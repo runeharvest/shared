@@ -18,8 +18,8 @@
 #define NL_ZONE_UTILITY
 
 #include "nel/misc/types_nl.h"
-#include <vector>
 #include <set>
+#include <vector>
 
 bool getZoneCoordByName(const char *name, uint16 &x, uint16 &y);
 void getZoneNameByCoord(uint16 x, uint16 y, std::string &zoneName);

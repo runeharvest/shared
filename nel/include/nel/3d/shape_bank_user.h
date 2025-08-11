@@ -17,9 +17,9 @@
 #ifndef NL_SHAPE_BANK_USER_H
 #define NL_SHAPE_BANK_USER_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/3d/u_shape_bank.h"
 #include "nel/3d/shape_bank.h"
+#include "nel/3d/u_shape_bank.h"
+#include "nel/misc/types_nl.h"
 
 namespace NL3D {
 
@@ -31,31 +31,35 @@ class CDriverUser;
  * \author Nevrax France
  * \date 2001
  */
-class CShapeBankUser : public UShapeBank
-{
+class CShapeBankUser : public UShapeBank {
 public:
-	virtual ~CShapeBankUser()
-	{
-	}
+  virtual ~CShapeBankUser() {}
 
-	virtual void addShapeCache(const std::string &shapeCacheName);
-	virtual void removeShapeCache(const std::string &shapeCacheName);
-	virtual void reset();
-	virtual void setShapeCacheSize(const std::string &shapeCacheName, sint32 maxSize);
-	virtual void linkShapeToShapeCache(const std::string &shapeName, const std::string &shapeCacheName);
-	virtual void preLoadShapesFromDirectory(const std::string &shapeCacheName,
-	    const std::string &path, const std::string &wildCard, bool recurs, NLMISC::IProgressCallback *progress = NULL, bool flushTextures = false);
-	virtual void preLoadShapesFromBNP(const std::string &shapeCacheName,
-	    const std::string &bnpName, const std::string &wildCard, NLMISC::IProgressCallback *progress = NULL, bool flushTextures = false);
-	virtual UShape getShape(const std::string &shapeName);
-	virtual void buildSystemGeometryForshape(const std::string &shapeName);
+  virtual void addShapeCache(const std::string &shapeCacheName);
+  virtual void removeShapeCache(const std::string &shapeCacheName);
+  virtual void reset();
+  virtual void setShapeCacheSize(const std::string &shapeCacheName,
+                                 sint32 maxSize);
+  virtual void linkShapeToShapeCache(const std::string &shapeName,
+                                     const std::string &shapeCacheName);
+  virtual void preLoadShapesFromDirectory(
+      const std::string &shapeCacheName, const std::string &path,
+      const std::string &wildCard, bool recurs,
+      NLMISC::IProgressCallback *progress = NULL, bool flushTextures = false);
+  virtual void preLoadShapesFromBNP(const std::string &shapeCacheName,
+                                    const std::string &bnpName,
+                                    const std::string &wildCard,
+                                    NLMISC::IProgressCallback *progress = NULL,
+                                    bool flushTextures = false);
+  virtual UShape getShape(const std::string &shapeName);
+  virtual void buildSystemGeometryForshape(const std::string &shapeName);
 
-	// The real shape bank
-	CShapeBank _ShapeBank;
-	CDriverUser *_DriverUser;
+  // The real shape bank
+  CShapeBank _ShapeBank;
+  CDriverUser *_DriverUser;
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_SHAPE_BANK_USER_H
 

@@ -17,18 +17,18 @@
 #ifndef NL_PS_PARTICLE_H
 #define NL_PS_PARTICLE_H
 
-/** NOTE : All particle definitions where done here. Now they are splitted in different files
- * This file is maintained for backward compatibility
+/** NOTE : All particle definitions where done here. Now they are splitted in
+ * different files This file is maintained for backward compatibility
  */
 
 #include "nel/3d/ps_dot.h"
+#include "nel/3d/ps_face.h"
 #include "nel/3d/ps_face_look_at.h"
 #include "nel/3d/ps_fan_light.h"
-#include "nel/3d/ps_tail_dot.h"
 #include "nel/3d/ps_ribbon.h"
 #include "nel/3d/ps_ribbon_look_at.h"
-#include "nel/3d/ps_face.h"
 #include "nel/3d/ps_shockwave.h"
+#include "nel/3d/ps_tail_dot.h"
 
 #endif // NL_PS_PARTICLE_H
 

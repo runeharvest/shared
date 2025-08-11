@@ -17,59 +17,58 @@
 #ifndef NL_PATCHUV_LOCATOR_H
 #define NL_PATCHUV_LOCATOR_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/3d/patch.h"
+#include "nel/misc/types_nl.h"
 #include "nel/misc/vector_2f.h"
 
 namespace NL3D {
 
 // ***************************************************************************
 /**
- * From a patch and UV coordinate in [0,OrderS], [0,OrderT], retrieve the appropriate coordinate in neighborhood.
- * \author Lionel Berenguier
- * \author Nevrax France
- * \date 2001
+ * From a patch and UV coordinate in [0,OrderS], [0,OrderT], retrieve the
+ * appropriate coordinate in neighborhood. \author Lionel Berenguier \author
+ * Nevrax France \date 2001
  */
-class CPatchUVLocator
-{
+class CPatchUVLocator {
 public:
-	// build information for a patch and his 1 to 4 neigbhor on a edge.
-	void build(const CPatch *patchCenter, sint edgeCenter, CPatch::CBindInfo &bindInfo);
+  // build information for a patch and his 1 to 4 neigbhor on a edge.
+  void build(const CPatch *patchCenter, sint edgeCenter,
+             CPatch::CBindInfo &bindInfo);
 
-	// for an uv given in src patch basis, find the associate patch.
-	uint selectPatch(const NLMISC::CVector2f &uvIn);
+  // for an uv given in src patch basis, find the associate patch.
+  uint selectPatch(const NLMISC::CVector2f &uvIn);
 
-	// for an uv given in src patch basis, and the number of patch we want (for bind 1/X, see selectPatch),
-	// find the neighbor UV, and the neighbor patch.
-	void locateUV(const NLMISC::CVector2f &uvIn, uint patch, CPatch *&patchOut, NLMISC::CVector2f &uvOut);
+  // for an uv given in src patch basis, and the number of patch we want (for
+  // bind 1/X, see selectPatch), find the neighbor UV, and the neighbor patch.
+  void locateUV(const NLMISC::CVector2f &uvIn, uint patch, CPatch *&patchOut,
+                NLMISC::CVector2f &uvOut);
 
-	/** return true only if the 2 edges have same number of tiles.
-	 *	bind 1/X case: return true only if ALL the adjacents patchs respect this rule. So you are sure that
-	 *	for all the src patch, one tile has exaclty one neighbor tile near him.
-	 */
-	bool sameEdgeOrder() const { return _SameEdgeOrder; }
-
-private:
-	struct CUVBasis
-	{
-		NLMISC::CVector2f UvI, UvJ, UvP;
-
-		void mulPoint(const NLMISC::CVector2f &uvIn, NLMISC::CVector2f &uvOut)
-		{
-			uvOut = UvP + uvIn.x * UvI + uvIn.y * UvJ;
-		}
-	};
+  /** return true only if the 2 edges have same number of tiles.
+   *	bind 1/X case: return true only if ALL the adjacents patchs respect this
+   *rule. So you are sure that for all the src patch, one tile has exaclty one
+   *neighbor tile near him.
+   */
+  bool sameEdgeOrder() const { return _SameEdgeOrder; }
 
 private:
-	CPatch *_CenterPatch;
-	sint _CenterPatchEdge;
-	sint _NPatchs;
-	CPatch *_NeighborPatch[4];
-	CUVBasis _NeighborBasis[4];
-	bool _SameEdgeOrder;
+  struct CUVBasis {
+    NLMISC::CVector2f UvI, UvJ, UvP;
+
+    void mulPoint(const NLMISC::CVector2f &uvIn, NLMISC::CVector2f &uvOut) {
+      uvOut = UvP + uvIn.x * UvI + uvIn.y * UvJ;
+    }
+  };
+
+private:
+  CPatch *_CenterPatch;
+  sint _CenterPatchEdge;
+  sint _NPatchs;
+  CPatch *_NeighborPatch[4];
+  CUVBasis _NeighborBasis[4];
+  bool _SameEdgeOrder;
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_PATCHUV_LOCATOR_H
 

@@ -31,23 +31,21 @@ namespace NLMISC {
  *			TMyCont	_MyCont;
  *
  *		public:
- *			// return the container with mutable item content but const item list
- *			const TMyCont getContainer() const { return _MyCont; };
+ *			// return the container with mutable item content but
+ *const item list const TMyCont getContainer() const { return _MyCont; };
  *		}
  *
  */
-template <class BaseContainer>
-struct TMutableContainer : public BaseContainer
-{
-	typename BaseContainer::iterator begin() const
-	{
-		return const_cast<BaseContainer *>(static_cast<const BaseContainer *>(this))->begin();
-	}
+template <class BaseContainer> struct TMutableContainer : public BaseContainer {
+  typename BaseContainer::iterator begin() const {
+    return const_cast<BaseContainer *>(static_cast<const BaseContainer *>(this))
+        ->begin();
+  }
 
-	typename BaseContainer::iterator end() const
-	{
-		return const_cast<BaseContainer *>(static_cast<const BaseContainer *>(this))->end();
-	}
+  typename BaseContainer::iterator end() const {
+    return const_cast<BaseContainer *>(static_cast<const BaseContainer *>(this))
+        ->end();
+  }
 };
 
 } // namespace NLMISC

@@ -1,6 +1,5 @@
-typedef union
-{
-	cf_value Val;
+typedef union {
+  cf_value Val;
 } YYSTYPE;
 #define ADD_ASSIGN 257
 #define ASSIGN 258

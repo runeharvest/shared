@@ -17,9 +17,9 @@
 #ifndef NL_LANDSCAPE_COLLISION_GRID_H
 #define NL_LANDSCAPE_COLLISION_GRID_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/3d/patch.h"
 #include "nel/3d/visual_collision_manager.h"
+#include "nel/misc/types_nl.h"
 #include <vector>
 
 namespace NL3D {
@@ -32,44 +32,44 @@ class CVisualCollisionManager;
 
 // ***************************************************************************
 /**
- * A grid of Tiles Id. Each CVisualCollisionEntity has such a grid. This looks like CQuadGrid, but with
- * special features.
- * \author Lionel Berenguier
- * \author Nevrax France
- * \date 2001
+ * A grid of Tiles Id. Each CVisualCollisionEntity has such a grid. This looks
+ * like CQuadGrid, but with special features. \author Lionel Berenguier \author
+ * Nevrax France \date 2001
  */
-class CLandscapeCollisionGrid
-{
+class CLandscapeCollisionGrid {
 public:
-	/// Constructor
-	CLandscapeCollisionGrid(CVisualCollisionManager *owner);
-	~CLandscapeCollisionGrid();
+  /// Constructor
+  CLandscapeCollisionGrid(CVisualCollisionManager *owner);
+  ~CLandscapeCollisionGrid();
 
-	/// clear the chainlist in the quadgrid.
-	void clear();
-	/** Build the quadgrid with a array of patchblock. delta is the vector to apply to tiles coordinate,
-	 * before insertion in the quadgrid (for precision consideration).
-	 */
-	void build(const std::vector<CPatchQuadBlock *> &quadBlocks, const CVector &delta);
+  /// clear the chainlist in the quadgrid.
+  void clear();
+  /** Build the quadgrid with a array of patchblock. delta is the vector to
+   * apply to tiles coordinate, before insertion in the quadgrid (for precision
+   * consideration).
+   */
+  void build(const std::vector<CPatchQuadBlock *> &quadBlocks,
+             const CVector &delta);
 
-	/// select one entry in the chainQuad. pos is a position in World.
-	CVisualTileDescNode *select(const NLMISC::CVector &pos);
+  /// select one entry in the chainQuad. pos is a position in World.
+  CVisualTileDescNode *select(const NLMISC::CVector &pos);
 
-	// ***********************
+  // ***********************
 private:
-	CVisualCollisionManager *_Owner;
+  CVisualCollisionManager *_Owner;
 
-	/// Array of list of CVisualTileDescNode.
-	bool _Cleared;
-	CVisualTileDescNode *_Grid[NL_COLGRID_SIZE * NL_COLGRID_SIZE];
-	uint _SizePower;
-	CVector _Delta;
+  /// Array of list of CVisualTileDescNode.
+  bool _Cleared;
+  CVisualTileDescNode *_Grid[NL_COLGRID_SIZE * NL_COLGRID_SIZE];
+  uint _SizePower;
+  CVector _Delta;
 
 private:
-	void addQuadToGrid(uint16 paBlockId, uint16 quadId, sint minx, sint maxx, sint miny, sint maxy);
+  void addQuadToGrid(uint16 paBlockId, uint16 quadId, sint minx, sint maxx,
+                     sint miny, sint maxy);
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_LANDSCAPE_COLLISION_GRID_H
 

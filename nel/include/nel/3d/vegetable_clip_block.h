@@ -17,11 +17,11 @@
 #ifndef NL_VEGETABLE_CLIP_BLOCK_H
 #define NL_VEGETABLE_CLIP_BLOCK_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/aabbox.h"
-#include "nel/misc/bsphere.h"
 #include "nel/3d/tess_list.h"
 #include "nel/3d/vegetable_sort_block.h"
+#include "nel/misc/aabbox.h"
+#include "nel/misc/bsphere.h"
+#include "nel/misc/types_nl.h"
 
 namespace NL3D {
 
@@ -30,51 +30,50 @@ using NLMISC::CVector;
 
 // ***************************************************************************
 /**
- *	A block of vegetable instance groups (via sortBlocks) which are clipped in frustum together
- *	Internal to VegetableManager. Just an Handle for public.
+ *	A block of vegetable instance groups (via sortBlocks) which are clipped
+ *in frustum together Internal to VegetableManager. Just an Handle for public.
  * \author Lionel Berenguier
  * \author Nevrax France
  * \date 2001
  */
-class CVegetableClipBlock : public CTessNodeList
-{
+class CVegetableClipBlock : public CTessNodeList {
 public:
-	/// Constructor
-	CVegetableClipBlock();
+  /// Constructor
+  CVegetableClipBlock();
 
-	// ***************
+  // ***************
 private:
-	friend class CVegetableManager;
+  friend class CVegetableManager;
 
-	/// \name Fast clipping.
-	// @{
-	bool _Empty;
-	NLMISC::CAABBox _BBox;
-	NLMISC::CBSphere _BSphere;
+  /// \name Fast clipping.
+  // @{
+  bool _Empty;
+  NLMISC::CAABBox _BBox;
+  NLMISC::CBSphere _BSphere;
 
-	// extend sphere
-	void extendSphere(const CVector &vec);
-	// extend bbox. Must not be empty. NB: do not modify the sphere
-	void extendBBoxOnly(const CVector &vec);
-	// compute the sphere according to the bbox.
-	void updateSphere();
-	// return false if empty or out of frustum
-	bool clip(const std::vector<CPlane> &pyramid);
+  // extend sphere
+  void extendSphere(const CVector &vec);
+  // extend bbox. Must not be empty. NB: do not modify the sphere
+  void extendBBoxOnly(const CVector &vec);
+  // compute the sphere according to the bbox.
+  void updateSphere();
+  // return false if empty or out of frustum
+  bool clip(const std::vector<CPlane> &pyramid);
 
-	// @}
+  // @}
 
 private:
-	// List of SortBlocks.
-	CTessList<CVegetableSortBlock> _SortBlockList;
+  // List of SortBlocks.
+  CTessList<CVegetableSortBlock> _SortBlockList;
 
-	// The number of instanceGroups created in this clipBlock.
-	uint _NumIgs;
+  // The number of instanceGroups created in this clipBlock.
+  uint _NumIgs;
 
-	// RenderList
-	CVegetableClipBlock *_RenderNext;
+  // RenderList
+  CVegetableClipBlock *_RenderNext;
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_VEGETABLE_CLIP_BLOCK_H
 

@@ -28,51 +28,48 @@
 /////////////////////////////////////////////////////////////////////////////
 // CLogSessions dialog
 
-class CLogSessions : public CDialog
-{
-	// Construction
+class CLogSessions : public CDialog {
+  // Construction
 public:
-	CLogSessions(CWnd *pParent = NULL); // standard constructor
+  CLogSessions(CWnd *pParent = NULL); // standard constructor
 
-	///
-	void addLogSession(const CString &line);
+  ///
+  void addLogSession(const CString &line);
 
-	///
-	void clear() { Sessions.clear(); }
+  ///
+  void clear() { Sessions.clear(); }
 
-	///
-	CString getStartDate() const;
+  ///
+  CString getStartDate() const;
 
-	std::vector<CString> Sessions;
-	std::vector<CString> Filenames;
+  std::vector<CString> Sessions;
+  std::vector<CString> Filenames;
 
-	// Dialog Data
-	//{{AFX_DATA(CLogSessions)
-	enum
-	{
-		IDD = IDD_LOGSESSIONS
-	};
-	CListBox m_ListBox;
-	CString m_StartDate;
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(CLogSessions)
+  enum { IDD = IDD_LOGSESSIONS };
+  CListBox m_ListBox;
+  CString m_StartDate;
+  //}}AFX_DATA
 
-	// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CLogSessions)
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CLogSessions)
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
-	//}}AFX_VIRTUAL
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+                                                   //}}AFX_VIRTUAL
 
-	// Implementation
+  // Implementation
 protected:
-	// Generated message map functions
-	//{{AFX_MSG(CLogSessions)
-	virtual BOOL OnInitDialog();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  // Generated message map functions
+  //{{AFX_MSG(CLogSessions)
+  virtual BOOL OnInitDialog();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before
+// the previous line.
 
 #endif // !defined(AFX_LOGSESSIONS_H__24A056CC_9FE8_4A90_B3FF_DAF2BF4929F0__INCLUDED_)

@@ -24,8 +24,6 @@
 
 namespace NL3D {
 
-void CTextureBlank::doGenerate(bool async)
-{
-}
+void CTextureBlank::doGenerate(bool async) {}
 
-} // NL3D
+} // namespace NL3D

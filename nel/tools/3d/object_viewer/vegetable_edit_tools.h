@@ -23,8 +23,8 @@
 // range_selector.h : header file
 //
 
-#include "nel/misc/types_nl.h"
 #include "editable_range.h"
+#include "nel/misc/types_nl.h"
 #include "vegetable_refresh.h"
 
 // ***************************************************************************
@@ -83,52 +83,47 @@
  * \author Nevrax France
  * \date 2001
  */
-class CDirectEditableRangeFloat : public CEditableRangeFloat
-{
+class CDirectEditableRangeFloat : public CEditableRangeFloat {
 public:
-	// Approximate Height of this control
-	enum
-	{
-		ControlHeight = 34
-	};
+  // Approximate Height of this control
+  enum { ControlHeight = 34 };
 
 public:
-	// ctor.
-	CDirectEditableRangeFloat(const std::string &id, float defaultMin, float defaultMax, const std::string &title);
+  // ctor.
+  CDirectEditableRangeFloat(const std::string &id, float defaultMin,
+                            float defaultMax, const std::string &title);
 
-	// Init the dialog, and the static text.
-	virtual void init(uint32 x, uint32 y, CWnd *pParent);
+  // Init the dialog, and the static text.
+  virtual void init(uint32 x, uint32 y, CWnd *pParent);
 
-	// Set our pointer to the float, and update view.
-	void setFloat(float *value, IVegetableRefresh *vegetRefresh);
+  // Set our pointer to the float, and update view.
+  void setFloat(float *value, IVegetableRefresh *vegetRefresh);
 
-	// if false, nothgin will be written to the Float.
-	void enableWrite(bool enb);
+  // if false, nothgin will be written to the Float.
+  void enableWrite(bool enb);
 
-	// *****************
+  // *****************
 private:
-	// Our easy wrapper.
-	class CDirectFloatWrapper : public IPSWrapperFloat
-	{
-	public:
-		CDirectFloatWrapper()
-		{
-			Value = NULL;
-			WriteEnabled = true;
-		}
+  // Our easy wrapper.
+  class CDirectFloatWrapper : public IPSWrapperFloat {
+  public:
+    CDirectFloatWrapper() {
+      Value = NULL;
+      WriteEnabled = true;
+    }
 
-		float *Value;
-		IVegetableRefresh *VegetableRefresh;
-		bool WriteEnabled;
-		float get(void) const;
-		void set(const float &f);
-	};
+    float *Value;
+    IVegetableRefresh *VegetableRefresh;
+    bool WriteEnabled;
+    float get(void) const;
+    void set(const float &f);
+  };
 
-	CDirectFloatWrapper _Wrapper;
+  CDirectFloatWrapper _Wrapper;
 
-	// Our Caption
-	std::string _Title;
-	CStatic _StaticText;
+  // Our Caption
+  std::string _Title;
+  CStatic _StaticText;
 };
 
 #endif // NL_VEGETABLE_EDIT_TOOLS_H

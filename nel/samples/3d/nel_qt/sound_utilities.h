@@ -27,7 +27,7 @@
 namespace NLSOUND {
 class UAudioMixer;
 class CSoundAnimManager;
-}
+} // namespace NLSOUND
 
 namespace NLQT {
 class CConfiguration;
@@ -42,42 +42,44 @@ class CGraphicsViewport;
  * \date 2010-02-06 12:26GMT
  * \author Jan Boon (Kaetemi)
  */
-class CSoundUtilities
-{
+class CSoundUtilities {
 public:
-	CSoundUtilities();
-	virtual ~CSoundUtilities();
+  CSoundUtilities();
+  virtual ~CSoundUtilities();
 
-	void init(CConfiguration *configuration, CInternationalization *internationalization);
-	void release();
+  void init(CConfiguration *configuration,
+            CInternationalization *internationalization);
+  void release();
 
-	void initGraphics(CGraphicsViewport *graphicsViewport);
-	void releaseGraphics();
+  void initGraphics(CGraphicsViewport *graphicsViewport);
+  void releaseGraphics();
 
-	// void initLandscape(CLandscapeUtilities *landscapeUtilities);
-	// void releaseLandscape();
+  // void initLandscape(CLandscapeUtilities *landscapeUtilities);
+  // void releaseLandscape();
 
-	// void initPacs(CPacsUtilities *pacsUtilities);
-	// void releasePacs();
+  // void initPacs(CPacsUtilities *pacsUtilities);
+  // void releasePacs();
 
-	void updateSound();
+  void updateSound();
 
-	inline NLSOUND::UAudioMixer *getAudioMixer() { return m_AudioMixer; }
-	inline NLSOUND::CSoundAnimManager *getSoundAnimManager() { return m_SoundAnimManager; }
-
-private:
-	CConfiguration *m_Configuration;
-	CInternationalization *m_Internationalization;
-	CGraphicsViewport *m_GraphicsViewport;
-	// CLandscapeUtilities *m_LandscapeUtilities;
-	// CPacsUtilities *m_PacsUtilities;
-
-	NLSOUND::UAudioMixer *m_AudioMixer;
-	NLSOUND::CSoundAnimManager *m_SoundAnimManager;
+  inline NLSOUND::UAudioMixer *getAudioMixer() { return m_AudioMixer; }
+  inline NLSOUND::CSoundAnimManager *getSoundAnimManager() {
+    return m_SoundAnimManager;
+  }
 
 private:
-	CSoundUtilities(const CSoundUtilities &);
-	CSoundUtilities &operator=(const CSoundUtilities &);
+  CConfiguration *m_Configuration;
+  CInternationalization *m_Internationalization;
+  CGraphicsViewport *m_GraphicsViewport;
+  // CLandscapeUtilities *m_LandscapeUtilities;
+  // CPacsUtilities *m_PacsUtilities;
+
+  NLSOUND::UAudioMixer *m_AudioMixer;
+  NLSOUND::CSoundAnimManager *m_SoundAnimManager;
+
+private:
+  CSoundUtilities(const CSoundUtilities &);
+  CSoundUtilities &operator=(const CSoundUtilities &);
 
 }; /* class CSoundUtilities */
 

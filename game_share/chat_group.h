@@ -18,12 +18,12 @@
 #define CHAT_GROUP_H
 
 // misc
-#include "nel/misc/types_nl.h"
 #include "nel/misc/string_mapper.h"
+#include "nel/misc/types_nl.h"
 
 // game share
-#include "ryzom_entity_id.h"
 #include "base_types.h"
+#include "ryzom_entity_id.h"
 
 // std
 #include <set>
@@ -38,65 +38,54 @@ typedef NLMISC::CEntityId TGroupId;
  * \author Nevrax France
  * \date 2002
  */
-struct CChatGroup
-{
-	enum
-	{
-		MaxDynChanPerPlayer = 8
-	};
-	// group type
-	enum TGroupType
-	{
-		say = 0,
-		shout,
-		team,
-		guild,
-		civilization,
-		territory,
-		universe,
-		tell,
-		player,
-		arround,
-		system,
-		region,
-		dyn_chat,
-		nbChatMode
-		// Following mode are client side only. Thus, after 'nbChatMode'
-	};
+struct CChatGroup {
+  enum { MaxDynChanPerPlayer = 8 };
+  // group type
+  enum TGroupType {
+    say = 0,
+    shout,
+    team,
+    guild,
+    civilization,
+    territory,
+    universe,
+    tell,
+    player,
+    arround,
+    system,
+    region,
+    dyn_chat,
+    nbChatMode
+    // Following mode are client side only. Thus, after 'nbChatMode'
+  };
 
-	/// group type
-	TGroupType Type;
-	/// Group name (for player chat channel)
-	//	std::string GroupName;
-	NLMISC::TStringId GroupName;
+  /// group type
+  TGroupType Type;
+  /// Group name (for player chat channel)
+  //	std::string GroupName;
+  NLMISC::TStringId GroupName;
 
-	typedef std::set<TDataSetRow> TMemberCont;
-	/// group members
-	//	std::set<NLMISC::CEntityId> Members;
-	TMemberCont Members;
+  typedef std::set<TDataSetRow> TMemberCont;
+  /// group members
+  //	std::set<NLMISC::CEntityId> Members;
+  TMemberCont Members;
 
-	/**
-	 * Default constructor
-	 */
-	CChatGroup()
-	    : Type(nbChatMode)
-	{
-	}
+  /**
+   * Default constructor
+   */
+  CChatGroup() : Type(nbChatMode) {}
 
-	/**
-	 * Constructor
-	 */
-	//	CChatGroup( TGroupType type, const std::string &groupName )
-	CChatGroup(TGroupType type, NLMISC::TStringId groupName)
-	    : Type(type)
-	    , GroupName(groupName)
-	{
-	}
+  /**
+   * Constructor
+   */
+  //	CChatGroup( TGroupType type, const std::string &groupName )
+  CChatGroup(TGroupType type, NLMISC::TStringId groupName)
+      : Type(type), GroupName(groupName) {}
 
-	/// convert a string to a group type
-	static TGroupType stringToGroupType(const std::string &str);
-	/// Convert a chat group to string
-	static const std::string &groupTypeToString(CChatGroup::TGroupType type);
+  /// convert a string to a group type
+  static TGroupType stringToGroupType(const std::string &str);
+  /// Convert a chat group to string
+  static const std::string &groupTypeToString(CChatGroup::TGroupType type);
 };
 
 #endif // CHAT_GROUP_H

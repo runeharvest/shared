@@ -46,11 +46,10 @@ namespace BUILTIN {
  * \author Jan Boon (Kaetemi)
  * CTexmap
  */
-class CTexmap : public CMtlBase
-{
+class CTexmap : public CMtlBase {
 public:
-	CTexmap(CScene *scene);
-	virtual ~CTexmap();
+  CTexmap(CScene *scene);
+  virtual ~CTexmap();
 
 }; /* class CTexmap */
 

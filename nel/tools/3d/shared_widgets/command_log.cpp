@@ -27,8 +27,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#include <nel/misc/types_nl.h>
 #include "command_log.h"
+#include <nel/misc/types_nl.h>
 
 // STL includes
 
@@ -36,8 +36,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QVBoxLayout>
 
 // NeL includes
-#include <nel/misc/debug.h>
 #include <nel/misc/command.h>
+#include <nel/misc/debug.h>
 #include <nel/misc/path.h>
 #include <nel/misc/window_displayer.h>
 
@@ -48,111 +48,105 @@ using namespace NLMISC;
 
 namespace NLQT {
 
-CCommandLog::CCommandLog(QWidget *parent)
-    : QWidget(parent)
-{
-	m_DisplayerOutput = new QTextEdit();
-	m_DisplayerOutput->setReadOnly(true);
-	m_DisplayerOutput->setFocusPolicy(Qt::NoFocus);
-	m_CommandInput = new QLineEdit();
+CCommandLog::CCommandLog(QWidget *parent) : QWidget(parent) {
+  m_DisplayerOutput = new QTextEdit();
+  m_DisplayerOutput->setReadOnly(true);
+  m_DisplayerOutput->setFocusPolicy(Qt::NoFocus);
+  m_CommandInput = new QLineEdit();
 
-	QVBoxLayout *layout = new QVBoxLayout();
-	layout->addWidget(m_DisplayerOutput);
-	layout->addWidget(m_CommandInput);
-	setLayout(layout);
+  QVBoxLayout *layout = new QVBoxLayout();
+  layout->addWidget(m_DisplayerOutput);
+  layout->addWidget(m_CommandInput);
+  setLayout(layout);
 
-	connect(m_CommandInput, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
-	connect(this, SIGNAL(tSigDisplay(const QColor &, const QString &)), this, SLOT(tSlotDisplay(const QColor &, const QString &)));
+  connect(m_CommandInput, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
+  connect(this, SIGNAL(tSigDisplay(const QColor &, const QString &)), this,
+          SLOT(tSlotDisplay(const QColor &, const QString &)));
 }
 
-CCommandLog::~CCommandLog()
-{
+CCommandLog::~CCommandLog() {}
+
+void CCommandLog::doDisplay(const CLog::TDisplayInfo &args,
+                            const char *message) {
+  QColor color;
+  switch (args.LogType) {
+  case CLog::LOG_DEBUG:
+    color = Qt::gray;
+    break;
+  case CLog::LOG_STAT:
+    color = Qt::green;
+    break;
+  case CLog::LOG_NO:
+  case CLog::LOG_UNKNOWN:
+  case CLog::LOG_INFO:
+    color = Qt::white;
+    break;
+  case CLog::LOG_WARNING:
+    color = Qt::yellow;
+    break;
+  case CLog::LOG_ERROR:
+  case CLog::LOG_ASSERT:
+    color = Qt::red;
+    break;
+  default:
+    color = Qt::black;
+    break;
+  }
+
+  std::string str = NLMISC::CWindowDisplayer::stringifyMessage(args, message);
+
+  emit tSigDisplay(color,
+                   QString::fromUtf8(str.substr(0, str.size() - 1).c_str()));
 }
 
-void CCommandLog::doDisplay(const CLog::TDisplayInfo &args, const char *message)
-{
-	QColor color;
-	switch (args.LogType)
-	{
-	case CLog::LOG_DEBUG:
-		color = Qt::gray;
-		break;
-	case CLog::LOG_STAT:
-		color = Qt::green;
-		break;
-	case CLog::LOG_NO:
-	case CLog::LOG_UNKNOWN:
-	case CLog::LOG_INFO:
-		color = Qt::white;
-		break;
-	case CLog::LOG_WARNING:
-		color = Qt::yellow;
-		break;
-	case CLog::LOG_ERROR:
-	case CLog::LOG_ASSERT:
-		color = Qt::red;
-		break;
-	default:
-		color = Qt::black;
-		break;
-	}
-
-	std::string str = NLMISC::CWindowDisplayer::stringifyMessage(args, message);
-
-	emit tSigDisplay(color, QString::fromUtf8(str.substr(0, str.size() - 1).c_str()));
+void CCommandLog::tSlotDisplay(const QColor &c, const QString &text) {
+  m_DisplayerOutput->setTextColor(c);
+  m_DisplayerOutput->append(text);
 }
 
-void CCommandLog::tSlotDisplay(const QColor &c, const QString &text)
-{
-	m_DisplayerOutput->setTextColor(c);
-	m_DisplayerOutput->append(text);
-}
+void CCommandLog::returnPressed() {
+  QString text = m_CommandInput->text();
+  if (text.isEmpty())
+    return;
 
-void CCommandLog::returnPressed()
-{
-	QString text = m_CommandInput->text();
-	if (text.isEmpty())
-		return;
+  emit execCommand(text);
+  if (m_Func)
+    m_Func(text.toUtf8().constData());
 
-	emit execCommand(text);
-	if (m_Func) m_Func(text.toUtf8().constData());
-
-	m_CommandInput->clear();
+  m_CommandInput->clear();
 }
 
 CCommandLogDisplayer::CCommandLogDisplayer(QWidget *parent)
-    : CCommandLog(parent)
-{
-	connect(this, SIGNAL(execCommand(const std::string &)), this, SLOT(execCommandLog(const std::string &)));
-	DebugLog->addDisplayer(this);
-	InfoLog->addDisplayer(this);
-	WarningLog->addDisplayer(this);
-	AssertLog->addDisplayer(this);
-	ErrorLog->addDisplayer(this);
-	m_Log.addDisplayer(this);
+    : CCommandLog(parent) {
+  connect(this, SIGNAL(execCommand(const std::string &)), this,
+          SLOT(execCommandLog(const std::string &)));
+  DebugLog->addDisplayer(this);
+  InfoLog->addDisplayer(this);
+  WarningLog->addDisplayer(this);
+  AssertLog->addDisplayer(this);
+  ErrorLog->addDisplayer(this);
+  m_Log.addDisplayer(this);
 }
 
-CCommandLogDisplayer::~CCommandLogDisplayer()
-{
-	DebugLog->removeDisplayer(this);
-	InfoLog->removeDisplayer(this);
-	WarningLog->removeDisplayer(this);
-	AssertLog->removeDisplayer(this);
-	ErrorLog->removeDisplayer(this);
-	m_Log.removeDisplayer(this);
+CCommandLogDisplayer::~CCommandLogDisplayer() {
+  DebugLog->removeDisplayer(this);
+  InfoLog->removeDisplayer(this);
+  WarningLog->removeDisplayer(this);
+  AssertLog->removeDisplayer(this);
+  ErrorLog->removeDisplayer(this);
+  m_Log.removeDisplayer(this);
 }
 
-void CCommandLogDisplayer::doDisplay(const NLMISC::CLog::TDisplayInfo &args, const char *message)
-{
-	CCommandLog::doDisplay(args, message);
+void CCommandLogDisplayer::doDisplay(const NLMISC::CLog::TDisplayInfo &args,
+                                     const char *message) {
+  CCommandLog::doDisplay(args, message);
 }
 
-void CCommandLogDisplayer::execCommandLog(const QString &cmd)
-{
-	std::string str = cmd.toUtf8().constData();
+void CCommandLogDisplayer::execCommandLog(const QString &cmd) {
+  std::string str = cmd.toUtf8().constData();
 
-	m_Log.displayRawNL("> %s", str.c_str());
-	ICommand::execute(str, m_Log);
+  m_Log.displayRawNL("> %s", str.c_str());
+  ICommand::execute(str, m_Log);
 }
 
 } /* namespace NLQT */

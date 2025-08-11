@@ -22,9 +22,8 @@
 
 namespace MEM_SET_TYPES {
 // New System. Only 10 memories are allowed
-enum
-{
-	NumMemories = 10,
+enum {
+  NumMemories = 10,
 };
 
 // Deprecated
@@ -91,7 +90,8 @@ enum
 /**
  * get the right mem set type from the input string
  * \param str the input string
- * \return the TMemorizationSetType associated to this string (Unknown if the string cannot be interpreted)
+ * \return the TMemorizationSetType associated to this string (Unknown if the
+ * string cannot be interpreted)
  */
 /*	TMemorizationSetType toMemSetType(const std::string &str);
 
@@ -104,7 +104,7 @@ enum
     /// convert an itemSkill to the associated memorization set type
     TMemorizationSetType skillToMemSetType(SKILLS::ESkills skill);
 */
-}; // MEM_SET_TYPES
+}; // namespace MEM_SET_TYPES
 
 #endif // RY_MEMORIZATION_SET_TYPE_H
 /* End of memorization_set_types.h */

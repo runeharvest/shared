@@ -80,77 +80,68 @@ NL_STRING_CONVERSION_TABLE_ENTRY(Aura)
 NL_STRING_CONVERSION_TABLE_ENTRY(UnknownFlag)
 NL_END_STRING_CONVERSION_TABLE(TBrickFlag, FlagConversion, UnknownFlag)
 
-const string &toString(TBrickFlag flag)
-{
+const string &toString(TBrickFlag flag) {
 #if !FINAL_VERSION
-	nlassert(NbCombatFlags < 32);
-	nlassert(NbPowerFlags < 31);
+  nlassert(NbCombatFlags < 32);
+  nlassert(NbPowerFlags < 31);
 #endif
-	return FlagConversion.toString(flag);
+  return FlagConversion.toString(flag);
 }
 
-TBrickFlag toBrickFlag(const string &str)
-{
+TBrickFlag toBrickFlag(const string &str) {
 #if !FINAL_VERSION
-	nlassert(NbCombatFlags < 32);
-	nlassert(NbPowerFlags < 31);
+  nlassert(NbCombatFlags < 32);
+  nlassert(NbPowerFlags < 31);
 #endif
-	return FlagConversion.fromString(str);
+  return FlagConversion.fromString(str);
 }
 
-TBrickFlag powerTypeToFlag(POWERS::TPowerType powerType)
-{
-	if (powerType >= POWERS::BeginAuras && powerType <= POWERS::EndAuras)
-	{
-		return Aura;
-	}
+TBrickFlag powerTypeToFlag(POWERS::TPowerType powerType) {
+  if (powerType >= POWERS::BeginAuras && powerType <= POWERS::EndAuras) {
+    return Aura;
+  }
 
-	if (powerType >= POWERS::BeginPower && powerType <= POWERS::EndPower)
-	{
-		return (TBrickFlag)(BeginPowerFlags + powerType - POWERS::BeginPower);
-	}
+  if (powerType >= POWERS::BeginPower && powerType <= POWERS::EndPower) {
+    return (TBrickFlag)(BeginPowerFlags + powerType - POWERS::BeginPower);
+  }
 
-	return UnknownFlag;
+  return UnknownFlag;
 }
 
 /// convert a slot to a combat flag
-TBrickFlag slotToFlag(SLOT_EQUIPMENT::TSlotEquipment slot)
-{
-	switch (slot)
-	{
-	case SLOT_EQUIPMENT::HEAD:
-		return Head;
-	case SLOT_EQUIPMENT::CHEST:
-		return Chest;
-	case SLOT_EQUIPMENT::ARMS:
-		return Arms;
-	case SLOT_EQUIPMENT::HANDS:
-		return Hands;
-	case SLOT_EQUIPMENT::LEGS:
-		return Legs;
-	case SLOT_EQUIPMENT::FEET:
-		return Feet;
-	default:
-		return UnknownFlag;
-	};
+TBrickFlag slotToFlag(SLOT_EQUIPMENT::TSlotEquipment slot) {
+  switch (slot) {
+  case SLOT_EQUIPMENT::HEAD:
+    return Head;
+  case SLOT_EQUIPMENT::CHEST:
+    return Chest;
+  case SLOT_EQUIPMENT::ARMS:
+    return Arms;
+  case SLOT_EQUIPMENT::HANDS:
+    return Hands;
+  case SLOT_EQUIPMENT::LEGS:
+    return Legs;
+  case SLOT_EQUIPMENT::FEET:
+    return Feet;
+  default:
+    return UnknownFlag;
+  };
 }
 
 /// convert an effect family to a flag
-TBrickFlag effectFamilyToFlag(EFFECT_FAMILIES::TEffectFamily family)
-{
-	switch (family)
-	{
-	case EFFECT_FAMILIES::CombatBleed:
-		return Bleed;
-	case EFFECT_FAMILIES::CombatStun:
-		return Stun;
-	case EFFECT_FAMILIES::CombatMvtSlow:
-		return SlowMove;
-	case EFFECT_FAMILIES::CombatAttackSlow:
-		return SlowAttacks;
-	default:
-		return UnknownFlag;
-	};
+TBrickFlag effectFamilyToFlag(EFFECT_FAMILIES::TEffectFamily family) {
+  switch (family) {
+  case EFFECT_FAMILIES::CombatBleed:
+    return Bleed;
+  case EFFECT_FAMILIES::CombatStun:
+    return Stun;
+  case EFFECT_FAMILIES::CombatMvtSlow:
+    return SlowMove;
+  case EFFECT_FAMILIES::CombatAttackSlow:
+    return SlowAttacks;
+  default:
+    return UnknownFlag;
+  };
 }
 
-}; // BRICK_FLAGS
+}; // namespace BRICK_FLAGS

@@ -42,23 +42,20 @@ struct THashPtr
     : public std::unary_function<const Pointer &, size_t>
 #endif
 {
-	enum
-	{
-		bucket_size = 4,
-		min_buckets = 8,
-	};
-	size_t operator()(const Pointer &ptr) const
-	{
-		// CHashSet<uint>::hasher	h;
-		//  transtype the pointer into int then hash it
-		// return h.operator()(uint(uintptr_t(ptr)));
-		return (size_t)(uintptr_t)ptr;
-	}
-	inline bool operator()(const Pointer &ptr1, const Pointer &ptr2) const
-	{
-		// delegate the work to someone else as well?
-		return (uintptr_t)ptr1 < (uintptr_t)ptr2;
-	}
+  enum {
+    bucket_size = 4,
+    min_buckets = 8,
+  };
+  size_t operator()(const Pointer &ptr) const {
+    // CHashSet<uint>::hasher	h;
+    //  transtype the pointer into int then hash it
+    // return h.operator()(uint(uintptr_t(ptr)));
+    return (size_t)(uintptr_t)ptr;
+  }
+  inline bool operator()(const Pointer &ptr1, const Pointer &ptr2) const {
+    // delegate the work to someone else as well?
+    return (uintptr_t)ptr1 < (uintptr_t)ptr2;
+  }
 };
 
 typedef CHashSet<CSourceCommon *, THashPtr<CSourceCommon *>> TSourceContainer;

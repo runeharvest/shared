@@ -37,43 +37,45 @@ typedef std::string TPathString;
 
 namespace NLPIPELINE {
 
-/// Asset project configuration. Used to configure lookup directories for tools and buildsite specific setup. Do not use for pipeline build settings
-class CProjectConfig
-{
+/// Asset project configuration. Used to configure lookup directories for tools
+/// and buildsite specific setup. Do not use for pipeline build settings
+class CProjectConfig {
 public:
-	enum Flags
-	{
-		DatabaseTextureSearchPaths = 0x0001,
-		DatabaseMaterialSearchPaths = 0x0002,
-		RuntimeTextureSearchPaths = 0x0100,
-		RuntimeShapeSearchPaths = 0x0200,
-	};
+  enum Flags {
+    DatabaseTextureSearchPaths = 0x0001,
+    DatabaseMaterialSearchPaths = 0x0002,
+    RuntimeTextureSearchPaths = 0x0100,
+    RuntimeShapeSearchPaths = 0x0200,
+  };
 
 public:
-	~CProjectConfig();
+  ~CProjectConfig();
 
-	/// Searches for the configuration for the specified asset path by recursively going through all parent directories looking for 'nel.cfg', matches it to a project cfg if partial is not set, initializes and applies the configuration.
-	static bool init(const std::string &asset, Flags flags, bool partial = false);
-	/// Undo init
-	static void release();
+  /// Searches for the configuration for the specified asset path by recursively
+  /// going through all parent directories looking for 'nel.cfg', matches it to
+  /// a project cfg if partial is not set, initializes and applies the
+  /// configuration.
+  static bool init(const std::string &asset, Flags flags, bool partial = false);
+  /// Undo init
+  static void release();
 
 private:
-	static void cleanup();
-	static void searchDirectories(const char *var);
+  static void cleanup();
+  static void searchDirectories(const char *var);
 
-	static CProjectConfig s_Instance;
+  static CProjectConfig s_Instance;
 
-	static uint32 s_AssetConfigModification;
-	static uint32 s_ProjectConfigModification;
+  static uint32 s_AssetConfigModification;
+  static uint32 s_ProjectConfigModification;
 
-	static TPathString s_AssetConfigPath;
-	static TPathString s_ProjectConfigPath;
+  static TPathString s_AssetConfigPath;
+  static TPathString s_ProjectConfigPath;
 
-	static std::string s_ProjectName;
-	static CProjectConfig::Flags s_InitFlags;
+  static std::string s_ProjectName;
+  static CProjectConfig::Flags s_InitFlags;
 
-	static std::vector<TPathString> s_ConfigPaths;
-	static std::vector<NLMISC::CConfigFile *> s_ConfigFiles;
+  static std::vector<TPathString> s_ConfigPaths;
+  static std::vector<NLMISC::CConfigFile *> s_ConfigFiles;
 };
 
 } /* namespace NLPIPELINE */

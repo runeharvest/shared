@@ -42,20 +42,18 @@ NL_END_STRING_CONVERSION_TABLE(TInventoryMode, InvModeConversion, Unknown)
 //-----------------------------------------------
 // toInvMode :
 //-----------------------------------------------
-TInventoryMode toInvMode(const std::string &str)
-{
-	uint16 nb = InvModeConversion.getNbPairs();
-	nlassert(uint16(NbModes + 1) == nb);
+TInventoryMode toInvMode(const std::string &str) {
+  uint16 nb = InvModeConversion.getNbPairs();
+  nlassert(uint16(NbModes + 1) == nb);
 
-	return InvModeConversion.fromString(str);
+  return InvModeConversion.fromString(str);
 } // toBrickFamily //
 
 //-----------------------------------------------
 // toString :
 //-----------------------------------------------
-const std::string &toString(TInventoryMode mode)
-{
-	return InvModeConversion.toString(mode);
+const std::string &toString(TInventoryMode mode) {
+  return InvModeConversion.toString(mode);
 } // toString //
 
-}; // TEMP_INV_MODE
+}; // namespace TEMP_INV_MODE

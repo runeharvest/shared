@@ -20,37 +20,38 @@
 #ifndef RY_PVP_CLAN_H
 #define RY_PVP_CLAN_H
 
-#include <string>
 #include "nel/misc/sheet_id.h"
 #include "people_pd.h"
+#include <string>
 
 namespace PVP_CLAN {
-// If you change this enum do not forget to update database.xml and local_database.xml
-enum TPVPClan
-{
-	None,
-	Neutral,
+// If you change this enum do not forget to update database.xml and
+// local_database.xml
+enum TPVPClan {
+  None,
+  Neutral,
 
-	BeginClans, // begin of "real" clans (None and Neutral are excluded)
-	BeginCults = BeginClans, // begin the cults section
+  BeginClans, // begin of "real" clans (None and Neutral are excluded)
+  BeginCults = BeginClans, // begin the cults section
 
-	Kami = BeginClans,
-	Karavan,
+  Kami = BeginClans,
+  Karavan,
 
-	EndCults = Karavan, // end of cults
-	BeginCivs, // begin of civilizations
+  EndCults = Karavan, // end of cults
+  BeginCivs,          // begin of civilizations
 
-	Fyros = BeginCivs,
-	Matis,
-	Tryker,
-	Zorai,
+  Fyros = BeginCivs,
+  Matis,
+  Tryker,
+  Zorai,
 
-	EndCivs = Zorai, // end of civs
-	EndClans = Zorai, // end of clans
+  EndCivs = Zorai,  // end of civs
+  EndClans = Zorai, // end of clans
 
-	Unknown,
-	NbClans = Unknown,
-	NbBits = 4 // number of bits needed to store all valid values (all but Unknown)
+  Unknown,
+  NbClans = Unknown,
+  NbBits =
+      4 // number of bits needed to store all valid values (all but Unknown)
 };
 
 TPVPClan fromString(const std::string &str);
@@ -62,57 +63,49 @@ TPVPClan getClanFromIndex(uint32 theIndex);
 NLMISC::CSheetId getFactionSheetId(TPVPClan clan);
 TPVPClan getClanFromPeople(EGSPD::CPeople::TPeople people);
 
-/// For Client Interface, return the define name of the type (eg: "pvp_faction_icon_Kami")
+/// For Client Interface, return the define name of the type (eg:
+/// "pvp_faction_icon_Kami")
 std::string toIconDefineString(TPVPClan c);
 
 /**
  *	CFactionWar
  */
-struct CFactionWar
-{
-	TPVPClan Clan1;
-	TPVPClan Clan2;
+struct CFactionWar {
+  TPVPClan Clan1;
+  TPVPClan Clan2;
 
-	CFactionWar()
-	{
-		Clan1 = None;
-		Clan2 = None;
-	}
+  CFactionWar() {
+    Clan1 = None;
+    Clan2 = None;
+  }
 
-	void setFactionWar(TPVPClan clan1, TPVPClan clan2)
-	{
-		if (clan1 != clan2)
-		{
-			if (clan1 < BeginClans || clan1 > EndClans)
-			{
-				nlwarning("<CFactionWar::setFactionWar> clan1 is invalid : %d", clan1);
-				return;
-			}
-			if (clan2 < BeginClans || clan2 > EndClans)
-			{
-				nlwarning("<CFactionWar::setFactionWar> clan2 is invalid : %d", clan2);
-				return;
-			}
-			Clan1 = clan1;
-			Clan2 = clan2;
-		}
-		else
-		{
-			nlwarning("<CFactionWar::setFactionWar> A clan can't be in war with him");
-			return;
-		}
-	}
+  void setFactionWar(TPVPClan clan1, TPVPClan clan2) {
+    if (clan1 != clan2) {
+      if (clan1 < BeginClans || clan1 > EndClans) {
+        nlwarning("<CFactionWar::setFactionWar> clan1 is invalid : %d", clan1);
+        return;
+      }
+      if (clan2 < BeginClans || clan2 > EndClans) {
+        nlwarning("<CFactionWar::setFactionWar> clan2 is invalid : %d", clan2);
+        return;
+      }
+      Clan1 = clan1;
+      Clan2 = clan2;
+    } else {
+      nlwarning("<CFactionWar::setFactionWar> A clan can't be in war with him");
+      return;
+    }
+  }
 
-	bool inPvPFaction(TPVPClan clan1, TPVPClan clan2) const
-	{
-		return ((clan1 == Clan1 && clan2 == Clan2) || (clan2 == Clan1 && clan1 == Clan2));
-	}
+  bool inPvPFaction(TPVPClan clan1, TPVPClan clan2) const {
+    return ((clan1 == Clan1 && clan2 == Clan2) ||
+            (clan2 == Clan1 && clan1 == Clan2));
+  }
 
-	void serial(NLMISC::IStream &f)
-	{
-		f.serialEnum(Clan1);
-		f.serialEnum(Clan2);
-	}
+  void serial(NLMISC::IStream &f) {
+    f.serialEnum(Clan1);
+    f.serialEnum(Clan2);
+  }
 };
 
 } // namespace PVP_CLAN

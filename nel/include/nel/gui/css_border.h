@@ -17,10 +17,10 @@
 #ifndef CL_CSS_BORDER_H
 #define CL_CSS_BORDER_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/rgba.h"
-#include "nel/gui/css_types.h"
 #include "nel/gui/css_length.h"
+#include "nel/gui/css_types.h"
+#include "nel/misc/rgba.h"
+#include "nel/misc/types_nl.h"
 
 namespace NLGUI {
 /**
@@ -28,42 +28,34 @@ namespace NLGUI {
  * \date 2021-07-23 09:51 GMT
  * \author Meelis Mägi (Nimetu)
  */
-class CSSBorder
-{
+class CSSBorder {
 public:
-	CSSBorder()
-	{
-		reset();
-	}
+  CSSBorder() { reset(); }
 
-	CSSBorder(uint width, CSSLineStyle style, NLMISC::CRGBA color)
-	{
-		set(width, style, color);
-	}
+  CSSBorder(uint width, CSSLineStyle style, NLMISC::CRGBA color) {
+    set(width, style, color);
+  }
 
-	void reset()
-	{
-		set(CSS_LINE_WIDTH_MEDIUM, CSS_LINE_STYLE_NONE, NLMISC::CRGBA::Transparent);
-	}
+  void reset() {
+    set(CSS_LINE_WIDTH_MEDIUM, CSS_LINE_STYLE_NONE, NLMISC::CRGBA::Transparent);
+  }
 
-	void set(uint width, CSSLineStyle style, NLMISC::CRGBA color)
-	{
-		Width.setFloatValue(width, "px");
-		Style = style;
-		Color = color;
-	}
+  void set(uint width, CSSLineStyle style, NLMISC::CRGBA color) {
+    Width.setFloatValue(width, "px");
+    Style = style;
+    Color = color;
+  }
 
-	bool empty() const
-	{
-		return Style == CSS_LINE_STYLE_NONE || Style == CSS_LINE_STYLE_HIDDEN
-		    || Width.getFloat() == 0;
-	}
+  bool empty() const {
+    return Style == CSS_LINE_STYLE_NONE || Style == CSS_LINE_STYLE_HIDDEN ||
+           Width.getFloat() == 0;
+  }
 
-	CSSLength Width;
-	CSSLineStyle Style;
-	NLMISC::CRGBA Color;
+  CSSLength Width;
+  CSSLineStyle Style;
+  NLMISC::CRGBA Color;
 };
 
-} // namespace
+} // namespace NLGUI
 
 #endif // CL_CSS_BORDER_H

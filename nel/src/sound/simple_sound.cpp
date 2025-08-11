@@ -21,12 +21,12 @@
 #include "stdsound.h"
 
 #include "nel/misc/path.h"
+#include "nel/sound/driver/buffer.h"
+#include "nel/sound/driver/sound_driver.h"
+#include "nel/sound/sample_bank.h"
+#include "nel/sound/sample_bank_manager.h"
 #include "nel/sound/simple_sound.h"
 #include "nel/sound/sound_bank.h"
-#include "nel/sound/sample_bank_manager.h"
-#include "nel/sound/sample_bank.h"
-#include "nel/sound/driver/sound_driver.h"
-#include "nel/sound/driver/buffer.h"
 
 using namespace std;
 using namespace NLMISC;
@@ -37,153 +37,139 @@ namespace NLSOUND {
  * Constructor
  */
 CSimpleSound::CSimpleSound()
-    : _Registered(false)
-    , _Buffer(NULL)
-    ,
-    // _Detailed(false), // not used?
-    _Alpha(1.0)
-    , _NeedContext(false)
-{
-	// init with NULL in case of unexecpted access
-	_Filename = NULL;
-	_Buffername = NULL;
+    : _Registered(false), _Buffer(NULL),
+      // _Detailed(false), // not used?
+      _Alpha(1.0), _NeedContext(false) {
+  // init with NULL in case of unexecpted access
+  _Filename = NULL;
+  _Buffername = NULL;
 }
 
 /*
  * Destructor
  */
-CSimpleSound::~CSimpleSound()
-{
-	if (_Buffer != NULL)
-		CAudioMixerUser::getInstance()->getSoundBank()->unregisterBufferAssoc(this, _Buffer);
+CSimpleSound::~CSimpleSound() {
+  if (_Buffer != NULL)
+    CAudioMixerUser::getInstance()->getSoundBank()->unregisterBufferAssoc(
+        this, _Buffer);
 }
 
-void CSimpleSound::setBuffer(IBuffer *buffer)
-{
-	if (_Buffer != NULL && buffer != NULL && _Buffer->getName() != buffer->getName())
-	{
-		// if buffer name change, update the registration/
-		CAudioMixerUser::getInstance()->getSoundBank()->unregisterBufferAssoc(this, _Buffer);
-		CAudioMixerUser::getInstance()->getSoundBank()->registerBufferAssoc(this, buffer);
-	}
-	else if (!_Registered && buffer != NULL)
-	{
-		// creater initial registration.
-		CAudioMixerUser::getInstance()->getSoundBank()->registerBufferAssoc(this, buffer);
-		_Registered = true;
-	}
-	_Buffer = buffer;
+void CSimpleSound::setBuffer(IBuffer *buffer) {
+  if (_Buffer != NULL && buffer != NULL &&
+      _Buffer->getName() != buffer->getName()) {
+    // if buffer name change, update the registration/
+    CAudioMixerUser::getInstance()->getSoundBank()->unregisterBufferAssoc(
+        this, _Buffer);
+    CAudioMixerUser::getInstance()->getSoundBank()->registerBufferAssoc(this,
+                                                                        buffer);
+  } else if (!_Registered && buffer != NULL) {
+    // creater initial registration.
+    CAudioMixerUser::getInstance()->getSoundBank()->registerBufferAssoc(this,
+                                                                        buffer);
+    _Registered = true;
+  }
+  _Buffer = buffer;
 }
 
-void CSimpleSound::getSubSoundList(std::vector<std::pair<std::string, CSound *>> &subsounds) const
-{
-	// A little hack, we use the reference vector to tag unavailable sample.
-	if (!(_Buffername == CStringMapper::emptyId()) && const_cast<CSimpleSound *>(this)->getBuffer() == 0)
-		subsounds.push_back(pair<string, CSound *>(CStringMapper::unmap(_Buffername) + " (sample)", (CSound *)NULL));
+void CSimpleSound::getSubSoundList(
+    std::vector<std::pair<std::string, CSound *>> &subsounds) const {
+  // A little hack, we use the reference vector to tag unavailable sample.
+  if (!(_Buffername == CStringMapper::emptyId()) &&
+      const_cast<CSimpleSound *>(this)->getBuffer() == 0)
+    subsounds.push_back(pair<string, CSound *>(
+        CStringMapper::unmap(_Buffername) + " (sample)", (CSound *)NULL));
 }
 
 /*
  * Return the sample buffer of this sound
  */
-IBuffer *CSimpleSound::getBuffer()
-{
-	if (_Buffer == 0)
-	{
-		// try to find the sample buffer in the sample bank.
-		CAudioMixerUser *audioMixer = CAudioMixerUser::instance();
-		_Buffer = audioMixer->getSampleBankManager()->get(_Buffername);
-		audioMixer->getSoundBank()->registerBufferAssoc(this, _Buffer);
-		_Registered = true;
-	}
-	return _Buffer;
+IBuffer *CSimpleSound::getBuffer() {
+  if (_Buffer == 0) {
+    // try to find the sample buffer in the sample bank.
+    CAudioMixerUser *audioMixer = CAudioMixerUser::instance();
+    _Buffer = audioMixer->getSampleBankManager()->get(_Buffername);
+    audioMixer->getSoundBank()->registerBufferAssoc(this, _Buffer);
+    _Registered = true;
+  }
+  return _Buffer;
 }
 
 /*
  * Return the length of the sound in ms
  */
-uint32 CSimpleSound::getDuration()
-{
-	IBuffer *buffer = getBuffer();
+uint32 CSimpleSound::getDuration() {
+  IBuffer *buffer = getBuffer();
 
-	if (buffer == NULL)
-	{
-		return 0;
-	}
-	else
-	{
-		return (uint32)(buffer->getDuration());
-	}
+  if (buffer == NULL) {
+    return 0;
+  } else {
+    return (uint32)(buffer->getDuration());
+  }
 }
 
-void CSimpleSound::serial(NLMISC::IStream &s)
-{
-	std::string bufferName;
-	CSound::serial(s);
+void CSimpleSound::serial(NLMISC::IStream &s) {
+  std::string bufferName;
+  CSound::serial(s);
 
-	s.serial(_MinDist);
-	s.serial(_Alpha);
+  s.serial(_MinDist);
+  s.serial(_Alpha);
 
-	if (s.isReading())
-	{
-		s.serial(bufferName);
-		_Buffername = CStringMapper::map(bufferName);
-		setBuffer(NULL);
+  if (s.isReading()) {
+    s.serial(bufferName);
+    _Buffername = CStringMapper::map(bufferName);
+    setBuffer(NULL);
 
-		// contain % so it need a context to play
-		if (bufferName.find("%") != string::npos)
-		{
-			_NeedContext = true;
-		}
-	}
-	else
-	{
-		bufferName = CStringMapper::unmap(_Buffername);
-		s.serial(bufferName);
-	}
+    // contain % so it need a context to play
+    if (bufferName.find("%") != string::npos) {
+      _NeedContext = true;
+    }
+  } else {
+    bufferName = CStringMapper::unmap(_Buffername);
+    s.serial(bufferName);
+  }
 }
 
 /**
  * 	Load the sound parameters from georges' form
  */
-void CSimpleSound::importForm(const std::string &filename, NLGEORGES::UFormElm &root)
-{
-	NLGEORGES::UFormElm *psoundType;
-	std::string dfnName;
+void CSimpleSound::importForm(const std::string &filename,
+                              NLGEORGES::UFormElm &root) {
+  NLGEORGES::UFormElm *psoundType;
+  std::string dfnName;
 
-	// some basic checking.
-	root.getNodeByName(&psoundType, ".SoundType");
-	nlassert(psoundType != NULL);
-	psoundType->getDfnName(dfnName);
-	nlassert(dfnName == "simple_sound.dfn");
+  // some basic checking.
+  root.getNodeByName(&psoundType, ".SoundType");
+  nlassert(psoundType != NULL);
+  psoundType->getDfnName(dfnName);
+  nlassert(dfnName == "simple_sound.dfn");
 
-	// Call the base class
-	CSound::importForm(filename, root);
+  // Call the base class
+  CSound::importForm(filename, root);
 
-	// Name
-	_Filename = CStringMapper::map(filename);
+  // Name
+  _Filename = CStringMapper::map(filename);
 
-	// Buffername
-	std::string bufferName;
-	root.getValueByName(bufferName, ".SoundType.Filename");
-	bufferName = CFile::getFilenameWithoutExtension(bufferName);
-	_Buffername = CStringMapper::map(bufferName);
+  // Buffername
+  std::string bufferName;
+  root.getValueByName(bufferName, ".SoundType.Filename");
+  bufferName = CFile::getFilenameWithoutExtension(bufferName);
+  _Buffername = CStringMapper::map(bufferName);
 
-	setBuffer(NULL);
+  setBuffer(NULL);
 
-	// contain % so it need a context to play
-	if (bufferName.find("%") != string::npos)
-	{
-		_NeedContext = true;
-	}
+  // contain % so it need a context to play
+  if (bufferName.find("%") != string::npos) {
+    _NeedContext = true;
+  }
 
-	// MaxDistance
-	root.getValueByName(_MaxDist, ".SoundType.MaxDistance");
+  // MaxDistance
+  root.getValueByName(_MaxDist, ".SoundType.MaxDistance");
 
-	// MinDistance
-	root.getValueByName(_MinDist, ".SoundType.MinDistance");
+  // MinDistance
+  root.getValueByName(_MinDist, ".SoundType.MinDistance");
 
-	// Alpha
-	root.getValueByName(_Alpha, ".SoundType.Alpha");
+  // Alpha
+  root.getValueByName(_Alpha, ".SoundType.Alpha");
 }
 
-} // NLSOUND
+} // namespace NLSOUND

@@ -20,8 +20,9 @@
 namespace NL3D {
 
 /** Interface to an occlusion query object.
- * An occlusion query allows to know whether some pixels passed the z-test for a set of primitives.
- * Common usages include visibility determination, lens flares / coronas rendering etc.
+ * An occlusion query allows to know whether some pixels passed the z-test for a
+ *set of primitives. Common usages include visibility determination, lens flares
+ * / coronas rendering etc.
  *
  * Usage :
  * \code
@@ -34,9 +35,8 @@ namespace NL3D {
  * {
  *     case IOcclusionQuery::NotAvailable:
  *       // Defer test. One should ideally wait the next frame.
- *       // Note that polling the result in a wait loop isn't safe, unless the driver is flushed.
- *		break;
- *     case IOcclusionQuery::Occluded:
+ *       // Note that polling the result in a wait loop isn't safe, unless the
+ *driver is flushed. break; case IOcclusionQuery::Occluded:
  *       // no pixels passed the z-test
  *     break;
  *     case IOcclusionQuery::NotOccluded:
@@ -46,45 +46,50 @@ namespace NL3D {
  *
  * \endcode
  *
- * After one's finished with IOcclusionQuery, IDriver::deleteOcclusionQuerry should be called
+ * After one's finished with IOcclusionQuery, IDriver::deleteOcclusionQuerry
+ *should be called
  *
- * IMPORTANT : - Occlusion query objects are invalid after a driver has been deleted, and thus must be recreated when driver changes.
- *             - Only one occlusion query object can be active at a time, e.g IOcclusionQuery::begin() should not be called
- *               within another begin() / end() pair. Such a situation will cause an assertion.
- *             - Not all drivers support the occlusion query mechanism. This should be checked by calling IDriver::supportOcclusionQuery.
- *               If not supported, the application can fallback to IDriver::getZBuffer, at the risk of stalling the GPU.
- *             - For a given query, result should NOT be retrieved between a begin()/end() pair, otherwise an assertion is raised
- * \author Nicolas Vizerie
+ * IMPORTANT : - Occlusion query objects are invalid after a driver has been
+ *deleted, and thus must be recreated when driver changes.
+ *             - Only one occlusion query object can be active at a time, e.g
+ *IOcclusionQuery::begin() should not be called within another begin() / end()
+ *pair. Such a situation will cause an assertion.
+ *             - Not all drivers support the occlusion query mechanism. This
+ *should be checked by calling IDriver::supportOcclusionQuery. If not supported,
+ *the application can fallback to IDriver::getZBuffer, at the risk of stalling
+ *the GPU.
+ *             - For a given query, result should NOT be retrieved between a
+ *begin()/end() pair, otherwise an assertion is raised \author Nicolas Vizerie
  * \author Nevrax France
  * \date 2004
  */
-struct IOcclusionQuery
-{
-	enum TOcclusionType
-	{
-		NotAvailable = 0, // occlusion test result isn't available yet
-		Occluded,
-		NotOccluded
-	};
+struct IOcclusionQuery {
+  enum TOcclusionType {
+    NotAvailable = 0, // occlusion test result isn't available yet
+    Occluded,
+    NotOccluded
+  };
 
-	virtual ~IOcclusionQuery() { }
+  virtual ~IOcclusionQuery() {}
 
-	/** Begin occlusion test
-	 * Should be called prior to primitive rendering
-	 */
-	virtual void begin() = 0;
-	// End occlusion test
-	virtual void end() = 0;
-	/** Get the result of the occlusion test
-	 * NB Do not call this between a begin()/end() pair for that query object (ok for other querries, though).
-	 */
-	virtual TOcclusionType getOcclusionType() = 0;
-	/** Get an indication about how many samples passed the z-test.
-	 * Depending on the implementation ,this may be the right number of sample, or just 0/1
-	 */
-	virtual uint getVisibleCount() = 0;
+  /** Begin occlusion test
+   * Should be called prior to primitive rendering
+   */
+  virtual void begin() = 0;
+  // End occlusion test
+  virtual void end() = 0;
+  /** Get the result of the occlusion test
+   * NB Do not call this between a begin()/end() pair for that query object (ok
+   * for other querries, though).
+   */
+  virtual TOcclusionType getOcclusionType() = 0;
+  /** Get an indication about how many samples passed the z-test.
+   * Depending on the implementation ,this may be the right number of sample, or
+   * just 0/1
+   */
+  virtual uint getVisibleCount() = 0;
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif

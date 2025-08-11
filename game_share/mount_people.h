@@ -21,13 +21,12 @@
 
 namespace MOUNT_PEOPLE {
 
-enum TMountPeople
-{
-	Unknown, // warning : keep this value to 0, this a special value in mirror
-	Fyros,
-	Matis,
-	Tryker,
-	Zorai
+enum TMountPeople {
+  Unknown, // warning : keep this value to 0, this a special value in mirror
+  Fyros,
+  Matis,
+  Tryker,
+  Zorai
 };
 
 TMountPeople fromString(const std::string &str);

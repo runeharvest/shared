@@ -21,8 +21,8 @@
 #ifndef NL_VIEW_TEXT_ID_H
 #define NL_VIEW_TEXT_ID_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/gui/view_text.h"
+#include "nel/misc/types_nl.h"
 
 namespace NLMISC {
 class CCDBNodeLeaf;
@@ -31,12 +31,11 @@ class CCDBNodeLeaf;
 namespace NLGUI {
 
 // ***************************************************************************
-class IOnReceiveTextId
-{
+class IOnReceiveTextId {
 public:
-	virtual ~IOnReceiveTextId() { }
-	// the deriver may change the input text
-	virtual void onReceiveTextId(std::string &str) = 0;
+  virtual ~IOnReceiveTextId() {}
+  // the deriver may change the input text
+  virtual void onReceiveTextId(std::string &str) = 0;
 };
 
 // ***************************************************************************
@@ -46,111 +45,111 @@ public:
  * \author Nevrax France
  * \date 2002
  */
-class CViewTextID : public CViewText
-{
+class CViewTextID : public CViewText {
 public:
-	DECLARE_UI_CLASS(CViewTextID)
+  DECLARE_UI_CLASS(CViewTextID)
 
-	/// Interface for classes which can provide text to CViewTextId
-	class IViewTextProvider
-	{
-	public:
-		virtual ~IViewTextProvider() { }
-		virtual bool getString(uint32 stringId, std::string &result) = 0;
-		virtual bool getDynString(uint32 dynStringId, std::string &result) = 0;
-	};
+  /// Interface for classes which can provide text to CViewTextId
+  class IViewTextProvider {
+  public:
+    virtual ~IViewTextProvider() {}
+    virtual bool getString(uint32 stringId, std::string &result) = 0;
+    virtual bool getDynString(uint32 dynStringId, std::string &result) = 0;
+  };
 
-	CViewTextID(const TCtorParam &param)
-	    : CViewText(param)
-	{
-		_StringModifier = NULL;
-		_IsDBLink = false;
-		_TextId = 0xFFFFFFFF;
-		_Initialized = false;
-		_DynamicString = false;
-		_IsTextFormatTaged = false;
-	}
+  CViewTextID(const TCtorParam &param) : CViewText(param) {
+    _StringModifier = NULL;
+    _IsDBLink = false;
+    _TextId = 0xFFFFFFFF;
+    _Initialized = false;
+    _DynamicString = false;
+    _IsTextFormatTaged = false;
+  }
 
-	// ctor with a text id
-	CViewTextID(const std::string &id, uint32 nID, sint FontSize = 12,
-	    NLMISC::CRGBA Color = NLMISC::CRGBA(255, 255, 255), bool Shadow = false)
-	    : CViewText(id, std::string(""), FontSize, Color, Shadow)
-	{
-		_StringModifier = NULL;
-		_IsDBLink = false;
-		_TextId = nID;
-		_Initialized = false;
-		_DynamicString = false;
-		_IsTextFormatTaged = false;
-	}
+  // ctor with a text id
+  CViewTextID(const std::string &id, uint32 nID, sint FontSize = 12,
+              NLMISC::CRGBA Color = NLMISC::CRGBA(255, 255, 255),
+              bool Shadow = false)
+      : CViewText(id, std::string(""), FontSize, Color, Shadow) {
+    _StringModifier = NULL;
+    _IsDBLink = false;
+    _TextId = nID;
+    _Initialized = false;
+    _DynamicString = false;
+    _IsTextFormatTaged = false;
+  }
 
-	// ctor with a db path entry
-	CViewTextID(const std::string &id,
-	    const std::string &idDBPath,
-	    sint FontSize = 12,
-	    NLMISC::CRGBA Color = NLMISC::CRGBA(255, 255, 255),
-	    bool Shadow = false);
+  // ctor with a db path entry
+  CViewTextID(const std::string &id, const std::string &idDBPath,
+              sint FontSize = 12,
+              NLMISC::CRGBA Color = NLMISC::CRGBA(255, 255, 255),
+              bool Shadow = false);
 
-	~CViewTextID();
+  ~CViewTextID();
 
-	std::string getProperty(const std::string &name) const;
-	void setProperty(const std::string &name, const std::string &value);
-	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
-	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
-	virtual void checkCoords();
+  std::string getProperty(const std::string &name) const;
+  void setProperty(const std::string &name, const std::string &value);
+  xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
+  virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+  virtual void checkCoords();
 
-	bool parseTextIdOptions(xmlNodePtr cur);
+  bool parseTextIdOptions(xmlNodePtr cur);
 
-	uint32 getTextId() const;
-	void setTextId(uint32 id);
+  uint32 getTextId() const;
+  void setTextId(uint32 id);
 
-	/** set a text id from a db path
-	 * \return true if the link could be done
-	 */
-	bool setDBTextID(const std::string &dbPath);
-	// set a text from a db leaf
-	void setDBLeaf(NLMISC::CCDBNodeLeaf *leaf);
+  /** set a text id from a db path
+   * \return true if the link could be done
+   */
+  bool setDBTextID(const std::string &dbPath);
+  // set a text from a db leaf
+  void setDBLeaf(NLMISC::CCDBNodeLeaf *leaf);
 
-	std::string getTextIdDbLink() const;
-	void setTextIdDbLink(const std::string &link);
+  std::string getTextIdDbLink() const;
+  void setTextIdDbLink(const std::string &link);
 
-	void setDynamicString(bool state) { _DynamicString = state; }
-	bool getDynamicString() const { return _DynamicString; }
+  void setDynamicString(bool state) { _DynamicString = state; }
+  bool getDynamicString() const { return _DynamicString; }
 
-	// modify name when received
-	void setOnReceiveTextId(IOnReceiveTextId *callBack) { _StringModifier = callBack; }
-	IOnReceiveTextId *getOnReceiveTextId() const { return _StringModifier; }
+  // modify name when received
+  void setOnReceiveTextId(IOnReceiveTextId *callBack) {
+    _StringModifier = callBack;
+  }
+  IOnReceiveTextId *getOnReceiveTextId() const { return _StringModifier; }
 
-	REFLECT_EXPORT_START(CViewTextID, CViewText)
-	REFLECT_UINT32("textid", getTextId, setTextId);
-	REFLECT_STRING("textid_dblink", getTextIdDbLink, setTextIdDbLink);
-	REFLECT_EXPORT_END
+  REFLECT_EXPORT_START(CViewTextID, CViewText)
+  REFLECT_UINT32("textid", getTextId, setTextId);
+  REFLECT_STRING("textid_dblink", getTextIdDbLink, setTextIdDbLink);
+  REFLECT_EXPORT_END
 
-	static void setTextProvider(IViewTextProvider *provider) { textProvider = provider; }
+  static void setTextProvider(IViewTextProvider *provider) {
+    textProvider = provider;
+  }
 
 protected:
-	bool _IsDBLink;
-	CInterfaceProperty _DBTextId;
-	uint32 _TextId;
+  bool _IsDBLink;
+  CInterfaceProperty _DBTextId;
+  uint32 _TextId;
 
-	bool _Initialized;
+  bool _Initialized;
 
-	// If true, use a dynamic string (CStringManagerClient::getDynString), else use a server string id (CStringManagerClient::getString)
-	bool _DynamicString;
+  // If true, use a dynamic string (CStringManagerClient::getDynString), else
+  // use a server string id (CStringManagerClient::getString)
+  bool _DynamicString;
 
-	// If true, setTextFormatted() is used instead of setText()
-	bool _IsTextFormatTaged;
+  // If true, setTextFormatted() is used instead of setText()
+  bool _IsTextFormatTaged;
 
-	// Optional utf-8 string modifier
-	IOnReceiveTextId *_StringModifier;
-	std::string _DBPath;
-	static IViewTextProvider *getTextProvider() { return textProvider; }
+  // Optional utf-8 string modifier
+  IOnReceiveTextId *_StringModifier;
+  std::string _DBPath;
+  static IViewTextProvider *getTextProvider() { return textProvider; }
 
 private:
-	static IViewTextProvider *textProvider;
+  static IViewTextProvider *textProvider;
 };
 
-}
+} // namespace NLGUI
 
 #endif // NL_VIEW_TEXT_ID_H
 

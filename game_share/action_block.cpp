@@ -23,63 +23,56 @@ using namespace NLMISC;
 
 namespace CLFECOMMON {
 
-CActionBlock::~CActionBlock()
-{
-	uint i;
-	for (i = 0; i < Actions.size(); ++i)
-		CActionFactory::getInstance()->remove(Actions[i]);
+CActionBlock::~CActionBlock() {
+  uint i;
+  for (i = 0; i < Actions.size(); ++i)
+    CActionFactory::getInstance()->remove(Actions[i]);
 }
 
-void CActionBlock::serial(CBitMemStream &msg)
-{
-	if (!msg.isReading() && Cycle == 0)
-		nlwarning("Packing action block (%d actions) with unset date", Actions.size());
+void CActionBlock::serial(CBitMemStream &msg) {
+  if (!msg.isReading() && Cycle == 0)
+    nlwarning("Packing action block (%d actions) with unset date",
+              Actions.size());
 
-	msg.serial(Cycle);
+  msg.serial(Cycle);
 
-	uint i;
+  uint i;
 
-	uint8 num = (uint8)Actions.size();
-	msg.serial(num);
+  uint8 num = (uint8)Actions.size();
+  msg.serial(num);
 
-	// static char	buff[1024], cat[128];
+  // static char	buff[1024], cat[128];
 
-	if (msg.isReading())
-	{
-		// sprintf(buff, "Unpack[%d]:", Cycle);
-		for (i = 0; i < num; ++i)
-		{
-			CAction *action = CActionFactory::getInstance()->unpack(msg, false);
-			if (!action)
-			{
-				Success = false; // reject an incorrect block
-			}
-			else
-			{
-				// sprintf(cat, " %d(%d bits)", action->Code, action->size());
-				// strcat(buff, cat);
-				Actions.push_back(action);
-			}
-		}
-	}
-	else
-	{
-		// sprintf(buff, "Pack[%d]:", Cycle);
-		for (i = 0; i < num; ++i)
-		{
-			uint msgPosBefore = msg.getPosInBit();
-			CActionFactory::getInstance()->pack(Actions[i], msg, false);
-			uint msgPosAfter = msg.getPosInBit();
+  if (msg.isReading()) {
+    // sprintf(buff, "Unpack[%d]:", Cycle);
+    for (i = 0; i < num; ++i) {
+      CAction *action = CActionFactory::getInstance()->unpack(msg, false);
+      if (!action) {
+        Success = false; // reject an incorrect block
+      } else {
+        // sprintf(cat, " %d(%d bits)", action->Code, action->size());
+        // strcat(buff, cat);
+        Actions.push_back(action);
+      }
+    }
+  } else {
+    // sprintf(buff, "Pack[%d]:", Cycle);
+    for (i = 0; i < num; ++i) {
+      uint msgPosBefore = msg.getPosInBit();
+      CActionFactory::getInstance()->pack(Actions[i], msg, false);
+      uint msgPosAfter = msg.getPosInBit();
 
-			uint actionSize = CActionFactory::getInstance()->size(Actions[i]);
+      uint actionSize = CActionFactory::getInstance()->size(Actions[i]);
 
-			if (actionSize < msgPosAfter - msgPosBefore)
-				nlwarning("Action %d declares a lower size (%d bits) from what it actually serialises (%d bits)", Actions[i]->Code, actionSize, msgPosAfter - msgPosBefore);
-			// sprintf(cat, " %d(%d bits)", Actions[i]->Code, Actions[i]->size());
-			// strcat(buff, cat);
-		}
-	}
-	// nlinfo("Block: %s", buff);
+      if (actionSize < msgPosAfter - msgPosBefore)
+        nlwarning("Action %d declares a lower size (%d bits) from what it "
+                  "actually serialises (%d bits)",
+                  Actions[i]->Code, actionSize, msgPosAfter - msgPosBefore);
+      // sprintf(cat, " %d(%d bits)", Actions[i]->Code, Actions[i]->size());
+      // strcat(buff, cat);
+    }
+  }
+  // nlinfo("Block: %s", buff);
 }
 
-} // CLFECOMMON
+} // namespace CLFECOMMON

@@ -19,9 +19,7 @@
 #include "action_sync.h"
 
 // leave not static else this workaround don't work
-void dummyToAvoidStupidCompilerWarning_game_share_action_sync_cpp()
-{
-}
+void dummyToAvoidStupidCompilerWarning_game_share_action_sync_cpp() {}
 
 namespace CLFECOMMON {
 
@@ -35,4 +33,4 @@ CActionSync::CActionSync()
 }
 */
 
-}
+} // namespace CLFECOMMON

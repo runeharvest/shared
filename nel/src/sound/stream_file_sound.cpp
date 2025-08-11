@@ -38,55 +38,52 @@ using namespace std;
 
 namespace NLSOUND {
 
-CStreamFileSound::CStreamFileSound()
-    : m_Async(true)
-{
+CStreamFileSound::CStreamFileSound() : m_Async(true) {}
+
+CStreamFileSound::~CStreamFileSound() {}
+
+void CStreamFileSound::importForm(const std::string &filename,
+                                  NLGEORGES::UFormElm &root) {
+  // Call the base class
+  CStreamSound::importForm(filename, root);
+
+  // Async
+  root.getValueByName(m_Async, ".SoundType.Async");
+
+  // FilePath
+  root.getValueByName(m_FilePath, ".SoundType.FilePath");
 }
 
-CStreamFileSound::~CStreamFileSound()
-{
+void CStreamFileSound::serial(NLMISC::IStream &s) {
+  CStreamSound::serial(s);
+
+  s.serial(m_Async);
+  s.serial(m_FilePath);
 }
 
-void CStreamFileSound::importForm(const std::string &filename, NLGEORGES::UFormElm &root)
-{
-	// Call the base class
-	CStreamSound::importForm(filename, root);
-
-	// Async
-	root.getValueByName(m_Async, ".SoundType.Async");
-
-	// FilePath
-	root.getValueByName(m_FilePath, ".SoundType.FilePath");
-}
-
-void CStreamFileSound::serial(NLMISC::IStream &s)
-{
-	CStreamSound::serial(s);
-
-	s.serial(m_Async);
-	s.serial(m_FilePath);
-}
-
-void CStreamFileSound::setMusicFilePath(const std::string &filePath, bool async, bool loop)
-{
+void CStreamFileSound::setMusicFilePath(const std::string &filePath, bool async,
+                                        bool loop) {
 #if !FINAL_VERSION
-	_Name = NLMISC::CStringMapper::map(std::string("<MusicChannel:") + NLMISC::CFile::getFilenameWithoutExtension(filePath) + ">");
+  _Name = NLMISC::CStringMapper::map(
+      std::string("<MusicChannel:") +
+      NLMISC::CFile::getFilenameWithoutExtension(filePath) + ">");
 #else
-	_Name = NLMISC::CStringMapper::map("<MusicChannel>");
+  _Name = NLMISC::CStringMapper::map("<MusicChannel>");
 #endif
-	_ConeInnerAngle = NLMISC::Pi * 2;
-	_ConeOuterAngle = NLMISC::Pi * 2;
-	_Looping = loop;
-	_Gain = 1.0f;
-	_ConeOuterGain = 1.0f;
-	_Direction = NLMISC::CVector(0.f, 0.f, 0.f);
-	_Pitch = 1.0f;
-	_Priority = HighestPri;
-	_MaxDist = 9000.0f;
-	_MinDist = 1000.0f;
-	m_Async = async;
-	m_FilePath = filePath;
-	_GroupController = CGroupControllerRoot::getInstance()->getGroupController(NLSOUND_SHEET_V1_DEFAULT_SOUND_MUSIC_GROUP_CONTROLLER);
+  _ConeInnerAngle = NLMISC::Pi * 2;
+  _ConeOuterAngle = NLMISC::Pi * 2;
+  _Looping = loop;
+  _Gain = 1.0f;
+  _ConeOuterGain = 1.0f;
+  _Direction = NLMISC::CVector(0.f, 0.f, 0.f);
+  _Pitch = 1.0f;
+  _Priority = HighestPri;
+  _MaxDist = 9000.0f;
+  _MinDist = 1000.0f;
+  m_Async = async;
+  m_FilePath = filePath;
+  _GroupController = CGroupControllerRoot::getInstance()->getGroupController(
+      NLSOUND_SHEET_V1_DEFAULT_SOUND_MUSIC_GROUP_CONTROLLER);
 }
 
 } /* namespace NLSOUND */

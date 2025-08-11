@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdafx.h"
-#include "tile_edit_exe.h"
 #include "TileList.h"
 #include "browse.h"
+#include "stdafx.h"
+#include "tile_edit_exe.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -32,13 +32,9 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // TileList
 
-TileList::TileList()
-{
-}
+TileList::TileList() {}
 
-TileList::~TileList()
-{
-}
+TileList::~TileList() {}
 
 BEGIN_MESSAGE_MAP(TileList, CListBox)
 //{{AFX_MSG_MAP(TileList)
@@ -49,17 +45,19 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // TileList message handlers
 
-BOOL TileList::PreCreateWindow(CREATESTRUCT &cs)
-{
-	// TODO: Add your specialized code here and/or call the base class
+BOOL TileList::PreCreateWindow(CREATESTRUCT &cs) {
+  // TODO: Add your specialized code here and/or call the base class
 
-	return CListBox::PreCreateWindow(cs);
+  return CListBox::PreCreateWindow(cs);
 }
 
-void TileList::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
-{
-	int x, y; // compute (x,y) coord of the item
-	if (lpDrawItemStruct->itemID < 0) return;
-	int nb_tile_per_line = (lpDrawItemStruct->rcItem.right - SEPARE_X) / (SEPARE_X + sizetile_x);
-	int nb_tile_per_column = (lpDrawItemStruct->rcItem.bottom - SEPARE_TEXT_TILE_Y) / (SEPARE_TEXT_TILE_Y + SEPARE_TILE_TEXT_Y + SIZETILE_Y);
+void TileList::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
+  int x, y; // compute (x,y) coord of the item
+  if (lpDrawItemStruct->itemID < 0)
+    return;
+  int nb_tile_per_line =
+      (lpDrawItemStruct->rcItem.right - SEPARE_X) / (SEPARE_X + sizetile_x);
+  int nb_tile_per_column =
+      (lpDrawItemStruct->rcItem.bottom - SEPARE_TEXT_TILE_Y) /
+      (SEPARE_TEXT_TILE_Y + SEPARE_TILE_TEXT_Y + SIZETILE_Y);
 }

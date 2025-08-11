@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <nel/misc/types_nl.h>
 #include "storage_array.h"
+#include <nel/misc/types_nl.h>
 
 // STL includes
 
@@ -41,7 +41,7 @@ using namespace std;
 namespace PIPELINE {
 namespace MAX {
 
-void blahblahblah() { }
+void blahblahblah() {}
 
 } /* namespace MAX */
 } /* namespace PIPELINE */

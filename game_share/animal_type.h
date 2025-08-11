@@ -20,14 +20,13 @@
 #include "nel/misc/types_nl.h"
 
 namespace ANIMAL_TYPE {
-enum EAnimalType
-{
-	All = 0,
-	Mount,
-	Packer,
-	Demon,
+enum EAnimalType {
+  All = 0,
+  Mount,
+  Packer,
+  Demon,
 
-	AnimalTypeSize
+  AnimalTypeSize
 };
 
 // Special values for HUNGER database leaf
@@ -37,7 +36,7 @@ const uint MaxDbSatiety = 31;
 // Special value for DESPAWN_TIMER database leaf
 const uint MaxDbTimeBeforeDespawn = 71;
 
-}; // ANIMAL_TYPE
+}; // namespace ANIMAL_TYPE
 
 #endif // RY_ANIMAL_TYPE_H
 

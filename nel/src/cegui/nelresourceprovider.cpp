@@ -37,55 +37,56 @@
 #endif
 
 // standard includes
-#include <set>
 #include <list>
+#include <set>
 
 // CEGUI includes
-#include <nel/cegui/nelresourceprovider.h>
 #include "CEGUIExceptions.h"
 #include "CEGUILogger.h"
 #include <memory.h>
+#include <nel/cegui/nelresourceprovider.h>
 
 // NeL includes
-#include <nel/misc/file.h>
-#include <nel/misc/path.h>
 #include <nel/misc/debug.h>
+#include <nel/misc/file.h>
 #include <nel/misc/mem_stream.h>
+#include <nel/misc/path.h>
 
 // Start of CEGUI namespace section
 namespace CEGUI {
-NeLResourceProvider::NeLResourceProvider()
-{
-	; // nothing to be done here.
+NeLResourceProvider::NeLResourceProvider() {
+  ; // nothing to be done here.
 }
 
-NeLResourceProvider::~NeLResourceProvider()
-{
-	; // nothing to be done here.
+NeLResourceProvider::~NeLResourceProvider() {
+  ; // nothing to be done here.
 }
 
-void NeLResourceProvider::loadRawDataContainer(const String &filename, RawDataContainer &output, const String &resourceGroup)
-{
-	if (!NLMISC::CPath::exists(filename.c_str()))
-	{
-		nlinfo("Scheme::Scheme - Filename supplied for Scheme loading must be valid [%s]", filename.c_str());
-		String sMsg = (utf8 *)"Scheme::Scheme - Filename supplied for Scheme loading must be valid";
-		sMsg += (utf8 *)" [" + filename + (utf8 *)"]";
-		throw InvalidRequestException(sMsg);
-	}
+void NeLResourceProvider::loadRawDataContainer(const String &filename,
+                                               RawDataContainer &output,
+                                               const String &resourceGroup) {
+  if (!NLMISC::CPath::exists(filename.c_str())) {
+    nlinfo("Scheme::Scheme - Filename supplied for Scheme loading must be "
+           "valid [%s]",
+           filename.c_str());
+    String sMsg = (utf8 *)"Scheme::Scheme - Filename supplied for Scheme "
+                          "loading must be valid";
+    sMsg += (utf8 *)" [" + filename + (utf8 *)"]";
+    throw InvalidRequestException(sMsg);
+  }
 
-	uint32 input_size;
-	std::string fname = NLMISC::CPath::lookup(filename.c_str());
-	NLMISC::CIFile f(NLMISC::CPath::lookup(filename.c_str()));
+  uint32 input_size;
+  std::string fname = NLMISC::CPath::lookup(filename.c_str());
+  NLMISC::CIFile f(NLMISC::CPath::lookup(filename.c_str()));
 
-	// get the size of the file and create a temp container.
-	input_size = f.getFileSize();
-	uint8 *input = new uint8[input_size + 1];
-	input[input_size] = 0;
-	f.serialBuffer(input, input_size);
-	f.close();
+  // get the size of the file and create a temp container.
+  input_size = f.getFileSize();
+  uint8 *input = new uint8[input_size + 1];
+  input[input_size] = 0;
+  f.serialBuffer(input, input_size);
+  f.close();
 
-	output.setData(input);
-	output.setSize(input_size);
+  output.setData(input);
+  output.setSize(input_size);
 }
 }; // end namespace CEGUI

@@ -19,9 +19,9 @@
 
 #include "stdgeorges.h"
 
-#include "nel/misc/thread.h"
-#include "nel/misc/i_xml.h"
 #include "nel/misc/common.h"
+#include "nel/misc/i_xml.h"
+#include "nel/misc/thread.h"
 
 #include "nel/georges/header.h"
 
@@ -39,201 +39,181 @@ void warning(bool exception, const char *format, ...);
 
 // ***************************************************************************
 
-CFileHeader::CFileHeader()
-{
-	MajorVersion = 0;
-	MinorVersion = 0;
-	State = Modified;
+CFileHeader::CFileHeader() {
+  MajorVersion = 0;
+  MinorVersion = 0;
+  State = Modified;
 }
 
 // ***************************************************************************
 
-void CFileHeader::write(xmlNodePtr node) const
-{
-	// Georges version system
-	char tmp[512];
-	smprintf(tmp, 512, "%d.%d", MajorVersion, MinorVersion);
-	xmlSetProp(node, (const xmlChar *)"Version", (const xmlChar *)tmp);
+void CFileHeader::write(xmlNodePtr node) const {
+  // Georges version system
+  char tmp[512];
+  smprintf(tmp, 512, "%d.%d", MajorVersion, MinorVersion);
+  xmlSetProp(node, (const xmlChar *)"Version", (const xmlChar *)tmp);
 
-	// State
-	if (State == Modified)
-		xmlSetProp(node, (const xmlChar *)"State", (const xmlChar *)"modified");
-	else
-		xmlSetProp(node, (const xmlChar *)"State", (const xmlChar *)"checked");
+  // State
+  if (State == Modified)
+    xmlSetProp(node, (const xmlChar *)"State", (const xmlChar *)"modified");
+  else
+    xmlSetProp(node, (const xmlChar *)"State", (const xmlChar *)"checked");
 
-	// Comments of the form
-	if (!Comments.empty())
-	{
-		// Create a new node
-		xmlNodePtr child = xmlNewChild(node, NULL, (const xmlChar *)"COMMENTS", NULL);
-		xmlNodePtr textNode = xmlNewText((const xmlChar *)Comments.c_str());
-		xmlAddChild(child, textNode);
-	}
+  // Comments of the form
+  if (!Comments.empty()) {
+    // Create a new node
+    xmlNodePtr child =
+        xmlNewChild(node, NULL, (const xmlChar *)"COMMENTS", NULL);
+    xmlNodePtr textNode = xmlNewText((const xmlChar *)Comments.c_str());
+    xmlAddChild(child, textNode);
+  }
 
-	// Logs
-	if (!Log.empty())
-	{
-		// Create a new node
-		xmlNodePtr child = xmlNewChild(node, NULL, (const xmlChar *)"LOG", NULL);
-		xmlNodePtr textNode = xmlNewText((const xmlChar *)Log.c_str());
-		xmlAddChild(child, textNode);
-	}
+  // Logs
+  if (!Log.empty()) {
+    // Create a new node
+    xmlNodePtr child = xmlNewChild(node, NULL, (const xmlChar *)"LOG", NULL);
+    xmlNodePtr textNode = xmlNewText((const xmlChar *)Log.c_str());
+    xmlAddChild(child, textNode);
+  }
 }
 
 // ***************************************************************************
 
-void CFileHeader::addLog(const std::string &log)
-{
-	time_t t;
-	time(&t);
-	if (!Log.empty())
-		Log += "\n";
-	Log += ctime(&t);
-	Log.resize(Log.size() - 1);
-	Log += " (";
-	Log += IThread::getCurrentThread()->getUserName();
-	Log += ") ";
-	Log += log;
+void CFileHeader::addLog(const std::string &log) {
+  time_t t;
+  time(&t);
+  if (!Log.empty())
+    Log += "\n";
+  Log += ctime(&t);
+  Log.resize(Log.size() - 1);
+  Log += " (";
+  Log += IThread::getCurrentThread()->getUserName();
+  Log += ") ";
+  Log += log;
 }
 
 // ***************************************************************************
 
-void CFileHeader::setComments(const std::string &comments)
-{
-	Comments = comments;
+void CFileHeader::setComments(const std::string &comments) {
+  Comments = comments;
 }
 
 // ***************************************************************************
 
-void CFileHeader::read(xmlNodePtr root)
-{
-	// Get the version
-	const char *value = (const char *)xmlGetProp(root, (xmlChar *)"Version");
-	if (value)
-	{
-		// Read the version
-		if (sscanf(value, "%d.%d", &MajorVersion, &MinorVersion) != 2)
-		{
-			// Delete the value
-			xmlFree((void *)value);
+void CFileHeader::read(xmlNodePtr root) {
+  // Get the version
+  const char *value = (const char *)xmlGetProp(root, (xmlChar *)"Version");
+  if (value) {
+    // Read the version
+    if (sscanf(value, "%d.%d", &MajorVersion, &MinorVersion) != 2) {
+      // Delete the value
+      xmlFree((void *)value);
 
-			// Throw exception
-			warning(true, "read", "XML Syntax error in TYPE block line %d, the Version argument is invalid.",
-			    (sint)root->line);
-		}
+      // Throw exception
+      warning(true, "read",
+              "XML Syntax error in TYPE block line %d, the Version argument is "
+              "invalid.",
+              (sint)root->line);
+    }
 
-		// Delete the value
-		xmlFree((void *)value);
-	}
-	else
-	{
-		// Set default
-		MajorVersion = 0;
-		MinorVersion = 0;
-	}
+    // Delete the value
+    xmlFree((void *)value);
+  } else {
+    // Set default
+    MajorVersion = 0;
+    MinorVersion = 0;
+  }
 
-	// Get the version
-	value = (const char *)xmlGetProp(root, (xmlChar *)"State");
-	if (value)
-	{
-		// Read the version
-		if (strcmp(value, "modified") == 0)
-		{
-			State = Modified;
-		}
-		else if (strcmp(value, "checked") == 0)
-		{
-			State = Checked;
-		}
-		else
-		{
-			// Delete the value
-			xmlFree((void *)value);
+  // Get the version
+  value = (const char *)xmlGetProp(root, (xmlChar *)"State");
+  if (value) {
+    // Read the version
+    if (strcmp(value, "modified") == 0) {
+      State = Modified;
+    } else if (strcmp(value, "checked") == 0) {
+      State = Checked;
+    } else {
+      // Delete the value
+      xmlFree((void *)value);
 
-			// Throw exception
-			warning(true, "read", "XML Syntax error in TYPE block line %d, the State argument is invalid.",
-			    (sint)root->line);
-		}
+      // Throw exception
+      warning(true, "read",
+              "XML Syntax error in TYPE block line %d, the State argument is "
+              "invalid.",
+              (sint)root->line);
+    }
 
-		// Delete the value
-		xmlFree((void *)value);
-	}
-	else
-	{
-		// Set default
-		State = Modified;
-	}
+    // Delete the value
+    xmlFree((void *)value);
+  } else {
+    // Set default
+    State = Modified;
+  }
 
-	// Look for the comment node
-	Comments.clear();
-	xmlNodePtr node = CIXml::getFirstChildNode(root, "COMMENTS");
-	if (node)
-	{
-		// Get a text node
-		node = CIXml::getFirstChildNode(node, XML_TEXT_NODE);
+  // Look for the comment node
+  Comments.clear();
+  xmlNodePtr node = CIXml::getFirstChildNode(root, "COMMENTS");
+  if (node) {
+    // Get a text node
+    node = CIXml::getFirstChildNode(node, XML_TEXT_NODE);
 
-		if (node)
-		{
-			// Get content
-			const char *comments = (const char *)xmlNodeGetContent(node);
-			if (comments)
-			{
-				Comments = comments;
+    if (node) {
+      // Get content
+      const char *comments = (const char *)xmlNodeGetContent(node);
+      if (comments) {
+        Comments = comments;
 
-				// Delete the value
-				xmlFree((void *)comments);
-			}
-		}
-	}
+        // Delete the value
+        xmlFree((void *)comments);
+      }
+    }
+  }
 
-	// Look for the log node
-	Log.clear();
-	node = CIXml::getFirstChildNode(root, "LOG");
-	if (node)
-	{
-		// Get a text node
-		node = CIXml::getFirstChildNode(node, XML_TEXT_NODE);
+  // Look for the log node
+  Log.clear();
+  node = CIXml::getFirstChildNode(root, "LOG");
+  if (node) {
+    // Get a text node
+    node = CIXml::getFirstChildNode(node, XML_TEXT_NODE);
 
-		if (node)
-		{
-			// Get content
-			const char *log = (const char *)xmlNodeGetContent(node);
-			if (log)
-			{
-				Log = log;
+    if (node) {
+      // Get content
+      const char *log = (const char *)xmlNodeGetContent(node);
+      if (log) {
+        Log = log;
 
-				// Delete the value
-				xmlFree((void *)log);
-			}
-		}
-	}
+        // Delete the value
+        xmlFree((void *)log);
+      }
+    }
+  }
 }
 
 // ***************************************************************************
 
-const char *CFileHeader::getStateString(TState state)
-{
-	if (state == Modified)
-		return "Modified";
-	else
-		return "Checked";
+const char *CFileHeader::getStateString(TState state) {
+  if (state == Modified)
+    return "Modified";
+  else
+    return "Checked";
 }
 
 // ***************************************************************************
 
-void CFileHeader::warning(bool exception, const std::string &function, const char *format, ...) const
-{
-	// Make a buffer string
-	va_list args;
-	va_start(args, format);
-	char buffer[1024];
-	vsnprintf(buffer, 1024, format, args);
-	va_end(args);
+void CFileHeader::warning(bool exception, const std::string &function,
+                          const char *format, ...) const {
+  // Make a buffer string
+  va_list args;
+  va_start(args, format);
+  char buffer[1024];
+  vsnprintf(buffer, 1024, format, args);
+  va_end(args);
 
-	// Set the warning
-	NLGEORGES::warning(exception, "(CFileHeader::%s) : %s", function.c_str(), buffer);
+  // Set the warning
+  NLGEORGES::warning(exception, "(CFileHeader::%s) : %s", function.c_str(),
+                     buffer);
 }
 
 // ***************************************************************************
 
-} // NLGEORGES
+} // namespace NLGEORGES

@@ -17,9 +17,9 @@
 #ifndef NL_U_CAMERA_H
 #define NL_U_CAMERA_H
 
+#include "frustum.h"
 #include "nel/misc/types_nl.h"
 #include "u_transform.h"
-#include "frustum.h"
 
 namespace NL3D {
 
@@ -30,65 +30,71 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2001
  */
-class UCamera : public UTransform
-{
+class UCamera : public UTransform {
 public:
-	/// \name Default Camera frustum (perspective).
-	//@{
-	static const float DefLx; //=0.26f;
-	static const float DefLy; //=0.2f;
-	static const float DefLzNear; //=0.15f;
-	static const float DefLzFar; //=1000.0f;
-	//@}
+  /// \name Default Camera frustum (perspective).
+  //@{
+  static const float DefLx;     //=0.26f;
+  static const float DefLy;     //=0.2f;
+  static const float DefLzNear; //=0.15f;
+  static const float DefLzFar;  //=1000.0f;
+                                //@}
 
 public:
-	/// \name Frustum
-	// @{
-	/// Set the frustum of the camera.
-	void setFrustum(const CFrustum &f);
-	/// Get the frustum of the camera.
-	const CFrustum &getFrustum() const;
-	/// Setup the camera mode as a perspective/ortho camera. NB: znear and zfar must be >0 (if perspective).
-	void setFrustum(float left, float right, float bottom, float top, float znear, float zfar, bool perspective = true);
-	/// Setup the camera mode as a perspective/ortho camera. NB: znear and zfar must be >0 (if perspective).
-	void setFrustum(float width, float height, float znear, float zfar, bool perspective = true);
-	/// Get the camera frustum.
-	void getFrustum(float &left, float &right, float &bottom, float &top, float &znear, float &zfar) const;
-	/// Is a ortho camera?
-	bool isOrtho() const;
-	/// Is a perspective camera?
-	bool isPerspective() const;
-	/** Setup a perspective camera, giving a fov in radians.
-	 * \param fov the horizontal angle of view, in radians. (Pi/2 as example)
-	 * \param aspectRatio the ratio horizontal/vertical (1.33 as example).
-	 * \param znear the front clipping plane distance.
-	 * \param zfar the back clipping plane distance.
-	 */
-	void setPerspective(float fov, float aspectRatio, float znear, float zfar);
-	// @}
+  /// \name Frustum
+  // @{
+  /// Set the frustum of the camera.
+  void setFrustum(const CFrustum &f);
+  /// Get the frustum of the camera.
+  const CFrustum &getFrustum() const;
+  /// Setup the camera mode as a perspective/ortho camera. NB: znear and zfar
+  /// must be >0 (if perspective).
+  void setFrustum(float left, float right, float bottom, float top, float znear,
+                  float zfar, bool perspective = true);
+  /// Setup the camera mode as a perspective/ortho camera. NB: znear and zfar
+  /// must be >0 (if perspective).
+  void setFrustum(float width, float height, float znear, float zfar,
+                  bool perspective = true);
+  /// Get the camera frustum.
+  void getFrustum(float &left, float &right, float &bottom, float &top,
+                  float &znear, float &zfar) const;
+  /// Is a ortho camera?
+  bool isOrtho() const;
+  /// Is a perspective camera?
+  bool isPerspective() const;
+  /** Setup a perspective camera, giving a fov in radians.
+   * \param fov the horizontal angle of view, in radians. (Pi/2 as example)
+   * \param aspectRatio the ratio horizontal/vertical (1.33 as example).
+   * \param znear the front clipping plane distance.
+   * \param zfar the back clipping plane distance.
+   */
+  void setPerspective(float fov, float aspectRatio, float znear, float zfar);
+  // @}
 
-	/// \name Misc
-	// @{
-	void buildCameraPyramid(std::vector<NLMISC::CPlane> &pyramid, bool useWorldMatrix);
-	void buildCameraPyramidCorners(std::vector<NLMISC::CVector> &pyramidCorners, bool useWorldMatrix);
-	// @}
+  /// \name Misc
+  // @{
+  void buildCameraPyramid(std::vector<NLMISC::CPlane> &pyramid,
+                          bool useWorldMatrix);
+  void buildCameraPyramidCorners(std::vector<NLMISC::CVector> &pyramidCorners,
+                                 bool useWorldMatrix);
+  // @}
 
-	/// Proxy interface
+  /// Proxy interface
 
-	/// Constructors
-	UCamera() { _Object = NULL; }
-	UCamera(class CCamera *object) { _Object = (ITransformable *)object; };
-	/// Attach an object to this proxy
-	void attach(class CCamera *object) { _Object = (ITransformable *)object; }
-	/// Detach the object
-	void detach() { _Object = NULL; }
-	/// Return true if the proxy is empty() (not attached)
-	bool empty() const { return _Object == NULL; }
-	/// For advanced usage, get the internal object ptr
-	class CCamera *getObjectPtr() const { return (CCamera *)_Object; }
+  /// Constructors
+  UCamera() { _Object = NULL; }
+  UCamera(class CCamera *object) { _Object = (ITransformable *)object; };
+  /// Attach an object to this proxy
+  void attach(class CCamera *object) { _Object = (ITransformable *)object; }
+  /// Detach the object
+  void detach() { _Object = NULL; }
+  /// Return true if the proxy is empty() (not attached)
+  bool empty() const { return _Object == NULL; }
+  /// For advanced usage, get the internal object ptr
+  class CCamera *getObjectPtr() const { return (CCamera *)_Object; }
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_U_CAMERA_H
 

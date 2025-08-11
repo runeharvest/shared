@@ -19,36 +19,41 @@
 
 #include "nel/misc/types_nl.h"
 
-/// a very simple type to replace the uint32 session ids used evrywhere in order to reduce bugs
-class CSessionId
-{
+/// a very simple type to replace the uint32 session ids used evrywhere in order
+/// to reduce bugs
+class CSessionId {
 public:
-	CSessionId(uint32 id = 0)
-	    : _Id(id)
-	{
-	}
-	operator uint32() const { return _Id; }
-	//	explicit CSessionId(uint32 id=0): _Id(id) {}
+  CSessionId(uint32 id = 0) : _Id(id) {}
+  operator uint32() const { return _Id; }
+  //	explicit CSessionId(uint32 id=0): _Id(id) {}
 
-	bool operator<(const CSessionId &other) const { return _Id < other._Id; }
-	bool operator==(const CSessionId &other) const { return _Id == other._Id; }
-	bool operator!=(const CSessionId &other) const { return _Id != other._Id; }
-	void serial(NLMISC::IStream &stream) { stream.serial(_Id); }
-	uint32 asInt() const { return _Id; }
-	std::string toString() const { return NLMISC::toString(_Id); }
+  bool operator<(const CSessionId &other) const { return _Id < other._Id; }
+  bool operator==(const CSessionId &other) const { return _Id == other._Id; }
+  bool operator!=(const CSessionId &other) const { return _Id != other._Id; }
+  void serial(NLMISC::IStream &stream) { stream.serial(_Id); }
+  uint32 asInt() const { return _Id; }
+  std::string toString() const { return NLMISC::toString(_Id); }
 
 private:
-	uint32 _Id;
+  uint32 _Id;
 };
 
 // Useful because if not defined the compiler do not chose between
 // lh.operator uint32() < rh or  lh < CSessionId(rh)
 
-inline bool operator<(const CSessionId &lh, uint32 rh) { return lh.asInt() < rh; }
-inline bool operator==(const CSessionId &lh, uint32 rh) { return lh.asInt() == rh; }
-inline bool operator!=(const CSessionId &lh, uint32 rh) { return lh.asInt() != rh; }
+inline bool operator<(const CSessionId &lh, uint32 rh) {
+  return lh.asInt() < rh;
+}
+inline bool operator==(const CSessionId &lh, uint32 rh) {
+  return lh.asInt() == rh;
+}
+inline bool operator!=(const CSessionId &lh, uint32 rh) {
+  return lh.asInt() != rh;
+}
 // useful for lh != 0
-inline bool operator!=(const CSessionId &lh, int rh) { return lh.asInt() != uint32(rh); }
+inline bool operator!=(const CSessionId &lh, int rh) {
+  return lh.asInt() != uint32(rh);
+}
 
 typedef CSessionId TSessionId;
 

@@ -20,13 +20,13 @@
 #ifndef NL_BUF_NET_BASE_H
 #define NL_BUF_NET_BASE_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/mutex.h"
 #include "nel/misc/atomic.h"
 #include "nel/misc/buf_fifo.h"
-#include "nel/misc/thread.h"
-#include "nel/misc/debug.h"
 #include "nel/misc/common.h"
+#include "nel/misc/debug.h"
+#include "nel/misc/mutex.h"
+#include "nel/misc/thread.h"
+#include "nel/misc/types_nl.h"
 
 namespace NLNET {
 
@@ -56,11 +56,7 @@ extern uint32 NbNetworkTask;
 
 #ifdef NL_OS_UNIX
 /// Access to the wake-up pipe (Unix only)
-enum TPipeWay
-{
-	PipeRead,
-	PipeWrite
-};
+enum TPipeWay { PipeRead, PipeWrite };
 #endif
 
 #ifdef NL_OS_WINDOWS
@@ -71,190 +67,178 @@ typedef void *HANDLE;
  * Layer 1
  *
  * Base class for CBufClient and CBufServer.
- * The max block sizes for sending and receiving are controlled by setMaxSentBlockSize()
- * and setMaxExpectedBlockSize(). Their default value is the maximum number contained in a sint32,
- * that is 2^31-1 (i.e. 0x7FFFFFFF). The limit for sending is checked only in debug mode.
+ * The max block sizes for sending and receiving are controlled by
+ * setMaxSentBlockSize() and setMaxExpectedBlockSize(). Their default value is
+ * the maximum number contained in a sint32, that is 2^31-1 (i.e. 0x7FFFFFFF).
+ * The limit for sending is checked only in debug mode.
  *
  * \author Nevrax France
  * \date 2001
  */
-class CBufNetBase
-{
+class CBufNetBase {
 public:
-	/// Type of incoming events (max 256)
-	enum TEventType
-	{
-		User = 'U',
-		Connection = 'C',
-		Disconnection = 'D'
-	};
+  /// Type of incoming events (max 256)
+  enum TEventType { User = 'U', Connection = 'C', Disconnection = 'D' };
 
-	/// Destructor
-	virtual ~CBufNetBase();
+  /// Destructor
+  virtual ~CBufNetBase();
 
 #if defined(NL_OS_UNIX)
-	/** Init the pipe for data available with an external pipe.
-	 * Call it only if you set initPipeForDataAvailable to false in the constructor.
-	 * Then don't call sleepUntilDataAvailable() but use select() on the pipe.
-	 * The pipe will be written one byte when receiving a message.
-	 */
-	void setExternalPipeForDataAvailable(int *twoPipeHandles)
-	{
-		_DataAvailablePipeHandle[PipeRead] = twoPipeHandles[PipeRead];
-		_DataAvailablePipeHandle[PipeWrite] = twoPipeHandles[PipeWrite];
-	}
+  /** Init the pipe for data available with an external pipe.
+   * Call it only if you set initPipeForDataAvailable to false in the
+   * constructor. Then don't call sleepUntilDataAvailable() but use select() on
+   * the pipe. The pipe will be written one byte when receiving a message.
+   */
+  void setExternalPipeForDataAvailable(int *twoPipeHandles) {
+    _DataAvailablePipeHandle[PipeRead] = twoPipeHandles[PipeRead];
+    _DataAvailablePipeHandle[PipeWrite] = twoPipeHandles[PipeWrite];
+  }
 #elif defined(NL_OS_WINDOWS)
-	void setExternalPipeForDataAvailable(HANDLE eventHandle)
-	{
-		_DataAvailableHandle = eventHandle;
-	}
+  void setExternalPipeForDataAvailable(HANDLE eventHandle) {
+    _DataAvailableHandle = eventHandle;
+  }
 #endif
 
-	/// Sets callback for detecting a disconnection (or NULL to disable callback)
-	void setDisconnectionCallback(TNetCallback cb, void *arg)
-	{
-		_DisconnectionCallback = cb;
-		_DisconnectionCbArg = arg;
-	}
+  /// Sets callback for detecting a disconnection (or NULL to disable callback)
+  void setDisconnectionCallback(TNetCallback cb, void *arg) {
+    _DisconnectionCallback = cb;
+    _DisconnectionCbArg = arg;
+  }
 
-	/// Returns the size of the receive queue (mutexed)
-	uint32 getReceiveQueueSize()
-	{
-		CFifoAccessor syncfifo(&_RecvFifo);
-		return syncfifo.value().size();
-	}
+  /// Returns the size of the receive queue (mutexed)
+  uint32 getReceiveQueueSize() {
+    CFifoAccessor syncfifo(&_RecvFifo);
+    return syncfifo.value().size();
+  }
 
-	void displayReceiveQueueStat(NLMISC::CLog *log = NLMISC::InfoLog)
-	{
-		CFifoAccessor syncfifo(&_RecvFifo);
-		syncfifo.value().displayStats(log);
-	}
+  void displayReceiveQueueStat(NLMISC::CLog *log = NLMISC::InfoLog) {
+    CFifoAccessor syncfifo(&_RecvFifo);
+    syncfifo.value().displayStats(log);
+  }
 
-	/**
-	 * Sets the max size of the received messages.
-	 * If receiving a message bigger than the limit, the connection will be dropped.
-	 *
-	 * Default value: CBufNetBase::DefaultMaxExpectedBlockSize
-	 * If you put a negative number as limit, the max size is reseted to the default value.
-	 * Warning: you can call this method only at initialization time, before connecting (for a client)
-	 * or calling init() (for a server) !
-	 */
-	void setMaxExpectedBlockSize(sint32 limit)
-	{
-		if (limit < 0)
-			_MaxExpectedBlockSize = DefaultMaxExpectedBlockSize;
-		else
-			_MaxExpectedBlockSize = (uint32)limit;
-	}
+  /**
+   * Sets the max size of the received messages.
+   * If receiving a message bigger than the limit, the connection will be
+   * dropped.
+   *
+   * Default value: CBufNetBase::DefaultMaxExpectedBlockSize
+   * If you put a negative number as limit, the max size is reseted to the
+   * default value. Warning: you can call this method only at initialization
+   * time, before connecting (for a client) or calling init() (for a server) !
+   */
+  void setMaxExpectedBlockSize(sint32 limit) {
+    if (limit < 0)
+      _MaxExpectedBlockSize = DefaultMaxExpectedBlockSize;
+    else
+      _MaxExpectedBlockSize = (uint32)limit;
+  }
 
-	/**
-	 * Sets the max size of the sent messages.
-	 * Any bigger sent block will produce an assertion failure, currently.
-	 *
-	 * Default value: CBufNetBase::DefaultMaxSentBlockSize
-	 * If you put a negative number as limit, the max size is reseted to the default value.
-	 * Warning: you can call this method only at initialization time, before connecting (for a client)
-	 * or calling init() (for a server) !
-	 */
-	void setMaxSentBlockSize(sint32 limit)
-	{
-		if (limit < 0)
-			_MaxSentBlockSize = DefaultMaxSentBlockSize;
-		else
-			_MaxSentBlockSize = (uint32)limit;
-	}
+  /**
+   * Sets the max size of the sent messages.
+   * Any bigger sent block will produce an assertion failure, currently.
+   *
+   * Default value: CBufNetBase::DefaultMaxSentBlockSize
+   * If you put a negative number as limit, the max size is reseted to the
+   * default value. Warning: you can call this method only at initialization
+   * time, before connecting (for a client) or calling init() (for a server) !
+   */
+  void setMaxSentBlockSize(sint32 limit) {
+    if (limit < 0)
+      _MaxSentBlockSize = DefaultMaxSentBlockSize;
+    else
+      _MaxSentBlockSize = (uint32)limit;
+  }
 
-	/// Returns the max size of the received messages (default: 2^31-1)
-	uint32 maxExpectedBlockSize() const
-	{
-		return _MaxExpectedBlockSize;
-	}
+  /// Returns the max size of the received messages (default: 2^31-1)
+  uint32 maxExpectedBlockSize() const { return _MaxExpectedBlockSize; }
 
-	/// Returns the max size of the sent messages (default: 2^31-1)
-	uint32 maxSentBlockSize() const
-	{
-		return _MaxSentBlockSize;
-	}
+  /// Returns the max size of the sent messages (default: 2^31-1)
+  uint32 maxSentBlockSize() const { return _MaxSentBlockSize; }
 
 #ifdef NL_OS_UNIX
-	/**
-	 * Return the handle for reading the 'data available pipe'. Use it if you want to do a select on
-	 * multiple CBufNetClient/CBufNetServer objects (then, don't call sleepUntilDataAvailable() on them).
-	 */
-	int dataAvailablePipeReadHandle() const { return _DataAvailablePipeHandle[PipeRead]; }
+  /**
+   * Return the handle for reading the 'data available pipe'. Use it if you want
+   * to do a select on multiple CBufNetClient/CBufNetServer objects (then, don't
+   * call sleepUntilDataAvailable() on them).
+   */
+  int dataAvailablePipeReadHandle() const {
+    return _DataAvailablePipeHandle[PipeRead];
+  }
 #endif
 
-	/// The value that will be used if setMaxExpectedBlockSize() is not called (or called with a negative argument)
-	static uint32 DefaultMaxExpectedBlockSize;
+  /// The value that will be used if setMaxExpectedBlockSize() is not called (or
+  /// called with a negative argument)
+  static uint32 DefaultMaxExpectedBlockSize;
 
-	/// The value that will be used if setMaxSentBlockSize() is not called (or called with a negative argument)
-	static uint32 DefaultMaxSentBlockSize;
+  /// The value that will be used if setMaxSentBlockSize() is not called (or
+  /// called with a negative argument)
+  static uint32 DefaultMaxSentBlockSize;
 
 protected:
-	friend class NLNET::CBufSock;
+  friend class NLNET::CBufSock;
 
 #ifdef NL_OS_UNIX
-	/// Constructor
-	CBufNetBase(bool isDataAvailablePipeSelfManaged);
+  /// Constructor
+  CBufNetBase(bool isDataAvailablePipeSelfManaged);
 #else
-	/// Constructor
-	CBufNetBase();
+  /// Constructor
+  CBufNetBase();
 #endif
 
-	/// Access to the receive queue
-	CSynchronizedFIFO &receiveQueue() { return _RecvFifo; }
+  /// Access to the receive queue
+  CSynchronizedFIFO &receiveQueue() { return _RecvFifo; }
 
-	/// Returns the disconnection callback
-	TNetCallback disconnectionCallback() const { return _DisconnectionCallback; }
+  /// Returns the disconnection callback
+  TNetCallback disconnectionCallback() const { return _DisconnectionCallback; }
 
-	/// Returns the argument of the disconnection callback
-	void *argOfDisconnectionCallback() const { return _DisconnectionCbArg; }
+  /// Returns the argument of the disconnection callback
+  void *argOfDisconnectionCallback() const { return _DisconnectionCbArg; }
 
-	/// Push message into receive queue (mutexed)
-	// TODO OPTIM never use this function
-	void pushMessageIntoReceiveQueue(const std::vector<uint8> &buffer);
+  /// Push message into receive queue (mutexed)
+  // TODO OPTIM never use this function
+  void pushMessageIntoReceiveQueue(const std::vector<uint8> &buffer);
 
-	/// Push message into receive queue (mutexed)
-	void pushMessageIntoReceiveQueue(const uint8 *buffer, uint32 size);
+  /// Push message into receive queue (mutexed)
+  void pushMessageIntoReceiveQueue(const uint8 *buffer, uint32 size);
 
-	/// Sets _DataAvailable
-	void setDataAvailableFlag(bool da) { _DataAvailable = da; }
+  /// Sets _DataAvailable
+  void setDataAvailableFlag(bool da) { _DataAvailable = da; }
 
-	/// Return _DataAvailable
-	bool dataAvailableFlag() const { return _DataAvailable; }
+  /// Return _DataAvailable
+  bool dataAvailableFlag() const { return _DataAvailable; }
 
 #if defined(NL_OS_UNIX)
-	/// Pipe to select() on data available
-	int _DataAvailablePipeHandle[2];
+  /// Pipe to select() on data available
+  int _DataAvailablePipeHandle[2];
 #elif defined(NL_OS_WINDOWS)
-	HANDLE _DataAvailableHandle;
+  HANDLE _DataAvailableHandle;
 #endif
 
 private:
-	/// The receive queue, protected by a mutex-like device
-	CSynchronizedFIFO _RecvFifo;
+  /// The receive queue, protected by a mutex-like device
+  CSynchronizedFIFO _RecvFifo;
 
-	/// Callback for disconnection
-	TNetCallback _DisconnectionCallback;
+  /// Callback for disconnection
+  TNetCallback _DisconnectionCallback;
 
-	/// Argument of the disconnection callback
-	void *_DisconnectionCbArg;
+  /// Argument of the disconnection callback
+  void *_DisconnectionCbArg;
 
-	/// Max size of received messages (limited by the user)
-	uint32 _MaxExpectedBlockSize;
+  /// Max size of received messages (limited by the user)
+  uint32 _MaxExpectedBlockSize;
 
-	/// Max size of sent messages (limited by the user)
-	uint32 _MaxSentBlockSize;
+  /// Max size of sent messages (limited by the user)
+  uint32 _MaxSentBlockSize;
 
-	/// True if there is data available (avoids locking a mutex)
-	NLMISC::CAtomicBool _DataAvailable;
+  /// True if there is data available (avoids locking a mutex)
+  NLMISC::CAtomicBool _DataAvailable;
 
 #ifdef NL_OS_UNIX
-	bool _IsDataAvailablePipeSelfManaged;
+  bool _IsDataAvailablePipeSelfManaged;
 #endif
 };
 
-} // NLNET
+} // namespace NLNET
 
 #endif // NL_BUF_NET_BASE_H
 

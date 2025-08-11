@@ -45,17 +45,16 @@ namespace BUILTIN {
  * \author Jan Boon (Kaetemi)
  * CMultiMtl
  */
-class CMultiMtl
-{
+class CMultiMtl {
 protected:
-	// pointers
-	// ...
+  // pointers
+  // ...
 
-	// instances
-	// ...
+  // instances
+  // ...
 public:
-	CMultiMtl();
-	virtual ~CMultiMtl();
+  CMultiMtl();
+  virtual ~CMultiMtl();
 }; /* class CMultiMtl */
 
 } /* namespace BUILTIN */

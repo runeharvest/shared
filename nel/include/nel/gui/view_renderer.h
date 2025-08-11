@@ -20,15 +20,15 @@
 #ifndef NL_VIEW_RENDERER_H
 #define NL_VIEW_RENDERER_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/rgba.h"
-#include "nel/misc/uv.h"
-#include "nel/misc/plane.h"
-#include "nel/3d/u_texture.h"
+#include "nel/3d/frustum.h"
+#include "nel/3d/u_driver.h"
 #include "nel/3d/u_material.h"
 #include "nel/3d/u_text_context.h"
-#include "nel/3d/u_driver.h"
-#include "nel/3d/frustum.h"
+#include "nel/3d/u_texture.h"
+#include "nel/misc/plane.h"
+#include "nel/misc/rgba.h"
+#include "nel/misc/types_nl.h"
+#include "nel/misc/uv.h"
 
 namespace NLGUI {
 
@@ -51,585 +51,594 @@ namespace NLGUI {
  * \author Nevrax France
  * \date 2002
  */
-class CViewRenderer
-{
+class CViewRenderer {
 public:
-	enum TSystemTexture
-	{
-		QuantityCrossTexture = 0,
-		DefaultBrickTexture,
-		DefaultItemTexture,
-		ItemPlanTexture,
-		SkillTexture,
-		ItemEnchantedTexture,
-		DragCopyTexture,
-		ItemWornedTexture,
-		OutOfRangeTexture,
-		RegenTexture,
-		RegenBackTexture,
-		GlowStarTexture,
-		ItemLockedByOwnerTexture,
-		NumSystemTextures,
-	};
+  enum TSystemTexture {
+    QuantityCrossTexture = 0,
+    DefaultBrickTexture,
+    DefaultItemTexture,
+    ItemPlanTexture,
+    SkillTexture,
+    ItemEnchantedTexture,
+    DragCopyTexture,
+    ItemWornedTexture,
+    OutOfRangeTexture,
+    RegenTexture,
+    RegenBackTexture,
+    GlowStarTexture,
+    ItemLockedByOwnerTexture,
+    NumSystemTextures,
+  };
 
 public:
-	/** That class hold a texture id. It handle texture id destruction.
-	 *	Please use this class in your view and not sint32 to hold a texture id
-	 */
-	class CTextureId
-	{
-	public:
-		// Default constructor
-		CTextureId()
-		{
-			_TextureId = -2;
-		}
+  /** That class hold a texture id. It handle texture id destruction.
+   *	Please use this class in your view and not sint32 to hold a texture id
+   */
+  class CTextureId {
+  public:
+    // Default constructor
+    CTextureId() { _TextureId = -2; }
 
-		// Destructor call deleteTextureId;
-		~CTextureId();
+    // Destructor call deleteTextureId;
+    ~CTextureId();
 
-		// Set the texture id
-		bool setTexture(const char *textureName, sint32 offsetX = 0, sint32 offsetY = 0, sint32 width = -1, sint32 height = -1,
-		    bool uploadDXTC = true, bool bReleasable = true);
+    // Set the texture id
+    bool setTexture(const char *textureName, sint32 offsetX = 0,
+                    sint32 offsetY = 0, sint32 width = -1, sint32 height = -1,
+                    bool uploadDXTC = true, bool bReleasable = true);
 
-		// Convert in texture id
-		operator sint32() const
-		{
-			return _TextureId;
-		}
+    // Convert in texture id
+    operator sint32() const { return _TextureId; }
 
-		// Return true if TextureId is not set
-		bool empty() const { return _TextureId < 0; };
+    // Return true if TextureId is not set
+    bool empty() const { return _TextureId < 0; };
 
-		// delete TextureId if set
-		void clear();
+    // delete TextureId if set
+    void clear();
 
-		void serial(NLMISC::IStream &f);
+    void serial(NLMISC::IStream &f);
 
-	private:
-		sint32 _TextureId;
-	};
+  private:
+    sint32 _TextureId;
+  };
 
 private:
-	CViewRenderer();
-	~CViewRenderer();
+  CViewRenderer();
+  ~CViewRenderer();
 
 public:
-	static CViewRenderer *getInstance();
+  static CViewRenderer *getInstance();
 
-	/// setup the default values for everything
-	void setup();
+  /// setup the default values for everything
+  void setup();
 
-	/// init when TextContext and Driver are created
-	void init();
+  /// init when TextContext and Driver are created
+  void init();
 
-	/// set the driver render states for the interface
-	void setRenderStates();
+  /// set the driver render states for the interface
+  void setRenderStates();
 
-	/// Delete all textures and the like and reset the view renderer
-	void reset();
+  /// Delete all textures and the like and reset the view renderer
+  void reset();
 
-	/// Release the resources of CViewRenderer, and delete the Singleton
-	static void release();
+  /// Release the resources of CViewRenderer, and delete the Singleton
+  static void release();
 
-	/// Retrieves the 3d driver we are using
-	static NL3D::UDriver *getDriver();
+  /// Retrieves the 3d driver we are using
+  static NL3D::UDriver *getDriver();
 
-	/// Sets the current TextContext.
-	static void setTextContext(NL3D::UTextContext *textcontext);
+  /// Sets the current TextContext.
+  static void setTextContext(NL3D::UTextContext *textcontext);
 
-	/// Sets the current driver
-	static void setDriver(NL3D::UDriver *driver);
+  /// Sets the current driver
+  static void setDriver(NL3D::UDriver *driver);
 
-	/*
-	 * setClipWindow : set the current clipping window
-	 * (this window do not inherit properties from parent or whatever)
-	 */
-	void setClipWindow(sint32 x, sint32 y, sint32 w, sint32 h);
+  /*
+   * setClipWindow : set the current clipping window
+   * (this window do not inherit properties from parent or whatever)
+   */
+  void setClipWindow(sint32 x, sint32 y, sint32 w, sint32 h);
 
-	/*
-	 * getClipWindow : get the current clipping region
-	 */
-	void getClipWindow(sint32 &x, sint32 &y, sint32 &w, sint32 &h)
-	{
-		x = _ClipX;
-		y = _ClipY;
-		w = _ClipW;
-		h = _ClipH;
-	}
+  /*
+   * getClipWindow : get the current clipping region
+   */
+  void getClipWindow(sint32 &x, sint32 &y, sint32 &w, sint32 &h) {
+    x = _ClipX;
+    y = _ClipY;
+    w = _ClipW;
+    h = _ClipH;
+  }
 
-	/*
-	 * true if the clipping region is empty: clipW or clipH is <=0
-	 */
-	bool isClipWindowEmpty() const { return _ClipW <= 0 || _ClipH <= 0; }
+  /*
+   * true if the clipping region is empty: clipW or clipH is <=0
+   */
+  bool isClipWindowEmpty() const { return _ClipW <= 0 || _ClipH <= 0; }
 
-	/*
-	 * checkNewScreenSize : check if the opengl screen size. This is SLOW !
-	 * NB: if the window is minimized (w==h==0), then the old screen size is kept, and isMinimized() return true
-	 */
-	void checkNewScreenSize();
+  /*
+   * checkNewScreenSize : check if the opengl screen size. This is SLOW !
+   * NB: if the window is minimized (w==h==0), then the old screen size is kept,
+   * and isMinimized() return true
+   */
+  void checkNewScreenSize();
 
-	/*
-	 * getScreenSize : get the screen window size changed (at last checkNewScreenSize called)
-	 */
-	void getScreenSize(uint32 &w, uint32 &h);
+  /*
+   * getScreenSize : get the screen window size changed (at last
+   * checkNewScreenSize called)
+   */
+  void getScreenSize(uint32 &w, uint32 &h);
 
-	/*
-	 * get OOW / OOH
-	 */
-	void getScreenOOSize(float &oow, float &ooh);
+  /*
+   * get OOW / OOH
+   */
+  void getScreenOOSize(float &oow, float &ooh);
 
-	/*
-	 * UI scaling
-	 */
-	void setInterfaceScale(float scale, sint32 width = 0, sint32 height = 0);
-	float getInterfaceScale() const { return _InterfaceScale; }
-	void setBilinearFiltering(bool b) { _Bilinear = b; }
+  /*
+   * UI scaling
+   */
+  void setInterfaceScale(float scale, sint32 width = 0, sint32 height = 0);
+  float getInterfaceScale() const { return _InterfaceScale; }
+  void setBilinearFiltering(bool b) { _Bilinear = b; }
 
-	/*
-	 * is the Screen minimized?
-	 */
-	bool isMinimized() const { return _IsMinimized; }
+  /*
+   * is the Screen minimized?
+   */
+  bool isMinimized() const { return _IsMinimized; }
 
-	/*
-	 * drawBitmap : this is the interface with all the views
-	 *
-	 */
-	void drawRotFlipBitmap(sint layerId, float x, float y, float width, float height, uint8 rot, bool flipv,
-	    sint32 nTxId, const NLMISC::CRGBA &col = NLMISC::CRGBA(255, 255, 255, 255));
+  /*
+   * drawBitmap : this is the interface with all the views
+   *
+   */
+  void drawRotFlipBitmap(sint layerId, float x, float y, float width,
+                         float height, uint8 rot, bool flipv, sint32 nTxId,
+                         const NLMISC::CRGBA &col = NLMISC::CRGBA(255, 255, 255,
+                                                                  255));
 
-	/*
-	 *	Draw a simple wired quad. No flushing is done as the draw is done instantly (usually for debug)
-	 */
-	void drawWiredQuad(sint32 x, sint32 y, sint32 width, sint32 height, NLMISC::CRGBA col = NLMISC::CRGBA::White);
+  /*
+   *	Draw a simple wired quad. No flushing is done as the draw is done
+   *instantly (usually for debug)
+   */
+  void drawWiredQuad(sint32 x, sint32 y, sint32 width, sint32 height,
+                     NLMISC::CRGBA col = NLMISC::CRGBA::White);
 
-	/*
-	 *	Draw a simple filled quad. No flushing is done as the draw is done instantly (usually for debug)
-	 */
-	void drawFilledQuad(sint32 x, sint32 y, sint32 width, sint32 height, NLMISC::CRGBA col = NLMISC::CRGBA::White);
+  /*
+   *	Draw a simple filled quad. No flushing is done as the draw is done
+   *instantly (usually for debug)
+   */
+  void drawFilledQuad(sint32 x, sint32 y, sint32 width, sint32 height,
+                      NLMISC::CRGBA col = NLMISC::CRGBA::White);
 
-	/*
-	 * drawBitmap : Tiled version
-	 * \param tileOrigin 2 bits 1 - Left/Right (0/1) 2 - Bottom/Top (0/1) (0-BL)(1-BR)(2-TL)(3-TR)
-	 *
-	 */
-	void drawRotFlipBitmapTiled(sint layerId, sint32 x, sint32 y, sint32 width, sint32 height, uint8 rot, bool flipv,
-	    sint32 nTxId, uint tileOrigin, const NLMISC::CRGBA &col = NLMISC::CRGBA(255, 255, 255, 255));
+  /*
+   * drawBitmap : Tiled version
+   * \param tileOrigin 2 bits 1 - Left/Right (0/1) 2 - Bottom/Top (0/1)
+   * (0-BL)(1-BR)(2-TL)(3-TR)
+   *
+   */
+  void drawRotFlipBitmapTiled(
+      sint layerId, sint32 x, sint32 y, sint32 width, sint32 height, uint8 rot,
+      bool flipv, sint32 nTxId, uint tileOrigin,
+      const NLMISC::CRGBA &col = NLMISC::CRGBA(255, 255, 255, 255));
 
-	/*
-	 * drawBitmap : draw a bitmap roted by 90 degrees in CW 'rot times'
-	 *				flipv is a boolean that indicates if there is a vertical flip
-	 *				this is a 1:1 ratio so if texture is x long there are x pixels on screen
-	 */
-	void draw11RotFlipBitmap(sint layerId, sint32 x, sint32 y, uint8 rot, bool flipv, sint32 nTxId,
-	    const NLMISC::CRGBA &col = NLMISC::CRGBA(255, 255, 255, 255));
+  /*
+   * drawBitmap : draw a bitmap roted by 90 degrees in CW 'rot times'
+   *				flipv is a boolean that indicates if there is a
+   *vertical flip this is a 1:1 ratio so if texture is x long there are x pixels
+   *on screen
+   */
+  void draw11RotFlipBitmap(sint layerId, sint32 x, sint32 y, uint8 rot,
+                           bool flipv, sint32 nTxId,
+                           const NLMISC::CRGBA &col = NLMISC::CRGBA(255, 255,
+                                                                    255, 255));
 
-	/** Draw an arbitrary quad (fast version) , possibly clipping it. Unlike draw11RotFlipBitmap & the like, texture is filtered here.
-	 * quads are all batched in the same render layer
-	 */
-	void drawQuad(sint layerId, const NLMISC::CQuadUV &quadUV, sint32 nTxId,
-	    NLMISC::CRGBA col, bool additif, bool filtered = true);
-	/** Draw a set of untextured triangle in the given layer. all triangles of the same layer are batched
-	 */
-	void drawUnclippedTriangles(sint layerId, const std::vector<NLMISC::CTriangle> &tris, NLMISC::CRGBA col);
+  /** Draw an arbitrary quad (fast version) , possibly clipping it. Unlike
+   * draw11RotFlipBitmap & the like, texture is filtered here. quads are all
+   * batched in the same render layer
+   */
+  void drawQuad(sint layerId, const NLMISC::CQuadUV &quadUV, sint32 nTxId,
+                NLMISC::CRGBA col, bool additif, bool filtered = true);
+  /** Draw a set of untextured triangle in the given layer. all triangles of the
+   * same layer are batched
+   */
+  void drawUnclippedTriangles(sint layerId,
+                              const std::vector<NLMISC::CTriangle> &tris,
+                              NLMISC::CRGBA col);
 
-	/*
-	 *	Draw a text
-	 */
-	void drawText(sint layerId, float x, float y, uint wordIndex, float xmin, float ymin, float xmax, float ymax, NL3D::UTextContext &textContext);
+  /*
+   *	Draw a text
+   */
+  void drawText(sint layerId, float x, float y, uint wordIndex, float xmin,
+                float ymin, float xmax, float ymax,
+                NL3D::UTextContext &textContext);
 
-	/*
-	 * loadTextures : load all textures associated with the interface
-	 *				this function add a globaltexture to the vector of global textures
-	 */
-	bool loadTextures(const std::string &textureFileName, const std::string &uvFileName, bool uploadDXTC);
+  /*
+   * loadTextures : load all textures associated with the interface
+   *				this function add a globaltexture to the vector
+   *of global textures
+   */
+  bool loadTextures(const std::string &textureFileName,
+                    const std::string &uvFileName, bool uploadDXTC);
 
-	/*
-	 * newTextureId : Return new placeholder texture id.
-	 *                You should call deleteTexture when the texture is not used anymore.
-	 */
-	sint32 newTextureId(const std::string &name);
+  /*
+   * newTextureId : Return new placeholder texture id.
+   *                You should call deleteTexture when the texture is not used
+   * anymore.
+   */
+  sint32 newTextureId(const std::string &name);
 
-	/*
-	 * reloadTexture : Replace existing global texture with new.
-	 *                 If previous was texture atlas and still used by 2+ textures,
-	 *                 then create new global texture.
-	 */
-	void reloadTexture(sint32 texId, const std::string &name, bool uploadDXTC = true, bool bReleasable = true);
+  /*
+   * reloadTexture : Replace existing global texture with new.
+   *                 If previous was texture atlas and still used by 2+
+   * textures, then create new global texture.
+   */
+  void reloadTexture(sint32 texId, const std::string &name,
+                     bool uploadDXTC = true, bool bReleasable = true);
 
-	/*
-	 *	createTexture : create a texture for the interface, possibly from an externally created texture
-	 *  If no external texture is given, then 'sGlobalTextureName' is the filename of the big texture
-	 *  You should call deleteTexture when the texture is not used anymore
-	 *	The method returns the texture id of the new texture
-	 */
-	sint32 createTexture(const std::string &sGlobalTextureName, // unique id identifying this big texture, (its filename if not externally created)
-	    sint32 offsetX = 0,
-	    sint32 offsetY = 0,
-	    sint32 width = -1,
-	    sint32 height = -1,
-	    bool uploadDXTC = true,
-	    bool bReleasable = true);
+  /*
+   *	createTexture : create a texture for the interface, possibly from an
+   *externally created texture If no external texture is given, then
+   *'sGlobalTextureName' is the filename of the big texture You should call
+   *deleteTexture when the texture is not used anymore The method returns the
+   *texture id of the new texture
+   */
+  sint32 createTexture(
+      const std::string
+          &sGlobalTextureName, // unique id identifying this big texture, (its
+                               // filename if not externally created)
+      sint32 offsetX = 0, sint32 offsetY = 0, sint32 width = -1,
+      sint32 height = -1, bool uploadDXTC = true, bool bReleasable = true);
 
-	// Create texture from dataURL "data:image/png;base64," string
-	sint32 createTextureFromDataURL(const std::string &data, bool uploadDXTC = true, bool bReleasable = true);
+  // Create texture from dataURL "data:image/png;base64," string
+  sint32 createTextureFromDataURL(const std::string &data,
+                                  bool uploadDXTC = true,
+                                  bool bReleasable = true);
 
-	// change position of a sub-texture (inside its big texture) from the sub-texture filename
-	void updateTexturePos(const std::string &texturefileName,
-	    sint32 offsetX = 0,
-	    sint32 offsetY = 0,
-	    sint32 width = -1,
-	    sint32 height = -1);
+  // change position of a sub-texture (inside its big texture) from the
+  // sub-texture filename
+  void updateTexturePos(const std::string &texturefileName, sint32 offsetX = 0,
+                        sint32 offsetY = 0, sint32 width = -1,
+                        sint32 height = -1);
 
-	/** Add / change a global texture from an externally created texture
-	 * \param defaultTexWidth width to used when CTextureId::createTexture is used without giving the width (e.g width = -1), useful for cropped textures
-	 * \param defaultTexHeight height to used when CTextureId::createTexture is used without giving the height (e.g height = -1), useful for cropped textures
-	 */
+  /** Add / change a global texture from an externally created texture
+   * \param defaultTexWidth width to used when CTextureId::createTexture is used
+   * without giving the width (e.g width = -1), useful for cropped textures
+   * \param defaultTexHeight height to used when CTextureId::createTexture is
+   * used without giving the height (e.g height = -1), useful for cropped
+   * textures
+   */
 
-	void setExternalTexture(const std::string &sGlobalTextureName,
-	    NL3D::UTexture *externalTexture = NULL,
-	    uint32 externalTexWidth = 1,
-	    uint32 externalTexHeight = 1,
-	    uint32 defaultTexWidth = 1,
-	    uint32 defaultTexHeight = 1);
+  void setExternalTexture(const std::string &sGlobalTextureName,
+                          NL3D::UTexture *externalTexture = NULL,
+                          uint32 externalTexWidth = 1,
+                          uint32 externalTexHeight = 1,
+                          uint32 defaultTexWidth = 1,
+                          uint32 defaultTexHeight = 1);
 
-	/*
-	 *	deleteTexture : create a texture for the interface
-	 */
-	void deleteTexture(sint32 textureId);
+  /*
+   *	deleteTexture : create a texture for the interface
+   */
+  void deleteTexture(sint32 textureId);
 
-	// get a global texture pointer from its name
-	NL3D::UTexture *getGlobalTexture(const std::string &name);
+  // get a global texture pointer from its name
+  NL3D::UTexture *getGlobalTexture(const std::string &name);
 
-	/*
-	 * Flush all parsed view and computed strings to screen
-	 */
-	void flush();
+  /*
+   * Flush all parsed view and computed strings to screen
+   */
+  void flush();
 
-	/// Retrives a texture
-	bool getTexture(NLMISC::CBitmap &bm, const std::string &name);
+  /// Retrives a texture
+  bool getTexture(NLMISC::CBitmap &bm, const std::string &name);
 
-	/// Retrieve the texture names
-	void getTextureNames(std::vector<std::string> &textures);
+  /// Retrieve the texture names
+  void getTextureNames(std::vector<std::string> &textures);
 
-	/**
-	 * get a texture file pointer from a string name. O(logN)
-	 *
-	 * FIXME: only works with textures in atlas loaded with loadTextures()
-	 *
-	 * \param id : the id of the texture
-	 * \return a texture file pointer. -1 if not found or if sName is empty()
-	 */
-	sint32 getTextureIdFromName(const std::string &sName) const;
-	std::string getTextureNameFromId(sint32 TxID);
-	void getTextureSizeFromId(sint32 id, sint32 &width, sint32 &height);
-	NLMISC::CRGBA getTextureColor(sint32 id, sint32 x, sint32 y);
+  /**
+   * get a texture file pointer from a string name. O(logN)
+   *
+   * FIXME: only works with textures in atlas loaded with loadTextures()
+   *
+   * \param id : the id of the texture
+   * \return a texture file pointer. -1 if not found or if sName is empty()
+   */
+  sint32 getTextureIdFromName(const std::string &sName) const;
+  std::string getTextureNameFromId(sint32 TxID);
+  void getTextureSizeFromId(sint32 id, sint32 &width, sint32 &height);
+  NLMISC::CRGBA getTextureColor(sint32 id, sint32 x, sint32 y);
 
-	/**
-	 * \return the texture associated with the param figur
-	 */
-	sint32 getFigurTextureId(uint index)
-	{
-		nlassert(index < 10);
-		return _IndexesToTextureIds[index];
-	}
+  /**
+   * \return the texture associated with the param figur
+   */
+  sint32 getFigurTextureId(uint index) {
+    nlassert(index < 10);
+    return _IndexesToTextureIds[index];
+  }
 
-	/**
-	 * \return the texture for figur separator '-'
-	 */
-	sint32 getFigurSeparator() const { return _FigurSeparatorTextureId; }
+  /**
+   * \return the texture for figur separator '-'
+   */
+  sint32 getFigurSeparator() const { return _FigurSeparatorTextureId; }
 
-	sint32 getFigurTextureW() const { return _WFigurTexture; }
-	sint32 getFigurTextureH() const { return _HFigurTexture; }
-	sint32 getFigurSeparatorW() const { return _WFigurSeparatorTexture; }
-	sint32 getFigurSeparatorH() const { return _HFigurSeparatorTexture; }
+  sint32 getFigurTextureW() const { return _WFigurTexture; }
+  sint32 getFigurTextureH() const { return _HFigurTexture; }
+  sint32 getFigurSeparatorW() const { return _WFigurSeparatorTexture; }
+  sint32 getFigurSeparatorH() const { return _HFigurSeparatorTexture; }
 
-	sint32 getFigurBlankTextureId()
-	{
-		return _FigurBlankId;
-	}
-	sint32 getBlankTextureId()
-	{
-		return _BlankId;
-	}
+  sint32 getFigurBlankTextureId() { return _FigurBlankId; }
+  sint32 getBlankTextureId() { return _BlankId; }
 
-	sint32 getTypoTextureW(char c);
-	sint32 getTypoTextureH(char c);
-	sint32 getTypoTextureId(char c);
+  sint32 getTypoTextureW(char c);
+  sint32 getTypoTextureH(char c);
+  sint32 getTypoTextureId(char c);
 
-	/// System Texture Manager. Used to avoid storing an id in each Ctrl for some texture code is aware of
-	// @{
-	sint32 getSystemTextureId(TSystemTexture e) const { return _SystemTextures[e].Id; }
-	sint32 getSystemTextureW(TSystemTexture e) const { return _SystemTextures[e].W; }
-	sint32 getSystemTextureH(TSystemTexture e) const { return _SystemTextures[e].H; }
-	// @}
+  /// System Texture Manager. Used to avoid storing an id in each Ctrl for some
+  /// texture code is aware of
+  // @{
+  sint32 getSystemTextureId(TSystemTexture e) const {
+    return _SystemTextures[e].Id;
+  }
+  sint32 getSystemTextureW(TSystemTexture e) const {
+    return _SystemTextures[e].W;
+  }
+  sint32 getSystemTextureH(TSystemTexture e) const {
+    return _SystemTextures[e].H;
+  }
+  // @}
 
-	/// For string rendering, get the RenderBuffer to the specified layer
-	NL3D::URenderStringBuffer *getStringRenderBuffer(sint layerId);
+  /// For string rendering, get the RenderBuffer to the specified layer
+  NL3D::URenderStringBuffer *getStringRenderBuffer(sint layerId);
 
-	/** Custom Rendering Interface
-	 * Note that this function is EXTREMLY SLOW so it should be used with care
-	 * This function flush the quad cache, clip the quad passed with current clipping region
-	 * and draw (with drawQuedUV2) it with the material passed in parameter. There is no cache operation done.
-	 * uv used are from (0,0) -> (1,1) for the 2 stages
-	 */
-	void drawCustom(sint32 x, sint32 y, sint32 width, sint32 height, NLMISC::CRGBA col, NL3D::UMaterial Mat);
-	// Same but we can control uv mapping of first stage
-	void drawCustom(sint32 x, sint32 y, sint32 width, sint32 height,
-	    const NLMISC::CUV &uv0Min, const NLMISC::CUV &uv0Max,
-	    NLMISC::CRGBA col, NL3D::UMaterial Mat);
-	// Same but we can control uv mapping of 2 stages
-	void drawCustom(sint32 x, sint32 y, sint32 width, sint32 height,
-	    const NLMISC::CUV &uv0Min, const NLMISC::CUV &uv0Max, const NLMISC::CUV &uv1Min, const NLMISC::CUV &uv1Max,
-	    NLMISC::CRGBA col, NL3D::UMaterial Mat);
+  /** Custom Rendering Interface
+   * Note that this function is EXTREMLY SLOW so it should be used with care
+   * This function flush the quad cache, clip the quad passed with current
+   * clipping region and draw (with drawQuedUV2) it with the material passed in
+   * parameter. There is no cache operation done. uv used are from (0,0) ->
+   * (1,1) for the 2 stages
+   */
+  void drawCustom(sint32 x, sint32 y, sint32 width, sint32 height,
+                  NLMISC::CRGBA col, NL3D::UMaterial Mat);
+  // Same but we can control uv mapping of first stage
+  void drawCustom(sint32 x, sint32 y, sint32 width, sint32 height,
+                  const NLMISC::CUV &uv0Min, const NLMISC::CUV &uv0Max,
+                  NLMISC::CRGBA col, NL3D::UMaterial Mat);
+  // Same but we can control uv mapping of 2 stages
+  void drawCustom(sint32 x, sint32 y, sint32 width, sint32 height,
+                  const NLMISC::CUV &uv0Min, const NLMISC::CUV &uv0Max,
+                  const NLMISC::CUV &uv1Min, const NLMISC::CUV &uv1Max,
+                  NLMISC::CRGBA col, NL3D::UMaterial Mat);
 
-	// **** World space interface methods
+  // **** World space interface methods
 
-	/** Set the current Z in projCenter.z.
-	 *	If you want to scale the window position, set a scale!=1. projCenter.x/y  is used as the
-	 *	pivot (in window coordinates)
-	 */
-	void setInterfaceDepth(const NLMISC::CVector &projCenter, float scale);
+  /** Set the current Z in projCenter.z.
+   *	If you want to scale the window position, set a scale!=1. projCenter.x/y
+   *is used as the pivot (in window coordinates)
+   */
+  void setInterfaceDepth(const NLMISC::CVector &projCenter, float scale);
 
-	// Activate world space transformation
-	void activateWorldSpaceMatrix(bool activate);
+  // Activate world space transformation
+  void activateWorldSpaceMatrix(bool activate);
 
-	// Set the screen to world space matrix
-	void setWorldSpaceFrustum(const NL3D::CFrustum &cameraFrustum);
+  // Set the screen to world space matrix
+  void setWorldSpaceFrustum(const NL3D::CFrustum &cameraFrustum);
 
-	// Get the current Frustum
-	const NL3D::CFrustum &getFrustum() const
-	{
-		return _CameraFrustum;
-	}
+  // Get the current Frustum
+  const NL3D::CFrustum &getFrustum() const { return _CameraFrustum; }
 
 private:
-	/**
-	 * init the map _IndexesToTextures
-	 */
-	void initIndexesToTextureIds();
-	void initTypo();
+  /**
+   * init the map _IndexesToTextures
+   */
+  void initIndexesToTextureIds();
+  void initTypo();
 
-	bool needClipping(const NLMISC::CQuad &q);
+  bool needClipping(const NLMISC::CQuad &q);
 
-	void clip(NLMISC::CQuadColorUV &qout, const NLMISC::CQuadColorUV &qin, uint rot);
-	void clip(NLMISC::CQuadColorUV2 &qout, const NLMISC::CQuadColorUV2 &qin);
+  void clip(NLMISC::CQuadColorUV &qout, const NLMISC::CQuadColorUV &qin,
+            uint rot);
+  void clip(NLMISC::CQuadColorUV2 &qout, const NLMISC::CQuadColorUV2 &qin);
 
 private:
-	// A layer is a vector of Quads.
-	class CLayer
-	{
-	public:
-		// unfiltered quads
-		std::vector<NLMISC::CQuadColorUV> Quads;
-		uint32 NbQuads;
-		std::vector<NLMISC::CTriangleColorUV> Tris;
-		// filtered alpha blended quads
-		std::vector<NLMISC::CQuadColorUV> FilteredAlphaBlendedQuads;
-		// filtered alpha blended tris
-		std::vector<NLMISC::CTriangleColorUV> FilteredAlphaBlendedTris;
-		// filtered additif blended quads
-		std::vector<NLMISC::CQuadColorUV> FilteredAdditifQuads;
-		// filtered additif blended tris
-		std::vector<NLMISC::CTriangleColorUV> FilteredAdditifTris;
+  // A layer is a vector of Quads.
+  class CLayer {
+  public:
+    // unfiltered quads
+    std::vector<NLMISC::CQuadColorUV> Quads;
+    uint32 NbQuads;
+    std::vector<NLMISC::CTriangleColorUV> Tris;
+    // filtered alpha blended quads
+    std::vector<NLMISC::CQuadColorUV> FilteredAlphaBlendedQuads;
+    // filtered alpha blended tris
+    std::vector<NLMISC::CTriangleColorUV> FilteredAlphaBlendedTris;
+    // filtered additif blended quads
+    std::vector<NLMISC::CQuadColorUV> FilteredAdditifQuads;
+    // filtered additif blended tris
+    std::vector<NLMISC::CTriangleColorUV> FilteredAdditifTris;
 
-		CLayer()
-		{
-			NbQuads = 0;
-		}
-	};
+    CLayer() { NbQuads = 0; }
+  };
 
-	// SGlobalTexture is a texture that regroup other texture. We store also current quads to render
-	struct SGlobalTexture
-	{
-		SGlobalTexture()
-		{
-			FromGlobaleTexture = true;
-			Scale = 1.f;
-		}
-		uint32 Width, Height;
-		uint32 DefaultWidth, DefaultHeight;
-		// used by texture atlas to unscale individual texture
-		// getTextureSizeFromId() calls to return 1x size for GUI.
-		float Scale;
-		NL3D::UTexture *Texture;
-		std::string Name;
-		bool FromGlobaleTexture;
-		// Array of layers
-		CLayer Layers[VR_NUM_LAYER];
-	};
+  // SGlobalTexture is a texture that regroup other texture. We store also
+  // current quads to render
+  struct SGlobalTexture {
+    SGlobalTexture() {
+      FromGlobaleTexture = true;
+      Scale = 1.f;
+    }
+    uint32 Width, Height;
+    uint32 DefaultWidth, DefaultHeight;
+    // used by texture atlas to unscale individual texture
+    // getTextureSizeFromId() calls to return 1x size for GUI.
+    float Scale;
+    NL3D::UTexture *Texture;
+    std::string Name;
+    bool FromGlobaleTexture;
+    // Array of layers
+    CLayer Layers[VR_NUM_LAYER];
+  };
 
-	// For each Layer, store a string Buffer
-	NL3D::URenderStringBuffer *_StringRBLayers[VR_NUM_LAYER];
+  // For each Layer, store a string Buffer
+  NL3D::URenderStringBuffer *_StringRBLayers[VR_NUM_LAYER];
 
-	// For each Layer, tells if empty or not
-	bool _EmptyLayer[VR_NUM_LAYER];
+  // For each Layer, tells if empty or not
+  bool _EmptyLayer[VR_NUM_LAYER];
 
-	// SImage is one texture of the SGlobalTexture textures
-	struct SImage
-	{
-		std::string Name;
-		SGlobalTexture *GlobalTexturePtr;
-		NLMISC::CUV UVMin, UVMax;
+  // SImage is one texture of the SGlobalTexture textures
+  struct SImage {
+    std::string Name;
+    SGlobalTexture *GlobalTexturePtr;
+    NLMISC::CUV UVMin, UVMax;
 
-		// Assign UV of this image to a quad depending on the flip and rot
-		void setupQuadUV(bool flipv, uint8 rot, NLMISC::CQuadColorUV &dest);
-	};
+    // Assign UV of this image to a quad depending on the flip and rot
+    void setupQuadUV(bool flipv, uint8 rot, NLMISC::CQuadColorUV &dest);
+  };
 
-	// ***************************************************************************
-	// \name Texture management
-	// ***************************************************************************
+  // ***************************************************************************
+  // \name Texture management
+  // ***************************************************************************
 
-	bool loadTextureFromString(SGlobalTexture *gt, const std::string &data);
-	bool loadTextureFromFile(SGlobalTexture *gt, const std::string &filename);
+  bool loadTextureFromString(SGlobalTexture *gt, const std::string &data);
+  bool loadTextureFromFile(SGlobalTexture *gt, const std::string &filename);
 
-	// SImage accessors
-	SImage *getSImage(sint32 textureId)
-	{
-		return &(*(_SImageIterators[textureId]));
-	}
+  // SImage accessors
+  SImage *getSImage(sint32 textureId) {
+    return &(*(_SImageIterators[textureId]));
+  }
 
-	// Add a SImage
-	sint32 addSImage(const SImage &image)
-	{
-		uint i;
-		for (i = 0; i < _SImageIterators.size(); i++)
-		{
-			// Free ?
-			if (_SImageIterators[i] == _SImages.end())
-				break;
-		}
+  // Add a SImage
+  sint32 addSImage(const SImage &image) {
+    uint i;
+    for (i = 0; i < _SImageIterators.size(); i++) {
+      // Free ?
+      if (_SImageIterators[i] == _SImages.end())
+        break;
+    }
 
-		// Nothing free ?
-		if (i == _SImageIterators.size())
-			_SImageIterators.push_back(_SImages.end());
+    // Nothing free ?
+    if (i == _SImageIterators.size())
+      _SImageIterators.push_back(_SImages.end());
 
-		_SImages.push_back(image);
-		_SImageIterators[i] = _SImages.end();
-		_SImageIterators[i]--;
-		return (sint32)i;
-	}
+    _SImages.push_back(image);
+    _SImageIterators[i] = _SImages.end();
+    _SImageIterators[i]--;
+    return (sint32)i;
+  }
 
-	// Remove a SImage
-	void removeSImage(sint32 textureId)
-	{
-		// Allocated ?
-		nlassert(_SImageIterators[textureId] != _SImages.end());
+  // Remove a SImage
+  void removeSImage(sint32 textureId) {
+    // Allocated ?
+    nlassert(_SImageIterators[textureId] != _SImages.end());
 
-		// Remove the image
-		_SImages.erase(_SImageIterators[textureId]);
+    // Remove the image
+    _SImages.erase(_SImageIterators[textureId]);
 
-		// Remove the index entry
-		_SImageIterators[textureId] = _SImages.end();
-	}
+    // Remove the index entry
+    _SImageIterators[textureId] = _SImages.end();
+  }
 
-	typedef std::list<SGlobalTexture> TGlobalTextureList;
-	typedef std::list<SImage> TSImageList;
-	typedef std::vector<std::list<SImage>::iterator> TSImageIterator;
+  typedef std::list<SGlobalTexture> TGlobalTextureList;
+  typedef std::list<SImage> TSImageList;
+  typedef std::vector<std::list<SImage>::iterator> TSImageIterator;
 
-	// List of global textures
-	TGlobalTextureList _GlobalTextures;
+  // List of global textures
+  TGlobalTextureList _GlobalTextures;
 
-	// List of SImage
-	TSImageList _SImages;
+  // List of SImage
+  TSImageList _SImages;
 
-	// Array used to convert a texture ID in _SImages iterator
-	TSImageIterator _SImageIterators;
+  // Array used to convert a texture ID in _SImages iterator
+  TSImageIterator _SImageIterators;
 
-	// ***************************************************************************
+  // ***************************************************************************
 
-	typedef std::map<std::string, uint> TTextureMap;
-	TTextureMap _TextureMap;
+  typedef std::map<std::string, uint> TTextureMap;
+  TTextureMap _TextureMap;
 
-	NL3D::UMaterial _Material;
+  NL3D::UMaterial _Material;
 
-	// Clip & screen system
-	sint32 _ClipX, _ClipY, _ClipW, _ClipH;
-	float _XMin, _XMax, _YMin, _YMax;
+  // Clip & screen system
+  sint32 _ClipX, _ClipY, _ClipW, _ClipH;
+  float _XMin, _XMax, _YMin, _YMax;
 
-	sint32 _ScreenW, _ScreenH;
-	float _OneOverScreenW, _OneOverScreenH;
-	bool _IsMinimized;
+  sint32 _ScreenW, _ScreenH;
+  float _OneOverScreenW, _OneOverScreenH;
+  bool _IsMinimized;
 
-	// UI scaling
-	float _InterfaceScale;
-	float _InterfaceUserScale;
-	sint32 _InterfaceBaseW, _InterfaceBaseH;
-	sint32 _EffectiveScreenW, _EffectiveScreenH;
-	bool _Bilinear;
+  // UI scaling
+  float _InterfaceScale;
+  float _InterfaceUserScale;
+  sint32 _InterfaceBaseW, _InterfaceBaseH;
+  sint32 _EffectiveScreenW, _EffectiveScreenH;
+  bool _Bilinear;
 
-	void updateInterfaceScale();
+  void updateInterfaceScale();
 
-	// map linking a uint to a bitmap. Used to display figurs
-	std::vector<sint32> _IndexesToTextureIds;
-	sint32 _FigurSeparatorTextureId;
-	sint32 _FigurBlankId, _BlankId;
-	sint32 _WFigurTexture;
-	sint32 _HFigurTexture;
-	sint32 _WFigurSeparatorTexture;
-	sint32 _HFigurSeparatorTexture;
-	NLMISC::CUV _BlankUV;
-	SGlobalTexture *_BlankGlobalTexture;
+  // map linking a uint to a bitmap. Used to display figurs
+  std::vector<sint32> _IndexesToTextureIds;
+  sint32 _FigurSeparatorTextureId;
+  sint32 _FigurBlankId, _BlankId;
+  sint32 _WFigurTexture;
+  sint32 _HFigurTexture;
+  sint32 _WFigurSeparatorTexture;
+  sint32 _HFigurSeparatorTexture;
+  NLMISC::CUV _BlankUV;
+  SGlobalTexture *_BlankGlobalTexture;
 
-	// System textures
-	class CSystemTexture
-	{
-	public:
-		sint32 Id;
-		sint32 W;
-		sint32 H;
+  // System textures
+  class CSystemTexture {
+  public:
+    sint32 Id;
+    sint32 W;
+    sint32 H;
 
-		CSystemTexture()
-		{
-			Id = -1;
-			W = H = 0;
-		}
-	};
-	CSystemTexture _SystemTextures[NumSystemTextures];
+    CSystemTexture() {
+      Id = -1;
+      W = H = 0;
+    }
+  };
+  CSystemTexture _SystemTextures[NumSystemTextures];
 
-	// Typo texture
-	enum
-	{
-		NumTypoChar = 127,
-	};
-	sint32 _TypoCharToTextureIds[NumTypoChar];
-	sint32 _TypoCharWs[NumTypoChar];
-	sint32 _TypoH;
+  // Typo texture
+  enum {
+    NumTypoChar = 127,
+  };
+  sint32 _TypoCharToTextureIds[NumTypoChar];
+  sint32 _TypoCharWs[NumTypoChar];
+  sint32 _TypoH;
 
-	void addSystemTexture(TSystemTexture e, const char *s);
-	void initSystemTextures();
+  void addSystemTexture(TSystemTexture e, const char *s);
+  void initSystemTextures();
 
-	/**
-	 * put a new quad in the cache (call flush if texture different)
-	 */
-	void putQuadInLayer(SGlobalTexture &gt, sint layerId, const NLMISC::CQuadColorUV &qcoluv, uint rot);
+  /**
+   * put a new quad in the cache (call flush if texture different)
+   */
+  void putQuadInLayer(SGlobalTexture &gt, sint layerId,
+                      const NLMISC::CQuadColorUV &qcoluv, uint rot);
 
-	// World space interface methods
-	void worldSpaceTransformation(NLMISC::CQuadColorUV &qcoluv);
+  // World space interface methods
+  void worldSpaceTransformation(NLMISC::CQuadColorUV &qcoluv);
 
-	bool _WorldSpaceTransformation; // Transform into world space
-	float _CurrentZ; // Current z used for the scene
-	NL3D::CFrustum _CameraFrustum; // Transform from screen space to world space
-	NLMISC::CMatrix _WorldSpaceMatrix; // Matrix to be applied for world space transformation
-	bool _WorldSpaceScale;
+  bool _WorldSpaceTransformation; // Transform into world space
+  float _CurrentZ;                // Current z used for the scene
+  NL3D::CFrustum _CameraFrustum;  // Transform from screen space to world space
+  NLMISC::CMatrix
+      _WorldSpaceMatrix; // Matrix to be applied for world space transformation
+  bool _WorldSpaceScale;
 
-	static CViewRenderer *instance;
-	static NL3D::UDriver *driver;
-	static NL3D::UTextContext *textcontext;
+  static CViewRenderer *instance;
+  static NL3D::UDriver *driver;
+  static NL3D::UTextContext *textcontext;
 
-	typedef CHashMap<std::string, NL3D::UTextContext *> TFontsList;
-	static TFontsList fonts;
+  typedef CHashMap<std::string, NL3D::UTextContext *> TFontsList;
+  static TFontsList fonts;
 
 public:
-	static NL3D::UTextContext *getTextContext(const std::string &name = "");
-	static bool registerFont(const std::string &name, const std::string &font);
+  static NL3D::UTextContext *getTextContext(const std::string &name = "");
+  static bool registerFont(const std::string &name, const std::string &font);
 
-	/// Set of hw cursor images
-	static std::set<std::string> *hwCursors;
-	static float hwCursorScale;
+  /// Set of hw cursor images
+  static std::set<std::string> *hwCursors;
+  static float hwCursorScale;
 };
 
-}
+} // namespace NLGUI
 
 #endif // NL_VIEW_RENDERER_H
 

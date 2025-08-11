@@ -17,32 +17,32 @@
 #ifndef NL_TEXTURE_BLOOM_H
 #define NL_TEXTURE_BLOOM_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/3d/texture_blank.h"
+#include "nel/misc/types_nl.h"
 
 namespace NL3D {
 
 /**
- * This texture does generate nothing, and it is releasable. It is used for bloom effect.
+ * This texture does generate nothing, and it is releasable. It is used for
+ * bloom effect.
  */
-class CTextureBloom : public CTextureBlank
-{
+class CTextureBloom : public CTextureBlank {
 public:
-	NLMISC_DECLARE_CLASS(CTextureBloom);
+  NLMISC_DECLARE_CLASS(CTextureBloom);
 
-	CTextureBloom() { Mode2D = false; }
-	virtual ~CTextureBloom() { }
+  CTextureBloom() { Mode2D = false; }
+  virtual ~CTextureBloom() {}
 
-	virtual bool isBloomTexture() const { return true; }
+  virtual bool isBloomTexture() const { return true; }
 
-	void mode2D(bool isMode2D) { Mode2D = isMode2D; }
-	bool isMode2D() { return Mode2D; }
+  void mode2D(bool isMode2D) { Mode2D = isMode2D; }
+  bool isMode2D() { return Mode2D; }
 
 private:
-	bool Mode2D;
+  bool Mode2D;
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_TEXTURE_BLOOM_H
 

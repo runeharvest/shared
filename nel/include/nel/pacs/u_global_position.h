@@ -29,23 +29,21 @@ namespace NLPACS {
  * \author Nevrax France
  * \date 2001
  */
-class ULocalPosition
-{
+class ULocalPosition {
 public:
-	/// The id of the surface corresponding to the local position.
-	sint32 Surface;
+  /// The id of the surface corresponding to the local position.
+  sint32 Surface;
 
-	/// The best position estimation of the point snapped on the surface. This is a CLocalRetriever local axis position.
-	NLMISC::CVector Estimation;
+  /// The best position estimation of the point snapped on the surface. This is
+  /// a CLocalRetriever local axis position.
+  NLMISC::CVector Estimation;
 
-	// set this global position from another global position, but keep the old z coordinate
-	void setKeepZ(const ULocalPosition &other)
-	{
-		Surface = other.Surface;
-		Estimation.set(other.Estimation.x,
-		    other.Estimation.y,
-		    Estimation.z);
-	}
+  // set this global position from another global position, but keep the old z
+  // coordinate
+  void setKeepZ(const ULocalPosition &other) {
+    Surface = other.Surface;
+    Estimation.set(other.Estimation.x, other.Estimation.y, Estimation.z);
+  }
 };
 
 /**
@@ -55,37 +53,29 @@ public:
  * \author Nevrax France
  * \date 2001
  */
-class UGlobalPosition
-{
+class UGlobalPosition {
 public:
-	enum TType
-	{
-		Unspecified = 0,
-		Landscape,
-		Interior
-	};
+  enum TType { Unspecified = 0, Landscape, Interior };
 
-	/// The id of the instance referred by this global position.
-	sint32 InstanceId;
+  /// The id of the instance referred by this global position.
+  sint32 InstanceId;
 
-	/// The local position within the CLocalRetriever referred by the instance (cf. InstanceId)
-	ULocalPosition LocalPosition;
+  /// The local position within the CLocalRetriever referred by the instance
+  /// (cf. InstanceId)
+  ULocalPosition LocalPosition;
 
-	/// default constructor
-	UGlobalPosition()
-	{
-		InstanceId = -1;
-	}
+  /// default constructor
+  UGlobalPosition() { InstanceId = -1; }
 
-	// set this global position from another global position, but keep the old z coordinate
-	void setKeepZ(const UGlobalPosition &other)
-	{
-		InstanceId = other.InstanceId;
-		LocalPosition.setKeepZ(other.LocalPosition);
-	}
+  // set this global position from another global position, but keep the old z
+  // coordinate
+  void setKeepZ(const UGlobalPosition &other) {
+    InstanceId = other.InstanceId;
+    LocalPosition.setKeepZ(other.LocalPosition);
+  }
 };
 
-} // NLPACS
+} // namespace NLPACS
 
 #endif // NL_U_GLOBAL_POSITION_H
 

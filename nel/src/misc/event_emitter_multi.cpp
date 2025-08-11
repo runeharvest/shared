@@ -17,9 +17,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdmisc.h"
 #include "nel/misc/event_emitter_multi.h"
 #include "nel/misc/system_utils.h"
+#include "stdmisc.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -28,91 +28,78 @@
 namespace NLMISC {
 
 // a predicate to find an emitter in a list
-struct EmitterEqualPred
-{
-	EmitterEqualPred(IEventEmitter *e)
-	    : E(e)
-	{
-	}
-	IEventEmitter *E;
-	bool operator()(const std::pair<IEventEmitter *, bool> &el)
-	{
-		return el.first == E;
-	}
+struct EmitterEqualPred {
+  EmitterEqualPred(IEventEmitter *e) : E(e) {}
+  IEventEmitter *E;
+  bool operator()(const std::pair<IEventEmitter *, bool> &el) {
+    return el.first == E;
+  }
 };
 
 ///============================================================
-CEventEmitterMulti::~CEventEmitterMulti()
-{
-	for (TEmitterCont::iterator it = _Emitters.begin(); it != _Emitters.end(); ++it)
-	{
-		if (it->second) // asked "must Delete' ?
-		{
-			delete it->first;
-		}
-	}
+CEventEmitterMulti::~CEventEmitterMulti() {
+  for (TEmitterCont::iterator it = _Emitters.begin(); it != _Emitters.end();
+       ++it) {
+    if (it->second) // asked "must Delete' ?
+    {
+      delete it->first;
+    }
+  }
 }
 
 ///============================================================
-void CEventEmitterMulti::addEmitter(IEventEmitter *e, bool mustDelete)
-{
-	nlassert(e != this); // avoid infinite recursion
-	nlassert(!isEmitter(e));
-	_Emitters.push_back(std::make_pair(e, mustDelete));
+void CEventEmitterMulti::addEmitter(IEventEmitter *e, bool mustDelete) {
+  nlassert(e != this); // avoid infinite recursion
+  nlassert(!isEmitter(e));
+  _Emitters.push_back(std::make_pair(e, mustDelete));
 }
 
 ///============================================================
-void CEventEmitterMulti::removeEmitter(IEventEmitter *e)
-{
-	TEmitterCont::iterator it = std::find_if(_Emitters.begin(), _Emitters.end(), EmitterEqualPred(e));
-	nlassert(it != _Emitters.end());
-	if (it->second)
-	{
-		delete it->first;
-	}
-	_Emitters.erase(it);
+void CEventEmitterMulti::removeEmitter(IEventEmitter *e) {
+  TEmitterCont::iterator it =
+      std::find_if(_Emitters.begin(), _Emitters.end(), EmitterEqualPred(e));
+  nlassert(it != _Emitters.end());
+  if (it->second) {
+    delete it->first;
+  }
+  _Emitters.erase(it);
 }
 
 ///============================================================
-bool CEventEmitterMulti::isEmitter(IEventEmitter *e) const
-{
-	TEmitterCont::const_iterator it = std::find_if(_Emitters.begin(), _Emitters.end(), EmitterEqualPred(e));
-	return it != _Emitters.end();
+bool CEventEmitterMulti::isEmitter(IEventEmitter *e) const {
+  TEmitterCont::const_iterator it =
+      std::find_if(_Emitters.begin(), _Emitters.end(), EmitterEqualPred(e));
+  return it != _Emitters.end();
 }
 
 ///============================================================
-void CEventEmitterMulti::submitEvents(CEventServer &server, bool allWindows)
-{
-	for (TEmitterCont::iterator it = _Emitters.begin(); it != _Emitters.end(); ++it)
-	{
-		it->first->submitEvents(server, allWindows);
-	}
+void CEventEmitterMulti::submitEvents(CEventServer &server, bool allWindows) {
+  for (TEmitterCont::iterator it = _Emitters.begin(); it != _Emitters.end();
+       ++it) {
+    it->first->submitEvents(server, allWindows);
+  }
 }
 
 ///============================================================
-IEventEmitter *CEventEmitterMulti::getEmitter(uint index)
-{
-	nlassert(index < _Emitters.size());
-	return _Emitters[index].first;
+IEventEmitter *CEventEmitterMulti::getEmitter(uint index) {
+  nlassert(index < _Emitters.size());
+  return _Emitters[index].first;
 }
 
 ///============================================================
-const IEventEmitter *CEventEmitterMulti::getEmitter(uint index) const
-{
-	nlassert(index < _Emitters.size());
-	return _Emitters[index].first;
+const IEventEmitter *CEventEmitterMulti::getEmitter(uint index) const {
+  nlassert(index < _Emitters.size());
+  return _Emitters[index].first;
 }
 
-bool CEventEmitterMulti::copyTextToClipboard(const std::string &text)
-{
-	// Naush: wrapped to old API to avoid duplicate code
-	return CSystemUtils::copyTextToClipboard(text);
+bool CEventEmitterMulti::copyTextToClipboard(const std::string &text) {
+  // Naush: wrapped to old API to avoid duplicate code
+  return CSystemUtils::copyTextToClipboard(text);
 }
 
-bool CEventEmitterMulti::pasteTextFromClipboard(std::string &text)
-{
-	// Naush: wrapped to old API to avoid duplicate code
-	return CSystemUtils::pasteTextFromClipboard(text);
+bool CEventEmitterMulti::pasteTextFromClipboard(std::string &text) {
+  // Naush: wrapped to old API to avoid duplicate code
+  return CSystemUtils::pasteTextFromClipboard(text);
 }
 
-} // NLMISC
+} // namespace NLMISC

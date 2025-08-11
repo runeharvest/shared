@@ -55,49 +55,51 @@ namespace NLMISC {
  * \author Nevrax France
  * \date 2001
  */
-class CWinDisplayer : public NLMISC::CWindowDisplayer
-{
+class CWinDisplayer : public NLMISC::CWindowDisplayer {
 public:
-	CWinDisplayer(const char *displayerName = "");
+  CWinDisplayer(const char *displayerName = "");
 
-	virtual ~CWinDisplayer();
+  virtual ~CWinDisplayer();
 
 #ifdef NL_OS_WINDOWS
-	HWND getHWnd() const { return _HWnd; }
+  HWND getHWnd() const { return _HWnd; }
 #endif // NL_OS_WINDOWS
 
 private:
-	// called by DT only
-	void resizeLabels();
-	// called by DT only
-	void updateLabels();
+  // called by DT only
+  void resizeLabels();
+  // called by DT only
+  void updateLabels();
 
-	// called by DT only
-	void open(std::string titleBar, bool iconified, sint x, sint y, sint w, sint h, sint hs, sint fs, const std::string &fn, bool ww, CLog *log);
-	// called by DT only
-	void clear();
-	// called by DT only
-	void display_main();
+  // called by DT only
+  void open(std::string titleBar, bool iconified, sint x, sint y, sint w,
+            sint h, sint hs, sint fs, const std::string &fn, bool ww,
+            CLog *log);
+  // called by DT only
+  void clear();
+  // called by DT only
+  void display_main();
 
-	virtual void setTitleBar(const std::string &titleBar);
+  virtual void setTitleBar(const std::string &titleBar);
 
-	virtual void getWindowPos(uint32 &x, uint32 &y, uint32 &w, uint32 &h);
+  virtual void getWindowPos(uint32 &x, uint32 &y, uint32 &w, uint32 &h);
 
-	// all these variables above is used only by the DT
+  // all these variables above is used only by the DT
 
-	HWND _HEdit, _HWnd, _HInputEdit;
-	HFONT _HFont;
-	HMODULE _HLibModule;
+  HWND _HEdit, _HWnd, _HInputEdit;
+  HFONT _HFont;
+  HMODULE _HLibModule;
 
-	CLog *Log;
+  CLog *Log;
 
-	// the MT must set the value to true to exit the thread
-	bool Exit;
+  // the MT must set the value to true to exit the thread
+  bool Exit;
 
-	friend LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+  friend LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam,
+                                  LPARAM lParam);
 };
 
-} // NLMISC
+} // namespace NLMISC
 
 #endif // NL_OS_WINDOWS
 

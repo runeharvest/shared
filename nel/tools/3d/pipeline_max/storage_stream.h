@@ -50,29 +50,29 @@ namespace MAX {
  * \author Jan Boon (Kaetemi)
  * CStorageStream
  */
-class CStorageStream : public NLMISC::IStream
-{
+class CStorageStream : public NLMISC::IStream {
 public:
-	CStorageStream(GsfInput *input);
-	CStorageStream(GsfOutput *output);
-	virtual ~CStorageStream();
+  CStorageStream(GsfInput *input);
+  CStorageStream(GsfOutput *output);
+  virtual ~CStorageStream();
 
-	virtual bool seek(sint32 offset, TSeekOrigin origin) const;
-	virtual sint32 getPos() const;
-	// virtual std::string getStreamName() const; // char const   *      gsf_input_name                      (GsfInput *input);
-	virtual void serialBuffer(uint8 *buf, uint len);
-	virtual void serialBit(bool &bit);
+  virtual bool seek(sint32 offset, TSeekOrigin origin) const;
+  virtual sint32 getPos() const;
+  // virtual std::string getStreamName() const; // char const   * gsf_input_name
+  // (GsfInput *input);
+  virtual void serialBuffer(uint8 *buf, uint len);
+  virtual void serialBit(bool &bit);
 
-	sint32 size();
-	bool eof();
+  sint32 size();
+  bool eof();
 
 private:
-	GsfInput *m_Input;
-	GsfOutput *m_Output;
+  GsfInput *m_Input;
+  GsfOutput *m_Output;
 
-	/* there exist compressed max files, so maybe we will need this at some point
-	GsfInput *          gsf_input_uncompress                (GsfInput *src);
-	*/
+  /* there exist compressed max files, so maybe we will need this at some point
+  GsfInput *          gsf_input_uncompress                (GsfInput *src);
+  */
 
 }; /* class CStorageStream */
 

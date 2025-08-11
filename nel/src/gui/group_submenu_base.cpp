@@ -17,8 +17,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdpch.h"
 #include "nel/gui/group_submenu_base.h"
+#include "stdpch.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -27,26 +27,20 @@
 namespace NLGUI {
 
 CGroupSubMenuBase::CGroupSubMenuBase(const NLGUI::CViewBase::TCtorParam &param)
-    : CGroupFrame(param)
-{
+    : CGroupFrame(param) {}
+
+CGroupSubMenuBase::~CGroupSubMenuBase() {}
+
+void CGroupSubMenuBase::openSubMenu(sint32 nb) {
+  // Necessary because it's supposed to be an abstract class,
+  // however reflection requires the class to be instantiated.
+  nlassert(false);
 }
 
-CGroupSubMenuBase::~CGroupSubMenuBase()
-{
+void CGroupSubMenuBase::hideSubMenus() {
+  // Necessary because it's supposed to be an abstract class,
+  // however reflection requires the class to be instantiated.
+  nlassert(false);
 }
 
-void CGroupSubMenuBase::openSubMenu(sint32 nb)
-{
-	// Necessary because it's supposed to be an abstract class,
-	// however reflection requires the class to be instantiated.
-	nlassert(false);
-}
-
-void CGroupSubMenuBase::hideSubMenus()
-{
-	// Necessary because it's supposed to be an abstract class,
-	// however reflection requires the class to be instantiated.
-	nlassert(false);
-}
-
-}
+} // namespace NLGUI

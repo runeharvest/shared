@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdpch.h"
 #include "sentence_appraisal.h"
+#include "stdpch.h"
 // nel
 #include "nel/misc/string_conversion.h"
 
@@ -25,38 +25,38 @@ using namespace NLMISC;
 namespace SENTENCE_APPRAISAL {
 // The conversion table
 const CStringConversion<ESentenceAppraisal>::CPair stringTable[] = {
-	{ "ChildPlay", ChildPlay },
-	{ "RealEasy", RealEasy },
-	{ "Easy", Easy },
-	{ "FairlyEasy", FairlyEasy },
-	{ "Average", Average },
-	{ "QuiteDifficult", QuiteDifficult },
-	{ "Difficult", Difficult },
-	{ "ReallyDifficult", ReallyDifficult },
-	{ "Harsh", Harsh },
-	{ "ExtremelyDifficult", ExtremelyDifficult },
+    {"ChildPlay", ChildPlay},
+    {"RealEasy", RealEasy},
+    {"Easy", Easy},
+    {"FairlyEasy", FairlyEasy},
+    {"Average", Average},
+    {"QuiteDifficult", QuiteDifficult},
+    {"Difficult", Difficult},
+    {"ReallyDifficult", ReallyDifficult},
+    {"Harsh", Harsh},
+    {"ExtremelyDifficult", ExtremelyDifficult},
 
-	{ "FeatureUnderConstruction", FeatureUnderConstruction },
-	{ "InvalidSentence", InvalidSentence },
-	{ "ErrorCreating", ErrorCreating },
-	{ "Uncomplete", Uncomplete },
-	{ "Cheater", Cheater },
+    {"FeatureUnderConstruction", FeatureUnderConstruction},
+    {"InvalidSentence", InvalidSentence},
+    {"ErrorCreating", ErrorCreating},
+    {"Uncomplete", Uncomplete},
+    {"Cheater", Cheater},
 
-	{ "Undefined", Undefined },
+    {"Undefined", Undefined},
 };
 
-CStringConversion<ESentenceAppraisal> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]), Undefined);
+CStringConversion<ESentenceAppraisal>
+    conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]),
+               Undefined);
 
 // convert type id to type name string
-const std::string &toString(ESentenceAppraisal type)
-{
-	return conversion.toString(type);
+const std::string &toString(ESentenceAppraisal type) {
+  return conversion.toString(type);
 }
 
 // convert type name to type enum value
-ESentenceAppraisal toAppraisal(const std::string &str)
-{
-	return conversion.fromString(str);
+ESentenceAppraisal toAppraisal(const std::string &str) {
+  return conversion.fromString(str);
 }
 
-} // SENTENCE_APPRAISAL
+} // namespace SENTENCE_APPRAISAL

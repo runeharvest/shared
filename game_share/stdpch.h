@@ -22,59 +22,59 @@
 
 #if defined(_MSC_VER) && defined(_DEBUG)
 #define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
 #include <crtdbg.h>
+#include <stdlib.h>
 #define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <math.h>
-#include <time.h>
 #include <assert.h>
+#include <math.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
-#include <string>
-#include <vector>
+#include <algorithm>
+#include <deque>
+#include <exception>
+#include <functional>
+#include <limits>
 #include <list>
 #include <map>
-#include <set>
-#include <algorithm>
-#include <sstream>
-#include <exception>
-#include <utility>
-#include <deque>
-#include <limits>
-#include <queue>
 #include <memory>
-#include <functional>
+#include <queue>
+#include <set>
+#include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
-#include "nel/misc/types_nl.h"
 #include "nel/misc/common.h"
 #include "nel/misc/debug.h"
+#include "nel/misc/types_nl.h"
 
-#include "nel/misc/stream.h"
-#include "nel/misc/time_nl.h"
-#include "nel/misc/vector.h"
-#include "nel/misc/matrix.h"
-#include "nel/misc/rgba.h"
-#include "nel/misc/sheet_id.h"
+#include "nel/misc/bit_mem_stream.h"
 #include "nel/misc/command.h"
 #include "nel/misc/config_file.h"
-#include "nel/misc/variable.h"
-#include "nel/misc/shared_memory.h"
 #include "nel/misc/file.h"
-#include "nel/misc/path.h"
-#include "nel/misc/singleton.h"
-#include "nel/misc/string_common.h"
-#include "nel/misc/sstring.h"
-#include "nel/misc/bit_mem_stream.h"
-#include "nel/misc/o_xml.h"
 #include "nel/misc/i_xml.h"
+#include "nel/misc/matrix.h"
+#include "nel/misc/o_xml.h"
+#include "nel/misc/path.h"
+#include "nel/misc/rgba.h"
+#include "nel/misc/shared_memory.h"
+#include "nel/misc/sheet_id.h"
+#include "nel/misc/singleton.h"
+#include "nel/misc/sstring.h"
+#include "nel/misc/stream.h"
+#include "nel/misc/string_common.h"
+#include "nel/misc/time_nl.h"
+#include "nel/misc/variable.h"
+#include "nel/misc/vector.h"
 
+#include "nel/net/service.h"
 #include "nel/net/udp_sock.h"
 #include "nel/net/unified_network.h"
-#include "nel/net/service.h"
 
 #include "nel/georges/load_form.h"
 
@@ -84,8 +84,8 @@
 #ifndef NL_COMP_MINGW
 #define NOMINMAX
 #endif
-#include <winsock2.h>
 #include <windows.h>
+#include <winsock2.h>
 #endif
 
 #endif

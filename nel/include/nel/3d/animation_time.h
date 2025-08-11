@@ -32,7 +32,7 @@ typedef float CAnimationTime;
 typedef float TAnimationTime;
 typedef double TGlobalAnimationTime;
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_ANIMATION_TIME_H
 

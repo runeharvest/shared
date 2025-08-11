@@ -25,10 +25,9 @@
  * \author Nevrax France
  * \date 2001
  */
-class IVegetableRefresh
-{
+class IVegetableRefresh {
 public:
-	virtual void refreshVegetableDisplay() = 0;
+  virtual void refreshVegetableDisplay() = 0;
 };
 
 #endif // NL_VEGETABLE_REFRESH_H

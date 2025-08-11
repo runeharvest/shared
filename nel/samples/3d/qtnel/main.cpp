@@ -14,18 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "qnelwindow.h"
 #include <QApplication>
 #include <nel/misc/app_context.h>
-#include "qnelwindow.h"
 
-int main(int argc, char *argv[])
-{
-	NLMISC::CApplicationContext myApplicationContext;
+int main(int argc, char *argv[]) {
+  NLMISC::CApplicationContext myApplicationContext;
 
-	QApplication app(argc, argv);
+  QApplication app(argc, argv);
 
-	QNelWindow window;
-	window.show();
+  QNelWindow window;
+  window.show();
 
-	return app.exec();
+  return app.exec();
 }

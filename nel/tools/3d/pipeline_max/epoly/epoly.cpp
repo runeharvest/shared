@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <nel/misc/types_nl.h>
 #include "epoly.h"
+#include <nel/misc/types_nl.h>
 
 // STL includes
 
@@ -45,29 +45,22 @@ namespace PIPELINE {
 namespace MAX {
 namespace EPOLY {
 
-CEPoly::CEPoly()
-{
+CEPoly::CEPoly() {}
+
+CEPoly::~CEPoly() {}
+
+void CEPoly::registerClasses(CSceneClassRegistry *registry) {
+  registry->add(&EditablePolyClassDesc);
 }
 
-CEPoly::~CEPoly()
-{
+const ucchar *CDllPluginDescEPoly::displayName() const {
+  static const ucstring value = ucstring("Editable Poly Object (Ryzom Core)");
+  return value.c_str();
 }
 
-void CEPoly::registerClasses(CSceneClassRegistry *registry)
-{
-	registry->add(&EditablePolyClassDesc);
-}
-
-const ucchar *CDllPluginDescEPoly::displayName() const
-{
-	static const ucstring value = ucstring("Editable Poly Object (Ryzom Core)");
-	return value.c_str();
-}
-
-const ucchar *CDllPluginDescEPoly::internalName() const
-{
-	static const ucstring value = ucstring("EPoly.dlo");
-	return value.c_str();
+const ucchar *CDllPluginDescEPoly::internalName() const {
+  static const ucstring value = ucstring("EPoly.dlo");
+  return value.c_str();
 }
 
 const CDllPluginDescEPoly DllPluginDescEPoly;

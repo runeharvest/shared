@@ -17,8 +17,8 @@
 #ifndef NL_STRIPIFIER_H
 #define NL_STRIPIFIER_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/3d/index_buffer.h"
+#include "nel/misc/types_nl.h"
 
 namespace NL3D {
 
@@ -29,21 +29,20 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2001
  */
-class CStripifier
-{
+class CStripifier {
 public:
-	/// Constructor
-	CStripifier();
+  /// Constructor
+  CStripifier();
 
-	/** reorganize triangles to get efficiency of GPU vertex-cache. Default vertex cache is 10.
-	 *	out get the same list of triangles, but in different order.
-	 *	any list of lines / quads in out are not modified.
-	 *	NB: &in == &out is possible.
-	 */
-	void optimizeTriangles(const CIndexBuffer &in, CIndexBuffer &out, uint cacheSize = 10);
+  /** reorganize triangles to get efficiency of GPU vertex-cache. Default vertex
+   *cache is 10. out get the same list of triangles, but in different order. any
+   *list of lines / quads in out are not modified. NB: &in == &out is possible.
+   */
+  void optimizeTriangles(const CIndexBuffer &in, CIndexBuffer &out,
+                         uint cacheSize = 10);
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_STRIPIFIER_H
 

@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdmisc.h"
 #include "nel/misc/string_view.h"
+#include "stdmisc.h"
 
 // STL includes
 
@@ -23,7 +23,7 @@
 
 namespace NLMISC {
 
-void nothing_here_string_view_nl() { }
+void nothing_here_string_view_nl() {}
 
 } /* namespace NLMISC */
 

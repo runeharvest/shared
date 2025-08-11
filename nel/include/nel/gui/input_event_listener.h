@@ -20,19 +20,18 @@
 #ifndef INPUTEVENTLISTENER_H
 #define INPUTEVENTLISTENER_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/gui/event_descriptor.h"
+#include "nel/misc/types_nl.h"
 
 namespace NLGUI {
 /**
  @brief Interface for accepting GUI input events.
  */
-class IInputEventListener
-{
+class IInputEventListener {
 public:
-	virtual ~IInputEventListener() { }
-	virtual bool handleEvent(const CEventDescriptor &eventDesc) = 0;
+  virtual ~IInputEventListener() {}
+  virtual bool handleEvent(const CEventDescriptor &eventDesc) = 0;
 };
-}
+} // namespace NLGUI
 
 #endif

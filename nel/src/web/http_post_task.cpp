@@ -31,33 +31,27 @@ using namespace NLWEB;
 namespace NLWEB {
 
 // ***************************************************************************
-CHttpPostTask::CHttpPostTask(const std::string &host, const std::string &page, const std::string &params)
-    : m_Host(host)
-    , m_Page(page)
-    , m_Params(params)
-{
-}
+CHttpPostTask::CHttpPostTask(const std::string &host, const std::string &page,
+                             const std::string &params)
+    : m_Host(host), m_Page(page), m_Params(params) {}
 
 // ***************************************************************************
-void CHttpPostTask::run(void)
-{
-	CCurlHttpClient httpClient;
-	std::string ret;
+void CHttpPostTask::run(void) {
+  CCurlHttpClient httpClient;
+  std::string ret;
 
-	if (!httpClient.connect(m_Host))
-	{
-		return;
-	}
+  if (!httpClient.connect(m_Host)) {
+    return;
+  }
 
-	if (!httpClient.sendPost(m_Host + m_Page, m_Params))
-	{
-		return;
-	}
+  if (!httpClient.sendPost(m_Host + m_Page, m_Params)) {
+    return;
+  }
 
-	httpClient.receive(ret);
-	httpClient.disconnect();
+  httpClient.receive(ret);
+  httpClient.disconnect();
 }
 
-}
+} // namespace NLWEB
 
 /* end of file */

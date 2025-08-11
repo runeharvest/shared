@@ -17,8 +17,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdpch.h"
 #include "nel/gui/group_container_base.h"
+#include "stdpch.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -27,76 +27,66 @@
 namespace NLGUI {
 
 CGroupContainerBase::CGroupContainerBase(const CViewBase::TCtorParam &param)
-    : CInterfaceGroup(param)
-{
-	_CurrentContainerAlpha = 255;
-	_CurrentContentAlpha = 255;
-	_ContentAlpha = 255;
-	_ContainerAlpha = 255;
-	_RolloverAlphaContainer = 0;
-	_RolloverAlphaContent = 0;
-	_Locked = false;
-	_UseGlobalAlpha = true;
+    : CInterfaceGroup(param) {
+  _CurrentContainerAlpha = 255;
+  _CurrentContentAlpha = 255;
+  _ContentAlpha = 255;
+  _ContainerAlpha = 255;
+  _RolloverAlphaContainer = 0;
+  _RolloverAlphaContent = 0;
+  _Locked = false;
+  _UseGlobalAlpha = true;
 }
 
-CGroupContainerBase::~CGroupContainerBase()
-{
+CGroupContainerBase::~CGroupContainerBase() {}
+
+void CGroupContainerBase::removeAllContainers() {
+  // Necessary because it's supposed to be an abstract class,
+  // however reflection requires the class to be instantiated.
+  nlassert(false);
 }
 
-void CGroupContainerBase::removeAllContainers()
-{
-	// Necessary because it's supposed to be an abstract class,
-	// however reflection requires the class to be instantiated.
-	nlassert(false);
-}
-
-void CGroupContainerBase::setLocked(bool locked)
-{
-	// Necessary because it's supposed to be an abstract class,
-	// however reflection requires the class to be instantiated.
-	nlassert(false);
+void CGroupContainerBase::setLocked(bool locked) {
+  // Necessary because it's supposed to be an abstract class,
+  // however reflection requires the class to be instantiated.
+  nlassert(false);
 }
 
 // ***************************************************************************
-void CGroupContainerBase::triggerAlphaSettingsChangedAH()
-{
-	if (_AHOnAlphaSettingsChanged != NULL)
-		CAHManager::getInstance()->runActionHandler(_AHOnAlphaSettingsChanged, this, _AHOnAlphaSettingsChangedParams);
+void CGroupContainerBase::triggerAlphaSettingsChangedAH() {
+  if (_AHOnAlphaSettingsChanged != NULL)
+    CAHManager::getInstance()->runActionHandler(
+        _AHOnAlphaSettingsChanged, this, _AHOnAlphaSettingsChangedParams);
 }
 
 // ***************************************************************************
-void CGroupContainerBase::setUseGlobalAlpha(bool use)
-{
-	_UseGlobalAlpha = use;
-	triggerAlphaSettingsChangedAH();
+void CGroupContainerBase::setUseGlobalAlpha(bool use) {
+  _UseGlobalAlpha = use;
+  triggerAlphaSettingsChangedAH();
 }
 
 // ***************************************************************************
-void CGroupContainerBase::setContainerAlpha(uint8 alpha)
-{
-	_ContainerAlpha = alpha;
-	triggerAlphaSettingsChangedAH();
+void CGroupContainerBase::setContainerAlpha(uint8 alpha) {
+  _ContainerAlpha = alpha;
+  triggerAlphaSettingsChangedAH();
 }
 
 // ***************************************************************************
-void CGroupContainerBase::setContentAlpha(uint8 alpha)
-{
-	_ContentAlpha = alpha;
-	triggerAlphaSettingsChangedAH();
+void CGroupContainerBase::setContentAlpha(uint8 alpha) {
+  _ContentAlpha = alpha;
+  triggerAlphaSettingsChangedAH();
 }
 
 // ***************************************************************************
-void CGroupContainerBase::setRolloverAlphaContent(uint8 alpha)
-{
-	_RolloverAlphaContent = alpha;
-	triggerAlphaSettingsChangedAH();
+void CGroupContainerBase::setRolloverAlphaContent(uint8 alpha) {
+  _RolloverAlphaContent = alpha;
+  triggerAlphaSettingsChangedAH();
 }
 
 // ***************************************************************************
-void CGroupContainerBase::setRolloverAlphaContainer(uint8 alpha)
-{
-	_RolloverAlphaContainer = alpha;
-	triggerAlphaSettingsChangedAH();
+void CGroupContainerBase::setRolloverAlphaContainer(uint8 alpha) {
+  _RolloverAlphaContainer = alpha;
+  triggerAlphaSettingsChangedAH();
 }
 
-}
+} // namespace NLGUI

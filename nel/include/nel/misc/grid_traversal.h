@@ -29,19 +29,21 @@ class CVector2f;
  * \author Nevrax France
  * \date 2005
  */
-class CGridTraversal
-{
+class CGridTraversal {
 public:
-	/** begin to traverse a grid along the given segments
-	 * \return first location in the grid
-	 */
-	static void startTraverse(const NLMISC::CVector2f &start, sint &nextX, sint &nextY);
-	/** continue grid traversal from the given position
-	 * If there are remaingind cells to traverse then true is returned, x & y are updated
-	 */
-	static bool traverse(const NLMISC::CVector2f &start, const NLMISC::CVector2f &dir, sint &x, sint &y);
+  /** begin to traverse a grid along the given segments
+   * \return first location in the grid
+   */
+  static void startTraverse(const NLMISC::CVector2f &start, sint &nextX,
+                            sint &nextY);
+  /** continue grid traversal from the given position
+   * If there are remaingind cells to traverse then true is returned, x & y are
+   * updated
+   */
+  static bool traverse(const NLMISC::CVector2f &start,
+                       const NLMISC::CVector2f &dir, sint &x, sint &y);
 };
 
-} // NLMISC
+} // namespace NLMISC
 
 #endif

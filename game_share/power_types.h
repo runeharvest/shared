@@ -20,65 +20,64 @@
 #include "nel/misc/types_nl.h"
 
 namespace POWERS {
-enum TPowerType
-{
-	/************************************************************************/
-	// Warning
-	// Power Flags MUST be in the same order than in brick_flags.h
-	/************************************************************************/
-	BeginPower = 0,
-	Taunt = BeginPower,
-	Shielding,
-	SpeedingUp,
-	LifeConcentration,
-	StaminaConcentration,
-	SapConcentration,
-	ConvertStamina,
-	ConvertSap,
-	Berserk,
-	BalanceHp,
-	Heal,
-	Invulnerability,
-	EnchantWeapon,
+enum TPowerType {
+  /************************************************************************/
+  // Warning
+  // Power Flags MUST be in the same order than in brick_flags.h
+  /************************************************************************/
+  BeginPower = 0,
+  Taunt = BeginPower,
+  Shielding,
+  SpeedingUp,
+  LifeConcentration,
+  StaminaConcentration,
+  SapConcentration,
+  ConvertStamina,
+  ConvertSap,
+  Berserk,
+  BalanceHp,
+  Heal,
+  Invulnerability,
+  EnchantWeapon,
 
-	// consumable item related powers
-	HealHpC,
-	HealSapC,
-	HealStaC,
-	HealFocusC,
-	ChgCharac,
-	ModDefenseSkill,
-	ModDodgeSkill,
-	ModParrySkill,
-	ModCraftSkill,
-	ModMeleeSkill,
-	ModRangeSkill,
-	ModMagicSkill,
-	ModForageSkill,
-	ModDesertForageSkill,
-	ModForestForageSkill,
-	ModLacustreForageSkill,
-	ModJungleForageSkill,
-	ModPrimaryRootForageSkill,
-	ModMagicProtection,
-	EndPower = ModMagicProtection,
+  // consumable item related powers
+  HealHpC,
+  HealSapC,
+  HealStaC,
+  HealFocusC,
+  ChgCharac,
+  ModDefenseSkill,
+  ModDodgeSkill,
+  ModParrySkill,
+  ModCraftSkill,
+  ModMeleeSkill,
+  ModRangeSkill,
+  ModMagicSkill,
+  ModForageSkill,
+  ModDesertForageSkill,
+  ModForestForageSkill,
+  ModLacustreForageSkill,
+  ModJungleForageSkill,
+  ModPrimaryRootForageSkill,
+  ModMagicProtection,
+  EndPower = ModMagicProtection,
 
-	BeginAuras,
-	LifeAura = BeginAuras,
-	StaminaAura,
-	SapAura,
-	MeleeProtection,
-	Umbrella,
-	AntiMagicShield,
-	WarCry,
-	FireWall,
-	ThornWall,
-	WaterWall,
-	LightningWall,
-	EndAuras = LightningWall,
+  BeginAuras,
+  LifeAura = BeginAuras,
+  StaminaAura,
+  SapAura,
+  MeleeProtection,
+  Umbrella,
+  AntiMagicShield,
+  WarCry,
+  FireWall,
+  ThornWall,
+  WaterWall,
+  LightningWall,
+  EndAuras = LightningWall,
 
-	NbTypes,
-	UnknownType = NbTypes,
+  NbTypes,
+  UnknownType = NbTypes,
 };
 
 /// convert a power type to a string
@@ -87,7 +86,7 @@ const std::string &toString(TPowerType type);
 /// convert a string to a power type
 TPowerType toPowerType(const std::string &str);
 
-}; // POWERS
+}; // namespace POWERS
 
 #endif // RY_POWER_TYPES_H
 /* End of power_types.h */

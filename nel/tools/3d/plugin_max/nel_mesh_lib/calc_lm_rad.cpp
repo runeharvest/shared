@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdafx.h"
 #include "export_nel.h"
+#include "stdafx.h"
 
 using namespace NL3D;
 
-bool CExportNel::calculateLMRad(CMesh::CMeshBuild *pZeMeshBuild, CMeshBase::CMeshBaseBuild *pZeMeshBaseBuild, INode &ZeNode,
-    TimeValue tvTime)
-{
-	return true;
+bool CExportNel::calculateLMRad(CMesh::CMeshBuild *pZeMeshBuild,
+                                CMeshBase::CMeshBaseBuild *pZeMeshBaseBuild,
+                                INode &ZeNode, TimeValue tvTime) {
+  return true;
 }

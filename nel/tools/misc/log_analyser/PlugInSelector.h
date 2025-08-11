@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined(AFX_PLUGINSELECTOR_H__3BA56BCC_F700_4C1E_9C56_E34561C8DB61__INCLUDED_)
+#if !defined(                                                                  \
+    AFX_PLUGINSELECTOR_H__3BA56BCC_F700_4C1E_9C56_E34561C8DB61__INCLUDED_)
 #define AFX_PLUGINSELECTOR_H__3BA56BCC_F700_4C1E_9C56_E34561C8DB61__INCLUDED_
 
 #if _MSC_VER > 1000
@@ -23,55 +24,53 @@
 // PlugInSelector.h : header file
 //
 
-#include <vector>
 #include <string>
+#include <vector>
 
 typedef std::string (*TInfoFunc)(void);
-typedef bool (*TAnalyseFunc)(const std::vector<const char *> &, std::string &, std::string &);
+typedef bool (*TAnalyseFunc)(const std::vector<const char *> &, std::string &,
+                             std::string &);
 
 /////////////////////////////////////////////////////////////////////////////
 // CPlugInSelector dialog
 
-class CPlugInSelector : public CDialog
-{
-	// Construction
+class CPlugInSelector : public CDialog {
+  // Construction
 public:
-	CPlugInSelector(CWnd *pParent = NULL); // standard constructor
+  CPlugInSelector(CWnd *pParent = NULL); // standard constructor
 
-	// Dialog Data
-	//{{AFX_DATA(CPlugInSelector)
-	enum
-	{
-		IDD = IDD_PLUGINSELECTOR_DIALOG
-	};
-	CListBox m_PlugInListBox;
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(CPlugInSelector)
+  enum { IDD = IDD_PLUGINSELECTOR_DIALOG };
+  CListBox m_PlugInListBox;
+  //}}AFX_DATA
 
-	void setPluginList(const std::vector<CString> &cont) { Dlls = &cont; }
+  void setPluginList(const std::vector<CString> &cont) { Dlls = &cont; }
 
-	const std::vector<CString> *Dlls;
-	HINSTANCE LibInst;
-	TAnalyseFunc AnalyseFunc;
+  const std::vector<CString> *Dlls;
+  HINSTANCE LibInst;
+  TAnalyseFunc AnalyseFunc;
 
-	// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CPlugInSelector)
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CPlugInSelector)
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
-	//}}AFX_VIRTUAL
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+                                                   //}}AFX_VIRTUAL
 
-	// Implementation
+  // Implementation
 protected:
-	// Generated message map functions
-	//{{AFX_MSG(CPlugInSelector)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnSelchangeList1();
-	virtual void OnCancel();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  // Generated message map functions
+  //{{AFX_MSG(CPlugInSelector)
+  virtual BOOL OnInitDialog();
+  afx_msg void OnSelchangeList1();
+  virtual void OnCancel();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before
+// the previous line.
 
 #endif // !defined(AFX_PLUGINSELECTOR_H__3BA56BCC_F700_4C1E_9C56_E34561C8DB61__INCLUDED_)

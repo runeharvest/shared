@@ -17,8 +17,8 @@
 #include "stdpch.h"
 
 #include "nel/misc/debug.h"
-#include "skills.h"
 #include "nel/misc/string_conversion.h"
+#include "skills.h"
 
 using namespace std;
 using namespace NLMISC;
@@ -256,19 +256,14 @@ NL_STRING_CONVERSION_TABLE_ENTRY(SMOEAEM)
 NL_STRING_CONVERSION_TABLE_ENTRY(unknown)
 NL_END_STRING_CONVERSION_TABLE(ESkills, SkillsConversion, unknown)
 
-ESkills toSkill(const std::string &str)
-{
-	return SkillsConversion.fromString(str);
+ESkills toSkill(const std::string &str) {
+  return SkillsConversion.fromString(str);
 }
 
-const std::string &toString(uint16 skill)
-{
-	return SkillsConversion.toString((ESkills)skill);
+const std::string &toString(uint16 skill) {
+  return SkillsConversion.toString((ESkills)skill);
 }
 
-const std::string &getSkillCategoryName(uint16 s)
-{
-	return UnknownString;
-}
+const std::string &getSkillCategoryName(uint16 s) { return UnknownString; }
 
-}; // SKILLS
+}; // namespace SKILLS

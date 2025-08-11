@@ -21,25 +21,20 @@
 /*
  * Constructor
  */
-CFarPosition::CFarPosition()
-    : SessionId(0)
-{
+CFarPosition::CFarPosition() : SessionId(0) {}
+
+//----------------------------------------------------------------------------
+bool COfflineEntityState::operator==(const COfflineEntityState &other) const {
+  return (other.X == X && other.Y == Y && other.Z == Z &&
+          other.Heading == Heading);
 }
 
 //----------------------------------------------------------------------------
-bool COfflineEntityState::operator==(const COfflineEntityState &other) const
-{
-	return (other.X == X && other.Y == Y && other.Z == Z && other.Heading == Heading);
+bool CFarPosition::operator==(const CFarPosition &other) const {
+  return (other.PosState == PosState && other.SessionId == SessionId);
 }
 
 //----------------------------------------------------------------------------
-bool CFarPosition::operator==(const CFarPosition &other) const
-{
-	return (other.PosState == PosState && other.SessionId == SessionId);
-}
-
-//----------------------------------------------------------------------------
-std::string COfflineEntityState::toString() const
-{
-	return NLMISC::toString("%d %d %d %g", X, Y, Z, Heading);
+std::string COfflineEntityState::toString() const {
+  return NLMISC::toString("%d %d %d %g", X, Y, Z, Heading);
 }

@@ -17,59 +17,56 @@
 #ifndef NL_STL_BLOCK_ALLOCATOR_H
 #define NL_STL_BLOCK_ALLOCATOR_H
 
-#include "types_nl.h"
 #include "block_memory.h"
+#include "types_nl.h"
 
 namespace NLMISC {
 
 // ***************************************************************************
 /**
- * This class is a STL block allocator which use CBlockMemory. see CBlockMemory for description
- *	of block memory management/advantages.
+ * This class is a STL block allocator which use CBlockMemory. see CBlockMemory
+ *for description of block memory management/advantages.
  *
- * This class works with STLPort. It implements __stl_alloc_rebind() (not C++ standard??) to work properly
- *	with list<>/set<> etc... node allocations.
+ * This class works with STLPort. It implements __stl_alloc_rebind() (not C++
+ *standard??) to work properly with list<>/set<> etc... node allocations.
  *
- * NB: if used with a vector<> or a deque<> (ie if allocate(..,n) is called with n>1), it's still work,
- *	but it's use malloc()/free() instead, so it is fully useless in this case :)
+ * NB: if used with a vector<> or a deque<> (ie if allocate(..,n) is called with
+ *n>1), it's still work, but it's use malloc()/free() instead, so it is fully
+ *useless in this case :)
  *
- * CSTLBlockAllocator use a pointer on a CBlockMemory, so multiple containers can share the same
- *	blockMemory, for maximum space/speed efficiency.
+ * CSTLBlockAllocator use a pointer on a CBlockMemory, so multiple containers
+ *can share the same blockMemory, for maximum space/speed efficiency.
  *
- * Because of CBlockMemory allocation scheme, only same containers of same types can share the
- *	same CBlockMemory instance (eg: "list<uint, &myBlockMemory>; vector<uint, &myBlockMemory>;" is invalid and
- *	will assert when allocations will occur).
+ * Because of CBlockMemory allocation scheme, only same containers of same types
+ *can share the same CBlockMemory instance (eg: "list<uint, &myBlockMemory>;
+ *vector<uint, &myBlockMemory>;" is invalid and will assert when allocations
+ *will occur).
  *
  * To construct a container which use this allocator, do like this:
- *	list<uint, CSTLBlockAllocator<uint> >		myList( ptrOnBlockMemory );
+ *	list<uint, CSTLBlockAllocator<uint> >		myList( ptrOnBlockMemory
+ *);
  *
- * But see CSTLBlockList for easier list instanciation, because using it, you'll do like this:
- *	CSTLBlockList<uint>		myList(ptrOnBlockMemory);
+ * But see CSTLBlockList for easier list instanciation, because using it, you'll
+ *do like this: CSTLBlockList<uint>		myList(ptrOnBlockMemory);
  *
- * Note: CSTLBlockAllocator take only 4 bytes in memory (a ptr on a CBlockMemory)
+ * Note: CSTLBlockAllocator take only 4 bytes in memory (a ptr on a
+ *CBlockMemory)
  *
  * \author Lionel Berenguier
  * \author Nevrax France
  * \date 2001
  */
 
-template <class T>
-class CSTLBlockAllocator : public std::allocator<T>
-{
+template <class T> class CSTLBlockAllocator : public std::allocator<T> {
 public:
-	/// Constructor. Must gives a blockMemory to ctor. NB: must gives a CBlockMemory<T, false> !!!
-	CSTLBlockAllocator(CBlockMemory<T, false> * /* bm */)
-	{
-	}
-	/// copy ctor
-	CSTLBlockAllocator(const CSTLBlockAllocator<T> &other)
-	    : std::allocator<T>(other)
-	{
-	}
-	/// dtor
-	~CSTLBlockAllocator()
-	{
-	}
+  /// Constructor. Must gives a blockMemory to ctor. NB: must gives a
+  /// CBlockMemory<T, false> !!!
+  CSTLBlockAllocator(CBlockMemory<T, false> * /* bm */) {}
+  /// copy ctor
+  CSTLBlockAllocator(const CSTLBlockAllocator<T> &other)
+      : std::allocator<T>(other) {}
+  /// dtor
+  ~CSTLBlockAllocator() {}
 };
 
 #if 0
@@ -213,7 +210,7 @@ public:
 	}
 
 };
-#else // !defined (__STL_USE_SGI_ALLOCATORS)
+#else  // !defined (__STL_USE_SGI_ALLOCATORS)
 class CSTLBlockAllocator : public  __sgi_alloc
 {
 public:
@@ -238,7 +235,7 @@ public:
 
 #endif // 0
 
-} // NLMISC
+} // namespace NLMISC
 
 #endif // NL_STL_BLOCK_ALLOCATOR_H
 

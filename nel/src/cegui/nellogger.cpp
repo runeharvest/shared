@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <nel/misc/types_nl.h>
 #include <nel/cegui/nellogger.h>
+#include <nel/misc/types_nl.h>
 
 // STL includes
 
@@ -29,37 +29,32 @@ using namespace std;
 
 namespace CEGUI {
 
-NeLLogger::NeLLogger()
-{
-}
+NeLLogger::NeLLogger() {}
 
-NeLLogger::~NeLLogger()
-{
-}
+NeLLogger::~NeLLogger() {}
 
-void NeLLogger::logEvent(const String &message, LoggingLevel level)
-{
-	if (getLoggingLevel() >= level) switch (level)
-		{
-		case Insane:
-			nldebug("%s", message.c_str());
-			break;
-		case Informative:
-		case Standard:
-			nlinfo("%s", message.c_str());
-			break;
-#if ((CEGUI_VERSION_MAJOR > 0) || ((CEGUI_VERSION_MAJOR >= 0) && (CEGUI_VERSION_MINOR >= 6)))
-		case Warnings:
+void NeLLogger::logEvent(const String &message, LoggingLevel level) {
+  if (getLoggingLevel() >= level)
+    switch (level) {
+    case Insane:
+      nldebug("%s", message.c_str());
+      break;
+    case Informative:
+    case Standard:
+      nlinfo("%s", message.c_str());
+      break;
+#if ((CEGUI_VERSION_MAJOR > 0) ||                                              \
+     ((CEGUI_VERSION_MAJOR >= 0) && (CEGUI_VERSION_MINOR >= 6)))
+    case Warnings:
 #endif
-		case Errors:
-			nlwarning("%s", message.c_str());
-			break;
-		}
+    case Errors:
+      nlwarning("%s", message.c_str());
+      break;
+    }
 }
 
-void NeLLogger::setLogFilename(const String &filename, bool append)
-{
-	// do nothing
+void NeLLogger::setLogFilename(const String &filename, bool append) {
+  // do nothing
 }
 
 } /* namespace CEGUI */

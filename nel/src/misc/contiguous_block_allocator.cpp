@@ -25,82 +25,75 @@
 namespace NLMISC {
 
 // *********************************************************************************************************
-CContiguousBlockAllocator::CContiguousBlockAllocator()
-{
-	_BlockStart = NULL;
-	_NextAvailablePos = NULL;
-	_BlockEnd = 0;
-	_NumAllocatedBytes = 0;
+CContiguousBlockAllocator::CContiguousBlockAllocator() {
+  _BlockStart = NULL;
+  _NextAvailablePos = NULL;
+  _BlockEnd = 0;
+  _NumAllocatedBytes = 0;
 #ifdef NL_DEBUG
-	_NumAlloc = 0;
-	_NumFree = 0;
+  _NumAlloc = 0;
+  _NumFree = 0;
 #endif
 }
 
 // *********************************************************************************************************
-CContiguousBlockAllocator::~CContiguousBlockAllocator()
-{
-	init(0);
-}
+CContiguousBlockAllocator::~CContiguousBlockAllocator() { init(0); }
 
 // *********************************************************************************************************
-void CContiguousBlockAllocator::init(uint numBytes /*=0*/)
-{
-	if (_BlockStart) _DefaultAlloc.deallocate(_BlockStart, _BlockEnd - _BlockStart);
-	_BlockEnd = NULL;
-	_BlockStart = NULL;
-	_NumAllocatedBytes = 0;
-	_NextAvailablePos = NULL;
-	if (numBytes != 0)
-	{
-		_BlockStart = _DefaultAlloc.allocate(numBytes);
-		_NextAvailablePos = _BlockStart;
-		_BlockEnd = _BlockStart + numBytes;
-		_NumAllocatedBytes = 0;
-	}
+void CContiguousBlockAllocator::init(uint numBytes /*=0*/) {
+  if (_BlockStart)
+    _DefaultAlloc.deallocate(_BlockStart, _BlockEnd - _BlockStart);
+  _BlockEnd = NULL;
+  _BlockStart = NULL;
+  _NumAllocatedBytes = 0;
+  _NextAvailablePos = NULL;
+  if (numBytes != 0) {
+    _BlockStart = _DefaultAlloc.allocate(numBytes);
+    _NextAvailablePos = _BlockStart;
+    _BlockEnd = _BlockStart + numBytes;
+    _NumAllocatedBytes = 0;
+  }
 #ifdef NL_DEBUG
-	_NumAlloc = 0;
-	_NumFree = 0;
+  _NumAlloc = 0;
+  _NumFree = 0;
 #endif
 }
 
 // *********************************************************************************************************
-void *CContiguousBlockAllocator::alloc(uint numBytes)
-{
-	if (numBytes == 0) return NULL;
-	_NumAllocatedBytes += numBytes;
-	if (_BlockStart)
-	{
-		if (_NextAvailablePos + numBytes <= _BlockEnd)
-		{
-			uint8 *block = _NextAvailablePos;
-			_NextAvailablePos += numBytes;
+void *CContiguousBlockAllocator::alloc(uint numBytes) {
+  if (numBytes == 0)
+    return NULL;
+  _NumAllocatedBytes += numBytes;
+  if (_BlockStart) {
+    if (_NextAvailablePos + numBytes <= _BlockEnd) {
+      uint8 *block = _NextAvailablePos;
+      _NextAvailablePos += numBytes;
 #ifdef NL_DEBUG
-			++_NumAlloc;
+      ++_NumAlloc;
 #endif
-			return block;
-		}
-	}
+      return block;
+    }
+  }
 // just uses standard new
 #ifdef NL_DEBUG
-	++_NumAlloc;
+  ++_NumAlloc;
 #endif
-	return _DefaultAlloc.allocate(numBytes);
+  return _DefaultAlloc.allocate(numBytes);
 }
 
 // *********************************************************************************************************
-void CContiguousBlockAllocator::freeBlock(void *block, uint numBytes)
-{
-	if (!block) return;
+void CContiguousBlockAllocator::freeBlock(void *block, uint numBytes) {
+  if (!block)
+    return;
 #ifdef NL_DEBUG
-	++_NumFree;
+  ++_NumFree;
 #endif
-	// no-op if block not inside the big block (sub-block are never deallocated until init(0) is encountered)
-	if (block < _BlockStart || block >= _BlockEnd)
-	{
-		// the block was allocated with std allocator
-		_DefaultAlloc.deallocate((uint8 *)block, numBytes);
-	}
+  // no-op if block not inside the big block (sub-block are never deallocated
+  // until init(0) is encountered)
+  if (block < _BlockStart || block >= _BlockEnd) {
+    // the block was allocated with std allocator
+    _DefaultAlloc.deallocate((uint8 *)block, numBytes);
+  }
 }
 
-} // NLMISC
+} // namespace NLMISC

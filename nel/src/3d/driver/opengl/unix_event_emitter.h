@@ -21,9 +21,9 @@
 #ifndef NL_UNIX_EVENT_EMITTER_H
 #define NL_UNIX_EVENT_EMITTER_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/misc/event_emitter.h"
 #include "nel/misc/events.h"
+#include "nel/misc/types_nl.h"
 
 #include "nel/3d/driver.h"
 
@@ -39,78 +39,72 @@ namespace NLMISC {
  * \author Nevrax France
  * \date 2000
  */
-class CUnixEventEmitter : public IEventEmitter
-{
+class CUnixEventEmitter : public IEventEmitter {
 public:
-	/// Constructor
-	CUnixEventEmitter();
-	virtual ~CUnixEventEmitter();
+  /// Constructor
+  CUnixEventEmitter();
+  virtual ~CUnixEventEmitter();
 
-	/**
-	 * initialize CUnixEventEmitter
-	 */
-	void init(Display *dpy, Window win, NL3D::IDriver *driver = NULL);
+  /**
+   * initialize CUnixEventEmitter
+   */
+  void init(Display *dpy, Window win, NL3D::IDriver *driver = NULL);
 
-	/**
-	 * sends all events to server
-	 * (should call CEventServer method postEvent() )
-	 */
-	virtual void submitEvents(CEventServer &server, bool allWindows);
+  /**
+   * sends all events to server
+   * (should call CEventServer method postEvent() )
+   */
+  virtual void submitEvents(CEventServer &server, bool allWindows);
 
-	/**
-	 * process input-related events (mouse and keyboard)
-	 */
-	bool processMessage(XEvent &event, CEventServer *server = NULL);
+  /**
+   * process input-related events (mouse and keyboard)
+   */
+  bool processMessage(XEvent &event, CEventServer *server = NULL);
 
-	/**
-	 * Copy a string to system clipboard.
-	 */
-	virtual bool copyTextToClipboard(const std::string &text);
+  /**
+   * Copy a string to system clipboard.
+   */
+  virtual bool copyTextToClipboard(const std::string &text);
 
-	/*
-	 * Paste a string from system clipboard.
-	 */
-	virtual bool pasteTextFromClipboard(std::string &text);
+  /*
+   * Paste a string from system clipboard.
+   */
+  virtual bool pasteTextFromClipboard(std::string &text);
 
-	void createIM();
-	void closeIM();
+  void createIM();
+  void closeIM();
 
 private:
-	// Private internal server message
-	class CUnixEventServer : CEventServer
-	{
-		friend class CUnixEventEmitter;
+  // Private internal server message
+  class CUnixEventServer : CEventServer {
+    friend class CUnixEventEmitter;
 
-	public:
-		void setServer(CEventServer *server)
-		{
-			_Server = server;
-		}
+  public:
+    void setServer(CEventServer *server) { _Server = server; }
 
-	private:
-		virtual bool pumpEvent(CEvent *event)
-		{
-			CEventServer::pumpEvent(event);
-			_Server->postEvent(event);
-			return false;
-		}
+  private:
+    virtual bool pumpEvent(CEvent *event) {
+      CEventServer::pumpEvent(event);
+      _Server->postEvent(event);
+      return false;
+    }
 
-	private:
-		CEventServer *_Server;
-	};
+  private:
+    CEventServer *_Server;
+  };
 
-	Display *_dpy;
-	Window _win;
-	std::map<TKey, bool> _PressedKeys;
-	XIM _im;
-	XIC _ic;
-	NL3D::IDriver *_driver;
-	CUnixEventServer _InternalServer;
-	std::string _CopiedString;
-	bool _SelectionOwned;
+  Display *_dpy;
+  Window _win;
+  std::map<TKey, bool> _PressedKeys;
+  XIM _im;
+  XIC _ic;
+  NL3D::IDriver *_driver;
+  CUnixEventServer _InternalServer;
+  std::string _CopiedString;
+  bool _SelectionOwned;
 };
 
-} // NLMISC
+} // namespace NLMISC
 
 #endif // defined(NL_OS_UNIX) && !defined(NL_OS_MAC)
 

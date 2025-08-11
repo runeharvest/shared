@@ -26,9 +26,10 @@
 
 namespace NLGUI {
 
-/** Display of an arbitrary textured quad in the UI. The applied texture is filtered.
- * Unlike CViewBitmap, the texture is always scaled here, and this ui element coordinates
- * are driven by the quad vertices coordinates (see setQuad).
+/** Display of an arbitrary textured quad in the UI. The applied texture is
+ * filtered. Unlike CViewBitmap, the texture is always scaled here, and this ui
+ * element coordinates are driven by the quad vertices coordinates (see
+ * setQuad).
  *
  * Derives from CCtrlBase for tooltipping support
  *
@@ -36,87 +37,82 @@ namespace NLGUI {
  * \author Nevrax France
  * \date 12/2005
  */
-class CCtrlQuad : public CCtrlBase
-{
+class CCtrlQuad : public CCtrlBase {
 public:
-	DECLARE_UI_CLASS(CCtrlQuad)
+  DECLARE_UI_CLASS(CCtrlQuad)
 
-	enum TWrapMode
-	{
-		Repeat = 0,
-		Clamp,
-		CustomUVs,
-		WrapModeCount
-	};
+  enum TWrapMode { Repeat = 0, Clamp, CustomUVs, WrapModeCount };
 
-	CCtrlQuad(const TCtorParam &param);
+  CCtrlQuad(const TCtorParam &param);
 
-	// from CInterfaceElement
-	bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
-	virtual void updateCoords();
-	virtual void draw();
-	virtual uint32 getMemory() { return (uint32)(sizeof(*this) + _Id.size()); }
+  // from CInterfaceElement
+  bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+  virtual void updateCoords();
+  virtual void draw();
+  virtual uint32 getMemory() { return (uint32)(sizeof(*this) + _Id.size()); }
 
-	// from CViewBase
-	virtual sint32 getAlpha() const { return (sint32)_Color.A; }
-	virtual void setAlpha(sint32 a);
+  // from CViewBase
+  virtual sint32 getAlpha() const { return (sint32)_Color.A; }
+  virtual void setAlpha(sint32 a);
 
-	// texture
-	void setTexture(const std::string &texName);
-	std::string getTexture() const;
+  // texture
+  void setTexture(const std::string &texName);
+  std::string getTexture() const;
 
-	// color
-	void setColorRGBA(NLMISC::CRGBA col) { _Color = col; }
-	NLMISC::CRGBA getColorRGBA() const { return _Color; }
+  // color
+  void setColorRGBA(NLMISC::CRGBA col) { _Color = col; }
+  NLMISC::CRGBA getColorRGBA() const { return _Color; }
 
-	/** Set a new quad relative to parent pos
-	 * x,y, w, h & hotspot are updated to fit the bounding rect of the quad
-	 */
-	void setQuad(const NLMISC::CQuad &quad);
-	void setQuad(const NLMISC::CVector &start, const NLMISC::CVector &end, float thickness);
-	/** Fit the given texture size (no hotspot for now, always centered)
-	 * NB : current texture is not modified.
-	 */
-	void setQuad(const std::string &texName, const NLMISC::CVector &pos, float angle = 0.f, float offCenter = 0.f);
-	void setQuad(const NLMISC::CVector &pos, float radius, float angle = 0.f);
-	const NLMISC::CQuad &getQuad() const { return _Quad; }
+  /** Set a new quad relative to parent pos
+   * x,y, w, h & hotspot are updated to fit the bounding rect of the quad
+   */
+  void setQuad(const NLMISC::CQuad &quad);
+  void setQuad(const NLMISC::CVector &start, const NLMISC::CVector &end,
+               float thickness);
+  /** Fit the given texture size (no hotspot for now, always centered)
+   * NB : current texture is not modified.
+   */
+  void setQuad(const std::string &texName, const NLMISC::CVector &pos,
+               float angle = 0.f, float offCenter = 0.f);
+  void setQuad(const NLMISC::CVector &pos, float radius, float angle = 0.f);
+  const NLMISC::CQuad &getQuad() const { return _Quad; }
 
-	void setAdditif(bool additif);
-	bool getAdditif() const { return _Additif; }
+  void setAdditif(bool additif);
+  bool getAdditif() const { return _Additif; }
 
-	void setFiltered(bool filtered);
-	bool getFiltered() const { return _Filtered; }
+  void setFiltered(bool filtered);
+  bool getFiltered() const { return _Filtered; }
 
-	void setPattern(float umin, float umax, TWrapMode wrapMode);
+  void setPattern(float umin, float umax, TWrapMode wrapMode);
 
-	/** Set uvs for each corners -> this will change the wrap mode to CustomUVs
-	 * Use setPattern(0.f, 0.f, CCtrlQuad::Repeat) to return to previous behavior
-	 */
-	void setCustomUVs(const NLMISC::CUV uvs[4]);
+  /** Set uvs for each corners -> this will change the wrap mode to CustomUVs
+   * Use setPattern(0.f, 0.f, CCtrlQuad::Repeat) to return to previous behavior
+   */
+  void setCustomUVs(const NLMISC::CUV uvs[4]);
 
-	// from CCtrlBase, no op by default
-	virtual bool handleEvent(const NLGUI::CEventDescriptor &event);
+  // from CCtrlBase, no op by default
+  virtual bool handleEvent(const NLGUI::CEventDescriptor &event);
 
-	// see if this control contains the given point (in parent coords)
-	bool contains(const NLMISC::CVector2f &pos) const;
+  // see if this control contains the given point (in parent coords)
+  bool contains(const NLMISC::CVector2f &pos) const;
 
-	// no capturable by default (just tooltip capability wanted)
-	virtual bool isCapturable() const { return false; }
+  // no capturable by default (just tooltip capability wanted)
+  virtual bool isCapturable() const { return false; }
 
 private:
-	NLMISC::CRGBA _Color;
-	NLMISC::CQuad _Quad;
-	NLMISC::CQuadUV _RealQuad; // absolute coords
-	float _ClampedUCorrection;
-	CViewRenderer::CTextureId _TextureId; /// Accelerator
-	bool _Additif;
-	bool _Filtered;
-	float _UMin;
-	float _UMax;
-	TWrapMode _WrapMode;
-	NLMISC::CUV _CustomUVs[4];
+  NLMISC::CRGBA _Color;
+  NLMISC::CQuad _Quad;
+  NLMISC::CQuadUV _RealQuad; // absolute coords
+  float _ClampedUCorrection;
+  CViewRenderer::CTextureId _TextureId; /// Accelerator
+  bool _Additif;
+  bool _Filtered;
+  float _UMin;
+  float _UMax;
+  TWrapMode _WrapMode;
+  NLMISC::CUV _CustomUVs[4];
 };
 
-}
+} // namespace NLGUI
 
 #endif

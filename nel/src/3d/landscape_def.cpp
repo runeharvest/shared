@@ -32,7 +32,8 @@ sint CLandscapeGlobals::CurrentDate = 0;
 sint CLandscapeGlobals::CurrentRenderDate = 0;
 CVector CLandscapeGlobals::RefineCenter = CVector::Null;
 float CLandscapeGlobals::RefineThreshold = 0.001f;
-float CLandscapeGlobals::OORefineThreshold = 1.0f / CLandscapeGlobals::RefineThreshold;
+float CLandscapeGlobals::OORefineThreshold =
+    1.0f / CLandscapeGlobals::RefineThreshold;
 
 CVector CLandscapeGlobals::PZBModelPosition = CVector::Null;
 
@@ -40,18 +41,24 @@ float CLandscapeGlobals::TileDistNear = 50;
 float CLandscapeGlobals::TileDistFar = CLandscapeGlobals::TileDistNear + 20;
 float CLandscapeGlobals::TileDistNearSqr = sqr(CLandscapeGlobals::TileDistNear);
 float CLandscapeGlobals::TileDistFarSqr = sqr(CLandscapeGlobals::TileDistFar);
-float CLandscapeGlobals::OOTileDistDeltaSqr = 1.0f / (CLandscapeGlobals::TileDistFarSqr - CLandscapeGlobals::TileDistNearSqr);
+float CLandscapeGlobals::OOTileDistDeltaSqr =
+    1.0f /
+    (CLandscapeGlobals::TileDistFarSqr - CLandscapeGlobals::TileDistNearSqr);
 sint CLandscapeGlobals::TileMaxSubdivision = 0;
 CBSphere CLandscapeGlobals::TileFarSphere;
 CBSphere CLandscapeGlobals::TileNearSphere;
 float CLandscapeGlobals::TilePixelSize = 128;
-float CLandscapeGlobals::TilePixelBias128 = 0.5f / CLandscapeGlobals::TilePixelSize;
-float CLandscapeGlobals::TilePixelScale128 = 1 - 1 / CLandscapeGlobals::TilePixelSize;
-float CLandscapeGlobals::TilePixelBias256 = 0.5f / (CLandscapeGlobals::TilePixelSize * 2);
-float CLandscapeGlobals::TilePixelScale256 = 1 - 1 / (CLandscapeGlobals::TilePixelSize * 2);
+float CLandscapeGlobals::TilePixelBias128 =
+    0.5f / CLandscapeGlobals::TilePixelSize;
+float CLandscapeGlobals::TilePixelScale128 =
+    1 - 1 / CLandscapeGlobals::TilePixelSize;
+float CLandscapeGlobals::TilePixelBias256 =
+    0.5f / (CLandscapeGlobals::TilePixelSize * 2);
+float CLandscapeGlobals::TilePixelScale256 =
+    1 - 1 / (CLandscapeGlobals::TilePixelSize * 2);
 
-float CLandscapeGlobals::Far0Dist = 200; // 200m.
-float CLandscapeGlobals::Far1Dist = 400; // 400m.
+float CLandscapeGlobals::Far0Dist = 200;     // 200m.
+float CLandscapeGlobals::Far1Dist = 400;     // 400m.
 float CLandscapeGlobals::FarTransition = 10; // Alpha transition= 10m.
 
 bool CLandscapeGlobals::VertexProgramEnabled = false;
@@ -69,6 +76,7 @@ CIndexBuffer CLandscapeGlobals::PassTriArray("CLandscapeGlobals::PassTriArray");
 CIndexBufferReadWrite CLandscapeGlobals::PassTriArrayIBA;
 uint NL3D_LandscapeGlobals_PassNTri = 0;
 void *NL3D_LandscapeGlobals_PassTriCurPtr = NULL;
-CIndexBuffer::TFormat NL3D_LandscapeGlobals_PassTriFormat = CIndexBuffer::IndicesUnknownFormat;
+CIndexBuffer::TFormat NL3D_LandscapeGlobals_PassTriFormat =
+    CIndexBuffer::IndicesUnknownFormat;
 
-} // NL3D
+} // namespace NL3D

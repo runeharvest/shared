@@ -17,10 +17,10 @@
 #ifndef NL_ANIMAL_HUNGER_H
 #define NL_ANIMAL_HUNGER_H
 
-#include "nel/misc/types_nl.h"
-#include "game_share/ryzom_mirror_properties.h"
 #include "game_share/mirror_prop_value.h"
+#include "game_share/ryzom_mirror_properties.h"
 #include "game_share/synchronised_message.h"
+#include "nel/misc/types_nl.h"
 
 /**
  * CSpeedLimit
@@ -29,23 +29,19 @@
  * All speeds are in meter per game cycle (m/gc).
  * \date 2004
  */
-class CSpeedLimit
-{
+class CSpeedLimit {
 public:
-	/// Constructor. The specified row need be accessible.
-	CSpeedLimit(CMirroredDataSet &dataset, const TDataSetRow &row)
-	    : _FreeSpeedValue(dataset, row, DSPropertyFUEL)
-	{
-	}
+  /// Constructor. The specified row need be accessible.
+  CSpeedLimit(CMirroredDataSet &dataset, const TDataSetRow &row)
+      : _FreeSpeedValue(dataset, row, DSPropertyFUEL) {}
 
-	/// Return the current max allowable speed (one of the params)
-	float getSpeedLimit(float walkSpeed, float maxSpeed) const
-	{
-		return (_FreeSpeedValue() ? maxSpeed : walkSpeed);
-	}
+  /// Return the current max allowable speed (one of the params)
+  float getSpeedLimit(float walkSpeed, float maxSpeed) const {
+    return (_FreeSpeedValue() ? maxSpeed : walkSpeed);
+  }
 
 private:
-	CMirrorPropValueRO<TYPE_FUEL> _FreeSpeedValue;
+  CMirrorPropValueRO<TYPE_FUEL> _FreeSpeedValue;
 };
 
 #endif // NL_ANIMAL_HUNGER_H

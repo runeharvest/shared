@@ -36,47 +36,49 @@ class CLigoError;
  * \author Nevrax France
  * \date 2001
  */
-class CZoneTemplate
-{
+class CZoneTemplate {
 public:
-	/**
-	 * Build method. Build the zone template with a vertex list and an edge list.
-	 *
-	 * \param vertices is the vertex array
-	 * \param indexes is the edge array
-	 * \param config is the current lingo config file
-	 * \param errors is the error structure
-	 * \return true if the build success, else return false
-	 */
-	bool build(const std::vector<NLMISC::CVector> &vertices, const std::vector<std::pair<uint, uint>> &indexes, const CLigoConfig &config, CLigoError &errors);
+  /**
+   * Build method. Build the zone template with a vertex list and an edge list.
+   *
+   * \param vertices is the vertex array
+   * \param indexes is the edge array
+   * \param config is the current lingo config file
+   * \param errors is the error structure
+   * \return true if the build success, else return false
+   */
+  bool build(const std::vector<NLMISC::CVector> &vertices,
+             const std::vector<std::pair<uint, uint>> &indexes,
+             const CLigoConfig &config, CLigoError &errors);
 
-	/// Serialisation
-	void serial(NLMISC::IStream &s);
+  /// Serialisation
+  void serial(NLMISC::IStream &s);
 
-	/// Get the vertex array of the template
-	const std::vector<CZoneEdge> &getEdges() const { return _Edges; }
+  /// Get the vertex array of the template
+  const std::vector<CZoneEdge> &getEdges() const { return _Edges; }
 
-	/// Get the mask of the template
-	void getMask(std::vector<bool> &mask, uint &width, uint &height);
+  /// Get the mask of the template
+  void getMask(std::vector<bool> &mask, uint &width, uint &height);
 
 private:
-	/// Round a value on the snap resolution
-	static inline void snap(float &value, float snap);
+  /// Round a value on the snap resolution
+  static inline void snap(float &value, float snap);
 
-	/// Snap a value on the grid
-	static inline bool snapOnGrid(float &value, float resolution, float snap);
+  /// Snap a value on the grid
+  static inline bool snapOnGrid(float &value, float resolution, float snap);
 
-	/// Return true if this value is snapped
-	static inline bool isSnapedOnGrid(float value, float resolution, float snap);
+  /// Return true if this value is snapped
+  static inline bool isSnapedOnGrid(float value, float resolution, float snap);
 
-	/// Return the interger index of a snappable value
-	static inline sint32 getSnappedIndex(float value, float resolution, float snap);
+  /// Return the interger index of a snappable value
+  static inline sint32 getSnappedIndex(float value, float resolution,
+                                       float snap);
 
-	/// Vertex array
-	std::vector<CZoneEdge> _Edges;
+  /// Vertex array
+  std::vector<CZoneEdge> _Edges;
 };
 
-}
+} // namespace NLLIGO
 
 #endif // NL_ZONE_TEMPLATE_H
 

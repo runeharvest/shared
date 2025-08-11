@@ -17,11 +17,11 @@
 #ifndef LOGIC_EVENT_H
 #define LOGIC_EVENT_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/stream.h"
 #include "nel/misc/entity_id.h"
-#include "nel/misc/o_xml.h"
 #include "nel/misc/i_xml.h"
+#include "nel/misc/o_xml.h"
+#include "nel/misc/stream.h"
+#include "nel/misc/types_nl.h"
 
 // #include "game_share/sid.h"
 
@@ -36,49 +36,47 @@ class CLogicStateMachine;
  * \author Nevrax France
  * \date 2001
  */
-class CLogicEventMessage
-{
+class CLogicEventMessage {
 public:
-	/// true if the message has to be sent
-	bool ToSend;
+  /// true if the message has to be sent
+  bool ToSend;
 
-	/// true if the message has been sent
-	bool Sent;
+  /// true if the message has been sent
+  bool Sent;
 
-	/// message destination
-	std::string Destination;
+  /// message destination
+  std::string Destination;
 
-	/// message destination id
-	NLMISC::CEntityId DestinationId;
+  /// message destination id
+  NLMISC::CEntityId DestinationId;
 
-	/// message id
-	std::string MessageId;
+  /// message id
+  std::string MessageId;
 
-	/// message arguments
-	std::string Arguments;
+  /// message arguments
+  std::string Arguments;
 
-	/**
-	 *	Default constructor
-	 */
-	CLogicEventMessage()
-	{
-		ToSend = false;
-		Sent = false;
-		Destination = "no_destination";
-		MessageId = "no_id";
-		DestinationId.setType(0xfe);
-		DestinationId.setCreatorId(0);
-		DestinationId.setDynamicId(0);
-		Arguments = "no_arguments";
-	}
+  /**
+   *	Default constructor
+   */
+  CLogicEventMessage() {
+    ToSend = false;
+    Sent = false;
+    Destination = "no_destination";
+    MessageId = "no_id";
+    DestinationId.setType(0xfe);
+    DestinationId.setCreatorId(0);
+    DestinationId.setDynamicId(0);
+    Arguments = "no_arguments";
+  }
 
-	/**
-	 * serial
-	 */
-	// void serial(NLMISC::IStream &f);
+  /**
+   * serial
+   */
+  // void serial(NLMISC::IStream &f);
 
-	void write(xmlNodePtr node, const char *subName = "") const;
-	void read(xmlNodePtr node, const char *subName = "");
+  void write(xmlNodePtr node, const char *subName = "") const;
+  void read(xmlNodePtr node, const char *subName = "");
 };
 
 /**
@@ -88,38 +86,34 @@ public:
  * \author Nevrax France
  * \date 2001
  */
-class CLogicEventAction
-{
+class CLogicEventAction {
 public:
-	/// true if this action consist in a state change, false if it's a message
-	bool IsStateChange;
+  /// true if this action consist in a state change, false if it's a message
+  bool IsStateChange;
 
-	/// state name for state change
-	std::string StateChange;
+  /// state name for state change
+  std::string StateChange;
 
-	/// event message
-	CLogicEventMessage EventMessage;
+  /// event message
+  CLogicEventMessage EventMessage;
 
-	/**
-	 * Default constructor
-	 */
-	CLogicEventAction()
-	{
-		IsStateChange = false;
-	}
+  /**
+   * Default constructor
+   */
+  CLogicEventAction() { IsStateChange = false; }
 
-	/**
-	 * This message will be sent as soon as the dest id will be given
-	 */
-	void enableSendMessage();
+  /**
+   * This message will be sent as soon as the dest id will be given
+   */
+  void enableSendMessage();
 
-	/**
-	 * serial
-	 */
-	// void serial(NLMISC::IStream &f);
+  /**
+   * serial
+   */
+  // void serial(NLMISC::IStream &f);
 
-	void write(xmlNodePtr node) const;
-	void read(xmlNodePtr node);
+  void write(xmlNodePtr node) const;
+  void read(xmlNodePtr node);
 };
 
 /**
@@ -129,55 +123,53 @@ public:
  * \author Nevrax France
  * \date 2001
  */
-class CLogicEvent
-{
-	/// state machine managing this event
-	CLogicStateMachine *_LogicStateMachine;
+class CLogicEvent {
+  /// state machine managing this event
+  CLogicStateMachine *_LogicStateMachine;
 
 public:
-	/// condition name
-	std::string ConditionName;
+  /// condition name
+  std::string ConditionName;
 
-	/// event action
-	CLogicEventAction EventAction;
+  /// event action
+  CLogicEventAction EventAction;
 
-	/**
-	 * Default constructor
-	 */
-	CLogicEvent()
-	{
-		_LogicStateMachine = 0;
-		ConditionName = "no_condition";
-	}
+  /**
+   * Default constructor
+   */
+  CLogicEvent() {
+    _LogicStateMachine = 0;
+    ConditionName = "no_condition";
+  }
 
-	/**
-	 *	Reset this event
-	 */
-	void reset();
+  /**
+   *	Reset this event
+   */
+  void reset();
 
-	/**
-	 *	Set the logic state machine
-	 *
-	 * \param logicStateMachine is the state machine containing this block
-	 */
-	void setLogicStateMachine(CLogicStateMachine *logicStateMachine);
+  /**
+   *	Set the logic state machine
+   *
+   * \param logicStateMachine is the state machine containing this block
+   */
+  void setLogicStateMachine(CLogicStateMachine *logicStateMachine);
 
-	/**
-	 * Test the condition
-	 *
-	 * \return true if condition is fulfiled
-	 */
-	bool testCondition();
+  /**
+   * Test the condition
+   *
+   * \return true if condition is fulfiled
+   */
+  bool testCondition();
 
-	/**
-	 * serial
-	 */
-	// void serial(NLMISC::IStream &f);
+  /**
+   * serial
+   */
+  // void serial(NLMISC::IStream &f);
 
-	void write(xmlNodePtr node) const;
-	void read(xmlNodePtr node);
+  void write(xmlNodePtr node) const;
+  void read(xmlNodePtr node);
 };
 
-} // NLLOGIC
+} // namespace NLLOGIC
 
 #endif // LOGIC_EVENT

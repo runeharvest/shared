@@ -41,7 +41,8 @@ using namespace std::string_view_literals;
 #define nlsv(strLit) (strLit##sv)
 /// Obtain an std::string from a string view.
 #define nlsvs(strView) (std::string(strView))
-/// Obtain a parameter to pass to find in a string indexed container from a string view.
+/// Obtain a parameter to pass to find in a string indexed container from a
+/// string view.
 #define nlsvf(strView) (strView)
 /// Comparison function for string indexed containers.
 #define NL_SV_LESS std::less<>
@@ -50,113 +51,93 @@ using namespace std::string_view_literals;
 #define nlsv(strLit) (CStringView(strLit, ::strlen(strLit)))
 /// Obtain an std::string from a string view.
 #define nlsvs(strView) (std::string(strView.data(), strView.size()))
-/// Obtain a parameter to pass to find in a string indexed container from a string view.
+/// Obtain a parameter to pass to find in a string indexed container from a
+/// string view.
 #define nlsvf(strView) nlsvs(strView)
 /// Comparison function for string indexed containers.
 #define NL_SV_LESS std::less<std::string>
 #endif
 
-/// Obtain a temporary C-string from a string view. Use directly in argument, do not store.
-#define nlsvc(strView) ((strView.data()[strView.size()]) ? nlsvs(strView).c_str() : strView.data())
+/// Obtain a temporary C-string from a string view. Use directly in argument, do
+/// not store.
+#define nlsvc(strView)                                                         \
+  ((strView.data()[strView.size()]) ? nlsvs(strView).c_str() : strView.data())
 
 namespace NLMISC {
 
 /// String view literals allow bypassing allocation and strlen calls.
-/// CStringView is a 100% drop-in replacement for (const char *str, size_t len) tuples. It's a non-owning reference.
-/// Always use `CStringView` where previously `const std::string &` would have been used. It avoids accidental copy.
-/// Gotcha: CStringView doesn't need to end with \0, so there's no guarantee with functions that expect \0 terminated strings,
-/// use the `nlsvc` macro to get a temporary C-string from a CStringView.
-/// Use the `nlsv` macro to get a CStringView from a string literal.
-/// Use the `nlstr` macro to get an std::string from a string literal.
-/// Use the `nlsvs` macro to get an std::string from a CStringView.
+/// CStringView is a 100% drop-in replacement for (const char *str, size_t len)
+/// tuples. It's a non-owning reference. Always use `CStringView` where
+/// previously `const std::string &` would have been used. It avoids accidental
+/// copy. Gotcha: CStringView doesn't need to end with \0, so there's no
+/// guarantee with functions that expect \0 terminated strings, use the `nlsvc`
+/// macro to get a temporary C-string from a CStringView. Use the `nlsv` macro
+/// to get a CStringView from a string literal. Use the `nlstr` macro to get an
+/// std::string from a string literal. Use the `nlsvs` macro to get an
+/// std::string from a CStringView.
 #ifdef NL_CPP17
 using CStringView = std::string_view;
 #else
-class CStringView
-{
+class CStringView {
 public:
-	CStringView(const std::string &str)
-	    : m_Str(&str[0])
-	    , m_Len(str.size())
-	{
-	}
-	CStringView(const char *const str, const size_t len)
-	    : m_Str(str)
-	    , m_Len(len)
-	{
-	}
-	CStringView(const char *const str)
-	    : m_Str(str)
-	    , m_Len(sizeof(str))
-	{
-	}
+  CStringView(const std::string &str) : m_Str(&str[0]), m_Len(str.size()) {}
+  CStringView(const char *const str, const size_t len)
+      : m_Str(str), m_Len(len) {}
+  CStringView(const char *const str) : m_Str(str), m_Len(sizeof(str)) {}
 
-	inline const char *data() const { return m_Str; }
-	inline size_t length() const { return m_Len; }
-	inline size_t size() const { return m_Len; }
+  inline const char *data() const { return m_Str; }
+  inline size_t length() const { return m_Len; }
+  inline size_t size() const { return m_Len; }
 
-	inline CStringView substr(const size_t offset, const size_t count = -1) { return CStringView(m_Str + offset, std::min(m_Len - offset, count)); }
+  inline CStringView substr(const size_t offset, const size_t count = -1) {
+    return CStringView(m_Str + offset, std::min(m_Len - offset, count));
+  }
 
-	inline bool operator==(const CStringView o)
-	{
-		if (m_Len != o.m_Len) return false;
-		return memcmp(m_Str, o.m_Str, m_Len) == 0;
-	}
-	inline bool operator!=(const CStringView o)
-	{
-		if (m_Len != o.m_Len) return true;
-		return memcmp(m_Str, o.m_Str, m_Len) != 0;
-	}
+  inline bool operator==(const CStringView o) {
+    if (m_Len != o.m_Len)
+      return false;
+    return memcmp(m_Str, o.m_Str, m_Len) == 0;
+  }
+  inline bool operator!=(const CStringView o) {
+    if (m_Len != o.m_Len)
+      return true;
+    return memcmp(m_Str, o.m_Str, m_Len) != 0;
+  }
 
-	struct const_iterator
-	{
-	public:
-		const_iterator()
-		    : m_Addr(NULL)
-		{
-		}
+  struct const_iterator {
+  public:
+    const_iterator() : m_Addr(NULL) {}
 
-		inline void operator++()
-		{
-			++m_Addr;
-		}
-		inline void operator+=(ptrdiff_t v)
-		{
-			m_Addr += v;
-		}
-		inline void operator--()
-		{
-			--m_Addr;
-		}
-		inline void operator-=(ptrdiff_t v)
-		{
-			m_Addr -= v;
-		}
-		inline bool operator!=(const const_iterator &o) const { return m_Addr != o.m_Addr; }
-		inline bool operator==(const const_iterator &o) const { return m_Addr == o.m_Addr; }
-		inline const char &operator*() const { return *m_Addr; }
+    inline void operator++() { ++m_Addr; }
+    inline void operator+=(ptrdiff_t v) { m_Addr += v; }
+    inline void operator--() { --m_Addr; }
+    inline void operator-=(ptrdiff_t v) { m_Addr -= v; }
+    inline bool operator!=(const const_iterator &o) const {
+      return m_Addr != o.m_Addr;
+    }
+    inline bool operator==(const const_iterator &o) const {
+      return m_Addr == o.m_Addr;
+    }
+    inline const char &operator*() const { return *m_Addr; }
 
-	private:
-		friend class CStringView;
-		inline const_iterator(const char *addr)
-		    : m_Addr(addr)
-		{
-		}
-		const char *m_Addr;
-	};
+  private:
+    friend class CStringView;
+    inline const_iterator(const char *addr) : m_Addr(addr) {}
+    const char *m_Addr;
+  };
 
-	typedef const_iterator iterator;
+  typedef const_iterator iterator;
 
-	iterator begin() const { return iterator(m_Str); }
-	inline iterator end() const { return iterator(m_Str + m_Len); }
+  iterator begin() const { return iterator(m_Str); }
+  inline iterator end() const { return iterator(m_Str + m_Len); }
 
 private:
-	const char *m_Str;
-	size_t m_Len;
+  const char *m_Str;
+  size_t m_Len;
 };
 #endif
 
-}
+} // namespace NLMISC
 
 #endif /* #ifndef NLMISC_STRING_VIEW_H */
 

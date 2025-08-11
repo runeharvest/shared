@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined(AFX_VEGETABLE_LIST_BOX_H__2F5C38C3_1FB5_4B8F_86C5_DE9B194BD9F6__INCLUDED_)
+#if !defined(                                                                  \
+    AFX_VEGETABLE_LIST_BOX_H__2F5C38C3_1FB5_4B8F_86C5_DE9B194BD9F6__INCLUDED_)
 #define AFX_VEGETABLE_LIST_BOX_H__2F5C38C3_1FB5_4B8F_86C5_DE9B194BD9F6__INCLUDED_
 
 #if _MSC_VER > 1000
@@ -28,44 +29,45 @@ class CVegetableDlg;
 /////////////////////////////////////////////////////////////////////////////
 // CVegetableListBox window
 
-class CVegetableListBox : public CListBox
-{
-	// Construction
+class CVegetableListBox : public CListBox {
+  // Construction
 public:
-	CVegetableListBox();
+  CVegetableListBox();
 
-	// Attributes
+  // Attributes
 public:
-	// Owner. Must be init
-	CVegetableDlg *VegetableDlg;
+  // Owner. Must be init
+  CVegetableDlg *VegetableDlg;
 
-	// Operations
+  // Operations
 public:
-	// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CVegetableListBox)
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CVegetableListBox)
 public:
-	virtual BOOL OnCmdMsg(UINT nID, int nCode, void *pExtra, AFX_CMDHANDLERINFO *pHandlerInfo);
-	virtual void MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct);
-	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
-	//}}AFX_VIRTUAL
+  virtual BOOL OnCmdMsg(UINT nID, int nCode, void *pExtra,
+                        AFX_CMDHANDLERINFO *pHandlerInfo);
+  virtual void MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct);
+  virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+  //}}AFX_VIRTUAL
 
-	// Implementation
+  // Implementation
 public:
-	virtual ~CVegetableListBox();
+  virtual ~CVegetableListBox();
 
-	// Generated message map functions
+  // Generated message map functions
 protected:
-	//{{AFX_MSG(CVegetableListBox)
-	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
-	//}}AFX_MSG
+  //{{AFX_MSG(CVegetableListBox)
+  afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+  //}}AFX_MSG
 
-	DECLARE_MESSAGE_MAP()
+  DECLARE_MESSAGE_MAP()
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before
+// the previous line.
 
 #endif // !defined(AFX_VEGETABLE_LIST_BOX_H__2F5C38C3_1FB5_4B8F_86C5_DE9B194BD9F6__INCLUDED_)

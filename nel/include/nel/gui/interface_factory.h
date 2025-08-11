@@ -26,11 +26,10 @@ namespace NLGUI {
 class CViewBase;
 
 /// Simple interface element ( widget ) factory
-class CInterfaceFactory
-{
+class CInterfaceFactory {
 public:
-	static CViewBase *createClass(const std::string &name);
+  static CViewBase *createClass(const std::string &name);
 };
-}
+} // namespace NLGUI
 
 #endif

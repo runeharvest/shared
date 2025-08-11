@@ -19,8 +19,8 @@
 //
 // Author: Jan BOON (Kaetemi) <jan.boon@kaetemi.be>
 
-#include <nel/misc/types_nl.h>
 #include "nel/pipeline/project_config.h"
+#include <nel/misc/types_nl.h>
 
 #ifdef NL_OS_WINDOWS
 #include <windows.h>
@@ -30,9 +30,9 @@
 
 #include <algorithm>
 
+#include <nel/misc/config_file.h>
 #include <nel/misc/debug.h>
 #include <nel/misc/path.h>
-#include <nel/misc/config_file.h>
 
 using namespace std;
 using namespace NLMISC;
@@ -51,202 +51,191 @@ std::string CProjectConfig::s_ProjectName;
 
 static std::set<TPathString> s_SearchPaths;
 
-void CProjectConfig::cleanup()
-{
-	for (std::vector<NLMISC::CConfigFile *>::iterator it(s_ConfigFiles.begin()), end(s_ConfigFiles.end()); it != end; ++it)
-		delete *it;
-	s_ConfigFiles.clear();
+void CProjectConfig::cleanup() {
+  for (std::vector<NLMISC::CConfigFile *>::iterator it(s_ConfigFiles.begin()),
+       end(s_ConfigFiles.end());
+       it != end; ++it)
+    delete *it;
+  s_ConfigFiles.clear();
 }
 
-CProjectConfig::~CProjectConfig()
-{
-	cleanup();
-}
+CProjectConfig::~CProjectConfig() { cleanup(); }
 
-bool CProjectConfig::init(const std::string &asset, Flags flags, bool partial)
-{
-	TPathString rootPath = NLMISC::CPath::standardizePath(asset, false);
-	TPathString configPath = rootPath + "/nel.cfg";
-	TPathString projectPath = rootPath + "/.nel";
-	while (!CFile::fileExists(configPath) && !CFile::isDirectory(projectPath))
-	{
-		std::string::size_type sep = CFile::getLastSeparator(rootPath);
-		if (sep == string::npos)
-			return false;
+bool CProjectConfig::init(const std::string &asset, Flags flags, bool partial) {
+  TPathString rootPath = NLMISC::CPath::standardizePath(asset, false);
+  TPathString configPath = rootPath + "/nel.cfg";
+  TPathString projectPath = rootPath + "/.nel";
+  while (!CFile::fileExists(configPath) && !CFile::isDirectory(projectPath)) {
+    std::string::size_type sep = CFile::getLastSeparator(rootPath);
+    if (sep == string::npos)
+      return false;
 
-		rootPath = rootPath.substr(0, sep);
-		if (rootPath.empty())
-			return false;
+    rootPath = rootPath.substr(0, sep);
+    if (rootPath.empty())
+      return false;
 
-		configPath = rootPath + "/nel.cfg";
-		projectPath = rootPath + "/.nel";
-	}
-	if (CFile::fileExists(configPath))
-	{
-		rootPath += "/";
-		projectPath = TPathString();
-	}
-	else
-	{
-		rootPath += "/graphics/";
-		configPath = rootPath + "nel.cfg";
-		if (!CFile::fileExists(configPath))
-			return false;
-	}
-	uint32 configFileModification = CFile::getFileModificationDate(configPath);
-	bool assetConfigSame = configPath == s_AssetConfigPath && s_AssetConfigModification == configFileModification && s_InitFlags == flags;
+    configPath = rootPath + "/nel.cfg";
+    projectPath = rootPath + "/.nel";
+  }
+  if (CFile::fileExists(configPath)) {
+    rootPath += "/";
+    projectPath = TPathString();
+  } else {
+    rootPath += "/graphics/";
+    configPath = rootPath + "nel.cfg";
+    if (!CFile::fileExists(configPath))
+      return false;
+  }
+  uint32 configFileModification = CFile::getFileModificationDate(configPath);
+  bool assetConfigSame = configPath == s_AssetConfigPath &&
+                         s_AssetConfigModification == configFileModification &&
+                         s_InitFlags == flags;
 
-	std::vector<TPathString> configRootPaths;
-	TPathString projectConfigPath;
-	uint32 projectConfigModification = 0;
-	std::string projectName;
-	if (partial)
-	{
-		if (assetConfigSame && s_ProjectConfigPath.empty())
-			return true; // Do not reload
-	}
-	else
-	{
-		if (assetConfigSame && !s_ProjectConfigPath.empty() && CFile::fileExists(s_ProjectConfigPath))
-		{
-			projectConfigModification = CFile::getFileModificationDate(s_ProjectConfigPath);
+  std::vector<TPathString> configRootPaths;
+  TPathString projectConfigPath;
+  uint32 projectConfigModification = 0;
+  std::string projectName;
+  if (partial) {
+    if (assetConfigSame && s_ProjectConfigPath.empty())
+      return true; // Do not reload
+  } else {
+    if (assetConfigSame && !s_ProjectConfigPath.empty() &&
+        CFile::fileExists(s_ProjectConfigPath)) {
+      projectConfigModification =
+          CFile::getFileModificationDate(s_ProjectConfigPath);
 
-			if (s_ProjectConfigModification == projectConfigModification)
-				return true; // Do not reload
-		}
+      if (s_ProjectConfigModification == projectConfigModification)
+        return true; // Do not reload
+    }
 
-		// Search for project and load up all root paths
-		std::vector<std::string> files;
-		CPath::getPathContent(CPath::getApplicationDirectory("NeL", true) + "/projects", false, false, true, files);
-		for (std::vector<std::string>::iterator it(files.begin()), end(files.end()); it != end; ++it)
-		{
-			const std::string &file = *it;
-			if (file.length() >= 4 && (file.compare(file.length() - 4, 4, ".cfg") == 0))
-			{
-				CConfigFile project;
-				project.load(file);
-				CConfigFile::CVar &directories = project.getVar("Directories");
-				bool isProject = false;
-				for (uint i = 0; i < directories.size(); ++i)
-				{
-					if (rootPath == CPath::standardizePath(directories.asString(i), true))
-					{
-						isProject = true;
-						break;
-					}
-				}
-				if (isProject)
-				{
-					projectConfigModification = CFile::getFileModificationDate(file);
-					projectConfigPath = file;
+    // Search for project and load up all root paths
+    std::vector<std::string> files;
+    CPath::getPathContent(CPath::getApplicationDirectory("NeL", true) +
+                              "/projects",
+                          false, false, true, files);
+    for (std::vector<std::string>::iterator it(files.begin()), end(files.end());
+         it != end; ++it) {
+      const std::string &file = *it;
+      if (file.length() >= 4 &&
+          (file.compare(file.length() - 4, 4, ".cfg") == 0)) {
+        CConfigFile project;
+        project.load(file);
+        CConfigFile::CVar &directories = project.getVar("Directories");
+        bool isProject = false;
+        for (uint i = 0; i < directories.size(); ++i) {
+          if (rootPath ==
+              CPath::standardizePath(directories.asString(i), true)) {
+            isProject = true;
+            break;
+          }
+        }
+        if (isProject) {
+          projectConfigModification = CFile::getFileModificationDate(file);
+          projectConfigPath = file;
 
-					for (uint i = 0; i < directories.size(); ++i)
-					{
-						std::string dir = CPath::standardizePath(directories.asString(i), true);
-						std::string cfgPath = dir + "nel.cfg";
-						if (CFile::fileExists(cfgPath))
-							configRootPaths.push_back(dir);
-					}
+          for (uint i = 0; i < directories.size(); ++i) {
+            std::string dir =
+                CPath::standardizePath(directories.asString(i), true);
+            std::string cfgPath = dir + "nel.cfg";
+            if (CFile::fileExists(cfgPath))
+              configRootPaths.push_back(dir);
+          }
 
-					projectName = project.getVar("ProjectName").asString();
+          projectName = project.getVar("ProjectName").asString();
 
-					break;
-				}
-			}
-		}
-	}
+          break;
+        }
+      }
+    }
+  }
 
-	if (projectConfigPath.empty())
-	{
-		projectName = "NeL Project";
-		configRootPaths.push_back(rootPath);
-		projectConfigModification = 0;
-	}
+  if (projectConfigPath.empty()) {
+    projectName = "NeL Project";
+    configRootPaths.push_back(rootPath);
+    projectConfigModification = 0;
+  }
 
-	nldebug("Initializing project config '%s'", projectConfigPath.empty() ? configPath.c_str() : projectConfigPath.c_str());
-	release();
+  nldebug("Initializing project config '%s'", projectConfigPath.empty()
+                                                  ? configPath.c_str()
+                                                  : projectConfigPath.c_str());
+  release();
 
-	s_InitFlags = flags;
-	s_AssetConfigPath = configPath;
-	s_AssetConfigModification = configFileModification;
-	s_ProjectConfigPath = projectConfigPath;
-	s_ProjectConfigModification = projectConfigModification;
-	s_ProjectName = projectName;
-	s_ConfigPaths = configRootPaths;
+  s_InitFlags = flags;
+  s_AssetConfigPath = configPath;
+  s_AssetConfigModification = configFileModification;
+  s_ProjectConfigPath = projectConfigPath;
+  s_ProjectConfigModification = projectConfigModification;
+  s_ProjectName = projectName;
+  s_ConfigPaths = configRootPaths;
 
-	std::map<std::string, CConfigFile *> configFiles;
-	for (std::vector<TPathString>::iterator it(configRootPaths.begin()), end(configRootPaths.end()); it != end; ++it)
-	{
-		const std::string &dir = *it;
-		const std::string &cfgPath = *it + "nel.cfg";
-		CConfigFile *cfgFile = new CConfigFile();
-		cfgFile->load(cfgPath);
-		std::string identifier = cfgFile->getVar("Identifier").asString();
-		if (configFiles.find(identifier) != configFiles.end()) // Identifier already exists
-		{
-			if (dir == rootPath)
-			{
-				// Replace config that was already added, asset root gets priority
-				std::vector<NLMISC::CConfigFile *>::iterator old = std::find(s_ConfigFiles.begin(), s_ConfigFiles.end(), configFiles[identifier]);
-				uint idx = old - s_ConfigFiles.begin();
-				s_ConfigFiles.erase(old);
-				s_ConfigPaths.erase(s_ConfigPaths.begin() + idx);
-			}
-			else
-			{
-				// Skip, first listed config gets priority
-				s_ConfigPaths.erase(s_ConfigPaths.begin() + s_ConfigFiles.size());
-				continue;
-			}
-		}
+  std::map<std::string, CConfigFile *> configFiles;
+  for (std::vector<TPathString>::iterator it(configRootPaths.begin()),
+       end(configRootPaths.end());
+       it != end; ++it) {
+    const std::string &dir = *it;
+    const std::string &cfgPath = *it + "nel.cfg";
+    CConfigFile *cfgFile = new CConfigFile();
+    cfgFile->load(cfgPath);
+    std::string identifier = cfgFile->getVar("Identifier").asString();
+    if (configFiles.find(identifier) !=
+        configFiles.end()) // Identifier already exists
+    {
+      if (dir == rootPath) {
+        // Replace config that was already added, asset root gets priority
+        std::vector<NLMISC::CConfigFile *>::iterator old =
+            std::find(s_ConfigFiles.begin(), s_ConfigFiles.end(),
+                      configFiles[identifier]);
+        uint idx = old - s_ConfigFiles.begin();
+        s_ConfigFiles.erase(old);
+        s_ConfigPaths.erase(s_ConfigPaths.begin() + idx);
+      } else {
+        // Skip, first listed config gets priority
+        s_ConfigPaths.erase(s_ConfigPaths.begin() + s_ConfigFiles.size());
+        continue;
+      }
+    }
 #ifdef NL_OS_WINDOWS
-		SetEnvironmentVariableA(identifier.c_str(), dir.c_str());
+    SetEnvironmentVariableA(identifier.c_str(), dir.c_str());
 #else
-		setenv(identifier.c_str(), dir.c_str(), 1);
+    setenv(identifier.c_str(), dir.c_str(), 1);
 #endif
-		configFiles[identifier] = cfgFile;
-		s_ConfigFiles.push_back(cfgFile);
-	}
+    configFiles[identifier] = cfgFile;
+    s_ConfigFiles.push_back(cfgFile);
+  }
 
-	nlassert(s_ConfigFiles.size() == s_ConfigPaths.size());
+  nlassert(s_ConfigFiles.size() == s_ConfigPaths.size());
 
-	if (flags & DatabaseTextureSearchPaths)
-	{
-		searchDirectories("DatabaseTextureSearchPaths");
-	}
+  if (flags & DatabaseTextureSearchPaths) {
+    searchDirectories("DatabaseTextureSearchPaths");
+  }
 
-	return true;
+  return true;
 }
 
-void CProjectConfig::searchDirectories(const char *var)
-{
-	for (uint i = 0; i < s_ConfigFiles.size(); ++i)
-	{
-		CConfigFile *cfg = s_ConfigFiles[i];
-		const TPathString &dir = s_ConfigPaths[i];
-		CConfigFile::CVar *paths = cfg->getVarPtr(var);
-		if (paths)
-		{
-			for (uint i = 0; i < paths->size(); i++)
-			{
-				TPathString path = paths->asString(i);
-				if (!CPath::isAbsolutePath(path)) path = dir + path;
-				path = CPath::standardizePath(path);
-				if (s_SearchPaths.find(path) == s_SearchPaths.end())
-				{
-					CPath::addSearchPath(path);
-					s_SearchPaths.insert(path);
-				}
-			}
-		}
-	}
+void CProjectConfig::searchDirectories(const char *var) {
+  for (uint i = 0; i < s_ConfigFiles.size(); ++i) {
+    CConfigFile *cfg = s_ConfigFiles[i];
+    const TPathString &dir = s_ConfigPaths[i];
+    CConfigFile::CVar *paths = cfg->getVarPtr(var);
+    if (paths) {
+      for (uint i = 0; i < paths->size(); i++) {
+        TPathString path = paths->asString(i);
+        if (!CPath::isAbsolutePath(path))
+          path = dir + path;
+        path = CPath::standardizePath(path);
+        if (s_SearchPaths.find(path) == s_SearchPaths.end()) {
+          CPath::addSearchPath(path);
+          s_SearchPaths.insert(path);
+        }
+      }
+    }
+  }
 }
 
-void CProjectConfig::release()
-{
-	s_SearchPaths.clear();
-	CPath::clearMap();
-	cleanup();
+void CProjectConfig::release() {
+  s_SearchPaths.clear();
+  CPath::clearMap();
+  cleanup();
 }
 
 } /* namespace NLPIPELINE */

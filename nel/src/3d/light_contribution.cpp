@@ -24,17 +24,16 @@
 
 namespace NL3D {
 
-CLightContribution::CLightContribution()
-{
-	FrozenStaticLightSetup = false;
-	// empty the list.
-	PointLight[0] = NULL;
-	// default is to take fully light from the sun.
-	SunContribution = 255;
+CLightContribution::CLightContribution() {
+  FrozenStaticLightSetup = false;
+  // empty the list.
+  PointLight[0] = NULL;
+  // default is to take fully light from the sun.
+  SunContribution = 255;
 
-	FrozenAmbientLight = NULL;
+  FrozenAmbientLight = NULL;
 
-	UseMergedPointLight = false;
+  UseMergedPointLight = false;
 }
 
-} // NL3D
+} // namespace NL3D

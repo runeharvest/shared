@@ -26,56 +26,46 @@
 #include "particle_workspace.h"
 
 // wrapper to read/write a value of type T
-template <class T>
-class IPSWrapper
-{
+template <class T> class IPSWrapper {
 public:
-	CParticleWorkspace::CNode *OwnerNode; // Owner node of the property. When the property is modified, then the node will be marked as 'modified'
+  CParticleWorkspace::CNode
+      *OwnerNode; // Owner node of the property. When the property is modified,
+                  // then the node will be marked as 'modified'
 public:
-	IPSWrapper()
-	    : OwnerNode(NULL)
-	{
-	}
-	// for derivers : get a value
-	virtual T get(void) const = 0;
-	void setAndUpdateModifiedFlag(const T &value)
-	{
-		if (OwnerNode)
-		{
-			OwnerNode->setModified(true);
-		}
-		set(value);
-	}
+  IPSWrapper() : OwnerNode(NULL) {}
+  // for derivers : get a value
+  virtual T get(void) const = 0;
+  void setAndUpdateModifiedFlag(const T &value) {
+    if (OwnerNode) {
+      OwnerNode->setModified(true);
+    }
+    set(value);
+  }
 
 protected:
-	// for derivers : set a value
-	virtual void set(const T &) = 0;
+  // for derivers : set a value
+  virtual void set(const T &) = 0;
 };
 
 // wrapper to read/write a scheme of type T
-template <class T>
-class IPSSchemeWrapper
-{
+template <class T> class IPSSchemeWrapper {
 public:
-	CParticleWorkspace::CNode *OwnerNode; // Owner node of the property. When the property is modified, then the node will be marked as 'modified'
+  CParticleWorkspace::CNode
+      *OwnerNode; // Owner node of the property. When the property is modified,
+                  // then the node will be marked as 'modified'
 public:
-	IPSSchemeWrapper()
-	    : OwnerNode(NULL)
-	{
-	}
-	typedef NL3D::CPSAttribMaker<T> scheme_type;
-	virtual scheme_type *getScheme(void) const = 0;
-	void setSchemeAndUpdateModifiedFlag(scheme_type *s)
-	{
-		if (OwnerNode)
-		{
-			OwnerNode->setModified(true);
-		}
-		setScheme(s);
-	}
+  IPSSchemeWrapper() : OwnerNode(NULL) {}
+  typedef NL3D::CPSAttribMaker<T> scheme_type;
+  virtual scheme_type *getScheme(void) const = 0;
+  void setSchemeAndUpdateModifiedFlag(scheme_type *s) {
+    if (OwnerNode) {
+      OwnerNode->setModified(true);
+    }
+    setScheme(s);
+  }
 
 protected:
-	virtual void setScheme(scheme_type *s) = 0;
+  virtual void setScheme(scheme_type *s) = 0;
 };
 
 // RGBA wrapper
@@ -91,26 +81,22 @@ typedef IPSWrapper<uint32> IPSWrapperUInt;
 typedef IPSSchemeWrapper<uint32> IPSSchemeWrapperUInt;
 
 // texture
-class IPSWrapperTexture
-{
+class IPSWrapperTexture {
 public:
-	CParticleWorkspace::CNode *OwnerNode;
+  CParticleWorkspace::CNode *OwnerNode;
 
 public:
-	// ctor
-	IPSWrapperTexture()
-	    : OwnerNode(NULL)
-	{
-	}
-	virtual NL3D::ITexture *get(void) = 0;
-	virtual void setAndUpdateModifiedFlag(NL3D::ITexture *tex)
-	{
-		if (OwnerNode) OwnerNode->setModified(true);
-		set(tex);
-	}
+  // ctor
+  IPSWrapperTexture() : OwnerNode(NULL) {}
+  virtual NL3D::ITexture *get(void) = 0;
+  virtual void setAndUpdateModifiedFlag(NL3D::ITexture *tex) {
+    if (OwnerNode)
+      OwnerNode->setModified(true);
+    set(tex);
+  }
 
 protected:
-	virtual void set(NL3D::ITexture *) = 0;
+  virtual void set(NL3D::ITexture *) = 0;
 };
 
 #endif

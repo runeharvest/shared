@@ -17,11 +17,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "std_afx.h"
-#include "nel_export.h"
+#include "../nel_3dsmax_shared/nel_3dsmax_shared.h"
 #include "nel/3d/register_3d.h"
 #include "nel/misc/app_context.h"
-#include "../nel_3dsmax_shared/nel_3dsmax_shared.h"
+#include "nel_export.h"
+#include "std_afx.h"
 #include <maxversion.h>
 
 extern ClassDesc2 *GetCNelExportDesc();
@@ -29,61 +29,50 @@ extern ClassDesc2 *GetCNelExportDesc();
 HINSTANCE hInstance;
 int controlsInit = FALSE;
 
-BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
-{
-	// initialize nel context
-	if (!NLMISC::INelContext::isContextInitialised())
-	{
-		new NLMISC::CLibraryContext(GetSharedNelContext());
-		nldebug("NeL Export: DllMain");
-	}
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved) {
+  // initialize nel context
+  if (!NLMISC::INelContext::isContextInitialised()) {
+    new NLMISC::CLibraryContext(GetSharedNelContext());
+    nldebug("NeL Export: DllMain");
+  }
 
-	hInstance = hinstDLL; // Hang on to this DLL's instance handle.
+  hInstance = hinstDLL; // Hang on to this DLL's instance handle.
 
-	NL3D::registerSerial3d();
+  NL3D::registerSerial3d();
 
-	if (!controlsInit)
-	{
-		controlsInit = TRUE;
+  if (!controlsInit) {
+    controlsInit = TRUE;
 #if MAX_VERSION_MAJOR < 14
-		InitCustomControls(hInstance); // Initialize MAX's custom controls
+    InitCustomControls(hInstance); // Initialize MAX's custom controls
 #endif
-		InitCommonControls(); // Initialize Win95 controls
-	}
+    InitCommonControls(); // Initialize Win95 controls
+  }
 
-	return (TRUE);
+  return (TRUE);
 }
 
-__declspec(dllexport) const TCHAR *LibDescription()
-{
-	return GetString(IDS_LIBDESCRIPTION);
+__declspec(dllexport) const TCHAR *LibDescription() {
+  return GetString(IDS_LIBDESCRIPTION);
 }
 
 // TODO: Must change this number when adding a new class
-__declspec(dllexport) int LibNumberClasses()
-{
-	return 1;
+__declspec(dllexport) int LibNumberClasses() { return 1; }
+
+__declspec(dllexport) ClassDesc *LibClassDesc(int i) {
+  switch (i) {
+  case 0:
+    return GetCNelExportDesc();
+  default:
+    return 0;
+  }
 }
 
-__declspec(dllexport) ClassDesc *LibClassDesc(int i)
-{
-	switch (i)
-	{
-	case 0: return GetCNelExportDesc();
-	default: return 0;
-	}
-}
+__declspec(dllexport) ULONG LibVersion() { return VERSION_3DSMAX; }
 
-__declspec(dllexport) ULONG LibVersion()
-{
-	return VERSION_3DSMAX;
-}
+TCHAR *GetString(int id) {
+  static TCHAR buf[256];
 
-TCHAR *GetString(int id)
-{
-	static TCHAR buf[256];
-
-	if (hInstance)
-		return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : NULL;
-	return NULL;
+  if (hInstance)
+    return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : NULL;
+  return NULL;
 }

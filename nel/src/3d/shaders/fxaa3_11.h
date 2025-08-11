@@ -677,10 +677,9 @@ API PORTING
 /*--------------------------------------------------------------------------*/
 #if (FXAA_HLSL_4 == 1)
 #define FxaaInt2 int2
-struct FxaaTex
-{
-	SamplerState smpl;
-	Texture2D tex;
+struct FxaaTex {
+  SamplerState smpl;
+  Texture2D tex;
 };
 #define FxaaTexTop(t, p) t.tex.SampleLevel(t.smpl, p, 0.0)
 #define FxaaTexOff(t, p, o, r) t.tex.SampleLevel(t.smpl, p, 0.0, o)
@@ -688,10 +687,9 @@ struct FxaaTex
 /*--------------------------------------------------------------------------*/
 #if (FXAA_HLSL_5 == 1)
 #define FxaaInt2 int2
-struct FxaaTex
-{
-	SamplerState smpl;
-	Texture2D tex;
+struct FxaaTex {
+  SamplerState smpl;
+  Texture2D tex;
 };
 #define FxaaTexTop(t, p) t.tex.SampleLevel(t.smpl, p, 0.0)
 #define FxaaTexOff(t, p, o, r) t.tex.SampleLevel(t.smpl, p, 0.0, o)
@@ -724,13 +722,13 @@ FXAA3 QUALITY - PC
 /*--------------------------------------------------------------------------*/
 FxaaFloat4 FxaaPixelShader(
     //
-    // Use noperspective interpolation here (turn off perspective interpolation).
-    // {xy} = center of pixel
+    // Use noperspective interpolation here (turn off perspective
+    // interpolation). {xy} = center of pixel
     FxaaFloat2 pos,
     //
     // Used only for FXAA Console, and not used on the 360 version.
-    // Use noperspective interpolation here (turn off perspective interpolation).
-    // {xy__} = upper left of pixel
+    // Use noperspective interpolation here (turn off perspective
+    // interpolation). {xy__} = upper left of pixel
     // {__zw} = lower right of pixel
     // FxaaFloat4 fxaaConsolePosPos,
     //
@@ -879,15 +877,14 @@ FxaaFloat4 FxaaPixelShader(
     // Immedates will result in compiler un-optimizing.
     // {xyzw} = float4(1.0, -1.0, 0.25, -0.25)
     // FxaaFloat4 fxaaConsole360ConstDir
-)
-{
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat2 posM;
-	posM.x = pos.x;
-	posM.y = pos.y;
+) {
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat2 posM;
+  posM.x = pos.x;
+  posM.y = pos.y;
 #if (FXAA_GATHER4_ALPHA == 1)
 #if (FXAA_DISCARD == 0)
-	FxaaFloat4 rgbyM = FxaaTexTop(tex, posM);
+  FxaaFloat4 rgbyM = FxaaTexTop(tex, posM);
 #if (FXAA_GREEN_AS_LUMA == 0)
 #define lumaM rgbyM.w
 #else
@@ -895,11 +892,11 @@ FxaaFloat4 FxaaPixelShader(
 #endif
 #endif
 #if (FXAA_GREEN_AS_LUMA == 0)
-	FxaaFloat4 luma4A = FxaaTexAlpha4(tex, posM);
-	FxaaFloat4 luma4B = FxaaTexOffAlpha4(tex, posM, FxaaInt2(-1, -1));
+  FxaaFloat4 luma4A = FxaaTexAlpha4(tex, posM);
+  FxaaFloat4 luma4B = FxaaTexOffAlpha4(tex, posM, FxaaInt2(-1, -1));
 #else
-	FxaaFloat4 luma4A = FxaaTexGreen4(tex, posM);
-	FxaaFloat4 luma4B = FxaaTexOffGreen4(tex, posM, FxaaInt2(-1, -1));
+  FxaaFloat4 luma4A = FxaaTexGreen4(tex, posM);
+  FxaaFloat4 luma4B = FxaaTexOffGreen4(tex, posM, FxaaInt2(-1, -1));
 #endif
 #if (FXAA_DISCARD == 1)
 #define lumaM luma4A.w
@@ -911,345 +908,447 @@ FxaaFloat4 FxaaPixelShader(
 #define lumaN luma4B.z
 #define lumaW luma4B.x
 #else
-	FxaaFloat4 rgbyM = FxaaTexTop(tex, posM);
+  FxaaFloat4 rgbyM = FxaaTexTop(tex, posM);
 #if (FXAA_GREEN_AS_LUMA == 0)
 #define lumaM rgbyM.w
 #else
 #define lumaM rgbyM.y
 #endif
-	FxaaFloat lumaS = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(0, 1), fxaaQualityRcpFrame.xy));
-	FxaaFloat lumaE = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(1, 0), fxaaQualityRcpFrame.xy));
-	FxaaFloat lumaN = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(0, -1), fxaaQualityRcpFrame.xy));
-	FxaaFloat lumaW = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(-1, 0), fxaaQualityRcpFrame.xy));
+  FxaaFloat lumaS =
+      FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(0, 1), fxaaQualityRcpFrame.xy));
+  FxaaFloat lumaE =
+      FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(1, 0), fxaaQualityRcpFrame.xy));
+  FxaaFloat lumaN =
+      FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(0, -1), fxaaQualityRcpFrame.xy));
+  FxaaFloat lumaW =
+      FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(-1, 0), fxaaQualityRcpFrame.xy));
 #endif
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat maxSM = max(lumaS, lumaM);
-	FxaaFloat minSM = min(lumaS, lumaM);
-	FxaaFloat maxESM = max(lumaE, maxSM);
-	FxaaFloat minESM = min(lumaE, minSM);
-	FxaaFloat maxWN = max(lumaN, lumaW);
-	FxaaFloat minWN = min(lumaN, lumaW);
-	FxaaFloat rangeMax = max(maxWN, maxESM);
-	FxaaFloat rangeMin = min(minWN, minESM);
-	FxaaFloat rangeMaxScaled = rangeMax * fxaaQualityEdgeThreshold;
-	FxaaFloat range = rangeMax - rangeMin;
-	FxaaFloat rangeMaxClamped = max(fxaaQualityEdgeThresholdMin, rangeMaxScaled);
-	FxaaBool earlyExit = range < rangeMaxClamped;
-	/*--------------------------------------------------------------------------*/
-	if (earlyExit)
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat maxSM = max(lumaS, lumaM);
+  FxaaFloat minSM = min(lumaS, lumaM);
+  FxaaFloat maxESM = max(lumaE, maxSM);
+  FxaaFloat minESM = min(lumaE, minSM);
+  FxaaFloat maxWN = max(lumaN, lumaW);
+  FxaaFloat minWN = min(lumaN, lumaW);
+  FxaaFloat rangeMax = max(maxWN, maxESM);
+  FxaaFloat rangeMin = min(minWN, minESM);
+  FxaaFloat rangeMaxScaled = rangeMax * fxaaQualityEdgeThreshold;
+  FxaaFloat range = rangeMax - rangeMin;
+  FxaaFloat rangeMaxClamped = max(fxaaQualityEdgeThresholdMin, rangeMaxScaled);
+  FxaaBool earlyExit = range < rangeMaxClamped;
+  /*--------------------------------------------------------------------------*/
+  if (earlyExit)
 #if (FXAA_DISCARD == 1)
-		FxaaDiscard;
+    FxaaDiscard;
 #else
-		return rgbyM;
+    return rgbyM;
 #endif
 /*--------------------------------------------------------------------------*/
 #if (FXAA_GATHER4_ALPHA == 0)
-	FxaaFloat lumaNW = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(-1, -1), fxaaQualityRcpFrame.xy));
-	FxaaFloat lumaSE = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(1, 1), fxaaQualityRcpFrame.xy));
-	FxaaFloat lumaNE = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(1, -1), fxaaQualityRcpFrame.xy));
-	FxaaFloat lumaSW = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(-1, 1), fxaaQualityRcpFrame.xy));
+  FxaaFloat lumaNW =
+      FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(-1, -1), fxaaQualityRcpFrame.xy));
+  FxaaFloat lumaSE =
+      FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(1, 1), fxaaQualityRcpFrame.xy));
+  FxaaFloat lumaNE =
+      FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(1, -1), fxaaQualityRcpFrame.xy));
+  FxaaFloat lumaSW =
+      FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(-1, 1), fxaaQualityRcpFrame.xy));
 #else
-	FxaaFloat lumaNE = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(1, -1), fxaaQualityRcpFrame.xy));
-	FxaaFloat lumaSW = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(-1, 1), fxaaQualityRcpFrame.xy));
+  FxaaFloat lumaNE =
+      FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(1, -1), fxaaQualityRcpFrame.xy));
+  FxaaFloat lumaSW =
+      FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(-1, 1), fxaaQualityRcpFrame.xy));
 #endif
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat lumaNS = lumaN + lumaS;
-	FxaaFloat lumaWE = lumaW + lumaE;
-	FxaaFloat subpixRcpRange = 1.0 / range;
-	FxaaFloat subpixNSWE = lumaNS + lumaWE;
-	FxaaFloat edgeHorz1 = (-2.0 * lumaM) + lumaNS;
-	FxaaFloat edgeVert1 = (-2.0 * lumaM) + lumaWE;
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat lumaNESE = lumaNE + lumaSE;
-	FxaaFloat lumaNWNE = lumaNW + lumaNE;
-	FxaaFloat edgeHorz2 = (-2.0 * lumaE) + lumaNESE;
-	FxaaFloat edgeVert2 = (-2.0 * lumaN) + lumaNWNE;
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat lumaNWSW = lumaNW + lumaSW;
-	FxaaFloat lumaSWSE = lumaSW + lumaSE;
-	FxaaFloat edgeHorz4 = (abs(edgeHorz1) * 2.0) + abs(edgeHorz2);
-	FxaaFloat edgeVert4 = (abs(edgeVert1) * 2.0) + abs(edgeVert2);
-	FxaaFloat edgeHorz3 = (-2.0 * lumaW) + lumaNWSW;
-	FxaaFloat edgeVert3 = (-2.0 * lumaS) + lumaSWSE;
-	FxaaFloat edgeHorz = abs(edgeHorz3) + edgeHorz4;
-	FxaaFloat edgeVert = abs(edgeVert3) + edgeVert4;
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat subpixNWSWNESE = lumaNWSW + lumaNESE;
-	FxaaFloat lengthSign = fxaaQualityRcpFrame.x;
-	FxaaBool horzSpan = edgeHorz >= edgeVert;
-	FxaaFloat subpixA = subpixNSWE * 2.0 + subpixNWSWNESE;
-	/*--------------------------------------------------------------------------*/
-	if (!horzSpan) lumaN = lumaW;
-	if (!horzSpan) lumaS = lumaE;
-	if (horzSpan) lengthSign = fxaaQualityRcpFrame.y;
-	FxaaFloat subpixB = (subpixA * (1.0 / 12.0)) - lumaM;
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat gradientN = lumaN - lumaM;
-	FxaaFloat gradientS = lumaS - lumaM;
-	FxaaFloat lumaNN = lumaN + lumaM;
-	FxaaFloat lumaSS = lumaS + lumaM;
-	FxaaBool pairN = abs(gradientN) >= abs(gradientS);
-	FxaaFloat gradient = max(abs(gradientN), abs(gradientS));
-	if (pairN) lengthSign = -lengthSign;
-	FxaaFloat subpixC = FxaaSat(abs(subpixB) * subpixRcpRange);
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat2 posB;
-	posB.x = posM.x;
-	posB.y = posM.y;
-	FxaaFloat2 offNP;
-	offNP.x = (!horzSpan) ? 0.0 : fxaaQualityRcpFrame.x;
-	offNP.y = (horzSpan) ? 0.0 : fxaaQualityRcpFrame.y;
-	if (!horzSpan) posB.x += lengthSign * 0.5;
-	if (horzSpan) posB.y += lengthSign * 0.5;
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat2 posN;
-	posN.x = posB.x - offNP.x * FXAA_QUALITY__P0;
-	posN.y = posB.y - offNP.y * FXAA_QUALITY__P0;
-	FxaaFloat2 posP;
-	posP.x = posB.x + offNP.x * FXAA_QUALITY__P0;
-	posP.y = posB.y + offNP.y * FXAA_QUALITY__P0;
-	FxaaFloat subpixD = ((-2.0) * subpixC) + 3.0;
-	FxaaFloat lumaEndN = FxaaLuma(FxaaTexTop(tex, posN));
-	FxaaFloat subpixE = subpixC * subpixC;
-	FxaaFloat lumaEndP = FxaaLuma(FxaaTexTop(tex, posP));
-	/*--------------------------------------------------------------------------*/
-	if (!pairN) lumaNN = lumaSS;
-	FxaaFloat gradientScaled = gradient * 1.0 / 4.0;
-	FxaaFloat lumaMM = lumaM - lumaNN * 0.5;
-	FxaaFloat subpixF = subpixD * subpixE;
-	FxaaBool lumaMLTZero = lumaMM < 0.0;
-	/*--------------------------------------------------------------------------*/
-	lumaEndN -= lumaNN * 0.5;
-	lumaEndP -= lumaNN * 0.5;
-	FxaaBool doneN = abs(lumaEndN) >= gradientScaled;
-	FxaaBool doneP = abs(lumaEndP) >= gradientScaled;
-	if (!doneN) posN.x -= offNP.x * FXAA_QUALITY__P1;
-	if (!doneN) posN.y -= offNP.y * FXAA_QUALITY__P1;
-	FxaaBool doneNP = (!doneN) || (!doneP);
-	if (!doneP) posP.x += offNP.x * FXAA_QUALITY__P1;
-	if (!doneP) posP.y += offNP.y * FXAA_QUALITY__P1;
-	/*--------------------------------------------------------------------------*/
-	if (doneNP)
-	{
-		if (!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
-		if (!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
-		if (!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;
-		if (!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;
-		doneN = abs(lumaEndN) >= gradientScaled;
-		doneP = abs(lumaEndP) >= gradientScaled;
-		if (!doneN) posN.x -= offNP.x * FXAA_QUALITY__P2;
-		if (!doneN) posN.y -= offNP.y * FXAA_QUALITY__P2;
-		doneNP = (!doneN) || (!doneP);
-		if (!doneP) posP.x += offNP.x * FXAA_QUALITY__P2;
-		if (!doneP) posP.y += offNP.y * FXAA_QUALITY__P2;
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat lumaNS = lumaN + lumaS;
+  FxaaFloat lumaWE = lumaW + lumaE;
+  FxaaFloat subpixRcpRange = 1.0 / range;
+  FxaaFloat subpixNSWE = lumaNS + lumaWE;
+  FxaaFloat edgeHorz1 = (-2.0 * lumaM) + lumaNS;
+  FxaaFloat edgeVert1 = (-2.0 * lumaM) + lumaWE;
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat lumaNESE = lumaNE + lumaSE;
+  FxaaFloat lumaNWNE = lumaNW + lumaNE;
+  FxaaFloat edgeHorz2 = (-2.0 * lumaE) + lumaNESE;
+  FxaaFloat edgeVert2 = (-2.0 * lumaN) + lumaNWNE;
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat lumaNWSW = lumaNW + lumaSW;
+  FxaaFloat lumaSWSE = lumaSW + lumaSE;
+  FxaaFloat edgeHorz4 = (abs(edgeHorz1) * 2.0) + abs(edgeHorz2);
+  FxaaFloat edgeVert4 = (abs(edgeVert1) * 2.0) + abs(edgeVert2);
+  FxaaFloat edgeHorz3 = (-2.0 * lumaW) + lumaNWSW;
+  FxaaFloat edgeVert3 = (-2.0 * lumaS) + lumaSWSE;
+  FxaaFloat edgeHorz = abs(edgeHorz3) + edgeHorz4;
+  FxaaFloat edgeVert = abs(edgeVert3) + edgeVert4;
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat subpixNWSWNESE = lumaNWSW + lumaNESE;
+  FxaaFloat lengthSign = fxaaQualityRcpFrame.x;
+  FxaaBool horzSpan = edgeHorz >= edgeVert;
+  FxaaFloat subpixA = subpixNSWE * 2.0 + subpixNWSWNESE;
+  /*--------------------------------------------------------------------------*/
+  if (!horzSpan)
+    lumaN = lumaW;
+  if (!horzSpan)
+    lumaS = lumaE;
+  if (horzSpan)
+    lengthSign = fxaaQualityRcpFrame.y;
+  FxaaFloat subpixB = (subpixA * (1.0 / 12.0)) - lumaM;
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat gradientN = lumaN - lumaM;
+  FxaaFloat gradientS = lumaS - lumaM;
+  FxaaFloat lumaNN = lumaN + lumaM;
+  FxaaFloat lumaSS = lumaS + lumaM;
+  FxaaBool pairN = abs(gradientN) >= abs(gradientS);
+  FxaaFloat gradient = max(abs(gradientN), abs(gradientS));
+  if (pairN)
+    lengthSign = -lengthSign;
+  FxaaFloat subpixC = FxaaSat(abs(subpixB) * subpixRcpRange);
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat2 posB;
+  posB.x = posM.x;
+  posB.y = posM.y;
+  FxaaFloat2 offNP;
+  offNP.x = (!horzSpan) ? 0.0 : fxaaQualityRcpFrame.x;
+  offNP.y = (horzSpan) ? 0.0 : fxaaQualityRcpFrame.y;
+  if (!horzSpan)
+    posB.x += lengthSign * 0.5;
+  if (horzSpan)
+    posB.y += lengthSign * 0.5;
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat2 posN;
+  posN.x = posB.x - offNP.x * FXAA_QUALITY__P0;
+  posN.y = posB.y - offNP.y * FXAA_QUALITY__P0;
+  FxaaFloat2 posP;
+  posP.x = posB.x + offNP.x * FXAA_QUALITY__P0;
+  posP.y = posB.y + offNP.y * FXAA_QUALITY__P0;
+  FxaaFloat subpixD = ((-2.0) * subpixC) + 3.0;
+  FxaaFloat lumaEndN = FxaaLuma(FxaaTexTop(tex, posN));
+  FxaaFloat subpixE = subpixC * subpixC;
+  FxaaFloat lumaEndP = FxaaLuma(FxaaTexTop(tex, posP));
+  /*--------------------------------------------------------------------------*/
+  if (!pairN)
+    lumaNN = lumaSS;
+  FxaaFloat gradientScaled = gradient * 1.0 / 4.0;
+  FxaaFloat lumaMM = lumaM - lumaNN * 0.5;
+  FxaaFloat subpixF = subpixD * subpixE;
+  FxaaBool lumaMLTZero = lumaMM < 0.0;
+  /*--------------------------------------------------------------------------*/
+  lumaEndN -= lumaNN * 0.5;
+  lumaEndP -= lumaNN * 0.5;
+  FxaaBool doneN = abs(lumaEndN) >= gradientScaled;
+  FxaaBool doneP = abs(lumaEndP) >= gradientScaled;
+  if (!doneN)
+    posN.x -= offNP.x * FXAA_QUALITY__P1;
+  if (!doneN)
+    posN.y -= offNP.y * FXAA_QUALITY__P1;
+  FxaaBool doneNP = (!doneN) || (!doneP);
+  if (!doneP)
+    posP.x += offNP.x * FXAA_QUALITY__P1;
+  if (!doneP)
+    posP.y += offNP.y * FXAA_QUALITY__P1;
+  /*--------------------------------------------------------------------------*/
+  if (doneNP) {
+    if (!doneN)
+      lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
+    if (!doneP)
+      lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
+    if (!doneN)
+      lumaEndN = lumaEndN - lumaNN * 0.5;
+    if (!doneP)
+      lumaEndP = lumaEndP - lumaNN * 0.5;
+    doneN = abs(lumaEndN) >= gradientScaled;
+    doneP = abs(lumaEndP) >= gradientScaled;
+    if (!doneN)
+      posN.x -= offNP.x * FXAA_QUALITY__P2;
+    if (!doneN)
+      posN.y -= offNP.y * FXAA_QUALITY__P2;
+    doneNP = (!doneN) || (!doneP);
+    if (!doneP)
+      posP.x += offNP.x * FXAA_QUALITY__P2;
+    if (!doneP)
+      posP.y += offNP.y * FXAA_QUALITY__P2;
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PS > 3)
-		if (doneNP)
-		{
-			if (!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
-			if (!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
-			if (!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;
-			if (!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;
-			doneN = abs(lumaEndN) >= gradientScaled;
-			doneP = abs(lumaEndP) >= gradientScaled;
-			if (!doneN) posN.x -= offNP.x * FXAA_QUALITY__P3;
-			if (!doneN) posN.y -= offNP.y * FXAA_QUALITY__P3;
-			doneNP = (!doneN) || (!doneP);
-			if (!doneP) posP.x += offNP.x * FXAA_QUALITY__P3;
-			if (!doneP) posP.y += offNP.y * FXAA_QUALITY__P3;
+    if (doneNP) {
+      if (!doneN)
+        lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
+      if (!doneP)
+        lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
+      if (!doneN)
+        lumaEndN = lumaEndN - lumaNN * 0.5;
+      if (!doneP)
+        lumaEndP = lumaEndP - lumaNN * 0.5;
+      doneN = abs(lumaEndN) >= gradientScaled;
+      doneP = abs(lumaEndP) >= gradientScaled;
+      if (!doneN)
+        posN.x -= offNP.x * FXAA_QUALITY__P3;
+      if (!doneN)
+        posN.y -= offNP.y * FXAA_QUALITY__P3;
+      doneNP = (!doneN) || (!doneP);
+      if (!doneP)
+        posP.x += offNP.x * FXAA_QUALITY__P3;
+      if (!doneP)
+        posP.y += offNP.y * FXAA_QUALITY__P3;
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PS > 4)
-			if (doneNP)
-			{
-				if (!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
-				if (!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
-				if (!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;
-				if (!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;
-				doneN = abs(lumaEndN) >= gradientScaled;
-				doneP = abs(lumaEndP) >= gradientScaled;
-				if (!doneN) posN.x -= offNP.x * FXAA_QUALITY__P4;
-				if (!doneN) posN.y -= offNP.y * FXAA_QUALITY__P4;
-				doneNP = (!doneN) || (!doneP);
-				if (!doneP) posP.x += offNP.x * FXAA_QUALITY__P4;
-				if (!doneP) posP.y += offNP.y * FXAA_QUALITY__P4;
+      if (doneNP) {
+        if (!doneN)
+          lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
+        if (!doneP)
+          lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
+        if (!doneN)
+          lumaEndN = lumaEndN - lumaNN * 0.5;
+        if (!doneP)
+          lumaEndP = lumaEndP - lumaNN * 0.5;
+        doneN = abs(lumaEndN) >= gradientScaled;
+        doneP = abs(lumaEndP) >= gradientScaled;
+        if (!doneN)
+          posN.x -= offNP.x * FXAA_QUALITY__P4;
+        if (!doneN)
+          posN.y -= offNP.y * FXAA_QUALITY__P4;
+        doneNP = (!doneN) || (!doneP);
+        if (!doneP)
+          posP.x += offNP.x * FXAA_QUALITY__P4;
+        if (!doneP)
+          posP.y += offNP.y * FXAA_QUALITY__P4;
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PS > 5)
-				if (doneNP)
-				{
-					if (!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
-					if (!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
-					if (!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;
-					if (!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;
-					doneN = abs(lumaEndN) >= gradientScaled;
-					doneP = abs(lumaEndP) >= gradientScaled;
-					if (!doneN) posN.x -= offNP.x * FXAA_QUALITY__P5;
-					if (!doneN) posN.y -= offNP.y * FXAA_QUALITY__P5;
-					doneNP = (!doneN) || (!doneP);
-					if (!doneP) posP.x += offNP.x * FXAA_QUALITY__P5;
-					if (!doneP) posP.y += offNP.y * FXAA_QUALITY__P5;
+        if (doneNP) {
+          if (!doneN)
+            lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
+          if (!doneP)
+            lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
+          if (!doneN)
+            lumaEndN = lumaEndN - lumaNN * 0.5;
+          if (!doneP)
+            lumaEndP = lumaEndP - lumaNN * 0.5;
+          doneN = abs(lumaEndN) >= gradientScaled;
+          doneP = abs(lumaEndP) >= gradientScaled;
+          if (!doneN)
+            posN.x -= offNP.x * FXAA_QUALITY__P5;
+          if (!doneN)
+            posN.y -= offNP.y * FXAA_QUALITY__P5;
+          doneNP = (!doneN) || (!doneP);
+          if (!doneP)
+            posP.x += offNP.x * FXAA_QUALITY__P5;
+          if (!doneP)
+            posP.y += offNP.y * FXAA_QUALITY__P5;
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PS > 6)
-					if (doneNP)
-					{
-						if (!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
-						if (!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
-						if (!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;
-						if (!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;
-						doneN = abs(lumaEndN) >= gradientScaled;
-						doneP = abs(lumaEndP) >= gradientScaled;
-						if (!doneN) posN.x -= offNP.x * FXAA_QUALITY__P6;
-						if (!doneN) posN.y -= offNP.y * FXAA_QUALITY__P6;
-						doneNP = (!doneN) || (!doneP);
-						if (!doneP) posP.x += offNP.x * FXAA_QUALITY__P6;
-						if (!doneP) posP.y += offNP.y * FXAA_QUALITY__P6;
+          if (doneNP) {
+            if (!doneN)
+              lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
+            if (!doneP)
+              lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
+            if (!doneN)
+              lumaEndN = lumaEndN - lumaNN * 0.5;
+            if (!doneP)
+              lumaEndP = lumaEndP - lumaNN * 0.5;
+            doneN = abs(lumaEndN) >= gradientScaled;
+            doneP = abs(lumaEndP) >= gradientScaled;
+            if (!doneN)
+              posN.x -= offNP.x * FXAA_QUALITY__P6;
+            if (!doneN)
+              posN.y -= offNP.y * FXAA_QUALITY__P6;
+            doneNP = (!doneN) || (!doneP);
+            if (!doneP)
+              posP.x += offNP.x * FXAA_QUALITY__P6;
+            if (!doneP)
+              posP.y += offNP.y * FXAA_QUALITY__P6;
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PS > 7)
-						if (doneNP)
-						{
-							if (!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
-							if (!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
-							if (!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;
-							if (!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;
-							doneN = abs(lumaEndN) >= gradientScaled;
-							doneP = abs(lumaEndP) >= gradientScaled;
-							if (!doneN) posN.x -= offNP.x * FXAA_QUALITY__P7;
-							if (!doneN) posN.y -= offNP.y * FXAA_QUALITY__P7;
-							doneNP = (!doneN) || (!doneP);
-							if (!doneP) posP.x += offNP.x * FXAA_QUALITY__P7;
-							if (!doneP) posP.y += offNP.y * FXAA_QUALITY__P7;
+            if (doneNP) {
+              if (!doneN)
+                lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
+              if (!doneP)
+                lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
+              if (!doneN)
+                lumaEndN = lumaEndN - lumaNN * 0.5;
+              if (!doneP)
+                lumaEndP = lumaEndP - lumaNN * 0.5;
+              doneN = abs(lumaEndN) >= gradientScaled;
+              doneP = abs(lumaEndP) >= gradientScaled;
+              if (!doneN)
+                posN.x -= offNP.x * FXAA_QUALITY__P7;
+              if (!doneN)
+                posN.y -= offNP.y * FXAA_QUALITY__P7;
+              doneNP = (!doneN) || (!doneP);
+              if (!doneP)
+                posP.x += offNP.x * FXAA_QUALITY__P7;
+              if (!doneP)
+                posP.y += offNP.y * FXAA_QUALITY__P7;
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PS > 8)
-							if (doneNP)
-							{
-								if (!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
-								if (!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
-								if (!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;
-								if (!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;
-								doneN = abs(lumaEndN) >= gradientScaled;
-								doneP = abs(lumaEndP) >= gradientScaled;
-								if (!doneN) posN.x -= offNP.x * FXAA_QUALITY__P8;
-								if (!doneN) posN.y -= offNP.y * FXAA_QUALITY__P8;
-								doneNP = (!doneN) || (!doneP);
-								if (!doneP) posP.x += offNP.x * FXAA_QUALITY__P8;
-								if (!doneP) posP.y += offNP.y * FXAA_QUALITY__P8;
+              if (doneNP) {
+                if (!doneN)
+                  lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
+                if (!doneP)
+                  lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
+                if (!doneN)
+                  lumaEndN = lumaEndN - lumaNN * 0.5;
+                if (!doneP)
+                  lumaEndP = lumaEndP - lumaNN * 0.5;
+                doneN = abs(lumaEndN) >= gradientScaled;
+                doneP = abs(lumaEndP) >= gradientScaled;
+                if (!doneN)
+                  posN.x -= offNP.x * FXAA_QUALITY__P8;
+                if (!doneN)
+                  posN.y -= offNP.y * FXAA_QUALITY__P8;
+                doneNP = (!doneN) || (!doneP);
+                if (!doneP)
+                  posP.x += offNP.x * FXAA_QUALITY__P8;
+                if (!doneP)
+                  posP.y += offNP.y * FXAA_QUALITY__P8;
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PS > 9)
-								if (doneNP)
-								{
-									if (!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
-									if (!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
-									if (!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;
-									if (!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;
-									doneN = abs(lumaEndN) >= gradientScaled;
-									doneP = abs(lumaEndP) >= gradientScaled;
-									if (!doneN) posN.x -= offNP.x * FXAA_QUALITY__P9;
-									if (!doneN) posN.y -= offNP.y * FXAA_QUALITY__P9;
-									doneNP = (!doneN) || (!doneP);
-									if (!doneP) posP.x += offNP.x * FXAA_QUALITY__P9;
-									if (!doneP) posP.y += offNP.y * FXAA_QUALITY__P9;
+                if (doneNP) {
+                  if (!doneN)
+                    lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
+                  if (!doneP)
+                    lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
+                  if (!doneN)
+                    lumaEndN = lumaEndN - lumaNN * 0.5;
+                  if (!doneP)
+                    lumaEndP = lumaEndP - lumaNN * 0.5;
+                  doneN = abs(lumaEndN) >= gradientScaled;
+                  doneP = abs(lumaEndP) >= gradientScaled;
+                  if (!doneN)
+                    posN.x -= offNP.x * FXAA_QUALITY__P9;
+                  if (!doneN)
+                    posN.y -= offNP.y * FXAA_QUALITY__P9;
+                  doneNP = (!doneN) || (!doneP);
+                  if (!doneP)
+                    posP.x += offNP.x * FXAA_QUALITY__P9;
+                  if (!doneP)
+                    posP.y += offNP.y * FXAA_QUALITY__P9;
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PS > 10)
-									if (doneNP)
-									{
-										if (!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
-										if (!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
-										if (!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;
-										if (!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;
-										doneN = abs(lumaEndN) >= gradientScaled;
-										doneP = abs(lumaEndP) >= gradientScaled;
-										if (!doneN) posN.x -= offNP.x * FXAA_QUALITY__P10;
-										if (!doneN) posN.y -= offNP.y * FXAA_QUALITY__P10;
-										doneNP = (!doneN) || (!doneP);
-										if (!doneP) posP.x += offNP.x * FXAA_QUALITY__P10;
-										if (!doneP) posP.y += offNP.y * FXAA_QUALITY__P10;
+                  if (doneNP) {
+                    if (!doneN)
+                      lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
+                    if (!doneP)
+                      lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
+                    if (!doneN)
+                      lumaEndN = lumaEndN - lumaNN * 0.5;
+                    if (!doneP)
+                      lumaEndP = lumaEndP - lumaNN * 0.5;
+                    doneN = abs(lumaEndN) >= gradientScaled;
+                    doneP = abs(lumaEndP) >= gradientScaled;
+                    if (!doneN)
+                      posN.x -= offNP.x * FXAA_QUALITY__P10;
+                    if (!doneN)
+                      posN.y -= offNP.y * FXAA_QUALITY__P10;
+                    doneNP = (!doneN) || (!doneP);
+                    if (!doneP)
+                      posP.x += offNP.x * FXAA_QUALITY__P10;
+                    if (!doneP)
+                      posP.y += offNP.y * FXAA_QUALITY__P10;
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PS > 11)
-										if (doneNP)
-										{
-											if (!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
-											if (!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
-											if (!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;
-											if (!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;
-											doneN = abs(lumaEndN) >= gradientScaled;
-											doneP = abs(lumaEndP) >= gradientScaled;
-											if (!doneN) posN.x -= offNP.x * FXAA_QUALITY__P11;
-											if (!doneN) posN.y -= offNP.y * FXAA_QUALITY__P11;
-											doneNP = (!doneN) || (!doneP);
-											if (!doneP) posP.x += offNP.x * FXAA_QUALITY__P11;
-											if (!doneP) posP.y += offNP.y * FXAA_QUALITY__P11;
+                    if (doneNP) {
+                      if (!doneN)
+                        lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
+                      if (!doneP)
+                        lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
+                      if (!doneN)
+                        lumaEndN = lumaEndN - lumaNN * 0.5;
+                      if (!doneP)
+                        lumaEndP = lumaEndP - lumaNN * 0.5;
+                      doneN = abs(lumaEndN) >= gradientScaled;
+                      doneP = abs(lumaEndP) >= gradientScaled;
+                      if (!doneN)
+                        posN.x -= offNP.x * FXAA_QUALITY__P11;
+                      if (!doneN)
+                        posN.y -= offNP.y * FXAA_QUALITY__P11;
+                      doneNP = (!doneN) || (!doneP);
+                      if (!doneP)
+                        posP.x += offNP.x * FXAA_QUALITY__P11;
+                      if (!doneP)
+                        posP.y += offNP.y * FXAA_QUALITY__P11;
 /*--------------------------------------------------------------------------*/
 #if (FXAA_QUALITY__PS > 12)
-											if (doneNP)
-											{
-												if (!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
-												if (!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
-												if (!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;
-												if (!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;
-												doneN = abs(lumaEndN) >= gradientScaled;
-												doneP = abs(lumaEndP) >= gradientScaled;
-												if (!doneN) posN.x -= offNP.x * FXAA_QUALITY__P12;
-												if (!doneN) posN.y -= offNP.y * FXAA_QUALITY__P12;
-												doneNP = (!doneN) || (!doneP);
-												if (!doneP) posP.x += offNP.x * FXAA_QUALITY__P12;
-												if (!doneP) posP.y += offNP.y * FXAA_QUALITY__P12;
-												/*--------------------------------------------------------------------------*/
-											}
+                      if (doneNP) {
+                        if (!doneN)
+                          lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));
+                        if (!doneP)
+                          lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));
+                        if (!doneN)
+                          lumaEndN = lumaEndN - lumaNN * 0.5;
+                        if (!doneP)
+                          lumaEndP = lumaEndP - lumaNN * 0.5;
+                        doneN = abs(lumaEndN) >= gradientScaled;
+                        doneP = abs(lumaEndP) >= gradientScaled;
+                        if (!doneN)
+                          posN.x -= offNP.x * FXAA_QUALITY__P12;
+                        if (!doneN)
+                          posN.y -= offNP.y * FXAA_QUALITY__P12;
+                        doneNP = (!doneN) || (!doneP);
+                        if (!doneP)
+                          posP.x += offNP.x * FXAA_QUALITY__P12;
+                        if (!doneP)
+                          posP.y += offNP.y * FXAA_QUALITY__P12;
+                        /*--------------------------------------------------------------------------*/
+                      }
 #endif
-											/*--------------------------------------------------------------------------*/
-										}
+                      /*--------------------------------------------------------------------------*/
+                    }
 #endif
-										/*--------------------------------------------------------------------------*/
-									}
+                    /*--------------------------------------------------------------------------*/
+                  }
 #endif
-									/*--------------------------------------------------------------------------*/
-								}
+                  /*--------------------------------------------------------------------------*/
+                }
 #endif
-								/*--------------------------------------------------------------------------*/
-							}
+                /*--------------------------------------------------------------------------*/
+              }
 #endif
-							/*--------------------------------------------------------------------------*/
-						}
+              /*--------------------------------------------------------------------------*/
+            }
 #endif
-						/*--------------------------------------------------------------------------*/
-					}
+            /*--------------------------------------------------------------------------*/
+          }
 #endif
-					/*--------------------------------------------------------------------------*/
-				}
+          /*--------------------------------------------------------------------------*/
+        }
 #endif
-				/*--------------------------------------------------------------------------*/
-			}
+        /*--------------------------------------------------------------------------*/
+      }
 #endif
-			/*--------------------------------------------------------------------------*/
-		}
+      /*--------------------------------------------------------------------------*/
+    }
 #endif
-		/*--------------------------------------------------------------------------*/
-	}
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat dstN = posM.x - posN.x;
-	FxaaFloat dstP = posP.x - posM.x;
-	if (!horzSpan) dstN = posM.y - posN.y;
-	if (!horzSpan) dstP = posP.y - posM.y;
-	/*--------------------------------------------------------------------------*/
-	FxaaBool goodSpanN = (lumaEndN < 0.0) != lumaMLTZero;
-	FxaaFloat spanLength = (dstP + dstN);
-	FxaaBool goodSpanP = (lumaEndP < 0.0) != lumaMLTZero;
-	FxaaFloat spanLengthRcp = 1.0 / spanLength;
-	/*--------------------------------------------------------------------------*/
-	FxaaBool directionN = dstN < dstP;
-	FxaaFloat dst = min(dstN, dstP);
-	FxaaBool goodSpan = directionN ? goodSpanN : goodSpanP;
-	FxaaFloat subpixG = subpixF * subpixF;
-	FxaaFloat pixelOffset = (dst * (-spanLengthRcp)) + 0.5;
-	FxaaFloat subpixH = subpixG * fxaaQualitySubpix;
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat pixelOffsetGood = goodSpan ? pixelOffset : 0.0;
-	FxaaFloat pixelOffsetSubpix = max(pixelOffsetGood, subpixH);
-	if (!horzSpan) posM.x += pixelOffsetSubpix * lengthSign;
-	if (horzSpan) posM.y += pixelOffsetSubpix * lengthSign;
+    /*--------------------------------------------------------------------------*/
+  }
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat dstN = posM.x - posN.x;
+  FxaaFloat dstP = posP.x - posM.x;
+  if (!horzSpan)
+    dstN = posM.y - posN.y;
+  if (!horzSpan)
+    dstP = posP.y - posM.y;
+  /*--------------------------------------------------------------------------*/
+  FxaaBool goodSpanN = (lumaEndN < 0.0) != lumaMLTZero;
+  FxaaFloat spanLength = (dstP + dstN);
+  FxaaBool goodSpanP = (lumaEndP < 0.0) != lumaMLTZero;
+  FxaaFloat spanLengthRcp = 1.0 / spanLength;
+  /*--------------------------------------------------------------------------*/
+  FxaaBool directionN = dstN < dstP;
+  FxaaFloat dst = min(dstN, dstP);
+  FxaaBool goodSpan = directionN ? goodSpanN : goodSpanP;
+  FxaaFloat subpixG = subpixF * subpixF;
+  FxaaFloat pixelOffset = (dst * (-spanLengthRcp)) + 0.5;
+  FxaaFloat subpixH = subpixG * fxaaQualitySubpix;
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat pixelOffsetGood = goodSpan ? pixelOffset : 0.0;
+  FxaaFloat pixelOffsetSubpix = max(pixelOffsetGood, subpixH);
+  if (!horzSpan)
+    posM.x += pixelOffsetSubpix * lengthSign;
+  if (horzSpan)
+    posM.y += pixelOffsetSubpix * lengthSign;
 #if (FXAA_DISCARD == 1)
-	return FxaaTexTop(tex, posM);
+  return FxaaTexTop(tex, posM);
 #else
-	return FxaaFloat4(FxaaTexTop(tex, posM).xyz, lumaM);
+  return FxaaFloat4(FxaaTexTop(tex, posM).xyz, lumaM);
 #endif
 }
 /*==========================================================================*/
@@ -1269,80 +1368,79 @@ Either are higher qualilty and almost as fast as this on modern PC GPUs.
 /*--------------------------------------------------------------------------*/
 FxaaFloat4 FxaaPixelShader(
     // See FXAA Quality FxaaPixelShader() source for docs on Inputs!
-    FxaaFloat2 pos,
-    FxaaFloat4 fxaaConsolePosPos,
-    FxaaTex tex,
+    FxaaFloat2 pos, FxaaFloat4 fxaaConsolePosPos, FxaaTex tex,
     FxaaTex fxaaConsole360TexExpBiasNegOne,
-    FxaaTex fxaaConsole360TexExpBiasNegTwo,
-    FxaaFloat2 fxaaQualityRcpFrame,
-    FxaaFloat4 fxaaConsoleRcpFrameOpt,
-    FxaaFloat4 fxaaConsoleRcpFrameOpt2,
-    FxaaFloat4 fxaaConsole360RcpFrameOpt2,
-    FxaaFloat fxaaQualitySubpix,
-    FxaaFloat fxaaQualityEdgeThreshold,
-    FxaaFloat fxaaQualityEdgeThresholdMin,
-    FxaaFloat fxaaConsoleEdgeSharpness,
-    FxaaFloat fxaaConsoleEdgeThreshold,
-    FxaaFloat fxaaConsoleEdgeThresholdMin,
-    FxaaFloat4 fxaaConsole360ConstDir)
-{
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat lumaNw = FxaaLuma(FxaaTexTop(tex, fxaaConsolePosPos.xy));
-	FxaaFloat lumaSw = FxaaLuma(FxaaTexTop(tex, fxaaConsolePosPos.xw));
-	FxaaFloat lumaNe = FxaaLuma(FxaaTexTop(tex, fxaaConsolePosPos.zy));
-	FxaaFloat lumaSe = FxaaLuma(FxaaTexTop(tex, fxaaConsolePosPos.zw));
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat4 rgbyM = FxaaTexTop(tex, pos.xy);
+    FxaaTex fxaaConsole360TexExpBiasNegTwo, FxaaFloat2 fxaaQualityRcpFrame,
+    FxaaFloat4 fxaaConsoleRcpFrameOpt, FxaaFloat4 fxaaConsoleRcpFrameOpt2,
+    FxaaFloat4 fxaaConsole360RcpFrameOpt2, FxaaFloat fxaaQualitySubpix,
+    FxaaFloat fxaaQualityEdgeThreshold, FxaaFloat fxaaQualityEdgeThresholdMin,
+    FxaaFloat fxaaConsoleEdgeSharpness, FxaaFloat fxaaConsoleEdgeThreshold,
+    FxaaFloat fxaaConsoleEdgeThresholdMin, FxaaFloat4 fxaaConsole360ConstDir) {
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat lumaNw = FxaaLuma(FxaaTexTop(tex, fxaaConsolePosPos.xy));
+  FxaaFloat lumaSw = FxaaLuma(FxaaTexTop(tex, fxaaConsolePosPos.xw));
+  FxaaFloat lumaNe = FxaaLuma(FxaaTexTop(tex, fxaaConsolePosPos.zy));
+  FxaaFloat lumaSe = FxaaLuma(FxaaTexTop(tex, fxaaConsolePosPos.zw));
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat4 rgbyM = FxaaTexTop(tex, pos.xy);
 #if (FXAA_GREEN_AS_LUMA == 0)
-	FxaaFloat lumaM = rgbyM.w;
+  FxaaFloat lumaM = rgbyM.w;
 #else
-	FxaaFloat lumaM = rgbyM.y;
+  FxaaFloat lumaM = rgbyM.y;
 #endif
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat lumaMaxNwSw = max(lumaNw, lumaSw);
-	lumaNe += 1.0 / 384.0;
-	FxaaFloat lumaMinNwSw = min(lumaNw, lumaSw);
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat lumaMaxNeSe = max(lumaNe, lumaSe);
-	FxaaFloat lumaMinNeSe = min(lumaNe, lumaSe);
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat lumaMax = max(lumaMaxNeSe, lumaMaxNwSw);
-	FxaaFloat lumaMin = min(lumaMinNeSe, lumaMinNwSw);
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat lumaMaxScaled = lumaMax * fxaaConsoleEdgeThreshold;
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat lumaMinM = min(lumaMin, lumaM);
-	FxaaFloat lumaMaxScaledClamped = max(fxaaConsoleEdgeThresholdMin, lumaMaxScaled);
-	FxaaFloat lumaMaxM = max(lumaMax, lumaM);
-	FxaaFloat dirSwMinusNe = lumaSw - lumaNe;
-	FxaaFloat lumaMaxSubMinM = lumaMaxM - lumaMinM;
-	FxaaFloat dirSeMinusNw = lumaSe - lumaNw;
-	if (lumaMaxSubMinM < lumaMaxScaledClamped) return rgbyM;
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat2 dir;
-	dir.x = dirSwMinusNe + dirSeMinusNw;
-	dir.y = dirSwMinusNe - dirSeMinusNw;
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat2 dir1 = normalize(dir.xy);
-	FxaaFloat4 rgbyN1 = FxaaTexTop(tex, pos.xy - dir1 * fxaaConsoleRcpFrameOpt.zw);
-	FxaaFloat4 rgbyP1 = FxaaTexTop(tex, pos.xy + dir1 * fxaaConsoleRcpFrameOpt.zw);
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat dirAbsMinTimesC = min(abs(dir1.x), abs(dir1.y)) * fxaaConsoleEdgeSharpness;
-	FxaaFloat2 dir2 = clamp(dir1.xy / dirAbsMinTimesC, -2.0, 2.0);
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat4 rgbyN2 = FxaaTexTop(tex, pos.xy - dir2 * fxaaConsoleRcpFrameOpt2.zw);
-	FxaaFloat4 rgbyP2 = FxaaTexTop(tex, pos.xy + dir2 * fxaaConsoleRcpFrameOpt2.zw);
-	/*--------------------------------------------------------------------------*/
-	FxaaFloat4 rgbyA = rgbyN1 + rgbyP1;
-	FxaaFloat4 rgbyB = ((rgbyN2 + rgbyP2) * 0.25) + (rgbyA * 0.25);
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat lumaMaxNwSw = max(lumaNw, lumaSw);
+  lumaNe += 1.0 / 384.0;
+  FxaaFloat lumaMinNwSw = min(lumaNw, lumaSw);
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat lumaMaxNeSe = max(lumaNe, lumaSe);
+  FxaaFloat lumaMinNeSe = min(lumaNe, lumaSe);
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat lumaMax = max(lumaMaxNeSe, lumaMaxNwSw);
+  FxaaFloat lumaMin = min(lumaMinNeSe, lumaMinNwSw);
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat lumaMaxScaled = lumaMax * fxaaConsoleEdgeThreshold;
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat lumaMinM = min(lumaMin, lumaM);
+  FxaaFloat lumaMaxScaledClamped =
+      max(fxaaConsoleEdgeThresholdMin, lumaMaxScaled);
+  FxaaFloat lumaMaxM = max(lumaMax, lumaM);
+  FxaaFloat dirSwMinusNe = lumaSw - lumaNe;
+  FxaaFloat lumaMaxSubMinM = lumaMaxM - lumaMinM;
+  FxaaFloat dirSeMinusNw = lumaSe - lumaNw;
+  if (lumaMaxSubMinM < lumaMaxScaledClamped)
+    return rgbyM;
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat2 dir;
+  dir.x = dirSwMinusNe + dirSeMinusNw;
+  dir.y = dirSwMinusNe - dirSeMinusNw;
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat2 dir1 = normalize(dir.xy);
+  FxaaFloat4 rgbyN1 =
+      FxaaTexTop(tex, pos.xy - dir1 * fxaaConsoleRcpFrameOpt.zw);
+  FxaaFloat4 rgbyP1 =
+      FxaaTexTop(tex, pos.xy + dir1 * fxaaConsoleRcpFrameOpt.zw);
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat dirAbsMinTimesC =
+      min(abs(dir1.x), abs(dir1.y)) * fxaaConsoleEdgeSharpness;
+  FxaaFloat2 dir2 = clamp(dir1.xy / dirAbsMinTimesC, -2.0, 2.0);
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat4 rgbyN2 =
+      FxaaTexTop(tex, pos.xy - dir2 * fxaaConsoleRcpFrameOpt2.zw);
+  FxaaFloat4 rgbyP2 =
+      FxaaTexTop(tex, pos.xy + dir2 * fxaaConsoleRcpFrameOpt2.zw);
+  /*--------------------------------------------------------------------------*/
+  FxaaFloat4 rgbyA = rgbyN1 + rgbyP1;
+  FxaaFloat4 rgbyB = ((rgbyN2 + rgbyP2) * 0.25) + (rgbyA * 0.25);
 /*--------------------------------------------------------------------------*/
 #if (FXAA_GREEN_AS_LUMA == 0)
-	FxaaBool twoTap = (rgbyB.w < lumaMin) || (rgbyB.w > lumaMax);
+  FxaaBool twoTap = (rgbyB.w < lumaMin) || (rgbyB.w > lumaMax);
 #else
-	FxaaBool twoTap = (rgbyB.y < lumaMin) || (rgbyB.y > lumaMax);
+  FxaaBool twoTap = (rgbyB.y < lumaMin) || (rgbyB.y > lumaMax);
 #endif
-	if (twoTap) rgbyB.xyz = rgbyA.xyz * 0.5;
-	return rgbyB;
+  if (twoTap)
+    rgbyB.xyz = rgbyA.xyz * 0.5;
+  return rgbyB;
 }
 /*==========================================================================*/
 #endif
@@ -1363,79 +1461,83 @@ If it does not work, please let me know so I can fix it.
 /*--------------------------------------------------------------------------*/
 [reduceTempRegUsage(4)] float4 FxaaPixelShader(
     // See FXAA Quality FxaaPixelShader() source for docs on Inputs!
-    FxaaFloat2 pos,
-    FxaaFloat4 fxaaConsolePosPos,
-    FxaaTex tex,
+    FxaaFloat2 pos, FxaaFloat4 fxaaConsolePosPos, FxaaTex tex,
     FxaaTex fxaaConsole360TexExpBiasNegOne,
-    FxaaTex fxaaConsole360TexExpBiasNegTwo,
-    FxaaFloat2 fxaaQualityRcpFrame,
-    FxaaFloat4 fxaaConsoleRcpFrameOpt,
-    FxaaFloat4 fxaaConsoleRcpFrameOpt2,
-    FxaaFloat4 fxaaConsole360RcpFrameOpt2,
-    FxaaFloat fxaaQualitySubpix,
-    FxaaFloat fxaaQualityEdgeThreshold,
-    FxaaFloat fxaaQualityEdgeThresholdMin,
-    FxaaFloat fxaaConsoleEdgeSharpness,
-    FxaaFloat fxaaConsoleEdgeThreshold,
-    FxaaFloat fxaaConsoleEdgeThresholdMin,
-    FxaaFloat4 fxaaConsole360ConstDir) {
-/*--------------------------------------------------------------------------*/
-float4 lumaNwNeSwSe;
+    FxaaTex fxaaConsole360TexExpBiasNegTwo, FxaaFloat2 fxaaQualityRcpFrame,
+    FxaaFloat4 fxaaConsoleRcpFrameOpt, FxaaFloat4 fxaaConsoleRcpFrameOpt2,
+    FxaaFloat4 fxaaConsole360RcpFrameOpt2, FxaaFloat fxaaQualitySubpix,
+    FxaaFloat fxaaQualityEdgeThreshold, FxaaFloat fxaaQualityEdgeThresholdMin,
+    FxaaFloat fxaaConsoleEdgeSharpness, FxaaFloat fxaaConsoleEdgeThreshold,
+    FxaaFloat fxaaConsoleEdgeThresholdMin, FxaaFloat4 fxaaConsole360ConstDir) {
+  /*--------------------------------------------------------------------------*/
+  float4 lumaNwNeSwSe;
 #if (FXAA_GREEN_AS_LUMA == 0)
-asm {
+  asm {
 tfetch2D lumaNwNeSwSe.w___, tex, pos.xy, OffsetX = -0.5, OffsetY = -0.5, UseComputedLOD=false
 tfetch2D lumaNwNeSwSe._w__, tex, pos.xy, OffsetX = 0.5, OffsetY = -0.5, UseComputedLOD=false
 tfetch2D lumaNwNeSwSe.__w_, tex, pos.xy, OffsetX = -0.5, OffsetY = 0.5, UseComputedLOD=false
 tfetch2D lumaNwNeSwSe.___w, tex, pos.xy, OffsetX = 0.5, OffsetY = 0.5, UseComputedLOD=false
-};
+  }
+  ;
 #else
-asm {
+  asm {
 tfetch2D lumaNwNeSwSe.y___, tex, pos.xy, OffsetX = -0.5, OffsetY = -0.5, UseComputedLOD=false
 tfetch2D lumaNwNeSwSe._y__, tex, pos.xy, OffsetX = 0.5, OffsetY = -0.5, UseComputedLOD=false
 tfetch2D lumaNwNeSwSe.__y_, tex, pos.xy, OffsetX = -0.5, OffsetY = 0.5, UseComputedLOD=false
 tfetch2D lumaNwNeSwSe.___y, tex, pos.xy, OffsetX = 0.5, OffsetY = 0.5, UseComputedLOD=false
-};
+  }
+  ;
 #endif
-/*--------------------------------------------------------------------------*/
-lumaNwNeSwSe.y += 1.0/384.0;
-float2 lumaMinTemp = min(lumaNwNeSwSe.xy, lumaNwNeSwSe.zw);
-float2 lumaMaxTemp = max(lumaNwNeSwSe.xy, lumaNwNeSwSe.zw);
-float lumaMin = min(lumaMinTemp.x, lumaMinTemp.y);
-float lumaMax = max(lumaMaxTemp.x, lumaMaxTemp.y);
-/*--------------------------------------------------------------------------*/
-float4 rgbyM = tex2Dlod(tex, float4(pos.xy, 0.0, 0.0));
+  /*--------------------------------------------------------------------------*/
+  lumaNwNeSwSe.y += 1.0 / 384.0;
+  float2 lumaMinTemp = min(lumaNwNeSwSe.xy, lumaNwNeSwSe.zw);
+  float2 lumaMaxTemp = max(lumaNwNeSwSe.xy, lumaNwNeSwSe.zw);
+  float lumaMin = min(lumaMinTemp.x, lumaMinTemp.y);
+  float lumaMax = max(lumaMaxTemp.x, lumaMaxTemp.y);
+  /*--------------------------------------------------------------------------*/
+  float4 rgbyM = tex2Dlod(tex, float4(pos.xy, 0.0, 0.0));
 #if (FXAA_GREEN_AS_LUMA == 0)
-float lumaMinM = min(lumaMin, rgbyM.w);
-float lumaMaxM = max(lumaMax, rgbyM.w);
+  float lumaMinM = min(lumaMin, rgbyM.w);
+  float lumaMaxM = max(lumaMax, rgbyM.w);
 #else
-float lumaMinM = min(lumaMin, rgbyM.y);
-float lumaMaxM = max(lumaMax, rgbyM.y);
+  float lumaMinM = min(lumaMin, rgbyM.y);
+  float lumaMaxM = max(lumaMax, rgbyM.y);
 #endif
-if((lumaMaxM - lumaMinM) < max(fxaaConsoleEdgeThresholdMin, lumaMax * fxaaConsoleEdgeThreshold)) return rgbyM;
-/*--------------------------------------------------------------------------*/
-float2 dir;
-dir.x = dot(lumaNwNeSwSe, fxaaConsole360ConstDir.yyxx);
-dir.y = dot(lumaNwNeSwSe, fxaaConsole360ConstDir.xyxy);
-dir = normalize(dir);
-/*--------------------------------------------------------------------------*/
-float4 dir1 = dir.xyxy * fxaaConsoleRcpFrameOpt.xyzw;
-/*--------------------------------------------------------------------------*/
-float4 dir2;
-float dirAbsMinTimesC = min(abs(dir.x), abs(dir.y)) * fxaaConsoleEdgeSharpness;
-dir2 = saturate(fxaaConsole360ConstDir.zzww * dir.xyxy / dirAbsMinTimesC + 0.5);
-dir2 = dir2 * fxaaConsole360RcpFrameOpt2.xyxy + fxaaConsole360RcpFrameOpt2.zwzw;
-/*--------------------------------------------------------------------------*/
-float4 rgbyN1 = tex2Dlod(fxaaConsole360TexExpBiasNegOne, float4(pos.xy + dir1.xy, 0.0, 0.0));
-float4 rgbyP1 = tex2Dlod(fxaaConsole360TexExpBiasNegOne, float4(pos.xy + dir1.zw, 0.0, 0.0));
-float4 rgbyN2 = tex2Dlod(fxaaConsole360TexExpBiasNegTwo, float4(pos.xy + dir2.xy, 0.0, 0.0));
-float4 rgbyP2 = tex2Dlod(fxaaConsole360TexExpBiasNegTwo, float4(pos.xy + dir2.zw, 0.0, 0.0));
-/*--------------------------------------------------------------------------*/
-float4 rgbyA = rgbyN1 + rgbyP1;
-float4 rgbyB = rgbyN2 + rgbyP2 + rgbyA * 0.5;
-/*--------------------------------------------------------------------------*/
-float4 rgbyR = ((FxaaLuma(rgbyB) - lumaMax) > 0.0) ? rgbyA : rgbyB;
-rgbyR = ((FxaaLuma(rgbyB) - lumaMin) > 0.0) ? rgbyR : rgbyA;
-return rgbyR; }
+  if ((lumaMaxM - lumaMinM) <
+      max(fxaaConsoleEdgeThresholdMin, lumaMax * fxaaConsoleEdgeThreshold))
+    return rgbyM;
+  /*--------------------------------------------------------------------------*/
+  float2 dir;
+  dir.x = dot(lumaNwNeSwSe, fxaaConsole360ConstDir.yyxx);
+  dir.y = dot(lumaNwNeSwSe, fxaaConsole360ConstDir.xyxy);
+  dir = normalize(dir);
+  /*--------------------------------------------------------------------------*/
+  float4 dir1 = dir.xyxy * fxaaConsoleRcpFrameOpt.xyzw;
+  /*--------------------------------------------------------------------------*/
+  float4 dir2;
+  float dirAbsMinTimesC =
+      min(abs(dir.x), abs(dir.y)) * fxaaConsoleEdgeSharpness;
+  dir2 =
+      saturate(fxaaConsole360ConstDir.zzww * dir.xyxy / dirAbsMinTimesC + 0.5);
+  dir2 =
+      dir2 * fxaaConsole360RcpFrameOpt2.xyxy + fxaaConsole360RcpFrameOpt2.zwzw;
+  /*--------------------------------------------------------------------------*/
+  float4 rgbyN1 = tex2Dlod(fxaaConsole360TexExpBiasNegOne,
+                           float4(pos.xy + dir1.xy, 0.0, 0.0));
+  float4 rgbyP1 = tex2Dlod(fxaaConsole360TexExpBiasNegOne,
+                           float4(pos.xy + dir1.zw, 0.0, 0.0));
+  float4 rgbyN2 = tex2Dlod(fxaaConsole360TexExpBiasNegTwo,
+                           float4(pos.xy + dir2.xy, 0.0, 0.0));
+  float4 rgbyP2 = tex2Dlod(fxaaConsole360TexExpBiasNegTwo,
+                           float4(pos.xy + dir2.zw, 0.0, 0.0));
+  /*--------------------------------------------------------------------------*/
+  float4 rgbyA = rgbyN1 + rgbyP1;
+  float4 rgbyB = rgbyN2 + rgbyP2 + rgbyA * 0.5;
+  /*--------------------------------------------------------------------------*/
+  float4 rgbyR = ((FxaaLuma(rgbyB) - lumaMax) > 0.0) ? rgbyA : rgbyB;
+  rgbyR = ((FxaaLuma(rgbyB) - lumaMin) > 0.0) ? rgbyR : rgbyA;
+  return rgbyR;
+}
 /*==========================================================================*/
 #endif
 
@@ -1474,28 +1576,18 @@ Shader to schedule:
 17: maxh h4.w(TRUE), h0, h1
 18: divx h2.xy(TRUE), h1_n.xzzw, h0_n
 19: movr r1.zw(TRUE), v4.xxxy
-20: madr r2.xz(TRUE), -h1, constant(cConst5.x, cConst5.y, cConst5.z, cConst5.w).zzww, r1.zzww
-22: minh h5.w(TRUE), h0, h1
-23: texpkb h0(TRUE), r2.xzxx, #0
-25: madr r0.zw(TRUE), h1.xzxz, constant(cConst5.x, cConst5.y, cConst5.z, cConst5.w), r1
-27: maxh h4.x(TRUE), h2.z, h2.w
-28: texpkb h1(TRUE), r0.zwzz, #0
-30: addh_d2 h1(TRUE), h0, h1
-31: madr r0.xy(TRUE), -h2, constant(cConst5.x, cConst5.y, cConst5.z, cConst5.w).xyxx, r1.zwzz
-33: texpkb h0(TRUE), r0, #0
-35: minh h4.z(TRUE), h2, h2.w
-36: fenct TRUE
-37: madr r1.xy(TRUE), h2, constant(cConst5.x, cConst5.y, cConst5.z, cConst5.w).xyxx, r1.zwzz
-39: texpkb h2(TRUE), r1, #0
-41: addh_d2 h0(TRUE), h0, h2
-42: maxh h2.w(TRUE), h4, h4.x
-43: minh h2.x(TRUE), h5.w, h4.z
-44: addh_d2 h0(TRUE), h0, h1
-45: slth h2.x(TRUE), h0.w, h2
-46: sgth h2.w(TRUE), h0, h2
-47: movh h0(TRUE), h0
-48: addx.c0 rc(TRUE), h2, h2.w
-49: movh h0(c0.NE.x), h1
+20: madr r2.xz(TRUE), -h1, constant(cConst5.x, cConst5.y, cConst5.z,
+cConst5.w).zzww, r1.zzww 22: minh h5.w(TRUE), h0, h1 23: texpkb h0(TRUE),
+r2.xzxx, #0 25: madr r0.zw(TRUE), h1.xzxz, constant(cConst5.x, cConst5.y,
+cConst5.z, cConst5.w), r1 27: maxh h4.x(TRUE), h2.z, h2.w 28: texpkb h1(TRUE),
+r0.zwzz, #0 30: addh_d2 h1(TRUE), h0, h1 31: madr r0.xy(TRUE), -h2,
+constant(cConst5.x, cConst5.y, cConst5.z, cConst5.w).xyxx, r1.zwzz 33: texpkb
+h0(TRUE), r0, #0 35: minh h4.z(TRUE), h2, h2.w 36: fenct TRUE 37: madr
+r1.xy(TRUE), h2, constant(cConst5.x, cConst5.y, cConst5.z, cConst5.w).xyxx,
+r1.zwzz 39: texpkb h2(TRUE), r1, #0 41: addh_d2 h0(TRUE), h0, h2 42: maxh
+h2.w(TRUE), h4, h4.x 43: minh h2.x(TRUE), h5.w, h4.z 44: addh_d2 h0(TRUE), h0,
+h1 45: slth h2.x(TRUE), h0.w, h2 46: sgth h2.w(TRUE), h0, h2 47: movh h0(TRUE),
+h0 48: addx.c0 rc(TRUE), h2, h2.w 49: movh h0(c0.NE.x), h1
 
 IPU0 ------ Simplified schedule: --------
 Pass | Unit | uOp | PC: Op
@@ -1603,14 +1695,11 @@ Results 13 cycles, 3 r regs, 923,076,923 pixels/s
 /*==========================================================================*/
 half4 FxaaPixelShader(
     // See FXAA Quality FxaaPixelShader() source for docs on Inputs!
-    FxaaFloat2 pos,
-    FxaaFloat4 fxaaConsolePosPos,
-    FxaaTex tex,
+    FxaaFloat2 pos, FxaaFloat4 fxaaConsolePosPos, FxaaTex tex,
     // FxaaTex fxaaConsole360TexExpBiasNegOne,
     // FxaaTex fxaaConsole360TexExpBiasNegTwo,
     // FxaaFloat2 fxaaQualityRcpFrame,
-    FxaaFloat4 fxaaConsoleRcpFrameOpt,
-    FxaaFloat4 fxaaConsoleRcpFrameOpt2
+    FxaaFloat4 fxaaConsoleRcpFrameOpt, FxaaFloat4 fxaaConsoleRcpFrameOpt2
     // FxaaFloat4 fxaaConsole360RcpFrameOpt2,
     // FxaaFloat fxaaQualitySubpix,
     // FxaaFloat fxaaQualityEdgeThreshold,
@@ -1619,109 +1708,120 @@ half4 FxaaPixelShader(
     // FxaaFloat fxaaConsoleEdgeThreshold,
     // FxaaFloat fxaaConsoleEdgeThresholdMin,
     // FxaaFloat4 fxaaConsole360ConstDir
-)
-{
-	/*--------------------------------------------------------------------------*/
-	// (1)
-	half4 dir;
-	half4 lumaNe = tex2D(tex, fxaaConsolePosPos.zy); // h4tex2Dlod(tex, half4(fxaaConsolePosPos.zy, 0, 0));
+) {
+  /*--------------------------------------------------------------------------*/
+  // (1)
+  half4 dir;
+  half4 lumaNe = tex2D(
+      tex, fxaaConsolePosPos
+               .zy); // h4tex2Dlod(tex, half4(fxaaConsolePosPos.zy, 0, 0));
 #if (FXAA_GREEN_AS_LUMA == 0)
-	lumaNe.w += half(1.0 / 512.0);
-	dir.x = -lumaNe.w;
-	dir.z = -lumaNe.w;
+  lumaNe.w += half(1.0 / 512.0);
+  dir.x = -lumaNe.w;
+  dir.z = -lumaNe.w;
 #else
-	lumaNe.y += half(1.0 / 512.0);
-	dir.x = -lumaNe.y;
-	dir.z = -lumaNe.y;
+  lumaNe.y += half(1.0 / 512.0);
+  dir.x = -lumaNe.y;
+  dir.z = -lumaNe.y;
 #endif
-	/*--------------------------------------------------------------------------*/
-	// (2)
-	half4 lumaSw = tex2D(tex, fxaaConsolePosPos.xw); // h4tex2Dlod(tex, half4(fxaaConsolePosPos.xw, 0, 0));
+  /*--------------------------------------------------------------------------*/
+  // (2)
+  half4 lumaSw = tex2D(
+      tex, fxaaConsolePosPos
+               .xw); // h4tex2Dlod(tex, half4(fxaaConsolePosPos.xw, 0, 0));
 #if (FXAA_GREEN_AS_LUMA == 0)
-	dir.x += lumaSw.w;
-	dir.z += lumaSw.w;
+  dir.x += lumaSw.w;
+  dir.z += lumaSw.w;
 #else
-	dir.x += lumaSw.y;
-	dir.z += lumaSw.y;
+  dir.x += lumaSw.y;
+  dir.z += lumaSw.y;
 #endif
-	/*--------------------------------------------------------------------------*/
-	// (3)
-	half4 lumaNw = tex2D(tex, fxaaConsolePosPos.xy); // h4tex2Dlod(tex, half4(fxaaConsolePosPos.xy, 0, 0));
+  /*--------------------------------------------------------------------------*/
+  // (3)
+  half4 lumaNw = tex2D(
+      tex, fxaaConsolePosPos
+               .xy); // h4tex2Dlod(tex, half4(fxaaConsolePosPos.xy, 0, 0));
 #if (FXAA_GREEN_AS_LUMA == 0)
-	dir.x -= lumaNw.w;
-	dir.z += lumaNw.w;
+  dir.x -= lumaNw.w;
+  dir.z += lumaNw.w;
 #else
-	dir.x -= lumaNw.y;
-	dir.z += lumaNw.y;
+  dir.x -= lumaNw.y;
+  dir.z += lumaNw.y;
 #endif
-	/*--------------------------------------------------------------------------*/
-	// (4)
-	half4 lumaSe = tex2D(tex, fxaaConsolePosPos.zw); // h4tex2Dlod(tex, half4(fxaaConsolePosPos.zw, 0, 0));
+  /*--------------------------------------------------------------------------*/
+  // (4)
+  half4 lumaSe = tex2D(
+      tex, fxaaConsolePosPos
+               .zw); // h4tex2Dlod(tex, half4(fxaaConsolePosPos.zw, 0, 0));
 #if (FXAA_GREEN_AS_LUMA == 0)
-	dir.x += lumaSe.w;
-	dir.z -= lumaSe.w;
+  dir.x += lumaSe.w;
+  dir.z -= lumaSe.w;
 #else
-	dir.x += lumaSe.y;
-	dir.z -= lumaSe.y;
+  dir.x += lumaSe.y;
+  dir.z -= lumaSe.y;
 #endif
-	/*--------------------------------------------------------------------------*/
-	// (5)
-	half4 dir1_pos;
-	dir1_pos.xy = normalize(dir.xz);
-	half dirAbsMinTimesC = min(abs(dir1_pos.x), abs(dir1_pos.y)) * half(FXAA_CONSOLE__PS3_EDGE_SHARPNESS);
-	/*--------------------------------------------------------------------------*/
-	// (6)
-	half4 dir2_pos;
-	dir2_pos.xy = clamp(dir1_pos.xy / dirAbsMinTimesC, half(-2.0), half(2.0));
-	dir1_pos.zw = pos.xy;
-	dir2_pos.zw = pos.xy;
-	half4 temp1N;
-	temp1N.xy = dir1_pos.zw - dir1_pos.xy * fxaaConsoleRcpFrameOpt.zw;
-	/*--------------------------------------------------------------------------*/
-	// (7)
-	temp1N = tex2D(tex, temp1N.xy); // h4tex2Dlod(tex, half4(temp1N.xy, 0.0, 0.0));
-	half4 rgby1;
-	rgby1.xy = dir1_pos.zw + dir1_pos.xy * fxaaConsoleRcpFrameOpt.zw;
-	/*--------------------------------------------------------------------------*/
-	// (8)
-	rgby1 = tex2D(tex, rgby1.xy); // h4tex2Dlod(tex, half4(rgby1.xy, 0.0, 0.0));
-	rgby1 = (temp1N + rgby1) * 0.5;
-	/*--------------------------------------------------------------------------*/
-	// (9)
-	half4 temp2N;
-	temp2N.xy = dir2_pos.zw - dir2_pos.xy * fxaaConsoleRcpFrameOpt2.zw;
-	temp2N = tex2D(tex, temp2N.xy); // h4tex2Dlod(tex, half4(temp2N.xy, 0.0, 0.0));
-	/*--------------------------------------------------------------------------*/
-	// (10)
-	half4 rgby2;
-	rgby2.xy = dir2_pos.zw + dir2_pos.xy * fxaaConsoleRcpFrameOpt2.zw;
-	rgby2 = tex2D(tex, rgby2.xy); // h4tex2Dlod(tex, half4(rgby2.xy, 0.0, 0.0));
-	rgby2 = (temp2N + rgby2) * 0.5;
+  /*--------------------------------------------------------------------------*/
+  // (5)
+  half4 dir1_pos;
+  dir1_pos.xy = normalize(dir.xz);
+  half dirAbsMinTimesC = min(abs(dir1_pos.x), abs(dir1_pos.y)) *
+                         half(FXAA_CONSOLE__PS3_EDGE_SHARPNESS);
+  /*--------------------------------------------------------------------------*/
+  // (6)
+  half4 dir2_pos;
+  dir2_pos.xy = clamp(dir1_pos.xy / dirAbsMinTimesC, half(-2.0), half(2.0));
+  dir1_pos.zw = pos.xy;
+  dir2_pos.zw = pos.xy;
+  half4 temp1N;
+  temp1N.xy = dir1_pos.zw - dir1_pos.xy * fxaaConsoleRcpFrameOpt.zw;
+  /*--------------------------------------------------------------------------*/
+  // (7)
+  temp1N =
+      tex2D(tex, temp1N.xy); // h4tex2Dlod(tex, half4(temp1N.xy, 0.0, 0.0));
+  half4 rgby1;
+  rgby1.xy = dir1_pos.zw + dir1_pos.xy * fxaaConsoleRcpFrameOpt.zw;
+  /*--------------------------------------------------------------------------*/
+  // (8)
+  rgby1 = tex2D(tex, rgby1.xy); // h4tex2Dlod(tex, half4(rgby1.xy, 0.0, 0.0));
+  rgby1 = (temp1N + rgby1) * 0.5;
+  /*--------------------------------------------------------------------------*/
+  // (9)
+  half4 temp2N;
+  temp2N.xy = dir2_pos.zw - dir2_pos.xy * fxaaConsoleRcpFrameOpt2.zw;
+  temp2N =
+      tex2D(tex, temp2N.xy); // h4tex2Dlod(tex, half4(temp2N.xy, 0.0, 0.0));
+  /*--------------------------------------------------------------------------*/
+  // (10)
+  half4 rgby2;
+  rgby2.xy = dir2_pos.zw + dir2_pos.xy * fxaaConsoleRcpFrameOpt2.zw;
+  rgby2 = tex2D(tex, rgby2.xy); // h4tex2Dlod(tex, half4(rgby2.xy, 0.0, 0.0));
+  rgby2 = (temp2N + rgby2) * 0.5;
 /*--------------------------------------------------------------------------*/
 // (11)
 // compilier moves these scalar ops up to other cycles
 #if (FXAA_GREEN_AS_LUMA == 0)
-	half lumaMin = min(min(lumaNw.w, lumaSw.w), min(lumaNe.w, lumaSe.w));
-	half lumaMax = max(max(lumaNw.w, lumaSw.w), max(lumaNe.w, lumaSe.w));
+  half lumaMin = min(min(lumaNw.w, lumaSw.w), min(lumaNe.w, lumaSe.w));
+  half lumaMax = max(max(lumaNw.w, lumaSw.w), max(lumaNe.w, lumaSe.w));
 #else
-	half lumaMin = min(min(lumaNw.y, lumaSw.y), min(lumaNe.y, lumaSe.y));
-	half lumaMax = max(max(lumaNw.y, lumaSw.y), max(lumaNe.y, lumaSe.y));
+  half lumaMin = min(min(lumaNw.y, lumaSw.y), min(lumaNe.y, lumaSe.y));
+  half lumaMax = max(max(lumaNw.y, lumaSw.y), max(lumaNe.y, lumaSe.y));
 #endif
-	rgby2 = (rgby2 + rgby1) * 0.5;
+  rgby2 = (rgby2 + rgby1) * 0.5;
 /*--------------------------------------------------------------------------*/
 // (12)
 #if (FXAA_GREEN_AS_LUMA == 0)
-	bool twoTapLt = rgby2.w < lumaMin;
-	bool twoTapGt = rgby2.w > lumaMax;
+  bool twoTapLt = rgby2.w < lumaMin;
+  bool twoTapGt = rgby2.w > lumaMax;
 #else
-	bool twoTapLt = rgby2.y < lumaMin;
-	bool twoTapGt = rgby2.y > lumaMax;
+  bool twoTapLt = rgby2.y < lumaMin;
+  bool twoTapGt = rgby2.y > lumaMax;
 #endif
-	/*--------------------------------------------------------------------------*/
-	// (13)
-	if (twoTapLt || twoTapGt) rgby2 = rgby1;
-	/*--------------------------------------------------------------------------*/
-	return rgby2;
+  /*--------------------------------------------------------------------------*/
+  // (13)
+  if (twoTapLt || twoTapGt)
+    rgby2 = rgby1;
+  /*--------------------------------------------------------------------------*/
+  return rgby2;
 }
 /*==========================================================================*/
 #endif
@@ -1767,30 +1867,19 @@ Shader to schedule:
 21: movr r1.zw(TRUE), v4.xxxy
 22: maxh h2.w(TRUE), h0, h1
 23: fenct TRUE
-24: madr r0.xy(TRUE), -h2.xzzw, constant(cConst5.x, cConst5.y, cConst5.z, cConst5.w).zwzz, r1.zwzz
-26: texpkb h0(TRUE), r0, #0
-28: maxh h5.x(TRUE), h2.w, h5
-29: minh h5.w(TRUE), h5.y, h4
-30: madr r1.xy(TRUE), h2.xzzw, constant(cConst5.x, cConst5.y, cConst5.z, cConst5.w).zwzz, r1.zwzz
-32: texpkb h2(TRUE), r1, #0
-34: addh_d2 h2(TRUE), h0, h2
-35: texpkb h1(TRUE), v4, #0
-37: maxh h5.y(TRUE), h5.x, h1.w
-38: minh h4.w(TRUE), h1, h5
-39: madr r0.xy(TRUE), -h4, constant(cConst5.x, cConst5.y, cConst5.z, cConst5.w).xyxx, r1.zwzz
-41: texpkb h0(TRUE), r0, #0
-43: addh_m8 h5.z(TRUE), h5.y, -h4.w
-44: madr r2.xy(TRUE), h4, constant(cConst5.x, cConst5.y, cConst5.z, cConst5.w).xyxx, r1.zwzz
-46: texpkb h3(TRUE), r2, #0
-48: addh_d2 h0(TRUE), h0, h3
-49: addh_d2 h3(TRUE), h0, h2
-50: movh h0(TRUE), h3
-51: slth h3.x(TRUE), h3.w, h5.w
-52: sgth h3.w(TRUE), h3, h5.x
-53: addx.c0 rc(TRUE), h3.x, h3
-54: slth.c0 rc(TRUE), h5.z, h5
-55: movh h0(c0.NE.w), h2
-56: movh h0(c0.NE.x), h1
+24: madr r0.xy(TRUE), -h2.xzzw, constant(cConst5.x, cConst5.y, cConst5.z,
+cConst5.w).zwzz, r1.zwzz 26: texpkb h0(TRUE), r0, #0 28: maxh h5.x(TRUE), h2.w,
+h5 29: minh h5.w(TRUE), h5.y, h4 30: madr r1.xy(TRUE), h2.xzzw,
+constant(cConst5.x, cConst5.y, cConst5.z, cConst5.w).zwzz, r1.zwzz 32: texpkb
+h2(TRUE), r1, #0 34: addh_d2 h2(TRUE), h0, h2 35: texpkb h1(TRUE), v4, #0 37:
+maxh h5.y(TRUE), h5.x, h1.w 38: minh h4.w(TRUE), h1, h5 39: madr r0.xy(TRUE),
+-h4, constant(cConst5.x, cConst5.y, cConst5.z, cConst5.w).xyxx, r1.zwzz 41:
+texpkb h0(TRUE), r0, #0 43: addh_m8 h5.z(TRUE), h5.y, -h4.w 44: madr
+r2.xy(TRUE), h4, constant(cConst5.x, cConst5.y, cConst5.z, cConst5.w).xyxx,
+r1.zwzz 46: texpkb h3(TRUE), r2, #0 48: addh_d2 h0(TRUE), h0, h3 49: addh_d2
+h3(TRUE), h0, h2 50: movh h0(TRUE), h3 51: slth h3.x(TRUE), h3.w, h5.w 52: sgth
+h3.w(TRUE), h3, h5.x 53: addx.c0 rc(TRUE), h3.x, h3 54: slth.c0 rc(TRUE), h5.z,
+h5 55: movh h0(c0.NE.w), h2 56: movh h0(c0.NE.x), h1
 
 IPU0 ------ Simplified schedule: --------
 Pass | Unit | uOp | PC: Op
@@ -1911,14 +2000,11 @@ Results 15 cycles, 3 r regs, 800,000,000 pixels/s
 /*==========================================================================*/
 half4 FxaaPixelShader(
     // See FXAA Quality FxaaPixelShader() source for docs on Inputs!
-    FxaaFloat2 pos,
-    FxaaFloat4 fxaaConsolePosPos,
-    FxaaTex tex,
+    FxaaFloat2 pos, FxaaFloat4 fxaaConsolePosPos, FxaaTex tex,
     // FxaaTex fxaaConsole360TexExpBiasNegOne,
     // FxaaTex fxaaConsole360TexExpBiasNegTwo,
     // FxaaFloat2 fxaaQualityRcpFrame,
-    FxaaFloat4 fxaaConsoleRcpFrameOpt,
-    FxaaFloat4 fxaaConsoleRcpFrameOpt2
+    FxaaFloat4 fxaaConsoleRcpFrameOpt, FxaaFloat4 fxaaConsoleRcpFrameOpt2
     // FxaaFloat4 fxaaConsole360RcpFrameOpt,
     // FxaaFloat fxaaQualitySubpix,
     // FxaaFloat fxaaQualityEdgeThreshold,
@@ -1927,128 +2013,140 @@ half4 FxaaPixelShader(
     // FxaaFloat fxaaConsoleEdgeThreshold,
     // FxaaFloat fxaaConsoleEdgeThresholdMin,
     // FxaaFloat4 fxaaConsole360ConstDir
-)
-{
-	/*--------------------------------------------------------------------------*/
-	// (1)
-	half4 rgbyNe = tex2D(tex, fxaaConsolePosPos.zy); // h4tex2Dlod(tex, half4(fxaaConsolePosPos.zy, 0, 0));
+) {
+  /*--------------------------------------------------------------------------*/
+  // (1)
+  half4 rgbyNe = tex2D(
+      tex, fxaaConsolePosPos
+               .zy); // h4tex2Dlod(tex, half4(fxaaConsolePosPos.zy, 0, 0));
 #if (FXAA_GREEN_AS_LUMA == 0)
-	half lumaNe = rgbyNe.w + half(1.0 / 512.0);
+  half lumaNe = rgbyNe.w + half(1.0 / 512.0);
 #else
-	half lumaNe = rgbyNe.y + half(1.0 / 512.0);
+  half lumaNe = rgbyNe.y + half(1.0 / 512.0);
 #endif
-	/*--------------------------------------------------------------------------*/
-	// (2)
-	half4 lumaSw = tex2D(tex, fxaaConsolePosPos.xw); // h4tex2Dlod(tex, half4(fxaaConsolePosPos.xw, 0, 0));
+  /*--------------------------------------------------------------------------*/
+  // (2)
+  half4 lumaSw = tex2D(
+      tex, fxaaConsolePosPos
+               .xw); // h4tex2Dlod(tex, half4(fxaaConsolePosPos.xw, 0, 0));
 #if (FXAA_GREEN_AS_LUMA == 0)
-	half lumaSwNegNe = lumaSw.w - lumaNe;
+  half lumaSwNegNe = lumaSw.w - lumaNe;
 #else
-	half lumaSwNegNe = lumaSw.y - lumaNe;
+  half lumaSwNegNe = lumaSw.y - lumaNe;
 #endif
-	/*--------------------------------------------------------------------------*/
-	// (3)
-	half4 lumaNw = tex2D(tex, fxaaConsolePosPos.xy); // h4tex2Dlod(tex, half4(fxaaConsolePosPos.xy, 0, 0));
+  /*--------------------------------------------------------------------------*/
+  // (3)
+  half4 lumaNw = tex2D(
+      tex, fxaaConsolePosPos
+               .xy); // h4tex2Dlod(tex, half4(fxaaConsolePosPos.xy, 0, 0));
 #if (FXAA_GREEN_AS_LUMA == 0)
-	half lumaMaxNwSw = max(lumaNw.w, lumaSw.w);
-	half lumaMinNwSw = min(lumaNw.w, lumaSw.w);
+  half lumaMaxNwSw = max(lumaNw.w, lumaSw.w);
+  half lumaMinNwSw = min(lumaNw.w, lumaSw.w);
 #else
-	half lumaMaxNwSw = max(lumaNw.y, lumaSw.y);
-	half lumaMinNwSw = min(lumaNw.y, lumaSw.y);
+  half lumaMaxNwSw = max(lumaNw.y, lumaSw.y);
+  half lumaMinNwSw = min(lumaNw.y, lumaSw.y);
 #endif
-	/*--------------------------------------------------------------------------*/
-	// (4)
-	half4 lumaSe = tex2D(tex, fxaaConsolePosPos.zw); // h4tex2Dlod(tex, half4(fxaaConsolePosPos.zw, 0, 0));
+  /*--------------------------------------------------------------------------*/
+  // (4)
+  half4 lumaSe = tex2D(
+      tex, fxaaConsolePosPos
+               .zw); // h4tex2Dlod(tex, half4(fxaaConsolePosPos.zw, 0, 0));
 #if (FXAA_GREEN_AS_LUMA == 0)
-	half dirZ = lumaNw.w + lumaSwNegNe;
-	half dirX = -lumaNw.w + lumaSwNegNe;
+  half dirZ = lumaNw.w + lumaSwNegNe;
+  half dirX = -lumaNw.w + lumaSwNegNe;
 #else
-	half dirZ = lumaNw.y + lumaSwNegNe;
-	half dirX = -lumaNw.y + lumaSwNegNe;
+  half dirZ = lumaNw.y + lumaSwNegNe;
+  half dirX = -lumaNw.y + lumaSwNegNe;
 #endif
-	/*--------------------------------------------------------------------------*/
-	// (5)
-	half3 dir;
-	dir.y = 0.0;
+  /*--------------------------------------------------------------------------*/
+  // (5)
+  half3 dir;
+  dir.y = 0.0;
 #if (FXAA_GREEN_AS_LUMA == 0)
-	dir.x = lumaSe.w + dirX;
-	dir.z = -lumaSe.w + dirZ;
-	half lumaMinNeSe = min(lumaNe, lumaSe.w);
+  dir.x = lumaSe.w + dirX;
+  dir.z = -lumaSe.w + dirZ;
+  half lumaMinNeSe = min(lumaNe, lumaSe.w);
 #else
-	dir.x = lumaSe.y + dirX;
-	dir.z = -lumaSe.y + dirZ;
-	half lumaMinNeSe = min(lumaNe, lumaSe.y);
+  dir.x = lumaSe.y + dirX;
+  dir.z = -lumaSe.y + dirZ;
+  half lumaMinNeSe = min(lumaNe, lumaSe.y);
 #endif
-	/*--------------------------------------------------------------------------*/
-	// (6)
-	half4 dir1_pos;
-	dir1_pos.xy = normalize(dir).xz;
-	half dirAbsMinTimes8 = min(abs(dir1_pos.x), abs(dir1_pos.y)) * half(FXAA_CONSOLE__PS3_EDGE_SHARPNESS);
-	/*--------------------------------------------------------------------------*/
-	// (7)
-	half4 dir2_pos;
-	dir2_pos.xy = clamp(dir1_pos.xy / dirAbsMinTimes8, half(-2.0), half(2.0));
-	dir1_pos.zw = pos.xy;
-	dir2_pos.zw = pos.xy;
+  /*--------------------------------------------------------------------------*/
+  // (6)
+  half4 dir1_pos;
+  dir1_pos.xy = normalize(dir).xz;
+  half dirAbsMinTimes8 = min(abs(dir1_pos.x), abs(dir1_pos.y)) *
+                         half(FXAA_CONSOLE__PS3_EDGE_SHARPNESS);
+  /*--------------------------------------------------------------------------*/
+  // (7)
+  half4 dir2_pos;
+  dir2_pos.xy = clamp(dir1_pos.xy / dirAbsMinTimes8, half(-2.0), half(2.0));
+  dir1_pos.zw = pos.xy;
+  dir2_pos.zw = pos.xy;
 #if (FXAA_GREEN_AS_LUMA == 0)
-	half lumaMaxNeSe = max(lumaNe, lumaSe.w);
+  half lumaMaxNeSe = max(lumaNe, lumaSe.w);
 #else
-	half lumaMaxNeSe = max(lumaNe, lumaSe.y);
+  half lumaMaxNeSe = max(lumaNe, lumaSe.y);
 #endif
-	/*--------------------------------------------------------------------------*/
-	// (8)
-	half4 temp1N;
-	temp1N.xy = dir1_pos.zw - dir1_pos.xy * fxaaConsoleRcpFrameOpt.zw;
-	temp1N = tex2D(tex, temp1N.xy); // h4tex2Dlod(tex, half4(temp1N.xy, 0.0, 0.0));
-	half lumaMax = max(lumaMaxNwSw, lumaMaxNeSe);
-	half lumaMin = min(lumaMinNwSw, lumaMinNeSe);
-	/*--------------------------------------------------------------------------*/
-	// (9)
-	half4 rgby1;
-	rgby1.xy = dir1_pos.zw + dir1_pos.xy * fxaaConsoleRcpFrameOpt.zw;
-	rgby1 = tex2D(tex, rgby1.xy); // h4tex2Dlod(tex, half4(rgby1.xy, 0.0, 0.0));
-	rgby1 = (temp1N + rgby1) * 0.5;
-	/*--------------------------------------------------------------------------*/
-	// (10)
-	half4 rgbyM = tex2D(tex, pos.xy); // h4tex2Dlod(tex, half4(pos.xy, 0.0, 0.0));
+  /*--------------------------------------------------------------------------*/
+  // (8)
+  half4 temp1N;
+  temp1N.xy = dir1_pos.zw - dir1_pos.xy * fxaaConsoleRcpFrameOpt.zw;
+  temp1N =
+      tex2D(tex, temp1N.xy); // h4tex2Dlod(tex, half4(temp1N.xy, 0.0, 0.0));
+  half lumaMax = max(lumaMaxNwSw, lumaMaxNeSe);
+  half lumaMin = min(lumaMinNwSw, lumaMinNeSe);
+  /*--------------------------------------------------------------------------*/
+  // (9)
+  half4 rgby1;
+  rgby1.xy = dir1_pos.zw + dir1_pos.xy * fxaaConsoleRcpFrameOpt.zw;
+  rgby1 = tex2D(tex, rgby1.xy); // h4tex2Dlod(tex, half4(rgby1.xy, 0.0, 0.0));
+  rgby1 = (temp1N + rgby1) * 0.5;
+  /*--------------------------------------------------------------------------*/
+  // (10)
+  half4 rgbyM = tex2D(tex, pos.xy); // h4tex2Dlod(tex, half4(pos.xy, 0.0, 0.0));
 #if (FXAA_GREEN_AS_LUMA == 0)
-	half lumaMaxM = max(lumaMax, rgbyM.w);
-	half lumaMinM = min(lumaMin, rgbyM.w);
+  half lumaMaxM = max(lumaMax, rgbyM.w);
+  half lumaMinM = min(lumaMin, rgbyM.w);
 #else
-	half lumaMaxM = max(lumaMax, rgbyM.y);
-	half lumaMinM = min(lumaMin, rgbyM.y);
+  half lumaMaxM = max(lumaMax, rgbyM.y);
+  half lumaMinM = min(lumaMin, rgbyM.y);
 #endif
-	/*--------------------------------------------------------------------------*/
-	// (11)
-	half4 temp2N;
-	temp2N.xy = dir2_pos.zw - dir2_pos.xy * fxaaConsoleRcpFrameOpt2.zw;
-	temp2N = tex2D(tex, temp2N.xy); // h4tex2Dlod(tex, half4(temp2N.xy, 0.0, 0.0));
-	half4 rgby2;
-	rgby2.xy = dir2_pos.zw + dir2_pos.xy * fxaaConsoleRcpFrameOpt2.zw;
-	half lumaRangeM = (lumaMaxM - lumaMinM) / FXAA_CONSOLE__PS3_EDGE_THRESHOLD;
-	/*--------------------------------------------------------------------------*/
-	// (12)
-	rgby2 = tex2D(tex, rgby2.xy); // h4tex2Dlod(tex, half4(rgby2.xy, 0.0, 0.0));
-	rgby2 = (temp2N + rgby2) * 0.5;
-	/*--------------------------------------------------------------------------*/
-	// (13)
-	rgby2 = (rgby2 + rgby1) * 0.5;
+  /*--------------------------------------------------------------------------*/
+  // (11)
+  half4 temp2N;
+  temp2N.xy = dir2_pos.zw - dir2_pos.xy * fxaaConsoleRcpFrameOpt2.zw;
+  temp2N =
+      tex2D(tex, temp2N.xy); // h4tex2Dlod(tex, half4(temp2N.xy, 0.0, 0.0));
+  half4 rgby2;
+  rgby2.xy = dir2_pos.zw + dir2_pos.xy * fxaaConsoleRcpFrameOpt2.zw;
+  half lumaRangeM = (lumaMaxM - lumaMinM) / FXAA_CONSOLE__PS3_EDGE_THRESHOLD;
+  /*--------------------------------------------------------------------------*/
+  // (12)
+  rgby2 = tex2D(tex, rgby2.xy); // h4tex2Dlod(tex, half4(rgby2.xy, 0.0, 0.0));
+  rgby2 = (temp2N + rgby2) * 0.5;
+  /*--------------------------------------------------------------------------*/
+  // (13)
+  rgby2 = (rgby2 + rgby1) * 0.5;
 /*--------------------------------------------------------------------------*/
 // (14)
 #if (FXAA_GREEN_AS_LUMA == 0)
-	bool twoTapLt = rgby2.w < lumaMin;
-	bool twoTapGt = rgby2.w > lumaMax;
+  bool twoTapLt = rgby2.w < lumaMin;
+  bool twoTapGt = rgby2.w > lumaMax;
 #else
-	bool twoTapLt = rgby2.y < lumaMin;
-	bool twoTapGt = rgby2.y > lumaMax;
+  bool twoTapLt = rgby2.y < lumaMin;
+  bool twoTapGt = rgby2.y > lumaMax;
 #endif
-	bool earlyExit = lumaRangeM < lumaMax;
-	bool twoTap = twoTapLt || twoTapGt;
-	/*--------------------------------------------------------------------------*/
-	// (15)
-	if (twoTap) rgby2 = rgby1;
-	if (earlyExit) rgby2 = rgbyM;
-	/*--------------------------------------------------------------------------*/
-	return rgby2;
+  bool earlyExit = lumaRangeM < lumaMax;
+  bool twoTap = twoTapLt || twoTapGt;
+  /*--------------------------------------------------------------------------*/
+  // (15)
+  if (twoTap)
+    rgby2 = rgby1;
+  if (earlyExit)
+    rgby2 = rgbyM;
+  /*--------------------------------------------------------------------------*/
+  return rgby2;
 }
 /*==========================================================================*/
 #endif

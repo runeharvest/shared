@@ -17,15 +17,15 @@
 #ifndef NL_MOVE_ELEMENT_INLINE_H
 #define NL_MOVE_ELEMENT_INLINE_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/debug.h"
 #include "move_primitive.h"
+#include "nel/misc/debug.h"
+#include "nel/misc/types_nl.h"
 
 namespace NLPACS {
 
 // ***************************************************************************
 
-} // NLPACS
+} // namespace NLPACS
 
 #endif // NL_MOVE_ELEMENT_INLINE_H
 

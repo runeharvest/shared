@@ -23,37 +23,37 @@ namespace NLGEORGES {
 class UForm;
 class UFormElm;
 
-}
+} // namespace NLGEORGES
 
 namespace NLMISC {
 class IStream;
 struct EStream;
 class CSheetId;
-}
-class CWeatherFunctionParamsSheetBase
-{
+} // namespace NLMISC
+class CWeatherFunctionParamsSheetBase {
 public:
-	uint32 DayLength; // length of day, in hours
-	uint32 CycleLength; // length of a cycle, in hours
-	//
-	float MinThunderPeriod; // Min thunder period, in s.
-	float ThunderLength; // Length of a thunder strike, in s.
-	//
-	float CloudWindSpeedFactor;
-	float CloudMinSpeed;
+  uint32 DayLength;   // length of day, in hours
+  uint32 CycleLength; // length of a cycle, in hours
+  //
+  float MinThunderPeriod; // Min thunder period, in s.
+  float ThunderLength;    // Length of a thunder strike, in s.
+  //
+  float CloudWindSpeedFactor;
+  float CloudMinSpeed;
 
-	// ctor
-	CWeatherFunctionParamsSheetBase();
-	//
-	void build(const NLGEORGES::UFormElm &item);
-	void serial(NLMISC::IStream &f);
-	//
-	void build(const std::string &sheetName);
+  // ctor
+  CWeatherFunctionParamsSheetBase();
+  //
+  void build(const NLGEORGES::UFormElm &item);
+  void serial(NLMISC::IStream &f);
+  //
+  void build(const std::string &sheetName);
 
-	//
-	void readGeorges(const NLGEORGES::UForm *form, const NLMISC::CSheetId &sheetId);
-	void removed() const { }
-	static uint32 getVersion() { return 0; }
+  //
+  void readGeorges(const NLGEORGES::UForm *form,
+                   const NLMISC::CSheetId &sheetId);
+  void removed() const {}
+  static uint32 getVersion() { return 0; }
 };
 
 #endif

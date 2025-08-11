@@ -24,12 +24,11 @@
 #endif
 
 namespace NL3D {
-void CPSUtil::registerZones()
-{
-	NLMISC_REGISTER_CLASS(CPSZonePlane);
-	NLMISC_REGISTER_CLASS(CPSZoneSphere);
-	NLMISC_REGISTER_CLASS(CPSZoneDisc);
-	NLMISC_REGISTER_CLASS(CPSZoneRectangle);
-	NLMISC_REGISTER_CLASS(CPSZoneCylinder);
+void CPSUtil::registerZones() {
+  NLMISC_REGISTER_CLASS(CPSZonePlane);
+  NLMISC_REGISTER_CLASS(CPSZoneSphere);
+  NLMISC_REGISTER_CLASS(CPSZoneDisc);
+  NLMISC_REGISTER_CLASS(CPSZoneRectangle);
+  NLMISC_REGISTER_CLASS(CPSZoneCylinder);
 }
-} // NL3D
+} // namespace NL3D

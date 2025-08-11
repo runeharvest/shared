@@ -29,83 +29,65 @@ class CVector2f;
  * \author Nevrax France
  * \date 2000
  */
-class CRect
-{
+class CRect {
 public:
-	/// default ctor
-	CRect() { }
+  /// default ctor
+  CRect() {}
 
-	/// Constructor with a 2d point, a width and a height
-	CRect(sint32 x, sint32 y, uint32 width, uint32 height);
+  /// Constructor with a 2d point, a width and a height
+  CRect(sint32 x, sint32 y, uint32 width, uint32 height);
 
-	/// Constructor with a single 2d point. Build a rectangle with width and height = 0.
-	CRect(sint32 x, sint32 y)
-	{
-		X = x;
-		Y = y;
-		Width = 0;
-		Height = 0;
-	}
+  /// Constructor with a single 2d point. Build a rectangle with width and
+  /// height = 0.
+  CRect(sint32 x, sint32 y) {
+    X = x;
+    Y = y;
+    Width = 0;
+    Height = 0;
+  }
 
-	/// Set from a 2d point, a width and a height
-	void setWH(sint32 x, sint32 y, uint32 width, uint32 height);
+  /// Set from a 2d point, a width and a height
+  void setWH(sint32 x, sint32 y, uint32 width, uint32 height);
 
-	/// Set from 2 2d points
-	void set(sint32 x0, sint32 y0, sint32 x1, sint32 y1);
+  /// Set from 2 2d points
+  void set(sint32 x0, sint32 y0, sint32 x1, sint32 y1);
 
-	/// Extend the box for including the point which coordinates are passed in parameter.
-	void extend(sint32 x, sint32 y);
+  /// Extend the box for including the point which coordinates are passed in
+  /// parameter.
+  void extend(sint32 x, sint32 y);
 
-	/// Return the lower X coordinate of the box
-	sint32 left() const
-	{
-		return X;
-	}
+  /// Return the lower X coordinate of the box
+  sint32 left() const { return X; }
 
-	/// Return the higher X coordinate of the box + 1
-	sint32 right() const
-	{
-		return X + (sint32)Width;
-	}
+  /// Return the higher X coordinate of the box + 1
+  sint32 right() const { return X + (sint32)Width; }
 
-	/// Return the lower Y coordinate of the box
-	sint32 top() const
-	{
-		return Y;
-	}
+  /// Return the lower Y coordinate of the box
+  sint32 top() const { return Y; }
 
-	/// Return the higher Y coordinate of the box + 1
-	sint32 bottom() const
-	{
-		return Y + (sint32)Height;
-	}
+  /// Return the higher Y coordinate of the box + 1
+  sint32 bottom() const { return Y + (sint32)Height; }
 
-	/// Compute the x center of the rectangle
-	sint32 getXCenter() const
-	{
-		return X + (sint32)(Width >> 1);
-	}
+  /// Compute the x center of the rectangle
+  sint32 getXCenter() const { return X + (sint32)(Width >> 1); }
 
-	/// Compute the y center of the rectangle
-	sint32 getYCenter() const
-	{
-		return Y + (sint32)(Height >> 1);
-	}
+  /// Compute the y center of the rectangle
+  sint32 getYCenter() const { return Y + (sint32)(Height >> 1); }
 
-	/// Lower X coordinate of the rect
-	sint32 X;
+  /// Lower X coordinate of the rect
+  sint32 X;
 
-	/// Lower Y coordinate of the rect
-	sint32 Y;
+  /// Lower Y coordinate of the rect
+  sint32 Y;
 
-	/// Width of the rect
-	uint32 Width;
+  /// Width of the rect
+  uint32 Width;
 
-	/// Height of the rect
-	uint32 Height;
+  /// Height of the rect
+  uint32 Height;
 };
 
-} // NLMISC
+} // namespace NLMISC
 
 #endif // NL_RECT_H
 

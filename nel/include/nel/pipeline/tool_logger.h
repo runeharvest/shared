@@ -32,14 +32,14 @@
 #include <nel/misc/types_nl.h>
 
 // STL includes
-#include <string>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
 
 // NeL includes
-#include <nel/misc/time_nl.h>
-#include <nel/misc/string_common.h>
 #include <nel/misc/common.h>
+#include <nel/misc/string_common.h>
+#include <nel/misc/time_nl.h>
 
 // Project includes
 
@@ -48,29 +48,36 @@
 #endif
 
 #ifdef NL_DEBUG_H
-#define tlerror(toolLogger, path, error, ...) nlwarning(error, ##__VA_ARGS__), toolLogger.writeError(NLPIPELINE::ERROR, path, error, ##__VA_ARGS__)
-#define tlwarning(toolLogger, path, error, ...) nlwarning(error, ##__VA_ARGS__), toolLogger.writeError(NLPIPELINE::WARNING, path, error, ##__VA_ARGS__)
-#define tlmessage(toolLogger, path, error, ...) nlinfo(error, ##__VA_ARGS__), toolLogger.writeError(NLPIPELINE::MESSAGE, path, error, ##__VA_ARGS__)
+#define tlerror(toolLogger, path, error, ...)                                  \
+  nlwarning(error, ##__VA_ARGS__),                                             \
+      toolLogger.writeError(NLPIPELINE::ERROR, path, error, ##__VA_ARGS__)
+#define tlwarning(toolLogger, path, error, ...)                                \
+  nlwarning(error, ##__VA_ARGS__),                                             \
+      toolLogger.writeError(NLPIPELINE::WARNING, path, error, ##__VA_ARGS__)
+#define tlmessage(toolLogger, path, error, ...)                                \
+  nlinfo(error, ##__VA_ARGS__),                                                \
+      toolLogger.writeError(NLPIPELINE::MESSAGE, path, error, ##__VA_ARGS__)
 #else
-#define tlerror(toolLogger, path, error, ...) toolLogger.writeError(NLPIPELINE::ERROR, path, error, ##__VA_ARGS__)
-#define tlwarning(toolLogger, path, error, ...) toolLogger.writeError(NLPIPELINE::WARNING, path, error, ##__VA_ARGS__)
-#define tlmessage(toolLogger, path, error, ...) toolLogger.writeError(NLPIPELINE::MESSAGE, path, error, ##__VA_ARGS__)
+#define tlerror(toolLogger, path, error, ...)                                  \
+  toolLogger.writeError(NLPIPELINE::ERROR, path, error, ##__VA_ARGS__)
+#define tlwarning(toolLogger, path, error, ...)                                \
+  toolLogger.writeError(NLPIPELINE::WARNING, path, error, ##__VA_ARGS__)
+#define tlmessage(toolLogger, path, error, ...)                                \
+  toolLogger.writeError(NLPIPELINE::MESSAGE, path, error, ##__VA_ARGS__)
 #endif
 
 namespace NLPIPELINE {
 
-enum TError
-{
-	ERROR,
-	WARNING,
-	MESSAGE,
+enum TError {
+  ERROR,
+  WARNING,
+  MESSAGE,
 };
 
-enum TDepend
-{
-	BUILD,
-	DIRECTORY,
-	RUNTIME,
+enum TDepend {
+  BUILD,
+  DIRECTORY,
+  RUNTIME,
 };
 
 const std::string s_ErrorHeader = "type\tpath\ttime\terror";
@@ -82,126 +89,110 @@ const std::string s_DependHeader = "type\toutput_file\tinput_file";
  * \author Jan Boon (Kaetemi)
  * CToolLogger
  */
-class CToolLogger
-{
+class CToolLogger {
 private:
-	FILE *m_ErrorLog;
-	FILE *m_DependLog;
+  FILE *m_ErrorLog;
+  FILE *m_DependLog;
 
 public:
-	inline CToolLogger()
-	    : m_ErrorLog(NULL)
-	    , m_DependLog(NULL)
-	{
-	}
+  inline CToolLogger() : m_ErrorLog(NULL), m_DependLog(NULL) {}
 
-	inline ~CToolLogger()
-	{
-		release();
-	}
+  inline ~CToolLogger() { release(); }
 
-	inline void initError(const std::string &errorLog)
-	{
-		releaseError();
+  inline void initError(const std::string &errorLog) {
+    releaseError();
 
-		m_ErrorLog = NLMISC::nlfopen(errorLog, "wt");
-		fwrite(s_ErrorHeader.c_str(), 1, s_ErrorHeader.length(), m_ErrorLog);
-		fwrite("\n", 1, 1, m_ErrorLog);
-		fflush(m_ErrorLog);
-	}
+    m_ErrorLog = NLMISC::nlfopen(errorLog, "wt");
+    fwrite(s_ErrorHeader.c_str(), 1, s_ErrorHeader.length(), m_ErrorLog);
+    fwrite("\n", 1, 1, m_ErrorLog);
+    fflush(m_ErrorLog);
+  }
 
-	inline void initDepend(const std::string &dependLog)
-	{
-		releaseDepend();
+  inline void initDepend(const std::string &dependLog) {
+    releaseDepend();
 
-		m_DependLog = NLMISC::nlfopen(dependLog, "wt");
-		fwrite(s_DependHeader.c_str(), 1, s_DependHeader.length(), m_DependLog);
-		fwrite("\n", 1, 1, m_DependLog);
-		// fflush(m_DependLog);
-	}
+    m_DependLog = NLMISC::nlfopen(dependLog, "wt");
+    fwrite(s_DependHeader.c_str(), 1, s_DependHeader.length(), m_DependLog);
+    fwrite("\n", 1, 1, m_DependLog);
+    // fflush(m_DependLog);
+  }
 
-	inline void writeError(TError type, const char *path, const char *error, ...)
-	{
-		if (m_ErrorLog)
-		{
-			switch (type)
-			{
-			case ERROR:
-				fwrite("ERROR", 1, 5, m_ErrorLog);
-				break;
-			case WARNING:
-				fwrite("WARNING", 1, 7, m_ErrorLog);
-				break;
-			case MESSAGE:
-				fwrite("MESSAGE", 1, 7, m_ErrorLog);
-				break;
-			}
-			fwrite("\t", 1, 1, m_ErrorLog);
-			fprintf(m_ErrorLog, "%s", path);
-			fwrite("\t", 1, 1, m_ErrorLog);
-			std::string time = NLMISC::toString(NLMISC::CTime::getSecondsSince1970());
-			fwrite(time.c_str(), 1, time.length(), m_ErrorLog);
-			fwrite("\t", 1, 1, m_ErrorLog);
-			va_list args;
-			va_start(args, error);
-			vfprintf(m_ErrorLog, error, args);
-			va_end(args);
-			fwrite("\n", 1, 1, m_ErrorLog);
-			fflush(m_ErrorLog);
-		}
-	}
+  inline void writeError(TError type, const char *path, const char *error,
+                         ...) {
+    if (m_ErrorLog) {
+      switch (type) {
+      case ERROR:
+        fwrite("ERROR", 1, 5, m_ErrorLog);
+        break;
+      case WARNING:
+        fwrite("WARNING", 1, 7, m_ErrorLog);
+        break;
+      case MESSAGE:
+        fwrite("MESSAGE", 1, 7, m_ErrorLog);
+        break;
+      }
+      fwrite("\t", 1, 1, m_ErrorLog);
+      fprintf(m_ErrorLog, "%s", path);
+      fwrite("\t", 1, 1, m_ErrorLog);
+      std::string time = NLMISC::toString(NLMISC::CTime::getSecondsSince1970());
+      fwrite(time.c_str(), 1, time.length(), m_ErrorLog);
+      fwrite("\t", 1, 1, m_ErrorLog);
+      va_list args;
+      va_start(args, error);
+      vfprintf(m_ErrorLog, error, args);
+      va_end(args);
+      fwrite("\n", 1, 1, m_ErrorLog);
+      fflush(m_ErrorLog);
+    }
+  }
 
-	/// inputFile can only be file. [? May be not-yet-existing file for expected input for future build runs. ?] Directories are handled on process level. [? You should call this before calling writeError on inputFile, so the error is also linked from the outputFile. ?]
-	inline void writeDepend(TDepend type, const char *outputFile, const char *inputFile)
-	{
-		if (m_DependLog)
-		{
-			switch (type)
-			{
-			case BUILD:
-				fwrite("BUILD", 1, 5, m_DependLog);
-				break;
-			case DIRECTORY:
-				fwrite("DIRECTORY", 1, 9, m_DependLog);
-				break;
-			case RUNTIME:
-				fwrite("RUNTIME", 1, 7, m_DependLog);
-				break;
-			}
-			fwrite("\t", 1, 1, m_DependLog);
-			fprintf(m_DependLog, "%s", outputFile);
-			fwrite("\t", 1, 1, m_DependLog);
-			fprintf(m_DependLog, "%s", inputFile);
-			fwrite("\n", 1, 1, m_DependLog);
-			// fflush(m_DependLog);
-		}
-	}
+  /// inputFile can only be file. [? May be not-yet-existing file for expected
+  /// input for future build runs. ?] Directories are handled on process level.
+  /// [? You should call this before calling writeError on inputFile, so the
+  /// error is also linked from the outputFile. ?]
+  inline void writeDepend(TDepend type, const char *outputFile,
+                          const char *inputFile) {
+    if (m_DependLog) {
+      switch (type) {
+      case BUILD:
+        fwrite("BUILD", 1, 5, m_DependLog);
+        break;
+      case DIRECTORY:
+        fwrite("DIRECTORY", 1, 9, m_DependLog);
+        break;
+      case RUNTIME:
+        fwrite("RUNTIME", 1, 7, m_DependLog);
+        break;
+      }
+      fwrite("\t", 1, 1, m_DependLog);
+      fprintf(m_DependLog, "%s", outputFile);
+      fwrite("\t", 1, 1, m_DependLog);
+      fprintf(m_DependLog, "%s", inputFile);
+      fwrite("\n", 1, 1, m_DependLog);
+      // fflush(m_DependLog);
+    }
+  }
 
-	inline void releaseError()
-	{
-		if (m_ErrorLog)
-		{
-			fflush(m_ErrorLog);
-			fclose(m_ErrorLog);
-			m_ErrorLog = NULL;
-		}
-	}
+  inline void releaseError() {
+    if (m_ErrorLog) {
+      fflush(m_ErrorLog);
+      fclose(m_ErrorLog);
+      m_ErrorLog = NULL;
+    }
+  }
 
-	inline void releaseDepend()
-	{
-		if (m_DependLog)
-		{
-			fflush(m_DependLog);
-			fclose(m_DependLog);
-			m_DependLog = NULL;
-		}
-	}
+  inline void releaseDepend() {
+    if (m_DependLog) {
+      fflush(m_DependLog);
+      fclose(m_DependLog);
+      m_DependLog = NULL;
+    }
+  }
 
-	inline void release()
-	{
-		releaseError();
-		releaseDepend();
-	}
+  inline void release() {
+    releaseError();
+    releaseDepend();
+  }
 }; /* class CToolLogger */
 
 } /* namespace NLPIPELINE */

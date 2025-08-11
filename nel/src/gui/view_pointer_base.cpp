@@ -18,8 +18,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdpch.h"
 #include "nel/gui/view_pointer_base.h"
+#include "stdpch.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -28,158 +28,132 @@
 namespace NLGUI {
 
 CViewPointerBase::CViewPointerBase(const CViewBase::TCtorParam &param)
-    : CViewBase(param)
-    , _Buttons(NLMISC::noButton)
-{
-	_PointerX = _PointerY = _PointerOldX = _PointerOldY = _PointerDownX = _PointerDownY = InvalidCoord;
-	_PointerDown = false;
-	_PointerVisible = true;
+    : CViewBase(param), _Buttons(NLMISC::noButton) {
+  _PointerX = _PointerY = _PointerOldX = _PointerOldY = _PointerDownX =
+      _PointerDownY = InvalidCoord;
+  _PointerDown = false;
+  _PointerVisible = true;
 }
 
-CViewPointerBase::~CViewPointerBase()
-{
+CViewPointerBase::~CViewPointerBase() {}
+
+// --------------------------------------------------------------------------------------------------------------------
+void CViewPointerBase::setPointerPos(sint32 x, sint32 y) {
+  if (_PointerDown) {
+    if (!_PointerDrag) {
+      if (((_PointerX - _PointerDownX) != 0) ||
+          ((_PointerY - _PointerDownY) != 0)) {
+        _PointerDrag = true;
+      }
+    }
+  }
+
+  _PointerOldX = getX();
+  _PointerOldY = getY();
+
+  _PointerX = x;
+  _PointerY = y;
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-void CViewPointerBase::setPointerPos(sint32 x, sint32 y)
-{
-	if (_PointerDown)
-	{
-		if (!_PointerDrag)
-		{
-			if (((_PointerX - _PointerDownX) != 0) || ((_PointerY - _PointerDownY) != 0))
-			{
-				_PointerDrag = true;
-			}
-		}
-	}
-
-	_PointerOldX = getX();
-	_PointerOldY = getY();
-
-	_PointerX = x;
-	_PointerY = y;
+void CViewPointerBase::setPointerDispPos(sint32 x, sint32 y) {
+  setX(x);
+  setY(y);
+  updateCoords();
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-void CViewPointerBase::setPointerDispPos(sint32 x, sint32 y)
-{
-	setX(x);
-	setY(y);
-	updateCoords();
+void CViewPointerBase::resetPointerPos() {
+  _PointerOldX = _PointerX;
+  _PointerOldY = _PointerY;
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-void CViewPointerBase::resetPointerPos()
-{
-	_PointerOldX = _PointerX;
-	_PointerOldY = _PointerY;
+void CViewPointerBase::setPointerDown(bool pd) {
+  _PointerDown = pd;
+
+  if (_PointerDown) {
+    _PointerDownX = _PointerX;
+    _PointerDownY = _PointerY;
+  } else
+    _PointerDrag = false;
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-void CViewPointerBase::setPointerDown(bool pd)
-{
-	_PointerDown = pd;
+void CViewPointerBase::setPointerMiddleDown(bool pd) {
+  _PointerMiddleDown = pd;
 
-	if (_PointerDown)
-	{
-		_PointerDownX = _PointerX;
-		_PointerDownY = _PointerY;
-	}
-	else
-		_PointerDrag = false;
+  if (_PointerMiddleDown) {
+    _PointerMiddleDownX = _PointerX;
+    _PointerMiddleDownY = _PointerY;
+  }
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-void CViewPointerBase::setPointerMiddleDown(bool pd)
-{
-	_PointerMiddleDown = pd;
+void CViewPointerBase::setPointerRightDown(bool pd) {
+  _PointerRightDown = pd;
 
-	if (_PointerMiddleDown)
-	{
-		_PointerMiddleDownX = _PointerX;
-		_PointerMiddleDownY = _PointerY;
-	}
+  if (_PointerRightDown) {
+    _PointerRightDownX = _PointerX;
+    _PointerRightDownY = _PointerY;
+  }
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-void CViewPointerBase::setPointerRightDown(bool pd)
-{
-	_PointerRightDown = pd;
-
-	if (_PointerRightDown)
-	{
-		_PointerRightDownX = _PointerX;
-		_PointerRightDownY = _PointerY;
-	}
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-void CViewPointerBase::setPointerDownString(const std::string &s)
-{
-	_PointerDownString = s;
+void CViewPointerBase::setPointerDownString(const std::string &s) {
+  _PointerDownString = s;
 }
 
 // +++ GET +++
 
 // --------------------------------------------------------------------------------------------------------------------
-void CViewPointerBase::getPointerPos(sint32 &x, sint32 &y)
-{
-	x = _PointerX;
-	y = _PointerY;
+void CViewPointerBase::getPointerPos(sint32 &x, sint32 &y) {
+  x = _PointerX;
+  y = _PointerY;
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-void CViewPointerBase::getPointerDispPos(sint32 &x, sint32 &y)
-{
-	x = getX();
-	y = getY();
+void CViewPointerBase::getPointerDispPos(sint32 &x, sint32 &y) {
+  x = getX();
+  y = getY();
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-void CViewPointerBase::getPointerOldPos(sint32 &x, sint32 &y)
-{
-	x = _PointerOldX;
-	y = _PointerOldY;
+void CViewPointerBase::getPointerOldPos(sint32 &x, sint32 &y) {
+  x = _PointerOldX;
+  y = _PointerOldY;
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-bool CViewPointerBase::getPointerDown(sint32 &x, sint32 &y)
-{
-	x = _PointerDownX;
-	y = _PointerDownY;
+bool CViewPointerBase::getPointerDown(sint32 &x, sint32 &y) {
+  x = _PointerDownX;
+  y = _PointerDownY;
 
-	return _PointerDown;
+  return _PointerDown;
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-bool CViewPointerBase::getPointerMiddleDown(sint32 &x, sint32 &y)
-{
-	x = _PointerMiddleDownX;
-	y = _PointerMiddleDownY;
+bool CViewPointerBase::getPointerMiddleDown(sint32 &x, sint32 &y) {
+  x = _PointerMiddleDownX;
+  y = _PointerMiddleDownY;
 
-	return _PointerMiddleDown;
+  return _PointerMiddleDown;
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-bool CViewPointerBase::getPointerRightDown(sint32 &x, sint32 &y)
-{
-	x = _PointerRightDownX;
-	y = _PointerRightDownY;
+bool CViewPointerBase::getPointerRightDown(sint32 &x, sint32 &y) {
+  x = _PointerRightDownX;
+  y = _PointerRightDownY;
 
-	return _PointerRightDown;
+  return _PointerRightDown;
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-bool CViewPointerBase::getPointerDrag()
-{
-	return _PointerDrag;
-}
+bool CViewPointerBase::getPointerDrag() { return _PointerDrag; }
 
 // --------------------------------------------------------------------------------------------------------------------
-std::string CViewPointerBase::getPointerDownString()
-{
-	return _PointerDownString;
+std::string CViewPointerBase::getPointerDownString() {
+  return _PointerDownString;
 }
 
-}
+} // namespace NLGUI

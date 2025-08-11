@@ -22,73 +22,70 @@ namespace EGSPD {
 /* -----------------------------------------
  * Inline implementation of CPeople
  * ----------------------------------------- */
-inline const std::string &CPeople::toString(TPeople v)
-{
-	if (v < 0 || v >= ___TPeople_useSize)
-	{
-		nlwarning("TPeople::toString(): value '%u' is not matched, \"Unknown\" string returned", v);
-		return _UnknownString;
-	}
-	if (!_Initialised)
-	{
-		init();
-	}
-	return _StrTable[v];
+inline const std::string &CPeople::toString(TPeople v) {
+  if (v < 0 || v >= ___TPeople_useSize) {
+    nlwarning("TPeople::toString(): value '%u' is not matched, \"Unknown\" "
+              "string returned",
+              v);
+    return _UnknownString;
+  }
+  if (!_Initialised) {
+    init();
+  }
+  return _StrTable[v];
 }
-inline CPeople::TPeople CPeople::fromString(const std::string &v)
-{
-	if (!_Initialised)
-	{
-		init();
-	}
-	if (v == _UnknownString)
-	{
-		return Unknown;
-	}
-	const std::map<std::string, TPeople>::const_iterator it = _ValueMap.find(NLMISC::toLowerAscii(v));
-	if (it == _ValueMap.end())
-	{
-		nlwarning("TPeople::toString(): string '%s' is not matched, 'Unknown' enum value returned", v.c_str());
-		return Unknown;
-	}
-	return (*it).second;
+inline CPeople::TPeople CPeople::fromString(const std::string &v) {
+  if (!_Initialised) {
+    init();
+  }
+  if (v == _UnknownString) {
+    return Unknown;
+  }
+  const std::map<std::string, TPeople>::const_iterator it =
+      _ValueMap.find(NLMISC::toLowerAscii(v));
+  if (it == _ValueMap.end()) {
+    nlwarning("TPeople::toString(): string '%s' is not matched, 'Unknown' enum "
+              "value returned",
+              v.c_str());
+    return Unknown;
+  }
+  return (*it).second;
 }
 // End of inline implementation of CPeople
 
 /* -----------------------------------------
  * Inline implementation of CClassificationType
  * ----------------------------------------- */
-inline const std::string &CClassificationType::toString(TClassificationType v)
-{
-	if (v < 0 || v >= ___TClassificationType_useSize)
-	{
-		nlwarning("TClassificationType::toString(): value '%u' is not matched, \"Unknown\" string returned", v);
-		return _UnknownString;
-	}
-	if (!_Initialised)
-	{
-		init();
-	}
-	return _StrTable[v];
+inline const std::string &CClassificationType::toString(TClassificationType v) {
+  if (v < 0 || v >= ___TClassificationType_useSize) {
+    nlwarning("TClassificationType::toString(): value '%u' is not matched, "
+              "\"Unknown\" string returned",
+              v);
+    return _UnknownString;
+  }
+  if (!_Initialised) {
+    init();
+  }
+  return _StrTable[v];
 }
-inline CClassificationType::TClassificationType CClassificationType::fromString(const std::string &v)
-{
-	if (!_Initialised)
-	{
-		init();
-	}
-	if (v == _UnknownString)
-	{
-		return Unknown;
-	}
-	const std::map<std::string, TClassificationType>::const_iterator it = _ValueMap.find(NLMISC::toLowerAscii(v));
-	if (it == _ValueMap.end())
-	{
-		nlwarning("TClassificationType::toString(): string '%s' is not matched, 'Unknown' enum value returned", v.c_str());
-		return Unknown;
-	}
-	return (*it).second;
+inline CClassificationType::TClassificationType
+CClassificationType::fromString(const std::string &v) {
+  if (!_Initialised) {
+    init();
+  }
+  if (v == _UnknownString) {
+    return Unknown;
+  }
+  const std::map<std::string, TClassificationType>::const_iterator it =
+      _ValueMap.find(NLMISC::toLowerAscii(v));
+  if (it == _ValueMap.end()) {
+    nlwarning("TClassificationType::toString(): string '%s' is not matched, "
+              "'Unknown' enum value returned",
+              v.c_str());
+    return Unknown;
+  }
+  return (*it).second;
 }
 // End of inline implementation of CClassificationType
 
-} // End of EGSPD
+} // namespace EGSPD

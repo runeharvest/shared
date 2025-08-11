@@ -16,14 +16,14 @@
 
 #include "std3d.h"
 
-#include "nel/misc/path.h"
 #include "nel/misc/file.h"
+#include "nel/misc/path.h"
 
-#include "nel/3d/nelu.h"
-#include "nel/3d/dru.h"
 #include "nel/3d/camera.h"
-#include "nel/3d/register_3d.h"
+#include "nel/3d/dru.h"
 #include "nel/3d/init_3d.h"
+#include "nel/3d/nelu.h"
+#include "nel/3d/register_3d.h"
 #include "nel/3d/vertex_stream_manager.h"
 #include "nel/misc/debug.h"
 
@@ -49,175 +49,154 @@ CRefPtr<CCamera> CNELU::Camera;
 CEventServer CNELU::EventServer;
 CEventListenerAsync CNELU::AsyncListener;
 
-bool CNELU::initDriver(uint w, uint h, uint bpp, bool windowed, nlWindow systemWindow, bool offscreen, bool direct3d)
-{
-	// Init debug system
-	//	NLMISC::InitDebug();
+bool CNELU::initDriver(uint w, uint h, uint bpp, bool windowed,
+                       nlWindow systemWindow, bool offscreen, bool direct3d) {
+  // Init debug system
+  //	NLMISC::InitDebug();
 
-	ShapeBank = new CShapeBank;
+  ShapeBank = new CShapeBank;
 
-	CNELU::Driver = NULL;
+  CNELU::Driver = NULL;
 
-	// Init driver.
+  // Init driver.
 #ifdef NL_OS_WINDOWS
-	if (direct3d)
-	{
-		CNELU::Driver = CDRU::createD3DDriver();
-	}
+  if (direct3d) {
+    CNELU::Driver = CDRU::createD3DDriver();
+  }
 #endif
 
-	if (!CNELU::Driver)
-	{
-		CNELU::Driver = CDRU::createGlDriver();
-	}
+  if (!CNELU::Driver) {
+    CNELU::Driver = CDRU::createGlDriver();
+  }
 
-	if (!CNELU::Driver)
-	{
-		nlwarning("CNELU::initDriver: no driver found");
-		return false;
-	}
+  if (!CNELU::Driver) {
+    nlwarning("CNELU::initDriver: no driver found");
+    return false;
+  }
 
-	if (!CNELU::Driver->init())
-	{
-		nlwarning("CNELU::initDriver: init() failed");
-		return false;
-	}
-	if (!CNELU::Driver->setDisplay(systemWindow, GfxMode(uint16(w), uint16(h), uint8(bpp), windowed, offscreen)))
-	{
-		nlwarning("CNELU::initDriver: setDisplay() failed");
-		return false;
-	}
-	if (!CNELU::Driver->activate())
-	{
-		nlwarning("CNELU::initDriver: activate() failed");
-		return false;
-	}
+  if (!CNELU::Driver->init()) {
+    nlwarning("CNELU::initDriver: init() failed");
+    return false;
+  }
+  if (!CNELU::Driver->setDisplay(
+          systemWindow,
+          GfxMode(uint16(w), uint16(h), uint8(bpp), windowed, offscreen))) {
+    nlwarning("CNELU::initDriver: setDisplay() failed");
+    return false;
+  }
+  if (!CNELU::Driver->activate()) {
+    nlwarning("CNELU::initDriver: activate() failed");
+    return false;
+  }
 
-	// Create a skin manager
-	MeshSkinManager = new CVertexStreamManager;
+  // Create a skin manager
+  MeshSkinManager = new CVertexStreamManager;
 
-	return true;
+  return true;
 }
 
-void CNELU::initScene(CViewport viewport)
-{
-	// Register basic csene.
-	CScene::registerBasics();
+void CNELU::initScene(CViewport viewport) {
+  // Register basic csene.
+  CScene::registerBasics();
 
-	if (CNELU::Scene == NULL)
-		CNELU::Scene = new CScene(false);
+  if (CNELU::Scene == NULL)
+    CNELU::Scene = new CScene(false);
 
-	// init default Roots.
-	CNELU::Scene->initDefaultRoots();
+  // init default Roots.
+  CNELU::Scene->initDefaultRoots();
 
-	// Set driver.
-	CNELU::Scene->setDriver(CNELU::Driver);
+  // Set driver.
+  CNELU::Scene->setDriver(CNELU::Driver);
 
-	// Set viewport
-	CNELU::Scene->setViewport(viewport);
+  // Set viewport
+  CNELU::Scene->setViewport(viewport);
 
-	// init QuadGridClipManager
-	CNELU::Scene->initQuadGridClipManager();
+  // init QuadGridClipManager
+  CNELU::Scene->initQuadGridClipManager();
 
-	// Create/link a camera.
-	CNELU::Camera = (CCamera *)CNELU::Scene->createModel(NL3D::CameraId);
-	CNELU::Scene->setCam(CNELU::Camera);
-	CNELU::Camera->setFrustum(DefLx, DefLy, DefLzNear, DefLzFar);
+  // Create/link a camera.
+  CNELU::Camera = (CCamera *)CNELU::Scene->createModel(NL3D::CameraId);
+  CNELU::Scene->setCam(CNELU::Camera);
+  CNELU::Camera->setFrustum(DefLx, DefLy, DefLzNear, DefLzFar);
 
-	// Link to the shape bank
-	CNELU::Scene->setShapeBank(CNELU::ShapeBank);
+  // Link to the shape bank
+  CNELU::Scene->setShapeBank(CNELU::ShapeBank);
 
-	// set the MeshSkin Vertex Streams
-	CNELU::Scene->getRenderTrav().setMeshSkinManager(MeshSkinManager);
+  // set the MeshSkin Vertex Streams
+  CNELU::Scene->getRenderTrav().setMeshSkinManager(MeshSkinManager);
 }
 
-void CNELU::initEventServer()
-{
-	CNELU::AsyncListener.reset();
-	CNELU::EventServer.addEmitter(CNELU::Driver->getEventEmitter());
-	CNELU::AsyncListener.addToServer(CNELU::EventServer);
+void CNELU::initEventServer() {
+  CNELU::AsyncListener.reset();
+  CNELU::EventServer.addEmitter(CNELU::Driver->getEventEmitter());
+  CNELU::AsyncListener.addToServer(CNELU::EventServer);
 }
 
-void CNELU::releaseEventServer()
-{
-	CNELU::AsyncListener.removeFromServer(CNELU::EventServer);
-	if (CNELU::Driver != NULL)
-	{
-		CNELU::EventServer.removeEmitter(CNELU::Driver->getEventEmitter());
-	}
+void CNELU::releaseEventServer() {
+  CNELU::AsyncListener.removeFromServer(CNELU::EventServer);
+  if (CNELU::Driver != NULL) {
+    CNELU::EventServer.removeEmitter(CNELU::Driver->getEventEmitter());
+  }
 }
 
-void CNELU::releaseScene()
-{
-	// Release the camera.
-	CNELU::Camera = NULL;
+void CNELU::releaseScene() {
+  // Release the camera.
+  CNELU::Camera = NULL;
 
-	// "Release" the Scene.
-	CNELU::Scene->setDriver(NULL);
-	CNELU::Scene->release();
+  // "Release" the Scene.
+  CNELU::Scene->setDriver(NULL);
+  CNELU::Scene->release();
 }
 
-void CNELU::releaseDriver()
-{
-	if (MeshSkinManager)
-		delete MeshSkinManager;
+void CNELU::releaseDriver() {
+  if (MeshSkinManager)
+    delete MeshSkinManager;
 
-	// "Release" the driver.
-	if (CNELU::Driver != NULL)
-	{
-		CNELU::Driver->release();
-		delete CNELU::Driver;
-		CNELU::Driver = NULL;
-	}
-	if (CNELU::ShapeBank != NULL)
-	{
-		delete CNELU::ShapeBank;
-		CNELU::ShapeBank = NULL;
-	}
+  // "Release" the driver.
+  if (CNELU::Driver != NULL) {
+    CNELU::Driver->release();
+    delete CNELU::Driver;
+    CNELU::Driver = NULL;
+  }
+  if (CNELU::ShapeBank != NULL) {
+    delete CNELU::ShapeBank;
+    CNELU::ShapeBank = NULL;
+  }
 }
 
-bool CNELU::init(uint w, uint h, CViewport viewport, uint bpp, bool windowed, nlWindow systemWindow, bool offscreen, bool direct3d)
-{
-	NL3D::registerSerial3d();
-	if (initDriver(w, h, bpp, windowed, systemWindow, offscreen, direct3d))
-	{
-		initScene(viewport);
-		initEventServer();
-		return true;
-	}
-	else
-		return false;
+bool CNELU::init(uint w, uint h, CViewport viewport, uint bpp, bool windowed,
+                 nlWindow systemWindow, bool offscreen, bool direct3d) {
+  NL3D::registerSerial3d();
+  if (initDriver(w, h, bpp, windowed, systemWindow, offscreen, direct3d)) {
+    initScene(viewport);
+    initEventServer();
+    return true;
+  } else
+    return false;
 }
 
-void CNELU::release()
-{
-	releaseEventServer();
-	releaseScene();
-	releaseDriver();
+void CNELU::release() {
+  releaseEventServer();
+  releaseScene();
+  releaseDriver();
 }
 
-void CNELU::screenshot()
-{
-	if (AsyncListener.isKeyPushed(KeyF12))
-	{
-		CBitmap btm;
-		CNELU::Driver->getBuffer(btm);
-		string filename = CFile::findNewFile("screenshot.tga");
-		COFile fs(filename);
-		btm.writeTGA(fs, 24);
-		nlinfo("Screenshot '%s' saved", filename.c_str());
-	}
+void CNELU::screenshot() {
+  if (AsyncListener.isKeyPushed(KeyF12)) {
+    CBitmap btm;
+    CNELU::Driver->getBuffer(btm);
+    string filename = CFile::findNewFile("screenshot.tga");
+    COFile fs(filename);
+    btm.writeTGA(fs, 24);
+    nlinfo("Screenshot '%s' saved", filename.c_str());
+  }
 }
 
-void CNELU::clearBuffers(CRGBA col)
-{
-	CNELU::Driver->clear2D(col);
-	CNELU::Driver->clearZBuffer();
+void CNELU::clearBuffers(CRGBA col) {
+  CNELU::Driver->clear2D(col);
+  CNELU::Driver->clearZBuffer();
 }
 
-void CNELU::swapBuffers()
-{
-	CNELU::Driver->swapBuffers();
-}
+void CNELU::swapBuffers() { CNELU::Driver->swapBuffers(); }
 
-} // NL3D
+} // namespace NL3D

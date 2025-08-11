@@ -29,92 +29,94 @@ namespace NLGUI {
  * \author Nevrax France
  * \date 2003
  */
-class CInterfaceExprNode
-{
+class CInterfaceExprNode {
 public:
-	virtual ~CInterfaceExprNode() { }
-	// eval result of expression, and eventually get the nodes the epression depends on
-	virtual void eval(CInterfaceExprValue &result) = 0;
-	// The same, but get db nodes the expression depends on (appended to vector)
-	virtual void evalWithDepends(CInterfaceExprValue &result, std::vector<NLMISC::ICDBNode *> &nodes) = 0;
-	// Get dependencies of the node (appended to vector)
-	virtual void getDepends(std::vector<NLMISC::ICDBNode *> &nodes) = 0;
+  virtual ~CInterfaceExprNode() {}
+  // eval result of expression, and eventually get the nodes the epression
+  // depends on
+  virtual void eval(CInterfaceExprValue &result) = 0;
+  // The same, but get db nodes the expression depends on (appended to vector)
+  virtual void evalWithDepends(CInterfaceExprValue &result,
+                               std::vector<NLMISC::ICDBNode *> &nodes) = 0;
+  // Get dependencies of the node (appended to vector)
+  virtual void getDepends(std::vector<NLMISC::ICDBNode *> &nodes) = 0;
 };
 
 // *******************************************************************************************************
-/** A constant value already parsed by interface (in a interface expr parse tree)
+/** A constant value already parsed by interface (in a interface expr parse
+ * tree)
  */
-class CInterfaceExprNodeValue : public CInterfaceExprNode
-{
+class CInterfaceExprNodeValue : public CInterfaceExprNode {
 public:
-	CInterfaceExprValue Value;
+  CInterfaceExprValue Value;
 
 public:
-	virtual void eval(CInterfaceExprValue &result);
-	virtual void evalWithDepends(CInterfaceExprValue &result, std::vector<NLMISC::ICDBNode *> &nodes);
-	virtual void getDepends(std::vector<NLMISC::ICDBNode *> &nodes);
+  virtual void eval(CInterfaceExprValue &result);
+  virtual void evalWithDepends(CInterfaceExprValue &result,
+                               std::vector<NLMISC::ICDBNode *> &nodes);
+  virtual void getDepends(std::vector<NLMISC::ICDBNode *> &nodes);
 };
 
 // *******************************************************************************************************
 /** A fct call (in a interface expr parse tree)
  */
-class CInterfaceExprNodeValueFnCall : public CInterfaceExprNode
-{
+class CInterfaceExprNodeValueFnCall : public CInterfaceExprNode {
 public:
-	CInterfaceExpr::TUserFct Func;
-	// list of parameters
-	std::vector<CInterfaceExprNode *> Params;
+  CInterfaceExpr::TUserFct Func;
+  // list of parameters
+  std::vector<CInterfaceExprNode *> Params;
 
 public:
-	virtual void eval(CInterfaceExprValue &result);
-	virtual void evalWithDepends(CInterfaceExprValue &result, std::vector<NLMISC::ICDBNode *> &nodes);
-	virtual void getDepends(std::vector<NLMISC::ICDBNode *> &nodes);
-	virtual ~CInterfaceExprNodeValueFnCall();
+  virtual void eval(CInterfaceExprValue &result);
+  virtual void evalWithDepends(CInterfaceExprValue &result,
+                               std::vector<NLMISC::ICDBNode *> &nodes);
+  virtual void getDepends(std::vector<NLMISC::ICDBNode *> &nodes);
+  virtual ~CInterfaceExprNodeValueFnCall();
 };
 
 // *******************************************************************************************************
 /** A db leaf read (in a interface expr parse tree)
  */
-class CInterfaceExprNodeDBLeaf : public CInterfaceExprNode
-{
+class CInterfaceExprNodeDBLeaf : public CInterfaceExprNode {
 public:
-	class NLMISC::CCDBNodeLeaf *Leaf;
+  class NLMISC::CCDBNodeLeaf *Leaf;
 
 public:
-	virtual void eval(CInterfaceExprValue &result);
-	virtual void evalWithDepends(CInterfaceExprValue &result, std::vector<NLMISC::ICDBNode *> &nodes);
-	virtual void getDepends(std::vector<NLMISC::ICDBNode *> &nodes);
+  virtual void eval(CInterfaceExprValue &result);
+  virtual void evalWithDepends(CInterfaceExprValue &result,
+                               std::vector<NLMISC::ICDBNode *> &nodes);
+  virtual void getDepends(std::vector<NLMISC::ICDBNode *> &nodes);
 };
 
 // *******************************************************************************************************
 /** A db branch read (in a interface expr parse tree)
  */
-class CInterfaceExprNodeDBBranch : public CInterfaceExprNode
-{
+class CInterfaceExprNodeDBBranch : public CInterfaceExprNode {
 public:
-	class NLMISC::CCDBNodeBranch *Branch;
+  class NLMISC::CCDBNodeBranch *Branch;
 
 public:
-	virtual void eval(CInterfaceExprValue &result);
-	virtual void evalWithDepends(CInterfaceExprValue &result, std::vector<NLMISC::ICDBNode *> &nodes);
-	virtual void getDepends(std::vector<NLMISC::ICDBNode *> &nodes);
+  virtual void eval(CInterfaceExprValue &result);
+  virtual void evalWithDepends(CInterfaceExprValue &result,
+                               std::vector<NLMISC::ICDBNode *> &nodes);
+  virtual void getDepends(std::vector<NLMISC::ICDBNode *> &nodes);
 };
 
 // *******************************************************************************************************
 /** A dependant db read (in a interface expr parse tree)
  * This is rarely used so no real optim there..
  */
-class CInterfaceExprNodeDependantDBRead : public CInterfaceExprNode
-{
+class CInterfaceExprNodeDependantDBRead : public CInterfaceExprNode {
 public:
-	std::string Expr;
+  std::string Expr;
 
 public:
-	virtual void eval(CInterfaceExprValue &result);
-	virtual void evalWithDepends(CInterfaceExprValue &result, std::vector<NLMISC::ICDBNode *> &nodes);
-	virtual void getDepends(std::vector<NLMISC::ICDBNode *> &nodes);
+  virtual void eval(CInterfaceExprValue &result);
+  virtual void evalWithDepends(CInterfaceExprValue &result,
+                               std::vector<NLMISC::ICDBNode *> &nodes);
+  virtual void getDepends(std::vector<NLMISC::ICDBNode *> &nodes);
 };
 
-}
+} // namespace NLGUI
 
 #endif

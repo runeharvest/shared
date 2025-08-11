@@ -19,8 +19,8 @@
 //
 // Author: Jan BOON (Kaetemi) <jan.boon@kaetemi.be>
 
-#include <nel/misc/types_nl.h>
 #include "scene_context.h"
+#include <nel/misc/types_nl.h>
 
 #include <nel/misc/debug.h>
 #include <nel/misc/path.h>

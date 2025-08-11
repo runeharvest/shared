@@ -24,8 +24,8 @@
 // INCLUDE //
 /////////////
 // Misc
-#include "nel/misc/types_nl.h"
 #include "nel/misc/sheet_id.h"
+#include "nel/misc/types_nl.h"
 // Game Share
 #include "slot_types.h"
 
@@ -38,91 +38,83 @@
  * \author Nevrax France
  * \date 2003
  */
-class CVisualSlotManager
-{
-	////////////
-	// PUBLIC //
+class CVisualSlotManager {
+  ////////////
+  // PUBLIC //
 public:
-	/**
-	 * Instanciate CVisualSlotManager. There can be only one instance (singleton)
-	 * \return CVisualSlotManager * : Pointer on CVisualSlotManager.
-	 */
-	static CVisualSlotManager *getInstance();
+  /**
+   * Instanciate CVisualSlotManager. There can be only one instance (singleton)
+   * \return CVisualSlotManager * : Pointer on CVisualSlotManager.
+   */
+  static CVisualSlotManager *getInstance();
 
-	// release memory
-	static void releaseInstance();
-
-public:
-	typedef struct TElement
-	{
-		uint32 Index;
-		NLMISC::CSheetId SheetId;
-
-		/// Load/Save the values using the serial system
-		void serial(NLMISC::IStream &s)
-		{
-			s.serial(Index);
-			s.serial(SheetId);
-		}
-	} TElement;
-
-	typedef struct TElementList
-	{
-		// elements list for a visual slot.
-		std::vector<TElement> Element;
-
-		// std::map to increase access speed
-		typedef std::map<NLMISC::CSheetId, uint32> SheetIdToIndexMapType;
-		SheetIdToIndexMapType SheetIdToIndexMap;
-
-		/// Load/Save the values using the serial system
-		void serial(NLMISC::IStream &s)
-		{
-			s.serialCont(Element);
-		}
-
-		void updateMaps();
-	} TElementList;
-
-	typedef std::vector<TElementList> TVisualSlot;
-
-	typedef struct
-	{
-		uint32 Index;
-		SLOTTYPE::EVisualSlot VisualSlot;
-	} TIdxbyVS;
+  // release memory
+  static void releaseInstance();
 
 public:
-	/// Return the visual slot index from a sheet Id for items in right hand.
-	uint32 rightItem2Index(const NLMISC::CSheetId &id);
-	/// Return the visual slot index from a sheet Id for items in left hand.
-	uint32 leftItem2Index(const NLMISC::CSheetId &id);
-	/// Return the visual index from a sheet Id and the visual slot.
-	uint32 sheet2Index(const NLMISC::CSheetId &id, SLOTTYPE::EVisualSlot slot);
-	// Return the sheet Id from visual index and the visual slot.
-	NLMISC::CSheetId *index2Sheet(uint32 index, SLOTTYPE::EVisualSlot slot);
-	/// ...
-	void sheet2Index(const NLMISC::CSheetId &id, std::vector<TIdxbyVS> &result);
-	/// Return the number of different index for a visual slot.
-	uint32 getNbIndex(SLOTTYPE::EVisualSlot slot) const;
+  typedef struct TElement {
+    uint32 Index;
+    NLMISC::CSheetId SheetId;
 
-	///////////////
-	// PROTECTED //
+    /// Load/Save the values using the serial system
+    void serial(NLMISC::IStream &s) {
+      s.serial(Index);
+      s.serial(SheetId);
+    }
+  } TElement;
+
+  typedef struct TElementList {
+    // elements list for a visual slot.
+    std::vector<TElement> Element;
+
+    // std::map to increase access speed
+    typedef std::map<NLMISC::CSheetId, uint32> SheetIdToIndexMapType;
+    SheetIdToIndexMapType SheetIdToIndexMap;
+
+    /// Load/Save the values using the serial system
+    void serial(NLMISC::IStream &s) { s.serialCont(Element); }
+
+    void updateMaps();
+  } TElementList;
+
+  typedef std::vector<TElementList> TVisualSlot;
+
+  typedef struct {
+    uint32 Index;
+    SLOTTYPE::EVisualSlot VisualSlot;
+  } TIdxbyVS;
+
+public:
+  /// Return the visual slot index from a sheet Id for items in right hand.
+  uint32 rightItem2Index(const NLMISC::CSheetId &id);
+  /// Return the visual slot index from a sheet Id for items in left hand.
+  uint32 leftItem2Index(const NLMISC::CSheetId &id);
+  /// Return the visual index from a sheet Id and the visual slot.
+  uint32 sheet2Index(const NLMISC::CSheetId &id, SLOTTYPE::EVisualSlot slot);
+  // Return the sheet Id from visual index and the visual slot.
+  NLMISC::CSheetId *index2Sheet(uint32 index, SLOTTYPE::EVisualSlot slot);
+  /// ...
+  void sheet2Index(const NLMISC::CSheetId &id, std::vector<TIdxbyVS> &result);
+  /// Return the number of different index for a visual slot.
+  uint32 getNbIndex(SLOTTYPE::EVisualSlot slot) const;
+
+  ///////////////
+  // PROTECTED //
 protected:
-	/// Constructor
-	CVisualSlotManager();
-	/// Initialize the class
-	void init();
+  /// Constructor
+  CVisualSlotManager();
+  /// Initialize the class
+  void init();
 
-	/////////////
-	// PRIVATE //
+  /////////////
+  // PRIVATE //
 private:
-	// The only one instance of the class
-	static CVisualSlotManager *_Instance;
+  // The only one instance of the class
+  static CVisualSlotManager *_Instance;
 
 private:
-	//
-	TVisualSlot _VisualSlot;
+  //
+  TVisualSlot _VisualSlot;
 };
 
 #endif // CL_VISUAL_SLOT_MANAGER_H

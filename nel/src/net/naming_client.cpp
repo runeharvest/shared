@@ -23,8 +23,8 @@
 
 #include "stdnet.h"
 
-#include "nel/net/naming_client.h"
 #include "nel/net/callback_client.h"
+#include "nel/net/naming_client.h"
 #include "nel/net/service.h"
 
 //
@@ -49,20 +49,19 @@ static TBroadcastCallback _UnregistrationBroadcastCallback = NULL;
 TServiceId CNamingClient::_MySId(0);
 
 std::list<CNamingClient::CServiceEntry> CNamingClient::RegisteredServices;
-NLMISC::CMutex CNamingClient::RegisteredServicesMutex("CNamingClient::RegisteredServicesMutex");
+NLMISC::CMutex CNamingClient::RegisteredServicesMutex(
+    "CNamingClient::RegisteredServicesMutex");
 
 //
 //
 //
 
-void CNamingClient::setRegistrationBroadcastCallback(TBroadcastCallback cb)
-{
-	_RegistrationBroadcastCallback = cb;
+void CNamingClient::setRegistrationBroadcastCallback(TBroadcastCallback cb) {
+  _RegistrationBroadcastCallback = cb;
 }
 
-void CNamingClient::setUnregistrationBroadcastCallback(TBroadcastCallback cb)
-{
-	_UnregistrationBroadcastCallback = cb;
+void CNamingClient::setUnregistrationBroadcastCallback(TBroadcastCallback cb) {
+  _UnregistrationBroadcastCallback = cb;
 }
 
 //
@@ -73,25 +72,23 @@ static bool Registered;
 static bool RegisteredSuccess;
 static TServiceId *RegisteredSID = NULL;
 static string Reason;
-void cbRegisterBroadcast(CMessage &msgin, TSockId from, CCallbackNetBase &netbase);
+void cbRegisterBroadcast(CMessage &msgin, TSockId from,
+                         CCallbackNetBase &netbase);
 
-static void cbRegister(CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
-{
-	nlassert(RegisteredSID != NULL);
+static void cbRegister(CMessage &msgin, TSockId from,
+                       CCallbackNetBase &netbase) {
+  nlassert(RegisteredSID != NULL);
 
-	msgin.serial(RegisteredSuccess);
-	if (RegisteredSuccess)
-	{
-		msgin.serial(*RegisteredSID);
+  msgin.serial(RegisteredSuccess);
+  if (RegisteredSuccess) {
+    msgin.serial(*RegisteredSID);
 
-		// decode the registered services at the register process
-		cbRegisterBroadcast(msgin, from, netbase);
-	}
-	else
-	{
-		msgin.serial(Reason);
-	}
-	Registered = true;
+    // decode the registered services at the register process
+    cbRegisterBroadcast(msgin, from, netbase);
+  } else {
+    msgin.serial(Reason);
+  }
+  Registered = true;
 }
 
 //
@@ -99,149 +96,150 @@ static void cbRegister(CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
 static bool QueryPort;
 static uint16 QueryPortPort;
 
-static void cbQueryPort(CMessage &msgin, TSockId /* from */, CCallbackNetBase & /* netbase */)
-{
-	msgin.serial(QueryPortPort);
-	QueryPort = true;
+static void cbQueryPort(CMessage &msgin, TSockId /* from */,
+                        CCallbackNetBase & /* netbase */) {
+  msgin.serial(QueryPortPort);
+  QueryPort = true;
 }
 
 //
 
 // static bool FirstRegisteredBroadcast;
 
-void cbRegisterBroadcast(CMessage &msgin, TSockId /* from */, CCallbackNetBase & /* netbase */)
-{
-	TServiceId::size_type size;
-	string name;
-	TServiceId sid;
-	vector<CInetAddress> addr;
+void cbRegisterBroadcast(CMessage &msgin, TSockId /* from */,
+                         CCallbackNetBase & /* netbase */) {
+  TServiceId::size_type size;
+  string name;
+  TServiceId sid;
+  vector<CInetAddress> addr;
 
-	msgin.serial(size);
+  msgin.serial(size);
 
-	for (TServiceId::size_type i = 0; i < size; i++)
-	{
-		msgin.serial(name);
-		msgin.serial(sid);
-		msgin.serialCont(addr);
+  for (TServiceId::size_type i = 0; i < size; i++) {
+    msgin.serial(name);
+    msgin.serial(sid);
+    msgin.serialCont(addr);
 
-		// add it in the list
+    // add it in the list
 
-		std::vector<CInetAddress> addrs;
-		CNamingClient::find(sid, addrs);
+    std::vector<CInetAddress> addrs;
+    CNamingClient::find(sid, addrs);
 
-		if (addrs.empty())
-		{
-			{
-				CAutoMutex<CMutex> lock(CNamingClient::RegisteredServicesMutex);
-				CNamingClient::RegisteredServices.push_back(CNamingClient::CServiceEntry(name, sid, addr));
-			}
+    if (addrs.empty()) {
+      {
+        CAutoMutex<CMutex> lock(CNamingClient::RegisteredServicesMutex);
+        CNamingClient::RegisteredServices.push_back(
+            CNamingClient::CServiceEntry(name, sid, addr));
+      }
 
-			nlinfo("NC: Registration Broadcast of the service %s-%hu '%s'", name.c_str(), sid.get(), vectorCInetAddressToString(addr).c_str());
+      nlinfo("NC: Registration Broadcast of the service %s-%hu '%s'",
+             name.c_str(), sid.get(), vectorCInetAddressToString(addr).c_str());
 
-			if (_RegistrationBroadcastCallback != NULL)
-				_RegistrationBroadcastCallback(name, sid, addr);
-		}
-		else if (addrs.size() == 1)
-		{
-			{
-				CAutoMutex<CMutex> lock(CNamingClient::RegisteredServicesMutex);
-				for (std::list<CNamingClient::CServiceEntry>::iterator it = CNamingClient::RegisteredServices.begin(); it != CNamingClient::RegisteredServices.end(); it++)
-				{
-					if (sid == (*it).SId)
-					{
-						(*it).Name = name;
-						(*it).Addr = addr;
-						break;
-					}
-				}
-			}
-			nlinfo("NC: Registration Broadcast (update) of the service %s-%hu '%s'", name.c_str(), sid.get(), addr[0].asString().c_str());
-		}
-		else
-		{
-			nlstop;
-		}
-	}
+      if (_RegistrationBroadcastCallback != NULL)
+        _RegistrationBroadcastCallback(name, sid, addr);
+    } else if (addrs.size() == 1) {
+      {
+        CAutoMutex<CMutex> lock(CNamingClient::RegisteredServicesMutex);
+        for (std::list<CNamingClient::CServiceEntry>::iterator it =
+                 CNamingClient::RegisteredServices.begin();
+             it != CNamingClient::RegisteredServices.end(); it++) {
+          if (sid == (*it).SId) {
+            (*it).Name = name;
+            (*it).Addr = addr;
+            break;
+          }
+        }
+      }
+      nlinfo("NC: Registration Broadcast (update) of the service %s-%hu '%s'",
+             name.c_str(), sid.get(), addr[0].asString().c_str());
+    } else {
+      nlstop;
+    }
+  }
 
-	//	FirstRegisteredBroadcast = true;
+  //	FirstRegisteredBroadcast = true;
 
-	// CNamingClient::displayRegisteredServices ();
+  // CNamingClient::displayRegisteredServices ();
 }
 
 //
 
-void cbUnregisterBroadcast(CMessage &msgin, TSockId /* from */, CCallbackNetBase & /* netbase */)
-{
-	string name;
-	TServiceId sid;
-	vector<CInetAddress> addrs;
+void cbUnregisterBroadcast(CMessage &msgin, TSockId /* from */,
+                           CCallbackNetBase & /* netbase */) {
+  string name;
+  TServiceId sid;
+  vector<CInetAddress> addrs;
 
-	msgin.serial(name);
-	msgin.serial(sid);
+  msgin.serial(name);
+  msgin.serial(sid);
 
-	// remove it in the list, if the service is not found, ignore it
+  // remove it in the list, if the service is not found, ignore it
 
-	{
-		CAutoMutex<CMutex> lock(CNamingClient::RegisteredServicesMutex);
-		for (std::list<CNamingClient::CServiceEntry>::iterator it = CNamingClient::RegisteredServices.begin(); it != CNamingClient::RegisteredServices.end(); it++)
-		{
-			CNamingClient::CServiceEntry &serviceEntry = *it;
-			if (serviceEntry.SId == sid)
-			{
-				// check the structure
-				nlassertex(serviceEntry.Name == name, ("%s %s", serviceEntry.Name.c_str(), name.c_str()));
+  {
+    CAutoMutex<CMutex> lock(CNamingClient::RegisteredServicesMutex);
+    for (std::list<CNamingClient::CServiceEntry>::iterator it =
+             CNamingClient::RegisteredServices.begin();
+         it != CNamingClient::RegisteredServices.end(); it++) {
+      CNamingClient::CServiceEntry &serviceEntry = *it;
+      if (serviceEntry.SId == sid) {
+        // check the structure
+        nlassertex(serviceEntry.Name == name,
+                   ("%s %s", serviceEntry.Name.c_str(), name.c_str()));
 
-				addrs = serviceEntry.Addr;
+        addrs = serviceEntry.Addr;
 
-				CNamingClient::RegisteredServices.erase(it);
-				break;
-			}
-		}
-	}
+        CNamingClient::RegisteredServices.erase(it);
+        break;
+      }
+    }
+  }
 
-	nlinfo("NC: Unregistration Broadcast of the service %s-%hu", name.c_str(), sid.get());
+  nlinfo("NC: Unregistration Broadcast of the service %s-%hu", name.c_str(),
+         sid.get());
 
-	// send the ACK to the NS
+  // send the ACK to the NS
 
-	CMessage msgout("ACK_UNI");
-	msgout.serial(sid);
-	CNamingClient::_Connection->send(msgout);
+  CMessage msgout("ACK_UNI");
+  msgout.serial(sid);
+  CNamingClient::_Connection->send(msgout);
 
-	// oh my god, it s my sid! but i m alive, why this f*cking naming service want to kill me? ok, i leave it alone!
-	if (CNamingClient::_MySId == sid)
-	{
-		nlwarning("NC: Naming Service asked me to leave, I leave!");
-		IService::getInstance()->exit();
-		return;
-	}
+  // oh my god, it s my sid! but i m alive, why this f*cking naming service want
+  // to kill me? ok, i leave it alone!
+  if (CNamingClient::_MySId == sid) {
+    nlwarning("NC: Naming Service asked me to leave, I leave!");
+    IService::getInstance()->exit();
+    return;
+  }
 
-	if (_UnregistrationBroadcastCallback != NULL)
-		_UnregistrationBroadcastCallback(name, sid, addrs);
+  if (_UnregistrationBroadcastCallback != NULL)
+    _UnregistrationBroadcastCallback(name, sid, addrs);
 
-	// CNamingClient::displayRegisteredServices ();
+  // CNamingClient::displayRegisteredServices ();
 }
 
 //
 
 static TCallbackItem NamingClientCallbackArray[] = {
-	{ "RG", cbRegister },
-	{ "QP", cbQueryPort },
+    {"RG", cbRegister},
+    {"QP", cbQueryPort},
 
-	{ "RGB", cbRegisterBroadcast },
-	{ "UNB", cbUnregisterBroadcast }
-};
+    {"RGB", cbRegisterBroadcast},
+    {"UNB", cbUnregisterBroadcast}};
 
-void CNamingClient::connect(const CInetHost &addr, CCallbackNetBase::TRecordingState rec, const vector<CInetAddress> & /* addresses */)
-{
-	nlassert(_Connection == NULL || (_Connection != NULL && !_Connection->connected()));
+void CNamingClient::connect(const CInetHost &addr,
+                            CCallbackNetBase::TRecordingState rec,
+                            const vector<CInetAddress> & /* addresses */) {
+  nlassert(_Connection == NULL ||
+           (_Connection != NULL && !_Connection->connected()));
 
-	if (_Connection == NULL)
-	{
-		_Connection = new CCallbackClient(rec, "naming_client.nmr");
-		_Connection->addCallbackArray(NamingClientCallbackArray, sizeof(NamingClientCallbackArray) / sizeof(NamingClientCallbackArray[0]));
-	}
+  if (_Connection == NULL) {
+    _Connection = new CCallbackClient(rec, "naming_client.nmr");
+    _Connection->addCallbackArray(NamingClientCallbackArray,
+                                  sizeof(NamingClientCallbackArray) /
+                                      sizeof(NamingClientCallbackArray[0]));
+  }
 
-	_Connection->connect(addr);
+  _Connection->connect(addr);
 
 /*	// send the available addresses
 	CMessage msgout ("RS");
@@ -257,285 +255,268 @@ void CNamingClient::connect(const CInetHost &addr, CCallbackNetBase::TRecordingS
 	}
 */}
 
-void CNamingClient::disconnect()
-{
-	if (_Connection != NULL)
-	{
-		if (_Connection->connected())
-		{
-			_Connection->disconnect();
-		}
-		delete _Connection;
-		_Connection = NULL;
-	}
+void CNamingClient::disconnect() {
+  if (_Connection != NULL) {
+    if (_Connection->connected()) {
+      _Connection->disconnect();
+    }
+    delete _Connection;
+    _Connection = NULL;
+  }
 
-	// we don't call unregisterAllServices because when the naming service will see the disconnection,
-	// it'll automatically unregister all services registered by this client.
+  // we don't call unregisterAllServices because when the naming service will
+  // see the disconnection, it'll automatically unregister all services
+  // registered by this client.
 }
 
-string CNamingClient::info()
-{
-	string res;
+string CNamingClient::info() {
+  string res;
 
-	if (connected())
-	{
-		res = "connected to ";
-		res += _Connection->remoteAddress().asString();
-	}
-	else
-	{
-		res = "Not connected";
-	}
+  if (connected()) {
+    res = "connected to ";
+    res += _Connection->remoteAddress().asString();
+  } else {
+    res = "Not connected";
+  }
 
-	return res;
+  return res;
 }
 
-bool CNamingClient::registerService(const std::string &name, const std::vector<CInetAddress> &addr, TServiceId &sid)
-{
-	nlassert(_Connection != NULL && _Connection->connected());
+bool CNamingClient::registerService(const std::string &name,
+                                    const std::vector<CInetAddress> &addr,
+                                    TServiceId &sid) {
+  nlassert(_Connection != NULL && _Connection->connected());
 
-	CMessage msgout("RG");
-	msgout.serial(const_cast<std::string &>(name));
-	msgout.serialCont(const_cast<vector<CInetAddress> &>(addr));
-	sid.set(0);
-	msgout.serial(sid);
-	_Connection->send(msgout);
+  CMessage msgout("RG");
+  msgout.serial(const_cast<std::string &>(name));
+  msgout.serialCont(const_cast<vector<CInetAddress> &>(addr));
+  sid.set(0);
+  msgout.serial(sid);
+  _Connection->send(msgout);
 
-	// wait the answer of the naming service "RG"
-	Registered = false;
-	RegisteredSID = &sid;
-	while (!Registered)
-	{
-		_Connection->update(-1);
-		nlSleep(1);
-	}
-	if (RegisteredSuccess)
-	{
-		_MySId = sid;
-		_RegisteredServices.insert(make_pair(*RegisteredSID, name));
-		nldebug("NC: Registered service %s-%hu at %s", name.c_str(), sid.get(), addr[0].asString().c_str());
-	}
-	else
-	{
-		nldebug("NC: Naming service refused to register service %s at %s", name.c_str(), addr[0].asString().c_str());
-		nlwarning("NC: Startup denied: %s", Reason.c_str());
-		Reason.clear();
-	}
+  // wait the answer of the naming service "RG"
+  Registered = false;
+  RegisteredSID = &sid;
+  while (!Registered) {
+    _Connection->update(-1);
+    nlSleep(1);
+  }
+  if (RegisteredSuccess) {
+    _MySId = sid;
+    _RegisteredServices.insert(make_pair(*RegisteredSID, name));
+    nldebug("NC: Registered service %s-%hu at %s", name.c_str(), sid.get(),
+            addr[0].asString().c_str());
+  } else {
+    nldebug("NC: Naming service refused to register service %s at %s",
+            name.c_str(), addr[0].asString().c_str());
+    nlwarning("NC: Startup denied: %s", Reason.c_str());
+    Reason.clear();
+  }
 
-	RegisteredSID = NULL;
+  RegisteredSID = NULL;
 
-	return RegisteredSuccess;
+  return RegisteredSuccess;
 }
 
-bool CNamingClient::registerServiceWithSId(const std::string &name, const std::vector<CInetAddress> &addr, TServiceId sid)
-{
-	nlassert(_Connection != NULL && _Connection->connected());
+bool CNamingClient::registerServiceWithSId(
+    const std::string &name, const std::vector<CInetAddress> &addr,
+    TServiceId sid) {
+  nlassert(_Connection != NULL && _Connection->connected());
 
-	CMessage msgout("RG");
-	msgout.serial(const_cast<std::string &>(name));
-	msgout.serialCont(const_cast<vector<CInetAddress> &>(addr));
-	msgout.serial(sid);
-	_Connection->send(msgout);
+  CMessage msgout("RG");
+  msgout.serial(const_cast<std::string &>(name));
+  msgout.serialCont(const_cast<vector<CInetAddress> &>(addr));
+  msgout.serial(sid);
+  _Connection->send(msgout);
 
-	// wait the answer of the naming service "RGI"
-	Registered = false;
-	RegisteredSID = &sid;
-	while (!Registered)
-	{
-		_Connection->update(-1);
-		nlSleep(1);
-	}
-	if (RegisteredSuccess)
-	{
-		_MySId = sid;
-		_RegisteredServices.insert(make_pair(*RegisteredSID, name));
-		nldebug("NC: Registered service with sid %s-%hu at %s", name.c_str(), RegisteredSID->get(), addr[0].asString().c_str());
-	}
-	else
-	{
-		nlerror("NC: Naming service refused to register service with sid %s at %s", name.c_str(), addr[0].asString().c_str());
-	}
+  // wait the answer of the naming service "RGI"
+  Registered = false;
+  RegisteredSID = &sid;
+  while (!Registered) {
+    _Connection->update(-1);
+    nlSleep(1);
+  }
+  if (RegisteredSuccess) {
+    _MySId = sid;
+    _RegisteredServices.insert(make_pair(*RegisteredSID, name));
+    nldebug("NC: Registered service with sid %s-%hu at %s", name.c_str(),
+            RegisteredSID->get(), addr[0].asString().c_str());
+  } else {
+    nlerror("NC: Naming service refused to register service with sid %s at %s",
+            name.c_str(), addr[0].asString().c_str());
+  }
 
-	return RegisteredSuccess == 1;
+  return RegisteredSuccess == 1;
 }
 
-void CNamingClient::resendRegisteration(const std::string &name, const std::vector<CInetAddress> &addr, TServiceId sid)
-{
-	nlassert(_Connection != NULL && _Connection->connected());
+void CNamingClient::resendRegisteration(const std::string &name,
+                                        const std::vector<CInetAddress> &addr,
+                                        TServiceId sid) {
+  nlassert(_Connection != NULL && _Connection->connected());
 
-	CMessage msgout("RRG");
-	msgout.serial(const_cast<std::string &>(name));
-	msgout.serialCont(const_cast<vector<CInetAddress> &>(addr));
-	msgout.serial(sid);
-	_Connection->send(msgout);
+  CMessage msgout("RRG");
+  msgout.serial(const_cast<std::string &>(name));
+  msgout.serialCont(const_cast<vector<CInetAddress> &>(addr));
+  msgout.serial(sid);
+  _Connection->send(msgout);
 }
 
-void CNamingClient::unregisterService(TServiceId sid)
-{
-	nlassert(_Connection != NULL && _Connection->connected());
+void CNamingClient::unregisterService(TServiceId sid) {
+  nlassert(_Connection != NULL && _Connection->connected());
 
-	CMessage msgout("UNI");
-	msgout.serial(sid);
-	_Connection->send(msgout);
+  CMessage msgout("UNI");
+  msgout.serial(sid);
+  _Connection->send(msgout);
 
-	nldebug("NC: Unregistering service %s-%hu", _RegisteredServices[sid].c_str(), sid.get());
-	_RegisteredServices.erase(sid);
+  nldebug("NC: Unregistering service %s-%hu", _RegisteredServices[sid].c_str(),
+          sid.get());
+  _RegisteredServices.erase(sid);
 }
 
-void CNamingClient::unregisterAllServices()
-{
-	nlassert(_Connection != NULL && _Connection->connected());
+void CNamingClient::unregisterAllServices() {
+  nlassert(_Connection != NULL && _Connection->connected());
 
-	while (!_RegisteredServices.empty())
-	{
-		TRegServices::iterator irs = _RegisteredServices.begin();
-		TServiceId sid = (*irs).first;
-		unregisterService(sid);
-	}
+  while (!_RegisteredServices.empty()) {
+    TRegServices::iterator irs = _RegisteredServices.begin();
+    TServiceId sid = (*irs).first;
+    unregisterService(sid);
+  }
 }
 
-uint16 CNamingClient::queryServicePort()
-{
-	nlassert(_Connection != NULL && _Connection->connected());
+uint16 CNamingClient::queryServicePort() {
+  nlassert(_Connection != NULL && _Connection->connected());
 
-	CMessage msgout("QP");
-	_Connection->send(msgout);
+  CMessage msgout("QP");
+  _Connection->send(msgout);
 
-	// wait the answer of the naming service "QP"
-	QueryPort = false;
-	while (!QueryPort)
-	{
-		_Connection->update(-1);
-		nlSleep(1);
-	}
+  // wait the answer of the naming service "QP"
+  QueryPort = false;
+  while (!QueryPort) {
+    _Connection->update(-1);
+    nlSleep(1);
+  }
 
-	nlinfo("NC: Received the answer of the query port (%hu)", QueryPortPort);
+  nlinfo("NC: Received the answer of the query port (%hu)", QueryPortPort);
 
-	return QueryPortPort;
+  return QueryPortPort;
 }
 
-bool CNamingClient::lookup(const std::string &name, CInetAddress &addr)
-{
-	nlassert(_Connection != NULL && _Connection->connected());
+bool CNamingClient::lookup(const std::string &name, CInetAddress &addr) {
+  nlassert(_Connection != NULL && _Connection->connected());
 
-	vector<CInetAddress> addrs;
-	find(name, addrs);
+  vector<CInetAddress> addrs;
+  find(name, addrs);
 
-	if (addrs.empty())
-		return false;
+  if (addrs.empty())
+    return false;
 
-	nlassert(addrs.size() == 1);
-	addr = addrs[0];
+  nlassert(addrs.size() == 1);
+  addr = addrs[0];
 
-	return true;
+  return true;
 }
 
-bool CNamingClient::lookup(TServiceId sid, CInetAddress &addr)
-{
-	nlassert(_Connection != NULL && _Connection->connected());
+bool CNamingClient::lookup(TServiceId sid, CInetAddress &addr) {
+  nlassert(_Connection != NULL && _Connection->connected());
 
-	vector<CInetAddress> addrs;
-	find(sid, addrs);
+  vector<CInetAddress> addrs;
+  find(sid, addrs);
 
-	if (addrs.empty())
-		return false;
+  if (addrs.empty())
+    return false;
 
-	nlassert(addrs.size() == 1);
-	addr = addrs[0];
+  nlassert(addrs.size() == 1);
+  addr = addrs[0];
 
-	return true;
+  return true;
 }
 
-bool CNamingClient::lookupAlternate(const std::string &name, CInetAddress &addr)
-{
-	nlassert(_Connection != NULL && _Connection->connected());
+bool CNamingClient::lookupAlternate(const std::string &name,
+                                    CInetAddress &addr) {
+  nlassert(_Connection != NULL && _Connection->connected());
 
-	// remove it from his local list
-	{
-		CAutoMutex<CMutex> lock(RegisteredServicesMutex);
-		for (std::list<CServiceEntry>::iterator it = RegisteredServices.begin(); it != RegisteredServices.end(); it++)
-		{
-			if ((*it).Addr[0] == addr)
-			{
-				RegisteredServices.erase(it);
-				break;
-			}
-		}
-	}
+  // remove it from his local list
+  {
+    CAutoMutex<CMutex> lock(RegisteredServicesMutex);
+    for (std::list<CServiceEntry>::iterator it = RegisteredServices.begin();
+         it != RegisteredServices.end(); it++) {
+      if ((*it).Addr[0] == addr) {
+        RegisteredServices.erase(it);
+        break;
+      }
+    }
+  }
 
-	vector<CInetAddress> addrs;
-	find(name, addrs);
+  vector<CInetAddress> addrs;
+  find(name, addrs);
 
-	if (addrs.empty())
-		return false;
+  if (addrs.empty())
+    return false;
 
-	nlassert(addrs.size() == 1);
-	addr = addrs[0];
+  nlassert(addrs.size() == 1);
+  addr = addrs[0];
 
-	return true;
+  return true;
 }
 
-void CNamingClient::lookupAll(const std::string &name, std::vector<CInetAddress> &addrs)
-{
-	nlassert(_Connection != NULL && _Connection->connected());
+void CNamingClient::lookupAll(const std::string &name,
+                              std::vector<CInetAddress> &addrs) {
+  nlassert(_Connection != NULL && _Connection->connected());
 
-	find(name, addrs);
+  find(name, addrs);
 }
 
-bool CNamingClient::lookupAndConnect(const std::string &name, CCallbackClient &sock)
-{
-	nlassert(_Connection != NULL && _Connection->connected());
+bool CNamingClient::lookupAndConnect(const std::string &name,
+                                     CCallbackClient &sock) {
+  nlassert(_Connection != NULL && _Connection->connected());
 
-	// look up for service
-	CInetAddress servaddr;
+  // look up for service
+  CInetAddress servaddr;
 
-	// if service not found, return false
-	if (!CNamingClient::lookup(name, servaddr))
-		return false;
+  // if service not found, return false
+  if (!CNamingClient::lookup(name, servaddr))
+    return false;
 
-	for (;;)
-	{
-		try
-		{
-			// try to connect to the server
-			sock.connect(servaddr);
+  for (;;) {
+    try {
+      // try to connect to the server
+      sock.connect(servaddr);
 
-			// connection succeeded
-			return true;
-		}
-		catch (const ESocketConnectionFailed &e)
-		{
-			nldebug("NC: Connection to %s failed: %s, tring another service if available", servaddr.asString().c_str(), e.what());
+      // connection succeeded
+      return true;
+    } catch (const ESocketConnectionFailed &e) {
+      nldebug(
+          "NC: Connection to %s failed: %s, tring another service if available",
+          servaddr.asString().c_str(), e.what());
 
-			// try another server and if service is not found, return false
-			if (!CNamingClient::lookupAlternate(name, servaddr))
-				return false;
-		}
-	}
+      // try another server and if service is not found, return false
+      if (!CNamingClient::lookupAlternate(name, servaddr))
+        return false;
+    }
+  }
 }
 
-void CNamingClient::update()
-{
-	// get message for naming service (new registration for example)
-	if (_Connection != NULL && _Connection->connected())
-		_Connection->update();
+void CNamingClient::update() {
+  // get message for naming service (new registration for example)
+  if (_Connection != NULL && _Connection->connected())
+    _Connection->update();
 }
 
 //
 // Commands
 //
 
-NLMISC_CATEGORISED_COMMAND(nel, services, "displays registered services", "")
-{
-	nlunreferenced(rawCommandString);
-	nlunreferenced(quiet);
-	nlunreferenced(human);
+NLMISC_CATEGORISED_COMMAND(nel, services, "displays registered services", "") {
+  nlunreferenced(rawCommandString);
+  nlunreferenced(quiet);
+  nlunreferenced(human);
 
-	if (args.size() != 0) return false;
+  if (args.size() != 0)
+    return false;
 
-	CNamingClient::displayRegisteredServices(&log);
+  CNamingClient::displayRegisteredServices(&log);
 
-	return true;
+  return true;
 }
 
-} // NLNET
+} // namespace NLNET

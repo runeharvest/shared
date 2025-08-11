@@ -46,11 +46,10 @@ namespace MAX {
  * Used for internal plugin descriptions that have no actual plugin
  * associated with them.
  */
-class IDllPluginDescInternal
-{
+class IDllPluginDescInternal {
 public:
-	virtual const ucchar *displayName() const = 0;
-	virtual const ucchar *internalName() const = 0;
+  virtual const ucchar *displayName() const = 0;
+  virtual const ucchar *internalName() const = 0;
 
 }; /* class IDllPluginDescInternal */
 
@@ -60,12 +59,11 @@ public:
  * \author Jan Boon (Kaetemi)
  * Inherit from this when making a plugin
  */
-class IDllPluginDesc : public IDllPluginDescInternal
-{
+class IDllPluginDesc : public IDllPluginDescInternal {
 public:
-	// virtual const ucchar *displayName() const = 0;
-	// virtual const ucchar *internalName() const = 0;
-	// TODO: list scene classes
+  // virtual const ucchar *displayName() const = 0;
+  // virtual const ucchar *internalName() const = 0;
+  // TODO: list scene classes
 
 }; /* class IDllPluginDesc */
 
@@ -76,11 +74,10 @@ public:
  * Use only internally for builtin classes
  * TODO: Move to separate header?
  */
-class CDllPluginDescBuiltin : public IDllPluginDescInternal
-{
+class CDllPluginDescBuiltin : public IDllPluginDescInternal {
 public:
-	virtual const ucchar *displayName() const;
-	virtual const ucchar *internalName() const;
+  virtual const ucchar *displayName() const;
+  virtual const ucchar *internalName() const;
 }; /* class CDllPluginDescBuiltin */
 
 extern const CDllPluginDescBuiltin DllPluginDescBuiltin;
@@ -92,11 +89,10 @@ extern const CDllPluginDescBuiltin DllPluginDescBuiltin;
  * Use only internally for scripts
  * TODO: Move to separate header?
  */
-class CDllPluginDescScript : public IDllPluginDescInternal
-{
+class CDllPluginDescScript : public IDllPluginDescInternal {
 public:
-	virtual const ucchar *displayName() const;
-	virtual const ucchar *internalName() const;
+  virtual const ucchar *displayName() const;
+  virtual const ucchar *internalName() const;
 }; /* class CDllPluginDescScript */
 
 extern const CDllPluginDescScript DllPluginDescScript;

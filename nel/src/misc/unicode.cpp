@@ -17,9 +17,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdmisc.h"
 #include "nel/misc/ucstring.h"
 #include "nel/misc/utf_string_view.h"
+#include "stdmisc.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -27,68 +27,60 @@
 
 namespace NLMISC {
 
-ucstring toLower(const ucstring &str)
-{
-	return ucstring::makeFromUtf8(toLower(str.toUtf8()));
+ucstring toLower(const ucstring &str) {
+  return ucstring::makeFromUtf8(toLower(str.toUtf8()));
 }
 
 // ***************************************************************************
 
-void toLower(ucchar *str)
-{
-	while (*str)
-	{
-		*str = toLower(*str);
-		++str;
-	}
+void toLower(ucchar *str) {
+  while (*str) {
+    *str = toLower(*str);
+    ++str;
+  }
 }
 
 // ***************************************************************************
 
-ucchar toLower(ucchar c)
-{
-	if ((c & 0xF800) == 0xD800)
-		return c;
-	std::string tmpc, tmpr;
-	CUtfStringView::append(tmpc, c);
-	ptrdiff_t i = 0;
-	appendToLower(tmpr, tmpc, i);
-	ucstring res = CUtfStringView(tmpr).toUtf16();
-	nlassert(res.size() == 1);
-	return res[0];
+ucchar toLower(ucchar c) {
+  if ((c & 0xF800) == 0xD800)
+    return c;
+  std::string tmpc, tmpr;
+  CUtfStringView::append(tmpc, c);
+  ptrdiff_t i = 0;
+  appendToLower(tmpr, tmpc, i);
+  ucstring res = CUtfStringView(tmpr).toUtf16();
+  nlassert(res.size() == 1);
+  return res[0];
 }
 
 // ***************************************************************************
 
-ucstring toUpper(const ucstring &str)
-{
-	return ucstring::makeFromUtf8(toUpper(str.toUtf8()));
+ucstring toUpper(const ucstring &str) {
+  return ucstring::makeFromUtf8(toUpper(str.toUtf8()));
 }
 
 // ***************************************************************************
 
-void toUpper(ucchar *str)
-{
-	while (*str)
-	{
-		*str = toUpper(*str);
-		++str;
-	}
+void toUpper(ucchar *str) {
+  while (*str) {
+    *str = toUpper(*str);
+    ++str;
+  }
 }
 
 // ***************************************************************************
 
-ucchar toUpper(ucchar c)
-{
-	if ((c & 0xF800) == 0xD800)
-		return c;
-	std::string tmpc, tmpr;
-	CUtfStringView::append(tmpc, c);
-	ptrdiff_t i = 0;
-	appendToUpper(tmpr, tmpc, i);
-	ucstring res = CUtfStringView(tmpr).toUtf16();
-	nlassert(res.size() == 1);
-	return res[0];
+ucchar toUpper(ucchar c) {
+  if ((c & 0xF800) == 0xD800)
+    return c;
+  std::string tmpc, tmpr;
+  CUtfStringView::append(tmpc, c);
+  ptrdiff_t i = 0;
+  appendToUpper(tmpr, tmpc, i);
+  ucstring res = CUtfStringView(tmpr).toUtf16();
+  nlassert(res.size() == 1);
+  return res[0];
 }
 
-} // NLMISC
+} // namespace NLMISC

@@ -18,5 +18,4 @@
 
 #include "nel/pacs/collision_callback.h"
 
-namespace NLPACS {
-} // NLPACS
+namespace NLPACS {} // namespace NLPACS

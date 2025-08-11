@@ -17,34 +17,33 @@
 #ifndef __PROGRESS__H
 #define __PROGRESS__H
 
-#include <string>
 #include "../nel_mesh_lib/export_nel.h"
+#include <string>
 
 // ---------------------------------------------------------------------------
 
-class CProgressBar : public IProgress
-{
+class CProgressBar : public IProgress {
 
 public:
-	bool bCancelCalculation;
-	float rRatioCalculated;
-	double rTimeBegin;
-	uint32 nNbTotalMeshes;
-	std::string sInfoProgress[14];
-	HWND hWndProgress;
+  bool bCancelCalculation;
+  float rRatioCalculated;
+  double rTimeBegin;
+  uint32 nNbTotalMeshes;
+  std::string sInfoProgress[14];
+  HWND hWndProgress;
 
 public:
-	CProgressBar();
-	~CProgressBar();
+  CProgressBar();
+  ~CProgressBar();
 
-	void initProgressBar(sint32 nNbMesh, Interface &ip);
-	void uninitProgressBar();
-	void updateProgressBar(sint32 NMeshNb);
-	bool isCanceledProgressBar();
+  void initProgressBar(sint32 nNbMesh, Interface &ip);
+  void uninitProgressBar();
+  void updateProgressBar(sint32 NMeshNb);
+  bool isCanceledProgressBar();
 
-	// Interface implemenation
-	virtual void setLine(uint32 LineNumber, std::string &LineText);
-	virtual void update();
+  // Interface implemenation
+  virtual void setLine(uint32 LineNumber, std::string &LineText);
+  virtual void update();
 };
 
 // ---------------------------------------------------------------------------

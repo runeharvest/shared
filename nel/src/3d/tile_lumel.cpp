@@ -27,59 +27,50 @@ using namespace NLMISC;
 namespace NL3D {
 
 // ***************************************************************************
-void CTileLumel::createUncompressed(uint8 interpolated, uint8 shaded)
-{
-	// Shading
-	Shaded = shaded;
+void CTileLumel::createUncompressed(uint8 interpolated, uint8 shaded) {
+  // Shading
+  Shaded = shaded;
 
-	// Same color ?
-	if (interpolated != shaded)
-	{
-		// Compute compressed value
-		sint temp = ((shaded << 3) / (sint)(interpolated ? interpolated : 1));
-		clamp(temp, 0, 15);
+  // Same color ?
+  if (interpolated != shaded) {
+    // Compute compressed value
+    sint temp = ((shaded << 3) / (sint)(interpolated ? interpolated : 1));
+    clamp(temp, 0, 15);
 
-		// After decompression
-		uint decompressed = (((uint)interpolated * ((uint)temp)) >> 3) + 4;
-		if (decompressed > 255)
-			decompressed = 255;
+    // After decompression
+    uint decompressed = (((uint)interpolated * ((uint)temp)) >> 3) + 4;
+    if (decompressed > 255)
+      decompressed = 255;
 
-		// Need to compress ?
-		if (abs((sint)shaded - (sint)decompressed) >= abs((sint)shaded - (sint)interpolated))
-		{
-			// Shadow not present
-			_ShadowValue = 0xff;
-		}
-		else
-		{
-			// Shadow
-			_ShadowValue = temp;
-		}
-	}
-	else
-	{
-		// Shadow not present
-		_ShadowValue = 0xff;
-	}
+    // Need to compress ?
+    if (abs((sint)shaded - (sint)decompressed) >=
+        abs((sint)shaded - (sint)interpolated)) {
+      // Shadow not present
+      _ShadowValue = 0xff;
+    } else {
+      // Shadow
+      _ShadowValue = temp;
+    }
+  } else {
+    // Shadow not present
+    _ShadowValue = 0xff;
+  }
 }
 
 // ***************************************************************************
-void CTileLumel::pack(CStreamBit &stream) const
-{
-	// There is shadow here ?
-	if (isShadowed())
-	{
-		// Put a true
-		stream.pushBackBool(true);
+void CTileLumel::pack(CStreamBit &stream) const {
+  // There is shadow here ?
+  if (isShadowed()) {
+    // Put a true
+    stream.pushBackBool(true);
 
-		// Read the shadow value
-		stream.pushBack4bits(_ShadowValue);
-	}
-	else
-		// Put a false
-		stream.pushBackBool(false);
+    // Read the shadow value
+    stream.pushBack4bits(_ShadowValue);
+  } else
+    // Put a false
+    stream.pushBackBool(false);
 }
 
-} // NL3D
+} // namespace NL3D
 
 /* End of tile_lumel.h */

@@ -22,9 +22,9 @@
 //////////////
 // Includes //
 //////////////
+#include "nel/misc/bit_mem_stream.h"
 #include "nel/misc/cdb.h"
 #include "nel/misc/cdb_branch.h"
-#include "nel/misc/bit_mem_stream.h"
 
 ////////////////
 // Namespaces //
@@ -40,52 +40,48 @@ namespace NLMISC {
 CStringMapper *ICDBNode::_DBSM = NULL;
 bool ICDBNode::verboseDatabase = false;
 
-std::string ICDBNode::getFullName()
-{
-	CSString sTmp;
-	sTmp.reserve(256);
-	_buildFullName(sTmp);
-	return sTmp;
-	//	CCDBNodeBranch *pParent = getParent();
-	//	if (pParent == NULL)
-	//		return _DBSM->localUnmap(_Name);
-	//	CSString sTmp;
-	//	_buildFullName(sTmp);
-	//	sTmp << ":" << sTmp;
-	//	return sTmp;
+std::string ICDBNode::getFullName() {
+  CSString sTmp;
+  sTmp.reserve(256);
+  _buildFullName(sTmp);
+  return sTmp;
+  //	CCDBNodeBranch *pParent = getParent();
+  //	if (pParent == NULL)
+  //		return _DBSM->localUnmap(_Name);
+  //	CSString sTmp;
+  //	_buildFullName(sTmp);
+  //	sTmp << ":" << sTmp;
+  //	return sTmp;
 
-	//	// climb the parent hierarchie
-	//	while (pParent->getParent() != NULL)
-	//		pParent = pParent->getParent();
-	//
-	//	// now build the full name in desc order
-	//	while (p)
-	//
-	//	while (pParent->getParent() != NULL)
-	//	{
-	//		sTmp = *pParent->getName()) << ":" << sTmp;
-	//		pParent = pParent->getParent();
-	//	}
-	//	return sTmp;
+  //	// climb the parent hierarchie
+  //	while (pParent->getParent() != NULL)
+  //		pParent = pParent->getParent();
+  //
+  //	// now build the full name in desc order
+  //	while (p)
+  //
+  //	while (pParent->getParent() != NULL)
+  //	{
+  //		sTmp = *pParent->getName()) << ":" << sTmp;
+  //		pParent = pParent->getParent();
+  //	}
+  //	return sTmp;
 }
 
-void ICDBNode::_buildFullName(CSString &fullName)
-{
-	// we do not want to recurse up to the ROOT node - we stop 1 level down from the root
-	if (getParent() != NULL && getParent()->getParent() != NULL)
-	{
-		getParent()->_buildFullName(fullName);
-		fullName << ":" << _DBSM->localUnmap(_Name);
-	}
-	else
-		fullName = _DBSM->localUnmap(_Name);
+void ICDBNode::_buildFullName(CSString &fullName) {
+  // we do not want to recurse up to the ROOT node - we stop 1 level down from
+  // the root
+  if (getParent() != NULL && getParent()->getParent() != NULL) {
+    getParent()->_buildFullName(fullName);
+    fullName << ":" << _DBSM->localUnmap(_Name);
+  } else
+    fullName = _DBSM->localUnmap(_Name);
 }
 
-void ICDBNode::releaseStringMapper()
-{
-	if (_DBSM)
-		delete _DBSM;
-	_DBSM = NULL;
+void ICDBNode::releaseStringMapper() {
+  if (_DBSM)
+    delete _DBSM;
+  _DBSM = NULL;
 }
 
-}
+} // namespace NLMISC

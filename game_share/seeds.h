@@ -34,75 +34,69 @@ const double SeedWeigth = 0.01;
  * \author Nevrax France
  * \date 2002
  */
-class CSeeds
-{
+class CSeeds {
 public:
-	typedef uint32 TUInt; // type of integer to count number of seeds for a slot.
-	typedef uint64 TBigUInt; // type of integer to count the total number of seeds.
-	enum
-	{
-		MaxUIntValue = INT_MAX
-	};
+  typedef uint32 TUInt; // type of integer to count number of seeds for a slot.
+  typedef uint64
+      TBigUInt; // type of integer to count the total number of seeds.
+  enum { MaxUIntValue = INT_MAX };
 
 public:
-	// ctruct with the given quantity of money
-	CSeeds(TUInt ls = 0, TUInt ms = 0, TUInt bs = 0, TUInt vbs = 0)
-	    : _LS(ls)
-	    , _MS(ms)
-	    , _BS(bs)
-	    , _VBS(vbs)
-	{
-	}
-	// set the given total by using the smallest number of seeds
-	void setTotal(TBigUInt total);
-	// gets
-	TUInt getLS() const { return _LS; }
-	TUInt getMS() const { return _MS; }
-	TUInt getBS() const { return _BS; }
-	TUInt getVBS() const { return _VBS; }
+  // ctruct with the given quantity of money
+  CSeeds(TUInt ls = 0, TUInt ms = 0, TUInt bs = 0, TUInt vbs = 0)
+      : _LS(ls), _MS(ms), _BS(bs), _VBS(vbs) {}
+  // set the given total by using the smallest number of seeds
+  void setTotal(TBigUInt total);
+  // gets
+  TUInt getLS() const { return _LS; }
+  TUInt getMS() const { return _MS; }
+  TUInt getBS() const { return _BS; }
+  TUInt getVBS() const { return _VBS; }
 
-	// sets
-	void setLS(TUInt quantity) { _LS = quantity; }
-	void setMS(TUInt quantity) { _MS = quantity; }
-	void setBS(TUInt quantity) { _BS = quantity; }
-	void setVBS(TUInt quantity) { _VBS = quantity; }
+  // sets
+  void setLS(TUInt quantity) { _LS = quantity; }
+  void setMS(TUInt quantity) { _MS = quantity; }
+  void setBS(TUInt quantity) { _BS = quantity; }
+  void setVBS(TUInt quantity) { _VBS = quantity; }
 
-	// get money total (expressed in little seeds)
-	TBigUInt getTotal() const { return (TBigUInt)_LS + 10 * (TBigUInt)_MS + 100 * (TBigUInt)_BS + 1000 * (TBigUInt)_VBS; }
-	/** Add a number of seeds.
-	 * If an overflow is detected, only the maximum value is added, & overflow is filled with the difference
-	 */
-	void add(const CSeeds &other, CSeeds &overflow);
-	/** Subtract a number of seeds. Begin to subtract the littlest seeds.
-	 * Always works provided that the total of the subtracted seeds is < to the total of the target.
-	 * Should test it yourself otherwise an assert is raised.
-	 * This is typically used when you buy something to a merchant
-	 */
-	void tradeSubtract(const CSeeds &other);
-	void tradeSubtract(TBigUInt rhs);
-	//
-	bool canTradeSubtract(const CSeeds &other) const;
-	bool canTradeSubtract(TBigUInt rhs) const;
-	//
-	// Subtract the given quantity to this obj on a per seeds basis. Must ensure that it is possible
-	void subtract(const CSeeds &other);
-	// Test if the given quantity can be subtracted to this obj
-	bool canSubtract(const CSeeds &other) const;
-	// Optimize a quantity of money so that the number of seeds is minimum
-	void optimize();
-	// serial
-	void serial(NLMISC::IStream &f)
-	{
-		f.serial(_LS, _MS, _BS, _VBS);
-	}
-	// get the weight of all seeds
-	double getWeight() const { return SeedWeigth * (_LS + _MS + _BS + _VBS); }
-	/////////////////////////////////////////////////////
+  // get money total (expressed in little seeds)
+  TBigUInt getTotal() const {
+    return (TBigUInt)_LS + 10 * (TBigUInt)_MS + 100 * (TBigUInt)_BS +
+           1000 * (TBigUInt)_VBS;
+  }
+  /** Add a number of seeds.
+   * If an overflow is detected, only the maximum value is added, & overflow is
+   * filled with the difference
+   */
+  void add(const CSeeds &other, CSeeds &overflow);
+  /** Subtract a number of seeds. Begin to subtract the littlest seeds.
+   * Always works provided that the total of the subtracted seeds is < to the
+   * total of the target. Should test it yourself otherwise an assert is raised.
+   * This is typically used when you buy something to a merchant
+   */
+  void tradeSubtract(const CSeeds &other);
+  void tradeSubtract(TBigUInt rhs);
+  //
+  bool canTradeSubtract(const CSeeds &other) const;
+  bool canTradeSubtract(TBigUInt rhs) const;
+  //
+  // Subtract the given quantity to this obj on a per seeds basis. Must ensure
+  // that it is possible
+  void subtract(const CSeeds &other);
+  // Test if the given quantity can be subtracted to this obj
+  bool canSubtract(const CSeeds &other) const;
+  // Optimize a quantity of money so that the number of seeds is minimum
+  void optimize();
+  // serial
+  void serial(NLMISC::IStream &f) { f.serial(_LS, _MS, _BS, _VBS); }
+  // get the weight of all seeds
+  double getWeight() const { return SeedWeigth * (_LS + _MS + _BS + _VBS); }
+  /////////////////////////////////////////////////////
 private:
-	TUInt _LS; // little seeds
-	TUInt _MS; // medium seeds
-	TUInt _BS; // big seeds
-	TUInt _VBS; // very big seeds
+  TUInt _LS;  // little seeds
+  TUInt _MS;  // medium seeds
+  TUInt _BS;  // big seeds
+  TUInt _VBS; // very big seeds
 };
 
 #endif

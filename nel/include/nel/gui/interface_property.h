@@ -20,94 +20,82 @@
 #ifndef NL_INTERFACE_PROPERTY_H
 #define NL_INTERFACE_PROPERTY_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/rgba.h"
 #include "nel/misc/cdb.h"
-#include "nel/misc/cdb_leaf.h"
 #include "nel/misc/cdb_branch.h"
+#include "nel/misc/cdb_leaf.h"
+#include "nel/misc/rgba.h"
+#include "nel/misc/types_nl.h"
 
 namespace NLGUI {
 
 /**
  * interface property
  * class used to managed all the interface member values
- * As the database contains only sint64, several methods are needed to do the conversion
- * \author Nicolas Brigand
- * \author Nevrax France
- * \date 2002
+ * As the database contains only sint64, several methods are needed to do the
+ * conversion \author Nicolas Brigand \author Nevrax France \date 2002
  */
-class CInterfaceProperty
-{
+class CInterfaceProperty {
 public:
-	// enum defining a hot spot
+  // enum defining a hot spot
 
-	/// Constructor
-	CInterfaceProperty()
-	{
-		_VolatileValue = NULL;
-	}
+  /// Constructor
+  CInterfaceProperty() { _VolatileValue = NULL; }
 
-	/// Tells if this property has a value
-	bool hasValue() const
-	{
-		if (_VolatileValue != NULL)
-			return true;
-		else
-			return false;
-	}
+  /// Tells if this property has a value
+  bool hasValue() const {
+    if (_VolatileValue != NULL)
+      return true;
+    else
+      return false;
+  }
 
-	NLMISC::CCDBNodeLeaf *getNodePtr() const
-	{
-		return _VolatileValue;
-	}
+  NLMISC::CCDBNodeLeaf *getNodePtr() const { return _VolatileValue; }
 
-	void setNodePtr(NLMISC::CCDBNodeLeaf *ptr)
-	{
-		_VolatileValue = ptr;
-	}
+  void setNodePtr(NLMISC::CCDBNodeLeaf *ptr) { _VolatileValue = ptr; }
 
-	bool link(const char *DBProp);
-	bool link(NLMISC::CCDBNodeLeaf *dbNode);
-	bool link(NLMISC::CCDBNodeBranch *dbNode, const std::string &leafId, NLMISC::CCDBNodeLeaf *defaultLeaf = NULL);
+  bool link(const char *DBProp);
+  bool link(NLMISC::CCDBNodeLeaf *dbNode);
+  bool link(NLMISC::CCDBNodeBranch *dbNode, const std::string &leafId,
+            NLMISC::CCDBNodeLeaf *defaultLeaf = NULL);
 
-	/// float operations
-	void setDouble(double value);
-	double getDouble() const;
-	void readDouble(const char *value, const std::string &id);
+  /// float operations
+  void setDouble(double value);
+  double getDouble() const;
+  void readDouble(const char *value, const std::string &id);
 
-	/// sint32 operations
-	void setSInt32(sint32 value) { _VolatileValue->setValue32(value); }
-	sint32 getSInt32() const { return _VolatileValue->getValue32(); }
-	void readSInt32(const char *value, const std::string &id);
+  /// sint32 operations
+  void setSInt32(sint32 value) { _VolatileValue->setValue32(value); }
+  sint32 getSInt32() const { return _VolatileValue->getValue32(); }
+  void readSInt32(const char *value, const std::string &id);
 
-	/// sint64 operations
-	void setSInt64(sint64 value) { _VolatileValue->setValue64(value); }
-	sint64 getSInt64() const { return _VolatileValue->getValue64(); }
-	void readSInt64(const char *value, const std::string &id);
+  /// sint64 operations
+  void setSInt64(sint64 value) { _VolatileValue->setValue64(value); }
+  sint64 getSInt64() const { return _VolatileValue->getValue64(); }
+  void readSInt64(const char *value, const std::string &id);
 
-	/// CRGBA operations
-	void setRGBA(const NLMISC::CRGBA &value);
-	NLMISC::CRGBA getRGBA() const;
-	void readRGBA(const char *value, const std::string &id);
+  /// CRGBA operations
+  void setRGBA(const NLMISC::CRGBA &value);
+  NLMISC::CRGBA getRGBA() const;
+  void readRGBA(const char *value, const std::string &id);
 
-	/// HotSpot operations
+  /// HotSpot operations
 
-	void readHotSpot(const char *value, const std::string &id);
+  void readHotSpot(const char *value, const std::string &id);
 
-	/// bool operations
-	void setBool(bool value);
-	bool getBool() const;
-	void readBool(const char *value, const std::string &id);
+  /// bool operations
+  void setBool(bool value);
+  bool getBool() const;
+  void readBool(const char *value, const std::string &id);
 
-	// Swap the content of this 2 property (no-op if one is NULL)
-	void swap32(CInterfaceProperty &o);
+  // Swap the content of this 2 property (no-op if one is NULL)
+  void swap32(CInterfaceProperty &o);
 
 private:
-	/// volatile value of the property (pointer to a leaf of the database)
-	NLMISC::CCDBNodeLeaf *_VolatileValue;
+  /// volatile value of the property (pointer to a leaf of the database)
+  NLMISC::CCDBNodeLeaf *_VolatileValue;
 };
 
-}
+} // namespace NLGUI
 
 #endif // NL_INTERFACE_PROPERTY_H
 

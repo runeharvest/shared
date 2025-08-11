@@ -37,80 +37,83 @@ class CSoundDriverFMod;
  * \author Jan Boon (Kaetemi)
  * Stuff for fading moved into nlsound, and modified for new music interface
  */
-class CMusicChannelFMod : public IMusicChannel
-{
+class CMusicChannelFMod : public IMusicChannel {
 protected:
-	/// Volume set by user
-	float _Gain;
-	/// The FMod stream
-	FSOUND_STREAM *_MusicStream;
-	/// the RAM buffer (representation of a MP3 file, only for sync play)
-	uint8 *_MusicBuffer;
-	/// channel played for music. CAN BE -1 while _MusicStream!=NULL in case of Async Loading
-	sint _MusicChannel;
-	/// true if the fmod end callback said the stream is ended
-	bool _CallBackEnded;
-	/// see stopMusicFader()
-	std::list<FSOUND_STREAM *> _WaitingForClose;
-	/// Sound driver that created this
-	CSoundDriverFMod *_SoundDriver;
+  /// Volume set by user
+  float _Gain;
+  /// The FMod stream
+  FSOUND_STREAM *_MusicStream;
+  /// the RAM buffer (representation of a MP3 file, only for sync play)
+  uint8 *_MusicBuffer;
+  /// channel played for music. CAN BE -1 while _MusicStream!=NULL in case of
+  /// Async Loading
+  sint _MusicChannel;
+  /// true if the fmod end callback said the stream is ended
+  bool _CallBackEnded;
+  /// see stopMusicFader()
+  std::list<FSOUND_STREAM *> _WaitingForClose;
+  /// Sound driver that created this
+  CSoundDriverFMod *_SoundDriver;
 
 public:
-	/// Constructor
-	CMusicChannelFMod(CSoundDriverFMod *soundDriver);
-	virtual ~CMusicChannelFMod();
+  /// Constructor
+  CMusicChannelFMod(CSoundDriverFMod *soundDriver);
+  virtual ~CMusicChannelFMod();
 
-	/// From callback
-	void markMusicChannelEnded(void *stream);
+  /// From callback
+  void markMusicChannelEnded(void *stream);
 
-	/// Play async, if bnp give path of bnp and position and size of file inside, else just path to file.
-	bool playAsync(const std::string &filepath, bool loop, uint fileOffset = 0, uint fileSize = 0);
+  /// Play async, if bnp give path of bnp and position and size of file inside,
+  /// else just path to file.
+  bool playAsync(const std::string &filepath, bool loop, uint fileOffset = 0,
+                 uint fileSize = 0);
 
-	/// Play from memory.
-	bool playSync(const std::string &filepath, bool loop);
+  /// Play from memory.
+  bool playSync(const std::string &filepath, bool loop);
 
-	/// Play the stream
-	bool playStream();
+  /// Play the stream
+  bool playStream();
 
-	/// updateWaitingForClose
-	void update();
+  /// updateWaitingForClose
+  void update();
 
-	/// Close async streams
-	void updateWaitingForClose();
+  /// Close async streams
+  void updateWaitingForClose();
 
-	/** Play some music (.ogg etc...)
-	 *	NB: if an old music was played, it is first stop with stopMusic()
-	 *	\param filepath file path, CPath::lookup is done here
-	 *  \param async stream music from hard disk, preload in memory if false
-	 *	\param loop must be true to play the music in loop.
-	 */
-	virtual bool play(const std::string &filepath, bool async, bool loop);
+  /** Play some music (.ogg etc...)
+   *	NB: if an old music was played, it is first stop with stopMusic()
+   *	\param filepath file path, CPath::lookup is done here
+   *  \param async stream music from hard disk, preload in memory if false
+   *	\param loop must be true to play the music in loop.
+   */
+  virtual bool play(const std::string &filepath, bool async, bool loop);
 
-	/// Stop the music previously loaded and played (the Memory is also freed)
-	virtual void stop();
+  /// Stop the music previously loaded and played (the Memory is also freed)
+  virtual void stop();
 
-	/// Makes sure any resources are freed, but keeps available for next play call
-	virtual void reset();
+  /// Makes sure any resources are freed, but keeps available for next play call
+  virtual void reset();
 
-	/// Pause the music previously loaded and played (the Memory is not freed)
-	virtual void pause();
+  /// Pause the music previously loaded and played (the Memory is not freed)
+  virtual void pause();
 
-	/// Resume the music previously paused
-	virtual void resume();
+  /// Resume the music previously paused
+  virtual void resume();
 
-	/// Return true if a song is finished.
-	virtual bool isEnded();
+  /// Return true if a song is finished.
+  virtual bool isEnded();
 
-	/// Return true if the song is still loading asynchronously and hasn't started playing yet (false if not async), used to delay fading
-	virtual bool isLoadingAsync();
+  /// Return true if the song is still loading asynchronously and hasn't started
+  /// playing yet (false if not async), used to delay fading
+  virtual bool isLoadingAsync();
 
-	/// Return the total length (in second) of the music currently played
-	virtual float getLength();
+  /// Return the total length (in second) of the music currently played
+  virtual float getLength();
 
-	/** Set the music volume (if any music played). (volume value inside [0 , 1]) (default: 1)
-	 *	NB: the volume of music is NOT affected by IListener::setGain()
-	 */
-	virtual void setVolume(float gain);
+  /** Set the music volume (if any music played). (volume value inside [0 , 1])
+   *(default: 1) NB: the volume of music is NOT affected by IListener::setGain()
+   */
+  virtual void setVolume(float gain);
 }; /* class CMusicChannelFMod */
 
 } /* namespace NLSOUND */

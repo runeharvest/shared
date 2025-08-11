@@ -17,8 +17,8 @@
 #ifndef NL_LANDSCAPEVB_INFO_H
 #define NL_LANDSCAPEVB_INFO_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/3d/vertex_buffer.h"
+#include "nel/misc/types_nl.h"
 
 namespace NL3D {
 
@@ -26,67 +26,65 @@ class CVertexBuffer;
 
 // ***************************************************************************
 /// Info for the current Far VertexBuffer setuped (iether normal or hard).
-class CFarVertexBufferInfo
-{
+class CFarVertexBufferInfo {
 public:
-	CVertexBufferReadWrite Accessor;
-	uint32 VertexFormat;
-	uint32 VertexSize;
-	uint32 NumVertices;
-	void *VertexCoordPointer;
-	void *TexCoordPointer0;
-	void *TexCoordPointer1;
-	void *ColorPointer;
-	uint32 TexCoordOff0;
-	uint32 TexCoordOff1;
-	uint32 ColorOff;
+  CVertexBufferReadWrite Accessor;
+  uint32 VertexFormat;
+  uint32 VertexSize;
+  uint32 NumVertices;
+  void *VertexCoordPointer;
+  void *TexCoordPointer0;
+  void *TexCoordPointer1;
+  void *ColorPointer;
+  uint32 TexCoordOff0;
+  uint32 TexCoordOff1;
+  uint32 ColorOff;
 
-	// VertexProgram Only.
-	void *GeomInfoPointer;
-	void *DeltaPosPointer;
-	void *AlphaInfoPointer;
-	uint32 GeomInfoOff;
-	uint32 DeltaPosOff;
-	uint32 AlphaInfoOff;
+  // VertexProgram Only.
+  void *GeomInfoPointer;
+  void *DeltaPosPointer;
+  void *AlphaInfoPointer;
+  uint32 GeomInfoOff;
+  uint32 DeltaPosOff;
+  uint32 AlphaInfoOff;
 
-	void setupVertexBuffer(CVertexBuffer &vb, bool forVertexProgram);
-	void setupNullPointers();
+  void setupVertexBuffer(CVertexBuffer &vb, bool forVertexProgram);
+  void setupNullPointers();
 
 private:
-	void setupPointersForVertexProgram();
+  void setupPointersForVertexProgram();
 };
 
 // ***************************************************************************
 /// Info for the current Far VertexBuffer setuped (iether normal or hard).
-class CNearVertexBufferInfo
-{
+class CNearVertexBufferInfo {
 public:
-	CVertexBufferReadWrite Accessor;
-	uint32 VertexFormat;
-	uint32 VertexSize;
-	uint32 NumVertices;
-	void *VertexCoordPointer;
-	void *TexCoordPointer0;
-	void *TexCoordPointer1;
-	void *TexCoordPointer2;
-	uint32 TexCoordOff0;
-	uint32 TexCoordOff1;
-	uint32 TexCoordOff2;
+  CVertexBufferReadWrite Accessor;
+  uint32 VertexFormat;
+  uint32 VertexSize;
+  uint32 NumVertices;
+  void *VertexCoordPointer;
+  void *TexCoordPointer0;
+  void *TexCoordPointer1;
+  void *TexCoordPointer2;
+  uint32 TexCoordOff0;
+  uint32 TexCoordOff1;
+  uint32 TexCoordOff2;
 
-	// VertexProgram Only.
-	void *GeomInfoPointer;
-	void *DeltaPosPointer;
-	uint32 GeomInfoOff;
-	uint32 DeltaPosOff;
+  // VertexProgram Only.
+  void *GeomInfoPointer;
+  void *DeltaPosPointer;
+  uint32 GeomInfoOff;
+  uint32 DeltaPosOff;
 
-	void setupVertexBuffer(CVertexBuffer &vb, bool forVertexProgram);
-	void setupNullPointers();
+  void setupVertexBuffer(CVertexBuffer &vb, bool forVertexProgram);
+  void setupNullPointers();
 
 private:
-	void setupPointersForVertexProgram();
+  void setupPointersForVertexProgram();
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_LANDSCAPEVB_INFO_H
 

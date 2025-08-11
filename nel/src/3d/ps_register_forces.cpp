@@ -16,25 +16,24 @@
 
 #include "std3d.h"
 
-#include "nel/3d/ps_util.h"
 #include "nel/3d/ps_force.h"
+#include "nel/3d/ps_util.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
 namespace NL3D {
-void CPSUtil::registerForces()
-{
-	NLMISC_REGISTER_CLASS(CPSSpring);
-	NLMISC_REGISTER_CLASS(CPSDirectionnalForce);
-	NLMISC_REGISTER_CLASS(CPSGravity);
-	NLMISC_REGISTER_CLASS(CPSBrownianForce);
-	NLMISC_REGISTER_CLASS(CPSCentralGravity);
-	NLMISC_REGISTER_CLASS(CPSFluidFriction);
-	NLMISC_REGISTER_CLASS(CPSTurbul);
-	NLMISC_REGISTER_CLASS(CPSCylindricVortex);
-	NLMISC_REGISTER_CLASS(CPSMagneticForce);
-	CPSBrownianForce::initPrecalc();
+void CPSUtil::registerForces() {
+  NLMISC_REGISTER_CLASS(CPSSpring);
+  NLMISC_REGISTER_CLASS(CPSDirectionnalForce);
+  NLMISC_REGISTER_CLASS(CPSGravity);
+  NLMISC_REGISTER_CLASS(CPSBrownianForce);
+  NLMISC_REGISTER_CLASS(CPSCentralGravity);
+  NLMISC_REGISTER_CLASS(CPSFluidFriction);
+  NLMISC_REGISTER_CLASS(CPSTurbul);
+  NLMISC_REGISTER_CLASS(CPSCylindricVortex);
+  NLMISC_REGISTER_CLASS(CPSMagneticForce);
+  CPSBrownianForce::initPrecalc();
 }
-} // NL3D
+} // namespace NL3D

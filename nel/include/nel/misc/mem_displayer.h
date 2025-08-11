@@ -17,8 +17,8 @@
 #ifndef NL_MEM_DISPLAYER_H
 #define NL_MEM_DISPLAYER_H
 
-#include "types_nl.h"
 #include "displayer.h"
+#include "types_nl.h"
 
 #include <deque>
 #include <string>
@@ -31,66 +31,59 @@ namespace NLMISC {
  * \author Nevrax France
  * \date 2001
  */
-class CMemDisplayer : public IDisplayer
-{
+class CMemDisplayer : public IDisplayer {
 public:
-	/// Constructor
-	CMemDisplayer(const char *displayerName = "");
+  /// Constructor
+  CMemDisplayer(const char *displayerName = "");
 
-	/// Set Parameter of the displayer if not set at the ctor time
-	void setParam(uint32 maxStrings = 50);
+  /// Set Parameter of the displayer if not set at the ctor time
+  void setParam(uint32 maxStrings = 50);
 
-	/// Write N last line into a displayer (InfoLog by default)
-	void write(CLog *log = NULL, bool quiet = true);
-	void write(std::string &str, bool crLf = false);
+  /// Write N last line into a displayer (InfoLog by default)
+  void write(CLog *log = NULL, bool quiet = true);
+  void write(std::string &str, bool crLf = false);
 
-	const std::deque<std::string> &lockStrings()
-	{
-		_CanUseStrings = false;
-		return _Strings;
-	}
+  const std::deque<std::string> &lockStrings() {
+    _CanUseStrings = false;
+    return _Strings;
+  }
 
-	void unlockStrings() { _CanUseStrings = true; }
+  void unlockStrings() { _CanUseStrings = true; }
 
-	void clear()
-	{
-		if (_CanUseStrings) _Strings.clear();
-	}
+  void clear() {
+    if (_CanUseStrings)
+      _Strings.clear();
+  }
 
 protected:
-	/// Put the string into the file.
-	virtual void doDisplay(const CLog::TDisplayInfo &args, const char *message);
+  /// Put the string into the file.
+  virtual void doDisplay(const CLog::TDisplayInfo &args, const char *message);
 
-	bool _NeedHeader;
+  bool _NeedHeader;
 
-	uint32 _MaxStrings; // number of string in the _Strings queue (default is 50)
+  uint32 _MaxStrings; // number of string in the _Strings queue (default is 50)
 
-	bool _CanUseStrings;
+  bool _CanUseStrings;
 
-	std::deque<std::string> _Strings;
+  std::deque<std::string> _Strings;
 };
 
 /**
- * Same as CMemDisplayer but only display the text (no line, no date, no process...)
- * \author Vianney Lecroart
- * \author Nevrax France
- * \date 2002
+ * Same as CMemDisplayer but only display the text (no line, no date, no
+ * process...) \author Vianney Lecroart \author Nevrax France \date 2002
  */
-class CLightMemDisplayer : public CMemDisplayer
-{
+class CLightMemDisplayer : public CMemDisplayer {
 public:
-	/// Constructor
-	CLightMemDisplayer(const char *displayerName = "")
-	    : CMemDisplayer(displayerName)
-	{
-	}
+  /// Constructor
+  CLightMemDisplayer(const char *displayerName = "")
+      : CMemDisplayer(displayerName) {}
 
 protected:
-	/// Put the string into the file.
-	virtual void doDisplay(const CLog::TDisplayInfo &args, const char *message);
+  /// Put the string into the file.
+  virtual void doDisplay(const CLog::TDisplayInfo &args, const char *message);
 };
 
-} // NLMISC
+} // namespace NLMISC
 
 #endif // NL_MEM_DISPLAYER_H
 

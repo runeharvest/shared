@@ -10,16 +10,15 @@ EXTERN_C_BEGIN
 
 /* ---------- State Interface ---------- */
 
-typedef struct
-{
-	unsigned state;
-	Byte control;
-	Byte needInitLevel;
-	Byte isExtraMode;
-	Byte _pad_;
-	UInt32 packSize;
-	UInt32 unpackSize;
-	CLzmaDec decoder;
+typedef struct {
+  unsigned state;
+  Byte control;
+  Byte needInitLevel;
+  Byte isExtraMode;
+  Byte _pad_;
+  UInt32 packSize;
+  UInt32 unpackSize;
+  CLzmaDec decoder;
 } CLzma2Dec;
 
 #define Lzma2Dec_Construct(p) LzmaDec_Construct(&(p)->decoder)
@@ -32,9 +31,9 @@ void Lzma2Dec_Init(CLzma2Dec *p);
 
 /*
 finishMode:
-  It has meaning only if the decoding reaches output limit (*destLen or dicLimit).
-  LZMA_FINISH_ANY - use smallest number of input bytes
-  LZMA_FINISH_END - read EndOfStream marker after decoding
+  It has meaning only if the decoding reaches output limit (*destLen or
+dicLimit). LZMA_FINISH_ANY - use smallest number of input bytes LZMA_FINISH_END
+- read EndOfStream marker after decoding
 
 Returns:
   SZ_OK
@@ -45,39 +44,44 @@ Returns:
   SZ_ERROR_DATA - Data error
 */
 
-SRes Lzma2Dec_DecodeToDic(CLzma2Dec *p, SizeT dicLimit,
-    const Byte *src, SizeT *srcLen, ELzmaFinishMode finishMode, ELzmaStatus *status);
+SRes Lzma2Dec_DecodeToDic(CLzma2Dec *p, SizeT dicLimit, const Byte *src,
+                          SizeT *srcLen, ELzmaFinishMode finishMode,
+                          ELzmaStatus *status);
 
 SRes Lzma2Dec_DecodeToBuf(CLzma2Dec *p, Byte *dest, SizeT *destLen,
-    const Byte *src, SizeT *srcLen, ELzmaFinishMode finishMode, ELzmaStatus *status);
+                          const Byte *src, SizeT *srcLen,
+                          ELzmaFinishMode finishMode, ELzmaStatus *status);
 
 /* ---------- LZMA2 block and chunk parsing ---------- */
 
 /*
-Lzma2Dec_Parse() parses compressed data stream up to next independent block or next chunk data.
-It can return LZMA_STATUS_* code or LZMA2_PARSE_STATUS_* code:
-  - LZMA2_PARSE_STATUS_NEW_BLOCK - there is new block, and 1 additional byte (control byte of next block header) was read from input.
-  - LZMA2_PARSE_STATUS_NEW_CHUNK - there is new chunk, and only lzma2 header of new chunk was read.
-                                   CLzma2Dec::unpackSize contains unpack size of that chunk
+Lzma2Dec_Parse() parses compressed data stream up to next independent block or
+next chunk data. It can return LZMA_STATUS_* code or LZMA2_PARSE_STATUS_* code:
+  - LZMA2_PARSE_STATUS_NEW_BLOCK - there is new block, and 1 additional byte
+(control byte of next block header) was read from input.
+  - LZMA2_PARSE_STATUS_NEW_CHUNK - there is new chunk, and only lzma2 header of
+new chunk was read. CLzma2Dec::unpackSize contains unpack size of that chunk
 */
 
-typedef enum
-{
-	/*
-	  LZMA_STATUS_NOT_SPECIFIED                 // data error
-	  LZMA_STATUS_FINISHED_WITH_MARK
-	  LZMA_STATUS_NOT_FINISHED                  //
-	  LZMA_STATUS_NEEDS_MORE_INPUT
-	  LZMA_STATUS_MAYBE_FINISHED_WITHOUT_MARK   // unused
-	*/
-	LZMA2_PARSE_STATUS_NEW_BLOCK = LZMA_STATUS_MAYBE_FINISHED_WITHOUT_MARK + 1,
-	LZMA2_PARSE_STATUS_NEW_CHUNK
+typedef enum {
+  /*
+    LZMA_STATUS_NOT_SPECIFIED                 // data error
+    LZMA_STATUS_FINISHED_WITH_MARK
+    LZMA_STATUS_NOT_FINISHED                  //
+    LZMA_STATUS_NEEDS_MORE_INPUT
+    LZMA_STATUS_MAYBE_FINISHED_WITHOUT_MARK   // unused
+  */
+  LZMA2_PARSE_STATUS_NEW_BLOCK = LZMA_STATUS_MAYBE_FINISHED_WITHOUT_MARK + 1,
+  LZMA2_PARSE_STATUS_NEW_CHUNK
 } ELzma2ParseStatus;
 
-ELzma2ParseStatus Lzma2Dec_Parse(CLzma2Dec *p,
-    SizeT outSize, // output size
-    const Byte *src, SizeT *srcLen,
-    int checkFinishBlock // set (checkFinishBlock = 1), if it must read full input data, if decoder.dicPos reaches blockMax position.
+ELzma2ParseStatus
+Lzma2Dec_Parse(CLzma2Dec *p,
+               SizeT outSize, // output size
+               const Byte *src, SizeT *srcLen,
+               int checkFinishBlock // set (checkFinishBlock = 1), if it must
+                                    // read full input data, if decoder.dicPos
+                                    // reaches blockMax position.
 );
 
 /*
@@ -111,7 +115,8 @@ Returns:
 */
 
 SRes Lzma2Decode(Byte *dest, SizeT *destLen, const Byte *src, SizeT *srcLen,
-    Byte prop, ELzmaFinishMode finishMode, ELzmaStatus *status, ISzAllocPtr alloc);
+                 Byte prop, ELzmaFinishMode finishMode, ELzmaStatus *status,
+                 ISzAllocPtr alloc);
 
 EXTERN_C_END
 

@@ -26,25 +26,24 @@ class CSoundDriverXAudio2;
  * \author Jan Boon (Kaetemi)
  * CEffectXAudio2
  */
-class CEffectXAudio2
-{
+class CEffectXAudio2 {
 protected:
-	// outside pointers
-	CSoundDriverXAudio2 *_SoundDriver;
+  // outside pointers
+  CSoundDriverXAudio2 *_SoundDriver;
 
-	// pointers
-	IXAudio2SubmixVoice *_DryVoice;
-	IXAudio2SubmixVoice *_FilterVoice;
-	IUnknown *_Effect; // set by subclass
+  // pointers
+  IXAudio2SubmixVoice *_DryVoice;
+  IXAudio2SubmixVoice *_FilterVoice;
+  IUnknown *_Effect; // set by subclass
 
 public:
-	CEffectXAudio2(CSoundDriverXAudio2 *soundDriver, uint channels);
-	virtual ~CEffectXAudio2();
-	virtual void release();
+  CEffectXAudio2(CSoundDriverXAudio2 *soundDriver, uint channels);
+  virtual ~CEffectXAudio2();
+  virtual void release();
 
-	inline IUnknown *getEffect() { return _Effect; }
-	inline IXAudio2Voice *getDryVoice() { return _DryVoice; }
-	inline IXAudio2Voice *getFilterVoice() { return _FilterVoice; }
+  inline IUnknown *getEffect() { return _Effect; }
+  inline IXAudio2Voice *getDryVoice() { return _DryVoice; }
+  inline IXAudio2Voice *getFilterVoice() { return _FilterVoice; }
 
 }; /* class CEffectXAudio2 */
 
@@ -54,20 +53,20 @@ public:
  * \author Jan Boon (Kaetemi)
  * CReverbEffectXAudio2
  */
-class CReverbEffectXAudio2 : public IReverbEffect, public CEffectXAudio2
-{
+class CReverbEffectXAudio2 : public IReverbEffect, public CEffectXAudio2 {
 protected:
-	// user data
-	/// Parameters of the reverb (eax environment) effect.
-	XAUDIO2FX_REVERB_PARAMETERS _ReverbParams;
+  // user data
+  /// Parameters of the reverb (eax environment) effect.
+  XAUDIO2FX_REVERB_PARAMETERS _ReverbParams;
 
 public:
-	CReverbEffectXAudio2(CSoundDriverXAudio2 *soundDriver);
-	virtual ~CReverbEffectXAudio2();
-	virtual void release();
+  CReverbEffectXAudio2(CSoundDriverXAudio2 *soundDriver);
+  virtual ~CReverbEffectXAudio2();
+  virtual void release();
 
-	/// Set the environment (you have full control now, have fun)
-	virtual void setEnvironment(const CEnvironment &environment = CEnvironment(), float roomSize = 100.0f);
+  /// Set the environment (you have full control now, have fun)
+  virtual void setEnvironment(const CEnvironment &environment = CEnvironment(),
+                              float roomSize = 100.0f);
 
 }; /* class CReverbEffectXAudio2 */
 

@@ -186,195 +186,209 @@ NL_STRING_CONVERSION_TABLE_ENTRY(Unknown)
 
 NL_END_STRING_CONVERSION_TABLE(TEffectFamily, EffectFamilyConversion, Unknown)
 
-TEffectFamily toEffectFamily(const std::string &str)
-{
-	return EffectFamilyConversion.fromString(str);
+TEffectFamily toEffectFamily(const std::string &str) {
+  return EffectFamilyConversion.fromString(str);
 }
 
-const std::string &toString(TEffectFamily family)
-{
-	return EffectFamilyConversion.toString(family);
+const std::string &toString(TEffectFamily family) {
+  return EffectFamilyConversion.toString(family);
 }
 
-TEffectFamily getDebuffResistEffect(DMGTYPE::EDamageType type)
-{
-	switch (type)
-	{
-	case DMGTYPE::SLASHING: return DebuffResistSlash;
-	case DMGTYPE::PIERCING: return DebuffResistPierce;
-	case DMGTYPE::BLUNT: return DebuffResistBlunt;
-	case DMGTYPE::ROT: return DebuffResistRot;
-	case DMGTYPE::ACID: return DebuffResistAcid;
-	case DMGTYPE::COLD: return DebuffResistCold;
-	case DMGTYPE::FIRE: return DebuffResistFire;
-	case DMGTYPE::POISON: return DebuffResistPoison;
-	case DMGTYPE::ELECTRICITY: return DebuffResistElectricity;
-	case DMGTYPE::SHOCK: return DebuffResistSchock;
-	default: break;
-	}
-	return Unknown;
+TEffectFamily getDebuffResistEffect(DMGTYPE::EDamageType type) {
+  switch (type) {
+  case DMGTYPE::SLASHING:
+    return DebuffResistSlash;
+  case DMGTYPE::PIERCING:
+    return DebuffResistPierce;
+  case DMGTYPE::BLUNT:
+    return DebuffResistBlunt;
+  case DMGTYPE::ROT:
+    return DebuffResistRot;
+  case DMGTYPE::ACID:
+    return DebuffResistAcid;
+  case DMGTYPE::COLD:
+    return DebuffResistCold;
+  case DMGTYPE::FIRE:
+    return DebuffResistFire;
+  case DMGTYPE::POISON:
+    return DebuffResistPoison;
+  case DMGTYPE::ELECTRICITY:
+    return DebuffResistElectricity;
+  case DMGTYPE::SHOCK:
+    return DebuffResistSchock;
+  default:
+    break;
+  }
+  return Unknown;
 }
 
-TEffectFamily getCombatDoTEffect(DMGTYPE::EDamageType type)
-{
-	switch (type)
-	{
-	case DMGTYPE::ROT: return CombatDoTRot;
-	case DMGTYPE::ACID: return CombatDoTAcid;
-	case DMGTYPE::COLD: return CombatDoTCold;
-	case DMGTYPE::FIRE: return CombatDoTFire;
-	case DMGTYPE::POISON: return CombatDoTPoison;
-	case DMGTYPE::ELECTRICITY: return CombatDoTElectricity;
-	case DMGTYPE::SHOCK: return CombatDoTShock;
-	default: break;
-	}
-	return Unknown;
+TEffectFamily getCombatDoTEffect(DMGTYPE::EDamageType type) {
+  switch (type) {
+  case DMGTYPE::ROT:
+    return CombatDoTRot;
+  case DMGTYPE::ACID:
+    return CombatDoTAcid;
+  case DMGTYPE::COLD:
+    return CombatDoTCold;
+  case DMGTYPE::FIRE:
+    return CombatDoTFire;
+  case DMGTYPE::POISON:
+    return CombatDoTPoison;
+  case DMGTYPE::ELECTRICITY:
+    return CombatDoTElectricity;
+  case DMGTYPE::SHOCK:
+    return CombatDoTShock;
+  default:
+    break;
+  }
+  return Unknown;
 }
 
-bool isEffectABonus(EFFECT_FAMILIES::TEffectFamily family)
-{
-	if (family == EFFECT_FAMILIES::Hot)
-		return true;
+bool isEffectABonus(EFFECT_FAMILIES::TEffectFamily family) {
+  if (family == EFFECT_FAMILIES::Hot)
+    return true;
 
-	if (family >= EFFECT_FAMILIES::BeginPowerEffects && family <= EFFECT_FAMILIES::EndPowerEffects)
-		return true;
+  if (family >= EFFECT_FAMILIES::BeginPowerEffects &&
+      family <= EFFECT_FAMILIES::EndPowerEffects)
+    return true;
 
-	if (family == EFFECT_FAMILIES::ProcShootAgain)
-		return true;
+  if (family == EFFECT_FAMILIES::ProcShootAgain)
+    return true;
 
-	return false;
+  return false;
 }
 
 // The conversion table
 const NLMISC::CStringConversion<TEffectFamily>::CPair chatIdTable[] = {
-	{ "MEZZ", Mezz },
-	{ "STUN", Stun },
-	{ "STUN", CombatStun },
-	{ "ROOT", Root },
-	{ "FEAR", Fear },
-	{ "BLIND", Blind },
-	{ "SLOW_MOVE", CombatMvtSlow },
-	{ "SLOW_MOVE", SlowMove },
-	{ "SLOW_ATTACKS", CombatAttackSlow },
-	{ "DEBUFF_COMBAT", CombatDebuffCombatSkills },
-	{ "DEBUFF_DEFENSE", CombatDefenseModifier },
-	{ "DEBUFF_DODGE", CombatDebuffDodge },
-	{ "INVULNERABILITY", PowerInvulnerability },
-	{ "MADNESS", Madness },
-	{ "STENCH", Stench },
+    {"MEZZ", Mezz},
+    {"STUN", Stun},
+    {"STUN", CombatStun},
+    {"ROOT", Root},
+    {"FEAR", Fear},
+    {"BLIND", Blind},
+    {"SLOW_MOVE", CombatMvtSlow},
+    {"SLOW_MOVE", SlowMove},
+    {"SLOW_ATTACKS", CombatAttackSlow},
+    {"DEBUFF_COMBAT", CombatDebuffCombatSkills},
+    {"DEBUFF_DEFENSE", CombatDefenseModifier},
+    {"DEBUFF_DODGE", CombatDebuffDodge},
+    {"INVULNERABILITY", PowerInvulnerability},
+    {"MADNESS", Madness},
+    {"STENCH", Stench},
 
 };
-NLMISC::CStringConversion<TEffectFamily> conversion(chatIdTable, sizeof(chatIdTable) / sizeof(chatIdTable[0]), Unknown);
+NLMISC::CStringConversion<TEffectFamily>
+    conversion(chatIdTable, sizeof(chatIdTable) / sizeof(chatIdTable[0]),
+               Unknown);
 
 const std::string EmptyStr;
 const std::string UnknownStr = "Unknown";
 
-const std::string &getAssociatedChatId(EFFECT_FAMILIES::TEffectFamily family)
-{
-	const std::string &str = conversion.toString(family);
-	if (str == UnknownStr)
-		return EmptyStr;
-	else
-		return str;
+const std::string &getAssociatedChatId(EFFECT_FAMILIES::TEffectFamily family) {
+  const std::string &str = conversion.toString(family);
+  if (str == UnknownStr)
+    return EmptyStr;
+  else
+    return str;
 }
 
 // conversion effect->sheetid
 const NLMISC::CStringConversion<TEffectFamily>::CPair sheetIdTable[] = {
-	{ "mezz.sbrick", Mezz },
-	{ "stun.sbrick", Stun },
-	{ "stun.sbrick", CombatStun },
-	{ "root.sbrick", Root },
-	{ "fear.sbrick", Fear },
-	{ "blind.sbrick", Blind },
-	{ "snare.sbrick", CombatMvtSlow },
-	{ "snare.sbrick", SlowMove },
-	{ "slow.sbrick", CombatAttackSlow },
-	{ "slow.sbrick", CombatSlow },
-	{ "stench.sbrick", Stench },
+    {"mezz.sbrick", Mezz},
+    {"stun.sbrick", Stun},
+    {"stun.sbrick", CombatStun},
+    {"root.sbrick", Root},
+    {"fear.sbrick", Fear},
+    {"blind.sbrick", Blind},
+    {"snare.sbrick", CombatMvtSlow},
+    {"snare.sbrick", SlowMove},
+    {"slow.sbrick", CombatAttackSlow},
+    {"slow.sbrick", CombatSlow},
+    {"stench.sbrick", Stench},
 
-	{ "rot.sbrick", CombatDoTRot },
-	{ "cold.sbrick", CombatDoTCold },
-	{ "fire.sbrick", CombatDoTFire },
-	{ "electric.sbrick", CombatDoTElectricity },
-	{ "acid.sbrick", CombatDoTAcid },
-	{ "poison.sbrick", CombatDoTPoison },
-	{ "shockwave.sbrick", CombatDoTShock },
+    {"rot.sbrick", CombatDoTRot},
+    {"cold.sbrick", CombatDoTCold},
+    {"fire.sbrick", CombatDoTFire},
+    {"electric.sbrick", CombatDoTElectricity},
+    {"acid.sbrick", CombatDoTAcid},
+    {"poison.sbrick", CombatDoTPoison},
+    {"shockwave.sbrick", CombatDoTShock},
 
-	{ "debuff_dodge.sbrick", CombatDebuffDodge },
-	{ "debuff_combat_skills.sbrick", CombatDebuffCombatSkills },
+    {"debuff_dodge.sbrick", CombatDebuffDodge},
+    {"debuff_combat_skills.sbrick", CombatDebuffCombatSkills},
 
-	{ "shielding.sbrick", PowerShielding },
-	{ "life_aura.sbrick", PowerLifeAura },
-	{ "stamina_aura.sbrick", PowerStaminaAura },
-	{ "sap_aura.sbrick", PowerSapAura },
-	{ "umbrella_aura.sbrick", PowerUmbrella },
-	{ "melee_protection_aura.sbrick", PowerProtection },
-	{ "anti_magic_shield_aura.sbrick", PowerAntiMagicShield },
-	{ "invulnerability.sbrick", PowerInvulnerability },
-	{ "war_cry_aura.sbrick", PowerWarCry },
-	{ "fire_wall_aura.sbrick", PowerFireWall },
-	{ "thorn_wall_aura.sbrick", PowerThornWall },
-	{ "water_wall_aura.sbrick", PowerWaterWall },
-	{ "lightning_wall_aura.sbrick", PowerLightningWall },
-	{ "chg_charac.sbrick", PowerChgCharac },
-	{ "mod_defense.sbrick", PowerModDefenseSkill },
-	{ "mod_dodge.sbrick", PowerModDodgeSkill },
-	{ "mod_parry.sbrick", PowerModParrySkill },
-	{ "mod_craft_success.sbrick", PowerModCraftSkill },
-	{ "mod_melee_success.sbrick", PowerModMeleeSkill },
-	{ "mod_range_success.sbrick", PowerModRangeSkill },
-	{ "mod_magic_success.sbrick", PowerModMagicSkill },
-	{ "mod_forage_success.sbrick", PowerModForageSkill },
-	{ "mod_desert_forage_success.sbrick", PowerModDesertForageSkill },
-	{ "mod_forest_forage_success.sbrick", PowerModForestForageSkill },
-	{ "mod_lacustre_forage_success.sbrick", PowerModLacustreForageSkill },
-	{ "mod_jungle_forage_success.sbrick", PowerModJungleForageSkill },
-	{ "mod_primary_root_forage_success.sbrick", PowerModPrimaryRootForageSkill },
-	{ "mod_protect_magic.sbrick", PowerModMagicProtection },
-	{ "speeding_up.sbrick", PowerSpeedingUp },
-	{ "berserk.sbrick", PowerBerserker },
-	{ "enchant_weapon.sbrick", PowerEnchantWeapon },
+    {"shielding.sbrick", PowerShielding},
+    {"life_aura.sbrick", PowerLifeAura},
+    {"stamina_aura.sbrick", PowerStaminaAura},
+    {"sap_aura.sbrick", PowerSapAura},
+    {"umbrella_aura.sbrick", PowerUmbrella},
+    {"melee_protection_aura.sbrick", PowerProtection},
+    {"anti_magic_shield_aura.sbrick", PowerAntiMagicShield},
+    {"invulnerability.sbrick", PowerInvulnerability},
+    {"war_cry_aura.sbrick", PowerWarCry},
+    {"fire_wall_aura.sbrick", PowerFireWall},
+    {"thorn_wall_aura.sbrick", PowerThornWall},
+    {"water_wall_aura.sbrick", PowerWaterWall},
+    {"lightning_wall_aura.sbrick", PowerLightningWall},
+    {"chg_charac.sbrick", PowerChgCharac},
+    {"mod_defense.sbrick", PowerModDefenseSkill},
+    {"mod_dodge.sbrick", PowerModDodgeSkill},
+    {"mod_parry.sbrick", PowerModParrySkill},
+    {"mod_craft_success.sbrick", PowerModCraftSkill},
+    {"mod_melee_success.sbrick", PowerModMeleeSkill},
+    {"mod_range_success.sbrick", PowerModRangeSkill},
+    {"mod_magic_success.sbrick", PowerModMagicSkill},
+    {"mod_forage_success.sbrick", PowerModForageSkill},
+    {"mod_desert_forage_success.sbrick", PowerModDesertForageSkill},
+    {"mod_forest_forage_success.sbrick", PowerModForestForageSkill},
+    {"mod_lacustre_forage_success.sbrick", PowerModLacustreForageSkill},
+    {"mod_jungle_forage_success.sbrick", PowerModJungleForageSkill},
+    {"mod_primary_root_forage_success.sbrick", PowerModPrimaryRootForageSkill},
+    {"mod_protect_magic.sbrick", PowerModMagicProtection},
+    {"speeding_up.sbrick", PowerSpeedingUp},
+    {"berserk.sbrick", PowerBerserker},
+    {"enchant_weapon.sbrick", PowerEnchantWeapon},
 
-	{ "Unknown", Unknown },
+    {"Unknown", Unknown},
 };
-NLMISC::CStringConversion<TEffectFamily> conversionSheetID(sheetIdTable, sizeof(sheetIdTable) / sizeof(sheetIdTable[0]), Unknown);
+NLMISC::CStringConversion<TEffectFamily>
+    conversionSheetID(sheetIdTable,
+                      sizeof(sheetIdTable) / sizeof(sheetIdTable[0]), Unknown);
 
 /// get the sheetId associated to an effect to display on client interface
-NLMISC::CSheetId getAssociatedSheetId(TEffectFamily family)
-{
-	const std::string &str = conversionSheetID.toString(family);
-	if (!str.empty() && str != "Unknown")
-		return NLMISC::CSheetId(str);
-	else
-		return NLMISC::CSheetId::Unknown;
+NLMISC::CSheetId getAssociatedSheetId(TEffectFamily family) {
+  const std::string &str = conversionSheetID.toString(family);
+  if (!str.empty() && str != "Unknown")
+    return NLMISC::CSheetId(str);
+  else
+    return NLMISC::CSheetId::Unknown;
 }
 
-RESISTANCE_TYPE::TResistanceType getAssociatedResistanceType(TEffectFamily family)
-{
-	switch (family)
-	{
-	case Blind:
-	case MadnessMelee:
-	case MadnessMagic:
-	case MadnessRange:
-	case Madness:
-		return RESISTANCE_TYPE::Desert;
-	case Mezz:
-	case SlowMove:
-		return RESISTANCE_TYPE::Forest;
-	case Stun:
-		return RESISTANCE_TYPE::Lacustre;
-	case SlowMelee:
-	case SlowRange:
-	case SlowMagic:
-	case SlowAttack:
-	case Root:
-		return RESISTANCE_TYPE::Jungle;
-	case Fear:
-		return RESISTANCE_TYPE::PrimaryRoot;
-	default:
-		return RESISTANCE_TYPE::None;
-	};
+RESISTANCE_TYPE::TResistanceType
+getAssociatedResistanceType(TEffectFamily family) {
+  switch (family) {
+  case Blind:
+  case MadnessMelee:
+  case MadnessMagic:
+  case MadnessRange:
+  case Madness:
+    return RESISTANCE_TYPE::Desert;
+  case Mezz:
+  case SlowMove:
+    return RESISTANCE_TYPE::Forest;
+  case Stun:
+    return RESISTANCE_TYPE::Lacustre;
+  case SlowMelee:
+  case SlowRange:
+  case SlowMagic:
+  case SlowAttack:
+  case Root:
+    return RESISTANCE_TYPE::Jungle;
+  case Fear:
+    return RESISTANCE_TYPE::PrimaryRoot;
+  default:
+    return RESISTANCE_TYPE::None;
+  };
 }
 
-}; // EFFECT_FAMILIES
+}; // namespace EFFECT_FAMILIES

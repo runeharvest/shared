@@ -20,7 +20,8 @@
 /*
  * Transport class example, gd server.
  *
- * This service have a class (CSharedClass) that send to other service when online.
+ * This service have a class (CSharedClass) that send to other service when
+ * online.
  *
  * To run this program, ensure there is a file "ai_service.cfg"
  * containing the location of the naming service (NSHost, NSPort)
@@ -32,9 +33,9 @@
 //
 
 // We're using the NeL Service framework, and layer 5
-#include "nel/net/service.h"
-#include "nel/misc/time_nl.h"
 #include "nel/misc/displayer.h"
+#include "nel/misc/time_nl.h"
+#include "nel/net/service.h"
 
 #include "nel/net/transport_class.h"
 
@@ -61,43 +62,33 @@ using namespace NLMISC;
 // Shared Class
 //
 
-struct CSharedClass : public CTransportClass
-{
-	uint32 i1;
-	uint16 i2;
-	float f1, f2;
+struct CSharedClass : public CTransportClass {
+  uint32 i1;
+  uint16 i2;
+  float f1, f2;
 
-	vector<uint32> vi1;
+  vector<uint32> vi1;
 
-	string str;
+  string str;
 
-	CEntityId eid;
+  CEntityId eid;
 
-	CSharedClass()
-	    : i1(20)
-	    , i2(20)
-	    , f1(20)
-	    , str("str20")
-	    , eid(5, 1515664512)
-	{
-	}
+  CSharedClass() : i1(20), i2(20), f1(20), str("str20"), eid(5, 1515664512) {}
 
-	virtual void description()
-	{
-		className("SharedClass");
-		property("i1", PropUInt32, (uint32)21, i1);
-		property("f1", PropFloat, 2.5f, f1);
-		property("i2", PropUInt16, (uint16)22, i2);
-		propertyCont("vi1", PropUInt16, vi1);
-		property("str", PropString, (string) "str22", str);
-		//		property ("eid", PropEntityId, CEntityId::Unknown, eid);
-		property("f2", PropFloat, 2.5f, f2);
-	}
+  virtual void description() {
+    className("SharedClass");
+    property("i1", PropUInt32, (uint32)21, i1);
+    property("f1", PropFloat, 2.5f, f1);
+    property("i2", PropUInt16, (uint16)22, i2);
+    propertyCont("vi1", PropUInt16, vi1);
+    property("str", PropString, (string) "str22", str);
+    //		property ("eid", PropEntityId, CEntityId::Unknown, eid);
+    property("f2", PropFloat, 2.5f, f2);
+  }
 
-	virtual void callback(const string &name, uint8 sid)
-	{
-		nlinfo("Yes! I receive a Shared class from '%s' %d", name.c_str(), sid);
-	}
+  virtual void callback(const string &name, uint8 sid) {
+    nlinfo("Yes! I receive a Shared class from '%s' %d", name.c_str(), sid);
+  }
 };
 
 //
@@ -108,40 +99,39 @@ struct CSharedClass : public CTransportClass
 // Functions
 //
 
-static void cbUpService(const std::string &serviceName, uint16 sid, void *arg)
-{
-	// When a service comes, send the new class
-	CSharedClass foo;
-	foo.send((TServiceId)sid);
+static void cbUpService(const std::string &serviceName, uint16 sid, void *arg) {
+  // When a service comes, send the new class
+  CSharedClass foo;
+  foo.send((TServiceId)sid);
 }
 
 //
 // Main class
 //
 
-struct CAIService : public IService
-{
-	void init()
-	{
-		// callback when a new service comes
-		CUnifiedNetwork::getInstance()->setServiceUpCallback("*", (TUnifiedNetCallback)cbUpService, NULL);
+struct CAIService : public IService {
+  void init() {
+    // callback when a new service comes
+    CUnifiedNetwork::getInstance()->setServiceUpCallback(
+        "*", (TUnifiedNetCallback)cbUpService, NULL);
 
-		// init the class transport system
-		CTransportClass::init();
+    // init the class transport system
+    CTransportClass::init();
 
-		// register the shared class
-		TRANSPORT_CLASS_REGISTER(CSharedClass);
-	}
+    // register the shared class
+    TRANSPORT_CLASS_REGISTER(CSharedClass);
+  }
 
-	void release()
-	{
-		// release all the class transport system
-		CTransportClass::release();
-	}
+  void release() {
+    // release all the class transport system
+    CTransportClass::release();
+  }
 };
 
 /*
- * Declare a service with the class IService, the names "AIS" (short) and "ai_service" (long).
- * The port is automatically allocated (0) and the main callback array is empty.
+ * Declare a service with the class IService, the names "AIS" (short) and
+ * "ai_service" (long). The port is automatically allocated (0) and the main
+ * callback array is empty.
  */
-NLNET_SERVICE_MAIN(CAIService, "AIS", "ai_service", 0, EmptyCallbackArray, NL_CT_CFG, "")
+NLNET_SERVICE_MAIN(CAIService, "AIS", "ai_service", 0, EmptyCallbackArray,
+                   NL_CT_CFG, "")

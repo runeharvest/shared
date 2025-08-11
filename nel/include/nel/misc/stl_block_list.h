@@ -17,8 +17,8 @@
 #ifndef NL_STL_BLOCK_LIST_H
 #define NL_STL_BLOCK_LIST_H
 
-#include "types_nl.h"
 #include "stl_block_allocator.h"
+#include "types_nl.h"
 
 #include <list>
 
@@ -36,34 +36,28 @@ namespace NLMISC {
  * \date 2001
  */
 template <class T>
-class CSTLBlockList : public std::list<T, CSTLBlockAllocator<T>>
-{
+class CSTLBlockList : public std::list<T, CSTLBlockAllocator<T>> {
 public:
-	typedef typename NLMISC::CSTLBlockList<T>::size_type TSizeType;
-	typedef typename NLMISC::CSTLBlockList<T>::const_iterator TBlockListConstIt;
+  typedef typename NLMISC::CSTLBlockList<T>::size_type TSizeType;
+  typedef typename NLMISC::CSTLBlockList<T>::const_iterator TBlockListConstIt;
 
-	explicit CSTLBlockList(CBlockMemory<T, false> *bm)
-	    : std::list<T, CSTLBlockAllocator<T>>(CSTLBlockAllocator<T>(bm))
-	{
-	}
+  explicit CSTLBlockList(CBlockMemory<T, false> *bm)
+      : std::list<T, CSTLBlockAllocator<T>>(CSTLBlockAllocator<T>(bm)) {}
 
-	explicit CSTLBlockList(TSizeType n, CBlockMemory<T, false> *bm)
-	    : std::list<T, CSTLBlockAllocator<T>>(n, T(), CSTLBlockAllocator<T>(bm))
-	{
-	}
+  explicit CSTLBlockList(TSizeType n, CBlockMemory<T, false> *bm)
+      : std::list<T, CSTLBlockAllocator<T>>(n, T(), CSTLBlockAllocator<T>(bm)) {
+  }
 
-	explicit CSTLBlockList(TSizeType n, const T &v, CBlockMemory<T, false> *bm)
-	    : std::list<T, CSTLBlockAllocator<T>>(n, v, CSTLBlockAllocator<T>(bm))
-	{
-	}
+  explicit CSTLBlockList(TSizeType n, const T &v, CBlockMemory<T, false> *bm)
+      : std::list<T, CSTLBlockAllocator<T>>(n, v, CSTLBlockAllocator<T>(bm)) {}
 
-	CSTLBlockList(TBlockListConstIt first, TBlockListConstIt last, CBlockMemory<T, false> *bm)
-	    : std::list<T, CSTLBlockAllocator<T>>(first, last, CSTLBlockAllocator<T>(bm))
-	{
-	}
+  CSTLBlockList(TBlockListConstIt first, TBlockListConstIt last,
+                CBlockMemory<T, false> *bm)
+      : std::list<T, CSTLBlockAllocator<T>>(first, last,
+                                            CSTLBlockAllocator<T>(bm)) {}
 };
 
-} // NLMISC
+} // namespace NLMISC
 
 #endif // NL_STL_BLOCK_LIST_H
 

@@ -16,8 +16,8 @@
 
 #include "stdpch.h"
 
-#include "nel/misc/string_conversion.h"
 #include "nel/misc/sstring.h"
+#include "nel/misc/string_conversion.h"
 
 #include "pvp_relation.h"
 
@@ -33,14 +33,12 @@ NL_STRING_CONVERSION_TABLE_ENTRY(Ally)
 NL_STRING_CONVERSION_TABLE_ENTRY(Ennemy)
 NL_END_STRING_CONVERSION_TABLE(TPVPRelation, PVPRelationConversion, Unknown)
 
-TPVPRelation fromString(const std::string &str)
-{
-	return PVPRelationConversion.fromString(str);
+TPVPRelation fromString(const std::string &str) {
+  return PVPRelationConversion.fromString(str);
 }
 
-const std::string &toString(TPVPRelation relation)
-{
-	return PVPRelationConversion.toString(relation);
+const std::string &toString(TPVPRelation relation) {
+  return PVPRelationConversion.toString(relation);
 }
 
 } // namespace PVP_RELATION

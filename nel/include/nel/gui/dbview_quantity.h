@@ -21,8 +21,8 @@
 #ifndef NL_DBVIEW_QUANTITY_H
 #define NL_DBVIEW_QUANTITY_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/gui/view_text.h"
+#include "nel/misc/types_nl.h"
 
 namespace NLGUI {
 
@@ -33,33 +33,32 @@ namespace NLGUI {
  * \author Nevrax France
  * \date 2002
  */
-class CDBViewQuantity : public CViewText
-{
+class CDBViewQuantity : public CViewText {
 public:
-	DECLARE_UI_CLASS(CDBViewQuantity)
+  DECLARE_UI_CLASS(CDBViewQuantity)
 
-	/// Constructor
-	CDBViewQuantity(const TCtorParam &param);
+  /// Constructor
+  CDBViewQuantity(const TCtorParam &param);
 
-	std::string getProperty(const std::string &name) const;
-	void setProperty(const std::string &name, const std::string &value);
-	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
-	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
-	virtual void draw();
+  std::string getProperty(const std::string &name) const;
+  void setProperty(const std::string &name, const std::string &value);
+  xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
+  virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+  virtual void draw();
 
-	static void forceLink();
+  static void forceLink();
 
 protected:
-	CInterfaceProperty _Number;
-	CInterfaceProperty _NumberMax;
-	sint32 _Cache;
-	sint32 _CacheMax;
-	std::string _EmptyText;
+  CInterfaceProperty _Number;
+  CInterfaceProperty _NumberMax;
+  sint32 _Cache;
+  sint32 _CacheMax;
+  std::string _EmptyText;
 
-	void buildTextFromCache();
+  void buildTextFromCache();
 };
 
-}
+} // namespace NLGUI
 
 #endif // NL_DBVIEW_QUANTITY_H
 

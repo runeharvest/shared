@@ -36,8 +36,9 @@
 
 namespace NLPIPELINE {
 
-// Tool logger is fully implemented in header so small tools do not need to link to this library unnecessarily.
-void dummy_tool_logger_cpp() { }
+// Tool logger is fully implemented in header so small tools do not need to link
+// to this library unnecessarily.
+void dummy_tool_logger_cpp() {}
 
 } /* namespace NLPIPELINE */
 

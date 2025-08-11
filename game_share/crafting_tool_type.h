@@ -18,33 +18,34 @@
 #define RY_CRAFTING_TOOL_TYPE_H
 
 namespace TOOL_TYPE {
-enum TCraftingToolType
-{
-	ArmorTool,
-	JewelryTool,
-	AmmoTool,
-	RangeWeaponTool,
-	MeleeWeaponTool,
-	ToolMaker,
+enum TCraftingToolType {
+  ArmorTool,
+  JewelryTool,
+  AmmoTool,
+  RangeWeaponTool,
+  MeleeWeaponTool,
+  ToolMaker,
 
-	Unknown,
-	NUM_CRAFTING_TOOL_TYPE = Unknown,
+  Unknown,
+  NUM_CRAFTING_TOOL_TYPE = Unknown,
 };
 
 /**
  * get the right string from the given enum value
  * \param jop the TCraftingToolType value to convert
- * \return the string associated to this enum number (Unknown if the enum number not exist)
+ * \return the string associated to this enum number (Unknown if the enum number
+ * not exist)
  */
 const std::string &toString(TCraftingToolType type);
 
 /**
  * get the right TCraftingToolType from its string
  * \param str the input string
- * \return the TCraftingToolType associated to this string (unknown if the string cannot be interpreted)
+ * \return the TCraftingToolType associated to this string (unknown if the
+ * string cannot be interpreted)
  */
 TCraftingToolType toToolType(const std::string &str);
 
-} // TOOL_TYPE
+} // namespace TOOL_TYPE
 
 #endif // RY_CRAFTING_TOOL_TYPE_H //

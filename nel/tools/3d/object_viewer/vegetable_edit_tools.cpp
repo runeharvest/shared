@@ -17,53 +17,49 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "std_afx.h"
-#include "object_viewer.h"
 #include "vegetable_edit_tools.h"
+#include "object_viewer.h"
+#include "std_afx.h"
 
-CDirectEditableRangeFloat::CDirectEditableRangeFloat(const std::string &id, float defaultMin, float defaultMax, const std::string &title)
-    : CEditableRangeFloat(id, NULL, defaultMin, defaultMax)
-    , _Title(title)
-{
+CDirectEditableRangeFloat::CDirectEditableRangeFloat(const std::string &id,
+                                                     float defaultMin,
+                                                     float defaultMax,
+                                                     const std::string &title)
+    : CEditableRangeFloat(id, NULL, defaultMin, defaultMax), _Title(title) {}
+
+void CDirectEditableRangeFloat::init(uint32 x, uint32 y, CWnd *pParent) {
+  uint dx = 60;
+
+  CEditableRangeFloat::init(x + dx, y, pParent);
+
+  CRect rect;
+  rect.SetRect(x, y + 10, x + dx, y + 25);
+  _StaticText.Create(nlUtf8ToTStr(_Title), WS_CHILD | WS_VISIBLE, rect,
+                     pParent);
+  _StaticText.SetFont(pParent->GetFont());
 }
 
-void CDirectEditableRangeFloat::init(uint32 x, uint32 y, CWnd *pParent)
-{
-	uint dx = 60;
+void CDirectEditableRangeFloat::setFloat(float *value,
+                                         IVegetableRefresh *vegetRefresh) {
+  nlassert(value);
+  _Wrapper.Value = value;
+  _Wrapper.VegetableRefresh = vegetRefresh;
+  setWrapper(&_Wrapper);
 
-	CEditableRangeFloat::init(x + dx, y, pParent);
-
-	CRect rect;
-	rect.SetRect(x, y + 10, x + dx, y + 25);
-	_StaticText.Create(nlUtf8ToTStr(_Title), WS_CHILD | WS_VISIBLE, rect, pParent);
-	_StaticText.SetFont(pParent->GetFont());
+  // update view.
+  updateValueFromReader();
 }
 
-void CDirectEditableRangeFloat::setFloat(float *value, IVegetableRefresh *vegetRefresh)
-{
-	nlassert(value);
-	_Wrapper.Value = value;
-	_Wrapper.VegetableRefresh = vegetRefresh;
-	setWrapper(&_Wrapper);
-
-	// update view.
-	updateValueFromReader();
+void CDirectEditableRangeFloat::enableWrite(bool enb) {
+  _Wrapper.WriteEnabled = enb;
 }
 
-void CDirectEditableRangeFloat::enableWrite(bool enb)
-{
-	_Wrapper.WriteEnabled = enb;
+float CDirectEditableRangeFloat::CDirectFloatWrapper::get(void) const {
+  return *Value;
 }
-
-float CDirectEditableRangeFloat::CDirectFloatWrapper::get(void) const
-{
-	return *Value;
-}
-void CDirectEditableRangeFloat::CDirectFloatWrapper::set(const float &f)
-{
-	if (WriteEnabled)
-	{
-		*Value = f;
-		VegetableRefresh->refreshVegetableDisplay();
-	}
+void CDirectEditableRangeFloat::CDirectFloatWrapper::set(const float &f) {
+  if (WriteEnabled) {
+    *Value = f;
+    VegetableRefresh->refreshVegetableDisplay();
+  }
 }

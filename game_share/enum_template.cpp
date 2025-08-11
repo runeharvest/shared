@@ -16,9 +16,9 @@
 
 #include "stdpch.h"
 
-#include "nel/misc/debug.h"
-#include "nel/misc/common.h"
 #include "enum_template.h"
+#include "nel/misc/common.h"
+#include "nel/misc/debug.h"
 
 using namespace std;
 using namespace NLMISC;
@@ -27,25 +27,22 @@ namespace ENUM_TEMPLATE {
 
 // ***************************************************************************
 static const string StringArray[NUM_ENUM_TEMPLATE] = {
-	"Unknown",
+    "Unknown",
 };
 
 // ***************************************************************************
-EEnumTemplate stringToEnum(const std::string &str)
-{
-	for (uint i = 0; i < NUM_ENUM_TEMPLATE; i++)
-	{
-		if (nlstricmp(StringArray[i], str) == 0)
-			return (EEnumTemplate)i;
-	}
-	return UNKNOWN;
+EEnumTemplate stringToEnum(const std::string &str) {
+  for (uint i = 0; i < NUM_ENUM_TEMPLATE; i++) {
+    if (nlstricmp(StringArray[i], str) == 0)
+      return (EEnumTemplate)i;
+  }
+  return UNKNOWN;
 }
 
 // ***************************************************************************
-const std::string &enumToString(EEnumTemplate e)
-{
-	nlassert((sint)e < NUM_ENUM_TEMPLATE);
-	return StringArray[e];
+const std::string &enumToString(EEnumTemplate e) {
+  nlassert((sint)e < NUM_ENUM_TEMPLATE);
+  return StringArray[e];
 }
 
-}
+} // namespace ENUM_TEMPLATE

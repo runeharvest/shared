@@ -25,17 +25,16 @@
 namespace NL3D {
 
 template <class T>
-void ITrackKeyFramer<T>::getKeysInRange(TAnimationTime t1, TAnimationTime t2, std::vector<TAnimationTime> &result)
-{
-	nlassert(t1 <= t2);
-	typename TMapTimeCKey::const_iterator it = _MapKey.lower_bound(t1);
-	typename TMapTimeCKey::const_iterator ub = _MapKey.upper_bound(t2);
-	result.clear();
-	while (it != ub)
-	{
-		result.push_back(it->first);
-		++it;
-	}
+void ITrackKeyFramer<T>::getKeysInRange(TAnimationTime t1, TAnimationTime t2,
+                                        std::vector<TAnimationTime> &result) {
+  nlassert(t1 <= t2);
+  typename TMapTimeCKey::const_iterator it = _MapKey.lower_bound(t1);
+  typename TMapTimeCKey::const_iterator ub = _MapKey.upper_bound(t2);
+  result.clear();
+  while (it != ub) {
+    result.push_back(it->first);
+    ++it;
+  }
 }
 
 // Some compilation check: force Visual to compile to template
@@ -65,17 +64,14 @@ CTrackKeyFramerConstRGBA attoto16;
 CTrackKeyFramerConstString attoto14;
 CTrackKeyFramerConstBool attoto15;
 
-UTrackKeyframer *UTrackKeyframer::createLinearFloatTrack()
-{
-	return new CTrackKeyFramerLinearFloat;
+UTrackKeyframer *UTrackKeyframer::createLinearFloatTrack() {
+  return new CTrackKeyFramerLinearFloat;
 }
-UTrackKeyframer *UTrackKeyframer::createBezierFloatTrack()
-{
-	return new CTrackKeyFramerBezierFloat;
+UTrackKeyframer *UTrackKeyframer::createBezierFloatTrack() {
+  return new CTrackKeyFramerBezierFloat;
 }
-UTrackKeyframer *UTrackKeyframer::createTCBFloatTrack()
-{
-	return new CTrackKeyFramerTCBFloat;
+UTrackKeyframer *UTrackKeyframer::createTCBFloatTrack() {
+  return new CTrackKeyFramerTCBFloat;
 }
 
-} // NL3D
+} // namespace NL3D

@@ -29,51 +29,50 @@ namespace NLPACS {
  * \author Nevrax France
  * \date 2002
  */
-class CPrimitiveDesc
-{
+class CPrimitiveDesc {
 public:
-	// Default constructor
-	CPrimitiveDesc();
+  // Default constructor
+  CPrimitiveDesc();
 
-	// The length of the 4 edges. The first is the width, the second is the depth
-	// For cylinder, the first is the radius
-	float Length[2];
+  // The length of the 4 edges. The first is the width, the second is the depth
+  // For cylinder, the first is the radius
+  float Length[2];
 
-	// This is the height of the box or of the cylinder.
-	float Height;
+  // This is the height of the box or of the cylinder.
+  float Height;
 
-	// Attenuation
-	float Attenuation;
+  // Attenuation
+  float Attenuation;
 
-	// Primitive type
-	UMovePrimitive::TType Type;
+  // Primitive type
+  UMovePrimitive::TType Type;
 
-	// Reaction type
-	UMovePrimitive::TReaction Reaction;
+  // Reaction type
+  UMovePrimitive::TReaction Reaction;
 
-	// Reaction type
-	UMovePrimitive::TTrigger Trigger;
+  // Reaction type
+  UMovePrimitive::TTrigger Trigger;
 
-	// Obstacle flag
-	bool Obstacle;
+  // Obstacle flag
+  bool Obstacle;
 
-	// Occlusion mask
-	UMovePrimitive::TCollisionMask OcclusionMask;
+  // Occlusion mask
+  UMovePrimitive::TCollisionMask OcclusionMask;
 
-	// Collision mask
-	UMovePrimitive::TCollisionMask CollisionMask;
+  // Collision mask
+  UMovePrimitive::TCollisionMask CollisionMask;
 
-	// Position of the primitive
-	NLMISC::CVector Position;
+  // Position of the primitive
+  NLMISC::CVector Position;
 
-	// Orientation of the primitive
-	float Orientation;
+  // Orientation of the primitive
+  float Orientation;
 
-	// User data
-	UMovePrimitive::TUserData UserData;
+  // User data
+  UMovePrimitive::TUserData UserData;
 
-	// Serial methods
-	void serial(NLMISC::IStream &s);
+  // Serial methods
+  void serial(NLMISC::IStream &s);
 };
 
 /**
@@ -82,29 +81,28 @@ public:
  * \author Nevrax France
  * \date 2002
  */
-class CPrimitiveBlock : public UPrimitiveBlock
-{
+class CPrimitiveBlock : public UPrimitiveBlock {
 public:
-	// Array of primitives
-	std::vector<CPrimitiveDesc> Primitives;
+  // Array of primitives
+  std::vector<CPrimitiveDesc> Primitives;
 
-	// Serial methods
-	void serial(NLMISC::IStream &s);
+  // Serial methods
+  void serial(NLMISC::IStream &s);
 
-	///\name from UPrimitive block, create a P.B. from a stream
-	//@{
-	static UPrimitiveBlock *createPrimitiveBlock(NLMISC::IStream &src);
-	static UPrimitiveBlock *createPrimitiveBlockFromFile(const std::string &fileName);
-	uint getNbPrimitive() { return (uint)Primitives.size(); }
-	UMovePrimitive::TUserData getUserData(uint nPrimNb)
-	{
-		nlassert(nPrimNb < Primitives.size());
-		return Primitives[nPrimNb].UserData;
-	}
-	//@}
+  ///\name from UPrimitive block, create a P.B. from a stream
+  //@{
+  static UPrimitiveBlock *createPrimitiveBlock(NLMISC::IStream &src);
+  static UPrimitiveBlock *
+  createPrimitiveBlockFromFile(const std::string &fileName);
+  uint getNbPrimitive() { return (uint)Primitives.size(); }
+  UMovePrimitive::TUserData getUserData(uint nPrimNb) {
+    nlassert(nPrimNb < Primitives.size());
+    return Primitives[nPrimNb].UserData;
+  }
+  //@}
 };
 
-} // NLPACS
+} // namespace NLPACS
 
 #endif // NL_PRIMITIVE_BLOCK_PACS_H
 

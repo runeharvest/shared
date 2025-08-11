@@ -19,11 +19,11 @@
 
 #include "nel/misc/types_nl.h"
 
-#include "module_utils.h"
 #include "module.h"
 #include "module_core.h"
 #include "module_parent.h"
 #include "module_proxy.h"
+#include "module_utils.h"
 
 #endif // RY_GAMEPLAY_MODULE_LIB_H
 

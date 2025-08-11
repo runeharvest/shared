@@ -17,11 +17,11 @@
 #ifndef RY_FOG_TYPE_H
 #define RY_FOG_TYPE_H
 
-enum TFogType
-{
-	MainFog = 0,
-	CanopyFog, /* fog for the canopee. Example : the big root in the fyros territory */
-	NumFogType
+enum TFogType {
+  MainFog = 0,
+  CanopyFog, /* fog for the canopee. Example : the big root in the fyros
+                territory */
+  NumFogType
 };
 
 #endif

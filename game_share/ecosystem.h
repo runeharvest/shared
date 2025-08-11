@@ -20,25 +20,25 @@
 #include "nel/misc/types_nl.h"
 
 namespace ECOSYSTEM {
-// Please do not change the ordering of these (otherwise change arrays [ECOSYSTEM::NUM_ECOSYSTEM])
-enum EECosystem
-{
-	common_ecosystem = 0,
-	desert,
-	forest,
-	lacustre,
-	jungle,
-	goo,
-	primary_root,
+// Please do not change the ordering of these (otherwise change arrays
+// [ECOSYSTEM::NUM_ECOSYSTEM])
+enum EECosystem {
+  common_ecosystem = 0,
+  desert,
+  forest,
+  lacustre,
+  jungle,
+  goo,
+  primary_root,
 
-	unknown,
-	NUM_ECOSYSTEM = unknown
+  unknown,
+  NUM_ECOSYSTEM = unknown
 };
 
 /**
- * get the right ecosystem enum from the input string (case-unsensitive comparison)
- * \param str the input string
- * \return the EECosystem associated to this string (UNDEFINED if the string cannot be interpreted)
+ * get the right ecosystem enum from the input string (case-unsensitive
+ * comparison) \param str the input string \return the EECosystem associated to
+ * this string (UNDEFINED if the string cannot be interpreted)
  */
 EECosystem stringToEcosystem(const std::string &str);
 

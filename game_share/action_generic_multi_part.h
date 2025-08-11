@@ -30,111 +30,109 @@ namespace CLFECOMMON {
  * \author Nevrax France
  * \date 2001
  */
-class CActionGenericMultiPart : public CActionImpulsion
-{
+class CActionGenericMultiPart : public CActionImpulsion {
 public:
-	virtual ~CActionGenericMultiPart() { }
+  virtual ~CActionGenericMultiPart() {}
 
-	/** This function creates initializes its fields using the buffer.
-	 * \param buffer pointer to the buffer where the data are
-	 * \size size of the buffer
-	 */
-	virtual void unpack(NLMISC::CBitMemStream &message)
-	{
-		message.serial(Number);
-		message.serial(Part);
-		message.serial(NbBlock);
+  /** This function creates initializes its fields using the buffer.
+   * \param buffer pointer to the buffer where the data are
+   * \size size of the buffer
+   */
+  virtual void unpack(NLMISC::CBitMemStream &message) {
+    message.serial(Number);
+    message.serial(Part);
+    message.serial(NbBlock);
 
-		uint32 size;
-		message.serial(size);
-		// The following test removed by Sadge because it appears to be pointless and prevents ^2 testing to continue as required
-		//		if ( size > 512 )
-		//		{
-		//			throw NLMISC::EInvalidDataStream();
-		//		}
+    uint32 size;
+    message.serial(size);
+    // The following test removed by Sadge because it appears to be pointless
+    // and prevents ^2 testing to continue as required
+    //		if ( size > 512 )
+    //		{
+    //			throw NLMISC::EInvalidDataStream();
+    //		}
 
-		PartCont.resize(size);
-		if (size > 0)
-			message.serialBuffer(&(PartCont[0]), size);
-	}
+    PartCont.resize(size);
+    if (size > 0)
+      message.serialBuffer(&(PartCont[0]), size);
+  }
 
-	/** Returns the size of this action when it will be send to the UDP connection:
-	 * the size is IN BITS, not in bytes (the actual size is this one plus the header size)
-	 */
-	virtual uint32 size()
-	{
-		uint32 bytesize = 1 + 2 + 2 + 4; // header
-		bytesize += (uint32)PartCont.size();
-		return bytesize * 8;
-	}
+  /** Returns the size of this action when it will be send to the UDP
+   * connection: the size is IN BITS, not in bytes (the actual size is this one
+   * plus the header size)
+   */
+  virtual uint32 size() {
+    uint32 bytesize = 1 + 2 + 2 + 4; // header
+    bytesize += (uint32)PartCont.size();
+    return bytesize * 8;
+  }
 
-	static CAction *create() { return new CActionGenericMultiPart(); }
+  static CAction *create() { return new CActionGenericMultiPart(); }
 
-	// set(): vector version (size are in BYTES)
-	void set(uint8 number, uint16 part, std::vector<uint8> &v, uint32 size, uint16 nbBlock)
-	{
-		reset();
-		uint32 start = part * size;
-		uint32 end = start + size;
-		if (end > v.size())
-			end = (uint32)v.size();
-		PartCont.resize(end - start);
-		std::copy(v.begin() + start, v.begin() + end, PartCont.begin());
+  // set(): vector version (size are in BYTES)
+  void set(uint8 number, uint16 part, std::vector<uint8> &v, uint32 size,
+           uint16 nbBlock) {
+    reset();
+    uint32 start = part * size;
+    uint32 end = start + size;
+    if (end > v.size())
+      end = (uint32)v.size();
+    PartCont.resize(end - start);
+    std::copy(v.begin() + start, v.begin() + end, PartCont.begin());
 
-		Number = number;
-		Part = part;
-		NbBlock = nbBlock;
-	}
+    Number = number;
+    Part = part;
+    NbBlock = nbBlock;
+  }
 
-	/**
-	 * set(): uint8* version (to match with sendImpulsion() optimisation) (size are in BYTES)
-	 *
-	 * Preconditions:
-	 * - size != 0
-	 */
-	void set(uint8 number, uint16 part, const uint8 *buffer, uint32 bytelen, uint32 size, uint16 nbBlock)
-	{
-		// nlassert( size != 0 ); // => PartCont won't be resized to 0
-		reset();
-		uint32 start = part * size;
-		uint32 end = start + size;
-		if (end > bytelen)
-			end = bytelen;
-		PartCont.resize(end - start);
-		memcpy(&PartCont[0], buffer + start, end - start);
+  /**
+   * set(): uint8* version (to match with sendImpulsion() optimisation) (size
+   * are in BYTES)
+   *
+   * Preconditions:
+   * - size != 0
+   */
+  void set(uint8 number, uint16 part, const uint8 *buffer, uint32 bytelen,
+           uint32 size, uint16 nbBlock) {
+    // nlassert( size != 0 ); // => PartCont won't be resized to 0
+    reset();
+    uint32 start = part * size;
+    uint32 end = start + size;
+    if (end > bytelen)
+      end = bytelen;
+    PartCont.resize(end - start);
+    memcpy(&PartCont[0], buffer + start, end - start);
 
-		Number = number;
-		Part = part;
-		NbBlock = nbBlock;
-	}
+    Number = number;
+    Part = part;
+    NbBlock = nbBlock;
+  }
 
-	std::vector<uint8> PartCont;
-	uint8 Number;
-	uint16 Part, NbBlock;
+  std::vector<uint8> PartCont;
+  uint8 Number;
+  uint16 Part, NbBlock;
 
 protected:
-	/** This function transform the internal field and transform them into a buffer for the UDP connection.
-	 * \param buffer pointer to the buffer where the data will be written
-	 * \size size of the buffer
-	 */
-	virtual void pack(NLMISC::CBitMemStream &message)
-	{
-		message.serial(Number);
-		message.serial(Part);
-		message.serial(NbBlock);
-		message.serialCont(PartCont);
-	}
+  /** This function transform the internal field and transform them into a
+   * buffer for the UDP connection. \param buffer pointer to the buffer where
+   * the data will be written \size size of the buffer
+   */
+  virtual void pack(NLMISC::CBitMemStream &message) {
+    message.serial(Number);
+    message.serial(Part);
+    message.serial(NbBlock);
+    message.serialCont(PartCont);
+  }
 
-	virtual void reset()
-	{
-		PartCont.clear();
-		AllowExceedingMaxSize = false;
-	}
+  virtual void reset() {
+    PartCont.clear();
+    AllowExceedingMaxSize = false;
+  }
 
-	friend class CActionFactory;
+  friend class CActionFactory;
 };
 
-}
+} // namespace CLFECOMMON
 
 #endif // NL_ACTION_GENERIC_MULTI_PART_H
 

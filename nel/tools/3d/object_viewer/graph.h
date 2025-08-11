@@ -31,60 +31,47 @@
  * \author Nevrax France
  * \date 2002
  */
-class CGraph
-{
+class CGraph {
 public:
-	std::string Name;
-	float X, Y, Width, Height;
-	NLMISC::CRGBA BackColor;
-	float MaxValue;
-	float Peak;
-	bool LineMode;
-	float PrevY;
+  std::string Name;
+  float X, Y, Width, Height;
+  NLMISC::CRGBA BackColor;
+  float MaxValue;
+  float Peak;
+  bool LineMode;
+  float PrevY;
 
-	std::deque<float> Values;
+  std::deque<float> Values;
 
-	NLMISC::TTime Quantum;
+  NLMISC::TTime Quantum;
 
-	NLMISC::TTime CurrentQuantumStart;
+  NLMISC::TTime CurrentQuantumStart;
 
-	/// release material
-	~CGraph()
-	{
-	}
+  /// release material
+  ~CGraph() {}
 
-	/// Constructor (CGraph::init() must have been called before)
-	CGraph(std::string name,
-	    float x, float y, float width, float height,
-	    NLMISC::CRGBA backColor,
-	    NLMISC::TTime quantum,
-	    float maxValue,
-	    bool lineMode = false)
-	    : Name(name)
-	    , X(x)
-	    , Y(y)
-	    , Width(width)
-	    , Height(height)
-	    , BackColor(backColor)
-	    , Quantum(quantum)
-	    , MaxValue(maxValue)
-	    , Peak(0.0f)
-	    , LineMode(lineMode)
-	    , PrevY(y)
-	{
-		CurrentQuantumStart = (uint64)(1000 * NLMISC::CTime::ticksToSecond(NLMISC::CTime::getPerformanceTime()));
-	}
+  /// Constructor (CGraph::init() must have been called before)
+  CGraph(std::string name, float x, float y, float width, float height,
+         NLMISC::CRGBA backColor, NLMISC::TTime quantum, float maxValue,
+         bool lineMode = false)
+      : Name(name), X(x), Y(y), Width(width), Height(height),
+        BackColor(backColor), Quantum(quantum), MaxValue(maxValue), Peak(0.0f),
+        LineMode(lineMode), PrevY(y) {
+    CurrentQuantumStart =
+        (uint64)(1000 * NLMISC::CTime::ticksToSecond(
+                            NLMISC::CTime::getPerformanceTime()));
+  }
 
-	/// Add one value
-	void addOneValue(float value = 0.0f);
+  /// Add one value
+  void addOneValue(float value = 0.0f);
 
-	/// Add value
-	void addValue(float value);
+  /// Add value
+  void addValue(float value);
 
-	static bool DisplayAverageValue;
-	static bool Display;
+  static bool DisplayAverageValue;
+  static bool Display;
 
-	void renderGraph();
+  void renderGraph();
 
 private:
 };

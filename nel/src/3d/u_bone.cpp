@@ -25,22 +25,19 @@
 
 namespace NL3D {
 
-const CMatrix &UBone::getLastWorldMatrixComputed() const
-{
-	CBone *object = getObjectPtr();
-	return object->getWorldMatrix();
+const CMatrix &UBone::getLastWorldMatrixComputed() const {
+  CBone *object = getObjectPtr();
+  return object->getWorldMatrix();
 }
 
-void UBone::setSkinScale(CVector &skinScale)
-{
-	CBone *object = getObjectPtr();
-	object->setSkinScale(skinScale);
+void UBone::setSkinScale(CVector &skinScale) {
+  CBone *object = getObjectPtr();
+  object->setSkinScale(skinScale);
 }
 
-const CVector &UBone::getSkinScale() const
-{
-	CBone *object = getObjectPtr();
-	return object->getSkinScale();
+const CVector &UBone::getSkinScale() const {
+  CBone *object = getObjectPtr();
+  return object->getSkinScale();
 }
 
-} // NL3D
+} // namespace NL3D

@@ -53,39 +53,39 @@ class CAppData;
  * \author Jan Boon (Kaetemi)
  * This scene class owns the AppData chunk
  */
-class CAnimatable : public CSceneClass
-{
+class CAnimatable : public CSceneClass {
 public:
-	CAnimatable(CScene *scene);
-	virtual ~CAnimatable();
+  CAnimatable(CScene *scene);
+  virtual ~CAnimatable();
 
-	// class desc
-	static const ucstring DisplayName;
-	static const char *InternalName;
-	static const char *InternalNameUnknown;
-	static const NLMISC::CClassId ClassId;
-	static const TSClassId SuperClassId;
+  // class desc
+  static const ucstring DisplayName;
+  static const char *InternalName;
+  static const char *InternalNameUnknown;
+  static const NLMISC::CClassId ClassId;
+  static const TSClassId SuperClassId;
 
-	// inherited
-	virtual void parse(uint16 version, uint filter = 0);
-	virtual void clean();
-	virtual void build(uint16 version, uint filter = 0);
-	virtual void disown();
-	virtual void init();
-	virtual bool inherits(const NLMISC::CClassId classId) const;
-	virtual const ISceneClassDesc *classDesc() const;
-	virtual void toStringLocal(std::ostream &ostream, const std::string &pad = "", uint filter = 0) const;
+  // inherited
+  virtual void parse(uint16 version, uint filter = 0);
+  virtual void clean();
+  virtual void build(uint16 version, uint filter = 0);
+  virtual void disown();
+  virtual void init();
+  virtual bool inherits(const NLMISC::CClassId classId) const;
+  virtual const ISceneClassDesc *classDesc() const;
+  virtual void toStringLocal(std::ostream &ostream, const std::string &pad = "",
+                             uint filter = 0) const;
 
-	// public
-	STORAGE::CAppData *appData();
+  // public
+  STORAGE::CAppData *appData();
 
 protected:
-	// inherited
-	virtual IStorageObject *createChunkById(uint16 id, bool container);
+  // inherited
+  virtual IStorageObject *createChunkById(uint16 id, bool container);
 
 private:
-	IStorageObject *m_Unknown2140;
-	STORAGE::CAppData *m_AppData;
+  IStorageObject *m_Unknown2140;
+  STORAGE::CAppData *m_AppData;
 
 }; /* class CAnimatable */
 

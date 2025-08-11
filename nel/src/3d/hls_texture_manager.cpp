@@ -17,10 +17,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "std3d.h"
 #include "nel/3d/hls_texture_manager.h"
-#include "nel/misc/common.h"
 #include "nel/misc/algo.h"
+#include "nel/misc/common.h"
+#include "std3d.h"
 
 using namespace std;
 using namespace NLMISC;
@@ -32,86 +32,75 @@ using namespace NLMISC;
 namespace NL3D {
 
 // ***************************************************************************
-CHLSTextureManager::CHLSTextureManager()
-{
+CHLSTextureManager::CHLSTextureManager() {}
+
+// ***************************************************************************
+CHLSTextureManager::~CHLSTextureManager() { reset(); }
+
+// ***************************************************************************
+void CHLSTextureManager::reset() {
+  // delete instances.
+  contReset(_Instances);
+
+  // delete banks.
+  for (uint i = 0; i < _Banks.size(); i++) {
+    delete _Banks[i];
+  }
+  contReset(_Banks);
 }
 
 // ***************************************************************************
-CHLSTextureManager::~CHLSTextureManager()
-{
-	reset();
+void CHLSTextureManager::addBank(CHLSTextureBank *bank) {
+  // add the bank to the list
+  _Banks.push_back(bank);
+
+  // Add the bank instance list to the main.
+  bank->fillHandleArray(_Instances);
+
+  // then re-sort this array.
+  sort(_Instances.begin(), _Instances.end());
 }
 
 // ***************************************************************************
-void CHLSTextureManager::reset()
-{
-	// delete instances.
-	contReset(_Instances);
+sint CHLSTextureManager::findTexture(const std::string &name) const {
+  // empty?
+  if (_Instances.empty())
+    return -1;
 
-	// delete banks.
-	for (uint i = 0; i < _Banks.size(); i++)
-	{
-		delete _Banks[i];
-	}
-	contReset(_Banks);
+  // Build a valid key.
+  string nameLwr = toLowerAscii(name);
+  CHLSTextureBank::CTextureInstance textKey;
+  CHLSTextureBank::CTextureInstanceHandle textKeyHandle;
+  textKey.buildAsKey(nameLwr.c_str());
+  textKeyHandle.Texture = &textKey;
+
+  // logN search it in the array
+  uint id = searchLowerBound(_Instances, textKeyHandle);
+  // verify if really same name (index must exist since 0 if error, and not
+  // empty here)
+  CHLSTextureBank::CTextureInstance &textInst = *_Instances[id].Texture;
+  if (textInst.sameName(nameLwr.c_str()))
+    return id;
+  else
+    return -1;
 }
 
 // ***************************************************************************
-void CHLSTextureManager::addBank(CHLSTextureBank *bank)
-{
-	// add the bank to the list
-	_Banks.push_back(bank);
-
-	// Add the bank instance list to the main.
-	bank->fillHandleArray(_Instances);
-
-	// then re-sort this array.
-	sort(_Instances.begin(), _Instances.end());
+bool CHLSTextureManager::buildTexture(sint textId, NLMISC::CBitmap &out) const {
+  if (textId < 0 || textId >= (sint)_Instances.size())
+    return false;
+  else {
+    // Ok. build the bitmap
+    CHLSTextureBank::CTextureInstance &textInst = *_Instances[textId].Texture;
+    textInst.buildColorVersion(out);
+    return true;
+  }
 }
 
 // ***************************************************************************
-sint CHLSTextureManager::findTexture(const std::string &name) const
-{
-	// empty?
-	if (_Instances.empty())
-		return -1;
-
-	// Build a valid key.
-	string nameLwr = toLowerAscii(name);
-	CHLSTextureBank::CTextureInstance textKey;
-	CHLSTextureBank::CTextureInstanceHandle textKeyHandle;
-	textKey.buildAsKey(nameLwr.c_str());
-	textKeyHandle.Texture = &textKey;
-
-	// logN search it in the array
-	uint id = searchLowerBound(_Instances, textKeyHandle);
-	// verify if really same name (index must exist since 0 if error, and not empty here)
-	CHLSTextureBank::CTextureInstance &textInst = *_Instances[id].Texture;
-	if (textInst.sameName(nameLwr.c_str()))
-		return id;
-	else
-		return -1;
+const char *CHLSTextureManager::getTextureName(uint i) const {
+  nlassert(i < _Instances.size());
+  return _Instances[i].Texture->getName();
 }
 
-// ***************************************************************************
-bool CHLSTextureManager::buildTexture(sint textId, NLMISC::CBitmap &out) const
-{
-	if (textId < 0 || textId >= (sint)_Instances.size())
-		return false;
-	else
-	{
-		// Ok. build the bitmap
-		CHLSTextureBank::CTextureInstance &textInst = *_Instances[textId].Texture;
-		textInst.buildColorVersion(out);
-		return true;
-	}
-}
-
-// ***************************************************************************
-const char *CHLSTextureManager::getTextureName(uint i) const
-{
-	nlassert(i < _Instances.size());
-	return _Instances[i].Texture->getName();
-}
-
-} // NL3D
+} // namespace NL3D

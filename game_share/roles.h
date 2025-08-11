@@ -24,43 +24,45 @@
 
 namespace ROLES {
 
-enum ERole
-{
-	unknown = 0,
-	role_unknown = unknown,
+enum ERole {
+  unknown = 0,
+  role_unknown = unknown,
 
-	fighter,
-	caster,
-	crafter,
-	harvester,
+  fighter,
+  caster,
+  crafter,
+  harvester,
 
-	NB_ROLES,
+  NB_ROLES,
 };
 
 /**
  * get the role sheet string from the given enum
  * \param  R is the enum number
- * \return the string associated to this enum number (Unknown if the enum number not exist)
+ * \return the string associated to this enum number (Unknown if the enum number
+ * not exist)
  */
 const std::string &toSheetString(ERole r);
 
 /**
  * get the right role string from the given enum
  * \param  R is the enum number
- * \return the string associated to this enum number (Unknown if the enum number not exist)
+ * \return the string associated to this enum number (Unknown if the enum number
+ * not exist)
  */
 const std::string &toString(ERole r);
 
 /**
  * get the right role ID from its string
  * \param str the input string
- * \return the RoleId associated to this string (unknown if the string cannot be interpreted)
+ * \return the RoleId associated to this string (unknown if the string cannot be
+ * interpreted)
  */
 ERole toRoleId(const std::string &Role);
 
 // Return the Translated name of the Job
 const std::string &roleToUCString(ERole r);
 
-} // ROLES
+} // namespace ROLES
 
 #endif

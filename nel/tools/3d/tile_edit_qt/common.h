@@ -19,8 +19,8 @@
 
 #if defined(_MSC_VER) && defined(_DEBUG)
 #define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
 #include <crtdbg.h>
+#include <stdlib.h>
 #define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #undef realloc
 #undef free
@@ -34,17 +34,17 @@
 #endif
 
 #ifdef USE_QT5
-#include <QtWidgets/QtWidgets>
 #include <QtConcurrent/QtConcurrent>
+#include <QtWidgets/QtWidgets>
 #endif
 
 #include <string>
 
-#include <nel/misc/types_nl.h>
 #include <nel/3d/tile_bank.h>
-#include <nel/misc/stream.h>
-#include <nel/misc/file.h>
 #include <nel/misc/app_context.h>
 #include <nel/misc/bitmap.h>
+#include <nel/misc/file.h>
+#include <nel/misc/stream.h>
+#include <nel/misc/types_nl.h>
 
 #endif

@@ -17,11 +17,11 @@
 #ifndef NL_CLASS_REGISTRY_H
 #define NL_CLASS_REGISTRY_H
 
-#include "types_nl.h"
 #include "common.h"
-#include <typeinfo>
-#include <string>
+#include "types_nl.h"
 #include <set>
+#include <string>
+#include <typeinfo>
 
 namespace NLMISC {
 
@@ -32,37 +32,20 @@ namespace NLMISC {
  * \author Nevrax France
  * \date 2000
  */
-struct ERegistry : public Exception
-{
-	ERegistry()
-	    : Exception("Registry error")
-	{
-	}
+struct ERegistry : public Exception {
+  ERegistry() : Exception("Registry error") {}
 
-	ERegistry(const std::string &str)
-	    : Exception(str)
-	{
-	}
+  ERegistry(const std::string &str) : Exception(str) {}
 };
 
-struct ERegisteredClass : public ERegistry
-{
-	ERegisteredClass()
-	    : ERegistry("Class already registered")
-	{
-	}
+struct ERegisteredClass : public ERegistry {
+  ERegisteredClass() : ERegistry("Class already registered") {}
 };
 
-struct EUnregisteredClass : public ERegistry
-{
-	EUnregisteredClass()
-	    : ERegistry("Class not registered")
-	{
-	}
-	EUnregisteredClass(const std::string &className)
-	    : ERegistry(std::string("Class not registered : ") + className)
-	{
-	}
+struct EUnregisteredClass : public ERegistry {
+  EUnregisteredClass() : ERegistry("Class not registered") {}
+  EUnregisteredClass(const std::string &className)
+      : ERegistry(std::string("Class not registered : ") + className) {}
 };
 
 // ======================================================================================================
@@ -72,53 +55,53 @@ struct EUnregisteredClass : public ERegistry
  * \author Nevrax France
  * \date 2000
  */
-class IClassable
-{
+class IClassable {
 public:
-	virtual std::string getClassName() = 0;
-	virtual ~IClassable() { }
+  virtual std::string getClassName() = 0;
+  virtual ~IClassable() {}
 };
 
 // ======================================================================================================
 /**
- * The Class registry where we can instanciate IClassable objects from their names.
- * \author Lionel Berenguier
- * \author Nevrax France
- * \date 2000
+ * The Class registry where we can instanciate IClassable objects from their
+ * names. \author Lionel Berenguier \author Nevrax France \date 2000
  */
-class CClassRegistry
-{
+class CClassRegistry {
 public:
-	/// Inits the ClassRegistry (especially RegistredClasses)
-	static void init();
+  /// Inits the ClassRegistry (especially RegistredClasses)
+  static void init();
 
-	/// release memory
-	static void release();
+  /// release memory
+  static void release();
 
-	///	Register your class for future Instanciation.
-	static void registerClass(const std::string &className, IClassable *(*creator)(), const std::string &typeidCheck);
+  ///	Register your class for future Instanciation.
+  static void registerClass(const std::string &className,
+                            IClassable *(*creator)(),
+                            const std::string &typeidCheck);
 
-	/// Create an object from his class name.
-	static IClassable *create(const std::string &className);
+  /// Create an object from his class name.
+  static IClassable *create(const std::string &className);
 
-	/// check if the object has been correctly registered. Must be used for debug only, and Must compile with RTTI.
-	static bool checkObject(IClassable *obj);
+  /// check if the object has been correctly registered. Must be used for debug
+  /// only, and Must compile with RTTI.
+  static bool checkObject(IClassable *obj);
 
 private:
-	struct CClassNode
-	{
-		std::string TypeIdCheck;
-		IClassable *(*Creator)();
-	};
-	typedef CHashMap<std::string, CClassNode> TClassMap;
-	static TClassMap *RegistredClasses;
+  struct CClassNode {
+    std::string TypeIdCheck;
+    IClassable *(*Creator)();
+  };
+  typedef CHashMap<std::string, CClassNode> TClassMap;
+  static TClassMap *RegistredClasses;
 };
 
 /// Useful Macros.
-#define NLMISC_DECLARE_CLASS(_class_)                       \
-	virtual std::string getClassName() { return #_class_; } \
-	static NLMISC::IClassable *creator() { return new _class_; }
-#define NLMISC_REGISTER_CLASS(_class_) NLMISC::CClassRegistry::registerClass(#_class_, _class_::creator, typeid(_class_).name());
+#define NLMISC_DECLARE_CLASS(_class_)                                          \
+  virtual std::string getClassName() { return #_class_; }                      \
+  static NLMISC::IClassable *creator() { return new _class_; }
+#define NLMISC_REGISTER_CLASS(_class_)                                         \
+  NLMISC::CClassRegistry::registerClass(#_class_, _class_::creator,            \
+                                        typeid(_class_).name());
 
 } // namespace NLMISC.
 

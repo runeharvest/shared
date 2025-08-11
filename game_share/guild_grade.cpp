@@ -17,36 +17,32 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdpch.h"
 #include "guild_grade.h"
+#include "stdpch.h"
 
 namespace EGSPD {
 
-static const struct
-{
-	const char *Name;
-	CGuildGrade::TGuildGrade Value;
-} TGuildGradeConvert[] = {
-	{ "Leader", CGuildGrade::Leader },
-	{ "HighOfficer", CGuildGrade::HighOfficer },
-	{ "Officer", CGuildGrade::Officer },
-	{ "Member", CGuildGrade::Member }
-};
+static const struct {
+  const char *Name;
+  CGuildGrade::TGuildGrade Value;
+} TGuildGradeConvert[] = {{"Leader", CGuildGrade::Leader},
+                          {"HighOfficer", CGuildGrade::HighOfficer},
+                          {"Officer", CGuildGrade::Officer},
+                          {"Member", CGuildGrade::Member}};
 /* -----------------------------------------
  * Static Implementation of CGuildGrade
  * ----------------------------------------- */
-void CGuildGrade::init()
-{
-	_StrTable.clear();
-	_ValueMap.clear();
-	_StrTable.resize(4);
-	uint i;
-	for (i = 0; i < 4; ++i)
-	{
-		_StrTable[TGuildGradeConvert[i].Value] = TGuildGradeConvert[i].Name;
-		_ValueMap[NLMISC::toLowerAscii(std::string(TGuildGradeConvert[i].Name))] = TGuildGradeConvert[i].Value;
-	}
-	_Initialised = true;
+void CGuildGrade::init() {
+  _StrTable.clear();
+  _ValueMap.clear();
+  _StrTable.resize(4);
+  uint i;
+  for (i = 0; i < 4; ++i) {
+    _StrTable[TGuildGradeConvert[i].Value] = TGuildGradeConvert[i].Name;
+    _ValueMap[NLMISC::toLowerAscii(std::string(TGuildGradeConvert[i].Name))] =
+        TGuildGradeConvert[i].Value;
+  }
+  _Initialised = true;
 }
 bool CGuildGrade::_Initialised = false;
 std::string CGuildGrade::_UnknownString = "Unknown";
@@ -54,4 +50,4 @@ std::vector<std::string> CGuildGrade::_StrTable;
 std::map<std::string, CGuildGrade::TGuildGrade> CGuildGrade::_ValueMap;
 // End of static implementation of CGuildGrade
 
-} // End of EGSPD
+} // namespace EGSPD

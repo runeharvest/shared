@@ -20,32 +20,31 @@
 #include "nel/misc/types_nl.h"
 
 namespace CLIENT_ACTION_TYPE {
-enum TClientActionType
-{
-	None = 0, // display nothing
+enum TClientActionType {
+  None = 0, // display nothing
 
-	Combat,
-	Spell,
-	Faber,
-	Repair,
-	Refine,
-	Memorize,
-	Forage,
-	Harvest,
-	Training,
-	Tame,
-	Teleport,
-	Disconnect,
-	Mount,
-	Unmount,
-	ConsumeItem,
+  Combat,
+  Spell,
+  Faber,
+  Repair,
+  Refine,
+  Memorize,
+  Forage,
+  Harvest,
+  Training,
+  Tame,
+  Teleport,
+  Disconnect,
+  Mount,
+  Unmount,
+  ConsumeItem,
 
-	NumClientActionType
+  NumClientActionType
 };
 
 const std::string &toString(TClientActionType e);
 TClientActionType fromString(const std::string &s);
-};
+}; // namespace CLIENT_ACTION_TYPE
 
 #endif // NL_CLIENT_ACTION_TYPE_H
 

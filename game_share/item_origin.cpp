@@ -16,9 +16,9 @@
 
 #include "stdpch.h"
 
-#include "nel/misc/debug.h"
-#include "nel/misc/common.h"
 #include "item_origin.h"
+#include "nel/misc/common.h"
+#include "nel/misc/debug.h"
 
 using namespace std;
 using namespace NLMISC;
@@ -27,67 +27,54 @@ namespace ITEM_ORIGIN {
 
 // ***************************************************************************
 
-/* Warning : if you add an enum here, you MUST add it in translation/work/en.uxt prefixed with "io" like this :
-ioUnknown			[Unknown]
+/* Warning : if you add an enum here, you MUST add it in translation/work/en.uxt
+prefixed with "io" like this : ioUnknown			[Unknown]
 ioCommon			[Common]
 */
 static const string StringArray[NUM_ITEM_ORIGIN + 1] = {
-	"Common",
-	"Fyros",
-	"Matis",
-	"Tryker",
-	"Zorai",
-	"Refugee",
-	"Tribe",
-	"Kami",
-	"Karavan",
-	"Unknown",
+    "Common",  "Fyros", "Matis", "Tryker",  "Zorai",
+    "Refugee", "Tribe", "Kami",  "Karavan", "Unknown",
 };
 
 // ***************************************************************************
-EItemOrigin stringToEnum(const std::string &str)
-{
-	for (uint i = 0; i < NUM_ITEM_ORIGIN; i++)
-	{
-		if (nlstricmp(StringArray[i], str) == 0)
-			return (EItemOrigin)i;
-	}
-	return UNKNOWN;
+EItemOrigin stringToEnum(const std::string &str) {
+  for (uint i = 0; i < NUM_ITEM_ORIGIN; i++) {
+    if (nlstricmp(StringArray[i], str) == 0)
+      return (EItemOrigin)i;
+  }
+  return UNKNOWN;
 }
 
 // ***************************************************************************
-const std::string &enumToString(EItemOrigin e)
-{
-	nlassert((sint)e <= NUM_ITEM_ORIGIN);
-	return StringArray[e];
+const std::string &enumToString(EItemOrigin e) {
+  nlassert((sint)e <= NUM_ITEM_ORIGIN);
+  return StringArray[e];
 }
 
 // ***************************************************************************
-EGSPD::CPeople::TPeople itemOriginStringToPeopleEnum(const std::string &str)
-{
-	switch (ITEM_ORIGIN::stringToEnum(str))
-	{
-	case COMMON:
-		return EGSPD::CPeople::Common;
-	case FYROS:
-		return EGSPD::CPeople::Fyros;
-	case MATIS:
-		return EGSPD::CPeople::Matis;
-	case TRYKER:
-		return EGSPD::CPeople::Tryker;
-	case ZORAI:
-		return EGSPD::CPeople::Zorai;
-	case REFUGEE:
-		return EGSPD::CPeople::Common;
-	case TRIBE:
-		return EGSPD::CPeople::Tribe;
-	case KAMI:
-		return EGSPD::CPeople::Kami;
-	case KARAVAN:
-		return EGSPD::CPeople::Karavan;
-	default:
-		return EGSPD::CPeople::EndPeople;
-	}
+EGSPD::CPeople::TPeople itemOriginStringToPeopleEnum(const std::string &str) {
+  switch (ITEM_ORIGIN::stringToEnum(str)) {
+  case COMMON:
+    return EGSPD::CPeople::Common;
+  case FYROS:
+    return EGSPD::CPeople::Fyros;
+  case MATIS:
+    return EGSPD::CPeople::Matis;
+  case TRYKER:
+    return EGSPD::CPeople::Tryker;
+  case ZORAI:
+    return EGSPD::CPeople::Zorai;
+  case REFUGEE:
+    return EGSPD::CPeople::Common;
+  case TRIBE:
+    return EGSPD::CPeople::Tribe;
+  case KAMI:
+    return EGSPD::CPeople::Kami;
+  case KARAVAN:
+    return EGSPD::CPeople::Karavan;
+  default:
+    return EGSPD::CPeople::EndPeople;
+  }
 }
 
-}
+} // namespace ITEM_ORIGIN

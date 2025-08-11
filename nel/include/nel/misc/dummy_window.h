@@ -46,32 +46,32 @@ namespace NLMISC {
 /** A simple invisible win32 window, with an optional message handling function.
  * Possible uses include :
  * - Creating an icon in the tray (require a window to be passed)
- * - Creating a message queue (in order to use an IPC mechanism such as WM_COPYDATA)
+ * - Creating a message queue (in order to use an IPC mechanism such as
+ * WM_COPYDATA)
  * - etc.
  *
  * \author Nicolas Vizerie
  * \author Nevrax France
  * \date 2007
  */
-class CDummyWindow
-{
+class CDummyWindow {
 public:
-	CDummyWindow();
-	/** Init a dummy window, with an optional message handling procedure
-	 * \return true on success
-	 */
-	bool init(HINSTANCE hInstance, WNDPROC winProc = NULL);
-	// release this window
-	void release();
-	~CDummyWindow();
-	// Get this window handle
-	HWND getWnd() const { return _HWnd; }
+  CDummyWindow();
+  /** Init a dummy window, with an optional message handling procedure
+   * \return true on success
+   */
+  bool init(HINSTANCE hInstance, WNDPROC winProc = NULL);
+  // release this window
+  void release();
+  ~CDummyWindow();
+  // Get this window handle
+  HWND getWnd() const { return _HWnd; }
 
 private:
-	HWND _HWnd;
+  HWND _HWnd;
 };
 
-} // NLMISC
+} // namespace NLMISC
 
 #endif // NL_OS_WINDOWS
 

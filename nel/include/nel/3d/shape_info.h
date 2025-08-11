@@ -17,8 +17,8 @@
 #ifndef NL_SHAPE_INFO_H
 #define NL_SHAPE_INFO_H
 
-#include "nel/misc/triangle.h"
 #include "nel/misc/aabbox.h"
+#include "nel/misc/triangle.h"
 //
 #include <vector>
 
@@ -30,19 +30,19 @@ class IShape;
 class CMeshBase;
 
 // Mesh or mrm mesh as a bunch of triangles
-class CShapeInfo
-{
+class CShapeInfo {
 public:
-	NLMISC::CAABBox LocalBBox;
-	std::vector<NLMISC::CTriangle> Tris;
+  NLMISC::CAABBox LocalBBox;
+  std::vector<NLMISC::CTriangle> Tris;
 
 public:
-	void build(const NL3D::IShape &shape);
-	void swap(CShapeInfo &other);
+  void build(const NL3D::IShape &shape);
+  void swap(CShapeInfo &other);
 
 private:
-	void build(const NL3D::CMeshBase &meshBase, const NL3D::CMeshGeom &meshGeom);
-	void build(const NL3D::CMeshBase &meshBase, const NL3D::CMeshMRMGeom &meshGeom);
+  void build(const NL3D::CMeshBase &meshBase, const NL3D::CMeshGeom &meshGeom);
+  void build(const NL3D::CMeshBase &meshBase,
+             const NL3D::CMeshMRMGeom &meshGeom);
 };
 
 // a shape cache, sorted by names
@@ -51,6 +51,6 @@ typedef std::map<std::string, CShapeInfo> TShapeCache;
 // format a shape name to have lowercase + extension, for lookup in shape cache
 std::string standardizeShapeName(const std::string &name);
 
-} // NL3D
+} // namespace NL3D
 
 #endif

@@ -45,13 +45,11 @@ NL_STRING_CONVERSION_TABLE_ENTRY(BONUS)
 NL_STRING_CONVERSION_TABLE_ENTRY(UNKNOWN)
 NL_END_STRING_CONVERSION_TABLE(EBrickType, Conversion, UNKNOWN)
 
-EBrickType toBrickType(const std::string &str)
-{
-	return Conversion.fromString(str);
+EBrickType toBrickType(const std::string &str) {
+  return Conversion.fromString(str);
 }
 
-const std::string &toString(EBrickType type)
-{
-	return Conversion.toString(type);
+const std::string &toString(EBrickType type) {
+  return Conversion.toString(type);
 }
-}; // BRICK_TYPE
+}; // namespace BRICK_TYPE

@@ -21,17 +21,16 @@
 
 namespace ITEM_SERVICE_TYPE {
 
-enum TItemServiceType
-{
-	StableFeedAnimal1,
-	StableFeedAnimal2,
-	StableFeedAnimal3,
-	StableFeedAnimal4,
-	StableFeedAllAnimals,
-	SpeedUpDPLoss,
+enum TItemServiceType {
+  StableFeedAnimal1,
+  StableFeedAnimal2,
+  StableFeedAnimal3,
+  StableFeedAnimal4,
+  StableFeedAllAnimals,
+  SpeedUpDPLoss,
 
-	Unknown,
-	NbItemServiceType = Unknown
+  Unknown,
+  NbItemServiceType = Unknown
 };
 
 TItemServiceType fromString(const std::string &str);

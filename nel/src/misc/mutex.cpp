@@ -23,9 +23,9 @@
 #define _GNU_SOURCE
 #endif // _GNU_SOURCE
 
+#include "nel/misc/debug.h"
 #include "nel/misc/mutex.h"
 #include "nel/misc/time_nl.h"
-#include "nel/misc/debug.h"
 
 using namespace std;
 
@@ -49,39 +49,40 @@ using namespace std;
 
 namespace NLMISC {
 
-inline void EnterMutex(void *handle)
-{
+inline void EnterMutex(void *handle) {
 #ifdef NL_DEBUG
-	DWORD timeout;
-	if (IsDebuggerPresent())
-		timeout = INFINITE;
-	else
-		timeout = 10000;
+  DWORD timeout;
+  if (IsDebuggerPresent())
+    timeout = INFINITE;
+  else
+    timeout = 10000;
 
-	// Request ownership of mutex
-	DWORD dwWaitResult = WaitForSingleObject(handle, timeout);
+  // Request ownership of mutex
+  DWORD dwWaitResult = WaitForSingleObject(handle, timeout);
 #else
-	// Request ownership of mutex during 10s
-	DWORD dwWaitResult = WaitForSingleObject(handle, 10000);
+  // Request ownership of mutex during 10s
+  DWORD dwWaitResult = WaitForSingleObject(handle, 10000);
 #endif // NL_DEBUG
-	switch (dwWaitResult)
-	{
-	// The thread got mutex ownership.
-	case WAIT_OBJECT_0: break;
-	// Cannot get mutex ownership due to time-out.
-	case WAIT_TIMEOUT: nlerror("Dead lock in a mutex (or more that 10s for the critical section");
-	// Got ownership of the abandoned mutex object.
-	case WAIT_ABANDONED: nlerror("A thread forgot to release the mutex");
-	default: nlerror("EnterMutex failed");
-	}
+  switch (dwWaitResult) {
+  // The thread got mutex ownership.
+  case WAIT_OBJECT_0:
+    break;
+  // Cannot get mutex ownership due to time-out.
+  case WAIT_TIMEOUT:
+    nlerror("Dead lock in a mutex (or more that 10s for the critical section");
+  // Got ownership of the abandoned mutex object.
+  case WAIT_ABANDONED:
+    nlerror("A thread forgot to release the mutex");
+  default:
+    nlerror("EnterMutex failed");
+  }
 }
 
-inline void LeaveMutex(void *handle)
-{
-	if (ReleaseMutex(handle) == 0)
-	{
-		nlerror("error while releasing the mutex (0x%x %d), %p", GetLastError(), GetLastError(), handle);
-	}
+inline void LeaveMutex(void *handle) {
+  if (ReleaseMutex(handle) == 0) {
+    nlerror("error while releasing the mutex (0x%x %d), %p", GetLastError(),
+            GetLastError(), handle);
+  }
 }
 
 /////////////////////////// CUnfairMutex
@@ -92,45 +93,34 @@ inline void LeaveMutex(void *handle)
  * Windows version
  */
 
-CUnfairMutex::CUnfairMutex()
-{
-	// Create a mutex with no initial owner.
-	_Mutex = (void *)CreateMutex(NULL, FALSE, NULL);
-	nlassert(_Mutex != NULL);
+CUnfairMutex::CUnfairMutex() {
+  // Create a mutex with no initial owner.
+  _Mutex = (void *)CreateMutex(NULL, FALSE, NULL);
+  nlassert(_Mutex != NULL);
 }
 
-CUnfairMutex::CUnfairMutex(const std::string & /* name */)
-{
-	// Create a mutex with no initial owner.
-	_Mutex = (void *)CreateMutex(NULL, FALSE, NULL);
-	nlassert(_Mutex != NULL);
+CUnfairMutex::CUnfairMutex(const std::string & /* name */) {
+  // Create a mutex with no initial owner.
+  _Mutex = (void *)CreateMutex(NULL, FALSE, NULL);
+  nlassert(_Mutex != NULL);
 
-	// (Does not use name, only provided for debug compatibility with CFairMutex)
-}
-
-/*
- * Windows version
- */
-CUnfairMutex::~CUnfairMutex()
-{
-	CloseHandle(_Mutex);
+  // (Does not use name, only provided for debug compatibility with CFairMutex)
 }
 
 /*
  * Windows version
  */
-void CUnfairMutex::enter()
-{
-	EnterMutex(_Mutex);
-}
+CUnfairMutex::~CUnfairMutex() { CloseHandle(_Mutex); }
 
 /*
  * Windows version
  */
-void CUnfairMutex::leave()
-{
-	LeaveMutex(_Mutex);
-}
+void CUnfairMutex::enter() { EnterMutex(_Mutex); }
+
+/*
+ * Windows version
+ */
+void CUnfairMutex::leave() { LeaveMutex(_Mutex); }
 
 #endif
 
@@ -139,49 +129,39 @@ void CUnfairMutex::leave()
 /*
  *
  */
-CSharedMutex::CSharedMutex()
-{
-	_Mutex = NULL;
-}
+CSharedMutex::CSharedMutex() { _Mutex = NULL; }
 
 /*
- * Create or use an existing mutex (created by another process) with a specific object name (createNow must be false in the constructor)
- * Returns false if it failed.
+ * Create or use an existing mutex (created by another process) with a specific
+ * object name (createNow must be false in the constructor) Returns false if it
+ * failed.
  */
-bool CSharedMutex::createByName(const char *objectName)
-{
+bool CSharedMutex::createByName(const char *objectName) {
 #ifdef NL_DEBUG
-	nlassert(_Mutex == NULL);
+  nlassert(_Mutex == NULL);
 #endif
-	_Mutex = (void *)CreateMutexA(NULL, FALSE, objectName);
-	// nldebug( "Creating mutex %s: handle %p", objectName, _Mutex );
-	return (_Mutex != NULL);
+  _Mutex = (void *)CreateMutexA(NULL, FALSE, objectName);
+  // nldebug( "Creating mutex %s: handle %p", objectName, _Mutex );
+  return (_Mutex != NULL);
 }
 
 /*
  *
  */
-void CSharedMutex::destroy()
-{
-	CloseHandle(_Mutex);
-	_Mutex = NULL;
+void CSharedMutex::destroy() {
+  CloseHandle(_Mutex);
+  _Mutex = NULL;
 }
 
 /*
  *
  */
-void CSharedMutex::enter()
-{
-	EnterMutex(_Mutex);
-}
+void CSharedMutex::enter() { EnterMutex(_Mutex); }
 
 /*
  *
  */
-void CSharedMutex::leave()
-{
-	LeaveMutex(_Mutex);
-}
+void CSharedMutex::leave() { LeaveMutex(_Mutex); }
 
 /////////////////////////// CFairMutex
 
@@ -190,82 +170,77 @@ void CSharedMutex::leave()
 /*
  * Windows version
  */
-CFairMutex::CFairMutex()
-{
+CFairMutex::CFairMutex() {
 #ifdef STORE_MUTEX_NAME
-	Name = "unset mutex name";
+  Name = "unset mutex name";
 #endif
 
-	debugCreateMutex();
+  debugCreateMutex();
 
-	// Check that the CRITICAL_SECTION structure has not changed
-	nlassert(sizeof(TNelRtlCriticalSection) == sizeof(CRITICAL_SECTION));
+  // Check that the CRITICAL_SECTION structure has not changed
+  nlassert(sizeof(TNelRtlCriticalSection) == sizeof(CRITICAL_SECTION));
 
 #if (_WIN32_WINNT >= 0x0500)
-	DWORD dwSpinCount = 0x80000000; // set high-order bit to use preallocation
-	if (!InitializeCriticalSectionAndSpinCount((CRITICAL_SECTION *)&_Cs, dwSpinCount))
-	{
-		nlerror("Error entering critical section");
-	}
+  DWORD dwSpinCount = 0x80000000; // set high-order bit to use preallocation
+  if (!InitializeCriticalSectionAndSpinCount((CRITICAL_SECTION *)&_Cs,
+                                             dwSpinCount)) {
+    nlerror("Error entering critical section");
+  }
 #else
-	InitializeCriticalSection((CRITICAL_SECTION *)&_Cs);
+  InitializeCriticalSection((CRITICAL_SECTION *)&_Cs);
 #endif
 }
 
-CFairMutex::CFairMutex(const string &name)
-{
+CFairMutex::CFairMutex(const string &name) {
 #ifdef STORE_MUTEX_NAME
-	Name = name;
+  Name = name;
 #endif
 
 #ifdef MUTEX_DEBUG
-	debugCreateMutex();
+  debugCreateMutex();
 #endif
 
-	// Check that the CRITICAL_SECTION structure has not changed
-	nlassert(sizeof(TNelRtlCriticalSection) == sizeof(CRITICAL_SECTION));
+  // Check that the CRITICAL_SECTION structure has not changed
+  nlassert(sizeof(TNelRtlCriticalSection) == sizeof(CRITICAL_SECTION));
 
 #if (_WIN32_WINNT >= 0x0500)
-	DWORD dwSpinCount = 0x80000000; // set high-order bit to use preallocation
-	if (!InitializeCriticalSectionAndSpinCount((CRITICAL_SECTION *)&_Cs, dwSpinCount))
-	{
-		nlerror("Error entering critical section");
-	}
+  DWORD dwSpinCount = 0x80000000; // set high-order bit to use preallocation
+  if (!InitializeCriticalSectionAndSpinCount((CRITICAL_SECTION *)&_Cs,
+                                             dwSpinCount)) {
+    nlerror("Error entering critical section");
+  }
 #else
-	InitializeCriticalSection((CRITICAL_SECTION *)&_Cs);
+  InitializeCriticalSection((CRITICAL_SECTION *)&_Cs);
 #endif
 }
 
 /*
  * Windows version
  */
-CFairMutex::~CFairMutex()
-{
-	DeleteCriticalSection((CRITICAL_SECTION *)&_Cs);
+CFairMutex::~CFairMutex() {
+  DeleteCriticalSection((CRITICAL_SECTION *)&_Cs);
 
-	debugDeleteMutex();
+  debugDeleteMutex();
 }
 
 /*
  * Windows version
  */
-void CFairMutex::enter()
-{
-	debugBeginEnter();
+void CFairMutex::enter() {
+  debugBeginEnter();
 
-	EnterCriticalSection((CRITICAL_SECTION *)&_Cs);
+  EnterCriticalSection((CRITICAL_SECTION *)&_Cs);
 
-	debugEndEnter();
+  debugEndEnter();
 }
 
 /*
  * Windows version
  */
-void CFairMutex::leave()
-{
-	LeaveCriticalSection((CRITICAL_SECTION *)&_Cs);
+void CFairMutex::leave() {
+  LeaveCriticalSection((CRITICAL_SECTION *)&_Cs);
 
-	debugLeave();
+  debugLeave();
 }
 
 #endif
@@ -276,13 +251,13 @@ void CFairMutex::leave()
 
 #elif defined NL_OS_UNIX
 
-#include <pthread.h>
 #include <cerrno>
+#include <pthread.h>
 #include <unistd.h>
 
-#include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/sem.h> // System V semaphores
+#include <sys/types.h>
 
 /*
  * Clanlib authors say: "We need to do this because the posix threads library
@@ -296,77 +271,68 @@ namespace NLMISC {
 
 #ifndef CUnfairMutex
 
-CUnfairMutex::CUnfairMutex()
-{
-	pthread_mutexattr_t attr;
-	pthread_mutexattr_init(&attr);
-	// Fast mutex. Note: on Windows all mutexes are recursive
-	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-	pthread_mutex_init(&mutex, &attr);
-	pthread_mutexattr_destroy(&attr);
+CUnfairMutex::CUnfairMutex() {
+  pthread_mutexattr_t attr;
+  pthread_mutexattr_init(&attr);
+  // Fast mutex. Note: on Windows all mutexes are recursive
+  pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+  pthread_mutex_init(&mutex, &attr);
+  pthread_mutexattr_destroy(&attr);
 }
 
 /*
  * Unix version
  */
-CUnfairMutex::CUnfairMutex(const std::string &name)
-{
-	pthread_mutexattr_t attr;
-	pthread_mutexattr_init(&attr);
-	// Fast mutex. Note: on Windows all mutexes are recursive
-	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-	pthread_mutex_init(&mutex, &attr);
-	pthread_mutexattr_destroy(&attr);
+CUnfairMutex::CUnfairMutex(const std::string &name) {
+  pthread_mutexattr_t attr;
+  pthread_mutexattr_init(&attr);
+  // Fast mutex. Note: on Windows all mutexes are recursive
+  pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+  pthread_mutex_init(&mutex, &attr);
+  pthread_mutexattr_destroy(&attr);
 }
 
 /*
  * Unix version
  */
-CUnfairMutex::~CUnfairMutex()
-{
-	pthread_mutex_destroy(&mutex);
+CUnfairMutex::~CUnfairMutex() { pthread_mutex_destroy(&mutex); }
+
+/*
+ * Unix version
+ */
+void CUnfairMutex::enter() {
+  // cout << getpid() << ": Locking " << &mutex << endl;
+  if (pthread_mutex_lock(&mutex) != 0) {
+    // cout << "Error locking a mutex " << endl;
+    nlerror("Error locking a mutex");
+  }
+  /*else
+  {
+    cout << getpid() << ": Owning " << &mutex << endl;
+  }*/
 }
 
 /*
  * Unix version
  */
-void CUnfairMutex::enter()
-{
-	// cout << getpid() << ": Locking " << &mutex << endl;
-	if (pthread_mutex_lock(&mutex) != 0)
-	{
-		// cout << "Error locking a mutex " << endl;
-		nlerror("Error locking a mutex");
-	}
-	/*else
-	{
-	  cout << getpid() << ": Owning " << &mutex << endl;
-	}*/
-}
-
-/*
- * Unix version
- */
-void CUnfairMutex::leave()
-{
-	// int errcode;
-	// cout << getpid() << ": Unlocking " << &mutex << endl;
-	if ((/*errcode=*/pthread_mutex_unlock(&mutex)) != 0)
-	{
-		/* switch ( errcode )
-		   {
-		   case EINVAL: cout << "INVAL" << endl; break;
-		   case EPERM: cout << "PERM" << endl; break;
-		   default: cout << "OTHER" << endl;
-		   }
-		 */
-		// cout << "Error unlocking a mutex " /*<< &mutex*/ << endl;
-		nlerror("Error unlocking a mutex");
-	}
-	/*else
-	{
-	  cout << getpid() << ": Released " << &mutex << endl;
-	}*/
+void CUnfairMutex::leave() {
+  // int errcode;
+  // cout << getpid() << ": Unlocking " << &mutex << endl;
+  if ((/*errcode=*/pthread_mutex_unlock(&mutex)) != 0) {
+    /* switch ( errcode )
+       {
+       case EINVAL: cout << "INVAL" << endl; break;
+       case EPERM: cout << "PERM" << endl; break;
+       default: cout << "OTHER" << endl;
+       }
+     */
+    // cout << "Error unlocking a mutex " /*<< &mutex*/ << endl;
+    nlerror("Error unlocking a mutex");
+  }
+  /*else
+  {
+    cout << getpid() << ": Released " << &mutex << endl;
+  }*/
 }
 
 #endif
@@ -376,57 +342,53 @@ void CUnfairMutex::leave()
 /*
  * Unix version
  */
-CFairMutex::CFairMutex()
-{
+CFairMutex::CFairMutex() {
 #ifdef NL_OS_MAC
-	_Sem = dispatch_semaphore_create(1);
+  _Sem = dispatch_semaphore_create(1);
 #else
-	sem_init(const_cast<sem_t *>(&_Sem), 0, 1);
+  sem_init(const_cast<sem_t *>(&_Sem), 0, 1);
 #endif
 }
 
-CFairMutex::CFairMutex(const std::string &name)
-{
+CFairMutex::CFairMutex(const std::string &name) {
 #ifdef NL_OS_MAC
-	_Sem = dispatch_semaphore_create(1);
+  _Sem = dispatch_semaphore_create(1);
 #else
-	sem_init(const_cast<sem_t *>(&_Sem), 0, 1);
-#endif
-}
-
-/*
- * Unix version
- */
-CFairMutex::~CFairMutex()
-{
-#ifdef NL_OS_MAC
-	dispatch_release(_Sem);
-#else
-	sem_destroy(const_cast<sem_t *>(&_Sem)); // needs that no thread is waiting on the semaphore
+  sem_init(const_cast<sem_t *>(&_Sem), 0, 1);
 #endif
 }
 
 /*
  * Unix version
  */
-void CFairMutex::enter()
-{
+CFairMutex::~CFairMutex() {
 #ifdef NL_OS_MAC
-	dispatch_semaphore_wait(_Sem, DISPATCH_TIME_FOREVER);
+  dispatch_release(_Sem);
 #else
-	sem_wait(const_cast<sem_t *>(&_Sem));
+  sem_destroy(const_cast<sem_t *>(
+      &_Sem)); // needs that no thread is waiting on the semaphore
 #endif
 }
 
 /*
  * Unix version
  */
-void CFairMutex::leave()
-{
+void CFairMutex::enter() {
 #ifdef NL_OS_MAC
-	dispatch_semaphore_signal(_Sem);
+  dispatch_semaphore_wait(_Sem, DISPATCH_TIME_FOREVER);
 #else
-	sem_post(const_cast<sem_t *>(&_Sem));
+  sem_wait(const_cast<sem_t *>(&_Sem));
+#endif
+}
+
+/*
+ * Unix version
+ */
+void CFairMutex::leave() {
+#ifdef NL_OS_MAC
+  dispatch_semaphore_signal(_Sem);
+#else
+  sem_post(const_cast<sem_t *>(&_Sem));
 #endif
 }
 
@@ -437,85 +399,77 @@ void CFairMutex::leave()
 /*
  *
  */
-CSharedMutex::CSharedMutex()
-    : _SemId(-1)
-{
-}
+CSharedMutex::CSharedMutex() : _SemId(-1) {}
 
 #if defined(__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
 /* union semun is defined by including <sys/sem.h> */
 #else
 /* according to X/OPEN we have to define it ourselves */
-union semun
-{
-	int val; /* value for SETVAL */
-	struct semid_ds *buf; /* buffer for IPC_STAT, IPC_SET */
-	unsigned short int *array; /* array for GETALL, SETALL */
-	struct seminfo *__buf; /* buffer for IPC_INFO */
+union semun {
+  int val;                   /* value for SETVAL */
+  struct semid_ds *buf;      /* buffer for IPC_STAT, IPC_SET */
+  unsigned short int *array; /* array for GETALL, SETALL */
+  struct seminfo *__buf;     /* buffer for IPC_INFO */
 };
 #endif
 
 /*
  *
  */
-bool CSharedMutex::createByKey(int key, bool createNew)
-{
-	// Create a semaphore set containing one semaphore
-	/*key_t mykey = ftok(".", 'n');
-	_SemId = semget( mykey, 1, IPC_CREAT | IPC_EXCL | 0666 );*/
+bool CSharedMutex::createByKey(int key, bool createNew) {
+  // Create a semaphore set containing one semaphore
+  /*key_t mykey = ftok(".", 'n');
+  _SemId = semget( mykey, 1, IPC_CREAT | IPC_EXCL | 0666 );*/
 
-	if (createNew)
-		_SemId = semget(key, 1, IPC_CREAT | IPC_EXCL | 0666);
-	else
-		_SemId = semget(key, 1, 0666);
-	nldebug("Got semid %d", _SemId);
-	if (_SemId == -1)
-		return false;
+  if (createNew)
+    _SemId = semget(key, 1, IPC_CREAT | IPC_EXCL | 0666);
+  else
+    _SemId = semget(key, 1, 0666);
+  nldebug("Got semid %d", _SemId);
+  if (_SemId == -1)
+    return false;
 
-	// Initialise the semaphore to 1
-	union semun arg;
-	arg.val = 1;
-	if (semctl(_SemId, 0, SETVAL, arg) == -1)
-	{
-		nlwarning("semid=%d, err=%s", _SemId, strerror(errno));
-		return false;
-	}
-	return true;
+  // Initialise the semaphore to 1
+  union semun arg;
+  arg.val = 1;
+  if (semctl(_SemId, 0, SETVAL, arg) == -1) {
+    nlwarning("semid=%d, err=%s", _SemId, strerror(errno));
+    return false;
+  }
+  return true;
 }
 
 /*
  *
  */
-void CSharedMutex::destroy()
-{
-	// Destroy the semaphore
-	union semun arg;
-	nlverifyex(semctl(_SemId, 0, IPC_RMID, arg) != -1, ("semid=%d, err=%s", _SemId, strerror(errno)));
-	_SemId = -1;
+void CSharedMutex::destroy() {
+  // Destroy the semaphore
+  union semun arg;
+  nlverifyex(semctl(_SemId, 0, IPC_RMID, arg) != -1,
+             ("semid=%d, err=%s", _SemId, strerror(errno)));
+  _SemId = -1;
 }
 
 /*
  *
  */
-void CSharedMutex::enter()
-{
-	// Decrement the semaphore
-	sembuf buf;
-	buf.sem_num = 0;
-	buf.sem_op = -1;
-	nlverify(semop(_SemId, &buf, 1) != -1);
+void CSharedMutex::enter() {
+  // Decrement the semaphore
+  sembuf buf;
+  buf.sem_num = 0;
+  buf.sem_op = -1;
+  nlverify(semop(_SemId, &buf, 1) != -1);
 }
 
 /*
  *
  */
-void CSharedMutex::leave()
-{
-	// Increment the semaphore
-	sembuf buf;
-	buf.sem_num = 0;
-	buf.sem_op = 1;
-	nlverify(semop(_SemId, &buf, 1) != -1);
+void CSharedMutex::leave() {
+  // Increment the semaphore
+  sembuf buf;
+  buf.sem_num = 0;
+  buf.sem_op = 1;
+  nlverify(semop(_SemId, &buf, 1) != -1);
 }
 
 #endif // NL_OS_WINDOWS/NL_OS_UNIX
@@ -532,43 +486,40 @@ CFairMutex *ATMutex = NULL;
 bool InitAT = true;
 
 /// Inits the "mutex debugging info system"
-void initAcquireTimeMap()
-{
-	if (InitAT)
-	{
-		ATMutex = new CFairMutex("ATMutex");
-		AcquireTime = new map<CFairMutex *, TMutexLocks>;
-		InitAT = false;
-	}
+void initAcquireTimeMap() {
+  if (InitAT) {
+    ATMutex = new CFairMutex("ATMutex");
+    AcquireTime = new map<CFairMutex *, TMutexLocks>;
+    InitAT = false;
+  }
 }
 
-/// Gets the debugging info for all mutexes (call it evenly, e.g. once per second)
-map<CFairMutex *, TMutexLocks> getNewAcquireTimes()
-{
-	map<CMutex *, TMutexLocks> m;
-	ATMutex->enter();
+/// Gets the debugging info for all mutexes (call it evenly, e.g. once per
+/// second)
+map<CFairMutex *, TMutexLocks> getNewAcquireTimes() {
+  map<CMutex *, TMutexLocks> m;
+  ATMutex->enter();
 
-	// Copy map
-	m = *AcquireTime;
+  // Copy map
+  m = *AcquireTime;
 
-	// Reset map
-	/*	map<CMutex*,TMutexLocks>::iterator im;
-	    for ( im=AcquireTime->begin(); im!=AcquireTime->end(); ++im )
-	    {
-	        (*im).second.Time = 0;
-	        (*im).second.Nb = 0;
-	        (*im).second.Locked = false;
-	    }
-	*/
-	ATMutex->leave();
-	return m;
+  // Reset map
+  /*	map<CMutex*,TMutexLocks>::iterator im;
+      for ( im=AcquireTime->begin(); im!=AcquireTime->end(); ++im )
+      {
+          (*im).second.Time = 0;
+          (*im).second.Nb = 0;
+          (*im).second.Locked = false;
+      }
+  */
+  ATMutex->leave();
+  return m;
 }
 
 ////////////////////////
 ////////////////////////
 
-void CFairMutex::debugCreateMutex()
-{
+void CFairMutex::debugCreateMutex() {
 /*	if ( ! InitAT )
 	{
 		ATMutex->enter();
@@ -589,100 +540,98 @@ void CFairMutex::debugCreateMutex()
 	}
 */}
 
-void CFairMutex::debugDeleteMutex()
-{
-	if ((this != ATMutex) && (ATMutex != NULL))
-	{
-		ATMutex->enter();
-		(*AcquireTime)[this].Dead = true;
-		ATMutex->leave();
-	}
+void CFairMutex::debugDeleteMutex() {
+  if ((this != ATMutex) && (ATMutex != NULL)) {
+    ATMutex->enter();
+    (*AcquireTime)[this].Dead = true;
+    ATMutex->leave();
+  }
 }
 
-void CFairMutex::debugBeginEnter()
-{
-	if ((this != ATMutex) && (ATMutex != NULL))
-	{
-		TTicks t = CTime::getPerformanceTime();
+void CFairMutex::debugBeginEnter() {
+  if ((this != ATMutex) && (ATMutex != NULL)) {
+    TTicks t = CTime::getPerformanceTime();
 
-		ATMutex->enter();
-		std::map<CMutex *, TMutexLocks>::iterator it = (*AcquireTime).find(this);
-		if (it == (*AcquireTime).end())
-		{
-			AcquireTime->insert(make_pair(this, TMutexLocks(NbMutexes++)));
-			char dbgstr[256];
+    ATMutex->enter();
+    std::map<CMutex *, TMutexLocks>::iterator it = (*AcquireTime).find(this);
+    if (it == (*AcquireTime).end()) {
+      AcquireTime->insert(make_pair(this, TMutexLocks(NbMutexes++)));
+      char dbgstr[256];
 #ifdef STORE_MUTEX_NAME
-			smprintf(dbgstr, 256, "MUTEX: Creating mutex %p %s (number %u)\n", this, Name.c_str(), NbMutexes - 1);
+      smprintf(dbgstr, 256, "MUTEX: Creating mutex %p %s (number %u)\n", this,
+               Name.c_str(), NbMutexes - 1);
 #else
-			smprintf(dbgstr, 256, "MUTEX: Creating mutex %p (number %u)\n", this, NbMutexes - 1);
+      smprintf(dbgstr, 256, "MUTEX: Creating mutex %p (number %u)\n", this,
+               NbMutexes - 1);
 #endif
 
 #ifdef NL_OS_WINDOWS
-			if (IsDebuggerPresent()) OutputDebugString(dbgstr);
+      if (IsDebuggerPresent())
+        OutputDebugString(dbgstr);
 #endif
-			cout << dbgstr << endl;
+      cout << dbgstr << endl;
 
-			it = (*AcquireTime).find(this);
+      it = (*AcquireTime).find(this);
 #ifdef STORE_MUTEX_NAME
-			(*it).second.MutexName = Name;
+      (*it).second.MutexName = Name;
 #endif
-		}
-		(*it).second.WaitingMutex++;
-		(*it).second.BeginEnter = t;
-		ATMutex->leave();
-	}
+    }
+    (*it).second.WaitingMutex++;
+    (*it).second.BeginEnter = t;
+    ATMutex->leave();
+  }
 }
 
-void CFairMutex::debugEndEnter()
-{
-	//	printf("1");
-	/*	char str[1024];
-	    sprintf(str, "enter %8p %8p %8p\n", this, _Mutex, getThreadId ());
-	    if (_Mutex == (void*)0x88)
-	    {
-	        OutputDebugString (str);
-	        if (entered) __debugbreak();
-	        entered = true;
-	    }
-	*/
-	if ((this != ATMutex) && (ATMutex != NULL))
-	{
-		TTicks t = CTime::getPerformanceTime();
-		ATMutex->enter();
-		if ((uint32)(t - (*AcquireTime)[this].BeginEnter) > (*AcquireTime)[this].TimeToEnter)
-			(*AcquireTime)[this].TimeToEnter = (uint32)(t - (*AcquireTime)[this].BeginEnter);
-		(*AcquireTime)[this].Nb += 1;
-		(*AcquireTime)[this].WaitingMutex--;
-		(*AcquireTime)[this].ThreadHavingTheMutex = getThreadId();
-		(*AcquireTime)[this].EndEnter = t;
-		ATMutex->leave();
-	}
+void CFairMutex::debugEndEnter() {
+  //	printf("1");
+  /*	char str[1024];
+      sprintf(str, "enter %8p %8p %8p\n", this, _Mutex, getThreadId ());
+      if (_Mutex == (void*)0x88)
+      {
+          OutputDebugString (str);
+          if (entered) __debugbreak();
+          entered = true;
+      }
+  */
+  if ((this != ATMutex) && (ATMutex != NULL)) {
+    TTicks t = CTime::getPerformanceTime();
+    ATMutex->enter();
+    if ((uint32)(t - (*AcquireTime)[this].BeginEnter) >
+        (*AcquireTime)[this].TimeToEnter)
+      (*AcquireTime)[this].TimeToEnter =
+          (uint32)(t - (*AcquireTime)[this].BeginEnter);
+    (*AcquireTime)[this].Nb += 1;
+    (*AcquireTime)[this].WaitingMutex--;
+    (*AcquireTime)[this].ThreadHavingTheMutex = getThreadId();
+    (*AcquireTime)[this].EndEnter = t;
+    ATMutex->leave();
+  }
 }
 
-void CFairMutex::debugLeave()
-{
-	//	printf( "0" );
-	/*	char str[1024];
-	    sprintf(str, "leave %8p %8p %8p\n", this, _Mutex, getThreadId ());
-	    if (_Mutex == (void*)0x88)
-	    {
-	        OutputDebugString (str);
-	        if (!entered) __debugbreak();
-	        entered = false;
-	    }
-	*/
+void CFairMutex::debugLeave() {
+  //	printf( "0" );
+  /*	char str[1024];
+      sprintf(str, "leave %8p %8p %8p\n", this, _Mutex, getThreadId ());
+      if (_Mutex == (void*)0x88)
+      {
+          OutputDebugString (str);
+          if (!entered) __debugbreak();
+          entered = false;
+      }
+  */
 
-	if ((this != ATMutex) && (ATMutex != NULL))
-	{
-		TTicks Leave = CTime::getPerformanceTime();
-		ATMutex->enter();
-		if ((uint32)(Leave - (*AcquireTime)[this].EndEnter) > (*AcquireTime)[this].TimeInMutex)
-			(*AcquireTime)[this].TimeInMutex = (uint32)(Leave - (*AcquireTime)[this].EndEnter);
-		(*AcquireTime)[this].Nb += 1;
-		(*AcquireTime)[this].WaitingMutex = false;
-		(*AcquireTime)[this].ThreadHavingTheMutex = 0xFFFFFFFF;
-		ATMutex->leave();
-	}
+  if ((this != ATMutex) && (ATMutex != NULL)) {
+    TTicks Leave = CTime::getPerformanceTime();
+    ATMutex->enter();
+    if ((uint32)(Leave - (*AcquireTime)[this].EndEnter) >
+        (*AcquireTime)[this].TimeInMutex)
+      (*AcquireTime)[this].TimeInMutex =
+          (uint32)(Leave - (*AcquireTime)[this].EndEnter);
+    (*AcquireTime)[this].Nb += 1;
+    (*AcquireTime)[this].WaitingMutex = false;
+    (*AcquireTime)[this].ThreadHavingTheMutex = 0xFFFFFFFF;
+    ATMutex->leave();
+  }
 }
 
 #endif // MUTEX_DEBUG

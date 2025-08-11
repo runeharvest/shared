@@ -27,50 +27,46 @@ using namespace NLMISC;
 
 namespace NLMISC {
 
-void cbVarChanged(CConfigFile::CVar &cvar)
-{
-	CCommandRegistry &cr = CCommandRegistry::getInstance();
-	for (CCommandRegistry::TCommand::iterator comm = cr._Commands.begin(); comm != cr._Commands.end(); comm++)
-	{
-		if (comm->second->Type == ICommand::Variable && comm->second->getName() == cvar.Name)
-		{
-			IVariable *var = static_cast<IVariable *>(comm->second);
-			string val = cvar.asString();
-			nlinfo("VAR: Setting variable '%s' with value '%s' from config file", cvar.Name.c_str(), val.c_str());
-			var->fromString(val, true);
-		}
-	}
+void cbVarChanged(CConfigFile::CVar &cvar) {
+  CCommandRegistry &cr = CCommandRegistry::getInstance();
+  for (CCommandRegistry::TCommand::iterator comm = cr._Commands.begin();
+       comm != cr._Commands.end(); comm++) {
+    if (comm->second->Type == ICommand::Variable &&
+        comm->second->getName() == cvar.Name) {
+      IVariable *var = static_cast<IVariable *>(comm->second);
+      string val = cvar.asString();
+      nlinfo("VAR: Setting variable '%s' with value '%s' from config file",
+             cvar.Name.c_str(), val.c_str());
+      var->fromString(val, true);
+    }
+  }
 }
 
-void IVariable::init(NLMISC::CConfigFile &configFile)
-{
-	CCommandRegistry::getInstance().initVariables(configFile);
+void IVariable::init(NLMISC::CConfigFile &configFile) {
+  CCommandRegistry::getInstance().initVariables(configFile);
 }
 
-void CCommandRegistry::initVariables(NLMISC::CConfigFile &configFile)
-{
-	for (TCommand::iterator comm = _Commands.begin(); comm != _Commands.end(); comm++)
-	{
-		if (comm->second->Type == ICommand::Variable)
-		{
-			IVariable *var = static_cast<IVariable *>(comm->second);
-			if (var->_UseConfigFile)
-			{
-				configFile.setCallback(var->_CommandName, cbVarChanged);
-				CConfigFile::CVar *cvar = configFile.getVarPtr(var->_CommandName);
-				if (cvar != 0)
-				{
-					string val = cvar->asString();
-					// nldebug("VAR: Setting variable '%s' with value '%s' from config file '%s'", var->_CommandName.c_str(), val.c_str(), configFile.getFilename().c_str());
-					var->fromString(val, true);
-				}
-				else
-				{
-					// nldebug("VAR: No variable '%s' in config file '%s'", var->_CommandName.c_str(), configFile.getFilename().c_str());
-				}
-			}
-		}
-	}
+void CCommandRegistry::initVariables(NLMISC::CConfigFile &configFile) {
+  for (TCommand::iterator comm = _Commands.begin(); comm != _Commands.end();
+       comm++) {
+    if (comm->second->Type == ICommand::Variable) {
+      IVariable *var = static_cast<IVariable *>(comm->second);
+      if (var->_UseConfigFile) {
+        configFile.setCallback(var->_CommandName, cbVarChanged);
+        CConfigFile::CVar *cvar = configFile.getVarPtr(var->_CommandName);
+        if (cvar != 0) {
+          string val = cvar->asString();
+          // nldebug("VAR: Setting variable '%s' with value '%s' from config
+          // file '%s'", var->_CommandName.c_str(), val.c_str(),
+          // configFile.getFilename().c_str());
+          var->fromString(val, true);
+        } else {
+          // nldebug("VAR: No variable '%s' in config file '%s'",
+          // var->_CommandName.c_str(), configFile.getFilename().c_str());
+        }
+      }
+    }
+  }
 }
 
-} // NLMISC
+} // namespace NLMISC

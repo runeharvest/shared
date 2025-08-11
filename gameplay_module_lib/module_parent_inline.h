@@ -22,8 +22,8 @@ void CModuleParent::removeChildModule(IModule* module)
     MODULE_AST( module );
     MODULE_AST(_Owner);
     NLMISC::CRefPtr<IModule> ref(module);
-    std::vector< NLMISC::CRefPtr<IModule> >::iterator it( std::find( _Modules.begin(), _Modules.end(), ref ) );
-    if ( it == _Modules.end() )
+    std::vector< NLMISC::CRefPtr<IModule> >::iterator it( std::find(
+_Modules.begin(), _Modules.end(), ref ) ); if ( it == _Modules.end() )
     {
         nlwarning("<MODULE> cant find the module to remove");
         return;
@@ -38,8 +38,8 @@ void CModuleParent::addChildModule(IModule* module)
     MODULE_AST( module );
 #ifdef RY_MODULE_DEBUG
     NLMISC::CRefPtr<IModule> ref(module);
-    std::vector< NLMISC::CRefPtr<IModule> >::iterator it( std::find( _Modules.begin(), _Modules.end(), ref ) );
-    if ( it != _Modules.end() )
+    std::vector< NLMISC::CRefPtr<IModule> >::iterator it( std::find(
+_Modules.begin(), _Modules.end(), ref ) ); if ( it != _Modules.end() )
         nlerror("a module was added twice");
 #endif
     _Modules.push_back(module);

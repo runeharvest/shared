@@ -18,91 +18,85 @@
 #define RY_WEATHER_SETUP_SHEET_BASE_H
 
 #include "../fog_type.h"
-#include "nel/misc/string_mapper.h"
 #include "nel/misc/rgba.h"
+#include "nel/misc/string_mapper.h"
 
 namespace NLGEORGES {
 class UForm;
 class UFormElm;
-}
+} // namespace NLGEORGES
 
 namespace NLMISC {
 class CSheetId;
 }
 
 // state of weather, not including clouds
-class CWeatherStateSheet
-{
+class CWeatherStateSheet {
 public:
-	// Best aprox setup name when blended
-	std::string BestSetupName;
-	struct CFXInfos
-	{
-		std::string Name;
-		float Ratio;
+  // Best aprox setup name when blended
+  std::string BestSetupName;
+  struct CFXInfos {
+    std::string Name;
+    float Ratio;
 
-		CFXInfos() { Ratio = 0.0f; }
+    CFXInfos() { Ratio = 0.0f; }
 
-		void serial(NLMISC::IStream &f)
-		{
-			f.serial(Name, Ratio);
-		}
-	};
-	// Fog (main & canopy)
-	float FogRatio;
-	NLMISC::CRGBA FogColorDay;
-	NLMISC::CRGBA FogColorDusk;
-	NLMISC::CRGBA FogColorNight;
-	float FogNear[NumFogType];
-	float FogFar[NumFogType];
-	float FogGradientFactor; // factor for the fog gradient
-	// Lighting
-	float Lighting;
-	/** Bg read from the sheet
-	 */
-	std::string DayBackground;
-	std::string DuskBackground;
-	std::string NightBackground;
+    void serial(NLMISC::IStream &f) { f.serial(Name, Ratio); }
+  };
+  // Fog (main & canopy)
+  float FogRatio;
+  NLMISC::CRGBA FogColorDay;
+  NLMISC::CRGBA FogColorDusk;
+  NLMISC::CRGBA FogColorNight;
+  float FogNear[NumFogType];
+  float FogFar[NumFogType];
+  float FogGradientFactor; // factor for the fog gradient
+  // Lighting
+  float Lighting;
+  /** Bg read from the sheet
+   */
+  std::string DayBackground;
+  std::string DuskBackground;
+  std::string NightBackground;
 
-	// Wind
-	float WindIntensity;
-	// FX
-	std::vector<CFXInfos> FXInfos;
-	// Thunder
-	float ThunderIntensity;
-	NLMISC::CRGBA ThunderColor;
+  // Wind
+  float WindIntensity;
+  // FX
+  std::vector<CFXInfos> FXInfos;
+  // Thunder
+  float ThunderIntensity;
+  NLMISC::CRGBA ThunderColor;
 
-	std::string LocalizedName;
+  std::string LocalizedName;
 
 public:
-	// default ctor
-	CWeatherStateSheet();
-	/** Build that weather state from a georges sheet
-	 */
-	void build(const NLGEORGES::UFormElm &item);
-	//
-	void serial(NLMISC::IStream &f);
+  // default ctor
+  CWeatherStateSheet();
+  /** Build that weather state from a georges sheet
+   */
+  void build(const NLGEORGES::UFormElm &item);
+  //
+  void serial(NLMISC::IStream &f);
 };
 
 // state of weather, including clouds
-class CCloudStateSheet
-{
+class CCloudStateSheet {
 public:
-	NLMISC::CRGBA AmbientDay;
-	NLMISC::CRGBA DiffuseDay;
-	NLMISC::CRGBA AmbientNight;
-	NLMISC::CRGBA DiffuseNight;
-	NLMISC::CRGBA AmbientDusk;
-	NLMISC::CRGBA DiffuseDusk;
-	uint32 NumClouds;
-	float DiffusionSpeed;
+  NLMISC::CRGBA AmbientDay;
+  NLMISC::CRGBA DiffuseDay;
+  NLMISC::CRGBA AmbientNight;
+  NLMISC::CRGBA DiffuseNight;
+  NLMISC::CRGBA AmbientDusk;
+  NLMISC::CRGBA DiffuseDusk;
+  uint32 NumClouds;
+  float DiffusionSpeed;
 
 public:
-	CCloudStateSheet();
-	// Build from a georges sheet
-	void build(const NLGEORGES::UFormElm &item);
-	//
-	void serial(NLMISC::IStream &f);
+  CCloudStateSheet();
+  // Build from a georges sheet
+  void build(const NLGEORGES::UFormElm &item);
+  //
+  void serial(NLMISC::IStream &f);
 };
 
 /**
@@ -111,24 +105,24 @@ public:
  * \author Nevrax France
  * \date 2003
  */
-class CWeatherSetupSheetBase
-{
+class CWeatherSetupSheetBase {
 public:
-	CWeatherStateSheet WeatherState;
-	CCloudStateSheet CloudState;
-	NLMISC::TStringId SetupName;
+  CWeatherStateSheet WeatherState;
+  CCloudStateSheet CloudState;
+  NLMISC::TStringId SetupName;
 
 public:
-	// ctor
-	CWeatherSetupSheetBase();
-	// build from an external sheet
-	void build(const NLGEORGES::UFormElm &item);
-	virtual void serial(NLMISC::IStream &f);
+  // ctor
+  CWeatherSetupSheetBase();
+  // build from an external sheet
+  void build(const NLGEORGES::UFormElm &item);
+  virtual void serial(NLMISC::IStream &f);
 
-	//
-	void readGeorges(const NLGEORGES::UForm *form, const NLMISC::CSheetId &sheetId);
-	void removed() const { }
-	static uint32 getVersion() { return 0; }
+  //
+  void readGeorges(const NLGEORGES::UForm *form,
+                   const NLMISC::CSheetId &sheetId);
+  void removed() const {}
+  static uint32 getVersion() { return 0; }
 };
 
 #endif

@@ -17,29 +17,23 @@
 #ifndef RY_TYPE_SKILL_MOD_H
 #define RY_TYPE_SKILL_MOD_H
 
+#include "characteristics.h"
 #include "nel/misc/types_nl.h"
 #include "people.h"
-#include "characteristics.h"
 #include "persistent_data.h"
 
-struct CTypeSkillMod
-{
-	CTypeSkillMod()
-	    : Modifier(0)
-	    , Type(EGSPD::CClassificationType::Unknown)
-	{
-	}
+struct CTypeSkillMod {
+  CTypeSkillMod() : Modifier(0), Type(EGSPD::CClassificationType::Unknown) {}
 
-	void serial(NLMISC::IStream &f)
-	{
-		f.serialEnum(Type);
-		f.serial(Modifier);
-	}
+  void serial(NLMISC::IStream &f) {
+    f.serialEnum(Type);
+    f.serial(Modifier);
+  }
 
-	sint32 Modifier;
-	EGSPD::CClassificationType::TClassificationType Type;
+  sint32 Modifier;
+  EGSPD::CClassificationType::TClassificationType Type;
 
-	DECLARE_PERSISTENCE_METHODS
+  DECLARE_PERSISTENCE_METHODS
 };
 
 #endif // RY_TYPE_SKILL_MOD_H

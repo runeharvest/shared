@@ -33,8 +33,8 @@
 #include <vector>
 
 // NeL includes
-#include <nel/misc/ucstring.h>
 #include <nel/misc/string_common.h>
+#include <nel/misc/ucstring.h>
 
 // Project includes
 #include "storage_object.h"
@@ -53,112 +53,98 @@ namespace MAX {
  * WARNING: sizeof(TType) should match the serialized size,
  * otherwise you must specialize the getSize and setSize functions!
  */
-template <typename T>
-class CStorageArray : public IStorageObject
-{
+template <typename T> class CStorageArray : public IStorageObject {
 public:
-	// public data
-	typedef T TType;
-	typedef std::vector<TType> TTypeArray;
-	TTypeArray Value;
+  // public data
+  typedef T TType;
+  typedef std::vector<TType> TTypeArray;
+  TTypeArray Value;
 
-	// inherited
-	virtual std::string className() const;
-	virtual void serial(NLMISC::IStream &stream);
-	virtual void toString(std::ostream &ostream, const std::string &pad = "") const;
+  // inherited
+  virtual std::string className() const;
+  virtual void serial(NLMISC::IStream &stream);
+  virtual void toString(std::ostream &ostream,
+                        const std::string &pad = "") const;
 
 public: // should be protected but that doesn't compile, nice c++!
-	// Sets size when reading
-	virtual void setSize(sint32 size);
-	// Gets the size when writing, return false if unknown
-	virtual bool getSize(sint32 &size) const;
+  // Sets size when reading
+  virtual void setSize(sint32 size);
+  // Gets the size when writing, return false if unknown
+  virtual bool getSize(sint32 &size) const;
 }; /* class CStorageArray */
 
-template <typename T>
-std::string CStorageArray<T>::className() const
-{
-	return "StorageArray";
+template <typename T> std::string CStorageArray<T>::className() const {
+  return "StorageArray";
+}
+
+template <typename T> void CStorageArray<T>::serial(NLMISC::IStream &stream) {
+  for (typename TTypeArray::iterator it = Value.begin(), end = Value.end();
+       it != end; ++it) {
+    stream.serial(*it);
+  }
 }
 
 template <typename T>
-void CStorageArray<T>::serial(NLMISC::IStream &stream)
-{
-	for (typename TTypeArray::iterator it = Value.begin(), end = Value.end(); it != end; ++it)
-	{
-		stream.serial(*it);
-	}
+void CStorageArray<T>::toString(std::ostream &ostream,
+                                const std::string &pad) const {
+  ostream << "(" << className() << ") [" << Value.size()
+          << "] { "; // << s << " } ";
+  uint i = 0;
+  for (typename TTypeArray::const_iterator it = Value.begin(),
+                                           end = Value.end();
+       it != end; ++it) {
+    std::string s = NLMISC::toString(*it);
+    // ostream << "\n" << pad << i << ": " << s;
+    ostream << "{ " << s << " } ";
+    ++i;
+  }
+  ostream << "} ";
 }
 
-template <typename T>
-void CStorageArray<T>::toString(std::ostream &ostream, const std::string &pad) const
-{
-	ostream << "(" << className() << ") [" << Value.size() << "] { "; // << s << " } ";
-	uint i = 0;
-	for (typename TTypeArray::const_iterator it = Value.begin(), end = Value.end(); it != end; ++it)
-	{
-		std::string s = NLMISC::toString(*it);
-		// ostream << "\n" << pad << i << ": " << s;
-		ostream << "{ " << s << " } ";
-		++i;
-	}
-	ostream << "} ";
+template <typename T> void CStorageArray<T>::setSize(sint32 size) {
+  if (size % (sizeof(TType)) != 0)
+    nlerror("Size %i is not a multiple of value type size %i", size,
+            sizeof(TType));
+  Value.resize(size / sizeof(TType));
 }
 
-template <typename T>
-void CStorageArray<T>::setSize(sint32 size)
-{
-	if (size % (sizeof(TType)) != 0)
-		nlerror("Size %i is not a multiple of value type size %i", size, sizeof(TType));
-	Value.resize(size / sizeof(TType));
-}
-
-template <typename T>
-bool CStorageArray<T>::getSize(sint32 &size) const
-{
-	size = Value.size() * sizeof(TType);
-	return true;
+template <typename T> bool CStorageArray<T>::getSize(sint32 &size) const {
+  size = Value.size() * sizeof(TType);
+  return true;
 }
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-template <typename T>
-class CStorageArraySizePre : public CStorageArray<T>
-{
+template <typename T> class CStorageArraySizePre : public CStorageArray<T> {
 public:
-	virtual std::string className() const;
-	virtual void serial(NLMISC::IStream &stream);
-	virtual void setSize(sint32 size);
-	virtual bool getSize(sint32 &size) const;
+  virtual std::string className() const;
+  virtual void serial(NLMISC::IStream &stream);
+  virtual void setSize(sint32 size);
+  virtual bool getSize(sint32 &size) const;
 };
 
-template <typename T>
-std::string CStorageArraySizePre<T>::className() const
-{
-	return "StorageArraySizePre";
+template <typename T> std::string CStorageArraySizePre<T>::className() const {
+  return "StorageArraySizePre";
 }
 
 template <typename T>
-void CStorageArraySizePre<T>::serial(NLMISC::IStream &stream)
-{
-	uint32 size = this->Value.size();
-	stream.serial(size);
-	nlassert(this->Value.size() == size);
-	CStorageArray<T>::serial(stream);
+void CStorageArraySizePre<T>::serial(NLMISC::IStream &stream) {
+  uint32 size = this->Value.size();
+  stream.serial(size);
+  nlassert(this->Value.size() == size);
+  CStorageArray<T>::serial(stream);
+}
+
+template <typename T> void CStorageArraySizePre<T>::setSize(sint32 size) {
+  CStorageArray<T>::setSize(size - sizeof(uint32));
 }
 
 template <typename T>
-void CStorageArraySizePre<T>::setSize(sint32 size)
-{
-	CStorageArray<T>::setSize(size - sizeof(uint32));
-}
-
-template <typename T>
-bool CStorageArraySizePre<T>::getSize(sint32 &size) const
-{
-	size = CStorageArray<T>::getSize(size) + sizeof(uint32);
-	return true;
+bool CStorageArraySizePre<T>::getSize(sint32 &size) const {
+  size = CStorageArray<T>::getSize(size) + sizeof(uint32);
+  return true;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -167,42 +153,34 @@ bool CStorageArraySizePre<T>::getSize(sint32 &size) const
 
 /// Same as CStorageArraySizePre but with no sizeof checks.
 /// Use when serializing variable sizes in type T.
-template <typename T>
-class CStorageArrayDynSize : public CStorageArray<T>
-{
+template <typename T> class CStorageArrayDynSize : public CStorageArray<T> {
 public:
-	virtual std::string className() const;
-	virtual void serial(NLMISC::IStream &stream);
-	virtual void setSize(sint32 size);
-	virtual bool getSize(sint32 &size) const;
+  virtual std::string className() const;
+  virtual void serial(NLMISC::IStream &stream);
+  virtual void setSize(sint32 size);
+  virtual bool getSize(sint32 &size) const;
 };
 
-template <typename T>
-std::string CStorageArrayDynSize<T>::className() const
-{
-	return "StorageArrayDynSize";
+template <typename T> std::string CStorageArrayDynSize<T>::className() const {
+  return "StorageArrayDynSize";
 }
 
 template <typename T>
-void CStorageArrayDynSize<T>::serial(NLMISC::IStream &stream)
-{
-	uint32 size = this->Value.size();
-	stream.serial(size);
-	this->Value.resize(size);
-	CStorageArray<T>::serial(stream);
+void CStorageArrayDynSize<T>::serial(NLMISC::IStream &stream) {
+  uint32 size = this->Value.size();
+  stream.serial(size);
+  this->Value.resize(size);
+  CStorageArray<T>::serial(stream);
+}
+
+template <typename T> void CStorageArrayDynSize<T>::setSize(sint32 size) {
+  // Nothing to do here!
 }
 
 template <typename T>
-void CStorageArrayDynSize<T>::setSize(sint32 size)
-{
-	// Nothing to do here!
-}
-
-template <typename T>
-bool CStorageArrayDynSize<T>::getSize(sint32 &size) const
-{
-	// Nothing to do here!
-	return false;
+bool CStorageArrayDynSize<T>::getSize(sint32 &size) const {
+  // Nothing to do here!
+  return false;
 }
 
 ////////////////////////////////////////////////////////////////////////

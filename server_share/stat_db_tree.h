@@ -17,10 +17,10 @@
 #ifndef RY_STAT_DB_TREE_H
 #define RY_STAT_DB_TREE_H
 
-#include "nel/misc/smart_ptr.h"
-#include "nel/misc/static_map.h"
 #include "nel/misc/entity_id.h"
 #include "nel/misc/log.h"
+#include "nel/misc/smart_ptr.h"
+#include "nel/misc/static_map.h"
 
 #include "stat_db_common.h"
 #include "stat_db_tree_visitor.h"
@@ -43,41 +43,41 @@ typedef NLMISC::CSmartPtr<IStatDBNode> IStatDBNodePtr;
  * \author Nevrax France
  * \date 2005 July
  */
-class IStatDBNode : public NLMISC::CRefCount
-{
+class IStatDBNode : public NLMISC::CRefCount {
 public:
-	struct CMatchingNode
-	{
-		std::string Path;
-		IStatDBNodePtr Node;
-	};
+  struct CMatchingNode {
+    std::string Path;
+    IStatDBNodePtr Node;
+  };
 
 public:
-	/// virtual dtor
-	virtual ~IStatDBNode() { }
+  /// virtual dtor
+  virtual ~IStatDBNode() {}
 
-	/// add a node at the given path, it creates the path if necessary
-	/// NOTE: if another node is already at the given path it is replaced
-	virtual bool setNode(const std::string &path, IStatDBNodePtr node) = 0;
+  /// add a node at the given path, it creates the path if necessary
+  /// NOTE: if another node is already at the given path it is replaced
+  virtual bool setNode(const std::string &path, IStatDBNodePtr node) = 0;
 
-	/// get the node at the given path or NULL if the path does not exist
-	virtual IStatDBNodePtr getNode(const std::string &path) = 0;
+  /// get the node at the given path or NULL if the path does not exist
+  virtual IStatDBNodePtr getNode(const std::string &path) = 0;
 
-	/// get all nodes whose path matches the given pattern
-	/// \param pathPattern : a path pattern
-	/// \param matchingNodes : return the matching nodes
-	/// \param currentPath : the current path
-	/// WARNING: the vector 'matchingNodes' will not be cleared by this method before matching nodes are added
-	virtual void getNodes(const std::string &pathPattern, std::vector<CMatchingNode> &matchingNodes,
-	    const std::string &currentPath)
-	    = 0;
+  /// get all nodes whose path matches the given pattern
+  /// \param pathPattern : a path pattern
+  /// \param matchingNodes : return the matching nodes
+  /// \param currentPath : the current path
+  /// WARNING: the vector 'matchingNodes' will not be cleared by this method
+  /// before matching nodes are added
+  virtual void getNodes(const std::string &pathPattern,
+                        std::vector<CMatchingNode> &matchingNodes,
+                        const std::string &currentPath) = 0;
 
-	/// remove and return the node at the given path
-	virtual IStatDBNodePtr removeNode(const std::string &path) = 0;
+  /// remove and return the node at the given path
+  virtual IStatDBNodePtr removeNode(const std::string &path) = 0;
 
-	/// accept a visitor (visitor design pattern)
-	/// \param currentPath : the path of this node
-	virtual void acceptVisitor(CStatDBNodeVisitor &visitor, const std::string &currentPath) = 0;
+  /// accept a visitor (visitor design pattern)
+  /// \param currentPath : the path of this node
+  virtual void acceptVisitor(CStatDBNodeVisitor &visitor,
+                             const std::string &currentPath) = 0;
 };
 
 /**
@@ -87,18 +87,21 @@ public:
  * \author Nevrax France
  * \date 2005 July
  */
-class CStatDBLeaf : public IStatDBNode
-{
+class CStatDBLeaf : public IStatDBNode {
 public:
-	virtual ~CStatDBLeaf() { }
+  virtual ~CStatDBLeaf() {}
 
-	bool setNode(const std::string & /* path */, IStatDBNodePtr /* node */) { return false; }
-	IStatDBNodePtr getNode(const std::string & /* path */) { return NULL; }
-	void getNodes(const std::string & /* pathPattern */, std::vector<CMatchingNode> & /* matchingNodes */,
-	    const std::string & /* currentPath */) { }
-	IStatDBNodePtr removeNode(const std::string & /* path */) { return NULL; }
+  bool setNode(const std::string & /* path */, IStatDBNodePtr /* node */) {
+    return false;
+  }
+  IStatDBNodePtr getNode(const std::string & /* path */) { return NULL; }
+  void getNodes(const std::string & /* pathPattern */,
+                std::vector<CMatchingNode> & /* matchingNodes */,
+                const std::string & /* currentPath */) {}
+  IStatDBNodePtr removeNode(const std::string & /* path */) { return NULL; }
 
-	virtual void acceptVisitor(CStatDBNodeVisitor & /* visitor */, const std::string & /* currentPath */) { }
+  virtual void acceptVisitor(CStatDBNodeVisitor & /* visitor */,
+                             const std::string & /* currentPath */) {}
 };
 
 /**
@@ -108,123 +111,119 @@ public:
  * \author Nevrax France
  * \date 2005 July
  */
-class CStatDBValueLeaf : public CStatDBLeaf
-{
+class CStatDBValueLeaf : public CStatDBLeaf {
 public:
-	/// ctor
-	CStatDBValueLeaf(sint32 val = 0)
-	    : _Value(val)
-	{
-	}
+  /// ctor
+  CStatDBValueLeaf(sint32 val = 0) : _Value(val) {}
 
-	/// set value
-	void setValue(sint32 val) { _Value = val; }
-	/// get value
-	sint32 getValue() { return _Value; }
+  /// set value
+  void setValue(sint32 val) { _Value = val; }
+  /// get value
+  sint32 getValue() { return _Value; }
 
-	/// add value
-	void addValue(sint32 val) { _Value += val; }
+  /// add value
+  void addValue(sint32 val) { _Value += val; }
 
-	void acceptVisitor(CStatDBNodeVisitor &visitor, const std::string &currentPath)
-	{
-		visitor.visitValueLeaf(this, currentPath);
-	}
+  void acceptVisitor(CStatDBNodeVisitor &visitor,
+                     const std::string &currentPath) {
+    visitor.visitValueLeaf(this, currentPath);
+  }
 
 private:
-	sint32 _Value;
+  sint32 _Value;
 };
 
 /**
- * Leaf structure of the statistical database retaining info for players and guilds.
- * For the moment a table leaf removes entries with a value <= 0 (cf playerAdd() and guildAdd() methods).
- * It is typically made to store some positive scores,
- * but it may support both signed and unsigned scores in the future.
+ * Leaf structure of the statistical database retaining info for players and
+ * guilds. For the moment a table leaf removes entries with a value <= 0 (cf
+ * playerAdd() and guildAdd() methods). It is typically made to store some
+ * positive scores, but it may support both signed and unsigned scores in the
+ * future.
  *
  * \author Matthieu 'Trap' Besson
  * \author Nevrax France
  * \date 2005 July
  */
-class CStatDBTableLeaf : public CStatDBLeaf
-{
+class CStatDBTableLeaf : public CStatDBLeaf {
 public:
-	typedef std::map<NLMISC::CEntityId, sint32> TPlayerValues;
-	typedef std::map<EGSPD::TGuildId, sint32> TGuildValues;
+  typedef std::map<NLMISC::CEntityId, sint32> TPlayerValues;
+  typedef std::map<EGSPD::TGuildId, sint32> TGuildValues;
 
 public:
-	/// ctor
-	CStatDBTableLeaf() { }
-	CStatDBTableLeaf(const TPlayerValues &playerValues, const TGuildValues &guildValues)
-	    : _PlayerValues(playerValues)
-	    , _GuildValues(guildValues)
-	{
-	}
+  /// ctor
+  CStatDBTableLeaf() {}
+  CStatDBTableLeaf(const TPlayerValues &playerValues,
+                   const TGuildValues &guildValues)
+      : _PlayerValues(playerValues), _GuildValues(guildValues) {}
 
-	/// add a value to a player
-	/// NOTE: if the new value of the player is <= 0 the player entry is removed
-	void playerAdd(NLMISC::CEntityId playerId, sint32 val);
-	/// add a value to a guild
-	/// NOTE: if the new value of the guild is <= 0 the guild entry is removed
-	void guildAdd(EGSPD::TGuildId guildId, sint32 val);
+  /// add a value to a player
+  /// NOTE: if the new value of the player is <= 0 the player entry is removed
+  void playerAdd(NLMISC::CEntityId playerId, sint32 val);
+  /// add a value to a guild
+  /// NOTE: if the new value of the guild is <= 0 the guild entry is removed
+  void guildAdd(EGSPD::TGuildId guildId, sint32 val);
 
-	/// set a player value
-	/// NOTE: if the new value of the player is <= 0 the player entry is removed
-	void playerSet(NLMISC::CEntityId playerId, sint32 val);
-	/// set a guild value
-	/// NOTE: if the new value of the guild is <= 0 the guild entry is removed
-	void guildSet(EGSPD::TGuildId guildId, sint32 val);
+  /// set a player value
+  /// NOTE: if the new value of the player is <= 0 the player entry is removed
+  void playerSet(NLMISC::CEntityId playerId, sint32 val);
+  /// set a guild value
+  /// NOTE: if the new value of the guild is <= 0 the guild entry is removed
+  void guildSet(EGSPD::TGuildId guildId, sint32 val);
 
-	/// get a value of a player
-	bool playerGet(NLMISC::CEntityId playerId, sint32 &val) const;
-	/// get a value of a guild
-	bool guildGet(EGSPD::TGuildId guildId, sint32 &val) const;
+  /// get a value of a player
+  bool playerGet(NLMISC::CEntityId playerId, sint32 &val) const;
+  /// get a value of a guild
+  bool guildGet(EGSPD::TGuildId guildId, sint32 &val) const;
 
-	/// get player values
-	const TPlayerValues &getPlayerValues() const { return _PlayerValues; }
-	/// get guild values
-	const TGuildValues &getGuildValues() const { return _GuildValues; }
+  /// get player values
+  const TPlayerValues &getPlayerValues() const { return _PlayerValues; }
+  /// get guild values
+  const TGuildValues &getGuildValues() const { return _GuildValues; }
 
-	/// remove a player from the table
-	void removePlayer(NLMISC::CEntityId playerId);
-	/// remove a guild from the table
-	void removeGuild(EGSPD::TGuildId guildId);
+  /// remove a player from the table
+  void removePlayer(NLMISC::CEntityId playerId);
+  /// remove a guild from the table
+  void removeGuild(EGSPD::TGuildId guildId);
 
-	void acceptVisitor(CStatDBNodeVisitor &visitor, const std::string &currentPath)
-	{
-		visitor.visitTableLeaf(this, currentPath);
-	}
+  void acceptVisitor(CStatDBNodeVisitor &visitor,
+                     const std::string &currentPath) {
+    visitor.visitTableLeaf(this, currentPath);
+  }
 
 private:
-	TPlayerValues _PlayerValues;
-	TGuildValues _GuildValues;
+  TPlayerValues _PlayerValues;
+  TGuildValues _GuildValues;
 };
 
 /**
  * Branch structure of the statistical database.
- * We use a static map for branches because we will not add branches all days its a
- * 'created once read/write multiple' type of structure.
+ * We use a static map for branches because we will not add branches all days
+ * its a 'created once read/write multiple' type of structure.
  *
  * \author Matthieu 'Trap' Besson
  * \author Nevrax France
  * \date 2005 July
  */
-class CStatDBBranch : public IStatDBNode
-{
+class CStatDBBranch : public IStatDBNode {
 public:
-	bool setNode(const std::string &path, IStatDBNodePtr node);
-	IStatDBNodePtr getNode(const std::string &path);
-	void getNodes(const std::string &pathPattern, std::vector<CMatchingNode> &matchingNodes,
-	    const std::string &currentPath);
-	IStatDBNodePtr removeNode(const std::string &path);
+  bool setNode(const std::string &path, IStatDBNodePtr node);
+  IStatDBNodePtr getNode(const std::string &path);
+  void getNodes(const std::string &pathPattern,
+                std::vector<CMatchingNode> &matchingNodes,
+                const std::string &currentPath);
+  IStatDBNodePtr removeNode(const std::string &path);
 
-	void acceptVisitor(CStatDBNodeVisitor &visitor, const std::string &currentPath);
-
-private:
-	bool isValidToken(const std::string &token) const;
-	void splitPath(const std::string &path, std::string &token, std::string &rest) const;
+  void acceptVisitor(CStatDBNodeVisitor &visitor,
+                     const std::string &currentPath);
 
 private:
-	typedef NLMISC::CStaticMap<std::string, IStatDBNodePtr> TChildren;
-	TChildren _Children;
+  bool isValidToken(const std::string &token) const;
+  void splitPath(const std::string &path, std::string &token,
+                 std::string &rest) const;
+
+private:
+  typedef NLMISC::CStaticMap<std::string, IStatDBNodePtr> TChildren;
+  TChildren _Children;
 };
 
 /**
@@ -234,23 +233,22 @@ private:
  * \author Nevrax France
  * \date 2005 July
  */
-class CStatDBEntitiesRemoval : private CStatDBNodeVisitor
-{
+class CStatDBEntitiesRemoval : private CStatDBNodeVisitor {
 public:
-	/// queue a player to remove
-	void addPlayerToRemove(NLMISC::CEntityId playerId);
-	/// queue a guild to remove
-	void addGuildToRemove(EGSPD::TGuildId guildId);
+  /// queue a player to remove
+  void addPlayerToRemove(NLMISC::CEntityId playerId);
+  /// queue a guild to remove
+  void addGuildToRemove(EGSPD::TGuildId guildId);
 
-	/// process removal of players and guilds actually queued and flush them
-	void processRemoval(IStatDBNodePtr root);
-
-private:
-	void visitTableLeaf(CStatDBTableLeaf *tableLeaf, const std::string &path);
+  /// process removal of players and guilds actually queued and flush them
+  void processRemoval(IStatDBNodePtr root);
 
 private:
-	std::vector<NLMISC::CEntityId> _PlayersToRemove;
-	std::vector<EGSPD::TGuildId> _GuildsToRemove;
+  void visitTableLeaf(CStatDBTableLeaf *tableLeaf, const std::string &path);
+
+private:
+  std::vector<NLMISC::CEntityId> _PlayersToRemove;
+  std::vector<EGSPD::TGuildId> _GuildsToRemove;
 };
 
 #endif // RY_STAT_DB_TREE_H

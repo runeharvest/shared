@@ -17,9 +17,9 @@
 #ifndef NL_ANIMATED_LIGHTMAP_H
 #define NL_ANIMATED_LIGHTMAP_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/smart_ptr.h"
 #include "nel/3d/animatable.h"
+#include "nel/misc/smart_ptr.h"
+#include "nel/misc/types_nl.h"
 
 #include "nel/3d/track.h"
 
@@ -36,67 +36,65 @@ class CScene;
  * \author Nevrax France
  * \date 2001
  */
-class CAnimatedLightmap : public IAnimatable
-{
+class CAnimatedLightmap : public IAnimatable {
 public:
-	/// \name ctor / setup.
-	// @{
-	/** Constructor.
-	 */
-	CAnimatedLightmap(uint lightmapGroup);
-	virtual ~CAnimatedLightmap() { }
-	// @}
+  /// \name ctor / setup.
+  // @{
+  /** Constructor.
+   */
+  CAnimatedLightmap(uint lightmapGroup);
+  virtual ~CAnimatedLightmap() {}
+  // @}
 
-	/// \name Herited from IAnimatable
-	// @{
-	/// Added values.
-	enum TAnimValues
-	{
-		OwnerBit = IAnimatable::AnimValueLast,
-		FactorValue,
-		AnimValueLast
-	};
+  /// \name Herited from IAnimatable
+  // @{
+  /// Added values.
+  enum TAnimValues {
+    OwnerBit = IAnimatable::AnimValueLast,
+    FactorValue,
+    AnimValueLast
+  };
 
-	/// From IAnimatable
-	virtual IAnimatedValue *getValue(uint valueId);
+  /// From IAnimatable
+  virtual IAnimatedValue *getValue(uint valueId);
 
-	/// From IAnimatable
-	virtual const char *getValueName(uint valueId) const;
+  /// From IAnimatable
+  virtual const char *getValueName(uint valueId) const;
 
-	/// From IAnimatable.
-	virtual ITrack *getDefaultTrack(uint valueId);
+  /// From IAnimatable.
+  virtual ITrack *getDefaultTrack(uint valueId);
 
-	/// From IAnimatable.
-	virtual void registerToChannelMixer(CChannelMixer *chanMixer, const std::string &prefix);
+  /// From IAnimatable.
+  virtual void registerToChannelMixer(CChannelMixer *chanMixer,
+                                      const std::string &prefix);
 
-	// @}
+  // @}
 
-	void setName(const std::string &s) { _Name = s; }
-	std::string getName() const { return _Name; }
+  void setName(const std::string &s) { _Name = s; }
+  std::string getName() const { return _Name; }
 
-	// Update the group color with the scene
-	void updateGroupColors(class NL3D::CScene &scene);
+  // Update the group color with the scene
+  void updateGroupColors(class NL3D::CScene &scene);
 
-	NLMISC::CRGBA getFactor(uint group) const
-	{
-		if (group < _GroupColor.size())
-			return _GroupColor[group];
-		else
-			return _Factor.Value;
-	}
+  NLMISC::CRGBA getFactor(uint group) const {
+    if (group < _GroupColor.size())
+      return _GroupColor[group];
+    else
+      return _Factor.Value;
+  }
 
-	// ********************
+  // ********************
 private:
-	std::string _Name;
+  std::string _Name;
 
-	// AnimValues.
+  // AnimValues.
 
-	CAnimatedValueRGBA _Factor;
-	CTrackDefaultRGBA _DefaultFactor;
-	std::vector<NLMISC::CRGBA> _GroupColor;
+  CAnimatedValueRGBA _Factor;
+  CTrackDefaultRGBA _DefaultFactor;
+  std::vector<NLMISC::CRGBA> _GroupColor;
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_ANIMATED_LIGHTMAP_H
 

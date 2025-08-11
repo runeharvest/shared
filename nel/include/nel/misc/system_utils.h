@@ -26,66 +26,65 @@
 namespace NLMISC {
 
 /*
- * Operating system miscellaneous functions (all methods and variables should be static)
- * \author Kervala
- * \date 2010
+ * Operating system miscellaneous functions (all methods and variables should be
+ * static) \author Kervala \date 2010
  */
-class CSystemUtils
-{
-	static nlWindow s_window;
+class CSystemUtils {
+  static nlWindow s_window;
 
 public:
-	/// Initialize data which needs it before using them.
-	static bool init();
+  /// Initialize data which needs it before using them.
+  static bool init();
 
-	/// Uninitialize data when they won't be used anymore.
-	static bool uninit();
+  /// Uninitialize data when they won't be used anymore.
+  static bool uninit();
 
-	/// Set the window which will be used by some functions.
-	static void setWindow(nlWindow window);
+  /// Set the window which will be used by some functions.
+  static void setWindow(nlWindow window);
 
-	/// Create/update a progress bar with an appearance depending on system.
-	static bool updateProgressBar(uint value, uint total);
+  /// Create/update a progress bar with an appearance depending on system.
+  static bool updateProgressBar(uint value, uint total);
 
-	/// Copy a string to system clipboard.
-	static bool copyTextToClipboard(const std::string &text);
+  /// Copy a string to system clipboard.
+  static bool copyTextToClipboard(const std::string &text);
 
-	/// Paste a string from system clipboard.
-	static bool pasteTextFromClipboard(std::string &text);
+  /// Paste a string from system clipboard.
+  static bool pasteTextFromClipboard(std::string &text);
 
-	/// Check if system supports unicode.
-	static bool supportUnicode();
+  /// Check if system supports unicode.
+  static bool supportUnicode();
 
-	/// Check if keyboard layout is AZERTY.
-	static bool isAzertyKeyboard();
+  /// Check if keyboard layout is AZERTY.
+  static bool isAzertyKeyboard();
 
-	/// Check if screensaver is enabled.
-	static bool isScreensaverEnabled();
+  /// Check if screensaver is enabled.
+  static bool isScreensaverEnabled();
 
-	/// Enable or disable screeensaver.
-	static bool enableScreensaver(bool screensaver);
+  /// Enable or disable screeensaver.
+  static bool enableScreensaver(bool screensaver);
 
-	/// Get the ROOT registry key used by getRegKey and setRegKey.
-	static std::string getRootKey();
+  /// Get the ROOT registry key used by getRegKey and setRegKey.
+  static std::string getRootKey();
 
-	/// Set the ROOT registry key used by getRegKey and setRegKey.
-	static void setRootKey(const std::string &root);
+  /// Set the ROOT registry key used by getRegKey and setRegKey.
+  static void setRootKey(const std::string &root);
 
-	/// Read a value from registry.
-	static std::string getRegKey(const std::string &entry);
+  /// Read a value from registry.
+  static std::string getRegKey(const std::string &entry);
 
-	/// Write a value to registry.
-	static bool setRegKey(const std::string &valueName, const std::string &value);
+  /// Write a value to registry.
+  static bool setRegKey(const std::string &valueName, const std::string &value);
 
-	/// Get desktop current color depth without using UDriver.
-	static uint getCurrentColorDepth();
+  /// Get desktop current color depth without using UDriver.
+  static uint getCurrentColorDepth();
 
-	/// Detect whether the current process is a windowed application. Return true if definitely yes, false if unknown
-	static bool detectWindowedApplication();
+  /// Detect whether the current process is a windowed application. Return true
+  /// if definitely yes, false if unknown
+  static bool detectWindowedApplication();
 
-	static sint getTotalVideoMemory();
+  static sint getTotalVideoMemory();
 };
 
-} // NLMISC
+} // namespace NLMISC
 
 #endif // NL_SYSTEM_UTILS_H

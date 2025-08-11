@@ -30,95 +30,78 @@ using namespace NLMISC;
 namespace NLSOUND {
 
 CBufferXAudio2::CBufferXAudio2(CSoundDriverXAudio2 *soundDriver)
-    : _SoundDriver(soundDriver)
-    , _DataAligned(NULL)
-    , _DataPtr(NULL)
-    , _Size(0)
-    , _Name(NULL)
-    , _Format((IBuffer::TBufferFormat)~0)
-    , _Channels(0)
-    , _BitsPerSample(0)
-    , _Frequency(0)
-    , _Capacity(0)
-{
+    : _SoundDriver(soundDriver), _DataAligned(NULL), _DataPtr(NULL), _Size(0),
+      _Name(NULL), _Format((IBuffer::TBufferFormat)~0), _Channels(0),
+      _BitsPerSample(0), _Frequency(0), _Capacity(0) {}
+
+CBufferXAudio2::~CBufferXAudio2() { release(); }
+
+void CBufferXAudio2::release() {
+  if (_SoundDriver) {
+    // Remove the buffer from the driver.
+    _SoundDriver->removeBuffer(this);
+    // Update stats.
+    _SoundDriver->performanceUnregisterBuffer(_Format, _Size);
+    _SoundDriver = NULL;
+  }
+  // Release possible _Data
+  if (_DataPtr) {
+    delete[] _DataPtr;
+    _DataAligned = NULL;
+    _DataPtr = NULL;
+  }
 }
 
-CBufferXAudio2::~CBufferXAudio2()
-{
-	release();
+/// Get a writable pointer to the buffer of specified size. Returns NULL in case
+/// of failure. It is only guaranteed that the original data is still available
+/// when using StorageSoftware and the specified size is not larger than the
+/// available data. Call setStorageMode() and setFormat() first.
+uint8 *CBufferXAudio2::lock(uint capacity) {
+  if (_DataPtr) {
+    _SoundDriver->performanceUnregisterBuffer(_Format, _Size);
+    if (capacity > _Capacity) {
+      delete[] _DataPtr;
+      _DataAligned = NULL;
+      _DataPtr = NULL;
+    }
+  }
+
+  if (!_DataPtr) {
+    _DataPtr = new uint8[capacity + 15];
+    _DataAligned =
+        (uint8 *)((size_t)_DataPtr + ((16 - ((size_t)_DataPtr % 16)) % 16));
+    _Capacity = capacity;
+    if (_Size > capacity)
+      _Size = capacity;
+  }
+  _SoundDriver->performanceRegisterBuffer(_Format, _Size);
+
+  return _DataAligned;
 }
 
-void CBufferXAudio2::release()
-{
-	if (_SoundDriver)
-	{
-		// Remove the buffer from the driver.
-		_SoundDriver->removeBuffer(this);
-		// Update stats.
-		_SoundDriver->performanceUnregisterBuffer(_Format, _Size);
-		_SoundDriver = NULL;
-	}
-	// Release possible _Data
-	if (_DataPtr)
-	{
-		delete[] _DataPtr;
-		_DataAligned = NULL;
-		_DataPtr = NULL;
-	}
+/// Notify that you are done writing to this buffer, so it can be copied over to
+/// hardware if needed. Returns true if ok.
+bool CBufferXAudio2::unlock(uint size) {
+  _SoundDriver->performanceUnregisterBuffer(_Format, _Size);
+  if (size > _Capacity) {
+    _Size = _Capacity;
+    _SoundDriver->performanceRegisterBuffer(_Format, _Size);
+    return false;
+  } else {
+    _Size = size;
+    _SoundDriver->performanceRegisterBuffer(_Format, _Size);
+    return true;
+  }
 }
 
-/// Get a writable pointer to the buffer of specified size. Returns NULL in case of failure. It is only guaranteed that the original data is still available when using StorageSoftware and the specified size is not larger than the available data. Call setStorageMode() and setFormat() first.
-uint8 *CBufferXAudio2::lock(uint capacity)
-{
-	if (_DataPtr)
-	{
-		_SoundDriver->performanceUnregisterBuffer(_Format, _Size);
-		if (capacity > _Capacity)
-		{
-			delete[] _DataPtr;
-			_DataAligned = NULL;
-			_DataPtr = NULL;
-		}
-	}
-
-	if (!_DataPtr)
-	{
-		_DataPtr = new uint8[capacity + 15];
-		_DataAligned = (uint8 *)((size_t)_DataPtr + ((16 - ((size_t)_DataPtr % 16)) % 16));
-		_Capacity = capacity;
-		if (_Size > capacity)
-			_Size = capacity;
-	}
-	_SoundDriver->performanceRegisterBuffer(_Format, _Size);
-
-	return _DataAligned;
-}
-
-/// Notify that you are done writing to this buffer, so it can be copied over to hardware if needed. Returns true if ok.
-bool CBufferXAudio2::unlock(uint size)
-{
-	_SoundDriver->performanceUnregisterBuffer(_Format, _Size);
-	if (size > _Capacity)
-	{
-		_Size = _Capacity;
-		_SoundDriver->performanceRegisterBuffer(_Format, _Size);
-		return false;
-	}
-	else
-	{
-		_Size = size;
-		_SoundDriver->performanceRegisterBuffer(_Format, _Size);
-		return true;
-	}
-}
-
-/// Copy the data with specified size into the buffer. A readable local copy is only guaranteed when OptionLocalBufferCopy is set. Returns true if ok.
-bool CBufferXAudio2::fill(const uint8 *src, uint size)
-{
-	uint8 *dest = lock(size);
-	if (dest == NULL) return false;
-	CFastMem::memcpy(dest, src, size);
-	return unlock(size);
+/// Copy the data with specified size into the buffer. A readable local copy is
+/// only guaranteed when OptionLocalBufferCopy is set. Returns true if ok.
+bool CBufferXAudio2::fill(const uint8 *src, uint size) {
+  uint8 *dest = lock(size);
+  if (dest == NULL)
+    return false;
+  CFastMem::memcpy(dest, src, size);
+  return unlock(size);
 }
 
 /** Preset the name of the buffer. Used for async loading to give a name
@@ -126,79 +109,65 @@ bool CBufferXAudio2::fill(const uint8 *src, uint size)
  *	If the name after loading of the buffer doesn't match the preset name,
  *	the load will assert.
  */
-void CBufferXAudio2::setName(NLMISC::TStringId bufferName)
-{
-	_Name = bufferName;
+void CBufferXAudio2::setName(NLMISC::TStringId bufferName) {
+  _Name = bufferName;
 }
 
-void CBufferXAudio2::setFormat(TBufferFormat format, uint8 channels, uint8 bitsPerSample, uint32 frequency)
-{
-	_Format = format;
-	_Channels = channels;
-	_Frequency = frequency;
-	_BitsPerSample = bitsPerSample;
+void CBufferXAudio2::setFormat(TBufferFormat format, uint8 channels,
+                               uint8 bitsPerSample, uint32 frequency) {
+  _Format = format;
+  _Channels = channels;
+  _Frequency = frequency;
+  _BitsPerSample = bitsPerSample;
 }
 
 /// Return the sample format information.
-void CBufferXAudio2::getFormat(TBufferFormat &format, uint8 &channels, uint8 &bitsPerSample, uint32 &frequency) const
-{
-	format = _Format;
-	channels = _Channels;
-	bitsPerSample = _BitsPerSample;
-	frequency = _Frequency;
+void CBufferXAudio2::getFormat(TBufferFormat &format, uint8 &channels,
+                               uint8 &bitsPerSample, uint32 &frequency) const {
+  format = _Format;
+  channels = _Channels;
+  bitsPerSample = _BitsPerSample;
+  frequency = _Frequency;
 }
 
 /// Return the size of the buffer, in bytes
-uint CBufferXAudio2::getSize() const
-{
-	return _Size;
-}
+uint CBufferXAudio2::getSize() const { return _Size; }
 
 /// Return the duration (in ms) of the sample in the buffer
-float CBufferXAudio2::getDuration() const
-{
-	switch (_Format)
-	{
-	case FormatDviAdpcm:
-		nlassert(_Channels == 1 && _BitsPerSample == 16);
-		return 1000.0f * ((float)_Size * 2.0f) / (float)_Frequency;
-		break;
-	case FormatPcm:
-		return 1000.0f * getDurationFromPCMSize(_Size, _Channels, _BitsPerSample, _Frequency);
-		break;
-	}
-	return 0.0f;
+float CBufferXAudio2::getDuration() const {
+  switch (_Format) {
+  case FormatDviAdpcm:
+    nlassert(_Channels == 1 && _BitsPerSample == 16);
+    return 1000.0f * ((float)_Size * 2.0f) / (float)_Frequency;
+    break;
+  case FormatPcm:
+    return 1000.0f *
+           getDurationFromPCMSize(_Size, _Channels, _BitsPerSample, _Frequency);
+    break;
+  }
+  return 0.0f;
 }
 
 /// Return true if the buffer is stereo, false if mono
-bool CBufferXAudio2::isStereo() const
-{
-	return _Channels > 1;
-}
+bool CBufferXAudio2::isStereo() const { return _Channels > 1; }
 
 /// Return the name of this buffer
-NLMISC::TStringId CBufferXAudio2::getName() const
-{
-	return _Name;
-}
+NLMISC::TStringId CBufferXAudio2::getName() const { return _Name; }
 
 /// Return true if the buffer is loaded. Used for async load/unload.
-bool CBufferXAudio2::isBufferLoaded() const
-{
-	return _DataPtr != NULL;
-}
+bool CBufferXAudio2::isBufferLoaded() const { return _DataPtr != NULL; }
 
-/// Set the storage mode of this buffer, call before filling this buffer. Storage mode is always software if OptionSoftwareBuffer is enabled. Default is auto.
-void CBufferXAudio2::setStorageMode(IBuffer::TStorageMode /* storageMode */)
-{
-	// software buffering, no hardware storage mode available
+/// Set the storage mode of this buffer, call before filling this buffer.
+/// Storage mode is always software if OptionSoftwareBuffer is enabled. Default
+/// is auto.
+void CBufferXAudio2::setStorageMode(IBuffer::TStorageMode /* storageMode */) {
+  // software buffering, no hardware storage mode available
 }
 
 /// Get the storage mode of this buffer.
-IBuffer::TStorageMode CBufferXAudio2::getStorageMode()
-{
-	// always uses software buffers
-	return IBuffer::StorageSoftware;
+IBuffer::TStorageMode CBufferXAudio2::getStorageMode() {
+  // always uses software buffers
+  return IBuffer::StorageSoftware;
 }
 
 } /* namespace NLSOUND */

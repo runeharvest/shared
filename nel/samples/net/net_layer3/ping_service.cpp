@@ -34,7 +34,8 @@ using namespace NLNET;
  * Arguments:
  * - msgin:	the incoming message (coming from a client)
  * - from: the "sockid" of the sender client
- * - server: the CCallbackNetBase object (which really is a CCallbackServer object, for a server)
+ * - server: the CCallbackNetBase object (which really is a CCallbackServer
+ * object, for a server)
  *
  * Input (expected message from a client): PING
  * - uint32: ping counter
@@ -42,32 +43,30 @@ using namespace NLNET;
  * Output (sent message to the ping server): PONG
  * - uint32: ping counter
  */
-void cbPing(CMessage &msgin, TSockId from, CCallbackNetBase &server)
-{
-	uint32 counter;
+void cbPing(CMessage &msgin, TSockId from, CCallbackNetBase &server) {
+  uint32 counter;
 
-	// Input
-	msgin.serial(counter);
+  // Input
+  msgin.serial(counter);
 
-	// Output
-	CMessage msgout("PONG");
-	msgout.serial(counter);
-	server.send(msgout, from);
+  // Output
+  CMessage msgout("PONG");
+  msgout.serial(counter);
+  server.send(msgout, from);
 
-	nlinfo("PING -> PONG");
+  nlinfo("PING -> PONG");
 }
 
 /*
  * Callback array for messages received from a client
  */
-TCallbackItem CallbackArray[] = {
-	{ "PING", cbPing }
-};
+TCallbackItem CallbackArray[] = {{"PING", cbPing}};
 
 // We use IService directly, no need to inherit from it
 
 /*
- * Declare a service with the class IService, the names "PS" (short) and "ping_service" (long).
- * The port is automatically allocated (0) and the main callback array is CallbackArray.
+ * Declare a service with the class IService, the names "PS" (short) and
+ * "ping_service" (long). The port is automatically allocated (0) and the main
+ * callback array is CallbackArray.
  */
 NLNET_OLD_SERVICE_MAIN(IService, "PS", "ping_service", 0, CallbackArray, "", "")

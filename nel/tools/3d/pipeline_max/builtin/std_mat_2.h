@@ -46,17 +46,16 @@ namespace BUILTIN {
  * \author Jan Boon (Kaetemi)
  * CStdMat2
  */
-class CStdMat2 : public CStdMat
-{
+class CStdMat2 : public CStdMat {
 protected:
-	// pointers
-	// ...
+  // pointers
+  // ...
 
-	// instances
-	// ...
+  // instances
+  // ...
 public:
-	CStdMat2(CScene *scene);
-	virtual ~CStdMat2();
+  CStdMat2(CScene *scene);
+  virtual ~CStdMat2();
 }; /* class CStdMat2 */
 
 } /* namespace BUILTIN */

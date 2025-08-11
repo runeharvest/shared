@@ -22,12 +22,12 @@
 #endif
 
 #pragma warning(disable : 4786)
-#include <assert.h>
 #include <Max.h>
-#include <istdplug.h>
-#include <meshadj.h>
+#include <assert.h>
 #include <iparamb2.h>
 #include <iparamm2.h>
+#include <istdplug.h>
+#include <meshadj.h>
 
 #undef _CRT_SECURE_NO_DEPRECATE
 

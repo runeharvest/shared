@@ -25,33 +25,32 @@ class CPointLight;
 
 /**
  * A pointLight Influence. Filled by Static Lighting system (landscape / Igs).
- *	The influence may be lower than 1, because landscape/Igs look into a grid (on patchs or on pacs surfaces)
- *	and do biLinear to avoid lighting poping.
+ *	The influence may be lower than 1, because landscape/Igs look into a
+ *grid (on patchs or on pacs surfaces) and do biLinear to avoid lighting poping.
  * \author Lionel Berenguier
  * \author Nevrax France
  * \date 2001
  */
-class CPointLightInfluence
-{
+class CPointLightInfluence {
 public:
-	// The light of interest
-	CPointLight *PointLight;
-	// The factor of influence (0..1) of this light, computed by the static light setup.
-	float Influence;
-	// Internal Use only. Used by CLightingManager
-	float BkupInfluence;
-	// Internal Use only. Used by CLightingManager
-	float DistanceToModel;
+  // The light of interest
+  CPointLight *PointLight;
+  // The factor of influence (0..1) of this light, computed by the static light
+  // setup.
+  float Influence;
+  // Internal Use only. Used by CLightingManager
+  float BkupInfluence;
+  // Internal Use only. Used by CLightingManager
+  float DistanceToModel;
 
-	// To sort by influence.
-	bool operator<(const CPointLightInfluence &sl) const
-	{
-		// sort in growing order
-		return Influence > sl.Influence;
-	}
+  // To sort by influence.
+  bool operator<(const CPointLightInfluence &sl) const {
+    // sort in growing order
+    return Influence > sl.Influence;
+  }
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_POINT_LIGHT_INFLUENCE_H
 

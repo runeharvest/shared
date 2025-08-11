@@ -33,28 +33,30 @@ namespace NLSOUND {
  * \author Nevrax France
  * \date 2004
  */
-class CMusicSource : public CSourceCommon
-{
+class CMusicSource : public CSourceCommon {
 public:
-	/// Constructor
-	CMusicSource(class CMusicSound *sound = NULL, bool spawn = false, TSpawnEndCallback cb = 0, void *cbUserParam = 0, NL3D::CCluster *cluster = 0, CGroupController *groupController = NULL);
-	/// Destructor
-	~CMusicSource();
+  /// Constructor
+  CMusicSource(class CMusicSound *sound = NULL, bool spawn = false,
+               TSpawnEndCallback cb = 0, void *cbUserParam = 0,
+               NL3D::CCluster *cluster = 0,
+               CGroupController *groupController = NULL);
+  /// Destructor
+  ~CMusicSource();
 
-	/// Return the sound binded to the source (or NULL if there is no sound)
-	virtual TSoundId getSound();
+  /// Return the sound binded to the source (or NULL if there is no sound)
+  virtual TSoundId getSound();
 
-	virtual void play();
-	/// Stop playing
-	virtual void stop();
+  virtual void play();
+  /// Stop playing
+  virtual void stop();
 
-	TSOURCE_TYPE getType() const { return SOURCE_MUSIC; }
+  TSOURCE_TYPE getType() const { return SOURCE_MUSIC; }
 
 private:
-	class CMusicSound *_MusicSound;
+  class CMusicSound *_MusicSound;
 };
 
-} // NLSOUND
+} // namespace NLSOUND
 
 #endif // NL_MUSIC_SOURCE_H
 

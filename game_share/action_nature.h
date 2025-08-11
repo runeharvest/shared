@@ -21,29 +21,30 @@
 
 namespace ACTNATURE {
 // action nature
-enum TActionNature
-{
-	FIGHT = 0,
-	OFFENSIVE_MAGIC,
-	CURATIVE_MAGIC,
-	CRAFT,
-	HARVEST,
-	SEARCH_MP,
-	DODGE,
-	PARRY,
-	SHIELD_USE,
-	RECHARGE,
+enum TActionNature {
+  FIGHT = 0,
+  OFFENSIVE_MAGIC,
+  CURATIVE_MAGIC,
+  CRAFT,
+  HARVEST,
+  SEARCH_MP,
+  DODGE,
+  PARRY,
+  SHIELD_USE,
+  RECHARGE,
 
-	NEUTRAL, // only for multi effect on spell,progression consider it as OFFENSIVE_MAGIC
+  NEUTRAL, // only for multi effect on spell,progression consider it as
+           // OFFENSIVE_MAGIC
 
-	UNKNOWN,
-	NB_ACTION_NATURE = UNKNOWN
+  UNKNOWN,
+  NB_ACTION_NATURE = UNKNOWN
 };
 
 /**
  * get action nature corresponding to input string
  * \param str the input string
- * \return the TActionNature associated to this string (UNKNOWN if the string cannot be interpreted)
+ * \return the TActionNature associated to this string (UNKNOWN if the string
+ * cannot be interpreted)
  */
 TActionNature toActionNature(const std::string &str);
 
@@ -53,7 +54,7 @@ TActionNature toActionNature(const std::string &str);
  * \return nature as a string (or UNKNOWN)
  */
 const std::string &toString(TActionNature nature);
-}; // ACTNATURE
+}; // namespace ACTNATURE
 
 #endif // RY_ACTION_NATURE_H
 /* End of action_nature.h */

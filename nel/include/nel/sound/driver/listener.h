@@ -46,51 +46,56 @@ namespace NLSOUND {
  * \author Nevrax France
  * \date 2001
  */
-class IListener
-{
+class IListener {
 public:
-	/// Constructor
-	IListener() { }
-	/// Destructor
-	virtual ~IListener() { }
+  /// Constructor
+  IListener() {}
+  /// Destructor
+  virtual ~IListener() {}
 
-	/// \name Listener properties
-	//@{
-	/// Set the position vector (default: (0,0,0)) (3D mode only)
-	virtual void setPos(const NLMISC::CVector &pos) = 0;
-	/** Get the position vector.
-	 * See setPos() for details.
-	 */
-	virtual const NLMISC::CVector &getPos() const = 0;
-	/// Set the velocity vector (3D mode only, ignored in stereo mode) (default: (0,0,0))
-	virtual void setVelocity(const NLMISC::CVector &vel) = 0;
-	/// Get the velocity vector
-	virtual void getVelocity(NLMISC::CVector &vel) const = 0;
-	/// Set the orientation vectors (3D mode only, ignored in stereo mode) (default: (0,1,0), (0,0,-1))
-	virtual void setOrientation(const NLMISC::CVector &front, const NLMISC::CVector &up) = 0;
-	/// Get the orientation vectors
-	virtual void getOrientation(NLMISC::CVector &front, NLMISC::CVector &up) const = 0;
-	/** Set the gain (volume value inside [0 , 1]). (default: 1)
-	 * 0.0 -> silence
-	 * 0.5 -> -6dB
-	 * 1.0 -> no attenuation
-	 * values > 1 (amplification) not supported by most drivers
-	 */
-	virtual void setGain(float gain) = 0;
-	/// Get the gain
-	virtual float getGain() const = 0;
-	//@}
+  /// \name Listener properties
+  //@{
+  /// Set the position vector (default: (0,0,0)) (3D mode only)
+  virtual void setPos(const NLMISC::CVector &pos) = 0;
+  /** Get the position vector.
+   * See setPos() for details.
+   */
+  virtual const NLMISC::CVector &getPos() const = 0;
+  /// Set the velocity vector (3D mode only, ignored in stereo mode) (default:
+  /// (0,0,0))
+  virtual void setVelocity(const NLMISC::CVector &vel) = 0;
+  /// Get the velocity vector
+  virtual void getVelocity(NLMISC::CVector &vel) const = 0;
+  /// Set the orientation vectors (3D mode only, ignored in stereo mode)
+  /// (default: (0,1,0), (0,0,-1))
+  virtual void setOrientation(const NLMISC::CVector &front,
+                              const NLMISC::CVector &up) = 0;
+  /// Get the orientation vectors
+  virtual void getOrientation(NLMISC::CVector &front,
+                              NLMISC::CVector &up) const = 0;
+  /** Set the gain (volume value inside [0 , 1]). (default: 1)
+   * 0.0 -> silence
+   * 0.5 -> -6dB
+   * 1.0 -> no attenuation
+   * values > 1 (amplification) not supported by most drivers
+   */
+  virtual void setGain(float gain) = 0;
+  /// Get the gain
+  virtual float getGain() const = 0;
+  //@}
 
-	/// \name Global properties
-	//@{
-	/// Set the doppler factor (default: 1) to exaggerate or not the doppler effect
-	virtual void setDopplerFactor(float f) = 0;
-	/// Set the rolloff factor (default: 1) to scale the distance attenuation effect
-	virtual void setRolloffFactor(float f) = 0;
-	//@}
+  /// \name Global properties
+  //@{
+  /// Set the doppler factor (default: 1) to exaggerate or not the doppler
+  /// effect
+  virtual void setDopplerFactor(float f) = 0;
+  /// Set the rolloff factor (default: 1) to scale the distance attenuation
+  /// effect
+  virtual void setRolloffFactor(float f) = 0;
+  //@}
 };
 
-} // NLSOUND
+} // namespace NLSOUND
 
 #endif // NL_LISTENER_H
 

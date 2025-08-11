@@ -24,8 +24,8 @@
 #include "nel/3d/texture.h"
 #include "nel/3d/texture_mem.h"
 #include "nel/3d/vertex_buffer.h"
-#include "nel/misc/smart_ptr.h"
 #include "nel/misc/geom_ext.h"
+#include "nel/misc/smart_ptr.h"
 
 namespace NL3D {
 
@@ -36,121 +36,122 @@ struct SCloudTexture3D;
 struct SCloudTextureClamp;
 
 // ------------------------------------------------------------------------------------------------
-class CCloud
-{
+class CCloud {
 public:
-	CCloud(CCloudScape *pCloudScape);
+  CCloud(CCloudScape *pCloudScape);
 
-	~CCloud();
+  ~CCloud();
 
-	void init(uint32 nVoxelW, uint32 nVoxelH, uint32 nVoxelD, float rBaseFreq, uint32 nNbOctave);
-	void generate(CNoise3d &noise);
-	void light();
+  void init(uint32 nVoxelW, uint32 nVoxelH, uint32 nVoxelD, float rBaseFreq,
+            uint32 nNbOctave);
+  void generate(CNoise3d &noise);
+  void light();
 
-	void reset(NL3D::CCamera *pViewer);
+  void reset(NL3D::CCamera *pViewer);
 
-	void anim(double dt, double dt2);
+  void anim(double dt, double dt2);
 
-	// Debug
-	void disp();
-	void dispXYZ(NL3D::CMaterial *pMat = NULL);
-	// Debug
+  // Debug
+  void disp();
+  void dispXYZ(NL3D::CMaterial *pMat = NULL);
+  // Debug
 
-	// Create the billboard (in the screen at pos (NbW*Width, 0)
-	void genBill(NL3D::CCamera *pViewer, uint32 nBillSize = 128);
+  // Create the billboard (in the screen at pos (NbW*Width, 0)
+  void genBill(NL3D::CCamera *pViewer, uint32 nBillSize = 128);
 
-	// Display billboard to the screen
-	void dispBill(NL3D::CCamera *pViewer);
+  // Display billboard to the screen
+  void dispBill(NL3D::CCamera *pViewer);
 
-	// Accessors
+  // Accessors
 
-	float getX() { return _Pos.x; }
-	float getLastX() { return _LastX; }
-	float getY() { return _Pos.y; }
-	float getZ() { return _Pos.z; }
+  float getX() { return _Pos.x; }
+  float getLastX() { return _LastX; }
+  float getY() { return _Pos.y; }
+  float getZ() { return _Pos.z; }
 
-	float getSizeX() { return _Size.x; }
-	float getSizeY() { return _Size.y; }
-	float getSizeZ() { return _Size.z; }
+  float getSizeX() { return _Size.x; }
+  float getSizeY() { return _Size.y; }
+  float getSizeZ() { return _Size.z; }
 
-	void setX(float x)
-	{
-		_Pos.x = x;
-		_LastX = x;
-	}
-	void setY(float y) { _Pos.y = y; }
-	void setZ(float z) { _Pos.z = z; }
+  void setX(float x) {
+    _Pos.x = x;
+    _LastX = x;
+  }
+  void setY(float y) { _Pos.y = y; }
+  void setZ(float z) { _Pos.z = z; }
 
-	void setSizeX(float x) { _Size.x = x; }
-	void setSizeY(float y) { _Size.y = y; }
-	void setSizeZ(float z) { _Size.z = z; }
+  void setSizeX(float x) { _Size.x = x; }
+  void setSizeY(float y) { _Size.y = y; }
+  void setSizeZ(float z) { _Size.z = z; }
 
-	void setTexClamp(SCloudTextureClamp &t) { _CloudTexClamp = &t; }
-	void setTex3DTemp(SCloudTexture3D &t) { _CloudTexTmp = &t; }
+  void setTexClamp(SCloudTextureClamp &t) { _CloudTexClamp = &t; }
+  void setTex3DTemp(SCloudTexture3D &t) { _CloudTexTmp = &t; }
 
-	void setLooping() { _WaitState = 2; }
+  void setLooping() { _WaitState = 2; }
 
-	uint32 getBillSize() { return _BillSize; }
+  uint32 getBillSize() { return _BillSize; }
 
-	uint32 getMemSize()
-	{
-		return _OldBillSize * _OldBillSize * 4 + _BillSize * _BillSize * 4;
-	}
+  uint32 getMemSize() {
+    return _OldBillSize * _OldBillSize * 4 + _BillSize * _BillSize * 4;
+  }
 
-	// uint32 Trans, TransTotal;
-	double Time, FuturTime;
+  // uint32 Trans, TransTotal;
+  double Time, FuturTime;
 
-	NLMISC::CRGBA CloudDiffuse;
-	NLMISC::CRGBA CloudAmbient;
-	uint8 CloudPower;
-	uint8 CloudDistAtt;
+  NLMISC::CRGBA CloudDiffuse;
+  NLMISC::CRGBA CloudAmbient;
+  uint8 CloudPower;
+  uint8 CloudDistAtt;
 
-	uint8 LastCloudPower; // Cloud power of the old bill board
+  uint8 LastCloudPower; // Cloud power of the old bill board
 private:
-	void setMode2D();
+  void setMode2D();
 
-	// in ; viewer, center
-	// out I,J,K, left,right,top,bottom,near,far
-	void calcBill(const NLMISC::CVector &Viewer, const NLMISC::CVector &Center, const NLMISC::CVector &Size,
-	    NLMISC::CVector &I, NLMISC::CVector &J, NLMISC::CVector &K,
-	    float &Left, float &Right, float &Top, float &Bottom, float &Near, float &Far);
+  // in ; viewer, center
+  // out I,J,K, left,right,top,bottom,near,far
+  void calcBill(const NLMISC::CVector &Viewer, const NLMISC::CVector &Center,
+                const NLMISC::CVector &Size, NLMISC::CVector &I,
+                NLMISC::CVector &J, NLMISC::CVector &K, float &Left,
+                float &Right, float &Top, float &Bottom, float &Near,
+                float &Far);
 
 private:
-	uint32 _Width, _Height, _Depth;
-	uint32 _NbW, _NbH; // Number of slice in width and height (NbW*NbH = Depth
+  uint32 _Width, _Height, _Depth;
+  uint32 _NbW, _NbH; // Number of slice in width and height (NbW*NbH = Depth
 
-	NLMISC::CVector _Size;
-	NLMISC::CVector _Pos;
-	float _LastX;
+  NLMISC::CVector _Size;
+  NLMISC::CVector _Pos;
+  float _LastX;
 
-	float _BaseFreq; // 1 -> 1 voxel is 1 noise3d pixel 0.5 -> 2 voxels are 1 noise3d pixel (Lowest octave freq)
-	uint32 _NbOctave;
-	double *_UStart, *_VStart, *_WStart; // 1st Lowest octave
+  float _BaseFreq; // 1 -> 1 voxel is 1 noise3d pixel 0.5 -> 2 voxels are 1
+                   // noise3d pixel (Lowest octave freq)
+  uint32 _NbOctave;
+  double *_UStart, *_VStart, *_WStart; // 1st Lowest octave
 
-	CCloudScape *_CloudScape;
-	SCloudTexture3D *_CloudTexTmp; // Temporary cloud texture 3D
-	SCloudTextureClamp *_CloudTexClamp;
+  CCloudScape *_CloudScape;
+  SCloudTexture3D *_CloudTexTmp; // Temporary cloud texture 3D
+  SCloudTextureClamp *_CloudTexClamp;
 
-	// BillBoard
+  // BillBoard
 public:
-	// The billboard is a texture where the cloud is rendered
-	uint32 _BillSize; // ( The texture is always sqare)
-	uint8 *_MemBill;
-	NLMISC::CSmartPtr<NL3D::CTextureMem> _TexBill;
+  // The billboard is a texture where the cloud is rendered
+  uint32 _BillSize; // ( The texture is always sqare)
+  uint8 *_MemBill;
+  NLMISC::CSmartPtr<NL3D::CTextureMem> _TexBill;
 
-	// The last texture
-	uint32 _OldBillSize;
-	uint8 *_MemOldBill;
-	NLMISC::CSmartPtr<NL3D::CTextureMem> _TexOldBill;
+  // The last texture
+  uint32 _OldBillSize;
+  uint8 *_MemOldBill;
+  NLMISC::CSmartPtr<NL3D::CTextureMem> _TexOldBill;
 
-	uint8 _WaitState;
+  uint8 _WaitState;
 
-	// Accel for calc bill
+  // Accel for calc bill
 
-	NLMISC::CVector _BillViewer, _BillCenter, _BillOldCenter;
+  NLMISC::CVector _BillViewer, _BillCenter, _BillOldCenter;
 
 private:
-	NL3D::IDriver *_Driver;
+  NL3D::IDriver *_Driver;
 };
 
 // ------------------------------------------------------------------------------------------------

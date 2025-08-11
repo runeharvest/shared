@@ -17,192 +17,189 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdmisc.h"
 #include "nel/misc/cdb_branch_observing_handler.h"
+#include "stdmisc.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
 namespace NLMISC {
-CCDBBranchObservingHandler::CCDBBranchObservingHandler()
-{
-	reset();
+CCDBBranchObservingHandler::CCDBBranchObservingHandler() { reset(); }
+
+CCDBBranchObservingHandler::~CCDBBranchObservingHandler() { reset(); }
+
+void CCDBBranchObservingHandler::flushObserverCalls() {
+  bool flushed = false;
+
+  do {
+    flushed = false;
+    uint oldList = currentList;
+    currentList = 1 - currentList;
+
+    std::list<CCDBNodeBranch::ICDBDBBranchObserverHandle *>::iterator itr =
+        flushableObservers[oldList].begin();
+
+    while (itr != flushableObservers[oldList].end()) {
+      currentHandle = *itr;
+      ++itr;
+
+      if (currentHandle->observer() != NULL)
+        currentHandle->observer()->update(currentHandle->owner());
+
+      // Update might have removed it
+      if (currentHandle != NULL)
+        currentHandle->removeFromFlushableList(oldList);
+
+      currentHandle = NULL;
+      flushed = true;
+    }
+    triggerFlushObservers();
+
+  } while (flushed);
+
+  triggerFlushObservers();
 }
 
-CCDBBranchObservingHandler::~CCDBBranchObservingHandler()
-{
-	reset();
+void CCDBBranchObservingHandler::reset() {
+  currentList = 0;
+  currentHandle = NULL;
+
+  for (uint i = 0; i < MAX_OBS_LST; i++)
+    flushableObservers[i].clear();
 }
 
-void CCDBBranchObservingHandler::flushObserverCalls()
-{
-	bool flushed = false;
+void CCDBBranchObservingHandler::addBranchObserver(
+    CCDBNodeBranch *branch, ICDBNode::IPropertyObserver *observer,
+    const std::vector<std::string> &positiveLeafNameFilter) {
+  if (branch == NULL)
+    return;
 
-	do
-	{
-		flushed = false;
-		uint oldList = currentList;
-		currentList = 1 - currentList;
-
-		std::list<CCDBNodeBranch::ICDBDBBranchObserverHandle *>::iterator itr
-		    = flushableObservers[oldList].begin();
-
-		while (itr != flushableObservers[oldList].end())
-		{
-			currentHandle = *itr;
-			++itr;
-
-			if (currentHandle->observer() != NULL)
-				currentHandle->observer()->update(currentHandle->owner());
-
-			// Update might have removed it
-			if (currentHandle != NULL)
-				currentHandle->removeFromFlushableList(oldList);
-
-			currentHandle = NULL;
-			flushed = true;
-		}
-		triggerFlushObservers();
-
-	} while (flushed);
-
-	triggerFlushObservers();
+  CCDBDBBranchObserverHandle *handle =
+      new CCDBDBBranchObserverHandle(observer, branch, this);
+  branch->addBranchObserver(handle, positiveLeafNameFilter);
 }
 
-void CCDBBranchObservingHandler::reset()
-{
-	currentList = 0;
-	currentHandle = NULL;
+void CCDBBranchObservingHandler::addBranchObserver(
+    CCDBNodeBranch *branch, const char *dbPathFromThisNode,
+    ICDBNode::IPropertyObserver &observer, const char **positiveLeafNameFilter,
+    uint positiveLeafNameFilterSize) {
+  if (branch == NULL)
+    return;
 
-	for (uint i = 0; i < MAX_OBS_LST; i++)
-		flushableObservers[i].clear();
+  CCDBDBBranchObserverHandle *handle =
+      new CCDBDBBranchObserverHandle(&observer, branch, this);
+  branch->addBranchObserver(handle, dbPathFromThisNode, positiveLeafNameFilter,
+                            positiveLeafNameFilterSize);
 }
 
-void CCDBBranchObservingHandler::addBranchObserver(CCDBNodeBranch *branch, ICDBNode::IPropertyObserver *observer, const std::vector<std::string> &positiveLeafNameFilter)
-{
-	if (branch == NULL)
-		return;
-
-	CCDBDBBranchObserverHandle *handle = new CCDBDBBranchObserverHandle(observer, branch, this);
-	branch->addBranchObserver(handle, positiveLeafNameFilter);
+void CCDBBranchObservingHandler::removeBranchObserver(
+    CCDBNodeBranch *branch, ICDBNode::IPropertyObserver *observer) {
+  branch->removeBranchObserver(observer);
 }
 
-void CCDBBranchObservingHandler::addBranchObserver(CCDBNodeBranch *branch, const char *dbPathFromThisNode, ICDBNode::IPropertyObserver &observer, const char **positiveLeafNameFilter, uint positiveLeafNameFilterSize)
-{
-	if (branch == NULL)
-		return;
-
-	CCDBDBBranchObserverHandle *handle = new CCDBDBBranchObserverHandle(&observer, branch, this);
-	branch->addBranchObserver(handle, dbPathFromThisNode, positiveLeafNameFilter, positiveLeafNameFilterSize);
+void CCDBBranchObservingHandler::removeBranchObserver(
+    CCDBNodeBranch *branch, const char *dbPathFromThisNode,
+    ICDBNode::IPropertyObserver &observer) {
+  branch->removeBranchObserver(dbPathFromThisNode, observer);
 }
 
-void CCDBBranchObservingHandler::removeBranchObserver(CCDBNodeBranch *branch, ICDBNode::IPropertyObserver *observer)
-{
-	branch->removeBranchObserver(observer);
+void CCDBBranchObservingHandler::triggerFlushObservers() {
+  for (std::vector<IBranchObserverCallFlushObserver *>::iterator itr =
+           flushObservers.begin();
+       itr != flushObservers.end(); itr++)
+    (*itr)->onObserverCallFlush();
 }
 
-void CCDBBranchObservingHandler::removeBranchObserver(CCDBNodeBranch *branch, const char *dbPathFromThisNode, ICDBNode::IPropertyObserver &observer)
-{
-	branch->removeBranchObserver(dbPathFromThisNode, observer);
+void CCDBBranchObservingHandler::addFlushObserver(
+    IBranchObserverCallFlushObserver *observer) {
+  std::vector<IBranchObserverCallFlushObserver *>::iterator itr =
+      std::find(flushObservers.begin(), flushObservers.end(), observer);
+
+  if (itr != flushObservers.end())
+    return;
+
+  flushObservers.push_back(observer);
 }
 
-void CCDBBranchObservingHandler::triggerFlushObservers()
-{
-	for (std::vector<IBranchObserverCallFlushObserver *>::iterator itr = flushObservers.begin();
-	     itr != flushObservers.end(); itr++)
-		(*itr)->onObserverCallFlush();
+void CCDBBranchObservingHandler::removeFlushObserver(
+    IBranchObserverCallFlushObserver *observer) {
+  std::vector<IBranchObserverCallFlushObserver *>::iterator itr =
+      std::find(flushObservers.begin(), flushObservers.end(), observer);
+
+  if (itr == flushObservers.end())
+    return;
+
+  flushObservers.erase(itr);
 }
 
-void CCDBBranchObservingHandler::addFlushObserver(IBranchObserverCallFlushObserver *observer)
-{
-	std::vector<IBranchObserverCallFlushObserver *>::iterator itr
-	    = std::find(flushObservers.begin(), flushObservers.end(), observer);
-
-	if (itr != flushObservers.end())
-		return;
-
-	flushObservers.push_back(observer);
+CCDBBranchObservingHandler::CCDBDBBranchObserverHandle::
+    CCDBDBBranchObserverHandle(NLMISC::ICDBNode::IPropertyObserver *observer,
+                               NLMISC::CCDBNodeBranch *owner,
+                               CCDBBranchObservingHandler *handler) {
+  std::fill(_inList, _inList + MAX_OBS_LST, false);
+  _observer = observer;
+  _owner = owner;
+  _handler = handler;
 }
 
-void CCDBBranchObservingHandler::removeFlushObserver(IBranchObserverCallFlushObserver *observer)
-{
-	std::vector<IBranchObserverCallFlushObserver *>::iterator itr
-	    = std::find(flushObservers.begin(), flushObservers.end(), observer);
-
-	if (itr == flushObservers.end())
-		return;
-
-	flushObservers.erase(itr);
+CCDBBranchObservingHandler::CCDBDBBranchObserverHandle::
+    ~CCDBDBBranchObserverHandle() {
+  _observer = NULL;
 }
 
-CCDBBranchObservingHandler::CCDBDBBranchObserverHandle::CCDBDBBranchObserverHandle(NLMISC::ICDBNode::IPropertyObserver *observer, NLMISC::CCDBNodeBranch *owner, CCDBBranchObservingHandler *handler)
-{
-	std::fill(_inList, _inList + MAX_OBS_LST, false);
-	_observer = observer;
-	_owner = owner;
-	_handler = handler;
+bool CCDBBranchObservingHandler::CCDBDBBranchObserverHandle::observesLeaf(
+    const std::string &leafName) {
+  if (!_observedLeaves.empty()) {
+    std::vector<std::string>::iterator itr =
+        std::find(_observedLeaves.begin(), _observedLeaves.end(), leafName);
+
+    if (itr == _observedLeaves.end())
+      return false;
+    else
+      return true;
+  }
+
+  return true;
 }
 
-CCDBBranchObservingHandler::CCDBDBBranchObserverHandle::~CCDBDBBranchObserverHandle()
-{
-	_observer = NULL;
+bool CCDBBranchObservingHandler::CCDBDBBranchObserverHandle::inList(uint list) {
+  return _inList[list];
 }
 
-bool CCDBBranchObservingHandler::CCDBDBBranchObserverHandle::observesLeaf(const std::string &leafName)
-{
-	if (!_observedLeaves.empty())
-	{
-		std::vector<std::string>::iterator itr
-		    = std::find(_observedLeaves.begin(), _observedLeaves.end(), leafName);
+void CCDBBranchObservingHandler::CCDBDBBranchObserverHandle::
+    addToFlushableList() {
+  uint list = _handler->currentList;
 
-		if (itr == _observedLeaves.end())
-			return false;
-		else
-			return true;
-	}
+  if (_inList[list])
+    return;
 
-	return true;
+  _handler->flushableObservers[list].push_back(this);
+  _inList[list] = true;
 }
 
-bool CCDBBranchObservingHandler::CCDBDBBranchObserverHandle::inList(uint list)
-{
-	return _inList[list];
+void CCDBBranchObservingHandler::CCDBDBBranchObserverHandle::
+    removeFromFlushableList(uint list) {
+  if (!_inList[list])
+    return;
+
+  std::list<CCDBNodeBranch::ICDBDBBranchObserverHandle *>::iterator itr =
+      std::find(_handler->flushableObservers[list].begin(),
+                _handler->flushableObservers[list].end(), this);
+
+  if (itr == _handler->flushableObservers[list].end())
+    return;
+
+  if (_handler->currentHandle == this)
+    _handler->currentHandle = NULL;
+
+  _handler->flushableObservers[list].erase(itr);
+  _inList[list] = false;
 }
 
-void CCDBBranchObservingHandler::CCDBDBBranchObserverHandle::addToFlushableList()
-{
-	uint list = _handler->currentList;
-
-	if (_inList[list])
-		return;
-
-	_handler->flushableObservers[list].push_back(this);
-	_inList[list] = true;
+void CCDBBranchObservingHandler::CCDBDBBranchObserverHandle::
+    removeFromFlushableList() {
+  for (uint i = 0; i < MAX_OBS_LST; i++)
+    removeFromFlushableList(i);
 }
-
-void CCDBBranchObservingHandler::CCDBDBBranchObserverHandle::removeFromFlushableList(uint list)
-{
-	if (!_inList[list])
-		return;
-
-	std::list<CCDBNodeBranch::ICDBDBBranchObserverHandle *>::iterator itr
-	    = std::find(_handler->flushableObservers[list].begin(),
-	        _handler->flushableObservers[list].end(), this);
-
-	if (itr == _handler->flushableObservers[list].end())
-		return;
-
-	if (_handler->currentHandle == this)
-		_handler->currentHandle = NULL;
-
-	_handler->flushableObservers[list].erase(itr);
-	_inList[list] = false;
-}
-
-void CCDBBranchObservingHandler::CCDBDBBranchObserverHandle::removeFromFlushableList()
-{
-	for (uint i = 0; i < MAX_OBS_LST; i++)
-		removeFromFlushableList(i);
-}
-}
+} // namespace NLMISC

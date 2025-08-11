@@ -35,70 +35,71 @@ namespace NLSOUND {
  * CAudioDecoderFfmpeg
  * Create trough IAudioDecoder
  */
-class CAudioDecoderFfmpeg : public IAudioDecoder
-{
+class CAudioDecoderFfmpeg : public IAudioDecoder {
 protected:
-	NLMISC::IStream *_Stream;
+  NLMISC::IStream *_Stream;
 
-	bool _IsSupported;
-	bool _Loop;
-	bool _IsMusicEnded;
-	sint32 _StreamOffset;
-	sint32 _StreamSize;
+  bool _IsSupported;
+  bool _Loop;
+  bool _IsMusicEnded;
+  sint32 _StreamOffset;
+  sint32 _StreamSize;
 
-	AVIOContext *_AvioContext;
-	AVFormatContext *_FormatContext;
-	AVCodecContext *_AudioContext;
-	SwrContext *_SwrContext;
+  AVIOContext *_AvioContext;
+  AVFormatContext *_FormatContext;
+  AVCodecContext *_AudioContext;
+  SwrContext *_SwrContext;
 
-	// selected stream
-	sint32 _AudioStreamIndex;
+  // selected stream
+  sint32 _AudioStreamIndex;
 
-	// output buffer for decoded frame
-	SwrContext *_ConvertContext;
+  // output buffer for decoded frame
+  SwrContext *_ConvertContext;
 
 private:
-	// called from constructor if ffmpeg fails to initialize
-	// or from destructor to cleanup ffmpeg pointers
-	void release();
+  // called from constructor if ffmpeg fails to initialize
+  // or from destructor to cleanup ffmpeg pointers
+  void release();
 
 public:
-	CAudioDecoderFfmpeg(NLMISC::IStream *stream, bool loop);
-	virtual ~CAudioDecoderFfmpeg();
+  CAudioDecoderFfmpeg(NLMISC::IStream *stream, bool loop);
+  virtual ~CAudioDecoderFfmpeg();
 
-	inline NLMISC::IStream *getStream() { return _Stream; }
-	inline sint32 getStreamSize() { return _StreamSize; }
-	inline sint32 getStreamOffset() { return _StreamOffset; }
+  inline NLMISC::IStream *getStream() { return _Stream; }
+  inline sint32 getStreamSize() { return _StreamSize; }
+  inline sint32 getStreamOffset() { return _StreamOffset; }
 
-	// Return true if ffmpeg is able to decode the stream
-	bool isFormatSupported() const;
+  // Return true if ffmpeg is able to decode the stream
+  bool isFormatSupported() const;
 
-	/// Get information on a music file (only artist and title at the moment).
-	static bool getInfo(NLMISC::IStream *stream, std::string &artist, std::string &title, float &length);
+  /// Get information on a music file (only artist and title at the moment).
+  static bool getInfo(NLMISC::IStream *stream, std::string &artist,
+                      std::string &title, float &length);
 
-	/// Get how many bytes the music buffer requires for output minimum.
-	virtual uint32 getRequiredBytes();
+  /// Get how many bytes the music buffer requires for output minimum.
+  virtual uint32 getRequiredBytes();
 
-	/// Get an amount of bytes between minimum and maximum (can be lower than minimum if at end).
-	virtual uint32 getNextBytes(uint8 *buffer, uint32 minimum, uint32 maximum);
+  /// Get an amount of bytes between minimum and maximum (can be lower than
+  /// minimum if at end).
+  virtual uint32 getNextBytes(uint8 *buffer, uint32 minimum, uint32 maximum);
 
-	/// Get the amount of channels (2 is stereo) in output.
-	virtual uint8 getChannels();
+  /// Get the amount of channels (2 is stereo) in output.
+  virtual uint8 getChannels();
 
-	/// Get the samples per second (often 44100) in output.
-	virtual uint getSamplesPerSec();
+  /// Get the samples per second (often 44100) in output.
+  virtual uint getSamplesPerSec();
 
-	/// Get the bits per sample (often 16) in output.
-	virtual uint8 getBitsPerSample();
+  /// Get the bits per sample (often 16) in output.
+  virtual uint8 getBitsPerSample();
 
-	/// Get if the music has ended playing (never true if loop).
-	virtual bool isMusicEnded();
+  /// Get if the music has ended playing (never true if loop).
+  virtual bool isMusicEnded();
 
-	/// Get the total time in seconds.
-	virtual float getLength();
+  /// Get the total time in seconds.
+  virtual float getLength();
 
-	/// Set looping
-	virtual void setLooping(bool loop);
+  /// Set looping
+  virtual void setLooping(bool loop);
 }; /* class CAudioDecoderFfmpeg */
 
 } /* namespace NLSOUND */

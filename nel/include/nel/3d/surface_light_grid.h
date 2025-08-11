@@ -17,13 +17,13 @@
 #ifndef NL_SURFACE_LIGHT_GRID_H
 #define NL_SURFACE_LIGHT_GRID_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/stream.h"
-#include "nel/misc/rgba.h"
-#include "nel/misc/object_vector.h"
-#include "nel/misc/vector_2f.h"
-#include "nel/misc/vector.h"
 #include "nel/3d/point_light_influence.h"
+#include "nel/misc/object_vector.h"
+#include "nel/misc/rgba.h"
+#include "nel/misc/stream.h"
+#include "nel/misc/types_nl.h"
+#include "nel/misc/vector.h"
+#include "nel/misc/vector_2f.h"
 
 namespace NL3D {
 
@@ -40,69 +40,65 @@ class CIGSurfaceLight;
  * \author Nevrax France
  * \date 2002
  */
-class CSurfaceLightGrid
-{
-	/* ***********************************************
-	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
-	 *	It can be loaded/called through CAsyncFileManager for instance
-	 * ***********************************************/
+class CSurfaceLightGrid {
+  /* ***********************************************
+   *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no
+   *static access for instance It can be loaded/called through CAsyncFileManager
+   *for instance
+   * ***********************************************/
 
 public:
-	/// We support only 2 light per corner. Should never be changed.
-	enum
-	{
-		NumLightPerCorner = 2
-	};
+  /// We support only 2 light per corner. Should never be changed.
+  enum { NumLightPerCorner = 2 };
 
-	struct CCellCorner
-	{
-		/// Contribution of Sun.
-		uint8 SunContribution;
-		/// Light that influence this point. 0xFF if none. if Light[i]==0xFF, then Light[j] with j>i is disabled too
-		uint8 Light[NumLightPerCorner];
-		/** Id of the ambiant Light to take for this corner. Ambient light are stored too in ig->getPointLigths()
-		 *	If 0xFF => take Ambient of the sun.
-		 */
-		uint8 LocalAmbientId;
+  struct CCellCorner {
+    /// Contribution of Sun.
+    uint8 SunContribution;
+    /// Light that influence this point. 0xFF if none. if Light[i]==0xFF, then
+    /// Light[j] with j>i is disabled too
+    uint8 Light[NumLightPerCorner];
+    /** Id of the ambiant Light to take for this corner. Ambient light are
+     *stored too in ig->getPointLigths() If 0xFF => take Ambient of the sun.
+     */
+    uint8 LocalAmbientId;
 
-		void serial(NLMISC::IStream &f)
-		{
-			uint ver = f.serialVersion(1);
-			nlassert(NumLightPerCorner == 2);
+    void serial(NLMISC::IStream &f) {
+      uint ver = f.serialVersion(1);
+      nlassert(NumLightPerCorner == 2);
 
-			if (ver >= 1)
-			{
-				f.serial(LocalAmbientId);
-			}
-			else if (f.isReading())
-			{
-				LocalAmbientId = 0xFF;
-			}
-			f.serial(SunContribution);
-			f.serial(Light[0]);
-			f.serial(Light[1]);
-		}
-	};
+      if (ver >= 1) {
+        f.serial(LocalAmbientId);
+      } else if (f.isReading()) {
+        LocalAmbientId = 0xFF;
+      }
+      f.serial(SunContribution);
+      f.serial(Light[0]);
+      f.serial(Light[1]);
+    }
+  };
 
 public:
-	// Origin of the grid. Size is (Width-1) * CIGSurfaceLight.getCellSize().
-	NLMISC::CVector2f Origin;
-	uint32 Width;
-	uint32 Height;
-	NLMISC::CObjectVector<CCellCorner> Cells;
+  // Origin of the grid. Size is (Width-1) * CIGSurfaceLight.getCellSize().
+  NLMISC::CVector2f Origin;
+  uint32 Width;
+  uint32 Height;
+  NLMISC::CObjectVector<CCellCorner> Cells;
 
 public:
-	/// Constructor
-	CSurfaceLightGrid();
+  /// Constructor
+  CSurfaceLightGrid();
 
-	// Get Infos from the grid
-	void getStaticLightSetup(NLMISC::CRGBA sunAmbient, const CVector &localPos, std::vector<CPointLightInfluence> &pointLightList, uint8 &sunContribution, CIGSurfaceLight &igsl, NLMISC::CRGBA &localAmbient) const;
+  // Get Infos from the grid
+  void getStaticLightSetup(NLMISC::CRGBA sunAmbient, const CVector &localPos,
+                           std::vector<CPointLightInfluence> &pointLightList,
+                           uint8 &sunContribution, CIGSurfaceLight &igsl,
+                           NLMISC::CRGBA &localAmbient) const;
 
-	// serial
-	void serial(NLMISC::IStream &f);
+  // serial
+  void serial(NLMISC::IStream &f);
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_SURFACE_LIGHT_GRID_H
 

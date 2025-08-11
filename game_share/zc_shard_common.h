@@ -20,20 +20,19 @@
 #include "nel/misc/types_nl.h"
 
 namespace ZCSTATE {
-enum TZcState
-{
-	/// tribe is in control of the zc
-	Tribe = 0,
-	/// A guild declared war to the tribe
-	TribeInWar,
-	/// A guild declared peace to the tribe
-	// TribeInPeace,
-	/// A guild won the zc through war
-	GuildInWar,
-	/// A guild won the zc through peace
-	GuildInPeace,
-	/// Unknow zc state
-	zs_unknown
+enum TZcState {
+  /// tribe is in control of the zc
+  Tribe = 0,
+  /// A guild declared war to the tribe
+  TribeInWar,
+  /// A guild declared peace to the tribe
+  // TribeInPeace,
+  /// A guild won the zc through war
+  GuildInWar,
+  /// A guild won the zc through peace
+  GuildInPeace,
+  /// Unknow zc state
+  zs_unknown
 };
 
 TZcState toZcState(const std::string &str);
@@ -41,11 +40,8 @@ TZcState toZcState(const std::string &str);
 const std::string &toString(TZcState type);
 
 // The ZC Duty Distribution period, in Days.
-enum
-{
-	ZCDistribPeriod = 15
-};
+enum { ZCDistribPeriod = 15 };
 
-};
+}; // namespace ZCSTATE
 
 #endif

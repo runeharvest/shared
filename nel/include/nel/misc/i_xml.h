@@ -22,8 +22,8 @@
 
 #ifndef NL_DONT_USE_EXTERNAL_CODE
 
-#include "types_nl.h"
 #include "stream.h"
+#include "types_nl.h"
 
 // Forward declarations for libxml2
 typedef struct _xmlNode xmlNode;
@@ -34,12 +34,8 @@ typedef xmlParserCtxt *xmlParserCtxtPtr;
 
 namespace NLMISC {
 
-struct EXmlParsingError : public EStream
-{
-	EXmlParsingError(const std::string &str)
-	    : EStream(str)
-	{
-	}
+struct EXmlParsingError : public EStream {
+  EXmlParsingError(const std::string &str) : EStream(str) {}
 };
 
 /**
@@ -86,178 +82,193 @@ struct EXmlParsingError : public EStream
  * \author Nevrax France
  * \date 2001
  */
-class CIXml : public IStream
-{
-	friend void xmlGenericErrorFuncRead(void *ctx, const char *msg, ...);
+class CIXml : public IStream {
+  friend void xmlGenericErrorFuncRead(void *ctx, const char *msg, ...);
 
 public:
-	/** Default ctor
-	 */
-	CIXml();
+  /** Default ctor
+   */
+  CIXml();
 
-	// If tryBinaryMode is true, try to open the stream in both, XML and Binary if XML doesn't work.
-	// In tryBinaryMode, the stream keep a pointer on the input stream passed to init();
-	CIXml(bool tryBinaryMode);
+  // If tryBinaryMode is true, try to open the stream in both, XML and Binary if
+  // XML doesn't work. In tryBinaryMode, the stream keep a pointer on the input
+  // stream passed to init();
+  CIXml(bool tryBinaryMode);
 
-	/** Dtor. Call release().
-	 */
-	virtual ~CIXml();
+  /** Dtor. Call release().
+   */
+  virtual ~CIXml();
 
-	/** Stream initialisation. The stream must be an input stream.
-	 * init() will load the XML tree. So init() can raise read error exceptions.
-	 *
-	 * \param stream is the stream the class will use to input xml code.
-	 * this pointer is not held by the class. This stream must support end seek functions (as files).
-	 * \return true if init success, false if stream is not an input stream.
-	 */
-	bool init(IStream &stream);
+  /** Stream initialisation. The stream must be an input stream.
+   * init() will load the XML tree. So init() can raise read error exceptions.
+   *
+   * \param stream is the stream the class will use to input xml code.
+   * this pointer is not held by the class. This stream must support end seek
+   * functions (as files). \return true if init success, false if stream is not
+   * an input stream.
+   */
+  bool init(IStream &stream);
 
-	/** Return the error string.
-	 * if not empty, something wrong appends
-	 */
-	static std::string getErrorString();
+  /** Return the error string.
+   * if not empty, something wrong appends
+   */
+  static std::string getErrorString();
 
-	/** Release the resources used by the stream.
-	 */
-	void release();
+  /** Release the resources used by the stream.
+   */
+  void release();
 
-	/** Get the root node pointer
-	 */
-	xmlNodePtr getRootNode() const;
+  /** Get the root node pointer
+   */
+  xmlNodePtr getRootNode() const;
 
-	/** Get the first child node pointer named childName. NULL if no node named childName.
-	 */
-	static xmlNodePtr getFirstChildNode(xmlNodePtr parent, const std::string &childName);
+  /** Get the first child node pointer named childName. NULL if no node named
+   * childName.
+   */
+  static xmlNodePtr getFirstChildNode(xmlNodePtr parent,
+                                      const std::string &childName);
 
-	/** Get the next child node pointer name childName, brother of previous. NULL if no node named childName.
-	 */
-	static xmlNodePtr getNextChildNode(xmlNodePtr last, const std::string &childName);
+  /** Get the next child node pointer name childName, brother of previous. NULL
+   * if no node named childName.
+   */
+  static xmlNodePtr getNextChildNode(xmlNodePtr last,
+                                     const std::string &childName);
 
-	/** Get the first child node pointer of type. NULL if no node of type.
-	 */
-	static xmlNodePtr getFirstChildNode(xmlNodePtr parent, sint /* xmlElementType */ type);
+  /** Get the first child node pointer of type. NULL if no node of type.
+   */
+  static xmlNodePtr getFirstChildNode(xmlNodePtr parent,
+                                      sint /* xmlElementType */ type);
 
-	/** Get the next child node pointer of type. NULL if no node of type.
-	 */
-	static xmlNodePtr getNextChildNode(xmlNodePtr last, sint /* xmlElementType */ type);
+  /** Get the next child node pointer of type. NULL if no node of type.
+   */
+  static xmlNodePtr getNextChildNode(xmlNodePtr last,
+                                     sint /* xmlElementType */ type);
 
-	/** Count number of sub node named with a given name for a given node.
-	 */
-	static uint countChildren(xmlNodePtr node, const std::string &childName);
+  /** Count number of sub node named with a given name for a given node.
+   */
+  static uint countChildren(xmlNodePtr node, const std::string &childName);
 
-	/** Count number of sub node of type for a given node.
-	 */
-	static uint countChildren(xmlNodePtr node, sint /* xmlElementType */ type);
+  /** Count number of sub node of type for a given node.
+   */
+  static uint countChildren(xmlNodePtr node, sint /* xmlElementType */ type);
 
-	/**
-	 * Read a property string
-	 *
-	 * Returns true and the result if the property has been found, else false.
-	 */
-	static bool getPropertyString(std::string &result, xmlNodePtr node, const std::string &property);
+  /**
+   * Read a property string
+   *
+   * Returns true and the result if the property has been found, else false.
+   */
+  static bool getPropertyString(std::string &result, xmlNodePtr node,
+                                const std::string &property);
 
-	/**
-	 *	Read an integer property - if the property is not found the default value is returned
-	 */
-	static int getIntProperty(xmlNodePtr node, const std::string &property, int defaultValue);
+  /**
+   *	Read an integer property - if the property is not found the default
+   *value is returned
+   */
+  static int getIntProperty(xmlNodePtr node, const std::string &property,
+                            int defaultValue);
 
-	/**
-	 *	Read a floating point property - if the property is not found the default value is returned
-	 */
-	static double getFloatProperty(xmlNodePtr node, const std::string &property, float defaultValue);
+  /**
+   *	Read a floating point property - if the property is not found the
+   *default value is returned
+   */
+  static double getFloatProperty(xmlNodePtr node, const std::string &property,
+                                 float defaultValue);
 
-	/**
-	 *	Read a string property - if the property is not found the default value is returned
-	 */
-	static std::string getStringProperty(xmlNodePtr node, const std::string &property, const std::string &defaultValue);
+  /**
+   *	Read a string property - if the property is not found the default value
+   *is returned
+   */
+  static std::string getStringProperty(xmlNodePtr node,
+                                       const std::string &property,
+                                       const std::string &defaultValue);
 
-	/**
-	 * Read the content of the node as a string
-	 *
-	 * Returns true and the result if some text has been found, else false.
-	 */
-	static bool getContentString(std::string &result, xmlNodePtr node);
+  /**
+   * Read the content of the node as a string
+   *
+   * Returns true and the result if some text has been found, else false.
+   */
+  static bool getContentString(std::string &result, xmlNodePtr node);
 
-	/**
-	 * Init all structures used by libxml2, to only call once.
-	 */
-	static void initLibXml();
+  /**
+   * Init all structures used by libxml2, to only call once.
+   */
+  static void initLibXml();
 
-	/**
-	 * Release memory used by libxml2, to only call before exit.
-	 */
-	static void releaseLibXml();
+  /**
+   * Release memory used by libxml2, to only call before exit.
+   */
+  static void releaseLibXml();
 
 private:
-	/// From IStream
-	virtual void serial(uint8 &b);
-	virtual void serial(sint8 &b);
-	virtual void serial(uint16 &b);
-	virtual void serial(sint16 &b);
-	virtual void serial(uint32 &b);
-	virtual void serial(sint32 &b);
-	virtual void serial(uint64 &b);
-	virtual void serial(sint64 &b);
-	virtual void serial(float &b);
-	virtual void serial(double &b);
-	virtual void serial(bool &b);
+  /// From IStream
+  virtual void serial(uint8 &b);
+  virtual void serial(sint8 &b);
+  virtual void serial(uint16 &b);
+  virtual void serial(sint16 &b);
+  virtual void serial(uint32 &b);
+  virtual void serial(sint32 &b);
+  virtual void serial(uint64 &b);
+  virtual void serial(sint64 &b);
+  virtual void serial(float &b);
+  virtual void serial(double &b);
+  virtual void serial(bool &b);
 #ifndef NL_OS_CYGWIN
-	virtual void serial(char &b);
+  virtual void serial(char &b);
 #endif
-	virtual void serial(std::string &b);
-	virtual void serial(ucstring &b);
-	virtual void serialBuffer(uint8 *buf, uint len);
-	virtual void serialBit(bool &bit);
+  virtual void serial(std::string &b);
+  virtual void serial(ucstring &b);
+  virtual void serialBuffer(uint8 *buf, uint len);
+  virtual void serialBit(bool &bit);
 
-	virtual bool xmlPushBeginInternal(const std::string &nodeName);
-	virtual bool xmlPushEndInternal();
-	virtual bool xmlPopInternal();
-	virtual bool xmlSetAttribInternal(const std::string &attribName);
-	virtual bool xmlBreakLineInternal();
-	virtual bool xmlCommentInternal(const std::string &comment);
+  virtual bool xmlPushBeginInternal(const std::string &nodeName);
+  virtual bool xmlPushEndInternal();
+  virtual bool xmlPopInternal();
+  virtual bool xmlSetAttribInternal(const std::string &attribName);
+  virtual bool xmlBreakLineInternal();
+  virtual bool xmlCommentInternal(const std::string &comment);
 
-	// Internal functions
-	void serialSeparatedBufferIn(std::string &value, bool checkSeparator = true);
-	inline void flushContentString();
+  // Internal functions
+  void serialSeparatedBufferIn(std::string &value, bool checkSeparator = true);
+  inline void flushContentString();
 
-	// Push has began
-	bool _PushBegin;
+  // Push has began
+  bool _PushBegin;
 
-	// Attribute present
-	bool _AttribPresent;
+  // Attribute present
+  bool _AttribPresent;
 
-	// Attribute name
-	std::string _AttribName;
+  // Attribute name
+  std::string _AttribName;
 
-	// Current libxml node
-	xmlNodePtr _CurrentNode;
+  // Current libxml node
+  xmlNodePtr _CurrentNode;
 
-	// Current libxml header node opened
-	xmlNodePtr _CurrentElement;
+  // Current libxml header node opened
+  xmlNodePtr _CurrentElement;
 
-	// Parser pointer
-	xmlParserCtxtPtr _Parser;
+  // Parser pointer
+  xmlParserCtxtPtr _Parser;
 
-	// Current node text
-	std::string _ContentString;
+  // Current node text
+  std::string _ContentString;
 
-	// Current index in the node string
-	uint _ContentStringIndex;
+  // Current index in the node string
+  uint _ContentStringIndex;
 
-	// Error message
-	static std::string _ErrorString;
+  // Error message
+  static std::string _ErrorString;
 
-	// Try binary mode
-	bool _TryBinaryMode;
+  // Try binary mode
+  bool _TryBinaryMode;
 
-	// If not NULL, binary mode detected, use this stream in serials
-	IStream *_BinaryStream;
+  // If not NULL, binary mode detected, use this stream in serials
+  IStream *_BinaryStream;
 
-	// LibXml has been initialized
-	static bool _LibXmlIntialized;
+  // LibXml has been initialized
+  static bool _LibXmlIntialized;
 };
 
-} // NLMISC
+} // namespace NLMISC
 
 #endif // NL_DONT_USE_EXTERNAL_CODE
 

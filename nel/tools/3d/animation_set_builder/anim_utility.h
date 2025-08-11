@@ -18,8 +18,8 @@
 #define NL_ZONE_UTILITY
 
 #include "nel/misc/types_nl.h"
-#include <vector>
 #include <set>
+#include <vector>
 
 std::string getDir(const std::string &path);
 std::string getName(const std::string &path);

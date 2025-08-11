@@ -17,8 +17,8 @@
 #ifndef NL_TILE_COLOR_H
 #define NL_TILE_COLOR_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/misc/stream.h"
+#include "nel/misc/types_nl.h"
 
 namespace NL3D {
 
@@ -29,22 +29,20 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2000
  */
-class CTileColor
-{
+class CTileColor {
 public:
-	/// The RGB user color.
-	uint16 Color565;
+  /// The RGB user color.
+  uint16 Color565;
 
 public:
-	/// Constructor
-	CTileColor() { }
+  /// Constructor
+  CTileColor() {}
 
-	// For patch with version >= 7, just read color.
-	void serial(NLMISC::IStream &f)
-	{
-		// NB: still don't use version number, for file size optimisation
-		f.xmlSerial(Color565, "COLOR");
-	}
+  // For patch with version >= 7, just read color.
+  void serial(NLMISC::IStream &f) {
+    // NB: still don't use version number, for file size optimisation
+    f.xmlSerial(Color565, "COLOR");
+  }
 };
 
 /**
@@ -53,24 +51,22 @@ public:
  * \author Nevrax France
  * \date 2000
  */
-class CTileColorOldPatchVersion6
-{
+class CTileColorOldPatchVersion6 {
 public:
-	/// The RGB user color.
-	uint16 Color565;
+  /// The RGB user color.
+  uint16 Color565;
 
 public:
-	// For patch with version <= 6, read dummy LightVector
-	void serial(NLMISC::IStream &f)
-	{
-		f.xmlSerial(Color565, "COLOR");
-		// read dummy bump light info
-		uint8 lightX, lightY, lightZ;
-		f.xmlSerial(lightX, lightY, lightZ, "LIGHT_VECTOR");
-	}
+  // For patch with version <= 6, read dummy LightVector
+  void serial(NLMISC::IStream &f) {
+    f.xmlSerial(Color565, "COLOR");
+    // read dummy bump light info
+    uint8 lightX, lightY, lightZ;
+    f.xmlSerial(lightX, lightY, lightZ, "LIGHT_VECTOR");
+  }
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_TILE_COLOR_H
 

@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdafx.h"
 #include "path_mesh_alloc.h"
+#include "stdafx.h"
 
 // remove stupid VC 6 warnings
 void foo_path_mesh_alloc_cpp() {};

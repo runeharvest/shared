@@ -24,8 +24,8 @@
 
 #include "std3d.h"
 
-#include "nel/misc/types_nl.h"
 #include "nel/3d/program.h"
+#include "nel/misc/types_nl.h"
 
 // STL includes
 
@@ -47,70 +47,61 @@ namespace NL3D {
 
 // ***************************************************************************
 
-IProgramDrvInfos::IProgramDrvInfos(IDriver *drv, ItGPUPrgDrvInfoPtrList it)
-{
-	_Driver = drv;
-	_DriverIterator = it;
+IProgramDrvInfos::IProgramDrvInfos(IDriver *drv, ItGPUPrgDrvInfoPtrList it) {
+  _Driver = drv;
+  _DriverIterator = it;
 }
 
 // ***************************************************************************
 
-IProgramDrvInfos::~IProgramDrvInfos()
-{
-	_Driver->removeGPUPrgDrvInfoPtr(_DriverIterator);
+IProgramDrvInfos::~IProgramDrvInfos() {
+  _Driver->removeGPUPrgDrvInfoPtr(_DriverIterator);
 }
 
 // ***************************************************************************
 
-IProgram::IProgram()
-{
-}
+IProgram::IProgram() {}
 
 // ***************************************************************************
 
-IProgram::~IProgram()
-{
-	// Must kill the drv mirror of this program.
-	m_DrvInfo.kill();
+IProgram::~IProgram() {
+  // Must kill the drv mirror of this program.
+  m_DrvInfo.kill();
 }
 
 const char *CProgramIndex::Names[NUM_UNIFORMS] = {
-	"modelView",
-	"modelViewInverse",
-	"modelViewTranspose",
-	"modelViewInverseTranspose",
+    "modelView",
+    "modelViewInverse",
+    "modelViewTranspose",
+    "modelViewInverseTranspose",
 
-	"projection",
-	"projectionInverse",
-	"projectionTranspose",
-	"projectionInverseTranspose",
+    "projection",
+    "projectionInverse",
+    "projectionTranspose",
+    "projectionInverseTranspose",
 
-	"modelViewProjection",
-	"modelViewProjectionInverse",
-	"modelViewProjectionTranspose",
-	"modelViewProjectionInverseTranspose",
+    "modelViewProjection",
+    "modelViewProjectionInverse",
+    "modelViewProjectionTranspose",
+    "modelViewProjectionInverseTranspose",
 
-	"fog",
+    "fog",
 };
 
-void IProgram::buildInfo(CSource *source)
-{
-	// nlassert(!m_Source); // VALID: When deleting driver and creating new one.
+void IProgram::buildInfo(CSource *source) {
+  // nlassert(!m_Source); // VALID: When deleting driver and creating new one.
 
-	m_Source = source;
+  m_Source = source;
 
-	// Fill index cache
-	for (int i = 0; i < CProgramIndex::NUM_UNIFORMS; ++i)
-	{
-		m_Index.Indices[i] = getUniformIndex(m_Index.Names[i]);
-	}
+  // Fill index cache
+  for (int i = 0; i < CProgramIndex::NUM_UNIFORMS; ++i) {
+    m_Index.Indices[i] = getUniformIndex(m_Index.Names[i]);
+  }
 
-	buildInfo();
+  buildInfo();
 }
 
-void IProgram::buildInfo()
-{
-}
+void IProgram::buildInfo() {}
 
 } /* namespace NL3D */
 

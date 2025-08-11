@@ -17,8 +17,8 @@
 #ifndef NL_COLLISION_DESC_H
 #define NL_COLLISION_DESC_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/misc/file.h"
+#include "nel/misc/types_nl.h"
 #include "nel/misc/vector.h"
 #include "nel/pacs/u_collision_desc.h"
 #include <vector>
@@ -32,16 +32,14 @@ namespace NLPACS {
  * \author Nevrax France
  * \date 2001
  */
-class CCollisionDesc : public UCollisionDesc
-{
+class CCollisionDesc : public UCollisionDesc {
 public:
-	// XChg contact normal 0 and 1
-	void XChgContactNormals()
-	{
-		NLMISC::CVectorD tmp = ContactNormal0;
-		ContactNormal0 = ContactNormal1;
-		ContactNormal1 = tmp;
-	}
+  // XChg contact normal 0 and 1
+  void XChgContactNormals() {
+    NLMISC::CVectorD tmp = ContactNormal0;
+    ContactNormal0 = ContactNormal1;
+    ContactNormal1 = tmp;
+  }
 };
 
 /**
@@ -51,33 +49,27 @@ public:
  * \author Nevrax France
  * \date 2001
  */
-class CSurfaceIdent
-{
+class CSurfaceIdent {
 public:
-	/// the surface mesh instance Id.
-	sint32 RetrieverInstanceId;
-	/// the surface Id of this surface mesh instance. -1 if Wall/impossible to walk through.
-	sint32 SurfaceId;
+  /// the surface mesh instance Id.
+  sint32 RetrieverInstanceId;
+  /// the surface Id of this surface mesh instance. -1 if Wall/impossible to
+  /// walk through.
+  sint32 SurfaceId;
 
-	bool operator==(const CSurfaceIdent &o) const
-	{
-		return RetrieverInstanceId == o.RetrieverInstanceId && SurfaceId == o.SurfaceId;
-	}
+  bool operator==(const CSurfaceIdent &o) const {
+    return RetrieverInstanceId == o.RetrieverInstanceId &&
+           SurfaceId == o.SurfaceId;
+  }
 
-	bool operator!=(const CSurfaceIdent &o) const
-	{
-		return !(*this == o);
-	}
+  bool operator!=(const CSurfaceIdent &o) const { return !(*this == o); }
 
 public:
-	CSurfaceIdent() { }
-	CSurfaceIdent(sint32 retInstance, sint32 surfId)
-	    : RetrieverInstanceId(retInstance)
-	    , SurfaceId(surfId)
-	{
-	}
+  CSurfaceIdent() {}
+  CSurfaceIdent(sint32 retInstance, sint32 surfId)
+      : RetrieverInstanceId(retInstance), SurfaceId(surfId) {}
 
-	void serial(NLMISC::IStream &f) { f.serial(RetrieverInstanceId, SurfaceId); }
+  void serial(NLMISC::IStream &f) { f.serial(RetrieverInstanceId, SurfaceId); }
 };
 
 /**
@@ -87,19 +79,18 @@ public:
  * \author Nevrax France
  * \date 2001
  */
-class CCollisionSurfaceDesc
-{
+class CCollisionSurfaceDesc {
 public:
-	NLMISC::CVectorD ContactNormal;
-	double ContactTime;
+  NLMISC::CVectorD ContactNormal;
+  double ContactTime;
 
-	/// To which surface we have collided.
-	CSurfaceIdent ContactSurface;
+  /// To which surface we have collided.
+  CSurfaceIdent ContactSurface;
 };
 
 typedef std::vector<CCollisionSurfaceDesc> TCollisionSurfaceDescVector;
 
-} // NLPACS
+} // namespace NLPACS
 
 #endif // NL_COLLISION_DESC_H
 

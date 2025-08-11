@@ -17,9 +17,9 @@
 #ifndef NL_TRACK_SAMPLED_COMMON_H
 #define NL_TRACK_SAMPLED_COMMON_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/object_vector.h"
 #include "nel/3d/track.h"
+#include "nel/misc/object_vector.h"
+#include "nel/misc/types_nl.h"
 
 namespace NL3D {
 
@@ -31,85 +31,82 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2002
  */
-class CTrackSampledCommon : public ITrack
-{
+class CTrackSampledCommon : public ITrack {
 public:
-	/// Constructor
-	CTrackSampledCommon();
-	virtual ~CTrackSampledCommon();
+  /// Constructor
+  CTrackSampledCommon();
+  virtual ~CTrackSampledCommon();
 
-	/// From UTrack/ITrack.
-	// @{
-	virtual bool getLoopMode() const;
-	virtual TAnimationTime getBeginTime() const;
-	virtual TAnimationTime getEndTime() const;
-	// @}
+  /// From UTrack/ITrack.
+  // @{
+  virtual bool getLoopMode() const;
+  virtual TAnimationTime getBeginTime() const;
+  virtual TAnimationTime getEndTime() const;
+  // @}
 
-	/// Change the loop mode. true default
-	void setLoopMode(bool mode);
+  /// Change the loop mode. true default
+  void setLoopMode(bool mode);
 
-	// **********************
+  // **********************
 protected:
-	// Param of animation
-	bool _LoopMode;
-	float _BeginTime;
-	float _EndTime;
-	float _TotalRange;
-	float _OOTotalRange;
-	// The frame Time == (_EndTime-_BeginTime)/NumKeys
-	float _DeltaTime;
-	float _OODeltaTime;
+  // Param of animation
+  bool _LoopMode;
+  float _BeginTime;
+  float _EndTime;
+  float _TotalRange;
+  float _OOTotalRange;
+  // The frame Time == (_EndTime-_BeginTime)/NumKeys
+  float _DeltaTime;
+  float _OODeltaTime;
 
-	// Typically, there is only one TimeBlock, for anim < 8.5 seconds (256/30 fps == 8.5 second).
-	class CTimeBlock
-	{
-	public:
-		// Value to add to the key in the array to have real frame value.
-		uint16 TimeOffset;
-		// Value to add to the index to have Key index in _Keys.
-		uint32 KeyOffset;
+  // Typically, there is only one TimeBlock, for anim < 8.5 seconds (256/30 fps
+  // == 8.5 second).
+  class CTimeBlock {
+  public:
+    // Value to add to the key in the array to have real frame value.
+    uint16 TimeOffset;
+    // Value to add to the index to have Key index in _Keys.
+    uint32 KeyOffset;
 
-		// Key Time. Separated for optimal memory packing, and better cache use at dichotomy search
-		NLMISC::CObjectVector<uint8, false> Times;
+    // Key Time. Separated for optimal memory packing, and better cache use at
+    // dichotomy search
+    NLMISC::CObjectVector<uint8, false> Times;
 
-		// For dicho comp
-		bool operator<=(const CTimeBlock &tb) const
-		{
-			return TimeOffset <= tb.TimeOffset;
-		}
+    // For dicho comp
+    bool operator<=(const CTimeBlock &tb) const {
+      return TimeOffset <= tb.TimeOffset;
+    }
 
-		void serial(NLMISC::IStream &f);
-	};
+    void serial(NLMISC::IStream &f);
+  };
 
-	// Time Values
-	NLMISC::CObjectVector<CTimeBlock> _TimeBlocks;
+  // Time Values
+  NLMISC::CObjectVector<CTimeBlock> _TimeBlocks;
 
 protected:
-	enum TEvalType
-	{
-		EvalDiscard,
-		EvalKey0,
-		EvalInterpolate
-	};
+  enum TEvalType { EvalDiscard, EvalKey0, EvalInterpolate };
 
-	// called by sons.
-	TEvalType evalTime(const TAnimationTime &date, uint numKeys, uint &keyId0, uint &keyId1, float &interpValue);
+  // called by sons.
+  TEvalType evalTime(const TAnimationTime &date, uint numKeys, uint &keyId0,
+                     uint &keyId1, float &interpValue);
 
-	// called by sons.
-	void serialCommon(NLMISC::IStream &f);
+  // called by sons.
+  void serialCommon(NLMISC::IStream &f);
 
-	/** Build the track time from a list of Keys.
-	 *	\param timeList the list of key time. First must be ==0. nlassert if difference between 2 keys is > 255
-	 *	\param beginTime map to the timeList[0] time.
-	 *	\param endTime map to the timeList[size-1] time.
-	 */
-	void buildCommon(const std::vector<uint16> &timeList, float beginTime, float endTime);
+  /** Build the track time from a list of Keys.
+   *	\param timeList the list of key time. First must be ==0. nlassert if
+   *difference between 2 keys is > 255 \param beginTime map to the timeList[0]
+   *time. \param endTime map to the timeList[size-1] time.
+   */
+  void buildCommon(const std::vector<uint16> &timeList, float beginTime,
+                   float endTime);
 
-	/// used by derivers
-	void applySampleDivisorCommon(uint sampleDivisor, std::vector<uint32> &keepKeys);
+  /// used by derivers
+  void applySampleDivisorCommon(uint sampleDivisor,
+                                std::vector<uint32> &keepKeys);
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_TRACK_SAMPLED_COMMON_H
 

@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <nel/misc/types_nl.h>
 #include "node_impl.h"
+#include <nel/misc/types_nl.h>
 
 // STL includes
 #include <iomanip>
@@ -48,150 +48,123 @@ namespace BUILTIN {
 #define PMB_NODE_NAME_CHUNK_ID 0x0962
 
 CNodeImpl::CNodeImpl(CScene *scene)
-    : INode(scene)
-    , m_NodeVersion(0)
-    , m_ParentFlags(0)
-    , m_UserName(ucstring("Untitled Node"))
-{
-}
+    : INode(scene), m_NodeVersion(0), m_ParentFlags(0),
+      m_UserName(ucstring("Untitled Node")) {}
 
-CNodeImpl::~CNodeImpl()
-{
-}
+CNodeImpl::~CNodeImpl() {}
 
 const ucstring CNodeImpl::DisplayName = ucstring("Node");
 const char *CNodeImpl::InternalName = "NodeImpl";
-const NLMISC::CClassId CNodeImpl::ClassId = NLMISC::CClassId(0x00000001, 0x00000000);
+const NLMISC::CClassId CNodeImpl::ClassId =
+    NLMISC::CClassId(0x00000001, 0x00000000);
 const TSClassId CNodeImpl::SuperClassId = INode::SuperClassId;
 const CNodeImplClassDesc NodeImplClassDesc(&DllPluginDescBuiltin);
 
-void CNodeImpl::parse(uint16 version, uint filter)
-{
-	INode::parse(version);
-	if (!m_ChunksOwnsPointers)
-	{
-		m_NodeVersion = getChunkValue<uint32>(PMB_NODE_VERSION_CHUNK_ID);
+void CNodeImpl::parse(uint16 version, uint filter) {
+  INode::parse(version);
+  if (!m_ChunksOwnsPointers) {
+    m_NodeVersion = getChunkValue<uint32>(PMB_NODE_VERSION_CHUNK_ID);
 
-		CStorageArray<uint32> *parent = static_cast<CStorageArray<uint32> *>(getChunk(PMB_NODE_PARENT_CHUNK_ID));
-		nlassert(parent);
-		nlassert(parent->Value.size() == 2);
-		setParent(dynamic_cast<INode *>(container()->getByStorageIndex((sint32)parent->Value[0])));
-		nlassert(m_Parent);
-		m_ParentFlags = parent->Value[1];
-		m_ArchivedChunks.push_back(parent);
+    CStorageArray<uint32> *parent = static_cast<CStorageArray<uint32> *>(
+        getChunk(PMB_NODE_PARENT_CHUNK_ID));
+    nlassert(parent);
+    nlassert(parent->Value.size() == 2);
+    setParent(dynamic_cast<INode *>(
+        container()->getByStorageIndex((sint32)parent->Value[0])));
+    nlassert(m_Parent);
+    m_ParentFlags = parent->Value[1];
+    m_ArchivedChunks.push_back(parent);
 
-		m_UserName = getChunkValue<ucstring>(PMB_NODE_NAME_CHUNK_ID);
-	}
+    m_UserName = getChunkValue<ucstring>(PMB_NODE_NAME_CHUNK_ID);
+  }
 }
 
-void CNodeImpl::clean()
-{
-	INode::clean();
+void CNodeImpl::clean() { INode::clean(); }
+
+void CNodeImpl::build(uint16 version, uint filter) {
+  INode::build(version);
+
+  putChunkValue(PMB_NODE_VERSION_CHUNK_ID, m_NodeVersion);
+
+  CStorageArray<uint32> *parent = new CStorageArray<uint32>();
+  parent->Value.resize(2);
+  parent->Value[0] = container()->getOrCreateStorageIndex(m_Parent);
+  parent->Value[1] = m_ParentFlags;
+  m_ArchivedChunks.push_back(parent);
+  putChunk(PMB_NODE_PARENT_CHUNK_ID, parent);
+
+  putChunkValue(PMB_NODE_NAME_CHUNK_ID, m_UserName);
 }
 
-void CNodeImpl::build(uint16 version, uint filter)
-{
-	INode::build(version);
+void CNodeImpl::disown() {
+  m_NodeVersion = 0;
+  setParent(NULL);
+  m_ParentFlags = 0;
+  m_UserName = ucstring("Untitled Node");
 
-	putChunkValue(PMB_NODE_VERSION_CHUNK_ID, m_NodeVersion);
-
-	CStorageArray<uint32> *parent = new CStorageArray<uint32>();
-	parent->Value.resize(2);
-	parent->Value[0] = container()->getOrCreateStorageIndex(m_Parent);
-	parent->Value[1] = m_ParentFlags;
-	m_ArchivedChunks.push_back(parent);
-	putChunk(PMB_NODE_PARENT_CHUNK_ID, parent);
-
-	putChunkValue(PMB_NODE_NAME_CHUNK_ID, m_UserName);
+  INode::disown();
 }
 
-void CNodeImpl::disown()
-{
-	m_NodeVersion = 0;
-	setParent(NULL);
-	m_ParentFlags = 0;
-	m_UserName = ucstring("Untitled Node");
+void CNodeImpl::init() { INode::init(); }
 
-	INode::disown();
+bool CNodeImpl::inherits(const NLMISC::CClassId classId) const {
+  if (classId == classDesc()->classId())
+    return true;
+  return INode::inherits(classId);
 }
 
-void CNodeImpl::init()
-{
-	INode::init();
+const ISceneClassDesc *CNodeImpl::classDesc() const {
+  return &NodeImplClassDesc;
 }
 
-bool CNodeImpl::inherits(const NLMISC::CClassId classId) const
-{
-	if (classId == classDesc()->classId()) return true;
-	return INode::inherits(classId);
+void CNodeImpl::toStringLocal(std::ostream &ostream, const std::string &pad,
+                              uint filter) const {
+  INode::toStringLocal(ostream, pad);
+  ostream << "\n" << pad << "NodeVersion: " << m_NodeVersion;
+  ostream << "\n" << pad << "Parent: ";
+  INode *parent = m_Parent;
+  nlassert(parent);
+  if (parent) {
+    ostream << "<ptr=0x";
+    {
+      std::stringstream ss;
+      ss << std::hex << std::setfill('0');
+      ss << std::setw(16) << (uint64)(void *)parent;
+      ostream << ss.str();
+    }
+    ostream << "> ";
+    ostream << "(" << ucstring(parent->classDesc()->displayName()).toUtf8()
+            << ", " << parent->classDesc()->classId().toString() << ") ";
+    ostream << parent->userName().toUtf8();
+  } else {
+    ostream << "NULL";
+  }
+  ostream << "\n" << pad << "ParentFlags: " << m_ParentFlags;
+  ostream << "\n" << pad << "UserName: " << m_UserName.toUtf8() << " ";
 }
 
-const ISceneClassDesc *CNodeImpl::classDesc() const
-{
-	return &NodeImplClassDesc;
+INode *CNodeImpl::parent() { return m_Parent; }
+
+void CNodeImpl::setParent(INode *node) {
+  if (m_Parent)
+    m_Parent->removeChild(this);
+  m_Parent = node;
+  if (node)
+    node->addChild(this);
 }
 
-void CNodeImpl::toStringLocal(std::ostream &ostream, const std::string &pad, uint filter) const
-{
-	INode::toStringLocal(ostream, pad);
-	ostream << "\n"
-	        << pad << "NodeVersion: " << m_NodeVersion;
-	ostream << "\n"
-	        << pad << "Parent: ";
-	INode *parent = m_Parent;
-	nlassert(parent);
-	if (parent)
-	{
-		ostream << "<ptr=0x";
-		{
-			std::stringstream ss;
-			ss << std::hex << std::setfill('0');
-			ss << std::setw(16) << (uint64)(void *)parent;
-			ostream << ss.str();
-		}
-		ostream << "> ";
-		ostream << "(" << ucstring(parent->classDesc()->displayName()).toUtf8() << ", " << parent->classDesc()->classId().toString() << ") ";
-		ostream << parent->userName().toUtf8();
-	}
-	else
-	{
-		ostream << "NULL";
-	}
-	ostream << "\n"
-	        << pad << "ParentFlags: " << m_ParentFlags;
-	ostream << "\n"
-	        << pad << "UserName: " << m_UserName.toUtf8() << " ";
-}
+const ucstring &CNodeImpl::userName() const { return m_UserName; }
 
-INode *CNodeImpl::parent()
-{
-	return m_Parent;
-}
-
-void CNodeImpl::setParent(INode *node)
-{
-	if (m_Parent) m_Parent->removeChild(this);
-	m_Parent = node;
-	if (node) node->addChild(this);
-}
-
-const ucstring &CNodeImpl::userName() const
-{
-	return m_UserName;
-}
-
-IStorageObject *CNodeImpl::createChunkById(uint16 id, bool container)
-{
-	switch (id)
-	{
-	case PMB_NODE_VERSION_CHUNK_ID:
-		return new CStorageValue<uint32>();
-	case PMB_NODE_PARENT_CHUNK_ID:
-		return new CStorageArray<uint32>();
-	case PMB_NODE_NAME_CHUNK_ID:
-		return new CStorageValue<ucstring>();
-	}
-	return INode::createChunkById(id, container);
+IStorageObject *CNodeImpl::createChunkById(uint16 id, bool container) {
+  switch (id) {
+  case PMB_NODE_VERSION_CHUNK_ID:
+    return new CStorageValue<uint32>();
+  case PMB_NODE_PARENT_CHUNK_ID:
+    return new CStorageArray<uint32>();
+  case PMB_NODE_NAME_CHUNK_ID:
+    return new CStorageValue<ucstring>();
+  }
+  return INode::createChunkById(id, container);
 }
 
 } /* namespace BUILTIN */

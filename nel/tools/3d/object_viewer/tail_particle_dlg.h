@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined(AFX_TAIL_PARTICLE_DLG_H__87722D81_F7C8_4837_96F2_96FCE342EF54__INCLUDED_)
+#if !defined(                                                                  \
+    AFX_TAIL_PARTICLE_DLG_H__87722D81_F7C8_4837_96F2_96FCE342EF54__INCLUDED_)
 #define AFX_TAIL_PARTICLE_DLG_H__87722D81_F7C8_4837_96F2_96FCE342EF54__INCLUDED_
 
 #if _MSC_VER > 1000
@@ -30,50 +31,48 @@ struct CPSTailParticle;
 /////////////////////////////////////////////////////////////////////////////
 // CTailParticleDlg dialog
 
-class CTailParticleDlg : public CDialog
-{
-	// Construction
+class CTailParticleDlg : public CDialog {
+  // Construction
 public:
-	CTailParticleDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSTailParticle *tp); // standard constructor
+  CTailParticleDlg(CParticleWorkspace::CNode *ownerNode,
+                   NL3D::CPSTailParticle *tp); // standard constructor
 
-	void init(CWnd *pParent, sint x, sint y);
-	// Dialog Data
-	//{{AFX_DATA(CTailParticleDlg)
-	enum
-	{
-		IDD = IDD_TAIL_PARTICLE
-	};
-	CComboBox m_TailShape;
-	CButton m_TailPersistAfterDeathCtrl;
-	BOOL m_TailFade;
-	BOOL m_TailPersistAfterDeath;
-	//}}AFX_DATA
+  void init(CWnd *pParent, sint x, sint y);
+  // Dialog Data
+  //{{AFX_DATA(CTailParticleDlg)
+  enum { IDD = IDD_TAIL_PARTICLE };
+  CComboBox m_TailShape;
+  CButton m_TailPersistAfterDeathCtrl;
+  BOOL m_TailFade;
+  BOOL m_TailPersistAfterDeath;
+  //}}AFX_DATA
 
-	// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CTailParticleDlg)
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CTailParticleDlg)
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
-	//}}AFX_VIRTUAL
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+                                                   //}}AFX_VIRTUAL
 
-	// Implementation
+  // Implementation
 protected:
-	// the particle being edited
-	NL3D::CPSTailParticle *_TailParticle;
-	CParticleWorkspace::CNode *_Node;
+  // the particle being edited
+  NL3D::CPSTailParticle *_TailParticle;
+  CParticleWorkspace::CNode *_Node;
 
-	// Generated message map functions
-	//{{AFX_MSG(CTailParticleDlg)
-	afx_msg void OnTailFade();
-	afx_msg void OnTailPersistAfterDeath();
-	afx_msg void OnSelchangeTailShape();
-	afx_msg void OnPaint();
-	afx_msg void OnSelchangeRibbonOrientation();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  // Generated message map functions
+  //{{AFX_MSG(CTailParticleDlg)
+  afx_msg void OnTailFade();
+  afx_msg void OnTailPersistAfterDeath();
+  afx_msg void OnSelchangeTailShape();
+  afx_msg void OnPaint();
+  afx_msg void OnSelchangeRibbonOrientation();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before
+// the previous line.
 
 #endif // !defined(AFX_TAIL_PARTICLE_DLG_H__87722D81_F7C8_4837_96F2_96FCE342EF54__INCLUDED_)

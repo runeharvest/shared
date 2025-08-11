@@ -31,30 +31,29 @@ namespace NLMISC {
  * \author Nevrax France
  * \date 2002
  */
-class CTDS
-{
+class CTDS {
 public:
-	/// Constructor. The pointer is initialized with NULL.
-	CTDS();
+  /// Constructor. The pointer is initialized with NULL.
+  CTDS();
 
-	/// Destructor
-	~CTDS();
+  /// Destructor
+  ~CTDS();
 
-	/// Get the thread specific pointer
-	void *getPointer() const;
+  /// Get the thread specific pointer
+  void *getPointer() const;
 
-	/// Set the thread specific pointer
-	void setPointer(void *pointer);
+  /// Set the thread specific pointer
+  void setPointer(void *pointer);
 
 private:
 #ifdef NL_OS_WINDOWS
-	uint32 _Handle;
-#else // NL_OS_WINDOWS
-	pthread_key_t _Key;
+  uint32 _Handle;
+#else  // NL_OS_WINDOWS
+  pthread_key_t _Key;
 #endif // NL_OS_WINDOWS
 };
 
-} // NLMISC
+} // namespace NLMISC
 
 #endif // NL_TDS_H
 

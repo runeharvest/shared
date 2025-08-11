@@ -17,23 +17,23 @@
 #ifndef NLMISC_STREAMED_PACKAGE_PROVIDER_H
 #define NLMISC_STREAMED_PACKAGE_PROVIDER_H
 
-#include <nel/misc/types_nl.h>
 #include <nel/misc/sha1.h>
+#include <nel/misc/types_nl.h>
 #include <string>
 
 namespace NLMISC {
 
-class IStreamedPackageProvider
-{
+class IStreamedPackageProvider {
 public:
-	IStreamedPackageProvider();
-	virtual ~IStreamedPackageProvider();
+  IStreamedPackageProvider();
+  virtual ~IStreamedPackageProvider();
 
-	/// Download a file. This call is blocking
-	/// filePath: [out] ex. /games/nel/stream/00/00/000000000..
-	/// hash: [in]
-	/// name: [in] name for debugging purposes
-	virtual bool getFile(std::string &filePath, const CHashKey &hash, const std::string &name = "") = 0;
+  /// Download a file. This call is blocking
+  /// filePath: [out] ex. /games/nel/stream/00/00/000000000..
+  /// hash: [in]
+  /// name: [in] name for debugging purposes
+  virtual bool getFile(std::string &filePath, const CHashKey &hash,
+                       const std::string &name = "") = 0;
 
 }; /* class IStreamedPackageProvider */
 

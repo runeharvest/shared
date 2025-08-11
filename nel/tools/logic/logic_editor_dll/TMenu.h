@@ -12,34 +12,34 @@
 /////////////////////////////////////////////////////////////////////////////
 // CTMenu window
 
-class CTMenu : public CMenu
-{
-	// Construction
+class CTMenu : public CMenu {
+  // Construction
 public:
-	CTMenu();
+  CTMenu();
 
-	// Attributes
+  // Attributes
 protected:
-	CFont m_Font;
-	CString m_strTitle;
+  CFont m_Font;
+  CString m_strTitle;
 
-	// Operations
+  // Operations
 public:
-	void AddMenuTitle(LPCTSTR lpszTitle);
+  void AddMenuTitle(LPCTSTR lpszTitle);
 
 protected:
-	HFONT CreatePopupMenuTitleFont();
+  HFONT CreatePopupMenuTitleFont();
 
-	// Implementation
+  // Implementation
 public:
-	virtual ~CTMenu();
-	virtual void MeasureItem(LPMEASUREITEMSTRUCT lpMIS);
-	virtual void DrawItem(LPDRAWITEMSTRUCT lpDIS);
+  virtual ~CTMenu();
+  virtual void MeasureItem(LPMEASUREITEMSTRUCT lpMIS);
+  virtual void DrawItem(LPDRAWITEMSTRUCT lpDIS);
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before
+// the previous line.
 
 #endif // !defined(AFX_TMENU_H__3C1D1728_241C_11D3_9CE5_0060973674E2__INCLUDED_)

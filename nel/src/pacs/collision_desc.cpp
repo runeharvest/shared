@@ -18,6 +18,4 @@
 
 #include "nel/pacs/collision_desc.h"
 
-namespace NLPACS {
-
-} // NLPACS
+namespace NLPACS {} // namespace NLPACS

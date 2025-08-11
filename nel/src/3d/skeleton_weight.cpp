@@ -27,63 +27,55 @@ namespace NL3D {
 
 // ***************************************************************************
 
-uint CSkeletonWeight::getNumNode() const
-{
-	return (uint)_Elements.size();
+uint CSkeletonWeight::getNumNode() const { return (uint)_Elements.size(); }
+
+// ***************************************************************************
+
+const std::string &CSkeletonWeight::getNodeName(uint node) const {
+  // Return the name of the n-th node
+  return _Elements[node].Name;
 }
 
 // ***************************************************************************
 
-const std::string &CSkeletonWeight::getNodeName(uint node) const
-{
-	// Return the name of the n-th node
-	return _Elements[node].Name;
+float CSkeletonWeight::getNodeWeight(uint node) const {
+  // Return the name of the n-th node
+  return _Elements[node].Weight;
 }
 
 // ***************************************************************************
 
-float CSkeletonWeight::getNodeWeight(uint node) const
-{
-	// Return the name of the n-th node
-	return _Elements[node].Weight;
+void CSkeletonWeight::build(const TNodeArray &array) {
+  // Copy the array
+  _Elements = array;
 }
 
 // ***************************************************************************
 
-void CSkeletonWeight::build(const TNodeArray &array)
-{
-	// Copy the array
-	_Elements = array;
+void CSkeletonWeight::serial(NLMISC::IStream &f) {
+  // Serial a header
+  f.serialCheck(NELID("TWKS"));
+
+  // Serial a version number
+  (void)f.serialVersion(0);
+
+  // Serial the array
+  f.serialCont(_Elements);
 }
 
 // ***************************************************************************
 
-void CSkeletonWeight::serial(NLMISC::IStream &f)
-{
-	// Serial a header
-	f.serialCheck(NELID("TWKS"));
+void CSkeletonWeight::CNode::serial(NLMISC::IStream &f) {
+  // Serial a version number
+  (void)f.serialVersion(0);
 
-	// Serial a version number
-	(void)f.serialVersion(0);
+  // Serial the name
+  f.serial(Name);
 
-	// Serial the array
-	f.serialCont(_Elements);
+  // Serial the weight
+  f.serial(Weight);
 }
 
 // ***************************************************************************
 
-void CSkeletonWeight::CNode::serial(NLMISC::IStream &f)
-{
-	// Serial a version number
-	(void)f.serialVersion(0);
-
-	// Serial the name
-	f.serial(Name);
-
-	// Serial the weight
-	f.serial(Weight);
-}
-
-// ***************************************************************************
-
-} // NL3D
+} // namespace NL3D

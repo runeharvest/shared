@@ -27,10 +27,13 @@
 
 #ifdef NL_DEBUG_VB
 
-#define CHECK_VERTEX_BUFFER(vb, pt) nlCheckVertexBuffer((vb), (const uint8 *)(pt));
+#define CHECK_VERTEX_BUFFER(vb, pt)                                            \
+  nlCheckVertexBuffer((vb), (const uint8 *)(pt));
 #define CHECK_VBA(vba, pt) nlCheckVBA((vba), (const uint8 *)(pt));
-#define CHECK_VBA_RANGE(vba, ptStart, length) nlCheckVBARange((vba), (const uint8 *)(ptStart), (uint)(length));
-#define CHECK_IBA_RANGE(iba, ptStart, length) nlCheckIBARange((iba), (const uint8 *)(ptStart), (uint)(length));
+#define CHECK_VBA_RANGE(vba, ptStart, length)                                  \
+  nlCheckVBARange((vba), (const uint8 *)(ptStart), (uint)(length));
+#define CHECK_IBA_RANGE(iba, ptStart, length)                                  \
+  nlCheckIBARange((iba), (const uint8 *)(ptStart), (uint)(length));
 #define CHECK_IBA(iba, ptStart) nlCheckIBA((iba), (const uint8 *)(ptStart));
 
 #else
@@ -53,12 +56,14 @@ void nlCheckVertexBuffer(const CVertexBuffer &vb, const uint8 *ptr);
 void nlCheckVBA(CVertexBufferRead &vbr, const uint8 *ptr);
 void nlCheckVBA(CVertexBufferReadWrite &vbrw, const uint8 *ptr);
 void nlCheckVBARange(CVertexBufferRead &vbr, const uint8 *ptStart, uint length);
-void nlCheckVBARange(CVertexBufferReadWrite &vbrw, const uint8 *ptStart, uint length);
-void nlCheckIBARange(CIndexBufferReadWrite &ibrw, const uint8 *ptStart, uint length);
+void nlCheckVBARange(CVertexBufferReadWrite &vbrw, const uint8 *ptStart,
+                     uint length);
+void nlCheckIBARange(CIndexBufferReadWrite &ibrw, const uint8 *ptStart,
+                     uint length);
 void nlCheckIBARange(CIndexBufferRead &ibr, const uint8 *ptStart, uint length);
 void nlCheckIBA(CIndexBufferReadWrite &ibrw, const uint8 *ptStart);
 void nlCheckIBA(CIndexBufferRead &ibrw, const uint8 *ptStart);
 
-} // NL3D
+} // namespace NL3D
 
 #endif

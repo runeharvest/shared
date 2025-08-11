@@ -17,37 +17,33 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdpch.h"
 #include "season.h"
+#include "stdpch.h"
 
 namespace EGSPD {
 
-static const struct
-{
-	const char *Name;
-	CSeason::TSeason Value;
+static const struct {
+  const char *Name;
+  CSeason::TSeason Value;
 } TSeasonConvert[] = {
-	{ "Spring", CSeason::Spring },
-	{ "Summer", CSeason::Summer },
-	{ "Autumn", CSeason::Autumn },
-	{ "Winter", CSeason::Winter },
-	{ "Invalid", CSeason::Invalid },
+    {"Spring", CSeason::Spring},   {"Summer", CSeason::Summer},
+    {"Autumn", CSeason::Autumn},   {"Winter", CSeason::Winter},
+    {"Invalid", CSeason::Invalid},
 };
 /* -----------------------------------------
  * Static Implementation of CSeason
  * ----------------------------------------- */
-void CSeason::init()
-{
-	_StrTable.clear();
-	_ValueMap.clear();
-	_StrTable.resize(5);
-	uint i;
-	for (i = 0; i < 5; ++i)
-	{
-		_StrTable[TSeasonConvert[i].Value] = TSeasonConvert[i].Name;
-		_ValueMap[NLMISC::toLowerAscii(std::string(TSeasonConvert[i].Name))] = TSeasonConvert[i].Value;
-	}
-	_Initialised = true;
+void CSeason::init() {
+  _StrTable.clear();
+  _ValueMap.clear();
+  _StrTable.resize(5);
+  uint i;
+  for (i = 0; i < 5; ++i) {
+    _StrTable[TSeasonConvert[i].Value] = TSeasonConvert[i].Name;
+    _ValueMap[NLMISC::toLowerAscii(std::string(TSeasonConvert[i].Name))] =
+        TSeasonConvert[i].Value;
+  }
+  _Initialised = true;
 }
 bool CSeason::_Initialised = false;
 std::string CSeason::_UnknownString = "Unknown";
@@ -55,4 +51,4 @@ std::vector<std::string> CSeason::_StrTable;
 std::map<std::string, CSeason::TSeason> CSeason::_ValueMap;
 // End of static implementation of CSeason
 
-} // End of EGSPD
+} // namespace EGSPD

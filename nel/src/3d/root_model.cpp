@@ -26,51 +26,44 @@
 namespace NL3D {
 
 // ***************************************************************************
-void CRootModel::registerBasic()
-{
-	CScene::registerModel(RootModelId, 0, CRootModel::creator);
+void CRootModel::registerBasic() {
+  CScene::registerModel(RootModelId, 0, CRootModel::creator);
 }
 
 // ***************************************************************************
-void CRootModel::traverseHrc()
-{
-	// Traverse the Hrc sons.
-	uint num = hrcGetNumChildren();
-	for (uint i = 0; i < num; i++)
-		hrcGetChild(i)->traverseHrc();
+void CRootModel::traverseHrc() {
+  // Traverse the Hrc sons.
+  uint num = hrcGetNumChildren();
+  for (uint i = 0; i < num; i++)
+    hrcGetChild(i)->traverseHrc();
 }
 
 // ***************************************************************************
-void CRootModel::traverseClip()
-{
-	// Traverse the Clip sons.
-	uint num = clipGetNumChildren();
-	for (uint i = 0; i < num; i++)
-		clipGetChild(i)->traverseClip();
+void CRootModel::traverseClip() {
+  // Traverse the Clip sons.
+  uint num = clipGetNumChildren();
+  for (uint i = 0; i < num; i++)
+    clipGetChild(i)->traverseClip();
 }
 
 // ***************************************************************************
-void CRootModel::traverseAnimDetail()
-{
-	// no-op
+void CRootModel::traverseAnimDetail() {
+  // no-op
 }
 
 // ***************************************************************************
-void CRootModel::traverseLoadBalancing()
-{
-	// no-op
+void CRootModel::traverseLoadBalancing() {
+  // no-op
 }
 
 // ***************************************************************************
-void CRootModel::traverseLight()
-{
-	// no-op
+void CRootModel::traverseLight() {
+  // no-op
 }
 
 // ***************************************************************************
-void CRootModel::traverseRender()
-{
-	// no-op
+void CRootModel::traverseRender() {
+  // no-op
 }
 
-} // NL3D
+} // namespace NL3D

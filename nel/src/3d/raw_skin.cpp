@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "std3d.h"
 #include "nel/3d/raw_skin.h"
+#include "std3d.h"
 
 using namespace NLMISC;
 
@@ -26,15 +26,14 @@ using namespace NLMISC;
 namespace NL3D {
 
 // ***************************************************************************
-void CRawSkinNormalCache::clearArrays()
-{
-	Vertices1.clear();
-	Vertices2.clear();
-	Vertices3.clear();
-	Vertices4.clear();
-	contReset(Geomorphs);
-	contReset(RdrPass);
-	contReset(VertexRemap);
+void CRawSkinNormalCache::clearArrays() {
+  Vertices1.clear();
+  Vertices2.clear();
+  Vertices3.clear();
+  Vertices4.clear();
+  contReset(Geomorphs);
+  contReset(RdrPass);
+  contReset(VertexRemap);
 }
 
-} // NL3D
+} // namespace NL3D

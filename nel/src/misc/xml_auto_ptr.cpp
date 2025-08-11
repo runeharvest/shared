@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdmisc.h"
 #include "nel/misc/xml_auto_ptr.h"
+#include "stdmisc.h"
 
 #include <libxml/parser.h>
 
@@ -24,26 +24,21 @@
 #endif
 
 //=======================================
-void CXMLAutoPtr::destroy()
-{
-	if (_Value)
-	{
-		xmlFree(const_cast<char *>(_Value));
-		_Value = NULL;
-	}
+void CXMLAutoPtr::destroy() {
+  if (_Value) {
+    xmlFree(const_cast<char *>(_Value));
+    _Value = NULL;
+  }
 }
 
 //=======================================
-CXMLAutoPtr::~CXMLAutoPtr()
-{
-	destroy();
-}
+CXMLAutoPtr::~CXMLAutoPtr() { destroy(); }
 
 //=======================================
-CXMLAutoPtr &CXMLAutoPtr::operator=(const char *other)
-{
-	if (other == _Value) return *this;
-	destroy();
-	_Value = other;
-	return *this;
+CXMLAutoPtr &CXMLAutoPtr::operator=(const char *other) {
+  if (other == _Value)
+    return *this;
+  destroy();
+  _Value = other;
+  return *this;
 }

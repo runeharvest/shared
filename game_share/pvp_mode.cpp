@@ -38,14 +38,12 @@ NL_STRING_CONVERSION_TABLE_ENTRY(PvpZoneSafe)
 NL_STRING_CONVERSION_TABLE_ENTRY(PvpSafe)
 NL_END_STRING_CONVERSION_TABLE(TPVPMode, PVPModeConversion, Unknown)
 
-TPVPMode fromString(const std::string &str)
-{
-	return PVPModeConversion.fromString(str);
+TPVPMode fromString(const std::string &str) {
+  return PVPModeConversion.fromString(str);
 }
 
-const std::string &toString(TPVPMode pvpMode)
-{
-	return PVPModeConversion.toString(pvpMode);
+const std::string &toString(TPVPMode pvpMode) {
+  return PVPModeConversion.toString(pvpMode);
 }
 
 } // namespace PVP_MODE

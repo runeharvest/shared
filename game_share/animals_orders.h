@@ -21,28 +21,28 @@
 
 namespace ANIMALS_ORDERS {
 // orders that can be given to a beast
-enum EBeastOrder
-{
-	FOLLOW = 0,
-	STOP,
-	FREE,
-	CALL,
-	ENTER_STABLE,
-	LEAVE_STABLE,
-	GRAZE, // must be added later
-	ATTACK,
-	MOUNT, // For animal of type : Mount
-	UNMOUNT, // For animal of type : Mount
+enum EBeastOrder {
+  FOLLOW = 0,
+  STOP,
+  FREE,
+  CALL,
+  ENTER_STABLE,
+  LEAVE_STABLE,
+  GRAZE, // must be added later
+  ATTACK,
+  MOUNT,   // For animal of type : Mount
+  UNMOUNT, // For animal of type : Mount
 
-	// the number of size existing
-	BEAST_ORDERS_SIZE,
-	UNKNOWN_BEAST_ORDER = BEAST_ORDERS_SIZE
+  // the number of size existing
+  BEAST_ORDERS_SIZE,
+  UNKNOWN_BEAST_ORDER = BEAST_ORDERS_SIZE
 };
 
 /**
  * get the EBeastOrder size from the input string
  * \param str the input string
- * \return the EBeastOrder associated to this string (UNKNOWN_BEAST_ORDER if the string cannot be interpreted)
+ * \return the EBeastOrder associated to this string (UNKNOWN_BEAST_ORDER if the
+ * string cannot be interpreted)
  */
 EBeastOrder stringToBeastOrder(const std::string &str);
 
@@ -53,7 +53,7 @@ EBeastOrder stringToBeastOrder(const std::string &str);
  */
 const std::string &stringToBeastOrder(EBeastOrder order);
 
-}; // ANIMALS_ORDERS
+}; // namespace ANIMALS_ORDERS
 
 #endif // RY_ANIMALS_ORDERS_H
 

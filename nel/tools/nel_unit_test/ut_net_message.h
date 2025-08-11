@@ -17,282 +17,262 @@
 #ifndef UT_NET_MESSAGE
 #define UT_NET_MESSAGE
 
-class CUTNetMessage : public Test::Suite
-{
+class CUTNetMessage : public Test::Suite {
 public:
-	CUTNetMessage()
-	{
-		TEST_ADD(CUTNetMessage::messageSwap);
-		TEST_ADD(CUTNetMessage::lockSubMEssage);
-		TEST_ADD(CUTNetMessage::lockSubMEssageWithLongName);
-	}
+  CUTNetMessage() {
+    TEST_ADD(CUTNetMessage::messageSwap);
+    TEST_ADD(CUTNetMessage::lockSubMEssage);
+    TEST_ADD(CUTNetMessage::lockSubMEssageWithLongName);
+  }
 
-	void lockSubMEssageWithLongName()
-	{
-		NLNET::CMessage master("BIG");
+  void lockSubMEssageWithLongName() {
+    NLNET::CMessage master("BIG");
 
-		// serial some stuff
-		for (uint8 i = 0; i < 10; ++i)
-		{
-			master.serial(i);
-		}
+    // serial some stuff
+    for (uint8 i = 0; i < 10; ++i) {
+      master.serial(i);
+    }
 
-		uint32 sizes[4];
+    uint32 sizes[4];
 
-		// serial 4 sub messages
-		for (uint i = 0; i < 4; ++i)
-		{
-			NLNET::CMessage sub(NLMISC::toString("A_VERY_LONG_SUB_MESSAGE_NAME_%u", i));
+    // serial 4 sub messages
+    for (uint i = 0; i < 4; ++i) {
+      NLNET::CMessage sub(
+          NLMISC::toString("A_VERY_LONG_SUB_MESSAGE_NAME_%u", i));
 
-			for (uint8 j = 0; j < i * 4; ++j)
-			{
-				sub.serial(j);
-			}
+      for (uint8 j = 0; j < i * 4; ++j) {
+        sub.serial(j);
+      }
 
-			string s("A VERY LONG MESSAGE THAT COULD BE A PROBLEM TO HANDLE");
-			sub.serial(s);
+      string s("A VERY LONG MESSAGE THAT COULD BE A PROBLEM TO HANDLE");
+      sub.serial(s);
 
-			sizes[i] = sub.length();
-
-			master.serialMessage(sub);
-		}
+      sizes[i] = sub.length();
 
-		// invert the message
-		master.invert();
+      master.serialMessage(sub);
+    }
 
-		// now, unpack and check
+    // invert the message
+    master.invert();
 
-		// read the first master data
-		for (uint8 i = 0; i < 10; ++i)
-		{
-			uint8 b;
-			master.serial(b);
+    // now, unpack and check
 
-			TEST_ASSERT(b == i);
-		}
+    // read the first master data
+    for (uint8 i = 0; i < 10; ++i) {
+      uint8 b;
+      master.serial(b);
 
-		// unpack each sub message
-		for (uint i = 0; i < 4; ++i)
-		{
-			uint32 subSize;
-			master.serial(subSize);
+      TEST_ASSERT(b == i);
+    }
 
-			master.lockSubMessage(subSize);
-			TEST_ASSERT(subSize == sizes[i]);
+    // unpack each sub message
+    for (uint i = 0; i < 4; ++i) {
+      uint32 subSize;
+      master.serial(subSize);
 
-			TEST_ASSERT(master.getName() == NLMISC::toString("A_VERY_LONG_SUB_MESSAGE_NAME_%u", i));
-			TEST_ASSERT(master.length() == sizes[i]);
+      master.lockSubMessage(subSize);
+      TEST_ASSERT(subSize == sizes[i]);
 
-			for (uint8 j = 0; j < i * 4; ++j)
-			{
-				uint8 b;
-				master.serial(b);
-				TEST_ASSERT(b == j);
-			}
+      TEST_ASSERT(master.getName() ==
+                  NLMISC::toString("A_VERY_LONG_SUB_MESSAGE_NAME_%u", i));
+      TEST_ASSERT(master.length() == sizes[i]);
 
-			string s;
-			master.serial(s);
-			TEST_ASSERT(s == "A VERY LONG MESSAGE THAT COULD BE A PROBLEM TO HANDLE");
+      for (uint8 j = 0; j < i * 4; ++j) {
+        uint8 b;
+        master.serial(b);
+        TEST_ASSERT(b == j);
+      }
 
-			TEST_ASSERT(master.getPos() == master.length());
+      string s;
+      master.serial(s);
+      TEST_ASSERT(s == "A VERY LONG MESSAGE THAT COULD BE A PROBLEM TO HANDLE");
 
-			master.unlockSubMessage();
-		}
+      TEST_ASSERT(master.getPos() == master.length());
 
-		// rewind the message
-		master.seek(master.getHeaderSize(), NLMISC::IStream::begin);
+      master.unlockSubMessage();
+    }
 
-		// read the first master data
-		for (uint8 i = 0; i < 10; ++i)
-		{
-			uint8 b;
-			master.serial(b);
+    // rewind the message
+    master.seek(master.getHeaderSize(), NLMISC::IStream::begin);
 
-			TEST_ASSERT(b == i);
-		}
+    // read the first master data
+    for (uint8 i = 0; i < 10; ++i) {
+      uint8 b;
+      master.serial(b);
 
-		// assign from each sub message
-		for (uint i = 0; i < 4; ++i)
-		{
-			uint32 subSize;
-			master.serial(subSize);
+      TEST_ASSERT(b == i);
+    }
 
-			master.lockSubMessage(subSize);
+    // assign from each sub message
+    for (uint i = 0; i < 4; ++i) {
+      uint32 subSize;
+      master.serial(subSize);
 
-			TEST_ASSERT(subSize == sizes[i]);
+      master.lockSubMessage(subSize);
 
-			TEST_ASSERT(master.getName() == NLMISC::toString("A_VERY_LONG_SUB_MESSAGE_NAME_%u", i));
-			TEST_ASSERT(master.length() == sizes[i]);
+      TEST_ASSERT(subSize == sizes[i]);
 
-			NLNET::CMessage sub;
-			sub.assignFromSubMessage(master);
+      TEST_ASSERT(master.getName() ==
+                  NLMISC::toString("A_VERY_LONG_SUB_MESSAGE_NAME_%u", i));
+      TEST_ASSERT(master.length() == sizes[i]);
 
-			for (uint8 j = 0; j < i * 4; ++j)
-			{
-				uint8 b;
-				sub.serial(b);
-				TEST_ASSERT(b == j);
-			}
+      NLNET::CMessage sub;
+      sub.assignFromSubMessage(master);
 
-			string s;
-			sub.serial(s);
-			TEST_ASSERT(s == "A VERY LONG MESSAGE THAT COULD BE A PROBLEM TO HANDLE");
+      for (uint8 j = 0; j < i * 4; ++j) {
+        uint8 b;
+        sub.serial(b);
+        TEST_ASSERT(b == j);
+      }
 
-			TEST_ASSERT(sub.getPos() == sub.length());
+      string s;
+      sub.serial(s);
+      TEST_ASSERT(s == "A VERY LONG MESSAGE THAT COULD BE A PROBLEM TO HANDLE");
 
-			master.unlockSubMessage();
-		}
-	}
+      TEST_ASSERT(sub.getPos() == sub.length());
 
-	void lockSubMEssage()
-	{
-		NLNET::CMessage master("BIG");
+      master.unlockSubMessage();
+    }
+  }
 
-		// serial some stuff
-		for (uint8 i = 0; i < 10; ++i)
-		{
-			master.serial(i);
-		}
+  void lockSubMEssage() {
+    NLNET::CMessage master("BIG");
 
-		sint32 sizes[4];
+    // serial some stuff
+    for (uint8 i = 0; i < 10; ++i) {
+      master.serial(i);
+    }
 
-		// serial 4 sub messages
-		for (uint i = 0; i < 4; ++i)
-		{
-			NLNET::CMessage sub(NLMISC::toString("SUB_%u", i));
+    sint32 sizes[4];
 
-			for (uint8 j = 0; j < i * 4; ++j)
-			{
-				sub.serial(j);
-			}
+    // serial 4 sub messages
+    for (uint i = 0; i < 4; ++i) {
+      NLNET::CMessage sub(NLMISC::toString("SUB_%u", i));
 
-			string s("A MESSAGE");
-			sub.serial(s);
+      for (uint8 j = 0; j < i * 4; ++j) {
+        sub.serial(j);
+      }
 
-			sizes[i] = sub.length();
+      string s("A MESSAGE");
+      sub.serial(s);
 
-			master.serialMessage(sub);
-		}
+      sizes[i] = sub.length();
 
-		// invert the message
-		master.invert();
+      master.serialMessage(sub);
+    }
 
-		// now, unpack and check
+    // invert the message
+    master.invert();
 
-		// read the first master data
-		for (uint8 i = 0; i < 10; ++i)
-		{
-			uint8 b;
-			master.serial(b);
+    // now, unpack and check
 
-			TEST_ASSERT(b == i);
-		}
+    // read the first master data
+    for (uint8 i = 0; i < 10; ++i) {
+      uint8 b;
+      master.serial(b);
 
-		// unpack each sub message
-		for (uint i = 0; i < 4; ++i)
-		{
-			uint32 subSize;
-			master.serial(subSize);
-
-			master.lockSubMessage(subSize);
-			TEST_ASSERT(subSize == sizes[i]);
-
-			TEST_ASSERT(master.getName() == NLMISC::toString("SUB_%u", i));
-			TEST_ASSERT(master.length() == sizes[i]);
-
-			for (uint8 j = 0; j < i * 4; ++j)
-			{
-				uint8 b;
-				master.serial(b);
-				TEST_ASSERT(b == j);
-			}
-
-			string s;
-			master.serial(s);
-			TEST_ASSERT(s == "A MESSAGE");
-
-			TEST_ASSERT(master.getPos() == master.length());
-
-			master.unlockSubMessage();
-		}
-
-		// rewind the message
-		master.seek(master.getHeaderSize(), NLMISC::IStream::begin);
-
-		// read the first master data
-		for (uint8 i = 0; i < 10; ++i)
-		{
-			uint8 b;
-			master.serial(b);
-
-			TEST_ASSERT(b == i);
-		}
-
-		// assign from each sub message
-		for (uint i = 0; i < 4; ++i)
-		{
-			uint32 subSize;
-			master.serial(subSize);
-
-			master.lockSubMessage(subSize);
-
-			TEST_ASSERT(subSize == sizes[i]);
-
-			TEST_ASSERT(master.getName() == NLMISC::toString("SUB_%u", i));
-			TEST_ASSERT(master.length() == sizes[i]);
-
-			NLNET::CMessage sub;
-			sub.assignFromSubMessage(master);
-
-			for (uint8 j = 0; j < i * 4; ++j)
-			{
-				uint8 b;
-				sub.serial(b);
-				TEST_ASSERT(b == j);
-			}
-
-			string s;
-			sub.serial(s);
-			TEST_ASSERT(s == "A MESSAGE");
-
-			TEST_ASSERT(sub.getPos() == sub.length());
-
-			master.unlockSubMessage();
-		}
-	}
-
-	void messageSwap()
-	{
-		NLNET::CMessage msg2;
-
-		string s;
-		{
-			NLNET::CMessage msg1;
-			msg1.setType("NAME", NLNET::CMessage::Request);
-
-			s = "foo1";
-			msg1.serial(s);
-			s = "foo2";
-			msg1.serial(s);
-			s = "";
-
-			msg2.swap(msg1);
-
-			// check that ms1 is empty now
-			TEST_ASSERT(msg1.length() == 0);
-			TEST_ASSERT(!msg1.typeIsSet());
-		}
-
-		TEST_ASSERT(!msg2.isReading());
-		msg2.invert();
-		TEST_ASSERT(msg2.typeIsSet());
-		TEST_ASSERT(msg2.getName() == "NAME");
-		TEST_ASSERT(msg2.getType() == NLNET::CMessage::Request);
-		msg2.serial(s);
-		TEST_ASSERT(s == "foo1");
-		msg2.serial(s);
-		TEST_ASSERT(s == "foo2");
-	}
+      TEST_ASSERT(b == i);
+    }
+
+    // unpack each sub message
+    for (uint i = 0; i < 4; ++i) {
+      uint32 subSize;
+      master.serial(subSize);
+
+      master.lockSubMessage(subSize);
+      TEST_ASSERT(subSize == sizes[i]);
+
+      TEST_ASSERT(master.getName() == NLMISC::toString("SUB_%u", i));
+      TEST_ASSERT(master.length() == sizes[i]);
+
+      for (uint8 j = 0; j < i * 4; ++j) {
+        uint8 b;
+        master.serial(b);
+        TEST_ASSERT(b == j);
+      }
+
+      string s;
+      master.serial(s);
+      TEST_ASSERT(s == "A MESSAGE");
+
+      TEST_ASSERT(master.getPos() == master.length());
+
+      master.unlockSubMessage();
+    }
+
+    // rewind the message
+    master.seek(master.getHeaderSize(), NLMISC::IStream::begin);
+
+    // read the first master data
+    for (uint8 i = 0; i < 10; ++i) {
+      uint8 b;
+      master.serial(b);
+
+      TEST_ASSERT(b == i);
+    }
+
+    // assign from each sub message
+    for (uint i = 0; i < 4; ++i) {
+      uint32 subSize;
+      master.serial(subSize);
+
+      master.lockSubMessage(subSize);
+
+      TEST_ASSERT(subSize == sizes[i]);
+
+      TEST_ASSERT(master.getName() == NLMISC::toString("SUB_%u", i));
+      TEST_ASSERT(master.length() == sizes[i]);
+
+      NLNET::CMessage sub;
+      sub.assignFromSubMessage(master);
+
+      for (uint8 j = 0; j < i * 4; ++j) {
+        uint8 b;
+        sub.serial(b);
+        TEST_ASSERT(b == j);
+      }
+
+      string s;
+      sub.serial(s);
+      TEST_ASSERT(s == "A MESSAGE");
+
+      TEST_ASSERT(sub.getPos() == sub.length());
+
+      master.unlockSubMessage();
+    }
+  }
+
+  void messageSwap() {
+    NLNET::CMessage msg2;
+
+    string s;
+    {
+      NLNET::CMessage msg1;
+      msg1.setType("NAME", NLNET::CMessage::Request);
+
+      s = "foo1";
+      msg1.serial(s);
+      s = "foo2";
+      msg1.serial(s);
+      s = "";
+
+      msg2.swap(msg1);
+
+      // check that ms1 is empty now
+      TEST_ASSERT(msg1.length() == 0);
+      TEST_ASSERT(!msg1.typeIsSet());
+    }
+
+    TEST_ASSERT(!msg2.isReading());
+    msg2.invert();
+    TEST_ASSERT(msg2.typeIsSet());
+    TEST_ASSERT(msg2.getName() == "NAME");
+    TEST_ASSERT(msg2.getType() == NLNET::CMessage::Request);
+    msg2.serial(s);
+    TEST_ASSERT(s == "foo1");
+    msg2.serial(s);
+    TEST_ASSERT(s == "foo2");
+  }
 };
 
 #endif

@@ -32,19 +32,17 @@ namespace NLMISC {
 #endif
 
 // ***************************************************************************
-inline CRefCount::~CRefCount()
-{
-	// This is the destruction of the objet.
+inline CRefCount::~CRefCount() {
+  // This is the destruction of the objet.
 #ifdef NL_DEBUG
-	nlassert(crefs == 0);
+  nlassert(crefs == 0);
 #endif
 
-	// If a CRefPtr still points on me...
-	if (!pinfo->IsNullPtrInfo)
-	{
-		// inform them of my destruction.
-		pinfo->Ptr = NULL;
-	}
+  // If a CRefPtr still points on me...
+  if (!pinfo->IsNullPtrInfo) {
+    // inform them of my destruction.
+    pinfo->Ptr = NULL;
+  }
 }
 
 // ***************************************************************************
@@ -54,49 +52,41 @@ inline CRefCount::~CRefCount()
 // ***************************************************************************
 
 // ***************************************************************************
-template <class T>
-inline CSmartPtr<T>::~CSmartPtr(void)
-{
-	SMART_TRACE("dtor()");
+template <class T> inline CSmartPtr<T>::~CSmartPtr(void) {
+  SMART_TRACE("dtor()");
 
-	if (Ptr)
-	{
+  if (Ptr) {
 #ifdef NL_DEBUG
-		nlassert(Ptr->crefs >= 0);
+    nlassert(Ptr->crefs >= 0);
 #endif
-		if (--(Ptr->crefs) == 0)
-			delete Ptr;
-		Ptr = NULL;
-	}
+    if (--(Ptr->crefs) == 0)
+      delete Ptr;
+    Ptr = NULL;
+  }
+}
+template <class T> SMART_INLINE CSmartPtr<T> &CSmartPtr<T>::operator=(T *p) {
+  SMART_TRACE("ope=(T*)Start");
+
+  // Implicit manage auto-assignation.
+  if (p)
+    p->crefs++;
+  if (Ptr) {
+    if (--(Ptr->crefs) == 0)
+      delete Ptr;
+  }
+  Ptr = p;
+
+  SMART_TRACE("ope=(T*)End");
+
+  return *this;
 }
 template <class T>
-SMART_INLINE CSmartPtr<T> &CSmartPtr<T>::operator=(T *p)
-{
-	SMART_TRACE("ope=(T*)Start");
-
-	// Implicit manage auto-assignation.
-	if (p)
-		p->crefs++;
-	if (Ptr)
-	{
-		if (--(Ptr->crefs) == 0)
-			delete Ptr;
-	}
-	Ptr = p;
-
-	SMART_TRACE("ope=(T*)End");
-
-	return *this;
+SMART_INLINE CSmartPtr<T> &CSmartPtr<T>::operator=(const CSmartPtr &p) {
+  return operator=(p.Ptr);
 }
 template <class T>
-SMART_INLINE CSmartPtr<T> &CSmartPtr<T>::operator=(const CSmartPtr &p)
-{
-	return operator=(p.Ptr);
-}
-template <class T>
-SMART_INLINE bool CSmartPtr<T>::operator<(const CSmartPtr &p) const
-{
-	return Ptr < p.Ptr;
+SMART_INLINE bool CSmartPtr<T>::operator<(const CSmartPtr &p) const {
+  return Ptr < p.Ptr;
 }
 
 // ***************************************************************************
@@ -106,182 +96,154 @@ SMART_INLINE bool CSmartPtr<T>::operator<(const CSmartPtr &p) const
 // ***************************************************************************
 
 // ***************************************************************************
-template <class T>
-SMART_INLINE void CRefPtr<T>::unRef() const
-{
-	pinfo->RefCount--;
-	if (pinfo->RefCount == 0)
-	{
-		// In CRefPtr, Never delete the object.
+template <class T> SMART_INLINE void CRefPtr<T>::unRef() const {
+  pinfo->RefCount--;
+  if (pinfo->RefCount == 0) {
+    // In CRefPtr, Never delete the object.
 
-		// We may be in the case that this==NullPtrInfo, and our NullPtrInfo has done a total round. Test it.
-		if (pinfo->IsNullPtrInfo)
-		{
-			// This should not happens, but I'm not sure :) ...
-			// Reset the NullPtrInfo to a middle round.
-			pinfo->RefCount = 0x7FFFFFFF;
-		}
-		else
-		{
-			// Guarantueed by !pinfo->IsNullPtrInfo
-			nlassumeex(pinfo != &CRefCount::NullPtrInfo);
-			// If the CRefPtr still point to a valid object.
-			if (pinfo->Ptr)
-			{
-				// Inform the Object that no more CRefPtr points on it.
-				pinfo->Ptr->pinfo = &CRefCount::NullPtrInfo;
-			}
-			// Then delete the pinfo.
-			delete pinfo;
-		}
-	}
+    // We may be in the case that this==NullPtrInfo, and our NullPtrInfo has
+    // done a total round. Test it.
+    if (pinfo->IsNullPtrInfo) {
+      // This should not happens, but I'm not sure :) ...
+      // Reset the NullPtrInfo to a middle round.
+      pinfo->RefCount = 0x7FFFFFFF;
+    } else {
+      // Guarantueed by !pinfo->IsNullPtrInfo
+      nlassumeex(pinfo != &CRefCount::NullPtrInfo);
+      // If the CRefPtr still point to a valid object.
+      if (pinfo->Ptr) {
+        // Inform the Object that no more CRefPtr points on it.
+        pinfo->Ptr->pinfo = &CRefCount::NullPtrInfo;
+      }
+      // Then delete the pinfo.
+      delete pinfo;
+    }
+  }
 }
 
 // ***************************************************************************
 // Cons - dest.
-template <class T>
-inline CRefPtr<T>::CRefPtr()
-{
-	pinfo = &CRefCount::NullPtrInfo;
-	Ptr = NULL;
+template <class T> inline CRefPtr<T>::CRefPtr() {
+  pinfo = &CRefCount::NullPtrInfo;
+  Ptr = NULL;
 
-	REF_TRACE("Smart()");
+  REF_TRACE("Smart()");
 }
-template <class T>
-inline CRefPtr<T>::CRefPtr(T *v)
-{
-	Ptr = v;
-	if (v)
-	{
-		// If no CRefPtr handles v, create a pinfo ref...
-		if (v->pinfo->IsNullPtrInfo)
-			v->pinfo = new CRefCount::CPtrInfo(v);
-		pinfo = v->pinfo;
-		// v is now used by this.
-		pinfo->RefCount++;
+template <class T> inline CRefPtr<T>::CRefPtr(T *v) {
+  Ptr = v;
+  if (v) {
+    // If no CRefPtr handles v, create a pinfo ref...
+    if (v->pinfo->IsNullPtrInfo)
+      v->pinfo = new CRefCount::CPtrInfo(v);
+    pinfo = v->pinfo;
+    // v is now used by this.
+    pinfo->RefCount++;
 
 #ifdef NL_DEBUG
-		nlassert(v == const_cast<T *>(static_cast<T const *>(pinfo->Ptr)));
+    nlassert(v == const_cast<T *>(static_cast<T const *>(pinfo->Ptr)));
 #endif
-	}
-	else
-		pinfo = &CRefCount::NullPtrInfo;
+  } else
+    pinfo = &CRefCount::NullPtrInfo;
 
-	REF_TRACE("Smart(T*)");
+  REF_TRACE("Smart(T*)");
 }
-template <class T>
-inline CRefPtr<T>::CRefPtr(const CRefPtr &copy)
-{
-	pinfo = copy.pinfo;
-	pinfo->RefCount++;
-	Ptr = const_cast<T *>(static_cast<T const *>(pinfo->Ptr));
+template <class T> inline CRefPtr<T>::CRefPtr(const CRefPtr &copy) {
+  pinfo = copy.pinfo;
+  pinfo->RefCount++;
+  Ptr = const_cast<T *>(static_cast<T const *>(pinfo->Ptr));
 
-	REF_TRACE("SmartCopy()");
+  REF_TRACE("SmartCopy()");
 }
-template <class T>
-inline CRefPtr<T>::~CRefPtr(void)
-{
-	REF_TRACE("~Smart()");
+template <class T> inline CRefPtr<T>::~CRefPtr(void) {
+  REF_TRACE("~Smart()");
 
-	unRef();
-	pinfo = &CRefCount::NullPtrInfo;
-	Ptr = NULL;
+  unRef();
+  pinfo = &CRefCount::NullPtrInfo;
+  Ptr = NULL;
 }
 
 // ***************************************************************************
 // Operators=.
-template <class T>
-CRefPtr<T> &CRefPtr<T>::operator=(T *v)
-{
-	REF_TRACE("ope=(T*)Start");
+template <class T> CRefPtr<T> &CRefPtr<T>::operator=(T *v) {
+  REF_TRACE("ope=(T*)Start");
 
-	Ptr = v;
-	if (v)
-	{
-		// If no CRefPtr handles v, create a pinfo ref...
-		if (v->pinfo->IsNullPtrInfo)
-			v->pinfo = new CRefCount::CPtrInfo(v);
-		// The auto equality test is implicitly done by upcounting first "v", then downcounting "this".
-		v->pinfo->RefCount++;
-		unRef();
-		pinfo = v->pinfo;
+  Ptr = v;
+  if (v) {
+    // If no CRefPtr handles v, create a pinfo ref...
+    if (v->pinfo->IsNullPtrInfo)
+      v->pinfo = new CRefCount::CPtrInfo(v);
+    // The auto equality test is implicitly done by upcounting first "v", then
+    // downcounting "this".
+    v->pinfo->RefCount++;
+    unRef();
+    pinfo = v->pinfo;
 
 #ifdef NL_DEBUG
-		nlassert(v == const_cast<T *>(static_cast<T const *>(pinfo->Ptr)));
+    nlassert(v == const_cast<T *>(static_cast<T const *>(pinfo->Ptr)));
 #endif
-	}
-	else
-	{
-		unRef();
-		pinfo = &CRefCount::NullPtrInfo;
-	}
+  } else {
+    unRef();
+    pinfo = &CRefCount::NullPtrInfo;
+  }
 
-	REF_TRACE("ope=(T*)End");
+  REF_TRACE("ope=(T*)End");
 
-	return *this;
+  return *this;
 }
-template <class T>
-CRefPtr<T> &CRefPtr<T>::operator=(const CRefPtr &copy)
-{
-	REF_TRACE("ope=(Smart)Start");
+template <class T> CRefPtr<T> &CRefPtr<T>::operator=(const CRefPtr &copy) {
+  REF_TRACE("ope=(Smart)Start");
 
-	// The auto equality test is implicitly done by upcounting first "copy", then downcounting "this".
-	copy.pinfo->RefCount++;
-	unRef();
-	pinfo = copy.pinfo;
-	// Must Refresh the ptr.
-	Ptr = const_cast<T *>(static_cast<T const *>(pinfo->Ptr));
+  // The auto equality test is implicitly done by upcounting first "copy", then
+  // downcounting "this".
+  copy.pinfo->RefCount++;
+  unRef();
+  pinfo = copy.pinfo;
+  // Must Refresh the ptr.
+  Ptr = const_cast<T *>(static_cast<T const *>(pinfo->Ptr));
 
-	REF_TRACE("ope=(Smart)End");
-	return *this;
+  REF_TRACE("ope=(Smart)End");
+  return *this;
 }
 
 // ***************************************************************************
 // Operations.
-template <class T>
-void CRefPtr<T>::kill()
-{
-	REF_TRACE("SmartKill");
+template <class T> void CRefPtr<T>::kill() {
+  REF_TRACE("SmartKill");
 
-	T *ptr = const_cast<T *>(static_cast<T const *>(pinfo->Ptr));
+  T *ptr = const_cast<T *>(static_cast<T const *>(pinfo->Ptr));
 
-	// First, release the refptr.
-	unRef();
-	pinfo = &CRefCount::NullPtrInfo;
-	Ptr = NULL;
+  // First, release the refptr.
+  unRef();
+  pinfo = &CRefCount::NullPtrInfo;
+  Ptr = NULL;
 
-	// Then delete the pointer.
-	if (ptr)
-		delete ptr;
+  // Then delete the pointer.
+  if (ptr)
+    delete ptr;
 }
 
 // ***************************************************************************
 // Cast.
-template <class T>
-inline CRefPtr<T>::operator T *() const
-{
-	REF_TRACE("SmartCast T*()");
+template <class T> inline CRefPtr<T>::operator T *() const {
+  REF_TRACE("SmartCast T*()");
 
-	// Refresh Ptr.
-	// NB: It is preferable (faster) here to just copy than testing if NULL and set NULL if necessary.
-	// (static_cast is like a simple copy but for multiple inheritance)
-	Ptr = const_cast<T *>(static_cast<T const *>(pinfo->Ptr));
-	return Ptr;
+  // Refresh Ptr.
+  // NB: It is preferable (faster) here to just copy than testing if NULL and
+  // set NULL if necessary. (static_cast is like a simple copy but for multiple
+  // inheritance)
+  Ptr = const_cast<T *>(static_cast<T const *>(pinfo->Ptr));
+  return Ptr;
 }
 
 // ***************************************************************************
 // Operators.
-template <class T>
-inline T &CRefPtr<T>::operator*(void) const
-{
-	REF_TRACE("Smart *()");
-	return *Ptr;
+template <class T> inline T &CRefPtr<T>::operator*(void) const {
+  REF_TRACE("Smart *()");
+  return *Ptr;
 }
-template <class T>
-inline T *CRefPtr<T>::operator->(void) const
-{
-	REF_TRACE("Smart ->()");
-	return Ptr;
+template <class T> inline T *CRefPtr<T>::operator->(void) const {
+  REF_TRACE("Smart ->()");
+  return Ptr;
 }
 
 // ***************************************************************************
@@ -291,190 +253,171 @@ inline T *CRefPtr<T>::operator->(void) const
 // ***************************************************************************
 
 // ***************************************************************************
-template <class T>
-SMART_INLINE void CVirtualRefPtr<T>::unRef() const
-{
-	pinfo->RefCount--;
-	if (pinfo->RefCount == 0)
-	{
-		// In CVirtualRefPtr, Never delete the object.
+template <class T> SMART_INLINE void CVirtualRefPtr<T>::unRef() const {
+  pinfo->RefCount--;
+  if (pinfo->RefCount == 0) {
+    // In CVirtualRefPtr, Never delete the object.
 
-		// We may be in the case that this==NullPtrInfo, and our NullPtrInfo has done a total round. Test it.
-		if (pinfo->IsNullPtrInfo)
-		{
-			// This should not happens, but I'm not sure :) ...
-			// Reset the NullPtrInfo to a middle round.
-			pinfo->RefCount = 0x7FFFFFFF;
-		}
-		else
-		{
-			// Guarantueed by !pinfo->IsNullPtrInfo
-			nlassumeex(pinfo != &CRefCount::NullPtrInfo);
-			// If the CVirtualRefPtr still point to a valid object.
-			if (pinfo->Ptr)
-			{
-				// Inform the Object that no more CVirtualRefPtr points on it.
-				pinfo->Ptr->pinfo = &CRefCount::NullPtrInfo;
-			}
-			// Then delete the pinfo.
-			delete pinfo;
-		}
-	}
+    // We may be in the case that this==NullPtrInfo, and our NullPtrInfo has
+    // done a total round. Test it.
+    if (pinfo->IsNullPtrInfo) {
+      // This should not happens, but I'm not sure :) ...
+      // Reset the NullPtrInfo to a middle round.
+      pinfo->RefCount = 0x7FFFFFFF;
+    } else {
+      // Guarantueed by !pinfo->IsNullPtrInfo
+      nlassumeex(pinfo != &CRefCount::NullPtrInfo);
+      // If the CVirtualRefPtr still point to a valid object.
+      if (pinfo->Ptr) {
+        // Inform the Object that no more CVirtualRefPtr points on it.
+        pinfo->Ptr->pinfo = &CRefCount::NullPtrInfo;
+      }
+      // Then delete the pinfo.
+      delete pinfo;
+    }
+  }
 }
 
 // ***************************************************************************
 // Cons - dest.
-template <class T>
-inline CVirtualRefPtr<T>::CVirtualRefPtr()
-{
-	pinfo = &CRefCount::NullPtrInfo;
-	Ptr = NULL;
+template <class T> inline CVirtualRefPtr<T>::CVirtualRefPtr() {
+  pinfo = &CRefCount::NullPtrInfo;
+  Ptr = NULL;
 
-	REF_TRACE("Smart()");
+  REF_TRACE("Smart()");
 }
-template <class T>
-inline CVirtualRefPtr<T>::CVirtualRefPtr(T *v)
-{
-	Ptr = v;
-	if (v)
-	{
-		// If no CVirtualRefPtr handles v, create a pinfo ref...
-		if (v->pinfo->IsNullPtrInfo)
-			v->pinfo = new CRefCount::CPtrInfo(static_cast<CVirtualRefCount const *>(v)); // v MUST derive from CVirtualRefCount
-		pinfo = v->pinfo;
-		// v is now used by this.
-		pinfo->RefCount++;
+template <class T> inline CVirtualRefPtr<T>::CVirtualRefPtr(T *v) {
+  Ptr = v;
+  if (v) {
+    // If no CVirtualRefPtr handles v, create a pinfo ref...
+    if (v->pinfo->IsNullPtrInfo)
+      v->pinfo = new CRefCount::CPtrInfo(static_cast<CVirtualRefCount const *>(
+          v)); // v MUST derive from CVirtualRefCount
+    pinfo = v->pinfo;
+    // v is now used by this.
+    pinfo->RefCount++;
 
 #ifdef NL_DEBUG
-		nlassert(v == const_cast<T *>(dynamic_cast<T const *>(static_cast<CVirtualRefCount const *>(pinfo->Ptr))));
+    nlassert(v == const_cast<T *>(dynamic_cast<T const *>(
+                      static_cast<CVirtualRefCount const *>(pinfo->Ptr))));
 #endif
-	}
-	else
-		pinfo = &CRefCount::NullPtrInfo;
+  } else
+    pinfo = &CRefCount::NullPtrInfo;
 
-	REF_TRACE("Smart(T*)");
+  REF_TRACE("Smart(T*)");
 }
 template <class T>
-inline CVirtualRefPtr<T>::CVirtualRefPtr(const CVirtualRefPtr &copy)
-{
-	pinfo = copy.pinfo;
-	pinfo->RefCount++;
-	Ptr = const_cast<T *>(dynamic_cast<T const *>(static_cast<CVirtualRefCount const *>(pinfo->Ptr)));
-	nlassert(Ptr != NULL || pinfo->Ptr == NULL);
+inline CVirtualRefPtr<T>::CVirtualRefPtr(const CVirtualRefPtr &copy) {
+  pinfo = copy.pinfo;
+  pinfo->RefCount++;
+  Ptr = const_cast<T *>(dynamic_cast<T const *>(
+      static_cast<CVirtualRefCount const *>(pinfo->Ptr)));
+  nlassert(Ptr != NULL || pinfo->Ptr == NULL);
 
-	REF_TRACE("SmartCopy()");
+  REF_TRACE("SmartCopy()");
 }
-template <class T>
-inline CVirtualRefPtr<T>::~CVirtualRefPtr(void)
-{
-	REF_TRACE("~Smart()");
+template <class T> inline CVirtualRefPtr<T>::~CVirtualRefPtr(void) {
+  REF_TRACE("~Smart()");
 
-	unRef();
-	pinfo = &CRefCount::NullPtrInfo;
-	Ptr = NULL;
+  unRef();
+  pinfo = &CRefCount::NullPtrInfo;
+  Ptr = NULL;
 }
 
 // ***************************************************************************
 // Operators=.
-template <class T>
-CVirtualRefPtr<T> &CVirtualRefPtr<T>::operator=(T *v)
-{
-	REF_TRACE("ope=(T*)Start");
+template <class T> CVirtualRefPtr<T> &CVirtualRefPtr<T>::operator=(T *v) {
+  REF_TRACE("ope=(T*)Start");
 
-	Ptr = v;
-	if (v)
-	{
-		// If no CVirtualRefPtr handles v, create a pinfo ref...
-		if (v->pinfo->IsNullPtrInfo)
-			v->pinfo = new CRefCount::CPtrInfo(static_cast<CVirtualRefCount const *>(v)); // v MUST derive from CVirtualRefCount
-		// The auto equality test is implicitly done by upcounting first "v", then downcounting "this".
-		v->pinfo->RefCount++;
-		unRef();
-		pinfo = v->pinfo;
+  Ptr = v;
+  if (v) {
+    // If no CVirtualRefPtr handles v, create a pinfo ref...
+    if (v->pinfo->IsNullPtrInfo)
+      v->pinfo = new CRefCount::CPtrInfo(static_cast<CVirtualRefCount const *>(
+          v)); // v MUST derive from CVirtualRefCount
+    // The auto equality test is implicitly done by upcounting first "v", then
+    // downcounting "this".
+    v->pinfo->RefCount++;
+    unRef();
+    pinfo = v->pinfo;
 
 #ifdef NL_DEBUG
-		nlassert(v == const_cast<T *>(dynamic_cast<T const *>(static_cast<CVirtualRefCount const *>(pinfo->Ptr))));
+    nlassert(v == const_cast<T *>(dynamic_cast<T const *>(
+                      static_cast<CVirtualRefCount const *>(pinfo->Ptr))));
 #endif
-	}
-	else
-	{
-		unRef();
-		pinfo = &CRefCount::NullPtrInfo;
-	}
+  } else {
+    unRef();
+    pinfo = &CRefCount::NullPtrInfo;
+  }
 
-	REF_TRACE("ope=(T*)End");
+  REF_TRACE("ope=(T*)End");
 
-	return *this;
+  return *this;
 }
 template <class T>
-CVirtualRefPtr<T> &CVirtualRefPtr<T>::operator=(const CVirtualRefPtr &copy)
-{
-	REF_TRACE("ope=(Smart)Start");
+CVirtualRefPtr<T> &CVirtualRefPtr<T>::operator=(const CVirtualRefPtr &copy) {
+  REF_TRACE("ope=(Smart)Start");
 
-	// The auto equality test is implicitly done by upcounting first "copy", then downcounting "this".
-	copy.pinfo->RefCount++;
-	unRef();
-	pinfo = copy.pinfo;
-	// Must Refresh the ptr.
-	Ptr = const_cast<T *>(dynamic_cast<T const *>(static_cast<CVirtualRefCount const *>(pinfo->Ptr)));
-	nlassert(Ptr != NULL || pinfo->Ptr == NULL);
+  // The auto equality test is implicitly done by upcounting first "copy", then
+  // downcounting "this".
+  copy.pinfo->RefCount++;
+  unRef();
+  pinfo = copy.pinfo;
+  // Must Refresh the ptr.
+  Ptr = const_cast<T *>(dynamic_cast<T const *>(
+      static_cast<CVirtualRefCount const *>(pinfo->Ptr)));
+  nlassert(Ptr != NULL || pinfo->Ptr == NULL);
 
-	REF_TRACE("ope=(Smart)End");
-	return *this;
+  REF_TRACE("ope=(Smart)End");
+  return *this;
 }
 
 // ***************************************************************************
 // Operations.
-template <class T>
-void CVirtualRefPtr<T>::kill()
-{
-	REF_TRACE("SmartKill");
+template <class T> void CVirtualRefPtr<T>::kill() {
+  REF_TRACE("SmartKill");
 
-	T *ptr = const_cast<T *>(dynamic_cast<T const *>(static_cast<CVirtualRefCount const *>(pinfo->Ptr)));
-	nlassert(ptr != NULL || pinfo->Ptr == NULL);
+  T *ptr = const_cast<T *>(dynamic_cast<T const *>(
+      static_cast<CVirtualRefCount const *>(pinfo->Ptr)));
+  nlassert(ptr != NULL || pinfo->Ptr == NULL);
 
-	// First, release the refptr.
-	unRef();
-	pinfo = &CRefCount::NullPtrInfo;
-	Ptr = NULL;
+  // First, release the refptr.
+  unRef();
+  pinfo = &CRefCount::NullPtrInfo;
+  Ptr = NULL;
 
-	// Then delete the pointer.
-	if (ptr)
-		delete ptr;
+  // Then delete the pointer.
+  if (ptr)
+    delete ptr;
 }
 
 // ***************************************************************************
 // Cast.
-template <class T>
-inline CVirtualRefPtr<T>::operator T *() const
-{
-	REF_TRACE("SmartCast T*()");
+template <class T> inline CVirtualRefPtr<T>::operator T *() const {
+  REF_TRACE("SmartCast T*()");
 
-	// Refresh Ptr if necessary.
-	// NB: It is preferable (faster) here to test if NULL and set NULL if necessary, than dynamic_casting the ptr.
-	if (pinfo->Ptr == NULL)
-		Ptr = NULL;
-	return Ptr;
+  // Refresh Ptr if necessary.
+  // NB: It is preferable (faster) here to test if NULL and set NULL if
+  // necessary, than dynamic_casting the ptr.
+  if (pinfo->Ptr == NULL)
+    Ptr = NULL;
+  return Ptr;
 }
 
 // ***************************************************************************
 // Operators.
-template <class T>
-inline T &CVirtualRefPtr<T>::operator*(void) const
-{
-	REF_TRACE("Smart *()");
-	return *Ptr;
+template <class T> inline T &CVirtualRefPtr<T>::operator*(void) const {
+  REF_TRACE("Smart *()");
+  return *Ptr;
 }
-template <class T>
-inline T *CVirtualRefPtr<T>::operator->(void) const
-{
-	REF_TRACE("Smart ->()");
-	return Ptr;
+template <class T> inline T *CVirtualRefPtr<T>::operator->(void) const {
+  REF_TRACE("Smart ->()");
+  return Ptr;
 }
 
 // ***************************************************************************
 #undef SMART_INLINE
 
-} // NLMISC
+} // namespace NLMISC
 
 #endif // NL_SMARTPTR_INLINE_H

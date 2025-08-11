@@ -17,9 +17,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdafx.h"
-#include "log_analyser.h"
 #include "PlugInSelector.h"
+#include "log_analyser.h"
+#include "stdafx.h"
 
 using namespace std;
 
@@ -33,19 +33,17 @@ static char THIS_FILE[] = __FILE__;
 // CPlugInSelector dialog
 
 CPlugInSelector::CPlugInSelector(CWnd *pParent /*=NULL*/)
-    : CDialog(CPlugInSelector::IDD, pParent)
-{
-	//{{AFX_DATA_INIT(CPlugInSelector)
-	// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
+    : CDialog(CPlugInSelector::IDD, pParent) {
+  //{{AFX_DATA_INIT(CPlugInSelector)
+  // NOTE: the ClassWizard will add member initialization here
+  //}}AFX_DATA_INIT
 }
 
-void CPlugInSelector::DoDataExchange(CDataExchange *pDX)
-{
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CPlugInSelector)
-	DDX_Control(pDX, IDC_LIST1, m_PlugInListBox);
-	//}}AFX_DATA_MAP
+void CPlugInSelector::DoDataExchange(CDataExchange *pDX) {
+  CDialog::DoDataExchange(pDX);
+  //{{AFX_DATA_MAP(CPlugInSelector)
+  DDX_Control(pDX, IDC_LIST1, m_PlugInListBox);
+  //}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(CPlugInSelector, CDialog)
@@ -60,117 +58,104 @@ END_MESSAGE_MAP()
 /*
  *
  */
-BOOL CPlugInSelector::OnInitDialog()
-{
-	CDialog::OnInitDialog();
+BOOL CPlugInSelector::OnInitDialog() {
+  CDialog::OnInitDialog();
 
-	if (m_PlugInListBox.GetCount() == 0)
-	{
-		for (unsigned int i = 0; i != Dlls->size(); ++i)
-		{
-			m_PlugInListBox.InsertString(i, (*Dlls)[i]); // not sorted
-		}
-	}
+  if (m_PlugInListBox.GetCount() == 0) {
+    for (unsigned int i = 0; i != Dlls->size(); ++i) {
+      m_PlugInListBox.InsertString(i, (*Dlls)[i]); // not sorted
+    }
+  }
 
-	AnalyseFunc = NULL;
-	LibInst = NULL;
+  AnalyseFunc = NULL;
+  LibInst = NULL;
 
-	GetDlgItem(IDC_GROUP_INFO)->EnableWindow(!Dlls->empty());
-	GetDlgItem(IDOK)->EnableWindow(!Dlls->empty());
-	if (!Dlls->empty())
-	{
-		m_PlugInListBox.SetCurSel(0);
-		OnSelchangeList1();
-	}
+  GetDlgItem(IDC_GROUP_INFO)->EnableWindow(!Dlls->empty());
+  GetDlgItem(IDOK)->EnableWindow(!Dlls->empty());
+  if (!Dlls->empty()) {
+    m_PlugInListBox.SetCurSel(0);
+    OnSelchangeList1();
+  }
 
-	return TRUE;
+  return TRUE;
 }
 
-std::string::size_type getLastSeparator(const string &filename)
-{
-	string::size_type pos = filename.find_last_of('/');
-	if (pos == string::npos)
-	{
-		pos = filename.find_last_of('\\');
-		if (pos == string::npos)
-		{
-			pos = filename.find_last_of('@');
-		}
-	}
-	return pos;
+std::string::size_type getLastSeparator(const string &filename) {
+  string::size_type pos = filename.find_last_of('/');
+  if (pos == string::npos) {
+    pos = filename.find_last_of('\\');
+    if (pos == string::npos) {
+      pos = filename.find_last_of('@');
+    }
+  }
+  return pos;
 }
 
-string getFilename(const string &filename)
-{
-	string::size_type pos = getLastSeparator(filename);
-	if (pos != string::npos)
-		return filename.substr(pos + 1);
-	else
-		return filename;
+string getFilename(const string &filename) {
+  string::size_type pos = getLastSeparator(filename);
+  if (pos != string::npos)
+    return filename.substr(pos + 1);
+  else
+    return filename;
 }
 
 /*
  *
  */
-void CPlugInSelector::OnSelchangeList1()
-{
-	CString dllName;
-	m_PlugInListBox.GetText(m_PlugInListBox.GetCurSel(), dllName);
+void CPlugInSelector::OnSelchangeList1() {
+  CString dllName;
+  m_PlugInListBox.GetText(m_PlugInListBox.GetCurSel(), dllName);
 
-	// Release previous DLL if any
-	if (LibInst != NULL)
-	{
-		FreeLibrary(LibInst);
-	}
+  // Release previous DLL if any
+  if (LibInst != NULL) {
+    FreeLibrary(LibInst);
+  }
 
-	// Load DLL
-	LibInst = LoadLibrary(dllName);
-	if (!LibInst)
-	{
-		CString s;
-		TCHAR msg[300];
-		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		    NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), msg, 299, NULL);
-		s.Format(_T("Can't load %s: %s"), dllName, msg);
-		AfxMessageBox(s);
-		AnalyseFunc = NULL;
-		return;
-	}
+  // Load DLL
+  LibInst = LoadLibrary(dllName);
+  if (!LibInst) {
+    CString s;
+    TCHAR msg[300];
+    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                  NULL, GetLastError(),
+                  MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), msg, 299, NULL);
+    s.Format(_T("Can't load %s: %s"), dllName, msg);
+    AfxMessageBox(s);
+    AnalyseFunc = NULL;
+    return;
+  }
 
-	// Display info
-	TInfoFunc infoFunc = (TInfoFunc)GetProcAddress(LibInst, "getInfoString");
-	if (!infoFunc)
-	{
-		AfxMessageBox(_T("Can't find function getInfoString in dll"));
-		return;
-	}
-	GetDlgItem(IDC_GROUP_INFO)->SetWindowText(nlUtf8ToTStr(getFilename(NLMISC::tStrToUtf8(dllName))));
-	GetDlgItem(IDC_PLUGIN_INFO)->SetWindowText(nlUtf8ToTStr(infoFunc()));
+  // Display info
+  TInfoFunc infoFunc = (TInfoFunc)GetProcAddress(LibInst, "getInfoString");
+  if (!infoFunc) {
+    AfxMessageBox(_T("Can't find function getInfoString in dll"));
+    return;
+  }
+  GetDlgItem(IDC_GROUP_INFO)
+      ->SetWindowText(nlUtf8ToTStr(getFilename(NLMISC::tStrToUtf8(dllName))));
+  GetDlgItem(IDC_PLUGIN_INFO)->SetWindowText(nlUtf8ToTStr(infoFunc()));
 
-	// Prepare analyse func
-	AnalyseFunc = (TAnalyseFunc)GetProcAddress(LibInst, "doAnalyse");
-	if (!AnalyseFunc)
-	{
-		AfxMessageBox(_T("Can't find function doAnalyse in dll"));
-		return;
-	}
+  // Prepare analyse func
+  AnalyseFunc = (TAnalyseFunc)GetProcAddress(LibInst, "doAnalyse");
+  if (!AnalyseFunc) {
+    AfxMessageBox(_T("Can't find function doAnalyse in dll"));
+    return;
+  }
 
-	GetDlgItem(IDOK)->EnableWindow(m_PlugInListBox.GetCurSel() != LB_ERR);
+  GetDlgItem(IDOK)->EnableWindow(m_PlugInListBox.GetCurSel() != LB_ERR);
 }
 
 /*
  *
  */
-void CPlugInSelector::OnCancel()
-{
-	AnalyseFunc = NULL;
+void CPlugInSelector::OnCancel() {
+  AnalyseFunc = NULL;
 
-	// Release previous DLL if any
-	if (LibInst != NULL)
-	{
-		FreeLibrary(LibInst);
-		LibInst = NULL;
-	}
+  // Release previous DLL if any
+  if (LibInst != NULL) {
+    FreeLibrary(LibInst);
+    LibInst = NULL;
+  }
 
-	CDialog::OnCancel();
+  CDialog::OnCancel();
 }

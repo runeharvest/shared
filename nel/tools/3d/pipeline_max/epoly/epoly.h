@@ -49,14 +49,13 @@ namespace EPOLY {
  * \author Jan Boon (Kaetemi)
  * CEPoly
  */
-class CEPoly
-{
+class CEPoly {
 public:
-	static void registerClasses(CSceneClassRegistry *registry);
+  static void registerClasses(CSceneClassRegistry *registry);
 
 public:
-	CEPoly();
-	virtual ~CEPoly();
+  CEPoly();
+  virtual ~CEPoly();
 
 }; /* class CEPoly */
 
@@ -66,11 +65,10 @@ public:
  * \author Jan Boon (Kaetemi)
  * CDllPluginDescEPoly
  */
-class CDllPluginDescEPoly : public IDllPluginDescInternal
-{
+class CDllPluginDescEPoly : public IDllPluginDescInternal {
 public:
-	virtual const ucchar *displayName() const;
-	virtual const ucchar *internalName() const;
+  virtual const ucchar *displayName() const;
+  virtual const ucchar *internalName() const;
 }; /* class CDllPluginDescScript */
 
 extern const CDllPluginDescEPoly DllPluginDescEPoly;

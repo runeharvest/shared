@@ -17,8 +17,8 @@
 #ifndef NL_U_PLAY_LIST_MANAGER_H
 #define NL_U_PLAY_LIST_MANAGER_H
 
-#include "nel/misc/types_nl.h"
 #include "animation_time.h"
+#include "nel/misc/types_nl.h"
 
 namespace NL3D {
 
@@ -32,42 +32,43 @@ class UPlayList;
  * \author Nevrax France
  * \date 2001
  */
-class UPlayListManager
-{
+class UPlayListManager {
 protected:
-	/// Constructor
-	UPlayListManager() { }
-	/// dtor
-	virtual ~UPlayListManager() { }
+  /// Constructor
+  UPlayListManager() {}
+  /// dtor
+  virtual ~UPlayListManager() {}
 
 public:
-	/** Create a playlist, instance of an animation set. nlerror if(animSet==NULL).
-	 * \param animSet the UAnimationSet you want to instanciate into a UPlayList.
-	 * \return the new created playlist.
-	 */
-	virtual UPlayList *createPlayList(UAnimationSet *animSet) = 0;
-	/** Delete a playlist. nlerror if not found. no-op if playList==NULL.
-	 * \param playList the playList you want to delete.
-	 */
-	virtual void deletePlayList(UPlayList *playList) = 0;
+  /** Create a playlist, instance of an animation set. nlerror
+   * if(animSet==NULL). \param animSet the UAnimationSet you want to instanciate
+   * into a UPlayList. \return the new created playlist.
+   */
+  virtual UPlayList *createPlayList(UAnimationSet *animSet) = 0;
+  /** Delete a playlist. nlerror if not found. no-op if playList==NULL.
+   * \param playList the playList you want to delete.
+   */
+  virtual void deletePlayList(UPlayList *playList) = 0;
 
-	/** Animate all the playlist. Only the globals channels are animated.
-	 * NB: all objects registered to the playLists (see registerTransform) are updated, BUT the detail channels
-	 * (like materials channels) which may be updated during UScene::render(), only if they are visibles...
-	 *
-	 * \param time the effective currentTime in second.
-	 */
-	virtual void animate(TGlobalAnimationTime time) = 0;
+  /** Animate all the playlist. Only the globals channels are animated.
+   * NB: all objects registered to the playLists (see registerTransform) are
+   * updated, BUT the detail channels (like materials channels) which may be
+   * updated during UScene::render(), only if they are visibles...
+   *
+   * \param time the effective currentTime in second.
+   */
+  virtual void animate(TGlobalAnimationTime time) = 0;
 
-	/** Setup all the playlist. Channels are not animated.
-	 * NB: all objects registered to the playLists (see registerTransform) are updated.
-	 *
-	 * \param time the effective currentTime in second.
-	 */
-	virtual void setup(TGlobalAnimationTime time) = 0;
+  /** Setup all the playlist. Channels are not animated.
+   * NB: all objects registered to the playLists (see registerTransform) are
+   * updated.
+   *
+   * \param time the effective currentTime in second.
+   */
+  virtual void setup(TGlobalAnimationTime time) = 0;
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_U_PLAY_LIST_MANAGER_H
 

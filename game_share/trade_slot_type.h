@@ -18,11 +18,7 @@
 #define RY_TRADE_SLOT_TYPE_H
 
 namespace TRADE_SLOT_TYPE {
-enum TTradeSlotType
-{
-	StandardBehaviour = 0,
-	Skill
-};
+enum TTradeSlotType { StandardBehaviour = 0, Skill };
 }
 
 #endif

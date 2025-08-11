@@ -19,36 +19,30 @@
 
 #include "nel/misc/entity_id.h"
 
-#include "stat_db_common.h"
 #include "game_share/persistent_data.h"
+#include "stat_db_common.h"
 
-struct CStatDBValueLeafPD
-{
-	DECLARE_PERSISTENCE_METHODS
+struct CStatDBValueLeafPD {
+  DECLARE_PERSISTENCE_METHODS
 
-	CStatDBValueLeafPD()
-	    : Value(0)
-	{
-	}
+  CStatDBValueLeafPD() : Value(0) {}
 
-	std::string Path;
-	sint32 Value;
+  std::string Path;
+  sint32 Value;
 };
 
-struct CStatDBTableLeafPD
-{
-	DECLARE_PERSISTENCE_METHODS
+struct CStatDBTableLeafPD {
+  DECLARE_PERSISTENCE_METHODS
 
-	std::string Path;
-	std::map<NLMISC::CEntityId, sint32> PlayerValues;
-	std::map<EGSPD::TGuildId, sint32> GuildValues;
+  std::string Path;
+  std::map<NLMISC::CEntityId, sint32> PlayerValues;
+  std::map<EGSPD::TGuildId, sint32> GuildValues;
 };
 
-struct CStatDBValueLeavesPD
-{
-	DECLARE_PERSISTENCE_METHODS
+struct CStatDBValueLeavesPD {
+  DECLARE_PERSISTENCE_METHODS
 
-	std::vector<CStatDBValueLeafPD> ValueLeavesPD;
+  std::vector<CStatDBValueLeafPD> ValueLeavesPD;
 };
 
 #endif // RY_STAT_DB_TREE_PD_H

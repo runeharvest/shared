@@ -17,9 +17,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdpch.h"
 #include "nel/gui/lua_manager.h"
 #include "nel/gui/lua_helper.h"
+#include "stdpch.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -31,61 +31,51 @@ bool CLuaManager::debugLua = false;
 bool CLuaManager::editorMode = false;
 CLuaManager *CLuaManager::instance = NULL;
 
-CLuaManager::CLuaManager()
-{
-	luaState = new NLGUI::CLuaState(debugLua);
+CLuaManager::CLuaManager() { luaState = new NLGUI::CLuaState(debugLua); }
+
+CLuaManager::~CLuaManager() {
+  if (luaState) {
+    delete luaState;
+    luaState = NULL;
+  }
 }
 
-CLuaManager::~CLuaManager()
-{
-	if (luaState)
-	{
-		delete luaState;
-		luaState = NULL;
-	}
+void CLuaManager::releaseInstance() {
+  if (instance) {
+    delete instance;
+    instance = NULL;
+  }
 }
 
-void CLuaManager::releaseInstance()
-{
-	if (instance)
-	{
-		delete instance;
-		instance = NULL;
-	}
+bool CLuaManager::executeLuaScript(const std::string &luaScript,
+                                   bool smallScript) {
+  if (editorMode)
+    return true;
+
+  try {
+    if (smallScript)
+      luaState->executeSmallScript(luaScript);
+    else
+      luaState->executeScript(luaScript);
+  } catch (const ELuaError &e) {
+    nlwarning(e.luaWhat().c_str());
+    return false;
+  }
+
+  return true;
 }
 
-bool CLuaManager::executeLuaScript(const std::string &luaScript, bool smallScript)
-{
-	if (editorMode)
-		return true;
+void CLuaManager::ResetLuaState() {
+  if (luaState)
+    delete luaState;
 
-	try
-	{
-		if (smallScript)
-			luaState->executeSmallScript(luaScript);
-		else
-			luaState->executeScript(luaScript);
-	}
-	catch (const ELuaError &e)
-	{
-		nlwarning(e.luaWhat().c_str());
-		return false;
-	}
-
-	return true;
+  luaState = new CLuaState(debugLua);
 }
 
-void CLuaManager::ResetLuaState()
-{
-	if (luaState) delete luaState;
-
-	luaState = new CLuaState(debugLua);
+void CLuaManager::forceGarbageCollect() {
+  nlinfo("Collecting Garbaged LUA variables");
+  luaState->setGCThreshold(0);
+  nlinfo(
+      NLMISC::toString("Memory Used : %d Kb", luaState->getGCCount()).c_str());
 }
-
-void CLuaManager::forceGarbageCollect()
-{
-	nlinfo("Collecting Garbaged LUA variables");
-	luaState->setGCThreshold(0);
-	nlinfo(NLMISC::toString("Memory Used : %d Kb", luaState->getGCCount()).c_str());
-}
-}
+} // namespace NLGUI

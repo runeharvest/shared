@@ -22,10 +22,6 @@
 
 using namespace NLMISC;
 
-void dummyToAvoidVisualWarning_bot_chat_types_cpp()
-{
-}
+void dummyToAvoidVisualWarning_bot_chat_types_cpp() {}
 
-namespace BOTCHATTYPE {
-
-} // BOTCHATTYPE
+namespace BOTCHATTYPE {} // namespace BOTCHATTYPE

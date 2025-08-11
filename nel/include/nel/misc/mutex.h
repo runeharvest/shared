@@ -21,10 +21,10 @@
 #ifndef NL_MUTEX_H
 #define NL_MUTEX_H
 
-#include "types_nl.h"
-#include "time_nl.h"
-#include "common.h"
 #include "atomic.h"
+#include "common.h"
+#include "time_nl.h"
+#include "types_nl.h"
 #include <map>
 
 #ifdef NL_CPP11
@@ -54,9 +54,9 @@
 namespace NLMISC {
 
 /*
- * This define must be disabled when sharing a mutex between several processes that can
- * have a different debug mode (because when __STL_DEBUG is on, sizeof(string) is twice
- * the common string size).
+ * This define must be disabled when sharing a mutex between several processes
+ * that can have a different debug mode (because when __STL_DEBUG is on,
+ * sizeof(string) is twice the common string size).
  */
 #define STORE_MUTEX_NAME
 
@@ -73,11 +73,13 @@ namespace NLMISC {
 #define CUnfairMutex CStdMutex
 #define CFairMutex CStdMutex
 #elif defined(NL_OS_WINDOWS)
-// By default on Windows, all mutex/synchronization use the CFair* class to avoid freeze problem.
+// By default on Windows, all mutex/synchronization use the CFair* class to
+// avoid freeze problem.
 #define CMutex CFairMutex
 #define CSynchronized CFairSynchronized
 #else
-// On GNU/Linux and Mac, we use CUnfair* everwise it creates some strange deadlock during loading and after
+// On GNU/Linux and Mac, we use CUnfair* everwise it creates some strange
+// deadlock during loading and after
 #define CMutex CUnfairMutex
 #define CSynchronized CUnfairSynchronized
 #endif
@@ -104,27 +106,26 @@ namespace NLMISC {
  * \author Nevrax France
  * \date 2000
  */
-class CUnfairMutex
-{
+class CUnfairMutex {
 public:
-	/// Constructor
-	CUnfairMutex();
-	CUnfairMutex(const std::string &name);
+  /// Constructor
+  CUnfairMutex();
+  CUnfairMutex(const std::string &name);
 
-	/// Destructor
-	~CUnfairMutex();
+  /// Destructor
+  ~CUnfairMutex();
 
-	/// Enter the critical section
-	void enter();
+  /// Enter the critical section
+  void enter();
 
-	/// Leave the critical section
-	void leave();
+  /// Leave the critical section
+  void leave();
 
 private:
 #ifdef NL_OS_WINDOWS
-	void *_Mutex;
+  void *_Mutex;
 #elif defined NL_OS_UNIX
-	pthread_mutex_t mutex;
+  pthread_mutex_t mutex;
 #else
 #error "No unfair mutex implementation for this OS"
 #endif
@@ -163,7 +164,8 @@ private:
 */
 
 /*
-// Tested: does not work (at least on multi-processor)! (with or without 'lock' prefix)
+// Tested: does not work (at least on multi-processor)! (with or without 'lock'
+prefix)
 #define ASM_ASWAP_FOR_GCC_CMPXCHG __asm__ volatile( \
             "mov $1, %%edx;" \
             "mov %1, %%ecx;" \
@@ -174,7 +176,8 @@ private:
             "mov %%eax, %0" \
             : "=m" (result) \
             : "m" (lockPtr) \
-            : "eax", "ecx", "edx", "memory" ); // force to use registers and memory
+            : "eax", "ecx", "edx", "memory" ); // force to use registers and
+memory
 */
 
 // Tested: does not work on hyper-threading processors!
@@ -199,7 +202,8 @@ test_again:
  * on the same mutex from the same thread without having called leave()) ;
  * The threads ARE NOT woken-up in the same order as they were put to sleep.
  * The threads ARE NOT woken-up using signals but using Sleep().
- * This mutex works but is not optimal for multiprocessors because if the mutex is locked,
+ * This mutex works but is not optimal for multiprocessors because if the mutex
+ is locked,
  * next enter will be sleeped without waiting a little.
  *
  * Implementation notes:
@@ -219,7 +223,8 @@ test_again:
  * \author Nevrax France
  * \date 2002, 2003
  */
-#if defined(__ppc__) && !defined(NL_OS_MAC) && (GCC_VERSION <= 40100) && !defined(NL_ATOMIC_H)
+#if defined(__ppc__) && !defined(NL_OS_MAC) && (GCC_VERSION <= 40100) &&       \
+    !defined(NL_ATOMIC_H)
 #error "no CFastMutex implementation available, try to use GCC >4.0.1"
 #endif
 
@@ -229,62 +234,47 @@ test_again:
 
 #ifdef NL_ATOMIC_H
 
-class CFastMutex
-{
+class CFastMutex {
 private:
-	CAtomicFlag m_Flag;
+  CAtomicFlag m_Flag;
 
 public:
-	NL_FORCE_INLINE CFastMutex()
-	{
-		init();
-	}
+  NL_FORCE_INLINE CFastMutex() { init(); }
 
-	/// Same as constructor, useful for init in a shared memory block (though, you should really use emplacement new!)
-	NL_FORCE_INLINE void init()
-	{
-		m_Flag.clear();
-	}
+  /// Same as constructor, useful for init in a shared memory block (though, you
+  /// should really use emplacement new!)
+  NL_FORCE_INLINE void init() { m_Flag.clear(); }
 
-	/// Enter the critical section
-	inline void enter()
-	{
-		CAtomicLockFast::enter(m_Flag);
-	}
+  /// Enter the critical section
+  inline void enter() { CAtomicLockFast::enter(m_Flag); }
 
-	/// Leave the critical section
-	NL_FORCE_INLINE void leave()
-	{
-		CAtomicLockFast::leave(m_Flag);
-	}
+  /// Leave the critical section
+  NL_FORCE_INLINE void leave() { CAtomicLockFast::leave(m_Flag); }
 };
 
 #else
 
-class CFastMutex
-{
+class CFastMutex {
 public:
-	/// Constructor
-	CFastMutex()
-	    : _Lock(0)
-	{
-	}
+  /// Constructor
+  CFastMutex() : _Lock(0) {}
 
-	/// Same as constructor, useful for init in a shared memory block
-	void init() volatile { _Lock = 0; }
+  /// Same as constructor, useful for init in a shared memory block
+  void init() volatile { _Lock = 0; }
 
-	/// Atomic swap
-	__forceinline static bool atomic_swap(volatile uint32 *lockPtr)
-	{
-		uint32 result;
+  /// Atomic swap
+  __forceinline static bool atomic_swap(volatile uint32 *lockPtr) {
+    uint32 result;
 #ifdef NL_OS_WINDOWS
 #ifdef NL_NO_ASM
-		result = _InterlockedExchange(reinterpret_cast<volatile long *>(lockPtr), 1);
+    result =
+        _InterlockedExchange(reinterpret_cast<volatile long *>(lockPtr), 1);
 #else
 #ifdef NL_DEBUG
-		// Workaround for dumb inlining bug (returning of function goes into the choux): push/pop registers
-		__asm
-		{
+    // Workaround for dumb inlining bug (returning of function goes into the
+    // choux): push/pop registers
+    __asm
+    {
 			push eax
 			push ecx
 			mov ecx,lockPtr
@@ -293,111 +283,98 @@ public:
 			mov [result],eax
 			pop ecx
 			pop eax
-		}
+    }
 #else
-		__asm
-		{
+    __asm
+    {
 			mov ecx,lockPtr
 			mov eax,1
 			xchg [ecx],eax
 			mov [result],eax
-		}
+    }
 #endif // NL_DEBUG
 #endif // NL_NO_ASM
 #elif defined(NL_OS_MAC)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-		// warning: 'OSAtomicCompareAndSwap32' is deprecated: first deprecated in macOS 10.12 -
-		// Use std::atomic_compare_exchange_strong_explicit(std::memory_order_relaxed) from <atomic> instead
-		return OSAtomicCompareAndSwap32(0, 1, reinterpret_cast<volatile sint32 *>(lockPtr));
+    // warning: 'OSAtomicCompareAndSwap32' is deprecated: first deprecated in
+    // macOS 10.12 - Use
+    // std::atomic_compare_exchange_strong_explicit(std::memory_order_relaxed)
+    // from <atomic> instead
+    return OSAtomicCompareAndSwap32(
+        0, 1, reinterpret_cast<volatile sint32 *>(lockPtr));
 #pragma clang diagnostic pop
 #elif defined(NL_OS_UNIX)
-		// GCC implements the same functionality using a builtin function
-		// http://gcc.gnu.org/onlinedocs/gcc/Atomic-Builtins.html
-		// the macro below crashed on Mac OS X 10.6 in a 64bit build
+    // GCC implements the same functionality using a builtin function
+    // http://gcc.gnu.org/onlinedocs/gcc/Atomic-Builtins.html
+    // the macro below crashed on Mac OS X 10.6 in a 64bit build
 #if (GCC_VERSION > 40100)
-		// return __sync_bool_compare_and_swap(lockPtr, 0, 1);
-		result = __sync_val_compare_and_swap(lockPtr, 0, 1);
+    // return __sync_bool_compare_and_swap(lockPtr, 0, 1);
+    result = __sync_val_compare_and_swap(lockPtr, 0, 1);
 #else
-		ASM_ASWAP_FOR_GCC_XCHG
+    ASM_ASWAP_FOR_GCC_XCHG
 #endif
 #endif // NL_OS_WINDOWS
-		return result != 0;
-	}
+    return result != 0;
+  }
 
-	// Enter critical section
-	__forceinline void enter() volatile
-	{
-		// std::cout << "Entering, Lock=" << _Lock << std::endl;
-		if (atomic_swap(&_Lock))
-		{
-			// First test
-			uint i;
-			for (i = 0;; ++i)
-			{
-				uint wait_time = i + 6;
+  // Enter critical section
+  __forceinline void enter() volatile {
+    // std::cout << "Entering, Lock=" << _Lock << std::endl;
+    if (atomic_swap(&_Lock)) {
+      // First test
+      uint i;
+      for (i = 0;; ++i) {
+        uint wait_time = i + 6;
 
-				// Increment wait time with a log function
-				if (wait_time > 27)
-					wait_time = 27;
+        // Increment wait time with a log function
+        if (wait_time > 27)
+          wait_time = 27;
 
-				// Sleep
-				if (wait_time <= 20)
-					wait_time = 0;
-				else
-					wait_time = 1 << (wait_time - 20);
+        // Sleep
+        if (wait_time <= 20)
+          wait_time = 0;
+        else
+          wait_time = 1 << (wait_time - 20);
 
-				if (!atomic_swap(&_Lock))
-					break;
+        if (!atomic_swap(&_Lock))
+          break;
 
-				nlSleep(wait_time);
-			}
-		}
-	}
+        nlSleep(wait_time);
+      }
+    }
+  }
 
-	// Leave critical section
-	__forceinline void leave() volatile
-	{
-		_Lock = 0;
-		// std::cout << "Leave" << std::endl;
-	}
+  // Leave critical section
+  __forceinline void leave() volatile {
+    _Lock = 0;
+    // std::cout << "Leave" << std::endl;
+  }
 
 private:
-	volatile uint32 _Lock;
+  volatile uint32 _Lock;
 };
 
 #endif
 
 #ifdef NL_ATOMIC_H
 
-class CFastMutexMP
-{
+class CFastMutexMP {
 private:
-	CAtomicFlag m_Flag;
+  CAtomicFlag m_Flag;
 
 public:
-	NL_FORCE_INLINE CFastMutexMP()
-	{
-		init();
-	}
+  NL_FORCE_INLINE CFastMutexMP() { init(); }
 
-	/// Same as constructor, useful for init in a shared memory block (though, you should really use emplacement new!)
-	NL_FORCE_INLINE void init()
-	{
-		m_Flag.clear();
-	}
+  /// Same as constructor, useful for init in a shared memory block (though, you
+  /// should really use emplacement new!)
+  NL_FORCE_INLINE void init() { m_Flag.clear(); }
 
-	/// Enter the critical section
-	inline void enter()
-	{
-		CAtomicLockFastMP::enter(m_Flag);
-	}
+  /// Enter the critical section
+  inline void enter() { CAtomicLockFastMP::enter(m_Flag); }
 
-	/// Leave the critical section
-	NL_FORCE_INLINE void leave()
-	{
-		CAtomicLockFastMP::leave(m_Flag);
-	}
+  /// Leave the critical section
+  NL_FORCE_INLINE void leave() { CAtomicLockFastMP::leave(m_Flag); }
 };
 
 #else
@@ -426,84 +403,71 @@ public:
  * \date 2002, 2003
  */
 #ifndef __ppc__
-class CFastMutexMP
-{
+class CFastMutexMP {
 public:
-	/// Constructor
-	CFastMutexMP()
-	    : _Lock(0)
-	{
-	}
+  /// Constructor
+  CFastMutexMP() : _Lock(0) {}
 
-	/// Same as constructor, useful for init in a shared memory block
-	void init() volatile { _Lock = 0; }
+  /// Same as constructor, useful for init in a shared memory block
+  void init() volatile { _Lock = 0; }
 
-	// Enter critical section
-	__forceinline void enter() volatile
-	{
-		// std::cout << "Entering, Lock=" << _Lock << std::endl;
-		while (CFastMutex::atomic_swap(&_Lock))
-		{
-			static uint last = 0;
-			static uint _max = 30;
-			uint spinMax = _max;
-			uint lastSpins = last;
-			volatile uint temp = 17;
-			uint i;
-			for (i = 0; i < spinMax; ++i)
-			{
-				if (i < lastSpins / 2 || _Lock)
-				{
-					temp *= temp;
-					temp *= temp;
-					temp *= temp;
-					temp *= temp;
-				}
-				else
-				{
-					if (!CFastMutex::atomic_swap(&_Lock))
-					{
-						last = i;
-						_max = 1000;
-						return;
-					}
-				}
-			}
+  // Enter critical section
+  __forceinline void enter() volatile {
+    // std::cout << "Entering, Lock=" << _Lock << std::endl;
+    while (CFastMutex::atomic_swap(&_Lock)) {
+      static uint last = 0;
+      static uint _max = 30;
+      uint spinMax = _max;
+      uint lastSpins = last;
+      volatile uint temp = 17;
+      uint i;
+      for (i = 0; i < spinMax; ++i) {
+        if (i < lastSpins / 2 || _Lock) {
+          temp *= temp;
+          temp *= temp;
+          temp *= temp;
+          temp *= temp;
+        } else {
+          if (!CFastMutex::atomic_swap(&_Lock)) {
+            last = i;
+            _max = 1000;
+            return;
+          }
+        }
+      }
 
-			_max = 30;
+      _max = 30;
 
-			// First test
-			for (i = 0;; ++i)
-			{
-				uint wait_time = i + 6;
+      // First test
+      for (i = 0;; ++i) {
+        uint wait_time = i + 6;
 
-				// Increment wait time with a log function
-				if (wait_time > 27)
-					wait_time = 27;
+        // Increment wait time with a log function
+        if (wait_time > 27)
+          wait_time = 27;
 
-				// Sleep
-				if (wait_time <= 20)
-					wait_time = 0;
-				else
-					wait_time = 1 << (wait_time - 20);
+        // Sleep
+        if (wait_time <= 20)
+          wait_time = 0;
+        else
+          wait_time = 1 << (wait_time - 20);
 
-				if (!CFastMutex::atomic_swap(&_Lock))
-					break;
+        if (!CFastMutex::atomic_swap(&_Lock))
+          break;
 
-				nlSleep(wait_time);
-			}
-		}
-	}
+        nlSleep(wait_time);
+      }
+    }
+  }
 
-	// Leave critical section
-	__forceinline void leave() volatile
-	{
-		_Lock = 0;
-		// std::cout << "Leave" << std::endl;
-	}
+  // Leave critical section
+  __forceinline void leave() volatile {
+    _Lock = 0;
+    // std::cout << "Leave" << std::endl;
+  }
 
 private:
-	volatile uint32 _Lock;
+  volatile uint32 _Lock;
 };
 #endif
 
@@ -519,36 +483,37 @@ private:
  * \author Nevrax France
  * \date 2002
  */
-class CSharedMutex
-{
+class CSharedMutex {
 public:
-	/// Constructor (does not create the mutex, see createByName()/createByKey())
-	CSharedMutex();
+  /// Constructor (does not create the mutex, see createByName()/createByKey())
+  CSharedMutex();
 
 #ifdef NL_OS_WINDOWS
-	/// Create or access an existing mutex (created by another process) with a specific object name. Returns false if it failed.
-	bool createByName(const char *objectName);
+  /// Create or access an existing mutex (created by another process) with a
+  /// specific object name. Returns false if it failed.
+  bool createByName(const char *objectName);
 #else
-	/// Create (with createNew to true) or access an existing mutex (created by another process) with a specific key. Returns false if it failed.
-	bool createByKey(int key, bool createNew);
+  /// Create (with createNew to true) or access an existing mutex (created by
+  /// another process) with a specific key. Returns false if it failed.
+  bool createByKey(int key, bool createNew);
 #endif
 
-	/// Destroy the mutex
-	void destroy();
+  /// Destroy the mutex
+  void destroy();
 
-	/// Enter the critical section
-	void enter();
+  /// Enter the critical section
+  void enter();
 
-	/// Leave the critical section
-	void leave();
+  /// Leave the critical section
+  void leave();
 
 private:
 #ifdef NL_OS_WINDOWS
-	/// The mutex handle
-	void *_Mutex;
+  /// The mutex handle
+  void *_Mutex;
 #else
-	/// The semaphore id
-	int _SemId;
+  /// The semaphore id
+  int _SemId;
 #endif
 };
 
@@ -558,32 +523,24 @@ private:
  * winbase.h: typedef RTL_CRITICAL_SECTION CRITICAL_SECTION;
  * The original RTL_CRITICAL_SECTION is in winnt.h.
  */
-struct TNelRtlCriticalSection
-{
-	void *DebugInfo;
-	long LockCount;
-	long RecursionCount;
-	void *OwningThread; // from the thread's ClientId->UniqueThread
-	void *LockSemaphore;
-	uint32 SpinCount;
+struct TNelRtlCriticalSection {
+  void *DebugInfo;
+  long LockCount;
+  long RecursionCount;
+  void *OwningThread; // from the thread's ClientId->UniqueThread
+  void *LockSemaphore;
+  uint32 SpinCount;
 };
 #endif // NL_OS_WINDOWS
 
 #ifdef NL_CPP11
-class CStdMutex : std::mutex
-{
+class CStdMutex : std::mutex {
 public:
-	NL_FORCE_INLINE CStdMutex(const std::string &name)
-	    : std::mutex()
-	{
-	}
-	NL_FORCE_INLINE CStdMutex()
-	    : std::mutex()
-	{
-	}
+  NL_FORCE_INLINE CStdMutex(const std::string &name) : std::mutex() {}
+  NL_FORCE_INLINE CStdMutex() : std::mutex() {}
 
-	NL_FORCE_INLINE void enter() { std::mutex::lock(); }
-	NL_FORCE_INLINE void leave() { std::mutex::unlock(); }
+  NL_FORCE_INLINE void enter() { std::mutex::lock(); }
+  NL_FORCE_INLINE void leave() { std::mutex::unlock(); }
 };
 #endif
 
@@ -615,41 +572,40 @@ public:
  * \author Nevrax France
  * \date 2001
  */
-class CFairMutex
-{
+class CFairMutex {
 public:
-	/// Constructor
-	CFairMutex();
-	CFairMutex(const std::string &name);
+  /// Constructor
+  CFairMutex();
+  CFairMutex(const std::string &name);
 
-	/// Destructor
-	~CFairMutex();
+  /// Destructor
+  ~CFairMutex();
 
-	void enter();
-	void leave();
+  void enter();
+  void leave();
 
 #ifdef STORE_MUTEX_NAME
-	std::string Name;
+  std::string Name;
 #endif
 
 private:
 #ifdef NL_OS_WINDOWS
-	TNelRtlCriticalSection _Cs;
+  TNelRtlCriticalSection _Cs;
 #elif defined(NL_OS_MAC)
-	dispatch_semaphore_t _Sem;
+  dispatch_semaphore_t _Sem;
 #elif defined(NL_OS_UNIX)
-	sem_t _Sem;
+  sem_t _Sem;
 #else
 #error "No fair mutex implementation for this OS"
 #endif
 
 #ifdef MUTEX_DEBUG
-	// debug stuffs
-	void debugCreateMutex();
-	void debugBeginEnter();
-	void debugEndEnter();
-	void debugLeave();
-	void debugDeleteMutex();
+  // debug stuffs
+  void debugCreateMutex();
+  void debugBeginEnter();
+  void debugEndEnter();
+  void debugLeave();
+  void debugDeleteMutex();
 #endif // MUTEX_DEBUG
 };
 
@@ -660,30 +616,23 @@ private:
  */
 #ifdef MUTEX_DEBUG
 
-struct TMutexLocks
-{
-	TMutexLocks(uint32 m = 0)
-	    : TimeToEnter(0)
-	    , TimeInMutex(0)
-	    , Nb(0)
-	    , WaitingMutex(0)
-	    , MutexNum(m)
-	    , ThreadHavingTheMutex(0xFFFFFFFF)
-	    , Dead(false)
-	{
-	}
+struct TMutexLocks {
+  TMutexLocks(uint32 m = 0)
+      : TimeToEnter(0), TimeInMutex(0), Nb(0), WaitingMutex(0), MutexNum(m),
+        ThreadHavingTheMutex(0xFFFFFFFF), Dead(false) {}
 
-	uint32 TimeToEnter; // cumulated time blocking on enter
-	uint32 TimeInMutex; // cumulated time between enter and leave
-	uint32 Nb; // number of calls of enter
-	uint32 WaitingMutex; // number of thread that waiting this mutex
-	sint32 MutexNum; // identifying a mutex
-	uint ThreadHavingTheMutex; // thread id of the thread that is in this mutex (0xFFFFFFFF if no thread)
-	bool Dead; // True if the mutex is dead (deleted)
-	std::string MutexName; // Name of the mutex
+  uint32 TimeToEnter;        // cumulated time blocking on enter
+  uint32 TimeInMutex;        // cumulated time between enter and leave
+  uint32 Nb;                 // number of calls of enter
+  uint32 WaitingMutex;       // number of thread that waiting this mutex
+  sint32 MutexNum;           // identifying a mutex
+  uint ThreadHavingTheMutex; // thread id of the thread that is in this mutex
+                             // (0xFFFFFFFF if no thread)
+  bool Dead;                 // True if the mutex is dead (deleted)
+  std::string MutexName;     // Name of the mutex
 
-	NLMISC::TTicks BeginEnter;
-	NLMISC::TTicks EndEnter;
+  NLMISC::TTicks BeginEnter;
+  NLMISC::TTicks EndEnter;
 };
 
 /// Inits the "mutex debugging info system"
@@ -692,17 +641,22 @@ void initAcquireTimeMap();
 /// Gets the debugging info for all mutexes (call it evenly)
 std::map<CMutex *, TMutexLocks> getNewAcquireTimes();
 
-/// The number of created mutexes (does not take in account the destroyed mutexes)
+/// The number of created mutexes (does not take in account the destroyed
+/// mutexes)
 extern uint32 NbMutexes;
 
 #endif // MUTEX_DEBUG
 
 /**
- * This class ensure that the Value is accessed by only one thread. First you have to create a CSynchronized class with your type.
- * Then, if a thread want to modify or do anything on it, you create a CAccessor in a \b sub \b scope. You can modify the value
- * of the CUnfairSynchronized using the value() function \b until the end of the scope. So you have to put the smaller scope as you can.
+ * This class ensure that the Value is accessed by only one thread. First you
+ have to create a CSynchronized class with your type.
+ * Then, if a thread want to modify or do anything on it, you create a CAccessor
+ in a \b sub \b scope. You can modify the value
+ * of the CUnfairSynchronized using the value() function \b until the end of the
+ scope. So you have to put the smaller scope as you can.
  *
- * Internally, this class uses a CUnfairMutex object (see CUnfairMutex for programming considerations).
+ * Internally, this class uses a CUnfairMutex object (see CUnfairMutex for
+ programming considerations).
  *
  *\code
  // the value that you want to be thread safe.
@@ -710,59 +664,47 @@ extern uint32 NbMutexes;
  { // create a new scope for the access
    // get an access to the value
    CUnfairSynchronized<int>::CAccessor acces(&val);
-   // now, you have a thread safe access until the end of the scope, so you can do whatever you want. for example, change the value
-   acces.value () = 10;
- } // end of the access
+   // now, you have a thread safe access until the end of the scope, so you can
+ do whatever you want. for example, change the value acces.value () = 10; } //
+ end of the access
  *\endcode
  * \author Vianney Lecroart
  * \author Nevrax France
  * \date 2000
  */
-template <class T>
-class CUnfairSynchronized
-{
+template <class T> class CUnfairSynchronized {
 public:
-	CUnfairSynchronized(const std::string &name)
-	    : _Mutex(name)
-	{
-	}
+  CUnfairSynchronized(const std::string &name) : _Mutex(name) {}
 
-	/**
-	 * This class give you a thread safe access to the CSynchronized Value. Look at the example in the CSynchronized.
-	 */
-	class CAccessor
-	{
-		CUnfairSynchronized<T> *Synchronized;
+  /**
+   * This class give you a thread safe access to the CSynchronized Value. Look
+   * at the example in the CSynchronized.
+   */
+  class CAccessor {
+    CUnfairSynchronized<T> *Synchronized;
 
-	public:
-		/// get the mutex or wait
-		CAccessor(CUnfairSynchronized<T> *cs)
-		{
-			Synchronized = cs;
-			const_cast<CMutex &>(Synchronized->_Mutex).enter();
-		}
+  public:
+    /// get the mutex or wait
+    CAccessor(CUnfairSynchronized<T> *cs) {
+      Synchronized = cs;
+      const_cast<CMutex &>(Synchronized->_Mutex).enter();
+    }
 
-		/// release the mutex
-		~CAccessor()
-		{
-			const_cast<CMutex &>(Synchronized->_Mutex).leave();
-		}
+    /// release the mutex
+    ~CAccessor() { const_cast<CMutex &>(Synchronized->_Mutex).leave(); }
 
-		/// access to the Value
-		T &value()
-		{
-			return const_cast<T &>(Synchronized->_Value);
-		}
-	};
+    /// access to the Value
+    T &value() { return const_cast<T &>(Synchronized->_Value); }
+  };
 
 private:
-	friend class CUnfairSynchronized::CAccessor;
+  friend class CUnfairSynchronized::CAccessor;
 
-	/// The mutex of the synchronized value.
-	volatile CUnfairMutex _Mutex;
+  /// The mutex of the synchronized value.
+  volatile CUnfairMutex _Mutex;
 
-	/// The synchronized value.
-	volatile T _Value;
+  /// The synchronized value.
+  volatile T _Value;
 };
 
 /**
@@ -773,98 +715,72 @@ private:
  * \author Nevrax France
  * \date 2001
  */
-template <class T>
-class CFairSynchronized
-{
+template <class T> class CFairSynchronized {
 public:
-	CFairSynchronized(const std::string &name)
-	    : _Cs(name)
-	{
-	}
+  CFairSynchronized(const std::string &name) : _Cs(name) {}
 
-	/**
-	 * This class give you a thread safe access to the CFairSynchronized Value. Look at the example in CSynchronized.
-	 */
-	class CAccessor
-	{
-		CFairSynchronized<T> *Synchronized;
+  /**
+   * This class give you a thread safe access to the CFairSynchronized Value.
+   * Look at the example in CSynchronized.
+   */
+  class CAccessor {
+    CFairSynchronized<T> *Synchronized;
 
-	public:
-		/// get the mutex or wait
-		CAccessor(CFairSynchronized<T> *cs)
-		{
-			Synchronized = cs;
-			const_cast<CFairMutex &>(Synchronized->_Cs).enter();
-		}
+  public:
+    /// get the mutex or wait
+    CAccessor(CFairSynchronized<T> *cs) {
+      Synchronized = cs;
+      const_cast<CFairMutex &>(Synchronized->_Cs).enter();
+    }
 
-		/// release the mutex
-		~CAccessor()
-		{
-			const_cast<CFairMutex &>(Synchronized->_Cs).leave();
-		}
+    /// release the mutex
+    ~CAccessor() { const_cast<CFairMutex &>(Synchronized->_Cs).leave(); }
 
-		/// access to the Value
-		T &value()
-		{
-			return const_cast<T &>(Synchronized->_Value);
-		}
-	};
+    /// access to the Value
+    T &value() { return const_cast<T &>(Synchronized->_Value); }
+  };
 
 private:
-	friend class CFairSynchronized::CAccessor;
+  friend class CFairSynchronized::CAccessor;
 
-	/// The mutex of the synchronized value.
-	volatile CFairMutex _Cs;
+  /// The mutex of the synchronized value.
+  volatile CFairMutex _Cs;
 
-	/// The synchronized value.
-	volatile T _Value;
+  /// The synchronized value.
+  volatile T _Value;
 };
 
 #ifdef NL_CPP11
-template <class T>
-class CStdSynchronized
-{
+template <class T> class CStdSynchronized {
 public:
-	CStdSynchronized() { }
-	CStdSynchronized(const std::string &name)
-	    : m_Mutex(name)
-	{
-	}
+  CStdSynchronized() {}
+  CStdSynchronized(const std::string &name) : m_Mutex(name) {}
 
-	class CAccessor
-	{
-	public:
-		/// get the mutex or wait
-		CAccessor(CStdSynchronized<T> *cs)
-		    : m_Synchronized(cs)
-		{
-			const_cast<CStdMutex &>(m_Synchronized->m_Mutex).enter();
-		}
+  class CAccessor {
+  public:
+    /// get the mutex or wait
+    CAccessor(CStdSynchronized<T> *cs) : m_Synchronized(cs) {
+      const_cast<CStdMutex &>(m_Synchronized->m_Mutex).enter();
+    }
 
-		/// release the mutex
-		~CAccessor()
-		{
-			const_cast<CStdMutex &>(m_Synchronized->m_Mutex).leave();
-		}
+    /// release the mutex
+    ~CAccessor() { const_cast<CStdMutex &>(m_Synchronized->m_Mutex).leave(); }
 
-		/// access to the Value
-		T &value()
-		{
-			return const_cast<T &>(m_Synchronized->m_Value);
-		}
+    /// access to the Value
+    T &value() { return const_cast<T &>(m_Synchronized->m_Value); }
 
-	private:
-		CStdSynchronized<T> *m_Synchronized;
-	};
+  private:
+    CStdSynchronized<T> *m_Synchronized;
+  };
 
 private:
-	friend class CStdSynchronized::CAccessor;
+  friend class CStdSynchronized::CAccessor;
 
-	/// The mutex of the synchronized value.
-	CStdMutex m_Mutex;
+  /// The mutex of the synchronized value.
+  CStdMutex m_Mutex;
 
-	/// The synchronized value.
-	T m_Value;
+  /// The synchronized value.
+  T m_Value;
 };
 #endif
 
@@ -872,40 +788,26 @@ private:
 
 /// Fair spinlock
 /// Yield while waiting
-class CAtomicTicketMutex
-{
+class CAtomicTicketMutex {
 private:
-	CAtomicInt m_Ticket;
-	CAtomicInt m_Serving;
+  CAtomicInt m_Ticket;
+  CAtomicInt m_Serving;
 
 public:
-	NL_FORCE_INLINE CAtomicTicketMutex()
-	    : m_Ticket(0, TMemoryOrderRelaxed)
-	    , m_Serving(0, TMemoryOrderRelease)
-	{
-	}
+  NL_FORCE_INLINE CAtomicTicketMutex()
+      : m_Ticket(0, TMemoryOrderRelaxed), m_Serving(0, TMemoryOrderRelease) {}
 
-	NL_FORCE_INLINE void lock()
-	{
-		int ticket = m_Ticket.fetchAdd(1, TMemoryOrderAcqRel);
-		while (m_Serving.load(TMemoryOrderAcquire) != ticket)
-			nlYield();
-	}
+  NL_FORCE_INLINE void lock() {
+    int ticket = m_Ticket.fetchAdd(1, TMemoryOrderAcqRel);
+    while (m_Serving.load(TMemoryOrderAcquire) != ticket)
+      nlYield();
+  }
 
-	NL_FORCE_INLINE void enter()
-	{
-		lock();
-	}
+  NL_FORCE_INLINE void enter() { lock(); }
 
-	NL_FORCE_INLINE void unlock()
-	{
-		m_Serving.fetchAdd(1, TMemoryOrderRelease);
-	}
+  NL_FORCE_INLINE void unlock() { m_Serving.fetchAdd(1, TMemoryOrderRelease); }
 
-	NL_FORCE_INLINE void leave()
-	{
-		unlock();
-	}
+  NL_FORCE_INLINE void leave() { unlock(); }
 };
 
 #endif
@@ -913,78 +815,62 @@ public:
 /** Helper class that allow easy usage of mutex to protect
  *	a local block of code with an existing mutex.
  */
-template <class TMutex = CMutex>
-class CAutoMutex
-{
+template <class TMutex = CMutex> class CAutoMutex {
 private:
-	TMutex &m_Mutex;
+  TMutex &m_Mutex;
 
 #ifdef NL_CPP14
-	CAutoMutex(const CAutoMutex &) = delete;
-	CAutoMutex &operator=(const CAutoMutex &) = delete;
+  CAutoMutex(const CAutoMutex &) = delete;
+  CAutoMutex &operator=(const CAutoMutex &) = delete;
 #else
-	// Forbidden copy or assignent
-	CAutoMutex(const CAutoMutex & /* other */);
-	CAutoMutex &operator=(const CAutoMutex & /* other */);
+  // Forbidden copy or assignent
+  CAutoMutex(const CAutoMutex & /* other */);
+  CAutoMutex &operator=(const CAutoMutex & /* other */);
 #endif
 
 public:
-	NL_FORCE_INLINE CAutoMutex(TMutex &mutex)
-	    : m_Mutex(mutex)
-	{
-		m_Mutex.enter();
-	}
+  NL_FORCE_INLINE CAutoMutex(TMutex &mutex) : m_Mutex(mutex) {
+    m_Mutex.enter();
+  }
 
-	NL_FORCE_INLINE ~CAutoMutex()
-	{
-		m_Mutex.leave();
-	}
+  NL_FORCE_INLINE ~CAutoMutex() { m_Mutex.leave(); }
 };
 
 /// Same as CAutoMutex, but you can unlock it early.
-template <class TMutex = CMutex>
-class CUnlockableAutoMutex
-{
+template <class TMutex = CMutex> class CUnlockableAutoMutex {
 private:
-	TMutex &m_Mutex;
-	bool m_Unlocked;
+  TMutex &m_Mutex;
+  bool m_Unlocked;
 
 #ifdef NL_CPP14
-	CUnlockableAutoMutex(const CUnlockableAutoMutex &) = delete;
-	CUnlockableAutoMutex &operator=(const CUnlockableAutoMutex &) = delete;
+  CUnlockableAutoMutex(const CUnlockableAutoMutex &) = delete;
+  CUnlockableAutoMutex &operator=(const CUnlockableAutoMutex &) = delete;
 #else
-	// Forbidden copy or assignent
-	CUnlockableAutoMutex(const CUnlockableAutoMutex & /* other */);
-	CUnlockableAutoMutex &operator=(const CUnlockableAutoMutex & /* other */);
+  // Forbidden copy or assignent
+  CUnlockableAutoMutex(const CUnlockableAutoMutex & /* other */);
+  CUnlockableAutoMutex &operator=(const CUnlockableAutoMutex & /* other */);
 #endif
 
 public:
-	NL_FORCE_INLINE CUnlockableAutoMutex(TMutex &mutex)
-	    : m_Mutex(mutex)
-	    , m_Unlocked(false)
-	{
-		m_Mutex.enter();
-	}
+  NL_FORCE_INLINE CUnlockableAutoMutex(TMutex &mutex)
+      : m_Mutex(mutex), m_Unlocked(false) {
+    m_Mutex.enter();
+  }
 
-	NL_FORCE_INLINE ~CUnlockableAutoMutex()
-	{
-		if (!m_Unlocked)
-			m_Mutex.leave();
-	}
+  NL_FORCE_INLINE ~CUnlockableAutoMutex() {
+    if (!m_Unlocked)
+      m_Mutex.leave();
+  }
 
-	NL_FORCE_INLINE void leave()
-	{
-		m_Unlocked = true;
-		m_Mutex.leave();
-	}
+  NL_FORCE_INLINE void leave() {
+    m_Unlocked = true;
+    m_Mutex.leave();
+  }
 
-	NL_FORCE_INLINE void unlock()
-	{
-		leave();
-	}
+  NL_FORCE_INLINE void unlock() { leave(); }
 };
 
-} // NLMISC
+} // namespace NLMISC
 
 #endif // NL_MUTEX_H
 

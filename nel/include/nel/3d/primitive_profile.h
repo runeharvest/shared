@@ -28,25 +28,22 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2001
  */
-class CPrimitiveProfile
-{
+class CPrimitiveProfile {
 public:
-	uint NPoints;
-	uint NLines;
-	uint NTriangles;
-	uint NQuads;
-	/// The number of triangles strip rendered (if you just draw 1 strip of 400 triangles, NTriangleStrips==400).
-	uint NTriangleStrips;
+  uint NPoints;
+  uint NLines;
+  uint NTriangles;
+  uint NQuads;
+  /// The number of triangles strip rendered (if you just draw 1 strip of 400
+  /// triangles, NTriangleStrips==400).
+  uint NTriangleStrips;
 
-	CPrimitiveProfile()
-	{
-		reset();
-	}
+  CPrimitiveProfile() { reset(); }
 
-	void reset();
+  void reset();
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_PRIMITIVE_PROFILE_H
 

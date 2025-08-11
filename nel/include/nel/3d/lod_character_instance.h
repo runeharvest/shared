@@ -17,10 +17,10 @@
 #ifndef NL_LOD_CHARACTER_INSTANCE_H
 #define NL_LOD_CHARACTER_INSTANCE_H
 
+#include "nel/3d/animation_time.h"
+#include "nel/misc/rgba.h"
 #include "nel/misc/types_nl.h"
 #include "nel/misc/uv.h"
-#include "nel/misc/rgba.h"
-#include "nel/3d/animation_time.h"
 
 namespace NL3D {
 
@@ -36,53 +36,53 @@ class CLodCharacterManager;
  * \author Nevrax France
  * \date 2002
  */
-class CLodCharacterInstance
-{
+class CLodCharacterInstance {
 public:
-	/// shapeId is the id of the lod character shape to use. No-Op if not found.
-	sint ShapeId; // -1 if disabled
-	/// animId is the anim to use for this shape. No-Op if not found.
-	uint AnimId;
-	/// time is the time of animation
-	TGlobalAnimationTime AnimTime;
-	/// wrapMode if true, the anim loop, else just clamp
-	bool WrapMode;
+  /// shapeId is the id of the lod character shape to use. No-Op if not found.
+  sint ShapeId; // -1 if disabled
+  /// animId is the anim to use for this shape. No-Op if not found.
+  uint AnimId;
+  /// time is the time of animation
+  TGlobalAnimationTime AnimTime;
+  /// wrapMode if true, the anim loop, else just clamp
+  bool WrapMode;
 
-	/** The precomputed alpha array
-	 *	must be same size of the shape number vertices, else the
-	 *	whole mesh is supposed to be opaque. see CLodCharacterShape::startBoneAlpha() for how to build this array
-	 */
-	std::vector<uint8> VertexAlphas;
+  /** The precomputed alpha array
+   *	must be same size of the shape number vertices, else the
+   *	whole mesh is supposed to be opaque. see
+   *CLodCharacterShape::startBoneAlpha() for how to build this array
+   */
+  std::vector<uint8> VertexAlphas;
 
 public:
-	CLodCharacterInstance()
-	{
-		ShapeId = -1;
-		AnimId = 0;
-		AnimTime = 0;
-		WrapMode = true;
-		_TextureId = -1;
-		_Owner = NULL;
-	}
+  CLodCharacterInstance() {
+    ShapeId = -1;
+    AnimId = 0;
+    AnimTime = 0;
+    WrapMode = true;
+    _TextureId = -1;
+    _Owner = NULL;
+  }
 
-	~CLodCharacterInstance();
+  ~CLodCharacterInstance();
 
-	/// get a ptr on the UVs.
-	const CUV *getUVs() const;
+  /// get a ptr on the UVs.
+  const CUV *getUVs() const;
 
-	// ***************
+  // ***************
 private:
-	friend class CLodCharacterManager;
+  friend class CLodCharacterManager;
 
-	// The manager which owns us. Filled by CLodCharacterManager.
-	CLodCharacterManager *_Owner;
-	// The id of the texture the manager gives to us. Filled by CLodCharacterManager.
-	sint _TextureId;
-	/// The precomputed UVs. Filled by CLodCharacterManager.
-	std::vector<CUV> _UVs;
+  // The manager which owns us. Filled by CLodCharacterManager.
+  CLodCharacterManager *_Owner;
+  // The id of the texture the manager gives to us. Filled by
+  // CLodCharacterManager.
+  sint _TextureId;
+  /// The precomputed UVs. Filled by CLodCharacterManager.
+  std::vector<CUV> _UVs;
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_LOD_CHARACTER_INSTANCE_H
 

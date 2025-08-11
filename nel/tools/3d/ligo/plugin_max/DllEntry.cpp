@@ -17,11 +17,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "../../plugin_max/nel_3dsmax_shared/nel_3dsmax_shared.h"
 #include "ligoscape_utility.h"
 #include "nel/misc/app_context.h"
-#include <nel/misc/debug.h>
-#include "../../plugin_max/nel_3dsmax_shared/nel_3dsmax_shared.h"
 #include <maxversion.h>
+#include <nel/misc/debug.h>
 
 extern ClassDesc2 *GetLigoscapeDesc();
 
@@ -34,67 +34,55 @@ int controlsInit = FALSE;
 // do inside this function.  In the code below, note how after the DLL is
 // loaded the first time only a few statements are executed.
 
-BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
-{
-	// initialize nel context
-	if (!NLMISC::INelContext::isContextInitialised())
-	{
-		new NLMISC::CLibraryContext(GetSharedNelContext());
-		nldebug("NeL Ligoscape Utility: DllMain");
-	}
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved) {
+  // initialize nel context
+  if (!NLMISC::INelContext::isContextInitialised()) {
+    new NLMISC::CLibraryContext(GetSharedNelContext());
+    nldebug("NeL Ligoscape Utility: DllMain");
+  }
 
-	hInstance = hinstDLL; // Hang on to this DLL's instance handle.
+  hInstance = hinstDLL; // Hang on to this DLL's instance handle.
 
-	if (!controlsInit)
-	{
-		controlsInit = TRUE;
+  if (!controlsInit) {
+    controlsInit = TRUE;
 #if MAX_VERSION_MAJOR < 14
-		InitCustomControls(hInstance); // Initialize MAX's custom controls
+    InitCustomControls(hInstance); // Initialize MAX's custom controls
 #endif
-		InitCommonControls(); // Initialize Win95 controls
-	}
+    InitCommonControls(); // Initialize Win95 controls
+  }
 
-	// initialize nel context
-	if (!NLMISC::INelContext::isContextInitialised())
-		new NLMISC::CApplicationContext();
+  // initialize nel context
+  if (!NLMISC::INelContext::isContextInitialised())
+    new NLMISC::CApplicationContext();
 
-	return (TRUE);
+  return (TRUE);
 }
 
 // This function returns a string that describes the DLL and where the user
 // could purchase the DLL if they don't have it.
-__declspec(dllexport) const TCHAR *LibDescription()
-{
-	return GetString(IDS_LIBDESCRIPTION);
+__declspec(dllexport) const TCHAR *LibDescription() {
+  return GetString(IDS_LIBDESCRIPTION);
 }
 
 // This function returns the number of plug-in classes this DLL
 // TODO: Must change this number when adding a new class
-__declspec(dllexport) int LibNumberClasses()
-{
-	// Only script extension
-	return 0;
+__declspec(dllexport) int LibNumberClasses() {
+  // Only script extension
+  return 0;
 }
 
 // This function returns the number of plug-in classes this DLL
-__declspec(dllexport) ClassDesc *LibClassDesc(int i)
-{
-	return NULL;
-}
+__declspec(dllexport) ClassDesc *LibClassDesc(int i) { return NULL; }
 
 // This function returns a pre-defined constant indicating the version of
 // the system under which it was compiled.  It is used to allow the system
 // to catch obsolete DLLs.
-__declspec(dllexport) ULONG LibVersion()
-{
-	return VERSION_3DSMAX;
-}
+__declspec(dllexport) ULONG LibVersion() { return VERSION_3DSMAX; }
 
-TCHAR *GetString(int id)
-{
-	static TCHAR buf[256];
+TCHAR *GetString(int id) {
+  static TCHAR buf[256];
 
-	if (hInstance)
-		return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : NULL;
-	return NULL;
+  if (hInstance)
+    return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : NULL;
+  return NULL;
 }

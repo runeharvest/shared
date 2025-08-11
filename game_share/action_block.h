@@ -17,9 +17,9 @@
 #ifndef NL_ACTION_BLOCK_H
 #define NL_ACTION_BLOCK_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/time_nl.h"
 #include "nel/misc/bit_mem_stream.h"
+#include "nel/misc/time_nl.h"
+#include "nel/misc/types_nl.h"
 
 #include "entity_types.h"
 
@@ -35,33 +35,29 @@ class CAction;
  * \author Nevrax France
  * \date 2001
  */
-class CActionBlock
-{
+class CActionBlock {
 public:
-	NLMISC::TGameCycle Cycle;
-	TPacketNumber FirstPacket;
-	std::vector<CAction *> Actions;
-	bool Success;
+  NLMISC::TGameCycle Cycle;
+  TPacketNumber FirstPacket;
+  std::vector<CAction *> Actions;
+  bool Success;
 
-	/// Constructor
-	CActionBlock()
-	    : Cycle(0)
-	    , FirstPacket(0)
-	    , Success(true)
-	{
-	}
+  /// Constructor
+  CActionBlock() : Cycle(0), FirstPacket(0), Success(true) {}
 
-	/// Destructor
-	~CActionBlock();
+  /// Destructor
+  ~CActionBlock();
 
-	/// serialisation method
-	void serial(NLMISC::CBitMemStream &msg);
+  /// serialisation method
+  void serial(NLMISC::CBitMemStream &msg);
 
-	///
-	static uint32 getHeaderSizeInBits() { return (sizeof(NLMISC::TGameCycle) + sizeof(uint8)) * 8; }
+  ///
+  static uint32 getHeaderSizeInBits() {
+    return (sizeof(NLMISC::TGameCycle) + sizeof(uint8)) * 8;
+  }
 };
 
-} // CLFECOMMON
+} // namespace CLFECOMMON
 
 #endif // NL_ACTION_BLOCK_H
 

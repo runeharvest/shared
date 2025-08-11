@@ -17,10 +17,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdmisc.h"
 #include "nel/misc/app_context.h"
-#include "nel/misc/dynloadlib.h"
 #include "nel/misc/command.h"
+#include "nel/misc/dynloadlib.h"
+#include "stdmisc.h"
 
 #include <locale.h>
 
@@ -33,454 +33,379 @@ namespace NLMISC {
 // INelContext *NelContext = NULL;
 INelContext *INelContext::_NelContext = NULL;
 
-INelContext **INelContext::_getInstance()
-{
-	static INelContext *nelContext = NULL;
+INelContext **INelContext::_getInstance() {
+  static INelContext *nelContext = NULL;
 
-	return &nelContext;
+  return &nelContext;
 }
 
-INelContext &INelContext::getInstance()
-{
-	if (*(_getInstance()) == NULL)
-	{
-		_NelContext = new CApplicationContext;
-		*(_getInstance()) = _NelContext;
-	}
+INelContext &INelContext::getInstance() {
+  if (*(_getInstance()) == NULL) {
+    _NelContext = new CApplicationContext;
+    *(_getInstance()) = _NelContext;
+  }
 
-	return *_NelContext;
+  return *_NelContext;
 }
 
-bool INelContext::isContextInitialised()
-{
-	return (*_getInstance()) != NULL;
+bool INelContext::isContextInitialised() { return (*_getInstance()) != NULL; }
+
+INelContext::~INelContext() {
+  // unregister still undeleted local command into the global command registry
+  if (ICommand::LocalCommands) {
+    ICommand::TCommand::iterator first(ICommand::LocalCommands->begin()),
+        last(ICommand::LocalCommands->end());
+    for (; first != last; ++first) {
+      ICommand *command = first->second;
+      CCommandRegistry::getInstance().unregisterCommand(command);
+    }
+  }
+
+  CInstanceCounterLocalManager::releaseInstance();
+
+  _NelContext = NULL;
+  *(_getInstance()) = NULL;
 }
 
-INelContext::~INelContext()
-{
-	// unregister still undeleted local command into the global command registry
-	if (ICommand::LocalCommands)
-	{
-		ICommand::TCommand::iterator first(ICommand::LocalCommands->begin()), last(ICommand::LocalCommands->end());
-		for (; first != last; ++first)
-		{
-			ICommand *command = first->second;
-			CCommandRegistry::getInstance().unregisterCommand(command);
-		}
-	}
-
-	CInstanceCounterLocalManager::releaseInstance();
-
-	_NelContext = NULL;
-	*(_getInstance()) = NULL;
-}
-
-void INelContext::contextReady()
-{
-	// Register the NeL Context
-	// This assert doesn't work for Linux due to ELF symbol relocation
+void INelContext::contextReady() {
+  // Register the NeL Context
+  // This assert doesn't work for Linux due to ELF symbol relocation
 #ifdef NL_OS_WINDOWS
-	nlassert(*(_getInstance()) == NULL);
+  nlassert(*(_getInstance()) == NULL);
 #endif // NL_OS_WINDOWS
-	_NelContext = this;
-	*(_getInstance()) = this;
+  _NelContext = this;
+  *(_getInstance()) = this;
 
-	// set numeric locale to C to avoid the use of decimal separators different of a dot
-	char *locale = setlocale(LC_NUMERIC, "C");
+  // set numeric locale to C to avoid the use of decimal separators different of
+  // a dot
+  char *locale = setlocale(LC_NUMERIC, "C");
 
-	// register any pending thinks
+  // register any pending thinks
 
-	// register local instance counter in the global instance counter manager
-	CInstanceCounterLocalManager::getInstance().registerLocalManager();
+  // register local instance counter in the global instance counter manager
+  CInstanceCounterLocalManager::getInstance().registerLocalManager();
 
-	// register local commands into the global command registry (except it there is no command at all)
-	if (ICommand::LocalCommands != NULL)
-	{
-		ICommand::TCommand::iterator first(ICommand::LocalCommands->begin()), last(ICommand::LocalCommands->end());
-		for (; first != last; ++first)
-		{
-			CCommandRegistry::getInstance().registerCommand(first->second);
-		}
-	}
+  // register local commands into the global command registry (except it there
+  // is no command at all)
+  if (ICommand::LocalCommands != NULL) {
+    ICommand::TCommand::iterator first(ICommand::LocalCommands->begin()),
+        last(ICommand::LocalCommands->end());
+    for (; first != last; ++first) {
+      CCommandRegistry::getInstance().registerCommand(first->second);
+    }
+  }
 }
 
-CApplicationContext::CApplicationContext()
-{
-	// init
-	ErrorLog = NULL;
-	WarningLog = NULL;
-	InfoLog = NULL;
-	DebugLog = NULL;
-	AssertLog = NULL;
-	DefaultMemDisplayer = NULL;
-	DefaultMsgBoxDisplayer = NULL;
-	DebugNeedAssert = false;
-	NoAssert = false;
-	AlreadyCreateSharedAmongThreads = false;
-	WindowedApplication = false;
+CApplicationContext::CApplicationContext() {
+  // init
+  ErrorLog = NULL;
+  WarningLog = NULL;
+  InfoLog = NULL;
+  DebugLog = NULL;
+  AssertLog = NULL;
+  DefaultMemDisplayer = NULL;
+  DefaultMsgBoxDisplayer = NULL;
+  DebugNeedAssert = false;
+  NoAssert = false;
+  AlreadyCreateSharedAmongThreads = false;
+  WindowedApplication = false;
 
-	contextReady();
+  contextReady();
 }
 
-CApplicationContext::~CApplicationContext()
-{
+CApplicationContext::~CApplicationContext() {
 #ifdef NL_DEBUG
-	TSingletonRegistry::iterator it = _SingletonRegistry.begin(), iend = _SingletonRegistry.end();
+  TSingletonRegistry::iterator it = _SingletonRegistry.begin(),
+                               iend = _SingletonRegistry.end();
 
-	while (it != iend)
-	{
-		// can't use nldebug there because it'll create new displayers
-		std::string message = toString("Instance '%s' still allocated at %p\n", it->first.c_str(), it->second);
+  while (it != iend) {
+    // can't use nldebug there because it'll create new displayers
+    std::string message = toString("Instance '%s' still allocated at %p\n",
+                                   it->first.c_str(), it->second);
 
 #ifdef NL_OS_WINDOWS
-		OutputDebugStringW(nlUtf8ToWide(message));
+    OutputDebugStringW(nlUtf8ToWide(message));
 #else
-		printf("%s", message.c_str());
+    printf("%s", message.c_str());
 #endif
 
-		++it;
-	}
+    ++it;
+  }
 #endif
 }
 
-void *CApplicationContext::getSingletonPointer(const std::string &singletonName)
-{
-	TSingletonRegistry::iterator it(_SingletonRegistry.find(singletonName));
-	if (it != _SingletonRegistry.end())
-		return it->second;
+void *
+CApplicationContext::getSingletonPointer(const std::string &singletonName) {
+  TSingletonRegistry::iterator it(_SingletonRegistry.find(singletonName));
+  if (it != _SingletonRegistry.end())
+    return it->second;
 
-	//	nlwarning("Can't find singleton '%s'", singletonName.c_str());
-	return NULL;
+  //	nlwarning("Can't find singleton '%s'", singletonName.c_str());
+  return NULL;
 }
 
-void CApplicationContext::setSingletonPointer(const std::string &singletonName, void *ptr)
-{
-	nlassert(_SingletonRegistry.find(singletonName) == _SingletonRegistry.end());
-	_SingletonRegistry[singletonName] = ptr;
+void CApplicationContext::setSingletonPointer(const std::string &singletonName,
+                                              void *ptr) {
+  nlassert(_SingletonRegistry.find(singletonName) == _SingletonRegistry.end());
+  _SingletonRegistry[singletonName] = ptr;
 }
 
-void CApplicationContext::releaseSingletonPointer(const std::string &singletonName, void *ptr)
-{
-	nlassert(_SingletonRegistry.find(singletonName) != _SingletonRegistry.end());
-	nlassert(_SingletonRegistry.find(singletonName)->second == ptr);
-	_SingletonRegistry.erase(singletonName);
+void CApplicationContext::releaseSingletonPointer(
+    const std::string &singletonName, void *ptr) {
+  nlassert(_SingletonRegistry.find(singletonName) != _SingletonRegistry.end());
+  nlassert(_SingletonRegistry.find(singletonName)->second == ptr);
+  _SingletonRegistry.erase(singletonName);
 }
 
-CLog *CApplicationContext::getErrorLog()
-{
-	return ErrorLog;
+CLog *CApplicationContext::getErrorLog() { return ErrorLog; }
+
+void CApplicationContext::setErrorLog(CLog *errorLog) { ErrorLog = errorLog; }
+
+CLog *CApplicationContext::getWarningLog() { return WarningLog; }
+
+void CApplicationContext::setWarningLog(CLog *warningLog) {
+  WarningLog = warningLog;
 }
 
-void CApplicationContext::setErrorLog(CLog *errorLog)
-{
-	ErrorLog = errorLog;
+CLog *CApplicationContext::getInfoLog() { return InfoLog; }
+
+void CApplicationContext::setInfoLog(CLog *infoLog) { InfoLog = infoLog; }
+
+CLog *CApplicationContext::getDebugLog() { return DebugLog; }
+
+void CApplicationContext::setDebugLog(CLog *debugLog) { DebugLog = debugLog; }
+
+CLog *CApplicationContext::getAssertLog() { return AssertLog; }
+
+void CApplicationContext::setAssertLog(CLog *assertLog) {
+  AssertLog = assertLog;
 }
 
-CLog *CApplicationContext::getWarningLog()
-{
-	return WarningLog;
+CMemDisplayer *CApplicationContext::getDefaultMemDisplayer() {
+  return DefaultMemDisplayer;
 }
 
-void CApplicationContext::setWarningLog(CLog *warningLog)
-{
-	WarningLog = warningLog;
+void CApplicationContext::setDefaultMemDisplayer(CMemDisplayer *memDisplayer) {
+  DefaultMemDisplayer = memDisplayer;
 }
 
-CLog *CApplicationContext::getInfoLog()
-{
-	return InfoLog;
+CMsgBoxDisplayer *CApplicationContext::getDefaultMsgBoxDisplayer() {
+  return DefaultMsgBoxDisplayer;
 }
 
-void CApplicationContext::setInfoLog(CLog *infoLog)
-{
-	InfoLog = infoLog;
+void CApplicationContext::setDefaultMsgBoxDisplayer(
+    CMsgBoxDisplayer *msgBoxDisplayer) {
+  DefaultMsgBoxDisplayer = msgBoxDisplayer;
 }
 
-CLog *CApplicationContext::getDebugLog()
-{
-	return DebugLog;
+bool CApplicationContext::getDebugNeedAssert() { return DebugNeedAssert; }
+
+void CApplicationContext::setDebugNeedAssert(bool needAssert) {
+  DebugNeedAssert = needAssert;
 }
 
-void CApplicationContext::setDebugLog(CLog *debugLog)
-{
-	DebugLog = debugLog;
+bool CApplicationContext::getNoAssert() { return NoAssert; }
+
+void CApplicationContext::setNoAssert(bool noAssert) { NoAssert = noAssert; }
+
+bool CApplicationContext::getAlreadyCreateSharedAmongThreads() {
+  return AlreadyCreateSharedAmongThreads;
 }
 
-CLog *CApplicationContext::getAssertLog()
-{
-	return AssertLog;
+void CApplicationContext::setAlreadyCreateSharedAmongThreads(bool b) {
+  AlreadyCreateSharedAmongThreads = b;
 }
 
-void CApplicationContext::setAssertLog(CLog *assertLog)
-{
-	AssertLog = assertLog;
+bool CApplicationContext::isWindowedApplication() {
+  return WindowedApplication;
 }
 
-CMemDisplayer *CApplicationContext::getDefaultMemDisplayer()
-{
-	return DefaultMemDisplayer;
-}
-
-void CApplicationContext::setDefaultMemDisplayer(CMemDisplayer *memDisplayer)
-{
-	DefaultMemDisplayer = memDisplayer;
-}
-
-CMsgBoxDisplayer *CApplicationContext::getDefaultMsgBoxDisplayer()
-{
-	return DefaultMsgBoxDisplayer;
-}
-
-void CApplicationContext::setDefaultMsgBoxDisplayer(CMsgBoxDisplayer *msgBoxDisplayer)
-{
-	DefaultMsgBoxDisplayer = msgBoxDisplayer;
-}
-
-bool CApplicationContext::getDebugNeedAssert()
-{
-	return DebugNeedAssert;
-}
-
-void CApplicationContext::setDebugNeedAssert(bool needAssert)
-{
-	DebugNeedAssert = needAssert;
-}
-
-bool CApplicationContext::getNoAssert()
-{
-	return NoAssert;
-}
-
-void CApplicationContext::setNoAssert(bool noAssert)
-{
-	NoAssert = noAssert;
-}
-
-bool CApplicationContext::getAlreadyCreateSharedAmongThreads()
-{
-	return AlreadyCreateSharedAmongThreads;
-}
-
-void CApplicationContext::setAlreadyCreateSharedAmongThreads(bool b)
-{
-	AlreadyCreateSharedAmongThreads = b;
-}
-
-bool CApplicationContext::isWindowedApplication()
-{
-	return WindowedApplication;
-}
-
-void CApplicationContext::setWindowedApplication(bool b)
-{
-	WindowedApplication = b;
+void CApplicationContext::setWindowedApplication(bool b) {
+  WindowedApplication = b;
 }
 
 CLibraryContext::CLibraryContext(INelContext &applicationContext)
-    : _ApplicationContext(&applicationContext)
-{
-	contextReady();
+    : _ApplicationContext(&applicationContext) {
+  contextReady();
 }
 
-void *CLibraryContext::getSingletonPointer(const std::string &singletonName)
-{
-	//	nlassert(_ApplicationContext != NULL);
+void *CLibraryContext::getSingletonPointer(const std::string &singletonName) {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	return _ApplicationContext->getSingletonPointer(singletonName);
+  // just forward the call
+  return _ApplicationContext->getSingletonPointer(singletonName);
 }
 
-void CLibraryContext::setSingletonPointer(const std::string &singletonName, void *ptr)
-{
-	//	nlassert(_ApplicationContext != NULL);
+void CLibraryContext::setSingletonPointer(const std::string &singletonName,
+                                          void *ptr) {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	_ApplicationContext->setSingletonPointer(singletonName, ptr);
+  // just forward the call
+  _ApplicationContext->setSingletonPointer(singletonName, ptr);
 }
 
-void CLibraryContext::releaseSingletonPointer(const std::string &singletonName, void *ptr)
-{
-	//	nlassert(_ApplicationContext != NULL);
+void CLibraryContext::releaseSingletonPointer(const std::string &singletonName,
+                                              void *ptr) {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	_ApplicationContext->releaseSingletonPointer(singletonName, ptr);
+  // just forward the call
+  _ApplicationContext->releaseSingletonPointer(singletonName, ptr);
 }
 
-CLog *CLibraryContext::getErrorLog()
-{
-	//	nlassert(_ApplicationContext != NULL);
+CLog *CLibraryContext::getErrorLog() {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	return _ApplicationContext->getErrorLog();
+  // just forward the call
+  return _ApplicationContext->getErrorLog();
 }
 
-void CLibraryContext::setErrorLog(CLog *errorLog)
-{
-	//	nlassert(_ApplicationContext != NULL);
+void CLibraryContext::setErrorLog(CLog *errorLog) {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	_ApplicationContext->setErrorLog(errorLog);
+  // just forward the call
+  _ApplicationContext->setErrorLog(errorLog);
 }
 
-CLog *CLibraryContext::getWarningLog()
-{
-	//	nlassert(_ApplicationContext != NULL);
+CLog *CLibraryContext::getWarningLog() {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	return _ApplicationContext->getWarningLog();
+  // just forward the call
+  return _ApplicationContext->getWarningLog();
 }
 
-void CLibraryContext::setWarningLog(CLog *warningLog)
-{
-	//	nlassert(_ApplicationContext != NULL);
+void CLibraryContext::setWarningLog(CLog *warningLog) {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	_ApplicationContext->setWarningLog(warningLog);
+  // just forward the call
+  _ApplicationContext->setWarningLog(warningLog);
 }
 
-CLog *CLibraryContext::getInfoLog()
-{
-	//	nlassert(_ApplicationContext != NULL);
+CLog *CLibraryContext::getInfoLog() {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	return _ApplicationContext->getInfoLog();
+  // just forward the call
+  return _ApplicationContext->getInfoLog();
 }
 
-void CLibraryContext::setInfoLog(CLog *infoLog)
-{
-	//	nlassert(_ApplicationContext != NULL);
+void CLibraryContext::setInfoLog(CLog *infoLog) {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	_ApplicationContext->setInfoLog(infoLog);
+  // just forward the call
+  _ApplicationContext->setInfoLog(infoLog);
 }
 
-CLog *CLibraryContext::getDebugLog()
-{
-	//	nlassert(_ApplicationContext != NULL);
+CLog *CLibraryContext::getDebugLog() {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	return _ApplicationContext->getDebugLog();
+  // just forward the call
+  return _ApplicationContext->getDebugLog();
 }
 
-void CLibraryContext::setDebugLog(CLog *debugLog)
-{
-	//	nlassert(_ApplicationContext != NULL);
+void CLibraryContext::setDebugLog(CLog *debugLog) {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	_ApplicationContext->setDebugLog(debugLog);
+  // just forward the call
+  _ApplicationContext->setDebugLog(debugLog);
 }
 
-CLog *CLibraryContext::getAssertLog()
-{
-	//	nlassert(_ApplicationContext != NULL);
+CLog *CLibraryContext::getAssertLog() {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	return _ApplicationContext->getAssertLog();
+  // just forward the call
+  return _ApplicationContext->getAssertLog();
 }
 
-void CLibraryContext::setAssertLog(CLog *assertLog)
-{
-	//	nlassert(_ApplicationContext != NULL);
+void CLibraryContext::setAssertLog(CLog *assertLog) {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	_ApplicationContext->setAssertLog(assertLog);
+  // just forward the call
+  _ApplicationContext->setAssertLog(assertLog);
 }
 
-CMemDisplayer *CLibraryContext::getDefaultMemDisplayer()
-{
-	//	nlassert(_ApplicationContext != NULL);
+CMemDisplayer *CLibraryContext::getDefaultMemDisplayer() {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	return _ApplicationContext->getDefaultMemDisplayer();
+  // just forward the call
+  return _ApplicationContext->getDefaultMemDisplayer();
 }
 
-void CLibraryContext::setDefaultMemDisplayer(CMemDisplayer *memDisplayer)
-{
-	//	nlassert(_ApplicationContext != NULL);
+void CLibraryContext::setDefaultMemDisplayer(CMemDisplayer *memDisplayer) {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	_ApplicationContext->setDefaultMemDisplayer(memDisplayer);
+  // just forward the call
+  _ApplicationContext->setDefaultMemDisplayer(memDisplayer);
 }
 
-CMsgBoxDisplayer *CLibraryContext::getDefaultMsgBoxDisplayer()
-{
-	//	nlassert(_ApplicationContext != NULL);
+CMsgBoxDisplayer *CLibraryContext::getDefaultMsgBoxDisplayer() {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	return _ApplicationContext->getDefaultMsgBoxDisplayer();
+  // just forward the call
+  return _ApplicationContext->getDefaultMsgBoxDisplayer();
 }
 
-void CLibraryContext::setDefaultMsgBoxDisplayer(CMsgBoxDisplayer *msgBoxDisplayer)
-{
-	//	nlassert(_ApplicationContext != NULL);
+void CLibraryContext::setDefaultMsgBoxDisplayer(
+    CMsgBoxDisplayer *msgBoxDisplayer) {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	_ApplicationContext->setDefaultMsgBoxDisplayer(msgBoxDisplayer);
+  // just forward the call
+  _ApplicationContext->setDefaultMsgBoxDisplayer(msgBoxDisplayer);
 }
 
-bool CLibraryContext::getDebugNeedAssert()
-{
-	//	nlassert(_ApplicationContext != NULL);
+bool CLibraryContext::getDebugNeedAssert() {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	return _ApplicationContext->getDebugNeedAssert();
+  // just forward the call
+  return _ApplicationContext->getDebugNeedAssert();
 }
 
-void CLibraryContext::setDebugNeedAssert(bool needAssert)
-{
-	//	nlassert(_ApplicationContext != NULL);
+void CLibraryContext::setDebugNeedAssert(bool needAssert) {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	_ApplicationContext->setDebugNeedAssert(needAssert);
+  // just forward the call
+  _ApplicationContext->setDebugNeedAssert(needAssert);
 }
 
-bool CLibraryContext::getNoAssert()
-{
-	//	nlassert(_ApplicationContext != NULL);
+bool CLibraryContext::getNoAssert() {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	return _ApplicationContext->getNoAssert();
+  // just forward the call
+  return _ApplicationContext->getNoAssert();
 }
 
-void CLibraryContext::setNoAssert(bool noAssert)
-{
-	//	nlassert(_ApplicationContext != NULL);
+void CLibraryContext::setNoAssert(bool noAssert) {
+  //	nlassert(_ApplicationContext != NULL);
 
-	// just forward the call
-	_ApplicationContext->setNoAssert(noAssert);
+  // just forward the call
+  _ApplicationContext->setNoAssert(noAssert);
 }
 
-bool CLibraryContext::getAlreadyCreateSharedAmongThreads()
-{
-	return _ApplicationContext->getAlreadyCreateSharedAmongThreads();
+bool CLibraryContext::getAlreadyCreateSharedAmongThreads() {
+  return _ApplicationContext->getAlreadyCreateSharedAmongThreads();
 }
 
-void CLibraryContext::setAlreadyCreateSharedAmongThreads(bool b)
-{
-	_ApplicationContext->setAlreadyCreateSharedAmongThreads(b);
+void CLibraryContext::setAlreadyCreateSharedAmongThreads(bool b) {
+  _ApplicationContext->setAlreadyCreateSharedAmongThreads(b);
 }
 
-bool CLibraryContext::isWindowedApplication()
-{
-	return _ApplicationContext->isWindowedApplication();
+bool CLibraryContext::isWindowedApplication() {
+  return _ApplicationContext->isWindowedApplication();
 }
 
-void CLibraryContext::setWindowedApplication(bool b)
-{
-	_ApplicationContext->setWindowedApplication(b);
+void CLibraryContext::setWindowedApplication(bool b) {
+  _ApplicationContext->setWindowedApplication(b);
 }
 
-void initNelLibrary(NLMISC::CLibrary &lib)
-{
-	nlassert(lib.isLibraryLoaded());
+void initNelLibrary(NLMISC::CLibrary &lib) {
+  nlassert(lib.isLibraryLoaded());
 
-	TInitLibraryFunc *funptrptr = reinterpret_cast<TInitLibraryFunc *>(lib.getSymbolAddress("libraryEntry"));
-	nlassert(funptrptr != NULL);
+  TInitLibraryFunc *funptrptr = reinterpret_cast<TInitLibraryFunc *>(
+      lib.getSymbolAddress("libraryEntry"));
+  nlassert(funptrptr != NULL);
 
-	TInitLibraryFunc funptr = *funptrptr;
+  TInitLibraryFunc funptr = *funptrptr;
 
-	// call the initialisation function
-	funptr(NLMISC::INelContext::getInstance());
+  // call the initialisation function
+  funptr(NLMISC::INelContext::getInstance());
 }
 
 } // namespace NLMISC

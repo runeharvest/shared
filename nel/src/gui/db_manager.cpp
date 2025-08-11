@@ -17,8 +17,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdpch.h"
 #include "nel/gui/db_manager.h"
+#include "stdpch.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -27,50 +27,36 @@
 namespace NLGUI {
 CDBManager *CDBManager::instance = NULL;
 
-CDBManager::CDBManager()
-    : NLMISC::CCDBManager("ROOT", 0)
-{
+CDBManager::CDBManager() : NLMISC::CCDBManager("ROOT", 0) {}
+
+CDBManager::~CDBManager() {}
+
+CDBManager *CDBManager::getInstance() {
+  if (instance == NULL)
+    instance = new CDBManager();
+  return instance;
 }
 
-CDBManager::~CDBManager()
-{
+void CDBManager::release() {
+  nlassert(instance != NULL);
+  delete instance;
+  instance = NULL;
 }
 
-CDBManager *CDBManager::getInstance()
-{
-	if (instance == NULL)
-		instance = new CDBManager();
-	return instance;
+NLMISC::CCDBNodeLeaf *CDBManager::getDbProp(const std::string &name,
+                                            bool create) {
+  return getDbLeaf(name, create);
 }
 
-void CDBManager::release()
-{
-	nlassert(instance != NULL);
-	delete instance;
-	instance = NULL;
+void CDBManager::delDbProp(const std::string &name) { delDbNode(name); }
+
+sint32 CDBManager::getDbValue32(const std::string &name) {
+  NLMISC::CCDBNodeLeaf *node = getDbProp(name, false);
+  if (node != NULL)
+    return node->getValue32();
+  else
+    return 0;
 }
 
-NLMISC::CCDBNodeLeaf *CDBManager::getDbProp(const std::string &name, bool create)
-{
-	return getDbLeaf(name, create);
-}
-
-void CDBManager::delDbProp(const std::string &name)
-{
-	delDbNode(name);
-}
-
-sint32 CDBManager::getDbValue32(const std::string &name)
-{
-	NLMISC::CCDBNodeLeaf *node = getDbProp(name, false);
-	if (node != NULL)
-		return node->getValue32();
-	else
-		return 0;
-}
-
-NLMISC::CCDBNodeBranch *CDBManager::getDB() const
-{
-	return _Database;
-}
-}
+NLMISC::CCDBNodeBranch *CDBManager::getDB() const { return _Database; }
+} // namespace NLGUI

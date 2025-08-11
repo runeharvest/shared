@@ -25,17 +25,13 @@ namespace R2 {
 
 class CDynamicMapService;
 
-class CUserConnectionMgr
-{
+class CUserConnectionMgr {
 public:
-	CUserConnectionMgr(CDynamicMapService *server)
-	{
-		_Server = server;
-	}
-	uint32 getCurrentMap(const std::string & /* eid */) { return 1; }
+  CUserConnectionMgr(CDynamicMapService *server) { _Server = server; }
+  uint32 getCurrentMap(const std::string & /* eid */) { return 1; }
 
 private:
-	CDynamicMapService *_Server;
+  CDynamicMapService *_Server;
 };
-} // namespace DMS
+} // namespace R2
 #endif // DMS_USER_CONNECTION_MGR_H

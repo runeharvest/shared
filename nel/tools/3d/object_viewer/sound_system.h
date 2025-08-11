@@ -19,84 +19,92 @@
 
 #include <nel/misc/types_nl.h>
 #include <nel/misc/vector.h>
-#include <string>
 #include <set>
+#include <string>
 
 #include "nel/sound/sound_anim_manager.h"
 
 namespace NLSOUND {
 class UAudioMixer;
 class USource;
-}
+} // namespace NLSOUND
 
 namespace NLMISC {
 class CMatrix;
 }
 
 /// this class init the sound system used by the object viewer
-class CSoundSystem
-{
+class CSoundSystem {
 public:
-	/// set the name of the file containing the sound bank
-	/*	static void addSoundBank(const std::string &soundBankFileName)
-	    {
-	        _SoundBanksFileName.insert(soundBankFileName);
-	    }
-	*/
-	/// set the name of the file containing the sample bank
-	static void addSampleBank(const std::string &sampleBankFileName)
-	{
-		_SampleBanksFileName.insert(sampleBankFileName);
-	}
+  /// set the name of the file containing the sound bank
+  /*	static void addSoundBank(const std::string &soundBankFileName)
+      {
+          _SoundBanksFileName.insert(soundBankFileName);
+      }
+  */
+  /// set the name of the file containing the sample bank
+  static void addSampleBank(const std::string &sampleBankFileName) {
+    _SampleBanksFileName.insert(sampleBankFileName);
+  }
 
-	static void setSamplePath(std::string &path) { _SamplePath = NLMISC::CPath::standardizePath(path, true); }
-	static void setPackedSheetPath(std::string &path) { _PackedSheetPath = NLMISC::CPath::standardizePath(path, true); }
+  static void setSamplePath(std::string &path) {
+    _SamplePath = NLMISC::CPath::standardizePath(path, true);
+  }
+  static void setPackedSheetPath(std::string &path) {
+    _PackedSheetPath = NLMISC::CPath::standardizePath(path, true);
+  }
 
-	/** Init the sound system this also load the sound bank
-	 * See setSoundBank
-	 */
-	static void initSoundSystem(void);
+  /** Init the sound system this also load the sound bank
+   * See setSoundBank
+   */
+  static void initSoundSystem(void);
 
-	/// release the sound system
-	static void releaseSoundSystem(void);
+  /// release the sound system
+  static void releaseSoundSystem(void);
 
-	/// set the listener matrix.
-	static void setListenerMatrix(const NLMISC::CMatrix &m);
+  /// set the listener matrix.
+  static void setListenerMatrix(const NLMISC::CMatrix &m);
 
-	/// poll sound. Must be called periodically
-	static void poll(void);
+  /// poll sound. Must be called periodically
+  static void poll(void);
 
-	// spawn a sound at the user position
-	static void play(const std::string &soundName);
-	// create a sound at the user position (don't spawn it)
-	static NLSOUND::USource *create(const std::string &soundName);
+  // spawn a sound at the user position
+  static void play(const std::string &soundName);
+  // create a sound at the user position (don't spawn it)
+  static NLSOUND::USource *create(const std::string &soundName);
 
-	// get the audio mixer, or null if init failed
-	static NLSOUND::UAudioMixer *getAudioMixer(void) { return _AudioMixer; }
+  // get the audio mixer, or null if init failed
+  static NLSOUND::UAudioMixer *getAudioMixer(void) { return _AudioMixer; }
 
-	/// Load the sound animation with the specified name
-	static void loadAnimation(std::string &name) { _AnimManager->loadAnimation(name); }
+  /// Load the sound animation with the specified name
+  static void loadAnimation(std::string &name) {
+    _AnimManager->loadAnimation(name);
+  }
 
-	/// Start playing a sound animation.
-	static void playAnimation(std::string &name, float lastTime, float curTime, NLSOUND::CSoundContext &context);
+  /// Start playing a sound animation.
+  static void playAnimation(std::string &name, float lastTime, float curTime,
+                            NLSOUND::CSoundContext &context);
 
-	/// Update the sound animations.
-	// static void updateAnimations(float lastTime, float curTime)	{ _AnimManager->update(lastTime, curTime); };
+  /// Update the sound animations.
+  // static void updateAnimations(float lastTime, float curTime)	{
+  // _AnimManager->update(lastTime, curTime); };
 
-	/// Returns a reference to the animation manager
-	static NLSOUND::CSoundAnimManager *getSoundAnimManager() { return _AnimManager; }
+  /// Returns a reference to the animation manager
+  static NLSOUND::CSoundAnimManager *getSoundAnimManager() {
+    return _AnimManager;
+  }
 
 private:
-	static NLSOUND::UAudioMixer *_AudioMixer;
-	//	static std::set<std::string>		_SoundBanksFileName;
-	static std::set<std::string> _SampleBanksFileName;
-	static NLSOUND::CSoundAnimManager *_AnimManager;
-	// static sint							_AnimIndex;
-	// static NLSOUND::TSoundAnimId		_CurrentAnimation;
-	// static NLSOUND::TSoundAnimPlayId	_CurrentPlayback;
-	static NLMISC::CVector _Zero;
-	static std::string _SamplePath;
-	static std::string _PackedSheetPath;
+  static NLSOUND::UAudioMixer *_AudioMixer;
+  //	static std::set<std::string>		_SoundBanksFileName;
+  static std::set<std::string> _SampleBanksFileName;
+  static NLSOUND::CSoundAnimManager *_AnimManager;
+  // static sint _AnimIndex; static NLSOUND::TSoundAnimId
+  // _CurrentAnimation; static NLSOUND::TSoundAnimPlayId
+  // _CurrentPlayback;
+  static NLMISC::CVector _Zero;
+  static std::string _SamplePath;
+  static std::string _PackedSheetPath;
 };
 
 #endif

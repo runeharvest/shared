@@ -20,27 +20,26 @@
 #ifndef ROOT_GROUP_H
 #define ROOT_GROUP_H
 
-#include <string>
 #include <map>
+#include <string>
 
 #include "nel/gui/interface_group.h"
 
 namespace NLGUI {
 
-class CRootGroup : public CInterfaceGroup
-{
+class CRootGroup : public CInterfaceGroup {
 public:
-	CRootGroup(const TCtorParam &param);
-	virtual ~CRootGroup();
+  CRootGroup(const TCtorParam &param);
+  virtual ~CRootGroup();
 
-	virtual CInterfaceElement *getElement(const std::string &id);
-	virtual void addGroup(CInterfaceGroup *child, sint eltOrder = -1);
-	virtual bool delGroup(CInterfaceGroup *child, bool dontDelete = false);
+  virtual CInterfaceElement *getElement(const std::string &id);
+  virtual void addGroup(CInterfaceGroup *child, sint eltOrder = -1);
+  virtual bool delGroup(CInterfaceGroup *child, bool dontDelete = false);
 
 private:
-	std::map<std::string, CInterfaceGroup *> _Accel;
+  std::map<std::string, CInterfaceGroup *> _Accel;
 };
 
-}
+} // namespace NLGUI
 
 #endif

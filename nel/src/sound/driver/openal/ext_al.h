@@ -36,8 +36,8 @@
 #include <eax.h>
 #endif
 #if EFX_CREATIVE_AVAILABLE
-#include <efx-creative.h>
 #include <EFX-Util.h>
+#include <efx-creative.h>
 #endif
 
 extern "C" {
@@ -66,25 +66,34 @@ extern bool AlEnumerateAllExt;
 
 // EAX-RAM (see OpenAL Programmer's Guide.pdf and http://icculus.org/alextreg/)
 extern bool AlExtXRam;
-typedef ALboolean(AL_APIENTRY *EAXSetBufferMode)(ALsizei n, ALuint *buffers, ALint value);
+typedef ALboolean(AL_APIENTRY *EAXSetBufferMode)(ALsizei n, ALuint *buffers,
+                                                 ALint value);
 extern EAXSetBufferMode eaxSetBufferMode;
 typedef ALenum(AL_APIENTRY *EAXGetBufferMode)(ALuint buffer, ALint *value);
 extern EAXGetBufferMode eaxGetBufferMode;
 
-// ALC_EXT_EFX (see Effects Extension Guide.pdf and http://icculus.org/alextreg/)
+// ALC_EXT_EFX (see Effects Extension Guide.pdf and
+// http://icculus.org/alextreg/)
 extern bool AlExtEfx;
 #define ALC_MAX_AUXILIARY_SENDS 0x20003
 typedef void(AL_APIENTRY *LPALGENEFXOBJECTS)(ALsizei n, ALuint *objects);
 typedef void(AL_APIENTRY *LPALDELETEEFXOBJECTS)(ALsizei n, ALuint *objects);
 typedef ALboolean(AL_APIENTRY *LPALISEFXOBJECT)(ALuint id);
 typedef void(AL_APIENTRY *LPALEFXOBJECTI)(ALuint id, ALenum param, ALint value);
-typedef void(AL_APIENTRY *LPALEFXOBJECTIV)(ALuint id, ALenum param, ALint *values);
-typedef void(AL_APIENTRY *LPALEFXOBJECTF)(ALuint id, ALenum param, ALfloat value);
-typedef void(AL_APIENTRY *LPALEFXOBJECTFV)(ALuint id, ALenum param, ALfloat *values);
-typedef void(AL_APIENTRY *LPALGETEFXOBJECTI)(ALuint id, ALenum pname, ALint *value);
-typedef void(AL_APIENTRY *LPALGETEFXOBJECTIV)(ALuint id, ALenum pname, ALint *values);
-typedef void(AL_APIENTRY *LPALGETEFXOBJECTF)(ALuint id, ALenum pname, ALfloat *value);
-typedef void(AL_APIENTRY *LPALGETEFXOBJECTFV)(ALuint id, ALenum pname, ALfloat *values);
+typedef void(AL_APIENTRY *LPALEFXOBJECTIV)(ALuint id, ALenum param,
+                                           ALint *values);
+typedef void(AL_APIENTRY *LPALEFXOBJECTF)(ALuint id, ALenum param,
+                                          ALfloat value);
+typedef void(AL_APIENTRY *LPALEFXOBJECTFV)(ALuint id, ALenum param,
+                                           ALfloat *values);
+typedef void(AL_APIENTRY *LPALGETEFXOBJECTI)(ALuint id, ALenum pname,
+                                             ALint *value);
+typedef void(AL_APIENTRY *LPALGETEFXOBJECTIV)(ALuint id, ALenum pname,
+                                              ALint *values);
+typedef void(AL_APIENTRY *LPALGETEFXOBJECTF)(ALuint id, ALenum pname,
+                                             ALfloat *value);
+typedef void(AL_APIENTRY *LPALGETEFXOBJECTFV)(ALuint id, ALenum pname,
+                                              ALfloat *values);
 // source objects
 #define AL_DIRECT_FILTER 0x20005
 #define AL_AUXILIARY_SEND_FILTER 0x20006

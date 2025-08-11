@@ -19,47 +19,42 @@ class CLogicState;
 /**
  * class CEvent
  */
-class CEvent
-{
+class CEvent {
 public:
-	CEvent()
-	{
-		m_bActionIsMessage = FALSE;
-	}
+  CEvent() { m_bActionIsMessage = FALSE; }
 
-	virtual ~CEvent()
-	{
-	}
+  virtual ~CEvent() {}
 
-	const CString &getEventAsString() const;
+  const CString &getEventAsString() const;
 
-	// attributes:
+  // attributes:
 public:
-	CString m_sConditionName;
+  CString m_sConditionName;
 
-	/// bool, true if the event action is sending a message, false if it's changing state
-	bool m_bActionIsMessage;
+  /// bool, true if the event action is sending a message, false if it's
+  /// changing state
+  bool m_bActionIsMessage;
 
-	/// \name event message
-	//@{
-	/// destination of the message (name of a .bot, .flaura, .var... file)
-	CString m_sMessageDestination;
-	/// message ID (selected from valid ID for given destination (file extension))
-	CString m_sMessageID;
-	/// message arguments, syntax defined for given message ID
-	CString m_sArguments;
-	//@}
+  /// \name event message
+  //@{
+  /// destination of the message (name of a .bot, .flaura, .var... file)
+  CString m_sMessageDestination;
+  /// message ID (selected from valid ID for given destination (file extension))
+  CString m_sMessageID;
+  /// message arguments, syntax defined for given message ID
+  CString m_sArguments;
+  //@}
 
-	/// \name state change event
-	//@{
-	/// destination state (if m_bActionIsMessage == false)
-	CString m_sStateChange;
-	//@]
+  /// \name state change event
+  //@{
+  /// destination state (if m_bActionIsMessage == false)
+  CString m_sStateChange;
+  //@]
 
-	/// temp string used to store the event as a string when requested
-	mutable CString eventString;
+  /// temp string used to store the event as a string when requested
+  mutable CString eventString;
 
-	friend bool operator==(const CEvent &ev1, const CEvent &ev2);
+  friend bool operator==(const CEvent &ev1, const CEvent &ev2);
 };
 
 typedef CList<CEvent *, CEvent *&> TPEventList;
@@ -67,30 +62,30 @@ typedef CList<CEvent *, CEvent *&> TPEventList;
 /**
  * class State
  */
-class CState
-{
+class CState {
 public:
-	/// constructor
-	CState(const CString &name = CString(""));
+  /// constructor
+  CState(const CString &name = CString(""));
 
-	/// copy constructor
-	CState(const CState &state);
+  /// copy constructor
+  CState(const CState &state);
 
-	virtual ~CState();
+  virtual ~CState();
 
-	/// add an event to this State
-	inline void addEvent(CEvent *event) { m_evEvents.AddTail(event); }
+  /// add an event to this State
+  inline void addEvent(CEvent *event) { m_evEvents.AddTail(event); }
 
-	/// remove the specified event from the state object, return TRUE if done, FALSE if event not found
-	BOOL removeEvent(CEvent *event);
+  /// remove the specified event from the state object, return TRUE if done,
+  /// FALSE if event not found
+  BOOL removeEvent(CEvent *event);
 
-	// attributes
-	// private:
+  // attributes
+  // private:
 public:
-	CString m_sName;
+  CString m_sName;
 
-	/// list of pointers on CEvent objects
-	TPEventList m_evEvents;
+  /// list of pointers on CEvent objects
+  TPEventList m_evEvents;
 };
 
 /**

@@ -46,11 +46,10 @@ namespace BUILTIN {
  * \author Jan Boon (Kaetemi)
  * CMtl
  */
-class CMtl : public CMtlBase
-{
+class CMtl : public CMtlBase {
 public:
-	CMtl(CScene *scene);
-	virtual ~CMtl();
+  CMtl(CScene *scene);
+  virtual ~CMtl();
 
 }; /* class CMtl */
 

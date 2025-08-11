@@ -20,22 +20,21 @@
 #include "nel/misc/types_nl.h"
 
 namespace LIFT_ICONS {
-enum TLiftIcon
-{
-	RoleMasterFight = 0,
-	RoleMasterMagic,
-	RoleMasterCraft,
-	RoleMasterHarvest,
-	MainGuildRoom,
-	PlayerRoom,
-	Exit,
-	Unknown,
-	None = Unknown,
+enum TLiftIcon {
+  RoleMasterFight = 0,
+  RoleMasterMagic,
+  RoleMasterCraft,
+  RoleMasterHarvest,
+  MainGuildRoom,
+  PlayerRoom,
+  Exit,
+  Unknown,
+  None = Unknown,
 };
 
 const std::string &toString(TLiftIcon icon);
 TLiftIcon toLiftIcon(const std::string &str);
-}
+} // namespace LIFT_ICONS
 
 #endif // RY_LIFT_ICONS_H
 

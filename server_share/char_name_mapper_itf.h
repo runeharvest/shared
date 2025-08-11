@@ -20,15 +20,15 @@
 
 #ifndef CHAR_NAME_MAPPER_ITF
 #define CHAR_NAME_MAPPER_ITF
-#include "nel/misc/types_nl.h"
-#include <memory>
 #include "nel/misc/hierarchical_timer.h"
 #include "nel/misc/string_conversion.h"
+#include "nel/misc/types_nl.h"
 #include "nel/net/message.h"
 #include "nel/net/module.h"
 #include "nel/net/module_builder_parts.h"
-#include "nel/net/module_message.h"
 #include "nel/net/module_gateway.h"
+#include "nel/net/module_message.h"
+#include <memory>
 
 #include "nel/misc/entity_id.h"
 
@@ -41,64 +41,38 @@ class TCharMappedInfo;
 /////////////////////////////////////////////////////////////////
 // WARNING : this is a generated file, don't change it !
 /////////////////////////////////////////////////////////////////
-class TCharNameInfo
-{
+class TCharNameInfo {
 protected:
-	//
-	NLMISC::CEntityId _CharEid;
-	//
-	ucstring _CharName;
+  //
+  NLMISC::CEntityId _CharEid;
+  //
+  ucstring _CharName;
 
 public:
-	//
-	const NLMISC::CEntityId &getCharEid() const
-	{
-		return _CharEid;
-	}
+  //
+  const NLMISC::CEntityId &getCharEid() const { return _CharEid; }
 
-	NLMISC::CEntityId &getCharEid()
-	{
-		return _CharEid;
-	}
+  NLMISC::CEntityId &getCharEid() { return _CharEid; }
 
-	void setCharEid(const NLMISC::CEntityId &value)
-	{
+  void setCharEid(const NLMISC::CEntityId &value) { _CharEid = value; }
+  //
+  const ucstring &getCharName() const { return _CharName; }
 
-		_CharEid = value;
-	}
-	//
-	const ucstring &getCharName() const
-	{
-		return _CharName;
-	}
+  ucstring &getCharName() { return _CharName; }
 
-	ucstring &getCharName()
-	{
-		return _CharName;
-	}
+  void setCharName(const ucstring &value) { _CharName = value; }
 
-	void setCharName(const ucstring &value)
-	{
+  bool operator==(const TCharNameInfo &other) const {
+    return _CharEid == other._CharEid && _CharName == other._CharName;
+  }
 
-		_CharName = value;
-	}
+  // constructor
+  TCharNameInfo() {}
 
-	bool operator==(const TCharNameInfo &other) const
-	{
-		return _CharEid == other._CharEid
-		    && _CharName == other._CharName;
-	}
-
-	// constructor
-	TCharNameInfo()
-	{
-	}
-
-	void serial(NLMISC::IStream &s)
-	{
-		s.serial(_CharEid);
-		s.serial(_CharName);
-	}
+  void serial(NLMISC::IStream &s) {
+    s.serial(_CharEid);
+    s.serial(_CharName);
+  }
 
 private:
 };
@@ -106,59 +80,36 @@ private:
 /////////////////////////////////////////////////////////////////
 // WARNING : this is a generated file, don't change it !
 /////////////////////////////////////////////////////////////////
-class TCharMappedInfo
-{
+class TCharMappedInfo {
 protected:
-	//
-	NLMISC::CEntityId _CharEid;
-	//
-	uint32 _StringId;
+  //
+  NLMISC::CEntityId _CharEid;
+  //
+  uint32 _StringId;
 
 public:
-	//
-	const NLMISC::CEntityId &getCharEid() const
-	{
-		return _CharEid;
-	}
+  //
+  const NLMISC::CEntityId &getCharEid() const { return _CharEid; }
 
-	NLMISC::CEntityId &getCharEid()
-	{
-		return _CharEid;
-	}
+  NLMISC::CEntityId &getCharEid() { return _CharEid; }
 
-	void setCharEid(const NLMISC::CEntityId &value)
-	{
+  void setCharEid(const NLMISC::CEntityId &value) { _CharEid = value; }
+  //
+  uint32 getStringId() const { return _StringId; }
 
-		_CharEid = value;
-	}
-	//
-	uint32 getStringId() const
-	{
-		return _StringId;
-	}
+  void setStringId(uint32 value) { _StringId = value; }
 
-	void setStringId(uint32 value)
-	{
+  bool operator==(const TCharMappedInfo &other) const {
+    return _CharEid == other._CharEid && _StringId == other._StringId;
+  }
 
-		_StringId = value;
-	}
+  // constructor
+  TCharMappedInfo() {}
 
-	bool operator==(const TCharMappedInfo &other) const
-	{
-		return _CharEid == other._CharEid
-		    && _StringId == other._StringId;
-	}
-
-	// constructor
-	TCharMappedInfo()
-	{
-	}
-
-	void serial(NLMISC::IStream &s)
-	{
-		s.serial(_CharEid);
-		s.serial(_StringId);
-	}
+  void serial(NLMISC::IStream &s) {
+    s.serial(_CharEid);
+    s.serial(_StringId);
+  }
 
 private:
 };
@@ -166,215 +117,205 @@ private:
 /////////////////////////////////////////////////////////////////
 // WARNING : this is a generated file, don't change it !
 /////////////////////////////////////////////////////////////////
-class CCharNameMapperSkel
-{
+class CCharNameMapperSkel {
 public:
-	/// the interceptor type
-	typedef NLNET::CInterceptorForwarder<CCharNameMapperSkel> TInterceptor;
+  /// the interceptor type
+  typedef NLNET::CInterceptorForwarder<CCharNameMapperSkel> TInterceptor;
 
 protected:
-	CCharNameMapperSkel()
-	{
-		// do early run time check for message table
-		getMessageHandlers();
-	}
-	virtual ~CCharNameMapperSkel()
-	{
-	}
+  CCharNameMapperSkel() {
+    // do early run time check for message table
+    getMessageHandlers();
+  }
+  virtual ~CCharNameMapperSkel() {}
 
-	void init(NLNET::IModule *module)
-	{
-		_Interceptor.init(this, module);
-	}
+  void init(NLNET::IModule *module) { _Interceptor.init(this, module); }
 
-	// unused interceptors
-	std::string fwdBuildModuleManifest() const { return std::string(); }
-	void fwdOnModuleUp(NLNET::IModuleProxy *moduleProxy) { }
-	void fwdOnModuleDown(NLNET::IModuleProxy *moduleProxy) { }
-	void fwdOnModuleSecurityChange(NLNET::IModuleProxy *moduleProxy) { }
+  // unused interceptors
+  std::string fwdBuildModuleManifest() const { return std::string(); }
+  void fwdOnModuleUp(NLNET::IModuleProxy *moduleProxy) {}
+  void fwdOnModuleDown(NLNET::IModuleProxy *moduleProxy) {}
+  void fwdOnModuleSecurityChange(NLNET::IModuleProxy *moduleProxy) {}
 
-	// process module message interceptor
-	bool fwdOnProcessModuleMessage(NLNET::IModuleProxy *sender, const NLNET::CMessage &message);
+  // process module message interceptor
+  bool fwdOnProcessModuleMessage(NLNET::IModuleProxy *sender,
+                                 const NLNET::CMessage &message);
 
 private:
-	typedef void (CCharNameMapperSkel::*TMessageHandler)(NLNET::IModuleProxy *sender, const NLNET::CMessage &message);
-	typedef std::map<std::string, TMessageHandler> TMessageHandlerMap;
+  typedef void (CCharNameMapperSkel::*TMessageHandler)(
+      NLNET::IModuleProxy *sender, const NLNET::CMessage &message);
+  typedef std::map<std::string, TMessageHandler> TMessageHandlerMap;
 
-	const TMessageHandlerMap &getMessageHandlers() const;
+  const TMessageHandlerMap &getMessageHandlers() const;
 
-	void mapCharNames_skel(NLNET::IModuleProxy *sender, const NLNET::CMessage &__message);
+  void mapCharNames_skel(NLNET::IModuleProxy *sender,
+                         const NLNET::CMessage &__message);
 
-	// declare one interceptor member of the skeleton
-	TInterceptor _Interceptor;
+  // declare one interceptor member of the skeleton
+  TInterceptor _Interceptor;
 
-	// declare the interceptor forwarder as friend of this class
-	friend class NLNET::CInterceptorForwarder<CCharNameMapperSkel>;
+  // declare the interceptor forwarder as friend of this class
+  friend class NLNET::CInterceptorForwarder<CCharNameMapperSkel>;
 
 public:
-	/////////////////////////////////////////////////////////////////
-	// WARNING : this is a generated file, don't change it !
-	/////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////
+  // WARNING : this is a generated file, don't change it !
+  /////////////////////////////////////////////////////////////////
 
-	//
-	virtual void mapCharNames(NLNET::IModuleProxy *sender, const std::vector<TCharNameInfo> &charNameInfos) = 0;
+  //
+  virtual void
+  mapCharNames(NLNET::IModuleProxy *sender,
+               const std::vector<TCharNameInfo> &charNameInfos) = 0;
 };
 
 /////////////////////////////////////////////////////////////////
 // WARNING : this is a generated file, don't change it !
 /////////////////////////////////////////////////////////////////
-class CCharNameMapperProxy
-{
-	/// Smart pointer on the module proxy
-	NLNET::TModuleProxyPtr _ModuleProxy;
+class CCharNameMapperProxy {
+  /// Smart pointer on the module proxy
+  NLNET::TModuleProxyPtr _ModuleProxy;
 
-	// Pointer on the local module that implement the interface (if the proxy is for a local module)
-	NLNET::TModulePtr _LocalModule;
-	// Direct pointer on the server implementation interface for collocated module
-	CCharNameMapperSkel *_LocalModuleSkel;
+  // Pointer on the local module that implement the interface (if the proxy is
+  // for a local module)
+  NLNET::TModulePtr _LocalModule;
+  // Direct pointer on the server implementation interface for collocated module
+  CCharNameMapperSkel *_LocalModuleSkel;
 
 public:
-	CCharNameMapperProxy(NLNET::IModuleProxy *proxy)
-	{
+  CCharNameMapperProxy(NLNET::IModuleProxy *proxy) {
 
-		_ModuleProxy = proxy;
+    _ModuleProxy = proxy;
 
-		// initialize collocated servant interface
-		if (proxy->getModuleDistance() == 0)
-		{
-			_LocalModule = proxy->getLocalModule();
-			nlassert(_LocalModule != NULL);
-			CCharNameMapperSkel::TInterceptor *interceptor = NULL;
-			interceptor = static_cast<NLNET::CModuleBase *>(_LocalModule.getPtr())->getInterceptor(interceptor);
-			nlassert(interceptor != NULL);
+    // initialize collocated servant interface
+    if (proxy->getModuleDistance() == 0) {
+      _LocalModule = proxy->getLocalModule();
+      nlassert(_LocalModule != NULL);
+      CCharNameMapperSkel::TInterceptor *interceptor = NULL;
+      interceptor = static_cast<NLNET::CModuleBase *>(_LocalModule.getPtr())
+                        ->getInterceptor(interceptor);
+      nlassert(interceptor != NULL);
 
-			_LocalModuleSkel = interceptor->getParent();
-			nlassert(_LocalModuleSkel != NULL);
-		}
-		else
-			_LocalModuleSkel = 0;
-	}
-	virtual ~CCharNameMapperProxy()
-	{
-	}
+      _LocalModuleSkel = interceptor->getParent();
+      nlassert(_LocalModuleSkel != NULL);
+    } else
+      _LocalModuleSkel = 0;
+  }
+  virtual ~CCharNameMapperProxy() {}
 
-	NLNET::IModuleProxy *getModuleProxy()
-	{
-		return _ModuleProxy;
-	}
+  NLNET::IModuleProxy *getModuleProxy() { return _ModuleProxy; }
 
-	//
-	void mapCharNames(NLNET::IModule *sender, const std::vector<TCharNameInfo> &charNameInfos);
+  //
+  void mapCharNames(NLNET::IModule *sender,
+                    const std::vector<TCharNameInfo> &charNameInfos);
 
-	// Message serializer. Return the message received in reference for easier integration
-	static const NLNET::CMessage &buildMessageFor_mapCharNames(NLNET::CMessage &__message, const std::vector<TCharNameInfo> &charNameInfos);
+  // Message serializer. Return the message received in reference for easier
+  // integration
+  static const NLNET::CMessage &
+  buildMessageFor_mapCharNames(NLNET::CMessage &__message,
+                               const std::vector<TCharNameInfo> &charNameInfos);
 };
 
 /////////////////////////////////////////////////////////////////
 // WARNING : this is a generated file, don't change it !
 /////////////////////////////////////////////////////////////////
-class CCharNameMapperClientSkel
-{
+class CCharNameMapperClientSkel {
 public:
-	/// the interceptor type
-	typedef NLNET::CInterceptorForwarder<CCharNameMapperClientSkel> TInterceptor;
+  /// the interceptor type
+  typedef NLNET::CInterceptorForwarder<CCharNameMapperClientSkel> TInterceptor;
 
 protected:
-	CCharNameMapperClientSkel()
-	{
-		// do early run time check for message table
-		getMessageHandlers();
-	}
-	virtual ~CCharNameMapperClientSkel()
-	{
-	}
+  CCharNameMapperClientSkel() {
+    // do early run time check for message table
+    getMessageHandlers();
+  }
+  virtual ~CCharNameMapperClientSkel() {}
 
-	void init(NLNET::IModule *module)
-	{
-		_Interceptor.init(this, module);
-	}
+  void init(NLNET::IModule *module) { _Interceptor.init(this, module); }
 
-	// unused interceptors
-	std::string fwdBuildModuleManifest() const { return std::string(); }
-	void fwdOnModuleUp(NLNET::IModuleProxy *moduleProxy) { }
-	void fwdOnModuleDown(NLNET::IModuleProxy *moduleProxy) { }
-	void fwdOnModuleSecurityChange(NLNET::IModuleProxy *moduleProxy) { }
+  // unused interceptors
+  std::string fwdBuildModuleManifest() const { return std::string(); }
+  void fwdOnModuleUp(NLNET::IModuleProxy *moduleProxy) {}
+  void fwdOnModuleDown(NLNET::IModuleProxy *moduleProxy) {}
+  void fwdOnModuleSecurityChange(NLNET::IModuleProxy *moduleProxy) {}
 
-	// process module message interceptor
-	bool fwdOnProcessModuleMessage(NLNET::IModuleProxy *sender, const NLNET::CMessage &message);
+  // process module message interceptor
+  bool fwdOnProcessModuleMessage(NLNET::IModuleProxy *sender,
+                                 const NLNET::CMessage &message);
 
 private:
-	typedef void (CCharNameMapperClientSkel::*TMessageHandler)(NLNET::IModuleProxy *sender, const NLNET::CMessage &message);
-	typedef std::map<std::string, TMessageHandler> TMessageHandlerMap;
+  typedef void (CCharNameMapperClientSkel::*TMessageHandler)(
+      NLNET::IModuleProxy *sender, const NLNET::CMessage &message);
+  typedef std::map<std::string, TMessageHandler> TMessageHandlerMap;
 
-	const TMessageHandlerMap &getMessageHandlers() const;
+  const TMessageHandlerMap &getMessageHandlers() const;
 
-	void charNamesMapped_skel(NLNET::IModuleProxy *sender, const NLNET::CMessage &__message);
+  void charNamesMapped_skel(NLNET::IModuleProxy *sender,
+                            const NLNET::CMessage &__message);
 
-	// declare one interceptor member of the skeleton
-	TInterceptor _Interceptor;
+  // declare one interceptor member of the skeleton
+  TInterceptor _Interceptor;
 
-	// declare the interceptor forwarder as friend of this class
-	friend class NLNET::CInterceptorForwarder<CCharNameMapperClientSkel>;
+  // declare the interceptor forwarder as friend of this class
+  friend class NLNET::CInterceptorForwarder<CCharNameMapperClientSkel>;
 
 public:
-	/////////////////////////////////////////////////////////////////
-	// WARNING : this is a generated file, don't change it !
-	/////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////
+  // WARNING : this is a generated file, don't change it !
+  /////////////////////////////////////////////////////////////////
 
-	//
-	virtual void charNamesMapped(NLNET::IModuleProxy *sender, const std::vector<TCharMappedInfo> &charMappedInfos) = 0;
+  //
+  virtual void
+  charNamesMapped(NLNET::IModuleProxy *sender,
+                  const std::vector<TCharMappedInfo> &charMappedInfos) = 0;
 };
 
 /////////////////////////////////////////////////////////////////
 // WARNING : this is a generated file, don't change it !
 /////////////////////////////////////////////////////////////////
-class CCharNameMapperClientProxy
-{
-	/// Smart pointer on the module proxy
-	NLNET::TModuleProxyPtr _ModuleProxy;
+class CCharNameMapperClientProxy {
+  /// Smart pointer on the module proxy
+  NLNET::TModuleProxyPtr _ModuleProxy;
 
-	// Pointer on the local module that implement the interface (if the proxy is for a local module)
-	NLNET::TModulePtr _LocalModule;
-	// Direct pointer on the server implementation interface for collocated module
-	CCharNameMapperClientSkel *_LocalModuleSkel;
+  // Pointer on the local module that implement the interface (if the proxy is
+  // for a local module)
+  NLNET::TModulePtr _LocalModule;
+  // Direct pointer on the server implementation interface for collocated module
+  CCharNameMapperClientSkel *_LocalModuleSkel;
 
 public:
-	CCharNameMapperClientProxy(NLNET::IModuleProxy *proxy)
-	{
+  CCharNameMapperClientProxy(NLNET::IModuleProxy *proxy) {
 
-		_ModuleProxy = proxy;
+    _ModuleProxy = proxy;
 
-		// initialize collocated servant interface
-		if (proxy->getModuleDistance() == 0)
-		{
-			_LocalModule = proxy->getLocalModule();
-			nlassert(_LocalModule != NULL);
-			CCharNameMapperClientSkel::TInterceptor *interceptor = NULL;
-			interceptor = static_cast<NLNET::CModuleBase *>(_LocalModule.getPtr())->getInterceptor(interceptor);
-			nlassert(interceptor != NULL);
+    // initialize collocated servant interface
+    if (proxy->getModuleDistance() == 0) {
+      _LocalModule = proxy->getLocalModule();
+      nlassert(_LocalModule != NULL);
+      CCharNameMapperClientSkel::TInterceptor *interceptor = NULL;
+      interceptor = static_cast<NLNET::CModuleBase *>(_LocalModule.getPtr())
+                        ->getInterceptor(interceptor);
+      nlassert(interceptor != NULL);
 
-			_LocalModuleSkel = interceptor->getParent();
-			nlassert(_LocalModuleSkel != NULL);
-		}
-		else
-			_LocalModuleSkel = 0;
-	}
-	virtual ~CCharNameMapperClientProxy()
-	{
-	}
+      _LocalModuleSkel = interceptor->getParent();
+      nlassert(_LocalModuleSkel != NULL);
+    } else
+      _LocalModuleSkel = 0;
+  }
+  virtual ~CCharNameMapperClientProxy() {}
 
-	NLNET::IModuleProxy *getModuleProxy()
-	{
-		return _ModuleProxy;
-	}
+  NLNET::IModuleProxy *getModuleProxy() { return _ModuleProxy; }
 
-	//
-	void charNamesMapped(NLNET::IModule *sender, const std::vector<TCharMappedInfo> &charMappedInfos);
+  //
+  void charNamesMapped(NLNET::IModule *sender,
+                       const std::vector<TCharMappedInfo> &charMappedInfos);
 
-	// Message serializer. Return the message received in reference for easier integration
-	static const NLNET::CMessage &buildMessageFor_charNamesMapped(NLNET::CMessage &__message, const std::vector<TCharMappedInfo> &charMappedInfos);
+  // Message serializer. Return the message received in reference for easier
+  // integration
+  static const NLNET::CMessage &buildMessageFor_charNamesMapped(
+      NLNET::CMessage &__message,
+      const std::vector<TCharMappedInfo> &charMappedInfos);
 };
 
-}
+} // namespace CNM
 
 #endif

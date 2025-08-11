@@ -23,9 +23,11 @@ namespace NLGEORGES {
 class UFormElm;
 }
 
-/** Tool fct : this read a set of characteristics from a sheet, and put the result in an array.
- * The characs can be asolute, or delta values.
+/** Tool fct : this read a set of characteristics from a sheet, and put the
+ * result in an array. The characs can be asolute, or delta values.
  */
-void loadCharacteristicsFromSheet(const NLGEORGES::UFormElm &rootNode, std::string prefix, sint8 dest[CHARACTERISTICS::NUM_CHARACTERISTICS]);
+void loadCharacteristicsFromSheet(
+    const NLGEORGES::UFormElm &rootNode, std::string prefix,
+    sint8 dest[CHARACTERISTICS::NUM_CHARACTERISTICS]);
 
 #endif

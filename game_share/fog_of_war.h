@@ -23,43 +23,43 @@
  * \author Nevrax France
  * \date June 2004
  */
-class IFogOfWar
-{
+class IFogOfWar {
 
 protected:
-	sint16 MapWidth, MapHeight; // Size of the map in pixel
-	float MinX, MinY, MaxX, MaxY; // World Coords (same as continent ones)
+  sint16 MapWidth, MapHeight;   // Size of the map in pixel
+  float MinX, MinY, MaxX, MaxY; // World Coords (same as continent ones)
 
 public:
-	IFogOfWar();
-	virtual ~IFogOfWar();
+  IFogOfWar();
+  virtual ~IFogOfWar();
 
-	// Must be implemented in derived class
-	// Return a pointer to the data (array of uint8 of size RealWidth * RealHeight)
-	// in this array 0 is unexplored place, 255 is explored
-	virtual uint8 *getData() = 0;
-	// Create the data containing the
-	virtual bool createData(sint16 w, sint16 h) = 0;
-	// Real width and real height can be different from MapWidth and MapHeight if the Data
-	// containing the map is larger (next power of 2 for instance)
-	virtual sint16 getRealWidth() { return MapWidth; }
-	virtual sint16 getRealHeight() { return MapHeight; }
+  // Must be implemented in derived class
+  // Return a pointer to the data (array of uint8 of size RealWidth *
+  // RealHeight) in this array 0 is unexplored place, 255 is explored
+  virtual uint8 *getData() = 0;
+  // Create the data containing the
+  virtual bool createData(sint16 w, sint16 h) = 0;
+  // Real width and real height can be different from MapWidth and MapHeight if
+  // the Data containing the map is larger (next power of 2 for instance)
+  virtual sint16 getRealWidth() { return MapWidth; }
+  virtual sint16 getRealHeight() { return MapHeight; }
 
-	// Explore a position
-	void explore(float worldPosX, float worldPosY);
+  // Explore a position
+  void explore(float worldPosX, float worldPosY);
 
-	// Callback if new explored pos (used to unlock info, upload texture to VRAM, etc...)
-	virtual void explored(sint16 /* mapPosX */, sint16 /* mapPosY */) { }
+  // Callback if new explored pos (used to unlock info, upload texture to VRAM,
+  // etc...)
+  virtual void explored(sint16 /* mapPosX */, sint16 /* mapPosY */) {}
 
-	float getMinX() const { return MinX; }
-	float getMinY() const { return MinY; }
-	float getMaxX() const { return MaxX; }
-	float getMaxY() const { return MaxY; }
-	sint16 getMapWidth() const { return MapWidth; }
-	sint16 getMapHeight() const { return MapHeight; }
+  float getMinX() const { return MinX; }
+  float getMinY() const { return MinY; }
+  float getMaxX() const { return MaxX; }
+  float getMaxY() const { return MaxY; }
+  sint16 getMapWidth() const { return MapWidth; }
+  sint16 getMapHeight() const { return MapHeight; }
 
-	// Serialize the map
-	void serial(NLMISC::IStream &f);
+  // Serialize the map
+  void serial(NLMISC::IStream &f);
 };
 
 #endif

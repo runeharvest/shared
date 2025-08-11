@@ -17,44 +17,42 @@
 #ifndef NL_PS_SPAWN_INFO_H
 #define NL_PS_SPAWN_INFO_H
 
-#include "nel/misc/vector.h"
 #include "nel/3d/animation_time.h"
 #include "nel/3d/particle_system_process.h"
+#include "nel/misc/vector.h"
 
 namespace NL3D {
 
 class CPSLocated;
 
 // info about the state of an emitting particle
-class CPSEmitterInfo
-{
+class CPSEmitterInfo {
 public:
-	CPSLocated *Loc;
-	NLMISC::CVector Pos;
-	NLMISC::CVector Speed;
-	float InvMass;
-	float Life;
+  CPSLocated *Loc;
+  NLMISC::CVector Pos;
+  NLMISC::CVector Speed;
+  float InvMass;
+  float Life;
 
 public:
-	void setDefaults()
-	{
-		Loc = NULL;
-		Pos = NLMISC::CVector::Null;
-		Speed = NLMISC::CVector::Null;
-		InvMass = 1.f;
-		Life = 0.f;
-	}
+  void setDefaults() {
+    Loc = NULL;
+    Pos = NLMISC::CVector::Null;
+    Speed = NLMISC::CVector::Null;
+    InvMass = 1.f;
+    Life = 0.f;
+  }
 };
 
 // info about a particle that should be spawned
-struct CPSSpawnInfo
-{
-	CPSEmitterInfo EmitterInfo;
-	NLMISC::CVector SpawnPos;
-	NLMISC::CVector Speed;
-	TPSMatrixMode SpeedCoordSystem;
-	TAnimationTime LifeTime; // age of the particle when it is spawned (may not be 0 because of sub-frame accuracy)
+struct CPSSpawnInfo {
+  CPSEmitterInfo EmitterInfo;
+  NLMISC::CVector SpawnPos;
+  NLMISC::CVector Speed;
+  TPSMatrixMode SpeedCoordSystem;
+  TAnimationTime LifeTime; // age of the particle when it is spawned (may not be
+                           // 0 because of sub-frame accuracy)
 };
 
-}
+} // namespace NL3D
 #endif

@@ -25,217 +25,204 @@ class ISoundController;
 
 typedef std::basic_string<uint16> uint16_string;
 
-class CSoundPattern
-{
+class CSoundPattern {
 public:
-	class Iterator
-	{
-	public:
-		uint16 _Max;
-		uint16 _Value;
-		CSoundPattern *_Pattern;
+  class Iterator {
+  public:
+    uint16 _Max;
+    uint16 _Value;
+    CSoundPattern *_Pattern;
 
-		Iterator(CSoundPattern *pattern, uint16 max)
-		    : _Pattern(pattern)
-		    , _Value(0)
-		    , _Max(max)
-		{
-		}
+    Iterator(CSoundPattern *pattern, uint16 max)
+        : _Pattern(pattern), _Value(0), _Max(max) {}
 
-		Iterator &operator++()
-		{
-			_Value++;
-			if (_Value >= _Max)
-			{
-				_Value -= _Max;
-			}
-		}
-	};
+    Iterator &operator++() {
+      _Value++;
+      if (_Value >= _Max) {
+        _Value -= _Max;
+      }
+    }
+  };
 
-	class PatternIterator : public Iterator
-	{
-	public:
-		PatternIterator()
-		    : Iterator(0, 0)
-		{
-		}
-		PatternIterator(CSoundPattern *pattern, uint16 max)
-		    : Iterator(pattern, max)
-		{
-		}
+  class PatternIterator : public Iterator {
+  public:
+    PatternIterator() : Iterator(0, 0) {}
+    PatternIterator(CSoundPattern *pattern, uint16 max)
+        : Iterator(pattern, max) {}
 
-		std::string &operator*()
-		{
-			return _Pattern->getSound(this);
-		}
-	};
+    std::string &operator*() { return _Pattern->getSound(this); }
+  };
 
-	class IntervalIterator : public Iterator
-	{
-	public:
-		IntervalIterator()
-		    : Iterator(0, 0)
-		{
-		}
-		IntervalIterator(CSoundPattern *pattern, uint16 max)
-		    : Iterator(pattern, max)
-		{
-		}
+  class IntervalIterator : public Iterator {
+  public:
+    IntervalIterator() : Iterator(0, 0) {}
+    IntervalIterator(CSoundPattern *pattern, uint16 max)
+        : Iterator(pattern, max) {}
 
-		uint32 operator*()
-		{
-			return _Pattern->getInterval(this);
-		}
-	};
+    uint32 operator*() { return _Pattern->getInterval(this); }
+  };
 
-	/** Constructor */
-	CSoundPattern();
+  /** Constructor */
+  CSoundPattern();
 
-	/** Destructor */
-	virtual ~CSoundPattern();
+  /** Destructor */
+  virtual ~CSoundPattern();
 
-	/// \name Sounds list management
-	//@{
+  /// \name Sounds list management
+  //@{
 
-	/** \def addSound(name)
-	 *  Add a sound to the list of sounds used in this pattern
-	 */
+  /** \def addSound(name)
+   *  Add a sound to the list of sounds used in this pattern
+   */
 
-	/** \def removeSound(name)
-	 *  Remove a sound from the list of sounds used in this pattern
-	 */
+  /** \def removeSound(name)
+   *  Remove a sound from the list of sounds used in this pattern
+   */
 
-	/** \def getSounds(sounds)
-	 *  Get the list of all sounds in this pattern
-	 */
+  /** \def getSounds(sounds)
+   *  Get the list of all sounds in this pattern
+   */
 
-	virtual void addSound(std::string &name) { _Sounds.push_back(name); }
-	virtual void removeSound(const NLMISC::TStringId &name);
-	virtual void getSounds(std::vector<std::string> &sounds);
-	//@}
+  virtual void addSound(std::string &name) { _Sounds.push_back(name); }
+  virtual void removeSound(const NLMISC::TStringId &name);
+  virtual void getSounds(std::vector<std::string> &sounds);
+  //@}
 
-	/// \name Iterating through the sound pattern
-	//@{
+  /// \name Iterating through the sound pattern
+  //@{
 
-	/** \def beginSoundPattern()
-	 *  Get the beginning of the pattern. The pattern has infinite length. The code to run
-	 *  through the list of elements ressembles the iteration in STL classes:
-	 *
-	 *\code
+  /** \def beginSoundPattern()
+   *  Get the beginning of the pattern. The pattern has infinite length. The
+   code to run
+   *  through the list of elements ressembles the iteration in STL classes:
+   *
+   *\code
 
-	    PatternIterator iterator = pattern.beginSoundPattern();
+      PatternIterator iterator = pattern.beginSoundPattern();
 
-	    while (true)
-	    {
-	        string& sound = *iterator;
-	        iterator++;
-	    }
+      while (true)
+      {
+          string& sound = *iterator;
+          iterator++;
+      }
 
-	 *\endcode
-	 */
+   *\endcode
+   */
 
-	/** \def getSound(iterator)
-	 *  Returns the sound corresponding to the iterator value in the sound pattern.
-	 */
+  /** \def getSound(iterator)
+   *  Returns the sound corresponding to the iterator value in the sound
+   * pattern.
+   */
 
-	virtual PatternIterator beginSoundPattern() { return PatternIterator(this, _SoundPattern.size()); }
-	virtual std::string &getSound(PatternIterator *iterator);
-	//@}
+  virtual PatternIterator beginSoundPattern() {
+    return PatternIterator(this, _SoundPattern.size());
+  }
+  virtual std::string &getSound(PatternIterator *iterator);
+  //@}
 
-	/// \name Iterating through the sound pattern
-	//@{
+  /// \name Iterating through the sound pattern
+  //@{
 
-	/** \def beginIntervalPattern()
-	 *  Get the beginning of the interval pattern. The pattern has infinite length. The code
-	 *  to run through the list of elements ressembles the iteration in STL classes. See
-	 *  code example in beginSoundPattern().
-	 * \see beginSoundPattern
-	 */
+  /** \def beginIntervalPattern()
+   *  Get the beginning of the interval pattern. The pattern has infinite
+   * length. The code to run through the list of elements ressembles the
+   * iteration in STL classes. See code example in beginSoundPattern(). \see
+   * beginSoundPattern
+   */
 
-	/** \def getInterval(iterator)
-	 *  Returns the interval corresponding to the iterator value in the sound pattern.
-	 */
+  /** \def getInterval(iterator)
+   *  Returns the interval corresponding to the iterator value in the sound
+   * pattern.
+   */
 
-	virtual IntervalIterator beginIntervalPattern() { return IntervalIterator(this, _Intervals.size()); }
-	virtual uint16 getInterval(IntervalIterator *iterator);
-	//@}
+  virtual IntervalIterator beginIntervalPattern() {
+    return IntervalIterator(this, _Intervals.size());
+  }
+  virtual uint16 getInterval(IntervalIterator *iterator);
+  //@}
 
-	/// \name Sound pattern editing and generation
-	//@{
-	/** \def setSoundPattern(list)
-	 *  Set the pattern of the intervals. The list should be a string of numbers
-	 *  separated by a comma. For example, "100,120,100,5,10,50"
-	 */
+  /// \name Sound pattern editing and generation
+  //@{
+  /** \def setSoundPattern(list)
+   *  Set the pattern of the intervals. The list should be a string of numbers
+   *  separated by a comma. For example, "100,120,100,5,10,50"
+   */
 
-	/** \def getIntervals(list)
-	 *  Returns the pattern of the intervals as a string. The returned list has
-	 *  the same format as expected by the setIntervals function.
-	 *  \see setIntervals
-	 */
+  /** \def getIntervals(list)
+   *  Returns the pattern of the intervals as a string. The returned list has
+   *  the same format as expected by the setIntervals function.
+   *  \see setIntervals
+   */
 
-	virtual void setSoundPattern(std::string &list);
-	virtual void getSoundPattern(std::string &list);
-	virtual void generateRandomPattern(uint length);
-	virtual void generateRandomMin1Pattern(uint length);
-	//@}
+  virtual void setSoundPattern(std::string &list);
+  virtual void getSoundPattern(std::string &list);
+  virtual void generateRandomPattern(uint length);
+  virtual void generateRandomMin1Pattern(uint length);
+  //@}
 
-	/// \name Interval pattern editing and generation
-	//@{
+  /// \name Interval pattern editing and generation
+  //@{
 
-	/** \def setIntervals(list)
-	 *  Set the pattern of the intervals. The list should be a string of numbers
-	 *  separated by a comma. For example, "100,120,100,5,10,50"
-	 */
+  /** \def setIntervals(list)
+   *  Set the pattern of the intervals. The list should be a string of numbers
+   *  separated by a comma. For example, "100,120,100,5,10,50"
+   */
 
-	/** \def getIntervals(list)
-	 *  Returns the pattern of the intervals as a string. The returned list has
-	 *  the same format as expected by the setIntervals function.
-	 *  \see setIntervals
-	 */
+  /** \def getIntervals(list)
+   *  Returns the pattern of the intervals as a string. The returned list has
+   *  the same format as expected by the setIntervals function.
+   *  \see setIntervals
+   */
 
-	virtual void setIntervals(std::string &list);
-	virtual void getIntervals(std::string &list);
-	virtual void generateRandomIntervals(uint length, uint16 min, uint16 max);
-	virtual void generateRandomMin1Intervals(uint length, uint16 min, uint16 max);
-	//@}
+  virtual void setIntervals(std::string &list);
+  virtual void getIntervals(std::string &list);
+  virtual void generateRandomIntervals(uint length, uint16 min, uint16 max);
+  virtual void generateRandomMin1Intervals(uint length, uint16 min, uint16 max);
+  //@}
 
-	/// \name Tempo
-	//@{
-	virtual float getTicksPerSecond() { return _TicksPerSeconds; }
-	virtual void setTicksPerSecond(float ticks) { _TicksPerSeconds = ticks; }
-	//@}
+  /// \name Tempo
+  //@{
+  virtual float getTicksPerSecond() { return _TicksPerSeconds; }
+  virtual void setTicksPerSecond(float ticks) { _TicksPerSeconds = ticks; }
+  //@}
 
-	/// \name Spawning
-	//@{
-	virtual void setSpawn(bool v) { _Spawn = v; }
-	virtual bool getSpawn() { return _Spawn; }
-	//@}
+  /// \name Spawning
+  //@{
+  virtual void setSpawn(bool v) { _Spawn = v; }
+  virtual bool getSpawn() { return _Spawn; }
+  //@}
 
-	/// \name Continuous controllers
-	//@{
-	virtual void setVolumeEnvelope(ISoundController *env) { _VolumeEnvelope = env; }
-	virtual ISoundController *getVolumeEnvelope() { return _VolumeEnvelope; }
-	virtual void setFreqModulation(ISoundController *mod) { _FreqModulation = mod; }
-	virtual ISoundController *getFreqModulation() { return _FreqModulation; }
-	//@}
+  /// \name Continuous controllers
+  //@{
+  virtual void setVolumeEnvelope(ISoundController *env) {
+    _VolumeEnvelope = env;
+  }
+  virtual ISoundController *getVolumeEnvelope() { return _VolumeEnvelope; }
+  virtual void setFreqModulation(ISoundController *mod) {
+    _FreqModulation = mod;
+  }
+  virtual ISoundController *getFreqModulation() { return _FreqModulation; }
+  //@}
 
 private:
-	virtual void parsePattern(std::string &list, uint16_string &pattern);
-	virtual void concatenatePattern(std::string &list, uint16_string &pattern);
-	virtual void generateRandomPattern(uint16_string &pattern, uint length, uint16 min, uint16 max);
-	virtual void generateRandomMin1Pattern(uint16_string &pattern, uint length, uint16 min, uint16 max);
-	virtual void expandString(std::string &s, std::string &buffer);
+  virtual void parsePattern(std::string &list, uint16_string &pattern);
+  virtual void concatenatePattern(std::string &list, uint16_string &pattern);
+  virtual void generateRandomPattern(uint16_string &pattern, uint length,
+                                     uint16 min, uint16 max);
+  virtual void generateRandomMin1Pattern(uint16_string &pattern, uint length,
+                                         uint16 min, uint16 max);
+  virtual void expandString(std::string &s, std::string &buffer);
 
-	std::vector<std::string> _Sounds;
-	float _TicksPerSeconds;
-	uint16_string _SoundPattern;
-	uint16_string _Intervals;
-	bool _Spawn;
-	ISoundController *_VolumeEnvelope;
-	ISoundController *_FreqModulation;
-	std::string _StringBuffer;
+  std::vector<std::string> _Sounds;
+  float _TicksPerSeconds;
+  uint16_string _SoundPattern;
+  uint16_string _Intervals;
+  bool _Spawn;
+  ISoundController *_VolumeEnvelope;
+  ISoundController *_FreqModulation;
+  std::string _StringBuffer;
 };
 
-} // namespace
+} // namespace NLSOUND
 
 #endif // NL_SOUND_PATTERN_H

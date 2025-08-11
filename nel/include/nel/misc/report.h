@@ -33,32 +33,36 @@ namespace NLMISC {
 #define NL_REPORT_DEFAULT NLMISC::ReportBreak
 #endif
 
-enum TReportResult
-{
-	// See also crash_report_widget.h EReturnValue
-	ReportAlwaysIgnore = 21,
-	ReportIgnore = 22,
-	ReportAbort = 23,
-	ReportBreak = 24
+enum TReportResult {
+  // See also crash_report_widget.h EReturnValue
+  ReportAlwaysIgnore = 21,
+  ReportIgnore = 22,
+  ReportAbort = 23,
+  ReportBreak = 24
 };
 
 /** Display a crash report
  *
- * \param title set the title of the report. If empty, it'll display "NeL report"
- * \param subject extended title of the report
- * \param body message displayed in the edit text box. This string will be sent to the crash report tool
- * \param attachment binary file to attach. This is a filename
- * \param synchronous use system() and wait for the crash tool exit code, passes -dev flag; otherwise return defaultResult immediately
- * \param sendReport hide 'dont send' button, or auto enable 'send report' checkbox
+ * \param title set the title of the report. If empty, it'll display "NeL
+ * report" \param subject extended title of the report \param body message
+ * displayed in the edit text box. This string will be sent to the crash report
+ * tool \param attachment binary file to attach. This is a filename \param
+ * synchronous use system() and wait for the crash tool exit code, passes -dev
+ * flag; otherwise return defaultResult immediately \param sendReport hide 'dont
+ * send' button, or auto enable 'send report' checkbox
  *
  * \return the button clicked or defaultResult
  */
-TReportResult report(const std::string &title, const std::string &subject, const std::string &body, const std::string &attachment, bool synchronous, bool sendReport, TReportResult defaultResult);
+TReportResult report(const std::string &title, const std::string &subject,
+                     const std::string &body, const std::string &attachment,
+                     bool synchronous, bool sendReport,
+                     TReportResult defaultResult);
 
-/// Set the Url of the web service used to post crash reports to. String is copied
+/// Set the Url of the web service used to post crash reports to. String is
+/// copied
 void setReportPostUrl(const char *postUrl);
 
-} // NLMISC
+} // namespace NLMISC
 
 #endif // NL_REPORT_H
 

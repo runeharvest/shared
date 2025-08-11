@@ -24,10 +24,10 @@
 #include <QtGui/QMainWindow>
 
 // NeL includes
-#include <nel/misc/rgba.h>
-#include <nel/misc/ucstring.h>
-#include <nel/misc/time_nl.h>
 #include <nel/3d/animation_time.h>
+#include <nel/misc/rgba.h>
+#include <nel/misc/time_nl.h>
+#include <nel/misc/ucstring.h>
 #include <nel/net/login_cookie.h>
 
 // Project includes
@@ -49,17 +49,17 @@ class UDriver;
 class UScene;
 class UTextContext;
 class UVisualCollisionManager;
-}
+} // namespace NL3D
 
 namespace NLPACS {
 class UMoveContainer;
 class UGlobalRetriever;
-}
+} // namespace NLPACS
 
 namespace NLSOUND {
 class UAudioMixer;
 class CSoundAnimManager;
-}
+} // namespace NLSOUND
 
 namespace NLQT {
 class CCommandLog;
@@ -72,112 +72,114 @@ class CGraphicsConfig;
  * \date 2010-02-05 13:01GMT
  * \author Jan Boon (Kaetemi)
  */
-class CMainWindow : public QMainWindow
-{
-	Q_OBJECT
+class CMainWindow : public QMainWindow {
+  Q_OBJECT
 
 public:
-	CMainWindow(const QMap<QString, QSize> &customSizeHints, QWidget *parent = 0, Qt::WindowFlags flags = 0);
-	virtual ~CMainWindow();
+  CMainWindow(const QMap<QString, QSize> &customSizeHints, QWidget *parent = 0,
+              Qt::WindowFlags flags = 0);
+  virtual ~CMainWindow();
 
-	virtual void setVisible(bool visible);
+  virtual void setVisible(bool visible);
 
 private slots:
-	void applyGraphicsConfig();
-	// void applySoundConfig();
+  void applyGraphicsConfig();
+  // void applySoundConfig();
 
-	void about();
-	void updateRender();
-	void printDebug();
-
-private:
-	void updateInitialization(bool visible);
-
-	void createActions();
-	void translateActions();
-	void createMenus();
-	void translateMenus();
-	void createToolBars();
-	void translateToolBars();
-	void createStatusBar();
-	void createDockWindows();
-	void translateDockWindows();
-
-	void recalculateMinimumWidth();
-
-	void cfcbQtStyle(NLMISC::CConfigFile::CVar &var);
-	void cfcbQtPalette(NLMISC::CConfigFile::CVar &var);
-
-	void cfcbSoundEnabled(NLMISC::CConfigFile::CVar &var);
-
-	void incbLanguageCode();
+  void about();
+  void updateRender();
+  void printDebug();
 
 private:
-	CMainWindow(const CMainWindow &);
-	CMainWindow &operator=(const CMainWindow &);
+  void updateInitialization(bool visible);
+
+  void createActions();
+  void translateActions();
+  void createMenus();
+  void translateMenus();
+  void createToolBars();
+  void translateToolBars();
+  void createStatusBar();
+  void createDockWindows();
+  void translateDockWindows();
+
+  void recalculateMinimumWidth();
+
+  void cfcbQtStyle(NLMISC::CConfigFile::CVar &var);
+  void cfcbQtPalette(NLMISC::CConfigFile::CVar &var);
+
+  void cfcbSoundEnabled(NLMISC::CConfigFile::CVar &var);
+
+  void incbLanguageCode();
 
 private:
-	CConfiguration m_Configuration;
-	CInternationalization m_Internationalization;
-	CSoundUtilities m_SoundUtilities;
+  CMainWindow(const CMainWindow &);
+  CMainWindow &operator=(const CMainWindow &);
 
-	QUndoStack *m_UndoStack;
+private:
+  CConfiguration m_Configuration;
+  CInternationalization m_Internationalization;
+  CSoundUtilities m_SoundUtilities;
 
-	QPalette m_OriginalPalette;
+  QUndoStack *m_UndoStack;
 
-	bool m_IsGraphicsInitialized, m_IsGraphicsEnabled;
-	bool m_IsSoundInitialized, m_IsSoundEnabled;
+  QPalette m_OriginalPalette;
 
-	CGraphicsViewport *m_GraphicsViewport;
+  bool m_IsGraphicsInitialized, m_IsGraphicsEnabled;
+  bool m_IsSoundInitialized, m_IsSoundEnabled;
 
-	CCommandLog *m_CommandLog;
-	QDockWidget *m_CommandLogDock;
+  CGraphicsViewport *m_GraphicsViewport;
 
-	CGraphicsConfig *m_GraphicsConfig;
-	QScrollArea *m_GraphicsConfigScroll;
-	QDockWidget *m_GraphicsConfigDock;
+  CCommandLog *m_CommandLog;
+  QDockWidget *m_CommandLogDock;
 
-	QTreeView *m_AssetTreeView;
-	QDirModel *m_AssetTreeModel;
-	QDockWidget *m_AssetTreeDock;
+  CGraphicsConfig *m_GraphicsConfig;
+  QScrollArea *m_GraphicsConfigScroll;
+  QDockWidget *m_GraphicsConfigDock;
 
-	QMenu *m_FileMenu;
-	QMenu *m_EditMenu;
-	QMenu *m_ViewportMenu;
-	QMenu *m_WidgetsMenu;
-	QMenu *m_HelpMenu;
+  QTreeView *m_AssetTreeView;
+  QDirModel *m_AssetTreeModel;
+  QDockWidget *m_AssetTreeDock;
 
-	QToolBar *m_FileToolBar;
-	QToolBar *m_EditToolBar;
+  QMenu *m_FileMenu;
+  QMenu *m_EditMenu;
+  QMenu *m_ViewportMenu;
+  QMenu *m_WidgetsMenu;
+  QMenu *m_HelpMenu;
 
-	QAction *m_AboutAct;
-	QAction *m_QuitAct;
-	QAction *m_PrintDebugAct;
-	QAction *m_UndoAct;
-	QAction *m_RedoAct;
-	QAction *m_SaveScreenshotAct;
+  QToolBar *m_FileToolBar;
+  QToolBar *m_EditToolBar;
 
-	// NLMISC::CConfigFile *ConfigFile; // owned by CConfiguration
-	// CLoadingScreen LoadingScreen; // owned by CLoading (special case, always available)
-	// NL3D::UDriver *Driver; // owned by CGraphics
-	// NL3D::UTextContext *TextContext; // owned by CGraphics
-	// NLSOUND::UAudioMixer *AudioMixer; // owned by CSound
-	// NLSOUND::CSoundAnimManager *SoundAnimManager; // owned by CSound
-	// THCOMMON::CSheetLoader *SheetLoader; // owned by initSheets and releaseSheets
-	// NL3D::UScene *Scene; // owned by CEnvironment
-	// NLPACS::UMoveContainer *MoveContainer; // owned by CEnvironment
-	// NLPACS::UGlobalRetriever *GlobalRetriever; /// The global retriever used for pacs // owned by CEnvironment
-	// NL3D::UVisualCollisionManager *VisualCollisionManager; /// The collision manager for ground snapping // owned by CEnvironment
-	// THCLIENT::CKeyBinder *KeyBinder; // owned by CInterface
+  QAction *m_AboutAct;
+  QAction *m_QuitAct;
+  QAction *m_PrintDebugAct;
+  QAction *m_UndoAct;
+  QAction *m_RedoAct;
+  QAction *m_SaveScreenshotAct;
 
-	// NLMISC::TLocalTime LocalTime; // use for delta only // owned by CGameTime
-	// NLMISC::TLocalTime LocalTimeDelta; // owned by CGameTime
-	// NL3D::TGlobalAnimationTime AnimationTime; // owned by CGameTime
-	// NL3D::TAnimationTime AnimationTimeDelta; // owned by CGameTime
-	// float FramesPerSecond; // owned by CGameTime
-	// float FramesPerSecondSmooth; // owned by CGameTime
+  // NLMISC::CConfigFile *ConfigFile; // owned by CConfiguration
+  // CLoadingScreen LoadingScreen; // owned by CLoading (special case, always
+  // available) NL3D::UDriver *Driver; // owned by CGraphics NL3D::UTextContext
+  // *TextContext; // owned by CGraphics NLSOUND::UAudioMixer *AudioMixer; //
+  // owned by CSound NLSOUND::CSoundAnimManager *SoundAnimManager; // owned by
+  // CSound THCOMMON::CSheetLoader *SheetLoader; // owned by initSheets and
+  // releaseSheets NL3D::UScene *Scene; // owned by CEnvironment
+  // NLPACS::UMoveContainer *MoveContainer; // owned by CEnvironment
+  // NLPACS::UGlobalRetriever *GlobalRetriever; /// The global retriever used
+  // for pacs // owned by CEnvironment NL3D::UVisualCollisionManager
+  // *VisualCollisionManager; /// The collision manager for ground snapping //
+  // owned by CEnvironment THCLIENT::CKeyBinder *KeyBinder; // owned by
+  // CInterface
 
-	// NLMISC::CVector DetailTargetPosition; // player or camera position for lod improvements // owned by camera
+  // NLMISC::TLocalTime LocalTime; // use for delta only // owned by CGameTime
+  // NLMISC::TLocalTime LocalTimeDelta; // owned by CGameTime
+  // NL3D::TGlobalAnimationTime AnimationTime; // owned by CGameTime
+  // NL3D::TAnimationTime AnimationTimeDelta; // owned by CGameTime
+  // float FramesPerSecond; // owned by CGameTime
+  // float FramesPerSecondSmooth; // owned by CGameTime
+
+  // NLMISC::CVector DetailTargetPosition; // player or camera position for lod
+  // improvements // owned by camera
 
 }; /* class CMainWindow */
 

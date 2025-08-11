@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <nel/misc/types_nl.h>
 #include "mtl_base.h"
+#include <nel/misc/types_nl.h>
 
 // STL includes
 
@@ -42,14 +42,9 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CMtlBase::CMtlBase(CScene *scene)
-    : CReferenceTarget(scene)
-{
-}
+CMtlBase::CMtlBase(CScene *scene) : CReferenceTarget(scene) {}
 
-CMtlBase::~CMtlBase()
-{
-}
+CMtlBase::~CMtlBase() {}
 
 } /* namespace BUILTIN */
 } /* namespace MAX */

@@ -23,8 +23,8 @@
 
 #include "nel/misc/types_nl.h"
 // #include "nel/sound/u_source.h"
-#include "nel/sound/source_common.h"
 #include "nel/sound/background_sound.h"
+#include "nel/sound/source_common.h"
 
 namespace NLSOUND {
 
@@ -35,65 +35,67 @@ class CBackgroundSound;
  * \author Boris Boucher.
  * \author Nevrax
  */
-class CBackgroundSource : public CSourceCommon, public CAudioMixerUser::IMixerUpdate
-{
+class CBackgroundSource : public CSourceCommon,
+                          public CAudioMixerUser::IMixerUpdate {
 public:
-	/// Constructor
-	CBackgroundSource(CBackgroundSound *backgroundSound = NULL, bool spawn = false, TSpawnEndCallback cb = 0, void *cbUserParam = 0, NL3D::CCluster *cluster = 0, CGroupController *groupController = NULL);
-	/// Destructor
-	~CBackgroundSource();
+  /// Constructor
+  CBackgroundSource(CBackgroundSound *backgroundSound = NULL,
+                    bool spawn = false, TSpawnEndCallback cb = 0,
+                    void *cbUserParam = 0, NL3D::CCluster *cluster = 0,
+                    CGroupController *groupController = NULL);
+  /// Destructor
+  ~CBackgroundSource();
 
-	/// Return the sound binded to the source (or NULL if there is no sound)
-	virtual TSoundId getSound();
+  /// Return the sound binded to the source (or NULL if there is no sound)
+  virtual TSoundId getSound();
 
-	virtual void play();
-	/// Stop playing
-	virtual void stop();
+  virtual void play();
+  /// Stop playing
+  virtual void stop();
 
-	TSOURCE_TYPE getType() const { return SOURCE_BACKGROUND; }
+  TSOURCE_TYPE getType() const { return SOURCE_BACKGROUND; }
 
-	void setGain(float gain);
-	void setRelativeGain(float gain);
+  void setGain(float gain);
+  void setRelativeGain(float gain);
 
-	void setPos(const NLMISC::CVector &pos);
-	void setVelocity(const NLMISC::CVector &vel);
-	void setDirection(const NLMISC::CVector &dir);
+  void setPos(const NLMISC::CVector &pos);
+  void setVelocity(const NLMISC::CVector &vel);
+  void setDirection(const NLMISC::CVector &dir);
 
-	void updateFilterValues(const float *filterValues);
+  void updateFilterValues(const float *filterValues);
 
 private:
-	/// Mixer update
-	void onUpdate();
+  /// Mixer update
+  void onUpdate();
 
-	/// Sub source possible status.
-	enum TSubSourceStatus
-	{
-		/// The sub source is playing.
-		SUB_STATUS_PLAY,
-		/// The sub source is stopped : it is masked by environnemt status.
-		SUB_STATUS_STOP,
-		/// The sub source have fail to play, either because of distance or no available track...
-		SUB_STATUS_PLAY_FAIL
-	};
+  /// Sub source possible status.
+  enum TSubSourceStatus {
+    /// The sub source is playing.
+    SUB_STATUS_PLAY,
+    /// The sub source is stopped : it is masked by environnemt status.
+    SUB_STATUS_STOP,
+    /// The sub source have fail to play, either because of distance or no
+    /// available track...
+    SUB_STATUS_PLAY_FAIL
+  };
 
-	/// Sub source info.
-	struct TSubSource
-	{
-		/// Sub source instance.
-		USource *Source;
-		/// Sub source status.
-		TSubSourceStatus Status;
-		/// Sub source filter.
-		UAudioMixer::TBackgroundFlags Filter;
-	};
+  /// Sub source info.
+  struct TSubSource {
+    /// Sub source instance.
+    USource *Source;
+    /// Sub source status.
+    TSubSourceStatus Status;
+    /// Sub source filter.
+    UAudioMixer::TBackgroundFlags Filter;
+  };
 
-	/// The sound static data.
-	CBackgroundSound *_BackgroundSound;
+  /// The sound static data.
+  CBackgroundSound *_BackgroundSound;
 
-	/// The sub sources container.
-	std::vector<TSubSource> _Sources;
+  /// The sub sources container.
+  std::vector<TSubSource> _Sources;
 };
 
-} // NLSOOUND
+} // namespace NLSOUND
 
 #endif // NL_BACKGROUND_SOURCE_H

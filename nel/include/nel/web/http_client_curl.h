@@ -30,67 +30,78 @@ namespace NLWEB {
 /**
  * HTTP client with SSL capabilities
  */
-class CCurlHttpClient
-{
+class CCurlHttpClient {
 public:
-	/// Constructor
-	CCurlHttpClient()
-	    : _Curl(NULL)
-	    , m_Verify(true)
-	{
-	}
+  /// Constructor
+  CCurlHttpClient() : _Curl(NULL), m_Verify(true) {}
 
-	/// Connect to an http server (string by val is intended). If you specify a whole URL, an attempt will be made to determine the server.
-	bool connect(const std::string &server);
+  /// Connect to an http server (string by val is intended). If you specify a
+  /// whole URL, an attempt will be made to determine the server.
+  bool connect(const std::string &server);
 
-	/// Authenticate with "user:password" (only for restricted websites)
-	bool authenticate(const std::string &user, const std::string &password);
+  /// Authenticate with "user:password" (only for restricted websites)
+  bool authenticate(const std::string &user, const std::string &password);
 
-	/// For a https server, call this with true to check for server certificate and host
-	bool verifyServer(bool verify);
+  /// For a https server, call this with true to check for server certificate
+  /// and host
+  bool verifyServer(bool verify);
 
-	/// Send a 'get' request
-	bool sendGet(const std::string &url, const std::string &params = std::string(), bool verbose = false);
+  /// Send a 'get' request
+  bool sendGet(const std::string &url,
+               const std::string &params = std::string(), bool verbose = false);
 
-	/// Send a 'get' request with a cookie
-	bool sendGetWithCookie(const std::string &url, const std::string &name, const std::string &value, const std::string &params = std::string(), bool verbose = false);
+  /// Send a 'get' request with a cookie
+  bool sendGetWithCookie(const std::string &url, const std::string &name,
+                         const std::string &value,
+                         const std::string &params = std::string(),
+                         bool verbose = false);
 
-	/// Send a 'post' request
-	bool sendPost(const std::string &url, const std::string &params = std::string(), bool verbose = false);
+  /// Send a 'post' request
+  bool sendPost(const std::string &url,
+                const std::string &params = std::string(),
+                bool verbose = false);
 
-	/// Send a 'post' request with a cookie
-	bool sendPostWithCookie(const std::string &url, const std::string &name, const std::string &value, const std::string &params = std::string(), bool verbose = false);
+  /// Send a 'post' request with a cookie
+  bool sendPostWithCookie(const std::string &url, const std::string &name,
+                          const std::string &value,
+                          const std::string &params = std::string(),
+                          bool verbose = false);
 
-	/// Wait for a response
-	bool receive(std::string &res, bool verbose = false);
+  /// Wait for a response
+  bool receive(std::string &res, bool verbose = false);
 
-	/// Disconnect if connected (otherwise does nothing)
-	void disconnect();
+  /// Disconnect if connected (otherwise does nothing)
+  void disconnect();
 
-	const char *lastError() { return &m_ErrorBuf[0]; }
+  const char *lastError() { return &m_ErrorBuf[0]; }
 
 protected:
-	/// Helper
-	bool sendRequest(const std::string &methodWB, const std::string &url, const std::string &cookieName, const std::string &cookieValue, const std::string &postParams, bool verbose);
+  /// Helper
+  bool sendRequest(const std::string &methodWB, const std::string &url,
+                   const std::string &cookieName,
+                   const std::string &cookieValue,
+                   const std::string &postParams, bool verbose);
 
-	/// Helper
-	void pushReceivedData(uint8 *buffer, uint size);
+  /// Helper
+  void pushReceivedData(uint8 *buffer, uint size);
 
-	static size_t writeDataFromCurl(void *buffer, size_t size, size_t nmemb, void *pHttpClient);
+  static size_t writeDataFromCurl(void *buffer, size_t size, size_t nmemb,
+                                  void *pHttpClient);
 
 private:
-	CURL *_Curl;
+  CURL *_Curl;
 
-	std::vector<uint8> _ReceiveBuffer;
-	std::string _Auth; // must be kept here because curl only stores the char pointer
+  std::vector<uint8> _ReceiveBuffer;
+  std::string
+      _Auth; // must be kept here because curl only stores the char pointer
 
-	std::vector<char> m_ErrorBuf;
-	bool m_Verify;
+  std::vector<char> m_ErrorBuf;
+  bool m_Verify;
 };
 
 extern CCurlHttpClient CurlHttpClient;
 
-}
+} // namespace NLWEB
 
 #endif // NL_HTTP_CLIENT_H
 

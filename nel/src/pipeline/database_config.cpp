@@ -19,12 +19,12 @@
 //
 // Author: Jan BOON (Kaetemi) <jan.boon@kaetemi.be>
 
-#include <nel/misc/types_nl.h>
 #include "nel/pipeline/database_config.h"
+#include <nel/misc/types_nl.h>
 
+#include <nel/misc/config_file.h>
 #include <nel/misc/debug.h>
 #include <nel/misc/path.h>
-#include <nel/misc/config_file.h>
 
 using namespace std;
 using namespace NLMISC;
@@ -38,76 +38,66 @@ uint32 CDatabaseConfig::s_ConfigFileModification;
 
 static std::set<TPathString> s_SearchPaths;
 
-void CDatabaseConfig::cleanup()
-{
-	delete CDatabaseConfig::s_ConfigFile;
-	CDatabaseConfig::s_ConfigFile = NULL;
+void CDatabaseConfig::cleanup() {
+  delete CDatabaseConfig::s_ConfigFile;
+  CDatabaseConfig::s_ConfigFile = NULL;
 }
 
-CDatabaseConfig::~CDatabaseConfig()
-{
-	cleanup();
+CDatabaseConfig::~CDatabaseConfig() { cleanup(); }
+
+bool CDatabaseConfig::init(const std::string &asset) {
+  // release();
+
+  TPathString rootPath = NLMISC::CPath::standardizePath(asset, false);
+  TPathString configPath = rootPath + "/database.cfg";
+  while (!CFile::fileExists(configPath)) {
+    std::string::size_type sep = CFile::getLastSeparator(rootPath);
+    if (sep == string::npos)
+      return false;
+
+    rootPath = rootPath.substr(0, sep);
+    if (rootPath.empty())
+      return false;
+
+    configPath = rootPath + "/database.cfg";
+  }
+
+  rootPath += "/";
+  uint32 configFileModification = CFile::getFileModificationDate(configPath);
+  if (rootPath == s_RootPath &&
+      s_ConfigFileModification == configFileModification)
+    return true; // Do not reload
+
+  nldebug("Initializing database config '%s'", configPath.c_str());
+  release();
+
+  s_RootPath = rootPath;
+  s_ConfigFileModification = configFileModification;
+
+  s_ConfigFile = new CConfigFile();
+  s_ConfigFile->load(configPath);
+  return true;
 }
 
-bool CDatabaseConfig::init(const std::string &asset)
-{
-	// release();
-
-	TPathString rootPath = NLMISC::CPath::standardizePath(asset, false);
-	TPathString configPath = rootPath + "/database.cfg";
-	while (!CFile::fileExists(configPath))
-	{
-		std::string::size_type sep = CFile::getLastSeparator(rootPath);
-		if (sep == string::npos)
-			return false;
-
-		rootPath = rootPath.substr(0, sep);
-		if (rootPath.empty())
-			return false;
-
-		configPath = rootPath + "/database.cfg";
-	}
-
-	rootPath += "/";
-	uint32 configFileModification = CFile::getFileModificationDate(configPath);
-	if (rootPath == s_RootPath && s_ConfigFileModification == configFileModification)
-		return true; // Do not reload
-
-	nldebug("Initializing database config '%s'", configPath.c_str());
-	release();
-
-	s_RootPath = rootPath;
-	s_ConfigFileModification = configFileModification;
-
-	s_ConfigFile = new CConfigFile();
-	s_ConfigFile->load(configPath);
-	return true;
+void CDatabaseConfig::initTextureSearchDirectories() {
+  searchDirectories("TextureSearchDirectories");
 }
 
-void CDatabaseConfig::initTextureSearchDirectories()
-{
-	searchDirectories("TextureSearchDirectories");
+void CDatabaseConfig::searchDirectories(const char *var) {
+  CConfigFile::CVar &paths = s_ConfigFile->getVar(var);
+  for (uint i = 0; i < paths.size(); i++) {
+    TPathString path = paths.asString(i);
+    if (s_SearchPaths.find(path) == s_SearchPaths.end()) {
+      CPath::addSearchPath(s_RootPath + path);
+      s_SearchPaths.insert(path);
+    }
+  }
 }
 
-void CDatabaseConfig::searchDirectories(const char *var)
-{
-	CConfigFile::CVar &paths = s_ConfigFile->getVar(var);
-	for (uint i = 0; i < paths.size(); i++)
-	{
-		TPathString path = paths.asString(i);
-		if (s_SearchPaths.find(path) == s_SearchPaths.end())
-		{
-			CPath::addSearchPath(s_RootPath + path);
-			s_SearchPaths.insert(path);
-		}
-	}
-}
-
-void CDatabaseConfig::release()
-{
-	s_SearchPaths.clear();
-	CPath::clearMap();
-	cleanup();
+void CDatabaseConfig::release() {
+  s_SearchPaths.clear();
+  CPath::clearMap();
+  cleanup();
 }
 
 } /* namespace NLPIPELINE */

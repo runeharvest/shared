@@ -24,53 +24,51 @@
 //
 
 #include "slot_dlg.h"
-#include <nel/3d/channel_mixer.h>
 #include <nel/3d/animation_playlist.h>
+#include <nel/3d/channel_mixer.h>
 
 /////////////////////////////////////////////////////////////////////////////
 // CMainDlg dialog
 
-class CMainDlg : public CDialog
-{
-	// Construction
+class CMainDlg : public CDialog {
+  // Construction
 public:
-	CMainDlg(class CObjectViewer *main, CWnd *pParent = NULL); // standard constructor
+  CMainDlg(class CObjectViewer *main,
+           CWnd *pParent = NULL); // standard constructor
 
-	// Dialog Data
-	//{{AFX_DATA(CMainDlg)
-	enum
-	{
-		IDD = IDD_MAIN_DLG
-	};
-	// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(CMainDlg)
+  enum { IDD = IDD_MAIN_DLG };
+  // NOTE: the ClassWizard will add data members here
+  //}}AFX_DATA
 
-	void setAnimTime(float animStart, float animEnd);
+  void setAnimTime(float animStart, float animEnd);
 
-	void refresh(BOOL update);
+  void refresh(BOOL update);
 
-	// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CMainDlg)
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CMainDlg)
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
-	//}}AFX_VIRTUAL
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+                                                   //}}AFX_VIRTUAL
 public:
-	CSlotDlg Slots[NL3D::CChannelMixer::NumAnimationSlot];
-	CObjectViewer *Main;
+  CSlotDlg Slots[NL3D::CChannelMixer::NumAnimationSlot];
+  CObjectViewer *Main;
 
-	// Implementation
+  // Implementation
 protected:
-	// Generated message map functions
-	//{{AFX_MSG(CMainDlg)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnDestroy();
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  // Generated message map functions
+  //{{AFX_MSG(CMainDlg)
+  virtual BOOL OnInitDialog();
+  afx_msg void OnDestroy();
+  afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before
+// the previous line.
 
 #endif // !defined(AFX_MAIN_DLG_H__9B22CB90_1929_11D5_9CD4_0050DAC3A412__INCLUDED_)

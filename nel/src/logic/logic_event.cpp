@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdlogic.h"
 #include "nel/logic/logic_event.h"
+#include "stdlogic.h"
 
 #include "nel/logic/logic_state_machine.h"
 
@@ -46,23 +46,30 @@ namespace NLLOGIC {
 
 } // serial //*/
 
-void CLogicEventMessage::write(xmlNodePtr node, const char *subName) const
-{
-	xmlNodePtr elmPtr = xmlNewChild(node, NULL, (const xmlChar *)string(string(subName) + string("EVENT_MESSAGE")).c_str(), NULL);
-	xmlSetProp(elmPtr, (const xmlChar *)"Destination", (const xmlChar *)Destination.c_str());
-	xmlSetProp(elmPtr, (const xmlChar *)"DestinationId", (const xmlChar *)toString(DestinationId).c_str());
-	xmlSetProp(elmPtr, (const xmlChar *)"MessageId", (const xmlChar *)toString(MessageId).c_str());
-	xmlSetProp(elmPtr, (const xmlChar *)"Arguments", (const xmlChar *)toString(Arguments).c_str());
+void CLogicEventMessage::write(xmlNodePtr node, const char *subName) const {
+  xmlNodePtr elmPtr = xmlNewChild(
+      node, NULL,
+      (const xmlChar *)string(string(subName) + string("EVENT_MESSAGE"))
+          .c_str(),
+      NULL);
+  xmlSetProp(elmPtr, (const xmlChar *)"Destination",
+             (const xmlChar *)Destination.c_str());
+  xmlSetProp(elmPtr, (const xmlChar *)"DestinationId",
+             (const xmlChar *)toString(DestinationId).c_str());
+  xmlSetProp(elmPtr, (const xmlChar *)"MessageId",
+             (const xmlChar *)toString(MessageId).c_str());
+  xmlSetProp(elmPtr, (const xmlChar *)"Arguments",
+             (const xmlChar *)toString(Arguments).c_str());
 }
 
-void CLogicEventMessage::read(xmlNodePtr node, const char *subName)
-{
-	xmlCheckNodeName(node, string(string(subName) + string("EVENT_MESSAGE")).c_str());
+void CLogicEventMessage::read(xmlNodePtr node, const char *subName) {
+  xmlCheckNodeName(node,
+                   string(string(subName) + string("EVENT_MESSAGE")).c_str());
 
-	Destination = getXMLProp(node, "Destination");
-	DestinationId = atoiInt64(getXMLProp(node, "DestinationId").c_str());
-	MessageId = getXMLProp(node, "MessageId");
-	Arguments = getXMLProp(node, "Arguments");
+  Destination = getXMLProp(node, "Destination");
+  DestinationId = atoiInt64(getXMLProp(node, "DestinationId").c_str());
+  MessageId = getXMLProp(node, "MessageId");
+  Arguments = getXMLProp(node, "Arguments");
 }
 
 //----------------------------------- ACTION ----------------------------------
@@ -71,9 +78,8 @@ void CLogicEventMessage::read(xmlNodePtr node, const char *subName)
 // enableSendMessage
 //
 //-------------------------------------------------
-void CLogicEventAction::enableSendMessage()
-{
-	EventMessage.ToSend = true;
+void CLogicEventAction::enableSendMessage() {
+  EventMessage.ToSend = true;
 
 } // enableSendMessage //
 
@@ -99,33 +105,28 @@ void CLogicEventAction::enableSendMessage()
 
 } // serial //*/
 
-void CLogicEventAction::write(xmlNodePtr node) const
-{
-	xmlNodePtr elmPtr = xmlNewChild(node, NULL, (const xmlChar *)"EVENT_ACTION", NULL);
-	xmlSetProp(elmPtr, (const xmlChar *)"IsStateChange", (const xmlChar *)toString(IsStateChange).c_str());
-	if (IsStateChange)
-	{
-		xmlSetProp(elmPtr, (const xmlChar *)"StateChange", (const xmlChar *)StateChange.c_str());
-	}
-	else
-	{
-		EventMessage.write(elmPtr);
-	}
+void CLogicEventAction::write(xmlNodePtr node) const {
+  xmlNodePtr elmPtr =
+      xmlNewChild(node, NULL, (const xmlChar *)"EVENT_ACTION", NULL);
+  xmlSetProp(elmPtr, (const xmlChar *)"IsStateChange",
+             (const xmlChar *)toString(IsStateChange).c_str());
+  if (IsStateChange) {
+    xmlSetProp(elmPtr, (const xmlChar *)"StateChange",
+               (const xmlChar *)StateChange.c_str());
+  } else {
+    EventMessage.write(elmPtr);
+  }
 }
 
-void CLogicEventAction::read(xmlNodePtr node)
-{
-	xmlCheckNodeName(node, "EVENT_ACTION");
+void CLogicEventAction::read(xmlNodePtr node) {
+  xmlCheckNodeName(node, "EVENT_ACTION");
 
-	NLMISC::fromString(getXMLProp(node, "IsStateChange"), IsStateChange);
-	if (IsStateChange)
-	{
-		StateChange = getXMLProp(node, "StateChange");
-	}
-	else
-	{
-		EventMessage.read(node);
-	}
+  NLMISC::fromString(getXMLProp(node, "IsStateChange"), IsStateChange);
+  if (IsStateChange) {
+    StateChange = getXMLProp(node, "StateChange");
+  } else {
+    EventMessage.read(node);
+  }
 }
 
 //----------------------------------- EVENT ----------------------------------
@@ -134,10 +135,9 @@ void CLogicEventAction::read(xmlNodePtr node)
 // reset
 //
 //-------------------------------------------------
-void CLogicEvent::reset()
-{
-	EventAction.EventMessage.Sent = false;
-	EventAction.EventMessage.ToSend = false;
+void CLogicEvent::reset() {
+  EventAction.EventMessage.Sent = false;
+  EventAction.EventMessage.ToSend = false;
 
 } // reset //
 
@@ -145,17 +145,14 @@ void CLogicEvent::reset()
 // setLogicStateMachine
 //
 //-------------------------------------------------
-void CLogicEvent::setLogicStateMachine(CLogicStateMachine *logicStateMachine)
-{
-	if (logicStateMachine == 0)
-	{
-		nlwarning("(LOGIC)<CLogicEvent::setLogicStateMachine> The state machine is null");
-	}
-	else
-	{
-		// init the logic state machine for this event
-		_LogicStateMachine = logicStateMachine;
-	}
+void CLogicEvent::setLogicStateMachine(CLogicStateMachine *logicStateMachine) {
+  if (logicStateMachine == 0) {
+    nlwarning(
+        "(LOGIC)<CLogicEvent::setLogicStateMachine> The state machine is null");
+  } else {
+    // init the logic state machine for this event
+    _LogicStateMachine = logicStateMachine;
+  }
 
 } // setLogicStateMachine //
 
@@ -163,35 +160,28 @@ void CLogicEvent::setLogicStateMachine(CLogicStateMachine *logicStateMachine)
 // testCondition
 //
 //-------------------------------------------------
-bool CLogicEvent::testCondition()
-{
-	if (_LogicStateMachine)
-	{
-		if (ConditionName != "no_condition")
-		{
-			CLogicCondition cond;
-			if (_LogicStateMachine->getCondition(ConditionName, cond))
-			{
-				return cond.testLogic();
-			}
-			else
-			{
-				nlwarning("(LOGIC)<CLogicEvent::testCondition> Condition %s not found in the state machine", ConditionName.c_str());
-				return false;
-			}
-		}
-		else
-		{
-			nlwarning("(LOGIC)<CLogicEvent::testCondition> Condition undefined");
-			return false;
-		}
-	}
-	else
-	{
-		nlwarning("(LOGIC)<CLogicEvent::testCondition> The state machine managing this event is Null");
-	}
+bool CLogicEvent::testCondition() {
+  if (_LogicStateMachine) {
+    if (ConditionName != "no_condition") {
+      CLogicCondition cond;
+      if (_LogicStateMachine->getCondition(ConditionName, cond)) {
+        return cond.testLogic();
+      } else {
+        nlwarning("(LOGIC)<CLogicEvent::testCondition> Condition %s not found "
+                  "in the state machine",
+                  ConditionName.c_str());
+        return false;
+      }
+    } else {
+      nlwarning("(LOGIC)<CLogicEvent::testCondition> Condition undefined");
+      return false;
+    }
+  } else {
+    nlwarning("(LOGIC)<CLogicEvent::testCondition> The state machine managing "
+              "this event is Null");
+  }
 
-	return false;
+  return false;
 
 } // testCondition //
 
@@ -210,19 +200,18 @@ bool CLogicEvent::testCondition()
 
 } // serial //*/
 
-void CLogicEvent::write(xmlNodePtr node) const
-{
-	xmlNodePtr elmPtr = xmlNewChild(node, NULL, (const xmlChar *)"EVENT", NULL);
-	xmlSetProp(elmPtr, (const xmlChar *)"ConditionName", (const xmlChar *)ConditionName.c_str());
-	EventAction.write(elmPtr);
+void CLogicEvent::write(xmlNodePtr node) const {
+  xmlNodePtr elmPtr = xmlNewChild(node, NULL, (const xmlChar *)"EVENT", NULL);
+  xmlSetProp(elmPtr, (const xmlChar *)"ConditionName",
+             (const xmlChar *)ConditionName.c_str());
+  EventAction.write(elmPtr);
 }
 
-void CLogicEvent::read(xmlNodePtr node)
-{
-	xmlCheckNodeName(node, "EVENT");
+void CLogicEvent::read(xmlNodePtr node) {
+  xmlCheckNodeName(node, "EVENT");
 
-	ConditionName = getXMLProp(node, "ConditionName");
-	EventAction.read(node);
+  ConditionName = getXMLProp(node, "ConditionName");
+  EventAction.read(node);
 }
 
-} // NLLOGIC
+} // namespace NLLOGIC

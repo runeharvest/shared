@@ -26,82 +26,67 @@ namespace NLMISC {
  * \author Nevrax France
  * \date 2002
  */
-class CRandom
-{
+class CRandom {
 public:
-	// The max value that can be returned by the random generator
-	enum
-	{
-		RandMax = 0x7fff
-	};
+  // The max value that can be returned by the random generator
+  enum { RandMax = 0x7fff };
 
 public:
-	// ctor
-	inline CRandom();
-	// generate a random value in [0, RandMax]
-	inline sint32 rand();
-	// generate a random value in [0, mod]
-	inline sint32 rand(uint16 mod);
-	// generate a floating point random value in [0, mod]
-	inline float frand(double mod = 1.0f);
-	// generate a random value in [-mod, mod]
-	inline sint32 randPlusMinus(uint16 mod);
-	// generate a random value in [-mod, mod]
-	inline float frandPlusMinus(double mod = 1.0);
-	// set a new seed for the random generator
-	inline void srand(sint32 seed);
+  // ctor
+  inline CRandom();
+  // generate a random value in [0, RandMax]
+  inline sint32 rand();
+  // generate a random value in [0, mod]
+  inline sint32 rand(uint16 mod);
+  // generate a floating point random value in [0, mod]
+  inline float frand(double mod = 1.0f);
+  // generate a random value in [-mod, mod]
+  inline sint32 randPlusMinus(uint16 mod);
+  // generate a random value in [-mod, mod]
+  inline float frandPlusMinus(double mod = 1.0);
+  // set a new seed for the random generator
+  inline void srand(sint32 seed);
 
 private:
-	sint32 _Seed;
+  sint32 _Seed;
 };
 
 //===========================================================================
-inline CRandom::CRandom()
-    : _Seed(1)
-{
-}
+inline CRandom::CRandom() : _Seed(1) {}
 
 //===========================================================================
 // NB : In fact this random generator has the same behaviour than the VC6 one
-inline sint32 CRandom::rand()
-{
-	return ((_Seed = _Seed * 214013L + 2531011L) >> 16) & RandMax;
+inline sint32 CRandom::rand() {
+  return ((_Seed = _Seed * 214013L + 2531011L) >> 16) & RandMax;
 }
 
 //===========================================================================
-inline sint32 CRandom::rand(uint16 mod)
-{
-	sint32 m = mod;
-	return rand() * (m + 1) / (sint32(RandMax) + 1);
+inline sint32 CRandom::rand(uint16 mod) {
+  sint32 m = mod;
+  return rand() * (m + 1) / (sint32(RandMax) + 1);
 }
 
 //===========================================================================
-inline sint32 CRandom::randPlusMinus(uint16 mod)
-{
-	sint32 m = mod;
-	return m - rand() * (2 * m + 1) / (sint32(RandMax) + 1);
+inline sint32 CRandom::randPlusMinus(uint16 mod) {
+  sint32 m = mod;
+  return m - rand() * (2 * m + 1) / (sint32(RandMax) + 1);
 }
 
 //===========================================================================
-inline float CRandom::frand(double mod)
-{
-	double r = (double)rand();
-	r /= (double)RandMax;
-	return (float)(r * mod);
+inline float CRandom::frand(double mod) {
+  double r = (double)rand();
+  r /= (double)RandMax;
+  return (float)(r * mod);
 }
 
 //===========================================================================
-inline float CRandom::frandPlusMinus(double mod)
-{
-	return frand(2 * mod) - (float)mod;
+inline float CRandom::frandPlusMinus(double mod) {
+  return frand(2 * mod) - (float)mod;
 }
 
 //===========================================================================
-inline void CRandom::srand(sint32 seed)
-{
-	_Seed = seed;
-}
+inline void CRandom::srand(sint32 seed) { _Seed = seed; }
 
-}
+} // namespace NLMISC
 
 #endif

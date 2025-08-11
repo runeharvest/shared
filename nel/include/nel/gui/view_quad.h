@@ -26,75 +26,71 @@
 
 namespace NLGUI {
 
-/** Display of an arbitrary textured quad in the UI. The applied texture is filtered.
- * Unlike CViewBitmap, the texture is always scaled here, and this ui element coordinates
- * are driven by the quad vertices coordinates (see setQuad)
+/** Display of an arbitrary textured quad in the UI. The applied texture is
+ * filtered. Unlike CViewBitmap, the texture is always scaled here, and this ui
+ * element coordinates are driven by the quad vertices coordinates (see setQuad)
  *
  * \author Nicolas Vizerie
  * \author Nevrax France
  * \date 12/2005
  */
-class CViewQuad : public CViewBase
-{
+class CViewQuad : public CViewBase {
 public:
-	DECLARE_UI_CLASS(CViewQuad)
+  DECLARE_UI_CLASS(CViewQuad)
 
-	enum TWrapMode
-	{
-		Repeat = 0,
-		Clamp,
-		WrapModeCount
-	};
+  enum TWrapMode { Repeat = 0, Clamp, WrapModeCount };
 
-	CViewQuad(const TCtorParam &param);
+  CViewQuad(const TCtorParam &param);
 
-	// from CInterfaceElement
-	bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
-	virtual void updateCoords();
-	virtual void draw();
-	virtual uint32 getMemory() { return (uint32)(sizeof(*this) + _Id.size()); }
+  // from CInterfaceElement
+  bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+  virtual void updateCoords();
+  virtual void draw();
+  virtual uint32 getMemory() { return (uint32)(sizeof(*this) + _Id.size()); }
 
-	// from CViewBase
-	virtual sint32 getAlpha() const { return (sint32)_Color.A; }
-	virtual void setAlpha(sint32 a);
+  // from CViewBase
+  virtual sint32 getAlpha() const { return (sint32)_Color.A; }
+  virtual void setAlpha(sint32 a);
 
-	// texture
-	void setTexture(const std::string &texName);
-	std::string getTexture() const;
+  // texture
+  void setTexture(const std::string &texName);
+  std::string getTexture() const;
 
-	// color
-	void setColorRGBA(NLMISC::CRGBA col) { _Color = col; }
-	NLMISC::CRGBA getColorRGBA() const { return _Color; }
+  // color
+  void setColorRGBA(NLMISC::CRGBA col) { _Color = col; }
+  NLMISC::CRGBA getColorRGBA() const { return _Color; }
 
-	/** Set a new quad relative to parent pos
-	 * x,y, w, h & hotspot are updated to fit the bounding rect of the quad
-	 */
-	void setQuad(const NLMISC::CQuad &quad);
-	void setQuad(const NLMISC::CVector &start, const NLMISC::CVector &end, float thickness);
-	/** Fit the given texture size (no hotspot for now, always centered)
-	 * NB : current texture is not modified.
-	 */
-	void setQuad(const std::string &texName, const NLMISC::CVector &pos, float angle = 0.f, float offCenter = 0.f);
-	void setQuad(const NLMISC::CVector &pos, float radius, float angle = 0.f);
-	const NLMISC::CQuad &getQuad() const { return _Quad; }
+  /** Set a new quad relative to parent pos
+   * x,y, w, h & hotspot are updated to fit the bounding rect of the quad
+   */
+  void setQuad(const NLMISC::CQuad &quad);
+  void setQuad(const NLMISC::CVector &start, const NLMISC::CVector &end,
+               float thickness);
+  /** Fit the given texture size (no hotspot for now, always centered)
+   * NB : current texture is not modified.
+   */
+  void setQuad(const std::string &texName, const NLMISC::CVector &pos,
+               float angle = 0.f, float offCenter = 0.f);
+  void setQuad(const NLMISC::CVector &pos, float radius, float angle = 0.f);
+  const NLMISC::CQuad &getQuad() const { return _Quad; }
 
-	void setAdditif(bool additif);
-	bool getAdditif() const { return _Additif; }
+  void setAdditif(bool additif);
+  bool getAdditif() const { return _Additif; }
 
-	void setPattern(float umin, float umax, TWrapMode wrapMode);
+  void setPattern(float umin, float umax, TWrapMode wrapMode);
 
 private:
-	NLMISC::CRGBA _Color;
-	NLMISC::CQuad _Quad;
-	NLMISC::CQuadUV _RealQuad; // absolute coords
-	float _ClampedUCorrection;
-	CViewRenderer::CTextureId _TextureId; /// Accelerator
-	bool _Additif;
-	float _UMin;
-	float _UMax;
-	TWrapMode _WrapMode;
+  NLMISC::CRGBA _Color;
+  NLMISC::CQuad _Quad;
+  NLMISC::CQuadUV _RealQuad; // absolute coords
+  float _ClampedUCorrection;
+  CViewRenderer::CTextureId _TextureId; /// Accelerator
+  bool _Additif;
+  float _UMin;
+  float _UMax;
+  TWrapMode _WrapMode;
 };
 
-}
+} // namespace NLGUI
 
 #endif

@@ -23,50 +23,51 @@
 namespace NLGEORGES {
 class UFormElm;
 class IStream;
-}
+} // namespace NLGEORGES
 namespace NLMISC {
 struct EStream;
 class IStream;
-}
+} // namespace NLMISC
 
 // parameters of weather function, not including the list of setups
-struct CWeatherFunctionParameters
-{
-	// Parameters from form related to wind
-	float VegetableMinBendIntensity;
-	float VegetableMaxBendIntensity;
-	float VegetableMinWindFrequency;
-	float VegetableMaxWindFrequency;
-	float VegetableMaxBendOffset;
-	float VegetableWindIntensityThatStartBendOffset; // The wind intensity at which the vegetable start to have a bending offset
-	//
-	float TreeMinWindIntensity;
-	float TreeMaxWindIntensity;
-	// ctor
-	CWeatherFunctionParameters();
+struct CWeatherFunctionParameters {
+  // Parameters from form related to wind
+  float VegetableMinBendIntensity;
+  float VegetableMaxBendIntensity;
+  float VegetableMinWindFrequency;
+  float VegetableMaxWindFrequency;
+  float VegetableMaxBendOffset;
+  float VegetableWindIntensityThatStartBendOffset; // The wind intensity at
+                                                   // which the vegetable start
+                                                   // to have a bending offset
+  //
+  float TreeMinWindIntensity;
+  float TreeMaxWindIntensity;
+  // ctor
+  CWeatherFunctionParameters();
 };
 
 /**
  * Class to manage weather function sheets
  * sheet defining a weather function
- * Please note that we dont derive from CEntitySheet because CWeatherFunctionSheet instances are aggregated in a CContinentSheetInstance
+ * Please note that we dont derive from CEntitySheet because
+ * CWeatherFunctionSheet instances are aggregated in a CContinentSheetInstance
  *
  * \author Nicolas Vizerie
  * \author Nevrax France
  * \date 2003
  */
-class CWeatherFunctionSheet : public CWeatherFunctionParameters
-{
+class CWeatherFunctionSheet : public CWeatherFunctionParameters {
 public:
-	std::vector<std::string> SetupNames;
-	std::vector<uint32> SetupWeights;
+  std::vector<std::string> SetupNames;
+  std::vector<uint32> SetupWeights;
 
 public:
-	// ctor
-	CWeatherFunctionSheet();
+  // ctor
+  CWeatherFunctionSheet();
 
-	void build(const NLGEORGES::UFormElm &item);
-	void serial(NLMISC::IStream &f);
+  void build(const NLGEORGES::UFormElm &item);
+  void serial(NLMISC::IStream &f);
 };
 
 #endif

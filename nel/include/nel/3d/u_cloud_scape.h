@@ -22,7 +22,7 @@
 namespace NLMISC {
 class CVector2f;
 class CVector;
-};
+}; // namespace NLMISC
 
 namespace NL3D {
 
@@ -30,24 +30,22 @@ class UDriver;
 class UCamera;
 
 // ------------------------------------------------------------------------------------------------
-struct SCloudScapeSetup
-{
-	float TimeToChange;
-	float WindSpeed; // Speed the cloud move (along x axis)
-	float CloudSpeed; // Speed the cloud change
-	uint32 NbCloud;
-	NLMISC::CRGBA Ambient;
-	NLMISC::CRGBA Diffuse;
+struct SCloudScapeSetup {
+  float TimeToChange;
+  float WindSpeed;  // Speed the cloud move (along x axis)
+  float CloudSpeed; // Speed the cloud change
+  uint32 NbCloud;
+  NLMISC::CRGBA Ambient;
+  NLMISC::CRGBA Diffuse;
 
-	SCloudScapeSetup()
-	{
-		TimeToChange = 120.0f;
-		WindSpeed = 2.0f;
-		CloudSpeed = 5.0f;
-		NbCloud = 25;
-		Ambient = NLMISC::CRGBA(120, 140, 160, 255);
-		Diffuse = NLMISC::CRGBA(255, 255, 255, 255);
-	}
+  SCloudScapeSetup() {
+    TimeToChange = 120.0f;
+    WindSpeed = 2.0f;
+    CloudSpeed = 5.0f;
+    NbCloud = 25;
+    Ambient = NLMISC::CRGBA(120, 140, 160, 255);
+    Diffuse = NLMISC::CRGBA(255, 255, 255, 255);
+  }
 };
 
 /**
@@ -56,32 +54,31 @@ struct SCloudScapeSetup
  * \date 2002
  */
 // ------------------------------------------------------------------------------------------------
-class UCloudScape
-{
+class UCloudScape {
 public:
-	UCloudScape() { }
-	virtual ~UCloudScape() { }
+  UCloudScape() {}
+  virtual ~UCloudScape() {}
 
-	virtual void init(SCloudScapeSetup *pCSS = NULL) = 0;
+  virtual void init(SCloudScapeSetup *pCSS = NULL) = 0;
 
-	virtual void set(SCloudScapeSetup &css) = 0;
+  virtual void set(SCloudScapeSetup &css) = 0;
 
-	virtual void anim(double dt) = 0;
+  virtual void anim(double dt) = 0;
 
-	virtual void render() = 0;
+  virtual void render() = 0;
 
-	virtual uint32 getMemSize() = 0;
+  virtual uint32 getMemSize() = 0;
 
-	virtual void setQuality(float threshold) = 0;
+  virtual void setQuality(float threshold) = 0;
 
-	virtual void setNbCloudToUpdateIn80ms(uint32 n) = 0;
+  virtual void setNbCloudToUpdateIn80ms(uint32 n) = 0;
 
-	virtual bool isDebugQuadEnabled() = 0;
+  virtual bool isDebugQuadEnabled() = 0;
 
-	virtual void setDebugQuad(bool b) = 0;
+  virtual void setDebugQuad(bool b) = 0;
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_U_CLOUD_SCAPE_H
 

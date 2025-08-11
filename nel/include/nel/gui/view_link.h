@@ -33,40 +33,46 @@ class CGroupHTML;
  * \author Nevrax France
  * \date 2003
  */
-class CViewLink : public CViewText
-{
+class CViewLink : public CViewText {
 public:
-	DECLARE_UI_CLASS(CViewLink)
+  DECLARE_UI_CLASS(CViewLink)
 
-	// Default constructor
-	CViewLink(const TCtorParam &param);
+  // Default constructor
+  CViewLink(const TCtorParam &param);
 
-	// The URI
-	std::string Link;
+  // The URI
+  std::string Link;
 
-	std::string LinkTitle;
+  std::string LinkTitle;
 
-	// Set the main group
-	void setHTMLView(CGroupHTML *html);
-	bool getMouseOverShape(std::string &texName, uint8 &rot, NLMISC::CRGBA &col);
+  // Set the main group
+  void setHTMLView(CGroupHTML *html);
+  bool getMouseOverShape(std::string &texName, uint8 &rot, NLMISC::CRGBA &col);
 
-	void setActionOnLeftClick(const std::string &actionHandler) { _AHOnLeftClick = actionHandler; };
-	void setParamsOnLeftClick(const std::string &actionParams) { _AHOnLeftClickParams = actionParams; };
+  void setActionOnLeftClick(const std::string &actionHandler) {
+    _AHOnLeftClick = actionHandler;
+  };
+  void setParamsOnLeftClick(const std::string &actionParams) {
+    _AHOnLeftClickParams = actionParams;
+  };
 
-	const std::string &getActionOnLeftClick() const { return _AHOnLeftClick; }
-	const std::string &getParamsOnLeftClick() const { return _AHOnLeftClickParams; }
+  const std::string &getActionOnLeftClick() const { return _AHOnLeftClick; }
+  const std::string &getParamsOnLeftClick() const {
+    return _AHOnLeftClickParams;
+  }
 
 protected:
-	// The main HTML group
-	CGroupHTML *HTML;
+  // The main HTML group
+  CGroupHTML *HTML;
 
-	// Left mouse click action
-	// Don't use CStringShared as URLs change past values would be permanently remembered.
-	std::string _AHOnLeftClick;
-	std::string _AHOnLeftClickParams;
+  // Left mouse click action
+  // Don't use CStringShared as URLs change past values would be permanently
+  // remembered.
+  std::string _AHOnLeftClick;
+  std::string _AHOnLeftClickParams;
 };
 
-}
+} // namespace NLGUI
 
 #endif // NL_VIEW_LINK_H
 

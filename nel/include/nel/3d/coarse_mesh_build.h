@@ -17,11 +17,11 @@
 #ifndef NL_COARSE_MESH_BUILD_H
 #define NL_COARSE_MESH_BUILD_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/misc/bitmap.h"
+#include "nel/misc/types_nl.h"
 
-#include <vector>
 #include <map>
+#include <vector>
 
 namespace NL3D {
 
@@ -45,87 +45,88 @@ class ITexture;
  * \author Nevrax France
  * \date 2001
  */
-class CCoarseMeshBuild
-{
+class CCoarseMeshBuild {
 public:
-	/// Coarse mesh descriptor
-	class CCoarseMeshDesc
-	{
-	public:
-		// Constructor
-		CCoarseMeshDesc(CMeshGeom *meshGeom, const CMeshBase *baseMesh)
-		{
-			MeshGeom = meshGeom;
-			MeshBase = baseMesh;
-		}
+  /// Coarse mesh descriptor
+  class CCoarseMeshDesc {
+  public:
+    // Constructor
+    CCoarseMeshDesc(CMeshGeom *meshGeom, const CMeshBase *baseMesh) {
+      MeshGeom = meshGeom;
+      MeshBase = baseMesh;
+    }
 
-		/**
-		 * The pointer on the geom mesh of the coarse mesh.
-		 * This mesh will be modified.
-		 */
-		CMeshGeom *MeshGeom;
+    /**
+     * The pointer on the geom mesh of the coarse mesh.
+     * This mesh will be modified.
+     */
+    CMeshGeom *MeshGeom;
 
-		/**
-		 * The pointer on the base mesh used by the coarse mesh.
-		 * This class won't be modified.
-		 */
-		const CMeshBase *MeshBase;
-	};
+    /**
+     * The pointer on the base mesh used by the coarse mesh.
+     * This class won't be modified.
+     */
+    const CMeshBase *MeshBase;
+  };
 
-	/// Statistics about the build process
-	class CStats
-	{
-	public:
-		/**
-		 * Ratio of texture used. Between 0~1. 0, the texture is empty, 1
-		 * the texture is totaly used.
-		 */
-		float TextureUsed;
-	};
+  /// Statistics about the build process
+  class CStats {
+  public:
+    /**
+     * Ratio of texture used. Between 0~1. 0, the texture is empty, 1
+     * the texture is totaly used.
+     */
+    float TextureUsed;
+  };
 
-	/**
-	 * The build method. This method will build a single texture and adjust
-	 * the UV texture coordinates of each mesh geom.
-	 *
-	 * \param coarseMeshes is a vector of coarse mesh to compute.
-	 * \param bitmap will receive the final bitmap.
-	 * \param start will receive various statistics about the build process.
-	 * \param mulArea is the mul factor used to increase to theorical global texture size.
-	 */
-	bool build(const std::vector<CCoarseMeshDesc> &coarseMeshes, std::vector<NLMISC::CBitmap> &bitmaps, CStats &stats, float mulArea);
+  /**
+   * The build method. This method will build a single texture and adjust
+   * the UV texture coordinates of each mesh geom.
+   *
+   * \param coarseMeshes is a vector of coarse mesh to compute.
+   * \param bitmap will receive the final bitmap.
+   * \param start will receive various statistics about the build process.
+   * \param mulArea is the mul factor used to increase to theorical global
+   * texture size.
+   */
+  bool build(const std::vector<CCoarseMeshDesc> &coarseMeshes,
+             std::vector<NLMISC::CBitmap> &bitmaps, CStats &stats,
+             float mulArea);
 
 private:
-	class CBitmapDesc
-	{
-	public:
-		// Coordinates of the bitmap in the global bitmap
-		float U;
-		float V;
+  class CBitmapDesc {
+  public:
+    // Coordinates of the bitmap in the global bitmap
+    float U;
+    float V;
 
-		// Coordinates ratio
-		float FactorU;
-		float FactorV;
+    // Coordinates ratio
+    float FactorU;
+    float FactorV;
 
-		// Pointer on the textures
-		std::vector<NLMISC::CBitmap> Bitmaps;
+    // Pointer on the textures
+    std::vector<NLMISC::CBitmap> Bitmaps;
 
-		// Pointer on the texture
-		std::string Name;
-	};
+    // Pointer on the texture
+    std::string Name;
+  };
 
-	typedef std::map<std::string, CBitmapDesc> MapBitmapDesc;
+  typedef std::map<std::string, CBitmapDesc> MapBitmapDesc;
 
-	// Expand the border of a bitmap.
-	void expand(NLMISC::CBitmap &bitmap);
+  // Expand the border of a bitmap.
+  void expand(NLMISC::CBitmap &bitmap);
 
-	// Build the bitmap. Return false if the bitmap size is too small
-	bool buildBitmap(const std::vector<CCoarseMeshDesc> &coarseMeshes, std::vector<NLMISC::CBitmap> &bitmaps, CStats &stats, MapBitmapDesc &desc, float mulArea);
+  // Build the bitmap. Return false if the bitmap size is too small
+  bool buildBitmap(const std::vector<CCoarseMeshDesc> &coarseMeshes,
+                   std::vector<NLMISC::CBitmap> &bitmaps, CStats &stats,
+                   MapBitmapDesc &desc, float mulArea);
 
-	// Remap the coordinate
-	void remapCoordinates(const std::vector<CCoarseMeshDesc> &coarseMeshes, const MapBitmapDesc &desc, uint outputBitmapCount);
+  // Remap the coordinate
+  void remapCoordinates(const std::vector<CCoarseMeshDesc> &coarseMeshes,
+                        const MapBitmapDesc &desc, uint outputBitmapCount);
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_COARSE_MESH_BUILD_H
 

@@ -13,7 +13,8 @@ extern ClassDesc *GetEditPatchModDesc();
 extern HINSTANCE hInstance;
 
 // For 'Supports Object of Type' rollups
-extern BOOL CALLBACK DefaultSOTProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+extern BOOL CALLBACK DefaultSOTProc(HWND hWnd, UINT msg, WPARAM wParam,
+                                    LPARAM lParam);
 
 #define BIGFLOAT float(999999)
 

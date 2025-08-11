@@ -21,35 +21,28 @@
 
 namespace TARGET {
 
-enum EAggro
-{
-	Friendly = 0,
-	AlmostFriendly,
-	Neutral,
-	AlmostAggressive,
-	Agressive,
-	NUM_ENUM_AGGRO
+enum EAggro {
+  Friendly = 0,
+  AlmostFriendly,
+  Neutral,
+  AlmostAggressive,
+  Agressive,
+  NUM_ENUM_AGGRO
 };
 
-enum EForceRatio
-{
-	ThreeLevelBelowOrLess = 0,
-	TwoLevelBelow,
-	OneLevelBelow,
-	SameLevel,
-	OneLevelAbove,
-	TwoLevelAbove,
-	ThreeLevelAboveOrMore,
-	NUM_ENUM_FORCE_RATIO
+enum EForceRatio {
+  ThreeLevelBelowOrLess = 0,
+  TwoLevelBelow,
+  OneLevelBelow,
+  SameLevel,
+  OneLevelAbove,
+  TwoLevelAbove,
+  ThreeLevelAboveOrMore,
+  NUM_ENUM_FORCE_RATIO
 };
 
 // Enum for the target's restrictions.
-enum TTargetRestriction
-{
-	EveryBody = 0,
-	SelfOnly,
-	TargetRestrictionCount
-};
+enum TTargetRestriction { EveryBody = 0, SelfOnly, TargetRestrictionCount };
 /**
  * Get the Enum Value for a given target's restriction in string.
  * \param str : the input string
@@ -61,8 +54,9 @@ TTargetRestriction stringToTargetRestriction(const std::string &str);
  * \param targetRestriction : target's restriction
  * \return string : the target's restriction as a string.
  */
-const std::string &targetRestrictionToString(TTargetRestriction targetRestriction);
+const std::string &
+targetRestrictionToString(TTargetRestriction targetRestriction);
 
-} // TARGET
+} // namespace TARGET
 
 #endif

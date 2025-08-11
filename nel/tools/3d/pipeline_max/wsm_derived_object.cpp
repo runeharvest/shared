@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <nel/misc/types_nl.h>
 #include "wsm_derived_object.h"
+#include <nel/misc/types_nl.h>
 
 // STL includes
 
@@ -40,13 +40,9 @@ using namespace std;
 
 namespace PIPELINE {
 
-CWSMDerivedObject::CWSMDerivedObject()
-{
-}
+CWSMDerivedObject::CWSMDerivedObject() {}
 
-CWSMDerivedObject::~CWSMDerivedObject()
-{
-}
+CWSMDerivedObject::~CWSMDerivedObject() {}
 
 } /* namespace PIPELINE */
 

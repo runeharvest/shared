@@ -26,45 +26,42 @@
 /////////////////////////////////////////////////////////////////////////////
 // CFogDlg dialog
 
-class CFogDlg : public CDialog
-{
-	// Construction
+class CFogDlg : public CDialog {
+  // Construction
 public:
-	CFogDlg(CWnd *pParent = NULL); // standard constructor
+  CFogDlg(CWnd *pParent = NULL); // standard constructor
 
-	float getFogStart() const { return m_FogStart; }
-	float getFogEnd() const { return m_FogEnd; }
+  float getFogStart() const { return m_FogStart; }
+  float getFogEnd() const { return m_FogEnd; }
 
-	void setFogStart(float fogStart) { m_FogStart = fogStart; }
-	void setFogEnd(float fogEnd) { m_FogEnd = fogEnd; }
+  void setFogStart(float fogStart) { m_FogStart = fogStart; }
+  void setFogEnd(float fogEnd) { m_FogEnd = fogEnd; }
 
-	// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CFogDlg)
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CFogDlg)
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
-	//}}AFX_VIRTUAL
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+                                                   //}}AFX_VIRTUAL
 
-	// Implementation
+  // Implementation
 protected:
-	// Generated message map functions
-	//{{AFX_MSG(CFogDlg)
-	// NOTE: the ClassWizard will add member functions here
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  // Generated message map functions
+  //{{AFX_MSG(CFogDlg)
+  // NOTE: the ClassWizard will add member functions here
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 private:
-	// Dialog Data
-	//{{AFX_DATA(CFogDlg)
-	enum
-	{
-		IDD = IDD_SETUP_FOG
-	};
-	float m_FogStart;
-	float m_FogEnd;
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(CFogDlg)
+  enum { IDD = IDD_SETUP_FOG };
+  float m_FogStart;
+  float m_FogEnd;
+  //}}AFX_DATA
 };
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before
+// the previous line.
 
 #endif // !defined(AFX_FOG_DLG_H__5B26E605_00F0_42FD_8893_D1A20AF132F5__INCLUDED_)

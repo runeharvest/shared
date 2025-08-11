@@ -31,29 +31,25 @@ namespace NLNET {
  * \author Nevrax France
  * \date 2001
  */
-class CDummyTcpSock : public CTcpSock
-{
+class CDummyTcpSock : public CTcpSock {
 public:
-	// Constructor
-	CDummyTcpSock(bool logging = true)
-	    : CTcpSock(logging)
-	{
-	}
+  // Constructor
+  CDummyTcpSock(bool logging = true) : CTcpSock(logging) {}
 
-	// Dummy connection
-	virtual void connect(const CInetHost &addr) NL_OVERRIDE;
+  // Dummy connection
+  virtual void connect(const CInetHost &addr) NL_OVERRIDE;
 
-	// Dummy disconnection
-	virtual void disconnect() NL_OVERRIDE;
+  // Dummy disconnection
+  virtual void disconnect() NL_OVERRIDE;
 
-	// Nothing
-	virtual void setNoDelay(bool /* value */) NL_OVERRIDE { }
+  // Nothing
+  virtual void setNoDelay(bool /* value */) NL_OVERRIDE {}
 
-	// Nothing
-	virtual void close() NL_OVERRIDE { }
+  // Nothing
+  virtual void close() NL_OVERRIDE {}
 };
 
-} // NLNET
+} // namespace NLNET
 
 #endif // NL_DUMMY_TCP_SOCK_H
 

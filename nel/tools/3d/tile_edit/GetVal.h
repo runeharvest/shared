@@ -26,42 +26,39 @@
 /////////////////////////////////////////////////////////////////////////////
 // GetVal dialog
 
-class GetVal : public CDialog
-{
-	// Construction
+class GetVal : public CDialog {
+  // Construction
 public:
-	TCHAR *name;
-	int NameOk;
-	GetVal(CWnd *pParent = NULL); // standard constructor
+  TCHAR *name;
+  int NameOk;
+  GetVal(CWnd *pParent = NULL); // standard constructor
 
-	// Dialog Data
-	//{{AFX_DATA(GetVal)
-	enum
-	{
-		IDD = IDD_GETSTR
-	};
-	// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(GetVal)
+  enum { IDD = IDD_GETSTR };
+  // NOTE: the ClassWizard will add data members here
+  //}}AFX_DATA
 
-	// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(GetVal)
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(GetVal)
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
-	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
-	//}}AFX_VIRTUAL
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+  //}}AFX_VIRTUAL
 
-	// Implementation
+  // Implementation
 protected:
-	// Generated message map functions
-	//{{AFX_MSG(GetVal)
-	virtual void OnOK();
-	virtual void OnCancel();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  // Generated message map functions
+  //{{AFX_MSG(GetVal)
+  virtual void OnOK();
+  virtual void OnCancel();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before
+// the previous line.
 
 #endif // !defined(AFX_GETVAL_H__DD545A1E_2DA6_4D2B_A698_79FA197F9931__INCLUDED_)

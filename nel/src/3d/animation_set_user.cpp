@@ -27,42 +27,39 @@ namespace NL3D {
 
 // ***************************************************************************
 
-UAnimation *CAnimationSetUser::getAnimation(uint animationId)
-{
+UAnimation *CAnimationSetUser::getAnimation(uint animationId) {
 
-	return _AnimationSet->getAnimation(animationId);
+  return _AnimationSet->getAnimation(animationId);
 }
 
 // ***************************************************************************
 
-const CAnimationSet *CAnimationSetUser::getAnimationSet() const
-{
+const CAnimationSet *CAnimationSetUser::getAnimationSet() const {
 
-	return _AnimationSet;
+  return _AnimationSet;
 }
 
 // ***************************************************************************
-void CAnimationSetUser::setAnimationSampleDivisor(uint sampleDivisor)
-{
-	_AnimationSet->setAnimationSampleDivisor(sampleDivisor);
+void CAnimationSetUser::setAnimationSampleDivisor(uint sampleDivisor) {
+  _AnimationSet->setAnimationSampleDivisor(sampleDivisor);
 }
 
 // ***************************************************************************
-uint CAnimationSetUser::getAnimationSampleDivisor() const
-{
-	return _AnimationSet->getAnimationSampleDivisor();
+uint CAnimationSetUser::getAnimationSampleDivisor() const {
+  return _AnimationSet->getAnimationSampleDivisor();
 }
 
 // ***************************************************************************
-void CAnimationSetUser::build()
-{
+void CAnimationSetUser::build() {
 
-	// build
-	_AnimationSet->build();
+  // build
+  _AnimationSet->build();
 
-	// and preload all SSS shapes that can be spawned during animation
-	nlassert(_Owner->getDriver() && _Owner->getShapeBank());
-	_AnimationSet->preloadSSSShapes(*_Owner->getDriver(), ((CShapeBankUser *)_Owner->getShapeBank())->_ShapeBank);
+  // and preload all SSS shapes that can be spawned during animation
+  nlassert(_Owner->getDriver() && _Owner->getShapeBank());
+  _AnimationSet->preloadSSSShapes(
+      *_Owner->getDriver(),
+      ((CShapeBankUser *)_Owner->getShapeBank())->_ShapeBank);
 }
 
-} // NL3D
+} // namespace NL3D

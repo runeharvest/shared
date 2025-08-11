@@ -17,10 +17,10 @@
 #ifndef NL_HLS_BANK_TEXTURE_INFO_H
 #define NL_HLS_BANK_TEXTURE_INFO_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/stream.h"
-#include "nel/misc/rgba.h"
 #include "nel/misc/bitmap.h"
+#include "nel/misc/rgba.h"
+#include "nel/misc/stream.h"
+#include "nel/misc/types_nl.h"
 
 using NLMISC::CRGBA;
 
@@ -31,84 +31,77 @@ using NLMISC::CRGBA;
  * \author Nevrax France
  * \date 2002
  */
-class CHLSBankTextureInfo
-{
+class CHLSBankTextureInfo {
 public:
-	struct CMaskBitmap
-	{
-		uint32 Width, Height;
-		std::vector<uint8> Pixels;
+  struct CMaskBitmap {
+    uint32 Width, Height;
+    std::vector<uint8> Pixels;
 
-		void serial(NLMISC::IStream &f)
-		{
-			sint ver = f.serialVersion(0);
-			f.serial(Width, Height);
-			f.serialCont(Pixels);
-		}
+    void serial(NLMISC::IStream &f) {
+      sint ver = f.serialVersion(0);
+      f.serial(Width, Height);
+      f.serialCont(Pixels);
+    }
 
-		/// Compress a bitmap in a Alpha map
-		void build(const NLMISC::CBitmap &src);
-		/// build a RGBA bitmap.
-		void buildBitmap(NLMISC::CBitmap &dst);
-	};
+    /// Compress a bitmap in a Alpha map
+    void build(const NLMISC::CBitmap &src);
+    /// build a RGBA bitmap.
+    void buildBitmap(NLMISC::CBitmap &dst);
+  };
 
-	class CDXTCBitmap
-	{
-	public:
-		/// Compress a bitmap in DXTC5/mipmap
-		void build(const NLMISC::CBitmap &src);
-		/// build a DXTC5 bitmap.
-		void buildBitmap(NLMISC::CBitmap &dst);
-		/// save/load
-		void serial(NLMISC::IStream &f);
+  class CDXTCBitmap {
+  public:
+    /// Compress a bitmap in DXTC5/mipmap
+    void build(const NLMISC::CBitmap &src);
+    /// build a DXTC5 bitmap.
+    void buildBitmap(NLMISC::CBitmap &dst);
+    /// save/load
+    void serial(NLMISC::IStream &f);
 
-	private:
-		std::vector<uint8> _Data;
-	};
+  private:
+    std::vector<uint8> _Data;
+  };
 
-	struct CHLSMod
-	{
-		float DHue;
-		float DLum;
-		float DSat;
+  struct CHLSMod {
+    float DHue;
+    float DLum;
+    float DSat;
 
-		void serial(NLMISC::IStream &f)
-		{
-			sint ver = f.serialVersion(0);
-			f.serial(DHue, DLum, DSat);
-		}
-	};
+    void serial(NLMISC::IStream &f) {
+      sint ver = f.serialVersion(0);
+      f.serial(DHue, DLum, DSat);
+    }
+  };
 
-	struct CTextureInstance
-	{
-		/// name of the texture (with .tga)
-		std::string Name;
-		/// List of modifier for each mask.
-		std::vector<CHLSMod> Mods;
+  struct CTextureInstance {
+    /// name of the texture (with .tga)
+    std::string Name;
+    /// List of modifier for each mask.
+    std::vector<CHLSMod> Mods;
 
-		void serial(NLMISC::IStream &f)
-		{
-			sint ver = f.serialVersion(0);
-			f.serial(Name);
-			f.serialCont(Mods);
-		}
-	};
+    void serial(NLMISC::IStream &f) {
+      sint ver = f.serialVersion(0);
+      f.serial(Name);
+      f.serialCont(Mods);
+    }
+  };
 
 public:
-	// Info for panoply_maker. Tells if the original texture was in dir d4/ at the last compute
-	bool DividedBy2;
-	// The LowDef version of the Bitmap. Compressed in DXTC5 with mipmaps
-	CDXTCBitmap SrcBitmap;
-	// Array of Masks.
-	std::vector<CMaskBitmap> Masks;
-	// Array of colored version info
-	std::vector<CTextureInstance> Instances;
+  // Info for panoply_maker. Tells if the original texture was in dir d4/ at the
+  // last compute
+  bool DividedBy2;
+  // The LowDef version of the Bitmap. Compressed in DXTC5 with mipmaps
+  CDXTCBitmap SrcBitmap;
+  // Array of Masks.
+  std::vector<CMaskBitmap> Masks;
+  // Array of colored version info
+  std::vector<CTextureInstance> Instances;
 
 public:
-	/// Constructor
-	CHLSBankTextureInfo();
+  /// Constructor
+  CHLSBankTextureInfo();
 
-	void serial(NLMISC::IStream &f);
+  void serial(NLMISC::IStream &f);
 };
 
 #endif // NL_HLS_BANK_TEXTURE_INFO_H

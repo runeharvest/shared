@@ -20,26 +20,25 @@
 #ifndef NL_VERTEX_PROGRAM_H
 #define NL_VERTEX_PROGRAM_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/smart_ptr.h"
 #include "nel/3d/program.h"
+#include "nel/misc/smart_ptr.h"
+#include "nel/misc/types_nl.h"
 
 #include <list>
 
 namespace NL3D {
 
-class CVertexProgram : public IProgram
-{
+class CVertexProgram : public IProgram {
 public:
-	/// Constructor
-	CVertexProgram();
-	CVertexProgram(const char *nelvp);
+  /// Constructor
+  CVertexProgram();
+  CVertexProgram(const char *nelvp);
 
-	/// Destructor
-	virtual ~CVertexProgram();
+  /// Destructor
+  virtual ~CVertexProgram();
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_VERTEX_PROGRAM_H
 

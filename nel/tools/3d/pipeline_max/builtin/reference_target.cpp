@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <nel/misc/types_nl.h>
 #include "reference_target.h"
+#include <nel/misc/types_nl.h>
 
 // STL includes
 
@@ -42,67 +42,52 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CReferenceTarget::CReferenceTarget(CScene *scene)
-    : CReferenceMaker(scene)
-{
-}
+CReferenceTarget::CReferenceTarget(CScene *scene) : CReferenceMaker(scene) {}
 
-CReferenceTarget::~CReferenceTarget()
-{
-}
+CReferenceTarget::~CReferenceTarget() {}
 
 const ucstring CReferenceTarget::DisplayName = ucstring("ReferenceTarget");
 const char *CReferenceTarget::InternalName = "ReferenceTarget";
 const char *CReferenceTarget::InternalNameUnknown = "ReferenceTargetUnknown";
-const NLMISC::CClassId CReferenceTarget::ClassId = NLMISC::CClassId(0x5d545dd9, 0xa422e4); /* Not official, please correct */
+const NLMISC::CClassId CReferenceTarget::ClassId =
+    NLMISC::CClassId(0x5d545dd9, 0xa422e4); /* Not official, please correct */
 const TSClassId CReferenceTarget::SuperClassId = 0x00000200;
 const CReferenceTargetClassDesc ReferenceTargetClassDesc(&DllPluginDescBuiltin);
-const CReferenceTargetSuperClassDesc ReferenceTargetSuperClassDesc(&ReferenceTargetClassDesc);
+const CReferenceTargetSuperClassDesc
+    ReferenceTargetSuperClassDesc(&ReferenceTargetClassDesc);
 
-void CReferenceTarget::parse(uint16 version, uint filter)
-{
-	CReferenceMaker::parse(version);
+void CReferenceTarget::parse(uint16 version, uint filter) {
+  CReferenceMaker::parse(version);
 }
 
-void CReferenceTarget::clean()
-{
-	CReferenceMaker::clean();
+void CReferenceTarget::clean() { CReferenceMaker::clean(); }
+
+void CReferenceTarget::build(uint16 version, uint filter) {
+  CReferenceMaker::build(version);
 }
 
-void CReferenceTarget::build(uint16 version, uint filter)
-{
-	CReferenceMaker::build(version);
+void CReferenceTarget::disown() { CReferenceMaker::disown(); }
+
+void CReferenceTarget::init() { CReferenceMaker::init(); }
+
+bool CReferenceTarget::inherits(const NLMISC::CClassId classId) const {
+  if (classId == classDesc()->classId())
+    return true;
+  return CReferenceMaker::inherits(classId);
 }
 
-void CReferenceTarget::disown()
-{
-	CReferenceMaker::disown();
+const ISceneClassDesc *CReferenceTarget::classDesc() const {
+  return &ReferenceTargetClassDesc;
 }
 
-void CReferenceTarget::init()
-{
-	CReferenceMaker::init();
+void CReferenceTarget::toStringLocal(std::ostream &ostream,
+                                     const std::string &pad,
+                                     uint filter) const {
+  CReferenceMaker::toStringLocal(ostream, pad);
 }
 
-bool CReferenceTarget::inherits(const NLMISC::CClassId classId) const
-{
-	if (classId == classDesc()->classId()) return true;
-	return CReferenceMaker::inherits(classId);
-}
-
-const ISceneClassDesc *CReferenceTarget::classDesc() const
-{
-	return &ReferenceTargetClassDesc;
-}
-
-void CReferenceTarget::toStringLocal(std::ostream &ostream, const std::string &pad, uint filter) const
-{
-	CReferenceMaker::toStringLocal(ostream, pad);
-}
-
-IStorageObject *CReferenceTarget::createChunkById(uint16 id, bool container)
-{
-	return CReferenceMaker::createChunkById(id, container);
+IStorageObject *CReferenceTarget::createChunkById(uint16 id, bool container) {
+  return CReferenceMaker::createChunkById(id, container);
 }
 
 } /* namespace BUILTIN */

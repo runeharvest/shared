@@ -20,63 +20,61 @@
 #include "weapon_types.h"
 
 namespace WEAPONTYPE {
-EWeaponType stringToWeaponType(const std::string &str)
-{
-	if (str == "LIGHT" || str == "light")
-		return LIGHT;
+EWeaponType stringToWeaponType(const std::string &str) {
+  if (str == "LIGHT" || str == "light")
+    return LIGHT;
 
-	if (str == "MEDIUM" || str == "medium")
-		return MEDIUM;
+  if (str == "MEDIUM" || str == "medium")
+    return MEDIUM;
 
-	if (str == "HEAVY" || str == "heavy")
-		return HEAVY;
+  if (str == "HEAVY" || str == "heavy")
+    return HEAVY;
 
-	if (str == "HANDS" || str == "hands")
-		return HANDS;
+  if (str == "HANDS" || str == "hands")
+    return HANDS;
 
-	if (str == "LIGHT_GUN" || str == "light gun")
-		return LIGHT_GUN;
+  if (str == "LIGHT_GUN" || str == "light gun")
+    return LIGHT_GUN;
 
-	if (str == "MEDIUM_GUN" || str == "medium gun")
-		return MEDIUM_GUN;
+  if (str == "MEDIUM_GUN" || str == "medium gun")
+    return MEDIUM_GUN;
 
-	if (str == "HEAVY_GUN" || str == "heavy gun")
-		return HEAVY_GUN;
+  if (str == "HEAVY_GUN" || str == "heavy gun")
+    return HEAVY_GUN;
 
-	if (str == "UNKNOWN" || str == "unknown")
-		return UNKNOWN;
+  if (str == "UNKNOWN" || str == "unknown")
+    return UNKNOWN;
 
-	nlwarning("<stringToWeaponType> Unknown type %s", str.c_str());
-	return UNKNOWN;
+  nlwarning("<stringToWeaponType> Unknown type %s", str.c_str());
+  return UNKNOWN;
 }
 
-std::string toString(EWeaponType type)
-{
-	if (type == LIGHT)
-		return "LIGHT";
+std::string toString(EWeaponType type) {
+  if (type == LIGHT)
+    return "LIGHT";
 
-	if (type == MEDIUM)
-		return "MEDIUM";
+  if (type == MEDIUM)
+    return "MEDIUM";
 
-	if (type == HEAVY)
-		return "HEAVY";
+  if (type == HEAVY)
+    return "HEAVY";
 
-	if (type == HANDS)
-		return "HANDS";
+  if (type == HANDS)
+    return "HANDS";
 
-	if (type == LIGHT_GUN)
-		return "LIGHT_GUN";
+  if (type == LIGHT_GUN)
+    return "LIGHT_GUN";
 
-	if (type == MEDIUM_GUN)
-		return "MEDIUM_GUN";
+  if (type == MEDIUM_GUN)
+    return "MEDIUM_GUN";
 
-	if (type == HEAVY_GUN)
-		return "HEAVY_GUN";
+  if (type == HEAVY_GUN)
+    return "HEAVY_GUN";
 
-	if (type == UNKNOWN)
-		return "UNKNOWN";
+  if (type == UNKNOWN)
+    return "UNKNOWN";
 
-	nlwarning("<toString> Unknown type %d", type);
-	return "UNKNOWN";
+  nlwarning("<toString> Unknown type %d", type);
+  return "UNKNOWN";
 }
-}; // WEAPONTYPE
+}; // namespace WEAPONTYPE

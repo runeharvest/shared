@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "nel/misc/types_nl.h"
 #include "game_share/r2_basic_types.h"
+#include "nel/misc/types_nl.h"
 // #include "game_share/r2_types.h"
 #include "persistent_data.h"
 
@@ -25,14 +25,13 @@
 class CEntityState;
 
 /** Define the online state of a character */
-enum TCharConnectionState
-{
-	/// the character is offline
-	ccs_offline = 0,
-	/// the character is online on the same shard
-	ccs_online = 1,
-	/// the character is online, but on another shard in the domain.
-	ccs_online_abroad = 2
+enum TCharConnectionState {
+  /// the character is offline
+  ccs_offline = 0,
+  /// the character is online on the same shard
+  ccs_online = 1,
+  /// the character is online, but on another shard in the domain.
+  ccs_online_abroad = 2
 };
 
 /**
@@ -41,67 +40,60 @@ enum TCharConnectionState
  * \author Nevrax France
  * \date 2002
  */
-class COfflineEntityState
-{
+class COfflineEntityState {
 public:
-	// Start by declaring methods for persistent load/ save operations
-	// The following macro is defined in persistent_data.h
-	// At time of writing it evaluated to:
-	//	void store(CPersistentDataRecord &pdr) const;
-	//	void apply(CPersistentDataRecord &pdr);
+  // Start by declaring methods for persistent load/ save operations
+  // The following macro is defined in persistent_data.h
+  // At time of writing it evaluated to:
+  //	void store(CPersistentDataRecord &pdr) const;
+  //	void apply(CPersistentDataRecord &pdr);
 
-	DECLARE_PERSISTENCE_METHODS
+  DECLARE_PERSISTENCE_METHODS
 
-	sint32 X;
-	sint32 Y;
-	sint32 Z;
+  sint32 X;
+  sint32 Y;
+  sint32 Z;
 
-	float Heading;
+  float Heading;
 
-	/**
-	 * Constructor
-	 */
-	COfflineEntityState()
-	{
-		clear();
-	}
+  /**
+   * Constructor
+   */
+  COfflineEntityState() { clear(); }
 
-	void clear()
-	{
-		X = 0;
-		Y = 0;
-		Z = 0;
-		Heading = 0;
-	}
+  void clear() {
+    X = 0;
+    Y = 0;
+    Z = 0;
+    Heading = 0;
+  }
 
-	COfflineEntityState(const CEntityState &state);
+  COfflineEntityState(const CEntityState &state);
 
-	// Comparison
-	bool operator==(const COfflineEntityState &other) const;
+  // Comparison
+  bool operator==(const COfflineEntityState &other) const;
 
-	// Assignment
-	COfflineEntityState &operator=(const COfflineEntityState &src)
-	{
-		X = src.X;
-		Y = src.Y;
-		Z = src.Z;
-		Heading = src.Heading;
-		return *this;
-	}
+  // Assignment
+  COfflineEntityState &operator=(const COfflineEntityState &src) {
+    X = src.X;
+    Y = src.Y;
+    Z = src.Z;
+    Heading = src.Heading;
+    return *this;
+  }
 
-	/**
-	 * Serial
-	 */
-	void serial(NLMISC::IStream &f)
-	{
-		f.serial(X);
-		f.serial(Y);
-		f.serial(Z);
-		f.serial(Heading);
-	}
+  /**
+   * Serial
+   */
+  void serial(NLMISC::IStream &f) {
+    f.serial(X);
+    f.serial(Y);
+    f.serial(Z);
+    f.serial(Heading);
+  }
 
-	// Return as string
-	std::string toString() const;
+  // Return as string
+  std::string toString() const;
 };
 
 /*
@@ -112,7 +104,8 @@ public:
  */
 // typedef uint32 TSessionId;
 
-// Special value to force saving the position stack without updating it from the outside anymore
+// Special value to force saving the position stack without updating it from the
+// outside anymore
 const TSessionId SessionLockPositionStack(~0u);
 
 /**
@@ -121,35 +114,32 @@ const TSessionId SessionLockPositionStack(~0u);
  * \author Nevrax France
  * \date 2006
  */
-class CFarPosition
-{
+class CFarPosition {
 public:
-	DECLARE_PERSISTENCE_METHODS
+  DECLARE_PERSISTENCE_METHODS
 
-	TSessionId SessionId;
-	COfflineEntityState PosState;
+  TSessionId SessionId;
+  COfflineEntityState PosState;
 
-	CFarPosition();
+  CFarPosition();
 
-	// Comparison
-	bool operator==(const CFarPosition &other) const;
+  // Comparison
+  bool operator==(const CFarPosition &other) const;
 
-	// Assignment
-	CFarPosition &operator=(const CFarPosition &src)
-	{
-		SessionId = src.SessionId;
-		PosState = src.PosState;
-		return *this;
-	}
+  // Assignment
+  CFarPosition &operator=(const CFarPosition &src) {
+    SessionId = src.SessionId;
+    PosState = src.PosState;
+    return *this;
+  }
 
-	/**
-	 * Serial
-	 */
-	void serial(NLMISC::IStream &f)
-	{
-		f.serial(SessionId);
-		f.serial(PosState);
-	}
+  /**
+   * Serial
+   */
+  void serial(NLMISC::IStream &f) {
+    f.serial(SessionId);
+    f.serial(PosState);
+  }
 };
 
 #endif // NL_FAR_POSITION_H

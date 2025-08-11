@@ -20,11 +20,10 @@
 
 #include <QString>
 
-struct SCrashReportData
-{
-	QString description;
-	QString report;
-	QString email;
+struct SCrashReportData {
+  QString description;
+  QString report;
+  QString email;
 };
 
 #endif

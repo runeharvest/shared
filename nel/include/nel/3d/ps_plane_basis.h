@@ -17,12 +17,12 @@
 #ifndef NL_PS_PLANE_BASIS_H
 #define NL_PS_PLANE_BASIS_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/vector.h"
+#include "nel/3d/ps_attrib_maker_helper.h"
+#include "nel/3d/ps_util.h"
 #include "nel/misc/matrix.h"
 #include "nel/misc/traits_nl.h"
-#include "nel/3d/ps_util.h"
-#include "nel/3d/ps_attrib_maker_helper.h"
+#include "nel/misc/types_nl.h"
+#include "nel/misc/vector.h"
 
 namespace NL3D {
 
@@ -30,51 +30,40 @@ namespace NL3D {
  *  It's a like a 2x3 matrix, (with only the X and Y vector defined)
  */
 
-struct CPlaneBasis
-{
-	NLMISC::CVector X;
-	NLMISC::CVector Y;
+struct CPlaneBasis {
+  NLMISC::CVector X;
+  NLMISC::CVector Y;
 
-	// default ctor
-	CPlaneBasis() { }
+  // default ctor
+  CPlaneBasis() {}
 
-	// construct this basis by giving a normal to the plane that contains it
-	CPlaneBasis(const NLMISC::CVector &normal)
-	{
-		NLMISC::CMatrix mat;
-		CPSUtil::buildSchmidtBasis(normal, mat);
-		X = mat.getI();
-		Y = mat.getJ();
-	}
+  // construct this basis by giving a normal to the plane that contains it
+  CPlaneBasis(const NLMISC::CVector &normal) {
+    NLMISC::CMatrix mat;
+    CPSUtil::buildSchmidtBasis(normal, mat);
+    X = mat.getI();
+    Y = mat.getJ();
+  }
 
-	// construct this basis by giving its X and Y vectors
-	CPlaneBasis(const NLMISC::CVector &x, const NLMISC::CVector &y)
-	    : X(x)
-	    , Y(y)
-	{
-	}
+  // construct this basis by giving its X and Y vectors
+  CPlaneBasis(const NLMISC::CVector &x, const NLMISC::CVector &y)
+      : X(x), Y(y) {}
 
-	/// compute the normal of the plane basis
-	NLMISC::CVector getNormal(void) const
-	{
-		return X ^ Y;
-	}
+  /// compute the normal of the plane basis
+  NLMISC::CVector getNormal(void) const { return X ^ Y; }
 
-	void serial(NLMISC::IStream &f)
-	{
-		f.serial(X, Y);
-	}
+  void serial(NLMISC::IStream &f) { f.serial(X, Y); }
 };
 
 // for map insertion
 
-inline bool operator<(const CPlaneBasis &p1, const CPlaneBasis &p2)
-{
-	if (p1.X != p2.X) return p1.X < p2.X;
-	return p1.Y < p2.Y;
+inline bool operator<(const CPlaneBasis &p1, const CPlaneBasis &p2) {
+  if (p1.X != p2.X)
+    return p1.X < p2.X;
+  return p1.Y < p2.Y;
 }
 
-} // NL3D
+} // namespace NL3D
 
 // special traits for optimization
 namespace NLMISC {

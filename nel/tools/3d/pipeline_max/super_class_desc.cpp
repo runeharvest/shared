@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <nel/misc/types_nl.h>
 #include "super_class_desc.h"
+#include <nel/misc/types_nl.h>
 
 // STL includes
 
@@ -41,7 +41,7 @@
 namespace PIPELINE {
 namespace MAX {
 
-void nyannyannyan() { }
+void nyannyannyan() {}
 
 } /* namespace MAX */
 } /* namespace PIPELINE */

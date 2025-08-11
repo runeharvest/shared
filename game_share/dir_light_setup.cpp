@@ -14,73 +14,69 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdpch.h"
 #include "dir_light_setup.h"
 #include "georges_helper.h"
 #include "nel/georges/u_form_elm.h"
+#include "stdpch.h"
 
 //-----------------------------------------------
 CDirLightSetup::CDirLightSetup()
-    : Ambiant(0, 0, 0)
-    , Diffuse(255, 255, 255)
-    , Specular(0, 0, 0)
-    , Direction(1.f, 0.f, 0.f)
-{
+    : Ambiant(0, 0, 0), Diffuse(255, 255, 255), Specular(0, 0, 0),
+      Direction(1.f, 0.f, 0.f) {}
+
+//-----------------------------------------------
+void CDirLightSetup::blend(const CDirLightSetup &setup0,
+                           const CDirLightSetup &setup1, float blendFactor) {
+  uint uiFactor = (uint)(256.f * blendFactor);
+  Ambiant.blendFromui(setup0.Ambiant, setup1.Ambiant, uiFactor);
+  Diffuse.blendFromui(setup0.Diffuse, setup1.Diffuse, uiFactor);
+  Specular.blendFromui(setup0.Specular, setup1.Specular, uiFactor);
+  Direction =
+      (blendFactor * setup0.Direction + (1.f - blendFactor) * setup1.Direction)
+          .normed();
 }
 
 //-----------------------------------------------
-void CDirLightSetup::blend(const CDirLightSetup &setup0, const CDirLightSetup &setup1, float blendFactor)
-{
-	uint uiFactor = (uint)(256.f * blendFactor);
-	Ambiant.blendFromui(setup0.Ambiant, setup1.Ambiant, uiFactor);
-	Diffuse.blendFromui(setup0.Diffuse, setup1.Diffuse, uiFactor);
-	Specular.blendFromui(setup0.Specular, setup1.Specular, uiFactor);
-	Direction = (blendFactor * setup0.Direction + (1.f - blendFactor) * setup1.Direction).normed();
+void CDirLightSetup::modulate(float level) {
+  uint uiLevel = (uint)(256.f * level);
+  Ambiant.modulateFromui(Ambiant, uiLevel);
+  Diffuse.modulateFromui(Diffuse, uiLevel);
+  Specular.modulateFromui(Specular, uiLevel);
 }
 
 //-----------------------------------------------
-void CDirLightSetup::modulate(float level)
-{
-	uint uiLevel = (uint)(256.f * level);
-	Ambiant.modulateFromui(Ambiant, uiLevel);
-	Diffuse.modulateFromui(Diffuse, uiLevel);
-	Specular.modulateFromui(Specular, uiLevel);
-}
+bool CDirLightSetup::build(const NLGEORGES::UFormElm &item) {
+  NLMISC::CRGBA amb, dif, spe;
+  NLMISC::CVector dir;
 
-//-----------------------------------------------
-bool CDirLightSetup::build(const NLGEORGES::UFormElm &item)
-{
-	NLMISC::CRGBA amb, dif, spe;
-	NLMISC::CVector dir;
+  const NLGEORGES::UFormElm *pElt;
+  // Light Direction
+  if (item.getNodeByName(&pElt, ".Direction") && pElt) {
+    if (!CGeorgesHelper::convert(dir, *pElt))
+      return false;
+  }
+  // Light Ambiant
+  if (item.getNodeByName(&pElt, ".Ambiant") && pElt) {
+    if (!CGeorgesHelper::convert(amb, *pElt))
+      return false;
+  }
 
-	const NLGEORGES::UFormElm *pElt;
-	// Light Direction
-	if (item.getNodeByName(&pElt, ".Direction") && pElt)
-	{
-		if (!CGeorgesHelper::convert(dir, *pElt)) return false;
-	}
-	// Light Ambiant
-	if (item.getNodeByName(&pElt, ".Ambiant") && pElt)
-	{
-		if (!CGeorgesHelper::convert(amb, *pElt)) return false;
-	}
+  // Light Diffuse
+  if (item.getNodeByName(&pElt, ".Diffuse") && pElt) {
+    if (!CGeorgesHelper::convert(dif, *pElt))
+      return false;
+  }
 
-	// Light Diffuse
-	if (item.getNodeByName(&pElt, ".Diffuse") && pElt)
-	{
-		if (!CGeorgesHelper::convert(dif, *pElt)) return false;
-	}
+  // Light Specular
+  if (item.getNodeByName(&pElt, ".Specular") && pElt) {
+    if (!CGeorgesHelper::convert(spe, *pElt))
+      return false;
+  }
 
-	// Light Specular
-	if (item.getNodeByName(&pElt, ".Specular") && pElt)
-	{
-		if (!CGeorgesHelper::convert(spe, *pElt)) return false;
-	}
+  Ambiant = amb;
+  Diffuse = dif;
+  Specular = spe;
+  Direction = dir;
 
-	Ambiant = amb;
-	Diffuse = dif;
-	Specular = spe;
-	Direction = dir;
-
-	return true;
+  return true;
 }

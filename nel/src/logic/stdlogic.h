@@ -19,23 +19,23 @@
 
 #if defined(_MSC_VER) && defined(_DEBUG)
 #define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
 #include <crtdbg.h>
+#include <stdlib.h>
 #define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
-#include <vector>
+#include <limits>
 #include <map>
 #include <string>
-#include <limits>
+#include <vector>
 
 #include <libxml/parser.h>
 
-#include "nel/misc/types_nl.h"
 #include "nel/misc/entity_id.h"
 #include "nel/misc/i_xml.h"
 #include "nel/misc/o_xml.h"
 #include "nel/misc/stream.h"
+#include "nel/misc/types_nl.h"
 
 #ifdef NL_OS_WINDOWS
 #define WIN32_LEAN_AND_MEAN
@@ -47,8 +47,8 @@
 #define WINVER 0x0500
 #define NOMINMAX
 #endif
-#include <winsock2.h>
 #include <windows.h>
+#include <winsock2.h>
 #endif
 
 #endif // NL_STDMISC_H

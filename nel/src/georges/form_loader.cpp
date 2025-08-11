@@ -20,15 +20,15 @@
 #include "stdgeorges.h"
 
 #include "nel/misc/file.h"
-#include "nel/misc/path.h"
 #include "nel/misc/i_xml.h"
+#include "nel/misc/path.h"
 
 #include "nel/georges/u_form.h"
 
-#include "nel/georges/form_loader.h"
-#include "nel/georges/type.h"
 #include "nel/georges/form.h"
 #include "nel/georges/form_dfn.h"
+#include "nel/georges/form_loader.h"
+#include "nel/georges/type.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -47,285 +47,254 @@ void warning(bool exception, const char *format, ...);
 // UFormLoader
 // ***************************************************************************
 
-UFormLoader *UFormLoader::createLoader()
-{
-	return new CFormLoader;
-}
+UFormLoader *UFormLoader::createLoader() { return new CFormLoader; }
 
 // ***************************************************************************
 
-void UFormLoader::releaseLoader(UFormLoader *loader)
-{
-	delete ((CFormLoader *)loader);
+void UFormLoader::releaseLoader(UFormLoader *loader) {
+  delete ((CFormLoader *)loader);
 }
 
 // ***************************************************************************
 // CFormLoader
 // ***************************************************************************
-CFormLoader::~CFormLoader()
-{
-}
+CFormLoader::~CFormLoader() {}
 
-CType *CFormLoader::loadType(const std::string &filename)
-{
-	// Lower string filename
-	string lowerStr = toLowerAscii(filename);
-	lowerStr = CFile::getFilename(lowerStr);
+CType *CFormLoader::loadType(const std::string &filename) {
+  // Lower string filename
+  string lowerStr = toLowerAscii(filename);
+  lowerStr = CFile::getFilename(lowerStr);
 
-	// Already in the map ?
-	TTypeMap::iterator ite = _MapType.find(lowerStr);
-	if (ite != _MapType.end() && (ite->second != NULL))
-	{
-		// Return the pointer
-		return ite->second;
-	}
-	else
-	{
-		// Create the type
-		CType *type = new CType;
+  // Already in the map ?
+  TTypeMap::iterator ite = _MapType.find(lowerStr);
+  if (ite != _MapType.end() && (ite->second != NULL)) {
+    // Return the pointer
+    return ite->second;
+  } else {
+    // Create the type
+    CType *type = new CType;
 
-		// Load the type
-		try
-		{
-			// Open the file
-			string name = CPath::lookup(filename, false, false);
-			if (name.empty())
-				name = filename;
-			CIFile file;
-			if (file.open(name))
-			{
-				// Init an xml stream
-				CIXml read;
-				read.init(file);
+    // Load the type
+    try {
+      // Open the file
+      string name = CPath::lookup(filename, false, false);
+      if (name.empty())
+        name = filename;
+      CIFile file;
+      if (file.open(name)) {
+        // Init an xml stream
+        CIXml read;
+        read.init(file);
 
-				// Read the type
-				type->read(read.getRootNode());
-			}
-			else
-			{
-				// Output error
-				warning(false, "loadType", "Can't open the form file (%s).", filename.c_str());
+        // Read the type
+        type->read(read.getRootNode());
+      } else {
+        // Output error
+        warning(false, "loadType", "Can't open the form file (%s).",
+                filename.c_str());
 
-				// Delete the type
-				delete type;
-				type = NULL;
-			}
-		}
-		catch (const Exception &e)
-		{
-			// Output error
-			warning(false, "loadType", "Error while loading the form (%s): %s", filename.c_str(), e.what());
+        // Delete the type
+        delete type;
+        type = NULL;
+      }
+    } catch (const Exception &e) {
+      // Output error
+      warning(false, "loadType", "Error while loading the form (%s): %s",
+              filename.c_str(), e.what());
 
-			// Delete the type
-			delete type;
-			type = NULL;
-		}
+      // Delete the type
+      delete type;
+      type = NULL;
+    }
 
-		// Loaded ?
-		if (type)
-		{
-			// Insert a new entry
-			_MapType[lowerStr] = type;
-			ite = _MapType.find(lowerStr);
-			// CType *typeType = ite->second;
-			//			int toto = 0;
-		}
-		return type;
-	}
+    // Loaded ?
+    if (type) {
+      // Insert a new entry
+      _MapType[lowerStr] = type;
+      ite = _MapType.find(lowerStr);
+      // CType *typeType = ite->second;
+      //			int toto = 0;
+    }
+    return type;
+  }
 }
 
 // ***************************************************************************
 
-CFormDfn *CFormLoader::loadFormDfn(const std::string &filename, bool forceLoad)
-{
-	// Lower string filename
-	string lowerStr = toLowerAscii(filename);
-	lowerStr = CFile::getFilename(lowerStr);
+CFormDfn *CFormLoader::loadFormDfn(const std::string &filename,
+                                   bool forceLoad) {
+  // Lower string filename
+  string lowerStr = toLowerAscii(filename);
+  lowerStr = CFile::getFilename(lowerStr);
 
-	// Already in the map ?
-	TFormDfnMap::iterator ite = _MapFormDfn.find(lowerStr);
-	if (ite != _MapFormDfn.end() && ite->second)
-	{
-		// Return the pointer
-		return ite->second;
-	}
-	else
-	{
-		// Create the formDfn
-		CFormDfn *formDfn = new CFormDfn;
+  // Already in the map ?
+  TFormDfnMap::iterator ite = _MapFormDfn.find(lowerStr);
+  if (ite != _MapFormDfn.end() && ite->second) {
+    // Return the pointer
+    return ite->second;
+  } else {
+    // Create the formDfn
+    CFormDfn *formDfn = new CFormDfn;
 
-		// Insert the form first
-		_MapFormDfn[lowerStr] = formDfn;
+    // Insert the form first
+    _MapFormDfn[lowerStr] = formDfn;
 
-		// Load the type
-		try
-		{
-			// Open the file
-			string name = CPath::lookup(filename, false, false);
-			if (name.empty())
-				name = filename;
-			CIFile file;
-			if (file.open(name))
-			{
-				// Init an xml stream
-				CIXml read;
-				read.init(file);
+    // Load the type
+    try {
+      // Open the file
+      string name = CPath::lookup(filename, false, false);
+      if (name.empty())
+        name = filename;
+      CIFile file;
+      if (file.open(name)) {
+        // Init an xml stream
+        CIXml read;
+        read.init(file);
 
-				// Read the type
-				formDfn->read(read.getRootNode(), *this, forceLoad, filename);
-			}
-			else
-			{
-				// Output error
-				warning(false, "loadFormDfn", "Can't open the form file (%s).", filename.c_str());
+        // Read the type
+        formDfn->read(read.getRootNode(), *this, forceLoad, filename);
+      } else {
+        // Output error
+        warning(false, "loadFormDfn", "Can't open the form file (%s).",
+                filename.c_str());
 
-				// Delete the formDfn
-				delete formDfn;
-				formDfn = NULL;
-				_MapFormDfn.erase(lowerStr);
-			}
-		}
-		catch (const Exception &e)
-		{
-			// Output error
-			warning(false, "loadFormDfn", "Error while loading the form (%s): %s", filename.c_str(), e.what());
+        // Delete the formDfn
+        delete formDfn;
+        formDfn = NULL;
+        _MapFormDfn.erase(lowerStr);
+      }
+    } catch (const Exception &e) {
+      // Output error
+      warning(false, "loadFormDfn", "Error while loading the form (%s): %s",
+              filename.c_str(), e.what());
 
-			// Delete the formDfn
-			delete formDfn;
-			formDfn = NULL;
-			_MapFormDfn.erase(lowerStr);
-		}
+      // Delete the formDfn
+      delete formDfn;
+      formDfn = NULL;
+      _MapFormDfn.erase(lowerStr);
+    }
 
-		return formDfn;
-	}
+    return formDfn;
+  }
 }
 
 // ***************************************************************************
 
-UForm *CFormLoader::loadForm(const std::string &filename)
-{
-	// Lower string filename
-	string lowerStr = toLowerAscii((string)filename);
-	lowerStr = CFile::getFilename(lowerStr);
+UForm *CFormLoader::loadForm(const std::string &filename) {
+  // Lower string filename
+  string lowerStr = toLowerAscii((string)filename);
+  lowerStr = CFile::getFilename(lowerStr);
 
-	// Already in the map ?
-	TFormMap::iterator ite = _MapForm.find(lowerStr);
-	if (ite != _MapForm.end() && ite->second)
-	{
-		// Return the pointer
-		return (CForm *)ite->second;
-	}
-	else
-	{
-		// Create the form
-		CForm *form = new CForm;
+  // Already in the map ?
+  TFormMap::iterator ite = _MapForm.find(lowerStr);
+  if (ite != _MapForm.end() && ite->second) {
+    // Return the pointer
+    return (CForm *)ite->second;
+  } else {
+    // Create the form
+    CForm *form = new CForm;
 
-		// Insert the form first
-		_MapForm[lowerStr] = form;
+    // Insert the form first
+    _MapForm[lowerStr] = form;
 
-		// Load the type
-		try
-		{
-			// Get the form DFN filename
-			string name = CFile::getFilename(filename);
-			string::size_type index = name.rfind('.');
-			if (index == string::npos)
-			{
-				// Output error
-				warning(false, "loadForm", "Form name is invalid (%s). It should have the extension of its DFN type.", name.c_str());
+    // Load the type
+    try {
+      // Get the form DFN filename
+      string name = CFile::getFilename(filename);
+      string::size_type index = name.rfind('.');
+      if (index == string::npos) {
+        // Output error
+        warning(false, "loadForm",
+                "Form name is invalid (%s). It should have the extension of "
+                "its DFN type.",
+                name.c_str());
 
-				// Delete the form
-				delete form;
-				form = NULL;
-				_MapForm.erase(lowerStr);
-			}
-			name = name.substr(index + 1);
-			name += ".dfn";
+        // Delete the form
+        delete form;
+        form = NULL;
+        _MapForm.erase(lowerStr);
+      }
+      name = name.substr(index + 1);
+      name += ".dfn";
 
-			// Load the dfn
-			CSmartPtr<CFormDfn> dfn = loadFormDfn(name, false);
-			if (dfn)
-			{
-				// Open the file
-				name = CPath::lookup(filename, false, false);
-				if (name.empty())
-					name = filename;
-				CIFile file;
-				if (file.open(name))
-				{
-					// Init an xml stream
-					CIXml read;
-					read.init(file);
+      // Load the dfn
+      CSmartPtr<CFormDfn> dfn = loadFormDfn(name, false);
+      if (dfn) {
+        // Open the file
+        name = CPath::lookup(filename, false, false);
+        if (name.empty())
+          name = filename;
+        CIFile file;
+        if (file.open(name)) {
+          // Init an xml stream
+          CIXml read;
+          read.init(file);
 
-					// Read the form
-					form->read(read.getRootNode(), *this, dfn, filename);
-				}
-				else
-				{
-					// Output error
-					warning(false, "loadForm", "Can't open the form file (%s).", filename.c_str());
+          // Read the form
+          form->read(read.getRootNode(), *this, dfn, filename);
+        } else {
+          // Output error
+          warning(false, "loadForm", "Can't open the form file (%s).",
+                  filename.c_str());
 
-					// Delete the form
-					delete form;
-					form = NULL;
-					_MapForm.erase(lowerStr);
-				}
-			}
-			else
-			{
-				// Output error
-				warning(false, "loadForm", "Can't open the dfn file (%s).", name.c_str());
+          // Delete the form
+          delete form;
+          form = NULL;
+          _MapForm.erase(lowerStr);
+        }
+      } else {
+        // Output error
+        warning(false, "loadForm", "Can't open the dfn file (%s).",
+                name.c_str());
 
-				// Delete the form
-				delete form;
-				form = NULL;
-				_MapForm.erase(lowerStr);
-			}
-		}
-		catch (const Exception &e)
-		{
-			// Output error
-			warning(false, "loadForm", "Error while loading the form (%s): %s", filename.c_str(), e.what());
+        // Delete the form
+        delete form;
+        form = NULL;
+        _MapForm.erase(lowerStr);
+      }
+    } catch (const Exception &e) {
+      // Output error
+      warning(false, "loadForm", "Error while loading the form (%s): %s",
+              filename.c_str(), e.what());
 
-			// Delete the form
-			delete form;
-			form = NULL;
-			_MapForm.erase(lowerStr);
-		}
+      // Delete the form
+      delete form;
+      form = NULL;
+      _MapForm.erase(lowerStr);
+    }
 
-		return form;
-	}
+    return form;
+  }
 }
 
 // ***************************************************************************
 
-UFormDfn *CFormLoader::loadFormDfn(const std::string &filename)
-{
-	return loadFormDfn(filename, false);
+UFormDfn *CFormLoader::loadFormDfn(const std::string &filename) {
+  return loadFormDfn(filename, false);
 }
 
 // ***************************************************************************
 
-UType *CFormLoader::loadFormType(const std::string &filename)
-{
-	return loadType(filename);
+UType *CFormLoader::loadFormType(const std::string &filename) {
+  return loadType(filename);
 }
 
 // ***************************************************************************
 
-void CFormLoader::warning(bool exception, const std::string &function, const char *format, ...) const
-{
-	// Make a buffer string
-	va_list args;
-	va_start(args, format);
-	char buffer[1024];
-	vsnprintf(buffer, 1024, format, args);
-	va_end(args);
+void CFormLoader::warning(bool exception, const std::string &function,
+                          const char *format, ...) const {
+  // Make a buffer string
+  va_list args;
+  va_start(args, format);
+  char buffer[1024];
+  vsnprintf(buffer, 1024, format, args);
+  va_end(args);
 
-	// Set the warning
-	NLGEORGES::warning(exception, "(CFormLoader::%s) : %s", function.c_str(), buffer);
+  // Set the warning
+  NLGEORGES::warning(exception, "(CFormLoader::%s) : %s", function.c_str(),
+                     buffer);
 }
 
 // ***************************************************************************
 
-} // NLGEORGES
+} // namespace NLGEORGES

@@ -18,9 +18,9 @@
 
 #include "nel/3d/ps_util.h"
 
-#include "nel/3d/ps_register_int_attribs.h"
-#include "nel/3d/ps_register_float_attribs.h"
 #include "nel/3d/ps_register_color_attribs.h"
+#include "nel/3d/ps_register_float_attribs.h"
+#include "nel/3d/ps_register_int_attribs.h"
 #include "nel/3d/ps_register_plane_basis_attribs.h"
 
 #ifdef DEBUG_NEW
@@ -28,11 +28,10 @@
 #endif
 
 namespace NL3D {
-void CPSUtil::registerAttribs()
-{
-	PSRegisterIntAttribs();
-	PSRegisterFloatAttribs();
-	PSRegisterColorAttribs();
-	PSRegisterPlaneBasisAttribs();
+void CPSUtil::registerAttribs() {
+  PSRegisterIntAttribs();
+  PSRegisterFloatAttribs();
+  PSRegisterColorAttribs();
+  PSRegisterPlaneBasisAttribs();
 }
-} // NL3D
+} // namespace NL3D

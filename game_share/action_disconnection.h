@@ -30,22 +30,18 @@ namespace CLFECOMMON {
  * \author Nevrax France
  * \date 2001
  */
-class CActionDisconnection : public CActionImpulsion
-{
+class CActionDisconnection : public CActionImpulsion {
 public:
-	static CAction *create() { return new CActionDisconnection(); }
+  static CAction *create() { return new CActionDisconnection(); }
 
 protected:
-	friend class CActionFactory;
+  friend class CActionFactory;
 
-	/// This method intialises the action with a default state
-	virtual void reset()
-	{
-		AllowExceedingMaxSize = false;
-	}
+  /// This method intialises the action with a default state
+  virtual void reset() { AllowExceedingMaxSize = false; }
 };
 
-}
+} // namespace CLFECOMMON
 
 #endif // NL_ACTION_DISCONNECTION_H
 

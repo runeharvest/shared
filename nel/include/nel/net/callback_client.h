@@ -22,8 +22,8 @@
 
 #include "nel/misc/types_nl.h"
 
-#include "callback_net_base.h"
 #include "buf_client.h"
+#include "callback_net_base.h"
 
 namespace NLNET {
 
@@ -36,77 +36,93 @@ class CInetHost;
  * \author Nevrax France
  * \date 2001
  */
-class CCallbackClient : public CCallbackNetBase, public CBufClient
-{
+class CCallbackClient : public CCallbackNetBase, public CBufClient {
 public:
-	/// Constructor
-	CCallbackClient(TRecordingState rec = Off, const std::string &recfilename = "", bool recordall = true, bool initPipeForDataAvailable = true);
-	~CCallbackClient();
+  /// Constructor
+  CCallbackClient(TRecordingState rec = Off,
+                  const std::string &recfilename = "", bool recordall = true,
+                  bool initPipeForDataAvailable = true);
+  ~CCallbackClient();
 
-	/// Sends a message to the remote host (the second parameter isn't used)
-	void send(const CMessage &buffer, TSockId hostid = InvalidSockId, bool log = true);
+  /// Sends a message to the remote host (the second parameter isn't used)
+  void send(const CMessage &buffer, TSockId hostid = InvalidSockId,
+            bool log = true);
 
-	/// Force to send all data pending in the send queue. hostid must be InvalidSockId here. See comment in CCallbackNetBase.
-	bool flush(TSockId hostid = InvalidSockId, uint *nbBytesRemaining = NULL);
+  /// Force to send all data pending in the send queue. hostid must be
+  /// InvalidSockId here. See comment in CCallbackNetBase.
+  bool flush(TSockId hostid = InvalidSockId, uint *nbBytesRemaining = NULL);
 
-	/** Updates the network (call this method evenly).
-	 * More info about timeout and mintime in the code of CCallbackNetBase::baseUpdate().
-	 */
-	void update2(sint32 timeout = -1, sint32 mintime = 0);
+  /** Updates the network (call this method evenly).
+   * More info about timeout and mintime in the code of
+   * CCallbackNetBase::baseUpdate().
+   */
+  void update2(sint32 timeout = -1, sint32 mintime = 0);
 
-	/// Updates the network (call this method evenly) (legacy)
-	void update(sint32 timeout = 0);
+  /// Updates the network (call this method evenly) (legacy)
+  void update(sint32 timeout = 0);
 
-	/// Connects to the specified host
-	void connect(const CInetHost &addrs);
+  /// Connects to the specified host
+  void connect(const CInetHost &addrs);
 
-	/** Returns true if the connection is still connected (changed when a disconnection
-	 * event has reached the front of the receive queue, just before calling the disconnection callback
-	 * if there is one)
-	 */
-	virtual bool connected() const { return CBufClient::connected(); }
+  /** Returns true if the connection is still connected (changed when a
+   * disconnection event has reached the front of the receive queue, just before
+   * calling the disconnection callback if there is one)
+   */
+  virtual bool connected() const { return CBufClient::connected(); }
 
-	virtual const CInetAddress &hostAddress(TSockId /* hostid */) { return remoteAddress(); }
+  virtual const CInetAddress &hostAddress(TSockId /* hostid */) {
+    return remoteAddress();
+  }
 
-	/** Disconnect a connection
-	 * Unlike in CCallbackClient, you can call disconnect() on a socket that is already disconnected
-	 * (it will do nothing)
-	 */
-	void disconnect(TSockId hostid = InvalidSockId);
+  /** Disconnect a connection
+   * Unlike in CCallbackClient, you can call disconnect() on a socket that is
+   * already disconnected (it will do nothing)
+   */
+  void disconnect(TSockId hostid = InvalidSockId);
 
-	/// Sets callback for disconnections (or NULL to disable callback)
-	void setDisconnectionCallback(TNetCallback cb, void *arg) { CCallbackNetBase::setDisconnectionCallback(cb, arg); }
+  /// Sets callback for disconnections (or NULL to disable callback)
+  void setDisconnectionCallback(TNetCallback cb, void *arg) {
+    CCallbackNetBase::setDisconnectionCallback(cb, arg);
+  }
 
-	/// Returns the sockid
-	virtual TSockId getSockId(TSockId hostid = InvalidSockId);
+  /// Returns the sockid
+  virtual TSockId getSockId(TSockId hostid = InvalidSockId);
 
-	uint64 getReceiveQueueSize() { return CBufClient::getReceiveQueueSize(); }
-	uint64 getSendQueueSize() { return CBufClient::getSendQueueSize(); }
+  uint64 getReceiveQueueSize() { return CBufClient::getReceiveQueueSize(); }
+  uint64 getSendQueueSize() { return CBufClient::getSendQueueSize(); }
 
-	void displayReceiveQueueStat(NLMISC::CLog *log = NLMISC::InfoLog) { CBufClient::displayReceiveQueueStat(log); }
-	void displaySendQueueStat(NLMISC::CLog *log = NLMISC::InfoLog, TSockId /* destid */ = InvalidSockId) { CBufClient::displaySendQueueStat(log); }
+  void displayReceiveQueueStat(NLMISC::CLog *log = NLMISC::InfoLog) {
+    CBufClient::displayReceiveQueueStat(log);
+  }
+  void displaySendQueueStat(NLMISC::CLog *log = NLMISC::InfoLog,
+                            TSockId /* destid */ = InvalidSockId) {
+    CBufClient::displaySendQueueStat(log);
+  }
 
-	void displayThreadStat(NLMISC::CLog *log = NLMISC::InfoLog) { CBufClient::displayThreadStat(log); }
+  void displayThreadStat(NLMISC::CLog *log = NLMISC::InfoLog) {
+    CBufClient::displayThreadStat(log);
+  }
 
 private:
-	/// These function is public in the base class and put it private here because user cannot use it in layer 2
-	void send(const NLMISC::CMemStream & /* buffer */) { nlstop; }
+  /// These function is public in the base class and put it private here because
+  /// user cannot use it in layer 2
+  void send(const NLMISC::CMemStream & /* buffer */) { nlstop; }
 
-	/// Returns true if there are messages to read
-	bool dataAvailable();
-	virtual bool getDataAvailableFlagV() const { return dataAvailableFlag(); }
+  /// Returns true if there are messages to read
+  bool dataAvailable();
+  virtual bool getDataAvailableFlagV() const { return dataAvailableFlag(); }
 
-	void receive(CMessage &buffer, TSockId *hostid = NULL);
+  void receive(CMessage &buffer, TSockId *hostid = NULL);
 
-	// ---------------------------------------
+  // ---------------------------------------
 #ifdef USE_MESSAGE_RECORDER
-	virtual bool replaySystemCallbacks();
+  virtual bool replaySystemCallbacks();
 #endif
 
-	bool LockDeletion;
+  bool LockDeletion;
 };
 
-} // NLNET
+} // namespace NLNET
 
 #endif // NL_CALLBACK_CLIENT_H
 

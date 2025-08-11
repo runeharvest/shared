@@ -42,61 +42,56 @@ namespace MAX {
 namespace BUILTIN {
 namespace STORAGE {
 
-struct CGeomTriIndex
-{
-	uint32 a;
-	uint32 b;
-	uint32 c;
-	void serial(NLMISC::IStream &stream);
-	std::string toString() const;
+struct CGeomTriIndex {
+  uint32 a;
+  uint32 b;
+  uint32 c;
+  void serial(NLMISC::IStream &stream);
+  std::string toString() const;
 };
 
-struct CGeomTriIndexInfo
-{
-	uint32 a;
-	uint32 b;
-	uint32 c;
-	uint32 alwaysOne;
-	uint32 smoothingGroups;
-	void serial(NLMISC::IStream &stream);
-	std::string toString() const;
+struct CGeomTriIndexInfo {
+  uint32 a;
+  uint32 b;
+  uint32 c;
+  uint32 alwaysOne;
+  uint32 smoothingGroups;
+  void serial(NLMISC::IStream &stream);
+  std::string toString() const;
 };
 
-struct CGeomPolyVertexInfo
-{
-	uint32 i1;
-	NLMISC::CVector v;
-	void serial(NLMISC::IStream &stream);
-	std::string toString() const;
+struct CGeomPolyVertexInfo {
+  uint32 i1;
+  NLMISC::CVector v;
+  void serial(NLMISC::IStream &stream);
+  std::string toString() const;
 };
 
-struct CGeomPolyEdgeInfo
-{
-	uint32 i1;
-	uint32 a;
-	uint32 b;
-	void serial(NLMISC::IStream &stream);
-	std::string toString() const;
+struct CGeomPolyEdgeInfo {
+  uint32 i1;
+  uint32 a;
+  uint32 b;
+  void serial(NLMISC::IStream &stream);
+  std::string toString() const;
 };
 
-struct CGeomPolyFaceInfo
-{
-	CGeomPolyFaceInfo();
-	/// Vertex indices in the vertex buffer
-	std::vector<uint32> Vertices;
-	// Bitfield (implicitly stored)
-	/// Unknown 01 00 01 00
-	uint32 I1;
-	// Unknown?
-	// Unknown?
-	/// Material index in multi-submat
-	uint16 Material;
-	/// Bitfield with smoothing groups
-	uint32 SmoothingGroups;
-	/// Cuts at local vertex index to local vertex index
-	std::vector<std::pair<uint32, uint32>> Triangulation;
-	void serial(NLMISC::IStream &stream);
-	std::string toString() const;
+struct CGeomPolyFaceInfo {
+  CGeomPolyFaceInfo();
+  /// Vertex indices in the vertex buffer
+  std::vector<uint32> Vertices;
+  // Bitfield (implicitly stored)
+  /// Unknown 01 00 01 00
+  uint32 I1;
+  // Unknown?
+  // Unknown?
+  /// Material index in multi-submat
+  uint16 Material;
+  /// Bitfield with smoothing groups
+  uint32 SmoothingGroups;
+  /// Cuts at local vertex index to local vertex index
+  std::vector<std::pair<uint32, uint32>> Triangulation;
+  void serial(NLMISC::IStream &stream);
+  std::string toString() const;
 };
 
 /**
@@ -105,22 +100,22 @@ struct CGeomPolyFaceInfo
  * \author Jan Boon (Kaetemi)
  * CGeomBuffers
  */
-class CGeomBuffers : public CStorageContainer
-{
+class CGeomBuffers : public CStorageContainer {
 public:
-	CGeomBuffers();
-	virtual ~CGeomBuffers();
+  CGeomBuffers();
+  virtual ~CGeomBuffers();
 
-	// inherited
-	virtual std::string className() const;
-	virtual void toString(std::ostream &ostream, const std::string &pad = "") const;
-	virtual void parse(uint16 version, uint filter = 0);
-	virtual void clean();
-	virtual void build(uint16 version, uint filter = 0);
-	virtual void disown();
+  // inherited
+  virtual std::string className() const;
+  virtual void toString(std::ostream &ostream,
+                        const std::string &pad = "") const;
+  virtual void parse(uint16 version, uint filter = 0);
+  virtual void clean();
+  virtual void build(uint16 version, uint filter = 0);
+  virtual void disown();
 
 protected:
-	virtual IStorageObject *createChunkById(uint16 id, bool container);
+  virtual IStorageObject *createChunkById(uint16 id, bool container);
 
 }; /* class CGeomBuffers */
 

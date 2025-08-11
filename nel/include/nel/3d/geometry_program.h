@@ -24,24 +24,23 @@
 #ifndef NL_GEOMETRY_PROGRAM_H
 #define NL_GEOMETRY_PROGRAM_H
 
-#include <nel/misc/types_nl.h>
-#include <nel/misc/smart_ptr.h>
 #include <nel/3d/program.h>
+#include <nel/misc/smart_ptr.h>
+#include <nel/misc/types_nl.h>
 
 #include <list>
 
 namespace NL3D {
 
-class CGeometryProgram : public IProgram
-{
+class CGeometryProgram : public IProgram {
 public:
-	/// Constructor
-	CGeometryProgram();
-	/// Destructor
-	virtual ~CGeometryProgram();
+  /// Constructor
+  CGeometryProgram();
+  /// Destructor
+  virtual ~CGeometryProgram();
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_GEOMETRY_PROGRAM_H
 

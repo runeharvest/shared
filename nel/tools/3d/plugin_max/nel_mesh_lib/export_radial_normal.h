@@ -21,19 +21,19 @@
 
 class CExportNel;
 
-class CRadialVertices
-{
+class CRadialVertices {
 public:
-	CRadialVertices();
-	void init(INode *node, Mesh *mesh, TimeValue time, Interface &ip, CExportNel &nelExport);
-	bool isUsingRadialNormals(uint face);
-	Point3 getLocalNormal(uint vertex, uint face);
+  CRadialVertices();
+  void init(INode *node, Mesh *mesh, TimeValue time, Interface &ip,
+            CExportNel &nelExport);
+  bool isUsingRadialNormals(uint face);
+  Point3 getLocalNormal(uint vertex, uint face);
 
 private:
-	uint32 _SmoothingGroupMask;
-	NLMISC::CVector _Pivot[NEL3D_RADIAL_NORMAL_COUNT];
-	INode *_NodePtr;
-	Mesh *_MeshPtr;
+  uint32 _SmoothingGroupMask;
+  NLMISC::CVector _Pivot[NEL3D_RADIAL_NORMAL_COUNT];
+  INode *_NodePtr;
+  Mesh *_MeshPtr;
 };
 
 #endif // NL_EXPORT_RADIAL_NORMAL_H

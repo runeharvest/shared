@@ -34,7 +34,8 @@
 
 #define NLSOUND_SHEET_V1_DEFAULT_SOUND_GROUP_CONTROLLER "sound:effects:game"
 #define NLSOUND_SHEET_V1_DEFAULT_SOUND_MUSIC_GROUP_CONTROLLER "sound:music:game"
-#define NLSOUND_SHEET_V1_DEFAULT_SOUND_STREAM_GROUP_CONTROLLER "sound:dialog:game"
+#define NLSOUND_SHEET_V1_DEFAULT_SOUND_STREAM_GROUP_CONTROLLER                 \
+  "sound:dialog:game"
 
 namespace NLSOUND {
 
@@ -44,14 +45,13 @@ namespace NLSOUND {
  * \author Jan Boon (Kaetemi)
  * UGroupController
  */
-class UGroupController
-{
+class UGroupController {
 public:
-	virtual void setGain(float gain) = 0;
-	virtual float getGain() = 0;
+  virtual void setGain(float gain) = 0;
+  virtual float getGain() = 0;
 
 protected:
-	virtual ~UGroupController() { }
+  virtual ~UGroupController() {}
 
 }; /* class UGroupController */
 

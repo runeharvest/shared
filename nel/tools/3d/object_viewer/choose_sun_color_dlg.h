@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined(AFX_CHOOSE_SUN_COLOR_DLG_H__CA0B25DD_6DEE_4EF0_B561_2EFAA445321C__INCLUDED_)
+#if !defined(                                                                  \
+    AFX_CHOOSE_SUN_COLOR_DLG_H__CA0B25DD_6DEE_4EF0_B561_2EFAA445321C__INCLUDED_)
 #define AFX_CHOOSE_SUN_COLOR_DLG_H__CA0B25DD_6DEE_4EF0_B561_2EFAA445321C__INCLUDED_
 
 #if _MSC_VER > 1000
@@ -34,65 +35,60 @@ class CColorEdit;
  * \author Nevrax France
  * \date 2003
  */
-class CChooseSunColorDlg : public CDialog
-{
-	// Construction
+class CChooseSunColorDlg : public CDialog {
+  // Construction
 public:
-	CChooseSunColorDlg(NL3D::CScene *scene, CWnd *pParent = NULL); // standard constructor
-	~CChooseSunColorDlg();
+  CChooseSunColorDlg(NL3D::CScene *scene,
+                     CWnd *pParent = NULL); // standard constructor
+  ~CChooseSunColorDlg();
 
-	// Dialog Data
-	//{{AFX_DATA(CChooseSunColorDlg)
-	enum
-	{
-		IDD = IDD_CHOOSE_SUN_COLOR
-	};
-	// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(CChooseSunColorDlg)
+  enum { IDD = IDD_CHOOSE_SUN_COLOR };
+  // NOTE: the ClassWizard will add data members here
+  //}}AFX_DATA
 
-	// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CChooseSunColorDlg)
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CChooseSunColorDlg)
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
-	//}}AFX_VIRTUAL
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+                                                   //}}AFX_VIRTUAL
 
-	// Implementation
+  // Implementation
 protected:
-	CColorEdit *_DiffuseColorEdit;
-	CColorEdit *_AmbientColorEdit;
-	CColorEdit *_SpecularColorEdit;
+  CColorEdit *_DiffuseColorEdit;
+  CColorEdit *_AmbientColorEdit;
+  CColorEdit *_SpecularColorEdit;
 
-	struct CDiffuseColorWrapper : public IPSWrapperRGBA
-	{
-		NL3D::CScene *S;
-		void set(const NLMISC::CRGBA &col) { S->setSunDiffuse(col); }
-		NLMISC::CRGBA get() const { return S->getSunDiffuse(); }
-	} _DiffuseColorWrapper;
-	//
-	struct CAmbientColorWrapper : public IPSWrapperRGBA
-	{
-		NL3D::CScene *S;
-		void set(const NLMISC::CRGBA &col) { S->setSunAmbient(col); }
-		NLMISC::CRGBA get() const { return S->getSunAmbient(); }
-	} _AmbientColorWrapper;
-	//
-	struct CSpecularColorWrapper : public IPSWrapperRGBA
-	{
-		NL3D::CScene *S;
-		void set(const NLMISC::CRGBA &col) { S->setSunSpecular(col); }
-		NLMISC::CRGBA get() const { return S->getSunSpecular(); }
-	} _SpecularColorWrapper;
+  struct CDiffuseColorWrapper : public IPSWrapperRGBA {
+    NL3D::CScene *S;
+    void set(const NLMISC::CRGBA &col) { S->setSunDiffuse(col); }
+    NLMISC::CRGBA get() const { return S->getSunDiffuse(); }
+  } _DiffuseColorWrapper;
+  //
+  struct CAmbientColorWrapper : public IPSWrapperRGBA {
+    NL3D::CScene *S;
+    void set(const NLMISC::CRGBA &col) { S->setSunAmbient(col); }
+    NLMISC::CRGBA get() const { return S->getSunAmbient(); }
+  } _AmbientColorWrapper;
+  //
+  struct CSpecularColorWrapper : public IPSWrapperRGBA {
+    NL3D::CScene *S;
+    void set(const NLMISC::CRGBA &col) { S->setSunSpecular(col); }
+    NLMISC::CRGBA get() const { return S->getSunSpecular(); }
+  } _SpecularColorWrapper;
 
-	// Generated message map functions
-	//{{AFX_MSG(CChooseSunColorDlg)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnDestroy();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  // Generated message map functions
+  //{{AFX_MSG(CChooseSunColorDlg)
+  virtual BOOL OnInitDialog();
+  afx_msg void OnDestroy();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before
+// the previous line.
 
 #endif // !defined(AFX_CHOOSE_SUN_COLOR_DLG_H__CA0B25DD_6DEE_4EF0_B561_2EFAA445321C__INCLUDED_)

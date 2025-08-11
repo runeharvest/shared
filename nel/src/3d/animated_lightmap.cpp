@@ -34,14 +34,13 @@ namespace NL3D {
 // ***************************************************************************
 
 // ***************************************************************************
-CAnimatedLightmap::CAnimatedLightmap(uint lightmapGroup)
-{
-	// IAnimatable.
-	IAnimatable::resize(AnimValueLast);
+CAnimatedLightmap::CAnimatedLightmap(uint lightmapGroup) {
+  // IAnimatable.
+  IAnimatable::resize(AnimValueLast);
 
-	_DefaultFactor.setDefaultValue(CRGBA(255, 0, 255, 255));
-	_Factor.Value = _DefaultFactor.getDefaultValue();
-	_GroupColor.resize(lightmapGroup, CRGBA::White);
+  _DefaultFactor.setDefaultValue(CRGBA(255, 0, 255, 255));
+  _Factor.Value = _DefaultFactor.getDefaultValue();
+  _GroupColor.resize(lightmapGroup, CRGBA::White);
 }
 
 // ***************************************************************************
@@ -58,7 +57,8 @@ CAnimatedLightmap::CAnimatedLightmap(uint lightmapGroup)
         diff.A= c;
 
         // setup material.
-        _Lightmap->setLighting(true, _Emissive.Value, _Ambient.Value, diff, _Specular.Value, _Shininess.Value);
+        _Lightmap->setLighting(true, _Emissive.Value, _Ambient.Value, diff,
+_Specular.Value, _Shininess.Value);
 
         // clear flags.
         clearFlag(AmbientValue);
@@ -77,7 +77,8 @@ CAnimatedLightmap::CAnimatedLightmap(uint lightmapGroup)
             uint32	id= _Texture.Value;
             if(_LightmapBase->validAnimatedTexture(id))
             {
-                _Lightmap->setTexture(0, _LightmapBase->getAnimatedTexture(id) );
+                _Lightmap->setTexture(0, _LightmapBase->getAnimatedTexture(id)
+);
             }
             clearFlag(TextureValue);
         }
@@ -89,64 +90,62 @@ CAnimatedLightmap::CAnimatedLightmap(uint lightmapGroup)
 }*/
 
 // ***************************************************************************
-IAnimatedValue *CAnimatedLightmap::getValue(uint valueId)
-{
-	switch (valueId)
-	{
-	case FactorValue: return &_Factor;
-	};
+IAnimatedValue *CAnimatedLightmap::getValue(uint valueId) {
+  switch (valueId) {
+  case FactorValue:
+    return &_Factor;
+  };
 
-	// should not be here!!
-	nlstop;
-	return NULL;
+  // should not be here!!
+  nlstop;
+  return NULL;
 }
 // ***************************************************************************
-const char *CAnimatedLightmap::getValueName(uint valueId) const
-{
-	switch (valueId)
-	{
-	case FactorValue: nlstop; return "???";
-	};
+const char *CAnimatedLightmap::getValueName(uint valueId) const {
+  switch (valueId) {
+  case FactorValue:
+    nlstop;
+    return "???";
+  };
 
-	// should not be here!!
-	nlstop;
-	return "";
+  // should not be here!!
+  nlstop;
+  return "";
 }
 // ***************************************************************************
-ITrack *CAnimatedLightmap::getDefaultTrack(uint valueId)
-{
-	// nlassert(_LightmapBase);
+ITrack *CAnimatedLightmap::getDefaultTrack(uint valueId) {
+  // nlassert(_LightmapBase);
 
-	switch (valueId)
-	{
-	case FactorValue: return &_DefaultFactor;
-	};
+  switch (valueId) {
+  case FactorValue:
+    return &_DefaultFactor;
+  };
 
-	// should not be here!!
-	nlstop;
-	return NULL;
+  // should not be here!!
+  nlstop;
+  return NULL;
 }
 // ***************************************************************************
-void CAnimatedLightmap::registerToChannelMixer(CChannelMixer *chanMixer, const std::string &prefix)
-{
-	// For CAnimatedLightmap, channels are detailled (Lightmap rendered after clip)!
-	addValue(chanMixer, FactorValue, OwnerBit, prefix, true);
-}
-
-// ***************************************************************************
-
-void CAnimatedLightmap::updateGroupColors(class NL3D::CScene &scene)
-{
-	// For each colors
-	const uint count = scene.getNumLightGroup();
-	_GroupColor.resize(count);
-	uint i;
-	for (i = 0; i < count; i++)
-	{
-		_GroupColor[i].modulateFromColor(scene.getLightmapGroupColor(i), _Factor.Value);
-	}
+void CAnimatedLightmap::registerToChannelMixer(CChannelMixer *chanMixer,
+                                               const std::string &prefix) {
+  // For CAnimatedLightmap, channels are detailled (Lightmap rendered after
+  // clip)!
+  addValue(chanMixer, FactorValue, OwnerBit, prefix, true);
 }
 
 // ***************************************************************************
 
-} // NL3D
+void CAnimatedLightmap::updateGroupColors(class NL3D::CScene &scene) {
+  // For each colors
+  const uint count = scene.getNumLightGroup();
+  _GroupColor.resize(count);
+  uint i;
+  for (i = 0; i < count; i++) {
+    _GroupColor[i].modulateFromColor(scene.getLightmapGroupColor(i),
+                                     _Factor.Value);
+  }
+}
+
+// ***************************************************************************
+
+} // namespace NL3D

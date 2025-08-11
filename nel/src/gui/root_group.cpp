@@ -17,8 +17,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdpch.h"
 #include "nel/gui/root_group.h"
+#include "stdpch.h"
 #include <vector>
 
 #ifdef DEBUG_NEW
@@ -27,73 +27,61 @@
 
 namespace NLGUI {
 
-CRootGroup::CRootGroup(const TCtorParam &param)
-    : CInterfaceGroup(param)
-{
+CRootGroup::CRootGroup(const TCtorParam &param) : CInterfaceGroup(param) {}
+
+CRootGroup::~CRootGroup() {}
+
+CInterfaceElement *CRootGroup::getElement(const std::string &id) {
+  if (_Id == id)
+    return this;
+
+  if (id.substr(0, _Id.size()) != _Id)
+    return NULL;
+
+  std::vector<CViewBase *>::const_iterator itv;
+  for (itv = _Views.begin(); itv != _Views.end(); itv++) {
+    CViewBase *pVB = *itv;
+    if (pVB->getId() == id)
+      return pVB;
+  }
+
+  std::vector<CCtrlBase *>::const_iterator itc;
+  for (itc = _Controls.begin(); itc != _Controls.end(); itc++) {
+    CCtrlBase *ctrl = *itc;
+    if (ctrl->getId() == id)
+      return ctrl;
+  }
+
+  // Accelerate
+  std::string sTmp = id;
+  sTmp = sTmp.substr(_Id.size() + 1, sTmp.size());
+  std::string::size_type pos = sTmp.find(':');
+  if (pos != std::string::npos)
+    sTmp = sTmp.substr(0, pos);
+
+  std::map<std::string, CInterfaceGroup *>::iterator it = _Accel.find(sTmp);
+  if (it != _Accel.end()) {
+    CInterfaceGroup *pIG = it->second;
+    return pIG->getElement(id);
+  }
+  return NULL;
 }
 
-CRootGroup::~CRootGroup()
-{
+void CRootGroup::addGroup(CInterfaceGroup *child, sint eltOrder) {
+  std::string sTmp = child->getId();
+  sTmp = sTmp.substr(_Id.size() + 1, sTmp.size());
+  _Accel.insert(std::pair<std::string, CInterfaceGroup *>(sTmp, child));
+  CInterfaceGroup::addGroup(child, eltOrder);
 }
 
-CInterfaceElement *CRootGroup::getElement(const std::string &id)
-{
-	if (_Id == id)
-		return this;
-
-	if (id.substr(0, _Id.size()) != _Id)
-		return NULL;
-
-	std::vector<CViewBase *>::const_iterator itv;
-	for (itv = _Views.begin(); itv != _Views.end(); itv++)
-	{
-		CViewBase *pVB = *itv;
-		if (pVB->getId() == id)
-			return pVB;
-	}
-
-	std::vector<CCtrlBase *>::const_iterator itc;
-	for (itc = _Controls.begin(); itc != _Controls.end(); itc++)
-	{
-		CCtrlBase *ctrl = *itc;
-		if (ctrl->getId() == id)
-			return ctrl;
-	}
-
-	// Accelerate
-	std::string sTmp = id;
-	sTmp = sTmp.substr(_Id.size() + 1, sTmp.size());
-	std::string::size_type pos = sTmp.find(':');
-	if (pos != std::string::npos)
-		sTmp = sTmp.substr(0, pos);
-
-	std::map<std::string, CInterfaceGroup *>::iterator it = _Accel.find(sTmp);
-	if (it != _Accel.end())
-	{
-		CInterfaceGroup *pIG = it->second;
-		return pIG->getElement(id);
-	}
-	return NULL;
+bool CRootGroup::delGroup(CInterfaceGroup *child, bool dontDelete) {
+  std::string sTmp = child->getId();
+  sTmp = sTmp.substr(_Id.size() + 1, sTmp.size());
+  std::map<std::string, CInterfaceGroup *>::iterator it = _Accel.find(sTmp);
+  if (it != _Accel.end()) {
+    _Accel.erase(it);
+  }
+  return CInterfaceGroup::delGroup(child, dontDelete);
 }
 
-void CRootGroup::addGroup(CInterfaceGroup *child, sint eltOrder)
-{
-	std::string sTmp = child->getId();
-	sTmp = sTmp.substr(_Id.size() + 1, sTmp.size());
-	_Accel.insert(std::pair<std::string, CInterfaceGroup *>(sTmp, child));
-	CInterfaceGroup::addGroup(child, eltOrder);
-}
-
-bool CRootGroup::delGroup(CInterfaceGroup *child, bool dontDelete)
-{
-	std::string sTmp = child->getId();
-	sTmp = sTmp.substr(_Id.size() + 1, sTmp.size());
-	std::map<std::string, CInterfaceGroup *>::iterator it = _Accel.find(sTmp);
-	if (it != _Accel.end())
-	{
-		_Accel.erase(it);
-	}
-	return CInterfaceGroup::delGroup(child, dontDelete);
-}
-
-}
+} // namespace NLGUI

@@ -21,8 +21,8 @@
 #ifndef NL_SOUND_ANIM_MARKER_H
 #define NL_SOUND_ANIM_MARKER_H
 
-#include "nel/misc/string_mapper.h"
 #include "nel/3d/cluster.h"
+#include "nel/misc/string_mapper.h"
 #include "nel/sound/u_source.h"
 
 namespace NLMISC {
@@ -35,39 +35,36 @@ typedef std::set<NLMISC::TStringId> TMarkerSoundSet;
 
 class UAudioMixer;
 
-class CSoundAnimMarker
-{
+class CSoundAnimMarker {
 public:
-	CSoundAnimMarker(float time = 0.0f)
-	    : _Time(time)
-	{
-	}
-	virtual ~CSoundAnimMarker();
+  CSoundAnimMarker(float time = 0.0f) : _Time(time) {}
+  virtual ~CSoundAnimMarker();
 
-	/** Set the time of this marker */
-	virtual void setTime(float time) { _Time = time; }
+  /** Set the time of this marker */
+  virtual void setTime(float time) { _Time = time; }
 
-	/** Returns the time of this marker */
-	virtual float getTime() const { return _Time; }
+  /** Returns the time of this marker */
+  virtual float getTime() const { return _Time; }
 
-	/** Add a new sound in the set of to-be-played sounds for this marker */
-	virtual void addSound(const NLMISC::TStringId &soundName);
+  /** Add a new sound in the set of to-be-played sounds for this marker */
+  virtual void addSound(const NLMISC::TStringId &soundName);
 
-	/** Remove a sound */
-	virtual void removeSound(const NLMISC::TStringId &soundName);
+  /** Remove a sound */
+  virtual void removeSound(const NLMISC::TStringId &soundName);
 
-	/** Return the set of sounds of this marker */
-	virtual void getSounds(std::vector<NLMISC::TStringId> &sounds);
+  /** Return the set of sounds of this marker */
+  virtual void getSounds(std::vector<NLMISC::TStringId> &sounds);
 
-	/** Play all the sounds of this marker */
-	virtual void play(UAudioMixer *mixer, NL3D::CCluster *cluster, CSoundContext &context);
+  /** Play all the sounds of this marker */
+  virtual void play(UAudioMixer *mixer, NL3D::CCluster *cluster,
+                    CSoundContext &context);
 
 protected:
-	/** The set of sounds to be played */
-	TMarkerSoundSet _Sounds;
+  /** The set of sounds to be played */
+  TMarkerSoundSet _Sounds;
 
-	/** The time position of this marker */
-	float _Time;
+  /** The time position of this marker */
+  float _Time;
 };
 
 } // namespace NLSOUND

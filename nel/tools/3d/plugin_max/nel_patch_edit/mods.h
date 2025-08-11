@@ -34,23 +34,23 @@ extern ClassDesc *GetSDeleteModDesc();
 extern HINSTANCE hInstance;
 
 // For 'Supports Object of Type' rollups
-extern BOOL CALLBACK DefaultSOTProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+extern BOOL CALLBACK DefaultSOTProc(HWND hWnd, UINT msg, WPARAM wParam,
+                                    LPARAM lParam);
 
 #define BIGFLOAT float(999999)
 
 #define NEWSWMCAT _T("Modifiers")
 
 // Image list used for mesh sub-object toolbar in Edit Mesh, Mesh Select:
-class MeshSelImageHandler
-{
+class MeshSelImageHandler {
 public:
-	HIMAGELIST images;
-	MeshSelImageHandler() { images = NULL; }
-	~MeshSelImageHandler()
-	{
-		if (images) ImageList_Destroy(images);
-	}
-	HIMAGELIST LoadImages();
+  HIMAGELIST images;
+  MeshSelImageHandler() { images = NULL; }
+  ~MeshSelImageHandler() {
+    if (images)
+      ImageList_Destroy(images);
+  }
+  HIMAGELIST LoadImages();
 };
 #define IDC_SELVERTEX 0x3260
 #define IDC_SELEDGE 0x3261

@@ -17,23 +17,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdmisc.h"
 #include "nel/misc/ucstring.h"
 #include "nel/misc/utf_string_view.h"
+#include "stdmisc.h"
 
-void ucstring::toString(std::string &str) const
-{
-	str = nlmove(NLMISC::CUtfStringView(*this).toUtf8());
+void ucstring::toString(std::string &str) const {
+  str = nlmove(NLMISC::CUtfStringView(*this).toUtf8());
 }
 
-std::string ucstring::toUtf8() const
-{
-	return NLMISC::CUtfStringView(*this).toUtf8();
+std::string ucstring::toUtf8() const {
+  return NLMISC::CUtfStringView(*this).toUtf8();
 }
 
-void ucstring::fromUtf8(const std::string &stringUtf8)
-{
-	*this = NLMISC::CUtfStringView(stringUtf8).toUtf16();
+void ucstring::fromUtf8(const std::string &stringUtf8) {
+  *this = NLMISC::CUtfStringView(stringUtf8).toUtf16();
 }
 
 /* end of file */

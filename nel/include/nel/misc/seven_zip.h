@@ -20,23 +20,26 @@
 #ifndef SEVEN_ZIP_H
 #define SEVEN_ZIP_H
 
-#include <string>
 #include <nel/misc/sha1.h>
+#include <string>
 
 namespace NLMISC {
 
 // utility func to decompress a monofile 7zip archive
-bool unpack7Zip(const std::string &sevenZipFileName, const std::string &destFileName);
+bool unpack7Zip(const std::string &sevenZipFileName,
+                const std::string &destFileName);
 
 // utility func to decompress a single LZMA packed file
-bool unpackLZMA(const std::string &lzmaFileName, const std::string &destFileName);
+bool unpackLZMA(const std::string &lzmaFileName,
+                const std::string &destFileName);
 
 // utility func to decompress a single LZMA packed file
-bool unpackLZMA(const std::string &lzmaFileName, const std::string &destFileName, CHashKey &sha1);
+bool unpackLZMA(const std::string &lzmaFileName,
+                const std::string &destFileName, CHashKey &sha1);
 
 // utility func to compress a single file to LZMA packed file
 bool packLZMA(const std::string &srcFileName, const std::string &lzmaFileName);
 
-}
+} // namespace NLMISC
 
 #endif

@@ -21,9 +21,8 @@
 // fake variable to force a link to the handy_commands module
 //-------------------------------------------------------------------------------------------------
 
-static struct CHandyCommandIncluderClass
-{
-	CHandyCommandIncluderClass();
+static struct CHandyCommandIncluderClass {
+  CHandyCommandIncluderClass();
 } IncludeHandyCommand;
 
 //-------------------------------------------------------------------------------------------------

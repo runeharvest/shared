@@ -49,14 +49,13 @@ namespace UPDATE1 {
  * \author Jan Boon (Kaetemi)
  * CUpdate1
  */
-class CUpdate1
-{
+class CUpdate1 {
 public:
-	static void registerClasses(CSceneClassRegistry *registry);
+  static void registerClasses(CSceneClassRegistry *registry);
 
 public:
-	CUpdate1();
-	virtual ~CUpdate1();
+  CUpdate1();
+  virtual ~CUpdate1();
 
 }; /* class CUpdate1 */
 
@@ -66,11 +65,10 @@ public:
  * \author Jan Boon (Kaetemi)
  * CDllPluginDescUpdate1
  */
-class CDllPluginDescUpdate1 : public IDllPluginDescInternal
-{
+class CDllPluginDescUpdate1 : public IDllPluginDescInternal {
 public:
-	virtual const ucchar *displayName() const;
-	virtual const ucchar *internalName() const;
+  virtual const ucchar *displayName() const;
+  virtual const ucchar *internalName() const;
 }; /* class CDllPluginDescScript */
 
 extern const CDllPluginDescUpdate1 DllPluginDescUpdate1;

@@ -21,20 +21,20 @@
 
 namespace PLACE_TYPE {
 // action nature
-enum TPlaceType
-{
-	Capital,
-	Village,
-	Outpost,
-	Place,
-	Street,
-	Undefined,
+enum TPlaceType {
+  Capital,
+  Village,
+  Outpost,
+  Place,
+  Street,
+  Undefined,
 };
 
 /**
  * convert string to enum
  * \param str the input string
- * \return the TPlaceType associated to this string (UNKNOWN if the string cannot be interpreted)
+ * \return the TPlaceType associated to this string (UNKNOWN if the string
+ * cannot be interpreted)
  */
 TPlaceType fromString(const std::string &str);
 
@@ -44,7 +44,7 @@ TPlaceType fromString(const std::string &str);
  * \return nature as a string (or UNKNOWN)
  */
 const std::string &toString(TPlaceType place_type);
-};
+}; // namespace PLACE_TYPE
 
 #endif // RY_PLACE_TYPE_H
 /* End of place_type.h */

@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdpch.h"
 #include "ai_spawn_commands.h"
+#include "stdpch.h"
 
 // Fix the stupid Visual 6 Warning
 void foo_ai_spawn_commands() {};
@@ -28,7 +28,8 @@ namespace AI_SHARE {
 //-------------------------------------------------------------------------
 // SPAWNING	COMMANDS
 
-// NLMISC_COMMAND(spawnGrps,"spawn one of the versions of the group","<group id>")
+// NLMISC_COMMAND(spawnGrps,"spawn one of the versions of the group","<group
+// id>")
 //{
 //	if(args.size() <1) return false;
 //
@@ -38,7 +39,8 @@ namespace AI_SHARE {
 //	return true;
 // }
 
-// NLMISC_COMMAND(spawnMgrs,"spawn the population of one or more mgrs","[<mgr id>[...]]")
+// NLMISC_COMMAND(spawnMgrs,"spawn the population of one or more mgrs","[<mgr
+// id>[...]]")
 //{
 //	if(args.size() <1) return false;
 //
@@ -48,7 +50,8 @@ namespace AI_SHARE {
 //	return true;
 // }
 
-// NLMISC_COMMAND(spawnMaps,"spawn the population of one or more continents","[<continent name>[...]]")
+// NLMISC_COMMAND(spawnMaps,"spawn the population of one or more
+// continents","[<continent name>[...]]")
 //{
 //	if(args.size() <1) return false;
 //
@@ -70,7 +73,8 @@ namespace AI_SHARE {
 //-------------------------------------------------------------------------
 // DESPAWNING COMMANDS
 
-// NLMISC_COMMAND(despawnGrps,"despawn populations of one or more groups","<group id> [<group id>[...]]")
+// NLMISC_COMMAND(despawnGrps,"despawn populations of one or more
+// groups","<group id> [<group id>[...]]")
 //{
 //	if(args.size() <1) return false;
 //
@@ -80,7 +84,8 @@ namespace AI_SHARE {
 //	return true;
 // }
 //
-// NLMISC_COMMAND(despawnMgrs,"despawn the populations of one or more mgrs","[<mgr id>[...]]")
+// NLMISC_COMMAND(despawnMgrs,"despawn the populations of one or more
+// mgrs","[<mgr id>[...]]")
 //{
 //	if(args.size() <1) return false;
 //
@@ -90,7 +95,8 @@ namespace AI_SHARE {
 //	return true;
 // }
 //
-// NLMISC_COMMAND(despawnMaps,"despawn the population of one or more continents","[<continent id>[...]]")
+// NLMISC_COMMAND(despawnMaps,"despawn the population of one or more
+// continents","[<continent id>[...]]")
 //{
 //	if(args.size() <1) return false;
 //
@@ -100,7 +106,8 @@ namespace AI_SHARE {
 //	return true;
 // }
 //
-// NLMISC_COMMAND(despawnAll,"despawn the populations of all managers in service","")
+// NLMISC_COMMAND(despawnAll,"despawn the populations of all managers in
+// service","")
 //{
 //	if(args.size() !=0) return false;
 //
@@ -109,7 +116,8 @@ namespace AI_SHARE {
 //	return true;
 // }
 //
-//  THIS LINE EXISTS TO MAKE SURE THE LINKER DOESN'T THROW OUT THIS MODULE AT LINK TIME!!!
+//  THIS LINE EXISTS TO MAKE SURE THE LINKER DOESN'T THROW OUT THIS MODULE AT
+//  LINK TIME!!!
 bool LinkWithAiSpawnCommands = false;
 
-} // end of namespace
+} // namespace AI_SHARE

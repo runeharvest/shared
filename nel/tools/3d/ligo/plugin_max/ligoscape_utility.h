@@ -14,12 +14,12 @@
 #ifndef __PLUGIN_MAX__H
 #define __PLUGIN_MAX__H
 
-#include <assert.h>
 #include "Max.h"
 #include <Max.h>
-#include <istdplug.h>
+#include <assert.h>
 #include <iparamb2.h>
 #include <iparamm2.h>
+#include <istdplug.h>
 
 #include <utilapi.h>
 

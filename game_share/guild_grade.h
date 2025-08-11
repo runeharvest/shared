@@ -17,11 +17,11 @@
 #ifndef GUILD_GRADE_H
 #define GUILD_GRADE_H
 
-#include <nel/misc/types_nl.h>
-#include <nel/misc/debug.h>
-#include <nel/misc/common.h>
-#include <vector>
 #include <map>
+#include <nel/misc/common.h>
+#include <nel/misc/debug.h>
+#include <nel/misc/types_nl.h>
+#include <vector>
 
 // User #includes
 
@@ -38,53 +38,51 @@ namespace EGSPD {
 /** TGuildGrade
  * defined at game_share/pd_scripts/guild_grade.pds:6
  */
-class CGuildGrade
-{
+class CGuildGrade {
 
 public:
-	/// \name Enum values
-	// @{
+  /// \name Enum values
+  // @{
 
-	enum TGuildGrade
-	{
-		Leader = 0,
-		HighOfficer = 1,
-		Officer = 2,
-		Member = 3,
-		___TGuildGrade_useSize = 4,
-		Unknown = 4,
-		EndGuildGrade = 4,
-	};
+  enum TGuildGrade {
+    Leader = 0,
+    HighOfficer = 1,
+    Officer = 2,
+    Member = 3,
+    ___TGuildGrade_useSize = 4,
+    Unknown = 4,
+    EndGuildGrade = 4,
+  };
 
-	// @}
+  // @}
 
 public:
-	/// \name Conversion methods
-	// @{
+  /// \name Conversion methods
+  // @{
 
-	/**
-	 * Use these methods to convert from enum value to string (and vice versa)
-	 */
+  /**
+   * Use these methods to convert from enum value to string (and vice versa)
+   */
 
-	static const std::string &toString(TGuildGrade v);
-	static CGuildGrade::TGuildGrade fromString(const std::string &v);
+  static const std::string &toString(TGuildGrade v);
+  static CGuildGrade::TGuildGrade fromString(const std::string &v);
 
-	// @}
+  // @}
 
 private:
-	/// \name Enum initialisation
-	// @{
+  /// \name Enum initialisation
+  // @{
 
-	static void init();
-	static bool _Initialised;
-	static std::string _UnknownString;
-	static std::vector<std::string> _StrTable;
-	static std::map<std::string, TGuildGrade> _ValueMap;
+  static void init();
+  static bool _Initialised;
+  static std::string _UnknownString;
+  static std::vector<std::string> _StrTable;
+  static std::map<std::string, TGuildGrade> _ValueMap;
 
-	// @}
+  // @}
 };
 
-} // End of EGSPD
+} // namespace EGSPD
 
 //
 // Inline implementations

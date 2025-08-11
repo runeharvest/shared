@@ -48,28 +48,27 @@ namespace NLQT {
  * \date 2010-02-13 14:02GMT
  * \author Jan Boon (Kaetemi)
  */
-class CUndoRedoBinderButton : public QObject
-{
-	Q_OBJECT
+class CUndoRedoBinderButton : public QObject {
+  Q_OBJECT
 
 public:
-	CUndoRedoBinderButton(QAbstractButton *abstractButton, QUndoStack *undoStack);
-	virtual ~CUndoRedoBinderButton();
+  CUndoRedoBinderButton(QAbstractButton *abstractButton, QUndoStack *undoStack);
+  virtual ~CUndoRedoBinderButton();
 
-	inline void enable(bool enabled) { m_Enabled = enabled; }
+  inline void enable(bool enabled) { m_Enabled = enabled; }
 
 private slots:
-	void abstractButtonToggled(bool checked);
+  void abstractButtonToggled(bool checked);
 
 private:
-	bool m_Enabled; // binder enabled
-	bool m_Checked;
-	QAbstractButton *m_AbstractButton;
-	QUndoStack *m_UndoStack;
+  bool m_Enabled; // binder enabled
+  bool m_Checked;
+  QAbstractButton *m_AbstractButton;
+  QUndoStack *m_UndoStack;
 
 private:
-	CUndoRedoBinderButton(const CUndoRedoBinderButton &);
-	CUndoRedoBinderButton &operator=(const CUndoRedoBinderButton &);
+  CUndoRedoBinderButton(const CUndoRedoBinderButton &);
+  CUndoRedoBinderButton &operator=(const CUndoRedoBinderButton &);
 
 }; /* class CUndoRedoBinderButton */
 
@@ -82,25 +81,26 @@ private:
  * \date 2010-02-13 14:02GMT
  * \author Jan Boon (Kaetemi)
  */
-class CUndoRedoCommandButton : public QUndoCommand
-{
+class CUndoRedoCommandButton : public QUndoCommand {
 public:
-	CUndoRedoCommandButton(CUndoRedoBinderButton *binder, QAbstractButton *abstractButton, bool undo /*, bool redo*/);
-	virtual ~CUndoRedoCommandButton();
+  CUndoRedoCommandButton(CUndoRedoBinderButton *binder,
+                         QAbstractButton *abstractButton,
+                         bool undo /*, bool redo*/);
+  virtual ~CUndoRedoCommandButton();
 
-	virtual void undo();
-	virtual void redo();
-
-private:
-	bool m_Undo;
-	/*bool m_Redo;*/
-	CUndoRedoBinderButton *m_Binder;
-	QAbstractButton *m_AbstractButton;
-	QUndoStack *m_UndoStack;
+  virtual void undo();
+  virtual void redo();
 
 private:
-	CUndoRedoCommandButton(const CUndoRedoCommandButton &);
-	CUndoRedoCommandButton &operator=(const CUndoRedoCommandButton &);
+  bool m_Undo;
+  /*bool m_Redo;*/
+  CUndoRedoBinderButton *m_Binder;
+  QAbstractButton *m_AbstractButton;
+  QUndoStack *m_UndoStack;
+
+private:
+  CUndoRedoCommandButton(const CUndoRedoCommandButton &);
+  CUndoRedoCommandButton &operator=(const CUndoRedoCommandButton &);
 
 }; /* class CUndoRedoCommandButton */
 
@@ -114,29 +114,28 @@ private:
  * \date 2010-02-13 14:02GMT
  * \author Jan Boon (Kaetemi)
  */
-class CUndoRedoBinderLineEdit : public QObject
-{
-	Q_OBJECT
+class CUndoRedoBinderLineEdit : public QObject {
+  Q_OBJECT
 
 public:
-	CUndoRedoBinderLineEdit(QLineEdit *lineEdit, QUndoStack *undoStack);
-	virtual ~CUndoRedoBinderLineEdit();
+  CUndoRedoBinderLineEdit(QLineEdit *lineEdit, QUndoStack *undoStack);
+  virtual ~CUndoRedoBinderLineEdit();
 
-	inline void enable(bool enabled) { m_Enabled = enabled; }
+  inline void enable(bool enabled) { m_Enabled = enabled; }
 
 private slots:
-	void lineEditTextChanged(const QString &text);
+  void lineEditTextChanged(const QString &text);
 
 private:
-	bool m_Enabled; // binder enabled
-	QString m_LastValue;
-	QLineEdit *m_LineEdit;
-	QUndoStack *m_UndoStack;
-	int m_Id;
+  bool m_Enabled; // binder enabled
+  QString m_LastValue;
+  QLineEdit *m_LineEdit;
+  QUndoStack *m_UndoStack;
+  int m_Id;
 
 private:
-	CUndoRedoBinderLineEdit(const CUndoRedoBinderLineEdit &);
-	CUndoRedoBinderLineEdit &operator=(const CUndoRedoBinderLineEdit &);
+  CUndoRedoBinderLineEdit(const CUndoRedoBinderLineEdit &);
+  CUndoRedoBinderLineEdit &operator=(const CUndoRedoBinderLineEdit &);
 
 }; /* class CUndoRedoBinderLineEdit */
 
@@ -149,29 +148,30 @@ private:
  * \date 2010-02-13 14:02GMT
  * \author Jan Boon (Kaetemi)
  */
-class CUndoRedoCommandLineEdit : public QUndoCommand
-{
+class CUndoRedoCommandLineEdit : public QUndoCommand {
 public:
-	CUndoRedoCommandLineEdit(CUndoRedoBinderLineEdit *binder, QLineEdit *abtractLineEdit, const QString &undo, const QString &redo, int id);
-	virtual ~CUndoRedoCommandLineEdit();
+  CUndoRedoCommandLineEdit(CUndoRedoBinderLineEdit *binder,
+                           QLineEdit *abtractLineEdit, const QString &undo,
+                           const QString &redo, int id);
+  virtual ~CUndoRedoCommandLineEdit();
 
-	virtual void undo();
-	virtual void redo();
+  virtual void undo();
+  virtual void redo();
 
-	virtual int id() const { return m_Id; };
-	virtual bool mergeWith(const QUndoCommand *other);
-
-private:
-	QString m_Undo;
-	QString m_Redo;
-	CUndoRedoBinderLineEdit *m_Binder;
-	QLineEdit *m_LineEdit;
-	QUndoStack *m_UndoStack;
-	int m_Id;
+  virtual int id() const { return m_Id; };
+  virtual bool mergeWith(const QUndoCommand *other);
 
 private:
-	CUndoRedoCommandLineEdit(const CUndoRedoCommandLineEdit &);
-	CUndoRedoCommandLineEdit &operator=(const CUndoRedoCommandLineEdit &);
+  QString m_Undo;
+  QString m_Redo;
+  CUndoRedoBinderLineEdit *m_Binder;
+  QLineEdit *m_LineEdit;
+  QUndoStack *m_UndoStack;
+  int m_Id;
+
+private:
+  CUndoRedoCommandLineEdit(const CUndoRedoCommandLineEdit &);
+  CUndoRedoCommandLineEdit &operator=(const CUndoRedoCommandLineEdit &);
 
 }; /* class CUndoRedoCommandLineEdit */
 
@@ -185,28 +185,27 @@ private:
  * \date 2010-02-13 14:02GMT
  * \author Jan Boon (Kaetemi)
  */
-class CUndoRedoBinderComboBox : public QObject
-{
-	Q_OBJECT
+class CUndoRedoBinderComboBox : public QObject {
+  Q_OBJECT
 
 public:
-	CUndoRedoBinderComboBox(QComboBox *comboBox, QUndoStack *undoStack);
-	virtual ~CUndoRedoBinderComboBox();
+  CUndoRedoBinderComboBox(QComboBox *comboBox, QUndoStack *undoStack);
+  virtual ~CUndoRedoBinderComboBox();
 
-	inline void enable(bool enabled) { m_Enabled = enabled; }
+  inline void enable(bool enabled) { m_Enabled = enabled; }
 
 private slots:
-	void comboBoxCurrentIndexChanged(int index);
+  void comboBoxCurrentIndexChanged(int index);
 
 private:
-	bool m_Enabled; // binder enabled
-	int m_LastValue;
-	QComboBox *m_ComboBox;
-	QUndoStack *m_UndoStack;
+  bool m_Enabled; // binder enabled
+  int m_LastValue;
+  QComboBox *m_ComboBox;
+  QUndoStack *m_UndoStack;
 
 private:
-	CUndoRedoBinderComboBox(const CUndoRedoBinderComboBox &);
-	CUndoRedoBinderComboBox &operator=(const CUndoRedoBinderComboBox &);
+  CUndoRedoBinderComboBox(const CUndoRedoBinderComboBox &);
+  CUndoRedoBinderComboBox &operator=(const CUndoRedoBinderComboBox &);
 
 }; /* class CUndoRedoBinderComboBox */
 
@@ -219,25 +218,25 @@ private:
  * \date 2010-02-13 14:02GMT
  * \author Jan Boon (Kaetemi)
  */
-class CUndoRedoCommandComboBox : public QUndoCommand
-{
+class CUndoRedoCommandComboBox : public QUndoCommand {
 public:
-	CUndoRedoCommandComboBox(CUndoRedoBinderComboBox *binder, QComboBox *abtractComboBox, int undo, int redo);
-	virtual ~CUndoRedoCommandComboBox();
+  CUndoRedoCommandComboBox(CUndoRedoBinderComboBox *binder,
+                           QComboBox *abtractComboBox, int undo, int redo);
+  virtual ~CUndoRedoCommandComboBox();
 
-	virtual void undo();
-	virtual void redo();
-
-private:
-	int m_Undo;
-	int m_Redo;
-	CUndoRedoBinderComboBox *m_Binder;
-	QComboBox *m_ComboBox;
-	QUndoStack *m_UndoStack;
+  virtual void undo();
+  virtual void redo();
 
 private:
-	CUndoRedoCommandComboBox(const CUndoRedoCommandComboBox &);
-	CUndoRedoCommandComboBox &operator=(const CUndoRedoCommandComboBox &);
+  int m_Undo;
+  int m_Redo;
+  CUndoRedoBinderComboBox *m_Binder;
+  QComboBox *m_ComboBox;
+  QUndoStack *m_UndoStack;
+
+private:
+  CUndoRedoCommandComboBox(const CUndoRedoCommandComboBox &);
+  CUndoRedoCommandComboBox &operator=(const CUndoRedoCommandComboBox &);
 
 }; /* class CUndoRedoCommandComboBox */
 
@@ -251,28 +250,27 @@ private:
  * \date 2010-02-13 14:02GMT
  * \author Jan Boon (Kaetemi)
  */
-class CUndoRedoBinderColorPicker : public QObject
-{
-	Q_OBJECT
+class CUndoRedoBinderColorPicker : public QObject {
+  Q_OBJECT
 
 public:
-	CUndoRedoBinderColorPicker(QtColorPicker *colorPicker, QUndoStack *undoStack);
-	virtual ~CUndoRedoBinderColorPicker();
+  CUndoRedoBinderColorPicker(QtColorPicker *colorPicker, QUndoStack *undoStack);
+  virtual ~CUndoRedoBinderColorPicker();
 
-	inline void enable(bool enabled) { m_Enabled = enabled; }
+  inline void enable(bool enabled) { m_Enabled = enabled; }
 
 private slots:
-	void colorPickerColorChanged(const QColor &col);
+  void colorPickerColorChanged(const QColor &col);
 
 private:
-	bool m_Enabled; // binder enabled
-	QColor m_LastValue;
-	QtColorPicker *m_ColorPicker;
-	QUndoStack *m_UndoStack;
+  bool m_Enabled; // binder enabled
+  QColor m_LastValue;
+  QtColorPicker *m_ColorPicker;
+  QUndoStack *m_UndoStack;
 
 private:
-	CUndoRedoBinderColorPicker(const CUndoRedoBinderColorPicker &);
-	CUndoRedoBinderColorPicker &operator=(const CUndoRedoBinderColorPicker &);
+  CUndoRedoBinderColorPicker(const CUndoRedoBinderColorPicker &);
+  CUndoRedoBinderColorPicker &operator=(const CUndoRedoBinderColorPicker &);
 
 }; /* class CUndoRedoBinderColorPicker */
 
@@ -285,25 +283,26 @@ private:
  * \date 2010-02-13 14:02GMT
  * \author Jan Boon (Kaetemi)
  */
-class CUndoRedoCommandColorPicker : public QUndoCommand
-{
+class CUndoRedoCommandColorPicker : public QUndoCommand {
 public:
-	CUndoRedoCommandColorPicker(CUndoRedoBinderColorPicker *binder, QtColorPicker *abtractColorPicker, const QColor &undo, const QColor &redo);
-	virtual ~CUndoRedoCommandColorPicker();
+  CUndoRedoCommandColorPicker(CUndoRedoBinderColorPicker *binder,
+                              QtColorPicker *abtractColorPicker,
+                              const QColor &undo, const QColor &redo);
+  virtual ~CUndoRedoCommandColorPicker();
 
-	virtual void undo();
-	virtual void redo();
-
-private:
-	QColor m_Undo;
-	QColor m_Redo;
-	CUndoRedoBinderColorPicker *m_Binder;
-	QtColorPicker *m_ColorPicker;
-	QUndoStack *m_UndoStack;
+  virtual void undo();
+  virtual void redo();
 
 private:
-	CUndoRedoCommandColorPicker(const CUndoRedoCommandColorPicker &);
-	CUndoRedoCommandColorPicker &operator=(const CUndoRedoCommandColorPicker &);
+  QColor m_Undo;
+  QColor m_Redo;
+  CUndoRedoBinderColorPicker *m_Binder;
+  QtColorPicker *m_ColorPicker;
+  QUndoStack *m_UndoStack;
+
+private:
+  CUndoRedoCommandColorPicker(const CUndoRedoCommandColorPicker &);
+  CUndoRedoCommandColorPicker &operator=(const CUndoRedoCommandColorPicker &);
 
 }; /* class CUndoRedoCommandColorPicker */
 

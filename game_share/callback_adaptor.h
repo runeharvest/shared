@@ -23,146 +23,115 @@
 #include "nel/net/callback_client.h"
 #include "nel/net/callback_server.h"
 
-class ICallbackServerAdaptor
-{
-	void *_ContainerClass;
+class ICallbackServerAdaptor {
+  void *_ContainerClass;
 
 public:
-	ICallbackServerAdaptor(void *containerClass)
-	    : _ContainerClass(containerClass)
-	{
-	}
+  ICallbackServerAdaptor(void *containerClass)
+      : _ContainerClass(containerClass) {}
 
-	virtual ~ICallbackServerAdaptor()
-	{
-	}
+  virtual ~ICallbackServerAdaptor() {}
 
-	void *getContainerClass()
-	{
-		return _ContainerClass;
-	}
+  void *getContainerClass() { return _ContainerClass; }
 
-	virtual void addCallbackArray(const NLNET::TCallbackItem *callbackarray, sint arraysize) = 0;
-	virtual void setConnectionCallback(NLNET::TNetCallback cb, void *arg) = 0;
-	virtual void setDisconnectionCallback(NLNET::TNetCallback cb, void *arg) = 0;
-	virtual void init(uint16 port) = 0;
-	virtual void disconnect(NLNET::TSockId hostid) = 0;
-	virtual void send(const NLNET::CMessage &buffer, NLNET::TSockId hostid, bool log = true) = 0;
-	virtual void update() = 0;
+  virtual void addCallbackArray(const NLNET::TCallbackItem *callbackarray,
+                                sint arraysize) = 0;
+  virtual void setConnectionCallback(NLNET::TNetCallback cb, void *arg) = 0;
+  virtual void setDisconnectionCallback(NLNET::TNetCallback cb, void *arg) = 0;
+  virtual void init(uint16 port) = 0;
+  virtual void disconnect(NLNET::TSockId hostid) = 0;
+  virtual void send(const NLNET::CMessage &buffer, NLNET::TSockId hostid,
+                    bool log = true) = 0;
+  virtual void update() = 0;
 };
 
-class ICallbackClientAdaptor
-{
-	void *_ContainerClass;
+class ICallbackClientAdaptor {
+  void *_ContainerClass;
 
 public:
-	ICallbackClientAdaptor(void *containerClass)
-	    : _ContainerClass(containerClass)
-	{
-	}
+  ICallbackClientAdaptor(void *containerClass)
+      : _ContainerClass(containerClass) {}
 
-	virtual ~ICallbackClientAdaptor()
-	{
-	}
+  virtual ~ICallbackClientAdaptor() {}
 
-	void *getContainerClass()
-	{
-		return _ContainerClass;
-	}
-	virtual void addCallbackArray(const NLNET::TCallbackItem *callbackarray, sint arraysize) = 0;
-	virtual void setDisconnectionCallback(NLNET::TNetCallback cb, void *arg) = 0;
-	virtual void connect(const NLNET::CInetHost &addr) = 0;
-	virtual bool connected() = 0;
-	virtual void send(const NLNET::CMessage &buffer, NLNET::TSockId hostid = NLNET::InvalidSockId, bool log = true) = 0;
-	virtual void update() = 0;
+  void *getContainerClass() { return _ContainerClass; }
+  virtual void addCallbackArray(const NLNET::TCallbackItem *callbackarray,
+                                sint arraysize) = 0;
+  virtual void setDisconnectionCallback(NLNET::TNetCallback cb, void *arg) = 0;
+  virtual void connect(const NLNET::CInetHost &addr) = 0;
+  virtual bool connected() = 0;
+  virtual void send(const NLNET::CMessage &buffer,
+                    NLNET::TSockId hostid = NLNET::InvalidSockId,
+                    bool log = true) = 0;
+  virtual void update() = 0;
 };
 
 /** this is the default adaptor that make use of the NeL callback server
  */
-class CNelCallbackServerAdaptor : public ICallbackServerAdaptor
-{
+class CNelCallbackServerAdaptor : public ICallbackServerAdaptor {
 protected:
-	NLNET::CCallbackServer _CallbackServer;
+  NLNET::CCallbackServer _CallbackServer;
 
 public:
-	CNelCallbackServerAdaptor(void *containerClass)
-	    : ICallbackServerAdaptor(containerClass)
-	{
-		_CallbackServer.setUserData(this);
-	}
+  CNelCallbackServerAdaptor(void *containerClass)
+      : ICallbackServerAdaptor(containerClass) {
+    _CallbackServer.setUserData(this);
+  }
 
 protected:
-	virtual void addCallbackArray(const NLNET::TCallbackItem *callbackarray, sint arraysize)
-	{
-		_CallbackServer.addCallbackArray(callbackarray, arraysize);
-	}
-	virtual void setConnectionCallback(NLNET::TNetCallback cb, void *arg)
-	{
-		_CallbackServer.setConnectionCallback(cb, arg);
-	}
-	virtual void setDisconnectionCallback(NLNET::TNetCallback cb, void *arg)
-	{
-		_CallbackServer.setDisconnectionCallback(cb, arg);
-	}
-	virtual void init(uint16 port)
-	{
-		_CallbackServer.init(port);
-	}
-	virtual void disconnect(NLNET::TSockId hostid)
-	{
-		_CallbackServer.disconnect(hostid);
-	}
+  virtual void addCallbackArray(const NLNET::TCallbackItem *callbackarray,
+                                sint arraysize) {
+    _CallbackServer.addCallbackArray(callbackarray, arraysize);
+  }
+  virtual void setConnectionCallback(NLNET::TNetCallback cb, void *arg) {
+    _CallbackServer.setConnectionCallback(cb, arg);
+  }
+  virtual void setDisconnectionCallback(NLNET::TNetCallback cb, void *arg) {
+    _CallbackServer.setDisconnectionCallback(cb, arg);
+  }
+  virtual void init(uint16 port) { _CallbackServer.init(port); }
+  virtual void disconnect(NLNET::TSockId hostid) {
+    _CallbackServer.disconnect(hostid);
+  }
 
-	virtual void send(const NLNET::CMessage &buffer, NLNET::TSockId hostid, bool log = true)
-	{
-		_CallbackServer.send(buffer, hostid, log);
-	}
-	virtual void update()
-	{
-		_CallbackServer.update();
-	}
+  virtual void send(const NLNET::CMessage &buffer, NLNET::TSockId hostid,
+                    bool log = true) {
+    _CallbackServer.send(buffer, hostid, log);
+  }
+  virtual void update() { _CallbackServer.update(); }
 };
 
 /** this is the default adaptor that make use of the NeL callback client
  */
-class CNelCallbackClientAdaptor : public ICallbackClientAdaptor
-{
+class CNelCallbackClientAdaptor : public ICallbackClientAdaptor {
 protected:
-	NLNET::CCallbackClient _CallbackClient;
+  NLNET::CCallbackClient _CallbackClient;
 
 public:
-	CNelCallbackClientAdaptor(void *containerClass)
-	    : ICallbackClientAdaptor(containerClass)
-	{
-		_CallbackClient.setUserData(this);
-	}
+  CNelCallbackClientAdaptor(void *containerClass)
+      : ICallbackClientAdaptor(containerClass) {
+    _CallbackClient.setUserData(this);
+  }
 
 protected:
-	virtual void addCallbackArray(const NLNET::TCallbackItem *callbackarray, sint arraysize)
-	{
-		_CallbackClient.addCallbackArray(callbackarray, arraysize);
-	}
-	virtual void setDisconnectionCallback(NLNET::TNetCallback cb, void *arg)
-	{
-		_CallbackClient.setDisconnectionCallback(cb, arg);
-	}
-	virtual void connect(const NLNET::CInetHost &addr)
-	{
-		_CallbackClient.connect(addr);
-	}
-	virtual bool connected()
-	{
-		return _CallbackClient.connected();
-	}
+  virtual void addCallbackArray(const NLNET::TCallbackItem *callbackarray,
+                                sint arraysize) {
+    _CallbackClient.addCallbackArray(callbackarray, arraysize);
+  }
+  virtual void setDisconnectionCallback(NLNET::TNetCallback cb, void *arg) {
+    _CallbackClient.setDisconnectionCallback(cb, arg);
+  }
+  virtual void connect(const NLNET::CInetHost &addr) {
+    _CallbackClient.connect(addr);
+  }
+  virtual bool connected() { return _CallbackClient.connected(); }
 
-	virtual void send(const NLNET::CMessage &buffer, NLNET::TSockId hostid = NLNET::InvalidSockId, bool log = true)
-	{
-		_CallbackClient.send(buffer, hostid, log);
-	}
-	virtual void update()
-	{
-		_CallbackClient.update();
-	}
+  virtual void send(const NLNET::CMessage &buffer,
+                    NLNET::TSockId hostid = NLNET::InvalidSockId,
+                    bool log = true) {
+    _CallbackClient.send(buffer, hostid, log);
+  }
+  virtual void update() { _CallbackClient.update(); }
 };
 
 #endif // CALLBACK_ADAPTER_H

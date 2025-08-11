@@ -19,9 +19,9 @@
 
 #include "nel/misc/types_nl.h"
 
-#include "ryzom_entity_id.h"
-#include "entity_types.h"
 #include "action.h"
+#include "entity_types.h"
+#include "ryzom_entity_id.h"
 
 namespace CLFECOMMON {
 
@@ -31,64 +31,65 @@ namespace CLFECOMMON {
  * \author Nevrax France
  * \date 2001
  */
-class CActionAssociation : public CAction
-{
+class CActionAssociation : public CAction {
 public:
-	/** This function creates initializes its fields using the buffer.
-	 * \param buffer pointer to the buffer where the data are
-	 * \size size of the buffer
-	 */
-	virtual void unpack(NLMISC::CBitMemStream &message)
-	{
-		message.serial(IsNewAssociation);
-		if (IsNewAssociation)
-		{
-			message.serial(SheetId);
-			message.serial(Replace);
-		}
-	}
+  /** This function creates initializes its fields using the buffer.
+   * \param buffer pointer to the buffer where the data are
+   * \size size of the buffer
+   */
+  virtual void unpack(NLMISC::CBitMemStream &message) {
+    message.serial(IsNewAssociation);
+    if (IsNewAssociation) {
+      message.serial(SheetId);
+      message.serial(Replace);
+    }
+  }
 
-	/// This functions is used when you want to transform an action into an IStream.
-	virtual void serial(NLMISC::IStream &f) { f.serial(IsNewAssociation, SheetId, Replace); }
+  /// This functions is used when you want to transform an action into an
+  /// IStream.
+  virtual void serial(NLMISC::IStream &f) {
+    f.serial(IsNewAssociation, SheetId, Replace);
+  }
 
-	/** Returns the size of this action when it will be send to the UDP connection:
-	 * the size is IN BITS, not in bytes (the actual size is this one plus the header size)
-	 */
-	virtual uint32 size() { return IsNewAssociation ? 8 * sizeof(CLFECOMMON::TSheetId) + 2 : 1; }
+  /** Returns the size of this action when it will be send to the UDP
+   * connection: the size is IN BITS, not in bytes (the actual size is this one
+   * plus the header size)
+   */
+  virtual uint32 size() {
+    return IsNewAssociation ? 8 * sizeof(CLFECOMMON::TSheetId) + 2 : 1;
+  }
 
-	/// Sets the value of the action
-	virtual TValue getValue() const { return (CAction::TValue)SheetId; }
+  /// Sets the value of the action
+  virtual TValue getValue() const { return (CAction::TValue)SheetId; }
 
-	static CAction *create() { return new CActionAssociation(); }
+  static CAction *create() { return new CActionAssociation(); }
 
 protected:
-	/// Constructor
-	CActionAssociation() { }
+  /// Constructor
+  CActionAssociation() {}
 
-	/** This function transform the internal field and transform them into a buffer for the UDP connection.
-	 * \param buffer pointer to the buffer where the data will be written
-	 * \size size of the buffer
-	 */
-	virtual void pack(NLMISC::CBitMemStream &message)
-	{
-		message.serial(IsNewAssociation);
-		if (IsNewAssociation)
-		{
-			message.serial(SheetId);
-			message.serial(Replace);
-		}
-	}
+  /** This function transform the internal field and transform them into a
+   * buffer for the UDP connection. \param buffer pointer to the buffer where
+   * the data will be written \size size of the buffer
+   */
+  virtual void pack(NLMISC::CBitMemStream &message) {
+    message.serial(IsNewAssociation);
+    if (IsNewAssociation) {
+      message.serial(SheetId);
+      message.serial(Replace);
+    }
+  }
 
-	friend class CActionFactory;
+  friend class CActionFactory;
 
 public:
-	/// The sheet id of the associated entity
-	bool IsNewAssociation;
-	bool Replace;
-	CLFECOMMON::TSheetId SheetId;
+  /// The sheet id of the associated entity
+  bool IsNewAssociation;
+  bool Replace;
+  CLFECOMMON::TSheetId SheetId;
 };
 
-}
+} // namespace CLFECOMMON
 
 #endif // NL_ACTION_ASSOCIATION_H
 

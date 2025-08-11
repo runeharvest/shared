@@ -21,24 +21,24 @@
 
 namespace INTENSITY_TYPE {
 // Attack intensity
-enum TAttackIntensity
-{
-	NONE = 0,
-	WEAK,
-	STANDARD,
-	STRONG,
-	CRITICAL_HIT,
+enum TAttackIntensity {
+  NONE = 0,
+  WEAK,
+  STANDARD,
+  STRONG,
+  CRITICAL_HIT,
 
-	WEAK_COMBO,
-	STRONG_COMBO,
+  WEAK_COMBO,
+  STRONG_COMBO,
 
-	UNDEFINED_ATTACK // = Nb intensity too.
+  UNDEFINED_ATTACK // = Nb intensity too.
 };
 
 /**
  * get the right attack intensity from the input string
  * \param str the input string
- * \return the TAttackIntensity associated to this string (UNDEFINED_ATTACK if the string cannot be interpreted)
+ * \return the TAttackIntensity associated to this string (UNDEFINED_ATTACK if
+ * the string cannot be interpreted)
  */
 TAttackIntensity stringToAttackIntensity(const std::string &str);
 
@@ -50,25 +50,25 @@ TAttackIntensity stringToAttackIntensity(const std::string &str);
 const std::string &attackIntensityToString(TAttackIntensity type);
 
 // Impact intensity
-enum TImpactIntensity
-{
-	IMPACT_NONE = 0,
-	IMPACT_INSIGNIFICANT, // < 2% Hp Max
-	IMPACT_VERY_WEAK, // < 5%
-	IMPACT_WEAK, // < 10%
-	IMPACT_AVERAGE, // < 20%
-	IMPACT_STRONG, // < 30%
-	// IMPACT_VERY_STRONG,		// < 40%
-	// IMPACT_HUGE,			// > 40%
+enum TImpactIntensity {
+  IMPACT_NONE = 0,
+  IMPACT_INSIGNIFICANT, // < 2% Hp Max
+  IMPACT_VERY_WEAK,     // < 5%
+  IMPACT_WEAK,          // < 10%
+  IMPACT_AVERAGE,       // < 20%
+  IMPACT_STRONG,        // < 30%
+  // IMPACT_VERY_STRONG,		// < 40%
+  // IMPACT_HUGE,			// > 40%
 
-	NB_IMPACT,
-	IMPACT_UNDEFINED = NB_IMPACT, // = Nb Impact too.
+  NB_IMPACT,
+  IMPACT_UNDEFINED = NB_IMPACT, // = Nb Impact too.
 };
 
 /**
  * get the right impact intensity from the input string
  * \param str the input string
- * \return the TImpactIntensity associated to this string (IMPACT_UNDEFINED if the string cannot be interpreted)
+ * \return the TImpactIntensity associated to this string (IMPACT_UNDEFINED if
+ * the string cannot be interpreted)
  */
 TImpactIntensity stringToImpactIntensity(const std::string &str);
 
@@ -79,7 +79,7 @@ TImpactIntensity stringToImpactIntensity(const std::string &str);
  */
 const std::string &impactIntensityToString(TImpactIntensity type);
 
-}; // INTENSITY_TYPE
+}; // namespace INTENSITY_TYPE
 
 #endif // RY_INTENSITY_TYPES_H
 /* End of intensity_types.h */

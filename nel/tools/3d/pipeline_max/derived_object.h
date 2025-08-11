@@ -43,17 +43,16 @@ namespace PIPELINE {
  * \author Jan Boon (Kaetemi)
  * CDerivedObject
  */
-class CDerivedObject
-{
+class CDerivedObject {
 protected:
-	// pointers
-	// ...
+  // pointers
+  // ...
 
-	// instances
-	// ...
+  // instances
+  // ...
 public:
-	CDerivedObject();
-	virtual ~CDerivedObject();
+  CDerivedObject();
+  virtual ~CDerivedObject();
 }; /* class CDerivedObject */
 
 } /* namespace PIPELINE */

@@ -28,27 +28,26 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2003
  */
-class UVisualCollisionMesh
-{
+class UVisualCollisionMesh {
 public:
-	/// Proxy interface
-	UVisualCollisionMesh();
-	/// Attach a IShape to this proxy
-	void attach(class CVisualCollisionMesh *mesh);
-	/// return true if the proxy is empty() (not attached)
-	bool empty() const { return _Mesh == NULL; }
-	/// For Advanced usage, get the Collision Mesh ptr
-	class CVisualCollisionMesh *getMeshPtr() const { return _Mesh; }
-	// get vertices of the mesh
-	const std::vector<NLMISC::CVector> &getVertices() const;
-	// get triangles of the mesh
-	const std::vector<uint16> &getTriangles() const;
+  /// Proxy interface
+  UVisualCollisionMesh();
+  /// Attach a IShape to this proxy
+  void attach(class CVisualCollisionMesh *mesh);
+  /// return true if the proxy is empty() (not attached)
+  bool empty() const { return _Mesh == NULL; }
+  /// For Advanced usage, get the Collision Mesh ptr
+  class CVisualCollisionMesh *getMeshPtr() const { return _Mesh; }
+  // get vertices of the mesh
+  const std::vector<NLMISC::CVector> &getVertices() const;
+  // get triangles of the mesh
+  const std::vector<uint16> &getTriangles() const;
 
 private:
-	class CVisualCollisionMesh *_Mesh;
+  class CVisualCollisionMesh *_Mesh;
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_U_VISUAL_COLLISION_MESH_H
 

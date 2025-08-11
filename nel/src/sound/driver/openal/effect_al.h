@@ -26,23 +26,23 @@ class CSoundDriverAL;
  * \author Jan Boon (Kaetemi)
  * CEffectAL
  */
-class CEffectAL
-{
+class CEffectAL {
 protected:
-	// outside pointers
-	CSoundDriverAL *_SoundDriver;
+  // outside pointers
+  CSoundDriverAL *_SoundDriver;
 
-	// instances
-	ALuint _AlEffect;
-	ALuint _AlAuxEffectSlot;
+  // instances
+  ALuint _AlEffect;
+  ALuint _AlAuxEffectSlot;
 
 public:
-	CEffectAL(CSoundDriverAL *soundDriver, ALuint alEffect, ALuint alAuxEffectSlot);
-	virtual ~CEffectAL();
-	virtual void release();
+  CEffectAL(CSoundDriverAL *soundDriver, ALuint alEffect,
+            ALuint alAuxEffectSlot);
+  virtual ~CEffectAL();
+  virtual void release();
 
-	inline ALuint getAlEffect() { return _AlEffect; }
-	inline ALuint getAuxEffectSlot() { return _AlAuxEffectSlot; }
+  inline ALuint getAlEffect() { return _AlEffect; }
+  inline ALuint getAuxEffectSlot() { return _AlAuxEffectSlot; }
 
 }; /* class CEffectAL */
 
@@ -52,13 +52,14 @@ public:
  * \author Jan Boon (Kaetemi)
  * CStandardReverbEffectAL
  */
-class CStandardReverbEffectAL : public IReverbEffect, public CEffectAL
-{
+class CStandardReverbEffectAL : public IReverbEffect, public CEffectAL {
 public:
-	CStandardReverbEffectAL(CSoundDriverAL *soundDriver, ALuint alEffect, ALuint alAuxEffectSlot);
-	virtual ~CStandardReverbEffectAL();
+  CStandardReverbEffectAL(CSoundDriverAL *soundDriver, ALuint alEffect,
+                          ALuint alAuxEffectSlot);
+  virtual ~CStandardReverbEffectAL();
 
-	virtual void setEnvironment(const CEnvironment &environment = CEnvironment(), float roomSize = 100.0f);
+  virtual void setEnvironment(const CEnvironment &environment = CEnvironment(),
+                              float roomSize = 100.0f);
 
 }; /* class CReverbEffectAL */
 
@@ -70,13 +71,14 @@ public:
  * \author Jan Boon (Kaetemi)
  * CCreativeReverbEffectAL
  */
-class CCreativeReverbEffectAL : public IReverbEffect, public CEffectAL
-{
+class CCreativeReverbEffectAL : public IReverbEffect, public CEffectAL {
 public:
-	CCreativeReverbEffectAL(CSoundDriverAL *soundDriver, ALuint alEffect, ALuint alAuxEffectSlot);
-	virtual ~CCreativeReverbEffectAL();
+  CCreativeReverbEffectAL(CSoundDriverAL *soundDriver, ALuint alEffect,
+                          ALuint alAuxEffectSlot);
+  virtual ~CCreativeReverbEffectAL();
 
-	virtual void setEnvironment(const CEnvironment &environment = CEnvironment(), float roomSize = 100.0f);
+  virtual void setEnvironment(const CEnvironment &environment = CEnvironment(),
+                              float roomSize = 100.0f);
 
 }; /* class CReverbEffectAL */
 

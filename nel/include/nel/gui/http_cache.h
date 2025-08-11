@@ -20,18 +20,16 @@
 #include "nel/misc/types_nl.h"
 
 namespace NLGUI {
-struct CHttpCacheObject
-{
-	CHttpCacheObject(uint32 expires = 0, const std::string &lastModified = "", const std::string &etag = "")
-	    : Expires(expires)
-	    , LastModified(lastModified)
-	    , Etag(etag) {};
+struct CHttpCacheObject {
+  CHttpCacheObject(uint32 expires = 0, const std::string &lastModified = "",
+                   const std::string &etag = "")
+      : Expires(expires), LastModified(lastModified), Etag(etag){};
 
-	uint32 Expires;
-	std::string LastModified;
-	std::string Etag;
+  uint32 Expires;
+  std::string LastModified;
+  std::string Etag;
 
-	void serial(NLMISC::IStream &f);
+  void serial(NLMISC::IStream &f);
 };
 
 /**
@@ -39,38 +37,37 @@ struct CHttpCacheObject
  * \author Meelis Mägi (nimetu)
  * \date 2017
  */
-class CHttpCache
-{
-	typedef std::map<std::string, CHttpCacheObject> THttpCacheMap;
+class CHttpCache {
+  typedef std::map<std::string, CHttpCacheObject> THttpCacheMap;
 
 public:
-	static CHttpCache *getInstance();
-	static void release();
+  static CHttpCache *getInstance();
+  static void release();
 
 public:
-	void setCacheIndex(const std::string &fname);
-	void init();
+  void setCacheIndex(const std::string &fname);
+  void init();
 
-	CHttpCacheObject lookup(const std::string &fname);
-	void store(const std::string &fname, const CHttpCacheObject &data);
+  CHttpCacheObject lookup(const std::string &fname);
+  void store(const std::string &fname, const CHttpCacheObject &data);
 
-	void flushCache();
+  void flushCache();
 
-	void serial(NLMISC::IStream &f);
+  void serial(NLMISC::IStream &f);
 
 private:
-	CHttpCache();
-	~CHttpCache();
+  CHttpCache();
+  ~CHttpCache();
 
-	void pruneCache();
+  void pruneCache();
 
-	static CHttpCache *instance;
+  static CHttpCache *instance;
 
-	THttpCacheMap _List;
+  THttpCacheMap _List;
 
-	std::string _IndexFilename;
-	bool _Initialized;
-	size_t _MaxObjects;
+  std::string _IndexFilename;
+  bool _Initialized;
+  size_t _MaxObjects;
 };
-}
+} // namespace NLGUI
 #endif

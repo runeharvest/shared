@@ -25,49 +25,46 @@ class UFormElm;
 
 /** Description of light cycle for a single season
  */
-struct CSeasonLightCycle
-{
-	float DayHour;
-	float DayToDuskHour;
-	float DuskToNightHour;
-	float NightHour;
-	float NightToDayHour;
-	///////////////////////////////////////////////////////////////
-	// ctor
-	CSeasonLightCycle();
-	// build from a Georges form
-	void build(const NLGEORGES::UFormElm &item);
-	// serial in a stream
-	void serial(NLMISC::IStream &f)
-	{
-		f.serial(DayHour, DayToDuskHour, DuskToNightHour, NightHour, NightToDayHour);
-	}
+struct CSeasonLightCycle {
+  float DayHour;
+  float DayToDuskHour;
+  float DuskToNightHour;
+  float NightHour;
+  float NightToDayHour;
+  ///////////////////////////////////////////////////////////////
+  // ctor
+  CSeasonLightCycle();
+  // build from a Georges form
+  void build(const NLGEORGES::UFormElm &item);
+  // serial in a stream
+  void serial(NLMISC::IStream &f) {
+    f.serial(DayHour, DayToDuskHour, DuskToNightHour, NightHour,
+             NightToDayHour);
+  }
 };
 
 /** Description of a complete light cycle for each season
  */
-struct CLightCycle
-{
-	float RealDayLength; // real length of the day, in seconds
-	float NumHours; // number of ryzom hours in a day
-	uint32 MaxNumColorSteps; // the max number of color steps
-	CSeasonLightCycle SeasonLightCycle[EGSPD::CSeason::Invalid]; // description of each season
-	///////////////////////////////////////////////////////////////
-	// ctor
-	CLightCycle();
-	// build from a Georges form
-	void build(const NLGEORGES::UFormElm &item);
-	// Build from a sheet file
-	void build(const char *sheetName);
-	//
-	void serial(NLMISC::IStream &f)
-	{
-		f.serial(RealDayLength, NumHours, MaxNumColorSteps);
-		for (uint k = 0; k < EGSPD::CSeason::Invalid; ++k)
-		{
-			f.serial(SeasonLightCycle[k]);
-		}
-	}
+struct CLightCycle {
+  float RealDayLength;     // real length of the day, in seconds
+  float NumHours;          // number of ryzom hours in a day
+  uint32 MaxNumColorSteps; // the max number of color steps
+  CSeasonLightCycle
+      SeasonLightCycle[EGSPD::CSeason::Invalid]; // description of each season
+  ///////////////////////////////////////////////////////////////
+  // ctor
+  CLightCycle();
+  // build from a Georges form
+  void build(const NLGEORGES::UFormElm &item);
+  // Build from a sheet file
+  void build(const char *sheetName);
+  //
+  void serial(NLMISC::IStream &f) {
+    f.serial(RealDayLength, NumHours, MaxNumColorSteps);
+    for (uint k = 0; k < EGSPD::CSeason::Invalid; ++k) {
+      f.serial(SeasonLightCycle[k]);
+    }
+  }
 };
 
 #endif

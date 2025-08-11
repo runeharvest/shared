@@ -35,7 +35,7 @@ namespace NL3D {
 class UDriver;
 class UTextContext;
 class UScene;
-}
+} // namespace NL3D
 
 namespace NLQT {
 class CGraphicsConfig;
@@ -47,55 +47,54 @@ class CInternationalization;
  * \date 2010-02-06 10:11GMT
  * \author Jan Boon (Kaetemi)
  */
-class CGraphicsViewport : public QWidget
-{
-	Q_OBJECT
+class CGraphicsViewport : public QWidget {
+  Q_OBJECT
 
 public:
-	CGraphicsViewport(QWidget *parent);
-	virtual ~CGraphicsViewport();
+  CGraphicsViewport(QWidget *parent);
+  virtual ~CGraphicsViewport();
 
-	virtual QPaintEngine *paintEngine() const { return NULL; }
+  virtual QPaintEngine *paintEngine() const { return NULL; }
 
-	void init(CGraphicsConfig *graphicsConfig);
-	void release();
+  void init(CGraphicsConfig *graphicsConfig);
+  void release();
 
-	void updateInput();
-	void renderDriver();
-	void renderDebug2D();
+  void updateInput();
+  void renderDriver();
+  void renderDebug2D();
 
-	QAction *createSaveScreenshotAction(QObject *parent);
+  QAction *createSaveScreenshotAction(QObject *parent);
 
-	void saveScreenshot(const std::string &name, bool jpg, bool png, bool tga);
+  void saveScreenshot(const std::string &name, bool jpg, bool png, bool tga);
 
-	inline NL3D::UDriver *getDriver() { return m_Driver; }
-	inline NL3D::UTextContext *getTextContext() { return m_TextContext; }
-	inline NL3D::UScene *getScene() { return m_Scene; }
+  inline NL3D::UDriver *getDriver() { return m_Driver; }
+  inline NL3D::UTextContext *getTextContext() { return m_TextContext; }
+  inline NL3D::UScene *getScene() { return m_Scene; }
 
 public slots:
-	void saveScreenshot();
+  void saveScreenshot();
 
 private slots:
-	void cfcbBackgroundColor(NLMISC::CRGBA backgroundColor);
-	void cfcbFontShadow(bool fontShadow);
+  void cfcbBackgroundColor(NLMISC::CRGBA backgroundColor);
+  void cfcbFontShadow(bool fontShadow);
 
 private:
-	virtual void resizeEvent(QResizeEvent *resizeEvent);
+  virtual void resizeEvent(QResizeEvent *resizeEvent);
 
 private:
-	NLMISC::CRGBA m_BackgroundColor;
+  NLMISC::CRGBA m_BackgroundColor;
 
-	CGraphicsConfig *m_GraphicsConfig;
+  CGraphicsConfig *m_GraphicsConfig;
 
-	NL3D::UDriver *m_Driver;
-	NL3D::UTextContext *m_TextContext;
-	NL3D::UScene *m_Scene;
+  NL3D::UDriver *m_Driver;
+  NL3D::UTextContext *m_TextContext;
+  NL3D::UScene *m_Scene;
 
-	bool m_Direct3D;
+  bool m_Direct3D;
 
 private:
-	CGraphicsViewport(const CGraphicsViewport &);
-	CGraphicsViewport &operator=(const CGraphicsViewport &);
+  CGraphicsViewport(const CGraphicsViewport &);
+  CGraphicsViewport &operator=(const CGraphicsViewport &);
 
 }; /* class CGraphicsViewport */
 

@@ -20,8 +20,8 @@
 #ifndef NL_DBVIEW_NUMBER_H
 #define NL_DBVIEW_NUMBER_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/gui/view_text.h"
+#include "nel/misc/types_nl.h"
 
 namespace NLGUI {
 
@@ -32,43 +32,39 @@ namespace NLGUI {
  * \author Nevrax France
  * \date 2002
  */
-class CDBViewNumber : public CViewText
-{
+class CDBViewNumber : public CViewText {
 public:
-	DECLARE_UI_CLASS(CDBViewNumber)
+  DECLARE_UI_CLASS(CDBViewNumber)
 
-	/// Constructor
-	CDBViewNumber(const TCtorParam &param);
+  /// Constructor
+  CDBViewNumber(const TCtorParam &param);
 
-	std::string getProperty(const std::string &name) const;
-	void setProperty(const std::string &name, const std::string &value);
-	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
-	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
-	virtual void checkCoords();
-	virtual void draw();
+  std::string getProperty(const std::string &name) const;
+  void setProperty(const std::string &name, const std::string &value);
+  xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
+  virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+  virtual void checkCoords();
+  virtual void draw();
 
-	void link(const std::string &dbprop)
-	{
-		_Number.link(dbprop.c_str());
-	}
+  void link(const std::string &dbprop) { _Number.link(dbprop.c_str()); }
 
-	static void forceLink();
+  static void forceLink();
 
 protected:
-	sint64 getVal();
+  sint64 getVal();
 
 protected:
-	CInterfaceProperty _Number;
-	sint64 _Cache;
-	bool _Positive; // only positive values are displayed
-	bool _Format; // the number will be formatted (like "1,000,000") if >= 10k
-	sint64 _Divisor, _Modulo;
-	// string to append to the value (eg: meters)
-	CStringShared _Suffix;
-	CStringShared _Prefix;
+  CInterfaceProperty _Number;
+  sint64 _Cache;
+  bool _Positive; // only positive values are displayed
+  bool _Format;   // the number will be formatted (like "1,000,000") if >= 10k
+  sint64 _Divisor, _Modulo;
+  // string to append to the value (eg: meters)
+  CStringShared _Suffix;
+  CStringShared _Prefix;
 };
 
-}
+} // namespace NLGUI
 
 #endif // NL_DBVIEW_NUMBER_H
 

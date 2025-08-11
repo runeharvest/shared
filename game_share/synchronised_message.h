@@ -19,35 +19,38 @@
 
 #include <nel/net/transport_class.h>
 
-void sendMessageViaMirror(const std::string &destServiceName, NLNET::CMessage &msgout);
-void sendMessageViaMirror(NLNET::TServiceId destServiceId, NLNET::CMessage &msgout);
+void sendMessageViaMirror(const std::string &destServiceName,
+                          NLNET::CMessage &msgout);
+void sendMessageViaMirror(NLNET::TServiceId destServiceId,
+                          NLNET::CMessage &msgout);
 void sendMessageViaMirrorToAll(NLNET::CMessage &msgout);
 
 /**
  * Transport class synchronised with the mirror system
  */
-class CMirrorTransportClass : public NLNET::CTransportClass
-{
+class CMirrorTransportClass : public NLNET::CTransportClass {
 public:
-	/// Send the transport class to a specified service using the service id
-	void send(NLNET::TServiceId sid)
-	{
-		sendMessageViaMirror(sid, write());
-		// nldebug( "%u: Sending MTC to service %hu", CTickEventHandler::getGameCycle(), (uint16)sid );
-	}
+  /// Send the transport class to a specified service using the service id
+  void send(NLNET::TServiceId sid) {
+    sendMessageViaMirror(sid, write());
+    // nldebug( "%u: Sending MTC to service %hu",
+    // CTickEventHandler::getGameCycle(), (uint16)sid );
+  }
 
-	/// Send the transport class to a specified service using the service name
-	void send(const std::string &serviceName)
-	{
-		sendMessageViaMirror(serviceName, write());
-		// nldebug( "%u: Sending MTC to %s", CTickEventHandler::getGameCycle(), serviceName.c_str() );
-	}
+  /// Send the transport class to a specified service using the service name
+  void send(const std::string &serviceName) {
+    sendMessageViaMirror(serviceName, write());
+    // nldebug( "%u: Sending MTC to %s", CTickEventHandler::getGameCycle(),
+    // serviceName.c_str() );
+  }
 
-	// Send the transport class directly (with no synchronisation, using CTransportClass::send())
-	// void sendAsync( uint8 sid ) { ((NLNET::CTransportClass*)(this))->send( sid ); }
+  // Send the transport class directly (with no synchronisation, using
+  // CTransportClass::send()) void sendAsync( uint8 sid ) {
+  // ((NLNET::CTransportClass*)(this))->send( sid ); }
 
-	// Send the transport class directly (with no synchronisation, using CTransportClass::send())
-	// void sendAsync( std::string serviceName ) { ((NLNET::CTransportClass*)(this))->send( serviceName ); }
+  // Send the transport class directly (with no synchronisation, using
+  // CTransportClass::send()) void sendAsync( std::string serviceName ) {
+  // ((NLNET::CTransportClass*)(this))->send( serviceName ); }
 };
 
 #endif

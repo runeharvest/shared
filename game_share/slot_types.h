@@ -21,62 +21,62 @@
 
 namespace SLOTTYPE {
 // Mode
-enum TSlotType
-{
-	UNDEFINED = 0,
+enum TSlotType {
+  UNDEFINED = 0,
 
-	HEADDRESS,
-	HEAD,
-	FACE,
-	EARS,
-	NECKLACE,
-	SHOULDER,
-	BACK,
-	CHEST,
-	ARMS,
-	WRIST,
-	HANDS,
-	FINGERS,
-	LEGS,
-	ANKLE,
-	FEET,
-	RIGHT_HAND,
-	LEFT_HAND,
-	TWO_HANDS,
-	RIGHT_HAND_EXCLUSIVE, // Left hand is empty but used by object in right hand (fire weapons)
-	AMMO,
-	// SHEATH,		// Fourreau
+  HEADDRESS,
+  HEAD,
+  FACE,
+  EARS,
+  NECKLACE,
+  SHOULDER,
+  BACK,
+  CHEST,
+  ARMS,
+  WRIST,
+  HANDS,
+  FINGERS,
+  LEGS,
+  ANKLE,
+  FEET,
+  RIGHT_HAND,
+  LEFT_HAND,
+  TWO_HANDS,
+  RIGHT_HAND_EXCLUSIVE, // Left hand is empty but used by object in right hand
+                        // (fire weapons)
+  AMMO,
+  // SHEATH,		// Fourreau
 
-	NB_SLOT_TYPE
+  NB_SLOT_TYPE
 };
 
 // Enum all visual slots.
-enum EVisualSlot
-{
-	HIDDEN_SLOT = 0,
-	CHEST_SLOT,
-	LEGS_SLOT,
-	HEAD_SLOT,
-	ARMS_SLOT,
-	FACE_SLOT,
-	HANDS_SLOT,
-	FEET_SLOT,
-	RIGHT_HAND_SLOT,
-	LEFT_HAND_SLOT,
+enum EVisualSlot {
+  HIDDEN_SLOT = 0,
+  CHEST_SLOT,
+  LEGS_SLOT,
+  HEAD_SLOT,
+  ARMS_SLOT,
+  FACE_SLOT,
+  HANDS_SLOT,
+  FEET_SLOT,
+  RIGHT_HAND_SLOT,
+  LEFT_HAND_SLOT,
 
-	NB_SLOT
+  NB_SLOT
 };
 
 /**
  * get the right effectType from the input string
  * \param str the input string
- * \return the TSlotType associated to this string (UNDEFINED if the string cannot be interpreted)
+ * \return the TSlotType associated to this string (UNDEFINED if the string
+ * cannot be interpreted)
  */
 TSlotType stringToSlotType(const std::string &str, bool warning = true);
 
 /// Convert a slot type into a visual slot.
 EVisualSlot convertTypeToVisualSlot(TSlotType type);
-}; // SLOTTYPE
+}; // namespace SLOTTYPE
 
 #endif // RY_SLOT_TYPES_H
 /* End of slot_types.h */

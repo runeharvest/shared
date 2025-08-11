@@ -17,66 +17,63 @@
 #ifndef NL_TEXTURE_MULTI_FILE_H
 #define NL_TEXTURE_MULTI_FILE_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/3d/texture.h"
+#include "nel/misc/types_nl.h"
 
 #include <string>
 
 namespace NL3D {
 
 /**
- * This kind of texture is like a texture file except that it can encode several texture at once.
- * Only ONE texture is active at a given time.
- * The texture being used is chosen by a call to selectTexture.
- * NB : This is not derived from CTextureMulti because we don't store a pointer on each texture, just the name.
- * Moreover the needed method are exposed by CTexture
- * \author Nicolas Vizerie
- * \author Nevrax France
- * \date 2002
+ * This kind of texture is like a texture file except that it can encode several
+ * texture at once. Only ONE texture is active at a given time. The texture
+ * being used is chosen by a call to selectTexture. NB : This is not derived
+ * from CTextureMulti because we don't store a pointer on each texture, just the
+ * name. Moreover the needed method are exposed by CTexture \author Nicolas
+ * Vizerie \author Nevrax France \date 2002
  */
-class CTextureMultiFile : public ITexture
-{
+class CTextureMultiFile : public ITexture {
 public:
-	CTextureMultiFile(uint numTexs = 0);
+  CTextureMultiFile(uint numTexs = 0);
 
-	/// set the number of textures that are encoded in that texture
-	void setNumTextures(uint numTexs);
-	/**
-	 * Set the name of the file containing the i-th texture
-	 * \param name of the file
-	 * \param index index of the texture
-	 */
-	void setFileName(uint index, const char *);
-	//
-	uint getNumFileName() const { return (uint)_FileNames.size(); }
-	/**
-	 * get the name of the file containing the texture for the given index
-	 * \return name of the file
-	 */
-	const std::string &getFileName(uint index) const { return _FileNames[index]; }
+  /// set the number of textures that are encoded in that texture
+  void setNumTextures(uint numTexs);
+  /**
+   * Set the name of the file containing the i-th texture
+   * \param name of the file
+   * \param index index of the texture
+   */
+  void setFileName(uint index, const char *);
+  //
+  uint getNumFileName() const { return (uint)_FileNames.size(); }
+  /**
+   * get the name of the file containing the texture for the given index
+   * \return name of the file
+   */
+  const std::string &getFileName(uint index) const { return _FileNames[index]; }
 
-	virtual bool supportSharing() const { return true; }
-	virtual std::string getShareName() const;
-	virtual void selectTexture(uint index);
-	virtual bool isSelectable() const { return true; }
-	virtual ITexture *buildNonSelectableVersion(uint index);
+  virtual bool supportSharing() const { return true; }
+  virtual std::string getShareName() const;
+  virtual void selectTexture(uint index);
+  virtual bool isSelectable() const { return true; }
+  virtual ITexture *buildNonSelectableVersion(uint index);
 
-	/// Generate the current selected texture, looking in CPath if necessary.
-	virtual void doGenerate(bool async = false);
-	/// Serial this object
-	virtual void serial(NLMISC::IStream &f);
-	NLMISC_DECLARE_CLASS(CTextureMultiFile);
-
-private:
-	uint32 _CurrSelectedTexture;
-	std::vector<std::string> _FileNames;
+  /// Generate the current selected texture, looking in CPath if necessary.
+  virtual void doGenerate(bool async = false);
+  /// Serial this object
+  virtual void serial(NLMISC::IStream &f);
+  NLMISC_DECLARE_CLASS(CTextureMultiFile);
 
 private:
-	sint getTexIndex(uint index) const;
-	const std::string &getTexNameByIndex(uint index) const;
+  uint32 _CurrSelectedTexture;
+  std::vector<std::string> _FileNames;
+
+private:
+  sint getTexIndex(uint index) const;
+  const std::string &getTexNameByIndex(uint index) const;
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_TEXTURE_MULTI_FILE_H
 

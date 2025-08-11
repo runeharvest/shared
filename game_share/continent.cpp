@@ -16,8 +16,8 @@
 
 #include "stdpch.h"
 
-#include "nel/misc/debug.h"
 #include "continent.h"
+#include "nel/misc/debug.h"
 // nel
 #include "nel/misc/string_conversion.h"
 
@@ -59,16 +59,14 @@ NL_END_STRING_CONVERSION_TABLE(TContinent, ContinentConversion, UNKNOWN)
 //-----------------------------------------------
 // toContinent:
 //-----------------------------------------------
-TContinent toContinent(const std::string &str)
-{
-	return ContinentConversion.fromString(str);
+TContinent toContinent(const std::string &str) {
+  return ContinentConversion.fromString(str);
 }
 
 //-----------------------------------------------
 // toString :
 //-----------------------------------------------
-const std::string &toString(TContinent continent)
-{
-	return ContinentConversion.toString(continent);
+const std::string &toString(TContinent continent) {
+  return ContinentConversion.toString(continent);
 }
-}; // CONTINENT
+}; // namespace CONTINENT

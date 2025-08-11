@@ -17,20 +17,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdpch.h"
 #include "bg_downloader_msg.h"
 #include "nel/misc/i18n.h"
 #include "nel/misc/string_conversion.h"
+#include "stdpch.h"
 
 namespace BGDownloader {
 
 const wchar_t *DownloaderMutexName = L"RyzomBgDownloader";
 
-std::string getWrittenSize(uint32 nSize)
-{
-	float fSize = ((float)nSize) / (1024.0f * 1024.0f);
-	std::string ucs = NLMISC::toString("%.1f", fSize) + " " + NLMISC::CI18N::get("uiMb");
-	return ucs;
+std::string getWrittenSize(uint32 nSize) {
+  float fSize = ((float)nSize) / (1024.0f * 1024.0f);
+  std::string ucs =
+      NLMISC::toString("%.1f", fSize) + " " + NLMISC::CI18N::get("uiMb");
+  return ucs;
 }
 
 NL_BEGIN_STRING_CONVERSION_TABLE(TMsgType)
@@ -55,9 +55,8 @@ NL_STRING_CONVERSION_TABLE_ENTRY(CL_Hide)
 NL_STRING_CONVERSION_TABLE_ENTRY(CL_SetPriority)
 NL_END_STRING_CONVERSION_TABLE(TMsgType, MSGTYPEConversion, UnknownMessageType)
 
-std::string toString(TMsgType msgType)
-{
-	return MSGTYPEConversion.toString(msgType);
+std::string toString(TMsgType msgType) {
+  return MSGTYPEConversion.toString(msgType);
 }
 
-} // BGDownloader
+} // namespace BGDownloader

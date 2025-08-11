@@ -16,12 +16,12 @@
 //
 // Author: Jan BOON (Kaetemi) <jan.boon@kaetemi.be>
 
-#include <nel/misc/types_nl.h>
 #include "scene_meta.h"
+#include <nel/misc/types_nl.h>
 
 #include <nel/misc/debug.h>
-#include <nel/misc/stream.h>
 #include <nel/misc/file.h>
+#include <nel/misc/stream.h>
 
 #include <nel/3d/material.h>
 
@@ -29,71 +29,55 @@ using namespace std;
 using namespace NLMISC;
 
 CNodeMeta::CNodeMeta()
-    : AddToIG(true)
-    , ExportMesh(TMeshShape)
-    , ExportBone(TBoneAuto)
-    , AutoAnim(false)
-{
-}
+    : AddToIG(true), ExportMesh(TMeshShape), ExportBone(TBoneAuto),
+      AutoAnim(false) {}
 
-void CNodeMeta::serial(NLMISC::IStream &s)
-{
-	uint version = s.serialVersion(1);
-	s.serial(AddToIG);
-	s.serial((uint32 &)ExportMesh);
-	s.serial((uint32 &)ExportBone);
-	s.serial(InstanceShape);
-	s.serial(InstanceName);
-	s.serial(InstanceGroupName);
-	s.serial(AutoAnim);
+void CNodeMeta::serial(NLMISC::IStream &s) {
+  uint version = s.serialVersion(1);
+  s.serial(AddToIG);
+  s.serial((uint32 &)ExportMesh);
+  s.serial((uint32 &)ExportBone);
+  s.serial(InstanceShape);
+  s.serial(InstanceName);
+  s.serial(InstanceGroupName);
+  s.serial(AutoAnim);
 }
 
 CSceneMeta::CSceneMeta()
-    : ImportShape(true)
-    , ImportSkel(true)
-    , ImportAnim(true)
-    , ImportCmb(true)
-    , ImportIG(true)
-    , ExportDefaultIG(false)
-    , SkeletonMode(TSkelRoot)
-{
+    : ImportShape(true), ImportSkel(true), ImportAnim(true), ImportCmb(true),
+      ImportIG(true), ExportDefaultIG(false), SkeletonMode(TSkelRoot) {}
+
+bool CSceneMeta::load(const std::string &filePath) {
+  m_MetaFilePath = NLMISC::CPath::standardizePath(filePath + ".nelmeta", false);
+  if (CFile::fileExists(m_MetaFilePath)) {
+    CIFile f(m_MetaFilePath);
+    serial(f);
+    f.close();
+    return true;
+  }
+  return false;
 }
 
-bool CSceneMeta::load(const std::string &filePath)
-{
-	m_MetaFilePath = NLMISC::CPath::standardizePath(filePath + ".nelmeta", false);
-	if (CFile::fileExists(m_MetaFilePath))
-	{
-		CIFile f(m_MetaFilePath);
-		serial(f);
-		f.close();
-		return true;
-	}
-	return false;
+void CSceneMeta::save() {
+  COFile f(m_MetaFilePath, false, false, true);
+  serial(f);
+  f.close();
 }
 
-void CSceneMeta::save()
-{
-	COFile f(m_MetaFilePath, false, false, true);
-	serial(f);
-	f.close();
-}
+void CSceneMeta::serial(NLMISC::IStream &s) {
+  uint version = s.serialVersion(1);
 
-void CSceneMeta::serial(NLMISC::IStream &s)
-{
-	uint version = s.serialVersion(1);
+  s.serial(ImportShape);
+  s.serial(ImportSkel);
+  s.serial(ImportAnim);
+  s.serial(ImportCmb);
+  s.serial(ImportIG);
 
-	s.serial(ImportShape);
-	s.serial(ImportSkel);
-	s.serial(ImportAnim);
-	s.serial(ImportCmb);
-	s.serial(ImportIG);
+  s.serial(ExportDefaultIG);
+  s.serial((uint32 &)SkeletonMode);
 
-	s.serial(ExportDefaultIG);
-	s.serial((uint32 &)SkeletonMode);
-
-	s.serialCont(Nodes);
-	s.serialPtrCont(Materials);
+  s.serialCont(Nodes);
+  s.serialPtrCont(Materials);
 }
 
 /* end of file */

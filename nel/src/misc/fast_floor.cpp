@@ -35,4 +35,4 @@ float OptFastFloorMagicConst24 = (float)pow(2.0, 23);
 
 #endif
 
-} // NLMISC
+} // namespace NLMISC

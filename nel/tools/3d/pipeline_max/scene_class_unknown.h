@@ -45,16 +45,16 @@ namespace MAX {
  * \author Jan Boon (Kaetemi)
  * CSceneClassUnknownDllPluginDesc
  */
-class CSceneClassUnknownDllPluginDesc : public IDllPluginDescInternal
-{
+class CSceneClassUnknownDllPluginDesc : public IDllPluginDescInternal {
 public:
-	CSceneClassUnknownDllPluginDesc(const ucstring &dllFilename, const ucstring &dllDescription);
-	virtual const ucchar *internalName() const;
-	virtual const ucchar *displayName() const;
+  CSceneClassUnknownDllPluginDesc(const ucstring &dllFilename,
+                                  const ucstring &dllDescription);
+  virtual const ucchar *internalName() const;
+  virtual const ucchar *displayName() const;
 
 private:
-	ucstring m_InternalName;
-	ucstring m_DisplayName;
+  ucstring m_InternalName;
+  ucstring m_DisplayName;
 };
 
 /**
@@ -63,24 +63,28 @@ private:
  * \author Jan Boon (Kaetemi)
  * CSceneClassUnknownDesc
  */
-class CSceneClassUnknownDesc : public ISceneClassDesc
-{
+class CSceneClassUnknownDesc : public ISceneClassDesc {
 public:
-	CSceneClassUnknownDesc(const NLMISC::CClassId classId, const TSClassId superClassId, const ucstring &displayName, const std::string &internalName, const ucstring &dllFilename, const ucstring &dllDescription);
-	virtual CSceneClass *create(CScene *scene) const;
-	virtual void destroy(CSceneClass *sc) const;
-	virtual const ucchar *displayName() const;
-	virtual const char *internalName() const;
-	virtual NLMISC::CClassId classId() const;
-	virtual TSClassId superClassId() const;
-	virtual const IDllPluginDescInternal *dllPluginDesc() const;
+  CSceneClassUnknownDesc(const NLMISC::CClassId classId,
+                         const TSClassId superClassId,
+                         const ucstring &displayName,
+                         const std::string &internalName,
+                         const ucstring &dllFilename,
+                         const ucstring &dllDescription);
+  virtual CSceneClass *create(CScene *scene) const;
+  virtual void destroy(CSceneClass *sc) const;
+  virtual const ucchar *displayName() const;
+  virtual const char *internalName() const;
+  virtual NLMISC::CClassId classId() const;
+  virtual TSClassId superClassId() const;
+  virtual const IDllPluginDescInternal *dllPluginDesc() const;
 
 private:
-	ucstring m_DisplayName;
-	std::string m_InternalName;
-	NLMISC::CClassId m_ClassId;
-	TSClassId m_SuperClassId;
-	CSceneClassUnknownDllPluginDesc m_DllPluginDesc;
+  ucstring m_DisplayName;
+  std::string m_InternalName;
+  NLMISC::CClassId m_ClassId;
+  TSClassId m_SuperClassId;
+  CSceneClassUnknownDllPluginDesc m_DllPluginDesc;
 
 }; /* class ISceneClassDesc */
 
@@ -91,22 +95,22 @@ private:
  * Utility class for parsing unknown scene classes and keeping them
  * in storage as is.
  */
-template <typename TSuperClass>
-class CSceneClassUnknown : public TSuperClass
-{
+template <typename TSuperClass> class CSceneClassUnknown : public TSuperClass {
 public:
-	CSceneClassUnknown(CScene *scene, const NLMISC::CClassId classId, const TSClassId superClassId, const ucstring &displayName, const std::string &internalName, const ucstring &dllFilename, const ucstring &dllDescription)
-	    : TSuperClass(scene)
-	    , m_Desc(classId, superClassId, displayName, internalName, dllFilename, dllDescription)
-	{
-	}
-	virtual ~CSceneClassUnknown() { }
+  CSceneClassUnknown(CScene *scene, const NLMISC::CClassId classId,
+                     const TSClassId superClassId, const ucstring &displayName,
+                     const std::string &internalName,
+                     const ucstring &dllFilename,
+                     const ucstring &dllDescription)
+      : TSuperClass(scene), m_Desc(classId, superClassId, displayName,
+                                   internalName, dllFilename, dllDescription) {}
+  virtual ~CSceneClassUnknown() {}
 
-	// inherited
-	virtual const ISceneClassDesc *classDesc() const { return &m_Desc; }
+  // inherited
+  virtual const ISceneClassDesc *classDesc() const { return &m_Desc; }
 
 private:
-	CSceneClassUnknownDesc m_Desc;
+  CSceneClassUnknownDesc m_Desc;
 
 }; /* class CSceneClass */
 

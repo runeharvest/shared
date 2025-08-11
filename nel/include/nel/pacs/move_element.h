@@ -30,30 +30,29 @@ class CMovePrimitive;
  * \author Nevrax France
  * \date 2001
  */
-class CMoveElement
-{
+class CMoveElement {
 public:
-	/// Pointer on the primitive for this move element
-	CMovePrimitive *Primitive;
+  /// Pointer on the primitive for this move element
+  CMovePrimitive *Primitive;
 
-	/// Next move element in the X List
-	CMoveElement *NextX;
+  /// Next move element in the X List
+  CMoveElement *NextX;
 
-	/// Previous move element in the X List
-	CMoveElement *PreviousX;
+  /// Previous move element in the X List
+  CMoveElement *PreviousX;
 
-	/// Next move element in the Y List
-	CMoveElement *NextY;
+  /// Next move element in the Y List
+  CMoveElement *NextY;
 
-	/// Previous move element in the Y List
-	CMoveElement *PreviousY;
+  /// Previous move element in the Y List
+  CMoveElement *PreviousY;
 
-	/// Cell coordinate
-	uint16 X;
-	uint16 Y;
+  /// Cell coordinate
+  uint16 X;
+  uint16 Y;
 };
 
-} // NLPACS
+} // namespace NLPACS
 
 #endif // NL_MOVE_ELEMENT_H
 

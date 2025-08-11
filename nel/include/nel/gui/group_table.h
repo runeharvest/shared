@@ -20,11 +20,11 @@
 #ifndef NL_GROUP_TABLE_H
 #define NL_GROUP_TABLE_H
 
-#include "nel/misc/types_nl.h"
+#include "nel/gui/css_types.h"
+#include "nel/gui/ctrl_button.h"
 #include "nel/gui/group_frame.h"
 #include "nel/gui/view_text.h"
-#include "nel/gui/ctrl_button.h"
-#include "nel/gui/css_types.h"
+#include "nel/misc/types_nl.h"
 
 namespace NLGUI {
 class CSSBorderRenderer;
@@ -35,205 +35,191 @@ class CSSBackgroundRenderer;
  * They have specific parameters to be aligned like HTML cells.
  * (Percent of the table size
  */
-class CGroupCell : public CInterfaceGroup
-{
-	friend class CGroupTable;
+class CGroupCell : public CInterfaceGroup {
+  friend class CGroupTable;
 
 public:
-	DECLARE_UI_CLASS(CGroupCell)
+  DECLARE_UI_CLASS(CGroupCell)
 
-	CGroupCell(const TCtorParam &param);
-	~CGroupCell();
+  CGroupCell(const TCtorParam &param);
+  ~CGroupCell();
 
-	enum TAlign
-	{
-		Left,
-		Center,
-		Right
-	};
+  enum TAlign { Left, Center, Right };
 
-	enum TVAlign
-	{
-		Top,
-		Middle,
-		Bottom
-	};
+  enum TVAlign { Top, Middle, Bottom };
 
-	/// \from CInterfaceElement
-	virtual void draw();
-	virtual sint32 getMaxUsedW() const;
-	virtual sint32 getMinUsedW() const;
+  /// \from CInterfaceElement
+  virtual void draw();
+  virtual sint32 getMaxUsedW() const;
+  virtual sint32 getMinUsedW() const;
 
-	std::string getProperty(const std::string &name) const;
-	void setProperty(const std::string &name, const std::string &value);
-	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
+  std::string getProperty(const std::string &name) const;
+  void setProperty(const std::string &name, const std::string &value);
+  xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
 
-	// to be called by CGroupTable
-	bool parseCell(xmlNodePtr cur, CInterfaceGroup *parentGroup, uint columnIndex, uint rowIndex);
+  // to be called by CGroupTable
+  bool parseCell(xmlNodePtr cur, CInterfaceGroup *parentGroup, uint columnIndex,
+                 uint rowIndex);
 
-	// If the cell is a new line. This is the first <td> after a <tr>
-	bool NewLine;
-	bool IgnoreMaxWidth;
-	bool IgnoreMinWidth;
-	bool AddChildW;
+  // If the cell is a new line. This is the first <td> after a <tr>
+  bool NewLine;
+  bool IgnoreMaxWidth;
+  bool IgnoreMinWidth;
+  bool AddChildW;
 
-	// The table width cell ratio. This is the <td width="50%"> parameter
-	float TableRatio;
+  // The table width cell ratio. This is the <td width="50%"> parameter
+  float TableRatio;
 
-	// The Width you want in pixel. This is the <td width="100"> parameter
-	sint32 WidthWanted;
+  // The Width you want in pixel. This is the <td width="100"> parameter
+  sint32 WidthWanted;
 
-	sint32 ColSpan;
-	sint32 RowSpan;
-	sint32 TableColumnIndex;
+  sint32 ColSpan;
+  sint32 RowSpan;
+  sint32 TableColumnIndex;
 
-	// The min height of the cell
-	sint32 Height;
+  // The min height of the cell
+  sint32 Height;
 
-	// Memorize max width
-	sint32 WidthMax;
+  // Memorize max width
+  sint32 WidthMax;
 
-	CSSBorderRenderer *Border;
-	CSSBackgroundRenderer *Background;
-	uint32 PaddingTop, PaddingRight, PaddingBottom, PaddingLeft;
+  CSSBorderRenderer *Border;
+  CSSBackgroundRenderer *Background;
+  uint32 PaddingTop, PaddingRight, PaddingBottom, PaddingLeft;
 
-	// Alignment
-	TAlign Align;
-	TVAlign VAlign;
-	sint32 LeftMargin;
+  // Alignment
+  TAlign Align;
+  TVAlign VAlign;
+  sint32 LeftMargin;
 
-	// The cell group
-	CInterfaceGroup *Group;
+  // The cell group
+  CInterfaceGroup *Group;
 
-	// The cell is nowrap
-	bool NoWrap;
+  // The cell is nowrap
+  bool NoWrap;
 
-	// deprecated background image
-	void setTexture(const std::string &TxName);
-	void setTextureTile(bool tiled);
-	void setTextureScale(bool scaled);
+  // deprecated background image
+  void setTexture(const std::string &TxName);
+  void setTextureTile(bool tiled);
+  void setTextureScale(bool scaled);
 
-	uint32 getPaddingLeftRight() const { return PaddingLeft + PaddingRight; };
-	uint32 getPaddingTopBottom() const { return PaddingTop + PaddingBottom; };
+  uint32 getPaddingLeftRight() const { return PaddingLeft + PaddingRight; };
+  uint32 getPaddingTopBottom() const { return PaddingTop + PaddingBottom; };
 
-	virtual void updateCoords();
+  virtual void updateCoords();
 
-	static void setDebugUICell(bool d) { DebugUICell = d; }
-	static bool getDebugUICell() { return DebugUICell; }
+  static void setDebugUICell(bool d) { DebugUICell = d; }
+  static bool getDebugUICell() { return DebugUICell; }
 
 private:
-	void setEnclosedGroupDefaultParams();
-	static bool DebugUICell;
+  void setEnclosedGroupDefaultParams();
+  static bool DebugUICell;
 };
 
 /**
- * This group is used to simulate HTML table. Support "percent of the parent width" sizeRef mode.
+ * This group is used to simulate HTML table. Support "percent of the parent
+ * width" sizeRef mode.
  */
-class CGroupTable : public CInterfaceGroup
-{
+class CGroupTable : public CInterfaceGroup {
 public:
-	DECLARE_UI_CLASS(CGroupTable)
+  DECLARE_UI_CLASS(CGroupTable)
 
-	/// constructor
-	CGroupTable(const TCtorParam &param);
+  /// constructor
+  CGroupTable(const TCtorParam &param);
 
-	// dtor
-	~CGroupTable();
+  // dtor
+  ~CGroupTable();
 
-	// Add a cell in the table
-	void addChild(CGroupCell *child);
+  // Add a cell in the table
+  void addChild(CGroupCell *child);
 
-	// The ratio you want [0 ~1]. This is the <table width="50%"> parameter
-	float TableRatio;
+  // The ratio you want [0 ~1]. This is the <table width="50%"> parameter
+  float TableRatio;
 
-	// The Width you want in pixel. This is the <table width="100"> parameter
-	sint32 ForceWidthMin;
+  // The Width you want in pixel. This is the <table width="100"> parameter
+  sint32 ForceWidthMin;
 
-	CSSBorderRenderer *Border;
-	CSSBackgroundRenderer *Background;
+  CSSBorderRenderer *Border;
+  CSSBackgroundRenderer *Background;
 
-	// Cell has 1px solid border when <table> has 'border' attribute with width > 0
-	bool CellBorder;
-	sint32 CellPadding;
-	sint32 CellSpacing;
+  // Cell has 1px solid border when <table> has 'border' attribute with width >
+  // 0
+  bool CellBorder;
+  sint32 CellPadding;
+  sint32 CellSpacing;
 
-	uint8 CurrentAlpha;
+  uint8 CurrentAlpha;
 
-	bool ContinuousUpdate;
+  bool ContinuousUpdate;
 
-	// deprecated background image
-	void setTexture(const std::string &TxName);
-	void setTextureTile(bool tiled);
-	void setTextureScale(bool scaled);
+  // deprecated background image
+  void setTexture(const std::string &TxName);
+  void setTextureTile(bool tiled);
+  void setTextureScale(bool scaled);
 
-	std::string getProperties(const std::string &name) const;
-	void setProperty(const std::string &name, const std::string &value);
-	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
+  std::string getProperties(const std::string &name) const;
+  void setProperty(const std::string &name, const std::string &value);
+  xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
 
 protected:
-	/// \from CInterfaceElement
-	void onInvalidateContent();
-	sint32 getMaxUsedW() const;
-	sint32 getMinUsedW() const;
-	void draw();
+  /// \from CInterfaceElement
+  void onInvalidateContent();
+  sint32 getMaxUsedW() const;
+  sint32 getMinUsedW() const;
+  void draw();
 
-	/**
-	 * init  or reset the children element coords. Orverloaded from CInterfaceGroup because we begin with the last inserted element here
-	 */
-	virtual void updateCoords();
+  /**
+   * init  or reset the children element coords. Orverloaded from
+   * CInterfaceGroup because we begin with the last inserted element here
+   */
+  virtual void updateCoords();
 
-	virtual void checkCoords();
+  virtual void checkCoords();
 
-	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+  virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
 
-	// Content validated
-	bool _ContentValidated;
+  // Content validated
+  bool _ContentValidated;
 
-	// Last parent width
-	sint32 _LastParentW;
+  // Last parent width
+  sint32 _LastParentW;
 
-	// Children
-	std::vector<CGroupCell *> _Cells;
+  // Children
+  std::vector<CGroupCell *> _Cells;
 
-	// Table column
-	class CColumn
-	{
-	public:
-		CColumn()
-		{
-			Width = 0;
-			WidthMax = 0;
-			WidthWanted = 0;
-			TableRatio = 0;
-			RowSpan = 1;
-		}
-		sint32 Width;
-		sint32 Height;
-		sint32 WidthWanted;
-		sint32 WidthMax;
-		float TableRatio;
-		sint32 RowSpan;
-	};
+  // Table column
+  class CColumn {
+  public:
+    CColumn() {
+      Width = 0;
+      WidthMax = 0;
+      WidthWanted = 0;
+      TableRatio = 0;
+      RowSpan = 1;
+    }
+    sint32 Width;
+    sint32 Height;
+    sint32 WidthWanted;
+    sint32 WidthMax;
+    float TableRatio;
+    sint32 RowSpan;
+  };
 
-	// Table row
-	class CRow
-	{
-	public:
-		CRow()
-		{
-			Height = 0;
-		}
-		sint32 Height;
-	};
+  // Table row
+  class CRow {
+  public:
+    CRow() { Height = 0; }
+    sint32 Height;
+  };
 
-	// Column table
-	std::vector<CColumn> _Columns;
+  // Column table
+  std::vector<CColumn> _Columns;
 
-	// Column table
-	std::vector<CRow> _Rows;
+  // Column table
+  std::vector<CRow> _Rows;
 };
 
-}
+} // namespace NLGUI
 
 #endif // NL_GROUP_TABLE_H
 

@@ -25,48 +25,49 @@ using namespace NLMISC;
 using namespace NLNET;
 
 //
-CSecurityCheckForFastDisconnection::CSecurityCheckForFastDisconnection()
-{
-	memset(&Block, 0, sizeof(Block)); // ensure encode() will work the same of different builds
+CSecurityCheckForFastDisconnection::CSecurityCheckForFastDisconnection() {
+  memset(
+      &Block, 0,
+      sizeof(Block)); // ensure encode() will work the same of different builds
 }
 
 //
-void CSecurityCheckForFastDisconnection::receiveSecurityCode(NLMISC::IStream &msgin)
-{
-	msgin.serial(Block.SessionId);
-	SecurityCode.serial(msgin);
+void CSecurityCheckForFastDisconnection::receiveSecurityCode(
+    NLMISC::IStream &msgin) {
+  msgin.serial(Block.SessionId);
+  SecurityCode.serial(msgin);
 }
 
 //
-void CSecurityCheckForFastDisconnection::forwardSecurityCode(NLMISC::IStream &msgout, TSessionId sessionId, CSecurityCode &securityCode)
-{
-	msgout.serial(sessionId);
-	securityCode.serial(msgout);
+void CSecurityCheckForFastDisconnection::forwardSecurityCode(
+    NLMISC::IStream &msgout, TSessionId sessionId,
+    CSecurityCode &securityCode) {
+  msgout.serial(sessionId);
+  securityCode.serial(msgout);
 }
 
 //
-CSecurityCode CSecurityCheckForFastDisconnection::encode(const char *passPhrase)
-{
-	if (!passPhrase)
-		throw Exception("Null passPhrase");
-	strncpy(Block.PassPhrase, passPhrase, 10);
-	CHashKeyMD5 md5 = getMD5((uint8 *)&Block, sizeof(Block));
-	CSecurityCode sc; // parts from NLMISC::CHashKeyMD5 (would CRC16 be better?)
-	sc.Data[0] = md5.Data[0];
-	sc.Data[1] = md5.Data[15];
-	return sc;
+CSecurityCode
+CSecurityCheckForFastDisconnection::encode(const char *passPhrase) {
+  if (!passPhrase)
+    throw Exception("Null passPhrase");
+  strncpy(Block.PassPhrase, passPhrase, 10);
+  CHashKeyMD5 md5 = getMD5((uint8 *)&Block, sizeof(Block));
+  CSecurityCode sc; // parts from NLMISC::CHashKeyMD5 (would CRC16 be better?)
+  sc.Data[0] = md5.Data[0];
+  sc.Data[1] = md5.Data[15];
+  return sc;
 }
 
 //
-void CSecurityCheckForFastDisconnection::check(const char *passPhrase)
-{
-	if (SecurityCode != encode(passPhrase))
-		throw Exception("Check not passed");
+void CSecurityCheckForFastDisconnection::check(const char *passPhrase) {
+  if (SecurityCode != encode(passPhrase))
+    throw Exception("Check not passed");
 }
 
 /*
-    // The following code helps ensure a sub portion of the md5 produces a wide range of different data
-    for (uint i=1; i!=10000; ++i)
+    // The following code helps ensure a sub portion of the md5 produces a wide
+   range of different data for (uint i=1; i!=10000; ++i)
     {
         CSecurityCheckForFastDisconnection securityCheck;
         securityCheck.setSessionId(i);

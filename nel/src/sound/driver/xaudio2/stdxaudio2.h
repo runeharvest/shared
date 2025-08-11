@@ -19,18 +19,18 @@
 
 #if defined(_MSC_VER) && defined(_DEBUG)
 #define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
 #include <crtdbg.h>
+#include <stdlib.h>
 #define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
 // STL includes
-#include <iostream>
-#include <cmath>
-#include <cfloat>
 #include <algorithm>
-#include <limits>
+#include <cfloat>
+#include <cmath>
 #include <intrin.h>
+#include <iostream>
+#include <limits>
 
 #include "nel/misc/types_nl.h"
 
@@ -73,25 +73,26 @@
 #undef DEFINE_CLSID
 #undef DEFINE_IID
 #undef DECLSPEC_UUID_WRAPPER
-#define DEFINE_CLSID(className, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8)                                            \
-	class className;                                                                                                  \
-	__CRT_UUID_DECL(className, 0x##l, 0x##w1, 0x##w2, 0x##b1, 0x##b2, 0x##b3, 0x##b4, 0x##b5, 0x##b6, 0x##b7, 0x##b8) \
-	EXTERN_C const GUID CLSID_##className
-#define DEFINE_IID(interfaceName, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8)                                              \
-	interface interfaceName;                                                                                              \
-	__CRT_UUID_DECL(interfaceName, 0x##l, 0x##w1, 0x##w2, 0x##b1, 0x##b2, 0x##b3, 0x##b4, 0x##b5, 0x##b6, 0x##b7, 0x##b8) \
-	EXTERN_C const GUID IID_##interfaceName
+#define DEFINE_CLSID(className, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8)     \
+  class className;                                                             \
+  __CRT_UUID_DECL(className, 0x##l, 0x##w1, 0x##w2, 0x##b1, 0x##b2, 0x##b3,    \
+                  0x##b4, 0x##b5, 0x##b6, 0x##b7, 0x##b8)                      \
+  EXTERN_C const GUID CLSID_##className
+#define DEFINE_IID(interfaceName, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8)   \
+  interface interfaceName;                                                     \
+  __CRT_UUID_DECL(interfaceName, 0x##l, 0x##w1, 0x##w2, 0x##b1, 0x##b2,        \
+                  0x##b3, 0x##b4, 0x##b5, 0x##b6, 0x##b7, 0x##b8)              \
+  EXTERN_C const GUID IID_##interfaceName
 #endif /* NL_COMP_MINGW */
 
+#include <x3daudio.h>
 #include <xaudio2.h>
 #include <xaudio2fx.h>
-#include <x3daudio.h>
 
 // NeL includes
-#include "nel/misc/singleton.h"
-#include "nel/misc/common.h"
 #include "nel/misc/big_file.h"
 #include "nel/misc/command.h"
+#include "nel/misc/common.h"
 #include "nel/misc/debug.h"
 #include "nel/misc/dynloadlib.h"
 #include "nel/misc/fast_mem.h"
@@ -102,6 +103,7 @@
 #include "nel/misc/mem_stream.h"
 #include "nel/misc/mutex.h"
 #include "nel/misc/path.h"
+#include "nel/misc/singleton.h"
 #include "nel/misc/stream.h"
 #include "nel/misc/time_nl.h"
 #include "nel/misc/variable.h"
@@ -118,14 +120,14 @@
 // prefix for warnings and debug messages
 #define NLSOUND_XAUDIO2_PREFIX "XA2: "
 // swap y and z
-#define NLSOUND_XAUDIO2_X3DAUDIO_VECTOR_FROM_VECTOR(to, from) \
-	(to).x = (from).x;                                        \
-	(to).y = (from).z;                                        \
-	(to).z = (from).y;
-#define NLSOUND_XAUDIO2_VECTOR_FROM_X3DAUDIO_VECTOR(to, from) \
-	(to).x = (from).x;                                        \
-	(to).y = (from).z;                                        \
-	(to).z = (from).y;
+#define NLSOUND_XAUDIO2_X3DAUDIO_VECTOR_FROM_VECTOR(to, from)                  \
+  (to).x = (from).x;                                                           \
+  (to).y = (from).z;                                                           \
+  (to).z = (from).y;
+#define NLSOUND_XAUDIO2_VECTOR_FROM_X3DAUDIO_VECTOR(to, from)                  \
+  (to).x = (from).x;                                                           \
+  (to).y = (from).z;                                                           \
+  (to).z = (from).y;
 
 #endif /* #ifndef NLSOUND_STDPCH_XAUDIO2_H */
 

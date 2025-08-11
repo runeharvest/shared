@@ -20,8 +20,8 @@
 #ifndef NL_DBVIEW_DIGIT_H
 #define NL_DBVIEW_DIGIT_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/gui/view_base.h"
+#include "nel/misc/types_nl.h"
 
 namespace NLGUI {
 
@@ -32,35 +32,34 @@ namespace NLGUI {
  * \author Nevrax France
  * \date 2002
  */
-class CDBViewDigit : public CViewBase
-{
+class CDBViewDigit : public CViewBase {
 public:
-	DECLARE_UI_CLASS(CDBViewDigit)
+  DECLARE_UI_CLASS(CDBViewDigit)
 
-	/// Constructor
-	CDBViewDigit(const TCtorParam &param);
+  /// Constructor
+  CDBViewDigit(const TCtorParam &param);
 
-	std::string getProperty(const std::string &name) const;
-	void setProperty(const std::string &name, const std::string &value);
-	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
+  std::string getProperty(const std::string &name) const;
+  void setProperty(const std::string &name, const std::string &value);
+  xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
 
-	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
-	virtual void draw();
-	virtual void updateCoords();
+  virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+  virtual void draw();
+  virtual void updateCoords();
 
 protected:
-	CInterfaceProperty _Number;
-	sint32 _Cache;
-	sint32 _NumDigit;
-	NLMISC::CRGBA _Color;
-	// space between each digit
-	sint32 _WSpace;
-	// The texture digit for the current number
-	sint32 _DigitId[10];
-	uint _DivBase;
+  CInterfaceProperty _Number;
+  sint32 _Cache;
+  sint32 _NumDigit;
+  NLMISC::CRGBA _Color;
+  // space between each digit
+  sint32 _WSpace;
+  // The texture digit for the current number
+  sint32 _DigitId[10];
+  uint _DivBase;
 };
 
-}
+} // namespace NLGUI
 
 #endif // NL_DBVIEW_DIGIT_H
 

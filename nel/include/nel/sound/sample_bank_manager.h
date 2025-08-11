@@ -25,9 +25,9 @@
 #include <string>
 
 // NeL includes
+#include <nel/georges/u_form_elm.h>
 #include <nel/misc/stream.h>
 #include <nel/misc/string_mapper.h>
-#include <nel/georges/u_form_elm.h>
 
 // Project includes
 #include "nel/sound/audio_mixer_user.h"
@@ -42,61 +42,65 @@ class CSampleBank;
  * \brief CSampleBankManager
  * \date 2010-03-08 21:09GMT
  */
-class CSampleBankManager
-{
-	friend class CSampleBank;
+class CSampleBankManager {
+  friend class CSampleBank;
 
 public:
-	CSampleBankManager(CAudioMixerUser *audioMixer);
-	virtual ~CSampleBankManager();
+  CSampleBankManager(CAudioMixerUser *audioMixer);
+  virtual ~CSampleBankManager();
 
-	/** Initialise the sample bank with the mixer config file.
-	 */
-	void init(NLGEORGES::UFormElm *mixerConfig);
+  /** Initialise the sample bank with the mixer config file.
+   */
+  void init(NLGEORGES::UFormElm *mixerConfig);
 
-	/// Delete all the loaded banks.
-	void releaseAll();
+  /// Delete all the loaded banks.
+  void releaseAll();
 
-	/// Return an existing bank for the given file name, NULL if no bank for this file.
-	CSampleBank *findSampleBank(const NLMISC::TStringId &filename);
+  /// Return an existing bank for the given file name, NULL if no bank for this
+  /// file.
+  CSampleBank *findSampleBank(const NLMISC::TStringId &filename);
 
-	/// Return the name corresponding to a name. The sample is searched
-	// in all the loaded sample banks.
-	IBuffer *get(const NLMISC::TStringId &name);
+  /// Return the name corresponding to a name. The sample is searched
+  // in all the loaded sample banks.
+  IBuffer *get(const NLMISC::TStringId &name);
 
-	/// Reload all the sample bank.
-	void reload(bool async);
+  /// Reload all the sample bank.
+  void reload(bool async);
 
-	/// Return the total loaded samples size.
-	inline uint getTotalByteSize() const { return m_LoadedSize; }
+  /// Return the total loaded samples size.
+  inline uint getTotalByteSize() const { return m_LoadedSize; }
 
-	/// Fill a vector with current loaded sample banks.
-	void getLoadedSampleBankInfo(std::vector<std::pair<std::string, uint>> &result);
-
-private:
-	typedef CHashMap<NLMISC::TStringId, CSampleBank *, NLMISC::CStringIdHashMapTraits> TSampleBankContainer;
-
-	CAudioMixerUser *m_AudioMixer;
-
-	// The map off all loaded sample banks
-	TSampleBankContainer m_Banks;
-
-	// The total size of loaded samples.
-	uint m_LoadedSize;
-
-	struct TFilteredBank
-	{
-		uint32 Filter;
-		NLMISC::TStringId BankName;
-	};
-
-	/// List of virtual sample bank.
-	typedef CHashMap<NLMISC::TStringId, std::vector<TFilteredBank>, NLMISC::CStringIdHashMapTraits> TVirtualBankCont;
-	TVirtualBankCont m_VirtualBanks;
+  /// Fill a vector with current loaded sample banks.
+  void
+  getLoadedSampleBankInfo(std::vector<std::pair<std::string, uint>> &result);
 
 private:
-	CSampleBankManager(const CSampleBankManager &);
-	CSampleBankManager &operator=(const CSampleBankManager &);
+  typedef CHashMap<NLMISC::TStringId, CSampleBank *,
+                   NLMISC::CStringIdHashMapTraits>
+      TSampleBankContainer;
+
+  CAudioMixerUser *m_AudioMixer;
+
+  // The map off all loaded sample banks
+  TSampleBankContainer m_Banks;
+
+  // The total size of loaded samples.
+  uint m_LoadedSize;
+
+  struct TFilteredBank {
+    uint32 Filter;
+    NLMISC::TStringId BankName;
+  };
+
+  /// List of virtual sample bank.
+  typedef CHashMap<NLMISC::TStringId, std::vector<TFilteredBank>,
+                   NLMISC::CStringIdHashMapTraits>
+      TVirtualBankCont;
+  TVirtualBankCont m_VirtualBanks;
+
+private:
+  CSampleBankManager(const CSampleBankManager &);
+  CSampleBankManager &operator=(const CSampleBankManager &);
 
 }; /* class CSampleBankManager */
 

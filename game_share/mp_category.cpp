@@ -33,58 +33,49 @@ const static string undefined = "Undefined";
 //-----------------------------------------------
 // initMap :
 //-----------------------------------------------
-void initMap()
-{
-	mapInitialized = true;
+void initMap() {
+  mapInitialized = true;
 
-	StringToMPCategory.insert(make_pair(string("Undefined"), Undefined));
-	MPCategoryToString.insert(make_pair(Undefined, string("Undefined")));
+  StringToMPCategory.insert(make_pair(string("Undefined"), Undefined));
+  MPCategoryToString.insert(make_pair(Undefined, string("Undefined")));
 
-	StringToMPCategory.insert(make_pair(string("Exotic"), Exotic));
-	MPCategoryToString.insert(make_pair(Exotic, string("Exotic")));
+  StringToMPCategory.insert(make_pair(string("Exotic"), Exotic));
+  MPCategoryToString.insert(make_pair(Exotic, string("Exotic")));
 
-	StringToMPCategory.insert(make_pair(string("Faber"), Faber));
-	MPCategoryToString.insert(make_pair(Faber, string("Faber")));
+  StringToMPCategory.insert(make_pair(string("Faber"), Faber));
+  MPCategoryToString.insert(make_pair(Faber, string("Faber")));
 
-	StringToMPCategory.insert(make_pair(string("Upgrade"), Upgrade));
-	MPCategoryToString.insert(make_pair(Upgrade, string("Upgrade")));
+  StringToMPCategory.insert(make_pair(string("Upgrade"), Upgrade));
+  MPCategoryToString.insert(make_pair(Upgrade, string("Upgrade")));
 } // initMap //
 
 //-----------------------------------------------
 // stringToMPCategory :
 //-----------------------------------------------
-TMPCategory stringToMPCategory(const string &str)
-{
-	if (!mapInitialized)
-		initMap();
+TMPCategory stringToMPCategory(const string &str) {
+  if (!mapInitialized)
+    initMap();
 
-	map<string, TMPCategory>::const_iterator it = StringToMPCategory.find(str);
-	if (it != StringToMPCategory.end())
-	{
-		return (*it).second;
-	}
-	else
-	{
-		return Undefined;
-	}
+  map<string, TMPCategory>::const_iterator it = StringToMPCategory.find(str);
+  if (it != StringToMPCategory.end()) {
+    return (*it).second;
+  } else {
+    return Undefined;
+  }
 } // stringToMPCategory //
 
 //-----------------------------------------------
 // mpCategoryToString :
 //-----------------------------------------------
-const string &mpCategoryToString(TMPCategory type)
-{
-	if (!mapInitialized)
-		initMap();
+const string &mpCategoryToString(TMPCategory type) {
+  if (!mapInitialized)
+    initMap();
 
-	map<TMPCategory, string>::const_iterator it = MPCategoryToString.find(type);
-	if (it != MPCategoryToString.end())
-	{
-		return (*it).second;
-	}
-	else
-	{
-		return undefined;
-	}
+  map<TMPCategory, string>::const_iterator it = MPCategoryToString.find(type);
+  if (it != MPCategoryToString.end()) {
+    return (*it).second;
+  } else {
+    return undefined;
+  }
 } // mpCategoryToString  //
-} // MP_CATEGORY
+} // namespace MP_CATEGORY

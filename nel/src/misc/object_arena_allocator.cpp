@@ -17,9 +17,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdmisc.h"
 #include "nel/misc/object_arena_allocator.h"
 #include "nel/misc/fixed_size_allocator.h"
+#include "stdmisc.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -30,147 +30,148 @@ namespace NLMISC {
 CObjectArenaAllocator *CObjectArenaAllocator::_DefaultAllocator = NULL;
 
 // *****************************************************************************************************************
-CObjectArenaAllocator::CObjectArenaAllocator(uint maxAllocSize, uint granularity /* = 4*/)
-{
-	nlassert(granularity > 0);
-	nlassert(maxAllocSize > 0);
-	_MaxAllocSize = granularity * ((maxAllocSize + (granularity - 1)) / granularity);
-	_ObjectSizeToAllocator.resize(_MaxAllocSize / granularity, NULL);
-	_Granularity = granularity;
+CObjectArenaAllocator::CObjectArenaAllocator(uint maxAllocSize,
+                                             uint granularity /* = 4*/) {
+  nlassert(granularity > 0);
+  nlassert(maxAllocSize > 0);
+  _MaxAllocSize =
+      granularity * ((maxAllocSize + (granularity - 1)) / granularity);
+  _ObjectSizeToAllocator.resize(_MaxAllocSize / granularity, NULL);
+  _Granularity = granularity;
 #ifdef NL_DEBUG
-	_AllocID = 0;
-	_WantBreakOnAlloc = false;
-	_BreakAllocID = 0;
+  _AllocID = 0;
+  _WantBreakOnAlloc = false;
+  _BreakAllocID = 0;
 #endif
 }
 
 // *****************************************************************************************************************
-CObjectArenaAllocator::~CObjectArenaAllocator()
-{
-	for (uint k = 0; k < _ObjectSizeToAllocator.size(); ++k)
-	{
-		delete _ObjectSizeToAllocator[k];
-	}
+CObjectArenaAllocator::~CObjectArenaAllocator() {
+  for (uint k = 0; k < _ObjectSizeToAllocator.size(); ++k) {
+    delete _ObjectSizeToAllocator[k];
+  }
 }
 
 // *****************************************************************************************************************
-void *CObjectArenaAllocator::alloc(uint size)
-{
+void *CObjectArenaAllocator::alloc(uint size) {
 #ifdef NL_DEBUG
-	if (_WantBreakOnAlloc)
-	{
-		if (_AllocID == _BreakAllocID)
-		{
-			nlassert(0);
-		}
-	}
+  if (_WantBreakOnAlloc) {
+    if (_AllocID == _BreakAllocID) {
+      nlassert(0);
+    }
+  }
 #endif
-	if (size >= _MaxAllocSize)
-	{
-		// use standard allocator
-		nlctassert(NL_DEFAULT_MEMORY_ALIGNMENT >= sizeof(uint));
-		uint8 *block = (uint8 *)aligned_malloc(NL_DEFAULT_MEMORY_ALIGNMENT + (ptrdiff_t)size, NL_DEFAULT_MEMORY_ALIGNMENT); // new uint8[size + sizeof(uint)]; // an additionnal uint is needed to store size of block
-		if (!block) throw std::bad_alloc();
+  if (size >= _MaxAllocSize) {
+    // use standard allocator
+    nlctassert(NL_DEFAULT_MEMORY_ALIGNMENT >= sizeof(uint));
+    uint8 *block = (uint8 *)aligned_malloc(
+        NL_DEFAULT_MEMORY_ALIGNMENT + (ptrdiff_t)size,
+        NL_DEFAULT_MEMORY_ALIGNMENT); // new uint8[size + sizeof(uint)]; // an
+                                      // additionnal uint is needed to store
+                                      // size of block
+    if (!block)
+      throw std::bad_alloc();
 #ifdef NL_DEBUG
-		_MemBlockToAllocID[block] = _AllocID;
-		++_AllocID;
+    _MemBlockToAllocID[block] = _AllocID;
+    ++_AllocID;
 #endif
-		*(uint *)block = size;
-		return block + NL_DEFAULT_MEMORY_ALIGNMENT;
-	}
-	uint entry = ((size + (_Granularity - 1)) / _Granularity);
-	nlassert(entry < _ObjectSizeToAllocator.size());
-	if (!_ObjectSizeToAllocator[entry])
-	{
-		_ObjectSizeToAllocator[entry] = new CFixedSizeAllocator(entry * _Granularity + NL_DEFAULT_MEMORY_ALIGNMENT, _MaxAllocSize / size); // an additionnal uint is needed to store size of block
-	}
-	void *block = _ObjectSizeToAllocator[entry]->alloc();
-	if (!block) throw std::bad_alloc();
-	nlassert(((uintptr_t)block % NL_DEFAULT_MEMORY_ALIGNMENT) == 0);
+    *(uint *)block = size;
+    return block + NL_DEFAULT_MEMORY_ALIGNMENT;
+  }
+  uint entry = ((size + (_Granularity - 1)) / _Granularity);
+  nlassert(entry < _ObjectSizeToAllocator.size());
+  if (!_ObjectSizeToAllocator[entry]) {
+    _ObjectSizeToAllocator[entry] = new CFixedSizeAllocator(
+        entry * _Granularity + NL_DEFAULT_MEMORY_ALIGNMENT,
+        _MaxAllocSize /
+            size); // an additionnal uint is needed to store size of block
+  }
+  void *block = _ObjectSizeToAllocator[entry]->alloc();
+  if (!block)
+    throw std::bad_alloc();
+  nlassert(((uintptr_t)block % NL_DEFAULT_MEMORY_ALIGNMENT) == 0);
 #ifdef NL_DEBUG
-	_MemBlockToAllocID[block] = _AllocID;
-	++_AllocID;
+  _MemBlockToAllocID[block] = _AllocID;
+  ++_AllocID;
 #endif
-	*(uint *)block = size;
-	return (void *)((uint8 *)block + NL_DEFAULT_MEMORY_ALIGNMENT);
+  *(uint *)block = size;
+  return (void *)((uint8 *)block + NL_DEFAULT_MEMORY_ALIGNMENT);
 }
 
 // *****************************************************************************************************************
-void CObjectArenaAllocator::freeBlock(void *block)
-{
-	if (!block) return;
-	uint8 *realBlock = (uint8 *)block - NL_DEFAULT_MEMORY_ALIGNMENT; // sizeof(uint); // a uint is used at start of block to give its size
-	uint size = *(uint *)realBlock;
-	if (size >= _MaxAllocSize)
-	{
+void CObjectArenaAllocator::freeBlock(void *block) {
+  if (!block)
+    return;
+  uint8 *realBlock =
+      (uint8 *)block -
+      NL_DEFAULT_MEMORY_ALIGNMENT; // sizeof(uint); // a uint is used at start
+                                   // of block to give its size
+  uint size = *(uint *)realBlock;
+  if (size >= _MaxAllocSize) {
 #ifdef NL_DEBUG
-		std::map<void *, uint>::iterator it = _MemBlockToAllocID.find(realBlock);
-		nlassert(it != _MemBlockToAllocID.end());
-		_MemBlockToAllocID.erase(it);
+    std::map<void *, uint>::iterator it = _MemBlockToAllocID.find(realBlock);
+    nlassert(it != _MemBlockToAllocID.end());
+    _MemBlockToAllocID.erase(it);
 #endif
-		aligned_free(realBlock);
-		return;
-	}
-	uint entry = ((size + (_Granularity - 1)) / _Granularity);
-	nlassert(entry < _ObjectSizeToAllocator.size());
-	_ObjectSizeToAllocator[entry]->freeBlock(realBlock);
+    aligned_free(realBlock);
+    return;
+  }
+  uint entry = ((size + (_Granularity - 1)) / _Granularity);
+  nlassert(entry < _ObjectSizeToAllocator.size());
+  _ObjectSizeToAllocator[entry]->freeBlock(realBlock);
 #ifdef NL_DEBUG
-	std::map<void *, uint>::iterator it = _MemBlockToAllocID.find(realBlock);
-	nlassert(it != _MemBlockToAllocID.end());
-	/*
-	#ifdef NL_DEBUG
-	        if (_WantBreakOnAlloc)
-	        {
-	            if (it->second == _BreakAllocID)
-	            {
-	                nlassert(0);
-	            }
-	        }
-	#endif
-	*/
-	_MemBlockToAllocID.erase(it);
+  std::map<void *, uint>::iterator it = _MemBlockToAllocID.find(realBlock);
+  nlassert(it != _MemBlockToAllocID.end());
+  /*
+  #ifdef NL_DEBUG
+          if (_WantBreakOnAlloc)
+          {
+              if (it->second == _BreakAllocID)
+              {
+                  nlassert(0);
+              }
+          }
+  #endif
+  */
+  _MemBlockToAllocID.erase(it);
 #endif
 }
 
 // *****************************************************************************************************************
-uint CObjectArenaAllocator::getNumAllocatedBlocks() const
-{
-	uint numObjs = 0;
-	for (uint k = 0; k < _ObjectSizeToAllocator.size(); ++k)
-	{
-		if (_ObjectSizeToAllocator[k]) numObjs += _ObjectSizeToAllocator[k]->getNumAllocatedBlocks();
-	}
-	return numObjs;
+uint CObjectArenaAllocator::getNumAllocatedBlocks() const {
+  uint numObjs = 0;
+  for (uint k = 0; k < _ObjectSizeToAllocator.size(); ++k) {
+    if (_ObjectSizeToAllocator[k])
+      numObjs += _ObjectSizeToAllocator[k]->getNumAllocatedBlocks();
+  }
+  return numObjs;
 }
 
 // *****************************************************************************************************************
-CObjectArenaAllocator &CObjectArenaAllocator::getDefaultAllocator()
-{
-	if (!_DefaultAllocator)
-	{
-		_DefaultAllocator = new CObjectArenaAllocator(32768);
-	}
-	return *_DefaultAllocator;
+CObjectArenaAllocator &CObjectArenaAllocator::getDefaultAllocator() {
+  if (!_DefaultAllocator) {
+    _DefaultAllocator = new CObjectArenaAllocator(32768);
+  }
+  return *_DefaultAllocator;
 }
 
 #ifdef NL_DEBUG
 
 // *****************************************************************************************************************
-void CObjectArenaAllocator::dumpUnreleasedBlocks()
-{
-	for (std::map<void *, uint>::iterator it = _MemBlockToAllocID.begin(); it != _MemBlockToAllocID.end(); ++it)
-	{
-		nlinfo("block %u at adress %p remains", it->second, (static_cast<uint8 *>(it->first) + sizeof(uint)));
-	}
+void CObjectArenaAllocator::dumpUnreleasedBlocks() {
+  for (std::map<void *, uint>::iterator it = _MemBlockToAllocID.begin();
+       it != _MemBlockToAllocID.end(); ++it) {
+    nlinfo("block %u at adress %p remains", it->second,
+           (static_cast<uint8 *>(it->first) + sizeof(uint)));
+  }
 }
 
 // *****************************************************************************************************************
-void CObjectArenaAllocator::setBreakForAllocID(bool enabled, uint id)
-{
-	_WantBreakOnAlloc = enabled;
-	_BreakAllocID = id;
+void CObjectArenaAllocator::setBreakForAllocID(bool enabled, uint id) {
+  _WantBreakOnAlloc = enabled;
+  _BreakAllocID = id;
 }
 
 #endif // NL_DEBUG
 
-} // NLMISC
+} // namespace NLMISC

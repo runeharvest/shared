@@ -24,4 +24,5 @@
 #endif
 
 #define MY_COPYRIGHT_DATE MY_COPYRIGHT " : " MY_DATE
-#define MY_VERSION_COPYRIGHT_DATE MY_VERSION_CPU " : " MY_COPYRIGHT " : " MY_DATE
+#define MY_VERSION_COPYRIGHT_DATE                                              \
+  MY_VERSION_CPU " : " MY_COPYRIGHT " : " MY_DATE

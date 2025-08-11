@@ -24,89 +24,91 @@
 
 namespace ITEM_TYPE {
 // Mode
-// nb : sell filter uses two 64b database values to build a bitfield, so the item type limit is 128 for now
+// nb : sell filter uses two 64b database values to build a bitfield, so the
+// item type limit is 128 for now
 enum TItemType
 #ifdef NL_CPP14
     : uint8
 #endif
 {
-	DAGGER,
-	SWORD,
-	MACE,
-	AXE,
-	SPEAR,
-	STAFF,
-	TWO_HAND_SWORD,
-	TWO_HAND_AXE,
-	PIKE,
-	TWO_HAND_MACE,
-	AUTOLAUCH,
-	BOWRIFLE,
-	LAUNCHER,
-	PISTOL,
-	BOWPISTOL,
-	RIFLE,
-	AUTOLAUNCH_AMMO,
-	BOWRIFLE_AMMO,
-	LAUNCHER_AMMO,
-	PISTOL_AMMO,
-	BOWPISTOL_AMMO,
-	RIFLE_AMMO,
-	SHIELD,
-	BUCKLER,
-	LIGHT_BOOTS,
-	LIGHT_GLOVES,
-	LIGHT_PANTS,
-	LIGHT_SLEEVES,
-	LIGHT_VEST,
-	MEDIUM_BOOTS,
-	MEDIUM_GLOVES,
-	MEDIUM_PANTS,
-	MEDIUM_SLEEVES,
-	MEDIUM_VEST,
-	HEAVY_BOOTS,
-	HEAVY_GLOVES,
-	HEAVY_PANTS,
-	HEAVY_SLEEVES,
-	HEAVY_VEST,
-	HEAVY_HELMET,
-	ANKLET,
-	BRACELET,
-	DIADEM,
-	EARING,
-	PENDANT,
-	RING,
-	SHEARS,
-	ArmorTool,
-	AmmoTool,
-	MeleeWeaponTool,
-	RangeWeaponTool,
-	JewelryTool,
-	ToolMaker,
-	CAMPSFIRE,
-	MEKTOUB_PACKER_TICKET,
-	MEKTOUB_MOUNT_TICKET,
-	FOOD,
-	MAGICIAN_STAFF,
-	HAIR_MALE,
-	HAIRCOLOR_MALE,
-	TATOO_MALE,
-	HAIR_FEMALE,
-	HAIRCOLOR_FEMALE,
-	TATOO_FEMALE,
-	SERVICE_STABLE,
-	JOB_ELEMENT,
-	GENERIC,
+  DAGGER,
+  SWORD,
+  MACE,
+  AXE,
+  SPEAR,
+  STAFF,
+  TWO_HAND_SWORD,
+  TWO_HAND_AXE,
+  PIKE,
+  TWO_HAND_MACE,
+  AUTOLAUCH,
+  BOWRIFLE,
+  LAUNCHER,
+  PISTOL,
+  BOWPISTOL,
+  RIFLE,
+  AUTOLAUNCH_AMMO,
+  BOWRIFLE_AMMO,
+  LAUNCHER_AMMO,
+  PISTOL_AMMO,
+  BOWPISTOL_AMMO,
+  RIFLE_AMMO,
+  SHIELD,
+  BUCKLER,
+  LIGHT_BOOTS,
+  LIGHT_GLOVES,
+  LIGHT_PANTS,
+  LIGHT_SLEEVES,
+  LIGHT_VEST,
+  MEDIUM_BOOTS,
+  MEDIUM_GLOVES,
+  MEDIUM_PANTS,
+  MEDIUM_SLEEVES,
+  MEDIUM_VEST,
+  HEAVY_BOOTS,
+  HEAVY_GLOVES,
+  HEAVY_PANTS,
+  HEAVY_SLEEVES,
+  HEAVY_VEST,
+  HEAVY_HELMET,
+  ANKLET,
+  BRACELET,
+  DIADEM,
+  EARING,
+  PENDANT,
+  RING,
+  SHEARS,
+  ArmorTool,
+  AmmoTool,
+  MeleeWeaponTool,
+  RangeWeaponTool,
+  JewelryTool,
+  ToolMaker,
+  CAMPSFIRE,
+  MEKTOUB_PACKER_TICKET,
+  MEKTOUB_MOUNT_TICKET,
+  FOOD,
+  MAGICIAN_STAFF,
+  HAIR_MALE,
+  HAIRCOLOR_MALE,
+  TATOO_MALE,
+  HAIR_FEMALE,
+  HAIRCOLOR_FEMALE,
+  TATOO_FEMALE,
+  SERVICE_STABLE,
+  JOB_ELEMENT,
+  GENERIC,
 
-	UNDEFINED,
-	NB_ITEM_TYPE = UNDEFINED,
-	LIMIT_64 = 64
+  UNDEFINED,
+  NB_ITEM_TYPE = UNDEFINED,
+  LIMIT_64 = 64
 };
 
 /**
  * get the right item type from the input string
  * \param str the input string
- * \return the TItemType associated to this string (UNDEFINED if the string cannot be interpreted)
+ * \return the TItemType associated to this string (UNDEFINED if the string
+ * cannot be interpreted)
  */
 TItemType stringToItemType(const std::string &str);
 
@@ -117,7 +119,7 @@ TItemType stringToItemType(const std::string &str);
  */
 const std::string &toString(TItemType item_type);
 
-}; // ITEM_TYPE
+}; // namespace ITEM_TYPE
 
 #endif // RY_ITEM_TYPE_H
 /* End of item_type.h */

@@ -19,8 +19,8 @@
 
 /*
 
-  This class implements an array of entities of any derived class of a given base class
-  The entities are allocated in a single memory block.
+  This class implements an array of entities of any derived class of a given
+  base class The entities are allocated in a single memory block.
 
 */
 
@@ -48,9 +48,8 @@ public:
 
         for (uint i=0;i<count;++i)
         {
-//			std::construct(&((DerivedClass*)_data)[i], DerivedClass());
-#undef new
-            new (&((DerivedClass*)_data)[i]) DerivedClass();
+//			std::construct(&((DerivedClass*)_data)[i],
+DerivedClass()); #undef new new (&((DerivedClass*)_data)[i]) DerivedClass();
 #define new NL_NEW
         }
     }

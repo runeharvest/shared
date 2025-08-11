@@ -47,4 +47,4 @@ sint ProfNFar1SetupMaterial = 0;
 sint ProfNPatchRdrFar0 = 0;
 sint ProfNPatchRdrFar1 = 0;
 
-} // NL3D
+} // namespace NL3D

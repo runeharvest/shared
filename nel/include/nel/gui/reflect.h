@@ -21,8 +21,8 @@
 #ifndef CL_REFLECT_H
 #define CL_REFLECT_H
 
-#include "nel/misc/rgba.h"
 #include "nel/gui/lua_object.h"
+#include "nel/misc/rgba.h"
 #include <string>
 
 namespace NLGUI {
@@ -33,83 +33,81 @@ struct CClassInfo;
 /** A property of a reflectable object
  * NB: multiple inheritance not supported
  */
-class CReflectedProperty
-{
+class CReflectedProperty {
 public:
-	enum TType
-	{
-		Boolean = 0,
-		SInt32,
-		UInt32,
-		Float,
-		String,
+  enum TType {
+    Boolean = 0,
+    SInt32,
+    UInt32,
+    Float,
+    String,
 #ifdef RYZOM_LUA_UCSTRING
-		UCString,
+    UCString,
 #endif
-		StringRef,
+    StringRef,
 #ifdef RYZOM_LUA_UCSTRING
-		UCStringRef,
+    UCStringRef,
 #endif
-		RGBA,
-		LuaMethod
-	}; // other types will be added when needed
-	// define some pointer-to-member types
-	typedef bool (CReflectable::*TGetBool)() const;
-	typedef sint32 (CReflectable::*TGetSInt32)() const;
-	typedef uint32 (CReflectable::*TGetUInt32)() const;
-	typedef float (CReflectable::*TGetFloat)() const;
-	typedef std::string (CReflectable::*TGetString)() const;
-	typedef ucstring (CReflectable::*TGetUCString)() const;
-	typedef const std::string &(CReflectable::*TGetStringRef)() const;
-	typedef const ucstring &(CReflectable::*TGetUCStringRef)() const;
-	typedef NLMISC::CRGBA (CReflectable::*TGetRGBA)() const;
-	//
-	typedef void (CReflectable::*TSetBool)(bool);
-	typedef void (CReflectable::*TSetSInt32)(sint32);
-	typedef void (CReflectable::*TSetUInt32)(uint32);
-	typedef void (CReflectable::*TSetFloat)(float);
-	typedef void (CReflectable::*TSetString)(const std::string &);
-	typedef void (CReflectable::*TSetUCString)(const ucstring &);
-	typedef void (CReflectable::*TSetRGBA)(NLMISC::CRGBA col);
-	//
-	typedef int (CReflectable::*TLuaMethod)(CLuaState &luaState);
+    RGBA,
+    LuaMethod
+  }; // other types will be added when needed
+  // define some pointer-to-member types
+  typedef bool (CReflectable::*TGetBool)() const;
+  typedef sint32 (CReflectable::*TGetSInt32)() const;
+  typedef uint32 (CReflectable::*TGetUInt32)() const;
+  typedef float (CReflectable::*TGetFloat)() const;
+  typedef std::string (CReflectable::*TGetString)() const;
+  typedef ucstring (CReflectable::*TGetUCString)() const;
+  typedef const std::string &(CReflectable::*TGetStringRef)() const;
+  typedef const ucstring &(CReflectable::*TGetUCStringRef)() const;
+  typedef NLMISC::CRGBA (CReflectable::*TGetRGBA)() const;
+  //
+  typedef void (CReflectable::*TSetBool)(bool);
+  typedef void (CReflectable::*TSetSInt32)(sint32);
+  typedef void (CReflectable::*TSetUInt32)(uint32);
+  typedef void (CReflectable::*TSetFloat)(float);
+  typedef void (CReflectable::*TSetString)(const std::string &);
+  typedef void (CReflectable::*TSetUCString)(const ucstring &);
+  typedef void (CReflectable::*TSetRGBA)(NLMISC::CRGBA col);
+  //
+  typedef int (CReflectable::*TLuaMethod)(CLuaState &luaState);
 
 public:
-	TType Type;
-	// In each union we have method pointers to retrieve / set the data of the desired type (as told in 'Type')
-	union
-	{
-		TGetBool GetBool;
-		TGetSInt32 GetSInt32;
-		TGetUInt32 GetUInt32;
-		TGetFloat GetFloat;
-		TGetString GetString;
+  TType Type;
+  // In each union we have method pointers to retrieve / set the data of the
+  // desired type (as told in 'Type')
+  union {
+    TGetBool GetBool;
+    TGetSInt32 GetSInt32;
+    TGetUInt32 GetUInt32;
+    TGetFloat GetFloat;
+    TGetString GetString;
 #ifdef RYZOM_LUA_UCSTRING
-		TGetUCString GetUCString;
+    TGetUCString GetUCString;
 #endif
-		TGetStringRef GetStringRef;
+    TGetStringRef GetStringRef;
 #ifdef RYZOM_LUA_UCSTRING
-		TGetUCStringRef GetUCStringRef;
+    TGetUCStringRef GetUCStringRef;
 #endif
-		TGetRGBA GetRGBA;
-		TLuaMethod GetLuaMethod; // lua method can only be obtained, not written ...
-	} GetMethod;
-	union
-	{
-		TSetBool SetBool;
-		TSetSInt32 SetSInt32;
-		TSetUInt32 SetUInt32;
-		TSetFloat SetFloat;
-		TSetString SetString;
+    TGetRGBA GetRGBA;
+    TLuaMethod GetLuaMethod; // lua method can only be obtained, not written ...
+  } GetMethod;
+  union {
+    TSetBool SetBool;
+    TSetSInt32 SetSInt32;
+    TSetUInt32 SetUInt32;
+    TSetFloat SetFloat;
+    TSetString SetString;
 #ifdef RYZOM_LUA_UCSTRING
-		TSetUCString SetUCString;
+    TSetUCString SetUCString;
 #endif
-		TSetRGBA SetRGBA;
-	} SetMethod;
-	// name of the property
-	std::string Name;
-	mutable CLuaObject LuaMethodRef; // cache pointer to function call if type == LuaMethod
-	const CClassInfo *ParentClass; // filled when 'registerClass' is called
+    TSetRGBA SetRGBA;
+  } SetMethod;
+  // name of the property
+  std::string Name;
+  mutable CLuaObject
+      LuaMethodRef; // cache pointer to function call if type == LuaMethod
+  const CClassInfo *ParentClass; // filled when 'registerClass' is called
 };
 
 // a vector of reflected properties
@@ -120,51 +118,54 @@ struct CClassInfo;
 /** Base class for a reflectable object
  * NB: multiple inheritance not supported
  */
-class CReflectable
-{
+class CReflectable {
 public:
-	virtual ~CReflectable() { }
-	virtual const char *getReflectedClassName() const { return "CReflectable"; }
-	virtual const char *getReflectedParentClassName() const { return ""; }
+  virtual ~CReflectable() {}
+  virtual const char *getReflectedClassName() const { return "CReflectable"; }
+  virtual const char *getReflectedParentClassName() const { return ""; }
 
-	/** When registering classes, the reflect system will call this function on each class
-	 * to know which properties they exports.
-	 * To defines which properties are exported use the REFLECT_EXPORT_** macros.
-	 * By doing so, a new 'getReflectedProperties' function will be defined
-	 */
-	static void getReflectedProperties(TReflectedProperties & /* props */)
-	{
-	}
-	// get class infos for this reflectable object
-	const CClassInfo *getClassInfo();
+  /** When registering classes, the reflect system will call this function on
+   * each class to know which properties they exports. To defines which
+   * properties are exported use the REFLECT_EXPORT_** macros. By doing so, a
+   * new 'getReflectedProperties' function will be defined
+   */
+  static void getReflectedProperties(TReflectedProperties & /* props */) {}
+  // get class infos for this reflectable object
+  const CClassInfo *getClassInfo();
 
-	/** get a property from this object by name
-	 * TODO nico : optimized version for lua string (found in CLuaIHM) would maybe fit better here ...
-	 */
-	const CReflectedProperty *getReflectedProperty(const std::string &propertyName, bool dspWarning = true) const;
+  /** get a property from this object by name
+   * TODO nico : optimized version for lua string (found in CLuaIHM) would maybe
+   * fit better here ...
+   */
+  const CReflectedProperty *
+  getReflectedProperty(const std::string &propertyName,
+                       bool dspWarning = true) const;
 };
 
-struct CLuaIndexedProperty
-{
-	const CReflectedProperty *Prop;
-	CLuaString Id; // must keep id here, so that we are sure the string is not gc in lua and its pointer remains valid
+struct CLuaIndexedProperty {
+  const CReflectedProperty *Prop;
+  CLuaString Id; // must keep id here, so that we are sure the string is not gc
+                 // in lua and its pointer remains valid
 };
 
-struct CClassInfo
-{
-	TReflectedProperties Properties; // the properties exported by this class
-	const CClassInfo *ParentClass; // pointer to infos of the parent class, or NULL if it is a root class
-	std::string ClassName;
-	/** For lua speedup (used by CLuaIHM) : because lua string are unique, we can use them to access property directly.
-	 */
-	typedef CHashMap<const char *, CLuaIndexedProperty, CLuaHashMapTraits> TLuaStrToPropMap;
-	mutable TLuaStrToPropMap LuaStrToProp;
+struct CClassInfo {
+  TReflectedProperties Properties; // the properties exported by this class
+  const CClassInfo *ParentClass;   // pointer to infos of the parent class, or
+                                   // NULL if it is a root class
+  std::string ClassName;
+  /** For lua speedup (used by CLuaIHM) : because lua string are unique, we can
+   * use them to access property directly.
+   */
+  typedef CHashMap<const char *, CLuaIndexedProperty, CLuaHashMapTraits>
+      TLuaStrToPropMap;
+  mutable TLuaStrToPropMap LuaStrToProp;
 };
 
 /** Simple reflection system.
  * Used by the GUI and some other objects.
- * It is used to export some properties so that we can easily manipulate them in the GUI scripts (either lua or with CInterfaceExpr).
- * NB: multiple inheritance not supported
+ * It is used to export some properties so that we can easily manipulate them in
+ *the GUI scripts (either lua or with CInterfaceExpr). NB: multiple inheritance
+ *not supported
  *
  * Example of use : a class exporting a boolean
  *
@@ -192,30 +193,35 @@ struct CClassInfo
  * \author Nevrax France
  * \date 2002
  */
-class CReflectSystem
-{
+class CReflectSystem {
 public:
-	typedef std::map<std::string, CClassInfo> TClassMap;
+  typedef std::map<std::string, CClassInfo> TClassMap;
 
 public:
-	// release memory
-	static void release();
+  // release memory
+  static void release();
 
-	/** register a class and its properties
-	 * NB : class should be registered after their parent have been, or an assertion will be raised
-	 */
-	static void registerClass(const std::string &className, const std::string &parentName, const TReflectedProperties properties);
+  /** register a class and its properties
+   * NB : class should be registered after their parent have been, or an
+   * assertion will be raised
+   */
+  static void registerClass(const std::string &className,
+                            const std::string &parentName,
+                            const TReflectedProperties properties);
 
-	// retrieve a property of a reflectable class, or NULL if unknown
-	static const CReflectedProperty *getProperty(const std::string &className, const std::string &propertyName, bool dspWarning = true);
+  // retrieve a property of a reflectable class, or NULL if unknown
+  static const CReflectedProperty *getProperty(const std::string &className,
+                                               const std::string &propertyName,
+                                               bool dspWarning = true);
 
-	// get the list of class for debug or read purpose (NULL if no register has been called)
-	static const TClassMap *getClassMap() { return _ClassMap; }
+  // get the list of class for debug or read purpose (NULL if no register has
+  // been called)
+  static const TClassMap *getClassMap() { return _ClassMap; }
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-	static TClassMap *_ClassMap; // each class and its infos
+  static TClassMap *_ClassMap; // each class and its infos
 };
 
 /** Helper macros to export properties of a reflectable class
@@ -224,185 +230,221 @@ private:
 /** Start a declaration of a reflectable class exports
  * Should be placed inside the class
  */
-#define REFLECT_EXPORT_START(className, parentName)                                             \
-	virtual const char *getReflectedClassName() const NL_OVERRIDE { return #className; }        \
-	virtual const char *getReflectedParentClassName() const NL_OVERRIDE { return #parentName; } \
-	static void getReflectedProperties(TReflectedProperties &props)                             \
-	{                                                                                           \
-		typedef className A;                                                                    \
-		typedef bool (className::*TGetBoola)() const;                                           \
-		typedef sint32 (className::*TGetSInt32a)() const;                                       \
-		typedef uint32 (className::*TGetUInt32a)() const;                                       \
-		typedef float (className::*TGetFloata)() const;                                         \
-		typedef std::string (className::*TGetStringa)() const;                                  \
-		typedef ucstring (className::*TGetUCStringa)() const;                                   \
-		typedef const std::string &(className::*TGetStringRefa)() const;                        \
-		typedef const ucstring &(className::*TGetUCStringRefa)() const;                         \
-		typedef NLMISC::CRGBA (className::*TGetRGBAa)() const;                                  \
-		typedef void (className::*TSetBoola)(bool);                                             \
-		typedef void (className::*TSetSInt32a)(sint32);                                         \
-		typedef void (className::*TSetUInt32a)(uint32);                                         \
-		typedef void (className::*TSetFloata)(float);                                           \
-		typedef void (className::*TSetStringa)(const std::string &);                            \
-		typedef void (className::*TSetUCStringa)(const ucstring &);                             \
-		typedef void (className::*TSetRGBAa)(NLMISC::CRGBA col);                                \
-		typedef int (className::*TLuaMethoda)(CLuaState & luaState);                            \
-		nlunreferenced(props);
+#define REFLECT_EXPORT_START(className, parentName)                            \
+  virtual const char *getReflectedClassName() const NL_OVERRIDE {              \
+    return #className;                                                         \
+  }                                                                            \
+  virtual const char *getReflectedParentClassName() const NL_OVERRIDE {        \
+    return #parentName;                                                        \
+  }                                                                            \
+  static void getReflectedProperties(TReflectedProperties &props) {            \
+    typedef className A;                                                       \
+    typedef bool (className::*TGetBoola)() const;                              \
+    typedef sint32 (className::*TGetSInt32a)() const;                          \
+    typedef uint32 (className::*TGetUInt32a)() const;                          \
+    typedef float (className::*TGetFloata)() const;                            \
+    typedef std::string (className::*TGetStringa)() const;                     \
+    typedef ucstring (className::*TGetUCStringa)() const;                      \
+    typedef const std::string &(className::*TGetStringRefa)() const;           \
+    typedef const ucstring &(className::*TGetUCStringRefa)() const;            \
+    typedef NLMISC::CRGBA (className::*TGetRGBAa)() const;                     \
+    typedef void (className::*TSetBoola)(bool);                                \
+    typedef void (className::*TSetSInt32a)(sint32);                            \
+    typedef void (className::*TSetUInt32a)(uint32);                            \
+    typedef void (className::*TSetFloata)(float);                              \
+    typedef void (className::*TSetStringa)(const std::string &);               \
+    typedef void (className::*TSetUCStringa)(const ucstring &);                \
+    typedef void (className::*TSetRGBAa)(NLMISC::CRGBA col);                   \
+    typedef int (className::*TLuaMethoda)(CLuaState & luaState);               \
+    nlunreferenced(props);
 
 // export a boolean value, by giving the name of the get and the set method
-#define REFLECT_BOOL(exportName, getMethod, setMethod)                                                 \
-	{                                                                                                  \
-		CReflectedProperty prop;                                                                       \
-		prop.Name = exportName;                                                                        \
-		prop.Type = CReflectedProperty::Boolean;                                                       \
-		prop.GetMethod.GetBool = (CReflectedProperty::TGetBool) static_cast<TGetBoola>(&A::getMethod); \
-		prop.SetMethod.SetBool = (CReflectedProperty::TSetBool) static_cast<TSetBoola>(&A::setMethod); \
-		props.push_back(prop);                                                                         \
-	}
+#define REFLECT_BOOL(exportName, getMethod, setMethod)                         \
+  {                                                                            \
+    CReflectedProperty prop;                                                   \
+    prop.Name = exportName;                                                    \
+    prop.Type = CReflectedProperty::Boolean;                                   \
+    prop.GetMethod.GetBool =                                                   \
+        (CReflectedProperty::TGetBool) static_cast<TGetBoola>(&A::getMethod);  \
+    prop.SetMethod.SetBool =                                                   \
+        (CReflectedProperty::TSetBool) static_cast<TSetBoola>(&A::setMethod);  \
+    props.push_back(prop);                                                     \
+  }
 
 // export a sint32 value, by giving the name of the get and the set method
-#define REFLECT_SINT32(exportName, getMethod, setMethod)                                                     \
-	{                                                                                                        \
-		CReflectedProperty prop;                                                                             \
-		prop.Name = exportName;                                                                              \
-		prop.Type = CReflectedProperty::SInt32;                                                              \
-		prop.GetMethod.GetSInt32 = (CReflectedProperty::TGetSInt32) static_cast<TGetSInt32a>(&A::getMethod); \
-		prop.SetMethod.SetSInt32 = (CReflectedProperty::TSetSInt32) static_cast<TSetSInt32a>(&A::setMethod); \
-		props.push_back(prop);                                                                               \
-	}
+#define REFLECT_SINT32(exportName, getMethod, setMethod)                       \
+  {                                                                            \
+    CReflectedProperty prop;                                                   \
+    prop.Name = exportName;                                                    \
+    prop.Type = CReflectedProperty::SInt32;                                    \
+    prop.GetMethod.GetSInt32 =                                                 \
+        (CReflectedProperty::TGetSInt32) static_cast<TGetSInt32a>(             \
+            &A::getMethod);                                                    \
+    prop.SetMethod.SetSInt32 =                                                 \
+        (CReflectedProperty::TSetSInt32) static_cast<TSetSInt32a>(             \
+            &A::setMethod);                                                    \
+    props.push_back(prop);                                                     \
+  }
 
 // export a sint32 value, by giving the name of the get and the set method
-#define REFLECT_UINT32(exportName, getMethod, setMethod)                                                     \
-	{                                                                                                        \
-		CReflectedProperty prop;                                                                             \
-		prop.Name = exportName;                                                                              \
-		prop.Type = CReflectedProperty::UInt32;                                                              \
-		prop.GetMethod.GetUInt32 = (CReflectedProperty::TGetUInt32) static_cast<TGetUInt32a>(&A::getMethod); \
-		prop.SetMethod.SetUInt32 = (CReflectedProperty::TSetUInt32) static_cast<TSetUInt32a>(&A::setMethod); \
-		props.push_back(prop);                                                                               \
-	}
+#define REFLECT_UINT32(exportName, getMethod, setMethod)                       \
+  {                                                                            \
+    CReflectedProperty prop;                                                   \
+    prop.Name = exportName;                                                    \
+    prop.Type = CReflectedProperty::UInt32;                                    \
+    prop.GetMethod.GetUInt32 =                                                 \
+        (CReflectedProperty::TGetUInt32) static_cast<TGetUInt32a>(             \
+            &A::getMethod);                                                    \
+    prop.SetMethod.SetUInt32 =                                                 \
+        (CReflectedProperty::TSetUInt32) static_cast<TSetUInt32a>(             \
+            &A::setMethod);                                                    \
+    props.push_back(prop);                                                     \
+  }
 
 // export a float value, by giving the name of the get and the set method
-#define REFLECT_FLOAT(exportName, getMethod, setMethod)                                                   \
-	{                                                                                                     \
-		CReflectedProperty prop;                                                                          \
-		prop.Name = exportName;                                                                           \
-		prop.Type = CReflectedProperty::Float;                                                            \
-		prop.GetMethod.GetFloat = (CReflectedProperty::TGetFloat) static_cast<TGetFloata>(&A::getMethod); \
-		prop.SetMethod.SetFloat = (CReflectedProperty::TSetFloat) static_cast<TSetFloata>(&A::setMethod); \
-		props.push_back(prop);                                                                            \
-	}
+#define REFLECT_FLOAT(exportName, getMethod, setMethod)                        \
+  {                                                                            \
+    CReflectedProperty prop;                                                   \
+    prop.Name = exportName;                                                    \
+    prop.Type = CReflectedProperty::Float;                                     \
+    prop.GetMethod.GetFloat =                                                  \
+        (CReflectedProperty::TGetFloat) static_cast<TGetFloata>(               \
+            &A::getMethod);                                                    \
+    prop.SetMethod.SetFloat =                                                  \
+        (CReflectedProperty::TSetFloat) static_cast<TSetFloata>(               \
+            &A::setMethod);                                                    \
+    props.push_back(prop);                                                     \
+  }
 
 // export a string value, by giving the name of the get and the set method
-#define REFLECT_STRING(exportName, getMethod, setMethod)                                                     \
-	{                                                                                                        \
-		CReflectedProperty prop;                                                                             \
-		prop.Name = exportName;                                                                              \
-		prop.Type = CReflectedProperty::String;                                                              \
-		prop.GetMethod.GetString = (CReflectedProperty::TGetString) static_cast<TGetStringa>(&A::getMethod); \
-		prop.SetMethod.SetString = (CReflectedProperty::TSetString) static_cast<TSetStringa>(&A::setMethod); \
-		props.push_back(prop);                                                                               \
-	}
+#define REFLECT_STRING(exportName, getMethod, setMethod)                       \
+  {                                                                            \
+    CReflectedProperty prop;                                                   \
+    prop.Name = exportName;                                                    \
+    prop.Type = CReflectedProperty::String;                                    \
+    prop.GetMethod.GetString =                                                 \
+        (CReflectedProperty::TGetString) static_cast<TGetStringa>(             \
+            &A::getMethod);                                                    \
+    prop.SetMethod.SetString =                                                 \
+        (CReflectedProperty::TSetString) static_cast<TSetStringa>(             \
+            &A::setMethod);                                                    \
+    props.push_back(prop);                                                     \
+  }
 
 #ifdef RYZOM_LUA_UCSTRING
-// export a unicode string value, by giving the name of the get and the set method
-#define REFLECT_UCSTRING(exportName, getMethod, setMethod)                                                         \
-	{                                                                                                              \
-		CReflectedProperty prop;                                                                                   \
-		prop.Name = exportName;                                                                                    \
-		prop.Type = CReflectedProperty::UCString;                                                                  \
-		prop.GetMethod.GetUCString = (CReflectedProperty::TGetUCString) static_cast<TGetUCStringa>(&A::getMethod); \
-		prop.SetMethod.SetUCString = (CReflectedProperty::TSetUCString) static_cast<TSetUCStringa>(&A::setMethod); \
-		props.push_back(prop);                                                                                     \
-	}
+// export a unicode string value, by giving the name of the get and the set
+// method
+#define REFLECT_UCSTRING(exportName, getMethod, setMethod)                     \
+  {                                                                            \
+    CReflectedProperty prop;                                                   \
+    prop.Name = exportName;                                                    \
+    prop.Type = CReflectedProperty::UCString;                                  \
+    prop.GetMethod.GetUCString =                                               \
+        (CReflectedProperty::TGetUCString) static_cast<TGetUCStringa>(         \
+            &A::getMethod);                                                    \
+    prop.SetMethod.SetUCString =                                               \
+        (CReflectedProperty::TSetUCString) static_cast<TSetUCStringa>(         \
+            &A::setMethod);                                                    \
+    props.push_back(prop);                                                     \
+  }
 #endif
 
 // export a string value, by giving the name of the get and the set method
-#define REFLECT_STRING_REF(exportName, getMethod, setMethod)                                                          \
-	{                                                                                                                 \
-		CReflectedProperty prop;                                                                                      \
-		prop.Name = exportName;                                                                                       \
-		prop.Type = CReflectedProperty::StringRef;                                                                    \
-		prop.GetMethod.GetStringRef = (CReflectedProperty::TGetStringRef) static_cast<TGetStringRefa>(&A::getMethod); \
-		prop.SetMethod.SetString = (CReflectedProperty::TSetString) static_cast<TSetStringa>(&A::setMethod);          \
-		props.push_back(prop);                                                                                        \
-	}
+#define REFLECT_STRING_REF(exportName, getMethod, setMethod)                   \
+  {                                                                            \
+    CReflectedProperty prop;                                                   \
+    prop.Name = exportName;                                                    \
+    prop.Type = CReflectedProperty::StringRef;                                 \
+    prop.GetMethod.GetStringRef =                                              \
+        (CReflectedProperty::TGetStringRef) static_cast<TGetStringRefa>(       \
+            &A::getMethod);                                                    \
+    prop.SetMethod.SetString =                                                 \
+        (CReflectedProperty::TSetString) static_cast<TSetStringa>(             \
+            &A::setMethod);                                                    \
+    props.push_back(prop);                                                     \
+  }
 
 #ifdef RYZOM_LUA_UCSTRING
-// export a unicode string value, by giving the name of the get and the set method
-#define REFLECT_UCSTRING_REF(exportName, getMethod, setMethod)                                                              \
-	{                                                                                                                       \
-		CReflectedProperty prop;                                                                                            \
-		prop.Name = exportName;                                                                                             \
-		prop.Type = CReflectedProperty::UCStringRef;                                                                        \
-		prop.GetMethod.GetUCStringRef = (CReflectedProperty::TGetUCStringRef) static_cast<TGetUCStringRefa>(&A::getMethod); \
-		prop.SetMethod.SetUCString = (CReflectedProperty::TSetUCString) static_cast<TSetUCStringa>(&A::setMethod);          \
-		props.push_back(prop);                                                                                              \
-	}
+// export a unicode string value, by giving the name of the get and the set
+// method
+#define REFLECT_UCSTRING_REF(exportName, getMethod, setMethod)                 \
+  {                                                                            \
+    CReflectedProperty prop;                                                   \
+    prop.Name = exportName;                                                    \
+    prop.Type = CReflectedProperty::UCStringRef;                               \
+    prop.GetMethod.GetUCStringRef =                                            \
+        (CReflectedProperty::TGetUCStringRef) static_cast<TGetUCStringRefa>(   \
+            &A::getMethod);                                                    \
+    prop.SetMethod.SetUCString =                                               \
+        (CReflectedProperty::TSetUCString) static_cast<TSetUCStringa>(         \
+            &A::setMethod);                                                    \
+    props.push_back(prop);                                                     \
+  }
 #endif
 
 // export a color value, by giving the name of the get and the set method
-#define REFLECT_RGBA(exportName, getMethod, setMethod)                                                 \
-	{                                                                                                  \
-		CReflectedProperty prop;                                                                       \
-		prop.Name = exportName;                                                                        \
-		prop.Type = CReflectedProperty::RGBA;                                                          \
-		prop.GetMethod.GetRGBA = (CReflectedProperty::TGetRGBA) static_cast<TGetRGBAa>(&A::getMethod); \
-		prop.SetMethod.SetRGBA = (CReflectedProperty::TSetRGBA) static_cast<TSetRGBAa>(&A::setMethod); \
-		props.push_back(prop);                                                                         \
-	}
+#define REFLECT_RGBA(exportName, getMethod, setMethod)                         \
+  {                                                                            \
+    CReflectedProperty prop;                                                   \
+    prop.Name = exportName;                                                    \
+    prop.Type = CReflectedProperty::RGBA;                                      \
+    prop.GetMethod.GetRGBA =                                                   \
+        (CReflectedProperty::TGetRGBA) static_cast<TGetRGBAa>(&A::getMethod);  \
+    prop.SetMethod.SetRGBA =                                                   \
+        (CReflectedProperty::TSetRGBA) static_cast<TSetRGBAa>(&A::setMethod);  \
+    props.push_back(prop);                                                     \
+  }
 
 // export a lua method
-#define REFLECT_LUA_METHOD(exportName, method)                                                               \
-	{                                                                                                        \
-		CReflectedProperty prop;                                                                             \
-		prop.Name = exportName;                                                                              \
-		prop.Type = CReflectedProperty::LuaMethod;                                                           \
-		prop.GetMethod.GetLuaMethod = (CReflectedProperty::TLuaMethod) static_cast<TLuaMethoda>(&A::method); \
-		props.push_back(prop);                                                                               \
-	}
+#define REFLECT_LUA_METHOD(exportName, method)                                 \
+  {                                                                            \
+    CReflectedProperty prop;                                                   \
+    prop.Name = exportName;                                                    \
+    prop.Type = CReflectedProperty::LuaMethod;                                 \
+    prop.GetMethod.GetLuaMethod =                                              \
+        (CReflectedProperty::TLuaMethod) static_cast<TLuaMethoda>(&A::method); \
+    props.push_back(prop);                                                     \
+  }
 
 // ends an export declaration
 #define REFLECT_EXPORT_END }
 
 // This macro registers a reflectable class to the manager
-#define REGISTER_REFLECTABLE_CLASS(className, parentName)              \
-	{                                                                  \
-		TReflectedProperties props;                                    \
-		className::getReflectedProperties(props);                      \
-		CReflectSystem::registerClass(#className, #parentName, props); \
-	}
+#define REGISTER_REFLECTABLE_CLASS(className, parentName)                      \
+  {                                                                            \
+    TReflectedProperties props;                                                \
+    className::getReflectedProperties(props);                                  \
+    CReflectSystem::registerClass(#className, #parentName, props);             \
+  }
 
 /** Reflectable refcounted object
- * NB nico : added this intermediate class so that the binding from lua to the reflection
- * system that are found in CLuaIHM can be reused for other objects as well
- * NOTE: The class is named 'CReflectableRefPtrTarget' and not 'CReflectableRefCount'
- * because the refcount part is only used for ref pointing in the ui
+ * NB nico : added this intermediate class so that the binding from lua to the
+ * reflection system that are found in CLuaIHM can be reused for other objects
+ * as well NOTE: The class is named 'CReflectableRefPtrTarget' and not
+ * 'CReflectableRefCount' because the refcount part is only used for ref
+ * pointing in the ui
  */
-class CReflectableRefPtrTarget : public CReflectable, public NLMISC::CRefCount
-{
+class CReflectableRefPtrTarget : public CReflectable, public NLMISC::CRefCount {
 public:
-	virtual ~CReflectableRefPtrTarget();
+  virtual ~CReflectableRefPtrTarget();
 };
 
-class CReflectableLuaRef
-{
+class CReflectableLuaRef {
 public:
-	CReflectableLuaRef(CReflectableRefPtrTarget *ptr = NULL)
-	    : Ptr(ptr)
-	    , _ClassInfo(NULL)
-	{
-	}
-	NLMISC::CRefPtr<CReflectableRefPtrTarget> Ptr;
-	const CClassInfo &getClassInfo() const;
-	// IMPORTANT : luaStringPtr should have been obtained from lua, see remark in CClassInfo
-	const CReflectedProperty *getProp(const char *luaStringPtr) const;
+  CReflectableLuaRef(CReflectableRefPtrTarget *ptr = NULL)
+      : Ptr(ptr), _ClassInfo(NULL) {}
+  NLMISC::CRefPtr<CReflectableRefPtrTarget> Ptr;
+  const CClassInfo &getClassInfo() const;
+  // IMPORTANT : luaStringPtr should have been obtained from lua, see remark in
+  // CClassInfo
+  const CReflectedProperty *getProp(const char *luaStringPtr) const;
 
 private:
-	// cache to class definition of the pointee object (once a CReflectableLuaRef created in lua, it remains a *const* pointer)
-	mutable const CClassInfo *_ClassInfo;
+  // cache to class definition of the pointee object (once a CReflectableLuaRef
+  // created in lua, it remains a *const* pointer)
+  mutable const CClassInfo *_ClassInfo;
 };
 
-}
+} // namespace NLGUI
 
 #endif

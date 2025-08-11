@@ -35,29 +35,32 @@ typedef std::string TPathString;
 namespace NLPIPELINE {
 
 /// Asset database configuration
-class CDatabaseConfig
-{
+class CDatabaseConfig {
 public:
-	~CDatabaseConfig();
+  ~CDatabaseConfig();
 
-	/// Searches for the configuration for the specified asset path by recursively going through all parent directories looking for 'database.cfg', initializes and applies the configuration.
-	static bool init(const std::string &asset);
-	static void release();
+  /// Searches for the configuration for the specified asset path by recursively
+  /// going through all parent directories looking for 'database.cfg',
+  /// initializes and applies the configuration.
+  static bool init(const std::string &asset);
+  static void release();
 
-	static void initTextureSearchDirectories();
+  static void initTextureSearchDirectories();
 
-	static inline const TPathString &rootPath() { return s_RootPath; }
-	static inline TPathString configPath() { return s_RootPath + "/database.cfg"; }
+  static inline const TPathString &rootPath() { return s_RootPath; }
+  static inline TPathString configPath() {
+    return s_RootPath + "/database.cfg";
+  }
 
 private:
-	static void cleanup();
-	static void searchDirectories(const char *var);
+  static void cleanup();
+  static void searchDirectories(const char *var);
 
-	static CDatabaseConfig s_Instance;
-	static uint32 s_ConfigFileModification;
+  static CDatabaseConfig s_Instance;
+  static uint32 s_ConfigFileModification;
 
-	static TPathString s_RootPath;
-	static NLMISC::CConfigFile *s_ConfigFile;
+  static TPathString s_RootPath;
+  static NLMISC::CConfigFile *s_ConfigFile;
 };
 
 } /* namespace NLPIPELINE */

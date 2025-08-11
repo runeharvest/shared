@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined(AFX_ATTRIB_LIST_BOX_H__0927B20B_FD26_433B_856B_6EF2871C233E__INCLUDED_)
+#if !defined(                                                                  \
+    AFX_ATTRIB_LIST_BOX_H__0927B20B_FD26_433B_856B_6EF2871C233E__INCLUDED_)
 #define AFX_ATTRIB_LIST_BOX_H__0927B20B_FD26_433B_856B_6EF2871C233E__INCLUDED_
 
 #if _MSC_VER > 1000
@@ -29,55 +30,53 @@ struct IValueGradientDlgClient;
 /////////////////////////////////////////////////////////////////////////////
 // CAttribListBox window
 
-class CAttribListBox : public CListBox
-{
+class CAttribListBox : public CListBox {
 public:
-	/// a function that can display a value in a gradient, with the given offset
-	typedef void (*TDisplayValue)(CDC *dc, uint index, sint x, sint y, void *lParam);
+  /// a function that can display a value in a gradient, with the given offset
+  typedef void (*TDisplayValue)(CDC *dc, uint index, sint x, sint y,
+                                void *lParam);
 
-	// Construction
+  // Construction
 public:
-	CAttribListBox();
+  CAttribListBox();
 
-	// Attributes
+  // Attributes
 public:
-	// Operations
+  // Operations
 public:
-	void setDrawer(IValueGradientDlgClient *drawer)
-	{
-		_DrawerInterface = drawer;
-	}
+  void setDrawer(IValueGradientDlgClient *drawer) { _DrawerInterface = drawer; }
 
-	void setCtrlID(uint id) { _Id = id; }
+  void setCtrlID(uint id) { _Id = id; }
 
-	// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CAttribListBox)
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CAttribListBox)
 public:
-	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
-	virtual void MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct);
-	virtual int CompareItem(LPCOMPAREITEMSTRUCT lpCompareItemStruct);
-	//}}AFX_VIRTUAL
+  virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+  virtual void MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct);
+  virtual int CompareItem(LPCOMPAREITEMSTRUCT lpCompareItemStruct);
+  //}}AFX_VIRTUAL
 
-	// Implementation
+  // Implementation
 public:
-	virtual ~CAttribListBox();
+  virtual ~CAttribListBox();
 
-	// Generated message map functions
+  // Generated message map functions
 protected:
-	//{{AFX_MSG(CAttribListBox)
-	// NOTE - the ClassWizard will add and remove member functions here.
-	//}}AFX_MSG
+  //{{AFX_MSG(CAttribListBox)
+  // NOTE - the ClassWizard will add and remove member functions here.
+  //}}AFX_MSG
 
-	DECLARE_MESSAGE_MAP()
+  DECLARE_MESSAGE_MAP()
 
-	IValueGradientDlgClient *_DrawerInterface;
-	uint _Id;
+  IValueGradientDlgClient *_DrawerInterface;
+  uint _Id;
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before
+// the previous line.
 
 #endif // !defined(AFX_ATTRIB_LIST_BOX_H__0927B20B_FD26_433B_856B_6EF2871C233E__INCLUDED_)

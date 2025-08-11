@@ -49,54 +49,54 @@ namespace BUILTIN {
  * \author Jan Boon (Kaetemi)
  * Scene implementation
  */
-class CSceneImpl : public CReferenceMaker
-{
+class CSceneImpl : public CReferenceMaker {
 public:
-	CSceneImpl(CScene *scene);
-	virtual ~CSceneImpl();
+  CSceneImpl(CScene *scene);
+  virtual ~CSceneImpl();
 
-	// class desc
-	static const ucstring DisplayName;
-	static const char *InternalName;
-	static const NLMISC::CClassId ClassId;
-	static const TSClassId SuperClassId;
+  // class desc
+  static const ucstring DisplayName;
+  static const char *InternalName;
+  static const NLMISC::CClassId ClassId;
+  static const TSClassId SuperClassId;
 
-	// inherited
-	virtual void parse(uint16 version, uint filter = 0);
-	virtual void clean();
-	virtual void build(uint16 version, uint filter = 0);
-	virtual void disown();
-	virtual void init();
-	virtual bool inherits(const NLMISC::CClassId classId) const;
-	virtual const ISceneClassDesc *classDesc() const;
-	virtual void toStringLocal(std::ostream &ostream, const std::string &pad = "", uint filter = 0) const;
+  // inherited
+  virtual void parse(uint16 version, uint filter = 0);
+  virtual void clean();
+  virtual void build(uint16 version, uint filter = 0);
+  virtual void disown();
+  virtual void init();
+  virtual bool inherits(const NLMISC::CClassId classId) const;
+  virtual const ISceneClassDesc *classDesc() const;
+  virtual void toStringLocal(std::ostream &ostream, const std::string &pad = "",
+                             uint filter = 0) const;
 
-	// reference maker
-	virtual CReferenceMaker *getReference(uint index) const;
-	virtual void setReference(uint index, CReferenceMaker *reference);
-	virtual uint nbReferences() const;
+  // reference maker
+  virtual CReferenceMaker *getReference(uint index) const;
+  virtual void setReference(uint index, CReferenceMaker *reference);
+  virtual uint nbReferences() const;
 
-	// read access
-	inline CRootNode *rootNode() const { return m_RootNode; }
-	inline CTrackViewNode *trackViewNode() const { return m_TrackViewNode; }
+  // read access
+  inline CRootNode *rootNode() const { return m_RootNode; }
+  inline CTrackViewNode *trackViewNode() const { return m_TrackViewNode; }
 
 protected:
-	// inherited
-	virtual IStorageObject *createChunkById(uint16 id, bool container);
+  // inherited
+  virtual IStorageObject *createChunkById(uint16 id, bool container);
 
 private:
-	NLMISC::CRefPtr<CReferenceMaker> m_MaterialEditor;
-	NLMISC::CRefPtr<CReferenceMaker> m_MtlBaseLib;
-	NLMISC::CRefPtr<CReferenceMaker> m_Sound;
-	NLMISC::CRefPtr<CRootNode> m_RootNode;
-	NLMISC::CRefPtr<CReferenceMaker> m_RenderEnvironment;
-	NLMISC::CRefPtr<CReferenceMaker> m_NamedSelSetList;
-	NLMISC::CRefPtr<CTrackViewNode> m_TrackViewNode;
-	NLMISC::CRefPtr<CReferenceMaker> m_GridReference;
-	NLMISC::CRefPtr<CReferenceMaker> m_RenderEffects;
-	NLMISC::CRefPtr<CReferenceMaker> m_ShadowMap;
-	NLMISC::CRefPtr<CReferenceMaker> m_LayerManager;
-	NLMISC::CRefPtr<CReferenceMaker> m_TrackSetList; // Does not exist in R3
+  NLMISC::CRefPtr<CReferenceMaker> m_MaterialEditor;
+  NLMISC::CRefPtr<CReferenceMaker> m_MtlBaseLib;
+  NLMISC::CRefPtr<CReferenceMaker> m_Sound;
+  NLMISC::CRefPtr<CRootNode> m_RootNode;
+  NLMISC::CRefPtr<CReferenceMaker> m_RenderEnvironment;
+  NLMISC::CRefPtr<CReferenceMaker> m_NamedSelSetList;
+  NLMISC::CRefPtr<CTrackViewNode> m_TrackViewNode;
+  NLMISC::CRefPtr<CReferenceMaker> m_GridReference;
+  NLMISC::CRefPtr<CReferenceMaker> m_RenderEffects;
+  NLMISC::CRefPtr<CReferenceMaker> m_ShadowMap;
+  NLMISC::CRefPtr<CReferenceMaker> m_LayerManager;
+  NLMISC::CRefPtr<CReferenceMaker> m_TrackSetList; // Does not exist in R3
 
 }; /* class CSceneImpl */
 

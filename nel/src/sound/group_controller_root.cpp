@@ -41,82 +41,76 @@ using namespace std;
 namespace NLSOUND {
 
 CGroupControllerRoot::CGroupControllerRoot()
-    : CGroupController(NULL)
-    , NLMISC::CManualSingleton<CGroupControllerRoot>()
-{
+    : CGroupController(NULL), NLMISC::CManualSingleton<CGroupControllerRoot>() {
 }
 
-CGroupControllerRoot::~CGroupControllerRoot()
-{
+CGroupControllerRoot::~CGroupControllerRoot() {}
+
+std::string CGroupControllerRoot::getPath() {
+  // The root node is always called sound
+  return NLSOUND_GROUP_CONTROLLER_ROOT_PATH;
 }
 
-std::string CGroupControllerRoot::getPath()
-{
-	// The root node is always called sound
-	return NLSOUND_GROUP_CONTROLLER_ROOT_PATH;
+void CGroupControllerRoot::calculateFinalGain() {
+  m_FinalGain = calculateTotalGain();
 }
 
-void CGroupControllerRoot::calculateFinalGain()
-{
-	m_FinalGain = calculateTotalGain();
+void CGroupControllerRoot::increaseSources() {
+  ++m_NbSourcesInclChild;
+
+  // Update source gain when this controller was inactive before.
+  if (m_NbSourcesInclChild == 1)
+    updateSourceGain();
 }
 
-void CGroupControllerRoot::increaseSources()
-{
-	++m_NbSourcesInclChild;
+void CGroupControllerRoot::decreaseSources() { --m_NbSourcesInclChild; }
 
-	// Update source gain when this controller was inactive before.
-	if (m_NbSourcesInclChild == 1)
-		updateSourceGain();
+bool CGroupControllerRoot::isReservedName(const std::string &nodeName) {
+  // These node names are reserved, in case these category controllers can be
+  // integrated with CDB. I do not forsee any functionality for changing
+  // environment effect settings for entire categories. The nodeName parameter
+  // is already lowercase, see CGroupControllerRoot::getGroupController.
+  if (nodeName == NLSOUND_GROUP_CONTROLLER_ROOT_PATH)
+    return true; // Root node name can only used by root.
+  if (nodeName == "gain")
+    return true;
+  if (nodeName == "pitch")
+    return true;
+  if (nodeName == "enable" || nodeName == "enabled")
+    return true;
+  return false;
 }
 
-void CGroupControllerRoot::decreaseSources()
-{
-	--m_NbSourcesInclChild;
-}
-
-bool CGroupControllerRoot::isReservedName(const std::string &nodeName)
-{
-	// These node names are reserved, in case these category controllers can be integrated with CDB.
-	// I do not forsee any functionality for changing environment effect settings for entire categories.
-	// The nodeName parameter is already lowercase, see CGroupControllerRoot::getGroupController.
-	if (nodeName == NLSOUND_GROUP_CONTROLLER_ROOT_PATH) return true; // Root node name can only used by root.
-	if (nodeName == "gain") return true;
-	if (nodeName == "pitch") return true;
-	if (nodeName == "enable" || nodeName == "enabled") return true;
-	return false;
-}
-
-CGroupController *CGroupControllerRoot::getGroupController(const std::string &path)
-{
-	std::vector<std::string> pathNodes;
-	NLMISC::splitString(NLMISC::toLowerAscii(path), ":", pathNodes);
-	CGroupController *active = this;
-	if (pathNodes[0] != NLSOUND_GROUP_CONTROLLER_ROOT_PATH)
-	{
-		nlerror("Root node for group controller must always be 'sound', invalid group '%s' requested", path.c_str());
-	}
-	for (std::vector<std::string>::iterator it(pathNodes.begin() + 1), end(pathNodes.end()); it != end; ++it)
-	{
-		if (!(*it).empty())
-		{
-			if (isReservedName(*it))
-			{
-				nlerror("Attempt to use reserved node name '%s' in group controller path '%s'", (*it).c_str(), path.c_str());
-			}
-			std::map<std::string, CGroupController *>::iterator found = active->m_Children.find(*it);
-			if (found == active->m_Children.end())
-			{
-				active = new CGroupController(active);
-				active->m_Parent->m_Children[*it] = active;
-			}
-			else
-			{
-				active = (*found).second;
-			}
-		}
-	}
-	return active;
+CGroupController *
+CGroupControllerRoot::getGroupController(const std::string &path) {
+  std::vector<std::string> pathNodes;
+  NLMISC::splitString(NLMISC::toLowerAscii(path), ":", pathNodes);
+  CGroupController *active = this;
+  if (pathNodes[0] != NLSOUND_GROUP_CONTROLLER_ROOT_PATH) {
+    nlerror("Root node for group controller must always be 'sound', invalid "
+            "group '%s' requested",
+            path.c_str());
+  }
+  for (std::vector<std::string>::iterator it(pathNodes.begin() + 1),
+       end(pathNodes.end());
+       it != end; ++it) {
+    if (!(*it).empty()) {
+      if (isReservedName(*it)) {
+        nlerror("Attempt to use reserved node name '%s' in group controller "
+                "path '%s'",
+                (*it).c_str(), path.c_str());
+      }
+      std::map<std::string, CGroupController *>::iterator found =
+          active->m_Children.find(*it);
+      if (found == active->m_Children.end()) {
+        active = new CGroupController(active);
+        active->m_Parent->m_Children[*it] = active;
+      } else {
+        active = (*found).second;
+      }
+    }
+  }
+  return active;
 }
 
 } /* namespace NLSOUND */

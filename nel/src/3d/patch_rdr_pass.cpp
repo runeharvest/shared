@@ -16,8 +16,8 @@
 
 #include "std3d.h"
 
-#include "nel/3d/patch_rdr_pass.h"
 #include "nel/3d/index_buffer.h"
+#include "nel/3d/patch_rdr_pass.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -26,31 +26,27 @@
 namespace NL3D {
 
 // ***************************************************************************
-CRdrTileId::CRdrTileId()
-{
-	PatchRdrPass = NULL;
-	TileMaterial = NULL;
-	_Next = NULL;
+CRdrTileId::CRdrTileId() {
+  PatchRdrPass = NULL;
+  TileMaterial = NULL;
+  _Next = NULL;
 }
 
 // ***************************************************************************
-CPatchRdrPass::CPatchRdrPass()
-{
-	RefCount = 0;
+CPatchRdrPass::CPatchRdrPass() {
+  RefCount = 0;
 
-	clearAllRenderList();
+  clearAllRenderList();
 }
 
 // ***************************************************************************
-void CPatchRdrPass::clearAllRenderList()
-{
-	_MaxRenderedFaces = 0;
-	_Far0ListRoot = NULL;
-	_Far1ListRoot = NULL;
-	for (uint i = 0; i < NL3D_MAX_TILE_PASS; i++)
-	{
-		_TileListRoot[i] = NULL;
-	}
+void CPatchRdrPass::clearAllRenderList() {
+  _MaxRenderedFaces = 0;
+  _Far0ListRoot = NULL;
+  _Far1ListRoot = NULL;
+  for (uint i = 0; i < NL3D_MAX_TILE_PASS; i++) {
+    _TileListRoot[i] = NULL;
+  }
 }
 
-} // NL3D
+} // namespace NL3D

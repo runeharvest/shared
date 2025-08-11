@@ -29,8 +29,8 @@
 // STL includes
 
 // NeL includes
-#include <nel/misc/smart_ptr.h>
 #include <nel/misc/geom_ext.h>
+#include <nel/misc/smart_ptr.h>
 
 // Project includes
 #include <nel/3d/u_texture.h>
@@ -55,21 +55,22 @@ struct CRenderTargetDescInt;
  * Assumes semi-constant render target quantity between frames,
  * except on changes of resolution or feature settings.
  */
-class CRenderTargetManager
-{
+class CRenderTargetManager {
 public:
-	CRenderTargetManager();
-	~CRenderTargetManager();
+  CRenderTargetManager();
+  ~CRenderTargetManager();
 
-	NL3D::CTextureUser *getRenderTarget(uint width, uint height, bool mode2D = false, UTexture::TUploadFormat format = UTexture::Auto);
-	void recycleRenderTarget(NL3D::CTextureUser *renderTarget);
+  NL3D::CTextureUser *
+  getRenderTarget(uint width, uint height, bool mode2D = false,
+                  UTexture::TUploadFormat format = UTexture::Auto);
+  void recycleRenderTarget(NL3D::CTextureUser *renderTarget);
 
-	void cleanup();
+  void cleanup();
 
 private:
-	friend class CDriverUser;
-	NL3D::UDriver *m_Driver;
-	std::vector<CRenderTargetDescInt *> m_RenderTargets;
+  friend class CDriverUser;
+  NL3D::UDriver *m_Driver;
+  std::vector<CRenderTargetDescInt *> m_RenderTargets;
 
 }; /* class CRenderTargetManager */
 

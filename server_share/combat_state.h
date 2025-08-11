@@ -21,16 +21,15 @@
 
 namespace RYZOMCOMBATSTATE {
 
-enum TCombatState
-{
-	NotEngaged = 0,
-	MovingTowardsTarget,
-	TargetUnreachable,
-	Engaged,
-	TargetLost
+enum TCombatState {
+  NotEngaged = 0,
+  MovingTowardsTarget,
+  TargetUnreachable,
+  Engaged,
+  TargetLost
 };
 
-}; // RYZOMCOMBATSTATE
+}; // namespace RYZOMCOMBATSTATE
 
 #endif // NL_COMBAT_STATE_H
 

@@ -39,87 +39,86 @@ using namespace std;
 namespace NLSOUND {
 
 CGroupController::CGroupController(CGroupController *parent)
-    : m_Parent(parent)
-    , m_Gain(1.0f)
-    , m_NbSourcesInclChild(0)
-{
+    : m_Parent(parent), m_Gain(1.0f), m_NbSourcesInclChild(0) {}
+
+CGroupController::~CGroupController() {
+  // If m_Sources is not empty, a crash is very likely.
+  nlassert(m_Sources.empty());
+
+  for (std::map<std::string, CGroupController *>::iterator
+           it(m_Children.begin()),
+       end(m_Children.end());
+       it != end; ++it) {
+    delete it->second;
+    it->second = NULL;
+  }
+  m_Parent = NULL;
 }
 
-CGroupController::~CGroupController()
-{
-	// If m_Sources is not empty, a crash is very likely.
-	nlassert(m_Sources.empty());
+void CGroupController::addSource(CSourceCommon *source) {
+  nlassert(this != NULL);
 
-	for (std::map<std::string, CGroupController *>::iterator it(m_Children.begin()), end(m_Children.end()); it != end; ++it)
-	{
-		delete it->second;
-		it->second = NULL;
-	}
-	m_Parent = NULL;
+  m_Sources.insert(source);
+  increaseSources();
 }
 
-void CGroupController::addSource(CSourceCommon *source)
-{
-	nlassert(this != NULL);
-
-	m_Sources.insert(source);
-	increaseSources();
-}
-
-void CGroupController::removeSource(CSourceCommon *source)
-{
-	decreaseSources();
-	m_Sources.erase(source);
+void CGroupController::removeSource(CSourceCommon *source) {
+  decreaseSources();
+  m_Sources.erase(source);
 }
 
 std::string CGroupController::getPath() // overridden by root
 {
-	for (std::map<std::string, CGroupController *>::iterator it(m_Parent->m_Children.begin()), end(m_Parent->m_Children.end()); it != end; ++it)
-	{
-		if (it->second == this)
-		{
-			const std::string &name = it->first;
-			std::string returnPath = m_Parent->getPath() + ":" + name;
-			return returnPath;
-		}
-	}
-	nlerror("Group Controller not child of parent");
-	return "";
+  for (std::map<std::string, CGroupController *>::iterator
+           it(m_Parent->m_Children.begin()),
+       end(m_Parent->m_Children.end());
+       it != end; ++it) {
+    if (it->second == this) {
+      const std::string &name = it->first;
+      std::string returnPath = m_Parent->getPath() + ":" + name;
+      return returnPath;
+    }
+  }
+  nlerror("Group Controller not child of parent");
+  return "";
 }
 
 void CGroupController::calculateFinalGain() // overridden by root
 {
-	m_FinalGain = calculateTotalGain() * m_Parent->getFinalGain();
+  m_FinalGain = calculateTotalGain() * m_Parent->getFinalGain();
 }
 
-void CGroupController::updateSourceGain()
-{
-	// Dont update source gain when this controller is inactive.
-	if (m_NbSourcesInclChild)
-	{
-		calculateFinalGain();
-		for (TSourceContainer::iterator it(m_Sources.begin()), end(m_Sources.end()); it != end; ++it)
-			(*it)->updateFinalGain();
-		for (std::map<std::string, CGroupController *>::iterator it(m_Children.begin()), end(m_Children.end()); it != end; ++it)
-			(*it).second->updateSourceGain();
-	}
+void CGroupController::updateSourceGain() {
+  // Dont update source gain when this controller is inactive.
+  if (m_NbSourcesInclChild) {
+    calculateFinalGain();
+    for (TSourceContainer::iterator it(m_Sources.begin()), end(m_Sources.end());
+         it != end; ++it)
+      (*it)->updateFinalGain();
+    for (std::map<std::string, CGroupController *>::iterator
+             it(m_Children.begin()),
+         end(m_Children.end());
+         it != end; ++it)
+      (*it).second->updateSourceGain();
+  }
 }
 
 void CGroupController::increaseSources() // overridden by root
 {
-	++m_NbSourcesInclChild;
-	m_Parent->increaseSources();
+  ++m_NbSourcesInclChild;
+  m_Parent->increaseSources();
 
-	// Update source gain when this controller was inactive before but the parent was active before.
-	// Thus, when this controller was the root of inactive controllers.
-	if (m_NbSourcesInclChild == 1 && m_Parent->m_NbSourcesInclChild > 1)
-		updateSourceGain();
+  // Update source gain when this controller was inactive before but the parent
+  // was active before. Thus, when this controller was the root of inactive
+  // controllers.
+  if (m_NbSourcesInclChild == 1 && m_Parent->m_NbSourcesInclChild > 1)
+    updateSourceGain();
 }
 
 void CGroupController::decreaseSources() // overridden by root
 {
-	--m_NbSourcesInclChild;
-	m_Parent->decreaseSources();
+  --m_NbSourcesInclChild;
+  m_Parent->decreaseSources();
 }
 
 } /* namespace NLSOUND */

@@ -17,12 +17,12 @@
 #ifndef NL_SHADOW_POLY_RECEIVER_H
 #define NL_SHADOW_POLY_RECEIVER_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/triangle.h"
-#include "nel/misc/vector_h.h"
+#include "nel/3d/index_buffer.h"
 #include "nel/3d/quad_grid.h"
 #include "nel/3d/vertex_buffer.h"
-#include "nel/3d/index_buffer.h"
+#include "nel/misc/triangle.h"
+#include "nel/misc/types_nl.h"
+#include "nel/misc/vector_h.h"
 
 namespace NL3D {
 
@@ -44,117 +44,120 @@ class CShadowMap;
  * \author Nevrax France
  * \date 2003
  */
-class CShadowPolyReceiver
-{
+class CShadowPolyReceiver {
 public:
-	enum TCameraColTest
-	{
-		CameraColSimpleRay,
-		CameraColCylinder,
-		CameraColCone,
-	};
+  enum TCameraColTest {
+    CameraColSimpleRay,
+    CameraColCylinder,
+    CameraColCone,
+  };
 
 public:
-	/// Constructor
-	CShadowPolyReceiver(uint quadGridSize = 32, float quadGridCellSize = 4.f);
+  /// Constructor
+  CShadowPolyReceiver(uint quadGridSize = 32, float quadGridCellSize = 4.f);
 
-	/// Append a triangle to the poly receiver.
-	uint addTriangle(const NLMISC::CTriangle &tri);
-	/// remove a triangle from the poly receiver.
-	void removeTriangle(uint id);
+  /// Append a triangle to the poly receiver.
+  uint addTriangle(const NLMISC::CTriangle &tri);
+  /// remove a triangle from the poly receiver.
+  void removeTriangle(uint id);
 
-	/** clip, and render with a shadow map. Matrix setup should be OK.
-	 *	\param vertDelta (for landscape). add this value from vertices before rendering.
-	 */
-	void render(IDriver *drv, CMaterial &shadowMat, const CShadowMap *shadowMap, const CVector &casterPos, const CVector &vertDelta);
+  /** clip, and render with a shadow map. Matrix setup should be OK.
+   *	\param vertDelta (for landscape). add this value from vertices before
+   *rendering.
+   */
+  void render(IDriver *drv, CMaterial &shadowMat, const CShadowMap *shadowMap,
+              const CVector &casterPos, const CVector &vertDelta);
 
-	/** clip, and render with a shadow map. Matrix setup should be OK.
-	 *  Clipping here is done with the polygon rather than its bbox, with will scale better
-	 *  for projection of large, thin decals.
-	 *	\param vertDelta (for landscape). add this value from vertices before rendering.
-	 *	\return : number of tested grid cells
-	 */
-	void renderWithPolyClip(IDriver *drv, CMaterial &shadowMat, const CShadowMap *shadowMap, const CVector &casterPos, const CVector &vertDelta,
-	    const NLMISC::CPolygon2D &poly);
+  /** clip, and render with a shadow map. Matrix setup should be OK.
+   *  Clipping here is done with the polygon rather than its bbox, with will
+   *scale better for projection of large, thin decals. \param vertDelta (for
+   *landscape). add this value from vertices before rendering. \return : number
+   *of tested grid cells
+   */
+  void renderWithPolyClip(IDriver *drv, CMaterial &shadowMat,
+                          const CShadowMap *shadowMap, const CVector &casterPos,
+                          const CVector &vertDelta,
+                          const NLMISC::CPolygon2D &poly);
 
-	// a vertex
-	struct CRGBAVertex
-	{
-		CVector V;
-		CRGBA Color;
-		CRGBAVertex() { }
-		CRGBAVertex(const CVector &v, CRGBA c)
-		    : V(v)
-		    , Color(c)
-		{
-		}
-	};
+  // a vertex
+  struct CRGBAVertex {
+    CVector V;
+    CRGBA Color;
+    CRGBAVertex() {}
+    CRGBAVertex(const CVector &v, CRGBA c) : V(v), Color(c) {}
+  };
 
-	/** Compute list of clipped tri under the shadow mat
-	 * useful for rendering of huge decal, that may consume a lot of fillrate, but change rarely.
-	 *
-	 */
-	void computeClippedTrisWithPolyClip(const CShadowMap *shadowMap, const CVector &casterPos, const CVector &vertDelta, const NLMISC::CPolygon2D &vertices,
-	    std::vector<CRGBAVertex> &destTris, bool colorUpfacingVertices);
+  /** Compute list of clipped tri under the shadow mat
+   * useful for rendering of huge decal, that may consume a lot of fillrate, but
+   * change rarely.
+   *
+   */
+  void computeClippedTrisWithPolyClip(const CShadowMap *shadowMap,
+                                      const CVector &casterPos,
+                                      const CVector &vertDelta,
+                                      const NLMISC::CPolygon2D &vertices,
+                                      std::vector<CRGBAVertex> &destTris,
+                                      bool colorUpfacingVertices);
 
-	/** Use the triangles added for camera 3rd person collision
-	 *	return a [0,1] value. 0 => collision at start. 1 => no collision.
-	 *	\param testType is the type of intersection: simple ray, cylinder or cone
-	 *	\param radius is the radius of the 'cylinder' or 'cone' (not used for simpleRay test, radius goes to end for cone)
-	 */
-	float getCameraCollision(const CVector &start, const CVector &end, TCameraColTest testType, float radius);
+  /** Use the triangles added for camera 3rd person collision
+   *	return a [0,1] value. 0 => collision at start. 1 => no collision.
+   *	\param testType is the type of intersection: simple ray, cylinder or
+   *cone \param radius is the radius of the 'cylinder' or 'cone' (not used for
+   *simpleRay test, radius goes to end for cone)
+   */
+  float getCameraCollision(const CVector &start, const CVector &end,
+                           TCameraColTest testType, float radius);
 
-	// ************
+  // ************
 private:
-	// Vertices.
-	class CVectorId : public CVector
-	{
-	public:
-		uint8 RefCount;
-		uint8 Flags;
-		sint16 VBIdx;
+  // Vertices.
+  class CVectorId : public CVector {
+  public:
+    uint8 RefCount;
+    uint8 Flags;
+    sint16 VBIdx;
 
-		CVectorId() { RefCount = 0; }
-		CVectorId(const CVector &v)
-		{
-			(*(CVector *)this) = v;
-			RefCount = 0;
-		}
-	};
-	std::vector<CVectorId> _Vertices;
-	std::vector<uint> _FreeVertices;
-	typedef std::map<CVector, uint> TVertexMap;
-	TVertexMap _VertexMap;
+    CVectorId() { RefCount = 0; }
+    CVectorId(const CVector &v) {
+      (*(CVector *)this) = v;
+      RefCount = 0;
+    }
+  };
+  std::vector<CVectorId> _Vertices;
+  std::vector<uint> _FreeVertices;
+  typedef std::map<CVector, uint> TVertexMap;
+  TVertexMap _VertexMap;
 
-	// Triangles
-	struct CTriangleId
-	{
-		uint Vertex[3];
-	};
-	typedef CQuadGrid<CTriangleId> TTriangleGrid;
-	TTriangleGrid _TriangleGrid;
-	std::vector<TTriangleGrid::CIterator> _Triangles;
-	std::vector<uint> _FreeTriangles;
+  // Triangles
+  struct CTriangleId {
+    uint Vertex[3];
+  };
+  typedef CQuadGrid<CTriangleId> TTriangleGrid;
+  TTriangleGrid _TriangleGrid;
+  std::vector<TTriangleGrid::CIterator> _Triangles;
+  std::vector<uint> _FreeTriangles;
 
-	// Render
-	// TODO_SHADOW: optim: VBHard.
-	CVertexBuffer _VB;
-	CIndexBuffer _RenderTriangles;
+  // Render
+  // TODO_SHADOW: optim: VBHard.
+  CVertexBuffer _VB;
+  CIndexBuffer _RenderTriangles;
 
-	// Vertex Mgt.
-	// Allocate a vertex. RefCount init to 0. _VertexMap modified.
-	uint allocateVertex(const CVector &v);
-	// Release a vertex, freeing him if no more unused => _VertexMap modified.
-	void releaseVertex(uint id);
-	// increment the Count of the ith vertex;
-	void incVertexRefCount(uint id);
-	// render, using current selection in the quad grid
-	void renderSelection(IDriver *drv, CMaterial &shadowMat, const CShadowMap *shadowMap, const CVector &casterPos, const CVector &vertDelta);
-	// select a polygon in the triangle grid
-	void selectPolygon(const NLMISC::CPolygon2D &poly);
+  // Vertex Mgt.
+  // Allocate a vertex. RefCount init to 0. _VertexMap modified.
+  uint allocateVertex(const CVector &v);
+  // Release a vertex, freeing him if no more unused => _VertexMap modified.
+  void releaseVertex(uint id);
+  // increment the Count of the ith vertex;
+  void incVertexRefCount(uint id);
+  // render, using current selection in the quad grid
+  void renderSelection(IDriver *drv, CMaterial &shadowMat,
+                       const CShadowMap *shadowMap, const CVector &casterPos,
+                       const CVector &vertDelta);
+  // select a polygon in the triangle grid
+  void selectPolygon(const NLMISC::CPolygon2D &poly);
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_SHADOW_POLY_RECEIVER_H
 

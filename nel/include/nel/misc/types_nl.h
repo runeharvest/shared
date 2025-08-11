@@ -66,7 +66,8 @@
 #define NL_CPU_INTEL
 #endif
 #ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0500 // Minimal OS = Windows 2000 (NeL is not supported on Windows 95/98)
+#define _WIN32_WINNT                                                           \
+  0x0500 // Minimal OS = Windows 2000 (NeL is not supported on Windows 95/98)
 #endif
 #ifdef _MSC_VER
 #define NL_COMP_VC
@@ -148,7 +149,8 @@
 #undef _WIN32_WINNT
 #define _WIN32_WINNT 0x0600 // force VISTA minimal version in 64 bits
 #endif
-// define NOMINMAX to be sure that windows includes will not define min max macros, but instead, use the stl template
+// define NOMINMAX to be sure that windows includes will not define min max
+// macros, but instead, use the stl template
 #ifndef NL_COMP_MINGW
 #define NOMINMAX
 #endif
@@ -180,11 +182,14 @@
 
 // https://docs.microsoft.com/en-us/cpp/overview/visual-cpp-language-conformance?view=vs-2019
 // https://gcc.gnu.org/projects/cxx-status.html
-#if (defined(_MSC_VER) && (_MSC_VER >= 1910) && (!defined(_HAS_CXX17) || _HAS_CXX17)) || (defined(__GNUC__) && (__GNUC__ >= 8) && (__cplusplus >= 201703L))
+#if (defined(_MSC_VER) && (_MSC_VER >= 1910) &&                                \
+     (!defined(_HAS_CXX17) || _HAS_CXX17)) ||                                  \
+    (defined(__GNUC__) && (__GNUC__ >= 8) && (__cplusplus >= 201703L))
 #define NL_CPP17
 #endif
 
-#if (defined(_MSC_VER) && (_MSC_VER >= 1900)) || (defined(__GNUC__) && (__GNUC__ >= 6) && (__cplusplus >= 201402L))
+#if (defined(_MSC_VER) && (_MSC_VER >= 1900)) ||                               \
+    (defined(__GNUC__) && (__GNUC__ >= 6) && (__cplusplus >= 201402L))
 #define NL_CPP14
 #define NL_CPP11
 #endif
@@ -211,9 +216,12 @@
 //
 // NL_ISO_SYNTAX can be used using #if NL_ISO_SYNTAX or #if !NL_ISO_SYNTAX
 //
-// NL_ISO_TEMPLATE_SPEC can be used in front of an instanciated class-template member data definition,
-// because sometimes MSVC++ 6 produces an error C2908 with a definition with template <>.
-#if defined(NL_COMP_VC) || (defined(__GNUC__) && ((__GNUC__ < 3) || (__GNUC__ == 3 && __GNUC_MINOR__ <= 3)))
+// NL_ISO_TEMPLATE_SPEC can be used in front of an instanciated class-template
+// member data definition, because sometimes MSVC++ 6 produces an error C2908
+// with a definition with template <>.
+#if defined(NL_COMP_VC) ||                                                     \
+    (defined(__GNUC__) &&                                                      \
+     ((__GNUC__ < 3) || (__GNUC__ == 3 && __GNUC_MINOR__ <= 3)))
 #define NL_ISO_SYNTAX 0
 #define NL_ISO_TEMPLATE_SPEC
 #else
@@ -223,7 +231,8 @@
 
 // gcc 4.1+ provides std::tr1
 #ifdef NL_COMP_GCC
-#define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+#define GCC_VERSION                                                            \
+  (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 #if GCC_VERSION > 40100
 // new libc++ bundled with clang under Mac OS X 10.9+ doesn't define __GLIBCXX__
 #ifdef __GLIBCXX__
@@ -238,45 +247,61 @@
 #endif
 // clang define GCC version for compatibility
 #ifdef __clang__
-#define CLANG_VERSION (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__)
+#define CLANG_VERSION                                                          \
+  (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__)
 #endif
 #endif
 
-#if defined(_HAS_CPP0X) || defined(__GXX_EXPERIMENTAL_CXX0X__) || (defined(NL_COMP_VC_VERSION) && NL_COMP_VC_VERSION >= 110) || (defined(NL_COMP_GCC) && (GCC_VERSION >= 40400) && (__cplusplus >= 201103L))
+#if defined(_HAS_CPP0X) || defined(__GXX_EXPERIMENTAL_CXX0X__) ||              \
+    (defined(NL_COMP_VC_VERSION) && NL_COMP_VC_VERSION >= 110) ||              \
+    (defined(NL_COMP_GCC) && (GCC_VERSION >= 40400) &&                         \
+     (__cplusplus >= 201103L))
 #define NL_ISO_CPP0X_AVAILABLE
 #endif
 
 // Remove stupid Visual C++ warnings
 #ifdef NL_OS_WINDOWS
-#pragma warning(disable : 4503) // STL: Decorated name length exceeded, name was truncated
+#pragma warning(                                                               \
+    disable : 4503) // STL: Decorated name length exceeded, name was truncated
 #pragma warning(disable : 4786) // STL: too long identifier
 #pragma warning(disable : 4290) // throw() not implemented warning
-#pragma warning(disable : 4250) // inherits via dominance (informational warning).
+#pragma warning(                                                               \
+    disable : 4250) // inherits via dominance (informational warning).
 #pragma warning(disable : 4390) // don't warn in empty block "if(exp) ;"
-#pragma warning(disable : 4996) // 'vsnprintf': This function or variable may be unsafe. Consider using vsnprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+#pragma warning(                                                               \
+    disable : 4996) // 'vsnprintf': This function or variable may be unsafe.
+                    // Consider using vsnprintf_s instead. To disable
+                    // deprecation, use _CRT_SECURE_NO_WARNINGS. See online help
+                    // for details.
 #ifdef NL_CPP17
-#pragma warning(disable : 5033) // 'register' is no longer a supported storage class
+#pragma warning(                                                               \
+    disable : 5033) // 'register' is no longer a supported storage class
 #endif
 // Debug : Sept 01 2006
 #if defined(NL_COMP_VC8) || defined(NL_COMP_VC9) || defined(NL_COMP_VC10)
-#pragma warning(disable : 4005) // don't warn on redefinitions caused by xp platform sdk
-#endif // NL_COMP_VC8 || NL_COMP_VC9
-#pragma warning(disable : 26495) // Variable is uninitialized. Always initialize a member variable. (On purpose for performance.)
-#pragma warning(disable : 26812) // The enum type is unscoped. Prefer 'enum class' over 'enum' (Enum.3).
-#endif // NL_OS_WINDOWS
+#pragma warning(                                                               \
+    disable : 4005) // don't warn on redefinitions caused by xp platform sdk
+#endif              // NL_COMP_VC8 || NL_COMP_VC9
+#pragma warning(                                                               \
+    disable : 26495) // Variable is uninitialized. Always initialize a member
+                     // variable. (On purpose for performance.)
+#pragma warning(disable : 26812) // The enum type is unscoped. Prefer 'enum
+                                 // class' over 'enum' (Enum.3).
+#endif                           // NL_OS_WINDOWS
 
 // Standard include
 
-#include <string>
 #include <exception>
+#include <string>
 
 // Setup extern asm functions.
 
-#ifndef NL_NO_ASM // If NL_NO_ASM is externely defined, don't override it.
-#ifndef NL_CPU_INTEL // If not on an Intel compatible plateforme (BeOS, 0x86 Linux, Windows)
-#define NL_NO_ASM // Don't use extern ASM. Full C++ code.
-#endif // NL_CPU_INTEL
-#endif // NL_NO_ASM
+#ifndef NL_NO_ASM    // If NL_NO_ASM is externely defined, don't override it.
+#ifndef NL_CPU_INTEL // If not on an Intel compatible plateforme (BeOS, 0x86
+                     // Linux, Windows)
+#define NL_NO_ASM    // Don't use extern ASM. Full C++ code.
+#endif               // NL_CPU_INTEL
+#endif               // NL_NO_ASM
 
 // Define this if you want to use GTK for gtk_displayer
 
@@ -284,7 +309,8 @@
 // #undef NL_USE_GTK
 
 // Define this if you want to remove all assert, debug code...
-// You should never need to define this since it's always good to have assert, even in release mode
+// You should never need to define this since it's always good to have assert,
+// even in release mode
 
 // #define NL_NO_DEBUG
 #undef NL_NO_DEBUG
@@ -292,9 +318,9 @@
 // Standard types
 
 /*
- * correct numeric types:	sint8, uint8, sint16, uint16, sint32, uint32, sint64, uint64, sint, uint
- * correct char types:		char, string, ucchar, ucstring
- * correct misc types:		void, bool, float, double
+ * correct numeric types:	sint8, uint8, sint16, uint16, sint32, uint32,
+ * sint64, uint64, sint, uint correct char types:		char, string,
+ * ucchar, ucstring correct misc types:		void, bool, float, double
  *
  */
 
@@ -340,21 +366,21 @@
 
 /**
  * \typedef uint
- * An unsigned integer, at least 32 bits (used only for internal loops or speedy purpose, processor dependent)
+ * An unsigned integer, at least 32 bits (used only for internal loops or speedy
+ *purpose, processor dependent)
  **/
 
 /**
  * \typedef sint
- * An signed integer at least 32 bits (used only for internal loops or speedy purpose, processor dependent)
+ * An signed integer at least 32 bits (used only for internal loops or speedy
+ * purpose, processor dependent)
  */
 
 /**
  * \def NL_I64
- * Used to display a int64 in a platform independent way with printf like functions.
- \code
- sint64 myint64 = SINT64_CONSTANT(0x123456781234);
- printf("This is a 64 bits int: %" NL_I64 "u", myint64);
- \endcode
+ * Used to display a int64 in a platform independent way with printf like
+ functions. \code sint64 myint64 = SINT64_CONSTANT(0x123456781234); printf("This
+ is a 64 bits int: %" NL_I64 "u", myint64); \endcode
  */
 
 #ifdef NL_OS_WINDOWS
@@ -368,16 +394,16 @@ typedef unsigned __int32 uint32;
 typedef signed __int64 sint64;
 typedef unsigned __int64 uint64;
 
-typedef int sint; // at least 32bits (depend of processor)
+typedef int sint;          // at least 32bits (depend of processor)
 typedef unsigned int uint; // at least 32bits (depend of processor)
 
 #define NL_I64 "I64"
 
 #elif defined(NL_OS_UNIX)
 
-#include <sys/types.h>
-#include <stdint.h>
 #include <climits>
+#include <stdint.h>
+#include <sys/types.h>
 
 typedef int8_t sint8;
 typedef uint8_t uint8;
@@ -388,7 +414,7 @@ typedef uint32_t uint32;
 typedef int64_t sint64;
 typedef uint64_t uint64;
 
-typedef int sint; // at least 32bits (depend of processor)
+typedef int sint;          // at least 32bits (depend of processor)
 typedef unsigned int uint; // at least 32bits (depend of processor)
 
 // used for macro PRI*64
@@ -428,14 +454,15 @@ typedef unsigned int uint; // at least 32bits (depend of processor)
 #endif
 
 #ifdef NL_OS_WINDOWS
-#include <stdlib.h>
 #include <intrin.h>
 #include <malloc.h>
+#include <stdlib.h>
 #define aligned_malloc(size, alignment) _aligned_malloc(size, alignment)
 #define aligned_free(ptr) _aligned_free(ptr)
 #elif defined(NL_OS_MAC)
 #include <stdlib.h>
-// under Mac OS X, malloc is already aligned for SSE and Altivec (16 bytes alignment)
+// under Mac OS X, malloc is already aligned for SSE and Altivec (16 bytes
+// alignment)
 #define aligned_malloc(size, alignment) malloc(size)
 #define aligned_free(ptr) free(ptr)
 #else
@@ -492,16 +519,19 @@ extern void operator delete[](void *p) throw();
 #endif // _STLP_HASH_MAP
 #define CUniquePtr ::std::auto_ptr
 #define CUniquePtrMove
-#elif defined(NL_ISO_CPP0X_AVAILABLE) || (defined(NL_COMP_VC) && (NL_COMP_VC_VERSION >= 100))
+#elif defined(NL_ISO_CPP0X_AVAILABLE) ||                                       \
+    (defined(NL_COMP_VC) && (NL_COMP_VC_VERSION >= 100))
+#include <memory>
 #include <unordered_map>
 #include <unordered_set>
-#include <memory>
 #define CHashMap ::std::unordered_map
 #define CHashSet ::std::unordered_set
 #define CHashMultiMap ::std::unordered_multimap
 #define CUniquePtr ::std::unique_ptr
 #define CUniquePtrMove ::std::move
-#elif defined(NL_ISO_STDTR1_AVAILABLE) // use std::tr1 for CHash* classes, if available (gcc 4.1+ and VC9 with TR1 feature pack)
+#elif defined(                                                                 \
+    NL_ISO_STDTR1_AVAILABLE) // use std::tr1 for CHash* classes, if available
+                             // (gcc 4.1+ and VC9 with TR1 feature pack)
 #include NL_ISO_STDTR1_HEADER(unordered_map)
 #include NL_ISO_STDTR1_HEADER(unordered_set)
 #define CHashMap NL_ISO_STDTR1_NAMESPACE::unordered_map
@@ -510,7 +540,8 @@ extern void operator delete[](void *p) throw();
 #define CUniquePtr ::std::auto_ptr
 #define CUniquePtrMove
 #define NL_OVERRIDE
-#elif defined(NL_COMP_VC) && (NL_COMP_VC_VERSION >= 70 && NL_COMP_VC_VERSION <= 90) // VC7 through 9
+#elif defined(NL_COMP_VC) &&                                                   \
+    (NL_COMP_VC_VERSION >= 70 && NL_COMP_VC_VERSION <= 90) // VC7 through 9
 #include <hash_map>
 #include <hash_set>
 #define CHashMap stdext::hash_map
@@ -530,25 +561,17 @@ extern void operator delete[](void *p) throw();
 
 namespace __gnu_cxx {
 
-template <>
-struct hash<std::string>
-{
-	size_t operator()(const std::string &s) const
-	{
-		return __stl_hash_string(s.c_str());
-	}
+template <> struct hash<std::string> {
+  size_t operator()(const std::string &s) const {
+    return __stl_hash_string(s.c_str());
+  }
 };
 
-template <>
-struct hash<uint64>
-{
-	size_t operator()(const uint64 x) const
-	{
-		return x;
-	}
+template <> struct hash<uint64> {
+  size_t operator()(const uint64 x) const { return x; }
 };
 
-} // END NAMESPACE __GNU_CXX
+} // namespace __gnu_cxx
 
 #else
 #pragma error("You need to update your compiler")

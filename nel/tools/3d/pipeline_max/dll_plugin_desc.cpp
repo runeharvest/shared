@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <nel/misc/types_nl.h>
 #include "dll_plugin_desc.h"
+#include <nel/misc/types_nl.h>
 
 // STL includes
 
@@ -41,30 +41,26 @@
 namespace PIPELINE {
 namespace MAX {
 
-const ucchar *CDllPluginDescBuiltin::displayName() const
-{
-	static const ucstring value = ucstring("Builtin");
-	return value.c_str();
+const ucchar *CDllPluginDescBuiltin::displayName() const {
+  static const ucstring value = ucstring("Builtin");
+  return value.c_str();
 }
 
-const ucchar *CDllPluginDescBuiltin::internalName() const
-{
-	static const ucstring value = ucstring("Builtin");
-	return value.c_str();
+const ucchar *CDllPluginDescBuiltin::internalName() const {
+  static const ucstring value = ucstring("Builtin");
+  return value.c_str();
 }
 
 const CDllPluginDescBuiltin DllPluginDescBuiltin;
 
-const ucchar *CDllPluginDescScript::displayName() const
-{
-	static const ucstring value = ucstring("Script");
-	return value.c_str();
+const ucchar *CDllPluginDescScript::displayName() const {
+  static const ucstring value = ucstring("Script");
+  return value.c_str();
 }
 
-const ucchar *CDllPluginDescScript::internalName() const
-{
-	static const ucstring value = ucstring("Script");
-	return value.c_str();
+const ucchar *CDllPluginDescScript::internalName() const {
+  static const ucstring value = ucstring("Script");
+  return value.c_str();
 }
 
 const CDllPluginDescScript DllPluginDescScript;

@@ -35,9 +35,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // Qt includes
 #include <QApplication>
-#include <QStyleFactory>
 #include <QDir>
 #include <QPalette>
+#include <QStyleFactory>
 
 // NeL includes
 
@@ -46,40 +46,38 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace NLQT {
 namespace {
 
-void preApplication()
-{
-	QCoreApplication::libraryPaths();
-	QString app_location = QCoreApplication::applicationFilePath();
-	app_location.truncate(app_location.lastIndexOf(QLatin1Char('/')));
-	app_location = QDir(app_location).canonicalPath();
-	QCoreApplication::removeLibraryPath(app_location);
-	QCoreApplication::addLibraryPath("./platforms");
-	QCoreApplication::addLibraryPath("./qtwebengine");
-	QCoreApplication::addLibraryPath("./imageformats");
-	QCoreApplication::addLibraryPath("./iconengines");
-	QCoreApplication::addLibraryPath("./designer");
+void preApplication() {
+  QCoreApplication::libraryPaths();
+  QString app_location = QCoreApplication::applicationFilePath();
+  app_location.truncate(app_location.lastIndexOf(QLatin1Char('/')));
+  app_location = QDir(app_location).canonicalPath();
+  QCoreApplication::removeLibraryPath(app_location);
+  QCoreApplication::addLibraryPath("./platforms");
+  QCoreApplication::addLibraryPath("./qtwebengine");
+  QCoreApplication::addLibraryPath("./imageformats");
+  QCoreApplication::addLibraryPath("./iconengines");
+  QCoreApplication::addLibraryPath("./designer");
 }
 
-void postApplication()
-{
-	QApplication::setStyle(QStyleFactory::create("Fusion"));
-	QPalette palette = qApp->palette();
-	palette.setColor(QPalette::Window, QColor(64, 64, 64));
-	palette.setColor(QPalette::WindowText, Qt::white);
-	palette.setColor(QPalette::Base, QColor(48, 48, 48));
-	palette.setColor(QPalette::AlternateBase, QColor(64, 64, 64));
-	palette.setColor(QPalette::ToolTipBase, Qt::white);
-	palette.setColor(QPalette::ToolTipText, Qt::white);
-	palette.setColor(QPalette::Text, Qt::white);
-	palette.setColor(QPalette::Button, QColor(64, 64, 64));
-	palette.setColor(QPalette::ButtonText, Qt::white);
-	palette.setColor(QPalette::BrightText, Qt::red);
-	palette.setColor(QPalette::Highlight, QColor(64, 128, 96));
-	palette.setColor(QPalette::HighlightedText, Qt::white);
-	qApp->setPalette(palette);
+void postApplication() {
+  QApplication::setStyle(QStyleFactory::create("Fusion"));
+  QPalette palette = qApp->palette();
+  palette.setColor(QPalette::Window, QColor(64, 64, 64));
+  palette.setColor(QPalette::WindowText, Qt::white);
+  palette.setColor(QPalette::Base, QColor(48, 48, 48));
+  palette.setColor(QPalette::AlternateBase, QColor(64, 64, 64));
+  palette.setColor(QPalette::ToolTipBase, Qt::white);
+  palette.setColor(QPalette::ToolTipText, Qt::white);
+  palette.setColor(QPalette::Text, Qt::white);
+  palette.setColor(QPalette::Button, QColor(64, 64, 64));
+  palette.setColor(QPalette::ButtonText, Qt::white);
+  palette.setColor(QPalette::BrightText, Qt::red);
+  palette.setColor(QPalette::Highlight, QColor(64, 128, 96));
+  palette.setColor(QPalette::HighlightedText, Qt::white);
+  qApp->setPalette(palette);
 }
 
-}
+} // namespace
 } /* namespace NLQT */
 
 #endif /* #ifndef NLQT_SERVICE_WINDOW_H */

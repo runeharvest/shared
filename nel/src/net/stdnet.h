@@ -22,42 +22,42 @@
 
 #if defined(_MSC_VER) && defined(_DEBUG)
 #define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
 #include <crtdbg.h>
+#include <stdlib.h>
 #define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
-#include <map>
-#include <set>
-#include <list>
 #include <cmath>
-#include <ctime>
 #include <csignal>
+#include <ctime>
+#include <list>
+#include <map>
 #include <queue>
+#include <set>
 
+#include <algorithm>
+#include <cctype>
+#include <cstdio>
+#include <cstdlib>
 #include <deque>
+#include <exception>
+#include <limits>
 #include <memory>
 #include <string>
-#include <vector>
-#include <cstdio>
 #include <utility>
-#include <cstdlib>
-#include <algorithm>
-#include <exception>
-#include <cctype>
-#include <limits>
+#include <vector>
 
 #include <errno.h>
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/debug.h"
+#include "nel/misc/command.h"
 #include "nel/misc/common.h"
+#include "nel/misc/debug.h"
+#include "nel/misc/hierarchical_timer.h"
+#include "nel/misc/mem_stream.h"
 #include "nel/misc/stream.h"
 #include "nel/misc/time_nl.h"
-#include "nel/misc/command.h"
+#include "nel/misc/types_nl.h"
 #include "nel/misc/variable.h"
-#include "nel/misc/mem_stream.h"
-#include "nel/misc/hierarchical_timer.h"
 
 #ifdef NL_OS_WINDOWS
 #define WIN32_LEAN_AND_MEAN
@@ -75,9 +75,9 @@
 #define NOMINMAX
 #endif
 #endif
+#include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
-#include <windows.h>
 #endif
 
 #endif

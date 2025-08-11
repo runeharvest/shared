@@ -44,95 +44,88 @@ class IMusicChannel;
  * \author Jan Boon (Kaetemi)
  * Roughly based on stuff in old CMusicChannelFMod
  */
-class CMusicChannelFader
-{
+class CMusicChannelFader {
 private:
-	struct _CMusicFader
-	{
-		_CMusicFader()
-		    : MusicChannel(NULL)
-		    , XFadeVolume(0.f)
-		    , XFadeDVolume(0.f)
-		    , Playing(false)
-		    , Fade(false)
-		{
-		}
-		IMusicChannel *MusicChannel;
-		float XFadeVolume; // 0--1
-		float XFadeDVolume; // delta
-		bool Playing;
-		bool Fade;
+  struct _CMusicFader {
+    _CMusicFader()
+        : MusicChannel(NULL), XFadeVolume(0.f), XFadeDVolume(0.f),
+          Playing(false), Fade(false) {}
+    IMusicChannel *MusicChannel;
+    float XFadeVolume;  // 0--1
+    float XFadeDVolume; // delta
+    bool Playing;
+    bool Fade;
 
-		inline void fadeIn(uint xFadeTime)
-		{
-			XFadeVolume = 0.f;
-			XFadeDVolume = 1000.f / xFadeTime;
-			Fade = true;
-		}
+    inline void fadeIn(uint xFadeTime) {
+      XFadeVolume = 0.f;
+      XFadeDVolume = 1000.f / xFadeTime;
+      Fade = true;
+    }
 
-		inline void fadeOut(uint xFadeTime)
-		{
-			XFadeDVolume = -1000.f / xFadeTime;
-			Fade = true;
-		}
-	};
+    inline void fadeOut(uint xFadeTime) {
+      XFadeDVolume = -1000.f / xFadeTime;
+      Fade = true;
+    }
+  };
 
 protected:
-	// const
-	static const uint _MaxMusicFader = 2;
+  // const
+  static const uint _MaxMusicFader = 2;
 
-	// outside pointers
-	ISoundDriver *_SoundDriver;
+  // outside pointers
+  ISoundDriver *_SoundDriver;
 
-	// pointers
-	_CMusicFader _MusicFader[_MaxMusicFader];
+  // pointers
+  _CMusicFader _MusicFader[_MaxMusicFader];
 
-	// instances
-	uint _ActiveMusicFader;
-	float _Gain;
-	NLMISC::TTime _LastTime;
+  // instances
+  uint _ActiveMusicFader;
+  float _Gain;
+  NLMISC::TTime _LastTime;
 
 public:
-	CMusicChannelFader();
-	virtual ~CMusicChannelFader();
-	void init(ISoundDriver *soundDriver);
-	void release();
+  CMusicChannelFader();
+  virtual ~CMusicChannelFader();
+  void init(ISoundDriver *soundDriver);
+  void release();
 
-	void reset();
+  void reset();
 
-	void update(); // time in seconds
-	inline bool isInitOk() { return _SoundDriver != NULL; }
+  void update(); // time in seconds
+  inline bool isInitOk() { return _SoundDriver != NULL; }
 
 private:
-	void updateVolume();
+  void updateVolume();
 
 public:
-	/** Play some music (.ogg etc...)
-	 *	NB: if an old music was played, it is first stop with stopMusic()
-	 *	\param filepath file path, CPath::lookup is done here
-	 *  \param async stream music from hard disk, preload in memory if false
-	 *	\param loop must be true to play the music in loop.
-	 */
-	bool play(const std::string &filepath, uint xFadeTime = 0, bool async = true, bool loop = true);
+  /** Play some music (.ogg etc...)
+   *	NB: if an old music was played, it is first stop with stopMusic()
+   *	\param filepath file path, CPath::lookup is done here
+   *  \param async stream music from hard disk, preload in memory if false
+   *	\param loop must be true to play the music in loop.
+   */
+  bool play(const std::string &filepath, uint xFadeTime = 0, bool async = true,
+            bool loop = true);
 
-	/// Stop the music previously loaded and played (the Memory is also freed)
-	bool stop(uint xFadeTime = 0);
+  /// Stop the music previously loaded and played (the Memory is also freed)
+  bool stop(uint xFadeTime = 0);
 
-	/// Pause the music previously loaded and played (the Memory is not freed)
-	void pause();
+  /// Pause the music previously loaded and played (the Memory is not freed)
+  void pause();
 
-	/// Resume the music previously paused
-	void resume();
+  /// Resume the music previously paused
+  void resume();
 
-	/// Return true if all songs are finished.
-	bool isEnded();
+  /// Return true if all songs are finished.
+  bool isEnded();
 
-	/// Return the total length (in second) of the music currently played
-	float getLength();
+  /// Return the total length (in second) of the music currently played
+  float getLength();
 
-	/// Set the music volume (if any music played). (volume value inside [0 , 1]) (default: 1)
-	/// NB: the volume of music is NOT affected by IListener::setGain()
-	void setVolume(float gain);
+  /// Set the music volume (if any music played). (volume value inside [0 , 1])
+  /// (default: 1) NB: the volume of music is NOT affected by
+  /// IListener::setGain()
+  void setVolume(float gain);
 }; /* class CMusicChannelFader */
 
 } /* namespace NLSOUND */

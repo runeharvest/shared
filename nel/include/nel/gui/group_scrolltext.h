@@ -20,79 +20,79 @@
 #ifndef CL_GROUP_SCROLLTEXT_H
 #define CL_GROUP_SCROLLTEXT_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/gui/interface_group.h"
+#include "nel/misc/types_nl.h"
 
 namespace NLGUI {
 class CCtrlBaseButton;
 class CCtrlScroll;
 class CGroupList;
 
-// Can be used to build a chat window or anything that displays sequences of strings
+// Can be used to build a chat window or anything that displays sequences of
+// strings
 /**
  * Widget to have a resizable scrolltext and its scrollbar
  * \author Nicolas Vizerie
  * \author Nevrax France
  * \date 2002
  */
-class CGroupScrollText : public CInterfaceGroup
-{
+class CGroupScrollText : public CInterfaceGroup {
 public:
-	DECLARE_UI_CLASS(CGroupScrollText)
+  DECLARE_UI_CLASS(CGroupScrollText)
 
-	/// Constructor
-	CGroupScrollText(const TCtorParam &param);
-	~CGroupScrollText();
+  /// Constructor
+  CGroupScrollText(const TCtorParam &param);
+  ~CGroupScrollText();
 
-	std::string getProperty(const std::string &name) const;
-	void setProperty(const std::string &name, const std::string &value);
-	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
+  std::string getProperty(const std::string &name) const;
+  void setProperty(const std::string &name, const std::string &value);
+  xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
 
-	/// CInterfaceGroup Interface
-	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
-	virtual void updateCoords();
-	virtual void checkCoords();
-	virtual void draw();
-	virtual void clearViews();
-	virtual bool handleEvent(const NLGUI::CEventDescriptor &eventDesc);
+  /// CInterfaceGroup Interface
+  virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+  virtual void updateCoords();
+  virtual void checkCoords();
+  virtual void draw();
+  virtual void clearViews();
+  virtual bool handleEvent(const NLGUI::CEventDescriptor &eventDesc);
 
-	// get the list associated to this group
-	CGroupList *getList() const { return _List; }
+  // get the list associated to this group
+  CGroupList *getList() const { return _List; }
 
-	// Get the scroll bar
-	CCtrlScroll *getScrollBar() const { return _ScrollBar; }
+  // Get the scroll bar
+  CCtrlScroll *getScrollBar() const { return _ScrollBar; }
 
-	// from CCtrlBase
-	virtual void elementCaptured(CCtrlBase *capturedElement);
+  // from CCtrlBase
+  virtual void elementCaptured(CCtrlBase *capturedElement);
 
-	// setup vertical scrolling event
-	void smoothScrollY(sint32 dy);
+  // setup vertical scrolling event
+  void smoothScrollY(sint32 dy);
 
-	REFLECT_EXPORT_START(CGroupScrollText, CInterfaceGroup)
-	REFLECT_EXPORT_END
+  REFLECT_EXPORT_START(CGroupScrollText, CInterfaceGroup)
+  REFLECT_EXPORT_END
 
 private:
-	CGroupList *_List;
-	CCtrlScroll *_ScrollBar;
-	CCtrlBaseButton *_ButtonAdd;
-	CCtrlBaseButton *_ButtonSub;
-	bool _Settuped;
-	bool _InvertScrollBar;
-	sint32 _ListHeight;
-	bool _Scrolling;
-	float _ScrollDistance;
-	bool _ClockMsgEventRegistered;
+  CGroupList *_List;
+  CCtrlScroll *_ScrollBar;
+  CCtrlBaseButton *_ButtonAdd;
+  CCtrlBaseButton *_ButtonSub;
+  bool _Settuped;
+  bool _InvertScrollBar;
+  sint32 _ListHeight;
+  bool _Scrolling;
+  float _ScrollDistance;
+  bool _ClockMsgEventRegistered;
 
 protected:
-	void setup();
-	void updateScrollBar();
+  void setup();
+  void updateScrollBar();
 
 public:
-	// private use for action handlers
-	sint32 _StartHeight;
-	sint64 _EllapsedTime;
+  // private use for action handlers
+  sint32 _StartHeight;
+  sint64 _EllapsedTime;
 };
 
-}
+} // namespace NLGUI
 
 #endif

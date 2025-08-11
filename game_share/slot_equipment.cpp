@@ -16,8 +16,8 @@
 
 #include "stdpch.h"
 
-#include "slot_equipment.h"
 #include "nel/misc/string_conversion.h"
+#include "slot_equipment.h"
 
 using namespace std;
 using namespace NLMISC;
@@ -25,38 +25,26 @@ using namespace NLMISC;
 namespace SLOT_EQUIPMENT {
 // The conversion table
 const CStringConversion<TSlotEquipment>::CPair stringTable[] = {
-	{ "Headdress", HEADDRESS },
-	{ "Head", HEAD },
-	{ "Face", FACE },
-	{ "EarL", EARL },
-	{ "EarR", EARR },
-	{ "Neck", NECKLACE },
-	{ "Body", CHEST },
-	{ "Arms", ARMS },
-	{ "WristL", WRISTL },
-	{ "WristR", WRISTR },
-	{ "Hands", HANDS },
-	{ "HandL", HANDL },
-	{ "HandR", HANDR },
-	{ "FingerL", FINGERL },
-	{ "FingerR", FINGERR },
-	{ "Legs", LEGS },
-	{ "AnkleL", ANKLEL },
-	{ "AnkleR", ANKLER },
-	{ "Feet", FEET },
+    {"Headdress", HEADDRESS}, {"Head", HEAD},       {"Face", FACE},
+    {"EarL", EARL},           {"EarR", EARR},       {"Neck", NECKLACE},
+    {"Body", CHEST},          {"Arms", ARMS},       {"WristL", WRISTL},
+    {"WristR", WRISTR},       {"Hands", HANDS},     {"HandL", HANDL},
+    {"HandR", HANDR},         {"FingerL", FINGERL}, {"FingerR", FINGERR},
+    {"Legs", LEGS},           {"AnkleL", ANKLEL},   {"AnkleR", ANKLER},
+    {"Feet", FEET},
 };
 
-CStringConversion<TSlotEquipment> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]), UNDEFINED);
+CStringConversion<TSlotEquipment>
+    conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]),
+               UNDEFINED);
 
 // convert type id to type name string
-const std::string &toString(TSlotEquipment slot_equipment)
-{
-	return conversion.toString(slot_equipment);
+const std::string &toString(TSlotEquipment slot_equipment) {
+  return conversion.toString(slot_equipment);
 }
 
 // convert type name to type enum value
-TSlotEquipment stringToSlotEquipment(const std::string &str)
-{
-	return conversion.fromString(str);
+TSlotEquipment stringToSlotEquipment(const std::string &str) {
+  return conversion.fromString(str);
 }
-}; // SLOT_EQUIPMENT
+}; // namespace SLOT_EQUIPMENT

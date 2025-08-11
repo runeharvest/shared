@@ -34,79 +34,75 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2002
  */
-class CMatrix3x4
-{
+class CMatrix3x4 {
 public:
-	// Order them in memory line first, for faster memory access.
-	float a11, a12, a13, a14;
-	float a21, a22, a23, a24;
-	float a31, a32, a33, a34;
+  // Order them in memory line first, for faster memory access.
+  float a11, a12, a13, a14;
+  float a21, a22, a23, a24;
+  float a31, a32, a33, a34;
 
-	// Copy from a matrix.
-	void set(const NLMISC::CMatrix &mat)
-	{
-		const float *m = mat.get();
-		a11 = m[0];
-		a12 = m[4];
-		a13 = m[8];
-		a14 = m[12];
-		a21 = m[1];
-		a22 = m[5];
-		a23 = m[9];
-		a24 = m[13];
-		a31 = m[2];
-		a32 = m[6];
-		a33 = m[10];
-		a34 = m[14];
-	}
+  // Copy from a matrix.
+  void set(const NLMISC::CMatrix &mat) {
+    const float *m = mat.get();
+    a11 = m[0];
+    a12 = m[4];
+    a13 = m[8];
+    a14 = m[12];
+    a21 = m[1];
+    a22 = m[5];
+    a23 = m[9];
+    a24 = m[13];
+    a31 = m[2];
+    a32 = m[6];
+    a33 = m[10];
+    a34 = m[14];
+  }
 
-	// mulSetvector. NB: in should be different as v!! (else don't work).
-	void mulSetVector(const NLMISC::CVector &in, NLMISC::CVector &out)
-	{
-		out.x = (a11 * in.x + a12 * in.y + a13 * in.z);
-		out.y = (a21 * in.x + a22 * in.y + a23 * in.z);
-		out.z = (a31 * in.x + a32 * in.y + a33 * in.z);
-	}
-	// mulSetpoint. NB: in should be different as v!! (else don't work).
-	void mulSetPoint(const NLMISC::CVector &in, NLMISC::CVector &out)
-	{
-		out.x = (a11 * in.x + a12 * in.y + a13 * in.z + a14);
-		out.y = (a21 * in.x + a22 * in.y + a23 * in.z + a24);
-		out.z = (a31 * in.x + a32 * in.y + a33 * in.z + a34);
-	}
+  // mulSetvector. NB: in should be different as v!! (else don't work).
+  void mulSetVector(const NLMISC::CVector &in, NLMISC::CVector &out) {
+    out.x = (a11 * in.x + a12 * in.y + a13 * in.z);
+    out.y = (a21 * in.x + a22 * in.y + a23 * in.z);
+    out.z = (a31 * in.x + a32 * in.y + a33 * in.z);
+  }
+  // mulSetpoint. NB: in should be different as v!! (else don't work).
+  void mulSetPoint(const NLMISC::CVector &in, NLMISC::CVector &out) {
+    out.x = (a11 * in.x + a12 * in.y + a13 * in.z + a14);
+    out.y = (a21 * in.x + a22 * in.y + a23 * in.z + a24);
+    out.z = (a31 * in.x + a32 * in.y + a33 * in.z + a34);
+  }
 
-	// mulSetvector. NB: in should be different as v!! (else don't work).
-	void mulSetVector(const NLMISC::CVector &in, float scale, NLMISC::CVector &out)
-	{
-		out.x = (a11 * in.x + a12 * in.y + a13 * in.z) * scale;
-		out.y = (a21 * in.x + a22 * in.y + a23 * in.z) * scale;
-		out.z = (a31 * in.x + a32 * in.y + a33 * in.z) * scale;
-	}
-	// mulSetpoint. NB: in should be different as v!! (else don't work).
-	void mulSetPoint(const NLMISC::CVector &in, float scale, NLMISC::CVector &out)
-	{
-		out.x = (a11 * in.x + a12 * in.y + a13 * in.z + a14) * scale;
-		out.y = (a21 * in.x + a22 * in.y + a23 * in.z + a24) * scale;
-		out.z = (a31 * in.x + a32 * in.y + a33 * in.z + a34) * scale;
-	}
+  // mulSetvector. NB: in should be different as v!! (else don't work).
+  void mulSetVector(const NLMISC::CVector &in, float scale,
+                    NLMISC::CVector &out) {
+    out.x = (a11 * in.x + a12 * in.y + a13 * in.z) * scale;
+    out.y = (a21 * in.x + a22 * in.y + a23 * in.z) * scale;
+    out.z = (a31 * in.x + a32 * in.y + a33 * in.z) * scale;
+  }
+  // mulSetpoint. NB: in should be different as v!! (else don't work).
+  void mulSetPoint(const NLMISC::CVector &in, float scale,
+                   NLMISC::CVector &out) {
+    out.x = (a11 * in.x + a12 * in.y + a13 * in.z + a14) * scale;
+    out.y = (a21 * in.x + a22 * in.y + a23 * in.z + a24) * scale;
+    out.z = (a31 * in.x + a32 * in.y + a33 * in.z + a34) * scale;
+  }
 
-	// mulAddvector. NB: in should be different as v!! (else don't work).
-	void mulAddVector(const NLMISC::CVector &in, float scale, NLMISC::CVector &out)
-	{
-		out.x += (a11 * in.x + a12 * in.y + a13 * in.z) * scale;
-		out.y += (a21 * in.x + a22 * in.y + a23 * in.z) * scale;
-		out.z += (a31 * in.x + a32 * in.y + a33 * in.z) * scale;
-	}
-	// mulAddpoint. NB: in should be different as v!! (else don't work).
-	void mulAddPoint(const NLMISC::CVector &in, float scale, NLMISC::CVector &out)
-	{
-		out.x += (a11 * in.x + a12 * in.y + a13 * in.z + a14) * scale;
-		out.y += (a21 * in.x + a22 * in.y + a23 * in.z + a24) * scale;
-		out.z += (a31 * in.x + a32 * in.y + a33 * in.z + a34) * scale;
-	}
+  // mulAddvector. NB: in should be different as v!! (else don't work).
+  void mulAddVector(const NLMISC::CVector &in, float scale,
+                    NLMISC::CVector &out) {
+    out.x += (a11 * in.x + a12 * in.y + a13 * in.z) * scale;
+    out.y += (a21 * in.x + a22 * in.y + a23 * in.z) * scale;
+    out.z += (a31 * in.x + a32 * in.y + a33 * in.z) * scale;
+  }
+  // mulAddpoint. NB: in should be different as v!! (else don't work).
+  void mulAddPoint(const NLMISC::CVector &in, float scale,
+                   NLMISC::CVector &out) {
+    out.x += (a11 * in.x + a12 * in.y + a13 * in.z + a14) * scale;
+    out.y += (a21 * in.x + a22 * in.y + a23 * in.z + a24) * scale;
+    out.z += (a31 * in.x + a32 * in.y + a33 * in.z + a34) * scale;
+  }
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_MATRIX_3X4_H
 

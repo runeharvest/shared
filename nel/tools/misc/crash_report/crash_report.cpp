@@ -23,60 +23,54 @@
 #include <QMessageBox>
 
 #include <stack>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "../../3d/shared_widgets/common.h"
 
-class CCmdLineParser
-{
+class CCmdLineParser {
 public:
-	static void parse(int argc, char **argv, std::vector<std::pair<std::string, std::string>> &v)
-	{
-		std::stack<std::string> stack;
-		std::string key;
-		std::string value;
+  static void parse(int argc, char **argv,
+                    std::vector<std::pair<std::string, std::string>> &v) {
+    std::stack<std::string> stack;
+    std::string key;
+    std::string value;
 
-		for (int i = argc - 1; i >= 0; i--)
-		{
-			stack.push(std::string(argv[i]));
-		}
+    for (int i = argc - 1; i >= 0; i--) {
+      stack.push(std::string(argv[i]));
+    }
 
-		while (!stack.empty())
-		{
-			key = stack.top();
-			stack.pop();
+    while (!stack.empty()) {
+      key = stack.top();
+      stack.pop();
 
-			// If not a real parameter ( they start with '-' ), discard.
-			if (key[0] != '-')
-				continue;
+      // If not a real parameter ( they start with '-' ), discard.
+      if (key[0] != '-')
+        continue;
 
-			// Remove the '-'
-			key = key.substr(1);
+      // Remove the '-'
+      key = key.substr(1);
 
-			// No more parameters
-			if (stack.empty())
-			{
-				v.push_back(std::make_pair(key, ""));
-				break;
-			}
+      // No more parameters
+      if (stack.empty()) {
+        v.push_back(std::make_pair(key, ""));
+        break;
+      }
 
-			value = stack.top();
+      value = stack.top();
 
-			// If next parameter is a key, process it in the next iteration
-			if (value[0] == '-')
-			{
-				v.push_back(std::make_pair(key, ""));
-				continue;
-			}
-			// Otherwise store the pair
-			else
-			{
-				v.push_back(std::make_pair(key, value));
-				stack.pop();
-			}
-		}
-	}
+      // If next parameter is a key, process it in the next iteration
+      if (value[0] == '-') {
+        v.push_back(std::make_pair(key, ""));
+        continue;
+      }
+      // Otherwise store the pair
+      else {
+        v.push_back(std::make_pair(key, value));
+        stack.pop();
+      }
+    }
+  }
 };
 
 #ifdef QT_STATICPLUGIN
@@ -95,38 +89,35 @@ Q_IMPORT_PLUGIN(QICOPlugin)
 
 #endif
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 #if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
-	// Workaround to default -style=gtk+ on recent Cinnamon versions
-	char *currentDesktop = getenv("XDG_CURRENT_DESKTOP");
-	if (currentDesktop)
-	{
-		printf("XDG_CURRENT_DESKTOP: %s\n", currentDesktop);
-		if (!strcmp(currentDesktop, "X-Cinnamon"))
-		{
-			setenv("XDG_CURRENT_DESKTOP", "gnome", 1);
-		}
-	}
+  // Workaround to default -style=gtk+ on recent Cinnamon versions
+  char *currentDesktop = getenv("XDG_CURRENT_DESKTOP");
+  if (currentDesktop) {
+    printf("XDG_CURRENT_DESKTOP: %s\n", currentDesktop);
+    if (!strcmp(currentDesktop, "X-Cinnamon")) {
+      setenv("XDG_CURRENT_DESKTOP", "gnome", 1);
+    }
+  }
 #endif
 
-	NLQT::preApplication();
-	QApplication app(argc, argv);
+  NLQT::preApplication();
+  QApplication app(argc, argv);
 
-	QApplication::setWindowIcon(QIcon(":/icons/nevraxpill.ico"));
+  QApplication::setWindowIcon(QIcon(":/icons/nevraxpill.ico"));
 
-	std::vector<std::pair<std::string, std::string>> params;
+  std::vector<std::pair<std::string, std::string>> params;
 
-	CCmdLineParser::parse(argc, argv, params);
+  CCmdLineParser::parse(argc, argv, params);
 
-	CCrashReportWidget w;
-	w.setup(params);
-	w.show();
+  CCrashReportWidget w;
+  w.setup(params);
+  w.show();
 
-	int ret = app.exec();
+  int ret = app.exec();
 
-	if (ret != EXIT_SUCCESS)
-		return ret;
-	else
-		return w.getReturnValue();
+  if (ret != EXIT_SUCCESS)
+    return ret;
+  else
+    return w.getReturnValue();
 }

@@ -29,55 +29,48 @@ class PatchMesh;
  * \author Nevrax France
  * \date 2001
  */
-class CVertexNeighborhood
-{
+class CVertexNeighborhood {
 public:
-	// Default constructor reserve a good array.
-	CVertexNeighborhood();
+  // Default constructor reserve a good array.
+  CVertexNeighborhood();
 
-	// build it
-	void build(const PatchMesh &patch);
+  // build it
+  void build(const PatchMesh &patch);
 
-	// Get neighbor index
-	uint getNeighborCount(uint neighborId) const
-	{
-		return _VectorIndex[2 * neighborId];
-	}
+  // Get neighbor index
+  uint getNeighborCount(uint neighborId) const {
+    return _VectorIndex[2 * neighborId];
+  }
 
-	// Get neighbor index
-	uint &getNeighborCountRef(uint neighborId)
-	{
-		return _VectorIndex[2 * neighborId];
-	}
+  // Get neighbor index
+  uint &getNeighborCountRef(uint neighborId) {
+    return _VectorIndex[2 * neighborId];
+  }
 
-	// Get neighbor list
-	const uint *getNeighborList(uint neighborId) const
-	{
-		// Const iterator
-		std::vector<uint>::const_iterator ite = _VectorIndex.begin();
-		return (&*ite) + getNeighborIndex(neighborId);
-	}
+  // Get neighbor list
+  const uint *getNeighborList(uint neighborId) const {
+    // Const iterator
+    std::vector<uint>::const_iterator ite = _VectorIndex.begin();
+    return (&*ite) + getNeighborIndex(neighborId);
+  }
 
-	// Get neighbor list
-	uint *getNeighborList(uint neighborId)
-	{
-		return &_VectorIndex[getNeighborIndex(neighborId)];
-	}
+  // Get neighbor list
+  uint *getNeighborList(uint neighborId) {
+    return &_VectorIndex[getNeighborIndex(neighborId)];
+  }
 
-	// Get neighbor count
-	uint getNeighborIndex(uint neighborId) const
-	{
-		return _VectorIndex[2 * neighborId + 1];
-	}
+  // Get neighbor count
+  uint getNeighborIndex(uint neighborId) const {
+    return _VectorIndex[2 * neighborId + 1];
+  }
 
-	// Get neighbor count
-	uint &getNeighborIndexRef(uint neighborId)
-	{
-		return _VectorIndex[2 * neighborId + 1];
-	}
+  // Get neighbor count
+  uint &getNeighborIndexRef(uint neighborId) {
+    return _VectorIndex[2 * neighborId + 1];
+  }
 
 private:
-	std::vector<uint> _VectorIndex;
+  std::vector<uint> _VectorIndex;
 };
 
 extern CVertexNeighborhood vertexNeighborhoodGlobal;

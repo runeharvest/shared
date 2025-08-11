@@ -22,11 +22,10 @@
 
 namespace NLGUI {
 /// Helper class to register reflectable classes
-class CReflectableRegister
-{
+class CReflectableRegister {
 public:
-	static void registerClasses();
+  static void registerClasses();
 };
-}
+} // namespace NLGUI
 
 #endif

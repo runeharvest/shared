@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined(AFX_TILE_EDIT_EXE_H__254ECFC3_F100_41C1_8D5E_BA741F24687D__INCLUDED_)
+#if !defined(                                                                  \
+    AFX_TILE_EDIT_EXE_H__254ECFC3_F100_41C1_8D5E_BA741F24687D__INCLUDED_)
 #define AFX_TILE_EDIT_EXE_H__254ECFC3_F100_41C1_8D5E_BA741F24687D__INCLUDED_
 
 #if _MSC_VER > 1000
@@ -32,29 +33,29 @@
 // See tile_edit_exe.cpp for the implementation of this class
 //
 
-class CTile_edit_exeApp : public CWinApp
-{
+class CTile_edit_exeApp : public CWinApp {
 public:
-	CTile_edit_exeApp();
+  CTile_edit_exeApp();
 
-	// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CTile_edit_exeApp)
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CTile_edit_exeApp)
 public:
-	virtual BOOL InitInstance();
-	//}}AFX_VIRTUAL
+  virtual BOOL InitInstance();
+  //}}AFX_VIRTUAL
 
-	// Implementation
+  // Implementation
 
-	//{{AFX_MSG(CTile_edit_exeApp)
-	afx_msg void OnSaveAs();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  //{{AFX_MSG(CTile_edit_exeApp)
+  afx_msg void OnSaveAs();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before
+// the previous line.
 
 #endif // !defined(AFX_TILE_EDIT_EXE_H__254ECFC3_F100_41C1_8D5E_BA741F24687D__INCLUDED_)

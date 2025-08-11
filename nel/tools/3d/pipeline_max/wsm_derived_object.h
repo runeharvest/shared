@@ -43,17 +43,16 @@ namespace PIPELINE {
  * \author Jan Boon (Kaetemi)
  * CWSMDerivedObject
  */
-class CWSMDerivedObject
-{
+class CWSMDerivedObject {
 protected:
-	// pointers
-	// ...
+  // pointers
+  // ...
 
-	// instances
-	// ...
+  // instances
+  // ...
 public:
-	CWSMDerivedObject();
-	virtual ~CWSMDerivedObject();
+  CWSMDerivedObject();
+  virtual ~CWSMDerivedObject();
 }; /* class CWSMDerivedObject */
 
 } /* namespace PIPELINE */

@@ -17,8 +17,8 @@
 #ifndef NL_LIGHT_INFLUENCE_INTERPOLATOR_H
 #define NL_LIGHT_INFLUENCE_INTERPOLATOR_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/3d/point_light_influence.h"
+#include "nel/misc/types_nl.h"
 #include <vector>
 
 namespace NL3D {
@@ -27,51 +27,45 @@ class CPointLightNamed;
 
 // ***************************************************************************
 /**
- * This class is used by CLandscape and IG/Pacs to compute interpolated influence of lights
- *	(biLinear-like) on a square. It works only with CPointLightNamed.
- * \author Lionel Berenguier
- * \author Nevrax France
- * \date 2001
+ * This class is used by CLandscape and IG/Pacs to compute interpolated
+ *influence of lights (biLinear-like) on a square. It works only with
+ *CPointLightNamed. \author Lionel Berenguier \author Nevrax France \date 2001
  */
-class CLightInfluenceInterpolator
-{
+class CLightInfluenceInterpolator {
 public:
-	/// We support only 2 light per corner.
-	enum
-	{
-		NumLightPerCorner = 2
-	};
+  /// We support only 2 light per corner.
+  enum { NumLightPerCorner = 2 };
 
 public:
-	struct CCorner
-	{
-		// List of lights on this corner
-		CPointLightNamed *Lights[NumLightPerCorner];
+  struct CCorner {
+    // List of lights on this corner
+    CPointLightNamed *Lights[NumLightPerCorner];
 
-	private:
-		friend class CLightInfluenceInterpolator;
-		// biLinear factor
-		float Influence;
-	};
+  private:
+    friend class CLightInfluenceInterpolator;
+    // biLinear factor
+    float Influence;
+  };
 
-	/** The User must setup Lights correctly for each corner (ie set NULL for each light not here).
-	 *	Corner order is TL(0,0), TR(1,0), BL(0,1), BR(1,1).
-	 */
-	CCorner Corners[4];
+  /** The User must setup Lights correctly for each corner (ie set NULL for each
+   *light not here). Corner order is TL(0,0), TR(1,0), BL(0,1), BR(1,1).
+   */
+  CCorner Corners[4];
 
 public:
-	/// Constructor. No-op !!
-	CLightInfluenceInterpolator() { }
+  /// Constructor. No-op !!
+  CLightInfluenceInterpolator() {}
 
-	/** solve the biLinear (regrouping multiple influence of light at same id),
-	 *	and add CPointLightInfluence to the list.
-	 *	\param subX E [0, 1] is the x coord for biLinear
-	 *	\param subY E [0, 1] is the y coord for biLinear
-	 */
-	void interpolate(std::vector<CPointLightInfluence> &pointLightList, float subX, float subY);
+  /** solve the biLinear (regrouping multiple influence of light at same id),
+   *	and add CPointLightInfluence to the list.
+   *	\param subX E [0, 1] is the x coord for biLinear
+   *	\param subY E [0, 1] is the y coord for biLinear
+   */
+  void interpolate(std::vector<CPointLightInfluence> &pointLightList,
+                   float subX, float subY);
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_LIGHT_INFLUENCE_INTERPOLATOR_H
 

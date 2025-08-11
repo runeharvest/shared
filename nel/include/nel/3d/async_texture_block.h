@@ -17,8 +17,8 @@
 #ifndef NL_ASYNC_TEXTURE_BLOCK_H
 #define NL_ASYNC_TEXTURE_BLOCK_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/3d/material.h"
+#include "nel/misc/types_nl.h"
 
 #include <limits>
 
@@ -33,31 +33,28 @@ class CMeshBaseInstance;
  * \author Nevrax France
  * \date 2002
  */
-class CAsyncTextureBlock
-{
+class CAsyncTextureBlock {
 public:
-	// List of texture file names for a material
-	std::string TextureNames[IDRV_MAT_MAXTEXTURES];
+  // List of texture file names for a material
+  std::string TextureNames[IDRV_MAT_MAXTEXTURES];
 
-	CAsyncTextureBlock()
-	{
-		for (uint i = 0; i < IDRV_MAT_MAXTEXTURES; i++)
-		{
-			TextIds[i] = std::numeric_limits<uint>::max();
-			IsTextureFile[i] = false;
-		}
-	}
-	bool isTextureFile(uint stage) const { return IsTextureFile[stage]; }
+  CAsyncTextureBlock() {
+    for (uint i = 0; i < IDRV_MAT_MAXTEXTURES; i++) {
+      TextIds[i] = std::numeric_limits<uint>::max();
+      IsTextureFile[i] = false;
+    }
+  }
+  bool isTextureFile(uint stage) const { return IsTextureFile[stage]; }
 
 private:
-	friend class CMeshBaseInstance;
-	// Ids in the CAsyncTextureManager
-	uint TextIds[IDRV_MAT_MAXTEXTURES];
-	// true if the texture in the stage is really a texture file.
-	bool IsTextureFile[IDRV_MAT_MAXTEXTURES];
+  friend class CMeshBaseInstance;
+  // Ids in the CAsyncTextureManager
+  uint TextIds[IDRV_MAT_MAXTEXTURES];
+  // true if the texture in the stage is really a texture file.
+  bool IsTextureFile[IDRV_MAT_MAXTEXTURES];
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_ASYNC_TEXTURE_BLOCK_H
 

@@ -35,16 +35,12 @@ namespace NL3D {
 
 // ***************************************************************************
 
-CPixelProgram::CPixelProgram()
-{
-}
+CPixelProgram::CPixelProgram() {}
 
 // ***************************************************************************
 
-CPixelProgram::~CPixelProgram()
-{
-}
+CPixelProgram::~CPixelProgram() {}
 
 // ***************************************************************************
 
-} // NL3D
+} // namespace NL3D

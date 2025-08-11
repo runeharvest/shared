@@ -17,8 +17,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdpch.h"
 #include "nel/gui/view_link.h"
+#include "stdpch.h"
 
 #include "nel/misc/bit_mem_stream.h"
 #include "nel/misc/i18n.h"
@@ -35,35 +35,27 @@ namespace NLGUI {
 
 // ***************************************************************************
 
-CViewLink::CViewLink(const TCtorParam &param)
-    : CViewText(param)
-{
-	HTML = NULL;
+CViewLink::CViewLink(const TCtorParam &param) : CViewText(param) {
+  HTML = NULL;
 }
 
 // ***************************************************************************
 
-void CViewLink::setHTMLView(CGroupHTML *html)
-{
-	HTML = html;
+void CViewLink::setHTMLView(CGroupHTML *html) { HTML = html; }
+
+// ***************************************************************************
+bool CViewLink::getMouseOverShape(string &texName, uint8 &rot, CRGBA &col) {
+  if (HTML != NULL) {
+    if (!LinkTitle.empty()) {
+      texName = LinkTitle;
+      rot = 0;
+      col = CRGBA::White;
+      return true;
+    }
+  }
+
+  return false;
 }
 
 // ***************************************************************************
-bool CViewLink::getMouseOverShape(string &texName, uint8 &rot, CRGBA &col)
-{
-	if (HTML != NULL)
-	{
-		if (!LinkTitle.empty())
-		{
-			texName = LinkTitle;
-			rot = 0;
-			col = CRGBA::White;
-			return true;
-		}
-	}
-
-	return false;
-}
-
-// ***************************************************************************
-}
+} // namespace NLGUI

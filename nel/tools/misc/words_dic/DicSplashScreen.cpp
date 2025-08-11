@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "DicSplashScreen.h"
 #include "StdAfx.h"
 #include "words_dic.h"
-#include "DicSplashScreen.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -28,19 +28,17 @@ static char THIS_FILE[] = __FILE__;
 // CDicSplashScreen dialog
 
 CDicSplashScreen::CDicSplashScreen(CWnd *pParent /*=NULL*/)
-    : CDialog(CDicSplashScreen::IDD, pParent)
-{
-	//{{AFX_DATA_INIT(CDicSplashScreen)
-	// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
+    : CDialog(CDicSplashScreen::IDD, pParent) {
+  //{{AFX_DATA_INIT(CDicSplashScreen)
+  // NOTE: the ClassWizard will add member initialization here
+  //}}AFX_DATA_INIT
 }
 
-void CDicSplashScreen::DoDataExchange(CDataExchange *pDX)
-{
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CDicSplashScreen)
-	// NOTE: the ClassWizard will add DDX and DDV calls here
-	//}}AFX_DATA_MAP
+void CDicSplashScreen::DoDataExchange(CDataExchange *pDX) {
+  CDialog::DoDataExchange(pDX);
+  //{{AFX_DATA_MAP(CDicSplashScreen)
+  // NOTE: the ClassWizard will add DDX and DDV calls here
+  //}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(CDicSplashScreen, CDialog)

@@ -35,36 +35,38 @@ namespace NLQT {
  * \date 2010-02-05 17:29GMT
  * \author Jan Boon (Kaetemi)
  */
-class CInternationalization : public NLMISC::CManualSingleton<CInternationalization> // singleton due to ci18n issues
+class CInternationalization
+    : public NLMISC::CManualSingleton<CInternationalization> // singleton due to
+                                                             // ci18n issues
 {
 public:
-	CInternationalization();
-	virtual ~CInternationalization();
+  CInternationalization();
+  virtual ~CInternationalization();
 
-	void init(CConfiguration *configuration);
-	void release();
+  void init(CConfiguration *configuration);
+  void release();
 
-	/// Sets the language code, but does not store to the config file
-	void setLanguageCode(const std::string &language);
-	/// Load the language code that was stored in the config file
-	void loadLanguageCode();
-	/// Sets the language code and stores it to the config file
-	void saveLanguageCode(const std::string &language);
+  /// Sets the language code, but does not store to the config file
+  void setLanguageCode(const std::string &language);
+  /// Load the language code that was stored in the config file
+  void loadLanguageCode();
+  /// Sets the language code and stores it to the config file
+  void saveLanguageCode(const std::string &language);
 
-	void enableCallback(CEmptyCallback incb);
-	void disableCallback(CEmptyCallback incb);
-
-private:
-	void cfcbLanguageCode(NLMISC::CConfigFile::CVar &var);
-	void cfcbLanguageCode(const std::string &language);
+  void enableCallback(CEmptyCallback incb);
+  void disableCallback(CEmptyCallback incb);
 
 private:
-	CConfiguration *m_Configuration;
-	std::vector<CEmptyCallback> m_Callbacks;
+  void cfcbLanguageCode(NLMISC::CConfigFile::CVar &var);
+  void cfcbLanguageCode(const std::string &language);
 
 private:
-	CInternationalization(const CInternationalization &);
-	CInternationalization &operator=(const CInternationalization &);
+  CConfiguration *m_Configuration;
+  std::vector<CEmptyCallback> m_Callbacks;
+
+private:
+  CInternationalization(const CInternationalization &);
+  CInternationalization &operator=(const CInternationalization &);
 
 }; /* class CInternationalization */
 

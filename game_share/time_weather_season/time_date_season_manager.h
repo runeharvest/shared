@@ -21,8 +21,8 @@
 #define RY_TIME_DATE_SEASON_MANAGER_H
 
 // Game share
-#include "time_and_season.h"
 #include "static_light_cycle.h"
+#include "time_and_season.h"
 
 /**
  * Ryzom Time, date and season manager
@@ -30,27 +30,30 @@
  * \author Nevrax France
  * \date 2002
  */
-class CTimeDateSeasonManager
-{
+class CTimeDateSeasonManager {
 public:
-	// init RyzomTime, date, weather
-	static void init(uint32 startDay = RYZOM_START_DAY, float startTime = RYZOM_START_HOUR);
-	static void packSheets(const std::string &writeDirectory);
+  // init RyzomTime, date, weather
+  static void init(uint32 startDay = RYZOM_START_DAY,
+                   float startTime = RYZOM_START_HOUR);
+  static void packSheets(const std::string &writeDirectory);
 
-	// tick update => update ryzom time
-	static void tickUpdate();
+  // tick update => update ryzom time
+  static void tickUpdate();
 
-	static const CRyzomTime &getRyzomTimeReference() { return _RyzomTime; }
-	static CRyzomTime &getRyzomTimeNoConstReference() { return _RyzomTime; }
-	static CRyzomTime::ETimeOfDay getDayCycle() { return _DayCycle; }
+  static const CRyzomTime &getRyzomTimeReference() { return _RyzomTime; }
+  static CRyzomTime &getRyzomTimeNoConstReference() { return _RyzomTime; }
+  static CRyzomTime::ETimeOfDay getDayCycle() { return _DayCycle; }
 
 private:
-	static void setDayCycle(float RyzomTime, CRyzomTime::ESeason Season);
-	static bool isInInterval(float start, float end, float value) { return start <= end ? value >= start && value < end : value >= start || value < end; }
+  static void setDayCycle(float RyzomTime, CRyzomTime::ESeason Season);
+  static bool isInInterval(float start, float end, float value) {
+    return start <= end ? value >= start && value < end
+                        : value >= start || value < end;
+  }
 
-	static CRyzomTime _RyzomTime;
-	static CRyzomTime::ETimeOfDay _DayCycle;
-	static std::map<NLMISC::CSheetId, CStaticLightCycle> _StaticLightCyclesHours;
+  static CRyzomTime _RyzomTime;
+  static CRyzomTime::ETimeOfDay _DayCycle;
+  static std::map<NLMISC::CSheetId, CStaticLightCycle> _StaticLightCyclesHours;
 };
 
 #endif // RY_TIME_DATE_SEASON_MANAGER_H

@@ -20,45 +20,45 @@
 #include "nel/misc/types_nl.h"
 
 namespace CONTINENT {
-enum TContinent
-{
-	FYROS = 0,
-	ZORAI,
-	TRYKER,
-	MATIS,
-	BAGNE,
-	NEXUS,
-	ROUTE_GOUFFRE,
-	SOURCES,
-	TERRE,
-	FYROS_ISLAND,
-	FYROS_NEWBIE,
-	TRYKER_ISLAND,
-	TRYKER_NEWBIE,
-	ZORAI_ISLAND,
-	MATIS_ISLAND,
-	ZORAI_NEWBIE,
-	MATIS_NEWBIE,
-	TESTROOM,
-	INDOORS,
-	NEWBIELAND,
-	R2_ROOTS,
-	R2_DESERT,
-	R2_LAKES,
-	R2_FOREST,
-	R2_JUNGLE,
-	CORRUPTED_MOOR,
-	KITINIERE,
+enum TContinent {
+  FYROS = 0,
+  ZORAI,
+  TRYKER,
+  MATIS,
+  BAGNE,
+  NEXUS,
+  ROUTE_GOUFFRE,
+  SOURCES,
+  TERRE,
+  FYROS_ISLAND,
+  FYROS_NEWBIE,
+  TRYKER_ISLAND,
+  TRYKER_NEWBIE,
+  ZORAI_ISLAND,
+  MATIS_ISLAND,
+  ZORAI_NEWBIE,
+  MATIS_NEWBIE,
+  TESTROOM,
+  INDOORS,
+  NEWBIELAND,
+  R2_ROOTS,
+  R2_DESERT,
+  R2_LAKES,
+  R2_FOREST,
+  R2_JUNGLE,
+  CORRUPTED_MOOR,
+  KITINIERE,
 
-	UNKNOWN,
-	//		NB_RESPAWN_POINT_TYPE = UNKNOWN,
-	NB_CONTINENTS = UNKNOWN
+  UNKNOWN,
+  //		NB_RESPAWN_POINT_TYPE = UNKNOWN,
+  NB_CONTINENTS = UNKNOWN
 };
 
 /**
  * get continent type corresponding to input string
  * \param str the input string
- * \return the TContinent associated to this string (UNKNOWN if the string cannot be interpreted)
+ * \return the TContinent associated to this string (UNKNOWN if the string
+ * cannot be interpreted)
  */
 TContinent toContinent(const std::string &str);
 
@@ -71,36 +71,24 @@ const std::string &toString(TContinent continent);
 
 // A small wrapper around the continent enum to allow it
 // to be used as a serialisable map key.
-struct TContinentId
-{
+struct TContinentId {
 
-	TContinentId()
-	    : _Continent(CONTINENT::UNKNOWN)
-	{
-	}
+  TContinentId() : _Continent(CONTINENT::UNKNOWN) {}
 
-	TContinentId(CONTINENT::TContinent cont)
-	    : _Continent(cont)
-	{
-	}
+  TContinentId(CONTINENT::TContinent cont) : _Continent(cont) {}
 
-	void serial(NLMISC::IStream &s)
-	{
-		s.serialEnum(_Continent);
-	}
+  void serial(NLMISC::IStream &s) { s.serialEnum(_Continent); }
 
-	bool operator<(const TContinentId &other) const
-	{
-		return _Continent < other._Continent;
-	}
+  bool operator<(const TContinentId &other) const {
+    return _Continent < other._Continent;
+  }
 
-	bool operator==(const TContinentId &other) const
-	{
-		return _Continent == other._Continent;
-	}
+  bool operator==(const TContinentId &other) const {
+    return _Continent == other._Continent;
+  }
 
 private:
-	CONTINENT::TContinent _Continent;
+  CONTINENT::TContinent _Continent;
 };
 
 // A container to host respawn points counters

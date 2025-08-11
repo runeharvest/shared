@@ -26,8 +26,8 @@
 // pick_sound.h : header file
 //
 #include "nel/misc/string_mapper.h"
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace NLSOUND {
 class USource;
@@ -36,57 +36,55 @@ class USource;
 /////////////////////////////////////////////////////////////////////////////
 // CPickSound dialog
 
-class CPickSound : public CDialog
-{
-	// Construction
+class CPickSound : public CDialog {
+  // Construction
 public:
-	typedef std::vector<NLMISC::TStringId> TNameVect;
-	CPickSound(const TNameVect &names, CWnd *pParent = NULL); // standard constructor
+  typedef std::vector<NLMISC::TStringId> TNameVect;
+  CPickSound(const TNameVect &names,
+             CWnd *pParent = NULL); // standard constructor
 
-	const NLMISC::TStringId &getName(void) const { return _CurrName; }
+  const NLMISC::TStringId &getName(void) const { return _CurrName; }
 
-	// Dialog Data
-	//{{AFX_DATA(CPickSound)
-	enum
-	{
-		IDD = IDD_PICK_SOUND
-	};
-	CListBox m_NameList;
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(CPickSound)
+  enum { IDD = IDD_PICK_SOUND };
+  CListBox m_NameList;
+  //}}AFX_DATA
 
-	// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CPickSound)
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CPickSound)
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
-	//}}AFX_VIRTUAL
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+                                                   //}}AFX_VIRTUAL
 
-	// Implementation
+  // Implementation
 protected:
-	TNameVect _Names;
-	NLMISC::TStringId _CurrName;
+  TNameVect _Names;
+  NLMISC::TStringId _CurrName;
 
-	UINT_PTR _Timer;
+  UINT_PTR _Timer;
 
-	NLMISC::CVector _BackupVel;
-	float _BackupGain;
-	NLSOUND::USource *_CurrSource;
+  NLMISC::CVector _BackupVel;
+  float _BackupGain;
+  NLSOUND::USource *_CurrSource;
 
-	// Generated message map functions
-	//{{AFX_MSG(CPickSound)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnSelchange();
-	afx_msg void OnPlaySound();
-	afx_msg void OnTimer(UINT_PTR nIDEvent);
-	afx_msg void OnDestroy();
-	afx_msg void OnDblclkList();
-	afx_msg void OnClose();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-	void stopCurrSource();
+  // Generated message map functions
+  //{{AFX_MSG(CPickSound)
+  virtual BOOL OnInitDialog();
+  afx_msg void OnSelchange();
+  afx_msg void OnPlaySound();
+  afx_msg void OnTimer(UINT_PTR nIDEvent);
+  afx_msg void OnDestroy();
+  afx_msg void OnDblclkList();
+  afx_msg void OnClose();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
+  void stopCurrSource();
 };
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before
+// the previous line.
 
 #endif // !defined(AFX_PICK_SOUND_H__14638414_B951_439C_A087_5468A8CDFCE1__INCLUDED_)

@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdmisc.h"
+#include "nel/misc/async_file_manager.h"
 #include "nel/misc/file.h"
 #include "nel/misc/path.h"
-#include "nel/misc/async_file_manager.h"
+#include "stdmisc.h"
 
 using namespace std;
 
@@ -49,53 +49,51 @@ NLMISC_SAFE_SINGLETON_IMPL(CAsyncFileManager);
 */
 // ***************************************************************************
 
-void CAsyncFileManager::terminate()
-{
-	if (_Instance != NULL)
-	{
-		INelContext::getInstance().releaseSingletonPointer("CAsyncFileManager", _Instance);
-		delete _Instance;
-		_Instance = NULL;
-	}
+void CAsyncFileManager::terminate() {
+  if (_Instance != NULL) {
+    INelContext::getInstance().releaseSingletonPointer("CAsyncFileManager",
+                                                       _Instance);
+    delete _Instance;
+    _Instance = NULL;
+  }
 }
 
-void CAsyncFileManager::addLoadTask(IRunnable *ploadTask)
-{
-	addTask(ploadTask);
+void CAsyncFileManager::addLoadTask(IRunnable *ploadTask) {
+  addTask(ploadTask);
 }
 
-bool CAsyncFileManager::cancelLoadTask(const CAsyncFileManager::ICancelCallback &callback)
-{
-	CSynchronized<list<CWaitingTask>>::CAccessor acces(&_TaskQueue);
-	list<CWaitingTask> &rTaskQueue = acces.value();
-	list<CWaitingTask>::iterator it = rTaskQueue.begin();
+bool CAsyncFileManager::cancelLoadTask(
+    const CAsyncFileManager::ICancelCallback &callback) {
+  CSynchronized<list<CWaitingTask>>::CAccessor acces(&_TaskQueue);
+  list<CWaitingTask> &rTaskQueue = acces.value();
+  list<CWaitingTask>::iterator it = rTaskQueue.begin();
 
-	while (it != rTaskQueue.end())
-	{
-		IRunnable *pR = it->Task;
+  while (it != rTaskQueue.end()) {
+    IRunnable *pR = it->Task;
 
-		// check the task with the cancel callback.
-		if (callback.callback(pR))
-		{
-			// Delete the load task
-			delete pR;
-			rTaskQueue.erase(it);
-			return true;
-		}
-		++it;
-	}
+    // check the task with the cancel callback.
+    if (callback.callback(pR)) {
+      // Delete the load task
+      delete pR;
+      rTaskQueue.erase(it);
+      return true;
+    }
+    ++it;
+  }
 
-	// If not found, the current running task may be the one we want to cancel. Must wait it.
-	// Beware that this code works because of the CSynchronized access we made above (ensure that the
-	// taskmanager will end just the current task async (if any) and won't start an other one.
-	waitCurrentTaskToComplete();
+  // If not found, the current running task may be the one we want to cancel.
+  // Must wait it. Beware that this code works because of the CSynchronized
+  // access we made above (ensure that the taskmanager will end just the current
+  // task async (if any) and won't start an other one.
+  waitCurrentTaskToComplete();
 
-	return false;
+  return false;
 }
 
 // ***************************************************************************
 /*
-void CAsyncFileManager::loadMesh(const std::string& meshName, IShape **ppShp, IDriver *pDriver)
+void CAsyncFileManager::loadMesh(const std::string& meshName, IShape **ppShp,
+IDriver *pDriver)
 {
     addTask (new CMeshLoad(meshName, ppShp, pDriver));
 }
@@ -129,63 +127,57 @@ bool CAsyncFileManager::cancelLoadMesh(const std::string& sMeshName)
 */
 // ***************************************************************************
 /*
-void CAsyncFileManager::loadIG (const std::string& IGName, CInstanceGroup **ppIG)
+void CAsyncFileManager::loadIG (const std::string& IGName, CInstanceGroup
+**ppIG)
 {
     addTask (new CIGLoad(IGName, ppIG));
 }
 
 // ***************************************************************************
 
-void CAsyncFileManager::loadIGUser (const std::string& IGName, UInstanceGroup **ppIG)
+void CAsyncFileManager::loadIGUser (const std::string& IGName, UInstanceGroup
+**ppIG)
 {
     addTask (new CIGLoadUser(IGName, ppIG));
 }
 */
 // ***************************************************************************
 
-void CAsyncFileManager::loadFile(const std::string &sFileName, uint8 **ppFile)
-{
-	addTask(new CFileLoad(sFileName, ppFile));
+void CAsyncFileManager::loadFile(const std::string &sFileName, uint8 **ppFile) {
+  addTask(new CFileLoad(sFileName, ppFile));
 }
 
 // ***************************************************************************
 
-void CAsyncFileManager::loadFiles(const std::vector<std::string> &vFileNames, const std::vector<uint8 **> &vPtrs)
-{
-	addTask(new CMultipleFileLoad(vFileNames, vPtrs));
+void CAsyncFileManager::loadFiles(const std::vector<std::string> &vFileNames,
+                                  const std::vector<uint8 **> &vPtrs) {
+  addTask(new CMultipleFileLoad(vFileNames, vPtrs));
 }
 
 // ***************************************************************************
 
-void CAsyncFileManager::signal(bool *pSgn)
-{
-	addTask(new CSignal(pSgn));
-}
+void CAsyncFileManager::signal(bool *pSgn) { addTask(new CSignal(pSgn)); }
 
 // ***************************************************************************
 
-void CAsyncFileManager::cancelSignal(bool *pSgn)
-{
-	CSynchronized<list<CWaitingTask>>::CAccessor acces(&_TaskQueue);
-	list<CWaitingTask> &rTaskQueue = acces.value();
-	list<CWaitingTask>::iterator it = rTaskQueue.begin();
+void CAsyncFileManager::cancelSignal(bool *pSgn) {
+  CSynchronized<list<CWaitingTask>>::CAccessor acces(&_TaskQueue);
+  list<CWaitingTask> &rTaskQueue = acces.value();
+  list<CWaitingTask>::iterator it = rTaskQueue.begin();
 
-	while (it != rTaskQueue.end())
-	{
-		IRunnable *pR = it->Task;
-		CSignal *pS = dynamic_cast<CSignal *>(pR);
-		if (pS != NULL)
-		{
-			if (pS->Sgn == pSgn)
-			{
-				// Delete signal task
-				delete pS;
-				rTaskQueue.erase(it);
-				return;
-			}
-		}
-		++it;
-	}
+  while (it != rTaskQueue.end()) {
+    IRunnable *pR = it->Task;
+    CSignal *pS = dynamic_cast<CSignal *>(pR);
+    if (pS != NULL) {
+      if (pS->Sgn == pSgn) {
+        // Delete signal task
+        delete pS;
+        rTaskQueue.erase(it);
+        return;
+      }
+    }
+    ++it;
+  }
 }
 
 // ***************************************************************************
@@ -193,37 +185,32 @@ void CAsyncFileManager::cancelSignal(bool *pSgn)
 // ***************************************************************************
 
 // ***************************************************************************
-CAsyncFileManager::CFileLoad::CFileLoad(const std::string &sFileName, uint8 **ppFile)
-{
-	_FileName = sFileName;
-	_ppFile = ppFile;
+CAsyncFileManager::CFileLoad::CFileLoad(const std::string &sFileName,
+                                        uint8 **ppFile) {
+  _FileName = sFileName;
+  _ppFile = ppFile;
 }
 
 // ***************************************************************************
-void CAsyncFileManager::CFileLoad::run(void)
-{
-	FILE *f = nlfopen(_FileName, "rb");
-	if (f != NULL)
-	{
-		uint32 filesize = CFile::getFileSize(f);
-		uint8 *ptr = new uint8[filesize];
-		if (fread(ptr, filesize, 1, f) != 1)
-			nlwarning("AFM: Couldn't read '%s'", _FileName.c_str());
-		fclose(f);
+void CAsyncFileManager::CFileLoad::run(void) {
+  FILE *f = nlfopen(_FileName, "rb");
+  if (f != NULL) {
+    uint32 filesize = CFile::getFileSize(f);
+    uint8 *ptr = new uint8[filesize];
+    if (fread(ptr, filesize, 1, f) != 1)
+      nlwarning("AFM: Couldn't read '%s'", _FileName.c_str());
+    fclose(f);
 
-		*_ppFile = ptr;
-	}
-	else
-	{
-		nlwarning("AFM: Couldn't load '%s'", _FileName.c_str());
-		*_ppFile = (uint8 *)-1;
-	}
+    *_ppFile = ptr;
+  } else {
+    nlwarning("AFM: Couldn't load '%s'", _FileName.c_str());
+    *_ppFile = (uint8 *)-1;
+  }
 }
 
 // ***************************************************************************
-void CAsyncFileManager::CFileLoad::getName(std::string &result) const
-{
-	result = "FileLoad (" + _FileName + ")";
+void CAsyncFileManager::CFileLoad::getName(std::string &result) const {
+  result = "FileLoad (" + _FileName + ")";
 }
 
 // ***************************************************************************
@@ -231,71 +218,59 @@ void CAsyncFileManager::CFileLoad::getName(std::string &result) const
 // ***************************************************************************
 
 // ***************************************************************************
-CAsyncFileManager::CMultipleFileLoad::CMultipleFileLoad(const std::vector<std::string> &vFileNames,
-    const std::vector<uint8 **> &vPtrs)
-{
-	_FileNames = vFileNames;
-	_Ptrs = vPtrs;
+CAsyncFileManager::CMultipleFileLoad::CMultipleFileLoad(
+    const std::vector<std::string> &vFileNames,
+    const std::vector<uint8 **> &vPtrs) {
+  _FileNames = vFileNames;
+  _Ptrs = vPtrs;
 }
 
 // ***************************************************************************
-void CAsyncFileManager::CMultipleFileLoad::run(void)
-{
-	for (uint32 i = 0; i < _FileNames.size(); ++i)
-	{
-		FILE *f = nlfopen(_FileNames[i], "rb");
-		if (f != NULL)
-		{
-			uint32 filesize = CFile::getFileSize(f);
-			uint8 *ptr = new uint8[filesize];
-			if (fread(ptr, filesize, 1, f) != 1)
-				nlwarning("AFM: Couldn't read '%s'", _FileNames[i].c_str());
-			fclose(f);
+void CAsyncFileManager::CMultipleFileLoad::run(void) {
+  for (uint32 i = 0; i < _FileNames.size(); ++i) {
+    FILE *f = nlfopen(_FileNames[i], "rb");
+    if (f != NULL) {
+      uint32 filesize = CFile::getFileSize(f);
+      uint8 *ptr = new uint8[filesize];
+      if (fread(ptr, filesize, 1, f) != 1)
+        nlwarning("AFM: Couldn't read '%s'", _FileNames[i].c_str());
+      fclose(f);
 
-			*_Ptrs[i] = ptr;
-		}
-		else
-		{
-			nlwarning("AFM: Couldn't load '%s'", _FileNames[i].c_str());
-			*_Ptrs[i] = (uint8 *)-1;
-		}
-	}
+      *_Ptrs[i] = ptr;
+    } else {
+      nlwarning("AFM: Couldn't load '%s'", _FileNames[i].c_str());
+      *_Ptrs[i] = (uint8 *)-1;
+    }
+  }
 }
 
 // ***************************************************************************
-void CAsyncFileManager::CMultipleFileLoad::getName(std::string &result) const
-{
-	result = "MultipleFileLoad (";
-	uint i;
-	for (i = 0; i < _FileNames.size(); i++)
-	{
-		if (i)
-			result += ", ";
-		result += _FileNames[i];
-	}
-	result += ")";
+void CAsyncFileManager::CMultipleFileLoad::getName(std::string &result) const {
+  result = "MultipleFileLoad (";
+  uint i;
+  for (i = 0; i < _FileNames.size(); i++) {
+    if (i)
+      result += ", ";
+    result += _FileNames[i];
+  }
+  result += ")";
 }
 // ***************************************************************************
 // Signal
 // ***************************************************************************
 
 // ***************************************************************************
-CAsyncFileManager::CSignal::CSignal(bool *pSgn)
-{
-	Sgn = pSgn;
-	*Sgn = false;
+CAsyncFileManager::CSignal::CSignal(bool *pSgn) {
+  Sgn = pSgn;
+  *Sgn = false;
 }
 
 // ***************************************************************************
-void CAsyncFileManager::CSignal::run(void)
-{
-	*Sgn = true;
-}
+void CAsyncFileManager::CSignal::run(void) { *Sgn = true; }
 
 // ***************************************************************************
-void CAsyncFileManager::CSignal::getName(std::string &result) const
-{
-	result = "Signal";
+void CAsyncFileManager::CSignal::getName(std::string &result) const {
+  result = "Signal";
 }
 
-} // NLMISC
+} // namespace NLMISC

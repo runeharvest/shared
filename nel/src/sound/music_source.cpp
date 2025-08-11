@@ -20,58 +20,61 @@
 
 #include "stdsound.h"
 
-#include "nel/sound/music_source.h"
-#include "nel/sound/music_sound.h"
 #include "nel/sound/audio_mixer_user.h"
+#include "nel/sound/music_sound.h"
 #include "nel/sound/music_sound_manager.h"
+#include "nel/sound/music_source.h"
 
 namespace NLSOUND {
 
 // ***************************************************************************
-CMusicSource::CMusicSource(CMusicSound *musicSound, bool spawn, TSpawnEndCallback cb, void *cbUserParam, NL3D::CCluster *cluster, CGroupController *groupController)
-    : CSourceCommon(musicSound, spawn, cb, cbUserParam, cluster, groupController)
-{
-	_MusicSound = musicSound;
+CMusicSource::CMusicSource(CMusicSound *musicSound, bool spawn,
+                           TSpawnEndCallback cb, void *cbUserParam,
+                           NL3D::CCluster *cluster,
+                           CGroupController *groupController)
+    : CSourceCommon(musicSound, spawn, cb, cbUserParam, cluster,
+                    groupController) {
+  _MusicSound = musicSound;
 }
 
 // ***************************************************************************
-CMusicSource::~CMusicSource()
-{
-	if (isPlaying())
-		stop();
+CMusicSource::~CMusicSource() {
+  if (isPlaying())
+    stop();
 
-	// avoid any bug, ensure the source is removed
-	CAudioMixerUser::instance()->getBackgroundMusicManager()->removeMusicSourcePlaying(this);
+  // avoid any bug, ensure the source is removed
+  CAudioMixerUser::instance()
+      ->getBackgroundMusicManager()
+      ->removeMusicSourcePlaying(this);
 }
 
 // ***************************************************************************
-TSoundId CMusicSource::getSound()
-{
-	return _MusicSound;
+TSoundId CMusicSource::getSound() { return _MusicSound; }
+
+// ***************************************************************************
+void CMusicSource::play() {
+  // if already playing, no-op (don't restart)
+  if (isPlaying())
+    return;
+
+  // append and play common
+  CAudioMixerUser::instance()
+      ->getBackgroundMusicManager()
+      ->addMusicSourcePlaying(this);
+  CSourceCommon::play();
 }
 
 // ***************************************************************************
-void CMusicSource::play()
-{
-	// if already playing, no-op (don't restart)
-	if (isPlaying())
-		return;
+void CMusicSource::stop() {
+  // if already non-playing, no-op (don't restop)
+  if (!isPlaying())
+    return;
 
-	// append and play common
-	CAudioMixerUser::instance()->getBackgroundMusicManager()->addMusicSourcePlaying(this);
-	CSourceCommon::play();
+  // remove and stop common
+  CAudioMixerUser::instance()
+      ->getBackgroundMusicManager()
+      ->removeMusicSourcePlaying(this);
+  CSourceCommon::stop();
 }
 
-// ***************************************************************************
-void CMusicSource::stop()
-{
-	// if already non-playing, no-op (don't restop)
-	if (!isPlaying())
-		return;
-
-	// remove and stop common
-	CAudioMixerUser::instance()->getBackgroundMusicManager()->removeMusicSourcePlaying(this);
-	CSourceCommon::stop();
-}
-
-} // NLSOUND
+} // namespace NLSOUND

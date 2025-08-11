@@ -16,8 +16,8 @@
 
 #include "stdpch.h"
 
-#include "nel/misc/debug.h"
 #include "creature_size.h"
+#include "nel/misc/debug.h"
 
 using namespace std;
 
@@ -31,57 +31,48 @@ const static string unknown_str = "UNKNOWN";
 //-----------------------------------------------
 // initMap :
 //-----------------------------------------------
-void initMap()
-{
-	mapInitialized = true;
+void initMap() {
+  mapInitialized = true;
 
-	StringToSizeMap.insert(make_pair(string("SMALL"), SMALL));
-	SizeToStringMap.insert(make_pair(SMALL, string("SMALL")));
+  StringToSizeMap.insert(make_pair(string("SMALL"), SMALL));
+  SizeToStringMap.insert(make_pair(SMALL, string("SMALL")));
 
-	StringToSizeMap.insert(make_pair(string("HOMIN"), HOMIN));
-	SizeToStringMap.insert(make_pair(HOMIN, string("HOMIN")));
+  StringToSizeMap.insert(make_pair(string("HOMIN"), HOMIN));
+  SizeToStringMap.insert(make_pair(HOMIN, string("HOMIN")));
 
-	StringToSizeMap.insert(make_pair(string("BIG"), BIG));
-	SizeToStringMap.insert(make_pair(BIG, string("BIG")));
+  StringToSizeMap.insert(make_pair(string("BIG"), BIG));
+  SizeToStringMap.insert(make_pair(BIG, string("BIG")));
 
 } // initMap //
 
 //-----------------------------------------------
 // stringToCreatureSize :
 //-----------------------------------------------
-ECreatureSize stringToCreatureSize(const string &str)
-{
-	if (!mapInitialized)
-		initMap();
+ECreatureSize stringToCreatureSize(const string &str) {
+  if (!mapInitialized)
+    initMap();
 
-	map<string, ECreatureSize>::const_iterator it = StringToSizeMap.find(str);
-	if (it != StringToSizeMap.end())
-	{
-		return (*it).second;
-	}
-	else
-	{
-		return UNKNOWN;
-	}
+  map<string, ECreatureSize>::const_iterator it = StringToSizeMap.find(str);
+  if (it != StringToSizeMap.end()) {
+    return (*it).second;
+  } else {
+    return UNKNOWN;
+  }
 } // stringToCreatureSize //
 
 //-----------------------------------------------
 // creatureSizeToString :
 //-----------------------------------------------
-const string &creatureSizeToString(ECreatureSize size)
-{
-	if (!mapInitialized)
-		initMap();
+const string &creatureSizeToString(ECreatureSize size) {
+  if (!mapInitialized)
+    initMap();
 
-	map<ECreatureSize, string>::const_iterator it = SizeToStringMap.find(size);
-	if (it != SizeToStringMap.end())
-	{
-		return (*it).second;
-	}
-	else
-	{
-		return unknown_str;
-	}
+  map<ECreatureSize, string>::const_iterator it = SizeToStringMap.find(size);
+  if (it != SizeToStringMap.end()) {
+    return (*it).second;
+  } else {
+    return unknown_str;
+  }
 } // creatureSizeToString //
 
-}; // CREATURE_SIZE
+}; // namespace CREATURE_SIZE

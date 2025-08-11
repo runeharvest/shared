@@ -25,8 +25,7 @@ using namespace std;
 using namespace NLMISC;
 
 // leave not static else this workaround don't work
-void dummyToAvoidStupidCompilerWarning_game_sshare_memorisation_set_types_cpp()
-{
+void dummyToAvoidStupidCompilerWarning_game_sshare_memorisation_set_types_cpp() {
 }
 
 namespace MEM_SET_TYPES {
@@ -67,7 +66,8 @@ namespace MEM_SET_TYPES {
 
     SKILLS::ESkills memSetTypeToSkill(TMemorizationSetType memType)
     {
-//		nlctassert( (sizeof(MemToSkill)/sizeof(MemToSkill[0])) == NbMemSetTypes );
+//		nlctassert( (sizeof(MemToSkill)/sizeof(MemToSkill[0])) ==
+NbMemSetTypes );
 
         if(memType>=NbMemSetTypes)
             return SKILLS::unknown;
@@ -127,4 +127,4 @@ namespace MEM_SET_TYPES {
         };
     }
 */
-}; // MEM_SET_TYPES
+}; // namespace MEM_SET_TYPES

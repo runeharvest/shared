@@ -23,734 +23,724 @@
 #include <limits>
 #include <nel/misc/string_common.h>
 
-struct CUTMiscStringCommon : public Test::Suite
-{
-	CUTMiscStringCommon()
-	{
-		TEST_ADD(CUTMiscStringCommon::fromStringSint8);
-		TEST_ADD(CUTMiscStringCommon::fromStringUint8);
-		TEST_ADD(CUTMiscStringCommon::fromStringSint16);
-		TEST_ADD(CUTMiscStringCommon::fromStringUint16);
-		TEST_ADD(CUTMiscStringCommon::fromStringSint32);
-		TEST_ADD(CUTMiscStringCommon::fromStringUint32);
-		TEST_ADD(CUTMiscStringCommon::fromStringSint64);
-		TEST_ADD(CUTMiscStringCommon::fromStringUint64);
-		TEST_ADD(CUTMiscStringCommon::fromStringFloat);
-		TEST_ADD(CUTMiscStringCommon::fromStringDouble);
-		TEST_ADD(CUTMiscStringCommon::fromStringBool);
-
-		// Add a line here when adding a new test METHOD
-	}
-
-	void fromStringSint8()
-	{
-		bool ret;
-
-		// tests for sint8
-		sint8 val;
-
-		// positive value
-		ret = NLMISC::fromString("1", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// negative value
-		ret = NLMISC::fromString("-1", val);
-		TEST_ASSERT(ret && val == -1);
-
-		// bad character
-		ret = NLMISC::fromString("a", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// right character and bad character
-		ret = NLMISC::fromString("1a", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// min limit
-		ret = NLMISC::fromString("-128", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<sint8>::min());
-
-		// max limit
-		ret = NLMISC::fromString("127", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<sint8>::max());
-
-		// min limit -1
-		ret = NLMISC::fromString("-129", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// max limit +1
-		ret = NLMISC::fromString("128", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// with period
-		ret = NLMISC::fromString("1.2", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with coma
-		ret = NLMISC::fromString("1,2", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with spaces before
-		ret = NLMISC::fromString("  10", val);
-		TEST_ASSERT(ret && val == 10);
-
-		// with spaces after
-		ret = NLMISC::fromString("10  ", val);
-		TEST_ASSERT(ret && val == 10);
-
-		// with 0s before
-		ret = NLMISC::fromString("001", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with + before
-		ret = NLMISC::fromString("+1", val);
-		TEST_ASSERT(ret && val == 1);
-	}
-
-	void fromStringUint8()
-	{
-		bool ret;
-
-		// tests for uint8
-		uint8 val;
-
-		// positive value
-		ret = NLMISC::fromString("1", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// bad character
-		ret = NLMISC::fromString("a", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// right character and bad character
-		ret = NLMISC::fromString("1a", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// min limit
-		ret = NLMISC::fromString("0", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<uint8>::min());
-
-		// max limit
-		ret = NLMISC::fromString("255", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<uint8>::max());
-
-		// min limit -1
-		ret = NLMISC::fromString("-1", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// max limit +1
-		ret = NLMISC::fromString("256", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// with period
-		ret = NLMISC::fromString("1.2", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with coma
-		ret = NLMISC::fromString("1,2", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with spaces before
-		ret = NLMISC::fromString("  10", val);
-		TEST_ASSERT(ret && val == 10);
-
-		// with spaces after
-		ret = NLMISC::fromString("10  ", val);
-		TEST_ASSERT(ret && val == 10);
-
-		// with 0s before
-		ret = NLMISC::fromString("001", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with + before
-		ret = NLMISC::fromString("+1", val);
-		TEST_ASSERT(ret && val == 1);
-	}
+struct CUTMiscStringCommon : public Test::Suite {
+  CUTMiscStringCommon() {
+    TEST_ADD(CUTMiscStringCommon::fromStringSint8);
+    TEST_ADD(CUTMiscStringCommon::fromStringUint8);
+    TEST_ADD(CUTMiscStringCommon::fromStringSint16);
+    TEST_ADD(CUTMiscStringCommon::fromStringUint16);
+    TEST_ADD(CUTMiscStringCommon::fromStringSint32);
+    TEST_ADD(CUTMiscStringCommon::fromStringUint32);
+    TEST_ADD(CUTMiscStringCommon::fromStringSint64);
+    TEST_ADD(CUTMiscStringCommon::fromStringUint64);
+    TEST_ADD(CUTMiscStringCommon::fromStringFloat);
+    TEST_ADD(CUTMiscStringCommon::fromStringDouble);
+    TEST_ADD(CUTMiscStringCommon::fromStringBool);
+
+    // Add a line here when adding a new test METHOD
+  }
+
+  void fromStringSint8() {
+    bool ret;
+
+    // tests for sint8
+    sint8 val;
+
+    // positive value
+    ret = NLMISC::fromString("1", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // negative value
+    ret = NLMISC::fromString("-1", val);
+    TEST_ASSERT(ret && val == -1);
+
+    // bad character
+    ret = NLMISC::fromString("a", val);
+    TEST_ASSERT(!ret && val == 0);
+
+    // right character and bad character
+    ret = NLMISC::fromString("1a", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // min limit
+    ret = NLMISC::fromString("-128", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<sint8>::min());
+
+    // max limit
+    ret = NLMISC::fromString("127", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<sint8>::max());
+
+    // min limit -1
+    ret = NLMISC::fromString("-129", val);
+    TEST_ASSERT(!ret && val == 0);
+
+    // max limit +1
+    ret = NLMISC::fromString("128", val);
+    TEST_ASSERT(!ret && val == 0);
+
+    // with period
+    ret = NLMISC::fromString("1.2", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // with coma
+    ret = NLMISC::fromString("1,2", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // with spaces before
+    ret = NLMISC::fromString("  10", val);
+    TEST_ASSERT(ret && val == 10);
+
+    // with spaces after
+    ret = NLMISC::fromString("10  ", val);
+    TEST_ASSERT(ret && val == 10);
+
+    // with 0s before
+    ret = NLMISC::fromString("001", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // with + before
+    ret = NLMISC::fromString("+1", val);
+    TEST_ASSERT(ret && val == 1);
+  }
+
+  void fromStringUint8() {
+    bool ret;
+
+    // tests for uint8
+    uint8 val;
+
+    // positive value
+    ret = NLMISC::fromString("1", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // bad character
+    ret = NLMISC::fromString("a", val);
+    TEST_ASSERT(!ret && val == 0);
+
+    // right character and bad character
+    ret = NLMISC::fromString("1a", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // min limit
+    ret = NLMISC::fromString("0", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<uint8>::min());
+
+    // max limit
+    ret = NLMISC::fromString("255", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<uint8>::max());
 
-	void fromStringSint16()
-	{
-		bool ret;
+    // min limit -1
+    ret = NLMISC::fromString("-1", val);
+    TEST_ASSERT(!ret && val == 0);
 
-		// tests for sint16
-		sint16 val;
-
-		// positive value
-		ret = NLMISC::fromString("1", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// negative value
-		ret = NLMISC::fromString("-1", val);
-		TEST_ASSERT(ret && val == -1);
-
-		// bad character
-		ret = NLMISC::fromString("a", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// right character and bad character
-		ret = NLMISC::fromString("1a", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// min limit
-		ret = NLMISC::fromString("-32768", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<sint16>::min());
-
-		// max limit
-		ret = NLMISC::fromString("32767", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<sint16>::max());
-
-		// min limit -1
-		ret = NLMISC::fromString("-32769", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// max limit +1
-		ret = NLMISC::fromString("32768", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// with period
-		ret = NLMISC::fromString("1.2", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with coma
-		ret = NLMISC::fromString("1,2", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with spaces before
-		ret = NLMISC::fromString("  10", val);
-		TEST_ASSERT(ret && val == 10);
-
-		// with spaces after
-		ret = NLMISC::fromString("10  ", val);
-		TEST_ASSERT(ret && val == 10);
-
-		// with 0s before
-		ret = NLMISC::fromString("001", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with + before
-		ret = NLMISC::fromString("+1", val);
-		TEST_ASSERT(ret && val == 1);
-	}
+    // max limit +1
+    ret = NLMISC::fromString("256", val);
+    TEST_ASSERT(!ret && val == 0);
 
-	void fromStringUint16()
-	{
-		bool ret;
+    // with period
+    ret = NLMISC::fromString("1.2", val);
+    TEST_ASSERT(ret && val == 1);
 
-		// tests for uint16
-		uint16 val;
-
-		// positive value
-		ret = NLMISC::fromString("1", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// bad character
-		ret = NLMISC::fromString("a", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// right character and bad character
-		ret = NLMISC::fromString("1a", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// min limit
-		ret = NLMISC::fromString("0", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<uint16>::min());
-
-		// max limit
-		ret = NLMISC::fromString("65535", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<uint16>::max());
-
-		// min limit -1
-		ret = NLMISC::fromString("-1", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// max limit +1
-		ret = NLMISC::fromString("65536", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// with period
-		ret = NLMISC::fromString("1.2", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with coma
-		ret = NLMISC::fromString("1,2", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with spaces before
-		ret = NLMISC::fromString("  10", val);
-		TEST_ASSERT(ret && val == 10);
-
-		// with spaces after
-		ret = NLMISC::fromString("10  ", val);
-		TEST_ASSERT(ret && val == 10);
-
-		// with 0s before
-		ret = NLMISC::fromString("001", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with + before
-		ret = NLMISC::fromString("+1", val);
-		TEST_ASSERT(ret && val == 1);
-	}
+    // with coma
+    ret = NLMISC::fromString("1,2", val);
+    TEST_ASSERT(ret && val == 1);
 
-	void fromStringSint32()
-	{
-		bool ret;
+    // with spaces before
+    ret = NLMISC::fromString("  10", val);
+    TEST_ASSERT(ret && val == 10);
 
-		// tests for sint32
-		sint32 val;
-
-		// positive value
-		ret = NLMISC::fromString("1", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// negative value
-		ret = NLMISC::fromString("-1", val);
-		TEST_ASSERT(ret && val == -1);
-
-		// bad character
-		ret = NLMISC::fromString("a", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// right character and bad character
-		ret = NLMISC::fromString("1a", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// min limit
-		ret = NLMISC::fromString("-2147483648", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<sint32>::min());
-
-		// max limit
-		ret = NLMISC::fromString("2147483647", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<sint32>::max());
-
-		// min limit -1
-		ret = NLMISC::fromString("-2147483649", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// max limit +1
-		ret = NLMISC::fromString("2147483648", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// with period
-		ret = NLMISC::fromString("1.2", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with coma
-		ret = NLMISC::fromString("1,2", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with spaces before
-		ret = NLMISC::fromString("  10", val);
-		TEST_ASSERT(ret && val == 10);
-
-		// with spaces after
-		ret = NLMISC::fromString("10  ", val);
-		TEST_ASSERT(ret && val == 10);
-
-		// with 0s before
-		ret = NLMISC::fromString("001", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with + before
-		ret = NLMISC::fromString("+1", val);
-		TEST_ASSERT(ret && val == 1);
-	}
-
-	void fromStringUint32()
-	{
-		bool ret;
-
-		// tests for uint32
-		uint32 val;
-
-		// positive value
-		ret = NLMISC::fromString("1", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// bad character
-		ret = NLMISC::fromString("a", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// right character and bad character
-		ret = NLMISC::fromString("1a", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// min limit
-		ret = NLMISC::fromString("0", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<uint32>::min());
-
-		// max limit
-		ret = NLMISC::fromString("4294967295", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<uint32>::max());
-
-		// min limit -1
-		ret = NLMISC::fromString("-1", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// max limit +1
-		ret = NLMISC::fromString("4294967296", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// with period
-		ret = NLMISC::fromString("1.2", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with coma
-		ret = NLMISC::fromString("1,2", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with spaces before
-		ret = NLMISC::fromString("  10", val);
-		TEST_ASSERT(ret && val == 10);
-
-		// with spaces after
-		ret = NLMISC::fromString("10  ", val);
-		TEST_ASSERT(ret && val == 10);
-
-		// with 0s before
-		ret = NLMISC::fromString("001", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with + before
-		ret = NLMISC::fromString("+1", val);
-		TEST_ASSERT(ret && val == 1);
-	}
-
-	void fromStringSint64()
-	{
-		bool ret;
-
-		// tests for sint64
-		sint64 val;
-
-		// positive value
-		ret = NLMISC::fromString("1", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// negative value
-		ret = NLMISC::fromString("-1", val);
-		TEST_ASSERT(ret && val == -1);
-
-		// bad character
-		ret = NLMISC::fromString("a", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// right character and bad character
-		ret = NLMISC::fromString("1a", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// min limit
-		ret = NLMISC::fromString("-9223372036854775808", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<sint64>::min());
-
-		// max limit
-		ret = NLMISC::fromString("9223372036854775807", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<sint64>::max());
-
-		// min limit -1, unable to compare with minimum value because no lower type
-		ret = NLMISC::fromString("-9223372036854775809", val);
-		// with GCC, it returns min, with VC++ it returns max
-		TEST_ASSERT(ret && (val == std::numeric_limits<sint64>::max() || std::numeric_limits<sint64>::min()));
-
-		// max limit +1, unable to compare with maximum value because no higher type
-		ret = NLMISC::fromString("9223372036854775808", val);
-		// with GCC, it returns max with VC++ it returns min
-		TEST_ASSERT(ret && (val == std::numeric_limits<sint64>::min() || std::numeric_limits<sint64>::max()));
-
-		// with period
-		ret = NLMISC::fromString("1.2", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with coma
-		ret = NLMISC::fromString("1,2", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with spaces before
-		ret = NLMISC::fromString("  10", val);
-		TEST_ASSERT(ret && val == 10);
-
-		// with spaces after
-		ret = NLMISC::fromString("10  ", val);
-		TEST_ASSERT(ret && val == 10);
-
-		// with 0s before
-		ret = NLMISC::fromString("001", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with + before
-		ret = NLMISC::fromString("+1", val);
-		TEST_ASSERT(ret && val == 1);
-	}
-
-	void fromStringUint64()
-	{
-		bool ret;
-
-		// tests for uint64
-		uint64 val;
-
-		// positive value
-		ret = NLMISC::fromString("1", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// bad character
-		ret = NLMISC::fromString("a", val);
-		TEST_ASSERT(!ret && val == 0);
-
-		// right character and bad character
-		ret = NLMISC::fromString("1a", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// min limit
-		ret = NLMISC::fromString("0", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<uint64>::min());
-
-		// max limit
-		ret = NLMISC::fromString("18446744073709551615", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<uint64>::max());
-
-		// min limit -1, unable to compare with minimum value because no lower type
-		ret = NLMISC::fromString("-1", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<uint64>::max());
-
-		// max limit +1, unable to compare with maximum value because no higher type
-		ret = NLMISC::fromString("18446744073709551616", val);
-		// with GCC, it returns max with VC++ it returns min
-		TEST_ASSERT(ret && (val == std::numeric_limits<uint64>::min() || val == std::numeric_limits<uint64>::max()));
-
-		// with period
-		ret = NLMISC::fromString("1.2", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with coma
-		ret = NLMISC::fromString("1,2", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with spaces before
-		ret = NLMISC::fromString("  10", val);
-		TEST_ASSERT(ret && val == 10);
-
-		// with spaces after
-		ret = NLMISC::fromString("10  ", val);
-		TEST_ASSERT(ret && val == 10);
-
-		// with 0s before
-		ret = NLMISC::fromString("001", val);
-		TEST_ASSERT(ret && val == 1);
-
-		// with + before
-		ret = NLMISC::fromString("+1", val);
-		TEST_ASSERT(ret && val == 1);
-	}
-
-	void fromStringFloat()
-	{
-		bool ret;
-
-		// tests for float
-		float val;
-
-		// positive value
-		ret = NLMISC::fromString("1", val);
-		TEST_ASSERT(ret && val == 1.f);
-
-		// negative value
-		ret = NLMISC::fromString("-1", val);
-		TEST_ASSERT(ret && val == -1.f);
-
-		// bad character
-		ret = NLMISC::fromString("a", val);
-		TEST_ASSERT(!ret && val == 0.f);
-
-		// right character and bad character
-		ret = NLMISC::fromString("1a", val);
-		TEST_ASSERT(ret && val == 1.f);
-
-		// min limit
-		ret = NLMISC::fromString("-3.4028235e+038", val);
-		TEST_ASSERT(ret && val == -std::numeric_limits<float>::max());
-
-		// min limit towards 0
-		ret = NLMISC::fromString("1.1754944e-038", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<float>::min());
-
-		// max limit
-		ret = NLMISC::fromString("3.4028235e+038", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<float>::max());
-
-		// min limit -1
-		ret = NLMISC::fromString("-3.4028235e+048", val);
-		TEST_ASSERT(ret && val == -std::numeric_limits<float>::infinity());
-
-		// min limit towards 0 -1
-		ret = NLMISC::fromString("1.1754944e-048", val);
-		TEST_ASSERT(ret && val == 0.f);
-
-		// max limit +1
-		ret = NLMISC::fromString("3.4028235e+048", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<float>::infinity());
-
-		// with period
-		ret = NLMISC::fromString("1.2", val);
-		TEST_ASSERT(ret && val == 1.2f);
-
-		// with coma
-		ret = NLMISC::fromString("1,2", val);
-		TEST_ASSERT(ret && val == 1.f);
+    // with spaces after
+    ret = NLMISC::fromString("10  ", val);
+    TEST_ASSERT(ret && val == 10);
 
-		// with spaces before
-		ret = NLMISC::fromString("  10", val);
-		TEST_ASSERT(ret && val == 10.f);
+    // with 0s before
+    ret = NLMISC::fromString("001", val);
+    TEST_ASSERT(ret && val == 1);
 
-		// with spaces after
-		ret = NLMISC::fromString("10  ", val);
-		TEST_ASSERT(ret && val == 10.f);
+    // with + before
+    ret = NLMISC::fromString("+1", val);
+    TEST_ASSERT(ret && val == 1);
+  }
 
-		// with 0s before
-		ret = NLMISC::fromString("001", val);
-		TEST_ASSERT(ret && val == 1.f);
+  void fromStringSint16() {
+    bool ret;
 
-		// with + before
-		ret = NLMISC::fromString("+1", val);
-		TEST_ASSERT(ret && val == 1.f);
-	}
+    // tests for sint16
+    sint16 val;
 
-	void fromStringDouble()
-	{
-		bool ret;
+    // positive value
+    ret = NLMISC::fromString("1", val);
+    TEST_ASSERT(ret && val == 1);
 
-		// tests for double
-		double val;
+    // negative value
+    ret = NLMISC::fromString("-1", val);
+    TEST_ASSERT(ret && val == -1);
 
-		// positive value
-		ret = NLMISC::fromString("1", val);
-		TEST_ASSERT(ret && val == 1.0);
+    // bad character
+    ret = NLMISC::fromString("a", val);
+    TEST_ASSERT(!ret && val == 0);
 
-		// negative value
-		ret = NLMISC::fromString("-1", val);
-		TEST_ASSERT(ret && val == -1.0);
+    // right character and bad character
+    ret = NLMISC::fromString("1a", val);
+    TEST_ASSERT(ret && val == 1);
 
-		// bad character
-		ret = NLMISC::fromString("a", val);
-		TEST_ASSERT(!ret && val == 0);
+    // min limit
+    ret = NLMISC::fromString("-32768", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<sint16>::min());
 
-		// right character and bad character
-		ret = NLMISC::fromString("1a", val);
-		TEST_ASSERT(ret && val == 1.0);
+    // max limit
+    ret = NLMISC::fromString("32767", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<sint16>::max());
 
-		// min limit
-		ret = NLMISC::fromString("-1.7976931348623158e+308", val);
-		TEST_ASSERT(ret && val == -std::numeric_limits<double>::max());
+    // min limit -1
+    ret = NLMISC::fromString("-32769", val);
+    TEST_ASSERT(!ret && val == 0);
 
-		// min limit towards 0
-		ret = NLMISC::fromString("2.2250738585072014e-308", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<double>::min());
+    // max limit +1
+    ret = NLMISC::fromString("32768", val);
+    TEST_ASSERT(!ret && val == 0);
 
-		// max limit
-		ret = NLMISC::fromString("1.7976931348623158e+308", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<double>::max());
+    // with period
+    ret = NLMISC::fromString("1.2", val);
+    TEST_ASSERT(ret && val == 1);
 
-		// min limit -1
-		ret = NLMISC::fromString("3e-408", val);
-		TEST_ASSERT(ret && val == 0.0);
+    // with coma
+    ret = NLMISC::fromString("1,2", val);
+    TEST_ASSERT(ret && val == 1);
 
-		// max limit +1
-		ret = NLMISC::fromString("2e+308", val);
-		TEST_ASSERT(ret && val == std::numeric_limits<double>::infinity());
+    // with spaces before
+    ret = NLMISC::fromString("  10", val);
+    TEST_ASSERT(ret && val == 10);
 
-		// with period
-		ret = NLMISC::fromString("1.2", val);
-		TEST_ASSERT(ret && val == 1.2);
+    // with spaces after
+    ret = NLMISC::fromString("10  ", val);
+    TEST_ASSERT(ret && val == 10);
 
-		// with coma
-		ret = NLMISC::fromString("1,2", val);
-		TEST_ASSERT(ret && val == 1.0);
+    // with 0s before
+    ret = NLMISC::fromString("001", val);
+    TEST_ASSERT(ret && val == 1);
 
-		// with spaces before
-		ret = NLMISC::fromString("  10", val);
-		TEST_ASSERT(ret && val == 10.0);
+    // with + before
+    ret = NLMISC::fromString("+1", val);
+    TEST_ASSERT(ret && val == 1);
+  }
 
-		// with spaces after
-		ret = NLMISC::fromString("10  ", val);
-		TEST_ASSERT(ret && val == 10.0);
+  void fromStringUint16() {
+    bool ret;
 
-		// with 0s before
-		ret = NLMISC::fromString("001", val);
-		TEST_ASSERT(ret && val == 1.0);
+    // tests for uint16
+    uint16 val;
 
-		// with + before
-		ret = NLMISC::fromString("+1", val);
-		TEST_ASSERT(ret && val == 1.0);
-	}
+    // positive value
+    ret = NLMISC::fromString("1", val);
+    TEST_ASSERT(ret && val == 1);
 
-	void fromStringBool()
-	{
-		bool ret;
+    // bad character
+    ret = NLMISC::fromString("a", val);
+    TEST_ASSERT(!ret && val == 0);
 
-		// tests for bool
-		bool val;
+    // right character and bad character
+    ret = NLMISC::fromString("1a", val);
+    TEST_ASSERT(ret && val == 1);
 
-		// true values
-		ret = NLMISC::fromString("1", val);
-		TEST_ASSERT(ret && val);
+    // min limit
+    ret = NLMISC::fromString("0", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<uint16>::min());
 
-		ret = NLMISC::fromString("t", val);
-		TEST_ASSERT(ret && val);
+    // max limit
+    ret = NLMISC::fromString("65535", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<uint16>::max());
 
-		ret = NLMISC::fromString("y", val);
-		TEST_ASSERT(ret && val);
+    // min limit -1
+    ret = NLMISC::fromString("-1", val);
+    TEST_ASSERT(!ret && val == 0);
 
-		ret = NLMISC::fromString("T", val);
-		TEST_ASSERT(ret && val);
+    // max limit +1
+    ret = NLMISC::fromString("65536", val);
+    TEST_ASSERT(!ret && val == 0);
 
-		ret = NLMISC::fromString("Y", val);
-		TEST_ASSERT(ret && val);
+    // with period
+    ret = NLMISC::fromString("1.2", val);
+    TEST_ASSERT(ret && val == 1);
 
-		ret = NLMISC::fromString("true", val);
-		TEST_ASSERT(ret && val);
+    // with coma
+    ret = NLMISC::fromString("1,2", val);
+    TEST_ASSERT(ret && val == 1);
 
-		ret = NLMISC::fromString("yes", val);
-		TEST_ASSERT(ret && val);
+    // with spaces before
+    ret = NLMISC::fromString("  10", val);
+    TEST_ASSERT(ret && val == 10);
 
-		ret = NLMISC::fromString("YES", val);
-		TEST_ASSERT(ret && val);
+    // with spaces after
+    ret = NLMISC::fromString("10  ", val);
+    TEST_ASSERT(ret && val == 10);
 
-		ret = NLMISC::fromString("True", val);
-		TEST_ASSERT(ret && val);
+    // with 0s before
+    ret = NLMISC::fromString("001", val);
+    TEST_ASSERT(ret && val == 1);
 
-		// false values
-		ret = NLMISC::fromString("0", val);
-		TEST_ASSERT(ret && !val);
+    // with + before
+    ret = NLMISC::fromString("+1", val);
+    TEST_ASSERT(ret && val == 1);
+  }
 
-		ret = NLMISC::fromString("f", val);
-		TEST_ASSERT(ret && !val);
+  void fromStringSint32() {
+    bool ret;
 
-		ret = NLMISC::fromString("n", val);
-		TEST_ASSERT(ret && !val);
+    // tests for sint32
+    sint32 val;
 
-		ret = NLMISC::fromString("F", val);
-		TEST_ASSERT(ret && !val);
+    // positive value
+    ret = NLMISC::fromString("1", val);
+    TEST_ASSERT(ret && val == 1);
 
-		ret = NLMISC::fromString("N", val);
-		TEST_ASSERT(ret && !val);
+    // negative value
+    ret = NLMISC::fromString("-1", val);
+    TEST_ASSERT(ret && val == -1);
 
-		ret = NLMISC::fromString("false", val);
-		TEST_ASSERT(ret && !val);
+    // bad character
+    ret = NLMISC::fromString("a", val);
+    TEST_ASSERT(!ret && val == 0);
 
-		ret = NLMISC::fromString("no", val);
-		TEST_ASSERT(ret && !val);
+    // right character and bad character
+    ret = NLMISC::fromString("1a", val);
+    TEST_ASSERT(ret && val == 1);
 
-		// wrong values
-		ret = NLMISC::fromString("foo", val);
-		TEST_ASSERT(!ret && !val);
+    // min limit
+    ret = NLMISC::fromString("-2147483648", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<sint32>::min());
 
-		ret = NLMISC::fromString("a", val);
-		TEST_ASSERT(!ret && !val);
+    // max limit
+    ret = NLMISC::fromString("2147483647", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<sint32>::max());
 
-		ret = NLMISC::fromString("Yesss", val);
-		TEST_ASSERT(!ret && !val);
+    // min limit -1
+    ret = NLMISC::fromString("-2147483649", val);
+    TEST_ASSERT(!ret && val == 0);
 
-		ret = NLMISC::fromString("nope", val);
-		TEST_ASSERT(!ret && !val);
-	}
+    // max limit +1
+    ret = NLMISC::fromString("2147483648", val);
+    TEST_ASSERT(!ret && val == 0);
+
+    // with period
+    ret = NLMISC::fromString("1.2", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // with coma
+    ret = NLMISC::fromString("1,2", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // with spaces before
+    ret = NLMISC::fromString("  10", val);
+    TEST_ASSERT(ret && val == 10);
+
+    // with spaces after
+    ret = NLMISC::fromString("10  ", val);
+    TEST_ASSERT(ret && val == 10);
+
+    // with 0s before
+    ret = NLMISC::fromString("001", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // with + before
+    ret = NLMISC::fromString("+1", val);
+    TEST_ASSERT(ret && val == 1);
+  }
+
+  void fromStringUint32() {
+    bool ret;
+
+    // tests for uint32
+    uint32 val;
+
+    // positive value
+    ret = NLMISC::fromString("1", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // bad character
+    ret = NLMISC::fromString("a", val);
+    TEST_ASSERT(!ret && val == 0);
+
+    // right character and bad character
+    ret = NLMISC::fromString("1a", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // min limit
+    ret = NLMISC::fromString("0", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<uint32>::min());
+
+    // max limit
+    ret = NLMISC::fromString("4294967295", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<uint32>::max());
+
+    // min limit -1
+    ret = NLMISC::fromString("-1", val);
+    TEST_ASSERT(!ret && val == 0);
+
+    // max limit +1
+    ret = NLMISC::fromString("4294967296", val);
+    TEST_ASSERT(!ret && val == 0);
+
+    // with period
+    ret = NLMISC::fromString("1.2", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // with coma
+    ret = NLMISC::fromString("1,2", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // with spaces before
+    ret = NLMISC::fromString("  10", val);
+    TEST_ASSERT(ret && val == 10);
+
+    // with spaces after
+    ret = NLMISC::fromString("10  ", val);
+    TEST_ASSERT(ret && val == 10);
+
+    // with 0s before
+    ret = NLMISC::fromString("001", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // with + before
+    ret = NLMISC::fromString("+1", val);
+    TEST_ASSERT(ret && val == 1);
+  }
+
+  void fromStringSint64() {
+    bool ret;
+
+    // tests for sint64
+    sint64 val;
+
+    // positive value
+    ret = NLMISC::fromString("1", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // negative value
+    ret = NLMISC::fromString("-1", val);
+    TEST_ASSERT(ret && val == -1);
+
+    // bad character
+    ret = NLMISC::fromString("a", val);
+    TEST_ASSERT(!ret && val == 0);
+
+    // right character and bad character
+    ret = NLMISC::fromString("1a", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // min limit
+    ret = NLMISC::fromString("-9223372036854775808", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<sint64>::min());
+
+    // max limit
+    ret = NLMISC::fromString("9223372036854775807", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<sint64>::max());
+
+    // min limit -1, unable to compare with minimum value because no lower type
+    ret = NLMISC::fromString("-9223372036854775809", val);
+    // with GCC, it returns min, with VC++ it returns max
+    TEST_ASSERT(ret && (val == std::numeric_limits<sint64>::max() ||
+                        std::numeric_limits<sint64>::min()));
+
+    // max limit +1, unable to compare with maximum value because no higher type
+    ret = NLMISC::fromString("9223372036854775808", val);
+    // with GCC, it returns max with VC++ it returns min
+    TEST_ASSERT(ret && (val == std::numeric_limits<sint64>::min() ||
+                        std::numeric_limits<sint64>::max()));
+
+    // with period
+    ret = NLMISC::fromString("1.2", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // with coma
+    ret = NLMISC::fromString("1,2", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // with spaces before
+    ret = NLMISC::fromString("  10", val);
+    TEST_ASSERT(ret && val == 10);
+
+    // with spaces after
+    ret = NLMISC::fromString("10  ", val);
+    TEST_ASSERT(ret && val == 10);
+
+    // with 0s before
+    ret = NLMISC::fromString("001", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // with + before
+    ret = NLMISC::fromString("+1", val);
+    TEST_ASSERT(ret && val == 1);
+  }
+
+  void fromStringUint64() {
+    bool ret;
+
+    // tests for uint64
+    uint64 val;
+
+    // positive value
+    ret = NLMISC::fromString("1", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // bad character
+    ret = NLMISC::fromString("a", val);
+    TEST_ASSERT(!ret && val == 0);
+
+    // right character and bad character
+    ret = NLMISC::fromString("1a", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // min limit
+    ret = NLMISC::fromString("0", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<uint64>::min());
+
+    // max limit
+    ret = NLMISC::fromString("18446744073709551615", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<uint64>::max());
+
+    // min limit -1, unable to compare with minimum value because no lower type
+    ret = NLMISC::fromString("-1", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<uint64>::max());
+
+    // max limit +1, unable to compare with maximum value because no higher type
+    ret = NLMISC::fromString("18446744073709551616", val);
+    // with GCC, it returns max with VC++ it returns min
+    TEST_ASSERT(ret && (val == std::numeric_limits<uint64>::min() ||
+                        val == std::numeric_limits<uint64>::max()));
+
+    // with period
+    ret = NLMISC::fromString("1.2", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // with coma
+    ret = NLMISC::fromString("1,2", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // with spaces before
+    ret = NLMISC::fromString("  10", val);
+    TEST_ASSERT(ret && val == 10);
+
+    // with spaces after
+    ret = NLMISC::fromString("10  ", val);
+    TEST_ASSERT(ret && val == 10);
+
+    // with 0s before
+    ret = NLMISC::fromString("001", val);
+    TEST_ASSERT(ret && val == 1);
+
+    // with + before
+    ret = NLMISC::fromString("+1", val);
+    TEST_ASSERT(ret && val == 1);
+  }
+
+  void fromStringFloat() {
+    bool ret;
+
+    // tests for float
+    float val;
+
+    // positive value
+    ret = NLMISC::fromString("1", val);
+    TEST_ASSERT(ret && val == 1.f);
+
+    // negative value
+    ret = NLMISC::fromString("-1", val);
+    TEST_ASSERT(ret && val == -1.f);
+
+    // bad character
+    ret = NLMISC::fromString("a", val);
+    TEST_ASSERT(!ret && val == 0.f);
+
+    // right character and bad character
+    ret = NLMISC::fromString("1a", val);
+    TEST_ASSERT(ret && val == 1.f);
+
+    // min limit
+    ret = NLMISC::fromString("-3.4028235e+038", val);
+    TEST_ASSERT(ret && val == -std::numeric_limits<float>::max());
+
+    // min limit towards 0
+    ret = NLMISC::fromString("1.1754944e-038", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<float>::min());
+
+    // max limit
+    ret = NLMISC::fromString("3.4028235e+038", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<float>::max());
+
+    // min limit -1
+    ret = NLMISC::fromString("-3.4028235e+048", val);
+    TEST_ASSERT(ret && val == -std::numeric_limits<float>::infinity());
+
+    // min limit towards 0 -1
+    ret = NLMISC::fromString("1.1754944e-048", val);
+    TEST_ASSERT(ret && val == 0.f);
+
+    // max limit +1
+    ret = NLMISC::fromString("3.4028235e+048", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<float>::infinity());
+
+    // with period
+    ret = NLMISC::fromString("1.2", val);
+    TEST_ASSERT(ret && val == 1.2f);
+
+    // with coma
+    ret = NLMISC::fromString("1,2", val);
+    TEST_ASSERT(ret && val == 1.f);
+
+    // with spaces before
+    ret = NLMISC::fromString("  10", val);
+    TEST_ASSERT(ret && val == 10.f);
+
+    // with spaces after
+    ret = NLMISC::fromString("10  ", val);
+    TEST_ASSERT(ret && val == 10.f);
+
+    // with 0s before
+    ret = NLMISC::fromString("001", val);
+    TEST_ASSERT(ret && val == 1.f);
+
+    // with + before
+    ret = NLMISC::fromString("+1", val);
+    TEST_ASSERT(ret && val == 1.f);
+  }
+
+  void fromStringDouble() {
+    bool ret;
+
+    // tests for double
+    double val;
+
+    // positive value
+    ret = NLMISC::fromString("1", val);
+    TEST_ASSERT(ret && val == 1.0);
+
+    // negative value
+    ret = NLMISC::fromString("-1", val);
+    TEST_ASSERT(ret && val == -1.0);
+
+    // bad character
+    ret = NLMISC::fromString("a", val);
+    TEST_ASSERT(!ret && val == 0);
+
+    // right character and bad character
+    ret = NLMISC::fromString("1a", val);
+    TEST_ASSERT(ret && val == 1.0);
+
+    // min limit
+    ret = NLMISC::fromString("-1.7976931348623158e+308", val);
+    TEST_ASSERT(ret && val == -std::numeric_limits<double>::max());
+
+    // min limit towards 0
+    ret = NLMISC::fromString("2.2250738585072014e-308", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<double>::min());
+
+    // max limit
+    ret = NLMISC::fromString("1.7976931348623158e+308", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<double>::max());
+
+    // min limit -1
+    ret = NLMISC::fromString("3e-408", val);
+    TEST_ASSERT(ret && val == 0.0);
+
+    // max limit +1
+    ret = NLMISC::fromString("2e+308", val);
+    TEST_ASSERT(ret && val == std::numeric_limits<double>::infinity());
+
+    // with period
+    ret = NLMISC::fromString("1.2", val);
+    TEST_ASSERT(ret && val == 1.2);
+
+    // with coma
+    ret = NLMISC::fromString("1,2", val);
+    TEST_ASSERT(ret && val == 1.0);
+
+    // with spaces before
+    ret = NLMISC::fromString("  10", val);
+    TEST_ASSERT(ret && val == 10.0);
+
+    // with spaces after
+    ret = NLMISC::fromString("10  ", val);
+    TEST_ASSERT(ret && val == 10.0);
+
+    // with 0s before
+    ret = NLMISC::fromString("001", val);
+    TEST_ASSERT(ret && val == 1.0);
+
+    // with + before
+    ret = NLMISC::fromString("+1", val);
+    TEST_ASSERT(ret && val == 1.0);
+  }
+
+  void fromStringBool() {
+    bool ret;
+
+    // tests for bool
+    bool val;
+
+    // true values
+    ret = NLMISC::fromString("1", val);
+    TEST_ASSERT(ret && val);
+
+    ret = NLMISC::fromString("t", val);
+    TEST_ASSERT(ret && val);
+
+    ret = NLMISC::fromString("y", val);
+    TEST_ASSERT(ret && val);
+
+    ret = NLMISC::fromString("T", val);
+    TEST_ASSERT(ret && val);
+
+    ret = NLMISC::fromString("Y", val);
+    TEST_ASSERT(ret && val);
+
+    ret = NLMISC::fromString("true", val);
+    TEST_ASSERT(ret && val);
+
+    ret = NLMISC::fromString("yes", val);
+    TEST_ASSERT(ret && val);
+
+    ret = NLMISC::fromString("YES", val);
+    TEST_ASSERT(ret && val);
+
+    ret = NLMISC::fromString("True", val);
+    TEST_ASSERT(ret && val);
+
+    // false values
+    ret = NLMISC::fromString("0", val);
+    TEST_ASSERT(ret && !val);
+
+    ret = NLMISC::fromString("f", val);
+    TEST_ASSERT(ret && !val);
+
+    ret = NLMISC::fromString("n", val);
+    TEST_ASSERT(ret && !val);
+
+    ret = NLMISC::fromString("F", val);
+    TEST_ASSERT(ret && !val);
+
+    ret = NLMISC::fromString("N", val);
+    TEST_ASSERT(ret && !val);
+
+    ret = NLMISC::fromString("false", val);
+    TEST_ASSERT(ret && !val);
+
+    ret = NLMISC::fromString("no", val);
+    TEST_ASSERT(ret && !val);
+
+    // wrong values
+    ret = NLMISC::fromString("foo", val);
+    TEST_ASSERT(!ret && !val);
+
+    ret = NLMISC::fromString("a", val);
+    TEST_ASSERT(!ret && !val);
+
+    ret = NLMISC::fromString("Yesss", val);
+    TEST_ASSERT(!ret && !val);
+
+    ret = NLMISC::fromString("nope", val);
+    TEST_ASSERT(!ret && !val);
+  }
 };
 
 #endif

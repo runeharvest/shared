@@ -21,14 +21,12 @@
 
 namespace NLMISC {
 
-IStreamedPackageProvider::IStreamedPackageProvider()
-{
-	// init
+IStreamedPackageProvider::IStreamedPackageProvider() {
+  // init
 }
 
-IStreamedPackageProvider::~IStreamedPackageProvider()
-{
-	// release
+IStreamedPackageProvider::~IStreamedPackageProvider() {
+  // release
 }
 
 } /* namespace NLMISC */

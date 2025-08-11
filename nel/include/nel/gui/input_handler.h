@@ -20,9 +20,9 @@
 #ifndef INPUT_HANDLER_H
 #define INPUT_HANDLER_H
 
-#include "nel/misc/events.h"
 #include "nel/gui/event_descriptor.h"
 #include "nel/gui/input_event_listener.h"
+#include "nel/misc/events.h"
 
 namespace NLGUI {
 
@@ -31,28 +31,27 @@ namespace NLGUI {
 
   Translates the NEL input events and forwards them.
 */
-class CInputHandler
-{
+class CInputHandler {
 public:
-	CInputHandler();
-	~CInputHandler();
+  CInputHandler();
+  ~CInputHandler();
 
-	bool handleEvent(const NLMISC::CEvent &evnt);
-	bool handleSetFocusEvent(const NLMISC::CEvent &evnt);
-	bool handleKeyboardEvent(const NLMISC::CEvent &evnt);
-	bool handleMouseEvent(const NLMISC::CEvent &evnt);
-	bool handleMouseMoveEvent(const NLMISC::CEvent &evnt);
-	bool handleMouseButtonDownEvent(const NLMISC::CEvent &evnt);
-	bool handleMouseButtonUpEvent(const NLMISC::CEvent &evnt);
-	bool handleMouseDblClickEvent(const NLMISC::CEvent &evnt);
-	bool handleMouseWheelEvent(const NLMISC::CEvent &evnt);
+  bool handleEvent(const NLMISC::CEvent &evnt);
+  bool handleSetFocusEvent(const NLMISC::CEvent &evnt);
+  bool handleKeyboardEvent(const NLMISC::CEvent &evnt);
+  bool handleMouseEvent(const NLMISC::CEvent &evnt);
+  bool handleMouseMoveEvent(const NLMISC::CEvent &evnt);
+  bool handleMouseButtonDownEvent(const NLMISC::CEvent &evnt);
+  bool handleMouseButtonUpEvent(const NLMISC::CEvent &evnt);
+  bool handleMouseDblClickEvent(const NLMISC::CEvent &evnt);
+  bool handleMouseWheelEvent(const NLMISC::CEvent &evnt);
 
-	void setListener(IInputEventListener *listener);
+  void setListener(IInputEventListener *listener);
 
 private:
-	IInputEventListener *listener;
+  IInputEventListener *listener;
 };
 
-}
+} // namespace NLGUI
 
 #endif

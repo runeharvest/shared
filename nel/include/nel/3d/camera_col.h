@@ -17,10 +17,10 @@
 #ifndef NL_CAMERA_COL_H
 #define NL_CAMERA_COL_H
 
+#include "nel/misc/aabbox.h"
+#include "nel/misc/plane.h"
 #include "nel/misc/types_nl.h"
 #include "nel/misc/vector.h"
-#include "nel/misc/plane.h"
-#include "nel/misc/aabbox.h"
 
 namespace NL3D {
 
@@ -31,81 +31,84 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2003
  */
-class CCameraCol
-{
+class CCameraCol {
 public:
-	CCameraCol();
+  CCameraCol();
 
-	/** build the camera collision as a cone or a cylinder
-	 */
-	void build(const NLMISC::CVector &start, const NLMISC::CVector &end, float radius, bool cone);
+  /** build the camera collision as a cone or a cylinder
+   */
+  void build(const NLMISC::CVector &start, const NLMISC::CVector &end,
+             float radius, bool cone);
 
-	/** build the camera collision as a simple ray
-	 */
-	void buildRay(const NLMISC::CVector &start, const NLMISC::CVector &end);
+  /** build the camera collision as a simple ray
+   */
+  void buildRay(const NLMISC::CVector &start, const NLMISC::CVector &end);
 
-	/** compute the intersection of the Camera Volume against the triangle, and minimize
-	 *	minDist (actual square of distance) with min sqr distance of the poly.
-	 */
-	void minimizeDistanceAgainstTri(const NLMISC::CVector &p0, const NLMISC::CVector &p1, const NLMISC::CVector &p2, float &sqrMinDist);
+  /** compute the intersection of the Camera Volume against the triangle, and
+   *minimize minDist (actual square of distance) with min sqr distance of the
+   *poly.
+   */
+  void minimizeDistanceAgainstTri(const NLMISC::CVector &p0,
+                                  const NLMISC::CVector &p1,
+                                  const NLMISC::CVector &p2, float &sqrMinDist);
 
-	/** Compute into this the camera collision 'other' mul by 'matrix'
-	 *	NB: for cone Radius, suppose uniform scale, else will have strange result (a uniform scale is deduced)
-	 */
-	void setApplyMatrix(const CCameraCol &other, const NLMISC::CMatrix &matrix);
+  /** Compute into this the camera collision 'other' mul by 'matrix'
+   *	NB: for cone Radius, suppose uniform scale, else will have strange
+   *result (a uniform scale is deduced)
+   */
+  void setApplyMatrix(const CCameraCol &other, const NLMISC::CMatrix &matrix);
 
-	/** Get The World Bbox enclosing the camera collision volume
-	 */
-	const NLMISC::CAABBox &getBBox() const { return _BBox; }
+  /** Get The World Bbox enclosing the camera collision volume
+   */
+  const NLMISC::CAABBox &getBBox() const { return _BBox; }
 
-	/** Get the length of the ray built
-	 */
-	float getRayLen() const { return _RayLen; }
+  /** Get the length of the ray built
+   */
+  float getRayLen() const { return _RayLen; }
 
-	bool isSimpleRay() const { return _SimpleRay; }
+  bool isSimpleRay() const { return _SimpleRay; }
 
 private:
-	enum
-	{
-		MaxNPlanes = 6
-	};
+  enum { MaxNPlanes = 6 };
 
-	// The start of the camera raycast
-	NLMISC::CVector _Start;
-	// The end of the camera raycast
-	NLMISC::CVector _End;
-	// The radius (at end only if cone)
-	float _Radius;
-	// cone or cylinder?
-	bool _Cone;
-	// Simple Ray?
-	bool _SimpleRay;
+  // The start of the camera raycast
+  NLMISC::CVector _Start;
+  // The end of the camera raycast
+  NLMISC::CVector _End;
+  // The radius (at end only if cone)
+  float _Radius;
+  // cone or cylinder?
+  bool _Cone;
+  // Simple Ray?
+  bool _SimpleRay;
 
-	// The World Bbox enclosing the camera collision volume
-	NLMISC::CAABBox _BBox;
+  // The World Bbox enclosing the camera collision volume
+  NLMISC::CAABBox _BBox;
 
-	// Temp Data for minimizeDistanceAgainstTri
-	NLMISC::CVector _ArrayIn[3 + MaxNPlanes];
-	NLMISC::CVector _ArrayOut[3 + MaxNPlanes];
+  // Temp Data for minimizeDistanceAgainstTri
+  NLMISC::CVector _ArrayIn[3 + MaxNPlanes];
+  NLMISC::CVector _ArrayOut[3 + MaxNPlanes];
 
-	// The pyramid representing the camera collision volume. Nb: local to start for precision problems
-	NLMISC::CPlane _Pyramid[MaxNPlanes];
-	uint _NPlanes;
+  // The pyramid representing the camera collision volume. Nb: local to start
+  // for precision problems
+  NLMISC::CPlane _Pyramid[MaxNPlanes];
+  uint _NPlanes;
 
-	// For Camera smoothing. => the pyramid is bigger
-	float _MaxRadius;
-	// projection of the radius at 1 meter
-	float _MinRadiusProj;
-	float _MaxRadiusProj;
-	float _OODeltaRadiusProj;
-	float _RayLen;
-	NLMISC::CVector _RayNorm;
+  // For Camera smoothing. => the pyramid is bigger
+  float _MaxRadius;
+  // projection of the radius at 1 meter
+  float _MinRadiusProj;
+  float _MaxRadiusProj;
+  float _OODeltaRadiusProj;
+  float _RayLen;
+  NLMISC::CVector _RayNorm;
 
-	// simpler method for simple ray
-	void intersectRay(const NLMISC::CVector &p0, const NLMISC::CVector &p1, const NLMISC::CVector &p2, float &sqrMinDist);
+  // simpler method for simple ray
+  void intersectRay(const NLMISC::CVector &p0, const NLMISC::CVector &p1,
+                    const NLMISC::CVector &p2, float &sqrMinDist);
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_CAMERA_COL_H
 

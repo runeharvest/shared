@@ -19,11 +19,11 @@
 
 ///-----------------------------------------------------------------------------
 /// C++ includes
-#include <iostream>
-#include <string>
-#include <map>
-#include <cstdlib>
 #include <cmath>
+#include <cstdlib>
+#include <iostream>
+#include <map>
+#include <string>
 
 ///-----------------------------------------------------------------------------
 /// Windowing Toolkit includes.
@@ -32,21 +32,21 @@
 ///-----------------------------------------------------------------------------
 /// The CameraTrack class which holds the objects and information to render
 /// the terrain.
-class QNelWindow : public QMainWindow
-{
-	Q_OBJECT
+class QNelWindow : public QMainWindow {
+  Q_OBJECT
 public:
-	// explicit QNelWindow (QWidget *parent=0, Qt::WFlags f=0) : QMainWindow (parent, f) { initWindow(); }
-	explicit QNelWindow(QWidget *parent = 0, Qt::WFlags f = 0);
-	virtual ~QNelWindow() { }
+  // explicit QNelWindow (QWidget *parent=0, Qt::WFlags f=0) : QMainWindow
+  // (parent, f) { initWindow(); }
+  explicit QNelWindow(QWidget *parent = 0, Qt::WFlags f = 0);
+  virtual ~QNelWindow() {}
 
 public slots:
 
 protected:
-	void initWindow();
+  void initWindow();
 
-	// CameraTrackWidget *myWidget;
-	// CameraTrackWidget *myWidget2;
+  // CameraTrackWidget *myWidget;
+  // CameraTrackWidget *myWidget2;
 };
 
 #endif // NL_QNELWINDOW_H

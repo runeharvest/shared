@@ -40,58 +40,66 @@ namespace NLGUI {
  * \author Nevrax France
  * \date 1/2006
  */
-class CCtrlPolygon : public CCtrlBase
-{
+class CCtrlPolygon : public CCtrlBase {
 public:
-	DECLARE_UI_CLASS(CCtrlPolygon)
-	CCtrlPolygon(const TCtorParam &param);
-	virtual uint32 getMemory() { return (uint32)(sizeof(*this) + _Id.size()); }
-	virtual void updateCoords();
-	virtual void draw();
-	/** Change the vertices. This is costly because concav / complex polys are split in a list of triangles
-	 */
-	void setVertices(const std::vector<NLMISC::CVector> &vertices);
-	const std::vector<NLMISC::CVector> &getVertices() const { return _Poly.Vertices; }
-	// test if current position in inside the current (transformed) poly (in window space)
-	bool contains(const NLMISC::CVector2f &pos) const;
-	// color
-	void setColorRGBA(NLMISC::CRGBA col) { _Color = col; }
-	NLMISC::CRGBA getColorRGBA() const { return _Color; }
-	// from CViewBase
-	virtual sint32 getAlpha() const { return (sint32)_Color.A; }
-	virtual void setAlpha(sint32 a);
-	/** Change the matrix for this poly. Changing the matrix is usually cheaper than changing
-	 * The vertices because complex poly do not have to be split again
-	 */
-	// void setMatrix(const NLMISC::CMatrix &mat);
-	// const NLMISC::CMatrix &getMatrix() const { return _Matrix; }
-	//  test if last call to 'setVertices' was for a valid poly (e.g one that doesn't overlapp itself)
-	bool isValid() const { return _Valid; }
-	virtual bool handleEvent(const NLGUI::CEventDescriptor &event);
+  DECLARE_UI_CLASS(CCtrlPolygon)
+  CCtrlPolygon(const TCtorParam &param);
+  virtual uint32 getMemory() { return (uint32)(sizeof(*this) + _Id.size()); }
+  virtual void updateCoords();
+  virtual void draw();
+  /** Change the vertices. This is costly because concav / complex polys are
+   * split in a list of triangles
+   */
+  void setVertices(const std::vector<NLMISC::CVector> &vertices);
+  const std::vector<NLMISC::CVector> &getVertices() const {
+    return _Poly.Vertices;
+  }
+  // test if current position in inside the current (transformed) poly (in
+  // window space)
+  bool contains(const NLMISC::CVector2f &pos) const;
+  // color
+  void setColorRGBA(NLMISC::CRGBA col) { _Color = col; }
+  NLMISC::CRGBA getColorRGBA() const { return _Color; }
+  // from CViewBase
+  virtual sint32 getAlpha() const { return (sint32)_Color.A; }
+  virtual void setAlpha(sint32 a);
+  /** Change the matrix for this poly. Changing the matrix is usually cheaper
+   * than changing The vertices because complex poly do not have to be split
+   * again
+   */
+  // void setMatrix(const NLMISC::CMatrix &mat);
+  // const NLMISC::CMatrix &getMatrix() const { return _Matrix; }
+  //  test if last call to 'setVertices' was for a valid poly (e.g one that
+  //  doesn't overlapp itself)
+  bool isValid() const { return _Valid; }
+  virtual bool handleEvent(const NLGUI::CEventDescriptor &event);
 
-	// no capturable by default (just tooltip capability wanted)
-	virtual bool isCapturable() const { return false; }
+  // no capturable by default (just tooltip capability wanted)
+  virtual bool isCapturable() const { return false; }
 
 private:
-	NLMISC::CPolygon _Poly;
-	NLMISC::CPolygon2D _XFormPoly;
-	// NLMISC::CMatrix  _Matrix;
-	bool _Valid;
-	bool _Touched;
-	NLMISC::CRGBA _Color;
-	std::vector<NLMISC::CTriangle> _Tris;
-	std::vector<NLMISC::CTriangle> _RealTris; // clipped tris in screen coordinates
+  NLMISC::CPolygon _Poly;
+  NLMISC::CPolygon2D _XFormPoly;
+  // NLMISC::CMatrix  _Matrix;
+  bool _Valid;
+  bool _Touched;
+  NLMISC::CRGBA _Color;
+  std::vector<NLMISC::CTriangle> _Tris;
+  std::vector<NLMISC::CTriangle>
+      _RealTris; // clipped tris in screen coordinates
 private:
-	void updateBoudingRect();
+  void updateBoudingRect();
 
 protected:
-	// TMP TMP : have to solve matrix imprecision for display in map -> do the full computation for now ...
-	virtual void computeScaledVertex(NLMISC::CVector2f &dest, const NLMISC::CVector2f &src);
+  // TMP TMP : have to solve matrix imprecision for display in map -> do the
+  // full computation for now ...
+  virtual void computeScaledVertex(NLMISC::CVector2f &dest,
+                                   const NLMISC::CVector2f &src);
 
 public:
-	void touch();
+  void touch();
 };
 
-}
+} // namespace NLGUI
 
 #endif

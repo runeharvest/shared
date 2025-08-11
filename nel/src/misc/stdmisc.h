@@ -22,9 +22,9 @@
 
 #if defined(_MSC_VER) && defined(_DEBUG)
 #define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <malloc.h>
 #include <crtdbg.h>
+#include <malloc.h>
+#include <stdlib.h>
 #define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #elif defined(_MSC_VER)
 #include <malloc.h>
@@ -69,8 +69,8 @@
 #define WINVER 0x0500
 #define NOMINMAX
 #endif
-#include <winsock2.h>
 #include <windows.h>
+#include <winsock2.h>
 #endif
 
 #endif // NL_STDMISC_H

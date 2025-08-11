@@ -21,10 +21,10 @@
 
 #include "nel/misc/types_nl.h"
 
-#include "nel/misc/mem_displayer.h"
-#include "nel/misc/path.h"
 #include "nel/misc/command.h"
 #include "nel/misc/debug.h"
+#include "nel/misc/mem_displayer.h"
+#include "nel/misc/path.h"
 
 #ifdef NL_OS_WINDOWS
 #include <imagehlp.h>
@@ -44,109 +44,103 @@ using namespace std;
 
 namespace NLMISC {
 
-//  UNTIL we found who to walk in the call stack wihtout error, we disactive this feature
+//  UNTIL we found who to walk in the call stack wihtout error, we disactive
+//  this feature
 
 #ifdef NL_OS_WINDOWS
 
 static const uint32 stringSize = 1024;
 
-static string getFuncInfo(DWORD_TYPE funcAddr, DWORD_TYPE stackAddr)
-{
-	string str("NoSymbol");
+static string getFuncInfo(DWORD_TYPE funcAddr, DWORD_TYPE stackAddr) {
+  string str("NoSymbol");
 
-	DWORD symSize = 10000;
-	PIMAGEHLP_SYMBOL sym = (PIMAGEHLP_SYMBOL)GlobalAlloc(GMEM_FIXED, symSize);
-	if (!sym) return str;
+  DWORD symSize = 10000;
+  PIMAGEHLP_SYMBOL sym = (PIMAGEHLP_SYMBOL)GlobalAlloc(GMEM_FIXED, symSize);
+  if (!sym)
+    return str;
 
-	::ZeroMemory(sym, symSize);
-	sym->SizeOfStruct = symSize;
-	sym->MaxNameLength = symSize - sizeof(IMAGEHLP_SYMBOL);
+  ::ZeroMemory(sym, symSize);
+  sym->SizeOfStruct = symSize;
+  sym->MaxNameLength = symSize - sizeof(IMAGEHLP_SYMBOL);
 
-	DWORD_TYPE disp = 0;
-	if (SymGetSymFromAddr(GetCurrentProcess(), funcAddr, &disp, sym) == FALSE)
-	{
-		return str;
-	}
+  DWORD_TYPE disp = 0;
+  if (SymGetSymFromAddr(GetCurrentProcess(), funcAddr, &disp, sym) == FALSE) {
+    return str;
+  }
 
-	CHAR undecSymbol[stringSize];
-	if (UnDecorateSymbolName(sym->Name, undecSymbol, stringSize, UNDNAME_COMPLETE | UNDNAME_NO_THISTYPE | UNDNAME_NO_SPECIAL_SYMS | UNDNAME_NO_MEMBER_TYPE | UNDNAME_NO_MS_KEYWORDS | UNDNAME_NO_ACCESS_SPECIFIERS) > 0)
-	{
-		str = undecSymbol;
-	}
-	else if (SymUnDName(sym, undecSymbol, stringSize) == TRUE)
-	{
-		str = undecSymbol;
-	}
+  CHAR undecSymbol[stringSize];
+  if (UnDecorateSymbolName(sym->Name, undecSymbol, stringSize,
+                           UNDNAME_COMPLETE | UNDNAME_NO_THISTYPE |
+                               UNDNAME_NO_SPECIAL_SYMS |
+                               UNDNAME_NO_MEMBER_TYPE | UNDNAME_NO_MS_KEYWORDS |
+                               UNDNAME_NO_ACCESS_SPECIFIERS) > 0) {
+    str = undecSymbol;
+  } else if (SymUnDName(sym, undecSymbol, stringSize) == TRUE) {
+    str = undecSymbol;
+  }
 
-	if (disp != 0)
-	{
-		str += " + ";
-		str += toString((uint32)disp);
-		str += " bytes";
-	}
+  if (disp != 0) {
+    str += " + ";
+    str += toString((uint32)disp);
+    str += " bytes";
+  }
 
-	// replace param with the value of the stack for this param
+  // replace param with the value of the stack for this param
 
-	string parse = str;
-	str.clear();
-	uint pos = 0;
-	sint stop = 0;
+  string parse = str;
+  str.clear();
+  uint pos = 0;
+  sint stop = 0;
 
-	for (uint i = 0; i < parse.size(); i++)
-	{
-		if (parse[i] == '<')
-			stop++;
-		if (parse[i] == '>')
-			stop--;
+  for (uint i = 0; i < parse.size(); i++) {
+    if (parse[i] == '<')
+      stop++;
+    if (parse[i] == '>')
+      stop--;
 
-		if (stop == 0 && (parse[i] == ',' || parse[i] == ')'))
-		{
-			char tmp[32];
-			sprintf(tmp, "=0x%p", (void *)(*((DWORD_TYPE *)(stackAddr) + 2 + pos++)));
-			str += tmp;
-		}
-		str += parse[i];
-	}
-	GlobalFree(sym);
+    if (stop == 0 && (parse[i] == ',' || parse[i] == ')')) {
+      char tmp[32];
+      sprintf(tmp, "=0x%p", (void *)(*((DWORD_TYPE *)(stackAddr) + 2 + pos++)));
+      str += tmp;
+    }
+    str += parse[i];
+  }
+  GlobalFree(sym);
 
-	return str;
+  return str;
 }
 
-static string getSourceInfo(DWORD_TYPE addr)
-{
-	string str;
+static string getSourceInfo(DWORD_TYPE addr) {
+  string str;
 
-	IMAGEHLP_LINE line;
-	::ZeroMemory(&line, sizeof(line));
-	line.SizeOfStruct = sizeof(line);
+  IMAGEHLP_LINE line;
+  ::ZeroMemory(&line, sizeof(line));
+  line.SizeOfStruct = sizeof(line);
 
-	// It doesn't work in windows 98
-	/*	DWORD disp;
-	    if (SymGetLineFromAddr (GetCurrentProcess(), addr, &disp, &line))
-	    {
-	        str = line.FileName;
-	        str += "(" + toString (line.LineNumber) + ")";
-	    }
-	    else
-	*/
-	{
-		IMAGEHLP_MODULE module;
-		::ZeroMemory(&module, sizeof(module));
-		module.SizeOfStruct = sizeof(module);
+  // It doesn't work in windows 98
+  /*	DWORD disp;
+      if (SymGetLineFromAddr (GetCurrentProcess(), addr, &disp, &line))
+      {
+          str = line.FileName;
+          str += "(" + toString (line.LineNumber) + ")";
+      }
+      else
+  */
+  {
+    IMAGEHLP_MODULE module;
+    ::ZeroMemory(&module, sizeof(module));
+    module.SizeOfStruct = sizeof(module);
 
-		if (SymGetModuleInfo(GetCurrentProcess(), addr, &module))
-		{
-			str = module.ModuleName;
-		}
-		else
-		{
-			str = "<NoModule>";
-		}
+    if (SymGetModuleInfo(GetCurrentProcess(), addr, &module)) {
+      str = module.ModuleName;
+    } else {
+      str = "<NoModule>";
+    }
 
-		str += toString("!0x%p", (void *)addr);
-	}
+    str += toString("!0x%p", (void *)addr);
+  }
 
-	return str;
+  return str;
 }
 
 #ifdef NL_OS_WIN64
@@ -155,184 +149,171 @@ static DWORD64 __stdcall GetModuleBase(HANDLE hProcess, DWORD64 dwReturnAddress)
 static DWORD __stdcall GetModuleBase(HANDLE hProcess, DWORD dwReturnAddress)
 #endif
 {
-	IMAGEHLP_MODULE moduleInfo;
+  IMAGEHLP_MODULE moduleInfo;
 
-	if (SymGetModuleInfo(hProcess, dwReturnAddress, &moduleInfo))
-		return moduleInfo.BaseOfImage;
-	else
-	{
-		MEMORY_BASIC_INFORMATION memoryBasicInfo;
+  if (SymGetModuleInfo(hProcess, dwReturnAddress, &moduleInfo))
+    return moduleInfo.BaseOfImage;
+  else {
+    MEMORY_BASIC_INFORMATION memoryBasicInfo;
 
-		if (::VirtualQueryEx(hProcess, (LPVOID)dwReturnAddress,
-		        &memoryBasicInfo, sizeof(memoryBasicInfo)))
-		{
-			DWORD cch = 0;
-			char szFile[MAX_PATH] = { 0 };
+    if (::VirtualQueryEx(hProcess, (LPVOID)dwReturnAddress, &memoryBasicInfo,
+                         sizeof(memoryBasicInfo))) {
+      DWORD cch = 0;
+      char szFile[MAX_PATH] = {0};
 
-			cch = GetModuleFileNameA((HINSTANCE)memoryBasicInfo.AllocationBase, szFile, MAX_PATH);
+      cch = GetModuleFileNameA((HINSTANCE)memoryBasicInfo.AllocationBase,
+                               szFile, MAX_PATH);
 
-			if (cch && (lstrcmpA(szFile, "DBFN") == 0))
-			{
-				char mn[] = { 'M', 'N', 0x00 };
+      if (cch && (lstrcmpA(szFile, "DBFN") == 0)) {
+        char mn[] = {'M', 'N', 0x00};
 #ifdef NL_OS_WIN64
-				if (!SymLoadModule64(
+        if (!SymLoadModule64(
 #else
-				if (!SymLoadModule(
+        if (!SymLoadModule(
 #endif
-				        hProcess,
-				        NULL, mn,
-				        NULL, (uintptr_t)memoryBasicInfo.AllocationBase, 0))
-				{
-					//					DWORD dwError = GetLastError();
-					//					nlinfo("Error: %d", dwError);
-				}
-			}
-			else
-			{
+                hProcess, NULL, mn, NULL,
+                (uintptr_t)memoryBasicInfo.AllocationBase, 0)) {
+          //					DWORD dwError = GetLastError();
+          //					nlinfo("Error: %d", dwError);
+        }
+      } else {
 #ifdef NL_OS_WIN64
-				if (!SymLoadModule64(
+        if (!SymLoadModule64(
 #else
-				if (!SymLoadModule(
+        if (!SymLoadModule(
 #endif
-				        hProcess,
-				        NULL, ((cch) ? szFile : NULL),
-				        NULL, (uintptr_t)memoryBasicInfo.AllocationBase, 0))
-				{
-					//				DWORD dwError = GetLastError();
-					//				nlinfo("Error: %d", dwError);
-				}
-			}
+                hProcess, NULL, ((cch) ? szFile : NULL), NULL,
+                (uintptr_t)memoryBasicInfo.AllocationBase, 0)) {
+          //				DWORD dwError = GetLastError();
+          //				nlinfo("Error: %d", dwError);
+        }
+      }
 
-			return (uintptr_t)memoryBasicInfo.AllocationBase;
-		}
-		//		else
-		//			nlinfo("Error is %d", GetLastError());
-	}
+      return (uintptr_t)memoryBasicInfo.AllocationBase;
+    }
+    //		else
+    //			nlinfo("Error is %d", GetLastError());
+  }
 
-	return 0;
+  return 0;
 }
 
-static void displayCallStack(CLog *log)
-{
-	static string symbolPath;
+static void displayCallStack(CLog *log) {
+  static string symbolPath;
 
-	DWORD symOptions = SymGetOptions();
-	symOptions |= SYMOPT_LOAD_LINES;
-	symOptions &= ~SYMOPT_UNDNAME;
-	SymSetOptions(symOptions);
+  DWORD symOptions = SymGetOptions();
+  symOptions |= SYMOPT_LOAD_LINES;
+  symOptions &= ~SYMOPT_UNDNAME;
+  SymSetOptions(symOptions);
 
-	//
-	// Create the path where to find the symbol
-	//
+  //
+  // Create the path where to find the symbol
+  //
 
-	if (symbolPath.empty())
-	{
-		wchar_t tmpPath[stringSize];
+  if (symbolPath.empty()) {
+    wchar_t tmpPath[stringSize];
 
-		symbolPath = ".";
+    symbolPath = ".";
 
-		if (GetEnvironmentVariableW(L"_NT_SYMBOL_PATH", tmpPath, stringSize))
-		{
-			symbolPath += ";";
-			symbolPath += wideToUtf8(tmpPath);
-		}
+    if (GetEnvironmentVariableW(L"_NT_SYMBOL_PATH", tmpPath, stringSize)) {
+      symbolPath += ";";
+      symbolPath += wideToUtf8(tmpPath);
+    }
 
-		if (GetEnvironmentVariableW(L"_NT_ALTERNATE_SYMBOL_PATH", tmpPath, stringSize))
-		{
-			symbolPath += ";";
-			symbolPath += wideToUtf8(tmpPath);
-		}
+    if (GetEnvironmentVariableW(L"_NT_ALTERNATE_SYMBOL_PATH", tmpPath,
+                                stringSize)) {
+      symbolPath += ";";
+      symbolPath += wideToUtf8(tmpPath);
+    }
 
-		if (GetEnvironmentVariableW(L"SYSTEMROOT", tmpPath, stringSize))
-		{
-			symbolPath += ";";
-			symbolPath += wideToUtf8(tmpPath);
-			symbolPath += ";";
-			symbolPath += wideToUtf8(tmpPath);
-			symbolPath += "\\system32";
-		}
-	}
+    if (GetEnvironmentVariableW(L"SYSTEMROOT", tmpPath, stringSize)) {
+      symbolPath += ";";
+      symbolPath += wideToUtf8(tmpPath);
+      symbolPath += ";";
+      symbolPath += wideToUtf8(tmpPath);
+      symbolPath += "\\system32";
+    }
+  }
 
-	//
-	// Initialize
-	//
+  //
+  // Initialize
+  //
 
-	if (SymInitialize(GetCurrentProcess(), NULL, FALSE) == FALSE)
-	{
-		nlwarning("DISP: SymInitialize(%p, '%s') failed", GetCurrentProcess(), symbolPath.c_str());
-		return;
-	}
+  if (SymInitialize(GetCurrentProcess(), NULL, FALSE) == FALSE) {
+    nlwarning("DISP: SymInitialize(%p, '%s') failed", GetCurrentProcess(),
+              symbolPath.c_str());
+    return;
+  }
 
-	// FIXME: Implement this for MinGW
+  // FIXME: Implement this for MinGW
 #ifndef NL_COMP_MINGW
-	CONTEXT context;
-	::ZeroMemory(&context, sizeof(context));
-	context.ContextFlags = CONTEXT_FULL;
+  CONTEXT context;
+  ::ZeroMemory(&context, sizeof(context));
+  context.ContextFlags = CONTEXT_FULL;
 
-	if (GetThreadContext(GetCurrentThread(), &context) == FALSE)
-	{
-		nlwarning("DISP: GetThreadContext(%p) failed", GetCurrentThread());
-		return;
-	}
+  if (GetThreadContext(GetCurrentThread(), &context) == FALSE) {
+    nlwarning("DISP: GetThreadContext(%p) failed", GetCurrentThread());
+    return;
+  }
 
-	STACKFRAME callStack;
-	::ZeroMemory(&callStack, sizeof(callStack));
-
-#ifdef NL_OS_WIN64
-	callStack.AddrPC.Offset = context.Rip;
-	callStack.AddrStack.Offset = context.Rsp;
-	callStack.AddrFrame.Offset = context.Rbp;
-#else
-	callStack.AddrPC.Offset = context.Eip;
-	callStack.AddrStack.Offset = context.Esp;
-	callStack.AddrFrame.Offset = context.Ebp;
-#endif
-
-	callStack.AddrPC.Mode = AddrModeFlat;
-	callStack.AddrStack.Mode = AddrModeFlat;
-	callStack.AddrFrame.Mode = AddrModeFlat;
-
-	for (uint32 i = 0;; i++)
-	{
-		DWORD MachineType;
+  STACKFRAME callStack;
+  ::ZeroMemory(&callStack, sizeof(callStack));
 
 #ifdef NL_OS_WIN64
-		MachineType = IMAGE_FILE_MACHINE_AMD64;
-		BOOL res = StackWalk64(MachineType, GetCurrentProcess(), GetCurrentThread(), &callStack,
-		    NULL, NULL, SymFunctionTableAccess, GetModuleBase, NULL);
+  callStack.AddrPC.Offset = context.Rip;
+  callStack.AddrStack.Offset = context.Rsp;
+  callStack.AddrFrame.Offset = context.Rbp;
 #else
-		MachineType = IMAGE_FILE_MACHINE_I386;
-		BOOL res = StackWalk(MachineType, GetCurrentProcess(), GetCurrentThread(), &callStack,
-		    NULL, NULL, SymFunctionTableAccess, GetModuleBase, NULL);
+  callStack.AddrPC.Offset = context.Eip;
+  callStack.AddrStack.Offset = context.Esp;
+  callStack.AddrFrame.Offset = context.Ebp;
 #endif
 
-		/*		if (res == FALSE)
-		        {
-		            DWORD r = GetLastError ();
-		            nlinfo ("%d",r);
-		        }
-		*/
-		if (i == 0)
-			continue;
+  callStack.AddrPC.Mode = AddrModeFlat;
+  callStack.AddrStack.Mode = AddrModeFlat;
+  callStack.AddrFrame.Mode = AddrModeFlat;
 
-		if (res == FALSE || callStack.AddrFrame.Offset == 0)
-			break;
+  for (uint32 i = 0;; i++) {
+    DWORD MachineType;
 
-		string symInfo, srcInfo;
+#ifdef NL_OS_WIN64
+    MachineType = IMAGE_FILE_MACHINE_AMD64;
+    BOOL res = StackWalk64(MachineType, GetCurrentProcess(), GetCurrentThread(),
+                           &callStack, NULL, NULL, SymFunctionTableAccess,
+                           GetModuleBase, NULL);
+#else
+    MachineType = IMAGE_FILE_MACHINE_I386;
+    BOOL res = StackWalk(MachineType, GetCurrentProcess(), GetCurrentThread(),
+                         &callStack, NULL, NULL, SymFunctionTableAccess,
+                         GetModuleBase, NULL);
+#endif
 
-		symInfo = getFuncInfo(callStack.AddrPC.Offset, callStack.AddrFrame.Offset);
-		srcInfo = getSourceInfo(callStack.AddrPC.Offset);
+    /*		if (res == FALSE)
+            {
+                DWORD r = GetLastError ();
+                nlinfo ("%d",r);
+            }
+    */
+    if (i == 0)
+      continue;
 
-		log->displayNL("   %s : %s", srcInfo.c_str(), symInfo.c_str());
-	}
+    if (res == FALSE || callStack.AddrFrame.Offset == 0)
+      break;
+
+    string symInfo, srcInfo;
+
+    symInfo = getFuncInfo(callStack.AddrPC.Offset, callStack.AddrFrame.Offset);
+    srcInfo = getSourceInfo(callStack.AddrPC.Offset);
+
+    log->displayNL("   %s : %s", srcInfo.c_str(), symInfo.c_str());
+  }
 #endif
 }
 
 #else // NL_OS_WINDOWS
 
-static void displayCallStack(CLog *log)
-{
-	log->displayNL("no call stack info available");
+static void displayCallStack(CLog *log) {
+  log->displayNL("no call stack info available");
 }
 
 #endif // NL_OS_WINDOWS
@@ -341,177 +322,162 @@ static void displayCallStack(CLog *log)
  * Constructor
  */
 CMemDisplayer::CMemDisplayer(const char *displayerName)
-    : IDisplayer(displayerName)
-    , _NeedHeader(true)
-    , _MaxStrings(50)
-    , _CanUseStrings(true)
-{
-	setParam(50);
+    : IDisplayer(displayerName), _NeedHeader(true), _MaxStrings(50),
+      _CanUseStrings(true) {
+  setParam(50);
 }
 
-void CMemDisplayer::setParam(uint32 maxStrings)
-{
-	_MaxStrings = maxStrings;
-}
+void CMemDisplayer::setParam(uint32 maxStrings) { _MaxStrings = maxStrings; }
 
-// Log format: "2000/01/15 12:05:30 <ProcessName> <LogType> <ThreadId> <FileName> <Line> : <Msg>"
-void CMemDisplayer::doDisplay(const CLog::TDisplayInfo &args, const char *message)
-{
-	//	stringstream	ss;
-	string str;
-	bool needSpace = false;
+// Log format: "2000/01/15 12:05:30 <ProcessName> <LogType> <ThreadId>
+// <FileName> <Line> : <Msg>"
+void CMemDisplayer::doDisplay(const CLog::TDisplayInfo &args,
+                              const char *message) {
+  //	stringstream	ss;
+  string str;
+  bool needSpace = false;
 
-	if (!_CanUseStrings) return;
+  if (!_CanUseStrings)
+    return;
 
-	if (_NeedHeader)
-	{
-		str += HeaderString();
-		_NeedHeader = false;
-	}
+  if (_NeedHeader) {
+    str += HeaderString();
+    _NeedHeader = false;
+  }
 
-	if (args.Date != 0)
-	{
-		str += dateToHumanString(args.Date);
-		needSpace = true;
-	}
+  if (args.Date != 0) {
+    str += dateToHumanString(args.Date);
+    needSpace = true;
+  }
 
-	if (!args.ProcessName.empty())
-	{
-		if (needSpace)
-		{
-			str += " ";
-			needSpace = false;
-		}
-		str += args.ProcessName;
-		needSpace = true;
-	}
+  if (!args.ProcessName.empty()) {
+    if (needSpace) {
+      str += " ";
+      needSpace = false;
+    }
+    str += args.ProcessName;
+    needSpace = true;
+  }
 
-	if (args.LogType != CLog::LOG_NO)
-	{
-		if (needSpace)
-		{
-			str += " ";
-			needSpace = false;
-		}
-		str += logTypeToString(args.LogType);
-		needSpace = true;
-	}
+  if (args.LogType != CLog::LOG_NO) {
+    if (needSpace) {
+      str += " ";
+      needSpace = false;
+    }
+    str += logTypeToString(args.LogType);
+    needSpace = true;
+  }
 
-	// Write thread identifier
-	if (args.ThreadId != 0)
-	{
-		if (needSpace)
-		{
-			str += " ";
-			needSpace = false;
-		}
+  // Write thread identifier
+  if (args.ThreadId != 0) {
+    if (needSpace) {
+      str += " ";
+      needSpace = false;
+    }
 #ifdef NL_OS_WINDOWS
-		str += NLMISC::toString("%5x", args.ThreadId);
+    str += NLMISC::toString("%5x", args.ThreadId);
 #else
-		str += NLMISC::toString("%08x", args.ThreadId);
+    str += NLMISC::toString("%08x", args.ThreadId);
 #endif
-		needSpace = true;
-	}
+    needSpace = true;
+  }
 
-	if (args.FileName != NULL)
-	{
-		if (needSpace)
-		{
-			str += " ";
-			needSpace = false;
-		}
-		str += CFile::getFilename(args.FileName);
-		needSpace = true;
-	}
+  if (args.FileName != NULL) {
+    if (needSpace) {
+      str += " ";
+      needSpace = false;
+    }
+    str += CFile::getFilename(args.FileName);
+    needSpace = true;
+  }
 
-	if (args.Line != -1)
-	{
-		if (needSpace)
-		{
-			str += " ";
-			needSpace = false;
-		}
-		str += NLMISC::toString(args.Line);
-		needSpace = true;
-	}
+  if (args.Line != -1) {
+    if (needSpace) {
+      str += " ";
+      needSpace = false;
+    }
+    str += NLMISC::toString(args.Line);
+    needSpace = true;
+  }
 
-	if (needSpace)
-	{
-		str += " : ";
-		needSpace = false;
-	}
+  if (needSpace) {
+    str += " : ";
+    needSpace = false;
+  }
 
-	str += message;
+  str += message;
 
-	// clear old line
-	while (_Strings.size() > _MaxStrings)
-	{
-		_Strings.pop_front();
-	}
+  // clear old line
+  while (_Strings.size() > _MaxStrings) {
+    _Strings.pop_front();
+  }
 
-	_Strings.push_back(str);
+  _Strings.push_back(str);
 }
 
-void CMemDisplayer::write(CLog *log, bool quiet)
-{
-	if (log == NULL)
-		log = InfoLog;
+void CMemDisplayer::write(CLog *log, bool quiet) {
+  if (log == NULL)
+    log = InfoLog;
 
-	if (!quiet)
-	{
-		log->forceDisplayRaw("------------------------------------------------------------------------------\n");
-		log->forceDisplayRaw("----------------------------------------- display MemDisplayer history -------\n");
-		log->forceDisplayRaw("------------------------------------------------------------------------------\n");
-	}
-	for (deque<string>::iterator it = _Strings.begin(); it != _Strings.end(); it++)
-	{
-		log->forceDisplayRaw((*it).c_str());
-	}
-	if (!quiet)
-	{
-		log->forceDisplayRaw("------------------------------------------------------------------------------\n");
-		log->forceDisplayRaw("----------------------------------------- display MemDisplayer callstack -----\n");
-		log->forceDisplayRaw("------------------------------------------------------------------------------\n");
-		displayCallStack(log);
-		log->forceDisplayRaw("------------------------------------------------------------------------------\n");
-		log->forceDisplayRaw("----------------------------------------- end of MemDisplayer display --------\n");
-		log->forceDisplayRaw("------------------------------------------------------------------------------\n");
-	}
+  if (!quiet) {
+    log->forceDisplayRaw("-----------------------------------------------------"
+                         "-------------------------\n");
+    log->forceDisplayRaw("----------------------------------------- display "
+                         "MemDisplayer history -------\n");
+    log->forceDisplayRaw("-----------------------------------------------------"
+                         "-------------------------\n");
+  }
+  for (deque<string>::iterator it = _Strings.begin(); it != _Strings.end();
+       it++) {
+    log->forceDisplayRaw((*it).c_str());
+  }
+  if (!quiet) {
+    log->forceDisplayRaw("-----------------------------------------------------"
+                         "-------------------------\n");
+    log->forceDisplayRaw("----------------------------------------- display "
+                         "MemDisplayer callstack -----\n");
+    log->forceDisplayRaw("-----------------------------------------------------"
+                         "-------------------------\n");
+    displayCallStack(log);
+    log->forceDisplayRaw("-----------------------------------------------------"
+                         "-------------------------\n");
+    log->forceDisplayRaw("----------------------------------------- end of "
+                         "MemDisplayer display --------\n");
+    log->forceDisplayRaw("-----------------------------------------------------"
+                         "-------------------------\n");
+  }
 }
 
-void CMemDisplayer::write(string &str, bool crLf)
-{
-	for (deque<string>::iterator it = _Strings.begin(); it != _Strings.end(); it++)
-	{
-		str += (*it);
-		if (crLf)
-		{
-			if ((!str.empty()) && (str[str.size() - 1] == '\n'))
-			{
-				str[str.size() - 1] = '\r';
-				str += '\n';
-			}
-		}
-	}
+void CMemDisplayer::write(string &str, bool crLf) {
+  for (deque<string>::iterator it = _Strings.begin(); it != _Strings.end();
+       it++) {
+    str += (*it);
+    if (crLf) {
+      if ((!str.empty()) && (str[str.size() - 1] == '\n')) {
+        str[str.size() - 1] = '\r';
+        str += '\n';
+      }
+    }
+  }
 }
 
-void CLightMemDisplayer::doDisplay(const CLog::TDisplayInfo & /* args */, const char *message)
-{
-	// stringstream	ss;
-	string str;
-	// bool			needSpace = false;
+void CLightMemDisplayer::doDisplay(const CLog::TDisplayInfo & /* args */,
+                                   const char *message) {
+  // stringstream	ss;
+  string str;
+  // bool			needSpace = false;
 
-	if (!_CanUseStrings) return;
+  if (!_CanUseStrings)
+    return;
 
-	str += message;
+  str += message;
 
-	// clear old line
-	while (_Strings.size() >= _MaxStrings)
-	{
-		_Strings.pop_front();
-	}
+  // clear old line
+  while (_Strings.size() >= _MaxStrings) {
+    _Strings.pop_front();
+  }
 
-	_Strings.push_back(str);
+  _Strings.push_back(str);
 }
 
-} // NLMISC
+} // namespace NLMISC

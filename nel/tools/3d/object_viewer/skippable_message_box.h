@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined(AFX_SKIPPABLE_MESSAGE_BOX_H__3311E633_C1A9_4994_9054_94094A8219B5__INCLUDED_)
+#if !defined(                                                                  \
+    AFX_SKIPPABLE_MESSAGE_BOX_H__3311E633_C1A9_4994_9054_94094A8219B5__INCLUDED_)
 #define AFX_SKIPPABLE_MESSAGE_BOX_H__3311E633_C1A9_4994_9054_94094A8219B5__INCLUDED_
 
 #if _MSC_VER > 1000
@@ -29,45 +30,43 @@
 // A skippabmle message box with user contenyt & caption
 // The user can check an option to not see the dialog again
 // this can be querried by calling 'getBypassFlag'
-class CSkippableMessageBox : public CDialog
-{
-	// Construction
+class CSkippableMessageBox : public CDialog {
+  // Construction
 public:
-	CSkippableMessageBox(const CString &caption, const CString &content, CWnd *pParent = NULL); // standard constructor
+  CSkippableMessageBox(const CString &caption, const CString &content,
+                       CWnd *pParent = NULL); // standard constructor
 
-	// Dialog Data
-	//{{AFX_DATA(CSkippableMessageBox)
-	enum
-	{
-		IDD = IDD_SKIPPABLE_MESSAGE_BOX
-	};
-	// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(CSkippableMessageBox)
+  enum { IDD = IDD_SKIPPABLE_MESSAGE_BOX };
+  // NOTE: the ClassWizard will add data members here
+  //}}AFX_DATA
 
-	// Test whether the user has checked the 'don't show again' check box
-	bool getBypassFlag() const { return _BypassFlag; }
+  // Test whether the user has checked the 'don't show again' check box
+  bool getBypassFlag() const { return _BypassFlag; }
 
-	// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CSkippableMessageBox)
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CSkippableMessageBox)
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
-	//}}AFX_VIRTUAL
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+                                                   //}}AFX_VIRTUAL
 
-	// Implementation
+  // Implementation
 protected:
-	bool _BypassFlag;
-	CString _Caption;
-	CString _Content;
-	// Generated message map functions
-	//{{AFX_MSG(CSkippableMessageBox)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  bool _BypassFlag;
+  CString _Caption;
+  CString _Content;
+  // Generated message map functions
+  //{{AFX_MSG(CSkippableMessageBox)
+  virtual BOOL OnInitDialog();
+  virtual void OnOK();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before
+// the previous line.
 
 #endif // !defined(AFX_SKIPPABLE_MESSAGE_BOX_H__3311E633_C1A9_4994_9054_94094A8219B5__INCLUDED_)

@@ -19,40 +19,40 @@
 
 #if defined(_MSC_VER) && defined(_DEBUG)
 #define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
 #include <crtdbg.h>
+#include <stdlib.h>
 #define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
-#include <map>
-#include <set>
-#include <list>
 #include <cmath>
 #include <ctime>
+#include <list>
+#include <map>
+#include <set>
 
-#include <deque>
-#include <cstdio>
-#include <string>
-#include <vector>
-#include <cstdlib>
-#include <utility>
 #include <algorithm>
+#include <cstdio>
+#include <cstdlib>
+#include <deque>
 #include <exception>
-#include <memory>
 #include <functional>
 #include <iostream>
-#include <limits>
 #include <iterator>
+#include <limits>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "nel/misc/types_nl.h"
 
-#include "nel/misc/rgba.h"
 #include "nel/misc/debug.h"
+#include "nel/misc/rgba.h"
 
 #include "nel/misc/common.h"
-#include "nel/misc/stream.h"
-#include "nel/misc/vector.h"
 #include "nel/misc/matrix.h"
+#include "nel/misc/stream.h"
 #include "nel/misc/time_nl.h"
+#include "nel/misc/vector.h"
 
 #endif

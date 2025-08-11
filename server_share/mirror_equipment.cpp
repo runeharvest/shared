@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdpch.h"
 #include "mirror_equipment.h"
+#include "stdpch.h"
 
 namespace NLMISC {
-std::string toString(const SMirrorEquipment &equipment)
-{
-	return std::string("Sheet: ") + equipment.IdSheet.toString() + std::string(" Quality: ") + NLMISC::toString(equipment.Quality);
+std::string toString(const SMirrorEquipment &equipment) {
+  return std::string("Sheet: ") + equipment.IdSheet.toString() +
+         std::string(" Quality: ") + NLMISC::toString(equipment.Quality);
 }
-};
+}; // namespace NLMISC
 
 /* End of mirror_equipment.cpp */

@@ -20,10 +20,10 @@
 #ifndef NL_UNITIME_H
 #define NL_UNITIME_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/time_nl.h"
-#include "nel/misc/debug.h"
 #include "callback_net_base.h"
+#include "nel/misc/debug.h"
+#include "nel/misc/time_nl.h"
+#include "nel/misc/types_nl.h"
 
 namespace NLNET {
 
@@ -40,67 +40,73 @@ class CCallbackClient;
  * THIS CLASS IS DEPRECATED, DON'T USE IT
  *
  */
-class _CUniTime : public NLMISC::CTime
-{
+class _CUniTime : public NLMISC::CTime {
 public:
-	/// Return the time in millisecond. This time is the same on all computers at the \b same moment.
-	static NLMISC::TTime getUniTime();
+  /// Return the time in millisecond. This time is the same on all computers at
+  /// the \b same moment.
+  static NLMISC::TTime getUniTime();
 
-	/// Return the time in a string format to be display
-	static const char *getStringUniTime();
+  /// Return the time in a string format to be display
+  static const char *getStringUniTime();
 
-	/// Return the time in a string format to be display
-	static const char *getStringUniTime(NLMISC::TTime ut);
+  /// Return the time in a string format to be display
+  static const char *getStringUniTime(NLMISC::TTime ut);
 
-	/** You need to call this function before calling getUniTime or an assert will occurred.
-	 * This function will connect to the time service and synchronize your computer.
-	 * This function assumes that all services run on server that are time synchronized with NTP for example.
-	 * If addr is NULL, the function will connect to the Time Service via the Naming Service. In this case,
-	 * the CNamingClient must be connected to a Naming Service.
-	 * This function can be called *ONLY* by services that are inside of the shard.
-	 * Don't use it for a client or a service outside of the shard.
-	 */
-	static void syncUniTimeFromService(CCallbackNetBase::TRecordingState rec = CCallbackNetBase::Off, const CInetHost *addr = NULL);
+  /** You need to call this function before calling getUniTime or an assert will
+   * occurred. This function will connect to the time service and synchronize
+   * your computer. This function assumes that all services run on server that
+   * are time synchronized with NTP for example. If addr is NULL, the function
+   * will connect to the Time Service via the Naming Service. In this case, the
+   * CNamingClient must be connected to a Naming Service. This function can be
+   * called *ONLY* by services that are inside of the shard. Don't use it for a
+   * client or a service outside of the shard.
+   */
+  static void syncUniTimeFromService(
+      CCallbackNetBase::TRecordingState rec = CCallbackNetBase::Off,
+      const CInetHost *addr = NULL);
 
-	/** Call this function in the init part of the front end service to enable time syncro between
-	 * shard and clients.
-	 */
-	static void installServer(CCallbackServer *server);
+  /** Call this function in the init part of the front end service to enable
+   * time syncro between shard and clients.
+   */
+  static void installServer(CCallbackServer *server);
 
-	/** Call this functions in the init part of the client side to synchronize between client and shard.
-	 * client is the connection between the client and the front end. The connection must be established before
-	 * calling this function.
-	 */
-	static void syncUniTimeFromServer(CCallbackClient *client);
+  /** Call this functions in the init part of the client side to synchronize
+   * between client and shard. client is the connection between the client and
+   * the front end. The connection must be established before calling this
+   * function.
+   */
+  static void syncUniTimeFromServer(CCallbackClient *client);
 
-	/** \internal used by the time service to set the universal time the first time
-	 */
-	static void setUniTime(NLMISC::TTime uTime, NLMISC::TTime lTime);
-	/** \internal
-	 */
-	static void setUniTime(NLMISC::TTime uTime);
+  /** \internal used by the time service to set the universal time the first
+   * time
+   */
+  static void setUniTime(NLMISC::TTime uTime, NLMISC::TTime lTime);
+  /** \internal
+   */
+  static void setUniTime(NLMISC::TTime uTime);
 
-	/**
-	 * Call this method before to prevent syncUniTimeFromService() from real synchronization:
-	 * syncUniTimeFromService() will still communicate with the time service, as usual,
-	 * but the local time will not be synchronized.
-	 */
-	static void simulate()
-	{
-		nlstop;
-		_Simulate = true;
-	}
+  /**
+   * Call this method before to prevent syncUniTimeFromService() from real
+   * synchronization: syncUniTimeFromService() will still communicate with the
+   * time service, as usual, but the local time will not be synchronized.
+   */
+  static void simulate() {
+    nlstop;
+    _Simulate = true;
+  }
 
-	static bool Sync; // true if the synchronization occurred
+  static bool Sync; // true if the synchronization occurred
 private:
-	static NLMISC::TTime _SyncUniTime; // time in millisecond when the universal time received
-	static NLMISC::TTime _SyncLocalTime; // time in millisecond when the syncro with universal time occurred
+  static NLMISC::TTime
+      _SyncUniTime; // time in millisecond when the universal time received
+  static NLMISC::TTime _SyncLocalTime; // time in millisecond when the syncro
+                                       // with universal time occurred
 
-	// If true, do not synchronize
-	static bool _Simulate;
+  // If true, do not synchronize
+  static bool _Simulate;
 };
 
-} // NLNET
+} // namespace NLNET
 
 #endif // NL_UNITIME_H
 

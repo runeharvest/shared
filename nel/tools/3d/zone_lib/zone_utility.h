@@ -18,8 +18,8 @@
 #define NL_ZONE_UTILITY
 
 #include "nel/misc/types_nl.h"
-#include <vector>
 #include <set>
+#include <vector>
 
 std::string getDir(const std::string &path);
 std::string getName(const std::string &path);
@@ -27,7 +27,8 @@ std::string getExt(const std::string &path);
 bool getZoneCoordByName(const char *name, uint16 &x, uint16 &y);
 void getLettersFromNum(uint16 num, std::string &code);
 void getZoneNameByCoord(uint16 x, uint16 y, std::string &zoneName);
-void getAdjacentZonesName(const std::string &zoneName, std::vector<std::string> &names);
+void getAdjacentZonesName(const std::string &zoneName,
+                          std::vector<std::string> &names);
 uint16 createZoneId(std::string zoneName);
 
 #endif // NL_ZONE_UTILITY

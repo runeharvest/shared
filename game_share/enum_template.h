@@ -20,28 +20,28 @@
 #include "nel/misc/types_nl.h"
 
 namespace ROLES {
-enum EEnumRole
-{
-	melee_warrior = 0,
-	range_warrior,
-	attack_magician,
-	buffer_magician,
-	healer_magician,
-	harvester,
-	shopkeeper,
-	faber,
-	all_caster,
-	all,
+enum EEnumRole {
+  melee_warrior = 0,
+  range_warrior,
+  attack_magician,
+  buffer_magician,
+  healer_magician,
+  harvester,
+  shopkeeper,
+  faber,
+  all_caster,
+  all,
 
-	UNKNOWN = 0,
+  UNKNOWN = 0,
 
-	NUM_ENUM_ROLE
+  NUM_ENUM_ROLE
 };
 
 /**
  * get the right EEnumTemplate enum from the input string
  * \param str the input string
- * \return the EEnumTemplate associated to this string (UNKNOWN if the string cannot be interpreted)
+ * \return the EEnumTemplate associated to this string (UNKNOWN if the string
+ * cannot be interpreted)
  */
 EEnumTemplate stringToEnum(const std::string &str);
 
@@ -52,6 +52,6 @@ EEnumTemplate stringToEnum(const std::string &str);
  */
 const std::string &enumToString(EEnumTemplate e);
 
-}; // namespace ENUM_ROLES
+}; // namespace ROLES
 
 #endif // RY_ENUM_ROLES_H

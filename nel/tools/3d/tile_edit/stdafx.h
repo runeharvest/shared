@@ -18,22 +18,21 @@
 #define STDAFX_H
 
 #define NOMINMAX
-#include <afxwin.h>
 #include <afxcmn.h>
 #include <afxdlgs.h>
+#include <afxwin.h>
 
+#include <list>
 #include <stdio.h>
 #include <stdlib.h>
-#include <vector>
 #include <string>
-#include <list>
+#include <vector>
 
-#include "nel/3d/tile_bank.h"
 #include "nel/3d/tile_bank.h"
 
 #include "nel/misc/bitmap.h"
 #include "nel/misc/file.h"
-#include "nel/misc/stream.h"
 #include "nel/misc/rgba.h"
+#include "nel/misc/stream.h"
 
 #endif

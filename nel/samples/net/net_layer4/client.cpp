@@ -22,8 +22,8 @@
  */
 
 // We're using NeL
-#include "nel/misc/types_nl.h"
 #include "nel/misc/debug.h"
+#include "nel/misc/types_nl.h"
 using namespace NLMISC;
 
 // We're using the layer 4
@@ -39,7 +39,8 @@ const char SVC[3] = "FS";
  * Arguments:
  * - msgin:	the incoming message
  * - from: the "sockid" of the sender (usually useless for a CCallbackClient)
- * - client: the CCallbackNetBase object (which really is a CCallbackClient object, for a client)
+ * - client: the CCallbackNetBase object (which really is a CCallbackClient
+ * object, for a client)
  *
  * Input (expected message): PONG
  * - uint32: ping counter
@@ -47,63 +48,60 @@ const char SVC[3] = "FS";
  * Output (sent message): PING
  * - uint32: new ping counter
  */
-void cbPong(CMessage &msgin, TSockId from, CCallbackNetBase &client)
-{
-	uint32 counter;
+void cbPong(CMessage &msgin, TSockId from, CCallbackNetBase &client) {
+  uint32 counter;
 
-	// Input
-	msgin.serial(counter);
-	nlinfo("Received PONG number %u", counter);
+  // Input
+  msgin.serial(counter);
+  nlinfo("Received PONG number %u", counter);
 
-	counter++;
+  counter++;
 
-	// Output
-	CMessage msgout("PING");
-	msgout.serial(counter);
-	CNetManager::send(SVC, msgout);
-	nlinfo("Sent PING number %u", counter);
+  // Output
+  CMessage msgout("PING");
+  msgout.serial(counter);
+  CNetManager::send(SVC, msgout);
+  nlinfo("Sent PING number %u", counter);
 }
 
 /*
  * Callback array
  */
 TCallbackItem CallbackArray[] = {
-	{ "PONG", cbPong } // when receiving a "PONG" message, call cbPong()
+    {"PONG", cbPong} // when receiving a "PONG" message, call cbPong()
 };
 
 /*
  * main
  */
-void main(int argc, char **argv)
-{
-	try
-	{
-		// Initialize (we don't call CNetManager::init() because we don't use the naming service)
+void main(int argc, char **argv) {
+  try {
+    // Initialize (we don't call CNetManager::init() because we don't use the
+    // naming service)
 
-		// Connect to the front-end server at localhost:37000
-		CNetManager::addClient(SVC, "localhost:37000");
-		CNetManager::addCallbackArray(SVC, CallbackArray, sizeof(CallbackArray) / sizeof(CallbackArray[0]));
+    // Connect to the front-end server at localhost:37000
+    CNetManager::addClient(SVC, "localhost:37000");
+    CNetManager::addCallbackArray(
+        SVC, CallbackArray, sizeof(CallbackArray) / sizeof(CallbackArray[0]));
 
-		// Send a PING message
-		uint32 counter = 0;
-		CMessage msg("PING"); // create the message
-		msg.serial(counter); // serialize the counter into the message
-		CNetManager::send(SVC, msg); // put into the send queue
-		nlinfo("Sent PING number %u", counter);
+    // Send a PING message
+    uint32 counter = 0;
+    CMessage msg("PING");        // create the message
+    msg.serial(counter);         // serialize the counter into the message
+    CNetManager::send(SVC, msg); // put into the send queue
+    nlinfo("Sent PING number %u", counter);
 
-		// Main loop
-		while (CNetManager::getNetBase(SVC)->connected())
-		{
-			// Perform sends and receives, call callbacks
-			CNetManager::update();
-		}
+    // Main loop
+    while (CNetManager::getNetBase(SVC)->connected()) {
+      // Perform sends and receives, call callbacks
+      CNetManager::update();
+    }
 
-		nlinfo("Disconnected");
+    nlinfo("Disconnected");
 
-		// We don't call CNetManager::release() because we didn't call CNetManager::init()
-	}
-	catch (Exception &e)
-	{
-		nlerror("Error: %s", e.what());
-	}
+    // We don't call CNetManager::release() because we didn't call
+    // CNetManager::init()
+  } catch (Exception &e) {
+    nlerror("Error: %s", e.what());
+  }
 }

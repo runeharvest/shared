@@ -47,52 +47,53 @@ namespace BUILTIN {
  * \author Jan Boon (Kaetemi)
  * This class implements references
  */
-class CReferenceMaker : public CAnimatable
-{
+class CReferenceMaker : public CAnimatable {
 public:
-	CReferenceMaker(CScene *scene);
-	virtual ~CReferenceMaker();
+  CReferenceMaker(CScene *scene);
+  virtual ~CReferenceMaker();
 
-	// class desc
-	static const ucstring DisplayName;
-	static const char *InternalName;
-	static const char *InternalNameUnknown;
-	static const NLMISC::CClassId ClassId;
-	static const TSClassId SuperClassId;
+  // class desc
+  static const ucstring DisplayName;
+  static const char *InternalName;
+  static const char *InternalNameUnknown;
+  static const NLMISC::CClassId ClassId;
+  static const TSClassId SuperClassId;
 
-	// inherited
-	virtual void parse(uint16 version, uint filter = 0);
-	virtual void clean();
-	virtual void build(uint16 version, uint filter = 0);
-	virtual void disown();
-	virtual void init();
-	virtual bool inherits(const NLMISC::CClassId classId) const;
-	virtual const ISceneClassDesc *classDesc() const;
-	virtual void toStringLocal(std::ostream &ostream, const std::string &pad = "", uint filter = 0) const;
+  // inherited
+  virtual void parse(uint16 version, uint filter = 0);
+  virtual void clean();
+  virtual void build(uint16 version, uint filter = 0);
+  virtual void disown();
+  virtual void init();
+  virtual bool inherits(const NLMISC::CClassId classId) const;
+  virtual const ISceneClassDesc *classDesc() const;
+  virtual void toStringLocal(std::ostream &ostream, const std::string &pad = "",
+                             uint filter = 0) const;
 
-	// child classes should inherit, default implementation stores in a vector
-	/// Get a reference
-	virtual CReferenceMaker *getReference(uint index) const;
-	virtual void setReference(uint index, CReferenceMaker *reference);
-	virtual uint nbReferences() const;
+  // child classes should inherit, default implementation stores in a vector
+  /// Get a reference
+  virtual CReferenceMaker *getReference(uint index) const;
+  virtual void setReference(uint index, CReferenceMaker *reference);
+  virtual uint nbReferences() const;
 
 protected:
-	// inherited
-	virtual IStorageObject *createChunkById(uint16 id, bool container);
-	/// Storage method
-	bool m_ReferenceMap;
+  // inherited
+  virtual IStorageObject *createChunkById(uint16 id, bool container);
+  /// Storage method
+  bool m_ReferenceMap;
 
 private:
-	CStorageValue<uint8> *m_204B_Equals_2E;
+  CStorageValue<uint8> *m_204B_Equals_2E;
 
-	/// Default implementation, should preferably not use this, no direct read access will be provided
-	std::vector<NLMISC::CRefPtr<CReferenceMaker>> m_References;
-	/// Unknown value
-	uint32 m_References2035Value0;
+  /// Default implementation, should preferably not use this, no direct read
+  /// access will be provided
+  std::vector<NLMISC::CRefPtr<CReferenceMaker>> m_References;
+  /// Unknown value
+  uint32 m_References2035Value0;
 
-	CStorageRaw *m_Unknown2045;
-	CStorageRaw *m_Unknown2047;
-	CStorageRaw *m_Unknown21B0;
+  CStorageRaw *m_Unknown2045;
+  CStorageRaw *m_Unknown2047;
+  CStorageRaw *m_Unknown21B0;
 
 }; /* class CReferenceMaker */
 

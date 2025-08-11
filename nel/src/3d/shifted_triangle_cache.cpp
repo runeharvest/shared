@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "std3d.h"
 #include "nel/3d/shifted_triangle_cache.h"
+#include "std3d.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -24,10 +24,9 @@
 namespace NL3D {
 
 // ***************************************************************************
-void CShiftedTriangleCache::clearArrays()
-{
-	RawIndices.deleteAllIndexes();
-	RdrPass.clear();
+void CShiftedTriangleCache::clearArrays() {
+  RawIndices.deleteAllIndexes();
+  RdrPass.clear();
 }
 
-} // NL3D
+} // namespace NL3D

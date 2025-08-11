@@ -32,72 +32,62 @@ namespace NL3D {
 // ***************************************************************************
 // ***************************************************************************
 
-CMorphBase::CMorphBase()
-{
-	DefaultFactor.setDefaultValue(0.0f);
+CMorphBase::CMorphBase() { DefaultFactor.setDefaultValue(0.0f); }
+
+// ***************************************************************************
+void CMorphBase::serial(NLMISC::IStream &f) { f.serial(Name); }
+
+// ***************************************************************************
+// ***************************************************************************
+// ***************************************************************************
+// ***************************************************************************
+
+// ***************************************************************************
+CAnimatedMorph::CAnimatedMorph(CMorphBase *mb) {
+  nlassert(mb);
+
+  // IAnimatable.
+  IAnimatable::resize(AnimValueLast);
+
+  _MorphBase = mb;
+
+  _Factor.Value = mb->DefaultFactor.getDefaultValue();
 }
 
 // ***************************************************************************
-void CMorphBase::serial(NLMISC::IStream &f)
-{
-	f.serial(Name);
-}
+IAnimatedValue *CAnimatedMorph::getValue(uint valueId) {
+  switch (valueId) {
+  case FactorValue:
+    return &_Factor;
+  };
 
-// ***************************************************************************
-// ***************************************************************************
-// ***************************************************************************
-// ***************************************************************************
-
-// ***************************************************************************
-CAnimatedMorph::CAnimatedMorph(CMorphBase *mb)
-{
-	nlassert(mb);
-
-	// IAnimatable.
-	IAnimatable::resize(AnimValueLast);
-
-	_MorphBase = mb;
-
-	_Factor.Value = mb->DefaultFactor.getDefaultValue();
-}
-
-// ***************************************************************************
-IAnimatedValue *CAnimatedMorph::getValue(uint valueId)
-{
-	switch (valueId)
-	{
-	case FactorValue: return &_Factor;
-	};
-
-	return NULL;
+  return NULL;
 }
 // ***************************************************************************
-const char *CAnimatedMorph::getValueName(uint valueId) const
-{
-	switch (valueId)
-	{
-	case FactorValue: return "MorphFactor";
-	};
+const char *CAnimatedMorph::getValueName(uint valueId) const {
+  switch (valueId) {
+  case FactorValue:
+    return "MorphFactor";
+  };
 
-	return "";
+  return "";
 }
 // ***************************************************************************
-ITrack *CAnimatedMorph::getDefaultTrack(uint valueId)
-{
-	nlassert(_MorphBase);
+ITrack *CAnimatedMorph::getDefaultTrack(uint valueId) {
+  nlassert(_MorphBase);
 
-	switch (valueId)
-	{
-	case FactorValue: return &_MorphBase->DefaultFactor;
-	};
+  switch (valueId) {
+  case FactorValue:
+    return &_MorphBase->DefaultFactor;
+  };
 
-	return NULL;
+  return NULL;
 }
 // ***************************************************************************
-void CAnimatedMorph::registerToChannelMixer(CChannelMixer *chanMixer, const std::string &prefix)
-{
-	// For CAnimatedMorph, channels are detailled (morph evaluated after clip)!
-	addValue(chanMixer, FactorValue, OwnerBit, prefix, true);
+void CAnimatedMorph::registerToChannelMixer(CChannelMixer *chanMixer,
+                                            const std::string &prefix) {
+  // For CAnimatedMorph, channels are detailled (morph evaluated after clip)!
+  addValue(chanMixer, FactorValue, OwnerBit, prefix, true);
 }
 
-} // NL3D
+} // namespace NL3D

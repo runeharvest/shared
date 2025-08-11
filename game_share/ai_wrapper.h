@@ -17,20 +17,20 @@
 #ifndef R2_AI_WRAPPER_H
 #define R2_AI_WRAPPER_H
 
-#include <string>
-#include "nel/misc/types_nl.h"
-#include "nel/misc/debug.h"
-#include "nel/misc/singleton.h"
-#include "nel/misc/entity_id.h"
-#include "game_share/r2_share_itf.h"
 #include "game_share/misc_const.h"
+#include "game_share/r2_share_itf.h"
+#include "nel/misc/debug.h"
+#include "nel/misc/entity_id.h"
+#include "nel/misc/singleton.h"
+#include "nel/misc/types_nl.h"
+#include <string>
 
 class CPersistentDataRecord;
 
 namespace NLLIGO {
 class CLigoConfig;
 class CPrimitives;
-}
+} // namespace NLLIGO
 
 namespace NLMISC {
 class IStream;
@@ -41,179 +41,152 @@ namespace R2 {
 // - in the client the default empty implementations of the methods are used
 // - in the server the CAiWrapperServer specialization is used
 
-class IAiWrapper
-{
+class IAiWrapper {
 public:
-	virtual ~IAiWrapper()
-	{
-	}
+  virtual ~IAiWrapper() {}
 
-	virtual void init(NLLIGO::CLigoConfig *ligoConfig)
-	{
-	}
+  virtual void init(NLLIGO::CLigoConfig *ligoConfig) {}
 
-	virtual void streamToPdr(NLMISC::IStream &stream, const std::string &primName, CPersistentDataRecord &pdr)
-	{
-	}
+  virtual void streamToPdr(NLMISC::IStream &stream, const std::string &primName,
+                           CPersistentDataRecord &pdr) {}
 
-	virtual void primsToPdr(NLLIGO::CPrimitives *prims, const std::string &primName, CPersistentDataRecord &pdr)
-	{
-	}
+  virtual void primsToPdr(NLLIGO::CPrimitives *prims,
+                          const std::string &primName,
+                          CPersistentDataRecord &pdr) {}
 
-	virtual void pdrToFile(CPersistentDataRecord &pdr, const std::string &pdrName)
-	{
-	}
+  virtual void pdrToFile(CPersistentDataRecord &pdr,
+                         const std::string &pdrName) {}
 
-	virtual void fileToPdr(const std::string &pdrName, CPersistentDataRecord &pdr)
-	{
-	}
+  virtual void fileToPdr(const std::string &pdrName,
+                         CPersistentDataRecord &pdr) {}
 
-	virtual void displayPdr(CPersistentDataRecord &pdr)
-	{
-	}
+  virtual void displayPdr(CPersistentDataRecord &pdr) {}
 
-	virtual void clearPdr(CPersistentDataRecord &pdr)
-	{
-	}
+  virtual void clearPdr(CPersistentDataRecord &pdr) {}
 
-	virtual void primitiveFileToPdr(const std::string &primitiveName, CPersistentDataRecord &pdr)
-	{
-	}
+  virtual void primitiveFileToPdr(const std::string &primitiveName,
+                                  CPersistentDataRecord &pdr) {}
 
-	virtual void stopTest(TSessionId sessionId, uint32 aiInstance)
-	{
-	}
+  virtual void stopTest(TSessionId sessionId, uint32 aiInstance) {}
 
-	virtual void startTest(TSessionId sessionId, uint32 aiInstance, CPersistentDataRecord &pdr)
-	{
-	}
+  virtual void startTest(TSessionId sessionId, uint32 aiInstance,
+                         CPersistentDataRecord &pdr) {}
 
-	virtual void stopAct(TSessionId sessionId, uint32 aiInstance)
-	{
-	}
+  virtual void stopAct(TSessionId sessionId, uint32 aiInstance) {}
 
-	virtual void startAct(TSessionId sessionId, uint32 aiInstance, CPersistentDataRecord &pdr)
-	{
-	}
+  virtual void startAct(TSessionId sessionId, uint32 aiInstance,
+                        CPersistentDataRecord &pdr) {}
 
-	virtual void despawnEntity(NLMISC::CEntityId entityId, TAIAlias alias)
-	{
-	}
+  virtual void despawnEntity(NLMISC::CEntityId entityId, TAIAlias alias) {}
 
-	virtual void setAggroRange(NLMISC::CEntityId entityId, float range)
-	{
-	}
+  virtual void setAggroRange(NLMISC::CEntityId entityId, float range) {}
 
-	virtual void setHPLevel(NLMISC::CEntityId entityId, uint32 alias, float value)
-	{
-	}
+  virtual void setHPLevel(NLMISC::CEntityId entityId, uint32 alias,
+                          float value) {}
 
-	virtual void setGrpHPLevel(NLMISC::CEntityId entityId, uint32 alias, float value)
-	{
-	}
+  virtual void setGrpHPLevel(NLMISC::CEntityId entityId, uint32 alias,
+                             float value) {}
 
-	virtual void startInstance(TSessionId sessionId, uint32 aiInstance)
-	{
-	}
-	virtual void triggerGrpEvent(NLMISC::CEntityId entityId, float eventId)
-	{
-	}
-	virtual void setPioneerRight(NLMISC::CEntityId clientId, const R2::TPioneerRight &right)
-	{
-	}
+  virtual void startInstance(TSessionId sessionId, uint32 aiInstance) {}
+  virtual void triggerGrpEvent(NLMISC::CEntityId entityId, float eventId) {}
+  virtual void setPioneerRight(NLMISC::CEntityId clientId,
+                               const R2::TPioneerRight &right) {}
 
-	virtual void controlNpc(NLMISC::CEntityId clientId, NLMISC::CEntityId npc)
-	{
-	}
+  virtual void controlNpc(NLMISC::CEntityId clientId, NLMISC::CEntityId npc) {}
 
-	virtual void stopControlNpc(NLMISC::CEntityId clientId, NLMISC::CEntityId npc)
-	{
-	}
+  virtual void stopControlNpc(NLMISC::CEntityId clientId,
+                              NLMISC::CEntityId npc) {}
 
-	virtual void triggerUserTrigger(const std::string &groupName, uint32 triggerId)
-	{
-	}
+  virtual void triggerUserTrigger(const std::string &groupName,
+                                  uint32 triggerId) {}
 
-	virtual void askBotDespawnNotification(NLMISC::CEntityId creatureId, TAIAlias alias)
-	{
-	}
+  virtual void askBotDespawnNotification(NLMISC::CEntityId creatureId,
+                                         TAIAlias alias) {}
 };
 
-// This specialization of IAiWrapper is the true implementation of CAiWrapper for use by server apps
+// This specialization of IAiWrapper is the true implementation of CAiWrapper
+// for use by server apps
 
-class CAiWrapperServer : public IAiWrapper
-{
+class CAiWrapperServer : public IAiWrapper {
 public:
-	void init(NLLIGO::CLigoConfig *ligoConfig);
+  void init(NLLIGO::CLigoConfig *ligoConfig);
 
-	virtual void streamToPdr(NLMISC::IStream &stream, const std::string &primName, CPersistentDataRecord &pdr);
+  virtual void streamToPdr(NLMISC::IStream &stream, const std::string &primName,
+                           CPersistentDataRecord &pdr);
 
-	virtual void primsToPdr(NLLIGO::CPrimitives *prims, const std::string &primName, CPersistentDataRecord &pdr);
+  virtual void primsToPdr(NLLIGO::CPrimitives *prims,
+                          const std::string &primName,
+                          CPersistentDataRecord &pdr);
 
-	virtual void pdrToFile(CPersistentDataRecord &pdr, const std::string &pdrName);
+  virtual void pdrToFile(CPersistentDataRecord &pdr,
+                         const std::string &pdrName);
 
-	virtual void fileToPdr(const std::string &pdrName, CPersistentDataRecord &pdr);
+  virtual void fileToPdr(const std::string &pdrName,
+                         CPersistentDataRecord &pdr);
 
-	virtual void displayPdr(CPersistentDataRecord &pdr);
+  virtual void displayPdr(CPersistentDataRecord &pdr);
 
-	virtual void clearPdr(CPersistentDataRecord &pdr);
+  virtual void clearPdr(CPersistentDataRecord &pdr);
 
-	virtual void primitiveFileToPdr(const std::string &primitiveName, CPersistentDataRecord &pdr);
+  virtual void primitiveFileToPdr(const std::string &primitiveName,
+                                  CPersistentDataRecord &pdr);
 
-	virtual void stopTest(TSessionId sessionId, uint32 aiInstance);
+  virtual void stopTest(TSessionId sessionId, uint32 aiInstance);
 
-	virtual void startTest(TSessionId sessionId, uint32 aiInstance, CPersistentDataRecord &pdr);
+  virtual void startTest(TSessionId sessionId, uint32 aiInstance,
+                         CPersistentDataRecord &pdr);
 
-	virtual void stopAct(TSessionId sessionId, uint32 aiInstance);
+  virtual void stopAct(TSessionId sessionId, uint32 aiInstance);
 
-	virtual void startAct(TSessionId sessionId, uint32 aiInstance, CPersistentDataRecord &pdr);
+  virtual void startAct(TSessionId sessionId, uint32 aiInstance,
+                        CPersistentDataRecord &pdr);
 
-	virtual void despawnEntity(NLMISC::CEntityId entityId, TAIAlias alias);
+  virtual void despawnEntity(NLMISC::CEntityId entityId, TAIAlias alias);
 
-	virtual void setAggroRange(NLMISC::CEntityId entityId, float range);
+  virtual void setAggroRange(NLMISC::CEntityId entityId, float range);
 
-	virtual void setHPLevel(NLMISC::CEntityId entityId, uint32 alias, float value);
-	virtual void setGrpHPLevel(NLMISC::CEntityId entityId, uint32 alias, float value);
+  virtual void setHPLevel(NLMISC::CEntityId entityId, uint32 alias,
+                          float value);
+  virtual void setGrpHPLevel(NLMISC::CEntityId entityId, uint32 alias,
+                             float value);
 
-	virtual void triggerGrpEvent(NLMISC::CEntityId entityId, float eventId);
+  virtual void triggerGrpEvent(NLMISC::CEntityId entityId, float eventId);
 
-	virtual void startInstance(TSessionId sessionId, uint32 aiInstance);
+  virtual void startInstance(TSessionId sessionId, uint32 aiInstance);
 
-	virtual void setPioneerRight(NLMISC::CEntityId clientId, const R2::TPioneerRight &right);
+  virtual void setPioneerRight(NLMISC::CEntityId clientId,
+                               const R2::TPioneerRight &right);
 
-	virtual void controlNpc(NLMISC::CEntityId clientId, NLMISC::CEntityId npc);
+  virtual void controlNpc(NLMISC::CEntityId clientId, NLMISC::CEntityId npc);
 
-	virtual void stopControlNpc(NLMISC::CEntityId clientId, NLMISC::CEntityId npc);
+  virtual void stopControlNpc(NLMISC::CEntityId clientId,
+                              NLMISC::CEntityId npc);
 
-	virtual void triggerUserTrigger(const std::string &groupName, uint32 triggerId);
+  virtual void triggerUserTrigger(const std::string &groupName,
+                                  uint32 triggerId);
 
-	virtual void askBotDespawnNotification(NLMISC::CEntityId creatureId, TAIAlias alias);
+  virtual void askBotDespawnNotification(NLMISC::CEntityId creatureId,
+                                         TAIAlias alias);
 };
 
-class CAiWrapper
-{
+class CAiWrapper {
 public:
-	static IAiWrapper &getInstance()
-	{
-		return *_instance();
-	}
+  static IAiWrapper &getInstance() { return *_instance(); }
 
-	static void setInstance(IAiWrapper *theInstance)
-	{
-		IAiWrapper *&inst = _instance();
-		delete inst;
-		inst = theInstance;
-	}
+  static void setInstance(IAiWrapper *theInstance) {
+    IAiWrapper *&inst = _instance();
+    delete inst;
+    inst = theInstance;
+  }
 
 private:
-	// implementation of a singleton variable
-	static IAiWrapper *&_instance()
-	{
-		static IAiWrapper *inst = NULL;
-		if (inst == NULL)
-			inst = new IAiWrapper;
-		return inst;
-	}
+  // implementation of a singleton variable
+  static IAiWrapper *&_instance() {
+    static IAiWrapper *inst = NULL;
+    if (inst == NULL)
+      inst = new IAiWrapper;
+    return inst;
+  }
 };
 
 } // namespace R2

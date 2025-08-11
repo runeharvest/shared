@@ -17,8 +17,8 @@
 #ifndef NL_HEIGHT_MAP_H
 #define NL_HEIGHT_MAP_H
 
-#include "nel/misc/types_nl.h"
 #include "nel/misc/bitmap.h"
+#include "nel/misc/types_nl.h"
 #include <vector>
 
 namespace NL3D {
@@ -30,46 +30,45 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2001
  */
-class CHeightMap
-{
+class CHeightMap {
 public:
-	std::vector<uint8> Heights;
+  std::vector<uint8> Heights;
 
-	/// The origin of the bottom-left corner of this heightmap.
-	float OriginX, OriginY;
-	/// The size of one Element ot this HeightMap (eg: 160x160 for a zone).
-	float SizeX, SizeY;
-	/// The range of heights: 0 to MaxZ.
-	float MaxZ;
+  /// The origin of the bottom-left corner of this heightmap.
+  float OriginX, OriginY;
+  /// The size of one Element ot this HeightMap (eg: 160x160 for a zone).
+  float SizeX, SizeY;
+  /// The range of heights: 0 to MaxZ.
+  float MaxZ;
 
 public:
-	/// Constructor
-	CHeightMap()
-	{
-		SizeX = SizeY = 160;
-		OriginX = OriginY = 0;
-		MaxZ = 100;
-	}
+  /// Constructor
+  CHeightMap() {
+    SizeX = SizeY = 160;
+    OriginX = OriginY = 0;
+    MaxZ = 100;
+  }
 
-	/// resize the heightmap. resize Heights too.
-	void resize(uint w, uint h);
-	uint getWidth() const { return _Width; }
-	uint getHeight() const { return _Height; }
+  /// resize the heightmap. resize Heights too.
+  void resize(uint w, uint h);
+  uint getWidth() const { return _Width; }
+  uint getHeight() const { return _Height; }
 
-	/// return the ZValue, interval is: 0-MaxZ. nlassert(x,y).
-	float getZ(uint x, uint y) const;
+  /// return the ZValue, interval is: 0-MaxZ. nlassert(x,y).
+  float getZ(uint x, uint y) const;
 
-	/** This tool method build a HeightMap, from a bitmap, resize(), and fill Heights.
-	 * value are read from bitmap luminance value. NB: Lines are inverted, because bitmap definition is left-right / top-bottom.
-	 */
-	void buildFromBitmap(const NLMISC::CBitmap &bitmap);
+  /** This tool method build a HeightMap, from a bitmap, resize(), and fill
+   * Heights. value are read from bitmap luminance value. NB: Lines are
+   * inverted, because bitmap definition is left-right / top-bottom.
+   */
+  void buildFromBitmap(const NLMISC::CBitmap &bitmap);
 
 private:
-	/// The size of this array. Heights.size
-	uint _Width, _Height;
+  /// The size of this array. Heights.size
+  uint _Width, _Height;
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_HEIGHT_MAP_H
 

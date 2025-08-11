@@ -38,55 +38,50 @@ namespace NL3D {
 // ***************************************************************************
 const sint CTileFarBank::CTileFar::_Version = 0x0;
 // ***************************************************************************
-void CTileFarBank::CTileFar::serial(NLMISC::IStream &f)
-{
-	// Serial version
-	(void)f.serialVersion(_Version);
+void CTileFarBank::CTileFar::serial(NLMISC::IStream &f) {
+  // Serial version
+  (void)f.serialVersion(_Version);
 
-	// Serial pixels
-	f.serialCont(_Pixels[diffuse][order0]);
-	f.serialCont(_Pixels[diffuse][order1]);
-	f.serialCont(_Pixels[diffuse][order2]);
-	f.serialCont(_Pixels[additive][order0]);
-	f.serialCont(_Pixels[additive][order1]);
-	f.serialCont(_Pixels[additive][order2]);
+  // Serial pixels
+  f.serialCont(_Pixels[diffuse][order0]);
+  f.serialCont(_Pixels[diffuse][order1]);
+  f.serialCont(_Pixels[diffuse][order2]);
+  f.serialCont(_Pixels[additive][order0]);
+  f.serialCont(_Pixels[additive][order1]);
+  f.serialCont(_Pixels[additive][order2]);
 
 #ifdef NEL_FORCE_WHITE_FAR_TEXTURE
-	int size = _Pixels[diffuse][order0].size();
-	_Pixels[diffuse][order0].resize(0);
-	_Pixels[diffuse][order0].resize(size, CRGBA::White);
-	size = _Pixels[diffuse][order1].size();
-	_Pixels[diffuse][order1].resize(0);
-	_Pixels[diffuse][order1].resize(size, CRGBA::White);
-	size = _Pixels[diffuse][order2].size();
-	_Pixels[diffuse][order2].resize(0);
-	_Pixels[diffuse][order2].resize(size, CRGBA::White);
+  int size = _Pixels[diffuse][order0].size();
+  _Pixels[diffuse][order0].resize(0);
+  _Pixels[diffuse][order0].resize(size, CRGBA::White);
+  size = _Pixels[diffuse][order1].size();
+  _Pixels[diffuse][order1].resize(0);
+  _Pixels[diffuse][order1].resize(size, CRGBA::White);
+  size = _Pixels[diffuse][order2].size();
+  _Pixels[diffuse][order2].resize(0);
+  _Pixels[diffuse][order2].resize(size, CRGBA::White);
 #endif // NEL_FORCE_WHITE_FAR_TEXTURE
 }
 // ***************************************************************************
-void CTileFarBank::CTileFar::setPixels(TFarType type, TFarOrder order, NLMISC::CRGBA *pixels, uint size)
-{
-	// Mode alpha ?
-	if (type == alpha)
-	{
-		_Pixels[diffuse][order].resize(size);
-		_Pixels[additive][order].resize(size);
+void CTileFarBank::CTileFar::setPixels(TFarType type, TFarOrder order,
+                                       NLMISC::CRGBA *pixels, uint size) {
+  // Mode alpha ?
+  if (type == alpha) {
+    _Pixels[diffuse][order].resize(size);
+    _Pixels[additive][order].resize(size);
 
-		// Copy only the alpha channel
-		for (uint p = 0; p < size; p++)
-		{
-			_Pixels[diffuse][order][p].A = pixels[p].A;
-			_Pixels[additive][order][p].A = pixels[p].A;
-		}
-	}
-	else
-	{
-		// Resize this array
-		_Pixels[type][order].resize(size);
+    // Copy only the alpha channel
+    for (uint p = 0; p < size; p++) {
+      _Pixels[diffuse][order][p].A = pixels[p].A;
+      _Pixels[additive][order][p].A = pixels[p].A;
+    }
+  } else {
+    // Resize this array
+    _Pixels[type][order].resize(size);
 
-		// Copy all the channels
-		memcpy(&_Pixels[type][order][0], pixels, size * sizeof(NLMISC::CRGBA));
-	}
+    // Copy all the channels
+    memcpy(&_Pixels[type][order][0], pixels, size * sizeof(NLMISC::CRGBA));
+  }
 }
 
 // ***************************************************************************
@@ -96,24 +91,21 @@ void CTileFarBank::CTileFar::setPixels(TFarType type, TFarOrder order, NLMISC::C
 // ***************************************************************************
 
 // ***************************************************************************
-CTileFarBank::CTileFarBank()
-{
-}
+CTileFarBank::CTileFarBank() {}
 
 // ***************************************************************************
 const sint CTileFarBank::_Version = 0x0;
 // ***************************************************************************
-void CTileFarBank::serial(NLMISC::IStream &f)
-{
-	// Write/Check "FAR_BANK" in header of the stream
-	f.serialCheck(NELID("_RAF"));
-	f.serialCheck(NELID("KNAB"));
+void CTileFarBank::serial(NLMISC::IStream &f) {
+  // Write/Check "FAR_BANK" in header of the stream
+  f.serialCheck(NELID("_RAF"));
+  f.serialCheck(NELID("KNAB"));
 
-	// Serial version
-	(void)f.serialVersion(_Version);
+  // Serial version
+  (void)f.serialVersion(_Version);
 
-	// Serial tiles
-	f.serialCont(_TileVector);
+  // Serial tiles
+  f.serialCont(_TileVector);
 }
 
-} // NL3D
+} // namespace NL3D

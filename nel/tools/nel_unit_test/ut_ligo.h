@@ -22,13 +22,11 @@
 #include "ut_ligo_primitive.h"
 // Add a line here when adding a new test CLASS
 
-struct CUTLigo : public Test::Suite
-{
-	CUTLigo()
-	{
-		add(std::auto_ptr<Test::Suite>(new CUTLigoPrimitive));
-		// Add a line here when adding a new test CLASS
-	}
+struct CUTLigo : public Test::Suite {
+  CUTLigo() {
+    add(std::auto_ptr<Test::Suite>(new CUTLigoPrimitive));
+    // Add a line here when adding a new test CLASS
+  }
 };
 
 #endif

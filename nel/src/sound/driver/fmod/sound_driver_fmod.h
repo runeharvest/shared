@@ -40,123 +40,133 @@ class CMusicChannelFMod;
 */
 
 // ***************************************************************************
-class CSoundDriverFMod : public ISoundDriver, public NLMISC::CManualSingleton<CSoundDriverFMod>
-{
+class CSoundDriverFMod : public ISoundDriver,
+                         public NLMISC::CManualSingleton<CSoundDriverFMod> {
 public:
-	/// Constructor
-	CSoundDriverFMod(ISoundDriver::IStringMapperProvider *stringMapper);
+  /// Constructor
+  CSoundDriverFMod(ISoundDriver::IStringMapperProvider *stringMapper);
 
-	virtual ~CSoundDriverFMod();
+  virtual ~CSoundDriverFMod();
 
-	/// Return a list of available devices for the user. The value at index 0 is empty, and is used for automatic device selection.
-	virtual void getDevices(std::vector<std::string> &devices);
-	/// Initialize the driver with a user selected device. If device.empty(), the default or most appropriate device is used.
-	virtual void initDevice(const std::string &device, TSoundOptions options);
+  /// Return a list of available devices for the user. The value at index 0 is
+  /// empty, and is used for automatic device selection.
+  virtual void getDevices(std::vector<std::string> &devices);
+  /// Initialize the driver with a user selected device. If device.empty(), the
+  /// default or most appropriate device is used.
+  virtual void initDevice(const std::string &device, TSoundOptions options);
 
-	/// Return options that are enabled (including those that cannot be disabled on this driver).
-	virtual TSoundOptions getOptions();
-	/// Return if an option is enabled (including those that cannot be disabled on this driver).
-	virtual bool getOption(TSoundOptions option);
+  /// Return options that are enabled (including those that cannot be disabled
+  /// on this driver).
+  virtual TSoundOptions getOptions();
+  /// Return if an option is enabled (including those that cannot be disabled on
+  /// this driver).
+  virtual bool getOption(TSoundOptions option);
 
-	/// Create the listener instance
-	virtual IListener *createListener();
+  /// Create the listener instance
+  virtual IListener *createListener();
 
-	/// Create a sound buffer
-	virtual IBuffer *createBuffer();
+  /// Create a sound buffer
+  virtual IBuffer *createBuffer();
 
-	// Source management
+  // Source management
 
-	/// Create a source
-	virtual ISource *createSource();
+  /// Create a source
+  virtual ISource *createSource();
 
-	/// Commit all the changes made to 3D settings of listener and sources
-	virtual void commit3DChanges();
+  /// Commit all the changes made to 3D settings of listener and sources
+  virtual void commit3DChanges();
 
-	/// Return the maximum number of sources that can created
-	virtual uint countMaxSources();
+  /// Return the maximum number of sources that can created
+  virtual uint countMaxSources();
 
-	/// Count the number of sources that are actually playing.
-	uint countPlayingSources();
+  /// Count the number of sources that are actually playing.
+  uint countPlayingSources();
 
-	/// Update all the driver and its sources. To be called only by the timer callback.
-	void update();
+  /// Update all the driver and its sources. To be called only by the timer
+  /// callback.
+  void update();
 
-	/// Write information about the driver to the output stream.
-	void writeProfile(std::string &out);
+  /// Write information about the driver to the output stream.
+  void writeProfile(std::string &out);
 
-	/** Set the gain (volume value inside [0 , 1]). (default: 1)
-	 * 0.0 -> silence
-	 * 0.5 -> -6dB
-	 * 1.0 -> no attenuation
-	 * values > 1 (amplification) not supported by most drivers
-	 */
-	void setGain(float gain);
+  /** Set the gain (volume value inside [0 , 1]). (default: 1)
+   * 0.0 -> silence
+   * 0.5 -> -6dB
+   * 1.0 -> no attenuation
+   * values > 1 (amplification) not supported by most drivers
+   */
+  void setGain(float gain);
 
-	/// Get the gain
-	float getGain();
+  /// Get the gain
+  float getGain();
 
-	/// Return the string mapper
-	IStringMapperProvider *getStringMapper() { return _StringMapper; }
+  /// Return the string mapper
+  IStringMapperProvider *getStringMapper() { return _StringMapper; }
 
-	// Tool method to transform from Nel coords to FMod coords
-	static void toFModCoord(const NLMISC::CVector &in, float out[3]);
+  // Tool method to transform from Nel coords to FMod coords
+  static void toFModCoord(const NLMISC::CVector &in, float out[3]);
 
-	bool fmodOk() const { return _FModOk; }
+  bool fmodOk() const { return _FModOk; }
 
-	bool forceSofwareBuffer() const { return _ForceSoftwareBuffer; }
+  bool forceSofwareBuffer() const { return _ForceSoftwareBuffer; }
 
-	/// Create a music channel, destroy with destroyMusicChannel
-	virtual IMusicChannel *createMusicChannel();
+  /// Create a music channel, destroy with destroyMusicChannel
+  virtual IMusicChannel *createMusicChannel();
 
-	/** Get music info. Returns false if the song is not found or the function is not implemented.
-	 *  \param filepath full path to file
-	 *  \param artist returns the song artist (empty if not available)
-	 *  \param title returns the title (empty if not available)
-	 */
-	virtual bool getMusicInfo(const std::string &filepath, std::string &artist, std::string &title, float &length);
+  /** Get music info. Returns false if the song is not found or the function is
+   * not implemented. \param filepath full path to file \param artist returns
+   * the song artist (empty if not available) \param title returns the title
+   * (empty if not available)
+   */
+  virtual bool getMusicInfo(const std::string &filepath, std::string &artist,
+                            std::string &title, float &length);
 
-	// also check that the channel still exist (avoid any free problem)
-	void markMusicChannelEnded(void *stream, CMusicChannelFMod *musicChannel);
+  // also check that the channel still exist (avoid any free problem)
+  void markMusicChannelEnded(void *stream, CMusicChannelFMod *musicChannel);
 
-	/// (Internal) Remove a buffer (should be called by the destructor of the buffer class)
-	void removeBuffer(CBufferFMod *buffer);
-	/// (Internal) Remove a source (should be called by the destructor of the source class)
-	void removeSource(CSourceFMod *source);
-	/// (Internal) Remove a music channel (should be called by the destructor of the music channel class)
-	void removeMusicChannel(CMusicChannelFMod *musicChannel);
+  /// (Internal) Remove a buffer (should be called by the destructor of the
+  /// buffer class)
+  void removeBuffer(CBufferFMod *buffer);
+  /// (Internal) Remove a source (should be called by the destructor of the
+  /// source class)
+  void removeSource(CSourceFMod *source);
+  /// (Internal) Remove a music channel (should be called by the destructor of
+  /// the music channel class)
+  void removeMusicChannel(CMusicChannelFMod *musicChannel);
 
-	/// Get audio/container extensions that are supported natively by the driver implementation.
-	virtual void getMusicExtensions(std::vector<std::string> &extensions) const;
-	/// Return if a music extension is supported by the driver's music channel.
-	virtual bool isMusicExtensionSupported(const std::string &extension) const;
+  /// Get audio/container extensions that are supported natively by the driver
+  /// implementation.
+  virtual void getMusicExtensions(std::vector<std::string> &extensions) const;
+  /// Return if a music extension is supported by the driver's music channel.
+  virtual bool isMusicExtensionSupported(const std::string &extension) const;
 
 private:
-	virtual void startBench();
-	virtual void endBench();
-	virtual void displayBench(NLMISC::CLog *log);
+  virtual void startBench();
+  virtual void endBench();
+  virtual void displayBench(NLMISC::CLog *log);
 
-	void updateMusic();
+  void updateMusic();
 
-	/// The string mapper provided by client code
-	IStringMapperProvider *_StringMapper;
+  /// The string mapper provided by client code
+  IStringMapperProvider *_StringMapper;
 
-	// Array with the allocated sources
-	std::set<CSourceFMod *> _Sources;
-	/// Array with the allocated music channels
-	std::set<CMusicChannelFMod *> _MusicChannels;
+  // Array with the allocated sources
+  std::set<CSourceFMod *> _Sources;
+  /// Array with the allocated music channels
+  std::set<CMusicChannelFMod *> _MusicChannels;
 
-	/// if correctly created
-	bool _FModOk;
-	/// If want to create buffer in software (no hardware)
-	bool _ForceSoftwareBuffer;
+  /// if correctly created
+  bool _FModOk;
+  /// If want to create buffer in software (no hardware)
+  bool _ForceSoftwareBuffer;
 
-	/// Master Volume [0,1]
-	float _MasterGain;
+  /// Master Volume [0,1]
+  float _MasterGain;
 
-	/// Driver options
-	TSoundOptions _Options;
+  /// Driver options
+  TSoundOptions _Options;
 };
 
-} // NLSOUND
+} // namespace NLSOUND
 
 #endif // NL_SOUND_DRIVER_FMOD_H

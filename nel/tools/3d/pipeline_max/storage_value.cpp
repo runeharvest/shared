@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <nel/misc/types_nl.h>
 #include "storage_value.h"
+#include <nel/misc/types_nl.h>
 
 // STL includes
 
@@ -41,46 +41,36 @@ using namespace std;
 namespace PIPELINE {
 namespace MAX {
 
-template <>
-void CStorageValue<std::string>::serial(NLMISC::IStream &stream)
-{
-	stream.serialBuffer(static_cast<uint8 *>(static_cast<void *>(&Value[0])), Value.size());
+template <> void CStorageValue<std::string>::serial(NLMISC::IStream &stream) {
+  stream.serialBuffer(static_cast<uint8 *>(static_cast<void *>(&Value[0])),
+                      Value.size());
+}
+
+template <> void CStorageValue<ucstring>::serial(NLMISC::IStream &stream) {
+  stream.serialBuffer(static_cast<uint8 *>(static_cast<void *>(&Value[0])),
+                      Value.size() * 2);
 }
 
 template <>
-void CStorageValue<ucstring>::serial(NLMISC::IStream &stream)
-{
-	stream.serialBuffer(static_cast<uint8 *>(static_cast<void *>(&Value[0])), Value.size() * 2);
+void CStorageValue<ucstring>::toString(std::ostream &ostream,
+                                       const std::string &pad) const {
+  ostream << "(" << className() << ") { " << Value.toUtf8() << " } ";
 }
 
-template <>
-void CStorageValue<ucstring>::toString(std::ostream &ostream, const std::string &pad) const
-{
-	ostream << "(" << className() << ") { " << Value.toUtf8() << " } ";
+template <> void CStorageValue<std::string>::setSize(sint32 size) {
+  Value.resize(size);
 }
 
-template <>
-void CStorageValue<std::string>::setSize(sint32 size)
-{
-	Value.resize(size);
+template <> void CStorageValue<ucstring>::setSize(sint32 size) {
+  Value.resize(size / 2);
 }
 
-template <>
-void CStorageValue<ucstring>::setSize(sint32 size)
-{
-	Value.resize(size / 2);
+template <> bool CStorageValue<std::string>::getSize(sint32 &size) const {
+  return Value.size();
 }
 
-template <>
-bool CStorageValue<std::string>::getSize(sint32 &size) const
-{
-	return Value.size();
-}
-
-template <>
-bool CStorageValue<ucstring>::getSize(sint32 &size) const
-{
-	return Value.size() * 2;
+template <> bool CStorageValue<ucstring>::getSize(sint32 &size) const {
+  return Value.size() * 2;
 }
 
 } /* namespace MAX */

@@ -45,17 +45,16 @@ namespace BUILTIN {
  * \author Jan Boon (Kaetemi)
  * CSuperClassUnknown
  */
-class CSuperClassUnknown
-{
+class CSuperClassUnknown {
 protected:
-	// pointers
-	// ...
+  // pointers
+  // ...
 
-	// instances
-	// ...
+  // instances
+  // ...
 public:
-	CSuperClassUnknown();
-	virtual ~CSuperClassUnknown();
+  CSuperClassUnknown();
+  virtual ~CSuperClassUnknown();
 }; /* class CSuperClassUnknown */
 
 } /* namespace BUILTIN */

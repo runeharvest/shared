@@ -25,8 +25,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "std3d.h"
 #include "nel/3d/stereo_display.h"
+#include "std3d.h"
 
 // STL includes
 
@@ -34,10 +34,10 @@
 // #include <nel/misc/debug.h>
 
 // Project includes
+#include "nel/3d/stereo_debugger.h"
+#include "nel/3d/stereo_libvr.h"
 #include "nel/3d/stereo_ovr.h"
 #include "nel/3d/stereo_ovr_04.h"
-#include "nel/3d/stereo_libvr.h"
-#include "nel/3d/stereo_debugger.h"
 
 using namespace std;
 // using namespace NLMISC;
@@ -48,65 +48,57 @@ using namespace std;
 
 namespace NL3D {
 
-IStereoDisplay::IStereoDisplay()
-{
+IStereoDisplay::IStereoDisplay() {}
+
+IStereoDisplay::~IStereoDisplay() {}
+
+const char *IStereoDisplay::getLibraryName(
+    CStereoDeviceInfo::TStereoDeviceLibrary library) {
+  static const char *nel3dName = "NeL 3D";
+  static const char *ovrName = "Oculus SDK";
+  static const char *libvrName = "LibVR";
+  static const char *openhmdName = "OpenHMD";
+  switch (library) {
+  case CStereoDeviceInfo::NeL3D:
+    return nel3dName;
+  case CStereoDeviceInfo::OVR:
+    return ovrName;
+  case CStereoDeviceInfo::LibVR:
+    return libvrName;
+  case CStereoDeviceInfo::OpenHMD:
+    return openhmdName;
+  }
+  nlerror("Invalid device library specified");
+  return "<InvalidDeviceLibrary>";
 }
 
-IStereoDisplay::~IStereoDisplay()
-{
-}
-
-const char *IStereoDisplay::getLibraryName(CStereoDeviceInfo::TStereoDeviceLibrary library)
-{
-	static const char *nel3dName = "NeL 3D";
-	static const char *ovrName = "Oculus SDK";
-	static const char *libvrName = "LibVR";
-	static const char *openhmdName = "OpenHMD";
-	switch (library)
-	{
-	case CStereoDeviceInfo::NeL3D:
-		return nel3dName;
-	case CStereoDeviceInfo::OVR:
-		return ovrName;
-	case CStereoDeviceInfo::LibVR:
-		return libvrName;
-	case CStereoDeviceInfo::OpenHMD:
-		return openhmdName;
-	}
-	nlerror("Invalid device library specified");
-	return "<InvalidDeviceLibrary>";
-}
-
-void IStereoDisplay::listDevices(std::vector<CStereoDeviceInfo> &devicesOut)
-{
+void IStereoDisplay::listDevices(std::vector<CStereoDeviceInfo> &devicesOut) {
 #ifdef HAVE_LIBOVR
-	CStereoOVR::listDevices(devicesOut);
+  CStereoOVR::listDevices(devicesOut);
 #endif
 #ifdef HAVE_LIBVR
-	CStereoLibVR::listDevices(devicesOut);
+  CStereoLibVR::listDevices(devicesOut);
 #endif
 #if !FINAL_VERSION
-	CStereoDebugger::listDevices(devicesOut);
+  CStereoDebugger::listDevices(devicesOut);
 #endif
 }
 
-IStereoDisplay *IStereoDisplay::createDevice(const CStereoDeviceInfo &deviceInfo)
-{
-	return deviceInfo.Factory->createDevice();
+IStereoDisplay *
+IStereoDisplay::createDevice(const CStereoDeviceInfo &deviceInfo) {
+  return deviceInfo.Factory->createDevice();
 }
 
-void IStereoDisplay::releaseUnusedLibraries()
-{
+void IStereoDisplay::releaseUnusedLibraries() {
 #ifdef HAVE_LIBOVR
-	if (!CStereoOVR::isLibraryInUse())
-		CStereoOVR::releaseLibrary();
+  if (!CStereoOVR::isLibraryInUse())
+    CStereoOVR::releaseLibrary();
 #endif
 }
 
-void IStereoDisplay::releaseAllLibraries()
-{
+void IStereoDisplay::releaseAllLibraries() {
 #ifdef HAVE_LIBOVR
-	CStereoOVR::releaseLibrary();
+  CStereoOVR::releaseLibrary();
 #endif
 }
 

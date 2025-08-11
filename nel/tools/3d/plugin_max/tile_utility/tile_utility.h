@@ -27,14 +27,14 @@
 #define _CRT_SECURE_NO_DEPRECATE
 #endif
 
-#include <assert.h>
 #include <Max.h>
-#include <istdplug.h>
+#include <assert.h>
 #include <iparamb2.h>
 #include <iparamm2.h>
-#include <utilapi.h>
+#include <istdplug.h>
 #include <plugapi.h>
 #include <stdmat.h>
+#include <utilapi.h>
 
 #undef _CRT_SECURE_NO_DEPRECATE
 

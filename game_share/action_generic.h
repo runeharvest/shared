@@ -24,62 +24,59 @@
 namespace CLFECOMMON {
 
 /**
- * This action is used to forward client message to the back end via front end (and vice et versa)
- * \author Vianney Lecoart
- * \author Nevrax France
- * \date 2002
+ * This action is used to forward client message to the back end via front end
+ * (and vice et versa) \author Vianney Lecoart \author Nevrax France \date 2002
  */
-class CActionGeneric : public CActionImpulsion
-{
+class CActionGeneric : public CActionImpulsion {
 public:
-	virtual ~CActionGeneric() { }
+  virtual ~CActionGeneric() {}
 
-	/** This function creates initializes its fields using the buffer.
-	 * \param buffer pointer to the buffer where the data are
-	 * \size size of the buffer
-	 */
-	virtual void unpack(NLMISC::CBitMemStream &message);
+  /** This function creates initializes its fields using the buffer.
+   * \param buffer pointer to the buffer where the data are
+   * \size size of the buffer
+   */
+  virtual void unpack(NLMISC::CBitMemStream &message);
 
-	/// This functions is used when you want to transform an action into an IStream.
-	virtual void serial(NLMISC::IStream &f);
+  /// This functions is used when you want to transform an action into an
+  /// IStream.
+  virtual void serial(NLMISC::IStream &f);
 
-	/// Returns the size of this action when will be send to the UDP connection (in number of bits.)
-	virtual uint32 size();
+  /// Returns the size of this action when will be send to the UDP connection
+  /// (in number of bits.)
+  virtual uint32 size();
 
-	virtual void set(NLMISC::CBitMemStream &message);
+  virtual void set(NLMISC::CBitMemStream &message);
 
-	/** Same as set(), avoiding the need to alloc a bitmemstream: copy from message.getPos()
-	 *
-	 * Preconditions:
-	 * - message.getPos() + bytelen <= message.length()
-	 */
-	void setFromMessage(NLMISC::CMemStream &message, uint32 bytelen);
+  /** Same as set(), avoiding the need to alloc a bitmemstream: copy from
+   * message.getPos()
+   *
+   * Preconditions:
+   * - message.getPos() + bytelen <= message.length()
+   */
+  void setFromMessage(NLMISC::CMemStream &message, uint32 bytelen);
 
-	virtual NLMISC::CBitMemStream &get();
+  virtual NLMISC::CBitMemStream &get();
 
-	static CAction *create() { return new CActionGeneric(); }
+  static CAction *create() { return new CActionGeneric(); }
 
-	static bool ServerSide;
+  static bool ServerSide;
 
 protected:
-	/** This function transform the internal field and transform them into a buffer for the UDP connection.
-	 * \param buffer pointer to the buffer where the data will be written
-	 * \size size of the buffer
-	 */
-	virtual void pack(NLMISC::CBitMemStream &message);
+  /** This function transform the internal field and transform them into a
+   * buffer for the UDP connection. \param buffer pointer to the buffer where
+   * the data will be written \size size of the buffer
+   */
+  virtual void pack(NLMISC::CBitMemStream &message);
 
-	/// This method intialises the action with a default state
-	virtual void reset()
-	{
-		AllowExceedingMaxSize = false;
-	}
+  /// This method intialises the action with a default state
+  virtual void reset() { AllowExceedingMaxSize = false; }
 
-	friend class CActionFactory;
+  friend class CActionFactory;
 
-	NLMISC::CBitMemStream _Message;
+  NLMISC::CBitMemStream _Message;
 };
 
-}
+} // namespace CLFECOMMON
 
 #endif // NL_ACTION_GENERIC_H
 

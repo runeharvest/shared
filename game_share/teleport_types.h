@@ -20,16 +20,15 @@
 namespace TELEPORT_TYPES {
 
 // type of a teleport
-enum TTeleportType
-{
-	KAMI,
-	KARAVAN,
-	NONE,
+enum TTeleportType {
+  KAMI,
+  KARAVAN,
+  NONE,
 };
 
 // get the type of a teleport type from a string
 TTeleportType getTpTypeFromString(const std::string &str);
 
-}
+} // namespace TELEPORT_TYPES
 
 #endif // TELEPORT_TYPES_H

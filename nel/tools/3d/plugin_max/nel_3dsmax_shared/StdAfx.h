@@ -30,10 +30,10 @@
 #define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
 
 #include <assert.h>
-#include <max.h>
 #include <iparamb2.h>
-#include <istdplug.h>
 #include <iparamm2.h>
+#include <istdplug.h>
+#include <max.h>
 #include <utilapi.h>
 
 #ifdef min
@@ -42,6 +42,7 @@
 #endif
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before
+// the previous line.
 
 #endif // !defined(AFX_STDAFX_H__2A07BE63_0E2F_11D5_9CD4_0050DAC3A412__INCLUDED_)

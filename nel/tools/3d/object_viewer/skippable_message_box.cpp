@@ -17,30 +17,30 @@
 // skippable_message_box.cpp : implementation file
 //
 
-#include "std_afx.h"
-#include "object_viewer.h"
 #include "skippable_message_box.h"
+#include "object_viewer.h"
+#include "std_afx.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CSkippableMessageBox dialog
 
-CSkippableMessageBox::CSkippableMessageBox(const CString &caption, const CString &content, CWnd *pParent /*=NULL*/)
-    : CDialog(CSkippableMessageBox::IDD, pParent)
-{
-	//{{AFX_DATA_INIT(CSkippableMessageBox)
-	// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
-	_BypassFlag = false;
-	_Caption = caption;
-	_Content = content;
+CSkippableMessageBox::CSkippableMessageBox(const CString &caption,
+                                           const CString &content,
+                                           CWnd *pParent /*=NULL*/)
+    : CDialog(CSkippableMessageBox::IDD, pParent) {
+  //{{AFX_DATA_INIT(CSkippableMessageBox)
+  // NOTE: the ClassWizard will add member initialization here
+  //}}AFX_DATA_INIT
+  _BypassFlag = false;
+  _Caption = caption;
+  _Content = content;
 }
 
-void CSkippableMessageBox::DoDataExchange(CDataExchange *pDX)
-{
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CSkippableMessageBox)
-	// NOTE: the ClassWizard will add DDX and DDV calls here
-	//}}AFX_DATA_MAP
+void CSkippableMessageBox::DoDataExchange(CDataExchange *pDX) {
+  CDialog::DoDataExchange(pDX);
+  //{{AFX_DATA_MAP(CSkippableMessageBox)
+  // NOTE: the ClassWizard will add DDX and DDV calls here
+  //}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(CSkippableMessageBox, CDialog)
@@ -51,18 +51,16 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CSkippableMessageBox message handlers
 
-BOOL CSkippableMessageBox::OnInitDialog()
-{
-	CDialog::OnInitDialog();
-	SetWindowText((LPCTSTR)_Caption);
-	GetDlgItem(IDC_MB_CONTENT)->SetWindowText((LPCTSTR)_Content);
-	return TRUE; // return TRUE unless you set the focus to a control
-	             // EXCEPTION: OCX Property Pages should return FALSE
+BOOL CSkippableMessageBox::OnInitDialog() {
+  CDialog::OnInitDialog();
+  SetWindowText((LPCTSTR)_Caption);
+  GetDlgItem(IDC_MB_CONTENT)->SetWindowText((LPCTSTR)_Content);
+  return TRUE; // return TRUE unless you set the focus to a control
+               // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 //*************************************************************************************
-void CSkippableMessageBox::OnOK()
-{
-	_BypassFlag = ((CButton *)GetDlgItem(IDC_DONT_SHOW_AGAIN))->GetCheck() != 0;
-	CDialog::OnOK();
+void CSkippableMessageBox::OnOK() {
+  _BypassFlag = ((CButton *)GetDlgItem(IDC_DONT_SHOW_AGAIN))->GetCheck() != 0;
+  CDialog::OnOK();
 }

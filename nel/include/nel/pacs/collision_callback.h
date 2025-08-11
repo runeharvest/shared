@@ -31,17 +31,17 @@ class CCollisionDesc;
  * \author Nevrax France
  * \date 2001
  */
-class ICollisionCallback
-{
+class ICollisionCallback {
 public:
-	/// destructor
-	virtual ~ICollisionCallback() { }
+  /// destructor
+  virtual ~ICollisionCallback() {}
 
-	/// Give a collision reaction
-	virtual bool reaction(CMovePrimitive &first, CMovePrimitive &second, const CCollisionDesc &desc) = 0;
+  /// Give a collision reaction
+  virtual bool reaction(CMovePrimitive &first, CMovePrimitive &second,
+                        const CCollisionDesc &desc) = 0;
 };
 
-} // NLPACS
+} // namespace NLPACS
 
 #endif // NL_COLLISION_CALLBACK_H
 

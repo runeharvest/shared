@@ -17,8 +17,8 @@
 #include "stdpch.h"
 
 #include "nel/misc/debug.h"
-#include "power_types.h"
 #include "nel/misc/string_conversion.h"
+#include "power_types.h"
 
 namespace POWERS {
 NL_BEGIN_STRING_CONVERSION_TABLE(TPowerType)
@@ -72,13 +72,11 @@ NL_STRING_CONVERSION_TABLE_ENTRY(LightningWall)
 NL_STRING_CONVERSION_TABLE_ENTRY(UnknownType)
 NL_END_STRING_CONVERSION_TABLE(TPowerType, ConversionTable, UnknownType)
 
-const std::string &toString(TPowerType type)
-{
-	return ConversionTable.toString(type);
+const std::string &toString(TPowerType type) {
+  return ConversionTable.toString(type);
 }
 
-TPowerType toPowerType(const std::string &str)
-{
-	return ConversionTable.fromString(str);
+TPowerType toPowerType(const std::string &str) {
+  return ConversionTable.fromString(str);
 }
-}; // POWERS
+}; // namespace POWERS

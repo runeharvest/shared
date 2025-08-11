@@ -19,19 +19,18 @@
 
 namespace NLMISC {
 
-class CFpuChecker
-{
+class CFpuChecker {
 private:
-	static int _RefFpuCtrl;
-	void check();
-	void dumpFpu(int value);
+  static int _RefFpuCtrl;
+  void check();
+  void dumpFpu(int value);
 
 public:
-	CFpuChecker();
-	~CFpuChecker();
+  CFpuChecker();
+  ~CFpuChecker();
 };
 
-}
+} // namespace NLMISC
 
 // Enable define. Normal State is 0, to save CPU speed.
 #define NL_CHECK_FPU_CONTROL_WORD 0
@@ -39,10 +38,8 @@ public:
 // Use those Macros
 #if NL_CHECK_FPU_CONTROL_WORD
 #define FPU_CHECKER NLMISC::CFpuChecker __fpc__;
-#define FPU_CHECKER_ONCE             \
-	{                                \
-		NLMISC::CFpuChecker __fpc__; \
-	}
+#define FPU_CHECKER_ONCE                                                       \
+  { NLMISC::CFpuChecker __fpc__; }
 #else
 #define FPU_CHECKER
 #define FPU_CHECKER_ONCE

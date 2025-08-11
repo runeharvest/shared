@@ -22,26 +22,26 @@
 
 #if defined(_MSC_VER) && defined(_DEBUG)
 #define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
 #include <crtdbg.h>
+#include <stdlib.h>
 #define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
-#include <cstdlib>
-#include <cstdio>
 #include <cmath>
+#include <cstdio>
+#include <cstdlib>
 #include <ctime>
 
-#include <string>
-#include <vector>
+#include <algorithm>
+#include <deque>
+#include <exception>
+#include <limits>
 #include <list>
 #include <map>
 #include <set>
-#include <algorithm>
-#include <exception>
+#include <string>
 #include <utility>
-#include <deque>
-#include <limits>
+#include <vector>
 
 #include "nel/misc/types_nl.h"
 
@@ -55,22 +55,22 @@
 #endif
 
 #ifdef USE_OPENGLES
-#include "GLES/gl.h"
-#include "GLES/glext.h"
 #include "EGL/egl.h"
 #include "EGL/eglext.h"
+#include "GLES/gl.h"
+#include "GLES/glext.h"
 #else
 #ifdef NL_OS_WINDOWS
-#include <GL/gl.h>
 #include "GL/wglext.h"
+#include <GL/gl.h>
 #elif defined(NL_OS_MAC)
 #define GL_GLEXT_LEGACY
 #include <OpenGL/gl.h>
 #elif defined(NL_OS_UNIX)
 #define GLX_GLXEXT_PROTOTYPES
+#include "GL/glxext.h"
 #include <GL/gl.h>
 #include <GL/glx.h>
-#include "GL/glxext.h"
 #endif
 #include "GL/glext.h"
 #endif
@@ -78,41 +78,40 @@
 #include "nel/misc/common.h"
 #include "nel/misc/debug.h"
 
-#include "nel/misc/stream.h"
-#include "nel/misc/mem_stream.h"
-#include "nel/misc/time_nl.h"
-#include "nel/misc/command.h"
-#include "nel/misc/matrix.h"
-#include "nel/misc/smart_ptr.h"
-#include "nel/misc/rgba.h"
-#include "nel/misc/event_emitter.h"
 #include "nel/misc/bit_set.h"
-#include "nel/misc/hierarchical_timer.h"
 #include "nel/misc/bitmap.h"
-#include "nel/misc/heap_memory.h"
-#include "nel/misc/event_emitter_multi.h"
-#include "nel/misc/time_nl.h"
-#include "nel/misc/rect.h"
+#include "nel/misc/command.h"
 #include "nel/misc/dynloadlib.h"
+#include "nel/misc/event_emitter.h"
+#include "nel/misc/event_emitter_multi.h"
 #include "nel/misc/file.h"
+#include "nel/misc/heap_memory.h"
+#include "nel/misc/hierarchical_timer.h"
+#include "nel/misc/matrix.h"
+#include "nel/misc/mem_stream.h"
+#include "nel/misc/rect.h"
+#include "nel/misc/rgba.h"
+#include "nel/misc/smart_ptr.h"
+#include "nel/misc/stream.h"
+#include "nel/misc/time_nl.h"
 
 #include "nel/3d/driver.h"
+#include "nel/3d/index_buffer.h"
+#include "nel/3d/light.h"
 #include "nel/3d/material.h"
-#include "nel/3d/vertex_buffer.h"
+#include "nel/3d/occlusion_query.h"
 #include "nel/3d/ptr_set.h"
+#include "nel/3d/scissor.h"
 #include "nel/3d/texture_cube.h"
+#include "nel/3d/u_driver.h"
+#include "nel/3d/vertex_buffer.h"
 #include "nel/3d/vertex_program_parse.h"
 #include "nel/3d/viewport.h"
-#include "nel/3d/scissor.h"
-#include "nel/3d/light.h"
-#include "nel/3d/occlusion_query.h"
-#include "nel/3d/u_driver.h"
-#include "nel/3d/light.h"
-#include "nel/3d/index_buffer.h"
 
 #ifdef NL_OS_MAC
 #include <AvailabilityMacros.h>
-#if defined(MAC_OS_X_VERSION_10_6) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+#if defined(MAC_OS_X_VERSION_10_6) &&                                          \
+    MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
 #define NL_MAC_VERSION_10_6_UP
 #endif
 #endif

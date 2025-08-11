@@ -32,39 +32,41 @@ namespace NLNET {
  * \author Nevrax France
  * \date 2000-2001
  */
-class CListenSock : public CTcpSock
-{
+class CListenSock : public CTcpSock {
 public:
-	/// Constructor
-	CListenSock();
+  /// Constructor
+  CListenSock();
 
-	///@name Socket setup
-	//@{
+  ///@name Socket setup
+  //@{
 
-	/// Prepares to receive connections on a specified port (bind+listen)
-	void init(uint16 port);
+  /// Prepares to receive connections on a specified port (bind+listen)
+  void init(uint16 port);
 
-	/// Prepares to receive connections on a specified address/port (useful when the host has several addresses)
-	void init(const CInetAddress &addr);
+  /// Prepares to receive connections on a specified address/port (useful when
+  /// the host has several addresses)
+  void init(const CInetAddress &addr);
 
-	/// Sets the number of the pending connections queue, or -1 for the maximum possible value.
-	void setBacklog(sint backlog);
+  /// Sets the number of the pending connections queue, or -1 for the maximum
+  /// possible value.
+  void setBacklog(sint backlog);
 
-	/// Returns the pending connections queue.
-	sint backlog() const { return _BackLog; }
+  /// Returns the pending connections queue.
+  sint backlog() const { return _BackLog; }
 
-	//@}
+  //@}
 
-	/// Blocks until an incoming connection is requested, accepts it, and creates a new socket (you have to delete it after use)
-	CTcpSock *accept();
+  /// Blocks until an incoming connection is requested, accepts it, and creates
+  /// a new socket (you have to delete it after use)
+  CTcpSock *accept();
 
 private:
-	bool _Bound;
+  bool _Bound;
 
-	sint _BackLog;
+  sint _BackLog;
 };
 
-} // NLNET
+} // namespace NLNET
 
 #endif // NL_LISTEN_SOCK_H
 

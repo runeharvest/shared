@@ -23,8 +23,8 @@ in CALL instructions to increase the compression ratio.
     state    - state variable for x86 converter
 
   Returns:
-    The number of processed bytes. If you call these functions with multiple calls,
-    you must start next call with first byte after block of processed bytes.
+    The number of processed bytes. If you call these functions with multiple
+calls, you must start next call with first byte after block of processed bytes.
 
   Type   Endian  Alignment  LookAhead
 
@@ -51,11 +51,10 @@ in CALL instructions to increase the compression ratio.
     }
 */
 
-#define x86_Convert_Init(state) \
-	{                           \
-		state = 0;              \
-	}
-SizeT x86_Convert(Byte *data, SizeT size, UInt32 ip, UInt32 *state, int encoding);
+#define x86_Convert_Init(state)                                                \
+  { state = 0; }
+SizeT x86_Convert(Byte *data, SizeT size, UInt32 ip, UInt32 *state,
+                  int encoding);
 SizeT ARM_Convert(Byte *data, SizeT size, UInt32 ip, int encoding);
 SizeT ARMT_Convert(Byte *data, SizeT size, UInt32 ip, int encoding);
 SizeT PPC_Convert(Byte *data, SizeT size, UInt32 ip, int encoding);

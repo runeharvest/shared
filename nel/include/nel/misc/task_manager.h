@@ -26,19 +26,18 @@
 #include <list>
 #include <vector>
 
+#include "atomic.h"
 #include "mutex.h"
 #include "thread.h"
-#include "atomic.h"
 
 namespace NLMISC {
 
 /**
  * A class derived from IRunnable to get a position
  */
-class IRunnablePos : public NLMISC::IRunnable
-{
+class IRunnablePos : public NLMISC::IRunnable {
 public:
-	NLMISC::CVector Position;
+  NLMISC::CVector Position;
 };
 
 /**
@@ -47,112 +46,110 @@ public:
  * \author Nevrax France
  * \date 2000
  */
-class CTaskManager : public IRunnable
-{
+class CTaskManager : public IRunnable {
 public:
-	/// Constructor
-	CTaskManager();
+  /// Constructor
+  CTaskManager();
 
-	/// Destructor
-	~CTaskManager();
+  /// Destructor
+  ~CTaskManager();
 
-	/// Manage TaskQueue
-	void run(void);
+  /// Manage TaskQueue
+  void run(void);
 
-	/// Add a task to TaskManager and its priority
-	void addTask(IRunnable *, float priority = 0);
+  /// Add a task to TaskManager and its priority
+  void addTask(IRunnable *, float priority = 0);
 
-	/// Delete a task, only if task is not running, return true if found and deleted
-	bool deleteTask(IRunnable *r);
+  /// Delete a task, only if task is not running, return true if found and
+  /// deleted
+  bool deleteTask(IRunnable *r);
 
-	/// Sleep a Task
-	void sleepTask(void) { nlSleep(10); }
+  /// Sleep a Task
+  void sleepTask(void) { nlSleep(10); }
 
-	/// Task list size
-	uint taskListSize(void);
+  /// Task list size
+  uint taskListSize(void);
 
-	/// return false if exit() is required. task added with addTask() should test this flag.
-	bool isThreadRunning() const { return _ThreadRunning; }
+  /// return false if exit() is required. task added with addTask() should test
+  /// this flag.
+  bool isThreadRunning() const { return _ThreadRunning; }
 
-	/// Dump task list
-	void dump(std::vector<std::string> &result);
+  /// Dump task list
+  void dump(std::vector<std::string> &result);
 
-	/// Clear the dump of Done files
-	void clearDump();
+  /// Clear the dump of Done files
+  void clearDump();
 
-	/// Get number of waiting task
-	uint getNumWaitingTasks();
+  /// Get number of waiting task
+  uint getNumWaitingTasks();
 
-	/// Is there a current task ?
-	bool isTaskRunning() const { return _IsTaskRunning; }
+  /// Is there a current task ?
+  bool isTaskRunning() const { return _IsTaskRunning; }
 
-	/// A callback to modify the task priority
-	class IChangeTaskPriority
-	{
-	public:
-		virtual ~IChangeTaskPriority() { }
-		virtual float getTaskPriority(const IRunnable &runable) = 0;
-	};
+  /// A callback to modify the task priority
+  class IChangeTaskPriority {
+  public:
+    virtual ~IChangeTaskPriority() {}
+    virtual float getTaskPriority(const IRunnable &runable) = 0;
+  };
 
-	/// Register task priority callback
-	void registerTaskPriorityCallback(IChangeTaskPriority *callback);
-
-protected:
-	/** If any, wait the current running task to complete
-	 *	this function MUST be called in a 'accessor to the _TaskQueue' statement because a mutex is required
-	 *	eg:
-	 *	\code
-	 *	{
-	 *		CSynchronized<list<IRunnable *> >::CAccessor acces(&_TaskQueue);
-	 *		waitCurrentTaskToComplete();
-	 *	}
-	 *	\endcode
-	 */
-	void waitCurrentTaskToComplete();
+  /// Register task priority callback
+  void registerTaskPriorityCallback(IChangeTaskPriority *callback);
 
 protected:
-	// A task in the waiting queue with its parameters
-	class CWaitingTask
-	{
-	public:
-		CWaitingTask(IRunnable *task, float priority)
-		{
-			Task = task;
-			Priority = priority;
-		}
-		IRunnable *Task;
-		float Priority;
+  /** If any, wait the current running task to complete
+   *	this function MUST be called in a 'accessor to the _TaskQueue' statement
+   *because a mutex is required eg: \code
+   *	{
+   *		CSynchronized<list<IRunnable *> >::CAccessor acces(&_TaskQueue);
+   *		waitCurrentTaskToComplete();
+   *	}
+   *	\endcode
+   */
+  void waitCurrentTaskToComplete();
 
-		// For the sort
-		bool operator<(const CWaitingTask &other) const
-		{
-			return Priority < other.Priority;
-		}
-	};
+protected:
+  // A task in the waiting queue with its parameters
+  class CWaitingTask {
+  public:
+    CWaitingTask(IRunnable *task, float priority) {
+      Task = task;
+      Priority = priority;
+    }
+    IRunnable *Task;
+    float Priority;
 
-	/// queue of tasks, using list container instead of queue for DeleteTask methode
-	CSynchronized<std::string> _RunningTask;
-	CSynchronized<std::list<CWaitingTask>> _TaskQueue;
-	CSynchronized<std::deque<std::string>> _DoneTaskQueue;
+    // For the sort
+    bool operator<(const CWaitingTask &other) const {
+      return Priority < other.Priority;
+    }
+  };
 
-	/// thread pointer
-	CUniquePtr<IThread> _Thread;
+  /// queue of tasks, using list container instead of queue for DeleteTask
+  /// methode
+  CSynchronized<std::string> _RunningTask;
+  CSynchronized<std::list<CWaitingTask>> _TaskQueue;
+  CSynchronized<std::deque<std::string>> _DoneTaskQueue;
 
-	/// flag indicate thread loop, if false cause thread exit
-	CAtomicBool _ThreadRunning;
+  /// thread pointer
+  CUniquePtr<IThread> _Thread;
+
+  /// flag indicate thread loop, if false cause thread exit
+  CAtomicBool _ThreadRunning;
 
 private:
-	/// Register task priority callback
-	void changeTaskPriority(CSynchronized<std::list<CWaitingTask>>::CAccessor &acces);
+  /// Register task priority callback
+  void
+  changeTaskPriority(CSynchronized<std::list<CWaitingTask>>::CAccessor &acces);
 
-	/// The callback
-	IChangeTaskPriority *_ChangePriorityCallback;
+  /// The callback
+  IChangeTaskPriority *_ChangePriorityCallback;
 
 private:
-	CAtomicBool _IsTaskRunning;
+  CAtomicBool _IsTaskRunning;
 };
 
-} // NLMISC
+} // namespace NLMISC
 
 #endif // NL_TASK_MANAGER_H
 

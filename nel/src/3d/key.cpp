@@ -39,4 +39,4 @@ CKeyFloat ktoto10;
 CKeyVector ktoto11;
 CKeyQuat ktoto12;
 
-} // NL3D
+} // namespace NL3D

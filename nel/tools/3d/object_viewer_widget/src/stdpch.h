@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #if defined(_MSC_VER) && defined(_DEBUG)
 #define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
 #include <crtdbg.h>
+#include <stdlib.h>
 #define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #undef realloc
 #undef free
@@ -32,8 +32,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtCore/QtCore>
 #include <QtGui/QtGui>
 
-#include <QtWidgets/QtWidgets>
 #include <QtConcurrent/QtConcurrent>
+#include <QtWidgets/QtWidgets>
 
 #include <map>
 #include <memory>
@@ -41,8 +41,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-#include <nel/misc/types_nl.h>
 #include <nel/misc/common.h>
+#include <nel/misc/types_nl.h>
 
 #if defined(NL_OS_WINDOWS)
 #define NOMINMAX

@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <nel/misc/types_nl.h>
 #include "typedefs.h"
+#include <nel/misc/types_nl.h>
 
 // STL includes
 
@@ -41,7 +41,7 @@ using namespace std;
 namespace PIPELINE {
 namespace MAX {
 
-void blahblahblah_typedefs() { }
+void blahblahblah_typedefs() {}
 
 } /* namespace MAX */
 } /* namespace PIPELINE */

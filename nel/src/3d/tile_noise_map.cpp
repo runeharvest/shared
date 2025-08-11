@@ -25,11 +25,11 @@
 namespace NL3D {
 
 // ***************************************************************************
-void CTileNoiseMap::serial(NLMISC::IStream &f)
-{
-	(void)f.serialVersion(0);
+void CTileNoiseMap::serial(NLMISC::IStream &f) {
+  (void)f.serialVersion(0);
 
-	f.serialBuffer((uint8 *)Pixels, NL3D_TILE_NOISE_MAP_SIZE * NL3D_TILE_NOISE_MAP_SIZE);
+  f.serialBuffer((uint8 *)Pixels,
+                 NL3D_TILE_NOISE_MAP_SIZE * NL3D_TILE_NOISE_MAP_SIZE);
 }
 
-} // NL3D
+} // namespace NL3D

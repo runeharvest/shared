@@ -19,30 +19,31 @@
 
 namespace TAMING_TOOL_TYPE {
 
-enum TTamingToolType
-{
-	Cattleprod,
-	Stick,
-	Whip,
+enum TTamingToolType {
+  Cattleprod,
+  Stick,
+  Whip,
 
-	Unknown,
-	NUM_TAMING_TOOL_TYPE = Unknown,
+  Unknown,
+  NUM_TAMING_TOOL_TYPE = Unknown,
 };
 
 /**
  * get the right string from the given enum value
  * \param jop the TTamingToolType value to convert
- * \return the string associated to this enum number (Unknown if the enum number not exist)
+ * \return the string associated to this enum number (Unknown if the enum number
+ * not exist)
  */
 const std::string &toString(TTamingToolType type);
 
 /**
  * get the right TTamingToolType from its string
  * \param str the input string
- * \return the TTamingToolType associated to this string (unknown if the string cannot be interpreted)
+ * \return the TTamingToolType associated to this string (unknown if the string
+ * cannot be interpreted)
  */
 TTamingToolType toToolType(const std::string &str);
 
-} // TAMING_TOOL_TYPE
+} // namespace TAMING_TOOL_TYPE
 
 #endif // RY_TAMING_TOOL_TYPE_H //

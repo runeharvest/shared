@@ -20,141 +20,108 @@
 #ifndef RYAI_AIS_MESSAGES_H
 #define RYAI_AIS_MESSAGES_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/time_nl.h"
-#include "nel/misc/sheet_id.h"
 #include "nel/misc/entity_id.h"
+#include "nel/misc/sheet_id.h"
+#include "nel/misc/time_nl.h"
+#include "nel/misc/types_nl.h"
 
 #include "nel/net/transport_class.h"
 
 //----------------------------------------------------------------
 // AIDS -> AIS: Upload a manager definition script
 
-class CMsgAIUploadActions : public NLNET::CTransportClass
-{
+class CMsgAIUploadActions : public NLNET::CTransportClass {
 public:
-	std::string Data;
+  std::string Data;
 
-	CMsgAIUploadActions()
-	{
-	}
+  CMsgAIUploadActions() {}
 
-	CMsgAIUploadActions(std::string data)
-	{
-		Data = data;
-	}
+  CMsgAIUploadActions(std::string data) { Data = data; }
 
-	virtual void description()
-	{
-		className("CMsgAIUploadActions");
-		property("data", PropString, std::string(), Data);
-	}
+  virtual void description() {
+    className("CMsgAIUploadActions");
+    property("data", PropString, std::string(), Data);
+  }
 
-	virtual void callback(const std::string &name, NLNET::TServiceId id);
+  virtual void callback(const std::string &name, NLNET::TServiceId id);
 };
 
 //----------------------------------------------------------------
 // AIDS -> AIS: Start Managers
 
-class CMsgAISpawnMgrs : public NLNET::CTransportClass
-{
+class CMsgAISpawnMgrs : public NLNET::CTransportClass {
 public:
-	std::vector<uint16> MgrId;
+  std::vector<uint16> MgrId;
 
-	CMsgAISpawnMgrs()
-	{
-	}
+  CMsgAISpawnMgrs() {}
 
-	CMsgAISpawnMgrs(uint16 mgrId, const std::string &name)
-	{
-		MgrId.push_back(mgrId);
-	}
+  CMsgAISpawnMgrs(uint16 mgrId, const std::string &name) {
+    MgrId.push_back(mgrId);
+  }
 
-	virtual void description()
-	{
-		className("CMsgAISpawnMgrs");
-		propertyCont("mgrId", PropUInt16, MgrId);
-	}
+  virtual void description() {
+    className("CMsgAISpawnMgrs");
+    propertyCont("mgrId", PropUInt16, MgrId);
+  }
 
-	virtual void callback(const std::string &name, NLNET::TServiceId id);
+  virtual void callback(const std::string &name, NLNET::TServiceId id);
 };
 
 //----------------------------------------------------------------
 // AIDS -> AIS: Save, stop and unload Managers
 
-class CMsgAIDespawnMgrs : public NLNET::CTransportClass
-{
+class CMsgAIDespawnMgrs : public NLNET::CTransportClass {
 public:
-	std::vector<uint16> MgrId;
+  std::vector<uint16> MgrId;
 
-	CMsgAIDespawnMgrs()
-	{
-	}
+  CMsgAIDespawnMgrs() {}
 
-	CMsgAIDespawnMgrs(uint16 mgrId)
-	{
-		MgrId.push_back(mgrId);
-	}
+  CMsgAIDespawnMgrs(uint16 mgrId) { MgrId.push_back(mgrId); }
 
-	virtual void description()
-	{
-		className("CMsgAIDespawnMgrs");
-		propertyCont("mgrId", PropUInt16, MgrId);
-	}
+  virtual void description() {
+    className("CMsgAIDespawnMgrs");
+    propertyCont("mgrId", PropUInt16, MgrId);
+  }
 
-	virtual void callback(const std::string &name, NLNET::TServiceId id);
+  virtual void callback(const std::string &name, NLNET::TServiceId id);
 };
 
 //----------------------------------------------------------------
 // AIDS -> AIS: Save managers' backups
 
-class CMsgAIBackupMgrs : public NLNET::CTransportClass
-{
+class CMsgAIBackupMgrs : public NLNET::CTransportClass {
 public:
-	std::vector<uint16> MgrId;
+  std::vector<uint16> MgrId;
 
-	CMsgAIBackupMgrs()
-	{
-	}
+  CMsgAIBackupMgrs() {}
 
-	CMsgAIBackupMgrs(uint16 mgrId)
-	{
-		MgrId.push_back(mgrId);
-	}
+  CMsgAIBackupMgrs(uint16 mgrId) { MgrId.push_back(mgrId); }
 
-	virtual void description()
-	{
-		className("CMsgAIBackupMgrs");
-		propertyCont("mgrId", PropUInt16, MgrId);
-	}
+  virtual void description() {
+    className("CMsgAIBackupMgrs");
+    propertyCont("mgrId", PropUInt16, MgrId);
+  }
 
-	virtual void callback(const std::string &name, NLNET::TServiceId id);
+  virtual void callback(const std::string &name, NLNET::TServiceId id);
 };
 
 //----------------------------------------------------------------
 // AIDS -> AIS: Close managers and unload from RAM
 
-class CMsgAICloseMgrs : public NLNET::CTransportClass
-{
+class CMsgAICloseMgrs : public NLNET::CTransportClass {
 public:
-	std::vector<uint16> MgrId;
+  std::vector<uint16> MgrId;
 
-	CMsgAICloseMgrs()
-	{
-	}
+  CMsgAICloseMgrs() {}
 
-	CMsgAICloseMgrs(uint16 mgrId)
-	{
-		MgrId.push_back(mgrId);
-	}
+  CMsgAICloseMgrs(uint16 mgrId) { MgrId.push_back(mgrId); }
 
-	virtual void description()
-	{
-		className("CMsgAICloseMgrs");
-		propertyCont("mgrId", PropUInt16, MgrId);
-	}
+  virtual void description() {
+    className("CMsgAICloseMgrs");
+    propertyCont("mgrId", PropUInt16, MgrId);
+  }
 
-	virtual void callback(const std::string &name, NLNET::TServiceId id);
+  virtual void callback(const std::string &name, NLNET::TServiceId id);
 };
 
 #endif

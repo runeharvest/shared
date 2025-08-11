@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdafx.h"
-#include "log_analyser.h"
 #include "LogSessions.h"
+#include "log_analyser.h"
+#include "stdafx.h"
 
 using namespace std;
 
@@ -30,20 +30,18 @@ static char THIS_FILE[] = __FILE__;
 // CLogSessions dialog
 
 CLogSessions::CLogSessions(CWnd *pParent /*=NULL*/)
-    : CDialog(CLogSessions::IDD, pParent)
-{
-	//{{AFX_DATA_INIT(CLogSessions)
-	m_StartDate = _T("");
-	//}}AFX_DATA_INIT
+    : CDialog(CLogSessions::IDD, pParent) {
+  //{{AFX_DATA_INIT(CLogSessions)
+  m_StartDate = _T("");
+  //}}AFX_DATA_INIT
 }
 
-void CLogSessions::DoDataExchange(CDataExchange *pDX)
-{
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CLogSessions)
-	DDX_Control(pDX, IDC_LIST1, m_ListBox);
-	DDX_LBString(pDX, IDC_LIST1, m_StartDate);
-	//}}AFX_DATA_MAP
+void CLogSessions::DoDataExchange(CDataExchange *pDX) {
+  CDialog::DoDataExchange(pDX);
+  //{{AFX_DATA_MAP(CLogSessions)
+  DDX_Control(pDX, IDC_LIST1, m_ListBox);
+  DDX_LBString(pDX, IDC_LIST1, m_StartDate);
+  //}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(CLogSessions, CDialog)
@@ -57,40 +55,36 @@ END_MESSAGE_MAP()
 /*
  *
  */
-void CLogSessions::addLogSession(const CString &line)
-{
-	Sessions.push_back(line);
+void CLogSessions::addLogSession(const CString &line) {
+  Sessions.push_back(line);
 }
 
 /*
  *
  */
-CString CLogSessions::getStartDate() const
-{
-	return m_StartDate;
+CString CLogSessions::getStartDate() const {
+  return m_StartDate;
 
-	/*if ( m_ListBox.GetCurSel() == LB_ERR )
-	{
-	    return "";
-	}
-	else
-	{
-	    CString res;
-	    m_ListBox.GetText( m_ListBox.GetCurSel(), res );
-	    return res;
-	}*/
+  /*if ( m_ListBox.GetCurSel() == LB_ERR )
+  {
+      return "";
+  }
+  else
+  {
+      CString res;
+      m_ListBox.GetText( m_ListBox.GetCurSel(), res );
+      return res;
+  }*/
 }
 
-BOOL CLogSessions::OnInitDialog()
-{
-	CDialog::OnInitDialog();
+BOOL CLogSessions::OnInitDialog() {
+  CDialog::OnInitDialog();
 
-	vector<CString>::iterator il;
-	for (il = Sessions.begin(); il != Sessions.end(); ++il)
-	{
-		m_ListBox.AddString(*il);
-	}
-	Sessions.clear();
+  vector<CString>::iterator il;
+  for (il = Sessions.begin(); il != Sessions.end(); ++il) {
+    m_ListBox.AddString(*il);
+  }
+  Sessions.clear();
 
-	return TRUE;
+  return TRUE;
 }

@@ -20,17 +20,16 @@
 #include "nel/misc/types_nl.h"
 
 namespace ROLEMASTER_FLAGS {
-enum TRolemasterFlag
-{
-	FightActions = 0,
-	MagicActions = 1,
-	ForageActions = 2,
-	CraftActions = 3,
+enum TRolemasterFlag {
+  FightActions = 0,
+  MagicActions = 1,
+  ForageActions = 2,
+  CraftActions = 3,
 
-	CaracteristicUpgrades = 4,
-	SpecialPowers = 5,
+  CaracteristicUpgrades = 4,
+  SpecialPowers = 5,
 
-	NbFlags = 6,
+  NbFlags = 6,
 };
 
 /// convert a TRolemasterFlag to a string
@@ -42,7 +41,7 @@ TRolemasterFlag fromString(const std::string &str);
 /// from a .sphrase sheet name, test if it can be sold by rolemaster Flags
 bool canSellPhrase(uint32 rmfBitField, const std::string &sheetName);
 
-}; // ROLEMASTER_FLAGS
+}; // namespace ROLEMASTER_FLAGS
 
 #endif // RY_ROLEMASTER_FLAGS_H
 /* End of rolemaster_flags.h */

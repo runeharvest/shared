@@ -21,6 +21,6 @@
 namespace NL3D {
 /// Register attribute makers based on int (used in particle systems)
 void PSRegisterIntAttribs();
-} // NL3D
+} // namespace NL3D
 
 #endif

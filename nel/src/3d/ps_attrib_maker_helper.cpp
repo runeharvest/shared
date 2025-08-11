@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "std3d.h"
 #include "nel/3d/ps_attrib_maker_helper.h"
+#include "std3d.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -24,102 +24,78 @@
 namespace NL3D {
 
 // ***********************************************************************************
-void CPSAttribMakerMemory<uint32>::serial(NLMISC::IStream &f)
-{
-	CPSAttribMakerMemoryBase<uint32>::serial(f);
-	if (f.isReading())
-	{
-		if (_T.getSize() != 0)
-		{
-			_MinValue = _MaxValue = _T[0];
-			for (uint k = 1; k < _T.getSize(); ++k)
-			{
-				_MinValue = std::min(_MinValue, _T[k]);
-				_MaxValue = std::max(_MaxValue, _T[k]);
-			}
-		}
-	}
+void CPSAttribMakerMemory<uint32>::serial(NLMISC::IStream &f) {
+  CPSAttribMakerMemoryBase<uint32>::serial(f);
+  if (f.isReading()) {
+    if (_T.getSize() != 0) {
+      _MinValue = _MaxValue = _T[0];
+      for (uint k = 1; k < _T.getSize(); ++k) {
+        _MinValue = std::min(_MinValue, _T[k]);
+        _MaxValue = std::max(_MaxValue, _T[k]);
+      }
+    }
+  }
 }
 
 // ***********************************************************************************
-void CPSAttribMakerMemory<uint32>::newElement(const CPSEmitterInfo &info)
-{
-	CPSAttribMakerMemoryBase<uint32>::newElement(info);
-	if (_T.getSize() > 1)
-	{
-		_MinValue = std::min(_MinValue, _T.back());
-		_MaxValue = std::max(_MaxValue, _T.back());
-	}
-	else
-	{
-		_MinValue = _MaxValue = _T[0];
-	}
+void CPSAttribMakerMemory<uint32>::newElement(const CPSEmitterInfo &info) {
+  CPSAttribMakerMemoryBase<uint32>::newElement(info);
+  if (_T.getSize() > 1) {
+    _MinValue = std::min(_MinValue, _T.back());
+    _MaxValue = std::max(_MaxValue, _T.back());
+  } else {
+    _MinValue = _MaxValue = _T[0];
+  }
 }
 
 // ***********************************************************************************
-void CPSAttribMakerMemory<sint32>::serial(NLMISC::IStream &f)
-{
-	CPSAttribMakerMemoryBase<sint32>::serial(f);
-	if (f.isReading())
-	{
-		if (_T.getSize() != 0)
-		{
-			_MinValue = _MaxValue = _T[0];
-			for (uint k = 1; k < _T.getSize(); ++k)
-			{
-				_MinValue = std::min(_MinValue, _T[k]);
-				_MaxValue = std::max(_MaxValue, _T[k]);
-			}
-		}
-	}
+void CPSAttribMakerMemory<sint32>::serial(NLMISC::IStream &f) {
+  CPSAttribMakerMemoryBase<sint32>::serial(f);
+  if (f.isReading()) {
+    if (_T.getSize() != 0) {
+      _MinValue = _MaxValue = _T[0];
+      for (uint k = 1; k < _T.getSize(); ++k) {
+        _MinValue = std::min(_MinValue, _T[k]);
+        _MaxValue = std::max(_MaxValue, _T[k]);
+      }
+    }
+  }
 }
 
 // ***********************************************************************************
-void CPSAttribMakerMemory<sint32>::newElement(const CPSEmitterInfo &info)
-{
-	CPSAttribMakerMemoryBase<sint32>::newElement(info);
-	if (_T.getSize() > 1)
-	{
-		_MinValue = std::min(_MinValue, _T.back());
-		_MaxValue = std::max(_MaxValue, _T.back());
-	}
-	else
-	{
-		_MinValue = _MaxValue = _T[0];
-	}
+void CPSAttribMakerMemory<sint32>::newElement(const CPSEmitterInfo &info) {
+  CPSAttribMakerMemoryBase<sint32>::newElement(info);
+  if (_T.getSize() > 1) {
+    _MinValue = std::min(_MinValue, _T.back());
+    _MaxValue = std::max(_MaxValue, _T.back());
+  } else {
+    _MinValue = _MaxValue = _T[0];
+  }
 }
 
 // ***********************************************************************************
-void CPSAttribMakerMemory<float>::serial(NLMISC::IStream &f)
-{
-	CPSAttribMakerMemoryBase<float>::serial(f);
-	if (f.isReading())
-	{
-		if (_T.getSize() != 0)
-		{
-			_MinValue = _MaxValue = _T[0];
-			for (uint k = 1; k < _T.getSize(); ++k)
-			{
-				_MinValue = std::min(_MinValue, _T[k]);
-				_MaxValue = std::max(_MaxValue, _T[k]);
-			}
-		}
-	}
+void CPSAttribMakerMemory<float>::serial(NLMISC::IStream &f) {
+  CPSAttribMakerMemoryBase<float>::serial(f);
+  if (f.isReading()) {
+    if (_T.getSize() != 0) {
+      _MinValue = _MaxValue = _T[0];
+      for (uint k = 1; k < _T.getSize(); ++k) {
+        _MinValue = std::min(_MinValue, _T[k]);
+        _MaxValue = std::max(_MaxValue, _T[k]);
+      }
+    }
+  }
 }
 
 // ***********************************************************************************
-void CPSAttribMakerMemory<float>::newElement(const CPSEmitterInfo &info)
-{
-	CPSAttribMakerMemoryBase<float>::newElement(info);
-	if (_T.getSize() > 1)
-	{
-		_MinValue = std::min(_MinValue, _T.back());
-		_MaxValue = std::max(_MaxValue, _T.back());
-	}
-	else
-	{
-		_MinValue = _MaxValue = _T[0];
-	}
+void CPSAttribMakerMemory<float>::newElement(const CPSEmitterInfo &info) {
+  CPSAttribMakerMemoryBase<float>::newElement(info);
+  if (_T.getSize() > 1) {
+    _MinValue = std::min(_MinValue, _T.back());
+    _MaxValue = std::max(_MaxValue, _T.back());
+  } else {
+    _MinValue = _MaxValue = _T[0];
+  }
 }
 
-} // NL3D
+} // namespace NL3D

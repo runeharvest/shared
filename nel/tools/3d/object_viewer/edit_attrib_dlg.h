@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined(AFX_EDIT_ATTRIB_DLG_H__0B2EFF2B_FA0E_4AC8_88B8_416605043BF9__INCLUDED_)
+#if !defined(                                                                  \
+    AFX_EDIT_ATTRIB_DLG_H__0B2EFF2B_FA0E_4AC8_88B8_416605043BF9__INCLUDED_)
 #define AFX_EDIT_ATTRIB_DLG_H__0B2EFF2B_FA0E_4AC8_88B8_416605043BF9__INCLUDED_
 
 #if _MSC_VER > 1000
@@ -25,12 +26,13 @@
  * a base class for attribute edition dialog in a particle system
  */
 
-class CEditAttribDlg : public CDialog
-{
+class CEditAttribDlg : public CDialog {
 public:
-	virtual BOOL EnableWindow(BOOL bEnable = TRUE) { return CDialog::EnableWindow(bEnable); };
-	virtual void init(uint32 x, uint32 y, CWnd *pParent) = 0;
-	virtual ~CEditAttribDlg() { }
+  virtual BOOL EnableWindow(BOOL bEnable = TRUE) {
+    return CDialog::EnableWindow(bEnable);
+  };
+  virtual void init(uint32 x, uint32 y, CWnd *pParent) = 0;
+  virtual ~CEditAttribDlg() {}
 };
 
 #endif

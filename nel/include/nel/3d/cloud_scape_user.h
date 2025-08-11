@@ -24,32 +24,31 @@ class CCloudScape;
 class CScene;
 
 /// implementation of UWaterInstance methods
-class CCloudScapeUser : public UCloudScape
-{
+class CCloudScapeUser : public UCloudScape {
 public:
-	CCloudScapeUser(CScene *scene);
-	virtual ~CCloudScapeUser();
+  CCloudScapeUser(CScene *scene);
+  virtual ~CCloudScapeUser();
 
-	virtual void init(SCloudScapeSetup *pCSS = NULL);
+  virtual void init(SCloudScapeSetup *pCSS = NULL);
 
-	virtual void set(SCloudScapeSetup &css);
+  virtual void set(SCloudScapeSetup &css);
 
-	virtual void anim(double dt);
+  virtual void anim(double dt);
 
-	virtual void render();
+  virtual void render();
 
-	virtual uint32 getMemSize();
+  virtual uint32 getMemSize();
 
-	virtual void setQuality(float threshold);
+  virtual void setQuality(float threshold);
 
-	virtual void setNbCloudToUpdateIn80ms(uint32 n);
+  virtual void setNbCloudToUpdateIn80ms(uint32 n);
 
-	virtual bool isDebugQuadEnabled();
+  virtual bool isDebugQuadEnabled();
 
-	virtual void setDebugQuad(bool b);
+  virtual void setDebugQuad(bool b);
 
-	CCloudScape *_CS;
-	CScene *_Scene;
+  CCloudScape *_CS;
+  CScene *_Scene;
 };
 
-} // NL3D
+} // namespace NL3D

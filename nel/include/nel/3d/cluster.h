@@ -17,10 +17,10 @@
 #ifndef NL_CLUSTER_H
 #define NL_CLUSTER_H
 
-#include "nel/misc/types_nl.h"
-#include "nel/misc/string_mapper.h"
-#include "nel/misc/plane.h"
 #include "nel/misc/aabbox.h"
+#include "nel/misc/plane.h"
+#include "nel/misc/string_mapper.h"
+#include "nel/misc/types_nl.h"
 
 #include "nel/3d/transform.h"
 
@@ -30,7 +30,7 @@ namespace NLMISC {
 class CRGBA;
 class IStream;
 struct EStream;
-}
+} // namespace NLMISC
 
 namespace NL3D {
 
@@ -48,158 +48,161 @@ const NLMISC::CClassId ClusterId = NLMISC::CClassId(0x13f37e46, 0x3e880780);
  * \author Nevrax France
  * \date 2001
  */
-class CCluster : public CTransform
-{
-	/* ***********************************************
-	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
-	 *	It can be loaded/called through CAsyncFileManager for instance
-	 * ***********************************************/
+class CCluster : public CTransform {
+  /* ***********************************************
+   *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no
+   *static access for instance It can be loaded/called through CAsyncFileManager
+   *for instance
+   * ***********************************************/
 
 public:
-	static void registerBasic();
+  static void registerBasic();
 
 public:
-	CCluster();
+  CCluster();
 
-	~CCluster();
+  ~CCluster();
 
-	/**
-	 * Make the cluster volume from a plane made with 3 points
-	 * All the faces passed must be connected with at least one of the others
-	 * return false if the plane we want to add make the volume concave
-	 */
-	bool makeVolume(const NLMISC::CVector &p1, const NLMISC::CVector &p2, const NLMISC::CVector &p3);
+  /**
+   * Make the cluster volume from a plane made with 3 points
+   * All the faces passed must be connected with at least one of the others
+   * return false if the plane we want to add make the volume concave
+   */
+  bool makeVolume(const NLMISC::CVector &p1, const NLMISC::CVector &p2,
+                  const NLMISC::CVector &p3);
 
-	/// Apply the given matrix to this cluster local / world volume & bbox
-	void applyMatrix(const NLMISC::CMatrix &m);
+  /// Apply the given matrix to this cluster local / world volume & bbox
+  void applyMatrix(const NLMISC::CMatrix &m);
 
-	/**
-	 * return true if the vertex is in the cluster volume
-	 */
-	bool isIn(const NLMISC::CVector &p);
+  /**
+   * return true if the vertex is in the cluster volume
+   */
+  bool isIn(const NLMISC::CVector &p);
 
-	/**
-	 * return true if the Bounding box intersect the cluster
-	 */
-	bool isIn(const NLMISC::CAABBox &b);
+  /**
+   * return true if the Bounding box intersect the cluster
+   */
+  bool isIn(const NLMISC::CAABBox &b);
 
-	/**
-	 * return true if the Sphere intersect the cluster
-	 */
-	bool isIn(const NLMISC::CVector &center, float size);
+  /**
+   * return true if the Sphere intersect the cluster
+   */
+  bool isIn(const NLMISC::CVector &center, float size);
 
-	/**
-	 * return true if the segment intersect the cluster
-	 *	start / end are the input and ouptut clipped segment
-	 */
-	bool clipSegment(NLMISC::CVector &p0, NLMISC::CVector &p1);
+  /**
+   * return true if the segment intersect the cluster
+   *	start / end are the input and ouptut clipped segment
+   */
+  bool clipSegment(NLMISC::CVector &p0, NLMISC::CVector &p1);
 
-	NLMISC::CAABBox &getBBox() { return _BBox; }
+  NLMISC::CAABBox &getBBox() { return _BBox; }
 
-	/// Linking
+  /// Linking
 
-	// reset all links to portals.
-	void resetPortalLinks();
+  // reset all links to portals.
+  void resetPortalLinks();
 
-	void link(CPortal *portal);
-	void unlink(CPortal *portal);
+  void link(CPortal *portal);
+  void unlink(CPortal *portal);
 
-	uint32 getNbPortals() { return (uint32)_Portals.size(); }
-	CPortal *getPortal(uint32 pos) { return _Portals[pos]; }
+  uint32 getNbPortals() { return (uint32)_Portals.size(); }
+  CPortal *getPortal(uint32 pos) { return _Portals[pos]; }
 
-	/// Serial
+  /// Serial
 
-	void serial(NLMISC::IStream &f);
+  void serial(NLMISC::IStream &f);
 
-	void setWorldMatrix(const NLMISC::CMatrix &WM);
+  void setWorldMatrix(const NLMISC::CMatrix &WM);
 
-	bool isRoot() { return _LocalVolume.empty(); }
+  bool isRoot() { return _LocalVolume.empty(); }
 
-	//\name Sound related.
-	//@{
-	void setSoundGroup(const std::string &soundGroup);
-	void setSoundGroup(const NLMISC::TStringId &soundGroupId);
-	const std::string &getSoundGroup();
-	NLMISC::TStringId getSoundGroupId();
-	void setEnvironmentFx(const std::string &environmentFx);
-	void setEnvironmentFx(const NLMISC::TStringId &environmentFxId);
-	const std::string &getEnvironmentFx();
-	NLMISC::TStringId getEnvironmentFxId();
-	//@}
+  //\name Sound related.
+  //@{
+  void setSoundGroup(const std::string &soundGroup);
+  void setSoundGroup(const NLMISC::TStringId &soundGroupId);
+  const std::string &getSoundGroup();
+  NLMISC::TStringId getSoundGroupId();
+  void setEnvironmentFx(const std::string &environmentFx);
+  void setEnvironmentFx(const NLMISC::TStringId &environmentFxId);
+  const std::string &getEnvironmentFx();
+  NLMISC::TStringId getEnvironmentFxId();
+  //@}
 
-	/// \name CTransform Specialisation
-	// @{
-	virtual void traverseHrc();
-	virtual void traverseClip();
-	virtual bool clip();
-	// For ClipTrav only.
-	void setCameraIn(bool state) { _CameraIn = state; }
-	bool isCameraIn() const { return _CameraIn; }
-	// @}
+  /// \name CTransform Specialisation
+  // @{
+  virtual void traverseHrc();
+  virtual void traverseClip();
+  virtual bool clip();
+  // For ClipTrav only.
+  void setCameraIn(bool state) { _CameraIn = state; }
+  bool isCameraIn() const { return _CameraIn; }
+  // @}
 
-	// clusters to clusters calls
-	void recursTraverseClip(CTransform *caller);
+  // clusters to clusters calls
+  void recursTraverseClip(CTransform *caller);
 
-	// Cluster Graph parsing with a ray (for CScene::findCameraClusterSystemFromRay())
-	void cameraRayClip(const CVector &start, const CVector &end, std::vector<CCluster *> &clusterVisited);
+  // Cluster Graph parsing with a ray (for
+  // CScene::findCameraClusterSystemFromRay())
+  void cameraRayClip(const CVector &start, const CVector &end,
+                     std::vector<CCluster *> &clusterVisited);
 
 private:
-	static CTransform *creator() { return new CCluster; }
+  static CTransform *creator() { return new CCluster; }
 
 public:
-	// Moving cluster
-	CQuadGrid<CCluster *>::CIterator AccelIt;
+  // Moving cluster
+  CQuadGrid<CCluster *>::CIterator AccelIt;
 
-	// Additionnal properties
-	std::string Name;
-	bool FatherVisible;
-	bool VisibleFromFather;
-	bool FatherAudible;
-	bool AudibleFromFather;
-	CCluster *Father;
-	std::vector<CCluster *> Children;
-	CInstanceGroup *Group;
-
-private:
-	/// Portals list
-	std::vector<CPortal *> _Portals;
-
-	/// Local bounding box and volume
-	/// -----------------------------
-	/// The bounding box of the volume
-	NLMISC::CAABBox _LocalBBox;
-	/// All planes are oriented to the exterior of the volume
-	std::vector<NLMISC::CPlane> _LocalVolume;
-
-	/// World bounding box and volume (valid after hrc trav)
-	/// -----------------------------
-	NLMISC::CAABBox _BBox;
-	/// All planes are oriented to the exterior of the volume
-	std::vector<NLMISC::CPlane> _Volume;
-
-	/// Sound group name id
-	NLMISC::TStringId _SoundGroupId;
-	/// Environement Fx name Id (using CStringMapper)
-	NLMISC::TStringId _EnvironmentFxId;
+  // Additionnal properties
+  std::string Name;
+  bool FatherVisible;
+  bool VisibleFromFather;
+  bool FatherAudible;
+  bool AudibleFromFather;
+  CCluster *Father;
+  std::vector<CCluster *> Children;
+  CInstanceGroup *Group;
 
 private:
-	// This unlink this cluster from its sons and its parents
-	void unlinkFromClusterTree();
-	//		unlink this cluster from its parent
-	void unlinkFromParent();
-	//		unlink this cluster sons
-	void unlinkSons();
+  /// Portals list
+  std::vector<CPortal *> _Portals;
 
-	/// ***** Clip Traversal
-	bool _Visited;
-	// true if in clip pass the camera is in. valid only during clip pass...
-	bool _CameraIn;
+  /// Local bounding box and volume
+  /// -----------------------------
+  /// The bounding box of the volume
+  NLMISC::CAABBox _LocalBBox;
+  /// All planes are oriented to the exterior of the volume
+  std::vector<NLMISC::CPlane> _LocalVolume;
 
-	/// Friends classes
-	friend class CInstanceGroup;
+  /// World bounding box and volume (valid after hrc trav)
+  /// -----------------------------
+  NLMISC::CAABBox _BBox;
+  /// All planes are oriented to the exterior of the volume
+  std::vector<NLMISC::CPlane> _Volume;
+
+  /// Sound group name id
+  NLMISC::TStringId _SoundGroupId;
+  /// Environement Fx name Id (using CStringMapper)
+  NLMISC::TStringId _EnvironmentFxId;
+
+private:
+  // This unlink this cluster from its sons and its parents
+  void unlinkFromClusterTree();
+  //		unlink this cluster from its parent
+  void unlinkFromParent();
+  //		unlink this cluster sons
+  void unlinkSons();
+
+  /// ***** Clip Traversal
+  bool _Visited;
+  // true if in clip pass the camera is in. valid only during clip pass...
+  bool _CameraIn;
+
+  /// Friends classes
+  friend class CInstanceGroup;
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_CLUSTER_H
 

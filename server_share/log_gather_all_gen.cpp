@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdpch.h"
 #include "game_share/utils.h"
+#include "stdpch.h"
 
 extern void forceLink_Player();
 
@@ -31,20 +31,19 @@ extern void forceLink_Ring();
 
 extern void forceLink_Chat();
 
-void forceLinkOfAllLogs()
-{
+void forceLinkOfAllLogs() {
 
-	forceLink_Player();
+  forceLink_Player();
 
-	forceLink_Character();
+  forceLink_Character();
 
-	forceLink_Item();
+  forceLink_Item();
 
-	forceLink_Command();
+  forceLink_Command();
 
-	forceLink_Outpost();
+  forceLink_Outpost();
 
-	forceLink_Ring();
+  forceLink_Ring();
 
-	forceLink_Chat();
+  forceLink_Chat();
 };

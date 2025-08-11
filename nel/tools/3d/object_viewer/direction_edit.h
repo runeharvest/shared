@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined(AFX_DIRECTION_EDIT_H__D494432C_2D31_4725_BEE7_E042C1F7845F__INCLUDED_)
+#if !defined(                                                                  \
+    AFX_DIRECTION_EDIT_H__D494432C_2D31_4725_BEE7_E042C1F7845F__INCLUDED_)
 #define AFX_DIRECTION_EDIT_H__D494432C_2D31_4725_BEE7_E042C1F7845F__INCLUDED_
 
 #if _MSC_VER > 1000
@@ -31,57 +32,50 @@ struct IPopupNotify;
 /////////////////////////////////////////////////////////////////////////////
 // CDirectionEdit dialog
 
-class CDirectionEdit : public CDialog
-{
-	// Construction
+class CDirectionEdit : public CDialog {
+  // Construction
 public:
-	CDirectionEdit(IPSWrapper<NLMISC::CVector> *wrapper); // standard constructor
+  CDirectionEdit(IPSWrapper<NLMISC::CVector> *wrapper); // standard constructor
 
-	void init(IPopupNotify *p, CWnd *parent);
+  void init(IPopupNotify *p, CWnd *parent);
 
-	// Dialog Data
-	//{{AFX_DATA(CDirectionEdit)
-	enum
-	{
-		IDD = IDD_DIRECTION_EDIT
-	};
-	// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(CDirectionEdit)
+  enum { IDD = IDD_DIRECTION_EDIT };
+  // NOTE: the ClassWizard will add data members here
+  //}}AFX_DATA
 
-	// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CDirectionEdit)
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CDirectionEdit)
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
-	//}}AFX_VIRTUAL
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+                                                   //}}AFX_VIRTUAL
 
-	// Implementation
+  // Implementation
 protected:
-	// the mouse state
-	enum State
-	{
-		Wait,
-		Drag
-	} _MouseState;
+  // the mouse state
+  enum State { Wait, Drag } _MouseState;
 
-	IPopupNotify *_Parent;
+  IPopupNotify *_Parent;
 
-	// select a new vect from a point (must be in the basis)
-	void selectNewVect(const CPoint &pos);
+  // select a new vect from a point (must be in the basis)
+  void selectNewVect(const CPoint &pos);
 
-	IPSWrapper<NLMISC::CVector> *_Wrapper;
-	// Generated message map functions
-	//{{AFX_MSG(CDirectionEdit)
-	afx_msg void OnPaint();
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnClose();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  IPSWrapper<NLMISC::CVector> *_Wrapper;
+  // Generated message map functions
+  //{{AFX_MSG(CDirectionEdit)
+  afx_msg void OnPaint();
+  afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+  afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+  afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+  afx_msg void OnClose();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before
+// the previous line.
 
 #endif // !defined(AFX_DIRECTION_EDIT_H__D494432C_2D31_4725_BEE7_E042C1F7845F__INCLUDED_)

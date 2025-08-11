@@ -31,21 +31,20 @@ NL_STRING_CONVERSION_TABLE_ENTRY(OUTPOST)
 NL_STRING_CONVERSION_TABLE_ENTRY(NEWBIELAND)
 NL_STRING_CONVERSION_TABLE_ENTRY(RESPAWNABLE)
 NL_STRING_CONVERSION_TABLE_ENTRY(NORMAL)
-NL_END_STRING_CONVERSION_TABLE(TRespawnPointType, RespawnPointTypeConversion, UNKNOWN)
+NL_END_STRING_CONVERSION_TABLE(TRespawnPointType, RespawnPointTypeConversion,
+                               UNKNOWN)
 
 //-----------------------------------------------
 // toRespawnPointType :
 //-----------------------------------------------
-TRespawnPointType toRespawnPointType(const std::string &str)
-{
-	return RespawnPointTypeConversion.fromString(str);
+TRespawnPointType toRespawnPointType(const std::string &str) {
+  return RespawnPointTypeConversion.fromString(str);
 }
 
 //-----------------------------------------------
 // toString :
 //-----------------------------------------------
-const std::string &toString(TRespawnPointType respawn_point_type)
-{
-	return RespawnPointTypeConversion.toString(respawn_point_type);
+const std::string &toString(TRespawnPointType respawn_point_type) {
+  return RespawnPointTypeConversion.toString(respawn_point_type);
 }
-}; // RESPAWN_POINT
+}; // namespace RESPAWN_POINT
