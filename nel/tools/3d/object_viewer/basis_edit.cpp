@@ -23,8 +23,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // CBasisEdit dialog
 
-
-CBasisEdit::CBasisEdit(CWnd* pParent /*=NULL*/)
+CBasisEdit::CBasisEdit(CWnd *pParent /*=NULL*/)
 {
 	//{{AFX_DATA_INIT(CBasisEdit)
 	m_Psi = 0;
@@ -33,8 +32,7 @@ CBasisEdit::CBasisEdit(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
-
-void CBasisEdit::DoDataExchange(CDataExchange* pDX)
+void CBasisEdit::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CBasisEdit)
@@ -47,20 +45,15 @@ void CBasisEdit::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CBasisEdit, CDialog)
-	//{{AFX_MSG_MAP(CBasisEdit)
-	ON_WM_PAINT()
-	ON_WM_HSCROLL()
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CBasisEdit)
+ON_WM_PAINT()
+ON_WM_HSCROLL()
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CBasisEdit message handlers
-
-
-
-
 
 void CBasisEdit::init(uint32 x, uint32 y, CWnd *pParent)
 {
@@ -72,29 +65,20 @@ void CBasisEdit::init(uint32 x, uint32 y, CWnd *pParent)
 	m_PsiCtrl.SetScrollRange(0, 359);
 	m_ThetaCtrl.SetScrollRange(0, 359);
 	m_PhiCtrl.SetScrollRange(0, 359);
-	
-	MoveWindow(x, y, r.right, r.bottom);	
+
+	MoveWindow(x, y, r.right, r.bottom);
 	updateAnglesFromReader();
-	ShowWindow(SW_SHOW);	
+	ShowWindow(SW_SHOW);
 	UpdateData(FALSE);
 }
 
-
-
-
-
 // build an euler matrix
-NLMISC::CMatrix  BuildEulerMatrix(float psi, float theta, float phi)
+NLMISC::CMatrix BuildEulerMatrix(float psi, float theta, float phi)
 {
-	float ca = cosf(psi), sa = sinf(psi)
-		  , cb = cosf(theta), sb = sinf(theta)
-		  , cc = cosf(phi), sc = sinf(phi);
+	float ca = cosf(psi), sa = sinf(psi), cb = cosf(theta), sb = sinf(theta), cc = cosf(phi), sc = sinf(phi);
 	NLMISC::CMatrix m;
 	m.identity();
-	m.setRot(NLMISC::CVector(ca * cb * cc - sa * sc, -cc * sa - ca * cb *sc, ca * sb)
-			 ,NLMISC::CVector(cb * cc * sa + ca * sc, ca * cc - cb * sa * sc, sa *sb)
-			 ,NLMISC::CVector(-cc * sb, sb * sc, cb)
-			);
+	m.setRot(NLMISC::CVector(ca * cb * cc - sa * sc, -cc * sa - ca * cb * sc, ca * sb), NLMISC::CVector(cb * cc * sa + ca * sc, ca * cc - cb * sa * sc, sa * sb), NLMISC::CVector(-cc * sb, sb * sc, cb));
 	return m;
 }
 
@@ -107,15 +91,17 @@ NLMISC::CVector GetEulerAngles(const NLMISC::CMatrix &mat)
 	mat.getRot(v[0], v[1], v[2]);
 	for (uint l = 0; l < 3; ++l)
 	{
-		m[0][l] = v[l].x; m[1][l] = v[l].y; m[2][l] = v[l].z; 
+		m[0][l] = v[l].x;
+		m[1][l] = v[l].y;
+		m[2][l] = v[l].z;
 	}
-	
+
 	// there are eight triplet that may satisfy the equation
 	// we compute them all, and test them against the matrix
 
 	float b0, b1, a0, a1, a2, a3, c0, c1, c2, c3;
 	b0 = acosf(m[2][2]);
-	b1 = (float) NLMISC::Pi - b0;
+	b1 = (float)NLMISC::Pi - b0;
 	float sb0 = sinf(b0), sb1 = sinf(b1);
 	if (fabsf(sb0) > 10E-6)
 	{
@@ -136,24 +122,14 @@ NLMISC::CVector GetEulerAngles(const NLMISC::CMatrix &mat)
 		a1 = c1 = 1.f;
 	}
 
+	a2 = (float)NLMISC::Pi - a0;
+	a3 = (float)NLMISC::Pi - a1;
 
-	a2 = (float) NLMISC::Pi - a0;
-	a3 = (float) NLMISC::Pi - a1;
-	
-	
-	c2 = (float) NLMISC::Pi - c0;
-	c3 = (float) NLMISC::Pi - c1;
+	c2 = (float)NLMISC::Pi - c0;
+	c3 = (float)NLMISC::Pi - c1;
 
-	NLMISC::CVector sol[] =
-	{
-		NLMISC::CVector(b0, a0, c0)
-		,NLMISC::CVector(b0, a2, c0)
-		,NLMISC::CVector(b0, a0, c2)
-		,NLMISC::CVector(b0, a2, c2)
-		,NLMISC::CVector(b1, a1, c1)
-		,NLMISC::CVector(b1, a3, c1)
-		,NLMISC::CVector(b1, a1, c3)
-		,NLMISC::CVector(b1, a3, c3)
+	NLMISC::CVector sol[] = {
+		NLMISC::CVector(b0, a0, c0), NLMISC::CVector(b0, a2, c0), NLMISC::CVector(b0, a0, c2), NLMISC::CVector(b0, a2, c2), NLMISC::CVector(b1, a1, c1), NLMISC::CVector(b1, a3, c1), NLMISC::CVector(b1, a1, c3), NLMISC::CVector(b1, a3, c3)
 	};
 
 	// now we take the triplet that fit best the 6 other equations
@@ -163,54 +139,45 @@ NLMISC::CVector GetEulerAngles(const NLMISC::CMatrix &mat)
 
 	for (uint k = 0; k < 8; ++k)
 	{
-		float ca = cosf(sol[k].x), sa = sinf(sol[k].x)
-		  , cb = cosf(sol[k].y), sb = sinf(sol[k].y)
-		  , cc = cosf(sol[k].z), sc = sinf(sol[k].z);
+		float ca = cosf(sol[k].x), sa = sinf(sol[k].x), cb = cosf(sol[k].y), sb = sinf(sol[k].y), cc = cosf(sol[k].z), sc = sinf(sol[k].z);
 
 		float gap = fabsf(m[0][0] - ca * cb * cc + sa * sc);
-		gap += fabsf(m[1][0] + cc * sa + ca * cb *sc);
+		gap += fabsf(m[1][0] + cc * sa + ca * cb * sc);
 		gap += fabsf(m[0][1] - cb * cc * sa - ca * sc);
 		gap += fabsf(m[0][1] - cb * cc * sa - ca * sc);
 		gap += fabsf(m[1][1] - ca * cc + cb * sa * sc);
-		gap += fabsf(m[2][1] - sb *ca);
+		gap += fabsf(m[2][1] - sb * ca);
 		gap += fabsf(m[0][2] + cc * sb);
 
 		if (k == 0 || gap < bestGap)
 		{
 			bestGap = gap;
-			bestIndex  = k; 
-
+			bestIndex = k;
 		}
 	}
 	return sol[bestIndex];
 }
 
-
-
 void CBasisEdit::updateAnglesFromReader()
 {
 	nlassert(_Wrapper); // _Wrapper should have been set before init !!
-	
+
 	// read plane basis
 	NL3D::CPlaneBasis pb = _Wrapper->get();
 	NLMISC::CMatrix mat;
 	mat.setRot(pb.X, pb.Y, pb.X ^ pb.Y);
 	NLMISC::CVector angles = GetEulerAngles(mat);
-	m_PsiCtrl.SetScrollPos((uint) (360.f * angles.x / (2.f * (float) NLMISC::Pi)));
-	m_ThetaCtrl.SetScrollPos((uint) (360.f * angles.y / (2.f * (float) NLMISC::Pi)));
-	m_PhiCtrl.SetScrollPos((uint) (360.f * angles.z / (2.f * (float) NLMISC::Pi)));
+	m_PsiCtrl.SetScrollPos((uint)(360.f * angles.x / (2.f * (float)NLMISC::Pi)));
+	m_ThetaCtrl.SetScrollPos((uint)(360.f * angles.y / (2.f * (float)NLMISC::Pi)));
+	m_PhiCtrl.SetScrollPos((uint)(360.f * angles.z / (2.f * (float)NLMISC::Pi)));
 	UpdateData(FALSE);
 }
-
-
-
-
 
 // just project a vector with orthogonal proj
 static CPoint BasisVectXForm(NLMISC::CVector &v, float size)
 {
 	const float sq = sqrtf(2.f) / 2.f;
-	return CPoint((int) (size * (sq * (v.x + v.y) )), (int) (size * (-v.z + sq * (v.x - v.y))));
+	return CPoint((int)(size * (sq * (v.x + v.y))), (int)(size * (-v.z + sq * (v.x - v.y))));
 }
 
 // draw a basis using the given colors, and hte given dc
@@ -218,20 +185,14 @@ static CPoint BasisVectXForm(NLMISC::CVector &v, float size)
 void DrawBasisInDC(const CPoint &center, float size, const NLMISC::CMatrix &m, CDC &dc, NLMISC::CRGBA col[3])
 {
 	// draw the basis
-	CPoint px  = center + BasisVectXForm(m.getI(), size);
-	CPoint py  = center + BasisVectXForm(m.getJ(), size);
-	CPoint pz  = center + BasisVectXForm(m.getK(), size);
-
+	CPoint px = center + BasisVectXForm(m.getI(), size);
+	CPoint py = center + BasisVectXForm(m.getJ(), size);
+	CPoint pz = center + BasisVectXForm(m.getK(), size);
 
 	CPen p[3];
-	p[0].CreatePen(PS_SOLID, 1, col[0].R + (col[0].G << 8) + (col[0].B << 16) );
-	p[1].CreatePen(PS_SOLID, 1, col[1].R + (col[1].G << 8) + (col[1].B << 16) );
-	p[2].CreatePen(PS_SOLID, 1, col[2].R + (col[2].G << 8) + (col[2].B << 16) );
-
-
-	
-
-	
+	p[0].CreatePen(PS_SOLID, 1, col[0].R + (col[0].G << 8) + (col[0].B << 16));
+	p[1].CreatePen(PS_SOLID, 1, col[1].R + (col[1].G << 8) + (col[1].B << 16));
+	p[2].CreatePen(PS_SOLID, 1, col[2].R + (col[2].G << 8) + (col[2].B << 16));
 
 	// draw letters indicating each axis
 	// X
@@ -243,12 +204,11 @@ void DrawBasisInDC(const CPoint &center, float size, const NLMISC::CMatrix &m, C
 	dc.MoveTo(px + CPoint(4, 2));
 	dc.LineTo(px + CPoint(3, 5));
 
-	 
 	// Y
-	dc.SelectObject(&p[1]);	
+	dc.SelectObject(&p[1]);
 	dc.MoveTo(center);
 	dc.LineTo(py);
-	
+
 	dc.MoveTo(py + CPoint(2, 2));
 	dc.LineTo(py + CPoint(4, 4));
 	dc.MoveTo(py + CPoint(4, 2));
@@ -267,63 +227,57 @@ void DrawBasisInDC(const CPoint &center, float size, const NLMISC::CMatrix &m, C
 	dc.LineTo(pz + CPoint(5, 4));
 
 	dc.SelectObject(old);
-
 }
 
-void CBasisEdit::OnPaint() 
+void CBasisEdit::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
-	
-	NLMISC::CRGBA c1[] ={ NLMISC::CRGBA::White, NLMISC::CRGBA::White, NLMISC::CRGBA::White };
-	NLMISC::CRGBA c2[] ={ NLMISC::CRGBA::Green, NLMISC::CRGBA::Green, NLMISC::CRGBA::Red };
+
+	NLMISC::CRGBA c1[] = { NLMISC::CRGBA::White, NLMISC::CRGBA::White, NLMISC::CRGBA::White };
+	NLMISC::CRGBA c2[] = { NLMISC::CRGBA::Green, NLMISC::CRGBA::Green, NLMISC::CRGBA::Red };
 
 	if (_Wrapper)
 	{
-		
+
 		// read plane basis
 		NL3D::CPlaneBasis pb = _Wrapper->get();
 
 		CPoint center(20, 20);
-		// draw a white box on the left				
+		// draw a white box on the left
 		dc.FillSolidRect(0, 0, 39, 39, 0x777777);
 
-	
 		NLMISC::CMatrix m;
 		m.identity();
 		DrawBasisInDC(center, 18, m, dc, c1);
 		m.setRot(pb.X, pb.Y, pb.X ^ pb.Y);
 		DrawBasisInDC(center, 18, m, dc, c2);
-
 	}
-	
+
 	// Do not call CDialog::OnPaint() for painting messages
 }
 
-void CBasisEdit::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CBasisEdit::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar)
 {
 	UpdateData();
 	if (nSBCode == SB_THUMBPOSITION || nSBCode == SB_THUMBTRACK)
 	{
-		NLMISC::CVector angles(2.f * (float) NLMISC::Pi * m_PsiCtrl.GetScrollPos() / 360.f
-					   , 2.f * (float) NLMISC::Pi * m_ThetaCtrl.GetScrollPos() / 360.f
-					   , 2.f * (float) NLMISC::Pi * m_PhiCtrl.GetScrollPos() / 360.f
-					  );
+		NLMISC::CVector angles(2.f * (float)NLMISC::Pi * m_PsiCtrl.GetScrollPos() / 360.f, 2.f * (float)NLMISC::Pi * m_ThetaCtrl.GetScrollPos() / 360.f, 2.f * (float)NLMISC::Pi * m_PhiCtrl.GetScrollPos() / 360.f);
 		if (pScrollBar == &m_PsiCtrl)
 		{
-			angles.x =  2.f * (float) NLMISC::Pi * nPos / 360.f;
-			m_PsiCtrl.SetScrollPos(nPos);				
+			angles.x = 2.f * (float)NLMISC::Pi * nPos / 360.f;
+			m_PsiCtrl.SetScrollPos(nPos);
 		}
 
 		if (pScrollBar == &m_ThetaCtrl)
 		{
-			angles.y =  2.f * (float) NLMISC::Pi * nPos / 360.f;
-			m_ThetaCtrl.SetScrollPos(nPos);				
+			angles.y = 2.f * (float)NLMISC::Pi * nPos / 360.f;
+			m_ThetaCtrl.SetScrollPos(nPos);
 		}
 
 		if (pScrollBar == &m_PhiCtrl)
 		{
-			angles.z =  2.f * (float) NLMISC::Pi * nPos / 360.f;
-			m_PhiCtrl.SetScrollPos(nPos);				
+			angles.z = 2.f * (float)NLMISC::Pi * nPos / 360.f;
+			m_PhiCtrl.SetScrollPos(nPos);
 		}
 
 		NLMISC::CMatrix mat = BuildEulerMatrix(angles.x, angles.y, angles.z);
@@ -332,7 +286,7 @@ void CBasisEdit::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		pb.Y = mat.getJ();
 		_Wrapper->setAndUpdateModifiedFlag(pb);
 		Invalidate();
-	}		
+	}
 	CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
 	UpdateData(FALSE);
 }

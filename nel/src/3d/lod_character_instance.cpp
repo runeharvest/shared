@@ -22,31 +22,26 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 CLodCharacterInstance::~CLodCharacterInstance()
 {
 	// If the texture was allocated.
-	if(_TextureId>=0)
+	if (_TextureId >= 0)
 	{
 		nlassert(_Owner);
 		_Owner->releaseInstance(*this);
 	}
 }
 
-
 // ***************************************************************************
-const CUV		*CLodCharacterInstance::getUVs() const
+const CUV *CLodCharacterInstance::getUVs() const
 {
-	if(_UVs.empty())
+	if (_UVs.empty())
 		return NULL;
 
 	return &_UVs[0];
 }
-
-
 
 } // NL3D

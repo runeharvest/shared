@@ -24,9 +24,7 @@
 #include "visual_collision_entity_user.h"
 #include "ptr_set.h"
 
-
 namespace NL3D {
-
 
 /**
  * UVisualCollisionManager implementation.
@@ -37,70 +35,64 @@ namespace NL3D {
 class CVisualCollisionManagerUser : public UVisualCollisionManager
 {
 public:
-
 	/// Constructor
 	CVisualCollisionManagerUser()
 	{
 	}
 
-
-	virtual void					setLandscape(ULandscape *landscape)
+	virtual void setLandscape(ULandscape *landscape)
 	{
-		_Manager.setLandscape(&(dynamic_cast<CLandscapeUser*>(landscape)->getLandscape()->Landscape));
+		_Manager.setLandscape(&(dynamic_cast<CLandscapeUser *>(landscape)->getLandscape()->Landscape));
 	}
 
-	virtual UVisualCollisionEntity	*createEntity()
+	virtual UVisualCollisionEntity *createEntity()
 	{
 		return _Entities.insert(new CVisualCollisionEntityUser(&_Manager));
 	}
 
-	virtual void					deleteEntity(UVisualCollisionEntity	*entity)
+	virtual void deleteEntity(UVisualCollisionEntity *entity)
 	{
-		_Entities.erase(dynamic_cast<CVisualCollisionEntityUser*>(entity));
+		_Entities.erase(dynamic_cast<CVisualCollisionEntityUser *>(entity));
 	}
 
-	virtual void					setSunContributionPower (float power, float maxThreshold)
+	virtual void setSunContributionPower(float power, float maxThreshold)
 	{
-		_Manager.setSunContributionPower (power, maxThreshold);
+		_Manager.setSunContributionPower(power, maxThreshold);
 	}
 
-	virtual void					setPlayerInside(bool state)
+	virtual void setPlayerInside(bool state)
 	{
 		_Manager.setPlayerInside(state);
 	}
 
-	virtual float					getCameraCollision(const CVector &start, const CVector &end, float radius, bool cone)
+	virtual float getCameraCollision(const CVector &start, const CVector &end, float radius, bool cone)
 	{
-		return _Manager.getCameraCollision (start, end, radius, cone);
+		return _Manager.getCameraCollision(start, end, radius, cone);
 	}
 
-	virtual bool					getRayCollision(const NLMISC::CVector &start, const NLMISC::CVector &end, bool landscapeOnly)
+	virtual bool getRayCollision(const NLMISC::CVector &start, const NLMISC::CVector &end, bool landscapeOnly)
 	{
-		return _Manager.getRayCollision (start, end, landscapeOnly);
+		return _Manager.getRayCollision(start, end, landscapeOnly);
 	}
 
-	virtual uint					addMeshInstanceCollision(const UVisualCollisionMesh &mesh, const NLMISC::CMatrix &instanceMatrix, bool avoidCollisionWhenInside, bool avoidCollisionWhenOutside);
+	virtual uint addMeshInstanceCollision(const UVisualCollisionMesh &mesh, const NLMISC::CMatrix &instanceMatrix, bool avoidCollisionWhenInside, bool avoidCollisionWhenOutside);
 
-	virtual void					removeMeshCollision(uint id)
+	virtual void removeMeshCollision(uint id)
 	{
 		_Manager.removeMeshCollision(id);
 	}
-	virtual	void					getMeshs(const NLMISC::CAABBox &aabbox, std::vector<CMeshInstanceColInfo> &dest);
-
+	virtual void getMeshs(const NLMISC::CAABBox &aabbox, std::vector<CMeshInstanceColInfo> &dest);
 
 public:
-	CVisualCollisionManager		&getVCM() {return _Manager;}
+	CVisualCollisionManager &getVCM() { return _Manager; }
 
 protected:
-	CVisualCollisionManager		_Manager;
-	typedef	CPtrSet<CVisualCollisionEntityUser>		TVisualCollisionEntitySet;
-	TVisualCollisionEntitySet	_Entities;
-
+	CVisualCollisionManager _Manager;
+	typedef CPtrSet<CVisualCollisionEntityUser> TVisualCollisionEntitySet;
+	TVisualCollisionEntitySet _Entities;
 };
 
-
 } // NL3D
-
 
 #endif // NL_VISUAL_COLLISION_MANAGER_USER_H
 

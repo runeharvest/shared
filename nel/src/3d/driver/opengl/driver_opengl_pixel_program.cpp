@@ -37,14 +37,13 @@
 
 using namespace std;
 using namespace NLMISC;
- 
+
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-	
+namespace NL3D {
+
 #ifdef NL_STATIC
 #ifdef USE_OPENGLES
 namespace NLDRIVERGLES {
@@ -55,7 +54,8 @@ namespace NLDRIVERGL {
 
 // ***************************************************************************
 
-CPixelProgamDrvInfosGL::CPixelProgamDrvInfosGL (CDriverGL *drv, ItGPUPrgDrvInfoPtrList it) : IProgramDrvInfos (drv, it) 
+CPixelProgamDrvInfosGL::CPixelProgamDrvInfosGL(CDriverGL *drv, ItGPUPrgDrvInfoPtrList it)
+    : IProgramDrvInfos(drv, it)
 {
 	H_AUTO_OGL(CPixelProgamDrvInfosGL_CPixelProgamDrvInfosGL)
 
@@ -112,16 +112,16 @@ bool CDriverGL::compilePixelProgram(NL3D::CPixelProgram *program)
 	{
 		glDisable(GL_FRAGMENT_PROGRAM_ARB);
 		_PixelProgramEnabled = false;
-		
+
 		// Insert into driver list. (so it is deleted when driver is deleted).
-		ItGPUPrgDrvInfoPtrList it = _GPUPrgDrvInfos.insert(_GPUPrgDrvInfos.end(), (NL3D::IProgramDrvInfos*)NULL);
+		ItGPUPrgDrvInfoPtrList it = _GPUPrgDrvInfos.insert(_GPUPrgDrvInfos.end(), (NL3D::IProgramDrvInfos *)NULL);
 
 		// Create a driver info
 		CPixelProgamDrvInfosGL *drvInfo;
 		*it = drvInfo = new CPixelProgamDrvInfosGL(this, it);
 		// Set the pointer
 		program->m_DrvInfo = drvInfo;
-	
+
 		if (!setupPixelProgram(program, drvInfo->ID))
 		{
 			delete drvInfo;
@@ -151,20 +151,20 @@ bool CDriverGL::activeARBPixelProgram(CPixelProgram *program)
 		if (!CDriverGL::compilePixelProgram(program)) return false;
 
 		// Cast the driver info pointer
-		CPixelProgamDrvInfosGL *drvInfo = safe_cast<CPixelProgamDrvInfosGL*>((IProgramDrvInfos*)program->m_DrvInfo);
+		CPixelProgamDrvInfosGL *drvInfo = safe_cast<CPixelProgamDrvInfosGL *>((IProgramDrvInfos *)program->m_DrvInfo);
 
 		glEnable(GL_FRAGMENT_PROGRAM_ARB);
 		_PixelProgramEnabled = true;
 		nglBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, drvInfo->ID);
-				
+
 		_LastSetuppedPP = program;
 	}
 	else
-	{		
+	{
 		glDisable(GL_FRAGMENT_PROGRAM_ARB);
 		_PixelProgramEnabled = false;
 	}
-	
+
 	return true;
 #else
 	return false;
@@ -173,10 +173,10 @@ bool CDriverGL::activeARBPixelProgram(CPixelProgram *program)
 
 // ***************************************************************************
 
-bool CDriverGL::setupPixelProgram(CPixelProgram *program, GLuint id/*, bool &specularWritten*/)
+bool CDriverGL::setupPixelProgram(CPixelProgram *program, GLuint id /*, bool &specularWritten*/)
 {
 	H_AUTO_OGL(CDriverGL_setupARBPixelProgram);
-	
+
 #ifndef USE_OPENGLES
 	CPixelProgamDrvInfosGL *drvInfo = static_cast<CPixelProgamDrvInfosGL *>((IProgramDrvInfos *)program->m_DrvInfo);
 
@@ -207,21 +207,21 @@ bool CDriverGL::setupPixelProgram(CPixelProgram *program, GLuint id/*, bool &spe
 			GLint position;
 			glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &position);
 			nlassert(position != -1); // there was an error..
-			nlassert(position < (GLint) source->SourceLen);
+			nlassert(position < (GLint)source->SourceLen);
 			uint line = 0;
 			const char *lineStart = source->SourcePtr;
-			for(uint k = 0; k < (uint) position; ++k)
+			for (uint k = 0; k < (uint)position; ++k)
 			{
-				if (source->SourcePtr[k] == '\n') 
+				if (source->SourcePtr[k] == '\n')
 				{
 					lineStart = source->SourcePtr + k;
 					++line;
 				}
 			}
-			nlwarning("ARB fragment program parse error at line %d.", (int) line);
+			nlwarning("ARB fragment program parse error at line %d.", (int)line);
 			// search end of line
 			const char *lineEnd = source->SourcePtr + source->SourceLen;
-			for(uint k = position; k < source->SourceLen; ++k)
+			for (uint k = position; k < source->SourceLen; ++k)
 			{
 				if (source->SourcePtr[k] == '\n')
 				{
@@ -232,8 +232,8 @@ bool CDriverGL::setupPixelProgram(CPixelProgram *program, GLuint id/*, bool &spe
 			nlwarning(std::string(lineStart, lineEnd).c_str());
 			// display the gl error msg
 			const GLubyte *errorMsg = glGetString(GL_PROGRAM_ERROR_STRING_ARB);
-			nlassert((const char *) errorMsg);
-			nlwarning((const char *) errorMsg);
+			nlassert((const char *)errorMsg);
+			nlwarning((const char *)errorMsg);
 		}
 		nlassert(0);
 		return false;

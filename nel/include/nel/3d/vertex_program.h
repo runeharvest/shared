@@ -36,12 +36,10 @@ public:
 	CVertexProgram(const char *nelvp);
 
 	/// Destructor
-	virtual ~CVertexProgram ();
-
+	virtual ~CVertexProgram();
 };
 
 } // NL3D
-
 
 #endif // NL_VERTEX_PROGRAM_H
 

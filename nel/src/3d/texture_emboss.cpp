@@ -26,15 +26,15 @@ using namespace NLMISC;
 namespace NL3D {
 
 // ***********************************************************************************************************
-CTextureEmboss::CTextureEmboss() : _Ambient(CRGBA::Black),
-								   _Diffuse(CRGBA::White),
-								   _DisableSharing(false),
-								   _SlopeFactor(1.f)
+CTextureEmboss::CTextureEmboss()
+    : _Ambient(CRGBA::Black)
+    , _Diffuse(CRGBA::White)
+    , _DisableSharing(false)
+    , _SlopeFactor(1.f)
 {
 	_LightDir.set(1.f, 1.f, 1.f);
 	_LightDir.normalize();
 }
-
 
 // ***********************************************************************************************************
 void CTextureEmboss::setHeightMap(ITexture *heightMap)
@@ -115,21 +115,21 @@ void CTextureEmboss::doGenerate(bool /* async */)
 	uint width = _HeightMap->getWidth();
 	uint height = _HeightMap->getHeight();
 
-	const CRGBA *src = (CRGBA *) &(_HeightMap->getPixels(0)[0]);
-	CRGBA *dest = (CRGBA *) &(getPixels(0)[0]);
+	const CRGBA *src = (CRGBA *)&(_HeightMap->getPixels(0)[0]);
+	CRGBA *dest = (CRGBA *)&(getPixels(0)[0]);
 	CVector normal;
 	for (uint y = 0; y < height; ++y)
 	{
 		for (uint x = 0; x < width; ++x)
 		{
 			// get position of each adajacent pixel (sure, it can be optimized)
-			const CRGBA *pixelRight = (x != width - 1) ? (src + 1) : (src + 1 - width );
-			const CRGBA *pixelLeft  = (x != 0) ? (src - 1) : (src + width - 1);
-			const CRGBA *pixelTop   = (y != 0) ? (src - width) : (src + width * (height - 1));
+			const CRGBA *pixelRight = (x != width - 1) ? (src + 1) : (src + 1 - width);
+			const CRGBA *pixelLeft = (x != 0) ? (src - 1) : (src + width - 1);
+			const CRGBA *pixelTop = (y != 0) ? (src - width) : (src + width * (height - 1));
 			const CRGBA *pixelBottom = (y != (height - 1)) ? (src + width) : (src - width * (height - 1));
 
-			normal.x = ((sint16) pixelRight->R - (sint16) pixelLeft->R) / 256.f;
-			normal.y = ((sint16) pixelTop->R - (sint16) pixelBottom->R) / 256.f;
+			normal.x = ((sint16)pixelRight->R - (sint16)pixelLeft->R) / 256.f;
+			normal.y = ((sint16)pixelTop->R - (sint16)pixelBottom->R) / 256.f;
 			normal.x *= _SlopeFactor;
 			NLMISC::clamp(normal.x, -1.f, 1.f);
 			normal.y *= _SlopeFactor;
@@ -142,12 +142,12 @@ void CTextureEmboss::doGenerate(bool /* async */)
 
 			CRGBA diffuse;
 			*dest = _Ambient;
-			diffuse.modulateFromui(_Diffuse, (uint) (255.f * colorValue));
+			diffuse.modulateFromui(_Diffuse, (uint)(255.f * colorValue));
 			dest->add(*dest, diffuse);
 			dest->A = 255;
 
-			++ src;
-			++ dest;
+			++src;
+			++dest;
 		}
 	}
 

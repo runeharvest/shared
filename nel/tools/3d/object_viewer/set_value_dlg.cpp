@@ -24,17 +24,15 @@
 /////////////////////////////////////////////////////////////////////////////
 // CSetValueDlg dialog
 
-
-CSetValueDlg::CSetValueDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CSetValueDlg::IDD, pParent)
+CSetValueDlg::CSetValueDlg(CWnd *pParent /*=NULL*/)
+    : CDialog(CSetValueDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CSetValueDlg)
 	Value = _T("");
 	//}}AFX_DATA_INIT
 }
 
-
-void CSetValueDlg::DoDataExchange(CDataExchange* pDX)
+void CSetValueDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSetValueDlg)
@@ -42,22 +40,21 @@ void CSetValueDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CSetValueDlg, CDialog)
-	//{{AFX_MSG_MAP(CSetValueDlg)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CSetValueDlg)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CSetValueDlg message handlers
 
-BOOL CSetValueDlg::OnInitDialog() 
+BOOL CSetValueDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	// TODO: Add extra initialization here
-	SetWindowText (Title);
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	SetWindowText(Title);
+
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }

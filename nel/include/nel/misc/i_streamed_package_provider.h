@@ -34,7 +34,7 @@ public:
 	/// hash: [in]
 	/// name: [in] name for debugging purposes
 	virtual bool getFile(std::string &filePath, const CHashKey &hash, const std::string &name = "") = 0;
-	
+
 }; /* class IStreamedPackageProvider */
 
 } /* namespace NLMISC */

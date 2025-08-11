@@ -4,15 +4,15 @@
 //
 // Modified 14/09/2000 by David Fleury
 //		get rid if the "resizable" stuff, just kept the auto arrange of controls
-//		
+//
 // Copyright (C) 2000 by Paolo Messina
 // (ppescher@yahoo.com)
 //
 // Free for non-commercial use.
 // You may change the code to your needs,
-// provided that credits to the original 
+// provided that credits to the original
 // author is given in the modified files.
-//  
+//
 /////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
@@ -37,20 +37,19 @@ inline void CResizableSheet::Construct()
 	m_bSavePage = FALSE;
 }
 
-
 CResizableSheet::CResizableSheet()
 {
 	Construct();
 }
 
 CResizableSheet::CResizableSheet(UINT nIDCaption, CWnd *pParentWnd, UINT iSelectPage)
-	 : CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
+    : CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 {
 	Construct();
 }
 
 CResizableSheet::CResizableSheet(LPCTSTR pszCaption, CWnd *pParentWnd, UINT iSelectPage)
-	 : CPropertySheet(pszCaption, pParentWnd, iSelectPage)
+    : CPropertySheet(pszCaption, pParentWnd, iSelectPage)
 {
 	Construct();
 }
@@ -60,23 +59,23 @@ CResizableSheet::~CResizableSheet()
 }
 
 BEGIN_MESSAGE_MAP(CResizableSheet, CPropertySheet)
-	//{{AFX_MSG_MAP(CResizableSheet)
-	ON_WM_SIZE()
-	ON_WM_DESTROY()
-	ON_WM_CREATE()
-	//}}AFX_MSG_MAP
-	ON_BN_CLICKED(ID_WIZBACK, OnPageChanged)
-	ON_BN_CLICKED(ID_WIZNEXT, OnPageChanged)
+//{{AFX_MSG_MAP(CResizableSheet)
+ON_WM_SIZE()
+ON_WM_DESTROY()
+ON_WM_CREATE()
+//}}AFX_MSG_MAP
+ON_BN_CLICKED(ID_WIZBACK, OnPageChanged)
+ON_BN_CLICKED(ID_WIZNEXT, OnPageChanged)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CResizableSheet message handlers
 
-int CResizableSheet::OnCreate(LPCREATESTRUCT lpCreateStruct) 
+int CResizableSheet::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CPropertySheet::OnCreate(lpCreateStruct) == -1)
 		return -1;
-	
+
 	/*********************************/
 	// MODIFIED 14/09/2000 Fleury David, I don't want the user to be able to resize the sheet
 	// // change window style to be resizable
@@ -85,7 +84,7 @@ int CResizableSheet::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-BOOL CResizableSheet::OnInitDialog() 
+BOOL CResizableSheet::OnInitDialog()
 {
 	BOOL bResult = CPropertySheet::OnInitDialog();
 
@@ -97,7 +96,7 @@ BOOL CResizableSheet::OnInitDialog()
 	return bResult;
 }
 
-void CResizableSheet::OnDestroy() 
+void CResizableSheet::OnDestroy()
 {
 	CPropertySheet::OnDestroy();
 
@@ -110,23 +109,22 @@ void CResizableSheet::OnDestroy()
 }
 
 // maps an index to a button ID and vice-versa
-static UINT _propButtons[] =
-{
+static UINT _propButtons[] = {
 	IDOK, IDCANCEL, ID_APPLY_NOW, IDHELP,
 	ID_WIZBACK, ID_WIZNEXT, ID_WIZFINISH
 };
 
 // horizontal line in wizard mode
-#define ID_WIZLINE	ID_WIZFINISH+1
+#define ID_WIZLINE ID_WIZFINISH + 1
 
 void CResizableSheet::PresetLayout()
 {
-	CWnd* pWnd;	// points to various children
+	CWnd *pWnd; // points to various children
 	CRect wndrc, objrc;
 	GetClientRect(&wndrc);
 
 	// tab control or wizard line position
-	if (m_psh.dwFlags & PSH_WIZARD)	// wizard mode
+	if (m_psh.dwFlags & PSH_WIZARD) // wizard mode
 	{
 		// get wizard line's bottom-right corner
 		pWnd = GetDlgItem(ID_WIZLINE);
@@ -134,7 +132,7 @@ void CResizableSheet::PresetLayout()
 		// hide tab control
 		GetTabControl()->ShowWindow(SW_HIDE);
 	}
-	else	// tabbed mode
+	else // tabbed mode
 	{
 		// get tab control's bottom-right corner
 		pWnd = GetTabControl();
@@ -159,7 +157,7 @@ void CResizableSheet::PresetLayout()
 	for (int i = 0; i < 7; i++)
 	{
 		pWnd = GetDlgItem(_propButtons[i]);
-		
+
 		if (pWnd == NULL)
 		{
 			// invalid position, button does not exist
@@ -169,7 +167,7 @@ void CResizableSheet::PresetLayout()
 			m_szLayoutButton[i].cy = 0;
 			continue;
 		}
-		
+
 		pWnd->GetWindowRect(&objrc);
 		ScreenToClient(&objrc);
 
@@ -181,7 +179,7 @@ void CResizableSheet::PresetLayout()
 void CResizableSheet::ArrangeLayout()
 {
 	// init some vars
-	CWnd* pWnd;
+	CWnd *pWnd;
 	CRect wndrc, objrc;
 	GetClientRect(&wndrc);
 
@@ -191,7 +189,7 @@ void CResizableSheet::ArrangeLayout()
 	// 1 active page
 	HDWP hdwp = BeginDeferWindowPos(6);
 
-	if (m_psh.dwFlags & PSH_WIZARD)	// wizard mode
+	if (m_psh.dwFlags & PSH_WIZARD) // wizard mode
 	{
 		// get wizard line's bottom-right corner
 		pWnd = GetDlgItem(ID_WIZLINE);
@@ -206,9 +204,9 @@ void CResizableSheet::ArrangeLayout()
 
 		// add the control
 		DeferWindowPos(hdwp, *pWnd, NULL, objrc.left, objrc.top,
-			objrc.Width(), objrc.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
+		    objrc.Width(), objrc.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
 	}
-	else	// tabbed mode
+	else // tabbed mode
 	{
 		// get tab control's bottom-right corner
 		pWnd = GetTabControl();
@@ -221,7 +219,7 @@ void CResizableSheet::ArrangeLayout()
 
 		// add the control, only resize
 		DeferWindowPos(hdwp, *pWnd, NULL, 0, 0, objrc.Width(),
-			objrc.Height(), SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+		    objrc.Height(), SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
 	}
 
 	// get child dialog's bottom-right corner
@@ -235,20 +233,20 @@ void CResizableSheet::ArrangeLayout()
 
 	// add the control, only resize
 	DeferWindowPos(hdwp, *pWnd, NULL, 0, 0, objrc.Width(),
-		objrc.Height(), SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+	    objrc.Height(), SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
 
 	// arrange buttons position
 	for (int i = 0; i < 7; i++)
 	{
 		pWnd = GetDlgItem(_propButtons[i]);
-		
+
 		if (pWnd == NULL)
-			continue;	// ignores deleted buttons
+			continue; // ignores deleted buttons
 
 		// this should never happen, because all the buttons you
 		// may activate already exist at time PresetLayout is called
 		ASSERT(m_szLayoutButton[i].cx != 0 || m_szLayoutButton[i].cy != 0);
-		
+
 		pWnd->GetWindowRect(&objrc);
 		ScreenToClient(&objrc);
 
@@ -257,19 +255,19 @@ void CResizableSheet::ArrangeLayout()
 
 		// add the control, only move
 		DeferWindowPos(hdwp, *pWnd, NULL, objrc.left, objrc.top,
-			0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+		    0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 	}
 
 	// go re-arrange child windows
 	EndDeferWindowPos(hdwp);
 }
 
-void CResizableSheet::OnSize(UINT nType, int cx, int cy) 
+void CResizableSheet::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
-	
+
 	if (nType == SIZE_MAXHIDE || nType == SIZE_MAXSHOW)
-		return;		// arrangement not needed
+		return; // arrangement not needed
 
 	if (m_bInitDone)
 		ArrangeLayout();
@@ -286,9 +284,7 @@ void CResizableSheet::OnPageChanged()
 	ArrangeLayout();
 }
 
-
 // protected members
-
 
 // NOTE: this must be called after all the other settings
 //       to have the dialog and its controls displayed properly
@@ -309,7 +305,7 @@ void CResizableSheet::EnableSaveRestore(LPCTSTR pszSection, LPCTSTR pszEntry, BO
 // either in the registry or a private .INI file
 // depending on your application settings
 
-#define PROFILE_FMT 	_T("%d,%d,%d,%d,%d,%d [%d]")
+#define PROFILE_FMT _T("%d,%d,%d,%d,%d,%d [%d]")
 
 void CResizableSheet::SaveWindowRect()
 {
@@ -319,22 +315,22 @@ void CResizableSheet::SaveWindowRect()
 	ZeroMemory(&wp, sizeof(WINDOWPLACEMENT));
 	wp.length = sizeof(WINDOWPLACEMENT);
 	GetWindowPlacement(&wp);
-	
-	RECT& rc = wp.rcNormalPosition;	// alias
+
+	RECT &rc = wp.rcNormalPosition; // alias
 
 	// also saves active page index, zero (the first) if problems
 	// cannot use GetActivePage, because it always fails
 	CTabCtrl *pTab = GetTabControl();
 	int page = 0;
 
-	if (pTab != NULL) 
+	if (pTab != NULL)
 		page = pTab->GetCurSel();
 	if (page < 0)
 		page = 0;
 
 	// always save page
 	data.Format(PROFILE_FMT, rc.left, rc.top,
-		rc.right, rc.bottom, wp.showCmd, wp.flags, page);
+	    rc.right, rc.bottom, wp.showCmd, wp.flags, page);
 
 	AfxGetApp()->WriteProfileString(m_sSection, m_sEntry, data);
 }
@@ -346,57 +342,58 @@ void CResizableSheet::LoadWindowRect()
 	int page;
 
 	data = AfxGetApp()->GetProfileString(m_sSection, m_sEntry);
-	
-	if (data.IsEmpty())	// never saved before
+
+	if (data.IsEmpty()) // never saved before
 		return;
-	
+
 	ZeroMemory(&wp, sizeof(WINDOWPLACEMENT));
 	wp.length = sizeof(WINDOWPLACEMENT);
 
-	RECT& rc = wp.rcNormalPosition;	// alias
+	RECT &rc = wp.rcNormalPosition; // alias
 
 	if (_stscanf_s(data, PROFILE_FMT, &rc.left, &rc.top,
-		&rc.right, &rc.bottom, &wp.showCmd, &wp.flags, &page) == 7)
+	        &rc.right, &rc.bottom, &wp.showCmd, &wp.flags, &page)
+	    == 7)
 	{
 		SetWindowPlacement(&wp);
 		if (m_bSavePage)
 		{
 			SetActivePage(page);
-			ArrangeLayout();	// needs refresh
+			ArrangeLayout(); // needs refresh
 		}
 	}
 }
 
 int CResizableSheet::GetMinWidth()
-{/*
-	int min = 0;
+{ /*
+	 int min = 0;
 
-	// search for leftmost button
-	for (int i = 0; i < 7; i++)
-	{
-		// left position is relative to the right border
-		// of the parent window (negative value)
-		if (m_szLayoutButton[i].cx < min)
-			min = m_szLayoutButton[i].cx;
-	}
+	 // search for leftmost button
+	 for (int i = 0; i < 7; i++)
+	 {
+	     // left position is relative to the right border
+	     // of the parent window (negative value)
+	     if (m_szLayoutButton[i].cx < min)
+	         min = m_szLayoutButton[i].cx;
+	 }
 
-	// sizing border width
-	int border = GetSystemMetrics(SM_CXSIZEFRAME);
-	
-	// get tab control or wizard line left position
-	CWnd* pWnd;
-	CRect objrc;
+	 // sizing border width
+	 int border = GetSystemMetrics(SM_CXSIZEFRAME);
 
-	if (m_psh.dwFlags & PSH_WIZARD)
-		pWnd = GetDlgItem(ID_WIZLINE);
-	else
-		pWnd = GetTabControl();
+	 // get tab control or wizard line left position
+	 CWnd* pWnd;
+	 CRect objrc;
 
-	pWnd->GetWindowRect(&objrc);
-	ScreenToClient(&objrc);
+	 if (m_psh.dwFlags & PSH_WIZARD)
+	     pWnd = GetDlgItem(ID_WIZLINE);
+	 else
+	     pWnd = GetTabControl();
 
-	// add the left margin and window's border
-	return -min + objrc.left + border*2;
-*/
+	 pWnd->GetWindowRect(&objrc);
+	 ScreenToClient(&objrc);
+
+	 // add the left margin and window's border
+	 return -min + objrc.left + border*2;
+ */
 	return 1;
 }

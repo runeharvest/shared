@@ -17,9 +17,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 //
-
 
 #include "std_afx.h"
 #include "object_viewer.h"
@@ -30,17 +28,16 @@
 
 #include "texture_chooser.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CMultiTexDlg dialog
 
-
-CMultiTexDlg::CMultiTexDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSMultiTexturedParticle *mtp, IPopupNotify* pn, CWnd *pParent)
-	: CDialog(IDD_MULTITEX, pParent),
-	  _Node(ownerNode),
-	  _MTP(mtp),
-	  _MainTexDlg(NULL), _AltTexDlg(NULL),
-	  _PN(pn)
+CMultiTexDlg::CMultiTexDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSMultiTexturedParticle *mtp, IPopupNotify *pn, CWnd *pParent)
+    : CDialog(IDD_MULTITEX, pParent)
+    , _Node(ownerNode)
+    , _MTP(mtp)
+    , _MainTexDlg(NULL)
+    , _AltTexDlg(NULL)
+    , _PN(pn)
 {
 	nlassert(_MTP);
 	//{{AFX_DATA_INIT(CMultiTexDlg)
@@ -58,13 +55,17 @@ void CMultiTexDlg::init(CWnd *pParent)
 
 CMultiTexDlg::~CMultiTexDlg()
 {
-	#define REMOVE_DLG(dlg) if (dlg) { (dlg)->DestroyWindow(); delete (dlg); }
+#define REMOVE_DLG(dlg)         \
+	if (dlg)                    \
+	{                           \
+		(dlg)->DestroyWindow(); \
+		delete (dlg);           \
+	}
 	REMOVE_DLG(_MainTexDlg);
 	REMOVE_DLG(_AltTexDlg);
 }
 
-
-void CMultiTexDlg::DoDataExchange(CDataExchange* pDX)
+void CMultiTexDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CMultiTexDlg)
@@ -80,33 +81,32 @@ void CMultiTexDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CMultiTexDlg, CDialog)
-	//{{AFX_MSG_MAP(CMultiTexDlg)
-	ON_WM_CLOSE()
-	ON_BN_CLICKED(IDC_ENABLE_ALTERNATE_TEX, OnEnableAlternate)
-	ON_BN_CLICKED(IDC_UPDATE_SPEED, OnUpdateSpeed)
-	ON_BN_CLICKED(IDC_UPDATE_SPEED_ALTERNATE, OnUpdateSpeedAlternate)
-	ON_CBN_SELCHANGE(IDC_ALTERNATE_OP, OnSelchangeAlternateOp)
-	ON_CBN_SELCHANGE(IDC_MAIN_OP, OnSelchangeMainOp)
-	ON_BN_CLICKED(IDC_FORCE_BASIC_CAPS, OnForceBasicCaps)
-	ON_BN_CLICKED(IDC_USE_PARTICLE_DATE, OnUseParticleDate)
-	ON_BN_CLICKED(IDC_USE_PARTICLE_DATE2, OnUseParticleDateAlt)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CMultiTexDlg)
+ON_WM_CLOSE()
+ON_BN_CLICKED(IDC_ENABLE_ALTERNATE_TEX, OnEnableAlternate)
+ON_BN_CLICKED(IDC_UPDATE_SPEED, OnUpdateSpeed)
+ON_BN_CLICKED(IDC_UPDATE_SPEED_ALTERNATE, OnUpdateSpeedAlternate)
+ON_CBN_SELCHANGE(IDC_ALTERNATE_OP, OnSelchangeAlternateOp)
+ON_CBN_SELCHANGE(IDC_MAIN_OP, OnSelchangeMainOp)
+ON_BN_CLICKED(IDC_FORCE_BASIC_CAPS, OnForceBasicCaps)
+ON_BN_CLICKED(IDC_USE_PARTICLE_DATE, OnUseParticleDate)
+ON_BN_CLICKED(IDC_USE_PARTICLE_DATE2, OnUseParticleDateAlt)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CMultiTexDlg message handlers
 
-BOOL CMultiTexDlg::OnInitDialog() 
+BOOL CMultiTexDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
-	_TexWrapper.MTP			 = _MTP;
+
+	_TexWrapper.MTP = _MTP;
 	_AlternateTexWrapper.MTP = _MTP;
 
 	RECT r;
-	
+
 	_MainTexDlg = new CTextureChooser(NULL, _Node);
 	_MainTexDlg->setWrapper(&_TexWrapper);
 	GetDlgItem(IDC_TEX_CHOOSER)->GetWindowRect(&r);
@@ -118,7 +118,7 @@ BOOL CMultiTexDlg::OnInitDialog()
 	GetDlgItem(IDC_TEX_CHOOSER_ALTERNATE)->GetWindowRect(&r);
 	ScreenToClient(&r);
 	_AltTexDlg->init(r.left, r.top, this);
-	
+
 	readValues(false);
 	updateAlternate();
 	updateTexOp();
@@ -128,17 +128,13 @@ BOOL CMultiTexDlg::OnInitDialog()
 		m_AltTexCtrl.SetCheck(1);
 	}
 
-	
-
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 //======================================================
 // texture wrappers
-	
-	
+
 NL3D::ITexture *CMultiTexDlg::CMainTexWrapper::get(void)
 {
 	return MTP->getTexture2();
@@ -158,7 +154,6 @@ void CMultiTexDlg::CAlternateTexWrapper::set(NL3D::ITexture *tex)
 {
 	MTP->setTexture2Alternate(tex);
 }
-
 
 //======================================================
 
@@ -194,15 +189,13 @@ void CMultiTexDlg::readValues(bool alternate)
 	GetDlgItem(IDC_BUMP_FACTOR)->SetWindowText(nlUtf8ToTStr(NLMISC::toString("%.3f", _MTP->getBumpFactor())));
 }
 
-
 //======================================================
-void	CMultiTexDlg::updateBumpFactorEnabled()
+void CMultiTexDlg::updateBumpFactorEnabled()
 {
 	BOOL bEnvBumpMapUsed = _MTP->getMainTexOp() == NL3D::CPSMultiTexturedParticle::EnvBumpMap ? TRUE : FALSE;
 	GetDlgItem(IDC_BUMP_FACTOR_TXT)->EnableWindow(bEnvBumpMapUsed);
 	GetDlgItem(IDC_BUMP_FACTOR)->EnableWindow(bEnvBumpMapUsed);
 }
-
 
 //======================================================
 void CMultiTexDlg::writeValues(bool alternate)
@@ -217,13 +210,10 @@ void CMultiTexDlg::writeValues(bool alternate)
 		GetDlgItem(IDC_U_SPEED_2)->GetWindowText(u2, 10);
 		GetDlgItem(IDC_V_SPEED_2)->GetWindowText(v2, 10);
 
-		if (_stscanf(u1, _T("%f"), &vs1.x) == 1 &&
-			_stscanf(v1, _T("%f"), &vs1.y) == 1 &&
-			_stscanf(u2, _T("%f"), &vs2.x) == 1 &&
-			_stscanf(v2, _T("%f"), &vs2.y) == 1)
+		if (_stscanf(u1, _T("%f"), &vs1.x) == 1 && _stscanf(v1, _T("%f"), &vs1.y) == 1 && _stscanf(u2, _T("%f"), &vs2.x) == 1 && _stscanf(v2, _T("%f"), &vs2.y) == 1)
 		{
-			_MTP->setScrollSpeed(0, vs1);	
-			_MTP->setScrollSpeed(1, vs2);	
+			_MTP->setScrollSpeed(0, vs1);
+			_MTP->setScrollSpeed(1, vs2);
 			updateModifiedFlag();
 		}
 		else
@@ -238,21 +228,18 @@ void CMultiTexDlg::writeValues(bool alternate)
 			GetDlgItem(IDC_U_SPEED_1_ALTERNATE)->GetWindowText(u1, 10);
 			GetDlgItem(IDC_V_SPEED_1_ALTERNATE)->GetWindowText(v1, 10);
 			GetDlgItem(IDC_U_SPEED_2_ALTERNATE)->GetWindowText(u2, 10);
-			GetDlgItem(IDC_V_SPEED_2_ALTERNATE)->GetWindowText(v2, 10);	
-			if (_stscanf(u1, _T("%f"), &vs1.x) == 1 &&
-				_stscanf(v1, _T("%f"), &vs1.y) == 1 &&
-				_stscanf(u2, _T("%f"), &vs2.x) == 1 &&
-				_stscanf(v2, _T("%f"), &vs2.y) == 1)
+			GetDlgItem(IDC_V_SPEED_2_ALTERNATE)->GetWindowText(v2, 10);
+			if (_stscanf(u1, _T("%f"), &vs1.x) == 1 && _stscanf(v1, _T("%f"), &vs1.y) == 1 && _stscanf(u2, _T("%f"), &vs2.x) == 1 && _stscanf(v2, _T("%f"), &vs2.y) == 1)
 			{
-				_MTP->setAlternateScrollSpeed(0, vs1);	
-				_MTP->setAlternateScrollSpeed(1, vs2);	
+				_MTP->setAlternateScrollSpeed(0, vs1);
+				_MTP->setAlternateScrollSpeed(1, vs2);
 				updateModifiedFlag();
 			}
 		}
 	}
 
 	TCHAR bumpFactorTxt[10];
-	float bumpFactor; 
+	float bumpFactor;
 	GetDlgItem(IDC_BUMP_FACTOR)->GetWindowText(bumpFactorTxt, 10);
 	if (_stscanf(bumpFactorTxt, _T("%f"), &bumpFactor) == 1)
 	{
@@ -262,14 +249,14 @@ void CMultiTexDlg::writeValues(bool alternate)
 }
 
 //======================================================
-void CMultiTexDlg::OnClose() 
-{		
+void CMultiTexDlg::OnClose()
+{
 	CDialog::OnClose();
 	if (_PN)
 		_PN->childPopupClosed(this);
 }
 
-void CMultiTexDlg::OnEnableAlternate() 
+void CMultiTexDlg::OnEnableAlternate()
 {
 	_MTP->enableAlternateTex(!_MTP->isAlternateTexEnabled());
 	updateAlternate();
@@ -284,7 +271,7 @@ void CMultiTexDlg::updateAlternate()
 	GetDlgItem(IDC_U_SPEED_1_ALTERNATE)->EnableWindow(bEnable);
 	GetDlgItem(IDC_V_SPEED_1_ALTERNATE)->EnableWindow(bEnable);
 	GetDlgItem(IDC_U_SPEED_2_ALTERNATE)->EnableWindow(bEnable);
-	GetDlgItem(IDC_V_SPEED_2_ALTERNATE)->EnableWindow(bEnable);	
+	GetDlgItem(IDC_V_SPEED_2_ALTERNATE)->EnableWindow(bEnable);
 	GetDlgItem(IDC_UPDATE_SPEED_ALTERNATE)->EnableWindow(bEnable);
 	GetDlgItem(IDC_ALTERNATE_OP)->EnableWindow(bEnable);
 	_AltTexDlg->EnableWindow(bEnable);
@@ -292,63 +279,62 @@ void CMultiTexDlg::updateAlternate()
 }
 
 //======================================================
-void CMultiTexDlg::OnUpdateSpeed() 
+void CMultiTexDlg::OnUpdateSpeed()
 {
-	writeValues(false);	
+	writeValues(false);
 }
 
 //======================================================
-void CMultiTexDlg::OnUpdateSpeedAlternate() 
+void CMultiTexDlg::OnUpdateSpeedAlternate()
 {
-	writeValues(true);	
+	writeValues(true);
 }
 
 //======================================================
 void CMultiTexDlg::updateTexOp()
 {
-	m_MainOpCtrl.SetCurSel((int) _MTP->getMainTexOp());
-	m_AlternateOpCtrl.SetCurSel((int) _MTP->getAlternateTexOp());
+	m_MainOpCtrl.SetCurSel((int)_MTP->getMainTexOp());
+	m_AlternateOpCtrl.SetCurSel((int)_MTP->getAlternateTexOp());
 	UpdateData(FALSE);
 	updateBumpFactorEnabled();
 }
 
 //======================================================
-void CMultiTexDlg::OnSelchangeAlternateOp() 
+void CMultiTexDlg::OnSelchangeAlternateOp()
 {
 	UpdateData(TRUE);
-	_MTP->setAlternateTexOp((NL3D::CPSMultiTexturedParticle::TOperator) m_AlternateOpCtrl.GetCurSel());	
+	_MTP->setAlternateTexOp((NL3D::CPSMultiTexturedParticle::TOperator)m_AlternateOpCtrl.GetCurSel());
 	updateModifiedFlag();
 }
 
 //======================================================
-void CMultiTexDlg::OnSelchangeMainOp() 
+void CMultiTexDlg::OnSelchangeMainOp()
 {
 	UpdateData(TRUE);
-	_MTP->setMainTexOp((NL3D::CPSMultiTexturedParticle::TOperator) m_MainOpCtrl.GetCurSel());	
+	_MTP->setMainTexOp((NL3D::CPSMultiTexturedParticle::TOperator)m_MainOpCtrl.GetCurSel());
 	updateModifiedFlag();
-	updateBumpFactorEnabled();		
+	updateBumpFactorEnabled();
 }
 
 //======================================================
-void CMultiTexDlg::OnForceBasicCaps() 
+void CMultiTexDlg::OnForceBasicCaps()
 {
 	UpdateData();
 	NL3D::CPSMultiTexturedParticle::forceBasicCaps(m_ForceBasicCaps ? true : false /* VC WARNING */);
-	
 }
 
 //======================================================
-void CMultiTexDlg::OnUseParticleDate() 
+void CMultiTexDlg::OnUseParticleDate()
 {
 	UpdateData();
-	_MTP->setUseLocalDate(m_UseParticleDate ? true : false /* VC WARNING */);	
+	_MTP->setUseLocalDate(m_UseParticleDate ? true : false /* VC WARNING */);
 	updateModifiedFlag();
 }
 
 //======================================================
-void CMultiTexDlg::OnUseParticleDateAlt() 
+void CMultiTexDlg::OnUseParticleDateAlt()
 {
 	UpdateData();
-	_MTP->setUseLocalDateAlt(m_UseParticleDateAlt ? true : false /* VC WARNING */);	
+	_MTP->setUseLocalDateAlt(m_UseParticleDateAlt ? true : false /* VC WARNING */);
 	updateModifiedFlag();
 }

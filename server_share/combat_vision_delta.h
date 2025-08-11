@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_COMBAT_VISION_DELTA_H
 #define NL_COMBAT_VISION_DELTA_H
 
@@ -34,21 +32,20 @@ class CCombatVisionDelta
 {
 public:
 	/// Constructor
-	CCombatVisionDelta() {}
-
+	CCombatVisionDelta() { }
 
 public:
 	/// The Id of the player that has vision changes
-	NLMISC::CEntityId				EntityId;
+	NLMISC::CEntityId EntityId;
 
 	/// Entities in vision
-	std::vector<NLMISC::CEntityId>	EntitiesIn;
+	std::vector<NLMISC::CEntityId> EntitiesIn;
 
 	/// Entities out vision
-	std::vector<NLMISC::CEntityId>	EntitiesOut;
+	std::vector<NLMISC::CEntityId> EntitiesOut;
 
 	/// Serialises the whole vision delta
-	void		serial(NLMISC::IStream &s)
+	void serial(NLMISC::IStream &s)
 	{
 		// Serialises entity id
 		s.serial(EntityId);
@@ -59,7 +56,7 @@ public:
 	}
 
 	/// Decodes a message containing a list of vision deltas sent by the gpms
-	static void	decodeVisionDelta(NLNET::CMessage &msgin, std::list<CCombatVisionDelta> &visionDelta)
+	static void decodeVisionDelta(NLNET::CMessage &msgin, std::list<CCombatVisionDelta> &visionDelta)
 	{
 		while ((uint)msgin.getPos() < (uint)msgin.length())
 		{
@@ -69,7 +66,7 @@ public:
 	}
 
 	/// Decodes a message containing a list of vision deltas sent by the gpms
-	static void	decodeVisionDelta(NLNET::CMessage &msgin, std::vector<CCombatVisionDelta> &visionDelta)
+	static void decodeVisionDelta(NLNET::CMessage &msgin, std::vector<CCombatVisionDelta> &visionDelta)
 	{
 		while ((uint)msgin.getPos() < (uint)msgin.length())
 		{
@@ -78,7 +75,6 @@ public:
 		}
 	}
 };
-
 
 #endif // NL_COMBAT_VISION_DELTA_H
 

@@ -13,31 +13,30 @@
 class CLogicTreeView : public CView
 {
 protected:
-	CLogicTreeView();           // protected constructor used by dynamic creation
+	CLogicTreeView(); // protected constructor used by dynamic creation
 	DECLARE_DYNCREATE(CLogicTreeView)
 
-// Attributes
+	// Attributes
 protected:
 public:
 	/// the splitter window in the view
 	CSplitterWnd m_wndSplitter;
 
-
-// Operations
+	// Operations
 public:
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CLogicTreeView)
-	protected:
-	virtual void OnDraw(CDC* pDC);      // overridden to draw this view
+protected:
+	virtual void OnDraw(CDC *pDC); // overridden to draw this view
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	virtual ~CLogicTreeView();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	virtual void Dump(CDumpContext &dc) const;
 #endif
 
 	// Generated message map functions
@@ -55,6 +54,3 @@ protected:
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
 #endif // !defined(AFX_LOGICTREEVIEW_H__EB843012_833A_4979_AECA_63302172A812__INCLUDED_)
-
-
-	

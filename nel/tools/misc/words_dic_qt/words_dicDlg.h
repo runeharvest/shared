@@ -27,15 +27,13 @@ private slots:
 	void on_lookUpEdit_returnPressed();
 
 private:
-
 	void initDialog();
 	void clear();
 	void getFileList();
-	void lookUp( const std::string& inputStr, const bool showAll );
-	void copyIntoClipboard( const std::string& selectedStr );
+	void lookUp(const std::string &inputStr, const bool showAll);
+	void copyIntoClipboard(const std::string &selectedStr);
 
 	Ui::Form ui;
 };
-
 
 #endif

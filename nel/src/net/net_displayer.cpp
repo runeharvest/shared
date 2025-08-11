@@ -23,28 +23,25 @@
 #include "nel/net/message.h"
 #include "nel/net/naming_client.h"
 
-
 using namespace std;
 using namespace NLMISC;
 
 namespace NLNET {
-
 
 /* This index must correspond to the index for "LOG" in CallbackArray in the Logging Service
  * (see CNetDisplayer::display())
  */
 const sint16 LOG_CBINDEX = 0;
 
-
 /*
  * Constructor
  */
-CNetDisplayer::CNetDisplayer(bool autoConnect) :
-	_Server(NULL), _ServerAllocated (false) // disable logging otherwise an infinite recursion may occur
+CNetDisplayer::CNetDisplayer(bool autoConnect)
+    : _Server(NULL)
+    , _ServerAllocated(false) // disable logging otherwise an infinite recursion may occur
 {
 	if (autoConnect) findAndConnect();
 }
-
 
 /*
  * Find the server (using the NS) and connect
@@ -57,16 +54,16 @@ void CNetDisplayer::findAndConnect()
 		_ServerAllocated = true;
 	}
 
-	if ( CNamingClient::lookupAndConnect( "LOGS", *_Server ) )
+	if (CNamingClient::lookupAndConnect("LOGS", *_Server))
 	{
-		nldebug( "Connected to logging service" );
+		nldebug("Connected to logging service");
 	}
 }
 
 /*
  * Sets logging server address
  */
-void CNetDisplayer::setLogServer (const CInetHost& logServerAddr)
+void CNetDisplayer::setLogServer(const CInetHost &logServerAddr)
 {
 	if (_Server != NULL && _Server->connected()) return;
 
@@ -80,41 +77,39 @@ void CNetDisplayer::setLogServer (const CInetHost& logServerAddr)
 
 	try
 	{
-		_Server->connect (_ServerAddr);
+		_Server->connect(_ServerAddr);
 	}
-	catch(const ESocket&)
+	catch (const ESocket &)
 	{
 		// Silence
 	}
 }
 
-void CNetDisplayer::setLogServer (CCallbackClient *server)
+void CNetDisplayer::setLogServer(CCallbackClient *server)
 {
 	if (_Server != NULL && _Server->connected()) return;
 
 	_Server = server;
 }
 
-
 /*
  * Destructor
  */
-CNetDisplayer::~CNetDisplayer ()
+CNetDisplayer::~CNetDisplayer()
 {
 	if (_ServerAllocated)
 	{
-		_Server->disconnect ();
+		_Server->disconnect();
 		delete _Server;
 	}
 }
-
 
 /*
  * Sends the string to the logging server
  *
  * Log format: "2000/01/15 12:05:30 <LogType> <ProcessName>: <Msg>"
  */
-void CNetDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *message)
+void CNetDisplayer::doDisplay(const CLog::TDisplayInfo &args, const char *message)
 {
 	try
 	{
@@ -124,7 +119,7 @@ void CNetDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *mess
 		}
 
 		bool needSpace = false;
-		//stringstream ss;
+		// stringstream ss;
 		string str;
 
 		if (args.Date != 0)
@@ -135,32 +130,43 @@ void CNetDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *mess
 
 		if (args.LogType != CLog::LOG_NO)
 		{
-			if (needSpace) { str += " "; needSpace = false; }
+			if (needSpace)
+			{
+				str += " ";
+				needSpace = false;
+			}
 			str += logTypeToString(args.LogType);
 			needSpace = true;
 		}
 
 		if (!args.ProcessName.empty())
 		{
-			if (needSpace) { str += " "; needSpace = false; }
+			if (needSpace)
+			{
+				str += " ";
+				needSpace = false;
+			}
 			str += args.ProcessName;
 			needSpace = true;
 		}
 
-		if (needSpace) { str += ": "; needSpace = false; }
+		if (needSpace)
+		{
+			str += ": ";
+			needSpace = false;
+		}
 
 		str += message;
 
-		CMessage msg("LOG" );
+		CMessage msg("LOG");
 		string s = str;
-		msg.serial( s );
-		_Server->send (msg, 0, false);
+		msg.serial(s);
+		_Server->send(msg, 0, false);
 	}
-	catch(const NLMISC::Exception& )
+	catch (const NLMISC::Exception &)
 	{
 		// Silence
 	}
 }
-
 
 } // NLNET

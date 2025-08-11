@@ -32,12 +32,12 @@
 namespace NLMISC {
 
 #ifdef NL_DEBUG
-#	define NL_DEBUG_SHEET_ID
+#define NL_DEBUG_SHEET_ID
 #endif
 
 // Use 24 bits id and 8 bits file types
-#define NL_SHEET_ID_ID_BITS		24
-#define NL_SHEET_ID_TYPE_BITS	32 - NL_SHEET_ID_ID_BITS
+#define NL_SHEET_ID_ID_BITS 24
+#define NL_SHEET_ID_TYPE_BITS 32 - NL_SHEET_ID_ID_BITS
 
 /**
  * CSheetId
@@ -49,47 +49,47 @@ namespace NLMISC {
 class CSheetId
 {
 
-public :
+public:
 	/// Unknow CSheetId is similar as an NULL pointer.
 	static const CSheetId Unknown;
 
 	/**
 	 *	Constructor
 	 */
-	explicit CSheetId( uint32 sheetRef = 0 );
-
-	/**
-	*	Constructor
-	*/
-	explicit CSheetId( int sheetRef );
+	explicit CSheetId(uint32 sheetRef = 0);
 
 	/**
 	 *	Constructor
 	 */
-	explicit CSheetId( const std::string& sheetName );
+	explicit CSheetId(int sheetRef);
 
 	/**
-	*	Operator=
-	*/
-	explicit CSheetId( const char *sheetName );
+	 *	Constructor
+	 */
+	explicit CSheetId(const std::string &sheetName);
+
+	/**
+	 *	Operator=
+	 */
+	explicit CSheetId(const char *sheetName);
 
 	/**
 	 * Constructor, uses defaultType as extension when sheetName
 	 * contains no file extension.
 	 */
-	explicit CSheetId( const std::string& sheetName, const std::string &defaultType );
+	explicit CSheetId(const std::string &sheetName, const std::string &defaultType);
 
 	/**
-	* Constructor, uses defaultType as extension when sheetName
-	* contains no file extension.
-	*/
-	explicit CSheetId( const std::string& sheetName, const char *defaultType );
+	 * Constructor, uses defaultType as extension when sheetName
+	 * contains no file extension.
+	 */
+	explicit CSheetId(const std::string &sheetName, const char *defaultType);
 
 	/**
-	* Constructor, uses defaultType as extension when sheetName
-	* contains no file extension.
-	*/
-	explicit CSheetId( const char *sheetName, const char *defaultType );
+	 * Constructor, uses defaultType as extension when sheetName
+	 * contains no file extension.
+	 */
+	explicit CSheetId(const char *sheetName, const char *defaultType);
 
 	// build from a string and returns true if the build succeed
 	bool buildSheetId(const char *sheetName, size_t sheetNameLen);
@@ -97,7 +97,7 @@ public :
 	inline bool buildSheetId(const std::string &sheetName) { return buildSheetId(sheetName.c_str(), sheetName.size()); }
 
 	// build from a SubSheetId and a type
-	void	 buildSheetId(uint32 shortId, uint32 type);
+	void buildSheetId(uint32 shortId, uint32 type);
 
 	/**
 	 *	Load the association sheet ref / sheet name
@@ -130,52 +130,49 @@ public :
 	inline uint32 getShortId() const { return _Id.IdInfos.Id; }
 
 	/**
-	*	Operator bool
-	*/
+	 *	Operator bool
+	 */
 	inline operator bool() const { return _Id.Id; }
 
 	/**
 	 *	Operator=
 	 */
-	CSheetId& operator=( const CSheetId& sheetId );
+	CSheetId &operator=(const CSheetId &sheetId);
 
 	/**
 	 *	Operator=
 	 */
-	CSheetId& operator=( const std::string& sheetName );
-
-	/**
-	*	Operator=
-	*/
-	CSheetId& operator=( const char *sheetName );
+	CSheetId &operator=(const std::string &sheetName);
 
 	/**
 	 *	Operator=
 	 */
-	CSheetId& operator=( uint32 sheetRef );
+	CSheetId &operator=(const char *sheetName);
 
 	/**
-	*	Operator=
-	*/
-	CSheetId& operator=( int sheetRef );
+	 *	Operator=
+	 */
+	CSheetId &operator=(uint32 sheetRef);
+
+	/**
+	 *	Operator=
+	 */
+	CSheetId &operator=(int sheetRef);
 
 	/**
 	 *	Operator<
 	 */
-	bool operator < (const CSheetId& sheetRef ) const;
+	bool operator<(const CSheetId &sheetRef) const;
 
 	/**
 	 *	Operator==
 	 */
-	inline bool operator == (const CSheetId& sheetRef ) const { return ( _Id.Id == sheetRef._Id.Id) ; }
+	inline bool operator==(const CSheetId &sheetRef) const { return (_Id.Id == sheetRef._Id.Id); }
 
 	/**
 	 *	Operator !=
 	 */
-	inline bool operator != (const CSheetId& sheetRef ) const { return (_Id.Id != sheetRef._Id.Id) ; }
-
-
-
+	inline bool operator!=(const CSheetId &sheetRef) const { return (_Id.Id != sheetRef._Id.Id); }
 
 	/**
 	 * Return the sheet id as a string
@@ -183,12 +180,12 @@ public :
 	 * - if 'ifNotFoundUseNumericId==false' the returned string is "<Sheet %d not found in sheet_id.bin>" with the id in %d
 	 * - if 'ifNotFoundUseNumericId==tue'   the returned string is "#%u" with the id in %u
 	 */
-	std::string toString(bool ifNotFoundUseNumericId=false) const;
+	std::string toString(bool ifNotFoundUseNumericId = false) const;
 
 	/**
 	 *	Serial
 	 */
-	void serial(NLMISC::IStream	&f);
+	void serial(NLMISC::IStream &f);
 	void serialString(NLMISC::IStream &f, const std::string &defaultType = "");
 
 	/**
@@ -203,11 +200,11 @@ public :
 	 *  This operation is non-destructive, the new entries are appended to the result vector
 	 *  note: fileExtension *not* include the '.' eg "bla" and *not* ".bla"
 	 **/
-	static void buildIdVector(std::vector <CSheetId> &result);
-	static void buildIdVector(std::vector <CSheetId> &result, uint32 type);
-	static void buildIdVector(std::vector <CSheetId> &result, std::vector <std::string> &resultFilenames, uint32 type);
-	static void buildIdVector(std::vector <CSheetId> &result, const std::string &fileExtension);
-	static void buildIdVector(std::vector <CSheetId> &result, std::vector <std::string> &resultFilenames, const std::string &fileExtension);
+	static void buildIdVector(std::vector<CSheetId> &result);
+	static void buildIdVector(std::vector<CSheetId> &result, uint32 type);
+	static void buildIdVector(std::vector<CSheetId> &result, std::vector<std::string> &resultFilenames, uint32 type);
+	static void buildIdVector(std::vector<CSheetId> &result, const std::string &fileExtension);
+	static void buildIdVector(std::vector<CSheetId> &result, std::vector<std::string> &resultFilenames, const std::string &fileExtension);
 
 	/**
 	 *  Convert between file extensions and numeric sheet types
@@ -216,36 +213,35 @@ public :
 	static const std::string &fileExtensionFromType(uint32 type);
 	static uint32 typeFromFileExtension(const std::string &fileExtension);
 
-private :
-
+private:
 	/// sheet id
 	union TSheetId
 	{
-		uint32		Id;
+		uint32 Id;
 
 		struct
 		{
-			uint32	Type	: NL_SHEET_ID_TYPE_BITS;
-			uint32	Id		: NL_SHEET_ID_ID_BITS;
+			uint32 Type : NL_SHEET_ID_TYPE_BITS;
+			uint32 Id : NL_SHEET_ID_ID_BITS;
 		} IdInfos;
 	};
 	TSheetId _Id;
 
 #ifdef NL_DEBUG_SHEET_ID
 	// Add some valuable debug information to sheetId
-	const char	*_DebugSheetName;
+	const char *_DebugSheetName;
 #endif
 
 	/// associate sheet id and sheet name
-	//static std::map<uint32,std::string> _SheetIdToName;
-	//static std::map<std::string,uint32> _SheetNameToId;
+	// static std::map<uint32,std::string> _SheetIdToName;
+	// static std::map<std::string,uint32> _SheetNameToId;
 
 	class CChar
 	{
 	public:
 		char *Ptr;
 		CChar() { Ptr = NULL; }
-		CChar(const CChar& c) { Ptr = c.Ptr; } // WARNING : Share Pointer
+		CChar(const CChar &c) { Ptr = c.Ptr; } // WARNING : Share Pointer
 	};
 
 	class CCharComp
@@ -269,22 +265,21 @@ private :
 
 	static bool _RemoveUnknownSheet;
 
-	static void loadSheetId ();
-	static void loadSheetAlias ();
-	static void cbFileChange (const std::string &filename);
+	static void loadSheetId();
+	static void loadSheetAlias();
+	static void cbFileChange(const std::string &filename);
 
 	/**
-	 * When initialized without sheet_id.bin, the sheet id are assigned 
-	 * dynamically. Separate maps are used, because in sheet_id.bin 
+	 * When initialized without sheet_id.bin, the sheet id are assigned
+	 * dynamically. Separate maps are used, because in sheet_id.bin
 	 * mode it uses static maps optimized during load.
 	 */
 	static bool _DontHaveSheetKnowledge;
 	static std::map<std::string, uint32> _DevTypeNameToId;
 	/// outer vector is type, inner vector is sheet id
-	static std::vector<std::vector<std::string> > _DevSheetIdToName;
+	static std::vector<std::vector<std::string>> _DevSheetIdToName;
 	static std::map<std::string, uint32> _DevSheetNameToId;
 };
-
 
 /**
  * Class to be used as a hash traits for a hash_map accessed by CSheetId
@@ -293,12 +288,16 @@ private :
 class CSheetIdHashMapTraits
 {
 public:
-	enum { bucket_size = 4, min_buckets = 8 };
-	inline size_t operator() ( const CSheetId& sheetId ) const
+	enum
+	{
+		bucket_size = 4,
+		min_buckets = 8
+	};
+	inline size_t operator()(const CSheetId &sheetId) const
 	{
 		return sheetId.asInt() >> 5;
 	}
-	bool operator() (const CSheetId &strId1, const CSheetId &strId2) const
+	bool operator()(const CSheetId &strId1, const CSheetId &strId2) const
 	{
 		return strId1.asInt() < strId2.asInt();
 	}

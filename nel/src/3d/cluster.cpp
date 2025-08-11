@@ -22,7 +22,7 @@
 #include "nel/misc/string_mapper.h"
 #include "nel/3d/scene.h"
 #include "nel/3d/transform_shape.h"
-//#include "mesh_instance.h"
+// #include "mesh_instance.h"
 #include "nel/3d/scene_group.h"
 
 using namespace NLMISC;
@@ -32,15 +32,13 @@ using namespace std;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // 0.5 cm of precision
 #define CLUSTERPRECISION 0.005
 
-
 // ***************************************************************************
-CCluster::CCluster ()
+CCluster::CCluster()
 {
 	/* ***********************************************
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
@@ -61,10 +59,9 @@ CCluster::CCluster ()
 	CTransform::setIsCluster(true);
 
 	// Default: not traversed
-	_Visited= false;
-	_CameraIn= false;
+	_Visited = false;
+	_CameraIn = false;
 }
-
 
 // ***************************************************************************
 CCluster::~CCluster()
@@ -76,7 +73,6 @@ CCluster::~CCluster()
 
 	unlinkFromClusterTree();
 }
-
 
 void CCluster::setSoundGroup(const std::string &soundGroup)
 {
@@ -103,7 +99,7 @@ void CCluster::setEnvironmentFx(const NLMISC::TStringId &environmentFxId)
 {
 	_EnvironmentFxId = environmentFxId;
 }
-const std::string	&CCluster::getEnvironmentFx()
+const std::string &CCluster::getEnvironmentFx()
 {
 	return CStringMapper::unmap(_EnvironmentFxId);
 }
@@ -112,8 +108,6 @@ NLMISC::TStringId CCluster::getEnvironmentFxId()
 {
 	return _EnvironmentFxId;
 }
-
-
 
 // ***************************************************************************
 void CCluster::unlinkFromParent()
@@ -126,8 +120,8 @@ void CCluster::unlinkFromParent()
 	// unlink from father sons list
 	if (Father)
 	{
-		 Father->Children.erase(remove(Father->Children.begin(), Father->Children.end(), this), Father->Children.end());
-		 Father = NULL;
+		Father->Children.erase(remove(Father->Children.begin(), Father->Children.end(), this), Father->Children.end());
+		Father = NULL;
 	}
 }
 
@@ -140,7 +134,7 @@ void CCluster::unlinkSons()
 	 * ***********************************************/
 
 	// tells all sons that they have no more father
-	for(uint k = 0; k < Children.size(); ++k)
+	for (uint k = 0; k < Children.size(); ++k)
 	{
 		if (Children[k]->Father == this)
 		{
@@ -149,8 +143,6 @@ void CCluster::unlinkSons()
 	}
 	NLMISC::contReset(Children);
 }
-
-
 
 // ***************************************************************************
 void CCluster::unlinkFromClusterTree()
@@ -164,41 +156,39 @@ void CCluster::unlinkFromClusterTree()
 	unlinkSons();
 }
 
-
-
 // ***************************************************************************
-void CCluster::registerBasic ()
+void CCluster::registerBasic()
 {
-	CScene::registerModel (ClusterId, 0, CCluster::creator);
+	CScene::registerModel(ClusterId, 0, CCluster::creator);
 }
 
 // ***************************************************************************
-bool CCluster::makeVolume (const CVector& p1, const CVector& p2, const CVector& p3)
+bool CCluster::makeVolume(const CVector &p1, const CVector &p2, const CVector &p3)
 {
 	uint i;
 	// Check if the plane is not close to a plane that already define the cluster
 	for (i = 0; i < _LocalVolume.size(); ++i)
 	{
-		float f1 = fabsf (_LocalVolume[i]*p1);
-		float f2 = fabsf (_LocalVolume[i]*p2);
-		float f3 = fabsf (_LocalVolume[i]*p3);
+		float f1 = fabsf(_LocalVolume[i] * p1);
+		float f2 = fabsf(_LocalVolume[i] * p2);
+		float f3 = fabsf(_LocalVolume[i] * p3);
 		if ((f1 < CLUSTERPRECISION) && (f2 < CLUSTERPRECISION) && (f3 < CLUSTERPRECISION))
 			return true;
 	}
 	// Check if we want to add a triangle not completely in the predefined volume
 	for (i = 0; i < _LocalVolume.size(); ++i)
 	{
-		float f1 = _LocalVolume[i]*p1;
-		float f2 = _LocalVolume[i]*p2;
-		float f3 = _LocalVolume[i]*p3;
+		float f1 = _LocalVolume[i] * p1;
+		float f2 = _LocalVolume[i] * p2;
+		float f3 = _LocalVolume[i] * p3;
 		if ((f1 > CLUSTERPRECISION) && (f2 > CLUSTERPRECISION) && (f3 > CLUSTERPRECISION))
 			return false;
 	}
 	// Build volume
 	CPlane p;
-	p.make (p1, p2, p3);
+	p.make(p1, p2, p3);
 	p.normalize();
-	_LocalVolume.push_back (p);
+	_LocalVolume.push_back(p);
 	// Build BBox
 	if (_LocalVolume.size() == 1)
 		_LocalBBox.setCenter(p1);
@@ -212,37 +202,36 @@ bool CCluster::makeVolume (const CVector& p1, const CVector& p2, const CVector& 
 }
 
 // ***************************************************************************
-bool CCluster::isIn (const CVector& p)
+bool CCluster::isIn(const CVector &p)
 {
 	for (uint i = 0; i < _Volume.size(); ++i)
-		if (_Volume[i]*p > CLUSTERPRECISION)
+		if (_Volume[i] * p > CLUSTERPRECISION)
 			return false;
 	return true;
 }
 
-
 // ***************************************************************************
-bool CCluster::isIn (const CAABBox& b)
+bool CCluster::isIn(const CAABBox &b)
 {
 	for (uint i = 0; i < _Volume.size(); ++i)
 	{
-		if (!b.clipBack (_Volume[i]))
+		if (!b.clipBack(_Volume[i]))
 			return false;
 	}
 	return true;
 }
 
 // ***************************************************************************
-bool CCluster::isIn (const NLMISC::CVector& center, float size)
+bool CCluster::isIn(const NLMISC::CVector &center, float size)
 {
 	for (uint i = 0; i < _Volume.size(); ++i)
-		if (_Volume[i]*center > size)
+		if (_Volume[i] * center > size)
 			return false;
 	return true;
 }
 
 // ***************************************************************************
-bool CCluster::clipSegment (NLMISC::CVector &p0, NLMISC::CVector &p1)
+bool CCluster::clipSegment(NLMISC::CVector &p0, NLMISC::CVector &p1)
 {
 	for (uint i = 0; i < _Volume.size(); ++i)
 	{
@@ -253,19 +242,19 @@ bool CCluster::clipSegment (NLMISC::CVector &p0, NLMISC::CVector &p1)
 }
 
 // ***************************************************************************
-void CCluster::resetPortalLinks ()
+void CCluster::resetPortalLinks()
 {
 	_Portals.clear();
 }
 
 // ***************************************************************************
-void CCluster::link (CPortal* portal)
+void CCluster::link(CPortal *portal)
 {
-	_Portals.push_back (portal);
+	_Portals.push_back(portal);
 }
 
 // ***************************************************************************
-void CCluster::unlink (CPortal* portal)
+void CCluster::unlink(CPortal *portal)
 {
 	uint32 pos;
 	for (pos = 0; pos < _Portals.size(); ++pos)
@@ -274,26 +263,26 @@ void CCluster::unlink (CPortal* portal)
 			break;
 	}
 	if (pos < _Portals.size())
-		_Portals.erase (_Portals.begin()+pos);
+		_Portals.erase(_Portals.begin() + pos);
 }
 
 // ***************************************************************************
-void CCluster::serial (NLMISC::IStream&f)
+void CCluster::serial(NLMISC::IStream &f)
 {
 	/* ***********************************************
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
 	 *	It can be loaded/called through CAsyncFileManager for instance
 	 * ***********************************************/
 
-	sint version = f.serialVersion (3);
+	sint version = f.serialVersion(3);
 
 	if (version >= 1)
-		f.serial (Name);
+		f.serial(Name);
 
-	f.serialCont (_LocalVolume);
-	f.serial (_LocalBBox);
-	f.serial (FatherVisible);
-	f.serial (VisibleFromFather);
+	f.serialCont(_LocalVolume);
+	f.serial(_LocalBBox);
+	f.serial(FatherVisible);
+	f.serial(VisibleFromFather);
 	if (f.isReading())
 	{
 		_Volume = _LocalVolume;
@@ -327,7 +316,7 @@ void CCluster::serial (NLMISC::IStream&f)
 			f.serial(envFxName);
 		}
 
-//		nldebug("Cluster %s, sound group [%s]", Name.c_str(), CStringMapper::unmap(_SoundGroupId).c_str());
+		//		nldebug("Cluster %s, sound group [%s]", Name.c_str(), CStringMapper::unmap(_SoundGroupId).c_str());
 	}
 
 	if (version >= 3)
@@ -344,7 +333,7 @@ void CCluster::serial (NLMISC::IStream&f)
 }
 
 // ***************************************************************************
-void CCluster::setWorldMatrix (const CMatrix &WM)
+void CCluster::setWorldMatrix(const CMatrix &WM)
 {
 	uint32 i;
 	CMatrix invWM = WM;
@@ -391,51 +380,49 @@ void CCluster::setWorldMatrix (const CMatrix &WM)
 	p[7].z = _LocalBBox.getMax().z;
 
 	for (i = 0; i < 8; ++i)
-		p[i] = WM.mulPoint(p[i]);
+	    p[i] = WM.mulPoint(p[i]);
 
 	CAABBox boxTemp;
 
 	boxTemp.setCenter(p[0]);
 	for (i = 1; i < 8; ++i)
-		boxTemp.extend(p[i]);
+	    boxTemp.extend(p[i]);
 	_BBox = boxTemp;*/
 }
 
 // ***************************************************************************
-void CCluster::traverseHrc ()
+void CCluster::traverseHrc()
 {
-	CTransform::traverseHrc ();
+	CTransform::traverseHrc();
 
-	setWorldMatrix (_WorldMatrix);
+	setWorldMatrix(_WorldMatrix);
 
 	for (uint32 i = 0; i < getNbPortals(); ++i)
 	{
 		CPortal *pPortal = getPortal(i);
-		pPortal->setWorldMatrix (_WorldMatrix);
+		pPortal->setWorldMatrix(_WorldMatrix);
 	}
 
 	// Re affect the cluster to the accelerator if not the root
 	if (!isRoot())
 	{
 		Group->_ClipTrav->unregisterCluster(this);
-		Group->_ClipTrav->registerCluster (this);
+		Group->_ClipTrav->registerCluster(this);
 	}
 }
 
 // ***************************************************************************
-bool CCluster::clip ()
+bool CCluster::clip()
 {
 	return true;
 }
 
-
 // ***************************************************************************
-void CCluster::traverseClip ()
+void CCluster::traverseClip()
 {
 	// This is the root call called by the SceneRoot
 	recursTraverseClip(NULL);
 }
-
 
 // ***************************************************************************
 void CCluster::recursTraverseClip(CTransform *caller)
@@ -446,9 +433,9 @@ void CCluster::recursTraverseClip(CTransform *caller)
 
 	// The cluster is visible because we are in it
 	// So clip the models attached (with MOT links) to the cluster
-	uint	num= clipGetNumChildren();
-	uint32	i;
-	for(i=0;i<num;i++)
+	uint num = clipGetNumChildren();
+	uint32 i;
+	for (i = 0; i < num; i++)
 		clipGetChild(i)->traverseClip();
 
 	// Debug visible clusters
@@ -461,29 +448,29 @@ void CCluster::recursTraverseClip(CTransform *caller)
 	// And look through portals
 	for (i = 0; i < getNbPortals(); ++i)
 	{
-		CPortal*pPortal = getPortal (i);
+		CPortal *pPortal = getPortal(i);
 		vector<CPlane> WorldPyrTemp = clipTrav.WorldPyramid;
 		bool backfaceclipped = false;
 		CCluster *pOtherSideCluster;
 		if (pPortal->getCluster(0) == this)
-			pOtherSideCluster = pPortal->getCluster (1);
+			pOtherSideCluster = pPortal->getCluster(1);
 		else
-			pOtherSideCluster = pPortal->getCluster (0);
+			pOtherSideCluster = pPortal->getCluster(0);
 
 		if (Father != NULL)
-		if (caller == Father) // If the caller is the father
-		if (VisibleFromFather)
-			// Backface clipping
-			if( !pPortal->isInFront( clipTrav.CamPos ))
-				backfaceclipped = true;
+			if (caller == Father) // If the caller is the father
+				if (VisibleFromFather)
+					// Backface clipping
+					if (!pPortal->isInFront(clipTrav.CamPos))
+						backfaceclipped = true;
 
 		if (!backfaceclipped && pOtherSideCluster)
 		{
 			/* If the otherSide cluster is fully visible because the camera is IN, then don't need to clip.
-				This is important to landscape test, to ensure that pyramid are strictly equal from 2 paths which
-				come from the 2 clusters where the camera start
+			    This is important to landscape test, to ensure that pyramid are strictly equal from 2 paths which
+			    come from the 2 clusters where the camera start
 			*/
-			if (pOtherSideCluster->isCameraIn() || pPortal->clipPyramid (clipTrav.CamPos, clipTrav.WorldPyramid))
+			if (pOtherSideCluster->isCameraIn() || pPortal->clipPyramid(clipTrav.CamPos, clipTrav.WorldPyramid))
 			{
 				pOtherSideCluster->recursTraverseClip(this);
 			}
@@ -493,21 +480,20 @@ void CCluster::recursTraverseClip(CTransform *caller)
 	}
 
 	// Link up in hierarchy
-	if ((FatherVisible)&&(Father != NULL))
+	if ((FatherVisible) && (Father != NULL))
 	{
 		Father->recursTraverseClip(this);
 	}
 
 	// Link down in hierarchy
 	for (i = 0; i < Children.size(); ++i)
-	if (Children[i]->VisibleFromFather)
-	{
-		Children[i]->recursTraverseClip(this);
-	}
+		if (Children[i]->VisibleFromFather)
+		{
+			Children[i]->recursTraverseClip(this);
+		}
 
 	_Visited = false;
 }
-
 
 // ***************************************************************************
 void CCluster::applyMatrix(const NLMISC::CMatrix &m)
@@ -529,47 +515,46 @@ void CCluster::applyMatrix(const NLMISC::CMatrix &m)
 	_LocalBBox = NLMISC::CAABBox::transformAABBox(m, _LocalBBox);
 }
 
-
 // ***************************************************************************
-void CCluster::cameraRayClip(const CVector &start, const CVector &end, std::vector<CCluster*> &clusterVisited)
+void CCluster::cameraRayClip(const CVector &start, const CVector &end, std::vector<CCluster *> &clusterVisited)
 {
-	uint	i;
+	uint i;
 	if (_Visited)
 		return;
 	_Visited = true;
 
 	// The cluster is visible because we are in it. add it to the list of cluster (if not already inserted)
-	for(i=0;i<clusterVisited.size();i++)
+	for (i = 0; i < clusterVisited.size(); i++)
 	{
-		if(clusterVisited[i]==this)
+		if (clusterVisited[i] == this)
 			break;
 	}
-	if(i==clusterVisited.size())
+	if (i == clusterVisited.size())
 		clusterVisited.push_back(this);
 
 	// look through portals
 	for (i = 0; i < getNbPortals(); ++i)
 	{
-		CPortal*pPortal = getPortal (i);
+		CPortal *pPortal = getPortal(i);
 		CCluster *pOtherSideCluster;
 		if (pPortal->getCluster(0) == this)
-			pOtherSideCluster = pPortal->getCluster (1);
+			pOtherSideCluster = pPortal->getCluster(1);
 		else
-			pOtherSideCluster = pPortal->getCluster (0);
+			pOtherSideCluster = pPortal->getCluster(0);
 
 		/*
 		bool backfaceclipped = false;
 		if (Father != NULL)
 		if (caller == Father) // If the caller is the father
 		if (VisibleFromFather)
-			// Backface clipping
-			if( !pPortal->isInFront( clipTrav.CamPos ))
-				backfaceclipped = true;
+		    // Backface clipping
+		    if( !pPortal->isInFront( clipTrav.CamPos ))
+		        backfaceclipped = true;
 		if (!backfaceclipped && pOtherSideCluster)*/
 
 		if (pOtherSideCluster)
 		{
-			if (pPortal->clipRay (start, end))
+			if (pPortal->clipRay(start, end))
 			{
 				pOtherSideCluster->cameraRayClip(start, end, clusterVisited);
 			}
@@ -577,9 +562,9 @@ void CCluster::cameraRayClip(const CVector &start, const CVector &end, std::vect
 	}
 
 	/* Link up in hierarchy. Test the Inverse Flag, cause the path is inverted here!!!
-		ie: if I allow the camera to go out, it MUST can re-enter (ie if I am VisibleFromFather)
+	    ie: if I allow the camera to go out, it MUST can re-enter (ie if I am VisibleFromFather)
 	*/
-	if ((VisibleFromFather)&&(Father != NULL))
+	if ((VisibleFromFather) && (Father != NULL))
 	{
 		Father->cameraRayClip(start, end, clusterVisited);
 	}
@@ -596,6 +581,5 @@ void CCluster::cameraRayClip(const CVector &start, const CVector &end, std::vect
 
 	_Visited = false;
 }
-
 
 } // NL3D

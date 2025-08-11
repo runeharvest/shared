@@ -26,7 +26,7 @@ using namespace NLMISC;
 
 // ***************************************************************************
 
-CRadialVertices::CRadialVertices ()
+CRadialVertices::CRadialVertices()
 {
 	_NodePtr = NULL;
 	_MeshPtr = NULL;
@@ -34,7 +34,7 @@ CRadialVertices::CRadialVertices ()
 
 // ***************************************************************************
 
-void CRadialVertices::init (INode *node, Mesh *mesh, TimeValue time, Interface &ip, CExportNel &nelExport)
+void CRadialVertices::init(INode *node, Mesh *mesh, TimeValue time, Interface &ip, CExportNel &nelExport)
 {
 	// Reset the mask
 	_SmoothingGroupMask = 0;
@@ -44,36 +44,36 @@ void CRadialVertices::init (INode *node, Mesh *mesh, TimeValue time, Interface &
 	_MeshPtr = mesh;
 
 	// Get the node object matrix
-	Matrix3 objectMatrix = _NodePtr->GetObjectTM (time);
+	Matrix3 objectMatrix = _NodePtr->GetObjectTM(time);
 
 	// Get a NeL matrix world to object space
 	CMatrix nelMatrix;
-	CExportNel::convertMatrix (nelMatrix, objectMatrix);
-	nelMatrix.invert ();
+	CExportNel::convertMatrix(nelMatrix, objectMatrix);
+	nelMatrix.invert();
 
 	// For each appdata
 	uint app;
-	for (app=NEL3D_RADIAL_FIRST_SM; app<NEL3D_RADIAL_FIRST_SM+NEL3D_RADIAL_NORMAL_COUNT; app++)
+	for (app = NEL3D_RADIAL_FIRST_SM; app < NEL3D_RADIAL_FIRST_SM + NEL3D_RADIAL_NORMAL_COUNT; app++)
 	{
 		// Get the appvalue
-		string pivotName = CExportNel::getScriptAppData (_NodePtr, NEL3D_APPDATA_RADIAL_NORMAL_SM+app-NEL3D_RADIAL_FIRST_SM, "");
+		string pivotName = CExportNel::getScriptAppData(_NodePtr, NEL3D_APPDATA_RADIAL_NORMAL_SM + app - NEL3D_RADIAL_FIRST_SM, "");
 
 		// Active ?
 		if (!pivotName.empty())
 		{
 			// Add the mask
-			_SmoothingGroupMask |= (1<<app);
+			_SmoothingGroupMask |= (1 << app);
 
 			// Get the node by name
 			INode *pivotNode = ip.GetINodeByName(MaxTStrFromUtf8(pivotName));
 			if (pivotNode)
 			{
 				// Get the world Pivot point
-				Point3 pivot = pivotNode->GetNodeTM (time).GetTrans ();
+				Point3 pivot = pivotNode->GetNodeTM(time).GetTrans();
 
 				// Nel vector
-				CVector &nelPivot = _Pivot[app-NEL3D_RADIAL_FIRST_SM];
-				nelPivot.set (pivot.x, pivot.y, pivot.z);
+				CVector &nelPivot = _Pivot[app - NEL3D_RADIAL_FIRST_SM];
+				nelPivot.set(pivot.x, pivot.y, pivot.z);
 
 				// Object space pivot
 				nelPivot = nelMatrix * nelPivot;
@@ -82,8 +82,8 @@ void CRadialVertices::init (INode *node, Mesh *mesh, TimeValue time, Interface &
 			{
 				// Output error message
 				char msg[512];
-				smprintf (msg, 512, "Can't find pivot node named '%s' of length %u", pivotName.c_str(), (uint)pivotName.length());
-				nelExport.outputErrorMessage (msg);
+				smprintf(msg, 512, "Can't find pivot node named '%s' of length %u", pivotName.c_str(), (uint)pivotName.length());
+				nelExport.outputErrorMessage(msg);
 			}
 		}
 	}
@@ -91,7 +91,7 @@ void CRadialVertices::init (INode *node, Mesh *mesh, TimeValue time, Interface &
 
 // ***************************************************************************
 
-bool CRadialVertices::isUsingRadialNormals (uint face)
+bool CRadialVertices::isUsingRadialNormals(uint face)
 {
 	if (_MeshPtr)
 	{
@@ -103,54 +103,54 @@ bool CRadialVertices::isUsingRadialNormals (uint face)
 	}
 	else
 	{
-		nlwarning ("CRadialVertices not initialized");
+		nlwarning("CRadialVertices not initialized");
 		return false;
 	}
 }
 
 // ***************************************************************************
 
-Point3 CRadialVertices::getLocalNormal (uint vertex, uint face)
+Point3 CRadialVertices::getLocalNormal(uint vertex, uint face)
 {
 	if (_MeshPtr)
 	{
 		// Result
-		Point3 result (0, 0, 0);
+		Point3 result(0, 0, 0);
 
 		// For each smoothing group
 		uint app;
-		for (app=NEL3D_RADIAL_FIRST_SM; app<NEL3D_RADIAL_FIRST_SM+NEL3D_RADIAL_NORMAL_COUNT; app++)
+		for (app = NEL3D_RADIAL_FIRST_SM; app < NEL3D_RADIAL_FIRST_SM + NEL3D_RADIAL_NORMAL_COUNT; app++)
 		{
 			// This smoothing group use radial normal ?
-			if (_SmoothingGroupMask & (1<<app))
+			if (_SmoothingGroupMask & (1 << app))
 			{
 				// Does this face belong to this smoothing group ?
-				if ((uint32)_MeshPtr->faces[face].smGroup & (1<<app))
+				if ((uint32)_MeshPtr->faces[face].smGroup & (1 << app))
 				{
 					// Get the object vertex
-					CVector vertex (_MeshPtr->verts[vertex].x, _MeshPtr->verts[vertex].y, _MeshPtr->verts[vertex].z);
+					CVector vertex(_MeshPtr->verts[vertex].x, _MeshPtr->verts[vertex].y, _MeshPtr->verts[vertex].z);
 
 					// Compute a normal
-					vertex -= _Pivot[app-NEL3D_RADIAL_FIRST_SM];
-					vertex.normalize ();
+					vertex -= _Pivot[app - NEL3D_RADIAL_FIRST_SM];
+					vertex.normalize();
 
 					// Add the vector
-					result += Point3 (vertex.x, vertex.y, vertex.z);
+					result += Point3(vertex.x, vertex.y, vertex.z);
 				}
 			}
 		}
 
 		// Return a normalize the result
-		if (Length (result) > 0)
-			return Normalize (result);
+		if (Length(result) > 0)
+			return Normalize(result);
 		else
-			nlwarning ("No radial normal found for this vertex");
+			nlwarning("No radial normal found for this vertex");
 	}
 	else
 	{
-		nlwarning ("CRadialVertices not initialized");
+		nlwarning("CRadialVertices not initialized");
 	}
-	return Point3 (0,0,0);
+	return Point3(0, 0, 0);
 }
 
 // ***************************************************************************

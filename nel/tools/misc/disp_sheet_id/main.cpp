@@ -28,7 +28,7 @@ int _getch()
 	struct termios oldt, newt;
 	int ch;
 	tcgetattr(STDIN_FILENO, &oldt);
-	newt=oldt;
+	newt = oldt;
 	newt.c_lflag &= ~(ICANON | ECHO);
 	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 	ch = getchar();
@@ -43,27 +43,24 @@ int _getch()
 #include "nel/misc/common.h"
 #include <vector>
 
-
-using	namespace std;
-using	namespace NLMISC;
-
-
+using namespace std;
+using namespace NLMISC;
 
 // ***************************************************************************
-class	CPred
+class CPred
 {
 public:
-	bool	operator()(const CSheetId &a, const CSheetId &b)
+	bool operator()(const CSheetId &a, const CSheetId &b)
 	{
-		return a.toString()<b.toString();
+		return a.toString() < b.toString();
 	}
 };
 
 // ***************************************************************************
 /// Dispaly info cmd line
-int		main(int argc, const char *argv[])
+int main(int argc, const char *argv[])
 {
-	if(argc<2)
+	if (argc < 2)
 	{
 		puts("Usage: disp_sheet_id path");
 		puts("    display a raw list of file names sorted by name with their sheet_id associated");
@@ -79,18 +76,18 @@ int		main(int argc, const char *argv[])
 
 	CSheetId::init(false);
 
-	std::vector<CSheetId>	sheets;
+	std::vector<CSheetId> sheets;
 	CSheetId::buildIdVector(sheets);
 
 	// sort by name
-	CPred	Pred;
+	CPred Pred;
 	sort(sheets.begin(), sheets.end(), Pred);
 
 	// display.
-	FILE	*out= nlfopen("sheetid.txt", "wb");
-	if(out)
+	FILE *out = nlfopen("sheetid.txt", "wb");
+	if (out)
 	{
-		for(uint i=0;i<sheets.size();i++)
+		for (uint i = 0; i < sheets.size(); i++)
 		{
 			fprintf(out, "%s : %d\n", sheets[i].toString().c_str(), sheets[i].asInt());
 		}

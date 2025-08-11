@@ -20,13 +20,11 @@
 #include <string>
 #include "nel/pacs/u_move_primitive.h"
 
-namespace NLMISC
-{
-	class IStream;
+namespace NLMISC {
+class IStream;
 }
 
-namespace NLPACS
-{
+namespace NLPACS {
 
 /**
  * Block of pacs primitives, user interface.
@@ -40,28 +38,23 @@ class UPrimitiveBlock
 {
 public:
 	// dtor
-	virtual ~UPrimitiveBlock() {}
+	virtual ~UPrimitiveBlock() { }
 	/** Create a primitive block from a stream.
-	  * This may raise exception if loading failed
-	  */
+	 * This may raise exception if loading failed
+	 */
 	static UPrimitiveBlock *createPrimitiveBlock(NLMISC::IStream &src);
 	/** Create a primitive block from its file name.
-	  * This may raise exceptions if loading failed.
-	  */
+	 * This may raise exceptions if loading failed.
+	 */
 	static UPrimitiveBlock *createPrimitiveBlockFromFile(const std::string &fileName);
 
 	/// get the number of primitives in the block
-	virtual uint						getNbPrimitive() = 0;
+	virtual uint getNbPrimitive() = 0;
 
 	/// return the user data for a primitive of the block
-	virtual UMovePrimitive::TUserData	getUserData(uint nPrimNb) = 0;
+	virtual UMovePrimitive::TUserData getUserData(uint nPrimNb) = 0;
 };
 
 }
 
 #endif
-
-
-
-
-

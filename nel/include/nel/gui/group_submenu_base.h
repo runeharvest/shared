@@ -22,30 +22,26 @@
 
 #include "nel/gui/group_frame.h"
 
-namespace NLGUI
+namespace NLGUI {
+
+class CGroupSubMenuBase : public CGroupFrame
 {
+public:
+	DECLARE_UI_CLASS(CGroupSubMenuBase)
 
-	class CGroupSubMenuBase : public CGroupFrame
-	{
-	public:
-		DECLARE_UI_CLASS( CGroupSubMenuBase )
+	CGroupSubMenuBase(const TCtorParam &param);
+	~CGroupSubMenuBase();
 
-		CGroupSubMenuBase( const TCtorParam &param );
-		~CGroupSubMenuBase();
+	virtual void openSubMenu(sint32 nb);
+	virtual void hideSubMenus();
 
-		virtual void openSubMenu( sint32 nb );
-		virtual void hideSubMenus();
+	REFLECT_EXPORT_START(CGroupSubMenuBase, CGroupFrame)
+	REFLECT_EXPORT_END
 
-		REFLECT_EXPORT_START( CGroupSubMenuBase, CGroupFrame )
-		REFLECT_EXPORT_END
-
-	protected:
-
-	private:
-
-	};
+protected:
+private:
+};
 
 }
 
 #endif
-

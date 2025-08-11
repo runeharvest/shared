@@ -22,13 +22,9 @@
 #include <map>
 #include <vector>
 
+namespace NL3D {
 
-namespace NL3D
-{
-
-
-class	CZone;
-
+class CZone;
 
 // ***************************************************************************
 /**
@@ -42,7 +38,6 @@ class	CZone;
 class CZoneCornerSmoother
 {
 public:
-
 	/// Constructor
 	CZoneCornerSmoother();
 
@@ -58,47 +53,40 @@ public:
 	 *
 	 *	This is important for noise computing, and lighting.
 	 */
-	void	computeAllCornerSmoothFlags(CZone *zone, std::vector<CZone*> neighborZones);
+	void computeAllCornerSmoothFlags(CZone *zone, std::vector<CZone *> neighborZones);
 
-
-// ***************
+	// ***************
 private:
-	struct	CVertexSmoothInfo
+	struct CVertexSmoothInfo
 	{
-		uint	NPatchShared;
-		bool	VertexOnBind;
-		bool	Smoothed;
+		uint NPatchShared;
+		bool VertexOnBind;
+		bool Smoothed;
 
 		CVertexSmoothInfo()
 		{
-			NPatchShared= 0;
-			VertexOnBind= false;
+			NPatchShared = 0;
+			VertexOnBind = false;
 			// by default smoothed is true. any edge which don't agree will set it to false.
-			Smoothed= true;
+			Smoothed = true;
 		}
 	};
 
+	typedef std::map<sint, CVertexSmoothInfo> TVertexMap;
+	typedef TVertexMap::iterator ItVertexMap;
 
-	typedef	std::map<sint, CVertexSmoothInfo>	TVertexMap;
-	typedef	TVertexMap::iterator				ItVertexMap;
-
-	typedef	std::map<const CTessVertex *, sint>	TIdVertexMap;
-	typedef	TIdVertexMap::iterator				ItIdVertexMap;
-
+	typedef std::map<const CTessVertex *, sint> TIdVertexMap;
+	typedef TIdVertexMap::iterator ItIdVertexMap;
 
 private:
-	TVertexMap		VertexMap;
-	TIdVertexMap	IdVertexMap;
+	TVertexMap VertexMap;
+	TIdVertexMap IdVertexMap;
 
-	void	buildPatchBindInfo(CPatch &pa, const CZone::CPatchConnect &pc, bool smoothEdge[4], bool cornerOnBind[4]);
-	void	updateVertex(uint idVert, uint corner, bool smoothEdge[4], bool cornerOnBind[4]);
-
-
+	void buildPatchBindInfo(CPatch &pa, const CZone::CPatchConnect &pc, bool smoothEdge[4], bool cornerOnBind[4]);
+	void updateVertex(uint idVert, uint corner, bool smoothEdge[4], bool cornerOnBind[4]);
 };
 
-
 } // NL3D
-
 
 #endif // NL_ZONE_CORNER_SMOOTHER_H
 

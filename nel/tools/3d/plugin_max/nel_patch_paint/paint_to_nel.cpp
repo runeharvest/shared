@@ -7,14 +7,14 @@
 /*-------------------------------------------------------------------*/
 
 // Get a patch tile array
-std::vector<CTileElement>* CNelPatchChanger::getTileArray (int mesh, int patch)
+std::vector<CTileElement> *CNelPatchChanger::getTileArray(int mesh, int patch)
 {
 	// Find an entry
-	CNelPatchMap::iterator ite=_MapNeLPatchInfo.find (CNelPatchKey (mesh, patch));
+	CNelPatchMap::iterator ite = _MapNeLPatchInfo.find(CNelPatchKey(mesh, patch));
 
 	// If no entry, add one
-	if (ite==_MapNeLPatchInfo.end())
-		ite=(_MapNeLPatchInfo.insert (CNelPatchMap::value_type (CNelPatchKey (mesh, patch), CNelPatchValue()))).first;
+	if (ite == _MapNeLPatchInfo.end())
+		ite = (_MapNeLPatchInfo.insert(CNelPatchMap::value_type(CNelPatchKey(mesh, patch), CNelPatchValue()))).first;
 
 	// Array doesn't exist ?
 	if (ite->second.Tiles == NULL)
@@ -23,28 +23,28 @@ std::vector<CTileElement>* CNelPatchChanger::getTileArray (int mesh, int patch)
 		ite->second.Tiles = new std::vector<CTileElement>;
 
 		// Get the zone for this mesh
-		CZone* zone=_Landscape->getZone (mesh);
-		nlassert (zone);
+		CZone *zone = _Landscape->getZone(mesh);
+		nlassert(zone);
 
 		// Copy it from the patch
-		*ite->second.Tiles = zone->getPatchTexture (patch);
+		*ite->second.Tiles = zone->getPatchTexture(patch);
 	}
 
-	// Return the array	
+	// Return the array
 	return ite->second.Tiles;
 }
 
 /*-------------------------------------------------------------------*/
 
 // Get a patch tile array
-std::vector<CTileColor>* CNelPatchChanger::getColorArray (int mesh, int patch)
+std::vector<CTileColor> *CNelPatchChanger::getColorArray(int mesh, int patch)
 {
 	// Find an entry
-	CNelPatchMap::iterator ite=_MapNeLPatchInfo.find (CNelPatchKey (mesh, patch));
+	CNelPatchMap::iterator ite = _MapNeLPatchInfo.find(CNelPatchKey(mesh, patch));
 
 	// If no entry, add one
-	if (ite==_MapNeLPatchInfo.end())
-		ite=(_MapNeLPatchInfo.insert (CNelPatchMap::value_type (CNelPatchKey (mesh, patch), CNelPatchValue()))).first;
+	if (ite == _MapNeLPatchInfo.end())
+		ite = (_MapNeLPatchInfo.insert(CNelPatchMap::value_type(CNelPatchKey(mesh, patch), CNelPatchValue()))).first;
 
 	// Array doesn't exist ?
 	if (ite->second.TileColors == NULL)
@@ -53,44 +53,44 @@ std::vector<CTileColor>* CNelPatchChanger::getColorArray (int mesh, int patch)
 		ite->second.TileColors = new std::vector<CTileColor>;
 
 		// Get the zone for this mesh
-		CZone* zone=_Landscape->getZone (mesh);
-		nlassert (zone);
+		CZone *zone = _Landscape->getZone(mesh);
+		nlassert(zone);
 
 		// Copy it from the patch
-		*ite->second.TileColors = zone->getPatchColor (patch);
+		*ite->second.TileColors = zone->getPatchColor(patch);
 	}
 
-	// Return the array	
+	// Return the array
 	return ite->second.TileColors;
 }
 
 /*-------------------------------------------------------------------*/
 
 // Apply changes
-void CNelPatchChanger::applyChanges (bool displace)
+void CNelPatchChanger::applyChanges(bool displace)
 {
 	// If displace, add neighbor
-	//if (displace)
+	// if (displace)
 	{
 		// Find the first entry
-		CNelPatchMap::iterator ite=_MapNeLPatchInfo.begin ();
+		CNelPatchMap::iterator ite = _MapNeLPatchInfo.begin();
 
-		std::set<std::pair<uint, uint> > setNewPatch;
+		std::set<std::pair<uint, uint>> setNewPatch;
 
-		while (ite!=_MapNeLPatchInfo.end())
+		while (ite != _MapNeLPatchInfo.end())
 		{
 			// *** Get its neighbord
 
 			// Get the zone for this mesh
-			const CZone* zone=_Landscape->getZone (ite->first.first);
-			nlassert (zone);
+			const CZone *zone = _Landscape->getZone(ite->first.first);
+			nlassert(zone);
 
 			// Get the patch
-			const CPatch *patch=zone->getPatch (ite->first.second);
-			nlassert (patch);
+			const CPatch *patch = zone->getPatch(ite->first.second);
+			nlassert(patch);
 
 			// For the 4 edges
-			for (uint edge=0; edge<4; edge++)
+			for (uint edge = 0; edge < 4; edge++)
 			{
 				// Get the bind info
 				CPatch::CBindInfo neighborEdge;
@@ -100,10 +100,10 @@ void CNelPatchChanger::applyChanges (bool displace)
 				if (neighborEdge.Zone)
 				{
 					// Add the patch around
-					for (uint i=0; i<(uint)neighborEdge.NPatchs; i++)
+					for (uint i = 0; i < (uint)neighborEdge.NPatchs; i++)
 					{
 						// Add new patch
-						setNewPatch.insert (std::pair<uint, uint> (neighborEdge.Zone->getZoneId(), neighborEdge.Next[i]->getPatchId()));
+						setNewPatch.insert(std::pair<uint, uint>(neighborEdge.Zone->getZoneId(), neighborEdge.Next[i]->getPatchId()));
 					}
 				}
 			}
@@ -113,20 +113,20 @@ void CNelPatchChanger::applyChanges (bool displace)
 		}
 
 		// Invalid the new zones
-		std::set<std::pair<uint, uint> >::iterator iteNew=setNewPatch.begin();
-		while (iteNew!=setNewPatch.end())
+		std::set<std::pair<uint, uint>>::iterator iteNew = setNewPatch.begin();
+		while (iteNew != setNewPatch.end())
 		{
 			// Already visited ?
-			if (_MapNeLPatchInfo.find (*iteNew)==_MapNeLPatchInfo.end())
+			if (_MapNeLPatchInfo.find(*iteNew) == _MapNeLPatchInfo.end())
 			{
 				// Get the zone
-				CZone* zone=_Landscape->getZone (iteNew->first);
+				CZone *zone = _Landscape->getZone(iteNew->first);
 
 				// Invalide the texture and color
-				//zone->changePatchTextureAndColor (iteNew->second, NULL, NULL);
+				// zone->changePatchTextureAndColor (iteNew->second, NULL, NULL);
 
 				// Refresh tesselation
-				zone->refreshTesselationGeometry (iteNew->second);
+				zone->refreshTesselationGeometry(iteNew->second);
 			}
 
 			// Next new
@@ -135,25 +135,25 @@ void CNelPatchChanger::applyChanges (bool displace)
 	}
 
 	// Find the first entry
-	CNelPatchMap::iterator ite=_MapNeLPatchInfo.begin ();
+	CNelPatchMap::iterator ite = _MapNeLPatchInfo.begin();
 
 	// For all entry
-	while (ite!=_MapNeLPatchInfo.end())
+	while (ite != _MapNeLPatchInfo.end())
 	{
 		// *** Apply changes
 
 		// Get the zone for this mesh
-		CZone* zone=_Landscape->getZone (ite->first.first);
-		nlassert (zone);
+		CZone *zone = _Landscape->getZone(ite->first.first);
+		nlassert(zone);
 
 		// Assign to the NeL patch
-		zone->changePatchTextureAndColor (ite->first.second, ite->second.Tiles, ite->second.TileColors);
+		zone->changePatchTextureAndColor(ite->first.second, ite->second.Tiles, ite->second.TileColors);
 
 		// Displace ?
-		//if (displace)
+		// if (displace)
 		{
 			// Refresh tesselation
-			zone->refreshTesselationGeometry (ite->first.second);
+			zone->refreshTesselationGeometry(ite->first.second);
 		}
 
 		// Next
@@ -164,18 +164,18 @@ void CNelPatchChanger::applyChanges (bool displace)
 /*-------------------------------------------------------------------*/
 
 // Clear the container
-void CNelPatchChanger::clear ()
+void CNelPatchChanger::clear()
 {
 	_MapNeLPatchInfo.clear();
 }
 
-CNelPatchValue::CNelPatchValue ()
+CNelPatchValue::CNelPatchValue()
 {
 	Tiles = NULL;
 	TileColors = NULL;
 }
 
-CNelPatchValue::~CNelPatchValue ()
+CNelPatchValue::~CNelPatchValue()
 {
 	if (Tiles)
 		delete Tiles;

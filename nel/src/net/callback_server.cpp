@@ -19,7 +19,6 @@
 #include "nel/net/callback_server.h"
 #include "nel/net/net_log.h"
 
-
 #ifdef USE_MESSAGE_RECORDER
 #include "nel/net/dummy_tcp_sock.h"
 #endif
@@ -29,124 +28,119 @@ using namespace NLMISC;
 
 namespace NLNET {
 
-
 /*
  * Connection callback (the disconnection callback is in callback_net_base.cpp
  */
-void cbsNewConnection (TSockId from, void *data)
+void cbsNewConnection(TSockId from, void *data)
 {
-	nlassert (data != NULL);
+	nlassert(data != NULL);
 	CCallbackServer *server = (CCallbackServer *)data;
 
 	LNETL3_DEBUG("LNETL3S: newConnection()");
 
 #ifdef USE_MESSAGE_RECORDER
 	// Record connection
-	server->noticeConnection( from );
+	server->noticeConnection(from);
 #endif
 
 	// send all my association to the new client
-// association are disactivated so we don t need to send them
-//	server->sendAllMyAssociations (from);
+	// association are disactivated so we don t need to send them
+	//	server->sendAllMyAssociations (from);
 
 	// call the client callback if necessary
 	if (server->_ConnectionCallback != NULL)
-		server->_ConnectionCallback (from, server->_ConnectionCbArg);
+		server->_ConnectionCallback(from, server->_ConnectionCbArg);
 }
-
 
 /*
  * Constructor
  */
-CCallbackServer::CCallbackServer( TRecordingState rec, const string& recfilename, bool recordall, bool initPipeForDataAvailable ) :
-	CCallbackNetBase( rec, recfilename, recordall ),
-	CBufServer( DEFAULT_STRATEGY, DEFAULT_MAX_THREADS, DEFAULT_MAX_SOCKETS_PER_THREADS, true, rec==Replay, initPipeForDataAvailable ),
-	_ConnectionCallback(NULL),
-	_ConnectionCbArg(NULL)
+CCallbackServer::CCallbackServer(TRecordingState rec, const string &recfilename, bool recordall, bool initPipeForDataAvailable)
+    : CCallbackNetBase(rec, recfilename, recordall)
+    , CBufServer(DEFAULT_STRATEGY, DEFAULT_MAX_THREADS, DEFAULT_MAX_SOCKETS_PER_THREADS, true, rec == Replay, initPipeForDataAvailable)
+    , _ConnectionCallback(NULL)
+    , _ConnectionCbArg(NULL)
 {
 #ifndef USE_MESSAGE_RECORDER
-	nlassertex( rec==Off, ("LNETL3S: The message recorder is disabled at compilation time ; switch the recording state Off") );
+	nlassertex(rec == Off, ("LNETL3S: The message recorder is disabled at compilation time ; switch the recording state Off"));
 #endif
 
-	CBufServer::setDisconnectionCallback (_NewDisconnectionCallback, this);
-	CBufServer::setConnectionCallback (cbsNewConnection, this);
+	CBufServer::setDisconnectionCallback(_NewDisconnectionCallback, this);
+	CBufServer::setConnectionCallback(cbsNewConnection, this);
 
 	_IsAServer = true;
 	_DefaultCallback = NULL;
 }
-
 
 /*
  * Send a message to the specified host (pushing to its send queue)
  * Recorded : YES
  * Replayed : MAYBE
  */
-void CCallbackServer::send (const CMessage &buffer, TSockId hostid, bool /* log */)
+void CCallbackServer::send(const CMessage &buffer, TSockId hostid, bool /* log */)
 {
-	nlassert (connected ());
-	nlassert (buffer.length() != 0);
-	nlassert (buffer.typeIsSet());
+	nlassert(connected());
+	nlassert(buffer.length() != 0);
+	nlassert(buffer.typeIsSet());
 
 	if (hostid == InvalidSockId)
 	{
 		// broadcast
-		sint nb = nbConnections ();
-		_BytesSent += buffer.length () * nb;
+		sint nb = nbConnections();
+		_BytesSent += buffer.length() * nb;
 	}
 	else
 	{
-		_BytesSent += buffer.length ();
+		_BytesSent += buffer.length();
 	}
 
-//	if (log)
+	//	if (log)
 	{
-//		LNETL3_DEBUG ("LNETL3S: Server: send(%s, %s)", buffer.toString().c_str(), hostid->asString().c_str());
+		//		LNETL3_DEBUG ("LNETL3S: Server: send(%s, %s)", buffer.toString().c_str(), hostid->asString().c_str());
 	}
 
 #ifdef USE_MESSAGE_RECORDER
-	if ( _MR_RecordingState != Replay )
+	if (_MR_RecordingState != Replay)
 	{
 #endif
 
 		// Send
-		CBufServer::send (buffer, hostid);
+		CBufServer::send(buffer, hostid);
 
 #ifdef USE_MESSAGE_RECORDER
-		if ( _MR_RecordingState == Record )
+		if (_MR_RecordingState == Record)
 		{
 			// Record sent message
-			_MR_Recorder.recordNext( _MR_UpdateCounter, Sending, hostid, const_cast<CMessage&>(buffer) );
+			_MR_Recorder.recordNext(_MR_UpdateCounter, Sending, hostid, const_cast<CMessage &>(buffer));
 		}
 	}
 #endif
 }
-
 
 /*
  * Updates the network (call this method evenly)
  * Recorded : YES (in baseUpdate())
  * Replayed : YES (in baseUpdate())
  */
-void CCallbackServer::update2 ( sint32 timeout, sint32 mintime )
+void CCallbackServer::update2(sint32 timeout, sint32 mintime)
 {
 	H_AUTO(L3UpdateServer);
 
-	nlassert (connected ());
+	nlassert(connected());
 
-//	LNETL3_DEBUG ("LNETL3S: Client: update()");
-	baseUpdate2 ( timeout, mintime ); // first receive
+	//	LNETL3_DEBUG ("LNETL3S: Client: update()");
+	baseUpdate2(timeout, mintime); // first receive
 
 #ifdef USE_MESSAGE_RECORDER
-	if ( _MR_RecordingState != Replay )
+	if (_MR_RecordingState != Replay)
 	{
 #endif
 		// L1-2 Update (nothing to do in replay mode)
-		CBufServer::update (); // then send
+		CBufServer::update(); // then send
 
 #ifdef USE_MESSAGE_RECORDER
 	}
 #endif
-
 }
 
 /*
@@ -154,50 +148,49 @@ void CCallbackServer::update2 ( sint32 timeout, sint32 mintime )
  * Recorded : YES (in baseUpdate())
  * Replayed : YES (in baseUpdate())
  */
-void CCallbackServer::update ( sint32 timeout )
+void CCallbackServer::update(sint32 timeout)
 {
 	H_AUTO(L3UpdateServer);
 
-	nlassert (connected ());
+	nlassert(connected());
 
-//	LNETL3_DEBUG ("LNETL3S: Client: update()");
-	baseUpdate ( timeout ); // first receive
+	//	LNETL3_DEBUG ("LNETL3S: Client: update()");
+	baseUpdate(timeout); // first receive
 
 #ifdef USE_MESSAGE_RECORDER
-	if ( _MR_RecordingState != Replay )
+	if (_MR_RecordingState != Replay)
 	{
 #endif
 		// L1-2 Update (nothing to do in replay mode)
-		CBufServer::update (); // then send
+		CBufServer::update(); // then send
 
 #ifdef USE_MESSAGE_RECORDER
 	}
 #endif
 }
 
-
 /*
  * Read the next message in the receive queue
  * Recorded : YES
  * Replayed : YES
  */
-void CCallbackServer::receive (CMessage &buffer, TSockId *hostid)
+void CCallbackServer::receive(CMessage &buffer, TSockId *hostid)
 {
-	nlassert (connected ());
+	nlassert(connected());
 
 #ifdef USE_MESSAGE_RECORDER
-	if ( _MR_RecordingState != Replay )
+	if (_MR_RecordingState != Replay)
 	{
 #endif
 
 		// Receive
-		CBufServer::receive (buffer, hostid);
+		CBufServer::receive(buffer, hostid);
 
 #ifdef USE_MESSAGE_RECORDER
-		if ( _MR_RecordingState == Record )
+		if (_MR_RecordingState == Record)
 		{
 			// Record received message
-			_MR_Recorder.recordNext( _MR_UpdateCounter, Receiving, *hostid, const_cast<CMessage&>(buffer) );
+			_MR_Recorder.recordNext(_MR_UpdateCounter, Receiving, *hostid, const_cast<CMessage &>(buffer));
 		}
 	}
 	else
@@ -209,9 +202,8 @@ void CCallbackServer::receive (CMessage &buffer, TSockId *hostid)
 	}
 #endif
 
-	buffer.readType ();
+	buffer.readType();
 }
-
 
 /*
  * Disconnect a connection
@@ -221,14 +213,14 @@ void CCallbackServer::receive (CMessage &buffer, TSockId *hostid)
  * Recorded : YES in noticeDisconnection called in the disconnection callback
  * Replayed : YES in noticeDisconnection called in the disconnection callback
  */
-void CCallbackServer::disconnect( TSockId hostid )
+void CCallbackServer::disconnect(TSockId hostid)
 {
 #ifdef USE_MESSAGE_RECORDER
-	if ( _MR_RecordingState != Replay )
+	if (_MR_RecordingState != Replay)
 	{
 #endif
 		// Disconnect
-		CBufServer::disconnect( hostid );
+		CBufServer::disconnect(hostid);
 
 #ifdef USE_MESSAGE_RECORDER
 	}
@@ -237,33 +229,31 @@ void CCallbackServer::disconnect( TSockId hostid )
 #endif
 }
 
-
 /*
  *
  */
-TSockId CCallbackServer::getSockId (TSockId hostid)
+TSockId CCallbackServer::getSockId(TSockId hostid)
 {
-	nlassert (hostid != InvalidSockId);	// invalid hostid
-	nlassert (connected ());
-	nlassert (hostid != NULL);
+	nlassert(hostid != InvalidSockId); // invalid hostid
+	nlassert(connected());
+	nlassert(hostid != NULL);
 	return hostid;
 }
-
 
 /*
  * Returns true if there are messages to read
  * Recorded : NO
  * Replayed : YES
  */
-bool CCallbackServer::dataAvailable ()
+bool CCallbackServer::dataAvailable()
 {
 #ifdef USE_MESSAGE_RECORDER
-	if ( _MR_RecordingState != Replay )
+	if (_MR_RecordingState != Replay)
 	{
 #endif
 
 		// Real dataAvailable()
-		return CBufServer::dataAvailable ();
+		return CBufServer::dataAvailable();
 
 #ifdef USE_MESSAGE_RECORDER
 	}
@@ -275,10 +265,8 @@ bool CCallbackServer::dataAvailable ()
 #endif
 }
 
-
 //-------------------------
 #ifdef USE_MESSAGE_RECORDER
-
 
 /*
  * Replay connection and disconnection callbacks, client version
@@ -287,7 +275,7 @@ bool CCallbackServer::replaySystemCallbacks()
 {
 	do
 	{
-		if ( _MR_Recorder.ReceivedMessages.empty() )
+		if (_MR_Recorder.ReceivedMessages.empty())
 		{
 			return false;
 		}
@@ -295,8 +283,8 @@ bool CCallbackServer::replaySystemCallbacks()
 		{
 			// Translate the stored sockid to the replayed sockid
 			TSockId sockid;
-			std::map<TSockId,TSockId>::iterator isi = _MR_SockIds.find( _MR_Recorder.ReceivedMessages.front().SockId );
-			if ( isi != _MR_SockIds.end() )
+			std::map<TSockId, TSockId>::iterator isi = _MR_SockIds.find(_MR_Recorder.ReceivedMessages.front().SockId);
+			if (isi != _MR_SockIds.end())
 			{
 				// The sockid is found in the map if the connection already exists
 				sockid = (*isi).second;
@@ -304,79 +292,75 @@ bool CCallbackServer::replaySystemCallbacks()
 			}
 
 			// Test event type
-			switch( _MR_Recorder.ReceivedMessages.front().Event )
+			switch (_MR_Recorder.ReceivedMessages.front().Event)
 			{
 			case Receiving:
 				return true;
 
 			case Disconnecting:
-				LNETL3_DEBUG( "LNETL3S: Disconnection event for %p", sockid );
+				LNETL3_DEBUG("LNETL3S: Disconnection event for %p", sockid);
 				sockid->Sock->disconnect();
-				sockid->setConnectedState( false );
+				sockid->setConnectedState(false);
 
 				// Call callback if needed
-				if ( disconnectionCallback() != NULL )
+				if (disconnectionCallback() != NULL)
 				{
-					disconnectionCallback()( sockid, argOfDisconnectionCallback() );
+					disconnectionCallback()(sockid, argOfDisconnectionCallback());
 				}
 				break;
 
-			case Accepting:
-				{
+			case Accepting: {
 				// Replay connection:
 
 				// Get remote address
 				CInetAddress addr;
-				_MR_Recorder.ReceivedMessages.front().Message.serial( addr );
+				_MR_Recorder.ReceivedMessages.front().Message.serial(addr);
 
 				// Create a new connection
-				sockid = new CBufSock( new CDummyTcpSock() );
-				sockid->Sock->connect( addr );
-				_MR_Connections.push_back( sockid );
+				sockid = new CBufSock(new CDummyTcpSock());
+				sockid->Sock->connect(addr);
+				_MR_Connections.push_back(sockid);
 
 				// Bind it to the "old" sockid
-				_MR_SockIds.insert( make_pair( _MR_Recorder.ReceivedMessages.front().SockId, sockid ) );
+				_MR_SockIds.insert(make_pair(_MR_Recorder.ReceivedMessages.front().SockId, sockid));
 
-				LNETL3_DEBUG( "LNETL3S: Connection event for %p", sockid );
-				sockid->setConnectedState( true );
+				LNETL3_DEBUG("LNETL3S: Connection event for %p", sockid);
+				sockid->setConnectedState(true);
 
 				// Call callback if needed
-				if ( connectionCallback() != NULL )
+				if (connectionCallback() != NULL)
 				{
-					connectionCallback()( sockid, argOfConnectionCallback() );
+					connectionCallback()(sockid, argOfConnectionCallback());
 				}
 				break;
-				}
+			}
 			default:
-				nlerror( "LNETL3S: Invalid system event type in client receive queue" );
+				nlerror("LNETL3S: Invalid system event type in client receive queue");
 			}
 			// Extract system event
 			_MR_Recorder.ReceivedMessages.pop();
 		}
-	}
-	while ( true );
+	} while (true);
 }
-
 
 /*
  * Record or replay connection
  */
-void CCallbackServer::noticeConnection( TSockId hostid )
+void CCallbackServer::noticeConnection(TSockId hostid)
 {
-	nlassert (hostid != InvalidSockId);	// invalid hostid
-	if ( _MR_RecordingState != Replay )
+	nlassert(hostid != InvalidSockId); // invalid hostid
+	if (_MR_RecordingState != Replay)
 	{
-		if ( _MR_RecordingState == Record )
+		if (_MR_RecordingState == Record)
 		{
 			// Record connection
 			CMessage addrmsg;
-			addrmsg.serial( const_cast<CInetAddress&>(hostAddress(hostid)) );
-			_MR_Recorder.recordNext( _MR_UpdateCounter, Accepting, hostid, addrmsg );
+			addrmsg.serial(const_cast<CInetAddress &>(hostAddress(hostid)));
+			_MR_Recorder.recordNext(_MR_UpdateCounter, Accepting, hostid, addrmsg);
 		}
 	}
 }
 
 #endif // USE_MESSAGE_RECORDER
-
 
 } // NLNET

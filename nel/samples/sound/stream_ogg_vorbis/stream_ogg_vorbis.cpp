@@ -19,7 +19,7 @@
 // STL includes
 #include <stdio.h>
 #ifdef NL_OS_WINDOWS
-#	include <conio.h>
+#include <conio.h>
 #endif
 
 // NeL includes
@@ -59,22 +59,23 @@ static void initSample()
 {
 	if (!INelContext::isContextInitialised())
 		new CApplicationContext();
-	CPath::addSearchPath(NL_SOUND_DATA"/database/build/", true, false);
-	
+	CPath::addSearchPath(NL_SOUND_DATA "/database/build/", true, false);
+
 	printf("Sample demonstrating OGG playback using UStreamSource.");
 	printf("\n\n");
-	
+
 	s_AudioMixer = UAudioMixer::createAudioMixer();
-	
+
 	printf("Select NLSOUND Driver:\n");
 	printf(" [1] FMod\n");
 	printf(" [2] OpenAl\n");
 	printf(" [3] DSound\n");
 	printf(" [4] XAudio2\n");
 	printf("> ");
-	int selection = getchar(); getchar();
+	int selection = getchar();
+	getchar();
 	printf("\n");
-	
+
 	// init with 128 tracks, EAX enabled, no ADPCM, and automatic sample bank loading
 	s_AudioMixer->init(8, true, false, NULL, true, (UAudioMixer::TDriver)(selection - '0'));
 	s_AudioMixer->setLowWaterMark(1);
@@ -84,8 +85,8 @@ static void initSample()
 	CVector upvec(0.0f, 0.0f, 1.0f);
 	s_AudioMixer->getListener()->setPos(initpos);
 	s_AudioMixer->getListener()->setOrientation(frontvec, upvec);
-	
-	//NLMISC::CHTimer::startBench();
+
+	// NLMISC::CHTimer::startBench();
 
 	USource *source = s_AudioMixer->createSource(CStringMapper::map("default_stream"));
 	nlassert(source);
@@ -96,14 +97,14 @@ static void initSample()
 	string sample = SAMPLE_OGG;
 	s_AudioDecoder = IAudioDecoder::createAudioDecoder(sample, false, false);
 	s_StreamSource->setFormat(s_AudioDecoder->getChannels(), s_AudioDecoder->getBitsPerSample(), (uint32)s_AudioDecoder->getSamplesPerSec());
-	//s_StreamSource->setPitch(2.0f);
+	// s_StreamSource->setPitch(2.0f);
 
 	s_GroupController = s_AudioMixer->getGroupController("sound:dialog");
 }
 
-//CMutex *s_Mutex = NULL;
+// CMutex *s_Mutex = NULL;
 //
-//class CTestThread : public IRunnable
+// class CTestThread : public IRunnable
 //{
 //	virtual void run()
 //	{
@@ -113,7 +114,7 @@ static void initSample()
 //			s_Mutex->leave();
 //		}
 //	}
-//};
+// };
 
 static void bufferMore(uint bytes) // buffer from bytes to bytes * 2
 {
@@ -132,10 +133,10 @@ static void runSample()
 	s_StreamSource->getRecommendedBufferSize(samples, bytes);
 
 	bufferMore(bytes);
-	//bufferMore(bytes);
+	// bufferMore(bytes);
 
 	s_StreamSource->play();
-	
+
 	printf("Change volume with - and +\n");
 	printf("Press ANY other key to exit\n");
 	while (!s_AudioDecoder->isMusicEnded())
@@ -163,11 +164,11 @@ static void runSample()
 		}
 		bufferMore(bytes);
 		s_AudioMixer->update();
-		//if (!s_StreamSource->asUSource()->isst)
+		// if (!s_StreamSource->asUSource()->isst)
 		//{
 		//	printf("*!playing!*");
 		//	s_StreamSource->asUSource()->play();
-		//}
+		// }
 		nlSleep(s_StreamSource->getRecommendedSleepTime());
 	}
 	printf("Last buffer streamed\n");
@@ -176,31 +177,35 @@ static void runSample()
 		nlSleep(40);
 		s_AudioMixer->update();
 	}
-	
+
 	s_StreamSource->stop();
-	
+
 	printf("End of song\n");
 	printf("Press ANY key to exit\n");
 #ifdef NL_OS_WINDOWS
-	while (!_kbhit()) 
+	while (!_kbhit())
 #else
 	char ch;
 	while (!read(0, &ch, 1))
 #endif
-	{ s_AudioMixer->update(); nlSleep(10); }
+	{
+		s_AudioMixer->update();
+		nlSleep(10);
+	}
 	return;
 }
 
 static void releaseSample()
 {
-	//NLMISC::CHTimer::clear();
+	// NLMISC::CHTimer::clear();
 	s_GroupController = NULL;
-	delete s_AudioDecoder; s_AudioDecoder = NULL;
-	delete s_StreamSource; s_StreamSource = NULL;
-	delete s_AudioMixer; s_AudioMixer = NULL;
+	delete s_AudioDecoder;
+	s_AudioDecoder = NULL;
+	delete s_StreamSource;
+	s_StreamSource = NULL;
+	delete s_AudioMixer;
+	s_AudioMixer = NULL;
 }
-
-
 
 } /* namespace NLSAMPLE */
 

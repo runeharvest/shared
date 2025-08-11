@@ -36,22 +36,37 @@ using namespace NLMISC;
 
 namespace NLSOUND {
 
-CSourceAL::CSourceAL(CSoundDriverAL *soundDriver) :
-_SoundDriver(NULL), _Buffer(NULL), _Source(AL_NONE),
-_DirectFilter(AL_FILTER_NULL), _EffectFilter(AL_FILTER_NULL), 
-_IsPlaying(false), _IsPaused(false), _StartTime(0), _IsStreaming(false), _RelativeMode(false), 
-_Pos(0.0f, 0.0f, 0.0f), _Gain(NLSOUND_DEFAULT_GAIN), _Alpha(1.0), 
-_MinDistance(1.0f), _MaxDistance(sqrt(numeric_limits<float>::max())), 
-_Effect(NULL), _Direct(true), 
-_DirectGain(NLSOUND_DEFAULT_DIRECT_GAIN), _EffectGain(NLSOUND_DEFAULT_EFFECT_GAIN), 
-_DirectFilterType(ISource::FilterLowPass), _EffectFilterType(ISource::FilterLowPass), 
-_DirectFilterEnabled(false), _EffectFilterEnabled(false), 
-_DirectFilterPassGain(NLSOUND_DEFAULT_FILTER_PASS_GAIN), _EffectFilterPassGain(NLSOUND_DEFAULT_FILTER_PASS_GAIN)
+CSourceAL::CSourceAL(CSoundDriverAL *soundDriver)
+    : _SoundDriver(NULL)
+    , _Buffer(NULL)
+    , _Source(AL_NONE)
+    , _DirectFilter(AL_FILTER_NULL)
+    , _EffectFilter(AL_FILTER_NULL)
+    , _IsPlaying(false)
+    , _IsPaused(false)
+    , _StartTime(0)
+    , _IsStreaming(false)
+    , _RelativeMode(false)
+    , _Pos(0.0f, 0.0f, 0.0f)
+    , _Gain(NLSOUND_DEFAULT_GAIN)
+    , _Alpha(1.0)
+    , _MinDistance(1.0f)
+    , _MaxDistance(sqrt(numeric_limits<float>::max()))
+    , _Effect(NULL)
+    , _Direct(true)
+    , _DirectGain(NLSOUND_DEFAULT_DIRECT_GAIN)
+    , _EffectGain(NLSOUND_DEFAULT_EFFECT_GAIN)
+    , _DirectFilterType(ISource::FilterLowPass)
+    , _EffectFilterType(ISource::FilterLowPass)
+    , _DirectFilterEnabled(false)
+    , _EffectFilterEnabled(false)
+    , _DirectFilterPassGain(NLSOUND_DEFAULT_FILTER_PASS_GAIN)
+    , _EffectFilterPassGain(NLSOUND_DEFAULT_FILTER_PASS_GAIN)
 {
 	// create the al source
 	alGenSources(1, &_Source);
 	alTestError();
-	
+
 	// configure rolloff
 	if (soundDriver->getOption(ISoundDriver::OptionManualRolloff))
 	{
@@ -63,7 +78,7 @@ _DirectFilterPassGain(NLSOUND_DEFAULT_FILTER_PASS_GAIN), _EffectFilterPassGain(N
 		alSourcef(_Source, AL_ROLLOFF_FACTOR, soundDriver->getRolloffFactor());
 		alTestError();
 	}
-	
+
 	// create filters
 	if (soundDriver->getOption(ISoundDriver::OptionFilterEffect))
 	{
@@ -78,7 +93,7 @@ _DirectFilterPassGain(NLSOUND_DEFAULT_FILTER_PASS_GAIN), _EffectFilterPassGain(N
 		alFilterf(_EffectFilter, AL_LOWPASS_GAINHF, NLSOUND_DEFAULT_FILTER_PASS_GAIN);
 		alTestError();
 	}
-	
+
 	// if everything went well, the source will be added in the sounddriver
 	_SoundDriver = soundDriver;
 }
@@ -92,9 +107,21 @@ CSourceAL::~CSourceAL()
 
 void CSourceAL::release()
 {
-	if (_Source != AL_NONE) { alDeleteSources(1, &_Source); _Source = AL_NONE; }
-	if (_DirectFilter != AL_FILTER_NULL) { alDeleteFilters(1, &_DirectFilter); _DirectFilter = AL_FILTER_NULL; }
-	if (_EffectFilter != AL_FILTER_NULL) { alDeleteFilters(1, &_EffectFilter); _EffectFilter = AL_FILTER_NULL; }
+	if (_Source != AL_NONE)
+	{
+		alDeleteSources(1, &_Source);
+		_Source = AL_NONE;
+	}
+	if (_DirectFilter != AL_FILTER_NULL)
+	{
+		alDeleteFilters(1, &_DirectFilter);
+		_DirectFilter = AL_FILTER_NULL;
+	}
+	if (_EffectFilter != AL_FILTER_NULL)
+	{
+		alDeleteFilters(1, &_EffectFilter);
+		_EffectFilter = AL_FILTER_NULL;
+	}
 	_SoundDriver = NULL;
 }
 
@@ -135,32 +162,31 @@ void CSourceAL::setStreaming(bool streaming)
  * If the buffer is stereo, the source mode becomes stereo and the source relative mode is on,
  * otherwise the source is considered as a 3D source.
  */
-void CSourceAL::setStaticBuffer( IBuffer *buffer )
+void CSourceAL::setStaticBuffer(IBuffer *buffer)
 {
 	// Stop source
 	alSourceStop(_Source);
 	alTestError();
 
 	// Set buffer
-	if ( buffer == NULL )
+	if (buffer == NULL)
 	{
-		alSourcei(_Source, AL_BUFFER, AL_NONE );
+		alSourcei(_Source, AL_BUFFER, AL_NONE);
 		alTestError();
 		_Buffer = NULL;
 	}
 	else
 	{
 		CBufferAL *bufferAL = dynamic_cast<CBufferAL *>(buffer);
-		alSourcei(_Source, AL_BUFFER, bufferAL->bufferName() );
+		alSourcei(_Source, AL_BUFFER, bufferAL->bufferName());
 		alTestError();
 
 		// Set relative mode if the buffer is stereo
-		setSourceRelativeMode( bufferAL->isStereo() );
+		setSourceRelativeMode(bufferAL->isStereo());
 
 		_Buffer = bufferAL;
 	}
 }
-
 
 IBuffer *CSourceAL::getStaticBuffer()
 {
@@ -174,17 +200,17 @@ void CSourceAL::submitStreamingBuffer(IBuffer *buffer)
 	CBufferAL *bufferAL = static_cast<CBufferAL *>(buffer);
 	ALuint bufferName = bufferAL->bufferName();
 	nlassert(bufferName);
-	
+
 	if (!bufferAL->isBufferLoaded())
 	{
 		nlwarning("AL: MUSICBUG: Streaming buffer was not loaded, skipping buffer. This should not happen.");
 		return;
 	}
-	
+
 	alSourceQueueBuffers(_Source, 1, &bufferName);
 	alTestError();
 	_QueuedBuffers.push(bufferAL);
-	
+
 	// Resume playback if the internal OpenAL source stopped due to buffer underrun.
 	ALint srcstate;
 	alGetSourcei(_Source, AL_SOURCE_STATE, &srcstate);
@@ -215,17 +241,17 @@ uint CSourceAL::countStreamingBuffers() const
 		--buffersProcessed;
 	}
 	// return how many are left in the queue
-	//ALint buffersQueued;
-	//alGetSourcei(_SourceName, AL_BUFFERS_QUEUED, &buffersQueued);
-	//alTestError();
-	//return (uint)buffersQueued;
+	// ALint buffersQueued;
+	// alGetSourcei(_SourceName, AL_BUFFERS_QUEUED, &buffersQueued);
+	// alTestError();
+	// return (uint)buffersQueued;
 	return (uint)_QueuedBuffers.size();
 }
 
 /// Set looping on/off for future playbacks (default: off)
-void CSourceAL::setLooping( bool l )
+void CSourceAL::setLooping(bool l)
 {
-	alSourcei(_Source, AL_LOOPING, l?AL_TRUE:AL_FALSE );
+	alSourcei(_Source, AL_LOOPING, l ? AL_TRUE : AL_FALSE);
 	alTestError();
 }
 
@@ -233,9 +259,9 @@ void CSourceAL::setLooping( bool l )
 bool CSourceAL::getLooping() const
 {
 	ALint b;
-	alGetSourcei(_Source, AL_LOOPING, &b );
+	alGetSourcei(_Source, AL_LOOPING, &b);
 	alTestError();
-	return ( b == AL_TRUE );
+	return (b == AL_TRUE);
 }
 
 /// Play the static buffer (or stream in and play)
@@ -287,12 +313,12 @@ bool CSourceAL::play()
 		alSourcePlay(_Source);
 		_IsPlaying = (alGetError() == AL_NO_ERROR);
 		if (_IsPlaying)
-			_StartTime = CTime::getLocalTime(); // TODO: Played time should freeze when buffering fails, and be calculated based on the number of buffers played plus passed time. This is necessary for synchronizing animation with sound.
+		    _StartTime = CTime::getLocalTime(); // TODO: Played time should freeze when buffering fails, and be calculated based on the number of buffers played plus passed time. This is necessary for synchronizing animation with sound.
 		return _IsPlaying;
 		*/
 		// Streaming mode
-		//nlwarning("AL: Cannot play null buffer; streaming not implemented" );
-		//nlstop;
+		// nlwarning("AL: Cannot play null buffer; streaming not implemented" );
+		// nlstop;
 	}
 	else
 	{
@@ -306,7 +332,7 @@ void CSourceAL::stop()
 {
 	_StartTime = 0;
 
-	if ( _Buffer != NULL )
+	if (_Buffer != NULL)
 	{
 		// Static playing mode
 		_IsPlaying = false;
@@ -330,15 +356,15 @@ void CSourceAL::stop()
 			alTestError();
 		}
 		// Streaming mode
-		//nlwarning("AL: Cannot stop null buffer; streaming not implemented" );
-		//nlstop;
+		// nlwarning("AL: Cannot stop null buffer; streaming not implemented" );
+		// nlstop;
 	}
 }
 
 /// Pause. Call play() to resume.
 void CSourceAL::pause()
 {
-	if ( _Buffer != NULL )
+	if (_Buffer != NULL)
 	{
 		if (_IsPaused) nlwarning("AL: Called pause() while _IsPaused == true!");
 
@@ -357,15 +383,15 @@ void CSourceAL::pause()
 		alSourcePause(_Source);
 		alTestError();
 		// Streaming mode
-		//nlwarning("AL: Cannot pause null buffer; streaming not implemented" );
-		//nlstop;
+		// nlwarning("AL: Cannot pause null buffer; streaming not implemented" );
+		// nlstop;
 	}
 }
 
 /// Return true if play() or pause(), false if stop().
 bool CSourceAL::isPlaying() const
 {
-	//return !isStopped() && !_IsPaused;
+	// return !isStopped() && !_IsPaused;
 	if (_Buffer != NULL)
 	{
 		ALint srcstate;
@@ -422,11 +448,11 @@ uint32 CSourceAL::getTime()
 }
 
 /// Set the position vector.
-void CSourceAL::setPos(const NLMISC::CVector& pos, bool /* deffered */)
+void CSourceAL::setPos(const NLMISC::CVector &pos, bool /* deffered */)
 {
 	_Pos = pos;
 	// Coordinate system: conversion from NeL to OpenAL/GL:
-	alSource3f(_Source, AL_POSITION, pos.x, pos.z, -pos.y );
+	alSource3f(_Source, AL_POSITION, pos.x, pos.z, -pos.y);
 	alTestError();
 }
 
@@ -437,39 +463,39 @@ const NLMISC::CVector &CSourceAL::getPos() const
 }
 
 /// Set the velocity vector (3D mode only)
-void CSourceAL::setVelocity( const NLMISC::CVector& vel, bool /* deferred */)
+void CSourceAL::setVelocity(const NLMISC::CVector &vel, bool /* deferred */)
 {
 	// Coordsys conversion
-	alSource3f(_Source, AL_VELOCITY, vel.x, vel.z, -vel.y );
+	alSource3f(_Source, AL_VELOCITY, vel.x, vel.z, -vel.y);
 	alTestError();
 }
 
 /// Get the velocity vector
-void CSourceAL::getVelocity( NLMISC::CVector& vel ) const
+void CSourceAL::getVelocity(NLMISC::CVector &vel) const
 {
 	ALfloat v[3];
-	alGetSourcefv(_Source, AL_VELOCITY, v );
+	alGetSourcefv(_Source, AL_VELOCITY, v);
 	alTestError();
 	// Coordsys conversion
-	vel.set( v[0], -v[2], v[1] );
+	vel.set(v[0], -v[2], v[1]);
 }
 
 /// Set the direction vector (3D mode only)
-void CSourceAL::setDirection( const NLMISC::CVector& dir )
+void CSourceAL::setDirection(const NLMISC::CVector &dir)
 {
 	// Coordsys conversion
-	alSource3f(_Source, AL_DIRECTION, dir.x, dir.z, -dir.y );
+	alSource3f(_Source, AL_DIRECTION, dir.x, dir.z, -dir.y);
 	alTestError();
 }
 
 /// Get the direction vector
-void CSourceAL::getDirection( NLMISC::CVector& dir ) const
+void CSourceAL::getDirection(NLMISC::CVector &dir) const
 {
 	ALfloat v[3];
-	alGetSourcefv(_Source, AL_DIRECTION, v );
+	alGetSourcefv(_Source, AL_DIRECTION, v);
 	alTestError();
 	// Coordsys conversion
-	dir.set( v[0], -v[2], v[1] );
+	dir.set(v[0], -v[2], v[1]);
 }
 
 /// Set the gain (volume value inside [0 , 1]).
@@ -518,34 +544,34 @@ float CSourceAL::getPitch() const
 }
 
 /// Set the source relative mode. If true, positions are interpreted relative to the listener position.
-void CSourceAL::setSourceRelativeMode( bool mode )
+void CSourceAL::setSourceRelativeMode(bool mode)
 {
 	_RelativeMode = mode;
-	alSourcei(_Source, AL_SOURCE_RELATIVE, mode?AL_TRUE:AL_FALSE );
+	alSourcei(_Source, AL_SOURCE_RELATIVE, mode ? AL_TRUE : AL_FALSE);
 	alTestError();
 }
 
 /// Get the source relative mode (3D mode only)
 bool CSourceAL::getSourceRelativeMode() const
 {
-	//ALint b;
-	//alGetSourcei(_Source, AL_SOURCE_RELATIVE, &b );
-	//alTestError();
-	//return (b==AL_TRUE);
+	// ALint b;
+	// alGetSourcei(_Source, AL_SOURCE_RELATIVE, &b );
+	// alTestError();
+	// return (b==AL_TRUE);
 	return _RelativeMode;
 }
 
 /// Set the min and max distances (3D mode only)
-void CSourceAL::setMinMaxDistances( float mindist, float maxdist, bool /* deferred */)
+void CSourceAL::setMinMaxDistances(float mindist, float maxdist, bool /* deferred */)
 {
-	nlassert( (mindist >= 0.0f) && (maxdist >= 0.0f) );
+	nlassert((mindist >= 0.0f) && (maxdist >= 0.0f));
 
 	static float maxSqrt = sqrt(std::numeric_limits<float>::max());
- 	if (maxdist >= maxSqrt)
- 	{
- 	       nlwarning("SOUND_DEV (OpenAL): Ridiculously high max distance set on source");
- 	       maxdist = maxSqrt;
- 	}
+	if (maxdist >= maxSqrt)
+	{
+		nlwarning("SOUND_DEV (OpenAL): Ridiculously high max distance set on source");
+		maxdist = maxSqrt;
+	}
 
 	_MinDistance = mindist;
 	_MaxDistance = maxdist;
@@ -558,7 +584,7 @@ void CSourceAL::setMinMaxDistances( float mindist, float maxdist, bool /* deferr
 }
 
 /// Get the min and max distances
-void CSourceAL::getMinMaxDistances( float& mindist, float& maxdist ) const
+void CSourceAL::getMinMaxDistances(float &mindist, float &maxdist) const
 {
 	/*alGetSourcef(_Source, AL_REFERENCE_DISTANCE, &mindist );
 	alGetSourcef(_Source, AL_MAX_DISTANCE, &maxdist );
@@ -568,24 +594,24 @@ void CSourceAL::getMinMaxDistances( float& mindist, float& maxdist ) const
 }
 
 /// Set the cone angles (in radian) and gain (in [0 , 1]) (3D mode only)
-void CSourceAL::setCone( float innerAngle, float outerAngle, float outerGain )
+void CSourceAL::setCone(float innerAngle, float outerAngle, float outerGain)
 {
-	nlassert( (outerGain >= 0.0f) && (outerGain <= 1.0f ) );
-	alSourcef(_Source, AL_CONE_INNER_ANGLE, radToDeg(innerAngle) );
-	alSourcef(_Source, AL_CONE_OUTER_ANGLE, radToDeg(outerAngle) );
-	alSourcef(_Source, AL_CONE_OUTER_GAIN, outerGain );
+	nlassert((outerGain >= 0.0f) && (outerGain <= 1.0f));
+	alSourcef(_Source, AL_CONE_INNER_ANGLE, radToDeg(innerAngle));
+	alSourcef(_Source, AL_CONE_OUTER_ANGLE, radToDeg(outerAngle));
+	alSourcef(_Source, AL_CONE_OUTER_GAIN, outerGain);
 	alTestError();
 }
 
 /// Get the cone angles (in radian)
-void CSourceAL::getCone( float& innerAngle, float& outerAngle, float& outerGain ) const
+void CSourceAL::getCone(float &innerAngle, float &outerAngle, float &outerGain) const
 {
 	float ina, outa;
-	alGetSourcef(_Source, AL_CONE_INNER_ANGLE, &ina );
+	alGetSourcef(_Source, AL_CONE_INNER_ANGLE, &ina);
 	innerAngle = degToRad(ina);
-	alGetSourcef(_Source, AL_CONE_OUTER_ANGLE, &outa );
+	alGetSourcef(_Source, AL_CONE_OUTER_ANGLE, &outa);
 	outerAngle = degToRad(outa);
-	alGetSourcef(_Source, AL_CONE_OUTER_GAIN, &outerGain );
+	alGetSourcef(_Source, AL_CONE_OUTER_GAIN, &outerGain);
 	alTestError();
 }
 

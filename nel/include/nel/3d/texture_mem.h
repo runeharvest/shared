@@ -21,10 +21,7 @@
 #include "nel/3d/texture.h"
 #include <string>
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ****************************************************************************
 /**
@@ -32,28 +29,28 @@ namespace NL3D
  */
 class CTextureMem : public ITexture
 {
-	uint8					*_Data;
-	uint32					_Length;
-	bool					_Delete;
-	bool					_IsFile;
-	bool					_AllowDegradation; // the default is false
-	std::string				_ShareName;
-	NLMISC::CBitmap::TType	_TexType;
+	uint8 *_Data;
+	uint32 _Length;
+	bool _Delete;
+	bool _IsFile;
+	bool _AllowDegradation; // the default is false
+	std::string _ShareName;
+	NLMISC::CBitmap::TType _TexType;
 
 	/// keep size for textures that aren't from a file
-	uint		_TexWidth, _TexHeight;
-public:
+	uint _TexWidth, _TexHeight;
 
+public:
 	/**
 	 * Default constructor
 	 */
-	CTextureMem() : _Data(NULL),
-					_Delete(false),
-					_AllowDegradation(false),
-					_TexType(CBitmap::RGBA)
+	CTextureMem()
+	    : _Data(NULL)
+	    , _Delete(false)
+	    , _AllowDegradation(false)
+	    , _TexType(CBitmap::RGBA)
 	{
 	}
-
 
 	/**
 	 * Destructor
@@ -61,9 +58,8 @@ public:
 	virtual ~CTextureMem()
 	{
 		if (_Data && _Delete)
-			delete [] _Data;
+			delete[] _Data;
 	}
-
 
 	/**
 	 * constructor
@@ -79,12 +75,11 @@ public:
 	 */
 	CTextureMem(uint8 *data, uint32 length, bool _delete, bool isFile = true, uint width = 0, uint height = 0, CBitmap::TType texType = CBitmap::RGBA)
 	{
-		_AllowDegradation=false;
-		_Data=NULL;
-		_Delete=false;
+		_AllowDegradation = false;
+		_Data = NULL;
+		_Delete = false;
 		setPointer(data, length, _delete, isFile, width, height, texType);
 	}
-
 
 	/**
 	 * Set the pointer of the mem file containing the texture.
@@ -98,37 +93,32 @@ public:
 	 */
 	void setPointer(uint8 *data, uint32 length, bool _delete, bool isFile = true, uint width = 0, uint height = 0, CBitmap::TType texType = CBitmap::RGBA)
 	{
-		if (_Data&&_Delete)
-			delete [] _Data;
-		_Touched=true;
-		_Data=data;
-		_Length=length;
-		_Delete=_delete;
+		if (_Data && _Delete)
+			delete[] _Data;
+		_Touched = true;
+		_Data = data;
+		_Length = length;
+		_Delete = _delete;
 		_IsFile = isFile;
 		_TexWidth = width;
 		_TexHeight = height;
 		_TexType = texType;
 	}
 
-
-
 	/**
 	 * Get the Pointer of the memory file containing the texture.
 	 */
-	uint8* getPointer() const { return _Data; }
-
+	uint8 *getPointer() const { return _Data; }
 
 	/**
 	 * Get length of the memory file containing the texture
 	 */
 	uint32 getLength() const { return _Length; }
 
-
 	/**
 	 * Return true if the class handle the delete of the pointer.
 	 */
 	bool isDeletable() const { return _Delete; }
-
 
 	/**
 	 * Generate the texture
@@ -136,13 +126,13 @@ public:
 	void doGenerate(bool async = false);
 
 	/// inherited from ITexture.
-	virtual bool			supportSharing() const
+	virtual bool supportSharing() const
 	{
 		return !_ShareName.empty();
 	}
 
 	/// inherited from ITexture.
-	virtual std::string		getShareName() const
+	virtual std::string getShareName() const
 	{
 		nlassert(!_ShareName.empty());
 		return _ShareName;
@@ -155,12 +145,12 @@ public:
 	}
 
 	/// texture file may allow the driver to degrade (default is true).
-	virtual bool	allowDegradation() const { return _AllowDegradation; }
+	virtual bool allowDegradation() const { return _AllowDegradation; }
 	/// Change the degradation mode. NB: this does not touch() the ITexture...
-	void			setAllowDegradation(bool allow);
+	void setAllowDegradation(bool allow);
 
 	/// Todo: serialize a mem texture.
-	virtual void	serial(NLMISC::IStream &/* f */) {nlstop;}
+	virtual void serial(NLMISC::IStream & /* f */) { nlstop; }
 	NLMISC_DECLARE_CLASS(CTextureMem);
 
 	/** This create a white square texture of 1x1
@@ -174,9 +164,7 @@ public:
 	uint32 getImageHeight() const;
 };
 
-
 } // NL3D
-
 
 #endif // NL_TEXTURE_MEM_H
 

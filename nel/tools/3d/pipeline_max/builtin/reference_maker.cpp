@@ -67,9 +67,15 @@ namespace BUILTIN {
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-CReferenceMaker::CReferenceMaker(CScene *scene) : CAnimatable(scene), m_ReferenceMap(false), m_204B_Equals_2E(NULL), m_References2035Value0(0), m_Unknown2045(NULL), m_Unknown2047(NULL), m_Unknown21B0(NULL)
+CReferenceMaker::CReferenceMaker(CScene *scene)
+    : CAnimatable(scene)
+    , m_ReferenceMap(false)
+    , m_204B_Equals_2E(NULL)
+    , m_References2035Value0(0)
+    , m_Unknown2045(NULL)
+    , m_Unknown2047(NULL)
+    , m_Unknown21B0(NULL)
 {
-
 }
 
 CReferenceMaker::~CReferenceMaker()
@@ -157,8 +163,8 @@ void CReferenceMaker::build(uint16 version, uint filter)
 {
 	CAnimatable::build(version);
 	// TODO: Build contents
-	//if (m_References2034) putChunk(PMB_REFERENCES_2034_CHUNK_ID, m_References2034);
-	//if (m_References2035) putChunk(PMB_REFERENCES_2035_CHUNK_ID, m_References2035);
+	// if (m_References2034) putChunk(PMB_REFERENCES_2034_CHUNK_ID, m_References2034);
+	// if (m_References2035) putChunk(PMB_REFERENCES_2035_CHUNK_ID, m_References2035);
 	if (!m_ReferenceMap)
 	{
 		CStorageArray<sint32> *references2034 = new CStorageArray<sint32>();
@@ -230,8 +236,10 @@ void CReferenceMaker::toStringLocal(std::ostream &ostream, const std::string &pa
 	uint nb = nbReferences();
 	if (nb)
 	{
-		if (!m_ReferenceMap) ostream << "\n" << pad << "References 0x2034: ";
-		else ostream << "\n" << pad << "References 0x2035: ";
+		if (!m_ReferenceMap) ostream << "\n"
+			                         << pad << "References 0x2034: ";
+		else ostream << "\n"
+			         << pad << "References 0x2035: ";
 		std::string padpad = pad + "\t";
 		ostream << "PARSED ";
 		if (!m_References.size()) ostream << "VIRTUAL ";
@@ -241,7 +249,8 @@ void CReferenceMaker::toStringLocal(std::ostream &ostream, const std::string &pa
 			CReferenceMaker *referenceMaker = getReference(i);
 			if (referenceMaker)
 			{
-				ostream << "\n" << padpad << i << ": <ptr=0x";
+				ostream << "\n"
+				        << padpad << i << ": <ptr=0x";
 				{
 					std::stringstream ss;
 					ss << std::hex << std::setfill('0');
@@ -256,22 +265,26 @@ void CReferenceMaker::toStringLocal(std::ostream &ostream, const std::string &pa
 	}
 	if (m_204B_Equals_2E)
 	{
-		ostream << "\n" << pad << "0x204B Equals 0x2E (46): ";
+		ostream << "\n"
+		        << pad << "0x204B Equals 0x2E (46): ";
 		m_204B_Equals_2E->toString(ostream, pad + "\t");
 	}
 	if (m_Unknown2045)
 	{
-		ostream << "\n" << pad << "Unknown 0x2045: ";
+		ostream << "\n"
+		        << pad << "Unknown 0x2045: ";
 		m_Unknown2045->toString(ostream, pad + "\t");
 	}
 	if (m_Unknown2047)
 	{
-		ostream << "\n" << pad << "Unknown 0x2047: ";
+		ostream << "\n"
+		        << pad << "Unknown 0x2047: ";
 		m_Unknown2047->toString(ostream, pad + "\t");
 	}
 	if (m_Unknown21B0)
 	{
-		ostream << "\n" << pad << "Unknown 0x21B0: ";
+		ostream << "\n"
+		        << pad << "Unknown 0x21B0: ";
 		m_Unknown21B0->toString(ostream, pad + "\t");
 	}
 }

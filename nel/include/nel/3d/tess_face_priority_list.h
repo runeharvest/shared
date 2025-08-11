@@ -21,13 +21,9 @@
 #include "nel/misc/vector.h"
 #include <vector>
 
+namespace NL3D {
 
-namespace NL3D
-{
-
-
-class	CTessFace;
-
+class CTessFace;
 
 // ***************************************************************************
 /** A chain link node for PriorityList. NB: It is a circular list <=> (this,this) if list is empty
@@ -38,12 +34,11 @@ class	CTessFace;
 class CTessFacePListNode
 {
 public:
-
 	// init to empty list.
 	CTessFacePListNode()
 	{
-		_PrecTessFaceInPList= this;
-		_NextTessFaceInPList= this;
+		_PrecTessFaceInPList = this;
+		_NextTessFaceInPList = this;
 	}
 	~CTessFacePListNode()
 	{
@@ -54,32 +49,30 @@ public:
 	// Copy cons don't copy Link stuff
 	CTessFacePListNode(const CTessFacePListNode &)
 	{
-		_PrecTessFaceInPList= this;
-		_NextTessFaceInPList= this;
+		_PrecTessFaceInPList = this;
+		_NextTessFaceInPList = this;
 	}
 	// Operator= don't copy Link stuff
-	CTessFacePListNode	&operator= (const CTessFacePListNode &) {return *this;}
+	CTessFacePListNode &operator=(const CTessFacePListNode &) { return *this; }
 
 	/// unlinkInPList, then link this node to the root of a list.
-	void		linkInPList(CTessFacePListNode	&root);
+	void linkInPList(CTessFacePListNode &root);
 	/// if linked, unlink this node from his list.
-	void		unlinkInPList();
+	void unlinkInPList();
 
 	/** append a list just after this node. root is the root of the list. It is not inserted in the result.
 	 *	After this, the list pointed by "root" is empty.
 	 */
-	void		appendPList(CTessFacePListNode	&root);
+	void appendPList(CTessFacePListNode &root);
 
 	/// get next ptr. next==this if list empty.
-	CTessFacePListNode		*precInPList() const {return _PrecTessFaceInPList;}
-	CTessFacePListNode		*nextInPList() const {return _NextTessFaceInPList;}
+	CTessFacePListNode *precInPList() const { return _PrecTessFaceInPList; }
+	CTessFacePListNode *nextInPList() const { return _NextTessFaceInPList; }
 
 private:
-	CTessFacePListNode		*_PrecTessFaceInPList;
-	CTessFacePListNode		*_NextTessFaceInPList;
-
+	CTessFacePListNode *_PrecTessFaceInPList;
+	CTessFacePListNode *_NextTessFaceInPList;
 };
-
 
 // ***************************************************************************
 /** This class manage a Priority list of elements, inserted with a "distance". The priority list can be shifted, so
@@ -103,7 +96,6 @@ private:
 class CTessFacePriorityList
 {
 public:
-
 	/// Constructor
 	CTessFacePriorityList();
 	~CTessFacePriorityList();
@@ -120,20 +112,20 @@ public:
 	 *
 	 *	\param numQuadrant set 0 if don't want to support quadrant notion. else set >=4 and a power of 2 (else nlassert)
 	 */
-	void			init(float distStep, uint numEntries, float distMaxMod, uint numQuadrant);
+	void init(float distStep, uint numEntries, float distMaxMod, uint numQuadrant);
 	/** Clear the priority list. All elements are removed. NB: for convenience, the remainder is reset.
 	 */
-	void			clear();
+	void clear();
 
 	/**	prior to insert an element with a direction notion, select which quadrant according to the direction
 	 *	Camera -> center of interest.
 	 *	\return 0 if no quadrant available, else the quadrant id
 	 */
-	uint			selectQuadrant(const NLMISC::CVector &direction);
+	uint selectQuadrant(const NLMISC::CVector &direction);
 
 	/**	get the quadrant dir associated to the Id. Undefined if 0.
 	 */
-	const NLMISC::CVector	&getQuadrantDirection(uint quadrantId) const {return _RollingTables[quadrantId].QuadrantDirection;}
+	const NLMISC::CVector &getQuadrantDirection(uint quadrantId) const { return _RollingTables[quadrantId].QuadrantDirection; }
 
 	/** Insert an element at a given distance, and in a given quadrant.
 	 *	Insert at the closest step. eg insert(1.2, elt) will insert elt at entry 1 (assuming distStep==1 here).
@@ -147,101 +139,92 @@ public:
 	 *	\param distance if quadrantId==0, distance should be the norm()-SphereSize, else it shoudl be
 	 *	direction*quadrantDirection-SphereSize.
 	 */
-	void			insert(uint quadrantId, float distance, CTessFace *value);
+	void insert(uint quadrantId, float distance, CTessFace *value);
 
 	/** Shift the Priority list in a given direction.
 	 *	NB: for each rolling table, even if shiftDistance==0, all elements in the entry 0 are pulled out.
 	 *	\parm pulledElements is the root of the list which will contains elements pulled from the list.
 	 */
-	void			shift(const NLMISC::CVector &direction, CTessFacePListNode	&pulledElements);
+	void shift(const NLMISC::CVector &direction, CTessFacePListNode &pulledElements);
 
 	/** Same as shift(), but shift all the array.
 	 */
-	void			shiftAll(CTessFacePListNode	&pulledElements);
+	void shiftAll(CTessFacePListNode &pulledElements);
 
-
-// **************************
+	// **************************
 private:
-
 	/*
-		NB: Remainder E [0,1[.
-		Meaning: value to substract to entries, to get their actual value.
-		eg: the entry 1 means "1 unit" (in the internal basis, ie independent of distStep). If Remainder==0.1,
-			then, entry 1 means "0.9 unit".
-			Then, if, as example, an element must be inserted at dist=0.95, it will be inserted in entry 1, and not entry 0!
-		NB: the "meaning" of entry 0 is always <=0.
+	    NB: Remainder E [0,1[.
+	    Meaning: value to substract to entries, to get their actual value.
+	    eg: the entry 1 means "1 unit" (in the internal basis, ie independent of distStep). If Remainder==0.1,
+	        then, entry 1 means "0.9 unit".
+	        Then, if, as example, an element must be inserted at dist=0.95, it will be inserted in entry 1, and not entry 0!
+	    NB: the "meaning" of entry 0 is always <=0.
 	*/
-	float			_Remainder;
-	float			_OODistStep;
-	uint			_NEntries;
-	uint			_MaskEntries;	// == _NEntries-1
-	uint			_EntryModStart;
-	uint			_NumQuadrant;
+	float _Remainder;
+	float _OODistStep;
+	uint _NEntries;
+	uint _MaskEntries; // == _NEntries-1
+	uint _EntryModStart;
+	uint _NumQuadrant;
 	// For Fast Selection of Quadrant. Split the list of quadrant into 4. NB: ids start at 0. and must AND the Ids.
-	uint			_MaskQuadrant;
-	uint			_QuarterQuadrantStart[4];
-	uint			_QuarterQuadrantEnd[4];
-
+	uint _MaskQuadrant;
+	uint _QuarterQuadrantStart[4];
+	uint _QuarterQuadrantEnd[4];
 
 	/// \name The rolling tables
 	// @{
 
 	/// A single rolling table  <=> HTable.
-	class		CRollingTable
+	class CRollingTable
 	{
 	public:
 		// The quadrant Direction for this rolling table.
-		NLMISC::CVector		QuadrantDirection;
+		NLMISC::CVector QuadrantDirection;
 
 		// computed and decremented by CTessFacePriorityList
-		float		Remainder;
+		float Remainder;
 
 	public:
 		CRollingTable();
 		~CRollingTable();
 
 		// init the roll table
-		void		init(uint numEntries);
+		void init(uint numEntries);
 
 		// entry is relative to _EntryStart.
-		void		insertInRollTable(uint entry, CTessFace *value);
+		void insertInRollTable(uint entry, CTessFace *value);
 
 		// get the root of the list at entry. entry is relative to _EntryStart.
-		CTessFacePListNode		&getRollTableEntry(uint entry);
+		CTessFacePListNode &getRollTableEntry(uint entry);
 
 		// shift the rollingTable of shiftEntry. elements in entries shifted are deleted. no-op if 0.
-		void		shiftRollTable(uint shiftEntry);
+		void shiftRollTable(uint shiftEntry);
 
 		// clear all elements of the roll table.
-		void		clearRollTable();
+		void clearRollTable();
 
 		/// append elements shifted and shift
-		void		shiftEntries(uint entryShift, CTessFacePListNode	&pulledElements);
+		void shiftEntries(uint entryShift, CTessFacePListNode &pulledElements);
 
 	private:
 		// where is the entry 0 in _Entries.
-		std::vector<CTessFacePListNode>		_Entries;
-		uint					_EntryStart;
-		uint					_NEntries;
-		uint					_MaskEntries;	// == _NEntries-1
+		std::vector<CTessFacePListNode> _Entries;
+		uint _EntryStart;
+		uint _NEntries;
+		uint _MaskEntries; // == _NEntries-1
 
 		// clear all element of an entry of the roll table. entry is relative to _EntryStart.
-		void		clearRollTableEntry(uint entry);
-
+		void clearRollTableEntry(uint entry);
 	};
 
 	// There is 1+NumQuadrant rollingTable.
-	std::vector<CRollingTable>		_RollingTables;
+	std::vector<CRollingTable> _RollingTables;
 
 	// @}
-
-
 };
 
-
-
 } // NL3D
-
 
 #endif // NL_TESS_FACE_PRIORITY_LIST_H
 

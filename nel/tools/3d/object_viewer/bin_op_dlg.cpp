@@ -24,24 +24,22 @@
 /////////////////////////////////////////////////////////////////////////////
 // CBinOpDlg dialog
 
-
-CBinOpDlg::CBinOpDlg(IPopupNotify *pn, CWnd* pParent /*=NULL*/)
-	: _PN(pn), CDialog(CBinOpDlg::IDD, pParent)
+CBinOpDlg::CBinOpDlg(IPopupNotify *pn, CWnd *pParent /*=NULL*/)
+    : _PN(pn)
+    , CDialog(CBinOpDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CBinOpDlg)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
 void CBinOpDlg::create(CWnd *pParent)
 {
-	CDialog::Create(IDD_BIN_OP, pParent);	
+	CDialog::Create(IDD_BIN_OP, pParent);
 	ShowWindow(SW_SHOW);
 }
 
-
-void CBinOpDlg::DoDataExchange(CDataExchange* pDX)
+void CBinOpDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CBinOpDlg)
@@ -49,33 +47,32 @@ void CBinOpDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CBinOpDlg, CDialog)
-	//{{AFX_MSG_MAP(CBinOpDlg)
-	ON_CBN_SELCHANGE(IDC_BIN_OP, OnSelchangeBinOp)
-	ON_WM_CLOSE()
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CBinOpDlg)
+ON_CBN_SELCHANGE(IDC_BIN_OP, OnSelchangeBinOp)
+ON_WM_CLOSE()
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CBinOpDlg message handlers
 
-BOOL CBinOpDlg::OnInitDialog() 
+BOOL CBinOpDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();					
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	CDialog::OnInitDialog();
+
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CBinOpDlg::OnSelchangeBinOp() 
+void CBinOpDlg::OnSelchangeBinOp()
 {
-	UpdateData() ;
-	newOp((uint32)m_BinOp.GetItemData(m_BinOp.GetCurSel())) ;	
+	UpdateData();
+	newOp((uint32)m_BinOp.GetItemData(m_BinOp.GetCurSel()));
 }
 
-void CBinOpDlg::OnClose() 
+void CBinOpDlg::OnClose()
 {
 	CDialog::OnClose();
-	if (_PN) _PN->childPopupClosed(this);	
+	if (_PN) _PN->childPopupClosed(this);
 }

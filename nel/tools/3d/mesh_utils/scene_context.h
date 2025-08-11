@@ -41,17 +41,16 @@
 #endif
 
 namespace NL3D {
-	class IShape;
-	class CMaterial;
+class IShape;
+class CMaterial;
 }
 
 struct CNodeContext
 {
-	CNodeContext() :
-		InternalNode(NULL),
-		IsBone(false)
+	CNodeContext()
+	    : InternalNode(NULL)
+	    , IsBone(false)
 	{
-
 	}
 
 	const NL_NODE_INTERNAL_TYPE *InternalNode;
@@ -64,9 +63,10 @@ struct CNodeContext
 typedef std::map<NLMISC::CSString, CNodeContext> TNodeContextMap;
 struct CMeshUtilsContext
 {
-	CMeshUtilsContext(const CMeshUtilsSettings &settings) : Settings(settings), InternalScene(NULL)
+	CMeshUtilsContext(const CMeshUtilsSettings &settings)
+	    : Settings(settings)
+	    , InternalScene(NULL)
 	{
-
 	}
 
 	const CMeshUtilsSettings &Settings;

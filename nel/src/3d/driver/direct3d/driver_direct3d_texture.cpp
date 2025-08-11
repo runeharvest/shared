@@ -36,16 +36,14 @@
 using namespace std;
 using namespace NLMISC;
 
-
-namespace NL3D
-{
+namespace NL3D {
 
 std::vector<uint8> CDriverD3D::_TempBuffer;
 
 // ***************************************************************************
 
 CTextureDrvInfosD3D::CTextureDrvInfosD3D(IDriver *drv, ItTexDrvInfoPtrMap it, CDriverD3D *drvD3D, bool renderTarget)
-					: ITextureDrvInfos(drv, it)
+    : ITextureDrvInfos(drv, it)
 {
 	H_AUTO_D3D(CTextureDrvInfosD3D_CTextureDrvInfosD3D)
 	Texture = NULL;
@@ -56,7 +54,7 @@ CTextureDrvInfosD3D::CTextureDrvInfosD3D(IDriver *drv, ItTexDrvInfoPtrMap it, CD
 	FirstMipMap = 0;
 
 	// Nb: at Driver dtor, all tex infos are deleted, so _Driver is always valid.
-	_Driver= drvD3D;
+	_Driver = drvD3D;
 
 	WrapS = D3DTADDRESS_WRAP;
 	WrapT = D3DTADDRESS_WRAP;
@@ -87,214 +85,207 @@ CTextureDrvInfosD3D::~CTextureDrvInfosD3D()
 	_Driver->_AllocatedTextureMemory -= TextureMemory;
 
 	// release in TextureUsed.
-	_Driver->_TextureUsed.erase (this);
+	_Driver->_TextureUsed.erase(this);
 }
 
 // ***************************************************************************
 
-bool CDriverD3D::setupTexture (ITexture& tex)
+bool CDriverD3D::setupTexture(ITexture &tex)
 {
-	H_AUTO_D3D(CDriverD3D_setupTexture )
+	H_AUTO_D3D(CDriverD3D_setupTexture)
 	bool nTmp;
-	return setupTextureEx (tex, true, nTmp, false);
+	return setupTextureEx(tex, true, nTmp, false);
 }
 
 // ***************************************************************************
 
-const D3DTEXTUREADDRESS RemapTextureAdressTypeNeL2D3D[ITexture::WrapModeCount]=
-{
-	D3DTADDRESS_WRAP,	// Repeat
-	D3DTADDRESS_CLAMP,	// Clamp
+const D3DTEXTUREADDRESS RemapTextureAdressTypeNeL2D3D[ITexture::WrapModeCount] = {
+	D3DTADDRESS_WRAP, // Repeat
+	D3DTADDRESS_CLAMP, // Clamp
 };
 
 // ***************************************************************************
 
-const D3DTEXTUREFILTERTYPE RemapMagTextureFilterTypeNeL2D3D[ITexture::MagFilterCount]=
-{
-	D3DTEXF_POINT,	// Nearest
-	D3DTEXF_LINEAR,	// Linear
+const D3DTEXTUREFILTERTYPE RemapMagTextureFilterTypeNeL2D3D[ITexture::MagFilterCount] = {
+	D3DTEXF_POINT, // Nearest
+	D3DTEXF_LINEAR, // Linear
 };
 
 // ***************************************************************************
 
-const D3DTEXTUREFILTERTYPE RemapMinTextureFilterTypeNeL2D3D[ITexture::MinFilterCount]=
-{
-	D3DTEXF_POINT,	// NearestMipMapOff
-	D3DTEXF_POINT,	// NearestMipMapNearest
-	D3DTEXF_POINT,	// NearestMipMapLinear
-	D3DTEXF_LINEAR,	// LinearMipMapOff
-	D3DTEXF_LINEAR,	// LinearMipMapNearest
-	D3DTEXF_LINEAR,	// LinearMipMapLinear
+const D3DTEXTUREFILTERTYPE RemapMinTextureFilterTypeNeL2D3D[ITexture::MinFilterCount] = {
+	D3DTEXF_POINT, // NearestMipMapOff
+	D3DTEXF_POINT, // NearestMipMapNearest
+	D3DTEXF_POINT, // NearestMipMapLinear
+	D3DTEXF_LINEAR, // LinearMipMapOff
+	D3DTEXF_LINEAR, // LinearMipMapNearest
+	D3DTEXF_LINEAR, // LinearMipMapLinear
 };
 
 // ***************************************************************************
 
-const D3DTEXTUREFILTERTYPE RemapMipTextureFilterTypeNeL2D3D[ITexture::MinFilterCount]=
-{
-	D3DTEXF_NONE,	// NearestMipMapOff
-	D3DTEXF_POINT,	// NearestMipMapNearest
-	D3DTEXF_LINEAR,	// NearestMipMapLinear
-	D3DTEXF_NONE,	// LinearMipMapOff
-	D3DTEXF_POINT,	// LinearMipMapNearest
-	D3DTEXF_LINEAR,	// LinearMipMapLinear
+const D3DTEXTUREFILTERTYPE RemapMipTextureFilterTypeNeL2D3D[ITexture::MinFilterCount] = {
+	D3DTEXF_NONE, // NearestMipMapOff
+	D3DTEXF_POINT, // NearestMipMapNearest
+	D3DTEXF_LINEAR, // NearestMipMapLinear
+	D3DTEXF_NONE, // LinearMipMapOff
+	D3DTEXF_POINT, // LinearMipMapNearest
+	D3DTEXF_LINEAR, // LinearMipMapLinear
 };
 
 // ***************************************************************************
 
-const D3DFORMAT RemapTextureFormatTypeNeL2D3D[CBitmap::ModeCount]=
-{
-	D3DFMT_A8R8G8B8,	// RGBA
-	D3DFMT_L8,			// Luminance
-	D3DFMT_A8,			// Alpha
-	D3DFMT_A8L8,		// AlphaLuminance
-	D3DFMT_DXT1,		// DXTC1
-	D3DFMT_DXT1,		// DXTC1Alpha
-	D3DFMT_DXT3,		// DXTC3
-	D3DFMT_DXT5,		// DXTC5
-	D3DFMT_V8U8,		// DsDt
+const D3DFORMAT RemapTextureFormatTypeNeL2D3D[CBitmap::ModeCount] = {
+	D3DFMT_A8R8G8B8, // RGBA
+	D3DFMT_L8, // Luminance
+	D3DFMT_A8, // Alpha
+	D3DFMT_A8L8, // AlphaLuminance
+	D3DFMT_DXT1, // DXTC1
+	D3DFMT_DXT1, // DXTC1Alpha
+	D3DFMT_DXT3, // DXTC3
+	D3DFMT_DXT5, // DXTC5
+	D3DFMT_V8U8, // DsDt
 };
 
 // ***************************************************************************
 
-const bool RemapTextureFormatCompressedTypeNeL2D3D[CBitmap::ModeCount]=
-{
-	false,	// RGBA
-	false,	// Luminance
-	false,	// Alpha
-	false,	// AlphaLuminance
-	true,	// DXTC1
-	true,	// DXTC1Alpha
-	true,	// DXTC3
-	true,	// DXTC5
-	false,	// DsDt
+const bool RemapTextureFormatCompressedTypeNeL2D3D[CBitmap::ModeCount] = {
+	false, // RGBA
+	false, // Luminance
+	false, // Alpha
+	false, // AlphaLuminance
+	true, // DXTC1
+	true, // DXTC1Alpha
+	true, // DXTC3
+	true, // DXTC5
+	false, // DsDt
 };
 
 // ***************************************************************************
 
-const D3DCUBEMAP_FACES RemapCubeFaceTypeNeL2D3D[6]=
-{
-	D3DCUBEMAP_FACE_POSITIVE_X,	// positive_x
-	D3DCUBEMAP_FACE_NEGATIVE_X,	// negative_x
-	D3DCUBEMAP_FACE_POSITIVE_Z,	// positive_y
-	D3DCUBEMAP_FACE_NEGATIVE_Z,	// negative_y
-	D3DCUBEMAP_FACE_POSITIVE_Y,	// positive_z
-	D3DCUBEMAP_FACE_NEGATIVE_Y,	// negative_z
+const D3DCUBEMAP_FACES RemapCubeFaceTypeNeL2D3D[6] = {
+	D3DCUBEMAP_FACE_POSITIVE_X, // positive_x
+	D3DCUBEMAP_FACE_NEGATIVE_X, // negative_x
+	D3DCUBEMAP_FACE_POSITIVE_Z, // positive_y
+	D3DCUBEMAP_FACE_NEGATIVE_Z, // negative_y
+	D3DCUBEMAP_FACE_POSITIVE_Y, // positive_z
+	D3DCUBEMAP_FACE_NEGATIVE_Y, // negative_z
 };
 
 // ***************************************************************************
 
-D3DFORMAT CDriverD3D::getD3DDestTextureFormat (ITexture& tex)
+D3DFORMAT CDriverD3D::getD3DDestTextureFormat(ITexture &tex)
 {
-	H_AUTO_D3D(CDriverD3D_getD3DDestTextureFormat )
-	ITexture::TUploadFormat texfmt= tex.getUploadFormat();
+	H_AUTO_D3D(CDriverD3D_getD3DDestTextureFormat)
+	ITexture::TUploadFormat texfmt = tex.getUploadFormat();
 
 	// If auto, retrieve the pixel format of the bitmap.
-	if(texfmt == ITexture::Auto)
+	if (texfmt == ITexture::Auto)
 	{
-		switch(tex.getPixelFormat())
+		switch (tex.getPixelFormat())
 		{
-			case CBitmap::RGBA:
-				if(_ForceDXTCCompression && tex.allowDegradation() )
-					texfmt= ITexture::DXTC5;
-				else
-					texfmt= ITexture::RGBA8888;
-				break;
-			case CBitmap::DXTC1:
-				texfmt= ITexture::DXTC1;
-				break;
-			case CBitmap::DXTC1Alpha:
-				texfmt= ITexture::DXTC1Alpha;
-				break;
-			case CBitmap::DXTC3:
-				texfmt= ITexture::DXTC3;
-				break;
-			case CBitmap::DXTC5:
-				texfmt= ITexture::DXTC5;
-				break;
-			case CBitmap::Luminance:
-				texfmt= ITexture::Luminance;
-				break;
-			case CBitmap::Alpha:
-				texfmt= ITexture::Alpha;
-				break;
-			case CBitmap::AlphaLuminance:
-				texfmt= ITexture::AlphaLuminance;
-				break;
-			case CBitmap::DsDt:
-				texfmt= ITexture::DsDt;
-				break;
-			default: texfmt= ITexture::RGBA8888; break;
+		case CBitmap::RGBA:
+			if (_ForceDXTCCompression && tex.allowDegradation())
+				texfmt = ITexture::DXTC5;
+			else
+				texfmt = ITexture::RGBA8888;
+			break;
+		case CBitmap::DXTC1:
+			texfmt = ITexture::DXTC1;
+			break;
+		case CBitmap::DXTC1Alpha:
+			texfmt = ITexture::DXTC1Alpha;
+			break;
+		case CBitmap::DXTC3:
+			texfmt = ITexture::DXTC3;
+			break;
+		case CBitmap::DXTC5:
+			texfmt = ITexture::DXTC5;
+			break;
+		case CBitmap::Luminance:
+			texfmt = ITexture::Luminance;
+			break;
+		case CBitmap::Alpha:
+			texfmt = ITexture::Alpha;
+			break;
+		case CBitmap::AlphaLuminance:
+			texfmt = ITexture::AlphaLuminance;
+			break;
+		case CBitmap::DsDt:
+			texfmt = ITexture::DsDt;
+			break;
+		default: texfmt = ITexture::RGBA8888; break;
 		}
 	}
 
 	// Get standard prefered tex format.
-	nlassert (texfmt<ITexture::UploadFormatCount);
+	nlassert(texfmt < ITexture::UploadFormatCount);
 	return _PreferedTextureFormat[texfmt];
 }
 
 // ***************************************************************************
 
-uint getPixelFormatSize (D3DFORMAT destFormat)
+uint getPixelFormatSize(D3DFORMAT destFormat)
 {
 	uint bits = 0;
 	switch (destFormat)
 	{
-	case D3DFMT_R8G8B8: bits=32; break;
-	case D3DFMT_A8R8G8B8: bits=32; break;
-	case D3DFMT_X8R8G8B8: bits=32; break;
-	case D3DFMT_R5G6B5: bits=16; break;
-	case D3DFMT_X1R5G5B5: bits=16; break;
-	case D3DFMT_A1R5G5B5: bits=16; break;
-	case D3DFMT_A4R4G4B4: bits=16; break;
-	case D3DFMT_R3G3B2: bits=8; break;
-	case D3DFMT_A8: bits=8; break;
-	case D3DFMT_A8R3G3B2: bits=16; break;
-	case D3DFMT_X4R4G4B4: bits=16; break;
-	case D3DFMT_A2B10G10R10: bits=32; break;
-	case D3DFMT_A8B8G8R8: bits=32; break;
-	case D3DFMT_X8B8G8R8: bits=32; break;
-	case D3DFMT_G16R16: bits=32; break;
-	case D3DFMT_A2R10G10B10: bits=32; break;
-	case D3DFMT_A16B16G16R16: bits=64; break;
-	case D3DFMT_A8P8: bits=16; break;
-	case D3DFMT_P8: bits=8; break;
-	case D3DFMT_L8: bits=8; break;
-	case D3DFMT_L16: bits=16; break;
-	case D3DFMT_A8L8: bits=16; break;
-	case D3DFMT_A4L4: bits=8; break;
-	case D3DFMT_V8U8: bits=16; break;
-	case D3DFMT_Q8W8V8U8: bits=32; break;
-	case D3DFMT_V16U16: bits=32; break;
-	case D3DFMT_Q16W16V16U16: bits=64; break;
-	case D3DFMT_CxV8U8: bits=16; break;
-	case D3DFMT_L6V5U5: bits=16; break;
-	case D3DFMT_X8L8V8U8: bits=32; break;
-	case D3DFMT_A2W10V10U10: bits=32; break;
-	case D3DFMT_G8R8_G8B8: bits=24; break;
-	case D3DFMT_R8G8_B8G8: bits=24; break;
-	case D3DFMT_DXT1: bits=4; break;
-	case D3DFMT_DXT2: bits=8; break;
-	case D3DFMT_DXT3: bits=8; break;
-	case D3DFMT_DXT4: bits=8; break;
-	case D3DFMT_DXT5: bits=8; break;
-	default: nlstop; break;	// unknown pixel format
+	case D3DFMT_R8G8B8: bits = 32; break;
+	case D3DFMT_A8R8G8B8: bits = 32; break;
+	case D3DFMT_X8R8G8B8: bits = 32; break;
+	case D3DFMT_R5G6B5: bits = 16; break;
+	case D3DFMT_X1R5G5B5: bits = 16; break;
+	case D3DFMT_A1R5G5B5: bits = 16; break;
+	case D3DFMT_A4R4G4B4: bits = 16; break;
+	case D3DFMT_R3G3B2: bits = 8; break;
+	case D3DFMT_A8: bits = 8; break;
+	case D3DFMT_A8R3G3B2: bits = 16; break;
+	case D3DFMT_X4R4G4B4: bits = 16; break;
+	case D3DFMT_A2B10G10R10: bits = 32; break;
+	case D3DFMT_A8B8G8R8: bits = 32; break;
+	case D3DFMT_X8B8G8R8: bits = 32; break;
+	case D3DFMT_G16R16: bits = 32; break;
+	case D3DFMT_A2R10G10B10: bits = 32; break;
+	case D3DFMT_A16B16G16R16: bits = 64; break;
+	case D3DFMT_A8P8: bits = 16; break;
+	case D3DFMT_P8: bits = 8; break;
+	case D3DFMT_L8: bits = 8; break;
+	case D3DFMT_L16: bits = 16; break;
+	case D3DFMT_A8L8: bits = 16; break;
+	case D3DFMT_A4L4: bits = 8; break;
+	case D3DFMT_V8U8: bits = 16; break;
+	case D3DFMT_Q8W8V8U8: bits = 32; break;
+	case D3DFMT_V16U16: bits = 32; break;
+	case D3DFMT_Q16W16V16U16: bits = 64; break;
+	case D3DFMT_CxV8U8: bits = 16; break;
+	case D3DFMT_L6V5U5: bits = 16; break;
+	case D3DFMT_X8L8V8U8: bits = 32; break;
+	case D3DFMT_A2W10V10U10: bits = 32; break;
+	case D3DFMT_G8R8_G8B8: bits = 24; break;
+	case D3DFMT_R8G8_B8G8: bits = 24; break;
+	case D3DFMT_DXT1: bits = 4; break;
+	case D3DFMT_DXT2: bits = 8; break;
+	case D3DFMT_DXT3: bits = 8; break;
+	case D3DFMT_DXT4: bits = 8; break;
+	case D3DFMT_DXT5: bits = 8; break;
+	default: nlstop; break; // unknown pixel format
 	}
 	return bits;
 }
 
 // ***************************************************************************
 
-uint32 CDriverD3D::computeTextureMemoryUsage (uint width, uint height, uint levels, D3DFORMAT destFormat, bool cube)
+uint32 CDriverD3D::computeTextureMemoryUsage(uint width, uint height, uint levels, D3DFORMAT destFormat, bool cube)
 {
-	H_AUTO_D3D(CDriverD3D_computeTextureMemoryUsage )
+	H_AUTO_D3D(CDriverD3D_computeTextureMemoryUsage)
 	// Get bit per pixel
-	uint bits = getPixelFormatSize (destFormat);
+	uint bits = getPixelFormatSize(destFormat);
 	uint32 size = 0;
-	while (levels>0)
+	while (levels > 0)
 	{
 		size += (width * height * bits) >> 3;
-		width = max((uint)(width>>1), 1U);
-		height = max((uint)(height>>1), 1U);
+		width = max((uint)(width >> 1), 1U);
+		height = max((uint)(height >> 1), 1U);
 		levels--;
 	}
 	if (cube)
@@ -304,9 +295,9 @@ uint32 CDriverD3D::computeTextureMemoryUsage (uint width, uint height, uint leve
 
 // ***************************************************************************
 
-bool CDriverD3D::generateD3DTexture (ITexture& tex, bool textureDegradation, D3DFORMAT &destFormat, D3DFORMAT &srcFormat, bool &cube)
+bool CDriverD3D::generateD3DTexture(ITexture &tex, bool textureDegradation, D3DFORMAT &destFormat, D3DFORMAT &srcFormat, bool &cube)
 {
-	H_AUTO_D3D(CDriverD3D_generateD3DTexture )
+	H_AUTO_D3D(CDriverD3D_generateD3DTexture)
 	// Regenerate all the texture.
 	tex.generate();
 
@@ -314,8 +305,8 @@ bool CDriverD3D::generateD3DTexture (ITexture& tex, bool textureDegradation, D3D
 	cube = tex.isTextureCube();
 
 	// D3D infos
-	CTextureDrvInfosD3D*	d3dtext;
-	d3dtext= getTextureD3D(tex);
+	CTextureDrvInfosD3D *d3dtext;
+	d3dtext = getTextureD3D(tex);
 
 	// For each face
 	UINT width = 0;
@@ -323,31 +314,31 @@ bool CDriverD3D::generateD3DTexture (ITexture& tex, bool textureDegradation, D3D
 	UINT levels = 0;
 	bool srcFormatCompressed = true;
 	bool renderTarget = false;
-	const uint faceCount = cube?6:1;
+	const uint faceCount = cube ? 6 : 1;
 	uint face;
 	uint firstMipMap = 0;
-	for (face=0; face<faceCount; face++)
+	for (face = 0; face < faceCount; face++)
 	{
 		// Get the texture pointer
-		ITexture *texture = cube?(static_cast<CTextureCube*>(&tex)->getTexture((CTextureCube::TFace)face)):&tex;
+		ITexture *texture = cube ? (static_cast<CTextureCube *>(&tex)->getTexture((CTextureCube::TFace)face)) : &tex;
 
 		// getD3DTextureFormat choose a d3d dest and a src format. src format should be the tex one.
-		if (face==0)
+		if (face == 0)
 		{
 			srcFormatCompressed = RemapTextureFormatCompressedTypeNeL2D3D[texture->getPixelFormat()];
 			srcFormat = RemapTextureFormatTypeNeL2D3D[texture->getPixelFormat()];
-			destFormat = getD3DDestTextureFormat (*texture);
+			destFormat = getD3DDestTextureFormat(*texture);
 		}
 		else
 		{
 			// All cube texture must have the same format
-			nlassert (srcFormatCompressed == RemapTextureFormatCompressedTypeNeL2D3D[texture->getPixelFormat()]);
-			nlassert (srcFormat == RemapTextureFormatTypeNeL2D3D[texture->getPixelFormat()]);
-			nlassert (destFormat == getD3DDestTextureFormat (*texture));
+			nlassert(srcFormatCompressed == RemapTextureFormatCompressedTypeNeL2D3D[texture->getPixelFormat()]);
+			nlassert(srcFormat == RemapTextureFormatTypeNeL2D3D[texture->getPixelFormat()]);
+			nlassert(destFormat == getD3DDestTextureFormat(*texture));
 		}
 
 		// Should not happen
-		nlassert (!((srcFormatCompressed) && (destFormat == D3DFMT_A8R8G8B8)));
+		nlassert(!((srcFormatCompressed) && (destFormat == D3DFMT_A8R8G8B8)));
 
 		// Get new texture format
 		width = texture->getWidth();
@@ -365,12 +356,12 @@ bool CDriverD3D::generateD3DTexture (ITexture& tex, bool textureDegradation, D3D
 		renderTarget = texture->getRenderTarget();
 
 		// Texture degradation
-		if (_ForceTextureResizePower>0 && texture->allowDegradation() && (!srcFormatCompressed || levels>1) && textureDegradation)
+		if (_ForceTextureResizePower > 0 && texture->allowDegradation() && (!srcFormatCompressed || levels > 1) && textureDegradation)
 		{
 			// New size
 			width = max(1U, (UINT)(texture->getWidth(0) >> _ForceTextureResizePower));
 			height = max(1U, (UINT)(texture->getHeight(0) >> _ForceTextureResizePower));
-			levels = (levels>_ForceTextureResizePower)?levels-_ForceTextureResizePower:1;
+			levels = (levels > _ForceTextureResizePower) ? levels - _ForceTextureResizePower : 1;
 
 			// Modify source texture
 			if (srcFormatCompressed)
@@ -378,13 +369,13 @@ bool CDriverD3D::generateD3DTexture (ITexture& tex, bool textureDegradation, D3D
 				if (cube && !_CubbedMipMapSupported)
 				{
 					// just uses one the level of interest and not the others
-					firstMipMap = (texture->getMipMapCount()>_ForceTextureResizePower)?_ForceTextureResizePower : texture->getMipMapCount() - 1;
+					firstMipMap = (texture->getMipMapCount() > _ForceTextureResizePower) ? _ForceTextureResizePower : texture->getMipMapCount() - 1;
 					levels = 1;
 				}
 				else
 				{
 					// Skip a compressed mipmap
-					firstMipMap = texture->getMipMapCount()-levels;
+					firstMipMap = texture->getMipMapCount() - levels;
 				}
 			}
 			else
@@ -400,10 +391,10 @@ bool CDriverD3D::generateD3DTexture (ITexture& tex, bool textureDegradation, D3D
 			if (texture->mipMapOn() && levels > 1)
 			{
 				texture->buildMipMaps();
-				levels= texture->getMipMapCount();
+				levels = texture->getMipMapCount();
 			}
 			else
-				levels= 1;
+				levels = 1;
 		}
 	}
 
@@ -411,23 +402,13 @@ bool CDriverD3D::generateD3DTexture (ITexture& tex, bool textureDegradation, D3D
 	if (srcFormatCompressed)
 	{
 		if (width & 3)
-			width = (width & ~3)+4;
+			width = (width & ~3) + 4;
 		if (height & 3)
-			height = (height & ~3)+4;
+			height = (height & ~3) + 4;
 	}
 
 	// Got an old texture ?
-	if (d3dtext->Texture &&
-							(
-								(d3dtext->Width != width) ||
-								(d3dtext->Height != height) ||
-								(d3dtext->Levels != levels) ||
-								(d3dtext->FirstMipMap != firstMipMap) ||
-								(d3dtext->DestFormat != destFormat) ||
-								(d3dtext->IsCube != cube) ||
-								(d3dtext->RenderTarget != renderTarget)
-							)
-		)
+	if (d3dtext->Texture && ((d3dtext->Width != width) || (d3dtext->Height != height) || (d3dtext->Levels != levels) || (d3dtext->FirstMipMap != firstMipMap) || (d3dtext->DestFormat != destFormat) || (d3dtext->IsCube != cube) || (d3dtext->RenderTarget != renderTarget)))
 	{
 		// Delete this texture
 		if (d3dtext->Texture)
@@ -447,32 +428,32 @@ bool CDriverD3D::generateD3DTexture (ITexture& tex, bool textureDegradation, D3D
 	if (d3dtext->Texture == NULL)
 	{
 		// profiling: count TextureMemory usage.
-		uint32 textureMemory = computeTextureMemoryUsage (width, height, levels, destFormat, cube);
+		uint32 textureMemory = computeTextureMemoryUsage(width, height, levels, destFormat, cube);
 
 		// Create the texture
 		bool createSuccess;
 
 		if (cube)
 		{
-			createSuccess = _DeviceInterface->CreateCubeTexture(width, levels, renderTarget?D3DUSAGE_RENDERTARGET:0, destFormat, renderTarget?D3DPOOL_DEFAULT:D3DPOOL_MANAGED, &(d3dtext->TextureCube), NULL) == D3D_OK;
+			createSuccess = _DeviceInterface->CreateCubeTexture(width, levels, renderTarget ? D3DUSAGE_RENDERTARGET : 0, destFormat, renderTarget ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED, &(d3dtext->TextureCube), NULL) == D3D_OK;
 			d3dtext->Texture = d3dtext->TextureCube;
 		}
 		else
 		{
-/*
-			// textures with mipmaps doesn't support not power of two sizes
-			// only DXTC formats are beginning with a 'D'
-			if (supportNonPowerOfTwoTextures() && (!isPowerOf2(width) || !isPowerOf2(height)) && levels == 1)
-			{
-				// support for non-power of two sizes for textures need these lines
-				_DeviceInterface->SetRenderState(D3DRS_WRAP0, 0);
-				_DeviceInterface->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-				_DeviceInterface->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-				_DeviceInterface->SetSamplerState(0, D3DSAMP_ADDRESSW, D3DTADDRESS_CLAMP);
-			}
-*/
+			/*
+			            // textures with mipmaps doesn't support not power of two sizes
+			            // only DXTC formats are beginning with a 'D'
+			            if (supportNonPowerOfTwoTextures() && (!isPowerOf2(width) || !isPowerOf2(height)) && levels == 1)
+			            {
+			                // support for non-power of two sizes for textures need these lines
+			                _DeviceInterface->SetRenderState(D3DRS_WRAP0, 0);
+			                _DeviceInterface->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+			                _DeviceInterface->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+			                _DeviceInterface->SetSamplerState(0, D3DSAMP_ADDRESSW, D3DTADDRESS_CLAMP);
+			            }
+			*/
 
-			HRESULT hr = _DeviceInterface->CreateTexture (width, height, levels, renderTarget?D3DUSAGE_RENDERTARGET:0, destFormat, renderTarget?D3DPOOL_DEFAULT:D3DPOOL_MANAGED, &(d3dtext->Texture2d), NULL);
+			HRESULT hr = _DeviceInterface->CreateTexture(width, height, levels, renderTarget ? D3DUSAGE_RENDERTARGET : 0, destFormat, renderTarget ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED, &(d3dtext->Texture2d), NULL);
 
 			if (hr != D3D_OK)
 			{
@@ -504,7 +485,7 @@ bool CDriverD3D::generateD3DTexture (ITexture& tex, bool textureDegradation, D3D
 }
 
 // ***************************************************************************
-inline void CDriverD3D::setupTextureWrapMode(ITexture& tex)
+inline void CDriverD3D::setupTextureWrapMode(ITexture &tex)
 {
 	CTextureDrvInfosD3D *d3dtext = CDriverD3D::getTextureD3D(tex);
 	nlassert(d3dtext);
@@ -528,51 +509,47 @@ inline void CDriverD3D::setupTextureWrapMode(ITexture& tex)
 	}
 }
 
-
-bool CDriverD3D::setupTextureEx (ITexture& tex, bool bUpload, bool &bAllUploaded, bool bMustRecreateSharedTexture)
+bool CDriverD3D::setupTextureEx(ITexture &tex, bool bUpload, bool &bAllUploaded, bool bMustRecreateSharedTexture)
 {
-	H_AUTO_D3D(CDriverD3D_setupTextureEx )
+	H_AUTO_D3D(CDriverD3D_setupTextureEx)
 	bAllUploaded = false;
-
 
 	// 0. Create/Retrieve the driver texture.
 	//=======================================
 	bool mustCreate = false;
-	if ( !tex.TextureDrvShare )
+	if (!tex.TextureDrvShare)
 	{
 		// insert into driver list. (so it is deleted when driver is deleted).
-		ItTexDrvSharePtrList	it= _TexDrvShares.insert(_TexDrvShares.end(), (NL3D::CTextureDrvShare*)NULL);
+		ItTexDrvSharePtrList it = _TexDrvShares.insert(_TexDrvShares.end(), (NL3D::CTextureDrvShare *)NULL);
 		// create and set iterator, for future deletion.
-		*it= tex.TextureDrvShare= new CTextureDrvShare(this, it, &tex);
+		*it = tex.TextureDrvShare = new CTextureDrvShare(this, it, &tex);
 
 		// Must (re)-create the texture.
 		mustCreate = true;
 	}
 
 	// Does the texture has been touched ?
-	if ( (!tex.touched()) && (!mustCreate) )
+	if ((!tex.touched()) && (!mustCreate))
 	{
 		setupTextureWrapMode(tex); // update basics parameters if needed
 		return true; // Do not do anything
 	}
 
-
 	// 1. If modified, may (re)load texture part or all of the texture.
 	//=================================================================
 
-
-	bool	mustLoadAll= false;
-	bool	mustLoadPart= false;
+	bool mustLoadAll = false;
+	bool mustLoadPart = false;
 
 	// A. Share mgt.
 	//==============
-	if(tex.supportSharing())
+	if (tex.supportSharing())
 	{
 		// Try to get the shared texture.
 
 		// Create the shared Name.
-		std::string	name;
-		getTextureShareName (tex, name);
+		std::string name;
+		getTextureShareName(tex, name);
 
 		// Destructor of texture infos locks _SyncTexDrvInfos, so any existing pointers must be deleted outside the lock
 		NLMISC::CSmartPtr<ITextureDrvInfos> maybeDeleted;
@@ -582,36 +559,36 @@ bool CDriverD3D::setupTextureEx (ITexture& tex, bool bUpload, bool &bAllUploaded
 			CSynchronized<TTexDrvInfoPtrMap>::CAccessor access(&_SyncTexDrvInfos);
 			TTexDrvInfoPtrMap &rTexDrvInfos = access.value();
 
-			ItTexDrvInfoPtrMap	itTex;
-			itTex= rTexDrvInfos.find(name);
+			ItTexDrvInfoPtrMap itTex;
+			itTex = rTexDrvInfos.find(name);
 
 			// texture not found?
-			if( itTex==rTexDrvInfos.end() )
+			if (itTex == rTexDrvInfos.end())
 			{
 				// insert into driver map. (so it is deleted when driver is deleted).
-				itTex= (rTexDrvInfos.insert(make_pair(name, (ITextureDrvInfos*)NULL))).first;
+				itTex = (rTexDrvInfos.insert(make_pair(name, (ITextureDrvInfos *)NULL))).first;
 				// keep old value, so it only gets deleted after we release the lock on _SyncTexDrvInfos
 				maybeDeleted = tex.TextureDrvShare->DrvTexture;
 				// create and set iterator, for future deletion.
-				itTex->second= tex.TextureDrvShare->DrvTexture= new CTextureDrvInfosD3D(this, itTex, this, tex.getRenderTarget());
+				itTex->second = tex.TextureDrvShare->DrvTexture = new CTextureDrvInfosD3D(this, itTex, this, tex.getRenderTarget());
 
 				// need to load ALL this texture.
-				mustLoadAll= true;
+				mustLoadAll = true;
 			}
 			else
 			{
 				// keep old value, so it only gets deleted after we release the lock on _SyncTexDrvInfos
 				maybeDeleted = tex.TextureDrvShare->DrvTexture;
 				// set new value
-				tex.TextureDrvShare->DrvTexture= itTex->second;
+				tex.TextureDrvShare->DrvTexture = itTex->second;
 
-				if(bMustRecreateSharedTexture)
+				if (bMustRecreateSharedTexture)
 					// reload this shared texture (user request)
-					mustLoadAll= true;
+					mustLoadAll = true;
 				else
 					// Do not need to reload this texture, even if the format/mipmap has changed, since we found this
 					// couple in the map.
-					mustLoadAll= false;
+					mustLoadAll = false;
 			}
 		}
 		// Do not test if part of texture may need to be computed, because Rect invalidation is incompatible
@@ -620,33 +597,33 @@ bool CDriverD3D::setupTextureEx (ITexture& tex, bool bUpload, bool &bAllUploaded
 	else
 	{
 		// If texture not already created.
-		if(!tex.TextureDrvShare->DrvTexture)
+		if (!tex.TextureDrvShare->DrvTexture)
 		{
 			// Must create it. Create auto a D3D id (in constructor).
 			// Do not insert into the map. This un-shared texture will be deleted at deletion of the texture.
 			// Inform ITextureDrvInfos by passing NULL _Driver.
-			tex.TextureDrvShare->DrvTexture= new CTextureDrvInfosD3D(NULL, ItTexDrvInfoPtrMap(), this, tex.getRenderTarget());
+			tex.TextureDrvShare->DrvTexture = new CTextureDrvInfosD3D(NULL, ItTexDrvInfoPtrMap(), this, tex.getRenderTarget());
 
 			// need to load ALL this texture.
-			mustLoadAll= true;
+			mustLoadAll = true;
 		}
-		else if(tex.isAllInvalidated())
-			mustLoadAll= true;
-		else if(tex.touched())
-			mustLoadPart= true;
+		else if (tex.isAllInvalidated())
+			mustLoadAll = true;
+		else if (tex.touched())
+			mustLoadPart = true;
 	}
 
-	if(tex.isTextureCube() && (!_TextureCubeSupported))
+	if (tex.isTextureCube() && (!_TextureCubeSupported))
 	{
 		return true;
 	}
 
 	// B. Setup texture.
 	//==================
-	if(mustLoadAll || mustLoadPart)
+	if (mustLoadAll || mustLoadPart)
 	{
-		CTextureDrvInfosD3D*	d3dtext;
-		d3dtext= getTextureD3D(tex);
+		CTextureDrvInfosD3D *d3dtext;
+		d3dtext = getTextureD3D(tex);
 
 		// a. Load All the texture case.
 		//==============================
@@ -655,9 +632,9 @@ bool CDriverD3D::setupTextureEx (ITexture& tex, bool bUpload, bool &bAllUploaded
 			D3DFORMAT srcFormat;
 			D3DFORMAT destFormat;
 			bool cube;
-			if (generateD3DTexture (tex, true, destFormat, srcFormat, cube))
+			if (generateD3DTexture(tex, true, destFormat, srcFormat, cube))
 			{
-				if((tex.getSize()>0) || cube)
+				if ((tex.getSize() > 0) || cube)
 				{
 					// Can support multi part upload ?
 					if ((destFormat != srcFormat) && d3dtext->SrcCompressed)
@@ -672,21 +649,21 @@ bool CDriverD3D::setupTextureEx (ITexture& tex, bool bUpload, bool &bAllUploaded
 						// Update the pixels
 						uint i;
 						UINT destLevel = 0;
-						uint blockCount = d3dtext->Height>>(d3dtext->SrcCompressed?2:0);
+						uint blockCount = d3dtext->Height >> (d3dtext->SrcCompressed ? 2 : 0);
 						uint lineWidth = d3dtext->Width;
-						const uint srcPixelSize = getPixelFormatSize (srcFormat);
-						for(i=d3dtext->FirstMipMap;i<uint(d3dtext->FirstMipMap)+uint(d3dtext->Levels);i++, destLevel++)
+						const uint srcPixelSize = getPixelFormatSize(srcFormat);
+						for (i = d3dtext->FirstMipMap; i < uint(d3dtext->FirstMipMap) + uint(d3dtext->Levels); i++, destLevel++)
 						{
 							// Size of a line
-							const uint blockSize = ((lineWidth*srcPixelSize)>>3)<<(d3dtext->SrcCompressed?2:0);
+							const uint blockSize = ((lineWidth * srcPixelSize) >> 3) << (d3dtext->SrcCompressed ? 2 : 0);
 
 							// Several faces for cube texture
-							const uint numFaces = d3dtext->IsCube?6:1;
+							const uint numFaces = d3dtext->IsCube ? 6 : 1;
 							uint face;
-							for (face=0; face<numFaces; face++)
+							for (face = 0; face < numFaces; face++)
 							{
 								// Get the cube texture
-								ITexture *texture = d3dtext->IsCube?(static_cast<CTextureCube*>(&tex)->getTexture((CTextureCube::TFace)face)):&tex;
+								ITexture *texture = d3dtext->IsCube ? (static_cast<CTextureCube *>(&tex)->getTexture((CTextureCube::TFace)face)) : &tex;
 								if (texture)
 								{
 									// Same format ?
@@ -696,30 +673,30 @@ bool CDriverD3D::setupTextureEx (ITexture& tex, bool bUpload, bool &bAllUploaded
 										D3DLOCKED_RECT rect;
 										bool locked = false;
 										if (!d3dtext->IsCube)
-											locked = d3dtext->Texture2d->LockRect (destLevel, &rect, NULL, 0) == D3D_OK;
+											locked = d3dtext->Texture2d->LockRect(destLevel, &rect, NULL, 0) == D3D_OK;
 										else
-											locked = d3dtext->TextureCube->LockRect (RemapCubeFaceTypeNeL2D3D[face], destLevel, &rect, NULL, 0) == D3D_OK;
+											locked = d3dtext->TextureCube->LockRect(RemapCubeFaceTypeNeL2D3D[face], destLevel, &rect, NULL, 0) == D3D_OK;
 
 										// Rect locked ?
 										if (locked)
 										{
 											uint block;
-											for (block=0; block<blockCount; block++)
+											for (block = 0; block < blockCount; block++)
 											{
 												// Copy the block
-												const uint8 *src = &(texture->getPixels(i)[block*blockSize]);
-												uint8 *dest = ((uint8*)rect.pBits)+block*rect.Pitch;
+												const uint8 *src = &(texture->getPixels(i)[block * blockSize]);
+												uint8 *dest = ((uint8 *)rect.pBits) + block * rect.Pitch;
 												if (destFormat == D3DFMT_A8R8G8B8)
-													copyRGBA2BGRA ((uint32*)dest, (const uint32*)src, blockSize>>2);
+													copyRGBA2BGRA((uint32 *)dest, (const uint32 *)src, blockSize >> 2);
 												else
-												memcpy (dest, src, blockSize);
+													memcpy(dest, src, blockSize);
 											}
 
 											// Unlock
 											if (!d3dtext->IsCube)
-												d3dtext->Texture2d->UnlockRect (destLevel);
+												d3dtext->Texture2d->UnlockRect(destLevel);
 											else
-												d3dtext->TextureCube->UnlockRect (RemapCubeFaceTypeNeL2D3D[face], destLevel);
+												d3dtext->TextureCube->UnlockRect(RemapCubeFaceTypeNeL2D3D[face], destLevel);
 										}
 									}
 									else
@@ -740,12 +717,12 @@ bool CDriverD3D::setupTextureEx (ITexture& tex, bool bUpload, bool &bAllUploaded
 												const uint8 *src = &(texture->getPixels(i)[0]);
 
 												// Fill the temp buffer with BGRA info
-												_TempBuffer.resize (blockCount*blockSize);
+												_TempBuffer.resize(blockCount * blockSize);
 												uint8 *dest = &(_TempBuffer[0]);
 												uint line;
-												for (line=0; line<blockCount; line++)
+												for (line = 0; line < blockCount; line++)
 												{
-													copyRGBA2BGRA ((uint32*)dest, (uint32*)(src+line*blockSize), lineWidth);
+													copyRGBA2BGRA((uint32 *)dest, (uint32 *)(src + line * blockSize), lineWidth);
 													dest += blockSize;
 												}
 
@@ -755,8 +732,8 @@ bool CDriverD3D::setupTextureEx (ITexture& tex, bool bUpload, bool &bAllUploaded
 												srcRect.bottom = blockCount;
 												srcRect.left = 0;
 												srcRect.right = lineWidth;
-												D3DXLoadSurfaceFromMemory (pDestSurface, NULL, NULL, &(_TempBuffer[0]), srcFormat,
-													blockSize, NULL, &srcRect, D3DX_FILTER_NONE, 0);
+												D3DXLoadSurfaceFromMemory(pDestSurface, NULL, NULL, &(_TempBuffer[0]), srcFormat,
+												    blockSize, NULL, &srcRect, D3DX_FILTER_NONE, 0);
 											}
 											else
 											{
@@ -765,8 +742,8 @@ bool CDriverD3D::setupTextureEx (ITexture& tex, bool bUpload, bool &bAllUploaded
 												rect.bottom = blockCount;
 												rect.left = 0;
 												rect.right = lineWidth;
-												D3DXLoadSurfaceFromMemory (pDestSurface, NULL, NULL, &(texture->getPixels(i)[0]), srcFormat,
-													blockSize, NULL, &rect, D3DX_FILTER_NONE, 0);
+												D3DXLoadSurfaceFromMemory(pDestSurface, NULL, NULL, &(texture->getPixels(i)[0]), srcFormat,
+												    blockSize, NULL, &rect, D3DX_FILTER_NONE, 0);
 											}
 											pDestSurface->Release();
 										}
@@ -775,8 +752,8 @@ bool CDriverD3D::setupTextureEx (ITexture& tex, bool bUpload, bool &bAllUploaded
 							}
 
 							// Next level
-							lineWidth = max((UINT)(lineWidth>>1), (UINT)(d3dtext->SrcCompressed?4:1));
-							blockCount = max((UINT)(blockCount>>1), 1U);
+							lineWidth = max((UINT)(lineWidth >> 1), (UINT)(d3dtext->SrcCompressed ? 4 : 1));
+							blockCount = max((UINT)(blockCount >> 1), 1U);
 						}
 
 						// Upload now
@@ -797,42 +774,42 @@ bool CDriverD3D::setupTextureEx (ITexture& tex, bool bUpload, bool &bAllUploaded
 			D3DFORMAT destFormat;
 			D3DFORMAT srcFormat;
 			bool cube;
-			if (CDriverD3D::generateD3DTexture (tex, false, destFormat, srcFormat, cube))
+			if (CDriverD3D::generateD3DTexture(tex, false, destFormat, srcFormat, cube))
 			{
 				// No degradation in load part
-				nlassert (d3dtext->FirstMipMap == 0);
+				nlassert(d3dtext->FirstMipMap == 0);
 
-				if(tex.getSize()>0 && bUpload && !tex.getRenderTarget())
+				if (tex.getSize() > 0 && bUpload && !tex.getRenderTarget())
 				{
 					// For all rect, update the texture/mipmap.
 					//===============================================
-					list<NLMISC::CRect>::iterator	itRect;
-					for(itRect=tex._ListInvalidRect.begin(); itRect!=tex._ListInvalidRect.end(); itRect++)
+					list<NLMISC::CRect>::iterator itRect;
+					for (itRect = tex._ListInvalidRect.begin(); itRect != tex._ListInvalidRect.end(); itRect++)
 					{
 						CRect &rect = *itRect;
-						sint	x0= rect.X;
-						sint	y0= rect.Y;
-						sint	x1= rect.X+rect.Width;
-						sint	y1= rect.Y+rect.Height;
+						sint x0 = rect.X;
+						sint y0 = rect.Y;
+						sint x1 = rect.X + rect.Width;
+						sint y1 = rect.Y + rect.Height;
 
 						// Update the pixels
 						uint i;
 						UINT destLevel = 0;
-						for(i=d3dtext->FirstMipMap;i<uint(d3dtext->FirstMipMap)+uint(d3dtext->Levels);i++, destLevel++)
+						for (i = d3dtext->FirstMipMap; i < uint(d3dtext->FirstMipMap) + uint(d3dtext->Levels); i++, destLevel++)
 						{
 							CRect rectDest;
 							rectDest.X = x0;
 							rectDest.Y = y0;
-							rectDest.Width = x1-x0;
-							rectDest.Height = y1-y0;
-							uploadTextureInternal (tex, rectDest, uint8(destLevel), uint8(i), destFormat, srcFormat);
+							rectDest.Width = x1 - x0;
+							rectDest.Height = y1 - y0;
+							uploadTextureInternal(tex, rectDest, uint8(destLevel), uint8(i), destFormat, srcFormat);
 
 							// floor .
-							x0= x0/2;
-							y0= y0/2;
+							x0 = x0 / 2;
+							y0 = y0 / 2;
 							// ceil.
-							x1= (x1+1)/2;
-							y1= (y1+1)/2;
+							x1 = (x1 + 1) / 2;
+							y1 = (y1 + 1) / 2;
 						}
 					}
 				}
@@ -840,7 +817,7 @@ bool CDriverD3D::setupTextureEx (ITexture& tex, bool bUpload, bool &bAllUploaded
 		}
 
 		// Release, if wanted.
-		if(tex.getReleasable())
+		if (tex.getReleasable())
 			tex.release();
 	}
 
@@ -852,9 +829,9 @@ bool CDriverD3D::setupTextureEx (ITexture& tex, bool bUpload, bool &bAllUploaded
 
 // ***************************************************************************
 
-bool CDriverD3D::uploadTexture (ITexture& tex, CRect& rect, uint8 nNumMipMap)
+bool CDriverD3D::uploadTexture(ITexture &tex, CRect &rect, uint8 nNumMipMap)
 {
-	H_AUTO_D3D(CDriverD3D_uploadTexture )
+	H_AUTO_D3D(CDriverD3D_uploadTexture)
 	if (tex.TextureDrvShare == NULL)
 		return false; // Texture not created
 	if (tex.TextureDrvShare->DrvTexture == NULL)
@@ -862,45 +839,45 @@ bool CDriverD3D::uploadTexture (ITexture& tex, CRect& rect, uint8 nNumMipMap)
 	if (tex.isTextureCube())
 		return false;
 
-	CTextureDrvInfosD3D*	d3dtext = getTextureD3D(tex);
+	CTextureDrvInfosD3D *d3dtext = getTextureD3D(tex);
 	// if the texture src is in DXTC MipMaped, and mipmapskip is enabled, skip first levels the user want to upload
-	if(d3dtext->FirstMipMap > nNumMipMap)
+	if (d3dtext->FirstMipMap > nNumMipMap)
 		return false;
 
-	nlassert (rect.X < (sint)d3dtext->Width);
-	nlassert (rect.Y < (sint)d3dtext->Height);
-	nlassert (rect.X + rect.Width <= (sint)d3dtext->Width);
-	nlassert (rect.Y + rect.Height <= (sint)d3dtext->Height);
-	nlassert(nNumMipMap<(uint8)tex.getMipMapCount());
+	nlassert(rect.X < (sint)d3dtext->Width);
+	nlassert(rect.Y < (sint)d3dtext->Height);
+	nlassert(rect.X + rect.Width <= (sint)d3dtext->Width);
+	nlassert(rect.Y + rect.Height <= (sint)d3dtext->Height);
+	nlassert(nNumMipMap < (uint8)tex.getMipMapCount());
 
 	// validate rect.
 	sint x0 = rect.X;
 	sint y0 = rect.Y;
-	sint x1 = rect.X+rect.Width;
-	sint y1 = rect.Y+rect.Height;
-	sint w = tex.getWidth (nNumMipMap);
-	sint h = tex.getHeight (nNumMipMap);
-	clamp (x0, 0, w);
-	clamp (y0, 0, h);
-	clamp (x1, x0, w);
-	clamp (y1, y0, h);
+	sint x1 = rect.X + rect.Width;
+	sint y1 = rect.Y + rect.Height;
+	sint w = tex.getWidth(nNumMipMap);
+	sint h = tex.getHeight(nNumMipMap);
+	clamp(x0, 0, w);
+	clamp(y0, 0, h);
+	clamp(x1, x0, w);
+	clamp(y1, y0, h);
 	rect.X = x0;
 	rect.Y = y0;
 	rect.Width = x1 - x0;
 	rect.Height = y1 - y0;
 
 	// Texture format
-	nlassert (!tex.isTextureCube());
+	nlassert(!tex.isTextureCube());
 	D3DFORMAT srcFormat = RemapTextureFormatTypeNeL2D3D[tex.getPixelFormat()];
-	D3DFORMAT destFormat = getD3DDestTextureFormat (tex);
+	D3DFORMAT destFormat = getD3DDestTextureFormat(tex);
 
-	return uploadTextureInternal (tex, rect, nNumMipMap-d3dtext->FirstMipMap, nNumMipMap, destFormat, srcFormat);
+	return uploadTextureInternal(tex, rect, nNumMipMap - d3dtext->FirstMipMap, nNumMipMap, destFormat, srcFormat);
 }
 
 // ***************************************************************************
 
-bool CDriverD3D::uploadTextureInternal (ITexture& tex, CRect& rect, uint8 destMipmap, uint8 srcMipmap,
-										D3DFORMAT destFormat, D3DFORMAT srcFormat)
+bool CDriverD3D::uploadTextureInternal(ITexture &tex, CRect &rect, uint8 destMipmap, uint8 srcMipmap,
+    D3DFORMAT destFormat, D3DFORMAT srcFormat)
 {
 	H_AUTO_D3D(CDriverD3D_uploadTextureInternal)
 
@@ -911,34 +888,34 @@ bool CDriverD3D::uploadTextureInternal (ITexture& tex, CRect& rect, uint8 destMi
 	}
 
 	// The D3D texture
-	CTextureDrvInfosD3D*	d3dtext = getTextureD3D(tex);
+	CTextureDrvInfosD3D *d3dtext = getTextureD3D(tex);
 
 	// The pixel size
 	const uint pixelSize = CBitmap::bitPerPixels[tex.getPixelFormat()];
 
 	// The line width of that mipmap level
-	uint lineWidth = max(d3dtext->Width>>destMipmap, uint(d3dtext->SrcCompressed?4:1));
+	uint lineWidth = max(d3dtext->Width >> destMipmap, uint(d3dtext->SrcCompressed ? 4 : 1));
 
-	sint	x0= rect.X;
-	sint	y0= rect.Y;
-	sint	x1= rect.X+rect.Width;
-	sint	y1= rect.Y+rect.Height;
-	sint    x1Copy = x1;
-	sint    y1Copy = y1;
+	sint x0 = rect.X;
+	sint y0 = rect.Y;
+	sint x1 = rect.X + rect.Width;
+	sint y1 = rect.Y + rect.Height;
+	sint x1Copy = x1;
+	sint y1Copy = y1;
 
 	if (d3dtext->SrcCompressed)
 	{
-		nlassert ((x0 & 0x3) == 0);
-		nlassert ((y0 & 0x3) == 0);
-		nlassert (((x1 & 0x3) == 0) || (x1<4));
-		nlassert (((y1 & 0x3) == 0) || (y1<4));
+		nlassert((x0 & 0x3) == 0);
+		nlassert((y0 & 0x3) == 0);
+		nlassert(((x1 & 0x3) == 0) || (x1 < 4));
+		nlassert(((y1 & 0x3) == 0) || (y1 < 4));
 		x1Copy = std::max(4, x1);
 		y1Copy = std::max(4, y1);
 	}
 
 	// Size of a line
-	const uint lineSize = ((lineWidth*pixelSize)>>3)<<(d3dtext->SrcCompressed?2:0);
-	const uint offsetX = (x0*pixelSize)>>3;
+	const uint lineSize = ((lineWidth * pixelSize) >> 3) << (d3dtext->SrcCompressed ? 2 : 0);
+	const uint offsetX = (x0 * pixelSize) >> 3;
 
 	// Block of line (for compressed textures)
 	uint lineStart = y0;
@@ -962,23 +939,21 @@ bool CDriverD3D::uploadTextureInternal (ITexture& tex, CRect& rect, uint8 destMi
 		region.top = y0;
 		region.bottom = y1;
 
-
-
-		const sint dataToCopy = (((x1Copy-x0)*pixelSize)>>3)<<(d3dtext->SrcCompressed?2:0);
-		if (d3dtext->Texture2d->LockRect (destMipmap, &rect, &region, 0) == D3D_OK)
+		const sint dataToCopy = (((x1Copy - x0) * pixelSize) >> 3) << (d3dtext->SrcCompressed ? 2 : 0);
+		if (d3dtext->Texture2d->LockRect(destMipmap, &rect, &region, 0) == D3D_OK)
 		{
 			uint line;
-			for (line=lineStart; line<lineEnd; line++)
+			for (line = lineStart; line < lineEnd; line++)
 			{
 				// Copy the line
-				const uint8 *src = &(tex.getPixels(srcMipmap)[line*lineSize+offsetX]);
-				uint8 *dest = ((uint8*)rect.pBits)+(line-lineStart)*rect.Pitch;
+				const uint8 *src = &(tex.getPixels(srcMipmap)[line * lineSize + offsetX]);
+				uint8 *dest = ((uint8 *)rect.pBits) + (line - lineStart) * rect.Pitch;
 				if (destFormat == D3DFMT_A8R8G8B8)
-					copyRGBA2BGRA ((uint32*)dest, (const uint32*)src, dataToCopy>>2);
+					copyRGBA2BGRA((uint32 *)dest, (const uint32 *)src, dataToCopy >> 2);
 				else
-					memcpy (dest, src, dataToCopy);
+					memcpy(dest, src, dataToCopy);
 			}
-			d3dtext->Texture2d->UnlockRect (destMipmap);
+			d3dtext->Texture2d->UnlockRect(destMipmap);
 		}
 		else
 		{
@@ -1004,24 +979,25 @@ bool CDriverD3D::uploadTextureInternal (ITexture& tex, CRect& rect, uint8 destMi
 				const uint8 *src = &(tex.getPixels(srcMipmap)[0]);
 
 				// Fill the temp buffer with BGRA info
-				const sint lineWidth = x1-x0;
-				_TempBuffer.resize (((y1-y0)*lineWidth)<<2);
+				const sint lineWidth = x1 - x0;
+				_TempBuffer.resize(((y1 - y0) * lineWidth) << 2);
 				uint8 *dest = &(_TempBuffer[0]);
 				uint line;
-				for (line=y0; line<(uint)y1; line++)
+				for (line = y0; line < (uint)y1; line++)
 				{
-					copyRGBA2BGRA ((uint32*)dest, (uint32*)(src+line*lineSize+(x0<<2)), lineWidth);
-					dest += lineWidth<<2;
+					copyRGBA2BGRA((uint32 *)dest, (uint32 *)(src + line * lineSize + (x0 << 2)), lineWidth);
+					dest += lineWidth << 2;
 				}
 
 				// Upload the texture part
 				RECT srcRect;
 				srcRect.top = 0;
-				srcRect.bottom = y1-y0;
+				srcRect.bottom = y1 - y0;
 				srcRect.left = 0;
 				srcRect.right = lineWidth;
-				if (D3DXLoadSurfaceFromMemory (pDestSurface, NULL, &destRect, &(_TempBuffer[0]), srcFormat,
-					lineWidth<<2, NULL, &srcRect, D3DX_FILTER_NONE, 0) != D3D_OK)
+				if (D3DXLoadSurfaceFromMemory(pDestSurface, NULL, &destRect, &(_TempBuffer[0]), srcFormat,
+				        lineWidth << 2, NULL, &srcRect, D3DX_FILTER_NONE, 0)
+				    != D3D_OK)
 					return false;
 			}
 			else
@@ -1032,8 +1008,9 @@ bool CDriverD3D::uploadTextureInternal (ITexture& tex, CRect& rect, uint8 destMi
 				srcRect.left = x0;
 				srcRect.right = x1;
 				const uint8 *src = &(tex.getPixels(srcMipmap)[0]);
-				if (D3DXLoadSurfaceFromMemory (pDestSurface, NULL, &destRect, src, srcFormat,
-					lineSize, NULL, &srcRect, D3DX_FILTER_NONE, 0) != D3D_OK)
+				if (D3DXLoadSurfaceFromMemory(pDestSurface, NULL, &destRect, src, srcFormat,
+				        lineSize, NULL, &srcRect, D3DX_FILTER_NONE, 0)
+				    != D3D_OK)
 					return false;
 			}
 			pDestSurface->Release();
@@ -1045,14 +1022,14 @@ bool CDriverD3D::uploadTextureInternal (ITexture& tex, CRect& rect, uint8 destMi
 
 // ***************************************************************************
 
-bool CDriverD3D::isTextureExist(const ITexture&tex)
+bool CDriverD3D::isTextureExist(const ITexture &tex)
 {
 	H_AUTO_D3D(CDriverD3D_isTextureExist)
 	bool result;
 
 	// Create the shared Name.
-	std::string	name;
-	getTextureShareName (tex, name);
+	std::string name;
+	getTextureShareName(tex, name);
 
 	{
 		CSynchronized<TTexDrvInfoPtrMap>::CAccessor access(&_SyncTexDrvInfos);
@@ -1072,17 +1049,17 @@ void CDriverD3D::swapTextureHandle(ITexture &tex0, ITexture &tex1)
 	setupTexture(tex1);
 
 	// avoid any problem, disable all textures
-	for(uint stage=0; stage<inlGetNumTextStages() ; stage++)
+	for (uint stage = 0; stage < inlGetNumTextStages(); stage++)
 	{
-		setTexture (stage, (LPDIRECT3DBASETEXTURE9)NULL);
+		setTexture(stage, (LPDIRECT3DBASETEXTURE9)NULL);
 	}
 
 	// get the handle.
-	CTextureDrvInfosD3D	*t0= getTextureD3D(tex0);
-	CTextureDrvInfosD3D	*t1= getTextureD3D(tex1);
+	CTextureDrvInfosD3D *t0 = getTextureD3D(tex0);
+	CTextureDrvInfosD3D *t1 = getTextureD3D(tex1);
 
 	/* Swap contents. Can't swap directly the pointers cause would have to change all CTextureDrvShare which point on
-		Can't do swap(*t0, *t1), because must keep the correct _DriverIterator
+	    Can't do swap(*t0, *t1), because must keep the correct _DriverIterator
 	*/
 	swap(t0->Texture, t1->Texture);
 	swap(t0->Texture2d, t1->Texture2d);
@@ -1109,13 +1086,13 @@ uintptr_t CDriverD3D::getTextureHandle(const ITexture &tex)
 {
 	H_AUTO_D3D(CDriverD3D_getTextureHandle)
 	// If DrvShare not setuped
-	if(!tex.TextureDrvShare)
+	if (!tex.TextureDrvShare)
 		return 0;
 
-	CTextureDrvInfosD3D	*d3dtext= getTextureD3D(const_cast<ITexture&>(tex));
+	CTextureDrvInfosD3D *d3dtext = getTextureD3D(const_cast<ITexture &>(tex));
 
 	// If DrvInfo not setuped
-	if(!d3dtext)
+	if (!d3dtext)
 		return 0;
 
 	return (uintptr_t)(d3dtext->Texture);
@@ -1123,19 +1100,19 @@ uintptr_t CDriverD3D::getTextureHandle(const ITexture &tex)
 
 // ***************************************************************************
 
-bool CDriverD3D::setRenderTarget (ITexture *tex, uint32 /* x */, uint32 /* y */, uint32 /* width */, uint32 /* height */, uint32 mipmapLevel, uint32 cubeFace)
+bool CDriverD3D::setRenderTarget(ITexture *tex, uint32 /* x */, uint32 /* y */, uint32 /* width */, uint32 /* height */, uint32 mipmapLevel, uint32 cubeFace)
 {
-	H_AUTO_D3D(CDriverD3D_setRenderTarget )
+	H_AUTO_D3D(CDriverD3D_setRenderTarget)
 	// Check the texture is a render target
 	if (tex)
-		nlassertex (tex->getRenderTarget(), ("The texture must be a render target. Call ITexture::setRenderTarget(true)."));
+		nlassertex(tex->getRenderTarget(), ("The texture must be a render target. Call ITexture::setRenderTarget(true)."));
 
 	if (tex == NULL)
 	{
 		_InvertCullMode = false;
 		if (_BackBuffer)
 		{
-			setRenderTarget (_BackBuffer, NULL, 0, 0);
+			setRenderTarget(_BackBuffer, NULL, 0, 0);
 			_BackBuffer->Release();
 			_BackBuffer = NULL;
 		}
@@ -1145,8 +1122,8 @@ bool CDriverD3D::setRenderTarget (ITexture *tex, uint32 /* x */, uint32 /* y */,
 		_InvertCullMode = true;
 		if (!_BackBuffer)
 		{
-			updateRenderVariables ();
-			_DeviceInterface->GetRenderTarget (0, &_BackBuffer);
+			updateRenderVariables();
+			_DeviceInterface->GetRenderTarget(0, &_BackBuffer);
 		}
 
 		// Alread setuped ?
@@ -1163,7 +1140,7 @@ bool CDriverD3D::setRenderTarget (ITexture *tex, uint32 /* x */, uint32 /* y */,
 
 		// Setup the new texture
 		bool nTmp;
-		if (!setupTextureEx (*tex, false, nTmp, false))
+		if (!setupTextureEx(*tex, false, nTmp, false))
 			return false;
 
 		// Get texture info
@@ -1178,7 +1155,7 @@ bool CDriverD3D::setRenderTarget (ITexture *tex, uint32 /* x */, uint32 /* y */,
 			surfaceOk = d3dtext->TextureCube->GetCubeMapSurface(RemapCubeFaceTypeNeL2D3D[cubeFace], mipmapLevel, &pDestSurface) == D3D_OK;
 		if (surfaceOk)
 		{
-			setRenderTarget (pDestSurface, tex, (uint8)mipmapLevel, (uint8)cubeFace);
+			setRenderTarget(pDestSurface, tex, (uint8)mipmapLevel, (uint8)cubeFace);
 			pDestSurface->Release();
 		}
 		else
@@ -1190,11 +1167,11 @@ bool CDriverD3D::setRenderTarget (ITexture *tex, uint32 /* x */, uint32 /* y */,
 	{
 		if (_CullMode == CCW)
 		{
-			setRenderState (D3DRS_CULLMODE, _InvertCullMode?D3DCULL_CCW:D3DCULL_CW);
+			setRenderState(D3DRS_CULLMODE, _InvertCullMode ? D3DCULL_CCW : D3DCULL_CW);
 		}
 		else
 		{
-			setRenderState (D3DRS_CULLMODE, _InvertCullMode?D3DCULL_CW:D3DCULL_CCW);
+			setRenderState(D3DRS_CULLMODE, _InvertCullMode ? D3DCULL_CW : D3DCULL_CCW);
 		}
 	}
 
@@ -1208,8 +1185,8 @@ ITexture *CDriverD3D::getRenderTarget() const
 
 // ***************************************************************************
 
-bool CDriverD3D::copyTargetToTexture (ITexture * /* tex */, uint32 /* offsetx */, uint32 /* offsety */, uint32 /* x */, uint32 /* y */, uint32 /* width */,
-												uint32 /* height */, uint32 /* mipmapLevel */)
+bool CDriverD3D::copyTargetToTexture(ITexture * /* tex */, uint32 /* offsetx */, uint32 /* offsety */, uint32 /* x */, uint32 /* y */, uint32 /* width */,
+    uint32 /* height */, uint32 /* mipmapLevel */)
 {
 	H_AUTO_D3D(CDriverD3D_copyTargetToTexture)
 	return false;
@@ -1217,25 +1194,24 @@ bool CDriverD3D::copyTargetToTexture (ITexture * /* tex */, uint32 /* offsetx */
 
 // ***************************************************************************
 
-bool CDriverD3D::getRenderTargetSize (uint32 &width, uint32 &height)
+bool CDriverD3D::getRenderTargetSize(uint32 &width, uint32 &height)
 {
 	H_AUTO_D3D(CDriverD3D_getRenderTargetSize)
 	// Target is the frame buffer ?
 	if (_RenderTarget.Texture)
 	{
-		CTextureDrvInfosD3D*	d3dtext = getTextureD3D(*_RenderTarget.Texture);
-		width = max ((uint32)1, (uint32)(d3dtext->Width >> (_RenderTarget.Level)));
-		height = max ((uint32)1, (uint32)(d3dtext->Height >> (_RenderTarget.Level)));
+		CTextureDrvInfosD3D *d3dtext = getTextureD3D(*_RenderTarget.Texture);
+		width = max((uint32)1, (uint32)(d3dtext->Width >> (_RenderTarget.Level)));
+		height = max((uint32)1, (uint32)(d3dtext->Height >> (_RenderTarget.Level)));
 		return true;
 	}
 	else
 	{
-		getWindowSize (width, height);
+		getWindowSize(width, height);
 		return true;
 	}
 }
 
 // ***************************************************************************
-
 
 } // NL3D

@@ -25,18 +25,20 @@
 
 typedef void CURL;
 
-namespace NLWEB
-{
+namespace NLWEB {
 
 /**
-	* HTTP client with SSL capabilities
-	*/
+ * HTTP client with SSL capabilities
+ */
 class CCurlHttpClient
 {
 public:
-
 	/// Constructor
-	CCurlHttpClient() : _Curl(NULL), m_Verify(true) {}
+	CCurlHttpClient()
+	    : _Curl(NULL)
+	    , m_Verify(true)
+	{
+	}
 
 	/// Connect to an http server (string by val is intended). If you specify a whole URL, an attempt will be made to determine the server.
 	bool connect(const std::string &server);
@@ -68,7 +70,6 @@ public:
 	const char *lastError() { return &m_ErrorBuf[0]; }
 
 protected:
-
 	/// Helper
 	bool sendRequest(const std::string &methodWB, const std::string &url, const std::string &cookieName, const std::string &cookieValue, const std::string &postParams, bool verbose);
 
@@ -76,16 +77,15 @@ protected:
 	void pushReceivedData(uint8 *buffer, uint size);
 
 	static size_t writeDataFromCurl(void *buffer, size_t size, size_t nmemb, void *pHttpClient);
-private:
 
+private:
 	CURL *_Curl;
 
-	std::vector<uint8>	_ReceiveBuffer;
-	std::string			_Auth; // must be kept here because curl only stores the char pointer
+	std::vector<uint8> _ReceiveBuffer;
+	std::string _Auth; // must be kept here because curl only stores the char pointer
 
 	std::vector<char> m_ErrorBuf;
 	bool m_Verify;
-
 };
 
 extern CCurlHttpClient CurlHttpClient;

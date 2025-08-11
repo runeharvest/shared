@@ -20,8 +20,7 @@
 #include "nel/misc/types_nl.h"
 #include "nel/misc/smart_ptr.h"
 
-namespace NLGEORGES
-{
+namespace NLGEORGES {
 
 /**
  * Georges type interface
@@ -33,13 +32,12 @@ namespace NLGEORGES
 class UType : public NLMISC::CRefCount
 {
 public:
-
-  virtual ~UType() { }
+	virtual ~UType() { }
 
 	// ** Type
 	enum TType
 	{
-		UnsignedInt=0,
+		UnsignedInt = 0,
 		SignedInt,
 		Double,
 		String,
@@ -48,61 +46,59 @@ public:
 	};
 
 	/**
-	  * Get the type of this type.
-	  */
-	virtual TType				getType () const = 0;
+	 * Get the type of this type.
+	 */
+	virtual TType getType() const = 0;
 
 	/**
-	  * Get the default value of this type.
-	  */
-	virtual const std::string	&getDefault () const = 0;
+	 * Get the default value of this type.
+	 */
+	virtual const std::string &getDefault() const = 0;
 
 	/**
-	  * Get the min value of this type.
-	  */
-	virtual const std::string	&getMin () const = 0;
+	 * Get the min value of this type.
+	 */
+	virtual const std::string &getMin() const = 0;
 
 	/**
-	  * Get the max value of this type.
-	  */
-	virtual const std::string	&getMax () const = 0;
+	 * Get the max value of this type.
+	 */
+	virtual const std::string &getMax() const = 0;
 
 	/**
-	  * Get the increment value of this type.
-	  */
-	virtual const std::string	&getIncrement () const = 0;
+	 * Get the increment value of this type.
+	 */
+	virtual const std::string &getIncrement() const = 0;
 
 	/**
-	  * Get the definition count for this type.
-	  */
-	virtual uint				getNumDefinition () const = 0;
+	 * Get the definition count for this type.
+	 */
+	virtual uint getNumDefinition() const = 0;
 
 	/**
-	  * Get a definition for this type.
-	  *
-	  * index is the index of the defnition you want to get.
-	  * If the method returns true, label will be filled with
-	  * the definition label and value will be filled with the
-	  * defnition value.
-	  * The method returns false if the index is invalid. In this
-	  * case, label and value are not changed.
-	  */
-	virtual bool				getDefinition (uint index, std::string &label, std::string &value) const = 0;
+	 * Get a definition for this type.
+	 *
+	 * index is the index of the defnition you want to get.
+	 * If the method returns true, label will be filled with
+	 * the definition label and value will be filled with the
+	 * defnition value.
+	 * The method returns false if the index is invalid. In this
+	 * case, label and value are not changed.
+	 */
+	virtual bool getDefinition(uint index, std::string &label, std::string &value) const = 0;
 
 	/**
-	  * Get the comments of type.
-	  */
-	virtual const std::string	&getComment () const = 0;
+	 * Get the comments of type.
+	 */
+	virtual const std::string &getComment() const = 0;
 
 	/**
-	  * Get dependency files
-	  */
-	virtual void	getDependencies (std::set<std::string> &dependencies) const = 0;
+	 * Get dependency files
+	 */
+	virtual void getDependencies(std::set<std::string> &dependencies) const = 0;
 };
 
-
 } // NLGEORGES
-
 
 #endif // NL_U_TYPE_H
 

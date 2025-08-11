@@ -22,18 +22,13 @@
 #include "nel/misc/plane.h"
 #include "nel/3d/trav_scene.h"
 
+namespace NL3D {
 
-namespace NL3D
-{
-
-
-using NLMISC::CVector;
-using NLMISC::CPlane;
 using NLMISC::CMatrix;
+using NLMISC::CPlane;
+using NLMISC::CVector;
 
-
-class	CTransform;
-
+class CTransform;
 
 // ***************************************************************************
 /**
@@ -48,54 +43,46 @@ class	CTransform;
 class CAnimDetailTrav : public CTraversal
 {
 public:
-
 	/// Constructor
 	CAnimDetailTrav();
-
 
 	/// \name ITrav/ITravScene Implementation.
 	//@{
 	/** render after Clip and before light.
 	 * This order is important for possible lights sticked to bones of skeletons.
 	 */
-	void				traverse();
+	void traverse();
 	//@}
-
 
 public:
 	// ONLY FOR MODEL TRAVERSING.
 
-	sint64		CurrentDate;	// The current date of the traversal, useful for evaldetail just one time..
-
+	sint64 CurrentDate; // The current date of the traversal, useful for evaldetail just one time..
 
 	// For clipTrav. cleared at beginning of CClipTrav::traverse
-	void				clearVisibleList();
+	void clearVisibleList();
 
 	// For ClipTrav only. NB: list is cleared at beginning of traverse(). NB: only CTransform are supported
-	void				addVisibleModel(CTransform *model)
+	void addVisibleModel(CTransform *model)
 	{
-		_VisibleList[_CurrentNumVisibleModels]= model;
+		_VisibleList[_CurrentNumVisibleModels] = model;
 		_CurrentNumVisibleModels++;
 	}
 
 	// for createModel().
-	void				reserveVisibleList(uint numModels);
+	void reserveVisibleList(uint numModels);
 
-
-// ********************
+	// ********************
 private:
 	/// traverse the model recursively, following Hrc hierarchy
-	void				traverseHrcRecurs(CTransform *model);
+	void traverseHrcRecurs(CTransform *model);
 
 	// traverse list of model visible and useful to animDetail.
-	std::vector<CTransform*>	_VisibleList;
-	uint32						_CurrentNumVisibleModels;
-
+	std::vector<CTransform *> _VisibleList;
+	uint32 _CurrentNumVisibleModels;
 };
 
-
 } // NL3D
-
 
 #endif // NL_ANIM_DETAIL_TRAV_H
 

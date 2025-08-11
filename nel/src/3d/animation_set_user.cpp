@@ -23,20 +23,19 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 
-UAnimation *CAnimationSetUser::getAnimation (uint animationId)
+UAnimation *CAnimationSetUser::getAnimation(uint animationId)
 {
 
-	return _AnimationSet->getAnimation (animationId);
+	return _AnimationSet->getAnimation(animationId);
 }
 
 // ***************************************************************************
 
-const CAnimationSet* CAnimationSetUser::getAnimationSet () const
+const CAnimationSet *CAnimationSetUser::getAnimationSet() const
 {
 
 	return _AnimationSet;
@@ -55,16 +54,15 @@ uint CAnimationSetUser::getAnimationSampleDivisor() const
 }
 
 // ***************************************************************************
-void CAnimationSetUser::build ()
+void CAnimationSetUser::build()
 {
 
 	// build
-	_AnimationSet->build ();
+	_AnimationSet->build();
 
 	// and preload all SSS shapes that can be spawned during animation
 	nlassert(_Owner->getDriver() && _Owner->getShapeBank());
-	_AnimationSet->preloadSSSShapes(*_Owner->getDriver(), ((CShapeBankUser*)_Owner->getShapeBank())->_ShapeBank);
+	_AnimationSet->preloadSSSShapes(*_Owner->getDriver(), ((CShapeBankUser *)_Owner->getShapeBank())->_ShapeBank);
 }
-
 
 } // NL3D

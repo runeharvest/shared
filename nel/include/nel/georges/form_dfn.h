@@ -27,16 +27,15 @@
 #include "header.h"
 #include "type.h"
 
-bool convertDfnFile (const std::string &oldFileName, const std::string &newFileName);
+bool convertDfnFile(const std::string &oldFileName, const std::string &newFileName);
 
-namespace NLGEORGES
-{
+namespace NLGEORGES {
 
 class CFormLoader;
 
 /**
-  * This class is the defnition for a family of forms.
-  */
+ * This class is the defnition for a family of forms.
+ */
 class CFormDfn : public UFormDfn
 {
 	friend class CForm;
@@ -44,16 +43,16 @@ class CFormDfn : public UFormDfn
 	friend class CFormElm;
 	friend class CFormLoader;
 	friend class CFormElmStruct;
-	friend bool convertDfnFile (const std::string &oldFileName, const std::string &newFileName);
-public:
+	friend bool convertDfnFile(const std::string &oldFileName, const std::string &newFileName);
 
+public:
 	// Default cstr
-	CFormDfn ()
+	CFormDfn()
 	{
 		Round = 0xffffffff;
 	}
 
-	virtual ~CFormDfn () { }
+	virtual ~CFormDfn() { }
 
 	// A form definition entry
 	class CEntry
@@ -63,95 +62,95 @@ public:
 		friend class CFormElm;
 		friend class CFormDfn;
 		friend class CFormElmStruct;
-		friend bool convertDfnFile (const std::string &oldFileName, const std::string &newFileName);
-	public:
+		friend bool convertDfnFile(const std::string &oldFileName, const std::string &newFileName);
 
-		CEntry ()
+	public:
+		CEntry()
 		{
 			TypeElement = EntryType;
 			FilenameExt = "*.*";
 		}
 
 		// Get the type
-		class CType					*getTypePtr ();
+		class CType *getTypePtr();
 
 		// Get the type
-		const CType					*getTypePtr () const;
+		const CType *getTypePtr() const;
 
 		// Get the dfn
-		CFormDfn					*getDfnPtr ();
+		CFormDfn *getDfnPtr();
 
 		// Get the dfn
-		const CFormDfn				*getDfnPtr () const;
+		const CFormDfn *getDfnPtr() const;
 
 		// Get type flag
-		TEntryType					getType () const;
+		TEntryType getType() const;
 
 		// Set as a type
-		void						setType (CFormLoader &loader, const std::string &filename);
+		void setType(CFormLoader &loader, const std::string &filename);
 
-		void						setType (TEntryType type);
+		void setType(TEntryType type);
 
 		// Set as a dfn
-		void						setDfn (CFormLoader &loader, const std::string &filename);
+		void setDfn(CFormLoader &loader, const std::string &filename);
 
 		// Set as a dfn pointer
-		void						setDfnPointer ();
+		void setDfnPointer();
 
 		// Get element Name
-		const std::string			&getName () const;
+		const std::string &getName() const;
 
 		// Set element Name
-		void						setName (const std::string &name);
+		void setName(const std::string &name);
 
 		// Get the filename
-		const std::string			&getFilename() const;
+		const std::string &getFilename() const;
 
 		// Get the filename extension
-		const std::string			&getFilenameExt() const;
+		const std::string &getFilenameExt() const;
 
 		// Set the filename
-		void						setFilename (const std::string &def);
+		void setFilename(const std::string &def);
 
 		// Set the filename extension
-		void						setFilenameExt (const std::string &ext);
+		void setFilenameExt(const std::string &ext);
 
 		// Get default value
-		const std::string			&getDefault () const;
+		const std::string &getDefault() const;
 
 		// Set default value
-		void						setDefault (const std::string &def);
+		void setDefault(const std::string &def);
 
 		// Set array flag
-		void						setArrayFlag (bool flag);
+		void setArrayFlag(bool flag);
 
 		// Get array flag
-		bool						getArrayFlag () const;
+		bool getArrayFlag() const;
 
 	private:
 		// Entry name
-		std::string					Name;
+		std::string Name;
 
 		// What is the type of the element ?
-		TEntryType					TypeElement;
+		TEntryType TypeElement;
 
 		// Is an array of this type ?
-		bool						Array;
+		bool Array;
 
 		// The filename
-		std::string					Filename;
+		std::string Filename;
 
 		// The default value for atom
-		std::string					Default;
+		std::string Default;
 
 		// The filename
-		std::string					FilenameExt;
+		std::string FilenameExt;
 
 		// Smart ptr on the type or the dfn
-		NLMISC::CSmartPtr<CType>	Type;
+		NLMISC::CSmartPtr<CType> Type;
 
 		// Smart ptr on the type or the dfn
-		NLMISC::CSmartPtr<CFormDfn>	Dfn;
+		NLMISC::CSmartPtr<CFormDfn> Dfn;
 	};
 
 	// Parent DFN
@@ -159,100 +158,100 @@ public:
 	{
 	public:
 		// The parent filename
-		std::string						ParentFilename;
+		std::string ParentFilename;
 
 		// The parent smart
-		NLMISC::CSmartPtr<CFormDfn>	Parent;
+		NLMISC::CSmartPtr<CFormDfn> Parent;
 	};
 
-	void							addEntry( const std::string &name );
+	void addEntry(const std::string &name);
 
-	void							removeEntry( uint idx );
+	void removeEntry(uint idx);
 
 	// ** IO functions
-	void							write (xmlDocPtr root, const std::string &filename);
+	void write(xmlDocPtr root, const std::string &filename);
 
 	// Count parent DFN
-	uint							countParentDfn (uint32 round=0) const;
+	uint countParentDfn(uint32 round = 0) const;
 
 	// Get parent DFN
-	void							getParentDfn (std::vector<CFormDfn*> &array, uint32 round=0);
+	void getParentDfn(std::vector<CFormDfn *> &array, uint32 round = 0);
 
 	// Get parent DFN
-	void							getParentDfn (std::vector<const CFormDfn*> &array, uint32 round=0) const;
+	void getParentDfn(std::vector<const CFormDfn *> &array, uint32 round = 0) const;
 
 	// Get num parent
-	uint							getNumParent () const;
+	uint getNumParent() const;
 
 	// Get parent count
-	void							setNumParent (uint size);
+	void setNumParent(uint size);
 
 	// Set a parent
-	void							setParent (uint parent, CFormLoader &loader, const std::string &filename);
+	void setParent(uint parent, CFormLoader &loader, const std::string &filename);
 
 	// Get a parent
-	CFormDfn						*getParent (uint parent) const;
+	CFormDfn *getParent(uint parent) const;
 
 	// Get a parent string
-	const std::string				&getParentFilename (uint parent) const;
+	const std::string &getParentFilename(uint parent) const;
 
 	// Get num entry
-	uint							getNumEntry () const;
+	uint getNumEntry() const;
 
 	// Set num entry
-	void							setNumEntry (uint size);
+	void setNumEntry(uint size);
 
 	// Get an entry
-	const CEntry					&getEntry (uint entry) const;
+	const CEntry &getEntry(uint entry) const;
 
 	// Get an entry
-	CEntry							&getEntry (uint entry);
+	CEntry &getEntry(uint entry);
 
 	// Form UFormDfn
-	bool							getEntryType (uint entry, TEntryType &type, bool &array) const;
-	bool							getEntryName (uint entry, std::string &name) const;
-	bool							getEntryIndexByName (uint &entry, const	std::string &name) const;
-	bool							getEntryDfn (uint entry, UFormDfn **dfn);
+	bool getEntryType(uint entry, TEntryType &type, bool &array) const;
+	bool getEntryName(uint entry, std::string &name) const;
+	bool getEntryIndexByName(uint &entry, const std::string &name) const;
+	bool getEntryDfn(uint entry, UFormDfn **dfn);
 
-	bool							getEntryByName			(const std::string &name, CFormDfn::CEntry **entry);
-	bool							getEntryDfnByName		(const std::string &name, UFormDfn **dfn);
-	bool							isAnArrayEntryByName	(const std::string &name)	const;
+	bool getEntryByName(const std::string &name, CFormDfn::CEntry **entry);
+	bool getEntryDfnByName(const std::string &name, UFormDfn **dfn);
+	bool isAnArrayEntryByName(const std::string &name) const;
 
-	bool							getEntryType (uint entry, UType **type);
-	uint							getNumParents () const;
-	bool							getParent (uint parent, UFormDfn **parentRet);
-	const std::string				&getComment () const;
-	bool							getEntryFilename (uint entry, std::string& filename) const;
-	bool							getEntryFilenameExt (uint entry, std::string& filename) const;
-	bool							getParentFilename (uint parent, std::string &filename) const;
-	void							getDependencies (std::set<std::string> &dependencies) const;
+	bool getEntryType(uint entry, UType **type);
+	uint getNumParents() const;
+	bool getParent(uint parent, UFormDfn **parentRet);
+	const std::string &getComment() const;
+	bool getEntryFilename(uint entry, std::string &filename) const;
+	bool getEntryFilenameExt(uint entry, std::string &filename) const;
+	bool getParentFilename(uint parent, std::string &filename) const;
+	void getDependencies(std::set<std::string> &dependencies) const;
 
 	// Get the sub dfn of a dfn
-	CFormDfn						*getSubDfn (uint index, uint &dfnIndex);
-	const CFormDfn					*getSubDfn (uint index, uint &dfnIndex) const;
+	CFormDfn *getSubDfn(uint index, uint &dfnIndex);
+	const CFormDfn *getSubDfn(uint index, uint &dfnIndex) const;
 
 	// Header
-	CFileHeader						Header;
+	CFileHeader Header;
 
 	// Error handling
-	void							warning (bool exception, const std::string &function, const char *format, ... ) const;
+	void warning(bool exception, const std::string &function, const char *format, ...) const;
 
 private:
 	// The parents array
-	std::vector<CParent>			Parents;
+	std::vector<CParent> Parents;
 
 	// A vector of entries
-	std::vector<CEntry>				Entries;
+	std::vector<CEntry> Entries;
 
 	// Recursive call count
-	mutable uint32					Round;
+	mutable uint32 Round;
 
 	// The form DFN filename
-	std::string						_Filename;
+	std::string _Filename;
 
 private:
 	// Read method called by the form loader
-	void							read (xmlNodePtr doc, CFormLoader &loader, bool forceLoad, const std::string &filename);
+	void read(xmlNodePtr doc, CFormLoader &loader, bool forceLoad, const std::string &filename);
 };
 
 } // NLGEORGES

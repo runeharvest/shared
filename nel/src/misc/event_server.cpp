@@ -22,55 +22,51 @@
 #include "nel/misc/events.h"
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
 namespace NLMISC {
 
-
 /*------------------------------------------------------------------*\
-							CEventServer()
+                            CEventServer()
 \*------------------------------------------------------------------*/
 CEventServer::CEventServer()
 {
-	_Pumping= false;
+	_Pumping = false;
 }
 
 CEventServer::~CEventServer()
 {
-	std::list<CEvent*>::iterator itev = _Events.begin();
-	while(itev!=_Events.end())
+	std::list<CEvent *>::iterator itev = _Events.begin();
+	while (itev != _Events.end())
 	{
 		delete *itev;
-		itev=_Events.erase (itev);
+		itev = _Events.erase(itev);
 	}
 }
 
-
 /*------------------------------------------------------------------*\
-							postEvent()
+                            postEvent()
 \*------------------------------------------------------------------*/
-void CEventServer::postEvent(CEvent * event)
+void CEventServer::postEvent(CEvent *event)
 {
 	_Events.push_back(event);
 }
 
-
-
 /*------------------------------------------------------------------*\
-							pump()
+                            pump()
 \*------------------------------------------------------------------*/
 void CEventServer::pump(bool allWindows)
 {
 	// Avoid recurse (can arise if the process of an event decide to pump the server again....)
 	nlassert(!_Pumping);
-	_Pumping= true;
+	_Pumping = true;
 
 	// **** submit emitters events
-	std::list<IEventEmitter*>::iterator item = _Emitters.begin();
+	std::list<IEventEmitter *>::iterator item = _Emitters.begin();
 
 	// getting events from emitters
-	while(item!=_Emitters.end())
+	while (item != _Emitters.end())
 	{
 		// ask emitters to submit their events to server
 		(*item)->submitEvents(*this, allWindows);
@@ -78,34 +74,33 @@ void CEventServer::pump(bool allWindows)
 	}
 
 	// **** process to listeners
-	std::list<CEvent*>::iterator itev = _Events.begin();
-	while(itev!=_Events.end())
+	std::list<CEvent *>::iterator itev = _Events.begin();
+	while (itev != _Events.end())
 	{
 		// pump event
-		bool bDelete=pumpEvent(*itev);
+		bool bDelete = pumpEvent(*itev);
 		if (bDelete)
 			delete *itev;
-		itev=_Events.erase (itev);
+		itev = _Events.erase(itev);
 	}
 
 	// end of pumping
-	_Pumping= false;
+	_Pumping = false;
 }
 
-
 /*------------------------------------------------------------------*\
-							pumpEvent()
+                            pumpEvent()
 \*------------------------------------------------------------------*/
-bool CEventServer::pumpEvent(CEvent* event)
+bool CEventServer::pumpEvent(CEvent *event)
 {
 	// taking id
-	uint64 id = (uint64) *event;
+	uint64 id = (uint64)*event;
 
 	// looking for the first occurence of id
 	mapListener::iterator it = _Listeners.find(id);
 
 	// calling every callbacks
-	while(it!=_Listeners.end() && (uint64)(*it).first == id)
+	while (it != _Listeners.end() && (uint64)(*it).first == id)
 	{
 		IEventListener *a = (IEventListener *)((*it).second);
 		a->process(*event);
@@ -116,29 +111,26 @@ bool CEventServer::pumpEvent(CEvent* event)
 	return true;
 }
 
-
-
 /*------------------------------------------------------------------*\
-							addListener()
+                            addListener()
 \*------------------------------------------------------------------*/
-void CEventServer::addListener(CClassId id, IEventListener* listener )
+void CEventServer::addListener(CClassId id, IEventListener *listener)
 {
-	_Listeners.insert( mapListener::value_type(id, listener));
+	_Listeners.insert(mapListener::value_type(id, listener));
 }
 
-
 /*------------------------------------------------------------------*\
-							removeListener()
+                            removeListener()
 \*------------------------------------------------------------------*/
-void CEventServer::removeListener(CClassId id, IEventListener* listener )
+void CEventServer::removeListener(CClassId id, IEventListener *listener)
 {
 	// looking for the first occurence of id
 	mapListener::iterator it = _Listeners.find(id);
 
 	// looking for occurence with the right callback
-	while(it!=_Listeners.end() && (*it).first == id)
+	while (it != _Listeners.end() && (*it).first == id)
 	{
-		if((*it).second==listener)
+		if ((*it).second == listener)
 		{
 			// erasing pair
 			_Listeners.erase(it);
@@ -148,23 +140,20 @@ void CEventServer::removeListener(CClassId id, IEventListener* listener )
 	}
 }
 
-
 /*------------------------------------------------------------------*\
-							addEmitter()
+                            addEmitter()
 \*------------------------------------------------------------------*/
-void CEventServer::addEmitter(IEventEmitter * emitter)
+void CEventServer::addEmitter(IEventEmitter *emitter)
 {
 	_Emitters.push_back(emitter);
 }
 
-
 /*------------------------------------------------------------------*\
-							removeEmitter()
+                            removeEmitter()
 \*------------------------------------------------------------------*/
-void CEventServer::removeEmitter(IEventEmitter * emitter)
+void CEventServer::removeEmitter(IEventEmitter *emitter)
 {
 	_Emitters.remove(emitter);
 }
-
 
 } // NLMISC

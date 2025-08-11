@@ -23,19 +23,18 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
+namespace NL3D {
+void CPSUtil::registerForces()
 {
-	void CPSUtil::registerForces()
-	{
-			NLMISC_REGISTER_CLASS(CPSSpring);
-		NLMISC_REGISTER_CLASS(CPSDirectionnalForce);
-		NLMISC_REGISTER_CLASS(CPSGravity);
-		NLMISC_REGISTER_CLASS(CPSBrownianForce);
-		NLMISC_REGISTER_CLASS(CPSCentralGravity);
-		NLMISC_REGISTER_CLASS(CPSFluidFriction);
-		NLMISC_REGISTER_CLASS(CPSTurbul);
-		NLMISC_REGISTER_CLASS(CPSCylindricVortex);
-		NLMISC_REGISTER_CLASS(CPSMagneticForce);
-		CPSBrownianForce::initPrecalc();
-	}
+	NLMISC_REGISTER_CLASS(CPSSpring);
+	NLMISC_REGISTER_CLASS(CPSDirectionnalForce);
+	NLMISC_REGISTER_CLASS(CPSGravity);
+	NLMISC_REGISTER_CLASS(CPSBrownianForce);
+	NLMISC_REGISTER_CLASS(CPSCentralGravity);
+	NLMISC_REGISTER_CLASS(CPSFluidFriction);
+	NLMISC_REGISTER_CLASS(CPSTurbul);
+	NLMISC_REGISTER_CLASS(CPSCylindricVortex);
+	NLMISC_REGISTER_CLASS(CPSMagneticForce);
+	CPSBrownianForce::initPrecalc();
+}
 } // NL3D

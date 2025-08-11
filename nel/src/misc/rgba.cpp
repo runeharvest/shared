@@ -25,13 +25,13 @@
 #include "nel/misc/common.h"
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
 namespace NLMISC {
 
 #ifdef NL_NO_ASM
-	#define DISABLE_MMX_OPTIM
+#define DISABLE_MMX_OPTIM
 #endif
 
 // ***************************************************************************
@@ -43,23 +43,23 @@ namespace NLMISC {
 // predifined colors
 
 /// some colors
-const CRGBA CRGBA::Black(0, 0, 0) ;
-const CRGBA CRGBA::Red(255, 0, 0) ;
-const CRGBA CRGBA::Green(0, 255, 0) ;
-const CRGBA CRGBA::Yellow(255, 255, 0) ;
-const CRGBA CRGBA::Blue(0, 0, 255) ;
-const CRGBA CRGBA::Magenta(255, 0, 255) ;
-const CRGBA CRGBA::Cyan(0, 255, 255) ;
-const CRGBA CRGBA::White(255, 255, 255) ;
+const CRGBA CRGBA::Black(0, 0, 0);
+const CRGBA CRGBA::Red(255, 0, 0);
+const CRGBA CRGBA::Green(0, 255, 0);
+const CRGBA CRGBA::Yellow(255, 255, 0);
+const CRGBA CRGBA::Blue(0, 0, 255);
+const CRGBA CRGBA::Magenta(255, 0, 255);
+const CRGBA CRGBA::Cyan(0, 255, 255);
+const CRGBA CRGBA::White(255, 255, 255);
 const CRGBA CRGBA::Transparent(0, 0, 0, 0);
 
 // ***************************************************************************
 void CRGBA::serial(NLMISC::IStream &f)
 {
-	f.serial (R);
-	f.serial (G);
-	f.serial (B);
-	f.serial (A);
+	f.serial(R);
+	f.serial(G);
+	f.serial(B);
+	f.serial(A);
 }
 // ***************************************************************************
 void CRGBA::set(uint8 r, uint8 g, uint8 b, uint8 a)
@@ -72,11 +72,11 @@ void CRGBA::set(uint8 r, uint8 g, uint8 b, uint8 a)
 // ***************************************************************************
 uint8 CRGBA::toGray() const
 {
-	return (R*11+G*16+B*5)/32;
+	return (R * 11 + G * 16 + B * 5) / 32;
 }
 
-#ifdef 	NL_OS_WINDOWS
-	#pragma warning(disable : 4731) /* frame pointer register 'ebp' modified by inline assembly code */
+#ifdef NL_OS_WINDOWS
+#pragma warning(disable : 4731) /* frame pointer register 'ebp' modified by inline assembly code */
 #endif
 
 // ***************************************************************************
@@ -86,15 +86,15 @@ void CRGBA::addColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, uint nu
 #if defined(NL_OS_WINDOWS) && !defined(DISABLE_MMX_OPTIM)
 	if (!CSystemInfo::hasMMX())
 #endif
-	{   // unoptimized version
+	{ // unoptimized version
 		if (dup == 1)
 		{
 			while (numColors--)
 			{
 				dest->add(*src1, *src2);
-				dest = (CRGBA *) ((uint8 *) dest + destStride);
-				src1 = (CRGBA *) ((uint8 *) src1 + srcStride);
-				src2 = (CRGBA *) ((uint8 *) src2 + srcStride);
+				dest = (CRGBA *)((uint8 *)dest + destStride);
+				src1 = (CRGBA *)((uint8 *)src1 + srcStride);
+				src2 = (CRGBA *)((uint8 *)src2 + srcStride);
 			}
 		}
 		else
@@ -104,15 +104,15 @@ void CRGBA::addColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, uint nu
 				while (numColors--)
 				{
 					dest->add(*src1, *src2);
-					* (CRGBA *) ((uint8 *) dest + destStride) = *dest;
-					dest = (CRGBA *) ((uint8 *) dest + destStride);
-					* (CRGBA *) ((uint8 *) dest + destStride) = *dest;
-					dest = (CRGBA *) ((uint8 *) dest + destStride);
-					* (CRGBA *) ((uint8 *) dest + destStride) = *dest;
-					dest = (CRGBA *) ((uint8 *) dest + (destStride << 1));
+					*(CRGBA *)((uint8 *)dest + destStride) = *dest;
+					dest = (CRGBA *)((uint8 *)dest + destStride);
+					*(CRGBA *)((uint8 *)dest + destStride) = *dest;
+					dest = (CRGBA *)((uint8 *)dest + destStride);
+					*(CRGBA *)((uint8 *)dest + destStride) = *dest;
+					dest = (CRGBA *)((uint8 *)dest + (destStride << 1));
 
-					src1 = (CRGBA *) ((uint8 *) src1 + srcStride);
-					src2 = (CRGBA *) ((uint8 *) src2 + srcStride);
+					src1 = (CRGBA *)((uint8 *)src1 + srcStride);
+					src2 = (CRGBA *)((uint8 *)src2 + srcStride);
 				}
 			}
 			else
@@ -124,14 +124,13 @@ void CRGBA::addColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, uint nu
 					uint k = dup - 1;
 					do
 					{
-						* (CRGBA *) ((uint8 *) dest + destStride) = *dest;
-						dest = (CRGBA *) ((uint8 *) dest + destStride);
-					}
-					while (--k);
+						*(CRGBA *)((uint8 *)dest + destStride) = *dest;
+						dest = (CRGBA *)((uint8 *)dest + destStride);
+					} while (--k);
 
-					dest = (CRGBA *) ((uint8 *) dest + destStride);
-					src1 = (CRGBA *) ((uint8 *) src1 + srcStride);
-					src2 = (CRGBA *) ((uint8 *) src2 + srcStride);
+					dest = (CRGBA *)((uint8 *)dest + destStride);
+					src1 = (CRGBA *)((uint8 *)src1 + srcStride);
+					src2 = (CRGBA *)((uint8 *)src2 + srcStride);
 				}
 			}
 		}
@@ -243,18 +242,18 @@ void CRGBA::addColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, uint nu
 // ***************************************************************************
 void CRGBA::modulateColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, uint numColors, uint srcStride, uint destStride, uint dup)
 {
-#if 	defined(NL_OS_WINDOWS) && !defined(DISABLE_MMX_OPTIM)
+#if defined(NL_OS_WINDOWS) && !defined(DISABLE_MMX_OPTIM)
 	if (!CSystemInfo::hasMMX())
 #endif
-	{   // unoptimized version
+	{ // unoptimized version
 		if (dup == 1)
 		{
 			while (numColors--)
 			{
 				dest->modulateFromColor(*src1, *src2);
-				dest = (CRGBA *) ((uint8 *) dest + destStride);
-				src1 = (CRGBA *) ((uint8 *) src1 + srcStride);
-				src2 = (CRGBA *) ((uint8 *) src2 + srcStride);
+				dest = (CRGBA *)((uint8 *)dest + destStride);
+				src1 = (CRGBA *)((uint8 *)src1 + srcStride);
+				src2 = (CRGBA *)((uint8 *)src2 + srcStride);
 			}
 		}
 		else
@@ -264,15 +263,15 @@ void CRGBA::modulateColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, ui
 				while (numColors--)
 				{
 					dest->modulateFromColor(*src1, *src2);
-					* (CRGBA *) ((uint8 *) dest + destStride) = *dest;
-					dest = (CRGBA *) ((uint8 *) dest + destStride);
-					* (CRGBA *) ((uint8 *) dest + destStride) = *dest;
-					dest = (CRGBA *) ((uint8 *) dest + destStride);
-					* (CRGBA *) ((uint8 *) dest + destStride) = *dest;
-					dest = (CRGBA *) ((uint8 *) dest + (destStride << 1));
+					*(CRGBA *)((uint8 *)dest + destStride) = *dest;
+					dest = (CRGBA *)((uint8 *)dest + destStride);
+					*(CRGBA *)((uint8 *)dest + destStride) = *dest;
+					dest = (CRGBA *)((uint8 *)dest + destStride);
+					*(CRGBA *)((uint8 *)dest + destStride) = *dest;
+					dest = (CRGBA *)((uint8 *)dest + (destStride << 1));
 
-					src1 = (CRGBA *) ((uint8 *) src1 + srcStride);
-					src2 = (CRGBA *) ((uint8 *) src2 + srcStride);
+					src1 = (CRGBA *)((uint8 *)src1 + srcStride);
+					src2 = (CRGBA *)((uint8 *)src2 + srcStride);
 				}
 			}
 			else
@@ -284,19 +283,18 @@ void CRGBA::modulateColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, ui
 					uint k = dup - 1;
 					do
 					{
-						* (CRGBA *) ((uint8 *) dest + destStride) = *dest;
-						dest = (CRGBA *) ((uint8 *) dest + destStride);
-					}
-					while (--k);
+						*(CRGBA *)((uint8 *)dest + destStride) = *dest;
+						dest = (CRGBA *)((uint8 *)dest + destStride);
+					} while (--k);
 
-					dest = (CRGBA *) ((uint8 *) dest + destStride);
-					src1 = (CRGBA *) ((uint8 *) src1 + srcStride);
-					src2 = (CRGBA *) ((uint8 *) src2 + srcStride);
+					dest = (CRGBA *)((uint8 *)dest + destStride);
+					src1 = (CRGBA *)((uint8 *)src1 + srcStride);
+					src2 = (CRGBA *)((uint8 *)src2 + srcStride);
 				}
 			}
 		}
 	}
-#if 	defined(NL_OS_WINDOWS) && !defined(DISABLE_MMX_OPTIM)
+#if defined(NL_OS_WINDOWS) && !defined(DISABLE_MMX_OPTIM)
 	else // optimized mmx version
 	{
 		uint64 blank = 0;
@@ -423,15 +421,15 @@ void CRGBA::subtractColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, ui
 #if defined(NL_OS_WINDOWS) && !defined(DISABLE_MMX_OPTIM)
 	if (!CSystemInfo::hasMMX())
 #endif
-	{   // unoptimized version
+	{ // unoptimized version
 		if (dup == 1)
 		{
 			while (numColors--)
 			{
 				dest->sub(*src1, *src2);
-				dest = (CRGBA *) ((uint8 *) dest + destStride);
-				src1 = (CRGBA *) ((uint8 *) src1 + srcStride);
-				src2 = (CRGBA *) ((uint8 *) src2 + srcStride);
+				dest = (CRGBA *)((uint8 *)dest + destStride);
+				src1 = (CRGBA *)((uint8 *)src1 + srcStride);
+				src2 = (CRGBA *)((uint8 *)src2 + srcStride);
 			}
 		}
 		else
@@ -441,15 +439,15 @@ void CRGBA::subtractColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, ui
 				while (numColors--)
 				{
 					dest->sub(*src1, *src2);
-					* (CRGBA *) ((uint8 *) dest + destStride) = *dest;
-					dest = (CRGBA *) ((uint8 *) dest + destStride);
-					* (CRGBA *) ((uint8 *) dest + destStride) = *dest;
-					dest = (CRGBA *) ((uint8 *) dest + destStride);
-					* (CRGBA *) ((uint8 *) dest + destStride) = *dest;
-					dest = (CRGBA *) ((uint8 *) dest + (destStride << 1));
+					*(CRGBA *)((uint8 *)dest + destStride) = *dest;
+					dest = (CRGBA *)((uint8 *)dest + destStride);
+					*(CRGBA *)((uint8 *)dest + destStride) = *dest;
+					dest = (CRGBA *)((uint8 *)dest + destStride);
+					*(CRGBA *)((uint8 *)dest + destStride) = *dest;
+					dest = (CRGBA *)((uint8 *)dest + (destStride << 1));
 
-					src1 = (CRGBA *) ((uint8 *) src1 + srcStride);
-					src2 = (CRGBA *) ((uint8 *) src2 + srcStride);
+					src1 = (CRGBA *)((uint8 *)src1 + srcStride);
+					src2 = (CRGBA *)((uint8 *)src2 + srcStride);
 				}
 			}
 			else
@@ -461,14 +459,13 @@ void CRGBA::subtractColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, ui
 					uint k = dup - 1;
 					do
 					{
-						* (CRGBA *) ((uint8 *) dest + destStride) = *dest;
-						dest = (CRGBA *) ((uint8 *) dest + destStride);
-					}
-					while (--k);
+						*(CRGBA *)((uint8 *)dest + destStride) = *dest;
+						dest = (CRGBA *)((uint8 *)dest + destStride);
+					} while (--k);
 
-					dest = (CRGBA *) ((uint8 *) dest + destStride);
-					src1 = (CRGBA *) ((uint8 *) src1 + srcStride);
-					src2 = (CRGBA *) ((uint8 *) src2 + srcStride);
+					dest = (CRGBA *)((uint8 *)dest + destStride);
+					src1 = (CRGBA *)((uint8 *)src1 + srcStride);
+					src2 = (CRGBA *)((uint8 *)src2 + srcStride);
 				}
 			}
 		}
@@ -583,14 +580,13 @@ void CRGBA::subtractColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, ui
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
 void CBGRA::serial(NLMISC::IStream &f)
 {
-	f.serial (B);
-	f.serial (G);
-	f.serial (R);
-	f.serial (A);
+	f.serial(B);
+	f.serial(G);
+	f.serial(R);
+	f.serial(A);
 }
 
 // ***************************************************************************
@@ -605,12 +601,12 @@ void CBGRA::set(uint8 r, uint8 g, uint8 b, uint8 a)
 // ***************************************************************************
 void CBGRA::blendFromui(CBGRA &c0, CBGRA &c1, uint coef) // coef must be in [0,256]
 {
-	sint	a1 = coef;
-	sint	a2 = 256-a1;
-	R = (c0.R*a2 + c1.R*a1) >>8;
-	G = (c0.G*a2 + c1.G*a1) >>8;
-	B = (c0.B*a2 + c1.B*a1) >>8;
-	A = (c0.A*a2 + c1.A*a1) >>8;
+	sint a1 = coef;
+	sint a2 = 256 - a1;
+	R = (c0.R * a2 + c1.R * a1) >> 8;
+	G = (c0.G * a2 + c1.G * a1) >> 8;
+	B = (c0.B * a2 + c1.B * a1) >> 8;
+	A = (c0.A * a2 + c1.A * a1) >> 8;
 }
 
 // ***************************************************************************
@@ -638,9 +634,9 @@ bool CRGBA::convertToHLS(float &h, float &l, float &s) const
 	float diff = maxV - minV;
 
 	// get saturation
-	s  = l > 0.5f ?   /*are we in the top of the double-hexcone ? */
-		diff / (2.f - maxV - minV)  :
-		diff / (maxV + minV);
+	s = l > 0.5f ? /*are we in the top of the double-hexcone ? */
+	    diff / (2.f - maxV - minV)
+	             : diff / (maxV + minV);
 
 	// get hue
 	if (maxV == r)
@@ -704,7 +700,6 @@ static float HLSValue(float h, float v1, float v2)
 	}
 }
 
-
 // ***************************************************************************
 void CRGBA::buildFromHLS(float h, float l, float s)
 {
@@ -716,7 +711,7 @@ void CRGBA::buildFromHLS(float h, float l, float s)
 
 	if (s == 0) // achromatic ?
 	{
-		R = G = B = (uint8) (255.f * l);
+		R = G = B = (uint8)(255.f * l);
 	}
 	else // chromatic case
 	{
@@ -724,33 +719,33 @@ void CRGBA::buildFromHLS(float h, float l, float s)
 		//
 		v = HLSValue(h + 120.f, v1, v2);
 		clamp(v, 0.f, 1.f);
-		R = (uint8) (255.f * v);
+		R = (uint8)(255.f * v);
 		//
 		v = HLSValue(h, v1, v2);
 		clamp(v, 0.f, 1.f);
-		G = (uint8) (255.f * v);
+		G = (uint8)(255.f * v);
 		//
 		v = HLSValue(h - 120.f, v1, v2);
 		clamp(v, 0.f, 1.f);
-		B = (uint8) (255.f * v);
+		B = (uint8)(255.f * v);
 	}
 }
 
-CRGBA CRGBA::stringToRGBA( const char *ptr )
+CRGBA CRGBA::stringToRGBA(const char *ptr)
 {
 	if (ptr)
 	{
 		int r = 255, g = 255, b = 255, a = 255;
 
 		// we need at least 3 integer values to consider string is valid
-		if (sscanf( ptr, "%d %d %d %d", &r, &g, &b, &a ) >= 3)
+		if (sscanf(ptr, "%d %d %d %d", &r, &g, &b, &a) >= 3)
 		{
-			clamp( r, 0, 255 );
-			clamp( g, 0, 255 );
-			clamp( b, 0, 255 );
-			clamp( a, 0, 255 );
-	
-			return CRGBA( r,g,b,a );
+			clamp(r, 0, 255);
+			clamp(g, 0, 255);
+			clamp(b, 0, 255);
+			clamp(a, 0, 255);
+
+			return CRGBA(r, g, b, a);
 		}
 
 		// we need at least 3 hexadecimal values to consider string is valid
@@ -771,22 +766,21 @@ CRGBA CRGBA::stringToRGBA( const char *ptr )
 std::string CRGBA::toString() const
 {
 	std::string s;
-	s =  NLMISC::toString( R );
+	s = NLMISC::toString(R);
 	s += " ";
-	s += NLMISC::toString( G );
+	s += NLMISC::toString(G);
 	s += " ";
-	s += NLMISC::toString( B );
+	s += NLMISC::toString(B);
 	s += " ";
-	s += NLMISC::toString( A );
+	s += NLMISC::toString(A);
 	return s;
 }
 
-bool CRGBA::fromString( const std::string &s )
+bool CRGBA::fromString(const std::string &s)
 {
-	*this = stringToRGBA( s.c_str() );
+	*this = stringToRGBA(s.c_str());
 	return true;
 }
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -794,14 +788,13 @@ bool CRGBA::fromString( const std::string &s )
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
 void CRGBAF::serial(NLMISC::IStream &f)
 {
-	f.serial (R);
-	f.serial (G);
-	f.serial (B);
-	f.serial (A);
+	f.serial(R);
+	f.serial(G);
+	f.serial(B);
+	f.serial(A);
 }
 // ***************************************************************************
 void CRGBAF::set(float r, float g, float b, float a)

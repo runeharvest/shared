@@ -32,10 +32,10 @@ extern TCHAR *WndRegKeys[4][5];
 
 class ViewColumn : public CDialog
 {
-// Construction
+	// Construction
 public:
-	ViewColumn(CWnd* pParent = NULL);   // standard constructor
-	
+	ViewColumn(CWnd *pParent = NULL); // standard constructor
+
 	TileInfo **list;
 	int nTiles;
 	int sizetile_y;
@@ -44,29 +44,30 @@ public:
 	CDialog *parent;
 	POINT MousePos;
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(ViewColumn)
-	enum { IDD = IDD_COLUMN };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_COLUMN
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ViewColumn)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(ViewColumn)
 	afx_msg void OnPaint();
 	virtual BOOL OnInitDialog();
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
 	afx_msg void OnClose();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);

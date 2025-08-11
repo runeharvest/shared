@@ -33,11 +33,11 @@ using namespace NLMISC;
 namespace NLSOUND {
 
 CSimpleSource::CSimpleSource(CSimpleSound *simpleSound, bool spawn, TSpawnEndCallback cb, void *cbUserParam, NL3D::CCluster *cluster, CGroupController *groupController)
-	: CSourceCommon(simpleSound, spawn, cb, cbUserParam, cluster, groupController), 
-	_SimpleSound(simpleSound),
-	_Track(NULL), 
-	_PlayMuted(false),
-	_WaitingForPlay(false)
+    : CSourceCommon(simpleSound, spawn, cb, cbUserParam, cluster, groupController)
+    , _SimpleSound(simpleSound)
+    , _Track(NULL)
+    , _PlayMuted(false)
+    , _WaitingForPlay(false)
 {
 	nlassert(_SimpleSound != 0);
 
@@ -100,7 +100,7 @@ void CSimpleSource::setLooping(bool l)
 {
 	CSourceCommon::setLooping(l);
 	if (hasPhysicalSource())
-		getPhysicalSource()->setLooping( l );
+		getPhysicalSource()->setLooping(l);
 }
 
 CVector CSimpleSource::getVirtualPos() const
@@ -114,7 +114,7 @@ CVector CSimpleSource::getVirtualPos() const
 			// there is some data here, update the virtual position of the sound.
 			float dist = (css->Position - getPos()).norm();
 			CVector vpos(CAudioMixerUser::instance()->getListenPosVector() + css->Direction * (css->Dist + dist));
-			vpos = _Position * (1-css->PosAlpha) + vpos*(css->PosAlpha);
+			vpos = _Position * (1 - css->PosAlpha) + vpos * (css->PosAlpha);
 			return vpos;
 		}
 	}
@@ -133,9 +133,9 @@ void CSimpleSource::play()
 
 	// Check if sample buffer is available and if the sound source is not too far
 	if (_SimpleSound->getBuffer() == 0
-		|| !_SimpleSound->getBuffer()->isBufferLoaded()
-		//|| (mixer->getListenPosVector() - _Position).sqrnorm() > _SimpleSound->getMaxDistance() * _SimpleSound->getMaxDistance())
-		|| (_RelativeMode ? getPos().sqrnorm() : (mixer->getListenPosVector() - getPos()).sqrnorm()) > _SimpleSound->getMaxDistance() * _SimpleSound->getMaxDistance())
+	    || !_SimpleSound->getBuffer()->isBufferLoaded()
+	    //|| (mixer->getListenPosVector() - _Position).sqrnorm() > _SimpleSound->getMaxDistance() * _SimpleSound->getMaxDistance())
+	    || (_RelativeMode ? getPos().sqrnorm() : (mixer->getListenPosVector() - getPos()).sqrnorm()) > _SimpleSound->getMaxDistance() * _SimpleSound->getMaxDistance())
 	{
 		// The sample buffer is not available, don't play (we don't know the length)
 		_WaitingForPlay = false;
@@ -143,7 +143,7 @@ void CSimpleSource::play()
 		{
 			if (_SpawnEndCb != 0)
 				_SpawnEndCb(this, _CbUserParam);
-			
+
 			delete this;
 		}
 		// nldebug("CSimpleSource %p : play FAILED !", (CAudioMixerUser::IMixerEvent*)this);
@@ -163,7 +163,7 @@ void CSimpleSource::play()
 
 		// ok, we have a track to realy play, fill the data into the track
 		pSource->setStaticBuffer(_SimpleSound->getBuffer());
-		
+
 		// pSource->setPos( _Position, false);
 		pSource->setPos(getVirtualPos(), false);
 		if (!_SimpleSound->getBuffer()->isStereo())
@@ -177,9 +177,9 @@ void CSimpleSource::play()
 		pSource->setLooping(_Looping);
 		pSource->setPitch(_Pitch);
 		pSource->setAlpha(_Alpha);
-		
+
 		// and play the sound
-		bool play = pSource->play();		
+		bool play = pSource->play();
 
 #ifdef NL_DEBUG
 		nlassert(play);
@@ -218,13 +218,13 @@ void CSimpleSource::onEvent()
 	// A muted play is terminated.
 
 	if (!_Playing)
-		return;	
+		return;
 	// nlassert(_Playing);
 	// nlassert(_Track == 0);
 
 	_PlayMuted = false;
 	CAudioMixerUser::instance()->decPlayingSourceMuted();
-	
+
 	stop();
 }
 
@@ -255,7 +255,7 @@ void CSimpleSource::stop()
 		mixer->decPlayingSourceMuted();
 		mixer->removeEvents(this);
 	}
-	
+
 	CSourceCommon::stop();
 
 	if (_Spawn)
@@ -273,7 +273,7 @@ void CSimpleSource::stop()
  * 3D mode -> 3D position
  * st mode -> x is the pan value (from left (-1) to right (1)), set y and z to 0
  */
-void CSimpleSource::setPos(const NLMISC::CVector& pos)
+void CSimpleSource::setPos(const NLMISC::CVector &pos)
 {
 	CSourceCommon::setPos(pos);
 
@@ -285,11 +285,10 @@ void CSimpleSource::setPos(const NLMISC::CVector& pos)
 	}
 }
 
-
 /*
  * Set the velocity vector (3D mode only, ignored in stereo mode) (default: (0,0,0))
  */
-void CSimpleSource::setVelocity(const NLMISC::CVector& vel)
+void CSimpleSource::setVelocity(const NLMISC::CVector &vel)
 {
 	CSourceCommon::setVelocity(vel);
 
@@ -301,11 +300,10 @@ void CSimpleSource::setVelocity(const NLMISC::CVector& vel)
 	}
 }
 
-
 /*
  * Set the direction vector (3D mode only, ignored in stereo mode) (default: (0,0,0) as non-directional)
  */
-void CSimpleSource::setDirection(const NLMISC::CVector& dir)
+void CSimpleSource::setDirection(const NLMISC::CVector &dir)
 {
 	CSourceCommon::setDirection(dir);
 
@@ -318,12 +316,12 @@ void CSimpleSource::setDirection(const NLMISC::CVector& dir)
 			if (dir.isNull()) // workaround
 			{
 				getPhysicalSource()->setCone(float(Pi * 2), float(Pi * 2), 1.0f); // because the direction with 0 is not enough for a non-directional source!
-				getPhysicalSource()->setDirection(CVector::I);  // Don't send a 0 vector, DSound will complain. Send (1,0,0), it's omnidirectional anyway.
+				getPhysicalSource()->setDirection(CVector::I); // Don't send a 0 vector, DSound will complain. Send (1,0,0), it's omnidirectional anyway.
 				coneset = false;
 			}
 			else
 			{
-//				if (!coneset)
+				//				if (!coneset)
 				{
 					getPhysicalSource()->setCone(_SimpleSound->getConeInnerAngle(), _SimpleSound->getConeOuterAngle(), _SimpleSound->getConeOuterGain());
 					coneset = true;
@@ -351,10 +349,9 @@ void CSimpleSource::setPitch(float pitch)
 	// Set the pitch
 	if (hasPhysicalSource())
 	{
-		getPhysicalSource()->setPitch( pitch );
+		getPhysicalSource()->setPitch(pitch);
 	}
 }
-
 
 /*
  * Set the source relative mode. If true, positions are interpreted relative to the listener position (default: false)
@@ -366,7 +363,7 @@ void CSimpleSource::setSourceRelativeMode(bool mode)
 	// Set the relative mode
 	if (hasPhysicalSource())
 	{
-		getPhysicalSource()->setSourceRelativeMode( mode );
+		getPhysicalSource()->setSourceRelativeMode(mode);
 	}
 }
 

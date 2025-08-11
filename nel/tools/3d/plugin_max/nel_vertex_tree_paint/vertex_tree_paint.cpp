@@ -1,12 +1,12 @@
 /**********************************************************************
  *<
-	FILE: vertex_tree_paint.cpp
+    FILE: vertex_tree_paint.cpp
 
-	DESCRIPTION:	Modifier implementation
+    DESCRIPTION:	Modifier implementation
 
-	CREATED BY: Christer Janson, Nikolai Sander
+    CREATED BY: Christer Janson, Nikolai Sander
 
-	HISTORY:
+    HISTORY:
 
  *>	Copyright (c) 1997, All Rights Reserved.
  **********************************************************************/
@@ -14,18 +14,18 @@
 #include "vertex_tree_paint.h"
 #include "meshdelta.h"
 
- // flags:
+// flags:
 #define VP_DISP_END_RESULT 0x01
 
 static WNDPROC colorSwatchOriginalWndProc;
 
-static	HIMAGELIST hButtonImages = NULL;
+static HIMAGELIST hButtonImages = NULL;
 
 static void LoadImages()
 {
 	if (hButtonImages) return;
 	HBITMAP hBitmap, hMask;
-	hButtonImages = ImageList_Create(15, 14, ILC_MASK, 2, 0);	// 17 is kluge to center square. -SA
+	hButtonImages = ImageList_Create(15, 14, ILC_MASK, 2, 0); // 17 is kluge to center square. -SA
 	hBitmap = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BUTTONS));
 	hMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BUTTON_MASK));
 	ImageList_Add(hButtonImages, hBitmap, hMask);
@@ -33,38 +33,35 @@ static void LoadImages()
 	DeleteObject(hMask);
 }
 
-ClassDesc* GetVertexPaintDesc();
+ClassDesc *GetVertexPaintDesc();
 
-
-class VertexPaintClassDesc :public ClassDesc
+class VertexPaintClassDesc : public ClassDesc
 {
 public:
-	int 			IsPublic() { return 1; }
-	void *			Create(BOOL loading = FALSE) { return new VertexPaint(); }
-	const MCHAR *	ClassName() { return GetString(IDS_CLASS_NAME); }
+	int IsPublic() { return 1; }
+	void *Create(BOOL loading = FALSE) { return new VertexPaint(); }
+	const MCHAR *ClassName() { return GetString(IDS_CLASS_NAME); }
 #if (MAX_VERSION_MAJOR >= 24)
 	virtual const TCHAR *NonLocalizedClassName() NL_OVERRIDE { return _M("Nel VertexTreePaint"); }
 #endif
-	SClass_ID		SuperClassID() { return OSM_CLASS_ID; }
-	Class_ID		ClassID() { return VERTEX_TREE_PAINT_CLASS_ID; }
-	const MCHAR* 	Category() { return GetString(IDS_CATEGORY); }
-	void			ResetClassParams(BOOL fileReset) {}
+	SClass_ID SuperClassID() { return OSM_CLASS_ID; }
+	Class_ID ClassID() { return VERTEX_TREE_PAINT_CLASS_ID; }
+	const MCHAR *Category() { return GetString(IDS_CATEGORY); }
+	void ResetClassParams(BOOL fileReset) { }
 };
 
 static VertexPaintClassDesc VertexPaintDesc;
-ClassDesc* GetVertexPaintDesc() { return &VertexPaintDesc; }
+ClassDesc *GetVertexPaintDesc() { return &VertexPaintDesc; }
 
 static INT_PTR CALLBACK VertexPaintDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	int numPoints;
-	VertexPaint *mod = (VertexPaint*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	VertexPaint *mod = (VertexPaint *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 	if (!mod && msg != WM_INITDIALOG) return FALSE;
-	int		comboResult;
-
+	int comboResult;
 
 	// Manages Spinners.
-	if (((msg == CC_SPINNER_BUTTONUP) && HIWORD(wParam)) ||
-		((msg == CC_SPINNER_CHANGE)))
+	if (((msg == CC_SPINNER_BUTTONUP) && HIWORD(wParam)) || ((msg == CC_SPINNER_CHANGE)))
 	{
 		ISpinnerControl *spin;
 		spin = (ISpinnerControl *)lParam;
@@ -90,25 +87,22 @@ static INT_PTR CALLBACK VertexPaintDlgProc(HWND hWnd, UINT msg, WPARAM wParam, L
 	{
 	case WM_INITDIALOG:
 		LoadImages();
-		mod = (VertexPaint*)lParam;
+		mod = (VertexPaint *)lParam;
 		SetWindowLongPtr(hWnd, GWLP_USERDATA, lParam);
 		mod->hParams = hWnd;
 		mod->iPaintButton = GetICustButton(GetDlgItem(hWnd, IDC_PAINT));
 		mod->iPaintButton->SetType(CBT_CHECK);
 		mod->iPaintButton->SetHighlightColor(GREEN_WASH);
-		mod->iPaintButton->SetCheck(mod->ip->GetCommandMode()->ID() == CID_PAINT &&
-			!((PaintMouseProc *)mod->ip->GetCommandMode()->MouseProc(&numPoints))->GetPickMode());
+		mod->iPaintButton->SetCheck(mod->ip->GetCommandMode()->ID() == CID_PAINT && !((PaintMouseProc *)mod->ip->GetCommandMode()->MouseProc(&numPoints))->GetPickMode());
 		mod->iPaintButton->SetImage(hButtonImages, 0, 0, 0, 0, 15, 14);
 		mod->iPaintButton->SetTooltip(TRUE, GetString(IDS_PAINT));
 
 		mod->iPickButton = GetICustButton(GetDlgItem(hWnd, IDC_PICK));
 		mod->iPickButton->SetType(CBT_CHECK);
 		mod->iPickButton->SetHighlightColor(GREEN_WASH);
-		mod->iPickButton->SetCheck(mod->ip->GetCommandMode()->ID() == CID_PAINT &&
-			((PaintMouseProc *)mod->ip->GetCommandMode()->MouseProc(&numPoints))->GetPickMode());
+		mod->iPickButton->SetCheck(mod->ip->GetCommandMode()->ID() == CID_PAINT && ((PaintMouseProc *)mod->ip->GetCommandMode()->MouseProc(&numPoints))->GetPickMode());
 		mod->iPickButton->SetImage(hButtonImages, 1, 1, 1, 1, 15, 14);
 		mod->iPickButton->SetTooltip(TRUE, GetString(IDS_PICK));
-
 
 		mod->iColor = GetIColorSwatch(GetDlgItem(hWnd, IDC_COLOR));
 		// change current Color according to editMode
@@ -120,11 +114,10 @@ static INT_PTR CALLBACK VertexPaintDlgProc(HWND hWnd, UINT msg, WPARAM wParam, L
 		mod->iColorGradient[0]->SetColor(mod->lastGradientColor[0]);
 		mod->iColorGradient[1]->SetColor(mod->lastGradientColor[1]);
 
-
 		// Init comboBox
-		SendDlgItemMessage(hWnd, IDC_COMBO_TYPE, CB_ADDSTRING, 0, (LPARAM)_T("Tree Weight"));
-		SendDlgItemMessage(hWnd, IDC_COMBO_TYPE, CB_ADDSTRING, 0, (LPARAM)_T("Phase Level 1"));
-		SendDlgItemMessage(hWnd, IDC_COMBO_TYPE, CB_ADDSTRING, 0, (LPARAM)_T("Phase Level 2"));
+		SendDlgItemMessage(hWnd, IDC_COMBO_TYPE, CB_ADDSTRING, 0, (LPARAM) _T("Tree Weight"));
+		SendDlgItemMessage(hWnd, IDC_COMBO_TYPE, CB_ADDSTRING, 0, (LPARAM) _T("Phase Level 1"));
+		SendDlgItemMessage(hWnd, IDC_COMBO_TYPE, CB_ADDSTRING, 0, (LPARAM) _T("Phase Level 2"));
 		SendDlgItemMessage(hWnd, IDC_COMBO_TYPE, CB_SETCURSEL, mod->getEditionType(), 0);
 
 		// If paint mode at last edit.
@@ -144,13 +137,14 @@ static INT_PTR CALLBACK VertexPaintDlgProc(HWND hWnd, UINT msg, WPARAM wParam, L
 	case CC_COLOR_CHANGE:
 		if (LOWORD(wParam) == IDC_COLOR)
 		{
-			IColorSwatch* iCol = (IColorSwatch*)lParam;
+			IColorSwatch *iCol = (IColorSwatch *)lParam;
 			switch (mod->getEditionType())
 			{
 			case 0: mod->lastWeightColor = iCol->GetColor(); break;
 			case 1:
 			case 2:
-				mod->lastPhaseColor = iCol->GetColor(); break;
+				mod->lastPhaseColor = iCol->GetColor();
+				break;
 			}
 		}
 		break;
@@ -211,23 +205,22 @@ static INT_PTR CALLBACK VertexPaintDlgProc(HWND hWnd, UINT msg, WPARAM wParam, L
 	return TRUE;
 }
 
-// Subclass procedure 
+// Subclass procedure
 LRESULT APIENTRY colorSwatchSubclassWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
 	case WM_LBUTTONDOWN:
 	case WM_LBUTTONUP:
-	case WM_LBUTTONDBLCLK:
-	{
+	case WM_LBUTTONDBLCLK: {
 		HWND hPanel = GetParent(hwnd);
 		LONG_PTR mod = GetWindowLongPtr(hPanel, GWLP_USERDATA);
 		if (mod)
 		{
-			((VertexPaint*)mod)->PaletteButton(hwnd);
+			((VertexPaint *)mod)->PaletteButton(hwnd);
 		}
 	}
-						   break;
+	break;
 	case WM_DESTROY:
 		SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)colorSwatchOriginalWndProc);
 		// Fallthrough...
@@ -238,28 +231,29 @@ LRESULT APIENTRY colorSwatchSubclassWndProc(HWND hwnd, UINT uMsg, WPARAM wParam,
 	return 0;
 }
 
-
 IObjParam *VertexPaint::ip = NULL;
 HWND VertexPaint::hParams = NULL;
-VertexPaint* VertexPaint::editMod = NULL;
-ICustButton* VertexPaint::iPaintButton = NULL;
-ICustButton* VertexPaint::iPickButton = NULL;
-IColorSwatch* VertexPaint::iColor = NULL;
+VertexPaint *VertexPaint::editMod = NULL;
+ICustButton *VertexPaint::iPaintButton = NULL;
+ICustButton *VertexPaint::iPickButton = NULL;
+IColorSwatch *VertexPaint::iColor = NULL;
 COLORREF VertexPaint::lastWeightColor = RGB(85, 85, 85);
 COLORREF VertexPaint::lastPhaseColor = RGB(0, 0, 0);
-COLORREF VertexPaint::palColors[] =
-{
-	//RGB(32,  32,  32),	RGB(  96,96,96),	RGB(  160,160,160),	RGB(224,224,224) };
-	RGB(0,  0,  0),	RGB(85,85,85),	RGB(170,170,170),	RGB(255,255,255),
-		 RGB(42,  42,  42), RGB(127, 127, 127), RGB(212, 212, 212) };
+COLORREF VertexPaint::palColors[] = {
+	// RGB(32,  32,  32),	RGB(  96,96,96),	RGB(  160,160,160),	RGB(224,224,224) };
+	RGB(0, 0, 0), RGB(85, 85, 85), RGB(170, 170, 170), RGB(255, 255, 255),
+	RGB(42, 42, 42), RGB(127, 127, 127), RGB(212, 212, 212)
+};
 
-
-IColorSwatch* VertexPaint::iColorGradient[] = { NULL, NULL };
-COLORREF VertexPaint::lastGradientColor[] = { RGB(0,  0,  0), RGB(85,  85,  85) };
-
+IColorSwatch *VertexPaint::iColorGradient[] = { NULL, NULL };
+COLORREF VertexPaint::lastGradientColor[] = { RGB(0, 0, 0), RGB(85, 85, 85) };
 
 //--- VertexPaint -------------------------------------------------------
-VertexPaint::VertexPaint() : iTint(NULL), fTint(1.0f), iGradientBend(NULL), fGradientBend(0.0f)
+VertexPaint::VertexPaint()
+    : iTint(NULL)
+    , fTint(1.0f)
+    , iGradientBend(NULL)
+    , fGradientBend(0.0f)
 {
 	flags = 0x0;
 	_EditType = 0;
@@ -280,29 +274,28 @@ BOOL VertexPaint::DependOnTopology(ModContext &mc)
 	return TRUE;
 }
 
-RefTargetHandle VertexPaint::Clone(RemapDir& remap)
+RefTargetHandle VertexPaint::Clone(RemapDir &remap)
 {
-	VertexPaint* newmod = new VertexPaint();
-	return(newmod);
+	VertexPaint *newmod = new VertexPaint();
+	return (newmod);
 }
 
 void VertexPaint::NotifyInputChanged(Interval changeInt, PartID partID, RefMessage message, ModContext *mc)
 {
 	if (!mc->localData) return;
-	((VertexPaintData*)mc->localData)->FreeCache();
-
+	((VertexPaintData *)mc->localData)->FreeCache();
 }
 
-void VertexPaint::ModifyObject(TimeValue t, ModContext &mc, ObjectState * os, INode *node)
+void VertexPaint::ModifyObject(TimeValue t, ModContext &mc, ObjectState *os, INode *node)
 {
 	if (!os->obj->IsSubClassOf(triObjectClassID)) return;
 
 	os->obj->ReadyChannelsForMod(GEOM_CHANNEL | TOPO_CHANNEL | VERTCOLOR_CHANNEL | TEXMAP_CHANNEL);
 
-	TriObject *tobj = (TriObject*)os->obj;
-	VertexPaintData *d = (VertexPaintData*)mc.localData;
+	TriObject *tobj = (TriObject *)os->obj;
+	VertexPaintData *d = (VertexPaintData *)mc.localData;
 
-	Mesh* mesh = &tobj->GetMesh();
+	Mesh *mesh = &tobj->GetMesh();
 
 	if (mesh)
 	{
@@ -327,21 +320,20 @@ void VertexPaint::ModifyObject(TimeValue t, ModContext &mc, ObjectState * os, IN
 		if (!d) mc.localData = d = new VertexPaintData(tobj->GetMesh());
 		if (!d->GetMesh()) d->SetCache(*mesh);
 
-
 		{
 			MeshDelta md(*mesh);
-			//MeshDelta mdc;
-			//if(cache) mdc.InitToMesh(*cache);
+			// MeshDelta mdc;
+			// if(cache) mdc.InitToMesh(*cache);
 
 			// If the incoming Mesh had no vertex colors, this will add a default map to start with.
 			// The default map has the same topology as the Mesh (so one color per vertex),
 			// with all colors set to white.
 			if (!mesh->mapSupport(0)) md.AddVertexColors();
-			//if (cache && !cache->mapSupport(0)) mdc.AddVertexColors ();
+			// if (cache && !cache->mapSupport(0)) mdc.AddVertexColors ();
 
 			// We used two routines -- VCreate to add new map vertices, and FRemap to make the
 			// existing map faces use the new verts.  frFlags tell FRemap which vertices on a face
-			// should be "remapped", and the ww array contains the new locations.			
+			// should be "remapped", and the ww array contains the new locations.
 			VertColor nvc;
 			int j;
 			for (int v = 0; v < d->GetNumColors(); v++)
@@ -355,15 +347,18 @@ void VertexPaint::ModifyObject(TimeValue t, ModContext &mc, ObjectState * os, IN
 					// change color to view only monochromatic info for this channel;
 					switch (_EditType)
 					{
-					case 0: nvc.y = nvc.z = nvc.x;
+					case 0:
+						nvc.y = nvc.z = nvc.x;
 						nvc.y *= 0.7f;
 						nvc.z *= 0.7f;
 						break;
-					case 1: nvc.x = nvc.z = nvc.y;
+					case 1:
+						nvc.x = nvc.z = nvc.y;
 						nvc.x *= 0.7f;
 						nvc.z *= 0.7f;
 						break;
-					case 2: nvc.x = nvc.y = nvc.z;
+					case 2:
+						nvc.x = nvc.y = nvc.z;
 						nvc.x *= 0.7f;
 						nvc.y *= 0.7f;
 						break;
@@ -379,20 +374,18 @@ void VertexPaint::ModifyObject(TimeValue t, ModContext &mc, ObjectState * os, IN
 
 				md.map->VCreate(&nvc);
 
-				// increase the number of vcol's and set the vcfaces as well	
+				// increase the number of vcol's and set the vcfaces as well
 				for (int i = 0; i < d->GetNVert(v).faces.Count(); i++)
 				{
 					j = d->GetNVert(v).whichVertex[i];
 					frFlags = (1 << j);
 					ww[j] = md.map->outVNum() - 1;
 					md.map->FRemap(d->GetNVert(v).faces[i], frFlags, ww);
-
 				}
 			}
 
 			md.Apply(*mesh);
 		}
-
 
 		NotifyDependents(FOREVER, PART_VERTCOLOR, REFMSG_CHANGE);
 		os->obj->UpdateValidity(VERT_COLOR_CHAN_NUM, Interval(t, t));
@@ -419,7 +412,7 @@ void VertexPaint::BeginEditParams(IObjParam *ip, ULONG flags, Animatable *prev)
 		hPaletteWnd[5] = GetDlgItem(hParams, IDC_PALETTE_6);
 		hPaletteWnd[6] = GetDlgItem(hParams, IDC_PALETTE_7);
 
-		int	i;
+		int i;
 		for (i = 0; i < NUMPALETTES; i++)
 		{
 			colorSwatchOriginalWndProc = (WNDPROC)SetWindowLongPtr(hPaletteWnd[i], GWLP_WNDPROC, (LONG_PTR)colorSwatchSubclassWndProc);
@@ -432,11 +425,10 @@ void VertexPaint::BeginEditParams(IObjParam *ip, ULONG flags, Animatable *prev)
 		SetWindowLongPtr(hParams, GWLP_USERDATA, (LONG_PTR)this);
 	}
 
-	iTint = SetupIntSpinner(hParams, IDC_TINT_SPIN, IDC_TINT, 0, 100, (int)(fTint*100.0f));
+	iTint = SetupIntSpinner(hParams, IDC_TINT_SPIN, IDC_TINT, 0, 100, (int)(fTint * 100.0f));
 
 	// Init Gradient Bend spinner
-	iGradientBend = SetupIntSpinner(hParams, IDC_BEND_SPIN, IDC_BEND, 0, 100, (int)(fGradientBend*100.0f));
-
+	iGradientBend = SetupIntSpinner(hParams, IDC_BEND_SPIN, IDC_BEND, 0, 100, (int)(fGradientBend * 100.0f));
 
 	// Set show end result.
 	oldShowEnd = ip->GetShowEndResult() ? TRUE : FALSE;
@@ -449,7 +441,7 @@ void VertexPaint::BeginEditParams(IObjParam *ip, ULONG flags, Animatable *prev)
 void VertexPaint::EndEditParams(IObjParam *ip, ULONG flags, Animatable *next)
 {
 	// Dsiable Painting.
-	bool	lpm = _LastPaintMode;
+	bool lpm = _LastPaintMode;
 	ActivatePaint(FALSE);
 	// bkup lastPainMode
 	_LastPaintMode = lpm;
@@ -462,7 +454,7 @@ void VertexPaint::EndEditParams(IObjParam *ip, ULONG flags, Animatable *next)
 	ip->GetModContexts(list, nodes);
 	for (int i = 0; i < list.Count(); i++)
 	{
-		VertexPaintData *vd = (VertexPaintData*)list[i]->localData;
+		VertexPaintData *vd = (VertexPaintData *)list[i]->localData;
 		if (vd) vd->FreeCache();
 	}
 	nodes.DisposeTemporary();
@@ -471,11 +463,9 @@ void VertexPaint::EndEditParams(IObjParam *ip, ULONG flags, Animatable *next)
 	SetFlag(VP_DISP_END_RESULT, ip->GetShowEndResult() ? TRUE : FALSE);
 	ip->SetShowEndResult(oldShowEnd);
 
-
 	// Exit editMod => draw true colored weights.
 	editMod = NULL;
 	NotifyDependents(FOREVER, PART_VERTCOLOR, REFMSG_CHANGE);
-
 
 	ip->DeleteRollupPage(hParams);
 	hParams = NULL;
@@ -484,8 +474,7 @@ void VertexPaint::EndEditParams(IObjParam *ip, ULONG flags, Animatable *next)
 	this->ip = NULL;
 }
 
-
-//From ReferenceMaker 
+// From ReferenceMaker
 RefResult VertexPaint::NotifyRefChanged(NOTIFY_REF_PARAMS)
 {
 	return REF_SUCCEED;
@@ -510,7 +499,7 @@ int VertexPaint::NumSubs()
 	return 0;
 }
 
-Animatable* VertexPaint::SubAnim(int i)
+Animatable *VertexPaint::SubAnim(int i)
 {
 	return NULL;
 }
@@ -524,9 +513,8 @@ TSTR VertexPaint::SubAnimName(int i, bool localized)
 	return _T("");
 }
 
-
-#define VERSION_CHUNKID			0x100
-#define COLORLIST_CHUNKID		0x120
+#define VERSION_CHUNKID 0x100
+#define COLORLIST_CHUNKID 0x120
 
 static int currentVersion = 1;
 
@@ -568,11 +556,11 @@ IOResult VertexPaint::Save(ISave *isave)
 
 IOResult VertexPaint::SaveLocalData(ISave *isave, LocalModData *ld)
 {
-	VertexPaintData*	d = (VertexPaintData*)ld;
-	IOResult	res;
-	ULONG		nb;
-	int			numColors;
-	ColorData	col;
+	VertexPaintData *d = (VertexPaintData *)ld;
+	IOResult res;
+	ULONG nb;
+	int numColors;
+	ColorData col;
 
 	isave->BeginChunk(VERSION_CHUNKID);
 	res = isave->Write(&currentVersion, sizeof(int), &nb);
@@ -594,11 +582,11 @@ IOResult VertexPaint::SaveLocalData(ISave *isave, LocalModData *ld)
 IOResult VertexPaint::LoadLocalData(ILoad *iload, LocalModData **pld)
 {
 	VertexPaintData *d = new VertexPaintData;
-	IOResult	res;
-	ULONG		nb;
-	int			version = 1;
-	int			numColors;
-	ColorData	col;
+	IOResult res;
+	ULONG nb;
+	int version = 1;
+	int numColors;
+	ColorData col;
 
 	*pld = d;
 
@@ -609,8 +597,7 @@ IOResult VertexPaint::LoadLocalData(ILoad *iload, LocalModData **pld)
 		case VERSION_CHUNKID:
 			iload->Read(&version, sizeof(version), &nb);
 			break;
-		case COLORLIST_CHUNKID:
-		{
+		case COLORLIST_CHUNKID: {
 			iload->Read(&numColors, sizeof(int), &nb);
 			d->AllocColorData(numColors);
 			for (int i = 0; i < numColors; i++)
@@ -629,7 +616,7 @@ IOResult VertexPaint::LoadLocalData(ILoad *iload, LocalModData **pld)
 
 void VertexPaint::PaletteButton(HWND hWnd)
 {
-	IColorSwatch* iPal = GetIColorSwatch(hWnd);
+	IColorSwatch *iPal = GetIColorSwatch(hWnd);
 	if (iPal && iColor)
 	{
 		iColor->SetColor(iPal->GetColor(), TRUE);
@@ -638,7 +625,7 @@ void VertexPaint::PaletteButton(HWND hWnd)
 
 void VertexPaint::InitPalettes()
 {
-	IColorSwatch* c;
+	IColorSwatch *c;
 	for (int i = 0; i < NUMPALETTES; i++)
 	{
 		c = GetIColorSwatch(hPaletteWnd[i]);
@@ -649,7 +636,7 @@ void VertexPaint::InitPalettes()
 
 void VertexPaint::SavePalettes()
 {
-	IColorSwatch* c;
+	IColorSwatch *c;
 	for (int i = 0; i < NUMPALETTES; i++)
 	{
 		c = GetIColorSwatch(hPaletteWnd[i]);
@@ -675,18 +662,16 @@ void VertexPaint::TurnVCOn(BOOL shaded)
 			NodeTab[i]->SetShadeCVerts(!NodeTab[i]->GetShadeCVerts());
 		else
 			NodeTab[i]->SetCVertMode(!NodeTab[i]->GetCVertMode());
-
 	}
 	NotifyDependents(FOREVER, PART_VERTCOLOR, REFMSG_CHANGE);
 	ip->RedrawViews(ip->GetTime());
 }
 
-
 // *****************************************************************
-void	VertexPaint::setEditionType(int editMode)
+void VertexPaint::setEditionType(int editMode)
 {
-	if (editMode < 0)	editMode = 0;
-	if (editMode > 2)	editMode = 2;
+	if (editMode < 0) editMode = 0;
+	if (editMode > 2) editMode = 2;
 
 	// backup current Color according to editMode
 	backupCurrentColor();
@@ -697,26 +682,25 @@ void	VertexPaint::setEditionType(int editMode)
 	ip->RedrawViews(ip->GetTime());
 
 	// Change Color Swatch according to editMode.
-	IColorSwatch* c;
+	IColorSwatch *c;
 	for (int i = 0; i < NUMPALETTES; i++)
 	{
 		// Change palColors[i].
-		int	val;
+		int val;
 		if (editMode == 0)
-			val = i * 255 / (4 - 1);		// 0, 85, 170, 255
+			val = i * 255 / (4 - 1); // 0, 85, 170, 255
 		else
-			val = (i * 256 + 128) / 4;		// 32, 96, 160, 224
+			val = (i * 256 + 128) / 4; // 32, 96, 160, 224
 		// Change Addditional Palette colors.
 		if (i >= 4)
 		{
 			if (editMode == 0)
-				val = 42 + (i - 4) * 255 / (4 - 1);	// 42, 127, 212
+				val = 42 + (i - 4) * 255 / (4 - 1); // 42, 127, 212
 			else
-				val = 0;		// Phase not used
+				val = 0; // Phase not used
 		}
 		// Setup Color
 		palColors[i] = RGB(val, val, val);
-
 
 		c = GetIColorSwatch(hPaletteWnd[i]);
 		c->SetColor(palColors[i]);
@@ -728,7 +712,7 @@ void	VertexPaint::setEditionType(int editMode)
 }
 
 // *****************************************************************
-void	VertexPaint::backupCurrentColor()
+void VertexPaint::backupCurrentColor()
 {
 	switch (getEditionType())
 	{
@@ -737,7 +721,7 @@ void	VertexPaint::backupCurrentColor()
 	case 2: lastPhaseColor = iColor->GetColor(); break;
 	}
 }
-void	VertexPaint::reloadBkupColor()
+void VertexPaint::reloadBkupColor()
 {
 	// Change current color according to editMode.
 	switch (getEditionType())
@@ -748,18 +732,17 @@ void	VertexPaint::reloadBkupColor()
 	}
 }
 
-
 // *****************************************************************
-void	VertexPaint::fillSelectionColor()
+void VertexPaint::fillSelectionColor()
 {
-	int		mci;
+	int mci;
 
 	// Put Data in Undo/Redo List.
 	if (!theHold.Holding())
 		theHold.Begin();
 
-	ModContextList	modContexts;
-	INodeTab		nodeTab;
+	ModContextList modContexts;
+	INodeTab nodeTab;
 
 	GetCOREInterface()->GetModContexts(modContexts, nodeTab);
 
@@ -767,14 +750,13 @@ void	VertexPaint::fillSelectionColor()
 	{
 		ModContext *mc = modContexts[mci];
 		if (mc && mc->localData)
-			theHold.Put(new VertexPaintRestore((VertexPaintData*)mc->localData, this));
+			theHold.Put(new VertexPaintRestore((VertexPaintData *)mc->localData, this));
 	}
 
 	theHold.Accept(GetString(IDS_RESTORE_FILL));
 
-
 	// Which Component to change??
-	VertexPaintData::TComponent	whichComponent;
+	VertexPaintData::TComponent whichComponent;
 	switch (getEditionType())
 	{
 	case 0: whichComponent = VertexPaintData::Red; break;
@@ -782,21 +764,20 @@ void	VertexPaint::fillSelectionColor()
 	case 2: whichComponent = VertexPaintData::Blue; break;
 	}
 
-
 	// Modify all meshes.
 	for (mci = 0; mci < modContexts.Count(); mci++)
 	{
 		ModContext *mc = modContexts[mci];
 		if (mc && mc->localData)
 		{
-			VertexPaintData* d = (VertexPaintData*)mc->localData;
-			Mesh*		mesh = d->GetMesh();
+			VertexPaintData *d = (VertexPaintData *)mc->localData;
+			Mesh *mesh = d->GetMesh();
 			if (mesh && mesh->vertCol)
 			{
 				// For all faces of the mesh
 				for (int fi = 0; fi < mesh->getNumFaces(); fi++)
 				{
-					Face* f = &mesh->faces[fi];
+					Face *f = &mesh->faces[fi];
 
 					for (int i = 0; i < 3; i++)
 					{
@@ -823,16 +804,16 @@ void	VertexPaint::fillSelectionColor()
 }
 
 // *****************************************************************
-void	VertexPaint::fillSelectionGradientColor()
+void VertexPaint::fillSelectionGradientColor()
 {
-	int		mci;
+	int mci;
 
 	// Put Data in Undo/Redo List.
 	if (!theHold.Holding())
 		theHold.Begin();
 
-	ModContextList	modContexts;
-	INodeTab		nodeTab;
+	ModContextList modContexts;
+	INodeTab nodeTab;
 
 	GetCOREInterface()->GetModContexts(modContexts, nodeTab);
 
@@ -840,26 +821,24 @@ void	VertexPaint::fillSelectionGradientColor()
 	{
 		ModContext *mc = modContexts[mci];
 		if (mc && mc->localData)
-			theHold.Put(new VertexPaintRestore((VertexPaintData*)mc->localData, this));
+			theHold.Put(new VertexPaintRestore((VertexPaintData *)mc->localData, this));
 	}
 
 	theHold.Accept(GetString(IDS_RESTORE_GRADIENT));
 
-
 	// Which Component to change??
-	VertexPaintData::TComponent	whichComponent;
+	VertexPaintData::TComponent whichComponent;
 	switch (getEditionType())
 	{
 	case 0: whichComponent = VertexPaintData::Red; break;
 	case 1: whichComponent = VertexPaintData::Green; break;
 	case 2: whichComponent = VertexPaintData::Blue; break;
 	}
-	COLORREF	grad0 = iColorGradient[0]->GetColor();
-	COLORREF	grad1 = iColorGradient[1]->GetColor();
-
+	COLORREF grad0 = iColorGradient[0]->GetColor();
+	COLORREF grad1 = iColorGradient[1]->GetColor();
 
 	// Get Matrix to viewport.
-	Matrix3		viewMat;
+	Matrix3 viewMat;
 	{
 #if MAX_VERSION_MAJOR >= 19
 		ViewExp *ve = &GetCOREInterface()->GetActiveViewExp();
@@ -874,25 +853,24 @@ void	VertexPaint::fillSelectionGradientColor()
 #endif
 	}
 
-
 	// Modify all meshes.
 	for (mci = 0; mci < modContexts.Count(); mci++)
 	{
 		ModContext *mc = modContexts[mci];
 		if (mc && mc->localData)
 		{
-			VertexPaintData* d = (VertexPaintData*)mc->localData;
-			Mesh*		mesh = d->GetMesh();
+			VertexPaintData *d = (VertexPaintData *)mc->localData;
+			Mesh *mesh = d->GetMesh();
 			if (mesh && mesh->vertCol)
 			{
-				float	yMini = FLT_MAX;
-				float	yMaxi = -FLT_MAX;
+				float yMini = FLT_MAX;
+				float yMaxi = -FLT_MAX;
 
 				// 1st, For all faces of the mesh, comute BBox of selection.
 				int fi;
 				for (fi = 0; fi < mesh->getNumFaces(); fi++)
 				{
-					Face* f = &mesh->faces[fi];
+					Face *f = &mesh->faces[fi];
 
 					for (int i = 0; i < 3; i++)
 					{
@@ -906,7 +884,7 @@ void	VertexPaint::fillSelectionGradientColor()
 							continue;
 
 						// Transform to viewSpace.
-						Point3	p = viewMat*mesh->getVert(f->v[i]);
+						Point3 p = viewMat * mesh->getVert(f->v[i]);
 						// extend bbox.
 						yMini = p.y < yMini ? p.y : yMini;
 						yMaxi = p.y > yMaxi ? p.y : yMaxi;
@@ -916,7 +894,7 @@ void	VertexPaint::fillSelectionGradientColor()
 				// 2nd, For all faces of the mesh, fill with gradient
 				for (fi = 0; fi < mesh->getNumFaces(); fi++)
 				{
-					Face* f = &mesh->faces[fi];
+					Face *f = &mesh->faces[fi];
 
 					for (int i = 0; i < 3; i++)
 					{
@@ -930,11 +908,11 @@ void	VertexPaint::fillSelectionGradientColor()
 							continue;
 
 						// Compute gradientValue.
-						float	gradValue;
-						Point3	p = viewMat*mesh->getVert(f->v[i]);
+						float gradValue;
+						Point3 p = viewMat * mesh->getVert(f->v[i]);
 						gradValue = (p.y - yMini) / (yMaxi - yMini);
 						// Modifie with bendPower. 1->6.
-						float	pow = 1 + fGradientBend * 5;
+						float pow = 1 + fGradientBend * 5;
 						gradValue = powf(gradValue, pow);
 
 						// Apply painting
@@ -944,7 +922,6 @@ void	VertexPaint::fillSelectionGradientColor()
 						d->SetColor(f->v[i], gradValue, grad1, whichComponent);
 					}
 				}
-
 			}
 		}
 	}
@@ -954,18 +931,28 @@ void	VertexPaint::fillSelectionGradientColor()
 	ip->RedrawViews(ip->GetTime());
 }
 
-
 // *****************************************************************
-VertexPaintData::VertexPaintData(Mesh& m) : mesh(NULL), colordata(NULL), nverts(NULL),
-nvcverts(NULL), numColors(0), numnverts(0), numnvcverts(0)
+VertexPaintData::VertexPaintData(Mesh &m)
+    : mesh(NULL)
+    , colordata(NULL)
+    , nverts(NULL)
+    , nvcverts(NULL)
+    , numColors(0)
+    , numnverts(0)
+    , numnvcverts(0)
 {
 	SetCache(m);
 }
 
-VertexPaintData::VertexPaintData() : mesh(NULL), colordata(NULL), nverts(NULL),
-nvcverts(NULL), numColors(0), numnverts(0), numnvcverts(0)
+VertexPaintData::VertexPaintData()
+    : mesh(NULL)
+    , colordata(NULL)
+    , nverts(NULL)
+    , nvcverts(NULL)
+    , numColors(0)
+    , numnverts(0)
+    , numnvcverts(0)
 {
-
 }
 
 VertexPaintData::~VertexPaintData()
@@ -985,13 +972,12 @@ VertexPaintData::~VertexPaintData()
 	numnvcverts = 0;
 }
 
-void VertexPaintData::SetCache(Mesh& m)
+void VertexPaintData::SetCache(Mesh &m)
 {
 	FreeCache();
 	mesh = new Mesh(m);
 	SynchVerts(m);
 	AllocColorData(mesh->getNumVerts());
-
 }
 
 void VertexPaintData::FreeCache()
@@ -1007,12 +993,12 @@ void VertexPaintData::FreeCache()
 	numnvcverts = 0;
 }
 
-Mesh* VertexPaintData::GetMesh()
+Mesh *VertexPaintData::GetMesh()
 {
 	return mesh;
 }
 
-NVert&  VertexPaintData::GetNVert(int i)
+NVert &VertexPaintData::GetNVert(int i)
 {
 	static NVert nv;
 
@@ -1022,7 +1008,7 @@ NVert&  VertexPaintData::GetNVert(int i)
 		return nv;
 }
 
-NVert& VertexPaintData::GetNVCVert(int i)
+NVert &VertexPaintData::GetNVCVert(int i)
 {
 	static NVert nv;
 
@@ -1032,7 +1018,7 @@ NVert& VertexPaintData::GetNVCVert(int i)
 		return nv;
 }
 
-COLORREF& VertexPaintData::GetColor(int i)
+COLORREF &VertexPaintData::GetColor(int i)
 {
 	static COLORREF c = RGB(0, 0, 0);
 	if (numColors > i)
@@ -1041,7 +1027,7 @@ COLORREF& VertexPaintData::GetColor(int i)
 		return c;
 }
 
-ColorData& VertexPaintData::GetColorData(int i)
+ColorData &VertexPaintData::GetColorData(int i)
 {
 	static ColorData c;
 
@@ -1057,23 +1043,23 @@ void VertexPaintData::SetColor(int i, float bary, COLORREF c, TComponent whichCo
 	if (colordata && numColors > i)
 	{
 		// change color.
-		COLORREF	oldColor = colordata[i].color;
-		int			oldVal;
-		int			editVal;
-		int			newVal;
+		COLORREF oldColor = colordata[i].color;
+		int oldVal;
+		int editVal;
+		int newVal;
 
 		// Mask good component.
 		switch (whichComp)
 		{
-		case  Red:
+		case Red:
 			oldVal = GetRValue(colordata[i].color);
 			editVal = GetRValue(c);
 			break;
-		case  Green:
+		case Green:
 			oldVal = GetGValue(colordata[i].color);
 			editVal = GetGValue(c);
 			break;
-		case  Blue:
+		case Blue:
 			oldVal = GetBValue(colordata[i].color);
 			editVal = GetBValue(c);
 			break;
@@ -1084,22 +1070,21 @@ void VertexPaintData::SetColor(int i, float bary, COLORREF c, TComponent whichCo
 		float alpha = (1.0f - bary);
 
 		// Compute new value
-		newVal = (int)(alpha*oldVal + bary*editVal);
+		newVal = (int)(alpha * oldVal + bary * editVal);
 
 		// Mask good component.
 		switch (whichComp)
 		{
-		case  Red:
+		case Red:
 			colordata[i].color = (RGB(newVal, 0, 0)) | (oldColor & RGB(0, 255, 255));
 			break;
-		case  Green:
+		case Green:
 			colordata[i].color = (RGB(0, newVal, 0)) | (oldColor & RGB(255, 0, 255));
 			break;
-		case  Blue:
+		case Blue:
 			colordata[i].color = (RGB(0, 0, newVal)) | (oldColor & RGB(255, 255, 0));
 			break;
 		}
-
 	}
 }
 
@@ -1118,7 +1103,7 @@ int VertexPaintData::GetNumColors()
 
 void VertexPaintData::AllocColorData(int numcols)
 {
-	ColorData* newColorData;
+	ColorData *newColorData;
 
 	// Colors already exist.
 	if (numColors == numcols)
@@ -1145,7 +1130,6 @@ void VertexPaintData::AllocColorData(int numcols)
 			colordata = newColorData;
 
 			numColors = numcols;
-
 		}
 		else
 		{
@@ -1160,9 +1144,9 @@ void VertexPaintData::AllocColorData(int numcols)
 	}
 }
 
-LocalModData* VertexPaintData::Clone()
+LocalModData *VertexPaintData::Clone()
 {
-	VertexPaintData* d = new VertexPaintData();
+	VertexPaintData *d = new VertexPaintData();
 
 	if (colordata)
 	{
@@ -1180,7 +1164,6 @@ LocalModData* VertexPaintData::Clone()
 		{
 			d->nverts[i] = nverts[i];
 		}
-
 	}
 	if (nvcverts)
 	{
@@ -1189,7 +1172,6 @@ LocalModData* VertexPaintData::Clone()
 		{
 			d->nvcverts[i] = nvcverts[i];
 		}
-
 	}
 
 	return d;
@@ -1224,7 +1206,7 @@ void VertexPaintData::SynchVerts(Mesh &m)
 		{
 			int iCur = nverts[mesh->faces[i].v[j]].faces.Count();
 
-			// Tell the vertex, which to which face it belongs and which 
+			// Tell the vertex, which to which face it belongs and which
 			// of the three face v-indices corresponds to the vertex
 
 			nverts[mesh->faces[i].v[j]].faces.SetCount(iCur + 1);
@@ -1232,7 +1214,6 @@ void VertexPaintData::SynchVerts(Mesh &m)
 
 			nverts[mesh->faces[i].v[j]].faces[iCur] = i;
 			nverts[mesh->faces[i].v[j]].whichVertex[iCur] = j;
-
 
 			if (mesh->vcFace)
 			{
@@ -1244,7 +1225,6 @@ void VertexPaintData::SynchVerts(Mesh &m)
 
 				nvcverts[mesh->vcFace[i].t[j]].faces[iCur] = i;
 				nvcverts[mesh->vcFace[i].t[j]].whichVertex[iCur] = j;
-
 			}
 			else
 				nlassert(0);
@@ -1252,14 +1232,11 @@ void VertexPaintData::SynchVerts(Mesh &m)
 	}
 }
 
-
 //***************************************************************************
 //**
 //** NVert
 //**
 //***************************************************************************
-
-
 
 NVert::NVert()
 {
@@ -1267,7 +1244,7 @@ NVert::NVert()
 	whichVertex.SetCount(0);
 }
 
-NVert& NVert::operator= (NVert &nvert)
+NVert &NVert::operator=(NVert &nvert)
 {
 	faces = nvert.faces;
 	whichVertex = nvert.whichVertex;
@@ -1276,16 +1253,17 @@ NVert& NVert::operator= (NVert &nvert)
 
 //***************************************************************************
 //**
-//** ColorData 
+//** ColorData
 //**
 //***************************************************************************
 
-
-ColorData::ColorData(DWORD col) : color(col)
+ColorData::ColorData(DWORD col)
+    : color(col)
 {
 }
 
-ColorData::ColorData() : color(0)
+ColorData::ColorData()
+    : color(0)
 {
 }
 
@@ -1296,7 +1274,9 @@ ColorData::ColorData() : color(0)
 //***************************************************************************
 
 VertexPaintRestore::VertexPaintRestore(VertexPaintData *pLocalData, VertexPaint *pVPaint)
-	: pMod(pVPaint), pPaintData(pLocalData), redoColordata(NULL)
+    : pMod(pVPaint)
+    , pPaintData(pLocalData)
+    , redoColordata(NULL)
 {
 	colordata = new ColorData[pPaintData->numColors];
 	for (int i = 0; i < pPaintData->numColors; i++)
@@ -1304,7 +1284,6 @@ VertexPaintRestore::VertexPaintRestore(VertexPaintData *pLocalData, VertexPaint 
 		colordata[i] = pPaintData->colordata[i];
 	}
 	numcolors = pPaintData->numColors;
-
 }
 
 VertexPaintRestore::~VertexPaintRestore()
@@ -1349,10 +1328,9 @@ void VertexPaintRestore::Redo()
 
 	pMod->NotifyDependents(FOREVER, PART_VERTCOLOR, REFMSG_CHANGE);
 	GetCOREInterface()->RedrawViews(GetCOREInterface()->GetTime());
-
 }
 
-int  VertexPaintRestore::Size()
+int VertexPaintRestore::Size()
 {
 	int iSize = 0;
 
@@ -1364,4 +1342,3 @@ int  VertexPaintRestore::Size()
 
 	return iSize;
 }
-

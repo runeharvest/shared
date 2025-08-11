@@ -295,8 +295,8 @@ public:
 	    , OcclusionGain(1.0f)
 	    , OcclusionLFFactor(0.0f)
 	    , OcclusionRoomRatio(0.5f)
-		, DirectCutoffFrequency(1000.0f)
-		, EffectCutoffFrequency(1000.0f)
+	    , DirectCutoffFrequency(1000.0f)
+	    , EffectCutoffFrequency(1000.0f)
 	{
 	}
 
@@ -323,7 +323,6 @@ public:
 	// float EffectCutoffFrequency;
 
 	CFilterParameters(float occlusion, float occlusionLfRatio, float occlusionRoomRatio, float obstruction);
-
 };
 
 } /* namespace NLSOUND */

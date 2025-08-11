@@ -14,16 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
 #ifndef RY_TARGET_H
 #define RY_TARGET_H
 
 #include <string>
 
-namespace TARGET
-{
+namespace TARGET {
 
 enum EAggro
 {
@@ -47,28 +43,26 @@ enum EForceRatio
 	NUM_ENUM_FORCE_RATIO
 };
 
-	// Enum for the target's restrictions.
-	enum TTargetRestriction
-	{
-		EveryBody = 0,
-		SelfOnly,
-		TargetRestrictionCount	
-	};
-	/**
-	 * Get the Enum Value for a given target's restriction in string.
-	 * \param str : the input string
-	 * \return TTargetRestriction : the target's restriction value (for the enum).
-	 */
-	TTargetRestriction stringToTargetRestriction(const std::string &str);
-	/**
-	 * Get the string for a given target's restriction.
-	 * \param targetRestriction : target's restriction
-	 * \return string : the target's restriction as a string.
-	 */
-	const std::string & targetRestrictionToString(TTargetRestriction targetRestriction);
-
+// Enum for the target's restrictions.
+enum TTargetRestriction
+{
+	EveryBody = 0,
+	SelfOnly,
+	TargetRestrictionCount
+};
+/**
+ * Get the Enum Value for a given target's restriction in string.
+ * \param str : the input string
+ * \return TTargetRestriction : the target's restriction value (for the enum).
+ */
+TTargetRestriction stringToTargetRestriction(const std::string &str);
+/**
+ * Get the string for a given target's restriction.
+ * \param targetRestriction : target's restriction
+ * \return string : the target's restriction as a string.
+ */
+const std::string &targetRestrictionToString(TTargetRestriction targetRestriction);
 
 } // TARGET
 
 #endif
-

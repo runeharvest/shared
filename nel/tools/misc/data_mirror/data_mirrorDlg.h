@@ -27,31 +27,31 @@ public:
 		ParametersCount,
 	};
 
-	std::string		Strings[ParametersCount];
-	int				Image;
-	uint			NewSizeUI;
-	uint			OldSizeUI;
-	FILETIME		NewDateST;
-	FILETIME		OldDateST;
+	std::string Strings[ParametersCount];
+	int Image;
+	uint NewSizeUI;
+	uint OldSizeUI;
+	FILETIME NewDateST;
+	FILETIME OldDateST;
 };
 
 class CData_mirrorDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CData_mirrorDlg(CWnd* pParent = NULL);	// standard constructor
+	CData_mirrorDlg(CWnd *pParent = NULL); // standard constructor
 
-	uint	ButtonXModifiedFromRight;
-	uint	ButtonXAddedFromRight;
-	uint	ButtonXRemovedFromRight;
-	uint	ListBottomFromBottom;
-	uint	ListRightFromRight;
+	uint ButtonXModifiedFromRight;
+	uint ButtonXAddedFromRight;
+	uint ButtonXRemovedFromRight;
+	uint ListBottomFromBottom;
+	uint ListRightFromRight;
 
-	void	resize ();
-	void	buildSourceFiles ();
-	void	updateList ();
-	void	updateSort ();
-	void	addEntry (uint where, const char *file, FILETIME &newDate, FILETIME &oldDate);
+	void resize();
+	void buildSourceFiles();
+	void updateList();
+	void updateSort();
+	void addEntry(uint where, const char *file, FILETIME &newDate, FILETIME &oldDate);
 
 	enum
 	{
@@ -62,30 +62,33 @@ public:
 	};
 
 	// Vectors
-	std::list<CEntryFile>		Files[FileTypes];
-	std::vector<std::string>	FilesToUpdate[FileTypes];
+	std::list<CEntryFile> Files[FileTypes];
+	std::vector<std::string> FilesToUpdate[FileTypes];
 
 	bool SortOrder;
 	uint SortedColumn;
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CData_mirrorDlg)
-	enum { IDD = IDD_DATA_MIRROR_DIALOG };
-	CButton	IgnoreCtrl;
-	CButton	ModifiedFilterCtrl;
-	CButton	AddedFilterCtrl;
-	CButton	RemovedFilterCtrl;
-	CMyListCtrl	List;
-	int		ModifiedFilter;
+	enum
+	{
+		IDD = IDD_DATA_MIRROR_DIALOG
+	};
+	CButton IgnoreCtrl;
+	CButton ModifiedFilterCtrl;
+	CButton AddedFilterCtrl;
+	CButton RemovedFilterCtrl;
+	CMyListCtrl List;
+	int ModifiedFilter;
 	//}}AFX_DATA
 
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CData_mirrorDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	HICON m_hIcon;
 
@@ -98,12 +101,12 @@ protected:
 	afx_msg void OnIgnore();
 	virtual void OnOK();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnClickList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnClickList(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnUpdate();
 	afx_msg void OnAddedFilters();
 	afx_msg void OnModifiedFilters();
 	afx_msg void OnRemovedFilters();
-	afx_msg void OnColumnclickList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnColumnclickList(NMHDR *pNMHDR, LRESULT *pResult);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

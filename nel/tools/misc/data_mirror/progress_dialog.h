@@ -12,30 +12,32 @@
 
 class CProgressDialog : public CDialog, public NLMISC::IProgressCallback
 {
-// Construction
+	// Construction
 public:
-	CProgressDialog(CWnd* pParent = NULL);   // standard constructor
+	CProgressDialog(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CProgressDialog)
-	enum { IDD = IDD_PROGRESS };
-	CProgressCtrl	Bar;
-	CString	Text;
+	enum
+	{
+		IDD = IDD_PROGRESS
+	};
+	CProgressCtrl Bar;
+	CString Text;
 	//}}AFX_DATA
 
 	/// \from IProgressCallback
-	virtual void progress (float progressValue);
+	virtual void progress(float progressValue);
 
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CProgressDialog)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CProgressDialog)
 	virtual BOOL OnInitDialog();

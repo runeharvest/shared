@@ -28,56 +28,55 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace NLLIGO
-{
+namespace NLLIGO {
 
 // ***************************************************************************
 CLigoConfig::CLigoConfig()
-: _DynamicAliasBitCount(32)
+    : _DynamicAliasBitCount(32)
 {
 }
 
 // ***************************************************************************
 
-bool CLigoConfig::readConfigFile (const std::string &fileName, bool parsePrimitiveComboContent)
+bool CLigoConfig::readConfigFile(const std::string &fileName, bool parsePrimitiveComboContent)
 {
 	// The CF
 	CConfigFile cf;
 
 	// Load and parse the file
-	cf.load (fileName);
+	cf.load(fileName);
 
 	// Read the parameters
-	CConfigFile::CVar &cell_size = cf.getVar ("cell_size");
-	CellSize = cell_size.asFloat ();
-	CConfigFile::CVar &snap = cf.getVar ("snap");
-	Snap = snap.asFloat ();
-	CConfigFile::CVar &snapShot = cf.getVar ("zone_snapeshot_res");
-	ZoneSnapShotRes = (uint)snapShot.asInt ();
-	CConfigFile::CVar &primitiveClassFilename = cf.getVar ("primitive_class_filename");
-	PrimitiveClassFilename= primitiveClassFilename.asString ();
+	CConfigFile::CVar &cell_size = cf.getVar("cell_size");
+	CellSize = cell_size.asFloat();
+	CConfigFile::CVar &snap = cf.getVar("snap");
+	Snap = snap.asFloat();
+	CConfigFile::CVar &snapShot = cf.getVar("zone_snapeshot_res");
+	ZoneSnapShotRes = (uint)snapShot.asInt();
+	CConfigFile::CVar &primitiveClassFilename = cf.getVar("primitive_class_filename");
+	PrimitiveClassFilename = primitiveClassFilename.asString();
 
 	// Clear the previous classes
 	_Contexts.clear();
-	_Contexts.push_back ("default");
+	_Contexts.push_back("default");
 	_PrimitiveClasses.clear();
 	_PrimitiveConfigurations.clear();
 
 	// Read the primitive class name
 	if (!PrimitiveClassFilename.empty())
 	{
-		return readPrimitiveClass (PrimitiveClassFilename.c_str(), parsePrimitiveComboContent);
+		return readPrimitiveClass(PrimitiveClassFilename.c_str(), parsePrimitiveComboContent);
 	}
 	return true;
 }
 
 // ***************************************************************************
 
-bool CLigoConfig::readPrimitiveClass (const std::string &_fileName, bool parsePrimitiveComboContent)
+bool CLigoConfig::readPrimitiveClass(const std::string &_fileName, bool parsePrimitiveComboContent)
 {
 	// File exist ?
 	string filename = _fileName;
-	filename = CPath::lookup (_fileName, false, false, false);
+	filename = CPath::lookup(_fileName, false, false, false);
 	if (filename.empty())
 		filename = _fileName;
 
@@ -86,27 +85,27 @@ bool CLigoConfig::readPrimitiveClass (const std::string &_fileName, bool parsePr
 
 	// Read the document
 	CIFile file;
-	if (file.open (filename))
+	if (file.open(filename))
 	{
 		try
 		{
 			// XML stream
 			CIXml xml;
-			xml.init (file);
+			xml.init(file);
 
 			// Get the root node
-			xmlNodePtr root = xml.getRootNode ();
-			nlassert (root);
+			xmlNodePtr root = xml.getRootNode();
+			nlassert(root);
 
 			// Check the header
-			if (strcmp ((const char*)root->name, "NEL_LIGO_PRIMITIVE_CLASS") == 0)
+			if (strcmp((const char *)root->name, "NEL_LIGO_PRIMITIVE_CLASS") == 0)
 			{
 				// ALIAS_DYNAMIC_BITS
-				xmlNodePtr aliasBits = CIXml::getFirstChildNode (root, "ALIAS_DYNAMIC_BITS");
+				xmlNodePtr aliasBits = CIXml::getFirstChildNode(root, "ALIAS_DYNAMIC_BITS");
 				if (aliasBits)
 				{
 					string bits;
-					if (getPropertyString (bits, filename.c_str(), aliasBits, "BIT_COUNT"))
+					if (getPropertyString(bits, filename.c_str(), aliasBits, "BIT_COUNT"))
 					{
 						uint32 uBits;
 						NLMISC::fromString(bits, uBits);
@@ -114,7 +113,6 @@ bool CLigoConfig::readPrimitiveClass (const std::string &_fileName, bool parsePr
 					}
 					else
 						return false;
-
 				}
 				else
 				{
@@ -122,22 +120,22 @@ bool CLigoConfig::readPrimitiveClass (const std::string &_fileName, bool parsePr
 					_DynamicAliasBitCount = 32;
 				}
 				// ALIAS_STATIC_FILE_ID
-				xmlNodePtr indexFileNameNode = CIXml::getFirstChildNode (root, "ALIAS_STATIC_FILE_ID");
+				xmlNodePtr indexFileNameNode = CIXml::getFirstChildNode(root, "ALIAS_STATIC_FILE_ID");
 				if (indexFileNameNode)
 				{
 					string indexFileName;
-					if (getPropertyString (indexFileName, filename.c_str(), indexFileNameNode, "FILE_NAME"))
+					if (getPropertyString(indexFileName, filename.c_str(), indexFileNameNode, "FILE_NAME"))
 					{
 						if (CPath::lookup(indexFileName, false, false, true).empty())
 						{
 							// try to append the class file path
-							indexFileName = CFile::getPath(_fileName)+indexFileName;
+							indexFileName = CFile::getPath(_fileName) + indexFileName;
 						}
 						// load the configuration file
 						reloadIndexFile(indexFileName);
 					}
 					else
-						nlwarning("Can't find XML element <FILE_NAME>, no file index available for alias" );
+						nlwarning("Can't find XML element <FILE_NAME>, no file index available for alias");
 				}
 				else
 				{
@@ -145,71 +143,67 @@ bool CLigoConfig::readPrimitiveClass (const std::string &_fileName, bool parsePr
 					_DynamicAliasBitCount = 32;
 				}
 
-
 				// Get the first primitive description
-				xmlNodePtr primitive = CIXml::getFirstChildNode (root, "PRIMITIVE");
+				xmlNodePtr primitive = CIXml::getFirstChildNode(root, "PRIMITIVE");
 				if (primitive)
 				{
 					do
 					{
 						// Get the primitive name
 						std::string name;
-						if (getPropertyString (name, filename.c_str(), primitive, "CLASS_NAME"))
+						if (getPropertyString(name, filename.c_str(), primitive, "CLASS_NAME"))
 						{
 							// Add the primitive
-							pair<std::map<std::string, CPrimitiveClass>::iterator, bool> insertResult =
-								_PrimitiveClasses.insert (std::map<std::string, CPrimitiveClass>::value_type (name, CPrimitiveClass ()));
+							pair<std::map<std::string, CPrimitiveClass>::iterator, bool> insertResult = _PrimitiveClasses.insert(std::map<std::string, CPrimitiveClass>::value_type(name, CPrimitiveClass()));
 							if (insertResult.second)
 							{
-								if (!insertResult.first->second.read (primitive, filename.c_str(), name.c_str (), contextStrings, _ContextFilesLookup, *this, parsePrimitiveComboContent))
+								if (!insertResult.first->second.read(primitive, filename.c_str(), name.c_str(), contextStrings, _ContextFilesLookup, *this, parsePrimitiveComboContent))
 									return false;
 							}
 							else
 							{
-								syntaxError (filename.c_str(), root, "Class (%s) already defined", name.c_str ());
+								syntaxError(filename.c_str(), root, "Class (%s) already defined", name.c_str());
 							}
 						}
 						else
 							return false;
 
-						primitive = CIXml::getNextChildNode (primitive, "PRIMITIVE");
-					}
-					while (primitive);
+						primitive = CIXml::getNextChildNode(primitive, "PRIMITIVE");
+					} while (primitive);
 				}
 
 				// Add the context strings
 				{
-					set<string>::iterator ite = contextStrings.begin ();
-					while (ite != contextStrings.end ())
+					set<string>::iterator ite = contextStrings.begin();
+					while (ite != contextStrings.end())
 					{
 						if (*ite != "default")
-							_Contexts.push_back (*ite);
+							_Contexts.push_back(*ite);
 						ite++;
 					}
 				}
 
 				// Get the first primitive configuration
-				_PrimitiveConfigurations.reserve (_PrimitiveConfigurations.size()+CIXml::countChildren (root, "CONFIGURATION"));
-				xmlNodePtr configuration = CIXml::getFirstChildNode (root, "CONFIGURATION");
+				_PrimitiveConfigurations.reserve(_PrimitiveConfigurations.size() + CIXml::countChildren(root, "CONFIGURATION"));
+				xmlNodePtr configuration = CIXml::getFirstChildNode(root, "CONFIGURATION");
 				if (configuration)
 				{
 					do
 					{
 						// Get the configuration name
 						std::string name;
-						if (getPropertyString (name, filename.c_str(), configuration, "NAME"))
+						if (getPropertyString(name, filename.c_str(), configuration, "NAME"))
 						{
 							// Add the configuration
-							_PrimitiveConfigurations.resize (_PrimitiveConfigurations.size()+1);
-							if (!_PrimitiveConfigurations.back().read (configuration, filename.c_str(), name.c_str (), *this))
+							_PrimitiveConfigurations.resize(_PrimitiveConfigurations.size() + 1);
+							if (!_PrimitiveConfigurations.back().read(configuration, filename.c_str(), name.c_str(), *this))
 								return false;
 						}
 						else
 							return false;
 
-						configuration = CIXml::getNextChildNode (configuration, "CONFIGURATION");
-					}
-					while (configuration);
+						configuration = CIXml::getNextChildNode(configuration, "CONFIGURATION");
+					} while (configuration);
 				}
 
 				// Ok
@@ -217,17 +211,17 @@ bool CLigoConfig::readPrimitiveClass (const std::string &_fileName, bool parsePr
 			}
 			else
 			{
-				syntaxError (filename.c_str(), root, "Wrong root node, should be NEL_LIGO_PRIMITIVE_CLASS");
+				syntaxError(filename.c_str(), root, "Wrong root node, should be NEL_LIGO_PRIMITIVE_CLASS");
 			}
 		}
 		catch (const Exception &e)
 		{
-			errorMessage ("File read error (%s):%s", filename.c_str(), e.what ());
+			errorMessage("File read error (%s):%s", filename.c_str(), e.what());
 		}
 	}
 	else
 	{
-		errorMessage ("Can't open the file %s for reading.", filename.c_str());
+		errorMessage("Can't open the file %s for reading.", filename.c_str());
 	}
 	return false;
 }
@@ -245,8 +239,8 @@ bool CLigoConfig::reloadIndexFile(const std::string &indexFileName)
 	if (!_IndexFileName.empty() && !indexFileName.empty() && _IndexFileName != indexFileName)
 	{
 		nlwarning("CLigoConfig::reloadIndexFile: index file already loaded as '%s', can't load another file '%s'!",
-			_IndexFileName.c_str(),
-			indexFileName.c_str());
+		    _IndexFileName.c_str(),
+		    indexFileName.c_str());
 		return false;
 	}
 
@@ -268,13 +262,13 @@ bool CLigoConfig::reloadIndexFile(const std::string &indexFileName)
 	CConfigFile::CVar *files = cf.getVarPtr("Files");
 	if (files != NULL)
 	{
-		for (uint i=0; i<files->size()/2; ++i)
+		for (uint i = 0; i < files->size() / 2; ++i)
 		{
 			string fileName;
 			uint32 index;
 
-			fileName = files->asString(i*2);
-			index = files->asInt(i*2+1);
+			fileName = files->asString(i * 2);
+			index = files->asInt(i * 2 + 1);
 
 			if (isFileStaticAliasMapped(fileName))
 			{
@@ -282,9 +276,9 @@ bool CLigoConfig::reloadIndexFile(const std::string &indexFileName)
 				if (getFileStaticAliasMapping(fileName) != index)
 				{
 					nlwarning("CLigoConfig::reloadIndexFile: the mapping for the file '%s' as changed from %u to %u in the config file, the change is ignored",
-						fileName.c_str(),
-						index,
-						getFileStaticAliasMapping(fileName));
+					    fileName.c_str(),
+					    index,
+					    getFileStaticAliasMapping(fileName));
 				}
 			}
 			else
@@ -299,15 +293,15 @@ bool CLigoConfig::reloadIndexFile(const std::string &indexFileName)
 
 // ***************************************************************************
 
-NLMISC::CRGBA CLigoConfig::getPrimitiveColor (const NLLIGO::IPrimitive &primitive)
+NLMISC::CRGBA CLigoConfig::getPrimitiveColor(const NLLIGO::IPrimitive &primitive)
 {
 	// Get the class
 	string className;
-	if (primitive.getPropertyByName ("class", className))
+	if (primitive.getPropertyByName("class", className))
 	{
 		// Get the class
-		std::map<std::string, CPrimitiveClass>::iterator ite = _PrimitiveClasses.find (className);
-		if (ite != _PrimitiveClasses.end ())
+		std::map<std::string, CPrimitiveClass>::iterator ite = _PrimitiveClasses.find(className);
+		if (ite != _PrimitiveClasses.end())
 		{
 			return ite->second.Color;
 		}
@@ -317,15 +311,15 @@ NLMISC::CRGBA CLigoConfig::getPrimitiveColor (const NLLIGO::IPrimitive &primitiv
 
 // ***************************************************************************
 
-bool CLigoConfig::isPrimitiveLinked (const NLLIGO::IPrimitive &primitive)
+bool CLigoConfig::isPrimitiveLinked(const NLLIGO::IPrimitive &primitive)
 {
 	// Get the class
 	string className;
-	if (primitive.getPropertyByName ("class", className))
+	if (primitive.getPropertyByName("class", className))
 	{
 		// Get the class
-		std::map<std::string, CPrimitiveClass>::iterator ite = _PrimitiveClasses.find (className);
-		if (ite != _PrimitiveClasses.end ())
+		std::map<std::string, CPrimitiveClass>::iterator ite = _PrimitiveClasses.find(className);
+		if (ite != _PrimitiveClasses.end())
 		{
 			return ite->second.LinkBrothers;
 		}
@@ -335,30 +329,30 @@ bool CLigoConfig::isPrimitiveLinked (const NLLIGO::IPrimitive &primitive)
 
 // ***************************************************************************
 
-const NLLIGO::IPrimitive *CLigoConfig::getLinkedPrimitive (const NLLIGO::IPrimitive &primitive) const
+const NLLIGO::IPrimitive *CLigoConfig::getLinkedPrimitive(const NLLIGO::IPrimitive &primitive) const
 {
 	// Get the parent
-	const IPrimitive *parent = primitive.getParent ();
+	const IPrimitive *parent = primitive.getParent();
 	if (parent)
 	{
 		uint childId;
-		if (parent->getChildId (childId, &primitive))
+		if (parent->getChildId(childId, &primitive))
 		{
 			// Test the next primitive
 
 			// Get the primitive class
 			string className;
-			if (primitive.getPropertyByName ("class", className))
+			if (primitive.getPropertyByName("class", className))
 			{
 				// Get the class
-				std::map<std::string, CPrimitiveClass>::const_iterator ite = _PrimitiveClasses.find (className);
-				if (ite != _PrimitiveClasses.end ())
+				std::map<std::string, CPrimitiveClass>::const_iterator ite = _PrimitiveClasses.find(className);
+				if (ite != _PrimitiveClasses.end())
 				{
 					if (ite->second.LinkBrothers)
 					{
 						// Add the next child
 						const IPrimitive *brother;
-						if (parent->getChild (brother, childId+1))
+						if (parent->getChild(brother, childId + 1))
 							return brother;
 					}
 				}
@@ -370,28 +364,28 @@ const NLLIGO::IPrimitive *CLigoConfig::getLinkedPrimitive (const NLLIGO::IPrimit
 
 // ***************************************************************************
 
-const NLLIGO::IPrimitive *CLigoConfig::getPreviousLinkedPrimitive (const NLLIGO::IPrimitive &primitive) const
+const NLLIGO::IPrimitive *CLigoConfig::getPreviousLinkedPrimitive(const NLLIGO::IPrimitive &primitive) const
 {
 	// Get the parent
-	const IPrimitive *parent = primitive.getParent ();
+	const IPrimitive *parent = primitive.getParent();
 	if (parent)
 	{
 		uint childId;
-		if (parent->getChildId (childId, &primitive))
+		if (parent->getChildId(childId, &primitive))
 		{
 			// Test the previous primitive
 			if (childId > 0)
 			{
 				const IPrimitive *brother;
-				if (parent->getChild (brother, childId-1) && brother)
+				if (parent->getChild(brother, childId - 1) && brother)
 				{
 					// Get the primitive class
 					string className;
-					if (brother->getPropertyByName ("class", className))
+					if (brother->getPropertyByName("class", className))
 					{
 						// Get the class
-						std::map<std::string, CPrimitiveClass>::const_iterator ite = _PrimitiveClasses.find (className);
-						if (ite != _PrimitiveClasses.end ())
+						std::map<std::string, CPrimitiveClass>::const_iterator ite = _PrimitiveClasses.find(className);
+						if (ite != _PrimitiveClasses.end())
 						{
 							if (ite->second.LinkBrothers)
 							{
@@ -409,19 +403,19 @@ const NLLIGO::IPrimitive *CLigoConfig::getPreviousLinkedPrimitive (const NLLIGO:
 
 // ***************************************************************************
 
-bool CLigoConfig::isPrimitiveDeletable (const NLLIGO::IPrimitive &primitive)
+bool CLigoConfig::isPrimitiveDeletable(const NLLIGO::IPrimitive &primitive)
 {
 	// If it is a static child, it can't be deleted.
-	if (isStaticChild (primitive))
+	if (isStaticChild(primitive))
 		return false;
 
 	// Get the class
 	string className;
-	if (primitive.getPropertyByName ("class", className))
+	if (primitive.getPropertyByName("class", className))
 	{
 		// Get the class
-		std::map<std::string, CPrimitiveClass>::iterator ite = _PrimitiveClasses.find (className);
-		if (ite != _PrimitiveClasses.end ())
+		std::map<std::string, CPrimitiveClass>::iterator ite = _PrimitiveClasses.find(className);
+		if (ite != _PrimitiveClasses.end())
 		{
 			return ite->second.Deletable;
 		}
@@ -431,36 +425,36 @@ bool CLigoConfig::isPrimitiveDeletable (const NLLIGO::IPrimitive &primitive)
 
 // ***************************************************************************
 
-bool CLigoConfig::canBeChild (const NLLIGO::IPrimitive &child, const NLLIGO::IPrimitive &parent)
+bool CLigoConfig::canBeChild(const NLLIGO::IPrimitive &child, const NLLIGO::IPrimitive &parent)
 {
 	// Get the child class
 	string childClassName;
-	if (child.getPropertyByName ("class", childClassName))
+	if (child.getPropertyByName("class", childClassName))
 	{
 		// Get the parent class
-		const CPrimitiveClass *parentClass = getPrimitiveClass (parent);
+		const CPrimitiveClass *parentClass = getPrimitiveClass(parent);
 		if (parentClass)
 		{
 			// Search for the child class
 			uint i;
-			for (i=0; i<parentClass->DynamicChildren.size (); i++)
+			for (i = 0; i < parentClass->DynamicChildren.size(); i++)
 			{
 				// The same ?
 				if (parentClass->DynamicChildren[i].ClassName == childClassName)
 					break;
 			}
 
-			if (i<parentClass->DynamicChildren.size ())
+			if (i < parentClass->DynamicChildren.size())
 				return true;
 
-			for (i=0; i<parentClass->GeneratedChildren.size (); i++)
+			for (i = 0; i < parentClass->GeneratedChildren.size(); i++)
 			{
 				// The same ?
 				if (parentClass->GeneratedChildren[i].ClassName == childClassName)
 					break;
 			}
 
-			return (i<parentClass->GeneratedChildren.size ());
+			return (i < parentClass->GeneratedChildren.size());
 		}
 		else
 			return true;
@@ -469,32 +463,32 @@ bool CLigoConfig::canBeChild (const NLLIGO::IPrimitive &child, const NLLIGO::IPr
 	{
 		// Only if it is a root node or parent class doesn't exist
 		string parentClassName;
-		return ( (parent.getParent () == NULL) || (!parent.getPropertyByName ("class", parentClassName) ) );
+		return ((parent.getParent() == NULL) || (!parent.getPropertyByName("class", parentClassName)));
 	}
 }
 
 // ***************************************************************************
 
-bool CLigoConfig::canBeRoot (const NLLIGO::IPrimitive &child)
+bool CLigoConfig::canBeRoot(const NLLIGO::IPrimitive &child)
 {
 	// Get the child class
 	string childClassName;
-	if (child.getPropertyByName ("class", childClassName))
+	if (child.getPropertyByName("class", childClassName))
 	{
 		// Get the parent class
-		const CPrimitiveClass *parentClass = getPrimitiveClass ("root");
+		const CPrimitiveClass *parentClass = getPrimitiveClass("root");
 		if (parentClass)
 		{
 			// Search for the child class
 			uint i;
-			for (i=0; i<parentClass->DynamicChildren.size (); i++)
+			for (i = 0; i < parentClass->DynamicChildren.size(); i++)
 			{
 				// The same ?
 				if (parentClass->DynamicChildren[i].ClassName == childClassName)
 					break;
 			}
 
-			return (i<parentClass->DynamicChildren.size ());
+			return (i < parentClass->DynamicChildren.size());
 		}
 		else
 			return true;
@@ -502,7 +496,7 @@ bool CLigoConfig::canBeRoot (const NLLIGO::IPrimitive &child)
 	else
 	{
 		// Root class doesn't exist
-		return ( !getPrimitiveClass ("root") );
+		return (!getPrimitiveClass("root"));
 	}
 }
 
@@ -511,10 +505,10 @@ bool CLigoConfig::canBeRoot (const NLLIGO::IPrimitive &child)
 bool CLigoConfig::getPropertyString(std::string &result, const std::string &filename, xmlNodePtr xmlNode, const std::string &propName)
 {
 	// Call the CIXml version
-	if (!CIXml::getPropertyString (result, xmlNode, propName))
+	if (!CIXml::getPropertyString(result, xmlNode, propName))
 	{
 		// Output a formated error
-		syntaxError (filename, xmlNode, "Missing XML node property (%s)", propName.c_str());
+		syntaxError(filename, xmlNode, "Missing XML node property (%s)", propName.c_str());
 		return false;
 	}
 	return true;
@@ -522,50 +516,50 @@ bool CLigoConfig::getPropertyString(std::string &result, const std::string &file
 
 // ***************************************************************************
 
-void CLigoConfig::syntaxError (const std::string &filename, xmlNodePtr xmlNode, const char *format, ...)
+void CLigoConfig::syntaxError(const std::string &filename, xmlNodePtr xmlNode, const char *format, ...)
 {
 	va_list args;
-	va_start( args, format );
+	va_start(args, format);
 	char buffer[1024];
-	vsnprintf( buffer, 1024, format, args );
-	va_end( args );
+	vsnprintf(buffer, 1024, format, args);
+	va_end(args);
 
-	errorMessage ("(%s), node (%s), line (%d) :\n%s", filename.c_str(), xmlNode->name, (sint)xmlNode->line, buffer);
+	errorMessage("(%s), node (%s), line (%d) :\n%s", filename.c_str(), xmlNode->name, (sint)xmlNode->line, buffer);
 }
 
 // ***************************************************************************
 
-void CLigoConfig::errorMessage (const char *format, ... )
+void CLigoConfig::errorMessage(const char *format, ...)
 {
 	// Make a buffer string
 	va_list args;
-	va_start( args, format );
+	va_start(args, format);
 	char buffer[1024];
-	vsnprintf( buffer, 1024, format, args );
-	va_end( args );
+	vsnprintf(buffer, 1024, format, args);
+	va_end(args);
 
-	nlwarning (buffer);
+	nlwarning(buffer);
 }
 
 // ***************************************************************************
 
-const std::vector<std::string> &CLigoConfig::getContextString () const
+const std::vector<std::string> &CLigoConfig::getContextString() const
 {
 	return _Contexts;
 }
 
 // ***************************************************************************
 
-const CPrimitiveClass *CLigoConfig::getPrimitiveClass (const IPrimitive &primitive) const
+const CPrimitiveClass *CLigoConfig::getPrimitiveClass(const IPrimitive &primitive) const
 {
 	const CPrimitiveClass *primClass = NULL;
 
 	// Get property class
 	string className;
-	if (primitive.getPropertyByName ("class", className))
+	if (primitive.getPropertyByName("class", className))
 	{
-		std::map<std::string, CPrimitiveClass>::const_iterator ite = _PrimitiveClasses.find (className);
-		if (ite != _PrimitiveClasses.end ())
+		std::map<std::string, CPrimitiveClass>::const_iterator ite = _PrimitiveClasses.find(className);
+		if (ite != _PrimitiveClasses.end())
 		{
 			primClass = &(ite->second);
 		}
@@ -575,10 +569,10 @@ const CPrimitiveClass *CLigoConfig::getPrimitiveClass (const IPrimitive &primiti
 	if (!primClass)
 	{
 		// Root ?
-		if (!primitive.getParent ())
+		if (!primitive.getParent())
 		{
-			std::map<std::string, CPrimitiveClass>::const_iterator ite = _PrimitiveClasses.find ("root");
-			if (ite != _PrimitiveClasses.end ())
+			std::map<std::string, CPrimitiveClass>::const_iterator ite = _PrimitiveClasses.find("root");
+			if (ite != _PrimitiveClasses.end())
 			{
 				primClass = &(ite->second);
 			}
@@ -591,8 +585,8 @@ const CPrimitiveClass *CLigoConfig::getPrimitiveClass (const IPrimitive &primiti
 
 const CPrimitiveClass *CLigoConfig::getPrimitiveClass(const std::string &className) const
 {
-	std::map<std::string, CPrimitiveClass>::const_iterator ite = _PrimitiveClasses.find (className);
-	if (ite != _PrimitiveClasses.end ())
+	std::map<std::string, CPrimitiveClass>::const_iterator ite = _PrimitiveClasses.find(className);
+	if (ite != _PrimitiveClasses.end())
 	{
 		return &(ite->second);
 	}
@@ -601,31 +595,30 @@ const CPrimitiveClass *CLigoConfig::getPrimitiveClass(const std::string &classNa
 
 // ***************************************************************************
 
-void CLigoConfig::resetPrimitiveConfiguration ()
+void CLigoConfig::resetPrimitiveConfiguration()
 {
-	_PrimitiveConfigurations.clear ();
+	_PrimitiveConfigurations.clear();
 }
 
 // ***************************************************************************
 
-bool CLigoConfig::isStaticChild (const NLLIGO::IPrimitive &primitive)
+bool CLigoConfig::isStaticChild(const NLLIGO::IPrimitive &primitive)
 {
 	// Has a parent ?
-	const IPrimitive *parent = primitive.getParent ();
+	const IPrimitive *parent = primitive.getParent();
 	if (parent)
 	{
 		// Get the classes
-		const CPrimitiveClass *parentClass = getPrimitiveClass (*parent);
+		const CPrimitiveClass *parentClass = getPrimitiveClass(*parent);
 		string className;
 		string name;
-		if (parentClass && primitive.getPropertyByName ("class", className) && primitive.getPropertyByName ("name", name))
+		if (parentClass && primitive.getPropertyByName("class", className) && primitive.getPropertyByName("name", name))
 		{
 			// Does it belong to the static children ?
 			uint i;
-			for (i=0; i<parentClass->StaticChildren.size(); i++)
+			for (i = 0; i < parentClass->StaticChildren.size(); i++)
 			{
-				if (parentClass->StaticChildren[i].Name == name &&
-					parentClass->StaticChildren[i].ClassName == className)
+				if (parentClass->StaticChildren[i].Name == name && parentClass->StaticChildren[i].ClassName == className)
 				{
 					// Found
 					return true;
@@ -654,14 +647,14 @@ uint32 CLigoConfig::getDynamicAliasMask() const
 	if (_DynamicAliasBitCount >= 32)
 		return 0xffffffff;
 	else
-		return (1U<<_DynamicAliasBitCount)-1;
+		return (1U << _DynamicAliasBitCount) - 1;
 }
 
 // ***************************************************************************
 /// Get the static bit size for alias
 uint32 CLigoConfig::getStaticAliasSize() const
 {
-	return 32-_DynamicAliasBitCount;
+	return 32 - _DynamicAliasBitCount;
 }
 
 // ***************************************************************************
@@ -678,17 +671,17 @@ uint32 CLigoConfig::buildAlias(uint32 staticPart, uint32 dynamicPart, bool warnI
 {
 	if (warnIfOverload)
 	{
-		if (staticPart != (staticPart & (getStaticAliasMask()>>getDynamicAliasSize())))
+		if (staticPart != (staticPart & (getStaticAliasMask() >> getDynamicAliasSize())))
 		{
 			nlwarning("CLigoConfig::buildAlias: staticPart 0x%x is outside the mask 0x%x",
-				staticPart,
-				getStaticAliasMask()>>getDynamicAliasSize());
+			    staticPart,
+			    getStaticAliasMask() >> getDynamicAliasSize());
 		}
 		if (dynamicPart != (dynamicPart & getDynamicAliasMask()))
 		{
 			nlwarning("CLigoConfig::buildAlias: dynamicPart 0x%x is outside the mask 0x%x",
-				dynamicPart,
-				getDynamicAliasMask());
+			    dynamicPart,
+			    getDynamicAliasMask());
 		}
 	}
 
@@ -705,24 +698,20 @@ void CLigoConfig::registerFileToStaticAliasTranslation(const std::string &fileNa
 	{
 		if (first->second == staticPart)
 		{
-			nlassertex(false, ("While registering static alias %u to file '%s', the alias is already assigned to file '%s'",
-				staticPart,
-				fileName.c_str(),
-				first->first.c_str()));
+			nlassertex(false, ("While registering static alias %u to file '%s', the alias is already assigned to file '%s'", staticPart, fileName.c_str(), first->first.c_str()));
 		}
 	}
-	if ((staticPart<<getDynamicAliasSize()) != ((staticPart<<getDynamicAliasSize()) & getStaticAliasMask()))
+	if ((staticPart << getDynamicAliasSize()) != ((staticPart << getDynamicAliasSize()) & getStaticAliasMask()))
 	{
 		nlwarning("CLigoConfig::registerStaticAliasTranslation: staticPart 0x%x(%u) is outside the mask 0x%x, the staticPart will be clipped to 0x%x(%u)",
-			staticPart,
-			staticPart,
-			getStaticAliasMask(),
-			staticPart & getStaticAliasMask(),
-			staticPart & getStaticAliasMask());
+		    staticPart,
+		    staticPart,
+		    getStaticAliasMask(),
+		    staticPart & getStaticAliasMask(),
+		    staticPart & getStaticAliasMask());
 
 		staticPart = (staticPart & getStaticAliasMask());
 	}
-
 
 	_StaticAliasFileMapping[fileName] = staticPart;
 }
@@ -740,7 +729,6 @@ const std::string &CLigoConfig::getFileNameForStaticAlias(uint32 staticAlias) co
 
 	return emptyString;
 }
-
 
 // ***************************************************************************
 
@@ -772,17 +760,15 @@ bool CLigoConfig::isFileStaticAliasMapped(const std::string &fileName) const
 		return false;
 }
 
-
 std::string CLigoConfig::aliasToString(uint32 fullAlias)
 {
 	uint32 staticPart;
 	uint32 dynPart;
 
-	staticPart = (fullAlias & getStaticAliasMask())>>getDynamicAliasSize();
+	staticPart = (fullAlias & getStaticAliasMask()) >> getDynamicAliasSize();
 	dynPart = fullAlias & getDynamicAliasMask();
 
 	return toString("(A:%u:%u)", staticPart, dynPart);
-
 }
 
 uint32 CLigoConfig::aliasFromString(const std::string &fullAlias)
@@ -791,10 +777,8 @@ uint32 CLigoConfig::aliasFromString(const std::string &fullAlias)
 	uint32 dynPart;
 	sscanf(fullAlias.c_str(), "(A:%u:%u)", &staticPart, &dynPart);
 
-	return ((staticPart<<getDynamicAliasSize()) & getStaticAliasMask()) | (dynPart & getDynamicAliasMask());
-
+	return ((staticPart << getDynamicAliasSize()) & getStaticAliasMask()) | (dynPart & getDynamicAliasMask());
 }
-
 
 void CLigoConfig::updateDynamicAliasBitCount(uint32 newDynamicAliasBitCount)
 {
@@ -804,18 +788,14 @@ void CLigoConfig::updateDynamicAliasBitCount(uint32 newDynamicAliasBitCount)
 	{
 		nlwarning("New bit count must be less than previous");
 		nlassert(0);
-
 	}
 
 	std::map<std::string, uint32>::iterator first(_StaticAliasFileMapping.begin()), last(_StaticAliasFileMapping.end());
-	for ( ; first != last; ++first)
+	for (; first != last; ++first)
 	{
-		first->second = first->second  << diff;
+		first->second = first->second << diff;
 	}
 	_DynamicAliasBitCount = newDynamicAliasBitCount;
 }
 
-
 }
-
-

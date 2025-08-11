@@ -23,30 +23,28 @@
 #include "nel/sound/source_common.h"
 #include "nel/sound/audio_mixer_user.h"
 
-
 using namespace NLMISC;
 
-namespace NLSOUND
-{
+namespace NLSOUND {
 
 CSourceCommon::CSourceCommon(TSoundId id, bool spawn, TSpawnEndCallback cb, void *cbUserParam, NL3D::CCluster *cluster, CGroupController *groupController)
-:	_Priority(MidPri),
-	_Playing(false),
-	_Looping(false),
-	_Position(CVector::Null),
-	_Velocity(CVector::Null),
-	_Direction(CVector::Null),
-	_Gain(1.0f),
-	_Pitch(1.0f),
-	_RelativeMode(false),
-	_InitialGain(1.0f),
-	_PlayStart(0),
-	_Spawn(spawn),
-	_SpawnEndCb(cb),
-	_CbUserParam(cbUserParam),
-	_Cluster(cluster),
-	_UserVarControler(id->getUserVarControler()),
-	_GroupController(groupController ? groupController : id->getGroupController())
+    : _Priority(MidPri)
+    , _Playing(false)
+    , _Looping(false)
+    , _Position(CVector::Null)
+    , _Velocity(CVector::Null)
+    , _Direction(CVector::Null)
+    , _Gain(1.0f)
+    , _Pitch(1.0f)
+    , _RelativeMode(false)
+    , _InitialGain(1.0f)
+    , _PlayStart(0)
+    , _Spawn(spawn)
+    , _SpawnEndCb(cb)
+    , _CbUserParam(cbUserParam)
+    , _Cluster(cluster)
+    , _UserVarControler(id->getUserVarControler())
+    , _GroupController(groupController ? groupController : id->getGroupController())
 {
 	CAudioMixerUser::instance()->addSource(this);
 	_GroupController->addSource(this);
@@ -65,17 +63,16 @@ CSourceCommon::~CSourceCommon()
 	CAudioMixerUser::instance()->removeSource(this);
 }
 
-
 /*
  * Change the priority of the source
  */
-void CSourceCommon::setPriority( TSoundPriority pr)
+void CSourceCommon::setPriority(TSoundPriority pr)
 {
 	_Priority = pr;
 
 	// The AudioMixer redispatches as necessary in the update() function [PH]
 	// Redispatch the tracks if needed
-	//if ( redispatch )
+	// if ( redispatch )
 	//{
 	//	CAudioMixerUser::instance()->balanceSources();
 	//}
@@ -84,7 +81,7 @@ void CSourceCommon::setPriority( TSoundPriority pr)
 /*
  * Set looping on/off for future playbacks (default: off)
  */
-void					CSourceCommon::setLooping( bool l )
+void CSourceCommon::setLooping(bool l)
 {
 	_Looping = l;
 }
@@ -92,7 +89,7 @@ void					CSourceCommon::setLooping( bool l )
 /*
  * Return the looping state
  */
-bool					CSourceCommon::getLooping() const
+bool CSourceCommon::getLooping() const
 {
 	return _Looping;
 }
@@ -100,7 +97,7 @@ bool					CSourceCommon::getLooping() const
 /*
  * Play
  */
-void					CSourceCommon::play()
+void CSourceCommon::play()
 {
 	CAudioMixerUser::instance()->incPlayingSource();
 	_Playing = true;
@@ -113,7 +110,7 @@ void					CSourceCommon::play()
 /*
  * Stop playing
  */
-void					CSourceCommon::stop()
+void CSourceCommon::stop()
 {
 	CAudioMixerUser::instance()->decPlayingSource();
 	_Playing = false;
@@ -126,7 +123,7 @@ void					CSourceCommon::stop()
  * 3D mode -> 3D position
  * st mode -> x is the pan value (from left (-1) to right (1)), set y and z to 0
  */
-void					CSourceCommon::setPos( const NLMISC::CVector& pos )
+void CSourceCommon::setPos(const NLMISC::CVector &pos)
 {
 	_Position = pos;
 }
@@ -136,31 +133,29 @@ void					CSourceCommon::setPos( const NLMISC::CVector& pos )
  */
 const NLMISC::CVector &CSourceCommon::getPos() const
 {
-	//if ( _3DPosition == NULL )
+	// if ( _3DPosition == NULL )
 	//{
 	return _Position;
 	//}
-	//else
+	// else
 	//{
 	//	return *_3DPosition;
 	//}
-
 }
 
 /* Shift the frequency. 1.0f equals identity, each reduction of 50% equals a pitch shift
  * of one octave. 0 is not a legal value.
  */
-void					CSourceCommon::setPitch( float pitch )
+void CSourceCommon::setPitch(float pitch)
 {
-//	nlassert( (pitch > 0) && (pitch <= 1.0f ) );
+	//	nlassert( (pitch > 0) && (pitch <= 1.0f ) );
 	_Pitch = pitch;
 }
-
 
 /*
  * Set the velocity vector (3D mode only, ignored in stereo mode) (default: (0,0,0))
  */
-void					CSourceCommon::setVelocity( const NLMISC::CVector& vel )
+void CSourceCommon::setVelocity(const NLMISC::CVector &vel)
 {
 	_Velocity = vel;
 }
@@ -168,7 +163,7 @@ void					CSourceCommon::setVelocity( const NLMISC::CVector& vel )
 /*
  * Set the direction vector (3D mode only, ignored in stereo mode) (default: (0,0,0) as non-directional)
  */
-void					CSourceCommon::setDirection( const NLMISC::CVector& dir )
+void CSourceCommon::setDirection(const NLMISC::CVector &dir)
 {
 	_Direction = dir;
 }
@@ -179,7 +174,7 @@ void					CSourceCommon::setDirection( const NLMISC::CVector& dir )
  * 1.0 -> no attenuation
  * values > 1 (amplification) not supported by most drivers
  */
-void					CSourceCommon::setGain( float gain )
+void CSourceCommon::setGain(float gain)
 {
 	clamp(gain, 0.0f, 1.0f);
 	_InitialGain = _Gain = gain;
@@ -189,7 +184,7 @@ void					CSourceCommon::setGain( float gain )
 /* Set the gain amount (value inside [0, 1]) to map between 0 and the nominal gain
  * (which is getSource()->getGain()). Does nothing if getSource() is null.
  */
-void					CSourceCommon::setRelativeGain( float gain )
+void CSourceCommon::setRelativeGain(float gain)
 {
 	clamp(gain, 0.0f, 1.0f);
 	_Gain = _InitialGain * gain;
@@ -199,7 +194,7 @@ void					CSourceCommon::setRelativeGain( float gain )
 /*
  * Return the relative gain (see setRelativeGain()), or the absolute gain if getSource() is null.
  */
-float					CSourceCommon::getRelativeGain() const
+float CSourceCommon::getRelativeGain() const
 {
 	if (_InitialGain == 0.0f)
 		return 0.0f;
@@ -210,19 +205,17 @@ float					CSourceCommon::getRelativeGain() const
 /*
  * Set the source relative mode. If true, positions are interpreted relative to the listener position (default: false)
  */
-void					CSourceCommon::setSourceRelativeMode( bool mode )
+void CSourceCommon::setSourceRelativeMode(bool mode)
 {
 	_RelativeMode = mode;
 }
 
-
-uint32					CSourceCommon::getTime()
+uint32 CSourceCommon::getTime()
 {
 	if (!_Playing)
 		return 0;
 	// default implementation
 	return uint32(CTime::getLocalTime() - _PlayStart);
 }
-
 
 } // NLSOUND

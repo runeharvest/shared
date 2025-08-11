@@ -23,15 +23,12 @@
 // vegetable_rotate_page.h : header file
 //
 
-namespace	NL3D
-{
-	class	CVegetable;
+namespace NL3D {
+class CVegetable;
 }
 
-
-class	CVegetableNoiseValueDlg;
-class	CVegetableDlg;
-
+class CVegetableNoiseValueDlg;
+class CVegetableDlg;
 
 /////////////////////////////////////////////////////////////////////////////
 // CVegetableRotatePage dialog
@@ -40,36 +37,36 @@ class CVegetableRotatePage : public CPropertyPage
 {
 	DECLARE_DYNCREATE(CVegetableRotatePage)
 
-// Construction
+	// Construction
 public:
 	CVegetableRotatePage();
 	~CVegetableRotatePage();
-	void	initVegetableDlg(CVegetableDlg *vegetableDlg) {_VegetableDlg= vegetableDlg;}
+	void initVegetableDlg(CVegetableDlg *vegetableDlg) { _VegetableDlg = vegetableDlg; }
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CVegetableRotatePage)
-	enum { IDD = IDD_VEGETABLE_ROTATE_DLG };
-		// NOTE - ClassWizard will add data members here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
+	enum
+	{
+		IDD = IDD_VEGETABLE_ROTATE_DLG
+	};
+	// NOTE - ClassWizard will add data members here.
+	//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CVegetableRotatePage)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
-
 
 public:
 	/** set the vegetble to edit. NULL will disable all the controls.
 	 *	Called by CVegetableDlg.
 	 */
-	void			setVegetableToEdit(NL3D::CVegetable *vegetable);
+	void setVegetableToEdit(NL3D::CVegetable *vegetable);
 
-
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(CVegetableRotatePage)
@@ -78,18 +75,15 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	// The "father" VegetableDlg.
-	CVegetableDlg					*_VegetableDlg;
-
+	CVegetableDlg *_VegetableDlg;
 
 	// The NoiseValue edition.
-	CVegetableNoiseValueDlg			*_RxDlg;
-	CVegetableNoiseValueDlg			*_RyDlg;
-	CVegetableNoiseValueDlg			*_RzDlg;
-
+	CVegetableNoiseValueDlg *_RxDlg;
+	CVegetableNoiseValueDlg *_RyDlg;
+	CVegetableNoiseValueDlg *_RzDlg;
 
 	// The vegetable to edit.
-	NL3D::CVegetable				*_Vegetable;
-
+	NL3D::CVegetable *_Vegetable;
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -11,7 +11,7 @@
 
 BOOL PickPatchAttach::Filter(INode *node)
 {
-	ModContextList mcList;		
+	ModContextList mcList;
 	INodeTab nodes;
 	if (node)
 	{
@@ -20,9 +20,9 @@ BOOL PickPatchAttach::Filter(INode *node)
 		ep->NotifyDependents(FOREVER, 0, REFMSG_TEST_DEPENDENCY);
 		if (node->EndDependencyTest())
 			return FALSE;
-		
+
 		ObjectState os = node->GetObjectRef()->Eval(ep->ip->GetTime());
-		GeomObject *object =(GeomObject *)os.obj;
+		GeomObject *object = (GeomObject *)os.obj;
 		// Make sure it isn't one of the nodes we're editing, for heaven's sake!
 		ep->ip->GetModContexts(mcList, nodes);
 		int numNodes = nodes.Count();
@@ -45,16 +45,16 @@ BOOL PickPatchAttach::Filter(INode *node)
 }
 
 BOOL PickPatchAttach::HitTest(
-		IObjParam *ip, HWND hWnd, ViewExp *vpt, IPoint2 m, int flags)
-{	
+    IObjParam *ip, HWND hWnd, ViewExp *vpt, IPoint2 m, int flags)
+{
 	INode *node = ip->PickNode(hWnd, m, this);
-	ModContextList mcList;		
+	ModContextList mcList;
 	INodeTab nodes;
-	
+
 	if (node)
 	{
 		ObjectState os = node->GetObjectRef()->Eval(ip->GetTime());
-		GeomObject *object =(GeomObject *)os.obj;
+		GeomObject *object = (GeomObject *)os.obj;
 		// Make sure it isn't one of the nodes we're editing, for heaven's sake!
 		ep->ip->GetModContexts(mcList, nodes);
 		int numNodes = nodes.Count();
@@ -72,7 +72,7 @@ BOOL PickPatchAttach::HitTest(
 			return TRUE;
 		}
 	}
-	
+
 	nodes.DisposeTemporary();
 	return FALSE;
 }
@@ -81,10 +81,10 @@ BOOL PickPatchAttach::Pick(IObjParam *ip, ViewExp *vpt)
 {
 	INode *node = vpt->GetClosestHit();
 	nlassert(node);
-	GeomObject *object =(GeomObject *)node->GetObjectRef()->Eval(ip->GetTime()).obj;
+	GeomObject *object = (GeomObject *)node->GetObjectRef()->Eval(ip->GetTime()).obj;
 	if (object->CanConvertToType(RYKOLPATCHOBJ_CLASS_ID))
 	{
-		RPO *attPatch =(RPO *)object->ConvertToType(ip->GetTime(), RYKOLPATCHOBJ_CLASS_ID);
+		RPO *attPatch = (RPO *)object->ConvertToType(ip->GetTime(), RYKOLPATCHOBJ_CLASS_ID);
 		if (attPatch)
 		{
 			PatchMesh patch = attPatch->patch;
@@ -93,7 +93,7 @@ BOOL PickPatchAttach::Pick(IObjParam *ip, ViewExp *vpt)
 			INodeTab nodes;
 			ip->GetModContexts(mcList, nodes);
 			BOOL res = TRUE;
-			if (nodes[0]->GetMtl() && node->GetMtl() &&(nodes[0]->GetMtl() != node->GetMtl()))
+			if (nodes[0]->GetMtl() && node->GetMtl() && (nodes[0]->GetMtl() != node->GetMtl()))
 				res = DoAttachMatOptionDialog(ep->ip, ep);
 			if (res)
 			{
@@ -104,13 +104,12 @@ BOOL PickPatchAttach::Pick(IObjParam *ip, ViewExp *vpt)
 			}
 			nodes.DisposeTemporary();
 			// Discard the copy it made, if it isn't the same as the object itself
-			if (attPatch !=(PatchObject *)object)
+			if (attPatch != (PatchObject *)object)
 				delete attPatch;
 		}
 	}
 	return FALSE;
 }
-
 
 void PickPatchAttach::EnterMode(IObjParam *ip)
 {
@@ -132,7 +131,7 @@ void PickPatchAttach::ExitMode(IObjParam *ip)
 	}
 }
 
-HCURSOR PickPatchAttach::GetHitCursor(IObjParam *ip) 
+HCURSOR PickPatchAttach::GetHitCursor(IObjParam *ip)
 {
 	return LoadCursor(hInstance, MAKEINTRESOURCE(IDC_ATTACHCUR));
 }

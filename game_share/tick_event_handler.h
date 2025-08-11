@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_TICK_EVENT_HANDLER_H
 #define RY_TICK_EVENT_HANDLER_H
 
@@ -24,9 +22,7 @@
 #include "nel/misc/common.h"
 #include "nel/net/naming_client.h"
 
-
-typedef void (* TUserSyncCallback) ();
-
+typedef void (*TUserSyncCallback)();
 
 /**
  * Implements callbacks relative to the tick service
@@ -37,8 +33,7 @@ typedef void (* TUserSyncCallback) ();
  */
 class CTickEventHandler
 {
-public :
-
+public:
 	/**
 	 * Get the current universal game time
 	 */
@@ -47,7 +42,7 @@ public :
 	/**
 	 * Set the current universal game time
 	 */
-	static void setGameTime( NLMISC::TGameTime gameTime) { _GameTime = gameTime; }
+	static void setGameTime(NLMISC::TGameTime gameTime) { _GameTime = gameTime; }
 
 	/**
 	 * Get the current step time of the tick service
@@ -57,24 +52,24 @@ public :
 	/**
 	 * Set the current game time step
 	 */
-	static void setGameTimeStep( NLMISC::TGameTime gameTimeStep) { _GameTimeStep = gameTimeStep; }
+	static void setGameTimeStep(NLMISC::TGameTime gameTimeStep) { _GameTimeStep = gameTimeStep; }
 
 	/**
 	 * Get the number of ellapsed game cycles
 	 */
-	inline	static const NLMISC::TGameCycle &getGameCycle() { return _GameCycle;	}
+	inline static const NLMISC::TGameCycle &getGameCycle() { return _GameCycle; }
 
 	/**
 	 * Get the number of ellapsed game cycles
 	 */
-	static void setGameCycle( NLMISC::TGameCycle gameCycle ) { _GameCycle = gameCycle; }
+	static void setGameCycle(NLMISC::TGameCycle gameCycle) { _GameCycle = gameCycle; }
 
 	/**
 	 * Send a tock and update the game time
 	 */
-	static void tickUpdate( NLNET::TServiceId serviceId );
+	static void tickUpdate(NLNET::TServiceId serviceId);
 
-	static void	sendTockBack( NLNET::TServiceId serviceId );
+	static void sendTockBack(NLNET::TServiceId serviceId);
 
 	/**
 	 * initialize the callback Array and get a pointer to the service's specific update function
@@ -84,7 +79,7 @@ public :
 	 * \param tockAtBeginOfTickUpdate indicates if we will send TOCK before calling updateFunc()
 	 * instead of after.
 	 */
-	static void init(void (*updateFunc)(), void (*syncFunc)() = NULL, bool tockAtBeginOfTickUpdate=false);
+	static void init(void (*updateFunc)(), void (*syncFunc)() = NULL, bool tockAtBeginOfTickUpdate = false);
 
 	/**
 	 * Set a callback to call when receiving the first game cycle (call this method in your init())
@@ -92,12 +87,11 @@ public :
 	 * \param allowReplaceCallback true if we allow the callback to be replaced
 	 * \return previous callback if exist, otherwise NULL
 	 */
-	static TUserSyncCallback setSyncCallback( TUserSyncCallback syncFunc, bool allowReplaceCallback = false );
+	static TUserSyncCallback setSyncCallback(TUserSyncCallback syncFunc, bool allowReplaceCallback = false);
 
 	static bool getTockAtBeginOfTickUpdate() { return _TockAtBeginOfTickUpdate; }
 
-private :
-
+private:
 	/// Time according to the game (used for determining day, night...) (double in seconds)
 	static NLMISC::TGameTime _GameTime;
 
@@ -116,7 +110,4 @@ private :
 	CTickEventHandler() { }
 };
 
-
-#endif// RY_TICK_EVENT_HANDLER_H
-
-
+#endif // RY_TICK_EVENT_HANDLER_H

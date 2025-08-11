@@ -44,9 +44,9 @@ namespace PIPELINE {
 namespace MAX {
 namespace EPOLY {
 
-CEditablePoly::CEditablePoly(CScene *scene) : CPolyObject(scene)
+CEditablePoly::CEditablePoly(CScene *scene)
+    : CPolyObject(scene)
 {
-
 }
 
 CEditablePoly::~CEditablePoly()
@@ -74,7 +74,7 @@ void CEditablePoly::parse(uint16 version, uint filter)
 	if (so) m_EditablePolyUnknown.push_back(TStorageObjectWithId(0x4039, so));
 	so = getChunk(0x403a);
 	if (so) m_EditablePolyUnknown.push_back(TStorageObjectWithId(0x403a, so));
-	for (; ; )
+	for (;;)
 	{ // note: also in editable mesh, copy paste or related somehow? / use a common parser class inbetween?
 		so = getChunk(0x3003);
 		if (so) m_EditablePolyUnknown.push_back(TStorageObjectWithId(0x3003, so));
@@ -138,7 +138,8 @@ void CEditablePoly::toStringLocal(std::ostream &ostream, const std::string &pad,
 		std::stringstream ss;
 		ss << std::hex << std::setfill('0');
 		ss << std::setw(4) << it->first;
-		ostream << "\n" << pad << "EditablePolyUnkown[" << i << "] 0x" << ss.str() << ": ";
+		ostream << "\n"
+		        << pad << "EditablePolyUnkown[" << i << "] 0x" << ss.str() << ": ";
 		it->second->toString(ostream, padpad);
 		++i;
 	}

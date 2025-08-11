@@ -22,9 +22,7 @@
 #include "nel/misc/quat.h"
 #include "nel/3d/track_sampled_common.h"
 
-
 namespace NL3D {
-
 
 // ***************************************************************************
 /**
@@ -44,17 +42,16 @@ namespace NL3D {
 class CTrackSampledVector : public CTrackSampledCommon
 {
 public:
-
 	/// Constructor
 	CTrackSampledVector();
 	virtual ~CTrackSampledVector();
-	NLMISC_DECLARE_CLASS (CTrackSampledVector);
+	NLMISC_DECLARE_CLASS(CTrackSampledVector);
 
 	/// From UTrack/ITrack.
 	// @{
-	virtual const IAnimatedValue	&eval (const TAnimationTime& date, CAnimatedValueBlock &avBlock);
-	virtual void					serial(NLMISC::IStream &f);
-	virtual void					applySampleDivisor(uint sampleDivisor);
+	virtual const IAnimatedValue &eval(const TAnimationTime &date, CAnimatedValueBlock &avBlock);
+	virtual void serial(NLMISC::IStream &f);
+	virtual void applySampleDivisor(uint sampleDivisor);
 	// @}
 
 	/** Build the track from a list of keys
@@ -64,20 +61,16 @@ public:
 	 *	\param beginTime map to the timeList[0] time.
 	 *	\param endTime map to the timeList[size-1] time.
 	 */
-	void	build(const std::vector<uint16> &timeList, const std::vector<CVector> &keyList,
-		float beginTime, float endTime);
+	void build(const std::vector<uint16> &timeList, const std::vector<CVector> &keyList,
+	    float beginTime, float endTime);
 
-// **********************
+	// **********************
 protected:
-
 	// Key Values
-	NLMISC::CObjectVector<CVector, false>		_Keys;
+	NLMISC::CObjectVector<CVector, false> _Keys;
 };
 
-
-
 } // NL3D
-
 
 #endif // NL_TRACK_SAMPLED_VECTOR_H
 

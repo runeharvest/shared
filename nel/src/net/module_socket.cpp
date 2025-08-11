@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdnet.h"
 #include "nel/net/module_socket.h"
 #include "nel/net/module.h"
@@ -25,89 +24,86 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace NLNET
+namespace NLNET {
+
+CModuleSocket::CModuleSocket()
+    : _SocketRegistered(false)
 {
+}
 
-	CModuleSocket::CModuleSocket()
-		: _SocketRegistered(false)
+CModuleSocket::~CModuleSocket()
+{
+	unregisterSocket();
+}
+
+void CModuleSocket::registerSocket()
+{
+	if (!_SocketRegistered)
 	{
+		_SocketRegistered = true;
+		IModuleManager::getInstance().registerModuleSocket(this);
+	}
+}
+
+void CModuleSocket::unregisterSocket()
+{
+	if (_SocketRegistered)
+	{
+		IModuleManager::getInstance().unregisterModuleSocket(this);
+		_SocketRegistered = false;
+	}
+}
+
+void CModuleSocket::_onModulePlugged(const TModulePtr &pluggedModule)
+{
+	TPluggedModules::TBToAMap::const_iterator it(_PluggedModules.getBToAMap().find(pluggedModule));
+	if (it != _PluggedModules.getBToAMap().end())
+	{
+		throw IModule::EModuleAlreadyPluggedHere();
 	}
 
-	CModuleSocket::~CModuleSocket()
+	_PluggedModules.add(pluggedModule->getModuleId(), pluggedModule);
+
+	// callback socket implementation
+	onModulePlugged(pluggedModule);
+}
+
+void CModuleSocket::_onModuleUnplugged(const TModulePtr &pluggedModule)
+{
+	TPluggedModules::TBToAMap::const_iterator it(_PluggedModules.getBToAMap().find(pluggedModule));
+	if (it == _PluggedModules.getBToAMap().end())
 	{
-		unregisterSocket();
+		throw EModuleNotPluggedHere();
 	}
 
+	// callback socket implementation
+	onModuleUnplugged(pluggedModule);
 
-	void CModuleSocket::registerSocket()
+	_PluggedModules.removeWithB(pluggedModule);
+}
+
+void CModuleSocket::sendModuleMessage(IModule *senderModule, TModuleId destModuleProxyId, const NLNET::CMessage &message)
+{
+	TPluggedModules::TBToAMap::const_iterator it(_PluggedModules.getBToAMap().find(senderModule));
+	if (it == _PluggedModules.getBToAMap().end())
 	{
-		if (!_SocketRegistered)
-		{
-			_SocketRegistered = true;
-			IModuleManager::getInstance().registerModuleSocket(this);
-		}
+		throw EModuleNotPluggedHere();
 	}
 
-	void CModuleSocket::unregisterSocket()
+	// forward to socket implementation
+	_sendModuleMessage(senderModule, destModuleProxyId, message);
+}
+
+void CModuleSocket::broadcastModuleMessage(IModule *senderModule, const NLNET::CMessage &message)
+{
+	TPluggedModules::TBToAMap::const_iterator it(_PluggedModules.getBToAMap().find(senderModule));
+	if (it == _PluggedModules.getBToAMap().end())
 	{
-		if (_SocketRegistered)
-		{
-			IModuleManager::getInstance().unregisterModuleSocket(this);
-			_SocketRegistered = false;
-		}
+		throw EModuleNotPluggedHere();
 	}
 
-	void CModuleSocket::_onModulePlugged(const TModulePtr &pluggedModule)
-	{
-		TPluggedModules::TBToAMap::const_iterator it(_PluggedModules.getBToAMap().find(pluggedModule));
-		if (it != _PluggedModules.getBToAMap().end())
-		{
-			throw IModule::EModuleAlreadyPluggedHere();
-		}
-
-		_PluggedModules.add(pluggedModule->getModuleId(), pluggedModule);
-
-		// callback socket implementation
-		onModulePlugged(pluggedModule);
-	}
-
-	void CModuleSocket::_onModuleUnplugged(const TModulePtr &pluggedModule)
-	{
-		TPluggedModules::TBToAMap::const_iterator it(_PluggedModules.getBToAMap().find(pluggedModule));
-		if (it == _PluggedModules.getBToAMap().end())
-		{
-			throw EModuleNotPluggedHere();
-		}
-
-		// callback socket implementation
-		onModuleUnplugged(pluggedModule);
-
-		_PluggedModules.removeWithB(pluggedModule);
-	}
-
-	void CModuleSocket::sendModuleMessage(IModule *senderModule, TModuleId destModuleProxyId, const NLNET::CMessage &message)
-	{
-		TPluggedModules::TBToAMap::const_iterator it(_PluggedModules.getBToAMap().find(senderModule));
-		if (it == _PluggedModules.getBToAMap().end())
-		{
-			throw EModuleNotPluggedHere();
-		}
-
-		// forward to socket implementation
-		_sendModuleMessage(senderModule, destModuleProxyId, message);
-
-	}
-
-	void CModuleSocket::broadcastModuleMessage(IModule *senderModule, const NLNET::CMessage &message)
-	{
-		TPluggedModules::TBToAMap::const_iterator it(_PluggedModules.getBToAMap().find(senderModule));
-		if (it == _PluggedModules.getBToAMap().end())
-		{
-			throw EModuleNotPluggedHere();
-		}
-
-		// forward to socket implementation
-		_broadcastModuleMessage(senderModule, message);
-	}
+	// forward to socket implementation
+	_broadcastModuleMessage(senderModule, message);
+}
 
 } // namespace NLNET

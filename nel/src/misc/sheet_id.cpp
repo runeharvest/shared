@@ -36,14 +36,13 @@ using namespace std;
 #define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 CSheetId::CChar CSheetId::_AllStrings;
 CStaticMap<uint32, CSheetId::CChar> CSheetId::_SheetIdToName;
 CStaticMap<CSheetId::CChar, uint32, CSheetId::CCharComp> CSheetId::_SheetNameToId;
-//map<uint32,std::string> CSheetId::_SheetIdToName;
-//map<std::string,uint32> CSheetId::_SheetNameToId;
+// map<uint32,std::string> CSheetId::_SheetIdToName;
+// map<std::string,uint32> CSheetId::_SheetNameToId;
 vector<std::string> CSheetId::_FileExtensions;
 bool CSheetId::_Initialised = false;
 bool CSheetId::_RemoveUnknownSheet = true;
@@ -129,12 +128,12 @@ CSheetId::CSheetId(const string &sheetName)
 			nlwarning("SHEETID: Try to create an CSheetId with empty name. TODO: check why.");
 		else
 			nlwarning("SHEETID: The sheet '%s' is not in sheet_id.bin, setting it to Unknown", sheetName.c_str());
-		//std::string stack;
-		//NLMISC::getCallStack(stack);
-		//std::vector<std::string> contexts;
-		//NLMISC::explode(stack, string("\n"), contexts);
-		//nldebug("Dumping callstack :");
-		//for (uint i=0; i<contexts.size(); ++i)
+		// std::string stack;
+		// NLMISC::getCallStack(stack);
+		// std::vector<std::string> contexts;
+		// NLMISC::explode(stack, string("\n"), contexts);
+		// nldebug("Dumping callstack :");
+		// for (uint i=0; i<contexts.size(); ++i)
 		//	nldebug("  %3u : %s", i, contexts[i].c_str());
 		*this = Unknown;
 	}
@@ -311,7 +310,7 @@ bool CSheetId::buildSheetId(const char *sheetName, size_t sheetNameLen)
 void CSheetId::loadSheetId()
 {
 	H_AUTO(CSheetIdInit);
-	//nldebug("Loading sheet_id.bin");
+	// nldebug("Loading sheet_id.bin");
 
 	// Open the sheet id to sheet file name association
 	CIFile file;
@@ -348,7 +347,7 @@ void CSheetId::loadSheetId()
 				else
 				{
 					map<uint32, string>::iterator olditStr = itStr2;
-					//nldebug ("Removing file '%s' from CSheetId because the file not exists", (*olditStr).second.c_str ());
+					// nldebug ("Removing file '%s' from CSheetId because the file not exists", (*olditStr).second.c_str ());
 					itStr2++;
 					tempMap.erase(olditStr);
 					removednbfiles++;
@@ -630,7 +629,7 @@ string CSheetId::toString(bool ifNotFoundUseNumericId) const
 	{
 		// This nlwarning is commented out because the loggers are mutexed, therefore
 		// you couldn't use toString() within a nlwarning().
-		//nlwarning("<CSheetId::toString> The sheet %08x is not in sheet_id.bin",_Id.Id);
+		// nlwarning("<CSheetId::toString> The sheet %08x is not in sheet_id.bin",_Id.Id);
 		if (ifNotFoundUseNumericId)
 		{
 			return NLMISC::toString("#%u", _Id.Id);
@@ -689,7 +688,7 @@ void CSheetId::display()
 	TSheetIdToNameMap::const_iterator itStr;
 	for (itStr = _SheetIdToName.begin(); itStr != _SheetIdToName.end(); ++itStr)
 	{
-		//nlinfo("%d %s",(*itStr).first,(*itStr).second.c_str());
+		// nlinfo("%d %s",(*itStr).first,(*itStr).second.c_str());
 		nlinfo("SHEETID: (%08x %d) %s", (*itStr).first, (*itStr).first, (*itStr).second.Ptr);
 	}
 
@@ -714,7 +713,7 @@ void CSheetId::display(uint32 type)
 		// decide whether or not to display the entry
 		if (type == sheetId.IdInfos.Type)
 		{
-			//nlinfo("%d %s",(*itStr).first,(*itStr).second.c_str());
+			// nlinfo("%d %s",(*itStr).first,(*itStr).second.c_str());
 			nlinfo("SHEETID: (%08x %d) %s", (*itStr).first, (*itStr).first, (*itStr).second.Ptr);
 		}
 	}

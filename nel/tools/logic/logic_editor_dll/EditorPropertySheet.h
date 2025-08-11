@@ -21,36 +21,34 @@ class CEditorPropertySheet : public CPropertySheet
 {
 	DECLARE_DYNAMIC(CEditorPropertySheet)
 
-// Construction
+	// Construction
 public:
-	CEditorPropertySheet(UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-	CEditorPropertySheet(LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	CEditorPropertySheet(UINT nIDCaption, CWnd *pParentWnd = NULL, UINT iSelectPage = 0);
+	CEditorPropertySheet(LPCTSTR pszCaption, CWnd *pParentWnd = NULL, UINT iSelectPage = 0);
 
-// Operations
+	// Operations
 public:
-	
-// Attributes
+	// Attributes
 public:
+	// protected:
+	CCounterPage m_counterPage;
+	CConditionPage m_conditionPage;
+	CVariablePage m_variablePage;
+	CStatePage m_statePage;
 
-//protected:
-	CCounterPage	m_counterPage;
-	CConditionPage	m_conditionPage;
-	CVariablePage	m_variablePage;
-	CStatePage		m_statePage;
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CEditorPropertySheet)
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CEditorPropertySheet();
 
 	// Generated message map functions
 protected:
 	//{{AFX_MSG(CEditorPropertySheet)
-		// NOTE - the ClassWizard will add and remove member functions here.
+	// NOTE - the ClassWizard will add and remove member functions here.
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

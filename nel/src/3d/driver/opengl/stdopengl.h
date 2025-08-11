@@ -21,10 +21,10 @@
 #define STDOPENGL_H
 
 #if defined(_MSC_VER) && defined(_DEBUG)
-	#define _CRTDBG_MAP_ALLOC
-	#include <stdlib.h>
-	#include <crtdbg.h>
-	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
 #include <cstdlib>
@@ -46,33 +46,33 @@
 #include "nel/misc/types_nl.h"
 
 #ifdef NL_OS_WINDOWS
-#	define WIN32_LEAN_AND_MEAN
-#	ifndef NL_COMP_MINGW
-#		define NOMINMAX
-#	endif
-#	include <windows.h>
-#	include <windowsx.h>
+#define WIN32_LEAN_AND_MEAN
+#ifndef NL_COMP_MINGW
+#define NOMINMAX
+#endif
+#include <windows.h>
+#include <windowsx.h>
 #endif
 
 #ifdef USE_OPENGLES
-#	include "GLES/gl.h"
-#	include "GLES/glext.h"
-#	include "EGL/egl.h"
-#	include "EGL/eglext.h"
+#include "GLES/gl.h"
+#include "GLES/glext.h"
+#include "EGL/egl.h"
+#include "EGL/eglext.h"
 #else
-#	ifdef NL_OS_WINDOWS
-#		include <GL/gl.h>
-#		include "GL/wglext.h"
-#	elif defined(NL_OS_MAC)
-#		define GL_GLEXT_LEGACY
-#		include <OpenGL/gl.h>
-#	elif defined (NL_OS_UNIX)
-#		define GLX_GLXEXT_PROTOTYPES
-#		include <GL/gl.h>
-#		include <GL/glx.h>
-#		include "GL/glxext.h"
-#	endif
-#	include "GL/glext.h"
+#ifdef NL_OS_WINDOWS
+#include <GL/gl.h>
+#include "GL/wglext.h"
+#elif defined(NL_OS_MAC)
+#define GL_GLEXT_LEGACY
+#include <OpenGL/gl.h>
+#elif defined(NL_OS_UNIX)
+#define GLX_GLXEXT_PROTOTYPES
+#include <GL/gl.h>
+#include <GL/glx.h>
+#include "GL/glxext.h"
+#endif
+#include "GL/glext.h"
 #endif
 
 #include "nel/misc/common.h"

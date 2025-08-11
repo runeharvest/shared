@@ -17,20 +17,15 @@
 #ifndef NL_ASYNC_TEXTURE_MANAGER_H
 #define NL_ASYNC_TEXTURE_MANAGER_H
 
-
 #include "nel/misc/types_nl.h"
 #include "nel/3d/texture_file.h"
 #include "nel/3d/hls_texture_manager.h"
 #include <vector>
 #include "nel/misc/bitmap.h"
 
+namespace NL3D {
 
-namespace NL3D
-{
-
-
-class	CMeshBaseInstance;
-
+class CMeshBaseInstance;
 
 // ***************************************************************************
 /**
@@ -45,10 +40,9 @@ class CAsyncTextureManager
 {
 public:
 	/// User is free to add bank to this manager. Other methods are used by the async manager
-	CHLSTextureManager		HLSManager;
+	CHLSTextureManager HLSManager;
 
 public:
-
 	/// Constructor
 	CAsyncTextureManager();
 	~CAsyncTextureManager();
@@ -60,13 +54,13 @@ public:
 	 *	tells where to stop. If 0, the texture will finally be entirely uploaded.
 	 *	Default is 3,1.
 	 */
-	void			setupLod(uint baseLevel, uint maxLevel);
+	void setupLod(uint baseLevel, uint maxLevel);
 	/// Setup max texture upload in driver per update() call (in bytes). Default to 64K
-	void			setupMaxUploadPerFrame(uint maxup);
+	void setupMaxUploadPerFrame(uint maxup);
 	/// Setup max texture HLS Coloring per update() call (in bytes). Default to 20K.
-	void			setupMaxHLSColoringPerFrame(uint maxCol);
+	void setupMaxHLSColoringPerFrame(uint maxCol);
 	/// Setup max total texture size allowed. Default is 10Mo
-	void			setupMaxTotalTextureSize(uint maxText);
+	void setupMaxTotalTextureSize(uint maxText);
 
 	/** Add a reference to a texture owned by an instance.
 	 *	If the texture still exists, only the refcount is incremented
@@ -79,171 +73,160 @@ public:
 	 *	the file is entirely loaded and uploaded. The problem is that upload is not cut according to maxUpLoadPerFrame, so
 	 *	some freeze may occur.
 	 */
-	uint			addTextureRef(const std::string &textName, CMeshBaseInstance *instance, const NLMISC::CVector &position);
+	uint addTextureRef(const std::string &textName, CMeshBaseInstance *instance, const NLMISC::CVector &position);
 
 	/// release a texture-instance tuple. The texture is released if no more instance use it.
-	void			releaseTexture(uint id, CMeshBaseInstance *instance);
+	void releaseTexture(uint id, CMeshBaseInstance *instance);
 
 	/// tells if a texture is loaded in the driver (ie. ready to use)
-	bool			isTextureUpLoaded(uint id) const;
+	bool isTextureUpLoaded(uint id) const;
 
 	/** get the RAM LowDef version of a texture. Used For CLodCharacters
 	 *	return NULL if bad Id or if the texture is still not loaded.
 	 *	The bitmap returned has no mipmaps and should be in DXTC1 (not guaranteed).
 	 */
-	const NLMISC::CBitmap	*getCoarseBitmap(uint id) const;
-
+	const NLMISC::CBitmap *getCoarseBitmap(uint id) const;
 
 	/** update the manager. New loaded textures are uploaded. Instances are updated to know if all their
 	 *	pending textures have been uploaded.
 	 */
-	void			update(IDriver *pDriver);
-
+	void update(IDriver *pDriver);
 
 	/// get the async texture size asked (ie. maybe bigger than MaxTotalTextureSize).
-	uint			getTotalTextureSizeAsked() const {return _TotalTextureSizeAsked;}
+	uint getTotalTextureSizeAsked() const { return _TotalTextureSizeAsked; }
 	/// get what the system really allows
-	uint			getLastTextureSizeGot() const {return _LastTextureSizeGot;}
+	uint getLastTextureSizeGot() const { return _LastTextureSizeGot; }
 
-
-// ***************************************************************************
+	// ***************************************************************************
 private:
-
-	typedef	std::map<std::string, uint>	TTextureEntryMap;
-	typedef	TTextureEntryMap::iterator	ItTextureEntryMap;
-
+	typedef std::map<std::string, uint> TTextureEntryMap;
+	typedef TTextureEntryMap::iterator ItTextureEntryMap;
 
 	// A base texture uploadable.
-	class	CTextureBase
+	class CTextureBase
 	{
 	public:
 		// the texture currently loaded / uploaded.
-		NLMISC::CSmartPtr<CTextureFile>		Texture;
+		NLMISC::CSmartPtr<CTextureFile> Texture;
 
-		bool	isTextureEntry() const {return IsTextureEntry;}
+		bool isTextureEntry() const { return IsTextureEntry; }
+
 	protected:
-		bool	IsTextureEntry;
+		bool IsTextureEntry;
 	};
 
-
-	class	CTextureEntry;
+	class CTextureEntry;
 
 	// A Lod version of a texture entry.
-	class	CTextureLod : public CTextureBase
+	class CTextureLod : public CTextureBase
 	{
 	public:
 		CTextureLod();
 
 		// A Ptr on the real texture used.
-		CTextureEntry						*TextureEntry;
+		CTextureEntry *TextureEntry;
 		// Weight of the lod, according to distance and level.
-		float								Weight;
+		float Weight;
 		// the level of this Lod. 0 means full original texture resolution.
-		uint8								Level;
+		uint8 Level;
 		// True if loading has ended
-		bool								Loaded;
+		bool Loaded;
 		// True if TextureEntry has at least this lod in VRAM
-		bool								UpLoaded;
+		bool UpLoaded;
 		// The size that this lod takes in VRAM (minus TextureEntry->BaseSize)
-		uint								ExtraSize;
+		uint ExtraSize;
 	};
-
 
 	struct CTextureLodToSort
 	{
-		CTextureLod		*Lod;
-		NLMISC::CVector	Position;
-		bool			operator<(const CTextureLodToSort &other) const
+		CTextureLod *Lod;
+		NLMISC::CVector Position;
+		bool operator<(const CTextureLodToSort &other) const
 		{
-			return Lod->Weight<other.Lod->Weight;
+			return Lod->Weight < other.Lod->Weight;
 		}
 	};
 
 	// A texture entry
-	class	CTextureEntry : public CTextureBase
+	class CTextureEntry : public CTextureBase
 	{
 	public:
 		// The it in the map.
-		ItTextureEntryMap					ItMap;
+		ItTextureEntryMap ItMap;
 		// true if async loading has ended
-		bool								Loaded;
+		bool Loaded;
 		// true if the texture is loaded in the driver (at least the coarsest level).
-		bool								UpLoaded;
+		bool UpLoaded;
 		// true if first loading ended, and if DXTC with mipmap
-		bool								CanHaveLOD;
+		bool CanHaveLOD;
 		// true if this texture must be built from the HLSManager (at first load)
-		bool								BuildFromHLSManager;
+		bool BuildFromHLSManager;
 		// if BuildFromHLSManager, gives the text id in the manager
-		sint								HLSManagerTextId;
+		sint HLSManagerTextId;
 
 		// Base Size of the texture, without HDLod
-		uint								BaseSize;
+		uint BaseSize;
 		// list of instances currently using this texture.
-		std::vector<CMeshBaseInstance*>		Instances;
+		std::vector<CMeshBaseInstance *> Instances;
 		// min distance of all Instances.
-		float								MinDistance;
+		float MinDistance;
 		// min position.
-		NLMISC::CVector						MinPosition;
+		NLMISC::CVector MinPosition;
 		// with all mipmaps loaded, what place this takes.
-		uint								TotalTextureSizeAsked;
+		uint TotalTextureSizeAsked;
 
 		// The High Def Lod.
-		CTextureLod							HDLod;
+		CTextureLod HDLod;
 
 		// The Coarse Bitmap stored in RAM for CLod
-		NLMISC::CBitmap						CoarseBitmap;
+		NLMISC::CBitmap CoarseBitmap;
 
 	public:
 		CTextureEntry();
 
-		void		createCoarseBitmap();
+		void createCoarseBitmap();
 	};
 
-
 private:
-	uint								_BaseLodLevel, _MaxLodLevel;
-	uint								_MaxUploadPerFrame;
-	uint								_MaxHLSColoringPerFrame;
-	uint								_MaxTotalTextureSize;
-	uint								_TotalTextureSizeAsked;
-	uint								_LastTextureSizeGot;
+	uint _BaseLodLevel, _MaxLodLevel;
+	uint _MaxUploadPerFrame;
+	uint _MaxHLSColoringPerFrame;
+	uint _MaxTotalTextureSize;
+	uint _TotalTextureSizeAsked;
+	uint _LastTextureSizeGot;
 
 	// Textures Entries.
-	std::vector<CTextureEntry*>			_TextureEntries;
-	std::vector<uint>					_FreeTextureIds;
-	TTextureEntryMap					_TextureEntryMap;
-	std::vector<uint>					_WaitingTextures;
+	std::vector<CTextureEntry *> _TextureEntries;
+	std::vector<uint> _FreeTextureIds;
+	TTextureEntryMap _TextureEntryMap;
+	std::vector<uint> _WaitingTextures;
 
 	// Upload of texture piece by piece.
-	CTextureBase						*_CurrentUploadTexture;
-	uint								_CurrentUploadTextureMipMap;
-	uint								_CurrentUploadTextureLine;
+	CTextureBase *_CurrentUploadTexture;
+	uint _CurrentUploadTextureMipMap;
+	uint _CurrentUploadTextureLine;
 
 	// The current HDLod async loaded (NB: loaded / or upLoaded)
-	CTextureLod							*_CurrentTextureLodLoaded;
+	CTextureLod *_CurrentTextureLodLoaded;
 
 	// For texture profiling
-	NLMISC::CSmartPtr<ITexture::CTextureCategory>	_TextureCategory;
+	NLMISC::CSmartPtr<ITexture::CTextureCategory> _TextureCategory;
 
 private:
-
-	static bool		validDXTCMipMap(ITexture *pText);
+	static bool validDXTCMipMap(ITexture *pText);
 
 	// delete the texture and all references in map/array, instance refcount etc...
-	void			deleteTexture(uint id);
+	void deleteTexture(uint id);
 
 	// Fill _CurrentUploadTexture with next texture to upload, or set NULL if none
-	void			getNextTextureToUpLoad(uint &nTotalColored, IDriver *pDriver);
-	bool			uploadTexturePart(ITexture *pText, IDriver *pDriver, uint &nTotalUpload);
+	void getNextTextureToUpLoad(uint &nTotalColored, IDriver *pDriver);
+	bool uploadTexturePart(ITexture *pText, IDriver *pDriver, uint &nTotalUpload);
 
 	// update list of texture lods.
-	void			updateTextureLodSystem(IDriver *pDriver);
-
+	void updateTextureLodSystem(IDriver *pDriver);
 };
 
-
 } // NL3D
-
 
 #endif // NL_ASYNC_TEXTURE_MANAGER_H
 

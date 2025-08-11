@@ -25,7 +25,7 @@ class CPatchAllocator;
 #define NEL_3DSMAX_SHARED_API __declspec(dllimport)
 #endif
 
-extern NEL_3DSMAX_SHARED_API CPatchAllocator& GetAllocator();
+extern NEL_3DSMAX_SHARED_API CPatchAllocator &GetAllocator();
 
 extern NEL_3DSMAX_SHARED_API NLMISC::INelContext &GetSharedNelContext();
 

@@ -50,12 +50,10 @@ namespace NL3D {
 
 IStereoDisplay::IStereoDisplay()
 {
-	
 }
 
 IStereoDisplay::~IStereoDisplay()
 {
-	
 }
 
 const char *IStereoDisplay::getLibraryName(CStereoDeviceInfo::TStereoDeviceLibrary library)

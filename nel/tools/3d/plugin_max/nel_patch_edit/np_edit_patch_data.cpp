@@ -13,22 +13,22 @@ using namespace NLMISC;
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-class EPVertMapRestore : public RestoreObj 
+class EPVertMapRestore : public RestoreObj
 {
 public:
 	BOOL gotRedo;
 	EPVertMapper undo;
 	EPVertMapper redo;
 	EditPatchData *epd;
-	
-	EPVertMapRestore(EditPatchData *d) 
+
+	EPVertMapRestore(EditPatchData *d)
 	{
 		undo = d->vertMap;
 		epd = d;
 		gotRedo = FALSE;
 	}
-	
-	void Restore(int isUndo) 
+
+	void Restore(int isUndo)
 	{
 		if (!gotRedo)
 		{
@@ -37,12 +37,12 @@ public:
 		}
 		epd->vertMap = undo;
 	}
-	
-	void Redo() 
+
+	void Redo()
 	{
 		epd->vertMap = redo;
 	}
-	
+
 	int Size() { return 1; }
 	void EndHold() { }
 	TSTR Description() { return TSTR(_T("EPVertMapRestore")); }
@@ -50,7 +50,7 @@ public:
 
 // --------------------------------------------------------------------------------------
 
-class FinalPatchRestore : public RestoreObj 
+class FinalPatchRestore : public RestoreObj
 {
 public:
 	BOOL gotRedo;
@@ -60,7 +60,7 @@ public:
 	RPatchMesh *rundo;
 	RPatchMesh *rredo;
 	RPatchMesh *rpatch;
-	
+
 	FinalPatchRestore(PatchMesh *s, RPatchMesh *rs)
 	{
 		rundo = NULL;
@@ -70,7 +70,7 @@ public:
 
 		if (rs)
 		{
-			rundo=new RPatchMesh();
+			rundo = new RPatchMesh();
 			*rundo = *rs;
 		}
 
@@ -78,7 +78,7 @@ public:
 		rpatch = rs;
 		gotRedo = FALSE;
 	}
-	
+
 	virtual ~FinalPatchRestore()
 	{
 		if (rundo)
@@ -87,7 +87,7 @@ public:
 			delete rredo;
 	}
 
-	void Restore(int isUndo) 
+	void Restore(int isUndo)
 	{
 		if (!gotRedo)
 		{
@@ -96,8 +96,8 @@ public:
 
 			if (rpatch)
 			{
-				if (rredo==NULL)
-					rredo=new RPatchMesh();
+				if (rredo == NULL)
+					rredo = new RPatchMesh();
 
 				*rredo = *rpatch;
 			}
@@ -107,15 +107,15 @@ public:
 		if (rundo)
 			*rpatch = *rundo;
 	}
-	
-	void Redo() 
+
+	void Redo()
 	{
 		*patch = redo;
 
 		if (rredo)
 			*rpatch = *rredo;
 	}
-	
+
 	int Size() { return 1; }
 	void EndHold() { }
 	TSTR Description() { return TSTR(_T("FinalPatchRestore")); }
@@ -129,7 +129,7 @@ EditPatchData::EditPatchData(EditPatchMod *mod)
 	// 3-18-99 to suport render steps and removal of the mental tesselator
 	meshStepsRender = mod->meshStepsRender;
 	showInterior = mod->showInterior;
-	
+
 	//	meshAdaptive = mod->meshAdaptive;	// Future use (Not used now)
 	viewTess = mod->viewTess;
 	prodTess = mod->prodTess;
@@ -149,13 +149,13 @@ EditPatchData::EditPatchData(EditPatchMod *mod)
 	tempData = NULL;
 }
 
-EditPatchData::EditPatchData(EditPatchData& emc)
+EditPatchData::EditPatchData(EditPatchData &emc)
 {
 	meshSteps = emc.meshSteps;
 	// 3-18-99 to suport render steps and removal of the mental tesselator
 	meshStepsRender = emc.meshStepsRender;
 	showInterior = emc.showInterior;
-	
+
 	//	meshAdaptive = emc.meshAdaptive;	// Future use (Not used now)
 	viewTess = emc.viewTess;
 	prodTess = emc.prodTess;
@@ -180,20 +180,19 @@ EditPatchData::EditPatchData(EditPatchData& emc)
 
 void EditPatchData::Apply(TimeValue t, RPO *patchOb, int selLevel)
 {
-	TTicks ticks=CTime::getPerformanceTime ();
+	TTicks ticks = CTime::getPerformanceTime();
 	// Either just copy it from the existing cache or rebuild from previous level!
-	if (!GetFlag(EPD_UPDATING_CACHE) && tempData 
-		&& tempData->PatchCached(t))
+	if (!GetFlag(EPD_UPDATING_CACHE) && tempData
+	    && tempData->PatchCached(t))
 	{
 		RPatchMesh *rpatch;
-		PatchMesh *patch=tempData->GetPatch(t, rpatch);
-		patchOb->patch.DeepCopy( patch,
-			PART_GEOM | SELECT_CHANNEL | PART_SUBSEL_TYPE|
-			PART_DISPLAY | PART_TOPO | TEXMAP_CHANNEL);
-		//rpatch->UpdateBinding (*patch, t);
-		*patchOb->rpatch=*rpatch;
+		PatchMesh *patch = tempData->GetPatch(t, rpatch);
+		patchOb->patch.DeepCopy(patch,
+		    PART_GEOM | SELECT_CHANNEL | PART_SUBSEL_TYPE | PART_DISPLAY | PART_TOPO | TEXMAP_CHANNEL);
+		// rpatch->UpdateBinding (*patch, t);
+		*patchOb->rpatch = *rpatch;
 		patchOb->PointsWereChanged();
-	}	
+	}
 	else if (GetFlag(EPD_HASDATA))
 	{
 		// For old files, which contain exhaustive data to reconstruct the editing process
@@ -232,7 +231,7 @@ void EditPatchData::Apply(TimeValue t, RPO *patchOb, int selLevel)
 			changes.Shrink();
 			count = 0;
 		}
-		else 
+		else
 		{
 			// Apply deltas to incoming shape, placing into finalPatch
 			vertMap.UpdateAndApplyDeltas(patchOb->patch, finalPatch);
@@ -240,15 +239,15 @@ void EditPatchData::Apply(TimeValue t, RPO *patchOb, int selLevel)
 			*patchOb->rpatch = rfinalPatch;
 		}
 		patchOb->PointsWereChanged();
-		// Kind of a waste when there's no animation...		
+		// Kind of a waste when there's no animation...
 		patchOb->UpdateValidity(GEOM_CHAN_NUM, FOREVER);
 		patchOb->UpdateValidity(TOPO_CHAN_NUM, FOREVER);
 		patchOb->UpdateValidity(SELECT_CHAN_NUM, FOREVER);
 		patchOb->UpdateValidity(SUBSEL_TYPE_CHAN_NUM, FOREVER);
 		patchOb->UpdateValidity(DISP_ATTRIB_CHAN_NUM, FOREVER);
 	}
-	else 
-	{	// No data yet -- Store initial required data
+	else
+	{ // No data yet -- Store initial required data
 		// DebugPrint("<<<Storing Initial Data>>>\n");
 		vertMap.Build(patchOb->patch);
 		finalPatch = patchOb->patch;
@@ -265,10 +264,10 @@ void EditPatchData::Apply(TimeValue t, RPO *patchOb, int selLevel)
 	patchOb->SetViewTess(viewTess);
 	patchOb->SetProdTess(prodTess);
 	patchOb->SetDispTess(dispTess);
-	patchOb->rpatch->rTess.ModeTile=tileMode;
-	patchOb->rpatch->rTess.TileTesselLevel=tileLevel;
-	patchOb->rpatch->rTess.TransitionType=transitionType;
-	patchOb->rpatch->rTess.KeepMapping=keepMapping;
+	patchOb->rpatch->rTess.ModeTile = tileMode;
+	patchOb->rpatch->rTess.TileTesselLevel = tileLevel;
+	patchOb->rpatch->rTess.TransitionType = transitionType;
+	patchOb->rpatch->rTess.KeepMapping = keepMapping;
 	patchOb->SetViewTessNormals(mViewTessNormals);
 	patchOb->SetProdTessNormals(mProdTessNormals);
 	patchOb->SetViewTessWeld(mViewTessWeld);
@@ -276,7 +275,7 @@ void EditPatchData::Apply(TimeValue t, RPO *patchOb, int selLevel)
 
 	patchOb->showMesh = displaySurface;
 	patchOb->SetShowLattice(displayLattice);
-	patchOb->patch.dispFlags = 0;	// TH 3/3/99
+	patchOb->patch.dispFlags = 0; // TH 3/3/99
 	switch (selLevel)
 	{
 	case EP_PATCH:
@@ -289,11 +288,11 @@ void EditPatchData::Apply(TimeValue t, RPO *patchOb, int selLevel)
 		patchOb->patch.SetDispFlag(DISP_VERTTICKS | DISP_SELVERTS | DISP_VERTS);
 		break;
 	case EP_TILE:
-		//patchOb->patch.SetDispFlag(DISP_VERTTICKS | DISP_SELVERTS | DISP_VERTS);
+		// patchOb->patch.SetDispFlag(DISP_VERTTICKS | DISP_SELVERTS | DISP_VERTS);
 		break;
 	}
 	patchOb->patch.selLevel = patchLevel[selLevel];
-	patchOb->rpatch->SetSelLevel (selLevel);
+	patchOb->rpatch->SetSelLevel(selLevel);
 
 	/*rfinalPatch.UpdateBinding (finalPatch, t);
 	patchOb->rpatch->UpdateBinding (patchOb->patch, t);*/
@@ -303,9 +302,9 @@ void EditPatchData::Apply(TimeValue t, RPO *patchOb, int selLevel)
 		nlassert(tempData);
 		tempData->UpdateCache(patchOb);
 		SetFlag(EPD_UPDATING_CACHE, FALSE);
-	}		
-	ticks=CTime::getPerformanceTime ()-ticks;
-	nldebug ("%f", CTime::ticksToSecond(ticks));
+	}
+	ticks = CTime::getPerformanceTime() - ticks;
+	nldebug("%f", CTime::ticksToSecond(ticks));
 }
 
 void EditPatchData::Invalidate(PartID part, BOOL patchValid)
@@ -333,7 +332,7 @@ EPTempData *EditPatchData::TempData(EditPatchMod *mod)
 	return tempData;
 }
 
-void EditPatchData::RescaleWorldUnits(float f) 
+void EditPatchData::RescaleWorldUnits(float f)
 {
 	// Scale the deltas inside the vertex map
 	vertMap.RescaleWorldUnits(f);
@@ -342,7 +341,7 @@ void EditPatchData::RescaleWorldUnits(float f)
 	finalPatch.Transform(stm);
 }
 
-void EditPatchData::RecordTopologyTags(PatchMesh *patch) 
+void EditPatchData::RecordTopologyTags(PatchMesh *patch)
 {
 	// First, stuff all -1's into aux fields
 	int i;
@@ -356,7 +355,7 @@ void EditPatchData::RecordTopologyTags(PatchMesh *patch)
 	vertMap.RecordTopologyTags(*patch);
 }
 
-GenericNamedSelSetList &EditPatchData::GetSelSet(EditPatchMod *mod) 
+GenericNamedSelSetList &EditPatchData::GetSelSet(EditPatchMod *mod)
 {
 	switch (mod->GetSubobjectLevel())
 	{
@@ -371,7 +370,7 @@ GenericNamedSelSetList &EditPatchData::GetSelSet(EditPatchMod *mod)
 	}
 }
 
-GenericNamedSelSetList &EditPatchData::GetSelSet(int level) 
+GenericNamedSelSetList &EditPatchData::GetSelSet(int level)
 {
 	switch (level + EP_VERTEX)
 	{
@@ -386,13 +385,12 @@ GenericNamedSelSetList &EditPatchData::GetSelSet(int level)
 	}
 }
 
-
-void EditPatchData::UpdateChanges(PatchMesh *patch, RPatchMesh *rpatch, BOOL checkTopology) 
+void EditPatchData::UpdateChanges(PatchMesh *patch, RPatchMesh *rpatch, BOOL checkTopology)
 {
 	if (theHold.Holding())
 	{
 		theHold.Put(new EPVertMapRestore(this));
-		//theHold.Put(new FinalPatchRestore(&finalPatch, &rfinalPatch));
+		// theHold.Put(new FinalPatchRestore(&finalPatch, &rfinalPatch));
 		if (rpatch)
 			theHold.Put(new FinalPatchRestore(&finalPatch, &rfinalPatch));
 		else
@@ -410,32 +408,32 @@ void EditPatchData::UpdateChanges(PatchMesh *patch, RPatchMesh *rpatch, BOOL che
 		rfinalPatch = *rpatch;
 }
 
-#define EPD_GENERAL_CHUNK		0x1000	// Obsolete as of 11/12/98 (r3)
-#define CHANGE_CHUNK			0x1010 	// Obsolete as of 11/12/98 (r3)
-#define EPD_R3_GENERAL_CHUNK	0x1015
-#define MESH_ATTRIB_CHUNK		0x1020
-#define DISP_PARTS_CHUNK		0x1030
-#define VTESS_ATTRIB_CHUNK		0x1070
-#define PTESS_ATTRIB_CHUNK		0x1080
-#define DTESS_ATTRIB_CHUNK		0x1090
-#define NORMAL_TESS_ATTRIB_CHUNK	0x1110
-#define WELD_TESS_ATTRIB_CHUNK	0x1120
-#define VERTMAP_CHUNK			0x1130
-#define FINALPATCH_CHUNK		0x1140
-#define RENDERSTEPS_CHUNK		0x1150
-#define SHOWINTERIOR_CHUNK		0x1160
+#define EPD_GENERAL_CHUNK 0x1000 // Obsolete as of 11/12/98 (r3)
+#define CHANGE_CHUNK 0x1010 // Obsolete as of 11/12/98 (r3)
+#define EPD_R3_GENERAL_CHUNK 0x1015
+#define MESH_ATTRIB_CHUNK 0x1020
+#define DISP_PARTS_CHUNK 0x1030
+#define VTESS_ATTRIB_CHUNK 0x1070
+#define PTESS_ATTRIB_CHUNK 0x1080
+#define DTESS_ATTRIB_CHUNK 0x1090
+#define NORMAL_TESS_ATTRIB_CHUNK 0x1110
+#define WELD_TESS_ATTRIB_CHUNK 0x1120
+#define VERTMAP_CHUNK 0x1130
+#define FINALPATCH_CHUNK 0x1140
+#define RENDERSTEPS_CHUNK 0x1150
+#define SHOWINTERIOR_CHUNK 0x1160
 
 // Named sel set chunks
-#define VSELSET_CHUNK		0x1040
-#define ESELSET_CHUNK		0x1050
-#define PSELSET_CHUNK		0x1060
+#define VSELSET_CHUNK 0x1040
+#define ESELSET_CHUNK 0x1050
+#define PSELSET_CHUNK 0x1060
 
 #define RPO_MODE_TILE 0x4000
 #define RFINALPATCH_CHUNK 0x4001
 #define RPO_MODE_TILE_TRANSITION 0x4002
 #define RPO_INCLUDE_MESHES 0x4003
 
-IOResult EditPatchData::Save(ISave *isave) 
+IOResult EditPatchData::Save(ISave *isave)
 {
 	ULONG nb;
 	isave->BeginChunk(EPD_R3_GENERAL_CHUNK);
@@ -444,14 +442,14 @@ IOResult EditPatchData::Save(ISave *isave)
 	isave->BeginChunk(MESH_ATTRIB_CHUNK);
 	isave->Write(&meshSteps, sizeof(int), &nb);
 	// Future use (Not used now)
-	BOOL fakeAdaptive = FALSE;	
+	BOOL fakeAdaptive = FALSE;
 	isave->Write(&fakeAdaptive, sizeof(BOOL), &nb);
 	//	isave->Write(&meshAdaptive,sizeof(BOOL),&nb);	// Future use (Not used now)
 	isave->EndChunk();
-	
+
 	// 3-18-99 to suport render steps and removal of the mental tesselator
 	isave->BeginChunk(RENDERSTEPS_CHUNK);
-	if ((meshStepsRender < 0) ||(meshStepsRender > 100))
+	if ((meshStepsRender < 0) || (meshStepsRender > 100))
 	{
 		meshStepsRender = 5;
 		nlassert(0);
@@ -461,8 +459,7 @@ IOResult EditPatchData::Save(ISave *isave)
 	isave->BeginChunk(SHOWINTERIOR_CHUNK);
 	isave->Write(&showInterior, sizeof(BOOL), &nb);
 	isave->EndChunk();
-	
-	
+
 	isave->BeginChunk(VTESS_ATTRIB_CHUNK);
 	viewTess.Save(isave);
 	isave->EndChunk();
@@ -476,23 +473,23 @@ IOResult EditPatchData::Save(ISave *isave)
 	isave->Write(&displaySurface, sizeof(BOOL), &nb);
 	isave->Write(&displayLattice, sizeof(BOOL), &nb);
 	isave->EndChunk();
-	
+
 	isave->BeginChunk(NORMAL_TESS_ATTRIB_CHUNK);
 	isave->Write(&mViewTessNormals, sizeof(BOOL), &nb);
 	isave->Write(&mProdTessNormals, sizeof(BOOL), &nb);
 	isave->EndChunk();
-	
+
 	isave->BeginChunk(WELD_TESS_ATTRIB_CHUNK);
 	isave->Write(&mViewTessWeld, sizeof(BOOL), &nb);
 	isave->Write(&mProdTessWeld, sizeof(BOOL), &nb);
 	isave->EndChunk();
-	
+
 	isave->BeginChunk(RPO_MODE_TILE);
 	isave->Write(&tileMode, sizeof(tileMode), &nb);
 	isave->Write(&tileLevel, sizeof(tileLevel), &nb);
 	isave->Write(&keepMapping, sizeof(keepMapping), &nb);
 	isave->EndChunk();
-	
+
 	isave->BeginChunk(RPO_INCLUDE_MESHES);
 	isave->Write(&includeMeshes, sizeof(includeMeshes), &nb);
 	isave->EndChunk();
@@ -500,7 +497,7 @@ IOResult EditPatchData::Save(ISave *isave)
 	isave->BeginChunk(RPO_MODE_TILE_TRANSITION);
 	isave->Write(&transitionType, sizeof(transitionType), &nb);
 	isave->EndChunk();
-	
+
 	// Save named sel sets
 	if (vselSet.Count())
 	{
@@ -520,195 +517,195 @@ IOResult EditPatchData::Save(ISave *isave)
 		pselSet.Save(isave);
 		isave->EndChunk();
 	}
-	
+
 	isave->BeginChunk(VERTMAP_CHUNK);
 	vertMap.Save(isave);
 	isave->EndChunk();
 	isave->BeginChunk(FINALPATCH_CHUNK);
 	finalPatch.Save(isave);
 	isave->EndChunk();
-	
+
 	isave->BeginChunk(RFINALPATCH_CHUNK);
 	rfinalPatch.Save(isave);
-	isave->EndChunk();	
-	
+	isave->EndChunk();
+
 	return IO_OK;
 }
 
-IOResult EditPatchData::Load(ILoad *iload) 
+IOResult EditPatchData::Load(ILoad *iload)
 {
-IOResult res;
-ULONG nb;
-PModRecord *theChange;
-while (IO_OK == (res = iload->OpenChunk())) 
-{
-	switch (iload->CurChunkID())
+	IOResult res;
+	ULONG nb;
+	PModRecord *theChange;
+	while (IO_OK == (res = iload->OpenChunk()))
 	{
-		// The following code is here to load pre-release 3 files.
-	case EPD_GENERAL_CHUNK:
-		iload->SetObsolete();
-		iload->Read(&flags, sizeof(DWORD), &nb);
-		break;
-	case CLEARVERTSELRECORD_CHUNK:
-		theChange = new ClearPVertSelRecord;
-		goto load_change;
-	case SETVERTSELRECORD_CHUNK:
-		theChange = new SetPVertSelRecord;
-		goto load_change;
-	case INVERTVERTSELRECORD_CHUNK:
-		theChange = new InvertPVertSelRecord;
-		goto load_change;
-	case CLEAREDGESELRECORD_CHUNK:
-		theChange = new ClearPEdgeSelRecord;
-		goto load_change;
-	case SETEDGESELRECORD_CHUNK:
-		theChange = new SetPEdgeSelRecord;
-		goto load_change;
-	case INVERTEDGESELRECORD_CHUNK:
-		theChange = new InvertPEdgeSelRecord;
-		goto load_change;
-	case CLEARPATCHSELRECORD_CHUNK:
-		theChange = new ClearPatchSelRecord;
-		goto load_change;
-	case SETPATCHSELRECORD_CHUNK:
-		theChange = new SetPatchSelRecord;
-		goto load_change;
-	case INVERTPATCHSELRECORD_CHUNK:
-		theChange = new InvertPatchSelRecord;
-		goto load_change;
-	case VERTSELRECORD_CHUNK:
-		theChange = new PVertSelRecord;
-		goto load_change;
-	case EDGESELRECORD_CHUNK:
-		theChange = new PEdgeSelRecord;
-		goto load_change;
-	case PATCHSELRECORD_CHUNK:
-		theChange = new PatchSelRecord;
-		goto load_change;
-	case PATCHDELETERECORD_CHUNK:
-		theChange = new PatchDeleteRecord;
-		goto load_change;
-	case VERTMOVERECORD_CHUNK:
-		theChange = new PVertMoveRecord;
-		goto load_change;
-	case PATCHCHANGERECORD_CHUNK:
-		theChange = new PatchChangeRecord;
-		goto load_change;
-	case VERTCHANGERECORD_CHUNK:
-		theChange = new PVertChangeRecord;
-		goto load_change;
-	case PATCHADDRECORD_CHUNK:
-		theChange = new PatchAddRecord;
-		goto load_change;
-	case EDGESUBDIVIDERECORD_CHUNK:
-		theChange = new EdgeSubdivideRecord;
-		goto load_change;
-	case PATCHSUBDIVIDERECORD_CHUNK:
-		theChange = new PatchSubdivideRecord;
-		goto load_change;
-	case PATTACHRECORD_CHUNK:
-		theChange = new PAttachRecord;
-		goto load_change;
-	case PATCHDETACHRECORD_CHUNK:
-		theChange = new PatchDetachRecord;
-		goto load_change;
-	case PATCHMTLRECORD_CHUNK:
-		theChange = new PatchMtlRecord;
-		goto load_change;
-	case VERTWELDRECORD_CHUNK:
-		theChange = new PVertWeldRecord;
-		goto load_change;
-	case VERTDELETERECORD_CHUNK:
-		theChange = new PVertDeleteRecord;
-		// Intentional fall-thru!
-load_change:
-		changes.Append(1, &theChange);
-		changes[changes.Count() - 1]->Load(iload);
-		break;
-		//
-		// The following code is used for post-release 3 files
-		//
-	case EPD_R3_GENERAL_CHUNK:
-		res = iload->Read(&flags, sizeof(DWORD), &nb);
-		break;
-	case VERTMAP_CHUNK:
-		res = vertMap.Load(iload);
-		break;
-	case FINALPATCH_CHUNK:
-		res = finalPatch.Load(iload);
-		break;
-	case RFINALPATCH_CHUNK:
-		res = rfinalPatch.Load(iload);
-		break;
-		//
-		// The following code is common to all versions' files
-		//
-	case MESH_ATTRIB_CHUNK:
-		iload->Read(&meshSteps, sizeof(int), &nb);
-		res = iload->Read(&meshAdaptive, sizeof(BOOL), &nb);	// Future use (Not used now)
-		break;
-		// 3-18-99 to suport render steps and removal of the mental tesselator
-	case RENDERSTEPS_CHUNK:
-		iload->Read(&meshStepsRender, sizeof(int), &nb);
-		if ((meshStepsRender < 0) ||(meshStepsRender > 100))
+		switch (iload->CurChunkID())
 		{
-			meshStepsRender = 5;
-			nlassert(0);
-		}
-		
-		break;
-	case SHOWINTERIOR_CHUNK:
-		iload->Read(&showInterior, sizeof(BOOL), &nb);
-		break;
-		
-	case VTESS_ATTRIB_CHUNK:
-		viewTess.Load(iload);
-		break;
-	case PTESS_ATTRIB_CHUNK:
-		prodTess.Load(iload);
-		break;
-	case DTESS_ATTRIB_CHUNK:
-		dispTess.Load(iload);
-		break;
-	case NORMAL_TESS_ATTRIB_CHUNK:
-		iload->Read(&mViewTessNormals, sizeof(BOOL), &nb);
-		res = iload->Read(&mProdTessNormals, sizeof(BOOL), &nb);
-		break;
-	case WELD_TESS_ATTRIB_CHUNK:
-		iload->Read(&mViewTessWeld, sizeof(BOOL), &nb);
-		res = iload->Read(&mProdTessWeld, sizeof(BOOL), &nb);
-		break;
-	case DISP_PARTS_CHUNK:
-		iload->Read(&displaySurface, sizeof(BOOL), &nb);
-		res = iload->Read(&displayLattice, sizeof(BOOL), &nb);
-		break;
-		// Load named selection sets
-	case VSELSET_CHUNK:
-		res = vselSet.Load(iload);
-		break;
-	case PSELSET_CHUNK:
-		res = pselSet.Load(iload);
-		break;
-	case ESELSET_CHUNK:
-		res = eselSet.Load(iload);
-		break;
+			// The following code is here to load pre-release 3 files.
+		case EPD_GENERAL_CHUNK:
+			iload->SetObsolete();
+			iload->Read(&flags, sizeof(DWORD), &nb);
+			break;
+		case CLEARVERTSELRECORD_CHUNK:
+			theChange = new ClearPVertSelRecord;
+			goto load_change;
+		case SETVERTSELRECORD_CHUNK:
+			theChange = new SetPVertSelRecord;
+			goto load_change;
+		case INVERTVERTSELRECORD_CHUNK:
+			theChange = new InvertPVertSelRecord;
+			goto load_change;
+		case CLEAREDGESELRECORD_CHUNK:
+			theChange = new ClearPEdgeSelRecord;
+			goto load_change;
+		case SETEDGESELRECORD_CHUNK:
+			theChange = new SetPEdgeSelRecord;
+			goto load_change;
+		case INVERTEDGESELRECORD_CHUNK:
+			theChange = new InvertPEdgeSelRecord;
+			goto load_change;
+		case CLEARPATCHSELRECORD_CHUNK:
+			theChange = new ClearPatchSelRecord;
+			goto load_change;
+		case SETPATCHSELRECORD_CHUNK:
+			theChange = new SetPatchSelRecord;
+			goto load_change;
+		case INVERTPATCHSELRECORD_CHUNK:
+			theChange = new InvertPatchSelRecord;
+			goto load_change;
+		case VERTSELRECORD_CHUNK:
+			theChange = new PVertSelRecord;
+			goto load_change;
+		case EDGESELRECORD_CHUNK:
+			theChange = new PEdgeSelRecord;
+			goto load_change;
+		case PATCHSELRECORD_CHUNK:
+			theChange = new PatchSelRecord;
+			goto load_change;
+		case PATCHDELETERECORD_CHUNK:
+			theChange = new PatchDeleteRecord;
+			goto load_change;
+		case VERTMOVERECORD_CHUNK:
+			theChange = new PVertMoveRecord;
+			goto load_change;
+		case PATCHCHANGERECORD_CHUNK:
+			theChange = new PatchChangeRecord;
+			goto load_change;
+		case VERTCHANGERECORD_CHUNK:
+			theChange = new PVertChangeRecord;
+			goto load_change;
+		case PATCHADDRECORD_CHUNK:
+			theChange = new PatchAddRecord;
+			goto load_change;
+		case EDGESUBDIVIDERECORD_CHUNK:
+			theChange = new EdgeSubdivideRecord;
+			goto load_change;
+		case PATCHSUBDIVIDERECORD_CHUNK:
+			theChange = new PatchSubdivideRecord;
+			goto load_change;
+		case PATTACHRECORD_CHUNK:
+			theChange = new PAttachRecord;
+			goto load_change;
+		case PATCHDETACHRECORD_CHUNK:
+			theChange = new PatchDetachRecord;
+			goto load_change;
+		case PATCHMTLRECORD_CHUNK:
+			theChange = new PatchMtlRecord;
+			goto load_change;
+		case VERTWELDRECORD_CHUNK:
+			theChange = new PVertWeldRecord;
+			goto load_change;
+		case VERTDELETERECORD_CHUNK:
+			theChange = new PVertDeleteRecord;
+			// Intentional fall-thru!
+		load_change:
+			changes.Append(1, &theChange);
+			changes[changes.Count() - 1]->Load(iload);
+			break;
+			//
+			// The following code is used for post-release 3 files
+			//
+		case EPD_R3_GENERAL_CHUNK:
+			res = iload->Read(&flags, sizeof(DWORD), &nb);
+			break;
+		case VERTMAP_CHUNK:
+			res = vertMap.Load(iload);
+			break;
+		case FINALPATCH_CHUNK:
+			res = finalPatch.Load(iload);
+			break;
+		case RFINALPATCH_CHUNK:
+			res = rfinalPatch.Load(iload);
+			break;
+			//
+			// The following code is common to all versions' files
+			//
+		case MESH_ATTRIB_CHUNK:
+			iload->Read(&meshSteps, sizeof(int), &nb);
+			res = iload->Read(&meshAdaptive, sizeof(BOOL), &nb); // Future use (Not used now)
+			break;
+			// 3-18-99 to suport render steps and removal of the mental tesselator
+		case RENDERSTEPS_CHUNK:
+			iload->Read(&meshStepsRender, sizeof(int), &nb);
+			if ((meshStepsRender < 0) || (meshStepsRender > 100))
+			{
+				meshStepsRender = 5;
+				nlassert(0);
+			}
 
-	case RPO_MODE_TILE:
-		res = iload->Read(&tileMode, sizeof(tileMode), &nb);
-		res = iload->Read(&tileLevel, sizeof(tileLevel), &nb);
-		res = iload->Read(&keepMapping, sizeof(keepMapping), &nb);
-		break;
+			break;
+		case SHOWINTERIOR_CHUNK:
+			iload->Read(&showInterior, sizeof(BOOL), &nb);
+			break;
 
-	case RPO_INCLUDE_MESHES:
-		res = iload->Read(&includeMeshes, sizeof(includeMeshes), &nb);
-		break;
+		case VTESS_ATTRIB_CHUNK:
+			viewTess.Load(iload);
+			break;
+		case PTESS_ATTRIB_CHUNK:
+			prodTess.Load(iload);
+			break;
+		case DTESS_ATTRIB_CHUNK:
+			dispTess.Load(iload);
+			break;
+		case NORMAL_TESS_ATTRIB_CHUNK:
+			iload->Read(&mViewTessNormals, sizeof(BOOL), &nb);
+			res = iload->Read(&mProdTessNormals, sizeof(BOOL), &nb);
+			break;
+		case WELD_TESS_ATTRIB_CHUNK:
+			iload->Read(&mViewTessWeld, sizeof(BOOL), &nb);
+			res = iload->Read(&mProdTessWeld, sizeof(BOOL), &nb);
+			break;
+		case DISP_PARTS_CHUNK:
+			iload->Read(&displaySurface, sizeof(BOOL), &nb);
+			res = iload->Read(&displayLattice, sizeof(BOOL), &nb);
+			break;
+			// Load named selection sets
+		case VSELSET_CHUNK:
+			res = vselSet.Load(iload);
+			break;
+		case PSELSET_CHUNK:
+			res = pselSet.Load(iload);
+			break;
+		case ESELSET_CHUNK:
+			res = eselSet.Load(iload);
+			break;
 
-	case RPO_MODE_TILE_TRANSITION:
-		res = iload->Read(&transitionType, sizeof(transitionType), &nb);
-		break;
+		case RPO_MODE_TILE:
+			res = iload->Read(&tileMode, sizeof(tileMode), &nb);
+			res = iload->Read(&tileLevel, sizeof(tileLevel), &nb);
+			res = iload->Read(&keepMapping, sizeof(keepMapping), &nb);
+			break;
+
+		case RPO_INCLUDE_MESHES:
+			res = iload->Read(&includeMeshes, sizeof(includeMeshes), &nb);
+			break;
+
+		case RPO_MODE_TILE_TRANSITION:
+			res = iload->Read(&transitionType, sizeof(transitionType), &nb);
+			break;
 		}
 		iload->CloseChunk();
-		if (res != IO_OK) 
+		if (res != IO_OK)
 			return res;
 	}
 	return IO_OK;

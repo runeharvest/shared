@@ -22,7 +22,6 @@
 
 namespace NL3D {
 
-
 /**
  * The same as an ordering table, but it allows to have several layers for the display.
  * - Layer 0 acts as an ordering table.
@@ -34,7 +33,6 @@ template <class T>
 class CLayeredOrderingTable
 {
 public:
-
 	/// ctor
 	CLayeredOrderingTable();
 
@@ -42,7 +40,7 @@ public:
 	 * Initialization.
 	 * The ordering tables have a range from 0 to nNbEntries-1
 	 */
-	void init( uint32 nNbEntries );
+	void init(uint32 nNbEntries);
 
 	/**
 	 * Just return the number of entries in the ordering tables
@@ -60,12 +58,12 @@ public:
 	 * \param layer the layer in which to insert the object. Might be 0, 1 or 2
 	 * \param entry pos The position for the ordering tables. It is ignored when the layer is 1.
 	 */
-	void insert( uint layer, T *pValue, uint32 nEntryPos = 0 );
+	void insert(uint layer, T *pValue, uint32 nEntryPos = 0);
 
 	/** Share allocator between 2 or more layered ordering tables. So that calling reset will give the max number of insert
-      * for both tables. This is useful if several table are used for sorting (example : sort by priority with one table per possible priority)
-	  * NB : the table of "source table" becomes the used allocator
-	  */
+	 * for both tables. This is useful if several table are used for sorting (example : sort by priority with one table per possible priority)
+	 * NB : the table of "source table" becomes the used allocator
+	 */
 	void shareAllocator(CLayeredOrderingTable<T> &sourceTable);
 
 	/**
@@ -87,33 +85,35 @@ public:
 	/**
 	 * Get the currently selected element.
 	 */
-	inline T* get();
+	inline T *get();
 
 	/**
 	 * Move selection pointer to the next element
 	 */
 	inline void next();
 
-// =================
-// =================
-// IMPLEMENTATION.
-// =================
-// =================
+	// =================
+	// =================
+	// IMPLEMENTATION.
+	// =================
+	// =================
 private:
 	typedef std::vector<T *> TTypePtVect;
-	COrderingTable<T>		_Layer0;
-	TTypePtVect				_Layer1;
-	COrderingTable<T>		_Layer2;
-	uint					_IndexInLayer1;
-	uint8					_CurrLayer;
-	bool					_ForwardTraversal;
+	COrderingTable<T> _Layer0;
+	TTypePtVect _Layer1;
+	COrderingTable<T> _Layer2;
+	uint _IndexInLayer1;
+	uint8 _CurrLayer;
+	bool _ForwardTraversal;
 };
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template <class T>
-CLayeredOrderingTable<T>::CLayeredOrderingTable()  : _IndexInLayer1(0), _CurrLayer(0), _ForwardTraversal(true)
+CLayeredOrderingTable<T>::CLayeredOrderingTable()
+    : _IndexInLayer1(0)
+    , _CurrLayer(0)
+    , _ForwardTraversal(true)
 {
 	// share allocator between layer 0 and 2
 	_Layer2.shareAllocator(_Layer0);
@@ -121,7 +121,7 @@ CLayeredOrderingTable<T>::CLayeredOrderingTable()  : _IndexInLayer1(0), _CurrLay
 
 //==================================================================
 template <class T>
-void CLayeredOrderingTable<T>::init( uint32 nNbEntries )
+void CLayeredOrderingTable<T>::init(uint32 nNbEntries)
 {
 	_Layer0.init(nNbEntries);
 	_Layer2.init(nNbEntries);
@@ -134,7 +134,6 @@ uint32 CLayeredOrderingTable<T>::getSize()
 	nlassert(_Layer0.getSize() == _Layer2.getSize());
 	return _Layer0.getSize();
 }
-
 
 //==================================================================
 template <class T>
@@ -155,21 +154,21 @@ void CLayeredOrderingTable<T>::reset(uint maxElementToInsert)
 
 //==================================================================
 template <class T>
-void CLayeredOrderingTable<T>::insert( uint layer, T *pValue, uint32 nEntryPos /* = 0 */)
+void CLayeredOrderingTable<T>::insert(uint layer, T *pValue, uint32 nEntryPos /* = 0 */)
 {
 	switch (layer)
 	{
-		case 0:
-			_Layer0.insert(nEntryPos, pValue);
+	case 0:
+		_Layer0.insert(nEntryPos, pValue);
 		break;
-		case 1:
-			_Layer1.push_back(pValue);
+	case 1:
+		_Layer1.push_back(pValue);
 		break;
-		case 2:
-			_Layer2.insert(nEntryPos, pValue);
+	case 2:
+		_Layer2.insert(nEntryPos, pValue);
 		break;
-		default:
-			nlassert(0); // invalid layer
+	default:
+		nlassert(0); // invalid layer
 		break;
 	}
 }
@@ -225,21 +224,21 @@ inline void CLayeredOrderingTable<T>::begin(bool forwardTraversal /*= true*/)
 
 //==================================================================
 template <class T>
-inline T* CLayeredOrderingTable<T>::get()
+inline T *CLayeredOrderingTable<T>::get()
 {
-	switch(_CurrLayer)
+	switch (_CurrLayer)
 	{
-		case 0:
-			return _Layer0.get();
+	case 0:
+		return _Layer0.get();
 		break;
-		case 1:
-			return _Layer1[_IndexInLayer1];
+	case 1:
+		return _Layer1[_IndexInLayer1];
 		break;
-		case 2:
-			return _Layer2.get();
+	case 2:
+		return _Layer2.get();
 		break;
-		default:
-			nlassert(0);
+	default:
+		nlassert(0);
 		break;
 	}
 	return NULL; // avoid warning
@@ -251,81 +250,76 @@ inline void CLayeredOrderingTable<T>::next()
 {
 	if (_ForwardTraversal)
 	{
-		switch(_CurrLayer)
+		switch (_CurrLayer)
 		{
-			case 0:
-				_Layer0.next();
-				if (_Layer0.get() == NULL)
+		case 0:
+			_Layer0.next();
+			if (_Layer0.get() == NULL)
+			{
+				if (_Layer1.size() != 0)
 				{
-					if (_Layer1.size() != 0)
-					{
-						_CurrLayer = 1;
-						_IndexInLayer1 = 0;
-					}
-					else
-					{
-						_CurrLayer = 2;
-						_Layer2.begin();
-					}
+					_CurrLayer = 1;
+					_IndexInLayer1 = 0;
 				}
-
-			break;
-			case 1:
-				++ _IndexInLayer1;
-				if (_IndexInLayer1 == _Layer1.size())
+				else
 				{
 					_CurrLayer = 2;
 					_Layer2.begin();
 				}
+			}
+
 			break;
-			case 2:
-				_Layer2.next();
+		case 1:
+			++_IndexInLayer1;
+			if (_IndexInLayer1 == _Layer1.size())
+			{
+				_CurrLayer = 2;
+				_Layer2.begin();
+			}
+			break;
+		case 2:
+			_Layer2.next();
 			break;
 		}
 	}
 	else
 	{
-		switch(_CurrLayer)
+		switch (_CurrLayer)
 		{
 
-			case 2:
-				_Layer2.next();
-				if (_Layer2.get() == NULL)
+		case 2:
+			_Layer2.next();
+			if (_Layer2.get() == NULL)
+			{
+				if (_Layer1.size() != 0)
 				{
-					if (_Layer1.size() != 0)
-					{
-						_CurrLayer = 1;
-						_IndexInLayer1 = 0;
-					}
-					else
-					{
-						_CurrLayer = 0;
-						_Layer0.begin();
-					}
+					_CurrLayer = 1;
+					_IndexInLayer1 = 0;
 				}
-
-			break;
-			case 1:
-				++ _IndexInLayer1;
-				if (_IndexInLayer1 == _Layer1.size())
+				else
 				{
 					_CurrLayer = 0;
 					_Layer0.begin();
 				}
+			}
+
 			break;
-			case 0:
-				_Layer0.next();
+		case 1:
+			++_IndexInLayer1;
+			if (_IndexInLayer1 == _Layer1.size())
+			{
+				_CurrLayer = 0;
+				_Layer0.begin();
+			}
+			break;
+		case 0:
+			_Layer0.next();
 			break;
 		}
 	}
 }
 
-
-
-
-
 } // NL3D
-
 
 #endif // NL_LAYERED_ORDERING_TABLE_H
 

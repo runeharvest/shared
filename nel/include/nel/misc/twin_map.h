@@ -20,56 +20,55 @@
 #include "nel/misc/debug.h"
 #include <map>
 
-namespace NLMISC
-{
-
+namespace NLMISC {
 
 /** Bidirectionnal association between values
-  * Behaves like a map, but key can be used as value and vice-versa
-  *
-  * Association must be bijective or assertions are raised
-  *
-  *
-  * Example of use :
-  *
-  * CTwinMap<string, int>  tm;
-  * tm.add("foo", 1);
-  * tm.add("bar", 2);
-  * tm.add("foorbar", 3);
-  * tm.get("foo");		 // returns 1
-  * tm.get(1);			 // returns "foo"
-  * tm.remove(1);		 // removes ("foo", 1) couple
-  * tm.remove("bar")	 // removes ("bar", 2) couple
-  * tm.add("foobar", 4); // assert !
-  * tm.add("foo", 3);    // assrt! (3 associated with foobar)
-  *
-  * \author Nicolas Vizerie
-  * \author Nevrax France
-  * \date 2004
-  */
+ * Behaves like a map, but key can be used as value and vice-versa
+ *
+ * Association must be bijective or assertions are raised
+ *
+ *
+ * Example of use :
+ *
+ * CTwinMap<string, int>  tm;
+ * tm.add("foo", 1);
+ * tm.add("bar", 2);
+ * tm.add("foorbar", 3);
+ * tm.get("foo");		 // returns 1
+ * tm.get(1);			 // returns "foo"
+ * tm.remove(1);		 // removes ("foo", 1) couple
+ * tm.remove("bar")	 // removes ("bar", 2) couple
+ * tm.add("foobar", 4); // assert !
+ * tm.add("foo", 3);    // assrt! (3 associated with foobar)
+ *
+ * \author Nicolas Vizerie
+ * \author Nevrax France
+ * \date 2004
+ */
 template <class TypeA, class TypeB>
 class CTwinMap
 {
 public:
 	typedef std::map<TypeA, TypeB> TAToBMap;
 	typedef std::map<TypeB, TypeA> TBToAMap;
+
 public:
 	// add a couple in the twin map. An assertion is raised if either valueA or valueB were already present in the map
-	inline void			add(const TypeA &valueA, const TypeB &valueB);
+	inline void add(const TypeA &valueA, const TypeB &valueB);
 	// retrieves value of type 'TypeB' associated with 'valueA', or NULL if not found
 	inline const TypeA *getA(const TypeB &valueB) const;
 	// retrieves value of type 'TypeB' associated with 'valueA', or NULL if not found
 	inline const TypeB *getB(const TypeA &valueA) const;
 	// removes a couple from its TypeA value
-	inline void			removeWithA(const TypeA &valueA);
+	inline void removeWithA(const TypeA &valueA);
 	// removes a couple from its TypeB value
-	inline void			removeWithB(const TypeB &valueB);
+	inline void removeWithB(const TypeB &valueB);
 	// Direct read access to 'TypeA to TypeB' map
-	const TAToBMap	   &getAToBMap() const { return _AToB; }
+	const TAToBMap &getAToBMap() const { return _AToB; }
 	// Direct read access to 'TypeB to TypeA' map
-	const TBToAMap	   &getBToAMap() const { return _BToA; }
+	const TBToAMap &getBToAMap() const { return _BToA; }
 	// clear the twin map
-	inline	void		clear();
+	inline void clear();
 
 private:
 	TAToBMap _AToB;
@@ -82,7 +81,7 @@ private:
 
 //==================================================================================================
 template <class TypeA, class TypeB>
-inline void	CTwinMap<TypeA, TypeB>::clear()
+inline void CTwinMap<TypeA, TypeB>::clear()
 {
 	_AToB.clear();
 	_BToA.clear();
@@ -90,7 +89,7 @@ inline void	CTwinMap<TypeA, TypeB>::clear()
 
 //==================================================================================================
 template <class TypeA, class TypeB>
-inline void	CTwinMap<TypeA, TypeB>::add(const TypeA &valueA, const TypeB &valueB)
+inline void CTwinMap<TypeA, TypeB>::add(const TypeA &valueA, const TypeB &valueB)
 {
 	nlassert(!getB(valueA));
 	nlassert(!getA(valueB));
@@ -118,7 +117,7 @@ inline const TypeB *CTwinMap<TypeA, TypeB>::getB(const TypeA &valueA) const
 
 //==================================================================================================
 template <class TypeA, class TypeB>
-inline void	CTwinMap<TypeA, TypeB>::removeWithA(const TypeA &valueA)
+inline void CTwinMap<TypeA, TypeB>::removeWithA(const TypeA &valueA)
 {
 	typename TAToBMap::iterator itA = _AToB.find(valueA);
 	nlassert(itA != _AToB.end());
@@ -130,7 +129,7 @@ inline void	CTwinMap<TypeA, TypeB>::removeWithA(const TypeA &valueA)
 
 //==================================================================================================
 template <class TypeA, class TypeB>
-inline void	CTwinMap<TypeA, TypeB>::removeWithB(const TypeB &valueB)
+inline void CTwinMap<TypeA, TypeB>::removeWithB(const TypeB &valueB)
 {
 	typename TBToAMap::iterator itB = _BToA.find(valueB);
 	nlassert(itB != _BToA.end());
@@ -140,10 +139,6 @@ inline void	CTwinMap<TypeA, TypeB>::removeWithB(const TypeB &valueB)
 	_BToA.erase(itB);
 }
 
-
-
 } // NLMISC
-
-
 
 #endif

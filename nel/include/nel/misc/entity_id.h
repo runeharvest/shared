@@ -44,11 +44,10 @@ struct CEntityId
 		CREATOR_ID_SIZE = 8,
 		TYPE_SIZE = 8,
 		ID_SIZE = 40,
-		UNKNOWN_TYPE = (1 << TYPE_SIZE)-1
+		UNKNOWN_TYPE = (1 << TYPE_SIZE) - 1
 	};
 
 protected:
-
 	// ---------------------------------------------------------------------------------
 	// instantiated data
 
@@ -56,14 +55,14 @@ protected:
 	{
 		struct
 		{
-		/// Id of the service where the entity is (variable routing info).
-		uint64	DynamicId   :  DYNAMIC_ID_SIZE;
-		/// Id of the service who created the entity (persistent).
-		uint64	CreatorId   :  CREATOR_ID_SIZE;
-		/// Type of the entity (persistent).
-		uint64	Type :			TYPE_SIZE;
-		/// Local entity number (persistent).
-		uint64	Id :			ID_SIZE;
+			/// Id of the service where the entity is (variable routing info).
+			uint64 DynamicId : DYNAMIC_ID_SIZE;
+			/// Id of the service who created the entity (persistent).
+			uint64 CreatorId : CREATOR_ID_SIZE;
+			/// Type of the entity (persistent).
+			uint64 Type : TYPE_SIZE;
+			/// Local entity number (persistent).
+			uint64 Id : ID_SIZE;
 		} DetailedId;
 
 		uint64 FullId;
@@ -73,40 +72,38 @@ protected:
 	// static data
 
 	/// Counter for generation of unique entity ids
-	static NLMISC::CEntityId	_NextEntityId;
+	static NLMISC::CEntityId _NextEntityId;
 
-	///The local num service id of the local machin.
-	static uint8				_ServerId;
+	/// The local num service id of the local machin.
+	static uint8 _ServerId;
 
 public:
-
 	// ---------------------------------------------------------------------------------
 	// static data
 
-	///The maximum number that we could generate without generate an overtaking exception.
-	static const uint64			MaxEntityId;
+	/// The maximum number that we could generate without generate an overtaking exception.
+	static const uint64 MaxEntityId;
 
 	/// Unknown CEntityId is similar as a NULL pointer.
-	static const CEntityId		Unknown;
-
+	static const CEntityId Unknown;
 
 	// ---------------------------------------------------------------------------------
 	// generation of new unique entity ids
 
 	/// Set the service id for the generator
-	static void					setServiceId( uint8 sid )
+	static void setServiceId(uint8 sid)
 	{
-		_NextEntityId.setDynamicId( sid );
-		_NextEntityId.setCreatorId( sid );
+		_NextEntityId.setDynamicId(sid);
+		_NextEntityId.setCreatorId(sid);
 		_ServerId = sid;
 	}
 
 	/// Generator of entity ids
-	static CEntityId			getNewEntityId( uint8 type )
+	static CEntityId getNewEntityId(uint8 type)
 	{
-		nlassert(_NextEntityId != Unknown ); // type may be Unknown, so isUnknownId() would return true
+		nlassert(_NextEntityId != Unknown); // type may be Unknown, so isUnknownId() would return true
 		NLMISC::CEntityId id = _NextEntityId++;
-		id.setType( type );
+		id.setType(type);
 		return id;
 	}
 
@@ -116,7 +113,7 @@ public:
 	///\name Constructor
 	//@{
 
-	CEntityId ()
+	CEntityId()
 	{
 		FullId = 0;
 		DetailedId.Type = UNKNOWN_TYPE;
@@ -129,7 +126,7 @@ public:
 		*/
 	}
 
-	CEntityId (uint8 type, uint64 id, uint8 creator, uint8 dynamic)
+	CEntityId(uint8 type, uint64 id, uint8 creator, uint8 dynamic)
 	{
 		DetailedId.DynamicId = dynamic;
 		DetailedId.CreatorId = creator;
@@ -137,7 +134,7 @@ public:
 		DetailedId.Id = id;
 	}
 
-	CEntityId (uint8 type, uint64 id)
+	CEntityId(uint8 type, uint64 id)
 	{
 		DetailedId.Type = type;
 		DetailedId.Id = id;
@@ -145,7 +142,7 @@ public:
 		DetailedId.DynamicId = _ServerId;
 	}
 
-	explicit CEntityId (uint64 p)
+	explicit CEntityId(uint64 p)
 	{
 		FullId = p;
 		/*
@@ -159,7 +156,7 @@ public:
 		*/
 	}
 
-	CEntityId (const CEntityId &a)
+	CEntityId(const CEntityId &a)
 	{
 		FullId = a.FullId;
 		/*
@@ -170,8 +167,8 @@ public:
 		*/
 	}
 
-	///fill from read stream.
-	CEntityId (NLMISC::IStream &is)
+	/// fill from read stream.
+	CEntityId(NLMISC::IStream &is)
 	{
 		is.serial(FullId);
 		/*
@@ -188,18 +185,17 @@ public:
 		*/
 	}
 
-	explicit CEntityId (const std::string &str)
+	explicit CEntityId(const std::string &str)
 	{
 		fromString(str.c_str());
 	}
 
-	explicit CEntityId (const char *str)
+	explicit CEntityId(const char *str)
 	{
-		CEntityId ();
+		CEntityId();
 		fromString(str);
 	}
 	//@}
-
 
 	// ---------------------------------------------------------------------------------
 	// accessors
@@ -220,7 +216,7 @@ public:
 	}
 
 	/// Set the local entity number
-	void setShortId( uint64 shortId )
+	void setShortId(uint64 shortId)
 	{
 		DetailedId.Id = shortId;
 	}
@@ -232,7 +228,7 @@ public:
 	}
 
 	/// Set the variable routing info
-	void setDynamicId( uint8 dynId )
+	void setDynamicId(uint8 dynId)
 	{
 		DetailedId.DynamicId = dynId;
 	}
@@ -244,7 +240,7 @@ public:
 	}
 
 	/// Set the persistent creator id
-	void setCreatorId( uint8 creatorId )
+	void setCreatorId(uint8 creatorId)
 	{
 		DetailedId.CreatorId = creatorId;
 	}
@@ -256,7 +252,7 @@ public:
 	}
 
 	/// Set the entity type
-	void setType( uint8 type )
+	void setType(uint8 type)
 	{
 		DetailedId.Type = type;
 	}
@@ -276,17 +272,16 @@ public:
 		return DetailedId.Type == UNKNOWN_TYPE;
 	}
 
-
 	// ---------------------------------------------------------------------------------
 	// operators
 
 	///\name comparison of two CEntityId.
 	//@{
-	bool operator == (const CEntityId &a) const
-//	virtual bool operator == (const CEntityId &a) const
+	bool operator==(const CEntityId &a) const
+	//	virtual bool operator == (const CEntityId &a) const
 	{
 
-		CEntityId testId ( FullId ^ a.FullId );
+		CEntityId testId(FullId ^ a.FullId);
 		testId.DetailedId.DynamicId = 0;
 		return testId.FullId == 0;
 
@@ -294,56 +289,56 @@ public:
 		return (Id == a.DetailedId.Id && DetailedId.CreatorId == a.DetailedId.CreatorId && DetailedId.Type == a.DetailedId.Type);
 		*/
 	}
-	bool operator != (const CEntityId &a) const
+	bool operator!=(const CEntityId &a) const
 	{
 		return !((*this) == a);
 	}
 
-	bool operator < (const CEntityId &a) const
-//	virtual bool operator < (const CEntityId &a) const
+	bool operator<(const CEntityId &a) const
+	//	virtual bool operator < (const CEntityId &a) const
 	{
 		return getUniqueId() < a.getUniqueId();
 
 		/*
 		if (Type < a.Type)
 		{
-			return true;
+		    return true;
 		}
 		else if (Type == a.Type)
 		{
-			if (Id < a.Id)
-			{
-				return true;
-			}
-			else if (Id == a.Id)
-			{
-				return (CreatorId < a.CreatorId);
-			}
+		    if (Id < a.Id)
+		    {
+		        return true;
+		    }
+		    else if (Id == a.Id)
+		    {
+		        return (CreatorId < a.CreatorId);
+		    }
 		}
 		return false;
 		*/
 	}
 
-	bool operator > (const CEntityId &a) const
-//	virtual bool operator > (const CEntityId &a) const
+	bool operator>(const CEntityId &a) const
+	//	virtual bool operator > (const CEntityId &a) const
 	{
 		return getUniqueId() > a.getUniqueId();
 
 		/*
 		if (Type > a.Type)
 		{
-			return true;
+		    return true;
 		}
 		else if (Type == a.Type)
 		{
-			if (Id > a.Id)
-			{
-				return true;
-			}
-			else if (Id == a.Id)
-			{
-				return (CreatorId > a.CreatorId);
-			}
+		    if (Id > a.Id)
+		    {
+		        return true;
+		    }
+		    else if (Id == a.Id)
+		    {
+		        return (CreatorId > a.CreatorId);
+		    }
 		}
 		// lesser
 		return false;
@@ -351,20 +346,20 @@ public:
 	}
 	//@}
 
-	const CEntityId &operator ++(int)
+	const CEntityId &operator++(int)
 	{
-		if(DetailedId.Id < MaxEntityId)
+		if (DetailedId.Id < MaxEntityId)
 		{
-			DetailedId.Id ++;
+			DetailedId.Id++;
 		}
 		else
 		{
-			nlerror ("CEntityId looped (max was %" NL_I64 "d", MaxEntityId);
+			nlerror("CEntityId looped (max was %" NL_I64 "d", MaxEntityId);
 		}
 		return *this;
 	}
 
-	const CEntityId &operator = (const CEntityId &a)
+	const CEntityId &operator=(const CEntityId &a)
 	{
 		FullId = a.FullId;
 		/*
@@ -376,7 +371,7 @@ public:
 		return *this;
 	}
 
-	const CEntityId &operator = (uint64 p)
+	const CEntityId &operator=(uint64 p)
 	{
 		FullId = p;
 		/*
@@ -391,36 +386,35 @@ public:
 		return *this;
 	}
 
-
 	// ---------------------------------------------------------------------------------
 	// other methods...
-	uint64 asUint64()const
+	uint64 asUint64() const
 	{
 		return FullId;
 	}
 
-/*	operator uint64 () const
-	{
-		return FullId;
+	/*	operator uint64 () const
+	    {
+	        return FullId;
 
-		uint64 p = Id;
-		p <<= 8;
-		p |= (uint64)Type;
-		p <<= 8;
-		p |= (uint64)CreatorId;
-		p <<= 8;
-		p |= (uint64)DynamicId;
+	        uint64 p = Id;
+	        p <<= 8;
+	        p |= (uint64)Type;
+	        p <<= 8;
+	        p |= (uint64)CreatorId;
+	        p <<= 8;
+	        p |= (uint64)DynamicId;
 
-		return p;
-	}
-*/
+	        return p;
+	    }
+	*/
 
 	// ---------------------------------------------------------------------------------
 	// loading, saving, serialising...
 
 	/// Save the Id into an output stream.
 	void save(NLMISC::IStream &os)
-//	virtual void save(NLMISC::IStream &os)
+	//	virtual void save(NLMISC::IStream &os)
 	{
 		os.serial(FullId);
 		/*
@@ -437,7 +431,7 @@ public:
 
 	/// Load the number from an input stream.
 	void load(NLMISC::IStream &is)
-//	virtual void load(NLMISC::IStream &is)
+	//	virtual void load(NLMISC::IStream &is)
 	{
 		is.serial(FullId);
 		/*
@@ -454,20 +448,18 @@ public:
 		*/
 	}
 
-
-	void serial (NLMISC::IStream &f)
-//	virtual void serial (NLMISC::IStream &f)
+	void serial(NLMISC::IStream &f)
+	//	virtual void serial (NLMISC::IStream &f)
 	{
-		if (f.isReading ())
+		if (f.isReading())
 		{
-			load (f);
+			load(f);
 		}
 		else
 		{
-			save (f);
+			save(f);
 		}
 	}
-
 
 	// ---------------------------------------------------------------------------------
 	// string convertions
@@ -477,20 +469,20 @@ public:
 	{
 		std::string ident;
 		ident.reserve(25);
-		ident+='(';
-		getDebugString (ident);
-		ident+=')';
+		ident += '(';
+		getDebugString(ident);
+		ident += ')';
 		return ident;
 	}
 
 	/// Read from a debug string, use the same format as toString() (id:type:creator:dynamic) in hexadecimal
-	void	fromString(const char *str)
-//	virtual void	fromString(const char *str)
+	void fromString(const char *str)
+	//	virtual void	fromString(const char *str)
 	{
-		uint64		id;
-		uint		type;
-		uint		creatorId;
-		uint		dynamicId;
+		uint64 id;
+		uint type;
+		uint creatorId;
+		uint dynamicId;
 
 		if (sscanf(str, "(%" NL_I64 "x:%x:%x:%x)", &id, &type, &creatorId, &dynamicId) != 4)
 		{
@@ -506,17 +498,17 @@ public:
 
 	/// Have a debug string.
 	void getDebugString(std::string &str) const
-//	virtual void getDebugString(std::string &str) const
+	//	virtual void getDebugString(std::string &str) const
 	{
-		str.reserve(str.size()+24);
+		str.reserve(str.size() + 24);
 		char b[256];
-		memset(b,0,255);
-		memset(b,'0',19);
+		memset(b, 0, 255);
+		memset(b, '0', 19);
 		sint n;
 
 		uint64 x = DetailedId.Id;
 		char baseTable[] = "0123456789abcdef";
-		for(n = 10; n < 20; n ++)
+		for (n = 10; n < 20; n++)
 		{
 			b[19 - n] = baseTable[(x & 15)];
 			x >>= 4;
@@ -524,7 +516,7 @@ public:
 		b[19 - 9] = ':';
 
 		x = DetailedId.Type;
-		for(n = 7; n < 9; n ++)
+		for (n = 7; n < 9; n++)
 		{
 			b[19 - n] = baseTable[(x & 15)];
 			x >>= 4;
@@ -532,7 +524,7 @@ public:
 		b[19 - 6] = ':';
 
 		x = DetailedId.CreatorId;
-		for(n = 4; n < 6; n ++)
+		for (n = 4; n < 6; n++)
 		{
 			b[19 - n] = baseTable[(x & 15)];
 			x >>= 4;
@@ -540,7 +532,7 @@ public:
 		b[19 - 3] = ':';
 
 		x = DetailedId.DynamicId;
-		for(n = 1; n < 3; n ++)
+		for (n = 1; n < 3; n++)
 		{
 			b[19 - n] = baseTable[(x & 15)];
 			x >>= 4;
@@ -548,19 +540,19 @@ public:
 		str += "0x";
 		str += b;
 	}
-/*
-	/// \name NLMISC::IStreamable method.
-	//@{
-	std::string	getClassName ()
-//	virtual std::string	getClassName ()
-	{
-		return std::string ("<CEntityId>");
-	}
+	/*
+	    /// \name NLMISC::IStreamable method.
+	    //@{
+	    std::string	getClassName ()
+	//	virtual std::string	getClassName ()
+	    {
+	        return std::string ("<CEntityId>");
+	    }
 
-	//@}
-*/
+	    //@}
+	*/
 
-//	friend std::stringstream &operator << (std::stringstream &__os, const CEntityId &__t);
+	//	friend std::stringstream &operator << (std::stringstream &__os, const CEntityId &__t);
 };
 
 /**
@@ -569,12 +561,12 @@ public:
 /*class CEidHash
 {
 public:
-	size_t	operator () ( const NLMISC::CEntityId & id ) const
-	{
-		uint64 hash64 = id.getUniqueId();
-		return size_t(hash64) ^ size_t( hash64 >> 32 );
-		return (uint32)id.getShortId();
-	}
+    size_t	operator () ( const NLMISC::CEntityId & id ) const
+    {
+        uint64 hash64 = id.getUniqueId();
+        return size_t(hash64) ^ size_t( hash64 >> 32 );
+        return (uint32)id.getShortId();
+    }
 };*/
 
 // Traits for hash_map using CEntityId
@@ -601,9 +593,13 @@ struct CEntityIdHashMapTraits
 #else
 struct CEntityIdHashMapTraits
 {
-	enum { bucket_size = 4, min_buckets = 8 };
+	enum
+	{
+		bucket_size = 4,
+		min_buckets = 8
+	};
 	CEntityIdHashMapTraits() { }
-	size_t operator() (const NLMISC::CEntityId &id ) const
+	size_t operator()(const NLMISC::CEntityId &id) const
 	{
 		uint64 hash64 = id.getUniqueId();
 		if (sizeof(size_t) == 8)
@@ -622,8 +618,8 @@ struct CEntityIdHashMapTraits
 
 /*inline std::stringstream &operator << (std::stringstream &__os, const CEntityId &__t)
 {
-	__os << __t.toString ();
-	return __os;
+    __os << __t.toString ();
+    return __os;
 }*/
 
 } // NLMISC

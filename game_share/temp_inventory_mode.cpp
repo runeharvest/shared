@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 #include "nel/misc/debug.h"
@@ -26,42 +24,38 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace TEMP_INV_MODE
+namespace TEMP_INV_MODE {
+
+NL_BEGIN_STRING_CONVERSION_TABLE(TInventoryMode)
+NL_STRING_CONVERSION_TABLE_ENTRY(Harvest)
+NL_STRING_CONVERSION_TABLE_ENTRY(Loot)
+NL_STRING_CONVERSION_TABLE_ENTRY(Forage)
+NL_STRING_CONVERSION_TABLE_ENTRY(Quarter)
+NL_STRING_CONVERSION_TABLE_ENTRY(BagFull)
+NL_STRING_CONVERSION_TABLE_ENTRY(Craft)
+NL_STRING_CONVERSION_TABLE_ENTRY(MissionReward)
+NL_STRING_CONVERSION_TABLE_ENTRY(Crystallize)
+
+NL_STRING_CONVERSION_TABLE_ENTRY(Unknown)
+NL_END_STRING_CONVERSION_TABLE(TInventoryMode, InvModeConversion, Unknown)
+
+//-----------------------------------------------
+// toInvMode :
+//-----------------------------------------------
+TInventoryMode toInvMode(const std::string &str)
 {
+	uint16 nb = InvModeConversion.getNbPairs();
+	nlassert(uint16(NbModes + 1) == nb);
 
-	NL_BEGIN_STRING_CONVERSION_TABLE (TInventoryMode)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Harvest)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Loot)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Forage)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Quarter)
-		NL_STRING_CONVERSION_TABLE_ENTRY(BagFull)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Craft)
-		NL_STRING_CONVERSION_TABLE_ENTRY(MissionReward)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Crystallize)
+	return InvModeConversion.fromString(str);
+} // toBrickFamily //
 
-		NL_STRING_CONVERSION_TABLE_ENTRY(Unknown)
-	NL_END_STRING_CONVERSION_TABLE(TInventoryMode, InvModeConversion, Unknown)
-
-	//-----------------------------------------------
-	// toInvMode :
-	//-----------------------------------------------
-	TInventoryMode toInvMode(const std::string &str)
-	{
-		uint16 nb = InvModeConversion.getNbPairs();
-		nlassert( uint16(NbModes+1) == nb );
-
-		return InvModeConversion.fromString(str);
-	} // toBrickFamily //
-
-
-	//-----------------------------------------------
-	// toString :
-	//-----------------------------------------------
-	const std::string &toString(TInventoryMode mode)
-	{
-		return InvModeConversion.toString(mode);
-	} // toString //
-
-
+//-----------------------------------------------
+// toString :
+//-----------------------------------------------
+const std::string &toString(TInventoryMode mode)
+{
+	return InvModeConversion.toString(mode);
+} // toString //
 
 }; // TEMP_INV_MODE

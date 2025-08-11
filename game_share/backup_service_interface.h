@@ -14,9 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef BACKUP_SERVICE_INTERFACE_H
-#define	BACKUP_SERVICE_INTERFACE_H
+#define BACKUP_SERVICE_INTERFACE_H
 
 //-------------------------------------------------------------------------------------------------
 // includes
@@ -27,21 +26,18 @@
 #include "nel/misc/hierarchical_timer.h"
 #include "file_description_container.h"
 
-
 //-------------------------------------------------------------------------------------------------
 // Configuration Variables
 //-------------------------------------------------------------------------------------------------
 
-extern NLMISC::CVariable<std::string>	BackupServiceIP;
-extern NLMISC::CVariable<bool>    		UseBS;
-
+extern NLMISC::CVariable<std::string> BackupServiceIP;
+extern NLMISC::CVariable<bool> UseBS;
 
 //-------------------------------------------------------------------------------------------------
 // Forward class declarations
 //-------------------------------------------------------------------------------------------------
 
 class CBackupServiceInterface;
-
 
 //-------------------------------------------------------------------------------------------------
 // class CBackupFileClass
@@ -53,16 +49,14 @@ class CBackupServiceInterface;
 class CBackupFileClass
 {
 public:
-
 	/// Equal patterns for this class
-	std::vector<std::string>	Patterns;
+	std::vector<std::string> Patterns;
 
-	void	serial(NLMISC::IStream& s)
+	void serial(NLMISC::IStream &s)
 	{
 		s.serialCont(Patterns);
 	}
 };
-
 
 //-------------------------------------------------------------------------------------------------
 // struct CBackupMsgSaveFile
@@ -80,43 +74,41 @@ struct CBackupMsgSaveFile
 	// Type of message (the TypesStr table must be synchronized with it)
 	enum TBackupMsgSaveFileType
 	{
-		SaveFile,			// Save file and create directory tree if not existing
-		SaveFileCheck,		// Save file and create directory tree if not existing (same as above)
-		AppendFile,			// Append file and create directory tree if not existing
-		AppendFileCheck,	// Append file and create directory tree if not existing (same as above)
+		SaveFile, // Save file and create directory tree if not existing
+		SaveFileCheck, // Save file and create directory tree if not existing (same as above)
+		AppendFile, // Append file and create directory tree if not existing
+		AppendFileCheck, // Append file and create directory tree if not existing (same as above)
 
 		NbTypes
 	};
 
 	// Constructor for sending
-	CBackupMsgSaveFile( const std::string& filename, TBackupMsgSaveFileType msgType, const CBackupServiceInterface& itf );
+	CBackupMsgSaveFile(const std::string &filename, TBackupMsgSaveFileType msgType, const CBackupServiceInterface &itf);
 
 	NLNET::CMessage DataMsg;
 	std::string FileName; // the filename passed to the constructor
 
 private:
-
 	TBackupMsgSaveFileType _MsgType;
 	friend class CBackupServiceInterface;
 
-	static const char *_TypesStr [NbTypes];
+	static const char *_TypesStr[NbTypes];
 };
-
 
 //-------------------------------------------------------------------------------------------------
 // class IBackupFileReceiveCallback
 //-------------------------------------------------------------------------------------------------
 
-class IBackupFileReceiveCallback: public NLMISC::CRefCount
+class IBackupFileReceiveCallback : public NLMISC::CRefCount
 {
 	NL_INSTANCE_COUNTER_DECL(IBackupFileReceiveCallback);
+
 public:
-	virtual ~IBackupFileReceiveCallback() {}
+	virtual ~IBackupFileReceiveCallback() { }
 	// note: on entry to the callback the quantity of data in dataStream is guaranteed to be
 	// the same as the value of fileDescription.FileSize
-	virtual void callback(const CFileDescription& fileDescription, NLMISC::IStream& dataStream)=0;
+	virtual void callback(const CFileDescription &fileDescription, NLMISC::IStream &dataStream) = 0;
 };
-
 
 //-------------------------------------------------------------------------------------------------
 // class IBackupFileClassReceiveCallback
@@ -125,25 +117,24 @@ public:
 class IBackupFileClassReceiveCallback : public NLMISC::CRefCount
 {
 	NL_INSTANCE_COUNTER_DECL(IBackupFileClassReceiveCallback);
+
 public:
-
-	virtual ~IBackupFileClassReceiveCallback() {}
-	virtual void callback(const CFileDescriptionContainer& fileList)=0;
+	virtual ~IBackupFileClassReceiveCallback() { }
+	virtual void callback(const CFileDescriptionContainer &fileList) = 0;
 };
-
 
 //-------------------------------------------------------------------------------------------------
 // class IBackupGenericAckCallback
 //-------------------------------------------------------------------------------------------------
 
-class IBackupGenericAckCallback: public NLMISC::CRefCount
+class IBackupGenericAckCallback : public NLMISC::CRefCount
 {
 	NL_INSTANCE_COUNTER_DECL(IBackupGenericAckCallback);
-public:
-	virtual ~IBackupGenericAckCallback() {}
-	virtual void callback(const std::string& fileName)=0;
-};
 
+public:
+	virtual ~IBackupGenericAckCallback() { }
+	virtual void callback(const std::string &fileName) = 0;
+};
 
 //-------------------------------------------------------------------------------------------------
 // class IBackupServiceConnection
@@ -152,9 +143,8 @@ public:
 class IBackupServiceConnection
 {
 public:
-	virtual void cbBSconnect(bool connecting)=0;
+	virtual void cbBSconnect(bool connecting) = 0;
 };
-
 
 //-------------------------------------------------------------------------------------------------
 // class CBackupServiceInterface
@@ -165,48 +155,43 @@ public:
 //   When UseBS=0, the files will be saved in the local path
 //-------------------------------------------------------------------------------------------------
 
-class CBackupServiceInterface: public NLMISC::CRefCount
+class CBackupServiceInterface : public NLMISC::CRefCount
 {
 public:
-
 	// request that the backup service load a file
-	void requestFile(const std::string& fileName, NLMISC::CSmartPtr<IBackupFileReceiveCallback> cb);
+	void requestFile(const std::string &fileName, NLMISC::CSmartPtr<IBackupFileReceiveCallback> cb);
 
 	// load a file synchronously
-	void syncLoadFile(const std::string& fileName, NLMISC::CSmartPtr<IBackupFileReceiveCallback> cb);
+	void syncLoadFile(const std::string &fileName, NLMISC::CSmartPtr<IBackupFileReceiveCallback> cb);
 
 	// load a set of file synchronously
-	void syncLoadFiles(const std::vector<std::string>& fileNames, NLMISC::CSmartPtr<IBackupFileReceiveCallback> cb);
+	void syncLoadFiles(const std::vector<std::string> &fileNames, NLMISC::CSmartPtr<IBackupFileReceiveCallback> cb);
 
 	// send a file to the backup service for saving. Use either the SaveFile or SaveFileCheck msg type.
-	void sendFile(CBackupMsgSaveFile& msg, NLMISC::CSmartPtr<IBackupGenericAckCallback> cb=NULL);
+	void sendFile(CBackupMsgSaveFile &msg, NLMISC::CSmartPtr<IBackupGenericAckCallback> cb = NULL);
 
 	// request BS sends me files matching the given file classes
-	void requestFileClass(const std::string& directory, const std::vector<CBackupFileClass>& classes, NLMISC::CSmartPtr<IBackupFileClassReceiveCallback> cb);
+	void requestFileClass(const std::string &directory, const std::vector<CBackupFileClass> &classes, NLMISC::CSmartPtr<IBackupFileClassReceiveCallback> cb);
 
 	// load a set of file synchronously
-	void syncLoadFileClass(const std::string& directory, const std::vector<CBackupFileClass>& classes, NLMISC::CSmartPtr<IBackupFileClassReceiveCallback> cb);
-
+	void syncLoadFileClass(const std::string &directory, const std::vector<CBackupFileClass> &classes, NLMISC::CSmartPtr<IBackupFileClassReceiveCallback> cb);
 
 	// Append a line to a file
-	void append(const std::string& filename, const std::string& line, NLMISC::CSmartPtr<IBackupGenericAckCallback> cb=NULL);
+	void append(const std::string &filename, const std::string &line, NLMISC::CSmartPtr<IBackupGenericAckCallback> cb = NULL);
 	// Append a data stream to a file. Use either the AppendFile or the AppendFileCheck msg type.
-	void append(CBackupMsgSaveFile& msg, NLMISC::CSmartPtr<IBackupGenericAckCallback> cb=NULL);
-
+	void append(CBackupMsgSaveFile &msg, NLMISC::CSmartPtr<IBackupGenericAckCallback> cb = NULL);
 
 	// request for a file to be deleted (WARNING: no archiving of the file)
-	void deleteFile(const std::string& fileName, bool keepBackupOfFile = true, NLMISC::CSmartPtr<IBackupGenericAckCallback> cb=NULL);
-
+	void deleteFile(const std::string &fileName, bool keepBackupOfFile = true, NLMISC::CSmartPtr<IBackupGenericAckCallback> cb = NULL);
 
 	// setup a callback to receive connection and disconnection events from the backup system
-	void registerBSConnectionCallback(IBackupServiceConnection* cb);
-
+	void registerBSConnectionCallback(IBackupServiceConnection *cb);
 
 	// Return the local path that is added before the provided filenames. Ex: "/home/nevrax/save_shard/s01/" added before "characters/account..."
-	const std::string& getLocalPath() const { return _LocalPath; }
+	const std::string &getLocalPath() const { return _LocalPath; }
 
 	// Return the remote path that is added between the BS root path and the provided filename. Ex: "s01/" added between root "/home/nevrax/save_shard/" and "characters/account..."
-	const std::string& getRemotePath() const { return _RemotePath; }
+	const std::string &getRemotePath() const { return _RemotePath; }
 
 	// Return the timestamp of the last packet ack (or ping pong) from the backup system
 	NLMISC::TTime getLastAckTime() const;
@@ -216,13 +201,13 @@ public:
 
 private:
 	// Constructor. Called by the singleton registry init.
-	CBackupServiceInterface() {}
-	void init(const std::string& bsiname);
+	CBackupServiceInterface() { }
+	void init(const std::string &bsiname);
 	friend class CBackupInterfaceSingleton;
 
 	// Path modification. Called by the constructor or by callbacks from variables.
-	void setRemotePath( const std::string& remotePath );
-	void setLocalPath( const std::string& localPath );
+	void setRemotePath(const std::string &remotePath);
+	void setLocalPath(const std::string &localPath);
 	friend void onSaveShardRootModified(NLMISC::IVariable &var);
 
 	std::string _LocalPath;
@@ -230,18 +215,16 @@ private:
 	std::string _Name;
 };
 
-
 //-------------------------------------------------------------------------------------------------
 // globals - pre defined CBackupServiceInterface instances
 //-------------------------------------------------------------------------------------------------
 
-CBackupServiceInterface& getShardDependentBsi();
-CBackupServiceInterface& getGlobalBsi();
-//CBackupServiceInterface& getPDBsi();
-#define Bsi		  getShardDependentBsi()
+CBackupServiceInterface &getShardDependentBsi();
+CBackupServiceInterface &getGlobalBsi();
+// CBackupServiceInterface& getPDBsi();
+#define Bsi getShardDependentBsi()
 #define BsiGlobal getGlobalBsi()
-//#define PDBsi	  getPDBsi()
-
+// #define PDBsi	  getPDBsi()
 
 //-------------------------------------------------------------------------------------------------
 #endif

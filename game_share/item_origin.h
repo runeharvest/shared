@@ -17,8 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_ITEM_ORIGIN_H
 #define RY_ITEM_ORIGIN_H
 
@@ -26,49 +24,46 @@
 
 #include "people.h"
 
-namespace ITEM_ORIGIN
-{
-	enum EItemOrigin
+namespace ITEM_ORIGIN {
+enum EItemOrigin
 #ifdef NL_CPP14
-		: uint8
+    : uint8
 #endif
-	{
-		COMMON = 0,
-		FYROS,
-		MATIS,
-		TRYKER,
-		ZORAI,
-		REFUGEE,
-		TRIBE,
-		KAMI,
-		KARAVAN,
+{
+	COMMON = 0,
+	FYROS,
+	MATIS,
+	TRYKER,
+	ZORAI,
+	REFUGEE,
+	TRIBE,
+	KAMI,
+	KARAVAN,
 
-		UNKNOWN,
-		NUM_ITEM_ORIGIN = UNKNOWN
-	};
+	UNKNOWN,
+	NUM_ITEM_ORIGIN = UNKNOWN
+};
 
+/**
+ * get the right EItemOrigin enum from the input string
+ * \param str the input string
+ * \return the EItemOrigin associated to this string (UNKNOWN if the string cannot be interpreted)
+ */
+EItemOrigin stringToEnum(const std::string &str);
 
-	/**
-	 * get the right EItemOrigin enum from the input string
-	 * \param str the input string
-	 * \return the EItemOrigin associated to this string (UNKNOWN if the string cannot be interpreted)
-	 */
-	EItemOrigin stringToEnum(const std::string &str);
+/**
+ * get the EItemOrigin type as a string
+ * \param e the EItemOrigin enum
+ * \return the string associated to this EItemOrigin
+ */
+const std::string &enumToString(EItemOrigin e);
 
-	/**
-	 * get the EItemOrigin type as a string
-	 * \param e the EItemOrigin enum
-	 * \return the string associated to this EItemOrigin
-	 */
-	const std::string & enumToString (EItemOrigin e);
-
-	/**
-	 * return people enum corresponding to item origin string
-	 * \param e the EItemOrigin enum
-	 * \return the string associated to this EItemOrigin
-	 */
-	EGSPD::CPeople::TPeople itemOriginStringToPeopleEnum( const std::string &str );
+/**
+ * return people enum corresponding to item origin string
+ * \param e the EItemOrigin enum
+ * \return the string associated to this EItemOrigin
+ */
+EGSPD::CPeople::TPeople itemOriginStringToPeopleEnum(const std::string &str);
 }; // namespace ITEM_ORIGIN
 
 #endif // RY_ITEM_ORIGIN_H
-

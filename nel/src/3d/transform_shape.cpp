@@ -28,30 +28,26 @@
 #include "nel/3d/quad_grid_clip_cluster.h"
 #include "nel/3d/scene.h"
 
-
 using namespace NLMISC;
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
-void		CTransformShape::registerBasic()
+void CTransformShape::registerBasic()
 {
 	CScene::registerModel(TransformShapeId, TransformId, CTransformShape::creator);
 }
 
-
 // ***************************************************************************
 CTransformShape::CTransformShape()
 {
-	_NumTrianglesAfterLoadBalancing= 100;
-	_CurrentLightContribution= NULL;
-	_CurrentUseLocalAttenuation= false;
+	_NumTrianglesAfterLoadBalancing = 100;
+	_CurrentLightContribution = NULL;
+	_CurrentUseLocalAttenuation = false;
 	_DistMax = -1.f;
 	// By default all transformShape are LoadBalancable
 	CTransform::setIsLoadbalancable(true);
@@ -63,19 +59,17 @@ CTransformShape::CTransformShape()
 	CTransform::setIsTransformShape(true);
 }
 
-
 // ***************************************************************************
-float		CTransformShape::getNumTriangles (float distance)
+float CTransformShape::getNumTriangles(float distance)
 {
 	// Call shape method
-	return Shape->getNumTriangles (distance);
+	return Shape->getNumTriangles(distance);
 }
 
-
 // ***************************************************************************
-void		CTransformShape::getAABBox(NLMISC::CAABBox &bbox) const
+void CTransformShape::getAABBox(NLMISC::CAABBox &bbox) const
 {
-	if(Shape)
+	if (Shape)
 	{
 		Shape->getAABBox(bbox);
 	}
@@ -86,67 +80,62 @@ void		CTransformShape::getAABBox(NLMISC::CAABBox &bbox) const
 	}
 }
 
-
 // ***************************************************************************
-void		CTransformShape::setupCurrentLightContribution(CLightContribution *lightContrib, bool useLocalAtt)
+void CTransformShape::setupCurrentLightContribution(CLightContribution *lightContrib, bool useLocalAtt)
 {
-	_CurrentLightContribution= lightContrib;
-	_CurrentUseLocalAttenuation= useLocalAtt;
+	_CurrentLightContribution = lightContrib;
+	_CurrentUseLocalAttenuation = useLocalAtt;
 }
 
 // ***************************************************************************
-void		CTransformShape::changeLightSetup(CRenderTrav *rdrTrav)
+void CTransformShape::changeLightSetup(CRenderTrav *rdrTrav)
 {
 	// setup the instance lighting.
 	rdrTrav->changeLightSetup(_CurrentLightContribution, _CurrentUseLocalAttenuation);
 }
 
-
 // ***************************************************************************
-uint		CTransformShape::getNumMaterial () const
+uint CTransformShape::getNumMaterial() const
 {
 	return 0;
 }
 
-
 // ***************************************************************************
-const CMaterial *CTransformShape::getMaterial (uint /* materialId */) const
-{
-	return NULL;
-}
-
-
-// ***************************************************************************
-CMaterial *CTransformShape::getMaterial (uint /* materialId */)
+const CMaterial *CTransformShape::getMaterial(uint /* materialId */) const
 {
 	return NULL;
 }
 
 // ***************************************************************************
-void	CTransformShape::unlinkFromQuadCluster()
+CMaterial *CTransformShape::getMaterial(uint /* materialId */)
+{
+	return NULL;
+}
+
+// ***************************************************************************
+void CTransformShape::unlinkFromQuadCluster()
 {
 	// if linked to a quadGridClipCluster, unlink it
 	_QuadClusterListNode.unlink();
 }
 
-
 // ***************************************************************************
-bool	CTransformShape::clip()
+bool CTransformShape::clip()
 {
-	H_AUTO( NL3D_TrShape_Clip );
+	H_AUTO(NL3D_TrShape_Clip);
 
-	CClipTrav			&clipTrav= getOwnerScene()->getClipTrav();
+	CClipTrav &clipTrav = getOwnerScene()->getClipTrav();
 
-	if(Shape)
+	if (Shape)
 	{
 		// first test DistMax (faster).
 		float maxDist = getDistMax();
 		// if DistMax test enabled
-		if(maxDist!=-1)
+		if (maxDist != -1)
 		{
 			// Calc the distance
-			float sqrDist = (clipTrav.CamPos - getWorldMatrix().getPos()).sqrnorm ();
-			maxDist*=maxDist;
+			float sqrDist = (clipTrav.CamPos - getWorldMatrix().getPos()).sqrnorm();
+			maxDist *= maxDist;
 
 			// if dist > maxDist, skip
 			if (sqrDist > maxDist)
@@ -157,7 +146,7 @@ bool	CTransformShape::clip()
 		}
 
 		// Else finer clip with pyramid, only if needed
-		if(clipTrav.ForceNoFrustumClip)
+		if (clipTrav.ForceNoFrustumClip)
 			return true;
 		else
 			return Shape->clip(clipTrav.WorldPyramid, getWorldMatrix());
@@ -166,138 +155,127 @@ bool	CTransformShape::clip()
 		return false;
 }
 
-
 // ***************************************************************************
-void	CTransformShape::traverseRender()
+void CTransformShape::traverseRender()
 {
-	H_AUTO( NL3D_TrShape_Render );
-
+	H_AUTO(NL3D_TrShape_Render);
 
 	// Compute the current lighting setup for this instance
 	//===================
 
-
 	// if the transform is lightable (ie not a fully lightmaped model), setup lighting
-	if(isLightable())
+	if (isLightable())
 	{
 		// useLocalAttenuation for this shape ??
-		if(Shape)
-			_CurrentUseLocalAttenuation= Shape->useLightingLocalAttenuation ();
+		if (Shape)
+			_CurrentUseLocalAttenuation = Shape->useLightingLocalAttenuation();
 		else
-			_CurrentUseLocalAttenuation= false;
+			_CurrentUseLocalAttenuation = false;
 
 		// the std case is to take my model lightContribution
-		if(_AncestorSkeletonModel==NULL)
-			_CurrentLightContribution= &getLightContribution();
+		if (_AncestorSkeletonModel == NULL)
+			_CurrentLightContribution = &getLightContribution();
 		// but if skinned/sticked (directly or not) to a skeleton, take its.
 		else
-			_CurrentLightContribution= &((CTransformShape*)_AncestorSkeletonModel)->getLightContribution();
+			_CurrentLightContribution = &((CTransformShape *)_AncestorSkeletonModel)->getLightContribution();
 	}
 	// else must disable the lightSetup
 	else
 	{
 		// setting NULL will disable all lights
-		_CurrentLightContribution= NULL;
-		_CurrentUseLocalAttenuation= false;
+		_CurrentLightContribution = NULL;
+		_CurrentUseLocalAttenuation = false;
 	}
-
 
 	// render the shape.
 	//=================
-	if(Shape)
+	if (Shape)
 	{
-		CRenderTrav			&rdrTrav= getOwnerScene()->getRenderTrav();
-		bool				currentPassOpaque= rdrTrav.isCurrentPassOpaque();
+		CRenderTrav &rdrTrav = getOwnerScene()->getRenderTrav();
+		bool currentPassOpaque = rdrTrav.isCurrentPassOpaque();
 
 		// shape must be rendered in a CMeshBlockManager ??
 		float polygonCount = 0.f;
-		IMeshGeom	*meshGeom= NULL;
+		IMeshGeom *meshGeom = NULL;
 		// true only if in pass opaque
-		if( currentPassOpaque )
-			meshGeom= Shape->supportMeshBlockRendering(this, polygonCount);
+		if (currentPassOpaque)
+			meshGeom = Shape->supportMeshBlockRendering(this, polygonCount);
 
 		// if ok, add the meshgeom to the block manager.
-		if(meshGeom)
+		if (meshGeom)
 		{
-			CMeshBaseInstance	*inst= safe_cast<CMeshBaseInstance*>(this);
+			CMeshBaseInstance *inst = safe_cast<CMeshBaseInstance *>(this);
 			rdrTrav.MeshBlockManager.addInstance(meshGeom, inst, polygonCount);
 		}
 		// else render it.
 		else
 		{
 			// setup the lighting
-			changeLightSetup( &rdrTrav );
+			changeLightSetup(&rdrTrav);
 
 			// render the shape.
-			IDriver				*drv= rdrTrav.getDriver();
-			Shape->render( drv, this, currentPassOpaque );
+			IDriver *drv = rdrTrav.getDriver();
+			Shape->render(drv, this, currentPassOpaque);
 		}
 	}
 }
 
-
 // ***************************************************************************
-void	CTransformShape::profileRender()
+void CTransformShape::profileRender()
 {
 	// profile the shape.
-	if(Shape)
+	if (Shape)
 	{
-		CRenderTrav			&rdrTrav= getOwnerScene()->getRenderTrav();
-		bool				currentPassOpaque= rdrTrav.isCurrentPassOpaque();
+		CRenderTrav &rdrTrav = getOwnerScene()->getRenderTrav();
+		bool currentPassOpaque = rdrTrav.isCurrentPassOpaque();
 
-		Shape->profileSceneRender( &rdrTrav, this, currentPassOpaque );
+		Shape->profileSceneRender(&rdrTrav, this, currentPassOpaque);
 	}
 }
 
-
 // ***************************************************************************
-void	CTransformShape::traverseLoadBalancing()
+void CTransformShape::traverseLoadBalancing()
 {
-	CLoadBalancingTrav		&loadTrav= getOwnerScene()->getLoadBalancingTrav();
-	if(loadTrav.getLoadPass()==0)
+	CLoadBalancingTrav &loadTrav = getOwnerScene()->getLoadBalancingTrav();
+	if (loadTrav.getLoadPass() == 0)
 		traverseLoadBalancingPass0();
 	else
 		traverseLoadBalancingPass1();
 }
 
-
-
 // ***************************************************************************
-void	CTransformShape::traverseLoadBalancingPass0()
+void CTransformShape::traverseLoadBalancingPass0()
 {
-	CLoadBalancingTrav		&loadTrav= getOwnerScene()->getLoadBalancingTrav();
-	CSkeletonModel			*skeleton= getSkeletonModel();
+	CLoadBalancingTrav &loadTrav = getOwnerScene()->getLoadBalancingTrav();
+	CSkeletonModel *skeleton = getSkeletonModel();
 
 	// World Model position
-	const CVector		*modelPos;
+	const CVector *modelPos;
 
 	// If this isntance is binded or skinned to a skeleton, take the world matrix of this one as
 	// center for LoadBalancing Resolution.
-	if(skeleton)
+	if (skeleton)
 	{
 		// Take the root bone of the skeleton as reference (bone 0)
 		// And so get our position.
-		modelPos= &skeleton->Bones[0].getWorldMatrix().getPos();
+		modelPos = &skeleton->Bones[0].getWorldMatrix().getPos();
 	}
 	else
 	{
 		// get our position from
-		modelPos= &getWorldMatrix().getPos();
+		modelPos = &getWorldMatrix().getPos();
 	}
 
-
 	// Then compute distance from camera.
-	float	modelDist= ( loadTrav.CamPos - *modelPos).norm();
-
+	float modelDist = (loadTrav.CamPos - *modelPos).norm();
 
 	// Get the number of triangles this model use now.
-	_FaceCount= getNumTriangles(modelDist);
+	_FaceCount = getNumTriangles(modelDist);
 	_LoadBalancingGroup->addNbFacesPass0(_FaceCount);
 }
 
-
 // ***************************************************************************
-void	CTransformShape::traverseLoadBalancingPass1()
+void CTransformShape::traverseLoadBalancingPass1()
 {
 	// Show more polygons for upscaled shapes to preserve visual quality
 	float factor = 1.0f;
@@ -311,12 +289,11 @@ void	CTransformShape::traverseLoadBalancingPass1()
 	}
 
 	// Set the result into the instance.
-	_NumTrianglesAfterLoadBalancing= _LoadBalancingGroup->computeModelNbFace(_FaceCount);
-
+	_NumTrianglesAfterLoadBalancing = _LoadBalancingGroup->computeModelNbFace(_FaceCount);
 }
 
 // ***************************************************************************
-void	CTransformShape::getLightHotSpotInWorld(CVector &modelPos, float &modelRadius) const
+void CTransformShape::getLightHotSpotInWorld(CVector &modelPos, float &modelRadius) const
 {
 	/*
 	// get the untransformed bbox from the model.
@@ -327,13 +304,13 @@ void	CTransformShape::getLightHotSpotInWorld(CVector &modelPos, float &modelRadi
 	// If the model is a big lightable, must take radius from aabbox, else suppose 0 radius.
 	if(isBigLightable())
 	{
-		// get size of the bbox (bounding sphere)
-		modelRadius= bbox.getRadius();
+	    // get size of the bbox (bounding sphere)
+	    modelRadius= bbox.getRadius();
 	}
 	else
 	{
-		// Assume 0 radius => faster computeLinearAttenuation()
-		modelRadius= 0;
+	    // Assume 0 radius => faster computeLinearAttenuation()
+	    modelRadius= 0;
 	}
 	*/
 
@@ -341,23 +318,21 @@ void	CTransformShape::getLightHotSpotInWorld(CVector &modelPos, float &modelRadi
 	// TODO: generalize, saving a LightHotSpot per shape.
 
 	// get pos of object. Ie the hotSpot is the pivot.
-	modelPos= getWorldMatrix().getPos();
+	modelPos = getWorldMatrix().getPos();
 	// If the model is a big lightable, must take radius from aabbox, else suppose 0 radius.
-	if(isBigLightable())
+	if (isBigLightable())
 	{
 		// get the untransformed bbox from the model.
-		CAABBox		bbox;
+		CAABBox bbox;
 		getAABBox(bbox);
 		// get size of the bbox (bounding sphere)
-		modelRadius= bbox.getRadius();
+		modelRadius = bbox.getRadius();
 	}
 	else
 	{
 		// Assume 0 radius => faster computeLinearAttenuation()
-		modelRadius= 0;
+		modelRadius = 0;
 	}
-
 }
-
 
 } // NL3D

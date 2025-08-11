@@ -38,15 +38,11 @@
 #include <set>
 #include <vector>
 
+namespace NL3D {
 
-namespace NL3D
-{
-
-
-using	NLMISC::CVector;
-using	NLMISC::CPlane;
-using	NLMISC::CMatrix;
-
+using NLMISC::CMatrix;
+using NLMISC::CPlane;
+using NLMISC::CVector;
 
 class CMeshGeom;
 class CSkeletonModel;
@@ -54,11 +50,10 @@ class CMatrix3x4;
 
 // ***************************************************************************
 // Should be 4.
-#define		NL3D_MESH_SKINNING_MAX_MATRIX		4
+#define NL3D_MESH_SKINNING_MAX_MATRIX 4
 
 // Above this distance, Mesh with a bigger Radius will use BBox clipping
-#define		NL3D_MESH_PRECISE_CLIP_THRESHOLD	5.0f
-
+#define NL3D_MESH_PRECISE_CLIP_THRESHOLD 5.0f
 
 // ***************************************************************************
 /**
@@ -71,18 +66,17 @@ class CMatrix3x4;
 class CMesh : public CMeshBase
 {
 public:
-
 	/// \name Structures for building a mesh.
 	//@{
 
 	/// A corner of a face.
-	struct	CCorner
+	struct CCorner
 	{
-		sint32			Vertex;		/// The vertex Id.
-		CVector			Normal;
-		NLMISC::CUVW	Uvws[CVertexBuffer::MaxStage];
-		CRGBA			Color;
-		CRGBA			Specular;
+		sint32 Vertex; /// The vertex Id.
+		CVector Normal;
+		NLMISC::CUVW Uvws[CVertexBuffer::MaxStage];
+		CRGBA Color;
+		CRGBA Specular;
 
 		// Setup all to 0, but Color (to white)... Important for good corner comparison.
 		// This is slow but doesn't matter since used at mesh building....
@@ -92,32 +86,31 @@ public:
 	};
 
 	/// A Triangle face.
-	struct	CFace
+	struct CFace
 	{
-		CCorner		Corner[3];
-		sint32		MaterialId;
-		sint32      SmoothGroup;
+		CCorner Corner[3];
+		sint32 MaterialId;
+		sint32 SmoothGroup;
 		void serial(NLMISC::IStream &f);
 	};
-
 
 	/** Skinning: A skin weight for a vertex.
 	 * NB: if you don't use all matrix for this vertex, use at least the 0th matrix, and simply set 0 on Weights you don't use.
 	 */
-	struct	CSkinWeight
+	struct CSkinWeight
 	{
 		/// What matrix of the skeleton shape this vertex use.
-		uint32			MatrixId[NL3D_MESH_SKINNING_MAX_MATRIX];
+		uint32 MatrixId[NL3D_MESH_SKINNING_MAX_MATRIX];
 		/// weight of this matrix (sum of 4 must be 1).
-		float			Weights[NL3D_MESH_SKINNING_MAX_MATRIX];
+		float Weights[NL3D_MESH_SKINNING_MAX_MATRIX];
 
 		/// ctor.
 		CSkinWeight()
 		{
-			for(uint i=0;i<NL3D_MESH_SKINNING_MAX_MATRIX;i++)
+			for (uint i = 0; i < NL3D_MESH_SKINNING_MAX_MATRIX; i++)
 			{
-				MatrixId[i]=0;
-				Weights[i]=0;
+				MatrixId[i] = 0;
+				Weights[i] = 0;
 			}
 		}
 
@@ -129,7 +122,7 @@ public:
 		uint32 nFace, nCorner;
 		uint32 VertVB;
 
-		CVertLink (uint32 face, uint32 corner, uint32 iVB)
+		CVertLink(uint32 face, uint32 corner, uint32 iVB)
 		{
 			nFace = face;
 			nCorner = corner;
@@ -139,78 +132,75 @@ public:
 
 	/** Mesh Interface System for MRM
 	 */
-	struct	CInterfaceVertex
+	struct CInterfaceVertex
 	{
-		CVector					Pos;
-		CVector					Normal;
+		CVector Pos;
+		CVector Normal;
 	};
-	struct	CInterface
+	struct CInterface
 	{
 		// The polygon describing the interface between 2 meshs.
-		std::vector<CInterfaceVertex>	Vertices;
+		std::vector<CInterfaceVertex> Vertices;
 	};
 	/// For each vertex
-	struct	CInterfaceLink
+	struct CInterfaceLink
 	{
 		// to which interface this vertex is welded. -1 if none
-		sint	InterfaceId;
+		sint InterfaceId;
 		// to which vertex of the interface this vertex is welded
-		uint	InterfaceVertexId;
+		uint InterfaceVertexId;
 
 		CInterfaceLink()
 		{
-			InterfaceId= -1;
+			InterfaceId = -1;
 		}
 	};
 
 	/// A mesh information.
-	struct	CMeshBuild
+	struct CMeshBuild
 	{
 		/** the IDRV_VF* flags which tells what vertices data are used. See IDriver::setVertexFormat() for
 		 * more information. NB: IDRV_VF_XYZ is always considered to true..
 		 * Note that is some stage use 2 textures coordinates instead of 3, then the extended vertex format must be used isntead
 		 */
-		sint32						VertexFlags;
-		uint8						NumCoords[CVertexBuffer::MaxStage]; // tells for each uvw if is uses 2 or 3 coords
-		uint8						UVRouting[CVertexBuffer::MaxStage]; // gives the uv routing table. Each final UV channel can be routed to any vertex uv
+		sint32 VertexFlags;
+		uint8 NumCoords[CVertexBuffer::MaxStage]; // tells for each uvw if is uses 2 or 3 coords
+		uint8 UVRouting[CVertexBuffer::MaxStage]; // gives the uv routing table. Each final UV channel can be routed to any vertex uv
 
 		// Vertices array
-		std::vector<CVector>		Vertices;
+		std::vector<CVector> Vertices;
 
 		// Palette Skinning Vertices array (same size as Vertices). NULL if no skinning.
-		std::vector<CSkinWeight>	SkinWeights;
+		std::vector<CSkinWeight> SkinWeights;
 
 		// Bones name. Each matrix id used in SkinWeights must have a corresponding string in the bone name array.
-		std::vector<std::string>	BonesNames;
+		std::vector<std::string> BonesNames;
 
 		// Faces array
-		std::vector<CFace>			Faces;
+		std::vector<CFace> Faces;
 
 		// Blend shapes if some
-		std::vector<CBlendShape>	BlendShapes;
+		std::vector<CBlendShape> BlendShapes;
 
 		// Link between VB and max vertex indices
-		std::vector<CVertLink>		VertLink; // Filled when called build
+		std::vector<CVertLink> VertLink; // Filled when called build
 
 		// MeshVertexProgram to copy to meshGeom.
-		NLMISC::CSmartPtr<IMeshVertexProgram>	MeshVertexProgram;
+		NLMISC::CSmartPtr<IMeshVertexProgram> MeshVertexProgram;
 
 		// Mesh Interface System for MRM building
-		std::vector<CInterface>		Interfaces;
+		std::vector<CInterface> Interfaces;
 		// must be same size as Vertices, else Mesh Interface system disabled
-		std::vector<CInterfaceLink>	InterfaceLinks;
+		std::vector<CInterfaceLink> InterfaceLinks;
 
-		NLMISC::CBitSet             InterfaceVertexFlag; // each bit indicate if the vertex belongs to an interface
-
+		NLMISC::CBitSet InterfaceVertexFlag; // each bit indicate if the vertex belongs to an interface
 
 		CMeshBuild();
 
 		// Serialization
-		//void serial(NLMISC::IStream &f);
-
+		// void serial(NLMISC::IStream &f);
 	};
 	//@}
-
 
 public:
 	/* ***********************************************
@@ -223,57 +213,55 @@ public:
 	/// dtor
 	~CMesh();
 	CMesh(const CMesh &mesh);
-	CMesh	&operator=(const CMesh &mesh);
-
+	CMesh &operator=(const CMesh &mesh);
 
 	/// Build a mesh, replacing old. WARNING: This has a side effect of deleting AnimatedMaterials.
-	void			build(CMeshBase::CMeshBaseBuild &mbase, CMeshBuild &mbuild);
+	void build(CMeshBase::CMeshBaseBuild &mbase, CMeshBuild &mbuild);
 
 	/// Build a mesh from material info, and a builded MeshGeom. WARNING: This has a side effect of deleting AnimatedMaterials.
-	void			build(CMeshBase::CMeshBaseBuild &mbuild, CMeshGeom &meshGeom);
+	void build(CMeshBase::CMeshBaseBuild &mbuild, CMeshGeom &meshGeom);
 
 	/** Optimize material use. If a material in CMeshBase is not used by any renderPasses, it is removed, and ids are updated.
 	 *	WARNING: This has a side effect of deleting AnimatedMaterials.
 	 *	\param remap a remap material Id: newId= remap[oldId]. -1 means "no more used"
 	 */
-	void			optimizeMaterialUsage(std::vector<sint> &remap);
+	void optimizeMaterialUsage(std::vector<sint> &remap);
 
-
-	void			setBlendShapes(std::vector<CBlendShape>&bs);
+	void setBlendShapes(std::vector<CBlendShape> &bs);
 
 	/// Compute skinning id
-	void			computeBonesId (CSkeletonModel *skeleton);
+	void computeBonesId(CSkeletonModel *skeleton);
 
 	/// update Skeleton Usage. increment or decrement.
-	void			updateSkeletonUsage(CSkeletonModel *sm, bool increment);
+	void updateSkeletonUsage(CSkeletonModel *sm, bool increment);
 
 	/// \name From IShape
 	// @{
 
 	/// Create a CMeshInstance, which contains materials.
-	virtual	CTransformShape		*createInstance(CScene &scene);
+	virtual CTransformShape *createInstance(CScene &scene);
 
 	/// clip this mesh in a driver.
-	virtual bool	clip(const std::vector<CPlane>	&pyramid, const CMatrix &worldMatrix) ;
+	virtual bool clip(const std::vector<CPlane> &pyramid, const CMatrix &worldMatrix);
 
 	/// render() this mesh in a driver.
-	virtual void	render(IDriver *drv, CTransformShape *trans, bool opaquePass);
+	virtual void render(IDriver *drv, CTransformShape *trans, bool opaquePass);
 
 	/// serial this mesh.
-	virtual void	serial(NLMISC::IStream &f);
+	virtual void serial(NLMISC::IStream &f);
 	NLMISC_DECLARE_CLASS(CMesh);
 
 	/// get trinagle count.
-	virtual float	getNumTriangles (float distance);
+	virtual float getNumTriangles(float distance);
 
 	/// Get bbox.
-	virtual void	getAABBox(NLMISC::CAABBox &bbox) const {bbox= getBoundingBox().getAABBox();}
+	virtual void getAABBox(NLMISC::CAABBox &bbox) const { bbox = getBoundingBox().getAABBox(); }
 
 	/// profiling
-	virtual void	profileSceneRender(CRenderTrav *rdrTrav, CTransformShape *trans, bool opaquePass);
+	virtual void profileSceneRender(CRenderTrav *rdrTrav, CTransformShape *trans, bool opaquePass);
 
 	/// System Mem Geometry Copy, built at load time
-	virtual void	buildSystemGeometry();
+	virtual void buildSystemGeometry();
 
 	// @}
 
@@ -281,7 +269,7 @@ public:
 	// @{
 
 	/// get the extended axis aligned bounding box of the mesh
-	const NLMISC::CAABBoxExt& getBoundingBox() const;
+	const NLMISC::CAABBoxExt &getBoundingBox() const;
 
 	/// get the vertex buffer used by the mesh
 	const CVertexBuffer &getVertexBuffer() const;
@@ -307,27 +295,22 @@ public:
 	uint32 getRdrPassMaterial(uint matrixBlockIndex, uint renderingPassIndex) const;
 
 	/// Get the geom mesh
-	const CMeshGeom &getMeshGeom () const;
+	const CMeshGeom &getMeshGeom() const;
 
 	// @}
-
 
 	/// \name Mesh Block Render Interface
 	// @{
-	virtual IMeshGeom	*supportMeshBlockRendering (CTransformShape *trans, float &polygonCount ) const;
+	virtual IMeshGeom *supportMeshBlockRendering(CTransformShape *trans, float &polygonCount) const;
 	// @}
 
 private:
-
 	// The geometry.
-	CMeshGeom		*_MeshGeom;
+	CMeshGeom *_MeshGeom;
 
 	// Called at load or build time, all that is not serialized
-	void	compileRunTime();
+	void compileRunTime();
 };
-
-
-
 
 // ***************************************************************************
 /**
@@ -337,70 +320,67 @@ private:
  * \author Nevrax France
  * \date 2000
  */
-class CMeshGeom: public IMeshGeom
+class CMeshGeom : public IMeshGeom
 {
 public:
-
 	/// Constructor
 	CMeshGeom();
 	virtual ~CMeshGeom();
 
 	/// Build a meshGeom
-	void			build(CMesh::CMeshBuild &mbuild, uint numMaxMaterial);
+	void build(CMesh::CMeshBuild &mbuild, uint numMaxMaterial);
 
-	void			setBlendShapes(std::vector<CBlendShape>&bs);
+	void setBlendShapes(std::vector<CBlendShape> &bs);
 
 	/// change materials Ids (called from CMesh::optimizeMaterialUsage())
-	void			applyMaterialRemap(const std::vector<sint> &remap);
-
+	void applyMaterialRemap(const std::vector<sint> &remap);
 
 	/// \name From IMeshGeom
 	// @{
 
 	/// Init instance info.
-	virtual	void	initInstance(CMeshBaseInstance *mbi);
+	virtual void initInstance(CMeshBaseInstance *mbi);
 
 	/// clip this mesh
-	virtual bool	clip(const std::vector<CPlane>	&pyramid, const CMatrix &worldMatrix) ;
+	virtual bool clip(const std::vector<CPlane> &pyramid, const CMatrix &worldMatrix);
 
 	/// render() this mesh in a driver.
-	virtual void	render(IDriver *drv, CTransformShape *trans, float polygonCount, uint32 rdrFlags, float globalAlpha);
+	virtual void render(IDriver *drv, CTransformShape *trans, float polygonCount, uint32 rdrFlags, float globalAlpha);
 
 	/// render() this mesh as a skin
-	virtual void	renderSkin(CTransformShape *trans, float alphaMRM);
+	virtual void renderSkin(CTransformShape *trans, float alphaMRM);
 
 	// get an approximation of the number of triangles this instance will render for a fixed distance.
-	virtual float	getNumTriangles (float distance);
+	virtual float getNumTriangles(float distance);
 
 	/// serial this mesh.
-	virtual void	serial(NLMISC::IStream &f);
+	virtual void serial(NLMISC::IStream &f);
 	NLMISC_DECLARE_CLASS(CMeshGeom);
 
 	// profile
-	virtual void	profileSceneRender(CRenderTrav *rdrTrav, CTransformShape *trans, float polygonCount, uint32 rdrFlags);
+	virtual void profileSceneRender(CRenderTrav *rdrTrav, CTransformShape *trans, float polygonCount, uint32 rdrFlags);
 
 	// @}
-
 
 	/// \name Geometry accessors
 	// @{
 
 	/// get the extended axis aligned bounding box of the mesh
-	const NLMISC::CAABBoxExt& getBoundingBox() const
+	const NLMISC::CAABBoxExt &getBoundingBox() const
 	{
 		return _BBox;
 	}
 
 	/// get the vertex buffer used by the mesh
-	const CVertexBuffer &getVertexBuffer() const { return _VBuffer ; }
+	const CVertexBuffer &getVertexBuffer() const { return _VBuffer; }
 
 	/// get the number of matrix block
-	uint getNbMatrixBlock() const { return (uint)_MatrixBlocks.size() ; }
+	uint getNbMatrixBlock() const { return (uint)_MatrixBlocks.size(); }
 
 	/** get the number of rendering pass for a given matrix block
 	 *  \param matrixBlockIndex the index of the matrix block the rendering passes belong to
 	 */
-	uint getNbRdrPass(uint matrixBlockIndex) const { return (uint)_MatrixBlocks[matrixBlockIndex].RdrPass.size() ; }
+	uint getNbRdrPass(uint matrixBlockIndex) const { return (uint)_MatrixBlocks[matrixBlockIndex].RdrPass.size(); }
 
 	/** get the primitive block associated with a rendering pass of a matrix block
 	 *  \param matrixBlockIndex the index of the matrix block the renderin pass belong to
@@ -408,7 +388,7 @@ public:
 	 */
 	const CIndexBuffer &getRdrPassPrimitiveBlock(uint matrixBlockIndex, uint renderingPassIndex) const
 	{
-		return _MatrixBlocks[matrixBlockIndex].RdrPass[renderingPassIndex].PBlock ;
+		return _MatrixBlocks[matrixBlockIndex].RdrPass[renderingPassIndex].PBlock;
 	}
 
 	/** get the material ID associated with a rendering pass of a matrix block
@@ -417,52 +397,54 @@ public:
 	 */
 	uint32 getRdrPassMaterial(uint matrixBlockIndex, uint renderingPassIndex) const
 	{
-		return _MatrixBlocks[matrixBlockIndex].RdrPass[renderingPassIndex].MaterialId ;
+		return _MatrixBlocks[matrixBlockIndex].RdrPass[renderingPassIndex].MaterialId;
 	}
 
 	/// get the number of BlendShapes
-	uint getNbBlendShapes() const { if(_MeshMorpher) return (uint)_MeshMorpher->BlendShapes.size(); return 0; }
+	uint getNbBlendShapes() const
+	{
+		if (_MeshMorpher) return (uint)_MeshMorpher->BlendShapes.size();
+		return 0;
+	}
 
 	/** Tool function to retrieve vector geometry only of the mesh.
 	 *	return false if the vbuffer cannot be read (resident)
 	 */
-	bool	retrieveVertices(std::vector<NLMISC::CVector> &vertices) const;
+	bool retrieveVertices(std::vector<NLMISC::CVector> &vertices) const;
 
 	/** Tool function to retrieve triangles geometry only of the mesh (of all rdrpass).
 	 *	return false if the index buffer cannot be read (resident)
 	 */
-	bool	retrieveTriangles(std::vector<uint32> &indices) const;
+	bool retrieveTriangles(std::vector<uint32> &indices) const;
 
 	// @}
-
 
 	/// \name Skinning Behavior
 	// @{
 
 	/// Return true if the mesh is skinned, else return false.
-	bool isSkinned () const
+	bool isSkinned() const
 	{
 		return _Skinned;
 	}
 
 	/// Compute skinning id
-	void			computeBonesId (CSkeletonModel *skeleton);
+	void computeBonesId(CSkeletonModel *skeleton);
 
 	/// update Skeleton Usage. increment or decrement. computeBonesId must has been called before.
-	void			updateSkeletonUsage(CSkeletonModel *sm, bool increment);
+	void updateSkeletonUsage(CSkeletonModel *sm, bool increment);
 
 	/// return array of bones used by the skin. computeBonesId must has been called before.
-	const std::vector<sint32>	&getSkinBoneUsage() const {return _BonesId;}
+	const std::vector<sint32> &getSkinBoneUsage() const { return _BonesId; }
 
 	/// see CTransform::getSkinBoneSphere() doc for the meaning of this value. computeBonesId must has been called before.
-	const std::vector<NLMISC::CBSphere>	&getSkinBoneSphere() const {return _BonesSphere;}
+	const std::vector<NLMISC::CBSphere> &getSkinBoneSphere() const { return _BonesSphere; }
 
 	/// Skin intersection
-	bool			supportIntersectSkin() const {return _Skinned;}
-	bool			intersectSkin(CTransformShape	*mi, const CMatrix &toRaySpace, float &dist2D, float &distZ, bool computeDist2D);
+	bool supportIntersectSkin() const { return _Skinned; }
+	bool intersectSkin(CTransformShape *mi, const CMatrix &toRaySpace, float &dist2D, float &distZ, bool computeDist2D);
 
 	// @}
-
 
 	/** render the mesh geometry with a single material. Render is said "Simple" because no special features are used:
 	 *		- mesh is rendered without VertexProgram (if it has one).
@@ -471,9 +453,7 @@ public:
 	 *		- mesh is rendered without MeshMorpher.
 	 *		- .....
 	 */
-	void			renderSimpleWithMaterial(IDriver *drv, const CMatrix &worldMatrix, CMaterial &mat);
-
-
+	void renderSimpleWithMaterial(IDriver *drv, const CMatrix &worldMatrix, CMaterial &mat);
 
 	/// \name Mesh Block Render Implementation
 	// @{
@@ -481,45 +461,43 @@ public:
 	/** true if this meshGeom support meshBlock rendering.
 	 *	return false if skinned/meshMorphed.
 	 */
-	virtual bool	supportMeshBlockRendering () const;
+	virtual bool supportMeshBlockRendering() const;
 
-	virtual bool	sortPerMaterial() const;
-	virtual uint	getNumRdrPassesForMesh() const ;
-	virtual uint	getNumRdrPassesForInstance(CMeshBaseInstance *inst) const ;
-	virtual	void	beginMesh(CMeshGeomRenderContext &rdrCtx) ;
-	virtual	void	activeInstance(CMeshGeomRenderContext &rdrCtx, CMeshBaseInstance *inst, float polygonCount, void *vbDst) ;
-	virtual	void	renderPass(CMeshGeomRenderContext &rdrCtx, CMeshBaseInstance *inst, float polygonCount, uint rdrPass) ;
-	virtual	void	endMesh(CMeshGeomRenderContext &rdrCtx) ;
+	virtual bool sortPerMaterial() const;
+	virtual uint getNumRdrPassesForMesh() const;
+	virtual uint getNumRdrPassesForInstance(CMeshBaseInstance *inst) const;
+	virtual void beginMesh(CMeshGeomRenderContext &rdrCtx);
+	virtual void activeInstance(CMeshGeomRenderContext &rdrCtx, CMeshBaseInstance *inst, float polygonCount, void *vbDst);
+	virtual void renderPass(CMeshGeomRenderContext &rdrCtx, CMeshBaseInstance *inst, float polygonCount, uint rdrPass);
+	virtual void endMesh(CMeshGeomRenderContext &rdrCtx);
 
-	virtual	bool	getVBHeapInfo(uint &vertexFormat, uint &numVertices);
-	virtual	void	computeMeshVBHeap(void *dst, uint indexStart);
+	virtual bool getVBHeapInfo(uint &vertexFormat, uint &numVertices);
+	virtual void computeMeshVBHeap(void *dst, uint indexStart);
 
 	// @}
 
 	// Is this mesh Geom has a VertexProgram bound?
-	virtual bool	hasMeshVertexProgram() const {return _MeshVertexProgram!=NULL;}
+	virtual bool hasMeshVertexProgram() const { return _MeshVertexProgram != NULL; }
 
 	// get the Mesh VertexProgram
-	IMeshVertexProgram	*getMeshVertexProgram() const {return _MeshVertexProgram;}
+	IMeshVertexProgram *getMeshVertexProgram() const { return _MeshVertexProgram; }
 
-// ************************
+	// ************************
 private:
-
 	/// A block of primitives, sorted by material used.
-	class	CRdrPass
+	class CRdrPass
 	{
 	public:
 		// The id of this material.
-		uint32				MaterialId;
+		uint32 MaterialId;
 		// The list of primitives.
-		CIndexBuffer		PBlock;
+		CIndexBuffer PBlock;
 
 		// The same, shifted for VBHeap rendering.
-		CIndexBuffer		VBHeapPBlock;
-
+		CIndexBuffer VBHeapPBlock;
 
 		// Serialize a rdrpass.
-		void	serial(NLMISC::IStream &f)
+		void serial(NLMISC::IStream &f)
 		{
 			(void)f.serialVersion(0);
 
@@ -534,30 +512,30 @@ private:
 		}
 	};
 
-
 	/// A block of RdrPasses, sorted by matrix use.
-	class	CMatrixBlock
+	class CMatrixBlock
 	{
 	public:
 		// ctor
-		CMatrixBlock() : NumMatrix(0)
+		CMatrixBlock()
+		    : NumMatrix(0)
 		{
 			std::fill(MatrixId, MatrixId + IDriver::MaxModelMatrix, 0);
 		}
 		/// Which matrix we use for this block.
-		uint32					MatrixId[IDriver::MaxModelMatrix];
+		uint32 MatrixId[IDriver::MaxModelMatrix];
 		/// Number of matrix actually used.
-		uint32					NumMatrix;
+		uint32 NumMatrix;
 		/// List of rdr pass, for this matrix block.
-		std::vector<CRdrPass>	RdrPass;
+		std::vector<CRdrPass> RdrPass;
 
-		void	serial(NLMISC::IStream &f)
+		void serial(NLMISC::IStream &f)
 		{
 			(void)f.serialVersion(0);
 
 			// Code written for IDriver::MaxModelMatrix==16 matrixs.
 			nlctassert(IDriver::MaxModelMatrix == 16);
-			for(uint i=0;i<IDriver::MaxModelMatrix;i++)
+			for (uint i = 0; i < IDriver::MaxModelMatrix; i++)
 			{
 				f.serial(MatrixId[i]);
 			}
@@ -565,11 +543,9 @@ private:
 			f.serialCont(RdrPass);
 		}
 
-
 		/// return the idx of this bone, in MatrixId. -1 if not found.
-		sint	getMatrixIdLocation(uint32 boneId) const;
+		sint getMatrixIdLocation(uint32 boneId) const;
 	};
-
 
 private:
 	/**  Just for build process.
@@ -577,291 +553,277 @@ private:
 	 * discontinuities. eg: a vertex use Matrix18. After Matrix grouping (16matrix max), Matrix18 could be Matrix2 for a group
 	 * of face, but Matrix13 for another!!
 	 */
-	struct	CCornerTmp : public CMesh::CCorner
+	struct CCornerTmp : public CMesh::CCorner
 	{
-		CPaletteSkin	Palette;
-		float			Weights[NL3D_MESH_SKINNING_MAX_MATRIX];
+		CPaletteSkin Palette;
+		float Weights[NL3D_MESH_SKINNING_MAX_MATRIX];
 
 		// The comparison.
-		bool		operator<(const CCornerTmp &c) const;
+		bool operator<(const CCornerTmp &c) const;
 		// The result of the compression.
-		mutable sint	VBId;
+		mutable sint VBId;
 		// The flags to know what to compare.
-		static	sint	Flags;
+		static sint Flags;
 
 		// Setup all to 0, but Color (to white)... Important for good corner comparison.
 		// This is slow but doesn't matter since used at mesh building....
 		CCornerTmp()
 		{
-			VBId= 0;
-			for(sint i=0;i<NL3D_MESH_SKINNING_MAX_MATRIX;i++)
+			VBId = 0;
+			for (sint i = 0; i < NL3D_MESH_SKINNING_MAX_MATRIX; i++)
 			{
-				Palette.MatrixId[i]=0;
-				Weights[i]=0;
+				Palette.MatrixId[i] = 0;
+				Weights[i] = 0;
 			}
 		}
 
 		// copy from corner.
 		CCornerTmp &operator=(const CMesh::CCorner &o)
 		{
-			Vertex= o.Vertex;
-			Normal= o.Normal;
-			for(sint i=0;i<CVertexBuffer::MaxStage;i++)
+			Vertex = o.Vertex;
+			Normal = o.Normal;
+			for (sint i = 0; i < CVertexBuffer::MaxStage; i++)
 			{
-				Uvws[i]= o.Uvws[i];
+				Uvws[i] = o.Uvws[i];
 			}
-			Color= o.Color;
-			Specular= o.Specular;
+			Color = o.Color;
+			Specular = o.Specular;
 
 			return *this;
 		}
-
 	};
-
 
 	/** Just for build process. A Bone.
 	 */
-	struct	CBoneTmp
+	struct CBoneTmp
 	{
 		// How many ref points on it? (NB: a corner may have multiple (up to 4) on it).
-		uint	RefCount;
+		uint RefCount;
 		// Am i inserted into the current matrixblock?
-		bool	Inserted;
+		bool Inserted;
 		// If I am inserted into the current matrixblock, to which local bone (0-15) I am linked?
-		uint	MatrixIdInMB;
+		uint MatrixIdInMB;
 
 		CBoneTmp()
 		{
-			RefCount= 0;
-			Inserted=false;
+			RefCount = 0;
+			Inserted = false;
 		}
 	};
 
-
 	/** Just for build process. A map of Bone.
 	 */
-	typedef	std::map<uint, CBoneTmp>	TBoneMap;
-	typedef	TBoneMap::iterator			ItBoneMap;
-
+	typedef std::map<uint, CBoneTmp> TBoneMap;
+	typedef TBoneMap::iterator ItBoneMap;
 
 	/** Just for build process. A Triangle face.
 	 */
-	struct	CFaceTmp
+	struct CFaceTmp
 	{
-		CCornerTmp		Corner[3];
-		uint			MaterialId;
+		CCornerTmp Corner[3];
+		uint MaterialId;
 		// which matrixblock own this face. -1 <=> Not owned.
-		sint			MatrixBlockId;
+		sint MatrixBlockId;
 
 		CFaceTmp()
 		{
-			MatrixBlockId= -1;
+			MatrixBlockId = -1;
 		}
-		CFaceTmp	&operator=(const CMesh::CFace& o)
+		CFaceTmp &operator=(const CMesh::CFace &o)
 		{
-			Corner[0]= o.Corner[0];
-			Corner[1]= o.Corner[1];
-			Corner[2]= o.Corner[2];
-			MaterialId= o.MaterialId;
+			Corner[0] = o.Corner[0];
+			Corner[1] = o.Corner[1];
+			Corner[2] = o.Corner[2];
+			MaterialId = o.MaterialId;
 
 			return *this;
 		}
 
-
-		void	buildBoneUse(std::vector<uint>	&boneUse, std::vector<CMesh::CSkinWeight> &skinWeights);
-
+		void buildBoneUse(std::vector<uint> &boneUse, std::vector<CMesh::CSkinWeight> &skinWeights);
 	};
-
 
 	/** Just for build process. A MatrixBlock remap.
 	 */
-	class	CMatrixBlockRemap
+	class CMatrixBlockRemap
 	{
 	public:
-		uint32					Remap[IDriver::MaxModelMatrix];
+		uint32 Remap[IDriver::MaxModelMatrix];
 	};
-
 
 private:
 	/** Skinning: this is the list of vertices (mirror of VBuffer), at the bind Pos.
 	 *	Potentially modified by the mesh morpher
 	 */
-	std::vector<CVector>		_OriginalSkinVertices;
-	std::vector<CVector>		_OriginalSkinNormals;
-	std::vector<CVector>		_OriginalTGSpace;
+	std::vector<CVector> _OriginalSkinVertices;
+	std::vector<CVector> _OriginalSkinNormals;
+	std::vector<CVector> _OriginalTGSpace;
 
 	/// VBuffer of the mesh (potentially modified by the mesh morpher and skinning)
-	CVertexBuffer				_VBuffer;
+	CVertexBuffer _VBuffer;
 	/// The original VBuffer of the mesh used only if there are blend shapes.
-	CVertexBuffer				_VBufferOri;
+	CVertexBuffer _VBufferOri;
 	/// The matrix blocks.
-	std::vector<CMatrixBlock>	_MatrixBlocks;
+	std::vector<CMatrixBlock> _MatrixBlocks;
 	/// For clipping.
-	NLMISC::CAABBoxExt			_BBox;
+	NLMISC::CAABBoxExt _BBox;
 	/// This tells if the mesh is correctly skinned.
-	bool						_Skinned;
+	bool _Skinned;
 	/// This tells if the mesh VBuffer has coorect BindPos vertices
-	bool						_OriginalSkinRestored;
+	bool _OriginalSkinRestored;
 
 	/// This boolean is true if the bones id have been passed in the skeleton
-	bool						_BoneIdComputed;
+	bool _BoneIdComputed;
 	/// true if the _BonesIdExt have been computed (for bone Usage).
-	bool						_BoneIdExtended;
+	bool _BoneIdExtended;
 	/// see CTransform::getSkinBoneSphere() doc for the meaning of this value
-	std::vector<NLMISC::CBSphere>	_BonesSphere;
-
+	std::vector<NLMISC::CBSphere> _BonesSphere;
 
 	/// This array give the name of the local bones used.
-	std::vector<std::string>	_BonesName;
+	std::vector<std::string> _BonesName;
 	/// This array give the index in the skeleton of the local bones used. computed at first computeBoneId()
-	std::vector<sint32>			_BonesId;
+	std::vector<sint32> _BonesId;
 	/// Same as _BonesId but with parent of bones added. (used for bone usage)
-	std::vector<sint32>			_BonesIdExt;
+	std::vector<sint32> _BonesIdExt;
 
 	/// \name Mesh Block Render Implementation
 	// @{
 	/// setuped at compileRunTime.
 	enum TMBRSupport
 	{
-		MBROk= 1,
-		MBRSortPerMaterial= 2,
-		MBRCurrentUseVP= 4,
+		MBROk = 1,
+		MBRSortPerMaterial = 2,
+		MBRCurrentUseVP = 4,
 	};
 	// Of if don't support MBR at all
-	uint8							_SupportMBRFlags;
+	uint8 _SupportMBRFlags;
 	// @}
 
 	/// Estimate if we must do a Precise clipping (ie with bboxes)
-	bool						_PreciseClipping;
+	bool _PreciseClipping;
 
 	// The Mesh Morpher
-	CMeshMorpher	*_MeshMorpher;
-
+	CMeshMorpher *_MeshMorpher;
 
 	// Possible MeshVertexProgram to apply at render()
-	NLMISC::CSmartPtr<IMeshVertexProgram>	_MeshVertexProgram;
-
+	NLMISC::CSmartPtr<IMeshVertexProgram> _MeshVertexProgram;
 
 private:
 	// Locals, for build.
-	class	CCornerPred
+	class CCornerPred
 	{
 	public:
 		bool operator()(const CCornerTmp *x, const CCornerTmp *y) const
 		{
-			return (*x<*y);
+			return (*x < *y);
 		}
 	};
-	typedef		std::set<CCornerTmp*, CCornerPred>	TCornerSet;
-	typedef		TCornerSet::iterator ItCornerSet;
+	typedef std::set<CCornerTmp *, CCornerPred> TCornerSet;
+	typedef TCornerSet::iterator ItCornerSet;
 
 	// Find and fill the VBuffer.
-	void	findVBId(TCornerSet  &corners, const CCornerTmp *corn, sint &currentVBIndex, const CVector &vert, const CMesh::CMeshBuild &mb)
+	void findVBId(TCornerSet &corners, const CCornerTmp *corn, sint &currentVBIndex, const CVector &vert, const CMesh::CMeshBuild &mb)
 	{
-		ItCornerSet  it= corners.find(const_cast<CCornerTmp *>(corn));
-		if(it!=corners.end())
-			corn->VBId= (*it)->VBId;
+		ItCornerSet it = corners.find(const_cast<CCornerTmp *>(corn));
+		if (it != corners.end())
+			corn->VBId = (*it)->VBId;
 		else
 		{
 			// Add corner to the set to not insert same corner two times.
-			corners.insert (const_cast<CCornerTmp *>(corn));
-			sint	i;
-			corn->VBId= currentVBIndex++;
+			corners.insert(const_cast<CCornerTmp *>(corn));
+			sint i;
+			corn->VBId = currentVBIndex++;
 			// Fill the VBuffer.
 			_VBuffer.setNumVertices(currentVBIndex);
-			sint	id= currentVBIndex-1;
+			sint id = currentVBIndex - 1;
 
 			CVertexBufferReadWrite vba;
-			_VBuffer.lock (vba);
+			_VBuffer.lock(vba);
 
 			// XYZ.
 			vba.setVertexCoord(id, vert);
 			// Normal
-			if(CCornerTmp::Flags & CVertexBuffer::NormalFlag)
+			if (CCornerTmp::Flags & CVertexBuffer::NormalFlag)
 				vba.setNormalCoord(id, corn->Normal);
 			// Uvws.
-			for(i=0;i<CVertexBuffer::MaxStage;i++)
+			for (i = 0; i < CVertexBuffer::MaxStage; i++)
 			{
-				if(CCornerTmp::Flags & (CVertexBuffer::TexCoord0Flag<<i))
+				if (CCornerTmp::Flags & (CVertexBuffer::TexCoord0Flag << i))
 				{
-					switch(mb.NumCoords[i])
+					switch (mb.NumCoords[i])
 					{
-						case 2:
-							vba.setTexCoord(id, uint8(i), corn->Uvws[i].U, corn->Uvws[i].V);
+					case 2:
+						vba.setTexCoord(id, uint8(i), corn->Uvws[i].U, corn->Uvws[i].V);
 						break;
-						case 3:
-							vba.setValueFloat3Ex((CVertexBuffer::TValue) (CVertexBuffer::TexCoord0 + i), id, corn->Uvws[i].U, corn->Uvws[i].V, corn->Uvws[i].W);
+					case 3:
+						vba.setValueFloat3Ex((CVertexBuffer::TValue)(CVertexBuffer::TexCoord0 + i), id, corn->Uvws[i].U, corn->Uvws[i].V, corn->Uvws[i].W);
 						break;
-						default: // not supported
-							nlassert(0);
+					default: // not supported
+						nlassert(0);
 						break;
 					}
 				}
 			}
 			// Color.
-			if(CCornerTmp::Flags & CVertexBuffer::PrimaryColorFlag)
+			if (CCornerTmp::Flags & CVertexBuffer::PrimaryColorFlag)
 				vba.setColor(id, corn->Color);
 			// Specular.
-			if(CCornerTmp::Flags & CVertexBuffer::SecondaryColorFlag)
+			if (CCornerTmp::Flags & CVertexBuffer::SecondaryColorFlag)
 				vba.setSpecular(id, corn->Specular);
 
 			// setup palette skinning.
-			if ((CCornerTmp::Flags & CVertexBuffer::PaletteSkinFlag)==CVertexBuffer::PaletteSkinFlag)
+			if ((CCornerTmp::Flags & CVertexBuffer::PaletteSkinFlag) == CVertexBuffer::PaletteSkinFlag)
 			{
 				vba.setPaletteSkin(id, corn->Palette);
-				for(i=0;i<NL3D_MESH_SKINNING_MAX_MATRIX;i++)
+				for (i = 0; i < NL3D_MESH_SKINNING_MAX_MATRIX; i++)
 					vba.setWeight(id, uint8(i), corn->Weights[i]);
 			}
 		}
 	}
 
-
 	// optimize triangles order of all render pass.
-	void	optimizeTriangleOrder();
+	void optimizeTriangleOrder();
 
 	// Some runtime not serialized compilation
-	void	compileRunTime();
-
+	void compileRunTime();
 
 	/// \name Skinning
 	// @{
 
-	enum	TSkinType {SkinPosOnly=0, SkinWithNormal, SkinWithTgSpace};
+	enum TSkinType
+	{
+		SkinPosOnly = 0,
+		SkinWithNormal,
+		SkinWithTgSpace
+	};
 
 	// build skinning.
-	void	buildSkin(CMesh::CMeshBuild &m, std::vector<CFaceTmp>	&tmpFaces);
+	void buildSkin(CMesh::CMeshBuild &m, std::vector<CFaceTmp> &tmpFaces);
 
 	// Build bone Usage information for serialized mesh <= version 3.
-	void	buildBoneUsageVer3 ();
+	void buildBoneUsageVer3();
 
 	// bkup from VBuffer into _OriginalSkin*
-	void	bkupOriginalSkinVertices();
+	void bkupOriginalSkinVertices();
 	// restore from _OriginalSkin* to VBuffer. set _OriginalSkinRestored to true
-	void	restoreOriginalSkinVertices();
+	void restoreOriginalSkinVertices();
 
 	// apply Skin to all vertices from _OriginalSkin* to _VBuffer.
-	void	applySkin(void *dstVb, CSkeletonModel *skeleton);
+	void applySkin(void *dstVb, CSkeletonModel *skeleton);
 
-
-	void	flagSkinVerticesForMatrixBlock(uint8 *skinFlags, CMatrixBlock &mb);
-	void	computeSkinMatrixes(CSkeletonModel *skeleton, CMatrix3x4 *matrixes, CMatrixBlock  *prevBlock, CMatrixBlock &curBlock);
-	void	computeSoftwarePointSkinning(CMatrix3x4 *matrixes, CVector *srcVector, CPaletteSkin *srcPal, float *srcWgt, CVector *dstVector);
-	void	computeSoftwareVectorSkinning(CMatrix3x4 *matrixes, CVector *srcVector, CPaletteSkin *srcPal, float *srcWgt, CVector *dstVector);
+	void flagSkinVerticesForMatrixBlock(uint8 *skinFlags, CMatrixBlock &mb);
+	void computeSkinMatrixes(CSkeletonModel *skeleton, CMatrix3x4 *matrixes, CMatrixBlock *prevBlock, CMatrixBlock &curBlock);
+	void computeSoftwarePointSkinning(CMatrix3x4 *matrixes, CVector *srcVector, CPaletteSkin *srcPal, float *srcWgt, CVector *dstVector);
+	void computeSoftwareVectorSkinning(CMatrix3x4 *matrixes, CVector *srcVector, CPaletteSkin *srcPal, float *srcWgt, CVector *dstVector);
 
 	// Shadow mapping and CMesh. NB: not serialized, but created at each load
-	CShadowSkin				_ShadowSkin;
+	CShadowSkin _ShadowSkin;
 	// build the shadow skin, from the VertexBuffer/IndexBuffer
-	void	buildShadowSkin();
+	void buildShadowSkin();
 
 	// @}
-
 };
 
-
-
-
 } // NL3D
-
 
 #endif // NL_MESH_H
 

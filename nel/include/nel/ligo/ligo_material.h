@@ -21,10 +21,9 @@
 #include "nel/ligo/zone_template.h"
 
 // NeL include
-//#include "3d/zone.h"
+// #include "3d/zone.h"
 
-namespace NLLIGO
-{
+namespace NLLIGO {
 
 class CLigoError;
 class CLigoConfig;
@@ -39,20 +38,18 @@ class CLigoConfig;
 class CMaterial
 {
 public:
-
 	/// Build method
-	bool build (const CZoneTemplate &tplt, const CLigoConfig &config, CLigoError &errors);
+	bool build(const CZoneTemplate &tplt, const CLigoConfig &config, CLigoError &errors);
 
 	/// Return the material edge
-	const CZoneEdge& getEdge () const { return _ZoneEdge; }
+	const CZoneEdge &getEdge() const { return _ZoneEdge; }
 
 	/// Serial method
-	void serial (NLMISC::IStream &s);
+	void serial(NLMISC::IStream &s);
 
 private:
-
 	// The zone template for this material
-	CZoneEdge		_ZoneEdge;
+	CZoneEdge _ZoneEdge;
 };
 
 }

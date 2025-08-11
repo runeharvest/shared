@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "effect_manager.h"
 #include "effect_message.h"
@@ -27,11 +25,10 @@ using namespace NLNET;
 NL_INSTANCE_COUNTER_IMPL(TEffectVector);
 
 // init static members
-TEntitiesEffectMap		CEffectManager::_Effects;
-vector< CBasicEffect >	CEffectManager::_NewEffects;
-vector< CBasicEffect >	CEffectManager::_RemovedEffects;
-set< NLNET::TServiceId >	CEffectManager::_RegisteredServices;
-
+TEntitiesEffectMap CEffectManager::_Effects;
+vector<CBasicEffect> CEffectManager::_NewEffects;
+vector<CBasicEffect> CEffectManager::_RemovedEffects;
+set<NLNET::TServiceId> CEffectManager::_RegisteredServices;
 
 //--------------------------------------------------------------
 //					CEffectManager constructor
@@ -39,7 +36,6 @@ set< NLNET::TServiceId >	CEffectManager::_RegisteredServices;
 CEffectManager::CEffectManager()
 {
 } // constructor //
-
 
 //--------------------------------------------------------------
 //				CEffectManager destructor
@@ -49,7 +45,6 @@ CEffectManager::~CEffectManager()
 	release();
 } // destructor //
 
-
 //--------------------------------------------------------------
 //					CEffectManager::release
 //--------------------------------------------------------------
@@ -58,9 +53,9 @@ void CEffectManager::release()
 	TEntitiesEffectMap::iterator it = _Effects.begin();
 	const TEntitiesEffectMap::iterator itEnd = _Effects.end();
 
-	for ( ; it != itEnd ; ++it)
+	for (; it != itEnd; ++it)
 	{
-		if ( (*it).second != NULL)
+		if ((*it).second != NULL)
 		{
 			delete (*it).second;
 		}
@@ -72,7 +67,6 @@ void CEffectManager::release()
 	_NewEffects.clear();
 } // release //
 
-
 //--------------------------------------------------------------
 //					CEffectManager::update
 //--------------------------------------------------------------
@@ -80,34 +74,34 @@ void CEffectManager::update()
 {
 	H_AUTO(EffectManagerUpdate);
 
-	if (  ! _RegisteredServices.empty() )
+	if (!_RegisteredServices.empty())
 	{
-		CAddEffectsMessage		addMsg;
-		CRemoveEffectsMessage	removeMsg;
+		CAddEffectsMessage addMsg;
+		CRemoveEffectsMessage removeMsg;
 
-		std::vector< CBasicEffect >::const_iterator itNew = _NewEffects.begin();
-		const std::vector< CBasicEffect >::const_iterator itNewEnd = _NewEffects.end();
-		for ( ; itNew != itNewEnd ; ++itNew )
+		std::vector<CBasicEffect>::const_iterator itNew = _NewEffects.begin();
+		const std::vector<CBasicEffect>::const_iterator itNewEnd = _NewEffects.end();
+		for (; itNew != itNewEnd; ++itNew)
 		{
-			addMsg.addEffect( *itNew );
+			addMsg.addEffect(*itNew);
 		}
 
-		std::vector< CBasicEffect >::const_iterator itRemove = _RemovedEffects.begin();
-		const std::vector< CBasicEffect >::const_iterator itRemoveEnd = _RemovedEffects.end();
-		for ( ; itRemove != itRemoveEnd ; ++itRemove )
+		std::vector<CBasicEffect>::const_iterator itRemove = _RemovedEffects.begin();
+		const std::vector<CBasicEffect>::const_iterator itRemoveEnd = _RemovedEffects.end();
+		for (; itRemove != itRemoveEnd; ++itRemove)
 		{
-			removeMsg.addEffect( *itRemove );
-		}		
+			removeMsg.addEffect(*itRemove);
+		}
 
-		set< NLNET::TServiceId >::const_iterator it;
-		const set< NLNET::TServiceId >::const_iterator itEnd = _RegisteredServices.end();
-		for (it = _RegisteredServices.begin() ; it != itEnd ; ++it)
+		set<NLNET::TServiceId>::const_iterator it;
+		const set<NLNET::TServiceId>::const_iterator itEnd = _RegisteredServices.end();
+		for (it = _RegisteredServices.begin(); it != itEnd; ++it)
 		{
 			if (!_NewEffects.empty())
-				addMsg.send( (*it) );
+				addMsg.send((*it));
 
 			if (!_RemovedEffects.empty())
-				removeMsg.send( (*it) );
+				removeMsg.send((*it));
 		}
 	}
 

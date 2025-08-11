@@ -81,8 +81,8 @@ void validateInternalNodeNames(CMeshUtilsContext &context, const aiNode *node)
 	}
 	else if (node->mName.length == 0)
 	{
-		tlwarning(context.ToolLogger, context.Settings.SourceFilePath.c_str(), 
-			"Node has no name");
+		tlwarning(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
+		    "Node has no name");
 	}
 	else
 	{
@@ -90,8 +90,8 @@ void validateInternalNodeNames(CMeshUtilsContext &context, const aiNode *node)
 
 		if (nodeContext.InternalNode && nodeContext.InternalNode != node)
 		{
-			tlerror(context.ToolLogger, context.Settings.SourceFilePath.c_str(), 
-				"Node name '%s' appears multiple times", node->mName.C_Str());
+			tlerror(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
+			    "Node name '%s' appears multiple times", node->mName.C_Str());
 		}
 		else
 		{
@@ -116,8 +116,8 @@ void flagAssimpBones(CMeshUtilsContext &context)
 			CNodeContext &nodeContext = context.Nodes[mesh->mBones[j]->mName.C_Str()];
 			if (!nodeContext.InternalNode)
 			{
-				tlerror(context.ToolLogger, context.Settings.SourceFilePath.c_str(), 
-					"Bone '%s' has no associated node", mesh->mBones[j]->mName.C_Str());
+				tlerror(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
+				    "Bone '%s' has no associated node", mesh->mBones[j]->mName.C_Str());
 			}
 			else
 			{
@@ -128,7 +128,7 @@ void flagAssimpBones(CMeshUtilsContext &context)
 				/*const aiNode *parent = nodeContext.InternalNode;
 				while (parent = parent->mParent) if (parent->mName.length)
 				{
-					context.Nodes[parent->mName.C_Str()].IsBone = true;
+				    context.Nodes[parent->mName.C_Str()].IsBone = true;
 				}*/
 			}
 		}
@@ -173,20 +173,22 @@ void flagLocalParentBones(CMeshUtilsContext &context, CNodeContext &nodeContext)
 void flagAllParentBones(CMeshUtilsContext &context, CNodeContext &nodeContext, bool autoStop = false)
 {
 	const aiNode *parent = nodeContext.InternalNode;
-	while (parent = parent->mParent) if (parent->mName.length && parent != context.InternalScene->mRootNode)
-	{
-		CNodeContext &ctx = context.Nodes[parent->mName.C_Str()];
-		if (autoStop && ctx.IsBone)
-			break;
-		ctx.IsBone = true;
-	}
+	while (parent = parent->mParent)
+		if (parent->mName.length && parent != context.InternalScene->mRootNode)
+		{
+			CNodeContext &ctx = context.Nodes[parent->mName.C_Str()];
+			if (autoStop && ctx.IsBone)
+				break;
+			ctx.IsBone = true;
+		}
 }
 
 bool hasIndirectParentBone(CMeshUtilsContext &context, CNodeContext &nodeContext)
 {
 	const aiNode *parent = nodeContext.InternalNode;
-	while (parent = parent->mParent) if (parent->mName.length && parent != context.InternalScene->mRootNode)
-		if (context.Nodes[parent->mName.C_Str()].IsBone) return true;
+	while (parent = parent->mParent)
+		if (parent->mName.length && parent != context.InternalScene->mRootNode)
+			if (context.Nodes[parent->mName.C_Str()].IsBone) return true;
 	return false;
 }
 
@@ -248,7 +250,7 @@ void exportShapes(CMeshUtilsContext &context)
 				catch (...)
 				{
 					tlerror(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
-						"Shape '%s' serialization failed!", it->first.c_str());
+					    "Shape '%s' serialization failed!", it->first.c_str());
 				}
 			}
 			if (NL3D::CMeshBase *mesh = dynamic_cast<NL3D::CMeshBase *>(nodeContext.Shape.getPtr()))
@@ -272,7 +274,7 @@ void exportShapes(CMeshUtilsContext &context)
 								{
 									// TODO: Move this warning into nelmeta serialization so it's shown before export
 									tlwarning(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
-										"Texture '%s' referenced in material but not found in the database search paths", fileName.c_str());
+									    "Texture '%s' referenced in material but not found in the database search paths", fileName.c_str());
 								}
 							}
 						}
@@ -296,20 +298,17 @@ int exportScene(const CMeshUtilsSettings &settings)
 	context.ToolLogger.writeDepend(NLPIPELINE::BUILD, "*", NLMISC::CPath::standardizePath(context.Settings.SourceFilePath, false).c_str()); // Base input file
 
 	// Apply database configuration
-	if (!NLPIPELINE::CProjectConfig::init(settings.SourceFilePath, 
-		NLPIPELINE::CProjectConfig::DatabaseTextureSearchPaths,
-		true))
+	if (!NLPIPELINE::CProjectConfig::init(settings.SourceFilePath,
+	        NLPIPELINE::CProjectConfig::DatabaseTextureSearchPaths,
+	        true))
 	{
 		tlerror(context.ToolLogger, context.Settings.SourceFilePath.c_str(), "Unable to find database.cfg in input path or any of its parents.");
 		// return EXIT_FAILURE; We can continue but the output will not be guaranteed...
 	}
 
 	Assimp::Importer importer;
-	const aiScene *scene = importer.ReadFile(settings.SourceFilePath, 0
-		| aiProcess_Triangulate 
-		| aiProcess_ValidateDataStructure
-		| aiProcess_GenNormals // Or GenSmoothNormals? TODO: Validate smoothness between material boundaries!
-		); // aiProcess_SplitLargeMeshes | aiProcess_LimitBoneWeights
+	const aiScene *scene = importer.ReadFile(settings.SourceFilePath, 0 | aiProcess_Triangulate | aiProcess_ValidateDataStructure | aiProcess_GenNormals // Or GenSmoothNormals? TODO: Validate smoothness between material boundaries!
+	); // aiProcess_SplitLargeMeshes | aiProcess_LimitBoneWeights
 	if (!scene)
 	{
 		const char *errs = importer.GetErrorString();
@@ -321,7 +320,7 @@ int exportScene(const CMeshUtilsSettings &settings)
 	// aiProcess_ValidateDataStructure: TODO: Catch Assimp error output stream
 	// aiProcess_RemoveRedundantMaterials: Not used because we may override materials with NeL Material from meta
 	// aiProcess_ImproveCacheLocality: TODO: Verify this does not modify vertex indices
-	//scene->mRootNode->mMetaData
+	// scene->mRootNode->mMetaData
 
 	context.InternalScene = scene;
 	if (context.SceneMeta.load(context.Settings.SourceFilePath))

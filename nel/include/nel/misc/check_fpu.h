@@ -14,20 +14,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef NL_CHECK_FPU_H
 #define NL_CHECK_FPU_H
 
-
-namespace NLMISC
-{
+namespace NLMISC {
 
 class CFpuChecker
 {
 private:
-	static int	_RefFpuCtrl;
+	static int _RefFpuCtrl;
 	void check();
 	void dumpFpu(int value);
+
 public:
 	CFpuChecker();
 	~CFpuChecker();
@@ -35,19 +33,19 @@ public:
 
 }
 
-
 // Enable define. Normal State is 0, to save CPU speed.
 #define NL_CHECK_FPU_CONTROL_WORD 0
 
 // Use those Macros
 #if NL_CHECK_FPU_CONTROL_WORD
 #define FPU_CHECKER NLMISC::CFpuChecker __fpc__;
-#define FPU_CHECKER_ONCE { NLMISC::CFpuChecker __fpc__; }
+#define FPU_CHECKER_ONCE             \
+	{                                \
+		NLMISC::CFpuChecker __fpc__; \
+	}
 #else
 #define FPU_CHECKER
 #define FPU_CHECKER_ONCE
 #endif
 
-
-#endif	// NL_CHECK_FPU_H
-
+#endif // NL_CHECK_FPU_H

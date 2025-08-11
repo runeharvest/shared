@@ -27,18 +27,16 @@ using namespace std;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 /**
-* Constructor : Initialize some privates members
-*/
+ * Constructor : Initialize some privates members
+ */
 CZoneSearch::CZoneSearch()
 {
 	/// Size X is named of AA to ZZ, current size is IB = 26 * 8 + 2  (AA is zone number 1, AZ zone number 26, BA zone number 27...)
 	// TMP fix for level designer (nico ...)
-	_NbZoneX = 26 * ('Z'-'A') + ('Z'-'A');
+	_NbZoneX = 26 * ('Z' - 'A') + ('Z' - 'A');
 
 	/// Number zones on Y axis of landscape
 	_NbZoneY = 297;
@@ -50,15 +48,14 @@ CZoneSearch::CZoneSearch()
 	_SizeZoneY = 160;
 }
 
-
 /**
-* Get the zone name corresponding to coordinate
-* \param x is axis X coordinate (in meters)
-* \param y is axis Y coordinate (in meters)
-* \param cx is axis X coordinate of center area (in meters)
-* \param cy is axis Y coordinate of center area (in meters)
-* \return a pair of the zone name and square distance between zone and center area (in zone unit)
-*/
+ * Get the zone name corresponding to coordinate
+ * \param x is axis X coordinate (in meters)
+ * \param y is axis Y coordinate (in meters)
+ * \param cx is axis X coordinate of center area (in meters)
+ * \param cy is axis Y coordinate of center area (in meters)
+ * \return a pair of the zone name and square distance between zone and center area (in zone unit)
+ */
 pair<string, uint32> CZoneSearch::getZoneName(uint x, uint y, uint cx, uint cy)
 {
 	uint zoneY = y / _SizeZoneY + 1;
@@ -75,16 +72,15 @@ pair<string, uint32> CZoneSearch::getZoneName(uint x, uint y, uint cx, uint cy)
 	return std::pair<string, uint32>(NLMISC::toString("%u_%c%c.zonel", zoneY, firstLetter, secondLetter), distance);
 }
 
-
 /*
-* Get a list of zone name around a position
-* \param x is axis X ccordinate (in meter)
-* \param y is axis Y coordinate (in meter)
-* \param sizeArea is area of zone research (in meter)
-* \param l is a reference to a list of pair of string and uint32
-* \return a liste contained name of all zone around indicated position and and square distance between zone and center area (in zone unit)
-*/
-void CZoneSearch::getListZoneName(uint x, uint y, uint sizeArea, list<pair<string, uint32> >& l)
+ * Get a list of zone name around a position
+ * \param x is axis X ccordinate (in meter)
+ * \param y is axis Y coordinate (in meter)
+ * \param sizeArea is area of zone research (in meter)
+ * \param l is a reference to a list of pair of string and uint32
+ * \return a liste contained name of all zone around indicated position and and square distance between zone and center area (in zone unit)
+ */
+void CZoneSearch::getListZoneName(uint x, uint y, uint sizeArea, list<pair<string, uint32>> &l)
 {
 	sint startPosX, startPosY;
 	uint lastPosX, lastPosY, sizeAreaX, sizeAreaY;
@@ -95,27 +91,27 @@ void CZoneSearch::getListZoneName(uint x, uint y, uint sizeArea, list<pair<strin
 	sizeArea += sizeArea;
 	sizeAreaX = sizeAreaY = sizeArea;
 
-	if(startPosX < 0)
+	if (startPosX < 0)
 	{
 		sizeAreaX += startPosX;
 		startPosX = 0;
 	}
 
 	lastPosX = startPosX + sizeAreaX;
-	if(lastPosX >= (_NbZoneX * _SizeZoneX))
+	if (lastPosX >= (_NbZoneX * _SizeZoneX))
 	{
 		sizeAreaX -= _NbZoneX * _SizeZoneX - lastPosX;
 		lastPosX = _NbZoneX * _SizeZoneX - 1;
 	}
 
-	if(startPosY < 0)
+	if (startPosY < 0)
 	{
 		sizeAreaY += startPosY;
 		startPosY = 0;
 	}
 
 	lastPosY = startPosY + sizeAreaY;
-	if(lastPosY >= (_NbZoneY * _SizeZoneY))
+	if (lastPosY >= (_NbZoneY * _SizeZoneY))
 	{
 		sizeAreaY -= _NbZoneY * _SizeZoneY - lastPosY;
 		lastPosY = _NbZoneY * _SizeZoneY - 1;
@@ -123,30 +119,30 @@ void CZoneSearch::getListZoneName(uint x, uint y, uint sizeArea, list<pair<strin
 
 	l.clear();
 
-	for(uint i = startPosY; i <= lastPosY; i += _SizeZoneY)
+	for (uint i = startPosY; i <= lastPosY; i += _SizeZoneY)
 	{
-		for(uint j = startPosX; j <= lastPosX; j += _SizeZoneX)
+		for (uint j = startPosX; j <= lastPosX; j += _SizeZoneX)
 		{
 			l.push_back(getZoneName(j, i, x, y));
 		}
 	}
 }
 
-uint16 CZoneSearch::getZoneId (uint x, uint y) const
+uint16 CZoneSearch::getZoneId(uint x, uint y) const
 {
 	uint zoneY = y / _SizeZoneY;
 	uint zoneX = x / _SizeZoneX;
 
-	return (zoneX&255)+(zoneY<<8);
+	return (zoneX & 255) + (zoneY << 8);
 }
 
-void CZoneSearch::getZonePos (uint16 zoneId, uint &x, uint &y) const
+void CZoneSearch::getZonePos(uint16 zoneId, uint &x, uint &y) const
 {
-	x = _SizeZoneY*(zoneId&255);
-	y = _SizeZoneY*(zoneId>>8);
+	x = _SizeZoneY * (zoneId & 255);
+	y = _SizeZoneY * (zoneId >> 8);
 }
 
-void CZoneSearch::getListZoneId (uint x, uint y, uint sizeArea, vector<uint16> &l, const std::vector<uint16> *validZoneIds)
+void CZoneSearch::getListZoneId(uint x, uint y, uint sizeArea, vector<uint16> &l, const std::vector<uint16> *validZoneIds)
 {
 	sint startPosX, startPosY;
 	uint lastPosX, lastPosY, sizeAreaX, sizeAreaY;
@@ -157,27 +153,27 @@ void CZoneSearch::getListZoneId (uint x, uint y, uint sizeArea, vector<uint16> &
 	sizeArea += sizeArea;
 	sizeAreaX = sizeAreaY = sizeArea;
 
-	if(startPosX < 0)
+	if (startPosX < 0)
 	{
 		sizeAreaX += startPosX;
 		startPosX = 0;
 	}
 
 	lastPosX = startPosX + sizeAreaX;
-	if(lastPosX >= (_NbZoneX * _SizeZoneX))
+	if (lastPosX >= (_NbZoneX * _SizeZoneX))
 	{
 		sizeAreaX -= _NbZoneX * _SizeZoneX - lastPosX;
 		lastPosX = _NbZoneX * _SizeZoneX - 1;
 	}
 
-	if(startPosY < 0)
+	if (startPosY < 0)
 	{
 		sizeAreaY += startPosY;
 		startPosY = 0;
 	}
 
 	lastPosY = startPosY + sizeAreaY;
-	if(lastPosY >= (_NbZoneY * _SizeZoneY))
+	if (lastPosY >= (_NbZoneY * _SizeZoneY))
 	{
 		sizeAreaY -= _NbZoneY * _SizeZoneY - lastPosY;
 		lastPosY = _NbZoneY * _SizeZoneY - 1;
@@ -185,15 +181,15 @@ void CZoneSearch::getListZoneId (uint x, uint y, uint sizeArea, vector<uint16> &
 
 	l.clear();
 
-	for(uint i = startPosY; i <= lastPosY; i += _SizeZoneY)
+	for (uint i = startPosY; i <= lastPosY; i += _SizeZoneY)
 	{
-		for(uint j = startPosX; j <= lastPosX; j += _SizeZoneX)
+		for (uint j = startPosX; j <= lastPosX; j += _SizeZoneX)
 		{
 			uint16 zoneId = getZoneId(j, i);
 			if (validZoneIds)
 			{
 				bool found = false;
-				for(uint k = 0; k < validZoneIds->size(); ++k)
+				for (uint k = 0; k < validZoneIds->size(); ++k)
 				{
 					if (zoneId == (*validZoneIds)[k])
 					{
@@ -208,13 +204,11 @@ void CZoneSearch::getListZoneId (uint x, uint y, uint sizeArea, vector<uint16> &
 	}
 }
 
-std::string CZoneSearch::getZoneNameFromId (uint16 zoneid)
+std::string CZoneSearch::getZoneNameFromId(uint16 zoneid)
 {
-	sint	x = zoneid & 255;
-	sint	y = zoneid >> 8;
+	sint x = zoneid & 255;
+	sint y = zoneid >> 8;
 	return NLMISC::toString("%d_%c%c.zonel", y + 1, (char)('A' + (x / 26)), (char)('A' + (x % 26)));
 }
 
-
 } // NL3D
-

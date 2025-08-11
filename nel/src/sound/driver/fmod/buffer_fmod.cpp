@@ -14,15 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdfmod.h"
 #include "buffer_fmod.h"
 #include "sound_driver_fmod.h"
 
 #ifdef NL_OS_WINDOWS
-#	define NOMINMAX
-#	include <windows.h>
-#	include <mmsystem.h>
+#define NOMINMAX
+#include <windows.h>
+#include <mmsystem.h>
 #endif
 
 #ifdef DEBUG_NEW
@@ -32,30 +31,29 @@
 using namespace NLMISC;
 using namespace std;
 
-namespace NLSOUND
-{
+namespace NLSOUND {
 
-static const std::string	EmptyString;
-
+static const std::string EmptyString;
 
 // ***************************************************************************
-CBufferFMod::CBufferFMod() : _LockedData(NULL)
+CBufferFMod::CBufferFMod()
+    : _LockedData(NULL)
 {
 	_Name = CStringMapper::map(EmptyString);
-    _Size = 0;
-    _Format = Mono16;
-    _Freq = 0;
+	_Size = 0;
+	_Format = Mono16;
+	_Freq = 0;
 	_FModSample = NULL;
 }
 
 // ***************************************************************************
 CBufferFMod::~CBufferFMod()
 {
-    if (_FModSample!=NULL)
-    {
+	if (_FModSample != NULL)
+	{
 		// delete FMod sample
 		loadDataToFMod(NULL);
-    }
+	}
 }
 
 // ***************************************************************************
@@ -63,7 +61,6 @@ void CBufferFMod::setName(NLMISC::TStringId bufferName)
 {
 	_Name = bufferName;
 }
-
 
 // ***************************************************************************
 /// Set the sample format. (channels = 1, 2, ...; bitsPerSample = 8, 16; frequency = samples per second, 44100, ...)
@@ -117,27 +114,27 @@ uint CBufferFMod::getSize() const
 /// Return the duration (in ms) of the sample in the buffer.
 float CBufferFMod::getDuration() const
 {
-    float frames = (float) _Size;
+	float frames = (float)_Size;
 
-    switch (_Format)
+	switch (_Format)
 	{
-    case Mono8:
-        break;
-    case Mono16ADPCM:
-        frames *= 2.0f;
-        break;
-    case Mono16:
-        frames /= 2.0f;
-        break;
-    case Stereo8:
-        frames /= 2.0f;
-        break;
-    case Stereo16:
-        frames /= 4.0f;
-        break;
-    }
+	case Mono8:
+		break;
+	case Mono16ADPCM:
+		frames *= 2.0f;
+		break;
+	case Mono16:
+		frames /= 2.0f;
+		break;
+	case Stereo8:
+		frames /= 2.0f;
+		break;
+	case Stereo16:
+		frames /= 4.0f;
+		break;
+	}
 
-    return 1000.0f * frames / (float) _Freq;
+	return 1000.0f * frames / (float)_Freq;
 }
 
 /// Return true if the buffer is stereo (multi-channel), false if mono.
@@ -172,93 +169,88 @@ IBuffer::TStorageMode CBufferFMod::getStorageMode()
 }
 
 // ***************************************************************************
-void	CBufferFMod::loadDataToFMod(const uint8 *data)
+void CBufferFMod::loadDataToFMod(const uint8 *data)
 {
 	// Delete old one
-	if(_FModSample)
+	if (_FModSample)
 	{
 		FSOUND_Sample_Free(_FModSample);
-		_FModSample= NULL;
+		_FModSample = NULL;
 	}
 
 	// if some data, create new one
-	if(data)
+	if (data)
 	{
 		uint8 *tmpData = NULL;
-		const uint8	*uploadData = data;
+		const uint8 *uploadData = data;
 
 		// if format is ADPCM, decode into Mono16
-		if(_Format==Mono16ADPCM)
+		if (_Format == Mono16ADPCM)
 		{
 			// create Mono16 dest buffer
-			uint	nbSample= _Size*2;
-			tmpData= new uint8 [nbSample * sizeof(sint16)];
+			uint nbSample = _Size * 2;
+			tmpData = new uint8[nbSample * sizeof(sint16)];
 
 			// uncompress
-			TADPCMState	state;
+			TADPCMState state;
 			state.PreviousSample = 0;
 			state.StepIndex = 0;
-			decodeADPCM(data, (sint16*)tmpData, nbSample, state);
+			decodeADPCM(data, (sint16 *)tmpData, nbSample, state);
 
 			// change upload data, _Format and _Size to fit the new format
-			uploadData= tmpData;
-			_Format= Mono16;
-			_Size= nbSample*2;
+			uploadData = tmpData;
+			_Format = Mono16;
+			_Size = nbSample * 2;
 		}
 
 		// create FMod sample and upload according to format
-		uint32	type= 0;
-		switch(_Format)
+		uint32 type = 0;
+		switch (_Format)
 		{
-		case Mono8: type= FSOUND_8BITS|FSOUND_MONO; break;
-		case Mono16: type= FSOUND_16BITS|FSOUND_MONO; break;
-		case Stereo8: type= FSOUND_8BITS|FSOUND_STEREO; break;
-		case Stereo16: type= FSOUND_16BITS|FSOUND_STEREO; break;
+		case Mono8: type = FSOUND_8BITS | FSOUND_MONO; break;
+		case Mono16: type = FSOUND_16BITS | FSOUND_MONO; break;
+		case Stereo8: type = FSOUND_8BITS | FSOUND_STEREO; break;
+		case Stereo16: type = FSOUND_16BITS | FSOUND_STEREO; break;
 		default: nlstop;
 		};
-		uint32	commonType= FSOUND_LOADRAW|FSOUND_LOOP_NORMAL|FSOUND_LOADMEMORY;
+		uint32 commonType = FSOUND_LOADRAW | FSOUND_LOOP_NORMAL | FSOUND_LOADMEMORY;
 		// if can use hardware buffer
-		if(!CSoundDriverFMod::getInstance()->forceSofwareBuffer())
-			commonType|= FSOUND_HW3D;
+		if (!CSoundDriverFMod::getInstance()->forceSofwareBuffer())
+			commonType |= FSOUND_HW3D;
 		// create FMod sample
-		_FModSample= FSOUND_Sample_Load(FSOUND_FREE, (const char*)uploadData, commonType|type, 0, _Size);
+		_FModSample = FSOUND_Sample_Load(FSOUND_FREE, (const char *)uploadData, commonType | type, 0, _Size);
 
 		// clear any temporary data
-		if(tmpData)
+		if (tmpData)
 		{
-			delete [] tmpData;
+			delete[] tmpData;
 		}
 	}
 }
 
-
 // ***************************************************************************
-void		*CBufferFMod::lock()
+void *CBufferFMod::lock()
 {
-	if(!_FModSample)
+	if (!_FModSample)
 		return NULL;
 
-	void	*ptr0, *ptr1;
-	uint	len0, len1;
-	if(!FSOUND_Sample_Lock(_FModSample, 0, _Size, &ptr0, &ptr1, &len0, &len1))
+	void *ptr0, *ptr1;
+	uint len0, len1;
+	if (!FSOUND_Sample_Lock(_FModSample, 0, _Size, &ptr0, &ptr1, &len0, &len1))
 		return 0;
-	nlassert(ptr1== NULL && len1==0);
-	nlassert(len0==_Size);
+	nlassert(ptr1 == NULL && len1 == 0);
+	nlassert(len0 == _Size);
 
 	return ptr0;
 }
 
 // ***************************************************************************
-void		CBufferFMod::unlock(void *ptr)
+void CBufferFMod::unlock(void *ptr)
 {
-	if(!_FModSample || !ptr)
+	if (!_FModSample || !ptr)
 		return;
 
 	FSOUND_Sample_Unlock(_FModSample, ptr, NULL, _Size, 0);
 }
 
-
 } // NLSOUND
-
-
-

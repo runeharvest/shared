@@ -31,31 +31,31 @@
 #include "nel/3d/vegetable.h"
 #include "nel/3d/tile_vegetable_desc.h"
 
-
-
 /////////////////////////////////////////////////////////////////////////////
 // CVegetableDlg dialog
 
-
-CVegetableDlg::CVegetableDlg(CObjectViewer *viewer, CWnd* pParent /*=NULL*/)
-	: CDialog(CVegetableDlg::IDD, pParent), _ObjView(viewer),
-	_PropertySheet(NULL), _VegetableDensityPage(NULL), _VegetableApperancePage(NULL), 
-	_VegetableScalePage(NULL), _VegetableRotatePage(NULL),
-	_VegetableWindDlg(NULL)
+CVegetableDlg::CVegetableDlg(CObjectViewer *viewer, CWnd *pParent /*=NULL*/)
+    : CDialog(CVegetableDlg::IDD, pParent)
+    , _ObjView(viewer)
+    , _PropertySheet(NULL)
+    , _VegetableDensityPage(NULL)
+    , _VegetableApperancePage(NULL)
+    , _VegetableScalePage(NULL)
+    , _VegetableRotatePage(NULL)
+    , _VegetableWindDlg(NULL)
 {
 	nlassert(viewer);
 
-	_LastVegetSetName= "*.vegetset";
+	_LastVegetSetName = "*.vegetset";
 
 	// init VegetableList
-	VegetableList.VegetableDlg= this;
+	VegetableList.VegetableDlg = this;
 
 	//{{AFX_DATA_INIT(CVegetableDlg)
 	//}}AFX_DATA_INIT
 }
 
-
-void CVegetableDlg::DoDataExchange(CDataExchange* pDX)
+void CVegetableDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CVegetableDlg)
@@ -70,69 +70,67 @@ void CVegetableDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CVegetableDlg, CDialog)
-	//{{AFX_MSG_MAP(CVegetableDlg)
-	ON_WM_DESTROY()
-	ON_LBN_SELCHANGE(IDC_LIST_VEGETABLE, OnSelchangeListVegetable)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_ADD, OnButtonVegetableAdd)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_CLEAR, OnButtonVegetableClear)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_INSERT, OnButtonVegetableInsert)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_LOAD_DESC, OnButtonVegetableLoadDesc)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_LOAD_SET, OnButtonVegetableLoadSet)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_REMOVE, OnButtonVegetableRemove)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_SAVE_DESC, OnButtonVegetableSaveDesc)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_SAVE_SET, OnButtonVegetableSaveSet)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_APPEND_SET, OnButtonVegetableAppendSet)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_COPY, OnButtonVegetableCopy)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_REFRESH, OnButtonVegetableRefresh)
-	ON_BN_CLICKED(IDC_CHECK_VEGETABLE_SHOW, OnCheckVegetableShow)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_SETUP_WIND, OnButtonVegetableSetupWind)
-	ON_BN_CLICKED(IDC_CHECK_VEGETABLE_AUTOMATIC, OnCheckVegetableAutomatic)
-	ON_BN_CLICKED(IDC_CHECK_VEGETABLE_ENABLE, OnCheckVegetableEnable)
-	ON_BN_CLICKED(IDC_CHECK_VEGETABLE_SNAPTOGROUND, OnCheckVegetableSnaptoground)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CVegetableDlg)
+ON_WM_DESTROY()
+ON_LBN_SELCHANGE(IDC_LIST_VEGETABLE, OnSelchangeListVegetable)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_ADD, OnButtonVegetableAdd)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_CLEAR, OnButtonVegetableClear)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_INSERT, OnButtonVegetableInsert)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_LOAD_DESC, OnButtonVegetableLoadDesc)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_LOAD_SET, OnButtonVegetableLoadSet)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_REMOVE, OnButtonVegetableRemove)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_SAVE_DESC, OnButtonVegetableSaveDesc)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_SAVE_SET, OnButtonVegetableSaveSet)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_APPEND_SET, OnButtonVegetableAppendSet)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_COPY, OnButtonVegetableCopy)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_REFRESH, OnButtonVegetableRefresh)
+ON_BN_CLICKED(IDC_CHECK_VEGETABLE_SHOW, OnCheckVegetableShow)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_SETUP_WIND, OnButtonVegetableSetupWind)
+ON_BN_CLICKED(IDC_CHECK_VEGETABLE_AUTOMATIC, OnCheckVegetableAutomatic)
+ON_BN_CLICKED(IDC_CHECK_VEGETABLE_ENABLE, OnCheckVegetableEnable)
+ON_BN_CLICKED(IDC_CHECK_VEGETABLE_SNAPTOGROUND, OnCheckVegetableSnaptoground)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CVegetableDlg message handlers
 
-void CVegetableDlg::OnDestroy() 
+void CVegetableDlg::OnDestroy()
 {
-	setRegisterWindowState (this, REGKEY_OBJ_VIEW_VEGETABLE_DLG);
+	setRegisterWindowState(this, REGKEY_OBJ_VIEW_VEGETABLE_DLG);
 
 	CDialog::OnDestroy();
-	
-	// TODO: Add your message handler code here
-	
-}
 
+	// TODO: Add your message handler code here
+}
 
 CVegetableDlg::~CVegetableDlg()
 {
-	#define  REMOVE_WND(wnd) if (wnd) { wnd->DestroyWindow(); delete wnd; }
+#define REMOVE_WND(wnd)       \
+	if (wnd)                  \
+	{                         \
+		wnd->DestroyWindow(); \
+		delete wnd;           \
+	}
 	REMOVE_WND(_VegetableDensityPage);
-	REMOVE_WND(_VegetableApperancePage);	
+	REMOVE_WND(_VegetableApperancePage);
 	REMOVE_WND(_VegetableScalePage);
 	REMOVE_WND(_VegetableRotatePage);
-	REMOVE_WND(_PropertySheet);	
+	REMOVE_WND(_PropertySheet);
 	// destroy and remove wind dialog
-	REMOVE_WND(_VegetableWindDlg);	
+	REMOVE_WND(_VegetableWindDlg);
 }
 
-
-
-
 // ***************************************************************************
 // ***************************************************************************
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
-void			CVegetableDlg::doRefreshVegetableDisplay()
+void CVegetableDlg::doRefreshVegetableDisplay()
 {
-	NL3D::CTileVegetableDesc	vegetSet;
+	NL3D::CTileVegetableDesc vegetSet;
 
 	// first build the vegetSet, but don't keep <default> shapeName. and skip Hiden vegetables too
 	buildVegetableSet(vegetSet, false, false);
@@ -141,21 +139,19 @@ void			CVegetableDlg::doRefreshVegetableDisplay()
 	_ObjView->refreshVegetableLandscape(vegetSet);
 }
 
-
 // ***************************************************************************
-void			CVegetableDlg::refreshVegetableDisplay()
+void CVegetableDlg::refreshVegetableDisplay()
 {
 	// if automatic refresh is checked.
-	if(CheckAutomaticRefresh.GetCheck()==1)
+	if (CheckAutomaticRefresh.GetCheck() == 1)
 		// then do it
 		doRefreshVegetableDisplay();
 }
 
-
 // ***************************************************************************
-void			CVegetableDlg::setVegetableToEdit(NL3D::CVegetable *vegetable)
+void CVegetableDlg::setVegetableToEdit(NL3D::CVegetable *vegetable)
 {
-	if(vegetable == NULL)
+	if (vegetable == NULL)
 	{
 		// Show the SelectVegetableStaticText
 		SelectVegetableStaticText.ShowWindow(true);
@@ -180,21 +176,21 @@ void			CVegetableDlg::setVegetableToEdit(NL3D::CVegetable *vegetable)
 }
 
 // ***************************************************************************
-uint				CVegetableDlg::getNumVegetables() const
+uint CVegetableDlg::getNumVegetables() const
 {
 	return (uint)_Vegetables.size();
 }
 // ***************************************************************************
-std::string			CVegetableDlg::getVegetableName(uint id) const
+std::string CVegetableDlg::getVegetableName(uint id) const
 {
-	nlassert(id<_Vegetables.size());
-	return	_Vegetables[id].VegetableName;
+	nlassert(id < _Vegetables.size());
+	return _Vegetables[id].VegetableName;
 }
 // ***************************************************************************
-void				CVegetableDlg::updateCurSelVegetableName()
+void CVegetableDlg::updateCurSelVegetableName()
 {
-	sint	id= VegetableList.GetCurSel();
-	if(id!=LB_ERR)
+	sint id = VegetableList.GetCurSel();
+	if (id != LB_ERR)
 	{
 		_Vegetables[id].updateVegetableName();
 		// replace name in the listBox: must delete, and re-insert
@@ -205,27 +201,26 @@ void				CVegetableDlg::updateCurSelVegetableName()
 }
 
 // ***************************************************************************
-NL3D::CVegetable	*CVegetableDlg::getVegetable(uint id) const
+NL3D::CVegetable *CVegetableDlg::getVegetable(uint id) const
 {
-	nlassert(id<_Vegetables.size());
+	nlassert(id < _Vegetables.size());
 	return _Vegetables[id].Vegetable;
 }
 
-
-static const char	*NL_DefaultVegetName= "<default>";
+static const char *NL_DefaultVegetName = "<default>";
 
 // ***************************************************************************
 CVegetableDlg::CVegetableDesc::CVegetableDesc()
 {
-	Vegetable= NULL;
-	VegetableName= NL_DefaultVegetName;
-	Visible= true;
+	Vegetable = NULL;
+	VegetableName = NL_DefaultVegetName;
+	Visible = true;
 }
 
 // ***************************************************************************
-void		CVegetableDlg::CVegetableDesc::initDefaultVegetable()
+void CVegetableDlg::CVegetableDesc::initDefaultVegetable()
 {
-	Vegetable= new NL3D::CVegetable;
+	Vegetable = new NL3D::CVegetable;
 	// update vegetableName according to Vegetable
 	updateVegetableName();
 
@@ -233,100 +228,95 @@ void		CVegetableDlg::CVegetableDesc::initDefaultVegetable()
 
 	// General/Density.
 	// Density.
-	Vegetable->Density.Abs= NL_VEGETABLE_DENSITY_ABS_DEFAULT;
-	Vegetable->Density.Rand= NL_VEGETABLE_DENSITY_RAND_DEFAULT;
-	Vegetable->Density.Frequency= NL_VEGETABLE_FREQ_DEFAULT;
+	Vegetable->Density.Abs = NL_VEGETABLE_DENSITY_ABS_DEFAULT;
+	Vegetable->Density.Rand = NL_VEGETABLE_DENSITY_RAND_DEFAULT;
+	Vegetable->Density.Frequency = NL_VEGETABLE_FREQ_DEFAULT;
 	// disable MaxDensity
-	Vegetable->MaxDensity= -1;
+	Vegetable->MaxDensity = -1;
 	// Leave ShapeName to ""
 	// Default DistType is always 0.
-	Vegetable->DistType= 0;
-
+	Vegetable->DistType = 0;
 
 	// Apperance
 	// BendPhase
-	Vegetable->BendPhase.Abs= NL_VEGETABLE_BENDPHASE_ABS_DEFAULT;
-	Vegetable->BendPhase.Rand= NL_VEGETABLE_BENDPHASE_RAND_DEFAULT;
-	Vegetable->BendPhase.Frequency= NL_VEGETABLE_FREQ_DEFAULT;
+	Vegetable->BendPhase.Abs = NL_VEGETABLE_BENDPHASE_ABS_DEFAULT;
+	Vegetable->BendPhase.Rand = NL_VEGETABLE_BENDPHASE_RAND_DEFAULT;
+	Vegetable->BendPhase.Frequency = NL_VEGETABLE_FREQ_DEFAULT;
 	// BendFactor
-	Vegetable->BendFactor.Abs= NL_VEGETABLE_BENDFACTOR_ABS_DEFAULT;
-	Vegetable->BendFactor.Rand= NL_VEGETABLE_BENDFACTOR_RAND_DEFAULT;
-	Vegetable->BendFactor.Frequency= NL_VEGETABLE_FREQ_DEFAULT;
+	Vegetable->BendFactor.Abs = NL_VEGETABLE_BENDFACTOR_ABS_DEFAULT;
+	Vegetable->BendFactor.Rand = NL_VEGETABLE_BENDFACTOR_RAND_DEFAULT;
+	Vegetable->BendFactor.Frequency = NL_VEGETABLE_FREQ_DEFAULT;
 	// Color
-	Vegetable->Color.NoiseValue.Abs= NL_VEGETABLE_COLOR_ABS_DEFAULT;
-	Vegetable->Color.NoiseValue.Rand= NL_VEGETABLE_COLOR_RAND_DEFAULT;
-	Vegetable->Color.NoiseValue.Frequency= NL_VEGETABLE_FREQ_DEFAULT;
+	Vegetable->Color.NoiseValue.Abs = NL_VEGETABLE_COLOR_ABS_DEFAULT;
+	Vegetable->Color.NoiseValue.Rand = NL_VEGETABLE_COLOR_RAND_DEFAULT;
+	Vegetable->Color.NoiseValue.Frequency = NL_VEGETABLE_FREQ_DEFAULT;
 
 	// Scale
 	// ScaleXY
-	Vegetable->Sxy.Abs= NL_VEGETABLE_SCALE_ABS_DEFAULT;
-	Vegetable->Sxy.Rand= NL_VEGETABLE_SCALE_RAND_DEFAULT;
-	Vegetable->Sxy.Frequency= NL_VEGETABLE_FREQ_DEFAULT;
+	Vegetable->Sxy.Abs = NL_VEGETABLE_SCALE_ABS_DEFAULT;
+	Vegetable->Sxy.Rand = NL_VEGETABLE_SCALE_RAND_DEFAULT;
+	Vegetable->Sxy.Frequency = NL_VEGETABLE_FREQ_DEFAULT;
 	// ScaleZ.
-	Vegetable->Sz.Abs= NL_VEGETABLE_SCALE_ABS_DEFAULT;
-	Vegetable->Sz.Rand= NL_VEGETABLE_SCALE_RAND_DEFAULT;
-	Vegetable->Sz.Frequency= NL_VEGETABLE_FREQ_DEFAULT;
+	Vegetable->Sz.Abs = NL_VEGETABLE_SCALE_ABS_DEFAULT;
+	Vegetable->Sz.Rand = NL_VEGETABLE_SCALE_RAND_DEFAULT;
+	Vegetable->Sz.Frequency = NL_VEGETABLE_FREQ_DEFAULT;
 
 	// Rotate
 	// RotateX
-	Vegetable->Rx.Abs= NL_VEGETABLE_ROTATEX_ABS_DEFAULT;
-	Vegetable->Rx.Rand= NL_VEGETABLE_ROTATEX_RAND_DEFAULT;
-	Vegetable->Rx.Frequency= NL_VEGETABLE_FREQ_DEFAULT;
+	Vegetable->Rx.Abs = NL_VEGETABLE_ROTATEX_ABS_DEFAULT;
+	Vegetable->Rx.Rand = NL_VEGETABLE_ROTATEX_RAND_DEFAULT;
+	Vegetable->Rx.Frequency = NL_VEGETABLE_FREQ_DEFAULT;
 	// RotateY
-	Vegetable->Ry.Abs= NL_VEGETABLE_ROTATEY_ABS_DEFAULT;
-	Vegetable->Ry.Rand= NL_VEGETABLE_ROTATEY_RAND_DEFAULT;
-	Vegetable->Ry.Frequency= NL_VEGETABLE_FREQ_DEFAULT;
+	Vegetable->Ry.Abs = NL_VEGETABLE_ROTATEY_ABS_DEFAULT;
+	Vegetable->Ry.Rand = NL_VEGETABLE_ROTATEY_RAND_DEFAULT;
+	Vegetable->Ry.Frequency = NL_VEGETABLE_FREQ_DEFAULT;
 	// RotateZ
-	Vegetable->Rz.Abs= NL_VEGETABLE_ROTATEZ_ABS_DEFAULT;
-	Vegetable->Rz.Rand= NL_VEGETABLE_ROTATEZ_RAND_DEFAULT;
-	Vegetable->Rz.Frequency= NL_VEGETABLE_ROTATEZ_FREQ_DEFAULT;
-
+	Vegetable->Rz.Abs = NL_VEGETABLE_ROTATEZ_ABS_DEFAULT;
+	Vegetable->Rz.Rand = NL_VEGETABLE_ROTATEZ_RAND_DEFAULT;
+	Vegetable->Rz.Frequency = NL_VEGETABLE_ROTATEZ_FREQ_DEFAULT;
 }
 
 // ***************************************************************************
-void		CVegetableDlg::CVegetableDesc::initVegetable(const NL3D::CVegetable &vegetable)
+void CVegetableDlg::CVegetableDesc::initVegetable(const NL3D::CVegetable &vegetable)
 {
-	Vegetable= new NL3D::CVegetable(vegetable);
+	Vegetable = new NL3D::CVegetable(vegetable);
 	// update vegetableName according to Vegetable
 	updateVegetableName();
 }
 
-
 // ***************************************************************************
-void		CVegetableDlg::CVegetableDesc::updateVegetableName()
+void CVegetableDlg::CVegetableDesc::updateVegetableName()
 {
 	// Build the vegetable Name according to the ShapeName
-	if(Vegetable->ShapeName.empty())
+	if (Vegetable->ShapeName.empty())
 	{
-		VegetableName= NL_DefaultVegetName;
+		VegetableName = NL_DefaultVegetName;
 	}
 	else
 	{
-		std::string::size_type pos= Vegetable->ShapeName.find(".veget");
-		VegetableName= Vegetable->ShapeName.substr(0, pos);
+		std::string::size_type pos = Vegetable->ShapeName.find(".veget");
+		VegetableName = Vegetable->ShapeName.substr(0, pos);
 		// And (to be clearer) append distance of creation.
-		char	str[256];
-		sprintf(str, " - %dm", (Vegetable->DistType+1)*10);
-		VegetableName+= str;
+		char str[256];
+		sprintf(str, " - %dm", (Vegetable->DistType + 1) * 10);
+		VegetableName += str;
 		// NB: if you add info with other parameters, you must use updateCurSelVegetableName() if they change
 	}
 }
 
-
 // ***************************************************************************
-void		CVegetableDlg::CVegetableDesc::deleteVegetable()
+void CVegetableDlg::CVegetableDesc::deleteVegetable()
 {
 	delete Vegetable;
-	Vegetable= NULL;
-	VegetableName= NL_DefaultVegetName;
+	Vegetable = NULL;
+	VegetableName = NL_DefaultVegetName;
 }
 
-
 // ***************************************************************************
-void		CVegetableDlg::clearVegetables()
+void CVegetableDlg::clearVegetables()
 {
 	// delete all vegetables.
-	for(uint i=0; i<_Vegetables.size(); i++)
+	for (uint i = 0; i < _Vegetables.size(); i++)
 	{
 		_Vegetables[i].deleteVegetable();
 	}
@@ -337,20 +327,19 @@ void		CVegetableDlg::clearVegetables()
 	setVegetableToEdit(NULL);
 }
 
-
 // ***************************************************************************
-bool		CVegetableDlg::loadVegetableSet(NL3D::CTileVegetableDesc &vegetSet, const TCHAR *title)
+bool CVegetableDlg::loadVegetableSet(NL3D::CTileVegetableDesc &vegetSet, const TCHAR *title)
 {
 	vegetSet.clear();
-	bool	ok= false;
+	bool ok = false;
 
-	CFileDialog fd(TRUE, _T(".vegetset"), _T("*.vegetset"), 0, NULL, this) ;
+	CFileDialog fd(TRUE, _T(".vegetset"), _T("*.vegetset"), 0, NULL, this);
 	fd.m_ofn.lpstrTitle = title;
 	if (fd.DoModal() == IDOK)
 	{
-		NLMISC::CIFile	f;
-		
-		ok= true;
+		NLMISC::CIFile f;
+
+		ok = true;
 
 		if (f.open(NLMISC::tStrToUtf8(fd.GetPathName())))
 		{
@@ -361,15 +350,15 @@ bool		CVegetableDlg::loadVegetableSet(NL3D::CTileVegetableDesc &vegetSet, const 
 				// bkup fileName.
 				_LastVegetSetName = NLMISC::tStrToUtf8(fd.GetFileName());
 			}
-			catch(const NLMISC::EStream &)
+			catch (const NLMISC::EStream &)
 			{
-				ok= false;
+				ok = false;
 				MessageBox(_T("Failed to load file!"));
 			}
 		}
 		else
 		{
-			ok= false;
+			ok = false;
 			MessageBox(_T("Failed to open file!"));
 		}
 	}
@@ -378,67 +367,66 @@ bool		CVegetableDlg::loadVegetableSet(NL3D::CTileVegetableDesc &vegetSet, const 
 }
 
 // ***************************************************************************
-void		CVegetableDlg::buildVegetableSet(NL3D::CTileVegetableDesc &vegetSet, bool keepDefaultShapeName, bool keepHiden )
+void CVegetableDlg::buildVegetableSet(NL3D::CTileVegetableDesc &vegetSet, bool keepDefaultShapeName, bool keepHiden)
 {
 	vegetSet.clear();
-	float	degToRad= (float)(NLMISC::Pi / 180.f);
+	float degToRad = (float)(NLMISC::Pi / 180.f);
 
 	// build the list.
-	std::vector<NL3D::CVegetable>	vegetables;
-	for(uint i=0;i<_Vegetables.size();i++)
+	std::vector<NL3D::CVegetable> vegetables;
+	for (uint i = 0; i < _Vegetables.size(); i++)
 	{
 		// if don't want to keep <default> ShapeNames, skip them.
-		if(!keepDefaultShapeName && _Vegetables[i].Vegetable->ShapeName.empty())
+		if (!keepDefaultShapeName && _Vegetables[i].Vegetable->ShapeName.empty())
 			continue;
 		// if don't want to keep hiden vegetables, skip them.
-		if(!keepHiden && !_Vegetables[i].Visible)
+		if (!keepHiden && !_Vegetables[i].Visible)
 			continue;
 
 		vegetables.push_back(*_Vegetables[i].Vegetable);
 		// get dst index.
-		uint	dstId= (uint)vegetables.size()-1;
+		uint dstId = (uint)vegetables.size() - 1;
 		// transform degrees in radians.
-		vegetables[dstId].Rx.Abs*= degToRad;
-		vegetables[dstId].Rx.Rand*= degToRad;
-		vegetables[dstId].Ry.Abs*= degToRad;
-		vegetables[dstId].Ry.Rand*= degToRad;
-		vegetables[dstId].Rz.Abs*= degToRad;
-		vegetables[dstId].Rz.Rand*= degToRad;
+		vegetables[dstId].Rx.Abs *= degToRad;
+		vegetables[dstId].Rx.Rand *= degToRad;
+		vegetables[dstId].Ry.Abs *= degToRad;
+		vegetables[dstId].Ry.Rand *= degToRad;
+		vegetables[dstId].Rz.Abs *= degToRad;
+		vegetables[dstId].Rz.Rand *= degToRad;
 	}
 
 	// build the set.
 	vegetSet.build(vegetables);
 }
 
-
 // ***************************************************************************
-void		CVegetableDlg::appendVegetableSet(NL3D::CTileVegetableDesc &vegetSet)
+void CVegetableDlg::appendVegetableSet(NL3D::CTileVegetableDesc &vegetSet)
 {
-	float	radToDeg= (float)(180.f / NLMISC::Pi);
+	float radToDeg = (float)(180.f / NLMISC::Pi);
 
 	// for all distances Types.
-	for(uint distType=0; distType<NL3D_VEGETABLE_BLOCK_NUMDIST; distType++)
+	for (uint distType = 0; distType < NL3D_VEGETABLE_BLOCK_NUMDIST; distType++)
 	{
 		// retrieve list of vegetable
-		const std::vector<NL3D::CVegetable>		&vegetList= vegetSet.getVegetableList(distType);
+		const std::vector<NL3D::CVegetable> &vegetList = vegetSet.getVegetableList(distType);
 
 		// for all of them
-		for(uint i=0;i<vegetList.size();i++)
+		for (uint i = 0; i < vegetList.size(); i++)
 		{
 			// append the vegetable to the list.
-			NL3D::CVegetable	veget= vegetList[i];
+			NL3D::CVegetable veget = vegetList[i];
 
 			// transform radians into degrees.
-			veget.Rx.Abs*= radToDeg;
-			veget.Rx.Rand*= radToDeg;
-			veget.Ry.Abs*= radToDeg;
-			veget.Ry.Rand*= radToDeg;
-			veget.Rz.Abs*= radToDeg;
-			veget.Rz.Rand*= radToDeg;
+			veget.Rx.Abs *= radToDeg;
+			veget.Rx.Rand *= radToDeg;
+			veget.Ry.Abs *= radToDeg;
+			veget.Ry.Rand *= radToDeg;
+			veget.Rz.Abs *= radToDeg;
+			veget.Rz.Rand *= radToDeg;
 
 			// Add a new vegetable to the list.
-			_Vegetables.push_back( CVegetableDesc ());
-			uint	id= (uint)_Vegetables.size()-1;
+			_Vegetables.push_back(CVegetableDesc());
+			uint id = (uint)_Vegetables.size() - 1;
 			_Vegetables[id].initVegetable(veget);
 
 			// update view
@@ -447,37 +435,34 @@ void		CVegetableDlg::appendVegetableSet(NL3D::CTileVegetableDesc &vegetSet)
 	}
 }
 
-
 // ***************************************************************************
 // ***************************************************************************
 // CVegetableDlg message handlers
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
-BOOL CVegetableDlg::OnInitDialog() 
+BOOL CVegetableDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-
-	_PropertySheet= new CPropertySheet();
+	_PropertySheet = new CPropertySheet();
 
 	// Create the 4 pages.
 	// density
-	_VegetableDensityPage= new CVegetableDensityPage();
+	_VegetableDensityPage = new CVegetableDensityPage();
 	_VegetableDensityPage->initVegetableDlg(this);
 	_PropertySheet->AddPage(_VegetableDensityPage);
 	// appearance
-	_VegetableApperancePage= new CVegetableApperancePage();
+	_VegetableApperancePage = new CVegetableApperancePage();
 	_VegetableApperancePage->initVegetableDlg(this);
 	_PropertySheet->AddPage(_VegetableApperancePage);
 	// scale
-	_VegetableScalePage= new CVegetableScalePage();
+	_VegetableScalePage = new CVegetableScalePage();
 	_VegetableScalePage->initVegetableDlg(this);
 	_PropertySheet->AddPage(_VegetableScalePage);
 	// rot
-	_VegetableRotatePage= new CVegetableRotatePage();
+	_VegetableRotatePage = new CVegetableRotatePage();
 	_VegetableRotatePage->initVegetableDlg(this);
 	_PropertySheet->AddPage(_VegetableRotatePage);
 
@@ -486,7 +471,6 @@ BOOL CVegetableDlg::OnInitDialog()
 	// Enlarge at max size of the PropertySheet
 	_PropertySheet->MoveWindow(160, 0, 1000, 570);
 
-
 	// Force creation of the 4 pages, by selecting them.
 	_PropertySheet->SetActivePage(0);
 	_PropertySheet->SetActivePage(1);
@@ -494,7 +478,6 @@ BOOL CVegetableDlg::OnInitDialog()
 	_PropertySheet->SetActivePage(3);
 	// Start with Density page selected.
 	_PropertySheet->SetActivePage(0);
-
 
 	// Init the Dlg with no vegetable to edit.
 	setVegetableToEdit(NULL);
@@ -507,28 +490,26 @@ BOOL CVegetableDlg::OnInitDialog()
 	// Disable the refresh button, because landscape not displayed by default
 	ButtonRefreshLandscape.EnableWindow(false);
 
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
-
 
 // ***************************************************************************
-void CVegetableDlg::OnSelchangeListVegetable() 
+void CVegetableDlg::OnSelchangeListVegetable()
 {
 	// set the new vegetable to edit.
-	sint	id= VegetableList.GetCurSel();
-	if(id==LB_ERR)
-		setVegetableToEdit( NULL );
+	sint id = VegetableList.GetCurSel();
+	if (id == LB_ERR)
+		setVegetableToEdit(NULL);
 	else
-		setVegetableToEdit( _Vegetables[id].Vegetable );
+		setVegetableToEdit(_Vegetables[id].Vegetable);
 }
 
-void CVegetableDlg::OnButtonVegetableAdd() 
+void CVegetableDlg::OnButtonVegetableAdd()
 {
 	// Add a new vegetable to the list.
-	_Vegetables.push_back(CVegetableDesc ());
-	uint	id= (uint)_Vegetables.size()-1;
+	_Vegetables.push_back(CVegetableDesc());
+	uint id = (uint)_Vegetables.size() - 1;
 	_Vegetables[id].initDefaultVegetable();
 
 	// update view
@@ -538,12 +519,12 @@ void CVegetableDlg::OnButtonVegetableAdd()
 	refreshVegetableDisplay();
 }
 
-void CVegetableDlg::OnButtonVegetableClear() 
+void CVegetableDlg::OnButtonVegetableClear()
 {
-	if(_Vegetables.size()==0)
+	if (_Vegetables.size() == 0)
 		return;
 
-	if( MessageBox(_T("Clear all the list?"), _T("Clear List"), MB_OKCANCEL | MB_ICONWARNING | MB_APPLMODAL)==IDOK )
+	if (MessageBox(_T("Clear all the list?"), _T("Clear List"), MB_OKCANCEL | MB_ICONWARNING | MB_APPLMODAL) == IDOK)
 	{
 		clearVegetables();
 
@@ -552,13 +533,13 @@ void CVegetableDlg::OnButtonVegetableClear()
 	}
 }
 
-void CVegetableDlg::OnButtonVegetableInsert() 
+void CVegetableDlg::OnButtonVegetableInsert()
 {
-	sint	id= VegetableList.GetCurSel();
-	if(id!=LB_ERR)
+	sint id = VegetableList.GetCurSel();
+	if (id != LB_ERR)
 	{
 		// Add a new vegetable to the list.
-		_Vegetables.insert(_Vegetables.begin()+id, CVegetableDesc());
+		_Vegetables.insert(_Vegetables.begin() + id, CVegetableDesc());
 		_Vegetables[id].initDefaultVegetable();
 
 		// update view
@@ -574,25 +555,25 @@ void CVegetableDlg::OnButtonVegetableInsert()
 	}
 }
 
-void CVegetableDlg::OnButtonVegetableRemove() 
+void CVegetableDlg::OnButtonVegetableRemove()
 {
-	sint	id= VegetableList.GetCurSel();
-	if(id!=LB_ERR)
+	sint id = VegetableList.GetCurSel();
+	if (id != LB_ERR)
 	{
 		// UnSelect
 		setVegetableToEdit(NULL);
 
 		// erase the vegetable from the list.
 		_Vegetables[id].deleteVegetable();
-		_Vegetables.erase(_Vegetables.begin()+id);
+		_Vegetables.erase(_Vegetables.begin() + id);
 
 		// update view
 		VegetableList.DeleteString(id);
 
 		// select if posssible at the same id.
-		if(id>=(sint)_Vegetables.size())
+		if (id >= (sint)_Vegetables.size())
 			id--;
-		if(id>=0)
+		if (id >= 0)
 		{
 			// set the cur selection
 			VegetableList.SetCurSel(id);
@@ -606,24 +587,24 @@ void CVegetableDlg::OnButtonVegetableRemove()
 }
 
 // ***************************************************************************
-void CVegetableDlg::OnButtonVegetableLoadDesc() 
+void CVegetableDlg::OnButtonVegetableLoadDesc()
 {
-	CFileDialog fd(TRUE, _T(".vegetdesc"), _T("*.vegetdesc"), 0, NULL, this) ;
+	CFileDialog fd(TRUE, _T(".vegetdesc"), _T("*.vegetdesc"), 0, NULL, this);
 	fd.m_ofn.lpstrTitle = _T("Open Vegetable Descriptor");
 	if (fd.DoModal() == IDOK)
 	{
-		NLMISC::CIFile	f;
-		
+		NLMISC::CIFile f;
+
 		if (f.open(NLMISC::tStrToUtf8(fd.GetPathName())))
 		{
-			NL3D::CVegetable	veget;
+			NL3D::CVegetable veget;
 			try
 			{
 				// read the vegetable
 				f.serial(veget);
 				// Add a new vegetable to the list.
-				_Vegetables.push_back(CVegetableDesc ());
-				uint	id= (uint)_Vegetables.size()-1;
+				_Vegetables.push_back(CVegetableDesc());
+				uint id = (uint)_Vegetables.size() - 1;
 				_Vegetables[id].initVegetable(veget);
 
 				// update view
@@ -632,7 +613,7 @@ void CVegetableDlg::OnButtonVegetableLoadDesc()
 				// update 3D view
 				refreshVegetableDisplay();
 			}
-			catch(const NLMISC::EStream &)
+			catch (const NLMISC::EStream &)
 			{
 				MessageBox(_T("Failed to load file!"));
 			}
@@ -642,24 +623,23 @@ void CVegetableDlg::OnButtonVegetableLoadDesc()
 			MessageBox(_T("Failed to open file!"));
 		}
 	}
-
 }
 
-void CVegetableDlg::OnButtonVegetableSaveDesc() 
+void CVegetableDlg::OnButtonVegetableSaveDesc()
 {
-	sint	id= VegetableList.GetCurSel();
-	if(id!=LB_ERR)
+	sint id = VegetableList.GetCurSel();
+	if (id != LB_ERR)
 	{
-		NL3D::CVegetable	&veget= *_Vegetables[id].Vegetable;
+		NL3D::CVegetable &veget = *_Vegetables[id].Vegetable;
 
-		std::string		fileName= _Vegetables[id].VegetableName + ".vegetdesc";
+		std::string fileName = _Vegetables[id].VegetableName + ".vegetdesc";
 
 		CFileDialog fd(FALSE, _T("vegetdesc"), nlUtf8ToTStr(fileName), OFN_OVERWRITEPROMPT, _T("VegetDescFiles (*.vegetdesc)|*.vegetdesc|All Files (*.*)|*.*||"), this);
 		fd.m_ofn.lpstrTitle = _T("Save Vegetable Descriptor");
 		if (fd.DoModal() == IDOK)
 		{
-			NLMISC::COFile	f;
-			
+			NLMISC::COFile f;
+
 			if (f.open(NLMISC::tStrToUtf8(fd.GetPathName())))
 			{
 				try
@@ -667,7 +647,7 @@ void CVegetableDlg::OnButtonVegetableSaveDesc()
 					// save the vegetable
 					f.serial(veget);
 				}
-				catch(const NLMISC::EStream &)
+				catch (const NLMISC::EStream &)
 				{
 					MessageBox(_T("Failed to save file!"));
 				}
@@ -678,16 +658,14 @@ void CVegetableDlg::OnButtonVegetableSaveDesc()
 			}
 		}
 	}
-
 }
 
-
 // ***************************************************************************
-void CVegetableDlg::OnButtonVegetableLoadSet() 
+void CVegetableDlg::OnButtonVegetableLoadSet()
 {
-	NL3D::CTileVegetableDesc	vegetSet;
+	NL3D::CTileVegetableDesc vegetSet;
 	// if succes to load the vegetSet
-	if(loadVegetableSet(vegetSet, _T("Load Vegetable Set")))
+	if (loadVegetableSet(vegetSet, _T("Load Vegetable Set")))
 	{
 		// Delete all vegetables.
 		clearVegetables();
@@ -700,12 +678,11 @@ void CVegetableDlg::OnButtonVegetableLoadSet()
 	}
 }
 
-
-void CVegetableDlg::OnButtonVegetableAppendSet() 
+void CVegetableDlg::OnButtonVegetableAppendSet()
 {
-	NL3D::CTileVegetableDesc	vegetSet;
+	NL3D::CTileVegetableDesc vegetSet;
 	// if succes to load the vegetSet
-	if(loadVegetableSet(vegetSet, _T("Append Vegetable Set")))
+	if (loadVegetableSet(vegetSet, _T("Append Vegetable Set")))
 	{
 		// Do not Delete any vegetables.
 		// build them from list.
@@ -716,10 +693,9 @@ void CVegetableDlg::OnButtonVegetableAppendSet()
 	}
 }
 
-
-void CVegetableDlg::OnButtonVegetableSaveSet() 
+void CVegetableDlg::OnButtonVegetableSaveSet()
 {
-	NL3D::CTileVegetableDesc	vegetSet;
+	NL3D::CTileVegetableDesc vegetSet;
 
 	// first build the vegetSet.
 	buildVegetableSet(vegetSet);
@@ -729,8 +705,8 @@ void CVegetableDlg::OnButtonVegetableSaveSet()
 	fd.m_ofn.lpstrTitle = _T("Save Vegetable Set");
 	if (fd.DoModal() == IDOK)
 	{
-		NLMISC::COFile	f;
-		
+		NLMISC::COFile f;
+
 		if (f.open(NLMISC::tStrToUtf8(fd.GetPathName())))
 		{
 			try
@@ -738,7 +714,7 @@ void CVegetableDlg::OnButtonVegetableSaveSet()
 				// save the vegetable set
 				f.serial(vegetSet);
 			}
-			catch(const NLMISC::EStream &)
+			catch (const NLMISC::EStream &)
 			{
 				MessageBox(_T("Failed to save file!"));
 			}
@@ -748,50 +724,48 @@ void CVegetableDlg::OnButtonVegetableSaveSet()
 			MessageBox(_T("Failed to open file for write!"));
 		}
 	}
-	
 }
 
-
 // ***************************************************************************
-void CVegetableDlg::OnButtonVegetableCopy() 
+void CVegetableDlg::OnButtonVegetableCopy()
 {
-	sint	dstid= VegetableList.GetCurSel();
-	if(dstid!=LB_ERR)
+	sint dstid = VegetableList.GetCurSel();
+	if (dstid != LB_ERR)
 	{
-		CVegetableCopyDlg	dlg(this);
+		CVegetableCopyDlg dlg(this);
 
-		if(dlg.DoModal()==IDOK)
+		if (dlg.DoModal() == IDOK)
 		{
-			sint	srcid= dlg.VegetableSelected;
-			if(srcid!=LB_ERR && srcid!=dstid)
+			sint srcid = dlg.VegetableSelected;
+			if (srcid != LB_ERR && srcid != dstid)
 			{
 				// copy from src to dst
-				NL3D::CVegetable	&vegetSrc= *_Vegetables[srcid].Vegetable;
-				NL3D::CVegetable	&vegetDst= *_Vegetables[dstid].Vegetable;
+				NL3D::CVegetable &vegetSrc = *_Vegetables[srcid].Vegetable;
+				NL3D::CVegetable &vegetDst = *_Vegetables[dstid].Vegetable;
 
 				// copy all?
-				if(!dlg.SubsetCopy)
+				if (!dlg.SubsetCopy)
 				{
 					// copy all the vegetable
-					vegetDst= vegetSrc;
+					vegetDst = vegetSrc;
 				}
 				else
 				{
 					// copy mesh part.
-					if(dlg.Mesh)
+					if (dlg.Mesh)
 					{
-						vegetDst.ShapeName= vegetSrc.ShapeName;
+						vegetDst.ShapeName = vegetSrc.ShapeName;
 					}
 					// Density/dist.
-					if(dlg.Distance)
+					if (dlg.Distance)
 						vegetDst.DistType = vegetSrc.DistType;
-					if(dlg.Density)
+					if (dlg.Density)
 						vegetDst.Density = vegetSrc.Density;
-					if(dlg.MaxDensity)
+					if (dlg.MaxDensity)
 						vegetDst.MaxDensity = vegetSrc.MaxDensity;
-					if(dlg.AngleSetup)
+					if (dlg.AngleSetup)
 					{
-						switch(vegetSrc.getAngleType())
+						switch (vegetSrc.getAngleType())
 						{
 						case NL3D::CVegetable::AngleGround:
 							vegetDst.setAngleGround(vegetSrc.getCosAngleMin());
@@ -805,30 +779,29 @@ void CVegetableDlg::OnButtonVegetableCopy()
 						}
 					}
 					// Appearance
-					if(dlg.BendPhase)
+					if (dlg.BendPhase)
 						vegetDst.BendPhase = vegetSrc.BendPhase;
-					if(dlg.BendFactor)
+					if (dlg.BendFactor)
 						vegetDst.BendFactor = vegetSrc.BendFactor;
-					if(dlg.ColorNoise)
+					if (dlg.ColorNoise)
 						vegetDst.Color.NoiseValue = vegetSrc.Color.NoiseValue;
-					if(dlg.ColorSetup)
+					if (dlg.ColorSetup)
 						vegetDst.Color.Gradients = vegetSrc.Color.Gradients;
 					// Scale/Rot
-					if(dlg.ScaleXY)
+					if (dlg.ScaleXY)
 						vegetDst.Sxy = vegetSrc.Sxy;
-					if(dlg.ScaleZ)
+					if (dlg.ScaleZ)
 						vegetDst.Sz = vegetSrc.Sz;
-					if(dlg.RotateX)
+					if (dlg.RotateX)
 						vegetDst.Rx = vegetSrc.Rx;
-					if(dlg.RotateY)
+					if (dlg.RotateY)
 						vegetDst.Ry = vegetSrc.Ry;
-					if(dlg.RotateZ)
+					if (dlg.RotateZ)
 						vegetDst.Rz = vegetSrc.Rz;
 				}
 
 				// update dst vegetableName according to Vegetable copied
 				_Vegetables[dstid].updateVegetableName();
-
 
 				// deselect, then reselect, to refresh.
 				setVegetableToEdit(NULL);
@@ -840,7 +813,6 @@ void CVegetableDlg::OnButtonVegetableCopy()
 				// must also update our name in view
 				updateCurSelVegetableName();
 
-
 				// update 3D view
 				refreshVegetableDisplay();
 			}
@@ -848,27 +820,27 @@ void CVegetableDlg::OnButtonVegetableCopy()
 	}
 }
 
-void CVegetableDlg::OnButtonVegetableRefresh() 
+void CVegetableDlg::OnButtonVegetableRefresh()
 {
 	// refresh view, independently of checkBox
 	doRefreshVegetableDisplay();
 }
 
-void CVegetableDlg::OnCheckVegetableAutomatic() 
+void CVegetableDlg::OnCheckVegetableAutomatic()
 {
 	// Enabling the checkBox do a refresh (NB: disabling don't do a refresh).
 	refreshVegetableDisplay();
 }
 
-void CVegetableDlg::OnCheckVegetableShow() 
+void CVegetableDlg::OnCheckVegetableShow()
 {
-	if(CheckShowLandscape.GetCheck()==1)
+	if (CheckShowLandscape.GetCheck() == 1)
 	{
 		// Landscape not created ??
-		if(!_ObjView->isVegetableLandscapeCreated())
+		if (!_ObjView->isVegetableLandscapeCreated())
 		{
 			// if success to create / Load the landscape.
-			if(_ObjView->createVegetableLandscape())
+			if (_ObjView->createVegetableLandscape())
 			{
 				// Enable the refresh button
 				ButtonRefreshLandscape.EnableWindow(true);
@@ -893,22 +865,20 @@ void CVegetableDlg::OnCheckVegetableShow()
 	}
 }
 
-
 // ***************************************************************************
-void CVegetableDlg::OnCheckVegetableEnable() 
+void CVegetableDlg::OnCheckVegetableEnable()
 {
 	// update view.
-	_ObjView->enableLandscapeVegetable(CheckEnableVegetable.GetCheck()==1);
+	_ObjView->enableLandscapeVegetable(CheckEnableVegetable.GetCheck() == 1);
 }
 
-
 // ***************************************************************************
-void CVegetableDlg::OnButtonVegetableSetupWind() 
+void CVegetableDlg::OnButtonVegetableSetupWind()
 {
 	// create the window if necessary
-	if(!_VegetableWindDlg)
+	if (!_VegetableWindDlg)
 	{
-		_VegetableWindDlg= new CVegetableWindDlg(_ObjView, this);
+		_VegetableWindDlg = new CVegetableWindDlg(_ObjView, this);
 		_VegetableWindDlg->Create(CVegetableWindDlg::IDD, this);
 	}
 
@@ -916,19 +886,17 @@ void CVegetableDlg::OnButtonVegetableSetupWind()
 	_VegetableWindDlg->ShowWindow(true);
 }
 
-
 // ***************************************************************************
-void CVegetableDlg::OnCheckVegetableSnaptoground() 
+void CVegetableDlg::OnCheckVegetableSnaptoground()
 {
 	// update view.
-	_ObjView->snapToGroundVegetableLandscape(CheckSnapToGround.GetCheck()==1);
+	_ObjView->snapToGroundVegetableLandscape(CheckSnapToGround.GetCheck() == 1);
 }
 
-
 // ***************************************************************************
-void CVegetableDlg::swapShowHideVegetable (uint id)
+void CVegetableDlg::swapShowHideVegetable(uint id)
 {
-	if(id>=_Vegetables.size())
+	if (id >= _Vegetables.size())
 		return;
 
 	_Vegetables[id].Visible ^= true;
@@ -938,22 +906,22 @@ void CVegetableDlg::swapShowHideVegetable (uint id)
 }
 
 // ***************************************************************************
-void CVegetableDlg::setShowHideVegetable (uint id, bool visible, bool refreshDisplay)
+void CVegetableDlg::setShowHideVegetable(uint id, bool visible, bool refreshDisplay)
 {
-	if(id>=_Vegetables.size())
+	if (id >= _Vegetables.size())
 		return;
 
-	_Vegetables[id].Visible= visible;
+	_Vegetables[id].Visible = visible;
 
 	// update 3D view
-	if(refreshDisplay)
+	if (refreshDisplay)
 		refreshVegetableDisplay();
 }
 
 // ***************************************************************************
-bool CVegetableDlg::isVegetableVisible (uint id)
+bool CVegetableDlg::isVegetableVisible(uint id)
 {
-	if(id>=_Vegetables.size())
+	if (id >= _Vegetables.size())
 		return true;
 
 	return _Vegetables[id].Visible;

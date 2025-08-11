@@ -38,13 +38,12 @@
 using namespace std;
 using namespace NLMISC;
 
-
 namespace NLSOUND {
 
-CSound *CSound::createSound(const std::string &filename, NLGEORGES::UFormElm& formRoot)
+CSound *CSound::createSound(const std::string &filename, NLGEORGES::UFormElm &formRoot)
 {
 	CSound *ret = NULL;
-	string	soundType;
+	string soundType;
 
 	NLGEORGES::UFormElm *psoundType;
 
@@ -98,37 +97,34 @@ CSound *CSound::createSound(const std::string &filename, NLGEORGES::UFormElm& fo
 		{
 			nlassertex(false, ("SoundType unsupported: %s", dfnName.c_str()));
 		}
-
 	}
 
 	return ret;
 }
 
-
-
 /*
  * Constructor
  */
-CSound::CSound() :
-	_Gain(1.0f),
-	_Pitch(1.0f),
-	_Priority(MidPri),
-	_ConeInnerAngle(6.283185f),
-	_ConeOuterAngle(6.283185f),
-	_ConeOuterGain( 1.0f ),
-	_Looping(false),
-	_MinDist(1.0f),
-	_MaxDist(1000000.0f),
-	_UserVarControler(CStringMapper::emptyId()),
-	_GroupController(NULL)
+CSound::CSound()
+    : _Gain(1.0f)
+    , _Pitch(1.0f)
+    , _Priority(MidPri)
+    , _ConeInnerAngle(6.283185f)
+    , _ConeOuterAngle(6.283185f)
+    , _ConeOuterGain(1.0f)
+    , _Looping(false)
+    , _MinDist(1.0f)
+    , _MaxDist(1000000.0f)
+    , _UserVarControler(CStringMapper::emptyId())
+    , _GroupController(NULL)
 {
 }
 
 CSound::~CSound()
-{}
+{
+}
 
-
-void	CSound::serial(NLMISC::IStream &s)
+void CSound::serial(NLMISC::IStream &s)
 {
 	s.serial(_Gain);
 	s.serial(_Pitch);
@@ -148,7 +144,7 @@ void	CSound::serial(NLMISC::IStream &s)
 		std::string name = CStringMapper::unmap(_Name);
 		s.serial(name);
 	}
-	
+
 	nlassert(CGroupControllerRoot::isInitialized()); // not sure
 #if NLSOUND_SHEET_VERSION_BUILT < 2
 	if (s.isReading()) _GroupController = CGroupControllerRoot::getInstance()->getGroupController(NLSOUND_SHEET_V1_DEFAULT_SOUND_GROUP_CONTROLLER);
@@ -167,11 +163,10 @@ void	CSound::serial(NLMISC::IStream &s)
 #endif
 }
 
-
 /**
  * 	Load the sound parameters from georges' form
  */
-void				CSound::importForm(const std::string& filename, NLGEORGES::UFormElm& root)
+void CSound::importForm(const std::string &filename, NLGEORGES::UFormElm &root)
 {
 	// Name
 	_Name = CStringMapper::map(CFile::getFilenameWithoutExtension(filename));
@@ -183,7 +178,7 @@ void				CSound::importForm(const std::string& filename, NLGEORGES::UFormElm& roo
 	{
 		inner = 360;
 	}
-	_ConeInnerAngle = (float) (Pi * inner / 180.0f);  // convert to radians
+	_ConeInnerAngle = (float)(Pi * inner / 180.0f); // convert to radians
 
 	// ExternalConeAngle
 	uint32 outer;
@@ -192,7 +187,7 @@ void				CSound::importForm(const std::string& filename, NLGEORGES::UFormElm& roo
 	{
 		outer = 360;
 	}
-	_ConeOuterAngle= (float) (Pi * outer / 180.0f);  // convert to radians
+	_ConeOuterAngle = (float)(Pi * outer / 180.0f); // convert to radians
 
 	// Loop
 	root.getValueByName(_Looping, ".Loop");
@@ -208,7 +203,7 @@ void				CSound::importForm(const std::string& filename, NLGEORGES::UFormElm& roo
 	{
 		gain = -100;
 	}
-	_Gain = (float) pow(10.0, gain / 20.0); // convert dB to linear gain
+	_Gain = (float)pow(10.0, gain / 20.0); // convert dB to linear gain
 
 	// External gain
 	root.getValueByName(gain, ".ExternalGain");
@@ -220,7 +215,7 @@ void				CSound::importForm(const std::string& filename, NLGEORGES::UFormElm& roo
 	{
 		gain = -100;
 	}
-	_ConeOuterGain = (float) pow(10.0, gain / 20.0); // convert dB to linear gain
+	_ConeOuterGain = (float)pow(10.0, gain / 20.0); // convert dB to linear gain
 
 	// Direction
 	float x, y, z;
@@ -230,15 +225,14 @@ void				CSound::importForm(const std::string& filename, NLGEORGES::UFormElm& roo
 	root.getValueByName(z, ".Direction.Z");
 	_Direction = CVector(x, y, z);
 
-
 	// Pitch
 	sint32 trans;
 	root.getValueByName(trans, ".Transpose");
-	_Pitch =  (float) pow(Sqrt12_2, trans); // convert semi-tones to playback speed
+	_Pitch = (float)pow(Sqrt12_2, trans); // convert semi-tones to playback speed
 
 	// Priority
 	uint32 prio = 0;
- 	root.getValueByName(prio, ".Priority");
+	root.getValueByName(prio, ".Priority");
 	switch (prio)
 	{
 	case 0:
@@ -265,9 +259,6 @@ void				CSound::importForm(const std::string& filename, NLGEORGES::UFormElm& roo
 	root.getValueByName(groupControllerPath, ".GroupController");
 	_GroupController = CGroupControllerRoot::getInstance()->getGroupController(groupControllerPath);
 #endif
-
 }
-
-
 
 } // NLSOUND

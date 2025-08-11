@@ -19,7 +19,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdmisc.h"
 
 #include "nel/misc/path.h"
@@ -34,24 +33,24 @@
 using namespace std;
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
 namespace NLMISC {
 
-CI18N::StrMapContainer		CI18N::_StrMap;
-CI18N::StrMapContainer		CI18N::_StrMapFallback;
-CI18N::StrMapContainer16	CI18N::_StrMap16;
-CI18N::StrMapContainer16	CI18N::_StrMapFallback16;
-bool						CI18N::_StrMapLoaded = false;
-const ucstring				CI18N::_NotTranslatedValue16("<Not Translated>");
-const std::string			CI18N::_NotTranslatedValue("<Not Translated>");
-bool					CI18N::_LanguagesNamesLoaded = false;
-string					CI18N::_SelectedLanguageCode;
-CI18N::ILoadProxy		*CI18N::_LoadProxy = 0;
-vector<string>			CI18N::_LanguageCodes;
-vector<std::string>		CI18N::_LanguageNames;
-std::string				CI18N::_SystemLanguageCode;
+CI18N::StrMapContainer CI18N::_StrMap;
+CI18N::StrMapContainer CI18N::_StrMapFallback;
+CI18N::StrMapContainer16 CI18N::_StrMap16;
+CI18N::StrMapContainer16 CI18N::_StrMapFallback16;
+bool CI18N::_StrMapLoaded = false;
+const ucstring CI18N::_NotTranslatedValue16("<Not Translated>");
+const std::string CI18N::_NotTranslatedValue("<Not Translated>");
+bool CI18N::_LanguagesNamesLoaded = false;
+string CI18N::_SelectedLanguageCode;
+CI18N::ILoadProxy *CI18N::_LoadProxy = 0;
+vector<string> CI18N::_LanguageCodes;
+vector<std::string> CI18N::_LanguageNames;
+std::string CI18N::_SystemLanguageCode;
 bool CI18N::noResolution = false;
 
 void CI18N::setLoadProxy(ILoadProxy *loadProxy)
@@ -93,7 +92,7 @@ const std::vector<std::string> &CI18N::getLanguageCodes()
 	return _LanguageCodes;
 }
 
-void CI18N::load (const string &languageCode, const string &fallbackLanguageCode)
+void CI18N::load(const string &languageCode, const string &fallbackLanguageCode)
 {
 	if (_StrMapLoaded)
 	{
@@ -109,7 +108,7 @@ void CI18N::load (const string &languageCode, const string &fallbackLanguageCode
 
 	_StrMapFallback.clear();
 	_StrMapFallback16.clear();
-	if(!fallbackLanguageCode.empty())
+	if (!fallbackLanguageCode.empty())
 	{
 		loadFileIntoMap(fallbackLanguageCode + ".uxt", _StrMapFallback, _StrMapFallback16);
 	}
@@ -178,7 +177,7 @@ void CI18N::loadFromFilename(const string &filename, bool reload)
 		return;
 	}
 	// merge with existing map
-	for(StrMapContainer::iterator it = destMap.begin(); it != destMap.end(); ++it)
+	for (StrMapContainer::iterator it = destMap.begin(); it != destMap.end(); ++it)
 	{
 		if (!reload)
 		{
@@ -227,9 +226,9 @@ const std::string &CI18N::get(const string &label)
 	return badString;
 }
 
-const ucstring &CI18N::getAsUtf16 (const string &label)
+const ucstring &CI18N::getAsUtf16(const string &label)
 {
-	if( noResolution )
+	if (noResolution)
 	{
 		static ucstring labelString;
 		labelString = label;
@@ -247,7 +246,7 @@ const ucstring &CI18N::getAsUtf16 (const string &label)
 	if (it != _StrMap16.end())
 		return it->second;
 
-	static CHashSet<string>	missingStrings;
+	static CHashSet<string> missingStrings;
 	if (missingStrings.find(label) == missingStrings.end())
 	{
 		nlwarning("I18N: The string %s did not exist in language %s (display once)", label.c_str(), _SelectedLanguageCode.c_str());
@@ -259,9 +258,9 @@ const ucstring &CI18N::getAsUtf16 (const string &label)
 	if (it != _StrMapFallback16.end())
 		return it->second;
 
-	static ucstring	badString;
+	static ucstring badString;
 
-	badString = ucstring(string("<NotExist:")+label+">");
+	badString = ucstring(string("<NotExist:") + label + ">");
 
 	return badString;
 }
@@ -270,8 +269,8 @@ bool CI18N::hasTranslation(const string &label)
 {
 	if (label.empty()) return true;
 
-	if(_StrMap.find(label) != _StrMap.end())
-			return true;
+	if (_StrMap.find(label) != _StrMap.end())
+		return true;
 
 	// use the fall back language if it exists
 	if (_StrMapFallback.find(label) != _StrMapFallback.end())
@@ -280,12 +279,12 @@ bool CI18N::hasTranslation(const string &label)
 	return false;
 }
 
-std::string CI18N::getCurrentLanguageName ()
+std::string CI18N::getCurrentLanguageName()
 {
 	return get("LanguageName");
 }
 
-string CI18N::getCurrentLanguageCode ()
+string CI18N::getCurrentLanguageCode()
 {
 	return _SelectedLanguageCode;
 }
@@ -302,7 +301,7 @@ bool CI18N::isLanguageCodeSupported(const std::string &lang)
 	return false;
 }
 
-std::string CI18N::getSystemLanguageCode ()
+std::string CI18N::getSystemLanguageCode()
 {
 	if (!_SystemLanguageCode.empty())
 		return _SystemLanguageCode;
@@ -338,10 +337,10 @@ std::string CI18N::getSystemLanguageCode ()
 					CFIndex length = CFStringGetLength(langCF);
 
 					// allocate a temporary buffer to hold converted string
-					char *tmp = new char[length+1];
+					char *tmp = new char[length + 1];
 
 					// use alternative function to get a C string from CFString
-					if (CFStringGetCString(langCF, tmp, length+1, kCFStringEncodingASCII))
+					if (CFStringGetCString(langCF, tmp, length + 1, kCFStringEncodingASCII))
 					{
 						lang = std::string(tmp, length);
 					}
@@ -350,7 +349,7 @@ std::string CI18N::getSystemLanguageCode ()
 						nlwarning("Unable to convert CFStringRef to string");
 					}
 
-					delete [] tmp;
+					delete[] tmp;
 				}
 				else
 				{
@@ -387,7 +386,7 @@ std::string CI18N::getSystemLanguageCode ()
 	if (_SystemLanguageCode.empty())
 	{
 		// GetUserDefaultLocaleName prototype
-		typedef int (WINAPI* GetUserDefaultLocaleNamePtr)(LPWSTR lpLocaleName, int cchLocaleName);
+		typedef int(WINAPI * GetUserDefaultLocaleNamePtr)(LPWSTR lpLocaleName, int cchLocaleName);
 
 		// get pointer on GetUserDefaultLocaleName, kernel32.dll is always in memory so no need to call LoadLibrary
 		HMODULE hKernel32 = GetModuleHandleA("kernel32.dll");
@@ -428,7 +427,7 @@ std::string CI18N::getSystemLanguageCode ()
 			initLanguages();
 
 			// locales names are different under Windows, for example: French_France.1252
-			for(uint i = 0; i < _LanguageNames.size(); ++i)
+			for (uint i = 0; i < _LanguageNames.size(); ++i)
 			{
 				std::string name = _LanguageNames[i];
 
@@ -461,7 +460,7 @@ std::string CI18N::getSystemLanguageCode ()
 	return _SystemLanguageCode;
 }
 
-bool CI18N::setSystemLanguageCode (const std::string &languageCode)
+bool CI18N::setSystemLanguageCode(const std::string &languageCode)
 {
 	// be sure supported languages are initialized
 	initLanguages();
@@ -472,7 +471,7 @@ bool CI18N::setSystemLanguageCode (const std::string &languageCode)
 	if (lang.length() == 2)
 	{
 		// check if language code is supported
-		for(uint i = 0; i < _LanguageCodes.size(); ++i)
+		for (uint i = 0; i < _LanguageCodes.size(); ++i)
 		{
 			std::string code = NLMISC::toLowerAscii(_LanguageCodes[i]);
 
@@ -488,7 +487,7 @@ bool CI18N::setSystemLanguageCode (const std::string &languageCode)
 	else
 	{
 		// check if language name is supported
-		for(uint i = 0; i < _LanguageNames.size(); ++i)
+		for (uint i = 0; i < _LanguageNames.size(); ++i)
 		{
 			std::string name = NLMISC::toLowerAscii(_LanguageNames[i]);
 
@@ -509,7 +508,7 @@ void CI18N::removeCComment(ucstring &commentedString)
 	ucstring temp;
 	temp.reserve(commentedString.size());
 	ucstring::const_iterator first(commentedString.begin()), last(commentedString.end());
-	for (;first != last; ++first)
+	for (; first != last; ++first)
 	{
 		temp.push_back(*first);
 		if (*first == '[')
@@ -528,16 +527,16 @@ void CI18N::removeCComment(ucstring &commentedString)
 			++first;
 			if (first != last && *first == '/')
 			{
-				temp.resize(temp.size()-1);
+				temp.resize(temp.size() - 1);
 				// one line comment, skip until end of line
 				while (first != last && *first != '\n')
 					++first;
 			}
 			else if (first != last && *first == '*')
 			{
-				temp.resize(temp.size()-1);
+				temp.resize(temp.size() - 1);
 				// start of multi line comment, skip until we found '*/'
-				while (first != last && !(*first == '*' && (first+1) != last && *(first+1) == '/'))
+				while (first != last && !(*first == '*' && (first + 1) != last && *(first + 1) == '/'))
 					++first;
 				// skip the closing '/'
 				if (first != last)
@@ -554,17 +553,9 @@ void CI18N::removeCComment(ucstring &commentedString)
 
 void CI18N::skipWhiteSpace(ucstring::const_iterator &it, ucstring::const_iterator &last, ucstring *storeComments, bool newLineAsWhiteSpace)
 {
-	while (it != last &&
-			(
-					(*it == 0xa && newLineAsWhiteSpace)
-				||	(*it == 0xd && newLineAsWhiteSpace)
-				||	*it == ' '
-				||	*it == '\t'
-				||	(storeComments && *it == '/' && it+1 != last && *(it+1) == '/')
-				||	(storeComments && *it == '/' && it+1 != last && *(it+1) == '*')
-			))
+	while (it != last && ((*it == 0xa && newLineAsWhiteSpace) || (*it == 0xd && newLineAsWhiteSpace) || *it == ' ' || *it == '\t' || (storeComments && *it == '/' && it + 1 != last && *(it + 1) == '/') || (storeComments && *it == '/' && it + 1 != last && *(it + 1) == '*')))
 	{
-		if (storeComments && *it == '/' && it+1 != last && *(it+1) == '/')
+		if (storeComments && *it == '/' && it + 1 != last && *(it + 1) == '/')
 		{
 			// found a one line C comment. Store it until end of line.
 			while (it != last && (*it != '\n' && *it != '\r'))
@@ -574,7 +565,7 @@ void CI18N::skipWhiteSpace(ucstring::const_iterator &it, ucstring::const_iterato
 			if (it != last)
 				storeComments->push_back('\n');
 		}
-		else if (storeComments && *it == '/' && it+1 != last && *(it+1) == '*')
+		else if (storeComments && *it == '/' && it + 1 != last && *(it + 1) == '*')
 		{
 			// found a multi line C++ comment. store until we found the closing '*/'
 			while (it != last && !(*it == '*' && it + 1 != last && *(it + 1) == '/'))
@@ -616,15 +607,7 @@ bool CI18N::parseLabel(ucstring::const_iterator &it, ucstring::const_iterator &l
 	label.erase();
 
 	// first char must be A-Za-z@_
-	if (it != last &&
-			(
-				(*it >= '0' && *it <= '9')
-			||	(*it >= 'A' && *it <= 'Z')
-			||	(*it >= 'a' && *it <= 'z')
-			||	(*it == '_')
-			||	(*it == '@')
-			)
-		)
+	if (it != last && ((*it >= '0' && *it <= '9') || (*it >= 'A' && *it <= 'Z') || (*it >= 'a' && *it <= 'z') || (*it == '_') || (*it == '@')))
 		label.push_back(char(*it++));
 	else
 	{
@@ -633,15 +616,7 @@ bool CI18N::parseLabel(ucstring::const_iterator &it, ucstring::const_iterator &l
 	}
 
 	// other char must be [0-9A-Za-z@_]*
-	while (it != last &&
-			(
-				(*it >= '0' && *it <= '9')
-			||	(*it >= 'A' && *it <= 'Z')
-			||	(*it >= 'a' && *it <= 'z')
-			||	(*it == '_')
-			||	(*it == '@')
-			)
-		)
+	while (it != last && ((*it >= '0' && *it <= '9') || (*it >= 'A' && *it <= 'Z') || (*it >= 'a' && *it <= 'z') || (*it == '_') || (*it == '@')))
 		label.push_back(char(*it++));
 
 	return true;
@@ -665,14 +640,14 @@ bool CI18N::parseMarkedString(ucchar openMark, ucchar closeMark, ucstring::const
 				return false;
 			}
 			if (*it == '\t'
-				|| (*it == '\n' && allowNewline)
-				|| *it == '\r')
+			    || (*it == '\n' && allowNewline)
+			    || *it == '\r')
 				++it;
-			else if (*it == '\\' && it+1 != last && *(it+1) != '\\')
+			else if (*it == '\\' && it + 1 != last && *(it + 1) != '\\')
 			{
 				++it;
 				// this is an escape sequence !
-				switch(*it)
+				switch (*it)
 				{
 				case 't':
 					result.push_back('\t');
@@ -686,10 +661,10 @@ bool CI18N::parseMarkedString(ucchar openMark, ucchar closeMark, ucstring::const
 					break;
 				default:
 					// escape the close mark ?
-					if(*it == closeMark)
+					if (*it == closeMark)
 						result.push_back(closeMark);
 					// escape the open mark ?
-					else if(*it == openMark)
+					else if (*it == openMark)
 						result.push_back(openMark);
 					else
 					{
@@ -699,7 +674,7 @@ bool CI18N::parseMarkedString(ucchar openMark, ucchar closeMark, ucstring::const
 				}
 				++it;
 			}
-			else if (*it == '\\' && it+1 != last && *(it+1) == '\\')
+			else if (*it == '\\' && it + 1 != last && *(it + 1) == '\\')
 			{
 				// escape the \ char
 				++it;
@@ -734,11 +709,11 @@ bool CI18N::parseMarkedString(ucchar openMark, ucchar closeMark, ucstring::const
 }
 
 void CI18N::readTextFile(const string &filename,
-						 ucstring &result,
-						 bool fileLookup,
-						 bool preprocess,
-						 TLineFormat lineFmt,
-						 bool warnIfIncludesNotFound)
+    ucstring &result,
+    bool fileLookup,
+    bool preprocess,
+    TLineFormat lineFmt,
+    bool warnIfIncludesNotFound)
 {
 	// create the read context
 	TReadContext readContext;
@@ -748,11 +723,11 @@ void CI18N::readTextFile(const string &filename,
 
 	if (!readContext.IfStack.empty())
 	{
-		nlwarning("Preprocess: Missing %u closing #endif after parsing %s", (uint)readContext.IfStack.size(), filename.c_str() );
+		nlwarning("Preprocess: Missing %u closing #endif after parsing %s", (uint)readContext.IfStack.size(), filename.c_str());
 	}
 }
 
-bool CI18N::matchToken(const char* token, ucstring::const_iterator &it, ucstring::const_iterator end)
+bool CI18N::matchToken(const char *token, ucstring::const_iterator &it, ucstring::const_iterator end)
 {
 	ucstring::const_iterator rewind = it;
 	skipWhiteSpace(it, end, NULL, false);
@@ -786,16 +761,16 @@ void CI18N::skipLine(ucstring::const_iterator &it, ucstring::const_iterator end,
 }
 
 void CI18N::_readTextFile(const string &filename,
-						 ucstring &result,
-						 bool fileLookup,
-						 bool preprocess,
-						 TLineFormat lineFmt,
-						 bool warnIfIncludesNotFound,
-						 TReadContext &readContext)
+    ucstring &result,
+    bool fileLookup,
+    bool preprocess,
+    TLineFormat lineFmt,
+    bool warnIfIncludesNotFound,
+    TReadContext &readContext)
 {
 	string fullName;
 	if (fileLookup)
-		fullName = CPath::lookup(filename, false,warnIfIncludesNotFound);
+		fullName = CPath::lookup(filename, false, warnIfIncludesNotFound);
 	else
 		fullName = filename;
 
@@ -810,17 +785,17 @@ void CI18N::_readTextFile(const string &filename,
 		return;
 	}
 
-	NLMISC::CIFile	file(fullName);
+	NLMISC::CIFile file(fullName);
 
 	// Fast read all the text in binary mode.
 	string text;
 	text.resize(file.getFileSize());
 	if (file.getFileSize() > 0)
-		file.serialBuffer((uint8*)(&text[0]), (uint)text.size());
+		file.serialBuffer((uint8 *)(&text[0]), (uint)text.size());
 
 	// Transform the string in ucstring according to format header
 	if (!text.empty())
-		readTextBuffer((uint8*)&text[0], (uint)text.size(), result);
+		readTextBuffer((uint8 *)&text[0], (uint)text.size(), result);
 
 	if (preprocess)
 	{
@@ -879,21 +854,21 @@ void CI18N::_readTextFile(const string &filename,
 								if (!CFile::fileExists(subFilename))
 								{
 									// look for the file relative to current file
-									subFilename = CFile::getPath(filename)+subFilename;
+									subFilename = CFile::getPath(filename) + subFilename;
 									if (!CFile::fileExists(subFilename))
 									{
 										// the include file is not found, issue a warning
 										nlwarning("Preprocess: In file %s(%u) : Cannot include file '%s'",
-											filename.c_str(), currentLine,
-											str.toString().c_str());
+										    filename.c_str(), currentLine,
+										    str.toString().c_str());
 
 										break;
 									}
 								}
 
 								nlinfo("Preprocess: In file %s(%u) : Including '%s'",
-									filename.c_str(), currentLine,
-									subFilename.c_str());
+								    filename.c_str(), currentLine,
+								    subFilename.c_str());
 
 								ucstring inserted;
 								_readTextFile(subFilename, inserted, fileLookup, preprocess, lineFmt, warnIfIncludesNotFound, readContext);
@@ -932,22 +907,22 @@ void CI18N::_readTextFile(const string &filename,
 								if (!CFile::fileExists(subFilename))
 								{
 									// look for the file relative to current file
-									subFilename = CFile::getPath(filename)+subFilename;
+									subFilename = CFile::getPath(filename) + subFilename;
 									if (!CFile::fileExists(subFilename))
 									{
 										// not found but optional, only emit a debug log
 										// the include file is not found, issue a warning
 										nldebug("Preprocess: In file %s(%u) : Cannot include optional file '%s'",
-											filename.c_str(), currentLine,
-											str.toString().c_str());
+										    filename.c_str(), currentLine,
+										    str.toString().c_str());
 
 										break;
 									}
 								}
 
 								nlinfo("Preprocess: In file %s(%u) : Including optional '%s'",
-									filename.c_str(), currentLine,
-									subFilename.c_str());
+								    filename.c_str(), currentLine,
+								    subFilename.c_str());
 
 								ucstring inserted;
 								_readTextFile(subFilename, inserted, fileLookup, preprocess, lineFmt, warnIfIncludesNotFound, readContext);
@@ -972,8 +947,8 @@ void CI18N::_readTextFile(const string &filename,
 							if (readContext.Defines.find(label) != readContext.Defines.end())
 							{
 								nlinfo("Preprocess: In file %s(%u) : symbol '%s' already defined",
-									filename.c_str(), currentLine,
-									label.c_str());
+								    filename.c_str(), currentLine,
+								    label.c_str());
 							}
 							else
 							{
@@ -999,7 +974,7 @@ void CI18N::_readTextFile(const string &filename,
 						string label;
 						if (parseLabel(it, end, label))
 						{
-							if (readContext.Defines.find(label) != 	readContext.Defines.end())
+							if (readContext.Defines.find(label) != readContext.Defines.end())
 							{
 								// symbol defined, push a true
 								readContext.IfStack.push_back(true);
@@ -1036,7 +1011,7 @@ void CI18N::_readTextFile(const string &filename,
 						string label;
 						if (parseLabel(it, end, label))
 						{
-							if (readContext.Defines.find(label) == 	readContext.Defines.end())
+							if (readContext.Defines.find(label) == readContext.Defines.end())
 							{
 								// symbol defined, push a true
 								readContext.IfStack.push_back(true);
@@ -1086,13 +1061,13 @@ void CI18N::_readTextFile(const string &filename,
 						final += toString("#fileline \"%s\" %u\n", filename.c_str(), currentLine);
 					}
 					// update filename and line number
-//					final += toString("#fileline \"%s\" %u\n", filename.c_str(), currentLine);
+					//					final += toString("#fileline \"%s\" %u\n", filename.c_str(), currentLine);
 				}
 				else
 				{
 					// unrecognized command, ignore line
 					nlwarning("Preprocess: In file %s(%u) : Error unrecognized preprocessor command",
-						filename.c_str(), currentLine);
+					    filename.c_str(), currentLine);
 
 					skipLine(it, end, currentLine);
 					// update filename and line number
@@ -1127,21 +1102,21 @@ void CI18N::_readTextFile(const string &filename,
 			string::size_type lastPos = 0;
 			ucstring temp;
 			// reserve some place to reduce re-allocation
-			temp.reserve(result.size() +result.size()/10);
+			temp.reserve(result.size() + result.size() / 10);
 
 			// look for the first \r
 			pos = result.find('\r');
 			while (pos != string::npos)
 			{
-				if (pos < result.size()-1 && result[pos+1] == '\n')
+				if (pos < result.size() - 1 && result[pos + 1] == '\n')
 				{
-					temp.append(result.begin()+lastPos, result.begin()+pos);
+					temp.append(result.begin() + lastPos, result.begin() + pos);
 					pos += 1;
 				}
 				else
 				{
-					temp.append(result.begin()+lastPos, result.begin()+pos);
-					temp[temp.size()-1] = '\n';
+					temp.append(result.begin() + lastPos, result.begin() + pos);
+					temp[temp.size() - 1] = '\n';
 				}
 
 				lastPos = pos;
@@ -1150,7 +1125,7 @@ void CI18N::_readTextFile(const string &filename,
 			}
 
 			// copy the rest
-			temp.append(result.begin()+lastPos, result.end());
+			temp.append(result.begin() + lastPos, result.end());
 
 			result.swap(temp);
 		}
@@ -1162,18 +1137,17 @@ void CI18N::_readTextFile(const string &filename,
 
 			ucstring temp;
 			// reserve some place to reduce re-allocation
-			temp.reserve(result.size() +result.size()/10);
-
+			temp.reserve(result.size() + result.size() / 10);
 
 			// first loop with the '\r'
 			pos = result.find('\r', pos);
 			while (pos != string::npos)
 			{
-				if (pos >= result.size()-1 || result[pos+1] != '\n')
+				if (pos >= result.size() - 1 || result[pos + 1] != '\n')
 				{
-					temp.append(result.begin()+lastPos, result.begin()+pos+1);
+					temp.append(result.begin() + lastPos, result.begin() + pos + 1);
 					temp += '\n';
-					lastPos = pos+1;
+					lastPos = pos + 1;
 				}
 				// skip this char
 				pos++;
@@ -1183,7 +1157,7 @@ void CI18N::_readTextFile(const string &filename,
 			}
 
 			// copy the rest
-			temp.append(result.begin()+lastPos, result.end());
+			temp.append(result.begin() + lastPos, result.end());
 			result.swap(temp);
 
 			temp.clear();
@@ -1194,12 +1168,12 @@ void CI18N::_readTextFile(const string &filename,
 			pos = result.find('\n', pos);
 			while (pos != string::npos)
 			{
-				if (pos == 0 || result[pos-1] != '\r')
+				if (pos == 0 || result[pos - 1] != '\r')
 				{
-					temp.append(result.begin()+lastPos, result.begin()+pos);
+					temp.append(result.begin() + lastPos, result.begin() + pos);
 					temp += '\r';
 					temp += '\n';
-					lastPos = pos+1;
+					lastPos = pos + 1;
 				}
 				// skip this char
 				pos++;
@@ -1208,7 +1182,7 @@ void CI18N::_readTextFile(const string &filename,
 			}
 
 			// copy the rest
-			temp.append(result.begin()+lastPos, result.end());
+			temp.append(result.begin() + lastPos, result.end());
 			result.swap(temp);
 		}
 	}
@@ -1220,61 +1194,51 @@ void CI18N::readTextBuffer(uint8 *buffer, uint size, ucstring &result)
 	static uint8 utf16RevHeader[] = { 0xfeu, 0xffu };
 	static uint8 utf8Header[] = { 0xefu, 0xbbu, 0xbfu };
 
-	if (size>=3 &&
-			 buffer[0]==utf8Header[0] &&
-			 buffer[1]==utf8Header[1] &&
-			 buffer[2]==utf8Header[2]
-			)
+	if (size >= 3 && buffer[0] == utf8Header[0] && buffer[1] == utf8Header[1] && buffer[2] == utf8Header[2])
 	{
 		// remove utf8 header
-		buffer+= 3;
-		size-=3;
-		string text((char*)buffer, size);
+		buffer += 3;
+		size -= 3;
+		string text((char *)buffer, size);
 		result.fromUtf8(text);
 	}
-	else if (size>=2 &&
-			 buffer[0]==utf16Header[0] &&
-			 buffer[1]==utf16Header[1]
-			)
+	else if (size >= 2 && buffer[0] == utf16Header[0] && buffer[1] == utf16Header[1])
 	{
 		// remove utf16 header
-		buffer+= 2;
-		size-= 2;
+		buffer += 2;
+		size -= 2;
 		// check pair number of bytes
 		nlassert((size & 1) == 0);
 		// and do manual conversion
-		uint16 *src = (uint16*)(buffer);
-		result.resize(size/2);
-		for (uint j=0; j<result.size(); j++)
-			result[j]= *src++;
+		uint16 *src = (uint16 *)(buffer);
+		result.resize(size / 2);
+		for (uint j = 0; j < result.size(); j++)
+			result[j] = *src++;
 	}
-	else if (size>=2 &&
-			 buffer[0]==utf16RevHeader[0] &&
-			 buffer[1]==utf16RevHeader[1]
-			)
+	else if (size >= 2 && buffer[0] == utf16RevHeader[0] && buffer[1] == utf16RevHeader[1])
 	{
 		// remove utf16 header
-		buffer+= 2;
-		size-= 2;
+		buffer += 2;
+		size -= 2;
 		// check pair number of bytes
 		nlassert((size & 1) == 0);
 		// and do manual conversion
-		uint16 *src = (uint16*)(buffer);
-		result.resize(size/2);
+		uint16 *src = (uint16 *)(buffer);
+		result.resize(size / 2);
 		uint j;
-		for (j=0; j<result.size(); j++)
-			result[j]= *src++;
+		for (j = 0; j < result.size(); j++)
+			result[j] = *src++;
 		//  Reverse byte order
-		for (j=0; j<result.size(); j++)
+		for (j = 0; j < result.size(); j++)
 		{
-			uint8 *pc = (uint8*) &result[j];
+			uint8 *pc = (uint8 *)&result[j];
 			swap(pc[0], pc[1]);
 		}
 	}
 	else
 	{
 		// all text files without BOM are now parsed as UTF-8 by default
-		string text((char*)buffer, size);
+		string text((char *)buffer, size);
 		result.fromUtf8(text);
 	}
 }
@@ -1290,7 +1254,7 @@ void CI18N::writeTextFile(const string filename, const ucstring &content, bool u
 		file.serial(unicodeTag);
 
 		uint i;
-		for (i=0; i<content.size(); ++i)
+		for (i = 0; i < content.size(); ++i)
 		{
 			uint16 c = content[i];
 			file.serial(c);
@@ -1298,14 +1262,14 @@ void CI18N::writeTextFile(const string filename, const ucstring &content, bool u
 	}
 	else
 	{
-		static char utf8Header[] = {char(0xef), char(0xbb), char(0xbf), 0};
+		static char utf8Header[] = { char(0xef), char(0xbb), char(0xbf), 0 };
 
 		string str = encodeUTF8(content);
 		// add the UTF-8 'not official' header
 		str = utf8Header + str;
 
 		uint i;
-		for (i=0; i<str.size(); ++i)
+		for (i = 0; i < str.size(); ++i)
 		{
 			file.serial(str[i]);
 		}
@@ -1363,23 +1327,23 @@ U-00200000 - U-03FFFFFF:  111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
 U-04000000 - U-7FFFFFFF:  1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
 */
 
-uint64	CI18N::makeHash(const ucstring &str)
+uint64 CI18N::makeHash(const ucstring &str)
 {
 	// we do at least 8 pass on each result byte
 	if (str.empty())
 		return 0;
-	const	uint32	MIN_TURN = 8*8;
-	uint64	hash = 0;
-	uint8	*ph = (uint8*)&hash;
-	uint8	*pc = (uint8*)str.data();
+	const uint32 MIN_TURN = 8 * 8;
+	uint64 hash = 0;
+	uint8 *ph = (uint8 *)&hash;
+	uint8 *pc = (uint8 *)str.data();
 
-	uint nbLoop = max(uint32(str.size()*2), MIN_TURN);
+	uint nbLoop = max(uint32(str.size() * 2), MIN_TURN);
 	uint roll = 0;
 
-	for (uint i=0; i<nbLoop; ++i)
+	for (uint i = 0; i < nbLoop; ++i)
 	{
-		ph[(i/2) & 0x7] = uint8((ph[(i/2) & 0x7] + (pc[i%(str.size()*2)] << roll)) & 0xff);
-		ph[(i/2) & 0x7] = uint8((ph[(i/2) & 0x7] + (pc[i%(str.size()*2)] >> (8-roll))) & 0xff);
+		ph[(i / 2) & 0x7] = uint8((ph[(i / 2) & 0x7] + (pc[i % (str.size() * 2)] << roll)) & 0xff);
+		ph[(i / 2) & 0x7] = uint8((ph[(i / 2) & 0x7] + (pc[i % (str.size() * 2)] >> (8 - roll))) & 0xff);
 
 		roll++;
 		roll &= 0x7;
@@ -1398,16 +1362,16 @@ string CI18N::hashToString(uint64 hash)
 }
 
 // fast convert a hash value to a ucstring
-void	CI18N::hashToUCString(uint64 hash, ucstring &dst)
+void CI18N::hashToUCString(uint64 hash, ucstring &dst)
 {
-	static ucchar	cvtTable[]= {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+	static ucchar cvtTable[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 	dst.resize(16);
-	for(sint i=15;i>=0;i--)
+	for (sint i = 15; i >= 0; i--)
 	{
 		// Must decal dest of 8, cause of hashToString code (Little Endian)
-		dst[(i+8)&15]= cvtTable[hash&15];
-		hash>>=4;
+		dst[(i + 8) & 15] = cvtTable[hash & 15];
+		hash >>= 4;
 	}
 }
 
@@ -1415,7 +1379,7 @@ void	CI18N::hashToUCString(uint64 hash, ucstring &dst)
 uint64 CI18N::stringToHash(const string &str)
 {
 	nlassert(str.size() == 16);
-	uint32	low, high;
+	uint32 low, high;
 
 	string sl, sh;
 	sh = str.substr(0, 8);
@@ -1427,7 +1391,7 @@ uint64 CI18N::stringToHash(const string &str)
 	uint64 hash;
 
 	memcpy(&hash, &high, sizeof(high));
-	memcpy((uint32*)&hash + 1, &low, sizeof(low));
+	memcpy((uint32 *)&hash + 1, &low, sizeof(low));
 
 	return hash;
 }

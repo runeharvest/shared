@@ -21,89 +21,86 @@
 #include "nel/misc/vector.h"
 
 #ifndef OBJECT_VIEWER_EXPORT
-#define OBJECT_VIEWER_EXPORT __declspec( dllimport )
+#define OBJECT_VIEWER_EXPORT __declspec(dllimport)
 #endif // OBJECT_VIEWER_EXPORT
 
 // Increment this version number each time you distribute a new version of the dll.
 #define OBJECT_VIEWER_VERSION 4
 
-namespace NL3D
-{
-	class IShape;
-	class CAnimation;
-	class CLight;
-	class CTransformShape;
-	class CSkeletonModel;
-	class CWaterPoolManager;
-	class CCameraInfo;
-	class CAnimationSet;
-	class CInstanceGroup;
+namespace NL3D {
+class IShape;
+class CAnimation;
+class CLight;
+class CTransformShape;
+class CSkeletonModel;
+class CWaterPoolManager;
+class CCameraInfo;
+class CAnimationSet;
+class CInstanceGroup;
 }
 
-namespace NLMISC
-{
-	class CRGBA;
+namespace NLMISC {
+class CRGBA;
 }
 
-namespace NLPACS
-{
-	class	CRetrieverBank;
-	class	CGlobalRetriever;
+namespace NLPACS {
+class CRetrieverBank;
+class CGlobalRetriever;
 }
 
 class IObjectViewer
 {
 public:
-	virtual ~IObjectViewer () {}
+	virtual ~IObjectViewer() { }
 
 	// Init the UI
-	virtual bool initUI (HWND parent=NULL) = 0;
+	virtual bool initUI(HWND parent = NULL) = 0;
 
 	// Test whether an instance of the viewer is running
 	virtual bool isInstanceRunning() = 0;
 
 	// Go. It shouldn't be called if there's an instance of the viewer that is running.
-	virtual void go () = 0;
+	virtual void go() = 0;
 
 	// Release the UI
-	virtual void releaseUI () = 0;
+	virtual void releaseUI() = 0;
 
 	// Add a mesh
-	virtual uint addMesh(NL3D::IShape* pMeshShape, const std::string &meshName, uint skelIndex, const char* bindSkelName = NULL, bool createInstance = true) = 0;
+	virtual uint addMesh(NL3D::IShape *pMeshShape, const std::string &meshName, uint skelIndex, const char *bindSkelName = NULL, bool createInstance = true) = 0;
 
 	// Add a skel
-	virtual uint addSkel (NL3D::IShape* pSkelShape, const std::string &skelName) = 0;
+	virtual uint addSkel(NL3D::IShape *pSkelShape, const std::string &skelName) = 0;
 
 	// Add a camera
-	virtual uint addCamera (const NL3D::CCameraInfo &cameraInfo, const std::string &cameraName) = 0;
+	virtual uint addCamera(const NL3D::CCameraInfo &cameraInfo, const std::string &cameraName) = 0;
 
 	// remove all the instance from the scene
-	virtual void					 removeAllInstancesFromScene() = 0;
+	virtual void removeAllInstancesFromScene() = 0;
 
 	// Load a mesh
-	virtual bool loadMesh (std::vector<std::string> &meshFilename, const std::string &skeleton) = 0;
+	virtual bool loadMesh(std::vector<std::string> &meshFilename, const std::string &skeleton) = 0;
 
 	// Load a shape
-	virtual void resetCamera () = 0;
+	virtual void resetCamera() = 0;
 
 	// Set single animation
-	virtual void setSingleAnimation (NL3D::CAnimation* pAnim, const std::string &name, uint instance) = 0;
+	virtual void setSingleAnimation(NL3D::CAnimation *pAnim, const std::string &name, uint instance) = 0;
 
 	// Set automatic animation
-	virtual void setAutoAnimation (NL3D::CAnimationSet* pAnimSet) = 0;
+	virtual void setAutoAnimation(NL3D::CAnimationSet *pAnimSet) = 0;
 
 	// Set ambient color
-	virtual void setAmbientColor (const NLMISC::CRGBA& color) = 0;
+	virtual void setAmbientColor(const NLMISC::CRGBA &color) = 0;
 
 	// Set background color
-	virtual void setBackGroundColor (const NLMISC::CRGBA& color) = 0;
+	virtual void setBackGroundColor(const NLMISC::CRGBA &color) = 0;
 
 	// Set ambient color
-	virtual void setLight (unsigned char id, const NL3D::CLight& light) = 0;
+	virtual void setLight(unsigned char id, const NL3D::CLight &light) = 0;
 
-	/** set the water pool manager used by the object viewer. Must be the same than tyhe one of the dll which created the models 
-	  * (because the 3d lib is duplicated : one version in the viewer, and one version in the exporter)
-	  */
+	/** set the water pool manager used by the object viewer. Must be the same than tyhe one of the dll which created the models
+	 * (because the 3d lib is duplicated : one version in the viewer, and one version in the exporter)
+	 */
 	virtual void setWaterPoolManager(NL3D::CWaterPoolManager &wpm) = 0;
 
 	/** Add an InstanceGroup. ptr Will be deleted by objectViewer.
@@ -119,12 +116,11 @@ public:
 	 */
 	virtual void enableDynamicObjectLightingTest(NLPACS::CGlobalRetriever *globalRetriever, NL3D::CInstanceGroup *ig) = 0;
 
-
 	// Get instance
-	static OBJECT_VIEWER_EXPORT IObjectViewer* getInterface (int version=OBJECT_VIEWER_VERSION);
+	static OBJECT_VIEWER_EXPORT IObjectViewer *getInterface(int version = OBJECT_VIEWER_VERSION);
 
 	// Release instance
-	static OBJECT_VIEWER_EXPORT void releaseInterface (IObjectViewer* view);
+	static OBJECT_VIEWER_EXPORT void releaseInterface(IObjectViewer *view);
 };
 
 #endif OBJECT_VIEWER_INTERFACE

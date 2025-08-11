@@ -58,10 +58,10 @@ using namespace NL3D;
 
 /*inline CMatrix convMatrix(const aiMatrix4x4 &tf)
 {
-	CMatrix m;
-	for (int i = 0; i < 16; ++i)
-		m.set(&tf.a1);
-	return m;
+    CMatrix m;
+    for (int i = 0; i < 16; ++i)
+        m.set(&tf.a1);
+    return m;
 }*/
 
 inline CVector convVector(const aiVector3D &av)
@@ -101,7 +101,7 @@ void assimpBuildBaseMesh(CMeshBase::CMeshBaseBuild &buildBaseMesh, CMeshUtilsCon
 		if (am->Get(AI_MATKEY_NAME, amname) != aiReturn_SUCCESS)
 		{
 			tlerror(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
-				"Material used by node '%s' has no name", node->mName.C_Str()); // TODO: Maybe autogen names by index in mesh or node if this is actually a thing
+			    "Material used by node '%s' has no name", node->mName.C_Str()); // TODO: Maybe autogen names by index in mesh or node if this is actually a thing
 			assimpMaterial(buildBaseMesh.Materials[mi], context, am);
 		}
 		else
@@ -125,7 +125,7 @@ void assimpBuildBaseMesh(CMeshBase::CMeshBaseBuild &buildBaseMesh, CMeshUtilsCon
 	if (buildBaseMesh.DefaultScale.x != 1.0f || buildBaseMesh.DefaultScale.y != 1.0f || buildBaseMesh.DefaultScale.z != 1.0f)
 	{
 		tlmessage(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
-			"Node '%s' has a scaled transformation. This may be a mistake", node->mName.C_Str());
+		    "Node '%s' has a scaled transformation. This may be a mistake", node->mName.C_Str());
 	}
 
 	// Meta
@@ -153,19 +153,19 @@ bool assimpBuildMesh(CMesh::CMeshBuild &buildMesh, CMeshBase::CMeshBaseBuild &bu
 		if (mesh->GetNumColorChannels() > 2)
 		{
 			tlerror(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
-				"(%s) mesh->GetNumColorChannels() > 2", node->mName.C_Str());
+			    "(%s) mesh->GetNumColorChannels() > 2", node->mName.C_Str());
 			return false;
 		}
 		if (mesh->GetNumUVChannels() > CVertexBuffer::MaxStage)
 		{
 			tlerror(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
-				"(%s) mesh->GetNumUVChannels() > CVertexBuffer::MaxStage", node->mName.C_Str());
+			    "(%s) mesh->GetNumUVChannels() > CVertexBuffer::MaxStage", node->mName.C_Str());
 			return false;
 		}
 		if (!mesh->HasNormals())
 		{
 			tlerror(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
-				"(%s) !mesh->HasNormals()", node->mName.C_Str());
+			    "(%s) !mesh->HasNormals()", node->mName.C_Str());
 			return false;
 		}
 	}
@@ -186,7 +186,7 @@ bool assimpBuildMesh(CMesh::CMeshBuild &buildMesh, CMeshBase::CMeshBaseBuild &bu
 	buildMesh.Vertices.resize(numVertices);
 	numVertices = 0;
 	map<CVector, sint32> vertexIdentifiers;
-	vector<vector<sint32> > vertexRemapping;
+	vector<vector<sint32>> vertexRemapping;
 	vertexRemapping.resize(node->mNumMeshes);
 	for (unsigned int mi = 0; mi < node->mNumMeshes; ++mi)
 	{
@@ -212,7 +212,7 @@ bool assimpBuildMesh(CMesh::CMeshBuild &buildMesh, CMeshBase::CMeshBaseBuild &bu
 	buildMesh.Vertices.resize(numVertices);
 
 	// Process all faces
-	// WONT IMPLEMENT: Radial faces generation... is linked to smoothing group... 
+	// WONT IMPLEMENT: Radial faces generation... is linked to smoothing group...
 	// leave radial normals generation to modeling tool for now...
 	sint32 numFaces = 0;
 	for (unsigned int mi = 0; mi < node->mNumMeshes; ++mi)
@@ -230,7 +230,7 @@ bool assimpBuildMesh(CMesh::CMeshBuild &buildMesh, CMeshBase::CMeshBaseBuild &bu
 		if (numColorChannels > 2)
 		{
 			tlerror(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
-				"Shape '%s' has too many color channels in mesh %i (%i channels found)", node->mName.C_Str(), mi, numColorChannels);
+			    "Shape '%s' has too many color channels in mesh %i (%i channels found)", node->mName.C_Str(), mi, numColorChannels);
 		}
 		if (numColorChannels > 0)
 		{
@@ -244,7 +244,7 @@ bool assimpBuildMesh(CMesh::CMeshBuild &buildMesh, CMeshBase::CMeshBaseBuild &bu
 		if (numUVChannels > CVertexBuffer::MaxStage)
 		{
 			tlerror(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
-				"Shape '%s' has too many uv channels in mesh %i (%i channels found)", node->mName.C_Str(), mi, numUVChannels);
+			    "Shape '%s' has too many uv channels in mesh %i (%i channels found)", node->mName.C_Str(), mi, numUVChannels);
 			numUVChannels = CVertexBuffer::MaxStage;
 		}
 		for (unsigned int ui = 0; ui < numUVChannels; ++ui)
@@ -253,10 +253,10 @@ bool assimpBuildMesh(CMesh::CMeshBuild &buildMesh, CMeshBase::CMeshBaseBuild &bu
 		// TODO: Channels do in fact differ between submeshes, so we need to correctly recount and reroute the materials properly
 		if (numColorChannels != refNumColorChannels)
 			tlerror(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
-				"Shape '%s' mismatch of nb color channel in mesh '%i', please contact developer", node->mName.C_Str(), mi);
+			    "Shape '%s' mismatch of nb color channel in mesh '%i', please contact developer", node->mName.C_Str(), mi);
 		if (numUVChannels != refNumUVChannels)
 			tlerror(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
-				"Shape '%s' mismatch of nb uv channel in mesh '%i', please contact developer", node->mName.C_Str(), mi);
+			    "Shape '%s' mismatch of nb uv channel in mesh '%i', please contact developer", node->mName.C_Str(), mi);
 
 		for (unsigned int fi = 0; fi < mesh->mNumFaces; ++fi)
 		{
@@ -264,14 +264,14 @@ bool assimpBuildMesh(CMesh::CMeshBuild &buildMesh, CMeshBase::CMeshBaseBuild &bu
 			if (af.mNumIndices != 3)
 			{
 				tlerror(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
-					"(%s) Face %i on mesh %i has %i faces", node->mName.C_Str(), fi, mi, af.mNumIndices);
+				    "(%s) Face %i on mesh %i has %i faces", node->mName.C_Str(), fi, mi, af.mNumIndices);
 				continue; // return false; Keep going, just drop the face for better user experience
 			}
 			if (cleanupMesh)
 			{
 				if (vertexRemapping[mi][af.mIndices[0]] == vertexRemapping[mi][af.mIndices[1]]
-					|| vertexRemapping[mi][af.mIndices[1]] == vertexRemapping[mi][af.mIndices[2]]
-					|| vertexRemapping[mi][af.mIndices[2]] == vertexRemapping[mi][af.mIndices[0]])
+				    || vertexRemapping[mi][af.mIndices[1]] == vertexRemapping[mi][af.mIndices[2]]
+				    || vertexRemapping[mi][af.mIndices[2]] == vertexRemapping[mi][af.mIndices[0]])
 					continue; // Not a triangle
 			}
 			CMesh::CFace &face = buildMesh.Faces[numFaces];
@@ -329,7 +329,7 @@ bool assimpBuildMesh(CMesh::CMeshBuild &buildMesh, CMeshBase::CMeshBaseBuild &bu
 	if (numFaces != buildMesh.Faces.size())
 	{
 		tlmessage(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
-			"Removed %u degenerate faces in shape '%s'", (uint32)(buildMesh.Faces.size() - numFaces), node->mName.C_Str());
+		    "Removed %u degenerate faces in shape '%s'", (uint32)(buildMesh.Faces.size() - numFaces), node->mName.C_Str());
 		buildMesh.Faces.resize(numFaces);
 	}
 
@@ -339,7 +339,7 @@ bool assimpBuildMesh(CMesh::CMeshBuild &buildMesh, CMeshBase::CMeshBaseBuild &bu
 
 	// TODO: Export VP
 	buildMesh.MeshVertexProgram = NULL;
-	
+
 	return true;
 }
 

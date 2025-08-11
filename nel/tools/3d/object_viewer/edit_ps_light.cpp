@@ -22,20 +22,18 @@
 #include "edit_ps_light.h"
 #include "attrib_dlg.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CEditPSLight dialog
 
-
 //***************************************************************************************
-CEditPSLight::CEditPSLight(CParticleWorkspace::CNode *ownerNode, NL3D::CPSLight *light) 
-						  :	_Node(ownerNode),
-							_ColorDlg(NULL),
-							_AttenStartDlg(NULL),
-							_AttenEndDlg(NULL)
+CEditPSLight::CEditPSLight(CParticleWorkspace::CNode *ownerNode, NL3D::CPSLight *light)
+    : _Node(ownerNode)
+    , _ColorDlg(NULL)
+    , _AttenStartDlg(NULL)
+    , _AttenEndDlg(NULL)
 {
 	//{{AFX_DATA_INIT(CEditPSLight)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 	nlassert(light);
 	_Light = light;
@@ -61,20 +59,19 @@ CEditPSLight::~CEditPSLight()
 	}
 }
 
-
 //***************************************************************************************
-void CEditPSLight::DoDataExchange(CDataExchange* pDX)
+void CEditPSLight::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CEditPSLight)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
 //***************************************************************************************
-void CEditPSLight::init(CWnd* pParent /*=NULL*/)
+void CEditPSLight::init(CWnd *pParent /*=NULL*/)
 {
-	Create(IDD_PS_LIGHT, pParent);	
+	Create(IDD_PS_LIGHT, pParent);
 	nlassert(_Light);
 	//
 	RECT r;
@@ -82,7 +79,7 @@ void CEditPSLight::init(CWnd* pParent /*=NULL*/)
 	//
 	_ColorDlg = new CAttribDlgRGBA("LIGHT_COLOR", _Node);
 	_ColorWrapper.L = _Light;
-	_ColorDlg->setWrapper(&_ColorWrapper);	
+	_ColorDlg->setWrapper(&_ColorWrapper);
 	_ColorDlg->setSchemeWrapper(&_ColorWrapper);
 	GetDlgItem(IDC_COLOR_PLACEHOLDER)->GetWindowRect(&r);
 	ScreenToClient(&r);
@@ -91,8 +88,8 @@ void CEditPSLight::init(CWnd* pParent /*=NULL*/)
 	//
 	_AttenStartDlg = new CAttribDlgFloat("LIGHT_ATTEN_START", _Node, 0.01f, 5.f);
 	_AttenStartDlg->enableLowerBound(0.01f, true);
-	_AttenStartWrapper.L = _Light;	
-	_AttenStartDlg->setWrapper(&_AttenStartWrapper);	
+	_AttenStartWrapper.L = _Light;
+	_AttenStartDlg->setWrapper(&_AttenStartWrapper);
 	_AttenStartDlg->setSchemeWrapper(&_AttenStartWrapper);
 	GetDlgItem(IDC_ATTEN_START_PLACEHOLDER)->GetWindowRect(&r);
 	ScreenToClient(&r);
@@ -102,23 +99,21 @@ void CEditPSLight::init(CWnd* pParent /*=NULL*/)
 	_AttenEndDlg = new CAttribDlgFloat("LIGHT_ATTEN_END", _Node, 0.01f, 5.f);
 	_AttenEndDlg->enableLowerBound(0.01f, true);
 	_AttenEndWrapper.L = _Light;
-	_AttenEndDlg->setWrapper(&_AttenEndWrapper);	
+	_AttenEndDlg->setWrapper(&_AttenEndWrapper);
 	_AttenEndDlg->setSchemeWrapper(&_AttenEndWrapper);
 	GetDlgItem(IDC_ATTEN_END_PLACEHOLDER)->GetWindowRect(&r);
 	ScreenToClient(&r);
 	bmh = LoadBitmap(::AfxGetInstanceHandle(), MAKEINTRESOURCE(IDB_LIGHT_ATTEN_END));
 	_AttenEndDlg->init(bmh, r.left, r.top, this);
-	//	
-	ShowWindow(SW_SHOW); 
+	//
+	ShowWindow(SW_SHOW);
 	UpdateData(FALSE);
 }
 
-
-
 BEGIN_MESSAGE_MAP(CEditPSLight, CDialog)
-	//{{AFX_MSG_MAP(CEditPSLight)
-		// NOTE: the ClassWizard will add message map macros here
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CEditPSLight)
+// NOTE: the ClassWizard will add message map macros here
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////

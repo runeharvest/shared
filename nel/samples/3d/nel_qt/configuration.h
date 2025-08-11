@@ -48,13 +48,13 @@ public:
 
 	void init();
 	void release();
-	
+
 	void updateUtilities();
 
 	void setAndCallback(const std::string &varName, CConfigCallback configCallback);
 	void setCallback(const std::string &varName, CConfigCallback configCallback);
 	void dropCallback(const std::string &varName);
-	
+
 	float getValue(const std::string &varName, float defaultValue);
 	double getValue(const std::string &varName, double defaultValue);
 	int getValue(const std::string &varName, int defaultValue);
@@ -63,7 +63,7 @@ public:
 	bool getValue(const std::string &varName, bool defaultValue);
 	NLMISC::CRGBA getValue(const std::string &varName, const NLMISC::CRGBA &defaultValue);
 	NLMISC::CRGBA getValue(const NLMISC::CConfigFile::CVar &var, const NLMISC::CRGBA &defaultValue);
-	
+
 	inline NLMISC::CConfigFile &getConfigFile() { return m_ConfigFile; }
 
 private:
@@ -77,7 +77,7 @@ private:
 private:
 	NLMISC::CConfigFile m_ConfigFile;
 	std::map<std::string, CConfigCallback> m_ConfigCallbacks;
-	
+
 }; /* class CConfiguration */
 
 } /* namespace NLQT */

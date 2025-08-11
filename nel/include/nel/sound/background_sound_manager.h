@@ -28,14 +28,12 @@
 
 #include "audio_mixer_user.h"
 
-namespace NLLIGO
-{
-	class CPrimRegion;
-	class CLigoConfig;
+namespace NLLIGO {
+class CPrimRegion;
+class CLigoConfig;
 }
 
 namespace NLSOUND {
-
 
 class CListenerUser;
 class IPlayable;
@@ -43,8 +41,7 @@ class IBoundingShape;
 class CSourceCommon;
 
 /// Number of background layer. Layer are identified in .prim by a letter starting from 'a' (for layer 0)
-const uint32	BACKGROUND_LAYER = 5;	// 3 layer
-
+const uint32 BACKGROUND_LAYER = 5; // 3 layer
 
 /**
  * This manager handle the background sound :
@@ -77,18 +74,18 @@ public:
 	/** Load the background sounds from a CPrimRegion class.
 	 *	deprecated
 	 */
-//	void		loadSoundsFromRegion(const NLLIGO::CPrimRegion &region);
+	//	void		loadSoundsFromRegion(const NLLIGO::CPrimRegion &region);
 	/** Load the effects from a CPrimRegion class.
 	 *	deprecated
 	 */
-//	void		loadEffecsFromRegion(const NLLIGO::CPrimRegion &region);
+	//	void		loadEffecsFromRegion(const NLLIGO::CPrimRegion &region);
 	/** Load the samples banks from a CPrimRegion class.
 	 *	deprecated
 	 */
-//	void		loadSamplesFromRegion(const NLLIGO::CPrimRegion &region);
+	//	void		loadSamplesFromRegion(const NLLIGO::CPrimRegion &region);
 	/** Load the sounds, effects and sample banks from a region class.
-	*/
-	void		loadAudioFromPrimitives(const NLLIGO::IPrimitive &audioRoot);
+	 */
+	void loadAudioFromPrimitives(const NLLIGO::IPrimitive &audioRoot);
 
 	/** Load background sound for a continent. It'll automatically unload the old continent before loading the new one.
 	 * This method load the 'audio' regions (specifying the sounds), the 'effect' regions and the 'sample' regions.
@@ -97,25 +94,25 @@ public:
 	 * With the new primitive file, this method will try to load the .primitive file before
 	 * attempting to load any .prim file. If the .primitive is found, then no .prim are loaded.
 	 */
-	void		load (const std::string &continent, NLLIGO::CLigoConfig &config);
+	void load(const std::string &continent, NLLIGO::CLigoConfig &config);
 
 	/** Remove all data about the current continents
 	 */
-	void		unload ();
+	void unload();
 
 	/// Start to play the background sound.
-	void		play();
+	void play();
 	/// Stop the background sound.
-	void		stop();
+	void stop();
 
 	/// Call this method when the listener position change
-	void		setListenerPosition (const NLMISC::CVector &listenerPosition);
+	void setListenerPosition(const NLMISC::CVector &listenerPosition);
 
 	/// Call this method to update the background sound (sub method of setListenerPosition)
-	void		updateBackgroundStatus();
+	void updateBackgroundStatus();
 
 	// Call this function evenly to update the stuffs
-//	void		update ();
+	//	void		update ();
 
 	/// Return a patatoid. If isPath is not null, set it.
 	const std::vector<NLMISC::CVector> &getZone(uint32 zone, bool *isPath = 0);
@@ -126,15 +123,14 @@ public:
 	/// Get the background flags.
 	const UAudioMixer::TBackgroundFlags &getBackgroundFlags();
 	/// Set the background flags.
-	void		setBackgroundFlags(const UAudioMixer::TBackgroundFlags &backgroundFlags);
+	void setBackgroundFlags(const UAudioMixer::TBackgroundFlags &backgroundFlags);
 
 	const UAudioMixer::TBackgroundFilterFades &getBackgroundFilterFades();
-	void		setBackgroundFilterFades(const UAudioMixer::TBackgroundFilterFades &backgroundFilterFades);
+	void setBackgroundFilterFades(const UAudioMixer::TBackgroundFilterFades &backgroundFilterFades);
 
-	const float	*getFilterValues() { return _FilterFadeValues;}
+	const float *getFilterValues() { return _FilterFadeValues; }
 
 private:
-
 	// called by mixer when update registered.
 	void onUpdate();
 
@@ -144,14 +140,14 @@ private:
 	/// Constructor
 	CBackgroundSoundManager();
 	/// Destructor
-	virtual					~CBackgroundSoundManager();
+	virtual ~CBackgroundSoundManager();
 
 	/** Load the sounds from primitive */
-	void		loadSoundsFromPrimitives(const NLLIGO::IPrimitive &soundRoot);
+	void loadSoundsFromPrimitives(const NLLIGO::IPrimitive &soundRoot);
 	/** Load the sample banks from primitive */
-	void		loadSamplesFromPrimitives(const NLLIGO::IPrimitive &sampleRoot);
+	void loadSamplesFromPrimitives(const NLLIGO::IPrimitive &sampleRoot);
 	/** Load the sounds from primitive */
-	void		loadEffectsFromPrimitives(const NLLIGO::IPrimitive &fxRoot);
+	void loadEffectsFromPrimitives(const NLLIGO::IPrimitive &fxRoot);
 	// add a sound in a layer
 	void addSound(const std::string &soundName, uint layerId, const std::vector<NLLIGO::CPrimVector> &points, bool isPath);
 	/// deprecated, Internal use only for loading.
@@ -163,45 +159,44 @@ private:
 
 	/// TODO : Utility... should be in NLMISC ?
 	/*template <class CharType>
-		std::vector<std::basic_string<CharType> >	split(const std::basic_string<CharType> &str, CharType splitTag)
+	    std::vector<std::basic_string<CharType> >	split(const std::basic_string<CharType> &str, CharType splitTag)
 	{
-		std::vector<std::basic_string<CharType> >	splitted;
-		std::basic_string<CharType>::size_type pos = 0, nextPos = 0, size = 0;
+	    std::vector<std::basic_string<CharType> >	splitted;
+	    std::basic_string<CharType>::size_type pos = 0, nextPos = 0, size = 0;
 
-		while ((nextPos = str.find(splitTag, nextPos)) != std::basic_string<CharType>::npos)
-		{
-			size = nextPos - pos;
-			if (size > 0)
-				splitted.push_back(std::basic_string<CharType>(str, pos, nextPos - pos));
-			// skip the tag
-			nextPos += 1;
-			pos = nextPos;
-		}
-		// is there a last part ?
-		size = nextPos - pos;
-		if (pos != str.size())
-			splitted.push_back(std::basic_string<CharType>(str, pos, str.size() - pos));
+	    while ((nextPos = str.find(splitTag, nextPos)) != std::basic_string<CharType>::npos)
+	    {
+	        size = nextPos - pos;
+	        if (size > 0)
+	            splitted.push_back(std::basic_string<CharType>(str, pos, nextPos - pos));
+	        // skip the tag
+	        nextPos += 1;
+	        pos = nextPos;
+	    }
+	    // is there a last part ?
+	    size = nextPos - pos;
+	    if (pos != str.size())
+	        splitted.push_back(std::basic_string<CharType>(str, pos, str.size() - pos));
 
-		return splitted;
+	    return splitted;
 	}*/
 
-
 	/// Flag for playing background sounds.
-	bool					_Playing;
+	bool _Playing;
 
 	/// Background flags.
-	UAudioMixer::TBackgroundFlags			_BackgroundFlags;
+	UAudioMixer::TBackgroundFlags _BackgroundFlags;
 	/// Background filters fades
-	UAudioMixer::TBackgroundFilterFades		_BackgroundFilterFades;
+	UAudioMixer::TBackgroundFilterFades _BackgroundFilterFades;
 	/// The date of last fade in or out started for each filter
-	NLMISC::TTime							_FilterFadesStart[UAudioMixer::TBackgroundFlags::NB_BACKGROUND_FLAGS];
+	NLMISC::TTime _FilterFadesStart[UAudioMixer::TBackgroundFlags::NB_BACKGROUND_FLAGS];
 	/// The filter fade values.
-	float									_FilterFadeValues[UAudioMixer::TBackgroundFlags::NB_BACKGROUND_FLAGS];
+	float _FilterFadeValues[UAudioMixer::TBackgroundFlags::NB_BACKGROUND_FLAGS];
 	/// Is some fade in/out running?
-	bool									_DoFade;
+	bool _DoFade;
 
 	/// The last position of the listener.
-	NLMISC::CVector			_LastPosition;
+	NLMISC::CVector _LastPosition;
 
 	//@{
 	//\name Samples banks related thinks
@@ -210,22 +205,21 @@ private:
 	struct TBanksData
 	{
 		/// The list of samples banks that are active on this patatoid
-		std::vector<std::string>		Banks;
+		std::vector<std::string> Banks;
 		/// The min vector of the bounding box
-		NLMISC::CVector		MinBox;
+		NLMISC::CVector MinBox;
 		/// The max vector of the bounding box
-		NLMISC::CVector		MaxBox;
+		NLMISC::CVector MaxBox;
 		/// The vector of points composing the patatoid.
-		std::vector<NLMISC::CVector>	Points;
+		std::vector<NLMISC::CVector> Points;
 
 		void serial(NLMISC::IStream &s);
 	};
 	/// Container for the banks primitive.
-	std::vector<TBanksData>		_Banks;
+	std::vector<TBanksData> _Banks;
 	/// Container for the list of currently loaded banks.
-	std::set<std::string>		_LoadedBanks;
+	std::set<std::string> _LoadedBanks;
 	//@}
-
 
 	//@{
 	//\name Sounds related thinks
@@ -233,50 +227,55 @@ private:
 	struct TSoundData
 	{
 		/// The name of the sound.
-		NLMISC::TStringId	SoundName;
+		NLMISC::TStringId SoundName;
 		/// The reference to the sound.
-		CSound				*Sound;
+		CSound *Sound;
 		/// A source instance of the sound (may be NULL).
-		CSourceCommon		*Source;
+		CSourceCommon *Source;
 
 		/// The min vector of the bounding box
-		NLMISC::CVector		MinBox;
+		NLMISC::CVector MinBox;
 		/// The max vector of the bounding box
-		NLMISC::CVector		MaxBox;
+		NLMISC::CVector MaxBox;
 		/// The surface of the bounding box (used for patatoid competition)
-		float				Surface;
+		float Surface;
 		/// The max earing distance of the sound.
-		float				MaxDist;
+		float MaxDist;
 		/// Flag for path/patatoid sound.
-		bool				IsPath;
+		bool IsPath;
 		/// The vector of points compositing the primitive
-		std::vector<NLMISC::CVector>	Points;
+		std::vector<NLMISC::CVector> Points;
 		/// Flag telling if this sound is currently selected for play by bounding box.
-		bool				Selected;
+		bool Selected;
 
 		void serial(NLMISC::IStream &s);
 	};
 	/// Array of vector of sound data.
-	std::vector<TSoundData>		_Layers[BACKGROUND_LAYER];
+	std::vector<TSoundData> _Layers[BACKGROUND_LAYER];
 	// utility structure for audio mixing computation (see cpp)
 	struct TSoundStatus
 	{
 		/// The data of the sound.
-		TSoundData			&SoundData;
+		TSoundData &SoundData;
 		/// The position of the source.
-		NLMISC::CVector		Position;
+		NLMISC::CVector Position;
 		/** The relative gain of the source. This is used for patatoid competition.when
-		  * a smaller patatoid mute bigger one.
-		  */
-		float				Gain;
+		 * a smaller patatoid mute bigger one.
+		 */
+		float Gain;
 		/// The distance beween listener and source.
-		float				Distance;
+		float Distance;
 		/// flag if inside a sound zone
-		bool				Inside;
+		bool Inside;
 		/// Constructor.
 		TSoundStatus(TSoundData &sd, NLMISC::CVector position, float gain, float distance, bool inside)
-			: SoundData(sd), Position(position), Gain(gain), Distance(distance), Inside(inside)
-		{}
+		    : SoundData(sd)
+		    , Position(position)
+		    , Gain(gain)
+		    , Distance(distance)
+		    , Inside(inside)
+		{
+		}
 	};
 	//@}
 
@@ -286,27 +285,25 @@ private:
 	struct TFxZone
 	{
 		/// Name of the env fx
-		NLMISC::TStringId				FxName;
+		NLMISC::TStringId FxName;
 		/// The vector of points compositing the primitive
-		std::vector<NLMISC::CVector>	Points;
+		std::vector<NLMISC::CVector> Points;
 		/// The min vector of the bounding box
-		NLMISC::CVector					MinBox;
+		NLMISC::CVector MinBox;
 		/// The max vector of the bounding box
-		NLMISC::CVector					MaxBox;
+		NLMISC::CVector MaxBox;
 
 		void serial(NLMISC::IStream &s);
 	};
 	/// Container for the fx primitive.
-	std::vector<TFxZone>		_FxZones;
+	std::vector<TFxZone> _FxZones;
 	/// Last setted env fx. Used when clustered sound is not active
-	NLMISC::TStringId			_LastEnv;
+	NLMISC::TStringId _LastEnv;
 
 	//@}
 };
 
-
 } // NLSOUND
-
 
 #endif // NL_BACKGROUND_SOUND_MANAGER_H
 

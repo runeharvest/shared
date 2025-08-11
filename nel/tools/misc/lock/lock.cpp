@@ -21,16 +21,16 @@
 
 using namespace NLMISC;
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-	if (argc <3)
+	if (argc < 3)
 	{
-		printf ("lock [filein] [fleout]\n\t");
+		printf("lock [filein] [fleout]\n\t");
 	}
 	else
 	{
 		// Random
-		srand ((int)CTime::getLocalTime ());
+		srand((int)CTime::getLocalTime());
 
 		// Open the filein
 		while (1)
@@ -43,14 +43,14 @@ int main(int argc, char* argv[])
 			else
 			{
 				// Sleep..
-				printf ("Locked. Waiting for lock to be released\n");
-				uint sleepTime = (rand () * 5000) / RAND_MAX;
-				nlSleep (sleepTime);
+				printf("Locked. Waiting for lock to be released\n");
+				uint sleepTime = (rand() * 5000) / RAND_MAX;
+				nlSleep(sleepTime);
 			}
 		}
 
 		// Open the fileout
-		FILE *fileOut = fopen (argv[2], "w");
+		FILE *fileOut = fopen(argv[2], "w");
 	}
 
 	return 0;

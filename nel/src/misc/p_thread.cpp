@@ -18,7 +18,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdmisc.h"
 
 #include "nel/misc/types_nl.h"
@@ -32,7 +31,7 @@
 #include <pwd.h>
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
 namespace NLMISC {
@@ -43,12 +42,13 @@ static pthread_key_t threadSpecificKey;
 /* Special thread type representing the main thread. */
 struct CPMainThread : public CPThread
 {
-	CPMainThread() : CPThread(NULL, 0)
+	CPMainThread()
+	    : CPThread(NULL, 0)
 	{
-		if(pthread_key_create(&threadSpecificKey, NULL) != 0)
+		if (pthread_key_create(&threadSpecificKey, NULL) != 0)
 			throw EThread("cannot create thread specific storage key.");
 
-		if(pthread_setspecific(threadSpecificKey, this) != 0)
+		if (pthread_setspecific(threadSpecificKey, this) != 0)
 			throw EThread("cannot set main thread ptr in thread specific storage.");
 	}
 
@@ -68,15 +68,15 @@ static CPMainThread mainThread = CPMainThread();
 /*
  * The IThread static creator
  */
-IThread *IThread::create( IRunnable *runnable, uint32 stackSize)
+IThread *IThread::create(IRunnable *runnable, uint32 stackSize)
 {
-	return new CPThread( runnable, stackSize );
+	return new CPThread(runnable, stackSize);
 }
 
 /*
  * Get the current thread
  */
-IThread *IThread::getCurrentThread ()
+IThread *IThread::getCurrentThread()
 {
 	return (IThread *)pthread_getspecific(threadSpecificKey);
 }
@@ -84,12 +84,12 @@ IThread *IThread::getCurrentThread ()
 /*
  * Thread beginning
  */
-static void *ProxyFunc( void *arg )
+static void *ProxyFunc(void *arg)
 {
-	CPThread *parent = (CPThread*)arg;
+	CPThread *parent = (CPThread *)arg;
 
 	// Set this thread's thread specific storage to IThread instance pointer
-	if(pthread_setspecific(threadSpecificKey, parent) != 0)
+	if (pthread_setspecific(threadSpecificKey, parent) != 0)
 		throw EThread("cannot set thread ptr in thread specific storage.");
 
 	// Allow to terminate the thread without cancellation point
@@ -110,21 +110,19 @@ static void *ProxyFunc( void *arg )
 	}
 
 	// Allow some clean
-//	pthread_exit(0);
+	//	pthread_exit(0);
 	return NULL;
 }
-
-
 
 /*
  * Constructor
  */
 CPThread::CPThread(IRunnable *runnable, uint32 stackSize)
-	:	Runnable(runnable),
-		_State(ThreadStateNone),
-		_StackSize(stackSize)
-{}
-
+    : Runnable(runnable)
+    , _State(ThreadStateNone)
+    , _StackSize(stackSize)
+{
+}
 
 /*
  * Destructor
@@ -205,7 +203,7 @@ void CPThread::terminate()
 /*
  * wait
  */
-void CPThread::wait ()
+void CPThread::wait()
 {
 	if (_State == ThreadStateRunning)
 	{
@@ -223,7 +221,7 @@ void CPThread::wait ()
 		default:
 			throw EThread("Unknown thread join error");
 		}
-		if(_State != ThreadStateFinished)
+		if (_State != ThreadStateFinished)
 			throw EThread("Thread did not finish, this should not happen");
 	}
 }
@@ -237,7 +235,7 @@ bool CPThread::setCPUMask(uint64 cpuMask)
 
 	nlwarning("This code does not work. May cause a segmentation fault...");
 
-	sint res = pthread_setaffinity_np(_ThreadHandle, sizeof(uint64), (const cpu_set_t*)&cpuMask);
+	sint res = pthread_setaffinity_np(_ThreadHandle, sizeof(uint64), (const cpu_set_t *)&cpuMask);
 
 	if (res)
 	{
@@ -265,7 +263,7 @@ uint64 CPThread::getCPUMask()
 
 	uint64 cpuMask = 0;
 
-	sint res = pthread_getaffinity_np(_ThreadHandle, sizeof(uint64), (cpu_set_t*)&cpuMask);
+	sint res = pthread_getaffinity_np(_ThreadHandle, sizeof(uint64), (cpu_set_t *)&cpuMask);
 
 	if (res)
 	{
@@ -288,16 +286,14 @@ void CPThread::setPriority(TThreadPriority priority)
 	sched_param sp;
 	switch (priority)
 	{
-	case ThreadPriorityHigh:
-	{
+	case ThreadPriorityHigh: {
 		int minPrio = sched_get_priority_min(SCHED_FIFO);
 		int maxPrio = sched_get_priority_max(SCHED_FIFO);
 		sp.sched_priority = ((maxPrio - minPrio) / 4) + minPrio;
 		pthread_setschedparam(_ThreadHandle, SCHED_FIFO, &sp);
 		break;
 	}
-	case ThreadPriorityHighest:
-	{
+	case ThreadPriorityHighest: {
 		int minPrio = sched_get_priority_min(SCHED_FIFO);
 		int maxPrio = sched_get_priority_max(SCHED_FIFO);
 		sp.sched_priority = ((maxPrio - minPrio) / 2) + minPrio;
@@ -323,14 +319,13 @@ std::string CPThread::getUserName()
 	return pw->pw_name;
 }
 
-
 // **** Process
 
 // The current process
 CPProcess CurrentProcess;
 
 // Get the current process
-IProcess *IProcess::getCurrentProcess ()
+IProcess *IProcess::getCurrentProcess()
 {
 	return &CurrentProcess;
 }
@@ -343,7 +338,7 @@ uint64 CPProcess::getCPUMask()
 #ifdef __USE_GNU
 
 	uint64 cpuMask = 0;
-	sint res = sched_getaffinity(getpid(), sizeof(uint64), (cpu_set_t*)&cpuMask);
+	sint res = sched_getaffinity(getpid(), sizeof(uint64), (cpu_set_t *)&cpuMask);
 
 	if (res)
 	{
@@ -365,7 +360,7 @@ bool CPProcess::setCPUMask(uint64 cpuMask)
 {
 #ifdef __USE_GNU
 
-	sint res = sched_setaffinity(getpid(), sizeof(uint64), (const cpu_set_t*)&cpuMask);
+	sint res = sched_setaffinity(getpid(), sizeof(uint64), (const cpu_set_t *)&cpuMask);
 
 	if (res)
 	{
@@ -382,12 +377,11 @@ bool CPProcess::setCPUMask(uint64 cpuMask)
 #endif // __USE_GNU
 }
 
-
 } // NLMISC
 
 #else // NL_OS_UNIX
 
 // remove stupid VC6 warnings
-void foo_p_thread_cpp() {}
+void foo_p_thread_cpp() { }
 
 #endif // NL_OS_UNIX

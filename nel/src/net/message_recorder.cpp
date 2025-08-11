@@ -25,14 +25,12 @@
 using namespace NLMISC;
 using namespace std;
 
-
 namespace NLNET {
 
-
 /// TNetworkEvent -> string
-string EventToString( TNetworkEvent e )
+string EventToString(TNetworkEvent e)
 {
-	switch ( e )
+	switch (e)
 	{
 	case Sending: return "SEND";
 	case Receiving: return "RECV";
@@ -45,19 +43,19 @@ string EventToString( TNetworkEvent e )
 }
 
 /// string -> TNetworkEvent
-TNetworkEvent StringToEvent( string& s )
+TNetworkEvent StringToEvent(string &s)
 {
-	if ( s == "RECV" )
+	if (s == "RECV")
 		return Receiving;
-	else if ( s == "SEND" )
+	else if (s == "SEND")
 		return Sending;
-	else if ( s == "DISC" )
+	else if (s == "DISC")
 		return Disconnecting;
-	else if ( s == "ACCP" )
+	else if (s == "ACCP")
 		return Accepting;
-	else if ( s == "CONN" )
+	else if (s == "CONN")
 		return Connecting;
-	else if ( s == "CNFL" )
+	else if (s == "CNFL")
 		return ConnFailing;
 	else
 	{
@@ -66,95 +64,90 @@ TNetworkEvent StringToEvent( string& s )
 	}
 }
 
-
 /*
  * Constructor
  */
-CMessageRecorder::CMessageRecorder() : _RecordAll(true)
+CMessageRecorder::CMessageRecorder()
+    : _RecordAll(true)
 {
 #ifndef MESSAGES_PLAIN_TEXT
-	nlerror( "The message recorder works only with plain text messages. Please #define MESSAGES_PLAIN_TEXT" );
+	nlerror("The message recorder works only with plain text messages. Please #define MESSAGES_PLAIN_TEXT");
 #endif
 }
-
 
 /*
  * Destructor
  */
 CMessageRecorder::~CMessageRecorder()
 {
-	if ( !_Filename.empty() )
+	if (!_Filename.empty())
 	{
-		nldebug( "MR:%s: End of recording", _Filename.c_str() );
+		nldebug("MR:%s: End of recording", _Filename.c_str());
 	}
 	stopRecord();
 	stopReplay();
 }
 
-
 /*
  * Start recording
  */
-bool CMessageRecorder::startRecord( const std::string& filename, bool recordall )
+bool CMessageRecorder::startRecord(const std::string &filename, bool recordall)
 {
 	_Filename = filename;
-	_File.open( _Filename.c_str(), ios_base::out );
+	_File.open(_Filename.c_str(), ios_base::out);
 	_File << endl;
 	_RecordAll = recordall;
-	if ( _File.fail() )
+	if (_File.fail())
 	{
-		nlwarning( "MR: Record: Cannot open file %s", _Filename.c_str() );
+		nlwarning("MR: Record: Cannot open file %s", _Filename.c_str());
 		return false;
 	}
 	else
 	{
-		nldebug( "MR: Start recording into %s", _Filename.c_str() );
+		nldebug("MR: Start recording into %s", _Filename.c_str());
 		return true;
 	}
 }
-
 
 /*
  * Same as stringFromVector() but assumes the vector contains only printable characters
  */
 /*string stringFromTextVector( const vector<uint8>& v )
 {
-	string s;
+    string s;
 
-	// Copy contents
-	s.resize( v.size() );
-	memcpy( &*s.begin(), &*v.begin(), v.size() );
+    // Copy contents
+    s.resize( v.size() );
+    memcpy( &*s.begin(), &*v.begin(), v.size() );
 
-	return s;
+    return s;
 }*/
-
 
 /*
  * Add a record
  */
-void CMessageRecorder::recordNext( sint64 updatecounter, TNetworkEvent event, TSockId sockid, CMessage& message )
+void CMessageRecorder::recordNext(sint64 updatecounter, TNetworkEvent event, TSockId sockid, CMessage &message)
 {
-	nlassert( _File.is_open() );
+	nlassert(_File.is_open());
 
-	if ( (_RecordAll) || (event != Sending) )
+	if ((_RecordAll) || (event != Sending))
 	{
 		// Serial to stream
-		TMessageRecord rec ( event, sockid, message, updatecounter /*CTime::getLocalTime()*/ );
-		CMemStream stream ( false, true );
-		rec.serial( stream );
-		char c = '\0';      // end of cstring
-		stream.serial( c ); // added to the stream for _File << (char*)stream.buffer()
+		TMessageRecord rec(event, sockid, message, updatecounter /*CTime::getLocalTime()*/);
+		CMemStream stream(false, true);
+		rec.serial(stream);
+		char c = '\0'; // end of cstring
+		stream.serial(c); // added to the stream for _File << (char*)stream.buffer()
 
 		// Dump to file
-		nldebug( "MR:%s: Recording [%s]", _Filename.c_str(), stream.buffer() );
-		int len = (int)(stream.length()-2); // not the null character (and its separator) at the end of the buffer
+		nldebug("MR:%s: Recording [%s]", _Filename.c_str(), stream.buffer());
+		int len = (int)(stream.length() - 2); // not the null character (and its separator) at the end of the buffer
 		_File << "* ";
-		_File <<  len; // if we put the expression directly, it makes an access violation ! Weird.
+		_File << len; // if we put the expression directly, it makes an access violation ! Weird.
 		_File << " ";
-		_File << (char*)stream.buffer() << endl;
+		_File << (char *)stream.buffer() << endl;
 	}
 }
-
 
 /*
  * Stop recording
@@ -165,67 +158,64 @@ void CMessageRecorder::stopRecord()
 	_Filename.clear();
 }
 
-
 /*
  * Start playback
  */
-bool CMessageRecorder::startReplay( const std::string& filename )
+bool CMessageRecorder::startReplay(const std::string &filename)
 {
 	_Filename = filename;
-	_File.open( _Filename.c_str(), ios_base::in );
-	if ( _File.fail() )
+	_File.open(_Filename.c_str(), ios_base::in);
+	if (_File.fail())
 	{
-		nlerror( "MR: Replay: Cannot open file %s", _Filename.c_str() );
+		nlerror("MR: Replay: Cannot open file %s", _Filename.c_str());
 		return false;
 	}
 	else
 	{
-		nldebug( "MR: Start replaying from %s", _Filename.c_str() );
+		nldebug("MR: Start replaying from %s", _Filename.c_str());
 		return true;
 	}
 }
 
-
 /*
  * Get next record (throw EStreamOverflow)
  */
-bool CMessageRecorder::loadNext( TMessageRecord& record )
+bool CMessageRecorder::loadNext(TMessageRecord &record)
 {
 	// WARNING!!! This features doesn't work anymore becaues bufferAsVector() is not available with new CMemStream
 	nlstop;
 	return false;
 
-	nlassert( _File.is_open() );
+	nlassert(_File.is_open());
 
 	// Dump from file
-	CMemStream stream ( true, true );
+	CMemStream stream(true, true);
 	uint32 len;
 	char c;
 	_File >> c; // skip "* ";
-	_File >> (int&)len;
+	_File >> (int &)len;
 	_File.ignore(); // skip delimiter
-	if ( ! _File.fail() )
+	if (!_File.fail())
 	{
-		_File.get( (char*)stream.bufferToFill( len+1 ), len+1, '\0' );
-		//stream.bufferAsVector().resize( len ); // cut end of cstring
-		nldebug( "MR:%s: Reading [%s]", _Filename.c_str(), stream.buffer() );
+		_File.get((char *)stream.bufferToFill(len + 1), len + 1, '\0');
+		// stream.bufferAsVector().resize( len ); // cut end of cstring
+		nldebug("MR:%s: Reading [%s]", _Filename.c_str(), stream.buffer());
 
 		// Serial from stream
-		record.serial( stream ); // may throw EStreamOverflow if _File.fail()
+		record.serial(stream); // may throw EStreamOverflow if _File.fail()
 	}
 
-	return ! _File.fail(); // retest
+	return !_File.fail(); // retest
 }
-
 
 /*
  * Get the next record (from the preloaded records, or from the file)
  */
-bool CMessageRecorder::getNext( TMessageRecord& record, sint64 updatecounter )
+bool CMessageRecorder::getNext(TMessageRecord &record, sint64 updatecounter)
 {
-	if ( ! _PreloadedRecords.empty() )
+	if (!_PreloadedRecords.empty())
 	{
-		if ( _PreloadedRecords.front().UpdateCounter == updatecounter )
+		if (_PreloadedRecords.front().UpdateCounter == updatecounter)
 		{
 			// The requested record is in the preload
 			record = _PreloadedRecords.front();
@@ -235,15 +225,15 @@ bool CMessageRecorder::getNext( TMessageRecord& record, sint64 updatecounter )
 		else
 		{
 			// The requested record is not in the file
-			nlassert( updatecounter < _PreloadedRecords.front().UpdateCounter ); // not >
+			nlassert(updatecounter < _PreloadedRecords.front().UpdateCounter); // not >
 			return false;
 		}
 	}
 	else
 	{
-		if ( loadNext( record ) )
+		if (loadNext(record))
 		{
-			if ( record.UpdateCounter == updatecounter )
+			if (record.UpdateCounter == updatecounter)
 			{
 				// The requested record has been loaded
 				return true;
@@ -251,8 +241,8 @@ bool CMessageRecorder::getNext( TMessageRecord& record, sint64 updatecounter )
 			else
 			{
 				// The next loaded record is a new one
-				nlassert( updatecounter < record.UpdateCounter ); // not >
-				_PreloadedRecords.push_back( record ); // when we read one too far
+				nlassert(updatecounter < record.UpdateCounter); // not >
+				_PreloadedRecords.push_back(record); // when we read one too far
 				return false;
 			}
 		}
@@ -263,48 +253,46 @@ bool CMessageRecorder::getNext( TMessageRecord& record, sint64 updatecounter )
 	}
 }
 
-
 /*
  * Push the received blocks for this counter into the receive queue
  */
-void CMessageRecorder::replayNextDataAvailable( sint64 updatecounter )
+void CMessageRecorder::replayNextDataAvailable(sint64 updatecounter)
 {
-	TMessageRecord rec( true ); // input message
+	TMessageRecord rec(true); // input message
 
-	while ( getNext( rec, updatecounter ) )
+	while (getNext(rec, updatecounter))
 	{
-		switch ( rec.Event )
+		switch (rec.Event)
 		{
-		case Receiving :
-		case Accepting :
-		case Disconnecting :
-			ReceivedMessages.push( rec );
+		case Receiving:
+		case Accepting:
+		case Disconnecting:
+			ReceivedMessages.push(rec);
 			break;
 
-		case Sending :
+		case Sending:
 			break;
 
-		case Connecting :
-		case ConnFailing :
-			_ConnectionAttempts.push_back( rec );
+		case Connecting:
+		case ConnFailing:
+			_ConnectionAttempts.push_back(rec);
 			break;
 
-		default :
+		default:
 			nlstop;
 		}
 	}
 }
 
-
 /*
  * Returns true and the event type if the counter of the next data is updatecounter
  */
-TNetworkEvent CMessageRecorder::checkNextOne( sint64 updatecounter )
+TNetworkEvent CMessageRecorder::checkNextOne(sint64 updatecounter)
 {
 	TMessageRecord record;
-	if ( getNext( record, updatecounter ) )
+	if (getNext(record, updatecounter))
 	{
-		nldebug( "MR: Check next one: %s at update %" NL_I64 "u", EventToString(record.Event).c_str(), updatecounter );
+		nldebug("MR: Check next one: %s at update %" NL_I64 "u", EventToString(record.Event).c_str(), updatecounter);
 		return record.Event;
 	}
 	else
@@ -313,84 +301,82 @@ TNetworkEvent CMessageRecorder::checkNextOne( sint64 updatecounter )
 	}
 }
 
-
 /*
  * Get the first stored connection attempt corresponding to addr
  */
-TNetworkEvent CMessageRecorder::replayConnectionAttempt( const CInetHost& addr )
+TNetworkEvent CMessageRecorder::replayConnectionAttempt(const CInetHost &addr)
 {
 	TNetworkEvent event;
 	deque<TMessageRecord>::iterator ipr;
 
-	if ( ! _ConnectionAttempts.empty() )
+	if (!_ConnectionAttempts.empty())
 	{
 		// Search in the already processed connection attempts
-		for ( ipr=_ConnectionAttempts.begin(); ipr!=_ConnectionAttempts.end(); ++ipr )
+		for (ipr = _ConnectionAttempts.begin(); ipr != _ConnectionAttempts.end(); ++ipr)
 		{
 			CInetHost stored_addr;
-			(*ipr).Message.serial( stored_addr );
-			if ( stored_addr == addr )
+			(*ipr).Message.serial(stored_addr);
+			if (stored_addr == addr)
 			{
 				// Found
 				event = (*ipr).Event;
-				nldebug( "MR: Connection attempt found at update %" NL_I64 "u", (*ipr).UpdateCounter );
-				_ConnectionAttempts.erase( ipr );
+				nldebug("MR: Connection attempt found at update %" NL_I64 "u", (*ipr).UpdateCounter);
+				_ConnectionAttempts.erase(ipr);
 				return event;
 			}
 		}
 	}
 
 	// Seek in the preloaded records
-	for ( ipr=_PreloadedRecords.begin(); ipr!=_PreloadedRecords.end(); ++ipr )
+	for (ipr = _PreloadedRecords.begin(); ipr != _PreloadedRecords.end(); ++ipr)
 	{
 		event = (*ipr).Event;
-		if ( (event == Connecting) || (event == ConnFailing) )
+		if ((event == Connecting) || (event == ConnFailing))
 		{
 			CInetHost stored_addr;
-			(*ipr).Message.serial( stored_addr );
-			if ( stored_addr == addr )
+			(*ipr).Message.serial(stored_addr);
+			if (stored_addr == addr)
 			{
 				// Found
-				nldebug( "MR: Connection attempt found at update %" NL_I64 "u", (*ipr).UpdateCounter );
-				_PreloadedRecords.erase( ipr );
+				nldebug("MR: Connection attempt found at update %" NL_I64 "u", (*ipr).UpdateCounter);
+				_PreloadedRecords.erase(ipr);
 				return event;
 			}
 		}
 	}
-	if ( ipr==_PreloadedRecords.end() )
+	if (ipr == _PreloadedRecords.end())
 	{
 		// If not found, load next records until found !
-		TMessageRecord rec( true );
-		while ( loadNext( rec ) )
+		TMessageRecord rec(true);
+		while (loadNext(rec))
 		{
-			if ( ( rec.Event == Connecting ) || ( rec.Event == ConnFailing ) )
+			if ((rec.Event == Connecting) || (rec.Event == ConnFailing))
 			{
 				CInetHost stored_addr;
-				rec.Message.serial( stored_addr );
-				if ( stored_addr == addr )
+				rec.Message.serial(stored_addr);
+				if (stored_addr == addr)
 				{
 					// Found
-					nldebug( "MR: Connection attempt found at update %" NL_I64 "u", rec.UpdateCounter );
+					nldebug("MR: Connection attempt found at update %" NL_I64 "u", rec.UpdateCounter);
 					return rec.Event;
 				}
 				else
 				{
-					_PreloadedRecords.push_back( rec );
+					_PreloadedRecords.push_back(rec);
 				}
 			}
 			else
 			{
-				_PreloadedRecords.push_back( rec );
+				_PreloadedRecords.push_back(rec);
 			}
 		}
 		// Not found
-		nldebug( "MR: Connection attempt not found" );
+		nldebug("MR: Connection attempt not found");
 		return Error;
 	}
 	nlstop;
 	return Error;
 }
-
 
 /*
  * Stop playback
@@ -400,6 +386,5 @@ void CMessageRecorder::stopReplay()
 	_File.close();
 	_Filename.clear();
 }
-
 
 } // NLNET

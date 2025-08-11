@@ -24,9 +24,7 @@
 #include "event_emitter.h"
 #include <vector>
 
-
 namespace NLMISC {
-
 
 /** The composite pattern applied to events emmitters.
  * This is useful when you don't have the opportunity to register more than
@@ -38,13 +36,13 @@ public:
 	/// dtor
 	virtual ~CEventEmitterMulti();
 	/// add an emitter
-	void	addEmitter(IEventEmitter *e, bool mustDelete);
+	void addEmitter(IEventEmitter *e, bool mustDelete);
 	/// remove an emitter (and delete it if necessary)
-	void	removeEmitter(IEventEmitter *e);
+	void removeEmitter(IEventEmitter *e);
 	/// test whether e is in the emitter list
-	bool	isEmitter(IEventEmitter *e) const;
+	bool isEmitter(IEventEmitter *e) const;
 	// Get the number of registered emitters
-	uint	getNumEmitters() const { return (uint)_Emitters.size(); }
+	uint getNumEmitters() const { return (uint)_Emitters.size(); }
 	// Get an emitter
 	IEventEmitter *getEmitter(uint index);
 	const IEventEmitter *getEmitter(uint index) const;
@@ -55,13 +53,11 @@ public:
 	virtual bool pasteTextFromClipboard(std::string &text);
 
 private:
-	typedef std::vector<std::pair<IEventEmitter *, bool> > TEmitterCont;
-	TEmitterCont	_Emitters;
+	typedef std::vector<std::pair<IEventEmitter *, bool>> TEmitterCont;
+	TEmitterCont _Emitters;
 };
 
-
 } // NLMISC
-
 
 #endif // NL_EVENT_EMITTER_MULTI_H
 

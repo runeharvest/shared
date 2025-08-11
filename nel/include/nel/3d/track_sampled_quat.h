@@ -22,54 +22,48 @@
 #include "nel/misc/quat.h"
 #include "nel/3d/track_sampled_common.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 // For Debug only (must be defined). Correct serialized version is with compression.
-#define	NL3D_TSQ_ALLOW_QUAT_COMPRESS
-
+#define NL3D_TSQ_ALLOW_QUAT_COMPRESS
 
 // ***************************************************************************
 // For Debug only. Correct serialized version is with compression.
 #ifdef NL3D_TSQ_ALLOW_QUAT_COMPRESS
 /** A packed quaternion.
  */
-class	CQuatPack
+class CQuatPack
 {
 public:
-	sint16		x,y,z,w;
+	sint16 x, y, z, w;
 
-	void		pack(const CQuat &quat);
-	void		unpack(CQuat &quat);
+	void pack(const CQuat &quat);
+	void unpack(CQuat &quat);
 
-	void		serial(NLMISC::IStream &f)
+	void serial(NLMISC::IStream &f)
 	{
 		// NB: no version here.
-		f.serial(x,y,z,w);
+		f.serial(x, y, z, w);
 	}
 
-	bool	operator==(const CQuatPack &oq) const
+	bool operator==(const CQuatPack &oq) const
 	{
-		return x==oq.x && y==oq.y && z==oq.z && w==oq.w;
+		return x == oq.x && y == oq.y && z == oq.z && w == oq.w;
 	}
-
 };
 #else
 // A dummy packed quaternion.
-class	CQuatPack
+class CQuatPack
 {
 public:
-	CQuat	q;
+	CQuat q;
 
-	void		pack(const CQuat &quat)	{q= quat;}
-	void		unpack(CQuat &quat)		{quat= q;}
-	void		serial(NLMISC::IStream &f)	{f.serial(q);}
-	bool	operator==(const CQuatPack &oq) const {return q==oq.q;}
+	void pack(const CQuat &quat) { q = quat; }
+	void unpack(CQuat &quat) { quat = q; }
+	void serial(NLMISC::IStream &f) { f.serial(q); }
+	bool operator==(const CQuatPack &oq) const { return q == oq.q; }
 };
 #endif
-
 
 // ***************************************************************************
 /**
@@ -90,16 +84,15 @@ public:
 class CTrackSampledQuat : public CTrackSampledCommon
 {
 public:
-
 	/// Constructor
 	CTrackSampledQuat();
 	virtual ~CTrackSampledQuat();
-	NLMISC_DECLARE_CLASS (CTrackSampledQuat);
+	NLMISC_DECLARE_CLASS(CTrackSampledQuat);
 
 	/// From UTrack/ITrack.
 	// @{
-	virtual const IAnimatedValue	&eval (const TAnimationTime& date, CAnimatedValueBlock &avBlock);
-	virtual void					serial(NLMISC::IStream &f);
+	virtual const IAnimatedValue &eval(const TAnimationTime &date, CAnimatedValueBlock &avBlock);
+	virtual void serial(NLMISC::IStream &f);
 	virtual void applySampleDivisor(uint sampleDivisor);
 	// @}
 
@@ -111,25 +104,22 @@ public:
 	 *	\param beginTime map to the timeList[0] time.
 	 *	\param endTime map to the timeList[size-1] time.
 	 */
-	void	build(const std::vector<uint16> &timeList, const std::vector<CQuat> &keyList,
-		float beginTime, float endTime);
+	void build(const std::vector<uint16> &timeList, const std::vector<CQuat> &keyList,
+	    float beginTime, float endTime);
 
 	/// For Quat Track Header Compression
 	// @{
-	virtual bool	applyTrackQuatHeaderCompressionPass0(CTrackSampleCounter &quatCounter);
-	virtual ITrack	*applyTrackQuatHeaderCompressionPass1(uint &globalKeyOffset, CTrackSamplePack &quatPacker);
+	virtual bool applyTrackQuatHeaderCompressionPass0(CTrackSampleCounter &quatCounter);
+	virtual ITrack *applyTrackQuatHeaderCompressionPass1(uint &globalKeyOffset, CTrackSamplePack &quatPacker);
 	// @}
 
-// **********************
+	// **********************
 protected:
-
 	// Key Values
-	NLMISC::CObjectVector<CQuatPack, false>		_Keys;
+	NLMISC::CObjectVector<CQuatPack, false> _Keys;
 };
 
-
 } // NL3D
-
 
 #endif // NL_TRACK_SAMPLED_QUAT_H
 

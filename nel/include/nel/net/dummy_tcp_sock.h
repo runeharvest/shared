@@ -23,9 +23,7 @@
 #include "nel/misc/types_nl.h"
 #include "tcp_sock.h"
 
-
 namespace NLNET {
-
 
 /**
  * Dummy CTcpSock replacement for replay mode
@@ -36,27 +34,26 @@ namespace NLNET {
 class CDummyTcpSock : public CTcpSock
 {
 public:
-
 	// Constructor
-	CDummyTcpSock( bool logging = true ) : CTcpSock(logging) {}
+	CDummyTcpSock(bool logging = true)
+	    : CTcpSock(logging)
+	{
+	}
 
 	// Dummy connection
-	virtual void			connect( const CInetHost& addr ) NL_OVERRIDE;
+	virtual void connect(const CInetHost &addr) NL_OVERRIDE;
 
 	// Dummy disconnection
-	virtual void			disconnect() NL_OVERRIDE;
+	virtual void disconnect() NL_OVERRIDE;
 
 	// Nothing
-	virtual void			setNoDelay( bool /* value */ ) NL_OVERRIDE {}
+	virtual void setNoDelay(bool /* value */) NL_OVERRIDE { }
 
 	// Nothing
-	virtual void			close() NL_OVERRIDE {}
-
+	virtual void close() NL_OVERRIDE { }
 };
 
-
 } // NLNET
-
 
 #endif // NL_DUMMY_TCP_SOCK_H
 

@@ -24,7 +24,7 @@
 /*
 
   example:
-	Encapsulation of message callbacks
+    Encapsulation of message callbacks
 
 
   // in init
@@ -42,28 +42,36 @@
 
 */
 
-class CTimeoutAssertionThread: public NLMISC::IRunnable
+class CTimeoutAssertionThread : public NLMISC::IRunnable
 {
 public:
-	enum TControl { ACTIVE, INACTIVE, QUIT };
+	enum TControl
+	{
+		ACTIVE,
+		INACTIVE,
+		QUIT
+	};
 
-	CTimeoutAssertionThread(uint32 timeout = 0) : _Control(INACTIVE), _Counter(0), _Timeout(timeout)
+	CTimeoutAssertionThread(uint32 timeout = 0)
+	    : _Control(INACTIVE)
+	    , _Counter(0)
+	    , _Timeout(timeout)
 	{
 	}
 
 	void run()
 	{
 		uint32 lastCounter;
-		while(_Control != QUIT)
+		while (_Control != QUIT)
 		{
-			if(_Control != ACTIVE || _Timeout == 0)
+			if (_Control != ACTIVE || _Timeout == 0)
 			{
-				//nldebug("not active, sleep");
+				// nldebug("not active, sleep");
 				NLMISC::nlSleep(1000);
 			}
 			else
 			{
-				//nldebug("active, enter sleep");
+				// nldebug("active, enter sleep");
 				lastCounter = _Counter;
 
 				uint32 cummuledSleep = 0;
@@ -72,7 +80,7 @@ public:
 				while (cummuledSleep < _Timeout)
 				{
 					// sleep 1 s
-					NLMISC::nlSleep(std::min((uint32)(1000), (uint32)(_Timeout-cummuledSleep)));
+					NLMISC::nlSleep(std::min((uint32)(1000), (uint32)(_Timeout - cummuledSleep)));
 
 					cummuledSleep += 1000;
 
@@ -80,51 +88,50 @@ public:
 					if (_Control == QUIT)
 						return;
 				}
-				//nldebug("active, leave sleep, test assert");
+				// nldebug("active, leave sleep, test assert");
 
 				// If this assert occurred, it means that a checked part of the code was
 				// to slow and then I decided to assert to display the problem.
-				nlassert(!(_Control==ACTIVE && (uint32)_Counter==lastCounter));
+				nlassert(!(_Control == ACTIVE && (uint32)_Counter == lastCounter));
 			}
 		}
 	}
 
 	void activate()
 	{
-		if(_Control == QUIT) return;
+		if (_Control == QUIT) return;
 		nlassert(_Control == INACTIVE);
 		_Counter++;
 		_Control = ACTIVE;
-		//nldebug("activate");
+		// nldebug("activate");
 	}
 
 	void deactivate()
 	{
-		if(_Control == QUIT) return;
+		if (_Control == QUIT) return;
 		nlassert(_Control == ACTIVE);
 		_Control = INACTIVE;
-		//nldebug("deactivate");
+		// nldebug("deactivate");
 	}
 
 	void quit()
 	{
 		nlassert(_Control != QUIT);
 		_Control = QUIT;
-		//nldebug("quit");
+		// nldebug("quit");
 	}
 
 	void timeout(uint32 to)
 	{
 		_Timeout = to;
-		//nldebug("change timeout to %d", to);
+		// nldebug("change timeout to %d", to);
 	}
 
 private:
 	NLMISC::CAtomicEnum<TControl> _Control;
 	NLMISC::CAtomicInt _Counter;
-	NLMISC::CAtomicInt _Timeout;	// in millisecond
+	NLMISC::CAtomicInt _Timeout; // in millisecond
 };
-
 
 #endif // NL_TIMEOUT_ASSERTION_THREAD_H
 

@@ -17,57 +17,54 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef DBMANAGER_H
 #define DBMANAGER_H
 
 #include "nel/misc/cdb_manager.h"
 
-namespace NLGUI
+namespace NLGUI {
+
+/**
+ Database Manager
+
+ Provides access to a simple CDB based tree hierarchical data store
+ */
+class CDBManager : public NLMISC::CCDBManager
 {
+public:
+	static CDBManager *getInstance();
+	static void release();
 
 	/**
-	 Database Manager
-	 
-	 Provides access to a simple CDB based tree hierarchical data store
+	 Retrieves a leaf node from the database.
+	 @param name   - name of the data leaf node we are querying.
+	 @param create - when true if a node cannot be found it is created.
 	 */
-	class CDBManager : public NLMISC::CCDBManager
-	{
-	public:
-		static CDBManager* getInstance();
-		static void release();
-		
-		/**
-		 Retrieves a leaf node from the database.
-		 @param name   - name of the data leaf node we are querying.
-		 @param create - when true if a node cannot be found it is created.
-		 */
-		NLMISC::CCDBNodeLeaf* getDbProp( const std::string &name, bool create = true );
+	NLMISC::CCDBNodeLeaf *getDbProp(const std::string &name, bool create = true);
 
-		/**
-		 Deletes a node from the database.
-		 @param name  - name of the node.
-		 */
-		void delDbProp( const std::string &name );
+	/**
+	 Deletes a node from the database.
+	 @param name  - name of the node.
+	 */
+	void delDbProp(const std::string &name);
 
-		/**
-		 Returns a leaf node's content as an sint32
-		 @param name  -  name of the leaf node.
-		 */
-		sint32 getDbValue32( const std::string &name );
+	/**
+	 Returns a leaf node's content as an sint32
+	 @param name  -  name of the leaf node.
+	 */
+	sint32 getDbValue32(const std::string &name);
 
-		/**
-		 Returns the root branch of the database.
-		 */
-		NLMISC::CCDBNodeBranch* getDB() const;
-	
-	private:
-		CDBManager();
-		~CDBManager();
-		
-		static CDBManager *instance;
-	
-	};
+	/**
+	 Returns the root branch of the database.
+	 */
+	NLMISC::CCDBNodeBranch *getDB() const;
+
+private:
+	CDBManager();
+	~CDBManager();
+
+	static CDBManager *instance;
+};
 
 }
 

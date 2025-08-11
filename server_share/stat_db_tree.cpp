@@ -14,14 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdpch.h"
 #include "stat_db_tree.h"
 #include "game_share/utils.h"
 
 using namespace std;
 using namespace NLMISC;
-
 
 // ****************************************************************************
 // CStatDBTableLeaf
@@ -33,7 +31,7 @@ void CStatDBTableLeaf::playerAdd(NLMISC::CEntityId playerId, sint32 val)
 	TPlayerValues::iterator it = _PlayerValues.find(playerId);
 	if (it != _PlayerValues.end())
 	{
-		sint32 & playerValue = (*it).second;
+		sint32 &playerValue = (*it).second;
 
 		// avoid overflow
 		if (val > 0 && (playerValue + val) < playerValue)
@@ -64,7 +62,7 @@ void CStatDBTableLeaf::playerSet(NLMISC::CEntityId playerId, sint32 val)
 	TPlayerValues::iterator it = _PlayerValues.find(playerId);
 	if (it != _PlayerValues.end())
 	{
-		sint32 & playerValue = (*it).second;
+		sint32 &playerValue = (*it).second;
 
 		// set the value and remove the entry if the result is <= 0
 		if (val > 0)
@@ -91,7 +89,7 @@ void CStatDBTableLeaf::guildAdd(EGSPD::TGuildId guildId, sint32 val)
 	TGuildValues::iterator it = _GuildValues.find(guildId);
 	if (it != _GuildValues.end())
 	{
-		sint32 & guildValue = (*it).second;
+		sint32 &guildValue = (*it).second;
 
 		// avoid overflow
 		if (val > 0 && (guildValue + val) < guildValue)
@@ -122,7 +120,7 @@ void CStatDBTableLeaf::guildSet(EGSPD::TGuildId guildId, sint32 val)
 	TGuildValues::iterator it = _GuildValues.find(guildId);
 	if (it != _GuildValues.end())
 	{
-		sint32 & guildValue = (*it).second;
+		sint32 &guildValue = (*it).second;
 
 		// set the value and remove the entry if the result is <= 0
 		if (val > 0)
@@ -144,7 +142,7 @@ void CStatDBTableLeaf::guildSet(EGSPD::TGuildId guildId, sint32 val)
 }
 
 // ****************************************************************************
-bool CStatDBTableLeaf::playerGet(NLMISC::CEntityId playerId, sint32 & val) const
+bool CStatDBTableLeaf::playerGet(NLMISC::CEntityId playerId, sint32 &val) const
 {
 	TPlayerValues::const_iterator it = _PlayerValues.find(playerId);
 	if (it == _PlayerValues.end())
@@ -155,7 +153,7 @@ bool CStatDBTableLeaf::playerGet(NLMISC::CEntityId playerId, sint32 & val) const
 }
 
 // ****************************************************************************
-bool CStatDBTableLeaf::guildGet(EGSPD::TGuildId guildId, sint32 & val) const
+bool CStatDBTableLeaf::guildGet(EGSPD::TGuildId guildId, sint32 &val) const
 {
 	TGuildValues::const_iterator it = _GuildValues.find(guildId);
 	if (it == _GuildValues.end())
@@ -186,7 +184,7 @@ void CStatDBTableLeaf::removeGuild(EGSPD::TGuildId guildId)
 // ****************************************************************************
 
 // ****************************************************************************
-bool CStatDBBranch::setNode(const std::string & path, IStatDBNodePtr node)
+bool CStatDBBranch::setNode(const std::string &path, IStatDBNodePtr node)
 {
 	BOMB_IF(path.empty(), "empty path!", return false);
 	BOMB_IF(node == NULL, "NULL node!", return false);
@@ -220,7 +218,7 @@ bool CStatDBBranch::setNode(const std::string & path, IStatDBNodePtr node)
 }
 
 // ****************************************************************************
-IStatDBNodePtr CStatDBBranch::getNode(const std::string & path)
+IStatDBNodePtr CStatDBBranch::getNode(const std::string &path)
 {
 	BOMB_IF(path.empty(), "empty path!", return NULL);
 
@@ -239,8 +237,8 @@ IStatDBNodePtr CStatDBBranch::getNode(const std::string & path)
 }
 
 // ****************************************************************************
-void CStatDBBranch::getNodes(const std::string & pathPattern, std::vector<CMatchingNode> & matchingNodes,
-							 const std::string & currentPath)
+void CStatDBBranch::getNodes(const std::string &pathPattern, std::vector<CMatchingNode> &matchingNodes,
+    const std::string &currentPath)
 {
 	BOMB_IF(pathPattern.empty(), "empty path!", return);
 
@@ -295,7 +293,7 @@ void CStatDBBranch::getNodes(const std::string & pathPattern, std::vector<CMatch
 }
 
 // ****************************************************************************
-IStatDBNodePtr CStatDBBranch::removeNode(const std::string & path)
+IStatDBNodePtr CStatDBBranch::removeNode(const std::string &path)
 {
 	BOMB_IF(path.empty(), "empty path!", return NULL);
 
@@ -318,7 +316,7 @@ IStatDBNodePtr CStatDBBranch::removeNode(const std::string & path)
 }
 
 // ****************************************************************************
-void CStatDBBranch::acceptVisitor(CStatDBNodeVisitor & visitor, const std::string & currentPath)
+void CStatDBBranch::acceptVisitor(CStatDBNodeVisitor &visitor, const std::string &currentPath)
 {
 	string childPathPrefix;
 	if (!currentPath.empty())
@@ -333,7 +331,7 @@ void CStatDBBranch::acceptVisitor(CStatDBNodeVisitor & visitor, const std::strin
 }
 
 // ****************************************************************************
-bool CStatDBBranch::isValidToken(const std::string & token) const
+bool CStatDBBranch::isValidToken(const std::string &token) const
 {
 	if (token.empty())
 		return false;
@@ -348,7 +346,7 @@ bool CStatDBBranch::isValidToken(const std::string & token) const
 }
 
 // ****************************************************************************
-void CStatDBBranch::splitPath(const std::string & path, std::string & token, std::string & rest) const
+void CStatDBBranch::splitPath(const std::string &path, std::string &token, std::string &rest) const
 {
 	string::size_type i = path.find('.');
 	if (i == string::npos)
@@ -359,7 +357,7 @@ void CStatDBBranch::splitPath(const std::string & path, std::string & token, std
 	else
 	{
 		token = path.substr(0, i);
-		rest = path.substr(i+1);
+		rest = path.substr(i + 1);
 	}
 }
 
@@ -406,7 +404,7 @@ void CStatDBEntitiesRemoval::processRemoval(IStatDBNodePtr root)
 }
 
 // ****************************************************************************
-void CStatDBEntitiesRemoval::visitTableLeaf(CStatDBTableLeaf * tableLeaf, const std::string & path)
+void CStatDBEntitiesRemoval::visitTableLeaf(CStatDBTableLeaf *tableLeaf, const std::string &path)
 {
 	for (uint i = 0; i < _PlayersToRemove.size(); i++)
 	{
@@ -418,4 +416,3 @@ void CStatDBEntitiesRemoval::visitTableLeaf(CStatDBTableLeaf * tableLeaf, const 
 		tableLeaf->removeGuild(_GuildsToRemove[i]);
 	}
 }
-

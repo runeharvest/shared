@@ -45,7 +45,10 @@ using namespace std;
 namespace NLSOUND {
 
 CStreamFileSource::CStreamFileSource(CStreamFileSound *streamFileSound, bool spawn, TSpawnEndCallback cb, void *cbUserParam, NL3D::CCluster *cluster, CGroupController *groupController)
-: CStreamSource(streamFileSound, spawn, cb, cbUserParam, cluster, groupController), m_AudioDecoder(NULL), m_Paused(false), m_DecodingEnded(false)
+    : CStreamSource(streamFileSound, spawn, cb, cbUserParam, cluster, groupController)
+    , m_AudioDecoder(NULL)
+    , m_Paused(false)
+    , m_DecodingEnded(false)
 {
 	m_Thread = NLMISC::IThread::create(this);
 }
@@ -63,7 +66,6 @@ CStreamFileSource::~CStreamFileSource()
 void CStreamFileSource::play()
 {
 	// note: CStreamSource will assert crash if already physically playing!
-
 
 	if (m_WaitingForPlay)
 	{
@@ -102,12 +104,12 @@ void CStreamFileSource::play()
 #ifdef NLSOUND_STREAM_FILE_DEBUG
 		nldebug("play go %s", getStreamFileSound()->getFilePath().c_str());
 #endif
-		//if (!m_WaitingForPlay)
+		// if (!m_WaitingForPlay)
 		//{
-			// thread may be stopping from stop call
-			m_Thread->wait();
+		//  thread may be stopping from stop call
+		m_Thread->wait();
 		//}
-		//else
+		// else
 		//{
 		//	nlwarning("Already waiting for play");
 		//}
@@ -159,15 +161,14 @@ void CStreamFileSource::play()
 		nlwarning("Already playing");
 	}
 
-	
 	/*if (!m_WaitingForPlay)
 	{
-		m_WaitingForPlay = true;
+	    m_WaitingForPlay = true;
 
-		m_Thread->wait(); // thread must have stopped to restart it!
+	    m_Thread->wait(); // thread must have stopped to restart it!
 
-		m_Thread->start();
-		m_Thread->setPriority(NLMISC::ThreadPriorityHighest);
+	    m_Thread->start();
+	    m_Thread->setPriority(NLMISC::ThreadPriorityHighest);
 	}
 
 	CStreamSource::play();*/
@@ -219,7 +220,7 @@ void CStreamFileSource::pause()
 	{
 		// thread checks for this to not delete the audio decoder
 		m_Paused = true;
-		
+
 		// stop the underlying system
 		CStreamSource::stop();
 
@@ -240,7 +241,7 @@ void CStreamFileSource::resume()
 	if (m_Paused)
 	{
 		m_Thread->wait(); // thread must have stopped to restart it!
-		
+
 		play();
 	}
 	else
@@ -275,7 +276,7 @@ bool CStreamFileSource::prepareDecoder()
 	}
 	else if (m_AudioDecoder) // audio decoder should normally not exist when not paused and starting the thread
 	{
-		nlwarning("CAudioDecoder already exists, possible thread race bug with pause");			
+		nlwarning("CAudioDecoder already exists, possible thread race bug with pause");
 		delete m_AudioDecoder;
 		m_AudioDecoder = NULL;
 	}
@@ -334,7 +335,7 @@ void CStreamFileSource::run()
 		{
 #ifdef NLSOUND_STREAM_FILE_DEBUG
 			++dumpI;
-			if (!(dumpI % 100)) 
+			if (!(dumpI % 100))
 			{
 				nldebug("buffer %s %s %s", _Playing ? "PLAYING" : "NP", m_WaitingForPlay ? "WAITING" : "NW", getStreamFileSound()->getFilePath().c_str());
 				nldebug("gain %f", hasPhysicalSource() ? getPhysicalSource()->getGain() : -1.0f);
@@ -347,7 +348,7 @@ void CStreamFileSource::run()
 				m_AudioDecoder->setLooping(looping);
 				looping = newLooping;
 			}
-			
+
 			// reduce sleeping time if nothing was buffered
 			if (bufferMore(bytes)) recSleep = doSleep = this->getRecommendedSleepTime();
 			else doSleep = recSleep >> 2; // /4

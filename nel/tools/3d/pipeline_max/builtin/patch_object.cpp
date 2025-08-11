@@ -42,14 +42,13 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CPatchObject::CPatchObject(CScene *scene) : CGeomObject(scene)
+CPatchObject::CPatchObject(CScene *scene)
+    : CGeomObject(scene)
 {
-
 }
 
 CPatchObject::~CPatchObject()
 {
-
 }
 
 const ucstring CPatchObject::DisplayName = ucstring("PatchObject");

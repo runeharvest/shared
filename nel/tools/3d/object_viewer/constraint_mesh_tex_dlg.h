@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #if !defined(AFX_CONSTRAINT_MESH_TEX_DLG_H__CB61D391_C962_46D1_9587_6145EAF2C4C9__INCLUDED_)
 #define AFX_CONSTRAINT_MESH_TEX_DLG_H__CB61D391_C962_46D1_9587_6145EAF2C4C9__INCLUDED_
 
@@ -22,48 +21,46 @@
 #pragma once
 #endif
 
-namespace NL3D
-{
-	class CPSConstraintMesh;
+namespace NL3D {
+class CPSConstraintMesh;
 }
-
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CConstraintMeshTexDlg dialog
 
 class CConstraintMeshTexDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CConstraintMeshTexDlg(NL3D::CPSConstraintMesh *cm, CWnd* pParent = NULL);   // standard constructor
+	CConstraintMeshTexDlg(NL3D::CPSConstraintMesh *cm, CWnd *pParent = NULL); // standard constructor
 	~CConstraintMeshTexDlg();
 
 	void init(uint x, uint y, CWnd *pParent);
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CConstraintMeshTexDlg)
-	enum { IDD = IDD_CONSTRAINT_MESH_TEX_DLG };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_CONSTRAINT_MESH_TEX_DLG
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CConstraintMeshTexDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	NL3D::CPSConstraintMesh *_CM; // the constraint mesh being edited
-	CDialog					*_CurrDlg; // the current dialog for edition
+	CDialog *_CurrDlg; // the current dialog for edition
 
 	//// Create a dialog for global animation at the, discarding any previous dialog
-	void	createGlobalAnimationDlg(uint stage);
+	void createGlobalAnimationDlg(uint stage);
 
-	void   setupDlg();
-
+	void setupDlg();
 
 	// Generated message map functions
 	//{{AFX_MSG(CConstraintMeshTexDlg)

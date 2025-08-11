@@ -20,36 +20,34 @@
 #include "nel/sound/driver/sound_driver.h"
 
 namespace NLSOUND {
-	class IListener;
-	class ISource;
-	class IBuffer;
-	class CListenerFMod;
-	class CSourceFMod;
-	class CBufferFMod;
-	class CMusicChannelFMod;
+class IListener;
+class ISource;
+class IBuffer;
+class CListenerFMod;
+class CSourceFMod;
+class CBufferFMod;
+class CMusicChannelFMod;
 
 // ***************************************************************************
 /*
-	DRIVER FMOD LIMITATIONS:
+    DRIVER FMOD LIMITATIONS:
 
-	- EAX is not supported (setEnvironnement() / setEAXProperty() no-op)
-	- ADPCM is not supported (decompressed and the format change internaly )
-	- deffered param on ISource::setPos() etc... does not work. Always deffered.
-	- No cooperative level change in FMod as in DSOUND (default???)
+    - EAX is not supported (setEnvironnement() / setEAXProperty() no-op)
+    - ADPCM is not supported (decompressed and the format change internaly )
+    - deffered param on ISource::setPos() etc... does not work. Always deffered.
+    - No cooperative level change in FMod as in DSOUND (default???)
 
 */
-
 
 // ***************************************************************************
 class CSoundDriverFMod : public ISoundDriver, public NLMISC::CManualSingleton<CSoundDriverFMod>
 {
 public:
+	/// Constructor
+	CSoundDriverFMod(ISoundDriver::IStringMapperProvider *stringMapper);
 
-    /// Constructor
-    CSoundDriverFMod(ISoundDriver::IStringMapperProvider *stringMapper);
+	virtual ~CSoundDriverFMod();
 
-    virtual ~CSoundDriverFMod();
-	
 	/// Return a list of available devices for the user. The value at index 0 is empty, and is used for automatic device selection.
 	virtual void getDevices(std::vector<std::string> &devices);
 	/// Initialize the driver with a user selected device. If device.empty(), the default or most appropriate device is used.
@@ -61,15 +59,15 @@ public:
 	virtual bool getOption(TSoundOptions option);
 
 	/// Create the listener instance
-	virtual	IListener *createListener();
+	virtual IListener *createListener();
 
 	/// Create a sound buffer
-	virtual	IBuffer *createBuffer();
+	virtual IBuffer *createBuffer();
 
-    // Source management
+	// Source management
 
 	/// Create a source
-	virtual	ISource *createSource();
+	virtual ISource *createSource();
 
 	/// Commit all the changes made to 3D settings of listener and sources
 	virtual void commit3DChanges();
@@ -78,39 +76,38 @@ public:
 	virtual uint countMaxSources();
 
 	/// Count the number of sources that are actually playing.
-    uint countPlayingSources();
+	uint countPlayingSources();
 
 	/// Update all the driver and its sources. To be called only by the timer callback.
 	void update();
 
 	/// Write information about the driver to the output stream.
-	void writeProfile(std::string& out);
+	void writeProfile(std::string &out);
 
-
-    /** Set the gain (volume value inside [0 , 1]). (default: 1)
+	/** Set the gain (volume value inside [0 , 1]). (default: 1)
 	 * 0.0 -> silence
 	 * 0.5 -> -6dB
 	 * 1.0 -> no attenuation
 	 * values > 1 (amplification) not supported by most drivers
 	 */
-    void setGain( float gain );
+	void setGain(float gain);
 
-    /// Get the gain
+	/// Get the gain
 	float getGain();
 
 	/// Return the string mapper
-	IStringMapperProvider	*getStringMapper()	{return _StringMapper;}
+	IStringMapperProvider *getStringMapper() { return _StringMapper; }
 
 	// Tool method to transform from Nel coords to FMod coords
-	static void	toFModCoord(const NLMISC::CVector &in, float out[3]);
+	static void toFModCoord(const NLMISC::CVector &in, float out[3]);
 
-	bool	fmodOk() const {return _FModOk;}
+	bool fmodOk() const { return _FModOk; }
 
-	bool	forceSofwareBuffer() const {return _ForceSoftwareBuffer;}
+	bool forceSofwareBuffer() const { return _ForceSoftwareBuffer; }
 
 	/// Create a music channel, destroy with destroyMusicChannel
 	virtual IMusicChannel *createMusicChannel();
-	
+
 	/** Get music info. Returns false if the song is not found or the function is not implemented.
 	 *  \param filepath full path to file
 	 *  \param artist returns the song artist (empty if not available)
@@ -133,7 +130,7 @@ public:
 	/// Return if a music extension is supported by the driver's music channel.
 	virtual bool isMusicExtensionSupported(const std::string &extension) const;
 
-private:	
+private:
 	virtual void startBench();
 	virtual void endBench();
 	virtual void displayBench(NLMISC::CLog *log);
@@ -143,8 +140,8 @@ private:
 	/// The string mapper provided by client code
 	IStringMapperProvider *_StringMapper;
 
-    // Array with the allocated sources
-	std::set<CSourceFMod*> _Sources;
+	// Array with the allocated sources
+	std::set<CSourceFMod *> _Sources;
 	/// Array with the allocated music channels
 	std::set<CMusicChannelFMod *> _MusicChannels;
 
@@ -158,9 +155,7 @@ private:
 
 	/// Driver options
 	TSoundOptions _Options;
-
 };
-
 
 } // NLSOUND
 

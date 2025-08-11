@@ -24,34 +24,32 @@
 /////////////////////////////////////////////////////////////////////////////
 // CChoosePoolID dialog
 
-
-CChoosePoolID::CChoosePoolID(bool freezeID , CWnd* pParent /*=NULL*/)
-	: CDialog(CChoosePoolID::IDD, pParent),  _FreezeID(freezeID)
+CChoosePoolID::CChoosePoolID(bool freezeID, CWnd *pParent /*=NULL*/)
+    : CDialog(CChoosePoolID::IDD, pParent)
+    , _FreezeID(freezeID)
 {
 	//{{AFX_DATA_INIT(CChoosePoolID)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void CChoosePoolID::DoDataExchange(CDataExchange* pDX)
+void CChoosePoolID::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CChoosePoolID)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CChoosePoolID, CDialog)
-	//{{AFX_MSG_MAP(CChoosePoolID)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CChoosePoolID)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CChoosePoolID message handlers
 
-void CChoosePoolID::OnOK() 
+void CChoosePoolID::OnOK()
 {
 	CString val;
 	GetDlgItem(IDC_POOL_ID)->GetWindowText(val);
@@ -68,7 +66,7 @@ void CChoosePoolID::OnOK()
 	}
 }
 
-BOOL CChoosePoolID::OnInitDialog() 
+BOOL CChoosePoolID::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -81,6 +79,6 @@ BOOL CChoosePoolID::OnInitDialog()
 	{
 		GetDlgItem(IDC_POOL_ID)->EnableWindow(FALSE);
 	}
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }

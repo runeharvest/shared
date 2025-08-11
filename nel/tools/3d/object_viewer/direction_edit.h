@@ -19,57 +19,57 @@
 
 #if _MSC_VER > 1000
 #pragma once
-#endif 
+#endif
 #include "ps_wrapper.h"
-namespace NLMISC
-{
-	class CVector ;
+namespace NLMISC {
+class CVector;
 }
 
-
-class CDirectionAttr ;
+class CDirectionAttr;
 struct IPopupNotify;
 
 /////////////////////////////////////////////////////////////////////////////
 // CDirectionEdit dialog
 
-
 class CDirectionEdit : public CDialog
 {
-// Construction
+	// Construction
 public:
-	
-	CDirectionEdit(IPSWrapper<NLMISC::CVector> *wrapper) ;   // standard constructor
+	CDirectionEdit(IPSWrapper<NLMISC::CVector> *wrapper); // standard constructor
 
-	void init(IPopupNotify *p, CWnd *parent) ;
+	void init(IPopupNotify *p, CWnd *parent);
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CDirectionEdit)
-	enum { IDD = IDD_DIRECTION_EDIT };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_DIRECTION_EDIT
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDirectionEdit)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// the mouse state
-	enum State { Wait, Drag } _MouseState ;
+	enum State
+	{
+		Wait,
+		Drag
+	} _MouseState;
 
-	IPopupNotify *_Parent ;
+	IPopupNotify *_Parent;
 
 	// select a new vect from a point (must be in the basis)
-	void selectNewVect(const CPoint &pos) ;
+	void selectNewVect(const CPoint &pos);
 
-
-	IPSWrapper<NLMISC::CVector> *_Wrapper ;
+	IPSWrapper<NLMISC::CVector> *_Wrapper;
 	// Generated message map functions
 	//{{AFX_MSG(CDirectionEdit)
 	afx_msg void OnPaint();

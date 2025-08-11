@@ -26,43 +26,42 @@
 #include <vector>
 #include <string>
 
-typedef std::string (*TInfoFunc) (void);
-typedef bool (*TAnalyseFunc)( const std::vector<const char *>&, std::string&, std::string& );
-
+typedef std::string (*TInfoFunc)(void);
+typedef bool (*TAnalyseFunc)(const std::vector<const char *> &, std::string &, std::string &);
 
 /////////////////////////////////////////////////////////////////////////////
 // CPlugInSelector dialog
 
 class CPlugInSelector : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CPlugInSelector(CWnd* pParent = NULL);   // standard constructor
+	CPlugInSelector(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CPlugInSelector)
-	enum { IDD = IDD_PLUGINSELECTOR_DIALOG };
-	CListBox	m_PlugInListBox;
+	enum
+	{
+		IDD = IDD_PLUGINSELECTOR_DIALOG
+	};
+	CListBox m_PlugInListBox;
 	//}}AFX_DATA
 
+	void setPluginList(const std::vector<CString> &cont) { Dlls = &cont; }
 
-	void		setPluginList( const std::vector<CString>& cont ) { Dlls = &cont; }
+	const std::vector<CString> *Dlls;
+	HINSTANCE LibInst;
+	TAnalyseFunc AnalyseFunc;
 
-	const std::vector<CString>	*Dlls;
-	HINSTANCE					LibInst;
-	TAnalyseFunc				AnalyseFunc;
-
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CPlugInSelector)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CPlugInSelector)
 	virtual BOOL OnInitDialog();

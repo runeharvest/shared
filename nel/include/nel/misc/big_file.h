@@ -31,32 +31,32 @@ namespace NLMISC {
  * \date 2002
  */
 
-const uint32 BF_ALWAYS_OPENED		=	0x00000001;
-const uint32 BF_CACHE_FILE_ON_OPEN	=	0x00000002;
+const uint32 BF_ALWAYS_OPENED = 0x00000001;
+const uint32 BF_CACHE_FILE_ON_OPEN = 0x00000002;
 
 // ***************************************************************************
 class CBigFile
 {
 	NLMISC_SAFE_SINGLETON_DECL(CBigFile);
 
-	CBigFile() {}
-	~CBigFile() {}
+	CBigFile() { }
+	~CBigFile() { }
 
 public:
 	// release memory
 	static void releaseInstance();
 
 	// Retrieve the global instance
-//	static CBigFile &getInstance ();
+	//	static CBigFile &getInstance ();
 
 	// Add a big file to the manager
-	bool add (const std::string &sBigFileName, uint32 nOptions);
+	bool add(const std::string &sBigFileName, uint32 nOptions);
 
 	// get path of all added bigfiles
 	void getBigFilePaths(std::vector<std::string> &bigFilePaths);
 
 	// Remove a big file from the manager
-	void remove (const std::string &sBigFileName);
+	void remove(const std::string &sBigFileName);
 
 	// true if a bigFile is added
 	bool isBigFileAdded(const std::string &sBigFileName) const;
@@ -65,28 +65,27 @@ public:
 	std::string getBigFileName(const std::string &sBigFileName) const;
 
 	// List all files in a bigfile
-	void list (const std::string &sBigFileName, std::vector<std::string> &vAllFiles);
+	void list(const std::string &sBigFileName, std::vector<std::string> &vAllFiles);
 
 	// Remove all big files added
-	void removeAll ();
+	void removeAll();
 
 	/** Signal that the current thread has ended : all file handles "permanently" allocated for that thread
-	  * can be released then, preventing them from accumulating.
-	  */
+	 * can be released then, preventing them from accumulating.
+	 */
 	void currentThreadFinished();
 
-
 	// Used by CIFile to get information about the files within the big file
-	FILE* getFile (const std::string &sFileName, uint32 &rFileSize, uint32 &rBigFileOffset,
-					bool &rCacheFileOnOpen, bool &rAlwaysOpened);
+	FILE *getFile(const std::string &sFileName, uint32 &rFileSize, uint32 &rBigFileOffset,
+	    bool &rCacheFileOnOpen, bool &rAlwaysOpened);
 
 	// Used by Sound to get information for async loading of mp3 in .bnp. Return false if file not found in registered bnps
-	bool getFileInfo (const std::string &sFileName, uint32 &rFileSize, uint32 &rBigFileOffset);
+	bool getFileInfo(const std::string &sFileName, uint32 &rFileSize, uint32 &rBigFileOffset);
 
 	// Used for CPath only for the moment !
 	char *getFileNamePtr(const std::string &sFileName, const std::string &sBigFileName);
 
-	typedef CCallback<bool /* continue */, const std::string &/* filename */, uint32 /* currentSize */, uint32 /* totalSize */> TUnpackProgressCallback;
+	typedef CCallback<bool /* continue */, const std::string & /* filename */, uint32 /* currentSize */, uint32 /* totalSize */> TUnpackProgressCallback;
 
 	// Unpack all files in sBigFileName to sDestDir and send progress notifications to optional callback
 	static bool unpack(const std::string &sBigFileName, const std::string &sDestDir, TUnpackProgressCallback *callback = NULL);
@@ -94,19 +93,28 @@ public:
 	// A BNPFile header (filename is a char* pointing on FileNames and is always lowercase)
 	struct BNPFile
 	{
-		BNPFile() : Name(NULL), Size(0), Pos(0) { }
-		char*		Name;
-		uint32		Size;
-		uint32		Pos;
+		BNPFile()
+		    : Name(NULL)
+		    , Size(0)
+		    , Pos(0)
+		{
+		}
+		char *Name;
+		uint32 Size;
+		uint32 Pos;
 	};
 
 	// A SBNPFile header (filename is a std::string and keeps the original case)
 	struct SBNPFile
 	{
-		SBNPFile() : Size(0), Pos(0) { }
-		std::string	Name;
-		uint32		Size;
-		uint32		Pos;
+		SBNPFile()
+		    : Size(0)
+		    , Pos(0)
+		{
+		}
+		std::string Name;
+		uint32 Size;
+		uint32 Pos;
 	};
 
 	// A BNP structure
@@ -116,23 +124,23 @@ public:
 		~BNP();
 
 		// FileName of the BNP. important to open it in getFile() (for other threads or if not always opened).
-		std::string						BigFileName;
+		std::string BigFileName;
 		// map of files in the BNP.
-		char							*FileNames;
-		std::vector<BNPFile>			Files;
-		std::vector<SBNPFile>			SFiles;
+		char *FileNames;
+		std::vector<BNPFile> Files;
+		std::vector<SBNPFile> SFiles;
 
 		// Since many seek may be done on a FILE*, each thread should have its own FILE opened.
-		uint32							ThreadFileId;
-		bool							CacheFileOnOpen;
-		bool							AlwaysOpened;
-		bool							InternalUse;
+		uint32 ThreadFileId;
+		bool CacheFileOnOpen;
+		bool AlwaysOpened;
+		bool InternalUse;
 
 		// Offset written in BNP header
-		uint32							OffsetFromBeginning;
+		uint32 OffsetFromBeginning;
 
 		// Read BNP header from FILE* and init member variables
-		bool readHeader(FILE* file);
+		bool readHeader(FILE *file);
 
 		// Read BNP header from BigFileName and init member variables
 		bool readHeader();
@@ -147,56 +155,57 @@ public:
 		bool unpack(const std::string &sDestDir, TUnpackProgressCallback *callback = NULL);
 	};
 
-// ***************
+	// ***************
 private:
-	class	CThreadFileArray;
-	friend class	CThreadFileArray;
+	class CThreadFileArray;
+	friend class CThreadFileArray;
 
 	// A ptr to a file.
-	struct	CHandleFile
+	struct CHandleFile
 	{
-		FILE		*File;
-		CHandleFile() : File(NULL) { }
+		FILE *File;
+		CHandleFile()
+		    : File(NULL)
+		{
+		}
 	};
 
 	// A class which return a FILE * handle per Thread.
-	class	CThreadFileArray
+	class CThreadFileArray
 	{
 	public:
 		CThreadFileArray();
 		~CThreadFileArray();
 
 		// Allocate a FileId for a BNP.
-		uint32			allocate();
+		uint32 allocate();
 		// Given a BNP File Id, return its FILE* handle for the current thread.
-		CHandleFile		&get(uint32 index);
+		CHandleFile &get(uint32 index);
 
 		void currentThreadFinished();
 
 	private:
 		// Do it this way because a few limited TDS is possible (64 on NT4)
-		CTDS		_TDS;
+		CTDS _TDS;
 		// The array is grow only!!
-		uint32		_CurrentId;
+		uint32 _CurrentId;
 	};
 
 private:
+	//	CBigFile(); // Singleton mode -> access it with the getInstance function
 
-//	CBigFile(); // Singleton mode -> access it with the getInstance function
-
-//	static CBigFile				*_Singleton;
+	//	static CBigFile				*_Singleton;
 
 	// This is an array of CHandleFile, unique to each thread
-	CThreadFileArray			_ThreadFileArray;
+	CThreadFileArray _ThreadFileArray;
 
 	std::map<std::string, BNP> _BNPs;
 
 	// common for getFile and getFileInfo
-	bool getFileInternal (const std::string &sFileName, BNP *&zeBnp, BNPFile *&zeBnpFile);
+	bool getFileInternal(const std::string &sFileName, BNP *&zeBnp, BNPFile *&zeBnpFile);
 };
 
 } // NLMISC
-
 
 #endif // NL_BIG_FILE_H
 

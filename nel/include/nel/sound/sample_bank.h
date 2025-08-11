@@ -47,7 +47,7 @@ struct eqname
 */
 
 /// Sample names hash map
-typedef CHashMap<NLMISC::TStringId, IBuffer*, NLMISC::CStringIdHashMapTraits> TSampleTable;
+typedef CHashMap<NLMISC::TStringId, IBuffer *, NLMISC::CStringIdHashMapTraits> TSampleTable;
 
 /**
  * A set of samples.
@@ -69,55 +69,53 @@ public:
 	 * Can throw EPathNotFound or ESoundFileNotFound (check Exception)
 	 * \param async If true, the samples are loaded in background.
 	 */
-	void				load(bool async);
+	void load(bool async);
 
 	/** Unload all the samples in this bank. Return false is unload can't be done (if an async
 	 *	loading is not terminated.
 	 */
-	bool				unload();
-
+	bool unload();
 
 	/// Returns true if the samples in this bank have been loaded.
-	bool				isLoaded();
+	bool isLoaded();
 
 	/// Return a samples corresponding to a name.
-	IBuffer				*getSample(const NLMISC::TStringId &name);
+	IBuffer *getSample(const NLMISC::TStringId &name);
 
 	/// Return the number of samples in this bank.
-	uint				countSamples();
+	uint countSamples();
 
 	/// Return the size of this bank in bytes.
-	uint				getSize();
+	uint getSize();
 
 	/// Return the name (must be unique)
-	NLMISC::TStringId	getName() const { return _Name; }
-	
+	NLMISC::TStringId getName() const { return _Name; }
+
 private:
 	/// The update method. Used when waiting for async sample loading.
 	void onUpdate();
 
 	// Sample bank manager
-	CSampleBankManager	*_SampleBankManager;
+	CSampleBankManager *_SampleBankManager;
 
 	// Hashtable with samples
-	TSampleTable		_Samples;
+	TSampleTable _Samples;
 
 	// Sample bank name and path
-	NLMISC::TStringId	_Name;
+	NLMISC::TStringId _Name;
 
 	// Did we load the buffers.
-	bool				_Loaded;
+	bool _Loaded;
 	// Is the async load is done ?
-	bool				_LoadingDone;
+	bool _LoadingDone;
 	// The size of the samples in the bank
-	uint				_ByteSize;
-	
+	uint _ByteSize;
+
 	/// Flag for splitted load.
-	bool				_SplitLoadDone;
+	bool _SplitLoadDone;
 
 	/// List of sample that need to be loaded asynchronously.
-	std::list<std::pair<IBuffer *, NLMISC::TStringId> >	_LoadList;
-	
+	std::list<std::pair<IBuffer *, NLMISC::TStringId>> _LoadList;
 };
 
 /**
@@ -126,14 +124,14 @@ private:
 class ESampleBankNotFound : public NLMISC::Exception
 {
 public:
-	ESampleBankNotFound( const std::string filename ) :
-	  NLMISC::Exception( (std::string("Sample bank not found: ")+filename).c_str() ) {}
+	ESampleBankNotFound(const std::string filename)
+	    : NLMISC::Exception((std::string("Sample bank not found: ") + filename).c_str())
+	{
+	}
 };
 
 } // NLSOUND
 
-
 #endif // NL_SAMPLE_BANK_H
 
 /* End of sound.h */
-

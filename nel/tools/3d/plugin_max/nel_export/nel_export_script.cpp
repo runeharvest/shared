@@ -21,16 +21,15 @@
 #include "nel_export.h"
 #include <maxversion.h>
 #if MAX_VERSION_MAJOR >= 14
-#	include <maxscript/foundation/strings.h>
+#include <maxscript/foundation/strings.h>
 #else
-#	include <MaxScrpt/strings.h>
+#include <MaxScrpt/strings.h>
 #endif
 #include "../nel_mesh_lib/export_nel.h"
 #include "../nel_mesh_lib/export_appdata.h"
 
 // From max
 #include <notify.h>
-
 
 #define EXPORT_GET_ALLOCATOR
 
@@ -45,26 +44,26 @@ using namespace NLMISC;
  |	These will turn on texture map display at all levels for a given object
 \*===========================================================================*/
 
-def_visible_primitive ( export_shape,		"NelExportShape");
-def_visible_primitive ( export_shape_ex,	"NelExportShapeEx");
-def_visible_primitive ( export_skeleton,	"NelExportSkeleton");
-def_visible_primitive ( export_animation,	"NelExportAnimation");
-def_visible_primitive ( export_ig,			"NelExportInstanceGroup");
-def_visible_primitive ( export_skeleton_weight,		"NelExportSkeletonWeight");
-def_visible_primitive ( view_shape,			"NelViewShape");
-def_visible_primitive ( test_file_date,		"NeLTestFileDate");
-def_visible_primitive ( export_vegetable,	"NelExportVegetable");
-def_visible_primitive ( reload_texture,		"NelReloadTexture" );
-def_visible_primitive ( export_collision,	"NelExportCollision" );
-def_visible_primitive ( export_pacs_primitives,	"NelExportPACSPrimitives" );
-def_visible_primitive ( export_lod_character,	"NelExportLodCharacter" );
-def_visible_primitive ( node_properties,	"NelNodeProperties" );
-def_visible_primitive ( mirror_physique, 	"NelMirrorPhysique" );
-def_visible_primitive ( get_file_modification_date, 	"NeLGetFileModificationDate" );
-def_visible_primitive ( set_file_modification_date, 	"NeLSetFileModificationDate" );
+def_visible_primitive(export_shape, "NelExportShape");
+def_visible_primitive(export_shape_ex, "NelExportShapeEx");
+def_visible_primitive(export_skeleton, "NelExportSkeleton");
+def_visible_primitive(export_animation, "NelExportAnimation");
+def_visible_primitive(export_ig, "NelExportInstanceGroup");
+def_visible_primitive(export_skeleton_weight, "NelExportSkeletonWeight");
+def_visible_primitive(view_shape, "NelViewShape");
+def_visible_primitive(test_file_date, "NeLTestFileDate");
+def_visible_primitive(export_vegetable, "NelExportVegetable");
+def_visible_primitive(reload_texture, "NelReloadTexture");
+def_visible_primitive(export_collision, "NelExportCollision");
+def_visible_primitive(export_pacs_primitives, "NelExportPACSPrimitives");
+def_visible_primitive(export_lod_character, "NelExportLodCharacter");
+def_visible_primitive(node_properties, "NelNodeProperties");
+def_visible_primitive(mirror_physique, "NelMirrorPhysique");
+def_visible_primitive(get_file_modification_date, "NeLGetFileModificationDate");
+def_visible_primitive(set_file_modification_date, "NeLSetFileModificationDate");
 
-def_visible_primitive ( force_quit_on_msg_displayer,		"NelForceQuitOnMsgDisplayer");
-def_visible_primitive ( force_quit_right_now,		"NelForceQuitRightNow");
+def_visible_primitive(force_quit_on_msg_displayer, "NelForceQuitOnMsgDisplayer");
+def_visible_primitive(force_quit_right_now, "NelForceQuitRightNow");
 
 MCHAR *sExportShapeErrorMsg = _M("NeLExportShape [Object] [Filename.shape]");
 MCHAR *sExportShapeExErrorMsg = _M("NeLExportShapeEx [Object] [Filename.shape] [bShadow] [bExportLighting] [sLightmapPath] [nLightingLimit] [fLumelSize] [nOverSampling] [bExcludeNonSelected] [bShowLumel]");
@@ -74,79 +73,78 @@ MCHAR *sExportPACSPrimitivesErrorMsg = _M("NelExportPACSPrimitves [node array] [
 
 extern CExportNelOptions theExportSceneStruct;
 
-Value* export_shape_cf (Value** arg_list, int count)
+Value *export_shape_cf(Value **arg_list, int count)
 {
 	// Make sure we have the correct number of arguments (2)
 	check_arg_count(export_shape, 2, count);
 
 	// Check to see if the arguments match up to what we expect
 	// We want to use 'TurnAllTexturesOn <object to use>'
-	type_check (arg_list[0], MAXNode, sExportShapeErrorMsg);
-	type_check (arg_list[1], String, sExportShapeErrorMsg);
+	type_check(arg_list[0], MAXNode, sExportShapeErrorMsg);
+	type_check(arg_list[1], String, sExportShapeErrorMsg);
 
 	// Get a INode pointer from the argument passed to us
 	INode *node = arg_list[0]->to_node();
-	nlassert (node);
+	nlassert(node);
 
 	// Get a good interface pointer
 	Interface *ip = MAXScript_interface;
 
-	theCNelExport.init (false, false, ip, true);
+	theCNelExport.init(false, false, ip, true);
 
-	// Export path 
+	// Export path
 	std::string sPath = MCharStrToUtf8(arg_list[1]->to_string());
 
 	// Ok ?
-	Boolean *ret=&false_value;
+	Boolean *ret = &false_value;
 
 	try
 	{
 
 		// Is the flag dont export set ?
-		if (CExportNel::getScriptAppData (node, NEL3D_APPDATA_DONTEXPORT, 0))
+		if (CExportNel::getScriptAppData(node, NEL3D_APPDATA_DONTEXPORT, 0))
 			return ret;
 		// Object is flagged as a collision?
-		int	bCol= CExportNel::getScriptAppData(node, NEL3D_APPDATA_COLLISION, BST_UNCHECKED);
-		if(bCol == BST_CHECKED)
+		int bCol = CExportNel::getScriptAppData(node, NEL3D_APPDATA_COLLISION, BST_UNCHECKED);
+		if (bCol == BST_CHECKED)
 			return ret;
 
 		// Export
-		theCNelExport._ExportNel->deleteLM( *node);
-		if (theCNelExport.exportMesh (sPath, *node, ip->GetTime()))
+		theCNelExport._ExportNel->deleteLM(*node);
+		if (theCNelExport.exportMesh(sPath, *node, ip->GetTime()))
 			ret = &true_value;
 	}
 	catch (const Exception &e)
 	{
-		nlwarning ("ERROR (NelExportShape) %s", e.what());
+		nlwarning("ERROR (NelExportShape) %s", e.what());
 	}
 	catch (...)
 	{
-		nlwarning ("ERROR (NelExportShape) catch (...)");
+		nlwarning("ERROR (NelExportShape) catch (...)");
 	}
 	nlinfo("ret");
 
 	return ret;
 }
 
-
-Value* export_shape_ex_cf (Value** arg_list, int count)
+Value *export_shape_ex_cf(Value **arg_list, int count)
 {
 	// Make sure we have the correct number of arguments (11)
 	check_arg_count(export_shape, 11, count);
 
 	// Check to see if the arguments match up to what we expect
 	// We want to use 'TurnAllTexturesOn <object to use>'
-	type_check (arg_list[0], MAXNode, sExportShapeExErrorMsg);
-	type_check (arg_list[1], String, sExportShapeExErrorMsg);
-	type_check (arg_list[2], Boolean, sExportShapeExErrorMsg);
-	type_check (arg_list[3], Boolean, sExportShapeExErrorMsg);
-	type_check (arg_list[4], String, sExportShapeExErrorMsg);
-	type_check (arg_list[5], Integer, sExportShapeExErrorMsg);
-	type_check (arg_list[6], Float, sExportShapeExErrorMsg);
-	type_check (arg_list[7], Integer, sExportShapeExErrorMsg);
-	type_check (arg_list[8], Boolean, sExportShapeExErrorMsg);
-	type_check (arg_list[9], Boolean, sExportShapeExErrorMsg);
-	type_check (arg_list[10], Boolean, sExportShapeExErrorMsg);
+	type_check(arg_list[0], MAXNode, sExportShapeExErrorMsg);
+	type_check(arg_list[1], String, sExportShapeExErrorMsg);
+	type_check(arg_list[2], Boolean, sExportShapeExErrorMsg);
+	type_check(arg_list[3], Boolean, sExportShapeExErrorMsg);
+	type_check(arg_list[4], String, sExportShapeExErrorMsg);
+	type_check(arg_list[5], Integer, sExportShapeExErrorMsg);
+	type_check(arg_list[6], Float, sExportShapeExErrorMsg);
+	type_check(arg_list[7], Integer, sExportShapeExErrorMsg);
+	type_check(arg_list[8], Boolean, sExportShapeExErrorMsg);
+	type_check(arg_list[9], Boolean, sExportShapeExErrorMsg);
+	type_check(arg_list[10], Boolean, sExportShapeExErrorMsg);
 
 	// Get a good interface pointer
 	Interface *ip = MAXScript_interface;
@@ -156,128 +154,126 @@ Value* export_shape_ex_cf (Value** arg_list, int count)
 	nlassert(node);
 	nlassert(node->GetName());
 
-	// Export path 
+	// Export path
 	std::string sPath = MCharStrToUtf8(arg_list[1]->to_string());
 
 	// Ex argu
-	theExportSceneStruct.bShadow = arg_list[2]->to_bool()!=FALSE;
-	theExportSceneStruct.bExportLighting = arg_list[3]->to_bool()!=FALSE;
+	theExportSceneStruct.bShadow = arg_list[2]->to_bool() != FALSE;
+	theExportSceneStruct.bExportLighting = arg_list[3]->to_bool() != FALSE;
 	theExportSceneStruct.sExportLighting = MCharStrToUtf8(arg_list[4]->to_string());
 	theExportSceneStruct.nExportLighting = arg_list[5]->to_int();
 	theExportSceneStruct.rLumelSize = arg_list[6]->to_float();
 	theExportSceneStruct.nOverSampling = arg_list[7]->to_int();
-	theExportSceneStruct.bExcludeNonSelected = arg_list[8]->to_bool()!=FALSE;
-	theExportSceneStruct.bShowLumel = arg_list[9]->to_bool()!=FALSE;
-	theExportSceneStruct.OutputLightmapLog = arg_list[10]->to_bool()!=FALSE;
+	theExportSceneStruct.bExcludeNonSelected = arg_list[8]->to_bool() != FALSE;
+	theExportSceneStruct.bShowLumel = arg_list[9]->to_bool() != FALSE;
+	theExportSceneStruct.OutputLightmapLog = arg_list[10]->to_bool() != FALSE;
 
-	theCNelExport.init (false, false, ip, false);
+	theCNelExport.init(false, false, ip, false);
 
 	// Ok ?
-	Boolean *ret=&false_value;
+	Boolean *ret = &false_value;
 
 	// Is the flag dont export set ?
-	if (CExportNel::getScriptAppData (node, NEL3D_APPDATA_DONTEXPORT, 0))
+	if (CExportNel::getScriptAppData(node, NEL3D_APPDATA_DONTEXPORT, 0))
 		return ret;
 	// Object is flagged as a collision?
-	int	bCol= CExportNel::getScriptAppData(node, NEL3D_APPDATA_COLLISION, BST_UNCHECKED);
-	if(bCol == BST_CHECKED)
+	int bCol = CExportNel::getScriptAppData(node, NEL3D_APPDATA_COLLISION, BST_UNCHECKED);
+	if (bCol == BST_CHECKED)
 		return ret;
 
 	try
 	{
 		// Export
-		theCNelExport._ExportNel->deleteLM( *node );
-		if (theCNelExport.exportMesh (sPath.c_str(), *node, ip->GetTime()))
+		theCNelExport._ExportNel->deleteLM(*node);
+		if (theCNelExport.exportMesh(sPath.c_str(), *node, ip->GetTime()))
 			ret = &true_value;
 	}
 	catch (const Exception &e)
 	{
-		nlwarning ("ERROR (NelExportShapeEx) %s", e.what());
+		nlwarning("ERROR (NelExportShapeEx) %s", e.what());
 	}
 	catch (...)
 	{
-		nlwarning ("ERROR (NelExportShapeEx) catch (...)");
+		nlwarning("ERROR (NelExportShapeEx) catch (...)");
 	}
 	nlinfo("ret");
 	return ret;
 }
 
-
-Value* export_skeleton_cf (Value** arg_list, int count)
+Value *export_skeleton_cf(Value **arg_list, int count)
 {
 	// Make sure we have the correct number of arguments (2)
 	check_arg_count(export_shape, 2, count);
 
 	// Check to see if the arguments match up to what we expect
 	// We want to use 'TurnAllTexturesOn <object to use>'
-	type_check (arg_list[0], MAXNode, _M("NelExportSkeleton [root node] [Filename]"));
-	type_check (arg_list[1], String, _M("NelExportSkeleton [root node] [Filename]"));
+	type_check(arg_list[0], MAXNode, _M("NelExportSkeleton [root node] [Filename]"));
+	type_check(arg_list[1], String, _M("NelExportSkeleton [root node] [Filename]"));
 
 	// Get a good interface pointer
 	Interface *ip = MAXScript_interface;
 
-	theCNelExport.init (false, false, ip, true);
+	theCNelExport.init(false, false, ip, true);
 
 	// Get a INode pointer from the argument passed to us
 	INode *node = arg_list[0]->to_node();
-	nlassert (node);
+	nlassert(node);
 
-	// Export path 
+	// Export path
 	std::string sPath = MCharStrToUtf8(arg_list[1]->to_string());
 
 	// Ok ?
-	Boolean *ret=&false_value;
+	Boolean *ret = &false_value;
 
 	try
 	{
 		// Export
-		if (theCNelExport.exportSkeleton (sPath, node, ip->GetTime()))
+		if (theCNelExport.exportSkeleton(sPath, node, ip->GetTime()))
 			ret = &true_value;
 	}
 	catch (const Exception &e)
 	{
-		nlwarning ("ERROR (NelExportSkeleton) %s", e.what());
+		nlwarning("ERROR (NelExportSkeleton) %s", e.what());
 	}
 	catch (...)
 	{
-		nlwarning ("ERROR (NelExportSkeleton) catch (...)");
+		nlwarning("ERROR (NelExportSkeleton) catch (...)");
 	}
 
 	return ret;
 }
 
-
-Value* export_animation_cf (Value** arg_list, int count)
+Value *export_animation_cf(Value **arg_list, int count)
 {
 	// Make sure we have the correct number of arguments (2)
 	check_arg_count(export_shape, 3, count);
 
 	// Check to see if the arguments match up to what we expect
-	type_check (arg_list[0], Array, sExportAnimationErrorMsg);
-	type_check (arg_list[1], String, sExportAnimationErrorMsg);
-	type_check (arg_list[2], Boolean, sExportAnimationErrorMsg);
+	type_check(arg_list[0], Array, sExportAnimationErrorMsg);
+	type_check(arg_list[1], String, sExportAnimationErrorMsg);
+	type_check(arg_list[2], Boolean, sExportAnimationErrorMsg);
 
 	// Get a good interface pointer
 	Interface *ip = MAXScript_interface;
 
-	theCNelExport.init (false, false, ip, true);
+	theCNelExport.init(false, false, ip, true);
 
-	// Export path 
+	// Export path
 	std::string sPath = MCharStrToUtf8(arg_list[1]->to_string());
 
 	// Get time
-	TimeValue time=MAXScript_interface->GetTime();
-	
+	TimeValue time = MAXScript_interface->GetTime();
+
 	// Get array
-	Array* array=(Array*)arg_list[0];
+	Array *array = (Array *)arg_list[0];
 
 	// Check each value in the array
 	uint i;
-	for (i=0; i<(uint)array->size; i++)
-		type_check (array->get (i+1), MAXNode, sExportAnimationErrorMsg);
+	for (i = 0; i < (uint)array->size; i++)
+		type_check(array->get(i + 1), MAXNode, sExportAnimationErrorMsg);
 
 	// Ok ?
-	Boolean *ret=&false_value;
+	Boolean *ret = &false_value;
 
 	try
 	{
@@ -285,18 +281,18 @@ Value* export_animation_cf (Value** arg_list, int count)
 		if (array->size)
 		{
 			// Make a list of nodes
-			std::vector<INode*> vectNode;
-			for (i=0; i<(uint)array->size; i++)
-				vectNode.push_back (array->get (i+1)->to_node());
+			std::vector<INode *> vectNode;
+			for (i = 0; i < (uint)array->size; i++)
+				vectNode.push_back(array->get(i + 1)->to_node());
 
 			// Scene anim ?
-			BOOL scene=arg_list[2]->to_bool();
+			BOOL scene = arg_list[2]->to_bool();
 
 			// Export the zone
-			if (theCNelExport.exportAnim (sPath, vectNode, time, scene!=FALSE))
+			if (theCNelExport.exportAnim(sPath, vectNode, time, scene != FALSE))
 			{
 				// Ok
-				ret=&true_value;
+				ret = &true_value;
 			}
 			else
 			{
@@ -307,134 +303,132 @@ Value* export_animation_cf (Value** arg_list, int count)
 	}
 	catch (const Exception &e)
 	{
-		nlwarning ("ERROR (NelExportAnimation) %s", e.what());
+		nlwarning("ERROR (NelExportAnimation) %s", e.what());
 	}
 	catch (...)
 	{
-		nlwarning ("ERROR (NelExportAnimation) catch (...)");
+		nlwarning("ERROR (NelExportAnimation) catch (...)");
 	}
 	return ret;
 }
 
-
-Value* export_ig_cf (Value** arg_list, int count)
+Value *export_ig_cf(Value **arg_list, int count)
 {
 	// Make sure we have the correct number of arguments (2)
 	check_arg_count(export_shape, 2, count);
 
 	// Check to see if the arguments match up to what we expect
 	// We want to use 'TurnAllTexturesOn <object to use>'
-	type_check (arg_list[0], Array, _M("NelExportInstanceGroup [Object array] [Filename]"));
-	type_check (arg_list[1], String, _M("NelExportInstanceGroup [Object array] [Filename]"));
+	type_check(arg_list[0], Array, _M("NelExportInstanceGroup [Object array] [Filename]"));
+	type_check(arg_list[1], String, _M("NelExportInstanceGroup [Object array] [Filename]"));
 
 	// Get a good interface pointer
 	Interface *ip = MAXScript_interface;
 
-	theCNelExport.init (false, false, ip, true);
+	theCNelExport.init(false, false, ip, true);
 
 	// Ok ?
-	Boolean *ret=&false_value;
+	Boolean *ret = &false_value;
 
 	try
 	{
-		if (is_array (arg_list[0]))
+		if (is_array(arg_list[0]))
 		{
 			// Get array
-			Array* array=(Array*)arg_list[0];
+			Array *array = (Array *)arg_list[0];
 
 			// Check each value in the array
 			uint i;
-			for (i=0; i<(uint)array->size; i++)
-				type_check (array->get (i+1), MAXNode, _M("NelExportInstanceGroup [Object array] [Filename]"));
+			for (i = 0; i < (uint)array->size; i++)
+				type_check(array->get(i + 1), MAXNode, _M("NelExportInstanceGroup [Object array] [Filename]"));
 
 			// Create a STL array
 			if (array->size)
 			{
-				std::vector<INode*> vect;
-				for (uint i=0; i<(uint)array->size; i++)
-					vect.push_back (array->get (i+1)->to_node());
-					
-				// Export path 
+				std::vector<INode *> vect;
+				for (uint i = 0; i < (uint)array->size; i++)
+					vect.push_back(array->get(i + 1)->to_node());
+
+				// Export path
 				std::string sPath = MCharStrToUtf8(arg_list[1]->to_string());
 
 				// Export
-				if (theCNelExport.exportInstanceGroup (sPath, vect))
-					ret=&true_value;
+				if (theCNelExport.exportInstanceGroup(sPath, vect))
+					ret = &true_value;
 			}
 		}
 	}
 	catch (const Exception &e)
 	{
-		nlwarning ("ERROR (NelExportInstanceGroup) %s", e.what());
+		nlwarning("ERROR (NelExportInstanceGroup) %s", e.what());
 	}
 	catch (...)
 	{
-		nlwarning ("ERROR (NelExportInstanceGroup) catch (...)");
+		nlwarning("ERROR (NelExportInstanceGroup) catch (...)");
 	}
 
 	return ret;
 }
 
-
-Value* export_skeleton_weight_cf (Value** arg_list, int count)
+Value *export_skeleton_weight_cf(Value **arg_list, int count)
 {
 	// Make sure we have the correct number of arguments (2)
 	check_arg_count(export_shape, 2, count);
 
 	// Check to see if the arguments match up to what we expect
 	// We want to use 'TurnAllTexturesOn <object to use>'
-	type_check (arg_list[0], Array, _M("NelExportSkeletonWeight [Object array] [Filename]"));
-	type_check (arg_list[1], String, _M("NelExportSkeletonWeight [Object array] [Filename]"));
+	type_check(arg_list[0], Array, _M("NelExportSkeletonWeight [Object array] [Filename]"));
+	type_check(arg_list[1], String, _M("NelExportSkeletonWeight [Object array] [Filename]"));
 
 	// Get a good interface pointer
 	Interface *ip = MAXScript_interface;
 
-	theCNelExport.init (false, false, ip, true);
+	theCNelExport.init(false, false, ip, true);
 
 	// Ok ?
-	Boolean *ret=&false_value;
+	Boolean *ret = &false_value;
 
 	try
 	{
-		if (is_array (arg_list[0]))
+		if (is_array(arg_list[0]))
 		{
 			// Get array
-			Array* array=(Array*)arg_list[0];
+			Array *array = (Array *)arg_list[0];
 
 			// Check each value in the array
 			uint i;
-			for (i=0; i<(uint)array->size; i++)
-				type_check (array->get (i+1), MAXNode, _M("NelExportSkeletonWeight [Object array] [Filename]"));
+			for (i = 0; i < (uint)array->size; i++)
+				type_check(array->get(i + 1), MAXNode, _M("NelExportSkeletonWeight [Object array] [Filename]"));
 
 			// Create a STL array
 			if (array->size)
 			{
-				std::vector<INode*> vect;
-				for (uint i=0; i<(uint)array->size; i++)
-					vect.push_back (array->get (i+1)->to_node());
-					
-				// Export path 
+				std::vector<INode *> vect;
+				for (uint i = 0; i < (uint)array->size; i++)
+					vect.push_back(array->get(i + 1)->to_node());
+
+				// Export path
 				std::string sPath = MCharStrToUtf8(arg_list[1]->to_string());
 
 				// Export
-				if (theCNelExport.exportSWT (sPath, vect))
-					ret=&true_value;
+				if (theCNelExport.exportSWT(sPath, vect))
+					ret = &true_value;
 			}
 		}
 	}
 	catch (const Exception &e)
 	{
-		nlwarning ("ERROR (NelExportSkeletonWeight) %s", e.what());
+		nlwarning("ERROR (NelExportSkeletonWeight) %s", e.what());
 	}
 	catch (...)
 	{
-		nlwarning ("ERROR (NelExportSkeletonWeight) catch (...)");
+		nlwarning("ERROR (NelExportSkeletonWeight) catch (...)");
 	}
 
 	return ret;
 }
 
-Value* view_shape_cf (Value** arg_list, int count)
+Value *view_shape_cf(Value **arg_list, int count)
 {
 	// Make sure we have the correct number of arguments (2)
 	check_arg_count(view_shape, 0, count);
@@ -442,25 +436,25 @@ Value* view_shape_cf (Value** arg_list, int count)
 	// Get a good interface pointer
 	Interface *ip = MAXScript_interface;
 
-	try 
+	try
 	{
-		theCNelExport.init (true, true, ip, true);
+		theCNelExport.init(true, true, ip, true);
 
-		theCNelExport.viewMesh (ip->GetTime());		
+		theCNelExport.viewMesh(ip->GetTime());
 	}
 	catch (const Exception &e)
 	{
-		nlwarning ("ERROR %s", e.what());
+		nlwarning("ERROR %s", e.what());
 	}
 	catch (...)
 	{
-		nlwarning ("ERROR catch (...)");
+		nlwarning("ERROR catch (...)");
 	}
 
 	return &true_value;
 }
 
-Value* test_file_date_cf (Value** arg_list, int count)
+Value *test_file_date_cf(Value **arg_list, int count)
 {
 	// Make sure we have the correct number of arguments (2)
 	check_arg_count(view_shape, 2, count);
@@ -471,29 +465,29 @@ Value* test_file_date_cf (Value** arg_list, int count)
 	// Get a good interface pointer
 	Interface *ip = MAXScript_interface;
 
-	theCNelExport.init (false, false, ip, true);
+	theCNelExport.init(false, false, ip, true);
 
 	// The 2 filenames
 	WStr file0 = arg_list[0]->to_string();
 	WStr file1 = arg_list[1]->to_string();
 
 	// Open it
-	FILE *file= nlfopen(ucstring((const ucchar *)file0.data()).toUtf8().c_str(), "r");
+	FILE *file = nlfopen(ucstring((const ucchar *)file0.data()).toUtf8().c_str(), "r");
 	if (file == NULL)
 		return &true_value;
-	
+
 	// Close it
-	fclose (file);
+	fclose(file);
 
 	// Return value
 	Value *ret = &undefined;
 
 	// Create first file
 	HANDLE h0 = CreateFileW((LPCWSTR)file0.data(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (h0!=INVALID_HANDLE_VALUE)
+	if (h0 != INVALID_HANDLE_VALUE)
 	{
 		HANDLE h1 = CreateFileW((LPCWSTR)file1.data(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		if (h1!=INVALID_HANDLE_VALUE)
+		if (h1 != INVALID_HANDLE_VALUE)
 		{
 			// Get file time
 			FILETIME creationTime0;
@@ -503,26 +497,26 @@ Value* test_file_date_cf (Value** arg_list, int count)
 			FILETIME lastAccessTime1;
 			FILETIME lastWriteTime1;
 
-			if (GetFileTime (h0, &creationTime0, &lastAccessTime0, &lastWriteTime0))
+			if (GetFileTime(h0, &creationTime0, &lastAccessTime0, &lastWriteTime0))
 			{
-				if (GetFileTime (h1, &creationTime1, &lastAccessTime1, &lastWriteTime1))
+				if (GetFileTime(h1, &creationTime1, &lastAccessTime1, &lastWriteTime1))
 				{
 					// Compare date
-					if (CompareFileTime (&lastWriteTime0, &lastWriteTime1)<=0)
+					if (CompareFileTime(&lastWriteTime0, &lastWriteTime1) <= 0)
 						ret = &true_value;
 					else
-						ret= &false_value;
+						ret = &false_value;
 				}
 			}
-			CloseHandle (h1);
+			CloseHandle(h1);
 		}
-		CloseHandle (h0);
+		CloseHandle(h0);
 	}
 
 	return ret;
 }
 
-Value* export_vegetable_cf (Value** arg_list, int count)
+Value *export_vegetable_cf(Value **arg_list, int count)
 {
 	// Make sure we have the correct number of arguments (3)
 	check_arg_count(export_shape, 3, count);
@@ -530,15 +524,15 @@ Value* export_vegetable_cf (Value** arg_list, int count)
 	// Check to see if the arguments match up to what we expect
 	// We want to use 'TurnAllTexturesOn <object to use>'
 	MCHAR *message = _M("NelExportVegetable [node] [filename] [dialog error]");
-	type_check (arg_list[0], MAXNode, message);
-	type_check (arg_list[1], String, message);
-	type_check (arg_list[2], Boolean, message);
+	type_check(arg_list[0], MAXNode, message);
+	type_check(arg_list[1], String, message);
+	type_check(arg_list[2], Boolean, message);
 
 	// Get a INode pointer from the argument passed to us
 	INode *node = arg_list[0]->to_node();
-	nlassert (node);
+	nlassert(node);
 
-	// Export path 
+	// Export path
 	std::string sPath = MCharStrToUtf8(arg_list[1]->to_string());
 
 	// Message in dialog
@@ -547,97 +541,97 @@ Value* export_vegetable_cf (Value** arg_list, int count)
 	// Get a good interface pointer
 	Interface *ip = MAXScript_interface;
 
-	theCNelExport.init (false, dialogMessage, ip, true);
+	theCNelExport.init(false, dialogMessage, ip, true);
 
 	// Ok ?
-	Boolean *ret=&false_value;
+	Boolean *ret = &false_value;
 
 	try
 	{
 		// Export
-		if (theCNelExport.exportVegetable (sPath, *node, ip->GetTime()))
+		if (theCNelExport.exportVegetable(sPath, *node, ip->GetTime()))
 			ret = &true_value;
 	}
 	catch (const Exception &e)
 	{
-		nlwarning ("ERROR (NelExportVegetable) %s", e.what());
+		nlwarning("ERROR (NelExportVegetable) %s", e.what());
 	}
 	catch (...)
 	{
-		nlwarning ("ERROR (NelExportVegetable) catch (...)");
+		nlwarning("ERROR (NelExportVegetable) catch (...)");
 	}
 
 	return ret;
 }
 
-Value* reload_texture_cf (Value** arg_list, int count)
+Value *reload_texture_cf(Value **arg_list, int count)
 {
 	// Make sure we have the correct number of arguments (1)
 	check_arg_count(reload_texture, 1, count);
 	char *message = "NelReloadTexture [BitmapTex]";
-	//type_check (arg_list[0], TextureMap, message);
+	// type_check (arg_list[0], TextureMap, message);
 
 	// Get a good interface pointer
 	Interface *ip = MAXScript_interface;
 
-	theCNelExport.init (false, false, ip, true);
+	theCNelExport.init(false, false, ip, true);
 
 	// The 2 filenames
-	Texmap *texmap = arg_list[0]->to_texmap ();
+	Texmap *texmap = arg_list[0]->to_texmap();
 
 	// BitmapTex ?
-	if (texmap->ClassID() == Class_ID (BMTEX_CLASS_ID, 0))
+	if (texmap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0))
 	{
 		// Cast
-		BitmapTex *bitmap = (BitmapTex*)texmap;
+		BitmapTex *bitmap = (BitmapTex *)texmap;
 
 		// Reload
-		bitmap->ReloadBitmapAndUpdate ();
+		bitmap->ReloadBitmapAndUpdate();
 
 		// Tell the bitmap has changed
-		BroadcastNotification (NOTIFY_BITMAP_CHANGED, (void *)bitmap->GetMapName());
-		
+		BroadcastNotification(NOTIFY_BITMAP_CHANGED, (void *)bitmap->GetMapName());
+
 		return &true_value;
 	}
 
 	return &false_value;
 }
 
-Value* export_collision_cf (Value** arg_list, int count)
+Value *export_collision_cf(Value **arg_list, int count)
 {
 	// Make sure we have the correct number of arguments (2)
 	check_arg_count(export_shape, 2, count);
 
 	// Check to see if the arguments match up to what we expect
-	type_check (arg_list[0], Array, sExportCollisionErrorMsg);
-	type_check (arg_list[1], String, sExportCollisionErrorMsg);
+	type_check(arg_list[0], Array, sExportCollisionErrorMsg);
+	type_check(arg_list[1], String, sExportCollisionErrorMsg);
 
 	// Get a good interface pointer
 	Interface *ip = MAXScript_interface;
 
-	theCNelExport.init (false, false, ip, true);
+	theCNelExport.init(false, false, ip, true);
 
-	// Export path 
+	// Export path
 	string sPath = MCharStrToUtf8(arg_list[1]->to_string());
 
 	// Get time
 	TimeValue time = MAXScript_interface->GetTime();
-	
+
 	// Get array
-	Array* array=(Array*)arg_list[0];
+	Array *array = (Array *)arg_list[0];
 
 	// Array of INode *
 	std::vector<INode *> nodes;
-	nodes.reserve (array->size);
+	nodes.reserve(array->size);
 
 	// Check each value in the array
 	uint i;
-	for (i=0; i<(uint)array->size; i++)
+	for (i = 0; i < (uint)array->size; i++)
 	{
-		type_check (array->get (i+1), MAXNode, sExportCollisionErrorMsg);
+		type_check(array->get(i + 1), MAXNode, sExportCollisionErrorMsg);
 
 		// Add to the array of nodes
-		nodes.push_back (array->get (i+1)->to_node());
+		nodes.push_back(array->get(i + 1)->to_node());
 	}
 
 	// Ok ?
@@ -648,55 +642,55 @@ Value* export_collision_cf (Value** arg_list, int count)
 		// Warning as the export options are not used, they are not loaded!
 
 		// Export
-		if (theCNelExport.exportCollision (sPath.c_str(), nodes, time))
+		if (theCNelExport.exportCollision(sPath.c_str(), nodes, time))
 			ret = &true_value;
 	}
 	catch (const Exception &e)
 	{
-		nlwarning ("ERROR (NelExportCollision) %s", e.what());
+		nlwarning("ERROR (NelExportCollision) %s", e.what());
 	}
 	catch (...)
 	{
-		nlwarning ("ERROR (NelExportCollision) catch (...)");
+		nlwarning("ERROR (NelExportCollision) catch (...)");
 	}
 	return ret;
 }
 
-Value* export_pacs_primitives_cf (Value** arg_list, int count)
+Value *export_pacs_primitives_cf(Value **arg_list, int count)
 {
 	// Make sure we have the correct number of arguments (2)
 	check_arg_count(export_shape, 2, count);
 
 	// Check to see if the arguments match up to what we expect
-	type_check (arg_list[0], Array, sExportPACSPrimitivesErrorMsg);
-	type_check (arg_list[1], String, sExportPACSPrimitivesErrorMsg);
+	type_check(arg_list[0], Array, sExportPACSPrimitivesErrorMsg);
+	type_check(arg_list[1], String, sExportPACSPrimitivesErrorMsg);
 
 	// Get a good interface pointer
 	Interface *ip = MAXScript_interface;
 
-	theCNelExport.init (false, false, ip, true);
+	theCNelExport.init(false, false, ip, true);
 
-	// Export path 
+	// Export path
 	string sPath = MCharStrToUtf8(arg_list[1]->to_string());
 
 	// Get time
 	TimeValue time = MAXScript_interface->GetTime();
-	
+
 	// Get array
-	Array* array=(Array*)arg_list[0];
+	Array *array = (Array *)arg_list[0];
 
 	// Array of INode *
 	std::vector<INode *> nodes;
-	nodes.reserve (array->size);
+	nodes.reserve(array->size);
 
 	// Check each value in the array
 	uint i;
-	for (i=0; i<(uint)array->size; i++)
+	for (i = 0; i < (uint)array->size; i++)
 	{
-		type_check (array->get (i+1), MAXNode, sExportPACSPrimitivesErrorMsg);
+		type_check(array->get(i + 1), MAXNode, sExportPACSPrimitivesErrorMsg);
 
 		// Add to the array of nodes
-		nodes.push_back (array->get (i+1)->to_node());
+		nodes.push_back(array->get(i + 1)->to_node());
 	}
 
 	// Ok ?
@@ -705,37 +699,36 @@ Value* export_pacs_primitives_cf (Value** arg_list, int count)
 	try
 	{
 		// Export
-		if (theCNelExport.exportPACSPrimitives (sPath.c_str(), nodes, time))
+		if (theCNelExport.exportPACSPrimitives(sPath.c_str(), nodes, time))
 			ret = &true_value;
 	}
 	catch (const Exception &e)
 	{
-		nlwarning ("ERROR (NelExportPACSPrimitives) %s", e.what());
+		nlwarning("ERROR (NelExportPACSPrimitives) %s", e.what());
 	}
 	catch (...)
 	{
-		nlwarning ("ERROR (NelExportPACSPrimitives) catch (...)");
+		nlwarning("ERROR (NelExportPACSPrimitives) catch (...)");
 	}
 	return ret;
 }
 
-
-Value* export_lod_character_cf (Value** arg_list, int count)
+Value *export_lod_character_cf(Value **arg_list, int count)
 {
 	// Make sure we have the correct number of arguments (3)
 	check_arg_count(export_lod_character, 3, count);
 
 	// Check to see if the arguments match up to what we expect
 	MCHAR *message = _M("NelExportLodCharacter [node] [filename] [dialog error]");
-	type_check (arg_list[0], MAXNode, message);
-	type_check (arg_list[1], String, message);
-	type_check (arg_list[2], Boolean, message);
+	type_check(arg_list[0], MAXNode, message);
+	type_check(arg_list[1], String, message);
+	type_check(arg_list[2], Boolean, message);
 
 	// Get a INode pointer from the argument passed to us
 	INode *node = arg_list[0]->to_node();
-	nlassert (node);
+	nlassert(node);
 
-	// Export path 
+	// Export path
 	std::string sPath = MCharStrToUtf8(arg_list[1]->to_string());
 
 	// Message in dialog
@@ -744,31 +737,30 @@ Value* export_lod_character_cf (Value** arg_list, int count)
 	// Get a good interface pointer
 	Interface *ip = MAXScript_interface;
 
-	theCNelExport.init (false, dialogMessage, ip, true);
+	theCNelExport.init(false, dialogMessage, ip, true);
 
 	// Ok ?
-	Boolean *ret=&false_value;
+	Boolean *ret = &false_value;
 
 	try
 	{
 		// Export
-		if (theCNelExport.exportLodCharacter (sPath, *node, ip->GetTime()))
+		if (theCNelExport.exportLodCharacter(sPath, *node, ip->GetTime()))
 			ret = &true_value;
 	}
 	catch (const Exception &e)
 	{
-		nlwarning ("ERROR (NelExportLodCharacter) %s", e.what());
+		nlwarning("ERROR (NelExportLodCharacter) %s", e.what());
 	}
 	catch (...)
 	{
-		nlwarning ("ERROR (NelExportLodCharacter) catch (...)");
+		nlwarning("ERROR (NelExportLodCharacter) catch (...)");
 	}
 
 	return ret;
 }
 
-
-Value* node_properties_cf (Value** arg_list, int count)
+Value *node_properties_cf(Value **arg_list, int count)
 {
 	// Make sure we have the correct number of arguments (3)
 	check_arg_count(export_lod_character, 2, count);
@@ -776,24 +768,24 @@ Value* node_properties_cf (Value** arg_list, int count)
 	// Check to see if the arguments match up to what we expect
 	MCHAR *message = _M("NelNodeProperties [node_array] [dialog error]");
 
-	//type_check (arg_list[0], MAXNode, message);
-	type_check (arg_list[0], Array, message);
-	type_check (arg_list[1], Boolean, message);
+	// type_check (arg_list[0], MAXNode, message);
+	type_check(arg_list[0], Array, message);
+	type_check(arg_list[1], Boolean, message);
 
 	// Get array
-	Array* array=(Array*)arg_list[0];
+	Array *array = (Array *)arg_list[0];
 
 	// Array of INode *
 	std::set<INode *> nodes;
 
 	// Check each value in the array
 	uint i;
-	for (i=0; i<(uint)array->size; i++)
+	for (i = 0; i < (uint)array->size; i++)
 	{
-		type_check (array->get (i+1), MAXNode, _M("NelNodeProperties [node_array] [dialog error]"));
+		type_check(array->get(i + 1), MAXNode, _M("NelNodeProperties [node_array] [dialog error]"));
 
 		// Add to the array of nodes
-		nodes.insert (array->get (i+1)->to_node());
+		nodes.insert(array->get(i + 1)->to_node());
 	}
 
 	// Message in dialog
@@ -802,85 +794,83 @@ Value* node_properties_cf (Value** arg_list, int count)
 	// Get a good interface pointer
 	Interface *ip = MAXScript_interface;
 
-	theCNelExport.init (false, dialogMessage, ip, true);
-	
+	theCNelExport.init(false, dialogMessage, ip, true);
+
 	// Build a seleted set
-	std::set<INode*> listNode;
+	std::set<INode *> listNode;
 
 	// Get the sel node count
-	uint selNodeCount=ip->GetSelNodeCount();
-	for (i=0; i<selNodeCount; i++)
+	uint selNodeCount = ip->GetSelNodeCount();
+	for (i = 0; i < selNodeCount; i++)
 	{
 		// insert the node
-		listNode.insert (ip->GetSelNode(i));
+		listNode.insert(ip->GetSelNode(i));
 	}
 
 	// Call the dialog
-	theCNelExport.OnNodeProperties (listNode);
+	theCNelExport.OnNodeProperties(listNode);
 
 	return &true_value;
 }
-
 
 // ***************************************************************************
 // Physique Mirror
-Value* mirror_physique_cf (Value** arg_list, int count)
+Value *mirror_physique_cf(Value **arg_list, int count)
 {
 	uint i;
-	
+
 	// **** retrieve args.
 	// Make sure we have the correct number of arguments (3)
-	check_arg_count(NelMirrorPhysique , 3, count);
-	
+	check_arg_count(NelMirrorPhysique, 3, count);
+
 	// Check to see if the arguments match up to what we expect
 	MCHAR *message = _M("NelMirrorPhysique [node] [vert_list_in] [threshold]");
-	
-	//type_check
-	type_check (arg_list[0], MAXNode, message);
-	type_check (arg_list[1], Array, message);
-	type_check (arg_list[2], Float, message);
-	
+
+	// type_check
+	type_check(arg_list[0], MAXNode, message);
+	type_check(arg_list[1], Array, message);
+	type_check(arg_list[2], Float, message);
+
 	// get the node
-	INode	*node= arg_list[0]->to_node();
-	
+	INode *node = arg_list[0]->to_node();
+
 	// get vertices indices
-	Array* array=(Array*)arg_list[1];
-	std::vector<uint>	vertIn;
+	Array *array = (Array *)arg_list[1];
+	std::vector<uint> vertIn;
 	vertIn.resize(array->size);
-	for (i=0; i<(uint)array->size; i++)
+	for (i = 0; i < (uint)array->size; i++)
 	{
-		type_check (array->get (i+1), Integer, message);
-		vertIn[i]= array->get (i+1)->to_int() - 1;
+		type_check(array->get(i + 1), Integer, message);
+		vertIn[i] = array->get(i + 1)->to_int() - 1;
 	}
-	
+
 	// get threshold
-	float	threshold= arg_list[2]->to_float();
-	
+	float threshold = arg_list[2]->to_float();
+
 	// **** Mirror!
 	// Get time
-	TimeValue time=MAXScript_interface->GetTime();
-	
+	TimeValue time = MAXScript_interface->GetTime();
+
 	// do it
 	theCNelExport._ExportNel->mirrorPhysiqueSelection(*node, time, vertIn, threshold);
-	
+
 	return &true_value;
 }
 
-
 // ***************************************************************************
 
-Value* get_file_modification_date_cf (Value** arg_list, int count)
+Value *get_file_modification_date_cf(Value **arg_list, int count)
 {
 	// **** retrieve args.
 	// Make sure we have the correct number of arguments (3)
-	check_arg_count(NeLGetFileModificationDate , 1, count);
-	
+	check_arg_count(NeLGetFileModificationDate, 1, count);
+
 	// Check to see if the arguments match up to what we expect
 	MCHAR *message = _M("date NeLGetFileModificationDate [filename] - If an error occurred, returns undefined.");
-	
-	//type_check
-	type_check (arg_list[0], String, message);
-	
+
+	// type_check
+	type_check(arg_list[0], String, message);
+
 	// get the node
 	WStr sPath = arg_list[0]->to_string();
 
@@ -896,9 +886,9 @@ Value* get_file_modification_date_cf (Value** arg_list, int count)
 			sprintf(number, "%08x%08x", lastWriteTime.dwHighDateTime, lastWriteTime.dwLowDateTime);
 			result = number;
 		}
-		CloseHandle (file);
+		CloseHandle(file);
 	}
-	
+
 	if (result.empty())
 		return &undefined;
 	else
@@ -907,19 +897,19 @@ Value* get_file_modification_date_cf (Value** arg_list, int count)
 
 // ***************************************************************************
 
-Value* set_file_modification_date_cf (Value** arg_list, int count)
+Value *set_file_modification_date_cf(Value **arg_list, int count)
 {
 	// **** retrieve args.
 	// Make sure we have the correct number of arguments (3)
-	check_arg_count(NeLSetFileModificationDate , 2, count);
-	
+	check_arg_count(NeLSetFileModificationDate, 2, count);
+
 	// Check to see if the arguments match up to what we expect
 	MCHAR *message = _M("bool NeLSetFileModificationDate [filename] [date] - If an error occurred, returns false.");
-	
-	//type_check
+
+	// type_check
 	type_check(arg_list[0], String, message);
 	type_check(arg_list[1], String, message);
-	
+
 	// get the node
 	WStr sPath = arg_list[0]->to_string();
 	WStr sDate = arg_list[1]->to_string();
@@ -938,26 +928,29 @@ Value* set_file_modification_date_cf (Value** arg_list, int count)
 				return &true_value;
 			}
 		}
-		CloseHandle (file);
+		CloseHandle(file);
 	}
-	
+
 	return &false_value;
 }
 
 class CSuicideMsgBoxDisplayer : public CMsgBoxDisplayer
 {
 public:
-	CSuicideMsgBoxDisplayer (const char *displayerName = "") : CMsgBoxDisplayer(displayerName) { }
+	CSuicideMsgBoxDisplayer(const char *displayerName = "")
+	    : CMsgBoxDisplayer(displayerName)
+	{
+	}
 
 protected:
 	/// Put the string into the file.
-    virtual void doDisplay( const CLog::TDisplayInfo& args, const char *message )
+	virtual void doDisplay(const CLog::TDisplayInfo &args, const char *message)
 	{
 		nelExportTerminateProcess();
 	}
 };
 
-Value* force_quit_on_msg_displayer_cf(Value** arg_list, int count)
+Value *force_quit_on_msg_displayer_cf(Value **arg_list, int count)
 {
 	nlwarning("Enable force quit on NeL report msg displayer");
 	NLMISC::INelContext::getInstance().setWindowedApplication(false);
@@ -982,7 +975,7 @@ Value* force_quit_on_msg_displayer_cf(Value** arg_list, int count)
 	return &true_value;
 }
 
-Value* force_quit_right_now_cf(Value** arg_list, int count)
+Value *force_quit_right_now_cf(Value **arg_list, int count)
 {
 	// because quitMAX can fail
 	nlwarning("Force quit");
@@ -994,7 +987,7 @@ Value* force_quit_right_now_cf(Value** arg_list, int count)
  |	MAXScript Plugin Initialization
 \*===========================================================================*/
 
-__declspec( dllexport ) void
-LibInit() { 
+__declspec(dllexport) void
+LibInit()
+{
 }
-

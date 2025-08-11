@@ -86,7 +86,7 @@ private:
 	CStorageValue<uint8> *m_204B_Equals_2E;
 
 	/// Default implementation, should preferably not use this, no direct read access will be provided
-	std::vector<NLMISC::CRefPtr<CReferenceMaker> > m_References;
+	std::vector<NLMISC::CRefPtr<CReferenceMaker>> m_References;
 	/// Unknown value
 	uint32 m_References2035Value0;
 

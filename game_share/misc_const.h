@@ -14,19 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-
-
 #ifndef NL_MISC_CONST_H
 #define NL_MISC_CONST_H
 
 /// Constants for CTeam class
-namespace CTEAM
-{
-	const uint16	InvalidTeamId = 0xFFFF;
-	const uint8		TeamMaxNbMembers = 9;
+namespace CTEAM {
+const uint16 InvalidTeamId = 0xFFFF;
+const uint8 TeamMaxNbMembers = 9;
 }
 
 #define RZ_MAX_BUILDING_PER_OUTPOST 4
@@ -38,9 +32,7 @@ namespace CTEAM
  */
 typedef uint32 TAIAlias;
 
-
 /// Invalid AI Instance Id
-const uint32	INVALID_AI_INSTANCE = 0xffffffff;
-
+const uint32 INVALID_AI_INSTANCE = 0xffffffff;
 
 #endif // NL_MISC_CONST_H

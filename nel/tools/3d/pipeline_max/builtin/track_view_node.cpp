@@ -50,14 +50,15 @@ namespace BUILTIN {
 #define PMB_TVNODE_IDENTIFIER_CHUNK_ID 0x0120
 #define PMB_TVNODE_ISNOTNODE_CHUNK_ID 0x0130
 
-CTrackViewNode::CTrackViewNode(CScene *scene) : CReferenceTarget(scene), m_Empty0140(NULL), m_Empty0150(NULL)
+CTrackViewNode::CTrackViewNode(CScene *scene)
+    : CReferenceTarget(scene)
+    , m_Empty0140(NULL)
+    , m_Empty0150(NULL)
 {
-
 }
 
 CTrackViewNode::~CTrackViewNode()
 {
-
 }
 
 const ucstring CTrackViewNode::DisplayName = ucstring("TVNode");
@@ -134,14 +135,17 @@ const ISceneClassDesc *CTrackViewNode::classDesc() const
 void CTrackViewNode::toStringLocal(std::ostream &ostream, const std::string &pad, uint filter) const
 {
 	CReferenceTarget::toStringLocal(ostream, pad);
-	if (m_Empty0140) ostream << "\n" << pad << "Empty 0x0140 ";
-	if (m_Empty0150) ostream << "\n" << pad << "Empty 0x0150 ";
+	if (m_Empty0140) ostream << "\n"
+		                     << pad << "Empty 0x0140 ";
+	if (m_Empty0150) ostream << "\n"
+		                     << pad << "Empty 0x0150 ";
 	// std::string padpad = pad + "\t";
 	for (std::vector<TChild>::size_type i = 0; i < m_Children.size(); ++i)
 	{
 		CReferenceMaker *referenceMaker = m_Children[i].Reference;
 		nlassert(referenceMaker);
-		ostream << "\n" << pad << i << ": <ptr=0x";
+		ostream << "\n"
+		        << pad << i << ": <ptr=0x";
 		{
 			std::stringstream ss;
 			ss << std::hex << std::setfill('0');

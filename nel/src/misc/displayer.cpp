@@ -22,16 +22,16 @@
 #include "nel/misc/types_nl.h"
 
 #ifndef NL_OS_WINDOWS
-#	define IsDebuggerPresent() false
+#define IsDebuggerPresent() false
 #endif
 
 #ifdef NL_OS_WINDOWS
-#	include <io.h>
-#	include <fcntl.h>
-#	include <sys/types.h>
-#	include <sys/stat.h>
+#include <io.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #else
-#	include <cerrno>
+#include <cerrno>
 #endif // NL_OS_WINDOWS
 
 #include "nel/misc/path.h"
@@ -47,11 +47,10 @@
 using namespace std;
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 CVariable<bool> StdDisplayerColor("nel", "StdDisplayerColor", "Enable colors in std displayer", true, 0, true);
 
@@ -61,50 +60,49 @@ static const char *LogTypeToString[][8] = {
 	{ "", "A fatal error occurs. The program must quit", "", "", "", "", "A failed assertion occurs", "" },
 };
 
-const char *IDisplayer::logTypeToString (CLog::TLogType logType, bool longFormat)
+const char *IDisplayer::logTypeToString(CLog::TLogType logType, bool longFormat)
 {
 	if (logType < CLog::LOG_NO || logType > CLog::LOG_UNKNOWN)
 		return "<NotDefined>";
 
-	return LogTypeToString[longFormat?1:0][logType];
+	return LogTypeToString[longFormat ? 1 : 0][logType];
 }
 
-const char *IDisplayer::dateToHumanString ()
+const char *IDisplayer::dateToHumanString()
 {
 	time_t date;
-	time (&date);
-	return dateToHumanString (date);
+	time(&date);
+	return dateToHumanString(date);
 }
 
-const char *IDisplayer::dateToHumanString (time_t date)
+const char *IDisplayer::dateToHumanString(time_t date)
 {
 	static char cstime[25];
 	struct tm *tms = localtime(&date);
 	if (tms)
-		strftime (cstime, 25, "%Y/%m/%d %H:%M:%S", tms);
+		strftime(cstime, 25, "%Y/%m/%d %H:%M:%S", tms);
 	else
 		sprintf(cstime, "bad date %d", (uint32)date);
 	return cstime;
 }
 
-const char *IDisplayer::dateToComputerString (time_t date)
+const char *IDisplayer::dateToComputerString(time_t date)
 {
 	static char cstime[25];
-	smprintf (cstime, 25, "%ld", &date);
+	smprintf(cstime, 25, "%ld", &date);
 	return cstime;
 }
 
-const char *IDisplayer::HeaderString ()
+const char *IDisplayer::HeaderString()
 {
 	static char header[1024];
 	smprintf(header, 1024, "\nLog Starting [%s]\n", dateToHumanString());
 	return header;
 }
 
-
 IDisplayer::IDisplayer(const char *displayerName)
 {
-	_Mutex = new CMutex (string(displayerName)+"DISP");
+	_Mutex = new CMutex(string(displayerName) + "DISP");
 	DisplayerName = displayerName;
 }
 
@@ -116,12 +114,12 @@ IDisplayer::~IDisplayer()
 /*
  * Display the string where it does.
  */
-void IDisplayer::display ( const CLog::TDisplayInfo& args, const char *message )
+void IDisplayer::display(const CLog::TDisplayInfo &args, const char *message)
 {
 	_Mutex->enter();
 	try
 	{
-		doDisplay( args, message );
+		doDisplay(args, message);
 	}
 	catch (const Exception &)
 	{
@@ -130,12 +128,11 @@ void IDisplayer::display ( const CLog::TDisplayInfo& args, const char *message )
 	_Mutex->leave();
 }
 
-
 // Log format : "<LogType> <ThreadNo> <FileName> <Line> <ProcessName> : <Msg>"
-void CStdDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *message )
+void CStdDisplayer::doDisplay(const CLog::TDisplayInfo &args, const char *message)
 {
 	bool needSpace = false;
-	//stringstream ss;
+	// stringstream ss;
 	string str;
 #ifdef NL_OS_UNIX
 	bool colorSet = false;
@@ -146,21 +143,37 @@ void CStdDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *mess
 #ifdef NL_OS_UNIX
 		if (StdDisplayerColor.get())
 		{
-			if (args.LogType == CLog::LOG_ERROR || args.LogType == CLog::LOG_ASSERT) { str += "\e[0;30m\e[41m"; colorSet = true; } // black text, red background
-			else if (args.LogType == CLog::LOG_WARNING) { str += "\e[0;91m"; colorSet = true; } // bright red text
-			else if (args.LogType == CLog::LOG_DEBUG) { str += "\e[0;34m"; colorSet = true; } // blue text
+			if (args.LogType == CLog::LOG_ERROR || args.LogType == CLog::LOG_ASSERT)
+			{
+				str += "\e[0;30m\e[41m";
+				colorSet = true;
+			} // black text, red background
+			else if (args.LogType == CLog::LOG_WARNING)
+			{
+				str += "\e[0;91m";
+				colorSet = true;
+			} // bright red text
+			else if (args.LogType == CLog::LOG_DEBUG)
+			{
+				str += "\e[0;34m";
+				colorSet = true;
+			} // blue text
 		}
 #endif
-		//ss << logTypeToString(args.LogType);
+		// ss << logTypeToString(args.LogType);
 		str += logTypeToString(args.LogType);
 		needSpace = true;
 	}
 
 	// Write thread identifier
-	if ( args.ThreadId != 0 )
+	if (args.ThreadId != 0)
 	{
-		//ss << setw(5) << args.ThreadId;
-		if (needSpace) { str += " "; needSpace = false; }
+		// ss << setw(5) << args.ThreadId;
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 #ifdef NL_OS_WINDOWS
 		str += NLMISC::toString("%5x", args.ThreadId);
 #else
@@ -171,47 +184,67 @@ void CStdDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *mess
 
 	if (args.FileName != NULL)
 	{
-		//if (needSpace) { ss << " "; needSpace = false; }
-		if (needSpace) { str += " "; needSpace = false; }
-		//ss << CFile::getFilename(args.FileName);
+		// if (needSpace) { ss << " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
+		// ss << CFile::getFilename(args.FileName);
 		str += CFile::getFilename(args.FileName);
 		needSpace = true;
 	}
 
 	if (args.Line != -1)
 	{
-		//if (needSpace) { ss << " "; needSpace = false; }
-		if (needSpace) { str += " "; needSpace = false; }
-		//ss << args.Line;
+		// if (needSpace) { ss << " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
+		// ss << args.Line;
 		str += NLMISC::toString(args.Line);
 		needSpace = true;
 	}
 
 	if (args.FuncName != NULL)
 	{
-		//if (needSpace) { ss << " "; needSpace = false; }
-		if (needSpace) { str += " "; needSpace = false; }
-		//ss << args.FuncName;
+		// if (needSpace) { ss << " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
+		// ss << args.FuncName;
 		str += args.FuncName;
 		needSpace = true;
 	}
 
 	if (!args.ProcessName.empty())
 	{
-		//if (needSpace) { ss << " "; needSpace = false; }
-		if (needSpace) { str += " "; needSpace = false; }
-		//ss << args.ProcessName;
+		// if (needSpace) { ss << " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
+		// ss << args.ProcessName;
 		str += args.ProcessName;
 		needSpace = true;
 	}
 
-	//if (needSpace) { ss << " : "; needSpace = false; }
-	if (needSpace) { str += " : "; needSpace = false; }
+	// if (needSpace) { ss << " : "; needSpace = false; }
+	if (needSpace)
+	{
+		str += " : ";
+		needSpace = false;
+	}
 
-	//ss << message;
+	// ss << message;
 	str += message;
 
-//	string s = ss.str();
+	//	string s = ss.str();
 
 	static bool consoleMode = true;
 
@@ -219,10 +252,10 @@ void CStdDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *mess
 	static bool consoleModeTest = false;
 	if (!consoleModeTest)
 	{
-		HANDLE handle = CreateFileA ("CONOUT$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, 0);
+		HANDLE handle = CreateFileA("CONOUT$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, 0);
 		consoleMode = handle != INVALID_HANDLE_VALUE;
 		if (consoleMode)
-			CloseHandle (handle);
+			CloseHandle(handle);
 		consoleModeTest = true;
 	}
 #endif // NL_OS_WINDOWS
@@ -240,10 +273,10 @@ void CStdDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *mess
 #ifndef NL_OS_WINDOWS
 		// we don't use cout because sometimes, it crashs because cout isn't already init, printf doesn t crash.
 		if (!str.empty())
-			printf ("%s", str.c_str());
+			printf("%s", str.c_str());
 
 		if (!args.CallstackAndLog.empty())
-			printf ("%s", args.CallstackAndLog.c_str());
+			printf("%s", args.CallstackAndLog.c_str());
 #else
 		// we don't use cout because sometimes, it crashs because cout isn't already init, printf doesn t crash.
 		if (!str.empty())
@@ -257,9 +290,9 @@ void CStdDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *mess
 
 #ifdef NL_OS_WINDOWS
 	// display the string in the debugger is the application is started with the debugger
-	if (IsDebuggerPresent ())
+	if (IsDebuggerPresent())
 	{
-		//stringstream ss2;
+		// stringstream ss2;
 		string str2;
 		needSpace = false;
 
@@ -271,7 +304,11 @@ void CStdDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *mess
 			needSpace = true;
 		}
 
-		if (needSpace) { str2 += " : "; needSpace = false; }
+		if (needSpace)
+		{
+			str2 += " : ";
+			needSpace = false;
+		}
 
 		if (args.FuncName != NULL) str2 += string(args.FuncName) + " ";
 
@@ -282,16 +319,16 @@ void CStdDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *mess
 		}
 
 		// Write thread identifier
-		if ( args.ThreadId != 0 )
+		if (args.ThreadId != 0)
 		{
 			str2 += NLMISC::toString("%5x: ", args.ThreadId);
 		}
 
 		str2 += message;
 
-		const sint maxOutString = 2*1024;
+		const sint maxOutString = 2 * 1024;
 
-		if(str2.size() < maxOutString)
+		if (str2.size() < maxOutString)
 		{
 			//////////////////////////////////////////////////////////////////
 			// WARNING: READ THIS !!!!!!!!!!!!!!!! ///////////////////////////
@@ -306,10 +343,10 @@ void CStdDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *mess
 			std::string s(&str2.c_str()[0], (str2.size() - n));
 			OutputDebugStringW(nlUtf8ToWide(s));
 
-			for(;;)
+			for (;;)
 			{
 
-				if((n - count) < maxOutString )
+				if ((n - count) < maxOutString)
 				{
 					s = std::string(&message[count], (n - count));
 					OutputDebugStringW(nlUtf8ToWide(s));
@@ -318,7 +355,7 @@ void CStdDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *mess
 				}
 				else
 				{
-					s = std::string(&message[count] , count + maxOutString);
+					s = std::string(&message[count], count + maxOutString);
 					OutputDebugStringW(nlUtf8ToWide(s));
 					OutputDebugStringW(L"\n\t\t\t");
 					count += maxOutString;
@@ -329,17 +366,17 @@ void CStdDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *mess
 		// OutputDebugString is a big shit, we can't display big string in one time, we need to split
 		uint32 pos = 0;
 		string splited;
-		for(;;)
+		for (;;)
 		{
-			if (pos+1000 < args.CallstackAndLog.size ())
+			if (pos + 1000 < args.CallstackAndLog.size())
 			{
-				splited = args.CallstackAndLog.substr (pos, 1000);
+				splited = args.CallstackAndLog.substr(pos, 1000);
 				OutputDebugStringW(nlUtf8ToWide(splited));
 				pos += 1000;
 			}
 			else
 			{
-				splited = args.CallstackAndLog.substr (pos);
+				splited = args.CallstackAndLog.substr(pos);
 				OutputDebugStringW(nlUtf8ToWide(splited));
 				break;
 			}
@@ -348,74 +385,79 @@ void CStdDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *mess
 #endif
 }
 
-CFileDisplayer::CFileDisplayer (const std::string &filename, bool eraseLastLog, const char *displayerName, bool raw) :
-	IDisplayer (displayerName), _NeedHeader(true), _LastLogSizeChecked(0), _Raw(raw)
+CFileDisplayer::CFileDisplayer(const std::string &filename, bool eraseLastLog, const char *displayerName, bool raw)
+    : IDisplayer(displayerName)
+    , _NeedHeader(true)
+    , _LastLogSizeChecked(0)
+    , _Raw(raw)
 {
-	_FilePointer = (FILE*)1;
-	setParam (filename, eraseLastLog);
+	_FilePointer = (FILE *)1;
+	setParam(filename, eraseLastLog);
 }
 
-CFileDisplayer::CFileDisplayer () :
-	IDisplayer (""), _NeedHeader(true), _LastLogSizeChecked(0), _Raw(false)
+CFileDisplayer::CFileDisplayer()
+    : IDisplayer("")
+    , _NeedHeader(true)
+    , _LastLogSizeChecked(0)
+    , _Raw(false)
 {
-	_FilePointer = (FILE*)1;
+	_FilePointer = (FILE *)1;
 }
 
-CFileDisplayer::~CFileDisplayer ()
+CFileDisplayer::~CFileDisplayer()
 {
-	if (_FilePointer > (FILE*)1)
+	if (_FilePointer > (FILE *)1)
 	{
 		fclose(_FilePointer);
 		_FilePointer = NULL;
 	}
 }
 
-void CFileDisplayer::setParam (const std::string &filename, bool eraseLastLog)
+void CFileDisplayer::setParam(const std::string &filename, bool eraseLastLog)
 {
 	_FileName = filename;
 
 	if (filename.empty())
 	{
 		// can't do nlwarning or infinite recurs
-		printf ("CFileDisplayer::setParam(): Can't create file with empty filename\n");
+		printf("CFileDisplayer::setParam(): Can't create file with empty filename\n");
 		return;
 	}
 
 	if (eraseLastLog)
 	{
-/*		ofstream ofs (filename.c_str(), ios::out | ios::trunc);
-		if (!ofs.is_open())
-		{
-			// can't do nlwarning or infinite recurs
-			printf ("CFileDisplayer::setParam(): Can't open and clear the log file '%s'\n", filename.c_str());
-		}*/
+		/*		ofstream ofs (filename.c_str(), ios::out | ios::trunc);
+		        if (!ofs.is_open())
+		        {
+		            // can't do nlwarning or infinite recurs
+		            printf ("CFileDisplayer::setParam(): Can't open and clear the log file '%s'\n", filename.c_str());
+		        }*/
 
 		// Erase all the derived log files
 		int i = 0;
 		bool fileExist = true;
 		while (fileExist)
 		{
-			string fileToDelete = CFile::getPath (filename) + CFile::getFilenameWithoutExtension (filename) +
-				toString ("%03d.", i) + CFile::getExtension (filename);
-			fileExist = CFile::isExists (fileToDelete);
+			string fileToDelete = CFile::getPath(filename) + CFile::getFilenameWithoutExtension(filename) + toString("%03d.", i) + CFile::getExtension(filename);
+			fileExist = CFile::isExists(fileToDelete);
 			if (fileExist)
-				CFile::deleteFile (fileToDelete);
+				CFile::deleteFile(fileToDelete);
 			i++;
 		}
 	}
 
-	if (_FilePointer > (FILE*)1)
+	if (_FilePointer > (FILE *)1)
 	{
-		fclose (_FilePointer);
-		_FilePointer = (FILE*)1;
+		fclose(_FilePointer);
+		_FilePointer = (FILE *)1;
 	}
 }
 
 // Log format: "2000/01/15 12:05:30 <ProcessName> <LogType> <ThreadId> <FileName> <Line> : <Msg>"
-void CFileDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *message )
+void CFileDisplayer::doDisplay(const CLog::TDisplayInfo &args, const char *message)
 {
 	bool needSpace = false;
-	//stringstream ss;
+	// stringstream ss;
 	string str;
 
 	// if the filename is not set, don't log
@@ -429,15 +471,23 @@ void CFileDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *mes
 
 	if (args.LogType != CLog::LOG_NO && !_Raw)
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 		str += logTypeToString(args.LogType);
 		needSpace = true;
 	}
 
 	// Write thread identifier
-	if ( args.ThreadId != 0 && !_Raw)
+	if (args.ThreadId != 0 && !_Raw)
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 #ifdef NL_OS_WINDOWS
 		str += NLMISC::toString("%4x", args.ThreadId);
 #else
@@ -448,33 +498,53 @@ void CFileDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *mes
 
 	if (!args.ProcessName.empty() && !_Raw)
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 		str += args.ProcessName;
 		needSpace = true;
 	}
 
 	if (args.FileName != NULL && !_Raw)
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 		str += CFile::getFilename(args.FileName);
 		needSpace = true;
 	}
 
 	if (args.Line != -1 && !_Raw)
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 		str += NLMISC::toString(args.Line);
 		needSpace = true;
 	}
 
 	if (args.FuncName != NULL && !_Raw)
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 		str += args.FuncName;
 		needSpace = true;
 	}
 
-	if (needSpace) { str += " : "; needSpace = false; }
+	if (needSpace)
+	{
+		str += " : ";
+		needSpace = false;
+	}
 
 	str += message;
 
@@ -501,12 +571,12 @@ void CFileDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *mes
 		}
 	}
 
-	if (_FilePointer == (FILE*)1)
+	if (_FilePointer == (FILE *)1)
 	{
-		_FilePointer = nlfopen (_FileName, "at");
+		_FilePointer = nlfopen(_FileName, "at");
 		if (_FilePointer == NULL)
 #ifndef NL_OS_WINDOWS
-			printf ("Can't open log file '%s': %s\n", _FileName.c_str(), strerror (errno));
+			printf("Can't open log file '%s': %s\n", _FileName.c_str(), strerror(errno));
 #else
 			wprintf(L"Can't open log file '%s': %s\n", nlUtf8ToWide(_FileName), _wcserror(errno));
 #endif
@@ -554,14 +624,14 @@ void CFileDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *mes
 			}
 		}
 
-		fflush (_FilePointer);
+		fflush(_FilePointer);
 	}
 }
 
 // Log format in clipboard: "2000/01/15 12:05:30 <LogType> <ProcessName> <FileName> <Line>: <Msg>"
 // Log format on the screen: in debug   "<ProcessName> <FileName> <Line>: <Msg>"
 //                           in release "<Msg>"
-void CMsgBoxDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *message)
+void CMsgBoxDisplayer::doDisplay(const CLog::TDisplayInfo &args, const char *message)
 {
 	bool needSpace = false;
 	string str;
@@ -576,40 +646,64 @@ void CMsgBoxDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *m
 
 	if (args.LogType != CLog::LOG_NO)
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 		str += logTypeToString(args.LogType);
 		needSpace = true;
 	}
 
 	if (!args.ProcessName.empty())
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 		str += args.ProcessName;
 		needSpace = true;
 	}
 
 	if (args.FileName != NULL)
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 		str += CFile::getFilename(args.FileName);
 		needSpace = true;
 	}
 
 	if (args.Line != -1)
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 		str += NLMISC::toString(args.Line);
 		needSpace = true;
 	}
 
 	if (args.FuncName != NULL)
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 		str += args.FuncName;
 		needSpace = true;
 	}
 
-	if (needSpace) { str += ": "; needSpace = false; }
+	if (needSpace)
+	{
+		str += ": ";
+		needSpace = false;
+	}
 
 	str += message;
 
@@ -622,46 +716,67 @@ void CMsgBoxDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *m
 #ifdef NL_DEBUG
 	if (!args.ProcessName.empty())
 	{
-		if (needSpace) { str2 += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str2 += " ";
+			needSpace = false;
+		}
 		str2 += args.ProcessName;
 		needSpace = true;
 	}
 
 	if (args.FileName != NULL)
 	{
-		if (needSpace) { str2 += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str2 += " ";
+			needSpace = false;
+		}
 		str2 += CFile::getFilename(args.FileName);
 		needSpace = true;
 	}
 
 	if (args.Line != -1)
 	{
-		if (needSpace) { str2 += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str2 += " ";
+			needSpace = false;
+		}
 		str2 += NLMISC::toString(args.Line);
 		needSpace = true;
 	}
 
 	if (args.FuncName != NULL)
 	{
-		if (needSpace) { str2 += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str2 += " ";
+			needSpace = false;
+		}
 		str2 += args.FuncName;
 		needSpace = true;
 	}
 
-	if (needSpace) { str2 += ": "; needSpace = false; }
+	if (needSpace)
+	{
+		str2 += ": ";
+		needSpace = false;
+	}
 
 #endif // NL_DEBUG
 
 	str2 += message;
 	str2 += "\n\n(this message was copied in the clipboard)";
 
-/*	if (IsDebuggerPresent ())
+	/*	if (IsDebuggerPresent ())
+	    {
+	        // Must break in assert call
+	        DebugNeedAssert = true;
+	    }
+	    else
+	*/
 	{
-		// Must break in assert call
-		DebugNeedAssert = true;
-	}
-	else
-*/	{
 
 		// Display the report
 
@@ -670,7 +785,7 @@ void CMsgBoxDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *m
 		body += toString(LogTypeToString[2][args.LogType]) + "\n";
 		body += "ProcName: " + args.ProcessName + "\n";
 		body += "Date: " + string(dateToHumanString(args.Date)) + "\n";
-		if(args.FileName == NULL)
+		if (args.FileName == NULL)
 			body += "File: <Unknown>\n";
 		else
 			body += "File: " + string(args.FileName) + "\n";
@@ -687,35 +802,35 @@ void CMsgBoxDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *m
 
 		// procname is host/service_name-sid we only want the service_name to avoid redondant mail
 		string procname;
-		string::size_type pos = args.ProcessName.find ("/");
+		string::size_type pos = args.ProcessName.find("/");
 		if (pos == string::npos)
 		{
-			procname =  args.ProcessName;
+			procname = args.ProcessName;
 		}
 		else
 		{
-			string::size_type pos2 = args.ProcessName.find ("-", pos+1);
+			string::size_type pos2 = args.ProcessName.find("-", pos + 1);
 			if (pos2 == string::npos)
 			{
-				procname =  args.ProcessName.substr (pos+1);
+				procname = args.ProcessName.substr(pos + 1);
 			}
 			else
 			{
-				procname =  args.ProcessName.substr (pos+1, pos2-pos-1);
+				procname = args.ProcessName.substr(pos + 1, pos2 - pos - 1);
 			}
 		}
 
-		subject += procname + " NeL " + toString(LogTypeToString[0][args.LogType]) + " " + (args.FileName?string(args.FileName):"") + " " + toString(args.Line) + " " + (args.FuncName?string(args.FuncName):"");
+		subject += procname + " NeL " + toString(LogTypeToString[0][args.LogType]) + " " + (args.FileName ? string(args.FileName) : "") + " " + toString(args.Line) + " " + (args.FuncName ? string(args.FuncName) : "");
 
 		// Check the envvar NEL_IGNORE_ASSERT
-		if (getenv ("NEL_IGNORE_ASSERT") == NULL)
+		if (getenv("NEL_IGNORE_ASSERT") == NULL)
 		{
 			// yoyo: allow only to send the crash report once. Because users usually click ignore,
 			// which create noise into list of bugs (once a player crash, it will surely continues to do it).
 			std::string filename = getLogDirectory() + NL_CRASH_DUMP_FILE;
-			
+
 			TReportResult reportResult = report(args.ProcessName + " NeL " + toString(logTypeToString(args.LogType, true)),
-				subject, body, filename, NL_REPORT_SYNCHRONOUS, !isCrashAlreadyReported(), NL_REPORT_DEFAULT);
+			    subject, body, filename, NL_REPORT_SYNCHRONOUS, !isCrashAlreadyReported(), NL_REPORT_DEFAULT);
 
 			switch (reportResult)
 			{
@@ -726,12 +841,12 @@ void CMsgBoxDisplayer::doDisplay ( const CLog::TDisplayInfo& args, const char *m
 				INelContext::getInstance().setDebugNeedAssert(true);
 				break;
 			case ReportAbort:
-#		ifdef NL_OS_WINDOWS
-#		ifndef NL_COMP_MINGW
+#ifdef NL_OS_WINDOWS
+#ifndef NL_COMP_MINGW
 				// disable the Windows popup telling that the application aborted and disable the dr watson report.
 				_set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
-#		endif
-#		endif
+#endif
+#endif
 				abort();
 				break;
 

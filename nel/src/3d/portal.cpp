@@ -33,8 +33,7 @@ using namespace std;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // 0.5 cm of precision
 #define PORTALPRECISION 0.005
@@ -57,7 +56,7 @@ void CPortal::setOcclusionModel(const std::string &occlusionModel)
 {
 	_OcclusionModelId = CStringMapper::map(occlusionModel);
 }
-const std::string	&CPortal::getOcclusionModel()
+const std::string &CPortal::getOcclusionModel()
 {
 	return CStringMapper::unmap(_OcclusionModelId);
 }
@@ -69,7 +68,7 @@ void CPortal::setOpenOcclusionModel(const std::string &occlusionModel)
 {
 	_OpenOcclusionModelId = CStringMapper::map(occlusionModel);
 }
-const std::string	&CPortal::getOpenOcclusionModel()
+const std::string &CPortal::getOpenOcclusionModel()
 {
 	return CStringMapper::unmap(_OpenOcclusionModelId);
 }
@@ -78,38 +77,37 @@ NLMISC::TStringId CPortal::getOpenOcclusionModelId()
 	return _OpenOcclusionModelId;
 }
 
-
 // ***************************************************************************
-bool CPortal::clipPyramid (CVector &observer, std::vector<CPlane> &pyramid)
+bool CPortal::clipPyramid(CVector &observer, std::vector<CPlane> &pyramid)
 {
-	if (!_Opened || _Poly.size()<3)
+	if (!_Opened || _Poly.size() < 3)
 		return false;
 	// Clip portal with pyramid
 	CPolygon p;
 	p.Vertices = _Poly;
-	p.clip( &pyramid[1], (uint)pyramid.size()-1 );
+	p.clip(&pyramid[1], (uint)pyramid.size() - 1);
 
 	// Construct pyramid with clipped portal
-	if( p.Vertices.size() > 2 )
+	if (p.Vertices.size() > 2)
 	{
 		uint i;
 		// Found the right orientation
-		CVector n = (p.Vertices[1]-p.Vertices[0])^(p.Vertices[2]-p.Vertices[0]);
-		if( ((observer-p.Vertices[0])*n) < 0.0f )
+		CVector n = (p.Vertices[1] - p.Vertices[0]) ^ (p.Vertices[2] - p.Vertices[0]);
+		if (((observer - p.Vertices[0]) * n) < 0.0f)
 		{
 			// Invert vertices
-			for( i = 0; i < (p.Vertices.size()/2); ++i )
+			for (i = 0; i < (p.Vertices.size() / 2); ++i)
 			{
 				CVector tmp = p.Vertices[i];
-				p.Vertices[i] = p.Vertices[p.Vertices.size()-1-i];
-				p.Vertices[p.Vertices.size()-1-i] = tmp;
+				p.Vertices[i] = p.Vertices[p.Vertices.size() - 1 - i];
+				p.Vertices[p.Vertices.size() - 1 - i] = tmp;
 			}
 		}
 		// Make pyramid : preserve 0 and 1 plane which are near and far plane
-		pyramid.resize (p.Vertices.size()+2);
-		for( i = 0; i < (p.Vertices.size()); ++i )
+		pyramid.resize(p.Vertices.size() + 2);
+		for (i = 0; i < (p.Vertices.size()); ++i)
 		{
-			pyramid[i+2].make( observer, p.Vertices[i], p.Vertices[(i+1)%p.Vertices.size()] );
+			pyramid[i + 2].make(observer, p.Vertices[i], p.Vertices[(i + 1) % p.Vertices.size()]);
 		}
 		return true;
 	}
@@ -118,17 +116,16 @@ bool CPortal::clipPyramid (CVector &observer, std::vector<CPlane> &pyramid)
 }
 
 // ***************************************************************************
-bool CPortal::isInFront (CVector &v)
+bool CPortal::isInFront(CVector &v)
 {
-	if( _Poly.size()<3 )
+	if (_Poly.size() < 3)
 		return false;
 	CVector v1 = _Poly[1] - _Poly[0];
 	CVector v2 = _Poly[2] - _Poly[0];
-	CVector n = v1^v2;
+	CVector n = v1 ^ v2;
 	CVector pv = v - _Poly[0];
-	return ((n*pv) > 0.0f);
+	return ((n * pv) > 0.0f);
 }
-
 
 // ***************************************************************************
 void CPortal::resetClusterLinks()
@@ -139,12 +136,12 @@ void CPortal::resetClusterLinks()
 // ***************************************************************************
 bool CPortal::setCluster(CCluster *cluster)
 {
-	if( _Clusters[0] == NULL )
+	if (_Clusters[0] == NULL)
 	{
 		_Clusters[0] = cluster;
 		return true;
 	}
-	if( _Clusters[1] == NULL )
+	if (_Clusters[1] == NULL)
 	{
 		_Clusters[1] = cluster;
 		return true;
@@ -156,9 +153,9 @@ bool CPortal::setCluster(CCluster *cluster)
 uint8 CPortal::getNbCluster()
 {
 	uint8 nRet = 0;
-	if( _Clusters[0] != NULL )
+	if (_Clusters[0] != NULL)
 		nRet++;
-	if( _Clusters[1] != NULL )
+	if (_Clusters[1] != NULL)
 		nRet++;
 	return nRet;
 }
@@ -168,18 +165,18 @@ bool CPortal::setPoly(const std::vector<CVector> &poly)
 {
 	uint i;
 
-	if( poly.size() < 3 )
+	if (poly.size() < 3)
 		return false;
 
 	// Check if the polygon is a plane
 	CPlane p;
-	p.make( poly[0], poly[1], poly[2] );
+	p.make(poly[0], poly[1], poly[2]);
 	p.normalize();
 	float dist;
-	for( i = 0; i < (poly.size()-3); ++i )
+	for (i = 0; i < (poly.size() - 3); ++i)
 	{
-		dist = fabsf(p*poly[i+3]);
-		if( dist > PORTALPRECISION )
+		dist = fabsf(p * poly[i + 3]);
+		if (dist > PORTALPRECISION)
 			return false;
 	}
 
@@ -189,13 +186,13 @@ bool CPortal::setPoly(const std::vector<CVector> &poly)
 	CPlane p2;
 	for( i = 0; i < (poly.size()-1); ++i )
 	{
-		p2.make( poly[i], poly[i+1], poly[i]+p.getNormal() );
-		for( j = 0; j < poly.size(); ++j )
-		if( (j != i) && (j != i+1) )
-		{
-			if( p2*poly[j] < 0.0f )
-				return false;
-		}
+	    p2.make( poly[i], poly[i+1], poly[i]+p.getNormal() );
+	    for( j = 0; j < poly.size(); ++j )
+	    if( (j != i) && (j != i+1) )
+	    {
+	        if( p2*poly[j] < 0.0f )
+	            return false;
+	    }
 	}*/
 
 	// Set the value
@@ -211,21 +208,20 @@ void CPortal::getPoly(std::vector<NLMISC::CVector> &dest) const
 	dest = _LocalPoly;
 }
 
-
 // ***************************************************************************
-void CPortal::serial (NLMISC::IStream& f)
+void CPortal::serial(NLMISC::IStream &f)
 {
 	/* ***********************************************
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
 	 *	It can be loaded/called through CAsyncFileManager for instance
 	 * ***********************************************/
 
-	int version = f.serialVersion (1);
+	int version = f.serialVersion(1);
 
-	f.serialCont (_LocalPoly);
+	f.serialCont(_LocalPoly);
 	if (f.isReading())
 		_Poly = _LocalPoly;
-	f.serial (_Name);
+	f.serial(_Name);
 
 	if (version >= 1)
 	{
@@ -257,7 +253,7 @@ void CPortal::serial (NLMISC::IStream& f)
 }
 
 // ***************************************************************************
-void CPortal::setWorldMatrix (const CMatrix &WM)
+void CPortal::setWorldMatrix(const CMatrix &WM)
 {
 	for (uint32 i = 0; i < _LocalPoly.size(); ++i)
 		_Poly[i] = WM.mulPoint(_LocalPoly[i]);
@@ -266,55 +262,55 @@ void CPortal::setWorldMatrix (const CMatrix &WM)
 // ***************************************************************************
 bool CPortal::clipRay(const NLMISC::CVector &startWorld, const NLMISC::CVector &endWorld)
 {
-	if(_Poly.size()<3)
+	if (_Poly.size() < 3)
 		return false;
 
 	// Avoid precision problem, make local to poly
-	const	CVector		&refVert= _Poly[0];
-	CVector		start= startWorld - refVert;
-	CVector		end= endWorld - refVert;
+	const CVector &refVert = _Poly[0];
+	CVector start = startWorld - refVert;
+	CVector end = endWorld - refVert;
 
 	// compute the plane of this poly, local to polygon
-	CPlane	plane;
+	CPlane plane;
 	plane.make(CVector::Null, _Poly[1] - refVert, _Poly[2] - refVert);
-	CVector	normal = plane.getNormal();
+	CVector normal = plane.getNormal();
 
-	float	np1 = normal*end;
-	float	np2 = np1-normal*start;
+	float np1 = normal * end;
+	float np2 = np1 - normal * start;
 
 	if (np2 == 0.0f)
 		return false;
 
-	float	lambda = (plane.d+np1)/np2;
+	float lambda = (plane.d + np1) / np2;
 
 	// Checks the intersection belongs to the segment
 	if (lambda < 0 || lambda > 1.0f)
 		return false;
 
 	// The intersection on the plane
-	CVector	hit = start*lambda+end*(1.0f-lambda);
+	CVector hit = start * lambda + end * (1.0f - lambda);
 
 	// Do convex test on each border
-	sint	sign= 0;
-	uint	polySize= (uint)_Poly.size();
-	for(uint i=0;i<polySize;i++)
+	sint sign = 0;
+	uint polySize = (uint)_Poly.size();
+	for (uint i = 0; i < polySize; i++)
 	{
-		const	CVector	v0= _Poly[i] - refVert;
-		const	CVector	v1= _Poly[(i+1)%polySize] - refVert;
-		float	d = ((v1-v0)^normal)*(hit-v0);
-		if(d<0)
+		const CVector v0 = _Poly[i] - refVert;
+		const CVector v1 = _Poly[(i + 1) % polySize] - refVert;
+		float d = ((v1 - v0) ^ normal) * (hit - v0);
+		if (d < 0)
 		{
-			if(sign==1)
+			if (sign == 1)
 				return false;
 			else
-				sign=-1;
+				sign = -1;
 		}
-		else if(d>0)
+		else if (d > 0)
 		{
-			if(sign==-1)
+			if (sign == -1)
 				return false;
 			else
-				sign=1;
+				sign = 1;
 		}
 		else
 			return false;
@@ -323,6 +319,5 @@ bool CPortal::clipRay(const NLMISC::CVector &startWorld, const NLMISC::CVector &
 	// all on same side, ok!
 	return true;
 }
-
 
 } // NL3D

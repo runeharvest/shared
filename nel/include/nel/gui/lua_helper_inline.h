@@ -18,9 +18,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef RZ_INCLUDE_LUA_HELPER_INLINE
-	#error "don't include directly, include lua_helper.h instead"
+#error "don't include directly, include lua_helper.h instead"
 #endif
-
 
 /////////////////////
 // CLuaStackChecker //
@@ -34,7 +33,6 @@ inline CLuaStackChecker::CLuaStackChecker(CLuaState *state, int numWantedResults
 	_FinalWantedSize = state->getTop() + numWantedResults;
 }
 
-
 ///////////////
 // CLuaState //
 ///////////////
@@ -42,42 +40,40 @@ inline CLuaStackChecker::CLuaStackChecker(CLuaState *state, int numWantedResults
 //================================================================================
 inline void CLuaState::checkIndex(int index)
 {
-	//H_AUTO(Lua_CLuaState_checkIndex)
-	// NB : more restrictive test that in the documentation there, because
-	// we don't expose the check stack function
+	// H_AUTO(Lua_CLuaState_checkIndex)
+	//  NB : more restrictive test that in the documentation there, because
+	//  we don't expose the check stack function
 #if LUA_VERSION_NUM >= 502
-	nlassert( (index!=0 && abs(index) <= getTop())
-		|| index == LUA_REGISTRYINDEX
-		);
+	nlassert((index != 0 && abs(index) <= getTop())
+	    || index == LUA_REGISTRYINDEX);
 #else
-	nlassert( (index!=0 && abs(index) <= getTop())
-		|| index == LUA_REGISTRYINDEX
-		|| index == LUA_GLOBALSINDEX
-		);
+	nlassert((index != 0 && abs(index) <= getTop())
+	    || index == LUA_REGISTRYINDEX
+	    || index == LUA_GLOBALSINDEX);
 #endif
 }
 
 //================================================================================
-inline int  CLuaState::getTop()
+inline int CLuaState::getTop()
 {
-	//H_AUTO(Lua_CLuaState_getTop)
+	// H_AUTO(Lua_CLuaState_getTop)
 	return lua_gettop(_State);
 }
 
 //================================================================================
 inline void CLuaState::setTop(int index)
 {
-	//H_AUTO(Lua_CLuaState_setTop)
-	// if index is strictly negative, this is a "pop". ensure that the user don't pop more than allowed
+	// H_AUTO(Lua_CLuaState_setTop)
+	//  if index is strictly negative, this is a "pop". ensure that the user don't pop more than allowed
 	if (index < 0)
 	{
 		checkIndex(index);
 	}
 	// if index is positive and is more than the current top
-	else if ( index>getTop() )
+	else if (index > getTop())
 	{
 		// must ensure that we have enough stack space
-		nlverify( lua_checkstack(_State, index-getTop()) );
+		nlverify(lua_checkstack(_State, index - getTop()));
 	}
 
 	// set top
@@ -87,7 +83,7 @@ inline void CLuaState::setTop(int index)
 //================================================================================
 inline void CLuaState::pushGlobalTable()
 {
-	//H_AUTO(Lua_CLuaState_pushGlobalTable)
+	// H_AUTO(Lua_CLuaState_pushGlobalTable)
 #if LUA_VERSION_NUM >= 502
 	lua_pushglobaltable(_State);
 #else
@@ -99,7 +95,7 @@ inline void CLuaState::pushGlobalTable()
 //================================================================================
 inline void CLuaState::pushValue(int index)
 {
-	//H_AUTO(Lua_CLuaState_pushValue)
+	// H_AUTO(Lua_CLuaState_pushValue)
 	checkIndex(index);
 	lua_pushvalue(_State, index);
 }
@@ -107,7 +103,7 @@ inline void CLuaState::pushValue(int index)
 //================================================================================
 inline void CLuaState::remove(int index)
 {
-	//H_AUTO(Lua_CLuaState_remove)
+	// H_AUTO(Lua_CLuaState_remove)
 	checkIndex(index);
 	lua_remove(_State, index);
 }
@@ -115,7 +111,7 @@ inline void CLuaState::remove(int index)
 //================================================================================
 inline void CLuaState::insert(int index)
 {
-	//H_AUTO(Lua_CLuaState_insert)
+	// H_AUTO(Lua_CLuaState_insert)
 	checkIndex(index);
 	lua_insert(_State, index);
 }
@@ -123,7 +119,7 @@ inline void CLuaState::insert(int index)
 //================================================================================
 inline void CLuaState::replace(int index)
 {
-	//H_AUTO(Lua_CLuaState_replace)
+	// H_AUTO(Lua_CLuaState_replace)
 	checkIndex(index);
 	lua_replace(_State, index);
 }
@@ -131,7 +127,7 @@ inline void CLuaState::replace(int index)
 //================================================================================
 inline void CLuaState::pop(int numElem /* = 1 */)
 {
-	//H_AUTO(Lua_CLuaState_pop)
+	// H_AUTO(Lua_CLuaState_pop)
 	nlassert(numElem <= getTop());
 	lua_pop(_State, numElem);
 }
@@ -139,7 +135,7 @@ inline void CLuaState::pop(int numElem /* = 1 */)
 //================================================================================
 inline int CLuaState::type(int index /* = -1 */)
 {
-	//H_AUTO(Lua_CLuaState_type)
+	// H_AUTO(Lua_CLuaState_type)
 	checkIndex(index);
 	return lua_type(_State, index);
 }
@@ -147,14 +143,14 @@ inline int CLuaState::type(int index /* = -1 */)
 //================================================================================
 inline const char *CLuaState::getTypename(int type)
 {
-	//H_AUTO(Lua_CLuaState_getTypename)
+	// H_AUTO(Lua_CLuaState_getTypename)
 	return lua_typename(_State, type);
 }
 
 //================================================================================
 inline bool CLuaState::isNil(int index)
 {
-	//H_AUTO(Lua_CLuaState_isNil)
+	// H_AUTO(Lua_CLuaState_isNil)
 	checkIndex(index);
 	return lua_isnil(_State, index) != 0;
 }
@@ -162,7 +158,7 @@ inline bool CLuaState::isNil(int index)
 //================================================================================
 inline bool CLuaState::isBoolean(int index)
 {
-	//H_AUTO(Lua_CLuaState_isBoolean)
+	// H_AUTO(Lua_CLuaState_isBoolean)
 	checkIndex(index);
 	return lua_isboolean(_State, index) != 0;
 }
@@ -170,7 +166,7 @@ inline bool CLuaState::isBoolean(int index)
 //================================================================================
 inline bool CLuaState::isNumber(int index)
 {
-	//H_AUTO(Lua_CLuaState_isNumber)
+	// H_AUTO(Lua_CLuaState_isNumber)
 	checkIndex(index);
 	return lua_isnumber(_State, index) != 0;
 }
@@ -178,7 +174,7 @@ inline bool CLuaState::isNumber(int index)
 //================================================================================
 inline bool CLuaState::isInteger(int index)
 {
-	//H_AUTO(Lua_CLuaState_isInteger)
+	// H_AUTO(Lua_CLuaState_isInteger)
 	checkIndex(index);
 #if LUA_VERSION_NUM >= 503
 	return lua_isinteger(_State, index) != 0;
@@ -190,7 +186,7 @@ inline bool CLuaState::isInteger(int index)
 //================================================================================
 inline bool CLuaState::isString(int index)
 {
-	//H_AUTO(Lua_CLuaState_isString)
+	// H_AUTO(Lua_CLuaState_isString)
 	checkIndex(index);
 	return lua_isstring(_State, index) != 0;
 }
@@ -198,7 +194,7 @@ inline bool CLuaState::isString(int index)
 //================================================================================
 inline bool CLuaState::isTable(int index)
 {
-	//H_AUTO(Lua_CLuaState_isTable)
+	// H_AUTO(Lua_CLuaState_isTable)
 	checkIndex(index);
 	return lua_istable(_State, index) != 0;
 }
@@ -206,7 +202,7 @@ inline bool CLuaState::isTable(int index)
 //================================================================================
 inline bool CLuaState::isFunction(int index)
 {
-	//H_AUTO(Lua_CLuaState_isFunction)
+	// H_AUTO(Lua_CLuaState_isFunction)
 	checkIndex(index);
 	return lua_isfunction(_State, index) != 0;
 }
@@ -214,7 +210,7 @@ inline bool CLuaState::isFunction(int index)
 //================================================================================
 inline bool CLuaState::isCFunction(int index)
 {
-	//H_AUTO(Lua_CLuaState_isCFunction)
+	// H_AUTO(Lua_CLuaState_isCFunction)
 	checkIndex(index);
 	return lua_iscfunction(_State, index) != 0;
 }
@@ -222,7 +218,7 @@ inline bool CLuaState::isCFunction(int index)
 //================================================================================
 inline bool CLuaState::isUserData(int index)
 {
-	//H_AUTO(Lua_CLuaState_isUserData)
+	// H_AUTO(Lua_CLuaState_isUserData)
 	checkIndex(index);
 	return lua_isuserdata(_State, index) != 0;
 }
@@ -230,7 +226,7 @@ inline bool CLuaState::isUserData(int index)
 //================================================================================
 inline bool CLuaState::isLightUserData(int index)
 {
-	//H_AUTO(Lua_CLuaState_isLightUserData)
+	// H_AUTO(Lua_CLuaState_isLightUserData)
 	checkIndex(index);
 	return lua_islightuserdata(_State, index) != 0;
 }
@@ -238,7 +234,7 @@ inline bool CLuaState::isLightUserData(int index)
 //================================================================================
 inline bool CLuaState::toBoolean(int index)
 {
-	//H_AUTO(Lua_CLuaState_toBoolean)
+	// H_AUTO(Lua_CLuaState_toBoolean)
 	checkIndex(index);
 	return lua_toboolean(_State, index) != 0;
 }
@@ -246,7 +242,7 @@ inline bool CLuaState::toBoolean(int index)
 //================================================================================
 inline lua_Number CLuaState::toNumber(int index)
 {
-	//H_AUTO(Lua_CLuaState_toNumber)
+	// H_AUTO(Lua_CLuaState_toNumber)
 	checkIndex(index);
 	return lua_tonumber(_State, index);
 }
@@ -254,7 +250,7 @@ inline lua_Number CLuaState::toNumber(int index)
 //================================================================================
 inline lua_Integer CLuaState::toInteger(int index)
 {
-	//H_AUTO(Lua_CLuaState_toInteger)
+	// H_AUTO(Lua_CLuaState_toInteger)
 	checkIndex(index);
 #if LUA_VERSION_NUM >= 503
 	sint isnum = 0;
@@ -275,19 +271,19 @@ inline lua_Integer CLuaState::toInteger(int index)
 //================================================================================
 inline const char *CLuaState::toString(int index)
 {
-	//H_AUTO(Lua_CLuaState_toString)
+	// H_AUTO(Lua_CLuaState_toString)
 	checkIndex(index);
 	return lua_tostring(_State, index);
 }
 
 //================================================================================
-inline void			CLuaState::toString(int index, std::string &str)
+inline void CLuaState::toString(int index, std::string &str)
 {
-	//H_AUTO(Lua_CLuaState_toString)
+	// H_AUTO(Lua_CLuaState_toString)
 	checkIndex(index);
-	const char *pc= lua_tostring(_State, index);
-	if(pc)
-		str= pc;
+	const char *pc = lua_tostring(_State, index);
+	if (pc)
+		str = pc;
 	else
 		str.clear();
 }
@@ -295,7 +291,7 @@ inline void			CLuaState::toString(int index, std::string &str)
 //================================================================================
 inline size_t CLuaState::strlen(int index)
 {
-	//H_AUTO(Lua_CLuaState_strlen)
+	// H_AUTO(Lua_CLuaState_strlen)
 	checkIndex(index);
 #if LUA_VERSION_NUM >= 502
 	return lua_rawlen(_State, index);
@@ -307,7 +303,7 @@ inline size_t CLuaState::strlen(int index)
 //================================================================================
 inline lua_CFunction CLuaState::toCFunction(int index)
 {
-	//H_AUTO(Lua_CLuaState_toCFunction)
+	// H_AUTO(Lua_CLuaState_toCFunction)
 	checkIndex(index);
 	return lua_tocfunction(_State, index);
 }
@@ -315,7 +311,7 @@ inline lua_CFunction CLuaState::toCFunction(int index)
 //================================================================================
 inline void *CLuaState::toUserData(int index)
 {
-	//H_AUTO(Lua_CLuaState_toUserData)
+	// H_AUTO(Lua_CLuaState_toUserData)
 	checkIndex(index);
 	return lua_touserdata(_State, index);
 }
@@ -323,153 +319,151 @@ inline void *CLuaState::toUserData(int index)
 //================================================================================
 inline const void *CLuaState::toPointer(int index)
 {
-	//H_AUTO(Lua_CLuaState_toPointer)
+	// H_AUTO(Lua_CLuaState_toPointer)
 	checkIndex(index);
 	return lua_topointer(_State, index);
 }
 
-
 //================================================================================
 inline void CLuaState::push(bool value)
 {
-	//H_AUTO(Lua_CLuaState_push)
-	nlverify( lua_checkstack(_State, 1) );
-	lua_pushboolean(_State, (int) value);
+	// H_AUTO(Lua_CLuaState_push)
+	nlverify(lua_checkstack(_State, 1));
+	lua_pushboolean(_State, (int)value);
 }
 
 //================================================================================
 inline void CLuaState::push(float value)
 {
-	//H_AUTO(Lua_CLuaState_push)
-	nlverify( lua_checkstack(_State, 1) );
+	// H_AUTO(Lua_CLuaState_push)
+	nlverify(lua_checkstack(_State, 1));
 	lua_pushnumber(_State, (lua_Number)value);
 }
 
 //================================================================================
 inline void CLuaState::push(double value)
 {
-	//H_AUTO(Lua_CLuaState_push)
-	nlverify( lua_checkstack(_State, 1) );
+	// H_AUTO(Lua_CLuaState_push)
+	nlverify(lua_checkstack(_State, 1));
 	lua_pushnumber(_State, (lua_Number)value);
 }
 
 //================================================================================
 inline void CLuaState::push(uint8 value)
 {
-	//H_AUTO(Lua_CLuaState_push)
-	nlverify( lua_checkstack(_State, 1) );
+	// H_AUTO(Lua_CLuaState_push)
+	nlverify(lua_checkstack(_State, 1));
 	lua_pushinteger(_State, (lua_Integer)value);
 }
 
 //================================================================================
 inline void CLuaState::push(uint16 value)
 {
-	//H_AUTO(Lua_CLuaState_push)
-	nlverify( lua_checkstack(_State, 1) );
+	// H_AUTO(Lua_CLuaState_push)
+	nlverify(lua_checkstack(_State, 1));
 	lua_pushinteger(_State, (lua_Integer)value);
 }
 
 //================================================================================
 inline void CLuaState::push(uint32 value)
 {
-	//H_AUTO(Lua_CLuaState_push)
-	nlverify( lua_checkstack(_State, 1) );
+	// H_AUTO(Lua_CLuaState_push)
+	nlverify(lua_checkstack(_State, 1));
 	lua_pushinteger(_State, (lua_Integer)value);
 }
 
 //================================================================================
 inline void CLuaState::push(uint64 value)
 {
-	//H_AUTO(Lua_CLuaState_push)
-	nlverify( lua_checkstack(_State, 1) );
+	// H_AUTO(Lua_CLuaState_push)
+	nlverify(lua_checkstack(_State, 1));
 	lua_pushinteger(_State, (lua_Integer)value);
 }
 
 //================================================================================
 inline void CLuaState::push(sint8 value)
 {
-	//H_AUTO(Lua_CLuaState_push)
-	nlverify( lua_checkstack(_State, 1) );
+	// H_AUTO(Lua_CLuaState_push)
+	nlverify(lua_checkstack(_State, 1));
 	lua_pushinteger(_State, (lua_Integer)value);
 }
 
 //================================================================================
 inline void CLuaState::push(sint16 value)
 {
-	//H_AUTO(Lua_CLuaState_push)
-	nlverify( lua_checkstack(_State, 1) );
+	// H_AUTO(Lua_CLuaState_push)
+	nlverify(lua_checkstack(_State, 1));
 	lua_pushinteger(_State, (lua_Integer)value);
 }
 
 //================================================================================
 inline void CLuaState::push(sint32 value)
 {
-	//H_AUTO(Lua_CLuaState_push)
-	nlverify( lua_checkstack(_State, 1) );
+	// H_AUTO(Lua_CLuaState_push)
+	nlverify(lua_checkstack(_State, 1));
 	lua_pushinteger(_State, (lua_Integer)value);
 }
 
 //================================================================================
 inline void CLuaState::push(sint64 value)
 {
-	//H_AUTO(Lua_CLuaState_push)
-	nlverify( lua_checkstack(_State, 1) );
+	// H_AUTO(Lua_CLuaState_push)
+	nlverify(lua_checkstack(_State, 1));
 	lua_pushinteger(_State, (lua_Integer)value);
 }
 
 //================================================================================
 inline void CLuaState::push(const char *str)
 {
-	//H_AUTO(Lua_CLuaState_push)
-	nlverify( lua_checkstack(_State, 1) );
+	// H_AUTO(Lua_CLuaState_push)
+	nlverify(lua_checkstack(_State, 1));
 	lua_pushstring(_State, str);
 }
-
 
 //================================================================================
 inline void CLuaState::push(const char *str, int length)
 {
-	//H_AUTO(Lua_CLuaState_push)
-	nlverify( lua_checkstack(_State, 1) );
+	// H_AUTO(Lua_CLuaState_push)
+	nlverify(lua_checkstack(_State, 1));
 	lua_pushlstring(_State, str, length);
 }
 
 //================================================================================
-inline void         CLuaState::push(const std::string &str)
+inline void CLuaState::push(const std::string &str)
 {
-	//H_AUTO(Lua_CLuaState_push)
-	nlverify( lua_checkstack(_State, 1) );
+	// H_AUTO(Lua_CLuaState_push)
+	nlverify(lua_checkstack(_State, 1));
 	push(str.c_str());
 }
 
 //================================================================================
-inline void         CLuaState::pushNil()
+inline void CLuaState::pushNil()
 {
-	//H_AUTO(Lua_CLuaState_pushNil)
-	nlverify( lua_checkstack(_State, 1) );
+	// H_AUTO(Lua_CLuaState_pushNil)
+	nlverify(lua_checkstack(_State, 1));
 	lua_pushnil(_State);
 }
 
 //================================================================================
-inline void         CLuaState::push(lua_CFunction f)
+inline void CLuaState::push(lua_CFunction f)
 {
-	//H_AUTO(Lua_CLuaState_push)
-	nlverify( lua_checkstack(_State, 1) );
+	// H_AUTO(Lua_CLuaState_push)
+	nlverify(lua_checkstack(_State, 1));
 	lua_pushcfunction(_State, f);
 }
 
 //================================================================================
-inline void         CLuaState::pushLightUserData(void *ptr)
+inline void CLuaState::pushLightUserData(void *ptr)
 {
-	//H_AUTO(Lua_CLuaState_pushLightUserData)
-	nlverify( lua_checkstack(_State, 1) );
+	// H_AUTO(Lua_CLuaState_pushLightUserData)
+	nlverify(lua_checkstack(_State, 1));
 	lua_pushlightuserdata(_State, ptr);
 }
 
 //================================================================================
-inline bool         CLuaState::equal(int index1, int index2)
+inline bool CLuaState::equal(int index1, int index2)
 {
-	//H_AUTO(Lua_CLuaState_equal)
+	// H_AUTO(Lua_CLuaState_equal)
 	checkIndex(index1);
 	checkIndex(index2);
 #if LUA_VERSION_NUM >= 502
@@ -480,34 +474,34 @@ inline bool         CLuaState::equal(int index1, int index2)
 }
 
 //================================================================================
-inline bool         CLuaState::getMetaTable(int index)
+inline bool CLuaState::getMetaTable(int index)
 {
-	//H_AUTO(Lua_CLuaState_getMetaTable)
+	// H_AUTO(Lua_CLuaState_getMetaTable)
 	checkIndex(index);
 	return lua_getmetatable(_State, index) != 0;
 }
 
 //================================================================================
-inline bool         CLuaState::setMetaTable(int index)
+inline bool CLuaState::setMetaTable(int index)
 {
-	//H_AUTO(Lua_CLuaState_setMetaTable)
+	// H_AUTO(Lua_CLuaState_setMetaTable)
 	checkIndex(index);
 	return lua_setmetatable(_State, index) != 0;
 }
 
 //================================================================================
-inline bool         CLuaState::rawEqual(int index1, int index2)
+inline bool CLuaState::rawEqual(int index1, int index2)
 {
-	//H_AUTO(Lua_CLuaState_rawEqual)
+	// H_AUTO(Lua_CLuaState_rawEqual)
 	checkIndex(index1);
 	checkIndex(index2);
 	return lua_rawequal(_State, index1, index2) != 0;
 }
 
 //================================================================================
-inline bool         CLuaState::lessThan(int index1, int index2)
+inline bool CLuaState::lessThan(int index1, int index2)
 {
-	//H_AUTO(Lua_CLuaState_lessThan)
+	// H_AUTO(Lua_CLuaState_lessThan)
 	checkIndex(index1);
 	checkIndex(index2);
 #if LUA_VERSION_NUM >= 502
@@ -517,36 +511,35 @@ inline bool         CLuaState::lessThan(int index1, int index2)
 #endif
 }
 
-
 //================================================================================
-inline void         CLuaState::concat(int numElem)
+inline void CLuaState::concat(int numElem)
 {
-	//H_AUTO(Lua_CLuaState_concat)
+	// H_AUTO(Lua_CLuaState_concat)
 	nlassert(numElem <= getTop());
 	lua_concat(_State, numElem);
 }
 
 //================================================================================
-inline void         CLuaState::getTable(int index)
+inline void CLuaState::getTable(int index)
 {
-	//H_AUTO(Lua_CLuaState_getTable)
+	// H_AUTO(Lua_CLuaState_getTable)
 	checkIndex(index);
 	nlassert(isTable(index) || isUserData(index));
 	lua_gettable(_State, index);
 }
 
 //================================================================================
-inline void                CLuaState::rawGet(int index)
+inline void CLuaState::rawGet(int index)
 {
-	//H_AUTO(Lua_CLuaState_rawGet)
+	// H_AUTO(Lua_CLuaState_rawGet)
 	checkIndex(index);
 	lua_rawget(_State, index);
 }
 
 //================================================================================
-inline void                CLuaState::setTable(int index)
+inline void CLuaState::setTable(int index)
 {
-	//H_AUTO(Lua_CLuaState_setTable)
+	// H_AUTO(Lua_CLuaState_setTable)
 	checkIndex(index);
 	nlassert(getTop() >= 2);
 	nlassert(isTable(index));
@@ -554,56 +547,56 @@ inline void                CLuaState::setTable(int index)
 }
 
 //================================================================================
-inline void                CLuaState::rawSet(int index)
+inline void CLuaState::rawSet(int index)
 {
-	//H_AUTO(Lua_CLuaState_rawSet)
+	// H_AUTO(Lua_CLuaState_rawSet)
 	checkIndex(index);
 	lua_rawset(_State, index);
 }
 
 //================================================================================
-inline bool                CLuaState::next(int index)
+inline bool CLuaState::next(int index)
 {
-	//H_AUTO(Lua_CLuaState_next)
+	// H_AUTO(Lua_CLuaState_next)
 	checkIndex(index);
 	return lua_next(_State, index) != 0;
 }
 
 //================================================================================
-inline void                CLuaState::rawSetI(int index, int n)
+inline void CLuaState::rawSetI(int index, int n)
 {
-	//H_AUTO(Lua_CLuaState_rawSetI)
+	// H_AUTO(Lua_CLuaState_rawSetI)
 	checkIndex(index);
 	lua_rawseti(_State, index, n);
 }
 
 //================================================================================
-inline void                CLuaState::rawGetI(int index, int n)
+inline void CLuaState::rawGetI(int index, int n)
 {
-	//H_AUTO(Lua_CLuaState_rawGetI)
+	// H_AUTO(Lua_CLuaState_rawGetI)
 	checkIndex(index);
 	lua_rawgeti(_State, index, n);
 }
 
 //================================================================================
-inline void                CLuaState::call(int nargs, int nresults)
+inline void CLuaState::call(int nargs, int nresults)
 {
-	//H_AUTO(Lua_CLuaState_call)
+	// H_AUTO(Lua_CLuaState_call)
 	nlassert(getTop() >= nargs);
 	lua_call(_State, nargs, nresults);
 }
 
 //================================================================================
-inline int                 CLuaState::pcall(int nargs, int nresults, int errfunc)
+inline int CLuaState::pcall(int nargs, int nresults, int errfunc)
 {
-	//H_AUTO(Lua_CLuaState_pcall)
+	// H_AUTO(Lua_CLuaState_pcall)
 	return lua_pcall(_State, nargs, nresults, errfunc);
 }
 
 //================================================================================
-inline void					*CLuaState::newUserData(uint size)
+inline void *CLuaState::newUserData(uint size)
 {
-	//H_AUTO(Lua_CLuaState_newUserData)
-	nlassert(size>0);
+	// H_AUTO(Lua_CLuaState_newUserData)
+	nlassert(size > 0);
 	return lua_newuserdata(_State, size);
 }

@@ -14,14 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdsound.h"
 
 #include <nel/sound/audio_decoder_ffmpeg.h>
 
 #define __STDC_CONSTANT_MACROS
-extern "C"
-{
+extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libswresample/swresample.h>
@@ -34,7 +32,7 @@ using namespace NLSOUND;
 
 // Visual Studio does not support AV_TIME_BASE_Q macro in C++
 #undef AV_TIME_BASE_Q
-static const AVRational AV_TIME_BASE_Q = {1, AV_TIME_BASE};
+static const AVRational AV_TIME_BASE_Q = { 1, AV_TIME_BASE };
 
 namespace {
 
@@ -56,14 +54,14 @@ void nel_logger(void *ptr, int level, const char *fmt, va_list vargs)
 
 	if (ptr)
 	{
-		AVClass *avc = *(AVClass**) ptr;
+		AVClass *avc = *(AVClass **)ptr;
 		module = avc->item_name(ptr);
 	}
 
 	vsnprintf(msg, sizeof(msg), fmt, vargs);
-	msg[sizeof(msg)-1] = '\0';
+	msg[sizeof(msg) - 1] = '\0';
 
-	switch(level)
+	switch (level)
 	{
 	case AV_LOG_PANIC:
 		// ffmpeg is about to crash so lets throw
@@ -104,12 +102,12 @@ public:
 
 		av_register_all();
 
-		//avformat_network_init();
+		// avformat_network_init();
 	}
 
 	virtual ~CFfmpegInstance()
 	{
-		//avformat_network_deinit();
+		// avformat_network_deinit();
 	}
 };
 
@@ -137,28 +135,28 @@ sint64 avio_seek(void *opaque, sint64 offset, int whence)
 	nlassert(stream->isReading());
 
 	NLMISC::IStream::TSeekOrigin origin;
-	switch(whence)
+	switch (whence)
 	{
-		case SEEK_SET:
-			origin = NLMISC::IStream::begin;
-			break;
-		case SEEK_CUR:
-			origin = NLMISC::IStream::current;
-			break;
-		case SEEK_END:
-			origin = NLMISC::IStream::end;
-			break;
-		case AVSEEK_SIZE:
-			return decoder->getStreamSize();
-		default:
-			return -1;
+	case SEEK_SET:
+		origin = NLMISC::IStream::begin;
+		break;
+	case SEEK_CUR:
+		origin = NLMISC::IStream::current;
+		break;
+	case SEEK_END:
+		origin = NLMISC::IStream::end;
+		break;
+	case AVSEEK_SIZE:
+		return decoder->getStreamSize();
+	default:
+		return -1;
 	}
 
-	stream->seek((sint32) offset, origin);
+	stream->seek((sint32)offset, origin);
 	return stream->getPos();
 }
 
-}//ns
+} // ns
 
 namespace NLSOUND {
 
@@ -167,21 +165,28 @@ namespace NLSOUND {
 #define FFMPEG_CHANNELS 2
 #define FFMPEG_CHANNEL_LAYOUT AV_CH_LAYOUT_STEREO
 #define FFMPEG_BITS_PER_SAMPLE 16
-#define FFMPEG_SAMPLE_FORMAT  AV_SAMPLE_FMT_S16
+#define FFMPEG_SAMPLE_FORMAT AV_SAMPLE_FMT_S16
 
 CAudioDecoderFfmpeg::CAudioDecoderFfmpeg(NLMISC::IStream *stream, bool loop)
-: IAudioDecoder(),
-	_Stream(stream), _Loop(loop), _IsMusicEnded(false), _StreamSize(0), _IsSupported(false),
-	_AvioContext(NULL), _FormatContext(NULL),
-	_AudioContext(NULL), _AudioStreamIndex(0),
-	_SwrContext(NULL)
+    : IAudioDecoder()
+    , _Stream(stream)
+    , _Loop(loop)
+    , _IsMusicEnded(false)
+    , _StreamSize(0)
+    , _IsSupported(false)
+    , _AvioContext(NULL)
+    , _FormatContext(NULL)
+    , _AudioContext(NULL)
+    , _AudioStreamIndex(0)
+    , _SwrContext(NULL)
 {
 	_StreamOffset = stream->getPos();
 	stream->seek(0, NLMISC::IStream::end);
 	_StreamSize = stream->getPos();
 	stream->seek(_StreamOffset, NLMISC::IStream::begin);
 
-	try {
+	try
+	{
 		_FormatContext = avformat_alloc_context();
 		if (!_FormatContext)
 			throw Exception("Can't create AVFormatContext");
@@ -220,7 +225,7 @@ CAudioDecoderFfmpeg::CAudioDecoderFfmpeg(NLMISC::IStream *stream, bool loop)
 			}
 		}
 	}
-	catch(...)
+	catch (...)
 	{
 		release();
 
@@ -275,7 +280,7 @@ bool CAudioDecoderFfmpeg::getInfo(NLMISC::IStream *stream, std::string &artist, 
 	}
 
 	AVDictionaryEntry *tag = NULL;
-	while((tag = av_dict_get(ffmpeg._FormatContext->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)))
+	while ((tag = av_dict_get(ffmpeg._FormatContext->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)))
 	{
 		if (!strcmp(tag->key, "artist"))
 		{
@@ -312,23 +317,23 @@ uint32 CAudioDecoderFfmpeg::getNextBytes(uint8 *buffer, uint32 minimum, uint32 m
 
 	uint32 bytes_read = 0;
 
-	AVFrame frame = {0};
-	AVPacket packet = {0};
+	AVFrame frame = { 0 };
+	AVPacket packet = { 0 };
 
 	if (!_SwrContext)
 	{
 		sint64 in_channel_layout = av_get_default_channel_layout(_AudioContext->channels);
 		_SwrContext = swr_alloc_set_opts(NULL,
-				// output
-				FFMPEG_CHANNEL_LAYOUT, FFMPEG_SAMPLE_FORMAT, FFMPEG_SAMPLE_RATE,
-				// input
-				in_channel_layout, _AudioContext->sample_fmt, _AudioContext->sample_rate,
-				0, NULL);
+		    // output
+		    FFMPEG_CHANNEL_LAYOUT, FFMPEG_SAMPLE_FORMAT, FFMPEG_SAMPLE_RATE,
+		    // input
+		    in_channel_layout, _AudioContext->sample_fmt, _AudioContext->sample_rate,
+		    0, NULL);
 		swr_init(_SwrContext);
 	}
 
 	sint ret;
-	while(bytes_read < minimum)
+	while (bytes_read < minimum)
 	{
 		// read packet from stream
 		if ((ret = av_read_frame(_FormatContext, &packet)) < 0)
@@ -360,7 +365,7 @@ uint32 CAudioDecoderFfmpeg::getNextBytes(uint8 *buffer, uint32 minimum, uint32 m
 					uint32 max_samples = (maximum - bytes_read) / out_bps;
 
 					uint32 out_samples = av_rescale_rnd(swr_get_delay(_SwrContext, _AudioContext->sample_rate) + frame.nb_samples,
-							FFMPEG_SAMPLE_RATE, _AudioContext->sample_rate, AV_ROUND_UP);
+					    FFMPEG_SAMPLE_RATE, _AudioContext->sample_rate, AV_ROUND_UP);
 
 					if (max_samples > out_samples)
 						max_samples = out_samples;
@@ -423,7 +428,7 @@ float CAudioDecoderFfmpeg::getLength()
 
 void CAudioDecoderFfmpeg::setLooping(bool loop)
 {
-	 _Loop = loop;
+	_Loop = loop;
 }
 
 } /* namespace NLSOUND */

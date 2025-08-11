@@ -1,12 +1,12 @@
 /**********************************************************************
  *<
-	FILE: mods.cpp
+    FILE: mods.cpp
 
-	DESCRIPTION:   DLL implementation of modifiers
+    DESCRIPTION:   DLL implementation of modifiers
 
-	CREATED BY: Rolf Berteig (based on prim.cpp)
+    CREATED BY: Rolf Berteig (based on prim.cpp)
 
-	HISTORY: created 30 January 1995
+    HISTORY: created 30 January 1995
 
  *>	Copyright (c) 1994, All Rights Reserved.
  **********************************************************************/
@@ -25,7 +25,7 @@ int controlsInit = FALSE;
 using namespace NLMISC;
 
 /** public functions **/
-BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
 {
 	// initialize nel context
 	if (!NLMISC::INelContext::isContextInitialised())
@@ -62,54 +62,53 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
 	return TRUE;
 }
 
-
 //------------------------------------------------------
 // This is the interface to Jaguar:
 //------------------------------------------------------
-__declspec( dllexport ) const TCHAR *LibDescription()
+__declspec(dllexport) const TCHAR *LibDescription()
 {
 	return _T("NeL Patch Edit");
 }
 
 /// MUST CHANGE THIS NUMBER WHEN ADD NEW CLASS
-__declspec( dllexport ) int LibNumberClasses()
+__declspec(dllexport) int LibNumberClasses()
 {
 	return 1;
 }
 
-__declspec( dllexport ) ClassDesc *LibClassDesc(int i)
+__declspec(dllexport) ClassDesc *LibClassDesc(int i)
 {
-	switch(i)
+	switch (i)
 	{
-		case 0: return GetEditPatchModDesc();
-		default: return NULL;
+	case 0: return GetEditPatchModDesc();
+	default: return NULL;
 	}
 }
 
 // Return version so can detect obsolete DLLs
-__declspec( dllexport ) ULONG LibVersion()
+__declspec(dllexport) ULONG LibVersion()
 {
 	return VERSION_3DSMAX;
 }
 
 // Let the plug-in register itself for deferred loading
-__declspec( dllexport ) ULONG CanAutoDefer()
+__declspec(dllexport) ULONG CanAutoDefer()
 {
 	return 1;
 }
 
-BOOL CALLBACK DefaultSOTProc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
+BOOL CALLBACK DefaultSOTProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	IObjParam *ip = (IObjParam*)GetWindowLongPtr(hWnd,GWLP_USERDATA);
+	IObjParam *ip = (IObjParam *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
 	switch (msg)
 	{
-		case WM_INITDIALOG:
-			SetWindowLongPtr(hWnd,GWLP_USERDATA,lParam);
-			break;
+	case WM_INITDIALOG:
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, lParam);
+		break;
 
-		default:
-			return FALSE;
+	default:
+		return FALSE;
 	}
 	return TRUE;
 }

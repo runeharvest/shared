@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef SHARD_NAMES_H
 #define SHARD_NAMES_H
 
@@ -22,7 +21,6 @@
 #include "nel/misc/config_file.h"
 #include "nel/misc/singleton.h"
 #include "game_share/r2_basic_types.h"
-
 
 /** This class provide a standard way to deal with shard names.
  *	It allow to convert from shardID to shard name and vice versa
@@ -35,42 +33,42 @@ public:
 	struct TSessionName
 	{
 		/// The home mainland session Id for this shard
-		TSessionId			SessionId;
+		TSessionId SessionId;
 		/// Display name, as displayed in user interface and appended to player character names
-		std::string			DisplayName;
+		std::string DisplayName;
 		/// pre mapped name (in string mapper)
-		NLMISC::TStringId	DisplayNameId;
+		NLMISC::TStringId DisplayNameId;
 		/// short name used in user commands like "/tell [<shortName>.]<userName>"
-		std::string			ShortName;
+		std::string ShortName;
 	};
 
 	// This container is just a vector because it is very small and brute force parsing will be faster
-	typedef std::vector<TSessionName>	TSessionNames;
+	typedef std::vector<TSessionName> TSessionNames;
+
 private:
 	/// Table of home session names
-	TSessionNames	_SessionNames;
+	TSessionNames _SessionNames;
 
 	/// Typically For Shard when no SU, do not append () in makeFullName() if the session is not found
-	bool			_AppendParenthesisWhenSessionNotFound;
+	bool _AppendParenthesisWhenSessionNotFound;
 
 public:
-
 	/** ctor */
 	CShardNames()
 	{
-		_AppendParenthesisWhenSessionNotFound= true;
+		_AppendParenthesisWhenSessionNotFound = true;
 	}
 
 	/** init the shard names by reading the content of "HomeMainlandNames" var
-	*/
+	 */
 	void init(NLMISC::CConfigFile &configFile);
 
 	/** Build as a vector of string, for serial or message of the shardname configuration
-	*/
+	 */
 	void saveShardNames(std::vector<std::string> &outData) const;
 
 	/** Load as a vector of string, for serial or message of the shardname configuration
-	*/
+	 */
 	void loadShardNames(const std::vector<std::string> &inData);
 
 	/** Return the vector of names session */
@@ -112,9 +110,6 @@ public:
 	 *	a full name from a relative name in only 1 call.
 	 */
 	std::string makeFullNameFromRelative(TSessionId contextSessionId, const std::string &inputcharName);
-
 };
-
-
 
 #endif // SHARD_NAMES_H

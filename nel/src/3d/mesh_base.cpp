@@ -24,7 +24,6 @@
 #include "nel/3d/lod_character_texture.h"
 #include "nel/3d/visual_collision_mesh.h"
 
-
 using namespace std;
 using namespace NLMISC;
 
@@ -32,10 +31,7 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
-
+namespace NL3D {
 
 // ***************************************************************************
 CMeshBase::CMeshBase()
@@ -45,28 +41,27 @@ CMeshBase::CMeshBase()
 	 *	It can be loaded/called through CAsyncFileManager for instance
 	 * ***********************************************/
 
-	_UseLightingLocalAttenuation= false;
+	_UseLightingLocalAttenuation = false;
 
 	// To have same functionnality than previous version, init to identity.
-	_DefaultPos.setDefaultValue(CVector(0,0,0));
-	_DefaultPivot.setDefaultValue(CVector(0,0,0));
-	_DefaultRotEuler.setDefaultValue(CVector(0,0,0));
+	_DefaultPos.setDefaultValue(CVector(0, 0, 0));
+	_DefaultPivot.setDefaultValue(CVector(0, 0, 0));
+	_DefaultRotEuler.setDefaultValue(CVector(0, 0, 0));
 	_DefaultRotQuat.setDefaultValue(CQuat::Identity);
-	_DefaultScale.setDefaultValue(CVector(1,1,1));
-	_DefaultLMFactor.setDefaultValue(CRGBA(255,255,255,255));
+	_DefaultScale.setDefaultValue(CVector(1, 1, 1));
+	_DefaultLMFactor.setDefaultValue(CRGBA(255, 255, 255, 255));
 
 	_AutoAnim = false;
 
-	_LodCharacterTexture= NULL;
+	_LodCharacterTexture = NULL;
 
-	_CollisionMeshGeneration= AutoCameraCol;
+	_CollisionMeshGeneration = AutoCameraCol;
 
-	_VisualCollisionMesh= NULL;
+	_VisualCollisionMesh = NULL;
 
-	_DefaultOpacity= false;
-	_DefaultTransparency= false;
+	_DefaultOpacity = false;
+	_DefaultTransparency = false;
 }
-
 
 // ***************************************************************************
 CMeshBase::~CMeshBase()
@@ -79,13 +74,12 @@ CMeshBase::~CMeshBase()
 	// free if exist
 	resetLodCharacterTexture();
 	// delete the Col mesh if created
-	if(_VisualCollisionMesh)
+	if (_VisualCollisionMesh)
 	{
 		delete _VisualCollisionMesh;
-		_VisualCollisionMesh= NULL;
+		_VisualCollisionMesh = NULL;
 	}
 }
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -93,31 +87,29 @@ CMeshBase::~CMeshBase()
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
-void			CMeshBase::setAnimatedMaterial(uint id, const std::string &matName)
+void CMeshBase::setAnimatedMaterial(uint id, const std::string &matName)
 {
 	nlassert(!matName.empty());
-	if(id<_Materials.size())
+	if (id < _Materials.size())
 	{
 		// add / replace animated material.
-		_AnimatedMaterials[id].Name= matName;
+		_AnimatedMaterials[id].Name = matName;
 		// copy Material default.
 		_AnimatedMaterials[id].copyFromMaterial(&_Materials[id]);
 	}
 }
 
 // ***************************************************************************
-CMaterialBase	*CMeshBase::getAnimatedMaterial(uint id)
+CMaterialBase *CMeshBase::getAnimatedMaterial(uint id)
 {
-	TAnimatedMaterialMap::iterator	it;
-	it= _AnimatedMaterials.find(id);
-	if(it!=_AnimatedMaterials.end())
+	TAnimatedMaterialMap::iterator it;
+	it = _AnimatedMaterials.find(id);
+	if (it != _AnimatedMaterials.end())
 		return &it->second;
 	else
 		return NULL;
 }
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -125,19 +117,18 @@ CMaterialBase	*CMeshBase::getAnimatedMaterial(uint id)
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
 CMeshBase::CMeshBaseBuild::CMeshBaseBuild()
 {
-	DefaultPos.set(0,0,0);
-	DefaultPivot.set(0,0,0);
-	DefaultRotEuler.set(0,0,0);
-	DefaultScale.set(1,1,1);
+	DefaultPos.set(0, 0, 0);
+	DefaultPivot.set(0, 0, 0);
+	DefaultRotEuler.set(0, 0, 0);
+	DefaultScale.set(1, 1, 1);
 
-	bCastShadows= false;
-	bRcvShadows= false;
-	UseLightingLocalAttenuation= false;
-	CollisionMeshGeneration= CMeshBase::AutoCameraCol;
+	bCastShadows = false;
+	bRcvShadows = false;
+	UseLightingLocalAttenuation = false;
+	CollisionMeshGeneration = CMeshBase::AutoCameraCol;
 }
 
 // ***************************************************************************
@@ -167,7 +158,7 @@ void	CMeshBase::CMeshBaseBuild::serial(NLMISC::IStream &f)
 #endif
 
 // ***************************************************************************
-void	CMeshBase::serialMeshBase(NLMISC::IStream &f)
+void CMeshBase::serialMeshBase(NLMISC::IStream &f)
 {
 	/* ***********************************************
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
@@ -176,49 +167,49 @@ void	CMeshBase::serialMeshBase(NLMISC::IStream &f)
 
 	/*
 	Version 10:
-		- Ryzom Core release check
+	    - Ryzom Core release check
 	Version 9:
-		- _CollisionMeshGeneration
+	    - _CollisionMeshGeneration
 	Version 8:
-		- new format for CLightMapInfoList
+	    - new format for CLightMapInfoList
 	Version 7:
-		- _LodCharacterTexture
+	    - _LodCharacterTexture
 	Version 6:
-		- _DistMax
+	    - _DistMax
 	Version 5:
-		- _AutoAnim
+	    - _AutoAnim
 	Version 4:
-		- _UseLightingLocalAttenuation
+	    - _UseLightingLocalAttenuation
 	Version 3:
-		- _IsLightable
+	    - _IsLightable
 	Version 2:
-		- Added Blend Shapes factors
+	    - Added Blend Shapes factors
 	Version 1:
-		- Cut in version because of badly coded ITexture* serialisation. throw an exception if
-			find a version < 1.
+	    - Cut in version because of badly coded ITexture* serialisation. throw an exception if
+	        find a version < 1.
 	Version 0:
-		- 1st version.
+	    - 1st version.
 	*/
 	sint ver = f.serialVersion(10);
 
 	if (ver >= 2)
 	{
-		f.serialCont (_AnimatedMorph);
+		f.serialCont(_AnimatedMorph);
 	}
 
-	if(ver<1)
+	if (ver < 1)
 		throw NLMISC::EStream(f, "Mesh in Stream is too old (MeshBase version < 1)");
 
-	f.serial (_DefaultPos);
-	f.serial (_DefaultPivot);
-	f.serial (_DefaultRotEuler);
-	f.serial (_DefaultRotQuat);
-	f.serial (_DefaultScale);
+	f.serial(_DefaultPos);
+	f.serial(_DefaultPivot);
+	f.serial(_DefaultRotEuler);
+	f.serial(_DefaultRotQuat);
+	f.serial(_DefaultScale);
 
 	f.serialCont(_Materials);
 	f.serialCont(_AnimatedMaterials);
 
-	if(ver >= 8)
+	if (ver >= 8)
 		f.serialCont(_LightInfos);
 	else
 	{
@@ -226,100 +217,95 @@ void	CMeshBase::serialMeshBase(NLMISC::IStream &f)
 		f.serialCont(temp);
 	}
 
-	if(ver>=3)
+	if (ver >= 3)
 		// read/write _IsLightable flag.
 		f.serial(_IsLightable);
-	else if( f.isReading() )
+	else if (f.isReading())
 		// update _IsLightable flag.
 		computeIsLightable();
 
-	if(ver>=4)
+	if (ver >= 4)
 		f.serial(_UseLightingLocalAttenuation);
-	else if( f.isReading() )
-		_UseLightingLocalAttenuation= false;
+	else if (f.isReading())
+		_UseLightingLocalAttenuation = false;
 
 	if (ver >= 5)
 	{
 		f.serial(_AutoAnim);
 	}
 
-	if(ver >= 6)
+	if (ver >= 6)
 		f.serial(_DistMax);
 
-	if(ver >= 7)
+	if (ver >= 7)
 		f.serialPtr(_LodCharacterTexture);
 
-	if(ver >= 9)
+	if (ver >= 9)
 		f.serialEnum(_CollisionMeshGeneration);
 	else
-		_CollisionMeshGeneration= AutoCameraCol;
+		_CollisionMeshGeneration = AutoCameraCol;
 
 	// Some runtime not serialized compilation
-	if(f.isReading())
+	if (f.isReading())
 		compileRunTime();
 }
 
-
 // ***************************************************************************
-void	CMeshBase::buildMeshBase(CMeshBaseBuild &m)
+void CMeshBase::buildMeshBase(CMeshBaseBuild &m)
 {
 	// Copy light information
 	_LightInfos = m.LightInfoMap;
 
 	// copy the materials.
-	_Materials= m.Materials;
+	_Materials = m.Materials;
 
 	// clear the animated materials.
 	_AnimatedMaterials.clear();
 
 	/// Copy default position values
-	_DefaultPos.setDefaultValue (m.DefaultPos);
-	_DefaultPivot.setDefaultValue (m.DefaultPivot);
-	_DefaultRotEuler.setDefaultValue (m.DefaultRotEuler);
-	_DefaultRotQuat.setDefaultValue (m.DefaultRotQuat);
-	_DefaultScale.setDefaultValue (m.DefaultScale);
+	_DefaultPos.setDefaultValue(m.DefaultPos);
+	_DefaultPivot.setDefaultValue(m.DefaultPivot);
+	_DefaultRotEuler.setDefaultValue(m.DefaultRotEuler);
+	_DefaultRotQuat.setDefaultValue(m.DefaultRotQuat);
+	_DefaultScale.setDefaultValue(m.DefaultScale);
 
-	_AnimatedMorph	.resize(m.DefaultBSFactors.size());
+	_AnimatedMorph.resize(m.DefaultBSFactors.size());
 	for (uint32 i = 0; i < m.DefaultBSFactors.size(); ++i)
 	{
-		_AnimatedMorph[i].DefaultFactor.setDefaultValue (m.DefaultBSFactors[i]);
+		_AnimatedMorph[i].DefaultFactor.setDefaultValue(m.DefaultBSFactors[i]);
 		_AnimatedMorph[i].Name = m.BSNames[i];
 	}
 
 	// update _IsLightable flag.
 	computeIsLightable();
 	// copy _UseLightingLocalAttenuation
-	_UseLightingLocalAttenuation= m.UseLightingLocalAttenuation;
+	_UseLightingLocalAttenuation = m.UseLightingLocalAttenuation;
 
 	// copy CollisionMeshGeneration
-	_CollisionMeshGeneration= m.CollisionMeshGeneration;
+	_CollisionMeshGeneration = m.CollisionMeshGeneration;
 
 	// Some runtime not serialized compilation
 	compileRunTime();
 }
 
-
-
-
 // ***************************************************************************
-void	CMeshBase::instanciateMeshBase(CMeshBaseInstance *mi, CScene *ownerScene)
+void CMeshBase::instanciateMeshBase(CMeshBaseInstance *mi, CScene *ownerScene)
 {
 	uint32 i;
-
 
 	// setup animated blendShapes
 	//===========================
 	mi->_AnimatedMorphFactor.reserve(_AnimatedMorph.size());
-	for(i = 0; i < _AnimatedMorph.size(); ++i)
+	for (i = 0; i < _AnimatedMorph.size(); ++i)
 	{
 		CAnimatedMorph am(&_AnimatedMorph[i]);
-		mi->_AnimatedMorphFactor.push_back (am);
+		mi->_AnimatedMorphFactor.push_back(am);
 	}
 
 	// setup materials.
 	//=================
 	// Copy material. Textures are referenced only
-	mi->Materials= _Materials;
+	mi->Materials = _Materials;
 
 	// Instanciate selectable textures (use default set)
 	mi->selectTextureSet(0);
@@ -329,11 +315,11 @@ void	CMeshBase::instanciateMeshBase(CMeshBaseInstance *mi, CScene *ownerScene)
 
 	// setup animated materials.
 	//==========================
-	TAnimatedMaterialMap::iterator	it;
+	TAnimatedMaterialMap::iterator it;
 	mi->_AnimatedMaterials.reserve(_AnimatedMaterials.size());
-	for(it= _AnimatedMaterials.begin(); it!= _AnimatedMaterials.end(); it++)
+	for (it = _AnimatedMaterials.begin(); it != _AnimatedMaterials.end(); it++)
 	{
-		CAnimatedMaterial	aniMat(&it->second);
+		CAnimatedMaterial aniMat(&it->second);
 
 		// set the target instance material.
 		nlassert(it->first < mi->Materials.size());
@@ -350,14 +336,14 @@ void	CMeshBase::instanciateMeshBase(CMeshBaseInstance *mi, CScene *ownerScene)
 	//==========================
 
 	// Setup position with the default value
-	mi->ITransformable::setPos( _DefaultPos.getDefaultValue() );
-	mi->ITransformable::setRotQuat( _DefaultRotQuat.getDefaultValue() );
-	mi->ITransformable::setScale( _DefaultScale.getDefaultValue() );
-	mi->ITransformable::setPivot( _DefaultPivot.getDefaultValue() );
+	mi->ITransformable::setPos(_DefaultPos.getDefaultValue());
+	mi->ITransformable::setRotQuat(_DefaultRotQuat.getDefaultValue());
+	mi->ITransformable::setScale(_DefaultScale.getDefaultValue());
+	mi->ITransformable::setPivot(_DefaultPivot.getDefaultValue());
 
 	// Setup default opcaity / transparency state
-	mi->setOpacity( this->getDefaultOpacity() );
-	mi->setTransparency( this->getDefaultTransparency() );
+	mi->setOpacity(this->getDefaultOpacity());
+	mi->setTransparency(this->getDefaultTransparency());
 
 	// if the mesh is lightable, then the instance is
 	mi->setIsLightable(this->isLightable());
@@ -369,11 +355,10 @@ void	CMeshBase::instanciateMeshBase(CMeshBaseInstance *mi, CScene *ownerScene)
 	mi->enableFastIntersectSupport(!_SystemGeometry.empty());
 }
 
-
 // ***************************************************************************
-void	CMeshBase::applyMaterialUsageOptim(const std::vector<bool> &materialUsed, std::vector<sint> &remap)
+void CMeshBase::applyMaterialUsageOptim(const std::vector<bool> &materialUsed, std::vector<sint> &remap)
 {
-	nlassert(_Materials.size()==materialUsed.size());
+	nlassert(_Materials.size() == materialUsed.size());
 
 	// security reset
 	resetLodCharacterTexture();
@@ -384,132 +369,127 @@ void	CMeshBase::applyMaterialUsageOptim(const std::vector<bool> &materialUsed, s
 	remap.resize(_Materials.size(), -1);
 
 	// remove unused materials and build remap
-	vector<CMaterial>::iterator		itMat= _Materials.begin();
-	uint							dstIdx= 0;
+	vector<CMaterial>::iterator itMat = _Materials.begin();
+	uint dstIdx = 0;
 	uint i;
-	for(i=0;i<materialUsed.size();i++)
+	for (i = 0; i < materialUsed.size(); i++)
 	{
 		// if used, still use it, and remap.
-		if(materialUsed[i])
+		if (materialUsed[i])
 		{
-			remap[i]= dstIdx;
+			remap[i] = dstIdx;
 			itMat++;
 			dstIdx++;
 		}
 		// remove from the array
 		else
 		{
-			itMat= _Materials.erase(itMat);
+			itMat = _Materials.erase(itMat);
 		}
 	}
 
 	// apply the remap to LightMaps infos
-	const uint count = (uint)_LightInfos.size ();
-	for (i=0; i<count; i++)
+	const uint count = (uint)_LightInfos.size();
+	for (i = 0; i < count; i++)
 	{
 		CLightMapInfoList &mapInfoList = _LightInfos[i];
-		std::list<CMeshBase::CLightMapInfoList::CMatStage>::iterator ite = mapInfoList.StageList.begin ();
-		while (ite != mapInfoList.StageList.end ())
+		std::list<CMeshBase::CLightMapInfoList::CMatStage>::iterator ite = mapInfoList.StageList.begin();
+		while (ite != mapInfoList.StageList.end())
 		{
-			sint	newId= remap[ite->MatId];
+			sint newId = remap[ite->MatId];
 			// If material used
-			if(newId>=0)
+			if (newId >= 0)
 			{
 				// apply remap on the material id
-				ite->MatId= newId;
+				ite->MatId = newId;
 				ite++;
 			}
 			else
 			{
 				// remove it from list of light infos
-				ite= mapInfoList.StageList.erase(ite);
+				ite = mapInfoList.StageList.erase(ite);
 			}
 		}
 	}
 }
 
-
 // ***************************************************************************
-void	CMeshBase::flushTextures(IDriver &driver, uint selectedTexture)
+void CMeshBase::flushTextures(IDriver &driver, uint selectedTexture)
 {
 	// Mat count
-	uint matCount=(uint)_Materials.size();
+	uint matCount = (uint)_Materials.size();
 
 	// Flush each material textures
-	for (uint mat=0; mat<matCount; mat++)
+	for (uint mat = 0; mat < matCount; mat++)
 	{
 		/// Flush material textures
-		_Materials[mat].flushTextures (driver, selectedTexture);
+		_Materials[mat].flushTextures(driver, selectedTexture);
 	}
 }
 
-
 // ***************************************************************************
-void	CMeshBase::computeIsLightable()
+void CMeshBase::computeIsLightable()
 {
 	// by default the mesh is not lightable
-	_IsLightable= false;
+	_IsLightable = false;
 
 	// Mat count
-	uint matCount=(uint)_Materials.size();
+	uint matCount = (uint)_Materials.size();
 
 	// for each material
-	for (uint mat=0; mat<matCount; mat++)
+	for (uint mat = 0; mat < matCount; mat++)
 	{
 		// if this one is not a lightmap, then OK, the mesh is lightable
-		if( _Materials[mat].getShader()!=CMaterial::LightMap )
+		if (_Materials[mat].getShader() != CMaterial::LightMap)
 		{
-			_IsLightable= true;
+			_IsLightable = true;
 			break;
 		}
 	}
 }
 
-
 // ***************************************************************************
-bool	CMeshBase::useLightingLocalAttenuation () const
+bool CMeshBase::useLightingLocalAttenuation() const
 {
 	return _UseLightingLocalAttenuation;
 }
 
-
 // ***************************************************************************
-void	CMeshBase::resetLodCharacterTexture()
+void CMeshBase::resetLodCharacterTexture()
 {
-	if(_LodCharacterTexture)
+	if (_LodCharacterTexture)
 	{
 		delete _LodCharacterTexture;
-		_LodCharacterTexture= NULL;
+		_LodCharacterTexture = NULL;
 	}
 }
 
 // ***************************************************************************
-void	CMeshBase::setupLodCharacterTexture(CLodCharacterTexture &lodText)
+void CMeshBase::setupLodCharacterTexture(CLodCharacterTexture &lodText)
 {
 	// delete old
 	resetLodCharacterTexture();
 	// seutp new
-	_LodCharacterTexture= new CLodCharacterTexture;
-	*_LodCharacterTexture= lodText;
+	_LodCharacterTexture = new CLodCharacterTexture;
+	*_LodCharacterTexture = lodText;
 }
 
 // ***************************************************************************
-CVisualCollisionMesh		*CMeshBase::getVisualCollisionMesh() const
+CVisualCollisionMesh *CMeshBase::getVisualCollisionMesh() const
 {
 	return _VisualCollisionMesh;
 }
 
 // ***************************************************************************
-void	CMeshBase::compileRunTime()
+void CMeshBase::compileRunTime()
 {
-	_DefaultTransparency= false;
-	_DefaultOpacity= false;
-	for( uint i = 0; i < _Materials.size(); ++i )
-		if( _Materials[i].getBlend() )
-			_DefaultTransparency= true;
+	_DefaultTransparency = false;
+	_DefaultOpacity = false;
+	for (uint i = 0; i < _Materials.size(); ++i)
+		if (_Materials[i].getBlend())
+			_DefaultTransparency = true;
 		else
-			_DefaultOpacity= true;
+			_DefaultOpacity = true;
 }
-
 
 } // NL3D

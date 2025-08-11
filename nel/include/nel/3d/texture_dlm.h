@@ -22,22 +22,18 @@
 #include "nel/3d/texture.h"
 #include "nel/3d/landscape_def.h"
 
-
-#ifdef	NL_DLM_TILE_RES
+#ifdef NL_DLM_TILE_RES
 // Size of a Block in the texture. Must be 18.
-#define NL_DLM_BLOCK_SIZE	18
+#define NL_DLM_BLOCK_SIZE 18
 #else
 // Size of a Block in the texture. Must be 10.
-#define NL_DLM_BLOCK_SIZE	10
+#define NL_DLM_BLOCK_SIZE 10
 #endif
 
 // Number of lightmap type. 4*4
-#define NL_DLM_LIGHTMAP_TYPE_SIZE	16
+#define NL_DLM_LIGHTMAP_TYPE_SIZE 16
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 using NLMISC::CRGBA;
 
@@ -68,126 +64,114 @@ using NLMISC::CRGBA;
 class CTextureDLM : public ITexture
 {
 public:
-
 	/// Constructor
 	CTextureDLM(uint width, uint height);
 
 	/// Since texture is always in memory...
-	void			doGenerate(bool /* async */ = false)
+	void doGenerate(bool /* async */ = false)
 	{
 		// Do nothing. texture still in memory... :o)
 	}
 
 	/// TextureDLM are system. Do not need to serialize them...
 	// default ctor is required for compilation with NLMISC_DECLARE_CLASS, but never called...
-	CTextureDLM() {nlstop;}
-	virtual void	serial(NLMISC::IStream &/* f */) {nlstop;}
+	CTextureDLM() { nlstop; }
+	virtual void serial(NLMISC::IStream & /* f */) { nlstop; }
 	NLMISC_DECLARE_CLASS(CTextureDLM);
-
-
 
 	/// \name Lightmap mgt.
 	// @{
 
 	/// return true if can create a texture of this size.
-	bool			canCreateLightMap(uint w, uint h);
+	bool canCreateLightMap(uint w, uint h);
 
 	/** create a space for a lightmap. NB: texture space is not filled with black.
 	 *	return false if cannot, else return true, and return in x/y the position in the texture.
 	 */
-	bool			createLightMap(uint w, uint h, uint &x, uint &y);
+	bool createLightMap(uint w, uint h, uint &x, uint &y);
 
 	/** refill the texture with raw data. NB: no check is made on x,y,w,h lightmap validity.
 	 *	CRGBA are transformed to texture format (16 bits or better)
 	 *	The texture is invalidate (on this part only...)
 	 *	\param map is the raw array of RGBA colors to fills. must be of w*h size
 	 */
-	void			copyRect(uint x, uint y, uint w, uint h, CRGBA  *textMap);
+	void copyRect(uint x, uint y, uint w, uint h, CRGBA *textMap);
 
 	/** same as copyRect(), but fill a RGBA(value, value, value, value)
 	 */
-	void			fillRect(uint x, uint y, uint w, uint h, uint8 value);
+	void fillRect(uint x, uint y, uint w, uint h, uint8 value);
 
 	/** same as copyRect(), but modulate textMap with an array of 565 color, before copying.
 	 */
-	void			modulateAndfillRect565(uint x, uint y, uint w, uint h, CRGBA  *textMap, uint16 *modColor);
+	void modulateAndfillRect565(uint x, uint y, uint w, uint h, CRGBA *textMap, uint16 *modColor);
 
 	/** same as copyRect(), but modulate textMap with an array of CRGBA color, before copying.
 	 */
-	void			modulateAndfillRect8888(uint x, uint y, uint w, uint h, CRGBA  *textMap, CRGBA *modColor);
+	void modulateAndfillRect8888(uint x, uint y, uint w, uint h, CRGBA *textMap, CRGBA *modColor);
 
 	/** same as copyRect(), but modulate textMap with a cte color, before copying.
 	 */
-	void			modulateConstantAndfillRect(uint x, uint y, uint w, uint h, CRGBA  *textMap, CRGBA modColor);
+	void modulateConstantAndfillRect(uint x, uint y, uint w, uint h, CRGBA *textMap, CRGBA modColor);
 
 	/// Set a lightmap as free for use. It is an error to free a not allocated lightmap. (nlassert!!)
-	void			releaseLightMap(uint x, uint y);
+	void releaseLightMap(uint x, uint y);
 
 	// @}
 
-
-
-// *****************************
+	// *****************************
 private:
-
 	/// A block descriptor.
-	struct	CBlock
+	struct CBlock
 	{
 		// Size of a lightmap in the block. eg: 9x9. Not relevant if FreeSpace==0 (because block completely free).
-		uint8		Width, Height;
+		uint8 Width, Height;
 
 		// Position of block in texture, in pixels.
-		uint16		PosX, PosY;
+		uint16 PosX, PosY;
 
 		/* BitField of Space free (1 if not free).
-			NL_DLM_TILE_RES defined: since 3x3 is the minimum size, there is at max 6*6=36 lightmaps in a blocks.
-			Hence a uint64.
-			NL_DLM_TILE_RES defined: since 2x2 is the minimum size, there is at max 5*5=25 lightmaps in a blocks.
-			(NB: a uint32 would be sufficient, but never mind)
+		    NL_DLM_TILE_RES defined: since 3x3 is the minimum size, there is at max 6*6=36 lightmaps in a blocks.
+		    Hence a uint64.
+		    NL_DLM_TILE_RES defined: since 2x2 is the minimum size, there is at max 5*5=25 lightmaps in a blocks.
+		    (NB: a uint32 would be sufficient, but never mind)
 		*/
-		uint64		FreeSpace;
+		uint64 FreeSpace;
 
 		/// Free List.
-		CBlock		*FreePrec, *FreeNext;
+		CBlock *FreePrec, *FreeNext;
 
 		CBlock()
 		{
-			FreeSpace= 0;
+			FreeSpace = 0;
 			// No List
-			FreePrec= FreeNext= NULL;
+			FreePrec = FreeNext = NULL;
 		}
 	};
 
 private:
-
 	/// Number of block per line
-	uint				_WBlock;
+	uint _WBlock;
 
 	/** The list of blocks. There is TextureWidth/NL_DLM_BLOCK_SIZE * TextureHeight/NL_DLM_BLOCK_SIZE blocks,
 	 *	ranged from left to right then top to bottom.
 	 */
-	std::vector<CBlock>	_Blocks;
-
+	std::vector<CBlock> _Blocks;
 
 	/// The list of available Blocks, ie Blocks with FreeSpace==0
-	std::vector<uint>	_EmptyBlocks;
-
+	std::vector<uint> _EmptyBlocks;
 
 	/// For each type of lightmaps (2x2, 2x3 etc...), list of blocks which are not full
-	CBlock				*_FreeBlocks[NL_DLM_LIGHTMAP_TYPE_SIZE];
+	CBlock *_FreeBlocks[NL_DLM_LIGHTMAP_TYPE_SIZE];
 
 	/// get the lightmap type id according to lightmap size.
-	uint				getTypeForSize(uint width, uint height);
+	uint getTypeForSize(uint width, uint height);
 
 	/// FreeBlock list mgt.
-	void				linkFreeBlock(uint lMapType, CBlock *block);
-	void				unlinkFreeBlock(uint lMapType, CBlock *block);
-
+	void linkFreeBlock(uint lMapType, CBlock *block);
+	void unlinkFreeBlock(uint lMapType, CBlock *block);
 };
 
-
 } // NL3D
-
 
 #endif // NL_TEXTURE_DLM_H
 

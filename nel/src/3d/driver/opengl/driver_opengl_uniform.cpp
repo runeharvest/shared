@@ -137,60 +137,52 @@ void CDriverGL::setUniform4f(TProgram program, uint index, float f0, float f1, f
 
 void CDriverGL::setUniform1i(TProgram program, uint index, sint32 i0)
 {
-
 }
 
 void CDriverGL::setUniform2i(TProgram program, uint index, sint32 i0, sint32 i1)
 {
-
 }
 
 void CDriverGL::setUniform3i(TProgram program, uint index, sint32 i0, sint32 i1, sint32 i2)
 {
-
 }
 
 void CDriverGL::setUniform4i(TProgram program, uint index, sint32 i0, sint32 i1, sint32 i2, sint32 i3)
 {
-
 }
 
 void CDriverGL::setUniform1ui(TProgram program, uint index, uint32 ui0)
 {
-
 }
 
 void CDriverGL::setUniform2ui(TProgram program, uint index, uint32 ui0, uint32 ui1)
 {
-
 }
 
 void CDriverGL::setUniform3ui(TProgram program, uint index, uint32 ui0, uint32 ui1, uint32 ui2)
 {
-
 }
 
 void CDriverGL::setUniform4ui(TProgram program, uint index, uint32 ui0, uint32 ui1, uint32 ui2, uint32 ui3)
 {
-
 }
 
-void CDriverGL::setUniform3f(TProgram program, uint index, const NLMISC::CVector& v)
+void CDriverGL::setUniform3f(TProgram program, uint index, const NLMISC::CVector &v)
 {
 	CDriverGL::setUniform4fInl(program, index, v.x, v.y, v.z, 0.f);
 }
 
-void CDriverGL::setUniform4f(TProgram program, uint index, const NLMISC::CVector& v, float f3)
+void CDriverGL::setUniform4f(TProgram program, uint index, const NLMISC::CVector &v, float f3)
 {
 	CDriverGL::setUniform4fInl(program, index, v.x, v.y, v.z, f3);
 }
 
-void CDriverGL::setUniform4f(TProgram program, uint index, const NLMISC::CRGBAF& rgba)
+void CDriverGL::setUniform4f(TProgram program, uint index, const NLMISC::CRGBAF &rgba)
 {
 	CDriverGL::setUniform4fvInl(program, index, 1, &rgba.R);
 }
 
-void CDriverGL::setUniform4x4f(TProgram program, uint index, const NLMISC::CMatrix& m)
+void CDriverGL::setUniform4x4f(TProgram program, uint index, const NLMISC::CMatrix &m)
 {
 	H_AUTO_OGL(CDriverGL_setUniform4x4f);
 
@@ -209,16 +201,13 @@ void CDriverGL::setUniform4fv(TProgram program, uint index, size_t num, const fl
 
 void CDriverGL::setUniform4iv(TProgram program, uint index, size_t num, const sint32 *src)
 {
-	
 }
 
 void CDriverGL::setUniform4uiv(TProgram program, uint index, size_t num, const uint32 *src)
 {
-	
 }
 
-const uint CDriverGL::GLMatrix[IDriver::NumMatrix]=
-{
+const uint CDriverGL::GLMatrix[IDriver::NumMatrix] = {
 	GL_MODELVIEW,
 	GL_PROJECTION,
 #ifdef USE_OPENGLES
@@ -228,8 +217,7 @@ const uint CDriverGL::GLMatrix[IDriver::NumMatrix]=
 #endif
 };
 
-const uint CDriverGL::GLTransform[IDriver::NumTransform]=
-{
+const uint CDriverGL::GLTransform[IDriver::NumTransform] = {
 #ifdef USE_OPENGLES
 	0,
 	0,
@@ -267,43 +255,42 @@ void CDriverGL::setUniformMatrix(NL3D::IDriver::TProgram program, uint index, NL
 		CMatrix mat;
 		switch (matrix)
 		{
-			case IDriver::ModelView:
-				mat = _ModelViewMatrix;
+		case IDriver::ModelView:
+			mat = _ModelViewMatrix;
 			break;
-			case IDriver::Projection:
-				{
-					refreshProjMatrixFromGL();
-					mat = _GLProjMat;
-				}
+		case IDriver::Projection: {
+			refreshProjMatrixFromGL();
+			mat = _GLProjMat;
+		}
+		break;
+		case IDriver::ModelViewProjection:
+			refreshProjMatrixFromGL();
+			mat = _GLProjMat * _ModelViewMatrix;
 			break;
-			case IDriver::ModelViewProjection:
-				refreshProjMatrixFromGL();
-				mat = _GLProjMat * _ModelViewMatrix;
+		default:
 			break;
-            default:
-                break;
 		}
 
-		switch(transform)
+		switch (transform)
 		{
-			case IDriver::Identity: break;
-			case IDriver::Inverse:
-				mat.invert();
+		case IDriver::Identity: break;
+		case IDriver::Inverse:
+			mat.invert();
 			break;
-			case IDriver::Transpose:
-				mat.transpose();
+		case IDriver::Transpose:
+			mat.transpose();
 			break;
-			case IDriver::InverseTranspose:
-				mat.invert();
-				mat.transpose();
+		case IDriver::InverseTranspose:
+			mat.invert();
+			mat.transpose();
 			break;
-            default:
-                break;
+		default:
+			break;
 		}
 
 		mat.transpose();
 		const float *md = mat.get();
-		
+
 		CDriverGL::setUniform4fvInl(program, index, 4, md);
 	}
 #endif
@@ -312,7 +299,7 @@ void CDriverGL::setUniformMatrix(NL3D::IDriver::TProgram program, uint index, NL
 void CDriverGL::setUniformFog(NL3D::IDriver::TProgram program, uint index)
 {
 	H_AUTO_OGL(CDriverGL_setUniformFog)
-	
+
 	const float *values = _ModelViewMatrix.get();
 	CDriverGL::setUniform4fInl(program, index, -values[2], -values[6], -values[10], -values[14]);
 }
@@ -321,194 +308,194 @@ void CDriverGL::setUniformFog(NL3D::IDriver::TProgram program, uint index)
 
 bool CDriverGL::setUniformDriver(TProgram program)
 {
-	IProgram *prog = NULL;
-	switch (program)
-	{
-	case VertexProgram:
-		prog = _LastSetuppedVP;
-		break;
-	case PixelProgram:
-		prog = _LastSetuppedPP;
-		break;
-	}
-	if (!prog) return false;
+    IProgram *prog = NULL;
+    switch (program)
+    {
+    case VertexProgram:
+        prog = _LastSetuppedVP;
+        break;
+    case PixelProgram:
+        prog = _LastSetuppedPP;
+        break;
+    }
+    if (!prog) return false;
 
-	const CProgramFeatures &features = prog->features();
+    const CProgramFeatures &features = prog->features();
 
-	if (features.DriverFlags)
-	{
-		if (features.DriverFlags & CProgramFeatures::Matrices)
-		{
-			if (prog->getUniformIndex(CProgramIndex::ModelView) != std::numeric_limits<uint>::max())
-			{
-				setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ModelView), ModelView, Identity);
-			}
-			if (prog->getUniformIndex(CProgramIndex::ModelViewInverse) != std::numeric_limits<uint>::max())
-			{
-				setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ModelViewInverse), ModelView, Inverse);
-			}
-			if (prog->getUniformIndex(CProgramIndex::ModelViewTranspose) != std::numeric_limits<uint>::max())
-			{
-				setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ModelViewTranspose), ModelView, Transpose);
-			}
-			if (prog->getUniformIndex(CProgramIndex::ModelViewInverseTranspose) != std::numeric_limits<uint>::max())
-			{
-				setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ModelViewInverseTranspose), ModelView, InverseTranspose);
-			}
-			if (prog->getUniformIndex(CProgramIndex::Projection) != std::numeric_limits<uint>::max())
-			{
-				setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::Projection), Projection, Identity);
-			}
-			if (prog->getUniformIndex(CProgramIndex::ProjectionInverse) != std::numeric_limits<uint>::max())
-			{
-				setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ProjectionInverse), Projection, Inverse);
-			}
-			if (prog->getUniformIndex(CProgramIndex::ProjectionTranspose) != std::numeric_limits<uint>::max())
-			{
-				setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ProjectionTranspose), Projection, Transpose);
-			}
-			if (prog->getUniformIndex(CProgramIndex::ProjectionInverseTranspose) != std::numeric_limits<uint>::max())
-			{
-				setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ProjectionInverseTranspose), Projection, InverseTranspose);
-			}
-			if (prog->getUniformIndex(CProgramIndex::ModelViewProjection) != std::numeric_limits<uint>::max())
-			{
-				setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ModelViewProjection), ModelViewProjection, Identity);
-			}
-			if (prog->getUniformIndex(CProgramIndex::ModelViewProjectionInverse) != std::numeric_limits<uint>::max())
-			{
-				setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ModelViewProjectionInverse), ModelViewProjection, Inverse);
-			}
-			if (prog->getUniformIndex(CProgramIndex::ModelViewProjectionTranspose) != std::numeric_limits<uint>::max())
-			{
-				setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ModelViewProjectionTranspose), ModelViewProjection, Transpose);
-			}
-			if (prog->getUniformIndex(CProgramIndex::ModelViewProjectionInverseTranspose) != std::numeric_limits<uint>::max())
-			{
-				setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ModelViewProjectionInverseTranspose), ModelViewProjection, InverseTranspose);
-			}
-		}
-		if (features.DriverFlags & CProgramFeatures::Fog)
-		{
-			if (prog->getUniformIndex(CProgramIndex::Fog) != std::numeric_limits<uint>::max())
-			{
-				setUniformFog(program, prog->getUniformIndex(CProgramIndex::Fog));
-			}
-		}
-	}
+    if (features.DriverFlags)
+    {
+        if (features.DriverFlags & CProgramFeatures::Matrices)
+        {
+            if (prog->getUniformIndex(CProgramIndex::ModelView) != std::numeric_limits<uint>::max())
+            {
+                setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ModelView), ModelView, Identity);
+            }
+            if (prog->getUniformIndex(CProgramIndex::ModelViewInverse) != std::numeric_limits<uint>::max())
+            {
+                setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ModelViewInverse), ModelView, Inverse);
+            }
+            if (prog->getUniformIndex(CProgramIndex::ModelViewTranspose) != std::numeric_limits<uint>::max())
+            {
+                setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ModelViewTranspose), ModelView, Transpose);
+            }
+            if (prog->getUniformIndex(CProgramIndex::ModelViewInverseTranspose) != std::numeric_limits<uint>::max())
+            {
+                setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ModelViewInverseTranspose), ModelView, InverseTranspose);
+            }
+            if (prog->getUniformIndex(CProgramIndex::Projection) != std::numeric_limits<uint>::max())
+            {
+                setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::Projection), Projection, Identity);
+            }
+            if (prog->getUniformIndex(CProgramIndex::ProjectionInverse) != std::numeric_limits<uint>::max())
+            {
+                setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ProjectionInverse), Projection, Inverse);
+            }
+            if (prog->getUniformIndex(CProgramIndex::ProjectionTranspose) != std::numeric_limits<uint>::max())
+            {
+                setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ProjectionTranspose), Projection, Transpose);
+            }
+            if (prog->getUniformIndex(CProgramIndex::ProjectionInverseTranspose) != std::numeric_limits<uint>::max())
+            {
+                setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ProjectionInverseTranspose), Projection, InverseTranspose);
+            }
+            if (prog->getUniformIndex(CProgramIndex::ModelViewProjection) != std::numeric_limits<uint>::max())
+            {
+                setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ModelViewProjection), ModelViewProjection, Identity);
+            }
+            if (prog->getUniformIndex(CProgramIndex::ModelViewProjectionInverse) != std::numeric_limits<uint>::max())
+            {
+                setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ModelViewProjectionInverse), ModelViewProjection, Inverse);
+            }
+            if (prog->getUniformIndex(CProgramIndex::ModelViewProjectionTranspose) != std::numeric_limits<uint>::max())
+            {
+                setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ModelViewProjectionTranspose), ModelViewProjection, Transpose);
+            }
+            if (prog->getUniformIndex(CProgramIndex::ModelViewProjectionInverseTranspose) != std::numeric_limits<uint>::max())
+            {
+                setUniformMatrix(program, prog->getUniformIndex(CProgramIndex::ModelViewProjectionInverseTranspose), ModelViewProjection, InverseTranspose);
+            }
+        }
+        if (features.DriverFlags & CProgramFeatures::Fog)
+        {
+            if (prog->getUniformIndex(CProgramIndex::Fog) != std::numeric_limits<uint>::max())
+            {
+                setUniformFog(program, prog->getUniformIndex(CProgramIndex::Fog));
+            }
+        }
+    }
 
-	return true;
+    return true;
 }
 
 bool CDriverGL::setUniformMaterial(TProgram program, CMaterial &material)
 {
-	IProgram *prog = NULL;
-	switch (program)
-	{
-	case VertexProgram:
-		prog = _LastSetuppedVP;
-		break;
-	case PixelProgram:
-		prog = _LastSetuppedPP;
-		break;
-	}
-	if (!prog) return false;
+    IProgram *prog = NULL;
+    switch (program)
+    {
+    case VertexProgram:
+        prog = _LastSetuppedVP;
+        break;
+    case PixelProgram:
+        prog = _LastSetuppedPP;
+        break;
+    }
+    if (!prog) return false;
 
-	const CProgramFeatures &features = prog->features();
+    const CProgramFeatures &features = prog->features();
 
-	// These are also already set by setupMaterial, so setupMaterial uses setUniformMaterialInternal instead
-	if (features.MaterialFlags & (CProgramFeatures::TextureStages | CProgramFeatures::TextureMatrices))
-	{
-		if (features.MaterialFlags & CProgramFeatures::TextureStages)
-		{
-			for (uint stage = 0; stage < inlGetNumTextStages(); ++stage)
-			{
-				ITexture *text= material.getTexture(uint8(stage));
+    // These are also already set by setupMaterial, so setupMaterial uses setUniformMaterialInternal instead
+    if (features.MaterialFlags & (CProgramFeatures::TextureStages | CProgramFeatures::TextureMatrices))
+    {
+        if (features.MaterialFlags & CProgramFeatures::TextureStages)
+        {
+            for (uint stage = 0; stage < inlGetNumTextStages(); ++stage)
+            {
+                ITexture *text= material.getTexture(uint8(stage));
 
-				// Must setup textures each frame. (need to test if touched).
-				if (text != NULL && !setupTexture(*text))
-					return false;
+                // Must setup textures each frame. (need to test if touched).
+                if (text != NULL && !setupTexture(*text))
+                    return false;
 
-				// activate the texture, or disable texturing if NULL.
-				activateTexture(stage, text);
+                // activate the texture, or disable texturing if NULL.
+                activateTexture(stage, text);
 
-				// If texture not NULL, Change texture env function.
-				setTextureEnvFunction(stage, material);
-			}
+                // If texture not NULL, Change texture env function.
+                setTextureEnvFunction(stage, material);
+            }
 
-			
-		}
-		if (features.MaterialFlags & CProgramFeatures::TextureMatrices)
-		{
-			// Textures user matrix
-			setupUserTextureMatrix(inlGetNumTextStages(), material);
-		}
-	}
 
-	return true;
+        }
+        if (features.MaterialFlags & CProgramFeatures::TextureMatrices)
+        {
+            // Textures user matrix
+            setupUserTextureMatrix(inlGetNumTextStages(), material);
+        }
+    }
+
+    return true;
 }
 
 bool CDriverGL::setUniformMaterialInternal(TProgram program, CMaterial &material)
 {
-	IProgram *prog = NULL;
-	switch (program)
-	{
-	case VertexProgram:
-		prog = _LastSetuppedVP;
-		break;
-	case PixelProgram:
-		prog = _LastSetuppedPP;
-		break;
-	}
-	if (!prog) return false;
+    IProgram *prog = NULL;
+    switch (program)
+    {
+    case VertexProgram:
+        prog = _LastSetuppedVP;
+        break;
+    case PixelProgram:
+        prog = _LastSetuppedPP;
+        break;
+    }
+    if (!prog) return false;
 
-	const CProgramFeatures &features = prog->features();
+    const CProgramFeatures &features = prog->features();
 
-	if (features.MaterialFlags & ~(CProgramFeatures::TextureStages | CProgramFeatures::TextureMatrices))
-	{
-		// none
-	}
+    if (features.MaterialFlags & ~(CProgramFeatures::TextureStages | CProgramFeatures::TextureMatrices))
+    {
+        // none
+    }
 
-	return true;
+    return true;
 }
 
 void CDriverGL::setUniformParams(TProgram program, CGPUProgramParams &params)
 {
-	IProgram *prog = NULL;
-	switch (program)
-	{
-	case VertexProgram:
-		prog = _LastSetuppedVP;
-		break;
-	case PixelProgram:
-		prog = _LastSetuppedPP;
-		break;
-	}
-	if (!prog) return;
+    IProgram *prog = NULL;
+    switch (program)
+    {
+    case VertexProgram:
+        prog = _LastSetuppedVP;
+        break;
+    case PixelProgram:
+        prog = _LastSetuppedPP;
+        break;
+    }
+    if (!prog) return;
 
-	size_t offset = params.getBegin();
-	while (offset != params.getEnd())
-	{
-		uint size = params.getSizeByOffset(offset);
-		uint count = params.getCountByOffset(offset);
+    size_t offset = params.getBegin();
+    while (offset != params.getEnd())
+    {
+        uint size = params.getSizeByOffset(offset);
+        uint count = params.getCountByOffset(offset);
 
-		nlassert(size == 4 || count == 1); // only support float4 arrays
-		nlassert(params.getTypeByOffset(offset) == CGPUProgramParams::Float); // only support float
-		
-		uint index = params.getIndexByOffset(offset);
-		if (index == ~0)
-		{
-			const std::string &name = params.getNameByOffset(offset);
-			nlassert(!name.empty()); // missing both parameter name and index, code error
-			uint index = prog->getUniformIndex(name.c_str());
-			nlassert(index != std::numeric_limits<uint>::max()); // invalid parameter name
-			params.map(index, name);
-		}
-		
-		setUniform4fv(program, index, count, params.getPtrFByOffset(offset));
+        nlassert(size == 4 || count == 1); // only support float4 arrays
+        nlassert(params.getTypeByOffset(offset) == CGPUProgramParams::Float); // only support float
 
-		offset = params.getNext(offset);
-	}
+        uint index = params.getIndexByOffset(offset);
+        if (index == ~0)
+        {
+            const std::string &name = params.getNameByOffset(offset);
+            nlassert(!name.empty()); // missing both parameter name and index, code error
+            uint index = prog->getUniformIndex(name.c_str());
+            nlassert(index != std::numeric_limits<uint>::max()); // invalid parameter name
+            params.map(index, name);
+        }
+
+        setUniform4fv(program, index, count, params.getPtrFByOffset(offset));
+
+        offset = params.getNext(offset);
+    }
 }
 
 */

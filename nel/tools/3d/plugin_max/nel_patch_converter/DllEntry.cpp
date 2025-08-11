@@ -25,8 +25,8 @@
 #include "../nel_3dsmax_shared/nel_3dsmax_shared.h"
 #include <maxversion.h>
 
-extern ClassDesc2* GetPO2RPODesc();
-extern ClassDesc* GetRPODesc();
+extern ClassDesc2 *GetPO2RPODesc();
+extern ClassDesc *GetRPODesc();
 
 using namespace NLMISC;
 
@@ -35,13 +35,13 @@ int controlsInit = FALSE;
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------
 
-// This function is called by Windows when the DLL is loaded.  This 
+// This function is called by Windows when the DLL is loaded.  This
 // function may also be called many times during time critical operations
 // like rendering.  Therefore developers need to be careful what they
 // do inside this function.  In the code below, note how after the DLL is
 // loaded the first time only a few statements are executed.
 
-BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
 {
 	if (!NLMISC::INelContext::isContextInitialised())
 	{
@@ -49,7 +49,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
 		nldebug("NeL Export: DllMain");
 	}
 
-	if(fdwReason == DLL_PROCESS_ATTACH)
+	if (fdwReason == DLL_PROCESS_ATTACH)
 	{
 		// Hang on to this DLL's instance handle.
 		hInstance = hinstDLL;
@@ -58,14 +58,14 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
 	if (!NLMISC::INelContext::isContextInitialised())
 		new NLMISC::CApplicationContext();
 	nlassert(hInstance);
-	if (!controlsInit) 
+	if (!controlsInit)
 	{
 		// This method has been deprecated.
 		controlsInit = TRUE;
 #if MAX_VERSION_MAJOR < 14
-		InitCustomControls(hInstance);	// Initialize MAX's custom controls
+		InitCustomControls(hInstance); // Initialize MAX's custom controls
 #endif
-		InitCommonControls();			// Initialize Win95 controls
+		InitCommonControls(); // Initialize Win95 controls
 	}
 	return (TRUE);
 }
@@ -74,7 +74,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
 
 // This function returns a string that describes the DLL and where the user
 // could purchase the DLL if they don't have it.
-__declspec( dllexport ) const TCHAR* LibDescription()
+__declspec(dllexport) const TCHAR *LibDescription()
 {
 	return GetString(IDS_LIBDESCRIPTION);
 }
@@ -82,34 +82,35 @@ __declspec( dllexport ) const TCHAR* LibDescription()
 // ------------------------------------------------------------------------------------------------------------------------------------------------
 
 // This function returns the number of plug-in classes this DLL
-//TODO: Must change this number when adding a new class
-__declspec( dllexport ) int LibNumberClasses()
+// TODO: Must change this number when adding a new class
+__declspec(dllexport) int LibNumberClasses()
 {
 	return 2;
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------
 
-/// This function returns a pointer to an object (Class ClassDesc2) called a 
-/// class Descriptor for each plugin class in the DLL. This class descriptor 
-/// object describes the properties of each plugin class and a way to 
-/// allocate an instance of the class in memory. 
-__declspec( dllexport ) ClassDesc* LibClassDesc(int i)
+/// This function returns a pointer to an object (Class ClassDesc2) called a
+/// class Descriptor for each plugin class in the DLL. This class descriptor
+/// object describes the properties of each plugin class and a way to
+/// allocate an instance of the class in memory.
+__declspec(dllexport) ClassDesc *LibClassDesc(int i)
 {
-	switch(i) {
-		case 0: return GetPO2RPODesc();
-		case 1: return GetRPODesc();
-		//case 1: return GetRykolPatchMeshDesc();
-		default: return 0;
+	switch (i)
+	{
+	case 0: return GetPO2RPODesc();
+	case 1: return GetRPODesc();
+	// case 1: return GetRykolPatchMeshDesc();
+	default: return 0;
 	}
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------
 
-// This function returns a pre-defined constant indicating the version of 
+// This function returns a pre-defined constant indicating the version of
 // the system under which it was compiled.  It is used to allow the system
 // to catch obsolete DLLs.
-__declspec( dllexport ) ULONG LibVersion()
+__declspec(dllexport) ULONG LibVersion()
 {
 	return VERSION_3DSMAX;
 }
@@ -126,5 +127,3 @@ TCHAR *GetString(int id)
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------
-
-

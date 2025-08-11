@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_STATIC_LIGHT_CYCLE_H
 #define RY_STATIC_LIGHT_CYCLE_H
 
@@ -31,7 +29,6 @@
 class CStaticLightCycle
 {
 public:
-
 	struct SLightCycle
 	{
 		float DayHour;
@@ -43,32 +40,31 @@ public:
 		/// serialize
 		void serial(NLMISC::IStream &f)
 		{
-			f.serial( DayHour );
-			f.serial( DayToDuskHour );
-			f.serial( DuskToNightHour );
-			f.serial( NightHour );
-			f.serial( NightToDayHour );
+			f.serial(DayHour);
+			f.serial(DayToDuskHour);
+			f.serial(DuskToNightHour);
+			f.serial(NightHour);
+			f.serial(NightToDayHour);
 		}
 	};
 
-	std::vector< SLightCycle > LightCycles;
+	std::vector<SLightCycle> LightCycles;
 
 	/// serialize
 	void serial(NLMISC::IStream &f)
 	{
-		f.serialCont( LightCycles );
+		f.serialCont(LightCycles);
 	}
 
 	/// read the sheet
-	virtual void readGeorges( const NLMISC::CSmartPtr<NLGEORGES::UForm> &form, const NLMISC::CSheetId &sheetId );
+	virtual void readGeorges(const NLMISC::CSmartPtr<NLGEORGES::UForm> &form, const NLMISC::CSheetId &sheetId);
 
 	// return the version of this class, increments this value when the content of this class changed
-	static uint getVersion () { return 1; }
+	static uint getVersion() { return 1; }
 
 	/// called when the sheet is removed
-	void removed() {}
+	void removed() { }
 };
-
 
 #endif // RY_STATIC_LIGHT_CYCLE_H
 

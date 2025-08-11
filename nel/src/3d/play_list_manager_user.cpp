@@ -25,17 +25,15 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
-UPlayList	*CPlayListManagerUser::createPlayList(UAnimationSet	*animSet)
+UPlayList *CPlayListManagerUser::createPlayList(UAnimationSet *animSet)
 {
-	if(!animSet)
+	if (!animSet)
 		nlerror("createPlayList(): animSet==NULL");
 
-	CPlayListUser	*pl= new CPlayListUser( safe_cast<CAnimationSetUser*>(animSet)->_AnimationSet );
+	CPlayListUser *pl = new CPlayListUser(safe_cast<CAnimationSetUser *>(animSet)->_AnimationSet);
 	_PlayLists.insert(pl);
 
 	_PlayListManager.addPlaylist(&pl->_PlayList, &pl->_ChannelMixer);
@@ -43,34 +41,29 @@ UPlayList	*CPlayListManagerUser::createPlayList(UAnimationSet	*animSet)
 	return pl;
 }
 
-
 // ***************************************************************************
-void		CPlayListManagerUser::deletePlayList(UPlayList *playList)
+void CPlayListManagerUser::deletePlayList(UPlayList *playList)
 {
-	CPlayListUser	*pl= safe_cast<CPlayListUser*>(playList);
+	CPlayListUser *pl = safe_cast<CPlayListUser *>(playList);
 
 	_PlayListManager.removePlaylist(&pl->_PlayList);
 	_PlayLists.erase(pl, "deletePlayList(): bad playList");
 }
 
-
 // ***************************************************************************
-void		CPlayListManagerUser::animate(TGlobalAnimationTime	time)
+void CPlayListManagerUser::animate(TGlobalAnimationTime time)
 {
-		H_AUTO( NL3D_Render_PlayListMgr_Animate );
+	H_AUTO(NL3D_Render_PlayListMgr_Animate);
 
 	_PlayListManager.animate(time);
 }
 
-
 // ***************************************************************************
-void		CPlayListManagerUser::setup(TGlobalAnimationTime	time)
+void CPlayListManagerUser::setup(TGlobalAnimationTime time)
 {
-	H_AUTO( NL3D_Render_PlayListMgr_Setup );
+	H_AUTO(NL3D_Render_PlayListMgr_Setup);
 
 	_PlayListManager.setup(time);
 }
-
-
 
 } // NL3D

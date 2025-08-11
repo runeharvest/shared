@@ -24,10 +24,10 @@
 #include "nel/misc/thread.h"
 
 #ifdef NL_OS_WINDOWS
-#	include <mmsystem.h>
-#elif defined (NL_OS_UNIX)
-#	include <sys/time.h>
-#	include <unistd.h>
+#include <mmsystem.h>
+#elif defined(NL_OS_UNIX)
+#include <sys/time.h>
+#include <unistd.h>
 #endif
 
 #ifdef NL_OS_MAC
@@ -36,11 +36,10 @@
 #endif
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 namespace {
 #ifdef NL_OS_WINDOWS
@@ -48,12 +47,12 @@ bool a_HaveQueryPerformance = false;
 LARGE_INTEGER a_QueryPerformanceFrequency;
 #endif
 #ifdef NL_OS_UNIX
-#	if defined(_POSIX_TIMERS) && (_POSIX_TIMERS > 0)
-#	if defined(_POSIX_MONOTONIC_CLOCK) && (_POSIX_MONOTONIC_CLOCK >= 0)
-#		define NL_MONOTONIC_CLOCK
-#	endif
-#	endif
-#	ifdef NL_MONOTONIC_CLOCK
+#if defined(_POSIX_TIMERS) && (_POSIX_TIMERS > 0)
+#if defined(_POSIX_MONOTONIC_CLOCK) && (_POSIX_MONOTONIC_CLOCK >= 0)
+#define NL_MONOTONIC_CLOCK
+#endif
+#endif
+#ifdef NL_MONOTONIC_CLOCK
 bool a_CheckedMonotonicClock = false;
 bool a_HasMonotonicClock = false;
 uint64 a_MonotonicClockFrequency = 0;
@@ -63,14 +62,13 @@ bool hasMonotonicClock()
 	if (!a_CheckedMonotonicClock)
 	{
 		/* Initialize the local time engine.
-		* On Unix, this method will find out if the Monotonic Clock is supported
-		* (seems supported by kernel 2.6, not by kernel 2.4). See getLocalTime().
-		*/
+		 * On Unix, this method will find out if the Monotonic Clock is supported
+		 * (seems supported by kernel 2.6, not by kernel 2.4). See getLocalTime().
+		 */
 		struct timespec tv;
-		if ((clock_gettime( CLOCK_MONOTONIC, &tv ) == 0) &&
-			 (clock_getres( CLOCK_MONOTONIC, &tv ) == 0))
+		if ((clock_gettime(CLOCK_MONOTONIC, &tv) == 0) && (clock_getres(CLOCK_MONOTONIC, &tv) == 0))
 		{
-//			nldebug( "Monotonic local time supported (resolution %.6f ms)", ((float)tv.tv_sec)*1000.0f + ((float)tv.tv_nsec)/1000000.0f );
+			//			nldebug( "Monotonic local time supported (resolution %.6f ms)", ((float)tv.tv_sec)*1000.0f + ((float)tv.tv_nsec)/1000000.0f );
 
 			if (tv.tv_sec > 0)
 			{
@@ -95,7 +93,7 @@ bool hasMonotonicClock()
 	}
 	return a_HasMonotonicClock;
 }
-#	endif
+#endif
 #endif
 }
 
@@ -140,7 +138,7 @@ void CTime::probeTimerInfo(CTime::CTimerInfo &result)
 		result.IsHighPrecisionAvailable = true;
 		result.HighPrecisionResolution = 0;
 
-#	ifdef NL_MONOTONIC_CLOCK
+#ifdef NL_MONOTONIC_CLOCK
 		timespec monoClock;
 		if (hasMonotonicClock())
 		{
@@ -151,7 +149,7 @@ void CTime::probeTimerInfo(CTime::CTimerInfo &result)
 		{
 			nldebug("Monotonic clock not available");
 		}
-#	endif
+#endif
 
 #endif
 
@@ -190,7 +188,7 @@ void CTime::probeTimerInfo(CTime::CTimerInfo &result)
 					// Verify the core
 					/* Can only verify on 2003, Vista and higher.
 					if (1 << GetCurrentProcessorNumber() != currentBit)
-						++badcore;
+					    ++badcore;
 					*/
 					// Check if the timer is still sane.
 					if (result.IsHighPrecisionAvailable)
@@ -231,7 +229,7 @@ void CTime::probeTimerInfo(CTime::CTimerInfo &result)
 #else
 					nlSleep(0);
 #endif
-#	ifdef NL_MONOTONIC_CLOCK
+#ifdef NL_MONOTONIC_CLOCK
 					if (hasMonotonicClock())
 					{
 						timespec monoClockN;
@@ -248,7 +246,7 @@ void CTime::probeTimerInfo(CTime::CTimerInfo &result)
 						monoClock.tv_nsec = monoClockN.tv_nsec;
 					}
 					else
-#	endif
+#endif
 					{
 						TTime localTimeN = getLocalTime();
 						if (localTimeN == localTime)
@@ -303,7 +301,7 @@ void CTime::probeTimerInfo(CTime::CTimerInfo &result)
  * coordinated universal time, according to the system clock.
  * This values is the same on all computer if computers are synchronized (with NTP for example).
  */
-uint32 CTime::getSecondsSince1970 ()
+uint32 CTime::getSecondsSince1970()
 {
 	return uint32(time(NULL));
 }
@@ -314,7 +312,7 @@ uint32 CTime::getSecondsSince1970 ()
  * nor it have the daylight saving ajustement.
  * This values is the same on all computer if computers are synchronized (with NTP for example).
  */
-//uint32	CTime::getSecondsSince1970UTC ()
+// uint32	CTime::getSecondsSince1970UTC ()
 //{
 //	// get the local time
 //	time_t nowLocal = time(NULL);
@@ -322,7 +320,7 @@ uint32 CTime::getSecondsSince1970 ()
 //	struct tm * timeinfo;
 //	timeinfo = gmtime(&nowLocal);
 //	return nl_mktime(timeinfo);
-//}
+// }
 
 /* Return the local time in milliseconds.
  * Use it only to measure time difference, the absolute value does not mean anything.
@@ -332,36 +330,36 @@ uint32 CTime::getSecondsSince1970 ()
  * time that is the same on all computers.
  * \warning On Win32, the value is on 32 bits only. It wraps around to 0 every about 49.71 days.
  */
-TTime CTime::getLocalTime ()
+TTime CTime::getLocalTime()
 {
 
 #ifdef NL_OS_WINDOWS
 
-	//static bool initdone = false;
-	//static bool byperfcounter;
-	// Initialization
-	//if ( ! initdone )
+	// static bool initdone = false;
+	// static bool byperfcounter;
+	//  Initialization
+	// if ( ! initdone )
 	//{
-		//byperfcounter = (getPerformanceTime() != 0);
-		//initdone = true;
+	// byperfcounter = (getPerformanceTime() != 0);
+	// initdone = true;
 	//}
 
 	/* Retrieve time is ms
-     * Why do we prefer getPerformanceTime() to timeGetTime() ? Because on one dual-processor Win2k
+	 * Why do we prefer getPerformanceTime() to timeGetTime() ? Because on one dual-processor Win2k
 	 * PC, we have noticed that timeGetTime() slows down when the client is running !!!
 	 */
 	/* Now we have noticed that on all WinNT4 PC the getPerformanceTime can give us value that
 	 * are less than previous
 	 */
 
-	//if ( byperfcounter )
+	// if ( byperfcounter )
 	//{
 	//	return (TTime)(ticksToSecond(getPerformanceTime()) * 1000.0f);
-	//}
-	//else
+	// }
+	// else
 	//{
-		// This is not affected by system time changes. But it cycles every 49 days.
-		// return timeGetTime(); // Only this was left active before it was commented.
+	//  This is not affected by system time changes. But it cycles every 49 days.
+	//  return timeGetTime(); // Only this was left active before it was commented.
 	//}
 
 	/*
@@ -384,7 +382,7 @@ TTime CTime::getLocalTime ()
 		return timeGetTime();
 	}
 
-#elif defined (NL_OS_UNIX)
+#elif defined(NL_OS_UNIX)
 
 #ifdef NL_MONOTONIC_CLOCK
 
@@ -392,17 +390,17 @@ TTime CTime::getLocalTime ()
 	{
 		timespec tv;
 		// This is not affected by system time changes.
-		if ( clock_gettime( CLOCK_MONOTONIC, &tv ) != 0 )
-			nlerror ("Can't get clock time again");
-	    return (TTime)tv.tv_sec * (TTime)1000 + (TTime)((tv.tv_nsec/*+500*/) / 1000000);
+		if (clock_gettime(CLOCK_MONOTONIC, &tv) != 0)
+			nlerror("Can't get clock time again");
+		return (TTime)tv.tv_sec * (TTime)1000 + (TTime)((tv.tv_nsec /*+500*/) / 1000000);
 	}
 
 #endif
 
 	// This is affected by system time changes.
 	struct timeval tv;
-	if ( gettimeofday( &tv, NULL) != 0 )
-		nlerror ("Can't get time of day");
+	if (gettimeofday(&tv, NULL) != 0)
+		nlerror("Can't get time of day");
 	return (TTime)tv.tv_sec * (TTime)1000 + (TTime)tv.tv_usec / (TTime)1000;
 
 #endif
@@ -417,11 +415,11 @@ TTime CTime::getLocalTime ()
  * power management), so profiling several times and computing the average could be
  * a wise choice.
  */
-TTicks CTime::getPerformanceTime ()
+TTicks CTime::getPerformanceTime()
 {
 #ifdef NL_OS_WINDOWS
 	LARGE_INTEGER ret;
-	if (QueryPerformanceCounter (&ret))
+	if (QueryPerformanceCounter(&ret))
 		return ret.QuadPart;
 	else
 		return 0;
@@ -430,18 +428,18 @@ TTicks CTime::getPerformanceTime ()
 #else
 #if defined(HAVE_X86_64)
 	uint64 hi, lo;
-	__asm__ volatile (".byte 0x0f, 0x31" : "=a" (lo), "=d" (hi));
+	__asm__ volatile(".byte 0x0f, 0x31" : "=a"(lo), "=d"(hi));
 	return (hi << 32) | (lo & 0xffffffff);
 #elif defined(HAVE_X86) and !defined(NL_OS_MAC)
 	uint64 x;
 	// RDTSC - Read time-stamp counter into EDX:EAX.
-	__asm__ volatile (".byte 0x0f, 0x31" : "=A" (x));
+	__asm__ volatile(".byte 0x0f, 0x31" : "=A"(x));
 	return x;
 #else // HAVE_X86
 	static bool firstWarn = true;
 	if (firstWarn)
 	{
-		nlwarning ("TTicks CTime::getPerformanceTime () is not implemented for your processor, returning 0");
+		nlwarning("TTicks CTime::getPerformanceTime () is not implemented for your processor, returning 0");
 		firstWarn = false;
 	}
 	return 0;
@@ -457,17 +455,16 @@ TTicks CTime::getPerformanceTime ()
                       asm volatile ("pop %edx\n\t" "pop %eax\n\t" "pop %esi");
 */
 
-
 /* Convert a ticks count into second. If the performance time is not supported on this
  * hardware, it returns 0.0.
  */
-double CTime::ticksToSecond (TTicks ticks)
+double CTime::ticksToSecond(TTicks ticks)
 {
 #ifdef NL_OS_WINDOWS
 	LARGE_INTEGER ret;
 	if (QueryPerformanceFrequency(&ret))
 	{
-		return (double)(sint64)ticks/(double)ret.QuadPart;
+		return (double)(sint64)ticks / (double)ret.QuadPart;
 	}
 	else
 #elif defined(NL_OS_MAC)
@@ -489,16 +486,16 @@ double CTime::ticksToSecond (TTicks ticks)
 		{
 			// try to have an estimation of the cpu frequency
 
-			TTicks tickBefore = getPerformanceTime ();
+			TTicks tickBefore = getPerformanceTime();
 			TTicks tickAfter = tickBefore;
-			TTime timeBefore = getLocalTime ();
+			TTime timeBefore = getLocalTime();
 			TTime timeAfter = timeBefore;
-			for(;;)
+			for (;;)
 			{
 				if (timeAfter - timeBefore > 1000)
 					break;
-				timeAfter = getLocalTime ();
-				tickAfter = getPerformanceTime ();
+				timeAfter = getLocalTime();
+				tickAfter = getPerformanceTime();
 			}
 
 			TTime timeDelta = timeAfter - timeBefore;
@@ -508,12 +505,11 @@ double CTime::ticksToSecond (TTicks ticks)
 			benchFrequency = false;
 		}
 
-		return (double)(sint64)ticks/(double)freq;
+		return (double)(sint64)ticks / (double)freq;
 	}
 }
 
-
-std::string	CTime::getHumanRelativeTime(sint32 nbSeconds)
+std::string CTime::getHumanRelativeTime(sint32 nbSeconds)
 {
 	sint32 delta = nbSeconds;
 	if (delta < 0)
@@ -571,42 +567,41 @@ std::string	CTime::getHumanRelativeTime(sint32 nbSeconds)
 }
 
 #ifdef NL_OS_WINDOWS
-	/** Return the offset in 10th of micro sec between the windows base time (
-	 *	01-01-1601 0:0:0 UTC) and the unix base time (01-01-1970 0:0:0 UTC).
-	 *	This value is used to convert windows system and file time back and
-	 *	forth to unix time (aka epoch)
-	 */
-	uint64 CTime::getWindowsToUnixBaseTimeOffset()
+/** Return the offset in 10th of micro sec between the windows base time (
+ *	01-01-1601 0:0:0 UTC) and the unix base time (01-01-1970 0:0:0 UTC).
+ *	This value is used to convert windows system and file time back and
+ *	forth to unix time (aka epoch)
+ */
+uint64 CTime::getWindowsToUnixBaseTimeOffset()
+{
+	static bool init = false;
+
+	static uint64 offset = 0;
+
+	if (!init)
 	{
-		static bool init = false;
+		// compute the offset to convert windows base time into unix time (aka epoch)
+		// build a WIN32 system time for jan 1, 1970
+		SYSTEMTIME baseTime;
+		baseTime.wYear = 1970;
+		baseTime.wMonth = 1;
+		baseTime.wDayOfWeek = 0;
+		baseTime.wDay = 1;
+		baseTime.wHour = 0;
+		baseTime.wMinute = 0;
+		baseTime.wSecond = 0;
+		baseTime.wMilliseconds = 0;
 
-		static uint64 offset = 0;
+		FILETIME baseFileTime = { 0, 0 };
+		// convert it into a FILETIME value
+		SystemTimeToFileTime(&baseTime, &baseFileTime);
+		offset = baseFileTime.dwLowDateTime | (uint64(baseFileTime.dwHighDateTime) << 32);
 
-		if (! init)
-		{
-			// compute the offset to convert windows base time into unix time (aka epoch)
-			// build a WIN32 system time for jan 1, 1970
-			SYSTEMTIME baseTime;
-			baseTime.wYear = 1970;
-			baseTime.wMonth = 1;
-			baseTime.wDayOfWeek = 0;
-			baseTime.wDay = 1;
-			baseTime.wHour = 0;
-			baseTime.wMinute = 0;
-			baseTime.wSecond = 0;
-			baseTime.wMilliseconds = 0;
-
-			FILETIME baseFileTime = {0,0};
-			// convert it into a FILETIME value
-			SystemTimeToFileTime(&baseTime, &baseFileTime);
-			offset = baseFileTime.dwLowDateTime | (uint64(baseFileTime.dwHighDateTime)<<32);
-
-			init = true;
-		}
-
-		return offset;
+		init = true;
 	}
-#endif
 
+	return offset;
+}
+#endif
 
 } // NLMISC

@@ -19,17 +19,14 @@
 #include "nel/misc/block_memory.h"
 
 // remove stupid VC6 warnings
-void foo_block_memory_cpp() {}
+void foo_block_memory_cpp() { }
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
-
-bool		NL3D_BlockMemoryAssertOnPurge= true;
-
+bool NL3D_BlockMemoryAssertOnPurge = true;
 
 } // NLMISC

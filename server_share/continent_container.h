@@ -17,8 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_CONTINENT_CONTAINER_H
 #define NL_CONTINENT_CONTAINER_H
 
@@ -55,133 +53,132 @@ protected:
 	class CContinentMoveContainer
 	{
 	public:
-		CContinentMoveContainer() : GlobalRetriever(NULL), RetrieverBank(NULL), MoveContainer(NULL), AllowAutoSpawn(false) {}
+		CContinentMoveContainer()
+		    : GlobalRetriever(NULL)
+		    , RetrieverBank(NULL)
+		    , MoveContainer(NULL)
+		    , AllowAutoSpawn(false)
+		{
+		}
 		/// Then name of the continent
-		std::string								Name;
+		std::string Name;
 		/// The PACS global retriever for this continent
-		NLPACS::UGlobalRetriever				*GlobalRetriever;		// Global retriever retrieved surfaces of all territory
+		NLPACS::UGlobalRetriever *GlobalRetriever; // Global retriever retrieved surfaces of all territory
 		/// The PACS retriever bank for this continent
-		NLPACS::URetrieverBank					*RetrieverBank;			// Bank of global retriever
+		NLPACS::URetrieverBank *RetrieverBank; // Bank of global retriever
 		/// The PACS move container for this continent
-		NLPACS::UMoveContainer					*MoveContainer;			// Move container
+		NLPACS::UMoveContainer *MoveContainer; // Move container
 		/// True if entities are allowed to try spawning in this continent if no continent index is provided
-		bool									AllowAutoSpawn;
+		bool AllowAutoSpawn;
 	};
 
 	///
 	class CSheet
 	{
 	public:
-		CSheet() {}
+		CSheet() { }
 
-		std::string					Name;
-		std::string					PacsRBank;
-		std::string					PacsGR;
-		std::string					LandscapeIG;
-		std::vector<std::string>	ListIG;
+		std::string Name;
+		std::string PacsRBank;
+		std::string PacsGR;
+		std::string LandscapeIG;
+		std::vector<std::string> ListIG;
 
-		void readGeorges (const NLMISC::CSmartPtr<NLGEORGES::UForm> &form, const NLMISC::CSheetId &sheetId)
+		void readGeorges(const NLMISC::CSmartPtr<NLGEORGES::UForm> &form, const NLMISC::CSheetId &sheetId)
 		{
 			Name = sheetId.toString();
 			// the form was found so read the true values from George
-			form->getRootNode ().getValueByName (PacsRBank, "PacsRBank");
-			form->getRootNode ().getValueByName (PacsGR, "PacsGR");
-			form->getRootNode ().getValueByName (LandscapeIG, "LandscapeIG");
+			form->getRootNode().getValueByName(PacsRBank, "PacsRBank");
+			form->getRootNode().getValueByName(PacsGR, "PacsGR");
+			form->getRootNode().getValueByName(LandscapeIG, "LandscapeIG");
 
+			NLGEORGES::UFormElm *node;
+			uint numVillages, numIgs;
 
-			NLGEORGES::UFormElm	*node;
-			uint				numVillages, numIgs;
-
-			if (form->getRootNode().getNodeByName(&node, "Villages") && node &&
-				node->getArraySize(numVillages))
+			if (form->getRootNode().getNodeByName(&node, "Villages") && node && node->getArraySize(numVillages))
 			{
-				for (uint village=0; village<numVillages; ++village)
+				for (uint village = 0; village < numVillages; ++village)
 				{
-					if (form->getRootNode ().getNodeByName(&node, NLMISC::toString("Villages[%d].IgList", village).c_str()) && node &&
-						node->getArraySize(numIgs))
+					if (form->getRootNode().getNodeByName(&node, NLMISC::toString("Villages[%d].IgList", village).c_str()) && node && node->getArraySize(numIgs))
 					{
-						for (uint ig=0; ig<numIgs; ++ig)
+						for (uint ig = 0; ig < numIgs; ++ig)
 						{
-							std::string	igName;
-							if (form->getRootNode ().getValueByName(igName, NLMISC::toString("Villages[%d].IgList[%d].IgName", village, ig).c_str()))
+							std::string igName;
+							if (form->getRootNode().getValueByName(igName, NLMISC::toString("Villages[%d].IgList[%d].IgName", village, ig).c_str()))
 								ListIG.push_back(igName);
-						}						
+						}
 					}
 				}
 			}
-			
 		}
 
-		void serial (NLMISC::IStream &s)
+		void serial(NLMISC::IStream &s)
 		{
 			s.serial(Name);
 			s.serial(PacsRBank, PacsGR, LandscapeIG);
 			s.serialCont(ListIG);
 		}
 
-		static uint getVersion () { return 1; }
-		
-		void removed() {}
+		static uint getVersion() { return 1; }
+
+		void removed() { }
 	};
 
 	/// The global continent container
-	typedef std::vector<CContinentMoveContainer>	TContinentContainer;
+	typedef std::vector<CContinentMoveContainer> TContinentContainer;
 
 	///
-	typedef std::map<std::string, NLPACS::UPrimitiveBlock*>	TPacsPrimMap;
+	typedef std::map<std::string, NLPACS::UPrimitiveBlock *> TPacsPrimMap;
 
 	///
-	typedef std::map<uint, NLMISC::CVectorD>	TTriggerMap;
+	typedef std::map<uint, NLMISC::CVectorD> TTriggerMap;
 
 	/// the continents
-	TContinentContainer							_Continents;
+	TContinentContainer _Continents;
 
 	/// pacs primitives
-	TPacsPrimMap								_PacsPrimMap;
+	TPacsPrimMap _PacsPrimMap;
 
 	/// Sheet map type
-	typedef std::map<NLMISC::CSheetId, CSheet>	TSheetMap;
+	typedef std::map<NLMISC::CSheetId, CSheet> TSheetMap;
 
 	///
-	TSheetMap									_SheetMap;
+	TSheetMap _SheetMap;
 
 	///
-	TTriggerMap									_TriggerMap;
+	TTriggerMap _TriggerMap;
 
 	///
-	uint										_GridWidth;
-	uint										_GridHeight;
-	double										_CellSize;
-	double										_PrimitiveMaxSize;
-	uint										_NbWorldImages;
+	uint _GridWidth;
+	uint _GridHeight;
+	double _CellSize;
+	double _PrimitiveMaxSize;
+	uint _NbWorldImages;
 
 	/// Should load dynamic collision (e.g. trees)
-	bool										_LoadPacsPrims;
+	bool _LoadPacsPrims;
 
 public:
-
 	/// Constructor
 	CContinentContainer();
 
 	/// Init whole continent container
-	void	init(uint gridWidth, uint gridHeight, double primitiveMaxSize, uint nbWorldImages, const std::string &packedSheetsDirectory, double cellSize=0.0, bool loadPacsPrims = true);
+	void init(uint gridWidth, uint gridHeight, double primitiveMaxSize, uint nbWorldImages, const std::string &packedSheetsDirectory, double cellSize = 0.0, bool loadPacsPrims = true);
 
 	/// Build sheets
-	void	buildSheets(const std::string &packedSheetsDirectory);
+	void buildSheets(const std::string &packedSheetsDirectory);
 
 	/// Init pacs prims
-	void	initPacsPrim(const std::string &path = std::string("landscape_col_prim_pacs_list.txt"));
-
+	void initPacsPrim(const std::string &path = std::string("landscape_col_prim_pacs_list.txt"));
 
 	/// Load continent
-	void	loadContinent(std::string name, std::string file, sint index, bool allowAutoSpawn = true);
+	void loadContinent(std::string name, std::string file, sint index, bool allowAutoSpawn = true);
 
 	/// Remove continent
-	void	removeContinent(sint index);
-
+	void removeContinent(sint index);
 
 	/// Get move container for continent
-	NLPACS::UMoveContainer	*getMoveContainer(sint index)
+	NLPACS::UMoveContainer *getMoveContainer(sint index)
 	{
 		if (index < 0 || index >= (sint)_Continents.size())
 		{
@@ -192,7 +189,7 @@ public:
 	}
 
 	/// Get move container for continent
-	NLPACS::UGlobalRetriever	*getRetriever(sint index)
+	NLPACS::UGlobalRetriever *getRetriever(sint index)
 	{
 		if (index < 0 || index >= (sint)_Continents.size())
 		{
@@ -203,7 +200,7 @@ public:
 	}
 
 	/// Get move container for continent
-	NLPACS::URetrieverBank	*getRetrieverBank(sint index)
+	NLPACS::URetrieverBank *getRetrieverBank(sint index)
 	{
 		if (index < 0 || index >= (sint)_Continents.size())
 		{
@@ -213,28 +210,26 @@ public:
 		return _Continents[index].RetrieverBank;
 	}
 
-
 	/// Find continent to spawn in
-	sint	findContinent(const NLMISC::CVectorD &worldPosition, const NLMISC::CEntityId& id = NLMISC::CEntityId::Unknown)
+	sint findContinent(const NLMISC::CVectorD &worldPosition, const NLMISC::CEntityId &id = NLMISC::CEntityId::Unknown)
 	{
-		sint	continent = -1;
+		sint continent = -1;
 		// finds the continent that fits given position
-		uint	i;
-		for (i=0; i<_Continents.size(); ++i)
+		uint i;
+		for (i = 0; i < _Continents.size(); ++i)
 		{
-			if (_Continents[i].GlobalRetriever == NULL ||
-				!_Continents[i].AllowAutoSpawn)
+			if (_Continents[i].GlobalRetriever == NULL || !_Continents[i].AllowAutoSpawn)
 				continue;
 
-			NLPACS::UGlobalPosition		globalPosition = _Continents[i].GlobalRetriever->retrievePosition(worldPosition);
+			NLPACS::UGlobalPosition globalPosition = _Continents[i].GlobalRetriever->retrievePosition(worldPosition);
 			if (globalPosition.InstanceId != -1 && globalPosition.LocalPosition.Surface != -1)
 			{
 				if (continent != -1)
 				{
-					nlwarning("findContinent%s: continent not provided, and sole position (%.3f, %.3f, %.3f) refers to several continents (%d, %d) -- use first found", 
-						id.toString().c_str(),
-						worldPosition.x, worldPosition.y, worldPosition.z,
-						i, continent);
+					nlwarning("findContinent%s: continent not provided, and sole position (%.3f, %.3f, %.3f) refers to several continents (%d, %d) -- use first found",
+					    id.toString().c_str(),
+					    worldPosition.x, worldPosition.y, worldPosition.z,
+					    i, continent);
 					continue;
 				}
 
@@ -247,7 +242,7 @@ public:
 			if (worldPosition.x != 0.0 || worldPosition.y != 0.0 || worldPosition.z != 0.0)
 				nlwarning("findContinent%s: can't find best fitting continent for position (%.3f, %.3f, %.3f) -- use first available continent", id.toString().c_str(), worldPosition.x, worldPosition.y, worldPosition.z);
 
-			for (uint i=0; i<_Continents.size(); ++i)
+			for (uint i = 0; i < _Continents.size(); ++i)
 			{
 				if (_Continents[i].MoveContainer != NULL)
 				{
@@ -261,37 +256,35 @@ public:
 	}
 
 	/// Get container size
-	sint	size() const { return (sint)_Continents.size(); }
+	sint size() const { return (sint)_Continents.size(); }
 
-	/// clear the container -- WARNING 
-	void	clear()
-	{ 
-		uint	i;
-		for (i=0; i<_Continents.size(); ++i)
+	/// clear the container -- WARNING
+	void clear()
+	{
+		uint i;
+		for (i = 0; i < _Continents.size(); ++i)
 			removeContinent(i);
 		_Continents.clear();
 	}
 
 	/// get trigger position
-	NLMISC::CVectorD	getTriggerPosition(uint i) const
+	NLMISC::CVectorD getTriggerPosition(uint i) const
 	{
-		TTriggerMap::const_iterator	it = _TriggerMap.find(i);
-		return  (it == _TriggerMap.end()) ? NLMISC::CVectorD::Null : (*it).second;
+		TTriggerMap::const_iterator it = _TriggerMap.find(i);
+		return (it == _TriggerMap.end()) ? NLMISC::CVectorD::Null : (*it).second;
 	}
 
 	/// Display triggers
-	void				displayTriggers(NLMISC::CLog *log = NLMISC::InfoLog) const
+	void displayTriggers(NLMISC::CLog *log = NLMISC::InfoLog) const
 	{
-		TTriggerMap::const_iterator	it;
-		for (it=_TriggerMap.begin(); it!=_TriggerMap.end(); ++it)
+		TTriggerMap::const_iterator it;
+		for (it = _TriggerMap.begin(); it != _TriggerMap.end(); ++it)
 			log->displayNL("Trigger %d: (%.3f, %.3f, %.3f)", (*it).first, (*it).second.x, (*it).second.y, (*it).second.z);
 	}
 
 protected:
-
-	void	loadPacsPrims(const CSheet &sheet, NLPACS::UMoveContainer *moveContainer);
+	void loadPacsPrims(const CSheet &sheet, NLPACS::UMoveContainer *moveContainer);
 };
-
 
 #endif // NL_CONTINENT_CONTAINER_H
 

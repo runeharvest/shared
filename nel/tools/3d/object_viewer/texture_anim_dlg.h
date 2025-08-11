@@ -19,7 +19,7 @@
 
 #if _MSC_VER > 1000
 #pragma once
-#endif 
+#endif
 
 #include "ps_wrapper.h"
 #include "nel/3d/ps_particle.h"
@@ -27,10 +27,9 @@
 #include "popup_notify.h"
 #include "particle_workspace.h"
 
-namespace NL3D
-{
-	class CPSTexturedParticle;
-	class CPSMultiTexturedParticle;
+namespace NL3D {
+class CPSTexturedParticle;
+class CPSMultiTexturedParticle;
 
 }
 
@@ -44,39 +43,41 @@ class CMultiTexDlg;
 
 class CTextureAnimDlg : public CDialog, IPopupNotify
 {
-// Construction
+	// Construction
 public:
-	CTextureAnimDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSTexturedParticle *p, NL3D::CPSMultiTexturedParticle *mtp = NULL);   // standard constructor
+	CTextureAnimDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSTexturedParticle *p, NL3D::CPSMultiTexturedParticle *mtp = NULL); // standard constructor
 	~CTextureAnimDlg();
 
 	void init(sint x, sint y, CWnd *pParent);
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CTextureAnimDlg)
-	enum { IDD = IDD_TEXTURE_ANIM };
-	CButton	m_ChooseTextures;
-	BOOL	m_EnableTextureAnim;
-	BOOL	m_MultiTexEnable;
+	enum
+	{
+		IDD = IDD_TEXTURE_ANIM
+	};
+	CButton m_ChooseTextures;
+	BOOL m_EnableTextureAnim;
+	BOOL m_MultiTexEnable;
 	//}}AFX_DATA
 
+	BOOL EnableWindow(BOOL bEnable);
 
-	BOOL EnableWindow( BOOL bEnable);
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CTextureAnimDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	NL3D::CPSTexturedParticle *_EditedParticle;
 	NL3D::CPSMultiTexturedParticle *_MTP;
-	CParticleWorkspace::CNode	   *_Node;		
+	CParticleWorkspace::CNode *_Node;
 	// dialog to choose a constant texture
 	CTextureChooser *_TextureChooser;
 	// dialog to have a theme or constant value for texture id
-	CAttribDlgInt *_TextureIndexDialog;	
+	CAttribDlgInt *_TextureIndexDialog;
 	CMultiTexDlg *_MultiTexDlg;
 	// Generated message map functions
 	//{{AFX_MSG(CTextureAnimDlg)
@@ -86,49 +87,49 @@ protected:
 	afx_msg void OnEditMultitex();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-    // delete created controls
+	// delete created controls
 	void cleanCtrl(void);
 	// create the right controls, depending on the fact that a an,imated texture is used or not
 	void setupCtrl(void);
 	//////////////////////////////////
 	//   wrapper for single texture //
 	//////////////////////////////////
-			
-		struct CTextureWrapper : public IPSWrapperTexture
-		{
-			NL3D::CPSTexturedParticle *P;
-			NL3D::ITexture *get(void)  { return P->getTexture(); }
-			void set(NL3D::ITexture *t) { P->setTexture(t); }
-		} _TextureWrapper;
+
+	struct CTextureWrapper : public IPSWrapperTexture
+	{
+		NL3D::CPSTexturedParticle *P;
+		NL3D::ITexture *get(void) { return P->getTexture(); }
+		void set(NL3D::ITexture *t) { P->setTexture(t); }
+	} _TextureWrapper;
 
 	///////////////////////////////////////
 	// wrapper for texture anim sequence //
 	///////////////////////////////////////
 
-		struct CTextureIndexWrapper : public IPSWrapper<sint32>, IPSSchemeWrapper<sint32>
-		{
-		   NL3D::CPSTexturedParticle *P;		   
-		   sint32 get(void) const { return P->getTextureIndex(); }
-		   void set(const sint32 &v) { P->setTextureIndex(v); }
-		   scheme_type *getScheme(void) const { return P->getTextureIndexScheme(); }
-		   void setScheme(scheme_type *s) { P->setTextureIndexScheme(s); }
-		} _TextureIndexWrapper;
+	struct CTextureIndexWrapper : public IPSWrapper<sint32>, IPSSchemeWrapper<sint32>
+	{
+		NL3D::CPSTexturedParticle *P;
+		sint32 get(void) const { return P->getTextureIndex(); }
+		void set(const sint32 &v) { P->setTextureIndex(v); }
+		scheme_type *getScheme(void) const { return P->getTextureIndexScheme(); }
+		void setScheme(scheme_type *s) { P->setTextureIndexScheme(s); }
+	} _TextureIndexWrapper;
 
 	/**
 	 * the implementation of this struct tells the gradient dialog bow how to edit a texture list
 	 */
 
 	struct CGradientInterface : public IValueGradientDlgClient
-	{	
+	{
 		// the particle being edited
 		CValueGradientDlg *Dlg;
-		NL3D::CPSTexturedParticle *P;	
+		NL3D::CPSTexturedParticle *P;
 		// all method inherited from IValueGradientDlgClient
 		virtual CEditAttribDlg *createDialog(uint index, CValueGradientDlg *grad, CParticleWorkspace::CNode *ownerNode);
-		virtual void modifyGradient(TAction, uint index);	
-		virtual void displayValue(CDC *dc, uint index, sint x, sint y);	
-		virtual uint32 getSchemeSize(void) const;	
-		virtual uint32 getNbSteps(void) const;	
+		virtual void modifyGradient(TAction, uint index);
+		virtual void displayValue(CDC *dc, uint index, sint x, sint y);
+		virtual uint32 getSchemeSize(void) const;
+		virtual uint32 getNbSteps(void) const;
 		virtual void setNbSteps(uint32 value);
 
 		/////////////////////////////////////////////////
@@ -139,7 +140,7 @@ protected:
 		struct CTextureWrapper : public IPSWrapperTexture
 		{
 			CValueGradientDlg *Dlg;
-			NL3D::CPSTexturedParticle *P;			
+			NL3D::CPSTexturedParticle *P;
 			// index of the particle in the list
 			uint32 Index;
 			NL3D::ITexture *get(void);
@@ -148,10 +149,12 @@ protected:
 
 	} _GradientInterface;
 
-
 	/// inherited from IPopuNotify
 	void childPopupClosed(CWnd *child);
-	void updateModifiedFlag() { if (_Node) _Node->setModified(true); }
+	void updateModifiedFlag()
+	{
+		if (_Node) _Node->setModified(true);
+	}
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -11,98 +11,96 @@
 
 #ifndef UNDER_CE
 
-typedef BOOL (WINAPI *Func_SetDefaultDllDirectories)(DWORD DirectoryFlags);
+typedef BOOL(WINAPI *Func_SetDefaultDllDirectories)(DWORD DirectoryFlags);
 
 #define MY_LOAD_LIBRARY_SEARCH_USER_DIRS 0x400
-#define MY_LOAD_LIBRARY_SEARCH_SYSTEM32  0x800
+#define MY_LOAD_LIBRARY_SEARCH_SYSTEM32 0x800
 
-static const char * const g_Dlls =
-  #ifndef _CONSOLE
-  "UXTHEME\0"
-  #endif
-  "USERENV\0"
-  "SETUPAPI\0"
-  "APPHELP\0"
-  "PROPSYS\0"
-  "DWMAPI\0"
-  "CRYPTBASE\0"
-  "OLEACC\0"
-  "CLBCATQ\0"
-  "VERSION\0"
-  ;
+static const char *const g_Dlls =
+#ifndef _CONSOLE
+    "UXTHEME\0"
+#endif
+    "USERENV\0"
+    "SETUPAPI\0"
+    "APPHELP\0"
+    "PROPSYS\0"
+    "DWMAPI\0"
+    "CRYPTBASE\0"
+    "OLEACC\0"
+    "CLBCATQ\0"
+    "VERSION\0";
 
 #endif
 
 void My_SetDefaultDllDirectories()
 {
-  #ifndef UNDER_CE
-  
-    OSVERSIONINFO vi;
-    vi.dwOSVersionInfoSize = sizeof(vi);
-    GetVersionEx(&vi);
-    if (!GetVersionEx(&vi) || vi.dwMajorVersion != 6 || vi.dwMinorVersion != 0)
-    {
-      Func_SetDefaultDllDirectories setDllDirs = (Func_SetDefaultDllDirectories)
-          GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "SetDefaultDllDirectories");
-      if (setDllDirs)
-        if (setDllDirs(MY_LOAD_LIBRARY_SEARCH_SYSTEM32 | MY_LOAD_LIBRARY_SEARCH_USER_DIRS))
-          return;
-    }
+#ifndef UNDER_CE
 
-  #endif
+	OSVERSIONINFO vi;
+	vi.dwOSVersionInfoSize = sizeof(vi);
+	GetVersionEx(&vi);
+	if (!GetVersionEx(&vi) || vi.dwMajorVersion != 6 || vi.dwMinorVersion != 0)
+	{
+		Func_SetDefaultDllDirectories setDllDirs = (Func_SetDefaultDllDirectories)
+		    GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "SetDefaultDllDirectories");
+		if (setDllDirs)
+			if (setDllDirs(MY_LOAD_LIBRARY_SEARCH_SYSTEM32 | MY_LOAD_LIBRARY_SEARCH_USER_DIRS))
+				return;
+	}
+
+#endif
 }
-
 
 void LoadSecurityDlls()
 {
-  #ifndef UNDER_CE
-  
-  wchar_t buf[MAX_PATH + 100];
+#ifndef UNDER_CE
 
-  {
-    // at Vista (ver 6.0) : CoCreateInstance(CLSID_ShellLink, ...) doesn't work after SetDefaultDllDirectories() : Check it ???
-    OSVERSIONINFO vi;
-    vi.dwOSVersionInfoSize = sizeof(vi);
-    if (!GetVersionEx(&vi) || vi.dwMajorVersion != 6 || vi.dwMinorVersion != 0)
-    {
-      Func_SetDefaultDllDirectories setDllDirs = (Func_SetDefaultDllDirectories)
-          GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "SetDefaultDllDirectories");
-      if (setDllDirs)
-        if (setDllDirs(MY_LOAD_LIBRARY_SEARCH_SYSTEM32 | MY_LOAD_LIBRARY_SEARCH_USER_DIRS))
-          return;
-    }
-  }
+	wchar_t buf[MAX_PATH + 100];
 
-  {
-    unsigned len = GetSystemDirectoryW(buf, MAX_PATH + 2);
-    if (len == 0 || len > MAX_PATH)
-      return;
-  }
-  {
-    const char *dll;
-    unsigned pos = (unsigned)lstrlenW(buf);
+	{
+		// at Vista (ver 6.0) : CoCreateInstance(CLSID_ShellLink, ...) doesn't work after SetDefaultDllDirectories() : Check it ???
+		OSVERSIONINFO vi;
+		vi.dwOSVersionInfoSize = sizeof(vi);
+		if (!GetVersionEx(&vi) || vi.dwMajorVersion != 6 || vi.dwMinorVersion != 0)
+		{
+			Func_SetDefaultDllDirectories setDllDirs = (Func_SetDefaultDllDirectories)
+			    GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "SetDefaultDllDirectories");
+			if (setDllDirs)
+				if (setDllDirs(MY_LOAD_LIBRARY_SEARCH_SYSTEM32 | MY_LOAD_LIBRARY_SEARCH_USER_DIRS))
+					return;
+		}
+	}
 
-    if (buf[pos - 1] != '\\')
-      buf[pos++] = '\\';
-    
-    for (dll = g_Dlls; dll[0] != 0;)
-    {
-      unsigned k = 0;
-      for (;;)
-      {
-        char c = *dll++;
-        buf[pos + k] = (Byte)c;
-        k++;
-        if (c == 0)
-          break;
-      }
+	{
+		unsigned len = GetSystemDirectoryW(buf, MAX_PATH + 2);
+		if (len == 0 || len > MAX_PATH)
+			return;
+	}
+	{
+		const char *dll;
+		unsigned pos = (unsigned)lstrlenW(buf);
 
-      lstrcatW(buf, L".dll");
-      LoadLibraryExW(buf, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
-    }
-  }
-  
-  #endif
+		if (buf[pos - 1] != '\\')
+			buf[pos++] = '\\';
+
+		for (dll = g_Dlls; dll[0] != 0;)
+		{
+			unsigned k = 0;
+			for (;;)
+			{
+				char c = *dll++;
+				buf[pos + k] = (Byte)c;
+				k++;
+				if (c == 0)
+					break;
+			}
+
+			lstrcatW(buf, L".dll");
+			LoadLibraryExW(buf, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
+		}
+	}
+
+#endif
 }
 
 #endif

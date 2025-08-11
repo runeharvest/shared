@@ -17,7 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdpch.h"
 #include "nel/gui/ctrl_tooltip.h"
 #include "nel/misc/xml_auto_ptr.h"
@@ -34,45 +33,42 @@ NLMISC_REGISTER_OBJECT(CViewBase, CCtrlToolTip, std::string, "tooltip");
 
 REGISTER_UI_CLASS(CCtrlToolTip)
 
-namespace NLGUI
+namespace NLGUI {
+
+// ----------------------------------------------------------------------------
+void CCtrlToolTip::draw()
 {
-
-	// ----------------------------------------------------------------------------
-	void CCtrlToolTip::draw ()
-	{
-	}
-
-	// ----------------------------------------------------------------------------
-	bool CCtrlToolTip::handleEvent (const NLGUI::CEventDescriptor& event)
-	{
-		if (CCtrlBase::handleEvent(event)) return true;
-		return false;
-	}
-
-
-	xmlNodePtr CCtrlToolTip::serialize( xmlNodePtr parentNode, const char *type ) const
-	{
-		xmlNodePtr node = CCtrlBase::serialize( parentNode, type );
-		if( node == NULL )
-			return NULL;
-
-		xmlSetProp( node, BAD_CAST "type", BAD_CAST "tooltip" );
-
-		return node;
-	}
-
-	// ----------------------------------------------------------------------------
-	bool CCtrlToolTip::parse(xmlNodePtr cur, CInterfaceGroup *parentGroup)
-	{
-		if (!CCtrlBase::parse(cur, parentGroup)) return false;
-		return true;
-	}
-
-	// ----------------------------------------------------------------------------
-	void CCtrlToolTip::serial(NLMISC::IStream &f)
-	{
-		CCtrlBase::serial(f);
-	}
-
 }
 
+// ----------------------------------------------------------------------------
+bool CCtrlToolTip::handleEvent(const NLGUI::CEventDescriptor &event)
+{
+	if (CCtrlBase::handleEvent(event)) return true;
+	return false;
+}
+
+xmlNodePtr CCtrlToolTip::serialize(xmlNodePtr parentNode, const char *type) const
+{
+	xmlNodePtr node = CCtrlBase::serialize(parentNode, type);
+	if (node == NULL)
+		return NULL;
+
+	xmlSetProp(node, BAD_CAST "type", BAD_CAST "tooltip");
+
+	return node;
+}
+
+// ----------------------------------------------------------------------------
+bool CCtrlToolTip::parse(xmlNodePtr cur, CInterfaceGroup *parentGroup)
+{
+	if (!CCtrlBase::parse(cur, parentGroup)) return false;
+	return true;
+}
+
+// ----------------------------------------------------------------------------
+void CCtrlToolTip::serial(NLMISC::IStream &f)
+{
+	CCtrlBase::serial(f);
+}
+
+}

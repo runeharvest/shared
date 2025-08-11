@@ -38,10 +38,11 @@ using namespace std;
 
 namespace NLSOUND {
 
-CGroupController::CGroupController(CGroupController *parent) : 
-	m_Parent(parent), m_Gain(1.0f), m_NbSourcesInclChild(0)
+CGroupController::CGroupController(CGroupController *parent)
+    : m_Parent(parent)
+    , m_Gain(1.0f)
+    , m_NbSourcesInclChild(0)
 {
-	
 }
 
 CGroupController::~CGroupController()
@@ -108,7 +109,7 @@ void CGroupController::increaseSources() // overridden by root
 {
 	++m_NbSourcesInclChild;
 	m_Parent->increaseSources();
-	
+
 	// Update source gain when this controller was inactive before but the parent was active before.
 	// Thus, when this controller was the root of inactive controllers.
 	if (m_NbSourcesInclChild == 1 && m_Parent->m_NbSourcesInclChild > 1)

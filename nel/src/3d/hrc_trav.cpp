@@ -27,19 +27,17 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace	NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
-void				CHrcTrav::traverse()
+void CHrcTrav::traverse()
 {
-	H_AUTO( NL3D_TravHRC );
+	H_AUTO(NL3D_TravHRC);
 
 	_MovingObjects.clear();
 
 	// Traverse the graph.
-	if(Scene->getRoot())
+	if (Scene->getRoot())
 		Scene->getRoot()->traverseHrc();
 
 	// Inc the date.
@@ -47,6 +45,5 @@ void				CHrcTrav::traverse()
 	// Hence, we must inc the value before scene rendering. This is equivalent to start with 1, and inc at end of traverse().
 	CurrentDate++;
 }
-
 
 }

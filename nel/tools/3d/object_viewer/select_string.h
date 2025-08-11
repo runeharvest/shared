@@ -28,32 +28,34 @@
 
 class CSelectString : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CSelectString(const std::vector<std::string>& vectString, const std::string &title, CWnd* pParent, bool empty);   // standard constructor
+	CSelectString(const std::vector<std::string> &vectString, const std::string &title, CWnd *pParent, bool empty); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CSelectString)
-	enum { IDD = IDD_SELECT_STRING };
-	CButton		EmptyCtrl;
-	CListBox	ListCtrl;
+	enum
+	{
+		IDD = IDD_SELECT_STRING
+	};
+	CButton EmptyCtrl;
+	CListBox ListCtrl;
 	//}}AFX_DATA
 
-	std::string							Title;
-	std::vector<std::string>			Strings;
-	int									Selection;
-	bool								Empty;
+	std::string Title;
+	std::vector<std::string> Strings;
+	int Selection;
+	bool Empty;
 
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CSelectString)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CSelectString)
 	virtual void OnOK();

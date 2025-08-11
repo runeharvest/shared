@@ -17,7 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdpch.h"
 #include "nel/misc/events.h"
 #include "nel/gui/event_descriptor.h"
@@ -26,8 +25,7 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NLGUI
-{
+namespace NLGUI {
 
 void CEventDescriptorKey::init(const NLMISC::CEventKey &ev)
 {
@@ -37,22 +35,22 @@ void CEventDescriptorKey::init(const NLMISC::CEventKey &ev)
 	if (ev == NLMISC::EventCharId)
 	{
 		_KeyEvent = keychar;
-		_Char = ((const NLMISC::CEventChar &) ev).Char;
+		_Char = ((const NLMISC::CEventChar &)ev).Char;
 	}
 	else if (ev == NLMISC::EventKeyUpId)
 	{
 		_KeyEvent = keyup;
-		_Key = ((const NLMISC::CEventKeyUp &) ev).Key;
+		_Key = ((const NLMISC::CEventKeyUp &)ev).Key;
 	}
 	else if (ev == NLMISC::EventKeyDownId)
 	{
 		_KeyEvent = keydown;
-		_Key = ((const NLMISC::CEventKeyDown &) ev).Key;
+		_Key = ((const NLMISC::CEventKeyDown &)ev).Key;
 	}
 	else if (ev == NLMISC::EventStringId)
 	{
 		_KeyEvent = keystring;
-		_String = ((const NLMISC::CEventString &) ev).String;
+		_String = ((const NLMISC::CEventString &)ev).String;
 	}
 	else
 	{
@@ -61,4 +59,3 @@ void CEventDescriptorKey::init(const NLMISC::CEventKey &ev)
 }
 
 }
-

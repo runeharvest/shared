@@ -26,17 +26,13 @@
 using namespace std;
 using namespace NLMISC;
 
-
-
 namespace NLSOUND {
 
-
-//CContextSound	test;
-
+// CContextSound	test;
 
 /// Constructor
 CContextSound::CContextSound()
-:	_ContextSounds(0)
+    : _ContextSounds(0)
 {
 }
 /// Destructor
@@ -46,7 +42,7 @@ CContextSound::~CContextSound()
 		delete _ContextSounds;
 }
 
-void		CContextSound::serial(NLMISC::IStream &s)
+void CContextSound::serial(NLMISC::IStream &s)
 {
 	CSound::serial(s);
 	s.serial(_PatternName);
@@ -58,9 +54,8 @@ void		CContextSound::serial(NLMISC::IStream &s)
 	}
 }
 
-
 /// Load the sound parameters from georges' form
-void		CContextSound::importForm(const std::string& filename, NLGEORGES::UFormElm& formRoot)
+void CContextSound::importForm(const std::string &filename, NLGEORGES::UFormElm &formRoot)
 {
 	NLGEORGES::UFormElm *psoundType;
 	std::string dfnName;
@@ -79,34 +74,35 @@ void		CContextSound::importForm(const std::string& filename, NLGEORGES::UFormElm
 }
 
 /// Return true if cone is meaningful
-bool		CContextSound::isDetailed() const
+bool CContextSound::isDetailed() const
 {
 	return false;
 }
 
-float		CContextSound::getMaxDistance() const
+float CContextSound::getMaxDistance() const
 {
 	if (_ContextSounds == 0)
 	{
-		const_cast<CContextSound*>(this)->init();
+		const_cast<CContextSound *>(this)->init();
 		if (_ContextSounds == 0)
 		{
 			// invalid state
 			return 0;
 		}
 	}
-	return _ContextSounds->getMaxDistance();;
+	return _ContextSounds->getMaxDistance();
+	;
 }
 
 /// Return the length of the sound in ms
-uint32		CContextSound::getDuration()
+uint32 CContextSound::getDuration()
 {
-	std::vector<std::pair<std::string, CSound*> > sounds;
+	std::vector<std::pair<std::string, CSound *>> sounds;
 	getSubSoundList(sounds);
 
 	uint32 duration = 0;
 
-	std::vector<std::pair<std::string, CSound*> >::iterator first(sounds.begin()), last(sounds.end());
+	std::vector<std::pair<std::string, CSound *>>::iterator first(sounds.begin()), last(sounds.end());
 	for (; first != last; ++first)
 	{
 		duration = std::max(duration, first->second->getDuration());
@@ -115,11 +111,11 @@ uint32		CContextSound::getDuration()
 }
 
 /// Used by the george sound plugin to check sound recursion (ie sound 'toto' use sound 'titi' witch also use sound 'toto' ...).
-void		CContextSound::getSubSoundList(std::vector<std::pair<std::string, CSound*> > &subsounds) const
+void CContextSound::getSubSoundList(std::vector<std::pair<std::string, CSound *>> &subsounds) const
 {
 	if (_ContextSounds == 0)
 	{
-		const_cast<CContextSound*>(this)->init();
+		const_cast<CContextSound *>(this)->init();
 	}
 
 	if (_ContextSounds)
@@ -128,7 +124,7 @@ void		CContextSound::getSubSoundList(std::vector<std::pair<std::string, CSound*>
 	}
 }
 
-CSound	*CContextSound::getContextSound(CSoundContext &context)
+CSound *CContextSound::getContextSound(CSoundContext &context)
 {
 	if (_ContextSounds == 0)
 	{
@@ -142,10 +138,10 @@ CSound	*CContextSound::getContextSound(CSoundContext &context)
 	if (_Random > 1)
 	{
 		// compute the random value.
-		uint32	r;
+		uint32 r;
 		do
 		{
-			r = rand()%_Random;
+			r = rand() % _Random;
 		} while (r == context.PreviousRandom);
 
 		context.PreviousRandom = r;
@@ -154,23 +150,21 @@ CSound	*CContextSound::getContextSound(CSoundContext &context)
 	}
 	else
 		return _ContextSounds->getSound(context, 0);
-
-
 }
 
 void CContextSound::init()
 {
-	uint	nbJoker = 0;
-	uint	contextArgIndex[SoundContextNbArgs];
-	bool	useRandom = false;
-	bool	parseArg = false;
+	uint nbJoker = 0;
+	uint contextArgIndex[SoundContextNbArgs];
+	bool useRandom = false;
+	bool parseArg = false;
 	_BaseName.clear();
 
-	//nldebug("Init the context sound %s", _PatternName.c_str());
+	// nldebug("Init the context sound %s", _PatternName.c_str());
 
-	string::iterator	first(_PatternName.begin()), last(_PatternName.end());
+	string::iterator first(_PatternName.begin()), last(_PatternName.end());
 	// 1st loop until the first joker
-	for(; first != last && *first != '%'; ++first)
+	for (; first != last && *first != '%'; ++first)
 		_BaseName += *first;
 
 	// 2nd loop, now we read the context arg index for each joker.
@@ -228,13 +222,14 @@ void CContextSound::init()
 	if (_ContextSounds != 0)
 		delete _ContextSounds;
 
-	// A little macro to make life easier (LM stand for Local Macro)
-#define LM_CASE_CONTAINER_CREATOR(size)	case (size):\
-											if (useRandom)\
-												_ContextSounds = new CContextSoundContainer<(size), true>;\
-											else\
-												_ContextSounds = new CContextSoundContainer<(size), false>;\
-											break;
+		// A little macro to make life easier (LM stand for Local Macro)
+#define LM_CASE_CONTAINER_CREATOR(size)                                 \
+	case (size):                                                        \
+		if (useRandom)                                                  \
+			_ContextSounds = new CContextSoundContainer<(size), true>;  \
+		else                                                            \
+			_ContextSounds = new CContextSoundContainer<(size), false>; \
+		break;
 
 	// ok, now instantiate the correct container
 	switch (nbJoker)
@@ -262,7 +257,7 @@ void CContextSound::init()
 	// ok, we have the container, now fill it with the sound
 	{
 		std::vector<NLMISC::TStringId> allSounds;
-//		CSoundBank::getSoundNames(allSounds);
+		//		CSoundBank::getSoundNames(allSounds);
 		CAudioMixerUser::instance()->getSoundNames(allSounds);
 
 		std::vector<NLMISC::TStringId>::iterator first(allSounds.begin()), last(allSounds.end());
@@ -272,7 +267,7 @@ void CContextSound::init()
 			if (soundName.size() > _BaseName.size())
 			{
 				uint i;
-				for (i=0; i<_BaseName.size(); ++i)
+				for (i = 0; i < _BaseName.size(); ++i)
 				{
 					if (soundName[i] != _BaseName[i])
 						break;
@@ -288,7 +283,5 @@ void CContextSound::init()
 		}
 	}
 }
-
-
 
 } // NLSOUND

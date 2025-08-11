@@ -37,28 +37,27 @@ using namespace NLMISC;
 
 // this function will be called when the configfile will be modified by
 // an external program
-void mainCallback ()
+void mainCallback()
 {
-	nlinfo ("The file was modified by external program!");
+	nlinfo("The file was modified by external program!");
 }
 
 // this function will be called when the variable var12 will be modified by
 // an external program
-void var12Callback (CConfigFile::CVar &var)
+void var12Callback(CConfigFile::CVar &var)
 {
 	stringstream str;
-	
-	for (uint i = 0; i < var.size (); i++)
-		str << var.asInt (i) << " ";
 
-	nlinfo("%s modified, new value: %s\n", var.Name.c_str (), str.str().c_str());
+	for (uint i = 0; i < var.size(); i++)
+		str << var.asInt(i) << " ";
+
+	nlinfo("%s modified, new value: %s\n", var.Name.c_str(), str.str().c_str());
 }
-
 
 // the configfile
 CConfigFile cf;
 
-int main (int /* argc */, char ** /* argv */)
+int main(int /* argc */, char ** /* argv */)
 {
 
 	// look at the debug example
@@ -68,42 +67,42 @@ int main (int /* argc */, char ** /* argv */)
 	CPath::addSearchPath(NL_SAMPLE_CFG);
 
 	// load and parse the configfile
-	cf.load (CPath::lookup("simpletest.txt"));
+	cf.load(CPath::lookup("simpletest.txt"));
 
 	// CConfigFile checks if the config file has been modified by an external program.
 	// in this case, the configfile automatically reloads and reparses the file.
 	// you can connect a callback function that will be called in this case if
 	// you want, for example, reset variables
-	
+
 	// link a callback with this configfile.
-	cf.setCallback (mainCallback);
+	cf.setCallback(mainCallback);
 
 	// link a callback with the var12. If and only if the var12 changed, this
 	// callback will be called
-	cf.setCallback ("var12", var12Callback);
+	cf.setCallback("var12", var12Callback);
 
 	// display all variables
 	cf.display(InfoLog);
 
 	// get the value of var1 as int
-	int var1 = cf.getVar ("var1").asInt();
+	int var1 = cf.getVar("var1").asInt();
 	nlinfo("var1 (int) = %d", var1);
 
 	// get the value of var1 as double, in this case, a conversion from int
 	// to double will be done
-	double var2 = cf.getVar ("var1").asDouble();
+	double var2 = cf.getVar("var1").asDouble();
 	nlinfo("var1 (double) = %lf", var2);
 
 	// get the value of var2 as int, in this case, a conversion from string
 	// to int will be done
-	int var3 = cf.getVar ("var2").asInt();
+	int var3 = cf.getVar("var2").asInt();
 	nlinfo("var2 = %d", var3);
 
 	// if the variable is an array of values, you can access them putting the
 	// index of the variable you want. Example, get and print all value of var12:
-	for (uint i = 0; i < cf.getVar ("var12").size(); i++)
+	for (uint i = 0; i < cf.getVar("var12").size(); i++)
 	{
-		int val = cf.getVar ("var12").asInt(i);
+		int val = cf.getVar("var12").asInt(i);
 		nlinfo("%d -> %d", i, val);
 	}
 
@@ -113,7 +112,7 @@ int main (int /* argc */, char ** /* argv */)
 	try
 	{
 		// try to access an unknown variable
-		int val = cf.getVar ("unknown_variable").asInt();
+		int val = cf.getVar("unknown_variable").asInt();
 		nlinfo("unknown_variable = %d", val);
 	}
 	catch (const EConfigFile &e)
@@ -121,13 +120,13 @@ int main (int /* argc */, char ** /* argv */)
 		nlinfo("something goes wrong with configfile: %s", e.what());
 	}
 
-	cf.getVar ("var13").asInt (0);
-	cf.getVar ("var13").asInt (1);
-	cf.getVar ("var13").asInt (2);
-	
+	cf.getVar("var13").asInt(0);
+	cf.getVar("var13").asInt(1);
+	cf.getVar("var13").asInt(2);
+
 	nlinfo("Try to modify the var12 in the configfile or any other variable.\n\nPress CTRL-C to exit\n");
 
-	while(true)
+	while (true)
 	{
 		CConfigFile::checkConfigFiles();
 	}

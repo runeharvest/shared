@@ -21,13 +21,9 @@
 #include "nel/misc/vector.h"
 #include "nel/3d/vegetable_def.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 using NLMISC::CVector;
-
 
 // ***************************************************************************
 /**
@@ -39,17 +35,14 @@ using NLMISC::CVector;
 class CVegetableQuadrant
 {
 public:
-
 	/// Constructor
 	CVegetableQuadrant();
 
 	// Directions of quadrants
-	static CVector		Dirs[NL3D_VEGETABLE_NUM_QUADRANT];
+	static CVector Dirs[NL3D_VEGETABLE_NUM_QUADRANT];
 };
 
-
 } // NL3D
-
 
 #endif // NL_VEGETABLE_QUADRANT_H
 

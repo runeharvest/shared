@@ -22,7 +22,6 @@
 #include "nel/3d/ps_attrib_maker_bin_op.h"
 #include "nel/3d/ps_attrib_maker_helper.h"
 
-
 namespace NL3D {
 
 template <>
@@ -36,7 +35,8 @@ class CPSIntBlender : public CPSValueBlender<sint32>
 {
 public:
 	NLMISC_DECLARE_CLASS(CPSIntBlender);
-	CPSIntBlender(sint32 startInt = 0 , sint32 endInt = 10, float nbCycles = 1.0f) : CPSValueBlender<sint32>(nbCycles)
+	CPSIntBlender(sint32 startInt = 0, sint32 endInt = 10, float nbCycles = 1.0f)
+	    : CPSValueBlender<sint32>(nbCycles)
 	{
 		_F.setValues(startInt, endInt);
 	}
@@ -47,13 +47,13 @@ class CPSUIntBlender : public CPSValueBlender<uint32>
 {
 public:
 	NLMISC_DECLARE_CLASS(CPSUIntBlender);
-	CPSUIntBlender(uint32 startInt = 0 , uint32 endInt = 10, float nbCycles = 1.0f) : CPSValueBlender<uint32>(nbCycles)
+	CPSUIntBlender(uint32 startInt = 0, uint32 endInt = 10, float nbCycles = 1.0f)
+	    : CPSValueBlender<uint32>(nbCycles)
 	{
 		_F.setValues(startInt, endInt);
 	}
 	CPSAttribMakerBase *clone() const { return new CPSUIntBlender(*this); }
 };
-
 
 /// This is a int gradient class
 class CPSIntGradient : public CPSValueGradient<sint32>
@@ -67,8 +67,7 @@ public:
 	 * \param nbCycles : The nb of time the pattern is repeated during particle life. see ps_attrib_maker.h
 	 */
 
-	CPSIntGradient(const sint32 *intTab = CPSIntGradient::_DefaultGradient
-						, uint32 nbValues = 2, uint32 nbStages = 10, float nbCycles = 1.0f);
+	CPSIntGradient(const sint32 *intTab = CPSIntGradient::_DefaultGradient, uint32 nbValues = 2, uint32 nbStages = 10, float nbCycles = 1.0f);
 	CPSAttribMakerBase *clone() const { return new CPSIntGradient(*this); }
 	static sint32 _DefaultGradient[];
 };
@@ -84,16 +83,15 @@ public:
 	 * \param nbCycles : The nb of time the pattern is repeated during particle life. see ps_attrib_maker.h
 	 */
 
-	CPSUIntGradient(const uint32 *intTab = CPSUIntGradient::_DefaultGradient
-						, uint32 nbValues = 2, uint32 nbStages = 10, float nbCycles = 1.0f);
+	CPSUIntGradient(const uint32 *intTab = CPSUIntGradient::_DefaultGradient, uint32 nbValues = 2, uint32 nbStages = 10, float nbCycles = 1.0f);
 	CPSAttribMakerBase *clone() const { return new CPSUIntGradient(*this); }
 	static uint32 _DefaultGradient[];
 };
 
 /** this memorize value by applying some function on the emitter. For a particle's attribute, each particle has its
-  * own value memorized
-  *  You MUST called setScheme (from CPSAttribMakerMemory) to tell how the value will be generted
-  */
+ * own value memorized
+ *  You MUST called setScheme (from CPSAttribMakerMemory) to tell how the value will be generted
+ */
 class CPSIntMemory : public CPSAttribMakerMemory<sint32>
 {
 public:
@@ -102,11 +100,10 @@ public:
 	CPSAttribMakerBase *clone() const { return new CPSIntMemory(*this); }
 };
 
-
 /** this memorize value by applying some function on the emitter. For a particle's attribute, each particle has its
-  * own value memorized
-  *  You MUST called setScheme (from CPSAttribMakerMemory) to tell how the value will be generted
-  */
+ * own value memorized
+ *  You MUST called setScheme (from CPSAttribMakerMemory) to tell how the value will be generted
+ */
 class CPSUIntMemory : public CPSAttribMakerMemory<uint32>
 {
 public:
@@ -115,10 +112,9 @@ public:
 	CPSAttribMakerBase *clone() const { return new CPSUIntMemory(*this); }
 };
 
-
 /** An attribute maker whose output if the result of a binary op on uint32
-  *
-  */
+ *
+ */
 class CPSIntBinOp : public CPSAttribMakerBinOp<sint32>
 {
 public:
@@ -126,10 +122,9 @@ public:
 	CPSAttribMakerBase *clone() const { return new CPSIntBinOp(*this); }
 };
 
-
 /** An attribute maker whose output if the result of a binary op on uint32
-  *
-  */
+ *
+ */
 class CPSUIntBinOp : public CPSAttribMakerBinOp<uint32>
 {
 public:
@@ -137,11 +132,7 @@ public:
 	CPSAttribMakerBase *clone() const { return new CPSUIntBinOp(*this); }
 };
 
-
-
-
 } // NL3D
-
 
 #endif // NL_PS_INT_H
 

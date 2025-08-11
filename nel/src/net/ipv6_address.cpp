@@ -113,11 +113,11 @@ bool addressFromString(uint8 address[], const char *str, size_t len)
 		{
 			// Fallback to `inet_addr`
 			uint32 addr = inet_addr(lstr.c_str());
-			
+
 			// Failed to parse
 			if (addr == INADDR_NONE)
 				return false;
-			
+
 			// Convert to IPv4-mapped IPv6 address
 			memset(address, 0, 10);
 			address[10] = 0xFF;
@@ -490,12 +490,13 @@ CIPv6Address::TType CIPv6Address::getType() const
 	}
 	else
 	{
-		NL_ALIGNAS(uint64_t) static const uint8 loopback[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+		NL_ALIGNAS(uint64_t)
+		static const uint8 loopback[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 #ifndef NL_CPP14
 		if (memcmp(m_Address, loopback, 16) == 0) return Loopback;
 #else
 		if (((const uint64_t *)m_Address)[0] == ((const uint64_t *)loopback)[0]
-			&& ((const uint64_t *)m_Address)[1] == ((const uint64_t *)loopback)[1])
+		    && ((const uint64_t *)m_Address)[1] == ((const uint64_t *)loopback)[1])
 			return Loopback;
 #endif
 		if ((m_Address[0] & 0xFE) == 0xFC) return UniqueLocal;
@@ -563,12 +564,13 @@ bool CIPv6Address::isAny() const
 	}
 	else
 	{
-		NL_ALIGNAS(uint64_t) static const uint8 any[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		NL_ALIGNAS(uint64_t)
+		static const uint8 any[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 #ifndef NL_CPP14
 		return memcmp(m_Address, any, 16) == 0;
 #else
 		return ((const uint64_t *)m_Address)[0] == ((const uint64_t *)any)[0]
-			&& ((const uint64_t *)m_Address)[1] == ((const uint64_t *)any)[1];
+		    && ((const uint64_t *)m_Address)[1] == ((const uint64_t *)any)[1];
 #endif
 	}
 }

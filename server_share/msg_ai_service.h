@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_AIS_INTERFACE_MESSAGES_H
 #define RY_AIS_INTERFACE_MESSAGES_H
 
@@ -39,17 +37,17 @@
 class CCreatureAskInformationMsg : public CMirrorTransportClass
 {
 public:
-	std::vector< TDataSetRow > Character;
-	std::vector< TDataSetRow > Creature;
+	std::vector<TDataSetRow> Character;
+	std::vector<TDataSetRow> Creature;
 
-	virtual void description ()
+	virtual void description()
 	{
-		className ("CCreatureAskInformationMsg");
+		className("CCreatureAskInformationMsg");
 
-		propertyCont ("Character", PropDataSetRow, Character);
-		propertyCont ("Creature", PropDataSetRow, Creature);
+		propertyCont("Character", PropDataSetRow, Character);
+		propertyCont("Creature", PropDataSetRow, Creature);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -58,17 +56,17 @@ public:
 class CCAisActionMsg : public CMirrorTransportClass
 {
 public:
-	uint32						Alias;
-	std::vector<std::string>	Content;
+	uint32 Alias;
+	std::vector<std::string> Content;
 
-	virtual void description ()
+	virtual void description()
 	{
-		className ("CCAisActionMsg");
-		property ("Alias", PropUInt32, uint32(0xffffffff), Alias);
-		propertyCont ("Content", PropString, Content);
+		className("CCAisActionMsg");
+		property("Alias", PropUInt32, uint32(0xffffffff), Alias);
+		propertyCont("Content", PropString, Content);
 	}
 
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -77,24 +75,24 @@ public:
 class CUserEventMsg : public CMirrorTransportClass
 {
 public:
-	uint32						InstanceNumber;
+	uint32 InstanceNumber;
 	/// The group to with the event will be send
-	uint32						GrpAlias;
+	uint32 GrpAlias;
 	/// The event number, must be 0 to 9.
-	uint8						EventId;
+	uint8 EventId;
 	/// Parameters for the user event
-	std::vector<std::string>	Params;
+	std::vector<std::string> Params;
 
-	virtual void description ()
+	virtual void description()
 	{
-		className ("CUserEventMsg");
-		property ("InstanceNumber", PropUInt32, std::numeric_limits<uint32>::max(), InstanceNumber);
-		property ("GrpAlias", PropUInt32, uint32(0xffffffff), GrpAlias);
-		property ("EventId", PropUInt8, uint8(0xff), EventId);
-		propertyCont ("Params", PropString, Params);
+		className("CUserEventMsg");
+		property("InstanceNumber", PropUInt32, std::numeric_limits<uint32>::max(), InstanceNumber);
+		property("GrpAlias", PropUInt32, uint32(0xffffffff), GrpAlias);
+		property("EventId", PropUInt8, uint8(0xff), EventId);
+		propertyCont("Params", PropString, Params);
 	}
 
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -104,18 +102,18 @@ class CFaunaBotDescription : public CMirrorTransportClass
 {
 public:
 	/// The list of bots spawned this frame.
-	std::vector<TDataSetRow>	Bots;
+	std::vector<TDataSetRow> Bots;
 	/// The group alias of each bots in Bots vector.
-	std::vector<uint32>			GrpAlias;
+	std::vector<uint32> GrpAlias;
 
-	virtual void description ()
+	virtual void description()
 	{
-		className ("CFaunaBotDescription");
-		propertyCont ("Bots", PropDataSetRow, Bots);
-		propertyCont ("GrpAlias", PropUInt32, GrpAlias);
+		className("CFaunaBotDescription");
+		propertyCont("Bots", PropDataSetRow, Bots);
+		propertyCont("GrpAlias", PropUInt32, GrpAlias);
 	}
 
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -124,52 +122,52 @@ public:
 class CSetEscortTeamId : public CMirrorTransportClass
 {
 public:
-	uint32						InstanceNumber;
+	uint32 InstanceNumber;
 	/// The list of group alias to escort by the team
-	std::vector<uint32>			Groups;
+	std::vector<uint32> Groups;
 	/// The team Id of the escorter
-	uint16						TeamId;
+	uint16 TeamId;
 
-	virtual void description ()
+	virtual void description()
 	{
-		className ("CSetEscortTeamId");
-		property ("InstanceNumber", PropUInt32, std::numeric_limits<uint32>::max(), InstanceNumber);
-		propertyCont ("Groups", PropUInt32, Groups);
-		property ("TeamId", PropUInt16, CTEAM::InvalidTeamId, TeamId);
+		className("CSetEscortTeamId");
+		property("InstanceNumber", PropUInt32, std::numeric_limits<uint32>::max(), InstanceNumber);
+		propertyCont("Groups", PropUInt32, Groups);
+		property("TeamId", PropUInt16, CTEAM::InvalidTeamId, TeamId);
 	}
 
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
 // AIS -> EGS Message used to inform EGS of the existing *
 // Sent every time an AIS is launched, for the continents it manages *
 //----------------------------------------------------------------------------
-//class COutpostList : public CMirrorTransportClass
+// class COutpostList : public CMirrorTransportClass
 //{
-//public:
+// public:
 //	/// Continent name.
 //	std::string					Continent;
 //	/// outpost names
 //	std::vector<std::string>	OutpostNames;
-//	
+//
 //	virtual void description ()
 //	{
 //		className ("COutpostList");
 //		property ("Continent", PropString, std::string() ,Continent);
 //		propertyCont ("OutpostNames", PropString, OutpostNames);
 //	}
-//	
+//
 //	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
 //};
 
 //----------------------------------------------------------------------------
 // AIS -> EGS Message used to inform EGS of the description of an outpost
 //----------------------------------------------------------------------------
-//class COutpostDescription : public CMirrorTransportClass
+// class COutpostDescription : public CMirrorTransportClass
 //{
-//public:
-//	
+// public:
+//
 //	/// outpost names
 //	std::string					OutpostName;
 //
@@ -186,7 +184,7 @@ public:
 //
 //	/// fames of the duties
 ////	std::vector<std::string>	Fames;
-//	
+//
 //	virtual void description ()
 //	{
 //		className ("COutpostDescription");
@@ -197,7 +195,7 @@ public:
 //		property ("CenterY", PropSInt32, (sint32) 0, CenterY);
 ////		propertyCont ("Fames", PropString, DutyNames);
 //	}
-//	
+//
 //	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
 //};
 
@@ -207,35 +205,34 @@ public:
 class CDutyDescription : public CMirrorTransportClass
 {
 public:
-	
 	/// Duty names
-	std::string					DutyName;
-	/// Civilisation 
-	std::string					Civilisation;
+	std::string DutyName;
+	/// Civilisation
+	std::string Civilisation;
 
 	/// Duty parameters
-	std::vector<std::string>	Parameters;
+	std::vector<std::string> Parameters;
 
 	/// fames of the duties
-//	std::vector<std::string>	Fames;
-	
-	virtual void description ()
+	//	std::vector<std::string>	Fames;
+
+	virtual void description()
 	{
-		className ("CDutyDescription");
-		property ("DutyName", PropString,std::string(), DutyName);
-		property ("Civilisation", PropString, std::string() ,Civilisation);
-		propertyCont ("Parameters", PropString, Parameters);
+		className("CDutyDescription");
+		property("DutyName", PropString, std::string(), DutyName);
+		property("Civilisation", PropString, std::string(), Civilisation);
+		propertyCont("Parameters", PropString, Parameters);
 	}
-	
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
 // EGS -> AIS Message used to inform AIS of the state of an outpost
 //----------------------------------------------------------------------------
-//class COutpostState : public CMirrorTransportClass
+// class COutpostState : public CMirrorTransportClass
 //{
-//public:
+// public:
 //	//ZC Id
 //	std::string			OutpostName;
 //	//ZC state ( see ZCSTATE::TZcState enum in "zc_shard_common.h"
@@ -244,7 +241,7 @@ public:
 //	TDataSetRow			GuildIndex;
 //
 //
-//	
+//
 //	virtual void description ()
 //	{
 //		className ("COutpostState");
@@ -252,17 +249,16 @@ public:
 //		property ("State", PropUInt8,(uint8)0,State);
 //		property ("GuildIndex", PropDataSetRow, TDataSetRow() ,GuildIndex);
 //	}
-//	
+//
 //	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
 //};
-
 
 //----------------------------------------------------------------------------
 // AIS -> EGS Message used to inform EGS of the result of a war
 //----------------------------------------------------------------------------
-//class COutpostWarEnd : public CMirrorTransportClass
+// class COutpostWarEnd : public CMirrorTransportClass
 //{
-//public:
+// public:
 //	//ZC Id
 //	std::string			OutpostName;
 //
@@ -270,8 +266,8 @@ public:
 //	bool				GuildVictory;
 //
 //	// Id of the involved guild
-//	TDataSetRow			GuildId;	
-//	
+//	TDataSetRow			GuildId;
+//
 //	virtual void description ()
 //	{
 //		className ("COutpostWarEnd");
@@ -279,7 +275,7 @@ public:
 //		property ("GuildVictory", PropBool,false,GuildVictory);
 //		property ("GuildId", PropDataSetRow, TDataSetRow() ,GuildId);
 //	}
-//	
+//
 //	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
 //};
 
@@ -289,17 +285,16 @@ public:
 class CSetBotHeadingMsg : public CMirrorTransportClass
 {
 public:
-	TDataSetRow		BotRowId;
-	float			Heading;
-	
-	
-	virtual void description ()
+	TDataSetRow BotRowId;
+	float Heading;
+
+	virtual void description()
 	{
-		className ("CSetBotHeadingMsg");
-		property ("BotRowId", PropDataSetRow, TDataSetRow() , BotRowId);
-		property ("Heading", PropFloat,0.0f,Heading);
+		className("CSetBotHeadingMsg");
+		property("BotRowId", PropDataSetRow, TDataSetRow(), BotRowId);
+		property("Heading", PropFloat, 0.0f, Heading);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -308,16 +303,16 @@ public:
 class CAITauntMsg : public CMirrorTransportClass
 {
 public:
-	TDataSetRow		PlayerRowId;
-	TDataSetRow		TargetRowId;
-	
-	virtual void description ()
+	TDataSetRow PlayerRowId;
+	TDataSetRow TargetRowId;
+
+	virtual void description()
 	{
-		className ("CAITauntMsg");
-		property ("PlayerRowId", PropDataSetRow, TDataSetRow(), PlayerRowId);
-		property ("TargetRowId", PropDataSetRow, TDataSetRow(), TargetRowId);
+		className("CAITauntMsg");
+		property("PlayerRowId", PropDataSetRow, TDataSetRow(), PlayerRowId);
+		property("TargetRowId", PropDataSetRow, TDataSetRow(), TargetRowId);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -327,16 +322,16 @@ public:
 class CAICalmCreatureMsg : public CMirrorTransportClass
 {
 public:
-	TDataSetRow		PlayerRowId;
-	TDataSetRow		CreatureRowId;
-	
-	virtual void description ()
+	TDataSetRow PlayerRowId;
+	TDataSetRow CreatureRowId;
+
+	virtual void description()
 	{
-		className ("CAICalmCreatureMsg");
-		property ("PlayerRowId", PropDataSetRow, TDataSetRow(), PlayerRowId);
-		property ("CreatureRowId", PropDataSetRow, TDataSetRow(), CreatureRowId);
+		className("CAICalmCreatureMsg");
+		property("PlayerRowId", PropDataSetRow, TDataSetRow(), PlayerRowId);
+		property("CreatureRowId", PropDataSetRow, TDataSetRow(), CreatureRowId);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -345,10 +340,13 @@ public:
 class CAILostAggroMsg : public CMirrorTransportClass
 {
 public:
-	CAILostAggroMsg	()
-	{	}
+	CAILostAggroMsg()
+	{
+	}
 
-	CAILostAggroMsg	(const	TDataSetRow	&targetRowId,	const	TDataSetRow	&playerRowId) : PlayerRowId(playerRowId), TargetRowId(targetRowId)
+	CAILostAggroMsg(const TDataSetRow &targetRowId, const TDataSetRow &playerRowId)
+	    : PlayerRowId(playerRowId)
+	    , TargetRowId(targetRowId)
 	{
 #ifdef NL_DEBUG
 		nlassert(playerRowId.isValid());
@@ -356,16 +354,16 @@ public:
 #endif
 	}
 
-	TDataSetRow		PlayerRowId;
-	TDataSetRow		TargetRowId;
-	
-	virtual void description ()
+	TDataSetRow PlayerRowId;
+	TDataSetRow TargetRowId;
+
+	virtual void description()
 	{
-		className ("CAILostAggroMsg");
-		property ("PlayerRowId", PropDataSetRow, TDataSetRow(), PlayerRowId);
-		property ("TargetRowId", PropDataSetRow, TDataSetRow(), TargetRowId);
+		className("CAILostAggroMsg");
+		property("PlayerRowId", PropDataSetRow, TDataSetRow(), PlayerRowId);
+		property("TargetRowId", PropDataSetRow, TDataSetRow(), TargetRowId);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -374,10 +372,13 @@ public:
 class CAIGainAggroMsg : public CMirrorTransportClass
 {
 public:
-	CAIGainAggroMsg	()
-	{	}
+	CAIGainAggroMsg()
+	{
+	}
 
-	CAIGainAggroMsg	(const TDataSetRow &targetRowId, const TDataSetRow &playerRowId) : PlayerRowId(playerRowId), TargetRowId(targetRowId)
+	CAIGainAggroMsg(const TDataSetRow &targetRowId, const TDataSetRow &playerRowId)
+	    : PlayerRowId(playerRowId)
+	    , TargetRowId(targetRowId)
 	{
 #ifdef NL_DEBUG
 		nlassert(playerRowId.isValid());
@@ -385,16 +386,16 @@ public:
 #endif
 	}
 
-	TDataSetRow		PlayerRowId;
-	TDataSetRow		TargetRowId;
-	
-	virtual void description ()
+	TDataSetRow PlayerRowId;
+	TDataSetRow TargetRowId;
+
+	virtual void description()
 	{
-		className ("CAIGainAggroMsg");
-		property ("PlayerRowId", PropDataSetRow, TDataSetRow(), PlayerRowId);
-		property ("TargetRowId", PropDataSetRow, TDataSetRow(), TargetRowId);
+		className("CAIGainAggroMsg");
+		property("PlayerRowId", PropDataSetRow, TDataSetRow(), PlayerRowId);
+		property("TargetRowId", PropDataSetRow, TDataSetRow(), TargetRowId);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -403,14 +404,14 @@ public:
 class CAIPlayerRespawnMsg : public CMirrorTransportClass
 {
 public:
-	TDataSetRow		PlayerRowId;
-	
-	virtual void description ()
+	TDataSetRow PlayerRowId;
+
+	virtual void description()
 	{
-		className ("CAIPlayerRespawnMsg");
-		property ("PlayerRowId", PropDataSetRow, TDataSetRow(), PlayerRowId);
+		className("CAIPlayerRespawnMsg");
+		property("PlayerRowId", PropDataSetRow, TDataSetRow(), PlayerRowId);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -419,16 +420,16 @@ public:
 class CAIAskForInfosOnEntityMsg : public CMirrorTransportClass
 {
 public:
-	TDataSetRow		EntityRowId;
-	TDataSetRow		AskerRowID;
-	
-	virtual void description ()
+	TDataSetRow EntityRowId;
+	TDataSetRow AskerRowID;
+
+	virtual void description()
 	{
-		className ("CAIAskForInfosOnEntityMsg");
-		property ("EntityRowId", PropDataSetRow, TDataSetRow(), EntityRowId);
-		property ("AskerRowID", PropDataSetRow, TDataSetRow(), AskerRowID);
+		className("CAIAskForInfosOnEntityMsg");
+		property("EntityRowId", PropDataSetRow, TDataSetRow(), EntityRowId);
+		property("AskerRowID", PropDataSetRow, TDataSetRow(), AskerRowID);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -437,18 +438,18 @@ public:
 class CAIInfosOnEntityMsg : public CMirrorTransportClass
 {
 public:
-	TDataSetRow					EntityRowId;
-	TDataSetRow					AskerRowID;
-	std::vector<std::string>	Infos;
-	
-	virtual void description ()
+	TDataSetRow EntityRowId;
+	TDataSetRow AskerRowID;
+	std::vector<std::string> Infos;
+
+	virtual void description()
 	{
-		className ("CAIInfosOnEntityMsg");
-		property ("EntityRowId", PropDataSetRow, TDataSetRow(), EntityRowId);
-		property ("AskerRowID", PropDataSetRow, TDataSetRow(), AskerRowID);
-		propertyCont ("Infos", PropString, Infos);
+		className("CAIInfosOnEntityMsg");
+		property("EntityRowId", PropDataSetRow, TDataSetRow(), EntityRowId);
+		property("AskerRowID", PropDataSetRow, TDataSetRow(), AskerRowID);
+		propertyCont("Infos", PropString, Infos);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -457,16 +458,16 @@ public:
 class CEnableAggroOnPlayerMsg : public CMirrorTransportClass
 {
 public:
-	TDataSetRow					EntityRowId;
-	bool						EnableAggro;
-	
-	virtual void description ()
+	TDataSetRow EntityRowId;
+	bool EnableAggro;
+
+	virtual void description()
 	{
-		className ("CEnableAggroOnPlayerMsg");
-		property ("EntityRowId", PropDataSetRow, TDataSetRow(), EntityRowId);
-		property ("EnableAggro", PropBool, true, EnableAggro);
+		className("CEnableAggroOnPlayerMsg");
+		property("EntityRowId", PropDataSetRow, TDataSetRow(), EntityRowId);
+		property("EnableAggro", PropBool, true, EnableAggro);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -475,14 +476,14 @@ public:
 class CReportAICollisionAvailableMsg : public CMirrorTransportClass
 {
 public:
-	std::vector<std::string>	ContinentsCollision;
-	
-	virtual void description ()
+	std::vector<std::string> ContinentsCollision;
+
+	virtual void description()
 	{
-		className ("CReportAICollisionAvailableMsg");
-		propertyCont ("ContinentsCollision", PropString, ContinentsCollision);
+		className("CReportAICollisionAvailableMsg");
+		propertyCont("ContinentsCollision", PropString, ContinentsCollision);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -491,16 +492,16 @@ public:
 class CReportStaticAIInstanceMsg : public CMirrorTransportClass
 {
 public:
-	uint32			InstanceNumber;
-	std::string		InstanceContinent;
-	
-	virtual void description ()
+	uint32 InstanceNumber;
+	std::string InstanceContinent;
+
+	virtual void description()
 	{
-		className ("CReportStaticAIInstanceMsg");
-		property ("InstanceNumber", PropUInt32, uint32(0), InstanceNumber);
-		property ("InstanceContinent", PropString, std::string(), InstanceContinent);
+		className("CReportStaticAIInstanceMsg");
+		property("InstanceNumber", PropUInt32, uint32(0), InstanceNumber);
+		property("InstanceContinent", PropString, std::string(), InstanceContinent);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -509,18 +510,18 @@ public:
 class CCreatureSetUrlMsg : public CMirrorTransportClass
 {
 public:
-	std::vector<TDataSetRow>	Entities;
-	std::string		ActionName;
-	std::string		Url;
-	
-	virtual void description ()
+	std::vector<TDataSetRow> Entities;
+	std::string ActionName;
+	std::string Url;
+
+	virtual void description()
 	{
-		className ("CCreatureSetUrlMsg");
-		propertyCont ("Entities", PropDataSetRow, Entities);
-		property ("ActionName", PropString, std::string(), ActionName);
-		property ("Url", PropString, std::string(), Url);
+		className("CCreatureSetUrlMsg");
+		propertyCont("Entities", PropDataSetRow, Entities);
+		property("ActionName", PropString, std::string(), ActionName);
+		property("Url", PropString, std::string(), Url);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -529,16 +530,15 @@ public:
 class CReportAIInstanceDespawnMsg : public CMirrorTransportClass
 {
 public:
-	std::vector<uint32>			InstanceNumbers;
-	
-	virtual void description ()
-	{
-		className ("CReportAIInstanceDespawnMsg");
-		propertyCont ("InstanceNumbers", PropUInt32, InstanceNumbers);
-	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
-};
+	std::vector<uint32> InstanceNumbers;
 
+	virtual void description()
+	{
+		className("CReportAIInstanceDespawnMsg");
+		propertyCont("InstanceNumbers", PropUInt32, InstanceNumbers);
+	}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
+};
 
 //----------------------------------------------------------------------------
 // EGS -> AIS informe an AIS that one of it's instance spoof an already used instance number
@@ -548,14 +548,14 @@ public:
 class CWarnBadInstanceMsg : public CMirrorTransportClass
 {
 public:
-	uint32			InstanceNumber;
-	
-	virtual void description ()
+	uint32 InstanceNumber;
+
+	virtual void description()
 	{
-		className ("CWarnBadInstanceMsg");
-		property ("InstanceNumber", PropUInt32, uint32(0), InstanceNumber);
+		className("CWarnBadInstanceMsg");
+		property("InstanceNumber", PropUInt32, uint32(0), InstanceNumber);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -564,18 +564,18 @@ public:
 class CChangeActionFlagMsg : public CMirrorTransportClass
 {
 public:
-	std::vector<TDataSetRow>	Entities;
-	std::vector<uint8>			ActionFlags;
-	std::vector<bool>			Values;
+	std::vector<TDataSetRow> Entities;
+	std::vector<uint8> ActionFlags;
+	std::vector<bool> Values;
 
-	virtual void description ()
+	virtual void description()
 	{
-		className ("CChangeActionFlagMsg");
-		propertyCont ("Entities", PropDataSetRow, Entities);
-		propertyCont ("ActionFlags", PropUInt8, ActionFlags);
-		propertyVector ("Values", PropBool, Values);
+		className("CChangeActionFlagMsg");
+		propertyCont("Entities", PropDataSetRow, Entities);
+		propertyCont("ActionFlags", PropUInt8, ActionFlags);
+		propertyVector("Values", PropBool, Values);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 
 	inline void push(TDataSetRow entity, uint8 flag, bool value)
 	{
@@ -591,15 +591,15 @@ public:
 class CCreatureCompleteHealMsg : public CMirrorTransportClass
 {
 public:
-	std::vector<TDataSetRow>	Entities;
-	
-	virtual void description ()
+	std::vector<TDataSetRow> Entities;
+
+	virtual void description()
 	{
-		className ("CCreatureCompleteHealMsg");
-		propertyCont ("Entities", PropDataSetRow, Entities);
+		className("CCreatureCompleteHealMsg");
+		propertyCont("Entities", PropDataSetRow, Entities);
 	}
 
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -608,19 +608,19 @@ public:
 class CChangeCreatureMaxHPMsg : public CMirrorTransportClass
 {
 public:
-	std::vector<TDataSetRow>    Entities;
-	std::vector<uint32>         MaxHp;
-	std::vector<uint8>          SetFull;
-	
-	virtual void description ()
+	std::vector<TDataSetRow> Entities;
+	std::vector<uint32> MaxHp;
+	std::vector<uint8> SetFull;
+
+	virtual void description()
 	{
-		className ("CChangeCreatureMaxHPMsg");
-		propertyCont ("Entities", PropDataSetRow, Entities);
-		propertyCont ("MaxHp", PropUInt32, MaxHp);
-		propertyCont ("SetFull", PropUInt8, SetFull);
+		className("CChangeCreatureMaxHPMsg");
+		propertyCont("Entities", PropDataSetRow, Entities);
+		propertyCont("MaxHp", PropUInt32, MaxHp);
+		propertyCont("SetFull", PropUInt8, SetFull);
 	}
-	
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -629,17 +629,17 @@ public:
 class CChangeCreatureHPMsg : public CMirrorTransportClass
 {
 public:
-	std::vector<TDataSetRow>	Entities;
-	std::vector<sint32>			DeltaHp;
-	
-	virtual void description ()
+	std::vector<TDataSetRow> Entities;
+	std::vector<sint32> DeltaHp;
+
+	virtual void description()
 	{
-		className ("CChangeCreatureHPMsg");
-		propertyCont ("Entities", PropDataSetRow, Entities);
-		propertyCont ("DeltaHp", PropSInt32, DeltaHp);
+		className("CChangeCreatureHPMsg");
+		propertyCont("Entities", PropDataSetRow, Entities);
+		propertyCont("DeltaHp", PropSInt32, DeltaHp);
 	}
-	
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -648,16 +648,17 @@ public:
 class CChangeCreatureModeMsg : public CMirrorTransportClass
 {
 public:
-	TDataSetRow		CreatureId;
-	uint8			NewMode;
-	
-	virtual void description ()
+	TDataSetRow CreatureId;
+	uint8 NewMode;
+
+	virtual void description()
 	{
-		className ("CChangeCreatureModeMsg");
-		property ("CreatureId", PropDataSetRow, TDataSetRow(), CreatureId);
-		property ("NewMode", PropUInt8, (uint8)0, NewMode);	}
-	
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+		className("CChangeCreatureModeMsg");
+		property("CreatureId", PropDataSetRow, TDataSetRow(), CreatureId);
+		property("NewMode", PropUInt8, (uint8)0, NewMode);
+	}
+
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -666,14 +667,14 @@ public:
 class CCreatureDespawnMsg : public CMirrorTransportClass
 {
 public:
-	std::vector<TDataSetRow>	Entities;
-	
-	virtual void description ()
+	std::vector<TDataSetRow> Entities;
+
+	virtual void description()
 	{
-		className ("CCreatureDespawnMsg");
-		propertyCont ("Entities", PropDataSetRow, Entities);
+		className("CCreatureDespawnMsg");
+		propertyCont("Entities", PropDataSetRow, Entities);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -683,18 +684,18 @@ public:
 // EGS -> AIS Message used to create a squad
 struct COutpostCreateSquadMsg
 {
-	TAIAlias	Outpost;
-	TAIAlias	Group;
-	TAIAlias	Zone;
-	uint32		CreateOrder;
-	uint32		RespawnTimeS;
-	OUTPOSTENUMS::TPVPSide	Side;
-	void serial(NLMISC::IStream& s)
+	TAIAlias Outpost;
+	TAIAlias Group;
+	TAIAlias Zone;
+	uint32 CreateOrder;
+	uint32 RespawnTimeS;
+	OUTPOSTENUMS::TPVPSide Side;
+	void serial(NLMISC::IStream &s)
 	{
 		static uint32 const s_version = 1;
 		uint32 version = s_version;
 		s.serial(version);
-		nlassert(version==s_version);
+		nlassert(version == s_version);
 		s.serial(Outpost);
 		s.serial(Group);
 		s.serial(Zone);
@@ -709,10 +710,10 @@ struct COutpostCreateSquadMsg
 // AIS -> EGS Message used to notify a squad spawned
 struct COutpostSquadCreatedMsg
 {
-	TAIAlias	Outpost;
-	TAIAlias	CreateOrder;
-	uint32		GroupId;
-	void serial(NLMISC::IStream& s)
+	TAIAlias Outpost;
+	TAIAlias CreateOrder;
+	uint32 GroupId;
+	void serial(NLMISC::IStream &s)
 	{
 		s.serial(Outpost);
 		s.serial(CreateOrder);
@@ -723,9 +724,9 @@ struct COutpostSquadCreatedMsg
 // EGS -> AIS Message used to spawn a squad all squads
 struct COutpostSpawnSquadMsg
 {
-	TAIAlias	Outpost;
-	uint32		GroupId;
-	void serial(NLMISC::IStream& s)
+	TAIAlias Outpost;
+	uint32 GroupId;
+	void serial(NLMISC::IStream &s)
 	{
 		s.serial(Outpost);
 		s.serial(GroupId);
@@ -735,9 +736,9 @@ struct COutpostSpawnSquadMsg
 // AIS -> EGS Message used to notify a squad spawned
 struct COutpostSquadSpawnedMsg
 {
-	TAIAlias	Outpost;
-	uint32		GroupId;
-	void serial(NLMISC::IStream& s)
+	TAIAlias Outpost;
+	uint32 GroupId;
+	void serial(NLMISC::IStream &s)
 	{
 		s.serial(Outpost);
 		s.serial(GroupId);
@@ -747,9 +748,9 @@ struct COutpostSquadSpawnedMsg
 // EGS -> AIS Message used to despawn a squad all squads
 struct COutpostDespawnSquadMsg
 {
-	TAIAlias	Outpost;
-	uint32		GroupId;
-	void serial(NLMISC::IStream& s)
+	TAIAlias Outpost;
+	uint32 GroupId;
+	void serial(NLMISC::IStream &s)
 	{
 		s.serial(Outpost);
 		s.serial(GroupId);
@@ -759,9 +760,9 @@ struct COutpostDespawnSquadMsg
 // AIS -> EGS Message used to notify a squad despawned
 struct COutpostSquadDespawnedMsg
 {
-	TAIAlias	Outpost;
-	uint32		GroupId;
-	void serial(NLMISC::IStream& s)
+	TAIAlias Outpost;
+	uint32 GroupId;
+	void serial(NLMISC::IStream &s)
 	{
 		s.serial(Outpost);
 		s.serial(GroupId);
@@ -771,9 +772,9 @@ struct COutpostSquadDespawnedMsg
 // EGS -> AIS Message used to delete a squad all squads
 struct COutpostDeleteSquadMsg
 {
-	TAIAlias	Outpost;
-	uint32		GroupId;
-	void serial(NLMISC::IStream& s)
+	TAIAlias Outpost;
+	uint32 GroupId;
+	void serial(NLMISC::IStream &s)
 	{
 		s.serial(Outpost);
 		s.serial(GroupId);
@@ -783,9 +784,9 @@ struct COutpostDeleteSquadMsg
 // AIS -> EGS Message used to notify a squad died
 struct COutpostSquadDiedMsg
 {
-	TAIAlias	Outpost;
-	uint32		GroupId;
-	void serial(NLMISC::IStream& s)
+	TAIAlias Outpost;
+	uint32 GroupId;
+	void serial(NLMISC::IStream &s)
 	{
 		s.serial(Outpost);
 		s.serial(GroupId);
@@ -795,9 +796,9 @@ struct COutpostSquadDiedMsg
 // AIS -> EGS Message used to notify a squad leader died
 struct COutpostSquadLeaderDiedMsg
 {
-	TAIAlias	Outpost;
-	uint32		GroupId;
-	void serial(NLMISC::IStream& s)
+	TAIAlias Outpost;
+	uint32 GroupId;
+	void serial(NLMISC::IStream &s)
 	{
 		s.serial(Outpost);
 		s.serial(GroupId);
@@ -807,11 +808,11 @@ struct COutpostSquadLeaderDiedMsg
 // EGS -> AIS Message used to despawn all squads
 struct COutpostDespawnAllSquadsMsg
 {
-	TAIAlias	Outpost;
-	
-	void	serial( NLMISC::IStream& s )
+	TAIAlias Outpost;
+
+	void serial(NLMISC::IStream &s)
 	{
-		s.serial( Outpost );
+		s.serial(Outpost);
 	}
 };
 
@@ -826,13 +827,13 @@ const TAllianceId InvalidAllianceId = 0;
 //----------------------------------------------------------------------------
 struct CSetOutpostOwner
 {
-	TAIAlias		Outpost;
-	TAllianceId		Owner;		// InvalidAllianceId means "the tribe"
+	TAIAlias Outpost;
+	TAllianceId Owner; // InvalidAllianceId means "the tribe"
 
-	void	serial( NLMISC::IStream& s )
+	void serial(NLMISC::IStream &s)
 	{
-		s.serial( Outpost );
-		s.serial( Owner );
+		s.serial(Outpost);
+		s.serial(Owner);
 	}
 };
 
@@ -841,13 +842,13 @@ struct CSetOutpostOwner
 //----------------------------------------------------------------------------
 struct CSetOutpostAttacker
 {
-	TAIAlias		Outpost;
-	TAllianceId		Attacker;	// InvalidAllianceId means "no attacker"
-	
-	void	serial( NLMISC::IStream& s )
+	TAIAlias Outpost;
+	TAllianceId Attacker; // InvalidAllianceId means "no attacker"
+
+	void serial(NLMISC::IStream &s)
 	{
-		s.serial( Outpost );
-		s.serial( Attacker );
+		s.serial(Outpost);
+		s.serial(Attacker);
 	}
 };
 
@@ -856,14 +857,14 @@ struct CSetOutpostAttacker
 //----------------------------------------------------------------------------
 struct COutpostSetStateMsg
 {
-	TAIAlias	Outpost;
-	OUTPOSTENUMS::TOutpostState	State;
-	void serial(NLMISC::IStream& s)
+	TAIAlias Outpost;
+	OUTPOSTENUMS::TOutpostState State;
+	void serial(NLMISC::IStream &s)
 	{
 		uint32 const localVersion = 1;
 		uint32 version = localVersion;
 		s.serial(version);
-		nlassert(version==localVersion);
+		nlassert(version == localVersion);
 		s.serial(Outpost);
 		std::string str = OUTPOSTENUMS::toString(State);
 		s.serial(str);
@@ -876,14 +877,14 @@ struct COutpostSetStateMsg
 //----------------------------------------------------------------------------
 struct COutpostEventMsg
 {
-	TAIAlias	Outpost;
-	OUTPOSTENUMS::TSpecialOutpostEvent	Event;
-	void serial(NLMISC::IStream& s)
+	TAIAlias Outpost;
+	OUTPOSTENUMS::TSpecialOutpostEvent Event;
+	void serial(NLMISC::IStream &s)
 	{
 		uint32 const localVersion = 1;
 		uint32 version = localVersion;
 		s.serial(version);
-		nlassert(version==localVersion);
+		nlassert(version == localVersion);
 		s.serial(Outpost);
 		std::string str = OUTPOSTENUMS::toString(Event);
 		s.serial(str);
@@ -896,17 +897,17 @@ struct COutpostEventMsg
 //----------------------------------------------------------------------------
 struct COutpostSetBuildingBotSheetMsg
 {
-	TAIAlias			Outpost;
-	TAIAlias			Building;
-	NLMISC::CSheetId	SheetId;
-	bool				AutoSpawnDespawn;
-	std::string			CustomName;
-	void serial(NLMISC::IStream& s)
+	TAIAlias Outpost;
+	TAIAlias Building;
+	NLMISC::CSheetId SheetId;
+	bool AutoSpawnDespawn;
+	std::string CustomName;
+	void serial(NLMISC::IStream &s)
 	{
 		uint32 const localVersion = 1;
 		uint32 version = localVersion;
 		s.serial(version);
-		nlassert(version==localVersion);
+		nlassert(version == localVersion);
 		s.serial(Outpost);
 		s.serial(Building);
 		s.serial(SheetId);
@@ -921,20 +922,20 @@ struct COutpostSetBuildingBotSheetMsg
 class CAddHandledAIGroupMsg : public CMirrorTransportClass
 {
 public:
-	TDataSetRow		PlayerRowId;
-	uint32			GroupAlias;
-	uint32			MissionAlias;
-	uint32			DespawnTimeInTick;
+	TDataSetRow PlayerRowId;
+	uint32 GroupAlias;
+	uint32 MissionAlias;
+	uint32 DespawnTimeInTick;
 
-	virtual void description ()
+	virtual void description()
 	{
-		className ("CAddHandledAIGroupMsg");
-		property ("PlayerRowId", PropDataSetRow, TDataSetRow(), PlayerRowId);
-		property ("GroupAlias", PropUInt32, uint32(0xffffffff), GroupAlias);
-		property ("MissionAlias", PropUInt32, uint32(0xffffffff), MissionAlias);
-		property ("DespawnTimeInTick", PropUInt32, uint32(0), DespawnTimeInTick);
+		className("CAddHandledAIGroupMsg");
+		property("PlayerRowId", PropDataSetRow, TDataSetRow(), PlayerRowId);
+		property("GroupAlias", PropUInt32, uint32(0xffffffff), GroupAlias);
+		property("MissionAlias", PropUInt32, uint32(0xffffffff), MissionAlias);
+		property("DespawnTimeInTick", PropUInt32, uint32(0), DespawnTimeInTick);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -943,18 +944,18 @@ public:
 class CDelHandledAIGroupMsg : public CMirrorTransportClass
 {
 public:
-	TDataSetRow		PlayerRowId;
-	uint32			GroupAlias;
-	uint32			MissionAlias;
-	
-	virtual void description ()
+	TDataSetRow PlayerRowId;
+	uint32 GroupAlias;
+	uint32 MissionAlias;
+
+	virtual void description()
 	{
-		className ("CDelHandledAIGroupMsg");
-		property ("PlayerRowId", PropDataSetRow, TDataSetRow(), PlayerRowId);
-		property ("GroupAlias", PropUInt32, uint32(0xffffffff), GroupAlias);
-		property ("MissionAlias", PropUInt32, uint32(0xffffffff), MissionAlias);
+		className("CDelHandledAIGroupMsg");
+		property("PlayerRowId", PropDataSetRow, TDataSetRow(), PlayerRowId);
+		property("GroupAlias", PropUInt32, uint32(0xffffffff), GroupAlias);
+		property("MissionAlias", PropUInt32, uint32(0xffffffff), MissionAlias);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -963,18 +964,18 @@ public:
 class CHandledAIGroupSpawnedMsg : public CMirrorTransportClass
 {
 public:
-	TDataSetRow		PlayerRowId;
-	uint32			GroupAlias;
-	uint32			MissionAlias;
-	
-	virtual void description ()
+	TDataSetRow PlayerRowId;
+	uint32 GroupAlias;
+	uint32 MissionAlias;
+
+	virtual void description()
 	{
-		className ("CHandledAIGroupSpawnedMsg");
-		property ("PlayerRowId", PropDataSetRow, TDataSetRow(), PlayerRowId);
-		property ("GroupAlias", PropUInt32, uint32(0xffffffff), GroupAlias);
-		property ("MissionAlias", PropUInt32, uint32(0xffffffff), MissionAlias);
+		className("CHandledAIGroupSpawnedMsg");
+		property("PlayerRowId", PropDataSetRow, TDataSetRow(), PlayerRowId);
+		property("GroupAlias", PropUInt32, uint32(0xffffffff), GroupAlias);
+		property("MissionAlias", PropUInt32, uint32(0xffffffff), MissionAlias);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -983,20 +984,19 @@ public:
 class CHandledAIGroupDespawnedMsg : public CMirrorTransportClass
 {
 public:
-	TDataSetRow		PlayerRowId;
-	uint32			GroupAlias;
-	uint32			MissionAlias;
-	
-	virtual void description ()
-	{
-		className ("CHandledAIGroupDespawnedMsg");
-		property ("PlayerRowId", PropDataSetRow, TDataSetRow(), PlayerRowId);
-		property ("GroupAlias", PropUInt32, uint32(0xffffffff), GroupAlias);
-		property ("MissionAlias", PropUInt32, uint32(0xffffffff), MissionAlias);
-	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
-};
+	TDataSetRow PlayerRowId;
+	uint32 GroupAlias;
+	uint32 MissionAlias;
 
+	virtual void description()
+	{
+		className("CHandledAIGroupDespawnedMsg");
+		property("PlayerRowId", PropDataSetRow, TDataSetRow(), PlayerRowId);
+		property("GroupAlias", PropUInt32, uint32(0xffffffff), GroupAlias);
+		property("MissionAlias", PropUInt32, uint32(0xffffffff), MissionAlias);
+	}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
+};
 
 //----------------------------------------------------------------------------
 // AIS -> EGS AIS send a item request, message interface for manage in same way give and receive msg
@@ -1004,13 +1004,13 @@ public:
 class CItemRequestMsgItf : public CMirrorTransportClass
 {
 public:
-	virtual uint32									getInstanceId() const =0;
-	virtual uint32									getGroupAlias() const =0;
-	virtual TDataSetRow								getCharacterRowId() const =0;
-	virtual TDataSetRow								getCreatureRowId() const =0;
-	virtual const std::vector<NLMISC::CSheetId>&	getItems() const =0;
-	virtual const std::vector<uint32>&				getQuantities() const =0;
-	virtual const std::string&						getMissionText() const =0;	// utf8 string
+	virtual uint32 getInstanceId() const = 0;
+	virtual uint32 getGroupAlias() const = 0;
+	virtual TDataSetRow getCharacterRowId() const = 0;
+	virtual TDataSetRow getCreatureRowId() const = 0;
+	virtual const std::vector<NLMISC::CSheetId> &getItems() const = 0;
+	virtual const std::vector<uint32> &getQuantities() const = 0;
+	virtual const std::string &getMissionText() const = 0; // utf8 string
 };
 
 //----------------------------------------------------------------------------
@@ -1019,34 +1019,34 @@ public:
 class CGiveItemRequestMsg : public CItemRequestMsgItf
 {
 public:
-	uint32							InstanceId;
-	uint32							GroupAlias;
-	TDataSetRow						CharacterRowId;
-	TDataSetRow						CreatureRowId;
-	std::vector<NLMISC::CSheetId>	Items;
-	std::vector<uint32>				Quantities;
-	std::string						MissionText;	// utf8 string
+	uint32 InstanceId;
+	uint32 GroupAlias;
+	TDataSetRow CharacterRowId;
+	TDataSetRow CreatureRowId;
+	std::vector<NLMISC::CSheetId> Items;
+	std::vector<uint32> Quantities;
+	std::string MissionText; // utf8 string
 
-	uint32									getInstanceId() const { return InstanceId; }
-	uint32									getGroupAlias() const { return GroupAlias; }
-	TDataSetRow								getCharacterRowId() const { return CharacterRowId; }
-	TDataSetRow								getCreatureRowId() const { return CreatureRowId; }
-	const std::vector<NLMISC::CSheetId>&	getItems() const { return Items; }
-	const std::vector<uint32>&				getQuantities() const { return Quantities; }
-	const std::string&						getMissionText() const { return MissionText; }
+	uint32 getInstanceId() const { return InstanceId; }
+	uint32 getGroupAlias() const { return GroupAlias; }
+	TDataSetRow getCharacterRowId() const { return CharacterRowId; }
+	TDataSetRow getCreatureRowId() const { return CreatureRowId; }
+	const std::vector<NLMISC::CSheetId> &getItems() const { return Items; }
+	const std::vector<uint32> &getQuantities() const { return Quantities; }
+	const std::string &getMissionText() const { return MissionText; }
 
-	virtual void description ()
+	virtual void description()
 	{
-		className ("CGiveItemRequestMsg");
-		property ("InstanceId", PropUInt32, uint32(0xffffffff), InstanceId);
-		property ("GroupAlias", PropUInt32, uint32(0xffffffff), GroupAlias);
-		property ("CharacterRowId", PropDataSetRow, TDataSetRow(), CharacterRowId);
-		property ("CreatureRowId", PropDataSetRow, TDataSetRow(), CreatureRowId);
-		propertyCont ("Items", PropSheetId, Items);
-		propertyCont ("Quantities", PropUInt32, Quantities);
-		property ("MissionText", PropString, std::string(), MissionText);
+		className("CGiveItemRequestMsg");
+		property("InstanceId", PropUInt32, uint32(0xffffffff), InstanceId);
+		property("GroupAlias", PropUInt32, uint32(0xffffffff), GroupAlias);
+		property("CharacterRowId", PropDataSetRow, TDataSetRow(), CharacterRowId);
+		property("CreatureRowId", PropDataSetRow, TDataSetRow(), CreatureRowId);
+		propertyCont("Items", PropSheetId, Items);
+		propertyCont("Quantities", PropUInt32, Quantities);
+		property("MissionText", PropString, std::string(), MissionText);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
 
 //----------------------------------------------------------------------------
@@ -1055,41 +1055,40 @@ public:
 class CReceiveItemRequestMsg : public CItemRequestMsgItf
 {
 public:
-	uint32							InstanceId;
-	uint32							GroupAlias;
-	TDataSetRow						CharacterRowId;
-	TDataSetRow						CreatureRowId;
-	std::vector<NLMISC::CSheetId>	Items;
-	std::vector<uint32>				Quantities;
-	std::string						MissionText;	// utf8 string
+	uint32 InstanceId;
+	uint32 GroupAlias;
+	TDataSetRow CharacterRowId;
+	TDataSetRow CreatureRowId;
+	std::vector<NLMISC::CSheetId> Items;
+	std::vector<uint32> Quantities;
+	std::string MissionText; // utf8 string
 
-	uint32									getInstanceId() const { return InstanceId; }
-	uint32									getGroupAlias() const { return GroupAlias; }
-	TDataSetRow								getCharacterRowId() const { return CharacterRowId; }
-	TDataSetRow								getCreatureRowId() const { return CreatureRowId; }
-	const std::vector<NLMISC::CSheetId>&	getItems() const { return Items; }
-	const std::vector<uint32>&				getQuantities() const { return Quantities; }
-	const std::string&						getMissionText() const { return MissionText; }
+	uint32 getInstanceId() const { return InstanceId; }
+	uint32 getGroupAlias() const { return GroupAlias; }
+	TDataSetRow getCharacterRowId() const { return CharacterRowId; }
+	TDataSetRow getCreatureRowId() const { return CreatureRowId; }
+	const std::vector<NLMISC::CSheetId> &getItems() const { return Items; }
+	const std::vector<uint32> &getQuantities() const { return Quantities; }
+	const std::string &getMissionText() const { return MissionText; }
 
-	virtual void description ()
+	virtual void description()
 	{
-		className ("CReceiveItemRequestMsg");
-		property ("InstanceId", PropUInt32, uint32(0xffffffff), InstanceId);
-		property ("GroupAlias", PropUInt32, uint32(0xffffffff), GroupAlias);
-		property ("CharacterRowId", PropDataSetRow, TDataSetRow(), CharacterRowId);
-		property ("CreatureRowId", PropDataSetRow, TDataSetRow(), CreatureRowId);
-		propertyCont ("Items", PropSheetId, Items);
-		propertyCont ("Quantities", PropUInt32, Quantities);
-		property ("MissionText", PropString, std::string(), MissionText);
+		className("CReceiveItemRequestMsg");
+		property("InstanceId", PropUInt32, uint32(0xffffffff), InstanceId);
+		property("GroupAlias", PropUInt32, uint32(0xffffffff), GroupAlias);
+		property("CharacterRowId", PropDataSetRow, TDataSetRow(), CharacterRowId);
+		property("CreatureRowId", PropDataSetRow, TDataSetRow(), CreatureRowId);
+		propertyCont("Items", PropSheetId, Items);
+		propertyCont("Quantities", PropUInt32, Quantities);
+		property("MissionText", PropString, std::string(), MissionText);
 	}
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
 };
-
 
 //----------------------------------------------------------------------------
 // AIS -> EGS Ais script send a query to EGS that will be answered via script (user event)
 //----------------------------------------------------------------------------
-//see CUserEventMsg
+// see CUserEventMsg
 
 //----------------------------------------------------------------------------
 // User event to control AIS state machine (EGS=>AIS)
@@ -1097,49 +1096,58 @@ public:
 class CQueryEgs : public CMirrorTransportClass
 {
 public:
-	enum  TFunEnum
+	enum TFunEnum
 	{
 		Name,
-		Hp, MaxHp, RatioHp,
-		Sap, MaxSap, RatioSap,
-		Stamina, MaxStamina, RatioStamina,
-		Focus, MaxFocus, RatioFocus,
-		BestSkillLevel, 
+		Hp,
+		MaxHp,
+		RatioHp,
+		Sap,
+		MaxSap,
+		RatioSap,
+		Stamina,
+		MaxStamina,
+		RatioStamina,
+		Focus,
+		MaxFocus,
+		RatioFocus,
+		BestSkillLevel,
 		Target,
-		IsInInventory, KnowBrick,
+		IsInInventory,
+		KnowBrick,
 		Undef
 	};
 
-	typedef std::map<std::string, TFunEnum>  TFuns;
+	typedef std::map<std::string, TFunEnum> TFuns;
 
 public:
-	uint32						InstanceId;
+	uint32 InstanceId;
 	/// The group to with the event will be send
-	uint32						GroupAlias;
+	uint32 GroupAlias;
 	/// The event number, must be 0 to 9.
-	uint8						EventId;
+	uint8 EventId;
 	/// Parameters for the user event
-	std::vector<std::string>	Params;
+	std::vector<std::string> Params;
 
-	virtual void description ()
+	virtual void description()
 	{
-		className ("CQueryEgs");
-		property ("InstanceId", PropUInt32, uint32(0xffffffff), InstanceId);
-		property ("GroupAlias", PropUInt32, uint32(0xffffffff), GroupAlias);
-		property ("EventId", PropUInt8, uint8(0xff), EventId);
-		propertyCont ("Params", PropString, Params);
+		className("CQueryEgs");
+		property("InstanceId", PropUInt32, uint32(0xffffffff), InstanceId);
+		property("GroupAlias", PropUInt32, uint32(0xffffffff), GroupAlias);
+		property("EventId", PropUInt8, uint8(0xff), EventId);
+		propertyCont("Params", PropString, Params);
 	}
 
-	virtual void callback (const std::string &/* name */, NLNET::TServiceId /* id */) {}
-	
-	TFunEnum getFunEnum(const std::string& funName) const;
-	
+	virtual void callback(const std::string & /* name */, NLNET::TServiceId /* id */) { }
+
+	TFunEnum getFunEnum(const std::string &funName) const;
+
 private:
 	// lazy Initialisation
 	void init();
+
 private:
 	static TFuns _Funs;
 };
 
-
-#endif //RY_AIS_INTERFACE_MESSAGES_H
+#endif // RY_AIS_INTERFACE_MESSAGES_H

@@ -14,55 +14,51 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_DIFFICULTY_H
 #define RY_DIFFICULTY_H
 
 #include "nel/misc/types_nl.h"
 
-namespace SENTENCE_APPRAISAL
+namespace SENTENCE_APPRAISAL {
+// Mode
+enum ESentenceAppraisal
 {
-	// Mode
-	enum ESentenceAppraisal
-	{
-		Undefined = 0,
-		// related to difficulty
-		ChildPlay,
-		RealEasy,
-		Easy,
-		FairlyEasy,
-		Average,			// 5
-		QuiteDifficult,
-		Difficult,
-		ReallyDifficult,
-		Harsh,
-		ExtremelyDifficult,	 // 10
+	Undefined = 0,
+	// related to difficulty
+	ChildPlay,
+	RealEasy,
+	Easy,
+	FairlyEasy,
+	Average, // 5
+	QuiteDifficult,
+	Difficult,
+	ReallyDifficult,
+	Harsh,
+	ExtremelyDifficult, // 10
 
-		// text not related to difficulty but displayed in the difficulty field on clients
-		FeatureUnderConstruction,
-		InvalidSentence,
-		ErrorCreating,
-		Uncomplete,
-		Cheater,			// 15
+	// text not related to difficulty but displayed in the difficulty field on clients
+	FeatureUnderConstruction,
+	InvalidSentence,
+	ErrorCreating,
+	Uncomplete,
+	Cheater, // 15
 
-		// max value is 15 so only use 4 bits in the database, if more values are added don't forget to allow more bits in DB
-	};
+	// max value is 15 so only use 4 bits in the database, if more values are added don't forget to allow more bits in DB
+};
 
+/**
+ * get the right enum value from the input string
+ * \param str the input string
+ * \return the ESentenceAppraisal associated to this string (Undefined if the string cannot be interpreted)
+ */
+ESentenceAppraisal toAppraisal(const std::string &str);
 
-	/**
-	 * get the right enum value from the input string
-	 * \param str the input string
-	 * \return the ESentenceAppraisal associated to this string (Undefined if the string cannot be interpreted)
-	 */
-	ESentenceAppraisal toAppraisal(const std::string &str);
-
-	/**
-	 * get the string associated to a brick type
-	 * \param type the ESentenceAppraisal to convert into a string
-	 * \return the enum as a string
-	 */
-	const std::string &toString(ESentenceAppraisal type);
+/**
+ * get the string associated to a brick type
+ * \param type the ESentenceAppraisal to convert into a string
+ * \return the enum as a string
+ */
+const std::string &toString(ESentenceAppraisal type);
 
 }; // SENTENCE_APPRAISAL
 

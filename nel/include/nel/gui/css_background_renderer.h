@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_CSS_BACKGROUND_RENDERER_H
 #define NL_CSS_BACKGROUND_RENDERER_H
 
@@ -25,8 +23,7 @@
 #include "nel/gui/css_types.h"
 #include "nel/gui/css_background.h"
 
-namespace NLGUI
-{
+namespace NLGUI {
 class CInterfaceElement;
 
 /**
@@ -80,7 +77,8 @@ public:
 	}
 
 	// override painting area to be at least the size of viewport (ie, <html> background)
-	void setFillViewport(bool b) {
+	void setFillViewport(bool b)
+	{
 		m_Dirty = true;
 		m_FillViewport = b;
 	}
@@ -140,7 +138,7 @@ private:
 	float m_FontSize;
 
 	// viewport element for vw,wh,vmin,vmax
-	CInterfaceElement* m_Viewport;
+	CInterfaceElement *m_Viewport;
 
 	struct SDrawQueue
 	{
@@ -186,8 +184,6 @@ private:
 
 }; // CSSBackgroundRenderer
 
-}//namespace
+} // namespace
 
 #endif // NL_CSS_BACKGROUND_RENDERER_H
-
-

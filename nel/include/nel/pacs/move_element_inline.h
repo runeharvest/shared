@@ -21,14 +21,11 @@
 #include "nel/misc/debug.h"
 #include "move_primitive.h"
 
-
-namespace NLPACS
-{
+namespace NLPACS {
 
 // ***************************************************************************
 
 } // NLPACS
-
 
 #endif // NL_MOVE_ELEMENT_INLINE_H
 

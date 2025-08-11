@@ -18,10 +18,9 @@
 #ifndef NL_REGISTER_PLANE_BASIS_H
 #define NL_REGISTER_PLANE_BASIS_H
 
-namespace NL3D
-{
-	/// Register attribute makers based on colors (used in particle systems)
-	void PSRegisterPlaneBasisAttribs();
+namespace NL3D {
+/// Register attribute makers based on colors (used in particle systems)
+void PSRegisterPlaneBasisAttribs();
 } // NL3D
 
 #endif

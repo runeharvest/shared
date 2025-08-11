@@ -17,8 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_VERTEX_PROGRAM_PARSE_H
 #define NL_VERTEX_PROGRAM_PARSE_H
 
@@ -62,32 +60,36 @@
 /// Swizzle of an operand in a vertex program
 struct CVPSwizzle
 {
-	enum EComp { X = 0, Y = 1, Z = 2, W = 3};
-	EComp	Comp[4];
+	enum EComp
+	{
+		X = 0,
+		Y = 1,
+		Z = 2,
+		W = 3
+	};
+	EComp Comp[4];
 	// Test if all values are the same
 	bool isScalar() const
 	{
-		return    Comp[0] == Comp[1]
-			   && Comp[0] == Comp[2]
-			   && Comp[0] == Comp[3];
+		return Comp[0] == Comp[1]
+		    && Comp[0] == Comp[2]
+		    && Comp[0] == Comp[3];
 	}
 	// Test if no swizzle is applied
 	bool isIdentity() const
 	{
 		return Comp[0] == X
-			   && Comp[1] == Y
-			   && Comp[2] == Z
-			   && Comp[3] == W;
+		    && Comp[1] == Y
+		    && Comp[2] == Z
+		    && Comp[3] == W;
 	}
 };
 
-
-
 /** An operand in a vertex program
-  * \author Nicolas Vizerie
-  * \author Nevrax France
-  * \date 2002
-  */
+ * \author Nicolas Vizerie
+ * \author Nevrax France
+ * \date 2002
+ */
 struct CVPOperand
 {
 	// type of operand
@@ -127,7 +129,7 @@ struct CVPOperand
 		OHPosition = 0,
 		OPrimaryColor,
 		OSecondaryColor,
-		OBackFacePrimaryColor,   // warning : backface colors are not supported on all implementations
+		OBackFacePrimaryColor, // warning : backface colors are not supported on all implementations
 		OBackFaceSecondaryColor,
 		OFogCoord,
 		OPointSize,
@@ -148,9 +150,9 @@ struct CVPOperand
 	union
 	{
 		EOutputRegister OutputRegisterValue;
-		EInputRegister  InputRegisterValue;
-		uint		    VariableValue; // Index from 0 to 11
-		sint            ConstantValue; // Index from 0 to 95, or -64 to +63 for constants with displacement
+		EInputRegister InputRegisterValue;
+		uint VariableValue; // Index from 0 to 11
+		sint ConstantValue; // Index from 0 to 95, or -64 to +63 for constants with displacement
 	} Value;
 
 	bool Indexed; // true if it is a constant value, and if it is indexed
@@ -159,8 +161,8 @@ struct CVPOperand
 	uint WriteMask; // b0 -> X, b1 -> Y, b2 -> Z, b3 -> W
 
 	// swizzle & negate
-	bool		Negate;
-	CVPSwizzle	Swizzle;
+	bool Negate;
+	CVPSwizzle Swizzle;
 };
 
 /// An instruction in a vertex program with its operands
@@ -187,63 +189,64 @@ struct CVPInstruction
 		RCP,
 		OpcodeCount
 	};
-	EOpcode		Opcode;
-	CVPOperand  Dest;
-	CVPOperand  Src1;
-	CVPOperand  Src2; // if used
-	CVPOperand  Src3; // if used
+	EOpcode Opcode;
+	CVPOperand Dest;
+	CVPOperand Src1;
+	CVPOperand Src2; // if used
+	CVPOperand Src3; // if used
 
 	const CVPOperand &getSrc(uint index) const
 	{
 		nlassert(index < getNumUsedSrc());
-		switch(index)
+		switch (index)
 		{
-			case 0: return Src1;
-			case 1: return Src2;
-			case 2: return Src3;
-			default: nlstop;
+		case 0: return Src1;
+		case 1: return Src2;
+		case 2: return Src3;
+		default: nlstop;
 		}
 		return Src1; // avoid warning
 	}
 
 	// Get the number of source used depending on the opcode. Might be 1, 2, or 3
-	uint		getNumUsedSrc() const;
+	uint getNumUsedSrc() const;
 };
 
 /** A vertex program parser.
-  * \author Nicolas Vizerie
-  * \author Nevrax France
-  * \date 2002
-  */
+ * \author Nicolas Vizerie
+ * \author Nevrax France
+ * \date 2002
+ */
 class CVPParser
 {
 public:
 	typedef std::vector<CVPInstruction> TProgram;
+
 public:
 	/** Parse a vertex program, and convert to proprietary format.
-	  * It is intended to be used by a driver implementation.
-	  * \warning: Only syntax is checked. It doesn't check that a register has been initialised before use.
-	  * \param src The input text of a vertex program, in OpenGL format.
-	  * \param result The result program.
-	  * \param errorOutput If parsing failed, contains the reason
-	  * \result true if the parsing succeeded
-	  */
+	 * It is intended to be used by a driver implementation.
+	 * \warning: Only syntax is checked. It doesn't check that a register has been initialised before use.
+	 * \param src The input text of a vertex program, in OpenGL format.
+	 * \param result The result program.
+	 * \param errorOutput If parsing failed, contains the reason
+	 * \result true if the parsing succeeded
+	 */
 	bool parse(const char *src, TProgram &result, std::string &errorOutput);
 
 	/** Debugging purpose : This output a parsed vertex program in a string, with the standard format.
-	  * This can serve as a base for other format code generation
-	  */
+	 * This can serve as a base for other format code generation
+	 */
 	static void dump(const TProgram &prg, std::string &dest);
 
 	// test if a specific input is used by a vertex program
 	static bool isInputUsed(const TProgram &prg, CVPOperand::EInputRegister input);
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////
 private:
 	const char *_CurrChar;
 	const char *_LineStart;
-	uint		_LineIndex;
-	uint		_RegisterMask[96]; // which components of registers have been written
+	uint _LineIndex;
+	uint _RegisterMask[96]; // which components of registers have been written
 private:
 	bool parseOperand(CVPOperand &operand, bool outputOperand, std::string &errorOutput);
 	//
@@ -265,8 +268,4 @@ private:
 	void skipSpacesAndComments();
 };
 
-
-
-
 #endif
-

@@ -22,10 +22,7 @@
 #include "nel/misc/common.h"
 #include <map>
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 /**
@@ -37,25 +34,24 @@ namespace NL3D
 class CZoneSmoother
 {
 public:
-	struct	CZoneInfo
+	struct CZoneInfo
 	{
 		/// Id of the zone.
 		uint16 ZoneId;
 
 		/// A ptr on the array of patchs of the zone.
-		std::vector<CPatchInfo>		*Patchs;
+		std::vector<CPatchInfo> *Patchs;
 
 		CZoneInfo()
 		{
-			ZoneId= 0;
-			Patchs= NULL;
+			ZoneId = 0;
+			Patchs = NULL;
 		}
 	};
 
 public:
 	/// Constructor
-	CZoneSmoother() {}
-
+	CZoneSmoother() { }
 
 	/**
 	 * Smooth the tangents of those zones. Zones must be correclty welded.
@@ -74,23 +70,19 @@ public:
 	 *	the interiors (continuity C1). If false, tangent is setup so that previous distance ratio are kept.
 	 *
 	 */
-	void			smoothTangents(CZoneInfo zones[5], float angleThreshold= NLMISC::Pi/6, bool continuityC1= false);
-
+	void smoothTangents(CZoneInfo zones[5], float angleThreshold = NLMISC::Pi / 6, bool continuityC1 = false);
 
 private:
-	typedef std::map<sint, CZoneInfo>	TZoneInfoMap;
-	TZoneInfoMap		_Zones;
-	float				_CosThreshold;
-	bool				_ContinuityC1;
+	typedef std::map<sint, CZoneInfo> TZoneInfoMap;
+	TZoneInfoMap _Zones;
+	float _CosThreshold;
+	bool _ContinuityC1;
 
 	// smoothTangent according to _CosThreshold and _ContinuityC1.
-	bool		smoothTangent(const CVector &tgt, const CVector &int0, const CVector &int1, CVector &tgtres);
-
+	bool smoothTangent(const CVector &tgt, const CVector &int0, const CVector &int1, CVector &tgtres);
 };
 
-
 } // NL3D
-
 
 #endif // NL_ZONE_SMOOTHER_H
 

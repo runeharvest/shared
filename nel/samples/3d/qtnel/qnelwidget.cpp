@@ -17,7 +17,7 @@
 #include "qnelwidget.h"
 
 #if defined(Q_WS_WIN)
-#include <windows.h>	// needed for WindowFromDC()
+#include <windows.h> // needed for WindowFromDC()
 #else
 #include <Qt/qx11info_x11.h>
 #include <X11/Xlib.h>
@@ -53,10 +53,10 @@ void QNelWidget::initializeGL()
 	NL3D::CViewport viewport;
 
 	// Create a dummy driver.
-	//NL3D::IDriver *driver=NL3D::CDRU::createGlDriver();
+	// NL3D::IDriver *driver=NL3D::CDRU::createGlDriver();
 
-	//void *windowId = (void*)(this->parentWidget()->winId());
-	// Init NELU
+	// void *windowId = (void*)(this->parentWidget()->winId());
+	//  Init NELU
 	if (!NL3D::CNELU::init(width(), height(), viewport, 32, true, (void *)winId(), false, false))
 	{
 		return;
@@ -65,19 +65,18 @@ void QNelWidget::initializeGL()
 	//_SceneRoot= (NL3D::CTransform*)NL3D::CNELU::Scene->createModel(NL3D::TransformId);
 	NL3D::CTransformShape *sphere = NL3D::CNELU::Scene->createInstance("sphere01.shape");
 
-	
 	fontManager.setMaxMemory(2000000);
-	
+
 	tc.init(NL3D::CNELU::Driver, &fontManager);
-	tc.setFontGenerator (NLMISC::CPath::lookup("beteckna.ttf"));
+	tc.setFontGenerator(NLMISC::CPath::lookup("beteckna.ttf"));
 	nlinfo("end initialize gl");
 }
 
 void QNelWidget::paintGL()
 {
 	nlinfo("start painting gl");
-	NL3D::CNELU::clearBuffers(NL3D::CRGBA(0,0,0));
-	tc.setColor(NL3D::CRGBA (0, 0, 255));
+	NL3D::CNELU::clearBuffers(NL3D::CRGBA(0, 0, 0));
+	tc.setColor(NL3D::CRGBA(0, 0, 255));
 	tc.setFontSize(40);
 	tc.setHotSpot(NL3D::CComputedString::BottomLeft);
 	tc.printAt(0.3f, 0.5f, std::string("NeL"));
@@ -91,7 +90,8 @@ void QNelWidget::resizeGL(int width, int height)
 	nlinfo("end resize gl");
 }
 
-void QNelWidget::swapBuffers() {
+void QNelWidget::swapBuffers()
+{
 	nlinfo("starting rendering.");
 	// render a frame
 	NL3D::CNELU::swapBuffers();

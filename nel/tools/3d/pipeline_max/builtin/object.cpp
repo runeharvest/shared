@@ -42,14 +42,13 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CObject::CObject(CScene *scene) : CBaseObject(scene)
+CObject::CObject(CScene *scene)
+    : CBaseObject(scene)
 {
-
 }
 
 CObject::~CObject()
 {
-
 }
 
 const ucstring CObject::DisplayName = ucstring("Object");

@@ -69,13 +69,13 @@ struct CCharacterSummary
 
 	EGSPD::CPeople::TPeople People;
 
-	NLMISC::CSheetId  SheetId;
+	NLMISC::CSheetId SheetId;
 
 	CHARACTER_TITLE::ECharacterTitle Title;
 
 	uint8 CharacterSlot;
 
-	bool  InRingSession;
+	bool InRingSession;
 	bool HasEditSession;
 	bool InNewbieland;
 

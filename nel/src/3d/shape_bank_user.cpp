@@ -29,21 +29,20 @@ using namespace std;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 
 void CShapeBankUser::addShapeCache(const std::string &shapeCacheName)
 {
-	_ShapeBank.addShapeCache( shapeCacheName );
+	_ShapeBank.addShapeCache(shapeCacheName);
 }
 
 // ***************************************************************************
 
 void CShapeBankUser::removeShapeCache(const std::string &shapeCacheName)
 {
-	_ShapeBank.removeShapeCache( shapeCacheName );
+	_ShapeBank.removeShapeCache(shapeCacheName);
 }
 
 // ***************************************************************************
@@ -57,57 +56,56 @@ void CShapeBankUser::reset()
 
 void CShapeBankUser::setShapeCacheSize(const std::string &shapeCacheName, sint32 maxSize)
 {
-	_ShapeBank.setShapeCacheSize( shapeCacheName, maxSize );
+	_ShapeBank.setShapeCacheSize(shapeCacheName, maxSize);
 }
 
 // ***************************************************************************
 
 void CShapeBankUser::linkShapeToShapeCache(const std::string &shapeName, const std::string &shapeCacheName)
 {
-	_ShapeBank.linkShapeToShapeCache( shapeName, shapeCacheName );
+	_ShapeBank.linkShapeToShapeCache(shapeName, shapeCacheName);
 }
 
 // ***************************************************************************
 void CShapeBankUser::preLoadShapesFromDirectory(const std::string &shapeCacheName,
-	const std::string &path, const std::string &wildCardNotLwr, bool recurs, NLMISC::IProgressCallback *progress, bool flushTextures /*= false*/)
+    const std::string &path, const std::string &wildCardNotLwr, bool recurs, NLMISC::IProgressCallback *progress, bool flushTextures /*= false*/)
 {
 	// List all files From the path
-	vector<string>	listFile;
+	vector<string> listFile;
 	CPath::getPathContent(path, recurs, false, true, listFile);
 
 	// preLoad
-	if(!listFile.empty())
+	if (!listFile.empty())
 		_ShapeBank.preLoadShapes(shapeCacheName, listFile, wildCardNotLwr, progress, flushTextures, _DriverUser->getDriver());
 }
 
 // ***************************************************************************
 void CShapeBankUser::preLoadShapesFromBNP(const std::string &shapeCacheName,
-		const std::string &bnpName, const std::string &wildCardNotLwr, NLMISC::IProgressCallback *progress, bool flushTextures /*= false*/)
+    const std::string &bnpName, const std::string &wildCardNotLwr, NLMISC::IProgressCallback *progress, bool flushTextures /*= false*/)
 {
 	// List all files From the bnp
-	vector<string>	listFile;
+	vector<string> listFile;
 	CBigFile::getInstance().list(bnpName, listFile);
 
 	// preLoad
-	if(!listFile.empty())
+	if (!listFile.empty())
 		_ShapeBank.preLoadShapes(shapeCacheName, listFile, wildCardNotLwr, progress, flushTextures, _DriverUser->getDriver());
 }
 
 // ***************************************************************************
-UShape	CShapeBankUser::getShape(const std::string &shapeName)
+UShape CShapeBankUser::getShape(const std::string &shapeName)
 {
 	// get the IShape from the bank
-	UShape	ret;
+	UShape ret;
 	ret.attach(_ShapeBank.getShape(shapeName));
 
 	return ret;
 }
 
 // ***************************************************************************
-void	CShapeBankUser::buildSystemGeometryForshape(const std::string &shapeName)
+void CShapeBankUser::buildSystemGeometryForshape(const std::string &shapeName)
 {
 	_ShapeBank.buildSystemGeometryForshape(shapeName);
 }
-
 
 } // NL3D

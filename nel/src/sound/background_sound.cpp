@@ -27,11 +27,11 @@
 using namespace std;
 using namespace NLMISC;
 
-
 namespace NLSOUND {
 
 CBackgroundSound::CBackgroundSound()
-: _Duration(0), _DurationValid(false)
+    : _Duration(0)
+    , _DurationValid(false)
 {
 }
 
@@ -49,7 +49,7 @@ void CBackgroundSound::serial(NLMISC::IStream &s)
 		_DurationValid = false;
 }
 
-void CBackgroundSound::importForm(const std::string& filename, NLGEORGES::UFormElm& formRoot)
+void CBackgroundSound::importForm(const std::string &filename, NLGEORGES::UFormElm &formRoot)
 {
 	NLGEORGES::UFormElm *psoundType;
 	std::string dfnName;
@@ -76,10 +76,10 @@ void CBackgroundSound::importForm(const std::string& filename, NLGEORGES::UFormE
 			uint size;
 			psoundList->getArraySize(size);
 
-			for (uint i=0; i<size; ++i)
+			for (uint i = 0; i < size; ++i)
 			{
-				TSoundInfo	sound;
-				NLGEORGES::UFormElm	*psoundItem;
+				TSoundInfo sound;
+				NLGEORGES::UFormElm *psoundItem;
 
 				psoundList->getArrayNode(&psoundItem, i);
 
@@ -90,9 +90,8 @@ void CBackgroundSound::importForm(const std::string& filename, NLGEORGES::UFormE
 					psoundItem->getValueByName(soundName, "Sound");
 					sound.SoundName = CStringMapper::map(CFile::getFilenameWithoutExtension(soundName));
 
-
 					// Read the environnement flag.
-					for (uint j=0; j<UAudioMixer::TBackgroundFlags::NB_BACKGROUND_FLAGS; j++)
+					for (uint j = 0; j < UAudioMixer::TBackgroundFlags::NB_BACKGROUND_FLAGS; j++)
 					{
 						char tmp[200];
 						sprintf(tmp, "Filter%2.2u", j);
@@ -113,7 +112,7 @@ uint32 CBackgroundSound::getDuration()
 	if (_DurationValid)
 		return _Duration;
 
-	vector<sint32>	durations;
+	vector<sint32> durations;
 	CAudioMixerUser *mixer = CAudioMixerUser::instance();
 	std::vector<TSoundInfo>::const_iterator first(_Sounds.begin()), last(_Sounds.end());
 	for (; first != last; ++first)
@@ -130,7 +129,7 @@ uint32 CBackgroundSound::getDuration()
 	return _Duration;
 }
 
-void CBackgroundSound::getSubSoundList(std::vector<std::pair<std::string, CSound*> > &subsounds) const
+void CBackgroundSound::getSubSoundList(std::vector<std::pair<std::string, CSound *>> &subsounds) const
 {
 	CAudioMixerUser *mixer = CAudioMixerUser::instance();
 	std::vector<TSoundInfo>::const_iterator first(_Sounds.begin()), last(_Sounds.end());
@@ -155,11 +154,9 @@ float CBackgroundSound::getMaxDistance() const
 		}
 	}
 	if (ret == 0)
-		ret  = 1;
+		ret = 1;
 
 	return ret;
 }
-
-
 
 } // NLSOUND

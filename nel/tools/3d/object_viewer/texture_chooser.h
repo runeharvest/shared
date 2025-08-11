@@ -23,7 +23,6 @@
 // texture_chooser.h : header file
 //
 
-
 #include "edit_attrib_dlg.h"
 #include "popup_notify.h"
 #include "ps_wrapper.h"
@@ -33,68 +32,67 @@
 //
 #include "nel/3d/texture.h"
 
-using NLMISC::CSmartPtr ;
+using NLMISC::CSmartPtr;
 
-namespace NL3D
-{
-	class CPSMultiTexturedParticle;
+namespace NL3D {
+class CPSMultiTexturedParticle;
 }
 
 class CMultiTexDlg;
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CTextureChooser dialog
 
 class CTextureChooser : public CEditAttribDlg, IPopupNotify
 {
-// Construction
+	// Construction
 public:
 	// construct the object with the given texture
-	CTextureChooser(NL3D::CPSMultiTexturedParticle *mtp, CParticleWorkspace::CNode *ownerNode);   // standard constructor
+	CTextureChooser(NL3D::CPSMultiTexturedParticle *mtp, CParticleWorkspace::CNode *ownerNode); // standard constructor
 
 	~CTextureChooser();
 
 	/// when initing, you can also provide a point to a mutltitextured particle
-	virtual void init(uint32 x, uint32 y, CWnd *pParent = NULL) ;
-	
-	BOOL EnableWindow( BOOL bEnable);
+	virtual void init(uint32 x, uint32 y, CWnd *pParent = NULL);
+
+	BOOL EnableWindow(BOOL bEnable);
 
 	// set a wrapper to get the datas
-	void setWrapper(IPSWrapperTexture *wrapper) { _Wrapper = wrapper ; }
-
+	void setWrapper(IPSWrapperTexture *wrapper) { _Wrapper = wrapper; }
 
 	/// enable to remove texture. the default is false
-	void enableRemoveButton(void) { _EnableRemoveButton = true ; }
-// Dialog Data
+	void enableRemoveButton(void) { _EnableRemoveButton = true; }
+	// Dialog Data
 	//{{AFX_DATA(CTextureChooser)
-	enum { IDD = IDD_TEXTURE_CHOOSER };
-	CButton	m_MultiTexCtrl;
+	enum
+	{
+		IDD = IDD_TEXTURE_CHOOSER
+	};
+	CButton m_MultiTexCtrl;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CTextureChooser)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	bool _EnableRemoveButton;
 	CParticleWorkspace::CNode *_Node;
-	IPSWrapperTexture *_Wrapper ;
+	IPSWrapperTexture *_Wrapper;
 	NL3D::CPSMultiTexturedParticle *_MTP;
-	CMultiTexDlg	  *_MultiTexDlg;
+	CMultiTexDlg *_MultiTexDlg;
 	// handle to the current bitmap being displayed
-	HBITMAP _CurrBitmap ;
+	HBITMAP _CurrBitmap;
 
 	// update the current bitmap
-	void textureToBitmap() ;
+	void textureToBitmap();
 
 	// the current texture
-	CSmartPtr<NL3D::ITexture> _Texture ;
+	CSmartPtr<NL3D::ITexture> _Texture;
 
 	// Generated message map functions
 	//{{AFX_MSG(CTextureChooser)
@@ -105,17 +103,13 @@ protected:
 	afx_msg void OnEnableMultitexturing();
 	afx_msg void OnBrowseTexture();
 	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP() ;
+	DECLARE_MESSAGE_MAP();
 
 	/// inherited from IPopupNotify
 	void childPopupClosed(CWnd *child);
 
 	void updateMultiTexCtrl();
-	
-} ;
-
-
-
+};
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

@@ -21,13 +21,13 @@
 #define NL_STDWEB_H
 
 #if defined(_MSC_VER) && defined(_DEBUG)
-	#define _CRTDBG_MAP_ALLOC
-	#include <stdlib.h>
-	#include <malloc.h>
-	#include <crtdbg.h>
-	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <malloc.h>
+#include <crtdbg.h>
+#define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #elif defined(_MSC_VER)
-	#include <malloc.h>
+#include <malloc.h>
 #endif
 
 #include <algorithm>
@@ -58,21 +58,21 @@
 #include "nel/misc/types_nl.h"
 
 #ifdef NL_OS_WINDOWS
-#	define WIN32_LEAN_AND_MEAN
-#	define _WIN32_WINDOWS 0x0500
-#	ifndef _WIN32_WINNT
-#		define _WIN32_WINNT 0x0500
-#	endif
-#	ifndef NL_COMP_MINGW
-#		define WINVER 0x0500
-#		define NOMINMAX
-#	endif
-#	include <winsock2.h>
-#	include <windows.h>
-#	include <wincrypt.h>
-#	ifdef X509_NAME
-#		undef X509_NAME
-#	endif
+#define WIN32_LEAN_AND_MEAN
+#define _WIN32_WINDOWS 0x0500
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0500
+#endif
+#ifndef NL_COMP_MINGW
+#define WINVER 0x0500
+#define NOMINMAX
+#endif
+#include <winsock2.h>
+#include <windows.h>
+#include <wincrypt.h>
+#ifdef X509_NAME
+#undef X509_NAME
+#endif
 #endif
 
 #include <libxml/parser.h>

@@ -51,28 +51,26 @@ QString nli18n(const char *label)
 
 } /* anonymous namespace */
 
-CGraphicsViewport::CGraphicsViewport(QWidget *parent) 
-	: QWidget(parent),
-	m_GraphicsConfig(NULL), 
-	m_Driver(NULL), 
-	m_TextContext(NULL)
+CGraphicsViewport::CGraphicsViewport(QWidget *parent)
+    : QWidget(parent)
+    , m_GraphicsConfig(NULL)
+    , m_Driver(NULL)
+    , m_TextContext(NULL)
 {
-	
 }
 
 CGraphicsViewport::~CGraphicsViewport()
 {
-	
 }
 
 void CGraphicsViewport::init(CGraphicsConfig *graphicsConfig)
 {
-	//H_AUTO2
+	// H_AUTO2
 	nldebug("CGraphicsViewport::init");
 
 	// copy parameters
 	m_GraphicsConfig = graphicsConfig;
-	
+
 	// check stuff we need
 	nlassert(m_GraphicsConfig);
 
@@ -80,13 +78,13 @@ void CGraphicsViewport::init(CGraphicsConfig *graphicsConfig)
 	nlassert(!m_Driver);
 	m_Direct3D = false;
 	std::string driver = m_GraphicsConfig->getGraphicsDriver();
-	if (driver == "Direct3D") m_Direct3D = true; //m_Driver = Direct3D;
-	else if (driver == "OpenGL") m_Direct3D = false; //m_Driver = OpenGL;
+	if (driver == "Direct3D") m_Direct3D = true; // m_Driver = Direct3D;
+	else if (driver == "OpenGL") m_Direct3D = false; // m_Driver = OpenGL;
 	else
 	{
 		nlwarning("Invalid driver specified, defaulting to OpenGL");
-		//m_Configuration->getConfigFile().getVar("GraphicsDriver").forceAsString("OpenGL");
-		//m_Driver = OpenGL;
+		// m_Configuration->getConfigFile().getVar("GraphicsDriver").forceAsString("OpenGL");
+		// m_Driver = OpenGL;
 	}
 	m_Driver = UDriver::createDriver(NULL, m_Direct3D, NULL);
 	nlassert(m_Driver);
@@ -95,39 +93,39 @@ void CGraphicsViewport::init(CGraphicsConfig *graphicsConfig)
 	m_Driver->setDisplay(winId(), NL3D::UDriver::CMode(width(), height(), 32));
 
 	// register config callbacks
-	connect(m_GraphicsConfig, SIGNAL(onBackgroundColor(NLMISC::CRGBA)), 
-		this, SLOT(cfcbBackgroundColor(NLMISC::CRGBA)));
+	connect(m_GraphicsConfig, SIGNAL(onBackgroundColor(NLMISC::CRGBA)),
+	    this, SLOT(cfcbBackgroundColor(NLMISC::CRGBA)));
 	m_BackgroundColor = m_GraphicsConfig->getBackgroundColor();
 
 	// set the cache size for the font manager(in bytes)
 	m_Driver->setFontManagerMaxMemory(2097152);
-	
+
 	// create the text context
 	nlassert(!m_TextContext);
 	m_TextContext = m_Driver->createTextContext(CPath::lookup(
-		m_GraphicsConfig->getFontName()));
+	    m_GraphicsConfig->getFontName()));
 	nlassert(m_TextContext);
-	connect(m_GraphicsConfig, SIGNAL(onFontShadow(bool)), 
-		this, SLOT(cfcbFontShadow(bool)));
-	m_TextContext->setShaded(m_GraphicsConfig->getFontShadow());	
+	connect(m_GraphicsConfig, SIGNAL(onFontShadow(bool)),
+	    this, SLOT(cfcbFontShadow(bool)));
+	m_TextContext->setShaded(m_GraphicsConfig->getFontShadow());
 }
 
 void CGraphicsViewport::release()
 {
-	//H_AUTO2
+	// H_AUTO2
 	nldebug("CGraphicsViewport::release");
 
 	// release text context
 	nlassert(m_TextContext);
-	disconnect(m_GraphicsConfig, SIGNAL(onFontShadow(bool)), 
-		this, SLOT(cfcbFontShadow(bool)));
+	disconnect(m_GraphicsConfig, SIGNAL(onFontShadow(bool)),
+	    this, SLOT(cfcbFontShadow(bool)));
 	m_Driver->deleteTextContext(m_TextContext);
 	m_TextContext = NULL;
 
 	// release driver
 	nlassert(m_Driver);
-	disconnect(m_GraphicsConfig, SIGNAL(onBackgroundColor(NLMISC::CRGBA)), 
-		this, SLOT(cfcbBackgroundColor(NLMISC::CRGBA)));
+	disconnect(m_GraphicsConfig, SIGNAL(onBackgroundColor(NLMISC::CRGBA)),
+	    this, SLOT(cfcbBackgroundColor(NLMISC::CRGBA)));
 	m_Driver->release();
 	delete m_Driver;
 	m_Driver = NULL;
@@ -148,7 +146,7 @@ void CGraphicsViewport::renderDriver()
 
 void CGraphicsViewport::renderDebug2D()
 {
-	m_TextContext->setColor(NL3D::CRGBA (255, 255, 255));
+	m_TextContext->setColor(NL3D::CRGBA(255, 255, 255));
 	m_TextContext->setFontSize(40);
 	m_TextContext->setHotSpot(NL3D::UTextContext::BottomLeft);
 	m_TextContext->printAt(0.3f, 0.5f, std::string("NeL Qt"));
@@ -174,26 +172,26 @@ QAction *CGraphicsViewport::createSaveScreenshotAction(QObject *parent)
 void CGraphicsViewport::saveScreenshot()
 {
 	saveScreenshot(
-		m_GraphicsConfig->getScreenshotName(),
-		m_GraphicsConfig->getScreenshotJPG(),
-		m_GraphicsConfig->getScreenshotPNG(),
-		m_GraphicsConfig->getScreenshotTGA());
+	    m_GraphicsConfig->getScreenshotName(),
+	    m_GraphicsConfig->getScreenshotJPG(),
+	    m_GraphicsConfig->getScreenshotPNG(),
+	    m_GraphicsConfig->getScreenshotTGA());
 }
 
 void CGraphicsViewport::saveScreenshot(const string &name, bool jpg, bool png, bool tga)
 {
-	//H_AUTO2
+	// H_AUTO2
 
 	// FIXME: create screenshot path if it doesn't exist!
-	
+
 	// empty bitmap
 	CBitmap bitmap;
 	// copy the driver buffer to the bitmap
 	m_Driver->getBuffer(bitmap);
 	// create the file name
 	string filename = std::string("./")
-		+ m_GraphicsConfig->getScreenshotPath()
-		+ std::string("/") + name;
+	    + m_GraphicsConfig->getScreenshotPath()
+	    + std::string("/") + name;
 	// write the bitmap as a jpg, png or tga to the file
 	if (jpg)
 	{

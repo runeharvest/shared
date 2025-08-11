@@ -28,31 +28,33 @@
 
 class CChoosePoolID : public CDialog
 {
-// Construction
+	// Construction
 public:
 	/// you should set the 'Name' and 'PoolID' values before to create this dialog
-	CChoosePoolID(bool freezeID , CWnd* pParent = NULL);   // standard constructor
+	CChoosePoolID(bool freezeID, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CChoosePoolID)
-	enum { IDD = IDD_CHOOSE_POOL_ID };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_CHOOSE_POOL_ID
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CChoosePoolID)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-	public:
-	uint32		PoolID; // must be set and then retrieved by the caller
-	std::string Name;   // the name to edit
-
-// Implementation
 protected:
-	bool		_FreezeID;
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	//}}AFX_VIRTUAL
+public:
+	uint32 PoolID; // must be set and then retrieved by the caller
+	std::string Name; // the name to edit
+
+	// Implementation
+protected:
+	bool _FreezeID;
 
 	// Generated message map functions
 	//{{AFX_MSG(CChoosePoolID)

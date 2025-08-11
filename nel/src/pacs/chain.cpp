@@ -21,42 +21,40 @@
 using namespace std;
 using namespace NLMISC;
 
-
 // Functions for vertices comparison.
 // total order relation
-static inline bool	isStrictlyLess(const CVector &a, const CVector &b)
+static inline bool isStrictlyLess(const CVector &a, const CVector &b)
 {
-	if (a.x < b.x)	return true;
-	if (a.x > b.x)	return false;
-	if (a.y < b.y)	return true;
-	if (a.y > b.y)	return false;
-	if (a.z < b.y)	return true;
+	if (a.x < b.x) return true;
+	if (a.x > b.x) return false;
+	if (a.y < b.y) return true;
+	if (a.y > b.y) return false;
+	if (a.z < b.y) return true;
 	return false;
 }
 
-static inline bool	isStrictlyGreater(const CVector &a, const CVector &b)
+static inline bool isStrictlyGreater(const CVector &a, const CVector &b)
 {
-	if (a.x > b.x)	return true;
-	if (a.x < b.x)	return false;
-	if (a.y > b.y)	return true;
-	if (a.y < b.y)	return false;
-	if (a.z > b.y)	return true;
+	if (a.x > b.x) return true;
+	if (a.x < b.x) return false;
+	if (a.y > b.y) return true;
+	if (a.y < b.y) return false;
+	if (a.z > b.y) return true;
 	return false;
 }
 
-static inline bool	isEqual(const CVector &a, const CVector &b)
+static inline bool isEqual(const CVector &a, const CVector &b)
 {
 	return (a == b);
 }
 
-
 // COrderedChain3f methods implementation
 
-void	NLPACS::COrderedChain3f::serial(NLMISC::IStream &f)
+void NLPACS::COrderedChain3f::serial(NLMISC::IStream &f)
 {
 	/*
 	Version 0:
-		- base version.
+	    - base version.
 	*/
 	(void)f.serialVersion(0);
 
@@ -71,68 +69,68 @@ void	NLPACS::COrderedChain3f::serial(NLMISC::IStream &f)
 // COrderedChain methods implementation
 
 // translates the ordered chain by the vector translation
-void	NLPACS::COrderedChain::translate(const CVector &translation)
+void NLPACS::COrderedChain::translate(const CVector &translation)
 {
-	uint	i;
-	CVector2s	translat;
+	uint i;
+	CVector2s translat;
 	translat.pack(translation);
-	for (i=0; i<_Vertices.size(); ++i)
+	for (i = 0; i < _Vertices.size(); ++i)
 		_Vertices[i] += translat;
 }
 
 //
-void	NLPACS::COrderedChain::traverse(sint from, sint to, bool forward, vector<NLPACS::CVector2s> &path) const
+void NLPACS::COrderedChain::traverse(sint from, sint to, bool forward, vector<NLPACS::CVector2s> &path) const
 {
-	sint	i;
+	sint i;
 	if (forward)
 	{
-		if (from < 0)	from = 0;
-		if (to < 0)		to = (sint)_Vertices.size()-1;
+		if (from < 0) from = 0;
+		if (to < 0) to = (sint)_Vertices.size() - 1;
 
-		for (i=from+1; i<=to; ++i)
+		for (i = from + 1; i <= to; ++i)
 			path.push_back(_Vertices[i]);
 	}
 	else
 	{
-		if (from < 0)	from = (sint)_Vertices.size()-2;
-		if (to < 0)		to = -1;
+		if (from < 0) from = (sint)_Vertices.size() - 2;
+		if (to < 0) to = -1;
 
-		for (i=from; i>to; --i)
+		for (i = from; i > to; --i)
 			path.push_back(_Vertices[i]);
 	}
 }
 
 //
-float	NLPACS::COrderedChain::distance(const CVector &position) const
+float NLPACS::COrderedChain::distance(const CVector &position) const
 {
-	float		minDist = 1.0e10f;
-	uint		i;
-	CVector2f	pos = CVector2f(position);
+	float minDist = 1.0e10f;
+	uint i;
+	CVector2f pos = CVector2f(position);
 
-	for (i=0; i+1<_Vertices.size(); ++i)
+	for (i = 0; i + 1 < _Vertices.size(); ++i)
 	{
-		CVector2f	a = _Vertices[i].unpack(),
-					b = _Vertices[i+1].unpack();
+		CVector2f a = _Vertices[i].unpack(),
+		          b = _Vertices[i + 1].unpack();
 
-		CVector2f	d = (b-a);
-		float		len = d.norm();
+		CVector2f d = (b - a);
+		float len = d.norm();
 		d /= len;
-		CVector2f	n = CVector2f(d.y, -d.x);
+		CVector2f n = CVector2f(d.y, -d.x);
 
-		float		l = (pos-a)*d;
-		float		dist;
+		float l = (pos - a) * d;
+		float dist;
 
 		if (l < 0.0f)
 		{
-			dist = (pos-a).norm();
+			dist = (pos - a).norm();
 		}
 		else if (l > len)
 		{
-			dist = (pos-b).norm();
+			dist = (pos - b).norm();
 		}
 		else
 		{
-			dist = (float)fabs((pos-a)*n);
+			dist = (float)fabs((pos - a) * n);
 		}
 
 		if (dist < minDist)
@@ -144,17 +142,16 @@ float	NLPACS::COrderedChain::distance(const CVector &position) const
 	return minDist;
 }
 
-
 // serializes the ordered chain
-void	NLPACS::COrderedChain::serial(NLMISC::IStream &f)
+void NLPACS::COrderedChain::serial(NLMISC::IStream &f)
 {
 	/*
 	Version 0:
-		- base version.
+	    - base version.
 	Version 1:
-		- added _Min and _Max vectors
+	    - added _Min and _Max vectors
 	*/
-	sint	ver= f.serialVersion(1);
+	sint ver = f.serialVersion(1);
 
 	f.serialCont(_Vertices);
 	f.serial(_Forward);
@@ -168,9 +165,9 @@ void	NLPACS::COrderedChain::serial(NLMISC::IStream &f)
 	}
 	else if (f.isReading() && !_Vertices.empty())
 	{
-		uint	i;
+		uint i;
 		_Max = _Min = _Vertices[0];
-		for (i=1; i<_Vertices.size(); ++i)
+		for (i = 1; i < _Vertices.size(); ++i)
 		{
 			_Min.minof(_Min, _Vertices[i]);
 			_Max.maxof(_Max, _Vertices[i]);
@@ -180,39 +177,36 @@ void	NLPACS::COrderedChain::serial(NLMISC::IStream &f)
 
 // end of COrderedChain methods implementation
 
-
 // CChain methods implementation
 
 // builds the CChain from a list of vertices and a left and right surfaces id.
 // the chains vector is the vector where to store generated ordered chains.
 // thisId is the current id of the CChain, and edge is the number of the edge the CChain belongs to (-1
 // if none.)
-void	NLPACS::CChain::make(const vector<CVector> &vertices, sint32 left, sint32 right, vector<COrderedChain> &chains, uint16 thisId,
-							 vector<COrderedChain3f> &fullChains, vector<uint> &useOChainId)
+void NLPACS::CChain::make(const vector<CVector> &vertices, sint32 left, sint32 right, vector<COrderedChain> &chains, uint16 thisId,
+    vector<COrderedChain3f> &fullChains, vector<uint> &useOChainId)
 {
-	sint		first = 0, last = 0, i;
+	sint first = 0, last = 0, i;
 
 	_Left = left;
 	_Right = right;
 	_Length = 0.0f;
 
 	// splits the vertices list in ordered sub chains.
-	while (first < (sint)vertices.size()-1)
+	while (first < (sint)vertices.size() - 1)
 	{
-		last = first+1;
-		bool	forward = isStrictlyLess(vertices[first], vertices[last]);
+		last = first + 1;
+		bool forward = isStrictlyLess(vertices[first], vertices[last]);
 
 		// first checks if the subchain goes forward or backward.
 		if (forward)
-			for (; last < (sint)vertices.size() && isStrictlyLess(vertices[last-1], vertices[last]); ++last)
-				;
+			for (; last < (sint)vertices.size() && isStrictlyLess(vertices[last - 1], vertices[last]); ++last);
 		else
-			for (; last < (sint)vertices.size() && isStrictlyGreater(vertices[last-1], vertices[last]); ++last)
-				;
+			for (; last < (sint)vertices.size() && isStrictlyGreater(vertices[last - 1], vertices[last]); ++last);
 		--last;
 
 		// inserts the new subchain id within the CChain.
-		uint32	subChainId;
+		uint32 subChainId;
 
 		if (useOChainId.empty())
 		{
@@ -220,8 +214,8 @@ void	NLPACS::CChain::make(const vector<CVector> &vertices, sint32 left, sint32 r
 			if (subChainId > 65535)
 				nlerror("in NLPACS::CChain::make(): reached the maximum number of ordered chains");
 
-			chains.resize(chains.size()+1);
-			fullChains.resize(fullChains.size()+1);
+			chains.resize(chains.size() + 1);
+			fullChains.resize(fullChains.size() + 1);
 		}
 		else
 		{
@@ -232,29 +226,29 @@ void	NLPACS::CChain::make(const vector<CVector> &vertices, sint32 left, sint32 r
 		_SubChains.push_back((uint16)subChainId);
 
 		// and creates a new COrderedChain
-		COrderedChain3f	&subchain3f = fullChains[subChainId];
-		subchain3f._Vertices.reserve(last-first+1);
+		COrderedChain3f &subchain3f = fullChains[subChainId];
+		subchain3f._Vertices.reserve(last - first + 1);
 		subchain3f._Forward = forward;
 		subchain3f._ParentId = thisId;
-		subchain3f._IndexInParent = uint16(_SubChains.size()-1);
+		subchain3f._IndexInParent = uint16(_SubChains.size() - 1);
 
 		// and then copies the vertices (sorted, btw!)
 		if (forward)
-			for (i=first; i<=last; ++i)
+			for (i = first; i <= last; ++i)
 				subchain3f._Vertices.push_back(vertices[i]);
 		else
-			for (i=last; i>=first; --i)
+			for (i = last; i >= first; --i)
 				subchain3f._Vertices.push_back(vertices[i]);
 
 		first = last;
 
-		COrderedChain	&subchain = chains[subChainId];
+		COrderedChain &subchain = chains[subChainId];
 		subchain.pack(subchain3f);
 		subchain.computeMinMax();
 
-		float	length = 0.0f;
-		for (i=0; i<(sint)subchain._Vertices.size()-1; ++i)
-			length += (subchain._Vertices[i+1]-subchain._Vertices[i]).norm();
+		float length = 0.0f;
+		for (i = 0; i < (sint)subchain._Vertices.size() - 1; ++i)
+			length += (subchain._Vertices[i + 1] - subchain._Vertices[i]).norm();
 
 		subchain._Length = length;
 		_Length += length;
@@ -262,11 +256,11 @@ void	NLPACS::CChain::make(const vector<CVector> &vertices, sint32 left, sint32 r
 }
 
 // serializes the CChain
-void	NLPACS::CChain::serial(NLMISC::IStream &f)
+void NLPACS::CChain::serial(NLMISC::IStream &f)
 {
 	/*
 	Version 0:
-		- base version.
+	    - base version.
 	*/
 	(void)f.serialVersion(0);
 
@@ -278,38 +272,35 @@ void	NLPACS::CChain::serial(NLMISC::IStream &f)
 	f.serial(_RightLoop, _RightLoopIndex);
 }
 
-
-
 // unifiies the chain
-void	NLPACS::CChain::unify(vector<NLPACS::COrderedChain> &ochains)
+void NLPACS::CChain::unify(vector<NLPACS::COrderedChain> &ochains)
 {
-	CVector2s	snap;
-	uint		i;
+	CVector2s snap;
+	uint i;
 
 	snap = (ochains[_SubChains[0]].isForward()) ? ochains[_SubChains[0]]._Vertices.back() : ochains[_SubChains[0]]._Vertices.front();
 
-	for (i=1; i<_SubChains.size(); ++i)
+	for (i = 1; i < _SubChains.size(); ++i)
 	{
 		if (ochains[_SubChains[i]].isForward())
 		{
 			if (ochains[_SubChains[i]]._Vertices.front() != snap)
-				nlwarning("ochain %d and %d are not stuck together", _SubChains[i-1], _SubChains[i]);
+				nlwarning("ochain %d and %d are not stuck together", _SubChains[i - 1], _SubChains[i]);
 			ochains[_SubChains[i]]._Vertices.front() = snap;
 			snap = ochains[_SubChains[i]]._Vertices.back();
 		}
 		else
 		{
 			if (ochains[_SubChains[i]]._Vertices.back() != snap)
-				nlwarning("ochain %d and %d are not stuck together", _SubChains[i-1], _SubChains[i]);
+				nlwarning("ochain %d and %d are not stuck together", _SubChains[i - 1], _SubChains[i]);
 			ochains[_SubChains[i]]._Vertices.back() = snap;
 			snap = ochains[_SubChains[i]]._Vertices.front();
 		}
 	}
-
 }
 
 //
-void	NLPACS::CChain::setStartVector(const NLPACS::CVector2s &v, vector<NLPACS::COrderedChain> &ochains)
+void NLPACS::CChain::setStartVector(const NLPACS::CVector2s &v, vector<NLPACS::COrderedChain> &ochains)
 {
 	if (ochains[_SubChains.front()].isForward())
 		ochains[_SubChains.front()]._Vertices.front() = v;
@@ -318,7 +309,7 @@ void	NLPACS::CChain::setStartVector(const NLPACS::CVector2s &v, vector<NLPACS::C
 }
 
 //
-void	NLPACS::CChain::setStopVector(const NLPACS::CVector2s &v, vector<NLPACS::COrderedChain> &ochains)
+void NLPACS::CChain::setStopVector(const NLPACS::CVector2s &v, vector<NLPACS::COrderedChain> &ochains)
 {
 	if (ochains[_SubChains.back()].isForward())
 		ochains[_SubChains.back()]._Vertices.back() = v;
@@ -327,7 +318,7 @@ void	NLPACS::CChain::setStopVector(const NLPACS::CVector2s &v, vector<NLPACS::CO
 }
 
 //
-NLPACS::CVector2s	NLPACS::CChain::getStartVector(vector<NLPACS::COrderedChain> &ochains)
+NLPACS::CVector2s NLPACS::CChain::getStartVector(vector<NLPACS::COrderedChain> &ochains)
 {
 	if (ochains[_SubChains.front()].isForward())
 		return ochains[_SubChains.front()]._Vertices.front();
@@ -336,7 +327,7 @@ NLPACS::CVector2s	NLPACS::CChain::getStartVector(vector<NLPACS::COrderedChain> &
 }
 
 //
-NLPACS::CVector2s	NLPACS::CChain::getStopVector(vector<NLPACS::COrderedChain> &ochains)
+NLPACS::CVector2s NLPACS::CChain::getStopVector(vector<NLPACS::COrderedChain> &ochains)
 {
 	if (ochains[_SubChains.back()].isForward())
 		return ochains[_SubChains.back()]._Vertices.back();
@@ -345,4 +336,3 @@ NLPACS::CVector2s	NLPACS::CChain::getStopVector(vector<NLPACS::COrderedChain> &o
 }
 
 // end of CChain methods implementation
-

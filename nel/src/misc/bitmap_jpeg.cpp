@@ -27,23 +27,21 @@
 #include "nel/misc/stream.h"
 #include "nel/misc/file.h"
 #include <csetjmp>
-extern "C"
-{
-	#ifdef NL_COMP_MINGW
-	#	define HAVE_BOOLEAN
-	#endif
-	#include <jpeglib.h>
+extern "C" {
+#ifdef NL_COMP_MINGW
+#define HAVE_BOOLEAN
+#endif
+#include <jpeglib.h>
 }
 #endif
 
 using namespace std;
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 #ifdef USE_JPEG
 
@@ -60,7 +58,7 @@ struct my_error_mgr
 
 void my_error_exit(j_common_ptr cinfo)
 {
-	my_error_mgr *myerr = (my_error_mgr *) cinfo->err;
+	my_error_mgr *myerr = (my_error_mgr *)cinfo->err;
 
 	nlwarning("error while processing JPEG image");
 
@@ -88,9 +86,9 @@ static boolean jpgDecompressFill(j_decompress_ptr cinfo)
 
 	try
 	{
-		JPGStream->serialBuffer((uint8*) JPGBuffer, length);
+		JPGStream->serialBuffer((uint8 *)JPGBuffer, length);
 	}
-	catch(...)
+	catch (...)
 	{
 		nlwarning("error while reading JPEG image");
 		cinfo->src->next_input_byte = (unsigned char *)JPGBuffer;
@@ -107,14 +105,14 @@ static void jpgDecompressSkip(j_decompress_ptr cinfo, long num_bytes)
 {
 	if (num_bytes > 0)
 	{
-		while (num_bytes > (long) cinfo->src->bytes_in_buffer)
+		while (num_bytes > (long)cinfo->src->bytes_in_buffer)
 		{
-			num_bytes -= (long) cinfo->src->bytes_in_buffer;
+			num_bytes -= (long)cinfo->src->bytes_in_buffer;
 			jpgDecompressFill(cinfo);
 		}
 
-		cinfo->src->next_input_byte += (size_t) num_bytes;
-		cinfo->src->bytes_in_buffer -= (size_t) num_bytes;
+		cinfo->src->next_input_byte += (size_t)num_bytes;
+		cinfo->src->bytes_in_buffer -= (size_t)num_bytes;
 	}
 }
 
@@ -126,11 +124,11 @@ static jpeg_source_mgr jpgSourceManager = { NULL, 0,
 	jpgDecompressInit, jpgDecompressFill, jpgDecompressSkip, jpeg_resync_to_restart, jpgDecompressTerm };
 
 /*-------------------------------------------------------------------*\
-							readJPG
+                            readJPG
 \*-------------------------------------------------------------------*/
-uint8 CBitmap::readJPG( NLMISC::IStream &f )
+uint8 CBitmap::readJPG(NLMISC::IStream &f)
 {
-	if(!f.isReading()) return false;
+	if (!f.isReading()) return false;
 
 	struct jpeg_decompress_struct cinfo;
 
@@ -167,7 +165,7 @@ uint8 CBitmap::readJPG( NLMISC::IStream &f )
 	{
 		dstChannels = 1;
 		srcChannels = 1;
-		resize (cinfo.image_width, cinfo.image_height, _LoadGrayscaleAsAlpha ? Alpha : Luminance);
+		resize(cinfo.image_width, cinfo.image_height, _LoadGrayscaleAsAlpha ? Alpha : Luminance);
 	}
 	else
 	{
@@ -175,7 +173,7 @@ uint8 CBitmap::readJPG( NLMISC::IStream &f )
 		dstChannels = 4;
 		srcChannels = 3;
 		cinfo.out_color_space = JCS_RGB;
-		resize (cinfo.image_width, cinfo.image_height, RGBA);
+		resize(cinfo.image_width, cinfo.image_height, RGBA);
 	}
 
 	// start decompression of image data
@@ -186,8 +184,8 @@ uint8 CBitmap::readJPG( NLMISC::IStream &f )
 		return 0;
 	}
 
-	JSAMPARRAY buffer = (*cinfo.mem->alloc_sarray)((j_common_ptr) &cinfo,
-		JPOOL_IMAGE, cinfo.output_width * cinfo.output_components, 1);
+	JSAMPARRAY buffer = (*cinfo.mem->alloc_sarray)((j_common_ptr)&cinfo,
+	    JPOOL_IMAGE, cinfo.output_width * cinfo.output_components, 1);
 
 	uint i, j;
 
@@ -204,10 +202,10 @@ uint8 CBitmap::readJPG( NLMISC::IStream &f )
 		for (i = 0; i < _Width; i++)
 		{
 			for (j = 0; j < srcChannels; ++j)
-				_Data[0][offset+i*dstChannels+j] = buffer[0][i*srcChannels+j];
+				_Data[0][offset + i * dstChannels + j] = buffer[0][i * srcChannels + j];
 
 			if (PixelFormat == RGBA)
-				_Data[0][offset+i*dstChannels+j] = 255;
+				_Data[0][offset + i * dstChannels + j] = 255;
 		}
 	}
 
@@ -229,7 +227,7 @@ static void jpgCompressInit(j_compress_ptr cinfo)
 
 static boolean jpgCompressEmpty(j_compress_ptr cinfo)
 {
-	JPGStream->serialBuffer((uint8*) JPGBuffer, JPGBufferSize);
+	JPGStream->serialBuffer((uint8 *)JPGBuffer, JPGBufferSize);
 	cinfo->dest->next_output_byte = (unsigned char *)JPGBuffer;
 	cinfo->dest->free_in_buffer = JPGBufferSize;
 	return TRUE;
@@ -237,17 +235,17 @@ static boolean jpgCompressEmpty(j_compress_ptr cinfo)
 
 static void jpgCompressTerm(j_compress_ptr cinfo)
 {
-	if(JPGBufferSize - cinfo->dest->free_in_buffer > 0)
-		JPGStream->serialBuffer((uint8*) JPGBuffer, (uint)(JPGBufferSize - cinfo->dest->free_in_buffer));
+	if (JPGBufferSize - cinfo->dest->free_in_buffer > 0)
+		JPGStream->serialBuffer((uint8 *)JPGBuffer, (uint)(JPGBufferSize - cinfo->dest->free_in_buffer));
 }
 
 static jpeg_destination_mgr jpgDestinationManager = { 0, 0,
 	jpgCompressInit, jpgCompressEmpty, jpgCompressTerm };
 
 /*-------------------------------------------------------------------*\
-							writeJPG
+                            writeJPG
 \*-------------------------------------------------------------------*/
-bool CBitmap::writeJPG( NLMISC::IStream &f, uint8 quality)
+bool CBitmap::writeJPG(NLMISC::IStream &f, uint8 quality)
 {
 	if (f.isReading()) return false;
 
@@ -284,7 +282,7 @@ bool CBitmap::writeJPG( NLMISC::IStream &f, uint8 quality)
 	}
 	else
 	{
-		srcChannels = PixelFormat == AlphaLuminance ? 2:1;
+		srcChannels = PixelFormat == AlphaLuminance ? 2 : 1;
 		dstChannels = cinfo.input_components = 1;
 		cinfo.in_color_space = JCS_GRAYSCALE;
 	}
@@ -303,7 +301,7 @@ bool CBitmap::writeJPG( NLMISC::IStream &f, uint8 quality)
 	jpeg_start_compress(&cinfo, TRUE);
 
 	JSAMPROW row_pointer[1];
-	row_pointer[0] = new uint8[_Width*dstChannels];
+	row_pointer[0] = new uint8[_Width * dstChannels];
 
 	uint i, j;
 
@@ -315,7 +313,7 @@ bool CBitmap::writeJPG( NLMISC::IStream &f, uint8 quality)
 		{
 			for (j = 0; j < dstChannels; ++j)
 			{
-				row_pointer[0][i*dstChannels+j] = (uint8) _Data[0][offset + i*srcChannels+j];
+				row_pointer[0][i * dstChannels + j] = (uint8)_Data[0][offset + i * srcChannels + j];
 			}
 		}
 
@@ -339,15 +337,15 @@ bool CBitmap::writeJPG( NLMISC::IStream &f, uint8 quality)
 
 #else
 
-bool CBitmap::writeJPG( NLMISC::IStream &/* f */, uint8 /* quality */)
+bool CBitmap::writeJPG(NLMISC::IStream & /* f */, uint8 /* quality */)
 {
-	nlwarning ("You must compile NLMISC with USE_JPEG if you want jpeg support");
+	nlwarning("You must compile NLMISC with USE_JPEG if you want jpeg support");
 	return false;
 }
 
-uint8 CBitmap::readJPG( NLMISC::IStream &/* f */)
+uint8 CBitmap::readJPG(NLMISC::IStream & /* f */)
 {
-	nlwarning ("You must compile NLMISC with USE_JPEG if you want jpeg support");
+	nlwarning("You must compile NLMISC with USE_JPEG if you want jpeg support");
 	return 0;
 }
 

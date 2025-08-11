@@ -42,14 +42,13 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CTriObject::CTriObject(CScene *scene) : CGeomObject(scene)
+CTriObject::CTriObject(CScene *scene)
+    : CGeomObject(scene)
 {
-
 }
 
 CTriObject::~CTriObject()
 {
-
 }
 
 const ucstring CTriObject::DisplayName = ucstring("TriObject");

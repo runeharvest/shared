@@ -25,7 +25,6 @@
 #include "nel/net/inet_address.h"
 #include "nel/net/udp_sim_sock.h"
 
-
 //
 // Namespaces
 //
@@ -34,58 +33,57 @@ using namespace std;
 using namespace NLMISC;
 using namespace NLNET;
 
-
 //
 // Main
 //
 
-int main (int argc, char **argv)
+int main(int argc, char **argv)
 {
 	if (argc != 3)
 	{
-		nlinfo ("%s send udp datagram to a specific port to test a connection between client and server", argv[0]);
-		nlinfo ("usage: <ip_address> <port>");
-		exit (EXIT_FAILURE);
+		nlinfo("%s send udp datagram to a specific port to test a connection between client and server", argv[0]);
+		nlinfo("usage: <ip_address> <port>");
+		exit(EXIT_FAILURE);
 	}
 
-	CUdpSimSock	*UdpSock = NULL;
-	UdpSock = new CUdpSimSock( false );
+	CUdpSimSock *UdpSock = NULL;
+	UdpSock = new CUdpSimSock(false);
 	try
 	{
-		UdpSock->connect (CInetAddress (argv[1], atoi(argv[2])));
+		UdpSock->connect(CInetAddress(argv[1], atoi(argv[2])));
 	}
 	catch (Exception &e)
 	{
-		nlwarning ("Cannot connect to remote UDP host: %s", e.what());
-		exit (EXIT_FAILURE);
+		nlwarning("Cannot connect to remote UDP host: %s", e.what());
+		exit(EXIT_FAILURE);
 	}
 
 	uint8 *packet = new uint8[1000];
 	uint32 psize;
-	
-	while(true)
+
+	while (true)
 	{
 		CMemStream msgout;
 		uint32 foo = 10;
-		msgout.serial (foo);
+		msgout.serial(foo);
 		uint32 size = msgout.length();
-		UdpSock->send (msgout.buffer(), size);
-		nldebug ("Sent UDP datagram size %d to %s", size, UdpSock->localAddr().asString().c_str());
+		UdpSock->send(msgout.buffer(), size);
+		nldebug("Sent UDP datagram size %d to %s", size, UdpSock->localAddr().asString().c_str());
 
 		while (UdpSock->dataAvailable())
 		{
 			psize = 1000;
 			try
 			{
-				UdpSock->receive (packet, psize);
-				nldebug ("Received UDP datagram size %d bytes from %s", psize, UdpSock->localAddr().asString().c_str());
+				UdpSock->receive(packet, psize);
+				nldebug("Received UDP datagram size %d bytes from %s", psize, UdpSock->localAddr().asString().c_str());
 			}
-			catch ( Exception& e )
+			catch (Exception &e)
 			{
-				nlwarning ("Received failed: %s", e.what());
+				nlwarning("Received failed: %s", e.what());
 			}
 		}
-		nlSleep (1000);
+		nlSleep(1000);
 	}
 
 	return EXIT_SUCCESS;

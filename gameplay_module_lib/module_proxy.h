@@ -20,7 +20,6 @@
 #include "nel/misc/types_nl.h"
 #include "nel/misc/smart_ptr.h"
 
-
 class IModuleCore;
 
 /**
@@ -36,18 +35,17 @@ class IModuleProxy
 {
 public:
 	/// ctor ( needed by the module class )
-	IModuleProxy(){}
-	/// ctor to use if you are not in a module ( CAUTION : the only real case is when you have to interact with a core before creating the module ) 
-	IModuleProxy( IModuleCore * core)
+	IModuleProxy() { }
+	/// ctor to use if you are not in a module ( CAUTION : the only real case is when you have to interact with a core before creating the module )
+	IModuleProxy(IModuleCore *core)
 	{
-		_ModuleCore = dynamic_cast<T*>(core);
+		_ModuleCore = dynamic_cast<T *>(core);
 		MODULE_AST(_ModuleCore);
 	}
 
 protected:
-	NLMISC::CRefPtr<T>	_ModuleCore;
+	NLMISC::CRefPtr<T> _ModuleCore;
 };
-
 
 #endif // RY_MODULE_PROXY_H
 

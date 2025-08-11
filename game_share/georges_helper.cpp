@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 #include "georges_helper.h"
@@ -23,14 +21,11 @@
 #include "nel/misc/rgba.h"
 #include "nel/georges/u_form_elm.h"
 
-
 //=========================================================================
-/*static*/ bool CGeorgesHelper::convert(NLMISC::CVector &dest,const NLGEORGES::UFormElm &src)
+/*static*/ bool CGeorgesHelper::convert(NLMISC::CVector &dest, const NLGEORGES::UFormElm &src)
 {
 	NLMISC::CVector temp;
-	if ( src.getValueByName (temp.x, "X") &&
-		src.getValueByName (temp.y, "Y") &&
-		src.getValueByName (temp.z, "Z") )
+	if (src.getValueByName(temp.x, "X") && src.getValueByName(temp.y, "Y") && src.getValueByName(temp.z, "Z"))
 	{
 		dest = temp;
 		return true;
@@ -39,26 +34,22 @@
 }
 
 //=========================================================================
-/*static*/ bool CGeorgesHelper::convert(NLMISC::CRGBA &dest,const NLGEORGES::UFormElm &src)
+/*static*/ bool CGeorgesHelper::convert(NLMISC::CRGBA &dest, const NLGEORGES::UFormElm &src)
 {
 	NLMISC::CRGBA temp;
-	if ( src.getValueByName (temp.R, "R") &&
-		src.getValueByName (temp.G, "G") &&
-		src.getValueByName (temp.B, "B") &&
-		src.getValueByName (temp.A, "A") )
+	if (src.getValueByName(temp.R, "R") && src.getValueByName(temp.G, "G") && src.getValueByName(temp.B, "B") && src.getValueByName(temp.A, "A"))
 	{
 		dest = temp;
 		return true;
 	}
 	return false;
 }
-
 
 //=========================================================================
 bool CGeorgesHelper::getValueByName(NLMISC::CVector &dest, const NLGEORGES::UFormElm &item, const char *name)
 {
 	const NLGEORGES::UFormElm *pElt;
-	if(item.getNodeByName (&pElt, name) && pElt)
+	if (item.getNodeByName(&pElt, name) && pElt)
 		return CGeorgesHelper::convert(dest, *pElt);
 	else
 		return false;
@@ -68,7 +59,7 @@ bool CGeorgesHelper::getValueByName(NLMISC::CVector &dest, const NLGEORGES::UFor
 bool CGeorgesHelper::getValueByName(NLMISC::CRGBA &dest, const NLGEORGES::UFormElm &item, const char *name)
 {
 	const NLGEORGES::UFormElm *pElt;
-	if(item.getNodeByName (&pElt, name) && pElt)
+	if (item.getNodeByName(&pElt, name) && pElt)
 		return CGeorgesHelper::convert(dest, *pElt);
 	else
 		return false;

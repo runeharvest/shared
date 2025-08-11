@@ -17,18 +17,14 @@
 #ifndef NL_BIT_SET_H
 #define NL_BIT_SET_H
 
-
 #include "types_nl.h"
 #include "stream.h"
 
-
-namespace	NLMISC
-{
+namespace NLMISC {
 
 // Size in bit of base word.
-#define	NL_BITLEN			(4*8)
-#define	NL_BITLEN_SHIFT		5
-
+#define NL_BITLEN (4 * 8)
+#define NL_BITLEN_SHIFT 5
 
 // ***************************************************************************
 /**
@@ -37,7 +33,7 @@ namespace	NLMISC
  * \author Nevrax France
  * \date 2000
  */
-class	CBitSet
+class CBitSet
 {
 public:
 	/* ***********************************************
@@ -51,98 +47,96 @@ public:
 	CBitSet(uint numBits);
 	CBitSet(const CBitSet &bs);
 	~CBitSet();
-	CBitSet	&operator=(const CBitSet &bs);
+	CBitSet &operator=(const CBitSet &bs);
 	//@}
 
 	/// \name Basics.
 	//@{
 	/// Resize the bit array. All Bits are reseted.
-	void	resize (uint numBits);
+	void resize(uint numBits);
 	/// Resize the bit array. Bits are not reseted. New bits are set with value.
-	void	resizeNoReset (uint numBits, bool value=false);
+	void resizeNoReset(uint numBits, bool value = false);
 	/// Clear the bitarray so size() return 0.
-	void	clear();
+	void clear();
 	/// Return size of the bit array.
-	uint	size() const
+	uint size() const
 	{
 		return NumBits;
 	}
 	/// Set a bit to 0 or 1.
-	void	set(sint bitNumber, bool value)
+	void set(sint bitNumber, bool value)
 	{
-		nlassert(bitNumber>=0 && bitNumber<NumBits);
+		nlassert(bitNumber >= 0 && bitNumber < NumBits);
 
-		uint	mask= bitNumber&(NL_BITLEN-1);
-		mask= 1<<mask;
-		if(value)
-			Array[bitNumber >> NL_BITLEN_SHIFT]|= mask ;
+		uint mask = bitNumber & (NL_BITLEN - 1);
+		mask = 1 << mask;
+		if (value)
+			Array[bitNumber >> NL_BITLEN_SHIFT] |= mask;
 		else
-			Array[bitNumber >> NL_BITLEN_SHIFT]&= ~mask;
+			Array[bitNumber >> NL_BITLEN_SHIFT] &= ~mask;
 	}
 	/// Get the value of a bit.
-	bool	get(sint bitNumber) const
+	bool get(sint bitNumber) const
 	{
-		nlassert(bitNumber>=0 && bitNumber<NumBits);
+		nlassert(bitNumber >= 0 && bitNumber < NumBits);
 
-		uint	mask= bitNumber&(NL_BITLEN-1);
-		mask= 1<<mask;
+		uint mask = bitNumber & (NL_BITLEN - 1);
+		mask = 1 << mask;
 		return (Array[bitNumber >> NL_BITLEN_SHIFT] & mask) != 0;
 	}
 	/// Get the value of a bit.
-	bool	operator[](sint bitNumber) const
+	bool operator[](sint bitNumber) const
 	{
 		return get(bitNumber);
 	}
 	/// Set a bit to 1.
-	void	set(sint bitNumber) {set(bitNumber, true);}
+	void set(sint bitNumber) { set(bitNumber, true); }
 	/// Set a bit to 0.
-	void	clear(sint bitNumber) {set(bitNumber, false);}
+	void clear(sint bitNumber) { set(bitNumber, false); }
 	/// Set all bits to 1.
-	void	setAll();
+	void setAll();
 	/// Set all bits to 0.
-	void	clearAll();
+	void clearAll();
 	//@}
-
 
 	/// \name Bit operations.
 	//@{
 	/// Return The bitarray NOTed.
-	CBitSet	operator~() const;
+	CBitSet operator~() const;
 	/**
 	 * Return this ANDed with bs.
 	 * The result BitSet is of size of \c *this. Any missing bits into bs will be considered as 0.
 	 */
-	CBitSet	operator&(const CBitSet &bs) const;
+	CBitSet operator&(const CBitSet &bs) const;
 	/**
 	 * Return this ORed with bs.
 	 * The result BitSet is of size of \c *this. Any missing bits into bs will be considered as 0.
 	 */
-	CBitSet	operator|(const CBitSet &bs) const;
+	CBitSet operator|(const CBitSet &bs) const;
 	/**
 	 * Return this XORed with bs.
 	 * The result BitSet is of size of \c *this. Any missing bits into bs will be considered as 0.
 	 */
-	CBitSet	operator^(const CBitSet &bs) const;
+	CBitSet operator^(const CBitSet &bs) const;
 
 	/// NOT the BitArray.
-	void	flip();
+	void flip();
 	/**
 	 * AND the bitArray with bs.
 	 * The bitset size is not changed. Any missing bits into bs will be considered as 0.
 	 */
-	CBitSet	&operator&=(const CBitSet &bs);
+	CBitSet &operator&=(const CBitSet &bs);
 	/**
 	 * OR the bitArray with bs.
 	 * The bitset size is not changed. Any missing bits into bs will be considered as 0.
 	 */
-	CBitSet	&operator|=(const CBitSet &bs);
+	CBitSet &operator|=(const CBitSet &bs);
 	/**
 	 * XOR the bitArray with bs.
 	 * The bitset size is not changed. Any missing bits into bs will be considered as 0.
 	 */
-	CBitSet	&operator^=(const CBitSet &bs);
+	CBitSet &operator^=(const CBitSet &bs);
 	//@}
-
 
 	/// \name Bit comparisons.
 	//@{
@@ -150,40 +144,36 @@ public:
 	 * Compare two BitSet not necessarely of same size. The comparison is done on N bits, where N=min(this->size(), bs.size())
 	 * \return true if the N common bits of this and bs are the same. false otherwise.
 	 */
-	bool	compareRestrict(const CBitSet &bs) const;
+	bool compareRestrict(const CBitSet &bs) const;
 	/// Compare two BitSet. If not of same size, return false.
-	bool	operator==(const CBitSet &bs) const;
+	bool operator==(const CBitSet &bs) const;
 	/// operator!=.
-	bool	operator!=(const CBitSet &bs) const;
+	bool operator!=(const CBitSet &bs) const;
 	/// Return true if all bits are set. false if size()==0.
-	bool	allSet();
+	bool allSet();
 	/// Return true if all bits are cleared. false if size()==0.
-	bool	allCleared();
+	bool allCleared();
 	//@}
 
-
 	/// Serialize
-	void	serial(NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 
 	/// Return the raw vector
-	const std::vector<uint32>& getVector() const { return Array; }
+	const std::vector<uint32> &getVector() const { return Array; }
 
 	/// Write an uint32 into the bit set (use with caution, no check)
-	void	setUint( uint32 srcValue, uint i ) { Array[i] = srcValue; }
+	void setUint(uint32 srcValue, uint i) { Array[i] = srcValue; }
 
 	/// Return a string representing the bitfield with 1 and 0 (from left to right)
-	std::string	toString() const;
+	std::string toString() const;
 
 private:
-	std::vector<uint32>	Array;
-	sint				NumBits;
-	uint32				MaskLast;	// Mask for the last uint32.
+	std::vector<uint32> Array;
+	sint NumBits;
+	uint32 MaskLast; // Mask for the last uint32.
 };
 
-
 }
-
-
 
 #endif // NL_BIT_SET_H
 

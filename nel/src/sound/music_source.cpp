@@ -25,21 +25,19 @@
 #include "nel/sound/audio_mixer_user.h"
 #include "nel/sound/music_sound_manager.h"
 
-
 namespace NLSOUND {
-
 
 // ***************************************************************************
 CMusicSource::CMusicSource(CMusicSound *musicSound, bool spawn, TSpawnEndCallback cb, void *cbUserParam, NL3D::CCluster *cluster, CGroupController *groupController)
-	:	CSourceCommon(musicSound, spawn, cb, cbUserParam, cluster, groupController)
+    : CSourceCommon(musicSound, spawn, cb, cbUserParam, cluster, groupController)
 {
-	_MusicSound= musicSound;
+	_MusicSound = musicSound;
 }
 
 // ***************************************************************************
 CMusicSource::~CMusicSource()
 {
-	if(isPlaying())
+	if (isPlaying())
 		stop();
 
 	// avoid any bug, ensure the source is removed
@@ -47,16 +45,16 @@ CMusicSource::~CMusicSource()
 }
 
 // ***************************************************************************
-TSoundId			CMusicSource::getSound()
+TSoundId CMusicSource::getSound()
 {
 	return _MusicSound;
 }
 
 // ***************************************************************************
-void				CMusicSource::play()
+void CMusicSource::play()
 {
 	// if already playing, no-op (don't restart)
-	if(isPlaying())
+	if (isPlaying())
 		return;
 
 	// append and play common
@@ -65,16 +63,15 @@ void				CMusicSource::play()
 }
 
 // ***************************************************************************
-void				CMusicSource::stop()
+void CMusicSource::stop()
 {
 	// if already non-playing, no-op (don't restop)
-	if(!isPlaying())
+	if (!isPlaying())
 		return;
 
 	// remove and stop common
 	CAudioMixerUser::instance()->getBackgroundMusicManager()->removeMusicSourcePlaying(this);
 	CSourceCommon::stop();
 }
-
 
 } // NLSOUND

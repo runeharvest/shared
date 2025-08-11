@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #if !defined(AFX_EDIT_FOLLOW_PATH_H__80C5C9BA_85D1_48C5_8D8F_2D5CDE5FFB78__INCLUDED_)
 #define AFX_EDIT_FOLLOW_PATH_H__80C5C9BA_85D1_48C5_8D8F_2D5CDE5FFB78__INCLUDED_
 
@@ -28,45 +27,45 @@
 
 struct IPopupNotify;
 
-namespace NL3D
-{
-	class CPSPlaneBasisFollowSpeed;
+namespace NL3D {
+class CPSPlaneBasisFollowSpeed;
 }
 
-
 /** Dialog to edit the parameters of the 'Follow Path' modifier
-  * 
-  * \author Nicolas Vizerie
-  * \author Nevrax France
-  * \date 2003
-  */
+ *
+ * \author Nicolas Vizerie
+ * \author Nevrax France
+ * \date 2003
+ */
 class CEditFollowPath : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CEditFollowPath(NL3D::CPSPlaneBasisFollowSpeed *pbfs, CParticleWorkspace::CNode *ownerNode, CWnd* pParent, IPopupNotify *pn);   // standard constructor
+	CEditFollowPath(NL3D::CPSPlaneBasisFollowSpeed *pbfs, CParticleWorkspace::CNode *ownerNode, CWnd *pParent, IPopupNotify *pn); // standard constructor
 
 	/// init this dialog
 	void init(CWnd *pParent);
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CEditFollowPath)
-	enum { IDD = IDD_FOLLOWPATH };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_FOLLOWPATH
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CEditFollowPath)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	NL3D::CPSPlaneBasisFollowSpeed *_FollowPath;
-	IPopupNotify				   *_PN;
-	CParticleWorkspace::CNode	   *_Node;
+	IPopupNotify *_PN;
+	CParticleWorkspace::CNode *_Node;
 	// Generated message map functions
 	//{{AFX_MSG(CEditFollowPath)
 	virtual BOOL OnInitDialog();

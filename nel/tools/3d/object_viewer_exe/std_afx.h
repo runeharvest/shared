@@ -20,12 +20,11 @@
 #ifndef _STD_AFX_
 #define _STD_AFX_
 
-
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
 
-#define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
+#define VC_EXTRALEAN // Exclude rarely-used stuff from Windows headers
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #ifdef _WIN64

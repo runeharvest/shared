@@ -14,34 +14,28 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_LIFT_ICONS_H
 #define RY_LIFT_ICONS_H
 
 #include "nel/misc/types_nl.h"
 
-
-namespace LIFT_ICONS
+namespace LIFT_ICONS {
+enum TLiftIcon
 {
-	enum TLiftIcon
-	{
-		RoleMasterFight = 0,
-		RoleMasterMagic,
-		RoleMasterCraft,
-		RoleMasterHarvest,
-		MainGuildRoom,
-		PlayerRoom,
-		Exit,
-		Unknown,
-		None = Unknown,
-	};
+	RoleMasterFight = 0,
+	RoleMasterMagic,
+	RoleMasterCraft,
+	RoleMasterHarvest,
+	MainGuildRoom,
+	PlayerRoom,
+	Exit,
+	Unknown,
+	None = Unknown,
+};
 
-	const std::string & toString( TLiftIcon icon );
-	TLiftIcon toLiftIcon( const std::string & str );
+const std::string &toString(TLiftIcon icon);
+TLiftIcon toLiftIcon(const std::string &str);
 }
-
-
 
 #endif // RY_LIFT_ICONS_H
 

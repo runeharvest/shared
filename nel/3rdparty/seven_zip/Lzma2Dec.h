@@ -12,14 +12,14 @@ EXTERN_C_BEGIN
 
 typedef struct
 {
-  unsigned state;
-  Byte control;
-  Byte needInitLevel;
-  Byte isExtraMode;
-  Byte _pad_;
-  UInt32 packSize;
-  UInt32 unpackSize;
-  CLzmaDec decoder;
+	unsigned state;
+	Byte control;
+	Byte needInitLevel;
+	Byte isExtraMode;
+	Byte _pad_;
+	UInt32 packSize;
+	UInt32 unpackSize;
+	CLzmaDec decoder;
 } CLzma2Dec;
 
 #define Lzma2Dec_Construct(p) LzmaDec_Construct(&(p)->decoder)
@@ -51,7 +51,6 @@ SRes Lzma2Dec_DecodeToDic(CLzma2Dec *p, SizeT dicLimit,
 SRes Lzma2Dec_DecodeToBuf(CLzma2Dec *p, Byte *dest, SizeT *destLen,
     const Byte *src, SizeT *srcLen, ELzmaFinishMode finishMode, ELzmaStatus *status);
 
-
 /* ---------- LZMA2 block and chunk parsing ---------- */
 
 /*
@@ -64,22 +63,22 @@ It can return LZMA_STATUS_* code or LZMA2_PARSE_STATUS_* code:
 
 typedef enum
 {
-/*
-  LZMA_STATUS_NOT_SPECIFIED                 // data error
-  LZMA_STATUS_FINISHED_WITH_MARK
-  LZMA_STATUS_NOT_FINISHED                  //
-  LZMA_STATUS_NEEDS_MORE_INPUT
-  LZMA_STATUS_MAYBE_FINISHED_WITHOUT_MARK   // unused
-*/
-  LZMA2_PARSE_STATUS_NEW_BLOCK = LZMA_STATUS_MAYBE_FINISHED_WITHOUT_MARK + 1,
-  LZMA2_PARSE_STATUS_NEW_CHUNK
+	/*
+	  LZMA_STATUS_NOT_SPECIFIED                 // data error
+	  LZMA_STATUS_FINISHED_WITH_MARK
+	  LZMA_STATUS_NOT_FINISHED                  //
+	  LZMA_STATUS_NEEDS_MORE_INPUT
+	  LZMA_STATUS_MAYBE_FINISHED_WITHOUT_MARK   // unused
+	*/
+	LZMA2_PARSE_STATUS_NEW_BLOCK = LZMA_STATUS_MAYBE_FINISHED_WITHOUT_MARK + 1,
+	LZMA2_PARSE_STATUS_NEW_CHUNK
 } ELzma2ParseStatus;
 
 ELzma2ParseStatus Lzma2Dec_Parse(CLzma2Dec *p,
-    SizeT outSize,   // output size
+    SizeT outSize, // output size
     const Byte *src, SizeT *srcLen,
-    int checkFinishBlock   // set (checkFinishBlock = 1), if it must read full input data, if decoder.dicPos reaches blockMax position.
-    );
+    int checkFinishBlock // set (checkFinishBlock = 1), if it must read full input data, if decoder.dicPos reaches blockMax position.
+);
 
 /*
 LZMA2 parser doesn't decode LZMA chunks, so we must read
@@ -91,7 +90,6 @@ Lzma2Dec_GetUnpackExtra() returns the value that shows
 */
 
 #define Lzma2Dec_GetUnpackExtra(p) ((p)->isExtraMode ? (p)->unpackSize : 0);
-
 
 /* ---------- One Call Interface ---------- */
 

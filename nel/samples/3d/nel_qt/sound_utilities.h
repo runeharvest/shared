@@ -25,16 +25,16 @@
 // Project includes
 
 namespace NLSOUND {
-	class UAudioMixer;
-	class CSoundAnimManager;
+class UAudioMixer;
+class CSoundAnimManager;
 }
 
 namespace NLQT {
-	class CConfiguration;
-	class CInternationalization;
-	class CGraphicsViewport;
-	//class CLandscapeUtilities;
-	//class CPacsUtilities;
+class CConfiguration;
+class CInternationalization;
+class CGraphicsViewport;
+// class CLandscapeUtilities;
+// class CPacsUtilities;
 
 /**
  * CSoundUtilities
@@ -47,38 +47,38 @@ class CSoundUtilities
 public:
 	CSoundUtilities();
 	virtual ~CSoundUtilities();
-	
+
 	void init(CConfiguration *configuration, CInternationalization *internationalization);
 	void release();
-	
+
 	void initGraphics(CGraphicsViewport *graphicsViewport);
 	void releaseGraphics();
-	
-	//void initLandscape(CLandscapeUtilities *landscapeUtilities);
-	//void releaseLandscape();
-	
-	//void initPacs(CPacsUtilities *pacsUtilities);
-	//void releasePacs();
+
+	// void initLandscape(CLandscapeUtilities *landscapeUtilities);
+	// void releaseLandscape();
+
+	// void initPacs(CPacsUtilities *pacsUtilities);
+	// void releasePacs();
 
 	void updateSound();
 
 	inline NLSOUND::UAudioMixer *getAudioMixer() { return m_AudioMixer; }
 	inline NLSOUND::CSoundAnimManager *getSoundAnimManager() { return m_SoundAnimManager; }
-	
+
 private:
 	CConfiguration *m_Configuration;
 	CInternationalization *m_Internationalization;
 	CGraphicsViewport *m_GraphicsViewport;
-	//CLandscapeUtilities *m_LandscapeUtilities;
-	//CPacsUtilities *m_PacsUtilities;
+	// CLandscapeUtilities *m_LandscapeUtilities;
+	// CPacsUtilities *m_PacsUtilities;
 
 	NLSOUND::UAudioMixer *m_AudioMixer;
 	NLSOUND::CSoundAnimManager *m_SoundAnimManager;
-	
+
 private:
 	CSoundUtilities(const CSoundUtilities &);
 	CSoundUtilities &operator=(const CSoundUtilities &);
-	
+
 }; /* class CSoundUtilities */
 
 } /* namespace NLQT */

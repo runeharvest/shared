@@ -23,8 +23,7 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 static void checkRange(const uint8 *min, const uint8 *max, const uint8 *start, uint length, const std::string &msg)
 {
@@ -39,56 +38,56 @@ static void checkRange(const uint8 *min, const uint8 *max, const uint8 *start, u
 void nlCheckVertexBuffer(const CVertexBuffer &vb, const uint8 *ptr)
 {
 	CVertexBufferRead vba;
-	vb.lock (vba);
-	checkRange((uint8 *) vba.getVertexCoordPointer(), (uint8 *) vba.getVertexCoordPointer() + vb.getNumVertices() * vb.getVertexSize(), ptr, 0, vb.getName());
+	vb.lock(vba);
+	checkRange((uint8 *)vba.getVertexCoordPointer(), (uint8 *)vba.getVertexCoordPointer() + vb.getNumVertices() * vb.getVertexSize(), ptr, 0, vb.getName());
 }
 
 // ************************************************************************************
 void nlCheckVBA(CVertexBufferRead &vba, const uint8 *ptr)
 {
-	checkRange((uint8 *) vba.getVertexCoordPointer(), (uint8 *) vba.getVertexCoordPointer() + vba.getParent()->getNumVertices() * vba.getParent()->getVertexSize(), ptr, 0, vba.getParent()->getName());
+	checkRange((uint8 *)vba.getVertexCoordPointer(), (uint8 *)vba.getVertexCoordPointer() + vba.getParent()->getNumVertices() * vba.getParent()->getVertexSize(), ptr, 0, vba.getParent()->getName());
 }
 
 // ************************************************************************************
 void nlCheckVBA(CVertexBufferReadWrite &vba, const uint8 *ptr)
 {
-	checkRange((uint8 *) vba.getVertexCoordPointer(), (uint8 *) vba.getVertexCoordPointer() + vba.getParent()->getNumVertices() * vba.getParent()->getVertexSize(), ptr, 0, vba.getParent()->getName());
+	checkRange((uint8 *)vba.getVertexCoordPointer(), (uint8 *)vba.getVertexCoordPointer() + vba.getParent()->getNumVertices() * vba.getParent()->getVertexSize(), ptr, 0, vba.getParent()->getName());
 }
 
 // ************************************************************************************
 void nlCheckVBARange(CVertexBufferRead &vba, const uint8 *ptStart, uint length)
 {
-	checkRange((uint8 *) vba.getVertexCoordPointer(), (uint8 *) vba.getVertexCoordPointer() + vba.getParent()->getNumVertices() * vba.getParent()->getVertexSize(), ptStart, length, vba.getParent()->getName());
+	checkRange((uint8 *)vba.getVertexCoordPointer(), (uint8 *)vba.getVertexCoordPointer() + vba.getParent()->getNumVertices() * vba.getParent()->getVertexSize(), ptStart, length, vba.getParent()->getName());
 }
 
 // ************************************************************************************
 void nlCheckVBARange(CVertexBufferReadWrite &vba, const uint8 *ptStart, uint length)
 {
-	checkRange((uint8 *) vba.getVertexCoordPointer(), (uint8 *) vba.getVertexCoordPointer() + vba.getParent()->getNumVertices() * vba.getParent()->getVertexSize(), ptStart, length, vba.getParent()->getName());
+	checkRange((uint8 *)vba.getVertexCoordPointer(), (uint8 *)vba.getVertexCoordPointer() + vba.getParent()->getNumVertices() * vba.getParent()->getVertexSize(), ptStart, length, vba.getParent()->getName());
 }
 
 // ************************************************************************************
 void nlCheckIBARange(CIndexBufferReadWrite &iba, const uint8 *ptStart, uint length)
 {
-	checkRange((uint8 *) iba.getPtr(), (uint8 *) iba.getPtr() + iba.getParent()->getNumIndexes() * iba.getIndexNumBytes(), ptStart, length, iba.getParent()->getName());
+	checkRange((uint8 *)iba.getPtr(), (uint8 *)iba.getPtr() + iba.getParent()->getNumIndexes() * iba.getIndexNumBytes(), ptStart, length, iba.getParent()->getName());
 }
 
 // ************************************************************************************
 void nlCheckIBARange(CIndexBufferRead &iba, const uint8 *ptStart, uint length)
 {
-	checkRange((uint8 *) iba.getPtr(), (uint8 *) iba.getPtr() + iba.getParent()->getNumIndexes() * iba.getIndexNumBytes(), ptStart, length, iba.getParent()->getName());
+	checkRange((uint8 *)iba.getPtr(), (uint8 *)iba.getPtr() + iba.getParent()->getNumIndexes() * iba.getIndexNumBytes(), ptStart, length, iba.getParent()->getName());
 }
 
 // ************************************************************************************
 void nlCheckIBA(CIndexBufferReadWrite &iba, const uint8 *ptStart)
 {
-	checkRange((uint8 *) iba.getPtr(), (uint8 *) iba.getPtr() + iba.getParent()->getNumIndexes() * iba.getIndexNumBytes(), ptStart, 0, iba.getParent()->getName());
+	checkRange((uint8 *)iba.getPtr(), (uint8 *)iba.getPtr() + iba.getParent()->getNumIndexes() * iba.getIndexNumBytes(), ptStart, 0, iba.getParent()->getName());
 }
 
 // ************************************************************************************
 void nlCheckIBA(CIndexBufferRead &iba, const uint8 *ptStart)
 {
-	checkRange((uint8 *) iba.getPtr(), (uint8 *) iba.getPtr() + iba.getParent()->getNumIndexes() * iba.getIndexNumBytes(), ptStart, 0, iba.getParent()->getName());
+	checkRange((uint8 *)iba.getPtr(), (uint8 *)iba.getPtr() + iba.getParent()->getNumIndexes() * iba.getIndexNumBytes(), ptStart, 0, iba.getParent()->getName());
 }
 
 } // NL3D

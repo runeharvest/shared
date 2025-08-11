@@ -19,7 +19,7 @@
 // STL includes
 #include <stdio.h>
 #ifdef NL_OS_WINDOWS
-#	include <conio.h>
+#include <conio.h>
 #endif
 
 // NeL includes
@@ -62,31 +62,32 @@ static void initSample()
 {
 	if (!INelContext::isContextInitialised())
 		new CApplicationContext();
-	CPath::addSearchPath(NL_SOUND_DATA"/data", true, false);
-	
+	CPath::addSearchPath(NL_SOUND_DATA "/data", true, false);
+
 	printf("Sample demonstrating OGG playback using stream file .sound sheets.");
 	printf("\n\n");
-	
+
 	s_AudioMixer = UAudioMixer::createAudioMixer();
-	
+
 	// Set the sample path before init, this allow the mixer to build the sample banks
-	s_AudioMixer->setSamplePath(NL_SOUND_DATA"/data/samplebank");
+	s_AudioMixer->setSamplePath(NL_SOUND_DATA "/data/samplebank");
 	// Packed sheet option, this mean we want packed sheet generated in 'data' folder
-	s_AudioMixer->setPackedSheetOption(NL_SOUND_DATA"/data", true);
-	
+	s_AudioMixer->setPackedSheetOption(NL_SOUND_DATA "/data", true);
+
 	printf("Select NLSOUND Driver:\n");
 	printf(" [1] FMod\n");
 	printf(" [2] OpenAl\n");
 	printf(" [3] DSound\n");
 	printf(" [4] XAudio2\n");
 	printf("> ");
-	int selection = getchar(); getchar();
+	int selection = getchar();
+	getchar();
 	printf("\n");
-	
+
 	// init with 8 tracks, EAX enabled, no ADPCM, and automatic sample bank loading
 	s_AudioMixer->init(8, true, false, NULL, true, (UAudioMixer::TDriver)(selection - '0'));
 	s_AudioMixer->setLowWaterMark(1);
-	
+
 	CVector initpos(0.0f, 0.0f, 0.0f);
 	CVector frontvec(0.0f, 1.0f, 0.0f);
 	CVector upvec(0.0f, 0.0f, 1.0f);
@@ -94,14 +95,14 @@ static void initSample()
 	s_AudioMixer->getListener()->setOrientation(frontvec, upvec);
 
 	CPath::addSearchPath(RYZOM_DATA, true, false);
-	
-	//NLMISC::CHTimer::startBench();
+
+	// NLMISC::CHTimer::startBench();
 
 	s_Source = s_AudioMixer->createSource(CStringMapper::map("stream_file"));
 	nlassert(s_Source);
 	s_StreamFileSource = dynamic_cast<CStreamFileSource *>(s_Source);
 	nlassert(s_StreamFileSource);
-	// s_Source->setSourceRelativeMode(true);	
+	// s_Source->setSourceRelativeMode(true);
 	// s_Source->setPitch(2.0f);
 
 	s_GroupController = s_AudioMixer->getGroupController("sound:dialog");
@@ -110,10 +111,10 @@ static void initSample()
 static void runSample()
 {
 	s_Source->play();
-	
+
 	printf("Change volume with - and +\n");
 	printf("Press ANY other key to exit\n");
-	for (; ; )
+	for (;;)
 	{
 #ifdef NL_OS_WINDOWS
 		if (_kbhit())
@@ -153,21 +154,21 @@ static void runSample()
 		}
 
 		s_AudioMixer->update();
-		
+
 		nlSleep(40);
 	}
 }
 
 static void releaseSample()
 {
-	//NLMISC::CHTimer::clear();
+	// NLMISC::CHTimer::clear();
 	s_GroupController = NULL;
 	s_StreamFileSource = NULL;
-	delete s_Source; s_Source = NULL;
-	delete s_AudioMixer; s_AudioMixer = NULL;
+	delete s_Source;
+	s_Source = NULL;
+	delete s_AudioMixer;
+	s_AudioMixer = NULL;
 }
-
-
 
 } /* namespace NLSAMPLE */
 

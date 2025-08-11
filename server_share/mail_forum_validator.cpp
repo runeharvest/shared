@@ -17,8 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 // pch
 #include "stdpch.h"
 
@@ -33,31 +31,27 @@
 #include "game_share/shard_names.h"
 #include "game_share//r2_basic_types.h"
 
-
 using namespace std;
 using namespace NLMISC;
 using namespace NLNET;
 
-
-
 // Mail and forum shard id (default is 666, d'uh) -- DEPRECATED
-uint32			CMailForumValidator::_ShardId = 666;
+uint32 CMailForumValidator::_ShardId = 666;
 
 // Initialised yet?
-bool			CMailForumValidator::_Initialised = false;
+bool CMailForumValidator::_Initialised = false;
 
 // Mail notification
-CMailForumValidator::TMailNotification	CMailForumValidator::_Notification = NULL;
-
+CMailForumValidator::TMailNotification CMailForumValidator::_Notification = NULL;
 
 // Use Mail/Forum
-CVariable<bool>		UseMailForum("web", "UseMailForum", "Allow mail/forum validation", true, 0, true);
+CVariable<bool> UseMailForum("web", "UseMailForum", "Allow mail/forum validation", true, 0, true);
 
 // For a mainland shard (non ring), we need the session id to initialize the normal position stack with
 // the current far position after loading an old character file with no stored session id.
 // (Alternatively, the ServerAnimationModule could sent it to any mainland shard, looking up in the DB
 // ring:sessions).
-NLMISC::CVariable<uint32> FixedSessionId( "egs", "FixedSessionId", "For a mainland shard, the session id", 0, 0, true );
+NLMISC::CVariable<uint32> FixedSessionId("egs", "FixedSessionId", "For a mainland shard, the session id", 0, 0, true);
 
 /*
  * Constructor
@@ -67,20 +61,19 @@ CMailForumValidator::CMailForumValidator()
 }
 
 // Set mail notification
-void	CMailForumValidator::setNotification(TMailNotification callback)
+void CMailForumValidator::setNotification(TMailNotification callback)
 {
 	_Notification = callback;
 }
 
 /* get shard relative name */
-std::string		CMailForumValidator::getShardRelativeName(const std::string &s)
+std::string CMailForumValidator::getShardRelativeName(const std::string &s)
 {
-	std::string		relName;
-	TSessionId		dummy;
+	std::string relName;
+	TSessionId dummy;
 	CShardNames::getInstance().parseRelativeName(TSessionId(FixedSessionId), s, relName, dummy);
 	return relName;
 }
-
 
 /*
  * Validate mail/forum user entry
@@ -93,11 +86,11 @@ void CMailForumValidator::validateUserEntry(uint32 homeMainlandId, const string 
 	if (!init())
 		return;
 
-	CMessage	msgout("OPEN_SESSION");
+	CMessage msgout("OPEN_SESSION");
 
-//	uint32	shardid = IService::getInstance()->getShardId();
-	string	username = getShardRelativeName(userName);
-	string	c = cookie;
+	//	uint32	shardid = IService::getInstance()->getShardId();
+	string username = getShardRelativeName(userName);
+	string c = cookie;
 
 	msgout.serial(homeMainlandId, username, c);
 	CUnifiedNetwork::getInstance()->send("MFS", msgout);
@@ -114,20 +107,19 @@ void CMailForumValidator::unvalidateUserEntry(uint32 homeMainlandId, const strin
 	if (!init())
 		return;
 
-	CMessage	msgout("CLOSE_SESSION");
+	CMessage msgout("CLOSE_SESSION");
 
-//	uint32	shardid = IService::getInstance()->getShardId();
-	string	username = getShardRelativeName(userName);
+	//	uint32	shardid = IService::getInstance()->getShardId();
+	string username = getShardRelativeName(userName);
 
 	msgout.serial(homeMainlandId, username);
 	CUnifiedNetwork::getInstance()->send("MFS", msgout);
 }
 
-
 /*
  * Change player/guild name
  */
-void	CMailForumValidator::changeUserName(uint32 homeMainlandId, const std::string& oldname, const std::string& newname)
+void CMailForumValidator::changeUserName(uint32 homeMainlandId, const std::string &oldname, const std::string &newname)
 {
 	if (!UseMailForum.get())
 		return;
@@ -135,11 +127,11 @@ void	CMailForumValidator::changeUserName(uint32 homeMainlandId, const std::strin
 	if (!init())
 		return;
 
-	CMessage	msgout("CHANGE_UNAME");
+	CMessage msgout("CHANGE_UNAME");
 
-//	uint32	shardid = IService::getInstance()->getShardId();
-	string	oldName = getShardRelativeName(oldname);
-	string	newName = getShardRelativeName(newname);
+	//	uint32	shardid = IService::getInstance()->getShardId();
+	string oldName = getShardRelativeName(oldname);
+	string newName = getShardRelativeName(newname);
 
 	msgout.serial(homeMainlandId, oldName, newName);
 	CUnifiedNetwork::getInstance()->send("MFS", msgout);
@@ -152,7 +144,7 @@ void CMailForumValidator::removeUser(uint32 homeMainlandId, const std::string &u
 
 	CMessage msgout("REMOVE_USER");
 
-//	uint32 shardid = IService::getInstance()->getShardId();
+	//	uint32 shardid = IService::getInstance()->getShardId();
 	string username = getShardRelativeName(userName);
 
 	msgout.serial(homeMainlandId, username);
@@ -173,23 +165,22 @@ void CMailForumValidator::removeGuild(const std::string &guildName)
 	CUnifiedNetwork::getInstance()->send("MFS", msgout);
 }
 
-static TUnifiedCallbackItem CbArray[]=
-{
-	{ "MAIL_NOTIF",			CMailForumValidator::cbMailNotification },
+static TUnifiedCallbackItem CbArray[] = {
+	{ "MAIL_NOTIF", CMailForumValidator::cbMailNotification },
 };
 
 // received new mail!
-void	CMailForumValidator::cbMailNotification( NLNET::CMessage& msgin, const std::string &serviceName, TServiceId serviceId )
+void CMailForumValidator::cbMailNotification(NLNET::CMessage &msgin, const std::string &serviceName, TServiceId serviceId)
 {
-	uint32	shardId;
+	uint32 shardId;
 	msgin.serial(shardId);
 	if (shardId != IService::getInstance()->getShardId())
 		return;
 
-	string	toUser;
+	string toUser;
 	msgin.serial(toUser);
 
-	string	fromUser;
+	string fromUser;
 	if (msgin.getPos() < (sint32)msgin.length())
 	{
 		msgin.serial(fromUser);
@@ -205,19 +196,18 @@ void	CMailForumValidator::cbMailNotification( NLNET::CMessage& msgin, const std:
 	}
 }
 
-
 /*
  * init
  */
-bool	CMailForumValidator::init()
+bool CMailForumValidator::init()
 {
 	if (_Initialised)
 		return true;
 
 	_Initialised = true; // must be set immediately to avoid infinite recursion (see addService() below)
-						 // because init() called by service init() AND by CStatDB::cbMFServiceUp()
+	                     // because init() called by service init() AND by CStatDB::cbMFServiceUp()
 
-	IService	*service = IService::getInstance();
+	IService *service = IService::getInstance();
 
 	if (service == NULL)
 	{
@@ -226,13 +216,13 @@ bool	CMailForumValidator::init()
 		return false;
 	}
 
-	CConfigFile::CVar	*hostvar = service->ConfigFile.getVarPtr("MFSHost");
+	CConfigFile::CVar *hostvar = service->ConfigFile.getVarPtr("MFSHost");
 
 	if (hostvar != NULL && !hostvar->asString().empty())
 	{
 		string host = hostvar->asString();
-		if (host.find (":") == string::npos)
-			host+= ":43980";
+		if (host.find(":") == string::npos)
+			host += ":43980";
 
 		CUnifiedNetwork::getInstance()->addService("MFS", CInetHost(host)); // warning: can call the serviceUp callback => initMFS() again
 	}
@@ -242,7 +232,7 @@ bool	CMailForumValidator::init()
 		return false;
 	}
 
-	CUnifiedNetwork::getInstance()->addCallbackArray(CbArray, sizeof(CbArray)/sizeof(CbArray[0]));
+	CUnifiedNetwork::getInstance()->addCallbackArray(CbArray, sizeof(CbArray) / sizeof(CbArray[0]));
 
 	return true;
 }

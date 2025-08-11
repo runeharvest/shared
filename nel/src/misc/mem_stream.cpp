@@ -19,11 +19,10 @@
 #include "nel/misc/mem_stream.h"
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 void CMemStream::swap(CMemStream &other)
 {
@@ -33,44 +32,42 @@ void CMemStream::swap(CMemStream &other)
 	std::swap(_DefaultCapacity, other._DefaultCapacity);
 }
 
-
 /*
  * serial (inherited from IStream)
  */
 void CMemStream::serialBuffer(uint8 *buf, uint len)
 {
 	// commented for optimum performance
-//	nlassert (len > 0);
+	//	nlassert (len > 0);
 
 	if (len == 0)
 		return;
 
-	nlassert (buf != NULL);
+	nlassert(buf != NULL);
 
-	if ( isReading() )
+	if (isReading())
 	{
 		// Check that we don't read more than there is to read
-		//checkStreamSize(len);
+		// checkStreamSize(len);
 
 		uint32 pos = lengthS();
 		uint32 total = length();
-		if ( pos+len > total ) // calls virtual length (cf. sub messages)
+		if (pos + len > total) // calls virtual length (cf. sub messages)
 		{
-			throw EStreamOverflow( "CMemStream serialBuffer overflow: Read past %u bytes", total );
+			throw EStreamOverflow("CMemStream serialBuffer overflow: Read past %u bytes", total);
 		}
 
 		// Serialize in
-		CFastMem::memcpy( buf, _Buffer.getBuffer().getPtr()+_Buffer.Pos, len );
+		CFastMem::memcpy(buf, _Buffer.getBuffer().getPtr() + _Buffer.Pos, len);
 		_Buffer.Pos += len;
 	}
 	else
 	{
 		// Serialize out
 
-		increaseBufferIfNecessary (len);
-		CFastMem::memcpy( _Buffer.getBufferWrite().getPtr()+_Buffer.Pos, buf, len );
+		increaseBufferIfNecessary(len);
+		CFastMem::memcpy(_Buffer.getBufferWrite().getPtr() + _Buffer.Pos, buf, len);
 		_Buffer.Pos += len;
-
 	}
 }
 
@@ -80,18 +77,17 @@ void CMemStream::serialBuffer(uint8 *buf, uint len)
 void CMemStream::serialBit(bool &bit)
 {
 	uint8 u;
-	if ( isReading() )
+	if (isReading())
 	{
-		serial( u );
-		bit = (u!=0);
+		serial(u);
+		bit = (u != 0);
 	}
 	else
 	{
 		u = (uint8)bit;
-		serial( u );
+		serial(u);
 	}
 }
-
 
 /*
  * seek (inherited from IStream)
@@ -107,7 +103,7 @@ void CMemStream::serialBit(bool &bit)
  * (to prevent from an "inside serial" to increment it).
  * Then a seek(end) would get back to the pointer.
  */
-bool CMemStream::seek (sint32 offset, TSeekOrigin origin) const
+bool CMemStream::seek(sint32 offset, TSeekOrigin origin) const
 {
 	switch (origin)
 	{
@@ -119,9 +115,9 @@ bool CMemStream::seek (sint32 offset, TSeekOrigin origin) const
 		_Buffer.Pos = offset;
 		break;
 	case current:
-		if (getPos ()+offset > (sint)length())
+		if (getPos() + offset > (sint)length())
 			return false;
-		if (getPos ()+offset < 0)
+		if (getPos() + offset < 0)
 			return false;
 		_Buffer.Pos += offset;
 		break;
@@ -130,50 +126,48 @@ bool CMemStream::seek (sint32 offset, TSeekOrigin origin) const
 			return false;
 		if (offset > 0)
 			return false;
-		_Buffer.Pos = _Buffer.getBuffer().size()+offset;
+		_Buffer.Pos = _Buffer.getBuffer().size() + offset;
 		break;
 	}
 	return true;
 }
 
-
 /*
  * Resize the buffer.
  * Warning: the position is unchanged, only the size is changed.
  */
-void CMemStream::resize (uint32 size)
+void CMemStream::resize(uint32 size)
 {
 	if (size == length()) return;
 	// need to increase the buffer size
 	_Buffer.getBufferWrite().resize(size);
 }
 
-
 /*
  * Input: read from the stream until the next separator, and return the number of bytes read. The separator is then skipped.
  */
-uint CMemStream::serialSeparatedBufferIn( uint8 *buf, uint len )
+uint CMemStream::serialSeparatedBufferIn(uint8 *buf, uint len)
 {
-	nlassert( _StringMode && isReading() );
+	nlassert(_StringMode && isReading());
 
 	// Check that we don't read more than there is to read
-	if ( ( _Buffer.Pos == _Buffer.getBuffer().size() ) || // we are at the end
-		 ( ( lengthS()+len+SEP_SIZE > length() ) && (_Buffer.getBuffer()[_Buffer.getBuffer().size()-1] != SEPARATOR ) ) ) // we are before the end // calls virtual length (cf. sub messages)
+	if ((_Buffer.Pos == _Buffer.getBuffer().size()) || // we are at the end
+	    ((lengthS() + len + SEP_SIZE > length()) && (_Buffer.getBuffer()[_Buffer.getBuffer().size() - 1] != SEPARATOR))) // we are before the end // calls virtual length (cf. sub messages)
 	{
 		throw EStreamOverflow();
 	}
 	// Serialize in
 	uint32 i = 0;
-	const uint8	*pos = _Buffer.getBuffer().getPtr()+_Buffer.Pos;
-	while ( (i<len) && (*pos) != SEPARATOR )
+	const uint8 *pos = _Buffer.getBuffer().getPtr() + _Buffer.Pos;
+	while ((i < len) && (*pos) != SEPARATOR)
 	{
-		*(buf+i) = *pos;
+		*(buf + i) = *pos;
 		i++;
 		++pos;
 		++_Buffer.Pos;
 	}
 	// Exceeds len
-	if ( (*pos) != SEPARATOR )
+	if ((*pos) != SEPARATOR)
 	{
 		throw EStreamOverflow();
 	}
@@ -182,59 +176,55 @@ uint CMemStream::serialSeparatedBufferIn( uint8 *buf, uint len )
 	return i;
 }
 
-
 /*
  * Output: writes len bytes from buf into the stream
  */
-void CMemStream::serialSeparatedBufferOut( uint8 *buf, uint len )
+void CMemStream::serialSeparatedBufferOut(uint8 *buf, uint len)
 {
-	nlassert( _StringMode && (!isReading()) );
+	nlassert(_StringMode && (!isReading()));
 
 	// Serialize out
 	uint32 oldBufferSize = _Buffer.getBuffer().size();
 	if (_Buffer.Pos + (len + SEP_SIZE) > oldBufferSize)
 	{
 		// need to increase the buffer size
-		_Buffer.getBufferWrite().resize(oldBufferSize*2 + len + SEP_SIZE);
+		_Buffer.getBufferWrite().resize(oldBufferSize * 2 + len + SEP_SIZE);
 	}
 
-	CFastMem::memcpy( _Buffer.getBufferWrite().getPtr()+_Buffer.Pos, buf, len );
+	CFastMem::memcpy(_Buffer.getBufferWrite().getPtr() + _Buffer.Pos, buf, len);
 	_Buffer.Pos += len;
-	*(_Buffer.getBufferWrite().getPtr()+_Buffer.Pos) = SEPARATOR;
+	*(_Buffer.getBufferWrite().getPtr() + _Buffer.Pos) = SEPARATOR;
 	_Buffer.Pos += SEP_SIZE;
-
 }
 
 /* Returns a readable string to display it to the screen. It's only for debugging purpose!
  * Don't use it for anything else than to debugging, the string format could change in the future.
  * \param hexFormat If true, display all bytes in hexadecimal, else display as chars (above 31, otherwise '.')
  */
-std::string		CMemStream::toString( bool hexFormat ) const
+std::string CMemStream::toString(bool hexFormat) const
 {
 	std::string s;
 	uint32 len = length();
-	if ( hexFormat )
+	if (hexFormat)
 	{
-		for ( uint i=0; i!=len; ++i )
-			s += NLMISC::toString( "%2X ", buffer()[i] );
+		for (uint i = 0; i != len; ++i)
+			s += NLMISC::toString("%2X ", buffer()[i]);
 	}
 	else
 	{
-		for ( uint i=0; i!=len; ++i )
-			s += NLMISC::toString( "%c", (buffer()[i]>31) ? buffer()[i] : '.' );
+		for (uint i = 0; i != len; ++i)
+			s += NLMISC::toString("%c", (buffer()[i] > 31) ? buffer()[i] : '.');
 	}
 	return s;
 }
 
-
 // ***************************************************************************
-uint			CMemStream::getDbgStreamSize() const
+uint CMemStream::getDbgStreamSize() const
 {
-	if(isReading())
+	if (isReading())
 		return length();
 	else
 		return 0;
 }
-
 
 }

@@ -23,14 +23,10 @@
 #include "nel/3d/tess_list.h"
 #include "nel/3d/vegetable_sort_block.h"
 
+namespace NL3D {
 
-namespace NL3D
-{
-
-
-using NLMISC::CVector;
 using NLMISC::CPlane;
-
+using NLMISC::CVector;
 
 // ***************************************************************************
 /**
@@ -43,49 +39,42 @@ using NLMISC::CPlane;
 class CVegetableClipBlock : public CTessNodeList
 {
 public:
-
 	/// Constructor
 	CVegetableClipBlock();
 
-
-// ***************
+	// ***************
 private:
-	friend class	CVegetableManager;
-
+	friend class CVegetableManager;
 
 	/// \name Fast clipping.
 	// @{
-	bool				_Empty;
-	NLMISC::CAABBox		_BBox;
-	NLMISC::CBSphere	_BSphere;
+	bool _Empty;
+	NLMISC::CAABBox _BBox;
+	NLMISC::CBSphere _BSphere;
 
 	// extend sphere
-	void			extendSphere(const CVector &vec);
+	void extendSphere(const CVector &vec);
 	// extend bbox. Must not be empty. NB: do not modify the sphere
-	void			extendBBoxOnly(const CVector &vec);
+	void extendBBoxOnly(const CVector &vec);
 	// compute the sphere according to the bbox.
-	void			updateSphere();
+	void updateSphere();
 	// return false if empty or out of frustum
-	bool			clip(const std::vector<CPlane>	&pyramid);
+	bool clip(const std::vector<CPlane> &pyramid);
 
 	// @}
 
-
 private:
-
 	// List of SortBlocks.
-	CTessList<CVegetableSortBlock>		_SortBlockList;
+	CTessList<CVegetableSortBlock> _SortBlockList;
 
 	// The number of instanceGroups created in this clipBlock.
-	uint					_NumIgs;
+	uint _NumIgs;
 
 	// RenderList
-	CVegetableClipBlock		*_RenderNext;
+	CVegetableClipBlock *_RenderNext;
 };
 
-
 } // NL3D
-
 
 #endif // NL_VEGETABLE_CLIP_BLOCK_H
 

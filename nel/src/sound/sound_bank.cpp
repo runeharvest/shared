@@ -45,10 +45,9 @@ using namespace std;
 using namespace NLMISC;
 using namespace NLGEORGES;
 
-
 namespace NLSOUND {
 
-void CSoundBank::bufferUnloaded(const NLMISC::TStringId  &bufferName)
+void CSoundBank::bufferUnloaded(const NLMISC::TStringId &bufferName)
 {
 	TBufferAssocContainer::iterator it(_BufferAssoc.find(bufferName));
 
@@ -60,16 +59,16 @@ void CSoundBank::bufferUnloaded(const NLMISC::TStringId  &bufferName)
 		for (; first != last; ++first)
 		{
 			// remove the associated buffer.
-			CSimpleSound *ss = const_cast<CSimpleSound*>(*(first));
+			CSimpleSound *ss = const_cast<CSimpleSound *>(*(first));
 			ss->setBuffer(NULL);
 		}
 	}
 }
 
-//void CSoundBank::bufferLoaded(const std::string bufferName, IBuffer *buffer)
-void CSoundBank::bufferLoaded(const NLMISC::TStringId &/* bufferName */, IBuffer *buffer)
+// void CSoundBank::bufferLoaded(const std::string bufferName, IBuffer *buffer)
+void CSoundBank::bufferLoaded(const NLMISC::TStringId & /* bufferName */, IBuffer *buffer)
 {
-//	std::map<std::string, std::vector<TBufferAssoc> >::iterator it(_BufferAssoc.find(buffer->getName()));
+	//	std::map<std::string, std::vector<TBufferAssoc> >::iterator it(_BufferAssoc.find(buffer->getName()));
 	TBufferAssocContainer::iterator it(_BufferAssoc.find(buffer->getName()));
 
 	if (it != _BufferAssoc.end())
@@ -79,12 +78,11 @@ void CSoundBank::bufferLoaded(const NLMISC::TStringId &/* bufferName */, IBuffer
 		TSimpleSoundContainer::iterator first(it->second.begin()), last(it->second.end());
 		for (; first != last; ++first)
 		{
-			CSimpleSound *ss = const_cast<CSimpleSound*>(*(it->second.begin()));
+			CSimpleSound *ss = const_cast<CSimpleSound *>(*(it->second.begin()));
 			// restore the associated buffer.
 			ss->setBuffer(buffer);
 		}
 	}
-
 }
 
 void CSoundBank::registerBufferAssoc(CSimpleSound *sound, IBuffer *buffer)
@@ -96,7 +94,7 @@ void CSoundBank::registerBufferAssoc(CSimpleSound *sound, IBuffer *buffer)
 	}
 }
 
-void CSoundBank::unregisterBufferAssoc(CSimpleSound *sound, IBuffer * buffer)
+void CSoundBank::unregisterBufferAssoc(CSimpleSound *sound, IBuffer *buffer)
 {
 	if (buffer != NULL)
 	{
@@ -115,11 +113,9 @@ void CSoundBank::unregisterBufferAssoc(CSimpleSound *sound, IBuffer * buffer)
 				// last sound refenrecing this buffer
 				_BufferAssoc.erase(it);
 			}
-
 		}
 	}
 }
-
 
 /*
  * Destructor
@@ -141,7 +137,6 @@ void CSoundBank::removeSound(const NLMISC::TStringId &name)
 	_Sounds.erase(name);
 }
 
-
 /** Pseudo serializer for packed sheet loading/saving.
  *	This class act as a wrapper to create sound from
  *	xml document being read, call the serialisation method
@@ -156,22 +151,23 @@ public:
 
 	/// Default constructor.
 	CSoundSerializer()
-		: Sound(0)
-	{}
+	    : Sound(0)
+	{
+	}
 
 	// load the values using the george sheet (called by GEORGE::loadForm)
-	void readGeorges (const NLMISC::CSmartPtr<NLGEORGES::UForm> &form, const std::string &name)
+	void readGeorges(const NLMISC::CSmartPtr<NLGEORGES::UForm> &form, const std::string &name)
 	{
 		// just call the sound creation method with the xml form.
 		Sound = CSound::createSound(name, form->getRootNode());
 
 		// success ?
-//		if (_Sound != 0)
-//			CSoundBank::instance()->addSound(_Sound);
+		//		if (_Sound != 0)
+		//			CSoundBank::instance()->addSound(_Sound);
 	}
 
 	// load/save the values using the serial system (called by GEORGE::loadForm)
-	void serial (NLMISC::IStream &s)
+	void serial(NLMISC::IStream &s)
 	{
 		if (s.isReading())
 		{
@@ -179,11 +175,11 @@ public:
 			CSound::TSOUND_TYPE type = CSound::SOUND_SIMPLE;
 			s.serialEnum(type);
 			// read the sound name
-//			std::string name;
-//			s.serial(name);
+			//			std::string name;
+			//			s.serial(name);
 
 			// Instantiate the corresponding sound.
-			switch(CSound::TSOUND_TYPE(type))
+			switch (CSound::TSOUND_TYPE(type))
 			{
 			case CSound::SOUND_SIMPLE:
 				Sound = new CSimpleSound();
@@ -210,12 +206,12 @@ public:
 				Sound = 0;
 			}
 
-//			nlassert(_Sound != 0);
+			//			nlassert(_Sound != 0);
 			if (Sound)
 			{
 				// read the sound data
 				Sound->serial(s);
-//				CSoundBank::instance()->addSound(_Sound);
+				//				CSoundBank::instance()->addSound(_Sound);
 			}
 		}
 		else
@@ -225,7 +221,7 @@ public:
 				// the sound doesn't exist
 				uint32 i = std::numeric_limits<uint32>::max();
 				s.serialEnum(i);
-//				s.serial(std::string("bad sound"));
+				//				s.serial(std::string("bad sound"));
 			}
 			else
 			{
@@ -233,7 +229,7 @@ public:
 				CSound::TSOUND_TYPE type = Sound->getSoundType();
 				s.serialEnum(type);
 				// write the sound name
-//				s.serial(const_cast<std::string&>(_Sound->getName()));
+				//				s.serial(const_cast<std::string&>(_Sound->getName()));
 
 				// and write the sound data
 				Sound->serial(s);
@@ -249,15 +245,14 @@ public:
 		if (Sound != 0)
 		{
 			// we remove the sound from the bank and delete it.
-//			CSoundBank::instance()->removeSound(_Sound->getName());
+			//			CSoundBank::instance()->removeSound(_Sound->getName());
 			delete Sound;
 		}
 	}
 
 	// return the version of this class, increments this value when the content of this class changed
-	static uint getVersion () { return 3; }
+	static uint getVersion() { return 3; }
 };
-
 
 /** Load all the sound samples.
  *
@@ -283,11 +278,10 @@ void CSoundBank::load(const std::string &packedSheetDir, bool packedSheetUpdate)
 	Container.clear();
 }
 
-
 /*
  * Unload all the sound samples in this bank.
  */
-void				CSoundBank::unload()
+void CSoundBank::unload()
 {
 	nlassert(_Loaded);
 
@@ -300,35 +294,35 @@ void				CSoundBank::unload()
 	_Sounds.clear();
 	_Loaded = false;
 
-/*	vector<CSound*> vec;
+	/*	vector<CSound*> vec;
 
 
-	TSoundTable::iterator map_iter;
+	    TSoundTable::iterator map_iter;
 
-	for (map_iter = _Sounds.begin(); map_iter != _Sounds.end(); ++map_iter)
-	{
-		// We can't delete directly second because the map is based on second->getName()
-		vec.push_back( (*map_iter).second );
-	}
+	    for (map_iter = _Sounds.begin(); map_iter != _Sounds.end(); ++map_iter)
+	    {
+	        // We can't delete directly second because the map is based on second->getName()
+	        vec.push_back( (*map_iter).second );
+	    }
 
-	_Sounds.clear();
+	    _Sounds.clear();
 
-	vector<CSound*>::iterator vec_iter;
+	    vector<CSound*>::iterator vec_iter;
 
-	for (vec_iter = vec.begin(); vec_iter != vec.end(); ++vec_iter)
-	{
-		CSound *sound = *vec_iter;
-		delete sound;
-	}
+	    for (vec_iter = vec.begin(); vec_iter != vec.end(); ++vec_iter)
+	    {
+	        CSound *sound = *vec_iter;
+	        delete sound;
+	    }
 
-	_Loaded = false;
-*/
+	    _Loaded = false;
+	*/
 }
 
 /*
  * Returns true if the samples in this bank have been loaded.
  */
-bool				CSoundBank::isLoaded()
+bool CSoundBank::isLoaded()
 {
 	return _Loaded;
 }
@@ -336,11 +330,11 @@ bool				CSoundBank::isLoaded()
 /*
  * Return a sound sample corresponding to a name.
  */
-CSound*			CSoundBank::getSound(const NLMISC::TStringId &name)
+CSound *CSoundBank::getSound(const NLMISC::TStringId &name)
 {
 	// Find sound
 	TSoundTable::iterator iter = _Sounds.find(name);
-	if ( iter == _Sounds.end() )
+	if (iter == _Sounds.end())
 	{
 		return 0;
 	}
@@ -353,24 +347,22 @@ CSound*			CSoundBank::getSound(const NLMISC::TStringId &name)
 /**
  *  Return the names of the sounds
  */
-void				CSoundBank::getNames( std::vector<NLMISC::TStringId> &names )
+void CSoundBank::getNames(std::vector<NLMISC::TStringId> &names)
 {
 	TSoundTable::const_iterator iter;
 	for (iter = _Sounds.begin(); iter != _Sounds.end(); ++iter)
 	{
 		names.push_back((*iter).first);
-		//nlwarning("getting sound %s", (*iter).first);
+		// nlwarning("getting sound %s", (*iter).first);
 	}
 }
 
 /*
  * Return the number of buffers in this bank.
  */
-uint				CSoundBank::countSounds()
+uint CSoundBank::countSounds()
 {
 	return (uint)_Sounds.size();
 }
 
-
 } // namespace NLSOUND
-

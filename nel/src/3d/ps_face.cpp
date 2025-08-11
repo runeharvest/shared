@@ -29,8 +29,7 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 using NLMISC::CQuat;
 
@@ -39,10 +38,10 @@ using NLMISC::CQuat;
 ////////////////////////////
 
 /** Well, we could have put a method template in CPSFace, but some compilers
-  * want the definition of the methods in the header, and some compilers
-  * don't want friend with function template, so we use a static method template of a friend class instead,
-  * which gives us the same result :)
-  */
+ * want the definition of the methods in the header, and some compilers
+ * don't want friend with function template, so we use a static method template of a friend class instead,
+ * which gives us the same result :)
+ */
 class CPSFaceHelper
 {
 public:
@@ -80,14 +79,14 @@ public:
 			do
 			{
 				{
-					toProcess = leftFaces > (uint32) CPSQuad::quadBufSize ? (uint32) CPSQuad::quadBufSize : leftFaces;
+					toProcess = leftFaces > (uint32)CPSQuad::quadBufSize ? (uint32)CPSQuad::quadBufSize : leftFaces;
 					vb.setNumVertices(4 * toProcess);
 					CVertexBufferReadWrite vba;
-					vb.lock (vba);
-					currVertex = (uint8 *) vba.getVertexCoordPointer() ;
+					vb.lock(vba);
+					currVertex = (uint8 *)vba.getVertexCoordPointer();
 					if (f._SizeScheme)
 					{
-						ptSize = (float *) (f._SizeScheme->make(f._Owner, size - leftFaces, sizeBuf, sizeof(float), toProcess, true, srcStep));
+						ptSize = (float *)(f._SizeScheme->make(f._Owner, size - leftFaces, sizeBuf, sizeof(float), toProcess, true, srcStep));
 					}
 					else
 					{
@@ -100,58 +99,56 @@ public:
 					{
 						const CPlaneBasis &currBasis = f._PrecompBasis[*indexIt].Basis;
 						CHECK_VERTEX_BUFFER(vb, currVertex);
-						((CVector *) currVertex)->x = (*posIt).x  + *ptSize * currBasis.X.x;
-						((CVector *) currVertex)->y = (*posIt).y  + *ptSize * currBasis.X.y;
-						((CVector *) currVertex)->z = (*posIt).z  + *ptSize * currBasis.X.z;
+						((CVector *)currVertex)->x = (*posIt).x + *ptSize * currBasis.X.x;
+						((CVector *)currVertex)->y = (*posIt).y + *ptSize * currBasis.X.y;
+						((CVector *)currVertex)->z = (*posIt).z + *ptSize * currBasis.X.z;
 						currVertex += stride;
 
 						CHECK_VERTEX_BUFFER(vb, currVertex);
-						((CVector *) currVertex)->x = (*posIt).x  + *ptSize * currBasis.Y.x;
-						((CVector *) currVertex)->y = (*posIt).y  + *ptSize * currBasis.Y.y;
-						((CVector *) currVertex)->z = (*posIt).z  + *ptSize * currBasis.Y.z;
+						((CVector *)currVertex)->x = (*posIt).x + *ptSize * currBasis.Y.x;
+						((CVector *)currVertex)->y = (*posIt).y + *ptSize * currBasis.Y.y;
+						((CVector *)currVertex)->z = (*posIt).z + *ptSize * currBasis.Y.z;
 						currVertex += stride;
 
 						CHECK_VERTEX_BUFFER(vb, currVertex);
-						((CVector *) currVertex)->x = (*posIt).x  - *ptSize * currBasis.X.x;
-						((CVector *) currVertex)->y = (*posIt).y  - *ptSize * currBasis.X.y;
-						((CVector *) currVertex)->z = (*posIt).z  - *ptSize * currBasis.X.z;
+						((CVector *)currVertex)->x = (*posIt).x - *ptSize * currBasis.X.x;
+						((CVector *)currVertex)->y = (*posIt).y - *ptSize * currBasis.X.y;
+						((CVector *)currVertex)->z = (*posIt).z - *ptSize * currBasis.X.z;
 						currVertex += stride;
 
 						CHECK_VERTEX_BUFFER(vb, currVertex);
-						((CVector *) currVertex)->x = (*posIt).x  - *ptSize * currBasis.Y.x;
-						((CVector *) currVertex)->y = (*posIt).y  - *ptSize * currBasis.Y.y;
-						((CVector *) currVertex)->z = (*posIt).z  - *ptSize * currBasis.Y.z;
+						((CVector *)currVertex)->x = (*posIt).x - *ptSize * currBasis.Y.x;
+						((CVector *)currVertex)->y = (*posIt).y - *ptSize * currBasis.Y.y;
+						((CVector *)currVertex)->z = (*posIt).z - *ptSize * currBasis.Y.z;
 						currVertex += stride;
 						ptSize += ptSizeIncrement;
 						++indexIt;
 						++posIt;
-					}
-					while (posIt != endPosIt);
+					} while (posIt != endPosIt);
 				}
 				driver->activeVertexBuffer(vb),
-				driver->renderRawQuads(f._Mat, 0, toProcess);
+				    driver->renderRawQuads(f._Mat, 0, toProcess);
 				leftFaces -= toProcess;
-			}
-			while (leftFaces);
+			} while (leftFaces);
 		}
 		else
 		{
 			// must compute each particle basis at each time
 			static CPlaneBasis planeBasis[CPSQuad::quadBufSize]; // buffer to compute each particle basis
 			CPlaneBasis *currBasis;
-			uint32    ptPlaneBasisIncrement = f._PlaneBasisScheme ? 1 : 0;
+			uint32 ptPlaneBasisIncrement = f._PlaneBasisScheme ? 1 : 0;
 			const uint32 vSize = vb.getVertexSize();
 			do
 			{
 				{
-					toProcess = leftFaces > (uint32) CPSQuad::quadBufSize ? (uint32) CPSQuad::quadBufSize : leftFaces;
+					toProcess = leftFaces > (uint32)CPSQuad::quadBufSize ? (uint32)CPSQuad::quadBufSize : leftFaces;
 					vb.setNumVertices(4 * toProcess);
 					CVertexBufferReadWrite vba;
-					vb.lock (vba);
-					currVertex = (uint8 *) vba.getVertexCoordPointer() ;
+					vb.lock(vba);
+					currVertex = (uint8 *)vba.getVertexCoordPointer();
 					if (f._SizeScheme)
 					{
-						ptSize  = (float *) (f._SizeScheme->make(f._Owner, size - leftFaces, sizeBuf, sizeof(float), toProcess, true, srcStep));
+						ptSize = (float *)(f._SizeScheme->make(f._Owner, size - leftFaces, sizeBuf, sizeof(float), toProcess, true, srcStep));
 					}
 					else
 					{
@@ -160,7 +157,7 @@ public:
 
 					if (f._PlaneBasisScheme)
 					{
-						currBasis = (CPlaneBasis *) (f._PlaneBasisScheme->make(f._Owner, size - leftFaces, planeBasis, sizeof(CPlaneBasis), toProcess, true, srcStep));
+						currBasis = (CPlaneBasis *)(f._PlaneBasisScheme->make(f._Owner, size - leftFaces, planeBasis, sizeof(CPlaneBasis), toProcess, true, srcStep));
 					}
 					else
 					{
@@ -172,46 +169,45 @@ public:
 					{
 						// we use this instead of the + operator, because we avoid 4 constructor calls this way
 						CHECK_VERTEX_BUFFER(vb, currVertex);
-						((CVector *) currVertex)->x = (*posIt).x  + *ptSize * currBasis->X.x;
-						((CVector *) currVertex)->y = (*posIt).y  + *ptSize * currBasis->X.y;
-						((CVector *) currVertex)->z = (*posIt).z  + *ptSize * currBasis->X.z;
+						((CVector *)currVertex)->x = (*posIt).x + *ptSize * currBasis->X.x;
+						((CVector *)currVertex)->y = (*posIt).y + *ptSize * currBasis->X.y;
+						((CVector *)currVertex)->z = (*posIt).z + *ptSize * currBasis->X.z;
 						currVertex += vSize;
 
 						CHECK_VERTEX_BUFFER(vb, currVertex);
-						((CVector *) currVertex)->x = (*posIt).x  + *ptSize * currBasis->Y.x;
-						((CVector *) currVertex)->y = (*posIt).y  + *ptSize * currBasis->Y.y;
-						((CVector *) currVertex)->z = (*posIt).z  + *ptSize * currBasis->Y.z;
+						((CVector *)currVertex)->x = (*posIt).x + *ptSize * currBasis->Y.x;
+						((CVector *)currVertex)->y = (*posIt).y + *ptSize * currBasis->Y.y;
+						((CVector *)currVertex)->z = (*posIt).z + *ptSize * currBasis->Y.z;
 						currVertex += vSize;
 
 						CHECK_VERTEX_BUFFER(vb, currVertex);
-						((CVector *) currVertex)->x = (*posIt).x  - *ptSize * currBasis->X.x;
-						((CVector *) currVertex)->y = (*posIt).y  - *ptSize * currBasis->X.y;
-						((CVector *) currVertex)->z = (*posIt).z  - *ptSize * currBasis->X.z;
+						((CVector *)currVertex)->x = (*posIt).x - *ptSize * currBasis->X.x;
+						((CVector *)currVertex)->y = (*posIt).y - *ptSize * currBasis->X.y;
+						((CVector *)currVertex)->z = (*posIt).z - *ptSize * currBasis->X.z;
 						currVertex += vSize;
 
 						CHECK_VERTEX_BUFFER(vb, currVertex);
-						((CVector *) currVertex)->x = (*posIt).x  - *ptSize * currBasis->Y.x;
-						((CVector *) currVertex)->y = (*posIt).y  - *ptSize * currBasis->Y.y;
-						((CVector *) currVertex)->z = (*posIt).z  - *ptSize * currBasis->Y.z;
+						((CVector *)currVertex)->x = (*posIt).x - *ptSize * currBasis->Y.x;
+						((CVector *)currVertex)->y = (*posIt).y - *ptSize * currBasis->Y.y;
+						((CVector *)currVertex)->z = (*posIt).z - *ptSize * currBasis->Y.z;
 						currVertex += vSize;
 						ptSize += ptSizeIncrement;
 						++posIt;
 						currBasis += ptPlaneBasisIncrement;
-					}
-					while (posIt != endPosIt);
+					} while (posIt != endPosIt);
 				}
 				driver->activeVertexBuffer(vb);
 				driver->renderRawQuads(f._Mat, 0, toProcess);
 				leftFaces -= toProcess;
-			}
-			while (leftFaces);
+			} while (leftFaces);
 		}
 		PARTICLES_CHECK_MEM;
 	}
 };
 
 ///======================================================================================
-CPSFace::CPSFace(CSmartPtr<ITexture> tex) : CPSQuad(tex)
+CPSFace::CPSFace(CSmartPtr<ITexture> tex)
+    : CPSQuad(tex)
 {
 	NL_PS_FUNC(CPSFace_CPSFace)
 	if (CParticleSystem::getSerializeIdentifierFlag()) _Name = std::string("Face");
@@ -220,7 +216,7 @@ CPSFace::CPSFace(CSmartPtr<ITexture> tex) : CPSQuad(tex)
 ///======================================================================================
 void CPSFace::step(TPSProcessPass pass)
 {
-//	if (!FilterPS[1]) return;
+	//	if (!FilterPS[1]) return;
 	NL_PS_FUNC(CPSFace_step)
 	if (pass == PSToolRender) // edition mode only
 	{
@@ -233,7 +229,7 @@ void CPSFace::step(TPSProcessPass pass)
 		if (!_PrecompBasis.empty()) // do we use precomputed basis ?
 		{
 			// rotate all precomputed basis
-			for (CPSVector< CPlaneBasisPair >::V::iterator it = _PrecompBasis.begin(); it != _PrecompBasis.end(); ++it)
+			for (CPSVector<CPlaneBasisPair>::V::iterator it = _PrecompBasis.begin(); it != _PrecompBasis.end(); ++it)
 			{
 				// not optimized at all, but this will apply to very few elements anyway...
 				CMatrix mat;
@@ -244,24 +240,18 @@ void CPSFace::step(TPSProcessPass pass)
 		}
 		return;
 	}
-	else	// check this is the right pass
-	if (!
-		(	(pass == PSBlendRender && hasTransparentFaces())
-			|| (pass == PSSolidRender && hasOpaqueFaces())
-		)
-	   )
-	{
-		return;
-	}
-
-
+	else // check this is the right pass
+		if (!((pass == PSBlendRender && hasTransparentFaces())
+		        || (pass == PSSolidRender && hasOpaqueFaces())))
+		{
+			return;
+		}
 
 	if (!_Owner->getSize()) return;
 	uint32 step;
-	uint   numToProcess;
+	uint numToProcess;
 	computeSrcStep(step, numToProcess);
 	if (!numToProcess) return;
-
 
 	if (step == (1 << 16))
 	{
@@ -270,32 +260,28 @@ void CPSFace::step(TPSProcessPass pass)
 
 		/// draw the faces
 		CPSFaceHelper::drawFaces(_Owner->getPos().begin(),
-								 indexIt,
-								 *this,
-								 numToProcess,
-								 step
-								);
+		    indexIt,
+		    *this,
+		    numToProcess,
+		    step);
 	}
 	else
 	{
 		/// build index iterator
 		CAdvance1616Iterator<CPSVector<uint32>::V::const_iterator, const uint32>
-			indexIt(_IndexInPrecompBasis.begin(), 0, step);
+		    indexIt(_IndexInPrecompBasis.begin(), 0, step);
 		CPSFaceHelper::drawFaces(TIteratorVectStep1616(_Owner->getPos().begin(), 0, step),
-								 indexIt,
-								 *this,
-								 numToProcess,
-								 step
-								);
+		    indexIt,
+		    *this,
+		    numToProcess,
+		    step);
 	}
-
 }
-
 
 ///======================================================================================
 void CPSFace::serial(NLMISC::IStream &f)
 {
-	NL_PS_FUNC(CPSFace_IStream )
+	NL_PS_FUNC(CPSFace_IStream)
 	f.serialVersion(1);
 	CPSQuad::serial(f);
 	CPSRotated3DPlaneParticle::serialPlaneBasisScheme(f);
@@ -323,25 +309,18 @@ void CPSFace::serial(NLMISC::IStream &f)
 	}
 }
 
-
 ///======================================================================================
 /// this produce a random unit vector
 static CVector MakeRandomUnitVect(void)
 {
 	NL_PS_FUNC(MakeRandomUnitVect)
-	CVector v((float) ((rand() % 20000) - 10000)
-			  ,(float) ((rand() % 20000) - 10000)
-			  ,(float) ((rand() % 20000) - 10000)
-			  );
+	CVector v((float)((rand() % 20000) - 10000), (float)((rand() % 20000) - 10000), (float)((rand() % 20000) - 10000));
 	v.normalize();
 	return v;
 }
 
 ///======================================================================================
-void CPSFace::hintRotateTheSame(uint32 nbConfiguration
-						, float minAngularVelocity
-						, float maxAngularVelocity
-					  )
+void CPSFace::hintRotateTheSame(uint32 nbConfiguration, float minAngularVelocity, float maxAngularVelocity)
 {
 	NL_PS_FUNC(CPSFace_hintRotateTheSame)
 	_MinAngularVelocity = minAngularVelocity;
@@ -352,12 +331,11 @@ void CPSFace::hintRotateTheSame(uint32 nbConfiguration
 		// each precomp basis is created randomly;
 		for (uint k = 0; k < nbConfiguration; ++k)
 		{
-			 CVector v = MakeRandomUnitVect();
+			CVector v = MakeRandomUnitVect();
 			_PrecompBasis[k].Basis = CPlaneBasis(v);
 			_PrecompBasis[k].Axis = MakeRandomUnitVect();
 			_PrecompBasis[k].AngularVelocity = minAngularVelocity
-											   + (rand() % 20000) / 20000.f * (maxAngularVelocity - minAngularVelocity);
-
+			    + (rand() % 20000) / 20000.f * (maxAngularVelocity - minAngularVelocity);
 		}
 		// we need to do this because nbConfs may have changed
 		fillIndexesInPrecompBasis();
@@ -371,7 +349,7 @@ void CPSFace::fillIndexesInPrecompBasis(void)
 	const uint32 nbConf = (uint32)_PrecompBasis.size();
 	if (_Owner)
 	{
-		_IndexInPrecompBasis.resize( _Owner->getMaxSize() );
+		_IndexInPrecompBasis.resize(_Owner->getMaxSize());
 	}
 	for (CPSVector<uint32>::V::iterator it = _IndexInPrecompBasis.begin(); it != _IndexInPrecompBasis.end(); ++it)
 	{

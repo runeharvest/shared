@@ -16,26 +16,22 @@
 
 #include "std3d.h"
 
-
 #include "nel/3d/ps_util.h"
 #include "nel/3d/ps_emitter.h"
-
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
+namespace NL3D {
+void CPSUtil::registerEmitters()
 {
-	void CPSUtil::registerEmitters()
-	{
-		NL_PS_FUNC(	CPSUtil_registerEmitters)
-		NLMISC_REGISTER_CLASS(CPSEmitterOmni);
-		NLMISC_REGISTER_CLASS(CPSEmitterDirectionnal);
-		NLMISC_REGISTER_CLASS(CPSEmitterRectangle);
-		NLMISC_REGISTER_CLASS(CPSEmitterConic);
-		NLMISC_REGISTER_CLASS(CPSSphericalEmitter);
-		NLMISC_REGISTER_CLASS(CPSRadialEmitter);
-
-	}
+	NL_PS_FUNC(CPSUtil_registerEmitters)
+	NLMISC_REGISTER_CLASS(CPSEmitterOmni);
+	NLMISC_REGISTER_CLASS(CPSEmitterDirectionnal);
+	NLMISC_REGISTER_CLASS(CPSEmitterRectangle);
+	NLMISC_REGISTER_CLASS(CPSEmitterConic);
+	NLMISC_REGISTER_CLASS(CPSSphericalEmitter);
+	NLMISC_REGISTER_CLASS(CPSRadialEmitter);
+}
 } // NL3D

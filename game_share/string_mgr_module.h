@@ -35,137 +35,128 @@
 
 #include <map>
 #include <vector>
-namespace R2
+namespace R2 {
+
+/*
+Used to manage the creation / Destruction of Dynamic channel channel.
+When we can speak as a npc 'In this case we open a channel' and when we write in this channel we simulate that the npc is speaking
+When a npc is controlled and he want to talk. Its message are forwarded to this channel
+*/
+class CStringManagerModule;
+
+struct CDsrHandler
 {
+public:
+	CStringManagerModule *Module;
+	NLNET::TModuleId ModuleId;
+	virtual void execute(TDataSetRow &dsr) = 0;
+};
 
+struct TIncarn
+{
+public:
+	TChanID ChanId;
+	TDataSetRow NpcId;
+	void release();
+};
 
+struct ClientInfo
+{
+public:
+	NLNET::IModuleProxy *Proxy;
+	TSessionId SessionId;
 
-	/*
-	Used to manage the creation / Destruction of Dynamic channel channel.
-	When we can speak as a npc 'In this case we open a channel' and when we write in this channel we simulate that the npc is speaking
-	When a npc is controlled and he want to talk. Its message are forwarded to this channel
-	*/
-	class CStringManagerModule;
+	~ClientInfo();
 
-	struct CDsrHandler
-	{
-	public:
-		CStringManagerModule* Module;
-		NLNET::TModuleId ModuleId;
-		virtual void execute(TDataSetRow& dsr)=0;
-	};
+	TDataSetRow getIncarnation(TChanID chanId);
 
-	struct TIncarn{
-	public:
-		TChanID ChanId;
-		TDataSetRow NpcId;
-		void release();
-	};
+	TChanID getIncarnation(TDataSetRow npcId);
 
-	struct ClientInfo{
-	public:
-		NLNET::IModuleProxy* Proxy;
-		TSessionId SessionId;
+	bool incarn(TDataSetRow npcId);
 
-		~ClientInfo();
+	void addIncarnation(TChanID chanId, TDataSetRow &npcId);
 
-		TDataSetRow getIncarnation(TChanID chanId);
+	// release all channels used by this client
+	void clear();
 
-		TChanID getIncarnation(TDataSetRow npcId);
+	void removeIncarnation(TDataSetRow &npcId);
 
-		bool incarn(TDataSetRow npcId);
+private:
+	std::vector<TIncarn> _Incarnations;
+};
 
-		void addIncarnation(TChanID chanId,TDataSetRow& npcId);
+class CStringManagerModule : public NLNET::CModuleBase, public CStringTableManager
+{
+public:
+	CStringManagerModule();
 
-		//release all channels used by this client
-		void clear();
+	~CStringManagerModule();
 
-		void removeIncarnation(TDataSetRow& npcId);
+	void init(NLNET::IModuleSocket *clientGW, CDynamicMapService *server);
 
-	private:
+	virtual void onServiceUp(const std::string &serviceName, NLNET::TServiceId serviceId) { }
 
-		std::vector<TIncarn> _Incarnations;
-	};
+	virtual void onServiceDown(const std::string &serviceName, NLNET::TServiceId serviceId) { }
 
+	virtual void onModuleUpdate() { }
 
+	virtual void onApplicationExit();
 
+	virtual void onModuleUp(NLNET::IModuleProxy *moduleProxy);
 
-	class CStringManagerModule : public NLNET::CModuleBase, public CStringTableManager
-	{
-	public:
-		CStringManagerModule();
+	virtual void onModuleDown(NLNET::IModuleProxy *moduleProxy);
 
-		~CStringManagerModule();
+	virtual bool onProcessModuleMessage(NLNET::IModuleProxy *senderModuleProxy, const NLNET::CMessage &message);
 
-		void init(NLNET::IModuleSocket* clientGW,CDynamicMapService* server);
+	virtual void onModuleSecurityChange(NLNET::IModuleProxy *moduleProxy);
 
-		virtual void onServiceUp(const std::string &serviceName, NLNET::TServiceId serviceId) { }
+	virtual void onModuleSocketEvent(NLNET::IModuleSocket *moduleSocket, TModuleSocketEvent eventType) { }
 
-		virtual void onServiceDown(const std::string &serviceName, NLNET::TServiceId serviceId) {}
+	virtual void registerTableRequested(TSessionId sessionId, CObject *table);
 
-		virtual void onModuleUpdate() {}
+	virtual void registerTableRequested(const NLNET::CMessage &msgin);
 
-		virtual void onApplicationExit();
+	virtual void registerTableRequested(TSessionId sessionId, std::vector<std::pair<std::string, std::string>> &entries);
 
-		virtual void onModuleUp(NLNET::IModuleProxy *moduleProxy);
+	virtual void unregisterTableRequested(TSessionId sessionId);
 
-		virtual void onModuleDown(NLNET::IModuleProxy *moduleProxy);
+	virtual void translateAndForward(TDataSetRow senderId, CChatGroup::TGroupType groupType, std::string id, TSessionId sessionId);
 
-		virtual bool onProcessModuleMessage(NLNET::IModuleProxy *senderModuleProxy, const NLNET::CMessage &message);
+	virtual void translateAndForwardWithArg(TDataSetRow senderId, CChatGroup::TGroupType groupType, std::string id, TSessionId sessionId, std::vector<float> &val);
 
-		virtual void onModuleSecurityChange(NLNET::IModuleProxy *moduleProxy);
+	virtual void talkAs(NLNET::TModuleId &id, TDataSetRow &creaturRowId, std::string &name, TSessionId sessionId);
 
-		virtual void onModuleSocketEvent(NLNET::IModuleSocket *moduleSocket, TModuleSocketEvent eventType) {}
+	virtual void stopTalkAs(NLNET::TModuleId &id, TDataSetRow &npcId);
 
-		virtual void registerTableRequested(TSessionId sessionId,CObject* table);
+	virtual void forwardIncarnChat(TChanID id, TDataSetRow senderId, ucstring sentence);
 
-		virtual void registerTableRequested(const NLNET::CMessage& msgin);
+	virtual void sendTable(TSessionId sessionId, NLNET::IModuleProxy *moduleProxy);
 
-		virtual void registerTableRequested(TSessionId sessionId,std::vector<std::pair<std::string,std::string> >& entries);
+	virtual void sendIdList(TSessionId sessionId, NLNET::IModuleProxy *senderModuleProxy);
 
-		virtual void unregisterTableRequested(TSessionId sessionId);
+	virtual void sendStringValue(TSessionId sessionId, NLNET::IModuleProxy *moduleProxy, std::string id);
 
-		virtual void translateAndForward(TDataSetRow senderId,CChatGroup::TGroupType groupType,std::string id,TSessionId sessionId);
+	virtual void releaseChannels(TSessionId sessionId);
 
-		virtual void translateAndForwardWithArg(TDataSetRow senderId,CChatGroup::TGroupType groupType,std::string id,TSessionId sessionId,std::vector<float>& val);
+private:
+	static TChanID initChannel(std::string name = "", bool forwardInput = true);
 
-		virtual void talkAs(NLNET::TModuleId& id, TDataSetRow& creaturRowId,std::string& name,TSessionId sessionId);
+	virtual void send(TDataSetRow &senderId, CChatGroup::TGroupType groupType, const std::string &toSend);
 
-		virtual void stopTalkAs(NLNET::TModuleId& id,TDataSetRow& npcId);
+	virtual void insertClient(NLNET::IModuleProxy *moduleProxy, TChanID channelId);
 
-		virtual void forwardIncarnChat(TChanID id,TDataSetRow senderId,ucstring sentence);
+	virtual void removeClient(NLNET::IModuleProxy *moduleProxy);
 
-		virtual void sendTable(TSessionId sessionId,NLNET::IModuleProxy *moduleProxy);
+	virtual void addAnimSession(NLNET::TModuleId id, TSessionId scenarioId);
 
-		virtual void sendIdList(TSessionId sessionId,NLNET::IModuleProxy* senderModuleProxy);
+	void requestDsr(ucstring &name);
 
-		virtual void sendStringValue(TSessionId sessionId,NLNET::IModuleProxy* moduleProxy,std::string id);
+private:
+	std::map<uint32, TChanID> _AnimChans;
 
-		virtual void releaseChannels(TSessionId sessionId);
-
-
-	private:
-		static TChanID initChannel(std::string name="",bool forwardInput=true);
-
-		virtual void send(TDataSetRow& senderId,CChatGroup::TGroupType groupType,const std::string& toSend);
-
-		virtual void insertClient(NLNET::IModuleProxy *moduleProxy,TChanID channelId);
-
-		virtual void removeClient(NLNET::IModuleProxy *moduleProxy);
-
-		virtual void addAnimSession(NLNET::TModuleId id,TSessionId scenarioId);
-
-		void requestDsr( ucstring& name);
-
-	private:
-		std::map<uint32,TChanID> _AnimChans;
-
-		std::map<NLNET::TModuleId,ClientInfo* > _ClientChannels;
-		bool _AnimChan;
-	};
+	std::map<NLNET::TModuleId, ClientInfo *> _ClientChannels;
+	bool _AnimChan;
+};
 }
 
-
-
-
-#endif //STRING_MGR_MODULE_H
+#endif // STRING_MGR_MODULE_H

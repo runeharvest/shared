@@ -14,44 +14,41 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RYZOM_TEMP_INV_MODE_H
 #define RYZOM_TEMP_INV_MODE_H
 
 #include "nel/misc/types_nl.h"
 
-namespace TEMP_INV_MODE
+namespace TEMP_INV_MODE {
+// All the mode the temporary inventory can be opened (needed for Database SERVER:INVENTORY:TEMP:TYPE)
+enum TInventoryMode
 {
-	// All the mode the temporary inventory can be opened (needed for Database SERVER:INVENTORY:TEMP:TYPE)
-	enum TInventoryMode
-	{
-		Harvest = 0,
-		Loot,
-		Quarter,
-		Forage,
-		BagFull,
-		Craft,
-		MissionReward,
-		Crystallize,
+	Harvest = 0,
+	Loot,
+	Quarter,
+	Forage,
+	BagFull,
+	Craft,
+	MissionReward,
+	Crystallize,
 
-		NbModes,
-		Unknown,
-	};
+	NbModes,
+	Unknown,
+};
 
-	/**
-	 * get the right mode from the input string
-	 * \param str the input string
-	 * \return the TInventoryMode associated to this string (Unknown if the string cannot be interpreted)
-	 */
-	TInventoryMode toInvMode(const std::string &str);
+/**
+ * get the right mode from the input string
+ * \param str the input string
+ * \return the TInventoryMode associated to this string (Unknown if the string cannot be interpreted)
+ */
+TInventoryMode toInvMode(const std::string &str);
 
-	/**
-	 * get the string associated to a inv mode
-	 * \param family the TInventoryMode to convert into a string
-	 * \return the family as a string
-	 */
-	const std::string &toString(TInventoryMode mode);
+/**
+ * get the string associated to a inv mode
+ * \param family the TInventoryMode to convert into a string
+ * \return the family as a string
+ */
+const std::string &toString(TInventoryMode mode);
 
 }; // TEMP_INV_MODE
 

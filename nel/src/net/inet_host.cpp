@@ -244,7 +244,7 @@ void CInetHost::set(const std::string &hostname, uint16 port)
 #else
 	freeaddrinfo(res);
 #endif
-	
+
 	if (m_Addresses.empty())
 	{
 		m_Addresses.push_back(CInetAddress(CIPv6Address(), port));
@@ -328,7 +328,7 @@ std::string CInetHost::localHostName()
 CInetHost CInetHost::localAddresses(uint16 port, bool sort, bool loopback)
 {
 	CSock::initNetwork();
-	
+
 	CInetHost host;
 	std::set<CIPv6Address> addresses;
 	std::vector<CInetAddress> skipLoopback;
@@ -527,7 +527,7 @@ CInetHost CInetHost::localAddresses(uint16 port, bool sort, bool loopback)
 		freeifaddrs(ifaddr);
 	}
 #endif
-	
+
 	if (!host.m_Addresses.size() && skipLoopback.size())
 	{
 		nlwarning("The local hostname only resolves to %i loopback addresses, using them anyway", (int)skipLoopback.size());
@@ -707,7 +707,7 @@ std::string CInetHost::toString() const
 bool CInetHost::operator==(const CInetHost &other) const
 {
 	return m_Addresses == other.m_Addresses
-		|| (isAddressValid() && (m_Hostname == other.m_Hostname));
+	    || (isAddressValid() && (m_Hostname == other.m_Hostname));
 }
 
 CInetHost &CInetHost::operator=(const CInetHost &other)

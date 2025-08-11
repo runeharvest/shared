@@ -14,40 +14,36 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_MP_CATEGORY_H
 #define RY_MP_CATEGORY_H
 
 #include "nel/misc/types_nl.h"
 
-namespace MP_CATEGORY
+namespace MP_CATEGORY {
+enum TMPCategory
 {
-	enum TMPCategory
-	{
-		Exotic = 0,
-		Faber,
-		Upgrade,
+	Exotic = 0,
+	Faber,
+	Upgrade,
 
-		NbCategories,
+	NbCategories,
 
-		Undefined = NbCategories,
-	};
+	Undefined = NbCategories,
+};
 
+/**
+ * get the right mp category from the input string
+ * \param str the input string
+ * \return the TMPCategory associated to this string (UNDEFINED if the string cannot be interpreted)
+ */
+TMPCategory stringToMPCategory(const std::string &str);
 
-	/**
-	 * get the right mp category from the input string
-	 * \param str the input string
-	 * \return the TMPCategory associated to this string (UNDEFINED if the string cannot be interpreted)
-	 */
-	TMPCategory stringToMPCategory(const std::string &str);
-
-	/**
-	 * get the TMPCategory type as a string
-	 * \param cat the TMPCategory cat
-	 * \return the string associated to this TMPCategory
-	 */
-	const std::string & mpCategoryToString(TMPCategory cat);
+/**
+ * get the TMPCategory type as a string
+ * \param cat the TMPCategory cat
+ * \return the string associated to this TMPCategory
+ */
+const std::string &mpCategoryToString(TMPCategory cat);
 
 } // MP_CATEGORY
 

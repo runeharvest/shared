@@ -64,7 +64,7 @@ namespace NLMISC {
 /// String view literals allow bypassing allocation and strlen calls.
 /// CStringView is a 100% drop-in replacement for (const char *str, size_t len) tuples. It's a non-owning reference.
 /// Always use `CStringView` where previously `const std::string &` would have been used. It avoids accidental copy.
-/// Gotcha: CStringView doesn't need to end with \0, so there's no guarantee with functions that expect \0 terminated strings, 
+/// Gotcha: CStringView doesn't need to end with \0, so there's no guarantee with functions that expect \0 terminated strings,
 /// use the `nlsvc` macro to get a temporary C-string from a CStringView.
 /// Use the `nlsv` macro to get a CStringView from a string literal.
 /// Use the `nlstr` macro to get an std::string from a string literal.
@@ -75,9 +75,21 @@ using CStringView = std::string_view;
 class CStringView
 {
 public:
-	CStringView(const std::string &str) : m_Str(&str[0]), m_Len(str.size()) {}
-	CStringView(const char *const str, const size_t len) : m_Str(str), m_Len(len) {}
-	CStringView(const char *const str) : m_Str(str), m_Len(sizeof(str)) {}
+	CStringView(const std::string &str)
+	    : m_Str(&str[0])
+	    , m_Len(str.size())
+	{
+	}
+	CStringView(const char *const str, const size_t len)
+	    : m_Str(str)
+	    , m_Len(len)
+	{
+	}
+	CStringView(const char *const str)
+	    : m_Str(str)
+	    , m_Len(sizeof(str))
+	{
+	}
 
 	inline const char *data() const { return m_Str; }
 	inline size_t length() const { return m_Len; }
@@ -85,13 +97,24 @@ public:
 
 	inline CStringView substr(const size_t offset, const size_t count = -1) { return CStringView(m_Str + offset, std::min(m_Len - offset, count)); }
 
-	inline bool operator==(const CStringView o) { if (m_Len != o.m_Len) return false; return memcmp(m_Str, o.m_Str, m_Len) == 0; }
-	inline bool operator!=(const CStringView o) { if (m_Len != o.m_Len) return true; return memcmp(m_Str, o.m_Str, m_Len) != 0; }
+	inline bool operator==(const CStringView o)
+	{
+		if (m_Len != o.m_Len) return false;
+		return memcmp(m_Str, o.m_Str, m_Len) == 0;
+	}
+	inline bool operator!=(const CStringView o)
+	{
+		if (m_Len != o.m_Len) return true;
+		return memcmp(m_Str, o.m_Str, m_Len) != 0;
+	}
 
 	struct const_iterator
 	{
 	public:
-		const_iterator() : m_Addr(NULL) { }
+		const_iterator()
+		    : m_Addr(NULL)
+		{
+		}
 
 		inline void operator++()
 		{
@@ -115,9 +138,11 @@ public:
 
 	private:
 		friend class CStringView;
-		inline const_iterator(const char *addr) : m_Addr(addr) {}
+		inline const_iterator(const char *addr)
+		    : m_Addr(addr)
+		{
+		}
 		const char *m_Addr;
-
 	};
 
 	typedef const_iterator iterator;
@@ -128,7 +153,6 @@ public:
 private:
 	const char *m_Str;
 	size_t m_Len;
-
 };
 #endif
 

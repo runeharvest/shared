@@ -14,15 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_BASIC_EFFECT_H
 #define RY_BASIC_EFFECT_H
 
 #include "nel/misc/types_nl.h"
 #include "game_share/base_types.h"
 #include "game_share/effect_families.h"
-
 
 /**
  * <Class description>
@@ -34,25 +31,29 @@ class CBasicEffect
 {
 public:
 	/// Constructor
-	CBasicEffect(EFFECT_FAMILIES::TEffectFamily family, const TDataSetRow & creatorId, const TDataSetRow & targetRowId) 
-	: _CreatorRowId(creatorId), _TargetRowId(targetRowId), _Family(family), _EffectId(0)
+	CBasicEffect(EFFECT_FAMILIES::TEffectFamily family, const TDataSetRow &creatorId, const TDataSetRow &targetRowId)
+	    : _CreatorRowId(creatorId)
+	    , _TargetRowId(targetRowId)
+	    , _Family(family)
+	    , _EffectId(0)
 	{
 		_EffectId = ++_EffectCounter;
 	}
 
-	CBasicEffect( EFFECT_FAMILIES::TEffectFamily family, const TDataSetRow & creatorId, const TDataSetRow & targetRowId, uint32 effectId ) 
-		: _CreatorRowId(creatorId), _TargetRowId(targetRowId), _Family(family), _EffectId(effectId)
+	CBasicEffect(EFFECT_FAMILIES::TEffectFamily family, const TDataSetRow &creatorId, const TDataSetRow &targetRowId, uint32 effectId)
+	    : _CreatorRowId(creatorId)
+	    , _TargetRowId(targetRowId)
+	    , _Family(family)
+	    , _EffectId(effectId)
 	{
 	}
 
-
-
 	/// Destructor
-	virtual ~CBasicEffect() {}
+	virtual ~CBasicEffect() { }
 
 	/// get the effect creator Id
 	inline const TDataSetRow &creatorRowId() const { return _CreatorRowId; }
-	
+
 	/// get the effect target rowId
 	inline const TDataSetRow &targetRowId() const { return _TargetRowId; }
 
@@ -67,21 +68,20 @@ public:
 
 protected:
 	/// effect creator Id
-	TDataSetRow						_CreatorRowId;
+	TDataSetRow _CreatorRowId;
 
 	/// effect target Id
-	TDataSetRow						_TargetRowId;
+	TDataSetRow _TargetRowId;
 
 	/// effect family
-	EFFECT_FAMILIES::TEffectFamily	_Family;
+	EFFECT_FAMILIES::TEffectFamily _Family;
 
 	/// effect ID
-	uint32							_EffectId;
+	uint32 _EffectId;
 
 	/// counter, increased by one with every effect creation, give a unique Id per effect
-	static uint32					_EffectCounter;
+	static uint32 _EffectCounter;
 };
-
 
 #endif // RY_BASIC_EFFECT_H
 

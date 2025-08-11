@@ -22,16 +22,13 @@
 
 #include "nel/3d/mesh_base_instance.h"
 
+namespace NL3D {
 
-namespace NL3D
-{
-
-class	CMeshGeom;
+class CMeshGeom;
 
 // ***************************************************************************
 // ClassIds.
-const NLMISC::CClassId		MeshMultiLodInstanceId=NLMISC::CClassId(0x1ade6ef8, 0x75c5a84);
-
+const NLMISC::CClassId MeshMultiLodInstanceId = NLMISC::CClassId(0x1ade6ef8, 0x75c5a84);
 
 // ***************************************************************************
 /**
@@ -44,92 +41,86 @@ const NLMISC::CClassId		MeshMultiLodInstanceId=NLMISC::CClassId(0x1ade6ef8, 0x75
 class CMeshMultiLodInstance : public CMeshBaseInstance
 {
 public:
-
 	/// Ctor
-	CMeshMultiLodInstance ();
+	CMeshMultiLodInstance();
 
 	/// Dstructor
-	~CMeshMultiLodInstance ();
+	~CMeshMultiLodInstance();
 
 	/** Change MRM Distance setup. See CMeshBaseInstance::changeMRMDistanceSetup()
 	 */
-	virtual void		changeMRMDistanceSetup(float distanceFinest, float distanceMiddle, float distanceCoarsest);
-
+	virtual void changeMRMDistanceSetup(float distanceFinest, float distanceMiddle, float distanceCoarsest);
 
 	enum
 	{
-		Lod0Blend		=	0x1,
+		Lod0Blend = 0x1,
 	};
 
 	/// Call at the beginning of the program, to register the model
-	static	void	registerBasic();
+	static void registerBasic();
 
 	/// Last Matrix date for Lods
-	uint64			_LastLodMatrixDate;
+	uint64 _LastLodMatrixDate;
 
 	/// Last Lighting date for Lods
-	sint64			_LastLodLightingDate;
-
+	sint64 _LastLodLightingDate;
 
 	// return the contribution of lights (for Coarse Mesh render).
-	const CLightContribution	&getLightContribution() {return _LightContribution;}
+	const CLightContribution &getLightContribution() { return _LightContribution; }
 
 	// Override the shape coarse mesh distance (-1 if not overriden)
-	void			 setCoarseMeshDist(float dist) { _CoarseMeshDistance = dist; }
-	float            getCoarseMeshDist() const { return _CoarseMeshDistance; }
+	void setCoarseMeshDist(float dist) { _CoarseMeshDistance = dist; }
+	float getCoarseMeshDist() const { return _CoarseMeshDistance; }
 
 	// From CTransformShape
-	virtual float				getNumTriangles (float distance);
+	virtual float getNumTriangles(float distance);
 
 	// called at instanciation
-	void			initRenderFilterType();
+	void initRenderFilterType();
 
 	/// \name CTransform traverse specialisation
 	// @{
 	/** Additionally to std loadBalancing, it compues Lod related states
 	 */
-	virtual void	traverseLoadBalancing();
+	virtual void traverseLoadBalancing();
 	// @}
 
 private:
-
 	/// Computed first lod to display for this distance
-	uint	Lod0;
-	uint	Lod1;
+	uint Lod0;
+	uint Lod1;
 
 	/// Active blending on lod 0
-	uint	Flags;
+	uint Flags;
 
 	/// Coarse mesh transformed and Lighted. NB: array allocated at instanciation. => no allocation during time.
-	std::vector<uint8>		_CoarseMeshVB;
-	CMeshGeom				*_LastCoarseMesh;
-	uint					_LastCoarseMeshNumVertices;
+	std::vector<uint8> _CoarseMeshVB;
+	CMeshGeom *_LastCoarseMesh;
+	uint _LastCoarseMeshNumVertices;
 
 	/// Computed polygon count for the load balancing result
-	float	PolygonCountLod0;
-	float	PolygonCountLod1;
+	float PolygonCountLod0;
+	float PolygonCountLod1;
 
 	/// Alpha blending to use
-	float	BlendFactor;
+	float BlendFactor;
 
 	/// Corse mesh distance (-1 is the one for the mesh is used)
-	float   _CoarseMeshDistance;
+	float _CoarseMeshDistance;
 
-	static CTransform	*creator() {return new CMeshMultiLodInstance;}
-	friend	class CMeshMultiLod;
+	static CTransform *creator() { return new CMeshMultiLodInstance; }
+	friend class CMeshMultiLod;
 
 	/// get average color for Sun lighting. Get result from _LightContribution
-	CRGBA			getCoarseMeshLighting();
+	CRGBA getCoarseMeshLighting();
 
 	// Methods to fill The coarse VBuffer
-	void			setUVCoarseMesh( CMeshGeom &geom, uint vtDstSize, uint dstUvOff );
-	void			setPosCoarseMesh( CMeshGeom &geom, const CMatrix &matrix, uint vtDstSize );
-	void			setColorCoarseMesh( CRGBA color, uint vtDstSize, uint dstColorOff );
+	void setUVCoarseMesh(CMeshGeom &geom, uint vtDstSize, uint dstUvOff);
+	void setPosCoarseMesh(CMeshGeom &geom, const CMatrix &matrix, uint vtDstSize);
+	void setColorCoarseMesh(CRGBA color, uint vtDstSize, uint dstColorOff);
 };
 
-
 } // NL3D
-
 
 #endif // NL_MESH_MULTI_LOD_INSTANCE_H
 

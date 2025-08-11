@@ -41,9 +41,9 @@ namespace NLSOUND {
  * \brief IAudioDecoder
  * \date 2008-08-30 11:38GMT
  * \author Jan Boon (Kaetemi)
- * IAudioDecoder is only used by the driver implementation to stream 
+ * IAudioDecoder is only used by the driver implementation to stream
  * music files into a readable format (it's a simple decoder interface).
- * You should not call these functions (getSongTitle) on nlsound or user level, 
+ * You should not call these functions (getSongTitle) on nlsound or user level,
  * as a driver might have additional music types implemented.
  * TODO: Split IAudioDecoder into IAudioDecoder (actual decoding) and IMediaDemuxer (stream splitter), and change the interface to make more sense.
  * TODO: Allow user application to register more decoders.
@@ -68,7 +68,7 @@ public:
 
 	/// Get information on a music file (only artist and title at the moment).
 	static bool getInfo(const std::string &filepath, std::string &artist, std::string &title, float &length);
-	
+
 	/// Get audio/container extensions that are currently supported by the nel sound library.
 	static void getMusicExtensions(std::vector<std::string> &extensions);
 

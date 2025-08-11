@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_PROPERTY_ALLOCATOR_CLIENT_H
 #define NL_PROPERTY_ALLOCATOR_CLIENT_H
 
@@ -25,9 +23,8 @@
 
 #include <limits>
 
-namespace NLNET
-{
-	class CMessage;
+namespace NLNET {
+class CMessage;
 };
 
 /**
@@ -40,48 +37,49 @@ namespace NLNET
 class CPropertyAllocatorClient : public CPropertyAllocator
 {
 public:
-
 	/// Constructor
-	CPropertyAllocatorClient() : _LocalMSId(std::numeric_limits<uint16>::max()) {}
+	CPropertyAllocatorClient()
+	    : _LocalMSId(std::numeric_limits<uint16>::max())
+	{
+	}
 
 	/** Ask to allocate, if not done yet, a segment for the specified property.
 	 * The pointer will be soon returned by getPropertySegment(), but not always
 	 * immediately (getPropertySegment() will return NULL when the information
 	 * is not ready yet).
 	 */
-	void		allocProperty( const std::string& propName, TPropSubscribingOptions options, const std::string notifyGroupByPropName );
+	void allocProperty(const std::string &propName, TPropSubscribingOptions options, const std::string notifyGroupByPropName);
 
 	/// Unallocate property
-	void		unallocProperty( const std::string& propName );
+	void unallocProperty(const std::string &propName);
 
 	/// Set the local mirror service id (~0 for none)
-	void		setLocalMirrorServiceId( NLNET::TServiceId serviceId )
-				{ _LocalMSId = serviceId; }
+	void setLocalMirrorServiceId(NLNET::TServiceId serviceId)
+	{
+		_LocalMSId = serviceId;
+	}
 
 	/// Return the local mirror service id
-	NLNET::TServiceId		mirrorServiceId() const { return _LocalMSId; }
+	NLNET::TServiceId mirrorServiceId() const { return _LocalMSId; }
 
 	///
-	void		serialOutMirrorInfo( NLNET::CMessage& msgout );
+	void serialOutMirrorInfo(NLNET::CMessage &msgout);
 
 protected:
-
 	friend class CMirror;
 	friend class CMirroredDataSet;
 
 	/// Access a shared property segment
-	void		*accessPropertySegment( const std::string& propName, sint32 smid );
+	void *accessPropertySegment(const std::string &propName, sint32 smid);
 
 	/// Access a shared property segment if this service did not subscribed to it (return NULL if already accessed)
-	void		*accessOtherPropertySegment( sint32 smid );
+	void *accessOtherPropertySegment(sint32 smid);
 
-	friend void cbRecvSMIdToAccessPropertySegment( NLNET::CMessage& msgin, const std::string &serviceName, NLNET::TServiceId serviceId );
+	friend void cbRecvSMIdToAccessPropertySegment(NLNET::CMessage &msgin, const std::string &serviceName, NLNET::TServiceId serviceId);
 
 private:
-
-	NLNET::TServiceId		_LocalMSId;
+	NLNET::TServiceId _LocalMSId;
 };
-
 
 #endif // NL_PROPERTY_ALLOCATOR_CLIENT_H
 

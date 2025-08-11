@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
 #ifndef TICK_PROXY_TIME_MEASURE_H
 #define TICK_PROXY_TIME_MEASURE_H
 
@@ -34,17 +31,30 @@ inline TAccurateTime getAccurateTime()
 }
 
 // Depending of the unit of getAccurateTimeInTicks()
-inline uint16 accTimeToMs( TAccurateTime timeInAccurateUnit )
+inline uint16 accTimeToMs(TAccurateTime timeInAccurateUnit)
 {
-	return uint16(timeInAccurateUnit&0xffff);
+	return uint16(timeInAccurateUnit & 0xffff);
 }
 
+typedef const char **TMeasureTypeToCString;
 
-typedef const char* *TMeasureTypeToCString;
-
-enum TServiceTimeMeasureType { TickTockInterval, TickUpdateDuration, PrevProcessMirrorUpdateDuration, PrevReceiveMsgsViaMirrorDuration, PrevTotalGameCycleDuration, NbServiceTimeMeasureTypes };
-enum TMirrorTimeMeasureType { WaitAllReceivedDeltaDuration, BuildAndSendDeltaDuration, PrevApplyReceivedDeltaDuration, PrevSendUMMDuration, NbMirrorTimeMeasureTypes };
-
+enum TServiceTimeMeasureType
+{
+	TickTockInterval,
+	TickUpdateDuration,
+	PrevProcessMirrorUpdateDuration,
+	PrevReceiveMsgsViaMirrorDuration,
+	PrevTotalGameCycleDuration,
+	NbServiceTimeMeasureTypes
+};
+enum TMirrorTimeMeasureType
+{
+	WaitAllReceivedDeltaDuration,
+	BuildAndSendDeltaDuration,
+	PrevApplyReceivedDeltaDuration,
+	PrevSendUMMDuration,
+	NbMirrorTimeMeasureTypes
+};
 
 /**
  *
@@ -53,91 +63,100 @@ template <int N>
 class CTimeMeasure
 {
 public:
-
-	uint16	V [N];
-
-	///
-	CTimeMeasure( uint16 constant=0 ) { for ( uint i=0; i!=N; ++i ) V[i] = constant; }
+	uint16 V[N];
 
 	///
-	uint16&			operator[] ( uint i ) { return V[i]; }
-
-	///
-	const uint16&	operator[] ( uint i ) const { return V[i]; }
-
-	///
-	uint16			size() const { return N; }
-
-	///
-	void			serial( NLMISC::IStream& s ) { for ( uint i=0; i!=N; ++i ) s.serial( V[i] ); }
-
-	///
-	void			displayStat( NLMISC::CLog *log, TMeasureTypeToCString toCstr, uint divideBy=1 ) const
+	CTimeMeasure(uint16 constant = 0)
 	{
-		if ( divideBy != 0 )
-		{
-			for ( uint i=0; i!=N; ++i )
-				log->displayRawNL( "\t\t%s: %hu", toCstr[i], V[i] / divideBy );
-		}
-		else
-			log->displayRawNL( "\t\t<No data>" );
+		for (uint i = 0; i != N; ++i) V[i] = constant;
 	}
 
 	///
-	CTimeMeasure&	operator= ( uint16 constant ) { for ( uint i=0; i!=N; ++i ) V[i] = constant; return *this; }
+	uint16 &operator[](uint i) { return V[i]; }
 
 	///
-	CTimeMeasure	operator / (uint16 constant) const
+	const uint16 &operator[](uint i) const { return V[i]; }
+
+	///
+	uint16 size() const { return N; }
+
+	///
+	void serial(NLMISC::IStream &s)
+	{
+		for (uint i = 0; i != N; ++i) s.serial(V[i]);
+	}
+
+	///
+	void displayStat(NLMISC::CLog *log, TMeasureTypeToCString toCstr, uint divideBy = 1) const
+	{
+		if (divideBy != 0)
+		{
+			for (uint i = 0; i != N; ++i)
+				log->displayRawNL("\t\t%s: %hu", toCstr[i], V[i] / divideBy);
+		}
+		else
+			log->displayRawNL("\t\t<No data>");
+	}
+
+	///
+	CTimeMeasure &operator=(uint16 constant)
+	{
+		for (uint i = 0; i != N; ++i) V[i] = constant;
+		return *this;
+	}
+
+	///
+	CTimeMeasure operator/(uint16 constant) const
 	{
 		CTimeMeasure<N> nm;
-		for ( uint i=0; i!=N; ++i )
+		for (uint i = 0; i != N; ++i)
 			nm.V[i] = V[i] / constant;
 		return nm;
 	}
 
-/*#if defined( _MSC_VER )
-	friend CTimeMeasure	operator/ ( const CTimeMeasure& m, uint16 constant );
-#else
-	template <int M> friend CTimeMeasure operator/ ( const CTimeMeasure& m, uint16 constant );
-#endif
-*/
+	/*#if defined( _MSC_VER )
+	    friend CTimeMeasure	operator/ ( const CTimeMeasure& m, uint16 constant );
+	#else
+	    template <int M> friend CTimeMeasure operator/ ( const CTimeMeasure& m, uint16 constant );
+	#endif
+	*/
 	///
-	void	operator+= ( const CTimeMeasure& other )
+	void operator+=(const CTimeMeasure &other)
 	{
-		for ( uint i=0; i!=N; ++i )
+		for (uint i = 0; i != N; ++i)
 			V[i] += other.V[i];
 	}
 
 	///
-	void			copyLowerValues( const CTimeMeasure& src )
+	void copyLowerValues(const CTimeMeasure &src)
 	{
-		for ( uint i=0; i!=N; ++i )
+		for (uint i = 0; i != N; ++i)
 		{
-			if ( src.V[i] < V[i] )
+			if (src.V[i] < V[i])
 				V[i] = src.V[i];
 		}
 	}
 
 	///
-	void			copyHigherValues( const CTimeMeasure& src )
+	void copyHigherValues(const CTimeMeasure &src)
 	{
-		for ( uint i=0; i!=N; ++i )
+		for (uint i = 0; i != N; ++i)
 		{
-			if ( src.V[i] > V[i] )
+			if (src.V[i] > V[i])
 				V[i] = src.V[i];
 		}
 	}
 };
 
 ///
-//template <int N>
-//CTimeMeasure<N>	operator/ ( const CTimeMeasure<N>& m, uint16 constant )
+// template <int N>
+// CTimeMeasure<N>	operator/ ( const CTimeMeasure<N>& m, uint16 constant )
 //{
 //	CTimeMeasure<N> nm;
 //	for ( uint i=0; i!=N; ++i )
 //		nm.V[i] = m.V[i] / constant;
 //	return nm;
-//}
+// }
 
 typedef CTimeMeasure<NbServiceTimeMeasureTypes> CServiceTimeMeasure;
 typedef CTimeMeasure<NbMirrorTimeMeasureTypes> CMirrorTimeMeasure;
@@ -148,20 +167,17 @@ typedef CTimeMeasure<NbMirrorTimeMeasureTypes> CMirrorTimeMeasure;
 class CServiceGameCycleTimeMeasure
 {
 public:
+	CServiceTimeMeasure ServiceMeasure;
 
-
-	CServiceTimeMeasure	ServiceMeasure;
-
-	NLNET::TServiceId	ClientServiceId;
+	NLNET::TServiceId ClientServiceId;
 
 	///
-	void			serial( NLMISC::IStream& s )
+	void serial(NLMISC::IStream &s)
 	{
-		s.serial( ServiceMeasure );
-		s.serial( ClientServiceId );
+		s.serial(ServiceMeasure);
+		s.serial(ClientServiceId);
 	}
 };
-
 
 /**
  *
@@ -169,38 +185,15 @@ public:
 class CMirrorGameCycleTimeMeasure
 {
 public:
-
-	std::vector<CServiceGameCycleTimeMeasure>	ServiceMeasures;
-	CMirrorTimeMeasure							MirrorMeasure;
+	std::vector<CServiceGameCycleTimeMeasure> ServiceMeasures;
+	CMirrorTimeMeasure MirrorMeasure;
 
 	///
-	void			serial( NLMISC::IStream& s )
+	void serial(NLMISC::IStream &s)
 	{
-		s.serialCont( ServiceMeasures );
-		s.serial( MirrorMeasure );
+		s.serialCont(ServiceMeasures);
+		s.serial(MirrorMeasure);
 	}
 };
 
-
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

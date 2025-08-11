@@ -60,8 +60,8 @@ void CStreamedPackage::makePath(std::string &result, const CHashKey &hash)
 {
 	std::string lowerHash = NLMISC::toLowerAscii(hash.toString());
 	result = std::string("/") + lowerHash.substr(0, 2)
-		+ "/" + lowerHash.substr(2, 2)
-		+ "/" + lowerHash.substr(4);
+	    + "/" + lowerHash.substr(2, 2)
+	    + "/" + lowerHash.substr(4);
 }
 
 } /* namespace NLMISC */

@@ -18,28 +18,28 @@
 
 #include "far_position.h"
 
-
 /*
  * Constructor
  */
-CFarPosition::CFarPosition() : SessionId(0)
+CFarPosition::CFarPosition()
+    : SessionId(0)
 {
 }
 
 //----------------------------------------------------------------------------
-bool COfflineEntityState::operator == (const COfflineEntityState &other ) const
+bool COfflineEntityState::operator==(const COfflineEntityState &other) const
 {
-	return ( other.X == X && other.Y == Y && other.Z == Z && other.Heading == Heading );
+	return (other.X == X && other.Y == Y && other.Z == Z && other.Heading == Heading);
 }
 
 //----------------------------------------------------------------------------
-bool CFarPosition::operator == (const CFarPosition &other ) const
+bool CFarPosition::operator==(const CFarPosition &other) const
 {
-	return ( other.PosState == PosState && other.SessionId == SessionId );
+	return (other.PosState == PosState && other.SessionId == SessionId);
 }
 
 //----------------------------------------------------------------------------
 std::string COfflineEntityState::toString() const
 {
-	return NLMISC::toString( "%d %d %d %g", X, Y, Z, Heading );
+	return NLMISC::toString("%d %d %d %g", X, Y, Z, Heading);
 }

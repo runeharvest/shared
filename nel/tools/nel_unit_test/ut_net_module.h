@@ -31,21 +31,19 @@
 class CModuleType0 : public NLNET::CModuleBase
 {
 public:
+	uint PingCount;
+	uint ResponseReceived;
 
-	uint	PingCount;
-	uint	ResponseReceived;
+	set<NLNET::TModuleProxyPtr> ModuleType0;
 
-	set<NLNET::TModuleProxyPtr>	ModuleType0;
-
-	uint32	ModuleUpCalled;
-	uint32	ModuleDownCalled;
-	uint32	ProcessMessageCalled;
-	uint32	SecurityUpdateCalled;
-
+	uint32 ModuleUpCalled;
+	uint32 ModuleDownCalled;
+	uint32 ProcessMessageCalled;
+	uint32 SecurityUpdateCalled;
 
 	CModuleType0()
-		: PingCount(0),
-		ResponseReceived(0)
+	    : PingCount(0)
+	    , ResponseReceived(0)
 	{
 		ModuleUpCalled = 0;
 		ModuleDownCalled = 0;
@@ -53,7 +51,7 @@ public:
 		SecurityUpdateCalled = 0;
 	}
 
-	std::string					buildModuleManifest() const
+	std::string buildModuleManifest() const
 	{
 		return "CModuleType0";
 	}
@@ -67,24 +65,24 @@ public:
 		return ret;
 	}
 
-	void				onServiceUp(const std::string &serviceName, NLNET::TServiceId serviceId)
+	void onServiceUp(const std::string &serviceName, NLNET::TServiceId serviceId)
 	{
 	}
 	/// A nel layer 5 service has stopped.
-	void				onServiceDown(const std::string &serviceName, NLNET::TServiceId serviceId) 
+	void onServiceDown(const std::string &serviceName, NLNET::TServiceId serviceId)
 	{
 	}
-	void				onModuleUpdate()
+	void onModuleUpdate()
 	{
 	}
 	/** The service main loop is terminating it job', all module will be
 	 *	disconnected and removed after this callback.
 	 */
-	void				onApplicationExit() 
+	void onApplicationExit()
 	{
 	}
 
-	void				onModuleUp(NLNET::IModuleProxy *moduleProxy)
+	void onModuleUp(NLNET::IModuleProxy *moduleProxy)
 	{
 		ModuleUpCalled++;
 
@@ -95,7 +93,7 @@ public:
 	 *	module has been deleted OR has been no more accessible (due to
 	 *	some gateway disconnection).
 	 */
-	void				onModuleDown(NLNET::IModuleProxy *moduleProxy)
+	void onModuleDown(NLNET::IModuleProxy *moduleProxy)
 	{
 		ModuleDownCalled++;
 
@@ -103,7 +101,7 @@ public:
 			ModuleType0.erase(moduleProxy);
 	}
 
-	bool				onProcessModuleMessage(NLNET::IModuleProxy *senderModuleProxy, const NLNET::CMessage &message)
+	bool onProcessModuleMessage(NLNET::IModuleProxy *senderModuleProxy, const NLNET::CMessage &message)
 	{
 		ProcessMessageCalled++;
 
@@ -138,23 +136,23 @@ public:
 		return false;
 	}
 
-	void				onModuleSecurityChange(NLNET::IModuleProxy *moduleProxy)
+	void onModuleSecurityChange(NLNET::IModuleProxy *moduleProxy)
 	{
 		SecurityUpdateCalled++;
 	}
 
-	void				onModuleSocketEvent(NLNET::IModuleSocket *moduleSocket, IModule::TModuleSocketEvent eventType)
+	void onModuleSocketEvent(NLNET::IModuleSocket *moduleSocket, IModule::TModuleSocketEvent eventType)
 	{
 	}
 
 	void startTaskA()
 	{
-		// start a task on module 
+		// start a task on module
 		NLNET_START_MODULE_TASK(CModuleType0, taskA);
 	}
 
-	// test task A 
-	void		taskA()
+	// test task A
+	void taskA()
 	{
 		// use the first like me in the list
 		nlassert(!ModuleType0.empty());
@@ -177,8 +175,8 @@ public:
 		NLNET_START_MODULE_TASK(CModuleType0, taskB);
 	}
 
-	// test task B 
-	void		taskB()
+	// test task B
+	void taskB()
 	{
 		// use the first like me in the list
 		nlassert(!ModuleType0.empty());
@@ -193,12 +191,11 @@ public:
 		{
 			invokeModuleOperation(proxy, msg, resp);
 		}
-		catch(const IModule::EInvokeFailed &)
+		catch (const IModule::EInvokeFailed &)
 		{
 			ResponseReceived++;
 		}
 	}
-
 };
 
 NLNET_REGISTER_MODULE_FACTORY(CModuleType0, "ModuleType0");
@@ -207,10 +204,9 @@ NLNET_REGISTER_MODULE_FACTORY(CModuleType0, "ModuleType0");
 class CModuleAsync : public CModuleType0
 {
 public:
-
-	bool isImmediateDispatchingSupported() const 
-	{ 
-		return false; 
+	bool isImmediateDispatchingSupported() const
+	{
+		return false;
 	}
 };
 
@@ -227,10 +223,10 @@ enum TTestSecurityTypes
 // security type 1 data : contains host gateway name
 struct TSecurityType1 : public NLNET::TSecurityData
 {
-	string	SecurityGatewayName;
+	string SecurityGatewayName;
 
 	TSecurityType1(const TCtorParam &param)
-		: NLNET::TSecurityData(param)
+	    : NLNET::TSecurityData(param)
 	{
 	}
 
@@ -238,20 +234,18 @@ struct TSecurityType1 : public NLNET::TSecurityData
 	{
 		s.serial(SecurityGatewayName);
 	}
-
 };
 
 NLMISC_REGISTER_OBJECT(NLNET::TSecurityData, TSecurityType1, uint8, tst_type1);
 
-
 // security type 2 data : contains host gateway name and a predefined integer value
 struct TSecurityType2 : public NLNET::TSecurityData
 {
-	string	SecurityGatewayName;
-	uint32	IntegerValue;
+	string SecurityGatewayName;
+	uint32 IntegerValue;
 
 	TSecurityType2(const TCtorParam &param)
-		: NLNET::TSecurityData(param)
+	    : NLNET::TSecurityData(param)
 	{
 		IntegerValue = 0x12345678;
 	}
@@ -265,14 +259,13 @@ struct TSecurityType2 : public NLNET::TSecurityData
 
 NLMISC_REGISTER_OBJECT(NLNET::TSecurityData, TSecurityType2, uint8, tst_type2);
 
-
 // security type 3 data, same as type 1
 struct TSecurityType3 : public NLNET::TSecurityData
 {
-	string	SecurityGatewayName;
+	string SecurityGatewayName;
 
 	TSecurityType3(const TCtorParam &param)
-		: NLNET::TSecurityData(param)
+	    : NLNET::TSecurityData(param)
 	{
 	}
 
@@ -280,17 +273,16 @@ struct TSecurityType3 : public NLNET::TSecurityData
 	{
 		s.serial(SecurityGatewayName);
 	}
-
 };
 NLMISC_REGISTER_OBJECT(NLNET::TSecurityData, TSecurityType3, uint8, tst_type3);
 
 // security type 4 data, same as type 1 but not registered
 struct TSecurityType4 : public NLNET::TSecurityData
 {
-	string	SecurityGatewayName;
+	string SecurityGatewayName;
 
 	TSecurityType4(const TCtorParam &param)
-		: NLNET::TSecurityData(param)
+	    : NLNET::TSecurityData(param)
 	{
 	}
 
@@ -308,8 +300,9 @@ class CTestSecurity1 : public NLNET::CGatewaySecurity
 {
 public:
 	CTestSecurity1(const TCtorParam &params)
-		: NLNET::CGatewaySecurity(params)
-	{}
+	    : NLNET::CGatewaySecurity(params)
+	{
+	}
 
 	virtual void onNewProxy(NLNET::IModuleProxy *proxy)
 	{
@@ -350,11 +343,11 @@ public:
 
 	virtual void onDelete()
 	{
-		vector<NLNET::IModuleProxy*>	proxies;
+		vector<NLNET::IModuleProxy *> proxies;
 		_Gateway->getModuleProxyList(proxies);
 
 		// remove any security data managed by this plug-in
-		for (uint i=0; i<proxies.size(); ++i)
+		for (uint i = 0; i < proxies.size(); ++i)
 		{
 			NLNET::IModuleProxy *proxy = proxies[i];
 			if (proxy->getFirstSecurityData() != NULL)
@@ -367,7 +360,6 @@ public:
 			}
 		}
 	}
-
 };
 NLMISC_REGISTER_OBJECT(NLNET::CGatewaySecurity, CTestSecurity1, std::string, "TestSecurity1");
 
@@ -377,8 +369,9 @@ class CTestSecurity2 : public NLNET::CGatewaySecurity
 {
 public:
 	CTestSecurity2(const TCtorParam &params)
-		: NLNET::CGatewaySecurity(params)
-	{}
+	    : NLNET::CGatewaySecurity(params)
+	{
+	}
 
 	virtual void onNewProxy(NLNET::IModuleProxy *proxy)
 	{
@@ -404,11 +397,11 @@ public:
 
 	virtual void onDelete()
 	{
-		vector<NLNET::IModuleProxy*>	proxies;
+		vector<NLNET::IModuleProxy *> proxies;
 		_Gateway->getModuleProxyList(proxies);
 
 		// remove any security data managed by this plug-in
-		for (uint i=0; i<proxies.size(); ++i)
+		for (uint i = 0; i < proxies.size(); ++i)
 		{
 			NLNET::IModuleProxy *proxy = proxies[i];
 			if (proxy->getGatewayRoute() == NULL)
@@ -422,49 +415,48 @@ public:
 };
 NLMISC_REGISTER_OBJECT(NLNET::CGatewaySecurity, CTestSecurity2, std::string, "TestSecurity2");
 
-
 // A module interceptor
 class CInterceptor : public NLNET::IModuleInterceptable
 {
 public:
-	string	Name;
-	uint32	ModuleUpCalled;
-	uint32	ModuleDownCalled;
-	uint32	ProcessMessageCalled;
-	uint32	SecurityUpdateCalled;
+	string Name;
+	uint32 ModuleUpCalled;
+	uint32 ModuleDownCalled;
+	uint32 ProcessMessageCalled;
+	uint32 SecurityUpdateCalled;
 
 	CInterceptor(NLNET::IInterceptorRegistrar *registrar, const string &name)
-		:	Name(name)
+	    : Name(name)
 	{
 		NLNET::IModuleInterceptable::registerInterceptor(registrar),
-		ModuleUpCalled = 0;
+		    ModuleUpCalled = 0;
 		ModuleDownCalled = 0;
 		ProcessMessageCalled = 0;
 		SecurityUpdateCalled = 0;
 	}
 
-	virtual std::string			buildModuleManifest() const
+	virtual std::string buildModuleManifest() const
 	{
 		return Name;
 	}
 
-	virtual void				onModuleUp(NLNET::IModuleProxy *moduleProxy)
+	virtual void onModuleUp(NLNET::IModuleProxy *moduleProxy)
 	{
 		ModuleUpCalled++;
 	}
 
-	virtual void				onModuleDown(NLNET::IModuleProxy *moduleProxy)
+	virtual void onModuleDown(NLNET::IModuleProxy *moduleProxy)
 	{
 		ModuleDownCalled++;
 	}
 
-	virtual bool				onProcessModuleMessage(NLNET::IModuleProxy *senderModuleProxy, const NLNET::CMessage &message)
+	virtual bool onProcessModuleMessage(NLNET::IModuleProxy *senderModuleProxy, const NLNET::CMessage &message)
 	{
 		ProcessMessageCalled++;
 		return false;
 	}
 
-	virtual void				onModuleSecurityChange(NLNET::IModuleProxy *moduleProxy)
+	virtual void onModuleSecurityChange(NLNET::IModuleProxy *moduleProxy)
 	{
 		SecurityUpdateCalled++;
 	}
@@ -473,15 +465,15 @@ public:
 // Test suite for Modules class
 class CUTNetModule : public Test::Suite
 {
-	string	_WorkingPath;
-	string	_RestorePath;
+	string _WorkingPath;
+	string _RestorePath;
 
 public:
 	// utility to look for a specified proxy in a vector of proxy
 	// return true if the proxy if found
-	bool lookForModuleProxy(const vector<NLNET::IModuleProxy*> proxList, const std::string &modName)
+	bool lookForModuleProxy(const vector<NLNET::IModuleProxy *> proxList, const std::string &modName)
 	{
-		for (uint i=0; i<proxList.size(); ++i)
+		for (uint i = 0; i < proxList.size(); ++i)
 		{
 			if (proxList[i]->getModuleName().find(modName) == (proxList[i]->getModuleName().size() - modName.size()))
 				return true;
@@ -492,10 +484,10 @@ public:
 
 	NLNET::IModuleProxy *retrieveModuleProxy(NLNET::IModuleGateway *gw, const std::string &modName)
 	{
-		vector<NLNET::IModuleProxy*> proxList;
+		vector<NLNET::IModuleProxy *> proxList;
 		gw->getModuleProxyList(proxList);
 
-		for (uint i=0; i<proxList.size(); ++i)
+		for (uint i = 0; i < proxList.size(); ++i)
 		{
 			if (proxList[i]->getModuleName().find(modName) == (proxList[i]->getModuleName().size() - modName.size()))
 				return proxList[i];
@@ -516,20 +508,20 @@ public:
 		NLMISC::CPath::setCurrentPath(_RestorePath.c_str());
 	}
 
-	CUTNetModule ()
+	CUTNetModule()
 	{
 		TEST_ADD(CUTNetModule::testModuleInitInfoParsing);
 		TEST_ADD(CUTNetModule::testModuleInitInfoQuering);
 		TEST_ADD(CUTNetModule::testModuleInitInfoBadParsing);
 		TEST_ADD(CUTNetModule::localModuleFactory);
-		//TEST_ADD(CUTNetModule::loadModuleLib);
-		//TEST_ADD(CUTNetModule::createModule);
-		//TEST_ADD(CUTNetModule::deleteModule);
+		// TEST_ADD(CUTNetModule::loadModuleLib);
+		// TEST_ADD(CUTNetModule::createModule);
+		// TEST_ADD(CUTNetModule::deleteModule);
 		TEST_ADD(CUTNetModule::failedInit);
-		//TEST_ADD(CUTNetModule::unloadModuleLib);
+		// TEST_ADD(CUTNetModule::unloadModuleLib);
 		TEST_ADD(CUTNetModule::createLocalGateway);
 		TEST_ADD(CUTNetModule::plugLocalGateway);
-		//TEST_ADD(CUTNetModule::moduleManagerCommands);
+		// TEST_ADD(CUTNetModule::moduleManagerCommands);
 		TEST_ADD(CUTNetModule::gatewayTransportManagement);
 		TEST_ADD(CUTNetModule::connectGateways);
 		TEST_ADD(CUTNetModule::moduleDisclosure);
@@ -559,7 +551,7 @@ public:
 		NLNET::IModule *gw = mm.createModule("StandardGateway", "gw", "");
 		NLNET::IModule *mod = mm.createModule("ModuleType0", "mod", "");
 		NLNET::IModuleGateway *gGw = dynamic_cast<NLNET::IModuleGateway *>(gw);
-		CModuleType0 *mod0 = dynamic_cast<CModuleType0*>(mod);
+		CModuleType0 *mod0 = dynamic_cast<CModuleType0 *>(mod);
 
 		TEST_ASSERT(gGw != NULL);
 		TEST_ASSERT(mod0 != NULL);
@@ -573,7 +565,7 @@ public:
 		cr.execute("mod.plug gw", NLMISC::InfoLog());
 
 		// update the network
-		for (uint i=0; i<5; ++i)
+		for (uint i = 0; i < 5; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(40);
@@ -586,7 +578,7 @@ public:
 		modProx->sendModuleMessage(gw, msg);
 
 		// update the network
-		for (uint i=0; i<5; ++i)
+		for (uint i = 0; i < 5; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(40);
@@ -600,7 +592,7 @@ public:
 		cr.execute("mod.unplug gw", NLMISC::InfoLog());
 
 		// update the network
-		for (uint i=0; i<5; ++i)
+		for (uint i = 0; i < 5; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(40);
@@ -612,18 +604,17 @@ public:
 		TEST_ASSERT(mod0->ModuleUpCalled == 1);
 		TEST_ASSERT(mod0->ModuleDownCalled == 1);
 		TEST_ASSERT(mod0->ProcessMessageCalled == 1);
-//		TEST_ASSERT(mod0->SecurityUpdateCalled);
-		
+		//		TEST_ASSERT(mod0->SecurityUpdateCalled);
+
 		TEST_ASSERT(inter0->ModuleUpCalled == 1);
 		TEST_ASSERT(inter0->ModuleDownCalled == 1);
 		TEST_ASSERT(inter0->ProcessMessageCalled == 1);
-//		TEST_ASSERT(inter0->SecurityUpdateCalled);
-		
+		//		TEST_ASSERT(inter0->SecurityUpdateCalled);
+
 		TEST_ASSERT(inter1->ModuleUpCalled == 1);
 		TEST_ASSERT(inter1->ModuleDownCalled == 1);
 		TEST_ASSERT(inter1->ProcessMessageCalled == 1);
-//		TEST_ASSERT(inter1->SecurityUpdateCalled);
-
+		//		TEST_ASSERT(inter1->SecurityUpdateCalled);
 
 		// delete the modules
 		mm.deleteModule(gw);
@@ -633,10 +624,10 @@ public:
 		delete inter0;
 		delete inter1;
 	}
-	
+
 	void layer3Autoconnect()
 	{
-		// Check that layer 3 client can automatically reconnect in case of server 
+		// Check that layer 3 client can automatically reconnect in case of server
 		// down/up
 		//
 		//	We create two gateway, gw1 and gw2, plugged in themselves, then we create
@@ -647,7 +638,6 @@ public:
 		//	are diconnected and reopen the L3 server and recheck that module are connected.
 		//
 		//
-
 
 		NLNET::IModuleManager &mm = NLNET::IModuleManager::getInstance();
 		NLMISC::CCommandRegistry &cr = NLMISC::CCommandRegistry::getInstance();
@@ -668,7 +658,7 @@ public:
 		cr.execute("gw1.transportCmd l3c(connect addr=localhost:8062)", NLMISC::InfoLog());
 
 		// update the network
-		for (uint i=0; i<5; ++i)
+		for (uint i = 0; i < 5; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(40);
@@ -680,9 +670,9 @@ public:
 		// open the server
 		cr.execute("gw2.transportAdd L3Server l3s", NLMISC::InfoLog());
 		cr.execute("gw2.transportCmd l3s(open port=8062)", NLMISC::InfoLog());
-		
+
 		// update the network (give more time because we must cover the Layer3 client reconnection timer)
-		for (uint i=0; i<40; ++i)
+		for (uint i = 0; i < 40; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(50);
@@ -693,11 +683,11 @@ public:
 		TEST_ASSERT(retrieveModuleProxy(gGw1, "gw2") != NULL);
 
 		// exchange some message
-		cr.execute("gw1.sendPing "+gw2->getModuleFullyQualifiedName(), NLMISC::InfoLog());
-		cr.execute("gw2.sendPing "+gw1->getModuleFullyQualifiedName(), NLMISC::InfoLog());
+		cr.execute("gw1.sendPing " + gw2->getModuleFullyQualifiedName(), NLMISC::InfoLog());
+		cr.execute("gw2.sendPing " + gw1->getModuleFullyQualifiedName(), NLMISC::InfoLog());
 
 		// update the network
-		for (uint i=0; i<5; ++i)
+		for (uint i = 0; i < 5; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(40);
@@ -708,14 +698,14 @@ public:
 		TEST_ASSERT(gGw2->getReceivedPingCount() == 1);
 
 		// flood a little with ping
-		for (uint i=0; i<100; ++i)
-			cr.execute("gw1.sendPing "+gw2->getModuleFullyQualifiedName(), NLMISC::InfoLog());
+		for (uint i = 0; i < 100; ++i)
+			cr.execute("gw1.sendPing " + gw2->getModuleFullyQualifiedName(), NLMISC::InfoLog());
 
 		// close the server
 		cr.execute("gw2.transportCmd l3s(close)", NLMISC::InfoLog());
 
 		// update the network
-		for (uint i=0; i<5; ++i)
+		for (uint i = 0; i < 5; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(40);
@@ -729,7 +719,7 @@ public:
 		cr.execute("gw2.transportCmd l3s(open port=8062)", NLMISC::InfoLog());
 
 		// update the network (give more time because we must cover the Layer3 client reconnection timer)
-		for (uint i=0; i<40; ++i)
+		for (uint i = 0; i < 40; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(50);
@@ -740,11 +730,11 @@ public:
 		TEST_ASSERT(retrieveModuleProxy(gGw2, "gw1") != NULL);
 
 		// exchange some message
-		cr.execute("gw1.sendPing "+gw2->getModuleFullyQualifiedName(), NLMISC::InfoLog());
-		cr.execute("gw2.sendPing "+gw1->getModuleFullyQualifiedName(), NLMISC::InfoLog());
+		cr.execute("gw1.sendPing " + gw2->getModuleFullyQualifiedName(), NLMISC::InfoLog());
+		cr.execute("gw2.sendPing " + gw1->getModuleFullyQualifiedName(), NLMISC::InfoLog());
 
 		// update the network
-		for (uint i=0; i<5; ++i)
+		for (uint i = 0; i < 5; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(40);
@@ -767,7 +757,6 @@ public:
 		NLNET::IModuleManager &mm = NLNET::IModuleManager::getInstance();
 		NLMISC::CCommandRegistry &cr = NLMISC::CCommandRegistry::getInstance();
 
-
 		// create the modules
 		NLNET::IModule *gw = mm.createModule("StandardGateway", "gw", "");
 		NLNET::IModule *m1 = mm.createModule("ModuleType0", "m1", "");
@@ -778,7 +767,7 @@ public:
 		cr.execute("m2.plug gw", NLMISC::InfoLog());
 
 		// update the network
-		for (uint i=0; i<15; ++i)
+		for (uint i = 0; i < 15; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(40);
@@ -790,12 +779,11 @@ public:
 		mod1->startTaskA();
 
 		// update the network
-		for (uint i=0; i<5; ++i)
+		for (uint i = 0; i < 5; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(40);
 		}
-
 
 		TEST_ASSERT(mod1->PingCount == 4);
 		TEST_ASSERT(mod1->ResponseReceived == 1);
@@ -804,12 +792,11 @@ public:
 		mod1->startTaskB();
 
 		// update the network
-		for (uint i=0; i<5; ++i)
+		for (uint i = 0; i < 5; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(40);
 		}
-
 
 		TEST_ASSERT(mod1->PingCount == 4);
 		TEST_ASSERT(mod1->ResponseReceived == 2);
@@ -834,9 +821,9 @@ public:
 		//          |                        |
 		//    SecurityPlugin2          SecurityPlugin1
 		//
-		//	After connecting and plugging-in each gateway into themselves, 
+		//	After connecting and plugging-in each gateway into themselves,
 		//	we check the presence and content of the security datas.
-		//  then we remove the securityPlugin1 and check that all 
+		//  then we remove the securityPlugin1 and check that all
 		//	security data have been removed,
 		//	Then, we re create the securityPlugin1 and recheck
 		//	then one again, we remove it and recheck.
@@ -844,7 +831,7 @@ public:
 		//	For the second part of the check, we create a security
 		//	plug-in 2 on gw1 that add 'type3' security data on
 		//	local plug-in.
-		//	We also plug the security plug-in 1 and then we check that 
+		//	We also plug the security plug-in 1 and then we check that
 		//	we have the correct security data
 
 		NLNET::IModuleManager &mm = NLNET::IModuleManager::getInstance();
@@ -900,7 +887,6 @@ public:
 		cmd = "gw2.transportCmd l3c(connect addr=localhost:8063)";
 		TEST_ASSERT(cr.execute(cmd, NLMISC::InfoLog()));
 
-		
 		for (uint retry = 0; retry < 2; ++retry)
 		{
 			if (retry > 0)
@@ -910,19 +896,18 @@ public:
 				TEST_ASSERT(cr.execute(cmd, NLMISC::InfoLog()));
 			}
 			// update the network
-			for (uint i=0; i<15; ++i)
+			for (uint i = 0; i < 15; ++i)
 			{
 				mm.updateModules();
 				NLMISC::nlSleep(40);
 			}
-			NLNET::IModuleGateway *gGw1, *gGw2, *gGw3; 
+			NLNET::IModuleGateway *gGw1, *gGw2, *gGw3;
 			gGw1 = dynamic_cast<NLNET::IModuleGateway *>(gw1);
 			TEST_ASSERT(gGw1 != NULL);
 			gGw2 = dynamic_cast<NLNET::IModuleGateway *>(gw2);
 			TEST_ASSERT(gGw2 != NULL);
 			gGw3 = dynamic_cast<NLNET::IModuleGateway *>(gw3);
 			TEST_ASSERT(gGw3 != NULL);
-			
 
 			// check security data
 			NLNET::IModuleProxy *proxGw1_1, *proxGw2_1, *proxGw3_1;
@@ -1025,7 +1010,7 @@ public:
 			TEST_ASSERT(cr.execute(cmd, NLMISC::InfoLog()));
 
 			// update the network
-			for (uint i=0; i<15; ++i)
+			for (uint i = 0; i < 15; ++i)
 			{
 				mm.updateModules();
 				NLMISC::nlSleep(40);
@@ -1059,20 +1044,19 @@ public:
 		TEST_ASSERT(cr.execute(cmd, NLMISC::InfoLog()));
 
 		// update the network
-		for (uint i=0; i<15; ++i)
+		for (uint i = 0; i < 15; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(40);
 		}
 
-		NLNET::IModuleGateway *gGw1, *gGw2, *gGw3; 
+		NLNET::IModuleGateway *gGw1, *gGw2, *gGw3;
 		gGw1 = dynamic_cast<NLNET::IModuleGateway *>(gw1);
 		TEST_ASSERT(gGw1 != NULL);
 		gGw2 = dynamic_cast<NLNET::IModuleGateway *>(gw2);
 		TEST_ASSERT(gGw2 != NULL);
 		gGw3 = dynamic_cast<NLNET::IModuleGateway *>(gw3);
 		TEST_ASSERT(gGw3 != NULL);
-		
 
 		// check security data
 		NLNET::IModuleProxy *proxGw1_1, *proxGw2_1, *proxGw3_1;
@@ -1100,8 +1084,8 @@ public:
 		TEST_ASSERT(proxGw3_3 != NULL);
 
 		const NLNET::TSecurityData *ms;
-//		const TSecurityType1 *st1;
-//		const TSecurityType2 *st2;
+		//		const TSecurityType1 *st1;
+		//		const TSecurityType2 *st2;
 
 		ms = proxGw1_1->findSecurityData(tst_type1);
 		TEST_ASSERT(ms == NULL);
@@ -1111,7 +1095,7 @@ public:
 		TEST_ASSERT(ms != NULL);
 		ms = proxGw1_1->findSecurityData(tst_type4);
 		TEST_ASSERT(ms != NULL);
-		TEST_ASSERT(dynamic_cast<const TSecurityType4*>(ms) != NULL);
+		TEST_ASSERT(dynamic_cast<const TSecurityType4 *>(ms) != NULL);
 
 		ms = proxGw1_2->findSecurityData(tst_type1);
 		TEST_ASSERT(ms == NULL);
@@ -1121,7 +1105,7 @@ public:
 		TEST_ASSERT(ms != NULL);
 		ms = proxGw1_2->findSecurityData(0xff);
 		TEST_ASSERT(ms != NULL);
-		TEST_ASSERT(dynamic_cast<const NLNET::TUnknownSecurityData*>(ms) != NULL);
+		TEST_ASSERT(dynamic_cast<const NLNET::TUnknownSecurityData *>(ms) != NULL);
 
 		ms = proxGw1_3->findSecurityData(tst_type1);
 		TEST_ASSERT(ms == NULL);
@@ -1131,8 +1115,7 @@ public:
 		TEST_ASSERT(ms != NULL);
 		ms = proxGw1_3->findSecurityData(0xff);
 		TEST_ASSERT(ms != NULL);
-		TEST_ASSERT(dynamic_cast<const NLNET::TUnknownSecurityData*>(ms) != NULL);
-
+		TEST_ASSERT(dynamic_cast<const NLNET::TUnknownSecurityData *>(ms) != NULL);
 
 		ms = proxGw2_1->findSecurityData(tst_type1);
 		TEST_ASSERT(ms != NULL);
@@ -1160,7 +1143,6 @@ public:
 		TEST_ASSERT(ms == NULL);
 		ms = proxGw2_3->findSecurityData(tst_type4);
 		TEST_ASSERT(ms == NULL);
-
 
 		ms = proxGw3_1->findSecurityData(tst_type1);
 		TEST_ASSERT(ms == NULL);
@@ -1195,7 +1177,7 @@ public:
 		TEST_ASSERT(cr.execute(cmd, NLMISC::InfoLog()));
 
 		// update the network
-		for (uint i=0; i<15; ++i)
+		for (uint i = 0; i < 15; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(40);
@@ -1228,7 +1210,6 @@ public:
 		ms = proxGw1_3->findSecurityData(tst_type4);
 		TEST_ASSERT(ms == NULL);
 
-
 		ms = proxGw2_1->findSecurityData(tst_type1);
 		TEST_ASSERT(ms != NULL);
 		ms = proxGw2_1->findSecurityData(tst_type2);
@@ -1255,7 +1236,6 @@ public:
 		TEST_ASSERT(ms == NULL);
 		ms = proxGw2_3->findSecurityData(tst_type4);
 		TEST_ASSERT(ms == NULL);
-
 
 		ms = proxGw3_1->findSecurityData(tst_type1);
 		TEST_ASSERT(ms == NULL);
@@ -1293,7 +1273,7 @@ public:
 	void distanceAndConnectionLoop()
 	{
 		// Check that we support a closed loop or multi connection
-		// of gateway and that the gateway chooses the best 
+		// of gateway and that the gateway chooses the best
 		// route to reach a module when more than one is possible
 		// and that the distance is updated
 		//
@@ -1309,7 +1289,7 @@ public:
 		//
 		//	Finally, we create a second connection from gw1 to gw2 and
 		//	recheck module list and distances
-		//	
+		//
 		//                     /---<optional>---\
 		//      (l3s) gw1 (l3c)                  (l3s) gw2 (l3c) ------ (l3s) gw3 (l3c) ------ (l3s) gw4
 		//	      |            \----------------/                                   |
@@ -1385,7 +1365,7 @@ public:
 		TEST_ASSERT(cr.execute(cmd, NLMISC::InfoLog()));
 
 		// update the network
-		for (uint i=0; i<15; ++i)
+		for (uint i = 0; i < 15; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(40);
@@ -1403,7 +1383,7 @@ public:
 		gGw4 = dynamic_cast<NLNET::IModuleGateway *>(gw4);
 		TEST_ASSERT(gGw4 != NULL);
 
-		vector<NLNET::IModuleProxy*> proxList;
+		vector<NLNET::IModuleProxy *> proxList;
 		gGw1->getModuleProxyList(proxList);
 		TEST_ASSERT(proxList.size() == 4);
 		proxList.clear();
@@ -1417,10 +1397,10 @@ public:
 		TEST_ASSERT(proxList.size() == 4);
 
 		// check the distance
-		NLNET::IModuleProxy *gw1_1Prox, *gw1_2Prox, *gw1_3Prox, *gw1_4Prox; 
-		NLNET::IModuleProxy *gw2_1Prox, *gw2_2Prox, *gw2_3Prox, *gw2_4Prox; 
-		NLNET::IModuleProxy *gw3_1Prox, *gw3_2Prox, *gw3_3Prox, *gw3_4Prox; 
-		NLNET::IModuleProxy *gw4_1Prox, *gw4_2Prox, *gw4_3Prox, *gw4_4Prox; 
+		NLNET::IModuleProxy *gw1_1Prox, *gw1_2Prox, *gw1_3Prox, *gw1_4Prox;
+		NLNET::IModuleProxy *gw2_1Prox, *gw2_2Prox, *gw2_3Prox, *gw2_4Prox;
+		NLNET::IModuleProxy *gw3_1Prox, *gw3_2Prox, *gw3_3Prox, *gw3_4Prox;
+		NLNET::IModuleProxy *gw4_1Prox, *gw4_2Prox, *gw4_3Prox, *gw4_4Prox;
 
 		gw1_1Prox = retrieveModuleProxy(gGw1, "gw1");
 		TEST_ASSERT(gw1_1Prox != NULL);
@@ -1479,7 +1459,7 @@ public:
 		TEST_ASSERT(cr.execute(cmd, NLMISC::InfoLog()));
 
 		// update the network
-		for (uint i=0; i<7; ++i)
+		for (uint i = 0; i < 7; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(100);
@@ -1557,7 +1537,7 @@ public:
 		TEST_ASSERT(cr.execute(cmd, NLMISC::InfoLog()));
 
 		// update the network
-		for (uint i=0; i<7; ++i)
+		for (uint i = 0; i < 7; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(100);
@@ -1635,7 +1615,7 @@ public:
 		TEST_ASSERT(cr.execute(cmd, NLMISC::InfoLog()));
 
 		// update the network
-		for (uint i=0; i<7; ++i)
+		for (uint i = 0; i < 7; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(100);
@@ -1798,7 +1778,7 @@ public:
 		TEST_ASSERT(cr.execute(cmd, NLMISC::InfoLog()));
 
 		// d'ho ! all done, now let's run some loop of update
-		for (uint i=0; i<7; ++i)
+		for (uint i = 0; i < 7; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(100);
@@ -1815,7 +1795,7 @@ public:
 		gOther = dynamic_cast<NLNET::IModuleGateway *>(other);
 		TEST_ASSERT(gOther != NULL);
 
-		vector<NLNET::IModuleProxy*> proxList;
+		vector<NLNET::IModuleProxy *> proxList;
 		gPeer1->getModuleProxyList(proxList);
 		TEST_ASSERT(proxList.size() == 1);
 		TEST_ASSERT(lookForModuleProxy(proxList, "peer1"));
@@ -1841,7 +1821,6 @@ public:
 		TEST_ASSERT(lookForModuleProxy(proxList, "peer1"));
 		TEST_ASSERT(lookForModuleProxy(proxList, "peer2"));
 
-		
 		// now send the debug 'PING' message from 'other' to 'peer1', and a message from 'master' to 'peer2'
 		{
 			NLNET::CMessage ping("DEBUG_MOD_PING");
@@ -1861,7 +1840,7 @@ public:
 		}
 
 		// update the network
-		for (uint i=0; i<7; ++i)
+		for (uint i = 0; i < 7; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(100);
@@ -1903,7 +1882,7 @@ public:
 		TEST_ASSERT(cr.execute(cmd, NLMISC::InfoLog()));
 
 		// update the network
-		for (uint i=0; i<7; ++i)
+		for (uint i = 0; i < 7; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(100);
@@ -1947,13 +1926,11 @@ public:
 		cmd = "master.transportOptions l3s1(Firewalled)";
 		TEST_THROWS(cr.execute(cmd, NLMISC::InfoLog()), NLNET::IModuleGateway::EGatewayFirewallBreak);
 
-
 		// cleanup
 		mm.deleteModule(peer1);
 		mm.deleteModule(peer2);
 		mm.deleteModule(master);
 		mm.deleteModule(other);
-
 	}
 
 	void peerInvisible()
@@ -2038,7 +2015,7 @@ public:
 		TEST_ASSERT(cr.execute(cmd, NLMISC::InfoLog()));
 
 		// d'ho ! all done, now let's run some loop of update
-		for (uint i=0; i<7; ++i)
+		for (uint i = 0; i < 7; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(100);
@@ -2055,7 +2032,7 @@ public:
 		gOther = dynamic_cast<NLNET::IModuleGateway *>(other);
 		TEST_ASSERT(gOther != NULL);
 
-		vector<NLNET::IModuleProxy*> proxList;
+		vector<NLNET::IModuleProxy *> proxList;
 		gPeer1->getModuleProxyList(proxList);
 		TEST_ASSERT(proxList.size() == 3);
 		TEST_ASSERT(lookForModuleProxy(proxList, "peer1"));
@@ -2090,7 +2067,7 @@ public:
 		TEST_ASSERT(cr.execute(cmd, NLMISC::InfoLog()));
 
 		// update the network
-		for (uint i=0; i<7; ++i)
+		for (uint i = 0; i < 7; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(100);
@@ -2134,7 +2111,7 @@ public:
 		TEST_ASSERT(cr.execute(cmd, NLMISC::InfoLog()));
 
 		// update the network
-		for (uint i=0; i<7; ++i)
+		for (uint i = 0; i < 7; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(100);
@@ -2175,7 +2152,6 @@ public:
 		mm.deleteModule(peer2);
 		mm.deleteModule(master);
 		mm.deleteModule(other);
-
 	}
 
 	void gwPlugUnplug()
@@ -2195,7 +2171,7 @@ public:
 		mod->unplugModule(socket);
 		mod->plugModule(socket);
 
-		std::vector<NLNET::IModuleProxy*> result;
+		std::vector<NLNET::IModuleProxy *> result;
 		socket->getModuleList(result);
 		TEST_ASSERT(result.size() == 1);
 
@@ -2234,7 +2210,7 @@ public:
 
 		NLNET::IModule *mods = mm.createModule("StandardGateway", "gws", "");
 		TEST_ASSERT(mods != NULL);
-		NLNET::IModuleGateway *gws = dynamic_cast<NLNET::IModuleGateway*>(mods);
+		NLNET::IModuleGateway *gws = dynamic_cast<NLNET::IModuleGateway *>(mods);
 		TEST_ASSERT(gws != NULL);
 
 		// get the socket interface of the gateway
@@ -2242,23 +2218,23 @@ public:
 		TEST_ASSERT(socketGws != NULL);
 
 		// create two modules that will communicate localy
-		NLNET::IModule *m1= mm.createModule("ModuleType0", "m1", "");
-		TEST_ASSERT(m1!= NULL);
-		NLNET::IModule *m2= mm.createModule("ModuleAsync", "m2", "");
-		TEST_ASSERT(m2!= NULL);
+		NLNET::IModule *m1 = mm.createModule("ModuleType0", "m1", "");
+		TEST_ASSERT(m1 != NULL);
+		NLNET::IModule *m2 = mm.createModule("ModuleAsync", "m2", "");
+		TEST_ASSERT(m2 != NULL);
 
 		m1->plugModule(socketGws);
 		m2->plugModule(socketGws);
 
 		// update the networks
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(50);
 		}
 
 		// retrieve module proxy and send one ping to each other
-		vector<NLNET::IModuleProxy*>	proxiesC;
+		vector<NLNET::IModuleProxy *> proxiesC;
 		gws->getModuleProxyList(proxiesC);
 		TEST_ASSERT(proxiesC.size() == 2);
 		TEST_ASSERT(lookForModuleProxy(proxiesC, "m2"));
@@ -2277,15 +2253,15 @@ public:
 		pm1->sendModuleMessage(m2, aMessage);
 
 		// check received ping count
-		CModuleType0 *mod1 = dynamic_cast<CModuleType0*>(m1);
+		CModuleType0 *mod1 = dynamic_cast<CModuleType0 *>(m1);
 		TEST_ASSERT(mod1 != NULL);
 		TEST_ASSERT(mod1->PingCount == 1);
-		CModuleType0 *mod2 = dynamic_cast<CModuleType0*>(m2);
+		CModuleType0 *mod2 = dynamic_cast<CModuleType0 *>(m2);
 		TEST_ASSERT(mod2 != NULL);
 		TEST_ASSERT(mod2->PingCount == 0);
-	
+
 		// update the networks
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(50);
@@ -2296,7 +2272,7 @@ public:
 		TEST_ASSERT(mod2->PingCount == 1);
 
 		// update the networks
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(50);
@@ -2305,7 +2281,6 @@ public:
 		// check received ping count
 		TEST_ASSERT(mod1->PingCount == 1);
 		TEST_ASSERT(mod2->PingCount == 1);
-
 
 		// cleanup
 		mm.deleteModule(m1);
@@ -2321,7 +2296,7 @@ public:
 		// create two gateway an connect them, plug the gateway on themselves and send a message
 		NLNET::IModule *mods = mm.createModule("StandardGateway", "gws", "");
 		TEST_ASSERT(mods != NULL);
-		NLNET::IModuleGateway *gws = dynamic_cast<NLNET::IModuleGateway*>(mods);
+		NLNET::IModuleGateway *gws = dynamic_cast<NLNET::IModuleGateway *>(mods);
 		TEST_ASSERT(gws != NULL);
 
 		// plug the module in itself before opening connection
@@ -2337,7 +2312,7 @@ public:
 
 		NLNET::IModule *modc = mm.createModule("StandardGateway", "gwc", "");
 		TEST_ASSERT(modc != NULL);
-		NLNET::IModuleGateway *gwc = dynamic_cast<NLNET::IModuleGateway*>(modc);
+		NLNET::IModuleGateway *gwc = dynamic_cast<NLNET::IModuleGateway *>(modc);
 		TEST_ASSERT(gwc != NULL);
 		// add transport for client mode
 		cmd = "gwc.transportAdd L3Client l3c";
@@ -2351,7 +2326,7 @@ public:
 		modc->plugModule(socketGwc);
 
 		// update the gateways...
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(100);
@@ -2359,7 +2334,7 @@ public:
 
 		// send a message from gws to gwc using the proxy
 		// First, get the proxy for the client (must be the second one)
-		vector<NLNET::IModuleProxy*>	proxiesS;
+		vector<NLNET::IModuleProxy *> proxiesS;
 		gws->getModuleProxyList(proxiesS);
 		TEST_ASSERT(proxiesS.size() == 2);
 		TEST_ASSERT(lookForModuleProxy(proxiesS, "gwc"));
@@ -2367,7 +2342,7 @@ public:
 		proxiesS[1]->sendModuleMessage(mods, aMessage);
 
 		// update the gateways...
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(100);
@@ -2377,7 +2352,7 @@ public:
 		TEST_ASSERT(gwc->getReceivedPingCount() == 1);
 
 		// send two crossing messages simultaneously
-		vector<NLNET::IModuleProxy*>	proxiesC;
+		vector<NLNET::IModuleProxy *> proxiesC;
 		gwc->getModuleProxyList(proxiesC);
 		TEST_ASSERT(proxiesC.size() == 2);
 		TEST_ASSERT(lookForModuleProxy(proxiesC, "gws"));
@@ -2385,7 +2360,7 @@ public:
 		proxiesC[1]->sendModuleMessage(modc, aMessage);
 
 		// update the gateways...
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(100);
@@ -2393,12 +2368,11 @@ public:
 		// check that the ping has been received
 		TEST_ASSERT(gwc->getReceivedPingCount() == 2);
 		TEST_ASSERT(gws->getReceivedPingCount() == 1);
-		
 
 		// send with ISocket
 		socketGws->sendModuleMessage(mods, proxiesS[1]->getModuleProxyId(), aMessage);
 		// update the gateways...
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(100);
@@ -2421,7 +2395,7 @@ public:
 
 		NLNET::IModule *mods = mm.createModule("StandardGateway", "gws", "");
 		TEST_ASSERT(mods != NULL);
-		NLNET::IModuleGateway *gws = dynamic_cast<NLNET::IModuleGateway*>(mods);
+		NLNET::IModuleGateway *gws = dynamic_cast<NLNET::IModuleGateway *>(mods);
 		TEST_ASSERT(gws != NULL);
 
 		TEST_ASSERT(gws->getProxyCount() == 0);
@@ -2433,7 +2407,7 @@ public:
 
 		// now, there must be one proxy in the gateway
 		TEST_ASSERT(gws->getProxyCount() == 1);
-		vector<NLNET::IModuleProxy*>	proxies;
+		vector<NLNET::IModuleProxy *> proxies;
 		gws->getModuleProxyList(proxies);
 		TEST_ASSERT(proxies.size() == 1);
 		TEST_ASSERT(proxies[0]->getGatewayRoute() == NULL);
@@ -2447,7 +2421,7 @@ public:
 
 		NLNET::IModule *modc = mm.createModule("StandardGateway", "gwc", "");
 		TEST_ASSERT(modc != NULL);
-		NLNET::IModuleGateway *gwc = dynamic_cast<NLNET::IModuleGateway*>(modc);
+		NLNET::IModuleGateway *gwc = dynamic_cast<NLNET::IModuleGateway *>(modc);
 		TEST_ASSERT(gwc != NULL);
 		// add transport for client mode
 		cmd = "gwc.transportAdd L3Client l3c";
@@ -2455,7 +2429,7 @@ public:
 		cmd = "gwc.transportCmd l3c(connect addr=localhost:6185)";
 		TEST_ASSERT(cr.execute(cmd, NLMISC::InfoLog()));
 
-		for (uint i=0; i<5; ++i)
+		for (uint i = 0; i < 5; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(100);
@@ -2477,8 +2451,7 @@ public:
 		TEST_ASSERT(socketGwc != NULL);
 		modc->plugModule(socketGwc);
 
-
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(100);
@@ -2504,11 +2477,10 @@ public:
 		TEST_ASSERT(proxies[1]->getGatewayRoute() == NULL);
 		TEST_ASSERT(proxies[1]->getForeignModuleId() == modc->getModuleId());
 
-
 		// unplug the client module in itself after opening connection
 		mods->unplugModule(socketGws);
 
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			NLMISC::nlSleep(100);
 			mm.updateModules();
@@ -2529,7 +2501,7 @@ public:
 		TEST_ASSERT(proxies.size() == 1);
 		TEST_ASSERT(proxies[0]->getGatewayRoute() == NULL);
 		TEST_ASSERT(proxies[0]->getForeignModuleId() == modc->getModuleId());
-		
+
 		// Dump the module state
 		cmd = "gws.dump";
 		TEST_ASSERT(cr.execute(cmd, NLMISC::InfoLog()));
@@ -2549,17 +2521,17 @@ public:
 
 		NLNET::IModule *mods = mm.createModule("StandardGateway", "gws", "");
 		TEST_ASSERT(mods != NULL);
-		NLNET::IModuleGateway *gws = dynamic_cast<NLNET::IModuleGateway*>(mods);
+		NLNET::IModuleGateway *gws = dynamic_cast<NLNET::IModuleGateway *>(mods);
 		TEST_ASSERT(gws != NULL);
 		// add transport for server mode
 		string cmd = "gws.transportAdd L3Server l3s";
 		TEST_ASSERT(NLMISC::CCommandRegistry::getInstance().execute(cmd, NLMISC::InfoLog()));
 		cmd = "gws.transportCmd l3s(open port=6185)";
 		TEST_ASSERT(NLMISC::CCommandRegistry::getInstance().execute(cmd, NLMISC::InfoLog()));
-			
+
 		NLNET::IModule *modc1 = mm.createModule("StandardGateway", "gwc1", "");
 		TEST_ASSERT(modc1 != NULL);
-		NLNET::IModuleGateway *gwc1 = dynamic_cast<NLNET::IModuleGateway*>(modc1);
+		NLNET::IModuleGateway *gwc1 = dynamic_cast<NLNET::IModuleGateway *>(modc1);
 		TEST_ASSERT(gwc1 != NULL);
 		// add transport for client mode
 		cmd = "gwc1.transportAdd L3Client l3c";
@@ -2567,7 +2539,7 @@ public:
 		cmd = "gwc1.transportCmd l3c(connect addr=localhost:6185)";
 		TEST_ASSERT(NLMISC::CCommandRegistry::getInstance().execute(cmd, NLMISC::InfoLog()));
 
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			mm.updateModules();
 			NLMISC::nlSleep(100);
@@ -2575,7 +2547,7 @@ public:
 
 		TEST_ASSERT(gws->getRouteCount() == 1);
 		TEST_ASSERT(gwc1->getRouteCount() == 1);
-			
+
 		// do a second connect to the server for stress
 		// add transport for client mode
 		cmd = "gwc1.transportCmd l3c(connect addr=localhost:6185)";
@@ -2584,7 +2556,7 @@ public:
 		// create third gateway
 		NLNET::IModule *modc2 = mm.createModule("StandardGateway", "gwc2", "");
 		TEST_ASSERT(modc2 != NULL);
-		NLNET::IModuleGateway *gwc2 = dynamic_cast<NLNET::IModuleGateway*>(modc2);
+		NLNET::IModuleGateway *gwc2 = dynamic_cast<NLNET::IModuleGateway *>(modc2);
 		TEST_ASSERT(gwc2 != NULL);
 		// add transport for client mode
 		cmd = "gwc2.transportAdd L3Client l3c";
@@ -2593,7 +2565,7 @@ public:
 		TEST_ASSERT(NLMISC::CCommandRegistry::getInstance().execute(cmd, NLMISC::InfoLog()));
 
 		// update the module to update the network callback client and server
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			// give some time to the listen and receiver thread to do there jobs
 			NLMISC::nlSleep(100);
@@ -2628,7 +2600,7 @@ public:
 		// create a gateway module
 		NLNET::IModule *mod = mm.createModule("StandardGateway", "gw", "");
 		TEST_ASSERT(mod != NULL);
-		NLNET::IModuleGateway *gw = dynamic_cast<NLNET::IModuleGateway*>(mod);
+		NLNET::IModuleGateway *gw = dynamic_cast<NLNET::IModuleGateway *>(mod);
 		TEST_ASSERT(gw != NULL);
 
 		// Create a layer 3 server transport
@@ -2654,31 +2626,30 @@ public:
 		TEST_ASSERT(NLMISC::CCommandRegistry::getInstance().execute(cmd, NLMISC::InfoLog()));
 
 		// update the module to update the network callback client and server
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			// give some time to the listen and receiver thread to do there jobs
 			mm.updateModules();
 			NLMISC::nlSleep(100);
 		}
 
-		TEST_ASSERT(transportL3s->getRouteCount() == 1);	
+		TEST_ASSERT(transportL3s->getRouteCount() == 1);
 		TEST_ASSERT(transportL3c->getRouteCount() == 1);
 		TEST_ASSERT(gw->getRouteCount() == 2);
-		
+
 		// dump the gateways state
 		cmd = "gw.dump";
 		TEST_ASSERT(NLMISC::CCommandRegistry::getInstance().execute(cmd, NLMISC::InfoLog()));
 
-		
 		// close all connections
 		cmd = "gw.transportCmd l3s(close)";
 		TEST_ASSERT(NLMISC::CCommandRegistry::getInstance().execute(cmd, NLMISC::InfoLog()));
-		
+
 		cmd = "gw.transportCmd l3c(close connId=0)";
 		TEST_ASSERT(NLMISC::CCommandRegistry::getInstance().execute(cmd, NLMISC::InfoLog()));
 
 		// update the module to update the network callback client and server
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			// give some time to the listen and receiver thread to do there jobs
 			mm.updateModules();
@@ -2700,7 +2671,7 @@ public:
 		TEST_ASSERT(gw->getTransportCount() == 0);
 
 		// update the module to update the network callback client and server
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			// give some time to the listen and receiver thread to do there jobs
 			mm.updateModules();
@@ -2712,29 +2683,29 @@ public:
 		TEST_ASSERT(mm.getLocalModule("gw") == NULL);
 	}
 
-/*	void moduleManagerCommands()
-	{
-		string cmd;
-		// load a library
-		cmd = "moduleManager.loadLibrary net_module_lib_test/net_module_lib_test";
-		TEST_ASSERT(NLMISC::CCommandRegistry::getInstance().execute(cmd, NLMISC::InfoLog()));
+	/*	void moduleManagerCommands()
+	    {
+	        string cmd;
+	        // load a library
+	        cmd = "moduleManager.loadLibrary net_module_lib_test/net_module_lib_test";
+	        TEST_ASSERT(NLMISC::CCommandRegistry::getInstance().execute(cmd, NLMISC::InfoLog()));
 
-		// dump the module state
-		cmd = "moduleManager.dump";
-		TEST_ASSERT(NLMISC::CCommandRegistry::getInstance().execute(cmd, NLMISC::InfoLog()));
+	        // dump the module state
+	        cmd = "moduleManager.dump";
+	        TEST_ASSERT(NLMISC::CCommandRegistry::getInstance().execute(cmd, NLMISC::InfoLog()));
 
-		// create a module
-		cmd = "moduleManager.createModule ModuleType1 AModuleName";
-		TEST_ASSERT(NLMISC::CCommandRegistry::getInstance().execute(cmd, NLMISC::InfoLog()));
+	        // create a module
+	        cmd = "moduleManager.createModule ModuleType1 AModuleName";
+	        TEST_ASSERT(NLMISC::CCommandRegistry::getInstance().execute(cmd, NLMISC::InfoLog()));
 
-		// dump the module state
-		cmd = "moduleManager.dump";
-		TEST_ASSERT(NLMISC::CCommandRegistry::getInstance().execute(cmd, NLMISC::InfoLog()));
+	        // dump the module state
+	        cmd = "moduleManager.dump";
+	        TEST_ASSERT(NLMISC::CCommandRegistry::getInstance().execute(cmd, NLMISC::InfoLog()));
 
-		// delete the module
-		cmd = "moduleManager.deleteModule AModuleName";
-		TEST_ASSERT(NLMISC::CCommandRegistry::getInstance().execute(cmd, NLMISC::InfoLog()));
-	}*/
+	        // delete the module
+	        cmd = "moduleManager.deleteModule AModuleName";
+	        TEST_ASSERT(NLMISC::CCommandRegistry::getInstance().execute(cmd, NLMISC::InfoLog()));
+	    }*/
 
 	void plugLocalGateway()
 	{
@@ -2786,21 +2757,21 @@ public:
 		TEST_ASSERT(mm.getLocalModule("localGateway") == NULL);
 	}
 
-/*	void unloadModuleLib()
-	{
-		IModuleManager &mm = IModuleManager::getInstance();
+	/*	void unloadModuleLib()
+	    {
+	        IModuleManager &mm = IModuleManager::getInstance();
 
-		CRefPtr<IModule> module1 = mm.createModule("ModuleType1", "TheModule2", "the args");
-		TEST_ASSERT(module1 != NULL);
+	        CRefPtr<IModule> module1 = mm.createModule("ModuleType1", "TheModule2", "the args");
+	        TEST_ASSERT(module1 != NULL);
 
-		TEST_ASSERT(mm.unloadModuleLibrary("net_module_lib_test"));
+	        TEST_ASSERT(mm.unloadModuleLibrary("net_module_lib_test"));
 
-		// the module must have been deleted
-		TEST_ASSERT(module1 == NULL);
+	        // the module must have been deleted
+	        TEST_ASSERT(module1 == NULL);
 
-		TModulePtr module2 = mm.createModule("ModuleType1", "TheModuleThatCantBeCreated", "the args");
-		TEST_ASSERT(module2 == NULL);
-	}*/
+	        TModulePtr module2 = mm.createModule("ModuleType1", "TheModuleThatCantBeCreated", "the args");
+	        TEST_ASSERT(module2 == NULL);
+	    }*/
 
 	void failedInit()
 	{
@@ -2810,63 +2781,63 @@ public:
 		TEST_ASSERT(module == NULL);
 	}
 
-/*	void deleteModule()
-	{
-		IModuleManager &mm = IModuleManager::getInstance();
+	/*	void deleteModule()
+	    {
+	        IModuleManager &mm = IModuleManager::getInstance();
 
-		IModule *module = mm.createModule("ModuleType1", "TheModuleToDelete", "the args");
-		TEST_ASSERT(module != NULL);
+	        IModule *module = mm.createModule("ModuleType1", "TheModuleToDelete", "the args");
+	        TEST_ASSERT(module != NULL);
 
-		CRefPtr<IModule> checkPtr(module);
+	        CRefPtr<IModule> checkPtr(module);
 
-		mm.deleteModule(module);
-		TEST_ASSERT(checkPtr == NULL);
-	}*/
+	        mm.deleteModule(module);
+	        TEST_ASSERT(checkPtr == NULL);
+	    }*/
 
-/*	void createModule()
-	{
-		IModuleManager &mm = IModuleManager::getInstance();
+	/*	void createModule()
+	    {
+	        IModuleManager &mm = IModuleManager::getInstance();
 
-		TModulePtr module = mm.createModule("ModuleType1", "TheModule", "the args");
-		TEST_ASSERT(module != NULL);
+	        TModulePtr module = mm.createModule("ModuleType1", "TheModule", "the args");
+	        TEST_ASSERT(module != NULL);
 
-		TEST_ASSERT(module->getModuleClassName() == "ModuleType1");
-		TEST_ASSERT(module->getModuleName() == "TheModule");
+	        TEST_ASSERT(module->getModuleClassName() == "ModuleType1");
+	        TEST_ASSERT(module->getModuleName() == "TheModule");
 
-		string lh;
-		if (IService::isServiceInitialized())
-			lh = IService::getInstance()->getHostName();
-		else
-			lh = ::NLNET::CInetAddress::localHost().hostName();
-		string fqmn = lh+":"+toString(getpid())+":TheModule";
+	        string lh;
+	        if (IService::isServiceInitialized())
+	            lh = IService::getInstance()->getHostName();
+	        else
+	            lh = ::NLNET::CInetAddress::localHost().hostName();
+	        string fqmn = lh+":"+toString(getpid())+":TheModule";
 
-		TEST_ASSERT(module->getModuleFullyQualifiedName() == fqmn);
-	}*/
+	        TEST_ASSERT(module->getModuleFullyQualifiedName() == fqmn);
+	    }*/
 
-/*	void loadModuleLib()
-	{
-		string moduleLibName = "net_module_lib_test/net_module_lib_test";
+	/*	void loadModuleLib()
+	    {
+	        string moduleLibName = "net_module_lib_test/net_module_lib_test";
 
-		IModuleManager &mm = IModuleManager::getInstance();
-		TEST_ASSERT(mm.loadModuleLibrary(moduleLibName));
+	        IModuleManager &mm = IModuleManager::getInstance();
+	        TEST_ASSERT(mm.loadModuleLibrary(moduleLibName));
 
-		vector<string>	moduleList;
-		mm.getAvailableModuleClassList(moduleList);
+	        vector<string>	moduleList;
+	        mm.getAvailableModuleClassList(moduleList);
 
-		TEST_ASSERT(moduleList.size() == 6);
-		TEST_ASSERT(moduleList[0] == "LocalGateway");
-		TEST_ASSERT(moduleList[1] == "ModuleAsync");
-		TEST_ASSERT(moduleList[2] == "ModuleType0");
-		TEST_ASSERT(moduleList[3] == "ModuleType1");
-		TEST_ASSERT(moduleList[4] == "ModuleType2");
-		TEST_ASSERT(moduleList[5] == "StandardGateway");
-	}*/
+	        TEST_ASSERT(moduleList.size() == 6);
+	        TEST_ASSERT(moduleList[0] == "LocalGateway");
+	        TEST_ASSERT(moduleList[1] == "ModuleAsync");
+	        TEST_ASSERT(moduleList[2] == "ModuleType0");
+	        TEST_ASSERT(moduleList[3] == "ModuleType1");
+	        TEST_ASSERT(moduleList[4] == "ModuleType2");
+	        TEST_ASSERT(moduleList[5] == "StandardGateway");
+	    }*/
 
 	void localModuleFactory()
 	{
 		NLNET::IModuleManager &mm = NLNET::IModuleManager::getInstance();
 
-		vector<string>	moduleList;
+		vector<string> moduleList;
 		mm.getAvailableModuleClassList(moduleList);
 
 		TEST_ASSERT(moduleList.size() == 4);
@@ -2878,9 +2849,9 @@ public:
 
 	void testModuleInitInfoBadParsing()
 	{
-		NLNET::TParsedCommandLine	mif;
+		NLNET::TParsedCommandLine mif;
 
-		string	paramString = " a=1   b=2   ( b=1) ";
+		string paramString = " a=1   b=2   ( b=1) ";
 		TEST_ASSERT(!mif.parseParamList(paramString));
 
 		paramString = " lswkd ,fpqoj(( cruq fzemfwijf ujr wmozejifp_zujf woijpc_u ' ";
@@ -2904,9 +2875,9 @@ public:
 
 	void testModuleInitInfoQuering()
 	{
-		NLNET::TParsedCommandLine	mif;
+		NLNET::TParsedCommandLine mif;
 
-		string	paramString = " a=1   b=2   sub   ( y=22 zzzz=12 subsub (g=\"bean in box\" z=2) ) "; 
+		string paramString = " a=1   b=2   sub   ( y=22 zzzz=12 subsub (g=\"bean in box\" z=2) ) ";
 
 		TEST_ASSERT(mif.parseParamList(paramString));
 
@@ -2924,21 +2895,21 @@ public:
 
 	void testModuleInitInfoParsing()
 	{
-		NLNET::TParsedCommandLine	mif;
+		NLNET::TParsedCommandLine mif;
 
-		string	paramString = "a"; 
+		string paramString = "a";
 		TEST_ASSERT(mif.parseParamList(paramString));
-		paramString = "a=1"; 
+		paramString = "a=1";
 		TEST_ASSERT(mif.parseParamList(paramString));
-		paramString = "a(b=1)"; 
+		paramString = "a(b=1)";
 		TEST_ASSERT(mif.parseParamList(paramString));
-		paramString = "a a a a"; 
+		paramString = "a a a a";
 		TEST_ASSERT(mif.parseParamList(paramString));
 		TEST_ASSERT(mif.SubParams.size() == 4);
-		paramString = " a ( b=1 )"; 
+		paramString = " a ( b=1 )";
 		TEST_ASSERT(mif.parseParamList(paramString));
 
-		paramString = " a=1   b=2   sub   ( y=22 zzzz=12 subsub (g=\"bean in box\" z=2) ) "; 
+		paramString = " a=1   b=2   sub   ( y=22 zzzz=12 subsub (g=\"bean in box\" z=2) ) ";
 
 		TEST_ASSERT(mif.parseParamList(paramString));
 
@@ -2959,19 +2930,19 @@ public:
 		TEST_ASSERT(mif.SubParams[2]->SubParams[0]->SubParams.size() == 0);
 		TEST_ASSERT(mif.SubParams[2]->SubParams[0]->ParamName == "y");
 		TEST_ASSERT(mif.SubParams[2]->SubParams[0]->ParamValue == "22");
-	
+
 		TEST_ASSERT(mif.SubParams[2]->SubParams[1]->SubParams.size() == 0);
 		TEST_ASSERT(mif.SubParams[2]->SubParams[1]->ParamName == "zzzz");
 		TEST_ASSERT(mif.SubParams[2]->SubParams[1]->ParamValue == "12");
-	
+
 		TEST_ASSERT(mif.SubParams[2]->SubParams[2]->SubParams.size() == 2);
 		TEST_ASSERT(mif.SubParams[2]->SubParams[2]->ParamName == "subsub");
 		TEST_ASSERT(mif.SubParams[2]->SubParams[2]->ParamValue.empty());
-	
+
 		TEST_ASSERT(mif.SubParams[2]->SubParams[2]->SubParams[0]->SubParams.size() == 0);
 		TEST_ASSERT(mif.SubParams[2]->SubParams[2]->SubParams[0]->ParamName == "g");
 		TEST_ASSERT(mif.SubParams[2]->SubParams[2]->SubParams[0]->ParamValue == "bean in box");
-	
+
 		TEST_ASSERT(mif.SubParams[2]->SubParams[2]->SubParams[1]->SubParams.size() == 0);
 		TEST_ASSERT(mif.SubParams[2]->SubParams[2]->SubParams[1]->ParamName == "z");
 		TEST_ASSERT(mif.SubParams[2]->SubParams[2]->SubParams[1]->ParamValue == "2");

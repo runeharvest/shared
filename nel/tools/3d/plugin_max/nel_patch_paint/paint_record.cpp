@@ -7,21 +7,20 @@
 #define DBGWELD_ACTIONx
 #define DBG_NAMEDSELSx
 
-#define PROMPT_TIME	2000
+#define PROMPT_TIME 2000
 
 extern void DeletePatchParts(PatchMesh *patch, RPatchMesh *rpatch, BitArray &delVerts, BitArray &delPatches);
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-static BOOL IsCompatible(BitArray &a, BitArray &b) 
+static BOOL IsCompatible(BitArray &a, BitArray &b)
 {
 	return (a.GetSize() == b.GetSize()) ? TRUE : FALSE;
 }
 
-
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void ChangePatchType(PatchMesh *patch, int index, int type) 
+void ChangePatchType(PatchMesh *patch, int index, int type)
 {
 	// If positive vertex number, do it to just one vertex
 	if (index >= 0)
@@ -30,7 +29,7 @@ void ChangePatchType(PatchMesh *patch, int index, int type)
 		patch->computeInteriors();
 		return;
 	}
-	
+
 	// Otherwise, do it to all selected vertices!
 	int patches = patch->numPatches;
 	BitArray &psel = patch->patchSel;
@@ -42,9 +41,7 @@ void ChangePatchType(PatchMesh *patch, int index, int type)
 	patch->computeInteriors();
 }
 
-
-
-BOOL PatchChangeRecord::Redo(PatchMesh *patch, RPatchMesh *rpatch, int reRecord) 
+BOOL PatchChangeRecord::Redo(PatchMesh *patch, RPatchMesh *rpatch, int reRecord)
 {
 	if (index >= 0 && index >= patch->numPatches)
 		return FALSE;
@@ -57,14 +54,14 @@ BOOL PatchChangeRecord::Redo(PatchMesh *patch, RPatchMesh *rpatch, int reRecord)
 	return TRUE;
 }
 
-#define PCHG_GENERAL_CHUNK		0x1001
-#define PCHG_PATCH_CHUNK		0x1010
+#define PCHG_GENERAL_CHUNK 0x1001
+#define PCHG_PATCH_CHUNK 0x1010
 
-IOResult PatchChangeRecord::Load(ILoad *iload) 
+IOResult PatchChangeRecord::Load(ILoad *iload)
 {
 	IOResult res;
 	ULONG nb;
-	while (IO_OK == (res = iload->OpenChunk())) 
+	while (IO_OK == (res = iload->OpenChunk()))
 	{
 		switch (iload->CurChunkID())
 		{
@@ -77,7 +74,7 @@ IOResult PatchChangeRecord::Load(ILoad *iload)
 			//				break;
 		}
 		iload->CloseChunk();
-		if (res != IO_OK) 
+		if (res != IO_OK)
 			return res;
 	}
 	return IO_OK;

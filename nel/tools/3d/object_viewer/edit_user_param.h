@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 //
 
 #if !defined(AFX_EDIT_USER_PARAM_H__DF77F873_E367_4BCE_9E13_D8706ADCFD67__INCLUDED_)
@@ -31,29 +30,31 @@
 
 class CEditUserParam : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CEditUserParam(uint32 userParamIndex, CWnd* pParent = NULL);   // standard constructor
+	CEditUserParam(uint32 userParamIndex, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CEditUserParam)
-	enum { IDD = IDD_EDIT_USER_PARAM };
-	CComboBox	m_UserParamIndex;
+	enum
+	{
+		IDD = IDD_EDIT_USER_PARAM
+	};
+	CComboBox m_UserParamIndex;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CEditUserParam)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-	public:
-		uint32 getUserParamIndex(void) const { return _UserParamIndex ; }
-// Implementation
+public:
+	uint32 getUserParamIndex(void) const { return _UserParamIndex; }
+	// Implementation
 protected:
-	uint32 _UserParamIndex ;
+	uint32 _UserParamIndex;
 	// Generated message map functions
 	//{{AFX_MSG(CEditUserParam)
 	virtual BOOL OnInitDialog();

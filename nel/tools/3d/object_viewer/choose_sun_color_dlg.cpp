@@ -19,19 +19,18 @@
 #include "choose_sun_color_dlg.h"
 #include "color_edit.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CChooseSunColorDlg dialog
 
 //*************************************************************************************************
-CChooseSunColorDlg::CChooseSunColorDlg(NL3D::CScene *scene, CWnd* pParent /*=NULL*/)
-	: CDialog(CChooseSunColorDlg::IDD, pParent),
-	  _DiffuseColorEdit(NULL),
-	  _AmbientColorEdit(NULL),
-	  _SpecularColorEdit(NULL)
+CChooseSunColorDlg::CChooseSunColorDlg(NL3D::CScene *scene, CWnd *pParent /*=NULL*/)
+    : CDialog(CChooseSunColorDlg::IDD, pParent)
+    , _DiffuseColorEdit(NULL)
+    , _AmbientColorEdit(NULL)
+    , _SpecularColorEdit(NULL)
 {
 	//{{AFX_DATA_INIT(CChooseSunColorDlg)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 	nlassert(scene);
 	_DiffuseColorWrapper.S = scene;
@@ -49,7 +48,7 @@ CChooseSunColorDlg::CChooseSunColorDlg(NL3D::CScene *scene, CWnd* pParent /*=NUL
 
 //*************************************************************************************************
 CChooseSunColorDlg::~CChooseSunColorDlg()
-{	
+{
 	if (_DiffuseColorEdit)
 	{
 		_DiffuseColorEdit->DestroyWindow();
@@ -68,31 +67,31 @@ CChooseSunColorDlg::~CChooseSunColorDlg()
 }
 
 //*************************************************************************************************
-void CChooseSunColorDlg::DoDataExchange(CDataExchange* pDX)
+void CChooseSunColorDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CChooseSunColorDlg)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 BEGIN_MESSAGE_MAP(CChooseSunColorDlg, CDialog)
-	//{{AFX_MSG_MAP(CChooseSunColorDlg)
-	ON_WM_DESTROY()
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CChooseSunColorDlg)
+ON_WM_DESTROY()
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CChooseSunColorDlg message handlers
 
 //*************************************************************************************************
-BOOL CChooseSunColorDlg::OnInitDialog() 
+BOOL CChooseSunColorDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	RECT r;
 	//
 	GetDlgItem(IDC_DIFFUSE)->GetWindowRect(&r);
 	ScreenToClient(&r);
-	_DiffuseColorEdit->init(r.left, r.top, this);		
+	_DiffuseColorEdit->init(r.left, r.top, this);
 	//
 	GetDlgItem(IDC_AMBIENT)->GetWindowRect(&r);
 	ScreenToClient(&r);
@@ -102,13 +101,13 @@ BOOL CChooseSunColorDlg::OnInitDialog()
 	ScreenToClient(&r);
 	_SpecularColorEdit->init(r.left, r.top, this);
 	//
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 //*************************************************************************************************
-void CChooseSunColorDlg::OnDestroy() 
-{		
-	setRegisterWindowState (this, REGKEY_CHOOSE_SUN_COLOR_DLG);		
-	CDialog::OnDestroy();		// TODO: Add your message handler code here	
+void CChooseSunColorDlg::OnDestroy()
+{
+	setRegisterWindowState(this, REGKEY_CHOOSE_SUN_COLOR_DLG);
+	CDialog::OnDestroy(); // TODO: Add your message handler code here
 }

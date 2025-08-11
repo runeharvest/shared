@@ -38,7 +38,7 @@ public:
 		TEST_ADD(CUTNetAddress::stringCompare);
 		TEST_ADD(CUTNetAddress::netParse);
 		TEST_ADD(CUTNetAddress::hostParse);
-		//TEST_ADD(CUTNetAddress::hostLookup);
+		// TEST_ADD(CUTNetAddress::hostLookup);
 	}
 
 	void validAddress()

@@ -31,11 +31,11 @@
 #ifdef NL_OS_WINDOWS
 #ifdef NEL_CEGUIRENDERER_EXPORTS
 #define DLLSPEC __declspec(dllexport)
-#else //NEL_CEGUI_RENDERER_EXPORTS
+#else // NEL_CEGUI_RENDERER_EXPORTS
 #define DLLSPEC __declspec(dllimport)
 #endif // NEL_CEGUI_RENDERER_EXPORTS
 #else // NL_OS_WINDOWS
-#define DLLSPEC 
+#define DLLSPEC
 #endif // NL_OS_WINDOWS
 
 namespace CEGUI {
@@ -51,15 +51,15 @@ class DLLSPEC NeLLogger : public Logger
 protected:
 	// pointers
 	// ...
-	
+
 	// instances
 	// ...
 public:
 	NeLLogger();
 	virtual ~NeLLogger();
 
-	virtual void logEvent(const String& message, LoggingLevel level = Standard);
-    virtual void setLogFilename(const String& filename, bool append = false);
+	virtual void logEvent(const String &message, LoggingLevel level = Standard);
+	virtual void setLogFilename(const String &filename, bool append = false);
 }; /* class NeLLogger */
 
 } /* namespace CEGUI */

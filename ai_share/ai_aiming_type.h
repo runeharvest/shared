@@ -14,41 +14,38 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_AI_AIMING_TYPE_H
 #define RY_AI_AIMING_TYPE_H
 
 #include "nel/misc/types_nl.h"
 #include "game_share/slot_equipment.h"
 
-namespace AI_AIMING_TYPE
+namespace AI_AIMING_TYPE {
+enum TAiAimingType
 {
-	enum TAiAimingType
-	{
-		Random = 0,
-		Head,
-		Chest,
-		Arms,
-		Hands,
-		Legs,
-		Feet,
-		
-		LeastProtected,
-		AveragestProtected,
-		MostProtected,
-		
-		Unknown,
-	};
+	Random = 0,
+	Head,
+	Chest,
+	Arms,
+	Hands,
+	Legs,
+	Feet,
 
-	/// convert a flag to a string
-	const std::string &toString(TAiAimingType type);
+	LeastProtected,
+	AveragestProtected,
+	MostProtected,
 
-	/// convert a string to a flag
-	TAiAimingType toAimingType( const std::string &str);
+	Unknown,
+};
 
-	/// convert a slot to a combat flag
-	SLOT_EQUIPMENT::TSlotEquipment toSlot(TAiAimingType type);
+/// convert a flag to a string
+const std::string &toString(TAiAimingType type);
+
+/// convert a string to a flag
+TAiAimingType toAimingType(const std::string &str);
+
+/// convert a slot to a combat flag
+SLOT_EQUIPMENT::TSlotEquipment toSlot(TAiAimingType type);
 
 }; // AI_AIMING_TYPE
 

@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 #include "nel/misc/debug.h"
@@ -26,32 +24,29 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace RESISTANCE_TYPE
+namespace RESISTANCE_TYPE {
+NL_BEGIN_STRING_CONVERSION_TABLE(TResistanceType)
+NL_STRING_CONVERSION_TABLE_ENTRY(Desert)
+NL_STRING_CONVERSION_TABLE_ENTRY(Forest)
+NL_STRING_CONVERSION_TABLE_ENTRY(Lacustre)
+NL_STRING_CONVERSION_TABLE_ENTRY(Jungle)
+NL_STRING_CONVERSION_TABLE_ENTRY(PrimaryRoot)
+NL_STRING_CONVERSION_TABLE_ENTRY(None)
+NL_END_STRING_CONVERSION_TABLE(TResistanceType, ResistanceTypeConversion, None)
+
+//-----------------------------------------------
+// fromString:
+//-----------------------------------------------
+TResistanceType fromString(const std::string &str)
 {
-	NL_BEGIN_STRING_CONVERSION_TABLE (TResistanceType)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Desert)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Forest)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Lacustre)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Jungle)
-		NL_STRING_CONVERSION_TABLE_ENTRY(PrimaryRoot)
-		NL_STRING_CONVERSION_TABLE_ENTRY(None)
-	NL_END_STRING_CONVERSION_TABLE(TResistanceType, ResistanceTypeConversion, None)
+	return ResistanceTypeConversion.fromString(str);
+}
 
-
-	//-----------------------------------------------
-	// fromString:
-	//-----------------------------------------------
-	TResistanceType fromString(const std::string &str)
-	{
-		return ResistanceTypeConversion.fromString(str);
-	}
-
-
-	//-----------------------------------------------
-	// toString :
-	//-----------------------------------------------
-	const std::string& toString(TResistanceType resistance_type)
-	{
-		return ResistanceTypeConversion.toString(resistance_type);
-	}
+//-----------------------------------------------
+// toString :
+//-----------------------------------------------
+const std::string &toString(TResistanceType resistance_type)
+{
+	return ResistanceTypeConversion.toString(resistance_type);
+}
 };

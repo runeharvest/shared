@@ -41,7 +41,6 @@ using namespace NLNET;
 
 // to launch a service, the naming_service must run.
 
-
 // this stupid example creates a chat service. it's a 1 person chat, it
 // means that you can send strings to the service and it sends them back to you
 // (and only to you) so you can't see strings from other people :)
@@ -50,104 +49,99 @@ using namespace NLNET;
 class CChatService : public IService
 {
 public:
+	//	FILE *fp;
 
-//	FILE *fp;
-
-	void init ()
+	void init()
 	{
 		// this function is called after all standard service initialization.
 		// put here your code that inits your application.
 
-		nlinfo ("init() was called");
+		nlinfo("init() was called");
 
-//		fp = nlfopen (NLMISC::CFile::findNewFile("stat.csv"), "wt");
+		//		fp = nlfopen (NLMISC::CFile::findNewFile("stat.csv"), "wt");
 	}
 
-	bool update ()
+	bool update()
 	{
 		// this function is called every "loop". you return true if you want
 		// to continue or return false if you want to exit the service.
 		// the loop is called evenly (by default, at least one time per second).
 
-		nlinfo ("update() was called");
+		nlinfo("update() was called");
 
 		/*		static uint ii = 0;
 		if(ii++ == 15)
 		  {
-			nlstop;
-			}*/
+		    nlstop;
+		    }*/
 
-//////debug to test log flood for memory leak
+		//////debug to test log flood for memory leak
 
-//		DebugLog->addNegativeFilter("flood");
-//		InfoLog->addNegativeFilter("flood");
-//		WarningLog->addNegativeFilter("flood");
+		//		DebugLog->addNegativeFilter("flood");
+		//		InfoLog->addNegativeFilter("flood");
+		//		WarningLog->addNegativeFilter("flood");
 
-	  /*		string s;
+		/*		string s;
 
-		uint v = (uint)frand(80), i;
-		for (i = 0; i < v; i++)
-		{
-			s+='a'+rand()%26;
-		}
-	
-		static uint32 val = 0;
-		for(i = 0; i < 10; i++)
-		{
-			nldebug ("debg flood %d %s", val++, s.c_str());
-			nlinfo ("info flood %d %s", val++, s.c_str());
-			nlwarning ("warn flood %d %s", val++, s.c_str());
-//			nldebug ("debg flood %10d %s %d %d", val++, bytesToHumanReadable(CSystemInfo::getAllocatedSystemMemory ()).c_str(), UserSpeedLoop, NetSpeedLoop);
-//			nlinfo ("info flood %10d %s %d %d", val++, bytesToHumanReadable(CSystemInfo::getAllocatedSystemMemory ()).c_str(), UserSpeedLoop, NetSpeedLoop);
-//			nlwarning ("warn flood %10d %s %d %d", val++, bytesToHumanReadable(CSystemInfo::getAllocatedSystemMemory ()).c_str(), UserSpeedLoop, NetSpeedLoop);
-		}
-	  */
-/////////
-//		fprintf (fp, "%d;%d;%d\n", CMemUtils::getAllocatedSystemMemory (), UserSpeedLoop, NetSpeedLoop);
-//		fflush (fp);
+		  uint v = (uint)frand(80), i;
+		  for (i = 0; i < v; i++)
+		  {
+		      s+='a'+rand()%26;
+		  }
+
+		  static uint32 val = 0;
+		  for(i = 0; i < 10; i++)
+		  {
+		      nldebug ("debg flood %d %s", val++, s.c_str());
+		      nlinfo ("info flood %d %s", val++, s.c_str());
+		      nlwarning ("warn flood %d %s", val++, s.c_str());
+  //			nldebug ("debg flood %10d %s %d %d", val++, bytesToHumanReadable(CSystemInfo::getAllocatedSystemMemory ()).c_str(), UserSpeedLoop, NetSpeedLoop);
+  //			nlinfo ("info flood %10d %s %d %d", val++, bytesToHumanReadable(CSystemInfo::getAllocatedSystemMemory ()).c_str(), UserSpeedLoop, NetSpeedLoop);
+  //			nlwarning ("warn flood %10d %s %d %d", val++, bytesToHumanReadable(CSystemInfo::getAllocatedSystemMemory ()).c_str(), UserSpeedLoop, NetSpeedLoop);
+		  }
+		*/
+		/////////
+		//		fprintf (fp, "%d;%d;%d\n", CMemUtils::getAllocatedSystemMemory (), UserSpeedLoop, NetSpeedLoop);
+		//		fflush (fp);
 		return true;
 	}
 
-	void release ()
+	void release()
 	{
 		// this function is called before all standard service release code.
 		// put here your code that releases your application.
 
-//		fclose (fp);
+		//		fclose (fp);
 
-		nlinfo ("release() was called");
+		nlinfo("release() was called");
 	}
 };
-
 
 // each time the message CHAT is received, this function is called.
 // the first param contains parameters of the message. the second one is the
 // identifier of who sent this message
-static void cbChat (CMessage &msgin, const std::string &serviceName, TServiceId sid)
+static void cbChat(CMessage &msgin, const std::string &serviceName, TServiceId sid)
 {
 	// get the chat string of the client
 	string chat;
-	msgin.serial (chat);
+	msgin.serial(chat);
 
 	// create the message to send to the other
-	CMessage msgout ("CHAT");
-	msgout.serial (chat);
+	CMessage msgout("CHAT");
+	msgout.serial(chat);
 
 	// send it back to the sender
-	CUnifiedNetwork::getInstance()->send (sid, msgout);
+	CUnifiedNetwork::getInstance()->send(sid, msgout);
 }
-
 
 // this array contains all callback functions. it associates the callbackname (messagename),
 // with a callback
-TUnifiedCallbackItem CallbackArray[] =
-{
+TUnifiedCallbackItem CallbackArray[] = {
 	{ "CHAT", cbChat }
 };
-
 
 // this macro is the "main". the first param is the class name inherited from IService.
 // the second one is the name of the service used to register and find the service
 // using the naming service. the third one is the port where the listen socket will
 // be created. If you put 0, the system automatically finds a port.
-NLNET_SERVICE_MAIN (CChatService, "CS", "chat_service", 0, CallbackArray, "", "");
+NLNET_SERVICE_MAIN(CChatService, "CS", "chat_service", 0, CallbackArray, "", "");

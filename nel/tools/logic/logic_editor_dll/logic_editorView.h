@@ -9,50 +9,49 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-
 class CLogic_editorView : public CView
 {
 protected: // create from serialization only
 	CLogic_editorView();
 	DECLARE_DYNCREATE(CLogic_editorView)
 
-// Attributes
+	// Attributes
 public:
-	CLogic_editorDoc* GetDocument();
+	CLogic_editorDoc *GetDocument();
 
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CLogic_editorView)
-	public:
-	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+public:
+	virtual void OnDraw(CDC *pDC); // overridden to draw this view
+	virtual BOOL PreCreateWindow(CREATESTRUCT &cs);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CLogic_editorView();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	virtual void Dump(CDumpContext &dc) const;
 #endif
 
 protected:
-
-// Generated message map functions
+	// Generated message map functions
 protected:
 	//{{AFX_MSG(CLogic_editorView)
-		// NOTE - the ClassWizard will add and remove member functions here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
+	// NOTE - the ClassWizard will add and remove member functions here.
+	//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
 
-#ifndef _DEBUG  // debug version in logic_editorView.cpp
-inline CLogic_editorDoc* CLogic_editorView::GetDocument()
-   { return (CLogic_editorDoc*)m_pDocument; }
+#ifndef _DEBUG // debug version in logic_editorView.cpp
+inline CLogic_editorDoc *CLogic_editorView::GetDocument()
+{
+	return (CLogic_editorDoc *)m_pDocument;
+}
 #endif
 
 /////////////////////////////////////////////////////////////////////////////

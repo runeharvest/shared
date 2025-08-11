@@ -23,7 +23,6 @@
 #include "nel/3d/mesh.h"
 #include "nel/3d/skeleton_model.h"
 
-
 using namespace std;
 using namespace NLMISC;
 
@@ -31,85 +30,82 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 CLodCharacterBuilder::CLodCharacterBuilder()
 {
-	_SkeletonShape= NULL;
-	_LodBuild= NULL;
-	_TmpScene= NULL;
+	_SkeletonShape = NULL;
+	_LodBuild = NULL;
+	_TmpScene = NULL;
 }
 // ***************************************************************************
 CLodCharacterBuilder::~CLodCharacterBuilder()
 {
 	// release the scene
-	if(_TmpScene)
+	if (_TmpScene)
 	{
 		_TmpScene->release();
 		delete _TmpScene;
-		_TmpScene= NULL;
+		_TmpScene = NULL;
 	}
 }
 
 // ***************************************************************************
-void			CLodCharacterBuilder::setShape(const std::string &name, CSkeletonShape *skeletonShape, CLodCharacterShapeBuild *lodBuild)
+void CLodCharacterBuilder::setShape(const std::string &name, CSkeletonShape *skeletonShape, CLodCharacterShapeBuild *lodBuild)
 {
 	nlassert(skeletonShape);
 	nlassert(lodBuild);
 
 	// SmartPtr the skeleton Shape (NB: important because skeletonModel use it)
-	_SkeletonShape= skeletonShape;
+	_SkeletonShape = skeletonShape;
 	// a std ptr.
-	_LodBuild= lodBuild;
+	_LodBuild = lodBuild;
 
 	// Remap bone, with help of lodBuild and skeleton names.
 	_BoneRemap.resize(lodBuild->BonesNames.size());
-	for(uint i=0; i<_BoneRemap.size(); i++)
+	for (uint i = 0; i < _BoneRemap.size(); i++)
 	{
-		const std::string	&boneName= lodBuild->BonesNames[i];
-		sint32	boneId= _SkeletonShape->getBoneIdByName(boneName);
+		const std::string &boneName = lodBuild->BonesNames[i];
+		sint32 boneId = _SkeletonShape->getBoneIdByName(boneName);
 		// If not found
-		if(boneId<0)
+		if (boneId < 0)
 		{
 			nlwarning("Not found a bone in the skeleton Shape: %s", boneName.c_str());
 			// use root bone.
-			_BoneRemap[i]= 0;
+			_BoneRemap[i] = 0;
 		}
 		else
 			// remap
-			_BoneRemap[i]= boneId;
+			_BoneRemap[i] = boneId;
 	}
 
 	// build basics
 	_LodCharacterShape.buildMesh(name, *_LodBuild);
 
 	// Build a scene, for addAnim purpose
-	if(!_TmpScene)
+	if (!_TmpScene)
 	{
-		_TmpScene= new CScene(false);
+		_TmpScene = new CScene(false);
 		// Must init Statics for scene (because use it in addAnim). NB: never mind if done twice.
 		CScene::registerBasics();
 		// init default Roots.
 		_TmpScene->initDefaultRoots();
 		// Don't Set driver/viewport
 		// init QuadGridClipManager
-		_TmpScene->initQuadGridClipManager ();
+		_TmpScene->initQuadGridClipManager();
 	}
 }
 
-
 // ***************************************************************************
-void			CLodCharacterBuilder::addAnim(const char *animName, CAnimation *animation, float frameRate)
+void CLodCharacterBuilder::addAnim(const char *animName, CAnimation *animation, float frameRate)
 {
-	nlassert(frameRate>0);
+	nlassert(frameRate > 0);
 	nlassert(animation);
 
 	/*	Create a Scene, a skeletonModel, an animation set, and a channel mixer to play the animation
-		NB: no render is made and no driver is created. The scene is just here for correct creation of the skeleton
-		Yoyo: This is a tricky way, but I found it the easier one...
+	    NB: no render is made and no driver is created. The scene is just here for correct creation of the skeleton
+	    Yoyo: This is a tricky way, but I found it the easier one...
 	*/
 
 	// Create Components necesssary to play the animation
@@ -118,17 +114,16 @@ void			CLodCharacterBuilder::addAnim(const char *animName, CAnimation *animation
 	// create an animationSet, and a channelMixer.
 	//--------------
 	// build an animation set with the only one animation. This animation will be deleted with the animationSet
-	CAnimationSet	*tmpAnimationSet= new CAnimationSet;
+	CAnimationSet *tmpAnimationSet = new CAnimationSet;
 	tmpAnimationSet->addAnimation(animName, animation);
 	tmpAnimationSet->build();
 	// Build a channelMixer.
-	CChannelMixer	*tmpChannelMixer= new CChannelMixer;
+	CChannelMixer *tmpChannelMixer = new CChannelMixer;
 	tmpChannelMixer->setAnimationSet(tmpAnimationSet);
-
 
 	// create a skeleton Model for animation
 	//---------------
-	CSkeletonModel	*skeleton= (CSkeletonModel*)_SkeletonShape->createInstance(*_TmpScene);
+	CSkeletonModel *skeleton = (CSkeletonModel *)_SkeletonShape->createInstance(*_TmpScene);
 	// and skeleton it with animation
 	skeleton->registerToChannelMixer(tmpChannelMixer, "");
 	// activate the anim
@@ -136,27 +131,25 @@ void			CLodCharacterBuilder::addAnim(const char *animName, CAnimation *animation
 	nlassert(animID != CAnimationSet::NotFound);
 	tmpChannelMixer->setSlotAnimation(0, animID);
 
-
 	// Build Dst Animation basics.
 	//--------------
-	CLodCharacterShape::CAnimBuild	dstAnim;
-	dstAnim.Name= animName;
-	dstAnim.AnimLength= animation->getEndTime();
-	dstAnim.NumKeys= (uint)ceil(dstAnim.AnimLength * frameRate);
-	dstAnim.NumKeys= max(1U, dstAnim.NumKeys);
+	CLodCharacterShape::CAnimBuild dstAnim;
+	dstAnim.Name = animName;
+	dstAnim.AnimLength = animation->getEndTime();
+	dstAnim.NumKeys = (uint)ceil(dstAnim.AnimLength * frameRate);
+	dstAnim.NumKeys = max(1U, dstAnim.NumKeys);
 	// resize array.
 	dstAnim.Keys.resize(_LodCharacterShape.getNumVertices() * dstAnim.NumKeys);
 
-
 	// Bake the animation
 	//==========================
-	double	time=0;
-	double	dt= 1.0/(double)frameRate;
-	uint64	evalDetaiDate= 0;
-	for(uint i=0; i<dstAnim.NumKeys; i++, time+= dt)
+	double time = 0;
+	double dt = 1.0 / (double)frameRate;
+	uint64 evalDetaiDate = 0;
+	for (uint i = 0; i < dstAnim.NumKeys; i++, time += dt)
 	{
 		// clamp the time
-		time= min(time, (double)dstAnim.AnimLength);
+		time = min(time, (double)dstAnim.AnimLength);
 
 		// setup the channelMixer time
 		tmpChannelMixer->setSlotTime(0, (float)time);
@@ -169,14 +162,12 @@ void			CLodCharacterBuilder::addAnim(const char *animName, CAnimation *animation
 		skeleton->computeAllBones(CMatrix::Identity);
 
 		// apply the skinning from the current skeleton state
-		applySkin(skeleton, &dstAnim.Keys[i*_LodCharacterShape.getNumVertices()]);
+		applySkin(skeleton, &dstAnim.Keys[i * _LodCharacterShape.getNumVertices()]);
 	}
-
 
 	// Add the animation to the lod
 	//==========================
 	_LodCharacterShape.addAnim(dstAnim);
-
 
 	// Delete
 	//==========================
@@ -188,44 +179,42 @@ void			CLodCharacterBuilder::addAnim(const char *animName, CAnimation *animation
 	delete tmpAnimationSet;
 }
 
-
 // ***************************************************************************
-void			CLodCharacterBuilder::applySkin(CSkeletonModel *skeleton, CVector	*dstVertices)
+void CLodCharacterBuilder::applySkin(CSkeletonModel *skeleton, CVector *dstVertices)
 {
-	uint	numVerts= (uint)_LodBuild->Vertices.size();
+	uint numVerts = (uint)_LodBuild->Vertices.size();
 
 	// for all vertices.
-	for(uint i=0; i<numVerts; i++)
+	for (uint i = 0; i < numVerts; i++)
 	{
-		CMesh::CSkinWeight	&skinWgt= _LodBuild->SkinWeights[i];
-		CVector				&srcVert= _LodBuild->Vertices[i];
-		CVector				&dstVert= dstVertices[i];
-		dstVert= CVector::Null;
+		CMesh::CSkinWeight &skinWgt = _LodBuild->SkinWeights[i];
+		CVector &srcVert = _LodBuild->Vertices[i];
+		CVector &dstVert = dstVertices[i];
+		dstVert = CVector::Null;
 		// parse all Weights, and add influence.
-		for(uint j=0; j<NL3D_MESH_SKINNING_MAX_MATRIX; j++)
+		for (uint j = 0; j < NL3D_MESH_SKINNING_MAX_MATRIX; j++)
 		{
-			float	wgt= skinWgt.Weights[j];
+			float wgt = skinWgt.Weights[j];
 
-			if(wgt==0)
+			if (wgt == 0)
 			{
 				// this should not happen, at least weight 0 should have an influence.
-				if(j==0)
-					dstVert= srcVert;
+				if (j == 0)
+					dstVert = srcVert;
 				// no more influence for this vertex.
 				break;
 			}
 			else
 			{
 				// Get the skeleton bone to read.
-				uint	boneId= _BoneRemap[skinWgt.MatrixId[j]];
+				uint boneId = _BoneRemap[skinWgt.MatrixId[j]];
 				// Get the computed matrix from the skeleton.
-				const	CMatrix	&boneMat= skeleton->Bones[boneId].getBoneSkinMatrix();
+				const CMatrix &boneMat = skeleton->Bones[boneId].getBoneSkinMatrix();
 				// Add the influence of this bone.
-				dstVert+= (boneMat * srcVert) * wgt;
+				dstVert += (boneMat * srcVert) * wgt;
 			}
 		}
 	}
 }
-
 
 } // NL3D

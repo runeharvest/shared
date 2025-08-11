@@ -47,12 +47,10 @@ namespace UPDATE1 {
 
 CUpdate1::CUpdate1()
 {
-
 }
 
 CUpdate1::~CUpdate1()
 {
-
 }
 
 void CUpdate1::registerClasses(CSceneClassRegistry *registry)

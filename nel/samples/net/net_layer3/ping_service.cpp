@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /*
  * Layer 3 and Service example, ping server.
  *
@@ -25,11 +24,9 @@
  * in the working directory. The naming service must be running.
  */
 
-
 // We're building a server, using the NeL Service framework
 #include "nel/net/service.h"
 using namespace NLNET;
-
 
 /*
  * Callback function called when receiving a "PING" message
@@ -45,36 +42,32 @@ using namespace NLNET;
  * Output (sent message to the ping server): PONG
  * - uint32: ping counter
  */
-void cbPing( CMessage& msgin, TSockId from, CCallbackNetBase& server )
+void cbPing(CMessage &msgin, TSockId from, CCallbackNetBase &server)
 {
 	uint32 counter;
 
 	// Input
-	msgin.serial( counter );
+	msgin.serial(counter);
 
 	// Output
-	CMessage msgout( "PONG" );
-	msgout.serial( counter );
-	server.send( msgout, from );
+	CMessage msgout("PONG");
+	msgout.serial(counter);
+	server.send(msgout, from);
 
-	nlinfo( "PING -> PONG" );
+	nlinfo("PING -> PONG");
 }
-
 
 /*
  * Callback array for messages received from a client
  */
-TCallbackItem CallbackArray[] =
-{
+TCallbackItem CallbackArray[] = {
 	{ "PING", cbPing }
 };
 
-
 // We use IService directly, no need to inherit from it
-
 
 /*
  * Declare a service with the class IService, the names "PS" (short) and "ping_service" (long).
  * The port is automatically allocated (0) and the main callback array is CallbackArray.
  */
-NLNET_OLD_SERVICE_MAIN( IService, "PS", "ping_service", 0, CallbackArray, "", "" )
+NLNET_OLD_SERVICE_MAIN(IService, "PS", "ping_service", 0, CallbackArray, "", "")

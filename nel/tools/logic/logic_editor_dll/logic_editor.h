@@ -9,10 +9,10 @@
 #endif // _MSC_VER > 1000
 
 #ifndef __AFXWIN_H__
-	#error include 'stdafx.h' before including this file for PCH
+#error include 'stdafx.h' before including this file for PCH
 #endif
 
-#include "resource.h"		// main symbols
+#include "resource.h" // main symbols
 #include "logic_editor_interface.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -23,30 +23,26 @@
 class CLogic_editorApp : public CWinApp
 {
 
-	CMultiDocTemplate* _DocTemplate;
+	CMultiDocTemplate *_DocTemplate;
 
 public:
 	CLogic_editorApp();
-	void newDoc ();
+	void newDoc();
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CLogic_editorApp)
-	public:
-	//virtual BOOL InitInstance();
-	//}}AFX_VIRTUAL
-	virtual BOOL initInstance (int x=0, int y=0, int cx=0, int cy=0);
+public:
+	// virtual BOOL InitInstance();
+	// }}AFX_VIRTUAL
+	virtual BOOL initInstance(int x = 0, int y = 0, int cx = 0, int cy = 0);
 
-// Implementation
+	// Implementation
 	//{{AFX_MSG(CLogic_editorApp)
-	//afx_msg void OnAppAbout();
+	// afx_msg void OnAppAbout();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-
-
-
 
 /**
  *	CLogicEditor
@@ -59,51 +55,46 @@ class CLogicEditor : public ILogicEditor
 {
 
 public:
-
 	/**
-	 *	CLogicEditor 
+	 *	CLogicEditor
 	 */
-	CLogicEditor();	
+	CLogicEditor();
 
 	/**
 	 *	Init the UI
 	 */
-	void initUI (HWND parent=NULL);
+	void initUI(HWND parent = NULL);
 
 	/**
 	 *	Init the UI Light version
 	 */
-	virtual void initUILight (int x, int y, int cx, int cy);
+	virtual void initUILight(int x, int y, int cx, int cy);
 
 	/**
 	 *	Go
 	 */
-	void go ();
+	void go();
 
 	/**
 	 *	Get the main frame
 	 */
-	virtual void*getMainFrame ();
+	virtual void *getMainFrame();
 
 	/**
 	 *	load file
 	 */
-	virtual void loadFile( const TCHAR * fileName );
+	virtual void loadFile(const TCHAR *fileName);
 
 	/**
 	 * create a default file
 	 */
-	virtual void createDefaultFile( const TCHAR * filename = _T("logic.logic "));
-	
+	virtual void createDefaultFile(const TCHAR *filename = _T("logic.logic "));
 
 	/**
 	 *	Release the UI
 	 */
-	void releaseUI ();
+	void releaseUI();
 };
-
-
-
 
 /////////////////////////////////////////////////////////////////////////////
 

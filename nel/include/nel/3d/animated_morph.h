@@ -17,16 +17,13 @@
 #ifndef NL_ANIMATED_MORPH_H
 #define NL_ANIMATED_MORPH_H
 
-
 #include "nel/misc/types_nl.h"
 #include "nel/misc/smart_ptr.h"
 #include "nel/3d/animatable.h"
 #include "nel/3d/track.h"
 #include <map>
 
-
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 /**
@@ -38,19 +35,17 @@ namespace NL3D
 class CMorphBase : public NLMISC::CRefCount
 {
 public:
-
 	CMorphBase();
 
 	// Name of this material, for Animation access.
-	std::string				Name;
+	std::string Name;
 
 	// Default tracks.
-	CTrackDefaultFloat		DefaultFactor;
+	CTrackDefaultFloat DefaultFactor;
 
 	/// save/load.
-	void			serial(NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 };
-
 
 // ***************************************************************************
 /**
@@ -62,54 +57,50 @@ public:
 class CAnimatedMorph : public IAnimatable
 {
 public:
-
 	/// \name ctor / setup.
 	// @{
 	/** Constructor.
 	 */
-	CAnimatedMorph (CMorphBase*mb);
+	CAnimatedMorph(CMorphBase *mb);
 	// @}
-
 
 	/// \name Herited from IAnimatable
 	// @{
 	/// Added values.
-	enum	TAnimValues
+	enum TAnimValues
 	{
-		OwnerBit= IAnimatable::AnimValueLast,
+		OwnerBit = IAnimatable::AnimValueLast,
 		FactorValue,
 		AnimValueLast
 	};
 
 	/// From IAnimatable
-	virtual IAnimatedValue* getValue (uint valueId);
+	virtual IAnimatedValue *getValue(uint valueId);
 
 	/// From IAnimatable
-	virtual const char *getValueName (uint valueId) const;
+	virtual const char *getValueName(uint valueId) const;
 
 	/// From IAnimatable.
-	virtual ITrack* getDefaultTrack (uint valueId);
+	virtual ITrack *getDefaultTrack(uint valueId);
 
 	/// From IAnimatable.
-	virtual	void	registerToChannelMixer(CChannelMixer *chanMixer, const std::string &prefix);
+	virtual void registerToChannelMixer(CChannelMixer *chanMixer, const std::string &prefix);
 
 	// @}
 
-	float	getFactor() const { return _Factor.Value; }
-	void	setFactor (float rFactor) { _Factor.Value = rFactor; }
+	float getFactor() const { return _Factor.Value; }
+	void setFactor(float rFactor) { _Factor.Value = rFactor; }
 
-	const std::string& getName() const { return _MorphBase->Name; }
+	const std::string &getName() const { return _MorphBase->Name; }
 
-// ********************
+	// ********************
 private:
-	CMorphBase				*_MorphBase;
+	CMorphBase *_MorphBase;
 
-	CAnimatedValueFloat		_Factor;
+	CAnimatedValueFloat _Factor;
 };
 
-
 } // NL3D
-
 
 #endif // NL_ANIMATED_MORPH_H
 

@@ -30,7 +30,7 @@
 using namespace NL3D;
 using namespace NLMISC;
 
-bool CNelExport::exportSWT(const std::string &sPath, std::vector<INode*>& vectNode)
+bool CNelExport::exportSWT(const std::string &sPath, std::vector<INode *> &vectNode)
 {
 	float rPosValue;
 	float rRotValue;
@@ -41,33 +41,33 @@ bool CNelExport::exportSWT(const std::string &sPath, std::vector<INode*>& vectNo
 	aSWNodes.empty();
 
 	// Build the array of node
-	std::vector<INode*>::iterator it = vectNode.begin();
+	std::vector<INode *>::iterator it = vectNode.begin();
 
-	for(int i=0; i<(int)vectNode.size(); ++i,++it)
+	for (int i = 0; i < (int)vectNode.size(); ++i, ++it)
 	{
 		// Get the SWT Modifier
 		INode *pNode = *it;
 
 		// SWT active ?
-		if (CExportNel::getScriptAppData (pNode, NEL3D_APPDATA_EXPORT_SWT, BST_UNCHECKED) != BST_UNCHECKED)
+		if (CExportNel::getScriptAppData(pNode, NEL3D_APPDATA_EXPORT_SWT, BST_UNCHECKED) != BST_UNCHECKED)
 		{
 			// Get the value
-			rPosValue = CExportNel::getScriptAppData (pNode, NEL3D_APPDATA_EXPORT_SWT_WEIGHT, 0.f);
+			rPosValue = CExportNel::getScriptAppData(pNode, NEL3D_APPDATA_EXPORT_SWT_WEIGHT, 0.f);
 			rRotValue = rPosValue;
 			rScaleValue = rPosValue;
 
 			// Store them in the temporary list
-			aSWNodes.resize(nNumNode+3);
+			aSWNodes.resize(nNumNode + 3);
 			aSWNodes[nNumNode].Name = MCharStrToUtf8(pNode->GetName());
-			aSWNodes[nNumNode].Name += std::string (".")+ITransformable::getRotQuatValueName();
+			aSWNodes[nNumNode].Name += std::string(".") + ITransformable::getRotQuatValueName();
 			aSWNodes[nNumNode].Weight = rRotValue;
 			++nNumNode;
 			aSWNodes[nNumNode].Name = MCharStrToUtf8(pNode->GetName());
-			aSWNodes[nNumNode].Name += std::string (".")+ITransformable::getPosValueName ();
+			aSWNodes[nNumNode].Name += std::string(".") + ITransformable::getPosValueName();
 			aSWNodes[nNumNode].Weight = rPosValue;
 			++nNumNode;
 			aSWNodes[nNumNode].Name = MCharStrToUtf8(pNode->GetName());
-			aSWNodes[nNumNode].Name += std::string (".")+ITransformable::getScaleValueName();
+			aSWNodes[nNumNode].Name += std::string(".") + ITransformable::getScaleValueName();
 			aSWNodes[nNumNode].Weight = rScaleValue;
 			++nNumNode;
 		}
@@ -77,28 +77,28 @@ bool CNelExport::exportSWT(const std::string &sPath, std::vector<INode*>& vectNo
 	{
 		CSkeletonWeight sw;
 		COFile file;
-		
-		sw.build( aSWNodes );
 
-		if (file.open (sPath))
+		sw.build(aSWNodes);
+
+		if (file.open(sPath))
 		{
 			try
-			{							
+			{
 				// Serial the skeleton
-				sw.serial (file);
+				sw.serial(file);
 				// All is good
 				return true;
 			}
 			catch (const Exception &e)
 			{
-				nlwarning (e.what());
+				nlwarning(e.what());
 			}
 		}
 	}
 	else
 	{
 		// No node found with a SWT Modifier
-		nlwarning ("No node found with a SWT Modifier");
+		nlwarning("No node found with a SWT Modifier");
 	}
 	return false;
 }

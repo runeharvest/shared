@@ -25,82 +25,77 @@
 using namespace std;
 using namespace NLMISC;
 
-
 // -----------------------------------------------------------------------------------------------
 // Window dialog callback
 // -----------------------------------------------------------------------------------------------
-INT_PTR CALLBACK CalculatingDialogCallback (
-  HWND hwndDlg,  // handle to dialog box
-  UINT uMsg,     // message
-  WPARAM wParam, // first message parameter
-  LPARAM lParam  // second message parameter
+INT_PTR CALLBACK CalculatingDialogCallback(
+    HWND hwndDlg, // handle to dialog box
+    UINT uMsg, // message
+    WPARAM wParam, // first message parameter
+    LPARAM lParam // second message parameter
 )
 {
-	double TimeCurrent = CTime::ticksToSecond( CTime::getPerformanceTime() );
-	CProgressBar *pClass = (CProgressBar*)GetWindowLongPtr (hwndDlg, GWLP_USERDATA);
+	double TimeCurrent = CTime::ticksToSecond(CTime::getPerformanceTime());
+	CProgressBar *pClass = (CProgressBar *)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 
-	switch (uMsg) 
+	switch (uMsg)
 	{
-		case WM_INITDIALOG:
-		{
-			LONG res = SetWindowLongPtr(hwndDlg, GWLP_USERDATA, (LONG_PTR)lParam);
-			pClass = (CProgressBar*)GetWindowLongPtr (hwndDlg, GWLP_USERDATA);
+	case WM_INITDIALOG: {
+		LONG res = SetWindowLongPtr(hwndDlg, GWLP_USERDATA, (LONG_PTR)lParam);
+		pClass = (CProgressBar *)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 
-			CenterWindow( hwndDlg, theCNelExport._Ip->GetMAXHWnd() );
-			ShowWindow( hwndDlg, SW_SHOWNORMAL );
-			pClass->rRatioCalculated = 0.0;
-			pClass->bCancelCalculation = false;
+		CenterWindow(hwndDlg, theCNelExport._Ip->GetMAXHWnd());
+		ShowWindow(hwndDlg, SW_SHOWNORMAL);
+		pClass->rRatioCalculated = 0.0;
+		pClass->bCancelCalculation = false;
+	}
+	break;
+
+	case WM_PAINT: {
+		TCHAR temp[256];
+		SendMessage(GetDlgItem(hwndDlg, IDC_PROGRESS1), PBM_SETPOS, (int)(pClass->rRatioCalculated * 100), 0);
+
+		if (pClass->rRatioCalculated > 0.0)
+		{
+			double TimeLeft = (TimeCurrent - pClass->rTimeBegin) * (1.0 - pClass->rRatioCalculated);
+			_stprintf(temp, _T("Time remaining : %02d h %02d m %02d s"), ((uint32)TimeLeft) / 3600,
+			    (((uint32)TimeLeft) / 60) % 60,
+			    (((uint32)TimeLeft)) % 60);
+			if (pClass->bCancelCalculation)
+				_tcscpy_s(temp, 256, _T("INTERRUPTED - Finishing current object..."));
+
+			SendMessage(GetDlgItem(hwndDlg, IDC_STATICTIMELEFT), WM_SETTEXT, 0, (LPARAM)temp);
+			SendMessage(GetDlgItem(hwndDlg, IDC_BUTTONCANCEL), WM_PAINT, 0, 0);
 		}
-		break;
+		string all;
+		for (uint32 i = 0; i < 14; ++i)
+			all += pClass->sInfoProgress[i] + "\n";
+		SendMessage(GetDlgItem(hwndDlg, IDC_STATICINFO), WM_SETTEXT, 0, (LPARAM)MaxTStrFromUtf8(all).data());
+	}
+	break;
 
-		case WM_PAINT:
+	case WM_DESTROY:
+		pClass->bCancelCalculation = true;
+		break;
+	case WM_COMMAND: {
+		switch (LOWORD(wParam))
 		{
-			TCHAR temp[256];
-			SendMessage( GetDlgItem( hwndDlg, IDC_PROGRESS1 ), PBM_SETPOS, (int)(pClass->rRatioCalculated*100), 0 );
-
-			if( pClass->rRatioCalculated > 0.0 )
-			{
-				double TimeLeft = (TimeCurrent - pClass->rTimeBegin) * (1.0-pClass->rRatioCalculated);
-				_stprintf( temp, _T("Time remaining : %02d h %02d m %02d s"), ((uint32)TimeLeft)/3600,
-																		(((uint32)TimeLeft)/60)%60,
-																		(((uint32)TimeLeft))%60 );
-				if (pClass->bCancelCalculation)
-					_tcscpy_s (temp, 256, _T("INTERRUPTED - Finishing current object..."));
-
-				SendMessage (GetDlgItem (hwndDlg, IDC_STATICTIMELEFT), WM_SETTEXT, 0, (LPARAM)temp);
-				SendMessage (GetDlgItem (hwndDlg, IDC_BUTTONCANCEL), WM_PAINT, 0, 0);
-			}
-			string all;
-			for (uint32 i = 0; i < 14; ++i)
-				all += pClass->sInfoProgress[i] + "\n";
-			SendMessage (GetDlgItem (hwndDlg, IDC_STATICINFO), WM_SETTEXT, 0, (LPARAM)MaxTStrFromUtf8(all).data());
-		}
-		break;
-
-		case WM_DESTROY:
-			pClass->bCancelCalculation = true;
-		break;
-		case WM_COMMAND:
-		{
-			switch( LOWORD(wParam) )
-			{
-				// ---
-				case IDC_BUTTONCANCEL:
-					if( HIWORD(wParam) == BN_CLICKED )
-						pClass->bCancelCalculation = true;
-				break;
-				default:
-				break;
-			}
-		}		
-		break;
+		// ---
+		case IDC_BUTTONCANCEL:
+			if (HIWORD(wParam) == BN_CLICKED)
+				pClass->bCancelCalculation = true;
+			break;
 		default:
-			return FALSE;
+			break;
+		}
+	}
+	break;
+	default:
+		return FALSE;
 		break;
 	}
 	return TRUE;
 }
-
 
 // -----------------------------------------------------------------------------------------------
 CProgressBar::CProgressBar()
@@ -115,21 +110,21 @@ CProgressBar::~CProgressBar()
 
 // -----------------------------------------------------------------------------------------------
 // Initialize the dialog with the total number of meshes to treat
-void CProgressBar::initProgressBar( sint32 nNbMesh, Interface &ip)
+void CProgressBar::initProgressBar(sint32 nNbMesh, Interface &ip)
 {
-	rTimeBegin = CTime::ticksToSecond( CTime::getPerformanceTime() );
+	rTimeBegin = CTime::ticksToSecond(CTime::getPerformanceTime());
 	nNbTotalMeshes = nNbMesh;
-	hWndProgress = CreateDialogParam(	CNelExportDesc.HInstance(), 
-										MAKEINTRESOURCE(IDD_CALCULATING),
-										NULL,//ip.GetMAXHWnd(), 
-										CalculatingDialogCallback,
-										(LPARAM)this );
+	hWndProgress = CreateDialogParam(CNelExportDesc.HInstance(),
+	    MAKEINTRESOURCE(IDD_CALCULATING),
+	    NULL, // ip.GetMAXHWnd(),
+	    CalculatingDialogCallback,
+	    (LPARAM)this);
 }
 
 // -----------------------------------------------------------------------------------------------
 void CProgressBar::uninitProgressBar()
 {
-	DestroyWindow( hWndProgress );
+	DestroyWindow(hWndProgress);
 	hWndProgress = NULL;
 }
 
@@ -140,12 +135,12 @@ void CProgressBar::update()
 		return;
 
 	MSG msg;
-	PeekMessage (&msg, (HWND)hWndProgress,0, 0, PM_REMOVE);
+	PeekMessage(&msg, (HWND)hWndProgress, 0, 0, PM_REMOVE);
 	{
-		if (IsDialogMessage (hWndProgress ,&msg))
+		if (IsDialogMessage(hWndProgress, &msg))
 		{
-			TranslateMessage (&msg);
-			DispatchMessage (&msg);
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
 		}
 	}
 }
@@ -158,7 +153,7 @@ void CProgressBar::setLine(uint32 nLineNb, string &sText)
 
 // -----------------------------------------------------------------------------------------------
 // Update with the current mesh treated
-void CProgressBar::updateProgressBar (sint32 NMeshNb)
+void CProgressBar::updateProgressBar(sint32 NMeshNb)
 {
 	rRatioCalculated = ((float)NMeshNb) / ((float)nNbTotalMeshes);
 	update();
@@ -169,4 +164,3 @@ bool CProgressBar::isCanceledProgressBar()
 {
 	return bCancelCalculation;
 }
-

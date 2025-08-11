@@ -17,15 +17,14 @@
 #ifndef UT_NET_MESSAGE
 #define UT_NET_MESSAGE
 
-class CUTNetMessage: public Test::Suite
+class CUTNetMessage : public Test::Suite
 {
 public:
-	CUTNetMessage ()
+	CUTNetMessage()
 	{
 		TEST_ADD(CUTNetMessage::messageSwap);
 		TEST_ADD(CUTNetMessage::lockSubMEssage);
 		TEST_ADD(CUTNetMessage::lockSubMEssageWithLongName);
-
 	}
 
 	void lockSubMEssageWithLongName()
@@ -33,7 +32,7 @@ public:
 		NLNET::CMessage master("BIG");
 
 		// serial some stuff
-		for (uint8 i=0; i<10; ++i)
+		for (uint8 i = 0; i < 10; ++i)
 		{
 			master.serial(i);
 		}
@@ -41,11 +40,11 @@ public:
 		uint32 sizes[4];
 
 		// serial 4 sub messages
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			NLNET::CMessage sub(NLMISC::toString("A_VERY_LONG_SUB_MESSAGE_NAME_%u", i));
 
-			for (uint8 j=0; j<i*4; ++j)
+			for (uint8 j = 0; j < i * 4; ++j)
 			{
 				sub.serial(j);
 			}
@@ -64,7 +63,7 @@ public:
 		// now, unpack and check
 
 		// read the first master data
-		for (uint8 i=0; i<10; ++i)
+		for (uint8 i = 0; i < 10; ++i)
 		{
 			uint8 b;
 			master.serial(b);
@@ -73,7 +72,7 @@ public:
 		}
 
 		// unpack each sub message
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			uint32 subSize;
 			master.serial(subSize);
@@ -84,7 +83,7 @@ public:
 			TEST_ASSERT(master.getName() == NLMISC::toString("A_VERY_LONG_SUB_MESSAGE_NAME_%u", i));
 			TEST_ASSERT(master.length() == sizes[i]);
 
-			for (uint8 j=0; j<i*4; ++j)
+			for (uint8 j = 0; j < i * 4; ++j)
 			{
 				uint8 b;
 				master.serial(b);
@@ -104,7 +103,7 @@ public:
 		master.seek(master.getHeaderSize(), NLMISC::IStream::begin);
 
 		// read the first master data
-		for (uint8 i=0; i<10; ++i)
+		for (uint8 i = 0; i < 10; ++i)
 		{
 			uint8 b;
 			master.serial(b);
@@ -113,7 +112,7 @@ public:
 		}
 
 		// assign from each sub message
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			uint32 subSize;
 			master.serial(subSize);
@@ -128,7 +127,7 @@ public:
 			NLNET::CMessage sub;
 			sub.assignFromSubMessage(master);
 
-			for (uint8 j=0; j<i*4; ++j)
+			for (uint8 j = 0; j < i * 4; ++j)
 			{
 				uint8 b;
 				sub.serial(b);
@@ -143,7 +142,6 @@ public:
 
 			master.unlockSubMessage();
 		}
-
 	}
 
 	void lockSubMEssage()
@@ -151,7 +149,7 @@ public:
 		NLNET::CMessage master("BIG");
 
 		// serial some stuff
-		for (uint8 i=0; i<10; ++i)
+		for (uint8 i = 0; i < 10; ++i)
 		{
 			master.serial(i);
 		}
@@ -159,11 +157,11 @@ public:
 		sint32 sizes[4];
 
 		// serial 4 sub messages
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			NLNET::CMessage sub(NLMISC::toString("SUB_%u", i));
 
-			for (uint8 j=0; j<i*4; ++j)
+			for (uint8 j = 0; j < i * 4; ++j)
 			{
 				sub.serial(j);
 			}
@@ -182,7 +180,7 @@ public:
 		// now, unpack and check
 
 		// read the first master data
-		for (uint8 i=0; i<10; ++i)
+		for (uint8 i = 0; i < 10; ++i)
 		{
 			uint8 b;
 			master.serial(b);
@@ -191,7 +189,7 @@ public:
 		}
 
 		// unpack each sub message
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			uint32 subSize;
 			master.serial(subSize);
@@ -202,7 +200,7 @@ public:
 			TEST_ASSERT(master.getName() == NLMISC::toString("SUB_%u", i));
 			TEST_ASSERT(master.length() == sizes[i]);
 
-			for (uint8 j=0; j<i*4; ++j)
+			for (uint8 j = 0; j < i * 4; ++j)
 			{
 				uint8 b;
 				master.serial(b);
@@ -222,7 +220,7 @@ public:
 		master.seek(master.getHeaderSize(), NLMISC::IStream::begin);
 
 		// read the first master data
-		for (uint8 i=0; i<10; ++i)
+		for (uint8 i = 0; i < 10; ++i)
 		{
 			uint8 b;
 			master.serial(b);
@@ -231,7 +229,7 @@ public:
 		}
 
 		// assign from each sub message
-		for (uint i=0; i<4; ++i)
+		for (uint i = 0; i < 4; ++i)
 		{
 			uint32 subSize;
 			master.serial(subSize);
@@ -246,7 +244,7 @@ public:
 			NLNET::CMessage sub;
 			sub.assignFromSubMessage(master);
 
-			for (uint8 j=0; j<i*4; ++j)
+			for (uint8 j = 0; j < i * 4; ++j)
 			{
 				uint8 b;
 				sub.serial(b);
@@ -261,13 +259,12 @@ public:
 
 			master.unlockSubMessage();
 		}
-
 	}
-	
+
 	void messageSwap()
 	{
 		NLNET::CMessage msg2;
-			
+
 		string s;
 		{
 			NLNET::CMessage msg1;

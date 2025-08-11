@@ -21,14 +21,14 @@
 #include <nel/misc/bit_mem_stream.h>
 
 // The following line is known to crash in a Ryzom service
-NLMISC::CBitMemStream globalBms( false, 2048 ); // global to avoid reallocation
+NLMISC::CBitMemStream globalBms(false, 2048); // global to avoid reallocation
 
 // Test suite for stream based classes
 // ! not complete at all at time of writing !
-class CUTMiscStream: public Test::Suite
+class CUTMiscStream : public Test::Suite
 {
 public:
-	CUTMiscStream ()
+	CUTMiscStream()
 	{
 		TEST_ADD(CUTMiscStream::constAndStream);
 		TEST_ADD(CUTMiscStream::memStreamSwap);
@@ -38,22 +38,20 @@ public:
 
 	void preallocatedBitStream()
 	{
-		NLMISC::CBitMemStream localBms( false, 2048 ); // global to avoid reallocation
+		NLMISC::CBitMemStream localBms(false, 2048); // global to avoid reallocation
 	}
-
 
 	void copyOnWrite()
 	{
 		// test the copy on write strategy in the mem stream (and derived) class.
-		// The point is to be able to copy a mem stream (e.g a NLNET::CMessage) 
+		// The point is to be able to copy a mem stream (e.g a NLNET::CMessage)
 		// but to do not copy the stream buffer.
-		// If more than one stream use the same buffer, any attempt to 
+		// If more than one stream use the same buffer, any attempt to
 		// modifye the buffer content while lead to a buffer duplication
 
 		NLMISC::CMemStream s1;
 		NLMISC::CMemStream s2;
 		NLMISC::CMemStream s3;
-
 
 		uint32 i = 1;
 		s1.serial(i);
@@ -77,8 +75,6 @@ public:
 		s2.serial(i);
 
 		TEST_ASSERT(s2.buffer() == s3.buffer());
-
-
 	}
 
 	enum TEnum
@@ -93,16 +89,15 @@ public:
 	{
 		// check that we can serialize with const stream or const object
 
-
 		NLMISC::CMemStream s1;
 		NLMISC::IStream &is1 = s1;
 
 		const string str("toto");
 		const uint32 i(1234546);
-		const TEnum	e(e_a);
+		const TEnum e(e_a);
 		string str2("titi");
 		uint32 i2(123456);
-		TEnum	e2(e_b);
+		TEnum e2(e_b);
 
 		// no need for const cast any more
 		nlWriteSerial(s1, str);
@@ -134,7 +129,6 @@ public:
 		TEST_THROWS(nlReadSerial(is2, i3), NLMISC::ENotInputStream);
 		TEST_THROWS(nlRead(is2, serialEnum, e3), NLMISC::ENotInputStream);
 
-
 		s1.invert();
 
 		nlReadSerial(s2, str3);
@@ -144,7 +138,6 @@ public:
 		nlReadSerial(is2, i3);
 		nlRead(is2, serialEnum, e3);
 
-
 		// cant read a const value
 		TEST_THROWS(nlWriteSerial(s1, str), NLMISC::ENotOutputStream);
 		TEST_THROWS(nlWriteSerial(s1, i), NLMISC::ENotOutputStream);
@@ -152,13 +145,12 @@ public:
 		TEST_THROWS(nlWriteSerial(is1, str), NLMISC::ENotOutputStream);
 		TEST_THROWS(nlWriteSerial(is1, i), NLMISC::ENotOutputStream);
 		TEST_THROWS(nlWrite(is1, serialEnum, e), NLMISC::ENotOutputStream);
-
 	}
-	
+
 	void memStreamSwap()
 	{
 		NLMISC::CMemStream ms2;
-			
+
 		string s;
 		{
 			NLMISC::CMemStream ms1;

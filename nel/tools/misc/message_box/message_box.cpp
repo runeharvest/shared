@@ -27,22 +27,22 @@ using namespace std;
 int APIENTRY _tWinMain(HINSTANCE /* hInstance */, HINSTANCE /* hPrevInstance */, LPTSTR lpCmdLine, int /* nCmdShow */)
 {
 	char *filename;
-	if (filename = strstr (lpCmdLine, "-f "))
+	if (filename = strstr(lpCmdLine, "-f "))
 	{
 		filename += 3;
-		FILE *file = fopen (filename, "r");
+		FILE *file = fopen(filename, "r");
 		if (file)
 		{
 			string content;
 			char buffer[512];
-			while (fgets (buffer, sizeof(buffer), file))
+			while (fgets(buffer, sizeof(buffer), file))
 				content += buffer;
-			fclose (file);
-			MessageBox (NULL, content.c_str (), "message_box", MB_OK);
+			fclose(file);
+			MessageBox(NULL, content.c_str(), "message_box", MB_OK);
 		}
 	}
 	else
-		MessageBox (NULL, lpCmdLine, "message_box", MB_OK);
+		MessageBox(NULL, lpCmdLine, "message_box", MB_OK);
 
 	return 0;
 }

@@ -24,17 +24,15 @@
 /////////////////////////////////////////////////////////////////////////////
 // CDialogProgress dialog
 
-
-CDialogProgress::CDialogProgress(CWnd* pParent /*=NULL*/)
-	: CDialog(CDialogProgress::IDD, pParent)
+CDialogProgress::CDialogProgress(CWnd *pParent /*=NULL*/)
+    : CDialog(CDialogProgress::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CDialogProgress)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void CDialogProgress::DoDataExchange(CDataExchange* pDX)
+void CDialogProgress::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CDialogProgress)
@@ -43,11 +41,10 @@ void CDialogProgress::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CDialogProgress, CDialog)
-	//{{AFX_MSG_MAP(CDialogProgress)
-		// NOTE: the ClassWizard will add message map macros here
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CDialogProgress)
+// NOTE: the ClassWizard will add message map macros here
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////

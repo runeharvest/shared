@@ -32,7 +32,7 @@
 
 using namespace NLMISC;
 
-int main (int argc, char **argv)
+int main(int argc, char **argv)
 {
 	createDebug();
 

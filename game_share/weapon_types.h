@@ -14,41 +14,37 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_WEAPON_TYPES_H
 #define RY_WEAPON_TYPES_H
 
 #include "nel/misc/types_nl.h"
 
-namespace WEAPONTYPE
+namespace WEAPONTYPE {
+// Mode
+enum EWeaponType
 {
-	// Mode
-	enum EWeaponType
-	{
-		UNKNOWN = 0,
+	UNKNOWN = 0,
 
-		HANDS,
+	HANDS,
 
-		HEAVY,
-		MEDIUM,
-		LIGHT,
+	HEAVY,
+	MEDIUM,
+	LIGHT,
 
-		LIGHT_GUN,
-		MEDIUM_GUN,
-		HEAVY_GUN,
+	LIGHT_GUN,
+	MEDIUM_GUN,
+	HEAVY_GUN,
 
-	};
+};
 
+/**
+ * get the right weapon type from the input string
+ * \param str the input string
+ * \return the EWeaponType associated to this string (UNKNOWN if the string cannot be interpreted)
+ */
+EWeaponType stringToWeaponType(const std::string &str);
 
-	/**
-	 * get the right weapon type from the input string
-	 * \param str the input string
-	 * \return the EWeaponType associated to this string (UNKNOWN if the string cannot be interpreted)
-	 */
-	EWeaponType stringToWeaponType(const std::string &str);
-
-	std::string toString(EWeaponType type);
+std::string toString(EWeaponType type);
 
 }; // WEAPONTYPE
 

@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
 /////////////
 // INCLUDE //
 /////////////
@@ -30,34 +27,33 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace TARGET
+namespace TARGET {
+// TARGET TABLE
+NL_BEGIN_STRING_CONVERSION_TABLE(TTargetRestriction)
+NL_STRING_CONVERSION_TABLE_ENTRY(EveryBody)
+NL_STRING_CONVERSION_TABLE_ENTRY(SelfOnly)
+NL_END_STRING_CONVERSION_TABLE(TTargetRestriction, TargetRestrictionConversion, EveryBody)
+
+//-------------------------------------------
+// stringToRestriction :
+// Get the Enum Value for a given target's restriction in string.
+// \param str : the input string
+// \return TTargetRestriction : the target's restriction value (for the enum).
+//-------------------------------------------
+TARGET::TTargetRestriction stringToTargetRestriction(const std::string &str)
 {
-	// TARGET TABLE
-	NL_BEGIN_STRING_CONVERSION_TABLE (TTargetRestriction)
-		NL_STRING_CONVERSION_TABLE_ENTRY(EveryBody)
-		NL_STRING_CONVERSION_TABLE_ENTRY(SelfOnly)
-	NL_END_STRING_CONVERSION_TABLE(TTargetRestriction, TargetRestrictionConversion, EveryBody)
+	return TargetRestrictionConversion.fromString(str);
+} // stringToRestriction //
 
-	//-------------------------------------------
-	// stringToRestriction :
-	// Get the Enum Value for a given target's restriction in string.
-	// \param str : the input string
-	// \return TTargetRestriction : the target's restriction value (for the enum).
-	//-------------------------------------------
-	TARGET::TTargetRestriction stringToTargetRestriction(const std::string &str)
-	{
-		return TargetRestrictionConversion.fromString(str);
-	}// stringToRestriction //
+//-------------------------------------------
+// targetRestrictionToString :
+// Get the string for a given target's restriction.
+// \param targetRestriction : target's restriction
+// \return string : the target's restriction as a string.
+//-------------------------------------------
+const std::string &targetRestrictionToString(TARGET::TTargetRestriction targetRestriction)
+{
+	return TargetRestrictionConversion.toString(targetRestriction);
+} // targetRestrictionToString //
 
-	//-------------------------------------------
-	// targetRestrictionToString :
-	// Get the string for a given target's restriction.
-	// \param targetRestriction : target's restriction
-	// \return string : the target's restriction as a string.
-	//-------------------------------------------
-	const std::string & targetRestrictionToString(TARGET::TTargetRestriction targetRestriction)
-	{
-		return TargetRestrictionConversion.toString(targetRestriction);
-	}// targetRestrictionToString //
-
-};// TARGET
+}; // TARGET

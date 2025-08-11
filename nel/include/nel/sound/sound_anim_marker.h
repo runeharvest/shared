@@ -25,54 +25,49 @@
 #include "nel/3d/cluster.h"
 #include "nel/sound/u_source.h"
 
-
-namespace NLMISC
-{
-	class IStream;
+namespace NLMISC {
+class IStream;
 }
 
-
 namespace NLSOUND {
-
 
 typedef std::set<NLMISC::TStringId> TMarkerSoundSet;
 
 class UAudioMixer;
 
-
 class CSoundAnimMarker
 {
 public:
-
-	CSoundAnimMarker(float time = 0.0f) : _Time(time) {}
+	CSoundAnimMarker(float time = 0.0f)
+	    : _Time(time)
+	{
+	}
 	virtual ~CSoundAnimMarker();
 
 	/** Set the time of this marker */
-	virtual void			setTime(float time)		{ _Time = time; }
+	virtual void setTime(float time) { _Time = time; }
 
 	/** Returns the time of this marker */
-	virtual float			getTime()	const			{ return _Time; }
+	virtual float getTime() const { return _Time; }
 
 	/** Add a new sound in the set of to-be-played sounds for this marker */
-	virtual void			addSound(const NLMISC::TStringId &soundName);
+	virtual void addSound(const NLMISC::TStringId &soundName);
 
 	/** Remove a sound */
-	virtual void			removeSound(const NLMISC::TStringId &soundName);
+	virtual void removeSound(const NLMISC::TStringId &soundName);
 
 	/** Return the set of sounds of this marker */
-	virtual void			getSounds(std::vector<NLMISC::TStringId> &sounds);
+	virtual void getSounds(std::vector<NLMISC::TStringId> &sounds);
 
 	/** Play all the sounds of this marker */
-	virtual void			play(UAudioMixer* mixer, NL3D::CCluster *cluster, CSoundContext &context);
-
+	virtual void play(UAudioMixer *mixer, NL3D::CCluster *cluster, CSoundContext &context);
 
 protected:
-
 	/** The set of sounds to be played */
-	TMarkerSoundSet			_Sounds;
+	TMarkerSoundSet _Sounds;
 
 	/** The time position of this marker */
-	float					_Time;
+	float _Time;
 };
 
 } // namespace NLSOUND

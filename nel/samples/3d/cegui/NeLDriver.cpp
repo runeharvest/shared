@@ -28,27 +28,30 @@
 #include <CEGUIExceptions.h>
 
 #ifdef NL_OS_WINDOWS
-#	include <windows.h>
-#	undef min
-#	undef max
+#include <windows.h>
+#undef min
+#undef max
 #endif
 
 int frame = 0;
 
-void NeLDriver::init() {
+void NeLDriver::init()
+{
 #ifdef NL_OS_WINDOWS
-	HWND hWnd = (HWND )m_Driver->getDisplay();
-	SetWindowText(hWnd,"CEGUI NeL Demo");
+	HWND hWnd = (HWND)m_Driver->getDisplay();
+	SetWindowText(hWnd, "CEGUI NeL Demo");
 #endif
 
 	// Create the window with config file values
-	if (!m_Driver->setDisplay(NL3D::UDriver::CMode(800, 600, 32, true, 0))) {
-		nlwarning ("Can't set display mode %d %d %d %d %d", 800, 600, 32, false, 0);
+	if (!m_Driver->setDisplay(NL3D::UDriver::CMode(800, 600, 32, true, 0)))
+	{
+		nlwarning("Can't set display mode %d %d %d %d %d", 800, 600, 32, false, 0);
 		return;
 	}
 	m_Driver->setFontManagerMaxMemory(2000000);
 	m_TextContext = m_Driver->createTextContext(NLMISC::CPath::lookup("n019003l.pfb"));
-	if(m_TextContext == 0) {
+	if (m_TextContext == 0)
+	{
 		nlwarning("Can't create text context");
 		return;
 	}
@@ -56,17 +59,18 @@ void NeLDriver::init() {
 	m_Driver->setAmbientColor(NLMISC::CRGBA(82, 100, 133, 255));
 	m_Driver->enableFog(false);
 	m_Scene = m_Driver->createScene(false);
-	if(m_Scene == 0) {
+	if (m_Scene == 0)
+	{
 		nlwarning("Can't create a NeL UScene");
 		return;
 	}
-	m_Scene->getCam().setPerspective(NLMISC::degToRad(90.0f), 1.33f, 1.0f*GScale, 30000.0f*GScale);
+	m_Scene->getCam().setPerspective(NLMISC::degToRad(90.0f), 1.33f, 1.0f * GScale, 30000.0f * GScale);
 	m_Scene->getCam().setTransformMode(NL3D::UTransformable::DirectMatrix);
 	m_Scene->enableLightingSystem(true);
 	m_Scene->setSunAmbient(NLMISC::CRGBA(82, 100, 133, 255));
-	m_Scene->setSunDiffuse(NLMISC::CRGBA(255,255,255));
-	m_Scene->setSunSpecular(NLMISC::CRGBA(255,255,255));
-	m_Scene->setSunDirection(NLMISC::CVector(-1,0,-1));
+	m_Scene->setSunDiffuse(NLMISC::CRGBA(255, 255, 255));
+	m_Scene->setSunSpecular(NLMISC::CRGBA(255, 255, 255));
+	m_Scene->setSunDirection(NLMISC::CVector(-1, 0, -1));
 
 	m_Scene->setPolygonBalancingMode(NL3D::UScene::PolygonBalancingOn);
 	m_Scene->setGroupLoadMaxPolygon("Fx", 5000);
@@ -75,10 +79,10 @@ void NeLDriver::init() {
 	m_FirstTime = NLMISC::CTime::ticksToSecond(NLMISC::CTime::getPerformanceTime());
 	m_OldTime = NLMISC::CTime::ticksToSecond(NLMISC::CTime::getPerformanceTime());
 	m_Time = NLMISC::CTime::ticksToSecond(NLMISC::CTime::getPerformanceTime());
-	
 }
 
-void NeLDriver::update() {
+void NeLDriver::update()
+{
 	using namespace NLMISC;
 	H_AUTO(NeLDriver_update);
 	// UPDATE THE TIME.
@@ -95,25 +99,29 @@ void NeLDriver::update() {
 	m_Driver->EventServer.pump();
 }
 
-double NeLDriver::getFps() {
+double NeLDriver::getFps()
+{
 	return m_DeltaTimeSmooth.getSmoothValue() ? 1.0 / m_DeltaTimeSmooth.getSmoothValue() : 0.0;
 }
 
-void NeLDriver::render() {
+void NeLDriver::render()
+{
 	using namespace NLMISC;
 	H_AUTO(NeLDriver_render);
 	m_Scene->render();
 }
 
-NL3D::UDriver		&NeLDriver::getDriver() const {
+NL3D::UDriver &NeLDriver::getDriver() const
+{
 	return *m_Driver;
 }
 
-NL3D::UScene		&NeLDriver::getScene() const {
+NL3D::UScene &NeLDriver::getScene() const
+{
 	return *m_Scene;
 }
 
-NL3D::UTextContext	&NeLDriver::getTextContext() const {
+NL3D::UTextContext &NeLDriver::getTextContext() const
+{
 	return *m_TextContext;
 }
-

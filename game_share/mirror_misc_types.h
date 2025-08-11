@@ -14,12 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
 #ifndef NL_MIRROR_MISC_TYPES_H
 #define NL_MIRROR_MISC_TYPES_H
-
 
 #include <nel/misc/types_nl.h>
 #include <nel/net/message.h>
@@ -28,38 +24,39 @@
 
 #include <map>
 
-typedef std::list<CMirroredDataSet*> TDataSetList;
+typedef std::list<CMirroredDataSet *> TDataSetList;
 
 /**
  *
  */
 struct TEntitiesCreatedInEntityType
 {
-	TEntitiesCreatedInEntityType( sint32 maxnb ) : MaxNb(maxnb), CurrentNb(0) {}
+	TEntitiesCreatedInEntityType(sint32 maxnb)
+	    : MaxNb(maxnb)
+	    , CurrentNb(0)
+	{
+	}
 
-	sint32			MaxNb;
-	sint32			CurrentNb;
-	TDataSetList	DataSetList;
+	sint32 MaxNb;
+	sint32 CurrentNb;
+	TDataSetList DataSetList;
 };
 
-
-//typedef CHashMap< uint8, TEntitiesCreatedInEntityType, std::hash<uint> > TEntityTypesOwned;
-typedef CHashMap< uint8, TEntitiesCreatedInEntityType> TEntityTypesOwned;
+// typedef CHashMap< uint8, TEntitiesCreatedInEntityType, std::hash<uint> > TEntityTypesOwned;
+typedef CHashMap<uint8, TEntitiesCreatedInEntityType> TEntityTypesOwned;
 #define GET_ENTITY_TYPE_OWNED(it) ((*it).second)
-
 
 /*
  * Dataset map
  */
-class TNDataSets : public CHashMap< std::string, CMirroredDataSet*>
+class TNDataSets : public CHashMap<std::string, CMirroredDataSet *>
 {
 public:
-
 	/// Operator [] which does not create an object when the key is not found, but throws EMirror()
-	CMirroredDataSet& operator [] ( const std::string& key )
+	CMirroredDataSet &operator[](const std::string &key)
 	{
-		iterator ids = find( key );
-		if ( ids != end() )
+		iterator ids = find(key);
+		if (ids != end())
 		{
 			return GET_NDATASET(ids);
 		}
@@ -69,21 +66,18 @@ public:
 		}
 	}
 
-	static CMirroredDataSet	*InvalidDataSet;
+	static CMirroredDataSet *InvalidDataSet;
 };
-
 
 /*
  * TSDataSets map with keys as CSheetId
  */
 typedef std::map<NLMISC::CSheetId, CMirroredDataSet> TSDataSets;
 
-
 /*
  * Buffered mirror transport classes
  */
-//typedef std::vector< std::pair<NLNET::CMessage, uint16> > CBufferedMirrorTCs;
-
+// typedef std::vector< std::pair<NLNET::CMessage, uint16> > CBufferedMirrorTCs;
 
 #endif // NL_MIRROR_MISC_TYPES_H
 

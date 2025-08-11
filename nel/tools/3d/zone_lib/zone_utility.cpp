@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "nel/misc/types_nl.h"
 #include "nel/misc/file.h"
 #include "nel/3d/quad_tree.h"
@@ -23,94 +22,90 @@
 #include <set>
 #include <iostream>
 
-
 using namespace NL3D;
 using namespace NLMISC;
 using namespace std;
 
-
 /*******************************************************************\
-						getDir()
+                        getDir()
 \*******************************************************************/
-std::string getDir (const std::string& path)
+std::string getDir(const std::string &path)
 {
 	char tmpPath[512];
-	strcpy (tmpPath, path.c_str());
-	char* slash=strrchr (tmpPath, '/');
+	strcpy(tmpPath, path.c_str());
+	char *slash = strrchr(tmpPath, '/');
 	if (!slash)
 	{
-		slash=strrchr (tmpPath, '\\');
+		slash = strrchr(tmpPath, '\\');
 	}
 
 	if (!slash)
 		return "";
 
 	slash++;
-	*slash=0;
+	*slash = 0;
 	return tmpPath;
 }
 
-
 /*******************************************************************\
-						getName()
+                        getName()
 \*******************************************************************/
-std::string getName (const std::string& path)
+std::string getName(const std::string &path)
 {
-	std::string dir=getDir (path);
+	std::string dir = getDir(path);
 
 	char tmpPath[512];
-	strcpy (tmpPath, path.c_str());
+	strcpy(tmpPath, path.c_str());
 
-	char *name=tmpPath;
-	nlassert (dir.length()<=strlen(tmpPath));
-	name+=dir.length();
+	char *name = tmpPath;
+	nlassert(dir.length() <= strlen(tmpPath));
+	name += dir.length();
 
-	char* point=strrchr (name, '.');
+	char *point = strrchr(name, '.');
 	if (point)
-		*point=0;
+		*point = 0;
 
 	return name;
 }
 
-
 /*******************************************************************\
-						getExt()
+                        getExt()
 \*******************************************************************/
-std::string getExt (const std::string& path)
+std::string getExt(const std::string &path)
 {
-	std::string dir=getDir (path);
-	std::string name=getName (path);
+	std::string dir = getDir(path);
+	std::string name = getName(path);
 
 	char tmpPath[512];
-	strcpy (tmpPath, path.c_str());
+	strcpy(tmpPath, path.c_str());
 
-	char *ext=tmpPath;
-	nlassert (dir.length()+name.length()<=strlen(tmpPath));
-	ext+=dir.length()+name.length();
+	char *ext = tmpPath;
+	nlassert(dir.length() + name.length() <= strlen(tmpPath));
+	ext += dir.length() + name.length();
 
 	return ext;
 }
 
 /*******************************************************************\
-						getZoneCoordByName()
+                        getZoneCoordByName()
 \*******************************************************************/
-bool getZoneCoordByName(const char * name, uint16& x, uint16& y)
+bool getZoneCoordByName(const char *name, uint16 &x, uint16 &y)
 {
 	uint i;
-	
+
 	std::string zoneName(name);
 
 	// y
 	string::size_type ind1 = zoneName.find("_");
-	if(ind1 == string::npos || ind1>=zoneName.length())
+	if (ind1 == string::npos || ind1 >= zoneName.length())
 	{
 		nlwarning("bad file name");
 		return false;
 	}
-	std::string ystr = zoneName.substr(0,ind1);
-	for(i=0; i<ystr.length(); i++)
+	std::string ystr = zoneName.substr(0, ind1);
+	for (i = 0; i < ystr.length(); i++)
 	{
-		if(!isdigit(ystr[i]))
+		if (!isdigit(ystr[i]))
 		{
 			nlwarning("y code size is not a 2 characters code");
 			return false;
@@ -122,18 +117,18 @@ bool getZoneCoordByName(const char * name, uint16& x, uint16& y)
 	// x
 	x = 0;
 	uint ind2 = (uint)zoneName.length();
-	if((ind2-ind1-1)!=2)
+	if ((ind2 - ind1 - 1) != 2)
 	{
 		nlwarning("x code size is not a 2 characters code");
 		return false;
 	}
-	std::string xstr = zoneName.substr(ind1+1,ind2-ind1-1);
-	for(i=0; i<xstr.length(); i++)
+	std::string xstr = zoneName.substr(ind1 + 1, ind2 - ind1 - 1);
+	for (i = 0; i < xstr.length(); i++)
 	{
 		if (isalpha(xstr[i]))
 		{
 			x *= 26;
-			x += (tolower(xstr[i])-'a');
+			x += (tolower(xstr[i]) - 'a');
 		}
 		else
 		{
@@ -144,32 +139,30 @@ bool getZoneCoordByName(const char * name, uint16& x, uint16& y)
 	return true;
 }
 
-
 /*******************************************************************\
-						getLettersFromNum()
+                        getLettersFromNum()
 \*******************************************************************/
-void getLettersFromNum(uint16 num, std::string& code)
+void getLettersFromNum(uint16 num, std::string &code)
 {
-	if(num>26*26) 
+	if (num > 26 * 26)
 	{
 		nlwarning("zone index too high");
 		return;
 	}
 	code.resize(0);
-	uint16 remainder = num%26;
-	code += 'A' + num/26;
+	uint16 remainder = num % 26;
+	code += 'A' + num / 26;
 	code += 'A' + remainder;
 }
 
-
 /*******************************************************************\
-						getZoneNameByCoord()
+                        getZoneNameByCoord()
 \*******************************************************************/
-void getZoneNameByCoord(uint16 x, uint16 y, std::string& zoneName)
+void getZoneNameByCoord(uint16 x, uint16 y, std::string &zoneName)
 {
 	// y str
 	char stmp[10];
-	sprintf(stmp,"%d",y);
+	sprintf(stmp, "%d", y);
 	std::string ystrtmp = std::string(stmp);
 
 	// x str
@@ -178,30 +171,28 @@ void getZoneNameByCoord(uint16 x, uint16 y, std::string& zoneName)
 
 	// name
 	zoneName = ystrtmp;
-	zoneName +="_";
-	zoneName +=xstrtmp;
+	zoneName += "_";
+	zoneName += xstrtmp;
 }
 
-
-
 /*******************************************************************\
-						getAdjacentZonesName()
+                        getAdjacentZonesName()
 \*******************************************************************/
-void getAdjacentZonesName(const std::string& zoneName, std::vector<std::string>& names)
+void getAdjacentZonesName(const std::string &zoneName, std::vector<std::string> &names)
 {
-	uint16 x,y;
-	int xtmp,ytmp;
+	uint16 x, y;
+	int xtmp, ytmp;
 	std::string nametmp;
 	std::string empty("empty");
 
 	names.reserve(8);
-	
+
 	getZoneCoordByName(zoneName.c_str(), x, y);
 
 	// top left
-	xtmp = x-1;
-	ytmp = y-1;
-	if(xtmp<0||ytmp<0)
+	xtmp = x - 1;
+	ytmp = y - 1;
+	if (xtmp < 0 || ytmp < 0)
 		nametmp = empty;
 	else
 		getZoneNameByCoord(xtmp, ytmp, nametmp);
@@ -209,41 +200,41 @@ void getAdjacentZonesName(const std::string& zoneName, std::vector<std::string>&
 
 	// top
 	xtmp = x;
-	ytmp = y-1;
-	if(ytmp<0)
+	ytmp = y - 1;
+	if (ytmp < 0)
 		nametmp = empty;
 	else
 		getZoneNameByCoord(xtmp, ytmp, nametmp);
 	names.push_back(nametmp);
 
 	// top right
-	xtmp = x+1;
-	ytmp = y-1;
-	if(ytmp<0)
+	xtmp = x + 1;
+	ytmp = y - 1;
+	if (ytmp < 0)
 		nametmp = empty;
 	else
 		getZoneNameByCoord(xtmp, ytmp, nametmp);
 	names.push_back(nametmp);
 
 	// left
-	xtmp = x-1;
+	xtmp = x - 1;
 	ytmp = y;
-	if(xtmp<0)
+	if (xtmp < 0)
 		nametmp = empty;
 	else
 		getZoneNameByCoord(xtmp, ytmp, nametmp);
 	names.push_back(nametmp);
 
 	// right
-	xtmp = x+1;
+	xtmp = x + 1;
 	ytmp = y;
 	getZoneNameByCoord(xtmp, ytmp, nametmp);
 	names.push_back(nametmp);
 
 	// bottom left
-	xtmp = x-1;
-	ytmp = y+1;
-	if(xtmp<0)
+	xtmp = x - 1;
+	ytmp = y + 1;
+	if (xtmp < 0)
 		nametmp = empty;
 	else
 		getZoneNameByCoord(xtmp, ytmp, nametmp);
@@ -251,24 +242,23 @@ void getAdjacentZonesName(const std::string& zoneName, std::vector<std::string>&
 
 	// bottom
 	xtmp = x;
-	ytmp = y+1;
+	ytmp = y + 1;
 	getZoneNameByCoord(xtmp, ytmp, nametmp);
 	names.push_back(nametmp);
 
-	// bottom right 
-	xtmp = x+1;
-	ytmp = y+1;
+	// bottom right
+	xtmp = x + 1;
+	ytmp = y + 1;
 	getZoneNameByCoord(xtmp, ytmp, nametmp);
 	names.push_back(nametmp);
 }
 
-
 /*******************************************************************\
-						createZoneId()
+                        createZoneId()
 \*******************************************************************/
 uint16 createZoneId(std::string zoneName)
 {
-	uint16 x,y;
+	uint16 x, y;
 	getZoneCoordByName(zoneName.c_str(), x, y);
-	return ((y-1)<<8) + x;
+	return ((y - 1) << 8) + x;
 }

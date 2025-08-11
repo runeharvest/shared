@@ -1,12 +1,12 @@
 /**********************************************************************
  *<
-	FILE: VertexPaint.h
+    FILE: VertexPaint.h
 
-	DESCRIPTION: Modifier definition
+    DESCRIPTION: Modifier definition
 
-	CREATED BY:  Christer Janson, Nikolai Sander
+    CREATED BY:  Christer Janson, Nikolai Sander
 
-	HISTORY:
+    HISTORY:
 
  *>	Copyright (c) 1997, All Rights Reserved.
  **********************************************************************/
@@ -31,21 +31,21 @@
 
 #include "../nel_3dsmax_shared/string_common.h"
 
-#define VERTEX_TREE_PAINT_CLASS_ID	Class_ID(0x40c7005e, 0x2a95082c)
-#define CID_PAINT				(CID_USER+0x439c)
-#define NUMPALETTES				7
-#define NUMGRADIENTPALETTES		2
-#define WM_POSTINIT				(WM_USER+0x1177)
+#define VERTEX_TREE_PAINT_CLASS_ID Class_ID(0x40c7005e, 0x2a95082c)
+#define CID_PAINT (CID_USER + 0x439c)
+#define NUMPALETTES 7
+#define NUMGRADIENTPALETTES 2
+#define WM_POSTINIT (WM_USER + 0x1177)
 
 extern TCHAR *GetString(int id);
-extern ClassDesc* GetVertexPaintDesc();
+extern ClassDesc *GetVertexPaintDesc();
 extern HINSTANCE hInstance;
 
 class NVert
 {
 public:
 	NVert();
-	NVert& operator= (NVert &nvert);
+	NVert &operator=(NVert &nvert);
 	Tab<int> faces;
 	Tab<int> whichVertex;
 };
@@ -59,175 +59,188 @@ public:
 	COLORREF color;
 };
 
+class VertexPaintData : public LocalModData
+{
 
-class VertexPaintData : public LocalModData {
-	
 	friend class VertexPaintRestore;
 
 public:
-
-		enum	TComponent {Red=0, Green, Blue};
-
-		VertexPaintData(Mesh& m);
-		VertexPaintData();
-		~VertexPaintData();
-		LocalModData*	Clone();
-
-		Mesh*	GetMesh();
-		NVert&  GetNVert(int i);
-		NVert&  GetNVCVert(int i)  ;
-		void	SetCache(Mesh& m);
-		void	FreeCache();
-
-		COLORREF&	GetColor(int i);
-		ColorData&  GetColorData(int i);
-		// colorMask to enable/disable write to R/G/B
-		void		SetColor(int i,float bary,COLORREF c, TComponent whichComp);
-		void		SetColor(int i, const ColorData &c);
-		int			GetNumColors();
-		int			GetMaxNumColors();
-		void		AllocColorData(int numcols);
-		void		SynchVerts(Mesh &m);
-
-	private:
-		Mesh*	mesh;
-		ColorData* colordata;
-		int		numColors;
-		NVert    *nverts;
-		int      numnverts;
-		NVert    *nvcverts;
-		int      numnvcverts;
-
+	enum TComponent
+	{
+		Red = 0,
+		Green,
+		Blue
 	};
 
-class VertexPaint : public Modifier {
-	
+	VertexPaintData(Mesh &m);
+	VertexPaintData();
+	~VertexPaintData();
+	LocalModData *Clone();
+
+	Mesh *GetMesh();
+	NVert &GetNVert(int i);
+	NVert &GetNVCVert(int i);
+	void SetCache(Mesh &m);
+	void FreeCache();
+
+	COLORREF &GetColor(int i);
+	ColorData &GetColorData(int i);
+	// colorMask to enable/disable write to R/G/B
+	void SetColor(int i, float bary, COLORREF c, TComponent whichComp);
+	void SetColor(int i, const ColorData &c);
+	int GetNumColors();
+	int GetMaxNumColors();
+	void AllocColorData(int numcols);
+	void SynchVerts(Mesh &m);
+
+private:
+	Mesh *mesh;
+	ColorData *colordata;
+	int numColors;
+	NVert *nverts;
+	int numnverts;
+	NVert *nvcverts;
+	int numnvcverts;
+};
+
+class VertexPaint : public Modifier
+{
+
 	friend class PaintMouseProc;
 	friend INT_PTR CALLBACK VertexPaintDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 public:
+	static IObjParam *ip;
+	static VertexPaint *editMod;
+	static HWND hParams;
+	static ICustButton *iPaintButton;
+	static ICustButton *iPickButton;
+	static IColorSwatch *iColor;
+	static COLORREF lastWeightColor;
+	static COLORREF lastPhaseColor;
+	static COLORREF palColors[NUMPALETTES];
 
-		static IObjParam*		ip;
-		static VertexPaint*		editMod;
-		static HWND				hParams;
-		static ICustButton*		iPaintButton;
-		static ICustButton*		iPickButton;
-		static IColorSwatch*	iColor;
-		static COLORREF			lastWeightColor;
-		static COLORREF			lastPhaseColor;
-		static COLORREF			palColors[NUMPALETTES];
+	// Yoyo: ZGradient
+	static IColorSwatch *iColorGradient[NUMGRADIENTPALETTES];
+	static COLORREF lastGradientColor[NUMGRADIENTPALETTES];
+	float fGradientBend;
+	ISpinnerControl *iGradientBend;
 
-		// Yoyo: ZGradient
-		static IColorSwatch*	iColorGradient[NUMGRADIENTPALETTES];
-		static COLORREF			lastGradientColor[NUMGRADIENTPALETTES];
-		float					fGradientBend;
-		ISpinnerControl			*iGradientBend;
+	// Constructor/Destructor
+	VertexPaint();
+	~VertexPaint();
 
-
-		//Constructor/Destructor
-		VertexPaint();
-		~VertexPaint();
-
-		// From Animatable
-		void DeleteThis() { delete this; }
+	// From Animatable
+	void DeleteThis() { delete this; }
 #if (MAX_VERSION_MAJOR < 24)
-		void GetClassName(TSTR& s) { s= TSTR(GetString(IDS_CLASS_NAME)); }  
+	void GetClassName(TSTR &s) { s = TSTR(GetString(IDS_CLASS_NAME)); }
 #else
-		void GetClassName(TSTR& s, bool localized) const { if (localized) s = GetString(IDS_CLASS_NAME); else s = _T("Nel VertexTreePaint"); }
+	void GetClassName(TSTR &s, bool localized) const
+	{
+		if (localized) s = GetString(IDS_CLASS_NAME);
+		else s = _T("Nel VertexTreePaint");
+	}
 #endif
-		virtual Class_ID ClassID() { return VERTEX_TREE_PAINT_CLASS_ID;}		
-		RefTargetHandle Clone(RemapDir& remap = DefaultRemapDir());
+	virtual Class_ID ClassID() { return VERTEX_TREE_PAINT_CLASS_ID; }
+	RefTargetHandle Clone(RemapDir &remap = DefaultRemapDir());
 #if (MAX_VERSION_MAJOR < 24)
-		GET_OBJECT_NAME_CONST MCHAR *GetObjectName() { return GetString(IDS_CLASS_NAME); }
+	GET_OBJECT_NAME_CONST MCHAR *GetObjectName() { return GetString(IDS_CLASS_NAME); }
 #else
-		const MCHAR *GetObjectName(bool localized) const { if (localized) return GetString(IDS_CLASS_NAME); else return _T("Nel VertexTreePaint"); }
+	const MCHAR *GetObjectName(bool localized) const
+	{
+		if (localized) return GetString(IDS_CLASS_NAME);
+		else return _T("Nel VertexTreePaint");
+	}
 #endif
-		IOResult Load(ILoad *iload);
-		IOResult Save(ISave *isave);
-		IOResult LoadLocalData(ILoad *iload, LocalModData **pld);
-		IOResult SaveLocalData(ISave *isave, LocalModData *ld);
+	IOResult Load(ILoad *iload);
+	IOResult Save(ISave *isave);
+	IOResult LoadLocalData(ILoad *iload, LocalModData **pld);
+	IOResult SaveLocalData(ISave *isave, LocalModData *ld);
 
-		//From Modifier
-		ChannelMask ChannelsUsed()  { return GEOM_CHANNEL|TOPO_CHANNEL|VERTCOLOR_CHANNEL|PART_SUBSEL_TYPE|SELECT_CHANNEL|PART_DISPLAY|TEXMAP_CHANNEL; }
-		ChannelMask ChannelsChanged() { return VERTCOLOR_CHANNEL|TOPO_CHANNEL|GEOM_CHANNEL; }
-		void ModifyObject(TimeValue t, ModContext &mc, ObjectState *os, INode *node);
-		Class_ID InputType() {return triObjectClassID;}
-		Interval LocalValidity(TimeValue t);
-		void NotifyInputChanged(Interval changeInt, PartID partID, RefMessage message, ModContext *mc);
+	// From Modifier
+	ChannelMask ChannelsUsed() { return GEOM_CHANNEL | TOPO_CHANNEL | VERTCOLOR_CHANNEL | PART_SUBSEL_TYPE | SELECT_CHANNEL | PART_DISPLAY | TEXMAP_CHANNEL; }
+	ChannelMask ChannelsChanged() { return VERTCOLOR_CHANNEL | TOPO_CHANNEL | GEOM_CHANNEL; }
+	void ModifyObject(TimeValue t, ModContext &mc, ObjectState *os, INode *node);
+	Class_ID InputType() { return triObjectClassID; }
+	Interval LocalValidity(TimeValue t);
+	void NotifyInputChanged(Interval changeInt, PartID partID, RefMessage message, ModContext *mc);
 
+	// From BaseObject
+	BOOL ChangeTopology() { return FALSE; }
+	BOOL DependOnTopology(ModContext &mc);
 
-		// From BaseObject
-		BOOL ChangeTopology() {return FALSE;}
-		BOOL DependOnTopology(ModContext &mc);
+	int GetParamBlockIndex(int id) { return id; }
 
-		int GetParamBlockIndex(int id) {return id;}
+	// From ReferenceMaker
+	int NumRefs();
+	RefTargetHandle GetReference(int i);
+	void SetReference(int i, RefTargetHandle rtarg);
 
-		//From ReferenceMaker
-		int NumRefs();
-		RefTargetHandle GetReference(int i);
-		void SetReference(int i, RefTargetHandle rtarg);
-		
-		int NumSubs();
-		Animatable* SubAnim(int i);
+	int NumSubs();
+	Animatable *SubAnim(int i);
 #if (MAX_VERSION_MAJOR < 24)
-		TSTR SubAnimName(int i);
+	TSTR SubAnimName(int i);
 #else
-		virtual TSTR SubAnimName(int i, bool localized) NL_OVERRIDE;
+	virtual TSTR SubAnimName(int i, bool localized) NL_OVERRIDE;
 #endif
 
-		RefResult NotifyRefChanged(NOTIFY_REF_PARAMS);
-		
-		CreateMouseCallBack* GetCreateMouseCallBack() {return NULL;}
-		void BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev);
-		void EndEditParams(IObjParam *ip, ULONG flags,Animatable *next);
+	RefResult NotifyRefChanged(NOTIFY_REF_PARAMS);
 
-		Interval GetValidity(TimeValue t);
-		ParamDimension *GetParameterDim(int pbIndex);
-		TSTR GetParameterName(int pbIndex);
+	CreateMouseCallBack *GetCreateMouseCallBack() { return NULL; }
+	void BeginEditParams(IObjParam *ip, ULONG flags, Animatable *prev);
+	void EndEditParams(IObjParam *ip, ULONG flags, Animatable *next);
 
-		BOOL	ActivatePaint(BOOL bOnOff, BOOL bPick = FALSE);
-		void	EnterMode();
-		void	ExitMode();
-		BOOL	IsValidNode(INode* node);
-		ModContext* ModContextFromNode(INode* node);
-		COLORREF GetActiveColor();
-		void	TurnVCOn(BOOL shaded);
+	Interval GetValidity(TimeValue t);
+	ParamDimension *GetParameterDim(int pbIndex);
+	TSTR GetParameterName(int pbIndex);
 
-		// fill current selection with color.
-		void	fillSelectionColor();
+	BOOL ActivatePaint(BOOL bOnOff, BOOL bPick = FALSE);
+	void EnterMode();
+	void ExitMode();
+	BOOL IsValidNode(INode *node);
+	ModContext *ModContextFromNode(INode *node);
+	COLORREF GetActiveColor();
+	void TurnVCOn(BOOL shaded);
 
-		// fill current selection with gradient color.
-		void	fillSelectionGradientColor();
+	// fill current selection with color.
+	void fillSelectionColor();
 
-		// Edit what? Intensity, phaseLevel1, phaseLevel2.
-		void	setEditionType(int editMode);
-		int		getEditionType() const {return _EditType;}
+	// fill current selection with gradient color.
+	void fillSelectionGradientColor();
 
-		// Bkup/reload iColor color according to getEditionType()
-		void	backupCurrentColor();
-		void	reloadBkupColor();
+	// Edit what? Intensity, phaseLevel1, phaseLevel2.
+	void setEditionType(int editMode);
+	int getEditionType() const { return _EditType; }
 
-		void	PaletteButton(HWND hWnd);
-		void	InitPalettes();
-		void	SavePalettes();
-	
-	private :
+	// Bkup/reload iColor color according to getEditionType()
+	void backupCurrentColor();
+	void reloadBkupColor();
 
-		void SetFlag (DWORD fl) { flags |= fl; }
-		void ClearFlag (DWORD fl) { flags &= ~fl; }
-		void SetFlag (DWORD fl, bool set) { if (set) SetFlag (fl); else ClearFlag (fl); }
-		bool GetFlag (DWORD fl) { return (fl&flags) ? TRUE : FALSE; }
+	void PaletteButton(HWND hWnd);
+	void InitPalettes();
+	void SavePalettes();
 
-	private:
-		ModContextList	modContexts;
-		INodeTab		nodeTab;
-		HWND			hPaletteWnd[NUMPALETTES];
-		float			fTint;
-		ISpinnerControl *iTint;
-		DWORD flags;
+private:
+	void SetFlag(DWORD fl) { flags |= fl; }
+	void ClearFlag(DWORD fl) { flags &= ~fl; }
+	void SetFlag(DWORD fl, bool set)
+	{
+		if (set) SetFlag(fl);
+		else ClearFlag(fl);
+	}
+	bool GetFlag(DWORD fl) { return (fl & flags) ? TRUE : FALSE; }
 
-		int				_EditType;
-		bool			_LastPaintMode;
-	};
+private:
+	ModContextList modContexts;
+	INodeTab nodeTab;
+	HWND hPaletteWnd[NUMPALETTES];
+	float fTint;
+	ISpinnerControl *iTint;
+	DWORD flags;
+
+	int _EditType;
+	bool _LastPaintMode;
+};
 
 /****************************************************************************
  *
@@ -236,46 +249,50 @@ public:
  ***************************************************************************/
 
 // Mouse proc
-class PaintMouseProc : public MouseCallBack {
+class PaintMouseProc : public MouseCallBack
+{
 public:
-	int		proc(HWND hWnd, int msg, int point, int flags, IPoint2 m); // Mouse callback
-	void	SetModifier(VertexPaint* pMod) { pModifier = pMod; }
-	void	SetPickMode(BOOL bPick){bPickMode = bPick;}
-	BOOL	GetPickMode(){return bPickMode;}
-	void	DoPainting(HWND hWnd, IPoint2 m);
-	void	DoPickColor(HWND hWnd, IPoint2 m);
-	void	MaybeStartHold();
-	void	MaybeEndHold();
-	BOOL	IsValidPickNode(INode *node);
-
+	int proc(HWND hWnd, int msg, int point, int flags, IPoint2 m); // Mouse callback
+	void SetModifier(VertexPaint *pMod) { pModifier = pMod; }
+	void SetPickMode(BOOL bPick) { bPickMode = bPick; }
+	BOOL GetPickMode() { return bPickMode; }
+	void DoPainting(HWND hWnd, IPoint2 m);
+	void DoPickColor(HWND hWnd, IPoint2 m);
+	void MaybeStartHold();
+	void MaybeEndHold();
+	BOOL IsValidPickNode(INode *node);
 
 private:
-	VertexPaint*	pModifier;
-	BOOL			wasHolding;
-	BOOL			bPickMode;
+	VertexPaint *pModifier;
+	BOOL wasHolding;
+	BOOL bPickMode;
 };
 
+class PaintCommandMode : public CommandMode
+{
+public:
+	PaintCommandMode();
 
-class PaintCommandMode : public CommandMode {
-	public:
-		PaintCommandMode();
+	PaintMouseProc mouseProc;
 
-		PaintMouseProc mouseProc;
+	int Class();
+	virtual int ID();
+	MouseCallBack *MouseProc(int *numPoints);
+	BOOL ChangeFG(CommandMode *oldMode);
+	ChangeForegroundCallback *ChangeFGProc();
+	void EnterMode();
+	void ExitMode();
 
-		int							Class();
-		virtual int					ID();
-		MouseCallBack*				MouseProc(int *numPoints);
-		BOOL						ChangeFG(CommandMode *oldMode);
-		ChangeForegroundCallback*	ChangeFGProc();
-		void						EnterMode();
-		void						ExitMode();
-
-		void						SetInterface(Interface* ip) { iInterface = ip; }
-		void						SetModifier(VertexPaint* pMod)		{ pModifier = pMod; mouseProc.SetModifier(pMod); }
+	void SetInterface(Interface *ip) { iInterface = ip; }
+	void SetModifier(VertexPaint *pMod)
+	{
+		pModifier = pMod;
+		mouseProc.SetModifier(pMod);
+	}
 
 private:
-		Interface*					iInterface;
-		VertexPaint*				pModifier;
+	Interface *iInterface;
+	VertexPaint *pModifier;
 };
 
 class VertexPaintRestore : public RestoreObj
@@ -289,14 +306,12 @@ private:
 	int numcolors;
 	int redonumcolors;
 
-public:	
-
+public:
 	VertexPaintRestore(VertexPaintData *pLocalData, VertexPaint *pVPaint);
 	~VertexPaintRestore();
 	void Restore(int isUndo);
 	void Redo();
-	int  Size();
+	int Size();
 };
-
 
 #endif // __VERTEXPAINT__H

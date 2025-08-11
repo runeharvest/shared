@@ -20,17 +20,15 @@
 #include "nel/misc/types_nl.h"
 #include "nel/3d/mrm_mesh.h"
 
-
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 struct CLinearEquation
 {
 	struct Element
 	{
-		uint32	index;
-		float	factor;
+		uint32 index;
+		float factor;
 
 		Element(uint32 i, float f)
 		{
@@ -44,11 +42,11 @@ struct CLinearEquation
 	void init(uint32 ii)
 	{
 		clear();
-		Elts.push_back (Element(ii, 1.0f));
+		Elts.push_back(Element(ii, 1.0f));
 	}
 
 	// this = this + eq * factor
-	void add(CLinearEquation& eq, float factor)
+	void add(CLinearEquation &eq, float factor)
 	{
 		Element tmp(0, 0.0f);
 
@@ -56,12 +54,12 @@ struct CLinearEquation
 		{
 			tmp.index = eq.Elts[i].index;
 			tmp.factor = factor * eq.Elts[i].factor;
-			Elts.push_back (tmp);
+			Elts.push_back(tmp);
 		}
 	}
 
 	// this = this * factor
-	void mul (float factor)
+	void mul(float factor)
 	{
 		for (uint32 i = 0; i < Elts.size(); ++i)
 			Elts[i].factor *= factor;
@@ -69,7 +67,7 @@ struct CLinearEquation
 
 	void clear()
 	{
-		NLMISC::contReset (Elts);
+		NLMISC::contReset(Elts);
 	}
 };
 
@@ -80,26 +78,25 @@ struct CLinearEquation
  * \author Nevrax France
  * \date 2000
  */
-struct	CMRMVertex
+struct CMRMVertex
 {
 public:
 	// Original / Dest position.
-	CVector					Current,Original;
-	std::vector<CVector>	BSCurrent;
+	CVector Current, Original;
+	std::vector<CVector> BSCurrent;
 	// For Skinning.
-	CMesh::CSkinWeight		CurrentSW, OriginalSW;
-	std::vector<sint>		SharedFaces;
-	sint					CollapsedTo;
+	CMesh::CSkinWeight CurrentSW, OriginalSW;
+	std::vector<sint> SharedFaces;
+	sint CollapsedTo;
 	// Final index in the coarser mesh.
-	sint					CoarserIndex;
+	sint CoarserIndex;
 
 	// The link to the current meshInterface vertex.
-	CMesh::CInterfaceLink	InterfaceLink;
+	CMesh::CInterfaceLink InterfaceLink;
 
 public:
-	CMRMVertex() {CollapsedTo=-1;}
+	CMRMVertex() { CollapsedTo = -1; }
 };
-
 
 // ***************************************************************************
 /**
@@ -108,27 +105,26 @@ public:
  * \author Nevrax France
  * \date 2000
  */
-struct	CMRMAttribute
+struct CMRMAttribute
 {
 public:
-	CVectorH		Current,Original;
-	std::vector<CVectorH>		BSCurrent;
-	sint			CollapsedTo;		// -2 <=> "must interpolate from Current to Original".
+	CVectorH Current, Original;
+	std::vector<CVectorH> BSCurrent;
+	sint CollapsedTo; // -2 <=> "must interpolate from Current to Original".
 	// Final index in the coarser mesh.
-	sint			CoarserIndex;
+	sint CoarserIndex;
 
 public:
 	// temporary data in construction:
-	sint			InterpolatedFace;
-	sint			NbSharedFaces;
-	bool			Shared;
+	sint InterpolatedFace;
+	sint NbSharedFaces;
+	bool Shared;
 	// A wedge is said "shared" if after edge is collapsed, he lost corners.
 	// If NbSharedFaces==0, this wedge has been entirely destroyed.
 
 public:
-	CMRMAttribute() {CollapsedTo=-1;}
+	CMRMAttribute() { CollapsedTo = -1; }
 };
-
 
 // ***************************************************************************
 /**
@@ -137,55 +133,58 @@ public:
  * \author Nevrax France
  * \date 2000
  */
-struct	CMRMEdge
+struct CMRMEdge
 {
-	sint	v0,v1;
-	CMRMEdge() {}
-	CMRMEdge(sint a, sint b) {v0= a; v1=b;}
+	sint v0, v1;
+	CMRMEdge() { }
+	CMRMEdge(sint a, sint b)
+	{
+		v0 = a;
+		v1 = b;
+	}
 	bool operator==(const CMRMEdge &o) const
 	{
 		// Order means nothing  ( (v0,v1) == (v1,v0) ).... Kick it.
-		return (v0==o.v0 && v1==o.v1) || (v0==o.v1 && v1==o.v0);
+		return (v0 == o.v0 && v1 == o.v1) || (v0 == o.v1 && v1 == o.v0);
 	}
 	bool operator<(const CMRMEdge &o) const
 	{
 		// Order means nothing  ( (v0,v1) == (v1,v0) ).... Kick it.
-		sint max0= std::max(v0,v1);
-		sint min0= std::min(v0,v1);
-		sint max1= std::max(o.v0,o.v1);
-		sint min1= std::min(o.v0,o.v1);
-		if(max0!=max1)
-			return max0<max1;
+		sint max0 = std::max(v0, v1);
+		sint min0 = std::min(v0, v1);
+		sint max1 = std::max(o.v0, o.v1);
+		sint min1 = std::min(o.v0, o.v1);
+		if (max0 != max1)
+			return max0 < max1;
 		else
-			return min0<min1;
+			return min0 < min1;
 	}
 };
 
-
 // ***************************************************************************
-struct	CMRMFaceBuild;
+struct CMRMFaceBuild;
 /**
  * A tuple Edge/Face.
  * \author Lionel Berenguier
  * \author Nevrax France
  * \date 2000
  */
-struct	CMRMEdgeFace : public CMRMEdge
+struct CMRMEdgeFace : public CMRMEdge
 {
-	CMRMFaceBuild		*Face;
+	CMRMFaceBuild *Face;
 	CMRMEdgeFace();
 	CMRMEdgeFace(sint a, sint b, CMRMFaceBuild *f)
 	{
-		v0=a; v1=b;
-		Face= f;
+		v0 = a;
+		v1 = b;
+		Face = f;
 	}
-	CMRMEdgeFace(const CMRMEdge &e, CMRMFaceBuild *f) : CMRMEdge(e)
+	CMRMEdgeFace(const CMRMEdge &e, CMRMFaceBuild *f)
+	    : CMRMEdge(e)
 	{
-		Face= f;
+		Face = f;
 	}
-
 };
-
 
 // ***************************************************************************
 /**
@@ -194,9 +193,8 @@ struct	CMRMEdgeFace : public CMRMEdge
  * \author Nevrax France
  * \date 2000
  */
-typedef	std::multimap<float, CMRMEdgeFace>	TEdgeMap;
-typedef	TEdgeMap::iterator					ItEdgeMap;
-
+typedef std::multimap<float, CMRMEdgeFace> TEdgeMap;
+typedef TEdgeMap::iterator ItEdgeMap;
 
 // ***************************************************************************
 /**
@@ -205,148 +203,137 @@ typedef	TEdgeMap::iterator					ItEdgeMap;
  * \author Nevrax France
  * \date 2000
  */
-struct	CMRMFaceBuild : public CMRMFace
+struct CMRMFaceBuild : public CMRMFace
 {
 public:
 	// temporary data in construction:
 	// The interpolated attrbute of the face.
-	CVectorH		InterpolatedAttribute;
-	std::vector<CVectorH>	BSInterpolated;
+	CVectorH InterpolatedAttribute;
+	std::vector<CVectorH> BSInterpolated;
 
 	// Is this face deleted in the current MRM collapse?
-	bool			Deleted;
+	bool Deleted;
 	// The iterator of the edges in the EdgeCollapse list.
-	ItEdgeMap		It0, It1, It2;
+	ItEdgeMap It0, It1, It2;
 	// The mirror value of iterator: are they valid???
-	bool			ValidIt0, ValidIt1, ValidIt2;
-
+	bool ValidIt0, ValidIt1, ValidIt2;
 
 public:
 	CMRMFaceBuild()
 	{
-		Deleted=false;
-		ValidIt0= ValidIt1= ValidIt2= false;
+		Deleted = false;
+		ValidIt0 = ValidIt1 = ValidIt2 = false;
 	}
 	CMRMFaceBuild &operator=(const CMRMFace &f)
 	{
-		(CMRMFace &)(*this)=f;
+		(CMRMFace &)(*this) = f;
 		return *this;
 	}
 
 	// Edges.
 	//=======
-	sint	getAssociatedEdge(const CMRMEdge &edge) const
+	sint getAssociatedEdge(const CMRMEdge &edge) const
 	{
-		sint v0= edge.v0;
-		sint v1= edge.v1;
-		if(Corner[0].Vertex==v0 && Corner[1].Vertex==v1)	return 0;
-		if(Corner[0].Vertex==v1 && Corner[1].Vertex==v0)	return 0;
-		if(Corner[1].Vertex==v0 && Corner[2].Vertex==v1)	return 1;
-		if(Corner[1].Vertex==v1 && Corner[2].Vertex==v0)	return 1;
-		if(Corner[0].Vertex==v0 && Corner[2].Vertex==v1)	return 2;
-		if(Corner[0].Vertex==v1 && Corner[2].Vertex==v0)	return 2;
+		sint v0 = edge.v0;
+		sint v1 = edge.v1;
+		if (Corner[0].Vertex == v0 && Corner[1].Vertex == v1) return 0;
+		if (Corner[0].Vertex == v1 && Corner[1].Vertex == v0) return 0;
+		if (Corner[1].Vertex == v0 && Corner[2].Vertex == v1) return 1;
+		if (Corner[1].Vertex == v1 && Corner[2].Vertex == v0) return 1;
+		if (Corner[0].Vertex == v0 && Corner[2].Vertex == v1) return 2;
+		if (Corner[0].Vertex == v1 && Corner[2].Vertex == v0) return 2;
 		return -1;
 	}
-	bool	hasEdge(const CMRMEdge &edge) const
+	bool hasEdge(const CMRMEdge &edge) const
 	{
-		return getAssociatedEdge(edge)!=-1;
+		return getAssociatedEdge(edge) != -1;
 	}
-	CMRMEdge	getEdge(sint eId) const
+	CMRMEdge getEdge(sint eId) const
 	{
-		if(eId==0) return CMRMEdge(Corner[0].Vertex, Corner[1].Vertex);
-		if(eId==1) return CMRMEdge(Corner[1].Vertex, Corner[2].Vertex);
-		if(eId==2) return CMRMEdge(Corner[2].Vertex, Corner[0].Vertex);
+		if (eId == 0) return CMRMEdge(Corner[0].Vertex, Corner[1].Vertex);
+		if (eId == 1) return CMRMEdge(Corner[1].Vertex, Corner[2].Vertex);
+		if (eId == 2) return CMRMEdge(Corner[2].Vertex, Corner[0].Vertex);
 		nlstop;
-		return CMRMEdge(-1,-1);
+		return CMRMEdge(-1, -1);
 	}
-	void	invalidAllIts(TEdgeMap &edgeMap)
+	void invalidAllIts(TEdgeMap &edgeMap)
 	{
-		ValidIt0= ValidIt1= ValidIt2= false;
-		It0= edgeMap.end();
-		It1= edgeMap.end();
-		It2= edgeMap.end();
+		ValidIt0 = ValidIt1 = ValidIt2 = false;
+		It0 = edgeMap.end();
+		It1 = edgeMap.end();
+		It2 = edgeMap.end();
 	}
-	void	invalidEdgeIt(const CMRMEdge &e, TEdgeMap &edgeMap)
+	void invalidEdgeIt(const CMRMEdge &e, TEdgeMap &edgeMap)
 	{
-		if(e== getEdge(0))
-			It0= edgeMap.end(), ValidIt0= false;
-		else if(e== getEdge(1))
-			It1= edgeMap.end(), ValidIt1= false;
-		else if(e== getEdge(2))
-			It2= edgeMap.end(), ValidIt2= false;
+		if (e == getEdge(0))
+			It0 = edgeMap.end(), ValidIt0 = false;
+		else if (e == getEdge(1))
+			It1 = edgeMap.end(), ValidIt1 = false;
+		else if (e == getEdge(2))
+			It2 = edgeMap.end(), ValidIt2 = false;
 		else nlstop;
 	}
-	bool	validEdgeIt(const CMRMEdge &e)
+	bool validEdgeIt(const CMRMEdge &e)
 	{
-		if(e== getEdge(0)) return ValidIt0;
-		if(e== getEdge(1)) return ValidIt1;
-		if(e== getEdge(2)) return ValidIt2;
+		if (e == getEdge(0)) return ValidIt0;
+		if (e == getEdge(1)) return ValidIt1;
+		if (e == getEdge(2)) return ValidIt2;
 		nlstop;
 		return false;
 	}
 
 	// Vertices.
 	//==========
-	bool	hasVertex(sint	numvertex)
+	bool hasVertex(sint numvertex)
 	{
-		return Corner[0].Vertex==numvertex || Corner[1].Vertex==numvertex || Corner[2].Vertex==numvertex;
+		return Corner[0].Vertex == numvertex || Corner[1].Vertex == numvertex || Corner[2].Vertex == numvertex;
 	}
-
 
 	// Wedges.
 	//==========
-	bool	hasWedge(sint attribId, sint numwedge)
+	bool hasWedge(sint attribId, sint numwedge)
 	{
-		return Corner[0].Attributes[attribId]==numwedge ||
-			Corner[1].Attributes[attribId]==numwedge ||
-			Corner[2].Attributes[attribId]==numwedge;
+		return Corner[0].Attributes[attribId] == numwedge || Corner[1].Attributes[attribId] == numwedge || Corner[2].Attributes[attribId] == numwedge;
 	}
-	sint	getAssociatedWedge(sint attribId, sint numvertex)
+	sint getAssociatedWedge(sint attribId, sint numvertex)
 	{
-		if(Corner[0].Vertex==numvertex)	return Corner[0].Attributes[attribId];
-		if(Corner[1].Vertex==numvertex)	return Corner[1].Attributes[attribId];
-		if(Corner[2].Vertex==numvertex)	return Corner[2].Attributes[attribId];
+		if (Corner[0].Vertex == numvertex) return Corner[0].Attributes[attribId];
+		if (Corner[1].Vertex == numvertex) return Corner[1].Attributes[attribId];
+		if (Corner[2].Vertex == numvertex) return Corner[2].Attributes[attribId];
 		return -1;
 	}
 };
-
 
 // ***************************************************************************
 /**
  * An internal polygon with LOD information for Interface system
  */
-class	CMRMSewingMesh
+class CMRMSewingMesh
 {
-	struct	CLod
+	struct CLod
 	{
 		// A list of edge that must be collapsed for this Lod. NB: sorted from first to collapse to last to collapse
-		std::vector<CMRMEdge>	EdgeToCollapse;
+		std::vector<CMRMEdge> EdgeToCollapse;
 	};
 
 	// A list of Lods.
-	std::vector<CLod>	_Lods;
+	std::vector<CLod> _Lods;
 
 public:
-
 	/** Build a MRM sewing mesh from a CMeshBuild interface.
 	 */
-	void	build(const CMesh::CInterface &meshInt, uint nWantedLods, uint divisor);
+	void build(const CMesh::CInterface &meshInt, uint nWantedLods, uint divisor);
 
 	/** >=0 if the lod has this edge to collapse. -1 else. NB: order of collapse is returned.
 	 *	\param vertToCollapse is the vertex id which must be collapsed to the other (ie the one which moves/dissapear)
 	 */
-	sint	mustCollapseEdge(uint lod, const CMRMEdge &edge, uint &vertToCollapse) const;
+	sint mustCollapseEdge(uint lod, const CMRMEdge &edge, uint &vertToCollapse) const;
 
 	/// get the number of edge to collapse for a lod
-	sint	getNumCollapseEdge(uint lod) const;
-
+	sint getNumCollapseEdge(uint lod) const;
 };
 
-
-
-
 } // NL3D
-
 
 #endif // NL_MRM_INTERNAL_H
 

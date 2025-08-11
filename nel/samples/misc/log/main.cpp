@@ -38,25 +38,25 @@ CStdDisplayer sd;
 // create a displayer that displays in a file. The first parameter is the filename
 // and the second one says that we want to clear the file before logging.
 // If you put false (default value), then, new logs are append to the file.
-CFileDisplayer fd("main.log",true);
+CFileDisplayer fd("main.log", true);
 
 // create a displayer that displays in a message box. It actually works only on
 // Windows, it does nothing on other systems.
 CMsgBoxDisplayer mbd;
 
-int main (int /* argc */, char ** /* argv */)
+int main(int /* argc */, char ** /* argv */)
 {
 	// create a logger; it's an information logger.
-	CLog logger (CLog::LOG_INFO);
+	CLog logger(CLog::LOG_INFO);
 
 	// the process name is used when we have more than one process logging stuffs
 	// in the same displayer (for example for centralized displayer)
-	logger.setProcessName ("my_process_name");
+	logger.setProcessName("my_process_name");
 
 	// add displayers for the logger
-	logger.addDisplayer (&sd);
-	logger.addDisplayer (&fd);
-	logger.addDisplayer (&mbd);
+	logger.addDisplayer(&sd);
+	logger.addDisplayer(&fd);
+	logger.addDisplayer(&mbd);
 
 	// so, now, if we send something on the logger, it will be displayed on the 3 displayers
 	// (stdout, file and message box)
@@ -66,18 +66,16 @@ int main (int /* argc */, char ** /* argv */)
 	// They could add the date, the process name and so on.
 	// Before each display/displayNL, you have to set the position of where the display
 	// occurs. If you don't do that, the position will not be displayed on the displayers.
-	CSetLogPosition(&logger, __LINE__, __FILE__).log()
-		->display ("display using display() %d\n", 1);
+	CSetLogPosition(&logger, __LINE__, __FILE__).log()->display("display using display() %d\n", 1);
 
 	// display the string with decoration and a new line at the end of the string.
-	CSetLogPosition(&logger, __LINE__, __FILE__).log()
-		->displayNL ("display using displayNL() %d", 2);
+	CSetLogPosition(&logger, __LINE__, __FILE__).log()->displayNL("display using displayNL() %d", 2);
 
 	// display the string without decoration.
-	logger.displayRaw ("display using displayRaw() %d\n", 3);
+	logger.displayRaw("display using displayRaw() %d\n", 3);
 
 	// display the string without decoration and with a new line at the end of the string.
-	logger.displayRawNL ("display using displayRawNL() %d", 4);
+	logger.displayRawNL("display using displayRawNL() %d", 4);
 
 	printf("\nPress <return> to exit\n");
 	getchar();

@@ -31,20 +31,19 @@
 using namespace std;
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 static void readPNGData(png_structp png_ptr, png_bytep data, png_size_t length)
 {
-	IStream *stream = static_cast<IStream*>(png_get_io_ptr(png_ptr));
+	IStream *stream = static_cast<IStream *>(png_get_io_ptr(png_ptr));
 
 	try
 	{
 		if (stream)
-			stream->serialBuffer((uint8*)data, (uint)length);
+			stream->serialBuffer((uint8 *)data, (uint)length);
 	}
 	catch (...)
 	{
@@ -54,17 +53,17 @@ static void readPNGData(png_structp png_ptr, png_bytep data, png_size_t length)
 
 static void writePNGData(png_structp png_ptr, png_bytep data, png_size_t length)
 {
-	IStream *stream = static_cast<IStream*>(png_get_io_ptr(png_ptr));
+	IStream *stream = static_cast<IStream *>(png_get_io_ptr(png_ptr));
 	if (stream)
-		stream->serialBuffer((uint8*)data, (uint)length);
+		stream->serialBuffer((uint8 *)data, (uint)length);
 }
 
-static void setPNGWarning(png_struct * /* png_ptr */, const char* message)
+static void setPNGWarning(png_struct * /* png_ptr */, const char *message)
 {
 	nlwarning(message);
 }
 
-static void setPNGError(png_struct *png_ptr, const char* message)
+static void setPNGError(png_struct *png_ptr, const char *message)
 {
 	setPNGWarning(png_ptr, message);
 
@@ -72,11 +71,11 @@ static void setPNGError(png_struct *png_ptr, const char* message)
 }
 
 /*-------------------------------------------------------------------*\
-							readPNG
+                            readPNG
 \*-------------------------------------------------------------------*/
-uint8 CBitmap::readPNG( NLMISC::IStream &f )
+uint8 CBitmap::readPNG(NLMISC::IStream &f)
 {
-	if(!f.isReading()) return false;
+	if (!f.isReading()) return false;
 
 	// initialize the info header
 	png_struct *png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, setPNGError, setPNGWarning);
@@ -107,7 +106,7 @@ uint8 CBitmap::readPNG( NLMISC::IStream &f )
 	}
 
 	// set the read function
-	png_set_read_fn(png_ptr, (void*)&f, readPNGData);
+	png_set_read_fn(png_ptr, (void *)&f, readPNGData);
 
 	// set number of bit already read (in order to step back)
 	png_set_sig_bytes(png_ptr, 4);
@@ -136,7 +135,7 @@ uint8 CBitmap::readPNG( NLMISC::IStream &f )
 
 	// if required set gamma conversion
 	if (png_get_gAMA(png_ptr, info_ptr, &dGamma))
-		png_set_gamma(png_ptr, (double) 2.2, dGamma);
+		png_set_gamma(png_ptr, (double)2.2, dGamma);
 
 	// add alpha byte after each RGB triplet if it doesn't exist
 	png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
@@ -149,29 +148,29 @@ uint8 CBitmap::readPNG( NLMISC::IStream &f )
 
 	uint8 imageDepth;
 
-	switch(iColorType)
+	switch (iColorType)
 	{
-		case PNG_COLOR_TYPE_GRAY:
+	case PNG_COLOR_TYPE_GRAY:
 		imageDepth = iBitDepth;
 		break;
 
-		case PNG_COLOR_TYPE_PALETTE:
+	case PNG_COLOR_TYPE_PALETTE:
 		imageDepth = iBitDepth;
 		break;
 
-		case PNG_COLOR_TYPE_RGB:
+	case PNG_COLOR_TYPE_RGB:
 		imageDepth = iBitDepth * 3;
 		break;
 
-		case PNG_COLOR_TYPE_RGB_ALPHA:
+	case PNG_COLOR_TYPE_RGB_ALPHA:
 		imageDepth = iBitDepth * 4;
 		break;
 
-		case PNG_COLOR_TYPE_GRAY_ALPHA:
+	case PNG_COLOR_TYPE_GRAY_ALPHA:
 		imageDepth = iBitDepth * 2;
 		break;
 
-		default:
+	default:
 		imageDepth = iBitDepth * 4;
 		nlwarning("Unable to determine PNG color type: %d, consider it as RGBA", iColorType);
 		break;
@@ -203,7 +202,7 @@ uint8 CBitmap::readPNG( NLMISC::IStream &f )
 		dstChannels = 4;
 		firstChannel = 0;
 		lastChannel = 3;
-		resize (width, height, RGBA);
+		resize(width, height, RGBA);
 	}
 	else if (iColorType == PNG_COLOR_TYPE_GRAY)
 	{
@@ -211,7 +210,7 @@ uint8 CBitmap::readPNG( NLMISC::IStream &f )
 		dstChannels = 1;
 		firstChannel = 0;
 		lastChannel = 0;
-		resize (width, height, _LoadGrayscaleAsAlpha ? Alpha : Luminance);
+		resize(width, height, _LoadGrayscaleAsAlpha ? Alpha : Luminance);
 	}
 	else if (iColorType == PNG_COLOR_TYPE_GRAY_ALPHA)
 	{
@@ -219,7 +218,7 @@ uint8 CBitmap::readPNG( NLMISC::IStream &f )
 		dstChannels = 2;
 		firstChannel = 0;
 		lastChannel = 1;
-		resize (width, height, AlphaLuminance);
+		resize(width, height, AlphaLuminance);
 	}
 	else
 	{
@@ -230,11 +229,11 @@ uint8 CBitmap::readPNG( NLMISC::IStream &f )
 	{
 		for (uint32 x = 0; x < width; x++)
 		{
-			uint32 dstOffset = y*width*dstChannels+x*dstChannels;
-			const uint32 srcOffset = x*srcChannels;
+			uint32 dstOffset = y * width * dstChannels + x * dstChannels;
+			const uint32 srcOffset = x * srcChannels;
 
 			for (uint32 pix = firstChannel; pix <= lastChannel; pix++)
-				_Data[0][dstOffset++] = row_pointers[y][srcOffset+pix];
+				_Data[0][dstOffset++] = row_pointers[y][srcOffset + pix];
 		}
 	}
 
@@ -248,7 +247,7 @@ uint8 CBitmap::readPNG( NLMISC::IStream &f )
 	// clean up after the read, and free any memory allocated
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 
-	//return the size of a pixel, either 8,24,32 bit
+	// return the size of a pixel, either 8,24,32 bit
 	return imageDepth;
 }
 
@@ -258,7 +257,7 @@ static bool writePNGSetJmp(png_struct *png_ptr)
 	if (setjmp(png_jmpbuf(png_ptr)))
 	{
 		// free all of the memory associated with the png_ptr
-		png_destroy_write_struct(&png_ptr, (png_info**)NULL);
+		png_destroy_write_struct(&png_ptr, (png_info **)NULL);
 		// if we get here, we had a problem writing the file
 		nlwarning("Error while writing PNG");
 		return false;
@@ -268,18 +267,18 @@ static bool writePNGSetJmp(png_struct *png_ptr)
 }
 
 /*-------------------------------------------------------------------*\
-							writePNG
+                            writePNG
 \*-------------------------------------------------------------------*/
-bool CBitmap::writePNG( NLMISC::IStream &f, uint32 d)
+bool CBitmap::writePNG(NLMISC::IStream &f, uint32 d)
 {
-	if(f.isReading()) return false;
+	if (f.isReading()) return false;
 
 	if (PixelFormat > AlphaLuminance) return false;
 	if (!_Width || !_Height) return false;
 
 	if (d == 0) d = bitPerPixels[PixelFormat];
 
-	if (d!=32 && d!=24 && d!=16 && d!=8) return false;
+	if (d != 32 && d != 24 && d != 16 && d != 8) return false;
 
 	// create image write structure
 	png_struct *png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, setPNGError, setPNGWarning);
@@ -295,7 +294,7 @@ bool CBitmap::writePNG( NLMISC::IStream &f, uint32 d)
 
 	if (info_ptr == NULL)
 	{
-		png_destroy_write_struct( &png_ptr, (png_info**)NULL );
+		png_destroy_write_struct(&png_ptr, (png_info **)NULL);
 		nlwarning("couldn't save PNG image.");
 		return false;
 	}
@@ -303,10 +302,10 @@ bool CBitmap::writePNG( NLMISC::IStream &f, uint32 d)
 	if (!writePNGSetJmp(png_ptr)) return false;
 
 	// set the write function
-	png_set_write_fn(png_ptr, (void*)&f, writePNGData, NULL);
+	png_set_write_fn(png_ptr, (void *)&f, writePNGData, NULL);
 
 	int iColorType;
-	
+
 	// only RGBA color, RGB color and gray type are implemented
 	if (d == 8)
 	{
@@ -330,7 +329,7 @@ bool CBitmap::writePNG( NLMISC::IStream &f, uint32 d)
 
 	// set correct values for PNG header
 	png_set_IHDR(png_ptr, info_ptr, _Width, _Height, iBitDepth, iColorType,
-		PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+	    PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 
 	png_color_8 sig_bit;
 
@@ -357,22 +356,22 @@ bool CBitmap::writePNG( NLMISC::IStream &f, uint32 d)
 
 	// Optional gamma chunk is strongly suggested if you have any guess
 	// as to the correct gamma of the image.
-//	double gamma = 2.2;
-//	png_set_gAMA(png_ptr, info_ptr, gamma);
+	//	double gamma = 2.2;
+	//	png_set_gAMA(png_ptr, info_ptr, gamma);
 
 	// Optionally write comments into the image
-//	png_text text_ptr[3];
-//	text_ptr[0].key = "Title";
-//	text_ptr[0].text = "Mona Lisa";
-//	text_ptr[0].compression = PNG_TEXT_COMPRESSION_NONE;
-//	text_ptr[1].key = "Author";
-//	text_ptr[1].text = "Leonardo DaVinci";
-//	text_ptr[1].compression = PNG_TEXT_COMPRESSION_NONE;
-//	text_ptr[2].key = "Description";
-//	text_ptr[2].text = "<long text>";
-//	text_ptr[2].compression = PNG_TEXT_COMPRESSION_zTXt;
+	//	png_text text_ptr[3];
+	//	text_ptr[0].key = "Title";
+	//	text_ptr[0].text = "Mona Lisa";
+	//	text_ptr[0].compression = PNG_TEXT_COMPRESSION_NONE;
+	//	text_ptr[1].key = "Author";
+	//	text_ptr[1].text = "Leonardo DaVinci";
+	//	text_ptr[1].compression = PNG_TEXT_COMPRESSION_NONE;
+	//	text_ptr[2].key = "Description";
+	//	text_ptr[2].text = "<long text>";
+	//	text_ptr[2].compression = PNG_TEXT_COMPRESSION_zTXt;
 
-//	png_set_text(png_ptr, info_ptr, text_ptr, 3);
+	//	png_set_text(png_ptr, info_ptr, text_ptr, 3);
 
 	// write the file header information
 	png_write_info(png_ptr, info_ptr);
@@ -388,7 +387,7 @@ bool CBitmap::writePNG( NLMISC::IStream &f, uint32 d)
 	uint32 dstChannels = png_get_channels(png_ptr, info_ptr);
 
 	// get channels number of bitmap
-	sint srcChannels = bitPerPixels[PixelFormat]/8;
+	sint srcChannels = bitPerPixels[PixelFormat] / 8;
 
 	// get size of bitmap
 	sint height = _Height;
@@ -402,46 +401,46 @@ bool CBitmap::writePNG( NLMISC::IStream &f, uint32 d)
 
 	sint y, x, i;
 
-	for(y=0; y<height; ++y)
+	for (y = 0; y < height; ++y)
 	{
-		for(x=0; x<width; ++x)
+		for (x = 0; x < width; ++x)
 		{
-			const uint srcOffset = y*width*srcChannels + x*srcChannels;
-			const uint dstOffset = x*dstChannels;
+			const uint srcOffset = y * width * srcChannels + x * srcChannels;
+			const uint dstOffset = x * dstChannels;
 
 			if (dstChannels <= 2 && srcChannels == 4)
 			{
 				// convert colors to gray
-				row_pointers[y][dstOffset] = CRGBA(_Data[0][srcOffset+0],
-					_Data[0][srcOffset+1], _Data[0][srcOffset+2]).toGray();
+				row_pointers[y][dstOffset] = CRGBA(_Data[0][srcOffset + 0],
+				    _Data[0][srcOffset + 1], _Data[0][srcOffset + 2])
+				                                 .toGray();
 
 				if (sig_bit.alpha)
 				{
 					// copy alpha value
-					row_pointers[y][dstOffset+1] = _Data[0][srcOffset+3];
+					row_pointers[y][dstOffset + 1] = _Data[0][srcOffset + 3];
 				}
 			}
 			else if (dstChannels >= 3 && srcChannels <= 2)
 			{
 				// convert gray to colors
-				for(i=0; i<3; ++i)
+				for (i = 0; i < 3; ++i)
 				{
-					row_pointers[y][dstOffset+i] = _Data[0][srcOffset];
+					row_pointers[y][dstOffset + i] = _Data[0][srcOffset];
 				}
 
 				if (sig_bit.alpha)
 				{
 					// copy alpha value
-					row_pointers[y][dstOffset+3] = PixelFormat ==
-						Luminance ? 255:_Data[0][srcOffset+1];
+					row_pointers[y][dstOffset + 3] = PixelFormat == Luminance ? 255 : _Data[0][srcOffset + 1];
 				}
 			}
 			else
 			{
 				// copy all values
-				for(i=0; i<(sint)dstChannels; ++i)
+				for (i = 0; i < (sint)dstChannels; ++i)
 				{
-					row_pointers[y][dstOffset+i] = _Data[0][srcOffset+i];
+					row_pointers[y][dstOffset + i] = _Data[0][srcOffset + i];
 				}
 			}
 		}
@@ -466,4 +465,4 @@ bool CBitmap::writePNG( NLMISC::IStream &f, uint32 d)
 	return true;
 }
 
-}//namespace
+} // namespace

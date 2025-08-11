@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef DMS_USER_CONNECTION_MGR_H
 #define DMS_USER_CONNECTION_MGR_H
 
@@ -22,24 +21,21 @@
 
 #include <string>
 
-namespace R2
-{
-
+namespace R2 {
 
 class CDynamicMapService;
 
 class CUserConnectionMgr
 {
 public:
-	CUserConnectionMgr(CDynamicMapService* server)
+	CUserConnectionMgr(CDynamicMapService *server)
 	{
 		_Server = server;
 	}
-	uint32 getCurrentMap(const std::string& /* eid */) { return 1;}
+	uint32 getCurrentMap(const std::string & /* eid */) { return 1; }
 
 private:
-CDynamicMapService* _Server;
-
+	CDynamicMapService *_Server;
 };
 } // namespace DMS
-#endif //DMS_USER_CONNECTION_MGR_H
+#endif // DMS_USER_CONNECTION_MGR_H

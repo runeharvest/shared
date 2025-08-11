@@ -44,15 +44,27 @@ class CStorageChunks;
 
 struct EStorage : public NLMISC::Exception
 {
-	EStorage() : NLMISC::Exception("PIPELINE::MAX::EStorage") { }
-	EStorage(const char *msg) : NLMISC::Exception(msg) { }
+	EStorage()
+	    : NLMISC::Exception("PIPELINE::MAX::EStorage")
+	{
+	}
+	EStorage(const char *msg)
+	    : NLMISC::Exception(msg)
+	{
+	}
 	virtual ~EStorage() throw() { }
 };
 
 struct EStorageParse : public EStorage
 {
-	EStorageParse() : EStorage("PIPELINE::MAX::EStorageParse") { }
-	EStorageParse(const char *msg) : EStorage(msg) { }
+	EStorageParse()
+	    : EStorage("PIPELINE::MAX::EStorageParse")
+	{
+	}
+	EStorageParse(const char *msg)
+	    : EStorage(msg)
+	{
+	}
 	virtual ~EStorageParse() throw() { }
 };
 
@@ -138,7 +150,6 @@ protected:
 	virtual void serial(CStorageChunks &chunks);
 	// Create a storage object by id, override to provide custom serialization
 	virtual IStorageObject *createChunkById(uint16 id, bool container);
-
 };
 
 // CStorageRaw : serializes raw data, use for unknown data
@@ -163,7 +174,6 @@ public: // should be protected but that doesn't compile, nice c++!
 	virtual void setSize(sint32 size);
 	// Gets the size when writing, return false if unknown
 	virtual bool getSize(sint32 &size) const;
-
 };
 
 } /* namespace MAX */

@@ -17,7 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 //
 // Includes
 //
@@ -32,10 +31,10 @@
 #include <nel/3d/u_instance.h>
 
 #ifdef NL_OS_WINDOWS
-	#ifndef NL_COMP_MINGW
-		#define NOMINMAX
-	#endif
-	#include <windows.h>
+#ifndef NL_COMP_MINGW
+#define NOMINMAX
+#endif
+#include <windows.h>
 #endif // NL_OS_WINDOWS
 
 using namespace NLMISC;
@@ -47,7 +46,7 @@ void split(const std::string &str, std::vector<std::string> &tokens, const std::
 	// Skip delimiters at beginning.
 	std::string::size_type lastPos = str.find_first_not_of(delimiters, 0);
 	// Find first "non-delimiter".
-	std::string::size_type pos     = str.find_first_of(delimiters, lastPos);
+	std::string::size_type pos = str.find_first_of(delimiters, lastPos);
 
 	while (std::string::npos != pos || std::string::npos != lastPos)
 	{
@@ -95,7 +94,7 @@ sint main(int argc, char **argv)
 		Driver->setWindowTitle(ucstring("NeL shape viewer"));
 
 		// can use both dds and tga textures for shapes
-		CPath::remapExtension ("dds", "tga", true);
+		CPath::remapExtension("dds", "tga", true);
 
 		// create the light
 		ULight *Light = ULight::createLight();
@@ -122,17 +121,17 @@ sint main(int argc, char **argv)
 		UCamera Camera = Scene->getCam();
 		if (Camera.empty()) throw 5;
 
-		Camera.setTransformMode (UTransformable::DirectMatrix);
-		Camera.setPerspective ((float)Pi/2.f, 1.33f, 0.1f, 1000);
+		Camera.setTransformMode(UTransformable::DirectMatrix);
+		Camera.setPerspective((float)Pi / 2.f, 1.33f, 0.1f, 1000);
 
 		// camera will look at entities
-		Camera.lookAt (CVector(-10.f, 10.f, 0.f), CVector(0.f, 0.f, 0.f));
+		Camera.lookAt(CVector(-10.f, 10.f, 0.f), CVector(0.f, 0.f, 0.f));
 
 		// create entities
 		std::vector<UInstance> Entities;
 
 		// create each entity
-		for(int i = 1; i < argc; ++i)
+		for (int i = 1; i < argc; ++i)
 		{
 			// use the path of the shape to find its textures
 			CPath::addSearchPath(CFile::getPath(argv[i]), true, false);
@@ -157,17 +156,17 @@ sint main(int argc, char **argv)
 		while (Driver->isActive())
 		{
 			Driver->EventServer.pump();
-			
+
 			// the background is black
 			Driver->clearBuffers(CRGBA(0, 0, 0));
 
 			// increase the angle
 			angle += 0.1f;
 
-			if (angle >= NLMISC::Pi*2) angle = 0.f;
+			if (angle >= NLMISC::Pi * 2) angle = 0.f;
 
 			// rotate all entities
-			for(size_t i = 0; i < Entities.size(); ++i)
+			for (size_t i = 0; i < Entities.size(); ++i)
 			{
 				Entities[i].setRotEuler(0.f, 0.f, angle);
 			}
@@ -190,7 +189,7 @@ sint main(int argc, char **argv)
 			else if (Driver->AsyncListener.isKeyPushed(KeyF3))
 			{
 				UDriver::TPolygonMode p = Driver->getPolygonMode();
-				p = UDriver::TPolygonMode(((int)p+1)%3);
+				p = UDriver::TPolygonMode(((int)p + 1) % 3);
 				Driver->setPolygonMode(p);
 			}
 			// F12 will take a screenshot
@@ -199,14 +198,14 @@ sint main(int argc, char **argv)
 				CBitmap btm;
 				Driver->getBuffer(btm);
 				COFile fs(CFile::findNewFile("screenshot.png"));
-				btm.writePNG(fs,24);
+				btm.writePNG(fs, 24);
 			}
 		}
 
 		// we are leaving the program
 
 		// delete all entities
-		for(size_t i = 0; i < Entities.size(); ++i)
+		for (size_t i = 0; i < Entities.size(); ++i)
 		{
 			Scene->deleteInstance(Entities[i]);
 		}
@@ -223,11 +222,11 @@ sint main(int argc, char **argv)
 		// delete the driver
 		delete Driver;
 	}
-	catch(int a)
+	catch (int a)
 	{
 		return a;
 	}
-	catch(...)
+	catch (...)
 	{
 		return EXIT_FAILURE;
 	}

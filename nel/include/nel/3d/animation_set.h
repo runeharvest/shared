@@ -25,14 +25,12 @@
 #include <string>
 #include <vector>
 
-namespace NLMISC
-{
+namespace NLMISC {
 class IStream;
 struct EStream;
 }
 
-namespace NL3D
-{
+namespace NL3D {
 
 class IDriver;
 class CShapeBank;
@@ -48,239 +46,234 @@ class CShapeBank;
 class CAnimationSet : public NLMISC::CRefCount
 {
 public:
-
-	enum { NotFound=0xffffffff };
-
-	/**
-	  * \param headerOptim if true, the animationSet cannot be serialized (nlassert), but could save
-	  *	lot of memory load: CTrackSampleQuat memory are optimized (48 bytes to 12) and map<string, id>
-	  *	per animation is replaced with a (IdChannelInAnimSet, IdTrackInAnim) association
-	  */
-	CAnimationSet (bool headerOptim= false);
-	~CAnimationSet ();
+	enum
+	{
+		NotFound = 0xffffffff
+	};
 
 	/**
-	  * Get channel ID count. This number is the count of different track name in the animation set.
-	  */
-	uint getNumChannelId () const;
+	 * \param headerOptim if true, the animationSet cannot be serialized (nlassert), but could save
+	 *	lot of memory load: CTrackSampleQuat memory are optimized (48 bytes to 12) and map<string, id>
+	 *	per animation is replaced with a (IdChannelInAnimSet, IdTrackInAnim) association
+	 */
+	CAnimationSet(bool headerOptim = false);
+	~CAnimationSet();
+
+	/**
+	 * Get channel ID count. This number is the count of different track name in the animation set.
+	 */
+	uint getNumChannelId() const;
 
 	/** Get a channel Name by its Id.
-	  */
+	 */
 	const std::string &getChannelName(uint channelId) const
 	{
-		nlassert(channelId<_ChannelName.size());
+		nlassert(channelId < _ChannelName.size());
 		return _ChannelName[channelId];
 	}
 
 	/**
-	  * Get a channel ID with its name. If no channel is found, method returns NotFound.
-	  */
-	uint getChannelIdByName (const std::string& name) const
+	 * Get a channel ID with its name. If no channel is found, method returns NotFound.
+	 */
+	uint getChannelIdByName(const std::string &name) const
 	{
 		// Look for an id with this name
-		std::map <std::string, uint32>::const_iterator ite=_ChannelIdByName.find (name);
-		if (ite!=_ChannelIdByName.end ())
+		std::map<std::string, uint32>::const_iterator ite = _ChannelIdByName.find(name);
+		if (ite != _ChannelIdByName.end())
 			return ite->second;
 		else
 			return NotFound;
 	}
 
 	/**
-	  * Get a animation ID by name. If no channel is found, method returns NotFound.
-	  */
-	uint getAnimationIdByName (const std::string& name) const
+	 * Get a animation ID by name. If no channel is found, method returns NotFound.
+	 */
+	uint getAnimationIdByName(const std::string &name) const
 	{
 		// Look for an id with this name
-		std::map <std::string, uint32>::const_iterator ite=_AnimationIdByName.find (name);
-		if (ite!=_AnimationIdByName.end ())
+		std::map<std::string, uint32>::const_iterator ite = _AnimationIdByName.find(name);
+		if (ite != _AnimationIdByName.end())
 			return ite->second;
 		else
 			return NotFound;
 	}
 
 	/**
-	  * Get animations count.
-	  */
-	uint getNumAnimation () const
+	 * Get animations count.
+	 */
+	uint getNumAnimation() const
 	{
 		return (uint)_Animation.size();
 	}
 
 	/**
-	  * Get animation name.
-	  */
-	const std::string& getAnimationName (uint animationId) const
+	 * Get animation name.
+	 */
+	const std::string &getAnimationName(uint animationId) const
 	{
-		nlassert(animationId<_AnimationName.size());
+		nlassert(animationId < _AnimationName.size());
 		return _AnimationName[animationId];
 	}
 
 	/**
-	  * Get a read only animation pointer.
-	  */
-	const CAnimation* getAnimation (uint animationId) const
+	 * Get a read only animation pointer.
+	 */
+	const CAnimation *getAnimation(uint animationId) const
 	{
-		nlassert(animationId<_Animation.size());
+		nlassert(animationId < _Animation.size());
 		return _Animation[animationId];
 	}
 
 	/**
-	  * Get a writable animation pointer.
-	  */
-	CAnimation* getAnimation (uint animationId)
+	 * Get a writable animation pointer.
+	 */
+	CAnimation *getAnimation(uint animationId)
 	{
-		nlassert(animationId<_Animation.size());
+		nlassert(animationId < _Animation.size());
 		return _Animation[animationId];
 	}
 
 	/**
-	  * Get skeleton weight count.
-	  */
-	uint getNumSkeletonWeight () const
+	 * Get skeleton weight count.
+	 */
+	uint getNumSkeletonWeight() const
 	{
 		return (uint)_SkeletonWeight.size();
 	}
 
 	/**
-	  * Get a skeleton weight ID by name. If no skeleton weight is found, method returns NotFound.
-	  */
-	uint getSkeletonWeightIdByName (const std::string& name) const
+	 * Get a skeleton weight ID by name. If no skeleton weight is found, method returns NotFound.
+	 */
+	uint getSkeletonWeightIdByName(const std::string &name) const
 	{
 		// Look for an id with this name
-		std::map <std::string, uint32>::const_iterator ite=_SkeletonWeightIdByName.find (name);
-		if (ite!=_SkeletonWeightIdByName.end ())
+		std::map<std::string, uint32>::const_iterator ite = _SkeletonWeightIdByName.find(name);
+		if (ite != _SkeletonWeightIdByName.end())
 			return ite->second;
 		else
 			return NotFound;
 	}
 
 	/**
-	  * Get skeleton template name.
-	  */
-	const std::string& getSkeletonWeightName (uint skeletonId) const
+	 * Get skeleton template name.
+	 */
+	const std::string &getSkeletonWeightName(uint skeletonId) const
 	{
-		nlassert(skeletonId<_SkeletonWeightName.size());
+		nlassert(skeletonId < _SkeletonWeightName.size());
 		return _SkeletonWeightName[skeletonId];
 	}
 
 	/**
-	  * Get a read only skeleton weight pointer.
-	  */
-	const CSkeletonWeight* getSkeletonWeight (uint skeletonId) const
+	 * Get a read only skeleton weight pointer.
+	 */
+	const CSkeletonWeight *getSkeletonWeight(uint skeletonId) const
 	{
-		nlassert(skeletonId<_SkeletonWeight.size());
+		nlassert(skeletonId < _SkeletonWeight.size());
 		return _SkeletonWeight[skeletonId];
 	}
 
 	/**
-	  * Get a writable skeleton weight pointer.
-	  */
-	CSkeletonWeight* getSkeletonWeight (uint skeletonId)
+	 * Get a writable skeleton weight pointer.
+	 */
+	CSkeletonWeight *getSkeletonWeight(uint skeletonId)
 	{
-		nlassert(skeletonId<_SkeletonWeight.size());
+		nlassert(skeletonId < _SkeletonWeight.size());
 		return _SkeletonWeight[skeletonId];
 	}
 
 	/**
-	  * Add an animation to the set. The pointer of the animation must be allocated with new.
-	  * It is then handled by the animation set.
-	  *
-	  *	WARNING: it assert if you call addAnimation() after build(), while the animation set is in HeadOptim mode
-	  *
-	  * \param name is the name of the animation.
-	  * \param animation is the animation pointer.
-	  * \return the id of the new animation.
-	  */
-	uint addAnimation (const char* name, CAnimation* animation);
+	 * Add an animation to the set. The pointer of the animation must be allocated with new.
+	 * It is then handled by the animation set.
+	 *
+	 *	WARNING: it assert if you call addAnimation() after build(), while the animation set is in HeadOptim mode
+	 *
+	 * \param name is the name of the animation.
+	 * \param animation is the animation pointer.
+	 * \return the id of the new animation.
+	 */
+	uint addAnimation(const char *name, CAnimation *animation);
 
 	/**
-	  * Add a skeleton weight to the set. The pointer of the skeletonWeight must be allocated with new.
-	  * It is then handled by the animation set.
-	  *
-	  * \return the id of the new skeleton.
-	  */
-	uint addSkeletonWeight (const char* name, CSkeletonWeight* skeletonWeight);
+	 * Add a skeleton weight to the set. The pointer of the skeletonWeight must be allocated with new.
+	 * It is then handled by the animation set.
+	 *
+	 * \return the id of the new skeleton.
+	 */
+	uint addSkeletonWeight(const char *name, CSkeletonWeight *skeletonWeight);
 
 	/**
-	  * Reset the animation set.
-	  */
-	void reset ();
+	 * Reset the animation set.
+	 */
+	void reset();
 
 	/**
-	  * Final build of the animation set.
-	  *
-	  * First, for each animation you want to add to the set, you must add the animation in the set.
-	  *
-	  * When all animations are built, call this method to finalize the set.
-	  *
-	  * NoOp if already built
-	  */
-	void build ();
+	 * Final build of the animation set.
+	 *
+	 * First, for each animation you want to add to the set, you must add the animation in the set.
+	 *
+	 * When all animations are built, call this method to finalize the set.
+	 *
+	 * NoOp if already built
+	 */
+	void build();
 
 	/// Serial the template
-	void serial (NLMISC::IStream& f);
+	void serial(NLMISC::IStream &f);
 
 	/**
-	  * Helper method.
-	  * Load an animation set from animation files in a directory, then call build().
-	  * \param path Path to look at for animations
-	  * \param recurse whether to recurse to load animation in sub folders
-	  * \param ext the extension for animation files
-	  * \param wantWarningMessage displays warning if some of the files could not be loaded
-	  * \return true if everything loaded ok
-	  */
-	bool			loadFromFiles
-					(
-						const std::string &path,
-						bool recurse = true,
-						const char *ext = "anim",
-						bool wantWarningMessage = true
-					);
+	 * Helper method.
+	 * Load an animation set from animation files in a directory, then call build().
+	 * \param path Path to look at for animations
+	 * \param recurse whether to recurse to load animation in sub folders
+	 * \param ext the extension for animation files
+	 * \param wantWarningMessage displays warning if some of the files could not be loaded
+	 * \return true if everything loaded ok
+	 */
+	bool loadFromFiles(
+	    const std::string &path,
+	    bool recurse = true,
+	    const char *ext = "anim",
+	    bool wantWarningMessage = true);
 
 	/** Set the animation Set in "Low Memory" mode by skipping some keys
-	  * Each added animation will loose some keys for CTrackSampledQuat and CTrackSampledVector
-	  *	\param sampleDivisor if set to 5 for instance, the number of keys will be divided (ideally) by 5.
-	  *		if 0, set to 1. if 1 => no key skip (default to 1)
-	  */
+	 * Each added animation will loose some keys for CTrackSampledQuat and CTrackSampledVector
+	 *	\param sampleDivisor if set to 5 for instance, the number of keys will be divided (ideally) by 5.
+	 *		if 0, set to 1. if 1 => no key skip (default to 1)
+	 */
 	void setAnimationSampleDivisor(uint sampleDivisor);
 
 	/** see setAnimationSampleDivisor
-	  */
+	 */
 	uint getAnimationSampleDivisor() const;
 
 	/// see CAnimationSet ctor
-	bool	isAnimHeaderOptimized() const {return _AnimHeaderOptimisation;}
+	bool isAnimHeaderOptimized() const { return _AnimHeaderOptimisation; }
 
 	/** For SkeletonSpawnScript (SSS) animation.
 	 *	call this after build(). This method preload ALL the shapes/texture
 	 *	that can be spawned due to any animation
 	 */
-	void	preloadSSSShapes(IDriver &drv, CShapeBank &shapeBank);
-
+	void preloadSSSShapes(IDriver &drv, CShapeBank &shapeBank);
 
 private:
-	std::vector <CAnimation*>		_Animation;
-	std::vector <CSkeletonWeight*>	_SkeletonWeight;
-	std::vector <std::string>		_ChannelName;
-	std::vector <std::string>		_AnimationName;
-	std::vector <std::string>		_SkeletonWeightName;
-	std::map <std::string, uint32>	_ChannelIdByName;
-	std::map <std::string, uint32>	_AnimationIdByName;
-	std::map <std::string, uint32>	_SkeletonWeightIdByName;
-	uint							_SampleDivisor;
-	bool							_AnimHeaderOptimisation;
-	bool							_Built;
+	std::vector<CAnimation *> _Animation;
+	std::vector<CSkeletonWeight *> _SkeletonWeight;
+	std::vector<std::string> _ChannelName;
+	std::vector<std::string> _AnimationName;
+	std::vector<std::string> _SkeletonWeightName;
+	std::map<std::string, uint32> _ChannelIdByName;
+	std::map<std::string, uint32> _AnimationIdByName;
+	std::map<std::string, uint32> _SkeletonWeightIdByName;
+	uint _SampleDivisor;
+	bool _AnimHeaderOptimisation;
+	bool _Built;
 	/// All Shapes that can be spawned in any animation
-	std::set<std::string>			_SSSShapes;
+	std::set<std::string> _SSSShapes;
 
-
-	void	buildChannelNameFromMap();
-
+	void buildChannelNameFromMap();
 };
 
-
 } // NL3D
-
 
 #endif // NL_ANIMATION_SET_H
 

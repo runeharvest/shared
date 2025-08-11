@@ -22,7 +22,7 @@
 class CUTMiscDynLibLoad : public Test::Suite
 {
 public:
-	CUTMiscDynLibLoad ()
+	CUTMiscDynLibLoad()
 	{
 		TEST_ADD(CUTMiscDynLibLoad ::libraryNameDecoration)
 	}
@@ -30,7 +30,7 @@ public:
 	void libraryNameDecoration()
 	{
 		string libName = "libmylib_with_dll_so_some_very_bad_rd_df_tag_inside_df";
-		string fileName = "some/path/to/add/difficulties/"+NLMISC::CLibrary::makeLibName(libName);
+		string fileName = "some/path/to/add/difficulties/" + NLMISC::CLibrary::makeLibName(libName);
 		string cleanedName = NLMISC::CLibrary::cleanLibName(fileName);
 
 		TEST_ASSERT(cleanedName == libName);

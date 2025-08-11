@@ -20,14 +20,10 @@
 #include "nel/misc/types_nl.h"
 #include "nel/3d/lod_character_shape.h"
 
+namespace NL3D {
 
-namespace NL3D
-{
-
-
-class	CSkeletonShape;
-class	CAnimation;
-
+class CSkeletonShape;
+class CAnimation;
 
 // ***************************************************************************
 /**
@@ -40,7 +36,6 @@ class	CAnimation;
 class CLodCharacterBuilder
 {
 public:
-
 	/// Constructor
 	CLodCharacterBuilder();
 	~CLodCharacterBuilder();
@@ -53,37 +48,34 @@ public:
 	 *	\param skeletonShape the skeleton used for animation. Ptr is handled by the builder as a smartPtr.
 	 *	\param lodBuild the mesh information. Ptr is hold by the builder, but not deleted
 	 */
-	void			setShape(const std::string &name, CSkeletonShape *skeletonShape, CLodCharacterShapeBuild *lodBuild);
+	void setShape(const std::string &name, CSkeletonShape *skeletonShape, CLodCharacterShapeBuild *lodBuild);
 
 	/** add an animation to the process
 	 *	\param animName is the name of the animation, used as a key to receover animations in the CLodCharacterShape built
 	 *	\param animation is the animation to bake/over sample. NB: the animation is deleted at the end of addAnim
 	 *	\param frameRate is the desired overSampling rate. eg: 20 frame per second.
 	 */
-	void			addAnim(const char *animName, CAnimation *animation, float frameRate);
+	void addAnim(const char *animName, CAnimation *animation, float frameRate);
 
 	/// return the lod shape in its current state.
-	const CLodCharacterShape	&getLodShape() const {return _LodCharacterShape;}
+	const CLodCharacterShape &getLodShape() const { return _LodCharacterShape; }
 
-
-// *****************************
+	// *****************************
 private:
-	CLodCharacterShape			_LodCharacterShape;
+	CLodCharacterShape _LodCharacterShape;
 
-	NLMISC::CSmartPtr<CSkeletonShape>	_SkeletonShape;
-	CLodCharacterShapeBuild		*_LodBuild;
-	std::vector<uint>			_BoneRemap;
+	NLMISC::CSmartPtr<CSkeletonShape> _SkeletonShape;
+	CLodCharacterShapeBuild *_LodBuild;
+	std::vector<uint> _BoneRemap;
 
 	// A Tmp Scene, builded at setShape/dtor.
-	CScene						*_TmpScene;
+	CScene *_TmpScene;
 
 	// apply the skin, from _LodBuild, into dstVertices array
-	void			applySkin(CSkeletonModel *skeleton, CVector	*dstVertices);
+	void applySkin(CSkeletonModel *skeleton, CVector *dstVertices);
 };
 
-
 } // NL3D
-
 
 #endif // NL_LOD_CHARACTER_BUILDER_H
 

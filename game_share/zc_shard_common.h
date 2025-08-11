@@ -14,40 +14,38 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef ZC_SHARD_COMMON_H
 #define ZC_SHARD_COMMON_H
 
 #include "nel/misc/types_nl.h"
 
-namespace ZCSTATE
+namespace ZCSTATE {
+enum TZcState
 {
-	enum TZcState
-	{
-		/// tribe is in control of the zc
-		Tribe = 0,
-		/// A guild declared war to the tribe
-		TribeInWar,
-		/// A guild declared peace to the tribe
-		//TribeInPeace,
-		/// A guild won the zc through war
-		GuildInWar,
-		/// A guild won the zc through peace
-		GuildInPeace,
-		/// Unknow zc state
-		zs_unknown
-	};
-
-
-	TZcState toZcState( const std::string &str );
-
-	const std::string& toString( TZcState type );
-
-	// The ZC Duty Distribution period, in Days.
-	enum	{ZCDistribPeriod= 15};
-
+	/// tribe is in control of the zc
+	Tribe = 0,
+	/// A guild declared war to the tribe
+	TribeInWar,
+	/// A guild declared peace to the tribe
+	// TribeInPeace,
+	/// A guild won the zc through war
+	GuildInWar,
+	/// A guild won the zc through peace
+	GuildInPeace,
+	/// Unknow zc state
+	zs_unknown
 };
 
+TZcState toZcState(const std::string &str);
+
+const std::string &toString(TZcState type);
+
+// The ZC Duty Distribution period, in Days.
+enum
+{
+	ZCDistribPeriod = 15
+};
+
+};
 
 #endif

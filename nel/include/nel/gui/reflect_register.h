@@ -17,19 +17,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef REFLECT_REG_H
 #define REFLECT_REG_H
 
-namespace NLGUI
+namespace NLGUI {
+/// Helper class to register reflectable classes
+class CReflectableRegister
 {
-	/// Helper class to register reflectable classes
-	class CReflectableRegister
-	{
-	public:
-		static void registerClasses();
-	};
+public:
+	static void registerClasses();
+};
 }
-
 
 #endif

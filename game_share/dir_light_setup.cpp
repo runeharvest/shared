@@ -14,29 +14,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-
 #include "stdpch.h"
 #include "dir_light_setup.h"
 #include "georges_helper.h"
 #include "nel/georges/u_form_elm.h"
 
-
 //-----------------------------------------------
-CDirLightSetup::CDirLightSetup() :
-							Ambiant(0, 0, 0),
-							Diffuse(255, 255, 255),
-							Specular(0, 0, 0),
-							Direction(1.f, 0.f, 0.f)
+CDirLightSetup::CDirLightSetup()
+    : Ambiant(0, 0, 0)
+    , Diffuse(255, 255, 255)
+    , Specular(0, 0, 0)
+    , Direction(1.f, 0.f, 0.f)
 {
 }
 
 //-----------------------------------------------
 void CDirLightSetup::blend(const CDirLightSetup &setup0, const CDirLightSetup &setup1, float blendFactor)
 {
-	uint uiFactor = (uint) (256.f * blendFactor);
+	uint uiFactor = (uint)(256.f * blendFactor);
 	Ambiant.blendFromui(setup0.Ambiant, setup1.Ambiant, uiFactor);
 	Diffuse.blendFromui(setup0.Diffuse, setup1.Diffuse, uiFactor);
 	Specular.blendFromui(setup0.Specular, setup1.Specular, uiFactor);
@@ -46,7 +41,7 @@ void CDirLightSetup::blend(const CDirLightSetup &setup0, const CDirLightSetup &s
 //-----------------------------------------------
 void CDirLightSetup::modulate(float level)
 {
-	uint uiLevel = (uint) (256.f * level);
+	uint uiLevel = (uint)(256.f * level);
 	Ambiant.modulateFromui(Ambiant, uiLevel);
 	Diffuse.modulateFromui(Diffuse, uiLevel);
 	Specular.modulateFromui(Specular, uiLevel);
@@ -60,24 +55,24 @@ bool CDirLightSetup::build(const NLGEORGES::UFormElm &item)
 
 	const NLGEORGES::UFormElm *pElt;
 	// Light Direction
-	if (item.getNodeByName (&pElt, ".Direction") && pElt)
+	if (item.getNodeByName(&pElt, ".Direction") && pElt)
 	{
 		if (!CGeorgesHelper::convert(dir, *pElt)) return false;
 	}
 	// Light Ambiant
-	if (item.getNodeByName (&pElt, ".Ambiant") && pElt)
+	if (item.getNodeByName(&pElt, ".Ambiant") && pElt)
 	{
 		if (!CGeorgesHelper::convert(amb, *pElt)) return false;
 	}
 
 	// Light Diffuse
-	if (item.getNodeByName (&pElt, ".Diffuse") && pElt)
+	if (item.getNodeByName(&pElt, ".Diffuse") && pElt)
 	{
 		if (!CGeorgesHelper::convert(dif, *pElt)) return false;
 	}
 
 	// Light Specular
-	if (item.getNodeByName (&pElt, ".Specular") && pElt)
+	if (item.getNodeByName(&pElt, ".Specular") && pElt)
 	{
 		if (!CGeorgesHelper::convert(spe, *pElt)) return false;
 	}

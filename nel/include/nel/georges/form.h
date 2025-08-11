@@ -26,109 +26,109 @@
 #include "form_elm.h"
 #include "header.h"
 
-extern bool convertFormFile (const std::string &oldFileName, const std::string &newFileName);
+extern bool convertFormFile(const std::string &oldFileName, const std::string &newFileName);
 
-namespace NLGEORGES
-{
+namespace NLGEORGES {
 
 class UFormElm;
 
 /**
-  * This class implement a georges form.
-  */
+ * This class implement a georges form.
+ */
 class CForm : public UForm
 {
 	friend class CFormLoader;
-	friend bool convertFormFile (const std::string &oldFileName, const std::string &newFileName);
-public:
+	friend bool convertFormFile(const std::string &oldFileName, const std::string &newFileName);
 
-	enum { HeldElementCount = 4 };
+public:
+	enum
+	{
+		HeldElementCount = 4
+	};
 
 	// From UForm
-	UFormElm&		getRootNode ();
-	const UFormElm& getRootNode () const;
-	const std::string &getComment () const;
-	void			write (class NLMISC::IStream &stream);
-	void			getDependencies (std::set<std::string> &dependencies) const;
-	uint			getNumParent () const;
-	UForm			*getParentForm (uint parent) const;
+	UFormElm &getRootNode();
+	const UFormElm &getRootNode() const;
+	const std::string &getComment() const;
+	void write(class NLMISC::IStream &stream);
+	void getDependencies(std::set<std::string> &dependencies) const;
+	uint getNumParent() const;
+	UForm *getParentForm(uint parent) const;
 
 #ifdef NL_OS_WINDOWS
-#  pragma warning (disable : 4355)
+#pragma warning(disable : 4355)
 #endif
-	CForm ();
-	~CForm ();
+	CForm();
+	~CForm();
 
 	// Clean the form. Erase parents.
-	void				clean ();
+	void clean();
 
 	// ** Types
 
 	// ** Header
-	CFileHeader			Header;
+	CFileHeader Header;
 
 	// ** Body
 
 	/// Vector of CFormElm*
-	CFormElmStruct		Elements;
+	CFormElmStruct Elements;
 
 	/// Backup slots
-	CFormElmStruct		*HeldElements[HeldElementCount];
+	CFormElmStruct *HeldElements[HeldElementCount];
 
 	// ** IO functions
 	// Set the filename before saving the form
-	void				write (xmlDocPtr doc, const std::string &filename);
+	void write(xmlDocPtr doc, const std::string &filename);
 
 	// ** Parent access
 
 	// Insert parent before parent indexed "before".
-	bool				insertParent (uint before, const std::string &filename, CForm *parent);
+	bool insertParent(uint before, const std::string &filename, CForm *parent);
 
 	// Remove a parent from parent list
-	void				removeParent (uint parent);
+	void removeParent(uint parent);
 
 	// Get a parent
-	CForm *				getParent (uint parent) const;
-	const std::string	&getParentFilename (uint parent) const;
+	CForm *getParent(uint parent) const;
+	const std::string &getParentFilename(uint parent) const;
 
 	// Get parent count
-	uint				getParentCount () const;
+	uint getParentCount() const;
 
 	// Clear parents
-	void				clearParents ();
+	void clearParents();
 
 	// Get the form filename with extension
-	const std::string	&getFilename () const;
+	const std::string &getFilename() const;
 
 	// Error handling
-	void				warning (bool exception, const std::string &function, const char *format, ... ) const;
+	void warning(bool exception, const std::string &function, const char *format, ...) const;
 
 private:
-
 	// A parent structure
 	class CParent
 	{
 	public:
-		std::string					ParentFilename;
-		NLMISC::CSmartPtr<CForm>	Parent;
+		std::string ParentFilename;
+		NLMISC::CSmartPtr<CForm> Parent;
 	};
 
 	/// Pointer on the parent
-	std::vector<CParent>			ParentList;
+	std::vector<CParent> ParentList;
 
 	// CFormLoader call it
 	// Set the filename before reading the form
-	void				read (xmlNodePtr node, CFormLoader &loader, CFormDfn *dfn, const std::string &filename);
+	void read(xmlNodePtr node, CFormLoader &loader, CFormDfn *dfn, const std::string &filename);
 
 	// Called by read
-	void				readParent (const char *parent, CFormLoader &loader);
+	void readParent(const char *parent, CFormLoader &loader);
 
 	// The form filename
-	std::string			_Filename;
+	std::string _Filename;
 
 	// The dfn
 	NLMISC::CSmartPtr<CFormDfn> _Dfn;
-
 };
 
 } // NLGEORGES

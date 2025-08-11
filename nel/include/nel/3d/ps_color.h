@@ -25,17 +25,10 @@
 #include "nel/misc/rgba.h"
 #include "nel/3d/animation_time.h"
 
-
-
-
-
-
 namespace NL3D {
-
 
 template <>
 inline const char *CPSAttribMaker<NLMISC::CRGBA>::getType() { return "CRGBA"; }
-
 
 // Depending on the driver, the format of colors in vertex buffer may change. We don't want to change the format for each data that is (dynamically) in vertex buffer, so
 // we modify gradients instead
@@ -46,21 +39,21 @@ inline NLMISC::CRGBA convertVBColor(NLMISC::CRGBA color, CVertexBuffer::TVertexC
 
 void convertVBColor(NLMISC::CRGBA *array, uint numColor, CVertexBuffer::TVertexColorType format);
 
-
-
 // helper to change color type of color blender depending on vb type
 class CPSValueBlendFuncRGBA : public CPSValueBlendFunc<NLMISC::CRGBA>
 {
 public:
 	// ctor
-	CPSValueBlendFuncRGBA() : _ColorType(CVertexBuffer::TRGBA) {}
+	CPSValueBlendFuncRGBA()
+	    : _ColorType(CVertexBuffer::TRGBA)
+	{
+	}
 	//
 	void getValues(NLMISC::CRGBA &startValue, NLMISC::CRGBA &endValue) const
 	{
 		CPSValueBlendFunc<NLMISC::CRGBA>::getValues(startValue, endValue);
 		startValue = convertVBColor(startValue, _ColorType);
 		endValue = convertVBColor(endValue, _ColorType);
-
 	}
 	virtual void setValues(NLMISC::CRGBA startValue, NLMISC::CRGBA endValue)
 	{
@@ -76,6 +69,7 @@ public:
 
 	virtual NLMISC::CRGBA getMaxValue(void) const { return CRGBA::Black; }
 	virtual NLMISC::CRGBA getMinValue(void) const { return CRGBA::Black; }
+
 protected:
 	CVertexBuffer::TVertexColorType _ColorType;
 };
@@ -87,14 +81,16 @@ class CPSValueBlendSampleFuncRGBA : public CPSValueBlendSampleFunc<NLMISC::CRGBA
 {
 public:
 	// ctor
-	CPSValueBlendSampleFuncRGBA() : _ColorType(CVertexBuffer::TRGBA) {}
+	CPSValueBlendSampleFuncRGBA()
+	    : _ColorType(CVertexBuffer::TRGBA)
+	{
+	}
 	//
 	void getValues(NLMISC::CRGBA &startValue, NLMISC::CRGBA &endValue) const
 	{
 		CPSValueBlendSampleFunc<NLMISC::CRGBA, RGBA_BLENDER_NUM_VALUES>::getValues(startValue, endValue);
 		startValue = convertVBColor(startValue, _ColorType);
 		endValue = convertVBColor(endValue, _ColorType);
-
 	}
 	virtual void setValues(NLMISC::CRGBA startValue, NLMISC::CRGBA endValue)
 	{
@@ -110,6 +106,7 @@ public:
 
 	virtual NLMISC::CRGBA getMaxValue(void) const { return CRGBA::Black; }
 	virtual NLMISC::CRGBA getMinValue(void) const { return CRGBA::Black; }
+
 protected:
 	CVertexBuffer::TVertexColorType _ColorType;
 };
@@ -118,10 +115,13 @@ class CPSValueGradientFuncRGBA : public CPSValueGradientFunc<NLMISC::CRGBA>
 {
 public:
 	// ctor
-	CPSValueGradientFuncRGBA() : _ColorType(CVertexBuffer::TRGBA) {}
+	CPSValueGradientFuncRGBA()
+	    : _ColorType(CVertexBuffer::TRGBA)
+	{
+	}
 	//
 	void getValues(NLMISC::CRGBA *tab) const;
-	NLMISC::CRGBA getValue(uint index)	const;
+	NLMISC::CRGBA getValue(uint index) const;
 	void setValues(const NLMISC::CRGBA *valueTab, uint32 numValues, uint32 nbStages);
 	void setValuesUnpacked(const NLMISC::CRGBA *valueTab, uint32 numValues, uint32 nbStages);
 	void serial(NLMISC::IStream &f)
@@ -134,10 +134,10 @@ public:
 
 	virtual NLMISC::CRGBA getMaxValue(void) const { return CRGBA::Black; }
 	virtual NLMISC::CRGBA getMinValue(void) const { return CRGBA::Black; }
+
 protected:
 	CVertexBuffer::TVertexColorType _ColorType;
 };
-
 
 // helper class that helps to redefine the 'setColorType' method
 // T : the functor that compute colors
@@ -146,7 +146,10 @@ class CPSAttribMakerRGBA : public CPSAttribMakerT<NLMISC::CRGBA, F>
 {
 public:
 	// ctor
-	CPSAttribMakerRGBA(float nbCycles) : CPSAttribMakerT<NLMISC::CRGBA, F>(nbCycles) {}
+	CPSAttribMakerRGBA(float nbCycles)
+	    : CPSAttribMakerT<NLMISC::CRGBA, F>(nbCycles)
+	{
+	}
 	// helps to change internal color representation
 	virtual void setColorType(CVertexBuffer::TVertexColorType colorType)
 	{
@@ -160,47 +163,43 @@ public:
 	}
 };
 
-
 /// This is a int blender class. It just blend between 2 values. The blending is exact, and thus slow...
 class CPSColorBlenderExact : public CPSAttribMakerRGBA<CPSValueBlendFuncRGBA>
 {
 public:
 	NLMISC_DECLARE_CLASS(CPSColorBlenderExact);
-	CPSColorBlenderExact(NLMISC::CRGBA startColor = NLMISC::CRGBA::White , NLMISC::CRGBA endColor = NLMISC::CRGBA::Black, float nbCycles = 1.0f) : CPSAttribMakerRGBA<CPSValueBlendFuncRGBA>(nbCycles)
+	CPSColorBlenderExact(NLMISC::CRGBA startColor = NLMISC::CRGBA::White, NLMISC::CRGBA endColor = NLMISC::CRGBA::Black, float nbCycles = 1.0f)
+	    : CPSAttribMakerRGBA<CPSValueBlendFuncRGBA>(nbCycles)
 	{
 		_F.setValues(startColor, endColor);
 	}
 	CPSAttribMakerBase *clone() const { return new CPSColorBlenderExact(*this); }
-
 };
-
-
 
 // an int blender class that perform 64 color sample between colors, it is faster than CPSColorBlenderExact
 class CPSColorBlender : public CPSAttribMakerRGBA<CPSValueBlendSampleFuncRGBA>
 {
 public:
 	NLMISC_DECLARE_CLASS(CPSColorBlender);
-	CPSColorBlender(NLMISC::CRGBA startColor = NLMISC::CRGBA::White , NLMISC::CRGBA endColor = NLMISC::CRGBA::Black, float nbCycles = 1.0f) : CPSAttribMakerRGBA<CPSValueBlendSampleFuncRGBA>(nbCycles)
+	CPSColorBlender(NLMISC::CRGBA startColor = NLMISC::CRGBA::White, NLMISC::CRGBA endColor = NLMISC::CRGBA::Black, float nbCycles = 1.0f)
+	    : CPSAttribMakerRGBA<CPSValueBlendSampleFuncRGBA>(nbCycles)
 	{
 		_F.setValues(startColor, endColor);
 	}
 	CPSAttribMakerBase *clone() const { return new CPSColorBlender(*this); }
 };
 
-
-
 /** This is a color gradient class
-  * NB: a non null gradient must be set before use
-  */
+ * NB: a non null gradient must be set before use
+ */
 class CPSColorGradient : public CPSAttribMakerRGBA<CPSValueGradientFuncRGBA>
 {
 public:
 	NLMISC_DECLARE_CLASS(CPSColorGradient);
 
 	/** default ctor
-	  * NB: a non null gradient must be set before use
-	  */
+	 * NB: a non null gradient must be set before use
+	 */
 	CPSColorGradient();
 
 	/**
@@ -214,30 +213,32 @@ public:
 	CPSAttribMakerBase *clone() const { return new CPSColorGradient(*this); }
 };
 
-
-
 /** this memorize value by applying some function on the emitter. For a particle's attribute, each particle has its
-  * own value memorized
-  *  You MUST called setScheme (from CPSAttribMakerMemory) to tell how the value will be generted
-  */
+ * own value memorized
+ *  You MUST called setScheme (from CPSAttribMakerMemory) to tell how the value will be generted
+ */
 class CPSColorMemory : public CPSAttribMakerMemory<NLMISC::CRGBA>
 {
 public:
-	CPSColorMemory() : _ColorType(CVertexBuffer::TRGBA) { setDefaultValue(NLMISC::CRGBA::White); }
+	CPSColorMemory()
+	    : _ColorType(CVertexBuffer::TRGBA)
+	{
+		setDefaultValue(NLMISC::CRGBA::White);
+	}
 	NLMISC_DECLARE_CLASS(CPSColorMemory);
 	CPSAttribMakerBase *clone() const { return new CPSColorMemory(*this); }
 	virtual void setColorType(CVertexBuffer::TVertexColorType colorType);
 	virtual void setDefaultValue(NLMISC::CRGBA defaultValue);
 	virtual NLMISC::CRGBA getDefaultValue(void) const;
 	virtual void serial(NLMISC::IStream &f);
+
 protected:
 	CVertexBuffer::TVertexColorType _ColorType;
 };
 
-
 /** An attribute maker whose output if the result of a binary op on colors
-  *
-  */
+ *
+ */
 class CPSColorBinOp : public CPSAttribMakerBinOp<NLMISC::CRGBA>
 {
 public:
@@ -246,8 +247,6 @@ public:
 	virtual void setColorType(CVertexBuffer::TVertexColorType colorType);
 	virtual void serial(NLMISC::IStream &f);
 };
-
-
 
 #if 0
 
@@ -329,7 +328,6 @@ class CPSColorBinOp : public CPSAttribMakerBinOp<NLMISC::CRGBA>
 };
 
 #endif // #if 0
-
 
 } // NL3D
 #endif // NL_PS_COLOR_H

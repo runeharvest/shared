@@ -45,9 +45,10 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CAnimatable::CAnimatable(CScene *scene) : CSceneClass(scene), m_AppData(NULL)
+CAnimatable::CAnimatable(CScene *scene)
+    : CSceneClass(scene)
+    , m_AppData(NULL)
 {
-
 }
 
 CAnimatable::~CAnimatable()
@@ -140,14 +141,19 @@ void CAnimatable::toStringLocal(std::ostream &ostream, const std::string &pad, u
 	CSceneClass::toStringLocal(ostream, pad);
 	if (m_AppData && m_AppData->entries().size() != 0)
 	{
-		ostream << "\n" << pad << "AppData: ";
+		ostream << "\n"
+		        << pad << "AppData: ";
 		m_AppData->toString(ostream, pad + "\t");
 	}
 }
 
 STORAGE::CAppData *CAnimatable::appData()
 {
-	if (m_ChunksOwnsPointers) { nlerror("Not parsed"); return NULL; }
+	if (m_ChunksOwnsPointers)
+	{
+		nlerror("Not parsed");
+		return NULL;
+	}
 	if (!m_AppData)
 	{
 		m_AppData = new STORAGE::CAppData();

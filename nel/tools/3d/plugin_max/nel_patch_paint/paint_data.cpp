@@ -12,7 +12,7 @@ using namespace NLMISC;
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-class FinalPatchRestore : public RestoreObj 
+class FinalPatchRestore : public RestoreObj
 {
 public:
 	BOOL gotRedo;
@@ -22,7 +22,7 @@ public:
 	RPatchMesh *rundo;
 	RPatchMesh *rredo;
 	RPatchMesh *rpatch;
-	
+
 	FinalPatchRestore(PatchMesh *s, RPatchMesh *rs)
 	{
 		rundo = NULL;
@@ -32,7 +32,7 @@ public:
 
 		if (rs)
 		{
-			rundo=new RPatchMesh();
+			rundo = new RPatchMesh();
 			*rundo = *rs;
 		}
 
@@ -40,7 +40,7 @@ public:
 		rpatch = rs;
 		gotRedo = FALSE;
 	}
-	
+
 	virtual ~FinalPatchRestore()
 	{
 		if (rundo)
@@ -49,7 +49,7 @@ public:
 			delete rredo;
 	}
 
-	void Restore(int isUndo) 
+	void Restore(int isUndo)
 	{
 		if (!gotRedo)
 		{
@@ -58,8 +58,8 @@ public:
 
 			if (rpatch)
 			{
-				if (rredo==NULL)
-					rredo=new RPatchMesh();
+				if (rredo == NULL)
+					rredo = new RPatchMesh();
 
 				*rredo = *rpatch;
 			}
@@ -69,15 +69,15 @@ public:
 		if (rundo)
 			*rpatch = *rundo;
 	}
-	
-	void Redo() 
+
+	void Redo()
 	{
 		*patch = redo;
 
 		if (rredo)
 			*rpatch = *rredo;
 	}
-	
+
 	int Size() { return 1; }
 	void EndHold() { }
 	TSTR Description() { return TSTR(_T("FinalPatchRestore")); }
@@ -85,14 +85,14 @@ public:
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-PaintPatchData::PaintPatchData (PaintPatchMod *mod)
+PaintPatchData::PaintPatchData(PaintPatchMod *mod)
 {
 	flags = 0;
 	tempData = NULL;
 	preloadTiles = mod->preloadTiles;
 }
 
-PaintPatchData::PaintPatchData (PaintPatchData& emc)
+PaintPatchData::PaintPatchData(PaintPatchData &emc)
 {
 	flags = emc.flags;
 	tempData = NULL;
@@ -103,20 +103,19 @@ PaintPatchData::PaintPatchData (PaintPatchData& emc)
 
 void PaintPatchData::Apply(TimeValue t, RPO *patchOb, int selLevel)
 {
-	TTicks ticks=CTime::getPerformanceTime ();
+	TTicks ticks = CTime::getPerformanceTime();
 	// Either just copy it from the existing cache or rebuild from previous level!
-	if (!GetFlag(EPD_UPDATING_CACHE) && tempData 
-		&& tempData->PatchCached(t))
+	if (!GetFlag(EPD_UPDATING_CACHE) && tempData
+	    && tempData->PatchCached(t))
 	{
 		RPatchMesh *rpatch;
-		PatchMesh *patch=tempData->GetPatch(t, rpatch);
-		patchOb->patch.DeepCopy( patch,
-			PART_GEOM | SELECT_CHANNEL | PART_SUBSEL_TYPE|
-			PART_DISPLAY | PART_TOPO | TEXMAP_CHANNEL);
-		//rpatch->UpdateBinding (*patch, t);
-		*patchOb->rpatch=*rpatch;
+		PatchMesh *patch = tempData->GetPatch(t, rpatch);
+		patchOb->patch.DeepCopy(patch,
+		    PART_GEOM | SELECT_CHANNEL | PART_SUBSEL_TYPE | PART_DISPLAY | PART_TOPO | TEXMAP_CHANNEL);
+		// rpatch->UpdateBinding (*patch, t);
+		*patchOb->rpatch = *rpatch;
 		patchOb->PointsWereChanged();
-	}	
+	}
 	else if (GetFlag(EPD_HASDATA))
 	{
 		int count = changes.Count();
@@ -148,21 +147,21 @@ void PaintPatchData::Apply(TimeValue t, RPO *patchOb, int selLevel)
 			changes.Shrink();
 			count = 0;
 		}
-		else 
+		else
 		{
 			// Apply deltas to incoming shape, placing into finalPatch
 			patchOb->patch = finalPatch;
 			*patchOb->rpatch = rfinalPatch;
 		}
 		patchOb->PointsWereChanged();
-		// Kind of a waste when there's no animation...		
+		// Kind of a waste when there's no animation...
 		patchOb->UpdateValidity(GEOM_CHAN_NUM, FOREVER);
 		patchOb->UpdateValidity(TOPO_CHAN_NUM, FOREVER);
 		patchOb->UpdateValidity(SELECT_CHAN_NUM, FOREVER);
 		patchOb->UpdateValidity(SUBSEL_TYPE_CHAN_NUM, FOREVER);
 		patchOb->UpdateValidity(DISP_ATTRIB_CHAN_NUM, FOREVER);
 	}
-	else 
+	else
 	{
 		finalPatch = patchOb->patch;
 		rfinalPatch = *patchOb->rpatch;
@@ -175,9 +174,9 @@ void PaintPatchData::Apply(TimeValue t, RPO *patchOb, int selLevel)
 		nlassert(tempData);
 		tempData->UpdateCache(patchOb);
 		SetFlag(EPD_UPDATING_CACHE, FALSE);
-	}		
-	ticks=CTime::getPerformanceTime ()-ticks;
-	nldebug ("%f", CTime::ticksToSecond(ticks));
+	}
+	ticks = CTime::getPerformanceTime() - ticks;
+	nldebug("%f", CTime::ticksToSecond(ticks));
 }
 
 void PaintPatchData::Invalidate(PartID part, BOOL patchValid)
@@ -205,14 +204,14 @@ EPTempData *PaintPatchData::TempData(PaintPatchMod *mod)
 	return tempData;
 }
 
-void PaintPatchData::RescaleWorldUnits(float f) 
+void PaintPatchData::RescaleWorldUnits(float f)
 {
 	// Now rescale stuff inside our data structures
 	Matrix3 stm = ScaleMatrix(Point3(f, f, f));
 	finalPatch.Transform(stm);
 }
 
-void PaintPatchData::RecordTopologyTags(PatchMesh *patch) 
+void PaintPatchData::RecordTopologyTags(PatchMesh *patch)
 {
 	// First, stuff all -1's into aux fields
 	int i;
@@ -224,11 +223,11 @@ void PaintPatchData::RecordTopologyTags(PatchMesh *patch)
 		patch->patches[i].aux1 = 0xffffffff;
 }
 
-void PaintPatchData::UpdateChanges(PatchMesh *patch, RPatchMesh *rpatch, BOOL checkTopology) 
+void PaintPatchData::UpdateChanges(PatchMesh *patch, RPatchMesh *rpatch, BOOL checkTopology)
 {
 	if (theHold.Holding())
 	{
-		//theHold.Put(new FinalPatchRestore(&finalPatch, &rfinalPatch));
+		// theHold.Put(new FinalPatchRestore(&finalPatch, &rfinalPatch));
 		if (rpatch)
 			theHold.Put(new FinalPatchRestore(&finalPatch, &rfinalPatch));
 		else
@@ -241,25 +240,25 @@ void PaintPatchData::UpdateChanges(PatchMesh *patch, RPatchMesh *rpatch, BOOL ch
 		rfinalPatch = *rpatch;
 }
 
-#define EPD_GENERAL_CHUNK		0x1000	// Obsolete as of 11/12/98 (r3)
-#define CHANGE_CHUNK			0x1010 	// Obsolete as of 11/12/98 (r3)
-#define EPD_R3_GENERAL_CHUNK	0x1015
-#define MESH_ATTRIB_CHUNK		0x1020
-#define DISP_PARTS_CHUNK		0x1030
-#define VTESS_ATTRIB_CHUNK		0x1070
-#define PTESS_ATTRIB_CHUNK		0x1080
-#define DTESS_ATTRIB_CHUNK		0x1090
-#define NORMAL_TESS_ATTRIB_CHUNK	0x1110
-#define WELD_TESS_ATTRIB_CHUNK	0x1120
-#define VERTMAP_CHUNK			0x1130
-#define FINALPATCH_CHUNK		0x1140
-#define RENDERSTEPS_CHUNK		0x1150
-#define SHOWINTERIOR_CHUNK		0x1160
+#define EPD_GENERAL_CHUNK 0x1000 // Obsolete as of 11/12/98 (r3)
+#define CHANGE_CHUNK 0x1010 // Obsolete as of 11/12/98 (r3)
+#define EPD_R3_GENERAL_CHUNK 0x1015
+#define MESH_ATTRIB_CHUNK 0x1020
+#define DISP_PARTS_CHUNK 0x1030
+#define VTESS_ATTRIB_CHUNK 0x1070
+#define PTESS_ATTRIB_CHUNK 0x1080
+#define DTESS_ATTRIB_CHUNK 0x1090
+#define NORMAL_TESS_ATTRIB_CHUNK 0x1110
+#define WELD_TESS_ATTRIB_CHUNK 0x1120
+#define VERTMAP_CHUNK 0x1130
+#define FINALPATCH_CHUNK 0x1140
+#define RENDERSTEPS_CHUNK 0x1150
+#define SHOWINTERIOR_CHUNK 0x1160
 
 // Named sel set chunks
-#define VSELSET_CHUNK		0x1040
-#define ESELSET_CHUNK		0x1050
-#define PSELSET_CHUNK		0x1060
+#define VSELSET_CHUNK 0x1040
+#define ESELSET_CHUNK 0x1050
+#define PSELSET_CHUNK 0x1060
 
 #define RPO_MODE_TILE 0x4000
 #define RFINALPATCH_CHUNK 0x4001
@@ -267,7 +266,7 @@ void PaintPatchData::UpdateChanges(PatchMesh *patch, RPatchMesh *rpatch, BOOL ch
 #define RPO_INCLUDE_MESHES 0x4003
 #define RPO_PRELOAD_TILES 0x4010
 
-IOResult PaintPatchData::Save(ISave *isave) 
+IOResult PaintPatchData::Save(ISave *isave)
 {
 	ULONG nb;
 	isave->BeginChunk(EPD_R3_GENERAL_CHUNK);
@@ -277,15 +276,15 @@ IOResult PaintPatchData::Save(ISave *isave)
 	isave->BeginChunk(FINALPATCH_CHUNK);
 	finalPatch.Save(isave);
 	isave->EndChunk();
-	
+
 	isave->BeginChunk(RFINALPATCH_CHUNK);
 	rfinalPatch.Save(isave);
-	isave->EndChunk();	
+	isave->EndChunk();
 
 	isave->BeginChunk(RPO_INCLUDE_MESHES);
 	isave->Write(&includeMeshes, sizeof(includeMeshes), &nb);
 	isave->EndChunk();
-	
+
 	isave->BeginChunk(RPO_PRELOAD_TILES);
 	isave->Write(&preloadTiles, sizeof(preloadTiles), &nb);
 	isave->EndChunk();
@@ -293,12 +292,12 @@ IOResult PaintPatchData::Save(ISave *isave)
 	return IO_OK;
 }
 
-IOResult PaintPatchData::Load(ILoad *iload) 
+IOResult PaintPatchData::Load(ILoad *iload)
 {
 	IOResult res;
 	ULONG nb;
 	PModRecord *theChange;
-	while (IO_OK == (res = iload->OpenChunk())) 
+	while (IO_OK == (res = iload->OpenChunk()))
 	{
 		switch (iload->CurChunkID())
 		{
@@ -310,7 +309,7 @@ IOResult PaintPatchData::Load(ILoad *iload)
 		case PATCHCHANGERECORD_CHUNK:
 			theChange = new PatchChangeRecord;
 			goto load_change;
-load_change:
+		load_change:
 			//
 			// The following code is used for post-release 3 files
 			//
@@ -323,17 +322,16 @@ load_change:
 		case RFINALPATCH_CHUNK:
 			res = rfinalPatch.Load(iload);
 			break;
-			
+
 		case RPO_INCLUDE_MESHES:
 			res = iload->Read(&includeMeshes, sizeof(includeMeshes), &nb);
 			break;
 		case RPO_PRELOAD_TILES:
 			res = iload->Read(&preloadTiles, sizeof(preloadTiles), &nb);
 			break;
-
 		}
 		iload->CloseChunk();
-		if (res != IO_OK) 
+		if (res != IO_OK)
 			return res;
 	}
 	return IO_OK;

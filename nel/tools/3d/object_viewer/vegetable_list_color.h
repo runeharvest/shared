@@ -32,65 +32,61 @@ using NLMISC::CRGBA;
 
 class CVegetableListColor : public CListBox
 {
-// Construction
+	// Construction
 public:
 	CVegetableListColor();
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
 	// Setup.
-	void setCtrlID(uint id) { _Id = id ; }
+	void setCtrlID(uint id) { _Id = id; }
 	// itemXXX is the total space taken by an item. squareXXX is the size of the colored square
-	void setupItem(uint itemWidth, uint itemHeight, uint squareWidth, uint squareHeight );
-
+	void setupItem(uint itemWidth, uint itemHeight, uint squareWidth, uint squareHeight);
 
 	// Value mgt
 	// clear all values
-	void	clear();
+	void clear();
 	// add a value after all
-	void	addValue(CRGBA color);
+	void addValue(CRGBA color);
 	// insert a value after the current selected element.
-	void	insertValueBeforeCurSel(CRGBA color);
+	void insertValueBeforeCurSel(CRGBA color);
 	// remove the selected element
-	void	removeCurSelValue();
+	void removeCurSelValue();
 	// change the color of the selected element
-	void	changeCurSelValue(CRGBA color);
+	void changeCurSelValue(CRGBA color);
 	// get the corresponding color of a value
-	CRGBA	getValue(uint id);
+	CRGBA getValue(uint id);
 	// get the array of colors
-	const std::vector<CRGBA>	&getColors() const {return _Colors;}
+	const std::vector<CRGBA> &getColors() const { return _Colors; }
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CVegetableListColor)
-	public:
+public:
 	virtual int CompareItem(LPCOMPAREITEMSTRUCT lpCompareItemStruct);
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 	virtual void MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CVegetableListColor();
 
 	// Generated message map functions
 protected:
 	//{{AFX_MSG(CVegetableListColor)
-		// NOTE - the ClassWizard will add and remove member functions here.
+	// NOTE - the ClassWizard will add and remove member functions here.
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
 
-	uint _Id ;
+	uint _Id;
 	uint _ItemWidth, _ItemHeight;
 	uint _SquareWidth, _SquareHeight;
 
-	std::vector<CRGBA>		_Colors;
+	std::vector<CRGBA> _Colors;
 };
 
 /////////////////////////////////////////////////////////////////////////////

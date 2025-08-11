@@ -60,9 +60,9 @@ using namespace std;
 
 namespace NL3D {
 
-extern const char *g_StereoOVR_fp40; //TODO: what?
-extern const char *g_StereoOVR_arbfp1; //TODO: what?
-extern const char *g_StereoOVR_ps_2_0; //TODO: what?
+extern const char *g_StereoOVR_fp40; // TODO: what?
+extern const char *g_StereoOVR_arbfp1; // TODO: what?
+extern const char *g_StereoOVR_ps_2_0; // TODO: what?
 
 namespace {
 sint s_DeviceCounter = 0;
@@ -85,12 +85,20 @@ public:
 class CStereoLibVRDevicePtr
 {
 public:
-    struct hmd *HMDDevice;
-    struct display_info HMDInfo;
-    float InterpupillaryDistance;
+	struct hmd *HMDDevice;
+	struct display_info HMDInfo;
+	float InterpupillaryDistance;
 };
 
-CStereoLibVR::CStereoLibVR(const CStereoLibVRDeviceHandle *handle) : m_Stage(0), m_SubStage(0), m_OrientationCached(false), m_Driver(NULL), m_BarrelTexU(NULL), m_PixelProgram(NULL), m_EyePosition(0.0f, 0.09f, 0.15f), m_Scale(1.0f)
+CStereoLibVR::CStereoLibVR(const CStereoLibVRDeviceHandle *handle)
+    : m_Stage(0)
+    , m_SubStage(0)
+    , m_OrientationCached(false)
+    , m_Driver(NULL)
+    , m_BarrelTexU(NULL)
+    , m_PixelProgram(NULL)
+    , m_EyePosition(0.0f, 0.09f, 0.15f)
+    , m_Scale(1.0f)
 {
 	struct stereo_config st_conf;
 
@@ -98,7 +106,7 @@ CStereoLibVR::CStereoLibVR(const CStereoLibVRDeviceHandle *handle) : m_Stage(0),
 	// For now, LibVR doesn't support multiple devices...
 	m_DevicePtr = new CStereoLibVRDevicePtr();
 	m_DevicePtr->HMDDevice = hmd_open_first(0);
-	m_DevicePtr->InterpupillaryDistance = 0.0647; //TODO
+	m_DevicePtr->InterpupillaryDistance = 0.0647; // TODO
 
 	if (m_DevicePtr->HMDDevice)
 	{
@@ -146,21 +154,21 @@ void CStereoLibVR::setDriver(NL3D::UDriver *driver)
 {
 	nlassert(!m_PixelProgram);
 
-	NL3D::IDriver *drvInternal = (static_cast<CDriverUser *>(driver))->getDriver();	
+	NL3D::IDriver *drvInternal = (static_cast<CDriverUser *>(driver))->getDriver();
 	if (drvInternal->supportPixelProgram(CPixelProgram::fp40) && drvInternal->supportBloomEffect() && drvInternal->supportNonPowerOfTwoTextures())
 	{
 		nldebug("VR: fp40");
-		m_PixelProgram = new CPixelProgram(g_StereoOVR_fp40);		
+		m_PixelProgram = new CPixelProgram(g_StereoOVR_fp40);
 	}
 	else if (drvInternal->supportPixelProgram(CPixelProgram::arbfp1) && drvInternal->supportBloomEffect() && drvInternal->supportNonPowerOfTwoTextures())
 	{
 		nldebug("VR: arbfp1");
-		m_PixelProgram = new CPixelProgram(g_StereoOVR_arbfp1);		
+		m_PixelProgram = new CPixelProgram(g_StereoOVR_arbfp1);
 	}
 	else if (drvInternal->supportPixelProgram(CPixelProgram::ps_2_0))
 	{
 		nldebug("VR: ps_2_0");
-		m_PixelProgram = new CPixelProgram(g_StereoOVR_ps_2_0);	
+		m_PixelProgram = new CPixelProgram(g_StereoOVR_ps_2_0);
 	}
 
 	if (m_PixelProgram)
@@ -180,8 +188,8 @@ void CStereoLibVR::setDriver(NL3D::UDriver *driver)
 		m_BarrelMat = m_Driver->createMaterial();
 		m_BarrelMat.initUnlit();
 		m_BarrelMat.setColor(CRGBA::White);
-		m_BarrelMat.setBlend (false);
-		m_BarrelMat.setAlphaTest (false);
+		m_BarrelMat.setBlend(false);
+		m_BarrelMat.setAlphaTest(false);
 		NL3D::CMaterial *barrelMat = m_BarrelMat.getObjectPtr();
 		barrelMat->setShader(NL3D::CMaterial::PostProcessing);
 		barrelMat->setBlendFunc(CMaterial::one, CMaterial::zero);
@@ -202,12 +210,12 @@ void CStereoLibVR::setDriver(NL3D::UDriver *driver)
 
 		nlassert(!drvInternal->isTextureRectangle(m_BarrelTex)); // not allowed
 
-		m_BarrelQuadLeft.Uv0 = CUV(0.f,  0.f);
+		m_BarrelQuadLeft.Uv0 = CUV(0.f, 0.f);
 		m_BarrelQuadLeft.Uv1 = CUV(0.5f, 0.f);
 		m_BarrelQuadLeft.Uv2 = CUV(0.5f, 1.f);
-		m_BarrelQuadLeft.Uv3 = CUV(0.f,  1.f);
+		m_BarrelQuadLeft.Uv3 = CUV(0.f, 1.f);
 
-		m_BarrelQuadRight.Uv0 = CUV(0.5f,  0.f);
+		m_BarrelQuadRight.Uv0 = CUV(0.5f, 0.f);
 		m_BarrelQuadRight.Uv1 = CUV(1.f, 0.f);
 		m_BarrelQuadRight.Uv2 = CUV(1.f, 1.f);
 		m_BarrelQuadRight.Uv3 = CUV(0.5f, 1.f);
@@ -258,7 +266,7 @@ void CStereoLibVR::getClippingFrustum(uint cid, NL3D::UCamera *camera) const
 void CStereoLibVR::updateCamera(uint cid, const NL3D::UCamera *camera)
 {
 	if (camera->getFrustum().Near != m_LeftFrustum[cid].Near
-		|| camera->getFrustum().Far != m_LeftFrustum[cid].Far)
+	    || camera->getFrustum().Far != m_LeftFrustum[cid].Far)
 		CStereoLibVR::initCamera(cid, camera);
 	m_CameraMatrix[cid] = camera->getMatrix();
 }
@@ -390,7 +398,7 @@ bool CStereoLibVR::wantClear()
 	}
 	return m_Driver->getPolygonMode() != UDriver::Filled;
 }
-	
+
 bool CStereoLibVR::wantScene()
 {
 	switch (m_Stage)
@@ -426,7 +434,6 @@ bool CStereoLibVR::wantInterface2D()
 	}
 	return m_Driver->getPolygonMode() != UDriver::Filled;
 }
-
 
 /// Returns non-NULL if a new render target was set
 bool CStereoLibVR::beginRenderTarget()
@@ -465,12 +472,12 @@ bool CStereoLibVR::endRenderTarget()
 		barrelMat->setTexture(0, m_BarrelTex);
 		drvInternal->activePixelProgram(m_PixelProgram);
 
-		float w = float(m_BarrelQuadLeft.V1.x),// / float(width),
-			h = float(m_BarrelQuadLeft.V2.y),// / float(height),
-			x = float(m_BarrelQuadLeft.V0.x),/// / float(width),
-			y = float(m_BarrelQuadLeft.V0.y);// / float(height);
+		float w = float(m_BarrelQuadLeft.V1.x), // / float(width),
+		    h = float(m_BarrelQuadLeft.V2.y), // / float(height),
+		    x = float(m_BarrelQuadLeft.V0.x), /// / float(width),
+		    y = float(m_BarrelQuadLeft.V0.y); // / float(height);
 
-		//TODO: stereo_config stuff
+		// TODO: stereo_config stuff
 		float lensViewportShift = st_conf.proj.projection_offset;
 
 		float lensCenterX = x + (w + lensViewportShift * 0.5f) * 0.5f;
@@ -486,7 +493,6 @@ bool CStereoLibVR::endRenderTarget()
 		drvInternal->setPixelProgramConstant(2, scaleX, scaleY, 0.f, 0.f);
 		drvInternal->setPixelProgramConstant(3, scaleInX, scaleInY, 0.f, 0.f);
 		drvInternal->setPixelProgramConstant(4, 1, st_conf.distort.distortion_k);
-
 
 		m_Driver->drawQuad(m_BarrelQuadLeft, m_BarrelMat);
 
@@ -518,10 +524,22 @@ NLMISC::CQuat CStereoLibVR::getOrientation() const
 	hmd_get_rotation(m_DevicePtr->HMDDevice, quat);
 	NLMISC::CMatrix coordsys;
 	float csys[] = {
-		1.0f, 0.0f, 0.0f, 0.0f, 
-		0.0f, 0.0f, -1.0f, 0.0f, 
-		0.0f, 1.0f, 0.0f, 0.0f, 
-		0.0f, 0.0f, 0.0f, 1.0f, 
+		1.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		-1.0f,
+		0.0f,
+		0.0f,
+		1.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		1.0f,
 	};
 	coordsys.set(csys);
 	NLMISC::CMatrix matovr;
@@ -570,17 +588,16 @@ void CStereoLibVR::getInterface2DShift(uint cid, float &x, float &y, float dista
 	NLMISC::CVector ipd;
 	if (m_Stage % 2) ipd = CVector((m_DevicePtr->InterpupillaryDistance * m_Scale) * -0.5f, 0.f, 0.f);
 	else ipd = CVector((m_DevicePtr->InterpupillaryDistance * m_Scale) * 0.5f, 0.f, 0.f);
-	
 
 	NLMISC::CQuat rot = getOrientation();
 	NLMISC::CQuat modrot = NLMISC::CQuat(CVector(0.f, 1.f, 0.f), NLMISC::Pi);
 	rot = rot * modrot;
 	float p = NLMISC::Pi + atan2f(2.0f * ((rot.x * rot.y) + (rot.z * rot.w)), 1.0f - 2.0f * ((rot.y * rot.y) + (rot.w * rot.w)));
-	if (p > NLMISC::Pi) p -= NLMISC::Pi * 2.0f;	
-	float t = -atan2f(2.0f * ((rot.x * rot.w) + (rot.y * rot.z)), 1.0f - 2.0f * ((rot.z * rot.z) + (rot.w * rot.w)));// // asinf(2.0f * ((rot.x * rot.z) - (rot.w * rot.y)));
-	
+	if (p > NLMISC::Pi) p -= NLMISC::Pi * 2.0f;
+	float t = -atan2f(2.0f * ((rot.x * rot.w) + (rot.y * rot.z)), 1.0f - 2.0f * ((rot.z * rot.z) + (rot.w * rot.w))); // // asinf(2.0f * ((rot.x * rot.z) - (rot.w * rot.y)));
+
 	CVector rotshift = CVector(p, 0.f, t) * -distance;
-	
+
 	CVector proj = CStereoLibVR::getCurrentFrustum(cid).project(vec + ipd + rotshift);
 
 	x = (proj.x - 0.5f);
@@ -611,14 +628,14 @@ void CStereoLibVR::listDevices(std::vector<CStereoDeviceInfo> &devicesOut)
 	struct hmd *hmd = hmd_open_first(0);
 	if (hmd)
 	{
-                CStereoDeviceInfo deviceInfoOut;
+		CStereoDeviceInfo deviceInfoOut;
 		CStereoLibVRDeviceHandle *handle = new CStereoLibVRDeviceHandle();
 		deviceInfoOut.Factory = static_cast<IStereoDeviceFactory *>(handle);
 		deviceInfoOut.Class = CStereoDeviceInfo::StereoHMD;
 		deviceInfoOut.Library = CStereoDeviceInfo::LibVR;
 		deviceInfoOut.AllowAuto = true;
-		//TODO: manufacturer, produc name
-		//TODO: serial
+		// TODO: manufacturer, produc name
+		// TODO: serial
 		devicesOut.push_back(deviceInfoOut);
 		hmd_close(hmd);
 	}

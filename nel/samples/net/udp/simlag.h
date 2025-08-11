@@ -35,14 +35,13 @@
 //
 
 // Call this function evenly to flush messages that are laged
-void updateBufferizedPackets ();
+void updateBufferizedPackets();
 
 // Set the packet lost and lag values for the simluation
-void setSimlagValues (sint32 lag, sint8 packetLoss, sint8 packetDuplication, sint8 packetDisordering);
+void setSimlagValues(sint32 lag, sint8 packetLoss, sint8 packetDuplication, sint8 packetDisordering);
 
 // Send a message using UDP connection with sim lag
-void sendUDP (NLNET::CUdpSock *client, const uint8 *packet, uint32 packetSize, const NLNET::CInetAddress *addr = NULL);
-
+void sendUDP(NLNET::CUdpSock *client, const uint8 *packet, uint32 packetSize, const NLNET::CInetAddress *addr = NULL);
 
 #endif // NL_SIMLAG_H
 

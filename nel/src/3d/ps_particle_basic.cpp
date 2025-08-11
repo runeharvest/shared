@@ -27,23 +27,20 @@
 #include "nel/3d/texture_mem.h"
 #include "nel/3d/particle_system.h"
 
-
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
-
+namespace NL3D {
 
 /////////////////////////////////
 // CPSParticle implementation  //
 /////////////////////////////////
 
 //=======================================
-CPSParticle::CPSParticle() : _DisableAutoLOD(false),
-							 _UsesGlobalColorLighting(false)
+CPSParticle::CPSParticle()
+    : _DisableAutoLOD(false)
+    , _UsesGlobalColorLighting(false)
 {
 	NL_PS_FUNC(CPSParticle_CPSParticle)
 }
@@ -57,17 +54,7 @@ void CPSParticle::showTool()
 	CVector I = CVector::I;
 	CVector J = CVector::J;
 
-	const CVector tab[] = { 2 * J, I + J
-							, I + J, 2 * I + J
-							, 2 * I + J, I
-							, I,  2 * I - J
-							, 2 * I - J, - .5f * J
-							, - .5f * J, -2 * I - J
-							, -2 * I - J, - I
-							, - I, -2 * I + J
-							, -2 * I + J, - I + J
-							, - I + J, 2 * J
-						};
+	const CVector tab[] = { 2 * J, I + J, I + J, 2 * I + J, 2 * I + J, I, I, 2 * I - J, 2 * I - J, -.5f * J, -.5f * J, -2 * I - J, -2 * I - J, -I, -I, -2 * I + J, -2 * I + J, -I + J, -I + J, 2 * J };
 	const uint tabSize = sizeof(tab) / (2 * sizeof(CVector));
 
 	const float sSize = 0.1f;
@@ -100,12 +87,13 @@ void CPSParticle::computeSrcStep(uint32 &step, uint &numToProcess)
 			{
 				r *= factor;
 			}
-			numToProcess = (uint) (_Owner->getSize() * r);
+			numToProcess = (uint)(_Owner->getSize() * r);
 			if (numToProcess < 1) { numToProcess = 1; }
 
-			step =	 ps.getAutoLODMode() ?				   // skip or limit number, depending on the mode
-				(_Owner->getSize() << 16) / numToProcess : // skip particles
-				(1 << 16);							   // just display less particles
+			step = ps.getAutoLODMode() ? // skip or limit number, depending on the mode
+			    (_Owner->getSize() << 16) / numToProcess
+			                           : // skip particles
+			    (1 << 16); // just display less particles
 		}
 		else
 		{
@@ -113,7 +101,6 @@ void CPSParticle::computeSrcStep(uint32 &step, uint &numToProcess)
 			numToProcess = _Owner->getSize();
 		}
 	}
-
 }
 
 //////////////////////////////////////
@@ -142,13 +129,14 @@ void CPSColoredParticle::setColor(NLMISC::CRGBA col)
 }
 
 //=======================================
-CPSColoredParticle::CPSColoredParticle() : _Color(CRGBA(255, 255, 255)), _ColorScheme(NULL)
-{
-	NL_PS_FUNC(CPSColoredParticle_CPSColoredParticle)
-}
+CPSColoredParticle::CPSColoredParticle()
+    : _Color(CRGBA(255, 255, 255))
+    , _ColorScheme(NULL) {
+	    NL_PS_FUNC(CPSColoredParticle_CPSColoredParticle)
+    }
 
-//=======================================
-CPSColoredParticle::~CPSColoredParticle()
+    //=======================================
+    CPSColoredParticle::~CPSColoredParticle()
 {
 	NL_PS_FUNC(CPSColoredParticle_CPSColoredParticleDtor)
 	delete _ColorScheme;
@@ -157,7 +145,7 @@ CPSColoredParticle::~CPSColoredParticle()
 //=======================================
 void CPSColoredParticle::serialColorScheme(NLMISC::IStream &f)
 {
-	NL_PS_FUNC(CPSColoredParticle_IStream )
+	NL_PS_FUNC(CPSColoredParticle_IStream)
 	f.serialVersion(1);
 	if (f.isReading())
 	{
@@ -203,13 +191,14 @@ void CPSSizedParticle::setSize(float size)
 }
 
 //=======================================
-CPSSizedParticle::CPSSizedParticle() : _ParticleSize(0.3f), _SizeScheme(NULL)
-{
-	NL_PS_FUNC(CPSSizedParticle_CPSSizedParticle)
-}
+CPSSizedParticle::CPSSizedParticle()
+    : _ParticleSize(0.3f)
+    , _SizeScheme(NULL) {
+	    NL_PS_FUNC(CPSSizedParticle_CPSSizedParticle)
+    }
 
-//=======================================
-CPSSizedParticle::~CPSSizedParticle()
+    //=======================================
+    CPSSizedParticle::~CPSSizedParticle()
 {
 	NL_PS_FUNC(CPSSizedParticle_CPSSizedParticleDtor)
 	delete _SizeScheme;
@@ -267,13 +256,14 @@ void CPSRotated2DParticle::setAngle2D(float angle2DScheme)
 }
 
 ///===================================================================================
-CPSRotated2DParticle::CPSRotated2DParticle() : _Angle2D(0), _Angle2DScheme(NULL)
-{
-	NL_PS_FUNC(CPSRotated2DParticle_CPSRotated2DParticle)
-}
+CPSRotated2DParticle::CPSRotated2DParticle()
+    : _Angle2D(0)
+    , _Angle2DScheme(NULL) {
+	    NL_PS_FUNC(CPSRotated2DParticle_CPSRotated2DParticle)
+    }
 
-///===================================================================================
-CPSRotated2DParticle::~CPSRotated2DParticle()
+    ///===================================================================================
+    CPSRotated2DParticle::~CPSRotated2DParticle()
 {
 	NL_PS_FUNC(CPSRotated2DParticle_CPSRotated2DParticleDtor)
 	delete _Angle2DScheme;
@@ -311,8 +301,8 @@ void CPSRotated2DParticle::initRotTable(void)
 	float *ptFloat = _RotTable;
 	for (uint32 k = 0; k < 256; ++k)
 	{
-		const float ca = (float) cos(k * (1.0f / 256.0f) * 2.0f * NLMISC::Pi);
-		const float sa = (float) sin(k * (1.0f / 256.0f) * 2.0f * NLMISC::Pi);
+		const float ca = (float)cos(k * (1.0f / 256.0f) * 2.0f * NLMISC::Pi);
+		const float sa = (float)sin(k * (1.0f / 256.0f) * 2.0f * NLMISC::Pi);
 
 		*ptFloat++ = -ca - sa;
 		*ptFloat++ = -sa + ca;
@@ -336,7 +326,6 @@ void CPSTexturedParticle::setTextureIndexScheme(CPSAttribMaker<sint32> *animOrde
 	delete _TextureIndexScheme;
 	_TextureIndexScheme = animOrder;
 	if (getTextureIndexOwner() && animOrder->hasMemory()) animOrder->resize(getTextureIndexOwner()->getMaxSize(), getTextureIndexOwner()->getSize());
-
 
 	updateMatAndVbForTexture();
 }
@@ -375,15 +364,15 @@ void CPSTexturedParticle::setTexture(CSmartPtr<ITexture> tex)
 }
 
 ///===================================================================================
-CPSTexturedParticle::CPSTexturedParticle() : _TexGroup(NULL),
-											 _TextureIndexScheme(NULL),
-											 _TextureIndex(0)
-{
-	NL_PS_FUNC(CPSTexturedParticle_CPSTexturedParticle)
-}
+CPSTexturedParticle::CPSTexturedParticle()
+    : _TexGroup(NULL)
+    , _TextureIndexScheme(NULL)
+    , _TextureIndex(0) {
+	    NL_PS_FUNC(CPSTexturedParticle_CPSTexturedParticle)
+    }
 
-///===================================================================================
-CPSTexturedParticle::~CPSTexturedParticle()
+    ///===================================================================================
+    CPSTexturedParticle::~CPSTexturedParticle()
 {
 	NL_PS_FUNC(CPSTexturedParticle_CPSTexturedParticleDtor)
 	delete _TextureIndexScheme;
@@ -477,7 +466,8 @@ void CPSRotated3DPlaneParticle::setPlaneBasis(const CPlaneBasis &basis)
 }
 
 ///===================================================================================
-CPSRotated3DPlaneParticle::CPSRotated3DPlaneParticle() : _PlaneBasisScheme(NULL)
+CPSRotated3DPlaneParticle::CPSRotated3DPlaneParticle()
+    : _PlaneBasisScheme(NULL)
 {
 	NL_PS_FUNC(CPSRotated3DPlaneParticle_CPSRotated3DPlaneParticle)
 	_PlaneBasis.X = CVector::I;
@@ -520,7 +510,7 @@ CPSMaterial::CPSMaterial()
 ///===================================================================================
 void CPSMaterial::serialMaterial(NLMISC::IStream &f)
 {
-	NL_PS_FUNC(CPSMaterial_IStream )
+	NL_PS_FUNC(CPSMaterial_IStream)
 	// version 3 : added zbias
 	sint ver = f.serialVersion(3);
 	TBlendingMode m = getBlendingMode();
@@ -532,8 +522,7 @@ void CPSMaterial::serialMaterial(NLMISC::IStream &f)
 		f.serial(zTest);
 		enableZTest(zTest);
 	}
-	else
-	if (ver >= 3)
+	else if (ver >= 3)
 	{
 		// bit 0 : ztest enabled
 		// bit 1 : 1 if zbias is not 0, in this case zbias follows
@@ -548,7 +537,6 @@ void CPSMaterial::serialMaterial(NLMISC::IStream &f)
 		}
 	}
 }
-
 
 ///===================================================================================
 void CPSMaterial::enableZTest(bool enabled)
@@ -570,28 +558,28 @@ void CPSMaterial::setBlendingMode(CPSMaterial::TBlendingMode mode)
 	NL_PS_FUNC(CPSMaterial_setBlendingMode)
 	switch (mode)
 	{
-		case add:
-			_Mat.setBlend(true);
-			_Mat.setBlendFunc(CMaterial::one, CMaterial::one);
-			_Mat.setZWrite(false);
-			_Mat.setAlphaTest(false);
+	case add:
+		_Mat.setBlend(true);
+		_Mat.setBlendFunc(CMaterial::one, CMaterial::one);
+		_Mat.setZWrite(false);
+		_Mat.setAlphaTest(false);
 		break;
-		case modulate:
-			_Mat.setBlend(true);
-			_Mat.setBlendFunc(CMaterial::zero, CMaterial::srccolor);
-			_Mat.setZWrite(false);
-			_Mat.setAlphaTest(false);
+	case modulate:
+		_Mat.setBlend(true);
+		_Mat.setBlendFunc(CMaterial::zero, CMaterial::srccolor);
+		_Mat.setZWrite(false);
+		_Mat.setAlphaTest(false);
 		break;
-		case alphaBlend:
-			_Mat.setBlend(true);
-			_Mat.setBlendFunc(CMaterial::srcalpha, CMaterial::invsrcalpha);
-			_Mat.setZWrite(false);
-			_Mat.setAlphaTest(false);
+	case alphaBlend:
+		_Mat.setBlend(true);
+		_Mat.setBlendFunc(CMaterial::srcalpha, CMaterial::invsrcalpha);
+		_Mat.setZWrite(false);
+		_Mat.setAlphaTest(false);
 		break;
-		case alphaTest:
-			_Mat.setBlend(false);
-			_Mat.setZWrite(true);
-			_Mat.setAlphaTest(true);
+	case alphaTest:
+		_Mat.setBlend(false);
+		_Mat.setZWrite(true);
+		_Mat.setAlphaTest(true);
 		break;
 	}
 }
@@ -644,7 +632,6 @@ void CPSMaterial::forceModulateConstantColor(bool force, const NLMISC::CRGBA &co
 	}
 }
 
-
 ///===================================================================================
 void CPSMaterial::forceTexturedMaterialStages(uint numStages)
 {
@@ -671,28 +658,31 @@ void CPSMaterial::forceTexturedMaterialStages(uint numStages)
 	}
 }
 
-
 /////////////////////////////////////////////
 // CPSMultiTexturedParticle implementation //
 /////////////////////////////////////////////
 
 //=======================================
-bool CPSMultiTexturedParticle::_ForceBasicCaps  = false;
+bool CPSMultiTexturedParticle::_ForceBasicCaps = false;
 
 //=======================================
-CPSMultiTexturedParticle::CPSMultiTexturedParticle() : _MainOp(Add), _AlternateOp(Add), _MultiTexState(TouchFlag), _BumpFactor(1.f)
+CPSMultiTexturedParticle::CPSMultiTexturedParticle()
+    : _MainOp(Add)
+    , _AlternateOp(Add)
+    , _MultiTexState(TouchFlag)
+    , _BumpFactor(1.f)
 {
 	NL_PS_FUNC(CPSMultiTexturedParticle_CPSMultiTexturedParticle)
 }
 
 //=======================================
-void	CPSMultiTexturedParticle::enableMultiTexture(bool enabled /*= true*/)
+void CPSMultiTexturedParticle::enableMultiTexture(bool enabled /*= true*/)
 {
 	NL_PS_FUNC(CPSMultiTexturedParticle_enableMultiTexture)
 	if (isMultiTextureEnabled() == enabled) return;
 	if (!enabled)
 	{
-		_Texture2		   = NULL;
+		_Texture2 = NULL;
 		_AlternateTexture2 = NULL;
 		_MultiTexState = 0;
 	}
@@ -701,13 +691,13 @@ void	CPSMultiTexturedParticle::enableMultiTexture(bool enabled /*= true*/)
 		_MainOp = Modulate;
 		_TexScroll[0].set(0, 0);
 		_TexScroll[1].set(0, 0);
-		_MultiTexState = (uint8) MultiTextureEnabled;
+		_MultiTexState = (uint8)MultiTextureEnabled;
 	}
 	touch();
 }
 
 //=======================================
-void	CPSMultiTexturedParticle::enableAlternateTex(bool enabled /*= true*/)
+void CPSMultiTexturedParticle::enableAlternateTex(bool enabled /*= true*/)
 {
 	NL_PS_FUNC(CPSMultiTexturedParticle_enableAlternateTex)
 	nlassert(isMultiTextureEnabled()); // multitexturing must have been enabled first
@@ -718,18 +708,18 @@ void	CPSMultiTexturedParticle::enableAlternateTex(bool enabled /*= true*/)
 		_TexScrollAlternate[0].set(0, 0);
 		_TexScrollAlternate[1].set(0, 0);
 		_AlternateOp = Modulate;
-		_MultiTexState |= (uint8) AlternateTextureEnabled;
+		_MultiTexState |= (uint8)AlternateTextureEnabled;
 	}
 	else
 	{
 		_Texture2 = NULL;
-		_MultiTexState &= ~(uint8) AlternateTextureEnabled;
+		_MultiTexState &= ~(uint8)AlternateTextureEnabled;
 	}
 	touch();
 }
 
 //=======================================
-void	CPSMultiTexturedParticle::serialMultiTex(NLMISC::IStream &f)
+void CPSMultiTexturedParticle::serialMultiTex(NLMISC::IStream &f)
 {
 	NL_PS_FUNC(CPSMultiTexturedParticle_serialMultiTex)
 	/// version 1 : bump factor
@@ -779,7 +769,7 @@ void	CPSMultiTexturedParticle::serialMultiTex(NLMISC::IStream &f)
 	{
 		if (f.isReading())
 		{
-			_Texture2		   = NULL;
+			_Texture2 = NULL;
 			_AlternateTexture2 = NULL;
 		}
 	}
@@ -790,11 +780,11 @@ void CPSMultiTexturedParticle::setupMaterial(ITexture *primary, IDriver *driver,
 {
 	NL_PS_FUNC(CPSMultiTexturedParticle_setupMaterial)
 	/// if bump is used, the matrix must be setupped each time (not a material field)
-	if (!_ForceBasicCaps && isMultiTextureEnabled() && _MainOp  == EnvBumpMap)
+	if (!_ForceBasicCaps && isMultiTextureEnabled() && _MainOp == EnvBumpMap)
 	{
 		if (driver->supportTextureAddrMode(CMaterial::OffsetTexture))
 		{
-			CTextureBump *tb = dynamic_cast<CTextureBump *>((ITexture *) _Texture2);
+			CTextureBump *tb = dynamic_cast<CTextureBump *>((ITexture *)_Texture2);
 			if (tb != NULL)
 			{
 				float normFactor = tb->getNormalizationFactor();
@@ -805,7 +795,7 @@ void CPSMultiTexturedParticle::setupMaterial(ITexture *primary, IDriver *driver,
 					normFactor = tb->getNormalizationFactor();
 					tb->release();
 				}
-				const float bMat[] = { _BumpFactor * normFactor, 0.f, 0.f, _BumpFactor * normFactor};
+				const float bMat[] = { _BumpFactor * normFactor, 0.f, 0.f, _BumpFactor * normFactor };
 				driver->setMatrix2DForTextureOffsetAddrMode(1, bMat);
 			}
 			vb.setUVRouting(0, 1);
@@ -815,7 +805,7 @@ void CPSMultiTexturedParticle::setupMaterial(ITexture *primary, IDriver *driver,
 		{
 			uint embmTex = 0;
 			const uint numTexStages = driver->getNbTextureStages();
-			for(uint k = 0; k < numTexStages; ++k)
+			for (uint k = 0; k < numTexStages; ++k)
 			{
 				vb.setUVRouting(k, 0);
 				if (driver->isEMBMSupportedAtStage(k))
@@ -829,7 +819,7 @@ void CPSMultiTexturedParticle::setupMaterial(ITexture *primary, IDriver *driver,
 					break;
 				}
 			}
-			CTextureBump *tb = dynamic_cast<CTextureBump *>((ITexture *) _Texture2);
+			CTextureBump *tb = dynamic_cast<CTextureBump *>((ITexture *)_Texture2);
 			if (tb != NULL)
 			{
 				float normFactor = tb->getNormalizationFactor();
@@ -840,7 +830,7 @@ void CPSMultiTexturedParticle::setupMaterial(ITexture *primary, IDriver *driver,
 					normFactor = tb->getNormalizationFactor();
 					tb->release();
 				}
-				const float bMat[] = { _BumpFactor * normFactor, 0.f, 0.f, _BumpFactor * normFactor};
+				const float bMat[] = { _BumpFactor * normFactor, 0.f, 0.f, _BumpFactor * normFactor };
 				driver->setEMBMMatrix(embmTex, bMat);
 			}
 		}
@@ -856,17 +846,17 @@ void CPSMultiTexturedParticle::setupMaterial(ITexture *primary, IDriver *driver,
 	}
 	else
 	{
-		if (_MainOp  != EnvBumpMap)
+		if (_MainOp != EnvBumpMap)
 		{
 			setupMultiTexEnv(_MainOp, primary, _Texture2, mat, *driver);
-			_MultiTexState &= ~(uint8) EnvBumpMapUsed;
-			_MultiTexState &= ~(uint8) AlternateTextureUsed;
+			_MultiTexState &= ~(uint8)EnvBumpMapUsed;
+			_MultiTexState &= ~(uint8)AlternateTextureUsed;
 		}
 		else
 		{
 			if (!_ForceBasicCaps && (driver->supportTextureAddrMode(CMaterial::OffsetTexture) || driver->supportEMBM())) // envbumpmap supported ?
 			{
-				CTextureBump *tb = dynamic_cast<CTextureBump *>((ITexture *) _Texture2);
+				CTextureBump *tb = dynamic_cast<CTextureBump *>((ITexture *)_Texture2);
 				if (tb != NULL)
 				{
 					float normFactor = tb->getNormalizationFactor();
@@ -879,12 +869,12 @@ void CPSMultiTexturedParticle::setupMaterial(ITexture *primary, IDriver *driver,
 					}
 					setupMultiTexEnv(_MainOp, primary, _Texture2, mat, *driver);
 				}
-				_MultiTexState &= ~(uint8) AlternateTextureUsed;
-				_MultiTexState |= (uint8) EnvBumpMapUsed;
+				_MultiTexState &= ~(uint8)AlternateTextureUsed;
+				_MultiTexState |= (uint8)EnvBumpMapUsed;
 			}
 			else // switch to alternate
 			{
-				_MultiTexState |= (uint8) AlternateTextureUsed;
+				_MultiTexState |= (uint8)AlternateTextureUsed;
 				if (isAlternateTexEnabled() && _AlternateTexture2)
 				{
 					setupMultiTexEnv(_AlternateOp, primary, _AlternateTexture2, mat, *driver);
@@ -894,7 +884,7 @@ void CPSMultiTexturedParticle::setupMaterial(ITexture *primary, IDriver *driver,
 					mat.setTexture(0, primary);
 					mat.texEnvOpRGB(0, CMaterial::Modulate);
 				}
-				_MultiTexState &= ~(uint8) EnvBumpMapUsed;
+				_MultiTexState &= ~(uint8)EnvBumpMapUsed;
 			}
 		}
 	}
@@ -903,86 +893,86 @@ void CPSMultiTexturedParticle::setupMaterial(ITexture *primary, IDriver *driver,
 }
 
 //=======================================
-void	CPSMultiTexturedParticle::setupMultiTexEnv(TOperator op, ITexture *tex1, ITexture *tex2, CMaterial &mat, IDriver &drv)
+void CPSMultiTexturedParticle::setupMultiTexEnv(TOperator op, ITexture *tex1, ITexture *tex2, CMaterial &mat, IDriver &drv)
 {
 	NL_PS_FUNC(CPSMultiTexturedParticle_setupMultiTexEnv)
 	switch (op)
 	{
-		case Add:
-			mat.setTexture(0, tex1);
-			mat.setTexture(1, tex2);
-			mat.texEnvOpRGB(0, CMaterial::Modulate);
-			mat.texEnvOpRGB(1, CMaterial::Add);
-			mat.enableTexAddrMode(false);
-			break;
-		case Modulate:
-			mat.setTexture(0, tex1);
-			mat.setTexture(1, tex2);
-			mat.texEnvOpRGB(0, CMaterial::Modulate);
+	case Add:
+		mat.setTexture(0, tex1);
+		mat.setTexture(1, tex2);
+		mat.texEnvOpRGB(0, CMaterial::Modulate);
+		mat.texEnvOpRGB(1, CMaterial::Add);
+		mat.enableTexAddrMode(false);
+		break;
+	case Modulate:
+		mat.setTexture(0, tex1);
+		mat.setTexture(1, tex2);
+		mat.texEnvOpRGB(0, CMaterial::Modulate);
+		mat.texEnvOpRGB(1, CMaterial::Modulate);
+		mat.enableTexAddrMode(false);
+		break;
+	case EnvBumpMap:
+		if (drv.supportTextureAddrMode(CMaterial::OffsetTexture))
+		{
+			mat.setTexture(0, tex2);
+			mat.setTexture(1, tex1);
+			mat.texEnvOpRGB(0, CMaterial::Replace);
 			mat.texEnvOpRGB(1, CMaterial::Modulate);
-			mat.enableTexAddrMode(false);
-			break;
-		case EnvBumpMap:
-			if (drv.supportTextureAddrMode(CMaterial::OffsetTexture))
+			mat.enableTexAddrMode(true);
+			mat.setTexAddressingMode(0, CMaterial::FetchTexture);
+			mat.setTexAddressingMode(1, CMaterial::OffsetTexture);
+		}
+		else if (drv.supportEMBM())
+		{
+			const uint numTexStages = drv.getNbTextureStages();
+			// if embm unit is at last stage, it operates on texture at previous stage
+			// otherwise it operates on texture at next stage
+			for (uint k = 0; k < numTexStages; ++k)
 			{
-				mat.setTexture(0, tex2);
-				mat.setTexture(1, tex1);
-				mat.texEnvOpRGB(0, CMaterial::Replace);
-				mat.texEnvOpRGB(1, CMaterial::Modulate);
-				mat.enableTexAddrMode(true);
-				mat.setTexAddressingMode(0, CMaterial::FetchTexture);
-				mat.setTexAddressingMode(1, CMaterial::OffsetTexture);
-			}
-			else if (drv.supportEMBM())
-			{
-				const uint numTexStages = drv.getNbTextureStages();
-				// if embm unit is at last stage, it operates on texture at previous stage
-				// otherwise it operates on texture at next stage
-				for(uint k = 0; k < numTexStages; ++k)
+				if (drv.isEMBMSupportedAtStage(k))
 				{
-					if (drv.isEMBMSupportedAtStage(k))
+					if (k == (numTexStages - 1))
 					{
-						if (k == (numTexStages - 1))
-						{
-							mat.setTexture(k, tex2);
-							mat.texEnvOpRGB(k, CMaterial::EMBM);
-							mat.texEnvOpAlpha(k, CMaterial::EMBM);
-							mat.setTexture(0, tex1);
-							mat.texEnvOpRGB(0, CMaterial::Modulate);
-							mat.texEnvArg0RGB(0, CMaterial::Texture, CMaterial::SrcColor);
-							mat.texEnvArg1RGB(0, CMaterial::Diffuse, CMaterial::SrcColor);
-							mat.texEnvArg0Alpha(0, CMaterial::Texture, CMaterial::SrcAlpha);
-							mat.texEnvArg1Alpha(0, CMaterial::Diffuse, CMaterial::SrcAlpha);
-						}
-						else
-						{
-							// stage before the bump map must not be empty so fill them
-							for(uint l = 0; l < k; ++l)
-							{
-								mat.setTexture(l, tex1);
-								mat.texEnvOpRGB(l, CMaterial::Modulate);
-							}
-							mat.setTexture(k, tex2);
-							mat.texEnvOpRGB(k, CMaterial::EMBM);
-							mat.setTexture(k + 1, tex1);
-							mat.texEnvOpRGB(k + 1, CMaterial::Modulate);
-							mat.texEnvArg0RGB(k + 1, CMaterial::Texture, CMaterial::SrcColor);
-							mat.texEnvArg1RGB(k + 1, CMaterial::Diffuse, CMaterial::SrcColor);
-							mat.texEnvArg0Alpha(k + 1, CMaterial::Texture, CMaterial::SrcAlpha);
-							mat.texEnvArg1Alpha(k + 1, CMaterial::Diffuse, CMaterial::SrcAlpha);
-						}
-						break;
+						mat.setTexture(k, tex2);
+						mat.texEnvOpRGB(k, CMaterial::EMBM);
+						mat.texEnvOpAlpha(k, CMaterial::EMBM);
+						mat.setTexture(0, tex1);
+						mat.texEnvOpRGB(0, CMaterial::Modulate);
+						mat.texEnvArg0RGB(0, CMaterial::Texture, CMaterial::SrcColor);
+						mat.texEnvArg1RGB(0, CMaterial::Diffuse, CMaterial::SrcColor);
+						mat.texEnvArg0Alpha(0, CMaterial::Texture, CMaterial::SrcAlpha);
+						mat.texEnvArg1Alpha(0, CMaterial::Diffuse, CMaterial::SrcAlpha);
 					}
+					else
+					{
+						// stage before the bump map must not be empty so fill them
+						for (uint l = 0; l < k; ++l)
+						{
+							mat.setTexture(l, tex1);
+							mat.texEnvOpRGB(l, CMaterial::Modulate);
+						}
+						mat.setTexture(k, tex2);
+						mat.texEnvOpRGB(k, CMaterial::EMBM);
+						mat.setTexture(k + 1, tex1);
+						mat.texEnvOpRGB(k + 1, CMaterial::Modulate);
+						mat.texEnvArg0RGB(k + 1, CMaterial::Texture, CMaterial::SrcColor);
+						mat.texEnvArg1RGB(k + 1, CMaterial::Diffuse, CMaterial::SrcColor);
+						mat.texEnvArg0Alpha(k + 1, CMaterial::Texture, CMaterial::SrcAlpha);
+						mat.texEnvArg1Alpha(k + 1, CMaterial::Diffuse, CMaterial::SrcAlpha);
+					}
+					break;
 				}
 			}
+		}
 		break;
-		case Decal:
-			mat.setTexture(0, tex1);
-			mat.texEnvOpRGB(0, CMaterial::Replace);
-			mat.setTexture(1, NULL);
-			mat.enableTexAddrMode(false);
-			break;
-		default: break;
+	case Decal:
+		mat.setTexture(0, tex1);
+		mat.texEnvOpRGB(0, CMaterial::Replace);
+		mat.setTexture(1, NULL);
+		mat.enableTexAddrMode(false);
+		break;
+	default: break;
 	}
 }
 
@@ -990,11 +980,11 @@ void	CPSMultiTexturedParticle::setupMultiTexEnv(TOperator op, ITexture *tex1, IT
 static void ConvertToBumpMap(NLMISC::CSmartPtr<ITexture> &ptr)
 {
 	NL_PS_FUNC(ConvertToBumpMap)
-	if (!dynamic_cast<CTextureBump *>( (ITexture *) ptr))
+	if (!dynamic_cast<CTextureBump *>((ITexture *)ptr))
 	{
 		// convert to a bumpmap
 		CTextureBump *tb = new CTextureBump;
-		tb->setHeightMap((ITexture *) ptr);
+		tb->setHeightMap((ITexture *)ptr);
 		tb->enableSharing(true);
 		ptr = tb;
 	}
@@ -1004,7 +994,7 @@ static void ConvertToBumpMap(NLMISC::CSmartPtr<ITexture> &ptr)
 static void ConvertFromBumpMap(NLMISC::CSmartPtr<ITexture> &ptr)
 {
 	NL_PS_FUNC(ConvertFromBumpMap)
-	CTextureBump *bm = dynamic_cast<CTextureBump *>( (ITexture *) ptr);
+	CTextureBump *bm = dynamic_cast<CTextureBump *>((ITexture *)ptr);
 	if (bm)
 	{
 		// retrieve the heightmap from the bumpmap
@@ -1014,7 +1004,7 @@ static void ConvertFromBumpMap(NLMISC::CSmartPtr<ITexture> &ptr)
 }
 
 //=========================================
-void	CPSMultiTexturedParticle::setTexture2Alternate(ITexture *tex)
+void CPSMultiTexturedParticle::setTexture2Alternate(ITexture *tex)
 {
 	NL_PS_FUNC(CPSMultiTexturedParticle_setTexture2Alternate)
 	_AlternateTexture2 = tex;
@@ -1030,7 +1020,7 @@ void	CPSMultiTexturedParticle::setTexture2Alternate(ITexture *tex)
 }
 
 //==========================================
-void	CPSMultiTexturedParticle::setTexture2(ITexture *tex)
+void CPSMultiTexturedParticle::setTexture2(ITexture *tex)
 {
 	NL_PS_FUNC(CPSMultiTexturedParticle_setTexture2)
 	_Texture2 = tex;
@@ -1040,7 +1030,7 @@ void	CPSMultiTexturedParticle::setTexture2(ITexture *tex)
 	}
 	else
 	{
-		if (!dynamic_cast<NL3D::CTextureBump *>((ITexture *) _Texture2))
+		if (!dynamic_cast<NL3D::CTextureBump *>((ITexture *)_Texture2))
 		{
 			ConvertToBumpMap(_Texture2);
 		}
@@ -1049,7 +1039,7 @@ void	CPSMultiTexturedParticle::setTexture2(ITexture *tex)
 }
 
 //==========================================
-void	CPSMultiTexturedParticle::setMainTexOp(TOperator op)
+void CPSMultiTexturedParticle::setMainTexOp(TOperator op)
 {
 	NL_PS_FUNC(CPSMultiTexturedParticle_setMainTexOp)
 	_MainOp = op;
@@ -1065,7 +1055,7 @@ void	CPSMultiTexturedParticle::setMainTexOp(TOperator op)
 }
 
 //==========================================
-void	CPSMultiTexturedParticle::setAlternateTexOp(TOperator op)
+void CPSMultiTexturedParticle::setAlternateTexOp(TOperator op)
 {
 	NL_PS_FUNC(CPSMultiTexturedParticle_setAlternateTexOp)
 	_AlternateOp = op;
@@ -1080,27 +1070,24 @@ void	CPSMultiTexturedParticle::setAlternateTexOp(TOperator op)
 	touch();
 }
 
-
-
 //==========================================
-void	CPSMultiTexturedParticle::setUseLocalDate(bool use)
+void CPSMultiTexturedParticle::setUseLocalDate(bool use)
 {
 	NL_PS_FUNC(CPSMultiTexturedParticle_setUseLocalDate)
 	if (use) _MultiTexState |= ScrollUseLocalDate;
-	else _MultiTexState &= ~ ScrollUseLocalDate;
+	else _MultiTexState &= ~ScrollUseLocalDate;
 }
 
-
 //==========================================
-void	CPSMultiTexturedParticle::setUseLocalDateAlt(bool use)
+void CPSMultiTexturedParticle::setUseLocalDateAlt(bool use)
 {
 	NL_PS_FUNC(CPSMultiTexturedParticle_setUseLocalDateAlt)
 	if (use) _MultiTexState |= ScrollUseLocalDateAlternate;
-	else _MultiTexState &= ~ ScrollUseLocalDateAlternate;
+	else _MultiTexState &= ~ScrollUseLocalDateAlternate;
 }
 
 //==========================================
-void CPSTexturedParticle::enumTexs(std::vector<NLMISC::CSmartPtr<ITexture> > &dest)
+void CPSTexturedParticle::enumTexs(std::vector<NLMISC::CSmartPtr<ITexture>> &dest)
 {
 	NL_PS_FUNC(CPSTexturedParticle_enumTexs)
 	if (_Tex)
@@ -1114,10 +1101,10 @@ void CPSTexturedParticle::enumTexs(std::vector<NLMISC::CSmartPtr<ITexture> > &de
 }
 
 //==========================================
-void CPSMultiTexturedParticle::enumTexs(std::vector<NLMISC::CSmartPtr<ITexture> > &dest, IDriver &drv)
+void CPSMultiTexturedParticle::enumTexs(std::vector<NLMISC::CSmartPtr<ITexture>> &dest, IDriver &drv)
 {
 	NL_PS_FUNC(CPSMultiTexturedParticle_enumTexs)
-	if (_MainOp  == EnvBumpMap && !_ForceBasicCaps)
+	if (_MainOp == EnvBumpMap && !_ForceBasicCaps)
 	{
 		if (drv.supportTextureAddrMode(CMaterial::OffsetTexture) || drv.supportEMBM())
 		{
@@ -1137,7 +1124,7 @@ bool CPSMultiTexturedParticle::isAlternateTextureUsed(IDriver &driver) const
 {
 	NL_PS_FUNC(CPSMultiTexturedParticle_isAlternateTextureUsed)
 	if (!isTouched() && areBasicCapsForcedLocal() == areBasicCapsForced()) return (_MultiTexState & AlternateTextureUsed) != 0;
-	if (_MainOp  != EnvBumpMap) return false;
+	if (_MainOp != EnvBumpMap) return false;
 	return _ForceBasicCaps || (!driver.supportTextureAddrMode(CMaterial::OffsetTexture) && !driver.supportEMBM());
 }
 

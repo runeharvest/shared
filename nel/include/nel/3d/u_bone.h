@@ -20,9 +20,7 @@
 #include "nel/misc/types_nl.h"
 #include "u_transformable.h"
 
-
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 /**
@@ -35,7 +33,6 @@ namespace NL3D
 class UBone : public UTransformable
 {
 public:
-
 	/// \name Special feature
 	// @{
 
@@ -48,14 +45,14 @@ public:
 	 *	in this case, this bone will always be computed.
 	 *
 	 */
-	const CMatrix	&getLastWorldMatrixComputed() const;
+	const CMatrix &getLastWorldMatrixComputed() const;
 
 	/** Additionally to the standard scale, you can multiply the effect on the skin with a special SkinScale
 	 *	This scale is applied only on the skin (even son bones positions won't be affected)
 	 *	Default to (1,1,1)
 	 */
-	void			setSkinScale(CVector &skinScale);
-	const CVector	&getSkinScale() const;
+	void setSkinScale(CVector &skinScale);
+	const CVector &getSkinScale() const;
 
 	// @}
 
@@ -63,20 +60,18 @@ public:
 
 	/// Constructors
 	UBone() { _Object = NULL; }
-	UBone(class CBone *object) { _Object = (ITransformable*)object; };
+	UBone(class CBone *object) { _Object = (ITransformable *)object; };
 	/// Attach an object to this proxy
-	void			attach(class CBone *object) { _Object = (ITransformable*)object; }
+	void attach(class CBone *object) { _Object = (ITransformable *)object; }
 	/// Detach the object
-	void			detach() { _Object = NULL; }
+	void detach() { _Object = NULL; }
 	/// Return true if the proxy is empty() (not attached)
-	bool			empty() const {return _Object==NULL;}
+	bool empty() const { return _Object == NULL; }
 	/// For advanced usage, get the internal object ptr
-	class CBone	*getObjectPtr() const {return (CBone*)_Object;}
+	class CBone *getObjectPtr() const { return (CBone *)_Object; }
 };
 
-
 } // NL3D
-
 
 #endif // NL_U_BONE_H
 

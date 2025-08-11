@@ -32,26 +32,23 @@
 
 using NL3D::CPSConstraintMesh;
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CEditMorphMeshDlg dialog
 
-
-CEditMorphMeshDlg::CEditMorphMeshDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSConstraintMesh *cm, CWnd* pParent, CParticleDlg  *particleDlg, IPopupNotify *pn /*= NULL*/)
-									: _Node(ownerNode),
-									  _PN(pn),
-									  _CM(cm),
-									  CDialog(CEditMorphMeshDlg::IDD, pParent),
-									  _ParticleDlg(particleDlg)
+CEditMorphMeshDlg::CEditMorphMeshDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSConstraintMesh *cm, CWnd *pParent, CParticleDlg *particleDlg, IPopupNotify *pn /*= NULL*/)
+    : _Node(ownerNode)
+    , _PN(pn)
+    , _CM(cm)
+    , CDialog(CEditMorphMeshDlg::IDD, pParent)
+    , _ParticleDlg(particleDlg)
 {
 	nlassert(cm);
 	//{{AFX_DATA_INIT(CEditMorphMeshDlg)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void CEditMorphMeshDlg::DoDataExchange(CDataExchange* pDX)
+void CEditMorphMeshDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CEditMorphMeshDlg)
@@ -59,27 +56,24 @@ void CEditMorphMeshDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
-
 BEGIN_MESSAGE_MAP(CEditMorphMeshDlg, CDialog)
-	//{{AFX_MSG_MAP(CEditMorphMeshDlg)
-	ON_BN_CLICKED(IDC_ADD, OnAdd)
-	ON_BN_CLICKED(IDC_REMOVE, OnRemove)
-	ON_BN_CLICKED(IDC_CHANGE, OnChange)
-	ON_WM_CLOSE()
-	ON_BN_CLICKED(IDC_INSERT, OnInsert)
-	ON_BN_CLICKED(IDC_UP, OnUp)
-	ON_BN_CLICKED(IDC_DOWN, OnDown)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CEditMorphMeshDlg)
+ON_BN_CLICKED(IDC_ADD, OnAdd)
+ON_BN_CLICKED(IDC_REMOVE, OnRemove)
+ON_BN_CLICKED(IDC_CHANGE, OnChange)
+ON_WM_CLOSE()
+ON_BN_CLICKED(IDC_INSERT, OnInsert)
+ON_BN_CLICKED(IDC_UP, OnUp)
+ON_BN_CLICKED(IDC_DOWN, OnDown)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 //====================================================================
 void CEditMorphMeshDlg::init(CWnd *pParent)
 {
-	Create(IDD_EDIT_MORPH_MESH, pParent);	
+	Create(IDD_EDIT_MORPH_MESH, pParent);
 	ShowWindow(SW_SHOW);
 }
-
 
 //====================================================================
 bool CEditMorphMeshDlg::getShapeNameFromDlg(std::string &name)
@@ -93,7 +87,7 @@ bool CEditMorphMeshDlg::getShapeNameFromDlg(std::string &name)
 		*/
 
 		name = NLMISC::tStrToUtf8(fd.GetPathName());
-		
+
 		return true;
 	}
 	else
@@ -106,18 +100,18 @@ bool CEditMorphMeshDlg::getShapeNameFromDlg(std::string &name)
 void CEditMorphMeshDlg::touchPSState()
 {
 	if (_Node && _Node->getPSModel())
-	{	
+	{
 		_Node->getPSModel()->touchTransparencyState();
 		_Node->getPSModel()->touchLightableState();
 	}
 }
 
 //====================================================================
-void CEditMorphMeshDlg::OnAdd() 
+void CEditMorphMeshDlg::OnAdd()
 {
 	std::string shapeName;
 	if (getShapeNameFromDlg(shapeName))
-	{		
+	{
 		std::vector<std::string> shapeNames;
 		shapeNames.resize(_CM->getNumShapes() + 1);
 		_CM->getShapesNames(&shapeNames[0]);
@@ -125,7 +119,7 @@ void CEditMorphMeshDlg::OnAdd()
 		shapeNames[index] = shapeName;
 		_CM->setShapes(&shapeNames[0], (uint)shapeNames.size());
 		std::vector<sint> numVerts;
-		_CM->getShapeNumVerts(numVerts);		
+		_CM->getShapeNumVerts(numVerts);
 		m_MeshList.AddString(nlUtf8ToTStr(getShapeDescStr(index, numVerts[index])));
 		GetDlgItem(IDC_REMOVE)->EnableWindow(TRUE);
 	}
@@ -134,7 +128,7 @@ void CEditMorphMeshDlg::OnAdd()
 }
 
 //====================================================================
-void CEditMorphMeshDlg::OnRemove() 
+void CEditMorphMeshDlg::OnRemove()
 {
 	UpdateData();
 	sint selItem = m_MeshList.GetCurSel();
@@ -146,24 +140,24 @@ void CEditMorphMeshDlg::OnRemove()
 	if (_CM->getNumShapes() == 2)
 	{
 		GetDlgItem(IDC_REMOVE)->EnableWindow(FALSE);
-	}	
+	}
 	touchPSState();
 	updateMeshList();
 	updateValidFlag();
 }
 
 //====================================================================
-void CEditMorphMeshDlg::OnInsert() 
+void CEditMorphMeshDlg::OnInsert()
 {
 	std::string shapeName;
 	if (getShapeNameFromDlg(shapeName))
-	{	
+	{
 		sint selItem = m_MeshList.GetCurSel();
 		std::vector<std::string> shapeNames;
 		shapeNames.resize(_CM->getNumShapes());
 		_CM->getShapesNames(&shapeNames[0]);
 		shapeNames.insert(shapeNames.begin() + selItem, shapeName);
-		_CM->setShapes(&shapeNames[0], (uint)shapeNames.size());		
+		_CM->setShapes(&shapeNames[0], (uint)shapeNames.size());
 		GetDlgItem(IDC_REMOVE)->EnableWindow(TRUE);
 		touchPSState();
 		updateMeshList();
@@ -173,46 +167,46 @@ void CEditMorphMeshDlg::OnInsert()
 }
 
 //====================================================================
-void CEditMorphMeshDlg::OnUp() 
-{		
+void CEditMorphMeshDlg::OnUp()
+{
 	sint selItem = m_MeshList.GetCurSel();
 	if (selItem == 0) return;
 	std::vector<std::string> shapeNames;
 	shapeNames.resize(_CM->getNumShapes());
 	_CM->getShapesNames(&shapeNames[0]);
 	std::swap(shapeNames[selItem - 1], shapeNames[selItem]);
-	_CM->setShapes(&shapeNames[0], (uint)shapeNames.size());		
-	GetDlgItem(IDC_REMOVE)->EnableWindow(TRUE);		
+	_CM->setShapes(&shapeNames[0], (uint)shapeNames.size());
+	GetDlgItem(IDC_REMOVE)->EnableWindow(TRUE);
 	updateMeshList();
 	m_MeshList.SetCurSel(selItem - 1);
 	updateValidFlag();
 }
 
 //====================================================================
-void CEditMorphMeshDlg::OnDown() 
+void CEditMorphMeshDlg::OnDown()
 {
 	sint selItem = m_MeshList.GetCurSel();
-	if (selItem == (sint) (_CM->getNumShapes() - 1)) return;
+	if (selItem == (sint)(_CM->getNumShapes() - 1)) return;
 	std::vector<std::string> shapeNames;
 	shapeNames.resize(_CM->getNumShapes());
 	_CM->getShapesNames(&shapeNames[0]);
 	std::swap(shapeNames[selItem + 1], shapeNames[selItem]);
-	_CM->setShapes(&shapeNames[0], (uint)shapeNames.size());		
-	GetDlgItem(IDC_REMOVE)->EnableWindow(TRUE);		
+	_CM->setShapes(&shapeNames[0], (uint)shapeNames.size());
+	GetDlgItem(IDC_REMOVE)->EnableWindow(TRUE);
 	updateMeshList();
-	m_MeshList.SetCurSel(selItem + 1);	
+	m_MeshList.SetCurSel(selItem + 1);
 	updateValidFlag();
 }
 
 //====================================================================
-void CEditMorphMeshDlg::OnChange() 
+void CEditMorphMeshDlg::OnChange()
 {
 	UpdateData();
 	std::string shapeName;
 	if (getShapeNameFromDlg(shapeName))
-	{			
+	{
 		sint selItem = m_MeshList.GetCurSel();
-		_CM->setShape(selItem, shapeName);	
+		_CM->setShape(selItem, shapeName);
 		updateMeshList();
 		touchPSState();
 	}
@@ -224,9 +218,9 @@ float CEditMorphMeshDlg::CMorphSchemeWrapper::get(void) const
 {
 	nlassert(CM);
 	return CM->getMorphValue();
-}	
+}
 
-//====================================================================	
+//====================================================================
 void CEditMorphMeshDlg::CMorphSchemeWrapper::set(const float &v)
 {
 	nlassert(CM);
@@ -255,7 +249,7 @@ void CEditMorphMeshDlg::updateMeshList()
 	_CM->getShapeNumVerts(numVerts);
 	m_MeshList.ResetContent();
 	for (uint k = 0; k < _CM->getNumShapes(); ++k)
-	{	
+	{
 		m_MeshList.AddString(nlUtf8ToTStr(getShapeDescStr(k, numVerts[k])));
 	}
 	m_MeshList.SetCurSel(0);
@@ -264,38 +258,37 @@ void CEditMorphMeshDlg::updateMeshList()
 }
 
 //====================================================================
-BOOL CEditMorphMeshDlg::OnInitDialog() 
+BOOL CEditMorphMeshDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	updateMeshList(); // fill the list box with the neames of the meshs
 
 	/// create the morph scheme edition dialog
 	RECT r;
 	CAttribDlgFloat *mvd = new CAttribDlgFloat("MORPH_VALUE", _Node);
 	_MorphSchemeWrapper.CM = _CM;
-	mvd->setWrapper(&_MorphSchemeWrapper);	
+	mvd->setWrapper(&_MorphSchemeWrapper);
 	mvd->setSchemeWrapper(&_MorphSchemeWrapper);
 	GetDlgItem(IDC_MORPH_SCHEME)->GetWindowRect(&r);
 	ScreenToClient(&r);
 	HBITMAP bmh = LoadBitmap(::AfxGetInstanceHandle(), MAKEINTRESOURCE(IDB_MORPH_SCHEME));
-	mvd->init(bmh, r.left, r.top, this);	
+	mvd->init(bmh, r.left, r.top, this);
 	pushWnd(mvd);
 	if (_CM->getNumShapes() == 2)
 	{
 		GetDlgItem(IDC_REMOVE)->EnableWindow(FALSE);
-	}	
+	}
 	updateValidFlag();
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-
 //====================================================================
-void CEditMorphMeshDlg::OnClose() 
+void CEditMorphMeshDlg::OnClose()
 {
 	CDialog::OnClose();
-	if (_PN) _PN->childPopupClosed(this);	
+	if (_PN) _PN->childPopupClosed(this);
 }
 
 //====================================================================
@@ -310,17 +303,15 @@ void CEditMorphMeshDlg::updateValidFlag()
 std::string CEditMorphMeshDlg::getShapeDescStr(uint shapeIndex, sint numVerts) const
 {
 	if (numVerts >= 0)
-	{	
+	{
 		CString verts;
 		verts.LoadString(IDS_VERTICES);
 		std::string msg = _CM->getShape(shapeIndex) + " (" + NLMISC::toString(numVerts) + " " + NLMISC::tStrToUtf8(verts) + ")";
 		return msg;
 	}
 	else
-	{		
+	{
 		std::string result = _CM->getShape(shapeIndex) + " (" + NLMISC::tStrToUtf8(CMeshDlg::getShapeErrorString(numVerts)) + ")";
 		return result;
 	}
 }
-
-

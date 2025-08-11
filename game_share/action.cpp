@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdpch.h"
 #include "action.h"
 
@@ -33,9 +32,9 @@ namespace CLFECOMMON {
 // Classes
 //
 
-const CAction::TValue	NullValue = (CAction::TValue)0;
+const CAction::TValue NullValue = (CAction::TValue)0;
 
-CAction::CAction ()
+CAction::CAction()
 {
 	Timeout = 100;
 	Code = 0;

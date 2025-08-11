@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 // nel
@@ -27,52 +25,48 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace RYZOM_STARTING_POINT
-{
-	// The conversion table
-	const CStringConversion<TStartPoint>::CPair stringTable [] =
-	{
-		{ "stalli",		stalli },
-		{ "borea",		borea },
-		{ "nistia",		nistia },
-		{ "rosilio",	rosilio },
-		{ "miani",		miani },
+namespace RYZOM_STARTING_POINT {
+// The conversion table
+const CStringConversion<TStartPoint>::CPair stringTable[] = {
+	{ "stalli", stalli },
+	{ "borea", borea },
+	{ "nistia", nistia },
+	{ "rosilio", rosilio },
+	{ "miani", miani },
 
-		{ "qai_lo",		qai_lo },
-		{ "sheng_wo",	sheng_wo },
-		{ "men_xing",	men_xing },
-		{ "koi_zun",	koi_zun },
-		{ "yin_piang",	yin_piang },
+	{ "qai_lo", qai_lo },
+	{ "sheng_wo", sheng_wo },
+	{ "men_xing", men_xing },
+	{ "koi_zun", koi_zun },
+	{ "yin_piang", yin_piang },
 
-		{ "aegus",		aegus },
-		{ "kaemon",		kaemon },
-		{ "sekovix",	sekovix },
-		{ "phyxon",		phyxon },
-		{ "galemus",	galemus },
+	{ "aegus", aegus },
+	{ "kaemon", kaemon },
+	{ "sekovix", sekovix },
+	{ "phyxon", phyxon },
+	{ "galemus", galemus },
 
-		{ "aubermouth",	aubermouth },
-		{ "barkdell",	barkdell },
-		{ "hobwelly",	hobwelly },
-		{ "waverton",	waverton },
-		{ "dingleton",	dingleton },
+	{ "aubermouth", aubermouth },
+	{ "barkdell", barkdell },
+	{ "hobwelly", hobwelly },
+	{ "waverton", waverton },
+	{ "dingleton", dingleton },
 
-		{ "starting_city",	starting_city },
+	{ "starting_city", starting_city },
 
-	};
-
-	CStringConversion<TStartPoint> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]),  Unknown);
-
-	// convert type id to type name string
-	const std::string& toString( TStartPoint start_point )
-	{
-		return conversion.toString(start_point);
-	}
-
-	// convert type name to type enum value
-	TStartPoint toStartPoint( const std::string& str )
-	{
-		return conversion.fromString(str);
-	}
 };
 
+CStringConversion<TStartPoint> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]), Unknown);
 
+// convert type id to type name string
+const std::string &toString(TStartPoint start_point)
+{
+	return conversion.toString(start_point);
+}
+
+// convert type name to type enum value
+TStartPoint toStartPoint(const std::string &str)
+{
+	return conversion.fromString(str);
+}
+};

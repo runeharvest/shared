@@ -27,14 +27,12 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 
 CVertexProgram::CVertexProgram()
 {
-	
 }
 
 // ***************************************************************************
@@ -49,9 +47,8 @@ CVertexProgram::CVertexProgram(const char *nelvp)
 
 // ***************************************************************************
 
-CVertexProgram::~CVertexProgram ()
+CVertexProgram::~CVertexProgram()
 {
-	
 }
 
 } // NL3D

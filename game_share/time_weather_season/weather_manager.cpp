@@ -17,24 +17,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
 #include "stdpch.h"
 #include "weather_setup_sheet_base.h"
 #include "weather_manager.h"
 #include "nel/misc/path.h"
 
-
 using namespace NLMISC;
 using namespace std;
-
 
 //================================================================================================
 void CWeatherManager::init(const std::vector<const CWeatherSetupSheetBase *> &sheets, const std::vector<std::string> &sheetNames)
 {
 	nlassert(sheets.size() == sheetNames.size());
-	for(uint k = 0; k < sheets.size(); ++k)
+	for (uint k = 0; k < sheets.size(); ++k)
 	{
 		if (sheets[k])
 		{
@@ -47,9 +42,9 @@ void CWeatherManager::init(const std::vector<const CWeatherSetupSheetBase *> &sh
 					nlwarning("Duplicated weather setup : %s", id.c_str());
 				}
 				_WeatherSetupMap[id] = ws;
-				(CCloudStateSheet &) ws->CloudState   = sheets[k]->CloudState; // copy parent obj part
-				(CWeatherStateSheet &) ws->WeatherState = sheets[k]->WeatherState;
-				ws->SetupName    = sheets[k]->SetupName;
+				(CCloudStateSheet &)ws->CloudState = sheets[k]->CloudState; // copy parent obj part
+				(CWeatherStateSheet &)ws->WeatherState = sheets[k]->WeatherState;
+				ws->SetupName = sheets[k]->SetupName;
 				// copy the setup name in the weather state for blending ops
 				ws->WeatherState.BestSetupName = ws->SetupName;
 				// do additionnal init if needed

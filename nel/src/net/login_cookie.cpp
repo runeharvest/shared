@@ -25,29 +25,30 @@
 using namespace std;
 using namespace NLMISC;
 
-
 namespace NLNET {
-
 
 /*
  * Comparison == operator
  */
-bool operator== (const CLoginCookie &c1, const CLoginCookie &c2)
+bool operator==(const CLoginCookie &c1, const CLoginCookie &c2)
 {
-	nlassert (c1._Valid && c2._Valid);
+	nlassert(c1._Valid && c2._Valid);
 
-	return c1._UserAddr==c2._UserAddr && c1._UserKey==c2._UserKey && c1._UserId==c2._UserId;
+	return c1._UserAddr == c2._UserAddr && c1._UserKey == c2._UserKey && c1._UserId == c2._UserId;
 }
 
 /*
  * Comparison != operator
  */
-bool operator!= (const CLoginCookie &c1, const CLoginCookie &c2)
+bool operator!=(const CLoginCookie &c1, const CLoginCookie &c2)
 {
 	return !(c1 == c2);
 }
 
-CLoginCookie::CLoginCookie (uint32 addr, uint32 id) : _Valid(true), _UserAddr(addr), _UserId(id)
+CLoginCookie::CLoginCookie(uint32 addr, uint32 id)
+    : _Valid(true)
+    , _UserAddr(addr)
+    , _UserId(id)
 {
 	// generates the key for this cookie
 	_UserKey = generateKey();
@@ -56,7 +57,7 @@ CLoginCookie::CLoginCookie (uint32 addr, uint32 id) : _Valid(true), _UserAddr(ad
 uint32 CLoginCookie::generateKey()
 {
 	// This is a very poor random number generator that ensures no duplicates are generated within the same hour
-	
+
 	static uint32 salt0;
 	static uint32 salt1;
 	static bool seeded;
@@ -96,19 +97,18 @@ uint32 CLoginCookie::generateKey()
 	return wangHash(((n & 0xFFFFFF) << 8 | (r & 0xFF)) ^ salt0) ^ salt1;
 }
 
-
 /* test key generation
 void main()
 {
-	set<uint32> myset;
+    set<uint32> myset;
 
-	// generates the key for this cookie
-	for(;;)
-	{
-		uint32 val = (t&0xFFF)<<20 | (r&0xFF)<<12 | (n&0xFFF);
-		pair<set<uint32>::iterator,bool> p = myset.insert (val);
-		if (!p.second) printf("%10u 0x%x already inserted\n", val, val);
-	}
+    // generates the key for this cookie
+    for(;;)
+    {
+        uint32 val = (t&0xFFF)<<20 | (r&0xFF)<<12 | (n&0xFFF);
+        pair<set<uint32>::iterator,bool> p = myset.insert (val);
+        if (!p.second) printf("%10u 0x%x already inserted\n", val, val);
+    }
 }
 */
 

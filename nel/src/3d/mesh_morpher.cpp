@@ -20,7 +20,6 @@
 #include "nel/3d/vertex_buffer.h"
 #include "nel/3d/raw_skin.h"
 
-
 using namespace std;
 using namespace NLMISC;
 
@@ -28,11 +27,10 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
-void CBlendShape::serial (NLMISC::IStream &f)
+void CBlendShape::serial(NLMISC::IStream &f)
 {
 	/* ***********************************************
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
@@ -40,18 +38,18 @@ void CBlendShape::serial (NLMISC::IStream &f)
 	 * ***********************************************/
 
 	// version 1 : added tangent space support
-	sint ver = f.serialVersion (1);
+	sint ver = f.serialVersion(1);
 
-	f.serial (Name);
+	f.serial(Name);
 
-	f.serialCont (deltaPos);
-	f.serialCont (deltaNorm);
-	f.serialCont (deltaUV);
-	f.serialCont (deltaCol);
+	f.serialCont(deltaPos);
+	f.serialCont(deltaNorm);
+	f.serialCont(deltaUV);
+	f.serialCont(deltaCol);
 
 	if (ver >= 1) f.serialCont(deltaTgSpace);
 
-	f.serialCont (VertRefs);
+	f.serialCont(VertRefs);
 }
 
 // ***************************************************************************
@@ -67,12 +65,12 @@ CMeshMorpher::CMeshMorpher()
 
 	_Vertices = NULL;
 	_Normals = NULL;
-	_TgSpace= NULL;
-	_SkinApplied= false;
+	_TgSpace = NULL;
+	_SkinApplied = false;
 }
 
 // ***************************************************************************
-void CMeshMorpher::init (CVertexBuffer *vbOri, CVertexBuffer *vbDst, bool hasTgSpace)
+void CMeshMorpher::init(CVertexBuffer *vbOri, CVertexBuffer *vbDst, bool hasTgSpace)
 {
 	_VBOri = vbOri;
 	_VBDst = vbDst;
@@ -80,13 +78,13 @@ void CMeshMorpher::init (CVertexBuffer *vbOri, CVertexBuffer *vbDst, bool hasTgS
 }
 
 // ***************************************************************************
-void CMeshMorpher::initSkinned (CVertexBuffer *vbOri,
-							CVertexBuffer *vbDst,
-							bool hasTgSpace,
-							std::vector<CVector> *vVertices,
-							std::vector<CVector> *vNormals,
-							std::vector<CVector> *vTgSpace, /* NULL if none */
-							bool bSkinApplied	)
+void CMeshMorpher::initSkinned(CVertexBuffer *vbOri,
+    CVertexBuffer *vbDst,
+    bool hasTgSpace,
+    std::vector<CVector> *vVertices,
+    std::vector<CVector> *vNormals,
+    std::vector<CVector> *vTgSpace, /* NULL if none */
+    bool bSkinApplied)
 {
 	_VBOri = vbOri;
 	_VBDst = vbDst;
@@ -99,7 +97,7 @@ void CMeshMorpher::initSkinned (CVertexBuffer *vbOri,
 }
 
 // ***************************************************************************
-void CMeshMorpher::update (std::vector<CAnimatedMorph> *pBSFactor)
+void CMeshMorpher::update(std::vector<CAnimatedMorph> *pBSFactor)
 {
 	uint32 i, j;
 
@@ -109,7 +107,7 @@ void CMeshMorpher::update (std::vector<CAnimatedMorph> *pBSFactor)
 		return;
 
 	if (_VBOri->getNumVertices() != _VBDst->getNumVertices())
-	{	// Because the original vertex buffer is not initialized by default
+	{ // Because the original vertex buffer is not initialized by default
 		// we must init it here (if there are some blendshapes)
 		*_VBOri = *_VBDst;
 	}
@@ -117,7 +115,7 @@ void CMeshMorpher::update (std::vector<CAnimatedMorph> *pBSFactor)
 	// Does the flags are reserved ?
 	if (_Flags.size() != _VBOri->getNumVertices())
 	{
-		_Flags.resize (_VBOri->getNumVertices());
+		_Flags.resize(_VBOri->getNumVertices());
 		for (i = 0; i < _Flags.size(); ++i)
 			_Flags[i] = Modified; // Modified to update all
 	}
@@ -127,20 +125,20 @@ void CMeshMorpher::update (std::vector<CAnimatedMorph> *pBSFactor)
 	// Cleaning with original vertex buffer
 	uint32 VBVertexSize = _VBOri->getVertexSize();
 	CVertexBufferRead srcvba;
-	_VBOri->lock (srcvba);
+	_VBOri->lock(srcvba);
 	CVertexBufferReadWrite dstvba;
-	_VBDst->lock (dstvba);
-	const uint8 *pOri = (const uint8*)srcvba.getVertexCoordPointer ();
-	uint8 *pDst = (uint8*)dstvba.getVertexCoordPointer ();
+	_VBDst->lock(dstvba);
+	const uint8 *pOri = (const uint8 *)srcvba.getVertexCoordPointer();
+	uint8 *pDst = (uint8 *)dstvba.getVertexCoordPointer();
 
-	for (i= 0; i < _Flags.size(); ++i)
-	if (_Flags[i] >= Modified)
-	{
-		_Flags[i] = OriginalVBDst;
+	for (i = 0; i < _Flags.size(); ++i)
+		if (_Flags[i] >= Modified)
+		{
+			_Flags[i] = OriginalVBDst;
 
-		for(j = 0; j < VBVertexSize; ++j)
-			pDst[j+i*VBVertexSize] = pOri[j+i*VBVertexSize];
-	}
+			for (j = 0; j < VBVertexSize; ++j)
+				pDst[j + i * VBVertexSize] = pOri[j + i * VBVertexSize];
+		}
 
 	uint tgSpaceStage = 0;
 	if (_UseTgSpace)
@@ -152,73 +150,72 @@ void CMeshMorpher::update (std::vector<CAnimatedMorph> *pBSFactor)
 	for (i = 0; i < BlendShapes.size(); ++i)
 	{
 		CBlendShape &rBS = BlendShapes[i];
-		float rFactor = pBSFactor->operator[](i).getFactor()/100.0f;
+		float rFactor = pBSFactor->operator[](i).getFactor() / 100.0f;
 
 		// todo hulud check it works
 		// if (rFactor > 0.0f)
 		if (rFactor != 0.0f)
-		for (j = 0; j < rBS.VertRefs.size(); ++j)
-		{
-			uint32 vp = rBS.VertRefs[j];
-
-			// Modify Pos/Norm/TgSpace.
-			//------------
-			if (_VBDst->getVertexFormat() & CVertexBuffer::PositionFlag)
-			if (!rBS.deltaPos.empty())
+			for (j = 0; j < rBS.VertRefs.size(); ++j)
 			{
-				CVector *pV = dstvba.getVertexCoordPointer (vp);
-				*pV += rBS.deltaPos[j] * rFactor;
-			}
+				uint32 vp = rBS.VertRefs[j];
 
-			if (_VBDst->getVertexFormat() & CVertexBuffer::NormalFlag)
-			if (!rBS.deltaNorm.empty())
-			{
-				CVector *pV = dstvba.getNormalCoordPointer (vp);
-				*pV += rBS.deltaNorm[j] * rFactor;
-			}
+				// Modify Pos/Norm/TgSpace.
+				//------------
+				if (_VBDst->getVertexFormat() & CVertexBuffer::PositionFlag)
+					if (!rBS.deltaPos.empty())
+					{
+						CVector *pV = dstvba.getVertexCoordPointer(vp);
+						*pV += rBS.deltaPos[j] * rFactor;
+					}
 
-			if (_UseTgSpace)
-			if (!rBS.deltaTgSpace.empty())
-			{
-				CVector *pV = (CVector*)dstvba.getTexCoordPointer (vp, tgSpaceStage);
-				*pV += rBS.deltaTgSpace[j] * rFactor;
-			}
+				if (_VBDst->getVertexFormat() & CVertexBuffer::NormalFlag)
+					if (!rBS.deltaNorm.empty())
+					{
+						CVector *pV = dstvba.getNormalCoordPointer(vp);
+						*pV += rBS.deltaNorm[j] * rFactor;
+					}
 
-			// Modify UV0 / Color
-			//------------
-			if (_VBDst->getVertexFormat() & CVertexBuffer::TexCoord0Flag)
-			if (!rBS.deltaUV.empty())
-			{
-				CUV *pUV = dstvba.getTexCoordPointer (vp);
-				*pUV += rBS.deltaUV[j] * rFactor;
-			}
+				if (_UseTgSpace)
+					if (!rBS.deltaTgSpace.empty())
+					{
+						CVector *pV = (CVector *)dstvba.getTexCoordPointer(vp, tgSpaceStage);
+						*pV += rBS.deltaTgSpace[j] * rFactor;
+					}
 
-			if (_VBDst->getVertexFormat() & CVertexBuffer::PrimaryColorFlag)
-			if (!rBS.deltaCol.empty())
-			{
-				// todo hulud d3d vertex color RGBA / BGRA
-				CRGBA *pRGBA = (CRGBA*)dstvba.getColorPointer (vp);
-				CRGBAF rgbf(*pRGBA);
-				rgbf.R += rBS.deltaCol[j].R * rFactor;
-				rgbf.G += rBS.deltaCol[j].G * rFactor;
-				rgbf.B += rBS.deltaCol[j].B * rFactor;
-				rgbf.A += rBS.deltaCol[j].A * rFactor;
-				clamp(rgbf.R, 0.0f, 1.0f);
-				clamp(rgbf.G, 0.0f, 1.0f);
-				clamp(rgbf.B, 0.0f, 1.0f);
-				clamp(rgbf.A, 0.0f, 1.0f);
-				*pRGBA = rgbf;
-			}
+				// Modify UV0 / Color
+				//------------
+				if (_VBDst->getVertexFormat() & CVertexBuffer::TexCoord0Flag)
+					if (!rBS.deltaUV.empty())
+					{
+						CUV *pUV = dstvba.getTexCoordPointer(vp);
+						*pUV += rBS.deltaUV[j] * rFactor;
+					}
 
-			// Modified
-			_Flags[vp] = Modified;
-		}
+				if (_VBDst->getVertexFormat() & CVertexBuffer::PrimaryColorFlag)
+					if (!rBS.deltaCol.empty())
+					{
+						// todo hulud d3d vertex color RGBA / BGRA
+						CRGBA *pRGBA = (CRGBA *)dstvba.getColorPointer(vp);
+						CRGBAF rgbf(*pRGBA);
+						rgbf.R += rBS.deltaCol[j].R * rFactor;
+						rgbf.G += rBS.deltaCol[j].G * rFactor;
+						rgbf.B += rBS.deltaCol[j].B * rFactor;
+						rgbf.A += rBS.deltaCol[j].A * rFactor;
+						clamp(rgbf.R, 0.0f, 1.0f);
+						clamp(rgbf.G, 0.0f, 1.0f);
+						clamp(rgbf.B, 0.0f, 1.0f);
+						clamp(rgbf.A, 0.0f, 1.0f);
+						*pRGBA = rgbf;
+					}
+
+				// Modified
+				_Flags[vp] = Modified;
+			}
 	}
 }
 
-
 // ***************************************************************************
-void CMeshMorpher::updateSkinned (std::vector<CAnimatedMorph> *pBSFactor)
+void CMeshMorpher::updateSkinned(std::vector<CAnimatedMorph> *pBSFactor)
 {
 	uint32 i, j;
 
@@ -228,7 +225,7 @@ void CMeshMorpher::updateSkinned (std::vector<CAnimatedMorph> *pBSFactor)
 		return;
 
 	if (_VBOri->getNumVertices() != _VBDst->getNumVertices())
-	{	// Because the original vertex buffer is not initialized by default
+	{ // Because the original vertex buffer is not initialized by default
 		// we must init it here (if there are some blendshapes)
 		*_VBOri = *_VBDst;
 	}
@@ -236,7 +233,7 @@ void CMeshMorpher::updateSkinned (std::vector<CAnimatedMorph> *pBSFactor)
 	// Does the flags are reserved ?
 	if (_Flags.size() != _VBOri->getNumVertices())
 	{
-		_Flags.resize (_VBOri->getNumVertices());
+		_Flags.resize(_VBOri->getNumVertices());
 		for (i = 0; i < _Flags.size(); ++i)
 			_Flags[i] = Modified; // Modified to update all
 	}
@@ -254,118 +251,117 @@ void CMeshMorpher::updateSkinned (std::vector<CAnimatedMorph> *pBSFactor)
 	// Cleaning with original vertex buffer
 	uint32 VBVertexSize = _VBOri->getVertexSize();
 	CVertexBufferRead srcvba;
-	_VBOri->lock (srcvba);
+	_VBOri->lock(srcvba);
 	CVertexBufferReadWrite dstvba;
-	_VBDst->lock (dstvba);
-	const uint8 *pOri = (const uint8*)srcvba.getVertexCoordPointer ();
-	uint8 *pDst = (uint8*)dstvba.getVertexCoordPointer ();
+	_VBDst->lock(dstvba);
+	const uint8 *pOri = (const uint8 *)srcvba.getVertexCoordPointer();
+	uint8 *pDst = (uint8 *)dstvba.getVertexCoordPointer();
 
-	for (i= 0; i < _Flags.size(); ++i)
-	if (_Flags[i] >= Modified)
-	{
-		for(j = 0; j < VBVertexSize; ++j)
-			pDst[j+i*VBVertexSize] = pOri[j+i*VBVertexSize];
+	for (i = 0; i < _Flags.size(); ++i)
+		if (_Flags[i] >= Modified)
+		{
+			for (j = 0; j < VBVertexSize; ++j)
+				pDst[j + i * VBVertexSize] = pOri[j + i * VBVertexSize];
 
-		if (_Vertices != NULL)
-			_Vertices->operator[](i) = ((CVector*)(pOri+i*VBVertexSize))[0];
+			if (_Vertices != NULL)
+				_Vertices->operator[](i) = ((CVector *)(pOri + i * VBVertexSize))[0];
 
-		if (_Normals != NULL)
-			_Normals->operator[](i) = ((CVector*)(pOri+i*VBVertexSize))[1];
+			if (_Normals != NULL)
+				_Normals->operator[](i) = ((CVector *)(pOri + i * VBVertexSize))[1];
 
-		if (_TgSpace != NULL)
-			(*_TgSpace)[i] = * (CVector*)(pOri + i * VBVertexSize + tgSpaceOff);
+			if (_TgSpace != NULL)
+				(*_TgSpace)[i] = *(CVector *)(pOri + i * VBVertexSize + tgSpaceOff);
 
-		_Flags[i] = OriginalVBDst;
-	}
+			_Flags[i] = OriginalVBDst;
+		}
 
 	// Blending with blendshape
 	for (i = 0; i < BlendShapes.size(); ++i)
 	{
 		CBlendShape &rBS = BlendShapes[i];
-		float rFactor = pBSFactor->operator[](i).getFactor()/100.0f;
+		float rFactor = pBSFactor->operator[](i).getFactor() / 100.0f;
 
 		if (rFactor != 0.0f)
-		for (j = 0; j < rBS.VertRefs.size(); ++j)
-		{
-			uint32 vp = rBS.VertRefs[j];
-
-			// Modify Pos/Norm/TgSpace.
-			//------------
-			if (_Vertices != NULL)
-			if (!rBS.deltaPos.empty())
+			for (j = 0; j < rBS.VertRefs.size(); ++j)
 			{
-				CVector *pV = &(_Vertices->operator[](vp));
-				*pV += rBS.deltaPos[j] * rFactor;
-			}
+				uint32 vp = rBS.VertRefs[j];
 
-			if (_Normals != NULL)
-			if (!rBS.deltaNorm.empty())
-			{
-				CVector *pV = &(_Normals->operator[](vp));
-				*pV += rBS.deltaNorm[j] * rFactor;
-			}
+				// Modify Pos/Norm/TgSpace.
+				//------------
+				if (_Vertices != NULL)
+					if (!rBS.deltaPos.empty())
+					{
+						CVector *pV = &(_Vertices->operator[](vp));
+						*pV += rBS.deltaPos[j] * rFactor;
+					}
 
-			if (_UseTgSpace && _TgSpace != NULL)
-			if (!rBS.deltaTgSpace.empty())
-			{
-				CVector *pV = &((*_TgSpace)[vp]);
-				*pV += rBS.deltaTgSpace[j] * rFactor;
-			}
+				if (_Normals != NULL)
+					if (!rBS.deltaNorm.empty())
+					{
+						CVector *pV = &(_Normals->operator[](vp));
+						*pV += rBS.deltaNorm[j] * rFactor;
+					}
 
-			// Modify UV0 / Color
-			//------------
-			if (_VBDst->getVertexFormat() & CVertexBuffer::TexCoord0Flag)
-			if (!rBS.deltaUV.empty())
-			{
-				CUV *pUV = dstvba.getTexCoordPointer (vp);
-				*pUV += rBS.deltaUV[j] * rFactor;
-			}
+				if (_UseTgSpace && _TgSpace != NULL)
+					if (!rBS.deltaTgSpace.empty())
+					{
+						CVector *pV = &((*_TgSpace)[vp]);
+						*pV += rBS.deltaTgSpace[j] * rFactor;
+					}
 
-			if (_VBDst->getVertexFormat() & CVertexBuffer::PrimaryColorFlag)
-			if (!rBS.deltaCol.empty())
-			{
-				// todo hulud d3d vertex color RGBA / BGRA
-				CRGBA *pRGBA = (CRGBA*)dstvba.getColorPointer (vp);
-				CRGBAF rgbf(*pRGBA);
-				rgbf.R += rBS.deltaCol[j].R * rFactor;
-				rgbf.G += rBS.deltaCol[j].G * rFactor;
-				rgbf.B += rBS.deltaCol[j].B * rFactor;
-				rgbf.A += rBS.deltaCol[j].A * rFactor;
-				clamp(rgbf.R, 0.0f, 1.0f);
-				clamp(rgbf.G, 0.0f, 1.0f);
-				clamp(rgbf.B, 0.0f, 1.0f);
-				clamp(rgbf.A, 0.0f, 1.0f);
-				*pRGBA = rgbf;
-			}
+				// Modify UV0 / Color
+				//------------
+				if (_VBDst->getVertexFormat() & CVertexBuffer::TexCoord0Flag)
+					if (!rBS.deltaUV.empty())
+					{
+						CUV *pUV = dstvba.getTexCoordPointer(vp);
+						*pUV += rBS.deltaUV[j] * rFactor;
+					}
 
-			// Modified
-			_Flags[vp] = Modified;
-		}
+				if (_VBDst->getVertexFormat() & CVertexBuffer::PrimaryColorFlag)
+					if (!rBS.deltaCol.empty())
+					{
+						// todo hulud d3d vertex color RGBA / BGRA
+						CRGBA *pRGBA = (CRGBA *)dstvba.getColorPointer(vp);
+						CRGBAF rgbf(*pRGBA);
+						rgbf.R += rBS.deltaCol[j].R * rFactor;
+						rgbf.G += rBS.deltaCol[j].G * rFactor;
+						rgbf.B += rBS.deltaCol[j].B * rFactor;
+						rgbf.A += rBS.deltaCol[j].A * rFactor;
+						clamp(rgbf.R, 0.0f, 1.0f);
+						clamp(rgbf.G, 0.0f, 1.0f);
+						clamp(rgbf.B, 0.0f, 1.0f);
+						clamp(rgbf.A, 0.0f, 1.0f);
+						*pRGBA = rgbf;
+					}
+
+				// Modified
+				_Flags[vp] = Modified;
+			}
 	}
 }
 
 // ***************************************************************************
-void CMeshMorpher::serial (NLMISC::IStream &f)
+void CMeshMorpher::serial(NLMISC::IStream &f)
 {
 	/* ***********************************************
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
 	 *	It can be loaded/called through CAsyncFileManager for instance
 	 * ***********************************************/
 
-	(void)f.serialVersion (0);
+	(void)f.serialVersion(0);
 
-	f.serialCont (BlendShapes);
+	f.serialCont(BlendShapes);
 }
 
-
 // ***************************************************************************
-#define	NL3D_RAWSKIN_NORMAL_OFF		12
-#define	NL3D_RAWSKIN_UV_OFF			24
-#define	NL3D_RAWSKIN_VERTEX_SIZE	32
+#define NL3D_RAWSKIN_NORMAL_OFF 12
+#define NL3D_RAWSKIN_UV_OFF 24
+#define NL3D_RAWSKIN_VERTEX_SIZE 32
 
-void CMeshMorpher::updateRawSkin (CVertexBuffer *vbOri,
-					NLMISC::CObjectVector<CRawSkinVertex*, false>	&vertexRemap,
-					std::vector<CAnimatedMorph> *pBSFactor)
+void CMeshMorpher::updateRawSkin(CVertexBuffer *vbOri,
+    NLMISC::CObjectVector<CRawSkinVertex *, false> &vertexRemap,
+    std::vector<CAnimatedMorph> *pBSFactor)
 {
 	uint32 i, j;
 
@@ -374,79 +370,66 @@ void CMeshMorpher::updateRawSkin (CVertexBuffer *vbOri,
 	if (BlendShapes.empty())
 		return;
 
-	nlassert(vbOri->getVertexFormat() == (CVertexBuffer::PositionFlag | CVertexBuffer::NormalFlag |CVertexBuffer::TexCoord0Flag) );
+	nlassert(vbOri->getVertexFormat() == (CVertexBuffer::PositionFlag | CVertexBuffer::NormalFlag | CVertexBuffer::TexCoord0Flag));
 	nlassert(NL3D_RAWSKIN_VERTEX_SIZE == vbOri->getVertexSize());
 	nlassert(NL3D_RAWSKIN_NORMAL_OFF == vbOri->getNormalOff());
 	nlassert(NL3D_RAWSKIN_UV_OFF == vbOri->getTexCoordOff(0));
 
 	// Cleaning with original vertex buffer
 	CVertexBufferRead srcvba;
-	vbOri->lock (srcvba);
-	const uint8			*pOri = (const uint8*)srcvba.getVertexCoordPointer ();
-	CRawSkinVertex	**vRemap= vertexRemap.getPtr();
-	uint			numVertices= vbOri->getNumVertices();
+	vbOri->lock(srcvba);
+	const uint8 *pOri = (const uint8 *)srcvba.getVertexCoordPointer();
+	CRawSkinVertex **vRemap = vertexRemap.getPtr();
+	uint numVertices = vbOri->getNumVertices();
 
 	// Update only the vertices of this lod
-	for (i= 0; i < numVertices; ++i)
+	for (i = 0; i < numVertices; ++i)
 	{
-		if(*vRemap)
+		if (*vRemap)
 		{
-			(*vRemap)->Pos= *(CVector*)(pOri);
-			(*vRemap)->Normal= *(CVector*)(pOri + NL3D_RAWSKIN_NORMAL_OFF);
-			(*vRemap)->UV= *(CUV*)(pOri + NL3D_RAWSKIN_UV_OFF);
+			(*vRemap)->Pos = *(CVector *)(pOri);
+			(*vRemap)->Normal = *(CVector *)(pOri + NL3D_RAWSKIN_NORMAL_OFF);
+			(*vRemap)->UV = *(CUV *)(pOri + NL3D_RAWSKIN_UV_OFF);
 		}
-		pOri+= NL3D_RAWSKIN_VERTEX_SIZE;
+		pOri += NL3D_RAWSKIN_VERTEX_SIZE;
 		vRemap++;
 	}
 
 	// Blending with blendshape
 	for (i = 0; i < BlendShapes.size(); ++i)
 	{
-		CBlendShape		&rBS = BlendShapes[i];
-		float			rFactor = pBSFactor->operator[](i).getFactor();
+		CBlendShape &rBS = BlendShapes[i];
+		float rFactor = pBSFactor->operator[](i).getFactor();
 
 		if (rFactor != 0.0f)
 		{
-			rFactor*= 0.01f;
-			uint32		numVertices= (uint32)rBS.VertRefs.size();
+			rFactor *= 0.01f;
+			uint32 numVertices = (uint32)rBS.VertRefs.size();
 			// don't know why, but cases happen where deltaNorm not empty while deltaPos is
-			bool		hasPos = !rBS.deltaPos.empty();
-			bool		hasNorm = !rBS.deltaNorm.empty();
-			bool		hasUV = !rBS.deltaUV.empty();
+			bool hasPos = !rBS.deltaPos.empty();
+			bool hasNorm = !rBS.deltaNorm.empty();
+			bool hasUV = !rBS.deltaUV.empty();
 
 			for (j = 0; j < numVertices; ++j)
 			{
 				// Get the vertex Index in the VBufferFinal
-				uint	vid= rBS.VertRefs[j];
+				uint vid = rBS.VertRefs[j];
 				// Then get the RawSkin vertex to modify
-				CRawSkinVertex	*rsVert= vertexRemap[vid];
+				CRawSkinVertex *rsVert = vertexRemap[vid];
 
 				// If exist in this Lod RawSkin, apply
-				if(rsVert)
+				if (rsVert)
 				{
-					if(hasPos)
-						rsVert->Pos+= rBS.deltaPos[j] * rFactor;
-					if(hasNorm)
-						rsVert->Normal+= rBS.deltaNorm[j] * rFactor;
-					if(hasUV)
-						rsVert->UV+= rBS.deltaUV[j] * rFactor;
+					if (hasPos)
+						rsVert->Pos += rBS.deltaPos[j] * rFactor;
+					if (hasNorm)
+						rsVert->Normal += rBS.deltaNorm[j] * rFactor;
+					if (hasUV)
+						rsVert->UV += rBS.deltaUV[j] * rFactor;
 				}
 			}
 		}
-
 	}
-
 }
 
-
 } // NL3D
-
-
-
-
-
-
-
-
-
-

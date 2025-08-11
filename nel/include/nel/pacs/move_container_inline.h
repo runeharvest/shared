@@ -19,12 +19,11 @@
 
 #include "nel/misc/types_nl.h"
 
-namespace NLPACS
-{
+namespace NLPACS {
 
 // ***************************************************************************
 
-inline void CMoveContainer::changed (CMovePrimitive* primitive, uint8 worldImage)
+inline void CMoveContainer::changed(CMovePrimitive *primitive, uint8 worldImage)
 {
 	// Primitive noncollisionable ?
 	if (primitive->isCollisionable())
@@ -32,19 +31,19 @@ inline void CMoveContainer::changed (CMovePrimitive* primitive, uint8 worldImage
 		// Get the world image
 		CPrimitiveWorldImage *wI;
 
-		wI=primitive->getWorldImage (worldImage);
+		wI = primitive->getWorldImage(worldImage);
 
 		// Not yet in the list ?
-		if (!wI->isInModifiedListFlag ())
+		if (!wI->isInModifiedListFlag())
 		{
 			// Flag it
-			wI->setInModifiedListFlag (true);
+			wI->setInModifiedListFlag(true);
 
 			// Link it
-			wI->linkInModifiedList (_ChangedRoot[worldImage]);
+			wI->linkInModifiedList(_ChangedRoot[worldImage]);
 
 			// Change root list
-			_ChangedRoot[worldImage]=primitive;
+			_ChangedRoot[worldImage] = primitive;
 		}
 	}
 }
@@ -52,7 +51,6 @@ inline void CMoveContainer::changed (CMovePrimitive* primitive, uint8 worldImage
 // ***************************************************************************
 
 } // NLPACS
-
 
 #endif // NL_MOVE_CONTAINER_INLINE_H
 

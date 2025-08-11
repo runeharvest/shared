@@ -22,31 +22,27 @@
 
 #include "game_share/r2_ligo_config.h"
 #include "nel/misc/sstring.h"
-namespace R2
+namespace R2 {
+uint32 CR2LigoConfig::getFileStaticAliasMapping(const std::string &fileName) const
 {
-	uint32 CR2LigoConfig::getFileStaticAliasMapping(const std::string &fileName) const
+	uint32 filesize = 8; // strlen("r2.0000.");
+	if (fileName.size() > filesize && fileName.substr(0, 3) == "r2.")
 	{
-		uint32 filesize = 8;// strlen("r2.0000.");
-		if ( fileName.size() > filesize &&
-			fileName.substr(0, 3) == "r2.")
-		{
-			NLMISC::CSString instanceNumber(fileName.substr(3,4));
-			uint32 instance = instanceNumber.atoui();
-			TScenarioType type;
+		NLMISC::CSString instanceNumber(fileName.substr(3, 4));
+		uint32 instance = instanceNumber.atoui();
+		TScenarioType type;
 
-			if (fileName[8] == 'a') { type = Act;}
-			else type = Base;
-			return getStaticAliasMapping(instance, type);
-		}
-		return this->CLigoConfig::getFileStaticAliasMapping(fileName);
+		if (fileName[8] == 'a') { type = Act; }
+		else type = Base;
+		return getStaticAliasMapping(instance, type);
 	}
-
-
-	uint32 CR2LigoConfig::getStaticAliasMapping(uint32 aiInstance, TScenarioType type) const
-	{
-		uint32 instance = aiInstance * 2;
-		if (type == Act) { instance +=1; }
-		return (1 << (getStaticAliasSize() - 1) ) + instance;
-	}
+	return this->CLigoConfig::getFileStaticAliasMapping(fileName);
 }
 
+uint32 CR2LigoConfig::getStaticAliasMapping(uint32 aiInstance, TScenarioType type) const
+{
+	uint32 instance = aiInstance * 2;
+	if (type == Act) { instance += 1; }
+	return (1 << (getStaticAliasSize() - 1)) + instance;
+}
+}

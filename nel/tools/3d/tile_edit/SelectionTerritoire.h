@@ -28,42 +28,42 @@
 
 extern void Start(void);
 
-namespace NL3D
-{
-	class CTileBank;
+namespace NL3D {
+class CTileBank;
 }
 
 class SelectionTerritoire : public CDialog
 {
-// Construction
+	// Construction
 public:
-	SelectionTerritoire(CWnd* pParent = NULL);   // standard constructor
+	SelectionTerritoire(CWnd *pParent = NULL); // standard constructor
 
-//owner data
+	// owner data
 	CString DefautPath; // folder which contains all data
 	CString MainFileName; // txt main filename (contains territories list)
 	CString CurrentTerritory; // territory name currently being editing
 	int MainFileOk;
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(SelectionTerritoire)
-	enum { IDD = IDD_TERRITOIREMANAGER };
-	CEdit	SurfaceDataCtrl;
-	int		SurfaceData;
+	enum
+	{
+		IDD = IDD_TERRITOIREMANAGER
+	};
+	CEdit SurfaceDataCtrl;
+	int SurfaceData;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SelectionTerritoire)
-	protected: 
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(SelectionTerritoire)
 	afx_msg void OnAddTerritoire();
@@ -86,7 +86,7 @@ protected:
 	afx_msg void OnSelchangeTileSet();
 	virtual BOOL OnInitDialog();
 	//}}AFX_MSG
-	void Save(const TCHAR* path, NL3D::CTileBank &toSave);
+	void Save(const TCHAR *path, NL3D::CTileBank &toSave);
 
 	DECLARE_MESSAGE_MAP()
 };

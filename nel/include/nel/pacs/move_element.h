@@ -19,9 +19,7 @@
 
 #include "nel/misc/types_nl.h"
 
-
-namespace NLPACS
-{
+namespace NLPACS {
 
 class CMovePrimitive;
 
@@ -36,28 +34,26 @@ class CMoveElement
 {
 public:
 	/// Pointer on the primitive for this move element
-	CMovePrimitive	*Primitive;
+	CMovePrimitive *Primitive;
 
 	/// Next move element in the X List
-	CMoveElement	*NextX;
+	CMoveElement *NextX;
 
 	/// Previous move element in the X List
-	CMoveElement	*PreviousX;
+	CMoveElement *PreviousX;
 
 	/// Next move element in the Y List
-	CMoveElement	*NextY;
+	CMoveElement *NextY;
 
 	/// Previous move element in the Y List
-	CMoveElement	*PreviousY;
+	CMoveElement *PreviousY;
 
 	/// Cell coordinate
-	uint16			X;
-	uint16			Y;
+	uint16 X;
+	uint16 Y;
 };
 
-
 } // NLPACS
-
 
 #endif // NL_MOVE_ELEMENT_H
 

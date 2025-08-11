@@ -24,16 +24,13 @@
 #include "uv.h"
 #include "rgba.h"
 
-
-namespace NLMISC
-{
+namespace NLMISC {
 
 // ***************************************************************************
 // ***************************************************************************
 // Lines.
 // ***************************************************************************
 // ***************************************************************************
-
 
 // ***************************************************************************
 /**
@@ -45,21 +42,18 @@ namespace NLMISC
 class CLineColor : public CLine
 {
 public:
-	CRGBA	Color0, Color1;
+	CRGBA Color0, Color1;
 
 public:
-
 	/// Constructor
-	CLineColor() {}
+	CLineColor() { }
 
-	CLineColor		&operator=(const CLine &line)
+	CLineColor &operator=(const CLine &line)
 	{
-		*((CLine*)this)= line;
+		*((CLine *)this) = line;
 		return *this;
 	}
-
 };
-
 
 // ***************************************************************************
 /**
@@ -71,21 +65,18 @@ public:
 class CLineUV : public CLine
 {
 public:
-	CUV		Uv0, Uv1;
+	CUV Uv0, Uv1;
 
 public:
-
 	/// Constructor
-	CLineUV() {}
+	CLineUV() { }
 
-	CLineUV		&operator=(const CLine &line)
+	CLineUV &operator=(const CLine &line)
 	{
-		*((CLine*)this)= line;
+		*((CLine *)this) = line;
 		return *this;
 	}
-
 };
-
 
 // ***************************************************************************
 /**
@@ -97,30 +88,25 @@ public:
 class CLineColorUV : public CLine
 {
 public:
-	CRGBA	Color0, Color1;
-	CUV		Uv0, Uv1;
+	CRGBA Color0, Color1;
+	CUV Uv0, Uv1;
 
 public:
-
 	/// Constructor
-	CLineColorUV() {}
+	CLineColorUV() { }
 
-	CLineColorUV		&operator=(const CLine &line)
+	CLineColorUV &operator=(const CLine &line)
 	{
-		*((CLine*)this)= line;
+		*((CLine *)this) = line;
 		return *this;
 	}
-
 };
-
 
 // ***************************************************************************
 // ***************************************************************************
 // Triangles.
 // ***************************************************************************
 // ***************************************************************************
-
-
 
 // ***************************************************************************
 /**
@@ -132,21 +118,18 @@ public:
 class CTriangleColor : public CTriangle
 {
 public:
-	CRGBA	Color0, Color1, Color2;
+	CRGBA Color0, Color1, Color2;
 
 public:
-
 	/// Constructor
-	CTriangleColor() {}
+	CTriangleColor() { }
 
-	CTriangleColor		&operator=(const CTriangle &tri)
+	CTriangleColor &operator=(const CTriangle &tri)
 	{
-		*((CTriangle*)this)= tri;
+		*((CTriangle *)this) = tri;
 		return *this;
 	}
-
 };
-
 
 // ***************************************************************************
 /**
@@ -158,21 +141,18 @@ public:
 class CTriangleUV : public CTriangle
 {
 public:
-	CUV		Uv0, Uv1, Uv2;
+	CUV Uv0, Uv1, Uv2;
 
 public:
-
 	/// Constructor
-	CTriangleUV() {}
+	CTriangleUV() { }
 
-	CTriangleUV		&operator=(const CTriangle &tri)
+	CTriangleUV &operator=(const CTriangle &tri)
 	{
-		*((CTriangle*)this)= tri;
+		*((CTriangle *)this) = tri;
 		return *this;
 	}
-
 };
-
 
 // ***************************************************************************
 /**
@@ -184,29 +164,25 @@ public:
 class CTriangleColorUV : public CTriangle
 {
 public:
-	CRGBA	Color0, Color1, Color2;
-	CUV		Uv0, Uv1, Uv2;
+	CRGBA Color0, Color1, Color2;
+	CUV Uv0, Uv1, Uv2;
 
 public:
-
 	/// Constructor
-	CTriangleColorUV() {}
+	CTriangleColorUV() { }
 
-	CTriangleColorUV		&operator=(const CTriangle &tri)
+	CTriangleColorUV &operator=(const CTriangle &tri)
 	{
-		*((CTriangle*)this)= tri;
+		*((CTriangle *)this) = tri;
 		return *this;
 	}
-
 };
-
 
 // ***************************************************************************
 // ***************************************************************************
 // Quads.
 // ***************************************************************************
 // ***************************************************************************
-
 
 // ***************************************************************************
 /**
@@ -218,21 +194,18 @@ public:
 class CQuadColor : public CQuad
 {
 public:
-	CRGBA	Color0, Color1, Color2, Color3;
+	CRGBA Color0, Color1, Color2, Color3;
 
 public:
-
 	/// Constructor
-	CQuadColor() {}
+	CQuadColor() { }
 
-	CQuadColor		&operator=(const CQuad &quad)
+	CQuadColor &operator=(const CQuad &quad)
 	{
-		*((CQuad*)this)= quad;
+		*((CQuad *)this) = quad;
 		return *this;
 	}
-
 };
-
 
 // ***************************************************************************
 /**
@@ -244,21 +217,18 @@ public:
 class CQuadUV : public CQuad
 {
 public:
-	CUV		Uv0, Uv1, Uv2, Uv3;
+	CUV Uv0, Uv1, Uv2, Uv3;
 
 public:
-
 	/// Constructor
-	CQuadUV() {}
+	CQuadUV() { }
 
-	CQuadUV		&operator=(const CQuad &quad)
+	CQuadUV &operator=(const CQuad &quad)
 	{
-		*((CQuad*)this)= quad;
+		*((CQuad *)this) = quad;
 		return *this;
 	}
-
 };
-
 
 // ***************************************************************************
 /**
@@ -270,22 +240,19 @@ public:
 class CQuadColorUV : public CQuad
 {
 public:
-	CRGBA	Color0, Color1, Color2, Color3;
-	CUV		Uv0, Uv1, Uv2, Uv3;
+	CRGBA Color0, Color1, Color2, Color3;
+	CUV Uv0, Uv1, Uv2, Uv3;
 
 public:
-
 	/// Constructor
-	CQuadColorUV() {}
+	CQuadColorUV() { }
 
-	CQuadColorUV		&operator=(const CQuad &quad)
+	CQuadColorUV &operator=(const CQuad &quad)
 	{
-		*((CQuad*)this)= quad;
+		*((CQuad *)this) = quad;
 		return *this;
 	}
-
 };
-
 
 // ***************************************************************************
 /**
@@ -297,12 +264,10 @@ public:
 class CQuadColorUV2 : public CQuadColorUV
 {
 public:
-	CUV		Uv02, Uv12, Uv22, Uv32;
+	CUV Uv02, Uv12, Uv22, Uv32;
 };
 
-
 } // NLMISC
-
 
 #endif // NL_TRIANGLE_EXT_H
 

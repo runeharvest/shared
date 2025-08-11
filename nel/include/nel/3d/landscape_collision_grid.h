@@ -22,18 +22,13 @@
 #include "nel/3d/visual_collision_manager.h"
 #include <vector>
 
+namespace NL3D {
 
-namespace NL3D
-{
-
-
-class	CVisualCollisionManager;
-
+class CVisualCollisionManager;
 
 // must be a power of 2.
-#define NL_COLGRID_SIZE	32									// Size of the grid.
+#define NL_COLGRID_SIZE 32 // Size of the grid.
 // NB: for speedup, one elt is always size of 2 meters.
-
 
 // ***************************************************************************
 /**
@@ -46,45 +41,35 @@ class	CVisualCollisionManager;
 class CLandscapeCollisionGrid
 {
 public:
-
 	/// Constructor
 	CLandscapeCollisionGrid(CVisualCollisionManager *owner);
 	~CLandscapeCollisionGrid();
 
-
 	/// clear the chainlist in the quadgrid.
-	void			clear();
+	void clear();
 	/** Build the quadgrid with a array of patchblock. delta is the vector to apply to tiles coordinate,
 	 * before insertion in the quadgrid (for precision consideration).
 	 */
-	void			build(const std::vector<CPatchQuadBlock*> &quadBlocks, const CVector &delta);
-
+	void build(const std::vector<CPatchQuadBlock *> &quadBlocks, const CVector &delta);
 
 	/// select one entry in the chainQuad. pos is a position in World.
-	CVisualTileDescNode			*select(const NLMISC::CVector &pos);
+	CVisualTileDescNode *select(const NLMISC::CVector &pos);
 
-
-// ***********************
+	// ***********************
 private:
-	CVisualCollisionManager		*_Owner;
-
+	CVisualCollisionManager *_Owner;
 
 	/// Array of list of CVisualTileDescNode.
-	bool						_Cleared;
-	CVisualTileDescNode			*_Grid[NL_COLGRID_SIZE*NL_COLGRID_SIZE];
-	uint						_SizePower;
-	CVector						_Delta;
-
+	bool _Cleared;
+	CVisualTileDescNode *_Grid[NL_COLGRID_SIZE * NL_COLGRID_SIZE];
+	uint _SizePower;
+	CVector _Delta;
 
 private:
-	void			addQuadToGrid(uint16 paBlockId, uint16 quadId, sint minx, sint maxx, sint miny, sint maxy);
-
-
+	void addQuadToGrid(uint16 paBlockId, uint16 quadId, sint minx, sint maxx, sint miny, sint maxy);
 };
 
-
 } // NL3D
-
 
 #endif // NL_LANDSCAPE_COLLISION_GRID_H
 

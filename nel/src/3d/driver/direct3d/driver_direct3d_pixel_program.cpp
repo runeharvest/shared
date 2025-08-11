@@ -36,12 +36,12 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace NL3D 
-{
+namespace NL3D {
 
 // ***************************************************************************
 
-CPixelProgramDrvInfosD3D::CPixelProgramDrvInfosD3D(IDriver *drv, ItGPUPrgDrvInfoPtrList it) : IProgramDrvInfos (drv, it)
+CPixelProgramDrvInfosD3D::CPixelProgramDrvInfosD3D(IDriver *drv, ItGPUPrgDrvInfoPtrList it)
+    : IProgramDrvInfos(drv, it)
 {
 	H_AUTO_D3D(CPixelProgramDrvInfosD3D_CPixelProgamDrvInfosD3D)
 	Shader = NULL;
@@ -58,11 +58,11 @@ CPixelProgramDrvInfosD3D::~CPixelProgramDrvInfosD3D()
 
 // ***************************************************************************
 
-bool CDriverD3D::supportPixelProgram (CPixelProgram::TProfile profile) const
+bool CDriverD3D::supportPixelProgram(CPixelProgram::TProfile profile) const
 {
 	H_AUTO_D3D(CDriverD3D_supportPixelProgram_profile)
 	return ((profile & 0xFFFF0000) == 0xD9020000)
-		&& (_PixelProgramVersion >= (uint16)(profile & 0x0000FFFF));
+	    && (_PixelProgramVersion >= (uint16)(profile & 0x0000FFFF));
 }
 
 // ***************************************************************************
@@ -70,7 +70,7 @@ bool CDriverD3D::supportPixelProgram (CPixelProgram::TProfile profile) const
 bool CDriverD3D::compilePixelProgram(CPixelProgram *program)
 {
 	// Program setuped ?
-	if (program->m_DrvInfo==NULL)
+	if (program->m_DrvInfo == NULL)
 	{
 		// Find a supported pixel program profile
 		IProgram::CSource *source = NULL;
@@ -87,7 +87,7 @@ bool CDriverD3D::compilePixelProgram(CPixelProgram *program)
 			return false;
 		}
 
-		_GPUPrgDrvInfos.push_front (NULL);
+		_GPUPrgDrvInfos.push_front(NULL);
 		ItGPUPrgDrvInfoPtrList itPix = _GPUPrgDrvInfos.begin();
 		CPixelProgramDrvInfosD3D *drvInfo;
 		*itPix = drvInfo = new CPixelProgramDrvInfosD3D(this, itPix);
@@ -99,13 +99,13 @@ bool CDriverD3D::compilePixelProgram(CPixelProgram *program)
 		LPD3DXBUFFER pErrorMsgs;
 		if (D3DXAssembleShader(source->SourcePtr, source->SourceLen, NULL, NULL, 0, &pShader, &pErrorMsgs) == D3D_OK)
 		{
-			if (_DeviceInterface->CreatePixelShader((DWORD*)pShader->GetBufferPointer(), &(getPixelProgramD3D(*program)->Shader)) != D3D_OK)
+			if (_DeviceInterface->CreatePixelShader((DWORD *)pShader->GetBufferPointer(), &(getPixelProgramD3D(*program)->Shader)) != D3D_OK)
 				return false;
 		}
 		else
 		{
-			nlwarning ("Can't assemble pixel program:");
-			nlwarning ((const char*)pErrorMsgs->GetBufferPointer());
+			nlwarning("Can't assemble pixel program:");
+			nlwarning((const char *)pErrorMsgs->GetBufferPointer());
 			return false;
 		}
 
@@ -123,7 +123,7 @@ bool CDriverD3D::compilePixelProgram(CPixelProgram *program)
 
 bool CDriverD3D::activePixelProgram(CPixelProgram *program)
 {
-	H_AUTO_D3D(CDriverD3D_activePixelProgram )
+	H_AUTO_D3D(CDriverD3D_activePixelProgram)
 	if (_DisableHardwarePixelProgram)
 		return false;
 
@@ -132,7 +132,7 @@ bool CDriverD3D::activePixelProgram(CPixelProgram *program)
 	{
 		if (!CDriverD3D::compilePixelProgram(program)) return false;
 
-		CPixelProgramDrvInfosD3D *info = static_cast<CPixelProgramDrvInfosD3D *>((IProgramDrvInfos*)program->m_DrvInfo);
+		CPixelProgramDrvInfosD3D *info = static_cast<CPixelProgramDrvInfosD3D *>((IProgramDrvInfos *)program->m_DrvInfo);
 		_PixelProgramUser = program;
 		setPixelShader(info->Shader);
 	}

@@ -20,7 +20,7 @@
 #include "nel/sound/driver/buffer.h"
 
 namespace NLSOUND {
-	class CBufferXAudio2;
+class CBufferXAudio2;
 
 /**
  * \brief CAdpcmXAudio2
@@ -46,7 +46,7 @@ protected:
 	uint _SampleNb;
 	/// Current position in ADPCM buffer in uint8.
 	uint _AdpcmIndex;
-	
+
 	// other stuff
 	IBuffer::TADPCMState _State;
 	/// Looping or not.
@@ -65,13 +65,14 @@ protected:
 	uintptr_t _LastBufferContext;
 	/// Current buffer.
 	void *_ValidBufferContext[_BufferNb];
+
 public:
 	CAdpcmXAudio2(bool loop);
 	virtual ~CAdpcmXAudio2();
 
 	/// Create the source voice, it must have this class as callback stuff.
 	inline void setSourceVoice(IXAudio2SourceVoice *sourceVoice) { _SourceVoice = sourceVoice; }
-	
+
 	/// Set looping state.
 	inline void setLooping(bool l) { _Loop = l; }
 	/// Submit the next ADPCM buffer, only 1 buffer can be submitted at a time! Plays as soon as submitted (if sourcevoice is playing).
@@ -80,32 +81,39 @@ public:
 	void flushSourceBuffers();
 	/// Returns NULL if the buffer has ended playing, never NULL for loops!
 	inline const uint8 *getSourceData() const { return _SourceData; }
-	
+
 private:
 	/// (Internal) Process and submit the ADPCM data.
 	void processBuffers();
-	
+
 	// XAudio2 Callbacks
 	// Called just before this voice's processing pass begins.
-	STDMETHOD_(void, OnVoiceProcessingPassStart) (THIS_ UINT32 BytesRequired);
+	STDMETHOD_(void, OnVoiceProcessingPassStart)
+	(THIS_ UINT32 BytesRequired);
 	// Called just after this voice's processing pass ends.
-	STDMETHOD_(void, OnVoiceProcessingPassEnd) (THIS);
+	STDMETHOD_(void, OnVoiceProcessingPassEnd)
+	(THIS);
 	// Called when this voice has just finished playing a buffer stream
 	// (as marked with the XAUDIO2_END_OF_STREAM flag on the last buffer).
-	STDMETHOD_(void, OnStreamEnd) (THIS);
+	STDMETHOD_(void, OnStreamEnd)
+	(THIS);
 	// Called when this voice is about to start processing a new buffer.
-	STDMETHOD_(void, OnBufferStart) (THIS_ void* pBufferContext);
+	STDMETHOD_(void, OnBufferStart)
+	(THIS_ void *pBufferContext);
 	// Called when this voice has just finished processing a buffer.
 	// The buffer can now be reused or destroyed.
-	STDMETHOD_(void, OnBufferEnd) (THIS_ void* pBufferContext);
+	STDMETHOD_(void, OnBufferEnd)
+	(THIS_ void *pBufferContext);
 	// Called when this voice has just reached the end position of a loop.
-	STDMETHOD_(void, OnLoopEnd) (THIS_ void* pBufferContext);
+	STDMETHOD_(void, OnLoopEnd)
+	(THIS_ void *pBufferContext);
 	// Called in the event of a critical error during voice processing,
 	// such as a failing XAPO or an error from the hardware XMA decoder.
 	// The voice may have to be destroyed and re-created to recover from
 	// the error.  The callback arguments report which buffer was being
 	// processed when the error occurred, and its HRESULT code.
-	STDMETHOD_(void, OnVoiceError) (THIS_ void* pBufferContext, HRESULT Error);
+	STDMETHOD_(void, OnVoiceError)
+	(THIS_ void *pBufferContext, HRESULT Error);
 }; /* class CAdpcmXAudio2 */
 
 } /* namespace NLSOUND */

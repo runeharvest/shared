@@ -19,34 +19,33 @@
 
 #include "nel/misc/types_nl.h"
 
-namespace RESISTANCE_TYPE
+namespace RESISTANCE_TYPE {
+enum TResistanceType
 {
-	enum TResistanceType
-	{
-		Desert,
-		Forest,
-		Lacustre,
-		Jungle,
-		PrimaryRoot,
+	Desert,
+	Forest,
+	Lacustre,
+	Jungle,
+	PrimaryRoot,
 
-		None,
+	None,
 
-		NB_RESISTANCE_TYPE = None,
-	};
+	NB_RESISTANCE_TYPE = None,
+};
 
-	/**
-	 * get resistance type corresponding to input string
-	 * \param str the input string
-	 * \return the TResistanceType associated to this string (None if the string cannot be interpreted)
-	 */
-	TResistanceType fromString(const std::string &str);
+/**
+ * get resistance type corresponding to input string
+ * \param str the input string
+ * \return the TResistanceType associated to this string (None if the string cannot be interpreted)
+ */
+TResistanceType fromString(const std::string &str);
 
-	/**
-	 * get the resistance type string corresponding to enum
-	 * \param type the TResistanceType value
-	 * \return type as a string (or None)
-	 */
-	const std::string& toString(TResistanceType type);
+/**
+ * get the resistance type string corresponding to enum
+ * \param type the TResistanceType value
+ * \return type as a string (or None)
+ */
+const std::string &toString(TResistanceType type);
 };
 
 #endif // RYZOM_RESISTANCE_TYPE_H

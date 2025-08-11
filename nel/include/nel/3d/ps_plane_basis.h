@@ -24,12 +24,7 @@
 #include "nel/3d/ps_util.h"
 #include "nel/3d/ps_attrib_maker_helper.h"
 
-
 namespace NL3D {
-
-
-
-
 
 /** A basis for plane object, used by particle by face and shockwaves
  *  It's a like a 2x3 matrix, (with only the X and Y vector defined)
@@ -37,41 +32,39 @@ namespace NL3D {
 
 struct CPlaneBasis
 {
-	NLMISC::CVector X ;
-	NLMISC::CVector Y ;
-
+	NLMISC::CVector X;
+	NLMISC::CVector Y;
 
 	// default ctor
-	CPlaneBasis() {}
-
+	CPlaneBasis() { }
 
 	// construct this basis by giving a normal to the plane that contains it
 	CPlaneBasis(const NLMISC::CVector &normal)
 	{
 		NLMISC::CMatrix mat;
-		CPSUtil::buildSchmidtBasis(normal, mat) ;
-		X = mat.getI() ;
-		Y = mat.getJ() ;
+		CPSUtil::buildSchmidtBasis(normal, mat);
+		X = mat.getI();
+		Y = mat.getJ();
 	}
 
 	// construct this basis by giving its X and Y vectors
-	CPlaneBasis(const NLMISC::CVector &x, const NLMISC::CVector &y) : X(x), Y(y)
+	CPlaneBasis(const NLMISC::CVector &x, const NLMISC::CVector &y)
+	    : X(x)
+	    , Y(y)
 	{
 	}
 
 	/// compute the normal of the plane basis
 	NLMISC::CVector getNormal(void) const
 	{
-		return X ^ Y ;
+		return X ^ Y;
 	}
-
 
 	void serial(NLMISC::IStream &f)
 	{
-		f.serial(X, Y) ;
+		f.serial(X, Y);
 	}
-} ;
-
+};
 
 // for map insertion
 
@@ -81,16 +74,12 @@ inline bool operator<(const CPlaneBasis &p1, const CPlaneBasis &p2)
 	return p1.Y < p2.Y;
 }
 
-
 } // NL3D
 
 // special traits for optimization
-namespace NLMISC
-{
-	NL_TRIVIAL_TYPE_TRAITS(NL3D::CPlaneBasis);
+namespace NLMISC {
+NL_TRIVIAL_TYPE_TRAITS(NL3D::CPlaneBasis);
 }
-
-
 
 #endif // NL_PS_PLANE_BASIS_H
 

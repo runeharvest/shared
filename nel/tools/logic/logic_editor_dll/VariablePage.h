@@ -11,7 +11,6 @@
 
 class CLogic_editorDoc;
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CVariablePage dialog
 
@@ -19,29 +18,31 @@ class CVariablePage : public CPropertyPage
 {
 	DECLARE_DYNCREATE(CVariablePage)
 
-// Construction
+	// Construction
 public:
 	CVariablePage();
 	~CVariablePage();
 
-	void addVariable( CLogic_editorDoc *pDoc, CString varName );
+	void addVariable(CLogic_editorDoc *pDoc, CString varName);
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CVariablePage)
-	enum { IDD = IDD_PAGE_VARIABLES };
-	CListBox	m_listVariables;
-	CString	m_sVarName;
+	enum
+	{
+		IDD = IDD_PAGE_VARIABLES
+	};
+	CListBox m_listVariables;
+	CString m_sVarName;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CVariablePage)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(CVariablePage)
@@ -52,7 +53,6 @@ protected:
 	afx_msg void OnButtonVarApply();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-
 };
 
 //{{AFX_INSERT_LOCATION}}

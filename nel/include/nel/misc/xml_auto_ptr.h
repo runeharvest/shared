@@ -18,8 +18,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef XML_AUTO_PTR_H
 #define XML_AUTO_PTR_H
 
@@ -29,47 +27,55 @@
 #include <string>
 
 /** Simple auto pointer for xml pointers
-  */
+ */
 class CXMLAutoPtr
 {
 public:
-	CXMLAutoPtr(const char *value = NULL) : _Value(value) {}
-	CXMLAutoPtr(const unsigned char *value) : _Value((const char *) value) {}
+	CXMLAutoPtr(const char *value = NULL)
+	    : _Value(value)
+	{
+	}
+	CXMLAutoPtr(const unsigned char *value)
+	    : _Value((const char *)value)
+	{
+	}
 	~CXMLAutoPtr();
 	operator const char *() const { return _Value; }
 	operator bool() const { return _Value != NULL; }
 	inline std::string str() const { return _Value; }
-	bool operator ! () const { return _Value == NULL; }
-	operator const unsigned char *() const { return (const unsigned char *)  _Value; }
-	char operator * ()  const { nlassert(_Value); return *_Value; }
-	/// NB : This remove previous owned pointer with xmlFree
-	CXMLAutoPtr &operator = (const char *other);
-
-	CXMLAutoPtr &operator = (const unsigned char *other)
+	bool operator!() const { return _Value == NULL; }
+	operator const unsigned char *() const { return (const unsigned char *)_Value; }
+	char operator*() const
 	{
-		*this = (const char *) other;
+		nlassert(_Value);
+		return *_Value;
+	}
+	/// NB : This remove previous owned pointer with xmlFree
+	CXMLAutoPtr &operator=(const char *other);
+
+	CXMLAutoPtr &operator=(const unsigned char *other)
+	{
+		*this = (const char *)other;
 		return *this;
 	}
 	char *getDatas() const { return const_cast<char *>(_Value); }
-//////////////////////////////////////////////////
+	//////////////////////////////////////////////////
 private:
 	const char *_Value;
+
 private:
 	void destroy();
 
 	// We'd rather avoid problems
-	CXMLAutoPtr(const CXMLAutoPtr &/* other */)
+	CXMLAutoPtr(const CXMLAutoPtr & /* other */)
 	{
 		nlassert(0);
 	}
-	CXMLAutoPtr&operator = (const CXMLAutoPtr &/* other */)
+	CXMLAutoPtr &operator=(const CXMLAutoPtr & /* other */)
 	{
 		nlassert(0);
 		return *this;
 	}
 };
 
-
 #endif
-
-

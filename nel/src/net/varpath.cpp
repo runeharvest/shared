@@ -25,7 +25,6 @@
 
 #include "nel/net/varpath.h"
 
-
 //
 // Namespaces
 //
@@ -33,12 +32,9 @@
 using namespace std;
 using namespace NLMISC;
 
-
 //
 // Variables
 //
-
-
 
 //
 // Functions
@@ -54,10 +50,10 @@ using namespace NLMISC;
  */
 /*bool CVarPath::getDest (uint level, vector<string> &dest)
 {
-	return true;
+    return true;
 }*/
 
-string CVarPath::getToken ()
+string CVarPath::getToken()
 {
 	string res;
 
@@ -68,9 +64,15 @@ string CVarPath::getToken ()
 
 	switch (RawVarPath[TokenPos++])
 	{
-	case '.': case '*': case '[': case ']': case ',': case '=': case ' ':
+	case '.':
+	case '*':
+	case '[':
+	case ']':
+	case ',':
+	case '=':
+	case ' ':
 		break;
-	default :
+	default:
 		while (TokenPos < RawVarPath.size() && RawVarPath[TokenPos] != '.' && RawVarPath[TokenPos] != '[' && RawVarPath[TokenPos] != ']' && RawVarPath[TokenPos] != ',' && RawVarPath[TokenPos] != '=' && RawVarPath[TokenPos] != ' ')
 		{
 			res += RawVarPath[TokenPos++];
@@ -80,35 +82,34 @@ string CVarPath::getToken ()
 	return res;
 }
 
-
-void CVarPath::decode ()
+void CVarPath::decode()
 {
 	vector<string> dest;
 	TokenPos = 0;
-	Destination.clear ();
+	Destination.clear();
 
-	string val = getToken ();
+	string val = getToken();
 
 	if (val.empty())
 		return;
 
-	if (val == "[" )
+	if (val == "[")
 	{
-		for(;;)
+		for (;;)
 		{
 			uint osbnb = 0;
 			string d;
-			for(;;)
+			for (;;)
 			{
-				val = getToken ();
+				val = getToken();
 				if (val == "[")
 					osbnb++;
 
 				// end of token
 				if (val.empty())
 				{
-					nlwarning ("VP: Bad VarPath '%s', suppose it s an empty varpath", RawVarPath.c_str());
-					Destination.clear ();
+					nlwarning("VP: Bad VarPath '%s', suppose it s an empty varpath", RawVarPath.c_str());
+					Destination.clear();
 					return;
 				}
 
@@ -120,32 +121,32 @@ void CVarPath::decode ()
 
 				d += val;
 			}
-			dest.push_back (d);
+			dest.push_back(d);
 			if (val == "]")
 				break;
 		}
 	}
 	else if (val != "." && val != "," && val != "]")
 	{
-		dest.push_back (val);
+		dest.push_back(val);
 	}
 	else
 	{
-		nlwarning ("VP: Malformated VarPath '%s' before position %d", RawVarPath.c_str (), TokenPos);
+		nlwarning("VP: Malformated VarPath '%s' before position %d", RawVarPath.c_str(), TokenPos);
 		return;
 	}
 
 	// must be a . or end of string
-	val = getToken ();
+	val = getToken();
 	if (val == " ")
 	{
 		// special case, there s a space that means that everything after is not really part of the varpath.
-		Destination.push_back (make_pair(RawVarPath, string("")));
+		Destination.push_back(make_pair(RawVarPath, string("")));
 		return;
 	}
 	else if (val != "." && !val.empty() && val != "=")
 	{
-		nlwarning ("VP: Malformated VarPath '%s' before position %d", RawVarPath.c_str (), TokenPos);
+		nlwarning("VP: Malformated VarPath '%s' before position %d", RawVarPath.c_str(), TokenPos);
 		return;
 	}
 
@@ -154,44 +155,44 @@ void CVarPath::decode ()
 		string srv, var;
 		string::size_type pos;
 
-		if ((pos = dest[i].find ('.')) != string::npos)
+		if ((pos = dest[i].find('.')) != string::npos)
 		{
 			srv = dest[i].substr(0, pos);
-			var = dest[i].substr(pos+1);
+			var = dest[i].substr(pos + 1);
 			if (TokenPos < RawVarPath.size())
-				var += val + RawVarPath.substr (TokenPos);
+				var += val + RawVarPath.substr(TokenPos);
 		}
 		else
 		{
 			srv = dest[i];
 			if (val == "=")
 			{
-				srv += val + RawVarPath.substr (TokenPos);
+				srv += val + RawVarPath.substr(TokenPos);
 				var.clear();
 			}
 			else
-				var = RawVarPath.substr (TokenPos);
+				var = RawVarPath.substr(TokenPos);
 		}
 
-		Destination.push_back (make_pair(srv, var));
+		Destination.push_back(make_pair(srv, var));
 	}
 
-	//display ();
+	// display ();
 }
 
-bool CVarPath::isFinal ()
+bool CVarPath::isFinal()
 {
-	if(Destination.empty()) return true;
-	if(Destination[0].second.empty()) return true;
+	if (Destination.empty()) return true;
+	if (Destination[0].second.empty()) return true;
 	return false;
 }
 
-void CVarPath::display ()
+void CVarPath::display()
 {
-	nlinfo ("VP: VarPath dest = %d", Destination.size ());
-	for (uint i = 0; i < Destination.size (); i++)
+	nlinfo("VP: VarPath dest = %d", Destination.size());
+	for (uint i = 0; i < Destination.size(); i++)
 	{
-		nlinfo ("VP:  > '%s' '%s'", Destination[i].first.c_str(), Destination[i].second.c_str());
+		nlinfo("VP:  > '%s' '%s'", Destination[i].first.c_str(), Destination[i].second.c_str());
 	}
 }
 
@@ -201,16 +202,16 @@ NLMISC_CATEGORISED_COMMAND(nel, varPath, "Test a varpath (for debug purpose)", "
 	nlunreferenced(quiet);
 	nlunreferenced(human);
 
-	if(args.size() != 1) return false;
+	if (args.size() != 1) return false;
 
-	CVarPath vp (args[0]);
+	CVarPath vp(args[0]);
 
-	log.displayNL ("VarPath contains %d destination", vp.Destination.size ());
-	for (uint i = 0; i < vp.Destination.size (); i++)
+	log.displayNL("VarPath contains %d destination", vp.Destination.size());
+	for (uint i = 0; i < vp.Destination.size(); i++)
 	{
-		log.displayNL ("Dest '%s' value '%s'", vp.Destination[i].first.c_str(), vp.Destination[i].second.c_str());
+		log.displayNL("Dest '%s' value '%s'", vp.Destination[i].first.c_str(), vp.Destination[i].second.c_str());
 	}
-	log.displayNL ("End of varpath");
+	log.displayNL("End of varpath");
 
 	return true;
 }

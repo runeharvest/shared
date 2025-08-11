@@ -17,13 +17,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace EGSPD
-{
+namespace EGSPD {
 
 /* -----------------------------------------
-* Inline implementation of CPeople
-* ----------------------------------------- */
-inline const std::string&		CPeople::toString(TPeople v)
+ * Inline implementation of CPeople
+ * ----------------------------------------- */
+inline const std::string &CPeople::toString(TPeople v)
 {
 	if (v < 0 || v >= ___TPeople_useSize)
 	{
@@ -36,17 +35,17 @@ inline const std::string&		CPeople::toString(TPeople v)
 	}
 	return _StrTable[v];
 }
-inline CPeople::TPeople			CPeople::fromString(const std::string& v)
+inline CPeople::TPeople CPeople::fromString(const std::string &v)
 {
 	if (!_Initialised)
 	{
 		init();
 	}
-	if(v==_UnknownString)
+	if (v == _UnknownString)
 	{
 		return Unknown;
 	}
-	const std::map<std::string, TPeople>::const_iterator	it = _ValueMap.find(NLMISC::toLowerAscii(v));
+	const std::map<std::string, TPeople>::const_iterator it = _ValueMap.find(NLMISC::toLowerAscii(v));
 	if (it == _ValueMap.end())
 	{
 		nlwarning("TPeople::toString(): string '%s' is not matched, 'Unknown' enum value returned", v.c_str());
@@ -57,9 +56,9 @@ inline CPeople::TPeople			CPeople::fromString(const std::string& v)
 // End of inline implementation of CPeople
 
 /* -----------------------------------------
-* Inline implementation of CClassificationType
-* ----------------------------------------- */
-inline const std::string&		CClassificationType::toString(TClassificationType v)
+ * Inline implementation of CClassificationType
+ * ----------------------------------------- */
+inline const std::string &CClassificationType::toString(TClassificationType v)
 {
 	if (v < 0 || v >= ___TClassificationType_useSize)
 	{
@@ -72,17 +71,17 @@ inline const std::string&		CClassificationType::toString(TClassificationType v)
 	}
 	return _StrTable[v];
 }
-inline CClassificationType::TClassificationType	CClassificationType::fromString(const std::string& v)
+inline CClassificationType::TClassificationType CClassificationType::fromString(const std::string &v)
 {
 	if (!_Initialised)
 	{
 		init();
 	}
-	if(v==_UnknownString)
+	if (v == _UnknownString)
 	{
 		return Unknown;
 	}
-	const std::map<std::string, TClassificationType>::const_iterator	it = _ValueMap.find(NLMISC::toLowerAscii(v));
+	const std::map<std::string, TClassificationType>::const_iterator it = _ValueMap.find(NLMISC::toLowerAscii(v));
 	if (it == _ValueMap.end())
 	{
 		nlwarning("TClassificationType::toString(): string '%s' is not matched, 'Unknown' enum value returned", v.c_str());
@@ -91,6 +90,5 @@ inline CClassificationType::TClassificationType	CClassificationType::fromString(
 	return (*it).second;
 }
 // End of inline implementation of CClassificationType
-
 
 } // End of EGSPD

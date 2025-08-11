@@ -24,8 +24,7 @@
 #include "nel/misc/quat.h"
 #include <vector>
 
-namespace NLMISC
-{
+namespace NLMISC {
 class CRGBA;
 class IStream;
 struct EStream;
@@ -37,12 +36,12 @@ namespace NL3D {
 class CCluster;
 
 /**
-  * CPortal
-  *
-  * \author Matthieu Besson
-  * \author Nevrax France
-  * \date 2001
-  */
+ * CPortal
+ *
+ * \author Matthieu Besson
+ * \author Nevrax France
+ * \date 2001
+ */
 class CPortal
 {
 	/* ***********************************************
@@ -50,19 +49,17 @@ class CPortal
 	 *	It can be loaded/called through CAsyncFileManager for instance
 	 * ***********************************************/
 
-
 public:
-
 	CPortal();
 
 	/**
 	 * Clip the view pyramid (all planes pass through observer point) against the portal
 	 * \return false if the pyramid is completly clipped
 	 */
-	bool clipPyramid (NLMISC::CVector &observer, std::vector<NLMISC::CPlane> &pyramid);
+	bool clipPyramid(NLMISC::CVector &observer, std::vector<NLMISC::CPlane> &pyramid);
 
 	/// Return true if the vertex v is in front of the portal
-	bool isInFront (NLMISC::CVector &v);
+	bool isInFront(NLMISC::CVector &v);
 
 	/// Accessors
 	/// ---------
@@ -71,50 +68,48 @@ public:
 	void resetClusterLinks();
 
 	/// return false if more than 2 clusters added
-	bool setCluster (CCluster *cluster);
+	bool setCluster(CCluster *cluster);
 
 	/// return the number of clusters linked to the portal
-	uint8 getNbCluster ();
+	uint8 getNbCluster();
 
 	/// return the cluster linked to the portal
-	CCluster* getCluster (uint pos) { return _Clusters[pos]; }
+	CCluster *getCluster(uint pos) { return _Clusters[pos]; }
 
 	/// return false if the polygon is not convex
-	bool setPoly (const std::vector<NLMISC::CVector> &poly);
+	bool setPoly(const std::vector<NLMISC::CVector> &poly);
 
 	/// get this cluster poly in local coordinates
-	void getPoly (std::vector<NLMISC::CVector> &dest) const;
-	const std::vector<NLMISC::CVector> &getPoly()		{return _LocalPoly;}
+	void getPoly(std::vector<NLMISC::CVector> &dest) const;
+	const std::vector<NLMISC::CVector> &getPoly() { return _LocalPoly; }
 
 	/// Serial
-	void serial (NLMISC::IStream& f);
+	void serial(NLMISC::IStream &f);
 
-	void setWorldMatrix (const NLMISC::CMatrix &WM);
+	void setWorldMatrix(const NLMISC::CMatrix &WM);
 
+	void setName(const std::string &name) { _Name = name; }
 
-	void setName (const std::string &name) { _Name = name; }
+	std::string getName() const { return _Name; }
 
-	std::string getName () const { return _Name; }
-
-	void open (bool opened) { _Opened = opened; }
-	bool isOpened () { return _Opened; }
+	void open(bool opened) { _Opened = opened; }
+	bool isOpened() { return _Opened; }
 
 	//\name Sound related
 	//@{
-	void				setOcclusionModel(const std::string &occlusionModel);
-	const std::string	&getOcclusionModel();
-	NLMISC::TStringId	getOcclusionModelId();
-	void				setOpenOcclusionModel(const std::string &occlusionModel);
-	const std::string	&getOpenOcclusionModel();
-	NLMISC::TStringId	getOpenOcclusionModelId();
+	void setOcclusionModel(const std::string &occlusionModel);
+	const std::string &getOcclusionModel();
+	NLMISC::TStringId getOcclusionModelId();
+	void setOpenOcclusionModel(const std::string &occlusionModel);
+	const std::string &getOpenOcclusionModel();
+	NLMISC::TStringId getOpenOcclusionModelId();
 	//@}
 
 	/// return true if the portal clip the segment
-	bool				clipRay(const NLMISC::CVector &start, const NLMISC::CVector &end);
+	bool clipRay(const NLMISC::CVector &start, const NLMISC::CVector &end);
 
 private:
-
-	CCluster* _Clusters[2];
+	CCluster *_Clusters[2];
 
 	std::string _Name;
 	bool _Opened;
@@ -122,11 +117,10 @@ private:
 	std::vector<NLMISC::CVector> _LocalPoly;
 	std::vector<NLMISC::CVector> _Poly;
 
-//	std::string		_OcclusionModel;
-//	std::string		_OpenOcclusionModel;
-	NLMISC::TStringId		_OcclusionModelId;
-	NLMISC::TStringId		_OpenOcclusionModelId;
-
+	//	std::string		_OcclusionModel;
+	//	std::string		_OpenOcclusionModel;
+	NLMISC::TStringId _OcclusionModelId;
+	NLMISC::TStringId _OpenOcclusionModelId;
 
 	/// Friend class
 	friend class CInstanceGroup;
@@ -134,10 +128,7 @@ private:
 
 // ***************************************************************************
 
-
-
 } // NL3D
-
 
 #endif // NL_PORTAL_H
 

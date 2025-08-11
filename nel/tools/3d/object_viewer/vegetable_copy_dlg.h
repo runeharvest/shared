@@ -23,73 +23,69 @@
 // vegetable_copy_dlg.h : header file
 //
 
-
-class	CVegetableDlg;
-
+class CVegetableDlg;
 
 /////////////////////////////////////////////////////////////////////////////
 // CVegetableCopyDlg dialog
 
 class CVegetableCopyDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CVegetableCopyDlg(CVegetableDlg *vegetableDlg, CWnd* pParent = NULL);   // standard constructor
+	CVegetableCopyDlg(CVegetableDlg *vegetableDlg, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CVegetableCopyDlg)
-	enum { IDD = IDD_VEGETABLE_COPY };
-	CListBox	VegetableList;
-	CButton	CheckSubsetCopy;
-	CButton	CheckScaleZ;
-	CButton	CheckScaleXY;
-	CButton	CheckRotateZ;
-	CButton	CheckRotateY;
-	CButton	CheckRotateX;
-	CButton	CheckMesh;
-	CButton	CheckMaxDensity;
-	CButton	CheckDistance;
-	CButton	CheckDensity;
-	CButton	CheckColorSetup;
-	CButton	CheckColorNoise;
-	CButton	CheckBendPhase;
-	CButton	CheckBendFactor;
-	CButton	CheckAngleSetup;
-	BOOL	SubsetCopy;
-	BOOL	ScaleZ;
-	BOOL	ScaleXY;
-	BOOL	RotateZ;
-	BOOL	RotateY;
-	BOOL	RotateX;
-	BOOL	Mesh;
-	BOOL	MaxDensity;
-	BOOL	Distance;
-	BOOL	Density;
-	BOOL	ColorSetup;
-	BOOL	ColorNoise;
-	BOOL	BendPhase;
-	BOOL	BendFactor;
-	BOOL	AngleSetup;
-	int		VegetableSelected;
+	enum
+	{
+		IDD = IDD_VEGETABLE_COPY
+	};
+	CListBox VegetableList;
+	CButton CheckSubsetCopy;
+	CButton CheckScaleZ;
+	CButton CheckScaleXY;
+	CButton CheckRotateZ;
+	CButton CheckRotateY;
+	CButton CheckRotateX;
+	CButton CheckMesh;
+	CButton CheckMaxDensity;
+	CButton CheckDistance;
+	CButton CheckDensity;
+	CButton CheckColorSetup;
+	CButton CheckColorNoise;
+	CButton CheckBendPhase;
+	CButton CheckBendFactor;
+	CButton CheckAngleSetup;
+	BOOL SubsetCopy;
+	BOOL ScaleZ;
+	BOOL ScaleXY;
+	BOOL RotateZ;
+	BOOL RotateY;
+	BOOL RotateX;
+	BOOL Mesh;
+	BOOL MaxDensity;
+	BOOL Distance;
+	BOOL Density;
+	BOOL ColorSetup;
+	BOOL ColorNoise;
+	BOOL BendPhase;
+	BOOL BendFactor;
+	BOOL AngleSetup;
+	int VegetableSelected;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CVegetableCopyDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
+	CVegetableDlg *_VegetableDlg;
 
-	
-	CVegetableDlg	*_VegetableDlg;
-
-
-	void	enableChecks(bool enable);
-
+	void enableChecks(bool enable);
 
 	// Generated message map functions
 	//{{AFX_MSG(CVegetableCopyDlg)
@@ -108,28 +104,28 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	// LastSetup, stored and restored at each init / destroy.
-	struct	CLastSetup
+	struct CLastSetup
 	{
-		BOOL	SubsetCopy;
-		BOOL	ScaleZ;
-		BOOL	ScaleXY;
-		BOOL	RotateZ;
-		BOOL	RotateY;
-		BOOL	RotateX;
-		BOOL	Mesh;
-		BOOL	MaxDensity;
-		BOOL	Distance;
-		BOOL	Density;
-		BOOL	ColorSetup;
-		BOOL	ColorNoise;
-		BOOL	BendPhase;
-		BOOL	BendFactor;
-		BOOL	AngleSetup;
+		BOOL SubsetCopy;
+		BOOL ScaleZ;
+		BOOL ScaleXY;
+		BOOL RotateZ;
+		BOOL RotateY;
+		BOOL RotateX;
+		BOOL Mesh;
+		BOOL MaxDensity;
+		BOOL Distance;
+		BOOL Density;
+		BOOL ColorSetup;
+		BOOL ColorNoise;
+		BOOL BendPhase;
+		BOOL BendFactor;
+		BOOL AngleSetup;
 
 		CLastSetup();
 	};
 
-	static	CLastSetup		_LastSetup;
+	static CLastSetup _LastSetup;
 };
 
 //{{AFX_INSERT_LOCATION}}

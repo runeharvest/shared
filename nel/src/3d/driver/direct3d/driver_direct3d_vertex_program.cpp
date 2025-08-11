@@ -28,12 +28,12 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 
-CVertexProgamDrvInfosD3D::CVertexProgamDrvInfosD3D(IDriver *drv, ItGPUPrgDrvInfoPtrList it) : IProgramDrvInfos (drv, it)
+CVertexProgamDrvInfosD3D::CVertexProgamDrvInfosD3D(IDriver *drv, ItGPUPrgDrvInfoPtrList it)
+    : IProgramDrvInfos(drv, it)
 {
 	H_AUTO_D3D(CVertexProgamDrvInfosD3D_CVertexProgamDrvInfosD3D)
 	Shader = NULL;
@@ -50,25 +50,24 @@ CVertexProgamDrvInfosD3D::~CVertexProgamDrvInfosD3D()
 
 // ***************************************************************************
 
-bool CDriverD3D::supportVertexProgram (CVertexProgram::TProfile profile) const
+bool CDriverD3D::supportVertexProgram(CVertexProgram::TProfile profile) const
 {
-	H_AUTO_D3D(CDriverD3D_supportVertexProgram )
+	H_AUTO_D3D(CDriverD3D_supportVertexProgram)
 	return (profile == CVertexProgram::nelvp) && _VertexProgram;
 }
 
 // ***************************************************************************
 
-bool CDriverD3D::isVertexProgramEmulated () const
+bool CDriverD3D::isVertexProgramEmulated() const
 {
-	H_AUTO_D3D(CDriverD3D_isVertexProgramEmulated )
+	H_AUTO_D3D(CDriverD3D_isVertexProgramEmulated)
 	// Pure HAL driver, no emulation available
 	return false;
 }
 
 // ***************************************************************************
 
-static const char *instrToName[] =
-{
+static const char *instrToName[] = {
 	"mov  ",
 	"mov  ",
 	"mul  ",
@@ -90,8 +89,7 @@ static const char *instrToName[] =
 
 // ***************************************************************************
 
-static const char *outputRegisterToName[] =
-{
+static const char *outputRegisterToName[] = {
 	"Pos",
 	"D0",
 	"D1",
@@ -120,10 +118,10 @@ void dumpWriteMask(uint mask, std::string &out)
 		return;
 	}
 	out = ".";
-	if (mask & 1) out +="x";
-	if (mask & 2) out +="y";
-	if (mask & 4) out +="z";
-	if (mask & 8) out +="w";
+	if (mask & 1) out += "x";
+	if (mask & 2) out += "y";
+	if (mask & 4) out += "z";
+	if (mask & 8) out += "w";
 }
 
 // ***************************************************************************
@@ -137,21 +135,20 @@ void dumpSwizzle(const CVPSwizzle &swz, std::string &out)
 		return;
 	}
 	out = ".";
-	for(uint k = 0; k < 4; ++k)
+	for (uint k = 0; k < 4; ++k)
 	{
-		switch(swz.Comp[k])
+		switch (swz.Comp[k])
 		{
-			case CVPSwizzle::X: out += "x"; break;
-			case CVPSwizzle::Y: out += "y"; break;
-			case CVPSwizzle::Z: out += "z"; break;
-			case CVPSwizzle::W: out += "w"; break;
-			default:
-				nlassert(0);
+		case CVPSwizzle::X: out += "x"; break;
+		case CVPSwizzle::Y: out += "y"; break;
+		case CVPSwizzle::Z: out += "z"; break;
+		case CVPSwizzle::W: out += "w"; break;
+		default:
+			nlassert(0);
 			break;
 		}
 		if (swz.isScalar() && k == 0) break;
 	}
-
 }
 
 // ***************************************************************************
@@ -160,27 +157,27 @@ void dumpOperand(const CVPOperand &op, bool destOperand, std::string &out, set<u
 {
 	H_AUTO_D3D(dumpOperand)
 	out = op.Negate ? " -" : " ";
-	switch(op.Type)
+	switch (op.Type)
 	{
-		case CVPOperand::Variable: out += "r" + NLMISC::toString(op.Value.VariableValue); break;
-		case CVPOperand::Constant:
-			out += "c[";
-			if (op.Indexed)
-			{
-				out += "a0.x + ";
-			}
-			out += NLMISC::toString(op.Value.ConstantValue) + "]";
+	case CVPOperand::Variable: out += "r" + NLMISC::toString(op.Value.VariableValue); break;
+	case CVPOperand::Constant:
+		out += "c[";
+		if (op.Indexed)
+		{
+			out += "a0.x + ";
+		}
+		out += NLMISC::toString(op.Value.ConstantValue) + "]";
 		break;
-		case CVPOperand::InputRegister:
-			out += "v" + NLMISC::toString((uint) op.Value.InputRegisterValue);
-			inputs.insert (op.Value.InputRegisterValue);
+	case CVPOperand::InputRegister:
+		out += "v" + NLMISC::toString((uint)op.Value.InputRegisterValue);
+		inputs.insert(op.Value.InputRegisterValue);
 		break;
-		case CVPOperand::OutputRegister:
-			nlassert(op.Value.OutputRegisterValue < CVPOperand::OutputRegisterCount);
-			out += "o" + std::string(outputRegisterToName[op.Value.OutputRegisterValue]);
+	case CVPOperand::OutputRegister:
+		nlassert(op.Value.OutputRegisterValue < CVPOperand::OutputRegisterCount);
+		out += "o" + std::string(outputRegisterToName[op.Value.OutputRegisterValue]);
 		break;
-		case CVPOperand::AddressRegister:
-			out += "a0.x";
+	case CVPOperand::AddressRegister:
+		out += "a0.x";
 		break;
 	}
 	std::string suffix;
@@ -208,20 +205,19 @@ void dumpInstr(const CVPInstruction &instr, std::string &out, set<uint> &inputs)
 	std::string destOperand;
 	dumpOperand(instr.Dest, true, destOperand, inputs);
 	out += destOperand;
-	for(uint k = 0; k < nbOp; ++k)
+	for (uint k = 0; k < nbOp; ++k)
 	{
 		out += ", ";
 		std::string srcOperand;
 		dumpOperand(instr.getSrc(k), false, srcOperand, inputs);
 		out += srcOperand;
 	}
-	out +="; \n";
+	out += "; \n";
 }
 
 // ***************************************************************************
 
-static const char *inputToDecl[CVPOperand::InputRegisterCount] =
-{
+static const char *inputToDecl[CVPOperand::InputRegisterCount] = {
 	"dcl_position v0",
 	"dcl_blendweight v1",
 	"dcl_normal v2",
@@ -249,7 +245,7 @@ void dump(const CVPParser::TProgram &prg, std::string &dest)
 	set<uint> inputs;
 
 	string program;
-	for(uint k = 0; k < prg.size(); ++k)
+	for (uint k = 0; k < prg.size(); ++k)
 	{
 		std::string instr;
 		dumpInstr(prg[k], instr, inputs);
@@ -289,7 +285,7 @@ bool CDriverD3D::compileVertexProgram(NL3D::CVertexProgram *program)
 			return false;
 		}
 
-		_GPUPrgDrvInfos.push_front (NULL);
+		_GPUPrgDrvInfos.push_front(NULL);
 		ItGPUPrgDrvInfoPtrList itTex = _GPUPrgDrvInfos.begin();
 		CVertexProgamDrvInfosD3D *drvInfo;
 		*itTex = drvInfo = new CVertexProgamDrvInfosD3D(this, itTex);
@@ -298,8 +294,8 @@ bool CDriverD3D::compileVertexProgram(NL3D::CVertexProgram *program)
 		program->m_DrvInfo = *itTex;
 
 		/** Check with our parser if the program will works with other implemented extensions, too. (EXT_vertex_shader ..).
-		  * There are some incompatibilities.
-		  */
+		 * There are some incompatibilities.
+		 */
 		CVPParser parser;
 		CVPParser::TProgram parsedProgram;
 		std::string errorOutput;
@@ -308,30 +304,30 @@ bool CDriverD3D::compileVertexProgram(NL3D::CVertexProgram *program)
 		{
 			nlwarning("Unable to parse a vertex program :");
 			nlwarning(errorOutput.c_str());
-			#ifdef NL_DEBUG_D3D
-				nlassert(0);
-			#endif // NL_DEBUG_D3D
+#ifdef NL_DEBUG_D3D
+			nlassert(0);
+#endif // NL_DEBUG_D3D
 			return false;
 		}
 
-		// tmp fix for Radeon 8500/9000/9200
-		// Currently they hang when PaletteSkin / SkinWeight are present in the vertex declaration, but not used
-		// so disable them in the vertex declaration
-		// We don't use these component in vertex programs currently..
-		#ifdef NL_DEBUG
-			for(uint k = 0; k < parsedProgram.size(); ++k)
+// tmp fix for Radeon 8500/9000/9200
+// Currently they hang when PaletteSkin / SkinWeight are present in the vertex declaration, but not used
+// so disable them in the vertex declaration
+// We don't use these component in vertex programs currently..
+#ifdef NL_DEBUG
+		for (uint k = 0; k < parsedProgram.size(); ++k)
+		{
+			for (uint l = 0; l < parsedProgram[k].getNumUsedSrc(); ++l)
 			{
-				for(uint l = 0; l < parsedProgram[k].getNumUsedSrc(); ++l)
+				const CVPOperand &op = parsedProgram[k].getSrc(l);
+				if (op.Type == CVPOperand::InputRegister)
 				{
-					const CVPOperand &op = parsedProgram[k].getSrc(l);
-					if (op.Type == CVPOperand::InputRegister)
-					{
-						nlassert(op.Value.InputRegisterValue != CVPOperand::IWeight);
-						nlassert(op.Value.InputRegisterValue != CVPOperand::IPaletteSkin);
-					}
+					nlassert(op.Value.InputRegisterValue != CVPOperand::IWeight);
+					nlassert(op.Value.InputRegisterValue != CVPOperand::IPaletteSkin);
 				}
 			}
-		#endif
+		}
+#endif
 
 		// Dump the vertex program
 		std::string dest;
@@ -342,23 +338,23 @@ bool CDriverD3D::compileVertexProgram(NL3D::CVertexProgram *program)
 		string::size_type lineEnd;
 		while ((lineEnd = dest.find('\n', lineBegin)) != string::npos)
 		{
-			nlinfo(dest.substr (lineBegin, lineEnd-lineBegin).c_str());
-			lineBegin = lineEnd+1;
+			nlinfo(dest.substr(lineBegin, lineEnd - lineBegin).c_str());
+			lineBegin = lineEnd + 1;
 		}
-		nlinfo(dest.substr (lineBegin, lineEnd-lineBegin).c_str());
+		nlinfo(dest.substr(lineBegin, lineEnd - lineBegin).c_str());
 #endif // NL_DEBUG_D3D
 
 		LPD3DXBUFFER pShader;
 		LPD3DXBUFFER pErrorMsgs;
-		if (D3DXAssembleShader (dest.c_str(), (UINT)dest.size(), NULL, NULL, 0, &pShader, &pErrorMsgs) == D3D_OK)
+		if (D3DXAssembleShader(dest.c_str(), (UINT)dest.size(), NULL, NULL, 0, &pShader, &pErrorMsgs) == D3D_OK)
 		{
-			if (_DeviceInterface->CreateVertexShader((DWORD*)pShader->GetBufferPointer(), &(getVertexProgramD3D(*program)->Shader)) != D3D_OK)
+			if (_DeviceInterface->CreateVertexShader((DWORD *)pShader->GetBufferPointer(), &(getVertexProgramD3D(*program)->Shader)) != D3D_OK)
 				return false;
 		}
 		else
 		{
-			nlwarning ("Can't assemble vertex program:");
-			nlwarning ((const char*)pErrorMsgs->GetBufferPointer());
+			nlwarning("Can't assemble vertex program:");
+			nlwarning((const char *)pErrorMsgs->GetBufferPointer());
 			return false;
 		}
 
@@ -374,9 +370,9 @@ bool CDriverD3D::compileVertexProgram(NL3D::CVertexProgram *program)
 
 // ***************************************************************************
 
-bool CDriverD3D::activeVertexProgram (CVertexProgram *program)
+bool CDriverD3D::activeVertexProgram(CVertexProgram *program)
 {
-	H_AUTO_D3D(CDriverD3D_activeVertexProgram )
+	H_AUTO_D3D(CDriverD3D_activeVertexProgram)
 	if (_DisableHardwareVertexProgram)
 		return false;
 
@@ -385,9 +381,9 @@ bool CDriverD3D::activeVertexProgram (CVertexProgram *program)
 	{
 		if (!CDriverD3D::compileVertexProgram(program)) return false;
 
-		CVertexProgamDrvInfosD3D *info = NLMISC::safe_cast<CVertexProgamDrvInfosD3D *>((IProgramDrvInfos*)program->m_DrvInfo);
+		CVertexProgamDrvInfosD3D *info = NLMISC::safe_cast<CVertexProgamDrvInfosD3D *>((IProgramDrvInfos *)program->m_DrvInfo);
 		_VertexProgramUser = program;
-		setVertexProgram (info->Shader, program);
+		setVertexProgram(info->Shader, program);
 
 		/* D3DRS_FOGSTART and D3DRS_FOGEND must be set with [1, 0] else the fog doesn't work properly on VertexShader and non-VertexShader objects
 		(random fog flicking) with Geforce4 TI 4200 (drivers 53.03 and 45.23). The other cards seam to interpret the "oFog"'s values using D3DRS_FOGSTART,
@@ -396,17 +392,17 @@ bool CDriverD3D::activeVertexProgram (CVertexProgram *program)
 		 */
 		float z = 0;
 		float o = 1;
-		setRenderState (D3DRS_FOGSTART, *((DWORD*) (&o)));
-		setRenderState (D3DRS_FOGEND, *((DWORD*) (&z)));
+		setRenderState(D3DRS_FOGSTART, *((DWORD *)(&o)));
+		setRenderState(D3DRS_FOGEND, *((DWORD *)(&z)));
 	}
 	else
 	{
-		setVertexProgram (NULL, NULL);
+		setVertexProgram(NULL, NULL);
 		_VertexProgramUser = NULL;
 
 		// Set the old fog range
-		setRenderState (D3DRS_FOGSTART, *((DWORD*) (&_FogStart)));
-		setRenderState (D3DRS_FOGEND, *((DWORD*) (&_FogEnd)));
+		setRenderState(D3DRS_FOGSTART, *((DWORD *)(&_FogStart)));
+		setRenderState(D3DRS_FOGEND, *((DWORD *)(&_FogEnd)));
 	}
 
 	return true;

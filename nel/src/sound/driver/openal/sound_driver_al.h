@@ -23,21 +23,21 @@
 #include "nel/sound/driver/sound_driver.h"
 
 namespace NLSOUND {
-	class CBufferAL;
-	class CListenerAL;
-	class CSourceAL;
-	class CEffectAL;
+class CBufferAL;
+class CListenerAL;
+class CSourceAL;
+class CEffectAL;
 
 // alGenBuffers, alGenSources
-//typedef ALAPI ALvoid ALAPIENTRY (*TGenFunctionAL) ( ALsizei, ALuint* );
-typedef void (*TGenFunctionAL) ( ALsizei, ALuint* );
+// typedef ALAPI ALvoid ALAPIENTRY (*TGenFunctionAL) ( ALsizei, ALuint* );
+typedef void (*TGenFunctionAL)(ALsizei, ALuint *);
 
 // alDeleteBuffers
-typedef void (*TDeleteFunctionAL) ( ALsizei, const ALuint* );
+typedef void (*TDeleteFunctionAL)(ALsizei, const ALuint *);
 
 // alIsBuffer, alIsSource
-//typedef ALAPI ALboolean ALAPIENTRY (*TTestFunctionAL) ( ALuint );
-typedef ALboolean (*TTestFunctionAL) ( ALuint );
+// typedef ALAPI ALboolean ALAPIENTRY (*TTestFunctionAL) ( ALuint );
+typedef ALboolean (*TTestFunctionAL)(ALuint);
 
 #if !FINAL_VERSION
 void alTestWarning(const char *src);
@@ -93,8 +93,8 @@ private:
 	float _RolloffFactor; // ***todo*** move
 	/// Driver options
 	TSoundOptions _Options;
-public:
 
+public:
 	/// Constructor
 	CSoundDriverAL(ISoundDriver::IStringMapperProvider *stringMapper);
 	/// Destructor
@@ -115,22 +115,21 @@ public:
 	virtual bool getOption(TSoundOptions option);
 
 	/// Create a sound buffer
-	virtual	IBuffer *createBuffer();
+	virtual IBuffer *createBuffer();
 	/// Create the listener instance
-	virtual	IListener *createListener();
+	virtual IListener *createListener();
 	/// Create a source
-	virtual	ISource *createSource();
+	virtual ISource *createSource();
 	/// Create a reverb effect
 	virtual IReverbEffect *createReverbEffect();
 	/// Return the maximum number of sources that can created
 	virtual uint countMaxSources();
 	/// Return the maximum number of effects that can be created
 	virtual uint countMaxEffects();
-	
+
 	virtual void startBench();
 	virtual void endBench();
 	virtual void displayBench(NLMISC::CLog *log);
-
 
 	/// Change the rolloff factor and apply to all sources
 	void applyRolloffFactor(float f);
@@ -139,7 +138,7 @@ public:
 	virtual void commit3DChanges();
 
 	/// Write information about the driver to the output stream.
-	virtual void writeProfile(std::string& out);
+	virtual void writeProfile(std::string &out);
 
 	/// Remove a buffer
 	void removeBuffer(CBufferAL *buffer);
@@ -154,28 +153,25 @@ public:
 	virtual bool isMusicExtensionSupported(const std::string & /* extension */) const { return false; }
 
 protected:
-
 	/// Allocate nb new buffers or sources
-	void					allocateNewItems( TGenFunctionAL algenfunc, TTestFunctionAL altestfunc,
-											  std::vector<ALuint>& names, uint index, uint nb );
-	
+	void allocateNewItems(TGenFunctionAL algenfunc, TTestFunctionAL altestfunc,
+	    std::vector<ALuint> &names, uint index, uint nb);
+
 	/// Generate nb buffers
-	void					generateItems( TGenFunctionAL algenfunc, TTestFunctionAL altestfunc, uint nb, ALuint *array );
+	void generateItems(TGenFunctionAL algenfunc, TTestFunctionAL altestfunc, uint nb, ALuint *array);
 
 	/// Remove names of deleted items and return the number of valid items
-	uint					compactAliveNames( std::vector<ALuint>& names, TTestFunctionAL testfunc );
+	uint compactAliveNames(std::vector<ALuint> &names, TTestFunctionAL testfunc);
 
 	/// Create a sound buffer or a sound source
-	ALuint					createItem( TGenFunctionAL algenfunc, TTestFunctionAL altestfunc,
-										std::vector<ALuint>& names, uint& index, uint allocrate );
+	ALuint createItem(TGenFunctionAL algenfunc, TTestFunctionAL altestfunc,
+	    std::vector<ALuint> &names, uint &index, uint allocrate);
 
 	/// Delete a buffer or a source
-	bool					deleteItem( ALuint name, TDeleteFunctionAL aldeletefunc, std::vector<ALuint>& names );
+	bool deleteItem(ALuint name, TDeleteFunctionAL aldeletefunc, std::vector<ALuint> &names);
 };
 
-
 } // NLSOUND
-
 
 #endif // NL_SOUND_DRIVER_AL_H
 

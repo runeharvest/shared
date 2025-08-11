@@ -22,16 +22,13 @@
 
 #include <string>
 
-
 using namespace NLMISC;
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 // ***************************************************************************
@@ -39,15 +36,13 @@ namespace NL3D
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
-CTransformShape		*IShape::createInstance(CScene &scene)
+CTransformShape *IShape::createInstance(CScene &scene)
 {
-	CTransformShape		*mo= (CTransformShape*)scene.createModel(NL3D::TransformShapeId);
-	mo->Shape= this;
+	CTransformShape *mo = (CTransformShape *)scene.createModel(NL3D::TransformShapeId);
+	mo->Shape = this;
 	return mo;
 }
-
 
 // ***************************************************************************
 IShape::IShape()
@@ -57,27 +52,24 @@ IShape::IShape()
 	 *	It can be loaded/called through CAsyncFileManager for instance
 	 * ***********************************************/
 
-	_DistMax= -1;
+	_DistMax = -1;
 }
 
-
 // ***************************************************************************
-void			IShape::setDistMax(float distMax)
+void IShape::setDistMax(float distMax)
 {
-	_DistMax= distMax;
+	_DistMax = distMax;
 	// normalize infinite setup.
-	if(distMax<0)
-		_DistMax= -1;
+	if (distMax < 0)
+		_DistMax = -1;
 }
 
-
 // ***************************************************************************
-void			IShape::getAABBox(CAABBox &bbox) const
+void IShape::getAABBox(CAABBox &bbox) const
 {
 	bbox.setCenter(CVector::Null);
 	bbox.setHalfSize(CVector::Null);
 }
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -85,44 +77,39 @@ void			IShape::getAABBox(CAABBox &bbox) const
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
-CShapeStream::CShapeStream ()
+CShapeStream::CShapeStream()
 {
-	_Shape=NULL;
+	_Shape = NULL;
 }
 
-
 // ***************************************************************************
-CShapeStream::CShapeStream (IShape* shape)
+CShapeStream::CShapeStream(IShape *shape)
 {
 	// Set the pointer
-	setShapePointer (shape);
+	setShapePointer(shape);
 }
 
-
 // ***************************************************************************
-void CShapeStream::setShapePointer (IShape* shape)
+void CShapeStream::setShapePointer(IShape *shape)
 {
-	_Shape=shape;
+	_Shape = shape;
 }
 
-
 // ***************************************************************************
-IShape*	CShapeStream::getShapePointer () const
+IShape *CShapeStream::getShapePointer() const
 {
 	return _Shape;
 }
-
 
 // ***************************************************************************
 void CShapeStream::serial(NLMISC::IStream &f)
 {
 	// First, serial an header or checking if it is correct
-	f.serialCheck (NELID("PAHS"));
+	f.serialCheck(NELID("PAHS"));
 
 	// Then, serial the shape
-	f.serialPolyPtr (_Shape);
+	f.serialPolyPtr(_Shape);
 
 	// Ok, it's done
 }

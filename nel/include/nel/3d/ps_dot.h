@@ -21,9 +21,7 @@
 #include "nel/3d/vertex_buffer.h"
 #include "nel/3d/particle_system.h"
 
-
 namespace NL3D {
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,7 +43,7 @@ public:
 
 	NLMISC_DECLARE_CLASS(CPSDot);
 
-	///serialisation
+	/// serialisation
 	void serial(NLMISC::IStream &f);
 
 	/// return true if there are transparent faces in the object
@@ -55,7 +53,7 @@ public:
 	virtual bool hasOpaqueFaces(void);
 
 	/// from CPSParticle : return true if there are lightable faces in the object
-	virtual bool hasLightableFaces() { 	return false; }
+	virtual bool hasLightableFaces() { return false; }
 
 	/// return the max number of faces needed for display. This is needed for LOD balancing
 	virtual uint32 getNumWantedTris() const;
@@ -73,7 +71,7 @@ public:
 protected:
 	virtual void draw(bool opaque);
 	virtual CPSLocated *getColorOwner(void) { return _Owner; }
-	void	init(void);
+	void init(void);
 	static CVertexBuffer _DotVb;
 	static CVertexBuffer _DotVbColor;
 
@@ -81,7 +79,7 @@ protected:
 	virtual void updateMatAndVbForColor(void);
 
 	/** Set the max number of dot
-	*/
+	 */
 	void resize(uint32 size);
 
 	/// we don't save datas so it does nothing for now
@@ -89,13 +87,9 @@ protected:
 
 	/// we don't save datas so it does nothing for now
 	void deleteElement(uint32);
-
-
 };
 
-
 } // NL3D
-
 
 #endif // NL_PS_DOT_H
 

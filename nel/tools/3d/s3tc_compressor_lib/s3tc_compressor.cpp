@@ -20,9 +20,8 @@
 
 using namespace std;
 
-
 // ***************************************************************************
-static void		compressMipMap(uint8 *pixSrc, sint width, sint height, vector<uint8>	&compdata, CS3TCCompressor::DDS_HEADER &dest, sint algo)
+static void compressMipMap(uint8 *pixSrc, sint width, sint height, vector<uint8> &compdata, CS3TCCompressor::DDS_HEADER &dest, sint algo)
 {
 	// Filling DDSURFACEDESC structure for output
 	//===========================================
@@ -37,22 +36,22 @@ static void		compressMipMap(uint8 *pixSrc, sint width, sint height, vector<uint8
 
 	// Setting flags
 	int flags = squish::kColourIterativeClusterFit; // for best quality
-	switch(algo)
+	switch (algo)
 	{
-		case DXT1:
-		case DXT1A:
-			flags |= squish::kDxt1;
-			dest.ddpf.dwFourCC = MAKEFOURCC('D', 'X', 'T', '1');
-			// TODO: add special headers flags for DXTC1a
-			break;
-		case DXT3:
-			flags |= squish::kDxt3;
-			dest.ddpf.dwFourCC = MAKEFOURCC('D', 'X', 'T', '3');
-			break;
-		case DXT5:
-			flags |= squish::kDxt5;
-			dest.ddpf.dwFourCC = MAKEFOURCC('D', 'X', 'T', '5');
-			break;
+	case DXT1:
+	case DXT1A:
+		flags |= squish::kDxt1;
+		dest.ddpf.dwFourCC = MAKEFOURCC('D', 'X', 'T', '1');
+		// TODO: add special headers flags for DXTC1a
+		break;
+	case DXT3:
+		flags |= squish::kDxt3;
+		dest.ddpf.dwFourCC = MAKEFOURCC('D', 'X', 'T', '3');
+		break;
+	case DXT5:
+		flags |= squish::kDxt5;
+		dest.ddpf.dwFourCC = MAKEFOURCC('D', 'X', 'T', '5');
+		break;
 	}
 
 	// Encoding
@@ -62,7 +61,7 @@ static void		compressMipMap(uint8 *pixSrc, sint width, sint height, vector<uint8
 	compdata.resize(dest.dwLinearSize);
 	// Go!
 #ifdef SQUISH_COMPRESS_HAS_METRIC
-	float weight[3] = {0.3086f, 0.6094f, 0.0820f};
+	float weight[3] = { 0.3086f, 0.6094f, 0.0820f };
 	squish::CompressImage(pixSrc, width, height, &(*compdata.begin()), flags, weight);
 #else
 	squish::CompressImage(pixSrc, width, height, &(*compdata.begin()), flags);
@@ -162,63 +161,57 @@ static void		compressMipMap(uint8 *pixSrc, sint width, sint height, vector<uint8
 		}
 	}
 #endif
-	
 }
-
-
 
 // ***************************************************************************
 CS3TCCompressor::CS3TCCompressor()
 {
 }
 
-
 // ***************************************************************************
-void		CS3TCCompressor::compress(const NLMISC::CBitmap &bmpSrc, bool optMipMap, uint algo, NLMISC::IStream &output)
+void CS3TCCompressor::compress(const NLMISC::CBitmap &bmpSrc, bool optMipMap, uint algo, NLMISC::IStream &output)
 {
-	vector<uint8>		CompressedMipMaps;
-	DDS_HEADER			dest;
-	NLMISC::CBitmap		picSrc= bmpSrc;
+	vector<uint8> CompressedMipMaps;
+	DDS_HEADER dest;
+	NLMISC::CBitmap picSrc = bmpSrc;
 
 	// initialize DDS_HEADER
 	memset(&dest, 0, sizeof(dest));
 
 	// For all mipmaps, compress.
-	if(optMipMap)
+	if (optMipMap)
 	{
 		// Build the mipmaps.
 		picSrc.buildMipMaps();
 	}
-	for(sint mp= 0;mp<(sint)picSrc.getMipMapCount();mp++)
+	for (sint mp = 0; mp < (sint)picSrc.getMipMapCount(); mp++)
 	{
-		uint8	*pixDest;
-		uint8	*pixSrc= picSrc.getPixels(mp).getPtr();
-		sint	w= picSrc.getWidth(mp);
-		sint	h= picSrc.getHeight(mp);
-		vector<uint8>	compdata;
-		DDS_HEADER	temp;
+		uint8 *pixDest;
+		uint8 *pixSrc = picSrc.getPixels(mp).getPtr();
+		sint w = picSrc.getWidth(mp);
+		sint h = picSrc.getHeight(mp);
+		vector<uint8> compdata;
+		DDS_HEADER temp;
 		compressMipMap(pixSrc, w, h, compdata, temp, algo);
 		// Copy the result of the base dds in the dest.
-		if(mp==0)
-			dest= temp;
+		if (mp == 0)
+			dest = temp;
 
 		// Append this data to the global data.
-		uint	delta= (uint)CompressedMipMaps.size();
-		CompressedMipMaps.resize(CompressedMipMaps.size()+compdata.size());
-		pixDest= &(*CompressedMipMaps.begin())+ delta;
-		memcpy( pixDest, &(*compdata.begin()), compdata.size());
+		uint delta = (uint)CompressedMipMaps.size();
+		CompressedMipMaps.resize(CompressedMipMaps.size() + compdata.size());
+		pixDest = &(*CompressedMipMaps.begin()) + delta;
+		memcpy(pixDest, &(*compdata.begin()), compdata.size());
 	}
-
 
 	// Setting Nb MipMap.
 	dest.dwFlags |= DDSD_MIPMAPCOUNT;
 	dest.dwCaps |= DDSCAPS_MIPMAP;
 	dest.dwMipMapCount = picSrc.getMipMapCount();
 
-
 	// Saving DDS file
 	//=================
-	output.serialBuffer((uint8*)std::string("DDS ").c_str(),4);
-	output.serialBuffer((uint8*) &dest, sizeof(dest));
+	output.serialBuffer((uint8 *)std::string("DDS ").c_str(), 4);
+	output.serialBuffer((uint8 *)&dest, sizeof(dest));
 	output.serialBuffer(&(*CompressedMipMaps.begin()), (uint)CompressedMipMaps.size());
 }

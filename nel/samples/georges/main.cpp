@@ -41,7 +41,7 @@
 #include "nel/georges/load_form.h"
 
 #ifndef GF_DIR
-#       define GF_DIR "."
+#define GF_DIR "."
 #endif
 
 struct TPositionData
@@ -54,18 +54,18 @@ struct TPositionData
 		f.serial(X);
 		f.serial(Y);
 		f.serial(Z);
-	}	
+	}
 };
 
 struct TSampleConfig
 {
 	/// Load a form, if necessary, and store its data in the members of this class.
-	void readGeorges (const NLMISC::CSmartPtr<NLGEORGES::UForm> &form, const NLMISC::CSheetId &sheetId)
+	void readGeorges(const NLMISC::CSmartPtr<NLGEORGES::UForm> &form, const NLMISC::CSheetId &sheetId)
 	{
 		readForm(form);
 	}
 
-	void readGeorges (const NLMISC::CSmartPtr<NLGEORGES::UForm> &form, const std::string &sheetId)
+	void readGeorges(const NLMISC::CSmartPtr<NLGEORGES::UForm> &form, const std::string &sheetId)
 	{
 		readForm(form);
 	}
@@ -80,20 +80,22 @@ struct TSampleConfig
 		root.getValueByName(TestVal1, ".TestVal1");
 		root.getValueByName(TestVal2, ".TestVal2");
 
-		root.getValueByName(PosData.X,"PositionData.x");
-		root.getValueByName(PosData.Y,"PositionData.y");
-		root.getValueByName(PosData.Z,"PositionData.z");
+		root.getValueByName(PosData.X, "PositionData.x");
+		root.getValueByName(PosData.Y, "PositionData.y");
+		root.getValueByName(PosData.Z, "PositionData.z");
 
 		// Get the array called "TestArray"
 		NLGEORGES::UFormElm *testArray;
 		root.getNodeByName(&testArray, ".TestArray");
-		if(testArray != NULL) {
+		if (testArray != NULL)
+		{
 			// Get the size of the array.
 			uint size;
 			testArray->getArraySize(size);
 
 			// Cycle through the atoms in the array
-			for(uint idx=0 ; idx<size ; idx++) {
+			for (uint idx = 0; idx < size; idx++)
+			{
 				std::string arrayValue;
 
 				// Get the value of the array.
@@ -119,7 +121,6 @@ struct TSampleConfig
 	/// This is called whenever the loader needs to remove an old sheet.
 	void removed()
 	{
-
 	}
 
 	/// This is used to make sure that changes in form/loader versions are correctly handled. This must be > 0.
@@ -146,12 +147,14 @@ int main(void)
 
 	NLMISC::CPath::addSearchPath(GF_DIR, false, false);
 
-	try {
+	try
+	{
 		// set the name of the form you're going to load.
 		std::string sampleConfigFile = NLMISC::CPath::lookup("default.sample_config", false);
 
 		// check to see if CPath found the config.
-		if (!sampleConfigFile.empty()) {
+		if (!sampleConfigFile.empty())
+		{
 			// we'll use this to test retrieving vars.
 			bool res;
 
@@ -173,47 +176,52 @@ int main(void)
 			root.getValueByName(testVal2, ".TestVal2");
 
 			// try and get a var that doesn't exist.
-			res=root.getValueByName(badVar1, ".Foobar");
-			if(res) {
+			res = root.getValueByName(badVar1, ".Foobar");
+			if (res)
+			{
 				nlinfo("This should never have matched.");
 				exit(1);
 			}
 
 			// and output them
-			nlinfo("Test Value 1: %d",testVal1);
-			nlinfo("Test Value 2: %d",testVal2);
+			nlinfo("Test Value 1: %d", testVal1);
+			nlinfo("Test Value 2: %d", testVal2);
 			nlinfo("Foo Retrieval was: %s", res ? "true" : "false");
 
 			// Retrieve data from a root-level named struct
 			uint xTest, yTest, zTest;
-			root.getValueByName(xTest,"PositionData.x");
-			root.getValueByName(yTest,"PositionData.y");
-			root.getValueByName(zTest,"PositionData.z");
-			nlinfo("Retrieved Position Data (x,y,z): %d, %d, %d",xTest,yTest,zTest);
+			root.getValueByName(xTest, "PositionData.x");
+			root.getValueByName(yTest, "PositionData.y");
+			root.getValueByName(zTest, "PositionData.z");
+			nlinfo("Retrieved Position Data (x,y,z): %d, %d, %d", xTest, yTest, zTest);
 
 			// get a reference to the TestArray array...
 			NLGEORGES::UFormElm *testArray;
-			res=root.getNodeByName(&testArray, ".TestArray");
+			res = root.getNodeByName(&testArray, ".TestArray");
 
 			nlinfo("TestArray retrieval returned: %s", res ? "true" : "false");
 			// make sure it was there.
-			if(testArray != NULL) {
+			if (testArray != NULL)
+			{
 				// get the size of the array.
 				uint size;
 				testArray->getArraySize(size);
 
 				// cycle through the atoms in the array
-				for(uint idx=0 ; idx<size ; idx++) {
+				for (uint idx = 0; idx < size; idx++)
+				{
 					// string to store our array values in.
 					std::string arrayValue;
 
 					// and get the value of the array, we know it's a string.
 					testArray->getArrayValue(arrayValue, idx);
 
-					nlinfo("Found TestArray atom: %s",arrayValue.c_str());
+					nlinfo("Found TestArray atom: %s", arrayValue.c_str());
 				}
-			} else {
-				if(res==true)
+			}
+			else
+			{
+				if (res == true)
 					nlinfo("TestArray wasn't configured properly but was found, double check the form.");
 				else
 					nlinfo("Something's wrong, the TestArray is missing from the form.");
@@ -221,15 +229,17 @@ int main(void)
 
 			// Next grab a set of structures from an array.
 			NLGEORGES::UFormElm *coolFiles;
-			res=root.getNodeByName(&coolFiles, ".CoolFilesInfo");
+			res = root.getNodeByName(&coolFiles, ".CoolFilesInfo");
 
 			nlinfo("Retrieving CoolFilesInfo returned: %s", res ? "true" : "false");
-			if(coolFiles != NULL) {
+			if (coolFiles != NULL)
+			{
 				uint size;
 				coolFiles->getArraySize(size);
 
 				// cycle through the structs in the array.
-				for(uint idx=0 ; idx<size ; idx++) {
+				for (uint idx = 0; idx < size; idx++)
+				{
 					// storage for our vars in the structs
 					std::string name, shortname;
 					uint rank, toptenrank;
@@ -246,9 +256,10 @@ int main(void)
 					files->getValueByName(shortname, ".ShortName");
 					nlinfo("Retrieved struct %d: |%s| - %s at %d (%d)", idx, name.c_str(), shortname.c_str(), rank, toptenrank);
 				}
-
-			} else {
-				if(res==true)
+			}
+			else
+			{
+				if (res == true)
 					nlinfo("CoolFilesInfo was found, but might have been entered incorrectly, double check the form.");
 				else
 					nlinfo("CoolFilesInfo wasn't found or there was a syntax error loading your form.");
@@ -258,7 +269,7 @@ int main(void)
 			std::string bbool1, bbool2;
 			root.getValueByName(bbool1, ".TestByBracket[0]");
 			root.getValueByName(bbool2, ".TestByBracket[1]");
-			nlinfo("Bool Backet 1: %s, Bool Bracket 2: %s",bbool1.c_str(), bbool2.c_str());
+			nlinfo("Bool Backet 1: %s, Bool Bracket 2: %s", bbool1.c_str(), bbool2.c_str());
 
 			// likewise you can access structures by index and dot notation. take the CoolFilesInfo.
 			// the following should return 1, the ranking for the Nevrax Presents element.
@@ -274,18 +285,21 @@ int main(void)
 			uint writeValue;
 
 			// first lets see if we can find it:
-			res=root.getValueByName(writeValue,".WriteVal");
-			if(res) // if it existed, save the value and increment it.
+			res = root.getValueByName(writeValue, ".WriteVal");
+			if (res) // if it existed, save the value and increment it.
 				writeValue++;
 			else
-				writeValue=3;
+				writeValue = 3;
 
 			// now set the value. created tells us if the value was creaed or just updated.
 			bool created;
-			root.setValueByName(writeValue,".WriteVal",&created);
-			if(created) {
+			root.setValueByName(writeValue, ".WriteVal", &created);
+			if (created)
+			{
 				nlinfo("WriteVal wasn't found and was created.");
-			} else {
+			}
+			else
+			{
 				nlinfo("Updated WriteVal, it already existed in the form.");
 			}
 
@@ -294,7 +308,9 @@ int main(void)
 			NLMISC::COFile saveSample(sampleConfigFile);
 			form->write(saveSample);
 			nlinfo("Saved sample config file.");
-		} else {
+		}
+		else
+		{
 			// CPath didn't find the file, just print an error and exit.
 			nlinfo("Couldn't find the config file.");
 			exit(1);
@@ -302,8 +318,9 @@ int main(void)
 
 		// finished, unload the form loader.
 		NLGEORGES::UFormLoader::releaseLoader(formLoader);
-
-	} catch(...) {
+	}
+	catch (...)
+	{
 		// something went wrong, unload the form loader.
 		nlinfo("Caught an exception, quitting.");
 		NLGEORGES::UFormLoader::releaseLoader(formLoader);
@@ -311,13 +328,11 @@ int main(void)
 
 	// Now demonstrate the packed sheet system.
 	nlinfo("Begin loading packed sheets.");
-	::loadForm( "sample_config", "sample_configs.packed_sheets", MySampleConfigs, true, false);
+	::loadForm("sample_config", "sample_configs.packed_sheets", MySampleConfigs, true, false);
 	nlinfo("Number of sheets loaded: %d", MySampleConfigs.size());
 
 	// Now demonstrate the packed sheet system using CSheetId's and the sheet_id.bin file.
 	nlinfo("Load packed sheets using CSheetId and the sheet_id.bin");
-	::loadForm( "sample_config", "sample_configs_sheets.packed_sheets", MySampleConfigsSheets, true, false);
+	::loadForm("sample_config", "sample_configs_sheets.packed_sheets", MySampleConfigsSheets, true, false);
 	nlinfo("Number of sheets loaded with CSheetId's: %d", MySampleConfigsSheets.size());
-	
-	
 }

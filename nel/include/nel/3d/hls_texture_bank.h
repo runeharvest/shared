@@ -20,16 +20,12 @@
 #include "nel/misc/types_nl.h"
 #include "nel/3d/hls_color_texture.h"
 
-
-namespace NLMISC
-{
-	class	CBitmap;
-	class	IStream;
+namespace NLMISC {
+class CBitmap;
+class IStream;
 }
 
-
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 /**
@@ -44,55 +40,54 @@ public:
 	class CTextureInstance
 	{
 	private:
-		friend	class	CHLSTextureBank;
+		friend class CHLSTextureBank;
 		// Point to _TextureInstanceData. In this array, First come the name (0-ended), then the CHLSColorDelta.
-		uint32				_DataIndex;
+		uint32 _DataIndex;
 		// The ref color texture
-		uint32				_ColorTextureId;
+		uint32 _ColorTextureId;
 		// compiled/loaded direct ptr to the data
-		uint8				*_DataPtr;
+		uint8 *_DataPtr;
 		// compiled/loaded direct ptr to the color texture
-		CHLSColorTexture	*_ColorTexturePtr;
+		CHLSColorTexture *_ColorTexturePtr;
 
 	public:
-		void		serial(NLMISC::IStream &f);
+		void serial(NLMISC::IStream &f);
 
 		// let _DataPtr to point on ptr.
-		void		buildAsKey(const char *ptr)
+		void buildAsKey(const char *ptr)
 		{
-			_DataPtr= (uint8*)ptr;
+			_DataPtr = (uint8 *)ptr;
 		}
 
-		const char	*getName() const {return (const char*)_DataPtr;}
+		const char *getName() const { return (const char *)_DataPtr; }
 
 		// used for sort()
-		bool		operator<(const CTextureInstance &t) const;
+		bool operator<(const CTextureInstance &t) const;
 		// used for searchLowerBound()
-		bool		operator<=(const CTextureInstance &t) const;
+		bool operator<=(const CTextureInstance &t) const;
 		// return true if the instance has the same name has str.
-		bool		sameName(const char *str);
-
+		bool sameName(const char *str);
 
 		/// Build a colored version of this texture
-		void		buildColorVersion(NLMISC::CBitmap &out);
+		void buildColorVersion(NLMISC::CBitmap &out);
 	};
 
 	class CTextureInstanceHandle
 	{
 	public:
-		CTextureInstance	*Texture;
+		CTextureInstance *Texture;
 
 		// used for sort()
-		bool		operator<(const CTextureInstanceHandle &t) const
+		bool operator<(const CTextureInstanceHandle &t) const
 		{
 			// Compare the texture.
-			return *Texture<*t.Texture;
+			return *Texture < *t.Texture;
 		}
 		// used for searchLowerBound()
-		bool		operator<=(const CTextureInstanceHandle &t) const
+		bool operator<=(const CTextureInstanceHandle &t) const
 		{
 			// Compare the texture.
-			return *Texture<=*t.Texture;
+			return *Texture <= *t.Texture;
 		}
 	};
 
@@ -103,53 +98,49 @@ public:
 	/// \name Build
 	// @{
 	/// clear the bank
-	void			reset();
+	void reset();
 
 	/// Add a colorisable texture to the bank
-	uint32			addColorTexture(const CHLSColorTexture &tex);
+	uint32 addColorTexture(const CHLSColorTexture &tex);
 
 	/** Add an instance texture (ie colorised) to the bank
 	 *	\param name name of the colored texture. NB: it is lowered in this method
 	 *	\param colorTextureId index returned by addColorTexture()
-     *	\param cols must be same size of number of mask of the colorTextureId pointed (nlassert)
+	 *	\param cols must be same size of number of mask of the colorTextureId pointed (nlassert)
 	 */
-	void			addTextureInstance(const std::string &name, uint32 colorTextureId, const std::vector<CHLSColorDelta> &cols);
+	void addTextureInstance(const std::string &name, uint32 colorTextureId, const std::vector<CHLSColorDelta> &cols);
 
 	/// compile the bank.
-	void			compile();
+	void compile();
 
 	/// serial. if loading, ptrs are correclty setuped => no compile() needed
-	void			serial(NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 	// @}
-
 
 	/// \name Usage
 	// @{
 
 	/// Append handle into the array (build of the manager)
-	void			fillHandleArray(std::vector<CTextureInstanceHandle> &array);
+	void fillHandleArray(std::vector<CTextureInstanceHandle> &array);
 
 	// @}
 
-
-// ***************
+	// ***************
 private:
 	/// Array of colorisable texture.
-	std::vector<CHLSColorTexture>	_ColorTextures;
+	std::vector<CHLSColorTexture> _ColorTextures;
 
 	/// Raw Array of Name+HLS color delta.
-	std::vector<uint8>				_TextureInstanceData;
+	std::vector<uint8> _TextureInstanceData;
 
 	/// Array of textureInstances
-	std::vector<CTextureInstance>	_TextureInstances;
+	std::vector<CTextureInstance> _TextureInstances;
 
 private:
-	void			compilePtrs();
+	void compilePtrs();
 };
 
-
 } // NL3D
-
 
 #endif // NL_HLS_TEXTURE_BANK_H
 

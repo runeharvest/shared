@@ -41,7 +41,7 @@ CTextContext::CTextContext()
 	_Embolden = false;
 	_Oblique = false;
 
-	_Color = NLMISC::CRGBA(0,0,0);
+	_Color = NLMISC::CRGBA(0, 0, 0);
 
 	_HotSpot = CComputedString::BottomLeft;
 
@@ -52,9 +52,9 @@ CTextContext::CTextContext()
 	_ShadeOutline = false;
 	_ShadeExtentX = 0.001f;
 	_ShadeExtentY = 0.001f;
-	_ShadeColor = NLMISC::CRGBA(0,0,0);
+	_ShadeColor = NLMISC::CRGBA(0, 0, 0);
 
-	_Keep800x600Ratio= true;
+	_Keep800x600Ratio = true;
 
 	_CacheNbFreePlaces = 0;
 }
@@ -69,19 +69,19 @@ CTextContext::~CTextContext()
 }
 
 // ------------------------------------------------------------------------------------------------
-uint32 CTextContext::textPush (const char *format, ...)
+uint32 CTextContext::textPush(const char *format, ...)
 {
 	nlassert(_FontGen);
 
 	// convert the string.
 	char *str;
-	NLMISC_CONVERT_VARGS (str, format, NLMISC::MaxCStringSize);
+	NLMISC_CONVERT_VARGS(str, format, NLMISC::MaxCStringSize);
 
 	return textPush(NLMISC::CUtfStringView(str));
 }
 
 // ------------------------------------------------------------------------------------------------
-uint32 CTextContext::textPush (NLMISC::CUtfStringView sv)
+uint32 CTextContext::textPush(NLMISC::CUtfStringView sv)
 {
 	nlassert(_FontGen);
 
@@ -89,19 +89,19 @@ uint32 CTextContext::textPush (NLMISC::CUtfStringView sv)
 	{
 		CComputedString csTmp;
 
-		_CacheStrings.push_back (csTmp);
+		_CacheStrings.push_back(csTmp);
 		if (_CacheFreePlaces.empty())
-			_CacheFreePlaces.resize (1);
-		_CacheFreePlaces[0] = (uint32)_CacheStrings.size()-1;
+			_CacheFreePlaces.resize(1);
+		_CacheFreePlaces[0] = (uint32)_CacheStrings.size() - 1;
 		_CacheNbFreePlaces = 1;
 	}
 
 	// compute the string.
-	uint32 index = _CacheFreePlaces[_CacheNbFreePlaces-1];
-	nlassert (index < _CacheStrings.size());
+	uint32 index = _CacheFreePlaces[_CacheNbFreePlaces - 1];
+	nlassert(index < _CacheStrings.size());
 	CComputedString &strToFill = _CacheStrings[index];
 
-	_FontManager->computeString (sv, _FontGen, _Color, _FontSize, _Embolden, _Oblique, _Driver, strToFill, _Keep800x600Ratio);
+	_FontManager->computeString(sv, _FontGen, _Color, _FontSize, _Embolden, _Oblique, _Driver, strToFill, _Keep800x600Ratio);
 	// just compute letters, glyphs are rendered on demand before first draw
 	//_FontManager->computeStringInfo(str, _FontGen, _Color, _FontSize, _Embolden, _Oblique, _Driver, strToFill, _Keep800x600Ratio);
 
@@ -111,13 +111,13 @@ uint32 CTextContext::textPush (NLMISC::CUtfStringView sv)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CTextContext::erase (uint32 i)
+void CTextContext::erase(uint32 i)
 {
-	nlassertex ((i < _CacheStrings.size()), ("try to erase an unknown text"));
+	nlassertex((i < _CacheStrings.size()), ("try to erase an unknown text"));
 	_CacheStrings[i].LetterColors.clear();
 	if (_CacheFreePlaces.size() == _CacheNbFreePlaces)
 	{
-		_CacheFreePlaces.push_back (i);
+		_CacheFreePlaces.push_back(i);
 	}
 	else
 	{
@@ -126,15 +126,13 @@ void CTextContext::erase (uint32 i)
 	_CacheNbFreePlaces++;
 }
 
-
 // ------------------------------------------------------------------------------------------------
-void CTextContext::clear ()
+void CTextContext::clear()
 {
 	_CacheFreePlaces.clear();
 	_CacheNbFreePlaces = 0;
 	_CacheStrings.clear();
 }
-
 
 // ------------------------------------------------------------------------------------------------
 void CTextContext::setFontGenerator(const std::string &fontFileName, const std::string &fontExFileName)
@@ -145,9 +143,9 @@ void CTextContext::setFontGenerator(const std::string &fontFileName, const std::
 }
 
 // ------------------------------------------------------------------------------------------------
-void CTextContext::setLetterColors(CLetterColors * letterColors, uint index)
+void CTextContext::setLetterColors(CLetterColors *letterColors, uint index)
 {
-	if(/*index>=0 &&*/ index<_CacheStrings.size())
+	if (/*index>=0 &&*/ index < _CacheStrings.size())
 	{
 		_CacheStrings[index].LetterColors.clear();
 		_CacheStrings[index].LetterColors = *letterColors;
@@ -155,11 +153,11 @@ void CTextContext::setLetterColors(CLetterColors * letterColors, uint index)
 }
 
 // ------------------------------------------------------------------------------------------------
-bool CTextContext::isSameLetterColors(CLetterColors * letterColors, uint index)
+bool CTextContext::isSameLetterColors(CLetterColors *letterColors, uint index)
 {
-	if(/*index>=0 &&*/ index<_CacheStrings.size())
+	if (/*index>=0 &&*/ index < _CacheStrings.size())
 	{
-		CLetterColors & strLetterColors = _CacheStrings[index].LetterColors;
+		CLetterColors &strLetterColors = _CacheStrings[index].LetterColors;
 		return strLetterColors.isSameLetterColors(letterColors);
 	}
 

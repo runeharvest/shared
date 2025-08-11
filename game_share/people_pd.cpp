@@ -20,11 +20,13 @@
 #include "stdpch.h"
 #include "people_pd.h"
 
-namespace EGSPD
-{
+namespace EGSPD {
 
-static const struct { const char* Name; CPeople::TPeople Value; } TPeopleConvert[] =
+static const struct
 {
+	const char *Name;
+	CPeople::TPeople Value;
+} TPeopleConvert[] = {
 	{ "Humanoid", CPeople::Humanoid },
 	{ "Playable", CPeople::Playable },
 	{ "Fyros", CPeople::Fyros },
@@ -186,29 +188,32 @@ static const struct { const char* Name; CPeople::TPeople Value; } TPeopleConvert
 	{ "EndCreature", CPeople::EndCreature }
 };
 /* -----------------------------------------
-* Static Implementation of CPeople
-* ----------------------------------------- */
-void							CPeople::init()
+ * Static Implementation of CPeople
+ * ----------------------------------------- */
+void CPeople::init()
 {
 	_StrTable.clear();
 	_ValueMap.clear();
 	_StrTable.resize(142);
-	uint	i;
-	for (i=0; i<159; ++i)
+	uint i;
+	for (i = 0; i < 159; ++i)
 	{
 		_StrTable[TPeopleConvert[i].Value] = TPeopleConvert[i].Name;
 		_ValueMap[NLMISC::toLowerAscii(std::string(TPeopleConvert[i].Name))] = TPeopleConvert[i].Value;
 	}
 	_Initialised = true;
 }
-bool							CPeople::_Initialised = false;
-std::string						CPeople::_UnknownString = "Unknown";
-std::vector<std::string>		CPeople::_StrTable;
-std::map<std::string, CPeople::TPeople>	CPeople::_ValueMap;
+bool CPeople::_Initialised = false;
+std::string CPeople::_UnknownString = "Unknown";
+std::vector<std::string> CPeople::_StrTable;
+std::map<std::string, CPeople::TPeople> CPeople::_ValueMap;
 // End of static implementation of CPeople
 
-static const struct { const char* Name; CClassificationType::TClassificationType Value; } TClassificationTypeConvert[] =
+static const struct
 {
+	const char *Name;
+	CClassificationType::TClassificationType Value;
+} TClassificationTypeConvert[] = {
 	{ "TypeHumanoid", CClassificationType::TypeHumanoid },
 	{ "TypeHomin", CClassificationType::TypeHomin },
 	{ "TypeDegenerated", CClassificationType::TypeDegenerated },
@@ -231,26 +236,25 @@ static const struct { const char* Name; CClassificationType::TClassificationType
 	{ "TypeAll", CClassificationType::TypeAll },
 };
 /* -----------------------------------------
-* Static Implementation of CClassificationType
-* ----------------------------------------- */
-void							CClassificationType::init()
+ * Static Implementation of CClassificationType
+ * ----------------------------------------- */
+void CClassificationType::init()
 {
 	_StrTable.clear();
 	_ValueMap.clear();
 	_StrTable.resize(20);
-	uint	i;
-	for (i=0; i<20; ++i)
+	uint i;
+	for (i = 0; i < 20; ++i)
 	{
 		_StrTable[TClassificationTypeConvert[i].Value] = TClassificationTypeConvert[i].Name;
 		_ValueMap[NLMISC::toLowerAscii(std::string(TClassificationTypeConvert[i].Name))] = TClassificationTypeConvert[i].Value;
 	}
 	_Initialised = true;
 }
-bool							CClassificationType::_Initialised = false;
-std::string						CClassificationType::_UnknownString = "Unknown";
-std::vector<std::string>		CClassificationType::_StrTable;
-std::map<std::string, CClassificationType::TClassificationType>	CClassificationType::_ValueMap;
+bool CClassificationType::_Initialised = false;
+std::string CClassificationType::_UnknownString = "Unknown";
+std::vector<std::string> CClassificationType::_StrTable;
+std::map<std::string, CClassificationType::TClassificationType> CClassificationType::_ValueMap;
 // End of static implementation of CClassificationType
-
 
 } // End of EGSPD

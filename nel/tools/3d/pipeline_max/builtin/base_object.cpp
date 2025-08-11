@@ -42,14 +42,13 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CBaseObject::CBaseObject(CScene *scene) : CReferenceTarget(scene)
+CBaseObject::CBaseObject(CScene *scene)
+    : CReferenceTarget(scene)
 {
-
 }
 
 CBaseObject::~CBaseObject()
 {
-
 }
 
 const ucstring CBaseObject::DisplayName = ucstring("BaseObject");

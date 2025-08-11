@@ -233,14 +233,11 @@ const CXYZGenSuperClassDesc XYZGenSuperClassDesc(&ReferenceTargetClassDesc, "XYZ
 
 CBuiltin::CBuiltin()
 {
-
 }
 
 CBuiltin::~CBuiltin()
 {
-
 }
-
 
 void CBuiltin::registerClasses(CSceneClassRegistry *registry)
 {
@@ -307,9 +304,9 @@ void CBuiltin::registerClasses(CSceneClassRegistry *registry)
 	registry->add(&ControlTransformSuperClassDesc);
 	registry->add(&OSModifierSuperClassDesc);
 	registry->add(&MasterPointControllerSuperClassDesc);
-	//registry->add(&GeomObjectSuperClassDesc);
+	// registry->add(&GeomObjectSuperClassDesc);
 	registry->add(&LayerSuperClassDesc);
-	//registry->add(&ObjectSuperClassDesc);
+	// registry->add(&ObjectSuperClassDesc);
 	registry->add(&HelperObjectSuperClassDesc);
 	registry->add(&FilterKernelSuperClassDesc);
 	registry->add(&RendererSuperClassDesc);

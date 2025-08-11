@@ -35,7 +35,6 @@ namespace NL3D
 
 {
 
-
 CVertexBuffer CWaterEnvMap::_FlattenVB; // vb to map cube map top hemisphere to a 2D map
 CIndexBuffer CWaterEnvMap::_FlattenIB("CWaterEnvMap::_FlattenIB");
 bool CWaterEnvMap::_FlattenVBInitialized;
@@ -59,12 +58,10 @@ static const uint TEST_VB_NUM_TRIS = 2 * TEST_VB_NUM_SEGMENT * TEST_VB_NUM_SLICE
 static uint32 inline getFVBVertex(uint section, uint side)
 {
 	nlassert(section <= FVB_NUM_SECTIONS);
-	return (uint32) (section + (side % FVB_NUM_SIDES) * (FVB_NUM_SECTIONS + 1));
+	return (uint32)(section + (side % FVB_NUM_SIDES) * (FVB_NUM_SECTIONS + 1));
 }
 
-
 const uint NUM_FACES_TO_RENDER = 5;
-
 
 // *******************************************************************************
 CWaterEnvMap::CWaterEnvMap()
@@ -88,7 +85,7 @@ void CWaterEnvMap::init(uint cubeMapSize, uint projection2DSize, TGlobalAnimatio
 	class CTextureCubeUnshared : public CTextureCube
 	{
 	public:
-		virtual bool supportSharing() const {return false;}
+		virtual bool supportSharing() const { return false; }
 		virtual uint32 getWidth(uint32 numMipMap = 0) const
 		{
 			nlassert(numMipMap == 0);
@@ -105,7 +102,7 @@ void CWaterEnvMap::init(uint cubeMapSize, uint projection2DSize, TGlobalAnimatio
 	class CTexture2DUnshared : public CTextureBlank
 	{
 	public:
-		virtual bool supportSharing() const {return false;}
+		virtual bool supportSharing() const { return false; }
 		virtual uint32 getWidth(uint32 numMipMap = 0) const
 		{
 			nlassert(numMipMap == 0);
@@ -133,10 +130,10 @@ void CWaterEnvMap::init(uint cubeMapSize, uint projection2DSize, TGlobalAnimatio
 	                                      // that it needs to allocate for the texture, though its datas are never used (it is a render target)
 	tb->Size = cubeMapSize;
 	tb->setFilterMode(ITexture::Linear, ITexture::LinearMipMapOff);
-	for(uint k = 0; k < 6; ++k)
+	for (uint k = 0; k < 6; ++k)
 	{
-		_EnvCubic->setTexture((CTextureCube::TFace) k, tb);
-		_EnvCubic->getTexture((CTextureCube::TFace) k)->setRenderTarget(true);
+		_EnvCubic->setTexture((CTextureCube::TFace)k, tb);
+		_EnvCubic->getTexture((CTextureCube::TFace)k)->setRenderTarget(true);
 	}
 	envCubic->Size = cubeMapSize;
 	// setup the texture to force the driver to allocate vram for it
@@ -171,8 +168,8 @@ void CWaterEnvMap::update(TGlobalAnimationTime time, IDriver &driver)
 	uint numTexToRender;
 	if (_UpdateTime > 0)
 	{
-		uint64 currRenderTick = (uint64) (time / (_UpdateTime / (NUM_FACES_TO_RENDER + 1)));
-		numTexToRender = (uint) (currRenderTick - _LastRenderTick);
+		uint64 currRenderTick = (uint64)(time / (_UpdateTime / (NUM_FACES_TO_RENDER + 1)));
+		numTexToRender = (uint)(currRenderTick - _LastRenderTick);
 		_LastRenderTick = currRenderTick;
 	}
 	else
@@ -184,11 +181,11 @@ void CWaterEnvMap::update(TGlobalAnimationTime time, IDriver &driver)
 	{
 		_StartRenderTime = time;
 	}
-	uint lastCubeFacesToRender = std::min((uint) NUM_FACES_TO_RENDER, _NumRenderedFaces + numTexToRender); // we don't render negative Z (only top hemisphere is used)
-	for(uint k = _NumRenderedFaces; k < lastCubeFacesToRender; ++k)
+	uint lastCubeFacesToRender = std::min((uint)NUM_FACES_TO_RENDER, _NumRenderedFaces + numTexToRender); // we don't render negative Z (only top hemisphere is used)
+	for (uint k = _NumRenderedFaces; k < lastCubeFacesToRender; ++k)
 	{
-		driver.setRenderTarget(_EnvCubic, 0, 0, _EnvCubicSize, _EnvCubicSize, 0, (uint32) k);
-		render((CTextureCube::TFace) k, _StartRenderTime);
+		driver.setRenderTarget(_EnvCubic, 0, 0, _EnvCubicSize, _EnvCubicSize, 0, (uint32)k);
+		render((CTextureCube::TFace)k, _StartRenderTime);
 	}
 	_NumRenderedFaces = lastCubeFacesToRender;
 	if (_NumRenderedFaces == NUM_FACES_TO_RENDER && (_NumRenderedFaces + numTexToRender) > NUM_FACES_TO_RENDER)
@@ -203,7 +200,7 @@ void CWaterEnvMap::update(TGlobalAnimationTime time, IDriver &driver)
 		driver.setFrustum(-1.f, 1.f, -1.f, 1.f, 0.f, 1.f, false);
 		driver.setupViewMatrix(CMatrix::Identity);
 		CMatrix mat;
-		//mat.scale(0.8f);
+		// mat.scale(0.8f);
 		driver.setupModelMatrix(mat);
 		_MaterialPassThru.setTexture(0, _EnvCubic);
 		_MaterialPassThru.texConstantColor(0, CRGBA(255, 255, 255, _Alpha));
@@ -248,35 +245,35 @@ static const char *testMeshVPstr =
 class CVertexProgramTestMeshVP : public CVertexProgram
 {
 public:
-	struct CIdx
-	{
-		uint ProgramConstant0;
-	};
-	CVertexProgramTestMeshVP()
-	{
-		// nelvp
-		{
-			CSource *source = new CSource();
-			source->Profile = nelvp;
-			source->DisplayName = "testMeshVP/nelvp";
-			source->setSourcePtr(testMeshVPstr);
-			source->ParamIndices["modelViewProjection"] = 0;
-			source->ParamIndices["programConstant0"] = 4;
-			addSource(source);
-		}
-	}
-	virtual ~CVertexProgramTestMeshVP()
-	{
-		
-	}
-	virtual void buildInfo()
-	{
-		m_Idx.ProgramConstant0 = getUniformIndex("programConstant0");
-		nlassert(m_Idx.ProgramConstant0 != ~0);
-	}
-	inline const CIdx &idx() { return m_Idx; }
+    struct CIdx
+    {
+        uint ProgramConstant0;
+    };
+    CVertexProgramTestMeshVP()
+    {
+        // nelvp
+        {
+            CSource *source = new CSource();
+            source->Profile = nelvp;
+            source->DisplayName = "testMeshVP/nelvp";
+            source->setSourcePtr(testMeshVPstr);
+            source->ParamIndices["modelViewProjection"] = 0;
+            source->ParamIndices["programConstant0"] = 4;
+            addSource(source);
+        }
+    }
+    virtual ~CVertexProgramTestMeshVP()
+    {
+
+    }
+    virtual void buildInfo()
+    {
+        m_Idx.ProgramConstant0 = getUniformIndex("programConstant0");
+        nlassert(m_Idx.ProgramConstant0 != ~0);
+    }
+    inline const CIdx &idx() { return m_Idx; }
 private:
-	CIdx m_Idx;
+    CIdx m_Idx;
 };
 
 
@@ -287,33 +284,33 @@ static NLMISC::CSmartPtr<CVertexProgramTestMeshVP> testMeshVP;
 // *******************************************************************************
 void CWaterEnvMap::renderTestMesh(IDriver &driver)
 {
-	if (!testMeshVP)
-	{
-		testMeshVP = new CVertexProgramTestMeshVP();
-	}
+    if (!testMeshVP)
+    {
+        testMeshVP = new CVertexProgramTestMeshVP();
+    }
 
-	doInit();
-	CMaterial testMat;
-	testMat.setLighting(false);
-	testMat.texEnvOpRGB(0, CMaterial::Modulate);
-	testMat.texEnvArg0RGB(0, CMaterial::Texture, CMaterial::SrcColor);
-	testMat.texEnvArg0RGB(1, CMaterial::Diffuse, CMaterial::SrcColor);
-	testMat.texEnvOpAlpha(0, CMaterial::Replace);
-	testMat.texEnvArg0Alpha(0, CMaterial::Constant, CMaterial::SrcAlpha);
-	testMat.texConstantColor(0, CRGBA(255, 255, 255, 255));
-	testMat.setDoubleSided(true);
-	testMat.setZWrite(false);
-	testMat.setZFunc(CMaterial::always);
-	// tmp : test cubemap
-	driver.activeVertexProgram(testMeshVP);
-	driver.activeVertexBuffer(_TestVB);
-	driver.activeIndexBuffer(_TestIB);
-	_MaterialPassThruZTest.setTexture(0, _EnvCubic);
-	driver.setUniformMatrix(IDriver::VertexProgram, testMeshVP->getUniformIndex(CProgramIndex::ModelViewProjection), IDriver::ModelViewProjection, IDriver::Identity);
-	driver.setUniform2f(IDriver::VertexProgram, testMeshVP->idx().ProgramConstant0, 2.f, 1.f);
-	//driver.renderTriangles(testMat, 0, TEST_VB_NUM_TRIS);
-	driver.renderTriangles(_MaterialPassThruZTest, 0, TEST_VB_NUM_TRIS);
-	driver.activeVertexProgram(NULL);
+    doInit();
+    CMaterial testMat;
+    testMat.setLighting(false);
+    testMat.texEnvOpRGB(0, CMaterial::Modulate);
+    testMat.texEnvArg0RGB(0, CMaterial::Texture, CMaterial::SrcColor);
+    testMat.texEnvArg0RGB(1, CMaterial::Diffuse, CMaterial::SrcColor);
+    testMat.texEnvOpAlpha(0, CMaterial::Replace);
+    testMat.texEnvArg0Alpha(0, CMaterial::Constant, CMaterial::SrcAlpha);
+    testMat.texConstantColor(0, CRGBA(255, 255, 255, 255));
+    testMat.setDoubleSided(true);
+    testMat.setZWrite(false);
+    testMat.setZFunc(CMaterial::always);
+    // tmp : test cubemap
+    driver.activeVertexProgram(testMeshVP);
+    driver.activeVertexBuffer(_TestVB);
+    driver.activeIndexBuffer(_TestIB);
+    _MaterialPassThruZTest.setTexture(0, _EnvCubic);
+    driver.setUniformMatrix(IDriver::VertexProgram, testMeshVP->getUniformIndex(CProgramIndex::ModelViewProjection), IDriver::ModelViewProjection, IDriver::Identity);
+    driver.setUniform2f(IDriver::VertexProgram, testMeshVP->idx().ProgramConstant0, 2.f, 1.f);
+    //driver.renderTriangles(testMat, 0, TEST_VB_NUM_TRIS);
+    driver.renderTriangles(_MaterialPassThruZTest, 0, TEST_VB_NUM_TRIS);
+    driver.activeVertexProgram(NULL);
 }
 */
 // *******************************************************************************
@@ -322,8 +319,8 @@ void CWaterEnvMap::initFlattenVB()
 	_FlattenVB.setPreferredMemory(CVertexBuffer::AGPPreferred, true);
 	_FlattenVB.setName("Flatten VB");
 	_FlattenVB.clearValueEx();
-	_FlattenVB.addValueEx (CVertexBuffer::Position, CVertexBuffer::Float3);
-	_FlattenVB.addValueEx (CVertexBuffer::TexCoord0, CVertexBuffer::Float3);
+	_FlattenVB.addValueEx(CVertexBuffer::Position, CVertexBuffer::Float3);
+	_FlattenVB.addValueEx(CVertexBuffer::TexCoord0, CVertexBuffer::Float3);
 	_FlattenVB.initEx();
 	nlctassert(FVB_NUM_SIDES % 4 == 0); // number of sides must be a multiple of 4 so that sections sides will align with corners
 	_FlattenVB.setNumVertices(FVB_NUM_VERTS);
@@ -334,14 +331,14 @@ void CWaterEnvMap::initFlattenVB()
 		CIndexBufferReadWrite ibrw;
 		_FlattenVB.lock(vbrw);
 		_FlattenIB.lock(ibrw);
-		for(uint l = 0; l < FVB_NUM_SIDES; ++l)
+		for (uint l = 0; l < FVB_NUM_SIDES; ++l)
 		{
-			double angle = NLMISC::Pi * 0.25 + 2 * NLMISC::Pi * (double) l / (double) FVB_NUM_SIDES;
-			for(uint k = 0; k < FVB_NUM_SECTIONS + 1; ++k)
+			double angle = NLMISC::Pi * 0.25 + 2 * NLMISC::Pi * (double)l / (double)FVB_NUM_SIDES;
+			for (uint k = 0; k < FVB_NUM_SECTIONS + 1; ++k)
 			{
-				double radius = (double) k / (double) (FVB_NUM_SECTIONS - 1);
-				float x = (float) (radius * cos(angle));
-				float y = (float) (radius * sin(angle));
+				double radius = (double)k / (double)(FVB_NUM_SECTIONS - 1);
+				float x = (float)(radius * cos(angle));
+				float y = (float)(radius * sin(angle));
 				if (k < FVB_NUM_SECTIONS)
 				{
 					ibrw.setTri(3 * 2 * (k + (l * FVB_NUM_SECTIONS)), getFVBVertex(k, l), getFVBVertex(k + 1, l + 1), getFVBVertex(k + 1, l));
@@ -350,32 +347,32 @@ void CWaterEnvMap::initFlattenVB()
 				else
 				{
 					uint side = l / (FVB_NUM_SIDES / 4);
-					switch(side)
+					switch (side)
 					{
-						case 0: // top
-							x /= y;
-							y = 1.f;
+					case 0: // top
+						x /= y;
+						y = 1.f;
 						break;
-						case 1: // left
-							y /= -x;
-							x = -1.f;
+					case 1: // left
+						y /= -x;
+						x = -1.f;
 						break;
-						case 2: // bottom
-							x /= -y;
-							y = -1.f;
+					case 2: // bottom
+						x /= -y;
+						y = -1.f;
 						break;
-						case 3: // right
-							y /= x;
-							x = 1.f;
+					case 3: // right
+						y /= x;
+						x = 1.f;
 						break;
-						default:
-							nlassert(0);
+					default:
+						nlassert(0);
 						break;
 					}
 				}
 				CVector dir;
-				//dir.sphericToCartesian(1.f, (float) angle, (float) (NLMISC::Pi * 0.5 * acos(std::max(0.f, (1.f - (float) k / (FVB_NUM_SECTIONS - 1))))));
-				dir.sphericToCartesian(1.f, (float) angle, (float) acos(std::min(1.f, (float) k / (FVB_NUM_SECTIONS - 1))));
+				// dir.sphericToCartesian(1.f, (float) angle, (float) (NLMISC::Pi * 0.5 * acos(std::max(0.f, (1.f - (float) k / (FVB_NUM_SECTIONS - 1))))));
+				dir.sphericToCartesian(1.f, (float)angle, (float)acos(std::min(1.f, (float)k / (FVB_NUM_SECTIONS - 1))));
 				vbrw.setValueFloat3Ex(CVertexBuffer::Position, getFVBVertex(k, l), x, 0.5f, y);
 				vbrw.setValueFloat3Ex(CVertexBuffer::TexCoord0, getFVBVertex(k, l), -dir.x, dir.z, -dir.y);
 			}
@@ -405,8 +402,8 @@ void CWaterEnvMap::initTestVB()
 	_TestVB.setPreferredMemory(CVertexBuffer::AGPPreferred, true);
 	_TestVB.setName("TestVB");
 	_TestVB.clearValueEx();
-	_TestVB.addValueEx (CVertexBuffer::Position, CVertexBuffer::Float3);
-	_TestVB.addValueEx (CVertexBuffer::TexCoord0, CVertexBuffer::Float3);
+	_TestVB.addValueEx(CVertexBuffer::Position, CVertexBuffer::Float3);
+	_TestVB.addValueEx(CVertexBuffer::TexCoord0, CVertexBuffer::Float3);
 	_TestVB.initEx();
 	_TestVB.setNumVertices(TEST_VB_NUM_SEGMENT * 2 * (TEST_VB_NUM_SLICE + 1));
 	_TestIB.setFormat(NL_DEFAULT_INDEX_BUFFER_FORMAT);
@@ -417,15 +414,15 @@ void CWaterEnvMap::initTestVB()
 		_TestVB.lock(vbrw);
 		_TestIB.lock(ibrw);
 		uint triIndex = 0;
-		for(uint k = 0; k < TEST_VB_NUM_SEGMENT; ++k)
+		for (uint k = 0; k < TEST_VB_NUM_SEGMENT; ++k)
 		{
-			float theta = 2 * (float) (NLMISC::Pi * (double) k / (double) TEST_VB_NUM_SEGMENT);
-			for(uint l = 0; l <= TEST_VB_NUM_SLICE; ++l)
+			float theta = 2 * (float)(NLMISC::Pi * (double)k / (double)TEST_VB_NUM_SEGMENT);
+			for (uint l = 0; l <= TEST_VB_NUM_SLICE; ++l)
 			{
-				float phi = (float) (NLMISC::Pi / 2 * (1 - 2 * (double) l / (double) TEST_VB_NUM_SLICE));
+				float phi = (float)(NLMISC::Pi / 2 * (1 - 2 * (double)l / (double)TEST_VB_NUM_SLICE));
 				CVector pos;
 				pos.sphericToCartesian(1.f, theta, phi);
-				#define VERT_INDEX(k, l) ((l) + ((k) %  TEST_VB_NUM_SEGMENT) * (TEST_VB_NUM_SLICE + 1))
+#define VERT_INDEX(k, l) ((l) + ((k) % TEST_VB_NUM_SEGMENT) * (TEST_VB_NUM_SLICE + 1))
 				vbrw.setVertexCoord(VERT_INDEX(k, l), pos);
 				vbrw.setValueFloat3Ex(CVertexBuffer::TexCoord0, VERT_INDEX(k, l), pos);
 				if (l != TEST_VB_NUM_SLICE)
@@ -438,6 +435,5 @@ void CWaterEnvMap::initTestVB()
 		nlassert(triIndex == TEST_VB_NUM_TRIS);
 	}
 }
-
 
 } // NL3D

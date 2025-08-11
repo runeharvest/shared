@@ -24,7 +24,6 @@
 using namespace NLMISC;
 using namespace NLNET;
 
-
 //
 CSecurityCheckForFastDisconnection::CSecurityCheckForFastDisconnection()
 {
@@ -32,14 +31,14 @@ CSecurityCheckForFastDisconnection::CSecurityCheckForFastDisconnection()
 }
 
 //
-void CSecurityCheckForFastDisconnection::receiveSecurityCode(NLMISC::IStream& msgin)
+void CSecurityCheckForFastDisconnection::receiveSecurityCode(NLMISC::IStream &msgin)
 {
 	msgin.serial(Block.SessionId);
 	SecurityCode.serial(msgin);
 }
 
 //
-void CSecurityCheckForFastDisconnection::forwardSecurityCode(NLMISC::IStream& msgout, TSessionId sessionId, CSecurityCode& securityCode)
+void CSecurityCheckForFastDisconnection::forwardSecurityCode(NLMISC::IStream &msgout, TSessionId sessionId, CSecurityCode &securityCode)
 {
 	msgout.serial(sessionId);
 	securityCode.serial(msgout);
@@ -51,7 +50,7 @@ CSecurityCode CSecurityCheckForFastDisconnection::encode(const char *passPhrase)
 	if (!passPhrase)
 		throw Exception("Null passPhrase");
 	strncpy(Block.PassPhrase, passPhrase, 10);
-	CHashKeyMD5 md5 = getMD5((uint8*)&Block, sizeof(Block));
+	CHashKeyMD5 md5 = getMD5((uint8 *)&Block, sizeof(Block));
 	CSecurityCode sc; // parts from NLMISC::CHashKeyMD5 (would CRC16 be better?)
 	sc.Data[0] = md5.Data[0];
 	sc.Data[1] = md5.Data[15];
@@ -65,34 +64,30 @@ void CSecurityCheckForFastDisconnection::check(const char *passPhrase)
 		throw Exception("Check not passed");
 }
 
-
 /*
-	// The following code helps ensure a sub portion of the md5 produces a wide range of different data
-	for (uint i=1; i!=10000; ++i)
-	{
-		CSecurityCheckForFastDisconnection securityCheck;
-		securityCheck.setSessionId(i);
-		securityCheck.setCookie(cookie);
-		CHashKeyMD5 md5 = securityCheck.encode(""); // replace by pwd
-		uint8 Data[2];
-		Data[0] = md5.Data[0];
-		Data[1] = md5.Data[15];
-		InfoLog->displayNL("%u\t%u", i, Data[0] + (Data[1] << 8));
-	}
-	for (uint i=1; i!=100; ++i)
-	{
-		CLoginCookie ck2;
-		ck2.set(cookie.getUserAddr(), cookie.generateKey(), cookie.getUserId());
-		CSecurityCheckForFastDisconnection securityCheck;
-		securityCheck.setSessionId(sessionId);
-		securityCheck.setCookie(ck2);
-		CHashKeyMD5 md5 = securityCheck.encode(""); // replace by pwd
-		uint8 Data[2];
-		Data[0] = md5.Data[0];
-		Data[1] = md5.Data[15];
-		InfoLog->displayNL("%u\t%u", i, Data[0] + (Data[1] << 8));
-	}
+    // The following code helps ensure a sub portion of the md5 produces a wide range of different data
+    for (uint i=1; i!=10000; ++i)
+    {
+        CSecurityCheckForFastDisconnection securityCheck;
+        securityCheck.setSessionId(i);
+        securityCheck.setCookie(cookie);
+        CHashKeyMD5 md5 = securityCheck.encode(""); // replace by pwd
+        uint8 Data[2];
+        Data[0] = md5.Data[0];
+        Data[1] = md5.Data[15];
+        InfoLog->displayNL("%u\t%u", i, Data[0] + (Data[1] << 8));
+    }
+    for (uint i=1; i!=100; ++i)
+    {
+        CLoginCookie ck2;
+        ck2.set(cookie.getUserAddr(), cookie.generateKey(), cookie.getUserId());
+        CSecurityCheckForFastDisconnection securityCheck;
+        securityCheck.setSessionId(sessionId);
+        securityCheck.setCookie(ck2);
+        CHashKeyMD5 md5 = securityCheck.encode(""); // replace by pwd
+        uint8 Data[2];
+        Data[0] = md5.Data[0];
+        Data[1] = md5.Data[15];
+        InfoLog->displayNL("%u\t%u", i, Data[0] + (Data[1] << 8));
+    }
 */
-
-
-

@@ -20,16 +20,13 @@
 //
 #include "nel/misc/grid_traversal.h"
 
-
 using namespace NLMISC;
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // *************************************************************************************************
 void CPackedWorld::build(std::vector<TPackedZoneBaseSPtr> &packedZones)
@@ -40,41 +37,41 @@ void CPackedWorld::build(std::vector<TPackedZoneBaseSPtr> &packedZones)
 	CAABBox box;
 	nlassert(packedZones[0]);
 	box = packedZones[0]->Box;
-	for(uint k = 1; k < packedZones.size(); ++k)
+	for (uint k = 1; k < packedZones.size(); ++k)
 	{
 		nlassert(packedZones[k]);
 		box.extend(packedZones[k]->Box.getMin());
 		box.extend(packedZones[k]->Box.getMax());
 	}
 
-	_ZoneMinX = (sint32) floorf(box.getMin().x / 160.f);
-	_ZoneMinY = (sint32) floorf(box.getMin().y / 160.f);
+	_ZoneMinX = (sint32)floorf(box.getMin().x / 160.f);
+	_ZoneMinY = (sint32)floorf(box.getMin().y / 160.f);
 	//
-	sint32 zoneMaxX = (sint32) floorf(box.getMax().x / 160.f);
-	sint32 zoneMaxY = (sint32) floorf(box.getMax().y / 160.f);
+	sint32 zoneMaxX = (sint32)floorf(box.getMax().x / 160.f);
+	sint32 zoneMaxY = (sint32)floorf(box.getMax().y / 160.f);
 	//
 	_ZoneGrid.init(zoneMaxX - _ZoneMinX + 1, zoneMaxY - _ZoneMinY + 1);
 	_Zones.resize(packedZones.size());
 	//
-	for(uint k = 0; k < packedZones.size(); ++k)
+	for (uint k = 0; k < packedZones.size(); ++k)
 	{
 		CZoneInfo zi;
 		zi.Zone = packedZones[k];
 		zi.RaytraceCounter = 0;
 		_Zones[k] = zi;
-		sint zoneMinX = (sint) floorf(packedZones[k]->Box.getMin().x / 160.f) - (sint) _ZoneMinX;
-		sint zoneMinY = (sint) floorf(packedZones[k]->Box.getMin().y / 160.f) - (sint) _ZoneMinY;
-		sint zoneMaxX = (sint) floorf(packedZones[k]->Box.getMax().x / 160.f)  - (sint) _ZoneMinX;
-		sint zoneMaxY = (sint) floorf(packedZones[k]->Box.getMax().y / 160.f)  - (sint) _ZoneMinY;
+		sint zoneMinX = (sint)floorf(packedZones[k]->Box.getMin().x / 160.f) - (sint)_ZoneMinX;
+		sint zoneMinY = (sint)floorf(packedZones[k]->Box.getMin().y / 160.f) - (sint)_ZoneMinY;
+		sint zoneMaxX = (sint)floorf(packedZones[k]->Box.getMax().x / 160.f) - (sint)_ZoneMinX;
+		sint zoneMaxY = (sint)floorf(packedZones[k]->Box.getMax().y / 160.f) - (sint)_ZoneMinY;
 		for (sint y = zoneMinY; y <= zoneMaxY; ++y)
 		{
 			if (y < 0) continue;
-			if (y >= (sint) _ZoneGrid.getHeight()) break;
+			if (y >= (sint)_ZoneGrid.getHeight()) break;
 			for (sint x = zoneMinX; x <= zoneMaxX; ++x)
 			{
 				if (x < 0) continue;
-				if (x >= (sint) _ZoneGrid.getWidth()) break;
-				_ZoneGrid(x, y).IDs.push_back((uint32) k);
+				if (x >= (sint)_ZoneGrid.getWidth()) break;
+				_ZoneGrid(x, y).IDs.push_back((uint32)k);
 			}
 		}
 	}
@@ -92,7 +89,7 @@ bool CPackedWorld::raytrace(const NLMISC::CVector &start, const NLMISC::CVector 
 	CVector currInter;
 	if (_RaytraceCounter == std::numeric_limits<uint32>::max())
 	{
-		for(uint k = 0; k < _Zones.size(); ++k)
+		for (uint k = 0; k < _Zones.size(); ++k)
 		{
 			_Zones[k].RaytraceCounter = 0;
 		}
@@ -103,14 +100,14 @@ bool CPackedWorld::raytrace(const NLMISC::CVector &start, const NLMISC::CVector 
 	CGridTraversal::startTraverse(start2f, currX, currY);
 	do
 	{
-		sint x = currX - (sint) _ZoneMinX;
-		sint y = currY - (sint) _ZoneMinY;
+		sint x = currX - (sint)_ZoneMinX;
+		sint y = currY - (sint)_ZoneMinY;
 		if (x < 0) continue;
 		if (y < 0) continue;
-		if (x >= (sint) _ZoneGrid.getWidth()) continue;
-		if (y >= (sint) _ZoneGrid.getHeight()) continue;
+		if (x >= (sint)_ZoneGrid.getWidth()) continue;
+		if (y >= (sint)_ZoneGrid.getHeight()) continue;
 		std::vector<uint32> &currZoneList = _ZoneGrid(x, y).IDs;
-		for(uint k = 0; k < currZoneList.size(); ++k)
+		for (uint k = 0; k < currZoneList.size(); ++k)
 		{
 			if (_Zones[currZoneList[k]].RaytraceCounter != _RaytraceCounter) // already visited
 			{
@@ -137,8 +134,7 @@ bool CPackedWorld::raytrace(const NLMISC::CVector &start, const NLMISC::CVector 
 			}
 			return true;
 		}
-	}
-	while (CGridTraversal::traverse(start2f, dir2f, currX, currY));
+	} while (CGridTraversal::traverse(start2f, dir2f, currX, currY));
 	return false;
 }
 
@@ -146,7 +142,7 @@ bool CPackedWorld::raytrace(const NLMISC::CVector &start, const NLMISC::CVector 
 void CPackedWorld::getZones(std::vector<TPackedZoneBaseSPtr> &zones)
 {
 	zones.clear();
-	for(uint k = 0; k < _Zones.size(); ++k)
+	for (uint k = 0; k < _Zones.size(); ++k)
 	{
 		zones.push_back(_Zones[k].Zone);
 	}
@@ -178,18 +174,18 @@ void CPackedWorld::select(const NLMISC::CPolygon2D &poly, std::vector<NLMISC::CT
 	NLMISC::CPolygon2D zonePoly = poly;
 	for (uint k = 0; k < zonePoly.Vertices.size(); ++k)
 	{
-		zonePoly.Vertices[k].x = zonePoly.Vertices[k].x / 160.f - (float) _ZoneMinX;
-		zonePoly.Vertices[k].y = zonePoly.Vertices[k].y / 160.f - (float) _ZoneMinY;
+		zonePoly.Vertices[k].x = zonePoly.Vertices[k].x / 160.f - (float)_ZoneMinX;
+		zonePoly.Vertices[k].y = zonePoly.Vertices[k].y / 160.f - (float)_ZoneMinY;
 	}
 	NLMISC::CPolygon2D::TRasterVect borders;
 	sint minY;
 	zonePoly.computeOuterBorders(borders, minY);
-	for (sint y = minY; y < (sint) (minY + borders.size()); ++y)
+	for (sint y = minY; y < (sint)(minY + borders.size()); ++y)
 	{
-		if (y < 0 || y >= (sint) _ZoneGrid.getHeight()) continue;
+		if (y < 0 || y >= (sint)_ZoneGrid.getHeight()) continue;
 		for (sint x = borders[y - minY].first; x <= borders[y - minY].second; ++x)
 		{
-			if (x < 0 || x >= (sint) _ZoneGrid.getWidth()) continue;
+			if (x < 0 || x >= (sint)_ZoneGrid.getWidth()) continue;
 			{
 				const CZoneIndexList &zil = _ZoneGrid(x, y);
 				for (uint k = 0; k < zil.IDs.size(); ++k)
@@ -200,6 +196,5 @@ void CPackedWorld::select(const NLMISC::CPolygon2D &poly, std::vector<NLMISC::CT
 		}
 	}
 }
-
 
 } // Nl3D

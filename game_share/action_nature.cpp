@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 #include "nel/misc/debug.h"
@@ -26,37 +24,33 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace ACTNATURE
+namespace ACTNATURE {
+NL_BEGIN_STRING_CONVERSION_TABLE(TActionNature)
+NL_STRING_CONVERSION_TABLE_ENTRY(FIGHT)
+NL_STRING_CONVERSION_TABLE_ENTRY(OFFENSIVE_MAGIC)
+NL_STRING_CONVERSION_TABLE_ENTRY(CURATIVE_MAGIC)
+NL_STRING_CONVERSION_TABLE_ENTRY(CRAFT)
+NL_STRING_CONVERSION_TABLE_ENTRY(HARVEST)
+NL_STRING_CONVERSION_TABLE_ENTRY(SEARCH_MP)
+NL_STRING_CONVERSION_TABLE_ENTRY(DODGE)
+NL_STRING_CONVERSION_TABLE_ENTRY(PARRY)
+NL_STRING_CONVERSION_TABLE_ENTRY(SHIELD_USE)
+NL_STRING_CONVERSION_TABLE_ENTRY(RECHARGE)
+NL_END_STRING_CONVERSION_TABLE(TActionNature, ActionNatureConversion, UNKNOWN)
+
+//-----------------------------------------------
+// toActionNature :
+//-----------------------------------------------
+TActionNature toActionNature(const std::string &str)
 {
-	NL_BEGIN_STRING_CONVERSION_TABLE (TActionNature)
-		NL_STRING_CONVERSION_TABLE_ENTRY(FIGHT)
-		NL_STRING_CONVERSION_TABLE_ENTRY(OFFENSIVE_MAGIC)
-		NL_STRING_CONVERSION_TABLE_ENTRY(CURATIVE_MAGIC)
-		NL_STRING_CONVERSION_TABLE_ENTRY(CRAFT)
-		NL_STRING_CONVERSION_TABLE_ENTRY(HARVEST)
-		NL_STRING_CONVERSION_TABLE_ENTRY(SEARCH_MP)
-		NL_STRING_CONVERSION_TABLE_ENTRY(DODGE)
-		NL_STRING_CONVERSION_TABLE_ENTRY(PARRY)
-		NL_STRING_CONVERSION_TABLE_ENTRY(SHIELD_USE)
-		NL_STRING_CONVERSION_TABLE_ENTRY(RECHARGE)
-	NL_END_STRING_CONVERSION_TABLE(TActionNature, ActionNatureConversion, UNKNOWN)
+	return ActionNatureConversion.fromString(str);
+}
 
-
-
-	//-----------------------------------------------
-	// toActionNature :
-	//-----------------------------------------------
-	TActionNature toActionNature(const std::string &str)
-	{
-		return ActionNatureConversion.fromString(str);
-	}
-
-
-	//-----------------------------------------------
-	// toString :
-	//-----------------------------------------------
-	const std::string& toString(TActionNature nature)
-	{
-		return ActionNatureConversion.toString(nature);
-	}
+//-----------------------------------------------
+// toString :
+//-----------------------------------------------
+const std::string &toString(TActionNature nature)
+{
+	return ActionNatureConversion.toString(nature);
+}
 }; // ACTNATURE

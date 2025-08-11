@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #if !defined(AFX_CHOOSE_NAME_H__AF59C290_0134_437B_BACA_3698979572B5__INCLUDED_)
 #define AFX_CHOOSE_NAME_H__AF59C290_0134_437B_BACA_3698979572B5__INCLUDED_
 
@@ -30,32 +28,33 @@
 
 class CChooseName : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CChooseName(const CString &initialName, CWnd* pParent = NULL);   // standard constructor
+	CChooseName(const CString &initialName, CWnd *pParent = NULL); // standard constructor
 
 	std::string getName();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CChooseName)
-	enum { IDD = IDD_CHOOSE_NAME };
-	CString	m_Name;
+	enum
+	{
+		IDD = IDD_CHOOSE_NAME
+	};
+	CString m_Name;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CChooseName)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CChooseName)
-		// NOTE: the ClassWizard will add member functions here
+	// NOTE: the ClassWizard will add member functions here
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

@@ -27,9 +27,7 @@
 #include "thread.h"
 #include <pthread.h>
 
-
 namespace NLMISC {
-
 
 /**
  * Posix Thread
@@ -48,7 +46,7 @@ public:
 	};
 
 	/// Constructor
-	CPThread( IRunnable *runnable, uint32 stackSize);
+	CPThread(IRunnable *runnable, uint32 stackSize);
 
 	virtual ~CPThread();
 
@@ -67,13 +65,13 @@ public:
 	}
 
 	/// Internal use
-	IRunnable	*Runnable;
+	IRunnable *Runnable;
 
-	TThreadState	_State;
-	pthread_t	_ThreadHandle;
+	TThreadState _State;
+	pthread_t _ThreadHandle;
 
 private:
-	uint32		_StackSize;
+	uint32 _StackSize;
 };
 
 /**
@@ -85,13 +83,12 @@ private:
 class CPProcess : public IProcess
 {
 public:
-	virtual ~CPProcess() {}
+	virtual ~CPProcess() { }
 	virtual uint64 getCPUMask();
 	virtual bool setCPUMask(uint64 mask);
 };
 
 } // NLMISC
-
 
 #endif // NL_OS_UNIX
 

@@ -25,8 +25,6 @@
 #include <deque>
 #include <string>
 
-
-
 /**
  * Graph class for network statistics
  * \author Vianney Lecroart, Olivier Cado
@@ -42,7 +40,7 @@ public:
 	float MaxValue;
 	float Peak;
 	bool LineMode;
-	float PrevY;	
+	float PrevY;
 
 	std::deque<float> Values;
 
@@ -50,45 +48,46 @@ public:
 
 	NLMISC::TTime CurrentQuantumStart;
 
-		
-
 	/// release material
 	~CGraph()
-	{	
+	{
 	}
 
-
 	/// Constructor (CGraph::init() must have been called before)
-	CGraph (std::string name,
-			float x, float y, float width, float height,
-			NLMISC::CRGBA backColor,
-			NLMISC::TTime quantum,
-			float maxValue,
-			bool lineMode = false)
-		: Name(name), X(x), Y(y), Width(width), Height(height), BackColor(backColor), Quantum(quantum),
-		MaxValue(maxValue), Peak(0.0f), LineMode(lineMode), PrevY(y)
+	CGraph(std::string name,
+	    float x, float y, float width, float height,
+	    NLMISC::CRGBA backColor,
+	    NLMISC::TTime quantum,
+	    float maxValue,
+	    bool lineMode = false)
+	    : Name(name)
+	    , X(x)
+	    , Y(y)
+	    , Width(width)
+	    , Height(height)
+	    , BackColor(backColor)
+	    , Quantum(quantum)
+	    , MaxValue(maxValue)
+	    , Peak(0.0f)
+	    , LineMode(lineMode)
+	    , PrevY(y)
 	{
-		CurrentQuantumStart = (uint64) (1000 * NLMISC::CTime::ticksToSecond(NLMISC::CTime::getPerformanceTime()));		
+		CurrentQuantumStart = (uint64)(1000 * NLMISC::CTime::ticksToSecond(NLMISC::CTime::getPerformanceTime()));
 	}
 
 	/// Add one value
-	void addOneValue (float value = 0.0f);
+	void addOneValue(float value = 0.0f);
 
 	/// Add value
-	void addValue (float value);
+	void addValue(float value);
 
-	static bool					DisplayAverageValue;
-	static bool					Display;
+	static bool DisplayAverageValue;
+	static bool Display;
 
-	void renderGraph ();	
-	
+	void renderGraph();
+
 private:
-	
-	
-	
 };
-
-
 
 #endif // GRAPH_H
 

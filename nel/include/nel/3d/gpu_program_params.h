@@ -36,8 +36,8 @@
 // Project includes
 
 namespace NLMISC {
-	class CVector;
-	class CMatrix;
+class CVector;
+class CMatrix;
 }
 
 namespace NL3D {
@@ -48,7 +48,7 @@ namespace NL3D {
  * \author Jan Boon (Kaetemi)
  * A storage for USERCODE-PROVIDED parameters for GPU programs.
  * Allows for fast updating and iteration of parameters.
- * NOTE TO DRIVER IMPLEMENTORS: DO NOT USE FOR STORING COPIES 
+ * NOTE TO DRIVER IMPLEMENTORS: DO NOT USE FOR STORING COPIES
  * OF HARDCODED DRIVER MATERIAL PARAMETERS OR DRIVER PARAMETERS!!!
  * The 4-component alignment that is done in this storage
  * class is necessary to simplify support for register-based
@@ -57,11 +57,27 @@ namespace NL3D {
 class CGPUProgramParams
 {
 public:
-	enum TType { Float, Int, UInt };
-	struct CMeta { uint Index, Size, Count; TType Type; std::string Name; size_t Next, Prev; }; // size is element size, count is nb of elements
+	enum TType
+	{
+		Float,
+		Int,
+		UInt
+	};
+	struct CMeta
+	{
+		uint Index, Size, Count;
+		TType Type;
+		std::string Name;
+		size_t Next, Prev;
+	}; // size is element size, count is nb of elements
 
 private:
-	union CVec { float F[4]; sint32 I[4]; uint32 UI[4]; };
+	union CVec
+	{
+		float F[4];
+		sint32 I[4];
+		uint32 UI[4];
+	};
 
 public:
 	CGPUProgramParams();
@@ -85,9 +101,9 @@ public:
 	void set2ui(uint index, uint32 ui0, uint32 ui1);
 	void set3ui(uint index, uint32 ui0, uint32 ui1, uint32 ui2);
 	void set4ui(uint index, uint32 ui0, uint32 ui1, uint32 ui2, uint32 ui3);
-	void set3f(uint index, const NLMISC::CVector& v);
-	void set4f(uint index, const NLMISC::CVector& v, float f3);
-	void set4x4f(uint index, const NLMISC::CMatrix& m);
+	void set3f(uint index, const NLMISC::CVector &v);
+	void set4f(uint index, const NLMISC::CVector &v, float f3);
+	void set4x4f(uint index, const NLMISC::CMatrix &m);
 	void set4fv(uint index, size_t num, const float *src);
 	void set4iv(uint index, size_t num, const sint32 *src);
 	void set4uiv(uint index, size_t num, const uint32 *src);
@@ -106,9 +122,9 @@ public:
 	void set2ui(const std::string &name, uint32 ui0, uint32 ui1);
 	void set3ui(const std::string &name, uint32 ui0, uint32 ui1, uint32 ui2);
 	void set4ui(const std::string &name, uint32 ui0, uint32 ui1, uint32 ui2, uint32 ui3);
-	void set3f(const std::string &name, const NLMISC::CVector& v);
-	void set4f(const std::string &name, const NLMISC::CVector& v, float f3);
-	void set4x4f(const std::string &name, const NLMISC::CMatrix& m);
+	void set3f(const std::string &name, const NLMISC::CVector &v);
+	void set4f(const std::string &name, const NLMISC::CVector &v, float f3);
+	void set4x4f(const std::string &name, const NLMISC::CMatrix &m);
 	void set4fv(const std::string &name, size_t num, const float *src);
 	void set4iv(const std::string &name, size_t num, const sint32 *src);
 	void set4uiv(const std::string &name, size_t num, const uint32 *src);
@@ -116,8 +132,8 @@ public:
 	// @}
 
 	// Maps the given name to the given index.
-	// on duplicate entry the data set by name will be prefered, as it can be 
-	// assumed to have been set after the data set by index, and the mapping 
+	// on duplicate entry the data set by name will be prefered, as it can be
+	// assumed to have been set after the data set by index, and the mapping
 	// will usually happen while iterating and finding an element with name
 	// but no known index.
 	// Unknown index will be set to ~0, unknown name will have an empty string.

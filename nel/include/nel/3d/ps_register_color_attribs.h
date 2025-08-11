@@ -15,16 +15,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_REGISTER_COLOR_ATTRIB_H
 #define NL_REGISTER_COLOR_ATTRIB_H
 
-
-namespace NL3D
-{
-	/// Register attribute makers based on colors (used in particle systems)
-	void PSRegisterColorAttribs();
+namespace NL3D {
+/// Register attribute makers based on colors (used in particle systems)
+void PSRegisterColorAttribs();
 } // NL3D
 
 #endif

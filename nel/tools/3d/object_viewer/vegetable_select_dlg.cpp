@@ -25,21 +25,19 @@
 #include "vegetable_select_dlg.h"
 #include "vegetable_dlg.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CVegetableSelectDlg dialog
 
-
-CVegetableSelectDlg::CVegetableSelectDlg(CVegetableDlg *vegetableDlg, CWnd* pParent /*=NULL*/)
-	: CDialog(CVegetableSelectDlg::IDD, pParent), _VegetableDlg(vegetableDlg)
+CVegetableSelectDlg::CVegetableSelectDlg(CVegetableDlg *vegetableDlg, CWnd *pParent /*=NULL*/)
+    : CDialog(CVegetableSelectDlg::IDD, pParent)
+    , _VegetableDlg(vegetableDlg)
 {
 	//{{AFX_DATA_INIT(CVegetableSelectDlg)
 	VegetableSelected = -1;
 	//}}AFX_DATA_INIT
 }
 
-
-void CVegetableSelectDlg::DoDataExchange(CDataExchange* pDX)
+void CVegetableSelectDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CVegetableSelectDlg)
@@ -48,32 +46,31 @@ void CVegetableSelectDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CVegetableSelectDlg, CDialog)
-	//{{AFX_MSG_MAP(CVegetableSelectDlg)
-	ON_LBN_DBLCLK(IDC_LIST1, OnDblclkList1)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CVegetableSelectDlg)
+ON_LBN_DBLCLK(IDC_LIST1, OnDblclkList1)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CVegetableSelectDlg message handlers
 
-BOOL CVegetableSelectDlg::OnInitDialog() 
+BOOL CVegetableSelectDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
 	// Init the control list.
-	uint	num= _VegetableDlg->getNumVegetables();
-	for(uint i=0; i<num; i++)
+	uint num = _VegetableDlg->getNumVegetables();
+	for (uint i = 0; i < num; i++)
 	{
 		VegetableList.AddString(nlUtf8ToTStr(_VegetableDlg->getVegetableName(i)));
 	}
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CVegetableSelectDlg::OnDblclkList1() 
+void CVegetableSelectDlg::OnDblclkList1()
 {
 	UpdateData();
 	// DblClck select the name.

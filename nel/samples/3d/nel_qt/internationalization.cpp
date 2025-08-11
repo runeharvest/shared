@@ -45,25 +45,25 @@ public:
 	{
 		CI18N::readTextFile(filename, text);
 		text += ucstring("\n"
-#if defined (NL_DEBUG)
-#	if defined (NL_DEBUG_FAST)
-			"COMPILE_MODE [NL_DEBUG (NL_DEBUG_FAST)]\n"
-#	elif defined (NL_DEBUG_INSTRUMENT)
-			"COMPILE_MODE [NL_DEBUG (NL_DEBUG_INSTRUMENT)]\n"
-#	else
-			"COMPILE_MODE [NL_DEBUG]\n"
-#	endif
-#elif defined (NL_RELEASE_DEBUG)
-			"COMPILE_MODE [NL_RELEASE_DEBUG]\n"
-#elif defined (NL_RELEASE)
-			"COMPILE_MODE [NL_RELEASE]\n"
+#if defined(NL_DEBUG)
+#if defined(NL_DEBUG_FAST)
+		                 "COMPILE_MODE [NL_DEBUG (NL_DEBUG_FAST)]\n"
+#elif defined(NL_DEBUG_INSTRUMENT)
+		                 "COMPILE_MODE [NL_DEBUG (NL_DEBUG_INSTRUMENT)]\n"
+#else
+		                 "COMPILE_MODE [NL_DEBUG]\n"
+#endif
+#elif defined(NL_RELEASE_DEBUG)
+		                 "COMPILE_MODE [NL_RELEASE_DEBUG]\n"
+#elif defined(NL_RELEASE)
+		                 "COMPILE_MODE [NL_RELEASE]\n"
 #endif
 #if FINAL_VERSION
-			"RELEASE_TYPE [FINAL_VERSION]\n"
+		                 "RELEASE_TYPE [FINAL_VERSION]\n"
 #else
-			"RELEASE_TYPE [DEVELOPER_VERSION]\n"
+		                 "RELEASE_TYPE [DEVELOPER_VERSION]\n"
 #endif
-			"VERSION_NUMBER [" NLQT_VERSION "]\n");
+		                 "VERSION_NUMBER [" NLQT_VERSION "]\n");
 	}
 };
 
@@ -73,21 +73,19 @@ CI18NLoadProxyBuildInfo a_I18NLoadProxy;
 
 CInternationalization::CInternationalization()
 {
-
 }
 
 CInternationalization::~CInternationalization()
 {
-	
 }
 
 void CInternationalization::init(CConfiguration *configuration)
 {
-	//H_AUTO2
+	// H_AUTO2
 
 	// copy parameters
 	m_Configuration = configuration;
-	
+
 	// check stuff we need
 	nlassert(m_Configuration);
 
@@ -96,17 +94,17 @@ void CInternationalization::init(CConfiguration *configuration)
 	CI18N::setLoadProxy(&a_I18NLoadProxy);
 
 	// set the language code
-	m_Configuration->setAndCallback("LanguageCode",  CConfigCallback(this, &CInternationalization::cfcbLanguageCode));	
+	m_Configuration->setAndCallback("LanguageCode", CConfigCallback(this, &CInternationalization::cfcbLanguageCode));
 }
 
 void CInternationalization::release()
 {
-	//H_AUTO2
+	// H_AUTO2
 
 	// i18n itself cannot be released, but is 'ok' since static
 	m_Configuration->dropCallback("LanguageCode");
 
-	// drop the load proxy	
+	// drop the load proxy
 	CI18N::setLoadProxy(NULL);
 	nlassert(!m_Callbacks.size());
 
@@ -142,7 +140,12 @@ void CInternationalization::enableCallback(CEmptyCallback incb)
 void CInternationalization::disableCallback(CEmptyCallback incb)
 {
 	std::vector<CEmptyCallback>::iterator it(m_Callbacks.begin()), end(m_Callbacks.end());
-	for (; it != end; ++it) if (*it == incb) { m_Callbacks.erase(it); return; }
+	for (; it != end; ++it)
+		if (*it == incb)
+		{
+			m_Callbacks.erase(it);
+			return;
+		}
 	nlassert(false);
 }
 

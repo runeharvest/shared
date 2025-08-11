@@ -30,10 +30,7 @@
 #include "nel/3d/cube_grid.h"
 #include "nel/3d/ig_surface_light_build.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 /**
@@ -46,83 +43,81 @@ namespace NL3D
 class CInstanceLighter
 {
 public:
-
-	enum	{MaxOverSamples= 16};
+	enum
+	{
+		MaxOverSamples = 16
+	};
 
 public:
-
 	// Light Options decription structure
 	class CLightDesc
 	{
 	public:
 		// Default Ctor
-		CLightDesc ();
+		CLightDesc();
 
 		// Disable Sun contribution: ie set 0 to all contributions of sun on instances and surfaces?? false by default
-		bool					DisableSunContribution;
+		bool DisableSunContribution;
 
 		// Sun direction
-		NLMISC::CVector			LightDirection;
+		NLMISC::CVector LightDirection;
 
 		// Grid size
-		uint					GridSize;
+		uint GridSize;
 
 		// Grid size
-		float					GridCellSize;
+		float GridCellSize;
 
 		// Project shadows on instances.
-		bool					Shadow;
+		bool Shadow;
 
 		// Number of samples For sun shadowing only. Must be: 0 (disable), 2, 4, 8, 16
-		uint					OverSampling;
+		uint OverSampling;
 
 		// This is a user shapeMap.
-		std::map<std::string, IShape*>				UserShapeMap;
-
+		std::map<std::string, IShape *> UserShapeMap;
 	};
 
 	// A triangle used to light the zone
 	class CTriangle
 	{
 		friend class CInstanceLighter;
+
 	public:
 		// Ctors
-		CTriangle (const NLMISC::CTriangle& triangle, sint instanceId)
+		CTriangle(const NLMISC::CTriangle &triangle, sint instanceId)
 		{
-			Triangle=triangle;
-			InstanceId= instanceId;
+			Triangle = triangle;
+			InstanceId = instanceId;
 		}
 
 		// The triangle
-		NLMISC::CTriangle	Triangle;
+		NLMISC::CTriangle Triangle;
 
 		// which instance owns this triangle. -1 if none (landscape or others ig).
-		sint				InstanceId;
+		sint InstanceId;
 
 		// Other info
-		const NLMISC::CPlane		&getPlane() const {return Plane;}
+		const NLMISC::CPlane &getPlane() const { return Plane; }
 
 	private:
-		NLMISC::CPlane		Plane;
+		NLMISC::CPlane Plane;
 	};
 
-
 public:
-
 	/**	Tool method which take a single IG, and do all the god job to light this one, with no other dependencies
 	 *	NB: it uses instLighter passed, init() ing it. It use lightDesc.UserShapeMap or it load Shape in directory lightDesc.ShapePath
 	 */
-	static	void	lightIgSimple(CInstanceLighter &instLighter, const CInstanceGroup &igIn, CInstanceGroup &igOut, const CLightDesc &lightDesc, const char *igName);
+	static void lightIgSimple(CInstanceLighter &instLighter, const CInstanceGroup &igIn, CInstanceGroup &igOut, const CLightDesc &lightDesc, const char *igName);
 
 public:
-
 	/// Constructor
 	CInstanceLighter();
 	/// Destructor
-	virtual ~CInstanceLighter() {}
+	virtual ~CInstanceLighter() { }
 
 	// Init the system
-	void init ();
+	void init();
 
 	/** Light an InstanceGroup
 	 *	igOut has different PointLights than igIn. eg: if a pointLight do not light anything, then it is not
@@ -134,21 +129,19 @@ public:
 	 *	but all Zones that lies under igIn should be loaded in.
 	 *	\param igSurfaceLightBuild if !NULL, light() will compute igOut.IGSurfaceLight, else it is just cleared.
 	 */
-	void light (const CInstanceGroup &igIn, CInstanceGroup &igOut, const CLightDesc &lightDesc, std::vector<CTriangle>& obstacles,
-		CLandscape *landscape= NULL, CIGSurfaceLightBuild *igSurfaceLightBuild= NULL);
-
+	void light(const CInstanceGroup &igIn, CInstanceGroup &igOut, const CLightDesc &lightDesc, std::vector<CTriangle> &obstacles,
+	    CLandscape *landscape = NULL, CIGSurfaceLightBuild *igSurfaceLightBuild = NULL);
 
 	// Add triangles from a landscape
-	static void addTriangles (CLandscape &landscape, std::vector<uint> &listZone, uint order, std::vector<CTriangle>& triangleArray);
+	static void addTriangles(CLandscape &landscape, std::vector<uint> &listZone, uint order, std::vector<CTriangle> &triangleArray);
 
 	/** Add triangles from a transform shape. Work only for CMesh, CMultiMesh and CMeshMRM all without skinning.
 	 *	Give An instanceId!=-1 only for instances of the IG to compute. This is to avoid auto-shadowing.
 	 */
-	static void addTriangles (const IShape &shape, const NLMISC::CMatrix& modelMT, std::vector<CTriangle>& triangleArray, sint instanceId);
+	static void addTriangles(const IShape &shape, const NLMISC::CMatrix &modelMT, std::vector<CTriangle> &triangleArray, sint instanceId);
 
 	// Progress callback
-	virtual void progress (const char * /* message */, float /* progress */) {}
-
+	virtual void progress(const char * /* message */, float /* progress */) { }
 
 	/// \name Static PointLights mgt.
 	//@{
@@ -156,69 +149,64 @@ public:
 	/** Append a static point light to compute. call at setup stage (before light() ).
 	 *	NB: you must append all PointLights of intersets, even ones from the IG to compute.
 	 */
-	void			addStaticPointLight(const CPointLightNamed &pln, const char *igName);
+	void addStaticPointLight(const CPointLightNamed &pln, const char *igName);
 
 	//@}
 
-
-// ********************************
+	// ********************************
 private:
-
-
-	static void addTriangles (const CMeshGeom &meshGeom, const NLMISC::CMatrix& modelMT, std::vector<CTriangle>& triangleArray, sint instanceId);
-	static void addTriangles (const CMeshMRMGeom &meshGeom, const NLMISC::CMatrix& modelMT, std::vector<CTriangle>& triangleArray, sint instanceId);
-	static void excludeAllPatchFromRefineAll (CLandscape &landscape, std::vector<uint> &listZone, bool exclude);
-
+	static void addTriangles(const CMeshGeom &meshGeom, const NLMISC::CMatrix &modelMT, std::vector<CTriangle> &triangleArray, sint instanceId);
+	static void addTriangles(const CMeshMRMGeom &meshGeom, const NLMISC::CMatrix &modelMT, std::vector<CTriangle> &triangleArray, sint instanceId);
+	static void excludeAllPatchFromRefineAll(CLandscape &landscape, std::vector<uint> &listZone, bool exclude);
 
 	// light / rayTrace against sun.
-	void	computeSunContribution(const CLightDesc &lightDesc, std::vector<CTriangle>& obstacles, CLandscape *landscape);
+	void computeSunContribution(const CLightDesc &lightDesc, std::vector<CTriangle> &obstacles, CLandscape *landscape);
 
-	void	dilateLightingOnSurfaceCells();
+	void dilateLightingOnSurfaceCells();
 
 private:
-	struct	CPointLightRT;
+	struct CPointLightRT;
 
-	struct	CInstanceInfo
+	struct CInstanceInfo
 	{
 		// Center of the mesh to compute lighting.
-		CVector			CenterPos;
+		CVector CenterPos;
 
 		// Pos of samples, for overSampling. if none, OverSamples[0]== CenterPos
-		CVector			OverSamples[MaxOverSamples];
+		CVector OverSamples[MaxOverSamples];
 
 		// Temp light which influence this instance.
-		CPointLightRT	*Light[CInstanceGroup::NumStaticLightPerInstance];
+		CPointLightRT *Light[CInstanceGroup::NumStaticLightPerInstance];
 
 		// Temp Ambient light which influence this instance.
-		CPointLightRT	*LocalAmbientLight;
+		CPointLightRT *LocalAmbientLight;
 	};
 
 	// Instance of the current ig to be lighted.
-	std::vector<CInstanceGroup::CInstance>	_Instances;
+	std::vector<CInstanceGroup::CInstance> _Instances;
 	// Instance Lighting Info of the current ig to be lighted.
-	std::vector<CInstanceInfo>				_InstanceInfos;
+	std::vector<CInstanceInfo> _InstanceInfos;
 	// The current instance computed. Used to skip it in raytracing
-	sint									_CurrentInstanceComputed;
+	sint _CurrentInstanceComputed;
 	// CIGSurfaceLight Info.
-	CIGSurfaceLightBuild					*_IGSurfaceLightBuild;
+	CIGSurfaceLightBuild *_IGSurfaceLightBuild;
 	// The RetrieverGridMap currently builded.
-	CIGSurfaceLight::TRetrieverGridMap		_IGRetrieverGridMap;
-
+	CIGSurfaceLight::TRetrieverGridMap _IGRetrieverGridMap;
 
 	/// A PointLight struct to test raytracing.
-	struct	CPointLightRT
+	struct CPointLightRT
 	{
-		CPointLightNamed		PointLight;
-		float					OODeltaAttenuation;
+		CPointLightNamed PointLight;
+		float OODeltaAttenuation;
 		// BBox of the pointLight
-		NLMISC::CBSphere		BSphere;
+		NLMISC::CBSphere BSphere;
 
 		// Faces that may occlude the light. Only Back Faces (from the light pov) are inserted
-		CCubeGrid<const CTriangle*>		FaceCubeGrid;
+		CCubeGrid<const CTriangle *> FaceCubeGrid;
 		// Number of TileLightInfluences which use this PointLight.
-		uint					RefCount;
+		uint RefCount;
 		// Final id of the pointLight in the Ig.
-		uint					DstId;
+		uint DstId;
 
 		CPointLightRT();
 
@@ -227,72 +215,64 @@ private:
 		 *	if instanceComputed>=0, then skip obstacles with InstanceId==instanceComputed.
 		 *	Also Skip if the light is an Ambient, and skip if the light is a spot and if the position is out of the cone
 		 */
-		bool		testRaytrace(const CVector &v, sint instanceComputed= -1);
+		bool testRaytrace(const CVector &v, sint instanceComputed = -1);
 	};
-
 
 	/// For sort()
-	struct		CPredPointLightToPoint
+	struct CPredPointLightToPoint
 	{
-		CVector		Point;
+		CVector Point;
 
-		bool	operator() (CPointLightRT *pla, CPointLightRT *plb) const;
+		bool operator()(CPointLightRT *pla, CPointLightRT *plb) const;
 	};
 
-
 	/// List of PointLights
-	std::vector<CPointLightRT>		_StaticPointLights;
+	std::vector<CPointLightRT> _StaticPointLights;
 	/// QuadGrid of PointLights. Builded from _StaticPointLights
-	CQuadGrid<CPointLightRT*>		_StaticPointLightQuadGrid;
-
+	CQuadGrid<CPointLightRT *> _StaticPointLightQuadGrid;
 
 	/// Fill CubeGrid, and set PointLightRT in _StaticPointLightQuadGrid.
-	void			compilePointLightRT(uint gridSize, float gridCellSize, std::vector<CTriangle>& obstacles, bool doShadow);
+	void compilePointLightRT(uint gridSize, float gridCellSize, std::vector<CTriangle> &obstacles, bool doShadow);
 
 	/** Process the IG, ie process _InstanceInfos. Also process SurfaceLightGrid
 	 *	MultiCPU: not done for now. Be aware of CPointLightRT::RefCount!!!!
 	 */
-	void			processIGPointLightRT(std::vector<CPointLightNamed> &listPointLight);
-
+	void processIGPointLightRT(std::vector<CPointLightNamed> &listPointLight);
 
 private:
-
 	/// \name Cell Iteration. ie iteration on _IGRetrieverGridMap cells and _IGSurfaceLightBuild cells
 	// @{
 
-	void			beginCell();
-	void			nextCell();
-	bool			isEndCell();
+	void beginCell();
+	void nextCell();
+	bool isEndCell();
 	// get current cell iterated.
-	CSurfaceLightGrid::CCellCorner		&getCurrentCell();
+	CSurfaceLightGrid::CCellCorner &getCurrentCell();
 	// get current cellInfo iterated.
-	CIGSurfaceLightBuild::CCellCorner	&getCurrentCellInfo();
+	CIGSurfaceLightBuild::CCellCorner &getCurrentCellInfo();
 	// Neighboring of the cell
-	bool			isCurrentNeighborCellInSurface(sint xnb, sint ynb);
-	CSurfaceLightGrid::CCellCorner		&getCurrentNeighborCell(sint xnb, sint ynb);
-	CIGSurfaceLightBuild::CCellCorner	&getCurrentNeighborCellInfo(sint xnb, sint ynb);
+	bool isCurrentNeighborCellInSurface(sint xnb, sint ynb);
+	CSurfaceLightGrid::CCellCorner &getCurrentNeighborCell(sint xnb, sint ynb);
+	CIGSurfaceLightBuild::CCellCorner &getCurrentNeighborCellInfo(sint xnb, sint ynb);
 
-	uint			getCurrentCellNumber() const {return _ItCurrentCellNumber;}
-	uint			getTotalCellNumber() const	{return _TotalCellNumber;}
-	void			progressCell(const char *message);
+	uint getCurrentCellNumber() const { return _ItCurrentCellNumber; }
+	uint getTotalCellNumber() const { return _TotalCellNumber; }
+	void progressCell(const char *message);
 
 	// Iteration Data.
-	CIGSurfaceLight::ItRetrieverGridMap			_ItRetriever;
-	CIGSurfaceLightBuild::ItRetrieverGridMap	_ItRetrieverInfo;
-	uint										_ItSurfId;
-	uint										_ItCellId;
-	bool										_IsEndCell;
-	uint										_ItCurrentCellNumber;
-	uint										_TotalCellNumber;
-	float										_LastCellProgress;
+	CIGSurfaceLight::ItRetrieverGridMap _ItRetriever;
+	CIGSurfaceLightBuild::ItRetrieverGridMap _ItRetrieverInfo;
+	uint _ItSurfId;
+	uint _ItCellId;
+	bool _IsEndCell;
+	uint _ItCurrentCellNumber;
+	uint _TotalCellNumber;
+	float _LastCellProgress;
 
 	// @}
-
 };
 
-
 } // NL3D
-
 
 #endif // NL_INSTANCE_LIGHTER_H
 

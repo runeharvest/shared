@@ -22,12 +22,9 @@
 
 #include <limits>
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 class CMeshBaseInstance;
-
 
 // ***************************************************************************
 /**
@@ -40,30 +37,27 @@ class CAsyncTextureBlock
 {
 public:
 	// List of texture file names for a material
-	std::string			TextureNames[IDRV_MAT_MAXTEXTURES];
+	std::string TextureNames[IDRV_MAT_MAXTEXTURES];
 
 	CAsyncTextureBlock()
 	{
-		for(uint i=0;i<IDRV_MAT_MAXTEXTURES;i++)
+		for (uint i = 0; i < IDRV_MAT_MAXTEXTURES; i++)
 		{
-			TextIds[i]= std::numeric_limits<uint>::max();
-			IsTextureFile[i]= false;
+			TextIds[i] = std::numeric_limits<uint>::max();
+			IsTextureFile[i] = false;
 		}
 	}
-	bool				isTextureFile(uint stage) const {return IsTextureFile[stage];}
+	bool isTextureFile(uint stage) const { return IsTextureFile[stage]; }
 
 private:
-	friend	class CMeshBaseInstance;
+	friend class CMeshBaseInstance;
 	// Ids in the CAsyncTextureManager
-	uint				TextIds[IDRV_MAT_MAXTEXTURES];
+	uint TextIds[IDRV_MAT_MAXTEXTURES];
 	// true if the texture in the stage is really a texture file.
-	bool				IsTextureFile[IDRV_MAT_MAXTEXTURES];
-
+	bool IsTextureFile[IDRV_MAT_MAXTEXTURES];
 };
 
-
 } // NL3D
-
 
 #endif // NL_ASYNC_TEXTURE_BLOCK_H
 

@@ -22,17 +22,15 @@
 
 #include <string>
 
-namespace NLGUI
+namespace NLGUI {
+class CViewBase;
+
+/// Simple interface element ( widget ) factory
+class CInterfaceFactory
 {
-	class CViewBase;
-
-	/// Simple interface element ( widget ) factory
-	class CInterfaceFactory
-	{
-	public:
-		static CViewBase* createClass( const std::string &name );
-	};
+public:
+	static CViewBase *createClass(const std::string &name);
+};
 }
-
 
 #endif

@@ -24,22 +24,20 @@
 /////////////////////////////////////////////////////////////////////////////
 // CChooseName dialog
 
-
-CChooseName::CChooseName(const CString &initialName, CWnd* pParent /*=NULL*/)
-	: CDialog(CChooseName::IDD, pParent)
+CChooseName::CChooseName(const CString &initialName, CWnd *pParent /*=NULL*/)
+    : CDialog(CChooseName::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CChooseName)
 	m_Name = initialName;
 	//}}AFX_DATA_INIT
 }
 
-
 std::string CChooseName::getName()
 {
 	return NLMISC::tStrToUtf8(m_Name);
 }
 
-void CChooseName::DoDataExchange(CDataExchange* pDX)
+void CChooseName::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CChooseName)
@@ -47,11 +45,10 @@ void CChooseName::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CChooseName, CDialog)
-	//{{AFX_MSG_MAP(CChooseName)
-		// NOTE: the ClassWizard will add message map macros here
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CChooseName)
+// NOTE: the ClassWizard will add message map macros here
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////

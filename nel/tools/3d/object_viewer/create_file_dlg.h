@@ -28,18 +28,21 @@
 
 class CCreateFileDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CCreateFileDlg(const CString &title, const std::string &defaultBasePath, const std::string &extension, CWnd* pParent = NULL);   // standard constructor
+	CCreateFileDlg(const CString &title, const std::string &defaultBasePath, const std::string &extension, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CCreateFileDlg)
-	enum { IDD = IDD_CREATE_FILE };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_CREATE_FILE
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
 	// get chosen filename without path
-	std::string getFileName() const { return _Filename; }	
+	std::string getFileName() const { return _Filename; }
 	// get chosen path
 	std::string getPath() const { return _Path; }
 	// get full path (path + filename)
@@ -49,16 +52,14 @@ public:
 	// Appropriate error msgs will be issued if creation fails.
 	bool touchFile();
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CCreateFileDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
-	
 
-// Implementation
+	// Implementation
 protected:
 	std::string _Extension;
 	std::string _Filename;
@@ -74,6 +75,7 @@ protected:
 	// from CDialog
 	void OnOK();
 	void OnCancel();
+
 private:
 	CString _Title;
 };

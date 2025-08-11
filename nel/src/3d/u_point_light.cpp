@@ -20,69 +20,67 @@
 #include "nel/3d/u_point_light.h"
 #include "nel/3d/point_light_model.h"
 
-
 using namespace NLMISC;
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 
-void UPointLight::setAmbient (NLMISC::CRGBA ambient)
+void UPointLight::setAmbient(NLMISC::CRGBA ambient)
 {
-	CPointLightModel	*object = getObjectPtr();
+	CPointLightModel *object = getObjectPtr();
 	object->PointLight.setAmbient(ambient);
 }
 
 // ***************************************************************************
 
-void UPointLight::setDiffuse (NLMISC::CRGBA diffuse)
+void UPointLight::setDiffuse(NLMISC::CRGBA diffuse)
 {
-	CPointLightModel	*object = getObjectPtr();
-	object->PointLight.setDiffuse (diffuse);
+	CPointLightModel *object = getObjectPtr();
+	object->PointLight.setDiffuse(diffuse);
 }
 
 // ***************************************************************************
 
-void UPointLight::setSpecular (NLMISC::CRGBA specular)
+void UPointLight::setSpecular(NLMISC::CRGBA specular)
 {
-	CPointLightModel	*object = getObjectPtr();
-	object->PointLight.setSpecular (specular);
+	CPointLightModel *object = getObjectPtr();
+	object->PointLight.setSpecular(specular);
 }
 
 // ***************************************************************************
 
-void UPointLight::setColor (NLMISC::CRGBA color)
+void UPointLight::setColor(NLMISC::CRGBA color)
 {
-	CPointLightModel	*object = getObjectPtr();
-	object->PointLight.setColor (color);
+	CPointLightModel *object = getObjectPtr();
+	object->PointLight.setColor(color);
 }
 
 // ***************************************************************************
 
-NLMISC::CRGBA UPointLight::getAmbient () const
+NLMISC::CRGBA UPointLight::getAmbient() const
 {
-	CPointLightModel	*object = getObjectPtr();
+	CPointLightModel *object = getObjectPtr();
 	return object->PointLight.getAmbient();
 }
 
 // ***************************************************************************
 
-NLMISC::CRGBA UPointLight::getDiffuse () const
+NLMISC::CRGBA UPointLight::getDiffuse() const
 {
-	CPointLightModel	*object = getObjectPtr();
-	return object->PointLight.getDiffuse ();
+	CPointLightModel *object = getObjectPtr();
+	return object->PointLight.getDiffuse();
 }
 
 // ***************************************************************************
 
-NLMISC::CRGBA UPointLight::getSpecular () const
+NLMISC::CRGBA UPointLight::getSpecular() const
 {
-	CPointLightModel	*object = getObjectPtr();
+	CPointLightModel *object = getObjectPtr();
 	return object->PointLight.getSpecular();
 }
 
@@ -90,7 +88,7 @@ NLMISC::CRGBA UPointLight::getSpecular () const
 
 void UPointLight::setupAttenuation(float attenuationBegin, float attenuationEnd)
 {
-	CPointLightModel	*object = getObjectPtr();
+	CPointLightModel *object = getObjectPtr();
 	object->PointLight.setupAttenuation(attenuationBegin, attenuationEnd);
 }
 
@@ -98,7 +96,7 @@ void UPointLight::setupAttenuation(float attenuationBegin, float attenuationEnd)
 
 float UPointLight::getAttenuationBegin() const
 {
-	CPointLightModel	*object = getObjectPtr();
+	CPointLightModel *object = getObjectPtr();
 	return object->PointLight.getAttenuationBegin();
 }
 
@@ -106,7 +104,7 @@ float UPointLight::getAttenuationBegin() const
 
 float UPointLight::getAttenuationEnd() const
 {
-	CPointLightModel	*object = getObjectPtr();
+	CPointLightModel *object = getObjectPtr();
 	return object->PointLight.getAttenuationEnd();
 }
 
@@ -114,8 +112,8 @@ float UPointLight::getAttenuationEnd() const
 
 void UPointLight::enableSpotlight(bool enable)
 {
-	CPointLightModel	*object = getObjectPtr();
-	if(enable)
+	CPointLightModel *object = getObjectPtr();
+	if (enable)
 		object->PointLight.setType(CPointLight::SpotLight);
 	else
 		object->PointLight.setType(CPointLight::PointLight);
@@ -125,7 +123,7 @@ void UPointLight::enableSpotlight(bool enable)
 
 bool UPointLight::isSpotlight() const
 {
-	CPointLightModel	*object = getObjectPtr();
+	CPointLightModel *object = getObjectPtr();
 	return object->PointLight.getType() == CPointLight::SpotLight;
 }
 
@@ -133,7 +131,7 @@ bool UPointLight::isSpotlight() const
 
 void UPointLight::setupSpotAngle(float spotAngleBegin, float spotAngleEnd)
 {
-	CPointLightModel	*object = getObjectPtr();
+	CPointLightModel *object = getObjectPtr();
 	object->PointLight.setupSpotAngle(spotAngleBegin, spotAngleEnd);
 }
 
@@ -141,7 +139,7 @@ void UPointLight::setupSpotAngle(float spotAngleBegin, float spotAngleEnd)
 
 float UPointLight::getSpotAngleBegin() const
 {
-	CPointLightModel	*object = getObjectPtr();
+	CPointLightModel *object = getObjectPtr();
 	return object->PointLight.getSpotAngleBegin();
 }
 
@@ -149,7 +147,7 @@ float UPointLight::getSpotAngleBegin() const
 
 float UPointLight::getSpotAngleEnd() const
 {
-	CPointLightModel	*object = getObjectPtr();
+	CPointLightModel *object = getObjectPtr();
 	return object->PointLight.getSpotAngleEnd();
 }
 
@@ -157,31 +155,30 @@ float UPointLight::getSpotAngleEnd() const
 
 void UPointLight::setDeltaPosToSkeletonWhenOutOfFrustum(const CVector &deltaPos)
 {
-	CPointLightModel	*object = getObjectPtr();
-	object->setDeltaPosToSkeletonWhenOutOfFrustum(deltaPos) ;
+	CPointLightModel *object = getObjectPtr();
+	object->setDeltaPosToSkeletonWhenOutOfFrustum(deltaPos);
 }
 
 // ***************************************************************************
 
 const CVector &UPointLight::getDeltaPosToSkeletonWhenOutOfFrustum() const
 {
-	CPointLightModel	*object = getObjectPtr();
-	return object->getDeltaPosToSkeletonWhenOutOfFrustum() ;
+	CPointLightModel *object = getObjectPtr();
+	return object->getDeltaPosToSkeletonWhenOutOfFrustum();
 }
 
 // ***************************************************************************
-void			UPointLight::setInfluenceLightMap(bool enable)
+void UPointLight::setInfluenceLightMap(bool enable)
 {
-	CPointLightModel	*object = getObjectPtr();
+	CPointLightModel *object = getObjectPtr();
 	object->setInfluenceLightMap(enable);
 }
 
 // ***************************************************************************
-bool			UPointLight::getInfluenceLightMap() const
+bool UPointLight::getInfluenceLightMap() const
 {
-	CPointLightModel	*object = getObjectPtr();
-	return object->getInfluenceLightMap() ;
+	CPointLightModel *object = getObjectPtr();
+	return object->getInfluenceLightMap();
 }
-
 
 } // NL3D

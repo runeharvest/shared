@@ -14,63 +14,60 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #if !defined(AFX_CONSTRAINT_MESH_GLOBAL_TEX_ANIM_DLG_H__8676F219_18E6_4626_BE10_5A429D1EA0CD__INCLUDED_)
 #define AFX_CONSTRAINT_MESH_GLOBAL_TEX_ANIM_DLG_H__8676F219_18E6_4626_BE10_5A429D1EA0CD__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
-#endif 
+#endif
 
 #include "edit_ex.h"
 
-
-namespace NL3D
-{
-	class CPSConstraintMesh;
+namespace NL3D {
+class CPSConstraintMesh;
 }
 
 class CConstraintMeshGlobalTexAnimDlg : public CDialog, public CEditEx::IListener
 {
-// Construction
+	// Construction
 public:
-	CConstraintMeshGlobalTexAnimDlg(NL3D::CPSConstraintMesh *cm, uint stage, CWnd* pParent = NULL);   // standard constructor
-
+	CConstraintMeshGlobalTexAnimDlg(NL3D::CPSConstraintMesh *cm, uint stage, CWnd *pParent = NULL); // standard constructor
 
 	void init(uint x, uint y, CWnd *pParent);
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CConstraintMeshGlobalTexAnimDlg)
-	enum { IDD = IDD_CONSTRAINT_MESH_GLOBAL_TEX_ANIM_DLG };
-	CEditEx	m_VStartCtrl;
-	CEditEx	m_UStartCtrl;
-	CEditEx	m_UScaleStartCtrl;
-	CEditEx	m_WRotSpeedCtrl;
-	CEditEx	m_WRotAccelCtrl;
-	CEditEx	m_VSpeedCtrl;
-	CEditEx	m_VScaleStartCtrl;
-	CEditEx	m_VScaleSpeedCtrl;
-	CEditEx	m_VScaleAccelCtrl;
-	CEditEx	m_UScaleSpeedCtrl;
-	CEditEx	m_VAccelCtrl;
-	CEditEx	m_UScaleAccel;
-	CEditEx	m_UAccelCtrl;
-	CEditEx	m_USpeedCtrl;
+	enum
+	{
+		IDD = IDD_CONSTRAINT_MESH_GLOBAL_TEX_ANIM_DLG
+	};
+	CEditEx m_VStartCtrl;
+	CEditEx m_UStartCtrl;
+	CEditEx m_UScaleStartCtrl;
+	CEditEx m_WRotSpeedCtrl;
+	CEditEx m_WRotAccelCtrl;
+	CEditEx m_VSpeedCtrl;
+	CEditEx m_VScaleStartCtrl;
+	CEditEx m_VScaleSpeedCtrl;
+	CEditEx m_VScaleAccelCtrl;
+	CEditEx m_UScaleSpeedCtrl;
+	CEditEx m_VAccelCtrl;
+	CEditEx m_UScaleAccel;
+	CEditEx m_UAccelCtrl;
+	CEditEx m_USpeedCtrl;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CConstraintMeshGlobalTexAnimDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	NL3D::CPSConstraintMesh *_CM; // the constraint mesh being edited
-	uint					 _Stage; // the stage being edited
+	uint _Stage; // the stage being edited
 	// Generated message map functions
 	//{{AFX_MSG(CConstraintMeshGlobalTexAnimDlg)
 	virtual BOOL OnInitDialog();

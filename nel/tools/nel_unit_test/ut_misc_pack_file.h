@@ -17,16 +17,15 @@
 #ifndef UT_MISC_PACK_FILE
 #define UT_MISC_PACK_FILE
 
-
 // Commenting out the ifdef since the files are authored on Windows
 // and therefore always have a Windows-style newline.
-//#ifdef NL_OS_WINDOWS
+// #ifdef NL_OS_WINDOWS
 const string NewLine("\r\n");
-//#elif defined(NL_OS_UNIX)
-//const string NewLine("\n");
-//#else
-//#error "Specify the new line format for text file";
-//#endif
+// #elif defined(NL_OS_UNIX)
+// const string NewLine("\n");
+// #else
+// #error "Specify the new line format for text file";
+// #endif
 
 #ifndef NEL_UNIT_BASE
 #define NEL_UNIT_BASE ""
@@ -35,10 +34,11 @@ const string NewLine("\r\n");
 // Test suite for bnp and xml pack files
 class CUTMiscPackFile : public Test::Suite
 {
-	string		_WorkingPath;
-	string		_OldPath;
+	string _WorkingPath;
+	string _OldPath;
+
 public:
-	CUTMiscPackFile ()
+	CUTMiscPackFile()
 	{
 		TEST_ADD(CUTMiscPackFile::addBnp);
 		TEST_ADD(CUTMiscPackFile::loadFromBnp);
@@ -82,8 +82,8 @@ public:
 			NLMISC::CIFile file1(filename);
 			string content1;
 			content1.resize(file1.getFileSize());
-			file1.serialBuffer((uint8*)content1.data(), file1.getFileSize());
-			
+			file1.serialBuffer((uint8 *)content1.data(), file1.getFileSize());
+
 			// check the file content
 			TEST_ASSERT(content1 == "The content of the first file");
 		}
@@ -97,8 +97,8 @@ public:
 			NLMISC::CIFile file2(filename);
 			string content2;
 			content2.resize(file2.getFileSize());
-			file2.serialBuffer((uint8*)content2.data(), file2.getFileSize());
-			
+			file2.serialBuffer((uint8 *)content2.data(), file2.getFileSize());
+
 			// check the file content
 			TEST_ASSERT(content2 == "Another content but for the second file");
 		}
@@ -121,10 +121,10 @@ public:
 			NLMISC::CIFile file1(filename);
 			string content1;
 			content1.resize(file1.getFileSize());
-			file1.serialBuffer((uint8*)content1.data(), file1.getFileSize());
-			
+			file1.serialBuffer((uint8 *)content1.data(), file1.getFileSize());
+
 			// check the file content
-			string refText = "<myxml><withSomethink name=\"foo\"/></myxml>"+NewLine;
+			string refText = "<myxml><withSomethink name=\"foo\"/></myxml>" + NewLine;
 			TEST_ASSERT(content1 == refText);
 		}
 
@@ -137,23 +137,23 @@ public:
 			NLMISC::CIFile file2(filename);
 			string content2;
 			content2.resize(file2.getFileSize());
-			file2.serialBuffer((uint8*)content2.data(), file2.getFileSize());
-			
+			file2.serialBuffer((uint8 *)content2.data(), file2.getFileSize());
+
 			// check the file content
-			string refText="<anotherxml><withSomethink name=\"bar\"/></anotherxml>"+NewLine;
+			string refText = "<anotherxml><withSomethink name=\"bar\"/></anotherxml>" + NewLine;
 			TEST_ASSERT(content2 == refText);
 		}
 	}
 
 	void compressMemory()
 	{
-//#ifdef WIN32
-//_CrtCheckMemory();
-//#endif
+		// #ifdef WIN32
+		//_CrtCheckMemory();
+		// #endif
 		NLMISC::CPath::memoryCompress();
-//#ifdef WIN32
-//_CrtCheckMemory();
-//#endif
+		// #ifdef WIN32
+		//_CrtCheckMemory();
+		// #endif
 	}
 
 	void loadFromBnpCompressed()
@@ -191,8 +191,8 @@ public:
 		// but the 'addSearchPath' or add xml pack must be done
 		// at a higher discriminant directory
 
-//		NLMISC::CPath::addSearchXmlpackFile(NEL_UNIT_BASE "ut_misc_files/xml_files/same_subfolder_1/samename/samename.xml_pack", true, false, NULL);
-//		NLMISC::CPath::addSearchXmlpackFile(NEL_UNIT_BASE "ut_misc_files/xml_files/same_subfolder_2/samename/samename.xml_pack", true, false, NULL);
+		//		NLMISC::CPath::addSearchXmlpackFile(NEL_UNIT_BASE "ut_misc_files/xml_files/same_subfolder_1/samename/samename.xml_pack", true, false, NULL);
+		//		NLMISC::CPath::addSearchXmlpackFile(NEL_UNIT_BASE "ut_misc_files/xml_files/same_subfolder_2/samename/samename.xml_pack", true, false, NULL);
 		NLMISC::CPath::addSearchPath(NEL_UNIT_BASE "ut_misc_files/xml_files", true, false);
 
 		// lookup for the files in first subdirectory
@@ -217,10 +217,10 @@ public:
 			NLMISC::CIFile file1(filename);
 			string content1;
 			content1.resize(file1.getFileSize());
-			file1.serialBuffer((uint8*)content1.data(), file1.getFileSize());
-			
+			file1.serialBuffer((uint8 *)content1.data(), file1.getFileSize());
+
 			// check the file content
-			string refText = "<myxml><withSomethink name=\"foo\"/></myxml>"+NewLine;
+			string refText = "<myxml><withSomethink name=\"foo\"/></myxml>" + NewLine;
 			TEST_ASSERT(content1 == refText);
 		}
 
@@ -231,15 +231,13 @@ public:
 			NLMISC::CIFile file2(filename);
 			string content2;
 			content2.resize(file2.getFileSize());
-			file2.serialBuffer((uint8*)content2.data(), file2.getFileSize());
-			
+			file2.serialBuffer((uint8 *)content2.data(), file2.getFileSize());
+
 			// check the file content
-			string refText="<anotherxml><withSomethink name=\"bar\"/></anotherxml>"+NewLine;
+			string refText = "<anotherxml><withSomethink name=\"bar\"/></anotherxml>" + NewLine;
 			TEST_ASSERT(content2 == refText);
 		}
-
 	}
-
 };
 
 #endif

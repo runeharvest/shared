@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef R2_VARIABLES_H
 #define R2_VARIABLES_H
 
@@ -22,6 +21,6 @@
 #include "nel/misc/variable.h"
 
 // Is the shard a ring shard
-extern NLMISC::CVariable<bool>    		IsRingShard;
+extern NLMISC::CVariable<bool> IsRingShard;
 
 #endif // R2_VARIABLES_H

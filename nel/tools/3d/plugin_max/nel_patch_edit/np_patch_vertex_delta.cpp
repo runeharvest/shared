@@ -9,11 +9,10 @@
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-void PatchVertexDelta::SetSize(PatchMesh& patch, BOOL load)
+void PatchVertexDelta::SetSize(PatchMesh &patch, BOOL load)
 {
 	dtab.MakeCompatible(patch, FALSE);
-	
+
 	// Load it if necessary
 	if (load)
 	{
@@ -35,7 +34,7 @@ void PatchVertexDelta::Apply(PatchMesh &patch)
 	// DebugPrint(_T("PVD:Applying\n"));
 	// This does nothing if the number of verts hasn't changed in the mesh.
 	SetSize(patch, FALSE);
-	
+
 	// Apply the deltas
 	int verts = patch.numVerts;
 	int vecs = patch.numVecs;
@@ -57,7 +56,7 @@ void PatchVertexDelta::UnApply(PatchMesh &patch)
 	// DebugPrint(_T("PVD:UnApplying\n"));
 	// This does nothing if the number of verts hasn't changed in the mesh.
 	SetSize(patch, FALSE);
-	
+
 	// Apply the deltas
 	int verts = patch.numVerts;
 	int vecs = patch.numVecs;
@@ -75,19 +74,19 @@ void PatchVertexDelta::UnApply(PatchMesh &patch)
 }
 
 // This function applies the current changes to slave handles and their knots, and zeroes everything else
-void PatchVertexDelta::ApplyHandlesAndZero(PatchMesh &patch, int handleVert) 
+void PatchVertexDelta::ApplyHandlesAndZero(PatchMesh &patch, int handleVert)
 {
 	// DebugPrint(_T("PVD:ApplyAndZero\n"));
 	// This does nothing if the number of verts hasn't changed in the mesh.
 	SetSize(patch, FALSE);
-	
+
 	Point3 zeroPt(0.0f, 0.0f, 0.0f);
-	
+
 	// Apply the deltas	to just the slave handles
 	int verts = patch.numVerts;
 	int vecs = patch.numVecs;
-	Point3Tab& delta = dtab.vtab;
-	IntTab& kdelta = dtab.pttab;
+	Point3Tab &delta = dtab.vtab;
+	IntTab &kdelta = dtab.pttab;
 	int i;
 	for (i = 0; i < vecs; ++i)
 	{
@@ -99,7 +98,7 @@ void PatchVertexDelta::ApplyHandlesAndZero(PatchMesh &patch, int handleVert)
 				delta[i] = zeroPt;
 		}
 	}
-	
+
 	for (i = 0; i < verts; ++i)
 	{
 		if (kdelta[i])
@@ -107,21 +106,20 @@ void PatchVertexDelta::ApplyHandlesAndZero(PatchMesh &patch, int handleVert)
 	}
 }
 
+#define PVD_POINTTAB_CHUNK 0x1000
 
-#define PVD_POINTTAB_CHUNK		0x1000
-
-IOResult PatchVertexDelta::Save(ISave *isave) 
+IOResult PatchVertexDelta::Save(ISave *isave)
 {
 	isave->BeginChunk(PVD_POINTTAB_CHUNK);
 	dtab.Save(isave);
-	isave->	EndChunk();
+	isave->EndChunk();
 	return IO_OK;
 }
 
-IOResult PatchVertexDelta::Load(ILoad *iload) 
+IOResult PatchVertexDelta::Load(ILoad *iload)
 {
 	IOResult res;
-	while (IO_OK == (res = iload->OpenChunk())) 
+	while (IO_OK == (res = iload->OpenChunk()))
 	{
 		switch (iload->CurChunkID())
 		{
@@ -130,9 +128,8 @@ IOResult PatchVertexDelta::Load(ILoad *iload)
 			break;
 		}
 		iload->CloseChunk();
-		if (res != IO_OK) 
+		if (res != IO_OK)
 			return res;
 	}
 	return IO_OK;
 }
-

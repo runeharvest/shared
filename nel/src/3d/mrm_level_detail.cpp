@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "std3d.h"
 
 #include "nel/3d/mrm_level_detail.h"
@@ -23,34 +22,30 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
-void			CMRMLevelDetail::compileDistanceSetup()
+void CMRMLevelDetail::compileDistanceSetup()
 {
 	// Compute _OODistDelta.
-	OODistanceDelta= 1.0f / (DistanceCoarsest - DistanceFinest);
+	OODistanceDelta = 1.0f / (DistanceCoarsest - DistanceFinest);
 	/* Compute exponent pow, such that 0.5= dMiddle^pow;
-		ie 0.5= e(ln dMiddle * pow)
+	    ie 0.5= e(ln dMiddle * pow)
 	*/
-	float	dMiddle= (DistanceCoarsest - DistanceMiddle) * OODistanceDelta;
-	DistancePow= (float)(log(0.5) / log(dMiddle));
+	float dMiddle = (DistanceCoarsest - DistanceMiddle) * OODistanceDelta;
+	DistancePow = (float)(log(0.5) / log(dMiddle));
 }
-
 
 // ***************************************************************************
-float			CMRMLevelDetail::getLevelDetailFromDist(float dist)
+float CMRMLevelDetail::getLevelDetailFromDist(float dist)
 {
-	if(dist <= DistanceFinest)
+	if (dist <= DistanceFinest)
 		return 1;
-	if(dist >= DistanceCoarsest)
+	if (dist >= DistanceCoarsest)
 		return 0;
 
-	float	d= (DistanceCoarsest - dist) * OODistanceDelta;
-	return  (float)pow(d, DistancePow);
+	float d = (DistanceCoarsest - dist) * OODistanceDelta;
+	return (float)pow(d, DistancePow);
 }
-
 
 } // NL3D

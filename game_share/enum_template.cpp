@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 #include "nel/misc/debug.h"
@@ -25,33 +23,29 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace ENUM_TEMPLATE
-{
+namespace ENUM_TEMPLATE {
 
 // ***************************************************************************
-static const string StringArray[NUM_ENUM_TEMPLATE]=
-{
+static const string StringArray[NUM_ENUM_TEMPLATE] = {
 	"Unknown",
 };
 
 // ***************************************************************************
 EEnumTemplate stringToEnum(const std::string &str)
 {
-	for(uint i=0;i<NUM_ENUM_TEMPLATE;i++)
+	for (uint i = 0; i < NUM_ENUM_TEMPLATE; i++)
 	{
-		if(nlstricmp(StringArray[i], str)==0)
+		if (nlstricmp(StringArray[i], str) == 0)
 			return (EEnumTemplate)i;
 	}
 	return UNKNOWN;
 }
 
 // ***************************************************************************
-const std::string & enumToString (EEnumTemplate e)
+const std::string &enumToString(EEnumTemplate e)
 {
-	nlassert((sint)e<NUM_ENUM_TEMPLATE);
+	nlassert((sint)e < NUM_ENUM_TEMPLATE);
 	return StringArray[e];
 }
 
-
 }
-

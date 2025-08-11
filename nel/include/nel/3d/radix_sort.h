@@ -20,9 +20,7 @@
 #include "nel/misc/types_nl.h"
 #include "nel/misc/common.h"
 
-
 namespace NL3D {
-
 
 // ***************************************************************************
 /**
@@ -37,10 +35,10 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2001
  */
-template<class T> class CRadixSort
+template <class T>
+class CRadixSort
 {
 public:
-
 	/** Constructor
 	 *	\param keyDepth default is 32 bits, but if as example you're sure that you
 	 *		just use 14 bits, you can set keyDepth=14. Clamped to 1,32.
@@ -50,17 +48,17 @@ public:
 	 *		And this REALLY impact (eg: from 1 to 100 if you choose 16 instead than 8...)
 	 *		Clamped to 1,min(16, keyDepth).
 	 */
-	CRadixSort(uint keyDepth= 32, uint digitDepth= 8)
+	CRadixSort(uint keyDepth = 32, uint digitDepth = 8)
 	{
 		// setup
-		_KeyDepth= keyDepth;
+		_KeyDepth = keyDepth;
 		NLMISC::clamp(_KeyDepth, 1U, 32U);
-		_DigitDepth= digitDepth;
+		_DigitDepth = digitDepth;
 		NLMISC::clamp(_DigitDepth, 1U, 16U);
-		_DigitDepth= std::min(_DigitDepth, _KeyDepth);
+		_DigitDepth = std::min(_DigitDepth, _KeyDepth);
 
 		// resize the array of digits.
-		_DigitSize= 1<<_DigitDepth;
+		_DigitSize = 1 << _DigitDepth;
 		_SortDigits.resize(_DigitSize);
 	}
 
@@ -72,103 +70,99 @@ public:
 	 *		ceil(keyDepth/digitDepth) is pair, else return array1.
 	 *		The other array has elements in undefined order.
 	 */
-	T				*sort(T *array0, T *array1, uint size) {return doSort(array0, array1, size, true);}
-
+	T *sort(T *array0, T *array1, uint size) { return doSort(array0, array1, size, true); }
 
 	/**	same as sort(), but elements are reordered in decreasing order
 	 *	\see sort()
 	 */
-	T				*reverse_sort(T *array0, T *array1, uint size) {return doSort(array0, array1, size, false);}
+	T *reverse_sort(T *array0, T *array1, uint size) { return doSort(array0, array1, size, false); }
 
-
-// ***********************
+	// ***********************
 private:
-
-	struct	CSortDigit
+	struct CSortDigit
 	{
 		// For a digit, how many elements it has in the array.
-		uint	Count;
+		uint Count;
 		// current ptr where to write in destArray
-		T		*Ptr;
+		T *Ptr;
 	};
 
 	// setup
-	uint			_KeyDepth;
-	uint			_DigitDepth;
-	uint			_DigitSize;
+	uint _KeyDepth;
+	uint _DigitDepth;
+	uint _DigitSize;
 	// We sort digits per digit (default is byte per byte)
-	std::vector<CSortDigit>		_SortDigits;
-
+	std::vector<CSortDigit> _SortDigits;
 
 	/// radix sort algorithm
-	T				*doSort(T *arraySrc, T *arrayDst, uint size, bool increasingOrder)
+	T *doSort(T *arraySrc, T *arrayDst, uint size, bool increasingOrder)
 	{
-		if(size==0)
+		if (size == 0)
 			return arraySrc;
 
 		// for all digits.
-		for(uint	digit=0; digit< _KeyDepth; digit+=_DigitDepth )
+		for (uint digit = 0; digit < _KeyDepth; digit += _DigitDepth)
 		{
-			sint	i;
+			sint i;
 			// how many bits do we shift?
-			uint	digitShift= digit;
-			uint	digitMask= _DigitSize - 1;
+			uint digitShift = digit;
+			uint digitMask = _DigitSize - 1;
 
 			// Init digit count.
-			for(i=0; i<(sint)_DigitSize; i++)
+			for (i = 0; i < (sint)_DigitSize; i++)
 			{
-				_SortDigits[i].Count= 0;
+				_SortDigits[i].Count = 0;
 			}
 
 			// for all elements in array, count the usage of current digit.
-			T	*srcPtr= arraySrc;
-			for(i=0; i<(sint)size; i++, srcPtr++)
+			T *srcPtr = arraySrc;
+			for (i = 0; i < (sint)size; i++, srcPtr++)
 			{
 				// get the key for this element
-				uint32	key= srcPtr->getRadixKey();
+				uint32 key = srcPtr->getRadixKey();
 				// get the actual digit of interest
-				key>>= digitShift;
-				key&= digitMask;
+				key >>= digitShift;
+				key &= digitMask;
 				// increment the use of this digit.
 				_SortDigits[key].Count++;
 			}
 
 			// for all digit, init start Ptr.
-			T	*dstPtr= arrayDst;
-			if(increasingOrder)
+			T *dstPtr = arrayDst;
+			if (increasingOrder)
 			{
-				for(i=0; i<(sint)_DigitSize; i++)
+				for (i = 0; i < (sint)_DigitSize; i++)
 				{
 					// setup the dest ptr for this digit.
-					_SortDigits[i].Ptr= dstPtr;
+					_SortDigits[i].Ptr = dstPtr;
 					// increment the ptr of digit usage
-					dstPtr+= _SortDigits[i].Count;
+					dstPtr += _SortDigits[i].Count;
 				}
 			}
 			else
 			{
 				// reverse order of copy for digits, so the biggest one will
 				// copy in the beginning of the array
-				for(i=_DigitSize-1; i>=0; i--)
+				for (i = _DigitSize - 1; i >= 0; i--)
 				{
 					// setup the dest ptr for this digit.
-					_SortDigits[i].Ptr= dstPtr;
+					_SortDigits[i].Ptr = dstPtr;
 					// increment the ptr of digit usage
-					dstPtr+= _SortDigits[i].Count;
+					dstPtr += _SortDigits[i].Count;
 				}
 			}
 
 			// for all elements, sort for this digit, by copying from src to dest.
-			srcPtr= arraySrc;
-			for(i=0; i<(sint)size; i++, srcPtr++)
+			srcPtr = arraySrc;
+			for (i = 0; i < (sint)size; i++, srcPtr++)
 			{
 				// get the key for this element
-				uint32	key= srcPtr->getRadixKey();
+				uint32 key = srcPtr->getRadixKey();
 				// get the actual digit of interest
-				key>>= digitShift;
-				key&= digitMask;
+				key >>= digitShift;
+				key &= digitMask;
 				// copy to good digit dst, and increment dest ptr.
-				*(_SortDigits[key].Ptr++)= *srcPtr;
+				*(_SortDigits[key].Ptr++) = *srcPtr;
 			}
 
 			// arraDst has now values of arraySrc sorted for the current digit.
@@ -179,12 +173,9 @@ private:
 		// return the array correctly sorted. because of last swap, this is arraySrc
 		return arraySrc;
 	}
-
 };
 
-
 } // NL3D
-
 
 #endif // NL_RADIX_SORT_H
 

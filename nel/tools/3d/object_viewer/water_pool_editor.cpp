@@ -30,17 +30,15 @@
 #include "nel/misc/o_xml.h"
 #include "nel/misc/file.h"
 
-
-
-
-
 /////////////////////////////////////////////////////////////////////////////
 // CWaterPoolEditor dialog
 
-
-CWaterPoolEditor::CWaterPoolEditor(NL3D::CWaterPoolManager *wpm, CWnd* pParent /*= NULL*/)
-	: CDialog(CWaterPoolEditor::IDD, pParent), _DampingDlg(NULL),
-	  _FilterWeightDlg(NULL), _WaterUnitSizeDlg(NULL), _Wpm(wpm)
+CWaterPoolEditor::CWaterPoolEditor(NL3D::CWaterPoolManager *wpm, CWnd *pParent /*= NULL*/)
+    : CDialog(CWaterPoolEditor::IDD, pParent)
+    , _DampingDlg(NULL)
+    , _FilterWeightDlg(NULL)
+    , _WaterUnitSizeDlg(NULL)
+    , _Wpm(wpm)
 {
 	//{{AFX_DATA_INIT(CWaterPoolEditor)
 	m_AutomaticWavesGeneration = FALSE;
@@ -49,21 +47,24 @@ CWaterPoolEditor::CWaterPoolEditor(NL3D::CWaterPoolManager *wpm, CWnd* pParent /
 	//}}AFX_DATA_INIT
 }
 
-
 CWaterPoolEditor::~CWaterPoolEditor()
 {
-#define REMOVE_WINDOW(wnd) if (wnd) { (wnd)->DestroyWindow(); delete (wnd); }
-REMOVE_WINDOW(_DampingDlg);
-REMOVE_WINDOW(_FilterWeightDlg);
-REMOVE_WINDOW(_WaterUnitSizeDlg);
-REMOVE_WINDOW(_ImpulsionStrenghtDlg);
-REMOVE_WINDOW(_WavePeriodDlg);
-REMOVE_WINDOW(_WaveImpulsionRadiusDlg);
-REMOVE_WINDOW(_PropagationTimeDlg);
+#define REMOVE_WINDOW(wnd)      \
+	if (wnd)                    \
+	{                           \
+		(wnd)->DestroyWindow(); \
+		delete (wnd);           \
+	}
+	REMOVE_WINDOW(_DampingDlg);
+	REMOVE_WINDOW(_FilterWeightDlg);
+	REMOVE_WINDOW(_WaterUnitSizeDlg);
+	REMOVE_WINDOW(_ImpulsionStrenghtDlg);
+	REMOVE_WINDOW(_WavePeriodDlg);
+	REMOVE_WINDOW(_WaveImpulsionRadiusDlg);
+	REMOVE_WINDOW(_PropagationTimeDlg);
 }
 
-
-void CWaterPoolEditor::DoDataExchange(CDataExchange* pDX)
+void CWaterPoolEditor::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CWaterPoolEditor)
@@ -74,42 +75,38 @@ void CWaterPoolEditor::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CWaterPoolEditor, CDialog)
-	//{{AFX_MSG_MAP(CWaterPoolEditor)
-	ON_LBN_SELCHANGE(IDC_POOL_LIST, OnSelchangePoolList)
-	ON_BN_CLICKED(IDC_AUTOMATIC_WAVES_GENERATION, OnAutomaticWavesGeneration)
-	ON_BN_CLICKED(IDC_BORDERS_ONLY, OnBordersOnly)
-	ON_BN_CLICKED(IDC_ADD_POOL, OnAddPool)
-	ON_BN_CLICKED(IDC_DELETE_POOL, OnDeletePool)
-	ON_CBN_SELCHANGE(IDC_MAP_SIZE, OnSelchangeMapSize)
-	ON_BN_CLICKED(IDC_LOAD_POOL, OnLoadPool)
-	ON_BN_CLICKED(IDC_SAVE_POOL, OnSavePool)
-	ON_BN_CLICKED(IDC_RENAME_POOL, OnRenamePool)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CWaterPoolEditor)
+ON_LBN_SELCHANGE(IDC_POOL_LIST, OnSelchangePoolList)
+ON_BN_CLICKED(IDC_AUTOMATIC_WAVES_GENERATION, OnAutomaticWavesGeneration)
+ON_BN_CLICKED(IDC_BORDERS_ONLY, OnBordersOnly)
+ON_BN_CLICKED(IDC_ADD_POOL, OnAddPool)
+ON_BN_CLICKED(IDC_DELETE_POOL, OnDeletePool)
+ON_CBN_SELCHANGE(IDC_MAP_SIZE, OnSelchangeMapSize)
+ON_BN_CLICKED(IDC_LOAD_POOL, OnLoadPool)
+ON_BN_CLICKED(IDC_SAVE_POOL, OnSavePool)
+ON_BN_CLICKED(IDC_RENAME_POOL, OnRenamePool)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CWaterPoolEditor message handlers
 
-BOOL CWaterPoolEditor::OnInitDialog() 
+BOOL CWaterPoolEditor::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	RECT r;
-	
 
 	fillPoolList();
 
 	// damping
 	GetDlgItem(IDC_DAMPING)->GetWindowRect(&r);
 	ScreenToClient(&r);
-	_DampingDlg = new CEditableRangeFloat("WATER_DAMPING", NULL,0.9f ,0.999f);
+	_DampingDlg = new CEditableRangeFloat("WATER_DAMPING", NULL, 0.9f, 0.999f);
 	_DampingDlg->setWrapper(&_DampingWrapper);
 	_DampingDlg->init(r.left, r.top, this);
 	_DampingDlg->enableLowerBound(0, false);
 	_DampingDlg->enableUpperBound(1, true);
-
-	
 
 	// filter weight
 	GetDlgItem(IDC_FILTER_WEIGHT)->GetWindowRect(&r);
@@ -124,7 +121,7 @@ BOOL CWaterPoolEditor::OnInitDialog()
 	ScreenToClient(&r);
 	_WaterUnitSizeDlg = new CEditableRangeFloat("WATER_UNIT_SIZE", NULL, 0.1f, 1);
 	_WaterUnitSizeDlg->setWrapper(&_WaterUnitSizeWrapper);
-	_WaterUnitSizeDlg->init(r.left, r.top, this);	
+	_WaterUnitSizeDlg->init(r.left, r.top, this);
 	_WaterUnitSizeDlg->enableLowerBound(0, true);
 
 	// wave impulsion strenght
@@ -132,7 +129,7 @@ BOOL CWaterPoolEditor::OnInitDialog()
 	ScreenToClient(&r);
 	_ImpulsionStrenghtDlg = new CEditableRangeFloat("WAVE_IMPULSION_STRENGHT", NULL, 0.2f, 3.0f);
 	_ImpulsionStrenghtDlg->setWrapper(&_ImpulsionStrenghtWrapper);
-	_ImpulsionStrenghtDlg->init(r.left, r.top, this);	
+	_ImpulsionStrenghtDlg->init(r.left, r.top, this);
 
 	// wave period
 	GetDlgItem(IDC_PERIOD)->GetWindowRect(&r);
@@ -157,13 +154,13 @@ BOOL CWaterPoolEditor::OnInitDialog()
 	_WaveImpulsionRadiusDlg->setWrapper(&_WaveImpulsionRadiusWrapper);
 	_WaveImpulsionRadiusDlg->init(r.left, r.top, this);
 	_WaveImpulsionRadiusDlg->enableLowerBound(0, true);
-	
+
 	updateWaveControls();
 	updateWaveParams();
 	updateMapSizeCtrl();
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 int CWaterPoolEditor::addPool(uint32 ID)
@@ -173,7 +170,6 @@ int CWaterPoolEditor::addPool(uint32 ID)
 	nlassert(index != LB_ERR);
 	m_PoolList.SetItemData(index, ID);
 	return index;
-
 }
 
 //=====================================================================
@@ -189,13 +185,12 @@ void CWaterPoolEditor::fillPoolList()
 	}
 	for (uint k = 0; k < numPools; ++k)
 	{
-		addPool(_Wpm->getPoolID(k));		
+		addPool(_Wpm->getPoolID(k));
 	}
 	m_PoolList.SetCurSel(0);
 	updateWrappers();
 	UpdateData(FALSE);
 }
-
 
 //===================================================================
 uint32 CWaterPoolEditor::getCurrentPoolID()
@@ -207,26 +202,25 @@ uint32 CWaterPoolEditor::getCurrentPoolID()
 
 //===================================================================
 NL3D::CWaterHeightMap &CWaterPoolEditor::getCurrentPool()
-{	
+{
 	return _Wpm->getPoolByID(getCurrentPoolID());
 }
 
 //===================================================================
 void CWaterPoolEditor::updateWrappers()
-{		
-	NL3D::CWaterHeightMap *whm  = &getCurrentPool();
-	_DampingWrapper.Whm			= whm;
-	_FilterWeightWrapper.Whm    = whm;
-	_WaterUnitSizeWrapper.Whm   = whm;
-	_ImpulsionStrenghtWrapper.Whm   = whm;
+{
+	NL3D::CWaterHeightMap *whm = &getCurrentPool();
+	_DampingWrapper.Whm = whm;
+	_FilterWeightWrapper.Whm = whm;
+	_WaterUnitSizeWrapper.Whm = whm;
+	_ImpulsionStrenghtWrapper.Whm = whm;
 	_WavePeriodWrapper.Whm = whm;
-	_WaveImpulsionRadiusWrapper.Whm = whm;	
-	_PropagationTimeWrapper.Whm = whm;	
-
+	_WaveImpulsionRadiusWrapper.Whm = whm;
+	_PropagationTimeWrapper.Whm = whm;
 }
 
 //===================================================================
-void CWaterPoolEditor::OnSelchangePoolList() 
+void CWaterPoolEditor::OnSelchangePoolList()
 {
 	updateWrappers();
 	_DampingDlg->update();
@@ -242,18 +236,18 @@ void CWaterPoolEditor::OnSelchangePoolList()
 
 //===================================================================
 
-void CWaterPoolEditor::OnAutomaticWavesGeneration() 
+void CWaterPoolEditor::OnAutomaticWavesGeneration()
 {
 	UpdateData();
-	getCurrentPool().enableWaves(m_AutomaticWavesGeneration ? true : false /* VC++ warning */); 
-	updateWaveParams();	
+	getCurrentPool().enableWaves(m_AutomaticWavesGeneration ? true : false /* VC++ warning */);
+	updateWaveParams();
 }
 
 //===================================================================
 
 void CWaterPoolEditor::updateWaveParams()
 {
-	bool enabled = getCurrentPool().areWavesEnabled();	
+	bool enabled = getCurrentPool().areWavesEnabled();
 	_ImpulsionStrenghtDlg->EnableWindow(enabled);
 	_WavePeriodDlg->EnableWindow(enabled);
 	_WaveImpulsionRadiusDlg->EnableWindow(enabled);
@@ -262,58 +256,59 @@ void CWaterPoolEditor::updateWaveParams()
 
 //===================================================================
 
-void CWaterPoolEditor::OnBordersOnly() 
+void CWaterPoolEditor::OnBordersOnly()
 {
-	UpdateData();;
+	UpdateData();
+	;
 	NL3D::CWaterHeightMap &whm = getCurrentPool();
-	whm.setWaves(whm.getWaveIntensity(), whm.getWavePeriod(), whm.getWaveImpulsionRadius(), m_BordersOnly ? true : false /* VC++ Warning */); 
+	whm.setWaves(whm.getWaveIntensity(), whm.getWavePeriod(), whm.getWaveImpulsionRadius(), m_BordersOnly ? true : false /* VC++ Warning */);
 }
 
 //===================================================================
 
 void CWaterPoolEditor::updateWaveControls()
 {
-	const NL3D::CWaterHeightMap &whm  = getCurrentPool();
+	const NL3D::CWaterHeightMap &whm = getCurrentPool();
 	m_AutomaticWavesGeneration = whm.areWavesEnabled();
-	m_BordersOnly  = whm.getBorderWaves();
+	m_BordersOnly = whm.getBorderWaves();
 	UpdateData(FALSE);
 }
 
 //===================================================================
 void CWaterPoolEditor::updateMapSizeCtrl()
-{	
-	switch(getCurrentPool().getSize())
+{
+	switch (getCurrentPool().getSize())
 	{
-		case 16: m_MapSize = 0; break;
-		case 32: m_MapSize = 1; break;
-		case 64: m_MapSize = 2; break;
-		case 128: m_MapSize = 3; break;
-		case 256: m_MapSize = 4; break;
-		case 512: m_MapSize = 5; break;
-		default:
-			nlassert(0);
+	case 16: m_MapSize = 0; break;
+	case 32: m_MapSize = 1; break;
+	case 64: m_MapSize = 2; break;
+	case 128: m_MapSize = 3; break;
+	case 256: m_MapSize = 4; break;
+	case 512: m_MapSize = 5; break;
+	default:
+		nlassert(0);
 		break;
 	}
 	UpdateData(FALSE);
 }
 
 //===================================================================
-void CWaterPoolEditor::OnAddPool() 
+void CWaterPoolEditor::OnAddPool()
 {
 	CChoosePoolID cpi(false);
 	cpi.PoolID = getCurrentPoolID();
 	if (cpi.DoModal() == IDOK)
 	{
-		if (_Wpm->hasPool(cpi.PoolID) )
+		if (_Wpm->hasPool(cpi.PoolID))
 		{
 			MessageBox(_T("Pool already exists"), _T("error"));
 		}
 		else
 		{
 			NL3D::CWaterPoolManager::CWaterHeightMapBuild whmb;
-			whmb.ID   = cpi.PoolID;
+			whmb.ID = cpi.PoolID;
 			whmb.Name = cpi.Name;
-			_Wpm->createWaterPool(whmb);			
+			_Wpm->createWaterPool(whmb);
 			m_PoolList.SetCurSel(addPool(cpi.PoolID));
 			OnSelchangePoolList();
 		}
@@ -321,7 +316,7 @@ void CWaterPoolEditor::OnAddPool()
 }
 
 //===================================================================
-void CWaterPoolEditor::OnDeletePool() 
+void CWaterPoolEditor::OnDeletePool()
 {
 	UpdateData();
 	if (m_PoolList.GetCount() == 1)
@@ -339,30 +334,28 @@ void CWaterPoolEditor::OnDeletePool()
 }
 
 //===================================================================
-void CWaterPoolEditor::OnSelchangeMapSize() 
+void CWaterPoolEditor::OnSelchangeMapSize()
 {
 	UpdateData();
 	static const uint size[] = { 16, 32, 64, 128, 256, 512 };
 	const uint tabSize = sizeof(size) / sizeof(uint);
 	nlassert(m_MapSize < tabSize);
-	getCurrentPool().setSize(size[m_MapSize]);		
+	getCurrentPool().setSize(size[m_MapSize]);
 }
 
-
-
-void CWaterPoolEditor::OnLoadPool() 
-{	
+void CWaterPoolEditor::OnLoadPool()
+{
 	static TCHAR BASED_CODE szFilter[] = _T("NeL Water Pool Files (*.wpf)|*.wpf||");
-	CFileDialog fileDlg( TRUE, _T(".wpf"), _T("*.wpf"), OFN_HIDEREADONLY|OFN_OVERWRITEPROMPT, szFilter);
-	if (fileDlg.DoModal()==IDOK)
-	{				
+	CFileDialog fileDlg(TRUE, _T(".wpf"), _T("*.wpf"), OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, szFilter);
+	if (fileDlg.DoModal() == IDOK)
+	{
 		try
 		{
 			NLMISC::CIXml iXml;
 			NLMISC::CIFile iF;
 			if (iF.open(NLMISC::tStrToUtf8(fileDlg.GetPathName())))
 			{
-				if (iXml.init (iF))
+				if (iXml.init(iF))
 				{
 					_Wpm->serial(iXml);
 					iXml.release();
@@ -380,27 +373,26 @@ void CWaterPoolEditor::OnLoadPool()
 				MessageBox(nlUtf8ToTStr(NLMISC::toString("Unable to open file: %s", NLMISC::tStrToUtf8(fileDlg.GetPathName()).c_str())), _T("NeL object viewer"), MB_OK | MB_ICONEXCLAMATION);
 			}
 		}
-		catch (const NLMISC::Exception& e)
+		catch (const NLMISC::Exception &e)
 		{
 			MessageBox(nlUtf8ToTStr(e.what()), _T("NeL object viewer"), MB_OK | MB_ICONEXCLAMATION);
 		}
-	}	
+	}
 }
-	
 
-void CWaterPoolEditor::OnSavePool() 
+void CWaterPoolEditor::OnSavePool()
 {
 	static TCHAR BASED_CODE szFilter[] = _T("NeL Water Pool Files (*.wpf)|*.wpf||");
-	CFileDialog fileDlg( TRUE, _T(".wpf"), _T("*.wpf"), OFN_HIDEREADONLY|OFN_OVERWRITEPROMPT, szFilter);
-	if (fileDlg.DoModal()==IDOK)
-	{				
+	CFileDialog fileDlg(TRUE, _T(".wpf"), _T("*.wpf"), OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, szFilter);
+	if (fileDlg.DoModal() == IDOK)
+	{
 		try
 		{
 			NLMISC::COXml oXml;
 			NLMISC::COFile oF;
 			if (oF.open(NLMISC::tStrToUtf8(fileDlg.GetPathName())))
 			{
-				if (oXml.init (&oF))
+				if (oXml.init(&oF))
 				{
 					_Wpm->serial(oXml);
 					oXml.flush();
@@ -417,22 +409,21 @@ void CWaterPoolEditor::OnSavePool()
 				MessageBox(nlUtf8ToTStr(NLMISC::toString("Unable to open file: %s", NLMISC::tStrToUtf8(fileDlg.GetPathName()).c_str())), _T("NeL object viewer"), MB_OK | MB_ICONEXCLAMATION);
 			}
 		}
-		catch (const NLMISC::Exception& e)
+		catch (const NLMISC::Exception &e)
 		{
 			MessageBox(nlUtf8ToTStr(e.what()), _T("NeL object viewer"), MB_OK | MB_ICONEXCLAMATION);
 		}
 	}
-	
 }
 
-void CWaterPoolEditor::OnRenamePool() 
+void CWaterPoolEditor::OnRenamePool()
 {
 	CChoosePoolID cpi(true);
 	cpi.PoolID = getCurrentPoolID();
-	cpi.Name   = getCurrentPool().getName();
+	cpi.Name = getCurrentPool().getName();
 	if (cpi.DoModal() == IDOK)
 	{
 		getCurrentPool().setName(cpi.Name);
-		fillPoolList();		
-	}	
+		fillPoolList();
+	}
 }

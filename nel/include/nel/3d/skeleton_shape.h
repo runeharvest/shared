@@ -24,10 +24,7 @@
 #include <vector>
 #include <map>
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 /**
@@ -39,21 +36,19 @@ namespace NL3D
 class CSkeletonShape : public IShape
 {
 public:
-
 	/// This is a lod for skeleton.
-	struct	CLod
+	struct CLod
 	{
 		/// The distance of activation of this bone.
-		float				Distance;
+		float Distance;
 		/// Size of Bones. If a bone is active in this lod, 0xFF, else 0.
-		std::vector<uint8>	ActiveBones;
+		std::vector<uint8> ActiveBones;
 
 	public:
-		void	serial(NLMISC::IStream &f);
+		void serial(NLMISC::IStream &f);
 	};
 
 public:
-
 	/// Constructor
 	CSkeletonShape();
 
@@ -61,67 +56,62 @@ public:
 	 * WARNING: bones must be organized in Depth-first order (this is not checked).
 	 * Bone.LodDisableDistance are minimized such sons have always a distance <= father distance.
 	 */
-	void			build(const std::vector<CBoneBase> &bones);
+	void build(const std::vector<CBoneBase> &bones);
 
 	/** Retrieve Bones Information.
 	 */
-	void			retrieve(std::vector<CBoneBase> &bones) const;
-
+	void retrieve(std::vector<CBoneBase> &bones) const;
 
 	/// Return the id of a bone, from it's name. -1 if not present.
-	sint32			getBoneIdByName(const std::string &name) const;
-
+	sint32 getBoneIdByName(const std::string &name) const;
 
 	/// \name From IShape
 	// @{
 
 	/// Create a CSkeletonModel, which contains bones.
-	virtual	CTransformShape		*createInstance(CScene &scene);
+	virtual CTransformShape *createInstance(CScene &scene);
 
 	/// clip this skeleton.
-	virtual bool	clip(const std::vector<CPlane>	&pyramid, const CMatrix &worldMatrix);
+	virtual bool clip(const std::vector<CPlane> &pyramid, const CMatrix &worldMatrix);
 
 	/// render() this skeletonshape in a driver  (no-op)
-	virtual void	render(IDriver * /* drv */, CTransformShape * /* trans */, bool /* opaquePass */)
+	virtual void render(IDriver * /* drv */, CTransformShape * /* trans */, bool /* opaquePass */)
 	{
 	}
 
 	/** return the bounding box of the shape. Default is to return Null bbox.
 	 */
-	virtual	void	getAABBox(NLMISC::CAABBox &bbox) const;
+	virtual void getAABBox(NLMISC::CAABBox &bbox) const;
 
 	/// get an approximation of the number of triangles this instance will render for a fixed distance.
-	virtual float	getNumTriangles (float distance);
+	virtual float getNumTriangles(float distance);
 
 	/// serial this skeletonshape.
-	virtual void	serial(NLMISC::IStream &f);
+	virtual void serial(NLMISC::IStream &f);
 	NLMISC_DECLARE_CLASS(CSkeletonShape);
 
 	/// flush textures used by this shape.
-	virtual void	flushTextures (IDriver &/* driver */, uint /* selectedTexture */) {}
+	virtual void flushTextures(IDriver & /* driver */, uint /* selectedTexture */) { }
 
 	// @}
 
-
 	/// retrieve the lod to use for a given distance (log(n)).
-	uint			getLodForDistance(float dist) const;
+	uint getLodForDistance(float dist) const;
 
 	/// get lod information.
-	const CLod		&getLod(uint lod) const {return _Lods[lod];}
-	uint			getNumLods() const {return (uint)_Lods.size();}
+	const CLod &getLod(uint lod) const { return _Lods[lod]; }
+	uint getNumLods() const { return (uint)_Lods.size(); }
 
-// ***************************
+	// ***************************
 private:
-	std::vector<CBoneBase>			_Bones;
-	std::map<std::string, uint32>	_BoneMap;
-	NLMISC::CAABBox					_BBox;
+	std::vector<CBoneBase> _Bones;
+	std::map<std::string, uint32> _BoneMap;
+	NLMISC::CAABBox _BBox;
 
-	std::vector<CLod>				_Lods;
+	std::vector<CLod> _Lods;
 };
 
-
 } // NL3D
-
 
 #endif // NL_SKELETON_SHAPE_H
 

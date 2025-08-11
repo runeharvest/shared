@@ -14,27 +14,26 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef CL_SKILLS_BUILD_H
 #define CL_SKILLS_BUILD_H
-
 
 /////////////
 // CLASSES //
 /////////////
-namespace NLGEORGES
-{
-	class UFormElm;
+namespace NLGEORGES {
+class UFormElm;
 }
 
-
 /** Summary of a skill, contains just the ID of a skill and its value
-  */
+ */
 struct CSkillSummary
 {
-	CSkillSummary() {}
-	CSkillSummary(uint16 id, uint16 value) : ID(id), Value(value) {}
+	CSkillSummary() { }
+	CSkillSummary(uint16 id, uint16 value)
+	    : ID(id)
+	    , Value(value)
+	{
+	}
 	uint16 ID; /* see enum ESkills in skills.h */
 	uint16 Value;
 	virtual void serial(NLMISC::IStream &f)
@@ -43,14 +42,12 @@ struct CSkillSummary
 	}
 };
 
-
 /** Helper function to load a set of skills summaries from a georges sheet
-  * This can be used with sheets such as .player or .starting_role
-  * \param item The georges item from which to load the skills.
-  * \param prefix The prefix to get infos in georges sheet. It must be terminated by a dot (Ex : "Basic Player.").
-  * \param dest A vector that will be filled with skills summaries.
-  */
+ * This can be used with sheets such as .player or .starting_role
+ * \param item The georges item from which to load the skills.
+ * \param prefix The prefix to get infos in georges sheet. It must be terminated by a dot (Ex : "Basic Player.").
+ * \param dest A vector that will be filled with skills summaries.
+ */
 void loadSkillsSummaryFromSheet(const NLGEORGES::UFormElm &item, const std::string &prefix, std::vector<CSkillSummary> &dest);
 
 #endif
-

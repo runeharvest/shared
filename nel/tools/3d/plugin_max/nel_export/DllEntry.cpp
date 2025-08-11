@@ -24,13 +24,12 @@
 #include "../nel_3dsmax_shared/nel_3dsmax_shared.h"
 #include <maxversion.h>
 
-extern ClassDesc2* GetCNelExportDesc();
+extern ClassDesc2 *GetCNelExportDesc();
 
 HINSTANCE hInstance;
 int controlsInit = FALSE;
 
-
-BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
 {
 	// initialize nel context
 	if (!NLMISC::INelContext::isContextInitialised())
@@ -38,42 +37,44 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
 		new NLMISC::CLibraryContext(GetSharedNelContext());
 		nldebug("NeL Export: DllMain");
 	}
-			
-	hInstance = hinstDLL;				// Hang on to this DLL's instance handle.
+
+	hInstance = hinstDLL; // Hang on to this DLL's instance handle.
 
 	NL3D::registerSerial3d();
-	
-	if (!controlsInit) {
+
+	if (!controlsInit)
+	{
 		controlsInit = TRUE;
 #if MAX_VERSION_MAJOR < 14
-		InitCustomControls(hInstance);	// Initialize MAX's custom controls
+		InitCustomControls(hInstance); // Initialize MAX's custom controls
 #endif
-		InitCommonControls();			// Initialize Win95 controls
+		InitCommonControls(); // Initialize Win95 controls
 	}
-			
+
 	return (TRUE);
 }
 
-__declspec( dllexport ) const TCHAR* LibDescription()
+__declspec(dllexport) const TCHAR *LibDescription()
 {
 	return GetString(IDS_LIBDESCRIPTION);
 }
 
-//TODO: Must change this number when adding a new class
-__declspec( dllexport ) int LibNumberClasses()
+// TODO: Must change this number when adding a new class
+__declspec(dllexport) int LibNumberClasses()
 {
 	return 1;
 }
 
-__declspec( dllexport ) ClassDesc* LibClassDesc(int i)
+__declspec(dllexport) ClassDesc *LibClassDesc(int i)
 {
-	switch(i) {
-		case 0: return GetCNelExportDesc();
-		default: return 0;
+	switch (i)
+	{
+	case 0: return GetCNelExportDesc();
+	default: return 0;
 	}
 }
 
-__declspec( dllexport ) ULONG LibVersion()
+__declspec(dllexport) ULONG LibVersion()
 {
 	return VERSION_3DSMAX;
 }
@@ -86,5 +87,3 @@ TCHAR *GetString(int id)
 		return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : NULL;
 	return NULL;
 }
-
-

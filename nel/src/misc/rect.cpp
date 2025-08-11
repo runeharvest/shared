@@ -20,40 +20,38 @@
 #include "nel/misc/vector_2f.h"
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
 namespace NLMISC {
 
 // *********************************************************************
-void CRect::extend (sint32 x, sint32 y)
+void CRect::extend(sint32 x, sint32 y)
 {
-	if (x<X)
+	if (x < X)
 	{
-		Width+=(uint32)(X-x);
-		x=X;
+		Width += (uint32)(X - x);
+		x = X;
 	}
-	else if (x>=(X+(sint32)Width))
-		Width=(uint32)(x-X+1);
-	if (y<Y)
+	else if (x >= (X + (sint32)Width))
+		Width = (uint32)(x - X + 1);
+	if (y < Y)
 	{
-		Height+=(uint32)(Y-y);
-		y=Y;
+		Height += (uint32)(Y - y);
+		y = Y;
 	}
-	else if (y>=(Y+(sint32)Height))
-		Height=(uint32)(y-Y+1);
+	else if (y >= (Y + (sint32)Height))
+		Height = (uint32)(y - Y + 1);
 }
-
 
 // *********************************************************************
 void CRect::setWH(sint32 x, sint32 y, uint32 width, uint32 height)
 {
-	X=x;
-	Y=y;
-	Width=width;
-	Height=height;
+	X = x;
+	Y = y;
+	Width = width;
+	Height = height;
 }
-
 
 // *********************************************************************
 void CRect::set(sint32 x0, sint32 y0, sint32 x1, sint32 y1)
@@ -82,12 +80,9 @@ void CRect::set(sint32 x0, sint32 y0, sint32 x1, sint32 y1)
 }
 
 // *********************************************************************
-CRect::CRect (sint32 x, sint32 y, uint32 width, uint32 height)
+CRect::CRect(sint32 x, sint32 y, uint32 width, uint32 height)
 {
 	setWH(x, y, width, height);
 }
-
-
-
 
 } // NLMISC

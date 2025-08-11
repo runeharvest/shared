@@ -25,22 +25,17 @@
 #include "nel/misc/common.h"
 #include "nel/misc/hierarchical_timer.h"
 
-
 using namespace NLMISC;
 using namespace std;
 
-
 // define it only for debug bind.
-//#define	NL3D_DEBUG_DONT_BIND_PATCH
+// #define	NL3D_DEBUG_DONT_BIND_PATCH
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
-
+namespace NL3D {
 
 // ***************************************************************************
 // ***************************************************************************
@@ -48,26 +43,24 @@ namespace NL3D
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
-void			CPatchInfo::setCornerSmoothFlag(uint corner, bool smooth)
+void CPatchInfo::setCornerSmoothFlag(uint corner, bool smooth)
 {
-	nlassert(corner<=3);
-	uint	mask= 1<<corner;
-	if(smooth)
-		_CornerSmoothFlag|= mask;
+	nlassert(corner <= 3);
+	uint mask = 1 << corner;
+	if (smooth)
+		_CornerSmoothFlag |= mask;
 	else
-		_CornerSmoothFlag&= ~mask;
+		_CornerSmoothFlag &= ~mask;
 }
 
 // ***************************************************************************
-bool			CPatchInfo::getCornerSmoothFlag(uint corner) const
+bool CPatchInfo::getCornerSmoothFlag(uint corner) const
 {
-	nlassert(corner<=3);
-	uint	mask= 1<<corner;
-	return	(_CornerSmoothFlag & mask)!=0;
+	nlassert(corner <= 3);
+	uint mask = 1 << corner;
+	return (_CornerSmoothFlag & mask) != 0;
 }
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -75,14 +68,13 @@ bool			CPatchInfo::getCornerSmoothFlag(uint corner) const
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
 CZone::CZone()
 {
-	ZoneId= 0;
-	Compiled= false;
-	Landscape= NULL;
-	ClipResult= ClipOut;
+	ZoneId = 0;
+	Compiled = false;
+	Landscape = NULL;
+	ClipResult = ClipOut;
 }
 // ***************************************************************************
 CZone::~CZone()
@@ -91,149 +83,144 @@ CZone::~CZone()
 	nlassert(!Compiled);
 }
 
-
 // ***************************************************************************
-void			CZone::computeBBScaleBias(const CAABBox	&bb)
+void CZone::computeBBScaleBias(const CAABBox &bb)
 {
-	ZoneBB= bb;
+	ZoneBB = bb;
 	// Take a security for noise. (useful for zone clipping).
-	ZoneBB.setHalfSize(ZoneBB.getHalfSize()+CVector(NL3D_NOISE_MAX, NL3D_NOISE_MAX, NL3D_NOISE_MAX));
-	CVector	hs= ZoneBB.getHalfSize();
-	float	rmax= maxof(hs.x, hs.y, hs.z);
-	PatchScale= rmax / 32760;		// Prevent from float imprecision by taking 32760 and not 32767.
-	PatchBias= ZoneBB.getCenter();
+	ZoneBB.setHalfSize(ZoneBB.getHalfSize() + CVector(NL3D_NOISE_MAX, NL3D_NOISE_MAX, NL3D_NOISE_MAX));
+	CVector hs = ZoneBB.getHalfSize();
+	float rmax = maxof(hs.x, hs.y, hs.z);
+	PatchScale = rmax / 32760; // Prevent from float imprecision by taking 32760 and not 32767.
+	PatchBias = ZoneBB.getCenter();
 }
 
-
 // ***************************************************************************
-void			CZone::build(uint16 zoneId, const std::vector<CPatchInfo> &patchs, const std::vector<CBorderVertex> &borderVertices, uint32 numVertices)
+void CZone::build(uint16 zoneId, const std::vector<CPatchInfo> &patchs, const std::vector<CBorderVertex> &borderVertices, uint32 numVertices)
 {
-	CZoneInfo	zinfo;
-	zinfo.ZoneId= zoneId;
-	zinfo.Patchs= patchs;
-	zinfo.BorderVertices= borderVertices;
+	CZoneInfo zinfo;
+	zinfo.ZoneId = zoneId;
+	zinfo.Patchs = patchs;
+	zinfo.BorderVertices = borderVertices;
 
 	build(zinfo, numVertices);
 }
 // ***************************************************************************
-void			CZone::build(const CZoneInfo &zoneInfo, uint32 numVertices)
+void CZone::build(const CZoneInfo &zoneInfo, uint32 numVertices)
 {
-	sint	i,j;
+	sint i, j;
 	nlassert(!Compiled);
 
 	// Ref inupt
-	uint16		zoneId= zoneInfo.ZoneId;
-	const std::vector<CPatchInfo> &patchs= zoneInfo.Patchs;
-	const std::vector<CBorderVertex> &borderVertices= zoneInfo.BorderVertices;
+	uint16 zoneId = zoneInfo.ZoneId;
+	const std::vector<CPatchInfo> &patchs = zoneInfo.Patchs;
+	const std::vector<CBorderVertex> &borderVertices = zoneInfo.BorderVertices;
 
-
-	ZoneId= zoneId;
-	BorderVertices= borderVertices;
+	ZoneId = zoneId;
+	BorderVertices = borderVertices;
 
 	// Compute the bbox and the bias/scale.
 	//=====================================
-	CAABBox		bb;
-	if(!patchs.empty())
+	CAABBox bb;
+	if (!patchs.empty())
 		bb.setCenter(patchs[0].Patch.Vertices[0]);
 	bb.setHalfSize(CVector::Null);
-	for(j=0;j<(sint)patchs.size();j++)
+	for (j = 0; j < (sint)patchs.size(); j++)
 	{
-		const CBezierPatch	&p= patchs[j].Patch;
-		for(i=0;i<4;i++)
+		const CBezierPatch &p = patchs[j].Patch;
+		for (i = 0; i < 4; i++)
 			bb.extend(p.Vertices[i]);
-		for(i=0;i<8;i++)
+		for (i = 0; i < 8; i++)
 			bb.extend(p.Tangents[i]);
-		for(i=0;i<4;i++)
+		for (i = 0; i < 4; i++)
 			bb.extend(p.Interiors[i]);
 	}
 	// Compute BBox, and Patch Scale Bias, according to Noise.
 	computeBBScaleBias(bb);
 
-
 	// Compute/compress Patchs.
 	//=========================
 	Patchs.resize(patchs.size());
 	PatchConnects.resize(patchs.size());
-	sint	maxVertex=-1;
-	for(j=0;j<(sint)patchs.size();j++)
+	sint maxVertex = -1;
+	for (j = 0; j < (sint)patchs.size(); j++)
 	{
-		const CPatchInfo	&pi= patchs[j];
-		const CBezierPatch	&p= pi.Patch;
-		CPatch				&pa= Patchs[j];
-		CPatchConnect		&pc= PatchConnects[j];
+		const CPatchInfo &pi = patchs[j];
+		const CBezierPatch &p = pi.Patch;
+		CPatch &pa = Patchs[j];
+		CPatchConnect &pc = PatchConnects[j];
 
 		// Smoothing flags
-		pa.Flags&=~NL_PATCH_SMOOTH_FLAG_MASK;
-		pa.Flags|=NL_PATCH_SMOOTH_FLAG_MASK&(pi.Flags<<NL_PATCH_SMOOTH_FLAG_SHIFT);
-
+		pa.Flags &= ~NL_PATCH_SMOOTH_FLAG_MASK;
+		pa.Flags |= NL_PATCH_SMOOTH_FLAG_MASK & (pi.Flags << NL_PATCH_SMOOTH_FLAG_SHIFT);
 
 		// Noise Data
 		// copy noise rotation.
-		pa.NoiseRotation= pi.NoiseRotation;
+		pa.NoiseRotation = pi.NoiseRotation;
 		// copy all noise smoothing info.
-		for(i=0;i<4;i++)
+		for (i = 0; i < 4; i++)
 		{
 			pa.setCornerSmoothFlag(i, pi.getCornerSmoothFlag(i));
 		}
 
 		// Copy order of the patch
-		pa.OrderS= pi.OrderS;
-		pa.OrderT= pi.OrderT;
+		pa.OrderS = pi.OrderS;
+		pa.OrderT = pi.OrderT;
 
 		// Build the patch.
-		for(i=0;i<4;i++)
+		for (i = 0; i < 4; i++)
 			pa.Vertices[i].pack(p.Vertices[i], PatchBias, PatchScale);
-		for(i=0;i<8;i++)
+		for (i = 0; i < 8; i++)
 			pa.Tangents[i].pack(p.Tangents[i], PatchBias, PatchScale);
-		for(i=0;i<4;i++)
+		for (i = 0; i < 4; i++)
 			pa.Interiors[i].pack(p.Interiors[i], PatchBias, PatchScale);
-		pa.Tiles= pi.Tiles;
-		pa.TileColors= pi.TileColors;
+		pa.Tiles = pi.Tiles;
+		pa.TileColors = pi.TileColors;
 		/* Copy TileLightInfluences. It is possible that pi.TileLightInfluences.size()!= 0
-			and pi.TileLightInfluences.size()!= (uint)(pi.OrderS/2+1)*(pi.OrderT/2+1)
-			Because of a preceding bug where pa.OrderS and pa.OrderT were not initialized before the
-			pa.resetTileLightInfluences();
+		    and pi.TileLightInfluences.size()!= (uint)(pi.OrderS/2+1)*(pi.OrderT/2+1)
+		    Because of a preceding bug where pa.OrderS and pa.OrderT were not initialized before the
+		    pa.resetTileLightInfluences();
 		*/
-		if( pi.TileLightInfluences.size()!= (uint)(pi.OrderS/2+1)*(pi.OrderT/2+1) )
+		if (pi.TileLightInfluences.size() != (uint)(pi.OrderS / 2 + 1) * (pi.OrderT / 2 + 1))
 		{
 			pa.resetTileLightInfluences();
 		}
 		else
 		{
-			pa.TileLightInfluences= pi.TileLightInfluences;
+			pa.TileLightInfluences = pi.TileLightInfluences;
 		}
 
 		// Number of lumels in this patch
-		uint lumelCount=(pi.OrderS*NL_LUMEL_BY_TILE)*(pi.OrderT*NL_LUMEL_BY_TILE);
+		uint lumelCount = (pi.OrderS * NL_LUMEL_BY_TILE) * (pi.OrderT * NL_LUMEL_BY_TILE);
 
 		// Lumel empty ?
-		if (pi.Lumels.size ()==lumelCount)
+		if (pi.Lumels.size() == lumelCount)
 		{
 			// Pack the lumel map
-			pa.packShadowMap (&pi.Lumels[0]);
+			pa.packShadowMap(&pi.Lumels[0]);
 		}
 		else
 		{
 			// Reset lightmap
-			pa.resetCompressedLumels ();
+			pa.resetCompressedLumels();
 		}
 
-		nlassert(pa.Tiles.size()== (uint)pi.OrderS*pi.OrderT);
-		nlassert(pa.TileColors.size()== (uint)(pi.OrderS+1)*(pi.OrderT+1));
+		nlassert(pa.Tiles.size() == (uint)pi.OrderS * pi.OrderT);
+		nlassert(pa.TileColors.size() == (uint)(pi.OrderS + 1) * (pi.OrderT + 1));
 
 		// Build the patchConnect.
-		pc.ErrorSize= pi.ErrorSize;
-		for(i=0;i<4;i++)
+		pc.ErrorSize = pi.ErrorSize;
+		for (i = 0; i < 4; i++)
 		{
-			pc.BaseVertices[i]= pi.BaseVertices[i];
-			maxVertex= max((sint)pc.BaseVertices[i], maxVertex);
+			pc.BaseVertices[i] = pi.BaseVertices[i];
+			maxVertex = max((sint)pc.BaseVertices[i], maxVertex);
 		}
-		for(i=0;i<4;i++)
-			pc.BindEdges[i]= pi.BindEdges[i];
+		for (i = 0; i < 4; i++)
+			pc.BindEdges[i] = pi.BindEdges[i];
 	}
 
-	NumVertices= maxVertex+1;
-	NumVertices= max((uint32)NumVertices, numVertices);
+	NumVertices = maxVertex + 1;
+	NumVertices = max((uint32)NumVertices, numVertices);
 
 	// Init the Clip Arrays
 	_PatchRenderClipped.resize((uint)Patchs.size());
@@ -244,139 +231,131 @@ void			CZone::build(const CZoneInfo &zoneInfo, uint32 numVertices)
 	// Copy PointLights.
 	//=========================
 	// build array, lights are sorted
-	std::vector<uint>	plRemap;
+	std::vector<uint> plRemap;
 	_PointLightArray.build(zoneInfo.PointLights, plRemap);
 	// Check TileLightInfluences integrity, and remap PointLight Indices.
-	for(j=0;j<(sint)patchs.size();j++)
+	for (j = 0; j < (sint)patchs.size(); j++)
 	{
-		CPatch				&pa= Patchs[j];
-		for(uint k= 0; k<pa.TileLightInfluences.size(); k++)
+		CPatch &pa = Patchs[j];
+		for (uint k = 0; k < pa.TileLightInfluences.size(); k++)
 		{
-			CTileLightInfluence		&tli= pa.TileLightInfluences[k];
-			for(uint l=0; l<CTileLightInfluence::NumLightPerCorner; l++)
+			CTileLightInfluence &tli = pa.TileLightInfluences[k];
+			for (uint l = 0; l < CTileLightInfluence::NumLightPerCorner; l++)
 			{
 				// If NULL light, break and continue to next TileLightInfluence.
-				if(tli.Light[l]== 0xFF)
+				if (tli.Light[l] == 0xFF)
 					break;
 				else
 				{
 					// Check good index.
 					nlassert(tli.Light[l] < _PointLightArray.getPointLights().size());
 					// Remap index, because of light sorting.
-					tli.Light[l]= plRemap[tli.Light[l]];
+					tli.Light[l] = plRemap[tli.Light[l]];
 				}
-
 			}
 		}
 	}
 }
 
 // ***************************************************************************
-void			CZone::retrieve(std::vector<CPatchInfo> &patchs, std::vector<CBorderVertex> &borderVertices)
+void CZone::retrieve(std::vector<CPatchInfo> &patchs, std::vector<CBorderVertex> &borderVertices)
 {
-	CZoneInfo	zinfo;
+	CZoneInfo zinfo;
 
 	retrieve(zinfo);
 
-	patchs= zinfo.Patchs;
-	borderVertices= zinfo.BorderVertices;
+	patchs = zinfo.Patchs;
+	borderVertices = zinfo.BorderVertices;
 }
 
 // ***************************************************************************
-void			CZone::retrieve(CZoneInfo &zoneInfo)
+void CZone::retrieve(CZoneInfo &zoneInfo)
 {
-	sint i,j;
+	sint i, j;
 
 	// Ref on input.
-	std::vector<CPatchInfo> &patchs= zoneInfo.Patchs;
-	std::vector<CBorderVertex> &borderVertices= zoneInfo.BorderVertices;
+	std::vector<CPatchInfo> &patchs = zoneInfo.Patchs;
+	std::vector<CBorderVertex> &borderVertices = zoneInfo.BorderVertices;
 	// Copy zoneId.
-	zoneInfo.ZoneId= getZoneId();
-
+	zoneInfo.ZoneId = getZoneId();
 
 	// uncompress Patchs.
 	//=========================
 	patchs.resize(Patchs.size());
-	for(j=0;j<(sint)patchs.size();j++)
+	for (j = 0; j < (sint)patchs.size(); j++)
 	{
-		CPatchInfo			&pi= patchs[j];
-		CBezierPatch		&p= pi.Patch;
-		CPatch				&pa= Patchs[j];
-		CPatchConnect		&pc= PatchConnects[j];
-
+		CPatchInfo &pi = patchs[j];
+		CBezierPatch &p = pi.Patch;
+		CPatch &pa = Patchs[j];
+		CPatchConnect &pc = PatchConnects[j];
 
 		// Smoothing flags
-		pi.Flags= (pa.Flags&NL_PATCH_SMOOTH_FLAG_MASK)>>NL_PATCH_SMOOTH_FLAG_SHIFT;
-
+		pi.Flags = (pa.Flags & NL_PATCH_SMOOTH_FLAG_MASK) >> NL_PATCH_SMOOTH_FLAG_SHIFT;
 
 		// Noise Data
 		// copy noise rotation.
-		pi.NoiseRotation= pa.NoiseRotation;
+		pi.NoiseRotation = pa.NoiseRotation;
 		// copy all noise smoothing info.
-		for(i=0;i<4;i++)
+		for (i = 0; i < 4; i++)
 		{
 			pi.setCornerSmoothFlag(i, pa.getCornerSmoothFlag(i));
 		}
 
-
 		// re-Build the uncompressed bezier patch.
-		for(i=0;i<4;i++)
+		for (i = 0; i < 4; i++)
 			pa.Vertices[i].unpack(p.Vertices[i], PatchBias, PatchScale);
-		for(i=0;i<8;i++)
+		for (i = 0; i < 8; i++)
 			pa.Tangents[i].unpack(p.Tangents[i], PatchBias, PatchScale);
-		for(i=0;i<4;i++)
+		for (i = 0; i < 4; i++)
 			pa.Interiors[i].unpack(p.Interiors[i], PatchBias, PatchScale);
-		pi.Tiles= pa.Tiles;
-		pi.TileColors= pa.TileColors;
-		pi.TileLightInfluences= pa.TileLightInfluences;
-		pi.Lumels.resize ((pa.OrderS*4)*(pa.OrderT*4));
-		pi.Flags=(pa.Flags&NL_PATCH_SMOOTH_FLAG_MASK)>>NL_PATCH_SMOOTH_FLAG_SHIFT;
+		pi.Tiles = pa.Tiles;
+		pi.TileColors = pa.TileColors;
+		pi.TileLightInfluences = pa.TileLightInfluences;
+		pi.Lumels.resize((pa.OrderS * 4) * (pa.OrderT * 4));
+		pi.Flags = (pa.Flags & NL_PATCH_SMOOTH_FLAG_MASK) >> NL_PATCH_SMOOTH_FLAG_SHIFT;
 
 		// Unpack the lumel map
-		pa.unpackShadowMap (&pi.Lumels[0]);
+		pa.unpackShadowMap(&pi.Lumels[0]);
 
 		// from the patchConnect.
-		pi.OrderS= pa.OrderS;
-		pi.OrderT= pa.OrderT;
-		pi.ErrorSize= pc.ErrorSize;
-		for(i=0;i<4;i++)
+		pi.OrderS = pa.OrderS;
+		pi.OrderT = pa.OrderT;
+		pi.ErrorSize = pc.ErrorSize;
+		for (i = 0; i < 4; i++)
 		{
-			pi.BaseVertices[i]= pc.BaseVertices[i];
+			pi.BaseVertices[i] = pc.BaseVertices[i];
 		}
-		for(i=0;i<4;i++)
-			pi.BindEdges[i]= pc.BindEdges[i];
+		for (i = 0; i < 4; i++)
+			pi.BindEdges[i] = pc.BindEdges[i];
 	}
 
 	// retrieve bordervertices.
 	//=========================
-	borderVertices= BorderVertices;
+	borderVertices = BorderVertices;
 
 	// retrieve PointLights.
 	//=========================
-	zoneInfo.PointLights= _PointLightArray.getPointLights();
-
+	zoneInfo.PointLights = _PointLightArray.getPointLights();
 }
 
-
 // ***************************************************************************
-void			CZone::build(const CZone &zone)
+void CZone::build(const CZone &zone)
 {
 	nlassert(!Compiled);
 
-	ZoneId= zone.ZoneId;
-	BorderVertices= zone.BorderVertices;
+	ZoneId = zone.ZoneId;
+	BorderVertices = zone.BorderVertices;
 
 	// Compute the bbox and the bias/scale.
 	//=====================================
-	ZoneBB= zone.ZoneBB;
-	PatchScale= zone.PatchScale;
-	PatchBias= zone.PatchBias;
-
+	ZoneBB = zone.ZoneBB;
+	PatchScale = zone.PatchScale;
+	PatchBias = zone.PatchBias;
 
 	// Compute/compress Patchs.
 	//=========================
-	Patchs= zone.Patchs;
-	PatchConnects= zone.PatchConnects;
+	Patchs = zone.Patchs;
+	PatchConnects = zone.PatchConnects;
 
 	// Init the Clip Arrays
 	_PatchRenderClipped.resize((uint)Patchs.size());
@@ -384,19 +363,15 @@ void			CZone::build(const CZone &zone)
 	_PatchRenderClipped.setAll();
 	_PatchOldRenderClipped.setAll();
 
-
 	// copy pointLights.
 	//=========================
-	_PointLightArray= zone._PointLightArray;
+	_PointLightArray = zone._PointLightArray;
 
-
-	NumVertices= zone.NumVertices;
+	NumVertices = zone.NumVertices;
 }
 
-
-
 // ***************************************************************************
-void			CBorderVertex::serial(NLMISC::IStream &f)
+void CBorderVertex::serial(NLMISC::IStream &f)
 {
 	/* ***********************************************
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
@@ -404,26 +379,26 @@ void			CBorderVertex::serial(NLMISC::IStream &f)
 	 * ***********************************************/
 	(void)f.serialVersion(0);
 
-	f.xmlSerial (CurrentVertex, "CURRENT_VERTEX");
-	f.xmlSerial (NeighborZoneId, "NEIGHTBOR_ZONE_ID");
-	f.xmlSerial (NeighborVertex, "NEIGHTBOR_VERTEX");
+	f.xmlSerial(CurrentVertex, "CURRENT_VERTEX");
+	f.xmlSerial(NeighborZoneId, "NEIGHTBOR_ZONE_ID");
+	f.xmlSerial(NeighborVertex, "NEIGHTBOR_VERTEX");
 }
-void			CZone::CPatchConnect::serial(NLMISC::IStream &f)
+void CZone::CPatchConnect::serial(NLMISC::IStream &f)
 {
 	/* ***********************************************
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
 	 *	It can be loaded/called through CAsyncFileManager for instance
 	 * ***********************************************/
-	uint	ver= f.serialVersion(1);
+	uint ver = f.serialVersion(1);
 
-	if (ver<1)
+	if (ver < 1)
 		f.serial(OldOrderS, OldOrderT, ErrorSize);
 	else
 		f.serial(ErrorSize);
-	f.xmlSerial (BaseVertices[0], BaseVertices[1], BaseVertices[2], BaseVertices[3], "BASE_VERTICES");
-	f.xmlSerial (BindEdges[0], BindEdges[1], BindEdges[2], BindEdges[3], "BIND_EDGES");
+	f.xmlSerial(BaseVertices[0], BaseVertices[1], BaseVertices[2], BaseVertices[3], "BASE_VERTICES");
+	f.xmlSerial(BindEdges[0], BindEdges[1], BindEdges[2], BindEdges[3], "BIND_EDGES");
 }
-void			CPatchInfo::CBindInfo::serial(NLMISC::IStream &f)
+void CPatchInfo::CBindInfo::serial(NLMISC::IStream &f)
 {
 	/* ***********************************************
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
@@ -431,14 +406,14 @@ void			CPatchInfo::CBindInfo::serial(NLMISC::IStream &f)
 	 * ***********************************************/
 	(void)f.serialVersion(0);
 	f.xmlSerial(NPatchs, "NPATCH");
-	nlassert ( (NPatchs==0) | (NPatchs==1) | (NPatchs==2) | (NPatchs==4) | (NPatchs==5) );
-	f.xmlSerial (ZoneId, "ZONE_ID");
-	f.xmlSerial (Next[0], Next[1], Next[2], Next[3], "NEXT_PATCH");
-	f.xmlSerial (Edge[0], Edge[1], Edge[2], Edge[3], "NEXT_EDGE");
+	nlassert((NPatchs == 0) | (NPatchs == 1) | (NPatchs == 2) | (NPatchs == 4) | (NPatchs == 5));
+	f.xmlSerial(ZoneId, "ZONE_ID");
+	f.xmlSerial(Next[0], Next[1], Next[2], Next[3], "NEXT_PATCH");
+	f.xmlSerial(Edge[0], Edge[1], Edge[2], Edge[3], "NEXT_EDGE");
 }
 
 // ***************************************************************************
-void			CZone::serial(NLMISC::IStream &f)
+void CZone::serial(NLMISC::IStream &f)
 {
 	/* ***********************************************
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
@@ -446,55 +421,55 @@ void			CZone::serial(NLMISC::IStream &f)
 	 * ***********************************************/
 	/*
 	Version 5:
-		- Ryzom Core release check
+	    - Ryzom Core release check
 	Version 4:
-		- PointLights
+	    - PointLights
 	Version 3:
-		- Lumels compression version 2.
+	    - Lumels compression version 2.
 	Version 2:
-		- Lumels.
+	    - Lumels.
 	Version 1:
-		- Tile color.
+	    - Tile color.
 	Version 0:
-		- base verison.
+	    - base verison.
 	*/
-	uint	ver= f.serialVersion(5);
+	uint ver = f.serialVersion(5);
 
 	// No more compatibility before version 3
-	if (ver<3)
+	if (ver < 3)
 	{
 		throw EOlderStream(f);
 	}
 
 	f.serialCheck(NELID("ENOZ"));
 
-	f.xmlSerial (ZoneId, "ZONE_ID");
-	f.xmlSerial (ZoneBB, "BB");
-	f.xmlSerial (PatchBias, "PATCH_BIAS");
-	f.xmlSerial (PatchScale, "PATCH_SCALE");
-	f.xmlSerial (NumVertices, "NUM_VERTICES");
+	f.xmlSerial(ZoneId, "ZONE_ID");
+	f.xmlSerial(ZoneBB, "BB");
+	f.xmlSerial(PatchBias, "PATCH_BIAS");
+	f.xmlSerial(PatchScale, "PATCH_SCALE");
+	f.xmlSerial(NumVertices, "NUM_VERTICES");
 
-	f.xmlPush ("BORDER_VERTICES");
+	f.xmlPush("BORDER_VERTICES");
 	f.serialCont(BorderVertices);
-	f.xmlPop ();
+	f.xmlPop();
 
-	f.xmlPush ("PATCHES");
+	f.xmlPush("PATCHES");
 	f.serialCont(Patchs);
-	f.xmlPop ();
+	f.xmlPop();
 
-	f.xmlPush ("PATCH_CONNECTS");
+	f.xmlPush("PATCH_CONNECTS");
 	f.serialCont(PatchConnects);
-	f.xmlPop ();
+	f.xmlPop();
 
-	if (ver>=4)
+	if (ver >= 4)
 	{
-		f.xmlPush ("POINT_LIGHTS");
+		f.xmlPush("POINT_LIGHTS");
 		f.serial(_PointLightArray);
-		f.xmlPop ();
+		f.xmlPop();
 	}
 
 	// If read, must create and init Patch Clipped state to true (clipped even if not compiled)
-	if(f.isReading())
+	if (f.isReading())
 	{
 		_PatchRenderClipped.resize((uint)Patchs.size());
 		_PatchOldRenderClipped.resize((uint)Patchs.size());
@@ -508,187 +483,177 @@ void			CZone::serial(NLMISC::IStream &f)
 	// Deprecated, because ver<3 not supported
 }
 
-
-
 // ***************************************************************************
-void			CZone::compile(CLandscape *landscape, TZoneMap &loadedZones)
+void CZone::compile(CLandscape *landscape, TZoneMap &loadedZones)
 {
-	sint	i,j;
-	TZoneMap		neighborZones;
+	sint i, j;
+	TZoneMap neighborZones;
 
-	//nlinfo("Compile Zone: %d \n", (sint32)getZoneId());
+	// nlinfo("Compile Zone: %d \n", (sint32)getZoneId());
 
 	// Can't compile if compiled.
 	nlassert(!Compiled);
-	Landscape= landscape;
+	Landscape = landscape;
 
 	// Attach this to loadedZones.
 	//============================
-	nlassert(loadedZones.find(ZoneId)==loadedZones.end());
-	loadedZones[ZoneId]= this;
+	nlassert(loadedZones.find(ZoneId) == loadedZones.end());
+	loadedZones[ZoneId] = this;
 
 	// Create/link the base vertices according to present neigbor zones.
 	//============================
 	BaseVertices.clear();
 	BaseVertices.resize(NumVertices);
 	// First try to link vertices to other.
-	for(i=0;i<(sint)BorderVertices.size();i++)
+	for (i = 0; i < (sint)BorderVertices.size(); i++)
 	{
-		sint	cur= BorderVertices[i].CurrentVertex;
-		sint	vertto= BorderVertices[i].NeighborVertex;
-		sint	zoneto= BorderVertices[i].NeighborZoneId;
-		nlassert(cur<NumVertices);
+		sint cur = BorderVertices[i].CurrentVertex;
+		sint vertto = BorderVertices[i].NeighborVertex;
+		sint zoneto = BorderVertices[i].NeighborZoneId;
+		nlassert(cur < NumVertices);
 
-		if(loadedZones.find(zoneto)!=loadedZones.end())
+		if (loadedZones.find(zoneto) != loadedZones.end())
 		{
-			CZone	*zone;
-			zone= (*loadedZones.find(zoneto)).second;
-			nlassert(zone!=this);
+			CZone *zone;
+			zone = (*loadedZones.find(zoneto)).second;
+			nlassert(zone != this);
 			// insert the zone in the neigborood (if not done...).
-			neighborZones[zoneto]= zone;
+			neighborZones[zoneto] = zone;
 			// Doesn't matter if BaseVertices is already linked to another zone...
 			// This should be the same pointer in this case...
-			BaseVertices[cur]=  zone->getBaseVertex(vertto);
+			BaseVertices[cur] = zone->getBaseVertex(vertto);
 		}
 	}
 	// Else, create unbounded vertices.
-	for(i=0;i<(sint)BaseVertices.size();i++)
+	for (i = 0; i < (sint)BaseVertices.size(); i++)
 	{
-		if(BaseVertices[i]==NULL)
+		if (BaseVertices[i] == NULL)
 		{
-			BaseVertices[i]=  new CTessBaseVertex;
+			BaseVertices[i] = new CTessBaseVertex;
 		}
 	}
 
-
 	// compile() the patchs.
 	//======================
-	for(j=0;j<(sint)Patchs.size();j++)
+	for (j = 0; j < (sint)Patchs.size(); j++)
 	{
-		CPatch				&pa= Patchs[j];
-		CPatchConnect		&pc= PatchConnects[j];
-		CTessVertex			*baseVertices[4];
+		CPatch &pa = Patchs[j];
+		CPatchConnect &pc = PatchConnects[j];
+		CTessVertex *baseVertices[4];
 
-		baseVertices[0]= &(BaseVertices[pc.BaseVertices[0]]->Vert);
-		baseVertices[1]= &(BaseVertices[pc.BaseVertices[1]]->Vert);
-		baseVertices[2]= &(BaseVertices[pc.BaseVertices[2]]->Vert);
-		baseVertices[3]= &(BaseVertices[pc.BaseVertices[3]]->Vert);
+		baseVertices[0] = &(BaseVertices[pc.BaseVertices[0]]->Vert);
+		baseVertices[1] = &(BaseVertices[pc.BaseVertices[1]]->Vert);
+		baseVertices[2] = &(BaseVertices[pc.BaseVertices[2]]->Vert);
+		baseVertices[3] = &(BaseVertices[pc.BaseVertices[3]]->Vert);
 		pa.compile(this, j, pa.OrderS, pa.OrderT, baseVertices, pc.ErrorSize);
 	};
 
 	// compile() the Clip information for the patchs.
 	//======================
 	_PatchBSpheres.resize(Patchs.size());
-	for(j=0;j<(sint)Patchs.size();j++)
+	for (j = 0; j < (sint)Patchs.size(); j++)
 	{
-		CPatch				&pa= Patchs[j];
+		CPatch &pa = Patchs[j];
 
 		// Buil the BSPhere of the patch.
-		CAABBox	bb= pa.buildBBox();
-		_PatchBSpheres[j].Center= bb.getCenter();
-		_PatchBSpheres[j].Radius= bb.getRadius();
+		CAABBox bb = pa.buildBBox();
+		_PatchBSpheres[j].Center = bb.getCenter();
+		_PatchBSpheres[j].Radius = bb.getRadius();
 	}
 
 	// bind() the patchs. (after all compiled).
 	//===================
-	for(j=0;j<(sint)Patchs.size();j++)
+	for (j = 0; j < (sint)Patchs.size(); j++)
 	{
-		CPatch				&pa= Patchs[j];
-		CPatchConnect		&pc= PatchConnects[j];
+		CPatch &pa = Patchs[j];
+		CPatchConnect &pc = PatchConnects[j];
 
 		// bind the patch. This is the original bind, not a rebind.
 		bindPatch(loadedZones, pa, pc, false);
 	}
 
-
 	// rebindBorder() on neighbor zones.
 	//==================================
-	ItZoneMap		zoneIt;
+	ItZoneMap zoneIt;
 	// Traverse the neighborood.
-	for(zoneIt= neighborZones.begin(); zoneIt!=neighborZones.end(); zoneIt++)
+	for (zoneIt = neighborZones.begin(); zoneIt != neighborZones.end(); zoneIt++)
 	{
 		(*zoneIt).second->rebindBorder(loadedZones);
 	}
 
 	// End!!
-	Compiled= true;
+	Compiled = true;
 }
 
 // ***************************************************************************
-void			CZone::release(TZoneMap &loadedZones)
+void CZone::release(TZoneMap &loadedZones)
 {
-	sint	i,j;
+	sint i, j;
 
-	if(!Compiled)
+	if (!Compiled)
 		return;
 
 	// detach this zone to loadedZones.
 	//=================================
-	nlassert(loadedZones.find(ZoneId)!=loadedZones.end());
+	nlassert(loadedZones.find(ZoneId) != loadedZones.end());
 	loadedZones.erase(ZoneId);
 	// It doesn't server to unbindPatch(), since patch is not binded to neigbors.
 
-
 	// unbind() the patchs.
 	//=====================
-	for(j=0;j<(sint)Patchs.size();j++)
+	for (j = 0; j < (sint)Patchs.size(); j++)
 	{
-		CPatch				&pa= Patchs[j];
+		CPatch &pa = Patchs[j];
 		unbindPatch(pa);
 	}
-
 
 	// rebindBorder() on neighbor zones.
 	//==================================
 	// Build the nieghborood.
-	TZoneMap		neighborZones;
-	for(i=0;i<(sint)BorderVertices.size();i++)
+	TZoneMap neighborZones;
+	for (i = 0; i < (sint)BorderVertices.size(); i++)
 	{
-		sint	cur= BorderVertices[i].CurrentVertex;
-		sint	zoneto= BorderVertices[i].NeighborZoneId;
-		nlassert(cur<NumVertices);
+		sint cur = BorderVertices[i].CurrentVertex;
+		sint zoneto = BorderVertices[i].NeighborZoneId;
+		nlassert(cur < NumVertices);
 
-		if(loadedZones.find(zoneto)!=loadedZones.end())
+		if (loadedZones.find(zoneto) != loadedZones.end())
 		{
-			CZone	*zone;
-			zone= (*loadedZones.find(zoneto)).second;
-			nlassert(zone!=this);
+			CZone *zone;
+			zone = (*loadedZones.find(zoneto)).second;
+			nlassert(zone != this);
 			// insert the zone in the neigborood (if not done...).
-			neighborZones[zoneto]= zone;
+			neighborZones[zoneto] = zone;
 		}
 	}
 	// rebind borders.
-	ItZoneMap		zoneIt;
+	ItZoneMap zoneIt;
 	// Traverse the neighborood.
-	for(zoneIt= neighborZones.begin(); zoneIt!=neighborZones.end(); zoneIt++)
+	for (zoneIt = neighborZones.begin(); zoneIt != neighborZones.end(); zoneIt++)
 	{
 		// Since
 		(*zoneIt).second->rebindBorder(loadedZones);
 	}
 
-
 	// release() the patchs.
 	//======================
 	// unbind() need compiled neigbor patchs, so do the release after all unbind (so after rebindBorder() too...).
-	for(j=0;j<(sint)Patchs.size();j++)
+	for (j = 0; j < (sint)Patchs.size(); j++)
 	{
-		CPatch				&pa= Patchs[j];
+		CPatch &pa = Patchs[j];
 		pa.release();
 	}
-
 
 	// destroy/unlink the base vertices (internal..), according to present neigbor zones.
 	//=================================
 	// Just release the smartptrs (easy!!). Do it after patchs released...
 	BaseVertices.clear();
 
-
 	// End!!
-	Compiled= false;
-	Landscape= NULL;
-	ClipResult= ClipOut;
+	Compiled = false;
+	Landscape = NULL;
+	ClipResult = ClipOut;
 }
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -696,19 +661,18 @@ void			CZone::release(TZoneMap &loadedZones)
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
-void			CZone::rebindBorder(TZoneMap &loadedZones)
+void CZone::rebindBorder(TZoneMap &loadedZones)
 {
-	sint	j;
+	sint j;
 
 	// rebind patchs which are on border.
-	for(j=0;j<(sint)Patchs.size();j++)
+	for (j = 0; j < (sint)Patchs.size(); j++)
 	{
-		CPatch				&pa= Patchs[j];
-		CPatchConnect		&pc= PatchConnects[j];
+		CPatch &pa = Patchs[j];
+		CPatchConnect &pc = PatchConnects[j];
 
-		if(patchOnBorder(pc))
+		if (patchOnBorder(pc))
 		{
 			// rebind the patch. This is a rebind.
 			bindPatch(loadedZones, pa, pc, true);
@@ -717,108 +681,98 @@ void			CZone::rebindBorder(TZoneMap &loadedZones)
 }
 
 // ***************************************************************************
-CPatch		*CZone::getZonePatch(TZoneMap &loadedZones, sint zoneId, sint patch)
+CPatch *CZone::getZonePatch(TZoneMap &loadedZones, sint zoneId, sint patch)
 {
 #ifdef NL3D_DEBUG_DONT_BIND_PATCH
 	return NULL;
 #endif
-	if(loadedZones.find(zoneId)==loadedZones.end())
+	if (loadedZones.find(zoneId) == loadedZones.end())
 		return NULL;
 	else
 		return (loadedZones[zoneId])->getPatch(patch);
 }
 
-
 // ***************************************************************************
-void		CZone::buildBindInfo(uint patchId, uint edge, CZone *neighborZone, CPatch::CBindInfo	&paBind)
+void CZone::buildBindInfo(uint patchId, uint edge, CZone *neighborZone, CPatch::CBindInfo &paBind)
 {
 	nlassert(patchId < Patchs.size());
 	nlassert(neighborZone);
 
-	CPatchConnect	&pc= PatchConnects[patchId];
-
+	CPatchConnect &pc = PatchConnects[patchId];
 
 	// Get the bind info of this patch to his neighbor on "edge".
-	CPatchInfo::CBindInfo	&pcBind= pc.BindEdges[edge];
-	nlassert(pcBind.NPatchs==0 || pcBind.NPatchs==1 || pcBind.NPatchs==2 || pcBind.NPatchs==4 || pcBind.NPatchs==5);
-
+	CPatchInfo::CBindInfo &pcBind = pc.BindEdges[edge];
+	nlassert(pcBind.NPatchs == 0 || pcBind.NPatchs == 1 || pcBind.NPatchs == 2 || pcBind.NPatchs == 4 || pcBind.NPatchs == 5);
 
 	// copy zone ptr.
-	paBind.Zone= neighborZone;
-
+	paBind.Zone = neighborZone;
 
 	// Special case of a small patch connected to a bigger.
-	if(pcBind.NPatchs==5)
+	if (pcBind.NPatchs == 5)
 	{
-		paBind.NPatchs= 1;
-		paBind.Next[0]= neighborZone->getPatch(pcBind.Next[0]);
-		paBind.Edge[0]= pcBind.Edge[0];
+		paBind.NPatchs = 1;
+		paBind.Next[0] = neighborZone->getPatch(pcBind.Next[0]);
+		paBind.Edge[0] = pcBind.Edge[0];
 
 		// Get the twin bindInfo of pcBind.
-		const CPatchInfo::CBindInfo	&pcBindNeighbor=
-			neighborZone->getPatchConnect(pcBind.Next[0])->BindEdges[pcBind.Edge[0]];
+		const CPatchInfo::CBindInfo &pcBindNeighbor = neighborZone->getPatchConnect(pcBind.Next[0])->BindEdges[pcBind.Edge[0]];
 		// must have a multiple bind.
 		nlassert(pcBindNeighbor.NPatchs == 2 || pcBindNeighbor.NPatchs == 4);
 
 		// number of bind is stored on the twin bindInfo.
-		paBind.MultipleBindNum= pcBindNeighbor.NPatchs;
+		paBind.MultipleBindNum = pcBindNeighbor.NPatchs;
 
 		// Search our patchId on neighbor;
-		paBind.MultipleBindId= 255;
-		for(sint i=0; i<paBind.MultipleBindNum; i++)
+		paBind.MultipleBindId = 255;
+		for (sint i = 0; i < paBind.MultipleBindNum; i++)
 		{
-			if(pcBindNeighbor.Next[i]==patchId)
-				paBind.MultipleBindId= i;
+			if (pcBindNeighbor.Next[i] == patchId)
+				paBind.MultipleBindId = i;
 		}
-		nlassert(paBind.MultipleBindId!= 255);
+		nlassert(paBind.MultipleBindId != 255);
 	}
 	else
 	{
-		paBind.MultipleBindNum= 0;
-		paBind.NPatchs= pcBind.NPatchs;
-		for(sint i=0;i<paBind.NPatchs; i++)
+		paBind.MultipleBindNum = 0;
+		paBind.NPatchs = pcBind.NPatchs;
+		for (sint i = 0; i < paBind.NPatchs; i++)
 		{
-			paBind.Next[i]= neighborZone->getPatch(pcBind.Next[i]);
-			paBind.Edge[i]= pcBind.Edge[i];
+			paBind.Next[i] = neighborZone->getPatch(pcBind.Next[i]);
+			paBind.Edge[i] = pcBind.Edge[i];
 		}
 	}
-
-
 }
 
-
 // ***************************************************************************
-void		CZone::bindPatch(TZoneMap &loadedZones, CPatch &pa, CPatchConnect &pc, bool rebind)
+void CZone::bindPatch(TZoneMap &loadedZones, CPatch &pa, CPatchConnect &pc, bool rebind)
 {
-	CPatch::CBindInfo	edges[4];
+	CPatch::CBindInfo edges[4];
 
 	// Fill all edges.
-	for(sint i=0;i<4;i++)
+	for (sint i = 0; i < 4; i++)
 	{
-		CPatchInfo::CBindInfo	&pcBind= pc.BindEdges[i];
-		CPatch::CBindInfo		&paBind= edges[i];
+		CPatchInfo::CBindInfo &pcBind = pc.BindEdges[i];
+		CPatch::CBindInfo &paBind = edges[i];
 
-		nlassert(pcBind.NPatchs==0 || pcBind.NPatchs==1 || pcBind.NPatchs==2 || pcBind.NPatchs==4 || pcBind.NPatchs==5);
-		paBind.NPatchs= pcBind.NPatchs;
-
+		nlassert(pcBind.NPatchs == 0 || pcBind.NPatchs == 1 || pcBind.NPatchs == 2 || pcBind.NPatchs == 4 || pcBind.NPatchs == 5);
+		paBind.NPatchs = pcBind.NPatchs;
 
 		// Find the zone.
-		TZoneMap::iterator	itZoneMap;
+		TZoneMap::iterator itZoneMap;
 		// If no neighbor, or if zone neighbor not loaded.
-		if( paBind.NPatchs==0 || (itZoneMap=loadedZones.find(pcBind.ZoneId)) == loadedZones.end() )
-			paBind.Zone= NULL;
+		if (paBind.NPatchs == 0 || (itZoneMap = loadedZones.find(pcBind.ZoneId)) == loadedZones.end())
+			paBind.Zone = NULL;
 		else
-			paBind.Zone= itZoneMap->second;
-
+			paBind.Zone = itZoneMap->second;
 
 		// Special case of a small patch connected to a bigger.
-		if(paBind.NPatchs==5)
+		if (paBind.NPatchs == 5)
 		{
-			paBind.Edge[0]= pcBind.Edge[0];
-			paBind.Next[0]= CZone::getZonePatch(loadedZones, pcBind.ZoneId, pcBind.Next[0]);
+			paBind.Edge[0] = pcBind.Edge[0];
+			paBind.Next[0] = CZone::getZonePatch(loadedZones, pcBind.ZoneId, pcBind.Next[0]);
 			// If not loaded, don't bind to this edge.
-			if(!paBind.Next[0])
-				paBind.NPatchs=0;
+			if (!paBind.Next[0])
+				paBind.NPatchs = 0;
 			else
 			{
 				// pa.bind() will do the job.
@@ -827,33 +781,32 @@ void		CZone::bindPatch(TZoneMap &loadedZones, CPatch &pa, CPatchConnect &pc, boo
 			}
 		}
 
-
 		// Bind 1/1 and 1/2,1/4
-		if(paBind.NPatchs>=1)
+		if (paBind.NPatchs >= 1)
 		{
-			paBind.Edge[0]= pcBind.Edge[0];
-			paBind.Next[0]= CZone::getZonePatch(loadedZones, pcBind.ZoneId, pcBind.Next[0]);
+			paBind.Edge[0] = pcBind.Edge[0];
+			paBind.Next[0] = CZone::getZonePatch(loadedZones, pcBind.ZoneId, pcBind.Next[0]);
 			// If not loaded, don't bind to this edge.
-			if(!paBind.Next[0])
-				paBind.NPatchs=0;
+			if (!paBind.Next[0])
+				paBind.NPatchs = 0;
 		}
-		if(paBind.NPatchs>=2)
+		if (paBind.NPatchs >= 2)
 		{
-			paBind.Edge[1]= pcBind.Edge[1];
-			paBind.Next[1]= CZone::getZonePatch(loadedZones, pcBind.ZoneId, pcBind.Next[1]);
+			paBind.Edge[1] = pcBind.Edge[1];
+			paBind.Next[1] = CZone::getZonePatch(loadedZones, pcBind.ZoneId, pcBind.Next[1]);
 			// If not loaded, don't bind to this edge.
-			if(!paBind.Next[1])
-				paBind.NPatchs=0;
+			if (!paBind.Next[1])
+				paBind.NPatchs = 0;
 		}
-		if(paBind.NPatchs>=4)
+		if (paBind.NPatchs >= 4)
 		{
-			paBind.Edge[2]= pcBind.Edge[2];
-			paBind.Edge[3]= pcBind.Edge[3];
-			paBind.Next[2]= CZone::getZonePatch(loadedZones, pcBind.ZoneId, pcBind.Next[2]);
-			paBind.Next[3]= CZone::getZonePatch(loadedZones, pcBind.ZoneId, pcBind.Next[3]);
+			paBind.Edge[2] = pcBind.Edge[2];
+			paBind.Edge[3] = pcBind.Edge[3];
+			paBind.Next[2] = CZone::getZonePatch(loadedZones, pcBind.ZoneId, pcBind.Next[2]);
+			paBind.Next[3] = CZone::getZonePatch(loadedZones, pcBind.ZoneId, pcBind.Next[3]);
 			// If not loaded, don't bind to this edge.
-			if(!paBind.Next[2] || !paBind.Next[3])
-				paBind.NPatchs=0;
+			if (!paBind.Next[2] || !paBind.Next[3])
+				paBind.NPatchs = 0;
 		}
 	}
 
@@ -864,35 +817,33 @@ void		CZone::bindPatch(TZoneMap &loadedZones, CPatch &pa, CPatchConnect &pc, boo
 	pa.bind(edges, rebind);
 }
 
-
 // ***************************************************************************
-void		CZone::unbindPatch(CPatch &pa)
+void CZone::unbindPatch(CPatch &pa)
 {
 	/*
-		Remind: the old version with CPatch::unbindFrom*() doesn't work because of CZone::release(). This function
-		first erase the zone from loadedZones...
-		Not matter here. We use CPatch::unbind() which should do all the good job correctly (unbind pa from ohters
-		, and unbind others from pa at same time).
+	    Remind: the old version with CPatch::unbindFrom*() doesn't work because of CZone::release(). This function
+	    first erase the zone from loadedZones...
+	    Not matter here. We use CPatch::unbind() which should do all the good job correctly (unbind pa from ohters
+	    , and unbind others from pa at same time).
 	*/
 
 	pa.unbind();
 }
 
-
 // ***************************************************************************
-bool			CZone::patchOnBorder(const CPatchConnect &pc) const
+bool CZone::patchOnBorder(const CPatchConnect &pc) const
 {
 	// If only one of neighbor patch is not of this zone, we are on a border.
 
 	// Test all edges.
-	for(sint i=0;i<4;i++)
+	for (sint i = 0; i < 4; i++)
 	{
-		const CPatchInfo::CBindInfo	&pcBind= pc.BindEdges[i];
+		const CPatchInfo::CBindInfo &pcBind = pc.BindEdges[i];
 
-		nlassert(pcBind.NPatchs==0 || pcBind.NPatchs==1 || pcBind.NPatchs==2 || pcBind.NPatchs==4 || pcBind.NPatchs==5);
-		if(pcBind.NPatchs>=1)
+		nlassert(pcBind.NPatchs == 0 || pcBind.NPatchs == 1 || pcBind.NPatchs == 2 || pcBind.NPatchs == 4 || pcBind.NPatchs == 5);
+		if (pcBind.NPatchs >= 1)
 		{
-			if(pcBind.ZoneId != ZoneId)
+			if (pcBind.ZoneId != ZoneId)
 				return true;
 		}
 	}
@@ -900,154 +851,145 @@ bool			CZone::patchOnBorder(const CPatchConnect &pc) const
 	return false;
 }
 
-
 // ***************************************************************************
 // ***************************************************************************
 // Render part.
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
-const CBSphere	&CZone::getPatchBSphere(uint patch) const
+const CBSphere &CZone::getPatchBSphere(uint patch) const
 {
-	static	CBSphere	dummySphere;
-	if(patch<_PatchBSpheres.size())
+	static CBSphere dummySphere;
+	if (patch < _PatchBSpheres.size())
 		return _PatchBSpheres[patch];
 	else
 		return dummySphere;
 }
 
-
 // ***************************************************************************
-void			CZone::clip(const std::vector<CPlane>	&pyramid)
+void CZone::clip(const std::vector<CPlane> &pyramid)
 {
-	H_AUTO( NLMISC_ClipZone );
+	H_AUTO(NLMISC_ClipZone);
 
 	nlassert(Compiled);
 
 	// bkup old ClipResult. NB: by default, it is ClipOut (no VB created).
-	sint	oldClipResult= ClipResult;
+	sint oldClipResult = ClipResult;
 
 	// Pyramid with only the planes that clip the zone
-	static std::vector<CPlane>		patchPyramid(10);
-	static std::vector<uint>		patchPyramidIndex(10);
+	static std::vector<CPlane> patchPyramid(10);
+	static std::vector<uint> patchPyramidIndex(10);
 	patchPyramidIndex.clear();
 
 	// Compute ClipResult.
 	//-------------------
-	ClipResult= ClipIn;
-	for(sint i=0;i<(sint)pyramid.size();i++)
+	ClipResult = ClipIn;
+	for (sint i = 0; i < (sint)pyramid.size(); i++)
 	{
 		// If entirely out.
-		if(!ZoneBB.clipBack(pyramid[i]))
+		if (!ZoneBB.clipBack(pyramid[i]))
 		{
-			ClipResult= ClipOut;
+			ClipResult = ClipOut;
 			// If out of only one plane, out of all.
 			break;
 		}
 		// If partially IN (ie not entirely out, and not entirely IN)
-		else if(ZoneBB.clipFront(pyramid[i]))
+		else if (ZoneBB.clipFront(pyramid[i]))
 		{
 			// Force ClipResult to be ClipSide, and not ClipIn.
-			ClipResult=ClipSide;
+			ClipResult = ClipSide;
 			// Append the plane index to list to test
 			patchPyramidIndex.push_back(i);
 		}
 	}
 
-
 	// Easy Clip  :)
-	if(Patchs.empty())
+	if (Patchs.empty())
 	{
-		ClipResult= ClipOut;
+		ClipResult = ClipOut;
 		// don't need to go below...
 		return;
 	}
 
-
 	// Clip By Patch Pass.
 	//--------------------
-	if(ClipResult==ClipOut)
+	if (ClipResult == ClipOut)
 	{
-		H_AUTO( NLMISC_ClipZone_Out );
+		H_AUTO(NLMISC_ClipZone_Out);
 
 		// Set All RenderClip flags to true.
 		_PatchRenderClipped.setAll();
 	}
-	else if(ClipResult==ClipIn)
+	else if (ClipResult == ClipIn)
 	{
-		H_AUTO( NLMISC_ClipZone_In );
+		H_AUTO(NLMISC_ClipZone_In);
 
 		// Set All RenderClip flags to false.
 		_PatchRenderClipped.clearAll();
 	}
 	else
 	{
-		H_AUTO( NLMISC_ClipZone_Side );
+		H_AUTO(NLMISC_ClipZone_Side);
 
 		// Copy only the pyramid planes of interest
 		patchPyramid.resize(patchPyramidIndex.size());
 		uint i;
-		for(i=0;i<patchPyramidIndex.size();i++)
+		for (i = 0; i < patchPyramidIndex.size(); i++)
 		{
-			patchPyramid[i]= pyramid[patchPyramidIndex[i]];
+			patchPyramid[i] = pyramid[patchPyramidIndex[i]];
 		}
 
 		// clip all patchs with the simplified pyramid
 		clipPatchs(patchPyramid);
 	}
 
-
 	// delete / reallocate / fill VBuffers.
 	//-------------------
 	// If there is a change in the Clip of the zone, or if patchs may have change (ie ClipSide is undetermined).
-	if(oldClipResult!=ClipResult || oldClipResult==ClipSide)
+	if (oldClipResult != ClipResult || oldClipResult == ClipSide)
 	{
 		// get BitSet as Raw Array of uint32
-		uint32	*oldRenderClip= const_cast<uint32*>(&_PatchOldRenderClipped.getVector()[0]);
-		const	uint32	*newRenderClip= &_PatchRenderClipped.getVector()[0];
-		uint	numPatchs= (uint)Patchs.size();
+		uint32 *oldRenderClip = const_cast<uint32 *>(&_PatchOldRenderClipped.getVector()[0]);
+		const uint32 *newRenderClip = &_PatchRenderClipped.getVector()[0];
+		uint numPatchs = (uint)Patchs.size();
 		// Then, we must test by patch.
-		for(uint i=0;i<numPatchs;oldRenderClip++, newRenderClip++)
+		for (uint i = 0; i < numPatchs; oldRenderClip++, newRenderClip++)
 		{
-			uint32	oldWord= *oldRenderClip;
-			uint32	newWord= *newRenderClip;
+			uint32 oldWord = *oldRenderClip;
+			uint32 newWord = *newRenderClip;
 			// process at max 32 patch
-			uint	maxNumBits= min((numPatchs-i), 32U);
-			uint32	mask= 1;
-			for(;maxNumBits>0;maxNumBits--, mask<<=1, i++)
+			uint maxNumBits = min((numPatchs - i), 32U);
+			uint32 mask = 1;
+			for (; maxNumBits > 0; maxNumBits--, mask <<= 1, i++)
 			{
 				// same as: if(_PatchOldRenderClipped[i] != _PatchRenderClipped[i])
-				if( (oldWord^newWord)&mask )
+				if ((oldWord ^ newWord) & mask)
 				{
 					// set the flag.
-					*oldRenderClip&= ~mask;
-					*oldRenderClip|= newWord&mask;
+					*oldRenderClip &= ~mask;
+					*oldRenderClip |= newWord & mask;
 					// update clip patch
-					Patchs[i].updateClipPatchVB( (newWord&mask)!=0 );
+					Patchs[i].updateClipPatchVB((newWord & mask) != 0);
 				}
 			}
 		}
-
 	}
-
 }
 
-
 // ***************************************************************************
-void			CZone::clipPatchs(const std::vector<CPlane>	&pyramid)
+void CZone::clipPatchs(const std::vector<CPlane> &pyramid)
 {
 	// Init all to Not clipped
 	_PatchRenderClipped.clearAll();
 
-	for(uint j=0;j<_PatchBSpheres.size();j++)
+	for (uint j = 0; j < _PatchBSpheres.size(); j++)
 	{
-		CBSphere	&bSphere= _PatchBSpheres[j];
-		for(sint i=0;i<(sint)pyramid.size();i++)
+		CBSphere &bSphere = _PatchBSpheres[j];
+		for (sint i = 0; i < (sint)pyramid.size(); i++)
 		{
 			// If entirely out.
-			if(!bSphere.clipBack(pyramid[i]))
+			if (!bSphere.clipBack(pyramid[i]))
 			{
 				_PatchRenderClipped.set(j, true);
 				break;
@@ -1056,160 +998,153 @@ void			CZone::clipPatchs(const std::vector<CPlane>	&pyramid)
 	}
 }
 
-
 // ***************************************************************************
 // DebugYoyo.
 // Code for Debug test Only.. Do not erase it, may be used later :)
 /*
 static	void	cleanTess(CTessFace *face)
 {
-	if(!face->isLeaf())
-	{
-		cleanTess(face->SonLeft);
-		cleanTess(face->SonRight);
-	}
-	// If has father, clean it.
-	if(face->Father)
-	{
-		CTessFace	*face1=face->Father;
-		CTessFace	*face2=face->Father->FBase;
-		face1->FLeft= face1->SonLeft->FBase;
-		face1->FRight= face1->SonRight->FBase;
-		if(face2!=NULL)
-		{
-			face2->FLeft= face2->SonLeft->FBase;
-			face2->FRight= face2->SonRight->FBase;
-		}
-	}
+    if(!face->isLeaf())
+    {
+        cleanTess(face->SonLeft);
+        cleanTess(face->SonRight);
+    }
+    // If has father, clean it.
+    if(face->Father)
+    {
+        CTessFace	*face1=face->Father;
+        CTessFace	*face2=face->Father->FBase;
+        face1->FLeft= face1->SonLeft->FBase;
+        face1->FRight= face1->SonRight->FBase;
+        if(face2!=NULL)
+        {
+            face2->FLeft= face2->SonLeft->FBase;
+            face2->FRight= face2->SonRight->FBase;
+        }
+    }
 }
 static	void	testTess(CTessFace *face)
 {
-	if(!face->isLeaf())
-	{
-		testTess(face->SonLeft);
-		testTess(face->SonRight);
-	}
-	// Test validity.
-	nlassert(!face->FBase || face->FBase->Patch!=(CPatch*)0xdddddddd);
-	nlassert(!face->FLeft || face->FLeft->Patch!=(CPatch*)0xdddddddd);
-	nlassert(!face->FRight || face->FRight->Patch!=(CPatch*)0xdddddddd);
+    if(!face->isLeaf())
+    {
+        testTess(face->SonLeft);
+        testTess(face->SonRight);
+    }
+    // Test validity.
+    nlassert(!face->FBase || face->FBase->Patch!=(CPatch*)0xdddddddd);
+    nlassert(!face->FLeft || face->FLeft->Patch!=(CPatch*)0xdddddddd);
+    nlassert(!face->FRight || face->FRight->Patch!=(CPatch*)0xdddddddd);
 }
 static	void	checkTess()
 {
-	// This test should be inserted at begin of CZone::refine().
-	// And it needs hacking public/private.
-	CPatch		*pPatch;
-	sint		n;
-	pPatch= &(*Patchs.begin());
-	for(n=(sint)Patchs.size();n>0;n--, pPatch++)
-	{
-		cleanTess(pPatch->Son0);
-		cleanTess(pPatch->Son1);
-	}
-	pPatch= &(*Patchs.begin());
-	for(n=(sint)Patchs.size();n>0;n--, pPatch++)
-	{
-		testTess(pPatch->Son0);
-		testTess(pPatch->Son1);
-	}
+    // This test should be inserted at begin of CZone::refine().
+    // And it needs hacking public/private.
+    CPatch		*pPatch;
+    sint		n;
+    pPatch= &(*Patchs.begin());
+    for(n=(sint)Patchs.size();n>0;n--, pPatch++)
+    {
+        cleanTess(pPatch->Son0);
+        cleanTess(pPatch->Son1);
+    }
+    pPatch= &(*Patchs.begin());
+    for(n=(sint)Patchs.size();n>0;n--, pPatch++)
+    {
+        testTess(pPatch->Son0);
+        testTess(pPatch->Son1);
+    }
 }
 */
 
-
 // ***************************************************************************
-void			CZone::excludePatchFromRefineAll(uint patch, bool exclude)
+void CZone::excludePatchFromRefineAll(uint patch, bool exclude)
 {
 	nlassert(Compiled);
-	nlassert(patch<Patchs.size());
+	nlassert(patch < Patchs.size());
 
-	if(patch>=Patchs.size())
+	if (patch >= Patchs.size())
 		return;
 
-	Patchs[patch].ExcludeFromRefineAll= exclude;
+	Patchs[patch].ExcludeFromRefineAll = exclude;
 }
 
-
 // ***************************************************************************
-void			CZone::refineAll()
+void CZone::refineAll()
 {
 	nlassert(Compiled);
 
-	if(Patchs.empty())
+	if (Patchs.empty())
 		return;
 
 	// DO NOT do a forceNoRenderClip(), to avoid big allocation of Near/Far VB vertices in driver.
 	// DO NOT modify ClipResult, to avoid big allocation of Near/Far VB vertices in driver.
 
 	// refine ALL patchs (even those which may be invisible).
-	CPatch		*pPatch= &(*Patchs.begin());
+	CPatch *pPatch = &(*Patchs.begin());
 	sint n;
-	for(n=(sint)Patchs.size();n>0;n--, pPatch++)
+	for (n = (sint)Patchs.size(); n > 0; n--, pPatch++)
 	{
 		// For Pacs construction: may exclude some patch from refineAll (for speed improvement).
-		if(!pPatch->ExcludeFromRefineAll)
+		if (!pPatch->ExcludeFromRefineAll)
 			pPatch->refineAll();
 	}
-
 }
 
-
 // ***************************************************************************
-void			CZone::averageTesselationVertices()
+void CZone::averageTesselationVertices()
 {
 	nlassert(Compiled);
 
-	if(Patchs.empty())
+	if (Patchs.empty())
 		return;
 
 	// averageTesselationVertices of ALL patchs.
-	CPatch		*pPatch= &(*Patchs.begin());
-	for(sint n=(sint)Patchs.size();n>0;n--, pPatch++)
+	CPatch *pPatch = &(*Patchs.begin());
+	for (sint n = (sint)Patchs.size(); n > 0; n--, pPatch++)
 	{
 		pPatch->averageTesselationVertices();
 	}
 }
 
-
 // ***************************************************************************
-void			CZone::preRender()
+void CZone::preRender()
 {
 	nlassert(Compiled);
 
 	// Must be 2^X-1.
-	static const	uint	updateFarRefineFreq= 15;
+	static const uint updateFarRefineFreq = 15;
 	// Take the renderDate here.
-	uint		curDateMod= CLandscapeGlobals::CurrentRenderDate & updateFarRefineFreq;
+	uint curDateMod = CLandscapeGlobals::CurrentRenderDate & updateFarRefineFreq;
 
 	// If no patchs, do nothing.
-	if(Patchs.empty())
+	if (Patchs.empty())
 		return;
 
 	/* If patchs invisible, must still update their Far Textures,
-		else, there may be slowdown when we turn the head.
+	    else, there may be slowdown when we turn the head.
 	*/
 
-
 	// If all the zone is invisible.
-	if(ClipResult==ClipOut)
+	if (ClipResult == ClipOut)
 	{
 		// No patchs are visible, but maybe update the far textures.
-		if( curDateMod==(ZoneId & updateFarRefineFreq) )
+		if (curDateMod == (ZoneId & updateFarRefineFreq))
 		{
 			// updateTextureFarOnly for all patchs.
-			for(uint i=0;i<Patchs.size();i++)
+			for (uint i = 0; i < Patchs.size(); i++)
 			{
 				Patchs[i].updateTextureFarOnly(_PatchBSpheres[i]);
 			}
 		}
 	}
 	// else If some patchs only are visible.
-	else if(ClipResult==ClipSide)
+	else if (ClipResult == ClipSide)
 	{
 		// PreRender Pass, or updateTextureFarOnly(), according to _PatchRenderClipped state.
-		for(uint i=0;i<Patchs.size();i++)
+		for (uint i = 0; i < Patchs.size(); i++)
 		{
 			// If the patch is visible
-			if(!_PatchRenderClipped[i])
+			if (!_PatchRenderClipped[i])
 			{
 				// Then preRender it.
 				Patchs[i].preRender(_PatchBSpheres[i]);
@@ -1218,30 +1153,28 @@ void			CZone::preRender()
 			{
 				// else maybe updateFar it.
 				// ZoneId+i for better repartition.
-				if( curDateMod==((ZoneId+i) & updateFarRefineFreq) )
+				if (curDateMod == ((ZoneId + i) & updateFarRefineFreq))
 					Patchs[i].updateTextureFarOnly(_PatchBSpheres[i]);
 			}
 		}
 	}
-	else	// ClipResult==ClipIn
+	else // ClipResult==ClipIn
 	{
 		// PreRender Pass for All
-		for(uint i=0;i<Patchs.size();i++)
+		for (uint i = 0; i < Patchs.size(); i++)
 		{
 			Patchs[i].preRender(_PatchBSpheres[i]);
 		}
 	}
-
 }
 
-
 // ***************************************************************************
-void			CZone::resetRenderFarAndDeleteVBFV()
+void CZone::resetRenderFarAndDeleteVBFV()
 {
-	for(uint i=0;i<Patchs.size();i++)
+	for (uint i = 0; i < Patchs.size(); i++)
 	{
 		// If patch is visible
-		if(!_PatchRenderClipped[i])
+		if (!_PatchRenderClipped[i])
 		{
 			// release VertexBuffer, and FaceBuffer
 			Patchs[i].deleteVBAndFaceVector();
@@ -1253,21 +1186,19 @@ void			CZone::resetRenderFarAndDeleteVBFV()
 	}
 }
 
-
 // ***************************************************************************
-void			CZone::forceMergeAtTileLevel()
+void CZone::forceMergeAtTileLevel()
 {
-	CPatch		*pPatch=0;
+	CPatch *pPatch = 0;
 
 	if (!Patchs.empty())
-		pPatch= &(*Patchs.begin());
+		pPatch = &(*Patchs.begin());
 
-	for(sint n=(sint)Patchs.size();n>0;n--, pPatch++)
+	for (sint n = (sint)Patchs.size(); n > 0; n--, pPatch++)
 	{
 		pPatch->forceMergeAtTileLevel();
 	}
 }
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -1275,32 +1206,30 @@ void			CZone::forceMergeAtTileLevel()
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
-void			CZone::changePatchTextureAndColor (sint numPatch, const std::vector<CTileElement> *tiles, const std::vector<CTileColor> *colors)
+void CZone::changePatchTextureAndColor(sint numPatch, const std::vector<CTileElement> *tiles, const std::vector<CTileColor> *colors)
 {
-	nlassert(numPatch>=0);
-	nlassert(numPatch<getNumPatchs());
-
+	nlassert(numPatch >= 0);
+	nlassert(numPatch < getNumPatchs());
 
 	// Update the patch texture.
 	if (tiles)
 	{
-		nlassert( Patchs[numPatch].Tiles.size() == tiles->size() );
+		nlassert(Patchs[numPatch].Tiles.size() == tiles->size());
 		Patchs[numPatch].Tiles = *tiles;
 	}
 
 	// Update the patch colors.
 	if (colors)
 	{
-		nlassert( Patchs[numPatch].TileColors.size() == colors->size() );
+		nlassert(Patchs[numPatch].TileColors.size() == colors->size());
 		Patchs[numPatch].TileColors = *colors;
 	}
 
 	if (Compiled)
 	{
 		// If the patch is visible, then we must LockBuffers, because new VertexVB may be created.
-		if(!_PatchRenderClipped[numPatch])
+		if (!_PatchRenderClipped[numPatch])
 			Landscape->updateGlobalsAndLockBuffers(CVector::Null);
 
 		// Recompute UVs for new setup of Tiles.
@@ -1308,7 +1237,7 @@ void			CZone::changePatchTextureAndColor (sint numPatch, const std::vector<CTile
 		Patchs[numPatch].recreateTileUvs();
 
 		// unlockBuffers() if necessary.
-		if(!_PatchRenderClipped[numPatch])
+		if (!_PatchRenderClipped[numPatch])
 		{
 			Landscape->unlockBuffers();
 			// This patch is visible, and TileFaces have been deleted / added.
@@ -1318,37 +1247,34 @@ void			CZone::changePatchTextureAndColor (sint numPatch, const std::vector<CTile
 	}
 }
 
-
 // ***************************************************************************
-void			CZone::refreshTesselationGeometry(sint numPatch)
+void CZone::refreshTesselationGeometry(sint numPatch)
 {
-	nlassert(numPatch>=0);
-	nlassert(numPatch<getNumPatchs());
+	nlassert(numPatch >= 0);
+	nlassert(numPatch < getNumPatchs());
 	nlassert(Compiled);
 
 	// At next render, we must re-fill the entire unclipped VB, so change are taken into account.
-	Landscape->_RenderMustRefillVB= true;
+	Landscape->_RenderMustRefillVB = true;
 
 	Patchs[numPatch].refreshTesselationGeometry();
 }
 
-
 // ***************************************************************************
 const std::vector<CTileElement> &CZone::getPatchTexture(sint numPatch) const
 {
-	nlassert(numPatch>=0);
-	nlassert(numPatch<getNumPatchs());
+	nlassert(numPatch >= 0);
+	nlassert(numPatch < getNumPatchs());
 
 	// Update the patch texture.
 	return Patchs[numPatch].Tiles;
 }
 
-
 // ***************************************************************************
 const std::vector<CTileColor> &CZone::getPatchColor(sint numPatch) const
 {
-	nlassert(numPatch>=0);
-	nlassert(numPatch<getNumPatchs());
+	nlassert(numPatch >= 0);
+	nlassert(numPatch < getNumPatchs());
 
 	// Update the patch texture.
 	return Patchs[numPatch].TileColors;
@@ -1364,7 +1290,7 @@ void CZone::setTileColor(bool monochrome, float factor)
 		for (uint32 i = 0; i < Patchs.size(); ++i)
 		{
 			vector<CTileColor> &rTC = Patchs[i].TileColors;
-			for (uint32 j =  0; j < rTC.size(); ++j)
+			for (uint32 j = 0; j < rTC.size(); ++j)
 			{
 				float fR = (rTC[j].Color565 & 31) / 32.0f;
 				float fG = ((rTC[j].Color565 >> 5) & 63) / 64.0f;
@@ -1392,7 +1318,7 @@ void CZone::setTileColor(bool monochrome, float factor)
 			for (uint32 i = 0; i < Patchs.size(); ++i)
 			{
 				vector<CTileColor> &rTC = Patchs[i].TileColors;
-				for (uint32 j =  0; j < rTC.size(); ++j)
+				for (uint32 j = 0; j < rTC.size(); ++j)
 				{
 					float fR = (rTC[j].Color565 & 31) / 32.0f;
 					float fG = ((rTC[j].Color565 >> 5) & 63) / 64.0f;
@@ -1418,20 +1344,20 @@ void CZone::setTileColor(bool monochrome, float factor)
 }
 
 // ***************************************************************************
-void			CZone::debugBinds(FILE *f)
+void CZone::debugBinds(FILE *f)
 {
 	fprintf(f, "*****************************\n");
 	fprintf(f, "ZoneId: %d. NPatchs:%u\n", ZoneId, (uint)PatchConnects.size());
 	sint i;
-	for(i=0;i<(sint)PatchConnects.size();i++)
+	for (i = 0; i < (sint)PatchConnects.size(); i++)
 	{
-		CPatchConnect	&pc= PatchConnects[i];
+		CPatchConnect &pc = PatchConnects[i];
 		fprintf(f, "patch%d:\n", i);
-		for(sint j=0;j<4;j++)
+		for (sint j = 0; j < 4; j++)
 		{
-			CPatchInfo::CBindInfo	&bd= pc.BindEdges[j];
+			CPatchInfo::CBindInfo &bd = pc.BindEdges[j];
 			fprintf(f, "    edge%d: Zone:%u. NPatchs:%u. ", j, (uint)bd.ZoneId, (uint)bd.NPatchs);
-			for(sint k=0;k<bd.NPatchs;k++)
+			for (sint k = 0; k < bd.NPatchs; k++)
 			{
 				fprintf(f, "p%ue%u - ", (uint)bd.Next[k], (uint)bd.Edge[k]);
 			}
@@ -1439,92 +1365,89 @@ void			CZone::debugBinds(FILE *f)
 		}
 	}
 
-	fprintf(f,"Vertices :\n");
-	for(i=0;i<(sint)BorderVertices.size();i++)
+	fprintf(f, "Vertices :\n");
+	for (i = 0; i < (sint)BorderVertices.size(); i++)
 	{
-		fprintf(f,"current : %u -> (zone %u) vertex %u\n", (uint)BorderVertices[i].CurrentVertex,
-											(uint)BorderVertices[i].NeighborZoneId,
-											(uint)BorderVertices[i].NeighborVertex);
+		fprintf(f, "current : %u -> (zone %u) vertex %u\n", (uint)BorderVertices[i].CurrentVertex,
+		    (uint)BorderVertices[i].NeighborZoneId,
+		    (uint)BorderVertices[i].NeighborVertex);
 	}
 }
 
-
 // ***************************************************************************
-void			CZone::applyHeightField(const CLandscape &landScape)
+void CZone::applyHeightField(const CLandscape &landScape)
 {
-	sint	i,j;
-	vector<CBezierPatch>	patchs;
+	sint i, j;
+	vector<CBezierPatch> patchs;
 
 	// no patch, do nothing.
-	if(Patchs.empty())
+	if (Patchs.empty())
 		return;
 
 	// 0. Unpack patchs to Bezier Patchs.
 	//===================================
 	patchs.resize(Patchs.size());
-	for(j=0;j<(sint)patchs.size();j++)
+	for (j = 0; j < (sint)patchs.size(); j++)
 	{
-		CBezierPatch		&p= patchs[j];
-		CPatch				&pa= Patchs[j];
+		CBezierPatch &p = patchs[j];
+		CPatch &pa = Patchs[j];
 
 		// re-Build the uncompressed bezier patch.
-		for(i=0;i<4;i++)
+		for (i = 0; i < 4; i++)
 			pa.Vertices[i].unpack(p.Vertices[i], PatchBias, PatchScale);
-		for(i=0;i<8;i++)
+		for (i = 0; i < 8; i++)
 			pa.Tangents[i].unpack(p.Tangents[i], PatchBias, PatchScale);
-		for(i=0;i<4;i++)
+		for (i = 0; i < 4; i++)
 			pa.Interiors[i].unpack(p.Interiors[i], PatchBias, PatchScale);
 	}
 
 	// 1. apply heightfield on bezier patchs.
 	//===================================
-	for(j=0;j<(sint)patchs.size();j++)
+	for (j = 0; j < (sint)patchs.size(); j++)
 	{
-		CBezierPatch		&p= patchs[j];
+		CBezierPatch &p = patchs[j];
 
 		// apply delta.
-		for(i=0;i<4;i++)
-			p.Vertices[i]+= landScape.getHeightFieldDeltaZ(p.Vertices[i].x, p.Vertices[i].y);
-		for(i=0;i<8;i++)
-			p.Tangents[i]+= landScape.getHeightFieldDeltaZ(p.Tangents[i].x, p.Tangents[i].y);
-		for(i=0;i<4;i++)
-			p.Interiors[i]+= landScape.getHeightFieldDeltaZ(p.Interiors[i].x, p.Interiors[i].y);
+		for (i = 0; i < 4; i++)
+			p.Vertices[i] += landScape.getHeightFieldDeltaZ(p.Vertices[i].x, p.Vertices[i].y);
+		for (i = 0; i < 8; i++)
+			p.Tangents[i] += landScape.getHeightFieldDeltaZ(p.Tangents[i].x, p.Tangents[i].y);
+		for (i = 0; i < 4; i++)
+			p.Interiors[i] += landScape.getHeightFieldDeltaZ(p.Interiors[i].x, p.Interiors[i].y);
 	}
-
 
 	// 2. Re-compute Patch Scale/Bias, and Zone BBox.
 	//===================================
-	CAABBox		bb;
+	CAABBox bb;
 	bb.setCenter(patchs[0].Vertices[0]);
 	bb.setHalfSize(CVector::Null);
-	for(j=0;j<(sint)patchs.size();j++)
+	for (j = 0; j < (sint)patchs.size(); j++)
 	{
 		// extend bbox.
-		const CBezierPatch	&p= patchs[j];
-		for(i=0;i<4;i++)
+		const CBezierPatch &p = patchs[j];
+		for (i = 0; i < 4; i++)
 			bb.extend(p.Vertices[i]);
-		for(i=0;i<8;i++)
+		for (i = 0; i < 8; i++)
 			bb.extend(p.Tangents[i]);
-		for(i=0;i<4;i++)
+		for (i = 0; i < 4; i++)
 			bb.extend(p.Interiors[i]);
 	}
 	// Compute BBox, and Patch Scale Bias, according to Noise.
 	computeBBScaleBias(bb);
 
-
 	// 3. Re-pack patchs.
 	//===================================
-	for(j=0;j<(sint)patchs.size();j++)
+	for (j = 0; j < (sint)patchs.size(); j++)
 	{
-		CBezierPatch		&p= patchs[j];
-		CPatch				&pa= Patchs[j];
+		CBezierPatch &p = patchs[j];
+		CPatch &pa = Patchs[j];
 
 		// Build the packed patch.
-		for(i=0;i<4;i++)
+		for (i = 0; i < 4; i++)
 			pa.Vertices[i].pack(p.Vertices[i], PatchBias, PatchScale);
-		for(i=0;i<8;i++)
+		for (i = 0; i < 8; i++)
 			pa.Tangents[i].pack(p.Tangents[i], PatchBias, PatchScale);
-		for(i=0;i<4;i++)
+		for (i = 0; i < 4; i++)
 			pa.Interiors[i].pack(p.Interiors[i], PatchBias, PatchScale);
 	}
 }
@@ -1538,7 +1461,6 @@ void CZone::setupColorsFromTileFlags(const NLMISC::CRGBA colors[4])
 	}
 }
 
-
 // ***************************************************************************
 void CZone::copyTilesFlags(sint destPatchId, const CPatch *srcPatch)
 {
@@ -1547,128 +1469,124 @@ void CZone::copyTilesFlags(sint destPatchId, const CPatch *srcPatch)
 	destPatch->copyTileFlagsFromPatch(srcPatch);
 }
 
-
 // ***************************************************************************
-bool CPatchInfo::getNeighborTile (uint patchId, uint edge, sint position, uint &patchOut, sint &sOut, sint &tOut,
-								  const vector<CPatchInfo> &patchInfos) const
+bool CPatchInfo::getNeighborTile(uint patchId, uint edge, sint position, uint &patchOut, sint &sOut, sint &tOut,
+    const vector<CPatchInfo> &patchInfos) const
 {
-	nlassert (edge<4);
+	nlassert(edge < 4);
 
 	// S or T ?
-	uint length = (edge&1) ? OrderS : OrderT;
-	nlassert ((uint)position<length);
+	uint length = (edge & 1) ? OrderS : OrderT;
+	nlassert((uint)position < length);
 
 	// What kind of case ?
 	switch (BindEdges[edge].NPatchs)
 	{
 	case 1:
 	case 2:
-	case 4:
+	case 4: {
+		// Get neighbor index and position in neighbor
+		uint neighborLength = (length / BindEdges[edge].NPatchs);
+		uint neighbor = position / neighborLength;
+		uint neighborPosition = neighborLength - (position % neighborLength) - 1;
+		uint neighborEdge = BindEdges[edge].Edge[neighbor];
+
+		// Patch id
+		patchOut = BindEdges[edge].Next[neighbor];
+
+		// Check neighbor
+		uint neighborRealLength = (neighborEdge & 1) ? patchInfos[patchOut].OrderS : patchInfos[patchOut].OrderT;
+		if (neighborRealLength == neighborLength)
 		{
-			// Get neighbor index and position in neighbor
-			uint neighborLength = (length / BindEdges[edge].NPatchs);
-			uint neighbor = position / neighborLength;
-			uint neighborPosition = neighborLength - (position % neighborLength) - 1;
-			uint neighborEdge = BindEdges[edge].Edge[neighbor];
-
-			// Patch id
-			patchOut = BindEdges[edge].Next[neighbor];
-
-			// Check neighbor
-			uint neighborRealLength = (neighborEdge&1) ? patchInfos[patchOut].OrderS : patchInfos[patchOut].OrderT;
-			if (neighborRealLength == neighborLength)
+			// Get final coordinate
+			switch (neighborEdge)
 			{
-				// Get final coordinate
-				switch (neighborEdge)
-				{
-				case 0:
-					sOut = 0;
-					tOut = neighborPosition;
-					break;
-				case 1:
-					sOut = neighborPosition;
-					tOut = patchInfos[patchOut].OrderT-1;
-					break;
-				case 2:
-					sOut = patchInfos[patchOut].OrderS-1;
-					tOut = patchInfos[patchOut].OrderT-neighborPosition-1;
-					break;
-				case 3:
-					sOut = patchInfos[patchOut].OrderS-neighborPosition-1;
-					tOut = 0;
-					break;
-				}
-
-				// Ok todo remove
-				return true;
+			case 0:
+				sOut = 0;
+				tOut = neighborPosition;
+				break;
+			case 1:
+				sOut = neighborPosition;
+				tOut = patchInfos[patchOut].OrderT - 1;
+				break;
+			case 2:
+				sOut = patchInfos[patchOut].OrderS - 1;
+				tOut = patchInfos[patchOut].OrderT - neighborPosition - 1;
+				break;
+			case 3:
+				sOut = patchInfos[patchOut].OrderS - neighborPosition - 1;
+				tOut = 0;
+				break;
 			}
-		}
-		break;
 
-	case 5:
+			// Ok todo remove
+			return true;
+		}
+	}
+	break;
+
+	case 5: {
+		// Find in the neighbor where we are
+		patchOut = BindEdges[edge].Next[0];
+		uint neighborEdge = BindEdges[edge].Edge[0];
+		uint neighborEdgeCount = patchInfos[patchOut].BindEdges[neighborEdge].NPatchs;
+
+		// Check neighbor
+		uint neighborRealLength = (neighborEdge & 1) ? patchInfos[patchOut].OrderS : patchInfos[patchOut].OrderT;
+
+		// Good length ?
+		if ((neighborRealLength / neighborEdgeCount) == length)
 		{
-			// Find in the neighbor where we are
-			patchOut = BindEdges[edge].Next[0];
-			uint neighborEdge = BindEdges[edge].Edge[0];
-			uint neighborEdgeCount = patchInfos[patchOut].BindEdges[neighborEdge].NPatchs;
-
-			// Check neighbor
-			uint neighborRealLength = (neighborEdge&1) ? patchInfos[patchOut].OrderS : patchInfos[patchOut].OrderT;
-
-			// Good length ?
-			if ((neighborRealLength / neighborEdgeCount) == length)
+			// Find us in the neighbor
+			uint neighborPosition;
+			for (neighborPosition = 0; neighborPosition < neighborEdgeCount; neighborPosition++)
 			{
-				// Find us in the neighbor
-				uint neighborPosition;
-				for (neighborPosition=0; neighborPosition<neighborEdgeCount; neighborPosition++)
-				{
-					// Found ?
-					if (patchInfos[patchOut].BindEdges[neighborEdge].Next[neighborPosition] == patchId)
-						break;
-				}
-
-				// Must be found
-				nlassert (neighborPosition!=neighborEdgeCount);
-				neighborPosition = (neighborPosition + 1) * (neighborRealLength / neighborEdgeCount) - position - 1;
-
-				// Get final coordinate
-				switch (neighborEdge)
-				{
-				case 0:
-					sOut = 0;
-					tOut = neighborPosition;
+				// Found ?
+				if (patchInfos[patchOut].BindEdges[neighborEdge].Next[neighborPosition] == patchId)
 					break;
-				case 1:
-					sOut = neighborPosition;
-					tOut = patchInfos[patchOut].OrderT-1;
-					break;
-				case 2:
-					sOut = patchInfos[patchOut].OrderS-1;
-					tOut = patchInfos[patchOut].OrderT-neighborPosition-1;
-					break;
-				case 3:
-					sOut = patchInfos[patchOut].OrderS-neighborPosition-1;
-					tOut = 0;
-					break;
-				}
-
-				// Ok
-				return true;
 			}
+
+			// Must be found
+			nlassert(neighborPosition != neighborEdgeCount);
+			neighborPosition = (neighborPosition + 1) * (neighborRealLength / neighborEdgeCount) - position - 1;
+
+			// Get final coordinate
+			switch (neighborEdge)
+			{
+			case 0:
+				sOut = 0;
+				tOut = neighborPosition;
+				break;
+			case 1:
+				sOut = neighborPosition;
+				tOut = patchInfos[patchOut].OrderT - 1;
+				break;
+			case 2:
+				sOut = patchInfos[patchOut].OrderS - 1;
+				tOut = patchInfos[patchOut].OrderT - neighborPosition - 1;
+				break;
+			case 3:
+				sOut = patchInfos[patchOut].OrderS - neighborPosition - 1;
+				tOut = 0;
+				break;
+			}
+
+			// Ok
+			return true;
 		}
-		break;
+	}
+	break;
 	}
 
 	return false;
 }
 
-
 // ***************************************************************************
 
-bool CPatchInfo::getTileSymmetryRotate (const CTileBank &bank, uint tile, bool &symmetry, uint &rotate)
+bool CPatchInfo::getTileSymmetryRotate(const CTileBank &bank, uint tile, bool &symmetry, uint &rotate)
 {
 	// Need check the tile ?
-	if ( (symmetry || (rotate != 0)) && (tile != 0xffffffff) )
+	if ((symmetry || (rotate != 0)) && (tile != 0xffffffff))
 	{
 		// Tile exist ?
 		if (tile < (uint)bank.getTileCount())
@@ -1679,16 +1597,16 @@ bool CPatchInfo::getTileSymmetryRotate (const CTileBank &bank, uint tile, bool &
 			CTileBank::TTileType type;
 
 			// Get tile xref
-			bank.getTileXRef ((int)tile, tileSet, number, type);
+			bank.getTileXRef((int)tile, tileSet, number, type);
 
 			if ((tileSet < 0) || (tileSet >= bank.getTileSetCount()))
 			{
-				nlwarning("tile %d has an unknown tileSet (%d)",tile, tileSet);
+				nlwarning("tile %d has an unknown tileSet (%d)", tile, tileSet);
 				return false;
 			}
 
 			// Is it an oriented tile ?
-			if (bank.getTileSet (tileSet)->getOriented())
+			if (bank.getTileSet(tileSet)->getOriented())
 			{
 				// New rotation value
 				rotate = 0;
@@ -1706,10 +1624,10 @@ bool CPatchInfo::getTileSymmetryRotate (const CTileBank &bank, uint tile, bool &
 
 // ***************************************************************************
 
-bool CPatchInfo::transformTile (const CTileBank &bank, uint &tile, uint &tileRotation, bool symmetry, uint rotate, bool goofy)
+bool CPatchInfo::transformTile(const CTileBank &bank, uint &tile, uint &tileRotation, bool symmetry, uint rotate, bool goofy)
 {
 	// Tile exist ?
-	if ( (rotate!=0) || symmetry )
+	if ((rotate != 0) || symmetry)
 	{
 		if (tile < (uint)bank.getTileCount())
 		{
@@ -1719,7 +1637,7 @@ bool CPatchInfo::transformTile (const CTileBank &bank, uint &tile, uint &tileRot
 			CTileBank::TTileType type;
 
 			// Get tile xref
-			bank.getTileXRef ((int)tile, tileSet, number, type);
+			bank.getTileXRef((int)tile, tileSet, number, type);
 
 			// Transition ?
 			if (type == CTileBank::transition)
@@ -1728,53 +1646,52 @@ bool CPatchInfo::transformTile (const CTileBank &bank, uint &tile, uint &tileRot
 				uint transRotate = rotate;
 
 				// Number should be ok
-				nlassert (number>=0);
-				nlassert (number<CTileSet::count);
+				nlassert(number >= 0);
+				nlassert(number < CTileSet::count);
 
 				// Tlie set number
-				const CTileSet *pTileSet = bank.getTileSet (tileSet);
+				const CTileSet *pTileSet = bank.getTileSet(tileSet);
 
 				// Get border desc
-				CTileSet::TFlagBorder oriented[4] =
-				{
-					pTileSet->getOrientedBorder (CTileSet::left, CTileSet::getEdgeType ((CTileSet::TTransition)number, CTileSet::left)),
-					pTileSet->getOrientedBorder (CTileSet::bottom, CTileSet::getEdgeType ((CTileSet::TTransition)number, CTileSet::bottom)),
-					pTileSet->getOrientedBorder (CTileSet::right, CTileSet::getEdgeType ((CTileSet::TTransition)number, CTileSet::right)),
-					pTileSet->getOrientedBorder (CTileSet::top, CTileSet::getEdgeType ((CTileSet::TTransition)number, CTileSet::top))
+				CTileSet::TFlagBorder oriented[4] = {
+					pTileSet->getOrientedBorder(CTileSet::left, CTileSet::getEdgeType((CTileSet::TTransition)number, CTileSet::left)),
+					pTileSet->getOrientedBorder(CTileSet::bottom, CTileSet::getEdgeType((CTileSet::TTransition)number, CTileSet::bottom)),
+					pTileSet->getOrientedBorder(CTileSet::right, CTileSet::getEdgeType((CTileSet::TTransition)number, CTileSet::right)),
+					pTileSet->getOrientedBorder(CTileSet::top, CTileSet::getEdgeType((CTileSet::TTransition)number, CTileSet::top))
 				};
 
 				// Symmetry ?
 				if (symmetry)
 				{
-					if ( (tileRotation & 1) ^ goofy )
+					if ((tileRotation & 1) ^ goofy)
 					{
 						CTileSet::TFlagBorder tmp = oriented[1];
-						oriented[1] = CTileSet::getInvertBorder (oriented[3]);
-						oriented[3] = CTileSet::getInvertBorder (tmp);
-						oriented[2] = CTileSet::getInvertBorder (oriented[2]);
-						oriented[0] = CTileSet::getInvertBorder (oriented[0]);
+						oriented[1] = CTileSet::getInvertBorder(oriented[3]);
+						oriented[3] = CTileSet::getInvertBorder(tmp);
+						oriented[2] = CTileSet::getInvertBorder(oriented[2]);
+						oriented[0] = CTileSet::getInvertBorder(oriented[0]);
 					}
 					else
 					{
 						CTileSet::TFlagBorder tmp = oriented[0];
-						oriented[0] = CTileSet::getInvertBorder (oriented[2]);
-						oriented[2] = CTileSet::getInvertBorder (tmp);
-						oriented[1] = CTileSet::getInvertBorder (oriented[1]);
-						oriented[3] = CTileSet::getInvertBorder (oriented[3]);
+						oriented[0] = CTileSet::getInvertBorder(oriented[2]);
+						oriented[2] = CTileSet::getInvertBorder(tmp);
+						oriented[1] = CTileSet::getInvertBorder(oriented[1]);
+						oriented[3] = CTileSet::getInvertBorder(oriented[3]);
 					}
 				}
 
 				// Rotation
 				CTileSet::TFlagBorder edges[4];
-				edges[0] = pTileSet->getOrientedBorder (CTileSet::left, oriented[(0 + transRotate )&3]);
-				edges[1] = pTileSet->getOrientedBorder (CTileSet::bottom, oriented[(1 + transRotate )&3]);
-				edges[2] = pTileSet->getOrientedBorder (CTileSet::right, oriented[(2 + transRotate )&3]);
-				edges[3] = pTileSet->getOrientedBorder (CTileSet::top, oriented[(3 + transRotate )&3]);
+				edges[0] = pTileSet->getOrientedBorder(CTileSet::left, oriented[(0 + transRotate) & 3]);
+				edges[1] = pTileSet->getOrientedBorder(CTileSet::bottom, oriented[(1 + transRotate) & 3]);
+				edges[2] = pTileSet->getOrientedBorder(CTileSet::right, oriented[(2 + transRotate) & 3]);
+				edges[3] = pTileSet->getOrientedBorder(CTileSet::top, oriented[(3 + transRotate) & 3]);
 
 				// Get the good tile number
-				CTileSet::TTransition transition = pTileSet->getTransitionTile (edges[3], edges[1], edges[0], edges[2]);
-				nlassert ((CTileSet::TTransition)transition != CTileSet::notfound);
-				tile = (uint)(pTileSet->getTransition (transition)->getTile ());
+				CTileSet::TTransition transition = pTileSet->getTransitionTile(edges[3], edges[1], edges[0], edges[2]);
+				nlassert((CTileSet::TTransition)transition != CTileSet::notfound);
+				tile = (uint)(pTileSet->getTransition(transition)->getTile());
 			}
 
 			// Transform rotation: invert rotation
@@ -1797,19 +1714,19 @@ bool CPatchInfo::transformTile (const CTileBank &bank, uint &tile, uint &tileRot
 
 // ***************************************************************************
 
-void CPatchInfo::transform256Case (const CTileBank &bank, uint8 &case256, uint tileRotation, bool symmetry, uint rotate, bool goofy)
+void CPatchInfo::transform256Case(const CTileBank &bank, uint8 &case256, uint tileRotation, bool symmetry, uint rotate, bool goofy)
 {
 	// Tile exist ?
-	if ( (rotate!=0) || symmetry )
+	if ((rotate != 0) || symmetry)
 	{
 		// Symmetry ?
 		if (symmetry)
 		{
 			// Take the symmetry
-			uint symArray[4] = {3, 2, 1, 0};
+			uint symArray[4] = { 3, 2, 1, 0 };
 			case256 = symArray[case256];
 
-			if (goofy && ((tileRotation & 1) ==0))
+			if (goofy && ((tileRotation & 1) == 0))
 				case256 += 2;
 			if ((!goofy) && (tileRotation & 1))
 				case256 += 2;
@@ -1823,9 +1740,9 @@ void CPatchInfo::transform256Case (const CTileBank &bank, uint8 &case256, uint t
 
 // ***************************************************************************
 
-bool CPatchInfo::transform (std::vector<CPatchInfo> &patchInfo, NL3D::CZoneSymmetrisation &zoneSymmetry, const NL3D::CTileBank &bank, bool symmetry, uint rotate, float snapCell, float weldThreshold, const NLMISC::CMatrix &toOriginalSpace)
+bool CPatchInfo::transform(std::vector<CPatchInfo> &patchInfo, NL3D::CZoneSymmetrisation &zoneSymmetry, const NL3D::CTileBank &bank, bool symmetry, uint rotate, float snapCell, float weldThreshold, const NLMISC::CMatrix &toOriginalSpace)
 {
-	uint patchCount = (uint)patchInfo.size ();
+	uint patchCount = (uint)patchInfo.size();
 	uint i;
 
 	// --- Export tile info Symmetry of the bind info.
@@ -1835,7 +1752,7 @@ bool CPatchInfo::transform (std::vector<CPatchInfo> &patchInfo, NL3D::CZoneSymme
 	NL3D::CZoneSymmetrisation::CError error;
 
 	// Build the structure
-	if (!zoneSymmetry.build (patchInfo, snapCell, weldThreshold, bank, error, toOriginalSpace))
+	if (!zoneSymmetry.build(patchInfo, snapCell, weldThreshold, bank, error, toOriginalSpace))
 	{
 		return false;
 	}
@@ -1843,7 +1760,7 @@ bool CPatchInfo::transform (std::vector<CPatchInfo> &patchInfo, NL3D::CZoneSymme
 	// Symmetry ?
 	if (symmetry)
 	{
-		for(i=0 ; i<patchCount; i++)
+		for (i = 0; i < patchCount; i++)
 		{
 			// Ref on the current patch
 			CPatchInfo &pi = patchInfo[i];
@@ -1882,27 +1799,27 @@ bool CPatchInfo::transform (std::vector<CPatchInfo> &patchInfo, NL3D::CZoneSymme
 
 			// ** Symmetries tile colors
 
-			uint u,v;
-			uint countU = pi.OrderS/2+1;
-			uint countV = pi.OrderT+1;
-			for (v=0; v<countV; v++)
-			for (u=0; u<countU; u++)
-			{
-				// Store it in the tile info
-				uint index0 = u+v*(pi.OrderS+1);
-				uint index1 = (pi.OrderS-u)+v*(pi.OrderS+1);
+			uint u, v;
+			uint countU = pi.OrderS / 2 + 1;
+			uint countV = pi.OrderT + 1;
+			for (v = 0; v < countV; v++)
+				for (u = 0; u < countU; u++)
+				{
+					// Store it in the tile info
+					uint index0 = u + v * (pi.OrderS + 1);
+					uint index1 = (pi.OrderS - u) + v * (pi.OrderS + 1);
 
-				// XChg
-				uint16 tmp = pi.TileColors[index0].Color565;
-				pi.TileColors[index0].Color565 = pi.TileColors[index1].Color565;
-				pi.TileColors[index1].Color565 = tmp;
-			}
+					// XChg
+					uint16 tmp = pi.TileColors[index0].Color565;
+					pi.TileColors[index0].Color565 = pi.TileColors[index1].Color565;
+					pi.TileColors[index1].Color565 = tmp;
+				}
 
 			// Smooth flags
-			uint flags = (uint)(pi.getSmoothFlag (0))<<2;
-			flags |= (uint)(pi.getSmoothFlag (2))<<0;
-			flags |= (uint)(pi.getSmoothFlag (1))<<1;
-			flags |= (uint)(pi.getSmoothFlag (3))<<3;
+			uint flags = (uint)(pi.getSmoothFlag(0)) << 2;
+			flags |= (uint)(pi.getSmoothFlag(2)) << 0;
+			flags |= (uint)(pi.getSmoothFlag(1)) << 1;
+			flags |= (uint)(pi.getSmoothFlag(3)) << 3;
 			pi.Flags &= ~3;
 			pi.Flags |= flags;
 		}
@@ -1910,39 +1827,39 @@ bool CPatchInfo::transform (std::vector<CPatchInfo> &patchInfo, NL3D::CZoneSymme
 		// --- Symmetry of the bind info.
 		// --- Parse each patch and each edge
 		// For each patches
-		for (i=0 ; i<patchCount; i++)
+		for (i = 0; i < patchCount; i++)
 		{
 			// Ref on the patch info
 			CPatchInfo &pi = patchInfo[i];
 
 			// Xchg left and right
-			swap (pi.BindEdges[0], pi.BindEdges[2]);
-			swap (pi.BaseVertices[0], pi.BaseVertices[3]);
-			swap (pi.BaseVertices[1], pi.BaseVertices[2]);
+			swap(pi.BindEdges[0], pi.BindEdges[2]);
+			swap(pi.BaseVertices[0], pi.BaseVertices[3]);
+			swap(pi.BaseVertices[1], pi.BaseVertices[2]);
 
 			// Flip edges
-			for (uint edge=0; edge<4; edge++)
+			for (uint edge = 0; edge < 4; edge++)
 			{
 				// Ref on the patch info
 				CPatchInfo::CBindInfo &bindEdge = pi.BindEdges[edge];
 
 				uint next;
 				// Look if it is a bind ?
-				if ( (bindEdge.NPatchs>1) && (bindEdge.NPatchs!=5) )
+				if ((bindEdge.NPatchs > 1) && (bindEdge.NPatchs != 5))
 				{
-					for (next=0; next<(uint)bindEdge.NPatchs/2; next++)
+					for (next = 0; next < (uint)bindEdge.NPatchs / 2; next++)
 					{
-						swap (bindEdge.Next[bindEdge.NPatchs - next - 1], bindEdge.Next[next]);
-						swap (bindEdge.Edge[bindEdge.NPatchs - next - 1], bindEdge.Edge[next]);
+						swap(bindEdge.Next[bindEdge.NPatchs - next - 1], bindEdge.Next[next]);
+						swap(bindEdge.Edge[bindEdge.NPatchs - next - 1], bindEdge.Edge[next]);
 					}
 				}
 
 				// Look if we are binded on a reversed edge
-				uint bindCount = (bindEdge.NPatchs==5) ? 1 : bindEdge.NPatchs;
-				for (next=0; next<bindCount; next++)
+				uint bindCount = (bindEdge.NPatchs == 5) ? 1 : bindEdge.NPatchs;
+				for (next = 0; next < bindCount; next++)
 				{
 					// Left or right ?
-					if ( (bindEdge.Edge[next] & 1) == 0)
+					if ((bindEdge.Edge[next] & 1) == 0)
 					{
 						// Invert
 						bindEdge.Edge[next] += 2;
@@ -1954,93 +1871,93 @@ bool CPatchInfo::transform (std::vector<CPatchInfo> &patchInfo, NL3D::CZoneSymme
 	}
 
 	// For each patches
-	for (i=0 ; i<patchCount; i++)
+	for (i = 0; i < patchCount; i++)
 	{
 		// Tile infos
 		CPatchInfo &pi = patchInfo[i];
 
 		// Backup tiles
-		std::vector<CTileElement>	tiles = pi.Tiles;
+		std::vector<CTileElement> tiles = pi.Tiles;
 
-		int u,v;
-		for (v=0; v<pi.OrderT; v++)
-		for (u=0; u<pi.OrderS; u++)
-		{
-			// U tile
-			int uSymmetry = symmetry ? (pi.OrderS-u-1) : u;
-
-			// Destination tile
-			CTileElement &element = pi.Tiles[u+v*pi.OrderS];
-
-			// Copy the orginal symmetrical element
-			element = tiles[uSymmetry+v*pi.OrderS];
-
-			// For each layer
-			for (int l=0; l<3; l++)
+		int u, v;
+		for (v = 0; v < pi.OrderT; v++)
+			for (u = 0; u < pi.OrderS; u++)
 			{
-				// Empty ?
-				if (element.Tile[l] != 0xffff)
+				// U tile
+				int uSymmetry = symmetry ? (pi.OrderS - u - 1) : u;
+
+				// Destination tile
+				CTileElement &element = pi.Tiles[u + v * pi.OrderS];
+
+				// Copy the orginal symmetrical element
+				element = tiles[uSymmetry + v * pi.OrderS];
+
+				// For each layer
+				for (int l = 0; l < 3; l++)
 				{
-					// Get the tile index
-					uint tile = element.Tile[l];
-					uint tileRotation = element.getTileOrient (l);
-
-					// Get rot and symmetry for this tile
-					uint tileRotate = rotate;
-					bool tileSymmetry = symmetry;
-					bool goofy = symmetry && (zoneSymmetry.getTileState (i, uSymmetry+v*pi.OrderS, l) == CZoneSymmetrisation::Goofy);
-
-					// Transform the transfo
-					if (getTileSymmetryRotate (bank, tile, tileSymmetry, tileRotate))
+					// Empty ?
+					if (element.Tile[l] != 0xffff)
 					{
-						// Transform the tile
-						if (!transformTile (bank, tile, tileRotation, tileSymmetry, (4-tileRotate)&3, goofy))
+						// Get the tile index
+						uint tile = element.Tile[l];
+						uint tileRotation = element.getTileOrient(l);
+
+						// Get rot and symmetry for this tile
+						uint tileRotate = rotate;
+						bool tileSymmetry = symmetry;
+						bool goofy = symmetry && (zoneSymmetry.getTileState(i, uSymmetry + v * pi.OrderS, l) == CZoneSymmetrisation::Goofy);
+
+						// Transform the transfo
+						if (getTileSymmetryRotate(bank, tile, tileSymmetry, tileRotate))
+						{
+							// Transform the tile
+							if (!transformTile(bank, tile, tileRotation, tileSymmetry, (4 - tileRotate) & 3, goofy))
+							{
+								// Info
+								nlwarning("Error getting symmetrical / rotated zone tile.");
+								return false;
+							}
+						}
+						else
 						{
 							// Info
-							nlwarning ("Error getting symmetrical / rotated zone tile.");
+							nlwarning("Error getting symmetrical / rotated zone tile.");
 							return false;
 						}
-					}
-					else
-					{
-						// Info
-						nlwarning ("Error getting symmetrical / rotated zone tile.");
-						return false;
-					}
 
-					// Set the tile
-					element.Tile[l] = tile;
-					element.setTileOrient (l, (uint8)tileRotation);
+						// Set the tile
+						element.Tile[l] = tile;
+						element.setTileOrient(l, (uint8)tileRotation);
+					}
 				}
-			}
 
-			// Empty ?
-			if (element.Tile[0]!=0xffff)
-			{
-				// Get 256 info
-				bool is256x256;
-				uint8 uvOff;
-				element.getTile256Info (is256x256, uvOff);
-
-				// 256 ?
-				if (is256x256)
+				// Empty ?
+				if (element.Tile[0] != 0xffff)
 				{
-					// Get rot and symmetry for this tile
-					uint tileRotate = rotate;
-					bool tileSymmetry = symmetry;
-					uint tileRotation = tiles[uSymmetry+v*pi.OrderS].getTileOrient (0);
-					bool goofy = symmetry && (zoneSymmetry.getTileState (i, uSymmetry+v*pi.OrderS, 0) == CZoneSymmetrisation::Goofy);
+					// Get 256 info
+					bool is256x256;
+					uint8 uvOff;
+					element.getTile256Info(is256x256, uvOff);
 
-					// Transform the transfo
-					getTileSymmetryRotate (bank, element.Tile[0], tileSymmetry, tileRotate);
+					// 256 ?
+					if (is256x256)
+					{
+						// Get rot and symmetry for this tile
+						uint tileRotate = rotate;
+						bool tileSymmetry = symmetry;
+						uint tileRotation = tiles[uSymmetry + v * pi.OrderS].getTileOrient(0);
+						bool goofy = symmetry && (zoneSymmetry.getTileState(i, uSymmetry + v * pi.OrderS, 0) == CZoneSymmetrisation::Goofy);
 
-					// Transform the case
-					transform256Case (bank, uvOff, tileRotation, tileSymmetry, (4-tileRotate)&3, goofy);
+						// Transform the transfo
+						getTileSymmetryRotate(bank, element.Tile[0], tileSymmetry, tileRotate);
 
-					element.setTile256Info (true, uvOff);
+						// Transform the case
+						transform256Case(bank, uvOff, tileRotation, tileSymmetry, (4 - tileRotate) & 3, goofy);
+
+						element.setTile256Info(true, uvOff);
+					}
 				}
 			}
-		}
 	}
 
 	// Ok

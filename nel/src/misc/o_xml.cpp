@@ -35,11 +35,10 @@
 using namespace std;
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 // ***************************************************************************
 
@@ -47,25 +46,25 @@ const char SEPARATOR = ' ';
 
 // ***************************************************************************
 
-#define writenumber(src,format,digits) \
-	char number_as_cstring [digits+1]; \
-	sprintf( number_as_cstring, format, src ); \
-	serialSeparatedBufferOut( number_as_cstring );
+#define writenumber(src, format, digits)     \
+	char number_as_cstring[digits + 1];      \
+	sprintf(number_as_cstring, format, src); \
+	serialSeparatedBufferOut(number_as_cstring);
 
 // ***************************************************************************
 // XML callbacks
 // ***************************************************************************
 
-int xmlOutputWriteCallbackForNeL ( void *context, const char *buffer, int len)
+int xmlOutputWriteCallbackForNeL(void *context, const char *buffer, int len)
 {
 	// no need to save empty buffer
-	if(len == 0) return 0;
+	if (len == 0) return 0;
 
 	// Get the object
-	COXml *object = (COXml*) context;
+	COXml *object = (COXml *)context;
 
 	// Serialise the buffer
-	object->_InternalStream->serialBuffer ((uint8*)buffer, len);
+	object->_InternalStream->serialBuffer((uint8 *)buffer, len);
 
 	// Return the value
 	return len;
@@ -73,7 +72,7 @@ int xmlOutputWriteCallbackForNeL ( void *context, const char *buffer, int len)
 
 // ***************************************************************************
 
-int xmlOutputCloseCallbackForNeL ( void * /* context */ )
+int xmlOutputCloseCallbackForNeL(void * /* context */)
 {
 	// Get the object
 	// COXml *object = (COXml*) context;
@@ -84,46 +83,46 @@ int xmlOutputCloseCallbackForNeL ( void * /* context */ )
 
 // ***************************************************************************
 
-xmlDocPtr COXml::getDocument ()
+xmlDocPtr COXml::getDocument()
 {
 	if (_Document)
 		return _Document;
 
 	// Initialise the document
-	_Document = xmlNewDoc ((const xmlChar *)_Version.c_str());
+	_Document = xmlNewDoc((const xmlChar *)_Version.c_str());
 
 	return _Document;
 }
 
-
 // ***************************************************************************
 
-inline void COXml::flushContentString ()
+inline void COXml::flushContentString()
 {
 	// Current node must exist here
-	nlassert (_CurrentNode);
+	nlassert(_CurrentNode);
 
 	// String size
-	uint size=(uint)_ContentString.length();
+	uint size = (uint)_ContentString.length();
 
 	// Some content to write ?
 	if (size)
 	{
 		// Write it in the current node
-		xmlNodePtr textNode = xmlNewText ((const xmlChar *)_ContentString.c_str());
-		xmlAddChild (_CurrentNode, textNode);
+		xmlNodePtr textNode = xmlNewText((const xmlChar *)_ContentString.c_str());
+		xmlAddChild(_CurrentNode, textNode);
 
 		// Empty the string
-		_ContentString.erase ();
+		_ContentString.erase();
 	}
 }
 
 // ***************************************************************************
 
-COXml::COXml () : IStream (false /* Output mode */)
+COXml::COXml()
+    : IStream(false /* Output mode */)
 {
 	// Set XML mode
-	setXMLMode (true);
+	setXMLMode(true);
 
 	// Set the stream
 	_InternalStream = NULL;
@@ -146,7 +145,7 @@ COXml::COXml () : IStream (false /* Output mode */)
 
 // ***************************************************************************
 
-bool COXml::init (IStream *stream, const std::string &version)
+bool COXml::init(IStream *stream, const std::string &version)
 {
 	resetPtrTable();
 
@@ -156,7 +155,7 @@ bool COXml::init (IStream *stream, const std::string &version)
 	if (!stream->isReading())
 	{
 		// Set XML mode
-		setXMLMode (true);
+		setXMLMode(true);
 
 		// Set the stream
 		_InternalStream = stream;
@@ -185,20 +184,20 @@ bool COXml::init (IStream *stream, const std::string &version)
 
 // ***************************************************************************
 
-COXml::~COXml ()
+COXml::~COXml()
 {
 	// Flush document to the internal stream
-	flush ();
+	flush();
 }
 
 // ***************************************************************************
 
-void COXml::serialSeparatedBufferOut( const std::string &value )
+void COXml::serialSeparatedBufferOut(const std::string &value)
 {
-	nlassert( ! isReading() );
+	nlassert(!isReading());
 
 	// Output stream has been setuped ?
-	if ( _InternalStream )
+	if (_InternalStream)
 	{
 		// Current node presents ?
 		if (_CurrentNode)
@@ -210,7 +209,7 @@ void COXml::serialSeparatedBufferOut( const std::string &value )
 				if (_AttribPresent)
 				{
 					// Set the attribute
-					xmlSetProp (_CurrentNode, (const xmlChar*)_AttribName.c_str(), (const xmlChar*)value.c_str());
+					xmlSetProp(_CurrentNode, (const xmlChar *)_AttribName.c_str(), (const xmlChar *)value.c_str());
 
 					// The attribute has been used
 					_AttribPresent = false;
@@ -221,16 +220,16 @@ void COXml::serialSeparatedBufferOut( const std::string &value )
 					// * You must take care of this in your last serial call:
 					// * - Between xmlPushBegin() and xmlPushEnd(), before each serial, you must set the attribute name with xmlSetAttrib.
 					// * - Between xmlPushBegin() and xmlPushEnd(), you must serial only basic objects (numbers and strings).
-					nlerror ( "Error, the stream don't use XML streaming properly" );
+					nlerror("Error, the stream don't use XML streaming properly");
 				}
 			}
 			else
 			{
 				// Get the content buffer size
-				uint size=(uint)_ContentString.length();
+				uint size = (uint)_ContentString.length();
 
 				// Add a separator
-				if ((size) && (_ContentString[size-1]!='\n'))
+				if ((size) && (_ContentString[size - 1] != '\n'))
 					_ContentString += SEPARATOR;
 
 				// Concat the strings
@@ -241,12 +240,12 @@ void COXml::serialSeparatedBufferOut( const std::string &value )
 		{
 			// * Error, no current node present.
 			// * Check that your serial is initialy made between a xmlPushBegin and xmlPushEnd calls.
-			nlerror ( "Error, the stream don't use XML streaming properly" );
+			nlerror("Error, the stream don't use XML streaming properly");
 		}
 	}
 	else
 	{
-		nlerror ( "Output stream has not been setuped" );
+		nlerror("Output stream has not been setuped");
 	}
 }
 
@@ -255,70 +254,70 @@ void COXml::serialSeparatedBufferOut( const std::string &value )
 void COXml::serial(uint8 &b)
 {
 	// Write the number
-	writenumber( (uint16)b,"%hu", 3 );
+	writenumber((uint16)b, "%hu", 3);
 }
 
 // ***************************************************************************
 
 void COXml::serial(sint8 &b)
 {
-	writenumber( (sint16)b, "%hd", 4 );
+	writenumber((sint16)b, "%hd", 4);
 }
 
 // ***************************************************************************
 
 void COXml::serial(uint16 &b)
 {
-	writenumber( b, "%hu", 5 );
+	writenumber(b, "%hu", 5);
 }
 
 // ***************************************************************************
 
 void COXml::serial(sint16 &b)
 {
-	writenumber( b, "%hd", 6 );
+	writenumber(b, "%hd", 6);
 }
 
 // ***************************************************************************
 
 void COXml::serial(uint32 &b)
 {
-	writenumber( b, "%u", 10 );
+	writenumber(b, "%u", 10);
 }
 
 // ***************************************************************************
 
 void COXml::serial(sint32 &b)
 {
-	writenumber( b, "%d", 11 );
+	writenumber(b, "%d", 11);
 }
 
 // ***************************************************************************
 
 void COXml::serial(uint64 &b)
 {
-	writenumber( b, "%" NL_I64 "u", 20 );
+	writenumber(b, "%" NL_I64 "u", 20);
 }
 
 // ***************************************************************************
 
 void COXml::serial(sint64 &b)
 {
-	writenumber( b, "%" NL_I64 "d", 20 );
+	writenumber(b, "%" NL_I64 "d", 20);
 }
 
 // ***************************************************************************
 
 void COXml::serial(float &b)
 {
-	writenumber( (double)b, "%f", 128 );
+	writenumber((double)b, "%f", 128);
 }
 
 // ***************************************************************************
 
 void COXml::serial(double &b)
 {
-	writenumber( b, "%f", 128 );
+	writenumber(b, "%f", 128);
 }
 
 // ***************************************************************************
@@ -333,7 +332,7 @@ void COXml::serial(bool &b)
 void COXml::serialBit(bool &bit)
 {
 	uint8 u = (uint8)bit;
-	serial( u );
+	serial(u);
 }
 
 // ***************************************************************************
@@ -343,7 +342,7 @@ void COXml::serial(char &b)
 {
 	std::string tmp;
 	tmp += b;
-	serialSeparatedBufferOut( tmp );
+	serialSeparatedBufferOut(tmp);
 }
 #endif // NL_OS_CYGWIN
 
@@ -351,24 +350,24 @@ void COXml::serial(char &b)
 
 void COXml::serial(std::string &b)
 {
-	nlassert( ! isReading() );
+	nlassert(!isReading());
 
 	// Attibute ?
 	if (_PushBegin)
 	{
 		// Only serial the string
-		serialSeparatedBufferOut( b );
+		serialSeparatedBufferOut(b);
 	}
 	else
 	{
 		// Open a string node
-		xmlPush ("S");
+		xmlPush("S");
 
 		// Serial the string
-		serialSeparatedBufferOut( b );
+		serialSeparatedBufferOut(b);
 
 		// Close the node
-		xmlPop ();
+		xmlPop();
 	}
 }
 
@@ -376,13 +375,13 @@ void COXml::serial(std::string &b)
 
 void COXml::serial(ucstring &b)
 {
-	nlassert( ! isReading() );
+	nlassert(!isReading());
 
 	// convert ucstring to utf-8 std::string
 	std::string output = b.toUtf8();
 
 	// Serial this string
-	serial (output);
+	serial(output);
 }
 
 // ***************************************************************************
@@ -390,64 +389,64 @@ void COXml::serial(ucstring &b)
 void COXml::serialBuffer(uint8 *buf, uint len)
 {
 	// Open a node
-	xmlPush ("BUFFER");
+	xmlPush("BUFFER");
 
 	// Serialize the buffer
-	for (uint i=0; i<len; i++)
+	for (uint i = 0; i < len; i++)
 	{
-		xmlPush ("ELM");
+		xmlPush("ELM");
 
-		serial (buf[i]);
+		serial(buf[i]);
 
-		xmlPop ();
+		xmlPop();
 	}
 
 	// Close the node
-	xmlPop ();
+	xmlPop();
 }
 
 // ***************************************************************************
 
-bool COXml::xmlPushBeginInternal (const std::string &nodeName)
+bool COXml::xmlPushBeginInternal(const std::string &nodeName)
 {
-	nlassert( ! isReading() );
+	nlassert(!isReading());
 
 	// Check _InternalStream
-	if ( _InternalStream )
+	if (_InternalStream)
 	{
 		// Can make a xmlPushBegin ?
-		if ( ! _PushBegin )
+		if (!_PushBegin)
 		{
 			// Current node exist ?
-			if (_CurrentNode==NULL)
+			if (_CurrentNode == NULL)
 			{
 				// No document ?
 				if (_Document == NULL)
 				{
 					// Initialise the document
-					_Document = xmlNewDoc ((const xmlChar *)_Version.c_str());
+					_Document = xmlNewDoc((const xmlChar *)_Version.c_str());
 
 					// Return NULL if error
-					nlassert (_Document);
+					nlassert(_Document);
 				}
 
 				// Create the first node
-				_CurrentNode=xmlNewDocNode (_Document, NULL, (const xmlChar*)nodeName.c_str(), NULL);
-				xmlDocSetRootElement (_Document, _CurrentNode);
+				_CurrentNode = xmlNewDocNode(_Document, NULL, (const xmlChar *)nodeName.c_str(), NULL);
+				xmlDocSetRootElement(_Document, _CurrentNode);
 
 				// Return NULL if error
-				nlassert (_CurrentNode);
+				nlassert(_CurrentNode);
 			}
 			else
 			{
 				// Flush current content string ?
-				flushContentString ();
+				flushContentString();
 
 				// Create a new node
-				_CurrentNode=xmlNewChild (_CurrentNode, NULL, (const xmlChar*)nodeName.c_str(), NULL);
+				_CurrentNode = xmlNewChild(_CurrentNode, NULL, (const xmlChar *)nodeName.c_str(), NULL);
 
 				// Return NULL if error
-				nlassert (_CurrentNode);
+				nlassert(_CurrentNode);
 			}
 
 			// Push begun
@@ -455,13 +454,13 @@ bool COXml::xmlPushBeginInternal (const std::string &nodeName)
 		}
 		else
 		{
-			nlwarning ( "XML: You must close your xmlPushBegin - xmlPushEnd before calling a new xmlPushBegin.");
+			nlwarning("XML: You must close your xmlPushBegin - xmlPushEnd before calling a new xmlPushBegin.");
 			return false;
 		}
 	}
 	else
 	{
-		nlwarning ( "XML: Output stream has not been setuped.");
+		nlwarning("XML: Output stream has not been setuped.");
 		return false;
 	}
 
@@ -471,28 +470,28 @@ bool COXml::xmlPushBeginInternal (const std::string &nodeName)
 
 // ***************************************************************************
 
-bool COXml::xmlPushEndInternal ()
+bool COXml::xmlPushEndInternal()
 {
-	nlassert( ! isReading() );
+	nlassert(!isReading());
 
 	// Check _InternalStream
-	if ( _InternalStream )
+	if (_InternalStream)
 	{
 		// Can make a xmlPushEnd ?
-		if ( _PushBegin )
+		if (_PushBegin)
 		{
 			// Push begun
 			_PushBegin = false;
 		}
 		else
 		{
-			nlwarning ( "XML: You must call xmlPushBegin before calling xmlPushEnd.");
+			nlwarning("XML: You must call xmlPushBegin before calling xmlPushEnd.");
 			return false;
 		}
 	}
 	else
 	{
-		nlwarning ( "XML: Output stream has not been setuped.");
+		nlwarning("XML: Output stream has not been setuped.");
 		return false;
 	}
 
@@ -502,31 +501,31 @@ bool COXml::xmlPushEndInternal ()
 
 // ***************************************************************************
 
-bool COXml::xmlPopInternal ()
+bool COXml::xmlPopInternal()
 {
-	nlassert( ! isReading() );
+	nlassert(!isReading());
 
 	// Check _InternalStream
-	if ( _InternalStream )
+	if (_InternalStream)
 	{
 		// Not in the push mode ?
-		if ( ! _PushBegin )
+		if (!_PushBegin)
 		{
 			// Some content to write ?
-			flushContentString ();
+			flushContentString();
 
 			// Get parent
-			_CurrentNode=_CurrentNode->parent;
+			_CurrentNode = _CurrentNode->parent;
 		}
 		else
 		{
-			nlwarning ( "XML: You must call xmlPop after xmlPushEnd.");
+			nlwarning("XML: You must call xmlPop after xmlPushEnd.");
 			return false;
 		}
 	}
 	else
 	{
-		nlwarning ( "XML: Output stream has not been setuped.");
+		nlwarning("XML: Output stream has not been setuped.");
 		return false;
 	}
 
@@ -536,15 +535,15 @@ bool COXml::xmlPopInternal ()
 
 // ***************************************************************************
 
-bool COXml::xmlSetAttribInternal (const std::string &attribName)
+bool COXml::xmlSetAttribInternal(const std::string &attribName)
 {
-	nlassert( ! isReading() );
+	nlassert(!isReading());
 
 	// Check _InternalStream
-	if ( _InternalStream )
+	if (_InternalStream)
 	{
 		// Can make a xmlPushEnd ?
-		if ( _PushBegin )
+		if (_PushBegin)
 		{
 			// Set attribute name
 			_AttribName = attribName;
@@ -554,13 +553,13 @@ bool COXml::xmlSetAttribInternal (const std::string &attribName)
 		}
 		else
 		{
-			nlwarning ( "XML: You must call xmlSetAttrib between xmlPushBegin and xmlPushEnd calls.");
+			nlwarning("XML: You must call xmlSetAttrib between xmlPushBegin and xmlPushEnd calls.");
 			return false;
 		}
 	}
 	else
 	{
-		nlwarning ( "XML: Output stream has not been setuped.");
+		nlwarning("XML: Output stream has not been setuped.");
 		return false;
 	}
 
@@ -570,28 +569,28 @@ bool COXml::xmlSetAttribInternal (const std::string &attribName)
 
 // ***************************************************************************
 
-bool COXml::xmlBreakLineInternal ()
+bool COXml::xmlBreakLineInternal()
 {
-	nlassert( ! isReading() );
+	nlassert(!isReading());
 
 	// Check _InternalStream
-	if ( _InternalStream )
+	if (_InternalStream)
 	{
 		// Not in the push mode ?
-		if ( ! _PushBegin )
+		if (!_PushBegin)
 		{
 			// Add a break line
 			_ContentString += '\n';
 		}
 		else
 		{
-			nlwarning ( "XML: You must call xmlNBreakLine after xmlPushEnd.");
+			nlwarning("XML: You must call xmlNBreakLine after xmlPushEnd.");
 			return false;
 		}
 	}
 	else
 	{
-		nlwarning ( "XML: Output stream has not been setuped.");
+		nlwarning("XML: Output stream has not been setuped.");
 		return false;
 	}
 
@@ -601,31 +600,31 @@ bool COXml::xmlBreakLineInternal ()
 
 // ***************************************************************************
 
-bool COXml::xmlCommentInternal (const std::string &comment)
+bool COXml::xmlCommentInternal(const std::string &comment)
 {
-	nlassert( ! isReading() );
+	nlassert(!isReading());
 
 	// Check _InternalStream
-	if ( _InternalStream )
+	if (_InternalStream)
 	{
 		// Not in the push mode ?
-		if ( _CurrentNode != NULL)
+		if (_CurrentNode != NULL)
 		{
 			// Add a comment node
-			xmlNodePtr commentPtr = xmlNewComment ((const xmlChar *)comment.c_str());
+			xmlNodePtr commentPtr = xmlNewComment((const xmlChar *)comment.c_str());
 
 			// Add the node
-			xmlAddChild (_CurrentNode, commentPtr);
+			xmlAddChild(_CurrentNode, commentPtr);
 		}
 		else
 		{
-			nlwarning ( "XML: You must call xmlCommentInternal between xmlPushBegin and xmlPushEnd.");
+			nlwarning("XML: You must call xmlCommentInternal between xmlPushBegin and xmlPushEnd.");
 			return false;
 		}
 	}
 	else
 	{
-		nlwarning ( "XML: Output stream has not been setuped.");
+		nlwarning("XML: Output stream has not been setuped.");
 		return false;
 	}
 	// Ok
@@ -634,31 +633,31 @@ bool COXml::xmlCommentInternal (const std::string &comment)
 
 // ***************************************************************************
 
-void COXml::flush ()
+void COXml::flush()
 {
 	if (_Document)
 	{
 		// Generate indentation
-		xmlKeepBlanksDefault (0);
+		xmlKeepBlanksDefault(0);
 
 		// Create a output context
-		xmlOutputBufferPtr outputBuffer = xmlOutputBufferCreateIO  ( xmlOutputWriteCallbackForNeL, xmlOutputCloseCallbackForNeL, this, NULL );
+		xmlOutputBufferPtr outputBuffer = xmlOutputBufferCreateIO(xmlOutputWriteCallbackForNeL, xmlOutputCloseCallbackForNeL, this, NULL);
 
 		// Save the file
-		int res = xmlSaveFormatFileTo (outputBuffer, _Document, NULL, 1);
+		int res = xmlSaveFormatFileTo(outputBuffer, _Document, NULL, 1);
 
 		// No error should be returned because, exception should be raised by the internal stream
-		nlassert (res!=-1);
+		nlassert(res != -1);
 
 		// Free the document
-		xmlFreeDoc (_Document);
+		xmlFreeDoc(_Document);
 		_Document = NULL;
 	}
 }
 
 // ***************************************************************************
 
-bool COXml::isStringValidForProperties (const std::string &str)
+bool COXml::isStringValidForProperties(const std::string &str)
 {
 	return str.find('\n') == std::string::npos;
 }

@@ -26,11 +26,11 @@
 #include <nel/3d/material.h>
 
 namespace NLMISC {
-	class IStream;
+class IStream;
 }
 
 namespace NL3D {
-	class CMaterial;
+class CMaterial;
 }
 
 enum TMesh
@@ -76,7 +76,7 @@ enum TSkel
 	TSkelFull = 2, // Include all connected child nodes in the skeleton
 };
 
-typedef std::map<NLMISC::CSString, NLMISC::CSmartPtr<NL3D::CMaterial> > TMaterialMap;
+typedef std::map<NLMISC::CSString, NLMISC::CSmartPtr<NL3D::CMaterial>> TMaterialMap;
 struct CSceneMeta
 {
 	CSceneMeta();
@@ -101,7 +101,6 @@ struct CSceneMeta
 
 private:
 	std::string m_MetaFilePath;
-
 };
 
 #endif /* NL_SCENE_META_H */

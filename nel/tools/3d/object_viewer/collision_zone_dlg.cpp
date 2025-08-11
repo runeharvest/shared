@@ -26,24 +26,25 @@
 
 // standard constructor
 CCollisionZoneDlg::CCollisionZoneDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSZone *zone, CParticleDlg *particleDlg)
-	: _Zone(zone),
-	  _Node(ownerNode),
-	  _ParticleDlg(particleDlg)
+    : _Zone(zone)
+    , _Node(ownerNode)
+    , _ParticleDlg(particleDlg)
 {
 	nlassert(particleDlg);
 	//{{AFX_DATA_INIT(CCollisionZoneDlg)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
-
 
 void CCollisionZoneDlg::init(sint x, sint y, CWnd *pParent)
 {
 	RECT r;
 	Create(IDD_ZONE, pParent);
 	GetClientRect(&r);
-	r.top += y; r.bottom += y;
-	r.right += x; r.left += x;
+	r.top += y;
+	r.bottom += y;
+	r.right += x;
+	r.left += x;
 	MoveWindow(&r);
 
 	_BounceFactorDlg = new CEditableRangeFloat(std::string("BOUNCE_FACTOR"), _Node, 0.f, 1.f);
@@ -51,12 +52,12 @@ void CCollisionZoneDlg::init(sint x, sint y, CWnd *pParent)
 	_BounceFactorWrapper.Z = _Zone;
 	_BounceFactorDlg->setWrapper(&_BounceFactorWrapper);
 	_BounceFactorDlg->init(60, 35, this);
-	
-	m_CollisionBehaviour.SetCurSel((uint) _Zone->getCollisionBehaviour() );
+
+	m_CollisionBehaviour.SetCurSel((uint)_Zone->getCollisionBehaviour());
 
 	if (_Zone->getCollisionBehaviour() != NL3D::CPSZone::bounce)
 	{
-		_BounceFactorDlg->EnableWindow(FALSE);	
+		_BounceFactorDlg->EnableWindow(FALSE);
 	}
 
 	UpdateData();
@@ -64,8 +65,7 @@ void CCollisionZoneDlg::init(sint x, sint y, CWnd *pParent)
 	ShowWindow(SW_SHOW);
 }
 
-
-void CCollisionZoneDlg::DoDataExchange(CDataExchange* pDX)
+void CCollisionZoneDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CCollisionZoneDlg)
@@ -73,20 +73,19 @@ void CCollisionZoneDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CCollisionZoneDlg, CDialog)
-	//{{AFX_MSG_MAP(CCollisionZoneDlg)
-	ON_CBN_SELCHANGE(IDC_COLLISION_BEHAVIOUR, OnSelchangeCollisionBehaviour)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CCollisionZoneDlg)
+ON_CBN_SELCHANGE(IDC_COLLISION_BEHAVIOUR, OnSelchangeCollisionBehaviour)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CCollisionZoneDlg message handlers
 
-void CCollisionZoneDlg::OnSelchangeCollisionBehaviour() 
+void CCollisionZoneDlg::OnSelchangeCollisionBehaviour()
 {
 	UpdateData();
-	_Zone->setCollisionBehaviour( (NL3D::CPSZone::TCollisionBehaviour) m_CollisionBehaviour.GetCurSel());
-	_BounceFactorDlg->EnableWindow(_Zone->getCollisionBehaviour() == NL3D::CPSZone::bounce ? TRUE : FALSE);	
+	_Zone->setCollisionBehaviour((NL3D::CPSZone::TCollisionBehaviour)m_CollisionBehaviour.GetCurSel());
+	_BounceFactorDlg->EnableWindow(_Zone->getCollisionBehaviour() == NL3D::CPSZone::bounce ? TRUE : FALSE);
 	_ParticleDlg->StartStopDlg->resetAutoCount(_Node);
 }

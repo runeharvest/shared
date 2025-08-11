@@ -27,20 +27,14 @@
 #include "nel/sound/u_audio_mixer.h"
 #include "u_particle_system_sound.h"
 
-
 // WARNING : this file is not intended to be directly included by the client.
 // It is just used to avoid a dependencie between NL3D and NLSOUND
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 inline void SpawnedSourceEndedCallback(NLSOUND::USource *source, void *userParam);
 
-
 class CPSSoundServImpl;
-
 
 /// This class implement a sound instance (a sound source)
 class CPSSoundInstanceImpl : public UPSSoundInstance
@@ -48,9 +42,11 @@ class CPSSoundInstanceImpl : public UPSSoundInstance
 public:
 	/// construct this object from a nel sound source
 	/** The system will call this method to set the parameters of the sound
-	  */
+	 */
 	CPSSoundInstanceImpl()
-		: _Source(NULL), _Spawned(false), _SoundServImpl(NULL)
+	    : _Source(NULL)
+	    , _Spawned(false)
+	    , _SoundServImpl(NULL)
 	{
 	}
 
@@ -59,16 +55,15 @@ public:
 	{
 		nlassert(source);
 		_Source = source;
-		_Spawned    = spawned;
+		_Spawned = spawned;
 		_SoundServImpl = soundServImp;
 	}
 
 	/// change this sound source parameters
 	virtual void setSoundParams(float gain,
-								const NLMISC::CVector &pos,
-								const NLMISC::CVector &velocity,
-								float pitch
-							  )
+	    const NLMISC::CVector &pos,
+	    const NLMISC::CVector &velocity,
+	    float pitch)
 	{
 		if (!_Source) return;
 		if (gain < 0) gain = 0;
@@ -86,7 +81,6 @@ public:
 		if (!_Source) return;
 		_Source->play();
 	}
-
 
 	virtual bool isPlaying(void) const
 	{
@@ -116,9 +110,8 @@ public:
 
 	virtual bool isLooping() const
 	{
-			return _Source ? _Source->getLooping() : false;
+		return _Source ? _Source->getLooping() : false;
 	}
-
 
 	/// release the sound source
 	virtual void release(void);
@@ -126,15 +119,9 @@ public:
 protected:
 	friend inline void SpawnedSourceEndedCallback(NLSOUND::USource *source, void *userParam);
 	NLSOUND::USource *_Source;
-	bool			 _Spawned;
-	CPSSoundServImpl   *_SoundServImpl;
+	bool _Spawned;
+	CPSSoundServImpl *_SoundServImpl;
 };
-
-
-
-
-
-
 
 /**
  * This class implements PS sound server. It warps the calls to NEL sound. Everything is in a .h file to avoid dependency
@@ -146,11 +133,12 @@ class CPSSoundServImpl : public UPSSoundServer
 {
 public:
 	/// construct this sound server; You must init it then
-	CPSSoundServImpl() : _AudioMixer(NULL)
+	CPSSoundServImpl()
+	    : _AudioMixer(NULL)
 	{
 	}
 
-	virtual ~CPSSoundServImpl() {}
+	virtual ~CPSSoundServImpl() { }
 
 	/// init this particle system sound server, using the given audio mixer
 	void init(NLSOUND::UAudioMixer *audioMixer)
@@ -158,11 +146,9 @@ public:
 		_AudioMixer = audioMixer;
 	}
 
-
 	/// get the audio mixer associated with that server
-	NLSOUND::UAudioMixer *getAudioMixer(void) { return _AudioMixer;}
-	const NLSOUND::UAudioMixer *getAudioMixer(void) const { return _AudioMixer;}
-
+	NLSOUND::UAudioMixer *getAudioMixer(void) { return _AudioMixer; }
+	const NLSOUND::UAudioMixer *getAudioMixer(void) const { return _AudioMixer; }
 
 	/// inherited from IPSSoundServer
 	UPSSoundInstance *createSound(const NLMISC::TStringId &soundName, bool spawned = true)
@@ -170,13 +156,13 @@ public:
 		if (!_AudioMixer)
 			return NULL;
 		CPSSoundInstanceImpl *sound = new CPSSoundInstanceImpl;
-		NLSOUND::USource *source = _AudioMixer->createSource(soundName, spawned, SpawnedSourceEndedCallback, sound );
+		NLSOUND::USource *source = _AudioMixer->createSource(soundName, spawned, SpawnedSourceEndedCallback, sound);
 		if (source)
 		{
 			/*
 			if (spawned)
 			{
-				source->setLooping(false);
+			    source->setLooping(false);
 			}
 			*/
 			sound->init(source, this, spawned);
@@ -191,23 +177,17 @@ public:
 	}
 
 protected:
-
-	NLSOUND::UAudioMixer  *_AudioMixer;
-
+	NLSOUND::UAudioMixer *_AudioMixer;
 };
-
 
 /// this callback is called when a spawned source has ended, so that we know that the pointer to it is invalid...
 inline void SpawnedSourceEndedCallback(NLSOUND::USource *source, void *userParam)
 {
-	nlassert(((CPSSoundInstanceImpl *) userParam)->_Source == source);
-	((CPSSoundInstanceImpl *) userParam)->_Source = NULL;
+	nlassert(((CPSSoundInstanceImpl *)userParam)->_Source == source);
+	((CPSSoundInstanceImpl *)userParam)->_Source = NULL;
 }
 
-
-
 } // NL3D
-
 
 #endif // NL_PS_SOUND_IMPL_H
 

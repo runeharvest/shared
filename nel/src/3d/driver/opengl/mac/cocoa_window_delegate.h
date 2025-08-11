@@ -32,14 +32,14 @@ using NL3D::CDriverGL;
 
 @interface CocoaWindowDelegate : NSObject
 #ifdef NL_MAC_VERSION_10_6_UP
-<NSWindowDelegate>
+                                 <NSWindowDelegate>
 #endif
 {
-	CDriverGL* _driver;
+	CDriverGL *_driver;
 }
 
-- (id)initWithDriver:(CDriverGL*)driver;
-- (void)windowDidMove:(NSNotification*)notification;
+- (id)initWithDriver:(CDriverGL *)driver;
+- (void)windowDidMove:(NSNotification *)notification;
 - (void)windowDidBecomeKey:(NSNotification *)notification;
 - (void)windowDidResignKey:(NSNotification *)notification;
 

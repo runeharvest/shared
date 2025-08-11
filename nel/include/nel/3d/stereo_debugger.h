@@ -6,7 +6,6 @@
  * CStereoDebugger
  */
 
-
 // NeL - MMORPG Framework <https://wiki.ryzom.dev/>
 // Copyright (C) 2013-2014  Jan BOON (Kaetemi) <jan.boon@kaetemi.be>
 //
@@ -60,7 +59,6 @@ public:
 	CStereoDebugger();
 	virtual ~CStereoDebugger();
 
-
 	/// Sets driver and generates necessary render targets
 	virtual void setDriver(NL3D::UDriver *driver);
 	/*void releaseTextures();
@@ -96,13 +94,13 @@ public:
 	virtual void getCurrentMatrix(uint cid, NL3D::UCamera *camera) const;
 
 	/// At the start of a new render target
-	virtual bool wantClear();		
+	virtual bool wantClear();
 	/// The 3D scene
 	virtual bool wantScene();
 	/// Scene post processing effects
 	virtual bool wantSceneEffects();
 	/// Interface within the 3D scene
-	virtual bool wantInterface3D();	
+	virtual bool wantInterface3D();
 	/// 2D Interface
 	virtual bool wantInterface2D();
 
@@ -115,7 +113,6 @@ public:
 	virtual bool beginRenderTarget();
 	/// Returns true if a render target was fully drawn, always false if not using render targets
 	virtual bool endRenderTarget();
-
 
 	static void listDevices(std::vector<CStereoDeviceInfo> &devicesOut);
 

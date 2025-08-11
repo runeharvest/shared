@@ -31,7 +31,6 @@ namespace NL3D {
 
 std::map<std::string, uint> CTextureGrouped::_NameToSize;
 
-
 ///=====================================================================================================
 /// This is used to get the size of a texture, with an optimisation in the case of texture files
 static inline void GetTextureSize(ITexture *tex, uint &width, uint &height)
@@ -84,13 +83,15 @@ static inline void GetTextureSize(ITexture *tex, uint &width, uint &height)
 }
 
 ///=====================================================================================================
-CTextureGrouped::CTextureGrouped() : _NbTex(0)
+CTextureGrouped::CTextureGrouped()
+    : _NbTex(0)
 {
 	setFilterMode(Linear, LinearMipMapOff);
 }
 
 ///=====================================================================================================
-CTextureGrouped::CTextureGrouped(const CTextureGrouped &src) : ITexture(src)
+CTextureGrouped::CTextureGrouped(const CTextureGrouped &src)
+    : ITexture(src)
 {
 	// copy the part associated with us;
 	duplicate(src);
@@ -102,7 +103,7 @@ void CTextureGrouped::duplicate(const CTextureGrouped &src)
 	_NbTex = src._NbTex;
 	TTexList texCopy(src._Textures.begin(), src._Textures.end());
 	_Textures.swap(texCopy);
-	TFourUVList	uvCopy(_TexUVs.begin(), _TexUVs.end());
+	TFourUVList uvCopy(_TexUVs.begin(), _TexUVs.end());
 	_TexUVs.swap(uvCopy);
 }
 
@@ -119,19 +120,17 @@ bool CTextureGrouped::areValid(CSmartPtr<ITexture> *textureTab, uint nbTex)
 {
 	bool result = true;
 	uint k;
-	for(k = 0; k < nbTex; ++k)
+	for (k = 0; k < nbTex; ++k)
 	{
 		textureTab[k]->generate();
 		if (textureTab[k]->getWidth() != textureTab[0]->getWidth()
-			|| textureTab[k]->getHeight() != textureTab[0]->getHeight()
-			|| textureTab[k]->getPixelFormat() != textureTab[0]->getPixelFormat()
-		   )
+		    || textureTab[k]->getHeight() != textureTab[0]->getHeight()
+		    || textureTab[k]->getPixelFormat() != textureTab[0]->getPixelFormat())
 		{
 			result = false;
 			break;
 		}
 	}
-
 
 	for (k = 0; k < nbTex; ++k)
 	{
@@ -145,7 +144,6 @@ void CTextureGrouped::setTextures(CSmartPtr<ITexture> *textureTab, uint nbTex, b
 {
 	nlassert(nbTex > 0);
 
-
 	if (checkValid)
 	{
 		if (!areValid(textureTab, nbTex))
@@ -157,7 +155,7 @@ void CTextureGrouped::setTextures(CSmartPtr<ITexture> *textureTab, uint nbTex, b
 	_Textures.resize(nbTex);
 	std::copy(textureTab, textureTab + nbTex, _Textures.begin());
 	_TexUVs.resize(nbTex);
-	for(uint k = 0; k < nbTex; ++k)
+	for (uint k = 0; k < nbTex; ++k)
 	{
 		// real uvs are generated during doGenerate
 		_TexUVs[k].uv0.set(0.f, 0.f);
@@ -186,16 +184,16 @@ void CTextureGrouped::doGenerate(bool async)
 		_Textures[0]->generate();
 		const uint width = _Textures[0]->getWidth(), height = _Textures[0]->getHeight();
 		const uint totalHeight = height * _NbTex;
-		const uint realHeight  = NLMISC::raiseToNextPowerOf2(totalHeight);
+		const uint realHeight = NLMISC::raiseToNextPowerOf2(totalHeight);
 		resize(width, realHeight, _Textures[0]->getPixelFormat());
 		uint k;
-		sint32 currY =  0;
-		for(k = 0; k < _NbTex; ++k)
+		sint32 currY = 0;
+		for (k = 0; k < _NbTex; ++k)
 		{
 			_Textures[k]->generate();
 			if (_Textures[k]->getWidth() != width
-				|| _Textures[k]->getHeight() != height
-				|| _Textures[k]->getPixelFormat() != _Textures[0]->getPixelFormat())
+			    || _Textures[k]->getHeight() != height
+			    || _Textures[k]->getPixelFormat() != _Textures[0]->getPixelFormat())
 			{
 				makeDummy();
 				break;
@@ -204,9 +202,9 @@ void CTextureGrouped::doGenerate(bool async)
 			currY += height;
 		}
 
-		for(k = 0; k < _NbTex; ++k)
+		for (k = 0; k < _NbTex; ++k)
 		{
-			if ( _Textures[k]->getReleasable())
+			if (_Textures[k]->getReleasable())
 			{
 				_Textures[k]->release();
 			}
@@ -235,7 +233,7 @@ void CTextureGrouped::forceGenUVs()
 		{
 			_TexUVs.resize(_NbTex);
 			// generate default uvs
-			for(uint k = 0; k < _NbTex; ++k)
+			for (uint k = 0; k < _NbTex; ++k)
 			{
 				TFourUV &uvs = _TexUVs[k];
 				uvs.uv0.set(0.f, 0.f);
@@ -255,13 +253,13 @@ void CTextureGrouped::genUVs(uint subBitmapHeight)
 	_TexUVs.resize(_NbTex);
 	//
 	const uint totalHeight = subBitmapHeight * _NbTex; // *it contains the height of bitmap
-	const uint realHeight  = NLMISC::raiseToNextPowerOf2(totalHeight);
+	const uint realHeight = NLMISC::raiseToNextPowerOf2(totalHeight);
 	// TODO : better ordering of sub-bitmaps
 	const float deltaV = realHeight ? (float(totalHeight) / float(realHeight)) * (1.0f / _NbTex)
-		: 0.f;
-	_DeltaUV = CUV(1,  deltaV);
+	                                : 0.f;
+	_DeltaUV = CUV(1, deltaV);
 	CUV currentUV(0, 0);
-	for(uint k = 0; k < _NbTex; ++k)
+	for (uint k = 0; k < _NbTex; ++k)
 	{
 		TFourUV &uvs = _TexUVs[k];
 		uvs.uv0 = currentUV;
@@ -277,17 +275,17 @@ void CTextureGrouped::getTextures(CSmartPtr<ITexture> *textureTab) const
 {
 	CSmartPtr<ITexture> *dest = textureTab;
 
-	for(TTexList::const_iterator it = _Textures.begin(); it != _Textures.end(); ++it, ++dest)
+	for (TTexList::const_iterator it = _Textures.begin(); it != _Textures.end(); ++it, ++dest)
 	{
 		*dest = *it;
 	}
 }
 
 ///=====================================================================================================
-bool	CTextureGrouped::supportSharing() const
+bool CTextureGrouped::supportSharing() const
 {
 	// all textures in this group must support sharing for this one to support it
-	for(TTexList::const_iterator it = _Textures.begin(); it != _Textures.end(); ++it)
+	for (TTexList::const_iterator it = _Textures.begin(); it != _Textures.end(); ++it)
 	{
 		if (!(*it)->supportSharing()) return false;
 	}
@@ -296,12 +294,12 @@ bool	CTextureGrouped::supportSharing() const
 }
 
 ///=====================================================================================================
-std::string		CTextureGrouped::getShareName() const
+std::string CTextureGrouped::getShareName() const
 {
 	nlassert(supportSharing());
 
 	std::string shareName("groupedTex:");
-	for(TTexList::const_iterator it = _Textures.begin(); it != _Textures.end(); ++it)
+	for (TTexList::const_iterator it = _Textures.begin(); it != _Textures.end(); ++it)
 	{
 		shareName += (*it)->getShareName() + std::string("|");
 	}
@@ -351,9 +349,9 @@ void CTextureGrouped::serial(NLMISC::IStream &f)
 void CTextureGrouped::release()
 {
 	ITexture::release();
-	for(uint k = 0; k < _NbTex; ++k)
+	for (uint k = 0; k < _NbTex; ++k)
 	{
-		if ( _Textures[k]->getReleasable())
+		if (_Textures[k]->getReleasable())
 		{
 			_Textures[k]->release();
 		}
@@ -361,20 +359,20 @@ void CTextureGrouped::release()
 }
 
 ///=====================================================================================================
-void CTextureGrouped::makeDummies(CSmartPtr<ITexture> *textureTab,uint nbTex)
+void CTextureGrouped::makeDummies(CSmartPtr<ITexture> *textureTab, uint nbTex)
 {
- 	for(uint k = 0; k < nbTex; ++k)
+	for (uint k = 0; k < nbTex; ++k)
 	{
 		textureTab[k] = new CTextureFile("DummyTex"); // well this shouldn't exist..
 	}
 }
 
 ///=====================================================================================================
-void CTextureGrouped::displayIncompatibleTextureWarning(CSmartPtr<ITexture> *textureTab,uint nbTex)
+void CTextureGrouped::displayIncompatibleTextureWarning(CSmartPtr<ITexture> *textureTab, uint nbTex)
 {
 	nlwarning("=======================================================");
-	nlwarning("CTextureGrouped : found incompatible textures, that differs by size or format :"	);
-	for(uint k = 0; k < nbTex; ++k)
+	nlwarning("CTextureGrouped : found incompatible textures, that differs by size or format :");
+	for (uint k = 0; k < nbTex; ++k)
 	{
 		if (textureTab[k])
 		{
@@ -387,6 +385,5 @@ void CTextureGrouped::displayIncompatibleTextureWarning(CSmartPtr<ITexture> *tex
 	}
 	nlwarning("=======================================================");
 }
-
 
 } // NL3D

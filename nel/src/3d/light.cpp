@@ -24,29 +24,28 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 
-void CLight::setupDirectional (const CRGBA& ambiant, const CRGBA& diffuse, const CRGBA& specular, const CVector& direction,
-							   float constant, float linear, float quadratic)
+void CLight::setupDirectional(const CRGBA &ambiant, const CRGBA &diffuse, const CRGBA &specular, const CVector &direction,
+    float constant, float linear, float quadratic)
 {
 	// Set the mode
-	setMode (DirectionalLight);
+	setMode(DirectionalLight);
 
 	// Set the colors
-	setAmbiant (ambiant);
-	setDiffuse (diffuse);
-	setSpecular (specular);
+	setAmbiant(ambiant);
+	setDiffuse(diffuse);
+	setSpecular(specular);
 
 	// Set the direction
-	setDirection (direction);
+	setDirection(direction);
 
 	// Set attenuation
-	setConstantAttenuation (constant);
-	setLinearAttenuation (linear);
-	setQuadraticAttenuation (quadratic);
+	setConstantAttenuation(constant);
+	setLinearAttenuation(linear);
+	setQuadraticAttenuation(quadratic);
 
 	// Dummy to avoid uninit data, and problems of cache
 	setPosition(CVector::Null);
@@ -56,25 +55,25 @@ void CLight::setupDirectional (const CRGBA& ambiant, const CRGBA& diffuse, const
 
 // ***************************************************************************
 
-void CLight::setupPointLight (const CRGBA& ambiant, const CRGBA& diffuse, const CRGBA& specular, const CVector& position,
-						const CVector& direction, float constant, float linear, float quadratic)
+void CLight::setupPointLight(const CRGBA &ambiant, const CRGBA &diffuse, const CRGBA &specular, const CVector &position,
+    const CVector &direction, float constant, float linear, float quadratic)
 {
 	// Set the mode
-	setMode (PointLight);
+	setMode(PointLight);
 
 	// Set the colors
-	setAmbiant (ambiant);
-	setDiffuse (diffuse);
-	setSpecular (specular);
+	setAmbiant(ambiant);
+	setDiffuse(diffuse);
+	setSpecular(specular);
 
 	// Set the position and direction
-	setPosition (position);
-	setDirection (direction);
+	setPosition(position);
+	setDirection(direction);
 
 	// Set attenuation
-	setConstantAttenuation (constant);
-	setLinearAttenuation (linear);
-	setQuadraticAttenuation (quadratic);
+	setConstantAttenuation(constant);
+	setLinearAttenuation(linear);
+	setQuadraticAttenuation(quadratic);
 
 	// Dummy to avoid uninit data, and problems of cache
 	setExponent(0.f);
@@ -83,91 +82,91 @@ void CLight::setupPointLight (const CRGBA& ambiant, const CRGBA& diffuse, const 
 
 // ***************************************************************************
 
-void CLight::setupSpotLight (const CRGBA& ambiant, const CRGBA& diffuse, const CRGBA& specular, const CVector& position,
-						const CVector& direction, float exponent, float cutoff, float constant, float linear, float quadratic)
+void CLight::setupSpotLight(const CRGBA &ambiant, const CRGBA &diffuse, const CRGBA &specular, const CVector &position,
+    const CVector &direction, float exponent, float cutoff, float constant, float linear, float quadratic)
 {
 	// Set the mode
-	setMode (SpotLight);
+	setMode(SpotLight);
 
 	// Set the colors
-	setAmbiant (ambiant);
-	setDiffuse (diffuse);
-	setSpecular (specular);
+	setAmbiant(ambiant);
+	setDiffuse(diffuse);
+	setSpecular(specular);
 
 	// Set the position and direction
-	setPosition (position);
-	setDirection (direction);
+	setPosition(position);
+	setDirection(direction);
 
 	// Set spotlight parameters
-	setExponent (exponent);
-	setCutoff (cutoff);
+	setExponent(exponent);
+	setCutoff(cutoff);
 
 	// Set attenuation
-	setConstantAttenuation (constant);
-	setLinearAttenuation (linear);
-	setQuadraticAttenuation (quadratic);
+	setConstantAttenuation(constant);
+	setLinearAttenuation(linear);
+	setQuadraticAttenuation(quadratic);
 }
 
 // ***************************************************************************
-void CLight::setupAttenuation (float farAttenuationBegin, float farAttenuationEnd)
+void CLight::setupAttenuation(float farAttenuationBegin, float farAttenuationEnd)
 {
 	/* Yoyo: I changed this method because it did not work well for me
-		The most important in a light is its farAttenuationEnd (anything beyond should not be lighted)
-		The old compute had too smooth decrease, regarding this (at farAttenuationEnd, the light could be
-		attenuated by a factor of 0.7 (instead of 0) and slowly decreased).
+	    The most important in a light is its farAttenuationEnd (anything beyond should not be lighted)
+	    The old compute had too smooth decrease, regarding this (at farAttenuationEnd, the light could be
+	    attenuated by a factor of 0.7 (instead of 0) and slowly decreased).
 	*/
 
 	// limit case
-	if(farAttenuationEnd<=0)
+	if (farAttenuationEnd <= 0)
 	{
-		_ConstantAttenuation= 1000000;
-		_LinearAttenuation= 0;
-		_QuadraticAttenuation= 0;
+		_ConstantAttenuation = 1000000;
+		_LinearAttenuation = 0;
+		_QuadraticAttenuation = 0;
 	}
 	else
 	{
 		// The following factors are "it feels good for farAttenuationBegin=0/farAttenuationEnd=1" factors.
 		// btw, at r=farAttenuationEnd=1, att= 1/11 ~= 0.
-		const float	constant= 1.0f;
-		const float	linear= 0.f;
-		const float	quadratic= 10.0f;
+		const float constant = 1.0f;
+		const float linear = 0.f;
+		const float quadratic = 10.0f;
 
 		/*
-			With GL/D3D   'att=1/(c+l*r+q*r2)'  formula, I think it is impossible to simulate correctly
-			farAttenuationBegin (very big decrase if for instance farAttenuationBegin is near farAttenuationEnd),
-			hence I simulate it very badly by multiplying the farAttenuationEnd by some factor
+		    With GL/D3D   'att=1/(c+l*r+q*r2)'  formula, I think it is impossible to simulate correctly
+		    farAttenuationBegin (very big decrase if for instance farAttenuationBegin is near farAttenuationEnd),
+		    hence I simulate it very badly by multiplying the farAttenuationEnd by some factor
 		*/
-		float	factor= 1.f;
-		if(farAttenuationBegin/farAttenuationEnd>0.5f)
-			factor= 2.f;
-		else if(farAttenuationBegin>0)
-			factor= 1.f + 2*farAttenuationBegin/farAttenuationEnd;
-		farAttenuationEnd*= factor;
+		float factor = 1.f;
+		if (farAttenuationBegin / farAttenuationEnd > 0.5f)
+			factor = 2.f;
+		else if (farAttenuationBegin > 0)
+			factor = 1.f + 2 * farAttenuationBegin / farAttenuationEnd;
+		farAttenuationEnd *= factor;
 
 		// scale according to farAttenuationEnd.
-		_ConstantAttenuation= constant;
-		_LinearAttenuation= linear/farAttenuationEnd;
-		_QuadraticAttenuation= quadratic/sqr(farAttenuationEnd);
+		_ConstantAttenuation = constant;
+		_LinearAttenuation = linear / farAttenuationEnd;
+		_QuadraticAttenuation = quadratic / sqr(farAttenuationEnd);
 	}
 }
 
 // ***************************************************************************
 
-void CLight::setupSpotExponent (float hotSpotAngle)
+void CLight::setupSpotExponent(float hotSpotAngle)
 {
-	float divid=(float)log (cos (hotSpotAngle));
-	if (divid==0.f)
-		divid=0.0001f;
-	setExponent ((float)(log (0.9)/divid));
+	float divid = (float)log(cos(hotSpotAngle));
+	if (divid == 0.f)
+		divid = 0.0001f;
+	setExponent((float)(log(0.9) / divid));
 }
 
 // ***************************************************************************
 
-void CLight::setNoAttenuation ()
+void CLight::setNoAttenuation()
 {
-	_ConstantAttenuation=1.f;
-	_QuadraticAttenuation=0.f;
-	_LinearAttenuation=0.f;
+	_ConstantAttenuation = 1.f;
+	_QuadraticAttenuation = 0.f;
+	_LinearAttenuation = 0.f;
 }
 
 // ***************************************************************************

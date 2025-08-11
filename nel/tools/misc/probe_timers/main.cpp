@@ -23,7 +23,7 @@
 
 using namespace NLMISC;
 
-int main (int argc, char **argv)
+int main(int argc, char **argv)
 {
 	for (uint i = 0; i < 8; ++i)
 	{
@@ -31,8 +31,8 @@ int main (int argc, char **argv)
 		CTime::probeTimerInfo(timerInfo);
 	}
 
-	printf ("\nPress <return> to exit\n");
-	getchar ();
+	printf("\nPress <return> to exit\n");
+	getchar();
 
 	return EXIT_SUCCESS;
 }

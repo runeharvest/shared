@@ -19,16 +19,11 @@
 
 #include "nel/misc/types_nl.h"
 
-
-namespace NLMISC
-{
-	class	CBitmap;
+namespace NLMISC {
+class CBitmap;
 }
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 /**
@@ -40,55 +35,53 @@ namespace NL3D
 class CFastHLSModifier
 {
 public:
-
 	/// get the singleton
-	static CFastHLSModifier	&getInstance();
+	static CFastHLSModifier &getInstance();
 
 	// release singleton
 	static void releaseInstance();
 
 	/// convert a HLS (0..255) to a RGBA.
-	NLMISC::CRGBA		convert(uint H, uint L, uint S);
+	NLMISC::CRGBA convert(uint H, uint L, uint S);
 
 	/// convert a RGBA bitmap into another RGBA, with HLS decal (0..255, -255..+255, -255..+255).
-	void		convertRGBABitmap(NLMISC::CBitmap &dst, const NLMISC::CBitmap &src, uint8 dh, sint dl, sint ds);
+	void convertRGBABitmap(NLMISC::CBitmap &dst, const NLMISC::CBitmap &src, uint8 dh, sint dl, sint ds);
 
 	/// convert a DDS bitmap into another DDS, with HLS decal (0..255, -255..+255, -255..+255).
-	void		convertDDSBitmap(NLMISC::CBitmap &dst, const NLMISC::CBitmap &src, uint8 dh, sint dl, sint ds);
+	void convertDDSBitmap(NLMISC::CBitmap &dst, const NLMISC::CBitmap &src, uint8 dh, sint dl, sint ds);
 
 	/** convert a uint16 color into the uint16 with HLS decal.
 	 *	WARNING: this code use MMX when possible, but doesn't call emms!!! It is User job to do it.
 	 *	dLum must be actually 0xFFFFFF00 + realDLum (where realDLum== -255..+255)
 	 *	dSat must be actually 0xFFFFFF00 + realDSat (where realDSat== -255..+255)
 	 */
-	uint16		applyHLSMod(uint16 colorIn, uint8 dHue, uint dLum, uint dSat);
+	uint16 applyHLSMod(uint16 colorIn, uint8 dHue, uint dLum, uint dSat);
 
-
-// ****************
+	// ****************
 private:
+	static CFastHLSModifier *_Instance;
 
-	static	CFastHLSModifier	*_Instance;
-
-	enum	{HueTableSize= 256};
-	struct	CHLSA
+	enum
 	{
-		uint8	H,L,S,A;
+		HueTableSize = 256
+	};
+	struct CHLSA
+	{
+		uint8 H, L, S, A;
 	};
 
-	NLMISC::CRGBA		_HueTable[HueTableSize];
-	CHLSA		_Color16ToHLS[65536];
+	NLMISC::CRGBA _HueTable[HueTableSize];
+	CHLSA _Color16ToHLS[65536];
 
 	/// Constructor
 	CFastHLSModifier();
 	~CFastHLSModifier();
 
-	void		convertDDSBitmapDXTC1Or1A(NLMISC::CBitmap &dst, const NLMISC::CBitmap &src, uint8 dh, uint dLum, uint dSat);
-	void		convertDDSBitmapDXTC3Or5(NLMISC::CBitmap &dst, const NLMISC::CBitmap &src, uint8 dh, uint dLum, uint dSat);
+	void convertDDSBitmapDXTC1Or1A(NLMISC::CBitmap &dst, const NLMISC::CBitmap &src, uint8 dh, uint dLum, uint dSat);
+	void convertDDSBitmapDXTC3Or5(NLMISC::CBitmap &dst, const NLMISC::CBitmap &src, uint8 dh, uint dLum, uint dSat);
 };
 
-
 } // NL3D
-
 
 #endif // NL_FASTHLS_MODIFIER_H
 

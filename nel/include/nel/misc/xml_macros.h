@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef XML_MACROS_H
 #define XML_MACROS_H
 
@@ -27,48 +25,52 @@
 // XML_READ_SINT(cur, "prop_name", i, -1);
 //
 
-#define XML_READ_UINT(node, name, var, def) { \
-	uint tmp; \
-	prop = (char *) xmlGetProp(node, (xmlChar*)name); \
-	if (prop && fromString((const char*)prop, tmp)) \
-		var = tmp; \
-	else \
-		var = def; \
-}
+#define XML_READ_UINT(node, name, var, def)               \
+	{                                                     \
+		uint tmp;                                         \
+		prop = (char *)xmlGetProp(node, (xmlChar *)name); \
+		if (prop && fromString((const char *)prop, tmp))  \
+			var = tmp;                                    \
+		else                                              \
+			var = def;                                    \
+	}
 
-#define XML_READ_SINT(node, name, var, def) { \
-	sint tmp; \
-	prop = (char *) xmlGetProp(node, (xmlChar*)name); \
-	if (prop && fromString((const char*)prop, tmp)) \
-		var = tmp; \
-	else \
-		var = def; \
-}
+#define XML_READ_SINT(node, name, var, def)               \
+	{                                                     \
+		sint tmp;                                         \
+		prop = (char *)xmlGetProp(node, (xmlChar *)name); \
+		if (prop && fromString((const char *)prop, tmp))  \
+			var = tmp;                                    \
+		else                                              \
+			var = def;                                    \
+	}
 
-#define XML_READ_BOOL(node, name, var, def) { \
-	prop = (char *) xmlGetProp(node, (xmlChar*)name); \
-	if (prop) \
-		var = NLMISC::toBool((const char*)prop); \
-	else \
-		var = def; \
-}
+#define XML_READ_BOOL(node, name, var, def)               \
+	{                                                     \
+		prop = (char *)xmlGetProp(node, (xmlChar *)name); \
+		if (prop)                                         \
+			var = NLMISC::toBool((const char *)prop);     \
+		else                                              \
+			var = def;                                    \
+	}
 
-#define XML_READ_COLOR(node, name, var, def) { \
-	NLMISC::CRGBA tmp; \
-	prop = (char *) xmlGetProp(node, (xmlChar*)name); \
-	if (prop && fromString((const char*)prop, tmp)) \
-		var = tmp; \
-	else \
-		var = def; \
-}
+#define XML_READ_COLOR(node, name, var, def)              \
+	{                                                     \
+		NLMISC::CRGBA tmp;                                \
+		prop = (char *)xmlGetProp(node, (xmlChar *)name); \
+		if (prop && fromString((const char *)prop, tmp))  \
+			var = tmp;                                    \
+		else                                              \
+			var = def;                                    \
+	}
 
-#define XML_READ_STRING(node, name, var, def) { \
-	prop = (char *) xmlGetProp(node, (xmlChar*)name); \
-	if (prop) \
-		var = (const char*)prop; \
-	else \
-		var = def; \
-}
+#define XML_READ_STRING(node, name, var, def)             \
+	{                                                     \
+		prop = (char *)xmlGetProp(node, (xmlChar *)name); \
+		if (prop)                                         \
+			var = (const char *)prop;                     \
+		else                                              \
+			var = def;                                    \
+	}
 
 #endif // XML_MACROS_H
-

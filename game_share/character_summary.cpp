@@ -20,25 +20,22 @@
 void CCharacterSummary::serial(NLMISC::IStream &f)
 {
 	f.serialVersion(0);
-	f.serial		(Mainland);
-	f.serial		(Name);
-	f.serialEnum	(People);
-	f.serial		(Location);
-	f.serial		(VisualPropA);
-	f.serial		(VisualPropB);
-	f.serial		(VisualPropC);
-	f.serial		(SheetId);
-	f.serialEnum	(Title);
-	f.serial		(CharacterSlot);
-	f.serial		(InRingSession);
-	f.serial		(HasEditSession);
+	f.serial(Mainland);
+	f.serial(Name);
+	f.serialEnum(People);
+	f.serial(Location);
+	f.serial(VisualPropA);
+	f.serial(VisualPropB);
+	f.serial(VisualPropC);
+	f.serial(SheetId);
+	f.serialEnum(Title);
+	f.serial(CharacterSlot);
+	f.serial(InRingSession);
+	f.serial(HasEditSession);
 
 	static volatile bool serialNB = true; // TMP TMP, for test
 	if (serialNB)
 	{
-		f.serial		(InNewbieland);
+		f.serial(InNewbieland);
 	}
 }
-
-
-

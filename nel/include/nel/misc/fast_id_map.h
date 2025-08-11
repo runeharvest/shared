@@ -41,20 +41,24 @@ namespace NLMISC {
  * \author Jan Boon (Kaetemi)
  * This template allows for assigning unique uint32 identifiers to pointers.
  * Useful when externally only exposing an identifier, when pointers may have been deleted.
- * The identifier is made from two uint16's, one being the direct index in the identifier vector, 
+ * The identifier is made from two uint16's, one being the direct index in the identifier vector,
  * and the other being a verification value that is increased when the identifier index is re-used.
  * TId must be a typedef of uint32.
  * TValue should be a pointer.
  */
-template<typename TId, class TValue>
+template <typename TId, class TValue>
 class CFastIdMap
 {
 protected:
 	struct CIdInfo
 	{
 		CIdInfo() { }
-		CIdInfo(uint16 verification, uint16 next, TValue value) : 
-			Verification(verification), Next(next), Value(value) { }
+		CIdInfo(uint16 verification, uint16 next, TValue value)
+		    : Verification(verification)
+		    , Next(next)
+		    , Value(value)
+		{
+		}
 		uint16 Verification;
 		uint16 Next;
 		TValue Value;
@@ -67,7 +71,9 @@ protected:
 	uint16 m_Next;
 
 public:
-	CFastIdMap(TValue defaultValue) : m_Size(0), m_Next(0)
+	CFastIdMap(TValue defaultValue)
+	    : m_Size(0)
+	    , m_Next(0)
 	{
 		// Id 0 will contain the last available unused id, and be 0 if no more unused id's are available
 		// defaultValue will be returned when the ID is not found
@@ -90,7 +96,7 @@ public:
 		{
 			// size of used elements must be equal to the vector size minus one, when everything is allocated
 			nlassert((m_Ids.size() - 1) == m_Size);
-			
+
 			idx = (uint16)m_Ids.size();
 			uint16 verification = rand();
 			m_Ids.push_back(CIdInfo(verification, m_Next, value));

@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef RCERROR_SOCKET
 #define RCERROR_SOCKET
 
@@ -30,21 +29,21 @@ class CCrashReportSocket : public QObject
 {
 	Q_OBJECT
 
-public:	
-	CCrashReportSocket( QObject *parent );
+public:
+	CCrashReportSocket(QObject *parent);
 	~CCrashReportSocket();
 
-	void setURL( const char *URL ){ m_url = URL; }
-	QString url() const{ return m_url; }
+	void setURL(const char *URL) { m_url = URL; }
+	QString url() const { return m_url; }
 
-	void sendReport( const SCrashReportData &data );
+	void sendReport(const SCrashReportData &data);
 
 Q_SIGNALS:
 	void reportSent();
 	void reportFailed();
 
 private Q_SLOTS:
-	void onFinished( QNetworkReply *reply );
+	void onFinished(QNetworkReply *reply);
 
 private:
 	CCrashReportSocketPvt *m_pvt;
@@ -52,4 +51,3 @@ private:
 };
 
 #endif
-

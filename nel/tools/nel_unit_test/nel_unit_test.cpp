@@ -24,7 +24,7 @@
 using namespace std;
 
 #ifdef NL_OS_WINDOWS
-#	define NEL_UNIT_DATA ""
+#define NEL_UNIT_DATA ""
 #endif
 
 #include "ut_misc.h"
@@ -46,7 +46,7 @@ class CDebugOutput : public streambuf
 
 		if (c != traits_type::eof())
 			str += c;
-		OutputDebugString(str.c_str() );
+		OutputDebugString(str.c_str());
 
 		return c;
 	}
@@ -59,26 +59,26 @@ ostream msvDebug(new CDebugOutput);
 static void usage()
 {
 	cout << "usage: mytest [MODE]\n"
-		 << "where MODE may be one of:\n"
-		 << "  --compiler\n"
-		 << "  --html\n"
-		 << "  --text-terse (default)\n"
-		 << "  --text-verbose\n";
+	     << "where MODE may be one of:\n"
+	     << "  --compiler\n"
+	     << "  --html\n"
+	     << "  --text-terse (default)\n"
+	     << "  --text-verbose\n";
 	exit(0);
 }
 
-static CUniquePtr<Test::Output> cmdline(int argc, char* argv[])
+static CUniquePtr<Test::Output> cmdline(int argc, char *argv[])
 {
 	if (argc > 2)
 		usage(); // will not return
-	
-	Test::Output* output = 0;
-	
+
+	Test::Output *output = 0;
+
 	if (argc == 1)
 		output = new Test::TextOutput(Test::TextOutput::Verbose);
 	else
 	{
-		const char* arg = argv[1];
+		const char *arg = argv[1];
 		if (strcmp(arg, "--compiler") == 0)
 		{
 #ifdef _MSC_VER
@@ -90,7 +90,7 @@ static CUniquePtr<Test::Output> cmdline(int argc, char* argv[])
 #endif
 		}
 		else if (strcmp(arg, "--html") == 0)
-			output =  new Test::HtmlOutput;
+			output = new Test::HtmlOutput;
 		else if (strcmp(arg, "--text-terse") == 0)
 			output = new Test::TextOutput(Test::TextOutput::Terse);
 		else if (strcmp(arg, "--text-verbose") == 0)
@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
 		CUniquePtr<Test::Output> output(cmdline(argc, argv));
 		noerrors = ts.run(*output);
 
-		Test::HtmlOutput* const html = dynamic_cast<Test::HtmlOutput*>(output.get());
+		Test::HtmlOutput *const html = dynamic_cast<Test::HtmlOutput *>(output.get());
 		if (html)
 		{
 			std::ofstream fout(outputFileName);
@@ -154,9 +154,9 @@ int main(int argc, char *argv[])
 		cout << "unexpected exception encountered";
 		return EXIT_FAILURE;
 	}
-	if(noerrors)
+	if (noerrors)
 		nlinfo("No errors during unit testing");
 	else
 		nlwarning("Errors during unit testing");
-	return noerrors?EXIT_SUCCESS:EXIT_FAILURE;
+	return noerrors ? EXIT_SUCCESS : EXIT_FAILURE;
 }

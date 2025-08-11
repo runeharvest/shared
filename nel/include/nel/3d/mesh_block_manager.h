@@ -21,15 +21,12 @@
 #include "nel/3d/mesh_geom.h"
 #include "nel/3d/vertex_buffer_heap.h"
 
+namespace NL3D {
 
-namespace NL3D
-{
-
-
-class	CMeshBaseInstance;
-class	IDriver;
-class	CScene;
-class	CRenderTrav;
+class CMeshBaseInstance;
+class IDriver;
+class CScene;
+class CRenderTrav;
 
 // ***************************************************************************
 /**
@@ -47,7 +44,6 @@ class	CRenderTrav;
 class CMeshBlockManager
 {
 public:
-
 	/// Constructor
 	CMeshBlockManager();
 	~CMeshBlockManager();
@@ -55,84 +51,80 @@ public:
 	/** Add an instance of a MeshGeom to render. Only CMeshBaseInstance can be added.
 	 *	For now, only CMeshGeom and CMeshMRMGeom are known to work.
 	 */
-	void			addInstance(IMeshGeom *meshGeom, CMeshBaseInstance *inst, float polygonCount);
+	void addInstance(IMeshGeom *meshGeom, CMeshBaseInstance *inst, float polygonCount);
 
 	/** Flush the manager and effectively render.
 	 */
-	void			flush(IDriver *drv, CScene *scene, CRenderTrav *renderTrav);
-
+	void flush(IDriver *drv, CScene *scene, CRenderTrav *renderTrav);
 
 	/// \name VBHeap part.
 	// @{
 
 	/// release all Heaps => clear memory of meshs registered.
-	void			releaseVBHeaps();
+	void releaseVBHeaps();
 
 	/** Add a Heap for a given vertexFormat. Any meshGeom added with addInstance() which has this vertex Format
 	 *	may fit in this heap.
 	 *	return false and fail if the heap can't be allocated or if the heap with same vertexFormat still exist.
 	 */
-	bool			addVBHeap(IDriver *drv, uint vertexFormat, uint maxVertices);
+	bool addVBHeap(IDriver *drv, uint vertexFormat, uint maxVertices);
 
 	/// Called by ~IMeshGeom()
-	void			freeMeshVBHeap(IMeshGeom *mesh);
+	void freeMeshVBHeap(IMeshGeom *mesh);
 
 	// @}
 
-// ************************
+	// ************************
 private:
-
 	// An instance information.
-	struct	CInstanceInfo
+	struct CInstanceInfo
 	{
-		IMeshGeom			*MeshGeom;
-		CMeshBaseInstance	*MBI;
-		float				PolygonCount;
+		IMeshGeom *MeshGeom;
+		CMeshBaseInstance *MBI;
+		float PolygonCount;
 		// Next instance to render in the list. -1 if end of list.
-		sint32				NextInstance;
+		sint32 NextInstance;
 	};
 
 	// A VBHeap information.
-	struct	CVBHeapBlock
+	struct CVBHeapBlock
 	{
 		/// List of instances. small realloc are performed, since same vector used each frame.
-		std::vector<CInstanceInfo>	RdrInstances;
+		std::vector<CInstanceInfo> RdrInstances;
 
 		/// List of MeshGeom. small realloc are performed, since same vector used each frame.
-		std::vector<IMeshGeom*>		RdrMeshGeoms;
+		std::vector<IMeshGeom *> RdrMeshGeoms;
 
-#if 0		// todo hulud remove / restore VBHeap
+#if 0 // todo hulud remove / restore VBHeap
 		/// The actual VertexBufferHeap
 		CVertexBufferHeap			VBHeap;
-#endif		// todo hulud remove / restore VBHeap
+#endif // todo hulud remove / restore VBHeap
 		/// List of MeshGeom to clear VBHeap info.
-		std::vector<IMeshGeom*>		AllocatedMeshGeoms;
+		std::vector<IMeshGeom *> AllocatedMeshGeoms;
 		/// List of Id free in AllocatedMeshGeoms
-		std::vector<uint>			FreeIds;
+		std::vector<uint> FreeIds;
 	};
 
 	/// Heap Map from vertexFormat to VBHeap Id. NB: do not contains 0th.
-	typedef	std::map<uint, uint>	TVBHeapMap;
-	TVBHeapMap						_VBHeapMap;
+	typedef std::map<uint, uint> TVBHeapMap;
+	TVBHeapMap _VBHeapMap;
 
 	/** List of Heaps.
 	 *	NB: 0th heap is special: contains all meshs which can't fit in any VBHeap.
 	 */
-	std::vector<CVBHeapBlock*>		_VBHeapBlocks;
+	std::vector<CVBHeapBlock *> _VBHeapBlocks;
 
 	/// Try to allocate a MeshGeom into a specific Heap.
-	void			allocateMeshVBHeap(IMeshGeom *mesh);
+	void allocateMeshVBHeap(IMeshGeom *mesh);
 
 	// render all instance of this meshGeoms, sorting by material, VP etc....
-	void			render(CVBHeapBlock	*hb, IMeshGeom *meshGeom, std::vector<CInstanceInfo>	&rdrInstances);
+	void render(CVBHeapBlock *hb, IMeshGeom *meshGeom, std::vector<CInstanceInfo> &rdrInstances);
 
 	// current flush setup
-	CMeshGeomRenderContext		_RenderCtx;
+	CMeshGeomRenderContext _RenderCtx;
 };
 
-
 } // NL3D
-
 
 #endif // NL_MESH_BLOCK_MANAGER_H
 

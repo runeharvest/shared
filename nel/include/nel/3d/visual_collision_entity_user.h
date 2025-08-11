@@ -22,10 +22,7 @@
 #include "nel/3d/visual_collision_entity.h"
 #include "nel/3d/visual_collision_manager.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 /**
  * UVisualCollisionEntity implementation.
@@ -36,12 +33,11 @@ namespace NL3D
 class CVisualCollisionEntityUser : public UVisualCollisionEntity
 {
 public:
-
 	/// Constructor. create entity.
 	CVisualCollisionEntityUser(CVisualCollisionManager *manager)
 	{
-		_Manager= manager;
-		_Entity= _Manager->createEntity();
+		_Manager = manager;
+		_Entity = _Manager->createEntity();
 	}
 	/// dtor, delete the entity.
 	~CVisualCollisionEntityUser()
@@ -49,39 +45,30 @@ public:
 		_Manager->deleteEntity(_Entity);
 	}
 
+	virtual bool snapToGround(CVector &pos);
+	virtual bool snapToGround(CVector &pos, CVector &normal);
 
-	virtual bool	snapToGround(CVector &pos);
-	virtual bool	snapToGround(CVector &pos, CVector &normal);
+	virtual void setGroundMode(bool groundMode);
+	virtual void setCeilMode(bool ceilMode);
+	virtual bool getGroundMode() const;
+	virtual bool getCeilMode() const;
 
+	virtual void setSnapToRenderedTesselation(bool snapMode);
+	virtual bool getSnapToRenderedTesselation() const;
 
+	virtual bool getSurfaceInfo(const CVector &pos, CSurfaceInfo &surfaceInfo);
 
-	virtual void	setGroundMode(bool groundMode);
-	virtual void	setCeilMode(bool ceilMode);
-	virtual bool	getGroundMode() const;
-	virtual bool	getCeilMode() const;
+	virtual bool getStaticLightSetup(NLMISC::CRGBA sunAmbient, const CVector &pos, std::vector<CPointLightInfluence> &pointLightList,
+	    uint8 &sunContribution, NLMISC::CRGBA &localAmbient);
 
-
-	virtual void	setSnapToRenderedTesselation(bool snapMode);
-	virtual bool	getSnapToRenderedTesselation() const;
-
-	virtual bool	getSurfaceInfo(const CVector &pos, CSurfaceInfo &surfaceInfo);
-
-	virtual bool	getStaticLightSetup(NLMISC::CRGBA sunAmbient, const CVector &pos, std::vector<CPointLightInfluence> &pointLightList,
-		uint8 &sunContribution, NLMISC::CRGBA &localAmbient);
-
-
-	virtual void	displayDebugGrid(UDriver &drv) const;
-
+	virtual void displayDebugGrid(UDriver &drv) const;
 
 private:
-	CVisualCollisionManager		*_Manager;
-	CVisualCollisionEntity		*_Entity;
-
+	CVisualCollisionManager *_Manager;
+	CVisualCollisionEntity *_Entity;
 };
 
-
 } // NL3D
-
 
 #endif // NL_VISUAL_COLLISION_ENTITY_USER_H
 

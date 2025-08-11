@@ -23,10 +23,10 @@
 #include "nel/sound/driver/source.h"
 
 namespace NLSOUND {
-	class IBuffer;
-	class CBufferAL;
-	class CSoundDriverAL;
-	class CEffectAL;
+class IBuffer;
+class CBufferAL;
+class CSoundDriverAL;
+class CEffectAL;
 
 /**
  * OpenAL sound source
@@ -53,11 +53,11 @@ private:
 	/// Assigned buffer object
 	CBufferAL *_Buffer;
 	std::queue<CBufferAL *> _QueuedBuffers;
-	
+
 	/// AL Handles
 	ALuint _Source;
 	ALuint _DirectFilter, _EffectFilter;
-	
+
 	/// Playing status
 	bool _IsPlaying;
 	bool _IsPaused;
@@ -73,7 +73,7 @@ private:
 	float _MinDistance;
 	/// Maximum distance of sound.
 	float _MaxDistance;
-	
+
 	/// Send paths
 	CEffectAL *_Effect;
 	bool _Direct;
@@ -83,19 +83,19 @@ private:
 	TFilter _DirectFilterType, _EffectFilterType;
 	bool _DirectFilterEnabled, _EffectFilterEnabled;
 	float _DirectFilterPassGain, _EffectFilterPassGain;
-	
-public:	
+
+public:
 	/// Constructor
 	CSourceAL(CSoundDriverAL *soundDriver);
 	/// Destructor
-	virtual	~CSourceAL();
+	virtual ~CSourceAL();
 
 	/// Release called by the driver to release internal AL handles.
 	void release();
-	
+
 	/// Return the OpenAL source name
 	inline ALuint getSource() const { return _Source; }
-	
+
 	/// (Internal) Set the effect send for this source, NULL to disable.
 	void setEffect(CEffectAL *effect);
 	/// (Internal) Setup the direct send filter.
@@ -104,7 +104,7 @@ public:
 	void setupEffectFilter();
 	/// (Internal) Update the manual rolloff, only called when using manual rolloff.
 	void updateManualRolloff();
-	
+
 	/// \name Initialization
 	//@{
 	/// Enable or disable streaming mode. Source must be stopped to call this.
@@ -122,14 +122,14 @@ public:
 	/// Return the amount of buffers in the queue (playing and waiting). 3 buffers is optimal.
 	virtual uint countStreamingBuffers() const;
 	//@}
-	
+
 	/// \name Playback control
 	//@{
 	/// Set looping on/off for future playbacks (default: off), not available for streaming
 	virtual void setLooping(bool l);
 	/// Return the looping state
 	virtual bool getLooping() const;
-	
+
 	/** Play the static buffer (or stream in and play).
 	 *	This method can return false if the sample for this sound is unloaded.
 	 */
@@ -147,26 +147,26 @@ public:
 	/// Returns the number of milliseconds the source has been playing
 	virtual uint32 getTime();
 	//@}
-	
+
 	/// \name Source properties
 	//@{
 	/** Set the position vector (default: (0,0,0)).
 	 * 3D mode -> 3D position
 	 * st mode -> x is the pan value (from left (-1) to right (1)), set y and z to 0
 	 */
-	virtual void setPos(const NLMISC::CVector& pos, bool deffered = true);
+	virtual void setPos(const NLMISC::CVector &pos, bool deffered = true);
 	/** Get the position vector.
 	 * See setPos() for details.
 	 */
 	virtual const NLMISC::CVector &getPos() const;
 	/// Set the velocity vector (3D mode only, ignored in stereo mode) (default: (0,0,0))
-	virtual void setVelocity(const NLMISC::CVector& vel, bool deferred = true);
+	virtual void setVelocity(const NLMISC::CVector &vel, bool deferred = true);
 	/// Get the velocity vector
-	virtual void getVelocity(NLMISC::CVector& vel) const;
+	virtual void getVelocity(NLMISC::CVector &vel) const;
 	/// Set the direction vector (3D mode only, ignored in stereo mode) (default: (0,0,0) as non-directional)
-	virtual void setDirection(const NLMISC::CVector& dir);
+	virtual void setDirection(const NLMISC::CVector &dir);
 	/// Get the direction vector
-	virtual void getDirection(NLMISC::CVector& dir) const;
+	virtual void getDirection(NLMISC::CVector &dir) const;
 	/** Set the gain (volume value inside [0 , 1]). (default: 1)
 	 * 0.0 -> silence
 	 * 0.5 -> -6dB
@@ -189,11 +189,11 @@ public:
 	/// Set the min and max distances (default: 1, MAX_FLOAT) (3D mode only)
 	virtual void setMinMaxDistances(float mindist, float maxdist, bool deferred = true);
 	/// Get the min and max distances
-	virtual void getMinMaxDistances(float& mindist, float& maxdist) const;
+	virtual void getMinMaxDistances(float &mindist, float &maxdist) const;
 	/// Set the cone angles (in radian) and gain (in [0 , 1]) (default: 2PI, 2PI, 0)
 	virtual void setCone(float innerAngle, float outerAngle, float outerGain);
 	/// Get the cone angles (in radian)
-	virtual void getCone(float& innerAngle, float& outerAngle, float& outerGain) const;
+	virtual void getCone(float &innerAngle, float &outerAngle, float &outerGain) const;
 	/** Set the alpha value for the volume-distance curve
 	 *
 	 *	Useful only with OptionManualRolloff. value from -1 to 1 (default 0)
@@ -209,7 +209,7 @@ public:
 	 */
 	virtual void setAlpha(double a);
 	//@}
-	
+
 	/// \name Direct output
 	//@{
 	/// Enable or disable direct output [true/false], default: true
@@ -220,7 +220,7 @@ public:
 	virtual void setDirectGain(float gain);
 	/// Get the gain for the direct path
 	virtual float getDirectGain() const;
-	
+
 	/// Enable or disable the filter for the direct channel
 	virtual void enableDirectFilter(bool enable = true);
 	/// Check if the filter on the direct channel is enabled
@@ -234,7 +234,7 @@ public:
 	/// Get the direct filter gain
 	virtual float getDirectFilterPassGain() const;
 	//@}
-	
+
 	/// \name Effect output
 	//@{
 	/// Set the effect send for this source, NULL to disable. [IEffect], default: NULL
@@ -245,7 +245,7 @@ public:
 	virtual void setEffectGain(float gain);
 	/// Get the gain for the effect path
 	virtual float getEffectGain() const;
-	
+
 	/// Enable or disable the filter for the effect channel
 	virtual void enableEffectFilter(bool enable = true);
 	/// Check if the filter on the effect channel is enabled
@@ -259,7 +259,6 @@ public:
 	/// Get the effect filter gain
 	virtual float getEffectFilterPassGain() const;
 	//@}
-	
 };
 
 } // NLSOUND

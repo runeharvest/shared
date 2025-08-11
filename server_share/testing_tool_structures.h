@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef TESTING_TOOL_STRUCTURES_H
 #define TESTING_TOOL_STRUCTURES_H
 
@@ -32,91 +30,90 @@
 
 struct SActorBeginTest
 {
-//	uint16 Role;
-//	uint16 Level;
+	//	uint16 Role;
+	//	uint16 Level;
 	sint32 Hp;
 	sint32 Sta;
 	sint32 Sap;
 	NLMISC::CSheetId Armor;
-	uint16	ArmorQuality;
+	uint16 ArmorQuality;
 	NLMISC::CSheetId RightHand;
-	uint16	RightHandQuality;
+	uint16 RightHandQuality;
 	NLMISC::CSheetId LeftHand;
-	uint16	LeftHandQuality;
-	std::vector< NLMISC::CSheetId > Sentence1;
-	std::vector< NLMISC::CSheetId > Sentence2;
-	std::vector< NLMISC::CSheetId > Sentence3;
+	uint16 LeftHandQuality;
+	std::vector<NLMISC::CSheetId> Sentence1;
+	std::vector<NLMISC::CSheetId> Sentence2;
+	std::vector<NLMISC::CSheetId> Sentence3;
 
 	void serial(NLMISC::IStream &f)
 	{
-//		f.serial( Role );
-//		f.serial( Level );
-		f.serial( Hp );
-		f.serial( Sta );
-		f.serial( Sap );
-		f.serial( Armor );
-		f.serial( ArmorQuality );
-		f.serial( RightHand );
-		f.serial( RightHandQuality );
-		f.serial( LeftHand );
-		f.serial( LeftHandQuality );
-		f.serialCont( Sentence1 );
-		f.serialCont( Sentence2 );
-		f.serialCont( Sentence3 );
+		//		f.serial( Role );
+		//		f.serial( Level );
+		f.serial(Hp);
+		f.serial(Sta);
+		f.serial(Sap);
+		f.serial(Armor);
+		f.serial(ArmorQuality);
+		f.serial(RightHand);
+		f.serial(RightHandQuality);
+		f.serial(LeftHand);
+		f.serial(LeftHandQuality);
+		f.serialCont(Sentence1);
+		f.serialCont(Sentence2);
+		f.serialCont(Sentence3);
 	}
 };
 
 struct SLogReport
 {
-	std::vector< NLMISC::CSheetId > UsedBrick; //
-	bool	Stop;
-	uint8	SentenceSuccesLuck; //
-	bool	SentenceSucces;//
-	uint8	HitLuck;//
-	bool	Hit;//
-	bool	CriticalHit;
-	uint32	MaxDamage; //
-	uint32	MinDamage; //
-	uint32	GivenDamage; //
-	uint16	Localized; //
-	uint32	ShieldAbsorption; //
- 	uint32	ArmorAbsorption; //
-	uint32	HpLost; //
-	bool	SpecialEffectResist;
-	uint16	SpecialEffectStart;
-	uint32	SpecialEffectDuration;
-	uint32	UsedStamina; //
-	uint32	UsedSap;
-	uint32	StaminaLeft; //
-	uint32	SapLeft;
+	std::vector<NLMISC::CSheetId> UsedBrick; //
+	bool Stop;
+	uint8 SentenceSuccesLuck; //
+	bool SentenceSucces; //
+	uint8 HitLuck; //
+	bool Hit; //
+	bool CriticalHit;
+	uint32 MaxDamage; //
+	uint32 MinDamage; //
+	uint32 GivenDamage; //
+	uint16 Localized; //
+	uint32 ShieldAbsorption; //
+	uint32 ArmorAbsorption; //
+	uint32 HpLost; //
+	bool SpecialEffectResist;
+	uint16 SpecialEffectStart;
+	uint32 SpecialEffectDuration;
+	uint32 UsedStamina; //
+	uint32 UsedSap;
+	uint32 StaminaLeft; //
+	uint32 SapLeft;
 
 	void serial(NLMISC::IStream &f)
 	{
-		f.serialCont( UsedBrick );
-		f.serial( Stop );
-		f.serial( SentenceSuccesLuck );
-		f.serial( SentenceSucces );
-		f.serial( HitLuck );
-		f.serial( Hit );
-		f.serial( CriticalHit );
-		f.serial( MaxDamage );
-		f.serial( MinDamage );
-		f.serial( GivenDamage );
-		f.serial( Localized );
-		f.serial( ShieldAbsorption );
-		f.serial( ArmorAbsorption );
-		f.serial( HpLost );
-		f.serial( SpecialEffectResist );
-		f.serial( SpecialEffectStart );
-		f.serial( SpecialEffectDuration );
-		f.serial( UsedStamina );
-		f.serial( UsedSap );
-		f.serial( StaminaLeft );
-		f.serial( SapLeft );
+		f.serialCont(UsedBrick);
+		f.serial(Stop);
+		f.serial(SentenceSuccesLuck);
+		f.serial(SentenceSucces);
+		f.serial(HitLuck);
+		f.serial(Hit);
+		f.serial(CriticalHit);
+		f.serial(MaxDamage);
+		f.serial(MinDamage);
+		f.serial(GivenDamage);
+		f.serial(Localized);
+		f.serial(ShieldAbsorption);
+		f.serial(ArmorAbsorption);
+		f.serial(HpLost);
+		f.serial(SpecialEffectResist);
+		f.serial(SpecialEffectStart);
+		f.serial(SpecialEffectDuration);
+		f.serial(UsedStamina);
+		f.serial(UsedSap);
+		f.serial(StaminaLeft);
+		f.serial(SapLeft);
 	}
 };
 
 extern SLogReport LogReportStructure;
 
-#endif //TESTING_TOOL_H
-
+#endif // TESTING_TOOL_H

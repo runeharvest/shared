@@ -19,25 +19,23 @@
 #include "nel/pacs/collision_ot.h"
 #include "nel/pacs/move_primitive.h"
 
-
-namespace NLPACS
-{
+namespace NLPACS {
 
 // ***************************************************************************
 
 // Remove the collision from the primitives
-void CCollisionOTDynamicInfo::removeFromPrimitives ()
+void CCollisionOTDynamicInfo::removeFromPrimitives()
 {
-	_FirstPrimitive->removeCollisionOTInfo (this);
-	_SecondPrimitive->removeCollisionOTInfo (this);
+	_FirstPrimitive->removeCollisionOTInfo(this);
+	_SecondPrimitive->removeCollisionOTInfo(this);
 }
 
 // ***************************************************************************
 
 // Remove the collision from the primitives
-void CCollisionOTStaticInfo::removeFromPrimitives ()
+void CCollisionOTStaticInfo::removeFromPrimitives()
 {
-	_Primitive->removeCollisionOTInfo (this);
+	_Primitive->removeCollisionOTInfo(this);
 }
 
 // ***************************************************************************

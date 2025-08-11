@@ -44,12 +44,10 @@ namespace BUILTIN {
 
 CMultiMtl::CMultiMtl()
 {
-
 }
 
 CMultiMtl::~CMultiMtl()
 {
-
 }
 
 } /* namespace BUILTIN */

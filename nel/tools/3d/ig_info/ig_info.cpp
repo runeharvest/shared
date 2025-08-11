@@ -17,7 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "nel/3d/scene_group.h"
 #include "nel/misc/file.h"
 #include "nel/misc/common.h"
@@ -52,14 +51,14 @@ int main(int argc, char **argv)
 		printf("global pos : x = %.1f, y = %.1f, z =%.1f\n", gpos.x, gpos.y, gpos.z);
 		printf("Instances\n");
 		printf("---------\n");
-		for(k = 0; k < ig._InstancesInfos.size(); ++k)
+		for (k = 0; k < ig._InstancesInfos.size(); ++k)
 		{
 			printf("instance %s : x = %.1f, y = %.1f, z = %.1f, sx = %.1f, sy = %.1f, sz = %.1f, a = %.1f\n", ig._InstancesInfos[k].Name.c_str(), ig._InstancesInfos[k].Pos.x + gpos.x, ig._InstancesInfos[k].Pos.y + gpos.y, ig._InstancesInfos[k].Pos.z + gpos.z, ig._InstancesInfos[k].Scale.x, ig._InstancesInfos[k].Scale.y, ig._InstancesInfos[k].Scale.z, ig._InstancesInfos[k].Rot.getAngle());
 		}
 		printf("\n");
 		printf("Lights\n");
 		printf("---------\n");
-		for(k = 0; k < ig.getNumPointLights(); ++k)
+		for (k = 0; k < ig.getNumPointLights(); ++k)
 		{
 			const CPointLightNamed &pl = ig.getPointLightNamed(k);
 			printf("light group = %d, anim = \"%s\" x = %.1f, y = %.1f, z = %.1f\n", pl.LightGroup, pl.AnimatedLight.c_str(), pl.getPosition().x + gpos.x, pl.getPosition().y + gpos.y, pl.getPosition().z + gpos.z);
@@ -68,23 +67,22 @@ int main(int argc, char **argv)
 		printf("Realtime sun contribution = %s\n", ig.getRealTimeSunContribution() ? "on" : "off");
 		printf("---------\n");
 		// IGSurfaceLight info.
-		const CIGSurfaceLight::TRetrieverGridMap	&rgm= ig.getIGSurfaceLight().getRetrieverGridMap();
-		printf("IGSurfaceLighting: CellSize: %f. NumGridRetriever: %u\n", 
-			ig.getIGSurfaceLight().getCellSize(), (uint)rgm.size() );
-		uint	rgmInst= 0;
-		uint	totalCells= 0;
-		CIGSurfaceLight::TRetrieverGridMap::const_iterator	it= rgm.begin();
-		for(;it!=rgm.end();it++)
+		const CIGSurfaceLight::TRetrieverGridMap &rgm = ig.getIGSurfaceLight().getRetrieverGridMap();
+		printf("IGSurfaceLighting: CellSize: %f. NumGridRetriever: %u\n",
+		    ig.getIGSurfaceLight().getCellSize(), (uint)rgm.size());
+		uint rgmInst = 0;
+		uint totalCells = 0;
+		CIGSurfaceLight::TRetrieverGridMap::const_iterator it = rgm.begin();
+		for (; it != rgm.end(); it++)
 		{
-			for(uint i=0;i<it->second.Grids.size();i++)
+			for (uint i = 0; i < it->second.Grids.size(); i++)
 			{
-				printf("grid(%d, %d): %dx%d\n", rgmInst, i, it->second.Grids[i].Width, it->second.Grids[i].Height );
-				totalCells+= it->second.Grids[i].Cells.size();
+				printf("grid(%d, %d): %dx%d\n", rgmInst, i, it->second.Grids[i].Width, it->second.Grids[i].Height);
+				totalCells += it->second.Grids[i].Cells.size();
 			}
 			rgmInst++;
 		}
 		printf("TotalCells: %d\n", totalCells);
-
 	}
 	catch (const std::exception &e)
 	{

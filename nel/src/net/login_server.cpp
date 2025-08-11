@@ -31,19 +31,24 @@ namespace NLNET {
 
 struct CPendingUser
 {
-	CPendingUser (const CLoginCookie &cookie, const string &un, const string &up, const string &ux, uint32 instanceId, uint32 charSlot)
-		: Cookie (cookie), UserName(un), UserPriv(up), UserExtended(ux), InstanceId(instanceId), CharSlot(charSlot)
+	CPendingUser(const CLoginCookie &cookie, const string &un, const string &up, const string &ux, uint32 instanceId, uint32 charSlot)
+	    : Cookie(cookie)
+	    , UserName(un)
+	    , UserPriv(up)
+	    , UserExtended(ux)
+	    , InstanceId(instanceId)
+	    , CharSlot(charSlot)
 	{
 		Time = CTime::getSecondsSince1970();
 	}
 
 	CLoginCookie Cookie;
 	string UserName;
-	string UserPriv;		// privilege for executing commands from the clients
-	string UserExtended;	// extended data (for free use)
-	uint32 InstanceId;		// the world instance in witch the user is awaited
-	uint32 CharSlot;		// the expected character slot, any other will be denied
-	uint32 Time;			// when the cookie is inserted in pending list
+	string UserPriv; // privilege for executing commands from the clients
+	string UserExtended; // extended data (for free use)
+	uint32 InstanceId; // the world instance in witch the user is awaited
+	uint32 CharSlot; // the expected character slot, any other will be denied
+	uint32 Time; // when the cookie is inserted in pending list
 };
 
 static list<CPendingUser> PendingUsers;
@@ -62,7 +67,7 @@ static TDisconnectClientCallback DisconnectClientCallback = NULL;
 static bool ModeTcp = 0;
 
 // default value is 15 minutes
-static uint TimeBeforeEraseCookie = 15*60;
+static uint TimeBeforeEraseCookie = 15 * 60;
 
 /// contains the correspondance between userid and the sockid
 map<uint32, TSockId> UserIdSockAssociations;
@@ -77,26 +82,26 @@ TNewCookieCallback NewCookieCallback = NULL;
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-void	notifyWSRemovedPendingCookie(CLoginCookie& cookie)
+void notifyWSRemovedPendingCookie(CLoginCookie &cookie)
 {
-	CMessage msgout ("RPC");	// remove pending cookie
+	CMessage msgout("RPC"); // remove pending cookie
 	msgout.serial(cookie);
-	CUnifiedNetwork::getInstance()->send ("WS", msgout);
+	CUnifiedNetwork::getInstance()->send("WS", msgout);
 }
 
-void CLoginServer::refreshPendingList ()
+void CLoginServer::refreshPendingList()
 {
 	// delete too old cookie
 
 	list<CPendingUser>::iterator it = PendingUsers.begin();
 	uint32 Time = CTime::getSecondsSince1970();
-	while (it != PendingUsers.end ())
+	while (it != PendingUsers.end())
 	{
 		if ((*it).Time < Time - TimeBeforeEraseCookie)
 		{
 			nlinfo("LS: Removing cookie '%s' because too old", (*it).Cookie.toString().c_str());
 			notifyWSRemovedPendingCookie((*it).Cookie);
-			it = PendingUsers.erase (it);
+			it = PendingUsers.erase(it);
 		}
 		else
 		{
@@ -105,36 +110,35 @@ void CLoginServer::refreshPendingList ()
 	}
 }
 
-
-void cbWSChooseShard (CMessage &msgin, const std::string &/* serviceName */, TServiceId /* sid */)
+void cbWSChooseShard(CMessage &msgin, const std::string & /* serviceName */, TServiceId /* sid */)
 {
 	// the WS call me that a new client want to come in my shard
 	string reason, userName, userPriv, userExtended;
 	uint32 instanceId, charSlot;
 	CLoginCookie cookie;
 
-//	refreshPendingList ();
+	//	refreshPendingList ();
 
 	//
 	// S08: receive "CS" message from WS and send "SCS" message to WS
 	//
 
-	msgin.serial (cookie);
-	msgin.serial (userName, userPriv, userExtended);
-	msgin.serial (instanceId);
-	msgin.serial (charSlot);
+	msgin.serial(cookie);
+	msgin.serial(userName, userPriv, userExtended);
+	msgin.serial(instanceId);
+	msgin.serial(charSlot);
 
 	vector<list<CPendingUser>::iterator> pendingToRemove;
 	list<CPendingUser>::iterator it;
-	for (it = PendingUsers.begin(); it != PendingUsers.end (); it++)
+	for (it = PendingUsers.begin(); it != PendingUsers.end(); it++)
 	{
 		const CPendingUser &pu = *it;
 		if (pu.Cookie == cookie)
 		{
 			// the cookie already exists, erase it and return false
-			nlwarning ("LS: Cookie %s is already in the pending user list", cookie.toString().c_str());
-//			notifyWSRemovedPendingCookie((*it).Cookie);
-			PendingUsers.erase (it);
+			nlwarning("LS: Cookie %s is already in the pending user list", cookie.toString().c_str());
+			//			notifyWSRemovedPendingCookie((*it).Cookie);
+			PendingUsers.erase(it);
 			reason = "cookie already exists";
 			// iterator is invalid, set it to end
 			it = PendingUsers.end();
@@ -153,11 +157,11 @@ void cbWSChooseShard (CMessage &msgin, const std::string &/* serviceName */, TSe
 		pendingToRemove.pop_back();
 	}
 
-	if (it == PendingUsers.end ())
+	if (it == PendingUsers.end())
 	{
 		// add it to the awaiting client
-		nlinfo ("LS: New cookie %s (name '%s' priv '%s' extended '%s' instance %u slot %u) inserted in the pending user list (awaiting new client)", cookie.toString().c_str(), userName.c_str(), userPriv.c_str(), userExtended.c_str(), instanceId, charSlot);
-		PendingUsers.push_back (CPendingUser (cookie, userName, userPriv, userExtended, instanceId, charSlot));
+		nlinfo("LS: New cookie %s (name '%s' priv '%s' extended '%s' instance %u slot %u) inserted in the pending user list (awaiting new client)", cookie.toString().c_str(), userName.c_str(), userPriv.c_str(), userExtended.c_str(), instanceId, charSlot);
+		PendingUsers.push_back(CPendingUser(cookie, userName, userPriv, userExtended, instanceId, charSlot));
 		reason.clear();
 
 		// callback if needed
@@ -167,44 +171,43 @@ void cbWSChooseShard (CMessage &msgin, const std::string &/* serviceName */, TSe
 		}
 	}
 
-	CMessage msgout ("SCS");
-	msgout.serial (reason);
-	msgout.serial (cookie);
-	msgout.serial (ListenAddr);
+	CMessage msgout("SCS");
+	msgout.serial(reason);
+	msgout.serial(cookie);
+	msgout.serial(ListenAddr);
 	uint32 nbPending = (uint32)PendingUsers.size();
-	msgout.serial (nbPending);
-	CUnifiedNetwork::getInstance()->send ("WS", msgout);
+	msgout.serial(nbPending);
+	CUnifiedNetwork::getInstance()->send("WS", msgout);
 }
 
-void cbWSDisconnectClient (CMessage &msgin, const std::string &serviceName, TServiceId /* sid */)
+void cbWSDisconnectClient(CMessage &msgin, const std::string &serviceName, TServiceId /* sid */)
 {
 	// the WS tells me that i have to disconnect a client
 
 	uint32 userid;
-	msgin.serial (userid);
+	msgin.serial(userid);
 
 	if (ModeTcp)
 	{
-		map<uint32, TSockId>::iterator it = UserIdSockAssociations.find (userid);
-		if (it == UserIdSockAssociations.end ())
+		map<uint32, TSockId>::iterator it = UserIdSockAssociations.find(userid);
+		if (it == UserIdSockAssociations.end())
 		{
-			nlwarning ("LS: Can't disconnect the user %d, he is not found", userid);
+			nlwarning("LS: Can't disconnect the user %d, he is not found", userid);
 		}
 		else
 		{
-			nlinfo ("LS: Disconnect the user %d", userid);
-			Server->disconnect ((*it).second);
+			nlinfo("LS: Disconnect the user %d", userid);
+			Server->disconnect((*it).second);
 		}
 	}
 
 	if (DisconnectClientCallback != NULL)
 	{
-		DisconnectClientCallback (userid, serviceName);
+		DisconnectClientCallback(userid, serviceName);
 	}
 }
 
-static TUnifiedCallbackItem WSCallbackArray[] =
-{
+static TUnifiedCallbackItem WSCallbackArray[] = {
 	{ "CS", cbWSChooseShard },
 	{ "DC", cbWSDisconnectClient },
 };
@@ -215,7 +218,7 @@ static TUnifiedCallbackItem WSCallbackArray[] =
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-void cbShardValidation (CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
+void cbShardValidation(CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
 {
 	//
 	// S13: receive "SV" message from the client
@@ -224,29 +227,29 @@ void cbShardValidation (CMessage &msgin, TSockId from, CCallbackNetBase &netbase
 	// the client send me a cookie
 	CLoginCookie cookie;
 	string reason;
-	msgin.serial (cookie);
+	msgin.serial(cookie);
 
 	string userName, userPriv, userExtended;
 	uint32 instanceId, charSlot;
 	// verify that the user was pending
-	reason = CLoginServer::isValidCookie (cookie, userName, userPriv, userExtended, instanceId, charSlot);
+	reason = CLoginServer::isValidCookie(cookie, userName, userPriv, userExtended, instanceId, charSlot);
 
 	// if the cookie is not valid and we accept them, clear the error
-	if(AcceptInvalidCookie && !reason.empty())
+	if (AcceptInvalidCookie && !reason.empty())
 	{
 		reason.clear();
-		cookie.set (rand(), rand(), rand());
+		cookie.set(rand(), rand(), rand());
 	}
 
-	CMessage msgout2 ("SV");
-	msgout2.serial (reason);
-	netbase.send (msgout2, from);
+	CMessage msgout2("SV");
+	msgout2.serial(reason);
+	netbase.send(msgout2, from);
 
 	if (!reason.empty())
 	{
-		nlwarning ("LS: User (%s) is not in the pending user list (cookie:%s)", netbase.hostAddress(from).asString().c_str(), cookie.toString().c_str());
+		nlwarning("LS: User (%s) is not in the pending user list (cookie:%s)", netbase.hostAddress(from).asString().c_str(), cookie.toString().c_str());
 		// disconnect him
-		netbase.disconnect (from);
+		netbase.disconnect(from);
 	}
 	else
 	{
@@ -254,28 +257,26 @@ void cbShardValidation (CMessage &msgin, TSockId from, CCallbackNetBase &netbase
 		uint32 userid = cookie.getUserId();
 
 		if (ModeTcp)
-			UserIdSockAssociations.insert (make_pair(userid, from));
+			UserIdSockAssociations.insert(make_pair(userid, from));
 
 		// identification OK, let's call the user callback
 		if (NewClientCallback != NULL)
-			NewClientCallback (from, cookie);
+			NewClientCallback(from, cookie);
 
 		// ok, now, he can call all callback
-		Server->authorizeOnly (NULL, from);
+		Server->authorizeOnly(NULL, from);
 	}
 }
 
-void ClientConnection (TSockId from, void * /* arg */)
+void ClientConnection(TSockId from, void * /* arg */)
 {
-	nldebug("LS: new client connection: %s", from->asString ().c_str ());
+	nldebug("LS: new client connection: %s", from->asString().c_str());
 
 	// the client could only call "SV" message
-	Server->authorizeOnly ("SV", from);
+	Server->authorizeOnly("SV", from);
 }
 
-
-static const TCallbackItem ClientCallbackArray[] =
-{
+static const TCallbackItem ClientCallbackArray[] = {
 	{ "SV", cbShardValidation },
 };
 
@@ -284,7 +285,7 @@ void CLoginServer::setListenAddress(const string &la)
 	// if the var is empty or not found, take it from the listenAddress()
 	if (la.empty() && ModeTcp && Server != NULL)
 	{
-		ListenAddr = Server->listenAddress ().asIPString();
+		ListenAddr = Server->listenAddress().asIPString();
 	}
 	else
 	{
@@ -308,9 +309,9 @@ uint32 CLoginServer::getNbPendingUsers()
 	return (uint32)PendingUsers.size();
 }
 
-void cfcbListenAddress (CConfigFile::CVar &var)
+void cfcbListenAddress(CConfigFile::CVar &var)
 {
-	CLoginServer::setListenAddress (var.asString());
+	CLoginServer::setListenAddress(var.asString());
 }
 
 void cfcbDefaultUserPriv(CConfigFile::CVar &var)
@@ -326,7 +327,7 @@ void cfcbAcceptInvalidCookie(CConfigFile::CVar &var)
 	// set the new ListenAddr
 	AcceptInvalidCookie = var.asInt() == 1;
 
-	nlinfo("LS: This service %saccept invalid cookie", AcceptInvalidCookie?"":"doesn't ");
+	nlinfo("LS: This service %saccept invalid cookie", AcceptInvalidCookie ? "" : "doesn't ");
 }
 
 void cfcbTimeBeforeEraseCookie(CConfigFile::CVar &var)
@@ -344,25 +345,37 @@ void cfcbTimeBeforeEraseCookie(CConfigFile::CVar &var)
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 // common init
-void CLoginServer::init (const string &listenAddress)
+void CLoginServer::init(const string &listenAddress)
 {
 	// connect to the welcome service
-	connectToWS ();
+	connectToWS();
 
-	try {
+	try
+	{
 		cfcbDefaultUserPriv(IService::getInstance()->ConfigFile.getVar("DefaultUserPriv"));
 		IService::getInstance()->ConfigFile.setCallback("DefaultUserPriv", cfcbDefaultUserPriv);
-	} catch(const Exception &) { }
+	}
+	catch (const Exception &)
+	{
+	}
 
-	try {
-		cfcbAcceptInvalidCookie (IService::getInstance()->ConfigFile.getVar("AcceptInvalidCookie"));
+	try
+	{
+		cfcbAcceptInvalidCookie(IService::getInstance()->ConfigFile.getVar("AcceptInvalidCookie"));
 		IService::getInstance()->ConfigFile.setCallback("AcceptInvalidCookie", cfcbAcceptInvalidCookie);
-	} catch(const Exception &) { }
+	}
+	catch (const Exception &)
+	{
+	}
 
-	try {
-		cfcbTimeBeforeEraseCookie (IService::getInstance()->ConfigFile.getVar("TimeBeforeEraseCookie"));
+	try
+	{
+		cfcbTimeBeforeEraseCookie(IService::getInstance()->ConfigFile.getVar("TimeBeforeEraseCookie"));
 		IService::getInstance()->ConfigFile.setCallback("TimeBeforeEraseCookie", cfcbTimeBeforeEraseCookie);
-	} catch(const Exception &) { }
+	}
+	catch (const Exception &)
+	{
+	}
 
 	// setup the listen address
 
@@ -373,27 +386,27 @@ void CLoginServer::init (const string &listenAddress)
 		// use the command line param if set
 		la = IService::getInstance()->getArg('D');
 	}
-	else if (IService::getInstance()->ConfigFile.exists ("ListenAddress"))
+	else if (IService::getInstance()->ConfigFile.exists("ListenAddress"))
 	{
 		// use the config file param if set
-		la = IService::getInstance()->ConfigFile.getVar ("ListenAddress").asString();
+		la = IService::getInstance()->ConfigFile.getVar("ListenAddress").asString();
 	}
 	else
 	{
 		la = listenAddress;
 	}
-	setListenAddress (la);
+	setListenAddress(la);
 	IService::getInstance()->ConfigFile.setCallback("ListenAddress", cfcbListenAddress);
 }
 
 // listen socket is TCP
-void CLoginServer::init (CCallbackServer &server, TNewClientCallback ncl)
+void CLoginServer::init(CCallbackServer &server, TNewClientCallback ncl)
 {
-	init (server.listenAddress ().asIPString());
+	init(server.listenAddress().asIPString());
 
 	// add callback to the server
-	server.addCallbackArray (ClientCallbackArray, sizeof (ClientCallbackArray) / sizeof (ClientCallbackArray[0]));
-	server.setConnectionCallback (ClientConnection, NULL);
+	server.addCallbackArray(ClientCallbackArray, sizeof(ClientCallbackArray) / sizeof(ClientCallbackArray[0]));
+	server.setConnectionCallback(ClientConnection, NULL);
 
 	NewClientCallback = ncl;
 	Server = &server;
@@ -402,18 +415,18 @@ void CLoginServer::init (CCallbackServer &server, TNewClientCallback ncl)
 }
 
 // listen socket is UDP
-void CLoginServer::init (CUdpSock &server, TDisconnectClientCallback dc)
+void CLoginServer::init(CUdpSock &server, TDisconnectClientCallback dc)
 {
-	init (server.localAddr ().asIPString());
+	init(server.localAddr().asIPString());
 
 	DisconnectClientCallback = dc;
 
 	ModeTcp = false;
 }
 
-void CLoginServer::init (const std::string &listenAddr, TDisconnectClientCallback dc)
+void CLoginServer::init(const std::string &listenAddr, TDisconnectClientCallback dc)
 {
-	init (listenAddr);
+	init(listenAddr);
 
 	DisconnectClientCallback = dc;
 
@@ -425,8 +438,7 @@ void CLoginServer::addNewCookieCallback(TNewCookieCallback newCookieCb)
 	NewCookieCallback = newCookieCb;
 }
 
-
-string CLoginServer::isValidCookie (const CLoginCookie &lc, string &userName, string &userPriv, string &userExtended, uint32 &instanceId, uint32 &charSlot)
+string CLoginServer::isValidCookie(const CLoginCookie &lc, string &userName, string &userPriv, string &userExtended, uint32 &instanceId, uint32 &charSlot)
 {
 	userName.clear();
 	userPriv.clear();
@@ -436,19 +448,19 @@ string CLoginServer::isValidCookie (const CLoginCookie &lc, string &userName, st
 
 	// verify that the user was pending
 	list<CPendingUser>::iterator it;
-	for (it = PendingUsers.begin(); it != PendingUsers.end (); it++)
+	for (it = PendingUsers.begin(); it != PendingUsers.end(); it++)
 	{
 		CPendingUser &pu = *it;
 		if (pu.Cookie == lc)
 		{
-			nlinfo ("LS: Cookie '%s' is valid and pending (user %s), send the client connection to the WS", lc.toString ().c_str (), pu.UserName.c_str());
+			nlinfo("LS: Cookie '%s' is valid and pending (user %s), send the client connection to the WS", lc.toString().c_str(), pu.UserName.c_str());
 
 			// warn the WS that the client effectively connected
 			uint8 con = 1;
-			CMessage msgout ("CC");
+			CMessage msgout("CC");
 			uint32 userid = lc.getUserId();
-			msgout.serial (userid);
-			msgout.serial (con);
+			msgout.serial(userid);
+			msgout.serial(con);
 
 			CUnifiedNetwork::getInstance()->send("WS", msgout);
 
@@ -459,7 +471,7 @@ string CLoginServer::isValidCookie (const CLoginCookie &lc, string &userName, st
 			charSlot = pu.CharSlot;
 
 			// ok, it was validate, remove it
-			PendingUsers.erase (it);
+			PendingUsers.erase(it);
 
 			return "";
 		}
@@ -478,23 +490,23 @@ string CLoginServer::isValidCookie (const CLoginCookie &lc, string &userName, st
 	return "I didn't receive the cookie from WS";
 }
 
-void CLoginServer::connectToWS ()
+void CLoginServer::connectToWS()
 {
-	CUnifiedNetwork::getInstance()->addCallbackArray(WSCallbackArray, sizeof(WSCallbackArray)/sizeof(WSCallbackArray[0]));
+	CUnifiedNetwork::getInstance()->addCallbackArray(WSCallbackArray, sizeof(WSCallbackArray) / sizeof(WSCallbackArray[0]));
 }
 
-void CLoginServer::clientDisconnected (uint32 userId)
+void CLoginServer::clientDisconnected(uint32 userId)
 {
 	uint8 con = 0;
-	CMessage msgout ("CC");
-	msgout.serial (userId);
-	msgout.serial (con);
+	CMessage msgout("CC");
+	msgout.serial(userId);
+	msgout.serial(con);
 
 	CUnifiedNetwork::getInstance()->send("WS", msgout);
 
 	// remove the user association
 	if (ModeTcp)
-		UserIdSockAssociations.erase (userId);
+		UserIdSockAssociations.erase(userId);
 }
 
 /// Call this method to retrieve the listen address
@@ -502,7 +514,6 @@ const std::string &CLoginServer::getListenAddress()
 {
 	return ListenAddr;
 }
-
 
 /// Call this method to retrieve the listen address
 const CInetHost &CLoginServer::getListenHost()
@@ -514,7 +525,6 @@ bool CLoginServer::acceptsInvalidCookie()
 	return AcceptInvalidCookie;
 }
 
-
 //
 // Commands
 //
@@ -525,20 +535,20 @@ NLMISC_CATEGORISED_COMMAND(nel, lsUsers, "displays the list of all connected use
 	nlunreferenced(quiet);
 	nlunreferenced(human);
 
-	if(args.size() != 0) return false;
+	if (args.size() != 0) return false;
 
 	if (ModeTcp)
 	{
-		log.displayNL ("Display the %d connected users :", UserIdSockAssociations.size());
-		for (map<uint32, TSockId>::iterator it = UserIdSockAssociations.begin(); it != UserIdSockAssociations.end (); it++)
+		log.displayNL("Display the %d connected users :", UserIdSockAssociations.size());
+		for (map<uint32, TSockId>::iterator it = UserIdSockAssociations.begin(); it != UserIdSockAssociations.end(); it++)
 		{
-			log.displayNL ("> %u %s", (*it).first, (*it).second->asString().c_str());
+			log.displayNL("> %u %s", (*it).first, (*it).second->asString().c_str());
 		}
-		log.displayNL ("End of the list");
+		log.displayNL("End of the list");
 	}
 	else
 	{
-		log.displayNL ("No user list in udp mode");
+		log.displayNL("No user list in udp mode");
 	}
 
 	return true;
@@ -550,18 +560,17 @@ NLMISC_CATEGORISED_COMMAND(nel, lsPending, "displays the list of all pending use
 	nlunreferenced(quiet);
 	nlunreferenced(human);
 
-	if(args.size() != 0) return false;
+	if (args.size() != 0) return false;
 
-	log.displayNL ("Display the %d pending users :", PendingUsers.size());
-	for (list<CPendingUser>::iterator it = PendingUsers.begin(); it != PendingUsers.end (); it++)
+	log.displayNL("Display the %d pending users :", PendingUsers.size());
+	for (list<CPendingUser>::iterator it = PendingUsers.begin(); it != PendingUsers.end(); it++)
 	{
-		log.displayNL ("> %s %s", (*it).Cookie.toString().c_str(), (*it).UserName.c_str());
+		log.displayNL("> %s %s", (*it).Cookie.toString().c_str(), (*it).UserName.c_str());
 	}
-	log.displayNL ("End of the list");
+	log.displayNL("End of the list");
 
 	return true;
 }
-
 
 NLMISC_CATEGORISED_DYNVARIABLE(nel, string, LSListenAddress, "the listen address sended to the client to connect on this front_end")
 {
@@ -573,21 +582,21 @@ NLMISC_CATEGORISED_DYNVARIABLE(nel, string, LSListenAddress, "the listen address
 	}
 	else
 	{
-		if ((*pointer).find (":") == string::npos)
+		if ((*pointer).find(":") == string::npos)
 		{
-			nlwarning ("LS: You must set the address + port (ie: \"itsalive.nevrax.org:38000\")");
+			nlwarning("LS: You must set the address + port (ie: \"itsalive.nevrax.org:38000\")");
 			return;
 		}
 		else if ((*pointer).empty())
 		{
-			ListenAddr = Server->listenAddress ().asIPString();
+			ListenAddr = Server->listenAddress().asIPString();
 		}
 		else
 		{
 			ListenAddr = *pointer;
 		}
 		ListenHost = CInetHost(ListenAddr);
-		nlinfo ("LS: Listen Address that will be send to client is '%s'", ListenAddr.c_str());
+		nlinfo("LS: Listen Address that will be send to client is '%s'", ListenAddr.c_str());
 	}
 }
 

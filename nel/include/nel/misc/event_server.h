@@ -22,7 +22,6 @@
 #include <map>
 #include <list>
 
-
 namespace NLMISC {
 
 class IEventEmitter;
@@ -31,8 +30,7 @@ class CEvent;
 
 /*===================================================================*/
 
-typedef std::multimap<CClassId, IEventListener*, CClassIdHashMapTraits> mapListener;
-
+typedef std::multimap<CClassId, IEventListener *, CClassIdHashMapTraits> mapListener;
 
 /**
  * CEventServer
@@ -43,9 +41,9 @@ typedef std::multimap<CClassId, IEventListener*, CClassIdHashMapTraits> mapListe
 class CEventServer
 {
 	mapListener _Listeners;
-	std::list<IEventEmitter*> _Emitters;
-	std::list<CEvent*> _Events;
-	bool		_Pumping;
+	std::list<IEventEmitter *> _Emitters;
+	std::list<CEvent *> _Events;
+	bool _Pumping;
 
 public:
 	CEventServer();
@@ -55,7 +53,7 @@ public:
 	 * add event to the list
 	 * \param event
 	 */
-	void postEvent(CEvent * event);
+	void postEvent(CEvent *event);
 
 	/**
 	 * get call every callbacks associated with event id
@@ -68,26 +66,26 @@ public:
 	 * \param id of the CEvent class to hook
 	 * \param listener to use with this event
 	 */
-	void addListener(CClassId id, IEventListener* listener );
+	void addListener(CClassId id, IEventListener *listener);
 
 	/**
 	 * Remove a callback
 	 * \param id of event's callback
 	 * \param listener to be removed
 	 */
-	void removeListener(CClassId id, IEventListener* listener );
+	void removeListener(CClassId id, IEventListener *listener);
 
 	/**
 	 * Add an Emitter to the server
 	 * \param emitter
 	 */
-	void addEmitter(IEventEmitter * emitter);
+	void addEmitter(IEventEmitter *emitter);
 
 	/**
 	 * Remove an Emitter from the server
 	 * \param emitter
 	 */
-	void removeEmitter(IEventEmitter * emitter);
+	void removeEmitter(IEventEmitter *emitter);
 
 protected:
 	/**
@@ -95,14 +93,12 @@ protected:
 	 * \param event
 	 * \return true if the pointer must be delete, false if it not. (post to another message queue...)
 	 */
-	virtual bool pumpEvent(CEvent* event);
+	virtual bool pumpEvent(CEvent *event);
 };
-
 
 /*===================================================================*/
 
 } // NLMISC
-
 
 #endif // NL_EVENT_SERVER_H
 

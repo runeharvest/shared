@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RYZOM_RESPAWN_POINT_TYPE_H
 #define RYZOM_RESPAWN_POINT_TYPE_H
 
@@ -23,34 +21,32 @@
 
 #include <string>
 
-namespace RESPAWN_POINT
+namespace RESPAWN_POINT {
+enum TRespawnPointType
 {
-	enum TRespawnPointType
-	{
-		KAMI = 0,
-		KARAVAN,
-		NEWBIELAND,
-		OUTPOST,
-		RESPAWNABLE,
-		NORMAL,// invalid flag ( but != from unknown as we use this enum for spawn zone that are not player respawn points after death ). I know it is not the best name but we had to choose it because of AI compatiblity purposes
-		UNKNOWN,
-		NB_RESPAWN_POINT_TYPE = UNKNOWN
-	};
+	KAMI = 0,
+	KARAVAN,
+	NEWBIELAND,
+	OUTPOST,
+	RESPAWNABLE,
+	NORMAL, // invalid flag ( but != from unknown as we use this enum for spawn zone that are not player respawn points after death ). I know it is not the best name but we had to choose it because of AI compatiblity purposes
+	UNKNOWN,
+	NB_RESPAWN_POINT_TYPE = UNKNOWN
+};
 
+/**
+ * get respawn point type corresponding to input string
+ * \param str the input string
+ * \return the TRespawnPointType associated to this string (UNKNOWN if the string cannot be interpreted)
+ */
+TRespawnPointType toRespawnPointType(const std::string &str);
 
-	/**
-	 * get respawn point type corresponding to input string
-	 * \param str the input string
-	 * \return the TRespawnPointType associated to this string (UNKNOWN if the string cannot be interpreted)
-	 */
-	TRespawnPointType toRespawnPointType(const std::string &str);
-
-	/**
-	 * get the respawn point type string corresponding to enum
-	 * \param type the TRespawnPointType value
-	 * \return type as a string (or UNKNOWN)
-	 */
-	const std::string& toString(TRespawnPointType type);
+/**
+ * get the respawn point type string corresponding to enum
+ * \param type the TRespawnPointType value
+ * \return type as a string (or UNKNOWN)
+ */
+const std::string &toString(TRespawnPointType type);
 }; // RESPAWN_POINT
 
 #endif // RYZOM_RESPAWN_POINT_TYPE_H

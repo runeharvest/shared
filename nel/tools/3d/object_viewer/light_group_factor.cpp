@@ -26,9 +26,8 @@ using namespace NL3D;
 /////////////////////////////////////////////////////////////////////////////
 // CLightGroupFactor dialog
 
-
-CLightGroupFactor::CLightGroupFactor(CWnd* pParent /*=NULL*/)
-	: CDialog(CLightGroupFactor::IDD, pParent)
+CLightGroupFactor::CLightGroupFactor(CWnd *pParent /*=NULL*/)
+    : CDialog(CLightGroupFactor::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CLightGroupFactor)
 	LightGroup1 = 256;
@@ -37,8 +36,7 @@ CLightGroupFactor::CLightGroupFactor(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
-
-void CLightGroupFactor::DoDataExchange(CDataExchange* pDX)
+void CLightGroupFactor::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CLightGroupFactor)
@@ -57,30 +55,29 @@ void CLightGroupFactor::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CLightGroupFactor, CDialog)
-	//{{AFX_MSG_MAP(CLightGroupFactor)
-	ON_WM_HSCROLL()
-	ON_BN_CLICKED(IDC_BUTTON_COLOR_END0, OnButtonColorEnd0)
-	ON_BN_CLICKED(IDC_BUTTON_COLOR_END1, OnButtonColorEnd1)
-	ON_BN_CLICKED(IDC_BUTTON_COLOR_END2, OnButtonColorEnd2)
-	ON_BN_CLICKED(IDC_BUTTON_COLOR_START0, OnButtonColorStart0)
-	ON_BN_CLICKED(IDC_BUTTON_COLOR_START1, OnButtonColorStart1)
-	ON_BN_CLICKED(IDC_BUTTON_COLOR_START2, OnButtonColorStart2)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CLightGroupFactor)
+ON_WM_HSCROLL()
+ON_BN_CLICKED(IDC_BUTTON_COLOR_END0, OnButtonColorEnd0)
+ON_BN_CLICKED(IDC_BUTTON_COLOR_END1, OnButtonColorEnd1)
+ON_BN_CLICKED(IDC_BUTTON_COLOR_END2, OnButtonColorEnd2)
+ON_BN_CLICKED(IDC_BUTTON_COLOR_START0, OnButtonColorStart0)
+ON_BN_CLICKED(IDC_BUTTON_COLOR_START1, OnButtonColorStart1)
+ON_BN_CLICKED(IDC_BUTTON_COLOR_START2, OnButtonColorStart2)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CLightGroupFactor message handlers
 
-BOOL CLightGroupFactor::OnInitDialog() 
+BOOL CLightGroupFactor::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	// Light group
-	LightGroup1Ctrl.SetRange (0, 256);
-	LightGroup2Ctrl.SetRange (0, 256);
-	LightGroup3Ctrl.SetRange (0, 256);
+	LightGroup1Ctrl.SetRange(0, 256);
+	LightGroup2Ctrl.SetRange(0, 256);
+	LightGroup3Ctrl.SetRange(0, 256);
 	LightGroup1 = 256;
 	LightGroup2 = 256;
 	LightGroup3 = 256;
@@ -92,48 +89,48 @@ BOOL CLightGroupFactor::OnInitDialog()
 	ColorEnd0.setColor(CRGBA::White);
 	ColorEnd1.setColor(CRGBA::White);
 	ColorEnd2.setColor(CRGBA::White);
-	
-	UpdateData (FALSE);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	UpdateData(FALSE);
+
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CLightGroupFactor::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CLightGroupFactor::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar)
 {
-	handle ();
+	handle();
 
 	CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
 }
 
-void CLightGroupFactor::handle ()
+void CLightGroupFactor::handle()
 {
-	CRGBA	col;
-	UpdateData ();
+	CRGBA col;
+	UpdateData();
 
 	// Set the light factors
 	col.blendFromui(ColorStart0.getColor(), ColorEnd0.getColor(), LightGroup1);
-	CNELU::Scene->setLightGroupColor (0, col);
+	CNELU::Scene->setLightGroupColor(0, col);
 	col.blendFromui(ColorStart1.getColor(), ColorEnd1.getColor(), LightGroup2);
-	CNELU::Scene->setLightGroupColor (1, col);
+	CNELU::Scene->setLightGroupColor(1, col);
 	col.blendFromui(ColorStart2.getColor(), ColorEnd2.getColor(), LightGroup3);
-	CNELU::Scene->setLightGroupColor (2, col);
+	CNELU::Scene->setLightGroupColor(2, col);
 }
 
 // ***************************************************************************
-void	CLightGroupFactor::chooseColor(CColorButton &colbut)
+void CLightGroupFactor::chooseColor(CColorButton &colbut)
 {
-	CRGBA	col= colbut.getColor();
+	CRGBA col = colbut.getColor();
 
-	CColorDialog	dlg;
+	CColorDialog dlg;
 	dlg.m_cc.Flags |= CC_FULLOPEN | CC_RGBINIT;
-	dlg.m_cc.rgbResult = RGB(col.R,col.G,col.B);
-	if(dlg.DoModal()==IDOK)
+	dlg.m_cc.rgbResult = RGB(col.R, col.G, col.B);
+	if (dlg.DoModal() == IDOK)
 	{
-		col.R= GetRValue(dlg.GetColor());
-		col.G= GetGValue(dlg.GetColor());
-		col.B= GetBValue(dlg.GetColor());
-		col.A= 255;
+		col.R = GetRValue(dlg.GetColor());
+		col.G = GetGValue(dlg.GetColor());
+		col.B = GetBValue(dlg.GetColor());
+		col.A = 255;
 		colbut.setColor(col);
 
 		handle();
@@ -141,33 +138,32 @@ void	CLightGroupFactor::chooseColor(CColorButton &colbut)
 }
 
 // ***************************************************************************
-void CLightGroupFactor::OnButtonColorEnd0() 
+void CLightGroupFactor::OnButtonColorEnd0()
 {
 	chooseColor(ColorEnd0);
 }
 
-void CLightGroupFactor::OnButtonColorEnd1() 
+void CLightGroupFactor::OnButtonColorEnd1()
 {
 	chooseColor(ColorEnd1);
 }
 
-void CLightGroupFactor::OnButtonColorEnd2() 
+void CLightGroupFactor::OnButtonColorEnd2()
 {
 	chooseColor(ColorEnd2);
 }
 
-void CLightGroupFactor::OnButtonColorStart0() 
+void CLightGroupFactor::OnButtonColorStart0()
 {
 	chooseColor(ColorStart0);
 }
 
-void CLightGroupFactor::OnButtonColorStart1() 
+void CLightGroupFactor::OnButtonColorStart1()
 {
 	chooseColor(ColorStart1);
 }
 
-void CLightGroupFactor::OnButtonColorStart2() 
+void CLightGroupFactor::OnButtonColorStart2()
 {
 	chooseColor(ColorStart2);
 }
-

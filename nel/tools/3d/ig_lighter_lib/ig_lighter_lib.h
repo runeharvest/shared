@@ -20,12 +20,11 @@
 #include "nel/misc/types_nl.h"
 #include "nel/3d/instance_lighter.h"
 
-namespace NLPACS
-{
-	class	CRetrieverBank;
-	class	CLocalRetriever;
-	class	CGlobalRetriever;
-	class	ULocalPosition;
+namespace NLPACS {
+class CRetrieverBank;
+class CLocalRetriever;
+class CGlobalRetriever;
+class ULocalPosition;
 };
 
 // ***************************************************************************
@@ -38,30 +37,28 @@ namespace NLPACS
 class CIgLighterLib
 {
 public:
-
-	struct	CSurfaceLightingInfo
+	struct CSurfaceLightingInfo
 	{
 		// Pacs information. set to NULL if don't want IgSurfaceLighting.
-		NLPACS::CRetrieverBank		*RetrieverBank;
-		NLPACS::CGlobalRetriever	*GlobalRetriever;
-		float					CellSurfaceLightSize;
-		float					CellRaytraceDeltaZ; 
+		NLPACS::CRetrieverBank *RetrieverBank;
+		NLPACS::CGlobalRetriever *GlobalRetriever;
+		float CellSurfaceLightSize;
+		float CellRaytraceDeltaZ;
 		// FileName without the extension
-		std::string				IgFileName;
-		std::string				ColIdentifierPrefix;
-		std::string				ColIdentifierSuffix;
+		std::string IgFileName;
+		std::string ColIdentifierPrefix;
+		std::string ColIdentifierSuffix;
 
 		// Debug.
-		bool					BuildDebugSurfaceShape;
-		std::string				DebugSunName;
-		std::string				DebugPLName;
+		bool BuildDebugSurfaceShape;
+		std::string DebugSunName;
+		std::string DebugPLName;
 
 		CSurfaceLightingInfo()
 		{
-			BuildDebugSurfaceShape= false;
+			BuildDebugSurfaceShape = false;
 		}
 	};
-
 
 	/**	light an Ig with all PACS / 3D information:
 	 *	\param instanceLighter used to light the ig. Should not be reused for successive lightIg()
@@ -70,24 +67,18 @@ public:
 	 *	\param lightDesc is options for lighting.
 	 *	\param slInfo is the necessary info to build IGSurfaceLight grids.
 	 */
-	static void	lightIg(NL3D::CInstanceLighter &instanceLighter,
-		const NL3D::CInstanceGroup &igIn, NL3D::CInstanceGroup &igOut, NL3D::CInstanceLighter::CLightDesc &lightDesc, 
-		CSurfaceLightingInfo &slInfo, const char *igName);
+	static void lightIg(NL3D::CInstanceLighter &instanceLighter,
+	    const NL3D::CInstanceGroup &igIn, NL3D::CInstanceGroup &igOut, NL3D::CInstanceLighter::CLightDesc &lightDesc,
+	    CSurfaceLightingInfo &slInfo, const char *igName);
 
-
-// ******************************
+	// ******************************
 private:
-
 	// OverSample a cell, skipping samples not in Surface.
-	static void	overSampleCell(NL3D::CIGSurfaceLightBuild::CCellCorner &cell, uint nSampleReq, 
-		const NLPACS::CLocalRetriever &localRetriever, NLPACS::CGlobalRetriever &globalRetriever, 
-		sint retrieverInstanceId, const NLPACS::ULocalPosition &localPos, float cellSize,
-		float cellRaytraceDeltaZ);
-
+	static void overSampleCell(NL3D::CIGSurfaceLightBuild::CCellCorner &cell, uint nSampleReq,
+	    const NLPACS::CLocalRetriever &localRetriever, NLPACS::CGlobalRetriever &globalRetriever,
+	    sint retrieverInstanceId, const NLPACS::ULocalPosition &localPos, float cellSize,
+	    float cellRaytraceDeltaZ);
 };
-
-
-
 
 #endif // NL_IG_LIGHTER_LIB_H
 

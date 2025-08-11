@@ -27,7 +27,6 @@
 
 namespace NLMISC {
 
-
 /**
  * Windows implementation of CThread class (look thread.h)
  * \author Vianney Lecroart
@@ -37,12 +36,11 @@ namespace NLMISC {
 class CWinThread : public IThread
 {
 public:
-
 	/// Constructor
 	CWinThread(IRunnable *runnable, uint32 stackSize);
 
 	/// Don't use this constructor, only used to initialise the main thread class
-	CWinThread (void* threadHandle, uint32 threadId);
+	CWinThread(void *threadHandle, uint32 threadId);
 
 	virtual ~CWinThread();
 
@@ -66,8 +64,8 @@ public:
 	// Increment the suspend count, a suspend count >= 1 means the thread is suspended
 	void incSuspendCount();
 	/** Descrement the suspend count. Reaching 0 will resume the thread
-	  * An assertion is raised is the suspend count is already 0
-	  */
+	 * An assertion is raised is the suspend count is already 0
+	 */
 	void decSuspendCount();
 	// Suspend the thread. No-op if already suspended
 	void suspend();
@@ -77,14 +75,14 @@ public:
 	void enablePriorityBoost(bool enabled);
 
 	/// private use
-	IRunnable	*Runnable;
+	IRunnable *Runnable;
 
 private:
-	int			_SuspendCount;
-	uint32		_StackSize;
-	void		*ThreadHandle;	// HANDLE	don't put it to avoid including windows.h
-	uint32		ThreadId;		// DWORD	don't put it to avoid including windows.h
-	bool		_MainThread;	// true if ths thread is the main thread, else false
+	int _SuspendCount;
+	uint32 _StackSize;
+	void *ThreadHandle; // HANDLE	don't put it to avoid including windows.h
+	uint32 ThreadId; // DWORD	don't put it to avoid including windows.h
+	bool _MainThread; // true if ths thread is the main thread, else false
 };
 
 /**
@@ -97,26 +95,23 @@ private:
 class CWinProcess : public IProcess
 {
 public:
-
-	CWinProcess (void *handle);
-	virtual ~CWinProcess() {} // TODO do something with _ProcessHandle?
+	CWinProcess(void *handle);
+	virtual ~CWinProcess() { } // TODO do something with _ProcessHandle?
 
 	virtual uint64 getCPUMask();
 	virtual bool setCPUMask(uint64 mask);
 
 	// processes helpers
-	static bool   enumProcessesId(std::vector<uint32> &processesId);
+	static bool enumProcessesId(std::vector<uint32> &processesId);
 	// get fully qualified path for all modules used by a given process
-	static bool	  enumProcessModules(uint32 processId, std::vector<std::string> &moduleNames);
+	static bool enumProcessModules(uint32 processId, std::vector<std::string> &moduleNames);
 	static uint32 getProcessIdFromModuleFilename(const std::string &moduleFileName);
-	static bool	  terminateProcess(uint32 processId, uint exitCode = 0);
-	static bool	  terminateProcessFromModuleName(const std::string &moduleName, uint exitCode = 0);
+	static bool terminateProcess(uint32 processId, uint exitCode = 0);
+	static bool terminateProcessFromModuleName(const std::string &moduleName, uint exitCode = 0);
 
 private:
-	void	*_ProcessHandle;
+	void *_ProcessHandle;
 };
-
-
 
 /*
 //  I didn't use and test that code, enventually, but maybe useful in the future
@@ -127,14 +122,14 @@ private:
 class CProcessWatch
 {
 public:
-	CProcessWatch();
-	~CProcessWatch();
-	// launch a process with the given name and arguments, return true on success
-	bool launch(const std::string &programName, const std::string &arguments);
-	// return true if the process is still runing
-	bool isRunning() const;
+    CProcessWatch();
+    ~CProcessWatch();
+    // launch a process with the given name and arguments, return true on success
+    bool launch(const std::string &programName, const std::string &arguments);
+    // return true if the process is still runing
+    bool isRunning() const;
 private:
-	class CProcessWatchImpl *_PImpl;
+    class CProcessWatchImpl *_PImpl;
 };
 
 */

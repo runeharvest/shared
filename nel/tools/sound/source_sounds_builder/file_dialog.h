@@ -10,11 +10,9 @@
 class CMultiFileDialog : public CFileDialog
 {
 public:
-
 	CMultiFileDialog(BOOL bOpenFileDialog, LPCTSTR lpszDefExt, LPCTSTR lpszFileName,
-					 DWORD dwFlags, LPCTSTR lpszFilter, CWnd* pParentWnd);
+	    DWORD dwFlags, LPCTSTR lpszFilter, CWnd *pParentWnd);
 
 private:
-
 	CString m_strFileName;
 };

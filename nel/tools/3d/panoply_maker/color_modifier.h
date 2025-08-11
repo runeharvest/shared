@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef _COLOR_MODIFIER_H
 #define _COLOR_MODIFIER_H
 
@@ -22,42 +21,38 @@
 #include <vector>
 #include <string>
 
-namespace NLMISC
-{
-	class CBitmap;
+namespace NLMISC {
+class CBitmap;
 }
 
 /// This describes how colors of a bitmap must be modified, and provides methos for doing so
 struct CColorModifier
 {
-	float Hue;		  // Hue of the target color [0...360]
-					  // The hue delta is deduced by averaging the hue of the source bitmap
-	float Lightness;  // Lightness of the target color
+	float Hue; // Hue of the target color [0...360]
+	           // The hue delta is deduced by averaging the hue of the source bitmap
+	float Lightness; // Lightness of the target color
 	float Saturation; // Saturation of the terget color
 
-
-	/// luminosity and contrast that are applied after 
+	/// luminosity and contrast that are applied after
 	float Luminosity;
 	float Contrast;
 
-	std::string  ColID; // used to build the output fileNames
+	std::string ColID; // used to build the output fileNames
 
 	/** just convert the pixels of a bitmap by using the alpha of the given mask
 	 *	\param retDeltaHue take the real delta hue applied to the bitmap.
 	 */
-	void convertBitmap(NLMISC::CBitmap &destBitmap, const NLMISC::CBitmap &srcBitmap, const NLMISC::CBitmap &mask, 
-		float &retDeltaHue) const;
+	void convertBitmap(NLMISC::CBitmap &destBitmap, const NLMISC::CBitmap &srcBitmap, const NLMISC::CBitmap &mask,
+	    float &retDeltaHue) const;
 
-	/** compute the averaged H, S and L from a bitmap	  
-	  */
+	/** compute the averaged H, S and L from a bitmap
+	 */
 	static void evalBitmapStats(const NLMISC::CBitmap &srcBitmap,
-								const NLMISC::CBitmap &mask,
-								float &H,
-								float &S,
-								float &L,
-								uint8 &greyLevel
-							   );	
-
+	    const NLMISC::CBitmap &mask,
+	    float &H,
+	    float &S,
+	    float &L,
+	    uint8 &greyLevel);
 };
 
 typedef std::vector<CColorModifier> TColorModifierVect;

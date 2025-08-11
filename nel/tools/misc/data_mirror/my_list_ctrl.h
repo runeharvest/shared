@@ -12,29 +12,27 @@
 
 class CMyListCtrl : public CListCtrl
 {
-// Construction
+	// Construction
 public:
 	CMyListCtrl();
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CMyListCtrl)
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CMyListCtrl();
 
 	// Generated message map functions
 protected:
 	//{{AFX_MSG(CMyListCtrl)
-	afx_msg void OnItemclick(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnItemclick(NMHDR *pNMHDR, LRESULT *pResult);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

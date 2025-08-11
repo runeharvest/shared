@@ -25,15 +25,12 @@
 #include "nel/misc/rgba.h"
 #include "nel/3d/landscape_def.h"
 
+namespace NL3D {
 
-namespace NL3D
-{
-
-
-class	CPatch;
-class	CTextureDLM;
-class	CPointLight;
-class	CPatchDLMContextList;
+class CPatch;
+class CTextureDLM;
+class CPointLight;
+class CPatchDLMContextList;
 
 // ***************************************************************************
 /**
@@ -47,39 +44,36 @@ class CPatchDLMPointLight
 {
 public:
 	// Diffuse Color of the Spot, pre-modulated with landscape PointLightDiffuseMaterial. 0..255
-	float		R, G, B;
+	float R, G, B;
 	// Is this a spot? NB: if false, cosMin/cosMax are still well computed for correctLighting (cosMax=-1, cosMin= -2).
-	bool		IsSpot;
+	bool IsSpot;
 	// World Position of the spot
-	CVector		Pos;
+	CVector Pos;
 	// Direction of the spot, normalized
-	CVector		Dir;
+	CVector Dir;
 	// cosMax, where influence==1.
-	float		CosMax;
+	float CosMax;
 	// cosMin, where influence==0. NB: cosMax>cosMin (ie angleMax<angleMin)
-	float		CosMin;
+	float CosMin;
 	// 1.f / (cosMax-cosMin);
-	float		OOCosDelta;
+	float OOCosDelta;
 	// Attenuation distance, where influence==0.
-	float		AttMax;
+	float AttMax;
 	// Attenuation distance, where influence==1. NB: attMax>attMin
-	float		AttMin;
+	float AttMin;
 	// 1.f / (attMin-attMax);
-	float		OOAttDelta;
-
+	float OOAttDelta;
 
 	// The estimated sphere which englobe the light. NB: approximated for SpotLight
-	NLMISC::CBSphere	BSphere;
+	NLMISC::CBSphere BSphere;
 	// The BBox which englobe the light. NB: Sphere and Box are best fit to the light, ie bbox may not
 	// englobe the sphere and vice versa
-	NLMISC::CAABBox		BBox;
-
+	NLMISC::CAABBox BBox;
 
 public:
 	// compile from a pointlight. NB: attenuation end is clamped to maxAttEnd (must be >0)
-	void		compile(const CPointLight &pl, NLMISC::CRGBA landDiffMat, float maxAttEnd= 30.f);
+	void compile(const CPointLight &pl, NLMISC::CRGBA landDiffMat, float maxAttEnd = 30.f);
 };
-
 
 // ***************************************************************************
 /**
@@ -91,36 +85,38 @@ public:
 class CPatchDLMContext : public CTessNodeList
 {
 public:
-
-	struct	CVertex
+	struct CVertex
 	{
-		CVector		Pos;
-		CVector		Normal;
+		CVector Pos;
+		CVector Normal;
 	};
 
 	/// see compileLighting()
-	enum	TCompileType	{ModulateTileColor=0, ModulateTextureFar, ModulateConstant, NoModulate};
+	enum TCompileType
+	{
+		ModulateTileColor = 0,
+		ModulateTextureFar,
+		ModulateConstant,
+		NoModulate
+	};
 
 public:
-
 	/// DLM info
 	/// The position and size of the DLM in the texture, in pixels.
-	uint			TextPosX, TextPosY, Width, Height;
+	uint TextPosX, TextPosY, Width, Height;
 	/// Mapping to this rectangle from 0-1 basis
-	float			DLMUScale, DLMVScale, DLMUBias, DLMVBias;
+	float DLMUScale, DLMVScale, DLMUBias, DLMVBias;
 	/// texture coordinate bound in 8 bits. Important for Vegetable special DLM mapping
-	uint8			MinU8, MaxU8;
-	uint8			MinV8, MaxV8;
+	uint8 MinU8, MaxU8;
+	uint8 MinV8, MaxV8;
 
 	/** Lighting Process: number of light contribution to this patch in last rneder, and in cur Render.
 	 *	Modified by CPatch and CLandscape
 	 */
-	uint			OldPointLightCount;
-	uint			CurPointLightCount;
-
+	uint OldPointLightCount;
+	uint CurPointLightCount;
 
 public:
-
 	/// Constructor
 	CPatchDLMContext();
 	/// Destructor: lightmap is released from _DLMTexture
@@ -131,17 +127,17 @@ public:
 	 *	Texture space is filled with black (RAM only)
 	 *	\return false if cannot allocate texture space for this patch
 	 */
-	bool			generate(CPatch *patch, CTextureDLM *textureDLM, CPatchDLMContextList *ctxList);
+	bool generate(CPatch *patch, CTextureDLM *textureDLM, CPatchDLMContextList *ctxList);
 
 	/**	Fill texture space with Black: RAM texture is updated.
 	 *	NB: full src blackness is cached.
 	 */
-	void			clearLighting();
+	void clearLighting();
 
 	/**	Add a pointLight influence to the lighting: RAM texture is updated.
 	 *	NB: full src blackness is reseted.
 	 */
-	void			addPointLightInfluence(const CPatchDLMPointLight &pl);
+	void addPointLightInfluence(const CPatchDLMPointLight &pl);
 
 	/**	update VRAM texture with RAM texture. Uploaded in 16 bits format.
 	 *	NB: full dst blackness is cached.
@@ -150,85 +146,75 @@ public:
 	 *	\param modulateCte used only if compType==ModulateConstant. this is the cte to be modulate by lightmap
 	 *	before copy to texture
 	 */
-	void			compileLighting(TCompileType compType, NLMISC::CRGBA modulateCte= NLMISC::CRGBA::White);
+	void compileLighting(TCompileType compType, NLMISC::CRGBA modulateCte = NLMISC::CRGBA::White);
 
-	CPatch			*getPatch() const {return _Patch;}
+	CPatch *getPatch() const { return _Patch; }
 
 	// For Bench. Get the size in memory this class use.
-	uint			getMemorySize() const;
+	uint getMemorySize() const;
 
-// *************************
+	// *************************
 private:
-
 	/// The patch which owns us.
-	CPatch							*_Patch;
+	CPatch *_Patch;
 	/// The DLM texture (only one per landscape)
-	CTextureDLM						*_DLMTexture;
+	CTextureDLM *_DLMTexture;
 	// The ctx list where this context is appened.
-	CPatchDLMContextList			*_DLMContextList;
+	CPatchDLMContextList *_DLMContextList;
 
 	/// Bezier Patch Array information: Width*Height.
-	NLMISC::CObjectVector<CVertex>	_Vertices;
+	NLMISC::CObjectVector<CVertex> _Vertices;
 
 	/// The computed lightmap: Width*Height.
-	NLMISC::CObjectVector<CRGBA>	_LightMap;
+	NLMISC::CObjectVector<CRGBA> _LightMap;
 
 	/// A clip cluster, for quadTree of clusters.
-	struct	CCluster
+	struct CCluster
 	{
 		// The bounding sphere of the cluster
-		NLMISC::CBSphere			BSphere;
+		NLMISC::CBSphere BSphere;
 		// If cluster not clipped, how many cluster to skip. NB: if NSkips==0, then it is a leaf cluster.
-		uint						NSkips;
+		uint NSkips;
 		// For leaf cluster: logical position of the cluster
-		uint16						X, Y;
+		uint16 X, Y;
 	};
 
 	/// Bounding Sphere QuadTree (with NSkips paradigm)
-	NLMISC::CObjectVector<CCluster>	_Clusters;
+	NLMISC::CObjectVector<CCluster> _Clusters;
 
 	// Tells if all _LightMap[] is all black.
-	bool							_IsSrcTextureFullBlack;
+	bool _IsSrcTextureFullBlack;
 	// Tells if all dst texture in _DLMTexture is black.
-	bool							_IsDstTextureFullBlack;
-
+	bool _IsDstTextureFullBlack;
 
 // If resolution of the lightmap is every 2x2 tiles, must bkup tileColors.
 #ifndef NL_DLM_TILE_RES
 	// The tileColors at resolution of tessBlock
-	NLMISC::CObjectVector<uint16, false>	_LowResTileColors;
+	NLMISC::CObjectVector<uint16, false> _LowResTileColors;
 #endif
-
 
 	/** The TextureFar (at tile level or less), which is always computed at generate().
 	 *	NB: Real compute is TextureFar*UserColor, so it need only to be modulated by lightmap each frame.
 	 */
-	NLMISC::CObjectVector<CRGBA>	_TextureFar;
-
+	NLMISC::CObjectVector<CRGBA> _TextureFar;
 
 private:
-
 	// called at generate.
-	void			computeTextureFar();
+	void computeTextureFar();
 
 	// Tile at 2x2 resolution method
-	static const CRGBA	*computeTileFarSrcDeltas(sint nRot, bool is256x256, uint8 uvOff, const CRGBA *srcPixel, sint &srcDeltaX, sint &srcDeltaY);
-	static void		copyTileToTexture(const CRGBA *srcPixel, sint srcDeltaX, sint srcDeltaY, CRGBA *dstPixel, uint dstStride);
-	static void		blendTileToTexture(const CRGBA *srcPixel, sint srcDeltaX, sint srcDeltaY, CRGBA *dstPixel, uint dstStride);
-
+	static const CRGBA *computeTileFarSrcDeltas(sint nRot, bool is256x256, uint8 uvOff, const CRGBA *srcPixel, sint &srcDeltaX, sint &srcDeltaY);
+	static void copyTileToTexture(const CRGBA *srcPixel, sint srcDeltaX, sint srcDeltaY, CRGBA *dstPixel, uint dstStride);
+	static void blendTileToTexture(const CRGBA *srcPixel, sint srcDeltaX, sint srcDeltaY, CRGBA *dstPixel, uint dstStride);
 };
-
 
 // ***************************************************************************
 /// A List of CPatchDLMContext.
-class	CPatchDLMContextList : public CTessList<CPatchDLMContext>
+class CPatchDLMContextList : public CTessList<CPatchDLMContext>
 {
 };
 
-
-
 } // NL3D
-
 
 #endif // NL_PATCHDLM_CONTEXT_H
 

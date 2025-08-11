@@ -1,12 +1,12 @@
 /**********************************************************************
  *<
-	FILE: ligoscape_utility.h
+    FILE: ligoscape_utility.h
 
-	DESCRIPTION:	Template Utility
+    DESCRIPTION:	Template Utility
 
-	CREATED BY:
+    CREATED BY:
 
-	HISTORY:
+    HISTORY:
 
  *>	Copyright (c) 1997, All Rights Reserved.
  **********************************************************************/
@@ -22,7 +22,6 @@
 #include <iparamm2.h>
 
 #include <utilapi.h>
-
 
 #undef min
 #undef max

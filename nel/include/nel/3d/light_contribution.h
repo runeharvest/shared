@@ -21,17 +21,13 @@
 #include "nel/misc/rgba.h"
 #include "nel/3d/point_light.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 /** This is the maximum possible contribution of light. NB: actual max may be less
  *	because of setup in CLightingManager.
  */
-#define	NL3D_MAX_LIGHT_CONTRIBUTION		6
-
+#define NL3D_MAX_LIGHT_CONTRIBUTION 6
 
 // ***************************************************************************
 /**
@@ -55,57 +51,55 @@ class CLightContribution
 {
 public:
 	/// This is the list of Light which influence us. The first NULL means end_of_list.
-	CPointLight			*PointLight[NL3D_MAX_LIGHT_CONTRIBUTION];
+	CPointLight *PointLight[NL3D_MAX_LIGHT_CONTRIBUTION];
 	/// An iterator on the list of model in the pointLight which owns our transform.
-	CPointLight::ItTransformList	TransformIterator[NL3D_MAX_LIGHT_CONTRIBUTION];
+	CPointLight::ItTransformList TransformIterator[NL3D_MAX_LIGHT_CONTRIBUTION];
 	/// the factor of influence to apply to each point light.
-	uint8				Factor[NL3D_MAX_LIGHT_CONTRIBUTION];
+	uint8 Factor[NL3D_MAX_LIGHT_CONTRIBUTION];
 	/// the Attenuation factor of influence to apply to each point light. Used if the model
-	uint8				AttFactor[NL3D_MAX_LIGHT_CONTRIBUTION];
+	uint8 AttFactor[NL3D_MAX_LIGHT_CONTRIBUTION];
 	/// the Dynamic Local Ambient. equal to SunAmbient if no particular ambient light
-	NLMISC::CRGBA		LocalAmbient;
-
+	NLMISC::CRGBA LocalAmbient;
 
 	/// Tells if there is some frozen static light setup.
-	bool				FrozenStaticLightSetup;
+	bool FrozenStaticLightSetup;
 	/** if FrozenStaticLightSetup, tells the number of point light setup which are static.
 	 *	NB: it is possible that FrozenStaticLightSetup==true, and NumFrozenStaticLight==0. it means
 	 *	that the model is not touched by any static pointLight.
 	 */
-	uint8				NumFrozenStaticLight;
+	uint8 NumFrozenStaticLight;
 	// The contribution of the sun (directionnal light) on this model. This not apply to ambient part of the sun
-	uint8				SunContribution;
+	uint8 SunContribution;
 	// True if this contribution use the MergedPointLight.
-	bool				UseMergedPointLight;
+	bool UseMergedPointLight;
 	/** if FrozenStaticLightSetup, this is the frozen AmbientLight in ig.
 	 *	can't be stored as RGBA, because the ambient color may change.
 	 *	NULL means take full Sun ambient
 	 */
-	CPointLight			*FrozenAmbientLight;
+	CPointLight *FrozenAmbientLight;
 
 	// This is the Merged Ambient which simulate lot of pointLights.
-	CRGBA				MergedPointLight;
+	CRGBA MergedPointLight;
 
 public:
-
 	/// Constructor
 	CLightContribution();
 
 	/** Compute the current ambiant according to the FrozenAmbientLight, or LocalAmbient
 	 *	NB: The MergerPointLight is not added (since not really an ambiant)
 	 */
-	CRGBA				computeCurrentAmbient(CRGBA sunAmbient) const
+	CRGBA computeCurrentAmbient(CRGBA sunAmbient) const
 	{
-		if(FrozenStaticLightSetup)
+		if (FrozenStaticLightSetup)
 		{
 			// Any FrozenAmbientLight provided??
-			if(FrozenAmbientLight)
+			if (FrozenAmbientLight)
 			{
-				CRGBA	finalAmbient;
+				CRGBA finalAmbient;
 				// Take his current (maybe animated) ambient
-				finalAmbient= FrozenAmbientLight->getAmbient();
+				finalAmbient = FrozenAmbientLight->getAmbient();
 				// Add with sun?
-				if(FrozenAmbientLight->getAddAmbientWithSun())
+				if (FrozenAmbientLight->getAddAmbientWithSun())
 				{
 					finalAmbient.addRGBOnly(finalAmbient, sunAmbient);
 				}
@@ -121,12 +115,9 @@ public:
 			return LocalAmbient;
 		}
 	}
-
 };
 
-
 } // NL3D
-
 
 #endif // NL_LIGHT_CONTRIBUTION_H
 

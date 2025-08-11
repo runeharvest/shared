@@ -36,10 +36,10 @@ std::string CLoginRegistry::getProductInstallId()
 	if (RegOpenKeyExW(HKEY_CURRENT_USER, AppRegEntry, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
 	{
 		const uint keyMaxLength = 1024;
-		DWORD	dwType  = 0L;
-		DWORD	dwSize	= keyMaxLength;
-		wchar_t	buffer[keyMaxLength];
-		if (RegQueryValueExW(hKey, InstallIdKeyHandle, NULL, &dwType, (BYTE *) buffer, &dwSize) == ERROR_SUCCESS && dwType == REG_SZ)
+		DWORD dwType = 0L;
+		DWORD dwSize = keyMaxLength;
+		wchar_t buffer[keyMaxLength];
+		if (RegQueryValueExW(hKey, InstallIdKeyHandle, NULL, &dwType, (BYTE *)buffer, &dwSize) == ERROR_SUCCESS && dwType == REG_SZ)
 		{
 			RegCloseKey(hKey);
 			return NLMISC::wideToUtf8(buffer);
@@ -51,7 +51,7 @@ std::string CLoginRegistry::getProductInstallId()
 
 	// do not exist, create a new key
 	if (RegCreateKeyExW(HKEY_CURRENT_USER, AppRegEntry, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisp) == ERROR_SUCCESS)
-    {
+	{
 		srand((uint32)nl_time(0));
 		uint32 r = rand();
 		r <<= 16;
@@ -81,10 +81,10 @@ uint CLoginRegistry::getLoginStep()
 		DWORD loginStep = 0;
 		DWORD type;
 		DWORD dataSize = sizeof(DWORD);
-		RegQueryValueExW(hKey, LoginStepKeyHandle, 0, &type, (LPBYTE) &loginStep, &dataSize);
+		RegQueryValueExW(hKey, LoginStepKeyHandle, 0, &type, (LPBYTE)&loginStep, &dataSize);
 		if (type == REG_DWORD && dataSize == sizeof(DWORD))
 		{
-			return (uint) loginStep;
+			return (uint)loginStep;
 		}
 	}
 
@@ -99,7 +99,7 @@ void CLoginRegistry::setLoginStep(uint step)
 	if (RegCreateKeyExW(HKEY_CURRENT_USER, AppRegEntry, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisp) == ERROR_SUCCESS)
 	{
 		DWORD loginStep = step;
-		RegSetValueExW(hKey, LoginStepKeyHandle, 0L, REG_DWORD, (const BYTE *) &loginStep, sizeof(DWORD));
+		RegSetValueExW(hKey, LoginStepKeyHandle, 0L, REG_DWORD, (const BYTE *)&loginStep, sizeof(DWORD));
 	}
 }
 

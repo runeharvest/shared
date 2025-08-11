@@ -46,67 +46,71 @@
 
 class Browse : public CDialog
 {
-// Construction
+	// Construction
 public:
-	Browse(int nland, CWnd* pParent = NULL);   // standard constructor
+	Browse(int nland, CWnd *pParent = NULL); // standard constructor
 	void Init();
 
 	void LoadInThread(void);
-	static unsigned long __stdcall MyControllingFunction( void* pParam );
+	static unsigned long __stdcall MyControllingFunction(void *pParam);
 	void UpdateAll(void);
-//	TileCtrl m_ctrl;
+	//	TileCtrl m_ctrl;
 
-//my data
-	RECT minpos; //position minimum de la fenetre
-	int border_x,border_y; //taille de la bordure de la fenetre tile_ctrl a droite et en bas
+	// my data
+	RECT minpos; // position minimum de la fenetre
+	int border_x, border_y; // taille de la bordure de la fenetre tile_ctrl a droite et en bas
 	int oldsel;
-	RECT last_sel; int selection; int lbutton; int control;
+	RECT last_sel;
+	int selection;
+	int lbutton;
+	int control;
 	CPoint OriginalPos;
 	int land;
 	void OnDestroy();
-	void UpdateFlags ();
-	void Flags (int flagNumber, bool value);
+	void UpdateFlags();
+	void Flags(int flagNumber, bool value);
 
-//	listgroup theListGroup;
+	//	listgroup theListGroup;
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(Browse)
-	enum { IDD = IDD_BROWSER };
+	enum
+	{
+		IDD = IDD_BROWSER
+	};
 	int m_128x128;
-	CTView	m_ctrl;
-	CStatic	m_bmpsel;
-	CButton	m_infotexte;
-	CButton	m_rb_zoom1;
-	CButton	m_rb_num;
-	CButton	m_rb_jour;
-	int		SubGroup0;
-	int		SubGroup1;
-	int		SubGroup2;
-	int		SubGroup3;
-	int		SubGroup4;
-	int		SubGroup5;
-	int		SubGroup6;
-	int		SubGroup7;
-	int		SubGroup10;
-	int		SubGroup11;
-	int		SubGroup8;
-	int		SubGroup9;
-	int		Oriented;
+	CTView m_ctrl;
+	CStatic m_bmpsel;
+	CButton m_infotexte;
+	CButton m_rb_zoom1;
+	CButton m_rb_num;
+	CButton m_rb_jour;
+	int SubGroup0;
+	int SubGroup1;
+	int SubGroup2;
+	int SubGroup3;
+	int SubGroup4;
+	int SubGroup5;
+	int SubGroup6;
+	int SubGroup7;
+	int SubGroup10;
+	int SubGroup11;
+	int SubGroup8;
+	int SubGroup9;
+	int Oriented;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(Browse)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	virtual BOOL PreCreateWindow(CREATESTRUCT &cs);
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(Browse)
 	afx_msg void OnSize(UINT nType, int cx, int cy);
@@ -120,7 +124,7 @@ protected:
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnSelchangeListtype();
 	afx_msg void OnUpdateTiles();
-	afx_msg void OnBatchLoad ();
+	afx_msg void OnBatchLoad();
 	afx_msg void OnSubgroup0();
 	afx_msg void OnSubgroup1();
 	afx_msg void OnSubgroup2();

@@ -19,7 +19,6 @@
 #include "nel/3d/point_light_named_array.h"
 #include "nel/3d/scene.h"
 
-
 using namespace std;
 using namespace NLMISC;
 
@@ -28,7 +27,6 @@ using namespace NLMISC;
 #endif
 
 namespace NL3D {
-
 
 // ***************************************************************************
 CPointLightNamedArray::CPointLightNamedArray()
@@ -39,14 +37,13 @@ CPointLightNamedArray::CPointLightNamedArray()
 	 * ***********************************************/
 }
 
-
 // ***************************************************************************
-struct	CPointLightNamedSort
+struct CPointLightNamedSort
 {
-	const CPointLightNamed	*PointLight;
-	uint					SrcId;
+	const CPointLightNamed *PointLight;
+	uint SrcId;
 
-	bool	operator<(const CPointLightNamedSort &b) const
+	bool operator<(const CPointLightNamedSort &b) const
 	{
 		if (PointLight->AnimatedLight < b.PointLight->AnimatedLight)
 			return true;
@@ -56,41 +53,39 @@ struct	CPointLightNamedSort
 	}
 };
 
-
 // ***************************************************************************
-void			CPointLightNamedArray::clear()
+void CPointLightNamedArray::clear()
 {
 	_PointLights.clear();
 	_PointLightGroupMap.clear();
 }
 
-
 // ***************************************************************************
-void			CPointLightNamedArray::build(const std::vector<CPointLightNamed> &pointLights, std::vector<uint> &indexRemap)
+void CPointLightNamedArray::build(const std::vector<CPointLightNamed> &pointLights, std::vector<uint> &indexRemap)
 {
-	uint	i;
+	uint i;
 
 	// sort by name.
 	//----------
 	// Fill Sort array
-	vector<CPointLightNamedSort>	pointLightSorts;
+	vector<CPointLightNamedSort> pointLightSorts;
 	pointLightSorts.resize(pointLights.size());
-	for(i=0; i<pointLightSorts.size(); i++)
+	for (i = 0; i < pointLightSorts.size(); i++)
 	{
-		pointLightSorts[i].PointLight= &pointLights[i];
-		pointLightSorts[i].SrcId= i;
+		pointLightSorts[i].PointLight = &pointLights[i];
+		pointLightSorts[i].SrcId = i;
 	}
 	// sort
 	sort(pointLightSorts.begin(), pointLightSorts.end());
 	// Copy data, and Fill indexRemap array
 	_PointLights.resize(pointLights.size());
 	indexRemap.resize(pointLights.size());
-	for(i=0; i<pointLightSorts.size(); i++)
+	for (i = 0; i < pointLightSorts.size(); i++)
 	{
 		// Copy yhe PointLight to its new destination
-		_PointLights[i]= *pointLightSorts[i].PointLight;
+		_PointLights[i] = *pointLightSorts[i].PointLight;
 		// set the new index at the old position.
-		indexRemap[pointLightSorts[i].SrcId]= i;
+		indexRemap[pointLightSorts[i].SrcId] = i;
 	}
 
 	// Regroup.
@@ -98,68 +93,68 @@ void			CPointLightNamedArray::build(const std::vector<CPointLightNamed> &pointLi
 	_PointLightGroupMap.clear();
 	if (!_PointLights.empty())
 	{
-		bool	first= true;
-		string	precName;
-		uint precGroup= 0;
+		bool first = true;
+		string precName;
+		uint precGroup = 0;
 		// for all sorted pointLights
 		uint i;
-		for(i=0;i<_PointLights.size();i++)
+		for (i = 0; i < _PointLights.size(); i++)
 		{
-			const	std::string &curName = _PointLights[i].AnimatedLight;
-			const	uint curGroup = _PointLights[i].LightGroup;
-			if ( first || (precName!=curName) || (precGroup != curGroup) )
+			const std::string &curName = _PointLights[i].AnimatedLight;
+			const uint curGroup = _PointLights[i].LightGroup;
+			if (first || (precName != curName) || (precGroup != curGroup))
 			{
 				// End last group
-				if(first)
-					first= false;
+				if (first)
+					first = false;
 				else
-					_PointLightGroupMap.back ().EndId= i;
+					_PointLightGroupMap.back().EndId = i;
 
 				// Start new group
-				_PointLightGroupMap.push_back (CPointLightGroup ());
-				_PointLightGroupMap.back ().StartId= i;
-				_PointLightGroupMap.back ().AnimationLight = curName;
-				_PointLightGroupMap.back ().LightGroup = curGroup;
+				_PointLightGroupMap.push_back(CPointLightGroup());
+				_PointLightGroupMap.back().StartId = i;
+				_PointLightGroupMap.back().AnimationLight = curName;
+				_PointLightGroupMap.back().LightGroup = curGroup;
 				precName = curName;
 				precGroup = curGroup;
 			}
 		}
 		// End last group.
-		_PointLightGroupMap.back ().EndId= i;
+		_PointLightGroupMap.back().EndId = i;
 	}
 }
 
 // ***************************************************************************
-void			CPointLightNamedArray::setPointLightFactor(const CScene &scene)
+void CPointLightNamedArray::setPointLightFactor(const CScene &scene)
 {
 	// Search in the map.
-	const uint count = (uint)_PointLightGroupMap.size ();
+	const uint count = (uint)_PointLightGroupMap.size();
 	uint i;
-	for (i=0; i<count; i++)
+	for (i = 0; i < count; i++)
 	{
 		// Ref
 		CPointLightGroup &lightGroup = _PointLightGroupMap[i];
 
 		// Get the factor
-		CRGBA factorAnimated=	 scene.getAnimatedLightFactor (lightGroup.AnimationLightIndex, lightGroup.LightGroup);
-		CRGBA factorNotAnimated= scene.getLightmapGroupColor (lightGroup.LightGroup);;
+		CRGBA factorAnimated = scene.getAnimatedLightFactor(lightGroup.AnimationLightIndex, lightGroup.LightGroup);
+		CRGBA factorNotAnimated = scene.getLightmapGroupColor(lightGroup.LightGroup);
+		;
 
 		// Found the group. what entries in the array?
-		uint	startId= lightGroup.StartId;
-		const uint	endId= lightGroup.EndId;
-		nlassert(endId<=_PointLights.size());
+		uint startId = lightGroup.StartId;
+		const uint endId = lightGroup.EndId;
+		nlassert(endId <= _PointLights.size());
 
 		// for all entries, setLightFactor
-		for(uint i=startId;i<endId;i++)
+		for (uint i = startId; i < endId; i++)
 		{
-			_PointLights[i].setLightFactor (factorAnimated, factorNotAnimated);
+			_PointLights[i].setLightFactor(factorAnimated, factorNotAnimated);
 		}
 	}
 }
 
-
 // ***************************************************************************
-void			CPointLightNamedArray::serial(NLMISC::IStream &f)
+void CPointLightNamedArray::serial(NLMISC::IStream &f)
 {
 	/* ***********************************************
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
@@ -181,18 +176,17 @@ void			CPointLightNamedArray::serial(NLMISC::IStream &f)
 	}
 }
 
-
 // ***************************************************************************
-void			CPointLightNamedArray::initAnimatedLightIndex (const CScene &scene)
+void CPointLightNamedArray::initAnimatedLightIndex(const CScene &scene)
 {
 	// Search in the map.
-	const uint count = (uint)_PointLightGroupMap.size ();
+	const uint count = (uint)_PointLightGroupMap.size();
 	uint i;
-	for (i=0; i<count; i++)
+	for (i = 0; i < count; i++)
 	{
 		// Ref
 		CPointLightGroup &lightGroup = _PointLightGroupMap[i];
-		lightGroup.AnimationLightIndex = scene.getAnimatedLightNameToIndex (lightGroup.AnimationLight);
+		lightGroup.AnimationLightIndex = scene.getAnimatedLightNameToIndex(lightGroup.AnimationLight);
 	}
 }
 

@@ -17,7 +17,6 @@
 #ifndef NL_PACKED_WORLD
 #define NL_PACKED_WORLD
 
-
 #include "nel/3d/packed_zone.h"
 //
 #include "nel/misc/array_2d.h"
@@ -26,29 +25,26 @@
 //
 #include <vector>
 
-
-
-namespace NLMISC
-{
-	class CVector;
+namespace NLMISC {
+class CVector;
 }
 
-namespace NL3D
-{
+namespace NL3D {
 
 /** A set of packed zones
-  * Allows for world scale collision test with a packed format
-  *
-  * \author Nicolas Vizerie
-  * \author Nevrax France
-  * \date 2005
-  */
+ * Allows for world scale collision test with a packed format
+ *
+ * \author Nicolas Vizerie
+ * \author Nevrax France
+ * \date 2005
+ */
 class CPackedWorld
 {
 public:
 	// list of zones that goes into this packed world (used by incremental build to know if some
 	// zones need to be rebuilt)
 	std::vector<std::string> ZoneNames;
+
 public:
 	// build world from a set of packed zones
 	void build(std::vector<TPackedZoneBaseSPtr> &packesZones);
@@ -58,16 +54,17 @@ public:
 	// just serialize the header, containing name of the zones this CPackedWorld was built from
 	void serialZoneNames(NLMISC::IStream &f);
 	/** Roughly select triangles that are within a convex 2D polygon (world coordinates)
-	  * Selection is not exact, because limited to the resolution of the grid into which is packed each zone.
-	  * Triangle that are within are guaranteed to be selected, however.
-	  */
+	 * Selection is not exact, because limited to the resolution of the grid into which is packed each zone.
+	 * Triangle that are within are guaranteed to be selected, however.
+	 */
 	void select(const NLMISC::CPolygon2D &poly, std::vector<NLMISC::CTriangle> &selectedTriangles) const;
+
 private:
 	class CZoneInfo
 	{
 	public:
 		TPackedZoneBaseSPtr Zone;
-		uint32				RaytraceCounter;
+		uint32 RaytraceCounter;
 		void serial(NLMISC::IStream &f)
 		{
 			f.serialVersion(1);
@@ -76,7 +73,7 @@ private:
 			Zone = pz;
 		}
 	};
-	std::vector<CZoneInfo>				 _Zones;
+	std::vector<CZoneInfo> _Zones;
 	class CZoneIndexList
 	{
 	public:
@@ -86,13 +83,12 @@ private:
 			f.serialCont(IDs);
 		}
 	};
-	NLMISC::CArray2D<CZoneIndexList>	   _ZoneGrid;
-	sint32								   _ZoneMinX;
-	sint32								   _ZoneMinY;
-	uint32								   _RaytraceCounter;
+	NLMISC::CArray2D<CZoneIndexList> _ZoneGrid;
+	sint32 _ZoneMinX;
+	sint32 _ZoneMinY;
+	uint32 _RaytraceCounter;
 };
 
 } // NL3D
-
 
 #endif

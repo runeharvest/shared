@@ -5,7 +5,6 @@
 #include "logic_editor.h"
 #include "StatesView.h"
 
-
 #include "Logic_editorDoc.h"
 #include "MainFrm.h"
 #include "ChildFrm.h"
@@ -30,20 +29,19 @@ CStatesView::~CStatesView()
 {
 }
 
-
 BEGIN_MESSAGE_MAP(CStatesView, CTreeView)
-	//{{AFX_MSG_MAP(CStatesView)
-	ON_WM_KILLFOCUS()
-	ON_NOTIFY_REFLECT(TVN_SELCHANGED, OnSelchanged)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CStatesView)
+ON_WM_KILLFOCUS()
+ON_NOTIFY_REFLECT(TVN_SELCHANGED, OnSelchanged)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CStatesView drawing
 
-void CStatesView::OnDraw(CDC* pDC)
+void CStatesView::OnDraw(CDC *pDC)
 {
-	CDocument* pDoc = GetDocument();
+	CDocument *pDoc = GetDocument();
 	// TODO: add draw code here
 }
 
@@ -56,20 +54,13 @@ void CStatesView::AssertValid() const
 	CTreeView::AssertValid();
 }
 
-void CStatesView::Dump(CDumpContext& dc) const
+void CStatesView::Dump(CDumpContext &dc) const
 {
 	CTreeView::Dump(dc);
 }
 #endif //_DEBUG
 
-
-
-
-
-
-
-
-void CStatesView::expand(UINT nCode, HTREEITEM hItem) 
+void CStatesView::expand(UINT nCode, HTREEITEM hItem)
 {
 	HTREEITEM hElement;
 
@@ -80,50 +71,43 @@ void CStatesView::expand(UINT nCode, HTREEITEM hItem)
 		hElement = m_tree.GetRootItem();
 	else
 	{
-		m_tree.Expand(hItem,nCode);
+		m_tree.Expand(hItem, nCode);
 		hElement = m_tree.GetChildItem(hItem);
 	}
-	
+
 	pile.RemoveAll();
 
 	while ((hElement != NULL) || (pile.GetSize() != 0))
 	{
-		while ((hElement == NULL) && (pile.GetSize()!=0))
+		while ((hElement == NULL) && (pile.GetSize() != 0))
 		{
-			hElement = pile[pile.GetSize()-1];
-			pile.RemoveAt(pile.GetSize()-1);
+			hElement = pile[pile.GetSize() - 1];
+			pile.RemoveAt(pile.GetSize() - 1);
 			hElement = m_tree.GetNextSiblingItem(hElement);
 		}
 		if (hElement)
 		{
 			pile.Add(hElement);
-			m_tree.Expand(hElement,nCode);
+			m_tree.Expand(hElement, nCode);
 			hElement = m_tree.GetChildItem(hElement);
 		}
 	}
 }
 
-
-
-
-
-
 /////////////////////////////////////////////////////////////////////////////
 // CStatesView message handlers
 
-void CStatesView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) 
+void CStatesView::OnUpdate(CView *pSender, LPARAM lHint, CObject *pHint)
 {
 	/************* TO DO : REDRAW ONLY IF Some states have changed *****/
 
 	SetRedraw(FALSE);
 
-	CTreeView::OnUpdate(pSender,lHint,pHint);
-	
-	
+	CTreeView::OnUpdate(pSender, lHint, pHint);
+
 	BOOL bSelection = FALSE;
 
-
-	CLogic_editorDoc *pDoc =  static_cast<CLogic_editorDoc*>(GetDocument());
+	CLogic_editorDoc *pDoc = static_cast<CLogic_editorDoc *>(GetDocument());
 	ASSERT_VALID(pDoc);
 
 	CTreeCtrl &m_tree = GetTreeCtrl();
@@ -141,16 +125,16 @@ void CStatesView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 	while (pos != NULL)
 	{
-		pDoc->m_states.GetNextAssoc( pos, stateName, (void*&)pState );
-		hItem = m_tree.InsertItem( stateName , m_tree.GetRootItem());
+		pDoc->m_states.GetNextAssoc(pos, stateName, (void *&)pState);
+		hItem = m_tree.InsertItem(stateName, m_tree.GetRootItem());
 
 		// if this is the selected state (and there was no selected event), select it)
-		if ( m_pSelectedEvent == NULL && m_pSelectedState == pState )
+		if (m_pSelectedEvent == NULL && m_pSelectedState == pState)
 		{
-			m_tree.SelectItem( hItem);
+			m_tree.SelectItem(hItem);
 			bSelection = TRUE;
 		}
-		
+
 		// insert every event as children nodes
 		CEvent *pEvent = NULL;
 		HTREEITEM hItemCurrent;
@@ -158,23 +142,23 @@ void CStatesView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		POSITION eventPos = pState->m_evEvents.GetHeadPosition();
 		while (eventPos != NULL)
 		{
-			pEvent = pState->m_evEvents.GetNext( eventPos );
+			pEvent = pState->m_evEvents.GetNext(eventPos);
 			if (pEvent != NULL)
 			{
-				hItemCurrent = m_tree.InsertItem( pEvent->getEventAsString() , hItem);
-				m_mapItemToEvent.SetAt( hItemCurrent, pEvent );
+				hItemCurrent = m_tree.InsertItem(pEvent->getEventAsString(), hItem);
+				m_mapItemToEvent.SetAt(hItemCurrent, pEvent);
 				// if this is the selected event, select it
-				if ( m_pSelectedEvent == pEvent )
+				if (m_pSelectedEvent == pEvent)
 				{
-					m_tree.SelectItem( hItemCurrent);
+					m_tree.SelectItem(hItemCurrent);
 					bSelection = TRUE;
 				}
 			}
-		}		
+		}
 	}
 
 	// expand all tree
-	expand(/*TVE_EXPAND ,NULL*/ );
+	expand(/*TVE_EXPAND ,NULL*/);
 
 	//
 	if (!bSelection)
@@ -182,36 +166,34 @@ void CStatesView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		m_pSelectedEvent = NULL;
 		m_pSelectedState = NULL;
 	}
-		
-	SetRedraw(/*TRUE*/);	
+
+	SetRedraw(/*TRUE*/);
 }
 
-BOOL CStatesView::PreCreateWindow(CREATESTRUCT& cs) 
+BOOL CStatesView::PreCreateWindow(CREATESTRUCT &cs)
 {
 	// modify arborescence style
-	cs.style |=(TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS/*|TVS_EDITLABELS*/);
-//	cs.style &= ~TVS_DISABLEDRAGDROP;
-	
+	cs.style |= (TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS /*|TVS_EDITLABELS*/);
+	//	cs.style &= ~TVS_DISABLEDRAGDROP;
+
 	return CTreeView::PreCreateWindow(cs);
 }
 
-void CStatesView::OnKillFocus(CWnd* pNewWnd) 
+void CStatesView::OnKillFocus(CWnd *pNewWnd)
 {
-//	CTreeView::OnKillFocus(pNewWnd);	
+	//	CTreeView::OnKillFocus(pNewWnd);
 }
 
-void CStatesView::OnSelchanged(NMHDR* pNMHDR, LRESULT* pResult) 
+void CStatesView::OnSelchanged(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
+	NM_TREEVIEW *pNMTreeView = (NM_TREEVIEW *)pNMHDR;
 
-	
 	m_pSelectedEvent = NULL;
 	m_pSelectedState = NULL;
-	
-	
+
 	//
 	CTreeCtrl &treeCtrl = GetTreeCtrl();
-		
+
 	HTREEITEM hItem;
 	hItem = treeCtrl.GetSelectedItem();
 
@@ -220,35 +202,35 @@ void CStatesView::OnSelchanged(NMHDR* pNMHDR, LRESULT* pResult)
 		return;
 
 	// get the event selected (if any)
-	if ( ! m_mapItemToEvent.Lookup(hItem, m_pSelectedEvent) )
+	if (!m_mapItemToEvent.Lookup(hItem, m_pSelectedEvent))
 		m_pSelectedEvent = NULL;
 	else
 	{
 		// nothing special
 	}
-	
+
 	// get the state (if any)
-	while ( treeCtrl.GetParentItem( hItem ) != treeCtrl.GetRootItem() )
-		hItem = treeCtrl.GetParentItem( hItem );
+	while (treeCtrl.GetParentItem(hItem) != treeCtrl.GetRootItem())
+		hItem = treeCtrl.GetParentItem(hItem);
 
-	CString stateName = treeCtrl.GetItemText( hItem );
+	CString stateName = treeCtrl.GetItemText(hItem);
 
-	CLogic_editorDoc *pDoc = static_cast<CLogic_editorDoc *> (GetDocument());
-	
+	CLogic_editorDoc *pDoc = static_cast<CLogic_editorDoc *>(GetDocument());
+
 	//  to update the fields of the condition page in the form view
-	CMainFrame *pFrame = (CMainFrame*)AfxGetApp()->m_pMainWnd;
+	CMainFrame *pFrame = (CMainFrame *)AfxGetApp()->m_pMainWnd;
 
 	// Get the active MDI child window.
-	CChildFrame *pChild = (CChildFrame *) pFrame->GetActiveFrame();
+	CChildFrame *pChild = (CChildFrame *)pFrame->GetActiveFrame();
 
-	CEditorFormView *pFormView = static_cast<CEditorFormView *> ( pChild->m_wndSplitter.GetPane(0,1) );
-	CStatePage *pStatePage = static_cast<CStatePage*> ( pFormView->m_pPropertySheet->GetPage(3) );
+	CEditorFormView *pFormView = static_cast<CEditorFormView *>(pChild->m_wndSplitter.GetPane(0, 1));
+	CStatePage *pStatePage = static_cast<CStatePage *>(pFormView->m_pPropertySheet->GetPage(3));
 
-	if ( pDoc->m_states.Lookup( stateName, (void*&) m_pSelectedState) )
-	{		
-		pFormView->m_pPropertySheet->SetActivePage( pStatePage );
-		
-		if ( this->m_pSelectedEvent == NULL || pStatePage->m_pSelectedEvent != this->m_pSelectedEvent)
+	if (pDoc->m_states.Lookup(stateName, (void *&)m_pSelectedState))
+	{
+		pFormView->m_pPropertySheet->SetActivePage(pStatePage);
+
+		if (this->m_pSelectedEvent == NULL || pStatePage->m_pSelectedEvent != this->m_pSelectedEvent)
 		{
 			pStatePage->m_pSelectedEvent = this->m_pSelectedEvent;
 			pStatePage->m_pSelectedState = this->m_pSelectedState;
@@ -256,7 +238,7 @@ void CStatesView::OnSelchanged(NMHDR* pNMHDR, LRESULT* pResult)
 			pStatePage->Update();
 		}
 	}
-	else //this->m_pSelectedState == NULL
+	else // this->m_pSelectedState == NULL
 	{
 		if (pStatePage->m_pSelectedState != NULL)
 		{
@@ -270,10 +252,10 @@ void CStatesView::OnSelchanged(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-void CStatesView::OnInitialUpdate() 
+void CStatesView::OnInitialUpdate()
 {
 	CTreeView::OnInitialUpdate();
-	
+
 	m_pSelectedEvent = NULL;
 	m_pSelectedState = NULL;
 }

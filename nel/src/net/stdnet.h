@@ -24,7 +24,7 @@
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
-#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
 #include <map>
@@ -60,24 +60,24 @@
 #include "nel/misc/hierarchical_timer.h"
 
 #ifdef NL_OS_WINDOWS
-#	define WIN32_LEAN_AND_MEAN
-#	ifndef _WIN32_WINDOWS
-#		define _WIN32_WINDOWS 0x0410
-	#endif
-#	ifndef _WIN32_WINNT
-#		define _WIN32_WINNT 0x0500
-#	endif
-#	ifndef NL_COMP_MINGW
-#		ifndef WINVER
-#			define WINVER 0x0500
-#		endif
-#		ifndef NOMINMAX
-#			define NOMINMAX
-#		endif
-#	endif
-#	include <winsock2.h>
-#	include <ws2tcpip.h>
-#	include <windows.h>
+#define WIN32_LEAN_AND_MEAN
+#ifndef _WIN32_WINDOWS
+#define _WIN32_WINDOWS 0x0410
+#endif
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0500
+#endif
+#ifndef NL_COMP_MINGW
+#ifndef WINVER
+#define WINVER 0x0500
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#endif
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <windows.h>
 #endif
 
 #endif

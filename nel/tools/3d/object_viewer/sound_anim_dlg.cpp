@@ -30,15 +30,13 @@ using namespace std;
 using namespace NLMISC;
 using namespace NLSOUND;
 
-
-
 // ********************************************************
 
-CSoundAnimDlg::CSoundAnimDlg(CObjectViewer* objView, CAnimationDlg* animDlg, CWnd* pParent/*=NULL*/)
-	: CDialog(CSoundAnimDlg::IDD, pParent)
+CSoundAnimDlg::CSoundAnimDlg(CObjectViewer *objView, CAnimationDlg *animDlg, CWnd *pParent /*=NULL*/)
+    : CDialog(CSoundAnimDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CSoundAnimDlg)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 
 	_ObjView = objView;
@@ -61,18 +59,18 @@ int CSoundAnimDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	r.left = 150;
 	r.right = 674;
 
-	_AnimView.Create(_ObjView, _AnimationDlg, this, r);        
+	_AnimView.Create(_ObjView, _AnimationDlg, this, r);
 
 	return 0;
 }
 
 // ********************************************************
 
-BOOL CSoundAnimDlg::OnInitDialog() 
+BOOL CSoundAnimDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	return TRUE; 
+	return TRUE;
 }
 
 // ********************************************************
@@ -83,7 +81,7 @@ void CSoundAnimDlg::handle()
 	std::string text = toString("time: %.3f", sec);
 	GetDlgItem(IDC_SOUNDANIMINFO)->SetWindowText(nlUtf8ToTStr(text));
 
-	_AnimView.updateCursor(); 
+	_AnimView.updateCursor();
 }
 
 // ********************************************************
@@ -98,7 +96,7 @@ void CSoundAnimDlg::setAnimTime(float animStart, float animEnd)
 
 void CSoundAnimDlg::updateScroll(uint pos, uint min, uint max)
 {
-	CScrollBar* scroll = (CScrollBar*) GetDlgItem(IDC_SOUND_ANIM_SCROLLBAR);
+	CScrollBar *scroll = (CScrollBar *)GetDlgItem(IDC_SOUND_ANIM_SCROLLBAR);
 
 	scroll->SetScrollRange(min, max, FALSE);
 	scroll->SetScrollPos(pos, TRUE);
@@ -106,20 +104,20 @@ void CSoundAnimDlg::updateScroll(uint pos, uint min, uint max)
 
 // ********************************************************
 
-void CSoundAnimDlg::DoDataExchange(CDataExchange* pDX)
+void CSoundAnimDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSoundAnimDlg)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
 // ********************************************************
 
-void CSoundAnimDlg::selectMarker(CSoundAnimMarker* marker)
+void CSoundAnimDlg::selectMarker(CSoundAnimMarker *marker)
 {
 	_SelectedMarker = marker;
-	updateSounds();	
+	updateSounds();
 }
 
 // ********************************************************
@@ -132,7 +130,7 @@ void CSoundAnimDlg::updateSounds()
 
 		_SelectedMarker->getSounds(sounds);
 
-		CListBox* list = (CListBox*) GetDlgItem(IDC_SOUND_ANIM_LIST);
+		CListBox *list = (CListBox *)GetDlgItem(IDC_SOUND_ANIM_LIST);
 		list->ResetContent();
 
 		vector<NLMISC::TStringId>::iterator iter;
@@ -152,9 +150,8 @@ void CSoundAnimDlg::OnAddSound()
 {
 	if (_SelectedMarker != 0)
 	{
-//		CPickSound::TNameVect names;
-		vector<NLMISC::TStringId>	names;
-		
+		//		CPickSound::TNameVect names;
+		vector<NLMISC::TStringId> names;
 
 		NLSOUND::UAudioMixer *audioMixer = CSoundSystem::getAudioMixer();
 		if (audioMixer)
@@ -166,9 +163,9 @@ void CSoundAnimDlg::OnAddSound()
 
 		if (ps.DoModal() == IDOK)
 		{
-//			string name = ps.getName();
+			//			string name = ps.getName();
 			_SelectedMarker->addSound(ps.getName());
-			updateSounds();	
+			updateSounds();
 		}
 	}
 }
@@ -180,7 +177,7 @@ void CSoundAnimDlg::OnRemoveSound()
 	if (_SelectedMarker != 0)
 	{
 		TCHAR s[256];
-		CListBox* list = (CListBox*) GetDlgItem(IDC_SOUND_ANIM_LIST);
+		CListBox *list = (CListBox *)GetDlgItem(IDC_SOUND_ANIM_LIST);
 
 		if (list->GetText(list->GetCurSel(), s) != LB_ERR)
 		{
@@ -227,16 +224,16 @@ void CSoundAnimDlg::OnDelete()
 
 // ********************************************************
 
-void CSoundAnimDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CSoundAnimDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar)
 {
 	CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
 
 	nlwarning("CSoundAnimDlg::OnHScroll");
-	
-   // Get the minimum and maximum scroll-bar positions.
-   int minpos;
+
+	// Get the minimum and maximum scroll-bar positions.
+	int minpos;
 	int maxpos;
-	pScrollBar->GetScrollRange(&minpos, &maxpos); 
+	pScrollBar->GetScrollRange(&minpos, &maxpos);
 	maxpos = pScrollBar->GetScrollLimit();
 
 	// Get the current position of scroll box.
@@ -245,65 +242,65 @@ void CSoundAnimDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	// Determine the new position of scroll box.
 	switch (nSBCode)
 	{
-	case SB_LEFT:	  // Scroll to far left.
+	case SB_LEFT: // Scroll to far left.
 		curpos = minpos;
-	  break;
+		break;
 
-	case SB_RIGHT:		// Scroll to far right.
+	case SB_RIGHT: // Scroll to far right.
 		curpos = maxpos;
 		break;
 
-	case SB_ENDSCROLL:	// End scroll.
+	case SB_ENDSCROLL: // End scroll.
 		break;
 
-	case SB_LINELEFT:		// Scroll left.
+	case SB_LINELEFT: // Scroll left.
 		curpos -= 5;
 		if (curpos < minpos)
 		{
-		 curpos = minpos;
+			curpos = minpos;
 		}
 		break;
 
-	case SB_LINERIGHT:	// Scroll right.
+	case SB_LINERIGHT: // Scroll right.
 		curpos += 5;
 		if (curpos > maxpos)
 		{
-		 curpos = maxpos;
+			curpos = maxpos;
 		}
 		break;
 
-	case SB_PAGELEFT:	// Scroll one page left.
+	case SB_PAGELEFT: // Scroll one page left.
 	{
-		// Get the page size. 
-		SCROLLINFO	info;
+		// Get the page size.
+		SCROLLINFO info;
 		pScrollBar->GetScrollInfo(&info, SIF_ALL);
 
 		if (curpos > minpos)
 		{
-			curpos = std::max(minpos, curpos - (int) info.nPage);
+			curpos = std::max(minpos, curpos - (int)info.nPage);
 		}
 	}
-		break;
+	break;
 
-	case SB_PAGERIGHT:		// Scroll one page right.
+	case SB_PAGERIGHT: // Scroll one page right.
 	{
-		// Get the page size. 
-		SCROLLINFO	info;
+		// Get the page size.
+		SCROLLINFO info;
 		pScrollBar->GetScrollInfo(&info, SIF_ALL);
 
 		if (curpos < maxpos)
 		{
-			curpos = std::min(maxpos, curpos + (int) info.nPage);
+			curpos = std::min(maxpos, curpos + (int)info.nPage);
 		}
 	}
-		break;
+	break;
 
 	case SB_THUMBPOSITION: // Scroll to absolute position. nPos is the position
-		curpos = nPos;		// of the scroll box at the end of the drag operation.
+		curpos = nPos; // of the scroll box at the end of the drag operation.
 		break;
 
-	case SB_THUMBTRACK:	 // Drag scroll box to specified position. nPos is the
-		curpos = nPos;	 // position that the scroll box has been dragged to.
+	case SB_THUMBTRACK: // Drag scroll box to specified position. nPos is the
+		curpos = nPos; // position that the scroll box has been dragged to.
 		break;
 	}
 
@@ -318,18 +315,15 @@ void CSoundAnimDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 // ********************************************************
 
 BEGIN_MESSAGE_MAP(CSoundAnimDlg, CDialog)
-	//{{AFX_MSG_MAP(CSoundAnimDlg)
-	ON_BN_CLICKED(IDC_ANIM_SOUND_ADD, OnAddSound)
-	ON_BN_CLICKED(IDC_ANIM_SOUND_REMOVE, OnRemoveSound)
-	ON_BN_CLICKED(IDC_ANIM_SOUND_SAVE, OnSave)
-	ON_BN_CLICKED(IDC_ANIM_SOUND_ZOOMIN, OnZoomIn)
-	ON_BN_CLICKED(IDC_ANIM_SOUND_ZOOMOUT, OnZoomOut)
-	ON_BN_CLICKED(IDC_ANIM_SOUND_MARK, OnMark)
-	ON_BN_CLICKED(IDC_ANIM_SOUND_DELETE, OnDelete)
-	ON_WM_CREATE()
-	ON_WM_HSCROLL()
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CSoundAnimDlg)
+ON_BN_CLICKED(IDC_ANIM_SOUND_ADD, OnAddSound)
+ON_BN_CLICKED(IDC_ANIM_SOUND_REMOVE, OnRemoveSound)
+ON_BN_CLICKED(IDC_ANIM_SOUND_SAVE, OnSave)
+ON_BN_CLICKED(IDC_ANIM_SOUND_ZOOMIN, OnZoomIn)
+ON_BN_CLICKED(IDC_ANIM_SOUND_ZOOMOUT, OnZoomOut)
+ON_BN_CLICKED(IDC_ANIM_SOUND_MARK, OnMark)
+ON_BN_CLICKED(IDC_ANIM_SOUND_DELETE, OnDelete)
+ON_WM_CREATE()
+ON_WM_HSCROLL()
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
-
-

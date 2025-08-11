@@ -26,13 +26,9 @@
 #include "nel/misc/event_listener.h"
 #include "nel/misc/rgba.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 using NLMISC::CSmartPtr;
-
 
 /**
  * 3d Engine Utilities. Simple Open / Close framework.
@@ -52,11 +48,10 @@ class CNELU
 {
 public:
 	// Default Perspective of camera.
-	static const float		DefLx;		//=0.26f;
-	static const float		DefLy;		//=0.2f;
-	static const float		DefLzNear;	//=0.15f;
-	static const float		DefLzFar;	//=1000.0f;
-
+	static const float DefLx; //=0.26f;
+	static const float DefLy; //=0.2f;
+	static const float DefLzNear; //=0.15f;
+	static const float DefLzFar; //=1000.0f;
 
 public:
 	/** Init all that we need for a single GL window:
@@ -64,7 +59,7 @@ public:
 	 *
 	 * You can access the driver with CNELU::Driver.
 	 */
-	static bool		initDriver(uint w, uint h, uint bpp=32, bool windowed=true, nlWindow systemWindow=EmptyWindow, bool offscreen=false, bool direct3d=false);
+	static bool initDriver(uint w, uint h, uint bpp = 32, bool windowed = true, nlWindow systemWindow = EmptyWindow, bool offscreen = false, bool direct3d = false);
 
 	/** Init all that we need for a Scene.
 	 * - register scene basics models,
@@ -75,72 +70,64 @@ public:
 	 * to this camera or create/use another camera if you want...)
 	 * \param viewport the viewport, fullscreen by default.
 	 */
-	static void		initScene(CViewport viewport=CViewport());
+	static void initScene(CViewport viewport = CViewport());
 
 	/** Init all that we need for a window message processing:
 	 * - a server.
 	 * - an asynclistener for get async key states.
 	 */
-	static void		initEventServer();
-
+	static void initEventServer();
 
 	/** Release / delete the driver. (close window etc...)
 	 */
-	static void		releaseDriver();
+	static void releaseDriver();
 
 	/** Release the scene.
 	 */
-	static void		releaseScene();
+	static void releaseScene();
 
 	/** Release the event server and the asynclistener.
 	 */
-	static void		releaseEventServer();
+	static void releaseEventServer();
 
 	/** Check if you press F12 and if yes, take a screenshot
 	 */
-	static void		screenshot();
+	static void screenshot();
 
 public:
-
 	/** Init the registry, and init all NELU
 	 * - NL3D::registerSerial3d().
 	 * - initDriver();
 	 * - initScene();
 	 * - initEventServer();
 	 */
-	static bool		init(uint w, uint h, CViewport viewport=CViewport(), uint bpp=32, bool windowed=true, nlWindow systemWindow=EmptyWindow, bool offscreen = false, bool direct3d = false);
+	static bool init(uint w, uint h, CViewport viewport = CViewport(), uint bpp = 32, bool windowed = true, nlWindow systemWindow = EmptyWindow, bool offscreen = false, bool direct3d = false);
 
 	/** Delete all:
 	 * - releaseEventServer();
 	 * - releaseScene()
 	 * - releaseDriver().
 	 */
-	static void		release();
-
+	static void release();
 
 	/// Shortcut to clear ZBuffer and color buffer of CNELU::Driver.
-	static void		clearBuffers(NLMISC::CRGBA col= NLMISC::CRGBA(0,0,0,0));
+	static void clearBuffers(NLMISC::CRGBA col = NLMISC::CRGBA(0, 0, 0, 0));
 	/// Shortcut to swapBuffers of CNELU::Driver.
-	static void		swapBuffers();
-
-
+	static void swapBuffers();
 
 public:
-	static IDriver				*Driver;
-	static CScene				*Scene;
-	static CShapeBank			*ShapeBank;
+	static IDriver *Driver;
+	static CScene *Scene;
+	static CShapeBank *ShapeBank;
 	// There is one MeshSkin Vertex Stream per driver, and for all scenes.
-	static CVertexStreamManager	*MeshSkinManager;
+	static CVertexStreamManager *MeshSkinManager;
 
-	static CRefPtr<CCamera>		Camera;
-	static NLMISC::CEventServer			EventServer;
-	static NLMISC::CEventListenerAsync	AsyncListener;
-
+	static CRefPtr<CCamera> Camera;
+	static NLMISC::CEventServer EventServer;
+	static NLMISC::CEventListenerAsync AsyncListener;
 };
 
-
 } // NL3D
-
 
 #endif // NL_NELU_H
 

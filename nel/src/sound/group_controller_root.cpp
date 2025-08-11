@@ -40,14 +40,14 @@ using namespace std;
 
 namespace NLSOUND {
 
-CGroupControllerRoot::CGroupControllerRoot() : CGroupController(NULL), NLMISC::CManualSingleton<CGroupControllerRoot>()
+CGroupControllerRoot::CGroupControllerRoot()
+    : CGroupController(NULL)
+    , NLMISC::CManualSingleton<CGroupControllerRoot>()
 {
-	
 }
 
 CGroupControllerRoot::~CGroupControllerRoot()
 {
-	
 }
 
 std::string CGroupControllerRoot::getPath()

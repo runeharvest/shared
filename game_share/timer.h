@@ -33,71 +33,71 @@
 
   Example 1: - a class containing a timer
   ----------
-	class CMyClass
-	{
-	public:
-		void startTimer()
-		{
-			// set the timer to trigger in 50 ticks
-			_Timer.setRemaining(50);
-		}
-		void update()
-		{
-			if (_Timer.isActive())
-			{
-				nlinfo("time remaining: ",_Timer.getTimeRemaining());
-			}
-			else
-			{
-				// set the timer to trigger in 20 ticks
-				_Timer.setRemaining(20);
-			}
-		}
-	private:
-		CTimer _Timer;
-	};
+    class CMyClass
+    {
+    public:
+        void startTimer()
+        {
+            // set the timer to trigger in 50 ticks
+            _Timer.setRemaining(50);
+        }
+        void update()
+        {
+            if (_Timer.isActive())
+            {
+                nlinfo("time remaining: ",_Timer.getTimeRemaining());
+            }
+            else
+            {
+                // set the timer to trigger in 20 ticks
+                _Timer.setRemaining(20);
+            }
+        }
+    private:
+        CTimer _Timer;
+    };
 
 
   Example 2: - a class using a timer and a custom event handler to trigger regular actions
   ----------
-	class CMyClass;
-	class CMyTimerEvent;
+    class CMyClass;
+    class CMyTimerEvent;
 
-	class CMyTimerEvent: public CTimerEvent
-	{
-	public:
-		CMyTimerEvent(CMyClass* parent);
-		void timerCallback(CTimer* owner);
-	private:
-		CMyClass* _Parent;
-	}
+    class CMyTimerEvent: public CTimerEvent
+    {
+    public:
+        CMyTimerEvent(CMyClass* parent);
+        void timerCallback(CTimer* owner);
+    private:
+        CMyClass* _Parent;
+    }
 
-	class CMyClass
-	{
-	public:
-		void startTimer()
-		{
-			// set the timer to trigger in 50 ticks
-			_Timer.setRemaining(50,new CMyTimerEvent(this));
-		}
-		void doSomething(CTimerEvent* event)
-		{
-			nlinfo("hello world");
-			// set the timer to trigger in 20 ticks with the same event handler
-			_Timer.setRemaining(20,event);
-		}
-	private:
-		CMyTimer _Timer;
-	};
+    class CMyClass
+    {
+    public:
+        void startTimer()
+        {
+            // set the timer to trigger in 50 ticks
+            _Timer.setRemaining(50,new CMyTimerEvent(this));
+        }
+        void doSomething(CTimerEvent* event)
+        {
+            nlinfo("hello world");
+            // set the timer to trigger in 20 ticks with the same event handler
+            _Timer.setRemaining(20,event);
+        }
+    private:
+        CMyTimer _Timer;
+    };
 
-	void CMyTimerEvent::CMyTimerEvent(CMyClass* parent)
-	{
-		_Parent=parent;
-	}
-	void CMyTimerEvent::timerCallback(CTimer* owner)
-	{
-		_Parent->doSomething(this);
-	}
+    void CMyTimerEvent::CMyTimerEvent(CMyClass* parent)
+    {
+        _Parent=parent;
+    }
+    void CMyTimerEvent::timerCallback(CTimer* owner)
+    {
+        _Parent->doSomething(this);
+    }
 */
 
 #ifndef TIMER_H
@@ -119,7 +119,6 @@
 #include "tick_event_handler.h"
 #include "singleton_registry.h"
 
-
 //-------------------------------------------------------------------------------------------------
 // forward class declarations
 //-------------------------------------------------------------------------------------------------
@@ -127,7 +126,6 @@
 class CTimer;
 class CTimerEvent;
 class CTimerManager;
-
 
 //-------------------------------------------------------------------------------------------------
 // class CTimer
@@ -146,28 +144,28 @@ public:
 
 	// set the timer for somewhere between (time) and (time + variation)
 	// also clear the custom event object
-	void set(NLMISC::TGameCycle time,uint32 variation);
+	void set(NLMISC::TGameCycle time, uint32 variation);
 
 	// set the timer for a given target time with given custom event handler object
-	void set(NLMISC::TGameCycle time,CTimerEvent* eventObject);
+	void set(NLMISC::TGameCycle time, CTimerEvent *eventObject);
 
 	// set the timer for somewhere between (time) and (time + variation)
 	// also set given custom event handler object
-	void set(NLMISC::TGameCycle time,CTimerEvent* eventObject,uint32 variation);
+	void set(NLMISC::TGameCycle time, CTimerEvent *eventObject, uint32 variation);
 
 	// set the timer for (current time + time) & clear the custom event object
 	void setRemaining(NLMISC::TGameCycle time);
 
 	// set the timer for somewhere between (current time + time) and (current time + time + variation)
 	// also clear the custom event object
-	void setRemaining(NLMISC::TGameCycle time,uint32 variation);
+	void setRemaining(NLMISC::TGameCycle time, uint32 variation);
 
 	// set the timer for (current time + time) with given custom event handler object
-	void setRemaining(NLMISC::TGameCycle time,CTimerEvent* eventObject);
+	void setRemaining(NLMISC::TGameCycle time, CTimerEvent *eventObject);
 
 	// set the timer for somewhere between (current time + time) and (current time + time + variation)
 	// also set given custom event handler object
-	void setRemaining(NLMISC::TGameCycle time,CTimerEvent* eventObject,uint32 variation);
+	void setRemaining(NLMISC::TGameCycle time, CTimerEvent *eventObject, uint32 variation);
 
 	// test whether timer is running
 	bool isActive() const;
@@ -182,30 +180,30 @@ public:
 	NLMISC::TGameCycle getTimeRemaining() const;
 
 	// get a pointer to the current custom event object
-	CTimerEvent* getEvent();
+	CTimerEvent *getEvent();
 
 private:
 	// prohibit copy
-	CTimer(const CTimer&);
+	CTimer(const CTimer &);
 
-	CTimer& operator=(const CTimer&);
+	CTimer &operator=(const CTimer &);
 
 	// a smart pointer to the timer event - the event is reffed by a second smart ptr from the event system
 	NLMISC::CSmartPtr<CTimerEvent> _Event;
 };
-
 
 //-------------------------------------------------------------------------------------------------
 // class CTimerEvent
 //-------------------------------------------------------------------------------------------------
 // specialisable timer event class
 
-class CTimerEvent: public NLMISC::CRefCount
+class CTimerEvent : public NLMISC::CRefCount
 {
 	NL_INSTANCE_COUNTER_DECL(CTimerEvent);
+
 public:
 	// callback to be specialised
-	virtual void timerCallback(CTimer* owner) {}
+	virtual void timerCallback(CTimer *owner) { }
 
 public:
 	// ctor
@@ -218,7 +216,7 @@ public:
 	NLMISC::TGameCycle getTime() const;
 
 	// get hold of the object that created the event (or NULL if the object has been deleted)
-	CTimer* getOwner() const;
+	CTimer *getOwner() const;
 
 	// return true if the event is active otherwise false
 	bool isActive() const;
@@ -228,10 +226,10 @@ private:
 	friend class CTimer;
 
 	// setup the event
-	void set(CTimer* owner,NLMISC::TGameCycle time);
+	void set(CTimer *owner, NLMISC::TGameCycle time);
 
 	// setup the event, selecting a time between 'time' and 'time'+'variation'
-	void set(CTimer* owner,NLMISC::TGameCycle time,uint32 variation);
+	void set(CTimer *owner, NLMISC::TGameCycle time, uint32 variation);
 
 	// clear the event - mark it for deletion
 	void clear();
@@ -248,16 +246,15 @@ private:
 	NLMISC::TGameCycle _Time;
 
 	// a pointer to the owner object - is NULL if owner object has been deleted or this event has been invalidated
-	CTimer* _Owner;
+	CTimer *_Owner;
 };
-
 
 //-------------------------------------------------------------------------------------------------
 // class CTimerManager
 //-------------------------------------------------------------------------------------------------
 // singleton timer manager
 
-class CTimerManager: public IServiceSingleton
+class CTimerManager : public IServiceSingleton
 {
 public:
 	// update called each tick in service update
@@ -265,7 +262,7 @@ public:
 	virtual void tickUpdate();
 
 	// get the singleton instance...
-	static CTimerManager* getInstance();
+	static CTimerManager *getInstance();
 
 	// callback called when the tick service connects - used to ajust time values of event objects
 	void syncTick();
@@ -275,19 +272,18 @@ private:
 	CTimerManager();
 
 	// the type of the event vector for a given time hash
-	typedef std::vector<NLMISC::CSmartPtr<CTimerEvent> > TEventVector;
+	typedef std::vector<NLMISC::CSmartPtr<CTimerEvent>> TEventVector;
 
 	// the event vector is filled directly by CTimerEvent objects
 	friend class CTimerEvent;
 
 	// singleton encapsulation of event vector set
-	TEventVector& getEventVector(NLMISC::TGameCycle time);
+	TEventVector &getEventVector(NLMISC::TGameCycle time);
 
 	// data
 	NLMISC::TGameCycle _LastTick;
 	TEventVector _EventVectors[256];
 };
-
 
 //-------------------------------------------------------------------------------------------------
 // class CTimer
@@ -304,61 +300,61 @@ inline CTimer::~CTimer()
 
 inline void CTimer::set(NLMISC::TGameCycle time)
 {
-	set(time,new CTimerEvent);
+	set(time, new CTimerEvent);
 }
 
-inline void CTimer::set(NLMISC::TGameCycle time,uint32 variation)
+inline void CTimer::set(NLMISC::TGameCycle time, uint32 variation)
 {
-	set(time,new CTimerEvent,variation);
+	set(time, new CTimerEvent, variation);
 }
 
-inline void CTimer::set(NLMISC::TGameCycle time,CTimerEvent* eventObject)
+inline void CTimer::set(NLMISC::TGameCycle time, CTimerEvent *eventObject)
 {
-	if (_Event!=NULL)
+	if (_Event != NULL)
 		_Event->clear();
-	_Event= eventObject;
-	eventObject->set(this,time);
+	_Event = eventObject;
+	eventObject->set(this, time);
 }
 
-inline void CTimer::set(NLMISC::TGameCycle time,CTimerEvent* eventObject,uint32 variation)
+inline void CTimer::set(NLMISC::TGameCycle time, CTimerEvent *eventObject, uint32 variation)
 {
-	if (_Event!=NULL)
+	if (_Event != NULL)
 		_Event->clear();
-	_Event= eventObject;
-	eventObject->set(this,time,variation);
+	_Event = eventObject;
+	eventObject->set(this, time, variation);
 }
 
 inline void CTimer::setRemaining(NLMISC::TGameCycle time)
 {
-	set(CTickEventHandler::getGameCycle()+time);
+	set(CTickEventHandler::getGameCycle() + time);
 }
 
-inline void CTimer::setRemaining(NLMISC::TGameCycle time,uint32 variation)
+inline void CTimer::setRemaining(NLMISC::TGameCycle time, uint32 variation)
 {
-	set(CTickEventHandler::getGameCycle()+time,variation);
+	set(CTickEventHandler::getGameCycle() + time, variation);
 }
 
-inline void CTimer::setRemaining(NLMISC::TGameCycle time,CTimerEvent* eventObject)
+inline void CTimer::setRemaining(NLMISC::TGameCycle time, CTimerEvent *eventObject)
 {
-	set(CTickEventHandler::getGameCycle()+time,eventObject);
+	set(CTickEventHandler::getGameCycle() + time, eventObject);
 }
 
-inline void CTimer::setRemaining(NLMISC::TGameCycle time,CTimerEvent* eventObject,uint32 variation)
+inline void CTimer::setRemaining(NLMISC::TGameCycle time, CTimerEvent *eventObject, uint32 variation)
 {
-	set(CTickEventHandler::getGameCycle()+time,eventObject,variation);
+	set(CTickEventHandler::getGameCycle() + time, eventObject, variation);
 }
 
 inline void CTimer::reset()
 {
-	if (_Event==NULL)
+	if (_Event == NULL)
 		return;
 	_Event->clear();
-	_Event=NULL;
+	_Event = NULL;
 }
 
 inline bool CTimer::isActive() const
 {
-	return (_Event!=NULL) && _Event->isActive();
+	return (_Event != NULL) && _Event->isActive();
 }
 
 inline NLMISC::TGameCycle CTimer::getTime() const
@@ -372,10 +368,10 @@ inline NLMISC::TGameCycle CTimer::getTimeRemaining() const
 {
 	if (!isActive())
 		return 0;
-	return getTime()-CTickEventHandler::getGameCycle();
+	return getTime() - CTickEventHandler::getGameCycle();
 }
 
-inline CTimerEvent* CTimer::getEvent()
+inline CTimerEvent *CTimer::getEvent()
 {
 	return _Event;
 }
@@ -386,44 +382,44 @@ inline CTimerEvent* CTimer::getEvent()
 
 inline CTimerEvent::CTimerEvent()
 {
-	_Owner	= NULL;
-	_Time	= 0;
+	_Owner = NULL;
+	_Time = 0;
 }
 
 inline CTimerEvent::~CTimerEvent()
 {
 }
 
-inline void CTimerEvent::set(CTimer* owner,NLMISC::TGameCycle time)
+inline void CTimerEvent::set(CTimer *owner, NLMISC::TGameCycle time)
 {
-	BOMB_IF(owner==NULL,"Impossible to set a timer with a NULL owner",return);
-	BOMB_IF(_Owner!=NULL && _Owner!=owner,"Attempt to change owner of an active event",return);
-	_Owner	= owner;
-	_Time	= time;
+	BOMB_IF(owner == NULL, "Impossible to set a timer with a NULL owner", return);
+	BOMB_IF(_Owner != NULL && _Owner != owner, "Attempt to change owner of an active event", return);
+	_Owner = owner;
+	_Time = time;
 	CTimerManager::getInstance()->getEventVector(time).push_back(this);
 }
 
-inline void CTimerEvent::set(CTimer* owner,NLMISC::TGameCycle time,uint32 variation)
+inline void CTimerEvent::set(CTimer *owner, NLMISC::TGameCycle time, uint32 variation)
 {
-	BOMB_IF(variation==0,"shouldn't call this method with variation value of 0", set(owner,time));
-	BOMB_IF(variation>256,"shouldn't call this method with variation value of >256", variation=256);
+	BOMB_IF(variation == 0, "shouldn't call this method with variation value of 0", set(owner, time));
+	BOMB_IF(variation > 256, "shouldn't call this method with variation value of >256", variation = 256);
 
-	BOMB_IF(owner==NULL,"Impossible to set a timer with a NULL owner", return);
-	BOMB_IF(_Owner!=NULL && _Owner!=owner,"Attempt to change owner of an active event", return);
-	_Owner	= owner;
+	BOMB_IF(owner == NULL, "Impossible to set a timer with a NULL owner", return);
+	BOMB_IF(_Owner != NULL && _Owner != owner, "Attempt to change owner of an active event", return);
+	_Owner = owner;
 
-	CTimerManager* mgr=CTimerManager::getInstance();
-	CTimerManager::TEventVector *best=NULL;
-	uint32 bestLength=~0u;
+	CTimerManager *mgr = CTimerManager::getInstance();
+	CTimerManager::TEventVector *best = NULL;
+	uint32 bestLength = ~0u;
 
-	for (uint32 i=0;i<variation;++i)
+	for (uint32 i = 0; i < variation; ++i)
 	{
-		CTimerManager::TEventVector& vect= mgr->getEventVector(time+i);
-		uint32 length=(uint32)vect.size();
-		if (length<=bestLength)
+		CTimerManager::TEventVector &vect = mgr->getEventVector(time + i);
+		uint32 length = (uint32)vect.size();
+		if (length <= bestLength)
 		{
-			bestLength= length;
-			best=&vect;
+			bestLength = length;
+			best = &vect;
 			_Time = time + i;
 		}
 	}
@@ -436,25 +432,24 @@ inline NLMISC::TGameCycle CTimerEvent::getTime() const
 	return _Time;
 }
 
-inline CTimer* CTimerEvent::getOwner() const
+inline CTimer *CTimerEvent::getOwner() const
 {
 	return _Owner;
 }
 
 inline bool CTimerEvent::isActive() const
 {
-	return _Owner!=NULL;
+	return _Owner != NULL;
 }
 
 inline void CTimerEvent::clear()
 {
-	_Owner=NULL;
+	_Owner = NULL;
 }
-
 
 inline void CTimerEvent::processEvent()
 {
-	CTimer* owner=_Owner;
+	CTimer *owner = _Owner;
 	BOMB_IF(owner == NULL, "Attempt to process an event that no longer has a valid owner", return);
 
 	// mark the event as expired - the state may be chnaged during the timer callback...
@@ -465,31 +460,29 @@ inline void CTimerEvent::processEvent()
 	timerCallback(owner);
 }
 
-
 //-------------------------------------------------------------------------------------------------
 // inlines CTimerManager
 //-------------------------------------------------------------------------------------------------
 
 inline CTimerManager::CTimerManager()
 {
-	_LastTick= CTickEventHandler::getGameCycle();
+	_LastTick = CTickEventHandler::getGameCycle();
 }
 
-inline CTimerManager* CTimerManager::getInstance()
+inline CTimerManager *CTimerManager::getInstance()
 {
-	static CTimerManager* instance= NULL;
-	if (instance==NULL)
+	static CTimerManager *instance = NULL;
+	if (instance == NULL)
 	{
-		instance=new CTimerManager;
+		instance = new CTimerManager;
 	}
 	return instance;
 }
 
-inline CTimerManager::TEventVector& CTimerManager::getEventVector(NLMISC::TGameCycle time)
+inline CTimerManager::TEventVector &CTimerManager::getEventVector(NLMISC::TGameCycle time)
 {
-	return _EventVectors[uint8(time&0xff)];
+	return _EventVectors[uint8(time & 0xff)];
 }
-
 
 //-------------------------------------------------------------------------------------------------
 #endif

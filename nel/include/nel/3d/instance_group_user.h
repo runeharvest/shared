@@ -21,15 +21,12 @@
 #include "nel/3d/u_instance_group.h"
 #include "nel/3d/scene_group.h"
 
-
-namespace NLMISC
-{
-	class CVector;
-	class CQuat;
+namespace NLMISC {
+class CVector;
+class CQuat;
 }
 
-namespace NL3D
-{
+namespace NL3D {
 
 class UScene;
 class UInstanceGroup;
@@ -50,100 +47,94 @@ class CInstanceGroupUser : public UInstanceGroup
 	 * ***********************************************/
 
 public:
-	CInstanceGroupUser ();
-	virtual ~CInstanceGroupUser ();
+	CInstanceGroupUser();
+	virtual ~CInstanceGroupUser();
 	// Init with a scene.
-	//bool load (const std::string &instanceGroup);
+	// bool load (const std::string &instanceGroup);
 
 	// Init without a scene
-	bool init (const std::string &instanceGroup, bool async= false);
+	bool init(const std::string &instanceGroup, bool async = false);
 
 private:
 	// From UInstanceGroup
-	void setTransformNameCallback (ITransformName *pTN);
+	void setTransformNameCallback(ITransformName *pTN);
 	void setAddRemoveInstanceCallback(IAddRemoveInstance *callback);
 	void setIGAddBeginCallback(IIGAddBegin *callback);
 
+	void addToScene(class UScene &scene, UDriver *driver, uint selectedTexture);
+	void addToScene(class CScene &scene, IDriver *driver, uint selectedTexture);
 
-	void addToScene (class UScene& scene, UDriver *driver, uint selectedTexture);
-	void addToScene (class CScene& scene, IDriver *driver, uint selectedTexture);
+	void addToSceneAsync(class UScene &scene, UDriver *driver, uint selectedTexture);
+	TState getAddToSceneState();
+	void stopAddToSceneAsync();
 
-	void addToSceneAsync (class UScene& scene, UDriver *driver, uint selectedTexture);
-	TState getAddToSceneState ();
-	void stopAddToSceneAsync ();
+	virtual UInstance getInstance(uint instanceNb) const;
+	virtual void setDistMax(uint instance, float dist);
+	virtual float getDistMax(uint instance) const;
+	virtual void setCoarseMeshDist(uint instance, float dist);
+	virtual float getCoarseMeshDist(uint instance) const;
 
-	virtual UInstance		getInstance (uint instanceNb) const;
-	virtual void			setDistMax(uint instance, float dist);
-	virtual float			getDistMax(uint instance) const;
-	virtual void		    setCoarseMeshDist(uint instance, float dist);
-	virtual float           getCoarseMeshDist(uint instance) const;
+	void removeFromScene(class UScene &scene);
+	uint getNumInstance() const;
+	const std::string &getShapeName(uint instanceNb) const;
+	const std::string &getInstanceName(uint instanceNb) const;
+	virtual void getInstanceMatrix(uint instanceNb, NLMISC::CMatrix &dest) const;
+	const NLMISC::CVector &getInstancePos(uint instanceNb) const;
+	const NLMISC::CQuat &getInstanceRot(uint instanceNb) const;
+	const NLMISC::CVector &getInstanceScale(uint instanceNb) const;
+	UInstance getByName(const std::string &name) const;
+	sint getIndexByName(const std::string &name) const;
 
+	void setBlendShapeFactor(const std::string &bsName, float rFactor);
 
-	void removeFromScene (class UScene& scene);
-	uint getNumInstance () const;
-	const std::string& getShapeName (uint instanceNb) const;
-	const std::string& getInstanceName (uint instanceNb) const;
-	virtual void				getInstanceMatrix(uint instanceNb, NLMISC::CMatrix &dest) const;
-	const NLMISC::CVector& getInstancePos (uint instanceNb) const;
-	const NLMISC::CQuat& getInstanceRot (uint instanceNb) const;
-	const NLMISC::CVector& getInstanceScale (uint instanceNb) const;
-	UInstance getByName (const std::string& name) const;
-	sint	  getIndexByName(const std::string &name) const;
-
-
-	void setBlendShapeFactor (const std::string &bsName, float rFactor);
-
-	void createRoot (UScene &scene);
-	void setClusterSystemForInstances (UInstanceGroup *pClusterSystem);
+	void createRoot(UScene &scene);
+	void setClusterSystemForInstances(UInstanceGroup *pClusterSystem);
 	bool linkToParentCluster(UInstanceGroup *father);
 	UInstanceGroup *getParentCluster() const;
-	void getDynamicPortals (std::vector<std::string> &names);
-	void setDynamicPortal (std::string& name, bool opened);
-	bool getDynamicPortal (std::string& name);
+	void getDynamicPortals(std::vector<std::string> &names);
+	void setDynamicPortal(std::string &name, bool opened);
+	bool getDynamicPortal(std::string &name);
 
-
-	void setPos (const NLMISC::CVector &pos);
-	void setRotQuat (const NLMISC::CQuat &q);
+	void setPos(const NLMISC::CVector &pos);
+	void setRotQuat(const NLMISC::CQuat &q);
 
 	bool getStaticLightSetup(NLMISC::CRGBA sunAmbient, uint retrieverIdentifier, sint surfaceId, const NLMISC::CVector &localPos,
-		std::vector<CPointLightInfluence> &pointLightList, uint8 &sunContribution, NLMISC::CRGBA &localAmbient);
+	    std::vector<CPointLightInfluence> &pointLightList, uint8 &sunContribution, NLMISC::CRGBA &localAmbient);
 
-	NLMISC::CVector getPos ();
-	NLMISC::CQuat	getRotQuat ();
+	NLMISC::CVector getPos();
+	NLMISC::CQuat getRotQuat();
 
 	// The real instance group
-	CInstanceGroup	_InstanceGroup;
+	CInstanceGroup _InstanceGroup;
 	// For access through getInstance() and getByName()
-	std::map<std::string,CTransformShape*>	_InstanceMap;
+	std::map<std::string, CTransformShape *> _InstanceMap;
 	// Async stuff
 	TState _AddToSceneState;
 	UScene *_AddToSceneTempScene;
 	UDriver *_AddToSceneTempDriver;
 
-	virtual void			freezeHRC();
-	virtual void			unfreezeHRC();
+	virtual void freezeHRC();
+	virtual void unfreezeHRC();
 
-	virtual void			displayDebugClusters(UDriver *drv, UTextContext *txtCtx);
+	virtual void displayDebugClusters(UDriver *drv, UTextContext *txtCtx);
 
-	virtual bool			dontCastShadowForInterior(uint instance) const;
-	virtual bool			dontCastShadowForExterior(uint instance) const;
+	virtual bool dontCastShadowForInterior(uint instance) const;
+	virtual bool dontCastShadowForExterior(uint instance) const;
 
 	friend class CTransformUser;
 	friend class CSceneUser;
 
-	void		removeInstancesUser();
+	void removeInstancesUser();
 
 public:
 	// Debug purpose only.
-	CInstanceGroup	&getInternalIG()
+	CInstanceGroup &getInternalIG()
 	{
 		return _InstanceGroup;
 	}
 };
 
-
 } // NL3D
-
 
 #endif // NL_INSTANCE_GROUP_USER_H
 

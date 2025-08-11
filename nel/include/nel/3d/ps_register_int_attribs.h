@@ -18,10 +18,9 @@
 #ifndef NL_REGISTER_INT_ATTRIB_H
 #define NL_REGISTER_INT_ATTRIB_H
 
-namespace NL3D
-{
-	/// Register attribute makers based on int (used in particle systems)
-	void PSRegisterIntAttribs();
+namespace NL3D {
+/// Register attribute makers based on int (used in particle systems)
+void PSRegisterIntAttribs();
 } // NL3D
 
 #endif

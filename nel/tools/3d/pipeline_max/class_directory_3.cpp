@@ -47,9 +47,9 @@ namespace MAX {
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-CClassDirectory3::CClassDirectory3(CDllDirectory *dllDirectory) : m_DllDirectory(dllDirectory)
+CClassDirectory3::CClassDirectory3(CDllDirectory *dllDirectory)
+    : m_DllDirectory(dllDirectory)
 {
-
 }
 
 // Parallel to CDllDirectory
@@ -95,21 +95,23 @@ void CClassDirectory3::toString(std::ostream &ostream, const std::string &pad) c
 			switch (id)
 			{
 			case 0x2040: // ClassEntry
+			{
+				uint subi = 0;
+				for (std::vector<CClassEntry *>::const_iterator subit = m_Entries.begin(), subend = m_Entries.end(); subit != subend; ++subit)
 				{
-					uint subi = 0;
-					for (std::vector<CClassEntry *>::const_iterator subit = m_Entries.begin(), subend = m_Entries.end(); subit != subend; ++subit)
-					{
-						ostream << "\n" << pad << "Entries[" << subi << "]: ";
-						(*subit)->toString(ostream, padpad);
-						++subi;
-					}
+					ostream << "\n"
+					        << pad << "Entries[" << subi << "]: ";
+					(*subit)->toString(ostream, padpad);
+					++subi;
 				}
-				break;
+			}
+			break;
 			default:
 				std::stringstream ss;
 				ss << std::hex << std::setfill('0');
 				ss << std::setw(4) << it->first;
-				ostream << "\n" << pad << "0x" << ss.str() << ": ";
+				ostream << "\n"
+				        << pad << "0x" << ss.str() << ": ";
 				it->second->toString(ostream, padpad);
 				++i;
 				break;
@@ -140,20 +142,20 @@ void CClassDirectory3::parse(uint16 version, uint filter)
 		switch (id)
 		{
 		case 0x2040: // ClassEntry
+		{
+			if (parsedDllEntry && (lastCached != id))
+				throw EStorageParse(); // There were chunks inbetween
+			if (!parsedDllEntry)
 			{
-				if (parsedDllEntry && (lastCached != id))
-					throw EStorageParse(); // There were chunks inbetween
-				if (!parsedDllEntry)
-				{
-					m_ChunkCache.push_back(TStorageObjectWithId(id, NULL)); // Dummy entry to know the location
-					lastCached = id;
-					parsedDllEntry = true;
-				}
-				CClassEntry *classEntry = static_cast<CClassEntry *>(it->second);
-				m_ClassIdToIndex[classEntry->classId()] = m_Entries.size();
-				m_Entries.push_back(classEntry);
-				break;
+				m_ChunkCache.push_back(TStorageObjectWithId(id, NULL)); // Dummy entry to know the location
+				lastCached = id;
+				parsedDllEntry = true;
 			}
+			CClassEntry *classEntry = static_cast<CClassEntry *>(it->second);
+			m_ClassIdToIndex[classEntry->classId()] = m_Entries.size();
+			m_Entries.push_back(classEntry);
+			break;
+		}
 		default:
 			m_ChunkCache.push_back(*it); // Dummy entry to know the location
 			lastCached = id;
@@ -237,7 +239,11 @@ void CClassDirectory3::disown()
 const CClassEntry *CClassDirectory3::get(uint16 index) const
 {
 	nlassert(!m_ChunksOwnsPointers);
-	if (index >= m_Entries.size()) { nlerror("Index 0x%x is above the number of entries %i", (uint32)index, (uint32)m_Entries.size()); return NULL; }
+	if (index >= m_Entries.size())
+	{
+		nlerror("Index 0x%x is above the number of entries %i", (uint32)index, (uint32)m_Entries.size());
+		return NULL;
+	}
 	return m_Entries[index];
 }
 
@@ -294,12 +300,15 @@ IStorageObject *CClassDirectory3::createChunkById(uint16 id, bool container)
 //		SuperClassID: 3072 }
 //	1 0x2042: (CStorageValue) { NeL Material } }
 
-CClassEntry::CClassEntry() : m_Header(NULL), m_Name(NULL)
+CClassEntry::CClassEntry()
+    : m_Header(NULL)
+    , m_Name(NULL)
 {
-
 }
 
-CClassEntry::CClassEntry(CDllDirectory *dllDirectory, const ISceneClassDesc *sceneClassDesc) : m_Header(new CClassEntryHeader()), m_Name(new CStorageValue<ucstring>())
+CClassEntry::CClassEntry(CDllDirectory *dllDirectory, const ISceneClassDesc *sceneClassDesc)
+    : m_Header(new CClassEntryHeader())
+    , m_Name(new CStorageValue<ucstring>())
 {
 	m_Chunks.push_back(TStorageObjectWithId(0x2060, m_Header));
 	m_Chunks.push_back(TStorageObjectWithId(0x2042, m_Name));
@@ -311,7 +320,6 @@ CClassEntry::CClassEntry(CDllDirectory *dllDirectory, const ISceneClassDesc *sce
 
 CClassEntry::~CClassEntry()
 {
-
 }
 
 std::string CClassEntry::className() const
@@ -325,9 +333,11 @@ void CClassEntry::toString(std::ostream &ostream, const std::string &pad) const
 	{
 		ostream << "(" << className() << ") [" << m_Chunks.size() << "] PARSED { ";
 		std::string padpad = pad + "\t";
-		ostream << "\n" << pad << "Header: ";
+		ostream << "\n"
+		        << pad << "Header: ";
 		m_Header->toString(ostream, padpad);
-		ostream << "\n" << pad << "Name: " << m_Name->Value.toUtf8();
+		ostream << "\n"
+		        << pad << "Name: " << m_Name->Value.toUtf8();
 		ostream << " } ";
 	}
 	else
@@ -391,12 +401,10 @@ IStorageObject *CClassEntry::createChunkById(uint16 id, bool container)
 
 CClassEntryHeader::CClassEntryHeader()
 {
-
 }
 
 CClassEntryHeader::~CClassEntryHeader()
 {
-
 }
 
 std::string CClassEntryHeader::className() const
@@ -414,9 +422,12 @@ void CClassEntryHeader::serial(NLMISC::IStream &stream)
 void CClassEntryHeader::toString(std::ostream &ostream, const std::string &pad) const
 {
 	ostream << "(" << className() << ") { ";
-	ostream << "\n" << pad << "DllIndex: " << DllIndex;
-	ostream << "\n" << pad << "ClassId: " << NLMISC::toString(ClassId);
-	ostream << "\n" << pad << "SuperClassId: " << SuperClassId;
+	ostream << "\n"
+	        << pad << "DllIndex: " << DllIndex;
+	ostream << "\n"
+	        << pad << "ClassId: " << NLMISC::toString(ClassId);
+	ostream << "\n"
+	        << pad << "SuperClassId: " << SuperClassId;
 	ostream << " } ";
 }
 

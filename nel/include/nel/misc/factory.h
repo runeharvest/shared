@@ -24,8 +24,7 @@
 #include "debug.h"
 #include <map>
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 /** Interface class for object registered in the factory.
  *	This is for factory internal use, you should not need to use this class directly.
@@ -34,11 +33,10 @@ template <class BaseClass>
 class IFactoryRegister
 {
 public:
-	virtual ~IFactoryRegister() {}
+	virtual ~IFactoryRegister() { }
 	/// This method is called to create an instance of the factored object.
 	virtual BaseClass *createObject(const typename BaseClass::TCtorParam &ctorParam) = 0;
 };
-
 
 /** Factory implementation class.
  *	the class take 2 template argument :
@@ -53,15 +51,14 @@ public:
 template <class BaseClass, class KeyType = std::string>
 class CFactory
 {
-	typedef std::map<KeyType, IFactoryRegister<BaseClass>*> TRegisterCont;
+	typedef std::map<KeyType, IFactoryRegister<BaseClass> *> TRegisterCont;
 
 public:
-
 	/// Get the singleton instance reference.
 	static CFactory &instance()
 	{
 		// Singleton instance pointer.
-		static CFactory	instance;
+		static CFactory instance;
 		return instance;
 	}
 
@@ -82,7 +79,7 @@ public:
 	 */
 	BaseClass *createObject(const KeyType &key, const typename BaseClass::TCtorParam &ctorParam)
 	{
-		typename TRegisterCont::iterator it (_FactoryRegisters.find(key));
+		typename TRegisterCont::iterator it(_FactoryRegisters.find(key));
 		if (it == _FactoryRegisters.end())
 			return NULL;
 		else
@@ -98,12 +95,13 @@ public:
 			classList.push_back(first->first);
 		}
 	}
+
 protected:
 	/// Singleton instance pointer.
-//	static CFactory	*_Instance;
+	//	static CFactory	*_Instance;
 
 	/// Container of all registered factorable object.
-	TRegisterCont	_FactoryRegisters;
+	TRegisterCont _FactoryRegisters;
 };
 
 /** This class is responsible for creating the factorable object and to register
@@ -136,15 +134,14 @@ public:
  *	Place this macro in an appropriate cpp file to declare a factory implementation.
  *	You just need to specify the base class type and key type.
  */
-//#define NLMISC_IMPLEMENT_FACTORY(baseClass, keyType)	NLMISC::CFactory<baseClass, keyType>	*NLMISC::CFactory<baseClass, keyType>::_Instance = NULL
+// #define NLMISC_IMPLEMENT_FACTORY(baseClass, keyType)	NLMISC::CFactory<baseClass, keyType>	*NLMISC::CFactory<baseClass, keyType>::_Instance = NULL
 
 /** Macro to declare a factorable object.
  *	Place this macro in a cpp file after your factorable class declaration.
  */
-#define NLMISC_REGISTER_OBJECT(baseClass, factoredClass, keyType, keyValue)	NLMISC::CFactoryRegister<NLMISC::CFactory<baseClass, keyType>, baseClass, factoredClass, keyType>	Register##factoredClass(keyValue)
+#define NLMISC_REGISTER_OBJECT(baseClass, factoredClass, keyType, keyValue) NLMISC::CFactoryRegister<NLMISC::CFactory<baseClass, keyType>, baseClass, factoredClass, keyType> Register##factoredClass(keyValue)
 
 #define NLMISC_GET_FACTORY(baseClass, keyType) NLMISC::CFactory<baseClass, keyType>::instance()
-
 
 /** Interface class for object registered in the indirect factory.
  *	This is for indirect factory internal use, you should not need to use this class directly.
@@ -153,12 +150,10 @@ template <class BaseFactoryClass>
 class IFactoryIndirectRegister
 {
 public:
-	virtual ~IFactoryIndirectRegister() {}
+	virtual ~IFactoryIndirectRegister() { }
 	/** Return the factory implementation.*/
 	virtual BaseFactoryClass *getFactory() = 0;
 };
-
-
 
 /** Indirect factory implementation class.
  *	the class take 2 template argument :
@@ -175,13 +170,13 @@ public:
 template <class BaseFactoryClass, class KeyType = std::string>
 class CFactoryIndirect
 {
-	typedef std::map<KeyType, IFactoryIndirectRegister<BaseFactoryClass>*> TRegisterCont;
+	typedef std::map<KeyType, IFactoryIndirectRegister<BaseFactoryClass> *> TRegisterCont;
 
 public:
 	/// Get the singleton instance reference.
 	static CFactoryIndirect &instance()
 	{
-		static CFactoryIndirect	instance;
+		static CFactoryIndirect instance;
 		return instance;
 	}
 
@@ -193,7 +188,7 @@ public:
 
 	BaseFactoryClass *getFactory(const KeyType &key)
 	{
-		typename TRegisterCont::const_iterator it (_FactoryRegisters.find(key));
+		typename TRegisterCont::const_iterator it(_FactoryRegisters.find(key));
 		if (it == _FactoryRegisters.end())
 			return NULL;
 		else
@@ -208,17 +203,18 @@ public:
 			classList.push_back(first->first);
 		}
 	}
+
 protected:
-//	static CFactoryIndirect	*_Instance;
+	//	static CFactoryIndirect	*_Instance;
 
-	TRegisterCont	_FactoryRegisters;
+	TRegisterCont _FactoryRegisters;
 };
-
 
 template <class IndirectFactoryClass, class BaseFactoryClass, class SpecializedFactoryClass, class KeyType>
 class CFactoryIndirectRegister : public IFactoryIndirectRegister<BaseFactoryClass>
 {
-	SpecializedFactoryClass	_FactoryClass;
+	SpecializedFactoryClass _FactoryClass;
+
 public:
 	CFactoryIndirectRegister(const KeyType &key)
 	{
@@ -231,11 +227,11 @@ public:
 	}
 };
 
-//#define NLMISC_IMPLEMENT_FACTORY_INDIRECT(baseFactoryClass, keyType)	NLMISC::CFactoryIndirect<baseFactoryClass, keyType>	*NLMISC::CFactoryIndirect<baseFactoryClass, keyType>::_Instance = NULL
+// #define NLMISC_IMPLEMENT_FACTORY_INDIRECT(baseFactoryClass, keyType)	NLMISC::CFactoryIndirect<baseFactoryClass, keyType>	*NLMISC::CFactoryIndirect<baseFactoryClass, keyType>::_Instance = NULL
 
-#define NLMISC_GET_FACTORY_INDIRECT_REGISTRY(baseFactoryClass, keyType)	NLMISC::CFactoryIndirect<baseFactoryClass, keyType>::getInstance()
-#define NLMISC_REGISTER_OBJECT_INDIRECT(baseFactoryClass, specializedFactoryClass, keyType, keyValue)	NLMISC::CFactoryIndirectRegister<NLMISC::CFactoryIndirect<baseFactoryClass, keyType>, baseFactoryClass, specializedFactoryClass, keyType>	RegisterIndirect##specializedFactoryClass(keyValue)
-#define NLMISC_DECLARE_OBJECT_INDIRECT(baseFactoryClass, specializedFactoryClass, keyType)	extern NLMISC::CFactoryIndirectRegister<NLMISC::CFactoryIndirect<baseFactoryClass, keyType>, baseFactoryClass, specializedFactoryClass, keyType>	RegisterIndirect##specializedFactoryClass
+#define NLMISC_GET_FACTORY_INDIRECT_REGISTRY(baseFactoryClass, keyType) NLMISC::CFactoryIndirect<baseFactoryClass, keyType>::getInstance()
+#define NLMISC_REGISTER_OBJECT_INDIRECT(baseFactoryClass, specializedFactoryClass, keyType, keyValue) NLMISC::CFactoryIndirectRegister<NLMISC::CFactoryIndirect<baseFactoryClass, keyType>, baseFactoryClass, specializedFactoryClass, keyType> RegisterIndirect##specializedFactoryClass(keyValue)
+#define NLMISC_DECLARE_OBJECT_INDIRECT(baseFactoryClass, specializedFactoryClass, keyType) extern NLMISC::CFactoryIndirectRegister<NLMISC::CFactoryIndirect<baseFactoryClass, keyType>, baseFactoryClass, specializedFactoryClass, keyType> RegisterIndirect##specializedFactoryClass
 
 #define NLMISC_GET_FACTORY_INDIRECT(specializedFactoryClass) RegisterIndirect##specializedFactoryClass.getFactory()
 

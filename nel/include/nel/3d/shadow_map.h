@@ -22,18 +22,14 @@
 #include "nel/3d/vertex_buffer.h"
 #include "nel/misc/aabbox.h"
 
+namespace NL3D {
 
-namespace NL3D
-{
+using NLMISC::CAABBox;
+using NLMISC::CPlane;
+using NLMISC::CRefPtr;
 
-
-using	NLMISC::CPlane;
-using	NLMISC::CRefPtr;
-using	NLMISC::CAABBox;
-
-class	CShadowMapManager;
-class	CMaterial;
-
+class CShadowMapManager;
+class CMaterial;
 
 // ***************************************************************************
 /**
@@ -51,59 +47,55 @@ public:
 	 *	The usage of this matrix is for UV projection: XYZ= WorldProjectionMatrix * UVW.
 	 *	NB: Vj (ie for W) is mapped such that Vp means NearClip of the shadow and Vp+Vj means FarClip of the shadow
 	 */
-	NLMISC::CMatrix			LocalProjectionMatrix;
+	NLMISC::CMatrix LocalProjectionMatrix;
 
 	/** Computed at shadow casting time. They are clipping planes used to clip receivers (mirror of the OBB).
 	 *	Receivers may use them to clip sub received parts (as they which)
 	 *	Like the ProjectionLocalMatrix, this plane are in World, but the position of the Caster model.
 	 *	\see generateClipInfoFromMatrix()
 	 */
-	std::vector<CPlane>		LocalClipPlanes;
+	std::vector<CPlane> LocalClipPlanes;
 
 	/** Computed at shadow casting time. This is the LocalPos Bouding Box containing the shadow (AxisAligned).
 	 *	\see generateClipInfoFromMatrix()
 	 */
-	NLMISC::CAABBox			LocalBoundingBox;
-
+	NLMISC::CAABBox LocalBoundingBox;
 
 	// Filled by ShadowMapManager. This is the Last Frame Id we had update the texture.
-	uint64					LastGenerationFrame;
-
+	uint64 LastGenerationFrame;
 
 	/** They are the fade of the shadowMap, for Lod Shadow display. 0-1 values.
 	 *	NB: if DistanceFade==1 or TemporalOutScreenFade==1, then the ShadowMap Texture is released.
 	 *	Final Fade is the max of the 3.
 	 */
 	// Value computed according to pos of skeleton and Max Shadow Display value.
-	float					DistanceFade;
+	float DistanceFade;
 	// Value computed according to pos of skeleton and other skeletons in the area (whatever the visible state)
-	float					TemporalOutScreenFade;
+	float TemporalOutScreenFade;
 	// Value computed according to pos of skeleton and other skeletons in the frustum
-	float					TemporalInScreenFade;
+	float TemporalInScreenFade;
 	/** This value represent the fade time we don't know what to do with TemporalInScreenFade because the
 	 *	shadowMap is not visible or frustum-clipped.
 	 *	Once the shadowMap will be visible again, This will be add/removed (according to TemporalInScreenFade
 	 *	rules) to the TemporalInScreenFade.
 	 *	NB: by default the value is 1 so the initial state is correct when you enable cast shadowMap!
 	 */
-	float					InScreenFadeAccum;
+	float InScreenFadeAccum;
 
 public:
-
 	/// Constructor. NB: ptr is owned => shadowMap should no still live while smm dead.
 	CShadowMap(CShadowMapManager *smm);
 	~CShadowMap();
 
 	/// create the Texture. It reset the texture if not of same size.
-	void			initTexture(uint textSize);
+	void initTexture(uint textSize);
 	/// reset the Texture
-	void			resetTexture();
+	void resetTexture();
 	/// get the TextureSize
-	uint32			getTextureSize() const {return _TextSize;}
+	uint32 getTextureSize() const { return _TextSize; }
 
 	/// You can only get the texture for filling / use in a material.
-	ITexture		*getTexture() const {return _Texture;}
-
+	ITexture *getTexture() const { return _Texture; }
 
 	/// /name Tools
 	// @{
@@ -114,40 +106,38 @@ public:
 	 *		driver->setupModelMatrix(localPosMatrix);
 	 *	Then render his mesh.
 	 */
-	void			buildCasterCameraMatrix(const NLMISC::CVector &lightDir, const NLMISC::CMatrix &localPosMatrix, const NLMISC::CAABBox &bbShape, NLMISC::CMatrix &cameraMatrix);
+	void buildCasterCameraMatrix(const NLMISC::CVector &lightDir, const NLMISC::CMatrix &localPosMatrix, const NLMISC::CAABBox &bbShape, NLMISC::CMatrix &cameraMatrix);
 
 	/** From the Camera matrix computed with buildCasterCameraMatrix, compute the LocalProjectionMatrix, which modify the
 	 *	J axis according to backPoint and Shadow Depth.
 	 *	NB: automatically calls the buildClipInfoFromMatrix() method
 	 */
-	void			buildProjectionInfos(const NLMISC::CMatrix &cameraMatrix, const NLMISC::CVector &backPoint, float shadowMaxDepth);
+	void buildProjectionInfos(const NLMISC::CMatrix &cameraMatrix, const NLMISC::CVector &backPoint, float shadowMaxDepth);
 
 	/** The ShadowMap Caster can call this method after setting LocalProjectionMatrix. It computes auto the
 	 *	LocalClipPlanes and LocalBoundingBox from it. NB: don't use it if you use buildProjectionInfos().
 	 */
-	void			buildClipInfoFromMatrix();
+	void buildClipInfoFromMatrix();
 	// @}
 
 	/** Clamp Fades to 0-1. Additionaly reset the texture if DistanceFade>=1 or TemporalOutScreenFade>=1
 	 *	See Implementation for Why. Additionally compile getFadeAround() and getFadeInScreen()
 	 */
-	void			processFades();
+	void processFades();
 
 	/// return compiled max of DistanceFade and TemporalOutScreenFade.
-	float			getFadeAround() const {return _FadeAround;}
+	float getFadeAround() const { return _FadeAround; }
 	/// same but maximize with the TemporalInScreenFade;
-	float			getFinalFade() const {return _FinalFade;}
+	float getFinalFade() const { return _FinalFade; }
 
-// *************
+	// *************
 private:
-	NLMISC::CSmartPtr<ITexture>		_Texture;
-	uint32							_TextSize;
-	CShadowMapManager				*_ShadowMapManager;
-	float							_FadeAround;
-	float							_FinalFade;
-
+	NLMISC::CSmartPtr<ITexture> _Texture;
+	uint32 _TextSize;
+	CShadowMapManager *_ShadowMapManager;
+	float _FadeAround;
+	float _FinalFade;
 };
-
 
 // ***************************************************************************
 /** Used to recompute the projection matrix, according to the receiver worldMatrix
@@ -158,18 +148,16 @@ class CShadowMapProjector
 {
 public:
 	CShadowMapProjector();
-	void	setWorldSpaceTextMat(const NLMISC::CMatrix &ws);
-	void	applyToMaterial(const NLMISC::CMatrix &receiverWorldMatrix, CMaterial &material);
+	void setWorldSpaceTextMat(const NLMISC::CMatrix &ws);
+	void applyToMaterial(const NLMISC::CMatrix &receiverWorldMatrix, CMaterial &material);
 
 private:
-	NLMISC::CMatrix			_WsTextMat;
-	NLMISC::CMatrix			_XYZToUWVMatrix;
-	NLMISC::CMatrix			_XYZToWUVMatrix;
+	NLMISC::CMatrix _WsTextMat;
+	NLMISC::CMatrix _XYZToUWVMatrix;
+	NLMISC::CMatrix _XYZToWUVMatrix;
 };
 
-
 } // NL3D
-
 
 #endif // NL_SHADOW_MAP_H
 

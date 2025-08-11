@@ -20,10 +20,7 @@
 #include "nel/misc/types_nl.h"
 #include "nel/misc/vector.h"
 
-
-namespace NLPACS
-{
-
+namespace NLPACS {
 
 /**
  * An estimation of the position of a point on a specified surface.
@@ -36,21 +33,20 @@ class ULocalPosition
 {
 public:
 	/// The id of the surface corresponding to the local position.
-	sint32							Surface;
+	sint32 Surface;
 
 	/// The best position estimation of the point snapped on the surface. This is a CLocalRetriever local axis position.
-	NLMISC::CVector					Estimation;
+	NLMISC::CVector Estimation;
 
 	// set this global position from another global position, but keep the old z coordinate
-	void								setKeepZ(const ULocalPosition &other)
+	void setKeepZ(const ULocalPosition &other)
 	{
 		Surface = other.Surface;
 		Estimation.set(other.Estimation.x,
-					   other.Estimation.y,
-					   Estimation.z);
+		    other.Estimation.y,
+		    Estimation.z);
 	}
 };
-
 
 /**
  * The global position in the global retriever.
@@ -62,7 +58,6 @@ public:
 class UGlobalPosition
 {
 public:
-
 	enum TType
 	{
 		Unspecified = 0,
@@ -71,10 +66,10 @@ public:
 	};
 
 	/// The id of the instance referred by this global position.
-	sint32								InstanceId;
+	sint32 InstanceId;
 
 	/// The local position within the CLocalRetriever referred by the instance (cf. InstanceId)
-	ULocalPosition						LocalPosition;
+	ULocalPosition LocalPosition;
 
 	/// default constructor
 	UGlobalPosition()
@@ -83,16 +78,14 @@ public:
 	}
 
 	// set this global position from another global position, but keep the old z coordinate
-	void								setKeepZ(const UGlobalPosition &other)
+	void setKeepZ(const UGlobalPosition &other)
 	{
 		InstanceId = other.InstanceId;
 		LocalPosition.setKeepZ(other.LocalPosition);
 	}
 };
 
-
 } // NLPACS
-
 
 #endif // NL_U_GLOBAL_POSITION_H
 

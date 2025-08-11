@@ -14,50 +14,48 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #if !defined(AFX_SCHEME_BANK_DLG_H__C3639E36_1266_4D32_9CC3_5B9E3CD79F93__INCLUDED_)
 #define AFX_SCHEME_BANK_DLG_H__C3639E36_1266_4D32_9CC3_5B9E3CD79F93__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
-#endif 
+#endif
 
-namespace NL3D
-{
-	class CPSAttribMakerBase;
+namespace NL3D {
+class CPSAttribMakerBase;
 }
 
 class CSchemeBankDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CSchemeBankDlg(const std::string &type, CWnd* pParent = NULL);   // standard constructor
-
+	CSchemeBankDlg(const std::string &type, CWnd *pParent = NULL); // standard constructor
 
 	// get the scheme that has been selected, or NULL if none
-	NL3D::CPSAttribMakerBase  *getSelectedScheme() { return _CurrScheme; }
+	NL3D::CPSAttribMakerBase *getSelectedScheme() { return _CurrScheme; }
 
 	void buildList();
 
-
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CSchemeBankDlg)
-	enum { IDD = IDD_SCHEME_BANK_DLG };
-	CListBox	m_SchemeList;
+	enum
+	{
+		IDD = IDD_SCHEME_BANK_DLG
+	};
+	CListBox m_SchemeList;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CSchemeBankDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-	std::string				  _Type;
-	NL3D::CPSAttribMakerBase  *_CurrScheme;
+	std::string _Type;
+	NL3D::CPSAttribMakerBase *_CurrScheme;
 	// Generated message map functions
 	//{{AFX_MSG(CSchemeBankDlg)
 	virtual BOOL OnInitDialog();

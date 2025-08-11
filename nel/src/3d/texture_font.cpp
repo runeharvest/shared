@@ -32,31 +32,37 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ---------------------------------------------------------------------------
 CTextureFont::CTextureFont()
-	: _CacheVersion(1),
-	_TextureSizeX(512), _TextureSizeY(512), _TextureMaxW(4096), _TextureMaxH(4096),
-	_PaddingL(0), _PaddingT(0), _PaddingR(1), _PaddingB(1),
-	_MinGlyphSize(5), _MaxGlyphSize(200),
-	_GlyphSizeStepMin(50), _GlyphSizeStep(5)
+    : _CacheVersion(1)
+    , _TextureSizeX(512)
+    , _TextureSizeY(512)
+    , _TextureMaxW(4096)
+    , _TextureMaxH(4096)
+    , _PaddingL(0)
+    , _PaddingT(0)
+    , _PaddingR(1)
+    , _PaddingB(1)
+    , _MinGlyphSize(5)
+    , _MaxGlyphSize(200)
+    , _GlyphSizeStepMin(50)
+    , _GlyphSizeStep(5)
 {
-	setFilterMode (ITexture::Linear, ITexture::LinearMipMapOff);
+	setFilterMode(ITexture::Linear, ITexture::LinearMipMapOff);
 
-	setWrapS (ITexture::Repeat);
-	setWrapT (ITexture::Repeat);
+	setWrapS(ITexture::Repeat);
+	setWrapT(ITexture::Repeat);
 
-	setUploadFormat (Alpha);
+	setUploadFormat(Alpha);
 
-	setReleasable (false);
+	setReleasable(false);
 
-	resize (_TextureSizeX, _TextureSizeY, CBitmap::Alpha, true);
+	resize(_TextureSizeX, _TextureSizeY, CBitmap::Alpha, true);
 
 	_AtlasNodes.push_back(CRect(0, 0, _TextureSizeX, _TextureSizeY));
 }
-
 
 CTextureFont::~CTextureFont()
 {
@@ -66,17 +72,17 @@ CTextureFont::~CTextureFont()
 void CTextureFont::dumpTextureFont(const char *filename)
 {
 	CBitmap b;
-	COFile f( filename );
-	b.resize (_TextureSizeX, _TextureSizeY, CBitmap::RGBA);
-	CObjectVector<uint8>&bits = b.getPixels();
-	CObjectVector<uint8>&src = getPixels();
+	COFile f(filename);
+	b.resize(_TextureSizeX, _TextureSizeY, CBitmap::RGBA);
+	CObjectVector<uint8> &bits = b.getPixels();
+	CObjectVector<uint8> &src = getPixels();
 
-	for (uint i = 0; i < (_TextureSizeX*_TextureSizeY); ++i)
+	for (uint i = 0; i < (_TextureSizeX * _TextureSizeY); ++i)
 	{
-		bits[i*4+0] = bits[i*4+1] = bits[i*4+2] = bits[i*4+3] = src[i];
+		bits[i * 4 + 0] = bits[i * 4 + 1] = bits[i * 4 + 2] = bits[i * 4 + 3] = src[i];
 	}
 
-	b.writeTGA (f, 32);
+	b.writeTGA(f, 32);
 }
 
 // ---------------------------------------------------------------------------
@@ -112,7 +118,7 @@ void CTextureFont::clearAtlas()
 	_Data[0].fill(0);
 
 	// clear glyph cache
-	for(std::map<SLetterKey, SLetterInfo>::iterator it = _Letters.begin(); it != _Letters.end(); ++it)
+	for (std::map<SLetterKey, SLetterInfo>::iterator it = _Letters.begin(); it != _Letters.end(); ++it)
 	{
 		it->second.glyph = NULL;
 	}
@@ -134,7 +140,7 @@ void CTextureFont::repackAtlas()
 // new atlas will be sorted if _GlyphCache is
 void CTextureFont::repackAtlas(uint32 newW, uint32 newH)
 {
-	uint32 newCacheVersion = _CacheVersion+1;
+	uint32 newCacheVersion = _CacheVersion + 1;
 
 	CBitmap btm;
 	uint32 oldW, oldH;
@@ -149,7 +155,7 @@ void CTextureFont::repackAtlas(uint32 newW, uint32 newH)
 	{
 		_TextureSizeX = newW;
 		_TextureSizeY = newH;
-		resize (_TextureSizeX, _TextureSizeY, CBitmap::Alpha, true);
+		resize(_TextureSizeX, _TextureSizeY, CBitmap::Alpha, true);
 	}
 	else
 	{
@@ -160,13 +166,13 @@ void CTextureFont::repackAtlas(uint32 newW, uint32 newH)
 	_AtlasNodes.clear();
 	_AtlasNodes.push_back(CRect(0, 0, _TextureSizeX, _TextureSizeY));
 
-	CObjectVector<uint8>&src = btm.getPixels();
-	for(std::map<SLetterKey, SGlyphInfo>::iterator it = _GlyphCache.begin(); it != _GlyphCache.end(); ++it)
+	CObjectVector<uint8> &src = btm.getPixels();
+	for (std::map<SLetterKey, SGlyphInfo>::iterator it = _GlyphCache.begin(); it != _GlyphCache.end(); ++it)
 	{
 		if (it->second.CacheVersion != _CacheVersion)
 		{
 			// TODO: must remove glyph from all letters before removing glyph from cache
-			//continue;
+			// continue;
 		}
 
 		SGlyphInfo &glyph = it->second;
@@ -187,10 +193,10 @@ void CTextureFont::repackAtlas(uint32 newW, uint32 newH)
 			}
 
 			// TODO: dup code with renderGlyph
-			glyph.U0 = (atlasX+_PaddingL) / (float)_TextureSizeX;
-			glyph.V0 = (atlasY+_PaddingT) / (float)_TextureSizeY;
-			glyph.U1 = (atlasX+_PaddingL+glyph.CharWidth) / (float)_TextureSizeX;
-			glyph.V1 = (atlasY+_PaddingT+glyph.CharHeight) / (float)_TextureSizeY;
+			glyph.U0 = (atlasX + _PaddingL) / (float)_TextureSizeX;
+			glyph.V0 = (atlasY + _PaddingT) / (float)_TextureSizeY;
+			glyph.U1 = (atlasX + _PaddingL + glyph.CharWidth) / (float)_TextureSizeX;
+			glyph.V1 = (atlasY + _PaddingT + glyph.CharHeight) / (float)_TextureSizeY;
 
 			glyph.X = atlasX;
 			glyph.Y = atlasY;
@@ -223,7 +229,7 @@ void CTextureFont::doGenerate(bool async)
 {
 	/*
 	nlinfo("doGenerate: Letters(%d/%d), Glyphs(%d/%d)\n", _Letters.size(), _Letters.size() * sizeof(SLetterInfo),
-			_GlyphCache.size(), _GlyphCache.size() * sizeof(SGlyphInfo));
+	        _GlyphCache.size(), _GlyphCache.size() * sizeof(SGlyphInfo));
 	//std::string fname = CFile::findNewFile("/tmp/font-texture.tga");
 	std::string fname = toString("/tmp/font-texture-%p-%03d.tga", this, _CacheVersion);
 	dumpTextureFont (fname.c_str());
@@ -242,7 +248,7 @@ uint CTextureFont::fitRegion(uint index, uint width, uint height)
 	uint y = _AtlasNodes[index].Y;
 	sint widthLeft = width;
 
-	while(widthLeft > 0)
+	while (widthLeft > 0)
 	{
 		if (_AtlasNodes[index].Y > y)
 		{
@@ -277,12 +283,12 @@ bool CTextureFont::reserveAtlas(const uint32 width, const uint32 height, uint32 
 	sint bestWidth = _TextureSizeX;
 	sint bestHeight = _TextureSizeY;
 
-	sint selY=0;
+	sint selY = 0;
 
 	for (uint i = 0; i < _AtlasNodes.size(); ++i)
 	{
 		selY = fitRegion(i, width, height);
-		if (selY >=0)
+		if (selY >= 0)
 		{
 			if (((selY + height) < bestHeight) || ((selY + height) == bestHeight && _AtlasNodes[i].Width > 0 && _AtlasNodes[i].Width < bestWidth))
 			{
@@ -306,11 +312,11 @@ bool CTextureFont::reserveAtlas(const uint32 width, const uint32 height, uint32 
 	_AtlasNodes.insert(_AtlasNodes.begin() + bestIndex, r);
 
 	// shrink or remove nodes overlaping with newly inserted node
-	for(uint i = bestIndex+1; i< _AtlasNodes.size(); i++)
+	for (uint i = bestIndex + 1; i < _AtlasNodes.size(); i++)
 	{
-		if (_AtlasNodes[i].X < (_AtlasNodes[i-1].X + _AtlasNodes[i-1].Width))
+		if (_AtlasNodes[i].X < (_AtlasNodes[i - 1].X + _AtlasNodes[i - 1].Width))
 		{
-			sint shrink = _AtlasNodes[i-1].X + _AtlasNodes[i-1].Width - _AtlasNodes[i].X;
+			sint shrink = _AtlasNodes[i - 1].X + _AtlasNodes[i - 1].Width - _AtlasNodes[i].X;
 			_AtlasNodes[i].X += shrink;
 			if (_AtlasNodes[i].Width > shrink)
 			{
@@ -324,11 +330,11 @@ bool CTextureFont::reserveAtlas(const uint32 width, const uint32 height, uint32 
 	}
 
 	// merge nearby nodes from same row
-	for(uint i = 0; i < _AtlasNodes.size() - 1; i++)
+	for (uint i = 0; i < _AtlasNodes.size() - 1; i++)
 	{
-		if (_AtlasNodes[i].Y == _AtlasNodes[i+1].Y)
+		if (_AtlasNodes[i].Y == _AtlasNodes[i + 1].Y)
 		{
-			_AtlasNodes[i].Width += _AtlasNodes[i+1].Width;
+			_AtlasNodes[i].Width += _AtlasNodes[i + 1].Width;
 			_AtlasNodes.erase(_AtlasNodes.begin() + i + 1);
 			i--;
 		}
@@ -343,27 +349,27 @@ bool CTextureFont::reserveAtlas(const uint32 width, const uint32 height, uint32 
 // bitmapH : bitmap height
 // atlasX : pos x in font texture
 // atlasY : pos y in font texture
-void CTextureFont::copyGlyphBitmap(uint8* bitmap, uint32 bitmapW, uint32 bitmapH, uint32 atlasX, uint32 atlasY)
+void CTextureFont::copyGlyphBitmap(uint8 *bitmap, uint32 bitmapW, uint32 bitmapH, uint32 atlasX, uint32 atlasY)
 {
 	for (uint bY = 0; bY < bitmapH; ++bY)
 	{
-		uint8 *pDst = &_Data[0][(atlasY+_PaddingT+bY) * _TextureSizeX+atlasX+_PaddingL];
+		uint8 *pDst = &_Data[0][(atlasY + _PaddingT + bY) * _TextureSizeX + atlasX + _PaddingL];
 		for (uint bX = 0; bX < bitmapW; ++bX)
 		{
-			*pDst = bitmap[bY * bitmapW+bX];
+			*pDst = bitmap[bY * bitmapW + bX];
 			++pDst;
 		}
 	}
 
 	if (_PaddingR > 0 || _PaddingB > 0 || _PaddingL > 0 || _PaddingT > 0)
 	{
-		for(uint i = 0; i<(bitmapH+_PaddingT+_PaddingB); ++i)
+		for (uint i = 0; i < (bitmapH + _PaddingT + _PaddingB); ++i)
 		{
-			if (_PaddingT > 0) _Data[0][(atlasY + i) * _TextureSizeX + atlasX    ] = 0;
+			if (_PaddingT > 0) _Data[0][(atlasY + i) * _TextureSizeX + atlasX] = 0;
 			if (_PaddingB > 0) _Data[0][(atlasY + i) * _TextureSizeX + atlasX + _PaddingL + bitmapW] = 0;
 		}
 
-		for (uint i = 0; i<(bitmapW+_PaddingL+_PaddingR); ++i)
+		for (uint i = 0; i < (bitmapW + _PaddingL + _PaddingR); ++i)
 		{
 			if (_PaddingL > 0) _Data[0][atlasY * _TextureSizeX + atlasX + i] = 0;
 			if (_PaddingB > 0) _Data[0][(atlasY + _PaddingT + bitmapH) * _TextureSizeX + atlasX + i] = 0;
@@ -374,9 +380,8 @@ void CTextureFont::copyGlyphBitmap(uint8* bitmap, uint32 bitmapW, uint32 bitmapH
 	touchRect(r);
 }
 
-
 // ---------------------------------------------------------------------------
-CTextureFont::SGlyphInfo* CTextureFont::renderLetterGlyph(SLetterInfo *letter, uint bitmapFontSize)
+CTextureFont::SGlyphInfo *CTextureFont::renderLetterGlyph(SLetterInfo *letter, uint bitmapFontSize)
 {
 	uint32 nPitch;
 	sint32 left;
@@ -386,10 +391,10 @@ CTextureFont::SGlyphInfo* CTextureFont::renderLetterGlyph(SLetterInfo *letter, u
 	uint32 charHeight;
 	uint32 glyphIndex;
 
-	uint8 *bitmap = letter->FontGenerator->getBitmap (letter->Char, bitmapFontSize, letter->Embolden, letter->Oblique,
-													charWidth, charHeight,
-													nPitch, left, top,
-													advx, glyphIndex );
+	uint8 *bitmap = letter->FontGenerator->getBitmap(letter->Char, bitmapFontSize, letter->Embolden, letter->Oblique,
+	    charWidth, charHeight,
+	    nPitch, left, top,
+	    advx, glyphIndex);
 
 	uint32 atlasX, atlasY;
 	uint32 rectW, rectH;
@@ -406,7 +411,7 @@ CTextureFont::SGlyphInfo* CTextureFont::renderLetterGlyph(SLetterInfo *letter, u
 	SLetterKey k = *letter;
 	k.Size = bitmapFontSize;
 
-	SGlyphInfo* glyphInfo = &_GlyphCache[k];
+	SGlyphInfo *glyphInfo = &_GlyphCache[k];
 
 	glyphInfo->GlyphIndex = glyphIndex;
 	glyphInfo->Size = bitmapFontSize;
@@ -415,10 +420,10 @@ CTextureFont::SGlyphInfo* CTextureFont::renderLetterGlyph(SLetterInfo *letter, u
 	glyphInfo->FontGenerator = letter->FontGenerator;
 	glyphInfo->CacheVersion = _CacheVersion;
 
-	glyphInfo->U0 = (atlasX+_PaddingL) / (float)_TextureSizeX;
-	glyphInfo->V0 = (atlasY+_PaddingT) / (float)_TextureSizeY;
-	glyphInfo->U1 = (atlasX+_PaddingL+charWidth) / (float)_TextureSizeX;
-	glyphInfo->V1 = (atlasY+_PaddingT+charHeight) / (float)_TextureSizeY;
+	glyphInfo->U0 = (atlasX + _PaddingL) / (float)_TextureSizeX;
+	glyphInfo->V0 = (atlasY + _PaddingT) / (float)_TextureSizeY;
+	glyphInfo->U1 = (atlasX + _PaddingL + charWidth) / (float)_TextureSizeX;
+	glyphInfo->V1 = (atlasY + _PaddingT + charHeight) / (float)_TextureSizeY;
 
 	glyphInfo->CharWidth = charWidth;
 	glyphInfo->CharHeight = charHeight;
@@ -431,9 +436,8 @@ CTextureFont::SGlyphInfo* CTextureFont::renderLetterGlyph(SLetterInfo *letter, u
 	return glyphInfo;
 }
 
-
 // ---------------------------------------------------------------------------
-CTextureFont::SGlyphInfo* CTextureFont::findLetterGlyph(SLetterInfo *letter, bool insert)
+CTextureFont::SGlyphInfo *CTextureFont::findLetterGlyph(SLetterInfo *letter, bool insert)
 {
 	uint bitmapFontSize = max((sint)_MinGlyphSize, min((sint)_MaxGlyphSize, letter->Size));
 	if (_GlyphSizeStep > 1 && bitmapFontSize > _GlyphSizeStepMin)
@@ -460,7 +464,7 @@ CTextureFont::SGlyphInfo* CTextureFont::findLetterGlyph(SLetterInfo *letter, boo
 }
 
 // ---------------------------------------------------------------------------
-CTextureFont::SLetterInfo* CTextureFont::findLetter(SLetterKey &k, bool insert)
+CTextureFont::SLetterInfo *CTextureFont::findLetter(SLetterKey &k, bool insert)
 {
 	std::map<SLetterKey, SLetterInfo>::iterator it = _Letters.find(k);
 	if (it != _Letters.end())
@@ -470,7 +474,7 @@ CTextureFont::SLetterInfo* CTextureFont::findLetter(SLetterKey &k, bool insert)
 
 	if (insert)
 	{
-		SLetterInfo* letter = &_Letters[k];
+		SLetterInfo *letter = &_Letters[k];
 
 		// get metrics for requested size
 		letter->Char = k.Char;
@@ -481,9 +485,9 @@ CTextureFont::SLetterInfo* CTextureFont::findLetter(SLetterKey &k, bool insert)
 
 		uint32 nPitch;
 		letter->FontGenerator->getBitmap(letter->Char, letter->Size, letter->Embolden, letter->Oblique,
-										letter->CharWidth, letter->CharHeight,
-										nPitch, letter->Left, letter->Top,
-										letter->AdvX, letter->GlyphIndex );
+		    letter->CharWidth, letter->CharHeight,
+		    nPitch, letter->Left, letter->Top,
+		    letter->AdvX, letter->GlyphIndex);
 
 		return letter;
 	}
@@ -492,10 +496,10 @@ CTextureFont::SLetterInfo* CTextureFont::findLetter(SLetterKey &k, bool insert)
 }
 
 // ---------------------------------------------------------------------------
-CTextureFont::SLetterInfo* CTextureFont::getLetterInfo (SLetterKey& k, bool render)
+CTextureFont::SLetterInfo *CTextureFont::getLetterInfo(SLetterKey &k, bool render)
 {
 	// find already cached letter or create new one
-	SLetterInfo* letter = findLetter(k, true);
+	SLetterInfo *letter = findLetter(k, true);
 	// letter not found (=NULL) or render not requested
 	if (!letter || !render) return letter;
 

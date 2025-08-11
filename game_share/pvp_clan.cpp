@@ -28,122 +28,121 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace PVP_CLAN
+namespace PVP_CLAN {
+
+NL_BEGIN_STRING_CONVERSION_TABLE(TPVPClan)
+NL_STRING_CONVERSION_TABLE_ENTRY(None)
+NL_STRING_CONVERSION_TABLE_ENTRY(Neutral)
+NL_STRING_CONVERSION_TABLE_ENTRY(Kami)
+NL_STRING_CONVERSION_TABLE_ENTRY(Karavan)
+NL_STRING_CONVERSION_TABLE_ENTRY(Fyros)
+NL_STRING_CONVERSION_TABLE_ENTRY(Matis)
+NL_STRING_CONVERSION_TABLE_ENTRY(Tryker)
+NL_STRING_CONVERSION_TABLE_ENTRY(Zorai)
+NL_END_STRING_CONVERSION_TABLE(TPVPClan, PVPClanConversion, Unknown)
+
+TPVPClan fromString(const std::string &str)
 {
+	return PVPClanConversion.fromString(str);
+}
 
-	NL_BEGIN_STRING_CONVERSION_TABLE (TPVPClan)
-		NL_STRING_CONVERSION_TABLE_ENTRY(None)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Neutral)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Kami)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Karavan)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Fyros)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Matis)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Tryker)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Zorai)
-	NL_END_STRING_CONVERSION_TABLE(TPVPClan, PVPClanConversion, Unknown)
+const std::string &toString(TPVPClan clan)
+{
+	return PVPClanConversion.toString(clan);
+}
 
-	TPVPClan fromString(const std::string & str)
+std::string toLowerString(TPVPClan clan)
+{
+	return toLowerAscii(PVPClanConversion.toString(clan));
+}
+
+uint32 getFactionIndex(TPVPClan clan)
+{
+	static vector<uint32> factionIndexes;
+	if (factionIndexes.empty())
 	{
-		return PVPClanConversion.fromString(str);
+		factionIndexes.resize(NbClans, CStaticFames::INVALID_FACTION_INDEX);
+
+		factionIndexes[Kami] = CStaticFames::getInstance().getFactionIndex("kami");
+		factionIndexes[Karavan] = CStaticFames::getInstance().getFactionIndex("karavan");
+		factionIndexes[Fyros] = CStaticFames::getInstance().getFactionIndex("fyros");
+		factionIndexes[Matis] = CStaticFames::getInstance().getFactionIndex("matis");
+		factionIndexes[Tryker] = CStaticFames::getInstance().getFactionIndex("tryker");
+		factionIndexes[Zorai] = CStaticFames::getInstance().getFactionIndex("zorai");
+
+		for (uint i = BeginClans; i <= EndClans; i++)
+			nlassert(factionIndexes[i] != CStaticFames::INVALID_FACTION_INDEX);
 	}
 
-	const std::string & toString(TPVPClan clan)
-	{
-		return PVPClanConversion.toString(clan);
-	}
+	if (clan >= NbClans)
+		return CStaticFames::INVALID_FACTION_INDEX;
 
-	std::string toLowerString(TPVPClan clan)
-	{
-		return toLowerAscii(PVPClanConversion.toString(clan));
-	}
+	return factionIndexes[clan];
+}
 
-	uint32 getFactionIndex(TPVPClan clan)
+TPVPClan getClanFromIndex(uint32 theIndex)
+{
+	// These names are in order of the enum TPVPClan
+	// The first two clans, "None" and "Neutral", don't count.  Subtract 2 from the lookup.
+	std::string FactionNames[] = { "kami", "karavan", "fyros", "matis", "tryker", "zorai" };
+
+	for (int looper = BeginClans; looper <= EndClans; looper += 1)
 	{
-		static vector<uint32> factionIndexes;
-		if ( factionIndexes.empty() )
+		if (CStaticFames::getInstance().getFactionIndex(FactionNames[looper - BeginClans]) == theIndex)
 		{
-			factionIndexes.resize(NbClans, CStaticFames::INVALID_FACTION_INDEX);
-
-			factionIndexes[Kami]	= CStaticFames::getInstance().getFactionIndex("kami");
-			factionIndexes[Karavan]	= CStaticFames::getInstance().getFactionIndex("karavan");
-			factionIndexes[Fyros]	= CStaticFames::getInstance().getFactionIndex("fyros");
-			factionIndexes[Matis]	= CStaticFames::getInstance().getFactionIndex("matis");
-			factionIndexes[Tryker]	= CStaticFames::getInstance().getFactionIndex("tryker");
-			factionIndexes[Zorai]	= CStaticFames::getInstance().getFactionIndex("zorai");
-
-			for (uint i = BeginClans; i <= EndClans; i++)
-				nlassert( factionIndexes[i] != CStaticFames::INVALID_FACTION_INDEX );
+			return (TPVPClan)looper;
 		}
-
-		if (clan >= NbClans)
-			return CStaticFames::INVALID_FACTION_INDEX;
-
-		return factionIndexes[clan];
 	}
 
-	TPVPClan getClanFromIndex(uint32 theIndex)
+	// It wasn't found, return unknown to indicate error.
+	return Unknown;
+}
+
+NLMISC::CSheetId getFactionSheetId(TPVPClan clan)
+{
+	static vector<NLMISC::CSheetId> factionSheetIds;
+	if (factionSheetIds.empty())
 	{
-		// These names are in order of the enum TPVPClan
-		// The first two clans, "None" and "Neutral", don't count.  Subtract 2 from the lookup.
-		std::string FactionNames[] = { "kami","karavan","fyros","matis","tryker","zorai" };
+		factionSheetIds.resize(NbClans, NLMISC::CSheetId::Unknown);
 
-		for (int looper = BeginClans; looper <= EndClans; looper += 1)
-		{
-			if (CStaticFames::getInstance().getFactionIndex(FactionNames[looper-BeginClans]) == theIndex)
-			{
-				return (TPVPClan)looper;
-			}
-		}
+		factionSheetIds[Kami] = "kami.faction";
+		factionSheetIds[Karavan] = "karavan.faction";
+		factionSheetIds[Fyros] = "fyros.faction";
+		factionSheetIds[Matis] = "matis.faction";
+		factionSheetIds[Tryker] = "tryker.faction";
+		factionSheetIds[Zorai] = "zorai.faction";
 
-		// It wasn't found, return unknown to indicate error.
-		return Unknown;
+		for (uint i = BeginClans; i <= EndClans; i++)
+			nlassert(factionSheetIds[i] != NLMISC::CSheetId::Unknown);
 	}
 
-	NLMISC::CSheetId getFactionSheetId(TPVPClan clan)
+	if (clan >= NbClans)
+		return NLMISC::CSheetId::Unknown;
+
+	return factionSheetIds[clan];
+}
+
+std::string toIconDefineString(TPVPClan clan)
+{
+	return string("pvp_faction_icon_") + PVP_CLAN::toString(clan);
+}
+
+TPVPClan getClanFromPeople(EGSPD::CPeople::TPeople people)
+{
+	static vector<TPVPClan> peopleToClan;
+	if (peopleToClan.empty())
 	{
-		static vector<NLMISC::CSheetId> factionSheetIds;
-		if ( factionSheetIds.empty() )
-		{
-			factionSheetIds.resize(NbClans, NLMISC::CSheetId::Unknown);
-
-			factionSheetIds[Kami]		= "kami.faction";
-			factionSheetIds[Karavan]	= "karavan.faction";
-			factionSheetIds[Fyros]		= "fyros.faction";
-			factionSheetIds[Matis]		= "matis.faction";
-			factionSheetIds[Tryker]		= "tryker.faction";
-			factionSheetIds[Zorai]		= "zorai.faction";
-
-			for (uint i = BeginClans; i <= EndClans; i++)
-				nlassert( factionSheetIds[i] != NLMISC::CSheetId::Unknown );
-		}
-
-		if (clan >= NbClans)
-			return NLMISC::CSheetId::Unknown;
-
-		return factionSheetIds[clan];
+		peopleToClan.resize(EGSPD::CPeople::EndPlayable);
+		peopleToClan[EGSPD::CPeople::Fyros] = Fyros;
+		peopleToClan[EGSPD::CPeople::Matis] = Matis;
+		peopleToClan[EGSPD::CPeople::Tryker] = Tryker;
+		peopleToClan[EGSPD::CPeople::Zorai] = Zorai;
 	}
 
-	std::string toIconDefineString( TPVPClan clan )
-	{
-		return string("pvp_faction_icon_") + PVP_CLAN::toString(clan);
-	}
+	if (people < EGSPD::CPeople::EndPlayable && people >= EGSPD::CPeople::Playable)
+		return peopleToClan[people];
 
-	TPVPClan getClanFromPeople( EGSPD::CPeople::TPeople people )
-	{
-		static vector<TPVPClan> peopleToClan;
-		if( peopleToClan.empty() )
-		{
-			peopleToClan.resize( EGSPD::CPeople::EndPlayable );
-			peopleToClan[ EGSPD::CPeople::Fyros ] = Fyros;
-			peopleToClan[ EGSPD::CPeople::Matis ] = Matis;
-			peopleToClan[ EGSPD::CPeople::Tryker ] = Tryker;
-			peopleToClan[ EGSPD::CPeople::Zorai ] = Zorai;
-		}
-
-		if( people < EGSPD::CPeople::EndPlayable && people >= EGSPD::CPeople::Playable )
-			return peopleToClan[ people ];
-
-		return Unknown;
-	}
+	return Unknown;
+}
 
 } // namespace PVP_CLAN

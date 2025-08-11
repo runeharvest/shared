@@ -20,13 +20,9 @@
 #include "nel/misc/types_nl.h"
 #include "nel/3d/surface_light_grid.h"
 
+namespace NL3D {
 
-namespace NL3D
-{
-
-
-class	CInstanceGroup;
-
+class CInstanceGroup;
 
 // ***************************************************************************
 /**
@@ -44,39 +40,38 @@ class CIGSurfaceLight
 	 * ***********************************************/
 
 public:
-	struct	CRetrieverLightGrid
+	struct CRetrieverLightGrid
 	{
 		// There is localRetriver.getNumSurfaces() Grids.
-		NLMISC::CObjectVector<CSurfaceLightGrid>	Grids;
+		NLMISC::CObjectVector<CSurfaceLightGrid> Grids;
 
-		void	serial(NLMISC::IStream &f)
+		void serial(NLMISC::IStream &f)
 		{
 			(void)f.serialVersion(0);
 			f.serial(Grids);
 		}
 	};
-	typedef std::map<uint32, CRetrieverLightGrid>	TRetrieverGridMap;
-	typedef TRetrieverGridMap::iterator				ItRetrieverGridMap;
+	typedef std::map<uint32, CRetrieverLightGrid> TRetrieverGridMap;
+	typedef TRetrieverGridMap::iterator ItRetrieverGridMap;
 
 public:
-
 	/// Constructor. A CIGSurfaceLight MUST be owned by an CInstanceGroup (nlassert(_Owner!=NULL));
 	CIGSurfaceLight();
-	void			setOwner(CInstanceGroup *owner);
+	void setOwner(CInstanceGroup *owner);
 
 	/**	build. called by CInstanceLighter.
 	 *	\param retrieverGridMap is the gridMap builded by CInstanceLighter
 	 *	\param cellSize is the size in meter of a cell
 	 *	\param plRemap is the array returned by CInstanceGroup::build() to remap indices
 	 */
-	void			build(const TRetrieverGridMap &retrieverGridMap, float cellSize,
-		const std::vector<uint>	&plRemap);
+	void build(const TRetrieverGridMap &retrieverGridMap, float cellSize,
+	    const std::vector<uint> &plRemap);
 
 	/// clear.
-	void			clear();
+	void clear();
 
 	// serial
-	void			serial(NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 
 	/** Get StaticLightSetup Infos from the grid
 	 *	\param retrieverIdentifier value returned by CGlobalRetriever::getLocalRetrieverId(globalPos).
@@ -87,31 +82,27 @@ public:
 	 *	\return false if retrieverIdentifier / surfaceId is not found. In this case pointLightList is not
 	 *	modified, and sunContribution is set to 255, and localAmbient is set to 0
 	 */
-	bool			getStaticLightSetup(NLMISC::CRGBA sunAmbient, uint retrieverIdentifier, sint surfaceId, const CVector &localPos,
-		std::vector<CPointLightInfluence> &pointLightList, uint8 &sunContribution, NLMISC::CRGBA &localAmbient);
+	bool getStaticLightSetup(NLMISC::CRGBA sunAmbient, uint retrieverIdentifier, sint surfaceId, const CVector &localPos,
+	    std::vector<CPointLightInfluence> &pointLightList, uint8 &sunContribution, NLMISC::CRGBA &localAmbient);
 
-
-	float			getCellSize() const {return _CellSize;}
-	float			getOOCellSize() const {return _OOCellSize;}
+	float getCellSize() const { return _CellSize; }
+	float getOOCellSize() const { return _OOCellSize; }
 
 	// debug
-	const TRetrieverGridMap &getRetrieverGridMap() const {return _RetrieverGridMap;}
+	const TRetrieverGridMap &getRetrieverGridMap() const { return _RetrieverGridMap; }
 
-// *********************
+	// *********************
 private:
-	friend	class	CSurfaceLightGrid;
+	friend class CSurfaceLightGrid;
 
 private:
-	CInstanceGroup		*_Owner;
-	float				_CellSize;
-	float				_OOCellSize;
-	TRetrieverGridMap	_RetrieverGridMap;
-
+	CInstanceGroup *_Owner;
+	float _CellSize;
+	float _OOCellSize;
+	TRetrieverGridMap _RetrieverGridMap;
 };
 
-
 } // NL3D
-
 
 #endif // NL_IG_SURFACE_LIGHT_H
 

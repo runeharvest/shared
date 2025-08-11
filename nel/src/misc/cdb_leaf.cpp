@@ -20,9 +20,9 @@
 
 #include "stdmisc.h"
 
-//#define TRACE_READ_DELTA
-//#define TRACE_WRITE_DELTA
-//#define TRACE_SET_VALUE
+// #define TRACE_READ_DELTA
+// #define TRACE_WRITE_DELTA
+// #define TRACE_SET_VALUE
 
 #define DELAYED_OBSERVERS
 
@@ -32,7 +32,7 @@
 #include "nel/misc/cdb_leaf.h"
 #include "nel/misc/xml_auto_ptr.h"
 #include "nel/misc/bit_mem_stream.h"
-//#include <iostream.h>
+// #include <iostream.h>
 
 ////////////////
 // Namespaces //
@@ -43,17 +43,16 @@ using namespace std;
 #define new DEBUG_NEW
 #endif
 
-namespace NLMISC{
-
+namespace NLMISC {
 
 //-----------------------------------------------
 //	init
 //-----------------------------------------------
-void CCDBNodeLeaf::init(  xmlNodePtr node, IProgressCallback &/* progressCallBack */, bool /* mapBanks */, CCDBBankHandler * /* bankHandler */ )
+void CCDBNodeLeaf::init(xmlNodePtr node, IProgressCallback & /* progressCallBack */, bool /* mapBanks */, CCDBBankHandler * /* bankHandler */)
 {
 	// Read nullable
-	CXMLAutoPtr nullable((const char*)xmlGetProp (node, (xmlChar*)"nullable"));
-	if ((const char *) nullable != NULL)
+	CXMLAutoPtr nullable((const char *)xmlGetProp(node, (xmlChar *)"nullable"));
+	if ((const char *)nullable != NULL)
 	{
 		m_Nullable = (nullable.getDatas()[0] == '1');
 	}
@@ -63,17 +62,17 @@ void CCDBNodeLeaf::init(  xmlNodePtr node, IProgressCallback &/* progressCallBac
 	}
 
 	// Read type
-	CXMLAutoPtr type((const char*)xmlGetProp (node, (xmlChar*)"type"));
-	nlassert((const char *) type != NULL);
+	CXMLAutoPtr type((const char *)xmlGetProp(node, (xmlChar *)"type"));
+	nlassert((const char *)type != NULL);
 
 	// IF type is an INT with n bits [1,64].
 	if ((type.getDatas()[0] == 'I') || (type.getDatas()[0] == 'U'))
 	{
 		uint nbBit;
-		fromString((const char *) (type.getDatas() + 1), nbBit);
+		fromString((const char *)(type.getDatas() + 1), nbBit);
 
-		if(nbBit>=1 && nbBit<=64)
-			_Type=(ICDBNode::EPropType)nbBit;
+		if (nbBit >= 1 && nbBit <= 64)
+			_Type = (ICDBNode::EPropType)nbBit;
 		else
 		{
 			nlwarning("CCDBNodeLeaf::init : property is an INT and should be between [1,64] but it is %d bit(s).", nbBit);
@@ -83,10 +82,10 @@ void CCDBNodeLeaf::init(  xmlNodePtr node, IProgressCallback &/* progressCallBac
 	else if (type.getDatas()[0] == 'S')
 	{
 		uint nbBit;
-		fromString((const char *) (type.getDatas() + 1), nbBit);
+		fromString((const char *)(type.getDatas() + 1), nbBit);
 
-		if(nbBit>=1 && nbBit<=64)
-			_Type = (ICDBNode::EPropType)(nbBit+64);
+		if (nbBit >= 1 && nbBit <= 64)
+			_Type = (ICDBNode::EPropType)(nbBit + 64);
 		else
 		{
 			nlwarning("CCDBNodeLeaf::init : property is an SINT and should be between [1,64] but it is %d bit(s).", nbBit);
@@ -97,7 +96,7 @@ void CCDBNodeLeaf::init(  xmlNodePtr node, IProgressCallback &/* progressCallBac
 	else
 	{
 		// IF it is a TEXT.
-		if(!strcmp(type, "TEXT"))
+		if (!strcmp(type, "TEXT"))
 			_Type = ICDBNode::TEXT;
 		// IF it is a PACKED.
 		else if (!strcmp(type, "PACKED"))
@@ -112,22 +111,20 @@ void CCDBNodeLeaf::init(  xmlNodePtr node, IProgressCallback &/* progressCallBac
 
 } // init //
 
-
 //-----------------------------------------------
 //	getNode
 //
 //-----------------------------------------------
-ICDBNode * CCDBNodeLeaf::getNode( uint16 /* idx */ )
+ICDBNode *CCDBNodeLeaf::getNode(uint16 /* idx */)
 {
 	return this;
 } // getNode //
 
-
 //-----------------------------------------------
 //	getNode
 //
 //-----------------------------------------------
-ICDBNode * CCDBNodeLeaf::getNode (const CTextId& id, bool /* bCreate */)
+ICDBNode *CCDBNodeLeaf::getNode(const CTextId &id, bool /* bCreate */)
 {
 	if (_DBSM->localUnmap(_Name) == id.readNext())
 	{
@@ -141,12 +138,12 @@ ICDBNode * CCDBNodeLeaf::getNode (const CTextId& id, bool /* bCreate */)
 //	write
 //
 //-----------------------------------------------
-void CCDBNodeLeaf::write( CTextId& id, FILE * f)
+void CCDBNodeLeaf::write(CTextId &id, FILE *f)
 {
-	fprintf(f,"%" NL_I64 "d\t%s\n",_Property,id.toString().c_str());
+	fprintf(f, "%" NL_I64 "d\t%s\n", _Property, id.toString().c_str());
 } // write //
 
-inline uint readPackedBitCount(CBitMemStream & f)
+inline uint readPackedBitCount(CBitMemStream &f)
 {
 	uint64 nibbleCount;
 	f.serial(nibbleCount, 4);
@@ -158,10 +155,10 @@ inline uint readPackedBitCount(CBitMemStream & f)
 //-----------------------------------------------
 //	readDelta
 //-----------------------------------------------
-void CCDBNodeLeaf::readDelta(TGameCycle gc, CBitMemStream & f )
+void CCDBNodeLeaf::readDelta(TGameCycle gc, CBitMemStream &f)
 {
 	// If the property Type is valid.
-	if(_Type > UNKNOWN && _Type < Nb_Prop_Type)
+	if (_Type > UNKNOWN && _Type < Nb_Prop_Type)
 	{
 		// Read the Property Value according to the Property Type.
 		uint64 recvd = 0;
@@ -187,7 +184,7 @@ void CCDBNodeLeaf::readDelta(TGameCycle gc, CBitMemStream & f )
 		}
 
 		// if the DB update is older than last DB update, abort (but after the read!!)
-		if(gc<_LastChangeGC)
+		if (gc < _LastChangeGC)
 			return;
 
 		// bkup _oldProperty
@@ -197,81 +194,77 @@ void CCDBNodeLeaf::readDelta(TGameCycle gc, CBitMemStream & f )
 		_Property = (sint64)recvd;
 
 		// if signed
-		if (! ((_Type == TEXT) || (_Type == PACKED) || (_Type <= I64)))
+		if (!((_Type == TEXT) || (_Type == PACKED) || (_Type <= I64)))
 		{
 			if (!isNull)
 			{
 				// extend bit sign
-				sint64 mask = (((sint64)1)<<bits)-(sint64)1;
-				if( (_Property >> (bits-1))==1 )
+				sint64 mask = (((sint64)1) << bits) - (sint64)1;
+				if ((_Property >> (bits - 1)) == 1)
 				{
 					_Property |= ~mask;
 				}
 			}
 		}
-		if ( verboseDatabase )
+		if (verboseDatabase)
 		{
 			if (!isNull)
-				nlinfo( "CDB: Read value (%u bits) %" NL_I64 "d", bits, _Property );
+				nlinfo("CDB: Read value (%u bits) %" NL_I64 "d", bits, _Property);
 			else
-				nlinfo( "CDB: Read null value %" NL_I64 "d", _Property );
+				nlinfo("CDB: Read null value %" NL_I64 "d", _Property);
 		}
 
 		// bkup the date of change
-		_LastChangeGC= gc;
+		_LastChangeGC = gc;
 
 		notifyObservers();
-
 	}
 	else
 		nlwarning("CCDBNodeLeaf::readDelta : Property Type Unknown ('%d') -> not serialized.", (uint)_Type);
-}// readDelta //
-
+} // readDelta //
 
 //-----------------------------------------------
 // resetData
 //-----------------------------------------------
 void CCDBNodeLeaf::resetData(TGameCycle gc, bool forceReset)
 {
-	if(forceReset)
+	if (forceReset)
 	{
 		_LastChangeGC = 0;
 		setValue64(0);
 	}
-	else if (gc>=_LastChangeGC)	// apply only if happens after the DB change
+	else if (gc >= _LastChangeGC) // apply only if happens after the DB change
 	{
 		_LastChangeGC = gc;
 		setValue64(0);
 	}
 
-//  Same version but without observer notification:
-//	if ((!forceReset) && (gc<_LastChangeGC)) // if !forceReset, apply only if happens after the DB change
-//		return;
-//
-//	if (forceReset)
-//		gc = 0;
-//
-//	_LastChangeGC = gc;
-//	_oldProperty = _Property;
-//	if (_Property != 0)
-//		_Changed = true;
-//	_Property = 0;
+	//  Same version but without observer notification:
+	//	if ((!forceReset) && (gc<_LastChangeGC)) // if !forceReset, apply only if happens after the DB change
+	//		return;
+	//
+	//	if (forceReset)
+	//		gc = 0;
+	//
+	//	_LastChangeGC = gc;
+	//	_oldProperty = _Property;
+	//	if (_Property != 0)
+	//		_Changed = true;
+	//	_Property = 0;
 }
 
 //-----------------------------------------------
 //	getProp
 //
 //-----------------------------------------------
-sint64 CCDBNodeLeaf::getProp( CTextId& id )
+sint64 CCDBNodeLeaf::getProp(CTextId &id)
 {
 	// assert that there are no lines left in the textid
-	nlassert( id.getCurrentIndex() == id.size() );
+	nlassert(id.getCurrentIndex() == id.size());
 
 	// Return the property value.
 	return getValue64();
 } // getProp //
-
-
 
 //-----------------------------------------------
 //	setProp
@@ -281,10 +274,10 @@ sint64 CCDBNodeLeaf::getProp( CTextId& id )
 // \param value is the value of the property
 // \return bool : 'false' if id is too long.
 //-----------------------------------------------
-bool CCDBNodeLeaf::setProp( CTextId& id, sint64 value )
+bool CCDBNodeLeaf::setProp(CTextId &id, sint64 value)
 {
 	// assert that there are no lines left in the textid
-	if(id.getCurrentIndex() != id.size())
+	if (id.getCurrentIndex() != id.size())
 		return false;
 
 	// Set the property value (and set "_Changed" flag with 'true');
@@ -292,8 +285,7 @@ bool CCDBNodeLeaf::setProp( CTextId& id, sint64 value )
 
 	// Done
 	return true;
-}// setProp //
-
+} // setProp //
 
 //-----------------------------------------------
 //	setPropCheckGC
@@ -301,10 +293,10 @@ bool CCDBNodeLeaf::setProp( CTextId& id, sint64 value )
 bool CCDBNodeLeaf::setPropCheckGC(TGameCycle gc, sint64 value)
 {
 	// Apply only if happens after the DB change
-	if(gc>=_LastChangeGC)
+	if (gc >= _LastChangeGC)
 	{
 		// new recent date
-		_LastChangeGC= gc;
+		_LastChangeGC = gc;
 
 		// Set the property value (and set "_Changed" flag with 'true');
 		CCDBNodeLeaf::setValue64(value);
@@ -323,8 +315,6 @@ void CCDBNodeLeaf::clear()
 {
 
 } // clear //
-
-
 
 //-----------------------------------------------
 //-----------------------------------------------
@@ -354,7 +344,6 @@ void CCDBNodeLeaf::setValue16(sint16 prop)
 {
 	sint64 newVal = (sint64)prop;
 	setValue64(newVal);
-
 }
 
 void CCDBNodeLeaf::setValue8(sint8 prop)
@@ -369,12 +358,11 @@ void CCDBNodeLeaf::setValueBool(bool prop)
 	setValue64(newVal);
 }
 
-void CCDBNodeLeaf::setValueRGBA (const CRGBA &color)
+void CCDBNodeLeaf::setValueRGBA(const CRGBA &color)
 {
-	sint64 newVal = (uint32)(color.R+(color.G<<8)+(color.B<<16)+(color.A<<24));
+	sint64 newVal = (uint32)(color.R + (color.G << 8) + (color.B << 16) + (color.A << 24));
 	setValue64(newVal);
 }
-
 
 void CCDBNodeLeaf::display(const std::string &prefix)
 {
@@ -385,7 +373,7 @@ void CCDBNodeLeaf::display(const std::string &prefix)
 //	addObserver
 //
 //-----------------------------------------------
-bool CCDBNodeLeaf::addObserver(IPropertyObserver* observer,CTextId& /* id */)
+bool CCDBNodeLeaf::addObserver(IPropertyObserver *observer, CTextId & /* id */)
 {
 	_Observers.push_back(observer);
 	return true;
@@ -395,7 +383,7 @@ bool CCDBNodeLeaf::addObserver(IPropertyObserver* observer,CTextId& /* id */)
 //	removeObserver
 //
 //-----------------------------------------------
-bool CCDBNodeLeaf::removeObserver(IPropertyObserver* observer, CTextId& /* id */)
+bool CCDBNodeLeaf::removeObserver(IPropertyObserver *observer, CTextId & /* id */)
 {
 	std::vector<IPropertyObserver *>::iterator endIt = std::remove(_Observers.begin(), _Observers.end(), observer);
 	if (endIt == _Observers.end()) return false; // no observer has been removed..
@@ -406,21 +394,16 @@ bool CCDBNodeLeaf::removeObserver(IPropertyObserver* observer, CTextId& /* id */
 //-----------------------------------------------
 void CCDBNodeLeaf::notifyObservers()
 {
-	std::vector<IPropertyObserver*> obs = _Observers;
+	std::vector<IPropertyObserver *> obs = _Observers;
 	// notify observer
-	for (std::vector<IPropertyObserver*>::const_iterator it = obs.begin(); it != obs.end(); it++)
+	for (std::vector<IPropertyObserver *>::const_iterator it = obs.begin(); it != obs.end(); it++)
 	{
 		(*it)->update(this);
 	}
 	// mark parent branchs
 	if (_Parent)
-		_Parent->onLeafChanged( _Name );
+		_Parent->onLeafChanged(_Name);
 }
-
-
-
-
-
 
 #ifdef TRACE_READ_DELTA
 #undef TRACE_READ_DELTA
@@ -433,7 +416,6 @@ void CCDBNodeLeaf::notifyObservers()
 #ifdef TRACE_SET_VALUE
 #undef TRACE_SET_VALUE
 #endif
-//#############################################################################################
+// #############################################################################################
 
 }
-

@@ -20,188 +20,179 @@
 #include "nel/misc/matrix.h"
 #include <cmath>
 
-
 using namespace NLMISC;
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
-
-void			CFrustum::init(float left, float right, float bottom, float top, float znear, float zfar, bool perspective)
+void CFrustum::init(float left, float right, float bottom, float top, float znear, float zfar, bool perspective)
 {
-	Left= left;
-	Right= right;
-	Bottom=	bottom;
-	Top= top;
-	Near= znear;
-	Far= zfar;
-	Perspective= perspective;
+	Left = left;
+	Right = right;
+	Bottom = bottom;
+	Top = top;
+	Near = znear;
+	Far = zfar;
+	Perspective = perspective;
 }
 
-void			CFrustum::init(float width, float height, float znear, float zfar, bool perspective)
+void CFrustum::init(float width, float height, float znear, float zfar, bool perspective)
 {
-	init(-width/2, width/2, -height/2, height/2, znear, zfar, perspective);
+	init(-width / 2, width / 2, -height / 2, height / 2, znear, zfar, perspective);
 }
-void			CFrustum::initPerspective(float fov, float aspectRatio, float znear, float zfar)
+void CFrustum::initPerspective(float fov, float aspectRatio, float znear, float zfar)
 {
-	float	w,h;
-	w= 2*znear*(float)tan(fov/2);
-	h= aspectRatio != 0.f ? w/aspectRatio : 0.f;
-	init(w,h,znear,zfar,true);
+	float w, h;
+	w = 2 * znear * (float)tan(fov / 2);
+	h = aspectRatio != 0.f ? w / aspectRatio : 0.f;
+	init(w, h, znear, zfar, true);
 }
-void			CFrustum::getValues(float &left, float &right, float &bottom, float &top, float &znear, float &zfar) const
+void CFrustum::getValues(float &left, float &right, float &bottom, float &top, float &znear, float &zfar) const
 {
-	left= Left;
-	right= Right;
-	bottom=	Bottom;
-	top= Top;
-	znear= Near;
-	zfar= Far;
+	left = Left;
+	right = Right;
+	bottom = Bottom;
+	top = Top;
+	znear = Near;
+	zfar = Far;
 }
-
 
 // ***************************************************************************
-CVector			CFrustum::project(const CVector &vec) const
+CVector CFrustum::project(const CVector &vec) const
 {
-	CVector		ret;
-	float		decalX, decalY;
-	float		w, h;
-	float		OOw, OOh;
+	CVector ret;
+	float decalX, decalY;
+	float w, h;
+	float OOw, OOh;
 
 	// Fast transform to openGL like axis.
-	CVector		pt;
-	pt.x= vec.x;
-	pt.y= vec.z;
-	pt.z= -vec.y;
+	CVector pt;
+	pt.x = vec.x;
+	pt.y = vec.z;
+	pt.z = -vec.y;
 
-	decalX= (Right+Left);
-	decalY= (Top+Bottom);
-	w= Right-Left;
-	h= Top-Bottom;
-	OOw= 1.0f/w;
-	OOh= 1.0f/h;
+	decalX = (Right + Left);
+	decalY = (Top + Bottom);
+	w = Right - Left;
+	h = Top - Bottom;
+	OOw = 1.0f / w;
+	OOh = 1.0f / h;
 
 	// project to -1..+1.
-	if(Perspective)
+	if (Perspective)
 	{
-		ret.x= (2*Near*pt.x + decalX*pt.z)*OOw;
-		ret.x/= -pt.z;
-		ret.y= (2*Near*pt.y + decalY*pt.z)*OOh;
-		ret.y/= -pt.z;
+		ret.x = (2 * Near * pt.x + decalX * pt.z) * OOw;
+		ret.x /= -pt.z;
+		ret.y = (2 * Near * pt.y + decalY * pt.z) * OOh;
+		ret.y /= -pt.z;
 	}
 	else
 	{
-		ret.x= (2*pt.x-decalX)*OOw;
-		ret.y= (2*pt.y-decalY)*OOh;
+		ret.x = (2 * pt.x - decalX) * OOw;
+		ret.y = (2 * pt.y - decalY) * OOh;
 	}
 
-
 	// Map it to 0..1.
-	ret.x= 0.5f*(ret.x+1);
-	ret.y= 0.5f*(ret.y+1);
-	ret.z= 0;
+	ret.x = 0.5f * (ret.x + 1);
+	ret.y = 0.5f * (ret.y + 1);
+	ret.z = 0;
 
 	return ret;
 }
 
-
 // ***************************************************************************
-CVector			CFrustum::projectZ(const CVector &vec) const
+CVector CFrustum::projectZ(const CVector &vec) const
 {
-		CVector		ret;
-	float		decalX, decalY;
-	float		w, h;
-	float		OOw = 1.0f, OOh = 1.0f;
+	CVector ret;
+	float decalX, decalY;
+	float w, h;
+	float OOw = 1.0f, OOh = 1.0f;
 
 	// Fast transform to openGL like axis.
-	CVector		pt;
-	pt.x= vec.x;
-	pt.y= vec.z;
-	pt.z= -vec.y;
+	CVector pt;
+	pt.x = vec.x;
+	pt.y = vec.z;
+	pt.z = -vec.y;
 
-	decalX= (Right+Left);
-	decalY= (Top+Bottom);
-	w= Right-Left;
-	h= Top-Bottom;
+	decalX = (Right + Left);
+	decalY = (Top + Bottom);
+	w = Right - Left;
+	h = Top - Bottom;
 	if (w) OOw /= w;
 	if (h) OOh /= h;
 
 	// project to -1..+1.
-	if(Perspective)
+	if (Perspective)
 	{
-		ret.x= (2*Near*pt.x + decalX*pt.z)*OOw;
-		ret.x/= -pt.z;
-		ret.y= (2*Near*pt.y + decalY*pt.z)*OOh;
-		ret.y/= -pt.z;
+		ret.x = (2 * Near * pt.x + decalX * pt.z) * OOw;
+		ret.x /= -pt.z;
+		ret.y = (2 * Near * pt.y + decalY * pt.z) * OOh;
+		ret.y /= -pt.z;
 	}
 	else
 	{
-		ret.x= (2*pt.x-decalX)*OOw;
-		ret.y= (2*pt.y-decalY)*OOh;
+		ret.x = (2 * pt.x - decalX) * OOw;
+		ret.y = (2 * pt.y - decalY) * OOh;
 	}
 
-
 	// Map it to 0..1.
-	ret.x= 0.5f*(ret.x+1);
-	ret.y= 0.5f*(ret.y+1);
-	ret.z= pt.z;
+	ret.x = 0.5f * (ret.x + 1);
+	ret.y = 0.5f * (ret.y + 1);
+	ret.z = pt.z;
 
 	return ret;
 }
 
-
 // ***************************************************************************
-CVector			CFrustum::unProject(const CVector &vec) const
+CVector CFrustum::unProject(const CVector &vec) const
 {
-	CVector		ret;
-	float		decalX, decalY;
-	float		w, h;
+	CVector ret;
+	float decalX, decalY;
+	float w, h;
 
-	decalX= (Right+Left);
-	decalY= (Top+Bottom);
-	w= Right-Left;
-	h= Top-Bottom;
+	decalX = (Right + Left);
+	decalY = (Top + Bottom);
+	w = Right - Left;
+	h = Top - Bottom;
 
 	// vec is a vector in a left hand axis.
-	CVector		pt;
-	pt.x= vec.x;
-	pt.y= vec.y;
-	pt.z= vec.z;
+	CVector pt;
+	pt.x = vec.x;
+	pt.y = vec.y;
+	pt.z = vec.z;
 
 	// Map it to -1..1
-	pt.x= 2*(pt.x-0.5f);
-	pt.y= 2*(pt.y-0.5f);
+	pt.x = 2 * (pt.x - 0.5f);
+	pt.y = 2 * (pt.y - 0.5f);
 
 	// Map Z to Near..Far.
 	// Z IN is 1/Z, and is in 0..1.
 	// inverse to 1..0.
-	pt.z= 1-pt.z;
+	pt.z = 1 - pt.z;
 	// Map ret.z to 1/Far..1/Near.
-	pt.z= 1/Far+(1/Near-1/Far)*pt.z;
+	pt.z = 1 / Far + (1 / Near - 1 / Far) * pt.z;
 	// Inverse, so ret.z E Near..Far.
-	pt.z= 1/pt.z;
+	pt.z = 1 / pt.z;
 	// Actually, pt.z==w, homogenous coordinate.
 
-
 	// unproject
-	if(Perspective)
+	if (Perspective)
 	{
 		// w of homogenous coordinate.
-		float	Wh;
-		float	Zin;
-		Wh= pt.z;
-		Zin= -pt.z;
+		float Wh;
+		float Zin;
+		Wh = pt.z;
+		Zin = -pt.z;
 
 		// unproject.  (Projection is: x'= x/w.  y'= y/w).
-		pt.x= pt.x*Wh;
-		pt.y= pt.y*Wh;
-		ret.x= (pt.x*w-decalX*Zin)/(2*Near);
-		ret.y= (pt.y*h-decalY*Zin)/(2*Near);
-		ret.z= Zin;
+		pt.x = pt.x * Wh;
+		pt.y = pt.y * Wh;
+		ret.x = (pt.x * w - decalX * Zin) / (2 * Near);
+		ret.y = (pt.y * h - decalY * Zin) / (2 * Near);
+		ret.z = Zin;
 	}
 	else
 	{
@@ -213,83 +204,81 @@ CVector			CFrustum::unProject(const CVector &vec) const
 	}
 
 	// Fast transform from openGL like axis.
-	pt =ret;
-	ret.x= pt.x;
-	ret.y= -pt.z;
-	ret.z= pt.y;
+	pt = ret;
+	ret.x = pt.x;
+	ret.y = -pt.z;
+	ret.z = pt.y;
 
 	return ret;
 }
 
-
 // ***************************************************************************
-CVector			CFrustum::unProjectZ(const CVector &vec) const
+CVector CFrustum::unProjectZ(const CVector &vec) const
 {
-	CVector		ret;
-	float		decalX, decalY;
-	float		w, h;
+	CVector ret;
+	float decalX, decalY;
+	float w, h;
 
-	decalX= (Right+Left);
-	decalY= (Top+Bottom);
-	w= Right-Left;
-	h= Top-Bottom;
+	decalX = (Right + Left);
+	decalY = (Top + Bottom);
+	w = Right - Left;
+	h = Top - Bottom;
 
 	// vec is a vector in a left hand axis.
-	CVector		pt;
-	pt.x= vec.x;
-	pt.y= vec.y;
-	pt.z= vec.z;
+	CVector pt;
+	pt.x = vec.x;
+	pt.y = vec.y;
+	pt.z = vec.z;
 
 	// Map it to -1..1
-	pt.x= 2*(pt.x-0.5f);
-	pt.y= 2*(pt.y-0.5f);
+	pt.x = 2 * (pt.x - 0.5f);
+	pt.y = 2 * (pt.y - 0.5f);
 
 	// unproject
-	if(Perspective)
+	if (Perspective)
 	{
 		// w of homogenous coordinate.
-		float	Wh;
-		float	Zin;
-		Wh= pt.z;
-		Zin= -pt.z;
+		float Wh;
+		float Zin;
+		Wh = pt.z;
+		Zin = -pt.z;
 
 		// unproject.  (Projection is: x'= x/w.  y'= y/w).
-		pt.x= pt.x*Wh;
-		pt.y= pt.y*Wh;
-		ret.x= (pt.x*w-decalX*Zin)/(2*Near);
-		ret.y= (pt.y*h-decalY*Zin)/(2*Near);
-		ret.z= Zin;
+		pt.x = pt.x * Wh;
+		pt.y = pt.y * Wh;
+		ret.x = (pt.x * w - decalX * Zin) / (2 * Near);
+		ret.y = (pt.y * h - decalY * Zin) / (2 * Near);
+		ret.z = Zin;
 	}
 	else
 	{
 		// NOT DONE YET.
-		//nlstop;
+		// nlstop;
 		/*ret.x= (pt.x*w+decalX)/2;
 		ret.y= (pt.y*h+decalY)/2;
 		*/
 		// Yoyo: crash avoid for lem
-		ret= vec;
+		ret = vec;
 	}
 
 	// Fast transform from openGL like axis.
-	pt =ret;
-	ret.x= pt.x;
-	ret.y= -pt.z;
-	ret.z= pt.y;
+	pt = ret;
+	ret.x = pt.x;
+	ret.y = -pt.z;
+	ret.z = pt.y;
 
 	return ret;
 }
 
 // ***************************************************************************
-float		CFrustum::getAspectRatio() const
+float CFrustum::getAspectRatio() const
 {
-	float	w= Right-Left;
-	float	h= Top-Bottom;
-	if(h!=0)
-		return w/h;
+	float w = Right - Left;
+	float h = Top - Bottom;
+	if (h != 0)
+		return w / h;
 	else
 		return 1.f;
 }
-
 
 } // NL3D

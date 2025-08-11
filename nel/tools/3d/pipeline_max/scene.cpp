@@ -52,14 +52,15 @@ namespace MAX {
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-CScene::CScene(const CSceneClassRegistry *sceneClassRegistry, CDllDirectory *dllDirectory, CClassDirectory3 *classDirectory3) : m_SceneClassRegistry(sceneClassRegistry), m_DllDirectory(dllDirectory), m_ClassDirectory3(classDirectory3)
+CScene::CScene(const CSceneClassRegistry *sceneClassRegistry, CDllDirectory *dllDirectory, CClassDirectory3 *classDirectory3)
+    : m_SceneClassRegistry(sceneClassRegistry)
+    , m_DllDirectory(dllDirectory)
+    , m_ClassDirectory3(classDirectory3)
 {
-
 }
 
 CScene::~CScene()
 {
-
 }
 
 std::string CScene::className() const
@@ -120,14 +121,17 @@ IStorageObject *CScene::createChunkById(uint16 id, bool container)
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-CSceneClassContainer::CSceneClassContainer(CScene *scene, const CSceneClassRegistry *sceneClassRegistry, CDllDirectory *dllDirectory, CClassDirectory3 *classDirectory3) : m_Scene(scene), m_SceneClassRegistry(sceneClassRegistry), m_DllDirectory(dllDirectory), m_ClassDirectory3(classDirectory3), m_BuiltinScene(NULL)
+CSceneClassContainer::CSceneClassContainer(CScene *scene, const CSceneClassRegistry *sceneClassRegistry, CDllDirectory *dllDirectory, CClassDirectory3 *classDirectory3)
+    : m_Scene(scene)
+    , m_SceneClassRegistry(sceneClassRegistry)
+    , m_DllDirectory(dllDirectory)
+    , m_ClassDirectory3(classDirectory3)
+    , m_BuiltinScene(NULL)
 {
-
 }
 
 CSceneClassContainer::~CSceneClassContainer()
 {
-
 }
 
 std::string CSceneClassContainer::className() const
@@ -182,7 +186,11 @@ void CSceneClassContainer::disown()
 CSceneClass *CSceneClassContainer::getByStorageIndex(uint32 index) const
 {
 	// Temporary 'readonly' implementation, not modifying m_Chunks!
-	if (index >= m_StorageObjectByIndex.size()) { nlerror("Index %i is outside size %i", index, m_StorageObjectByIndex.size()); return NULL; }
+	if (index >= m_StorageObjectByIndex.size())
+	{
+		nlerror("Index %i is outside size %i", index, m_StorageObjectByIndex.size());
+		return NULL;
+	}
 	return m_StorageObjectByIndex[index];
 }
 
@@ -222,7 +230,7 @@ IStorageObject *CSceneClassContainer::createChunkById(uint16 id, bool container)
 		else
 		{
 			// Create an invalid unknown scene class
-			return static_cast<IStorageObject *>(new CSceneClassUnknown<CSceneClass>(m_Scene,classEntry->classId(), classEntry->superClassId(), classEntry->displayName(), "SceneClassUnknown", dllEntry->dllFilename(), dllEntry->dllDescription()));
+			return static_cast<IStorageObject *>(new CSceneClassUnknown<CSceneClass>(m_Scene, classEntry->classId(), classEntry->superClassId(), classEntry->displayName(), "SceneClassUnknown", dllEntry->dllFilename(), dllEntry->dllDescription()));
 		}
 	}
 }

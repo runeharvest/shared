@@ -16,9 +16,7 @@
 
 #include "std3d.h"
 
-
-
-//#include "nel/3d/u_particle_system_sound.h" we don't include this to avoid a link with NLSOUND
+// #include "nel/3d/u_particle_system_sound.h" we don't include this to avoid a link with NLSOUND
 #include "nel/3d/particle_system.h"
 #include "nel/3d/u_ps_sound_interface.h"
 #include "nel/3d/u_ps_sound_impl.h"
@@ -27,14 +25,12 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 void assignSoundServerToPS(UPSSoundServer *soundServer)
 {
 	CParticleSystem::registerSoundServer(soundServer);
 } // NL3D
-
 
 /// init the particle system sound with the given AudioMixer
 void UParticleSystemSound::setPSSound(NLSOUND::UAudioMixer *audioMixer)
@@ -50,7 +46,6 @@ void UParticleSystemSound::setPSSound(NLSOUND::UAudioMixer *audioMixer)
 		assignSoundServerToPS(NULL);
 	}
 }
-
 
 void CPSSoundInstanceImpl::release(void)
 {
@@ -71,8 +66,6 @@ void CPSSoundInstanceImpl::release(void)
 	}
 	delete this;
 }
-
-
 
 }
 

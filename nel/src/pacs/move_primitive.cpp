@@ -23,146 +23,145 @@
 
 using namespace NLMISC;
 
-H_AUTO_DECL ( NLPACS_Get_Global_Position )
-H_AUTO_DECL ( NLPACS_Set_Global_Position )
-H_AUTO_DECL ( NLPACS_Set_UGlobal_Position )
-H_AUTO_DECL ( NLPACS_Move )
-#define	NLPACS_HAUTO_GET_GLOBAL_POSITION	H_AUTO_USE ( NLPACS_Get_Global_Position )
-#define	NLPACS_HAUTO_SET_GLOBAL_POSITION	H_AUTO_USE ( NLPACS_Set_Global_Position )
-#define	NLPACS_HAUTO_SET_UGLOBAL_POSITION	H_AUTO_USE ( NLPACS_Set_UGlobal_Position )
-#define	NLPACS_HAUTO_MOVE					H_AUTO_USE ( NLPACS_Move )
+H_AUTO_DECL(NLPACS_Get_Global_Position)
+H_AUTO_DECL(NLPACS_Set_Global_Position)
+H_AUTO_DECL(NLPACS_Set_UGlobal_Position)
+H_AUTO_DECL(NLPACS_Move)
+#define NLPACS_HAUTO_GET_GLOBAL_POSITION H_AUTO_USE(NLPACS_Get_Global_Position)
+#define NLPACS_HAUTO_SET_GLOBAL_POSITION H_AUTO_USE(NLPACS_Set_Global_Position)
+#define NLPACS_HAUTO_SET_UGLOBAL_POSITION H_AUTO_USE(NLPACS_Set_UGlobal_Position)
+#define NLPACS_HAUTO_MOVE H_AUTO_USE(NLPACS_Move)
 
-namespace NLPACS
-{
+namespace NLPACS {
 
 // ***************************************************************************
 
-CMovePrimitive::CMovePrimitive (CMoveContainer* container, uint8 firstWorldImage, uint8 numWorldImage)
+CMovePrimitive::CMovePrimitive(CMoveContainer *container, uint8 firstWorldImage, uint8 numWorldImage)
 {
-	_FirstWorldImage=firstWorldImage;
-	_NumWorldImage=numWorldImage;
+	_FirstWorldImage = firstWorldImage;
+	_NumWorldImage = numWorldImage;
 
-	_CollisionMask=0xffffffff;
-	_OcclusionMask=0xffffffff;
-	_Attenuation=1;
-	_Container=container;
-	_StaticFlags=0;
-	_RootOTInfo=NULL;
-	_LastTestTime=0xffffffff;
+	_CollisionMask = 0xffffffff;
+	_OcclusionMask = 0xffffffff;
+	_Attenuation = 1;
+	_Container = container;
+	_StaticFlags = 0;
+	_RootOTInfo = NULL;
+	_LastTestTime = 0xffffffff;
 
 	// Ptr table alloc
-	_WorldImages=_Container->allocateWorldImagesPtrs (numWorldImage);
+	_WorldImages = _Container->allocateWorldImagesPtrs(numWorldImage);
 
 	// Alloc world images
-	for (uint j=0; j<numWorldImage; j++)
-		_WorldImages[j]=_Container->allocateWorldImage ();
+	for (uint j = 0; j < numWorldImage; j++)
+		_WorldImages[j] = _Container->allocateWorldImage();
 }
 
 // ***************************************************************************
 
-CMovePrimitive::~CMovePrimitive ()
+CMovePrimitive::~CMovePrimitive()
 {
 	// Alloc world images
-	for (uint j=0; j<(uint)_NumWorldImage; j++)
+	for (uint j = 0; j < (uint)_NumWorldImage; j++)
 	{
-		_WorldImages[j]->deleteIt (*_Container, (uint8)(_FirstWorldImage+j));
-		_Container->freeWorldImage (_WorldImages[j]);
+		_WorldImages[j]->deleteIt(*_Container, (uint8)(_FirstWorldImage + j));
+		_Container->freeWorldImage(_WorldImages[j]);
 	}
 
 	// Ptr table alloc
-	_Container->freeWorldImagesPtrs (_WorldImages);
+	_Container->freeWorldImagesPtrs(_WorldImages);
 }
 
 // ***************************************************************************
 
-void CMovePrimitive::removeCollisionOTInfo (CCollisionOTInfo *toRemove)
+void CMovePrimitive::removeCollisionOTInfo(CCollisionOTInfo *toRemove)
 {
 	// Should be ok
-	CCollisionOTInfo	*previousElement=NULL;
-	CCollisionOTInfo	*element=_RootOTInfo;
-	nlassert (element);
+	CCollisionOTInfo *previousElement = NULL;
+	CCollisionOTInfo *element = _RootOTInfo;
+	nlassert(element);
 
 	// Look for it
 	while (element)
 	{
 		// Good one ?
-		if (element==toRemove)
+		if (element == toRemove)
 		{
 			// If previous element, just link
 			if (previousElement)
-				previousElement->primitiveLink (this, element->getNext (this));
+				previousElement->primitiveLink(this, element->getNext(this));
 			else
-				_RootOTInfo=element->getNext (this);
+				_RootOTInfo = element->getNext(this);
 
 			// End
 			break;
 		}
 
 		// Look for next
-		previousElement=element;
-		element=element->getNext (this);
+		previousElement = element;
+		element = element->getNext(this);
 	}
 
 	// Should be found
-	nlassert (element);
+	nlassert(element);
 }
 
 // ***************************************************************************
 
-void CMovePrimitive::removeCollisionOTInfo ()
+void CMovePrimitive::removeCollisionOTInfo()
 {
 	// For each element in the list
-	CCollisionOTInfo	*element=_RootOTInfo;
+	CCollisionOTInfo *element = _RootOTInfo;
 	while (element)
 	{
 		// Unlink from ot
-		element->unlink ();
+		element->unlink();
 
 		// Remove collision ot info from other primitive
-		CMovePrimitive *other=element->getOtherPrimitive (this);
+		CMovePrimitive *other = element->getOtherPrimitive(this);
 		if (other)
 		{
 			// Remove it in the other element
-			other->removeCollisionOTInfo (element);
+			other->removeCollisionOTInfo(element);
 		}
 
 		// Next element
-		element=element->getNext (this);
+		element = element->getNext(this);
 	}
 
 	// Relink element because we keep it
-	_RootOTInfo=NULL;
+	_RootOTInfo = NULL;
 }
 
 // ***************************************************************************
 
-void CMovePrimitive::checkSortedList ()
+void CMovePrimitive::checkSortedList()
 {
 	// Check sorted list for ecah world image
-	for (uint i=0; i<(uint)_NumWorldImage; i++)
-		_WorldImages[i]->checkSortedList (uint8(i+_FirstWorldImage));
+	for (uint i = 0; i < (uint)_NumWorldImage; i++)
+		_WorldImages[i]->checkSortedList(uint8(i + _FirstWorldImage));
 }
 
 // ***************************************************************************
 
-bool CMovePrimitive::isTriggered (CMovePrimitive& second, bool enter, bool exit)
+bool CMovePrimitive::isTriggered(CMovePrimitive &second, bool enter, bool exit)
 {
 	// Generate a trigger ?
 
 	// Is the two are not triggers ?
-	if ( ( (_StaticFlags&TriggerMask) == NotATrigger ) && ( (second._StaticFlags&TriggerMask) == NotATrigger ) )
+	if (((_StaticFlags & TriggerMask) == NotATrigger) && ((second._StaticFlags & TriggerMask) == NotATrigger))
 		return false;
 
 	// Is one of them is an enter trigger ?
-	if ( enter && ( (_StaticFlags&EnterTrigger) || (second._StaticFlags&EnterTrigger) ) )
+	if (enter && ((_StaticFlags & EnterTrigger) || (second._StaticFlags & EnterTrigger)))
 		return true;
 
 	// Is one of them is an exit trigger ?
-	if ( exit && ( (_StaticFlags&ExitTrigger) || (second._StaticFlags&ExitTrigger) ) )
+	if (exit && ((_StaticFlags & ExitTrigger) || (second._StaticFlags & ExitTrigger)))
 		return true;
 
 	// Is one of them is a trigger ?
-	if ( (_StaticFlags&OverlapTrigger) || (second._StaticFlags&OverlapTrigger) )
+	if ((_StaticFlags & OverlapTrigger) || (second._StaticFlags & OverlapTrigger))
 		return true;
 
 	return false;
@@ -170,224 +169,224 @@ bool CMovePrimitive::isTriggered (CMovePrimitive& second, bool enter, bool exit)
 
 // ***************************************************************************
 
-void CMovePrimitive::insertInWorldImage (uint8 worldImage)
+void CMovePrimitive::insertInWorldImage(uint8 worldImage)
 {
 	// Check it is a collisionable primitive
-	nlassert (!isNonCollisionable());
+	nlassert(!isNonCollisionable());
 
 	// Check ad get the primitive world image
-	CPrimitiveWorldImage *wI=getWorldImage (worldImage);
+	CPrimitiveWorldImage *wI = getWorldImage(worldImage);
 
 	// Set as inserted
-	wI->setInWorldImageFlag (true);
+	wI->setInWorldImageFlag(true);
 
 	// Flag to update this wI
-	_Container->changed (this, worldImage);
+	_Container->changed(this, worldImage);
 }
 
 // ***************************************************************************
 
-void CMovePrimitive::removeFromWorldImage (uint8 worldImage)
+void CMovePrimitive::removeFromWorldImage(uint8 worldImage)
 {
 	// Check it is a collisionable primitive
-	nlassert (!isNonCollisionable());
+	nlassert(!isNonCollisionable());
 
 	// Check ad get the primitive world image
-	CPrimitiveWorldImage *wI=getWorldImage (worldImage);
+	CPrimitiveWorldImage *wI = getWorldImage(worldImage);
 
 	// Remove from cells
-	wI->deleteIt (*_Container, worldImage);
+	wI->deleteIt(*_Container, worldImage);
 
 	// Set as non inserted
-	wI->setInWorldImageFlag (false);
+	wI->setInWorldImageFlag(false);
 }
 
 // ***************************************************************************
 
-void CMovePrimitive::setAbsorbtion (float attenuation)
+void CMovePrimitive::setAbsorbtion(float attenuation)
 {
-	_Attenuation=attenuation;
+	_Attenuation = attenuation;
 }
 
 // ***************************************************************************
 
-void CMovePrimitive::setOrientation (double rot, uint8 worldImage)
+void CMovePrimitive::setOrientation(double rot, uint8 worldImage)
 {
 	if (isNonCollisionable())
-		getWorldImage (0)->setOrientation (rot, _Container, this, worldImage);
+		getWorldImage(0)->setOrientation(rot, _Container, this, worldImage);
 	else
-		getWorldImage (worldImage)->setOrientation (rot, _Container, this, worldImage);
+		getWorldImage(worldImage)->setOrientation(rot, _Container, this, worldImage);
 }
 
 // ***************************************************************************
 
-void CMovePrimitive::setGlobalPosition (const UGlobalPosition& pos, uint8 worldImage)
+void CMovePrimitive::setGlobalPosition(const UGlobalPosition &pos, uint8 worldImage)
 {
 	NLPACS_HAUTO_SET_GLOBAL_POSITION
 
 	if (isNonCollisionable())
-		getWorldImage (0)->setGlobalPosition (pos, *_Container, *this, worldImage);
+		getWorldImage(0)->setGlobalPosition(pos, *_Container, *this, worldImage);
 	else
-		getWorldImage (worldImage)->setGlobalPosition (pos, *_Container, *this, worldImage);
+		getWorldImage(worldImage)->setGlobalPosition(pos, *_Container, *this, worldImage);
 }
 
 // ***************************************************************************
 
-void CMovePrimitive::setGlobalPosition (const NLMISC::CVectorD& pos, uint8 worldImage, UGlobalPosition::TType /* type */)
+void CMovePrimitive::setGlobalPosition(const NLMISC::CVectorD &pos, uint8 worldImage, UGlobalPosition::TType /* type */)
 {
 	NLPACS_HAUTO_SET_UGLOBAL_POSITION
 
 	if (isNonCollisionable())
-		getWorldImage (0)->setGlobalPosition (pos, *_Container, *this, worldImage, (_StaticFlags & DontSnapToGroundFlag) != 0);
+		getWorldImage(0)->setGlobalPosition(pos, *_Container, *this, worldImage, (_StaticFlags & DontSnapToGroundFlag) != 0);
 	else
-		getWorldImage (worldImage)->setGlobalPosition (pos, *_Container, *this, worldImage, (_StaticFlags & DontSnapToGroundFlag) != 0);
+		getWorldImage(worldImage)->setGlobalPosition(pos, *_Container, *this, worldImage, (_StaticFlags & DontSnapToGroundFlag) != 0);
 }
 
 // ***************************************************************************
 
-void CMovePrimitive::move (const NLMISC::CVectorD& speed, uint8 worldImage)
+void CMovePrimitive::move(const NLMISC::CVectorD &speed, uint8 worldImage)
 {
 	NLPACS_HAUTO_MOVE
 
 	if (isNonCollisionable())
-		getWorldImage (0)->move (speed, *_Container, *this, worldImage);
+		getWorldImage(0)->move(speed, *_Container, *this, worldImage);
 	else
-		getWorldImage (worldImage)->move (speed, *_Container, *this, worldImage);
+		getWorldImage(worldImage)->move(speed, *_Container, *this, worldImage);
 }
 
 // ***************************************************************************
 
-NLMISC::CVectorD CMovePrimitive::getFinalPosition (uint8 worldImage)  const
+NLMISC::CVectorD CMovePrimitive::getFinalPosition(uint8 worldImage) const
 {
 	if (isNonCollisionable())
-		return getWorldImage (0)->getFinalPosition ();
+		return getWorldImage(0)->getFinalPosition();
 	else
-		return getWorldImage (worldImage)->getFinalPosition ();
+		return getWorldImage(worldImage)->getFinalPosition();
 }
 
 // ***************************************************************************
 
-const NLMISC::CVectorD&	CMovePrimitive::getSpeed (uint8 worldImage) const
+const NLMISC::CVectorD &CMovePrimitive::getSpeed(uint8 worldImage) const
 {
 	if (isNonCollisionable())
-		return getWorldImage (0)->getSpeed ();
+		return getWorldImage(0)->getSpeed();
 	else
-		return getWorldImage (worldImage)->getSpeed ();
+		return getWorldImage(worldImage)->getSpeed();
 }
 
 // ***************************************************************************
 
-CMovePrimitive::TType CMovePrimitive::getPrimitiveType () const
+CMovePrimitive::TType CMovePrimitive::getPrimitiveType() const
 {
-	return getPrimitiveTypeInternal ();
+	return getPrimitiveTypeInternal();
 }
 
 // ***************************************************************************
 
-CMovePrimitive::TReaction CMovePrimitive::getReactionType () const
+CMovePrimitive::TReaction CMovePrimitive::getReactionType() const
 {
-	return getReactionTypeInternal ();
+	return getReactionTypeInternal();
 }
 
 // ***************************************************************************
 
-CMovePrimitive::TTrigger CMovePrimitive::getTriggerType () const
+CMovePrimitive::TTrigger CMovePrimitive::getTriggerType() const
 {
-	return getTriggerTypeInternal ();
+	return getTriggerTypeInternal();
 }
 
 // ***************************************************************************
 
-CMovePrimitive::TCollisionMask CMovePrimitive::getCollisionMask () const
+CMovePrimitive::TCollisionMask CMovePrimitive::getCollisionMask() const
 {
-	return getCollisionMaskInternal ();
+	return getCollisionMaskInternal();
 }
 
 // ***************************************************************************
 
-CMovePrimitive::TCollisionMask CMovePrimitive::getOcclusionMask () const
+CMovePrimitive::TCollisionMask CMovePrimitive::getOcclusionMask() const
 {
-	return getOcclusionMaskInternal ();
+	return getOcclusionMaskInternal();
 }
 
 // ***************************************************************************
 
-bool CMovePrimitive::getObstacle () const
+bool CMovePrimitive::getObstacle() const
 {
-	return isObstacle ();
+	return isObstacle();
 }
 
 // ***************************************************************************
 
-float CMovePrimitive::getAbsorbtion () const
+float CMovePrimitive::getAbsorbtion() const
 {
 	return _Attenuation;
 }
 
 // ***************************************************************************
 
-void CMovePrimitive::getSize (float& width, float& depth) const
+void CMovePrimitive::getSize(float &width, float &depth) const
 {
-	width=getLength(0);
-	depth=getLength(1);
+	width = getLength(0);
+	depth = getLength(1);
 }
 
 // ***************************************************************************
 
-float CMovePrimitive::getHeight () const
+float CMovePrimitive::getHeight() const
 {
-	return getHeightInternal ();
+	return getHeightInternal();
 }
 
 // ***************************************************************************
 
-float CMovePrimitive::getRadius () const
+float CMovePrimitive::getRadius() const
 {
-	return getRadiusInternal ();
+	return getRadiusInternal();
 }
 
 // ***************************************************************************
 
-double CMovePrimitive::getOrientation (uint8 worldImage) const
+double CMovePrimitive::getOrientation(uint8 worldImage) const
 {
 	if (isNonCollisionable())
-		return getWorldImage (0)->getOrientation ();
+		return getWorldImage(0)->getOrientation();
 	else
-		return getWorldImage (worldImage)->getOrientation ();
+		return getWorldImage(worldImage)->getOrientation();
 }
 
 // ***************************************************************************
 
-void CMovePrimitive::getGlobalPosition (UGlobalPosition& pos, uint8 worldImage) const
+void CMovePrimitive::getGlobalPosition(UGlobalPosition &pos, uint8 worldImage) const
 {
 	NLPACS_HAUTO_GET_GLOBAL_POSITION
 
 	if (isNonCollisionable())
-		pos=getWorldImage (0)->getGlobalPosition();
+		pos = getWorldImage(0)->getGlobalPosition();
 	else
-		pos=getWorldImage (worldImage)->getGlobalPosition();
+		pos = getWorldImage(worldImage)->getGlobalPosition();
 }
 
 // ***************************************************************************
 
-uint8 CMovePrimitive::getFirstWorldImageV () const
+uint8 CMovePrimitive::getFirstWorldImageV() const
 {
-	return getFirstWorldImage ();
+	return getFirstWorldImage();
 }
 
 // ***************************************************************************
 
-uint8 CMovePrimitive::getNumWorldImageV () const
+uint8 CMovePrimitive::getNumWorldImageV() const
 {
-	return getNumWorldImage ();
+	return getNumWorldImage();
 }
 
 // ***************************************************************************
 
-bool CMovePrimitive::isInCollision (CMovePrimitive *primitive)
+bool CMovePrimitive::isInCollision(CMovePrimitive *primitive)
 {
 	// Should be ok
-	CCollisionOTInfo	*element=_RootOTInfo;
+	CCollisionOTInfo *element = _RootOTInfo;
 
 	// Look for it
 	while (element)
@@ -396,15 +395,15 @@ bool CMovePrimitive::isInCollision (CMovePrimitive *primitive)
 		if (!element->isCollisionAgainstStatic())
 		{
 			// Cast
-			const CCollisionOTDynamicInfo *dynInfo=static_cast<const CCollisionOTDynamicInfo*> (element);
+			const CCollisionOTDynamicInfo *dynInfo = static_cast<const CCollisionOTDynamicInfo *>(element);
 
 			// Check if the primitive is used
-			if ((dynInfo->getFirstPrimitive()== primitive)||(dynInfo->getSecondPrimitive()== primitive))
+			if ((dynInfo->getFirstPrimitive() == primitive) || (dynInfo->getSecondPrimitive() == primitive))
 				return true;
 		}
 
 		// Look for next
-		element=element->getNext (this);
+		element = element->getNext(this);
 	}
 
 	return false;

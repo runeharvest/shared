@@ -28,40 +28,41 @@
 
 class Custom : public CDialog
 {
-// Construction
+	// Construction
 public:
-	Custom(CWnd* pParent = NULL);   // standard constructor
-	
+	Custom(CWnd *pParent = NULL); // standard constructor
+
 	void Free(void);
 	CComboBox *clist;
 	__int64 flag;
-	int		mode; //0 : or, 1 : and
-	int		bOk;
+	int mode; // 0 : or, 1 : and
+	int bOk;
 
 private:
-	int		nButton;
+	int nButton;
 	CButton *buttonList;
 	CStatic *staticList;
 	CFont font;
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(Custom)
-	enum { IDD = IDD_CUSTOM };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_CUSTOM
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(Custom)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(Custom)
 	virtual void OnOK();

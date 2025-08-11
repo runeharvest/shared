@@ -46,7 +46,7 @@ public:
 	/// This will do a reverse lookup to find the hostname
 	/// If lookup is set, it will also do a lookup to find all other addresses
 	CInetHost(const CInetAddress &address, bool lookup);
-	
+
 	/// Set multiple existing addresses, for backwards compatibility
 	CInetHost(const std::vector<CInetAddress> &address, bool lookup);
 
@@ -56,7 +56,7 @@ public:
 
 	/// Sets hostname and port (ex: www.nevrax.com:80)
 	void set(const std::string &hostname, uint16 port);
-	
+
 	/// This will do a reverse lookup to find the hostname
 	/// If lookup is set, it will also do a lookup to find all other addresses
 	void set(const CInetAddress &address, bool lookup = false);
@@ -105,7 +105,7 @@ public:
 
 	/// To string hostname:port (ip)
 	std::string toStringLong(size_t i) const;
-	
+
 	/// To string short hostname:port
 	std::string toString() const;
 

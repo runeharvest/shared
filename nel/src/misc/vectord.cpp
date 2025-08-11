@@ -16,19 +16,17 @@
 
 #include "stdmisc.h"
 
-#include	"nel/misc/vectord.h"
+#include "nel/misc/vectord.h"
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace	NLMISC
-{
+namespace NLMISC {
 
-const CVectorD	CVectorD::Null(0,0,0);
-const CVectorD	CVectorD::I(1,0,0);
-const CVectorD	CVectorD::J(0,1,0);
-const CVectorD	CVectorD::K(0,0,1);
+const CVectorD CVectorD::Null(0, 0, 0);
+const CVectorD CVectorD::I(1, 0, 0);
+const CVectorD CVectorD::J(0, 1, 0);
+const CVectorD CVectorD::K(0, 0, 1);
 
 }
-

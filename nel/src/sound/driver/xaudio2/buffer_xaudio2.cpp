@@ -29,12 +29,18 @@ using namespace NLMISC;
 
 namespace NLSOUND {
 
-CBufferXAudio2::CBufferXAudio2(CSoundDriverXAudio2 *soundDriver) 
-: _SoundDriver(soundDriver), _DataAligned(NULL), _DataPtr(NULL), 
-_Size(0), _Name(NULL), _Format((IBuffer::TBufferFormat)~0),
-_Channels(0), _BitsPerSample(0), _Frequency(0), _Capacity(0)
+CBufferXAudio2::CBufferXAudio2(CSoundDriverXAudio2 *soundDriver)
+    : _SoundDriver(soundDriver)
+    , _DataAligned(NULL)
+    , _DataPtr(NULL)
+    , _Size(0)
+    , _Name(NULL)
+    , _Format((IBuffer::TBufferFormat)~0)
+    , _Channels(0)
+    , _BitsPerSample(0)
+    , _Frequency(0)
+    , _Capacity(0)
 {
-	
 }
 
 CBufferXAudio2::~CBufferXAudio2()
@@ -67,24 +73,24 @@ uint8 *CBufferXAudio2::lock(uint capacity)
 	if (_DataPtr)
 	{
 		_SoundDriver->performanceUnregisterBuffer(_Format, _Size);
-		if (capacity > _Capacity) 
+		if (capacity > _Capacity)
 		{
 			delete[] _DataPtr;
 			_DataAligned = NULL;
 			_DataPtr = NULL;
 		}
 	}
-	
-	if (!_DataPtr) 
+
+	if (!_DataPtr)
 	{
 		_DataPtr = new uint8[capacity + 15];
 		_DataAligned = (uint8 *)((size_t)_DataPtr + ((16 - ((size_t)_DataPtr % 16)) % 16));
 		_Capacity = capacity;
-		if (_Size > capacity) 
+		if (_Size > capacity)
 			_Size = capacity;
 	}
 	_SoundDriver->performanceRegisterBuffer(_Format, _Size);
-	
+
 	return _DataAligned;
 }
 
@@ -92,7 +98,7 @@ uint8 *CBufferXAudio2::lock(uint capacity)
 bool CBufferXAudio2::unlock(uint size)
 {
 	_SoundDriver->performanceUnregisterBuffer(_Format, _Size);
-	if (size > _Capacity) 
+	if (size > _Capacity)
 	{
 		_Size = _Capacity;
 		_SoundDriver->performanceRegisterBuffer(_Format, _Size);
@@ -151,7 +157,7 @@ uint CBufferXAudio2::getSize() const
 /// Return the duration (in ms) of the sample in the buffer
 float CBufferXAudio2::getDuration() const
 {
-	switch (_Format) 
+	switch (_Format)
 	{
 	case FormatDviAdpcm:
 		nlassert(_Channels == 1 && _BitsPerSample == 16);
@@ -181,7 +187,7 @@ bool CBufferXAudio2::isBufferLoaded() const
 {
 	return _DataPtr != NULL;
 }
-	
+
 /// Set the storage mode of this buffer, call before filling this buffer. Storage mode is always software if OptionSoftwareBuffer is enabled. Default is auto.
 void CBufferXAudio2::setStorageMode(IBuffer::TStorageMode /* storageMode */)
 {

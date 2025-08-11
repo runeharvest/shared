@@ -28,11 +28,9 @@
 #include "mem_stream.h"
 #include "command.h"
 
-
 namespace NLMISC {
 
 #undef BUFFIFO_TRACK_ALL_BUFFERS
-
 
 /**
  * This class is a dynamic size FIFO that contains variable size uint8 buffer.
@@ -46,18 +44,18 @@ namespace NLMISC {
  * of browsing the blocks.
  *
  * \code
- 	CBufFIFO fifo;
-	fifo.resize(10000);
-	vector<uint8> vec;
-	vec.resize(rand()%256);
-	memset (&(vec[0]), '-', vec.size());
-	// push the vector
-	fifo.push(vec);
-	// display the fifo
-	fifo.display();
-	vector<uint8> vec2;
-	// get the vector
-	fifo.pop(vec2);
+    CBufFIFO fifo;
+    fifo.resize(10000);
+    vector<uint8> vec;
+    vec.resize(rand()%256);
+    memset (&(vec[0]), '-', vec.size());
+    // push the vector
+    fifo.push(vec);
+    // display the fifo
+    fifo.display();
+    vector<uint8> vec2;
+    // get the vector
+    fifo.pop(vec2);
  * \endcode
  * \author Vianney Lecroart
  * \author Nevrax France
@@ -66,85 +64,80 @@ namespace NLMISC {
 class CBufFIFO
 {
 public:
-
-	CBufFIFO ();
-	~CBufFIFO ();
+	CBufFIFO();
+	~CBufFIFO();
 
 	/// Push 'buffer' in the head of the FIFO
-	void	 push (const std::vector<uint8> &buffer) { push (&buffer[0], (uint32)buffer.size()); }
+	void push(const std::vector<uint8> &buffer) { push(&buffer[0], (uint32)buffer.size()); }
 
-	void	 push (const NLMISC::CMemStream &buffer) { push (buffer.buffer(), buffer.length()); }
+	void push(const NLMISC::CMemStream &buffer) { push(buffer.buffer(), buffer.length()); }
 
-	void	 push (const uint8 *buffer, uint32 size);
+	void push(const uint8 *buffer, uint32 size);
 
 	/// Concate and push 'buffer1' and buffer2 in the head of the FIFO. The goal is to avoid a copy
-	void	 push (const std::vector<uint8> &buffer1, const std::vector<uint8> &buffer2);
-	void	 push (const uint8 *buffer1, uint32 size1, const uint8 *buffer2, uint32 size2);
+	void push(const std::vector<uint8> &buffer1, const std::vector<uint8> &buffer2);
+	void push(const uint8 *buffer1, uint32 size1, const uint8 *buffer2, uint32 size2);
 
 	/// Get the buffer in the tail of the FIFO and put it in 'buffer'
-	void	 front (std::vector<uint8> &buffer);
+	void front(std::vector<uint8> &buffer);
 
-	void	 front (NLMISC::CMemStream &buffer);
+	void front(NLMISC::CMemStream &buffer);
 
-	void	 front (uint8 *&buffer, uint32 &size);
+	void front(uint8 *&buffer, uint32 &size);
 
 	/// This function returns the last byte of the front message
 	/// It is used by the network to know a value quickly without doing front()
-	uint8	 frontLast ();
-
+	uint8 frontLast();
 
 	/// Pop the buffer in the tail of the FIFO
-	void	 pop ();
+	void pop();
 
 	/// Set the size of the FIFO buffer in byte
-	void	 resize (uint32 size);
+	void resize(uint32 size);
 
 	/// Return true if the FIFO is empty
-	bool	 empty () { return _Empty; }
-
+	bool empty() { return _Empty; }
 
 	/// Erase the FIFO
-	void	 clear ();
+	void clear();
 
 	/// Returns the size of the FIFO
-	uint32	 size ();
+	uint32 size();
 
 	/// display the FIFO to stdout (used to debug the FIFO)
-	void	 display ();
+	void display();
 
 	/// display the FIFO statistics (speed, nbcall, etc...) to stdout
-	void	 displayStats (CLog *log = InfoLog);
+	void displayStats(CLog *log = InfoLog);
 
 private:
-
 	typedef uint32 TFifoSize;
 
 	// pointer to the big buffer
-	uint8	*_Buffer;
+	uint8 *_Buffer;
 	// size of the big buffer
-	uint32	 _BufferSize;
+	uint32 _BufferSize;
 
 	// true if the bufffer is empty
-	bool	 _Empty;
+	bool _Empty;
 
 	// head of the FIFO
-	uint8	*_Head;
+	uint8 *_Head;
 	// tail of the FIFO
-	uint8	*_Tail;
+	uint8 *_Tail;
 	// pointer to the rewinder of the FIFO
-	uint8	*_Rewinder;
+	uint8 *_Rewinder;
 
 	// return true if we can put size bytes on the buffer
 	// return false if we have to resize
-	bool	 canFit (uint32 size);
-
+	bool canFit(uint32 size);
 
 	// statistics of the FIFO
 	uint32 _BiggestBlock;
 	uint32 _SmallestBlock;
 	uint32 _BiggestBuffer;
 	uint32 _SmallestBuffer;
-	uint32 _Pushed ;
+	uint32 _Pushed;
 	uint32 _Fronted;
 	uint32 _Resized;
 	TTicks _PushedTime;
@@ -152,17 +145,15 @@ private:
 	TTicks _ResizedTime;
 
 #ifdef BUFFIFO_TRACK_ALL_BUFFERS
-	typedef std::set<CBufFIFO*> TAllBuffers;
+	typedef std::set<CBufFIFO *> TAllBuffers;
 	// All the buffer for debug output
-	static TAllBuffers		_AllBuffers; // WARNING: not mutexed, can produce some crashes!
+	static TAllBuffers _AllBuffers; // WARNING: not mutexed, can produce some crashes!
 #endif
 
 	NLMISC_CATEGORISED_COMMAND_FRIEND(misc, dumpAllBuffers);
 };
 
-
 } // NLMISC
-
 
 #endif // NL_BUF_FIFO_H
 

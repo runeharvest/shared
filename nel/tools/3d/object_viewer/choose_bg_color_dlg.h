@@ -25,7 +25,6 @@
 
 #include "ps_wrapper.h"
 
-
 class CColorEdit;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -33,33 +32,35 @@ class CColorEdit;
 
 class CChooseBGColorDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CChooseBGColorDlg(CObjectViewer *objectViewer, CWnd* pParent);   // standard constructor
+	CChooseBGColorDlg(CObjectViewer *objectViewer, CWnd *pParent); // standard constructor
 	~CChooseBGColorDlg();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CChooseBGColorDlg)
-	enum { IDD = IDD_CHOOSE_BG_COLOR };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_CHOOSE_BG_COLOR
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CChooseBGColorDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	CColorEdit *_ColorEdit;
 	struct CBGColorWrapper : public IPSWrapperRGBA
 	{
 		CObjectViewer *OV;
 		void set(const NLMISC::CRGBA &col) { OV->setBackGroundColor(col); }
-		NLMISC::CRGBA get() const  { return OV->getBackGroundColor(); }
+		NLMISC::CRGBA get() const { return OV->getBackGroundColor(); }
 	} _BGColorWrapper;
 	// Generated message map functions
 	//{{AFX_MSG(CChooseBGColorDlg)

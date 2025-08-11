@@ -27,9 +27,7 @@
 
 #include <vector>
 
-
-const uint32 MsgHeaderSize = 1+8;	// 8 for the date
-
+const uint32 MsgHeaderSize = 1 + 8; // 8 for the date
 
 /**
  * Placeholder for received messages
@@ -37,56 +35,57 @@ const uint32 MsgHeaderSize = 1+8;	// 8 for the date
 struct TReceivedMessage
 {
 	/// Type of incoming events (see also NLNET::CBufNetBase::TEventType)
-	enum TEventType { User = 'U', RemoveClient = 'D' };
+	enum TEventType
+	{
+		User = 'U',
+		RemoveClient = 'D'
+	};
 
 	/// Constructor
 	TReceivedMessage();
 
 	/// Resize data
-	void				resizeData( uint32 datasize )	{ _Data.resize( MsgHeaderSize + datasize ); }
+	void resizeData(uint32 datasize) { _Data.resize(MsgHeaderSize + datasize); }
 
 	/// Return a vector containing the address info
-	void				addressToVector();
+	void addressToVector();
 
 	/// Set address with address info from specified vector
-	void				vectorToAddress();
+	void vectorToAddress();
 
 	/// Set "disconnection" message for the current AddrFrom
-	void				setTypeEvent( TEventType t )	{ *_Data.begin() = (uint8)t; }
+	void setTypeEvent(TEventType t) { *_Data.begin() = (uint8)t; }
 
-	void				setDate()	{ *(sint64*)&(*(_Data.begin()+1)) = NLMISC::CTime::getLocalTime(); }
+	void setDate() { *(sint64 *)&(*(_Data.begin() + 1)) = NLMISC::CTime::getLocalTime(); }
 
-	sint64				getDate()	{ return *(sint64*)&(*(_Data.begin()+1)); }
-	
+	sint64 getDate() { return *(sint64 *)&(*(_Data.begin() + 1)); }
+
 	/// Return the event type
-	TEventType			eventType() const				{ return (TEventType)(*_Data.begin()); }
+	TEventType eventType() const { return (TEventType)(*_Data.begin()); }
 
 	/// Return a pointer to user data for writing
-	uint8				*userDataW()					{ return &*_Data.begin() + MsgHeaderSize; }
+	uint8 *userDataW() { return &*_Data.begin() + MsgHeaderSize; }
 
 	/// Return a pointer to user data for reading
-	const uint8			*userDataR() const				{ return &*_Data.begin() + MsgHeaderSize; }
+	const uint8 *userDataR() const { return &*_Data.begin() + MsgHeaderSize; }
 
 	/// Return the size of user data
-	uint32				userSize()						{ return (uint32)_Data.size() - MsgHeaderSize; }
+	uint32 userSize() { return (uint32)_Data.size() - MsgHeaderSize; }
 
 	/// Return the data vector (event type header byte + user data)
-	std::vector<uint8>&		data()						{ return _Data; }
+	std::vector<uint8> &data() { return _Data; }
 
 private:
-
 	/// One byte for event type (header), followed by user data
-	std::vector<uint8>		_Data;
+	std::vector<uint8> _Data;
 
 public:
-	
 	/// Address of sender as CInetAddress
-	NLNET::CInetAddress	AddrFrom;
+	NLNET::CInetAddress AddrFrom;
 
 	/// Placeholder vector for address info
-	std::vector<uint8>		VAddrFrom;
+	std::vector<uint8> VAddrFrom;
 };
-
 
 /**
  * receive task
@@ -97,43 +96,38 @@ public:
 class CReceiveTask : public NLMISC::IRunnable
 {
 public:
-
 	/// Constructor
-	CReceiveTask( uint16 port, uint32 msgsize );
+	CReceiveTask(uint16 port, uint32 msgsize);
 
 	/// Destructor
 	~CReceiveTask();
 
 	/// Run
-	virtual void	run();
+	virtual void run();
 
 	/// Set new write queue
-	void			setWriteQueue( NLMISC::CBufFIFO *writequeue );
+	void setWriteQueue(NLMISC::CBufFIFO *writequeue);
 
 	/// Require exit
-	void			requireExit() { _ExitRequired = true; }
+	void requireExit() { _ExitRequired = true; }
 
 private:
-
 	/// Datagram length
-	uint										_DatagramLength;
+	uint _DatagramLength;
 
 	/// Received message
-	TReceivedMessage							_ReceivedMessage;
+	TReceivedMessage _ReceivedMessage;
 
 	/// Write queue access
-	NLMISC::CSynchronized<NLMISC::CBufFIFO*>	_WriteQueue;
+	NLMISC::CSynchronized<NLMISC::CBufFIFO *> _WriteQueue;
 
 	/// Exit required
-	volatile bool								_ExitRequired;
+	volatile bool _ExitRequired;
 
 public:
-	
 	/// External datagram socket
-	NLNET::CUdpSock								*DataSock;
-
+	NLNET::CUdpSock *DataSock;
 };
-
 
 #endif // NL_RECEIVE_TASK_H
 

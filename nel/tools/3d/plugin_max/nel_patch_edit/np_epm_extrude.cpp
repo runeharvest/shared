@@ -7,12 +7,12 @@
 #define DBGWELD_ACTIONx
 #define DBG_NAMEDSELSx
 
-#define PROMPT_TIME	2000
+#define PROMPT_TIME 2000
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-int EPM_ExtrudeMouseProc::proc(HWND hwnd, int msg, int point, int flags, IPoint2 m) 
-{	
+int EPM_ExtrudeMouseProc::proc(HWND hwnd, int msg, int point, int flags, IPoint2 m)
+{
 #if MAX_VERSION_MAJOR >= 19
 	ViewExp *vpt = &ip->GetViewExp(hwnd);
 #else
@@ -32,13 +32,13 @@ int EPM_ExtrudeMouseProc::proc(HWND hwnd, int msg, int point, int flags, IPoint2
 	case MOUSE_POINT:
 		if (!point)
 		{
-			po->BeginExtrude(ip->GetTime());		
+			po->BeginExtrude(ip->GetTime());
 			om = m;
-		} else 
+		}
+		else
 		{
 			ip->RedrawViews(ip->GetTime(), REDRAW_END);
 			po->EndExtrude(ip->GetTime(), TRUE);
-
 		}
 		break;
 
@@ -60,14 +60,14 @@ int EPM_ExtrudeMouseProc::proc(HWND hwnd, int msg, int point, int flags, IPoint2
 		spin = GetISpinner(GetDlgItem(po->hOpsPanel, IDC_EP_EXTRUDESPINNER));
 		if (spin)
 		{
-			spin->SetValue(amount, FALSE);	// sca - use signed value here too.
+			spin->SetValue(amount, FALSE); // sca - use signed value here too.
 			ReleaseISpinner(spin);
 		}
 		ip->RedrawViews(ip->GetTime(), REDRAW_INTERACTIVE);
 		break;
 
 	case MOUSE_ABORT:
-		po->EndExtrude(ip->GetTime(), FALSE);			
+		po->EndExtrude(ip->GetTime(), FALSE);
 		ip->RedrawViews(ip->GetTime(), REDRAW_END);
 		break;
 	}
@@ -82,17 +82,17 @@ int EPM_ExtrudeMouseProc::proc(HWND hwnd, int msg, int point, int flags, IPoint2
 
 // --------------------------------------------------------------------------------
 
-HCURSOR EPM_ExtrudeSelectionProcessor::GetTransformCursor() 
-{ 
+HCURSOR EPM_ExtrudeSelectionProcessor::GetTransformCursor()
+{
 	static HCURSOR hCur = NULL;
 	if (!hCur)
 		hCur = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_EXTRUDECUR));
-	return hCur; 
+	return hCur;
 }
 
 // --------------------------------------------------------------------------------
 
-void EPM_ExtrudeCMode::EnterMode() 
+void EPM_ExtrudeCMode::EnterMode()
 {
 	if (!po->hOpsPanel)
 		return;
@@ -103,7 +103,7 @@ void EPM_ExtrudeCMode::EnterMode()
 
 // --------------------------------------------------------------------------------
 
-void EPM_ExtrudeCMode::ExitMode() 
+void EPM_ExtrudeCMode::ExitMode()
 {
 	if (!po->hOpsPanel)
 		return;
@@ -116,8 +116,7 @@ void EPM_ExtrudeCMode::ExitMode()
 	{
 		spin->SetValue(0.0f, FALSE);
 		ReleaseISpinner(spin);
-		}
-
+	}
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -125,8 +124,7 @@ void EPM_ExtrudeCMode::ExitMode()
 void EditPatchMod::DoExtrude()
 {
 
-
-	ModContextList mcList;		
+	ModContextList mcList;
 	INodeTab nodes;
 	TimeValue t = ip->GetTime();
 	BOOL holdNeeded = FALSE;
@@ -143,7 +141,7 @@ void EditPatchMod::DoExtrude()
 	for (int i = 0; i < mcList.Count(); i++)
 	{
 		BOOL altered = FALSE;
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
@@ -153,7 +151,7 @@ void EditPatchMod::DoExtrude()
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(t, rpatch);
 		if (!patch)
-			continue;		
+			continue;
 		patchData->RecordTopologyTags(patch);
 		// If this is the first edit, then the delta arrays will be allocated
 		patchData->BeginEdit(t);
@@ -168,68 +166,66 @@ void EditPatchMod::DoExtrude()
 			// Call the vertex type change function
 			patch->CreateExtrusion();
 			rpatch->CreateExtrusion(patch);
-//			patch->InvalidateGeomCache();
-//			InvalidateMesh();
+			//			patch->InvalidateGeomCache();
+			//			InvalidateMesh();
 
 			patchData->UpdateChanges(patch, rpatch);
 			patchData->TempData(this)->Invalidate(PART_TOPO);
-			}
-		patchData->SetFlag(EPD_BEENDONE, TRUE);
 		}
-	
+		patchData->SetFlag(EPD_BEENDONE, TRUE);
+	}
+
 	if (holdNeeded)
 	{
 		ResolveTopoChanges();
 		theHold.Accept(GetString(IDS_TH_PATCHCHANGE));
-		}
-	else 
+	}
+	else
 	{
 		ip->DisplayTempPrompt(GetString(IDS_TH_NOPATCHESSEL), PROMPT_TIME);
 		theHold.End();
-		}
-
+	}
 
 	nodes.DisposeTemporary();
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 	NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
 	ip->RedrawViews(ip->GetTime(), REDRAW_NORMAL);
 
-/*
-	theHold.Begin();
-	patch.RecordTopologyTags();
-	POPatchGenRecord *rec = new POPatchGenRecord(this);
-	if (theHold.Holding())
-		theHold.Put(new PatchObjectRestore(this, rec));
+	/*
+	    theHold.Begin();
+	    patch.RecordTopologyTags();
+	    POPatchGenRecord *rec = new POPatchGenRecord(this);
+	    if (theHold.Holding())
+	        theHold.Put(new PatchObjectRestore(this, rec));
 
-	patch.CreateExtrusion();
-	
-	ResolveTopoChanges();
-	theHold.Accept(GetResString(IDS_TH_PATCHADD));
+	    patch.CreateExtrusion();
 
-	patch.InvalidateGeomCache();
-	InvalidateMesh();
+	    ResolveTopoChanges();
+	    theHold.Accept(GetResString(IDS_TH_PATCHADD));
 
-	NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
-	ip->RedrawViews(ip->GetTime(), REDRAW_NORMAL);
-*/
+	    patch.InvalidateGeomCache();
+	    InvalidateMesh();
+
+	    NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
+	    ip->RedrawViews(ip->GetTime(), REDRAW_NORMAL);
+	*/
 }
 
-
-void EditPatchMod::BeginExtrude(TimeValue t) 
-{	
+void EditPatchMod::BeginExtrude(TimeValue t)
+{
 	if (inExtrude)
 		return;
 	inExtrude = TRUE;
 	theHold.SuperBegin();
 	DoExtrude();
-//	PlugControllersSel(t,sel);
+	//	PlugControllersSel(t,sel);
 	theHold.Begin();
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void EditPatchMod::EndExtrude(TimeValue t, BOOL accept) 
-{		
+void EditPatchMod::EndExtrude(TimeValue t, BOOL accept)
+{
 	if (!ip)
 		return;
 
@@ -243,25 +239,23 @@ void EditPatchMod::EndExtrude(TimeValue t, BOOL accept)
 	{
 		spin->SetValue(0, FALSE);
 		ReleaseISpinner(spin);
-		}
-//	TempData()->freeBevelInfo();
+	}
+	//	TempData()->freeBevelInfo();
 
 	theHold.Accept(GetString(IDS_RB_EXTRUDE));
 	if (accept)
 		theHold.SuperAccept(GetString(IDS_RB_EXTRUDE));
 	else theHold.SuperCancel();
-
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void EditPatchMod::Extrude(TimeValue t, float amount, BOOL useLocalNorms) 
+void EditPatchMod::Extrude(TimeValue t, float amount, BOOL useLocalNorms)
 {
 	if (!inExtrude)
 		return;
 
-
-	ModContextList mcList;		
+	ModContextList mcList;
 	INodeTab nodes;
 	BOOL holdNeeded = FALSE;
 	BOOL hadSelected = FALSE;
@@ -272,13 +266,13 @@ void EditPatchMod::Extrude(TimeValue t, float amount, BOOL useLocalNorms)
 	ip->GetModContexts(mcList, nodes);
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 
-//	theHold.Begin();
+	//	theHold.Begin();
 	RecordTopologyTags();
 
 	for (int i = 0; i < mcList.Count(); i++)
 	{
 		BOOL altered = FALSE;
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
@@ -288,7 +282,7 @@ void EditPatchMod::Extrude(TimeValue t, float amount, BOOL useLocalNorms)
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(t, rpatch);
 		if (!patch)
-			continue;		
+			continue;
 		patchData->RecordTopologyTags(patch);
 		// If this is the first edit, then the delta arrays will be allocated
 		patchData->BeginEdit(t);
@@ -301,50 +295,46 @@ void EditPatchMod::Extrude(TimeValue t, float amount, BOOL useLocalNorms)
 			if (theHold.Holding())
 				theHold.Put(new PatchRestore(patchData, this, patch, rpatch));
 
-			// Call the vertex type change function
-			#if (MAX_RELEASE < 4000)
-				patch->MoveNormal(amount, useLocalNorms);
-			#else
-				patch->MoveNormal(amount, useLocalNorms, PATCH_PATCH);
-			#endif
+// Call the vertex type change function
+#if (MAX_RELEASE < 4000)
+			patch->MoveNormal(amount, useLocalNorms);
+#else
+			patch->MoveNormal(amount, useLocalNorms, PATCH_PATCH);
+#endif
 			patch->InvalidateGeomCache();
-			//InvalidateMesh();
+			// InvalidateMesh();
 
 			patchData->UpdateChanges(patch, rpatch);
 			patchData->TempData(this)->Invalidate(PART_TOPO);
 		}
 		patchData->SetFlag(EPD_BEENDONE, TRUE);
-		}
-	
+	}
+
 	if (holdNeeded)
 	{
 		ResolveTopoChanges();
 		theHold.Accept(GetString(IDS_TH_PATCHCHANGE));
-		}
-	else 
+	}
+	else
 	{
 		ip->DisplayTempPrompt(GetString(IDS_TH_NOPATCHESSEL), PROMPT_TIME);
 		theHold.End();
-		}
-
+	}
 
 	nodes.DisposeTemporary();
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 	NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
 	ip->RedrawViews(ip->GetTime(), REDRAW_NORMAL);
 
-/*	theHold.Restore();
-	patch.MoveNormal(amount, useLocalNorms);
+	/*	theHold.Restore();
+	    patch.MoveNormal(amount, useLocalNorms);
 
-	patch.InvalidateGeomCache();
-	InvalidateMesh();
+	    patch.InvalidateGeomCache();
+	    InvalidateMesh();
 
-	NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
-	ip->RedrawViews(ip->GetTime(), REDRAW_NORMAL);
-*/
-
-
+	    NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
+	    ip->RedrawViews(ip->GetTime(), REDRAW_NORMAL);
+	*/
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
-

@@ -16,7 +16,6 @@
 
 #include "std3d.h"
 
-
 #include "nel/3d/register_3d.h"
 #include "nel/3d/texture_font.h"
 #include "nel/3d/texture_file.h"
@@ -44,19 +43,16 @@
 #include "nel/3d/track_sampled_vector.h"
 #include "nel/3d/packed_zone.h"
 
-
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ****************************************************************************
-void	registerSerial3d()
+void registerSerial3d()
 {
-	static bool bInitialized=false;
+	static bool bInitialized = false;
 	if (!bInitialized)
 	{
 		// Textures.
@@ -70,8 +66,6 @@ void	registerSerial3d()
 		NLMISC_REGISTER_CLASS(CTextureEmboss);
 		NLMISC_REGISTER_CLASS(CTextureBlend);
 		NLMISC_REGISTER_CLASS(CTextureMultiFile);
-
-
 
 		// Track
 		NLMISC_REGISTER_CLASS(CTrackKeyFramerTCBFloat);
@@ -133,10 +127,8 @@ void	registerSerial3d()
 		NLMISC_REGISTER_CLASS(CPackedZone16);
 		NLMISC_REGISTER_CLASS(CPackedZone32);
 
-
-		bInitialized=true;
+		bInitialized = true;
 	}
 }
-
 
 } // NL3D

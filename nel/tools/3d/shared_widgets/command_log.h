@@ -52,13 +52,13 @@ typedef NLMISC::CCallback<void, const std::string &> TCommandExecute;
 class CCommandLog : public QWidget
 {
 	Q_OBJECT
-	
+
 public:
 	CCommandLog(QWidget *parent);
 	virtual ~CCommandLog();
 
 	void setExecCommand(const TCommandExecute &func) { m_Func = func; }
-	void doDisplay(const NLMISC::CLog::TDisplayInfo& args, const char *message);
+	void doDisplay(const NLMISC::CLog::TDisplayInfo &args, const char *message);
 
 	void clear() { m_DisplayerOutput->clear(); }
 
@@ -78,7 +78,7 @@ private:
 private:
 	CCommandLog(const CCommandLog &);
 	CCommandLog &operator=(const CCommandLog &);
-	
+
 }; /* class CCommandLog */
 
 class CCommandLogDisplayer : public CCommandLog, public NLMISC::IDisplayer
@@ -90,7 +90,7 @@ public:
 	virtual ~CCommandLogDisplayer();
 
 protected:
-	virtual void doDisplay(const NLMISC::CLog::TDisplayInfo& args, const char *message);
+	virtual void doDisplay(const NLMISC::CLog::TDisplayInfo &args, const char *message);
 
 private slots:
 	void execCommandLog(const QString &cmd);

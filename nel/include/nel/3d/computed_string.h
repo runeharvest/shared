@@ -36,7 +36,6 @@ class CMatrix;
 
 }
 
-
 namespace NL3D {
 
 class CTextureFont;
@@ -46,52 +45,49 @@ struct CComputedString;
 /**
  *	A Buffer to render batch of computed string.
  */
-class	CRenderStringBuffer : public URenderStringBuffer
+class CRenderStringBuffer : public URenderStringBuffer
 {
 public:
-	CVertexBuffer	Vertices;
-	uint			NumQuads;
+	CVertexBuffer Vertices;
+	uint NumQuads;
 
 public:
 	CRenderStringBuffer();
 	virtual ~CRenderStringBuffer();
 
 	/// render and make empty the render string buffer. see CComputedString::render2DClip()
-	void	flush(IDriver& driver, CMaterial *fontMat);
+	void flush(IDriver &driver, CMaterial *fontMat);
 
 	/** render and make empty the render string buffer. see CComputedString::render2DProjected()
 	 *  The driver view and model matrices have to be setuped as material zbuffer flags by the user.
 	 *	This method only render string quads.
 	 */
-	void	flushUnProjected(IDriver& driver, CMaterial *fontMat, bool zwrite);
+	void flushUnProjected(IDriver &driver, CMaterial *fontMat, bool zwrite);
 };
-
-
 
 class CLetterColors : public ULetterColors
 {
 
 public:
-
 	struct SLetterColor
 	{
 		uint Index;
 		NLMISC::CRGBA Color;
 
-		SLetterColor(uint index, const NLMISC::CRGBA & color)
+		SLetterColor(uint index, const NLMISC::CRGBA &color)
 		{
 			Index = index;
 			Color = color;
 		}
 
-		bool operator == ( const SLetterColor lc ) const
+		bool operator==(const SLetterColor lc) const
 		{
-			return (Index==lc.Index && Color==lc.Color);
+			return (Index == lc.Index && Color == lc.Color);
 		}
 	};
 
-	CLetterColors() {}
-	virtual ~CLetterColors() {}
+	CLetterColors() { }
+	virtual ~CLetterColors() { }
 
 	void clear()
 	{
@@ -110,39 +106,39 @@ public:
 
 	uint getIndex(uint i) const
 	{
-		if(i<_indexedColors.size())
+		if (i < _indexedColors.size())
 			return _indexedColors[i].Index;
 
-        return std::numeric_limits<uint>::max();
+		return std::numeric_limits<uint>::max();
 	}
 
-	const CRGBA & getColor(uint i) const
+	const CRGBA &getColor(uint i) const
 	{
-		if(i<_indexedColors.size())
+		if (i < _indexedColors.size())
 			return _indexedColors[i].Color;
 
 		return CRGBA::Black;
 	}
 
-	const SLetterColor & getLetterColor(uint i) const
+	const SLetterColor &getLetterColor(uint i) const
 	{
-		if(i<_indexedColors.size())
+		if (i < _indexedColors.size())
 			return _indexedColors[i];
 
 		static SLetterColor defaultLetterColor(0, CRGBA::Black);
 		return defaultLetterColor;
 	}
 
-	bool isSameLetterColors(ULetterColors * letterColors)
+	bool isSameLetterColors(ULetterColors *letterColors)
 	{
-		CLetterColors * letterCol = static_cast<CLetterColors*>(letterColors);
-		bool	sameLetterColors = false;
-		if(_indexedColors.size()==letterCol->size())
+		CLetterColors *letterCol = static_cast<CLetterColors *>(letterColors);
+		bool sameLetterColors = false;
+		if (_indexedColors.size() == letterCol->size())
 		{
-			sameLetterColors= true;
-			for(uint i=0;i<_indexedColors.size();i++)
+			sameLetterColors = true;
+			for (uint i = 0; i < _indexedColors.size(); i++)
 			{
-				if(!(_indexedColors[i] == letterCol->getLetterColor(i)))
+				if (!(_indexedColors[i] == letterCol->getLetterColor(i)))
 				{
 					sameLetterColors = false;
 					break;
@@ -153,15 +149,14 @@ public:
 		return sameLetterColors;
 	}
 
-	void pushLetterColor(uint index, const NLMISC::CRGBA & color)
+	void pushLetterColor(uint index, const NLMISC::CRGBA &color)
 	{
 		_indexedColors.push_back(SLetterColor(index, color));
 	}
 
 private:
-	std::vector< SLetterColor > _indexedColors;
+	std::vector<SLetterColor> _indexedColors;
 };
-
 
 // ***************************************************************************
 /**
@@ -177,9 +172,8 @@ struct CComputedString
 {
 
 public:
-
 	CVertexBuffer Vertices;
-	CMaterial	*Material;
+	CMaterial *Material;
 	CRGBA Color;
 	std::string Text;
 	size_t Length;
@@ -201,8 +195,8 @@ public:
 	float StringLine;
 
 	/// Optional: each render*() method can draw a subset of letters. Default is 0/FFFFFFFF
-	uint32	SelectStart;
-	uint32	SelectSize;
+	uint32 SelectStart;
+	uint32 SelectSize;
 
 	CLetterColors LetterColors;
 
@@ -213,7 +207,7 @@ public:
 	 */
 	enum THotSpot
 	{
-		BottomLeft=0,
+		BottomLeft = 0,
 		MiddleLeft,
 		TopLeft,
 		MiddleBottom,
@@ -229,26 +223,26 @@ public:
 	/**
 	 * Default constructor
 	 */
-	CComputedString (bool bSetupVB=true)
+	CComputedString(bool bSetupVB = true)
 	{
 		CacheVersion = 0;
 		StringWidth = 0;
 		StringHeight = 0;
 		if (bSetupVB)
 		{
-			Vertices.setVertexFormat (CVertexBuffer::PositionFlag | CVertexBuffer::TexCoord0Flag);
-			Vertices.setPreferredMemory (CVertexBuffer::RAMVolatile, true);
+			Vertices.setVertexFormat(CVertexBuffer::PositionFlag | CVertexBuffer::TexCoord0Flag);
+			Vertices.setPreferredMemory(CVertexBuffer::RAMVolatile, true);
 			Vertices.setName("CComputedString");
 		}
-		SelectStart= 0;
-		SelectSize= std::numeric_limits<uint32>::max();
+		SelectStart = 0;
+		SelectSize = std::numeric_limits<uint32>::max();
 	}
 
 	/**
 	 *	Get the string's origin
 	 * \param hotspot the origin of the string
 	 */
-	CVector getHotSpotVector (THotSpot hotspot);
+	CVector getHotSpotVector(THotSpot hotspot);
 
 	/**
 	 * Render the unicode string in a driver.
@@ -265,14 +259,13 @@ public:
 	 * \param roundToNearestPixel if true, snap the final string position to the nearest pixel. if set to true, and if
 	 *	useScreenAR43= false, you are sure that texels of the fonts fit exactly on centers of pixels (no apparent bi-linear).
 	 */
-	void render2D (IDriver& driver,
-					float x, float z,
-					THotSpot hotspot = BottomLeft,
-					float scaleX = 1, float scaleZ = 1,
-					float rotateY = 0,
-					bool  useScreenAR43= false,
-					bool  roundToNearestPixel= true
-					);
+	void render2D(IDriver &driver,
+	    float x, float z,
+	    THotSpot hotspot = BottomLeft,
+	    float scaleX = 1, float scaleZ = 1,
+	    float rotateY = 0,
+	    bool useScreenAR43 = false,
+	    bool roundToNearestPixel = true);
 
 	/** Special for interface. same as render2D but clip the quads to xmin,ymin/xmax,ymax.
 	 *	NB: behavior is same as render2D with: Hotspot = bottomLeft, scaleX=1, scaleZ=1, rotateY=0,
@@ -280,17 +273,16 @@ public:
 	 *	Additionnaly, this method doesn't render directly to the driver but add primitives to a CRenderStringBuffer
 	 *	Use the method CRenderStringBuffer::flush() to flush it all.
 	 */
-	void render2DClip (IDriver& driver, CRenderStringBuffer &rdrBuffer,
-					float x, float z,
-					float xmin=0, float ymin=0, float xmax=1, float ymax=1
-					);
+	void render2DClip(IDriver &driver, CRenderStringBuffer &rdrBuffer,
+	    float x, float z,
+	    float xmin = 0, float ymin = 0, float xmax = 1, float ymax = 1);
 
 	/** Special for interface. same as render2DClip but unproject the vertices using a frustum and a scale matrix
 	 *	Use the method CRenderStringBuffer::flush() to flush it all.
 	 */
-	void render2DUnProjected (IDriver& driver, CRenderStringBuffer &rdrBuffer, class NL3D::CFrustum &frustum,
-					const NLMISC::CMatrix &scaleMatrix,
-					float x, float z, float depth, float xmin=0, float ymin=0, float xmax=1, float ymax=1);
+	void render2DUnProjected(IDriver &driver, CRenderStringBuffer &rdrBuffer, class NL3D::CFrustum &frustum,
+	    const NLMISC::CMatrix &scaleMatrix,
+	    float x, float z, float depth, float xmin = 0, float ymin = 0, float xmax = 1, float ymax = 1);
 
 	/**
 	 * Render the unicode string in a driver, in 3D with a user matrix.
@@ -299,16 +291,11 @@ public:
 	 * \param matrix transformation matrix
 	 * \param hotspot position of string origine
 	 */
-	void render3D (IDriver& driver, const CMatrix &matrix, THotSpot hotspot = MiddleMiddle);
-
+	void render3D(IDriver &driver, const CMatrix &matrix, THotSpot hotspot = MiddleMiddle);
 };
 
-
-
 } // NL3D
-
 
 #endif // NL_COMPUTED_STRING_H
 
 /* End of computed_string.h */
-

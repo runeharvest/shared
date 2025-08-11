@@ -28,9 +28,9 @@ static char THIS_FILE[] = __FILE__;
 // CBranch_patcherApp
 
 BEGIN_MESSAGE_MAP(CBranch_patcherApp, CWinApp)
-	//{{AFX_MSG_MAP(CBranch_patcherApp)
-	//}}AFX_MSG
-	ON_COMMAND(ID_HELP, CWinApp::OnHelp)
+//{{AFX_MSG_MAP(CBranch_patcherApp)
+//}}AFX_MSG
+ON_COMMAND(ID_HELP, CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////

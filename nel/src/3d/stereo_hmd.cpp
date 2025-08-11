@@ -43,12 +43,10 @@ namespace NL3D {
 
 IStereoHMD::IStereoHMD()
 {
-	
 }
 
 IStereoHMD::~IStereoHMD()
 {
-	
 }
 
 } /* namespace NL3D */

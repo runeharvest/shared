@@ -18,9 +18,8 @@
 #define NL_PS_PARTICLE_H
 
 /** NOTE : All particle definitions where done here. Now they are splitted in different files
-  * This file is maintained for backward compatibility
-  */
-
+ * This file is maintained for backward compatibility
+ */
 
 #include "nel/3d/ps_dot.h"
 #include "nel/3d/ps_face_look_at.h"
@@ -30,7 +29,6 @@
 #include "nel/3d/ps_ribbon_look_at.h"
 #include "nel/3d/ps_face.h"
 #include "nel/3d/ps_shockwave.h"
-
 
 #endif // NL_PS_PARTICLE_H
 

@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 // game share
 #include "bot_chat_types.h"
@@ -24,13 +22,10 @@
 
 using namespace NLMISC;
 
-void	dummyToAvoidVisualWarning_bot_chat_types_cpp()
+void dummyToAvoidVisualWarning_bot_chat_types_cpp()
 {
 }
 
-namespace BOTCHATTYPE
-{
-
-
+namespace BOTCHATTYPE {
 
 } // BOTCHATTYPE

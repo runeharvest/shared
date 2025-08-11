@@ -22,10 +22,7 @@
 #include "nel/3d/channel_mixer.h"
 #include <map>
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 /**
@@ -39,52 +36,49 @@ namespace NL3D
 class CPlayListManager
 {
 public:
-
 	/// Constructor
-	CPlayListManager() {}
+	CPlayListManager() { }
 
 	/// add a playlist/channelmixer to the manager. nlassert(plist). chanMixer replaced if playlist already IN.
-	void	addPlaylist(CAnimationPlaylist* plist, CChannelMixer *chanMixer);
+	void addPlaylist(CAnimationPlaylist *plist, CChannelMixer *chanMixer);
 
 	/// remove a playlist/channelmixer from the manager. nlassert(plist). no op if not here.
-	void	removePlaylist(CAnimationPlaylist* plist);
+	void removePlaylist(CAnimationPlaylist *plist);
 
 	/** animate all the playlist: setupMixer() the channelMixer, and eval(false) (eval global part).
 	 * If a playlist/channelmixer has been deleted (RefPtr), the node is removed from the list.
 	 */
-	void	animate(TGlobalAnimationTime time);
+	void animate(TGlobalAnimationTime time);
 
 	/** steup all the playlist: setupMixer() the channelMixer.
 	 * If a playlist/channelmixer has been deleted (RefPtr), the node is removed from the list.
 	 */
-	void	setup(TGlobalAnimationTime time);
+	void setup(TGlobalAnimationTime time);
 
 	/** Perform a deletion of all pair playlist channel mixer
 	 */
-	void	deleteAll();
-// ***************************
+	void deleteAll();
+	// ***************************
 private:
-	struct	CNode
+	struct CNode
 	{
-		NLMISC::CRefPtr<CAnimationPlaylist>		PlayList;
-		NLMISC::CRefPtr<CChannelMixer>			ChannelMixer;
+		NLMISC::CRefPtr<CAnimationPlaylist> PlayList;
+		NLMISC::CRefPtr<CChannelMixer> ChannelMixer;
 
-		CNode() {}
+		CNode() { }
 		CNode(CAnimationPlaylist *pl, CChannelMixer *mix)
 		{
-			PlayList= pl;
-			ChannelMixer= mix;
+			PlayList = pl;
+			ChannelMixer = mix;
 		}
 	};
 
 	/// CAnimationPlaylist* is just the key.
-	typedef	std::map<CAnimationPlaylist*, CNode>		TPlayListList;
-	TPlayListList				_List;
+	typedef std::map<CAnimationPlaylist *, CNode> TPlayListList;
+	TPlayListList _List;
 };
 
-
 } // NL3D
-
 
 #endif // NL_PLAY_LIST_MANAGER_H
 

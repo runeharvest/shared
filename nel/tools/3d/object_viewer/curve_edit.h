@@ -21,46 +21,44 @@
 #pragma once
 #endif
 
-
 #include "nel/3d/ps_float.h"
 #include "ps_wrapper.h"
 #include "popup_notify.h"
 #include "editable_range.h"
 #include "particle_workspace.h"
 
-
 class CurveEdit : public CDialog
 {
 public:
 	// ctor
-	CurveEdit(NL3D::CPSFloatCurveFunctor *curve, CParticleWorkspace::CNode *ownerNode, IPopupNotify *pn, CWnd* pParent = NULL);
+	CurveEdit(NL3D::CPSFloatCurveFunctor *curve, CParticleWorkspace::CNode *ownerNode, IPopupNotify *pn, CWnd *pParent = NULL);
 	// dtor
 	~CurveEdit();
 
 	// non modal display
 	void init(CWnd *pParent);
-	
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CurveEdit)
-	enum { IDD = IDD_CURVE_EDIT };
-	BOOL	m_DisplayInterpolation;
-	BOOL	m_SmoothingOn;
+	enum
+	{
+		IDD = IDD_CURVE_EDIT
+	};
+	BOOL m_DisplayInterpolation;
+	BOOL m_SmoothingOn;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CurveEdit)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
-	public:
-	NL3D::CPSFloatCurveFunctor  *Curve; // the scheme being edited
+	// Implementation
+public:
+	NL3D::CPSFloatCurveFunctor *Curve; // the scheme being edited
 protected:
-	
 	typedef NL3D::CPSFloatCurveFunctor::CCtrlPoint CCtrlPoint;
 
 	// Generated message map functions
@@ -102,15 +100,21 @@ protected:
 	float getSampledValue(float date) const;
 	void scaleMinMax();
 
-	sint								_X, _Y, _Width, _Height; // position and size of the drawing window	
-	sint								_SelectedCtrlPoint;  //-1 means none
-	enum    { Move,  Moving,
-			  Create, Created,
-			  Remove, Removing }		_State;	
-	float								_Scale, _Origin;
-	CEditableRangeUInt					*_NumSamplesDlg;
-	CParticleWorkspace::CNode			*_Node;
-	
+	sint _X, _Y, _Width, _Height; // position and size of the drawing window
+	sint _SelectedCtrlPoint; //-1 means none
+	enum
+	{
+		Move,
+		Moving,
+		Create,
+		Created,
+		Remove,
+		Removing
+	} _State;
+	float _Scale, _Origin;
+	CEditableRangeUInt *_NumSamplesDlg;
+	CParticleWorkspace::CNode *_Node;
+
 	struct CNumSampleWrapper : public IPSWrapper<uint32>
 	{
 		CurveEdit *CE;
@@ -123,12 +127,11 @@ protected:
 			CE->Curve->setNumSamples(value);
 			CE->Invalidate();
 		}
-	}	_NumSampleWrapper;
+	} _NumSampleWrapper;
 
 	void invalidate();
 
 	IPopupNotify *_PN; // this should be notified when this window is destroyed
-	
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -25,16 +25,11 @@
 #include "nel/misc/vector.h"
 #include "nel/3d/point_light_influence.h"
 
+namespace NL3D {
 
-namespace NL3D
-{
+using NLMISC::CVector;
 
-
-using	NLMISC::CVector;
-
-
-class	CIGSurfaceLight;
-
+class CIGSurfaceLight;
 
 // ***************************************************************************
 /**
@@ -53,34 +48,35 @@ class CSurfaceLightGrid
 	 * ***********************************************/
 
 public:
-
 	/// We support only 2 light per corner. Should never be changed.
-	enum	{NumLightPerCorner= 2};
+	enum
+	{
+		NumLightPerCorner = 2
+	};
 
-
-	struct	CCellCorner
+	struct CCellCorner
 	{
 		/// Contribution of Sun.
-		uint8	SunContribution;
+		uint8 SunContribution;
 		/// Light that influence this point. 0xFF if none. if Light[i]==0xFF, then Light[j] with j>i is disabled too
-		uint8	Light[NumLightPerCorner];
+		uint8 Light[NumLightPerCorner];
 		/** Id of the ambiant Light to take for this corner. Ambient light are stored too in ig->getPointLigths()
 		 *	If 0xFF => take Ambient of the sun.
 		 */
-		uint8	LocalAmbientId;
+		uint8 LocalAmbientId;
 
-		void		serial(NLMISC::IStream &f)
+		void serial(NLMISC::IStream &f)
 		{
-			uint	ver= f.serialVersion(1);
-			nlassert(NumLightPerCorner==2);
+			uint ver = f.serialVersion(1);
+			nlassert(NumLightPerCorner == 2);
 
-			if(ver>=1)
+			if (ver >= 1)
 			{
 				f.serial(LocalAmbientId);
 			}
-			else if(f.isReading())
+			else if (f.isReading())
 			{
-				LocalAmbientId= 0xFF;
+				LocalAmbientId = 0xFF;
 			}
 			f.serial(SunContribution);
 			f.serial(Light[0]);
@@ -88,31 +84,25 @@ public:
 		}
 	};
 
-
 public:
 	// Origin of the grid. Size is (Width-1) * CIGSurfaceLight.getCellSize().
-	NLMISC::CVector2f					Origin;
-	uint32								Width;
-	uint32								Height;
-	NLMISC::CObjectVector<CCellCorner>	Cells;
-
+	NLMISC::CVector2f Origin;
+	uint32 Width;
+	uint32 Height;
+	NLMISC::CObjectVector<CCellCorner> Cells;
 
 public:
-
 	/// Constructor
 	CSurfaceLightGrid();
 
 	// Get Infos from the grid
-	void		getStaticLightSetup(NLMISC::CRGBA sunAmbient, const CVector &localPos, std::vector<CPointLightInfluence> &pointLightList, uint8 &sunContribution, CIGSurfaceLight &igsl, NLMISC::CRGBA &localAmbient) const;
+	void getStaticLightSetup(NLMISC::CRGBA sunAmbient, const CVector &localPos, std::vector<CPointLightInfluence> &pointLightList, uint8 &sunContribution, CIGSurfaceLight &igsl, NLMISC::CRGBA &localAmbient) const;
 
 	// serial
-	void		serial(NLMISC::IStream &f);
-
+	void serial(NLMISC::IStream &f);
 };
 
-
 } // NL3D
-
 
 #endif // NL_SURFACE_LIGHT_GRID_H
 

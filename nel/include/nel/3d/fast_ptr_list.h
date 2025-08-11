@@ -19,13 +19,9 @@
 
 #include "nel/misc/types_nl.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 class CFastPtrListBase;
-
 
 // ***************************************************************************
 /**
@@ -34,30 +30,28 @@ class CFastPtrListBase;
 class CFastPtrListNode
 {
 public:
-	CFastPtrListNode() {_Owner= NULL;}
-	~CFastPtrListNode() {unlink();}
+	CFastPtrListNode() { _Owner = NULL; }
+	~CFastPtrListNode() { unlink(); }
 	// No-op const copy
-	CFastPtrListNode(const CFastPtrListNode &/* o */) {_Owner= NULL;}
+	CFastPtrListNode(const CFastPtrListNode & /* o */) { _Owner = NULL; }
 
 	// If linked to a list, remove me from it.
-	void			unlink();
+	void unlink();
 
 	// linked?
-	bool			isLinked() const {return _Owner!=NULL;}
+	bool isLinked() const { return _Owner != NULL; }
 
 	// No-op operator=
-	CFastPtrListNode	&operator=(const CFastPtrListNode &/* o */)
+	CFastPtrListNode &operator=(const CFastPtrListNode & /* o */)
 	{
 		return *this;
 	}
 
-
 private:
 	friend class CFastPtrListBase;
-	CFastPtrListBase	*_Owner;
-	uint32				_IndexInOwner;
+	CFastPtrListBase *_Owner;
+	uint32 _IndexInOwner;
 };
-
 
 // ***************************************************************************
 /**
@@ -72,34 +66,37 @@ class CFastPtrListBase
 {
 public:
 	/// Constructor
-	CFastPtrListBase() {}
-	CFastPtrListBase(const CFastPtrListBase &/* o */) {}
+	CFastPtrListBase() { }
+	CFastPtrListBase(const CFastPtrListBase & /* o */) { }
 	~CFastPtrListBase();
 
 	/// insert an element in the list through its Node, unlinking older if necessary
-	void			insert(void *element, CFastPtrListNode *node);
+	void insert(void *element, CFastPtrListNode *node);
 	/// erase an element in the list through its Node. No-op if the list does not have this element
-	void			erase(CFastPtrListNode *node);
+	void erase(CFastPtrListNode *node);
 
 	/// Get the head on the array of elements. NULL if none
-	void			**begin() { if(_Elements.empty()) return NULL; else return &_Elements[0];}
+	void **begin()
+	{
+		if (_Elements.empty()) return NULL;
+		else return &_Elements[0];
+	}
 	/// get the number of elements
-	uint			size() const {return (uint)_Elements.size();}
-	bool			empty() const {return _Elements.empty();}
+	uint size() const { return (uint)_Elements.size(); }
+	bool empty() const { return _Elements.empty(); }
 
 	/// clear the list
-	void			clear();
+	void clear();
 
 	// operator= is noop. Cant do it because nodes keep a ptr on me!!
-	CFastPtrListBase	&operator=(const CFastPtrListBase &/* o */) {return *this;}
+	CFastPtrListBase &operator=(const CFastPtrListBase & /* o */) { return *this; }
 
-// **************
+	// **************
 private:
 	// The 2 lists of same size. Splitted in 2 lists for optimum _Elements accessing.
-	std::vector<void*>				_Elements;
-	std::vector<CFastPtrListNode*>	_Nodes;
+	std::vector<void *> _Elements;
+	std::vector<CFastPtrListNode *> _Nodes;
 };
-
 
 // ***************************************************************************
 /** Type Safe version of CFastPtrListBase
@@ -107,33 +104,30 @@ private:
  * \author Nevrax France
  * \date 2002
  */
-template< class T >
+template <class T>
 class CFastPtrList : public CFastPtrListBase
 {
 public:
 	/// Constructor
-	CFastPtrList() {}
-	~CFastPtrList() {}
+	CFastPtrList() { }
+	~CFastPtrList() { }
 
 	/// insert an element in the list through its Node, unlinking older if necessary
-	void			insert(T *element, CFastPtrListNode *node) {CFastPtrListBase::insert(element, node);}
+	void insert(T *element, CFastPtrListNode *node) { CFastPtrListBase::insert(element, node); }
 	/// erase an element in the list through its Node, unlinking older if necessary
-	void			erase(CFastPtrListNode *node) {CFastPtrListBase::erase(node);}
+	void erase(CFastPtrListNode *node) { CFastPtrListBase::erase(node); }
 
 	/// Get the head on the array of elements. NULL if none
-	T				**begin() {return (T**)CFastPtrListBase::begin();}
+	T **begin() { return (T **)CFastPtrListBase::begin(); }
 	/// get the number of elements
-	uint			size() const {return CFastPtrListBase::size();}
-	bool			empty() const {return CFastPtrListBase::empty();}
+	uint size() const { return CFastPtrListBase::size(); }
+	bool empty() const { return CFastPtrListBase::empty(); }
 
 	/// clear the list
-	void			clear() {CFastPtrListBase::clear();}
-
+	void clear() { CFastPtrListBase::clear(); }
 };
 
-
 } // NL3D
-
 
 #endif // NL_FAST_PTR_LIST_H
 

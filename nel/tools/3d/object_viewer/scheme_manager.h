@@ -23,9 +23,8 @@
 #include <map>
 #include <algorithm>
 
-namespace NL3D
-{
-	class CPSAttribMakerBase;
+namespace NL3D {
+class CPSAttribMakerBase;
 }
 
 class CSchemeManager
@@ -42,20 +41,18 @@ public:
 	// serial this collection
 	void serial(NLMISC::IStream &f);
 	// swap this collection with another one
-	void	swap(CSchemeManager &other);
+	void swap(CSchemeManager &other);
 	// remove a scheme from the bank, given a pointer on it
-	void    remove(NL3D::CPSAttribMakerBase *am);
+	void remove(NL3D::CPSAttribMakerBase *am);
 	// rename a scheme, given a pointer on it
-	void    rename(NL3D::CPSAttribMakerBase *am, const std::string &newName);
-protected:	
+	void rename(NL3D::CPSAttribMakerBase *am, const std::string &newName);
+
+protected:
 	typedef std::pair<std::string, NL3D::CPSAttribMakerBase *> TSchemeInfo;
 	typedef std::multimap<std::string, TSchemeInfo> TSchemeMap;
-	TSchemeMap		_SchemeMap;	
+	TSchemeMap _SchemeMap;
 };
 
 extern CSchemeManager SchemeManager;
-
-
-
 
 #endif

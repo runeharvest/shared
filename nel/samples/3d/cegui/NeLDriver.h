@@ -32,9 +32,15 @@
 extern uint16 gScreenWidth;
 extern uint16 gScreenHeight;
 
-class NeLDriver {
+class NeLDriver
+{
 public:
-	NeLDriver(NL3D::UDriver *driver):m_Driver(driver), m_TextContext(NULL), m_Scene(NULL) { }
+	NeLDriver(NL3D::UDriver *driver)
+	    : m_Driver(driver)
+	    , m_TextContext(NULL)
+	    , m_Scene(NULL)
+	{
+	}
 	virtual ~NeLDriver() { }
 
 	void init();
@@ -43,15 +49,15 @@ public:
 
 	double getFps();
 
-	NL3D::UDriver		&getDriver() const;
-	NL3D::UScene		&getScene() const; 
-	NL3D::UTextContext	&getTextContext() const;
+	NL3D::UDriver &getDriver() const;
+	NL3D::UScene &getScene() const;
+	NL3D::UTextContext &getTextContext() const;
 
 private:
 	// 3D
-	NL3D::UDriver				*m_Driver;
-	NL3D::UTextContext			*m_TextContext;
-	NL3D::UScene				*m_Scene;
+	NL3D::UDriver *m_Driver;
+	NL3D::UTextContext *m_TextContext;
+	NL3D::UScene *m_Scene;
 
 	// TIME
 	NLMISC::CValueSmootherTemplate<double> m_DeltaTimeSmooth;
@@ -61,6 +67,4 @@ private:
 	double m_Time;
 };
 
-
 #endif // __NELDRIVER_H__
-

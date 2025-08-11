@@ -593,11 +593,9 @@ public:
 	NL_FORCE_INLINE int store(int value, TMemoryOrder order = TMemoryOrderRelease)
 	{
 		if (order == TMemoryOrderRelaxed)
-			while (!OSAtomicCompareAndSwap32(load(), value, &m_Value))
-				; // relaxed
+			while (!OSAtomicCompareAndSwap32(load(), value, &m_Value)); // relaxed
 		else
-			while (!OSAtomicCompareAndSwap32Barrier(load(), value, &m_Value))
-				; // acq-rel
+			while (!OSAtomicCompareAndSwap32Barrier(load(), value, &m_Value)); // acq-rel
 	}
 
 	NL_FORCE_INLINE int fetchAdd(int value, TMemoryOrder order = TMemoryOrderAcqRel)
@@ -902,8 +900,7 @@ public:
 	NL_FORCE_INLINE CAtomicLockSpin(CAtomicFlag &flag)
 	    : m_Flag(flag)
 	{
-		while (m_Flag.testAndSet())
-			;
+		while (m_Flag.testAndSet());
 	}
 
 	NL_FORCE_INLINE ~CAtomicLockSpin()

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma warning (disable : 4786)
+#pragma warning(disable : 4786)
 #include <assert.h>
 #include <max.h>
 #include <decomp.h>
@@ -25,4 +25,3 @@
 #include <sbmtlapi.h>
 #undef min
 #undef max
-

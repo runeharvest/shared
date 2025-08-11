@@ -21,10 +21,7 @@
 #include "edge_collide.h"
 #include "collision_desc.h"
 
-
-namespace NLPACS
-{
-
+namespace NLPACS {
 
 // ***************************************************************************
 /**
@@ -37,15 +34,14 @@ class CEdgeCollideNode : public CEdgeCollide
 {
 public:
 	/// Next edgeCollideNode in the CCollisionSurfaceTemp allocator. 0xFFFFFFFF if none.
-	uint32			Next;
+	uint32 Next;
 
 public:
 	CEdgeCollideNode()
 	{
-		Next= 0xFFFFFFFF;
+		Next = 0xFFFFFFFF;
 	}
 };
-
 
 // ***************************************************************************
 /**
@@ -58,48 +54,46 @@ class CCollisionChain
 {
 public:
 	/// First edgeCollideNode in the CCollisionSurfaceTemp allocator. 0xFFFFFFFF if none. This is a List of edgeCollide.
-	uint32			FirstEdgeCollide;
+	uint32 FirstEdgeCollide;
 	/// The Left/Right surface next this chain.
-	CSurfaceIdent	LeftSurface, RightSurface;
+	CSurfaceIdent LeftSurface, RightSurface;
 	/// the id in the local retriever which generate this chain (temp).
-	uint16			ChainId;
+	uint16 ChainId;
 	/// In the algorithm, this chain has been tested???
-	bool			Tested;
+	bool Tested;
 	/// If the chain is an exterior edge
-	bool			ExteriorEdge;
+	bool ExteriorEdge;
 
 public:
 	CCollisionChain()
 	{
-		FirstEdgeCollide= 0xFFFFFFFF;
-		Tested= false;
+		FirstEdgeCollide = 0xFFFFFFFF;
+		Tested = false;
 		ExteriorEdge = false;
 	}
 
-
 	/// test if 2 CCollisionChain have same surface neighbors.
-	bool		sameSurfacesThan(const CCollisionChain &o) const
+	bool sameSurfacesThan(const CCollisionChain &o) const
 	{
-		return (LeftSurface==o.LeftSurface  && RightSurface==o.RightSurface)
-			|| (LeftSurface==o.RightSurface && RightSurface==o.LeftSurface);
+		return (LeftSurface == o.LeftSurface && RightSurface == o.RightSurface)
+		    || (LeftSurface == o.RightSurface && RightSurface == o.LeftSurface);
 	}
 
 	/// test if Left or Right == surf.
-	bool		hasSurface(const CSurfaceIdent &surf) const
+	bool hasSurface(const CSurfaceIdent &surf) const
 	{
-		return LeftSurface==surf || RightSurface==surf;
+		return LeftSurface == surf || RightSurface == surf;
 	}
 
 	/// Return Left if surf==Right, else return Right.
-	const CSurfaceIdent		&getOtherSurface(const CSurfaceIdent &surf) const
+	const CSurfaceIdent &getOtherSurface(const CSurfaceIdent &surf) const
 	{
-		if(RightSurface==surf)
+		if (RightSurface == surf)
 			return LeftSurface;
 		else
 			return RightSurface;
 	}
 };
-
 
 // ***************************************************************************
 /**
@@ -112,13 +106,12 @@ class CEdgeChainEntry
 {
 public:
 	/// The id of the ordered chain.
-	uint16		OChainId;
+	uint16 OChainId;
 	/// the first edge of the ordered chain, found in this quad.
-	uint16		EdgeStart;
+	uint16 EdgeStart;
 	/// the end edge of the ordered chain, found in this quad. "end edge" is lastEdge+1: numEdges= end-start.
-	uint16		EdgeEnd;
+	uint16 EdgeEnd;
 };
-
 
 // ***************************************************************************
 /**
@@ -131,16 +124,14 @@ class CExteriorEdgeEntry
 {
 public:
 	/// The id of the edge.
-	uint16			EdgeId;
+	uint16 EdgeId;
 	/// The id of the interior chain id
-	uint16			ChainId;
+	uint16 ChainId;
 	/// The interior and exterior surfaces along this edge
-	CSurfaceIdent	Interior, Exterior;
+	CSurfaceIdent Interior, Exterior;
 
-	void			serial(NLMISC::IStream &f)	{ f.serial(EdgeId, ChainId, Interior, Exterior); }
+	void serial(NLMISC::IStream &f) { f.serial(EdgeId, ChainId, Interior, Exterior); }
 };
-
-
 
 // ***************************************************************************
 /**
@@ -154,44 +145,52 @@ class CMoveSurfaceDesc
 {
 public:
 	/// This is the 128 bits rational float, when the movement reach this surface.
-	CRational64			ContactTime;
+	CRational64 ContactTime;
 
 	/// To which chain we have collided.
-	CSurfaceIdent		LeftSurface, RightSurface;
+	CSurfaceIdent LeftSurface, RightSurface;
 
 	/// Is it an interface between exterior and interior
-	bool				ExteriorEdge;
+	bool ExteriorEdge;
 
 	/// true if Dot product between EdgeCollide Norm and Movement is >=0.
-	bool				MovementSens;
+	bool MovementSens;
 
 	/// Chain Id of the exterior edge
-	uint16				ChainId;
+	uint16 ChainId;
 
 public:
-	CMoveSurfaceDesc() : ExteriorEdge(false) {}
-	CMoveSurfaceDesc(CRational64 t, CSurfaceIdent left, CSurfaceIdent right) : ContactTime(t), LeftSurface(left), RightSurface(right), ExteriorEdge(false) {}
-	bool	operator<(const CMoveSurfaceDesc &o) const
+	CMoveSurfaceDesc()
+	    : ExteriorEdge(false)
 	{
-		return ContactTime<o.ContactTime;
+	}
+	CMoveSurfaceDesc(CRational64 t, CSurfaceIdent left, CSurfaceIdent right)
+	    : ContactTime(t)
+	    , LeftSurface(left)
+	    , RightSurface(right)
+	    , ExteriorEdge(false)
+	{
+	}
+	bool operator<(const CMoveSurfaceDesc &o) const
+	{
+		return ContactTime < o.ContactTime;
 	}
 
 	/// test if Left or Right == surf.
-	bool		hasSurface(const CSurfaceIdent &surf)
+	bool hasSurface(const CSurfaceIdent &surf)
 	{
-		return LeftSurface==surf || RightSurface==surf;
+		return LeftSurface == surf || RightSurface == surf;
 	}
 
 	/// Return Left if surf==Right, else return Right.
-	const CSurfaceIdent		&getOtherSurface(const CSurfaceIdent &surf)
+	const CSurfaceIdent &getOtherSurface(const CSurfaceIdent &surf)
 	{
-		if(RightSurface==surf)
+		if (RightSurface == surf)
 			return LeftSurface;
 		else
 			return RightSurface;
 	}
 };
-
 
 // ***************************************************************************
 /**
@@ -205,31 +204,38 @@ class CRotSurfaceDesc
 {
 public:
 	/// This tells if this chain (arc of the graph) has been inserted.
-	bool				Tested;
+	bool Tested;
 
 	/// To which chain we have collided.
-	CSurfaceIdent		LeftSurface, RightSurface;
+	CSurfaceIdent LeftSurface, RightSurface;
 
 public:
-	CRotSurfaceDesc()  : Tested(false) {}
-	CRotSurfaceDesc(CSurfaceIdent left, CSurfaceIdent right) : Tested(false), LeftSurface(left), RightSurface(right) {}
+	CRotSurfaceDesc()
+	    : Tested(false)
+	{
+	}
+	CRotSurfaceDesc(CSurfaceIdent left, CSurfaceIdent right)
+	    : Tested(false)
+	    , LeftSurface(left)
+	    , RightSurface(right)
+	{
+	}
 
 	/// test if Left or Right == surf.
-	bool		hasSurface(const CSurfaceIdent &surf)
+	bool hasSurface(const CSurfaceIdent &surf)
 	{
-		return LeftSurface==surf || RightSurface==surf;
+		return LeftSurface == surf || RightSurface == surf;
 	}
 
 	/// Return Left if surf==Right, else return Right.
-	const CSurfaceIdent		&getOtherSurface(const CSurfaceIdent &surf)
+	const CSurfaceIdent &getOtherSurface(const CSurfaceIdent &surf)
 	{
-		if(RightSurface==surf)
+		if (RightSurface == surf)
 			return LeftSurface;
 		else
 			return RightSurface;
 	}
 };
-
 
 // ***************************************************************************
 /**
@@ -242,20 +248,26 @@ public:
 class CCollisionSurfaceTemp
 {
 public:
-	typedef std::pair<uint16, uint16>	TExteriorEdgeIndex;
-//	typedef std::pair<bool, uint8>		TSurfaceLUTEntry;
+	typedef std::pair<uint16, uint16> TExteriorEdgeIndex;
+	//	typedef std::pair<bool, uint8>		TSurfaceLUTEntry;
 
 	class CDistanceSurface
 	{
 	public:
-		uint16							Surface;
-		uint16							Instance;
-		float							Distance;
-		bool							FoundCloseEdge;
-		CDistanceSurface() {}
-		CDistanceSurface(float distance, uint16 surface, uint16 instance, bool foundCloseEdge) : Surface(surface), Instance(instance), Distance(distance), FoundCloseEdge(foundCloseEdge) {}
+		uint16 Surface;
+		uint16 Instance;
+		float Distance;
+		bool FoundCloseEdge;
+		CDistanceSurface() { }
+		CDistanceSurface(float distance, uint16 surface, uint16 instance, bool foundCloseEdge)
+		    : Surface(surface)
+		    , Instance(instance)
+		    , Distance(distance)
+		    , FoundCloseEdge(foundCloseEdge)
+		{
+		}
 
-		bool		operator () (const CDistanceSurface &a, const CDistanceSurface &b) const
+		bool operator()(const CDistanceSurface &a, const CDistanceSurface &b) const
 		{
 			return a.Distance < b.Distance;
 		}
@@ -264,69 +276,67 @@ public:
 	class CSurfaceLUTEntry
 	{
 	public:
-		bool						IsPossible;
-		bool						FoundCloseEdge;
-		bool						OnVerticalEdge;
-		uint8						Counter;
+		bool IsPossible;
+		bool FoundCloseEdge;
+		bool OnVerticalEdge;
+		uint8 Counter;
 
-		void						reset() { IsPossible = false; FoundCloseEdge = false; Counter = 0; }
+		void reset()
+		{
+			IsPossible = false;
+			FoundCloseEdge = false;
+			Counter = 0;
+		}
 	};
 
 public:
 	/// For CChainQuad::selectEdges().
-	uint16							OChainLUT[65536];
-	std::vector<CEdgeChainEntry>	EdgeChainEntries;
-	std::vector<uint16>				ExteriorEdgeIndexes;
+	uint16 OChainLUT[65536];
+	std::vector<CEdgeChainEntry> EdgeChainEntries;
+	std::vector<uint16> ExteriorEdgeIndexes;
 
 	/// Array of possible near surfaces
-//	TSurfaceLUTEntry				SurfaceLUT[65536];
-	CSurfaceLUTEntry				SurfaceLUT[65536];
-	uint8							OutCounter;
-	std::vector<uint16>				PossibleSurfaces;
-	std::vector<CDistanceSurface>	SortedSurfaces;
-
+	//	TSurfaceLUTEntry				SurfaceLUT[65536];
+	CSurfaceLUTEntry SurfaceLUT[65536];
+	uint8 OutCounter;
+	std::vector<uint16> PossibleSurfaces;
+	std::vector<CDistanceSurface> SortedSurfaces;
 
 	/// Array of near Collision Chains.
-	std::vector<CCollisionChain>	CollisionChains;
-
+	std::vector<CCollisionChain> CollisionChains;
 
 	/// result of testMovementWithCollisionChains().
-	std::vector<CMoveSurfaceDesc>	MoveDescs;
-
+	std::vector<CMoveSurfaceDesc> MoveDescs;
 
 	/// result of testRotWithCollisionChains().
-	std::vector<CRotSurfaceDesc>	RotDescs;
-
+	std::vector<CRotSurfaceDesc> RotDescs;
 
 	/// Result of collision testMove().
-	TCollisionSurfaceDescVector		CollisionDescs;
-
+	TCollisionSurfaceDescVector CollisionDescs;
 
 	/// CGlobalRetriever instance possibly colliding movement.
-	std::vector<sint32>				CollisionInstances;
-
+	std::vector<sint32> CollisionInstances;
 
 	/// For testMove/doMove, prec settings.
-	CSurfaceIdent					PrecStartSurface;
-	NLMISC::CVector					PrecStartPos;
-	NLMISC::CVector					PrecDeltaPos;
-	bool							PrecValid;
+	CSurfaceIdent PrecStartSurface;
+	NLMISC::CVector PrecStartPos;
+	NLMISC::CVector PrecDeltaPos;
+	bool PrecValid;
 
 public:
-
 	/// Constructor
 	CCollisionSurfaceTemp();
 
 	/// \name Access to EdgeCollideNode
 	// @{
-	void				resetEdgeCollideNodes();
+	void resetEdgeCollideNodes();
 	/// return first Id.
-	uint32				allocEdgeCollideNode(uint32 size=1);
-	CEdgeCollideNode	&getEdgeCollideNode(uint32 id);
+	uint32 allocEdgeCollideNode(uint32 size = 1);
+	CEdgeCollideNode &getEdgeCollideNode(uint32 id);
 	// @}
 
 	//
-	void				incSurface(sint32 surf)
+	void incSurface(sint32 surf)
 	{
 		if (surf >= 0)
 		{
@@ -342,7 +352,7 @@ public:
 	}
 
 	//
-	void				decSurface(sint32 surf)
+	void decSurface(sint32 surf)
 	{
 		if (surf >= 0)
 		{
@@ -359,13 +369,10 @@ public:
 
 private:
 	/// Allocator of EdgeCollideNode.
-	std::vector<CEdgeCollideNode>		_EdgeCollideNodes;
-
+	std::vector<CEdgeCollideNode> _EdgeCollideNodes;
 };
 
-
 } // NLPACS
-
 
 #endif // NL_COLLISION_SURFACE_TEMP_H
 

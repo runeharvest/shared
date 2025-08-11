@@ -40,15 +40,15 @@ using namespace NLSOUND;
 namespace NLQT {
 
 CSoundUtilities::CSoundUtilities()
-	: m_Configuration(NULL), 
-	m_Internationalization(NULL), 
-	m_GraphicsViewport(NULL), 
-	//m_LandscapeUtilities(NULL), 
-	//m_PacsUtilities(NULL), 
-	m_AudioMixer(NULL), 
-	m_SoundAnimManager(NULL)
+    : m_Configuration(NULL)
+    , m_Internationalization(NULL)
+    , m_GraphicsViewport(NULL)
+    ,
+    // m_LandscapeUtilities(NULL),
+    // m_PacsUtilities(NULL),
+    m_AudioMixer(NULL)
+    , m_SoundAnimManager(NULL)
 {
-	
 }
 
 CSoundUtilities::~CSoundUtilities()
@@ -58,18 +58,18 @@ CSoundUtilities::~CSoundUtilities()
 
 void CSoundUtilities::init(CConfiguration *configuration, CInternationalization *internationalization)
 {
-	//H_AUTO2
+	// H_AUTO2
 	nldebug("CSoundUtilities::init");
 
 	// copy parameters
 	m_Configuration = configuration;
 	m_Internationalization = internationalization;
-	
+
 	// check stuff we need
 	nlassert(m_Configuration);
 	nlassert(m_Internationalization);
 
-	// create audiomixer	
+	// create audiomixer
 	NL3D::UParticleSystemSound::setPSSound(NULL);
 	nlassert(!m_AudioMixer);
 	m_AudioMixer = UAudioMixer::createAudioMixer();
@@ -97,7 +97,7 @@ void CSoundUtilities::init(CConfiguration *configuration, CInternationalization 
 	nlassert(!m_SoundAnimManager);
 	m_SoundAnimManager = new CSoundAnimManager(m_AudioMixer);
 	nlassert(m_SoundAnimManager);
-	
+
 	// temp listener pos
 	m_AudioMixer->setListenerPos(CVector(0.0f, 0.0f, 0.0f));
 
@@ -107,7 +107,7 @@ void CSoundUtilities::init(CConfiguration *configuration, CInternationalization 
 
 void CSoundUtilities::release()
 {
-	//H_AUTO2
+	// H_AUTO2
 	nldebug("CSoundUtilities::release");
 
 	// release sources
@@ -131,7 +131,7 @@ void CSoundUtilities::release()
 		m_AudioMixer = NULL;
 	}
 	else nlwarning("!m_AudioMixer");
-	
+
 	// reset parameters
 	m_Configuration = NULL;
 	m_Internationalization = NULL;
@@ -144,7 +144,7 @@ void CSoundUtilities::updateSound()
 
 void CSoundUtilities::initGraphics(CGraphicsViewport *graphicsViewport)
 {
-	//H_AUTO2
+	// H_AUTO2
 	nldebug("CSoundUtilities::initGraphics");
 
 	// copy parameters
@@ -162,11 +162,11 @@ void CSoundUtilities::initGraphics(CGraphicsViewport *graphicsViewport)
 
 void CSoundUtilities::releaseGraphics()
 {
-	//H_AUTO2
+	// H_AUTO2
 	nldebug("CSoundUtilities::releaseGraphics");
 
 	// ..
-	
+
 	// clear particle system sound
 	NL3D::UParticleSystemSound::setPSSound(NULL);
 

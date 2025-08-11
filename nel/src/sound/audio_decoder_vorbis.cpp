@@ -83,10 +83,10 @@ int vorbisSeekFunc(void *datasource, ogg_int64_t offset, int whence)
 	else return -1;
 }
 
-//int vorbisCloseFunc(void *datasource)
+// int vorbisCloseFunc(void *datasource)
 //{
 //	//CAudioDecoderVorbis *audio_decoder_vorbis = (CAudioDecoderVorbis *)datasource;
-//}
+// }
 
 long vorbisTellFunc(void *datasource)
 {
@@ -95,14 +95,17 @@ long vorbisTellFunc(void *datasource)
 }
 
 static ov_callbacks OV_CALLBACKS_NLMISC_STREAM = {
-  (size_t (*)(void *, size_t, size_t, void *))  vorbisReadFunc,
-  (int (*)(void *, ogg_int64_t, int))		  vorbisSeekFunc,
-  (int (*)(void *))							 NULL, //vorbisCloseFunc,
-  (long (*)(void *))							vorbisTellFunc
+	(size_t(*)(void *, size_t, size_t, void *))vorbisReadFunc,
+	(int (*)(void *, ogg_int64_t, int))vorbisSeekFunc,
+	(int (*)(void *))NULL, // vorbisCloseFunc,
+	(long (*)(void *))vorbisTellFunc
 };
 
-CAudioDecoderVorbis::CAudioDecoderVorbis(NLMISC::IStream *stream, bool loop) 
-: _Stream(stream), _Loop(loop), _IsMusicEnded(false), _StreamSize(0)
+CAudioDecoderVorbis::CAudioDecoderVorbis(NLMISC::IStream *stream, bool loop)
+    : _Stream(stream)
+    , _Loop(loop)
+    , _IsMusicEnded(false)
+    , _StreamSize(0)
 {
 	_StreamOffset = stream->getPos();
 	stream->seek(0, NLMISC::IStream::end);
@@ -122,9 +125,11 @@ bool CAudioDecoderVorbis::getInfo(NLMISC::IStream *stream, std::string &artist, 
 	CAudioDecoderVorbis mbv(stream, false); // just opens and closes the oggvorbisfile thing :)
 	vorbis_comment *vc = ov_comment(&mbv._OggVorbisFile, -1);
 	char *title_c = vorbis_comment_query(vc, "title", 0);
-	if (title_c) title = title_c; else title.clear();
+	if (title_c) title = title_c;
+	else title.clear();
 	char *artist_c = vorbis_comment_query(vc, "artist", 0);
-	if (artist_c) artist = artist_c; else artist.clear();
+	if (artist_c) artist = artist_c;
+	else artist.clear();
 	length = (float)ov_time_total(&mbv._OggVorbisFile, -1);
 	return true;
 }
@@ -148,11 +153,11 @@ uint32 CAudioDecoderVorbis::getNextBytes(uint8 *buffer, uint32 minimum, uint32 m
 	do
 	{
 		// signed 16-bit or unsigned 8-bit little-endian samples
-		sint br = ov_read(&_OggVorbisFile, (char *)&buffer[bytes_read], maximum - bytes_read, 
-			endianness, // Specifies big or little endian byte packing. 0 for little endian, 1 for b ig endian. Typical value is 0.
-			getBitsPerSample() == 8 ? 1 : 2, 
-			getBitsPerSample() == 8 ? 0 : 1, // Signed or unsigned data. 0 for unsigned, 1 for signed. Typically 1.
-			&current_section);
+		sint br = ov_read(&_OggVorbisFile, (char *)&buffer[bytes_read], maximum - bytes_read,
+		    endianness, // Specifies big or little endian byte packing. 0 for little endian, 1 for b ig endian. Typical value is 0.
+		    getBitsPerSample() == 8 ? 1 : 2,
+		    getBitsPerSample() == 8 ? 0 : 1, // Signed or unsigned data. 0 for unsigned, 1 for signed. Typically 1.
+		    &current_section);
 		// nlinfo(NLSOUND_XAUDIO2_PREFIX "current_section: %i", current_section);
 		if (br > 0)
 		{
@@ -165,16 +170,16 @@ uint32 CAudioDecoderVorbis::getNextBytes(uint8 *buffer, uint32 minimum, uint32 m
 				ov_pcm_seek(&_OggVorbisFile, 0);
 				//_Stream->seek(0, NLMISC::IStream::begin);
 			}
-			else 
+			else
 			{
 				_IsMusicEnded = true;
-				break; 
+				break;
 			}
 		}
 		else
-		{ 
+		{
 			// error
-			switch(br)
+			switch (br)
 			{
 			case OV_HOLE:
 				nlwarning("ov_read returned OV_HOLE");
@@ -230,7 +235,7 @@ float CAudioDecoderVorbis::getLength()
 
 void CAudioDecoderVorbis::setLooping(bool loop)
 {
-	 _Loop = loop;
+	_Loop = loop;
 }
 
 } /* namespace NLSOUND */

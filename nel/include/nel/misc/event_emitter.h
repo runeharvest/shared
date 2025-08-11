@@ -24,8 +24,6 @@
 #include "event_server.h"
 #include "smart_ptr.h"
 
-
-
 namespace NLMISC {
 
 /*===================================================================*/
@@ -41,22 +39,20 @@ class CEventServer;
  * *** IF YOU MODIFY THE STRUCTURE OF THIS CLASS, PLEASE INCREMENT IDriver::InterfaceVersion TO INVALIDATE OLD DRIVER DLL
  * **********************************
  */
-class IEventEmitter	: public NLMISC::CRefCount
+class IEventEmitter : public NLMISC::CRefCount
 {
 public:
 	/// dtor
-	virtual ~IEventEmitter() {}
+	virtual ~IEventEmitter() { }
 	/**
 	 * sends all events to server
 	 * (should call CEventServer method postEvent() )
 	 * \param server
 	 */
-	virtual void submitEvents(CEventServer & server, bool allWindows) = 0;
+	virtual void submitEvents(CEventServer &server, bool allWindows) = 0;
 };
 
-
 } // NLMISC
-
 
 #endif // NL_EVENT_EMITTER_H
 

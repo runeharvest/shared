@@ -35,19 +35,46 @@ using namespace NLMISC;
 
 namespace NLSOUND {
 
-CSourceXAudio2::CSourceXAudio2(CSoundDriverXAudio2 *soundDriver) 
-: _SoundDriver(soundDriver), _SourceVoice(NULL), _StaticBuffer(NULL), _LastPreparedBuffer(NULL), _OperationSet(soundDriver->getUniqueOperationSet()), 
-_Format(IBuffer::FormatUnknown), _Frequency(0), _PlayStart(0), 
-_Doppler(1.0f), _Pos(0.0f, 0.0f, 0.0f), _Relative(false), _Alpha(1.0), 
-_DirectDryVoice(NULL), _DirectFilterVoice(NULL), _EffectDryVoice(NULL), _EffectFilterVoice(NULL), 
-_DirectDryEnabled(false), _DirectFilterEnabled(false), _EffectDryEnabled(false), _EffectFilterEnabled(false), 
-_DirectGain(NLSOUND_DEFAULT_DIRECT_GAIN), _EffectGain(NLSOUND_DEFAULT_EFFECT_GAIN), 
-_DirectFilterPassGain(NLSOUND_DEFAULT_FILTER_PASS_GAIN), _EffectFilterPassGain(NLSOUND_DEFAULT_FILTER_PASS_GAIN), 
-_DirectFilterLowFrequency(NLSOUND_DEFAULT_FILTER_PASS_LF), _DirectFilterHighFrequency(NLSOUND_DEFAULT_FILTER_PASS_HF), 
-_EffectFilterLowFrequency(NLSOUND_DEFAULT_FILTER_PASS_LF), _EffectFilterHighFrequency(NLSOUND_DEFAULT_FILTER_PASS_HF), 
-_IsPlaying(false), _IsPaused(false), _IsLooping(false), _Pitch(1.0f), 
-_Gain(1.0f), _MinDistance(1.0f), _MaxDistance(sqrt(numeric_limits<float>::max())),
-_AdpcmUtility(NULL), _Channels(0), _BitsPerSample(0), _BufferStreaming(false)
+CSourceXAudio2::CSourceXAudio2(CSoundDriverXAudio2 *soundDriver)
+    : _SoundDriver(soundDriver)
+    , _SourceVoice(NULL)
+    , _StaticBuffer(NULL)
+    , _LastPreparedBuffer(NULL)
+    , _OperationSet(soundDriver->getUniqueOperationSet())
+    , _Format(IBuffer::FormatUnknown)
+    , _Frequency(0)
+    , _PlayStart(0)
+    , _Doppler(1.0f)
+    , _Pos(0.0f, 0.0f, 0.0f)
+    , _Relative(false)
+    , _Alpha(1.0)
+    , _DirectDryVoice(NULL)
+    , _DirectFilterVoice(NULL)
+    , _EffectDryVoice(NULL)
+    , _EffectFilterVoice(NULL)
+    , _DirectDryEnabled(false)
+    , _DirectFilterEnabled(false)
+    , _EffectDryEnabled(false)
+    , _EffectFilterEnabled(false)
+    , _DirectGain(NLSOUND_DEFAULT_DIRECT_GAIN)
+    , _EffectGain(NLSOUND_DEFAULT_EFFECT_GAIN)
+    , _DirectFilterPassGain(NLSOUND_DEFAULT_FILTER_PASS_GAIN)
+    , _EffectFilterPassGain(NLSOUND_DEFAULT_FILTER_PASS_GAIN)
+    , _DirectFilterLowFrequency(NLSOUND_DEFAULT_FILTER_PASS_LF)
+    , _DirectFilterHighFrequency(NLSOUND_DEFAULT_FILTER_PASS_HF)
+    , _EffectFilterLowFrequency(NLSOUND_DEFAULT_FILTER_PASS_LF)
+    , _EffectFilterHighFrequency(NLSOUND_DEFAULT_FILTER_PASS_HF)
+    , _IsPlaying(false)
+    , _IsPaused(false)
+    , _IsLooping(false)
+    , _Pitch(1.0f)
+    , _Gain(1.0f)
+    , _MinDistance(1.0f)
+    , _MaxDistance(sqrt(numeric_limits<float>::max()))
+    , _AdpcmUtility(NULL)
+    , _Channels(0)
+    , _BitsPerSample(0)
+    , _BufferStreaming(false)
 {
 	// nlwarning(NLSOUND_XAUDIO2_PREFIX "Inititializing CSourceXAudio2");
 	nlassert(_SoundDriver->getListener());
@@ -110,12 +137,20 @@ CSourceXAudio2::~CSourceXAudio2()
 void CSourceXAudio2::release() // called by driver or destructor, whichever is first
 {
 	if (_AdpcmUtility) { _AdpcmUtility->flushSourceBuffers(); }
-	if (_SoundDriver) 
+	if (_SoundDriver)
 	{
 		_SoundDriver->getXAudio2()->CommitChanges(_OperationSet);
-		if (_SourceVoice) { _SoundDriver->destroySourceVoice(_SourceVoice); _SourceVoice = NULL; }
+		if (_SourceVoice)
+		{
+			_SoundDriver->destroySourceVoice(_SourceVoice);
+			_SourceVoice = NULL;
+		}
 	}
-	if (_AdpcmUtility) { delete _AdpcmUtility; _AdpcmUtility = NULL; }
+	if (_AdpcmUtility)
+	{
+		delete _AdpcmUtility;
+		_AdpcmUtility = NULL;
+	}
 	stop();
 	_SoundDriver = NULL;
 }
@@ -124,7 +159,7 @@ void CSourceXAudio2::release() // called by driver or destructor, whichever is f
 void CSourceXAudio2::commit3DChanges()
 {
 	nlassert(_SourceVoice);
-	
+
 	// Only mono buffers get 3d sound, multi-channel buffers go directly to the speakers without any distance rolloff.
 	if (_Channels > 1)
 	{
@@ -148,21 +183,21 @@ void CSourceXAudio2::commit3DChanges()
 		dspSettings.SrcChannelCount = 1;
 		dspSettings.DstChannelCount = voiceDetails.InputChannels;
 		// // nldebug(NLSOUND_XAUDIO2_PREFIX "_SampleVoice->getBuffer() %u", (uint32)_SampleVoice->getBuffer());
-		
+
 		_Emitter.DopplerScaler = _SoundDriver->getListener()->getDopplerScaler();
 
 		X3DAUDIO_DISTANCE_CURVE_POINT curve_points[2];
 		X3DAUDIO_DISTANCE_CURVE curve = { (X3DAUDIO_DISTANCE_CURVE_POINT *)&curve_points[0], 2 };
-		
+
 		if (_SoundDriver->getOption(ISoundDriver::OptionManualRolloff))
 		{
-			float sqrdist = _Relative 
-				? getPos().sqrnorm()
-				: (getPos() - _SoundDriver->getListener()->getPos()).sqrnorm();
+			float sqrdist = _Relative
+			    ? getPos().sqrnorm()
+			    : (getPos() - _SoundDriver->getListener()->getPos()).sqrnorm();
 			float rolloff = ISource::computeManualRolloff(_Alpha, sqrdist, _MinDistance, _MaxDistance);
-			curve_points[0].Distance = 0.f; 
+			curve_points[0].Distance = 0.f;
 			curve_points[0].DSPSetting = rolloff;
-			curve_points[1].Distance = 1.f; 
+			curve_points[1].Distance = 1.f;
 			curve_points[1].DSPSetting = rolloff;
 			_Emitter.pVolumeCurve = &curve;
 			_Emitter.pLFECurve = &curve;
@@ -173,22 +208,22 @@ void CSourceXAudio2::commit3DChanges()
 			_Emitter.CurveDistanceScaler = _MinDistance / _SoundDriver->getListener()->getRolloffScaler();
 			// _MaxDistance not implemented (basically should cut off sound beyond maxdistance)
 		}
-		
-		X3DAudioCalculate(_SoundDriver->getX3DAudio(), 
-			_Relative 
-				? _SoundDriver->getEmptyListener() // position is relative to listener (we use 0pos listener)
-				: _SoundDriver->getListener()->getListener(), // position is absolute
-			&_Emitter, 
-			X3DAUDIO_CALCULATE_MATRIX | X3DAUDIO_CALCULATE_DOPPLER, 
-			&dspSettings);
-		
+
+		X3DAudioCalculate(_SoundDriver->getX3DAudio(),
+		    _Relative
+		        ? _SoundDriver->getEmptyListener() // position is relative to listener (we use 0pos listener)
+		        : _SoundDriver->getListener()->getListener(), // position is absolute
+		    &_Emitter,
+		    X3DAUDIO_CALCULATE_MATRIX | X3DAUDIO_CALCULATE_DOPPLER,
+		    &dspSettings);
+
 		FLOAT32 outputMatrix[32 * 32];
 
 		if (_DirectDryEnabled)
 		{
 			float directDryGain = _DirectFilterEnabled
-				? _DirectFilterPassGain * _DirectGain
-				: _DirectGain;
+			    ? _DirectFilterPassGain * _DirectGain
+			    : _DirectGain;
 			for (uint32 i = 0; i < dspSettings.DstChannelCount; ++i)
 				outputMatrix[i] = matrixCoefficients[i] * directDryGain;
 			_SourceVoice->SetOutputMatrix(_DirectDryVoice, 1, dspSettings.DstChannelCount, outputMatrix, _OperationSet);
@@ -209,8 +244,8 @@ void CSourceXAudio2::commit3DChanges()
 			monoRolloff /= (float)dspSettings.DstChannelCount;
 
 			float effectDryGain = _EffectFilterEnabled
-				? _EffectFilterPassGain  * _EffectGain
-				: _EffectGain;
+			    ? _EffectFilterPassGain * _EffectGain
+			    : _EffectGain;
 			float outputSingle = monoRolloff * effectDryGain;
 			_SourceVoice->SetOutputMatrix(_EffectDryVoice, 1, 1, &outputSingle, _OperationSet);
 			if (_EffectFilterEnabled)
@@ -249,7 +284,7 @@ void CSourceXAudio2::updateState()
 				if (!_BufferStreaming)
 				{
 					// nldebug(NLSOUND_XAUDIO2_PREFIX "Stop");
-					if (FAILED(_SourceVoice->Stop(0))) 
+					if (FAILED(_SourceVoice->Stop(0)))
 						nlwarning(NLSOUND_XAUDIO2_PREFIX "FAILED Stop");
 					_IsPlaying = false;
 				}
@@ -265,7 +300,7 @@ void CSourceXAudio2::updateState()
 				if (!_BufferStreaming)
 				{
 					// nldebug(NLSOUND_XAUDIO2_PREFIX "Stop");
-					if (FAILED(_SourceVoice->Stop(0))) 
+					if (FAILED(_SourceVoice->Stop(0)))
 						nlwarning(NLSOUND_XAUDIO2_PREFIX "FAILED Stop");
 					_IsPlaying = false;
 				}
@@ -281,8 +316,8 @@ void CSourceXAudio2::submitBuffer(CBufferXAudio2 *ibuffer)
 
 	nlassert(_SourceVoice);
 	nlassert(ibuffer->getFormat() == _Format
-		&& ibuffer->getChannels() == _Channels
-		&& ibuffer->getBitsPerSample() == _BitsPerSample);
+	    && ibuffer->getChannels() == _Channels
+	    && ibuffer->getBitsPerSample() == _BitsPerSample);
 	if (_AdpcmUtility)
 	{
 		nlassert(!_BufferStreaming);
@@ -300,19 +335,19 @@ void CSourceXAudio2::submitBuffer(CBufferXAudio2 *ibuffer)
 		buffer.pContext = ibuffer;
 		buffer.PlayBegin = 0;
 		buffer.PlayLength = 0;
-		
+
 		_SourceVoice->SubmitSourceBuffer(&buffer);
 	}
 }
 
 /// (Internal) Update the send descriptor
 void CSourceXAudio2::setupVoiceSends()
-{	
+{
 	XAUDIO2_SEND_DESCRIPTOR sendDescriptors[4];
 	XAUDIO2_VOICE_SENDS voiceSends;
 	voiceSends.pSends = sendDescriptors;
 	voiceSends.SendCount = 0;
-	
+
 	if (_DirectDryEnabled)
 	{
 		sendDescriptors[0].Flags = 0;
@@ -325,7 +360,7 @@ void CSourceXAudio2::setupVoiceSends()
 		}
 		else voiceSends.SendCount = 1;
 	}
-	
+
 	if (_EffectDryEnabled)
 	{
 		sendDescriptors[voiceSends.SendCount].Flags = 0;
@@ -338,7 +373,7 @@ void CSourceXAudio2::setupVoiceSends()
 			++voiceSends.SendCount;
 		}
 	}
-	
+
 	_SoundDriver->getXAudio2()->CommitChanges(_OperationSet); // SetOutputVoices does not support OperationSet
 	_SourceVoice->SetOutputVoices(&voiceSends); // SetOutputVoices does not support OperationSet
 	setupDirectFilter();
@@ -362,7 +397,7 @@ void CSourceXAudio2::setStreaming(bool streaming)
 			if (!_IsLooping)
 				nlwarning(NLSOUND_XAUDIO2_PREFIX "Switched streaming mode while buffer still queued!?! Flush");
 			_SoundDriver->getXAudio2()->CommitChanges(_OperationSet);
-			if (FAILED(_SourceVoice->FlushSourceBuffers())) 
+			if (FAILED(_SourceVoice->FlushSourceBuffers()))
 				nlwarning(NLSOUND_XAUDIO2_PREFIX "FAILED FlushSourceBuffers");
 		}
 	}
@@ -383,7 +418,7 @@ void CSourceXAudio2::setStaticBuffer(IBuffer *buffer)
 	// else // nldebug(NLSOUND_XAUDIO2_PREFIX "setStaticBuffer NULL");
 
 	// if (_IsPlaying) nlwarning(NLSOUND_XAUDIO2_PREFIX "Called setStaticBuffer(IBuffer *buffer) while _IsPlaying == true!");
-	
+
 	_StaticBuffer = static_cast<CBufferXAudio2 *>(buffer);
 }
 
@@ -414,7 +449,7 @@ void CSourceXAudio2::submitStreamingBuffer(IBuffer *buffer)
 		preparePlay(bufferFormat, channels, bitsPerSample, frequency);
 		_LastPreparedBuffer = NULL;
 	}
-	
+
 	submitBuffer(static_cast<CBufferXAudio2 *>(buffer));
 }
 
@@ -422,7 +457,7 @@ void CSourceXAudio2::submitStreamingBuffer(IBuffer *buffer)
 uint CSourceXAudio2::countStreamingBuffers() const
 {
 	nlassert(_BufferStreaming);
-	
+
 	if (_SourceVoice)
 	{
 		XAUDIO2_VOICE_STATE voice_state;
@@ -458,7 +493,7 @@ void CSourceXAudio2::setLooping(bool l)
 					if (l)
 					{
 						// loop requested while already playing, flush any trash
-						if (FAILED(_SourceVoice->FlushSourceBuffers())) 
+						if (FAILED(_SourceVoice->FlushSourceBuffers()))
 							nlwarning(NLSOUND_XAUDIO2_PREFIX "FAILED FlushSourceBuffers");
 						// resubmit with updated looping settings
 						if (_LastPreparedBuffer == _StaticBuffer)
@@ -467,7 +502,7 @@ void CSourceXAudio2::setLooping(bool l)
 					else
 					{
 						// flush any queued buffers, keep playing current buffer
-						if (FAILED(_SourceVoice->FlushSourceBuffers())) 
+						if (FAILED(_SourceVoice->FlushSourceBuffers()))
 							nlwarning(NLSOUND_XAUDIO2_PREFIX "FAILED FlushSourceBuffers");
 						// exit loop of current buffer
 						if (FAILED(_SourceVoice->ExitLoop()))
@@ -482,7 +517,7 @@ void CSourceXAudio2::setLooping(bool l)
 					if (voice_state.BuffersQueued)
 					{
 						// nlwarning(NLSOUND_XAUDIO2_PREFIX "Not playing but buffer already queued while switching loop mode!?! Flush and requeue");
-						if (FAILED(_SourceVoice->FlushSourceBuffers())) 
+						if (FAILED(_SourceVoice->FlushSourceBuffers()))
 							nlwarning(NLSOUND_XAUDIO2_PREFIX "FAILED FlushSourceBuffers");
 						// queue buffer with correct looping parameters
 						if (_LastPreparedBuffer == _StaticBuffer)
@@ -507,7 +542,8 @@ bool CSourceXAudio2::initFormat(IBuffer::TBufferFormat bufferFormat, uint8 chann
 {
 	// nlwarning(NLSOUND_XAUDIO2_PREFIX "New voice with format %u!", (uint32)_StaticBuffer->getFormat());
 
-	nlassert(!_SourceVoice); nlassert(!_AdpcmUtility);
+	nlassert(!_SourceVoice);
+	nlassert(!_AdpcmUtility);
 	// create adpcm utility callback if needed
 	if (bufferFormat == IBuffer::FormatDviAdpcm) _AdpcmUtility = new CAdpcmXAudio2(_IsLooping);
 	// create voice with adpcm utility callback or NULL callback
@@ -520,25 +556,24 @@ bool CSourceXAudio2::initFormat(IBuffer::TBufferFormat bufferFormat, uint8 chann
 	_SourceVoice->SetVolume(_Gain, _OperationSet);
 	setupVoiceSends();
 	_SoundDriver->getXAudio2()->CommitChanges(_OperationSet);
-	
+
 	// Also commit any 3D settings that were already done
 	commit3DChanges();
-	
+
 	// test
-	//XAUDIO2_VOICE_DETAILS voice_details;
+	// XAUDIO2_VOICE_DETAILS voice_details;
 	//_SourceVoice->GetVoiceDetails(&voice_details);
 	//_SendDescriptors[0].Flags = XAUDIO2_SEND_USEFILTER;
 	//_SourceVoice->SetOutputVoices(&_VoiceSends);
-	//XAUDIO2_FILTER_PARAMETERS _FilterParameters[2];
+	// XAUDIO2_FILTER_PARAMETERS _FilterParameters[2];
 	//_FilterParameters[0].Type = LowPassFilter;
-	//nlinfo("voice_details.InputSampleRate: '%u'", voice_details.InputSampleRate);
+	// nlinfo("voice_details.InputSampleRate: '%u'", voice_details.InputSampleRate);
 	//_FilterParameters[0].Frequency = XAudio2CutoffFrequencyToRadians(5000, voice_details.InputSampleRate);
-	//nlinfo("_FilterParameters[0].Frequency: '%f'", _FilterParameters[0].Frequency);
+	// nlinfo("_FilterParameters[0].Frequency: '%f'", _FilterParameters[0].Frequency);
 	//_FilterParameters[0].OneOverQ = 1.0f;
-	//nlinfo("_FilterParameters[0].OneOverQ: '%f'", _FilterParameters[0].OneOverQ);
+	// nlinfo("_FilterParameters[0].OneOverQ: '%f'", _FilterParameters[0].OneOverQ);
 	//_SourceVoice->SetOutputFilterParameters(_SendDescriptors[0].pOutputVoice, &_FilterParameters[0]);
 	// test
-
 
 	return true;
 }
@@ -550,7 +585,7 @@ bool CSourceXAudio2::preparePlay(IBuffer::TBufferFormat bufferFormat, uint8 chan
 	{
 		// nlwarning(NLSOUND_XAUDIO2_PREFIX "Called play() while _IsPlaying == true!");
 		// stop the currently playing voice if it's of the same type as we need
-		if (bufferFormat == _Format && channels == _Channels && bitsPerSample == _BitsPerSample) 
+		if (bufferFormat == _Format && channels == _Channels && bitsPerSample == _BitsPerSample)
 			// cannot call stop directly before destroy voice, ms bug in xaudio2, see msdn docs
 			stop(); // sets _IsPlaying = false;
 	}
@@ -559,9 +594,11 @@ bool CSourceXAudio2::preparePlay(IBuffer::TBufferFormat bufferFormat, uint8 chan
 		// nlwarning(NLSOUND_XAUDIO2_PREFIX "Switching format %u to %u!", (uint32)_Format, (uint32)bufferFormat);
 		// destroy existing voice
 		_SoundDriver->getXAudio2()->CommitChanges(_OperationSet);
-		_SoundDriver->destroySourceVoice(_SourceVoice); _SourceVoice = NULL;
+		_SoundDriver->destroySourceVoice(_SourceVoice);
+		_SourceVoice = NULL;
 		// destroy adpcm utility (if it exists)
-		delete _AdpcmUtility; _AdpcmUtility = NULL;
+		delete _AdpcmUtility;
+		_AdpcmUtility = NULL;
 		// reset current stuff
 		_Format = IBuffer::FormatNotSet;
 		_Channels = 0;
@@ -569,7 +606,7 @@ bool CSourceXAudio2::preparePlay(IBuffer::TBufferFormat bufferFormat, uint8 chan
 	}
 	if (frequency != _Frequency)
 	{
-		if (_SourceVoice) 
+		if (_SourceVoice)
 		{
 			setupDirectFilter();
 			setupEffectFilter();
@@ -597,9 +634,9 @@ bool CSourceXAudio2::preparePlay(IBuffer::TBufferFormat bufferFormat, uint8 chan
 	commit3DChanges(); // sets pitch etc
 
 	// test
-	//XAUDIO2_VOICE_DETAILS voice_details;
+	// XAUDIO2_VOICE_DETAILS voice_details;
 	//_SourceVoice->GetVoiceDetails(&voice_details);
-	//nlinfo("voice_details.InputSampleRate: '%u'", voice_details.InputSampleRate);
+	// nlinfo("voice_details.InputSampleRate: '%u'", voice_details.InputSampleRate);
 	// test
 
 	return true;
@@ -618,16 +655,16 @@ bool CSourceXAudio2::play()
 	if (_IsPaused)
 	{
 		if (SUCCEEDED(_SourceVoice->Start(0))) _IsPaused = false;
-			else nlwarning(NLSOUND_XAUDIO2_PREFIX "FAILED Play");
+		else nlwarning(NLSOUND_XAUDIO2_PREFIX "FAILED Play");
 		return !_IsPaused;
 	}
 	else
 	{
 		_SoundDriver->performanceIncreaseSourcePlayCounter();
-		
+
 		if (_BufferStreaming)
 		{
-			// preparePlay already called, 
+			// preparePlay already called,
 			// stop already called before going into buffer streaming
 			nlassert(!_IsPlaying);
 			nlassert(_SourceVoice);
@@ -639,10 +676,10 @@ bool CSourceXAudio2::play()
 		{
 			if (_StaticBuffer)
 			{
-				preparePlay(_StaticBuffer->getFormat(), 
-					_StaticBuffer->getChannels(), 
-					_StaticBuffer->getBitsPerSample(),
-					_StaticBuffer->getFrequency());
+				preparePlay(_StaticBuffer->getFormat(),
+				    _StaticBuffer->getChannels(),
+				    _StaticBuffer->getBitsPerSample(),
+				    _StaticBuffer->getFrequency());
 				_LastPreparedBuffer = _StaticBuffer;
 				submitBuffer(_StaticBuffer);
 				_PlayStart = CTime::getLocalTime();
@@ -674,9 +711,9 @@ void CSourceXAudio2::stop()
 		_SoundDriver->getXAudio2()->CommitChanges(_OperationSet);
 		if (FAILED(_SourceVoice->ExitLoop()))
 			nlwarning(NLSOUND_XAUDIO2_PREFIX "FAILED ExitLoop");
-		if (FAILED(_SourceVoice->Stop(0))) 
+		if (FAILED(_SourceVoice->Stop(0)))
 			nlwarning(NLSOUND_XAUDIO2_PREFIX "FAILED Stop");
-		if (FAILED(_SourceVoice->FlushSourceBuffers())) 
+		if (FAILED(_SourceVoice->FlushSourceBuffers()))
 			nlwarning(NLSOUND_XAUDIO2_PREFIX "FAILED FlushSourceBuffers");
 	}
 }
@@ -691,7 +728,7 @@ void CSourceXAudio2::pause()
 	if (_IsPlaying)
 	{
 		_IsPaused = true;
-		if (FAILED(_SourceVoice->Stop(0))) 
+		if (FAILED(_SourceVoice->Stop(0)))
 			nlwarning(NLSOUND_XAUDIO2_PREFIX "FAILED Stop");
 	}
 	else nlwarning(NLSOUND_XAUDIO2_PREFIX "Called pause() while _IsPlaying == false!");
@@ -709,7 +746,7 @@ bool CSourceXAudio2::isPlaying() const
 bool CSourceXAudio2::isStopped() const
 {
 	// nldebug(NLSOUND_XAUDIO2_PREFIX "isStopped?");
-	
+
 	return !_IsPlaying;
 }
 
@@ -732,7 +769,7 @@ uint32 CSourceXAudio2::getTime()
 }
 
 /// Set the position vector (default: (0,0,0)).
-void CSourceXAudio2::setPos(const NLMISC::CVector& pos, bool /* deffered */) // note: deferred with a different spelling
+void CSourceXAudio2::setPos(const NLMISC::CVector &pos, bool /* deffered */) // note: deferred with a different spelling
 {
 	// nldebug(NLSOUND_XAUDIO2_PREFIX "setPos %f %f %f", pos.x, pos.y, pos.z);
 
@@ -749,7 +786,7 @@ const NLMISC::CVector &CSourceXAudio2::getPos() const
 }
 
 /// Set the velocity vector (3D mode only, ignored in stereo mode) (default: (0,0,0))
-void CSourceXAudio2::setVelocity(const NLMISC::CVector& vel, bool /* deferred */)
+void CSourceXAudio2::setVelocity(const NLMISC::CVector &vel, bool /* deferred */)
 {
 	// nldebug(NLSOUND_XAUDIO2_PREFIX "setVelocity %f %f %f", vel.x, vel.y, vel.z);
 
@@ -759,13 +796,13 @@ void CSourceXAudio2::setVelocity(const NLMISC::CVector& vel, bool /* deferred */
 }
 
 /// Get the velocity vector
-void CSourceXAudio2::getVelocity(NLMISC::CVector& vel) const
+void CSourceXAudio2::getVelocity(NLMISC::CVector &vel) const
 {
 	NLSOUND_XAUDIO2_VECTOR_FROM_X3DAUDIO_VECTOR(vel, _Emitter.Velocity);
 }
 
 /// Set the direction vector (3D mode only, ignored in stereo mode) (default: (0,0,0) as non-directional)
-void CSourceXAudio2::setDirection(const NLMISC::CVector& dir)
+void CSourceXAudio2::setDirection(const NLMISC::CVector &dir)
 {
 	// nldebug(NLSOUND_XAUDIO2_PREFIX "setDirection %f %f %f", dir.x, dir.y, dir.z);
 
@@ -773,7 +810,7 @@ void CSourceXAudio2::setDirection(const NLMISC::CVector& dir)
 }
 
 /// Get the direction vector
-void CSourceXAudio2::getDirection(NLMISC::CVector& dir) const
+void CSourceXAudio2::getDirection(NLMISC::CVector &dir) const
 {
 	NLSOUND_XAUDIO2_VECTOR_FROM_X3DAUDIO_VECTOR(dir, _Emitter.OrientFront);
 }
@@ -830,21 +867,21 @@ bool CSourceXAudio2::getSourceRelativeMode() const
 void CSourceXAudio2::setMinMaxDistances(float mindist, float maxdist, bool /* deferred */)
 {
 	// nldebug(NLSOUND_XAUDIO2_PREFIX "setMinMaxDistances %f, %f", mindist, maxdist);
-	
+
 	static float maxSqrt = sqrt(std::numeric_limits<float>::max());
 	if (maxdist >= maxSqrt)
 	{
 		nlwarning("SOUND_DEV (XAudio2): Ridiculously high max distance set on source");
 		maxdist = maxSqrt;
 	}
-	
+
 	_Emitter.InnerRadius = mindist;
 	_MinDistance = mindist;
 	_MaxDistance = maxdist;
 }
 
 /// Get the min and max distances
-void CSourceXAudio2::getMinMaxDistances(float& mindist, float& maxdist) const
+void CSourceXAudio2::getMinMaxDistances(float &mindist, float &maxdist) const
 {
 	mindist = _MinDistance;
 	maxdist = _MaxDistance;
@@ -854,7 +891,7 @@ void CSourceXAudio2::getMinMaxDistances(float& mindist, float& maxdist) const
 void CSourceXAudio2::setCone(float innerAngle, float outerAngle, float outerGain)
 {
 	// nldebug(NLSOUND_XAUDIO2_PREFIX "setCone %f, %f ,%f", innerAngle, outerAngle, outerGain);
-	
+
 	if (innerAngle >= 6.283185f && outerAngle >= 6.283185f)
 		_Emitter.pCone = NULL;
 	else _Emitter.pCone = &_Cone;
@@ -869,7 +906,7 @@ void CSourceXAudio2::setCone(float innerAngle, float outerAngle, float outerGain
 }
 
 /// Get the cone angles (in radian)
-void CSourceXAudio2::getCone(float& innerAngle, float& outerAngle, float& outerGain) const
+void CSourceXAudio2::getCone(float &innerAngle, float &outerAngle, float &outerGain) const
 {
 	innerAngle = _Cone.InnerAngle;
 	outerAngle = _Cone.OuterAngle;
@@ -877,10 +914,10 @@ void CSourceXAudio2::getCone(float& innerAngle, float& outerAngle, float& outerG
 }
 
 /// Set the alpha value for the volume-distance curve
-void CSourceXAudio2::setAlpha(double a) 
-{  
+void CSourceXAudio2::setAlpha(double a)
+{
 	nlassert(_SoundDriver->getOption(ISoundDriver::OptionManualRolloff));
-		
+
 	// if (a != 1.0) // nldebug(NLSOUND_XAUDIO2_PREFIX "setAlpha %f", (float)a);
 	_Alpha = a;
 }
@@ -941,8 +978,7 @@ void CSourceXAudio2::setupDirectFilter()
 			_DirectFilter.Frequency = XAudio2CutoffFrequencyToRadians(_DirectFilterHighFrequency, _Frequency);
 			_DirectFilter.OneOverQ = 1.0f;
 			break;
-		case BandPassFilter:
-		{
+		case BandPassFilter: {
 			float centerFrequency = sqrt(_DirectFilterLowFrequency * _DirectFilterHighFrequency); // geometric mean
 			float bandwidth = _DirectFilterHighFrequency - _DirectFilterLowFrequency;
 			float q = centerFrequency / bandwidth;
@@ -1094,8 +1130,7 @@ void CSourceXAudio2::setupEffectFilter()
 			_EffectFilter.Frequency = XAudio2CutoffFrequencyToRadians(_EffectFilterHighFrequency, _Frequency);
 			_EffectFilter.OneOverQ = 1.0f;
 			break;
-		case BandPassFilter:
-		{
+		case BandPassFilter: {
 			float centerFrequency = sqrt(_EffectFilterLowFrequency * _EffectFilterHighFrequency); // geometric mean
 			float bandwidth = _EffectFilterHighFrequency - _EffectFilterLowFrequency;
 			float q = centerFrequency / bandwidth;

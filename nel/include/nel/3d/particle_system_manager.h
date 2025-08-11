@@ -22,17 +22,14 @@
 #include "nel/3d/animation_time.h"
 #include "nel/3d/particle_system_process.h"
 
-
 #include <list>
 #include <vector>
 
-namespace NLMISC
-{
-	class CVector;
+namespace NLMISC {
+class CVector;
 }
 
 namespace NL3D {
-
 
 class CParticleSystemModel;
 
@@ -50,7 +47,10 @@ class CParticleSystemModel;
 class CParticleSystemManager
 {
 public:
-	enum { NumProcessToRefresh  = 3 }; // the number of systems that are refreshed at each call
+	enum
+	{
+		NumProcessToRefresh = 3
+	}; // the number of systems that are refreshed at each call
 
 	/// default ctor
 	CParticleSystemManager();
@@ -62,22 +62,22 @@ public:
 	static void release();
 
 	/// call this to refresh systems. (check those whose data should be released)
-	void	refreshModels(const std::vector<NLMISC::CPlane>	&worldFrustumPyramid,  const NLMISC::CVector &viewerPos);
+	void refreshModels(const std::vector<NLMISC::CPlane> &worldFrustumPyramid, const NLMISC::CVector &viewerPos);
 
 	/// perform animation on systems that should be animated even if not parsed (temporary spells for example)
-	void	processAnimate(TAnimationTime deltaT);
+	void processAnimate(TAnimationTime deltaT);
 
 	// stop sound for all particle systems in this manager
-	void    stopSound();
+	void stopSound();
 
 	// reactivate sound for all particle systems in this manager
-	void    reactivateSound();
+	void reactivateSound();
 
 	// stop sound for all particle systems in all managers
-	static void    stopSoundForAllManagers();
+	static void stopSoundForAllManagers();
 
 	// reactivate sound for all particle systems in all managers
-	static void    reactivateSoundForAllManagers();
+	static void reactivateSoundForAllManagers();
 
 private:
 	friend class CParticleSystemModel;
@@ -87,9 +87,9 @@ private:
 	{
 	public:
 		CParticleSystemModel *Model;
-		NLMISC::CMatrix		 OldAncestorMatOrRelPos;	// last matrix of ancestor skeleton or relative matrix of ps to its ancestor (see flag below)
-		bool				 IsRelMatrix;				// gives usage of the field OldAncestorMatOrRelPos
-		bool				 HasAncestorSkeleton;		// has the system an ancestor skeleton ?
+		NLMISC::CMatrix OldAncestorMatOrRelPos; // last matrix of ancestor skeleton or relative matrix of ps to its ancestor (see flag below)
+		bool IsRelMatrix; // gives usage of the field OldAncestorMatOrRelPos
+		bool HasAncestorSkeleton; // has the system an ancestor skeleton ?
 	public:
 		// ctor
 		CAlwaysAnimatedPS()
@@ -101,8 +101,8 @@ private:
 		}
 	};
 
-	typedef std::list<CParticleSystemModel *>   TModelList;
-	typedef std::list<CAlwaysAnimatedPS>		TAlwaysAnimatedModelList;
+	typedef std::list<CParticleSystemModel *> TModelList;
+	typedef std::list<CAlwaysAnimatedPS> TAlwaysAnimatedModelList;
 	typedef std::list<CParticleSystemManager *> TManagerList;
 
 	static TManagerList *ManagerList;
@@ -110,47 +110,49 @@ private:
 	struct TModelHandle
 	{
 		TModelList::iterator Iter;
-		bool				 Valid;
-		TModelHandle() : Valid(false) {}
+		bool Valid;
+		TModelHandle()
+		    : Valid(false)
+		{
+		}
 	};
 
 	struct TAlwaysAnimatedModelHandle
 	{
 		TAlwaysAnimatedModelList::iterator Iter;
-		bool							   Valid;
-		TAlwaysAnimatedModelHandle() : Valid(false) {}
+		bool Valid;
+		TAlwaysAnimatedModelHandle()
+		    : Valid(false)
+		{
+		}
 	};
 
-
 	/** Should be called when a new p.s. model has resources attached to it.
-	  * \see removeSystemModel
-	  */
+	 * \see removeSystemModel
+	 */
 	TModelHandle addSystemModel(CParticleSystemModel *);
 
 	/// Should called when a p.s model has resources detached from it.
-	void			removeSystemModel(TModelHandle &handle);
+	void removeSystemModel(TModelHandle &handle);
 
 	/// Should be called to attach a system that must always be animated
 	TAlwaysAnimatedModelHandle addPermanentlyAnimatedSystem(CParticleSystemModel *);
 
 	/// Remove a permanenlty animated system
-	void			removePermanentlyAnimatedSystem(TAlwaysAnimatedModelHandle &handle);
+	void removePermanentlyAnimatedSystem(TAlwaysAnimatedModelHandle &handle);
 
 private:
-
-	TModelList::iterator	_CurrListIterator; /// the current element being processed
-	TModelList				_ModelList;
+	TModelList::iterator _CurrListIterator; /// the current element being processed
+	TModelList _ModelList;
 	TAlwaysAnimatedModelList _PermanentlyAnimatedModelList;
-	uint					_NumModels;
+	uint _NumModels;
 	// access to list of currently instanciated managers
-	static TManagerList     &getManagerList();
+	static TManagerList &getManagerList();
 	// link into the global manager list for that manager
-	TManagerList::iterator	_GlobalListHandle;
+	TManagerList::iterator _GlobalListHandle;
 };
 
-
 } // NL3D
-
 
 #endif // NL_PARTICLE_SYSTEM_MANAGER_H
 

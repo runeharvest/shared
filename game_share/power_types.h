@@ -14,82 +14,78 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_POWER_TYPES_H
 #define RY_POWER_TYPES_H
 
 #include "nel/misc/types_nl.h"
 
-namespace POWERS
+namespace POWERS {
+enum TPowerType
 {
-	enum TPowerType
-	{
-		/************************************************************************/
-		// Warning
-		// Power Flags MUST be in the same order than in brick_flags.h
-		/************************************************************************/
-		BeginPower = 0,
-			Taunt = BeginPower,
-			Shielding,
-			SpeedingUp,
-			LifeConcentration,
-			StaminaConcentration,
-			SapConcentration,
-			ConvertStamina,
-			ConvertSap,
-			Berserk,
-			BalanceHp,
-			Heal,
-			Invulnerability,
-			EnchantWeapon,
+	/************************************************************************/
+	// Warning
+	// Power Flags MUST be in the same order than in brick_flags.h
+	/************************************************************************/
+	BeginPower = 0,
+	Taunt = BeginPower,
+	Shielding,
+	SpeedingUp,
+	LifeConcentration,
+	StaminaConcentration,
+	SapConcentration,
+	ConvertStamina,
+	ConvertSap,
+	Berserk,
+	BalanceHp,
+	Heal,
+	Invulnerability,
+	EnchantWeapon,
 
-			// consumable item related powers
-			HealHpC,
-			HealSapC,
-			HealStaC,
-			HealFocusC,
-			ChgCharac,
-			ModDefenseSkill,
-			ModDodgeSkill,
-			ModParrySkill,
-			ModCraftSkill,
-			ModMeleeSkill,
-			ModRangeSkill,
-			ModMagicSkill,
-			ModForageSkill,
-			ModDesertForageSkill,
-			ModForestForageSkill,
-			ModLacustreForageSkill,
-			ModJungleForageSkill,
-			ModPrimaryRootForageSkill,
-			ModMagicProtection,
-		EndPower = ModMagicProtection,
+	// consumable item related powers
+	HealHpC,
+	HealSapC,
+	HealStaC,
+	HealFocusC,
+	ChgCharac,
+	ModDefenseSkill,
+	ModDodgeSkill,
+	ModParrySkill,
+	ModCraftSkill,
+	ModMeleeSkill,
+	ModRangeSkill,
+	ModMagicSkill,
+	ModForageSkill,
+	ModDesertForageSkill,
+	ModForestForageSkill,
+	ModLacustreForageSkill,
+	ModJungleForageSkill,
+	ModPrimaryRootForageSkill,
+	ModMagicProtection,
+	EndPower = ModMagicProtection,
 
-		BeginAuras,
-			LifeAura = BeginAuras,
-			StaminaAura,
-			SapAura,
-			MeleeProtection,
-			Umbrella,
-			AntiMagicShield,
-			WarCry,
-			FireWall,
-			ThornWall,
-			WaterWall,
-			LightningWall,
-		EndAuras = LightningWall,
+	BeginAuras,
+	LifeAura = BeginAuras,
+	StaminaAura,
+	SapAura,
+	MeleeProtection,
+	Umbrella,
+	AntiMagicShield,
+	WarCry,
+	FireWall,
+	ThornWall,
+	WaterWall,
+	LightningWall,
+	EndAuras = LightningWall,
 
-		NbTypes,
-		UnknownType = NbTypes,
-	};
+	NbTypes,
+	UnknownType = NbTypes,
+};
 
-	/// convert a power type to a string
-	const std::string &toString(TPowerType type);
+/// convert a power type to a string
+const std::string &toString(TPowerType type);
 
-	/// convert a string to a power type
-	TPowerType toPowerType( const std::string &str);
-
+/// convert a string to a power type
+TPowerType toPowerType(const std::string &str);
 
 }; // POWERS
 

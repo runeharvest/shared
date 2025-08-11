@@ -37,19 +37,18 @@ using namespace std;
 #define NLMISC_DONE_FILE_OPENED 40
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
-typedef std::list<uint64> TFileAccessTimes;					// list of times at which a given file is opened for reading
-typedef CHashMap<std::string,TFileAccessTimes> TFileAccessLog;	// map from file name to read access times
+typedef std::list<uint64> TFileAccessTimes; // list of times at which a given file is opened for reading
+typedef CHashMap<std::string, TFileAccessTimes> TFileAccessLog; // map from file name to read access times
 typedef NLMISC::CSynchronized<TFileAccessLog> TSynchronizedFileAccessLog;
 
 static TSynchronizedFileAccessLog IFileAccessLog("IFileAccessLog");
-static bool IFileAccessLoggingEnabled= false;
-static uint64 IFileAccessLogStartTime= 0;
+static bool IFileAccessLoggingEnabled = false;
+static uint64 IFileAccessLogStartTime = 0;
 
 uint32 CIFile::_NbBytesSerialized = 0;
 uint32 CIFile::_NbBytesLoaded = 0;
@@ -57,10 +56,11 @@ uint32 CIFile::_ReadFromFile = 0;
 uint32 CIFile::_ReadingFromFile = 0;
 uint32 CIFile::_FileOpened = 0;
 uint32 CIFile::_FileRead = 0;
-CSynchronized<std::deque<std::string> > CIFile::_OpenedFiles("");
+CSynchronized<std::deque<std::string>> CIFile::_OpenedFiles("");
 
 // ======================================================================================================
-CIFile::CIFile() : IStream(true)
+CIFile::CIFile()
+    : IStream(true)
 {
 	_F = NULL;
 	_Cache = NULL;
@@ -71,13 +71,14 @@ CIFile::CIFile() : IStream(true)
 	_IsInXMLPackFile = false;
 	_CacheFileOnOpen = false;
 	_IsAsyncLoading = false;
-	_AllowBNPCacheFileOnOpen= true;
+	_AllowBNPCacheFileOnOpen = true;
 }
 
 // ======================================================================================================
-CIFile::CIFile(const std::string &path, bool text) : IStream(true)
+CIFile::CIFile(const std::string &path, bool text)
+    : IStream(true)
 {
-	_F=NULL;
+	_F = NULL;
 	_Cache = NULL;
 	_ReadPos = 0;
 	_FileSize = 0;
@@ -86,7 +87,7 @@ CIFile::CIFile(const std::string &path, bool text) : IStream(true)
 	_IsInXMLPackFile = false;
 	_CacheFileOnOpen = false;
 	_IsAsyncLoading = false;
-	_AllowBNPCacheFileOnOpen= true;
+	_AllowBNPCacheFileOnOpen = true;
 	open(path, text);
 }
 
@@ -96,66 +97,64 @@ CIFile::~CIFile()
 	close();
 }
 
-
 // ======================================================================================================
-void		CIFile::loadIntoCache()
+void CIFile::loadIntoCache()
 {
 	const uint32 READPACKETSIZE = 64 * 1024;
 	const uint32 INTERPACKETSLEEP = 5;
 
 	_Cache = new uint8[_FileSize];
-	if(!_IsAsyncLoading)
+	if (!_IsAsyncLoading)
 	{
 		_ReadingFromFile += _FileSize;
-		int read = (int)fread (_Cache, _FileSize, 1, _F);
+		int read = (int)fread(_Cache, _FileSize, 1, _F);
 		_FileRead++;
 		_ReadingFromFile -= _FileSize;
 		_ReadFromFile += read * _FileSize;
 	}
 	else
 	{
-		uint	index= 0;
-		while(index<_FileSize)
+		uint index = 0;
+		while (index < _FileSize)
 		{
-			if( _NbBytesLoaded + (_FileSize-index) > READPACKETSIZE )
+			if (_NbBytesLoaded + (_FileSize - index) > READPACKETSIZE)
 			{
-				sint	n= READPACKETSIZE-_NbBytesLoaded;
-				n= max(n, 1);
+				sint n = READPACKETSIZE - _NbBytesLoaded;
+				n = max(n, 1);
 				_ReadingFromFile += n;
-				int read = (int)fread (_Cache+index, n, 1, _F);
+				int read = (int)fread(_Cache + index, n, 1, _F);
 				_FileRead++;
 				_ReadingFromFile -= n;
 				_ReadFromFile += read * n;
-				index+= n;
+				index += n;
 
-				nlSleep (INTERPACKETSLEEP);
-				_NbBytesLoaded= 0;
+				nlSleep(INTERPACKETSLEEP);
+				_NbBytesLoaded = 0;
 			}
 			else
 			{
-				uint	n= _FileSize-index;
+				uint n = _FileSize - index;
 				_ReadingFromFile += n;
-				int read = (int)fread (_Cache+index, n, 1, _F);
+				int read = (int)fread(_Cache + index, n, 1, _F);
 				_FileRead++;
 				_ReadingFromFile -= n;
 				_ReadFromFile += read * n;
-				_NbBytesLoaded+= n;
-				index+= n;
+				_NbBytesLoaded += n;
+				index += n;
 			}
 		}
 	}
 }
 
-
 // ======================================================================================================
-bool		CIFile::open(const std::string &path, bool text)
+bool CIFile::open(const std::string &path, bool text)
 {
 	// Log opened files
 	{
-		CSynchronized<deque<string> >::CAccessor fileOpened(&_OpenedFiles);
-		fileOpened.value().push_front (path);
-		if (fileOpened.value().size () > NLMISC_DONE_FILE_OPENED)
-			fileOpened.value().resize (NLMISC_DONE_FILE_OPENED);
+		CSynchronized<deque<string>>::CAccessor fileOpened(&_OpenedFiles);
+		fileOpened.value().push_front(path);
+		if (fileOpened.value().size() > NLMISC_DONE_FILE_OPENED)
+			fileOpened.value().resize(NLMISC_DONE_FILE_OPENED);
 		_FileOpened++;
 	}
 
@@ -170,7 +169,7 @@ bool		CIFile::open(const std::string &path, bool text)
 	}
 
 	// can't open empty filename
-	if(path.empty ())
+	if (path.empty())
 		return false;
 
 	// IFile Access Log management
@@ -181,7 +180,7 @@ bool		CIFile::open(const std::string &path, bool text)
 
 		// get a handle for the container
 		TSynchronizedFileAccessLog::CAccessor synchronizedFileAccesLog(&IFileAccessLog);
-		TFileAccessLog& fileAccessLog= synchronizedFileAccesLog.value();
+		TFileAccessLog &fileAccessLog = synchronizedFileAccesLog.value();
 
 		// add the current time to the container entry for the given path (creating a new container entry if required)
 		fileAccessLog[path].push_back(timeNow);
@@ -200,22 +199,22 @@ bool		CIFile::open(const std::string &path, bool text)
 	if ((pos = path.find('@')) != string::npos)
 	{
 		// check for a double @ to identify XML pack file
-		if (pos+1 < path.size() && path[pos+1] == '@')
+		if (pos + 1 < path.size() && path[pos + 1] == '@')
 		{
 			// xml pack file
 			_IsInXMLPackFile = true;
 
-			if(_AllowBNPCacheFileOnOpen)
+			if (_AllowBNPCacheFileOnOpen)
 			{
 				_F = CXMLPack::getInstance().getFile(path, _FileSize, _BigFileOffset, _CacheFileOnOpen, _AlwaysOpened);
 			}
 			else
 			{
-				bool	dummy;
-				_F = CXMLPack::getInstance().getFile (path, _FileSize, _BigFileOffset, dummy, _AlwaysOpened);
+				bool dummy;
+				_F = CXMLPack::getInstance().getFile(path, _FileSize, _BigFileOffset, dummy, _AlwaysOpened);
 			}
 		}
-		else if (pos > 3 && path[pos-3] == 's' && path[pos-2] == 'n' && path[pos-1] == 'p')
+		else if (pos > 3 && path[pos - 3] == 's' && path[pos - 2] == 'n' && path[pos - 1] == 'p')
 		{
 			// nldebug("Opening a streamed package file");
 
@@ -224,12 +223,12 @@ bool		CIFile::open(const std::string &path, bool text)
 			_BigFileOffset = 0;
 			_AlwaysOpened = false;
 			std::string filePath;
-			if (CStreamedPackageManager::getInstance().getFile (filePath, path.substr(pos+1)))
+			if (CStreamedPackageManager::getInstance().getFile(filePath, path.substr(pos + 1)))
 			{
-				_F = fopen (filePath.c_str(), mode);
+				_F = fopen(filePath.c_str(), mode);
 				if (_F != NULL)
 				{
-					_FileSize=CFile::getFileSize(_F);
+					_FileSize = CFile::getFileSize(_F);
 					if (_FileSize == 0)
 					{
 						nlwarning("FILE: Size of file '%s' is 0", path.c_str());
@@ -253,20 +252,20 @@ bool		CIFile::open(const std::string &path, bool text)
 		{
 			// bnp file
 			_IsInBigFile = true;
-			if(_AllowBNPCacheFileOnOpen)
+			if (_AllowBNPCacheFileOnOpen)
 			{
-				_F = CBigFile::getInstance().getFile (path, _FileSize, _BigFileOffset, _CacheFileOnOpen, _AlwaysOpened);
+				_F = CBigFile::getInstance().getFile(path, _FileSize, _BigFileOffset, _CacheFileOnOpen, _AlwaysOpened);
 			}
 			else
 			{
-				bool	dummy;
-				_F = CBigFile::getInstance().getFile (path, _FileSize, _BigFileOffset, dummy, _AlwaysOpened);
+				bool dummy;
+				_F = CBigFile::getInstance().getFile(path, _FileSize, _BigFileOffset, dummy, _AlwaysOpened);
 			}
 		}
-		if(_F != NULL)
+		if (_F != NULL)
 		{
 			// Start to load the bigfile or xml file at the file offset.
-			nlfseek64 (_F, _BigFileOffset, SEEK_SET);
+			nlfseek64(_F, _BigFileOffset, SEEK_SET);
 
 			// Load into cache ?
 			if (_CacheFileOnOpen)
@@ -276,7 +275,7 @@ bool		CIFile::open(const std::string &path, bool text)
 
 				if (!_AlwaysOpened)
 				{
-					fclose (_F);
+					fclose(_F);
 					_F = NULL;
 				}
 				return (_Cache != NULL);
@@ -291,7 +290,7 @@ bool		CIFile::open(const std::string &path, bool text)
 		_IsInXMLPackFile = false;
 		_BigFileOffset = 0;
 		_AlwaysOpened = false;
-		_F = nlfopen (path, mode);
+		_F = nlfopen(path, mode);
 		if (_F != NULL)
 		{
 			/*
@@ -306,11 +305,11 @@ bool		CIFile::open(const std::string &path, bool text)
 			THE FOLLOWING WORKS BUT IS NOT PORTABLE
 			_FileSize=filelength(fileno(_F));
 			*/
-			_FileSize=CFile::getFileSize (_F);
+			_FileSize = CFile::getFileSize(_F);
 			if (_FileSize == 0)
 			{
-				nlwarning ("FILE: Size of file '%s' is 0", path.c_str());
-				fclose (_F);
+				nlwarning("FILE: Size of file '%s' is 0", path.c_str());
+				fclose(_F);
 				_F = NULL;
 			}
 		}
@@ -325,7 +324,7 @@ bool		CIFile::open(const std::string &path, bool text)
 			// load file in the cache
 			loadIntoCache();
 
-			fclose (_F);
+			fclose(_F);
 			_F = NULL;
 			return (_Cache != NULL);
 		}
@@ -335,20 +334,19 @@ bool		CIFile::open(const std::string &path, bool text)
 }
 
 // ======================================================================================================
-void		CIFile::setCacheFileOnOpen (bool newState)
+void CIFile::setCacheFileOnOpen(bool newState)
 {
 	_CacheFileOnOpen = newState;
 }
 
 // ======================================================================================================
-void		CIFile::setAsyncLoading (bool newState)
+void CIFile::setAsyncLoading(bool newState)
 {
 	_IsAsyncLoading = true;
 }
 
-
 // ======================================================================================================
-void		CIFile::close()
+void CIFile::close()
 {
 	if (_CacheFileOnOpen)
 	{
@@ -366,7 +364,7 @@ void		CIFile::close()
 			{
 				if (_F)
 				{
-					fclose (_F);
+					fclose(_F);
 					_F = NULL;
 				}
 			}
@@ -375,7 +373,7 @@ void		CIFile::close()
 		{
 			if (_F)
 			{
-				fclose (_F);
+				fclose(_F);
 				_F = NULL;
 			}
 		}
@@ -385,7 +383,7 @@ void		CIFile::close()
 }
 
 // ======================================================================================================
-void		CIFile::flush()
+void CIFile::flush()
 {
 	if (_CacheFileOnOpen)
 	{
@@ -394,13 +392,13 @@ void		CIFile::flush()
 	{
 		if (_F)
 		{
-			fflush (_F);
+			fflush(_F);
 		}
 	}
 }
 
 // ======================================================================================================
-bool	CIFile::readAll(std::string &buffer)
+bool CIFile::readAll(std::string &buffer)
 {
 	try
 	{
@@ -408,7 +406,7 @@ bool	CIFile::readAll(std::string &buffer)
 
 		buffer.clear();
 		buffer.reserve(_FileSize);
-		while(!eof() && remaining > 0)
+		while (!eof() && remaining > 0)
 		{
 			const static uint bufsize = 1024;
 			char buf[bufsize];
@@ -431,13 +429,13 @@ bool	CIFile::readAll(std::string &buffer)
 }
 
 // ======================================================================================================
-void		CIFile::getline (char *buffer, uint32 bufferSize)
+void CIFile::getline(char *buffer, uint32 bufferSize)
 {
 	if (bufferSize == 0)
 		return;
 
 	uint read = 0;
-	for(;;)
+	for (;;)
 	{
 		if (read == bufferSize - 1)
 		{
@@ -448,7 +446,7 @@ void		CIFile::getline (char *buffer, uint32 bufferSize)
 		try
 		{
 			// read one byte
-			serialBuffer ((uint8 *)buffer, 1);
+			serialBuffer((uint8 *)buffer, 1);
 		}
 		catch (const EFile &)
 		{
@@ -469,28 +467,26 @@ void		CIFile::getline (char *buffer, uint32 bufferSize)
 			read++;
 		}
 	}
-
 }
 
-
 // ======================================================================================================
-bool		CIFile::eof ()
+bool CIFile::eof()
 {
 	return _ReadPos >= (sint32)_FileSize;
 }
 
 // ======================================================================================================
-void		CIFile::serialBuffer(uint8 *buf, uint len)
+void CIFile::serialBuffer(uint8 *buf, uint len)
 {
 	if (len == 0)
 		return;
 	// Check the read pos
-	if ((_ReadPos < 0) || ((_ReadPos+len) > _FileSize))
-		throw EReadError (_FileName);
+	if ((_ReadPos < 0) || ((_ReadPos + len) > _FileSize))
+		throw EReadError(_FileName);
 	if ((_CacheFileOnOpen) && (_Cache == NULL))
-		throw EFileNotOpened (_FileName);
+		throw EFileNotOpened(_FileName);
 	if ((!_CacheFileOnOpen) && (_F == NULL))
-		throw EFileNotOpened (_FileName);
+		throw EFileNotOpened(_FileName);
 
 	if (_IsAsyncLoading)
 	{
@@ -498,21 +494,21 @@ void		CIFile::serialBuffer(uint8 *buf, uint len)
 		if (_NbBytesSerialized > 64 * 1024)
 		{
 			// give up time slice
-			nlSleep (0);
+			nlSleep(0);
 			_NbBytesSerialized = 0;
 		}
 	}
 
 	if (_CacheFileOnOpen)
 	{
-		memcpy (buf, _Cache + _ReadPos, len);
+		memcpy(buf, _Cache + _ReadPos, len);
 		_ReadPos += len;
 	}
 	else
 	{
 		int read;
 		_ReadingFromFile += len;
-		read=(int)fread(buf, len, 1, _F);
+		read = (int)fread(buf, len, 1, _F);
 		_FileRead++;
 		_ReadingFromFile -= len;
 		_ReadFromFile += /*read **/ len;
@@ -523,16 +519,16 @@ void		CIFile::serialBuffer(uint8 *buf, uint len)
 }
 
 // ======================================================================================================
-void		CIFile::serialBit(bool &bit)
+void CIFile::serialBit(bool &bit)
 {
 	// Simple for now.
-	uint8	v=bit;
+	uint8 v = bit;
 	serialBuffer(&v, 1);
-	bit=(v!=0);
+	bit = (v != 0);
 }
 
 // ======================================================================================================
-bool		CIFile::seek (sint32 offset, IStream::TSeekOrigin origin) const
+bool CIFile::seek(sint32 offset, IStream::TSeekOrigin origin) const
 {
 	if ((_CacheFileOnOpen) && (_Cache == NULL))
 		return false;
@@ -541,17 +537,17 @@ bool		CIFile::seek (sint32 offset, IStream::TSeekOrigin origin) const
 
 	switch (origin)
 	{
-		case IStream::begin:
-			_ReadPos = offset;
+	case IStream::begin:
+		_ReadPos = offset;
 		break;
-		case IStream::current:
-			_ReadPos = _ReadPos + offset;
+	case IStream::current:
+		_ReadPos = _ReadPos + offset;
 		break;
-		case IStream::end:
-			_ReadPos = _FileSize + offset;
+	case IStream::end:
+		_ReadPos = _FileSize + offset;
 		break;
-		default:
-			nlstop;
+	default:
+		nlstop;
 	}
 
 	if (_CacheFileOnOpen)
@@ -564,42 +560,39 @@ bool		CIFile::seek (sint32 offset, IStream::TSeekOrigin origin) const
 }
 
 // ======================================================================================================
-sint32		CIFile::getPos () const
+sint32 CIFile::getPos() const
 {
 	return _ReadPos;
 }
 
-
 // ======================================================================================================
-std::string	CIFile::getStreamName() const
+std::string CIFile::getStreamName() const
 {
 	return _FileName;
 }
 
-
 // ======================================================================================================
-void	CIFile::allowBNPCacheFileOnOpen(bool newState)
+void CIFile::allowBNPCacheFileOnOpen(bool newState)
 {
-	_AllowBNPCacheFileOnOpen= newState;
+	_AllowBNPCacheFileOnOpen = newState;
 }
 
-
 // ======================================================================================================
-void	CIFile::dump (std::vector<std::string> &result)
+void CIFile::dump(std::vector<std::string> &result)
 {
-	CSynchronized<deque<string> >::CAccessor acces(&_OpenedFiles);
+	CSynchronized<deque<string>>::CAccessor acces(&_OpenedFiles);
 
 	const deque<string> &openedFile = acces.value();
 
 	// Resize the destination array
-	result.clear ();
-	result.reserve (openedFile.size ());
+	result.clear();
+	result.reserve(openedFile.size());
 
 	// Add the waiting strings
-	deque<string>::const_reverse_iterator ite = openedFile.rbegin ();
-	while (ite != openedFile.rend ())
+	deque<string>::const_reverse_iterator ite = openedFile.rbegin();
+	while (ite != openedFile.rend())
 	{
-		result.push_back (*ite);
+		result.push_back(*ite);
 
 		// Next task
 		ite++;
@@ -607,34 +600,34 @@ void	CIFile::dump (std::vector<std::string> &result)
 }
 
 // ======================================================================================================
-void	CIFile::clearDump ()
+void CIFile::clearDump()
 {
-	CSynchronized<deque<string> >::CAccessor acces(&_OpenedFiles);
+	CSynchronized<deque<string>>::CAccessor acces(&_OpenedFiles);
 	acces.value().clear();
 }
 
 // ======================================================================================================
-uint	CIFile::getDbgStreamSize() const
+uint CIFile::getDbgStreamSize() const
 {
 	return getFileSize();
 }
 
-
 // ======================================================================================================
 // ======================================================================================================
 // ======================================================================================================
 
-
 // ======================================================================================================
-COFile::COFile() : IStream(false)
+COFile::COFile()
+    : IStream(false)
 {
-	_F=NULL;
+	_F = NULL;
 }
 
 // ======================================================================================================
-COFile::COFile(const std::string &path, bool append, bool text, bool useTempFile) : IStream(false)
+COFile::COFile(const std::string &path, bool append, bool text, bool useTempFile)
+    : IStream(false)
 {
-	_F=NULL;
+	_F = NULL;
 	open(path, append, text, useTempFile);
 }
 
@@ -644,27 +637,27 @@ COFile::~COFile()
 	internalClose(false);
 }
 // ======================================================================================================
-bool	COFile::open(const std::string &path, bool append, bool text, bool useTempFile)
+bool COFile::open(const std::string &path, bool append, bool text, bool useTempFile)
 {
 	close();
 
 	// can't open empty filename
-	if(path.empty ())
+	if (path.empty())
 		return false;
 
 	_FileName = path;
 	_TempFileName.clear();
 
 	char mode[3];
-	mode[0] = (append)?'a':'w';
-// ACE: NEVER SAVE IN TEXT MODE!!!	mode[1] = (text)?'\0':'b';
+	mode[0] = (append) ? 'a' : 'w';
+	// ACE: NEVER SAVE IN TEXT MODE!!!	mode[1] = (text)?'\0':'b';
 	mode[1] = 'b';
 	mode[2] = '\0';
 
 	string fileToOpen = path;
 	if (useTempFile)
 	{
-		CFile::getTemporaryOutputFilename (path, _TempFileName);
+		CFile::getTemporaryOutputFilename(path, _TempFileName);
 		fileToOpen = _TempFileName;
 	}
 
@@ -678,17 +671,17 @@ bool	COFile::open(const std::string &path, bool append, bool text, bool useTempF
 
 	_F = nlfopen(fileToOpen, mode);
 
-	return _F!=NULL;
+	return _F != NULL;
 }
 // ======================================================================================================
-void	COFile::close()
+void COFile::close()
 {
 	internalClose(true);
 }
 // ======================================================================================================
-void	COFile::internalClose(bool success)
+void COFile::internalClose(bool success)
 {
-	if(_F)
+	if (_F)
 	{
 		fclose(_F);
 
@@ -703,57 +696,56 @@ void	COFile::internalClose(bool success)
 				while (--retry)
 				{
 					if (CFile::fileExists(_FileName))
-						CFile::deleteFile (_FileName);
+						CFile::deleteFile(_FileName);
 
 					if (CFile::moveFile(_FileName, _TempFileName))
 						break;
-					nlSleep (0);
+					nlSleep(0);
 				}
 				if (!retry)
-					throw ERenameError (_FileName, _TempFileName);
+					throw ERenameError(_FileName, _TempFileName);
 			}
 			else
-				CFile::deleteFile (_TempFileName);
+				CFile::deleteFile(_TempFileName);
 		}
 
-		_F=NULL;
+		_F = NULL;
 	}
 	resetPtrTable();
 }
 // ======================================================================================================
-void	COFile::flush()
+void COFile::flush()
 {
-	if(_F)
+	if (_F)
 	{
 		fflush(_F);
 	}
 }
 
-
 // ======================================================================================================
-void		COFile::serialBuffer(uint8 *buf, uint len)
+void COFile::serialBuffer(uint8 *buf, uint len)
 {
-	if(!_F)
-		throw	EFileNotOpened(_FileName);
-	if(fwrite(buf, len, 1, _F) != 1)
-//	if(fwrite(buf, 1, len, _F) != len)
+	if (!_F)
+		throw EFileNotOpened(_FileName);
+	if (fwrite(buf, len, 1, _F) != 1)
+	//	if(fwrite(buf, 1, len, _F) != len)
 	{
 		if (ferror(_F) && errno == 28 /*ENOSPC*/)
 		{
 			throw EDiskFullError(_FileName);
 		}
-		throw	EWriteError(_FileName);
+		throw EWriteError(_FileName);
 	}
 }
 // ======================================================================================================
-void		COFile::serialBit(bool &bit)
+void COFile::serialBit(bool &bit)
 {
 	// Simple for now.
-	uint8	v=bit;
+	uint8 v = bit;
 	serialBuffer(&v, 1);
 }
 // ======================================================================================================
-bool		COFile::seek (sint32 offset, IStream::TSeekOrigin origin) const
+bool COFile::seek(sint32 offset, IStream::TSeekOrigin origin) const
 {
 	if (_F)
 	{
@@ -761,46 +753,43 @@ bool		COFile::seek (sint32 offset, IStream::TSeekOrigin origin) const
 		switch (origin)
 		{
 		case IStream::begin:
-			origin_c=SEEK_SET;
+			origin_c = SEEK_SET;
 			break;
 		case IStream::current:
-			origin_c=SEEK_CUR;
+			origin_c = SEEK_CUR;
 			break;
 		case IStream::end:
-			origin_c=SEEK_END;
+			origin_c = SEEK_END;
 			break;
 		default:
 			nlstop;
 		}
 
-		if (nlfseek64 (_F, offset, origin_c)!=0)
+		if (nlfseek64(_F, offset, origin_c) != 0)
 			return false;
 		return true;
 	}
 	return false;
 }
 // ======================================================================================================
-sint32		COFile::getPos () const
+sint32 COFile::getPos() const
 {
 	if (_F)
 	{
-		return ftell (_F);
+		return ftell(_F);
 	}
 	return 0;
 }
 
 // ======================================================================================================
-std::string		COFile::getStreamName() const
+std::string COFile::getStreamName() const
 {
 	return _FileName;
 }
 
-
-
 // ======================================================================================================
 // ======================================================================================================
 // ======================================================================================================
-
 
 // ======================================================================================================
 NLMISC_CATEGORISED_COMMAND(nel, iFileAccessLogStart, "Start file access logging", "")
@@ -808,11 +797,11 @@ NLMISC_CATEGORISED_COMMAND(nel, iFileAccessLogStart, "Start file access logging"
 	if (!args.empty())
 		return false;
 
-	IFileAccessLoggingEnabled= true;
-	if (IFileAccessLogStartTime==0)
+	IFileAccessLoggingEnabled = true;
+	if (IFileAccessLogStartTime == 0)
 	{
 		uint64 timeNow = NLMISC::CTime::getPerformanceTime();
-		IFileAccessLogStartTime= timeNow;
+		IFileAccessLogStartTime = timeNow;
 	}
 
 	return true;
@@ -824,7 +813,7 @@ NLMISC_CATEGORISED_COMMAND(nel, iFileAccessLogStop, "Stop file access logging", 
 	if (!args.empty())
 		return false;
 
-	IFileAccessLoggingEnabled= false;
+	IFileAccessLoggingEnabled = false;
 
 	return true;
 }
@@ -849,27 +838,27 @@ NLMISC_CATEGORISED_COMMAND(nel, iFileAccessLogDisplay, "Display file access logs
 	log.displayNL("-- FILE ACCESS LOG BEGIN --");
 
 	TSynchronizedFileAccessLog::CAccessor fileAccesLog(&IFileAccessLog);
-	TFileAccessLog::const_iterator it= fileAccesLog.value().begin();
-	TFileAccessLog::const_iterator itEnd= fileAccesLog.value().end();
-	uint32 count=0;
-	while (it!=itEnd)
+	TFileAccessLog::const_iterator it = fileAccesLog.value().begin();
+	TFileAccessLog::const_iterator itEnd = fileAccesLog.value().end();
+	uint32 count = 0;
+	while (it != itEnd)
 	{
-		uint32 numTimes= (uint32)it->second.size();
-		CSString fileName= it->first;
+		uint32 numTimes = (uint32)it->second.size();
+		CSString fileName = it->first;
 		if (fileName.contains("@"))
 		{
-			log.display("%d,%s,%s,",numTimes,fileName.splitTo("@").c_str(),fileName.splitFrom("@").c_str());
+			log.display("%d,%s,%s,", numTimes, fileName.splitTo("@").c_str(), fileName.splitFrom("@").c_str());
 		}
 		else
 		{
-			log.display("%d,,%s,",numTimes,fileName.c_str());
+			log.display("%d,,%s,", numTimes, fileName.c_str());
 		}
-		TFileAccessTimes::const_iterator atIt= it->second.begin();
-		TFileAccessTimes::const_iterator atItEnd=it->second.end();
-		while (atIt!=atItEnd)
+		TFileAccessTimes::const_iterator atIt = it->second.begin();
+		TFileAccessTimes::const_iterator atItEnd = it->second.end();
+		while (atIt != atItEnd)
 		{
-			uint64 delta= (*atIt-IFileAccessLogStartTime);
-			log.display("%" NL_I64 "u,",delta);
+			uint64 delta = (*atIt - IFileAccessLogStartTime);
+			log.display("%" NL_I64 "u,", delta);
 			++atIt;
 		}
 		log.displayNL("");
@@ -877,11 +866,9 @@ NLMISC_CATEGORISED_COMMAND(nel, iFileAccessLogDisplay, "Display file access logs
 		++it;
 	}
 
-	log.displayNL("-- FILE ACCESS LOG END (%d Unique Files Accessed) --",count);
+	log.displayNL("-- FILE ACCESS LOG END (%d Unique Files Accessed) --", count);
 
 	return true;
 }
 
 }
-
-

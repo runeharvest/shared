@@ -19,30 +19,28 @@
 
 #include "types_nl.h"
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 class CVector2f;
 
 /** Utility class for incremental grid traversal
-  *
-  * \author Nicolas Vizerie
-  * \author Nevrax France
-  * \date 2005
-  */
+ *
+ * \author Nicolas Vizerie
+ * \author Nevrax France
+ * \date 2005
+ */
 class CGridTraversal
 {
 public:
 	/** begin to traverse a grid along the given segments
-	  * \return first location in the grid
-	  */
+	 * \return first location in the grid
+	 */
 	static void startTraverse(const NLMISC::CVector2f &start, sint &nextX, sint &nextY);
 	/** continue grid traversal from the given position
-	  * If there are remaingind cells to traverse then true is returned, x & y are updated
-	  */
+	 * If there are remaingind cells to traverse then true is returned, x & y are updated
+	 */
 	static bool traverse(const NLMISC::CVector2f &start, const NLMISC::CVector2f &dir, sint &x, sint &y);
 };
-
 
 } // NLMISC
 

@@ -22,13 +22,10 @@
 
 #include "nel/3d/transform_shape.h"
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 class CScene;
 class CSkeletonModel;
-
 
 // ***************************************************************************
 /**
@@ -47,40 +44,38 @@ public:
 	~CSkeletonSpawnScript();
 
 	/// evaluate the current skeleton script
-	void			evaluate(CSkeletonModel *skeleton);
+	void evaluate(CSkeletonModel *skeleton);
 
 	/// Must call it at destruction of the owner skeleton
-	void			release(CScene *scene);
+	void release(CScene *scene);
 
 private:
 	friend class CSSSModelRequest;
 
 	// script cache to compare at each evaluate()
-	std::string			_Cache;
+	std::string _Cache;
 	// List of instance spawned
 	struct CInstance
 	{
 		// the 3D model created (NULL if failed). NB: a CRefPtr is used, in case of "AutoDeletable ParticleSystem" usage
-		NLMISC::CRefPtr<CTransformShape>		Model;
+		NLMISC::CRefPtr<CTransformShape> Model;
 		// this is a copy of the line in script, to compare for possible deletion
-		std::string								ScriptLine;
-		class CParticleSystemModel				*PS;
+		std::string ScriptLine;
+		class CParticleSystemModel *PS;
 		CInstance()
 		{
-			Model= NULL;
-			PS= NULL;
+			Model = NULL;
+			PS = NULL;
 		}
 	};
-	std::vector<CInstance>	_Instances;
-
+	std::vector<CInstance> _Instances;
 
 	// real parse stuff from _Cache
-	void	parseCache(CScene *scene, CSkeletonModel *skeleton);
+	void parseCache(CScene *scene, CSkeletonModel *skeleton);
 
 	// execute the request, or append to scene
-	void	addModelCreationRequest(class CSSSModelRequest &req, CScene *scene);
+	void addModelCreationRequest(class CSSSModelRequest &req, CScene *scene);
 };
-
 
 // ***************************************************************************
 /** Used by CSkeletonSpawnScript, to delay model creation
@@ -89,23 +84,21 @@ class CSSSModelRequest
 {
 public:
 	// Name o shape to create
-	std::string				Shape;
+	std::string Shape;
 	// Skeleton to bind to
-	NLMISC::CRefPtr<NL3D::CSkeletonModel>	Skel;
+	NLMISC::CRefPtr<NL3D::CSkeletonModel> Skel;
 	// Bone Id to stick to
-	uint					BoneId;
+	uint BoneId;
 	// where to store the instance result
-	uint					InstanceId;
+	uint InstanceId;
 	// SSSWO mode
-	bool					SSSWO;
+	bool SSSWO;
 
 	// execute the creation request
-	void		execute();
+	void execute();
 };
 
-
 } // NL3D
-
 
 #endif // NL_SKELETON_SPAWN_SCRIPT_H
 

@@ -22,66 +22,62 @@
 using namespace std;
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
-
+namespace NLMISC {
 
 // ======================================================================================================
-CClassRegistry::TClassMap		*CClassRegistry::RegistredClasses = NULL;
-
+CClassRegistry::TClassMap *CClassRegistry::RegistredClasses = NULL;
 
 // ======================================================================================================
-void		CClassRegistry::init()
+void CClassRegistry::init()
 {
 	if (RegistredClasses == NULL)
 		RegistredClasses = new TClassMap;
 }
 
 // ======================================================================================================
-void		CClassRegistry::release()
+void CClassRegistry::release()
 {
-	if( RegistredClasses )
+	if (RegistredClasses)
 		delete RegistredClasses;
 	RegistredClasses = NULL;
 }
 
 // ======================================================================================================
-IClassable	*CClassRegistry::create(const string &className)
+IClassable *CClassRegistry::create(const string &className)
 {
 	init();
 
-	TClassMap::iterator	it;
+	TClassMap::iterator it;
 
-	it=RegistredClasses->find(className);
+	it = RegistredClasses->find(className);
 
-	if(it==RegistredClasses->end())
+	if (it == RegistredClasses->end())
 		return NULL;
 	else
 	{
-		IClassable	*ptr;
-		ptr=it->second.Creator();
-		#ifdef NL_DEBUG
-			nlassert(CClassRegistry::checkObject(ptr));
-		#endif
+		IClassable *ptr;
+		ptr = it->second.Creator();
+#ifdef NL_DEBUG
+		nlassert(CClassRegistry::checkObject(ptr));
+#endif
 		return ptr;
 	}
-
 }
 
 // ======================================================================================================
-void		CClassRegistry::registerClass(const string &className, IClassable* (*creator)(), const string &typeidCheck)
+void CClassRegistry::registerClass(const string &className, IClassable *(*creator)(), const string &typeidCheck)
 {
 	init();
 
-	CClassNode	node;
-	node.Creator=creator;
-	node.TypeIdCheck= typeidCheck;
+	CClassNode node;
+	node.Creator = creator;
+	node.TypeIdCheck = typeidCheck;
 	std::pair<TClassMap::iterator, bool> result;
 	result = RegistredClasses->insert(TClassMap::value_type(className, node));
-	if(!result.second)
+	if (!result.second)
 	{
 		nlstop;
 		throw ERegisteredClass();
@@ -89,43 +85,19 @@ void		CClassRegistry::registerClass(const string &className, IClassable* (*creat
 }
 
 // ======================================================================================================
-bool		CClassRegistry::checkObject(IClassable* obj)
+bool CClassRegistry::checkObject(IClassable *obj)
 {
 	init();
 
-	TClassMap::iterator	it;
-	it=RegistredClasses->find(obj->getClassName());
-	if(it==RegistredClasses->end())
+	TClassMap::iterator it;
+	it = RegistredClasses->find(obj->getClassName());
+	if (it == RegistredClasses->end())
 		return false;
 
-	if( it->second.TypeIdCheck != string(typeid(*obj).name()) )
+	if (it->second.TypeIdCheck != string(typeid(*obj).name()))
 		return false;
 
 	return true;
 }
 
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

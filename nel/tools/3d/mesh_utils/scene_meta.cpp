@@ -28,13 +28,12 @@
 using namespace std;
 using namespace NLMISC;
 
-CNodeMeta::CNodeMeta() :
-	AddToIG(true),
-	ExportMesh(TMeshShape),
-	ExportBone(TBoneAuto),
-	AutoAnim(false)
+CNodeMeta::CNodeMeta()
+    : AddToIG(true)
+    , ExportMesh(TMeshShape)
+    , ExportBone(TBoneAuto)
+    , AutoAnim(false)
 {
-
 }
 
 void CNodeMeta::serial(NLMISC::IStream &s)
@@ -49,16 +48,15 @@ void CNodeMeta::serial(NLMISC::IStream &s)
 	s.serial(AutoAnim);
 }
 
-CSceneMeta::CSceneMeta() :
-	ImportShape(true),
-	ImportSkel(true),
-	ImportAnim(true),
-	ImportCmb(true),
-	ImportIG(true),
-	ExportDefaultIG(false),
-	SkeletonMode(TSkelRoot)
+CSceneMeta::CSceneMeta()
+    : ImportShape(true)
+    , ImportSkel(true)
+    , ImportAnim(true)
+    , ImportCmb(true)
+    , ImportIG(true)
+    , ExportDefaultIG(false)
+    , SkeletonMode(TSkelRoot)
 {
-	
 }
 
 bool CSceneMeta::load(const std::string &filePath)

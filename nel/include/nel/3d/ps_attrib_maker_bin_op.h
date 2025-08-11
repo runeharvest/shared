@@ -25,7 +25,6 @@
 
 namespace NL3D {
 
-
 /// this struct has an enumeration of various binary operators available with CPSAttribMakerBinOp
 struct CPSBinOp
 {
@@ -51,167 +50,158 @@ const uint PSBinOpBufSize = 1024;
  * \author Nevrax France
  * \date 2001
  */
-template <class T> class CPSAttribMakerBinOp : public CPSAttribMaker<T>
+template <class T>
+class CPSAttribMakerBinOp : public CPSAttribMaker<T>
 {
 public:
 	/// \name Object
 	//@{
-		/**  default ctor
-		  *  It construct an selectArg1 operator. The 2 argument are set to NULL,
-		  *  Which mean that an assertion will happen if get, make ... are called before setArg is called
-		  */
-		CPSAttribMakerBinOp();
+	/**  default ctor
+	 *  It construct an selectArg1 operator. The 2 argument are set to NULL,
+	 *  Which mean that an assertion will happen if get, make ... are called before setArg is called
+	 */
+	CPSAttribMakerBinOp();
 
-		/// copy ctor
-		CPSAttribMakerBinOp(const CPSAttribMakerBinOp &other);
+	/// copy ctor
+	CPSAttribMakerBinOp(const CPSAttribMakerBinOp &other);
 
-		/// dtor
-		virtual ~CPSAttribMakerBinOp();
-
-
+	/// dtor
+	virtual ~CPSAttribMakerBinOp();
 
 	//@}
 
 	/// \name inherited from CPSAttribMaker
 	//@{
-		virtual T		get			  (const CPSEmitterInfo &infos);
-		virtual T		get			  (CPSLocated *loc, uint32 index);
-		virtual void   *make		  (CPSLocated *loc,
-									   uint32 startIndex,
-									   void *tab,
-									   uint32 stride,
-									   uint32 numAttrib,
-									   bool allowNoCopy = false,
-									   uint32 srcStep = (1 << 16),
-									   bool	forceClampEntry = false
-									  ) const;
+	virtual T get(const CPSEmitterInfo &infos);
+	virtual T get(CPSLocated *loc, uint32 index);
+	virtual void *make(CPSLocated *loc,
+	    uint32 startIndex,
+	    void *tab,
+	    uint32 stride,
+	    uint32 numAttrib,
+	    bool allowNoCopy = false,
+	    uint32 srcStep = (1 << 16),
+	    bool forceClampEntry = false) const;
 
-		virtual void    make4		  (CPSLocated *loc,
-									   uint32 startIndex,
-									   void *tab,
-									   uint32 stride,
-									   uint32 numAttrib,
-									   uint32 srcStep = (1 << 16)
-									  ) const;
+	virtual void make4(CPSLocated *loc,
+	    uint32 startIndex,
+	    void *tab,
+	    uint32 stride,
+	    uint32 numAttrib,
+	    uint32 srcStep = (1 << 16)) const;
 
-		virtual void	makeN		  (CPSLocated *loc,
-									   uint32 startIndex,
-									   void *tab,
-									   uint32 stride,
-									   uint32 numAttrib,
-									   uint32 nbReplicate,
-									   uint32 srcStep = (1 << 16)
-									  ) const;
+	virtual void makeN(CPSLocated *loc,
+	    uint32 startIndex,
+	    void *tab,
+	    uint32 stride,
+	    uint32 numAttrib,
+	    uint32 nbReplicate,
+	    uint32 srcStep = (1 << 16)) const;
 
-		virtual void    serial		  (NLMISC::IStream &f);
-		virtual void    deleteElement (uint32 index);
-		virtual void    newElement	  (const CPSEmitterInfo &info);
-		virtual void	resize		  (uint32 capacity, uint32 nbPresentElements);
+	virtual void serial(NLMISC::IStream &f);
+	virtual void deleteElement(uint32 index);
+	virtual void newElement(const CPSEmitterInfo &info);
+	virtual void resize(uint32 capacity, uint32 nbPresentElements);
 	//@}
 
 	/// \name Input argument of the operator
 	//@{
-		/** set an argument for the operator
-		  * \param argNb must be 0 or 1 for the first and second argument
-		  * \param arg The argument. Must have been allocated by new, and is then owned by this object
-		  */
-		void setArg(uint argNb, CPSAttribMaker<T> *arg)
+	/** set an argument for the operator
+	 * \param argNb must be 0 or 1 for the first and second argument
+	 * \param arg The argument. Must have been allocated by new, and is then owned by this object
+	 */
+	void setArg(uint argNb, CPSAttribMaker<T> *arg)
+	{
+		nlassert(argNb < 2);
+		delete _Arg[argNb];
+		_Arg[argNb] = arg;
+		if (arg->hasMemory())
 		{
-			nlassert(argNb < 2);
-			delete _Arg[argNb];
-			_Arg[argNb] = arg;
-			if (arg->hasMemory())
-			{
-				arg->resize(_MaxSize, _Size);
-			}
+			arg->resize(_MaxSize, _Size);
 		}
+	}
 
-		/** get an argument
-		  * \see setArg
-		  */
-		CPSAttribMaker<T> *getArg(uint argNb)
-		{
-			nlassert(argNb < 2);
-			return _Arg[argNb];
-		}
+	/** get an argument
+	 * \see setArg
+	 */
+	CPSAttribMaker<T> *getArg(uint argNb)
+	{
+		nlassert(argNb < 2);
+		return _Arg[argNb];
+	}
 
-		/** get an argument, const version
-		  * \see setArg
-		  */
-		const CPSAttribMaker<T> *getArg(uint argNb) const
-		{
-			nlassert(argNb < 2);
-			return _Arg[argNb];
-		}
+	/** get an argument, const version
+	 * \see setArg
+	 */
+	const CPSAttribMaker<T> *getArg(uint argNb) const
+	{
+		nlassert(argNb < 2);
+		return _Arg[argNb];
+	}
 	//@}
 
 	/// \name Operator that is performed
 	//@{
-		/** Set the operator to use
-		  * An assertion is thrown when no available
-		  */
-		void setOp(CPSBinOp::BinOp op)
-		{
-			nlassert(supportOp(op));
-			_Op = op;
-		}
+	/** Set the operator to use
+	 * An assertion is thrown when no available
+	 */
+	void setOp(CPSBinOp::BinOp op)
+	{
+		nlassert(supportOp(op));
+		_Op = op;
+	}
 
-		/// return true if an operation is supported. The default support all ops
-		bool supportOp(CPSBinOp::BinOp /* op */) { return true; }
+	/// return true if an operation is supported. The default support all ops
+	bool supportOp(CPSBinOp::BinOp /* op */) { return true; }
 
-		/// get the current operator
-		CPSBinOp::BinOp getOp(void) const { return _Op; }
+	/// get the current operator
+	CPSBinOp::BinOp getOp(void) const { return _Op; }
 	//@}
 
 	// from CPSAttribMaker
-	virtual T getMinValue(void) const { return T() ; /* no mean by default */ }
-	virtual T getMaxValue(void) const { return T() ; /* no mean by default */ }
+	virtual T getMinValue(void) const { return T(); /* no mean by default */ }
+	virtual T getMaxValue(void) const { return T(); /* no mean by default */ }
 
 protected:
-	void   *makePrivate	(T *buf1,
-						 T *buf2,
-						 CPSLocated *loc,
-						 uint32 startIndex,
-						 void *tab,
-						 uint32 stride,
-						 uint32 numAttrib,
-						 bool allowNoCopy = false,
-						 uint32 srcStep = (1 << 16),
-						 bool	forceClampEntry = false
-						) const;
+	void *makePrivate(T *buf1,
+	    T *buf2,
+	    CPSLocated *loc,
+	    uint32 startIndex,
+	    void *tab,
+	    uint32 stride,
+	    uint32 numAttrib,
+	    bool allowNoCopy = false,
+	    uint32 srcStep = (1 << 16),
+	    bool forceClampEntry = false) const;
 
-	void    make4Private	(T *buf1,
-							 T *buf2,
-							 CPSLocated *loc,
-							 uint32 startIndex,
-							 void *tab,
-							 uint32 stride,
-							 uint32 numAttrib,
-							 uint32 srcStep = (1 << 16)
-							) const;
+	void make4Private(T *buf1,
+	    T *buf2,
+	    CPSLocated *loc,
+	    uint32 startIndex,
+	    void *tab,
+	    uint32 stride,
+	    uint32 numAttrib,
+	    uint32 srcStep = (1 << 16)) const;
 
-	void	makeNPrivate  (T *buf1,
-						   T *buf2,
-						   CPSLocated *loc,
-						   uint32 startIndex,
-						   void *tab,
-						   uint32 stride,
-						   uint32 numAttrib,
-						   uint32 nbReplicate,
-						   uint32 srcStep = (1 << 16)
-						  ) const;
+	void makeNPrivate(T *buf1,
+	    T *buf2,
+	    CPSLocated *loc,
+	    uint32 startIndex,
+	    void *tab,
+	    uint32 stride,
+	    uint32 numAttrib,
+	    uint32 nbReplicate,
+	    uint32 srcStep = (1 << 16)) const;
 
-	CPSBinOp::BinOp   _Op; // the operator being used
+	CPSBinOp::BinOp _Op; // the operator being used
 	CPSAttribMaker<T> *_Arg[2]; // the arguments for the binary operator
 	void clean(void);
 	uint32 _Size, _MaxSize;
 };
 
-
 } // NL3D
 
 #include "ps_attrib_maker_bin_op_inline.h"
-
 
 #endif // NL_PS_ATTRIB_MAKER_BIN_OP_H
 

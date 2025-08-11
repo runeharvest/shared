@@ -21,9 +21,7 @@
 #include "collision_desc.h"
 #include "global_retriever.h"
 
-
-namespace NLPACS
-{
+namespace NLPACS {
 
 class CMovePrimitive;
 class CCollisionOTInfo;
@@ -38,76 +36,76 @@ class CCollisionOTInfo;
 class CCollisionOT
 {
 public:
-	CCollisionOT ()
+	CCollisionOT()
 	{
-		_Info=false;
-		clear ();
+		_Info = false;
+		clear();
 	}
 
-	virtual ~CCollisionOT () { }
+	virtual ~CCollisionOT() { }
 
 	/// Clear the element
-	void			clear ()
+	void clear()
 	{
-		_Next=NULL;
-		_Previous=NULL;
+		_Next = NULL;
+		_Previous = NULL;
 	}
 
 	/// Link in the ot
-	void			link (CCollisionOT* newElement)
+	void link(CCollisionOT *newElement)
 	{
 		if (newElement)
 		{
-			newElement->_Previous=this;
-			newElement->_Next=_Next;
+			newElement->_Previous = this;
+			newElement->_Next = _Next;
 		}
 		if (_Next)
-			_Next->_Previous=newElement;
-		_Next=newElement;
+			_Next->_Previous = newElement;
+		_Next = newElement;
 	}
 
 	/// Remove from OT
-	void			unlink ()
+	void unlink()
 	{
 		if (_Previous)
-			_Previous->_Next=_Next;
+			_Previous->_Next = _Next;
 		if (_Next)
-			_Next->_Previous=_Previous;
-		_Next=NULL;
-		_Previous=NULL;
+			_Next->_Previous = _Previous;
+		_Next = NULL;
+		_Previous = NULL;
 	}
 
 	/// Return true if it an info collision else false;
-	bool			isInfo () const
+	bool isInfo() const
 	{
 		return _Info;
 	}
 
 	/// Get next element in the ot
-	CCollisionOT		*getPrevious () const
+	CCollisionOT *getPrevious() const
 	{
 		return _Previous;
 	}
 
 	/// Get next element in the ot
-	CCollisionOT		*getNext () const
+	CCollisionOT *getNext() const
 	{
 		return _Next;
 	}
 
 	/// Get next element in the ot
-	CCollisionOTInfo	*getNextInfo () const;
+	CCollisionOTInfo *getNextInfo() const;
 
 private:
 	// The next cell
-	CCollisionOT	*_Next;
+	CCollisionOT *_Next;
 
 	// The previous cell
-	CCollisionOT	*_Previous;
+	CCollisionOT *_Previous;
 
 protected:
 	// Is a CCollisionOTInfo
-	bool			_Info;
+	bool _Info;
 };
 
 /**
@@ -120,28 +118,28 @@ protected:
 class CCollisionOTInfo : public CCollisionOT
 {
 public:
-	CCollisionOTInfo ()
+	CCollisionOTInfo()
 	{
-		_Info=true;
+		_Info = true;
 	}
 
 	// Link in the primitive
-	virtual void primitiveLink (CMovePrimitive *primitive, CCollisionOTInfo *other) =0;
+	virtual void primitiveLink(CMovePrimitive *primitive, CCollisionOTInfo *other) = 0;
 
 	// Link in the primitive
-	virtual CCollisionOTInfo	*getNext (CMovePrimitive *primitive) const =0;
+	virtual CCollisionOTInfo *getNext(CMovePrimitive *primitive) const = 0;
 
 	// Return false for dynamic collision, true for static collision
-	virtual bool				isCollisionAgainstStatic () const=0;
+	virtual bool isCollisionAgainstStatic() const = 0;
 
 	// Return collision time
-	virtual double				getCollisionTime () const=0;
+	virtual double getCollisionTime() const = 0;
 
 	// Remove the collision from the primitives
-	virtual void				removeFromPrimitives ()=0;
+	virtual void removeFromPrimitives() = 0;
 
 	// Get second primitive
-	virtual CMovePrimitive		*getOtherPrimitive (CMovePrimitive *primitive) const=0;
+	virtual CMovePrimitive *getOtherPrimitive(CMovePrimitive *primitive) const = 0;
 };
 
 /**
@@ -154,117 +152,117 @@ public:
 class CCollisionOTDynamicInfo : public CCollisionOTInfo
 {
 public:
-	CCollisionOTDynamicInfo ()
+	CCollisionOTDynamicInfo()
 	{
-		_Info=true;
+		_Info = true;
 	}
 
 	// Get the first primitive in the collision
-	CMovePrimitive		*getFirstPrimitive () const
+	CMovePrimitive *getFirstPrimitive() const
 	{
 		return _FirstPrimitive;
 	}
 
 	// Get the second primitive in the collision
-	CMovePrimitive		*getSecondPrimitive () const
+	CMovePrimitive *getSecondPrimitive() const
 	{
 		return _SecondPrimitive;
 	}
 
 	// Get the collision descriptor
-	const CCollisionDesc	&getCollisionDesc () const
+	const CCollisionDesc &getCollisionDesc() const
 	{
 		return _Desc;
 	}
 
 	// Is a collision
-	bool				isCollision() const
+	bool isCollision() const
 	{
 		return _Collision;
 	}
 
 	// Is enter
-	bool				isEnter() const
+	bool isEnter() const
 	{
 		return _Enter;
 	}
 
 	// Is exit
-	bool				isExit() const
+	bool isExit() const
 	{
 		return _Exit;
 	}
 
 	// Is exit
-	bool				isInside() const
+	bool isInside() const
 	{
 		return _Inside;
 	}
 
 	// Is second primitive is static ?
-	bool				isSecondStatic () const
+	bool isSecondStatic() const
 	{
 		return _SecondStatic;
 	}
 
 	// Get the world image
-	uint8 getFirstWorldImage () const
+	uint8 getFirstWorldImage() const
 	{
 		return _FirstWorldImage;
 	}
 
 	// Get the world image
-	uint8 getSecondWorldImage () const
+	uint8 getSecondWorldImage() const
 	{
 		return _SecondWorldImage;
 	}
 
 	// Init the info
-	void				init (CMovePrimitive *firstPrimitive, CMovePrimitive *secondPrimitive, const CCollisionDesc& desc, bool collision,
-								bool enter, bool exit, bool inside, uint8 firstWorldImage, uint8 secondWorldImage, bool secondStatic)
+	void init(CMovePrimitive *firstPrimitive, CMovePrimitive *secondPrimitive, const CCollisionDesc &desc, bool collision,
+	    bool enter, bool exit, bool inside, uint8 firstWorldImage, uint8 secondWorldImage, bool secondStatic)
 	{
-		_FirstPrimitive=firstPrimitive;
-		_SecondPrimitive=secondPrimitive;
-		_Desc=desc;
-		_Collision=collision;
-		_Enter=enter;
-		_Exit=exit;
-		_Inside=inside;
-		_FirstWorldImage=firstWorldImage;
-		_SecondWorldImage=secondWorldImage;
-		_SecondStatic=secondStatic;
+		_FirstPrimitive = firstPrimitive;
+		_SecondPrimitive = secondPrimitive;
+		_Desc = desc;
+		_Collision = collision;
+		_Enter = enter;
+		_Exit = exit;
+		_Inside = inside;
+		_FirstWorldImage = firstWorldImage;
+		_SecondWorldImage = secondWorldImage;
+		_SecondStatic = secondStatic;
 	}
 
 	// Link in the primitive
-	void				primitiveLink (CMovePrimitive *primitive, CCollisionOTInfo *other)
+	void primitiveLink(CMovePrimitive *primitive, CCollisionOTInfo *other)
 	{
 		// First primitive ?
-		if (primitive==_FirstPrimitive)
+		if (primitive == _FirstPrimitive)
 		{
 			// Check
-			nlassert  (primitive!=_SecondPrimitive);
+			nlassert(primitive != _SecondPrimitive);
 
 			// Link
-			_FirstNext=other;
+			_FirstNext = other;
 		}
 		else // second
 		{
 			// Check
-			nlassert  (primitive==_SecondPrimitive);
+			nlassert(primitive == _SecondPrimitive);
 
 			// Link
-			_SecondNext=other;
+			_SecondNext = other;
 		}
 	}
 
 	// Link in the primitive
-	CCollisionOTInfo	*getNext (CMovePrimitive *primitive) const
+	CCollisionOTInfo *getNext(CMovePrimitive *primitive) const
 	{
 		// First primitive ?
-		if (primitive==_FirstPrimitive)
+		if (primitive == _FirstPrimitive)
 		{
 			// Check
-			nlassert  (primitive!=_SecondPrimitive);
+			nlassert(primitive != _SecondPrimitive);
 
 			// return next
 			return _FirstNext;
@@ -272,7 +270,7 @@ public:
 		else // second
 		{
 			// Check
-			nlassert  (primitive==_SecondPrimitive);
+			nlassert(primitive == _SecondPrimitive);
 
 			// Link
 			return _SecondNext;
@@ -280,59 +278,58 @@ public:
 	}
 
 	// Return false for dynamic collision, true for static collision
-	bool				isCollisionAgainstStatic () const
+	bool isCollisionAgainstStatic() const
 	{
 		return false;
 	}
 
 	// Return collision time
-	double				getCollisionTime () const
+	double getCollisionTime() const
 	{
 		return _Desc.ContactTime;
 	}
 
 	// Remove the collision from the primitives
-	void				removeFromPrimitives ();
+	void removeFromPrimitives();
 
 	// Get second primitive
-	CMovePrimitive		*getOtherPrimitive (CMovePrimitive *primitive) const
+	CMovePrimitive *getOtherPrimitive(CMovePrimitive *primitive) const
 	{
-		if (_FirstPrimitive==primitive)
+		if (_FirstPrimitive == primitive)
 			return _SecondPrimitive;
 		else
 		{
-			nlassert (_SecondPrimitive==primitive);
+			nlassert(_SecondPrimitive == primitive);
 			return _FirstPrimitive;
 		}
 	}
 
 private:
-
 	// The first primitive
-	CMovePrimitive		*_FirstPrimitive;
+	CMovePrimitive *_FirstPrimitive;
 
 	// The second primitive
-	CMovePrimitive		*_SecondPrimitive;
+	CMovePrimitive *_SecondPrimitive;
 
 	// Descriptor
-	CCollisionDesc		_Desc;
+	CCollisionDesc _Desc;
 
 	// Collision or only trigger ?
-	bool				_Collision;
-	bool				_Enter;
-	bool				_Exit;
-	bool				_Inside;
-	bool				_SecondStatic;
+	bool _Collision;
+	bool _Enter;
+	bool _Exit;
+	bool _Inside;
+	bool _SecondStatic;
 
 	// World images
 	uint8 _FirstWorldImage;
 	uint8 _SecondWorldImage;
 
 	// First primitive linked list
-	CCollisionOTInfo	*_FirstNext;
+	CCollisionOTInfo *_FirstNext;
 
 	// Second primitive linked list
-	CCollisionOTInfo	*_SecondNext;
+	CCollisionOTInfo *_SecondNext;
 };
 
 /**
@@ -345,124 +342,122 @@ private:
 class CCollisionOTStaticInfo : public CCollisionOTInfo
 {
 public:
-	CCollisionOTStaticInfo ()
+	CCollisionOTStaticInfo()
 	{
-		_Info=true;
+		_Info = true;
 	}
 
 	// Get the first primitive in the collision
-	CMovePrimitive		*getPrimitive () const
+	CMovePrimitive *getPrimitive() const
 	{
 		return _Primitive;
 	}
 
 	// Get the collision descriptor
-	const CCollisionSurfaceDesc	&getCollisionDesc () const
+	const CCollisionSurfaceDesc &getCollisionDesc() const
 	{
 		return _StaticDesc;
 	}
 
 	// Get the collision descriptor
-	const UGlobalPosition &getGlobalPosition () const
+	const UGlobalPosition &getGlobalPosition() const
 	{
 		return _GlobalPosition;
 	}
 
 	// Get delta time
-	double getDeltaTime () const
+	double getDeltaTime() const
 	{
 		return _DeltaTime;
 	}
 
 	// Get the world image
-	uint8 getWorldImage () const
+	uint8 getWorldImage() const
 	{
 		return _WorldImage;
 	}
 
 	// Init the info
-	void				init (CMovePrimitive *primitive, const CCollisionSurfaceDesc& desc,
-								const UGlobalPosition& nextGlobalPosition, double delta, uint8 worldImage)
+	void init(CMovePrimitive *primitive, const CCollisionSurfaceDesc &desc,
+	    const UGlobalPosition &nextGlobalPosition, double delta, uint8 worldImage)
 	{
-		_Primitive=primitive;
-		_StaticDesc=desc;
-		_GlobalPosition=nextGlobalPosition;
-		_DeltaTime=delta;
-		_WorldImage=worldImage;
+		_Primitive = primitive;
+		_StaticDesc = desc;
+		_GlobalPosition = nextGlobalPosition;
+		_DeltaTime = delta;
+		_WorldImage = worldImage;
 	}
 
 	// Link in the primitive
-	void				primitiveLink (CMovePrimitive * /* primitive */, CCollisionOTInfo *other)
+	void primitiveLink(CMovePrimitive * /* primitive */, CCollisionOTInfo *other)
 	{
 		// Link
-		_Next=other;
+		_Next = other;
 	}
 
 	// Link in the primitive
-	CCollisionOTInfo	*getNext (CMovePrimitive * /* primitive */) const
+	CCollisionOTInfo *getNext(CMovePrimitive * /* primitive */) const
 	{
 		// return next
 		return _Next;
 	}
 
 	// Return false for dynamic collision, true for static collision
-	bool				isCollisionAgainstStatic () const
+	bool isCollisionAgainstStatic() const
 	{
 		return true;
 	}
 
 	// Return collision time
-	double				getCollisionTime () const
+	double getCollisionTime() const
 	{
 		return _StaticDesc.ContactTime;
 	}
 
 	// Remove the collision from the primitives
-	void				removeFromPrimitives ();
+	void removeFromPrimitives();
 
-	CMovePrimitive		*getOtherPrimitive (CMovePrimitive * /* primitive */) const
+	CMovePrimitive *getOtherPrimitive(CMovePrimitive * /* primitive */) const
 	{
 		return NULL;
 	}
+
 private:
 	// The first primitive
-	CMovePrimitive		*_Primitive;
+	CMovePrimitive *_Primitive;
 
 	// The static descriptor
-	CCollisionSurfaceDesc	_StaticDesc;
+	CCollisionSurfaceDesc _StaticDesc;
 
 	// The next global position
-	UGlobalPosition	_GlobalPosition;
+	UGlobalPosition _GlobalPosition;
 
 	// Delta time for this collid
-	double				_DeltaTime;
+	double _DeltaTime;
 
 	// World image
-	uint8				_WorldImage;
+	uint8 _WorldImage;
 
 	// Next primitive in the linked list
-	CCollisionOTInfo	*_Next;
+	CCollisionOTInfo *_Next;
 };
 
 // ***************************************************************************
 
-inline CCollisionOTInfo	*CCollisionOT::getNextInfo () const
+inline CCollisionOTInfo *CCollisionOT::getNextInfo() const
 {
 	// Get next
-	CCollisionOT *next=_Next;
+	CCollisionOT *next = _Next;
 
 	// Is an info ?
-	while ( next && (!next->isInfo ()) )
-		next=next->getNextInfo ();
+	while (next && (!next->isInfo()))
+		next = next->getNextInfo();
 
 	// Return an info
-	return (CCollisionOTInfo*)next;
+	return (CCollisionOTInfo *)next;
 }
 
-
-
 } // NLPACS
-
 
 #endif // NL_COLLISION_OT_H
 

@@ -42,14 +42,13 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CBitmapTex::CBitmapTex(CScene *scene) : CTexmap(scene)
+CBitmapTex::CBitmapTex(CScene *scene)
+    : CTexmap(scene)
 {
-
 }
 
 CBitmapTex::~CBitmapTex()
 {
-
 }
 
 } /* namespace BUILTIN */

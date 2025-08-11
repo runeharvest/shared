@@ -25,12 +25,9 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NLGUI
+namespace NLGUI {
+CViewBase *CInterfaceFactory::createClass(const std::string &name)
 {
-	CViewBase* CInterfaceFactory::createClass( const std::string &name )
-	{
-		return NLMISC_GET_FACTORY( CViewBase, std::string ).createObject( std::string( name ) , CViewBase::TCtorParam() );
-	}
+	return NLMISC_GET_FACTORY(CViewBase, std::string).createObject(std::string(name), CViewBase::TCtorParam());
 }
-
-
+}

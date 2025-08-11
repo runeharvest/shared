@@ -29,155 +29,151 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 
-	CMeshMultiLodInstance::CMeshMultiLodInstance ()
+CMeshMultiLodInstance::CMeshMultiLodInstance()
 {
 	// No flags
-	Flags=0;
+	Flags = 0;
 	_CoarseMeshDistance = -1.f;
-	_LastCoarseMesh= NULL;
-	_LastCoarseMeshNumVertices= 0;
+	_LastCoarseMesh = NULL;
+	_LastCoarseMeshNumVertices = 0;
 }
 
 // ***************************************************************************
 
-CMeshMultiLodInstance::~CMeshMultiLodInstance ()
+CMeshMultiLodInstance::~CMeshMultiLodInstance()
 {
 }
 
-
 // ***************************************************************************
 
-void		CMeshMultiLodInstance::registerBasic()
+void CMeshMultiLodInstance::registerBasic()
 {
-	CScene::registerModel (MeshMultiLodInstanceId, MeshBaseInstanceId, CMeshMultiLodInstance::creator);
+	CScene::registerModel(MeshMultiLodInstanceId, MeshBaseInstanceId, CMeshMultiLodInstance::creator);
 }
 
-
 // ***************************************************************************
-CRGBA		CMeshMultiLodInstance::getCoarseMeshLighting()
+CRGBA CMeshMultiLodInstance::getCoarseMeshLighting()
 {
-	CScene	*scene= getOwnerScene();
+	CScene *scene = getOwnerScene();
 	nlassert(scene);
 
 	// compute his sun contribution result, and update
-	CRGBA	sunContrib= scene->getSunDiffuse();
+	CRGBA sunContrib = scene->getSunDiffuse();
 	// simulate/average diffuse lighting over the mesh by dividing diffuse by 2.
-	sunContrib.modulateFromuiRGBOnly(sunContrib, getLightContribution().SunContribution/2 );
+	sunContrib.modulateFromuiRGBOnly(sunContrib, getLightContribution().SunContribution / 2);
 	// Add Ambient
 	sunContrib.addRGBOnly(sunContrib, scene->getSunAmbient());
-	sunContrib.A= 255;
+	sunContrib.A = 255;
 
 	return sunContrib;
 }
 
-
 // ***************************************************************************
 
-void		CMeshMultiLodInstance::traverseLoadBalancing()
+void CMeshMultiLodInstance::traverseLoadBalancing()
 {
 	// Call previous
-	CMeshBaseInstance::traverseLoadBalancing ();
+	CMeshBaseInstance::traverseLoadBalancing();
 
 	// If this is the second pass of LoadBalancing, choose the Lods, according to getNumTrianglesAfterLoadBalancing()
-	CLoadBalancingTrav		&loadTrav= getOwnerScene()->getLoadBalancingTrav();
-	if(loadTrav.getLoadPass()==1)
+	CLoadBalancingTrav &loadTrav = getOwnerScene()->getLoadBalancingTrav();
+	if (loadTrav.getLoadPass() == 1)
 	{
 		// Get a pointer on the shape
-		CMeshMultiLod *shape=safe_cast<CMeshMultiLod*> ((IShape*)Shape);
+		CMeshMultiLod *shape = safe_cast<CMeshMultiLod *>((IShape *)Shape);
 
 		// Reset render pass
-		if	(!getBypassLODOpacityFlag())
+		if (!getBypassLODOpacityFlag())
 		{
 			setTransparency(false);
 			setOpacity(false);
 		}
 
 		// Get the wanted number of polygons
-		float polygonCount= getNumTrianglesAfterLoadBalancing ();
+		float polygonCount = getNumTrianglesAfterLoadBalancing();
 
 		// Look for the good slot
-		uint meshCount=(uint)shape->_MeshVector.size();
-		Lod0=0;
-		if (meshCount>1)
+		uint meshCount = (uint)shape->_MeshVector.size();
+		Lod0 = 0;
+		if (meshCount > 1)
 		{
 			// Look for good i
-			while ( polygonCount < shape->_MeshVector[Lod0].EndPolygonCount )
+			while (polygonCount < shape->_MeshVector[Lod0].EndPolygonCount)
 			{
 				Lod0++;
-				if (Lod0==meshCount-1)
+				if (Lod0 == meshCount - 1)
 					break;
 			}
 		}
 
 		// The slot
-		CMeshMultiLod::CMeshSlot	&slot=shape->_MeshVector[Lod0];
+		CMeshMultiLod::CMeshSlot &slot = shape->_MeshVector[Lod0];
 
 		// Get the distance with polygon count
-		float distance=(polygonCount-slot.B)/slot.A;
+		float distance = (polygonCount - slot.B) / slot.A;
 
 		// Get the final polygon count
 		if (slot.MeshGeom)
-			PolygonCountLod0=slot.MeshGeom->getNumTriangles (distance);
+			PolygonCountLod0 = slot.MeshGeom->getNumTriangles(distance);
 
 		// Second slot in use ?
-		Lod1=0xffffffff;
+		Lod1 = 0xffffffff;
 
 		// The next slot
-		CMeshMultiLod::CMeshSlot	*nextSlot=NULL;
+		CMeshMultiLod::CMeshSlot *nextSlot = NULL;
 
 		// Next slot exist ?
-		if (Lod0!=meshCount-1)
+		if (Lod0 != meshCount - 1)
 		{
-			nextSlot=&(shape->_MeshVector[Lod0+1]);
+			nextSlot = &(shape->_MeshVector[Lod0 + 1]);
 		}
 
 		// Max dist before blend
 		float startBlend;
 		if (nextSlot)
-			startBlend=slot.DistMax-nextSlot->BlendLength;
+			startBlend = slot.DistMax - nextSlot->BlendLength;
 		else
-			startBlend=slot.DistMax-slot.BlendLength;
+			startBlend = slot.DistMax - slot.BlendLength;
 
 		// In blend zone ?
-		if ( startBlend < distance )
+		if (startBlend < distance)
 		{
 			// Alpha factor for main Lod
-			BlendFactor = (slot.DistMax-distance)/(slot.DistMax-startBlend);
-			if (BlendFactor<0)
-				BlendFactor=0;
-			nlassert (BlendFactor<=1);
+			BlendFactor = (slot.DistMax - distance) / (slot.DistMax - startBlend);
+			if (BlendFactor < 0)
+				BlendFactor = 0;
+			nlassert(BlendFactor <= 1);
 
 			// Render this mesh
 			if (slot.MeshGeom)
 			{
-				if (slot.Flags&CMeshMultiLod::CMeshSlot::BlendOut)
+				if (slot.Flags & CMeshMultiLod::CMeshSlot::BlendOut)
 				{
 					// Render the geom mesh with alpha blending with goodPolyCount
 					if (!getBypassLODOpacityFlag()) setTransparency(true);
-					Flags|=CMeshMultiLodInstance::Lod0Blend;
+					Flags |= CMeshMultiLodInstance::Lod0Blend;
 				}
 				else
 				{
 					// Render the geom mesh without alpha blending with goodPolyCount
-					if (!getBypassLODOpacityFlag()) setTransparency (slot.isTransparent());
-					setOpacity (slot.isOpaque());
-					Flags&=~CMeshMultiLodInstance::Lod0Blend;
+					if (!getBypassLODOpacityFlag()) setTransparency(slot.isTransparent());
+					setOpacity(slot.isOpaque());
+					Flags &= ~CMeshMultiLodInstance::Lod0Blend;
 				}
 			}
 			else
-				Lod0=0xffffffff;
+				Lod0 = 0xffffffff;
 
 			// Next mesh, BlendIn actived ?
-			if (nextSlot && shape->_MeshVector[Lod0+1].MeshGeom && (nextSlot->Flags&CMeshMultiLod::CMeshSlot::BlendIn))
+			if (nextSlot && shape->_MeshVector[Lod0 + 1].MeshGeom && (nextSlot->Flags & CMeshMultiLod::CMeshSlot::BlendIn))
 			{
 				// Render the geom mesh with alpha blending with nextSlot->BeginPolygonCount
-				PolygonCountLod1=nextSlot->MeshGeom->getNumTriangles (distance);
-				Lod1=Lod0+1;
+				PolygonCountLod1 = nextSlot->MeshGeom->getNumTriangles(distance);
+				Lod1 = Lod0 + 1;
 				if (!getBypassLODOpacityFlag()) setTransparency(true);
 			}
 		}
@@ -188,150 +184,144 @@ void		CMeshMultiLodInstance::traverseLoadBalancing()
 				// Render without blend with goodPolyCount
 				if (!getBypassLODOpacityFlag())
 				{
-					setTransparency (slot.isTransparent());
-					setOpacity (slot.isOpaque());
+					setTransparency(slot.isTransparent());
+					setOpacity(slot.isOpaque());
 				}
-				Flags&=~CMeshMultiLodInstance::Lod0Blend;
+				Flags &= ~CMeshMultiLodInstance::Lod0Blend;
 			}
 			else
-				Lod0=0xffffffff;
+				Lod0 = 0xffffffff;
 		}
-
-
 	}
 }
 
 // ***************************************************************************
-void		CMeshMultiLodInstance::changeMRMDistanceSetup(float distanceFinest, float distanceMiddle, float distanceCoarsest)
+void CMeshMultiLodInstance::changeMRMDistanceSetup(float distanceFinest, float distanceMiddle, float distanceCoarsest)
 {
-	if(Shape)
+	if (Shape)
 	{
 		// Get a pointer on the shape.
-		CMeshMultiLod *pMesh =safe_cast<CMeshMultiLod*> ((IShape*)Shape);
+		CMeshMultiLod *pMesh = safe_cast<CMeshMultiLod *>((IShape *)Shape);
 		// Affect the mesh directly.
 		pMesh->changeMRMDistanceSetup(distanceFinest, distanceMiddle, distanceCoarsest);
 	}
 }
 
-
 // ***************************************************************************
-float	   CMeshMultiLodInstance::getNumTriangles (float distance)
+float CMeshMultiLodInstance::getNumTriangles(float distance)
 {
-	CMeshMultiLod *shape = safe_cast<CMeshMultiLod*> ((IShape*)Shape);
+	CMeshMultiLod *shape = safe_cast<CMeshMultiLod *>((IShape *)Shape);
 	return shape->getNumTrianglesWithCoarsestDist(distance, _CoarseMeshDistance);
 }
 
-
 // ***************************************************************************
-void		CMeshMultiLodInstance::initRenderFilterType()
+void CMeshMultiLodInstance::initRenderFilterType()
 {
-	if(Shape)
+	if (Shape)
 	{
-		CMeshMultiLod *shape = safe_cast<CMeshMultiLod*> ((IShape*)Shape);
+		CMeshMultiLod *shape = safe_cast<CMeshMultiLod *>((IShape *)Shape);
 
 		// Look only the First LOD to know if it has a VP or not
-		bool			hasVP= false;
-		bool			coarseMesh;
-		if(shape->getNumSlotMesh()>0 && shape->getSlotMesh(0, coarseMesh))
+		bool hasVP = false;
+		bool coarseMesh;
+		if (shape->getNumSlotMesh() > 0 && shape->getSlotMesh(0, coarseMesh))
 		{
-			IMeshGeom		*meshGeom= shape->getSlotMesh(0, coarseMesh);
+			IMeshGeom *meshGeom = shape->getSlotMesh(0, coarseMesh);
 			// hasVP possible only if not a coarseMesh.
-			if(!coarseMesh)
-				hasVP= meshGeom->hasMeshVertexProgram();
+			if (!coarseMesh)
+				hasVP = meshGeom->hasMeshVertexProgram();
 		}
 
-		if(hasVP)
-			_RenderFilterType= UScene::FilterMeshLodVP;
+		if (hasVP)
+			_RenderFilterType = UScene::FilterMeshLodVP;
 		else
-			_RenderFilterType= UScene::FilterMeshLodNoVP;
+			_RenderFilterType = UScene::FilterMeshLodNoVP;
 	}
 }
 
-
 // ***************************************************************************
-void		CMeshMultiLodInstance::setUVCoarseMesh( CMeshGeom &geom, uint vtDstSize, uint dstUvOff )
+void CMeshMultiLodInstance::setUVCoarseMesh(CMeshGeom &geom, uint vtDstSize, uint dstUvOff)
 {
 	// *** Copy UVs to the vertices
 
 	// Src vertex buffer
-	const CVertexBuffer &vbSrc=geom.getVertexBuffer();
+	const CVertexBuffer &vbSrc = geom.getVertexBuffer();
 	CVertexBufferRead vba;
-	vbSrc.lock (vba);
+	vbSrc.lock(vba);
 
 	// Check the vertex format and src Vertices
-	nlassert (vbSrc.getVertexFormat() & (CVertexBuffer::PositionFlag|CVertexBuffer::TexCoord0Flag) );
-	nlassert (vbSrc.getNumVertices()==_LastCoarseMeshNumVertices);
+	nlassert(vbSrc.getVertexFormat() & (CVertexBuffer::PositionFlag | CVertexBuffer::TexCoord0Flag));
+	nlassert(vbSrc.getNumVertices() == _LastCoarseMeshNumVertices);
 
 	// src Vertex size
-	uint vtSrcSize=vbSrc.getVertexSize ();
+	uint vtSrcSize = vbSrc.getVertexSize();
 
 	// Copy vector
-	const uint8 *vSrc = (const uint8 *)vba.getTexCoordPointer(0,0);
+	const uint8 *vSrc = (const uint8 *)vba.getTexCoordPointer(0, 0);
 	uint8 *vDest = &_CoarseMeshVB[0];
-	vDest+= dstUvOff;
+	vDest += dstUvOff;
 
 	// Transform it
-	for (uint i=0; i<_LastCoarseMeshNumVertices; i++)
+	for (uint i = 0; i < _LastCoarseMeshNumVertices; i++)
 	{
 		// Transform position
-		*(CUV*)vDest = *(const CUV*)vSrc;
+		*(CUV *)vDest = *(const CUV *)vSrc;
 
 		// Next point
-		vSrc+=vtSrcSize;
-		vDest+=vtDstSize;
+		vSrc += vtSrcSize;
+		vDest += vtDstSize;
 	}
 }
 // ***************************************************************************
-void		CMeshMultiLodInstance::setPosCoarseMesh( CMeshGeom &geom, const CMatrix &matrix, uint vtDstSize )
+void CMeshMultiLodInstance::setPosCoarseMesh(CMeshGeom &geom, const CMatrix &matrix, uint vtDstSize)
 {
 	// *** Transform the vertices
 
 	// Src vertex buffer
-	const CVertexBuffer &vbSrc=geom.getVertexBuffer();
+	const CVertexBuffer &vbSrc = geom.getVertexBuffer();
 	CVertexBufferRead vba;
-	vbSrc.lock (vba);
+	vbSrc.lock(vba);
 
 	// Check the vertex format and src Vertices
-	nlassert (vbSrc.getVertexFormat() & (CVertexBuffer::PositionFlag|CVertexBuffer::TexCoord0Flag) );
-	nlassert (vbSrc.getNumVertices()==_LastCoarseMeshNumVertices);
+	nlassert(vbSrc.getVertexFormat() & (CVertexBuffer::PositionFlag | CVertexBuffer::TexCoord0Flag));
+	nlassert(vbSrc.getNumVertices() == _LastCoarseMeshNumVertices);
 
 	// src Vertex size
-	uint vtSrcSize=vbSrc.getVertexSize ();
+	uint vtSrcSize = vbSrc.getVertexSize();
 
 	// Copy vector
-	const uint8 *vSrc = (const uint8 *)vba.getVertexCoordPointer (0);
+	const uint8 *vSrc = (const uint8 *)vba.getVertexCoordPointer(0);
 	uint8 *vDest = &_CoarseMeshVB[0];
 
 	// Transform it
-	for (uint i=0; i<_LastCoarseMeshNumVertices; i++)
+	for (uint i = 0; i < _LastCoarseMeshNumVertices; i++)
 	{
 		// Transform position
-		*(CVector*)vDest = matrix.mulPoint (*(const CVector*)vSrc);
+		*(CVector *)vDest = matrix.mulPoint(*(const CVector *)vSrc);
 
 		// Next point
-		vSrc+=vtSrcSize;
-		vDest+=vtDstSize;
+		vSrc += vtSrcSize;
+		vDest += vtDstSize;
 	}
 }
 // ***************************************************************************
-void		CMeshMultiLodInstance::setColorCoarseMesh( CRGBA color, uint vtDstSize, uint dstColorOff )
+void CMeshMultiLodInstance::setColorCoarseMesh(CRGBA color, uint vtDstSize, uint dstColorOff)
 {
 	// *** Copy color to vertices
 
 	// Copy vector
 	uint8 *vDest = &_CoarseMeshVB[0];
-	vDest+= dstColorOff;
+	vDest += dstColorOff;
 
 	// Transform it
-	for (uint i=0; i<_LastCoarseMeshNumVertices; i++)
+	for (uint i = 0; i < _LastCoarseMeshNumVertices; i++)
 	{
 		// Transform position
-		*(CRGBA*)vDest = color;
+		*(CRGBA *)vDest = color;
 
 		// Next point
-		vDest+=vtDstSize;
+		vDest += vtDstSize;
 	}
 }
-
 
 } // NL3D

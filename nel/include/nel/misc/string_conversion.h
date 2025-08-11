@@ -22,10 +22,7 @@
 
 #include <map>
 
-namespace NLMISC
-{
-
-
+namespace NLMISC {
 
 // a predicate use to do unsensitive string comparison (with operator <)
 struct CUnsensitiveStrLessPred
@@ -36,54 +33,54 @@ struct CUnsensitiveStrLessPred
 	}
 };
 
-
 /** This class allow simple mapping between string and other type (such as integral types or enum)
-  * In fact this primarily intended to make a string / enum correspondance
-  * Example of use :
-  *
-  * // An enumerated type
-  * enum TMyType { Foo = 0, Bar, FooBar, Unknown };
-  *
-  * // The conversion table
-  * static const CStringConversion<TMyType>::CPair stringTable [] =
-  * {
-  *   { "Foo", Foo },
-  *   { "Bar", Bar },
-  *   { "FooBar", FooBar }
-  * };
-  *
-  * // The helper object for conversion (instance of this class)
-  *	static const CStringConversion conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]),  Unknown);
-  *
-  * // Some conversions request
-  * TMyType value1 = conversion.fromString("foo");  // returns 'foo'
-  * value1 = conversion.fromString("Foo");          // returns 'foo' (this is case unsensitive by default)
-  * std::string str = conversion.toString(Bar)      // returns "Bar"
-  *
-  * NB : Please note that that helpers macros are provided to build such a table in an easy way
-  *      \see NL_BEGIN_STRING_CONVERSION_TABLE
-  *      \see NL_END_STRING_CONVERSION_TABLE
-  *
-  *
-  * NB: by default this class behaves in a case unsensitive way. To change this, just change the 'Pred' template parameter
-  *     to std::less<std::string>
-  *
-  * \author Nicolas Vizerie
-  * \author Nevrax France
-  * \date 2003
-  */
+ * In fact this primarily intended to make a string / enum correspondance
+ * Example of use :
+ *
+ * // An enumerated type
+ * enum TMyType { Foo = 0, Bar, FooBar, Unknown };
+ *
+ * // The conversion table
+ * static const CStringConversion<TMyType>::CPair stringTable [] =
+ * {
+ *   { "Foo", Foo },
+ *   { "Bar", Bar },
+ *   { "FooBar", FooBar }
+ * };
+ *
+ * // The helper object for conversion (instance of this class)
+ *	static const CStringConversion conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]),  Unknown);
+ *
+ * // Some conversions request
+ * TMyType value1 = conversion.fromString("foo");  // returns 'foo'
+ * value1 = conversion.fromString("Foo");          // returns 'foo' (this is case unsensitive by default)
+ * std::string str = conversion.toString(Bar)      // returns "Bar"
+ *
+ * NB : Please note that that helpers macros are provided to build such a table in an easy way
+ *      \see NL_BEGIN_STRING_CONVERSION_TABLE
+ *      \see NL_END_STRING_CONVERSION_TABLE
+ *
+ *
+ * NB: by default this class behaves in a case unsensitive way. To change this, just change the 'Pred' template parameter
+ *     to std::less<std::string>
+ *
+ * \author Nicolas Vizerie
+ * \author Nevrax France
+ * \date 2003
+ */
 
 template <class DestType, class Pred = CUnsensitiveStrLessPred>
 class CStringConversion
 {
 public:
 	typedef DestType TDestType;
-	typedef Pred     TPred;
+	typedef Pred TPred;
 	struct CPair
 	{
 		const char *Str;
-		TDestType   Value;
+		TDestType Value;
 	};
+
 public:
 	// init from pairs of string / value
 	CStringConversion(const CPair *pairs, uint numPairs, const DestType &notFoundValue);
@@ -102,48 +99,43 @@ public:
 
 	// Check a value against the list a value, return true if the value exist in the container
 	bool isValid(const DestType &value) const;
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 	typedef std::map<std::string, TDestType, TPred> TString2DestType;
-	typedef std::map<TDestType, std::string>        TDestType2String;
+	typedef std::map<TDestType, std::string> TDestType2String;
+
 private:
 	TString2DestType _String2DestType;
 	TDestType2String _DestType2String;
-	TDestType        _NotFoundValue;
+	TDestType _NotFoundValue;
 };
 
 /** This macro helps building a string conversion table
-  * Example of use :
-  *
-  * // The enumerated type for which a conversion should be defined
-  * enum TMyType { Foo = 0, Bar, FooBar, Unknown };
-  *
-  * // The conversion table
-  * NL_BEGIN_STRING_CONVERSION_TABLE(TMyType)
-  *	  NL_STRING_CONVERSION_TABLE_ENTRY(Foo)
-  *	  NL_STRING_CONVERSION_TABLE_ENTRY(Bar)
-  *	  NL_STRING_CONVERSION_TABLE_ENTRY(FooBar)
-  * NL_END_STRING_CONVERSION_TABLE(TMyType, myConversionTable, Unknown)
-  *
-  * // Now, we can use the 'myConversionTable' intance
-  *
-  * std::string str = myConversionTable.toString(Bar)      // returns "Bar"
-  *
-  */
-#define NL_BEGIN_STRING_CONVERSION_TABLE(__type)                                               \
-static const NLMISC::CStringConversion<__type>::CPair __type##_nl_string_conversion_table[] =          \
-{
-#define NL_END_STRING_CONVERSION_TABLE(__type, __tableName, __defaultValue)                    \
-};                                                                                             \
-NLMISC::CStringConversion<__type>                                                                \
-__tableName(__type##_nl_string_conversion_table, sizeof(__type##_nl_string_conversion_table)   \
-			/ sizeof(__type##_nl_string_conversion_table[0]),  __defaultValue);
-#define NL_STRING_CONVERSION_TABLE_ENTRY(val) { #val, val},
-
-
-
-
-
+ * Example of use :
+ *
+ * // The enumerated type for which a conversion should be defined
+ * enum TMyType { Foo = 0, Bar, FooBar, Unknown };
+ *
+ * // The conversion table
+ * NL_BEGIN_STRING_CONVERSION_TABLE(TMyType)
+ *	  NL_STRING_CONVERSION_TABLE_ENTRY(Foo)
+ *	  NL_STRING_CONVERSION_TABLE_ENTRY(Bar)
+ *	  NL_STRING_CONVERSION_TABLE_ENTRY(FooBar)
+ * NL_END_STRING_CONVERSION_TABLE(TMyType, myConversionTable, Unknown)
+ *
+ * // Now, we can use the 'myConversionTable' intance
+ *
+ * std::string str = myConversionTable.toString(Bar)      // returns "Bar"
+ *
+ */
+#define NL_BEGIN_STRING_CONVERSION_TABLE(__type) \
+	static const NLMISC::CStringConversion<__type>::CPair __type##_nl_string_conversion_table[] = {
+#define NL_END_STRING_CONVERSION_TABLE(__type, __tableName, __defaultValue) \
+	}                                                                       \
+	;                                                                       \
+	NLMISC::CStringConversion<__type>                                       \
+	    __tableName(__type##_nl_string_conversion_table, sizeof(__type##_nl_string_conversion_table) / sizeof(__type##_nl_string_conversion_table[0]), __defaultValue);
+#define NL_STRING_CONVERSION_TABLE_ENTRY(val) { #val, val },
 
 //////////////////////////////////////
 // CStringConversion implementation //
@@ -151,11 +143,11 @@ __tableName(__type##_nl_string_conversion_table, sizeof(__type##_nl_string_conve
 
 //=================================================================================================================
 /** CStringConversion ctor
-  */
+ */
 template <class DestType, class Pred>
 CStringConversion<DestType, Pred>::CStringConversion(const CPair *pairs, uint numPairs, const DestType &notFoundValue)
 {
-	for(uint k = 0; k < numPairs; ++k)
+	for (uint k = 0; k < numPairs; ++k)
 	{
 		_String2DestType[pairs[k].Str] = pairs[k].Value;
 		_DestType2String[pairs[k].Value] = pairs[k].Str;
@@ -170,7 +162,6 @@ void CStringConversion<DestType, Pred>::insert(const char *str, TDestType value)
 	_String2DestType[str] = value;
 	_DestType2String[value] = str;
 }
-
 
 //=================================================================================================================
 template <class DestType, class Pred>
@@ -203,7 +194,6 @@ const std::string &CStringConversion<DestType, Pred>::toString(const DestType &v
 	}
 }
 
-
 //=================================================================================================================
 template <class DestType, class Pred>
 bool CStringConversion<DestType, Pred>::isValid(const DestType &value) const
@@ -213,15 +203,6 @@ bool CStringConversion<DestType, Pred>::isValid(const DestType &value) const
 	return it != _DestType2String.end();
 }
 
-
 } // NLMISC
 
-
-
-
-
-
-
-
 #endif
-

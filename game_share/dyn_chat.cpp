@@ -30,16 +30,15 @@ NL_INSTANCE_COUNTER_IMPL(CDynChatSession);
 
 uint CDynChatSession::_NumSessions = 0;
 
-
 /////////////////////
 // CDynChatSession //
 /////////////////////
 //================================================================
 CDynChatSession::CDynChatSession(CDynChatClient *client, CDynChatChan *channel)
-							    :	StringID(0),
-								WriteRight(false),
-								_Client(client),
-								_Channel(channel)
+    : StringID(0)
+    , WriteRight(false)
+    , _Client(client)
+    , _Channel(channel)
 {
 	nlassert(client);
 	nlassert(channel);
@@ -62,14 +61,13 @@ CDynChatSession::CDynChatSession(CDynChatClient *client, CDynChatChan *channel)
 	_PrevChannelSession = &channel->_FirstSession;
 	channel->_FirstSession = this;
 
-	++ _NumSessions;
-
+	++_NumSessions;
 }
 
 //================================================================
 void CDynChatSession::unlink()
 {
-	nlassert(_Client);  // object already unlinked ?
+	nlassert(_Client); // object already unlinked ?
 	nlassert(_Channel);
 	nlassert(_PrevClientSession);
 	// client
@@ -109,7 +107,9 @@ CDynChatSession::~CDynChatSession()
 // CDynChatClient //
 ////////////////////
 //================================================================
-CDynChatClient::CDynChatClient(const TDataSetRow &client) : _FirstSession(NULL), _ID(client)
+CDynChatClient::CDynChatClient(const TDataSetRow &client)
+    : _FirstSession(NULL)
+    , _ID(client)
 {
 }
 
@@ -143,28 +143,28 @@ CDynChatSession *CDynChatClient::getSession(TChanID chan) const
 // CDynChatChan //
 //////////////////
 CDynChatChan::CDynChatChan()
-	:	HistoricSize(0),
-		HideBubble(false),
-		UniversalChannel(false),
-		_FirstSession(NULL),
-		_ID(CEntityId::Unknown),
-		_DontBroadcastPlayerInputs(false),
-		_ForwardPlayerIntputToOwnerService(false),
-		_UnifyChannel(false)
+    : HistoricSize(0)
+    , HideBubble(false)
+    , UniversalChannel(false)
+    , _FirstSession(NULL)
+    , _ID(CEntityId::Unknown)
+    , _DontBroadcastPlayerInputs(false)
+    , _ForwardPlayerIntputToOwnerService(false)
+    , _UnifyChannel(false)
 {
 }
 
 //================================================================
-//CDynChatChan::CDynChatChan(TChanID id) : _ID(id), _FirstSession(NULL), HistoricSize(0)
+// CDynChatChan::CDynChatChan(TChanID id) : _ID(id), _FirstSession(NULL), HistoricSize(0)
 CDynChatChan::CDynChatChan(TChanID id, bool noBroadcast, bool forwardInput, bool unified)
-	:	HistoricSize(0),
-		HideBubble(false),
-		UniversalChannel(false),
-		_FirstSession(NULL),
-		_ID(id),
-		_DontBroadcastPlayerInputs(noBroadcast),
-		_ForwardPlayerIntputToOwnerService(forwardInput),
-		_UnifyChannel(unified)
+    : HistoricSize(0)
+    , HideBubble(false)
+    , UniversalChannel(false)
+    , _FirstSession(NULL)
+    , _ID(id)
+    , _DontBroadcastPlayerInputs(noBroadcast)
+    , _ForwardPlayerIntputToOwnerService(forwardInput)
+    , _UnifyChannel(unified)
 {
 }
 
@@ -190,7 +190,7 @@ uint CDynChatChan::getSessionCount() const
 	CDynChatSession *currSession = _FirstSession;
 	while (currSession)
 	{
-		++ count;
+		++count;
 		currSession = currSession->getNextChannelSession();
 	}
 	return count;
@@ -199,7 +199,6 @@ uint CDynChatChan::getSessionCount() const
 //////////////
 // CDynChat //
 //////////////
-
 
 //================================================================
 bool CDynChat::addChan(TChanID chan, bool noBroadcast, bool forwardInput, bool unify)
@@ -330,12 +329,8 @@ void CDynChat::getChans(std::vector<CDynChatChan *> &channels)
 	uint numChans = (uint)_Chans.size();
 	channels.resize(numChans);
 	uint k = 0;
-	for(TChanMap::iterator it = _Chans.begin(); it != _Chans.end(); ++it, ++k)
+	for (TChanMap::iterator it = _Chans.begin(); it != _Chans.end(); ++it, ++k)
 	{
 		channels[k] = &(it->second);
 	}
 }
-
-
-
-

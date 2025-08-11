@@ -17,7 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef ROOT_GROUP_H
 #define ROOT_GROUP_H
 
@@ -26,24 +25,22 @@
 
 #include "nel/gui/interface_group.h"
 
-namespace NLGUI
+namespace NLGUI {
+
+class CRootGroup : public CInterfaceGroup
 {
+public:
+	CRootGroup(const TCtorParam &param);
+	virtual ~CRootGroup();
 
-	class CRootGroup : public CInterfaceGroup
-	{
-	public:
-		CRootGroup(const TCtorParam &param);
-		virtual ~CRootGroup();
+	virtual CInterfaceElement *getElement(const std::string &id);
+	virtual void addGroup(CInterfaceGroup *child, sint eltOrder = -1);
+	virtual bool delGroup(CInterfaceGroup *child, bool dontDelete = false);
 
-		virtual CInterfaceElement* getElement (const std::string &id);
-		virtual void addGroup (CInterfaceGroup *child, sint eltOrder = -1);
-		virtual bool delGroup (CInterfaceGroup *child, bool dontDelete = false);
-
-	private:
-		std::map< std::string, CInterfaceGroup* > _Accel;
-	};
+private:
+	std::map<std::string, CInterfaceGroup *> _Accel;
+};
 
 }
 
 #endif
-

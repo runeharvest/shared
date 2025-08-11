@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /*
  * Login system example, client.
  *
@@ -40,7 +39,6 @@
 
 #include "nel/net/udp_sock.h"
 
-
 using namespace std;
 using namespace NLMISC;
 using namespace NLNET;
@@ -48,31 +46,31 @@ using namespace NLNET;
 /*
  * main
  */
-void main (int argc, char **argv)
+void main(int argc, char **argv)
 {
 	string result;
 
 	CConfigFile ConfigFile;
-	
-	ConfigFile.load ("client.cfg");
+
+	ConfigFile.load("client.cfg");
 
 	string LSHost(ConfigFile.getVar("LSHost").asString());
 
-	char	buf[256];
+	char buf[256];
 	printf("Login: ");
 	fgets(buf, 256, stdin);
-	string	Login(buf);
+	string Login(buf);
 
 	printf("Password: ");
 	fgets(buf, 256, stdin);
-	string	Password(buf);
+	string Password(buf);
 
-	if (Login.empty ())
+	if (Login.empty())
 	{
 		Login = ConfigFile.getVar("Login").asString();
 	}
 
-	if (Password.empty ())
+	if (Password.empty())
 	{
 		Password = ConfigFile.getVar("Password").asString();
 	}
@@ -80,14 +78,14 @@ void main (int argc, char **argv)
 	/* Try to connect to the login service and check the login, password and version of the client.
 	 * return an empty string if all go well
 	 */
-	result = CLoginClient::authenticate(LSHost+":49999", Login, Password, "sample");
-	
-	if(!result.empty()) nlerror ("*** Authenticate failed '%s' ***", result.c_str());
+	result = CLoginClient::authenticate(LSHost + ":49999", Login, Password, "sample");
+
+	if (!result.empty()) nlerror("*** Authenticate failed '%s' ***", result.c_str());
 
 	// CLoginClient::ShardList contains all available shards
-	for (uint i = 0; i < CLoginClient::ShardList.size (); i++)
+	for (uint i = 0; i < CLoginClient::ShardList.size(); i++)
 	{
-		nlinfo("*** shard %d is: %s (%d) ***", i, CLoginClient::ShardList[i].Name.c_str (), CLoginClient::ShardList[i].Id);
+		nlinfo("*** shard %d is: %s (%d) ***", i, CLoginClient::ShardList[i].Name.c_str(), CLoginClient::ShardList[i].Id);
 	}
 
 	/* Try to connect to the last shard number in the list.
@@ -97,23 +95,24 @@ void main (int argc, char **argv)
 	string fs_ip, login_cookie;
 	result = CLoginClient::wantToConnectToShard(CLoginClient::ShardList[CLoginClient::ShardList.size() - 1].Id, fs_ip, login_cookie);
 	if (!result.empty()) nlerror("*** Select shard failed '%s' ***", result.c_str());
-	CLoginCookie cookie; cookie.setFromString(login_cookie); // who's idea was it to send the cookie as a string...
-	
+	CLoginCookie cookie;
+	cookie.setFromString(login_cookie); // who's idea was it to send the cookie as a string...
+
 	CCallbackClient *cnx = new CCallbackClient();
 	result = CLoginClient::connectToShard(cookie, fs_ip, *cnx);
 
 	if (!result.empty()) nlerror("*** Connection to the shard failed '%s' ***", result.c_str());
 
-	nlinfo ("*** Connection granted! You are connected on the frond end ***");
+	nlinfo("*** Connection granted! You are connected on the frond end ***");
 
-	while (cnx->connected ())
+	while (cnx->connected())
 	{
-		cnx->update ();
+		cnx->update();
 		nlSleep(10);
 	}
 
-	if( cnx->connected ())
-		cnx->disconnect ();
+	if (cnx->connected())
+		cnx->disconnect();
 
 	delete cnx;
 }

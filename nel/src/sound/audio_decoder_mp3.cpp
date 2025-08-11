@@ -17,7 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdsound.h"
 
 #if !defined(NL_OS_WINDOWS) || (NL_COMP_VC_VERSION > 90) /* VS2008 does not have stdint.h */
@@ -34,7 +33,7 @@ using namespace NLSOUND;
 namespace NLSOUND {
 
 // callback for drmp3
-static size_t drmp3_read(void* pUserData, void* pBufferOut, size_t bytesToRead)
+static size_t drmp3_read(void *pUserData, void *pBufferOut, size_t bytesToRead)
 {
 	NLSOUND::CAudioDecoderMP3 *decoder = static_cast<NLSOUND::CAudioDecoderMP3 *>(pUserData);
 	NLMISC::IStream *stream = decoder->getStream();
@@ -52,7 +51,7 @@ static size_t drmp3_read(void* pUserData, void* pBufferOut, size_t bytesToRead)
 }
 
 // callback for drmp3
-static drmp3_bool32 drmp3_seek(void* pUserData, int offset, drmp3_seek_origin origin)
+static drmp3_bool32 drmp3_seek(void *pUserData, int offset, drmp3_seek_origin origin)
 {
 	NLSOUND::CAudioDecoderMP3 *decoder = static_cast<NLSOUND::CAudioDecoderMP3 *>(pUserData);
 	NLMISC::IStream *stream = decoder->getStream();
@@ -66,7 +65,7 @@ static drmp3_bool32 drmp3_seek(void* pUserData, int offset, drmp3_seek_origin or
 	else
 		return false;
 
-	stream->seek((sint32) offset, seekOrigin);
+	stream->seek((sint32)offset, seekOrigin);
 	return true;
 }
 
@@ -76,8 +75,13 @@ static drmp3_bool32 drmp3_seek(void* pUserData, int offset, drmp3_seek_origin or
 #define MP3_CHANNELS 2
 
 CAudioDecoderMP3::CAudioDecoderMP3(NLMISC::IStream *stream, bool loop)
-: IAudioDecoder(),
-	_Stream(stream), _Loop(loop), _IsMusicEnded(false), _StreamSize(0), _IsSupported(false), _PCMFrameCount(0)
+    : IAudioDecoder()
+    , _Stream(stream)
+    , _Loop(loop)
+    , _IsMusicEnded(false)
+    , _StreamSize(0)
+    , _IsSupported(false)
+    , _PCMFrameCount(0)
 {
 	_StreamOffset = stream->getPos();
 	stream->seek(0, NLMISC::IStream::end);
@@ -128,13 +132,15 @@ bool CAudioDecoderMP3::getInfo(NLMISC::IStream *stream, std::string &artist, std
 		uint8 buf[128];
 		stream->serialBuffer(buf, 128);
 
-		if(buf[0] == 'T' && buf[1] == 'A' && buf[2] == 'G')
+		if (buf[0] == 'T' && buf[1] == 'A' && buf[2] == 'G')
 		{
 			uint i;
-			for(i = 0; i < 30; ++i) if (buf[3+i] == '\0') break;
+			for (i = 0; i < 30; ++i)
+				if (buf[3 + i] == '\0') break;
 			artist.assign((char *)&buf[3], i);
 
-			for(i = 0; i < 30; ++i) if (buf[33+i] == '\0') break;
+			for (i = 0; i < 30; ++i)
+				if (buf[33 + i] == '\0') break;
 			title.assign((char *)&buf[33], i);
 		}
 	}
@@ -165,7 +171,7 @@ uint32 CAudioDecoderMP3::getNextBytes(uint8 *buffer, uint32 minimum, uint32 maxi
 
 	uint32 totalFramesRead = 0;
 	uint32 framesToRead = minimum / bytesPerFrame;
-	while(framesToRead > 0)
+	while (framesToRead > 0)
 	{
 		float tempBuffer[4096];
 		uint64 tempFrames = drmp3_countof(tempBuffer) / _Decoder.channels;
@@ -216,12 +222,12 @@ float CAudioDecoderMP3::getLength()
 		_PCMFrameCount = drmp3_get_pcm_frame_count(&_Decoder);
 	}
 
-	return _PCMFrameCount / (float) _Decoder.sampleRate;
+	return _PCMFrameCount / (float)_Decoder.sampleRate;
 }
 
 void CAudioDecoderMP3::setLooping(bool loop)
 {
-	 _Loop = loop;
+	_Loop = loop;
 }
 
 } /* namespace NLSOUND */

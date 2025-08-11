@@ -107,7 +107,6 @@ void recursiveHtmlRender(CHtmlElement &elm, CCssStyle &style)
 		if (elm.hasAttribute("data-ruleset-before"))
 		{
 			TStyleVec testset = CCssParser::parseDecls(elm.getAttribute("data-ruleset-before"));
-
 		}
 
 		for (auto it = elm.Children.begin(); it != elm.Children.end(); ++it)

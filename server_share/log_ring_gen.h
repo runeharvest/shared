@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef _LOG_GEN_RING_H
 #define _LOG_GEN_RING_H
 
@@ -24,9 +22,7 @@
 #include "nel/misc/sheet_id.h"
 #include "game_share/inventories.h"
 
-
 #include "game_share/ring_session_manager_itf.h"
-
 
 /// No context context. Use this to disable any contextual log underneath
 struct TLogNoContext_Ring
@@ -34,8 +30,6 @@ struct TLogNoContext_Ring
 	TLogNoContext_Ring();
 	~TLogNoContext_Ring();
 };
-
-
 
 void _log_Ring_EnterSession(const NLMISC::CEntityId &charId, uint32 sessionId, const char *_filename_, uint _lineNo_);
 #define log_Ring_EnterSession(charId, sessionId) \
@@ -45,6 +39,4 @@ void _log_Ring_LeaveSession(const NLMISC::CEntityId &charId, uint32 sessionId, c
 #define log_Ring_LeaveSession(charId, sessionId) \
 	_log_Ring_LeaveSession(charId, sessionId, __FILE__, __LINE__)
 
-
 #endif
-

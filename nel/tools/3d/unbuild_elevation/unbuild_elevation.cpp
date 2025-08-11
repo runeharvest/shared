@@ -23,12 +23,12 @@
 #include <nel/misc/common.h>
 #include <nel/misc/cmd_args.h>
 #include <nel/misc/bitmap.h>
-//#include <nel/3d/quad_tree.h>
+// #include <nel/3d/quad_tree.h>
 #include <nel/3d/zone.h>
-//#include <nel/3d/landscape.h>
-//#include <nel/3d/zone_smoother.h>
-//#include <nel/3d/zone_tgt_smoother.h>
-//#include <nel/3d/zone_corner_smoother.h>
+// #include <nel/3d/landscape.h>
+// #include <nel/3d/zone_smoother.h>
+// #include <nel/3d/zone_tgt_smoother.h>
+// #include <nel/3d/zone_corner_smoother.h>
 #include <nel/ligo/zone_region.h>
 #include <vector>
 #include <set>
@@ -48,7 +48,7 @@ bool s_ExtendCoords;
 std::string s_SourceDir; /* R:\reference\2008_july\data\r2_desert */
 std::string s_ReferenceDir; /* R:\pipeline\export\continents\r2_desert\zone_weld */
 
-std::string s_OutputPy; 
+std::string s_OutputPy;
 
 std::string s_SourceExt = "zonel";
 std::string s_ReferenceExt = "zonenhw";
@@ -75,7 +75,7 @@ bool loadLand(const string &filename)
 	try
 	{
 		CIFile fileIn;
-		if (fileIn.open (filename))
+		if (fileIn.open(filename))
 		{
 			CIXml xml(true);
 			nlverify(xml.init(fileIn));
@@ -87,7 +87,7 @@ bool loadLand(const string &filename)
 			return false;
 		}
 	}
-	catch (const Exception& e)
+	catch (const Exception &e)
 	{
 		nlwarning("Error in land file: %s", e.what());
 		return true;
@@ -235,7 +235,7 @@ bool processZone(std::vector<NLMISC::CVector> &output, const std::string &source
 				continue;
 
 			if (abs(referenceVertices[i].x - referenceVertices[j].x) < 0.1f
-				&& abs(referenceVertices[i].y - referenceVertices[j].y) < 0.1f)
+			    && abs(referenceVertices[i].y - referenceVertices[j].y) < 0.1f)
 			{
 				processedReferenceIndices[j] = true;
 				referenceHeight += referenceVertices[j].z;
@@ -253,7 +253,7 @@ bool processZone(std::vector<NLMISC::CVector> &output, const std::string &source
 				continue;
 
 			if (abs(referenceVertices[i].x - sourceVertices[j].x) < 0.1f
-				&& abs(referenceVertices[i].y - sourceVertices[j].y) < 0.1f)
+			    && abs(referenceVertices[i].y - sourceVertices[j].y) < 0.1f)
 			{
 				processedSourceIndices[j] = true;
 				sourceHeight += sourceVertices[j].z;
@@ -337,7 +337,7 @@ bool unbuildElevation()
 				continue;
 
 			if (abs(output[i].x - output[j].x) < 0.1f
-				&& abs(output[i].y - output[j].y) < 0.1f)
+			    && abs(output[i].y - output[j].y) < 0.1f)
 			{
 				processedOutput[j] = true;
 				v.z += output[j].z;
@@ -419,7 +419,7 @@ bool unbuildElevation(NLMISC::CCmdArgs &args)
 		sint32 zoneMinX, zoneMinY;
 		sint32 zoneMaxX, zoneMaxY;
 		if (!getXYFromZoneName(zoneMinX, zoneMinY, args.getLongArg("zonemin")[0])
-			|| !getXYFromZoneName(zoneMaxX, zoneMaxY, args.getLongArg("zonemax")[0]))
+		    || !getXYFromZoneName(zoneMaxX, zoneMaxY, args.getLongArg("zonemax")[0]))
 		{
 			return false;
 		}

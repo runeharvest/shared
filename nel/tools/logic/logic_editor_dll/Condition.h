@@ -13,24 +13,22 @@
 
 class CConditionNode;
 
-namespace NLLOGIC
-{
+namespace NLLOGIC {
 class CLogicConditionNode;
 class CLogicCondition;
 }
 
-typedef CList< CConditionNode*, CConditionNode* > TPtrConditionList;
-
+typedef CList<CConditionNode *, CConditionNode *> TPtrConditionList;
 
 /**
-* class CConditionNode
-*/
+ * class CConditionNode
+ */
 class CConditionNode
 {
-public:	
+public:
 	enum TConditionType
 	{
-		NOT =0,
+		NOT = 0,
 		COMPARISON,
 		SUB_CONDITION,
 
@@ -38,19 +36,18 @@ public:
 	};
 
 	/// constructor
-	inline CConditionNode( CConditionNode *parent = NULL) : m_pParentNode(parent)
+	inline CConditionNode(CConditionNode *parent = NULL)
+	    : m_pParentNode(parent)
 	{
 		m_type = TERMINATOR;
 		m_dComparand = 0;
 	}
 
 	/// copy constructor, also copy all sub nodes (and allocate new nodes for them)
-	CConditionNode( const CConditionNode &node);
+	CConditionNode(const CConditionNode &node);
 
-
-	///destructor
+	/// destructor
 	~CConditionNode();
-
 
 	/// get the node as a string for display
 	const CString &getNodeAsString() const;
@@ -58,78 +55,72 @@ public:
 	inline CConditionNode *getParentNode() { return m_pParentNode; }
 
 	/// change all the occurences of the 'old' condition into 'newName' (recursive)
-	void changeConditionName( const CString &old, const CString &newName);
+	void changeConditionName(const CString &old, const CString &newName);
 
 	/// change all the occurences of the 'old' condition into 'newName' (recursive)
-	void conditionDeleted( const CString &name);
+	void conditionDeleted(const CString &name);
 
-	
-// attributes
+	// attributes
 public:
 	/// \name condition logic block
 	//@{
 	/// type of the block
-	TConditionType	m_type;
+	TConditionType m_type;
 
 	/// if sub condition block
-	CString			m_sConditionName;
-	
+	CString m_sConditionName;
+
 	/// if Comparison :
-	CString			m_sVariableName;
-	CString			m_sOperator; //in set '<' '>' '<=' >=' '=' '!='
-	double			m_dComparand;
+	CString m_sVariableName;
+	CString m_sOperator; // in set '<' '>' '<=' >=' '=' '!='
+	double m_dComparand;
 	//@}
 
 	/// the sub conditions tree
-	TPtrConditionList	m_ctSubTree;
+	TPtrConditionList m_ctSubTree;
 
 	/// pointer on the 'parent' node, or NULL if this node is a first level node
-	CConditionNode	*	m_pParentNode;
+	CConditionNode *m_pParentNode;
 
 private:
-	mutable CString		m_sNodeString;
+	mutable CString m_sNodeString;
 };
 
-
 /**
-* class CCondition
-*/
-class CCondition  
+ * class CCondition
+ */
+class CCondition
 {
 public:
 	/// constructor
 	CCondition();
 
 	/// copy constructor
-	CCondition( const CCondition &cond);
+	CCondition(const CCondition &cond);
 
 	/// change all the occurences of the 'old' condition into 'newName' (for the nodes)
-	void changeConditionName( CString old, const CString &newName) const;
+	void changeConditionName(CString old, const CString &newName) const;
 
 	// the specified condition has been deleted, delete all references to it
-	void conditionDeleted( CString name);
+	void conditionDeleted(CString name);
 
 	virtual ~CCondition();
 
-
-// attributes:
+	// attributes:
 public:
-	CString				m_sName;
+	CString m_sName;
 
-	TPtrConditionList	m_ctConditionTree;
+	TPtrConditionList m_ctConditionTree;
 };
-
-
 
 /**
  *	cConditionToCLogicCondition
  */
-void cConditionToCLogicCondition( CCondition& condition, NLLOGIC::CLogicCondition& logicCondition );
+void cConditionToCLogicCondition(CCondition &condition, NLLOGIC::CLogicCondition &logicCondition);
 
 /**
  *	cLogicConditionToCCondition
  */
-void cLogicConditionToCCondition( const NLLOGIC::CLogicCondition& logicCondition, CCondition& condition );
-
+void cLogicConditionToCCondition(const NLLOGIC::CLogicCondition &logicCondition, CCondition &condition);
 
 #endif // !defined(AFX_CONDITION_H__160ED1FB_6106_4D5D_B298_0C66ED094B4B__INCLUDED_)

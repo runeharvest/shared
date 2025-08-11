@@ -14,14 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-#ifndef	RY_RANGE_WEAPON_TYPE_H
+#ifndef RY_RANGE_WEAPON_TYPE_H
 #define RY_RANGE_WEAPON_TYPE_H
 
-namespace RANGE_WEAPON_TYPE
-{
-
+namespace RANGE_WEAPON_TYPE {
 
 enum TRangeWeaponType
 {
@@ -32,19 +28,15 @@ enum TRangeWeaponType
 	Unknown = RangeWeaponTypeCount
 };
 
-
 /**
-  * get the right range weapon type from the input string
-  * \param str the input string
-  * \return the TRangeWeaponType associated to this string (UNKNOWN if the string cannot be interpreted)
-  */
+ * get the right range weapon type from the input string
+ * \param str the input string
+ * \return the TRangeWeaponType associated to this string (UNKNOWN if the string cannot be interpreted)
+ */
 TRangeWeaponType stringToRangeWeaponType(const std::string &str);
 
 std::string toString(TRangeWeaponType type);
 
-
-
 } // RANGE_WEAPON_TYPE
-
 
 #endif

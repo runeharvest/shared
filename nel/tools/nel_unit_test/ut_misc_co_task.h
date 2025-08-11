@@ -20,8 +20,7 @@
 #include <nel/misc/co_task.h>
 #include <nel/misc/thread.h>
 
-const char *referenceResult[] =
-{
+const char *referenceResult[] = {
 	"Task1 : 0",
 	"Task2 : 0",
 	"Main : 0",
@@ -44,8 +43,7 @@ const char *referenceResult[] =
 	"Task2 : 6",
 };
 
-const char *referenceResultThread1[] =
-{
+const char *referenceResultThread1[] = {
 	"Task1 : 0",
 	"Thread : 0",
 
@@ -62,8 +60,7 @@ const char *referenceResultThread1[] =
 	"Thread : 4",
 };
 
-const char *referenceResultThread2[] =
-{
+const char *referenceResultThread2[] = {
 	"Task2 : 0",
 	"Main : 0",
 
@@ -77,21 +74,23 @@ const char *referenceResultThread2[] =
 	"Task2 : 4",
 };
 
-vector<string>	result;
-vector<string>	result2;
+vector<string> result;
+vector<string> result2;
 
 // a simple task
 class CTask1 : public NLMISC::CCoTask
 {
-	vector<string>	&Output;
+	vector<string> &Output;
+
 public:
 	CTask1(vector<string> &output = result)
-		: Output(output)
-	{}
+	    : Output(output)
+	{
+	}
 
 	void run()
 	{
-		for (uint i=0; i<5; ++i)
+		for (uint i = 0; i < 5; ++i)
 		{
 			string s = NLMISC::toString("Task1 : %u", i);
 			Output.push_back(s);
@@ -103,16 +102,17 @@ public:
 // another simple task
 class CTask2 : public NLMISC::CCoTask
 {
-	vector<string>	&Output;
+	vector<string> &Output;
 
 public:
-		CTask2(vector<string> &output = result)
-		: Output(output)
-	{}
+	CTask2(vector<string> &output = result)
+	    : Output(output)
+	{
+	}
 
 	void run()
 	{
-		for (uint i=0; i<7; ++i)
+		for (uint i = 0; i < 7; ++i)
 		{
 			string s = NLMISC::toString("Task2 : %u", i);
 			Output.push_back(s);
@@ -126,9 +126,9 @@ class CTaskThread : public NLMISC::IRunnable
 {
 	void run()
 	{
-		CTask1	t1(result2);
+		CTask1 t1(result2);
 
-		for (uint i=0; i<5; ++i)
+		for (uint i = 0; i < 5; ++i)
 		{
 			t1.resume();
 			string s = NLMISC::toString("Thread : %u", i);
@@ -139,34 +139,33 @@ class CTaskThread : public NLMISC::IRunnable
 };
 
 // Test suite for coroutine task
-class CUTMiscCoTask: public Test::Suite
+class CUTMiscCoTask : public Test::Suite
 {
 public:
 	CUTMiscCoTask()
 	{
 		TEST_ADD(CUTMiscCoTask::runTasks);
 		TEST_ADD(CUTMiscCoTask::tasksAndThreads);
-
 	}
 
 	void tasksAndThreads()
 	{
-		// test running task in two separate thread (this stress the 
+		// test running task in two separate thread (this stress the
 		// multithreading support of task). CoTask API ;ake use of
 		// thread local storage API to store by thread current task info.
 
 		result.clear();
 		result2.clear();
 
-		CTaskThread	tt;
+		CTaskThread tt;
 		NLMISC::IThread *th = NLMISC::IThread::create(&tt);
 
-		CTask2	t2;
+		CTask2 t2;
 
 		// start the thread
 		th->start();
 
-		for (uint i=0; i<2; ++i)
+		for (uint i = 0; i < 2; ++i)
 		{
 			t2.resume();
 			string s = NLMISC::toString("Main : %u", i);
@@ -183,20 +182,20 @@ public:
 		delete th;
 
 		// test result
-		for (uint i=0; i<sizeofarray(referenceResultThread1); ++i)
+		for (uint i = 0; i < sizeofarray(referenceResultThread1); ++i)
 		{
 			string &s1 = result2[i];
 			const char *s2 = referenceResultThread1[i];
 			TEST_ASSERT(referenceResultThread1[i] == result2[i]);
 		}
-		for (uint i=0; i<sizeofarray(referenceResultThread2); ++i)
+		for (uint i = 0; i < sizeofarray(referenceResultThread2); ++i)
 		{
 			string &s1 = result[i];
 			const char *s2 = referenceResultThread2[i];
 			TEST_ASSERT(referenceResultThread2[i] == result[i]);
 		}
 	}
-	
+
 	void runTasks()
 	{
 		/// Run two main task and two working task at once and check that the result
@@ -211,7 +210,7 @@ public:
 		t2.resume();
 
 		// loop and run the main task and the two sub task
-		for (uint i=0; i<2; ++i)
+		for (uint i = 0; i < 2; ++i)
 		{
 			string s = NLMISC::toString("Main : %u", i);
 			result.push_back(s);
@@ -232,7 +231,7 @@ public:
 
 		// check the generated result
 		TEST_ASSERT(sizeofarray(referenceResult) == result.size());
-		for (uint i=0; i<sizeofarray(referenceResult); ++i)
+		for (uint i = 0; i < sizeofarray(referenceResult); ++i)
 		{
 			string &s1 = result[i];
 			const char *s2 = referenceResult[i];

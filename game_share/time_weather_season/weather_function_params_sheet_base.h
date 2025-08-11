@@ -14,37 +14,33 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_WEATHER_FUNCTION_PARAMS_SHEET_BASE_H
 #define RY_WEATHER_FUNCTION_PARAMS_SHEET_BASE_H
 
 #include "nel/misc/types_nl.h"
 
-namespace NLGEORGES
-{
-	class UForm;
-	class UFormElm;
+namespace NLGEORGES {
+class UForm;
+class UFormElm;
 
 }
 
-namespace NLMISC
-{
-	class IStream;
-	struct EStream;
-	class CSheetId;
+namespace NLMISC {
+class IStream;
+struct EStream;
+class CSheetId;
 }
 class CWeatherFunctionParamsSheetBase
 {
 public:
-	uint32  DayLength;   // length of day, in hours
-	uint32  CycleLength; // length of a cycle, in hours
+	uint32 DayLength; // length of day, in hours
+	uint32 CycleLength; // length of a cycle, in hours
 	//
-	float   MinThunderPeriod; // Min thunder period, in s.
-	float   ThunderLength; // Length of a thunder strike, in s.
+	float MinThunderPeriod; // Min thunder period, in s.
+	float ThunderLength; // Length of a thunder strike, in s.
 	//
-	float   CloudWindSpeedFactor;
-	float   CloudMinSpeed;
+	float CloudWindSpeedFactor;
+	float CloudMinSpeed;
 
 	// ctor
 	CWeatherFunctionParamsSheetBase();
@@ -55,15 +51,9 @@ public:
 	void build(const std::string &sheetName);
 
 	//
-	void readGeorges (const NLGEORGES::UForm *form, const NLMISC::CSheetId &sheetId);
-	void removed() const {}
+	void readGeorges(const NLGEORGES::UForm *form, const NLMISC::CSheetId &sheetId);
+	void removed() const { }
 	static uint32 getVersion() { return 0; }
 };
-
-
-
-
-
-
 
 #endif

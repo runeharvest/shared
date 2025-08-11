@@ -7,31 +7,31 @@
 
 /*-------------------------------------------------------------------*/
 
-void CTileUndo::toUndo ( const CUndoElement& undoList )
+void CTileUndo::toUndo(const CUndoElement &undoList)
 {
 	// Push in the toundo list
-	_ToUndoList.push_back (undoList);
+	_ToUndoList.push_back(undoList);
 }
 
 /*-------------------------------------------------------------------*/
 
 // Add undo action
-void CTileUndo::pushUndo ()
+void CTileUndo::pushUndo()
 {
 	// Resize the array
-	if (_UndoSize<MAX_UNDO)
+	if (_UndoSize < MAX_UNDO)
 		_UndoSize++;
 
 	// Decal undo list
-	for (int l=_UndoSize-1; l>0; l--)
+	for (int l = _UndoSize - 1; l > 0; l--)
 		// Copy array
-		_UndoList[l]=_UndoList[l-1];
+		_UndoList[l] = _UndoList[l - 1];
 
 	// Push it in the undo stack
-	_UndoList[0]=_ToUndoList;
+	_UndoList[0] = _ToUndoList;
 
 	// Clear redo list
-	_RedoSize=0;
+	_RedoSize = 0;
 
 	// Clear the toundo list
 	_ToUndoList.clear();
@@ -40,34 +40,34 @@ void CTileUndo::pushUndo ()
 /*-------------------------------------------------------------------*/
 
 // Undo action: return action to performe
-void CTileUndo::getUndoList ()
+void CTileUndo::getUndoList()
 {
 	// Clear result
-	_Result.clear ();
+	_Result.clear();
 
 	// Not empty list
-	if (_UndoSize>0)
+	if (_UndoSize > 0)
 	{
 		// Resize the array
-		if (_RedoSize<MAX_UNDO)
+		if (_RedoSize < MAX_UNDO)
 			_RedoSize++;
 
 		// Decal redo list
 		uint l;
-		for (l=_RedoSize-1; l>0; l--)
+		for (l = _RedoSize - 1; l > 0; l--)
 			// Copy array
-			_RedoList[l]=_RedoList[l-1];
+			_RedoList[l] = _RedoList[l - 1];
 
 		// Put in the redo list
-		_RedoList[0]=_UndoList[0];
+		_RedoList[0] = _UndoList[0];
 
 		// Copy return
-		_Result=_UndoList[0];
+		_Result = _UndoList[0];
 
 		// Decal undo list upper
-		for (l=0; l<_UndoSize-1; l++)
+		for (l = 0; l < _UndoSize - 1; l++)
 			// Copy array
-			_UndoList[l]=_UndoList[l+1];
+			_UndoList[l] = _UndoList[l + 1];
 
 		// Resize the undo array
 		_UndoSize--;
@@ -77,34 +77,34 @@ void CTileUndo::getUndoList ()
 /*-------------------------------------------------------------------*/
 
 // Redo action: return action to performe
-void CTileUndo::getRedoList ()
+void CTileUndo::getRedoList()
 {
 	// Clear result
-	_Result.clear ();
+	_Result.clear();
 
 	// Not empty list
-	if (_RedoSize>0)
+	if (_RedoSize > 0)
 	{
 		// Resize the undo array
-		if (_UndoSize<MAX_UNDO)
+		if (_UndoSize < MAX_UNDO)
 			_UndoSize++;
 
 		// Decal undo list
 		uint l;
-		for (l=_UndoSize-1; l>0; l--)
+		for (l = _UndoSize - 1; l > 0; l--)
 			// Copy array
-			_UndoList[l]=_UndoList[l-1];
+			_UndoList[l] = _UndoList[l - 1];
 
 		// Put in the redo list
-		_UndoList[0]=_RedoList[0];
+		_UndoList[0] = _RedoList[0];
 
 		// Copy return
-		_Result=_RedoList[0];
+		_Result = _RedoList[0];
 
 		// Decal undo list upper
-		for (l=0; l<_RedoSize-1; l++)
+		for (l = 0; l < _RedoSize - 1; l++)
 			// Copy array
-			_RedoList[l]=_RedoList[l+1];
+			_RedoList[l] = _RedoList[l + 1];
 
 		// Resize the undo array
 		_RedoSize--;
@@ -114,25 +114,24 @@ void CTileUndo::getRedoList ()
 /*-------------------------------------------------------------------*/
 
 // Undo
-void CTileUndo::undo (EPM_PaintMouseProc& mouseProc, std::vector<EPM_Mesh>& vectMesh, CLandscape* land, PaintPatchMod* pobj, CPaintColor& paintColor)
+void CTileUndo::undo(EPM_PaintMouseProc &mouseProc, std::vector<EPM_Mesh> &vectMesh, CLandscape *land, PaintPatchMod *pobj, CPaintColor &paintColor)
 {
 	// List to undo
-	getUndoList ();
+	getUndoList();
 
 	// Iterator
-	std::vector<CUndoElement>::iterator ite=_Result.begin();
+	std::vector<CUndoElement>::iterator ite = _Result.begin();
 
 	// Set of meshes
 	std::set<int> setMeshes;
 
 	// Nel patch changement manager
-	CNelPatchChanger nelPatchChg (land);
+	CNelPatchChanger nelPatchChg(land);
 
-
-		// Iterator
-	if (_Result.size()!=0)
+	// Iterator
+	if (_Result.size() != 0)
 	{
-		std::vector<CUndoElement>::iterator ite=_Result.end();
+		std::vector<CUndoElement>::iterator ite = _Result.end();
 
 		// Go undo
 		do
@@ -141,66 +140,65 @@ void CTileUndo::undo (EPM_PaintMouseProc& mouseProc, std::vector<EPM_Mesh>& vect
 			ite--;
 
 			// Add the mesh
-			setMeshes.insert (ite->_Mesh);
+			setMeshes.insert(ite->_Mesh);
 
 			// Check the good action
-			if (ite->_Action==UndoTile)
+			if (ite->_Action == UndoTile)
 				// Set the tile
-				mouseProc.SetTile (ite->_Mesh, ite->_Tile, ite->_Old._Desc, vectMesh, land, nelPatchChg, false, false);
-			else if (ite->_Action==UndoColor)
+				mouseProc.SetTile(ite->_Mesh, ite->_Tile, ite->_Old._Desc, vectMesh, land, nelPatchChg, false, false);
+			else if (ite->_Action == UndoColor)
 				// Set the color
-				paintColor.setVertexColor (ite->_Mesh, ite->_Old._Patch, ite->_Old._S, ite->_Old._T, ite->_Old._Color, ite->_Old._Blend, 
-											vectMesh, nelPatchChg, false);
-		}
-		while (ite!=_Result.begin());
+				paintColor.setVertexColor(ite->_Mesh, ite->_Old._Patch, ite->_Old._S, ite->_Old._T, ite->_Old._Color, ite->_Old._Blend,
+				    vectMesh, nelPatchChg, false);
+		} while (ite != _Result.begin());
 	}
-	
+
 	// Flush nel chgt
-	nelPatchChg.applyChanges (true);
+	nelPatchChg.applyChanges(true);
 
 	// Invalid all meshes
-	std::set<int>::iterator iteSet=setMeshes.begin();
+	std::set<int>::iterator iteSet = setMeshes.begin();
 }
 
 /*-------------------------------------------------------------------*/
 
 // Redo
-void CTileUndo::redo (EPM_PaintMouseProc& mouseProc, std::vector<EPM_Mesh>& vectMesh, CLandscape* land, PaintPatchMod* pobj, CPaintColor& paintColor)
+void CTileUndo::redo(EPM_PaintMouseProc &mouseProc, std::vector<EPM_Mesh> &vectMesh, CLandscape *land, PaintPatchMod *pobj, CPaintColor &paintColor)
 {
 	// List to undo
-	getRedoList ();
+	getRedoList();
 
 	// Set of meshes
 	std::set<int> setMeshes;
 
 	// Nel patch changement manager
-	CNelPatchChanger nelPatchChg (land);
+	CNelPatchChanger nelPatchChg(land);
 
 	// First
-	std::vector<CUndoElement>::iterator ite=_Result.begin();
+	std::vector<CUndoElement>::iterator ite = _Result.begin();
 
 	// Go undo
-	while (ite!=_Result.end())
+	while (ite != _Result.end())
 	{
 		// Check the good action
-		if (ite->_Action==UndoTile)
+		if (ite->_Action == UndoTile)
 			// Set the tile
-			mouseProc.SetTile (ite->_Mesh, ite->_Tile, ite->_New._Desc, vectMesh, land, nelPatchChg, false, false);
-		else if (ite->_Action==UndoColor)
+			mouseProc.SetTile(ite->_Mesh, ite->_Tile, ite->_New._Desc, vectMesh, land, nelPatchChg, false, false);
+		else if (ite->_Action == UndoColor)
 			// Set the color
-			paintColor.setVertexColor (ite->_Mesh, ite->_New._Patch, ite->_New._S, ite->_New._T, ite->_New._Color, ite->_New._Blend, 
-										vectMesh, nelPatchChg, false);
+			paintColor.setVertexColor(ite->_Mesh, ite->_New._Patch, ite->_New._S, ite->_New._T, ite->_New._Color, ite->_New._Blend,
+			    vectMesh, nelPatchChg, false);
 
 		// Add the mesh
-		setMeshes.insert (ite->_Mesh);
+		setMeshes.insert(ite->_Mesh);
 
 		// Next
 		ite++;
 	}
 
 	// Flush nel chgt
-	nelPatchChg.applyChanges (true);
+	nelPatchChg.applyChanges(true);
 
 	// Invalid all meshes
-	std::set<int>::iterator iteSet=setMeshes.begin();
+	std::set<int>::iterator iteSet = setMeshes.begin();
 }

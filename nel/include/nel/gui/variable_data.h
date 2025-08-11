@@ -22,23 +22,20 @@
 
 #include "nel/misc/types_nl.h"
 
-namespace NLGUI
+namespace NLGUI {
+struct VariableData
 {
-	struct VariableData
+	std::string entry;
+	std::string type;
+	std::string value;
+	uint32 size;
+
+	VariableData()
 	{
-		std::string entry;
-		std::string type;
-		std::string value;
-		uint32 size;
-		
-		VariableData()
-		{
-			size = 0;
-		}
-	};
+		size = 0;
+	}
+};
 
 }
 
-
 #endif
-

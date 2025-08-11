@@ -19,36 +19,31 @@
 #include "nel/3d/vegetable_quadrant.h"
 #include "nel/misc/matrix.h"
 
-
 using namespace NLMISC;
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 /*
  * Constructor, just used to init quadrants.
  */
 CVegetableQuadrant::CVegetableQuadrant()
 {
-	for(uint i=0;i<NL3D_VEGETABLE_NUM_QUADRANT;i++)
+	for (uint i = 0; i < NL3D_VEGETABLE_NUM_QUADRANT; i++)
 	{
-		CMatrix	mat;
-		mat.rotateZ(2*(float)Pi * i / NL3D_VEGETABLE_NUM_QUADRANT);
-		Dirs[i]= mat.getJ();
+		CMatrix mat;
+		mat.rotateZ(2 * (float)Pi * i / NL3D_VEGETABLE_NUM_QUADRANT);
+		Dirs[i] = mat.getJ();
 	}
 }
 
-
 // Quadrants.
-CVector		CVegetableQuadrant::Dirs[NL3D_VEGETABLE_NUM_QUADRANT];
+CVector CVegetableQuadrant::Dirs[NL3D_VEGETABLE_NUM_QUADRANT];
 
 // The variable to init the quadrants.
-static	CVegetableQuadrant		InitVegetableQuadrant;
-
+static CVegetableQuadrant InitVegetableQuadrant;
 
 } // NL3D

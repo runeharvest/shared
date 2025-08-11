@@ -28,8 +28,7 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace NL3D
-{
+namespace NL3D {
 
 void CDriverD3D::setUniform4f(TProgram program, uint index, float f0, float f1, float f2, float f3)
 {
@@ -97,60 +96,52 @@ void CDriverD3D::setUniform3f(TProgram program, uint index, float f0, float f1, 
 
 void CDriverD3D::setUniform1i(TProgram program, uint index, sint32 i0)
 {
-
 }
 
 void CDriverD3D::setUniform2i(TProgram program, uint index, sint32 i0, sint32 i1)
 {
-
 }
 
 void CDriverD3D::setUniform3i(TProgram program, uint index, sint32 i0, sint32 i1, sint32 i2)
 {
-
 }
 
 void CDriverD3D::setUniform4i(TProgram program, uint index, sint32 i0, sint32 i1, sint32 i2, sint32 i3)
 {
-
 }
 
 void CDriverD3D::setUniform1ui(TProgram program, uint index, uint32 ui0)
 {
-
 }
 
 void CDriverD3D::setUniform2ui(TProgram program, uint index, uint32 ui0, uint32 ui1)
 {
-
 }
 
 void CDriverD3D::setUniform3ui(TProgram program, uint index, uint32 ui0, uint32 ui1, uint32 ui2)
 {
-
 }
 
 void CDriverD3D::setUniform4ui(TProgram program, uint index, uint32 ui0, uint32 ui1, uint32 ui2, uint32 ui3)
 {
-
 }
 
-void CDriverD3D::setUniform3f(TProgram program, uint index, const NLMISC::CVector& v)
+void CDriverD3D::setUniform3f(TProgram program, uint index, const NLMISC::CVector &v)
 {
 	CDriverD3D::setUniform4f(program, index, v.x, v.y, v.z, 0.f);
 }
 
-void CDriverD3D::setUniform4f(TProgram program, uint index, const NLMISC::CVector& v, float f3)
+void CDriverD3D::setUniform4f(TProgram program, uint index, const NLMISC::CVector &v, float f3)
 {
 	CDriverD3D::setUniform4f(program, index, v.x, v.y, v.z, f3);
 }
 
-void CDriverD3D::setUniform4f(TProgram program, uint index, const NLMISC::CRGBAF& rgba)
+void CDriverD3D::setUniform4f(TProgram program, uint index, const NLMISC::CRGBAF &rgba)
 {
 	CDriverD3D::setUniform4fv(program, index, 1, &rgba.R);
 }
 
-void CDriverD3D::setUniform4x4f(TProgram program, uint index, const NLMISC::CMatrix& m)
+void CDriverD3D::setUniform4x4f(TProgram program, uint index, const NLMISC::CMatrix &m)
 {
 	H_AUTO_D3D(CDriverD3D_setUniform4x4f);
 
@@ -164,52 +155,50 @@ void CDriverD3D::setUniform4x4f(TProgram program, uint index, const NLMISC::CMat
 
 void CDriverD3D::setUniform4iv(TProgram program, uint index, size_t num, const sint32 *src)
 {
-	
 }
 
 void CDriverD3D::setUniform4uiv(TProgram program, uint index, size_t num, const uint32 *src)
 {
-	
 }
 
 void CDriverD3D::setUniformMatrix(NL3D::IDriver::TProgram program, uint index, NL3D::IDriver::TMatrix matrix, NL3D::IDriver::TTransform transform)
 {
 	H_AUTO_D3D(CDriverD3D_setUniformMatrix);
-	
+
 	D3DXMATRIX mat;
 	D3DXMATRIX *matPtr = NULL;
 	switch (matrix)
 	{
-		case IDriver::ModelView:
-			matPtr = &_D3DModelView;
+	case IDriver::ModelView:
+		matPtr = &_D3DModelView;
 		break;
-		case IDriver::Projection:
-			matPtr = &(_MatrixCache[remapMatrixIndex(D3DTS_PROJECTION)].Matrix);
+	case IDriver::Projection:
+		matPtr = &(_MatrixCache[remapMatrixIndex(D3DTS_PROJECTION)].Matrix);
 		break;
-		case IDriver::ModelViewProjection:
-			matPtr = &_D3DModelViewProjection;
+	case IDriver::ModelViewProjection:
+		matPtr = &_D3DModelViewProjection;
 		break;
 	}
 	if (transform != IDriver::Identity)
 	{
 		switch (transform)
 		{
-			case IDriver::Inverse:
-				D3DXMatrixInverse(&mat, NULL, matPtr);
+		case IDriver::Inverse:
+			D3DXMatrixInverse(&mat, NULL, matPtr);
 			break;
-			case IDriver::Transpose:
-				D3DXMatrixTranspose(&mat, matPtr);
+		case IDriver::Transpose:
+			D3DXMatrixTranspose(&mat, matPtr);
 			break;
-			case IDriver::InverseTranspose:
-				D3DXMatrixInverse(&mat, NULL, matPtr);
-				D3DXMatrixTranspose(&mat, &mat);
+		case IDriver::InverseTranspose:
+			D3DXMatrixInverse(&mat, NULL, matPtr);
+			D3DXMatrixTranspose(&mat, &mat);
 			break;
 		}
 		matPtr = &mat;
 	}
 
 	D3DXMatrixTranspose(&mat, matPtr);
-	
+
 	CDriverD3D::setUniform4fv(program, index, 4, &mat.m[0][0]);
 }
 
@@ -220,11 +209,11 @@ void CDriverD3D::setUniformFog(NL3D::IDriver::TProgram program, uint index)
 	/* "oFog" must always be between [1, 0] what ever you set in D3DRS_FOGSTART and D3DRS_FOGEND (1 for no fog, 0 for full fog).
 	The Geforce4 TI 4200 (drivers 53.03 and 45.23) doesn't accept other values for "oFog". */
 	const float delta = _FogEnd - _FogStart;
-	CDriverD3D::setUniform4f(program, index, 
-		-_D3DModelView._13 / delta, 
-		-_D3DModelView._23 / delta, 
-		-_D3DModelView._33 / delta, 
-		1 - (_D3DModelView._43 - _FogStart) / delta);
+	CDriverD3D::setUniform4f(program, index,
+	    -_D3DModelView._13 / delta,
+	    -_D3DModelView._23 / delta,
+	    -_D3DModelView._33 / delta,
+	    1 - (_D3DModelView._43 - _FogStart) / delta);
 }
 
 bool CDriverD3D::setUniformDriver(TProgram program)

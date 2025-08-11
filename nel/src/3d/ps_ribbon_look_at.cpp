@@ -26,8 +26,7 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 ////////////////////////////////////
 // CPSRibbonLookAt implementation //
@@ -36,7 +35,6 @@ namespace NL3D
 const float ZEpsilon = 10E-3f;
 const float NormEpsilon = 10E-8f;
 
-
 struct CVectInfo
 {
 	NLMISC::CVector Interp;
@@ -44,12 +42,11 @@ struct CVectInfo
 };
 typedef std::vector<CVectInfo> TRibbonVect; // a vector used for intermediate computations
 
-CPSRibbonLookAt::TVBMap		CPSRibbonLookAt::_VBMap;			// index buffers with no color
-CPSRibbonLookAt::TVBMap		CPSRibbonLookAt::_ColoredVBMap;  // index buffer + colors
+CPSRibbonLookAt::TVBMap CPSRibbonLookAt::_VBMap; // index buffers with no color
+CPSRibbonLookAt::TVBMap CPSRibbonLookAt::_ColoredVBMap; // index buffer + colors
 
 //=======================================================
-CPSRibbonLookAt::CPSRibbonLookAt()
-{
+CPSRibbonLookAt::CPSRibbonLookAt() {
 	NL_PS_FUNC(CPSRibbonLookAt_CPSRibbonLookAt)
 }
 
@@ -57,7 +54,7 @@ CPSRibbonLookAt::CPSRibbonLookAt()
 CPSRibbonLookAt::~CPSRibbonLookAt()
 {
 	NL_PS_FUNC(CPSRibbonLookAt_CPSRibbonLookAtDtor)
-//	delete _DyingRibbons;
+	//	delete _DyingRibbons;
 }
 
 //=======================================================
@@ -65,8 +62,8 @@ void CPSRibbonLookAt::serial(NLMISC::IStream &f)
 {
 	NL_PS_FUNC(CPSRibbonLookAt_serial)
 	/** Version 4 : added CPSRibbonBase has a base class instead of CPSParticle
-	  *
-	  */
+	 *
+	 */
 	sint ver = f.serialVersion(4);
 	if (ver > 3)
 	{
@@ -91,7 +88,6 @@ void CPSRibbonLookAt::serial(NLMISC::IStream &f)
 		f.serial(_Parametric);
 	}
 
-
 	if (!f.isReading())
 	{
 		tex = _Tex;
@@ -111,7 +107,6 @@ void CPSRibbonLookAt::serial(NLMISC::IStream &f)
 	}
 }
 
-
 //=======================================================
 void CPSRibbonLookAt::setTexture(CSmartPtr<ITexture> tex)
 {
@@ -125,7 +120,6 @@ void CPSRibbonLookAt::setTexture(CSmartPtr<ITexture> tex)
 	updateMatAndVbForColor();
 }
 
-
 //=======================================================
 void CPSRibbonLookAt::step(TPSProcessPass pass)
 {
@@ -137,14 +131,12 @@ void CPSRibbonLookAt::step(TPSProcessPass pass)
 			updateGlobals();
 		}
 	}
-	else
-	if (
-		(pass == PSBlendRender && hasTransparentFaces())
-		|| (pass == PSSolidRender && hasOpaqueFaces())
-		)
+	else if (
+	    (pass == PSBlendRender && hasTransparentFaces())
+	    || (pass == PSSolidRender && hasOpaqueFaces()))
 	{
 		uint32 step;
-		uint   numToProcess;
+		uint numToProcess;
 		computeSrcStep(step, numToProcess);
 		if (!numToProcess) return;
 
@@ -159,17 +151,15 @@ void CPSRibbonLookAt::step(TPSProcessPass pass)
 			_Mat.setColor(ps.getGlobalColor());
 		}
 		/** We support Auto-LOD for ribbons, although there is a built-in LOD (that change the geometry rather than the number of ribbons)
-		  * that gives better result (both can be used simultaneously)
-		  */
+		 * that gives better result (both can be used simultaneously)
+		 */
 		displayRibbons(numToProcess, step);
 	}
-	else
-	if (pass == PSToolRender) // edition mode only
+	else if (pass == PSToolRender) // edition mode only
 	{
-		//showTool();
+		// showTool();
 	}
 }
-
 
 //=======================================================
 void CPSRibbonLookAt::newElement(const CPSEmitterInfo &info)
@@ -180,7 +170,6 @@ void CPSRibbonLookAt::newElement(const CPSEmitterInfo &info)
 	newSizeElement(info);
 }
 
-
 //=======================================================
 void CPSRibbonLookAt::deleteElement(uint32 index)
 {
@@ -189,7 +178,6 @@ void CPSRibbonLookAt::deleteElement(uint32 index)
 	deleteColorElement(index);
 	deleteSizeElement(index);
 }
-
 
 //=======================================================
 void CPSRibbonLookAt::resize(uint32 size)
@@ -222,12 +210,12 @@ static inline void MakeProj(NLMISC::CVector &dest, const NLMISC::CVector &src)
 }
 
 static inline void BuildSlice(const NLMISC::CMatrix &mat, CVertexBuffer &vb, uint8 *currVert, uint32 vertexSize,
-							  const NLMISC::CVector &I,
-							  const NLMISC::CVector &K,
-  							  TRibbonVect::iterator  pos,
-							  TRibbonVect::iterator  prev,
-							  TRibbonVect::iterator  next,
-							  float ribSize)
+    const NLMISC::CVector &I,
+    const NLMISC::CVector &K,
+    TRibbonVect::iterator pos,
+    TRibbonVect::iterator prev,
+    TRibbonVect::iterator next,
+    float ribSize)
 /// TODO: some optimisation to get a better speed
 {
 	NL_PS_FUNC(BuildSlice)
@@ -252,8 +240,8 @@ static inline void BuildSlice(const NLMISC::CMatrix &mat, CVertexBuffer &vb, uin
 			invTgNorm = 1.f;
 		}
 		// build orthogonals vectors to tangent
-		*(NLMISC::CVector *) currVert = pos->Interp + ribSize * invTgNorm * (tangent.x * K - tangent.z * I);
-		*(NLMISC::CVector *) (currVert + vertexSize) = pos->Interp + ribSize * invTgNorm * (- tangent.x * K + tangent.z * I);
+		*(NLMISC::CVector *)currVert = pos->Interp + ribSize * invTgNorm * (tangent.x * K - tangent.z * I);
+		*(NLMISC::CVector *)(currVert + vertexSize) = pos->Interp + ribSize * invTgNorm * (-tangent.x * K + tangent.z * I);
 	}
 	else if (prev->Proj.y > ZEpsilon) // second point cross the near plane
 	{
@@ -262,14 +250,14 @@ static inline void BuildSlice(const NLMISC::CMatrix &mat, CVertexBuffer &vb, uin
 		NLMISC::CVector tInter = CVector::Null;
 		if (fabsf(prev->Proj.y - next->Proj.y) > NormEpsilon)
 		{
-				float lambda = (next->Proj.y - ZEpsilon) / (next->Proj.y - prev->Proj.y);
-				inter = lambda * prev->Interp + (1.f - lambda) * next->Interp;
-				MakeProj(tInter, mat * inter);
+			float lambda = (next->Proj.y - ZEpsilon) / (next->Proj.y - prev->Proj.y);
+			inter = lambda * prev->Interp + (1.f - lambda) * next->Interp;
+			MakeProj(tInter, mat * inter);
 		}
 		else //
 		{
-			*(NLMISC::CVector *) currVert = pos->Interp;
-			*(NLMISC::CVector *) (currVert + vertexSize) = pos->Interp;
+			*(NLMISC::CVector *)currVert = pos->Interp;
+			*(NLMISC::CVector *)(currVert + vertexSize) = pos->Interp;
 			return;
 		}
 
@@ -287,8 +275,8 @@ static inline void BuildSlice(const NLMISC::CMatrix &mat, CVertexBuffer &vb, uin
 		}
 		// build orthogonals vectors to tangent
 
-		*(NLMISC::CVector *) currVert = inter + ribSize *  invTgNorm * (tangent.x * K - tangent.z * I);
-		*(NLMISC::CVector *) (currVert + vertexSize) = inter + ribSize * invTgNorm * (- tangent.x * K + tangent.z * I);
+		*(NLMISC::CVector *)currVert = inter + ribSize * invTgNorm * (tangent.x * K - tangent.z * I);
+		*(NLMISC::CVector *)(currVert + vertexSize) = inter + ribSize * invTgNorm * (-tangent.x * K + tangent.z * I);
 	}
 	else if (next->Proj.y > ZEpsilon) // first point cross the near plane
 	{
@@ -297,14 +285,14 @@ static inline void BuildSlice(const NLMISC::CMatrix &mat, CVertexBuffer &vb, uin
 		NLMISC::CVector tInter = NLMISC::CVector::Null;
 		if (fabsf(prev->Proj.y - next->Proj.y) > NormEpsilon)
 		{
-				float lambda = (next->Proj.y - ZEpsilon) / (next->Proj.y - prev->Proj.y);
-				inter = lambda * prev->Interp + (1.f - lambda) * next->Interp;
-				MakeProj(tInter, mat * inter);
+			float lambda = (next->Proj.y - ZEpsilon) / (next->Proj.y - prev->Proj.y);
+			inter = lambda * prev->Interp + (1.f - lambda) * next->Interp;
+			MakeProj(tInter, mat * inter);
 		}
 		else //
 		{
-			*(NLMISC::CVector *) currVert = pos->Interp;
-			*(NLMISC::CVector *) (currVert + vertexSize) = pos->Interp;
+			*(NLMISC::CVector *)currVert = pos->Interp;
+			*(NLMISC::CVector *)(currVert + vertexSize) = pos->Interp;
 			return;
 		}
 
@@ -321,56 +309,52 @@ static inline void BuildSlice(const NLMISC::CMatrix &mat, CVertexBuffer &vb, uin
 		}
 		// build orthogonals vectors to tangent
 
-		*(NLMISC::CVector *) currVert = inter + ribSize * invTgNorm * (tangent.x * K - tangent.z * I);
-		*(NLMISC::CVector *) (currVert + vertexSize) = inter + ribSize * invTgNorm * (- tangent.x * K + tangent.z * I);
-
+		*(NLMISC::CVector *)currVert = inter + ribSize * invTgNorm * (tangent.x * K - tangent.z * I);
+		*(NLMISC::CVector *)(currVert + vertexSize) = inter + ribSize * invTgNorm * (-tangent.x * K + tangent.z * I);
 	}
 	else // two points are not visible
 	{
-		*(NLMISC::CVector *) currVert = pos->Interp;
-		*(NLMISC::CVector *) (currVert + vertexSize) = pos->Interp;
+		*(NLMISC::CVector *)currVert = pos->Interp;
+		*(NLMISC::CVector *)(currVert + vertexSize) = pos->Interp;
 	}
-
 }
-
 
 //==========================================================================
 void CPSRibbonLookAt::displayRibbons(uint32 nbRibbons, uint32 srcStep)
 {
-//	if (!FilterPS[6]) return;
+	//	if (!FilterPS[6]) return;
 	NL_PS_FUNC(CPSRibbonLookAt_displayRibbons)
 	if (!nbRibbons) return;
 	nlassert(_Owner);
 	CPSRibbonBase::updateLOD();
 	if (_UsedNbSegs < 2) return;
 	const float date = _Owner->getOwner()->getSystemDate();
-	uint8						*currVert;
-	CVBnPB						&VBnPB = getVBnPB(); // get the appropriate vb (build it if needed)
-	CVertexBuffer				&VB = VBnPB.VB;
-	CIndexBuffer				&PB = VBnPB.PB;
-	const uint32				vertexSize  = VB.getVertexSize();
-	uint						colorOffset=0;
-	const uint32				vertexSizeX2  = vertexSize << 1;
-	const NLMISC::CVector       I = _Owner->computeI();
-	const NLMISC::CVector       K = _Owner->computeK();
+	uint8 *currVert;
+	CVBnPB &VBnPB = getVBnPB(); // get the appropriate vb (build it if needed)
+	CVertexBuffer &VB = VBnPB.VB;
+	CIndexBuffer &PB = VBnPB.PB;
+	const uint32 vertexSize = VB.getVertexSize();
+	uint colorOffset = 0;
+	const uint32 vertexSizeX2 = vertexSize << 1;
+	const NLMISC::CVector I = _Owner->computeI();
+	const NLMISC::CVector K = _Owner->computeK();
 	const NLMISC::CMatrix &localToWorldMatrix = getLocalToWorldTrailMatrix();
-	const NLMISC::CMatrix &mat =  getViewMat() * localToWorldMatrix;
+	const NLMISC::CMatrix &mat = getViewMat() * localToWorldMatrix;
 	IDriver *drv = this->getDriver();
-	#ifdef NL_DEBUG
-		nlassert(drv);
-	#endif
+#ifdef NL_DEBUG
+	nlassert(drv);
+#endif
 	drv->setupModelMatrix(localToWorldMatrix);
 	_Owner->incrementNbDrawnParticles(nbRibbons); // for benchmark purpose
 	const uint numRibbonBatch = getNumRibbonsInVB(); // number of ribbons to process at once
-	static TRibbonVect				   currRibbon;
-	static std::vector<float>		   sizes;
-	static std::vector<NLMISC::CRGBA>  colors;
+	static TRibbonVect currRibbon;
+	static std::vector<float> sizes;
+	static std::vector<NLMISC::CRGBA> colors;
 
 	if (_UsedNbSegs == 0) return;
 
 	currRibbon.resize(_UsedNbSegs + 1);
 	sizes.resize(numRibbonBatch);
-
 
 	/// update material color
 	CParticleSystem &ps = *(_Owner->getOwner());
@@ -378,8 +362,7 @@ void CPSRibbonLookAt::displayRibbons(uint32 nbRibbons, uint32 srcStep)
 	{
 		CPSMaterial::forceModulateConstantColor(true, ps.getGlobalColorLighted());
 	}
-	else
-	if (ps.getColorAttenuationScheme() != NULL || ps.isUserColorUsed())
+	else if (ps.getColorAttenuationScheme() != NULL || ps.isUserColorUsed())
 	{
 		CPSMaterial::forceModulateConstantColor(true, ps.getGlobalColor());
 	}
@@ -395,8 +378,6 @@ void CPSRibbonLookAt::displayRibbons(uint32 nbRibbons, uint32 srcStep)
 		colors.resize(numRibbonBatch);
 	}
 
-
-
 	uint toProcess;
 	uint ribbonIndex = 0; // index of the first ribbon in the batch being processed
 	uint32 fpRibbonIndex = 0;
@@ -406,13 +387,13 @@ void CPSRibbonLookAt::displayRibbons(uint32 nbRibbons, uint32 srcStep)
 	}
 	do
 	{
-		toProcess = std::min((uint) (nbRibbons - ribbonIndex) /* = left to do */, numRibbonBatch);
+		toProcess = std::min((uint)(nbRibbons - ribbonIndex) /* = left to do */, numRibbonBatch);
 		/// setup sizes
-		const float	*ptCurrSize;
-		uint32  ptCurrSizeIncrement;
+		const float *ptCurrSize;
+		uint32 ptCurrSizeIncrement;
 		if (_SizeScheme)
 		{
-			ptCurrSize = (float *) _SizeScheme->make(this->_Owner, ribbonIndex, &sizes[0], sizeof(float), toProcess, true, srcStep);
+			ptCurrSize = (float *)_SizeScheme->make(this->_Owner, ribbonIndex, &sizes[0], sizeof(float), toProcess, true, srcStep);
 			ptCurrSizeIncrement = 1;
 		}
 		else
@@ -421,19 +402,18 @@ void CPSRibbonLookAt::displayRibbons(uint32 nbRibbons, uint32 srcStep)
 			ptCurrSizeIncrement = 0;
 		}
 
-
 		/// setup colors
-		NLMISC::CRGBA	*ptCurrColor=0;
+		NLMISC::CRGBA *ptCurrColor = 0;
 		if (_ColorScheme)
 		{
 			colors.resize(nbRibbons);
-			ptCurrColor = (NLMISC::CRGBA *) _ColorScheme->make(this->_Owner, ribbonIndex, &colors[0], sizeof(NLMISC::CRGBA), toProcess, true, srcStep);
+			ptCurrColor = (NLMISC::CRGBA *)_ColorScheme->make(this->_Owner, ribbonIndex, &colors[0], sizeof(NLMISC::CRGBA), toProcess, true, srcStep);
 		}
 		VB.setNumVertices(2 * (_UsedNbSegs + 1) * toProcess);
 		{
 			CVertexBufferReadWrite vba;
-			VB.lock (vba);
-			currVert = (uint8 *) vba.getVertexCoordPointer();
+			VB.lock(vba);
+			currVert = (uint8 *)vba.getVertexCoordPointer();
 			for (uint k = ribbonIndex; k < ribbonIndex + toProcess; ++k)
 			{
 
@@ -443,102 +423,94 @@ void CPSRibbonLookAt::displayRibbons(uint32 nbRibbons, uint32 srcStep)
 				// interpolate and project points //
 				////////////////////////////////////
 
-					if (!_Parametric)
+				if (!_Parametric)
+				{
+
+					//////////////////////
+					// INCREMENTAL CASE //
+					//////////////////////
+
+					// the parent class has a method to get the ribbons positions
+					computeRibbon((uint)(fpRibbonIndex >> 16), &rIt->Interp, sizeof(CVectInfo));
+					do
 					{
-
-						//////////////////////
-						// INCREMENTAL CASE //
-						//////////////////////
-
-						// the parent class has a method to get the ribbons positions
-						computeRibbon((uint) (fpRibbonIndex >> 16), &rIt->Interp, sizeof(CVectInfo));
-						do
-						{
-							MakeProj(rIt->Proj, mat * rIt->Interp);
-							++rIt;
-						}
-						while (rIt != rItEnd);
-					}
-					else
-					{
-						//////////////////////
-						// PARAMETRIC  CASE //
-						//////////////////////
-						// we compute each pos thanks to the parametric curve
-						_Owner->integrateSingle(date - _UsedSegDuration * (_UsedNbSegs + 1), _UsedSegDuration, _UsedNbSegs + 1, (uint) (fpRibbonIndex >> 16),
-												 &rIt->Interp, sizeof(CVectInfo) );
-						// project each position now
-						do
-						{
-							MakeProj(rIt->Proj, mat * rIt->Interp);
-							++rIt;
-						}
-						while (rIt != rItEnd);
-					}
-
-					rIt = currRibbon.begin();
-
-
-					// setup colors
-					if (_ColorScheme)
-					{
-						uint8 *currColVertex = currVert + colorOffset;
-						uint colCount = (_UsedNbSegs + 1) << 1;
-						do
-						{
-							* (CRGBA *) currColVertex = *ptCurrColor;
-							currColVertex += vertexSize;
-						}
-						while (--colCount);
-
-						++ptCurrColor;
-					}
-
-					/// build the ribbon in vb
-					// deals with first point
-					BuildSlice(mat, VB, currVert, vertexSize, I, K, rIt, rIt, rIt + 1, *ptCurrSize);
-					currVert += vertexSizeX2;
-					++rIt;
-
-
-					// deals with other points
-					for (;;) // we assume at least 2 segments, so we must have a middle point
-					{
-						// build 2 vertices with the right tangent. /* to project 2 */ is old projected point
-						BuildSlice(mat, VB, currVert, vertexSize, I, K, rIt, rIt - 1, rIt + 1, *ptCurrSize);
-						// next position
+						MakeProj(rIt->Proj, mat * rIt->Interp);
 						++rIt;
-						if (rIt == rItEndMinusOne) break;
-						// next vertex
-						currVert += vertexSizeX2;
-					}
-					currVert += vertexSizeX2;
-					// last point.
-					BuildSlice(mat, VB, currVert, vertexSize, I, K, rIt , rIt - 1, rIt, *ptCurrSize);
-					ptCurrSize += ptCurrSizeIncrement;
-					currVert += vertexSizeX2;
+					} while (rIt != rItEnd);
+				}
+				else
+				{
+					//////////////////////
+					// PARAMETRIC  CASE //
+					//////////////////////
+					// we compute each pos thanks to the parametric curve
+					_Owner->integrateSingle(date - _UsedSegDuration * (_UsedNbSegs + 1), _UsedSegDuration, _UsedNbSegs + 1, (uint)(fpRibbonIndex >> 16),
+					    &rIt->Interp, sizeof(CVectInfo));
+					// project each position now
+					do
+					{
+						MakeProj(rIt->Proj, mat * rIt->Interp);
+						++rIt;
+					} while (rIt != rItEnd);
+				}
 
-					fpRibbonIndex += srcStep;
+				rIt = currRibbon.begin();
 
+				// setup colors
+				if (_ColorScheme)
+				{
+					uint8 *currColVertex = currVert + colorOffset;
+					uint colCount = (_UsedNbSegs + 1) << 1;
+					do
+					{
+						*(CRGBA *)currColVertex = *ptCurrColor;
+						currColVertex += vertexSize;
+					} while (--colCount);
+
+					++ptCurrColor;
+				}
+
+				/// build the ribbon in vb
+				// deals with first point
+				BuildSlice(mat, VB, currVert, vertexSize, I, K, rIt, rIt, rIt + 1, *ptCurrSize);
+				currVert += vertexSizeX2;
+				++rIt;
+
+				// deals with other points
+				for (;;) // we assume at least 2 segments, so we must have a middle point
+				{
+					// build 2 vertices with the right tangent. /* to project 2 */ is old projected point
+					BuildSlice(mat, VB, currVert, vertexSize, I, K, rIt, rIt - 1, rIt + 1, *ptCurrSize);
+					// next position
+					++rIt;
+					if (rIt == rItEndMinusOne) break;
+					// next vertex
+					currVert += vertexSizeX2;
+				}
+				currVert += vertexSizeX2;
+				// last point.
+				BuildSlice(mat, VB, currVert, vertexSize, I, K, rIt, rIt - 1, rIt, *ptCurrSize);
+				ptCurrSize += ptCurrSizeIncrement;
+				currVert += vertexSizeX2;
+
+				fpRibbonIndex += srcStep;
 			}
 		}
 		PB.setNumIndexes((_UsedNbSegs << 1) * toProcess * 3);
 		drv->activeVertexBuffer(VB);
 		// display the result
-		drv->activeIndexBuffer (PB);
-		drv->renderTriangles (_Mat, 0, PB.getNumIndexes()/3);
+		drv->activeIndexBuffer(PB);
+		drv->renderTriangles(_Mat, 0, PB.getNumIndexes() / 3);
 		ribbonIndex += toProcess;
-	}
-	while (ribbonIndex != nbRibbons);
+	} while (ribbonIndex != nbRibbons);
 }
 
 //==========================================================================
 bool CPSRibbonLookAt::hasTransparentFaces(void)
 {
 	NL_PS_FUNC(CPSRibbonLookAt_hasTransparentFaces)
-	return getBlendingMode() != CPSMaterial::alphaTest ;
+	return getBlendingMode() != CPSMaterial::alphaTest;
 }
-
 
 //==========================================================================
 bool CPSRibbonLookAt::hasOpaqueFaces(void)
@@ -552,11 +524,9 @@ uint32 CPSRibbonLookAt::getNumWantedTris() const
 {
 	NL_PS_FUNC(CPSRibbonLookAt_getNumWantedTris)
 	nlassert(_Owner);
-	//return _Owner->getMaxSize() * _NbSegs * 2;
+	// return _Owner->getMaxSize() * _NbSegs * 2;
 	return _Owner->getSize() * _NbSegs * 2;
 }
-
-
 
 //==========================================================================
 CPSRibbonLookAt::CVBnPB &CPSRibbonLookAt::getVBnPB()
@@ -568,27 +538,25 @@ CPSRibbonLookAt::CVBnPB &CPSRibbonLookAt::getVBnPB()
 	{
 		return it->second;
 	}
-	else	// must create this vb
+	else // must create this vb
 	{
 		const uint numRibbonInVB = getNumRibbonsInVB();
 		CVBnPB &VBnPB = map[_UsedNbSegs + 1]; // make an entry
 
 		/// set the vb format & size
 		CVertexBuffer &vb = VBnPB.VB;
-		vb.setVertexFormat(CVertexBuffer::PositionFlag |
-						   CVertexBuffer::TexCoord0Flag |
-						   (_ColorScheme ? CVertexBuffer::PrimaryColorFlag : 0));
-		vb.setNumVertices(2 * (_UsedNbSegs + 1) * numRibbonInVB );
+		vb.setVertexFormat(CVertexBuffer::PositionFlag | CVertexBuffer::TexCoord0Flag | (_ColorScheme ? CVertexBuffer::PrimaryColorFlag : 0));
+		vb.setNumVertices(2 * (_UsedNbSegs + 1) * numRibbonInVB);
 		vb.setPreferredMemory(CVertexBuffer::AGPVolatile, true);
 		CVertexBufferReadWrite vba;
-		vb.lock (vba);
+		vb.lock(vba);
 
 		// set the primitive block size
 		CIndexBuffer &pb = VBnPB.PB;
 		pb.setFormat(NL_DEFAULT_INDEX_BUFFER_FORMAT);
 		pb.setNumIndexes((_UsedNbSegs << 1) * numRibbonInVB * 3);
 		CIndexBufferReadWrite iba;
-		pb.lock (iba);
+		pb.lock(iba);
 		/// Setup the pb and vb parts. Not very fast but executed only once
 		uint vbIndex = 0;
 		uint pbIndex = 0;
@@ -596,14 +564,14 @@ CPSRibbonLookAt::CVBnPB &CPSRibbonLookAt::getVBnPB()
 		{
 			for (uint k = 0; k < (_UsedNbSegs + 1); ++k)
 			{
-				vba.setTexCoord(vbIndex, 0, CUV((1.f - k / (float) _UsedNbSegs), 0)); /// top vertex
-				vba.setTexCoord(vbIndex + 1, 0, CUV((1.f - k / (float) _UsedNbSegs), 1)); /// bottom vertex
+				vba.setTexCoord(vbIndex, 0, CUV((1.f - k / (float)_UsedNbSegs), 0)); /// top vertex
+				vba.setTexCoord(vbIndex + 1, 0, CUV((1.f - k / (float)_UsedNbSegs), 1)); /// bottom vertex
 				if (k != _UsedNbSegs)
 				{
 					/// add 2 tri in the primitive block
 					iba.setTri(pbIndex, vbIndex + 1, vbIndex + 2, vbIndex);
-					iba.setTri(pbIndex+3, vbIndex + 1, vbIndex + 3, vbIndex + 2);
-					pbIndex+=6;
+					iba.setTri(pbIndex + 3, vbIndex + 1, vbIndex + 3, vbIndex + 2);
+					pbIndex += 6;
 				}
 				vbIndex += 2;
 			}
@@ -613,16 +581,16 @@ CPSRibbonLookAt::CVBnPB &CPSRibbonLookAt::getVBnPB()
 }
 
 //==========================================================================
-uint	CPSRibbonLookAt::getNumRibbonsInVB() const
+uint CPSRibbonLookAt::getNumRibbonsInVB() const
 {
 	NL_PS_FUNC(CPSRibbonLookAt_getNumRibbonsInVB)
 	/// approximation of the max number of vertices we want in a vb
 	const uint vertexInVB = 256;
-	return std::max(1u, (uint) (vertexInVB / (_UsedNbSegs + 1)));
+	return std::max(1u, (uint)(vertexInVB / (_UsedNbSegs + 1)));
 }
 
 //==========================================================================
-void CPSRibbonLookAt::enumTexs(std::vector<NLMISC::CSmartPtr<ITexture> > &dest, IDriver &drv)
+void CPSRibbonLookAt::enumTexs(std::vector<NLMISC::CSmartPtr<ITexture>> &dest, IDriver &drv)
 {
 	NL_PS_FUNC(CPSRibbonLookAt_enumTexs)
 	if (_Tex)
@@ -631,6 +599,5 @@ void CPSRibbonLookAt::enumTexs(std::vector<NLMISC::CSmartPtr<ITexture> > &dest, 
 		_Tex->getShareName();
 	}
 }
-
 
 } // NL3D

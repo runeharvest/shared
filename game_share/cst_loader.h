@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef CST_LOADER_H
 #define CST_LOADER_H
 
@@ -26,7 +24,6 @@
 #include <vector>
 #include <string>
 
-
 /**
  * CSTLoader
  * \author Stephane Coutelas
@@ -36,7 +33,6 @@
 class CSTLoader
 {
 public:
-
 	/// data type
 	enum TDataType
 	{
@@ -52,12 +48,11 @@ public:
 	};
 
 private:
-
 	/// cst file
 	FILE *_File;
 
 	/// name of the cst file (used for debug information)
-	std::string	_FileName;
+	std::string _FileName;
 
 	/// separators
 	std::string _Seps;
@@ -69,13 +64,12 @@ private:
 	std::vector<std::string> _Columns;
 
 	/// file format expected
-	std::map<std::string,TDataType> _FileFormat;
+	std::map<std::string, TDataType> _FileFormat;
 
 	/// tokens for each expected columns
 	std::map<std::string, std::string> _Tokens;
 
 public:
-
 	/// constructor
 	CSTLoader()
 	{
@@ -87,11 +81,10 @@ public:
 	 * Set the separators to extract tokens
 	 * \param seps all characters than can be a separator
 	 */
-	void setSeparators( std::string seps )
+	void setSeparators(std::string seps)
 	{
 		_Seps = seps;
 	}
-
 
 	/**
 	 * (For files respecting the dynamical column label format : name<type>)
@@ -100,8 +93,7 @@ public:
 	 * \param fileName the name of the file
 	 * \param fileFormat the name of the columns and their data type
 	 */
-	void buildTableFormat( const std::string &fileName, std::list<std::pair< std::string,TDataType> >& tableFormat );
-
+	void buildTableFormat(const std::string &fileName, std::list<std::pair<std::string, TDataType>> &tableFormat);
 
 	/**
 	 * (For files respecting the dynamical column label format : name<type>)
@@ -109,15 +101,14 @@ public:
 	 *
 	 * \param data the list of the name of the columns and their data type
 	 */
-	void readData( std::list<std::list<std::string> >& data );
+	void readData(std::list<std::list<std::string>> &data);
 
 	/**
 	 * Open a file, and init the file format
 	 * \param fileName the name of the file
 	 * \param fileFormat the name of the columns and their data type
 	 */
-	void init( const std::string &fileName, const std::map<std::string,TDataType>& fileFormat);
-
+	void init(const std::string &fileName, const std::map<std::string, TDataType> &fileFormat);
 
 	/**
 	 * read a line in the file and check validity of token data type
@@ -125,40 +116,40 @@ public:
 	 */
 	bool readLine();
 
-
 	/**
 	 * return the value corresponding to the given column in the current file line
 	 * \param value  a value in the table
 	 */
-	template<class T> void getValue( const std::string& columnLabel, T& value )
+	template <class T>
+	void getValue(const std::string &columnLabel, T &value)
 	{
-		std::map<std::string,std::string>::const_iterator itt = _Tokens.find( columnLabel );
-		if( itt == _Tokens.end() )
+		std::map<std::string, std::string>::const_iterator itt = _Tokens.find(columnLabel);
+		if (itt == _Tokens.end())
 		{
-			nlerror("The value for the column %s has not been read in the line",columnLabel.c_str());
+			nlerror("The value for the column %s has not been read in the line", columnLabel.c_str());
 		}
 
-		std::map<std::string,TDataType>::const_iterator itf = _FileFormat.find( columnLabel );
-		if( itf == _FileFormat.end() )
+		std::map<std::string, TDataType>::const_iterator itf = _FileFormat.find(columnLabel);
+		if (itf == _FileFormat.end())
 		{
-			nlerror("The column %s is not in the file format",columnLabel.c_str());
+			nlerror("The column %s is not in the file format", columnLabel.c_str());
 		}
 
-		nlassert( (*itf).second != STRING && (*itf).second != BOOL );
+		nlassert((*itf).second != STRING && (*itf).second != BOOL);
 
-		switch( (*itf).second )
+		switch ((*itf).second)
 		{
-			case UINT8 :
-			case SINT8 :
-			case UINT16 :
-			case SINT16 :
-			case UINT32 :
-			case SINT32 :
-			case FLOAT :
-				fromString((*itt).second, value);
-				break;
-			default:
-				break;
+		case UINT8:
+		case SINT8:
+		case UINT16:
+		case SINT16:
+		case UINT32:
+		case SINT32:
+		case FLOAT:
+			fromString((*itt).second, value);
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -166,21 +157,21 @@ public:
 	 * return the string value corresponding to the given column in the current file line
 	 * \param value a string value in the table
 	 */
-	void getStringValue( const std::string& columnLabel, std::string& value )
+	void getStringValue(const std::string &columnLabel, std::string &value)
 	{
-		std::map<std::string,std::string>::const_iterator itt = _Tokens.find( columnLabel );
-		if( itt == _Tokens.end() )
+		std::map<std::string, std::string>::const_iterator itt = _Tokens.find(columnLabel);
+		if (itt == _Tokens.end())
 		{
-			nlerror("The value for the column %s has not been read in the line",columnLabel.c_str());
+			nlerror("The value for the column %s has not been read in the line", columnLabel.c_str());
 		}
 
-		std::map<std::string,TDataType>::const_iterator itf = _FileFormat.find( columnLabel );
-		if( itf == _FileFormat.end() )
+		std::map<std::string, TDataType>::const_iterator itf = _FileFormat.find(columnLabel);
+		if (itf == _FileFormat.end())
 		{
-			nlerror("The column %s is not in the file format",columnLabel.c_str());
+			nlerror("The column %s is not in the file format", columnLabel.c_str());
 		}
 
-		nlassert( (*itf).second == STRING );
+		nlassert((*itf).second == STRING);
 
 		value = (*itt).second;
 	}
@@ -189,25 +180,24 @@ public:
 	 * return the bool value corresponding to the given column in the current file line
 	 * \param value a bool value in the table
 	 */
-	void getBoolValue( const std::string& columnLabel, bool& value )
+	void getBoolValue(const std::string &columnLabel, bool &value)
 	{
-		std::map<std::string,std::string>::const_iterator itt = _Tokens.find( columnLabel );
-		if( itt == _Tokens.end() )
+		std::map<std::string, std::string>::const_iterator itt = _Tokens.find(columnLabel);
+		if (itt == _Tokens.end())
 		{
-			nlerror("The value for the column %s has not been read in the line",columnLabel.c_str());
+			nlerror("The value for the column %s has not been read in the line", columnLabel.c_str());
 		}
 
-		std::map<std::string,TDataType>::const_iterator itf = _FileFormat.find( columnLabel );
-		if( itf == _FileFormat.end() )
+		std::map<std::string, TDataType>::const_iterator itf = _FileFormat.find(columnLabel);
+		if (itf == _FileFormat.end())
 		{
-			nlerror("The column %s is not in the file format",columnLabel.c_str());
+			nlerror("The column %s is not in the file format", columnLabel.c_str());
 		}
 
-		nlassert( (*itf).second == BOOL );
+		nlassert((*itf).second == BOOL);
 
 		NLMISC::fromString((*itt).second, value);
 	}
-
 
 	/// close file
 	void close()
@@ -216,64 +206,63 @@ public:
 		_File = NULL;
 	}
 
-
 	void Load(const std::string &fileName)
 	{
 		// Generates the base class
-		std::list< std::pair<std::string,TDataType> > format;
-		buildTableFormat( fileName, format );
-		generateBaseClass( format);
+		std::list<std::pair<std::string, TDataType>> format;
+		buildTableFormat(fileName, format);
+		generateBaseClass(format);
 
 		// Generates a derived class for each type of object
-		std::list< std::list<std::string> > data;
-		readData( data );
-		generateDerivedClasses( format, data );
+		std::list<std::list<std::string>> data;
+		readData(data);
+		generateDerivedClasses(format, data);
 	}
 
-	void generateBaseClass(const std::list< std::pair<std::string,TDataType> > &/* format */)
+	void generateBaseClass(const std::list<std::pair<std::string, TDataType>> & /* format */)
 	{
 		std::string content;
 		content += "From Agent : Define Item\n";
 		content += "{\n";
-/*		content += "\tComponent:\n";
+		/*		content += "\tComponent:\n";
 
-		std::list< std::pair<std::string,TDataType> >::iterator it_obj = format.begin();
-		it_obj++;
-		while ( it_obj != format.end() )
-		{
-			content += "\t\t" + convertFromType((*it_obj).second);
-			content += "<'" + (*it_obj).first + "', Static>;\n";
-			it_obj++;
-		}
+		        std::list< std::pair<std::string,TDataType> >::iterator it_obj = format.begin();
+		        it_obj++;
+		        while ( it_obj != format.end() )
+		        {
+		            content += "\t\t" + convertFromType((*it_obj).second);
+		            content += "<'" + (*it_obj).first + "', Static>;\n";
+		            it_obj++;
+		        }
 
-		content += "\tEnd\n"; */
+		        content += "\tEnd\n"; */
 		content += "}\n";
 		content += "\n";
 
 		fwrite(content.c_str(), 1, content.length(), _File);
 	}
 
-	void generateDerivedClasses(const std::list< std::pair<std::string, TDataType> > &, const std::list< std::list< std::string> > &);
+	void generateDerivedClasses(const std::list<std::pair<std::string, TDataType>> &, const std::list<std::list<std::string>> &);
 
 	TDataType convertType(const std::string &type_str)
 	{
-		if ( type_str == "UINT8")
+		if (type_str == "UINT8")
 			return UINT8;
-		if ( type_str == "SINT8")
+		if (type_str == "SINT8")
 			return SINT8;
-		if ( type_str == "UINT16")
+		if (type_str == "UINT16")
 			return UINT16;
-		if ( type_str == "SINT16")
+		if (type_str == "SINT16")
 			return SINT16;
-		if ( type_str == "UINT32")
+		if (type_str == "UINT32")
 			return UINT32;
-		if ( type_str == "SINT32")
+		if (type_str == "SINT32")
 			return SINT32;
-		if ( type_str == "FLOAT")
+		if (type_str == "FLOAT")
 			return FLOAT;
-		if ( type_str == "STRING")
+		if (type_str == "STRING")
 			return STRING;
-		if ( type_str == "BOOL")
+		if (type_str == "BOOL")
 			return BOOL;
 		return (TDataType)0;
 	}
@@ -285,28 +274,28 @@ public:
 		int i = 0;
 		char buffer[1024];
 		std::string::const_iterator it_c = name.begin();
-		while ( it_c != name.end() )
+		while (it_c != name.end())
 		{
 			char c = *it_c;
-			switch ( c )
+			switch (c)
 			{
-				case ' ':
-				case '.':
-					buffer[i] = '_';
-					break;
+			case ' ':
+			case '.':
+				buffer[i] = '_';
+				break;
 
-				case ',':
-					buffer[i] = '.';
-					break;
+			case ',':
+				buffer[i] = '.';
+				break;
 
-				default:
-					buffer[i] = *it_c;
+			default:
+				buffer[i] = *it_c;
 			}
 			i++;
 			it_c++;
 		}
 		buffer[i] = 0;
-		return std::string( buffer );
+		return std::string(buffer);
 	}
 };
 

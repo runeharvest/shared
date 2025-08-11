@@ -18,13 +18,13 @@
 #include "driver_opengl.h"
 
 #if defined(NL_OS_UNIX) && !defined(NL_OS_MAC)
-# include <X11/Xatom.h>
-# ifdef HAVE_XRENDER
-#  include <X11/extensions/Xrender.h>
-# endif // HAVE_XRENDER
-# ifdef HAVE_XCURSOR
-#  include <X11/Xcursor/Xcursor.h>
-# endif // HAVE_XCURSOR
+#include <X11/Xatom.h>
+#ifdef HAVE_XRENDER
+#include <X11/extensions/Xrender.h>
+#endif // HAVE_XRENDER
+#ifdef HAVE_XCURSOR
+#include <X11/Xcursor/Xcursor.h>
+#endif // HAVE_XCURSOR
 #endif // defined(NL_OS_UNIX) && !defined(NL_OS_MAC)
 
 #include "nel/3d/u_driver.h"
@@ -48,16 +48,17 @@ namespace NLDRIVERGL {
 #endif
 
 // *************************************************************************************
-CDriverGL::CCursor::CCursor() : ColorDepth(CDriverGL::ColorDepth32),
-								OrigHeight(32),
-								HotspotScale(1.f),
-								HotspotOffsetX(0),
-								HotspotOffsetY(0),
-								HotSpotX(0),
-								HotSpotY(0),
-								Cursor(EmptyCursor),
-								Col(CRGBA::White),
-								Rot(0)
+CDriverGL::CCursor::CCursor()
+    : ColorDepth(CDriverGL::ColorDepth32)
+    , OrigHeight(32)
+    , HotspotScale(1.f)
+    , HotspotOffsetX(0)
+    , HotspotOffsetY(0)
+    , HotSpotX(0)
+    , HotSpotY(0)
+    , Cursor(EmptyCursor)
+    , Col(CRGBA::White)
+    , Rot(0)
 {
 #if defined(NL_OS_UNIX) && !defined(NL_OS_MAC)
 	Dpy = NULL;
@@ -86,7 +87,7 @@ void CDriverGL::CCursor::reset()
 }
 
 // *************************************************************************************
-CDriverGL::CCursor& CDriverGL::CCursor::operator= (const CDriverGL::CCursor& from)
+CDriverGL::CCursor &CDriverGL::CCursor::operator=(const CDriverGL::CCursor &from)
 {
 	if (&from == this)
 		return *this;
@@ -121,7 +122,7 @@ bool CDriverGL::isAlphaBlendedCursorSupported()
 		osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 		if (GetVersionEx(&osvi))
 		{
-			_AlphaBlendedCursorSupported = (osvi.dwMajorVersion	>= 5);
+			_AlphaBlendedCursorSupported = (osvi.dwMajorVersion >= 5);
 		}
 #elif defined(NL_OS_MAC)
 #elif defined(NL_OS_UNIX)
@@ -153,7 +154,7 @@ void CDriverGL::addCursor(const std::string &name, const NLMISC::CBitmap &cursor
 	nlassert(cursorBitmap.getHeight() != 0);
 
 	// find used part base on alpha, to avoid too much shrinking
-	const CRGBA *pixels = (const CRGBA *) &cursorBitmap.getPixels()[0];
+	const CRGBA *pixels = (const CRGBA *)&cursorBitmap.getPixels()[0];
 	uint minX, maxX, minY, maxY;
 	uint width = cursorBitmap.getWidth();
 	uint height = cursorBitmap.getHeight();
@@ -165,7 +166,7 @@ void CDriverGL::addCursor(const std::string &name, const NLMISC::CBitmap &cursor
 		minX = x;
 		for (uint y = 0; y < height; ++y)
 		{
-			if(pixels[x + y * width].A != 0)
+			if (pixels[x + y * width].A != 0)
 			{
 				stop = true;
 				break;
@@ -178,10 +179,10 @@ void CDriverGL::addCursor(const std::string &name, const NLMISC::CBitmap &cursor
 	for (sint x = width - 1; x >= 0; --x)
 	{
 		bool stop = false;
-		maxX = (uint) x;
+		maxX = (uint)x;
 		for (uint y = 0; y < height; ++y)
 		{
-			if(pixels[x + y * width].A != 0)
+			if (pixels[x + y * width].A != 0)
 			{
 				stop = true;
 				break;
@@ -197,7 +198,7 @@ void CDriverGL::addCursor(const std::string &name, const NLMISC::CBitmap &cursor
 		minY = y;
 		for (uint x = 0; x < width; ++x)
 		{
-			if(pixels[x + y * width].A != 0)
+			if (pixels[x + y * width].A != 0)
 			{
 				stop = true;
 				break;
@@ -210,10 +211,10 @@ void CDriverGL::addCursor(const std::string &name, const NLMISC::CBitmap &cursor
 	for (sint y = height - 1; y >= 0; --y)
 	{
 		bool stop = false;
-		maxY = (uint) y;
+		maxY = (uint)y;
 		for (uint x = 0; x < width; ++x)
 		{
-			if(pixels[x + y * width].A != 0)
+			if (pixels[x + y * width].A != 0)
 			{
 				stop = true;
 				break;
@@ -241,7 +242,7 @@ void CDriverGL::addCursor(const std::string &name, const NLMISC::CBitmap &cursor
 	curs.HotspotScale = _CursorScale;
 	clamp(curs.HotspotScale, 0.f, 1.f);
 	// first resampling, same for all cursors
-	tmpSize = (uint) (tmpSize * curs.HotspotScale);
+	tmpSize = (uint)(tmpSize * curs.HotspotScale);
 	if (tmpSize == 0) tmpSize = 1;
 
 	if (curs.HotspotScale < 1.f)
@@ -283,12 +284,12 @@ void CDriverGL::createCursors()
 	if (_dpy && _win && _BlankCursor == EmptyCursor)
 	{
 		// create blank cursor
-		char bm_no_data[] = { 0,0,0,0,0,0,0,0 };
-		Pixmap pixmap_no_data = XCreateBitmapFromData (_dpy, _win, bm_no_data, 8, 8);
+		char bm_no_data[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+		Pixmap pixmap_no_data = XCreateBitmapFromData(_dpy, _win, bm_no_data, 8, 8);
 		XColor black;
-		memset(&black, 0, sizeof (XColor));
+		memset(&black, 0, sizeof(XColor));
 		black.flags = DoRed | DoGreen | DoBlue;
-		_BlankCursor = XCreatePixmapCursor (_dpy, pixmap_no_data, pixmap_no_data, &black, &black, 0, 0);
+		_BlankCursor = XCreatePixmapCursor(_dpy, pixmap_no_data, pixmap_no_data, &black, &black, 0, 0);
 		XFreePixmap(_dpy, pixmap_no_data);
 	}
 #endif
@@ -329,7 +330,7 @@ void CDriverGL::setCursor(const std::string &name, NLMISC::CRGBA col, uint8 rot,
 	// cursor has to be changed next time
 	if (_CurrName.empty()) return;
 
-	if (rot >	3) rot = 3; // same than 'CViewRenderer::drawRotFlipBitmapTiled
+	if (rot > 3) rot = 3; // same than 'CViewRenderer::drawRotFlipBitmapTiled
 
 	TCursorMap::iterator it = _Cursors.find(name);
 
@@ -339,16 +340,9 @@ void CDriverGL::setCursor(const std::string &name, NLMISC::CRGBA col, uint8 rot,
 	{
 		// Update cursor if modified or not already built
 		CCursor &curs = it->second;
-		hotSpotX = (sint) (curs.HotspotScale * (hotSpotX - curs.HotspotOffsetX));
-		hotSpotY = (sint) (curs.HotspotScale * ((curs.OrigHeight - hotSpotY) - curs.HotspotOffsetY));
-		if (curs.Cursor == EmptyCursor ||
-			curs.HotSpotX != hotSpotX ||
-			curs.HotSpotY != hotSpotY ||
-			curs.Col != col ||
-			curs.Rot != rot ||
-			curs.ColorDepth != _ColorDepth ||
-			forceRebuild
-		   )
+		hotSpotX = (sint)(curs.HotspotScale * (hotSpotX - curs.HotspotOffsetX));
+		hotSpotY = (sint)(curs.HotspotScale * ((curs.OrigHeight - hotSpotY) - curs.HotspotOffsetY));
+		if (curs.Cursor == EmptyCursor || curs.HotSpotX != hotSpotX || curs.HotSpotY != hotSpotY || curs.Col != col || curs.Rot != rot || curs.ColorDepth != _ColorDepth || forceRebuild)
 		{
 			curs.reset();
 			curs.Cursor = buildCursor(curs.Src, col, rot, hotSpotX, hotSpotY);
@@ -370,7 +364,7 @@ void CDriverGL::setCursor(const std::string &name, NLMISC::CRGBA col, uint8 rot,
 #ifdef NL_OS_WINDOWS
 		{
 			::SetCursor(cursorHandle);
-			SetClassLongPtr(_win, GCLP_HCURSOR, (LONG_PTR) cursorHandle); // set default mouse icon to the last one
+			SetClassLongPtr(_win, GCLP_HCURSOR, (LONG_PTR)cursorHandle); // set default mouse icon to the last one
 		}
 #elif defined(NL_OS_MAC)
 #elif defined(NL_OS_UNIX)
@@ -384,7 +378,6 @@ void CDriverGL::setCursor(const std::string &name, NLMISC::CRGBA col, uint8 rot,
 		}
 #endif
 	}
-
 }
 
 // *************************************************************************************
@@ -403,20 +396,22 @@ nlCursor CDriverGL::buildCursor(const CBitmap &src, NLMISC::CRGBA col, uint8 rot
 
 	CBitmap rotSrc = src;
 	if (rot > 3) rot = 3; // mimic behavior of 'CViewRenderer::drawRotFlipBitmapTiled' (why not rot & 3 ??? ...)
-	switch(rot)
+	switch (rot)
 	{
-		case 0: break;
-		case 1: rotSrc.rot90CW(); break;
-		case 2: rotSrc.rot90CW(); rotSrc.rot90CW(); break;
-		case 3: rotSrc.rot90CCW(); break;
+	case 0: break;
+	case 1: rotSrc.rot90CW(); break;
+	case 2:
+		rotSrc.rot90CW();
+		rotSrc.rot90CW();
+		break;
+	case 3: rotSrc.rot90CCW(); break;
 	}
 
 	// create a cursor from bitmap
 	nlCursor result = EmptyCursor;
-	convertBitmapToCursor(rotSrc, result, mouseW, mouseH, _ColorDepth == ColorDepth16 ? 16:32, col, hotSpotX, hotSpotY);
+	convertBitmapToCursor(rotSrc, result, mouseW, mouseH, _ColorDepth == ColorDepth16 ? 16 : 32, col, hotSpotX, hotSpotY);
 	return result;
 }
-
 
 // *************************************************************************************
 void CDriverGL::setSystemArrow()
@@ -430,7 +425,7 @@ void CDriverGL::setSystemArrow()
 	}
 
 	// set default mouse icon to the default one
-	SetClassLongPtr(_win, GCLP_HCURSOR, (LONG_PTR) _DefaultCursor);
+	SetClassLongPtr(_win, GCLP_HCURSOR, (LONG_PTR)_DefaultCursor);
 #elif defined(NL_OS_MAC)
 #elif defined(NL_OS_UNIX)
 	XUndefineCursor(_dpy, _win);
@@ -452,13 +447,11 @@ void CDriverGL::showCursor(bool b)
 		// update current hardware icon to avoid to have the plain arrow
 		updateCursor(true);
 
-		while (ShowCursor(b) < 0)
-			;
+		while (ShowCursor(b) < 0);
 	}
 	else
 	{
-		while (ShowCursor(b) >= 0)
-			;
+		while (ShowCursor(b) >= 0);
 	}
 
 #elif defined(NL_OS_MAC)
@@ -469,24 +462,24 @@ void CDriverGL::showCursor(bool b)
 	// by only calling hide if the cursor is visible and only calling show if
 	// the cursor was hidden.
 
-	CGDisplayErr error  = kCGErrorSuccess;
+	CGDisplayErr error = kCGErrorSuccess;
 	static bool visible = true;
 
-	if(b && !visible)
+	if (b && !visible)
 	{
 		error = CGDisplayShowCursor(kCGDirectMainDisplay);
 		visible = true;
 	}
-	else if(!b && visible)
+	else if (!b && visible)
 	{
 		error = CGDisplayHideCursor(kCGDirectMainDisplay);
 		visible = false;
 	}
 
-	if(error != kCGErrorSuccess)
+	if (error != kCGErrorSuccess)
 		nlerror("cannot show / hide cursor");
 
-#elif defined (NL_OS_UNIX)
+#elif defined(NL_OS_UNIX)
 
 	if (!b)
 	{
@@ -512,8 +505,8 @@ void CDriverGL::setMousePos(float x, float y)
 	if (_win == EmptyWindow || !_WindowFocus)
 		return;
 
-	sint x1 = (sint)((float)_CurrentMode.Width*x);
-	sint y1 = (sint)((float)_CurrentMode.Height*(1.0f-y));
+	sint x1 = (sint)((float)_CurrentMode.Width * x);
+	sint y1 = (sint)((float)_CurrentMode.Height * (1.0f - y));
 
 #ifdef NL_OS_WINDOWS
 
@@ -521,7 +514,7 @@ void CDriverGL::setMousePos(float x, float y)
 	POINT pt;
 	pt.x = x1;
 	pt.y = y1;
-	ClientToScreen (_win, &pt);
+	ClientToScreen(_win, &pt);
 	SetCursorPos(pt.x, pt.y);
 
 #elif defined(NL_OS_MAC)
@@ -533,7 +526,7 @@ void CDriverGL::setMousePos(float x, float y)
 
 	// get the rect (position, size) of the window
 	NSRect windowRect;
-	if([containerView() isInFullScreenMode])
+	if ([containerView() isInFullScreenMode])
 		windowRect = [[[containerView() window] screen] frame];
 	else
 		windowRect = [[containerView() window] frame];
@@ -543,23 +536,20 @@ void CDriverGL::setMousePos(float x, float y)
 
 	// set the cursor position
 	CGDisplayErr error = CGDisplayMoveCursorToPoint(
-		kCGDirectMainDisplay, CGPointMake(
-			windowRect.origin.x + (viewRect.size.width * x),
-			firstScreenRect.size.height - windowRect.origin.y -
-				viewRect.size.height + ((1.0 - y) * viewRect.size.height)));
+	    kCGDirectMainDisplay, CGPointMake(windowRect.origin.x + (viewRect.size.width * x), firstScreenRect.size.height - windowRect.origin.y - viewRect.size.height + ((1.0 - y) * viewRect.size.height)));
 
-	if(error != kCGErrorSuccess)
+	if (error != kCGErrorSuccess)
 		nlerror("cannot set mouse position");
 
-#elif defined (NL_OS_UNIX)
+#elif defined(NL_OS_UNIX)
 
-	XWarpPointer (_dpy, None, _win, None, None, None, None, x1, y1);
+	XWarpPointer(_dpy, None, _win, None, None, None, None, x1, y1);
 
 #endif // NL_OS_UNIX
 }
 
 // ***************************************************************************
-void CDriverGL::setCapture (bool b)
+void CDriverGL::setCapture(bool b)
 {
 	H_AUTO_OGL(CDriverGL_setCapture);
 
@@ -586,15 +576,15 @@ void CDriverGL::setCapture (bool b)
 	// no need to capture
 	_MouseCaptured = b;
 
-#elif defined (NL_OS_UNIX)
+#elif defined(NL_OS_UNIX)
 
-	if(b /* && isSystemCursorInClientArea() && !isSystemCursorCaptured()*/) // capture the cursor.
+	if (b /* && isSystemCursorInClientArea() && !isSystemCursorCaptured()*/) // capture the cursor.
 	{
 		// capture the cursor
 		XGrabPointer(_dpy, _win, True, 0, GrabModeAsync, GrabModeAsync, _win, None, CurrentTime);
 		_MouseCaptured = true;
 	}
-	else if (!b/* && isSystemCursorCaptured()*/)
+	else if (!b /* && isSystemCursorCaptured()*/)
 	{
 		// release the cursor
 		XUngrabPointer(_dpy, CurrentTime);
@@ -653,7 +643,7 @@ bool CDriverGL::isSystemCursorInClientArea()
 		}
 #elif defined(NL_OS_MAC)
 		// TODO: implement this
-#elif defined (NL_OS_UNIX)
+#elif defined(NL_OS_UNIX)
 		// TODO: implement this
 #endif
 		// TODO: probably wrong if NeL window is docked inside parent (ie QT widget)
@@ -716,9 +706,9 @@ bool CDriverGL::convertBitmapToCursor(const NLMISC::CBitmap &bitmap, nlCursor &c
 
 	CBitmap colorBm;
 	colorBm.resize(iconWidth, iconHeight, CBitmap::RGBA);
-	const CRGBA *srcColorPtr = (CRGBA *) &(src.getPixels()[0]);
+	const CRGBA *srcColorPtr = (CRGBA *)&(src.getPixels()[0]);
 	const CRGBA *srcColorPtrLast = srcColorPtr + (iconWidth * iconHeight);
-	CRGBA *destColorPtr = (CRGBA *) &(colorBm.getPixels()[0]);
+	CRGBA *destColorPtr = (CRGBA *)&(colorBm.getPixels()[0]);
 
 	do
 	{
@@ -736,10 +726,9 @@ bool CDriverGL::convertBitmapToCursor(const NLMISC::CBitmap &bitmap, nlCursor &c
 			destColorPtr->B = (destColorPtr->B * destColorPtr->A) / 255;
 		}
 
-		++ srcColorPtr;
-		++ destColorPtr;
-	}
-	while (srcColorPtr != srcColorPtrLast);
+		++srcColorPtr;
+		++destColorPtr;
+	} while (srcColorPtr != srcColorPtrLast);
 
 #ifdef HAVE_XCURSOR
 
@@ -756,7 +745,7 @@ bool CDriverGL::convertBitmapToCursor(const NLMISC::CBitmap &bitmap, nlCursor &c
 			image->xhot = (uint)hotSpotX;
 			image->yhot = (uint)hotSpotY;
 
-			memcpy(image->pixels, &colorBm.getPixels(0)[0], colorBm.getSize()*4);
+			memcpy(image->pixels, &colorBm.getPixels(0)[0], colorBm.getSize() * 4);
 
 			cursor = XcursorImageLoadCursor(_dpy, image);
 
@@ -771,8 +760,8 @@ bool CDriverGL::convertBitmapToCursor(const NLMISC::CBitmap &bitmap, nlCursor &c
 	if (_xrender_version > 0)
 	{
 		// use malloc() because X will free() data itself
-		CRGBA *src32 = (CRGBA*)malloc(colorBm.getSize()*4);
-		memcpy(src32, &colorBm.getPixels(0)[0], colorBm.getSize()*4);
+		CRGBA *src32 = (CRGBA *)malloc(colorBm.getSize() * 4);
+		memcpy(src32, &colorBm.getPixels(0)[0], colorBm.getSize() * 4);
 
 		uint size = iconWidth * iconHeight;
 
@@ -786,7 +775,7 @@ bool CDriverGL::convertBitmapToCursor(const NLMISC::CBitmap &bitmap, nlCursor &c
 		}
 
 		// Create the icon image
-		XImage* image = XCreateImage(_dpy, visual, 32, ZPixmap, 0, (char*)src32, iconWidth, iconHeight, 32, 0);
+		XImage *image = XCreateImage(_dpy, visual, 32, ZPixmap, 0, (char *)src32, iconWidth, iconHeight, 32, 0);
 
 		if (!image)
 		{

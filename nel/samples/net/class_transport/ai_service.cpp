@@ -17,7 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /*
  * Transport class example, gd server.
  *
@@ -40,10 +39,10 @@
 #include "nel/net/transport_class.h"
 
 #ifdef NL_OS_WINDOWS
-#	ifndef NL_COMP_MINGW
-#		define NOMINMAX
-#	endif
-#	include <windows.h>
+#ifndef NL_COMP_MINGW
+#define NOMINMAX
+#endif
+#include <windows.h>
 #endif // NL_OS_WINDOWS
 
 #ifndef NL_CT_CFG
@@ -64,33 +63,40 @@ using namespace NLMISC;
 
 struct CSharedClass : public CTransportClass
 {
-	uint32	i1;
-	uint16	i2;
-	float	f1, f2;
-	
+	uint32 i1;
+	uint16 i2;
+	float f1, f2;
+
 	vector<uint32> vi1;
 
 	string str;
 
 	CEntityId eid;
 
-	CSharedClass () : i1(20), i2(20), f1(20), str("str20"), eid (5, 1515664512) { }
-
-	virtual void description ()
+	CSharedClass()
+	    : i1(20)
+	    , i2(20)
+	    , f1(20)
+	    , str("str20")
+	    , eid(5, 1515664512)
 	{
-		className ("SharedClass");
-		property ("i1", PropUInt32, (uint32)21, i1);
-		property ("f1", PropFloat,  2.5f, f1);
-		property ("i2", PropUInt16, (uint16)22, i2);
-		propertyCont ("vi1", PropUInt16, vi1);
-		property ("str", PropString, (string)"str22", str);
-//		property ("eid", PropEntityId, CEntityId::Unknown, eid);
-		property ("f2", PropFloat,  2.5f, f2);
 	}
 
-	virtual void callback (const string &name, uint8 sid)
+	virtual void description()
 	{
-		nlinfo ("Yes! I receive a Shared class from '%s' %d", name.c_str(), sid);
+		className("SharedClass");
+		property("i1", PropUInt32, (uint32)21, i1);
+		property("f1", PropFloat, 2.5f, f1);
+		property("i2", PropUInt16, (uint16)22, i2);
+		propertyCont("vi1", PropUInt16, vi1);
+		property("str", PropString, (string) "str22", str);
+		//		property ("eid", PropEntityId, CEntityId::Unknown, eid);
+		property("f2", PropFloat, 2.5f, f2);
+	}
+
+	virtual void callback(const string &name, uint8 sid)
+	{
+		nlinfo("Yes! I receive a Shared class from '%s' %d", name.c_str(), sid);
 	}
 };
 
@@ -102,7 +108,7 @@ struct CSharedClass : public CTransportClass
 // Functions
 //
 
-static void cbUpService (const std::string &serviceName, uint16 sid, void *arg)
+static void cbUpService(const std::string &serviceName, uint16 sid, void *arg)
 {
 	// When a service comes, send the new class
 	CSharedClass foo;
@@ -121,22 +127,21 @@ struct CAIService : public IService
 		CUnifiedNetwork::getInstance()->setServiceUpCallback("*", (TUnifiedNetCallback)cbUpService, NULL);
 
 		// init the class transport system
-		CTransportClass::init ();
+		CTransportClass::init();
 
 		// register the shared class
-		TRANSPORT_CLASS_REGISTER (CSharedClass);
+		TRANSPORT_CLASS_REGISTER(CSharedClass);
 	}
 
-	void release ()
+	void release()
 	{
 		// release all the class transport system
-		CTransportClass::release ();
+		CTransportClass::release();
 	}
 };
-
 
 /*
  * Declare a service with the class IService, the names "AIS" (short) and "ai_service" (long).
  * The port is automatically allocated (0) and the main callback array is empty.
  */
-NLNET_SERVICE_MAIN( CAIService, "AIS", "ai_service", 0, EmptyCallbackArray, NL_CT_CFG, "" )
+NLNET_SERVICE_MAIN(CAIService, "AIS", "ai_service", 0, EmptyCallbackArray, NL_CT_CFG, "")

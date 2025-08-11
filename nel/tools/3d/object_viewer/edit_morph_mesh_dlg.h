@@ -19,11 +19,10 @@
 
 #if _MSC_VER > 1000
 #pragma once
-#endif 
+#endif
 
-namespace NL3D
-{
-	class CPSConstraintMesh;
+namespace NL3D {
+class CPSConstraintMesh;
 }
 
 #include "ps_wrapper.h"
@@ -31,42 +30,40 @@ namespace NL3D
 #include "particle_workspace.h"
 
 struct IPopupNotify;
-class  CParticleDlg;
+class CParticleDlg;
 /////////////////////////////////////////////////////////////////////////////
 // CEditMorphMeshDlg dialog
 
 class CEditMorphMeshDlg : public CDialog, public CDialogStack
 {
-// Construction
+	// Construction
 public:
-	CEditMorphMeshDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSConstraintMesh *cm, CWnd* pParent, CParticleDlg  *particleDlg, IPopupNotify *pn = NULL);   // standard constructor
-
-	
+	CEditMorphMeshDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSConstraintMesh *cm, CWnd *pParent, CParticleDlg *particleDlg, IPopupNotify *pn = NULL); // standard constructor
 
 	void init(CWnd *pParent);
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CEditMorphMeshDlg)
-	enum { IDD = IDD_EDIT_MORPH_MESH };
-	CListBox	m_MeshList;
+	enum
+	{
+		IDD = IDD_EDIT_MORPH_MESH
+	};
+	CListBox m_MeshList;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CEditMorphMeshDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
-
-	
+	// Implementation
 
 protected:
 	CParticleWorkspace::CNode *_Node;
-	NL3D::CPSConstraintMesh   *_CM; // the constraint mesh being edited
-	IPopupNotify			  *_PN; // a window to notify when this dialog is destroyed
-	CParticleDlg			  *_ParticleDlg;
+	NL3D::CPSConstraintMesh *_CM; // the constraint mesh being edited
+	IPopupNotify *_PN; // a window to notify when this dialog is destroyed
+	CParticleDlg *_ParticleDlg;
 
 	/// open a file dialog to get the mesh name
 	bool getShapeNameFromDlg(std::string &name);
@@ -76,9 +73,8 @@ protected:
 
 	// update dialog msg to say that mesh are incompatibles
 	void updateValidFlag();
-	
+
 	std::string getShapeDescStr(uint shapeIndex, sint numVerts) const;
-	
 
 	// Generated message map functions
 	//{{AFX_MSG(CEditMorphMeshDlg)

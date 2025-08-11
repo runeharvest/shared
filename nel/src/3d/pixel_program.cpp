@@ -31,21 +31,18 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D 
-{
+namespace NL3D {
 
 // ***************************************************************************
 
 CPixelProgram::CPixelProgram()
 {
-	
 }
 
 // ***************************************************************************
 
-CPixelProgram::~CPixelProgram ()
+CPixelProgram::~CPixelProgram()
 {
-	
 }
 
 // ***************************************************************************

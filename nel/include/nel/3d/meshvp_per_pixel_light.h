@@ -24,9 +24,7 @@
 #include "nel/3d/mesh_vertex_program.h"
 #include "nel/3d/vertex_program.h"
 
-
 #include <memory>
-
 
 namespace NL3D {
 
@@ -56,47 +54,53 @@ public:
 	friend class CVertexProgramPerPixelLight;
 
 	/// true if want Specular Lighting.
-	bool		SpecularLighting;
+	bool SpecularLighting;
+
 public:
-	CMeshVPPerPixelLight() : SpecularLighting(true), _Enabled(false) {}
+	CMeshVPPerPixelLight()
+	    : SpecularLighting(true)
+	    , _Enabled(false)
+	{
+	}
 	/// \name IMeshVertexProgram implementation
 	// @{
-		virtual	void	initInstance(CMeshBaseInstance *mbi);
-		virtual	bool	begin(IDriver *drv,
-							  CScene *scene,
-							  CMeshBaseInstance *mbi,
-							  const NLMISC::CMatrix &invertedModelMat,
-							  const NLMISC::CVector &viewerPos);
-		virtual	void	end(IDriver *drv);
-		virtual void	serial(NLMISC::IStream &f);
-		virtual void	setupForMaterial(const CMaterial &mat,
-										 IDriver *drv,
-										 CScene *scene,
-										 CVertexBuffer *vb
-										);
-		virtual	bool	needTangentSpace() const { return true; }
-		NLMISC_DECLARE_CLASS(CMeshVPPerPixelLight);
+	virtual void initInstance(CMeshBaseInstance *mbi);
+	virtual bool begin(IDriver *drv,
+	    CScene *scene,
+	    CMeshBaseInstance *mbi,
+	    const NLMISC::CMatrix &invertedModelMat,
+	    const NLMISC::CVector &viewerPos);
+	virtual void end(IDriver *drv);
+	virtual void serial(NLMISC::IStream &f);
+	virtual void setupForMaterial(const CMaterial &mat,
+	    IDriver *drv,
+	    CScene *scene,
+	    CVertexBuffer *vb);
+	virtual bool needTangentSpace() const { return true; }
+	NLMISC_DECLARE_CLASS(CMeshVPPerPixelLight);
 	// @}
 private:
 	// enable / disable this v.p
-	void	enable(bool enabled, IDriver *drv);
+	void enable(bool enabled, IDriver *drv);
+
 private:
 	// this setup the material, and returns true if the v.p has been enabled / disabled
-	virtual bool	setupForMaterial(const CMaterial &mat,
-									 IDriver *drv,
-									 CScene *scene
-									);
-	bool	_Enabled;
-	bool	_IsPointLight;
+	virtual bool setupForMaterial(const CMaterial &mat,
+	    IDriver *drv,
+	    CScene *scene);
+	bool _Enabled;
+	bool _IsPointLight;
 	//
-	enum { NumVp = 8};
-	static	NLMISC::CSmartPtr<CVertexProgramPerPixelLight> _VertexProgram[NumVp];
+	enum
+	{
+		NumVp = 8
+	};
+	static NLMISC::CSmartPtr<CVertexProgramPerPixelLight> _VertexProgram[NumVp];
 
 	NLMISC::CRefPtr<CVertexProgramPerPixelLight> _ActiveVertexProgram;
 };
 
 } // NL3D
-
 
 #endif // NL_MESHVP_PER_PIXEL_LIGHT_H
 

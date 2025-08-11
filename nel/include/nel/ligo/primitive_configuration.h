@@ -25,8 +25,7 @@
 typedef struct _xmlNode xmlNode;
 typedef xmlNode *xmlNodePtr;
 
-namespace NLLIGO
-{
+namespace NLLIGO {
 
 class CLigoConfig;
 class IPrimitive;
@@ -41,28 +40,27 @@ class IPrimitive;
 class CPrimitiveConfigurations
 {
 public:
-
 	// The name of the matching values
-	std::string	Name;
+	std::string Name;
 
 	// The configuration color
-	NLMISC::CRGBA	Color;
+	NLMISC::CRGBA Color;
 
 	// Matching pairs
 	class CMatchGroup
 	{
 	public:
-		std::vector<std::pair<std::string, std::string>	>	Pairs;
+		std::vector<std::pair<std::string, std::string>> Pairs;
 	};
 
 	// The pair of name / value parameter to match
-	std::vector<CMatchGroup>	MatchPairs;
+	std::vector<CMatchGroup> MatchPairs;
 
 	// Read from a xml tree
-	bool	read (xmlNodePtr configurationNode, const char *filename, const char *name, class CLigoConfig &config);
+	bool read(xmlNodePtr configurationNode, const char *filename, const char *name, class CLigoConfig &config);
 
 	// Test if this primitive belong this configuration
-	bool	belong (const IPrimitive &primitive) const;
+	bool belong(const IPrimitive &primitive) const;
 };
 
 }

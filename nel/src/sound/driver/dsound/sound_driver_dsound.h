@@ -34,14 +34,14 @@ class CBufferDSound;
 class CSoundDriverDSound : public ISoundDriver
 {
 public:
-    /// Constructor
-    CSoundDriverDSound(ISoundDriver::IStringMapperProvider *stringMapper);
+	/// Constructor
+	CSoundDriverDSound(ISoundDriver::IStringMapperProvider *stringMapper);
 
-    virtual ~CSoundDriverDSound();
+	virtual ~CSoundDriverDSound();
 
 	/// Return the instance of the singleton
 	static CSoundDriverDSound *instance() { return _Instance; }
-	
+
 	/// Return a list of available devices for the user. The value at index 0 is empty, and is used for automatic device selection.
 	virtual void getDevices(std::vector<std::string> &devices);
 	/// Initialize the driver with a user selected device. If device.empty(), the default or most appropriate device is used.
@@ -53,15 +53,15 @@ public:
 	virtual bool getOption(TSoundOptions option);
 
 	/// Create the listener instance
-	virtual	IListener *createListener();
+	virtual IListener *createListener();
 
 	/// Create a sound buffer
-	virtual	IBuffer *createBuffer();
+	virtual IBuffer *createBuffer();
 
-    // Source management
+	// Source management
 
 	/// Create a source
-	virtual	ISource *createSource();
+	virtual ISource *createSource();
 
 	/// Commit all the changes made to 3D settings of listener and sources
 	virtual void commit3DChanges();
@@ -70,37 +70,36 @@ public:
 	virtual uint countMaxSources();
 
 	/// Count the number of available hardware streaming 3D buffers
-    uint countHw3DBuffers();
+	uint countHw3DBuffers();
 
 	/// Count the number of available hardware streaming 2D buffers
-    uint countHw2DBuffers();
+	uint countHw2DBuffers();
 
 	/// Count the number of sources that are actually playing.
-    uint countPlayingSources();
+	uint countPlayingSources();
 
 	/// Update all the driver and its sources. To be called only by the timer callback.
 	void update();
 
 	/// Write information about the driver to the output stream.
-	void writeProfile(std::string& out);
+	void writeProfile(std::string &out);
 
-
-    /** Set the gain (volume value inside [0 , 1]). (default: 1)
+	/** Set the gain (volume value inside [0 , 1]). (default: 1)
 	 * 0.0 -> silence
 	 * 0.5 -> -6dB
 	 * 1.0 -> no attenuation
 	 * values > 1 (amplification) not supported by most drivers
 	 */
-    void setGain( float gain );
+	void setGain(float gain);
 
-    /// Get the gain
+	/// Get the gain
 	float getGain();
 
 	/// Return the string mapper
-	IStringMapperProvider	*getStringMapper()	{return _StringMapper;}
+	IStringMapperProvider *getStringMapper() { return _StringMapper; }
 
 #if EAX_AVAILABLE == 1
-	LPKSPROPERTYSET		createPropertySet(CSourceDSound *source);
+	LPKSPROPERTYSET createPropertySet(CSourceDSound *source);
 #endif
 
 	/// Create a music channel, destroy with destroyMusicChannel
@@ -108,105 +107,100 @@ public:
 
 	/// Destroy a music channel
 	virtual void destroyMusicChannel(IMusicChannel * /* musicChannel */) { nlassert(false); }
-	
-	/** Get music info. Returns false if the song is not found or the function is not implemented. 
+
+	/** Get music info. Returns false if the song is not found or the function is not implemented.
 	 *  If the song has no name, result is filled with the filename.
 	 *  \param filepath path to file, CPath::lookup done by driver
 	 *  \param artist returns the song artist (empty if not available)
 	 *  \param title returns the title (empty if not available)
 	 */
-	virtual bool getMusicInfo(const std::string & /* filepath */, std::string &artist, std::string &title, float &length) { artist.clear(); title.clear(); length = 0.f; return false; }
+	virtual bool getMusicInfo(const std::string & /* filepath */, std::string &artist, std::string &title, float &length)
+	{
+		artist.clear();
+		title.clear();
+		length = 0.f;
+		return false;
+	}
 
 private:
-
 	// The callback for the multimedia timer
-    static void CALLBACK TimerCallback(UINT uID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2);
+	static void CALLBACK TimerCallback(UINT uID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2);
 
 	// The refence to the singleton.
-    static CSoundDriverDSound* _Instance;
+	static CSoundDriverDSound *_Instance;
 
 	// The period of the timer.
-    static uint32 _TimerPeriod;
+	static uint32 _TimerPeriod;
 
 	friend CBufferDSound::~CBufferDSound();
 	friend CSourceDSound::~CSourceDSound();
 
- 	/// Remove a buffer (should be called by the friend destructor of the buffer class)
+	/// Remove a buffer (should be called by the friend destructor of the buffer class)
 	virtual void removeBuffer(IBuffer *buffer);
 
 	/// Remove a source (should be called by the friend destructor of the source class)
 	virtual void removeSource(ISource *source);
 
+	virtual void startBench();
+	virtual void endBench();
+	virtual void displayBench(NLMISC::CLog *log);
 
-	virtual void	startBench();
-	virtual void	endBench();
-	virtual void	displayBench(NLMISC::CLog *log);
-	
-	
 	/// Get audio/container extensions that are supported natively by the driver implementation.
 	virtual void getMusicExtensions(std::vector<std::string> & /* extensions */) const { }
 	/// Return if a music extension is supported by the driver's music channel.
 	virtual bool isMusicExtensionSupported(const std::string & /* extension */) const { return false; }
-	
-	
+
 	// The DirectSound object
-    LPDIRECTSOUND			_DirectSound;
+	LPDIRECTSOUND _DirectSound;
 
-    // The application-wide primary buffer
-    LPDIRECTSOUNDBUFFER	_PrimaryBuffer;
+	// The application-wide primary buffer
+	LPDIRECTSOUNDBUFFER _PrimaryBuffer;
 
-    // The capabilities of the driver
-    DSCAPS _Caps;
+	// The capabilities of the driver
+	DSCAPS _Caps;
 
-    // Array with the allocated sources
-    //CSourceDSound** _Sources;
-	std::set<CSourceDSound*> _Sources;
+	// Array with the allocated sources
+	// CSourceDSound** _Sources;
+	std::set<CSourceDSound *> _Sources;
 
 	// The number of allocated sources
-    uint _SourceCount;
+	uint _SourceCount;
 
 	// The Windows ID of the multimedia timer used in the update.
-    UINT _TimerID;
+	UINT _TimerID;
 
 	// The timer resolution.
-    uint32 _TimerResolution;
+	uint32 _TimerResolution;
 
 	/// The EAX support is requested and accepted (ie, there is enougth hardware 3D buffer)
-	bool	_UseEAX;
+	bool _UseEAX;
 	/// The string mapper provided by client code
-	IStringMapperProvider	*_StringMapper;
+	IStringMapperProvider *_StringMapper;
 	/// Driver options
 	TSoundOptions _Options;
 
 #if NLSOUND_PROFILE
 protected:
-
-
-    uint _TimerInterval[1024];
-    uint _TimerIntervalCount;
-    NLMISC::TTicks _TimerDate;
-    double _TotalTime;
-    double _TotalUpdateTime;
+	uint _TimerInterval[1024];
+	uint _TimerIntervalCount;
+	NLMISC::TTicks _TimerDate;
+	double _TotalTime;
+	double _TotalUpdateTime;
 	uint32 _UpdateCount;
 	uint32 _UpdateSources;
 	uint32 _UpdateExec;
 
-
 public:
-
-    void printDriverInfo(FILE* fp);
-    uint countTimerIntervals();
-    uint getTimerIntervals(uint index);
-    void addTimerInterval(uint32 dt);
-    double getCPULoad();
-	double getTotalTime()            { return _TotalTime; };
-	double getAverageUpdateTime()    { return (_UpdateCount) ?  _TotalUpdateTime / _UpdateCount : 0.0; }
-	uint32 getAverageUpdateSources() { return (_UpdateExec) ?  _UpdateSources / _UpdateExec : 0; }
-	double getUpdatePercentage()     { return (_UpdateCount) ? (double) _UpdateExec / (double) _UpdateCount: 0; }
+	void printDriverInfo(FILE *fp);
+	uint countTimerIntervals();
+	uint getTimerIntervals(uint index);
+	void addTimerInterval(uint32 dt);
+	double getCPULoad();
+	double getTotalTime() { return _TotalTime; };
+	double getAverageUpdateTime() { return (_UpdateCount) ? _TotalUpdateTime / _UpdateCount : 0.0; }
+	uint32 getAverageUpdateSources() { return (_UpdateExec) ? _UpdateSources / _UpdateExec : 0; }
+	double getUpdatePercentage() { return (_UpdateCount) ? (double)_UpdateExec / (double)_UpdateCount : 0; }
 #endif
-
-
-
 };
 
 } // NLSOUND

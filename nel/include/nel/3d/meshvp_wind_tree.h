@@ -24,7 +24,6 @@
 #include "nel/3d/mesh_vertex_program.h"
 #include "nel/3d/vertex_program.h"
 
-
 namespace NL3D {
 
 class CVertexProgramWindTree;
@@ -41,110 +40,110 @@ class CMeshVPWindTree : public IMeshVertexProgram
 public:
 	friend class CVertexProgramWindTree;
 
-	enum	{HrcDepth= 3};
+	enum
+	{
+		HrcDepth = 3
+	};
 
 	/// \name WindTree Parameters;
 	// @{
 
 	/// Frequency of the wind for 3 Hierachy levels
-	float		Frequency[HrcDepth];
+	float Frequency[HrcDepth];
 	/// Additional frequency, multiplied by the globalWindPower
-	float		FrequencyWindFactor[HrcDepth];
+	float FrequencyWindFactor[HrcDepth];
 	/// Power of the wind on XY. Mul by globalWindPower
-	float		PowerXY[HrcDepth];
+	float PowerXY[HrcDepth];
 	/// Power of the wind on Z. Mul by globalWindPower
-	float		PowerZ[HrcDepth];
+	float PowerZ[HrcDepth];
 	/// Bias result of the cosinus: f= cos(time)+bias.
-	float		Bias[HrcDepth];
+	float Bias[HrcDepth];
 
 	/// true if want Specular Lighting.
-	bool		SpecularLighting;
+	bool SpecularLighting;
 
 	// @}
 
 public:
-
 	/// Constructor
 	CMeshVPWindTree();
 	virtual ~CMeshVPWindTree();
-
 
 	/// \name IMeshVertexProgram implementation
 	// @{
 
 	/// Setup a rand phase for wind in mbi
-	virtual	void	initInstance(CMeshBaseInstance *mbi);
+	virtual void initInstance(CMeshBaseInstance *mbi);
 	/// Setup Wind constants, Light constants, and activate the VP.
-	virtual	bool	begin(IDriver *drv,
-						  CScene *scene,
-						  CMeshBaseInstance *mbi,
-						  const NLMISC::CMatrix &invertedModelMat,
-						  const NLMISC::CVector & /*viewerPos*/);
+	virtual bool begin(IDriver *drv,
+	    CScene *scene,
+	    CMeshBaseInstance *mbi,
+	    const NLMISC::CMatrix &invertedModelMat,
+	    const NLMISC::CVector & /*viewerPos*/);
 	/// disable the VertexProgram.
-	virtual	void	end(IDriver *drv);
+	virtual void end(IDriver *drv);
 
 	// Setup this shader for the given material.
-	virtual void	setupForMaterial(const CMaterial &mat,
-									 IDriver *drv,
-									 CScene *scene,
-									 CVertexBuffer *vb);
+	virtual void setupForMaterial(const CMaterial &mat,
+	    IDriver *drv,
+	    CScene *scene,
+	    CVertexBuffer *vb);
 
 	// Max VP Distance movement
-	virtual float	getMaxVertexMove();
+	virtual float getMaxVertexMove();
 
 	// Serial.
-	virtual void	serial(NLMISC::IStream &f);
+	virtual void serial(NLMISC::IStream &f);
 	NLMISC_DECLARE_CLASS(CMeshVPWindTree);
 
 	// @}
 
 	/** \name MBR support For WindTree
-	*/
+	 */
 	// @{
-	virtual	bool	supportMeshBlockRendering() const;
-	virtual	bool	isMBRVpOk(IDriver *drv) const;
-	virtual	void	beginMBRMesh(IDriver *drv, CScene *scene);
-	virtual	void	beginMBRInstance(IDriver *drv, CScene *scene, CMeshBaseInstance *mbi, const NLMISC::CMatrix &invertedModelMat);
-	virtual	void	endMBRMesh(IDriver *drv);
+	virtual bool supportMeshBlockRendering() const;
+	virtual bool isMBRVpOk(IDriver *drv) const;
+	virtual void beginMBRMesh(IDriver *drv, CScene *scene);
+	virtual void beginMBRInstance(IDriver *drv, CScene *scene, CMeshBaseInstance *mbi, const NLMISC::CMatrix &invertedModelMat);
+	virtual void endMBRMesh(IDriver *drv);
 	// @}
 
 private:
-	static void	initVertexPrograms();
-	void	setupLighting(CScene *scene, CMeshBaseInstance *mbi, const NLMISC::CMatrix &invertedModelMat);
-private:
+	static void initVertexPrograms();
+	void setupLighting(CScene *scene, CMeshBaseInstance *mbi, const NLMISC::CMatrix &invertedModelMat);
 
-	enum { NumVp = 16};
+private:
+	enum
+	{
+		NumVp = 16
+	};
 
 	/** The 16 versions: Specular or not (0 or 2), + normalize normal or not (0 or 1).
 	 *	All multiplied by 4, because support from 0 to 3 pointLights activated. (0.., 4.., 8.., 12..)
 	 */
-	static	NLMISC::CSmartPtr<CVertexProgramWindTree> _VertexProgram[NumVp];
+	static NLMISC::CSmartPtr<CVertexProgramWindTree> _VertexProgram[NumVp];
 
 	NLMISC::CRefPtr<CVertexProgramWindTree> _ActiveVertexProgram;
 
 	// WindTree Time for this mesh param setup. Stored in mesh because same for all instances.
-	float		_CurrentTime[HrcDepth];
-	double		_LastSceneTime;
+	float _CurrentTime[HrcDepth];
+	double _LastSceneTime;
 
 	// maximum amplitude vector for each level. Stored in mesh because same for all instances.
-	NLMISC::CVector		_MaxDeltaPos[HrcDepth];
-	float		_MaxVertexMove;
+	NLMISC::CVector _MaxDeltaPos[HrcDepth];
+	float _MaxVertexMove;
 
 	// MBR Cache
-	uint		_LastMBRIdVP;
+	uint _LastMBRIdVP;
 
 	// Compute a cosinus with an angle given in 0-1 <=> 0-2Pi. Actual values goes from 0 to 2.
-	static float	speedCos(float angle);
+	static float speedCos(float angle);
 
-
-	void		setupPerMesh(IDriver *driver, CScene *scene);
-	void		setupPerInstanceConstants(IDriver *driver, CScene *scene, CMeshBaseInstance *mbi, const NLMISC::CMatrix &invertedModelMat);
-
+	void setupPerMesh(IDriver *driver, CScene *scene);
+	void setupPerInstanceConstants(IDriver *driver, CScene *scene, CMeshBaseInstance *mbi, const NLMISC::CMatrix &invertedModelMat);
 };
 
-
 } // NL3D
-
 
 #endif // NL_MESHVP_WIND_TREE_H
 

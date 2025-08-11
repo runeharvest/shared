@@ -19,17 +19,16 @@
 
 #if _MSC_VER > 1000
 #pragma once
-#endif 
+#endif
 
-namespace NL3D
-{
-	template <typename T> class CPSAttribMakerMemory ;
+namespace NL3D {
+template <typename T>
+class CPSAttribMakerMemory;
 }
 
 #include "attrib_dlg.h"
 #include "ps_wrapper.h"
 #include "nel/3d/ps_attrib_maker.h"
-
 
 struct IPopupNotify;
 
@@ -38,29 +37,31 @@ struct IPopupNotify;
 
 class CValueFromEmitterDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CValueFromEmitterDlg(IPopupNotify *pn, CWnd* pParent = NULL);   // standard constructor
+	CValueFromEmitterDlg(IPopupNotify *pn, CWnd *pParent = NULL); // standard constructor
 
-	virtual void  init(CWnd *pParent) = 0 ;
-	void		  create(CWnd *parent);
-// Dialog Data
+	virtual void init(CWnd *pParent) = 0;
+	void create(CWnd *parent);
+	// Dialog Data
 	//{{AFX_DATA(CValueFromEmitterDlg)
-	enum { IDD = IDD_MEMORY_VALUE_DLG };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_MEMORY_VALUE_DLG
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CValueFromEmitterDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-	IPopupNotify	*_PN;
+	IPopupNotify *_PN;
 	// Generated message map functions
 	//{{AFX_MSG(CValueFromEmitterDlg)
 	virtual BOOL OnInitDialog();
@@ -69,62 +70,64 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-/** construct a dialog that allow to edit a scheme used for initial attribute generation in a particle  
-  */
-template <class T> class CValueFromEmitterDlgT : public CValueFromEmitterDlg
+/** construct a dialog that allow to edit a scheme used for initial attribute generation in a particle
+ */
+template <class T>
+class CValueFromEmitterDlgT : public CValueFromEmitterDlg
 {
-public:		
+public:
 	CValueFromEmitterDlgT(NL3D::CPSAttribMakerMemory<T> *editedScheme, CAttribDlgT<T> *srcDlg, IPopupNotify *pn, HBITMAP bitmapToDisplay)
-		: CValueFromEmitterDlg(pn), _BitmapToDisplay(bitmapToDisplay), _AttrbDlg(srcDlg)
+	    : CValueFromEmitterDlg(pn)
+	    , _BitmapToDisplay(bitmapToDisplay)
+	    , _AttrbDlg(srcDlg)
 	{
 		nlassert(srcDlg);
-		_SchemeWrapper.S = editedScheme ;
-	}	
+		_SchemeWrapper.S = editedScheme;
+	}
 	// inherited from CValueFromEmitterDlg
 	void init(CWnd *pParent)
 	{
-		CValueFromEmitterDlg::create(pParent);				
-		_AttrbDlg->disableConstantValue() ;
-		_AttrbDlg->setWrapper(&_DummyWrapper) ;
-		_AttrbDlg->setSchemeWrapper(&_SchemeWrapper) ;
-		_AttrbDlg->init(_BitmapToDisplay, 10, 10, this) ;		
+		CValueFromEmitterDlg::create(pParent);
+		_AttrbDlg->disableConstantValue();
+		_AttrbDlg->setWrapper(&_DummyWrapper);
+		_AttrbDlg->setSchemeWrapper(&_SchemeWrapper);
+		_AttrbDlg->init(_BitmapToDisplay, 10, 10, this);
 	}
 
 	~CValueFromEmitterDlgT()
 	{
-		if (_AttrbDlg) _AttrbDlg->DestroyWindow() ;
-		delete _AttrbDlg ;
-	}	
+		if (_AttrbDlg) _AttrbDlg->DestroyWindow();
+		delete _AttrbDlg;
+	}
 
-protected:	
+protected:
 	// the bitmap displayed onthe left
-	HBITMAP _BitmapToDisplay ;
+	HBITMAP _BitmapToDisplay;
 
 	/// the dialog that allow us to edit the scheme
-	CAttribDlgT<T> *_AttrbDlg ;
+	CAttribDlgT<T> *_AttrbDlg;
 
 	/// a wrapper to edit the scheme (which himself owns a scheme !!)
 	struct CSchemeWrapper : public IPSSchemeWrapper<T>
 	{
-		NL3D::CPSAttribMakerMemory<T> *S ;
-		virtual scheme_type *getScheme(void) const { return S->getScheme() ; }
-		virtual void setScheme(scheme_type *s) { S->setScheme(s) ; } ;
-	} _SchemeWrapper ;
+		NL3D::CPSAttribMakerMemory<T> *S;
+		virtual scheme_type *getScheme(void) const { return S->getScheme(); }
+		virtual void setScheme(scheme_type *s) { S->setScheme(s); };
+	} _SchemeWrapper;
 
 	/// a dummy wrapper for constant value. This shouldn't be called , however
 	struct CDummyWrapper : public IPSWrapper<T>
 	{
-		T get(void) const { nlassert(false) ; return T() ; }
-		void set(const T &) { nlassert(false) ; }
-	} _DummyWrapper ;
-		
-	
-} ;
+		T get(void) const
+		{
+			nlassert(false);
+			return T();
+		}
+		void set(const T &) { nlassert(false); }
+	} _DummyWrapper;
+};
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-
-
 
 #endif // !defined(AFX_VALUE_FROM_EMITTER_DLG_H__D3416DBF_1735_4FBB_A1FD_7E8DCC133825__INCLUDED_)

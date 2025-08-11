@@ -22,43 +22,44 @@
 // Forward declarations for libxml2
 typedef struct _xmlNode xmlNode;
 
-namespace NLGUI
+namespace NLGUI {
+class CHtmlElement;
+
+/**
+ * \brief HTML parsing
+ * \date 2019-03-15 10:50 GMT
+ * \author Meelis Mägi (Nimetu)
+ */
+class CHtmlParser
 {
-	class CHtmlElement;
-
-	/**
-	 * \brief HTML parsing
-	 * \date 2019-03-15 10:50 GMT
-	 * \author Meelis Mägi (Nimetu)
-	 */
-	class CHtmlParser
+public:
+	// <link rel=stylesheet>
+	struct StyleLink
 	{
-	public:
-		// <link rel=stylesheet>
-		struct StyleLink
+		uint Index;
+		std::string Url;
+		StyleLink(uint i, const std::string &url)
+		    : Index(i)
+		    , Url(url)
 		{
-			uint Index;
-			std::string Url;
-			StyleLink(uint i, const std::string &url) : Index(i), Url(url)
-			{ }
-		};
-
-		bool parseHtml(std::string htmlString) const;
-
-		// parse html string into DOM, extract <style> and <link stylesheet> urls
-		void getDOM(std::string htmlString, CHtmlElement &parent, std::vector<std::string> &styles, std::vector<StyleLink> &links) const;
-
-	private:
-		// iterate over libxml html tree, build DOM
-		void parseNode(xmlNode *a_node, CHtmlElement &parent, std::vector<std::string> &styles, std::vector<StyleLink> &links) const;
-
-		// read <style> tag and add its content to styleString
-		void parseStyle(xmlNode *a_node, std::string &styleString) const;
-
-		// update parent/sibling in elm.Children
-		void reindexChilds(CHtmlElement &elm) const;
+		}
 	};
+
+	bool parseHtml(std::string htmlString) const;
+
+	// parse html string into DOM, extract <style> and <link stylesheet> urls
+	void getDOM(std::string htmlString, CHtmlElement &parent, std::vector<std::string> &styles, std::vector<StyleLink> &links) const;
+
+private:
+	// iterate over libxml html tree, build DOM
+	void parseNode(xmlNode *a_node, CHtmlElement &parent, std::vector<std::string> &styles, std::vector<StyleLink> &links) const;
+
+	// read <style> tag and add its content to styleString
+	void parseStyle(xmlNode *a_node, std::string &styleString) const;
+
+	// update parent/sibling in elm.Children
+	void reindexChilds(CHtmlElement &elm) const;
+};
 }
 
 #endif
-

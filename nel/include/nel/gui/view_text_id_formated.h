@@ -18,43 +18,43 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef VIEW_TEXT_ID_FORMATED_H
 #define VIEW_TEXT_ID_FORMATED_H
 
 #include "nel/gui/view_text_id.h"
 
 /** The same as a view text id, but with some display option
-  * The input is a formated string, every character is copied, but subsitution is done for each character preceded by $
-  * $t -> expand the value of the text id
-  * $p -> expand the player name
-  * $P -> expand the player name in uppercase
-  * $b -> expand the current bot name ( bot with which the player is talking)
-  * $s -> expand the current short bot name (with no specification/title in it)
-  */
+ * The input is a formated string, every character is copied, but subsitution is done for each character preceded by $
+ * $t -> expand the value of the text id
+ * $p -> expand the player name
+ * $P -> expand the player name in uppercase
+ * $b -> expand the current bot name ( bot with which the player is talking)
+ * $s -> expand the current short bot name (with no specification/title in it)
+ */
 
-namespace NLGUI
+namespace NLGUI {
+
+class CViewTextIDFormated : public CViewTextID
 {
+public:
+	DECLARE_UI_CLASS(CViewTextIDFormated)
 
-	class CViewTextIDFormated : public  CViewTextID
+	CViewTextIDFormated(const TCtorParam &param)
+	    : CViewTextID(param)
 	{
-	public:
-        DECLARE_UI_CLASS( CViewTextIDFormated )
+	}
 
-		CViewTextIDFormated(const TCtorParam &param) : CViewTextID(param)
-		{}
+	std::string getProperty(const std::string &name) const;
+	void setProperty(const std::string &name, const std::string &value);
+	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
+	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+	virtual void checkCoords();
+	const std::string &getFormatString() const { return _FormatString; }
+	void setFormatString(const std::string &format);
 
-		std::string getProperty( const std::string &name ) const;
-		void setProperty( const std::string &name, const std::string &value );
-		xmlNodePtr serialize( xmlNodePtr parentNode, const char *type ) const;
-		virtual bool parse(xmlNodePtr cur, CInterfaceGroup * parentGroup);
-		virtual void checkCoords();
-		const  std::string &getFormatString() const { return _FormatString; }
-		void setFormatString(const std::string &format);
-	private:
-		std::string	_FormatString;
-	};
+private:
+	std::string _FormatString;
+};
 
 }
 

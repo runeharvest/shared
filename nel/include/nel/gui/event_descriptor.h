@@ -18,16 +18,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RZ_EVENT_DESCRIPTOR_H
 #define RZ_EVENT_DESCRIPTOR_H
 
 #include "nel/misc/types_nl.h"
 #include "nel/misc/events.h"
 
-namespace NLGUI
-{
+namespace NLGUI {
 
 // ----------------------------------------------------------------------------
 class CEventDescriptor
@@ -46,30 +43,35 @@ public:
 	}
 
 protected:
-	//type of the event
+	// type of the event
 	EEventType _EventType;
 };
 
-
 /** encode key events.
-  */
+ */
 class CEventDescriptorKey : public CEventDescriptor
 {
 public:
 	enum EKeyEventType
 	{
 		keydown = 0, // a key has been press down. The key value is stored as a TKey
-		keyup,   // a key has been released. The key value is stored as a TKey
-		keychar,  // a key has been stroke. The key is a ucchar
+		keyup, // a key has been released. The key value is stored as a TKey
+		keychar, // a key has been stroke. The key is a ucchar
 		keystring, // a string has been sent. The string is a utf-8 string
 		unknown, // uninitialized event
 	};
-	CEventDescriptorKey() : _KeyEvent(unknown), _CtrlState(false), _ShiftState(false), _AltState(false), _Char(0)
+	CEventDescriptorKey()
+	    : _KeyEvent(unknown)
+	    , _CtrlState(false)
+	    , _ShiftState(false)
+	    , _AltState(false)
+	    , _Char(0)
 	{
 		_EventType = key;
 	}
 	// ctrcuct from a CEventKey obj
-	CEventDescriptorKey(const NLMISC::CEventKey &ev) : _KeyEvent(unknown)
+	CEventDescriptorKey(const NLMISC::CEventKey &ev)
+	    : _KeyEvent(unknown)
 	{
 		_EventType = key;
 		init(ev);
@@ -77,7 +79,7 @@ public:
 	// get the type of the key event
 	EKeyEventType getKeyEventType() const { return _KeyEvent; }
 	// return the key that has been pressed. The key event type MUST be 'keydown' or 'keyup', else => assert
-	NLMISC::TKey  getKey() const
+	NLMISC::TKey getKey() const
 	{
 		nlassert(_KeyEvent == keydown || _KeyEvent == keyup);
 		return _Key;
@@ -111,40 +113,40 @@ public:
 	bool isShiftDown()
 	{
 		return (_KeyEvent == CEventDescriptorKey::keydown && (_Key == NLMISC::KeySHIFT || _ShiftState))
-			|| (_KeyEvent == CEventDescriptorKey::keyup   && (_Key != NLMISC::KeySHIFT && _ShiftState))
-			|| (_KeyEvent == CEventDescriptorKey::keychar && _ShiftState);
+		    || (_KeyEvent == CEventDescriptorKey::keyup && (_Key != NLMISC::KeySHIFT && _ShiftState))
+		    || (_KeyEvent == CEventDescriptorKey::keychar && _ShiftState);
 	}
 
 	// return true if key was pressed or held down at a time of this event
 	bool isCtrlDown()
 	{
 		return (_KeyEvent == CEventDescriptorKey::keydown && (_Key == NLMISC::KeyCONTROL || _CtrlState))
-			|| (_KeyEvent == CEventDescriptorKey::keyup   && (_Key != NLMISC::KeyCONTROL && _CtrlState))
-			|| (_KeyEvent == CEventDescriptorKey::keychar && _CtrlState);
+		    || (_KeyEvent == CEventDescriptorKey::keyup && (_Key != NLMISC::KeyCONTROL && _CtrlState))
+		    || (_KeyEvent == CEventDescriptorKey::keychar && _CtrlState);
 	}
 
 	// return true if key was pressed or held down at a time of this event
 	bool isAltDown()
 	{
 		return (_KeyEvent == CEventDescriptorKey::keydown && (_Key == NLMISC::KeyMENU || _AltState))
-			|| (_KeyEvent == CEventDescriptorKey::keyup   && (_Key != NLMISC::KeyMENU && _AltState))
-			|| (_KeyEvent == CEventDescriptorKey::keychar && _AltState);
+		    || (_KeyEvent == CEventDescriptorKey::keyup && (_Key != NLMISC::KeyMENU && _AltState))
+		    || (_KeyEvent == CEventDescriptorKey::keychar && _AltState);
 	}
 
 	// init from a CEventKey obj
 	void init(const NLMISC::CEventKey &ev);
 
 private:
-	EKeyEventType   _KeyEvent;
-	bool		    _CtrlState;
-	bool			_ShiftState;
-	bool			_AltState;
+	EKeyEventType _KeyEvent;
+	bool _CtrlState;
+	bool _ShiftState;
+	bool _AltState;
 	union
 	{
-		NLMISC::TKey	_Key;
-		u32char			_Char;
+		NLMISC::TKey _Key;
+		u32char _Char;
 	};
-	std::string			_String;
+	std::string _String;
 };
 
 // ----------------------------------------------------------------------------
@@ -153,14 +155,14 @@ class CEventDescriptorMouse : public CEventDescriptor
 public:
 	enum EEventTypeExtended
 	{
-		mouseleftdown=0,
-		mouseleftup=1,
-		mouserightdown=2,
-		mouserightup=3,
-		mousewheel=4,		// Complementary info stored in wheel
-		mousemove=5,		// Complementary info stored in x and y
-		mouseleftdblclk= 6,
-		mouserightdblclk= 7,
+		mouseleftdown = 0,
+		mouseleftup = 1,
+		mouserightdown = 2,
+		mouserightup = 3,
+		mousewheel = 4, // Complementary info stored in wheel
+		mousemove = 5, // Complementary info stored in x and y
+		mouseleftdblclk = 6,
+		mouserightdblclk = 7,
 	};
 
 	CEventDescriptorMouse()
@@ -169,7 +171,7 @@ public:
 		_X = _Y = _Wheel = 0;
 	}
 
-	CEventDescriptorMouse (sint32 x, sint32 y)
+	CEventDescriptorMouse(sint32 x, sint32 y)
 	{
 		_X = x;
 		_Y = y;
@@ -195,22 +197,22 @@ public:
 		return _EventTypeExtended;
 	}
 
-	void setX (sint32 x)
+	void setX(sint32 x)
 	{
 		_X = x;
 	}
 
-	void setY (sint32 y)
+	void setY(sint32 y)
 	{
 		_Y = y;
 	}
 
-	void setWheel (sint32 w)
+	void setWheel(sint32 w)
 	{
 		_Wheel = w;
 	}
 
-	void setEventTypeExtended (sint32 e)
+	void setEventTypeExtended(sint32 e)
 	{
 		_EventTypeExtended = e;
 	}
@@ -222,14 +224,13 @@ protected:
 	sint32 _EventTypeExtended;
 };
 
-
 // ----------------------------------------------------------------------------
 class CEventDescriptorSystem : public CEventDescriptor
 {
 public:
 	enum EEventTypeExtended
 	{
-		activecalledonparent= 0,
+		activecalledonparent = 0,
 		clocktick,
 		setfocus,
 		unknown
@@ -239,14 +240,16 @@ public:
 	{
 		return _EventTypeExtended;
 	}
-	void setEventTypeExtended (sint32 e)
+	void setEventTypeExtended(sint32 e)
 	{
 		_EventTypeExtended = e;
 	}
-	CEventDescriptorSystem() : _EventTypeExtended(unknown)
+	CEventDescriptorSystem()
+	    : _EventTypeExtended(unknown)
 	{
 		_EventType = system;
 	}
+
 protected:
 	sint32 _EventTypeExtended;
 };
@@ -257,24 +260,27 @@ class CEventDescriptorActiveCalledOnParent : public CEventDescriptorSystem
 public:
 	bool getActive() const { return _Active; }
 	void setActive(bool active) { _Active = active; }
-	CEventDescriptorActiveCalledOnParent(bool active = false) : _Active(active)
+	CEventDescriptorActiveCalledOnParent(bool active = false)
+	    : _Active(active)
 	{
 		setEventTypeExtended(activecalledonparent);
 	}
+
 protected:
 	bool _Active;
 };
-
 
 // ----------------------------------------------------------------------------
 class CEventDescriptorSetFocus : public CEventDescriptorSystem
 {
 public:
 	bool hasFocus() const { return _HasFocus; }
-	CEventDescriptorSetFocus(bool hasFocus = false) : _HasFocus(hasFocus)
+	CEventDescriptorSetFocus(bool hasFocus = false)
+	    : _HasFocus(hasFocus)
 	{
 		setEventTypeExtended(setfocus);
 	}
+
 protected:
 	bool _HasFocus;
 };

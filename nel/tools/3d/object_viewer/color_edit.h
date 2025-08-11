@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #if !defined(AFX_COLOR_EDIT_H__50C45CFE_2188_4161_B565_C773FE029BF3__INCLUDED_)
 #define AFX_COLOR_EDIT_H__50C45CFE_2188_4161_B565_C773FE029BF3__INCLUDED_
 
@@ -26,7 +25,7 @@
 
 #include "nel/misc/rgba.h"
 
-using NLMISC::CRGBA ;
+using NLMISC::CRGBA;
 
 #include "edit_attrib_dlg.h"
 #include "color_button.h"
@@ -36,69 +35,66 @@ using NLMISC::CRGBA ;
 /////////////////////////////////////////////////////////////////////////////
 // CColorEdit dialog
 
-
-class CColorButton ;
+class CColorButton;
 
 class CColorEdit : public CEditAttribDlg, CEditEx::IListener
 {
-// Construction
+	// Construction
 public:
 	// construct the dialog.
-	CColorEdit(CWnd* pParent = NULL);   // standard constructor
-
+	CColorEdit(CWnd *pParent = NULL); // standard constructor
 
 	// inherited from CEditAttribDlg
-	virtual void init(uint32 x, uint32 y, CWnd *pParent) ;
+	virtual void init(uint32 x, uint32 y, CWnd *pParent);
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CColorEdit)
-	enum { IDD = IDD_COLOR_EDIT };
-	CEditEx	m_BlueEditCtrl;
-	CEditEx	m_AlphaEditCtrl;
-	CEditEx	m_GreenEditCtrl;
-	CEditEx	m_RedEditCtrl;
-	CScrollBar	m_AlphaCtrl;
-	CScrollBar	m_GreenCtrl;
-	CScrollBar	m_BlueCtrl;
-	CScrollBar	m_RedCtrl;
-	CColorButton	m_Color;
+	enum
+	{
+		IDD = IDD_COLOR_EDIT
+	};
+	CEditEx m_BlueEditCtrl;
+	CEditEx m_AlphaEditCtrl;
+	CEditEx m_GreenEditCtrl;
+	CEditEx m_RedEditCtrl;
+	CScrollBar m_AlphaCtrl;
+	CScrollBar m_GreenCtrl;
+	CScrollBar m_BlueCtrl;
+	CScrollBar m_RedCtrl;
+	CColorButton m_Color;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CColorEdit)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
-
+	// Implementation
 
 public:
 	// set a wrapper to get the datas
-	void setWrapper(IPSWrapperRGBA *wrapper) { _Wrapper = wrapper ; }
-	
+	void setWrapper(IPSWrapperRGBA *wrapper) { _Wrapper = wrapper; }
 
 protected:
 	/// inherited from CEditEx::IListener
 	virtual void editExValueChanged(CEditEx *ctrl);
-	CColorButton &getColorCtrl(void) { return  * (CColorButton *) GetDlgItem(IDC_PARTICLE_COLOR) ; }
+	CColorButton &getColorCtrl(void) { return *(CColorButton *)GetDlgItem(IDC_PARTICLE_COLOR); }
 	void updateEdits();
-	
+
 	// wrapper to the datas
-	IPSWrapperRGBA *_Wrapper ;
+	IPSWrapperRGBA *_Wrapper;
 
 	// once the xrapper has been set, this display the basis
-	void updateColorFromReader(void) ;
+	void updateColorFromReader(void);
 
 	// Generated message map functions
 	//{{AFX_MSG(CColorEdit)
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
 	afx_msg void OnBrowseColor();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-	
 };
 
 //{{AFX_INSERT_LOCATION}}

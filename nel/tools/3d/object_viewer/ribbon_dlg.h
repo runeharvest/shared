@@ -19,13 +19,12 @@
 
 #if _MSC_VER > 1000
 #pragma once
-#endif 
+#endif
 
 #include "ps_wrapper.h"
 
-namespace NL3D
-{
-	class CPSRibbonBase;
+namespace NL3D {
+class CPSRibbonBase;
 }
 
 #include "editable_range.h"
@@ -33,34 +32,35 @@ namespace NL3D
 
 class CRibbonDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CRibbonDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSRibbonBase *ribbon, CWnd* pParent = NULL);   // standard constructor
+	CRibbonDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSRibbonBase *ribbon, CWnd *pParent = NULL); // standard constructor
 	~CRibbonDlg();
-	void init(CWnd *pParent, sint x, sint y);	
+	void init(CWnd *pParent, sint x, sint y);
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CRibbonDlg)
-	enum { IDD = IDD_RIBBON_DLG };
-	BOOL	m_UseHermitteInterpolation;
-	BOOL	m_ConstantLength;
+	enum
+	{
+		IDD = IDD_RIBBON_DLG
+	};
+	BOOL m_UseHermitteInterpolation;
+	BOOL m_ConstantLength;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CRibbonDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	CParticleWorkspace::CNode *_Node;
-	NL3D::CPSRibbonBase		  *_Ribbon; // the ribbon being edited
-	CEditableRangeFloat		  *_RibbonLengthDlg;
-	CEditableRangeFloat		  *_LODDegradationDlg;
-
+	NL3D::CPSRibbonBase *_Ribbon; // the ribbon being edited
+	CEditableRangeFloat *_RibbonLengthDlg;
+	CEditableRangeFloat *_LODDegradationDlg;
 
 	// Generated message map functions
 	//{{AFX_MSG(CRibbonDlg)
@@ -75,19 +75,21 @@ protected:
 	{
 		NL3D::CPSRibbonBase *R;
 		float get() const;
-		void  set(const float &v);
+		void set(const float &v);
 	} _RibbonLengthWrapper;
-
 
 	struct CLODDegradationWrapper : IPSWrapperFloat
 	{
 		NL3D::CPSRibbonBase *R;
 		float get() const;
-		void  set(const float &v);
+		void set(const float &v);
 	} _LODDegradationWrapper;
 
 	void updateState();
-	void updateModifiedFlag() { if (_Node) _Node->setModified(true); }
+	void updateModifiedFlag()
+	{
+		if (_Node) _Node->setModified(true);
+	}
 };
 
 //{{AFX_INSERT_LOCATION}}

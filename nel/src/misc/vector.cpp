@@ -16,22 +16,20 @@
 
 #include "stdmisc.h"
 
-#include	"nel/misc/vector.h"
+#include "nel/misc/vector.h"
 
 using namespace std;
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace	NLMISC
-{
+namespace NLMISC {
 
-const CVector	CVector::Null(0,0,0);
-const CVector	CVector::I(1,0,0);
-const CVector	CVector::J(0,1,0);
-const CVector	CVector::K(0,0,1);
-
+const CVector CVector::Null(0, 0, 0);
+const CVector CVector::I(1, 0, 0);
+const CVector CVector::J(0, 1, 0);
+const CVector CVector::K(0, 0, 1);
 
 /*
  * Returns the contents as a printable string "x y z"
@@ -43,6 +41,4 @@ string CVector::toString() const
 	return str;
 }
 
-
 }
-

@@ -25,19 +25,19 @@
 #ifdef NL_OS_WINDOWS
 
 #ifndef WIN32_LEAN_AND_MEAN
-#	define WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
 #endif
 #ifndef _WIN32_WINDOWS
-#	define _WIN32_WINDOWS 0x0500
+#define _WIN32_WINDOWS 0x0500
 #endif
 #ifndef _WIN32_WINNT
-#	define _WIN32_WINNT 0x0500
+#define _WIN32_WINNT 0x0500
 #endif
 #ifndef WINVER
-#	define WINVER 0x0500
+#define WINVER 0x0500
 #endif
 #ifndef NOMINMAX
-#	define NOMINMAX
+#define NOMINMAX
 #endif
 #include <windows.h>
 
@@ -47,7 +47,6 @@
 #include "window_displayer.h"
 
 namespace NLMISC {
-
 
 /**
  * this displayer displays on a win32 windows.
@@ -59,32 +58,30 @@ namespace NLMISC {
 class CWinDisplayer : public NLMISC::CWindowDisplayer
 {
 public:
-
 	CWinDisplayer(const char *displayerName = "");
 
-	virtual ~CWinDisplayer ();
+	virtual ~CWinDisplayer();
 
 #ifdef NL_OS_WINDOWS
-	HWND getHWnd () const { return _HWnd; }
+	HWND getHWnd() const { return _HWnd; }
 #endif // NL_OS_WINDOWS
 
 private:
+	// called by DT only
+	void resizeLabels();
+	// called by DT only
+	void updateLabels();
 
 	// called by DT only
-	void	resizeLabels ();
+	void open(std::string titleBar, bool iconified, sint x, sint y, sint w, sint h, sint hs, sint fs, const std::string &fn, bool ww, CLog *log);
 	// called by DT only
-	void	updateLabels ();
+	void clear();
+	// called by DT only
+	void display_main();
 
-	// called by DT only
-	void	open (std::string titleBar, bool iconified, sint x, sint y, sint w, sint h, sint hs, sint fs, const std::string &fn, bool ww, CLog *log);
-	// called by DT only
-	void	clear ();
-	// called by DT only
-	void	display_main ();
+	virtual void setTitleBar(const std::string &titleBar);
 
-	virtual void	setTitleBar (const std::string &titleBar);
-
-	virtual void	getWindowPos (uint32 &x, uint32 &y, uint32 &w, uint32 &h);
+	virtual void getWindowPos(uint32 &x, uint32 &y, uint32 &w, uint32 &h);
 
 	// all these variables above is used only by the DT
 
@@ -97,7 +94,7 @@ private:
 	// the MT must set the value to true to exit the thread
 	bool Exit;
 
-	friend LRESULT CALLBACK WndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	friend LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
 
 } // NLMISC

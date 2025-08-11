@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "multi_target.h"
 
@@ -23,17 +21,17 @@
 void CMultiTarget::pack(uint64 *destVP, uint numVP)
 {
 	nlassert(numVP * 4 >= Targets.size()); // not enough room to stores visual properties!
-	CTarget  invalidTarget;
+	CTarget invalidTarget;
 	uint index = 0;
-	for(uint k = 0; k < numVP; ++k)
+	for (uint k = 0; k < numVP; ++k)
 	{
 		uint16 parts[4];
-		for(uint l = 0; l < 4; ++l)
+		for (uint l = 0; l < 4; ++l)
 		{
 			parts[l] = index < Targets.size() ? Targets[index].getPacked() : invalidTarget.getPacked();
-			++ index;
+			++index;
 		}
-		destVP[k] = (uint64) parts[0] |  ((uint64) parts[1] << 16) | ((uint64) parts[2] << 32) | ((uint64) parts[3] << 48);
+		destVP[k] = (uint64)parts[0] | ((uint64)parts[1] << 16) | ((uint64)parts[2] << 32) | ((uint64)parts[3] << 48);
 	}
 }
 
@@ -41,12 +39,12 @@ void CMultiTarget::pack(uint64 *destVP, uint numVP)
 void CMultiTarget::unpack(const uint64 *srcVP, uint numVP)
 {
 	Targets.clear();
-	for(uint k = 0; k < numVP; ++k)
+	for (uint k = 0; k < numVP; ++k)
 	{
-		for(uint l = 0; l < 4; ++l)
+		for (uint l = 0; l < 4; ++l)
 		{
 			CTarget t;
-			t.setPacked((uint16) ((srcVP[k] >> (16 * l)) & 0xffff));
+			t.setPacked((uint16)((srcVP[k] >> (16 * l)) & 0xffff));
 			if (t.TargetSlot != CLFECOMMON::INVALID_SLOT)
 			{
 				Targets.push_back(t);

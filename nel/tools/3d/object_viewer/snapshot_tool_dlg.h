@@ -23,24 +23,21 @@
 // snapshot_tool_dlg.h : header file
 //
 
-
-namespace NL3D
-{
-	class CCamera;
+namespace NL3D {
+class CCamera;
 }
 
 class CObjectViewer;
 
 /**
-  * Snapshot tool dialog
-  *
-  */
+ * Snapshot tool dialog
+ *
+ */
 class CSnapshotToolDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-
-	enum 
+	enum
 	{
 		OutputFormat_Tga,
 		OutputFormat_Png,
@@ -64,44 +61,43 @@ public:
 		SnapshotAngle_Back
 	};
 
-
-	CSnapshotToolDlg(CObjectViewer *ov, CWnd* pParent = NULL);   // standard constructor
+	CSnapshotToolDlg(CObjectViewer *ov, CWnd *pParent = NULL); // standard constructor
 	~CSnapshotToolDlg();
-	
-// Dialog Data
+
+	// Dialog Data
 	//{{AFX_DATA(CSnapshotToolDlg)
-	enum { IDD = IDD_SNAPSHOT_TOOL };
-	CListBox	m_Log;
-	CListBox	m_Filters;
-	CString	m_OutputPath;
-	CString	m_InputPath;
-	BOOL	m_RecurseSubFolder;	
-	UINT	m_OutputHeight;
-	UINT	m_OutputWidth;	
-	int		m_Format;
-	int		m_OutputPathOption;
-	BOOL	m_DumpTextureSets;
-	BOOL	m_ViewBack;
-	BOOL	m_ViewBottom;
-	BOOL	m_ViewFront;
-	BOOL	m_ViewLeft;
-	BOOL	m_ViewRight;
-	BOOL	m_ViewTop;
-	BOOL	m_PostFixViewName;
+	enum
+	{
+		IDD = IDD_SNAPSHOT_TOOL
+	};
+	CListBox m_Log;
+	CListBox m_Filters;
+	CString m_OutputPath;
+	CString m_InputPath;
+	BOOL m_RecurseSubFolder;
+	UINT m_OutputHeight;
+	UINT m_OutputWidth;
+	int m_Format;
+	int m_OutputPathOption;
+	BOOL m_DumpTextureSets;
+	BOOL m_ViewBack;
+	BOOL m_ViewBottom;
+	BOOL m_ViewFront;
+	BOOL m_ViewLeft;
+	BOOL m_ViewRight;
+	BOOL m_ViewTop;
+	BOOL m_PostFixViewName;
 	//}}AFX_DATA
-	
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CSnapshotToolDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CSnapshotToolDlg)
 	afx_msg void OnBrowseInputPath();
@@ -131,7 +127,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-
 	std::deque<std::string> _FilteredFiles;
 
 	// Retrieve the options chosen in the snapshot tool ui from the registry.
@@ -144,9 +139,9 @@ private:
 	static void setCamFromView(uint view, NL3D::CCamera *cam, const NLMISC::CAABBox &bbox);
 	uint getSelectedViewCount();
 	static std::string viewToString(uint view);
+
 private:
 	CObjectViewer *_ObjectViewer;
-
 };
 
 //{{AFX_INSERT_LOCATION}}

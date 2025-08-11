@@ -23,27 +23,27 @@
 #include "nel/net/net_log.h"
 
 #ifdef NL_OS_WINDOWS
-#	include <winsock2.h>
-#	ifndef NL_COMP_MINGW
-#		define NOMINMAX
-#	endif
-#	include <windows.h>
-#	define socklen_t int
-#	define ERROR_NUM WSAGetLastError()
+#include <winsock2.h>
+#ifndef NL_COMP_MINGW
+#define NOMINMAX
+#endif
+#include <windows.h>
+#define socklen_t int
+#define ERROR_NUM WSAGetLastError()
 #elif defined NL_OS_UNIX
-#	include <unistd.h>
-#	include <sys/types.h>
-#	include <sys/time.h>
-#	include <sys/socket.h>
-#	include <netinet/in.h>
-#	include <netinet/tcp.h>
-#	include <arpa/inet.h>
-#	include <netdb.h>
-#	include <cerrno>
-#	define SOCKET_ERROR -1
-#	define INVALID_SOCKET -1
-#	define ERROR_NUM errno
-#	define ERROR_MSG strerror(errno)
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <cerrno>
+#define SOCKET_ERROR -1
+#define INVALID_SOCKET -1
+#define ERROR_NUM errno
+#define ERROR_MSG strerror(errno)
 typedef int SOCKET;
 #endif
 
@@ -51,21 +51,21 @@ using namespace NLMISC;
 
 namespace NLNET {
 
-
 /*
  * Constructor
  */
-CTcpSock::CTcpSock( bool logging ) :
-	CSock( logging )
-{}
-
+CTcpSock::CTcpSock(bool logging)
+    : CSock(logging)
+{
+}
 
 /*
  * Construct a CTcpSocket object using an already connected socket
  */
-CTcpSock::CTcpSock( SOCKET sock, const CInetAddress& remoteaddr ) :
-	CSock( sock, remoteaddr )
-{}
+CTcpSock::CTcpSock(SOCKET sock, const CInetAddress &remoteaddr)
+    : CSock(sock, remoteaddr)
+{
+}
 
 /* Connection. You can reconnect a socket after being disconnected.
  * This method does not return a boolean, otherwise a programmer could ignore the result and no
@@ -73,45 +73,43 @@ CTcpSock::CTcpSock( SOCKET sock, const CInetAddress& remoteaddr ) :
  * - If addr is not valid, an exception ESocket is thrown
  * - If connect() fails for another reason, an exception ESocketConnectionFailed is thrown
  */
-void CTcpSock::connect( const CInetHost & addrs )
+void CTcpSock::connect(const CInetHost &addrs)
 {
 	// Create a new socket
-	if ( _Sock != INVALID_SOCKET )
+	if (_Sock != INVALID_SOCKET)
 	{
-	  if ( _Logging )
-	    {
-//		LNETL0_DEBUG( "LNETL0: Closing socket %d before reconnecting", _Sock );
-	    }
-	  close();
+		if (_Logging)
+		{
+			//		LNETL0_DEBUG( "LNETL0: Closing socket %d before reconnecting", _Sock );
+		}
+		close();
 	}
-	createSocket( SOCK_STREAM, IPPROTO_TCP );
+	createSocket(SOCK_STREAM, IPPROTO_TCP);
 
 	// activate keep alive
 	setKeepAlive(true);
 
 	// Connection
-	CSock::connect( addrs );
+	CSock::connect(addrs);
 }
-
 
 /*
  * Active disconnection. After disconnecting, you can't connect back with the same socket.
  */
 void CTcpSock::disconnect()
 {
-	LNETL0_DEBUG( "LNETL0: Socket %d disconnecting from %s...", _Sock, _RemoteAddr.asString().c_str() );
+	LNETL0_DEBUG("LNETL0: Socket %d disconnecting from %s...", _Sock, _RemoteAddr.asString().c_str());
 
 	// This shutdown resets the connection immediately (not a graceful closure)
 #ifdef NL_OS_WINDOWS
-	::shutdown( _Sock, SD_BOTH );
+	::shutdown(_Sock, SD_BOTH);
 #elif defined NL_OS_UNIX
-	::shutdown( _Sock, SHUT_RDWR );
+	::shutdown(_Sock, SHUT_RDWR);
 #endif
 	/*CSynchronized<bool>::CAccessor sync( &_SyncConnected );
 	sync.value() = false;*/
 	_Connected = false;
 }
-
 
 /*
  * Active disconnection for download way only
@@ -119,12 +117,11 @@ void CTcpSock::disconnect()
 void CTcpSock::shutdownReceiving()
 {
 #ifdef NL_OS_WINDOWS
-	::shutdown( _Sock, SD_RECEIVE );
+	::shutdown(_Sock, SD_RECEIVE);
 #elif defined NL_OS_UNIX
-	::shutdown( _Sock, SHUT_RD );
+	::shutdown(_Sock, SHUT_RD);
 #endif
 }
-
 
 /*
  * Active disconnection for upload way only
@@ -132,62 +129,58 @@ void CTcpSock::shutdownReceiving()
 void CTcpSock::shutdownSending()
 {
 #ifdef NL_OS_WINDOWS
-	::shutdown( _Sock, SD_SEND );
+	::shutdown(_Sock, SD_SEND);
 #elif defined NL_OS_UNIX
-	::shutdown( _Sock, SHUT_WR );
+	::shutdown(_Sock, SHUT_WR);
 #endif
 }
 
-
-
-void CTcpSock::setKeepAlive( bool keepAlive)
+void CTcpSock::setKeepAlive(bool keepAlive)
 {
 	nlassert(_Sock != INVALID_SOCKET);
-	int b = keepAlive?1:0;
-	if ( setsockopt( _Sock, SOL_SOCKET, SO_KEEPALIVE, (char*)&b, sizeof(b) ) != 0 )
+	int b = keepAlive ? 1 : 0;
+	if (setsockopt(_Sock, SOL_SOCKET, SO_KEEPALIVE, (char *)&b, sizeof(b)) != 0)
 	{
-		throw ESocket( "setKeepAlive failed" );
+		throw ESocket("setKeepAlive failed");
 	}
 }
 
 /*
  * Sets/unsets TCP_NODELAY
  */
-void CTcpSock::setNoDelay( bool value )
+void CTcpSock::setNoDelay(bool value)
 {
-	int b = value?1:0;
-	if ( setsockopt( _Sock, IPPROTO_TCP, TCP_NODELAY, (char*)&b, sizeof(b) ) != 0 )
+	int b = value ? 1 : 0;
+	if (setsockopt(_Sock, IPPROTO_TCP, TCP_NODELAY, (char *)&b, sizeof(b)) != 0)
 	{
-		throw ESocket( "setNoDelay failed" );
+		throw ESocket("setNoDelay failed");
 	}
 }
-
 
 /* Sets a custom TCP Window size (SO_RCVBUF and SO_SNDBUF).
  * You must close the socket is necessary, before calling this method.
  *
  * See http://www.ncsa.uiuc.edu/People/vwelch/net_perf/tcp_windows.html
  */
-void CTcpSock::connectWithCustomWindowSize( const CInetAddress& addr, int windowsize )
+void CTcpSock::connectWithCustomWindowSize(const CInetAddress &addr, int windowsize)
 {
 	// Create socket
-	if ( _Sock != INVALID_SOCKET )
+	if (_Sock != INVALID_SOCKET)
 	{
-		nlerror( "Cannot connect with custom window size when already connected" );
+		nlerror("Cannot connect with custom window size when already connected");
 	}
-	createSocket( SOCK_STREAM, IPPROTO_TCP );
+	createSocket(SOCK_STREAM, IPPROTO_TCP);
 
 	// Change window size
-	if ( setsockopt( _Sock, SOL_SOCKET, SO_SNDBUF, (char*)&windowsize, sizeof(windowsize) ) != 0
-	  || setsockopt( _Sock, SOL_SOCKET, SO_RCVBUF, (char*)&windowsize, sizeof(windowsize) ) != 0 )
+	if (setsockopt(_Sock, SOL_SOCKET, SO_SNDBUF, (char *)&windowsize, sizeof(windowsize)) != 0
+	    || setsockopt(_Sock, SOL_SOCKET, SO_RCVBUF, (char *)&windowsize, sizeof(windowsize)) != 0)
 	{
-		throw ESocket( "setWindowSize failed" );
+		throw ESocket("setWindowSize failed");
 	}
 
 	// Connection
-	CSock::connect( addr );
+	CSock::connect(addr);
 }
-
 
 /*
  * Returns the TCP Window Size for the current socket
@@ -195,10 +188,10 @@ void CTcpSock::connectWithCustomWindowSize( const CInetAddress& addr, int window
 uint32 CTcpSock::getWindowSize()
 {
 	int windowsize = 0;
-	socklen_t len = sizeof( windowsize );
+	socklen_t len = sizeof(windowsize);
 
 	/* send buffer -- query for buffer size */
-	if ( getsockopt( _Sock, SOL_SOCKET, SO_SNDBUF, (char*) &windowsize, &len ) == 0 )
+	if (getsockopt(_Sock, SOL_SOCKET, SO_SNDBUF, (char *)&windowsize, &len) == 0)
 	{
 		return windowsize;
 	}
@@ -207,6 +200,5 @@ uint32 CTcpSock::getWindowSize()
 		return 0;
 	}
 }
-
 
 } // NLNET

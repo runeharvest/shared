@@ -22,21 +22,16 @@
 #include "nel/3d/material.h"
 #include "nel/3d/animated_material.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 class CMeshMRMSkinned;
 class CMeshMRMSkinnedGeom;
 class CRawSkinnedNormalCache;
 class CShiftedTriangleCache;
 
-
 // ***************************************************************************
 // ClassIds.
-const NLMISC::CClassId		MeshMRMSkinnedInstanceId=NLMISC::CClassId(0x6cfd2619, 0x2f8f36fc);
-
+const NLMISC::CClassId MeshMRMSkinnedInstanceId = NLMISC::CClassId(0x6cfd2619, 0x2f8f36fc);
 
 // ***************************************************************************
 /**
@@ -50,91 +45,85 @@ class CMeshMRMSkinnedInstance : public CMeshBaseInstance
 {
 public:
 	/// Call at the beginning of the program, to register the model
-	static	void	registerBasic();
+	static void registerBasic();
 
 protected:
 	/// Constructor
 	CMeshMRMSkinnedInstance()
 	{
-		_RawSkinCache= NULL;
-		_ShiftedTriangleCache= NULL;
+		_RawSkinCache = NULL;
+		_ShiftedTriangleCache = NULL;
 	}
 	/// Destructor
 	virtual ~CMeshMRMSkinnedInstance();
 
-
 	/// \name Skinning Behavior.
 	// @{
 	/// I can be skinned if the mesh is.
-	virtual	bool	isSkinnable() const;
+	virtual bool isSkinnable() const;
 
 	/// Called when the skin is applied on the skeleton
-	virtual	void	setApplySkin(bool state);
+	virtual void setApplySkin(bool state);
 
 	/// Called for lod character coloring.
-	virtual const std::vector<sint32>			*getSkinBoneUsage() const;
+	virtual const std::vector<sint32> *getSkinBoneUsage() const;
 
 	/// Called for more precise clipping.
-	virtual const std::vector<NLMISC::CBSphere>	*getSkinBoneSphere() const;
+	virtual const std::vector<NLMISC::CBSphere> *getSkinBoneSphere() const;
 
 	/// Implementation of the renderSkin
-	virtual void	renderSkin(float alphaMRM);
+	virtual void renderSkin(float alphaMRM);
 
 	// Implementation of SkinGrouping
-	virtual	bool			supportSkinGrouping() const;
-	virtual	sint			renderSkinGroupGeom(float alphaMRM, uint remainingVertices, uint8 *dest);
-	virtual	void			renderSkinGroupPrimitives(uint baseVertex, std::vector<CSkinSpecularRdrPass> &specularRdrPasses, uint skinIndex);
-	virtual	void			renderSkinGroupSpecularRdrPass(uint rdrPassId);
+	virtual bool supportSkinGrouping() const;
+	virtual sint renderSkinGroupGeom(float alphaMRM, uint remainingVertices, uint8 *dest);
+	virtual void renderSkinGroupPrimitives(uint baseVertex, std::vector<CSkinSpecularRdrPass> &specularRdrPasses, uint skinIndex);
+	virtual void renderSkinGroupSpecularRdrPass(uint rdrPassId);
 
-	virtual	bool			supportShadowSkinGrouping() const;
-	virtual	sint			renderShadowSkinGeom(uint remainingVertices, uint8 *vbDest);
-	virtual	void			renderShadowSkinPrimitives(CMaterial &castMat, IDriver *drv, uint baseVertex);
+	virtual bool supportShadowSkinGrouping() const;
+	virtual sint renderShadowSkinGeom(uint remainingVertices, uint8 *vbDest);
+	virtual void renderShadowSkinPrimitives(CMaterial &castMat, IDriver *drv, uint baseVertex);
 
-	virtual	bool			supportIntersectSkin() const;
-	virtual	bool			intersectSkin(const CMatrix &toRaySpace, float &dist2D, float &distZ, bool computeDist2D);
+	virtual bool supportIntersectSkin() const;
+	virtual bool intersectSkin(const CMatrix &toRaySpace, float &dist2D, float &distZ, bool computeDist2D);
 
 	/// Called for edition purpose (slow call O(NVertex))
-	virtual bool			getSkinBoneBBox(NLMISC::CAABBox &bbox, uint boneId);
+	virtual bool getSkinBoneBBox(NLMISC::CAABBox &bbox, uint boneId);
 
 	// @}
-
 
 	/// \name Load balancing methods
 	// @{
 
 	/** Change MRM Distance setup. See CMeshBaseInstance::changeMRMDistanceSetup()
 	 */
-	virtual void		changeMRMDistanceSetup(float distanceFinest, float distanceMiddle, float distanceCoarsest);
+	virtual void changeMRMDistanceSetup(float distanceFinest, float distanceMiddle, float distanceCoarsest);
 
-	virtual	const	CMRMLevelDetail		*getMRMLevelDetail() const;
+	virtual const CMRMLevelDetail *getMRMLevelDetail() const;
 
 	// @}
 
 	// called at instanciation
-	void			initRenderFilterType();
+	void initRenderFilterType();
 
-// *************************
+	// *************************
 private:
-	static CTransform	*creator() {return new CMeshMRMSkinnedInstance;}
-	friend	class CMeshMRMSkinned;
-	friend	class CMeshMRMSkinnedGeom;
+	static CTransform *creator() { return new CMeshMRMSkinnedInstance; }
+	friend class CMeshMRMSkinned;
+	friend class CMeshMRMSkinnedGeom;
 
 	/// Used by CMeshMRMSkinnedGeom. This a cache for skinning objects, for skinning optimisation
-	CRawSkinnedNormalCache		*_RawSkinCache;
+	CRawSkinnedNormalCache *_RawSkinCache;
 	/// Reset the RawSkin Info.
-	void					clearRawSkinCache();
+	void clearRawSkinCache();
 
 	/// Used by CMeshMRMSkinnedGeom. This a cache for skinning objects, for skinning optimisation
-	CShiftedTriangleCache	*_ShiftedTriangleCache;
+	CShiftedTriangleCache *_ShiftedTriangleCache;
 	/// Reset the _ShiftedTriangleCache Info.
-	void					clearShiftedTriangleCache();
-
+	void clearShiftedTriangleCache();
 };
 
-
-
 } // NL3D
-
 
 #endif // NL_MESH_MRM_SKINNED_INSTANCE_H
 

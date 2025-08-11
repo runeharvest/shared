@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 #include "nel/net/module.h"
@@ -23,37 +21,33 @@
 
 #include "command_executor_itf.h"
 
-
 using namespace std;
 using namespace NLMISC;
 using namespace NLNET;
 using namespace CMDEXE;
 
-
 void commandExecutor_forcelink()
 {
 }
 
-
-class CCommandExecutor: public CEmptyModuleServiceBehav<CEmptyModuleCommBehav<CEmptySocketBehav <CModuleBase> > >,
-	public CCommandExecutorSkel
+class CCommandExecutor : public CEmptyModuleServiceBehav<CEmptyModuleCommBehav<CEmptySocketBehav<CModuleBase>>>,
+                         public CCommandExecutorSkel
 {
 public:
-
 	CCommandExecutor()
 	{
 		CCommandExecutorSkel::init(this);
 	}
 
-//	bool onProcessModuleMessage(IModuleProxy *sender, const CMessage &message)
-//	{
-//		if (CCommandExecutorSkel::onDispatchMessage(sender, message))
-//			return true;
-//
-//		nlwarning("CCommandExecutor : Unknown message '%s' received", message.getName().c_str());
-//
-//		return false;
-//	}
+	//	bool onProcessModuleMessage(IModuleProxy *sender, const CMessage &message)
+	//	{
+	//		if (CCommandExecutorSkel::onDispatchMessage(sender, message))
+	//			return true;
+	//
+	//		nlwarning("CCommandExecutor : Unknown message '%s' received", message.getName().c_str());
+	//
+	//		return false;
+	//	}
 
 	std::string buildModuleManifest() const
 	{
@@ -63,7 +57,6 @@ public:
 		return ret;
 	}
 
-
 	///////////////////////////////////////////////////////////////////////////////
 	///////// CCommandExecutorSkel implementation  ////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////
@@ -71,19 +64,16 @@ public:
 	void sendCommand(NLNET::IModuleProxy *sender, const std::string &commandName, const NLMISC::CEntityId &senderEId, bool haveTarget, const NLMISC::CEntityId &targetEId, const std::string &arg)
 	{
 		// rebuild the command line
-		string cmdLine = commandName+" "+senderEId.toString();
+		string cmdLine = commandName + " " + senderEId.toString();
 		if (haveTarget)
 		{
-			cmdLine += " "+targetEId.toString();
+			cmdLine += " " + targetEId.toString();
 		}
-		
+
 		cmdLine += " " + arg;
 		// execute the command
 		NLMISC::CCommandRegistry::getInstance().execute(cmdLine, InfoLog());
- 	}
-
+	}
 };
 
 NLNET_REGISTER_MODULE_FACTORY(CCommandExecutor, "CommandExecutor");
-
-

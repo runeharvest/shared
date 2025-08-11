@@ -22,31 +22,30 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace PVP_MODE
+namespace PVP_MODE {
+
+NL_BEGIN_STRING_CONVERSION_TABLE(TPVPMode)
+NL_STRING_CONVERSION_TABLE_ENTRY(None)
+NL_STRING_CONVERSION_TABLE_ENTRY(PvpDuel)
+NL_STRING_CONVERSION_TABLE_ENTRY(PvpChallenge)
+NL_STRING_CONVERSION_TABLE_ENTRY(PvpZoneFree)
+NL_STRING_CONVERSION_TABLE_ENTRY(PvpZoneFaction)
+NL_STRING_CONVERSION_TABLE_ENTRY(PvpZoneGuild)
+NL_STRING_CONVERSION_TABLE_ENTRY(PvpZoneOutpost)
+NL_STRING_CONVERSION_TABLE_ENTRY(PvpFaction)
+NL_STRING_CONVERSION_TABLE_ENTRY(PvpFactionFlagged)
+NL_STRING_CONVERSION_TABLE_ENTRY(PvpZoneSafe)
+NL_STRING_CONVERSION_TABLE_ENTRY(PvpSafe)
+NL_END_STRING_CONVERSION_TABLE(TPVPMode, PVPModeConversion, Unknown)
+
+TPVPMode fromString(const std::string &str)
 {
+	return PVPModeConversion.fromString(str);
+}
 
-	NL_BEGIN_STRING_CONVERSION_TABLE (TPVPMode)
-		NL_STRING_CONVERSION_TABLE_ENTRY(None)
-		NL_STRING_CONVERSION_TABLE_ENTRY(PvpDuel)
-		NL_STRING_CONVERSION_TABLE_ENTRY(PvpChallenge)
-		NL_STRING_CONVERSION_TABLE_ENTRY(PvpZoneFree)
-		NL_STRING_CONVERSION_TABLE_ENTRY(PvpZoneFaction)
-		NL_STRING_CONVERSION_TABLE_ENTRY(PvpZoneGuild)
-		NL_STRING_CONVERSION_TABLE_ENTRY(PvpZoneOutpost)
-		NL_STRING_CONVERSION_TABLE_ENTRY(PvpFaction)
-		NL_STRING_CONVERSION_TABLE_ENTRY(PvpFactionFlagged)
-		NL_STRING_CONVERSION_TABLE_ENTRY(PvpZoneSafe)
-		NL_STRING_CONVERSION_TABLE_ENTRY(PvpSafe)
-	NL_END_STRING_CONVERSION_TABLE(TPVPMode, PVPModeConversion, Unknown)
-
-	TPVPMode fromString(const std::string & str)
-	{
-		return PVPModeConversion.fromString(str);
-	}
-
-	const std::string & toString(TPVPMode pvpMode)
-	{
-		return PVPModeConversion.toString(pvpMode);
-	}
+const std::string &toString(TPVPMode pvpMode)
+{
+	return PVPModeConversion.toString(pvpMode);
+}
 
 } // namespace PVP_MODE

@@ -20,9 +20,10 @@
 #include <nel/misc/debug.h>
 #include <nel/misc/dynloadlib.h>
 
-class CMiscUnitTestNelLibrary : public NLMISC::INelLibrary { 
-	void onLibraryLoaded(bool firstTime) { } 
-	void onLibraryUnloaded(bool lastTime) { }  
+class CMiscUnitTestNelLibrary : public NLMISC::INelLibrary
+{
+	void onLibraryLoaded(bool firstTime) { }
+	void onLibraryUnloaded(bool lastTime) { }
 };
 NLMISC_DECL_PURE_LIB(CMiscUnitTestNelLibrary);
 
@@ -50,7 +51,6 @@ public:
 
 NL_INSTANCE_COUNTER_IMPL(CFoo3);
 
-
 class CUTMiscDebug : public Test::Suite
 {
 public:
@@ -59,13 +59,13 @@ public:
 		TEST_ADD(CUTMiscDebug::testInstanceCounter)
 		TEST_ADD(CUTMiscDebug::testInstanceCounterOutput)
 	}
-	
+
 private:
 	void testInstanceCounter()
 	{
 		sint32 n;
 		{
-			CFoo1	foo1;
+			CFoo1 foo1;
 
 			sint32 n = NL_GET_INSTANCE_COUNTER(CFoo1);
 			TEST_ASSERT(n == 1);
@@ -85,8 +85,8 @@ private:
 		TEST_ASSERT(n == -1);
 
 		{
-			CFoo1	foo1;
-			CFoo1	other(foo1);
+			CFoo1 foo1;
+			CFoo1 other(foo1);
 
 			sint32 n = NL_GET_INSTANCE_COUNTER(CFoo1);
 			TEST_ASSERT(n == 2);
@@ -106,8 +106,8 @@ private:
 		TEST_ASSERT(n == -2);
 
 		{
-			CFoo1	foo1;
-			CFoo1	other;
+			CFoo1 foo1;
+			CFoo1 other;
 
 			foo1 = other;
 
@@ -128,15 +128,14 @@ private:
 		n = NL_GET_INSTANCE_COUNTER_DELTA(CFoo1);
 		TEST_ASSERT(n == -2);
 
-		CFoo1	*foo1s[10];
-		CFoo2	*foo2s[10];
-		CFoo3	*foo3s[10];
-		for (uint i=0; i<10; ++i)
+		CFoo1 *foo1s[10];
+		CFoo2 *foo2s[10];
+		CFoo3 *foo3s[10];
+		for (uint i = 0; i < 10; ++i)
 		{
 			foo1s[i] = new CFoo1;
 			foo2s[i] = new CFoo2;
 			foo3s[i] = new CFoo3;
-
 		}
 		n = NL_GET_INSTANCE_COUNTER(CFoo1);
 		TEST_ASSERT(n == 10);
@@ -165,7 +164,7 @@ private:
 		n = NL_GET_INSTANCE_COUNTER_DELTA(CFoo3);
 		TEST_ASSERT(n == 0);
 
-		for (uint i=0; i<5; ++i)
+		for (uint i = 0; i < 5; ++i)
 		{
 			delete foo1s[i];
 			delete foo2s[i];
@@ -183,7 +182,7 @@ private:
 		TEST_ASSERT(n == 5);
 		n = NL_GET_INSTANCE_COUNTER_DELTA(CFoo3);
 		TEST_ASSERT(n == -5);
-		for (uint i=5; i<10; ++i)
+		for (uint i = 5; i < 10; ++i)
 		{
 			delete foo1s[i];
 			delete foo2s[i];
@@ -207,21 +206,20 @@ private:
 	{
 		NLMISC::CInstanceCounterManager::getInstance().resetDeltaCounter();
 
-		CFoo1	*foo1s[10];
-		CFoo2	*foo2s[10];
-		CFoo3	*foo3s[10];
-		for (uint i=0; i<10; ++i)
+		CFoo1 *foo1s[10];
+		CFoo2 *foo2s[10];
+		CFoo3 *foo3s[10];
+		for (uint i = 0; i < 10; ++i)
 		{
 			foo1s[i] = new CFoo1;
 			foo2s[i] = new CFoo2;
 			foo3s[i] = new CFoo3;
-
 		}
 
 		string ref = "Listing 3 Instance counters :\n"
-					 "  Class 'CFoo1               ', \t        10 instances, \t        10 delta\n"
-					 "  Class 'CFoo2               ', \t        20 instances, \t        20 delta\n"
-					 "  Class 'CFoo3               ', \t        10 instances, \t        10 delta\n";
+		             "  Class 'CFoo1               ', \t        10 instances, \t        10 delta\n"
+		             "  Class 'CFoo2               ', \t        20 instances, \t        20 delta\n"
+		             "  Class 'CFoo3               ', \t        10 instances, \t        10 delta\n";
 
 		string ret = NLMISC::CInstanceCounterManager::getInstance().displayCounters();
 

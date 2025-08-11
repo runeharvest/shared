@@ -20,13 +20,10 @@
 #ifndef NL_CLASS_ID_H
 #define NL_CLASS_ID_H
 
-
 #include "types_nl.h"
 
-
-namespace	NLMISC
-{
-	class IStream;
+namespace NLMISC {
+class IStream;
 
 // ***************************************************************************
 /**
@@ -36,29 +33,29 @@ namespace	NLMISC
  * \author Nevrax France
  * \date 2000
  */
-class	CClassId
+class CClassId
 {
-	uint64	Uid;
+	uint64 Uid;
 
 public:
-	static const	CClassId	Null;
+	static const CClassId Null;
 
 public:
-	CClassId() {Uid=0;}
-	CClassId(uint32 a, uint32 b) {Uid= ((uint64)a<<32) | b;}
-	CClassId(uint64 a) {Uid=a;}
-	bool	operator==(const CClassId &o) const {return Uid==o.Uid;}
-	bool	operator!=(const CClassId &o) const {return Uid!=o.Uid;}
-	bool	operator<=(const CClassId &o) const {return Uid<=o.Uid;}
-	bool	operator>=(const CClassId &o) const {return Uid>=o.Uid;}
-	bool	operator<(const CClassId &o) const {return Uid<o.Uid;}
-	bool	operator>(const CClassId &o) const {return Uid>o.Uid;}
-	//CClassId& operator=(const CClassId &o) { Uid = o.Uid; return *this;}
-	operator uint64() const {return Uid;}
+	CClassId() { Uid = 0; }
+	CClassId(uint32 a, uint32 b) { Uid = ((uint64)a << 32) | b; }
+	CClassId(uint64 a) { Uid = a; }
+	bool operator==(const CClassId &o) const { return Uid == o.Uid; }
+	bool operator!=(const CClassId &o) const { return Uid != o.Uid; }
+	bool operator<=(const CClassId &o) const { return Uid <= o.Uid; }
+	bool operator>=(const CClassId &o) const { return Uid >= o.Uid; }
+	bool operator<(const CClassId &o) const { return Uid < o.Uid; }
+	bool operator>(const CClassId &o) const { return Uid > o.Uid; }
+	// CClassId& operator=(const CClassId &o) { Uid = o.Uid; return *this;}
+	operator uint64() const { return Uid; }
 
 	inline uint32 a() const { return (uint32)(Uid >> 32); }
 	inline uint32 b() const { return (uint32)(Uid & 0xFFFFFFFFL); }
-	inline void setA(uint32 a) { Uid = ((uint64)a<<32) | (Uid & 0xFFFFFFFFL); }
+	inline void setA(uint32 a) { Uid = ((uint64)a << 32) | (Uid & 0xFFFFFFFFL); }
 	inline void setB(uint32 b) { Uid = (Uid & 0xFFFFFFFF00000000L) | b; }
 
 	void serial(NLMISC::IStream &s);
@@ -72,19 +69,22 @@ public:
 class CClassIdHashMapTraits
 {
 public:
-	enum { bucket_size = 4, min_buckets = 8 };
-	inline size_t operator() ( const CClassId& classId ) const
+	enum
 	{
-		return ((((uint64)classId >> 32)|0xFFFFFFFF) ^ (((uint64)classId|0xFFFFFFFF) & 0xFFFFFFFF));
+		bucket_size = 4,
+		min_buckets = 8
+	};
+	inline size_t operator()(const CClassId &classId) const
+	{
+		return ((((uint64)classId >> 32) | 0xFFFFFFFF) ^ (((uint64)classId | 0xFFFFFFFF) & 0xFFFFFFFF));
 	}
-	bool operator() (const CClassId &classId1, const CClassId &classId2) const
+	bool operator()(const CClassId &classId1, const CClassId &classId2) const
 	{
 		return classId1 < classId2;
 	}
 };
 
 }
-
 
 #endif // NL_CLASS_ID_H
 

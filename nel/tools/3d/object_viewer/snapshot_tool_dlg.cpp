@@ -42,11 +42,7 @@
 #include "nel/3d/particle_system_shape.h"
 #include "nel/3d/particle_system_model.h"
 
-
-
-
 #define NEL_OV_SNAPSHOT_TOOL_REGKEY _T("Software\\Nevrax\\nel\\object_viewer\\snapshot_dlg")
-
 
 using namespace NLMISC;
 using namespace NL3D;
@@ -55,8 +51,8 @@ using namespace NL3D;
 // CSnapshotToolDlg dialog
 
 //****************************************************************************************
-CSnapshotToolDlg::CSnapshotToolDlg(CObjectViewer *ov, CWnd* pParent /*=NULL*/)
-	: CDialog(CSnapshotToolDlg::IDD, pParent)
+CSnapshotToolDlg::CSnapshotToolDlg(CObjectViewer *ov, CWnd *pParent /*=NULL*/)
+    : CDialog(CSnapshotToolDlg::IDD, pParent)
 {
 	nlassert(ov);
 	_ObjectViewer = ov;
@@ -64,8 +60,8 @@ CSnapshotToolDlg::CSnapshotToolDlg(CObjectViewer *ov, CWnd* pParent /*=NULL*/)
 	m_OutputPath = _T("");
 	m_InputPath = _T("");
 	m_RecurseSubFolder = FALSE;
-	m_OutputHeight = 100;		
-	m_OutputWidth = 160;	
+	m_OutputHeight = 100;
+	m_OutputWidth = 160;
 	m_Format = -1;
 	m_OutputPathOption = -1;
 	m_DumpTextureSets = FALSE;
@@ -81,11 +77,11 @@ CSnapshotToolDlg::CSnapshotToolDlg(CObjectViewer *ov, CWnd* pParent /*=NULL*/)
 
 //****************************************************************************************
 CSnapshotToolDlg::~CSnapshotToolDlg()
-{	
+{
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::DoDataExchange(CDataExchange* pDX)
+void CSnapshotToolDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSnapshotToolDlg)
@@ -93,11 +89,11 @@ void CSnapshotToolDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_FILTERS, m_Filters);
 	DDX_Text(pDX, IDC_OUTPUT_PATH, m_OutputPath);
 	DDX_Text(pDX, IDC_INPUT_PATH, m_InputPath);
-	DDX_Check(pDX, IDC_RECURSE_SUBFOLDER, m_RecurseSubFolder);	
+	DDX_Check(pDX, IDC_RECURSE_SUBFOLDER, m_RecurseSubFolder);
 	DDX_Text(pDX, IDC_HEIGHT, m_OutputHeight);
 	DDV_MinMaxUInt(pDX, m_OutputHeight, 1, 1024);
 	DDX_Text(pDX, IDC_WIDTH, m_OutputWidth);
-	DDV_MinMaxUInt(pDX, m_OutputWidth, 1, 1024);	
+	DDV_MinMaxUInt(pDX, m_OutputWidth, 1, 1024);
 	DDX_CBIndex(pDX, IDC_FORMAT, m_Format);
 	DDX_CBIndex(pDX, IDC_OUTPUTPATH_OPTION, m_OutputPathOption);
 	DDX_Check(pDX, IDC_DUMP_TEXTURE_SETS, m_DumpTextureSets);
@@ -113,7 +109,7 @@ void CSnapshotToolDlg::DoDataExchange(CDataExchange* pDX)
 
 //****************************************************************************************
 void CSnapshotToolDlg::stringFromRegistry(HKEY hKey, const TCHAR *name, CString &dest, const CString &defaultStr)
-{	
+{
 	DWORD type;
 	DWORD size;
 	LONG result = RegQueryValueEx(hKey, name, NULL, &type, NULL, &size);
@@ -125,7 +121,7 @@ void CSnapshotToolDlg::stringFromRegistry(HKEY hKey, const TCHAR *name, CString 
 	}
 
 	std::vector<TCHAR> tmpDest(size);
-	result = RegQueryValueEx(hKey, name, NULL, &type, (BYTE*)&tmpDest[0], &size);
+	result = RegQueryValueEx(hKey, name, NULL, &type, (BYTE *)&tmpDest[0], &size);
 
 	if (result != ERROR_SUCCESS)
 	{
@@ -136,10 +132,10 @@ void CSnapshotToolDlg::stringFromRegistry(HKEY hKey, const TCHAR *name, CString 
 	dest = &tmpDest[0];
 }
 
-
 //****************************************************************************************
-template <class T, class U> void integralTypeFromRegistry(HKEY hKey, const TCHAR *name, T &dest, const U &defaultValue)
-{	
+template <class T, class U>
+void integralTypeFromRegistry(HKEY hKey, const TCHAR *name, T &dest, const U &defaultValue)
+{
 	if (hKey == 0)
 	{
 		dest = defaultValue;
@@ -151,9 +147,9 @@ template <class T, class U> void integralTypeFromRegistry(HKEY hKey, const TCHAR
 
 	if (type != REG_DWORD || result != ERROR_SUCCESS || size == 0)
 	{
-		dest = (T) defaultValue;
+		dest = (T)defaultValue;
 		return;
-	}		
+	}
 
 	DWORD value;
 	result = RegQueryValueEx(hKey, name, NULL, &type, LPBYTE(&value), &size);
@@ -164,15 +160,14 @@ template <class T, class U> void integralTypeFromRegistry(HKEY hKey, const TCHAR
 		return;
 	}
 
-	dest = (T) value;
+	dest = (T)value;
 }
-
 
 //****************************************************************************************
 void CSnapshotToolDlg::fromRegistry()
 {
 	HKEY hKey = 0;
-	RegOpenKeyEx(HKEY_CURRENT_USER, NEL_OV_SNAPSHOT_TOOL_REGKEY, 0, KEY_READ, &hKey);					
+	RegOpenKeyEx(HKEY_CURRENT_USER, NEL_OV_SNAPSHOT_TOOL_REGKEY, 0, KEY_READ, &hKey);
 	stringFromRegistry(hKey, _T("InputPath"), m_InputPath, "");
 	stringFromRegistry(hKey, _T("OutputPath"), m_OutputPath, "");
 
@@ -187,17 +182,17 @@ void CSnapshotToolDlg::fromRegistry()
 	for (uint k = 0; k < filterList.size(); ++k)
 	{
 		m_Filters.AddString(nlUtf8ToTStr(filterList[k]));
-	}	
-	
-	integralTypeFromRegistry(hKey, _T("RecurseSubFolder"), (int &) m_RecurseSubFolder, FALSE);
-	integralTypeFromRegistry(hKey, _T("DumpTextureSets"), (int &) m_DumpTextureSets, TRUE);
-	integralTypeFromRegistry(hKey, _T("PostFixViewName"), (int &) m_PostFixViewName, TRUE);
-	integralTypeFromRegistry(hKey, _T("ViewBack"), (int &) m_ViewBack, FALSE);
-	integralTypeFromRegistry(hKey, _T("ViewBottom"), (int &) m_ViewBottom, FALSE);
-	integralTypeFromRegistry(hKey, _T("ViewFront"), (int &) m_ViewFront, TRUE);
-	integralTypeFromRegistry(hKey, _T("ViewLeft"), (int &) m_ViewLeft, FALSE);
-	integralTypeFromRegistry(hKey, _T("ViewRight"), (int &) m_ViewRight, FALSE);
-	integralTypeFromRegistry(hKey, _T("ViewTop"), (int &) m_ViewTop, FALSE);
+	}
+
+	integralTypeFromRegistry(hKey, _T("RecurseSubFolder"), (int &)m_RecurseSubFolder, FALSE);
+	integralTypeFromRegistry(hKey, _T("DumpTextureSets"), (int &)m_DumpTextureSets, TRUE);
+	integralTypeFromRegistry(hKey, _T("PostFixViewName"), (int &)m_PostFixViewName, TRUE);
+	integralTypeFromRegistry(hKey, _T("ViewBack"), (int &)m_ViewBack, FALSE);
+	integralTypeFromRegistry(hKey, _T("ViewBottom"), (int &)m_ViewBottom, FALSE);
+	integralTypeFromRegistry(hKey, _T("ViewFront"), (int &)m_ViewFront, TRUE);
+	integralTypeFromRegistry(hKey, _T("ViewLeft"), (int &)m_ViewLeft, FALSE);
+	integralTypeFromRegistry(hKey, _T("ViewRight"), (int &)m_ViewRight, FALSE);
+	integralTypeFromRegistry(hKey, _T("ViewTop"), (int &)m_ViewTop, FALSE);
 	integralTypeFromRegistry(hKey, _T("OutputWidth"), m_OutputWidth, 128);
 	integralTypeFromRegistry(hKey, _T("OutputHeight"), m_OutputHeight, 128);
 	integralTypeFromRegistry(hKey, _T("Format"), m_Format, 0);
@@ -211,95 +206,92 @@ void CSnapshotToolDlg::toRegistry()
 {
 	UpdateData();
 	HKEY hKey;
-	if (RegCreateKey(HKEY_CURRENT_USER, NEL_OV_SNAPSHOT_TOOL_REGKEY, &hKey)==ERROR_SUCCESS)
-	{		
-		RegSetValueEx(hKey, _T("InputPath"), 0, REG_SZ, (BYTE*) (LPCTSTR) m_InputPath, (m_InputPath.GetLength() + 1) * sizeof(TCHAR));
-		RegSetValueEx(hKey, _T("OutputPath"), 0, REG_SZ, (BYTE*) (LPCTSTR) m_OutputPath, (m_OutputPath.GetLength() + 1) * sizeof(TCHAR));
+	if (RegCreateKey(HKEY_CURRENT_USER, NEL_OV_SNAPSHOT_TOOL_REGKEY, &hKey) == ERROR_SUCCESS)
+	{
+		RegSetValueEx(hKey, _T("InputPath"), 0, REG_SZ, (BYTE *)(LPCTSTR)m_InputPath, (m_InputPath.GetLength() + 1) * sizeof(TCHAR));
+		RegSetValueEx(hKey, _T("OutputPath"), 0, REG_SZ, (BYTE *)(LPCTSTR)m_OutputPath, (m_OutputPath.GetLength() + 1) * sizeof(TCHAR));
 		CString filters;
-		for (uint k = 0; k < (uint) m_Filters.GetCount(); ++k)
+		for (uint k = 0; k < (uint)m_Filters.GetCount(); ++k)
 		{
-			if (k!=0) filters += ",";
+			if (k != 0) filters += ",";
 			CString filter;
 			m_Filters.GetText(k, filter);
-			filters += filter;			
+			filters += filter;
 		}
 
-		RegSetValueEx(hKey, _T("Filters"), 0, REG_SZ, (BYTE*) (LPCTSTR) filters, (filters.GetLength() + 1) * sizeof(TCHAR));
+		RegSetValueEx(hKey, _T("Filters"), 0, REG_SZ, (BYTE *)(LPCTSTR)filters, (filters.GetLength() + 1) * sizeof(TCHAR));
 		DWORD recurseSubFolder = m_RecurseSubFolder;
 		DWORD dumpTextureSets = m_DumpTextureSets;
-		DWORD width = (DWORD) m_OutputWidth;
-		DWORD height = (DWORD) m_OutputHeight;		
+		DWORD width = (DWORD)m_OutputWidth;
+		DWORD height = (DWORD)m_OutputHeight;
 		DWORD format = m_Format;
 		DWORD outputPathOption = m_OutputPathOption;
 		DWORD postFixViewName = m_PostFixViewName;
-		integralTypeFromRegistry(hKey, _T("PostFixViewName"), (int &) m_PostFixViewName, TRUE);
-		RegSetValueEx(hKey, _T("ViewBack"), 0, REG_DWORD, (const BYTE *) &m_ViewBack, sizeof(DWORD));
-		RegSetValueEx(hKey, _T("ViewBottom"), 0, REG_DWORD, (const BYTE *) &m_ViewBottom, sizeof(DWORD));
-		RegSetValueEx(hKey, _T("ViewFront"), 0, REG_DWORD, (const BYTE *) &m_ViewFront, sizeof(DWORD));
-		RegSetValueEx(hKey, _T("ViewLeft"), 0, REG_DWORD, (const BYTE *) &m_ViewLeft, sizeof(DWORD));
-		RegSetValueEx(hKey, _T("ViewRight"), 0, REG_DWORD, (const BYTE *) &m_ViewRight, sizeof(DWORD));
-		RegSetValueEx(hKey, _T("ViewTop"), 0, REG_DWORD, (const BYTE *) &m_ViewTop, sizeof(DWORD));
-		RegSetValueEx(hKey, _T("RecurseSubFolder"), 0, REG_DWORD, (const BYTE *) &recurseSubFolder, sizeof(DWORD));
-		RegSetValueEx(hKey, _T("DumpTextureSets"), 0, REG_DWORD, (const BYTE *) &dumpTextureSets, sizeof(DWORD));
-		RegSetValueEx(hKey, _T("OutputWidth"), 0, REG_DWORD, (const BYTE *) &width, sizeof(DWORD));
-		RegSetValueEx(hKey, _T("OutputHeight"), 0, REG_DWORD, (const BYTE *) &height, sizeof(DWORD));
-		RegSetValueEx(hKey, _T("Format"), 0, REG_DWORD, (const BYTE *) &format, sizeof(DWORD));
-		RegSetValueEx(hKey, _T("OutputPathOption"), 0, REG_DWORD, (const BYTE *) &outputPathOption, sizeof(DWORD));
+		integralTypeFromRegistry(hKey, _T("PostFixViewName"), (int &)m_PostFixViewName, TRUE);
+		RegSetValueEx(hKey, _T("ViewBack"), 0, REG_DWORD, (const BYTE *)&m_ViewBack, sizeof(DWORD));
+		RegSetValueEx(hKey, _T("ViewBottom"), 0, REG_DWORD, (const BYTE *)&m_ViewBottom, sizeof(DWORD));
+		RegSetValueEx(hKey, _T("ViewFront"), 0, REG_DWORD, (const BYTE *)&m_ViewFront, sizeof(DWORD));
+		RegSetValueEx(hKey, _T("ViewLeft"), 0, REG_DWORD, (const BYTE *)&m_ViewLeft, sizeof(DWORD));
+		RegSetValueEx(hKey, _T("ViewRight"), 0, REG_DWORD, (const BYTE *)&m_ViewRight, sizeof(DWORD));
+		RegSetValueEx(hKey, _T("ViewTop"), 0, REG_DWORD, (const BYTE *)&m_ViewTop, sizeof(DWORD));
+		RegSetValueEx(hKey, _T("RecurseSubFolder"), 0, REG_DWORD, (const BYTE *)&recurseSubFolder, sizeof(DWORD));
+		RegSetValueEx(hKey, _T("DumpTextureSets"), 0, REG_DWORD, (const BYTE *)&dumpTextureSets, sizeof(DWORD));
+		RegSetValueEx(hKey, _T("OutputWidth"), 0, REG_DWORD, (const BYTE *)&width, sizeof(DWORD));
+		RegSetValueEx(hKey, _T("OutputHeight"), 0, REG_DWORD, (const BYTE *)&height, sizeof(DWORD));
+		RegSetValueEx(hKey, _T("Format"), 0, REG_DWORD, (const BYTE *)&format, sizeof(DWORD));
+		RegSetValueEx(hKey, _T("OutputPathOption"), 0, REG_DWORD, (const BYTE *)&outputPathOption, sizeof(DWORD));
 	}
 }
 
-
 BEGIN_MESSAGE_MAP(CSnapshotToolDlg, CDialog)
-	//{{AFX_MSG_MAP(CSnapshotToolDlg)
-	ON_BN_CLICKED(IDC_BROWSE_INPUT_PATH, OnBrowseInputPath)
-	ON_BN_CLICKED(IDC_BROWSE_OUTPUT_PATH, OnBrowseOutputPath)
-	ON_BN_CLICKED(IDC_GO, OnGo)
-	ON_BN_CLICKED(IDC_ADD_FILTER, OnAddFilter)
-	ON_BN_CLICKED(IDC_REMOVE_FILTER, OnRemoveFilter)
-	ON_BN_CLICKED(IDC_EDIT_FILTER, OnEditFilter)
-	ON_WM_CLOSE()
-	ON_EN_CHANGE(IDC_WIDTH, OnChangeWidth)
-	ON_EN_KILLFOCUS(IDC_HEIGHT, OnKillfocusHeight)
-	ON_EN_KILLFOCUS(IDC_WIDTH, OnKillfocusWidth)
-	ON_CBN_SELCHANGE(IDC_OUTPUTPATH_OPTION, OnSelchangeOutputpathOption)
-	ON_CBN_SELCHANGE(IDC_FORMAT, OnSelchangeFormat)
-	ON_BN_CLICKED(IDC_CLOSE, OnCloseButton)
-	ON_WM_TIMER()
-	ON_BN_CLICKED(IDC_STOP, OnStopSnapshots)
-	ON_BN_CLICKED(IDC_VIEW_FRONT, OnViewFront)
-	ON_BN_CLICKED(IDC_VIEW_LEFT, OnViewLeft)
-	ON_BN_CLICKED(IDC_VIEW_RIGHT, OnViewRight)
-	ON_BN_CLICKED(IDC_VIEW_TOP, OnViewTop)
-	ON_BN_CLICKED(IDC_VIEW_ALL, OnViewAll)
-	ON_BN_CLICKED(IDC_VIEW_NONE, OnViewNone)
-	ON_BN_CLICKED(IDC_POSTFIX_VIEWNAME, OnPostFixViewName)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CSnapshotToolDlg)
+ON_BN_CLICKED(IDC_BROWSE_INPUT_PATH, OnBrowseInputPath)
+ON_BN_CLICKED(IDC_BROWSE_OUTPUT_PATH, OnBrowseOutputPath)
+ON_BN_CLICKED(IDC_GO, OnGo)
+ON_BN_CLICKED(IDC_ADD_FILTER, OnAddFilter)
+ON_BN_CLICKED(IDC_REMOVE_FILTER, OnRemoveFilter)
+ON_BN_CLICKED(IDC_EDIT_FILTER, OnEditFilter)
+ON_WM_CLOSE()
+ON_EN_CHANGE(IDC_WIDTH, OnChangeWidth)
+ON_EN_KILLFOCUS(IDC_HEIGHT, OnKillfocusHeight)
+ON_EN_KILLFOCUS(IDC_WIDTH, OnKillfocusWidth)
+ON_CBN_SELCHANGE(IDC_OUTPUTPATH_OPTION, OnSelchangeOutputpathOption)
+ON_CBN_SELCHANGE(IDC_FORMAT, OnSelchangeFormat)
+ON_BN_CLICKED(IDC_CLOSE, OnCloseButton)
+ON_WM_TIMER()
+ON_BN_CLICKED(IDC_STOP, OnStopSnapshots)
+ON_BN_CLICKED(IDC_VIEW_FRONT, OnViewFront)
+ON_BN_CLICKED(IDC_VIEW_LEFT, OnViewLeft)
+ON_BN_CLICKED(IDC_VIEW_RIGHT, OnViewRight)
+ON_BN_CLICKED(IDC_VIEW_TOP, OnViewTop)
+ON_BN_CLICKED(IDC_VIEW_ALL, OnViewAll)
+ON_BN_CLICKED(IDC_VIEW_NONE, OnViewNone)
+ON_BN_CLICKED(IDC_POSTFIX_VIEWNAME, OnPostFixViewName)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CSnapshotToolDlg message handlers
 
-
 //****************************************************************************************
-BOOL CSnapshotToolDlg::OnInitDialog() 
+BOOL CSnapshotToolDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	fromRegistry();	
+	fromRegistry();
 	SetTimer(1, 10, NULL);
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::OnClose() 
+void CSnapshotToolDlg::OnClose()
 {
 	toRegistry();
 	CDialog::OnClose();
 }
 
-
 //****************************************************************************************
-void CSnapshotToolDlg::OnBrowseInputPath() 
+void CSnapshotToolDlg::OnBrowseInputPath()
 {
 	browseFolder(getStrRsc(IDS_CHOOSE_SNAPSHOT_INPUT_PATH), m_InputPath, this->m_hWnd);
 	UpdateData(FALSE);
@@ -307,16 +299,15 @@ void CSnapshotToolDlg::OnBrowseInputPath()
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::OnBrowseOutputPath() 
+void CSnapshotToolDlg::OnBrowseOutputPath()
 {
 	browseFolder(getStrRsc(IDS_CHOOSE_SNAPSHOT_OUTPUT_PATH), m_OutputPath, this->m_hWnd);
 	UpdateData(FALSE);
 	toRegistry();
 }
 
-
 //****************************************************************************************
-void CSnapshotToolDlg::OnAddFilter() 
+void CSnapshotToolDlg::OnAddFilter()
 {
 	CChooseName cn("*.shape", this);
 	if (cn.DoModal() == IDOK && !cn.m_Name.IsEmpty())
@@ -327,7 +318,7 @@ void CSnapshotToolDlg::OnAddFilter()
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::OnRemoveFilter() 
+void CSnapshotToolDlg::OnRemoveFilter()
 {
 	if (m_Filters.GetCurSel() != LB_ERR)
 	{
@@ -335,68 +326,60 @@ void CSnapshotToolDlg::OnRemoveFilter()
 	}
 }
 
-
 //****************************************************************************************
-void CSnapshotToolDlg::OnEditFilter() 
+void CSnapshotToolDlg::OnEditFilter()
 {
 	if (m_Filters.GetCurSel() != LB_ERR)
 	{
 		CString current;
 		m_Filters.GetText(m_Filters.GetCurSel(), current);
-		CChooseName cn((LPCTSTR) current, this);
+		CChooseName cn((LPCTSTR)current, this);
 		if (cn.DoModal() == IDOK && !cn.m_Name.IsEmpty())
 		{
 			int curSel = m_Filters.GetCurSel();
 			m_Filters.DeleteString(m_Filters.GetCurSel());
 			m_Filters.InsertString(curSel, cn.m_Name);
-			m_Filters.SetCurSel(curSel);			
+			m_Filters.SetCurSel(curSel);
 		}
 	}
 	toRegistry();
 }
 
-
 //****************************************************************************************
-uint CSnapshotToolDlg::getSelectedViewCount() 
+uint CSnapshotToolDlg::getSelectedViewCount()
 {
 	UpdateData();
-	return (m_ViewBack ? 1 : 0) +
-			(m_ViewBottom ? 1 : 0) +
-			(m_ViewFront ? 1 : 0) + 
-			(m_ViewLeft ? 1 : 0) +
-			(m_ViewRight ? 1 : 0) +
-			(m_ViewTop ? 1 : 0);
+	return (m_ViewBack ? 1 : 0) + (m_ViewBottom ? 1 : 0) + (m_ViewFront ? 1 : 0) + (m_ViewLeft ? 1 : 0) + (m_ViewRight ? 1 : 0) + (m_ViewTop ? 1 : 0);
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::updateUIEnabledState() 
+void CSnapshotToolDlg::updateUIEnabledState()
 {
 	BOOL enabled = _FilteredFiles.empty() ? TRUE : FALSE;
-	m_Filters.EnableWindow(enabled);		
-    GetDlgItem(IDC_INPUT_PATH)->EnableWindow(enabled);
-    GetDlgItem(IDC_BROWSE_INPUT_PATH)->EnableWindow(enabled);
-    GetDlgItem(IDC_OUTPUT_PATH)->EnableWindow(enabled  && m_OutputPathOption == OutputPath_Custom);
-    GetDlgItem(IDC_BROWSE_OUTPUT_PATH)->EnableWindow(enabled);
-    GetDlgItem(IDC_RECURSE_SUBFOLDER)->EnableWindow(enabled);
-    GetDlgItem(IDC_OUTPUTPATH_OPTION)->EnableWindow(enabled);
-    GetDlgItem(IDC_FILTERS)->EnableWindow(enabled);
-    GetDlgItem(IDC_ADD_FILTER)->EnableWindow(enabled);
-    GetDlgItem(IDC_REMOVE_FILTER)->EnableWindow(enabled);
-    GetDlgItem(IDC_EDIT_FILTER)->EnableWindow(enabled);
-    GetDlgItem(IDC_WIDTH)->EnableWindow(enabled);
-    GetDlgItem(IDC_HEIGHT)->EnableWindow(enabled);    
-    GetDlgItem(IDC_FORMAT)->EnableWindow(enabled);
-    GetDlgItem(IDC_GO)->EnableWindow(enabled);
+	m_Filters.EnableWindow(enabled);
+	GetDlgItem(IDC_INPUT_PATH)->EnableWindow(enabled);
+	GetDlgItem(IDC_BROWSE_INPUT_PATH)->EnableWindow(enabled);
+	GetDlgItem(IDC_OUTPUT_PATH)->EnableWindow(enabled && m_OutputPathOption == OutputPath_Custom);
+	GetDlgItem(IDC_BROWSE_OUTPUT_PATH)->EnableWindow(enabled);
+	GetDlgItem(IDC_RECURSE_SUBFOLDER)->EnableWindow(enabled);
+	GetDlgItem(IDC_OUTPUTPATH_OPTION)->EnableWindow(enabled);
+	GetDlgItem(IDC_FILTERS)->EnableWindow(enabled);
+	GetDlgItem(IDC_ADD_FILTER)->EnableWindow(enabled);
+	GetDlgItem(IDC_REMOVE_FILTER)->EnableWindow(enabled);
+	GetDlgItem(IDC_EDIT_FILTER)->EnableWindow(enabled);
+	GetDlgItem(IDC_WIDTH)->EnableWindow(enabled);
+	GetDlgItem(IDC_HEIGHT)->EnableWindow(enabled);
+	GetDlgItem(IDC_FORMAT)->EnableWindow(enabled);
+	GetDlgItem(IDC_GO)->EnableWindow(enabled);
 	GetDlgItem(IDC_DUMP_TEXTURE_SETS)->EnableWindow(enabled);
-    GetDlgItem(IDC_STOP)->EnableWindow(!enabled);				
+	GetDlgItem(IDC_STOP)->EnableWindow(!enabled);
 	GetDlgItem(IDC_POSTFIX_VIEWNAME)->EnableWindow((enabled && getSelectedViewCount() == 1) ? TRUE : FALSE);
-    //GetDlgItem(IDC_CLOSE)->EnaleWindow(enabled);
-
+	// GetDlgItem(IDC_CLOSE)->EnaleWindow(enabled);
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::OnGo() 
-{	
+void CSnapshotToolDlg::OnGo()
+{
 	UpdateData();
 	if (getSelectedViewCount() == 0)
 	{
@@ -424,7 +407,7 @@ void CSnapshotToolDlg::OnGo()
 		{
 			return;
 		}
-		if(!NLMISC::CFile::createDirectoryTree(tStrToUtf8(m_OutputPath)))
+		if (!NLMISC::CFile::createDirectoryTree(tStrToUtf8(m_OutputPath)))
 		{
 			MessageBox(getStrRsc(IDS_SNAPSHOT_OUTPUT_PATH_CREATION_FAILED), getStrRsc(IDS_OBJECT_VIEWER), MB_ICONEXCLAMATION);
 			return;
@@ -434,13 +417,12 @@ void CSnapshotToolDlg::OnGo()
 	// make sure that the screen can contains the window client area
 	RECT desktopSize;
 	::GetClientRect(::GetDesktopWindow(), &desktopSize);
-	if (desktopSize.right < LONG(m_OutputWidth) ||
-		desktopSize.bottom < LONG(m_OutputHeight))
+	if (desktopSize.right < LONG(m_OutputWidth) || desktopSize.bottom < LONG(m_OutputHeight))
 	{
 		MessageBox(getStrRsc(IDS_DESKTOP_TOO_SMALL_FOR_SNAPSHOT), getStrRsc(IDS_OBJECT_VIEWER), MB_ICONEXCLAMATION);
 		return;
 	}
-	
+
 	m_Log.ResetContent();
 	m_Log.AddString(getStrRsc(IDS_GETTING_PATH_CONTENT));
 	std::vector<std::string> files;
@@ -470,66 +452,62 @@ void CSnapshotToolDlg::OnGo()
 		m_Log.AddString(getStrRsc(IDS_SNAPSHOT_NO_FILTER_MATCH_FOUND));
 		return;
 	}
-	m_Log.AddString(toString("%d", (int) _FilteredFiles.size()).c_str() + getStrRsc(IDS_SNAPSHOT_FILES_TO_PROCESS));			
+	m_Log.AddString(toString("%d", (int)_FilteredFiles.size()).c_str() + getStrRsc(IDS_SNAPSHOT_FILES_TO_PROCESS));
 	updateUIEnabledState();
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::OnChangeWidth() 
+void CSnapshotToolDlg::OnChangeWidth()
 {
 	// TODO: If this is a RICHEDIT control, the control will not
 	// send this notification unless you override the CDialog::OnInitDialog()
 	// function and call CRichEditCtrl().SetEventMask()
 	// with the ENM_CHANGE flag ORed into the mask.
-	
+
 	// TODO: Add your control notification handler code here
-
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::OnKillfocusHeight() 
+void CSnapshotToolDlg::OnKillfocusHeight()
 {
-	toRegistry();	
+	toRegistry();
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::OnKillfocusWidth() 
+void CSnapshotToolDlg::OnKillfocusWidth()
 {
-	toRegistry();	
+	toRegistry();
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::OnSelchangeOutputpathOption() 
+void CSnapshotToolDlg::OnSelchangeOutputpathOption()
 {
 	toRegistry();
 	updateUIEnabledState();
 }
 
-
 //****************************************************************************************
-void CSnapshotToolDlg::OnSelchangeFormat() 
+void CSnapshotToolDlg::OnSelchangeFormat()
 {
-	toRegistry();	
+	toRegistry();
 }
 
-
 //****************************************************************************************
-void CSnapshotToolDlg::OnCloseButton() 
+void CSnapshotToolDlg::OnCloseButton()
 {
 	toRegistry();
 	SendMessage(WM_CLOSE);
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::setCamFromView(uint view, CCamera *cam, const CAABBox &bbox) 
+void CSnapshotToolDlg::setCamFromView(uint view, CCamera *cam, const CAABBox &bbox)
 {
-	static const CVector camBackDir[] = 
-	{
+	static const CVector camBackDir[] = {
 		-CVector::J,
 		CVector::I,
 		-CVector::I,
 		CVector::K,
-		-CVector::K,		
+		-CVector::K,
 		CVector::J
 	};
 	const float viewDistScale = 3.f;
@@ -558,7 +536,7 @@ void CSnapshotToolDlg::setCamFromView(uint view, CCamera *cam, const CAABBox &bb
 //****************************************************************************************
 std::string CSnapshotToolDlg::viewToString(uint view)
 {
-	switch(view)
+	switch (view)
 	{
 	case SnapshotAngle_Front: return "front";
 	case SnapshotAngle_Right: return "right";
@@ -572,17 +550,17 @@ std::string CSnapshotToolDlg::viewToString(uint view)
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::OnTimer(UINT_PTR nIDEvent) 
+void CSnapshotToolDlg::OnTimer(UINT_PTR nIDEvent)
 {
-	if (_FilteredFiles.empty()) return;	
+	if (_FilteredFiles.empty()) return;
 	if (nIDEvent == 1)
 	{
 		// resize the window if needed
-		HWND wnd = (HWND) NL3D::CNELU::Driver->getDisplay();		
-		CScene		 scene(true /* small scene */);
+		HWND wnd = (HWND)NL3D::CNELU::Driver->getDisplay();
+		CScene scene(true /* small scene */);
 
-		scene.initDefaultRoots();		
-		scene.setDriver(CNELU::Driver);		
+		scene.initDefaultRoots();
+		scene.setDriver(CNELU::Driver);
 		scene.initQuadGridClipManager();
 		NL3D::CViewport vp;
 		vp.init(0.f, 0.f, 1.f, 1.f);
@@ -590,12 +568,11 @@ void CSnapshotToolDlg::OnTimer(UINT_PTR nIDEvent)
 		scene.enableLightingSystem(true);
 		scene.setAmbientGlobal(CRGBA::White);
 
-		CShapeBank   sb;
+		CShapeBank sb;
 		scene.setShapeBank(&sb);
-		CCamera *cam= safe_cast<CCamera *>(scene.createModel(CameraId));
+		CCamera *cam = safe_cast<CCamera *>(scene.createModel(CameraId));
 		scene.setCam(cam);
-		cam->setFrustum(0.1f, 0.1f, 0.1f, 5000.f);				
-				
+		cam->setFrustum(0.1f, 0.1f, 0.1f, 5000.f);
 
 		try
 		{
@@ -607,7 +584,7 @@ void CSnapshotToolDlg::OnTimer(UINT_PTR nIDEvent)
 			CAABBox bbox;
 			ss.getShapePointer()->getAABBox(bbox);
 			sb.add("shape", ss.getShapePointer());
-			CTransformShape	*model = scene.createInstance("shape");						
+			CTransformShape *model = scene.createInstance("shape");
 			CMatrix initTM = model->getMatrix();
 			model->setTransformMode(CTransform::DirectMatrix);
 			initTM.setPos(CVector::Null);
@@ -617,31 +594,31 @@ void CSnapshotToolDlg::OnTimer(UINT_PTR nIDEvent)
 			bbox.setCenter(newBBoxCenter);
 			bbox.setHalfSize(newBBoxHalfSize);
 			if (model)
-			{				
+			{
 				CMeshBaseInstance *mbi = dynamic_cast<CMeshBaseInstance *>(model);
 				uint textureSetCount = 1;
-				CMeshBase *mb = dynamic_cast<CMeshBase *>((IShape *) model->Shape);
-				CMesh	  *mesh = dynamic_cast<CMesh *>((IShape *) model->Shape);
+				CMeshBase *mb = dynamic_cast<CMeshBase *>((IShape *)model->Shape);
+				CMesh *mesh = dynamic_cast<CMesh *>((IShape *)model->Shape);
 				if (m_DumpTextureSets && mbi)
-				{					
+				{
 					if (mb)
 					{
-						const uint numMat = mb->getNbMaterial();	
+						const uint numMat = mb->getNbMaterial();
 						// see which material are selectable
-						for(uint k = 0; k < numMat; ++k)
+						for (uint k = 0; k < numMat; ++k)
 						{
 							CMaterial &mat = mb->getMaterial(k);
-							for(uint l = 0; l < IDRV_MAT_MAXTEXTURES; ++l)
+							for (uint l = 0; l < IDRV_MAT_MAXTEXTURES; ++l)
 							{
 								CTextureMultiFile *tmf = dynamic_cast<CTextureMultiFile *>(mat.getTexture(l));
 								if (tmf)
 								{
-									textureSetCount = std::max(textureSetCount, (uint) tmf->getNumFileName());
+									textureSetCount = std::max(textureSetCount, (uint)tmf->getNumFileName());
 								}
 							}
 						}
 					}
-				}		
+				}
 				// for particle systems :  simulate until half duration, then capture bbox
 				CParticleSystemModel *psm = dynamic_cast<CParticleSystemModel *>(model);
 				if (psm)
@@ -652,18 +629,17 @@ void CSnapshotToolDlg::OnTimer(UINT_PTR nIDEvent)
 					{
 						float duration = ps->evalDuration();
 						float deltaT = .5f * ps->getTimeTheshold();
-						for (float date = 0.f; date < duration * 0.5f; date += deltaT) 
+						for (float date = 0.f; date < duration * 0.5f; date += deltaT)
 						{
 							ps->setSysMat(&CMatrix::Identity);
-							ps->step(CParticleSystem::Anim, deltaT, *safe_cast<CParticleSystemShape *>((IShape *) psm->Shape), *psm);
+							ps->step(CParticleSystem::Anim, deltaT, *safe_cast<CParticleSystemShape *>((IShape *)psm->Shape), *psm);
 						}
 						ps->computeBBox(bbox);
 					}
 				}
 
-				cam->setTransformMode(ITransformable::DirectMatrix);				
-				BOOL views[] = 
-				{ 
+				cam->setTransformMode(ITransformable::DirectMatrix);
+				BOOL views[] = {
 					m_ViewFront,
 					m_ViewRight,
 					m_ViewLeft,
@@ -674,7 +650,7 @@ void CSnapshotToolDlg::OnTimer(UINT_PTR nIDEvent)
 				for (uint viewIndex = 0; viewIndex < 6; ++viewIndex)
 				{
 					if (!views[viewIndex]) continue;
-					setCamFromView(viewIndex, cam, bbox);					
+					setCamFromView(viewIndex, cam, bbox);
 					for (uint textureSet = 0; textureSet < textureSetCount; ++textureSet)
 					{
 						if (mbi)
@@ -698,7 +674,7 @@ void CSnapshotToolDlg::OnTimer(UINT_PTR nIDEvent)
 							std::string outputFilename = _FilteredFiles[0].substr(0, lastPoint);
 							if (textureSetCount > 1)
 							{
-								outputFilename += toString("_%u", (unsigned int) textureSet);
+								outputFilename += toString("_%u", (unsigned int)textureSet);
 							}
 							if (getSelectedViewCount() != 1 || m_PostFixViewName)
 							{
@@ -723,16 +699,16 @@ void CSnapshotToolDlg::OnTimer(UINT_PTR nIDEvent)
 							}
 							outputFilename += "." + ext;
 
-							switch(m_OutputPathOption)
+							switch (m_OutputPathOption)
 							{
-								case OutputPath_Custom: // custom output path
-									outputFilename = tStrToUtf8(m_OutputPath) + "\\" + NLMISC::CFile::getFilename(outputFilename);
+							case OutputPath_Custom: // custom output path
+								outputFilename = tStrToUtf8(m_OutputPath) + "\\" + NLMISC::CFile::getFilename(outputFilename);
 								break;
-								case OutputPath_SameAsInput: // Input path
-									outputFilename = tStrToUtf8(m_InputPath) + "\\" + NLMISC::CFile::getFilename(outputFilename);
+							case OutputPath_SameAsInput: // Input path
+								outputFilename = tStrToUtf8(m_InputPath) + "\\" + NLMISC::CFile::getFilename(outputFilename);
 								break;
-								case OutputPath_CurrShapeDirectory: // current path
-									// no op
+							case OutputPath_CurrShapeDirectory: // current path
+							                                    // no op
 								break;
 							}
 							COFile output(outputFilename);
@@ -748,7 +724,7 @@ void CSnapshotToolDlg::OnTimer(UINT_PTR nIDEvent)
 							else
 							{
 								snapshot.writeJPG(output);
-							}						
+							}
 						}
 						CNELU::Driver->swapBuffers();
 					}
@@ -757,11 +733,10 @@ void CSnapshotToolDlg::OnTimer(UINT_PTR nIDEvent)
 			}
 			sb.reset();
 		}
-		catch(const std::exception &e)
+		catch (const std::exception &e)
 		{
 			nlwarning(e.what());
-			
-		}				
+		}
 		_FilteredFiles.pop_front();
 		if (_FilteredFiles.empty())
 		{
@@ -773,43 +748,42 @@ void CSnapshotToolDlg::OnTimer(UINT_PTR nIDEvent)
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::OnStopSnapshots() 
+void CSnapshotToolDlg::OnStopSnapshots()
 {
 	_FilteredFiles.clear();
 	updateUIEnabledState();
 }
 
-
 //****************************************************************************************
-void CSnapshotToolDlg::OnViewFront() 
+void CSnapshotToolDlg::OnViewFront()
 {
 	toRegistry();
 	updateUIEnabledState();
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::OnViewLeft() 
+void CSnapshotToolDlg::OnViewLeft()
 {
 	toRegistry();
 	updateUIEnabledState();
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::OnViewRight() 
+void CSnapshotToolDlg::OnViewRight()
 {
 	toRegistry();
-	updateUIEnabledState();	
+	updateUIEnabledState();
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::OnViewTop() 
+void CSnapshotToolDlg::OnViewTop()
 {
 	toRegistry();
-	updateUIEnabledState();	
+	updateUIEnabledState();
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::OnViewAll() 
+void CSnapshotToolDlg::OnViewAll()
 {
 	m_ViewBack = TRUE;
 	m_ViewBottom = TRUE;
@@ -819,11 +793,11 @@ void CSnapshotToolDlg::OnViewAll()
 	m_ViewTop = TRUE;
 	UpdateData(FALSE);
 	toRegistry();
-	updateUIEnabledState();	
+	updateUIEnabledState();
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::OnViewNone() 
+void CSnapshotToolDlg::OnViewNone()
 {
 	m_ViewBack = FALSE;
 	m_ViewBottom = FALSE;
@@ -833,11 +807,11 @@ void CSnapshotToolDlg::OnViewNone()
 	m_ViewTop = FALSE;
 	UpdateData(FALSE);
 	toRegistry();
-	updateUIEnabledState();	
+	updateUIEnabledState();
 }
 
 //****************************************************************************************
-void CSnapshotToolDlg::OnPostFixViewName() 
+void CSnapshotToolDlg::OnPostFixViewName()
 {
 	toRegistry();
 }

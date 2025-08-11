@@ -19,16 +19,12 @@
 #include "nel/misc/quat.h"
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace	NLMISC
-{
+namespace NLMISC {
 
-
-const CQuat		CQuat::Identity;
-const CQuatD	CQuatD::Identity;
-
-
+const CQuat CQuat::Identity;
+const CQuatD CQuatD::Identity;
 
 } // NLMISC

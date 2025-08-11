@@ -14,18 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdlogic.h"
 #include "nel/logic/logic_state.h"
 #include "nel/logic/logic_state_machine.h"
-
 
 using namespace std;
 using namespace NLMISC;
 using namespace NLNET;
 
-namespace NLLOGIC
-{
+namespace NLLOGIC {
 
 //---------------------------------------------------
 //	CLogicState
@@ -38,14 +35,13 @@ CLogicState::CLogicState()
 
 } // CLogicState //
 
-
 //---------------------------------------------------
 //	setLogicStateMachine
 //
 //---------------------------------------------------
-void CLogicState::setLogicStateMachine( CLogicStateMachine * logicStateMachine )
+void CLogicState::setLogicStateMachine(CLogicStateMachine *logicStateMachine)
 {
-	if( logicStateMachine == 0 )
+	if (logicStateMachine == 0)
 	{
 		nlwarning("(LOGIC)<CLogicCondition::setLogicStateMachine> The state machine is null");
 	}
@@ -56,28 +52,24 @@ void CLogicState::setLogicStateMachine( CLogicStateMachine * logicStateMachine )
 
 		// init the logic state machine in each event
 		vector<CLogicEvent>::iterator itEvent;
-		for( itEvent = _Events.begin(); itEvent != _Events.end(); ++itEvent )
+		for (itEvent = _Events.begin(); itEvent != _Events.end(); ++itEvent)
 		{
-			(*itEvent).setLogicStateMachine( logicStateMachine );
+			(*itEvent).setLogicStateMachine(logicStateMachine);
 		}
 	}
 
 } // setLogicStateMachine //
 
-
-
 //---------------------------------------------------
 // addEvent :
 //
 //---------------------------------------------------
-void CLogicState::addEvent( CLogicEvent event )
+void CLogicState::addEvent(CLogicEvent event)
 {
-	event.setLogicStateMachine( _LogicStateMachine );
-	_Events.push_back( event );
+	event.setLogicStateMachine(_LogicStateMachine);
+	_Events.push_back(event);
 
 } // addEvent //
-
-
 
 //---------------------------------------------------
 // addSIdMap :
@@ -85,16 +77,16 @@ void CLogicState::addEvent( CLogicEvent event )
 // looks in all the messages of the state if the
 // destination names can be associated with a sid.
 //---------------------------------------------------
-void CLogicState::addSIdMap( const TSIdMap& sIdMap )
+void CLogicState::addSIdMap(const TSIdMap &sIdMap)
 {
 	vector<CLogicEventMessage>::iterator itMsg;
 
 	/// entry messages
-	for( itMsg = _EntryMessages.begin(); itMsg != _EntryMessages.end(); ++itMsg )
+	for (itMsg = _EntryMessages.begin(); itMsg != _EntryMessages.end(); ++itMsg)
 	{
-		TSIdMap::const_iterator itId = sIdMap.find( (*itMsg).Destination );
+		TSIdMap::const_iterator itId = sIdMap.find((*itMsg).Destination);
 		// if message destination exists in the map we associate the sid with the message
-		if( itId != sIdMap.end() )
+		if (itId != sIdMap.end())
 		{
 			(*itMsg).DestinationId = (*itId).second;
 		}
@@ -102,15 +94,14 @@ void CLogicState::addSIdMap( const TSIdMap& sIdMap )
 	/// send the entry messages that can be sent
 	trySendEntryMessages();
 
-
 	// event messages
 	vector<CLogicEvent>::iterator itEvt;
-	for( itEvt = _Events.begin(); itEvt != _Events.end(); ++itEvt )
+	for (itEvt = _Events.begin(); itEvt != _Events.end(); ++itEvt)
 	{
 		string dest = (*itEvt).EventAction.EventMessage.Destination;
-		TSIdMap::const_iterator itId = sIdMap.find( dest );
+		TSIdMap::const_iterator itId = sIdMap.find(dest);
 		// if message destination exists in the map we associate the sid with the message
-		if( itId != sIdMap.end() )
+		if (itId != sIdMap.end())
 		{
 			(*itEvt).EventAction.EventMessage.DestinationId = (*itId).second;
 		}
@@ -118,20 +109,18 @@ void CLogicState::addSIdMap( const TSIdMap& sIdMap )
 	/// send the event messages that can be sent
 	trySendEventMessages();
 
-
 	/// exit messages
-	for( itMsg = _ExitMessages.begin(); itMsg != _ExitMessages.end(); ++itMsg )
+	for (itMsg = _ExitMessages.begin(); itMsg != _ExitMessages.end(); ++itMsg)
 	{
-		TSIdMap::const_iterator itId = sIdMap.find( (*itMsg).Destination );
+		TSIdMap::const_iterator itId = sIdMap.find((*itMsg).Destination);
 		// if message destination exists in the map we associate the sid with the message
-		if( itId != sIdMap.end() )
+		if (itId != sIdMap.end())
 		{
 			(*itMsg).DestinationId = (*itId).second;
 		}
 	}
 
 } // addSIdMap //
-
 
 //---------------------------------------------------
 // processLogic :
@@ -141,14 +130,14 @@ void CLogicState::processLogic()
 {
 	// test all conditions managed by this state
 	vector<CLogicEvent>::iterator itEvent;
-	for( itEvent = _Events.begin(); itEvent != _Events.end(); ++itEvent )
+	for (itEvent = _Events.begin(); itEvent != _Events.end(); ++itEvent)
 	{
-		if( (*itEvent).testCondition() )
+		if ((*itEvent).testCondition())
 		{
-			//nlinfo("The condition %s is valid",(*itEvent).ConditionName.c_str());
-			if( (*itEvent).EventAction.IsStateChange )
+			// nlinfo("The condition %s is valid",(*itEvent).ConditionName.c_str());
+			if ((*itEvent).EventAction.IsStateChange)
 			{
-				_LogicStateMachine->setCurrentState( (*itEvent).EventAction.StateChange );
+				_LogicStateMachine->setCurrentState((*itEvent).EventAction.StateChange);
 			}
 			else
 			{
@@ -168,7 +157,6 @@ void CLogicState::processLogic()
 
 } // processLogic //
 
-
 //---------------------------------------------------
 // enterState :
 //
@@ -180,7 +168,6 @@ void CLogicState::enterState()
 
 } // enterState //
 
-
 //---------------------------------------------------
 // exitState :
 //
@@ -188,19 +175,19 @@ void CLogicState::enterState()
 void CLogicState::exitState()
 {
 	vector<CLogicEventMessage>::iterator itMsg;
-	for( itMsg = _ExitMessages.begin(); itMsg != _ExitMessages.end(); ++itMsg )
+	for (itMsg = _ExitMessages.begin(); itMsg != _ExitMessages.end(); ++itMsg)
 	{
-		if( (*itMsg).DestinationId != CEntityId() )
+		if ((*itMsg).DestinationId != CEntityId())
 		{
-			CMessage msgOut( (*itMsg).MessageId );
-			msgOut.serial( (*itMsg).Arguments );
+			CMessage msgOut((*itMsg).MessageId);
+			msgOut.serial((*itMsg).Arguments);
 
-			_MessagesToSend.insert( make_pair((*itMsg).DestinationId,msgOut) );
+			_MessagesToSend.insert(make_pair((*itMsg).DestinationId, msgOut));
 		}
 	}
 
 	// reset the entry messages send status
-	for( itMsg = _EntryMessages.begin(); itMsg != _EntryMessages.end(); ++itMsg )
+	for (itMsg = _EntryMessages.begin(); itMsg != _EntryMessages.end(); ++itMsg)
 	{
 		(*itMsg).ToSend = false;
 		(*itMsg).Sent = false;
@@ -208,21 +195,19 @@ void CLogicState::exitState()
 
 	// reset all events
 	vector<CLogicEvent>::iterator itEvent;
-	for( itEvent = _Events.begin(); itEvent != _Events.end(); ++itEvent )
+	for (itEvent = _Events.begin(); itEvent != _Events.end(); ++itEvent)
 	{
 		(*itEvent).reset();
 	}
 
 	// reset the exit messages send status
-	for( itMsg = _ExitMessages.begin(); itMsg != _ExitMessages.end(); ++itMsg )
+	for (itMsg = _ExitMessages.begin(); itMsg != _ExitMessages.end(); ++itMsg)
 	{
 		(*itMsg).ToSend = false;
 		(*itMsg).Sent = false;
 	}
 
 } // exitState //
-
-
 
 //---------------------------------------------------
 // trySendEntryMessages :
@@ -232,14 +217,14 @@ void CLogicState::trySendEntryMessages()
 {
 	/// send the entry messages that can be sent
 	vector<CLogicEventMessage>::iterator itMsg;
-	for( itMsg = _EntryMessages.begin(); itMsg != _EntryMessages.end(); ++itMsg )
+	for (itMsg = _EntryMessages.begin(); itMsg != _EntryMessages.end(); ++itMsg)
 	{
-		if( !(*itMsg).Sent && (*itMsg).DestinationId.getType() != 0xfe )
+		if (!(*itMsg).Sent && (*itMsg).DestinationId.getType() != 0xfe)
 		{
-			CMessage msgOut( (*itMsg).MessageId );
-			msgOut.serial( (*itMsg).Arguments );
+			CMessage msgOut((*itMsg).MessageId);
+			msgOut.serial((*itMsg).Arguments);
 
-			_MessagesToSend.insert( make_pair((*itMsg).DestinationId,msgOut) );
+			_MessagesToSend.insert(make_pair((*itMsg).DestinationId, msgOut));
 
 			(*itMsg).ToSend = false;
 			(*itMsg).Sent = true;
@@ -247,8 +232,6 @@ void CLogicState::trySendEntryMessages()
 	}
 
 } // trySendEntryMessages //
-
-
 
 //---------------------------------------------------
 // trySendEventMessages :
@@ -258,18 +241,18 @@ void CLogicState::trySendEventMessages()
 {
 	// test all conditions managed by this state
 	vector<CLogicEvent>::iterator itEvent;
-	for( itEvent = _Events.begin(); itEvent != _Events.end(); ++itEvent )
+	for (itEvent = _Events.begin(); itEvent != _Events.end(); ++itEvent)
 	{
-		if( (*itEvent).EventAction.EventMessage.ToSend == true )
+		if ((*itEvent).EventAction.EventMessage.ToSend == true)
 		{
-			if( (*itEvent).EventAction.EventMessage.Sent == false )
+			if ((*itEvent).EventAction.EventMessage.Sent == false)
 			{
-				if( (*itEvent).EventAction.EventMessage.DestinationId.getType() != 0xfe )
+				if ((*itEvent).EventAction.EventMessage.DestinationId.getType() != 0xfe)
 				{
-					CMessage msgOut( (*itEvent).EventAction.EventMessage.MessageId );
-					msgOut.serial( (*itEvent).EventAction.EventMessage.Arguments );
+					CMessage msgOut((*itEvent).EventAction.EventMessage.MessageId);
+					msgOut.serial((*itEvent).EventAction.EventMessage.Arguments);
 
-					_MessagesToSend.insert( make_pair((*itEvent).EventAction.EventMessage.DestinationId,msgOut) );
+					_MessagesToSend.insert(make_pair((*itEvent).EventAction.EventMessage.DestinationId, msgOut));
 
 					(*itEvent).EventAction.EventMessage.ToSend = false;
 					(*itEvent).EventAction.EventMessage.Sent = true;
@@ -280,17 +263,16 @@ void CLogicState::trySendEventMessages()
 
 } // trySendEventMessages //
 
-
 //---------------------------------------------------
 // getMessagesToSend :
 //
 //---------------------------------------------------
-void CLogicState::getMessagesToSend( multimap<CEntityId,CMessage>& msgs )
+void CLogicState::getMessagesToSend(multimap<CEntityId, CMessage> &msgs)
 {
-	multimap<CEntityId,CMessage>::iterator itMsg;
-	for( itMsg = _MessagesToSend.begin(); itMsg != _MessagesToSend.end(); ++itMsg )
+	multimap<CEntityId, CMessage>::iterator itMsg;
+	for (itMsg = _MessagesToSend.begin(); itMsg != _MessagesToSend.end(); ++itMsg)
 	{
-		msgs.insert( *itMsg );
+		msgs.insert(*itMsg);
 	}
 
 	// erase all the messages
@@ -298,38 +280,34 @@ void CLogicState::getMessagesToSend( multimap<CEntityId,CMessage>& msgs )
 
 } // getMessagesToSend //
 
-
-
 //---------------------------------------------------
 // fillVarMap :
 //
 //---------------------------------------------------
-void CLogicState::fillVarMap( multimap<CEntityId,string >& stateMachineVariables )
+void CLogicState::fillVarMap(multimap<CEntityId, string> &stateMachineVariables)
 {
 	// events
 	vector<CLogicEvent>::iterator itEvt;
-	for( itEvt = _Events.begin(); itEvt != _Events.end(); ++itEvt )
+	for (itEvt = _Events.begin(); itEvt != _Events.end(); ++itEvt)
 	{
 		// get the condition used in the event
 		CLogicCondition condition;
-		if( _LogicStateMachine->getCondition((*itEvt).ConditionName,condition) )
+		if (_LogicStateMachine->getCondition((*itEvt).ConditionName, condition))
 		{
 			// get vars used in the conditions
 			set<string> condVars;
-			condition.fillVarSet( condVars );
+			condition.fillVarSet(condVars);
 
 			// add var with related service
 			set<string>::iterator itCV;
-			for( itCV = condVars.begin(); itCV != condVars.end(); ++itCV )
+			for (itCV = condVars.begin(); itCV != condVars.end(); ++itCV)
 			{
-				stateMachineVariables.insert( make_pair((*itEvt).EventAction.EventMessage.DestinationId,*itCV) );
+				stateMachineVariables.insert(make_pair((*itEvt).EventAction.EventMessage.DestinationId, *itCV));
 			}
 		}
 	}
 
 } // fillVarMap //
-
-
 
 //---------------------------------------------------
 // serial :
@@ -337,21 +315,21 @@ void CLogicState::fillVarMap( multimap<CEntityId,string >& stateMachineVariables
 //---------------------------------------------------
 /*void CLogicState::serial( IStream &f )
 {
-	f.xmlPush( "STATE");
+    f.xmlPush( "STATE");
 
-	f.serial( _StateName );
-	f.serialCont( _EntryMessages );
-	f.serialCont( _ExitMessages );
-	f.serialCont( _Events );
+    f.serial( _StateName );
+    f.serialCont( _EntryMessages );
+    f.serialCont( _ExitMessages );
+    f.serialCont( _Events );
 
-	f.xmlPop();
+    f.xmlPop();
 
 } // serial //*/
 
-void CLogicState::write (xmlNodePtr node) const
+void CLogicState::write(xmlNodePtr node) const
 {
-	xmlNodePtr elmPtr = xmlNewChild ( node, NULL, (const xmlChar*)"STATE", NULL);
-	xmlSetProp (elmPtr, (const xmlChar*)"Name", (const xmlChar*)_StateName.c_str());
+	xmlNodePtr elmPtr = xmlNewChild(node, NULL, (const xmlChar *)"STATE", NULL);
+	xmlSetProp(elmPtr, (const xmlChar *)"Name", (const xmlChar *)_StateName.c_str());
 
 	uint i;
 	for (i = 0; i < _EntryMessages.size(); i++)
@@ -368,65 +346,62 @@ void CLogicState::write (xmlNodePtr node) const
 	}
 }
 
-void CLogicState::read (xmlNodePtr node)
+void CLogicState::read(xmlNodePtr node)
 {
-	xmlCheckNodeName (node, "STATE");
+	xmlCheckNodeName(node, "STATE");
 
-	_StateName = getXMLProp (node, "Name");
+	_StateName = getXMLProp(node, "Name");
 
 	{
 		// Count the parent
-		uint nb = CIXml::countChildren (node, "ENTRY_EVENT_MESSAGE");
+		uint nb = CIXml::countChildren(node, "ENTRY_EVENT_MESSAGE");
 		uint i = 0;
-		xmlNodePtr parent = CIXml::getFirstChildNode (node, "ENTRY_EVENT_MESSAGE");
-		while (i<nb)
+		xmlNodePtr parent = CIXml::getFirstChildNode(node, "ENTRY_EVENT_MESSAGE");
+		while (i < nb)
 		{
 			CLogicEventMessage v;
 			v.read(parent);
 			_EntryMessages.push_back(v);
 
 			// Next parent
-			parent = CIXml::getNextChildNode (parent, "ENTRY_EVENT_MESSAGE");
+			parent = CIXml::getNextChildNode(parent, "ENTRY_EVENT_MESSAGE");
 			i++;
 		}
 	}
 
 	{
 		// Count the parent
-		uint nb = CIXml::countChildren (node, "EXIT_EVENT_MESSAGE");
+		uint nb = CIXml::countChildren(node, "EXIT_EVENT_MESSAGE");
 		uint i = 0;
-		xmlNodePtr parent = CIXml::getFirstChildNode (node, "EXIT_EVENT_MESSAGE");
-		while (i<nb)
+		xmlNodePtr parent = CIXml::getFirstChildNode(node, "EXIT_EVENT_MESSAGE");
+		while (i < nb)
 		{
 			CLogicEventMessage v;
 			v.read(parent);
 			_ExitMessages.push_back(v);
 
 			// Next parent
-			parent = CIXml::getNextChildNode (parent, "EXIT_EVENT_MESSAGE");
+			parent = CIXml::getNextChildNode(parent, "EXIT_EVENT_MESSAGE");
 			i++;
 		}
 	}
 
 	{
 		// Count the parent
-		uint nb = CIXml::countChildren (node, "EVENT");
+		uint nb = CIXml::countChildren(node, "EVENT");
 		uint i = 0;
-		xmlNodePtr parent = CIXml::getFirstChildNode (node, "EVENT");
-		while (i<nb)
+		xmlNodePtr parent = CIXml::getFirstChildNode(node, "EVENT");
+		while (i < nb)
 		{
 			CLogicEvent v;
 			v.read(parent);
 			_Events.push_back(v);
 
 			// Next parent
-			parent = CIXml::getNextChildNode (parent, "EVENT");
+			parent = CIXml::getNextChildNode(parent, "EVENT");
 			i++;
 		}
 	}
-
 }
 
-
 } // NLLOGIC
-

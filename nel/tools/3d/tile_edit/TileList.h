@@ -12,32 +12,31 @@
 
 class TileList : public CListBox
 {
-// Construction
+	// Construction
 public:
 	TileList();
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(TileList)
-	virtual void DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct );	
-	protected:
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+
+protected:
+	virtual BOOL PreCreateWindow(CREATESTRUCT &cs);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~TileList();
 
 	// Generated message map functions
 protected:
 	//{{AFX_MSG(TileList)
-		// NOTE - the ClassWizard will add and remove member functions here.
+	// NOTE - the ClassWizard will add and remove member functions here.
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

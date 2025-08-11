@@ -24,16 +24,14 @@
 
 #include "nel/3d/ps_particle2.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CRibbonDlg dialog
 
-
-CRibbonDlg::CRibbonDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSRibbonBase *ribbon, CWnd* pParent /* = NULL*/)
-					 : CDialog(CRibbonDlg::IDD, pParent),
-					   _Node(ownerNode),
-					   _Ribbon(ribbon),
-					   _RibbonLengthDlg(NULL)
+CRibbonDlg::CRibbonDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSRibbonBase *ribbon, CWnd *pParent /* = NULL*/)
+    : CDialog(CRibbonDlg::IDD, pParent)
+    , _Node(ownerNode)
+    , _Ribbon(ribbon)
+    , _RibbonLengthDlg(NULL)
 {
 	nlassert(ribbon);
 	//{{AFX_DATA_INIT(CRibbonDlg)
@@ -63,15 +61,16 @@ void CRibbonDlg::init(CWnd *pParent, sint x, sint y)
 	Create(IDD_RIBBON_DLG, pParent);
 	RECT r;
 	GetClientRect(&r);
-	r.top += y; r.bottom += y;
-	r.right += x; r.left += x;
-	MoveWindow(&r);	
+	r.top += y;
+	r.bottom += y;
+	r.right += x;
+	r.left += x;
+	MoveWindow(&r);
 	ShowWindow(SW_SHOW);
 }
 
-
 ///==================================
-void CRibbonDlg::DoDataExchange(CDataExchange* pDX)
+void CRibbonDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CRibbonDlg)
@@ -80,42 +79,36 @@ void CRibbonDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CRibbonDlg, CDialog)
-	//{{AFX_MSG_MAP(CRibbonDlg)
-	ON_BN_CLICKED(IDC_USE_HERMITTE_INTERPOLATION, OnUseHermitteInterpolation)
-	ON_BN_CLICKED(IDC_CONSTANT_LENGTH, OnConstantLength)
-	ON_CBN_SELCHANGE(IDC_TRAIL_COORD_SYSTEM, OnSelchangeTrailCoordSystem)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CRibbonDlg)
+ON_BN_CLICKED(IDC_USE_HERMITTE_INTERPOLATION, OnUseHermitteInterpolation)
+ON_BN_CLICKED(IDC_CONSTANT_LENGTH, OnConstantLength)
+ON_CBN_SELCHANGE(IDC_TRAIL_COORD_SYSTEM, OnSelchangeTrailCoordSystem)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CRibbonDlg message handlers
 
 ///=========================================================
-void CRibbonDlg::OnUseHermitteInterpolation() 
+void CRibbonDlg::OnUseHermitteInterpolation()
 {
-	UpdateData();	
-	_Ribbon->setInterpolationMode(m_UseHermitteInterpolation ? 
-									NL3D::CPSRibbonBase::Hermitte :
-									NL3D::CPSRibbonBase::Linear);
+	UpdateData();
+	_Ribbon->setInterpolationMode(m_UseHermitteInterpolation ? NL3D::CPSRibbonBase::Hermitte : NL3D::CPSRibbonBase::Linear);
 	updateModifiedFlag();
 }
 
 ///=========================================================
-void CRibbonDlg::OnConstantLength() 
+void CRibbonDlg::OnConstantLength()
 {
 	UpdateData();
-	_Ribbon->setRibbonMode(m_ConstantLength ? 
-						   NL3D::CPSRibbonBase::FixedSize :
-						   NL3D::CPSRibbonBase::VariableSize);
+	_Ribbon->setRibbonMode(m_ConstantLength ? NL3D::CPSRibbonBase::FixedSize : NL3D::CPSRibbonBase::VariableSize);
 	updateState();
 	updateModifiedFlag();
 }
 
-
 ///=========================================================
-BOOL CRibbonDlg::OnInitDialog() 
+BOOL CRibbonDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	// Length
@@ -126,9 +119,8 @@ BOOL CRibbonDlg::OnInitDialog()
 	erf->enableLowerBound(0.f, true);
 	RECT r;
 	GetDlgItem(IDC_RIBBON_LENGTH)->GetWindowRect(&r);
-	ScreenToClient(&r);	
+	ScreenToClient(&r);
 	erf->init(r.left, r.top, this);
-
 
 	// Lod degradation
 	erf = new CEditableRangeFloat("LOD_DEGRADATION", _Node, 0.f, 1.f);
@@ -136,17 +128,17 @@ BOOL CRibbonDlg::OnInitDialog()
 	_LODDegradationWrapper.R = _Ribbon;
 	erf->setWrapper(&_LODDegradationWrapper);
 	erf->enableLowerBound(0.f, false);
-	erf->enableUpperBound(0.f, false);	
+	erf->enableUpperBound(0.f, false);
 	GetDlgItem(IDC_LOD_DEGRADATION)->GetWindowRect(&r);
-	ScreenToClient(&r);	
+	ScreenToClient(&r);
 	erf->init(r.left, r.top, this);
 
 	// Coord system
-	((CComboBox *) GetDlgItem(IDC_TRAIL_COORD_SYSTEM))->SetCurSel((int) _Ribbon->getMatrixMode());
+	((CComboBox *)GetDlgItem(IDC_TRAIL_COORD_SYSTEM))->SetCurSel((int)_Ribbon->getMatrixMode());
 
 	updateState();
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 ///=========================================================
@@ -156,34 +148,32 @@ void CRibbonDlg::updateState()
 }
 
 ///=========================================================
-float CRibbonDlg::CRibbonLengthWrapper::get() const 
-{ 
-	return R->getRibbonLength(); 
-}
-
-///=========================================================
-void  CRibbonDlg::CRibbonLengthWrapper::set(const float &v)
-{ 
-	R->setRibbonLength(v); 
-}
-
-
-///=========================================================
-float CRibbonDlg::CLODDegradationWrapper::get() const 
-{ 
-	return R->getLODDegradation(); 
-}
-
-///=========================================================
-void  CRibbonDlg::CLODDegradationWrapper::set(const float &v)
-{ 
-	R->setLODDegradation(v); 
-}
-
-
-///=========================================================
-void CRibbonDlg::OnSelchangeTrailCoordSystem() 
+float CRibbonDlg::CRibbonLengthWrapper::get() const
 {
-	_Ribbon->setMatrixMode((NL3D::CPSRibbonBase::TMatrixMode) ((CComboBox *) GetDlgItem(IDC_TRAIL_COORD_SYSTEM))->GetCurSel());
+	return R->getRibbonLength();
+}
+
+///=========================================================
+void CRibbonDlg::CRibbonLengthWrapper::set(const float &v)
+{
+	R->setRibbonLength(v);
+}
+
+///=========================================================
+float CRibbonDlg::CLODDegradationWrapper::get() const
+{
+	return R->getLODDegradation();
+}
+
+///=========================================================
+void CRibbonDlg::CLODDegradationWrapper::set(const float &v)
+{
+	R->setLODDegradation(v);
+}
+
+///=========================================================
+void CRibbonDlg::OnSelchangeTrailCoordSystem()
+{
+	_Ribbon->setMatrixMode((NL3D::CPSRibbonBase::TMatrixMode)((CComboBox *)GetDlgItem(IDC_TRAIL_COORD_SYSTEM))->GetCurSel());
 	_Node->setModified(true);
 }

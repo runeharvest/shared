@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "nel/misc/file.h"
 #include "nel/misc/common.h"
 #include "nel/misc/bitmap.h"
@@ -26,11 +25,13 @@
 
 struct CPoint
 {
-	CPoint(sint _x, sint _y) :x(_x), y(_y)
+	CPoint(sint _x, sint _y)
+	    : x(_x)
+	    , y(_y)
 	{
 	}
 
-	CPoint operator + (const CPoint &p) const
+	CPoint operator+(const CPoint &p) const
 	{
 		return CPoint(x + p.x, y + p.y);
 	}
@@ -90,9 +91,9 @@ bool fillPoint(NLMISC::CBitmap &bitmap, sint width, CPoints &points)
 
 		// put adjacent pixels in queue to process later
 		if (p.y > 0) points.push_back(p + Up);
-		if (p.y < h-1) points.push_back(p + Down);
+		if (p.y < h - 1) points.push_back(p + Down);
 		if (p.x > 0) points.push_back(p + Left);
-		if (p.x < w-1) points.push_back(p + Right);
+		if (p.x < w - 1) points.push_back(p + Right);
 	}
 	else if (c == NLMISC::CRGBA::Black)
 	{
@@ -116,7 +117,7 @@ void drawEdge(NLMISC::CBitmap &bitmap, const CObject &object, const CFace &face,
 	NLMISC::CUV uv0 = object.textureCoords[face.indices[index0]];
 	NLMISC::CUV uv1 = object.textureCoords[face.indices[index1]];
 
-	std::vector<std::pair<sint, sint> > pixels;
+	std::vector<std::pair<sint, sint>> pixels;
 
 	// draw the triangle with vertices UV coordinates
 	NLMISC::drawFullLine(uv0.U, uv0.V, uv1.U, uv1.V, pixels);
@@ -174,7 +175,7 @@ int main(int argc, char **argv)
 			{
 				NLMISC::CObjectVector<uint8> &pixels = bitmap.getPixels();
 
-				NLMISC::CRGBA *pRGBA = (NLMISC::CRGBA*)&pixels[0];
+				NLMISC::CRGBA *pRGBA = (NLMISC::CRGBA *)&pixels[0];
 
 				uint32 size = bitmap.getSize();
 
@@ -278,7 +279,7 @@ int main(int argc, char **argv)
 		Points.push_back(CPoint(0, 0));
 
 		// process all points from 0, 0
-		while(fillPoint(inBitmap, width, Points)) { }
+		while (fillPoint(inBitmap, width, Points)) { }
 
 		// create a new bitmap for output
 		NLMISC::CBitmap outBitmap;
@@ -368,7 +369,7 @@ int main(int argc, char **argv)
 				NLMISC::explode(line, std::string(" "), tokens);
 
 				CFace face;
-				face.indices.resize(tokens.size()-1);
+				face.indices.resize(tokens.size() - 1);
 
 				bool faceValid = true;
 
@@ -429,7 +430,7 @@ int main(int argc, char **argv)
 			}
 
 			// link last and fist pixels
-			drawEdge(outBitmap, object, face, face.indices.size()-1, 0);
+			drawEdge(outBitmap, object, face, face.indices.size() - 1, 0);
 		}
 
 		// save output bitmap

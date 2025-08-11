@@ -32,22 +32,21 @@
 class CSpeedLimit
 {
 public:
-
 	/// Constructor. The specified row need be accessible.
-	CSpeedLimit( CMirroredDataSet& dataset, const TDataSetRow& row ) : _FreeSpeedValue( dataset, row, DSPropertyFUEL ) {}
+	CSpeedLimit(CMirroredDataSet &dataset, const TDataSetRow &row)
+	    : _FreeSpeedValue(dataset, row, DSPropertyFUEL)
+	{
+	}
 
 	/// Return the current max allowable speed (one of the params)
-	float		getSpeedLimit( float walkSpeed, float maxSpeed ) const
+	float getSpeedLimit(float walkSpeed, float maxSpeed) const
 	{
 		return (_FreeSpeedValue() ? maxSpeed : walkSpeed);
 	}
 
 private:
-	
-	CMirrorPropValueRO<TYPE_FUEL>	_FreeSpeedValue;
-
+	CMirrorPropValueRO<TYPE_FUEL> _FreeSpeedValue;
 };
-
 
 #endif // NL_ANIMAL_HUNGER_H
 

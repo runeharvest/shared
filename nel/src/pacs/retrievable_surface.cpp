@@ -24,39 +24,38 @@ using namespace NLMISC;
 /*
 float			NLPACS::Models[NumCreatureModels][NumModelCharacteristics] =
 {
-	{ 0.5f, 1.0f, -1.0f },
-	{ 0.8f, 2.0f, -0.5f },
-	{ 2.0f, 4.0f, +0.5f },
-	{ 4.0f, 8.0f, +0.707f }
+    { 0.5f, 1.0f, -1.0f },
+    { 0.8f, 2.0f, -0.5f },
+    { 2.0f, 4.0f, +0.5f },
+    { 4.0f, 8.0f, +0.707f }
 };
 */
 
-float			NLPACS::Models[NumMaxCreatureModels][NumModelCharacteristics] =
-{
+float NLPACS::Models[NumMaxCreatureModels][NumModelCharacteristics] = {
 	{ 0.5f, 1.0f, -1.0f },
 	{ 4.0f, 8.0f, +0.5f },
 	{ 0.0f, 0.0f, -1.0f },
 	{ 0.0f, 0.0f, -1.0f },
 };
 
-void	NLPACS::CRetrievableSurface::serial(NLMISC::IStream &f)
+void NLPACS::CRetrievableSurface::serial(NLMISC::IStream &f)
 {
 	/*
 	Version 0:
-		- base version.
+	    - base version.
 	Version 1:
-		- absolute water height and flag
+	    - absolute water height and flag
 	Version 2:
-		- no more topologies in stream (obsolete)
-		- no more height quad
-		- quantized height (_QuantHeight)
+	    - no more topologies in stream (obsolete)
+	    - no more height quad
+	    - quantized height (_QuantHeight)
 	*/
-	sint	ver= f.serialVersion(2);
+	sint ver = f.serialVersion(2);
 
 	if (ver < 2)
 		throw EOlderStream();
 
-	uint	i;
+	uint i;
 	f.serial(_NormalQuanta);
 	f.serial(_OrientationQuanta);
 	f.serial(_Material);
@@ -67,7 +66,7 @@ void	NLPACS::CRetrievableSurface::serial(NLMISC::IStream &f)
 	if (ver <= 1)
 	{
 		f.serial(_Quad);
-		for (i=0; i<NumMaxCreatureModels; ++i)
+		for (i = 0; i < NumMaxCreatureModels; ++i)
 			f.serial(_Topologies[i]);
 	}
 	f.serial(_Center);
@@ -85,7 +84,7 @@ void	NLPACS::CRetrievableSurface::serial(NLMISC::IStream &f)
 	}
 }
 
-void	NLPACS::CRetrievableSurface::TLoop::serial(NLMISC::IStream &f)
+void NLPACS::CRetrievableSurface::TLoop::serial(NLMISC::IStream &f)
 {
 	f.serialCont(*this);
 	f.serial(Length);

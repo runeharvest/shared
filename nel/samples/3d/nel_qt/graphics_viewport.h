@@ -32,14 +32,14 @@
 class QAction;
 
 namespace NL3D {
-	class UDriver;
-	class UTextContext;
-	class UScene;
+class UDriver;
+class UTextContext;
+class UScene;
 }
 
 namespace NLQT {
-	class CGraphicsConfig;
-	class CInternationalization;
+class CGraphicsConfig;
+class CInternationalization;
 
 /**
  * CGraphicsViewport
@@ -55,7 +55,7 @@ public:
 	CGraphicsViewport(QWidget *parent);
 	virtual ~CGraphicsViewport();
 
-	virtual QPaintEngine* paintEngine() const { return NULL; }
+	virtual QPaintEngine *paintEngine() const { return NULL; }
 
 	void init(CGraphicsConfig *graphicsConfig);
 	void release();
@@ -72,7 +72,7 @@ public:
 	inline NL3D::UTextContext *getTextContext() { return m_TextContext; }
 	inline NL3D::UScene *getScene() { return m_Scene; }
 
-public slots:		
+public slots:
 	void saveScreenshot();
 
 private slots:
@@ -96,7 +96,7 @@ private:
 private:
 	CGraphicsViewport(const CGraphicsViewport &);
 	CGraphicsViewport &operator=(const CGraphicsViewport &);
-	
+
 }; /* class CGraphicsViewport */
 
 } /* namespace NLQT */

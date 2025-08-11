@@ -13,11 +13,11 @@
 #include <QtPlugin>
 
 #if defined(Q_OS_WIN32)
-	Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
+Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
 #elif defined(Q_OS_MAC)
-	Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
+Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
 #elif defined(Q_OS_UNIX)
-	Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)
+Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)
 #endif
 
 #endif
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 
 	// build command line arguments string
 	QString arguments;
-	for(int i = 1 ; i <= argc ; i++)
+	for (int i = 1; i <= argc; i++)
 	{
 		arguments += argv[i];
 		if (i < argc - 1)

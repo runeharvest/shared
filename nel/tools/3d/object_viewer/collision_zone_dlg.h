@@ -20,9 +20,8 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif
-namespace NL3D
-{
-	class CPSZone ;
+namespace NL3D {
+class CPSZone;
 }
 
 #include "ps_wrapper.h"
@@ -32,7 +31,6 @@ namespace NL3D
 //
 #include "nel/3d/ps_zone.h"
 
-
 class CParticleDlg;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -40,33 +38,35 @@ class CParticleDlg;
 
 class CCollisionZoneDlg : public CDialog, public CDialogStack
 {
-// Construction
+	// Construction
 public:
-	CCollisionZoneDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSZone *zone, CParticleDlg *particleDlg) ;   // standard constructor
+	CCollisionZoneDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSZone *zone, CParticleDlg *particleDlg); // standard constructor
 
-	void init(sint x, sint y, CWnd *pParent) ;
-// Dialog Data
+	void init(sint x, sint y, CWnd *pParent);
+	// Dialog Data
 	//{{AFX_DATA(CCollisionZoneDlg)
-	enum { IDD = IDD_ZONE };
-	CComboBox	m_CollisionBehaviour;
+	enum
+	{
+		IDD = IDD_ZONE
+	};
+	CComboBox m_CollisionBehaviour;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CCollisionZoneDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	CParticleWorkspace::CNode *_Node;
-	CParticleDlg              *_ParticleDlg;
+	CParticleDlg *_ParticleDlg;
 	// the collision zone being edited
-	NL3D::CPSZone             *_Zone ;
+	NL3D::CPSZone *_Zone;
 	// edition of the bounce factor
-	CEditableRangeFloat       *_BounceFactorDlg ;
+	CEditableRangeFloat *_BounceFactorDlg;
 	// Generated message map functions
 	//{{AFX_MSG(CCollisionZoneDlg)
 	afx_msg void OnSelchangeCollisionBehaviour();
@@ -77,11 +77,10 @@ protected:
 	struct CBounceFactorWrapper : public IPSWrapperFloat
 	{
 		// the zone being wrapped
-		NL3D::CPSZone *Z ;
-		float get(void) const { return Z->getBounceFactor() ; }
-		void set(const float &v) { Z->setBounceFactor(v) ; }
-	} _BounceFactorWrapper ;
-
+		NL3D::CPSZone *Z;
+		float get(void) const { return Z->getBounceFactor(); }
+		void set(const float &v) { Z->setBounceFactor(v); }
+	} _BounceFactorWrapper;
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -14,18 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_DIR_LIGHT_SETUP_H
 #define RY_DIR_LIGHT_SETUP_H
 
 #include "nel/misc/rgba.h"
 #include "nel/misc/stream.h"
 
-
-namespace NLGEORGES
-{
-	class UFormElm;
+namespace NLGEORGES {
+class UFormElm;
 }
 
 // Setup for a directionnal light
@@ -39,10 +35,13 @@ struct CDirLightSetup
 	CDirLightSetup();
 	// ctor
 	CDirLightSetup(NLMISC::CRGBA ambiant,
-			       NLMISC::CRGBA diffuse,
-				   NLMISC::CRGBA specular,
-				   const NLMISC::CVector &dir)
-				  : Ambiant(ambiant), Diffuse(diffuse), Specular(specular), Direction(dir)
+	    NLMISC::CRGBA diffuse,
+	    NLMISC::CRGBA specular,
+	    const NLMISC::CVector &dir)
+	    : Ambiant(ambiant)
+	    , Diffuse(diffuse)
+	    , Specular(specular)
+	    , Direction(dir)
 	{
 	}
 	// blend
@@ -50,18 +49,14 @@ struct CDirLightSetup
 	// modulate
 	void modulate(float level);
 	/** load from sheet.
-	  * \return true if the loading was ok
-	  */
+	 * \return true if the loading was ok
+	 */
 	bool build(const NLGEORGES::UFormElm &elm);
 	//
 	void serial(NLMISC::IStream &f)
 	{
 		f.serial(Ambiant, Diffuse, Specular, Direction);
 	}
-
 };
 
-
-
 #endif
-

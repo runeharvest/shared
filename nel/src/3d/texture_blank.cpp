@@ -28,7 +28,4 @@ void CTextureBlank::doGenerate(bool async)
 {
 }
 
-
-
-
 } // NL3D

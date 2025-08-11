@@ -12,31 +12,29 @@
 /////////////////////////////////////////////////////////////////////////////
 // CTMenu window
 
-  
 class CTMenu : public CMenu
 {
-// Construction
+	// Construction
 public:
 	CTMenu();
 
-// Attributes
+	// Attributes
 protected:
 	CFont m_Font;
 	CString m_strTitle;
 
-// Operations
+	// Operations
 public:
 	void AddMenuTitle(LPCTSTR lpszTitle);
 
 protected:
 	HFONT CreatePopupMenuTitleFont();
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CTMenu();
 	virtual void MeasureItem(LPMEASUREITEMSTRUCT lpMIS);
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDIS);
-
 };
 
 /////////////////////////////////////////////////////////////////////////////

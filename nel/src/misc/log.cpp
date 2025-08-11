@@ -22,9 +22,9 @@
 #include "nel/misc/log.h"
 
 #ifdef NL_OS_WINDOWS
-#	include <process.h>
+#include <process.h>
 #else
-#	include <unistd.h>
+#include <unistd.h>
 #endif
 
 #include "nel/misc/displayer.h"
@@ -35,15 +35,20 @@
 using namespace std;
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 string *CLog::_ProcessName = NULL;
 
-CLog::CLog( TLogType logType) : _LogType (logType), _FileName(NULL), _Line(-1), _FuncName(NULL), _Mutex("LOG"+toString((uint)logType)), _PosSet(false)
+CLog::CLog(TLogType logType)
+    : _LogType(logType)
+    , _FileName(NULL)
+    , _Line(-1)
+    , _FuncName(NULL)
+    , _Mutex("LOG" + toString((uint)logType))
+    , _PosSet(false)
 {
 }
 
@@ -64,7 +69,7 @@ CLog::CLog(const CLog &other)
 	TempArgs = other.TempArgs;
 }
 
-void CLog::setDefaultProcessName ()
+void CLog::setDefaultProcessName()
 {
 	if (_ProcessName == NULL)
 	{
@@ -91,7 +96,7 @@ void CLog::setDefaultProcessName ()
 #endif
 }
 
-void CLog::setProcessName (const std::string &processName)
+void CLog::setProcessName(const std::string &processName)
 {
 	if (_ProcessName == NULL)
 	{
@@ -107,9 +112,9 @@ void CLog::setProcessName (const std::string &processName)
 	*_ProcessName = CFile::getFilename(processName);
 }
 
-void CLog::setPosition (sint line, const char *fileName, const char *funcName)
+void CLog::setPosition(sint line, const char *fileName, const char *funcName)
 {
-	if ( !noDisplayer() )
+	if (!noDisplayer())
 	{
 		_Mutex.enter();
 		_PosSet++;
@@ -122,9 +127,9 @@ void CLog::setPosition (sint line, const char *fileName, const char *funcName)
 /// Symetric to setPosition(). Automatically called by display...(). Do not call if noDisplayer().
 void CLog::unsetPosition()
 {
-	nlassert( !noDisplayer() );
+	nlassert(!noDisplayer());
 
-	if ( _PosSet > 0 )
+	if (_PosSet > 0)
 	{
 		_FileName = NULL;
 		_Line = -1;
@@ -134,78 +139,76 @@ void CLog::unsetPosition()
 	}
 }
 
-
-void CLog::addDisplayer (IDisplayer *displayer, bool bypassFilter)
+void CLog::addDisplayer(IDisplayer *displayer, bool bypassFilter)
 {
 	if (displayer == NULL)
 	{
 		// Can't nlwarning because recursive call
-		printf ("Trying to add a NULL displayer\n");
+		printf("Trying to add a NULL displayer\n");
 		return;
 	}
 
 	if (bypassFilter)
 	{
-		CDisplayers::iterator idi = std::find (_BypassFilterDisplayers.begin (), _BypassFilterDisplayers.end (), displayer);
-		if (idi == _BypassFilterDisplayers.end ())
+		CDisplayers::iterator idi = std::find(_BypassFilterDisplayers.begin(), _BypassFilterDisplayers.end(), displayer);
+		if (idi == _BypassFilterDisplayers.end())
 		{
-			_BypassFilterDisplayers.push_back (displayer);
+			_BypassFilterDisplayers.push_back(displayer);
 		}
 		else
 		{
-			nlwarning ("LOG: Couldn't add the displayer, it was already added");
+			nlwarning("LOG: Couldn't add the displayer, it was already added");
 		}
 	}
 	else
 	{
-		CDisplayers::iterator idi = std::find (_Displayers.begin (), _Displayers.end (), displayer);
-		if (idi == _Displayers.end ())
+		CDisplayers::iterator idi = std::find(_Displayers.begin(), _Displayers.end(), displayer);
+		if (idi == _Displayers.end())
 		{
-			_Displayers.push_back (displayer);
+			_Displayers.push_back(displayer);
 		}
 		else
 		{
-			nlwarning ("LOG: Couldn't add the displayer, it was already added");
+			nlwarning("LOG: Couldn't add the displayer, it was already added");
 		}
 	}
 }
 
-void CLog::removeDisplayer (IDisplayer *displayer)
+void CLog::removeDisplayer(IDisplayer *displayer)
 {
 	if (displayer == NULL)
 	{
-		nlwarning ("LOG: Trying to remove a NULL displayer");
+		nlwarning("LOG: Trying to remove a NULL displayer");
 		return;
 	}
 
-	CDisplayers::iterator idi = std::find (_Displayers.begin (), _Displayers.end (), displayer);
-	if (idi != _Displayers.end ())
+	CDisplayers::iterator idi = std::find(_Displayers.begin(), _Displayers.end(), displayer);
+	if (idi != _Displayers.end())
 	{
-		_Displayers.erase (idi);
+		_Displayers.erase(idi);
 	}
 
-	idi = std::find (_BypassFilterDisplayers.begin (), _BypassFilterDisplayers.end (), displayer);
-	if (idi != _BypassFilterDisplayers.end ())
+	idi = std::find(_BypassFilterDisplayers.begin(), _BypassFilterDisplayers.end(), displayer);
+	if (idi != _BypassFilterDisplayers.end())
 	{
-		_BypassFilterDisplayers.erase (idi);
+		_BypassFilterDisplayers.erase(idi);
 	}
-
 }
 
-void CLog::removeDisplayer (const char *displayerName)
+void CLog::removeDisplayer(const char *displayerName)
 {
 	if (displayerName == NULL || displayerName[0] == '\0')
 	{
-		nlwarning ("LOG: Trying to remove an empty displayer name");
+		nlwarning("LOG: Trying to remove an empty displayer name");
 		return;
 	}
 
 	CDisplayers::iterator idi;
-	for (idi = _Displayers.begin (); idi != _Displayers.end ();)
+	for (idi = _Displayers.begin(); idi != _Displayers.end();)
 	{
 		if ((*idi)->DisplayerName == displayerName)
 		{
-			idi = _Displayers.erase (idi);
+			idi = _Displayers.erase(idi);
 		}
 		else
 		{
@@ -213,11 +216,11 @@ void CLog::removeDisplayer (const char *displayerName)
 		}
 	}
 
-	for (idi = _BypassFilterDisplayers.begin (); idi != _BypassFilterDisplayers.end ();)
+	for (idi = _BypassFilterDisplayers.begin(); idi != _BypassFilterDisplayers.end();)
 	{
 		if ((*idi)->DisplayerName == displayerName)
 		{
-			idi = _BypassFilterDisplayers.erase (idi);
+			idi = _BypassFilterDisplayers.erase(idi);
 		}
 		else
 		{
@@ -226,23 +229,23 @@ void CLog::removeDisplayer (const char *displayerName)
 	}
 }
 
-IDisplayer *CLog::getDisplayer (const char *displayerName)
+IDisplayer *CLog::getDisplayer(const char *displayerName)
 {
 	if (displayerName == NULL || displayerName[0] == '\0')
 	{
-		nlwarning ("LOG: Trying to get an empty displayer name");
+		nlwarning("LOG: Trying to get an empty displayer name");
 		return NULL;
 	}
 
 	CDisplayers::iterator idi;
-	for (idi = _Displayers.begin (); idi != _Displayers.end (); idi++)
+	for (idi = _Displayers.begin(); idi != _Displayers.end(); idi++)
 	{
 		if ((*idi)->DisplayerName == displayerName)
 		{
 			return *idi;
 		}
 	}
-	for (idi = _BypassFilterDisplayers.begin (); idi != _BypassFilterDisplayers.end (); idi++)
+	for (idi = _BypassFilterDisplayers.begin(); idi != _BypassFilterDisplayers.end(); idi++)
 	{
 		if ((*idi)->DisplayerName == displayerName)
 		{
@@ -257,23 +260,21 @@ IDisplayer *CLog::getDisplayer (const char *displayerName)
  */
 bool CLog::attached(IDisplayer *displayer) const
 {
-	return (find( _Displayers.begin(), _Displayers.end(), displayer ) != _Displayers.end()) ||
-			(find( _BypassFilterDisplayers.begin(), _BypassFilterDisplayers.end(), displayer ) != _BypassFilterDisplayers.end());
+	return (find(_Displayers.begin(), _Displayers.end(), displayer) != _Displayers.end()) || (find(_BypassFilterDisplayers.begin(), _BypassFilterDisplayers.end(), displayer) != _BypassFilterDisplayers.end());
 }
 
-
-void CLog::displayString (const char *str)
+void CLog::displayString(const char *str)
 {
 	const char *disp = NULL;
 	TDisplayInfo localargs, *args = NULL;
 
-	setDefaultProcessName ();
+	setDefaultProcessName();
 
-	if(strchr(str,'\n') == NULL)
+	if (strchr(str, '\n') == NULL)
 	{
 		if (TempString.empty())
 		{
-			time (&TempArgs.Date);
+			time(&TempArgs.Date);
 			TempArgs.LogType = _LogType;
 			TempArgs.ProcessName = *_ProcessName;
 			TempArgs.ThreadId = getThreadId();
@@ -294,7 +295,7 @@ void CLog::displayString (const char *str)
 	{
 		if (TempString.empty())
 		{
-			time (&localargs.Date);
+			time(&localargs.Date);
 			localargs.LogType = _LogType;
 			localargs.ProcessName = *_ProcessName;
 			localargs.ThreadId = getThreadId();
@@ -315,83 +316,82 @@ void CLog::displayString (const char *str)
 	}
 
 	// send to all bypass filter displayers
-	for (CDisplayers::iterator idi=_BypassFilterDisplayers.begin(); idi!=_BypassFilterDisplayers.end(); idi++ )
+	for (CDisplayers::iterator idi = _BypassFilterDisplayers.begin(); idi != _BypassFilterDisplayers.end(); idi++)
 	{
-		(*idi)->display( *args, disp );
+		(*idi)->display(*args, disp);
 	}
 
 	// get the log at the last minute to be sure to have everything
-	if(args->LogType == LOG_ERROR || args->LogType == LOG_ASSERT)
+	if (args->LogType == LOG_ERROR || args->LogType == LOG_ASSERT)
 	{
-		getCallStackAndLog (args->CallstackAndLog, 4);
+		getCallStackAndLog(args->CallstackAndLog, 4);
 	}
 
-	if (passFilter (disp))
+	if (passFilter(disp))
 	{
 		// Send to the attached displayers
-		for (CDisplayers::iterator idi=_Displayers.begin(); idi!=_Displayers.end(); idi++ )
+		for (CDisplayers::iterator idi = _Displayers.begin(); idi != _Displayers.end(); idi++)
 		{
-			(*idi)->display( *args, disp );
+			(*idi)->display(*args, disp);
 		}
 	}
 	TempString.clear();
 	// unsetPosition();
 }
 
-
 /*
  * Display the string with decoration and final new line to all attached displayers
  */
 #ifdef USE_LOG_CHECK_TYPES
-void CLog::_displayNL (const char *format, ...)
+void CLog::_displayNL(const char *format, ...)
 #else
-void CLog::displayNL (const char *format, ...)
+void CLog::displayNL(const char *format, ...)
 #endif
 {
-	if ( noDisplayer() )
+	if (noDisplayer())
 	{
 		return;
 	}
 
 	char *str;
-	NLMISC_CONVERT_VARGS (str, format, 1024/*NLMISC::MaxCStringSize*/);
+	NLMISC_CONVERT_VARGS(str, format, 1024 /*NLMISC::MaxCStringSize*/);
 
-	if (strlen(str)<1024/*NLMISC::MaxCStringSize*/-1)
-		strcat (str, "\n");
+	if (strlen(str) < 1024 /*NLMISC::MaxCStringSize*/ - 1)
+		strcat(str, "\n");
 	else
-		str[1024/*NLMISC::MaxCStringSize*/-2] = '\n';
+		str[1024 /*NLMISC::MaxCStringSize*/ - 2] = '\n';
 
-	displayString (str);
+	displayString(str);
 }
 
 /*
  * Display the string with decoration to all attached displayers
  */
 #ifdef USE_LOG_CHECK_TYPES
-void CLog::_display (const char *format, ...)
+void CLog::_display(const char *format, ...)
 #else
-void CLog::display (const char *format, ...)
+void CLog::display(const char *format, ...)
 #endif
 {
-	if ( noDisplayer() )
+	if (noDisplayer())
 	{
 		return;
 	}
 
 	char *str;
-	NLMISC_CONVERT_VARGS (str, format, 1024/*NLMISC::MaxCStringSize*/);
+	NLMISC_CONVERT_VARGS(str, format, 1024 /*NLMISC::MaxCStringSize*/);
 
-	displayString (str);
+	displayString(str);
 }
 
-void CLog::displayRawString (const char *str)
+void CLog::displayRawString(const char *str)
 {
 	const char *disp = NULL;
 	TDisplayInfo localargs, *args = NULL;
 
-	setDefaultProcessName ();
+	setDefaultProcessName();
 
-	if(strchr(str,'\n') == NULL)
+	if (strchr(str, '\n') == NULL)
 	{
 		if (TempString.empty())
 		{
@@ -435,23 +435,23 @@ void CLog::displayRawString (const char *str)
 	}
 
 	// send to all bypass filter displayers
-	for (CDisplayers::iterator idi=_BypassFilterDisplayers.begin(); idi!=_BypassFilterDisplayers.end(); idi++ )
+	for (CDisplayers::iterator idi = _BypassFilterDisplayers.begin(); idi != _BypassFilterDisplayers.end(); idi++)
 	{
-		(*idi)->display( *args, disp );
+		(*idi)->display(*args, disp);
 	}
 
 	// get the log at the last minute to be sure to have everything
-	if(args->LogType == LOG_ERROR || args->LogType == LOG_ASSERT)
+	if (args->LogType == LOG_ERROR || args->LogType == LOG_ASSERT)
 	{
-		getCallStackAndLog (args->CallstackAndLog, 4);
+		getCallStackAndLog(args->CallstackAndLog, 4);
 	}
 
-	if ( passFilter( disp ) )
+	if (passFilter(disp))
 	{
 		// Send to the attached displayers
-		for ( CDisplayers::iterator idi=_Displayers.begin(); idi!=_Displayers.end(); idi++ )
+		for (CDisplayers::iterator idi = _Displayers.begin(); idi != _Displayers.end(); idi++)
 		{
-			(*idi)->display( *args, disp );
+			(*idi)->display(*args, disp);
 		}
 	}
 	TempString.clear();
@@ -462,23 +462,23 @@ void CLog::displayRawString (const char *str)
  * Display a string (and nothing more) to all attached displayers
  */
 #ifdef USE_LOG_CHECK_TYPES
-void CLog::_displayRawNL( const char *format, ... )
+void CLog::_displayRawNL(const char *format, ...)
 #else
-void CLog::displayRawNL( const char *format, ... )
+void CLog::displayRawNL(const char *format, ...)
 #endif
 {
-	if ( noDisplayer() )
+	if (noDisplayer())
 	{
 		return;
 	}
 
 	char *str;
-	NLMISC_CONVERT_VARGS (str, format, 1024/*NLMISC::MaxCStringSize*/);
+	NLMISC_CONVERT_VARGS(str, format, 1024 /*NLMISC::MaxCStringSize*/);
 
-	if (strlen(str)<1024/*NLMISC::MaxCStringSize*/-1)
-		strcat (str, "\n");
+	if (strlen(str) < 1024 /*NLMISC::MaxCStringSize*/ - 1)
+		strcat(str, "\n");
 	else
-		str[1024/*NLMISC::MaxCStringSize*/-2] = '\n';
+		str[1024 /*NLMISC::MaxCStringSize*/ - 2] = '\n';
 
 	displayRawString(str);
 }
@@ -487,59 +487,56 @@ void CLog::displayRawNL( const char *format, ... )
  * Display a string (and nothing more) to all attached displayers
  */
 #ifdef USE_LOG_CHECK_TYPES
-void CLog::_displayRaw( const char *format, ... )
+void CLog::_displayRaw(const char *format, ...)
 #else
-void CLog::displayRaw( const char *format, ... )
+void CLog::displayRaw(const char *format, ...)
 #endif
 {
-	if ( noDisplayer() )
+	if (noDisplayer())
 	{
 		return;
 	}
 
 	char *str;
-	NLMISC_CONVERT_VARGS (str, format, 1024/*NLMISC::MaxCStringSize*/);
+	NLMISC_CONVERT_VARGS(str, format, 1024 /*NLMISC::MaxCStringSize*/);
 
 	displayRawString(str);
 }
 
-
 #ifdef USE_LOG_CHECK_TYPES
-void CLog::_forceDisplayRaw (const char *format, ...)
+void CLog::_forceDisplayRaw(const char *format, ...)
 #else
-void CLog::forceDisplayRaw (const char *format, ...)
+void CLog::forceDisplayRaw(const char *format, ...)
 #endif
 {
-	if ( noDisplayer() )
+	if (noDisplayer())
 	{
 		return;
 	}
 
 	char *str;
-	NLMISC_CONVERT_VARGS (str, format, 1024/*NLMISC::MaxCStringSize*/);
+	NLMISC_CONVERT_VARGS(str, format, 1024 /*NLMISC::MaxCStringSize*/);
 
 	TDisplayInfo args;
 	CDisplayers::iterator idi;
 
 	// send to all bypass filter displayers
-	for (idi=_BypassFilterDisplayers.begin(); idi!=_BypassFilterDisplayers.end(); idi++ )
+	for (idi = _BypassFilterDisplayers.begin(); idi != _BypassFilterDisplayers.end(); idi++)
 	{
-		(*idi)->display( args, str );
+		(*idi)->display(args, str);
 	}
 
 	// Send to the attached displayers
-	for ( idi=_Displayers.begin(); idi!=_Displayers.end(); idi++ )
+	for (idi = _Displayers.begin(); idi != _Displayers.end(); idi++)
 	{
-		(*idi)->display( args, str );
+		(*idi)->display(args, str);
 	}
 }
-
-
 
 /*
  * Returns true if the string must be logged, according to the current filter
  */
-bool CLog::passFilter( const char *filter )
+bool CLog::passFilter(const char *filter)
 {
 	bool yes = _PositiveFilter.empty();
 
@@ -547,26 +544,26 @@ bool CLog::passFilter( const char *filter )
 	list<string>::iterator ilf;
 
 	// 1. Positive filter
-	for ( ilf=_PositiveFilter.begin(); ilf!=_PositiveFilter.end(); ++ilf )
+	for (ilf = _PositiveFilter.begin(); ilf != _PositiveFilter.end(); ++ilf)
 	{
-		found = ( strstr( filter, (*ilf).c_str() ) != NULL );
-		if ( found )
+		found = (strstr(filter, (*ilf).c_str()) != NULL);
+		if (found)
 		{
 			yes = true; // positive filter passed (no need to check another one)
 			break;
 		}
 		// else try the next one
 	}
-	if ( ! yes )
+	if (!yes)
 	{
 		return false; // positive filter not passed
 	}
 
 	// 2. Negative filter
-	for ( ilf=_NegativeFilter.begin(); ilf!=_NegativeFilter.end(); ++ilf )
+	for (ilf = _NegativeFilter.begin(); ilf != _NegativeFilter.end(); ++ilf)
 	{
-		found = ( strstr( filter, (*ilf).c_str() ) != NULL );
-		if ( found )
+		found = (strstr(filter, (*ilf).c_str()) != NULL);
+		if (found)
 		{
 			return false; // negative filter not passed (no need to check another one)
 		}
@@ -574,56 +571,55 @@ bool CLog::passFilter( const char *filter )
 	return true; // negative filter passed
 }
 
-
 /*
  * Removes a filter by name. Returns true if it was found.
  */
-void CLog::removeFilter( const char *filterstr )
+void CLog::removeFilter(const char *filterstr)
 {
 	if (filterstr == NULL)
 	{
 		_PositiveFilter.clear();
 		_NegativeFilter.clear();
-		//displayNL ("CLog::addNegativeFilter('%s')", filterstr);
+		// displayNL ("CLog::addNegativeFilter('%s')", filterstr);
 	}
 	else
 	{
-		_PositiveFilter.remove( filterstr );
-		_NegativeFilter.remove( filterstr );
-		//displayNL ("CLog::removeFilter('%s')", filterstr);
+		_PositiveFilter.remove(filterstr);
+		_NegativeFilter.remove(filterstr);
+		// displayNL ("CLog::removeFilter('%s')", filterstr);
 	}
 }
 
-void CLog::displayFilter( CLog &log )
+void CLog::displayFilter(CLog &log)
 {
 	std::list<std::string>::iterator it;
-	log.displayNL ("Positive Filter(s):");
-	for (it = _PositiveFilter.begin (); it != _PositiveFilter.end (); it++)
+	log.displayNL("Positive Filter(s):");
+	for (it = _PositiveFilter.begin(); it != _PositiveFilter.end(); it++)
 	{
-		log.displayNL ("'%s'", (*it).c_str());
+		log.displayNL("'%s'", (*it).c_str());
 	}
-	log.displayNL ("Negative Filter(s):");
-	for (it = _NegativeFilter.begin (); it != _NegativeFilter.end (); it++)
+	log.displayNL("Negative Filter(s):");
+	for (it = _NegativeFilter.begin(); it != _NegativeFilter.end(); it++)
 	{
-		log.displayNL ("'%s'", (*it).c_str());
+		log.displayNL("'%s'", (*it).c_str());
 	}
 }
 
-void CLog::addPositiveFilter( const char *filterstr )
+void CLog::addPositiveFilter(const char *filterstr)
 {
-	//displayNL ("CLog::addPositiveFilter('%s')", filterstr);
-	_PositiveFilter.push_back( filterstr );
+	// displayNL ("CLog::addPositiveFilter('%s')", filterstr);
+	_PositiveFilter.push_back(filterstr);
 }
 
-void CLog::addNegativeFilter( const char *filterstr )
+void CLog::addNegativeFilter(const char *filterstr)
 {
-	//displayNL ("CLog::addNegativeFilter('%s')", filterstr);
-	_NegativeFilter.push_back( filterstr );
+	// displayNL ("CLog::addNegativeFilter('%s')", filterstr);
+	_NegativeFilter.push_back(filterstr);
 }
 
 void CLog::resetFilters()
 {
-	//displayNL ("CLog::resetFilter()");
+	// displayNL ("CLog::resetFilter()");
 	_PositiveFilter.clear();
 	_NegativeFilter.clear();
 }
@@ -644,4 +640,3 @@ void CLog::releaseProcessName()
 }
 
 } // NLMISC
-

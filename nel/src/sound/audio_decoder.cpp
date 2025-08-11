@@ -47,14 +47,18 @@ using namespace NLMISC;
 
 namespace NLSOUND {
 
-IAudioDecoder::IAudioDecoder() : _InternalStream(NULL)
+IAudioDecoder::IAudioDecoder()
+    : _InternalStream(NULL)
 {
-	
 }
 
 IAudioDecoder::~IAudioDecoder()
 {
-	if (_InternalStream) { delete _InternalStream; _InternalStream = NULL; }
+	if (_InternalStream)
+	{
+		delete _InternalStream;
+		_InternalStream = NULL;
+	}
 }
 
 IAudioDecoder *IAudioDecoder::createAudioDecoder(const std::string &filepath, bool async, bool loop)
@@ -82,11 +86,12 @@ IAudioDecoder *IAudioDecoder::createAudioDecoder(const std::string &type, NLMISC
 		return NULL;
 	}
 #ifdef FFMPEG_ENABLED
-	try {
+	try
+	{
 		CAudioDecoderFfmpeg *decoder = new CAudioDecoderFfmpeg(stream, loop);
 		return static_cast<IAudioDecoder *>(decoder);
 	}
-	catch(const Exception &e)
+	catch (const Exception &e)
 	{
 		nlwarning("Exception %s during ffmpeg setup", e.what());
 		return NULL;
@@ -157,7 +162,8 @@ bool IAudioDecoder::getInfo(const std::string &filepath, std::string &artist, st
 	}
 #endif
 
-	artist.clear(); title.clear();
+	artist.clear();
+	title.clear();
 	return false;
 }
 

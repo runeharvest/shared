@@ -25,7 +25,6 @@
 
 namespace NL3D {
 
-
 /**
  * This class describe an uncompressed lumel for tiles.
  *
@@ -36,119 +35,119 @@ namespace NL3D {
 class CTileLumel
 {
 public:
-
 	/// Stream bit class used to compress the shadow map of the patch
 	class CStreamBit
 	{
 	public:
 		/// Init the pointer of the stream
-		void setPtr (std::vector<uint8> *buffer);
+		void setPtr(std::vector<uint8> *buffer);
 
 		/// Push a bool
-		void pushBackBool (bool bBoolean);
+		void pushBackBool(bool bBoolean);
 
 		/// Push 4 bits
-		void pushBack4bits (uint8 fourBits);
+		void pushBack4bits(uint8 fourBits);
 
 		/// Pop a bool
-		bool popBackBool ();
+		bool popBackBool();
 
 		/// Pop 4 bits
-		uint8 popBack4bits ();
+		uint8 popBack4bits();
+
 	private:
-		std::vector<uint8>				*_Vector;
-		uint							_Offset;
+		std::vector<uint8> *_Vector;
+		uint _Offset;
 	};
 
 	/**
-	  *  Create a tileLumel with precompressed data.
-	  *
-	  *  \param interpolated is the bilinear interpolated value at this lumel.
-	  *  \param _4bits is the 4 bits compressed shadow.
-	  */
-	void createCompressed (uint8 interpolated, uint8 _4bits);
+	 *  Create a tileLumel with precompressed data.
+	 *
+	 *  \param interpolated is the bilinear interpolated value at this lumel.
+	 *  \param _4bits is the 4 bits compressed shadow.
+	 */
+	void createCompressed(uint8 interpolated, uint8 _4bits);
 
 	/**
-	  *  Create a tileLumel from uncompressed data.
-	  *
-	  *  \param interpolated is the bilinear interpolated value at this lumel.
-	  *  \param shaded is the reel shading value at this lumel.
-	  */
-	void createUncompressed (uint8 interpolated, uint8 shaded);
+	 *  Create a tileLumel from uncompressed data.
+	 *
+	 *  \param interpolated is the bilinear interpolated value at this lumel.
+	 *  \param shaded is the reel shading value at this lumel.
+	 */
+	void createUncompressed(uint8 interpolated, uint8 shaded);
 
 	/**
-	  *  Unpack the lumel from a bit stream.
-	  *
-	  *  \param interpolated is the bilinear interpolated value at this lumel.
-	  *  \param stream is the bit stream used to unpack the lumel.
-	  */
-	void unpack (CStreamBit& stream, uint8 interpolated);
+	 *  Unpack the lumel from a bit stream.
+	 *
+	 *  \param interpolated is the bilinear interpolated value at this lumel.
+	 *  \param stream is the bit stream used to unpack the lumel.
+	 */
+	void unpack(CStreamBit &stream, uint8 interpolated);
 
 	/**
-	  *  Skip the lumel from a bit stream.
-	  *
-	  *  \param stream is the bit stream used to skip the lumel.
-	  */
-	static void skip (CStreamBit& stream);
+	 *  Skip the lumel from a bit stream.
+	 *
+	 *  \param stream is the bit stream used to skip the lumel.
+	 */
+	static void skip(CStreamBit &stream);
 
 	/**
-	  *  Pack the lumel from a bit stream.
-	  *
-	  *  \param stream is the bit stream used to pack the lumel.
-	  */
-	void pack (CStreamBit& stream) const;
+	 *  Pack the lumel from a bit stream.
+	 *
+	 *  \param stream is the bit stream used to pack the lumel.
+	 */
+	void pack(CStreamBit &stream) const;
 
 	/**
-	  *  Is shadow are present? return true if this lumel is shadowed, else false.
-	  *
-	  *  \param stream is the bit stream used to pack the lumel.
-	  */
-	bool isShadowed () const
+	 *  Is shadow are present? return true if this lumel is shadowed, else false.
+	 *
+	 *  \param stream is the bit stream used to pack the lumel.
+	 */
+	bool isShadowed() const
 	{
-		return (_ShadowValue!=0xff);
+		return (_ShadowValue != 0xff);
 	}
 
 public:
 	/// The shading value [0-255]. Always valid.
-	uint8	Shaded;
+	uint8 Shaded;
+
 private:
 	/// The shadow 4 bits value [0-15]. 0xff means no shadows.
-	uint8	_ShadowValue;
+	uint8 _ShadowValue;
 };
 
-
 // ***************************************************************************
-inline void CTileLumel::CStreamBit::setPtr (std::vector<uint8> *buffer)
+inline void CTileLumel::CStreamBit::setPtr(std::vector<uint8> *buffer)
 {
-	_Vector=buffer;
-	_Offset=0;
+	_Vector = buffer;
+	_Offset = 0;
 }
 
 // ***************************************************************************
-inline void CTileLumel::CStreamBit::pushBackBool (bool bBoolean)
+inline void CTileLumel::CStreamBit::pushBackBool(bool bBoolean)
 {
 	// Size
-	if ((_Offset>>3)+_Vector->begin()>=_Vector->end())
-		_Vector->resize ((_Offset>>3)+1);
+	if ((_Offset >> 3) + _Vector->begin() >= _Vector->end())
+		_Vector->resize((_Offset >> 3) + 1);
 
-	uint off=_Offset>>3;
-	(*_Vector)[off]&=~(1<<(_Offset&0x7));
-	(*_Vector)[off]|=(((uint)bBoolean)<<(_Offset&0x7));
+	uint off = _Offset >> 3;
+	(*_Vector)[off] &= ~(1 << (_Offset & 0x7));
+	(*_Vector)[off] |= (((uint)bBoolean) << (_Offset & 0x7));
 	_Offset++;
 }
 
 // ***************************************************************************
-inline void CTileLumel::CStreamBit::pushBack4bits (uint8 fourBits)
+inline void CTileLumel::CStreamBit::pushBack4bits(uint8 fourBits)
 {
-	nlassert (fourBits<0x10);
+	nlassert(fourBits < 0x10);
 
-	pushBackBool ((fourBits&0x8)!=0);
-	pushBackBool ((fourBits&0x4)!=0);
-	pushBackBool ((fourBits&0x2)!=0);
-	pushBackBool ((fourBits&0x1)!=0);
+	pushBackBool((fourBits & 0x8) != 0);
+	pushBackBool((fourBits & 0x4) != 0);
+	pushBackBool((fourBits & 0x2) != 0);
+	pushBackBool((fourBits & 0x1) != 0);
 
 	/*if (((_Offset+3)>>3)+_Vector->begin()>=_Vector->end())
-		_Vector->resize (((_Offset+3)>>3)+1);
+	    _Vector->resize (((_Offset+3)>>3)+1);
 
 	uint off0=_Offset>>3;
 	uint off1=off0+1;
@@ -160,25 +159,25 @@ inline void CTileLumel::CStreamBit::pushBack4bits (uint8 fourBits)
 }
 
 // ***************************************************************************
-inline bool CTileLumel::CStreamBit::popBackBool ()
+inline bool CTileLumel::CStreamBit::popBackBool()
 {
 	// Size
-	nlassert ((_Offset>>3)<_Vector->size());
+	nlassert((_Offset >> 3) < _Vector->size());
 
-	uint off=_Offset>>3;
-	bool ret=((*_Vector)[off]&(1<<(_Offset&0x7)))!=0;
+	uint off = _Offset >> 3;
+	bool ret = ((*_Vector)[off] & (1 << (_Offset & 0x7))) != 0;
 	_Offset++;
 	return ret;
 }
 
 // ***************************************************************************
-inline uint8 CTileLumel::CStreamBit::popBack4bits ()
+inline uint8 CTileLumel::CStreamBit::popBack4bits()
 {
 	uint8 ret;
-	ret=(uint8)popBackBool ()<<3;
-	ret|=(uint8)popBackBool ()<<2;
-	ret|=(uint8)popBackBool ()<<1;
-	ret|=(uint8)popBackBool ();
+	ret = (uint8)popBackBool() << 3;
+	ret |= (uint8)popBackBool() << 2;
+	ret |= (uint8)popBackBool() << 1;
+	ret |= (uint8)popBackBool();
 	return ret;
 	/*nlassert (((_Offset+3)>>3)<_Vector->size());
 
@@ -186,47 +185,47 @@ inline uint8 CTileLumel::CStreamBit::popBack4bits ()
 	uint off1=off0+1;
 	_Offset+=4;
 	return 	(((*_Vector)[off0]&(0xf<<(  _Offset&0x7   )))>>(_Offset&0x7))|
-			(((*_Vector)[off1]&(0xf>>(8-(_Offset&0x7))))<<(8-(_Offset&0x7)));*/
+	        (((*_Vector)[off1]&(0xf>>(8-(_Offset&0x7))))<<(8-(_Offset&0x7)));*/
 }
 
 // ***************************************************************************
-inline void CTileLumel::createCompressed (uint8 interpolated, uint8 _4bits)
+inline void CTileLumel::createCompressed(uint8 interpolated, uint8 _4bits)
 {
 	// Shadow value
-	_ShadowValue=_4bits;
+	_ShadowValue = _4bits;
 
 	// Shading
-	uint temp=(((uint)interpolated*((uint)_ShadowValue))>>3)+4;
-	if (temp>255)
-		temp=255;
+	uint temp = (((uint)interpolated * ((uint)_ShadowValue)) >> 3) + 4;
+	if (temp > 255)
+		temp = 255;
 
-	Shaded=(uint8)temp;
+	Shaded = (uint8)temp;
 }
 
 // ***************************************************************************
-inline void CTileLumel::unpack (CStreamBit& stream, uint8 interpolated)
+inline void CTileLumel::unpack(CStreamBit &stream, uint8 interpolated)
 {
 	// There is shadow here ?
 	if (stream.popBackBool())
 	{
 		// Read the shadow value
-		uint8 value=stream.popBack4bits();
+		uint8 value = stream.popBack4bits();
 
 		// Unpack it
-		createCompressed (interpolated, value);
+		createCompressed(interpolated, value);
 	}
 	else
 	{
 		// Put a default shading
-		Shaded=interpolated;
+		Shaded = interpolated;
 
 		// Shadow not present
-		_ShadowValue=0xff;
+		_ShadowValue = 0xff;
 	}
 }
 
 // ***************************************************************************
-inline void CTileLumel::skip (CStreamBit& stream)
+inline void CTileLumel::skip(CStreamBit &stream)
 {
 	// There is shadow here ?
 	if (stream.popBackBool())
@@ -237,7 +236,6 @@ inline void CTileLumel::skip (CStreamBit& stream)
 }
 
 } // NL3D
-
 
 #endif // NL_TILE_LUMEL_H
 

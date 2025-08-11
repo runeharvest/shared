@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef BACKUP_SERVICE_MESSAGES_H
-#define	BACKUP_SERVICE_MESSAGES_H
+#define BACKUP_SERVICE_MESSAGES_H
 
 //-------------------------------------------------------------------------------------------------
 // includes
@@ -25,7 +25,6 @@
 #include "nel/misc/hierarchical_timer.h"
 #include "file_description_container.h"
 #include "backup_service_interface.h"
-
 
 //-------------------------------------------------------------------------------------------------
 // struct CBackupMsgRequestFile
@@ -38,16 +37,15 @@ struct CBackupMsgRequestFile
 
 	CBackupMsgRequestFile()
 	{
-		RequestId=0;
+		RequestId = 0;
 	}
 
-	void serial(NLMISC::IStream& stream)
+	void serial(NLMISC::IStream &stream)
 	{
 		stream.serial(RequestId);
 		stream.serial(FileName);
 	}
 };
-
 
 //-------------------------------------------------------------------------------------------------
 // struct CBackupMsgReceiveFile
@@ -61,19 +59,18 @@ struct CBackupMsgReceiveFile
 
 	CBackupMsgReceiveFile()
 	{
-		RequestId=0;
+		RequestId = 0;
 	}
 
-	void serial(NLMISC::IStream& stream)
+	void serial(NLMISC::IStream &stream)
 	{
 		stream.serial(RequestId);
 		stream.serial(FileDescription);
-		if (Data.isReading()!=stream.isReading())
+		if (Data.isReading() != stream.isReading())
 			Data.invert();
 		stream.serialMemStream(Data);
 	}
 };
-
 
 //-------------------------------------------------------------------------------------------------
 // struct CBackupMsgReceiveFileList
@@ -86,21 +83,21 @@ struct CBackupMsgReceiveFileList
 
 	CBackupMsgReceiveFileList()
 	{
-		RequestId=0;
+		RequestId = 0;
 	}
 
-	void serial(NLMISC::IStream& stream)
+	void serial(NLMISC::IStream &stream)
 	{
 		stream.serial(RequestId);
 		stream.serial(Fdc);
 	}
 
-	void send(const char* serviceName)
+	void send(const char *serviceName)
 	{
 		H_AUTO(CBackupMsgReceiveFileListSend0);
 		NLNET::CMessage msgOut("bs_file_list");
 		serial(msgOut);
-		NLNET::CUnifiedNetwork::getInstance()->send( serviceName, msgOut );
+		NLNET::CUnifiedNetwork::getInstance()->send(serviceName, msgOut);
 	}
 
 	void send(NLNET::TServiceId serviceId)
@@ -108,10 +105,9 @@ struct CBackupMsgReceiveFileList
 		H_AUTO(CBackupMsgReceiveFileListSend1);
 		NLNET::CMessage msgOut("bs_file_list");
 		serial(msgOut);
-		NLNET::CUnifiedNetwork::getInstance()->send( serviceId, msgOut );
+		NLNET::CUnifiedNetwork::getInstance()->send(serviceId, msgOut);
 	}
 };
-
 
 //-------------------------------------------------------------------------------------------------
 // struct CBackupMsgFileClass
@@ -119,16 +115,16 @@ struct CBackupMsgReceiveFileList
 
 struct CBackupMsgFileClass
 {
-	uint32							RequestId;
-	std::string						Directory;
-	std::vector<CBackupFileClass>	Classes;
+	uint32 RequestId;
+	std::string Directory;
+	std::vector<CBackupFileClass> Classes;
 
 	CBackupMsgFileClass()
 	{
-		RequestId=0;
+		RequestId = 0;
 	}
 
-	void serial(NLMISC::IStream& stream)
+	void serial(NLMISC::IStream &stream)
 	{
 		stream.serial(RequestId);
 		stream.serial(Directory);
@@ -136,28 +132,26 @@ struct CBackupMsgFileClass
 	}
 };
 
-
 //-------------------------------------------------------------------------------------------------
 // struct CBackupMsgReceiveFileClass
 //-------------------------------------------------------------------------------------------------
 
 struct CBackupMsgReceiveFileClass
 {
-	uint32						RequestId;
-	CFileDescriptionContainer	Fdc;
+	uint32 RequestId;
+	CFileDescriptionContainer Fdc;
 
 	CBackupMsgReceiveFileClass()
 	{
-		RequestId=0;
+		RequestId = 0;
 	}
 
-	void serial(NLMISC::IStream& stream)
+	void serial(NLMISC::IStream &stream)
 	{
 		stream.serial(RequestId);
 		stream.serial(Fdc);
 	}
 };
-
 
 //-------------------------------------------------------------------------------------------------
 // struct CBackupMsgAppend
@@ -165,14 +159,14 @@ struct CBackupMsgReceiveFileClass
 
 struct CBackupMsgAppend
 {
-	std::string					FileName;
-	std::string					Append;
+	std::string FileName;
+	std::string Append;
 
 	CBackupMsgAppend()
 	{
 	}
 
-	void serial(NLMISC::IStream& stream)
+	void serial(NLMISC::IStream &stream)
 	{
 		stream.serial(FileName);
 		stream.serial(Append);
@@ -185,22 +179,21 @@ struct CBackupMsgAppend
 
 struct CBackupMsgAppendCallback
 {
-	std::string					FileName;
-	std::vector<std::string>	Appends;
+	std::string FileName;
+	std::vector<std::string> Appends;
 
 	CBackupMsgAppendCallback()
 	{
 	}
 
-	void serial(NLMISC::IStream& stream)
+	void serial(NLMISC::IStream &stream)
 	{
 		stream.serial(FileName);
 		stream.serialCont(Appends);
 	}
 };
 
-typedef void	(*TBackupAppendCallback)(CBackupMsgAppendCallback& append);
-
+typedef void (*TBackupAppendCallback)(CBackupMsgAppendCallback &append);
 
 //-------------------------------------------------------------------------------------------------
 #endif

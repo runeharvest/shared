@@ -21,8 +21,7 @@
 
 // Project includes
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 void nothing_here_string_view_nl() { }
 

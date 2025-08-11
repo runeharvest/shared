@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef _LOG_GEN_CHARACTER_H
 #define _LOG_GEN_CHARACTER_H
 
@@ -23,7 +21,6 @@
 #include "nel/misc/entity_id.h"
 #include "nel/misc/sheet_id.h"
 #include "game_share/inventories.h"
-
 
 struct TLogContext_Character_BuyRolemasterPhrase
 {
@@ -36,8 +33,6 @@ struct TLogContext_Character_BuyRolemasterPhrase
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Character_AdminCommand
@@ -51,8 +46,6 @@ struct TLogContext_Character_AdminCommand
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Character_SkillProgress
@@ -66,8 +59,6 @@ struct TLogContext_Character_SkillProgress
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Character_MissionRecvXp
@@ -81,10 +72,7 @@ struct TLogContext_Character_MissionRecvXp
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
-
 
 /// No context context. Use this to disable any contextual log underneath
 struct TLogNoContext_Character
@@ -92,8 +80,6 @@ struct TLogNoContext_Character
 	TLogNoContext_Character();
 	~TLogNoContext_Character();
 };
-
-
 
 void _log_Character_Create(uint32 userId, const NLMISC::CEntityId &charId, const std::string &charName, const char *_filename_, uint _lineNo_);
 #define log_Character_Create(userId, charId, charName) \
@@ -128,4 +114,3 @@ void _log_Character_RemoveKnownBrick(const NLMISC::CSheetId &brickId, const char
 	_log_Character_RemoveKnownBrick(brickId, __FILE__, __LINE__)
 
 #endif
-

@@ -23,30 +23,30 @@
 #include "nel/net/net_log.h"
 
 #ifdef NL_OS_WINDOWS
-#	include <winsock2.h>
-#	ifndef NL_COMP_MINGW
-#		define NOMINMAX
-#	endif
-#	include <windows.h>
+#include <winsock2.h>
+#ifndef NL_COMP_MINGW
+#define NOMINMAX
+#endif
+#include <windows.h>
 // Windows includes for `sockaddr_in6` and `WSAStringToAddressW`
-#	include <ws2ipdef.h>
-#	define socklen_t int
-#	define ERROR_NUM WSAGetLastError()
+#include <ws2ipdef.h>
+#define socklen_t int
+#define ERROR_NUM WSAGetLastError()
 #elif defined NL_OS_UNIX
-#	include <unistd.h>
-#	include <sys/types.h>
-#	include <sys/time.h>
-#	include <sys/socket.h>
-#	include <netinet/in.h>
-#	include <netinet/tcp.h>
-#	include <arpa/inet.h>
-#	include <netdb.h>
-#	include <cerrno>
-//#include <fcntl.h>
-#	define SOCKET_ERROR -1
-#	define INVALID_SOCKET -1
-#	define ERROR_NUM errno
-#	define ERROR_MSG strerror(errno)
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <cerrno>
+// #include <fcntl.h>
+#define SOCKET_ERROR -1
+#define INVALID_SOCKET -1
+#define ERROR_NUM errno
+#define ERROR_MSG strerror(errno)
 typedef int SOCKET;
 #endif
 
@@ -63,49 +63,46 @@ inline static int sizeOfSockAddr(const sockaddr_storage &storage)
 	return sizeof(storage);
 }
 
-
 /*
  * Constructor
  */
-CUdpSock::CUdpSock( bool logging ) :
-	CSock( logging ),
-	_Bound( false )
+CUdpSock::CUdpSock(bool logging)
+    : CSock(logging)
+    , _Bound(false)
 {
 	// Socket creation
-	createSocket( SOCK_DGRAM, IPPROTO_UDP );
+	createSocket(SOCK_DGRAM, IPPROTO_UDP);
 }
-
 
 /** Binds the socket to the specified port. Call bind() for an unreliable socket if the host acts as a server and waits for
  * messages. If the host acts as a client, call sendTo(), there is no need to bind the socket.
  */
-void CUdpSock::bind( uint16 port )
+void CUdpSock::bind(uint16 port)
 {
 	CInetAddress addr; // any IP address
-	addr.setPort( port );
-	bind( addr );
+	addr.setPort(port);
+	bind(addr);
 	setLocalAddress(); // will not set the address if the host is multihomed, use bind(CInetAddress) instead
 }
-
 
 /*
  * Same as bind(uint16) but binds on a specified address/port (useful when the host has several addresses)
  */
-void CUdpSock::bind( const CInetAddress& addr )
+void CUdpSock::bind(const CInetAddress &addr)
 {
 	sockaddr_storage sockAddr;
-	
+
 	if (!addr.toSockAddrStorage(&sockAddr, _AddressFamily))
 	{
 		throw ESocket("Cannot bind to an invalid address", false);
 	}
-	
+
 #ifndef NL_OS_WINDOWS
 	// Set Reuse Address On (does not work on Win98 and is useless on Win2000)
 	int value = true;
-	if ( setsockopt( _Sock, SOL_SOCKET, SO_REUSEADDR, &value, sizeof(value) ) != 0 )
+	if (setsockopt(_Sock, SOL_SOCKET, SO_REUSEADDR, &value, sizeof(value)) != 0)
 	{
-		throw ESocket( "ReuseAddr failed" );
+		throw ESocket("ReuseAddr failed");
 	}
 #endif
 
@@ -133,17 +130,16 @@ void CUdpSock::bind( const CInetAddress& addr )
 		_LocalAddr = addr;
 	}
 	_Bound = true;
-	if ( _Logging )
+	if (_Logging)
 	{
-		LNETL0_DEBUG( "LNETL0: Socket %d bound at %s", _Sock, _LocalAddr.asString().c_str() );
+		LNETL0_DEBUG("LNETL0: Socket %d bound at %s", _Sock, _LocalAddr.asString().c_str());
 	}
 }
-
 
 /*
  * Sends a message
  */
-void CUdpSock::sendTo( const uint8 *buffer, uint len, const CInetAddress& addr )
+void CUdpSock::sendTo(const uint8 *buffer, uint len, const CInetAddress &addr)
 {
 	sockaddr_storage sockAddr;
 
@@ -159,13 +155,13 @@ void CUdpSock::sendTo( const uint8 *buffer, uint len, const CInetAddress& addr )
 	}
 	_BytesSent += len;
 
-	if ( _Logging )
+	if (_Logging)
 	{
-		LNETL0_DEBUG( "LNETL0: Socket %d sent %d bytes to %s", _Sock, len, addr.asString().c_str() );
+		LNETL0_DEBUG("LNETL0: Socket %d sent %d bytes to %s", _Sock, len, addr.asString().c_str());
 	}
 
 	// If socket is unbound, retrieve local address
-	if ( ! _Bound )
+	if (!_Bound)
 	{
 		setLocalAddress();
 		_Bound = true;
@@ -177,47 +173,45 @@ void CUdpSock::sendTo( const uint8 *buffer, uint len, const CInetAddress& addr )
 	if (first)
 	{
 		uint MMS, SB;
-		int  size = sizeof (MMS);
-		getsockopt (_Sock, SOL_SOCKET, SO_SNDBUF, (char *)&SB, &size);
-		getsockopt (_Sock, SOL_SOCKET, SO_MAX_MSG_SIZE, (char *)&MMS, &size);
-		LNETL0_INFO ("LNETL0: The udp SO_MAX_MSG_SIZE=%u, SO_SNDBUF=%u", MMS, SB);
+		int size = sizeof(MMS);
+		getsockopt(_Sock, SOL_SOCKET, SO_SNDBUF, (char *)&SB, &size);
+		getsockopt(_Sock, SOL_SOCKET, SO_MAX_MSG_SIZE, (char *)&MMS, &size);
+		LNETL0_INFO("LNETL0: The udp SO_MAX_MSG_SIZE=%u, SO_SNDBUF=%u", MMS, SB);
 		first = false;
 	}
 #endif
 }
 
-
 /*
  * Receives data from the peer. (blocking function)
  */
-bool CUdpSock::receive( uint8 *buffer, uint32& len, bool throw_exception )
+bool CUdpSock::receive(uint8 *buffer, uint32 &len, bool throw_exception)
 {
-	nlassert( _Connected && (buffer!=NULL) );
+	nlassert(_Connected && (buffer != NULL));
 
 	// Receive incoming message
-	len = ::recv( _Sock, (char*)buffer, len , 0 );
+	len = ::recv(_Sock, (char *)buffer, len, 0);
 
 	// Check for errors (after setting the address)
-	if ( ((int)len) == SOCKET_ERROR )
+	if (((int)len) == SOCKET_ERROR)
 	{
-		if ( throw_exception )
-			throw ESocket( "Cannot receive data" );
+		if (throw_exception)
+			throw ESocket("Cannot receive data");
 		return false;
 	}
 
 	_BytesReceived += len;
-	if ( _Logging )
+	if (_Logging)
 	{
-		LNETL0_DEBUG( "LNETL0: Socket %d received %d bytes from peer %s", _Sock, len, _RemoteAddr.asString().c_str() );
+		LNETL0_DEBUG("LNETL0: Socket %d received %d bytes from peer %s", _Sock, len, _RemoteAddr.asString().c_str());
 	}
 	return true;
 }
 
-
 /*
  * Receives data and say who the sender is. (blocking function)
  */
-bool CUdpSock::receivedFrom( uint8 *buffer, uint& len, CInetAddress& addr, bool throw_exception )
+bool CUdpSock::receivedFrom(uint8 *buffer, uint &len, CInetAddress &addr, bool throw_exception)
 {
 	// Receive incoming message
 	sockaddr_storage sockAddr;
@@ -230,20 +224,19 @@ bool CUdpSock::receivedFrom( uint8 *buffer, uint& len, CInetAddress& addr, bool 
 	addr.fromSockAddrStorage(&sockAddr);
 
 	// Check for errors (after setting the address)
-	if ( ((int)len) == SOCKET_ERROR )
+	if (((int)len) == SOCKET_ERROR)
 	{
-		if ( throw_exception )
-			throw ESocket( "Cannot receive data" );
+		if (throw_exception)
+			throw ESocket("Cannot receive data");
 		return false;
 	}
 
 	_BytesReceived += len;
-	if ( _Logging )
+	if (_Logging)
 	{
-		LNETL0_DEBUG( "LNETL0: Socket %d received %d bytes from %s", _Sock, len, addr.asString().c_str() );
+		LNETL0_DEBUG("LNETL0: Socket %d received %d bytes from %s", _Sock, len, addr.asString().c_str());
 	}
 	return true;
 }
-
 
 } // NLNET

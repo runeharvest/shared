@@ -28,30 +28,31 @@
 
 class CDicSplashScreen : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CDicSplashScreen(CWnd* pParent = NULL);   // standard constructor
+	CDicSplashScreen(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CDicSplashScreen)
-	enum { IDD = IDD_SplashScreen };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_SplashScreen
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDicSplashScreen)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CDicSplashScreen)
-		// NOTE: the ClassWizard will add member functions here
+	// NOTE: the ClassWizard will add member functions here
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

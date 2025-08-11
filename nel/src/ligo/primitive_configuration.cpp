@@ -27,21 +27,21 @@ using namespace std;
 using namespace NLMISC;
 using namespace NLLIGO;
 
-extern bool ReadColor (CRGBA &color, xmlNodePtr node);
+extern bool ReadColor(CRGBA &color, xmlNodePtr node);
 
 // ***************************************************************************
 
-bool CPrimitiveConfigurations::read (xmlNodePtr configurationNode, const char *filename, const char *name, NLLIGO::CLigoConfig &config)
+bool CPrimitiveConfigurations::read(xmlNodePtr configurationNode, const char *filename, const char *name, NLLIGO::CLigoConfig &config)
 {
 	// The name
 	Name = name;
 
 	// Read the color
-	ReadColor (Color, configurationNode);
+	ReadColor(Color, configurationNode);
 
 	// Get the first matching pair
-	MatchPairs.reserve (CIXml::countChildren (configurationNode, "MATCH_GROUP"));
-	xmlNodePtr matchGroups = CIXml::getFirstChildNode (configurationNode, "MATCH_GROUP");
+	MatchPairs.reserve(CIXml::countChildren(configurationNode, "MATCH_GROUP"));
+	xmlNodePtr matchGroups = CIXml::getFirstChildNode(configurationNode, "MATCH_GROUP");
 	if (matchGroups)
 	{
 		do
@@ -51,68 +51,66 @@ bool CPrimitiveConfigurations::read (xmlNodePtr configurationNode, const char *f
 			CMatchGroup &matchGroup = MatchPairs.back();
 
 			// Get the first matching pair
-			matchGroup.Pairs.reserve (CIXml::countChildren (matchGroups, "MATCH"));
-			xmlNodePtr match = CIXml::getFirstChildNode (matchGroups, "MATCH");
+			matchGroup.Pairs.reserve(CIXml::countChildren(matchGroups, "MATCH"));
+			xmlNodePtr match = CIXml::getFirstChildNode(matchGroups, "MATCH");
 			if (match)
 			{
 				do
 				{
 					// Add the match
-					matchGroup.Pairs.resize (matchGroup.Pairs.size()+1);
+					matchGroup.Pairs.resize(matchGroup.Pairs.size() + 1);
 					std::pair<std::string, std::string> &pair = matchGroup.Pairs.back();
 
 					// Get the match name
 					std::string name;
-					if (config.getPropertyString (name, filename, match, "NAME"))
+					if (config.getPropertyString(name, filename, match, "NAME"))
 					{
 						pair.first = name;
 					}
 					else
 					{
-						config.syntaxError (filename, match, "Missing match name in configuration (%s)", name.c_str());
+						config.syntaxError(filename, match, "Missing match name in configuration (%s)", name.c_str());
 						return false;
 					}
 
 					// Get the match value
-					if (config.getPropertyString (name, filename, match, "VALUE"))
+					if (config.getPropertyString(name, filename, match, "VALUE"))
 					{
 						pair.second = name;
 					}
 
-					match = CIXml::getNextChildNode (match, "MATCH");
-				}
-				while (match);
+					match = CIXml::getNextChildNode(match, "MATCH");
+				} while (match);
 			}
 
-			matchGroups = CIXml::getNextChildNode (matchGroups, "MATCH_GROUP");
-		}
-		while (matchGroups);
+			matchGroups = CIXml::getNextChildNode(matchGroups, "MATCH_GROUP");
+		} while (matchGroups);
 	}
 	return true;
 }
 
 // ***************************************************************************
 
-bool	CPrimitiveConfigurations::belong (const IPrimitive &primitive) const
+bool CPrimitiveConfigurations::belong(const IPrimitive &primitive) const
 {
 	// For each match group
 	uint group;
 	const uint numGroup = (uint)MatchPairs.size();
-	for (group=0; group<numGroup; group++)
+	for (group = 0; group < numGroup; group++)
 	{
 		const CMatchGroup &matchGroup = MatchPairs[group];
 
 		// For each rules
 		uint rules;
 		const uint numRules = (uint)matchGroup.Pairs.size();
-		for (rules=0; rules<numRules; rules++)
+		for (rules = 0; rules < numRules; rules++)
 		{
 			const std::pair<std::string, std::string> &pairs = matchGroup.Pairs[rules];
 			string key = toLowerAscii(pairs.second);
 
 			// Get the property
 			string value;
-			if (primitive.getPropertyByName (pairs.first.c_str(), value))
+			if (primitive.getPropertyByName(pairs.first.c_str(), value))
 			{
 				if (toLowerAscii(value) == key)
 					continue;
@@ -120,15 +118,15 @@ bool	CPrimitiveConfigurations::belong (const IPrimitive &primitive) const
 
 			// Get the property
 			const std::vector<string> *array = NULL;
-			if (primitive.getPropertyByName (pairs.first.c_str(), array) && array)
+			if (primitive.getPropertyByName(pairs.first.c_str(), array) && array)
 			{
 				uint i;
-				for (i=0; i<array->size(); i++)
+				for (i = 0; i < array->size(); i++)
 				{
 					if (toLowerAscii((*array)[i]) == key)
 						break;
 				}
-				if (i!=array->size())
+				if (i != array->size())
 					continue;
 			}
 
@@ -144,4 +142,3 @@ bool	CPrimitiveConfigurations::belong (const IPrimitive &primitive) const
 }
 
 // ***************************************************************************
-

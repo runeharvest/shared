@@ -29,8 +29,7 @@ using namespace std;
 #define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 string addSlashR(const string &str)
 {

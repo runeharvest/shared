@@ -23,12 +23,9 @@
 
 #include "particle_workspace.h"
 
-namespace NL3D
-{
-	struct CPSHintParticleRotateTheSame ;
-} ;
-
-
+namespace NL3D {
+struct CPSHintParticleRotateTheSame;
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // CPrecomputedRotationsDlg dialog
@@ -41,43 +38,47 @@ public:
 	 *  \param prts the particle being edited
 	 *  \param toDisable a window that is disabled when precomputed rotation are activated (null = none)
 	 */
-	CPrecomputedRotationsDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSHintParticleRotateTheSame *prts, class CAttribDlg *toDisable = NULL);   // standard constructor
-	void init(CWnd *pParent, sint x, sint y) ;
+	CPrecomputedRotationsDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSHintParticleRotateTheSame *prts, class CAttribDlg *toDisable = NULL); // standard constructor
+	void init(CWnd *pParent, sint x, sint y);
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CPrecomputedRotationsDlg)
-	enum { IDD = IDD_HINT_ROTATE_THE_SAME };
-	CEdit	m_RotSpeedMinCtrl;
-	CEdit	m_NbModelsCtrl;
-	CEdit	m_RotSpeedMaxCtrl;
-	CString	m_RotSpeedMax;
-	BOOL	m_PrecomputedRotations;
-	CString	m_RotSpeedMin;
-	CString	m_NbModels;
+	enum
+	{
+		IDD = IDD_HINT_ROTATE_THE_SAME
+	};
+	CEdit m_RotSpeedMinCtrl;
+	CEdit m_NbModelsCtrl;
+	CEdit m_RotSpeedMaxCtrl;
+	CString m_RotSpeedMax;
+	BOOL m_PrecomputedRotations;
+	CString m_RotSpeedMin;
+	CString m_NbModels;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CPrecomputedRotationsDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// anable / disable the controls for the tuning of the number of prerotated models
-	void enablePrecompRotationControl(void) ;
+	void enablePrecompRotationControl(void);
 	// update the control value from the particle being edited
 	void updateFromReader(void);
-	void updateModifiedFlag() { if (_Node) _Node->setModified(true); }
+	void updateModifiedFlag()
+	{
+		if (_Node) _Node->setModified(true);
+	}
 	//
 	CParticleWorkspace::CNode *_Node;
 	// the particle being edited
-	NL3D::CPSHintParticleRotateTheSame *_RotatedParticle ;
+	NL3D::CPSHintParticleRotateTheSame *_RotatedParticle;
 
-	CAttribDlg *_WndToDisable ;
+	CAttribDlg *_WndToDisable;
 
 	// Generated message map functions
 	//{{AFX_MSG(CPrecomputedRotationsDlg)

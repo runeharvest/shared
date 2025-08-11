@@ -26,29 +26,32 @@
 
 class CWords_dicDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CWords_dicDlg(CWnd* pParent = NULL);	// standard constructor
+	CWords_dicDlg(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CWords_dicDlg)
-	enum { IDD = IDD_WORDS_DIC_DIALOG };
-	CEdit	m_LookUp;
-	CListBox	m_Results;
+	enum
+	{
+		IDD = IDD_WORDS_DIC_DIALOG
+	};
+	CEdit m_LookUp;
+	CListBox m_Results;
 	//}}AFX_DATA
 
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWords_dicDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	HICON m_hIcon;
 
-	void	lookUp( const CString& inputStr );
-	void	clear();
+	void lookUp(const CString &inputStr);
+	void clear();
 
 	// Generated message map functions
 	//{{AFX_MSG(CWords_dicDlg)

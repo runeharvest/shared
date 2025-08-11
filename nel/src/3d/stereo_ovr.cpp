@@ -21,12 +21,12 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-// 
+//
 // Linking this library statically or dynamically with other modules
 // is making a combined work based on this library.  Thus, the terms
 // and conditions of the GNU General Public License cover the whole
 // combination.
-// 
+//
 // As a special exception, the copyright holders of this library give
 // you permission to link this library with the Oculus SDK to produce
 // an executable, regardless of the license terms of the Oculus SDK,
@@ -81,12 +81,12 @@ namespace {
 class CStereoOVRLog : public OVR::Log
 {
 public:
-	CStereoOVRLog(unsigned logMask = OVR::LogMask_All) : OVR::Log(logMask)
+	CStereoOVRLog(unsigned logMask = OVR::LogMask_All)
+	    : OVR::Log(logMask)
 	{
-
 	}
 
-	virtual void LogMessageVarg(OVR::LogMessageType messageType, const char* fmt, va_list argList)
+	virtual void LogMessageVarg(OVR::LogMessageType messageType, const char *fmt, va_list argList)
 	{
 		if (NLMISC::INelContext::isContextInitialised())
 		{
@@ -171,7 +171,16 @@ public:
 	OVR::HMDInfo HMDInfo;
 };
 
-CStereoOVR::CStereoOVR(const CStereoOVRDeviceHandle *handle) : m_Stage(0), m_SubStage(0), m_OrientationCached(false), m_Driver(NULL), m_SceneTexture(NULL), m_GUITexture(NULL), m_PixelProgram(NULL), m_EyePosition(0.0f, 0.09f, 0.15f), m_Scale(1.0f)
+CStereoOVR::CStereoOVR(const CStereoOVRDeviceHandle *handle)
+    : m_Stage(0)
+    , m_SubStage(0)
+    , m_OrientationCached(false)
+    , m_Driver(NULL)
+    , m_SceneTexture(NULL)
+    , m_GUITexture(NULL)
+    , m_PixelProgram(NULL)
+    , m_EyePosition(0.0f, 0.09f, 0.15f)
+    , m_Scale(1.0f)
 {
 	++s_DeviceCounter;
 	m_DevicePtr = new CStereoOVRDevicePtr();
@@ -190,14 +199,14 @@ CStereoOVR::CStereoOVR(const CStereoOVRDeviceHandle *handle) : m_Stage(0), m_Sub
 		nldebug("OVR: HResolution: %i, VResolution: %i", m_DevicePtr->HMDInfo.HResolution, m_DevicePtr->HMDInfo.VResolution);
 		nldebug("OVR: DistortionK[0]: %f, DistortionK[1]: %f", m_DevicePtr->HMDInfo.DistortionK[0], m_DevicePtr->HMDInfo.DistortionK[1]);
 		nldebug("OVR: DistortionK[2]: %f, DistortionK[3]: %f", m_DevicePtr->HMDInfo.DistortionK[2], m_DevicePtr->HMDInfo.DistortionK[3]);
-		//2013/06/26 05:31:51 DBG 17a0 snowballs_client.exe stereo_ovr.cpp 160 NL3D::CStereoOVR::CStereoOVR : OVR: HScreenSize: 0.149760, VScreenSize: 0.093600
-		//2013/06/26 05:31:51 DBG 17a0 snowballs_client.exe stereo_ovr.cpp 161 NL3D::CStereoOVR::CStereoOVR : OVR: VScreenCenter: 0.046800
-		//2013/06/26 05:31:51 DBG 17a0 snowballs_client.exe stereo_ovr.cpp 162 NL3D::CStereoOVR::CStereoOVR : OVR: EyeToScreenDistance: 0.041000
-		//2013/06/26 05:31:51 DBG 17a0 snowballs_client.exe stereo_ovr.cpp 163 NL3D::CStereoOVR::CStereoOVR : OVR: LensSeparationDistance: 0.063500
-		//2013/06/26 05:31:51 DBG 17a0 snowballs_client.exe stereo_ovr.cpp 164 NL3D::CStereoOVR::CStereoOVR : OVR: InterpupillaryDistance: 0.064000
-		//2013/06/26 05:31:51 DBG 17a0 snowballs_client.exe stereo_ovr.cpp 165 NL3D::CStereoOVR::CStereoOVR : OVR: HResolution: 1280, VResolution: 800
-		//2013/06/26 05:31:51 DBG 17a0 snowballs_client.exe stereo_ovr.cpp 166 NL3D::CStereoOVR::CStereoOVR : OVR: DistortionK[0]: 1.000000, DistortionK[1]: 0.220000
-		//2013/06/26 05:31:51 DBG 17a0 snowballs_client.exe stereo_ovr.cpp 167 NL3D::CStereoOVR::CStereoOVR : OVR: DistortionK[2]: 0.240000, DistortionK[3]: 0.000000
+		// 2013/06/26 05:31:51 DBG 17a0 snowballs_client.exe stereo_ovr.cpp 160 NL3D::CStereoOVR::CStereoOVR : OVR: HScreenSize: 0.149760, VScreenSize: 0.093600
+		// 2013/06/26 05:31:51 DBG 17a0 snowballs_client.exe stereo_ovr.cpp 161 NL3D::CStereoOVR::CStereoOVR : OVR: VScreenCenter: 0.046800
+		// 2013/06/26 05:31:51 DBG 17a0 snowballs_client.exe stereo_ovr.cpp 162 NL3D::CStereoOVR::CStereoOVR : OVR: EyeToScreenDistance: 0.041000
+		// 2013/06/26 05:31:51 DBG 17a0 snowballs_client.exe stereo_ovr.cpp 163 NL3D::CStereoOVR::CStereoOVR : OVR: LensSeparationDistance: 0.063500
+		// 2013/06/26 05:31:51 DBG 17a0 snowballs_client.exe stereo_ovr.cpp 164 NL3D::CStereoOVR::CStereoOVR : OVR: InterpupillaryDistance: 0.064000
+		// 2013/06/26 05:31:51 DBG 17a0 snowballs_client.exe stereo_ovr.cpp 165 NL3D::CStereoOVR::CStereoOVR : OVR: HResolution: 1280, VResolution: 800
+		// 2013/06/26 05:31:51 DBG 17a0 snowballs_client.exe stereo_ovr.cpp 166 NL3D::CStereoOVR::CStereoOVR : OVR: DistortionK[0]: 1.000000, DistortionK[1]: 0.220000
+		// 2013/06/26 05:31:51 DBG 17a0 snowballs_client.exe stereo_ovr.cpp 167 NL3D::CStereoOVR::CStereoOVR : OVR: DistortionK[2]: 0.240000, DistortionK[3]: 0.000000
 		m_DevicePtr->SensorDevice = m_DevicePtr->HMDDevice->GetSensor();
 		m_DevicePtr->SensorFusion.AttachToSensor(m_DevicePtr->SensorDevice);
 		m_DevicePtr->SensorFusion.SetGravityEnabled(true);
@@ -294,7 +303,6 @@ public:
 
 	virtual ~CPixelProgramOVR()
 	{
-		
 	}
 
 	virtual void buildInfo()
@@ -317,7 +325,6 @@ public:
 
 private:
 	COVRIndices m_OVRIndices;
-
 };
 
 void CStereoOVR::setDriver(NL3D::UDriver *driver)
@@ -352,8 +359,8 @@ void CStereoOVR::setDriver(NL3D::UDriver *driver)
 		m_BarrelMat = m_Driver->createMaterial();
 		m_BarrelMat.initUnlit();
 		m_BarrelMat.setColor(CRGBA::White);
-		m_BarrelMat.setBlend (false);
-		m_BarrelMat.setAlphaTest (false);
+		m_BarrelMat.setBlend(false);
+		m_BarrelMat.setAlphaTest(false);
 		NL3D::CMaterial *barrelMat = m_BarrelMat.getObjectPtr();
 		barrelMat->setShader(NL3D::CMaterial::Normal);
 		barrelMat->setBlendFunc(CMaterial::one, CMaterial::zero);
@@ -371,15 +378,15 @@ void CStereoOVR::setDriver(NL3D::UDriver *driver)
 		m_BarrelQuadRight.V1 = CVector(1.f, 0.f, 0.5f);
 		m_BarrelQuadRight.V2 = CVector(1.f, 1.f, 0.5f);
 		m_BarrelQuadRight.V3 = CVector(0.5f, 1.f, 0.5f);
-		
+
 		// nlassert(!drvInternal->isTextureRectangle(m_BarrelTex)); // not allowed
 
-		m_BarrelQuadLeft.Uv0 = CUV(0.f,  0.f);
+		m_BarrelQuadLeft.Uv0 = CUV(0.f, 0.f);
 		m_BarrelQuadLeft.Uv1 = CUV(0.5f, 0.f);
 		m_BarrelQuadLeft.Uv2 = CUV(0.5f, 1.f);
-		m_BarrelQuadLeft.Uv3 = CUV(0.f,  1.f);
+		m_BarrelQuadLeft.Uv3 = CUV(0.f, 1.f);
 
-		m_BarrelQuadRight.Uv0 = CUV(0.5f,  0.f);
+		m_BarrelQuadRight.Uv0 = CUV(0.5f, 0.f);
 		m_BarrelQuadRight.Uv1 = CUV(1.f, 0.f);
 		m_BarrelQuadRight.Uv2 = CUV(1.f, 1.f);
 		m_BarrelQuadRight.Uv3 = CUV(0.5f, 1.f);
@@ -405,7 +412,7 @@ void CStereoOVR::initCamera(uint cid, const NL3D::UCamera *camera)
 	float fov = 2.0f * atanf((m_DevicePtr->HMDInfo.HScreenSize * 0.5f * 0.5f) / (m_DevicePtr->HMDInfo.EyeToScreenDistance)); //(float)NLMISC::Pi/2.f; // 2.0f * atanf(m_DevicePtr->HMDInfo.VScreenSize / 2.0f * m_DevicePtr->HMDInfo.EyeToScreenDistance);
 	m_LeftFrustum[cid].initPerspective(fov, ar, camera->getFrustum().Near, camera->getFrustum().Far);
 	m_RightFrustum[cid] = m_LeftFrustum[cid];
-	
+
 	float viewCenter = m_DevicePtr->HMDInfo.HScreenSize * 0.25f;
 	float eyeProjectionShift = viewCenter - m_DevicePtr->HMDInfo.LensSeparationDistance * 0.5f; // docs say LensSeparationDistance, why not InterpupillaryDistance? related to how the lenses work?
 	float projectionCenterOffset = (eyeProjectionShift / (m_DevicePtr->HMDInfo.HScreenSize * 0.5f)) * (m_LeftFrustum[cid].Right - m_LeftFrustum[cid].Left); // used logic for this one, but it ends up being the same as the one i made up
@@ -437,7 +444,7 @@ void CStereoOVR::getOriginalFrustum(uint cid, NL3D::UCamera *camera) const
 void CStereoOVR::updateCamera(uint cid, const NL3D::UCamera *camera)
 {
 	if (camera->getFrustum().Near != m_LeftFrustum[cid].Near
-		|| camera->getFrustum().Far != m_LeftFrustum[cid].Far)
+	    || camera->getFrustum().Far != m_LeftFrustum[cid].Far)
 		CStereoOVR::initCamera(cid, camera);
 	m_CameraMatrix[cid] = camera->getMatrix();
 }
@@ -579,7 +586,7 @@ bool CStereoOVR::wantClear()
 	}
 	return m_Driver->getPolygonMode() != UDriver::Filled;
 }
-	
+
 bool CStereoOVR::wantScene()
 {
 	switch (m_Stage)
@@ -654,16 +661,16 @@ void CStereoOVR::setInterfaceMatrix(const NL3D::CMatrix &matrix)
 
 void CStereoOVR::renderGUI()
 {
-	
+
 	/*CMatrix mat;
 	mat.translate(m_InterfaceCameraMatrix.getPos());
 	CVector dir = m_InterfaceCameraMatrix.getJ();
 	dir.z = 0;
 	dir.normalize();
 	if (dir.y < 0)
-		mat.rotateZ(float(NLMISC::Pi+asin(dir.x)));
+	    mat.rotateZ(float(NLMISC::Pi+asin(dir.x)));
 	else
-		mat.rotateZ(float(NLMISC::Pi+NLMISC::Pi-asin(dir.x)));
+	    mat.rotateZ(float(NLMISC::Pi+NLMISC::Pi-asin(dir.x)));
 	m_Driver->setModelMatrix(mat);*/
 	m_Driver->setModelMatrix(m_InterfaceCameraMatrix);
 
@@ -681,7 +688,7 @@ void CStereoOVR::renderGUI()
 
 		m_Driver->deleteMaterial(mat);
 	}
-	
+
 	{
 		nlassert(m_GUITexture);
 
@@ -720,15 +727,15 @@ void CStereoOVR::renderGUI()
 		quadUV.V1 = CVector((width * 0.5f), distance, -(height * 0.5f));
 		quadUV.V2 = CVector((width * 0.5f), distance, (height * 0.5f));
 		quadUV.V3 = CVector(-(width * 0.5f), distance, (height * 0.5f));
-		quadUV.Uv0 = CUV(0.f,  0.f);
+		quadUV.Uv0 = CUV(0.f, 0.f);
 		quadUV.Uv1 = CUV(1.f, 0.f);
 		quadUV.Uv2 = CUV(1.f, 1.f);
-		quadUV.Uv3 = CUV(0.f,  1.f);
-		
+		quadUV.Uv3 = CUV(0.f, 1.f);
+
 		const uint nbQuads = 128;
 		static CVertexBuffer vb;
 		static CIndexBuffer ib;
-		
+
 		vb.setVertexFormat(CVertexBuffer::PositionFlag | CVertexBuffer::TexCoord0Flag);
 		vb.setPreferredMemory(CVertexBuffer::RAMVolatile, false);
 		vb.setNumVertices((nbQuads + 1) * 2);
@@ -778,7 +785,7 @@ void CStereoOVR::renderGUI()
 		// m_Driver->setPolygonMode(UDriver::Line);
 		driver->activeVertexBuffer(vb);
 		driver->activeIndexBuffer(ib);
-		driver->renderTriangles(*umat.getObjectPtr(), 0, nbQuads * 2); //renderRawQuads(umat, 0, 128);
+		driver->renderTriangles(*umat.getObjectPtr(), 0, nbQuads * 2); // renderRawQuads(umat, 0, 128);
 		// m_Driver->setPolygonMode(UDriver::Filled);
 
 		// m_Driver->drawQuad(quadUV, umat);
@@ -841,10 +848,10 @@ bool CStereoOVR::endRenderTarget()
 
 		drvInternal->activePixelProgram(m_PixelProgram);
 
-		float w = float(m_BarrelQuadLeft.V1.x),// / float(width),
-			h = float(m_BarrelQuadLeft.V2.y),// / float(height),
-			x = float(m_BarrelQuadLeft.V0.x),/// / float(width),
-			y = float(m_BarrelQuadLeft.V0.y);// / float(height);
+		float w = float(m_BarrelQuadLeft.V1.x), // / float(width),
+		    h = float(m_BarrelQuadLeft.V2.y), // / float(height),
+		    x = float(m_BarrelQuadLeft.V0.x), /// / float(width),
+		    y = float(m_BarrelQuadLeft.V0.y); // / float(height);
 
 		float lensOffset = m_DevicePtr->HMDInfo.LensSeparationDistance * 0.5f;
 		float lensShift = m_DevicePtr->HMDInfo.HScreenSize * 0.25f - lensOffset;
@@ -858,28 +865,26 @@ bool CStereoOVR::endRenderTarget()
 		float scaleY = (h / 2);
 		float scaleInX = (2 / w);
 		float scaleInY = (2 / h);
-		
 
-		drvInternal->setUniform2f(IDriver::PixelProgram, 
-			m_PixelProgram->ovrIndices().LensCenter, 
-			lensCenterX, lensCenterY);
+		drvInternal->setUniform2f(IDriver::PixelProgram,
+		    m_PixelProgram->ovrIndices().LensCenter,
+		    lensCenterX, lensCenterY);
 
-		drvInternal->setUniform2f(IDriver::PixelProgram, 
-			m_PixelProgram->ovrIndices().ScreenCenter, 
-			screenCenterX, screenCenterY);
+		drvInternal->setUniform2f(IDriver::PixelProgram,
+		    m_PixelProgram->ovrIndices().ScreenCenter,
+		    screenCenterX, screenCenterY);
 
-		drvInternal->setUniform2f(IDriver::PixelProgram, 
-			m_PixelProgram->ovrIndices().Scale, 
-			scaleX, scaleY);
+		drvInternal->setUniform2f(IDriver::PixelProgram,
+		    m_PixelProgram->ovrIndices().Scale,
+		    scaleX, scaleY);
 
-		drvInternal->setUniform2f(IDriver::PixelProgram, 
-			m_PixelProgram->ovrIndices().ScaleIn, 
-			scaleInX, scaleInY);
+		drvInternal->setUniform2f(IDriver::PixelProgram,
+		    m_PixelProgram->ovrIndices().ScaleIn,
+		    scaleInX, scaleInY);
 
-
-		drvInternal->setUniform4fv(IDriver::PixelProgram, 
-			m_PixelProgram->ovrIndices().HmdWarpParam, 
-			1, m_DevicePtr->HMDInfo.DistortionK);
+		drvInternal->setUniform4fv(IDriver::PixelProgram,
+		    m_PixelProgram->ovrIndices().HmdWarpParam,
+		    1, m_DevicePtr->HMDInfo.DistortionK);
 
 		m_Driver->drawQuad(m_BarrelQuadLeft, m_BarrelMat);
 
@@ -887,15 +892,13 @@ bool CStereoOVR::endRenderTarget()
 		lensCenterX = x + (w - lensViewportShift * 0.5f) * 0.5f;
 		screenCenterX = x + w * 0.5f;
 
+		drvInternal->setUniform2f(IDriver::PixelProgram,
+		    m_PixelProgram->ovrIndices().LensCenter,
+		    lensCenterX, lensCenterY);
 
-		drvInternal->setUniform2f(IDriver::PixelProgram, 
-			m_PixelProgram->ovrIndices().LensCenter, 
-			lensCenterX, lensCenterY);
-
-		drvInternal->setUniform2f(IDriver::PixelProgram, 
-			m_PixelProgram->ovrIndices().ScreenCenter, 
-			screenCenterX, screenCenterY);
-
+		drvInternal->setUniform2f(IDriver::PixelProgram,
+		    m_PixelProgram->ovrIndices().ScreenCenter,
+		    screenCenterX, screenCenterY);
 
 		m_Driver->drawQuad(m_BarrelQuadRight, m_BarrelMat);
 
@@ -920,10 +923,22 @@ NLMISC::CQuat CStereoOVR::getOrientation() const
 	OVR::Quatf quatovr = m_DevicePtr->SensorFusion.GetPredictedOrientation();
 	NLMISC::CMatrix coordsys;
 	float csys[] = {
-		1.0f, 0.0f, 0.0f, 0.0f, 
-		0.0f, 0.0f, -1.0f, 0.0f, 
-		0.0f, 1.0f, 0.0f, 0.0f, 
-		0.0f, 0.0f, 0.0f, 1.0f, 
+		1.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		-1.0f,
+		0.0f,
+		0.0f,
+		1.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		1.0f,
 	};
 	coordsys.set(csys);
 	NLMISC::CMatrix matovr;
@@ -972,17 +987,16 @@ void CStereoOVR::getInterface2DShift(uint cid, float &x, float &y, float distanc
 	NLMISC::CVector ipd;
 	if (m_Stage % 2) ipd = CVector((m_DevicePtr->HMDInfo.InterpupillaryDistance * m_Scale) * -0.5f, 0.f, 0.f);
 	else ipd = CVector((m_DevicePtr->HMDInfo.InterpupillaryDistance * m_Scale) * 0.5f, 0.f, 0.f);
-	
 
 	NLMISC::CQuat rot = getOrientation();
 	NLMISC::CQuat modrot = NLMISC::CQuat(CVector(0.f, 1.f, 0.f), NLMISC::Pi);
 	rot = rot * modrot;
 	float p = NLMISC::Pi + atan2f(2.0f * ((rot.x * rot.y) + (rot.z * rot.w)), 1.0f - 2.0f * ((rot.y * rot.y) + (rot.w * rot.w)));
-	if (p > NLMISC::Pi) p -= NLMISC::Pi * 2.0f;	
-	float t = -atan2f(2.0f * ((rot.x * rot.w) + (rot.y * rot.z)), 1.0f - 2.0f * ((rot.z * rot.z) + (rot.w * rot.w)));// // asinf(2.0f * ((rot.x * rot.z) - (rot.w * rot.y)));
-	
+	if (p > NLMISC::Pi) p -= NLMISC::Pi * 2.0f;
+	float t = -atan2f(2.0f * ((rot.x * rot.w) + (rot.y * rot.z)), 1.0f - 2.0f * ((rot.z * rot.z) + (rot.w * rot.w))); // // asinf(2.0f * ((rot.x * rot.z) - (rot.w * rot.y)));
+
 	CVector rotshift = CVector(p, 0.f, t) * -distance;
-	
+
 	CVector proj = CStereoOVR::getCurrentFrustum(cid).project(vec + ipd + rotshift);
 
 	x = (proj.x - 0.5f);

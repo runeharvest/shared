@@ -20,10 +20,7 @@
 #include "nel/misc/types_nl.h"
 #include "nel/3d/texture.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ****************************************************************************
 /**
@@ -35,37 +32,39 @@ namespace NL3D
 class CTextureCube : public ITexture
 {
 public:
-
-	enum TFace { positive_x=0, negative_x, positive_y, negative_y, positive_z, negative_z };
+	enum TFace
+	{
+		positive_x = 0,
+		negative_x,
+		positive_y,
+		negative_y,
+		positive_z,
+		negative_z
+	};
 
 public:
-
 	/**
 	 * Default constructor
 	 */
 	CTextureCube();
 
-
 	/**
 	 * Accessors
 	 */
 	void setTexture(TFace f, ITexture *t);
-	ITexture* getTexture(TFace f) { return _Textures[f]; }
-
+	ITexture *getTexture(TFace f) { return _Textures[f]; }
 
 	/**
 	 * Set the name of the file containing the texture
 	 * \param name of the file
 	 */
-	//void setFileName(std::string s);
-
+	// void setFileName(std::string s);
 
 	/**
 	 * sharing system.
 	 */
-	virtual bool			supportSharing() const {return true;}
-	virtual std::string		getShareName() const;
-
+	virtual bool supportSharing() const { return true; }
+	virtual std::string getShareName() const;
 
 	/**
 	 * Generate the texture, looking in CPath if necessary.
@@ -77,7 +76,7 @@ public:
 	virtual bool isTextureCube() const { return true; }
 
 	/// Save the texture file name.
-	virtual void	serial(NLMISC::IStream &f);
+	virtual void serial(NLMISC::IStream &f);
 	NLMISC_DECLARE_CLASS(CTextureCube);
 
 	/// If the face support multiple texture (such has CTextureMultiFile), this allow to select the active set
@@ -85,16 +84,13 @@ public:
 	// from ITexture
 	virtual bool isSelectable() const;
 	// from ITexture
-	virtual ITexture		*buildNonSelectableVersion(uint index);
-
+	virtual ITexture *buildNonSelectableVersion(uint index);
 
 private:
 	NLMISC::CSmartPtr<ITexture> _Textures[6];
 };
 
-
 } // NL3D
-
 
 #endif // NL_TEXTURE_CUBE_H
 

@@ -21,7 +21,7 @@
 #include <vector>
 #include <set>
 
-bool getZoneCoordByName(const char * name, uint16& x, uint16& y);
-void getZoneNameByCoord(uint16 x, uint16 y, std::string& zoneName);
+bool getZoneCoordByName(const char *name, uint16 &x, uint16 &y);
+void getZoneNameByCoord(uint16 x, uint16 y, std::string &zoneName);
 
 #endif // NL_ZONE_UTILITY

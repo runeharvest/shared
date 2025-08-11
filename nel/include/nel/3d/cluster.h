@@ -26,8 +26,7 @@
 
 #include <vector>
 
-namespace NLMISC
-{
+namespace NLMISC {
 class CRGBA;
 class IStream;
 struct EStream;
@@ -35,11 +34,10 @@ struct EStream;
 
 namespace NL3D {
 
-
 class CPortal;
 class CInstanceGroup;
 
-const NLMISC::CClassId	ClusterId=NLMISC::CClassId(0x13f37e46, 0x3e880780);
+const NLMISC::CClassId ClusterId = NLMISC::CClassId(0x13f37e46, 0x3e880780);
 
 /**
  * CCluster
@@ -57,13 +55,10 @@ class CCluster : public CTransform
 	 *	It can be loaded/called through CAsyncFileManager for instance
 	 * ***********************************************/
 
+public:
+	static void registerBasic();
 
 public:
-
-	static void registerBasic ();
-
-public:
-
 	CCluster();
 
 	~CCluster();
@@ -73,8 +68,7 @@ public:
 	 * All the faces passed must be connected with at least one of the others
 	 * return false if the plane we want to add make the volume concave
 	 */
-	bool makeVolume (const NLMISC::CVector& p1, const NLMISC::CVector& p2, const NLMISC::CVector& p3);
-
+	bool makeVolume(const NLMISC::CVector &p1, const NLMISC::CVector &p2, const NLMISC::CVector &p3);
 
 	/// Apply the given matrix to this cluster local / world volume & bbox
 	void applyMatrix(const NLMISC::CMatrix &m);
@@ -82,97 +76,93 @@ public:
 	/**
 	 * return true if the vertex is in the cluster volume
 	 */
-	bool isIn (const NLMISC::CVector& p);
+	bool isIn(const NLMISC::CVector &p);
 
 	/**
 	 * return true if the Bounding box intersect the cluster
 	 */
-	bool isIn (const NLMISC::CAABBox& b);
+	bool isIn(const NLMISC::CAABBox &b);
 
 	/**
 	 * return true if the Sphere intersect the cluster
 	 */
-	bool isIn (const NLMISC::CVector& center, float size);
+	bool isIn(const NLMISC::CVector &center, float size);
 
 	/**
 	 * return true if the segment intersect the cluster
 	 *	start / end are the input and ouptut clipped segment
 	 */
-	bool clipSegment (NLMISC::CVector &p0, NLMISC::CVector &p1);
+	bool clipSegment(NLMISC::CVector &p0, NLMISC::CVector &p1);
 
-
-	NLMISC::CAABBox& getBBox() { return _BBox; }
+	NLMISC::CAABBox &getBBox() { return _BBox; }
 
 	/// Linking
 
 	// reset all links to portals.
-	void resetPortalLinks ();
+	void resetPortalLinks();
 
-	void link (CPortal* portal);
-	void unlink (CPortal* portal);
+	void link(CPortal *portal);
+	void unlink(CPortal *portal);
 
-	uint32 getNbPortals() {return (uint32)_Portals.size();}
-	CPortal* getPortal(uint32 pos) {return _Portals[pos];}
+	uint32 getNbPortals() { return (uint32)_Portals.size(); }
+	CPortal *getPortal(uint32 pos) { return _Portals[pos]; }
 
 	/// Serial
 
-	void serial (NLMISC::IStream& f);
+	void serial(NLMISC::IStream &f);
 
-	void setWorldMatrix (const NLMISC::CMatrix &WM);
+	void setWorldMatrix(const NLMISC::CMatrix &WM);
 
 	bool isRoot() { return _LocalVolume.empty(); }
 
 	//\name Sound related.
 	//@{
-	void				setSoundGroup(const std::string &soundGroup);
-	void				setSoundGroup(const NLMISC::TStringId &soundGroupId);
-	const std::string	&getSoundGroup();
-	NLMISC::TStringId	getSoundGroupId();
-	void				setEnvironmentFx(const std::string &environmentFx);
-	void				setEnvironmentFx(const NLMISC::TStringId &environmentFxId);
-	const std::string	&getEnvironmentFx();
-	NLMISC::TStringId	getEnvironmentFxId();
+	void setSoundGroup(const std::string &soundGroup);
+	void setSoundGroup(const NLMISC::TStringId &soundGroupId);
+	const std::string &getSoundGroup();
+	NLMISC::TStringId getSoundGroupId();
+	void setEnvironmentFx(const std::string &environmentFx);
+	void setEnvironmentFx(const NLMISC::TStringId &environmentFxId);
+	const std::string &getEnvironmentFx();
+	NLMISC::TStringId getEnvironmentFxId();
 	//@}
-
 
 	/// \name CTransform Specialisation
 	// @{
-	virtual void	traverseHrc();
-	virtual void	traverseClip();
-	virtual	bool	clip();
+	virtual void traverseHrc();
+	virtual void traverseClip();
+	virtual bool clip();
 	// For ClipTrav only.
-	void			setCameraIn(bool state) {_CameraIn= state;}
-	bool			isCameraIn() const {return _CameraIn;}
+	void setCameraIn(bool state) { _CameraIn = state; }
+	bool isCameraIn() const { return _CameraIn; }
 	// @}
 
 	// clusters to clusters calls
-	void	recursTraverseClip(CTransform *caller);
+	void recursTraverseClip(CTransform *caller);
 
 	// Cluster Graph parsing with a ray (for CScene::findCameraClusterSystemFromRay())
-	void	cameraRayClip(const CVector &start, const CVector &end, std::vector<CCluster*> &clusterVisited);
+	void cameraRayClip(const CVector &start, const CVector &end, std::vector<CCluster *> &clusterVisited);
 
 private:
-
-	static CTransform *creator () {return new CCluster;}
+	static CTransform *creator() { return new CCluster; }
 
 public:
 	// Moving cluster
-	CQuadGrid<CCluster*>::CIterator AccelIt;
+	CQuadGrid<CCluster *>::CIterator AccelIt;
 
 	// Additionnal properties
-	std::string				Name;
-	bool					FatherVisible;
-	bool					VisibleFromFather;
-	bool					FatherAudible;
-	bool					AudibleFromFather;
-	CCluster				*Father;
-	std::vector<CCluster*>	Children;
-	CInstanceGroup			*Group;
+	std::string Name;
+	bool FatherVisible;
+	bool VisibleFromFather;
+	bool FatherAudible;
+	bool AudibleFromFather;
+	CCluster *Father;
+	std::vector<CCluster *> Children;
+	CInstanceGroup *Group;
 
 private:
-
 	/// Portals list
-	std::vector<CPortal*>	_Portals;
+	std::vector<CPortal *> _Portals;
 
 	/// Local bounding box and volume
 	/// -----------------------------
@@ -188,30 +178,28 @@ private:
 	std::vector<NLMISC::CPlane> _Volume;
 
 	/// Sound group name id
-	NLMISC::TStringId	_SoundGroupId;
+	NLMISC::TStringId _SoundGroupId;
 	/// Environement Fx name Id (using CStringMapper)
-	NLMISC::TStringId	_EnvironmentFxId;
+	NLMISC::TStringId _EnvironmentFxId;
 
 private:
 	// This unlink this cluster from its sons and its parents
-	void	unlinkFromClusterTree();
+	void unlinkFromClusterTree();
 	//		unlink this cluster from its parent
-	void	unlinkFromParent();
+	void unlinkFromParent();
 	//		unlink this cluster sons
-	void	unlinkSons();
+	void unlinkSons();
 
 	/// ***** Clip Traversal
-	bool	_Visited;
+	bool _Visited;
 	// true if in clip pass the camera is in. valid only during clip pass...
-	bool	_CameraIn;
+	bool _CameraIn;
 
 	/// Friends classes
 	friend class CInstanceGroup;
 };
 
-
 } // NL3D
-
 
 #endif // NL_CLUSTER_H
 

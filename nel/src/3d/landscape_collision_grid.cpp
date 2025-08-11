@@ -20,7 +20,6 @@
 #include "nel/misc/fast_floor.h"
 #include <algorithm>
 
-
 using namespace std;
 using namespace NLMISC;
 
@@ -28,21 +27,19 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 CLandscapeCollisionGrid::CLandscapeCollisionGrid(CVisualCollisionManager *owner)
 {
-	_Owner= owner;
+	_Owner = owner;
 	// reset list to NULL.
-	memset(_Grid, 0, NL_COLGRID_SIZE*NL_COLGRID_SIZE * sizeof(CVisualTileDescNode*));
-	_Cleared= true;
+	memset(_Grid, 0, NL_COLGRID_SIZE * NL_COLGRID_SIZE * sizeof(CVisualTileDescNode *));
+	_Cleared = true;
 
 	// sizepower.
 	nlassert(isPowerOf2(NL_COLGRID_SIZE));
-	_SizePower= getPowerOf2(NL_COLGRID_SIZE);
+	_SizePower = getPowerOf2(NL_COLGRID_SIZE);
 }
 
 // ***************************************************************************
@@ -52,48 +49,45 @@ CLandscapeCollisionGrid::~CLandscapeCollisionGrid()
 }
 
 // ***************************************************************************
-void			CLandscapeCollisionGrid::clear()
+void CLandscapeCollisionGrid::clear()
 {
 	// already cleared? do nothing.
-	if(_Cleared)
+	if (_Cleared)
 		return;
 
 	// Parse all quads.
-	sint	i;
-	for(i=0;i<NL_COLGRID_SIZE*NL_COLGRID_SIZE;i++)
+	sint i;
+	for (i = 0; i < NL_COLGRID_SIZE * NL_COLGRID_SIZE; i++)
 	{
-		CVisualTileDescNode			*ptr, *next;
-		ptr= _Grid[i];
+		CVisualTileDescNode *ptr, *next;
+		ptr = _Grid[i];
 
 		// delete list of node.
-		while(ptr)
+		while (ptr)
 		{
-			next= ptr->Next;
+			next = ptr->Next;
 			_Owner->deleteVisualTileDescNode(ptr);
-			ptr= next;
+			ptr = next;
 		}
 
 		// reset root.
-		_Grid[i]= NULL;
+		_Grid[i] = NULL;
 	}
 
-	_Cleared= true;
+	_Cleared = true;
 }
 
-
 // ***************************************************************************
-struct	CVector2i
+struct CVector2i
 {
-	sint	x,y;
-
+	sint x, y;
 };
 
-
 // ***************************************************************************
-void			CLandscapeCollisionGrid::build(const std::vector<CPatchQuadBlock*>	&quadBlocks, const CVector &delta)
+void CLandscapeCollisionGrid::build(const std::vector<CPatchQuadBlock *> &quadBlocks, const CVector &delta)
 {
-	sint	x,y;
-	static CVector2i	floorVals[NL_PATCH_BLOCK_MAX_VERTEX*NL_PATCH_BLOCK_MAX_VERTEX];
+	sint x, y;
+	static CVector2i floorVals[NL_PATCH_BLOCK_MAX_VERTEX * NL_PATCH_BLOCK_MAX_VERTEX];
 
 	// first clear
 	clear();
@@ -102,49 +96,57 @@ void			CLandscapeCollisionGrid::build(const std::vector<CPatchQuadBlock*>	&quadB
 	OptFastFloorBegin();
 
 	// then fill.
-	_Cleared= false;
-	_Delta= delta;
+	_Cleared = false;
+	_Delta = delta;
 	// parse all quad blocks.
-	for(sint i=0; i<(sint)quadBlocks.size();i++)
+	for (sint i = 0; i < (sint)quadBlocks.size(); i++)
 	{
-		CPatchQuadBlock		&qb= *quadBlocks[i];
-		sint		lenS= qb.PatchBlockId.S1 - qb.PatchBlockId.S0;
-		sint		lenT= qb.PatchBlockId.T1 - qb.PatchBlockId.T0;
+		CPatchQuadBlock &qb = *quadBlocks[i];
+		sint lenS = qb.PatchBlockId.S1 - qb.PatchBlockId.S0;
+		sint lenT = qb.PatchBlockId.T1 - qb.PatchBlockId.T0;
 
 		// First, floor all vertices of interest.
-		for(y=0; y<lenT+1; y++)
+		for (y = 0; y < lenT + 1; y++)
 		{
-			for(x=0; x<lenS+1; x++)
+			for (x = 0; x < lenS + 1; x++)
 			{
-				sint	id= y*NL_PATCH_BLOCK_MAX_VERTEX + x;
+				sint id = y * NL_PATCH_BLOCK_MAX_VERTEX + x;
 				// Add delta, and floor to sint.
-				floorVals[id].x= OptFastFloor(qb.Vertices[id].x + delta.x);
-				floorVals[id].y= OptFastFloor(qb.Vertices[id].y + delta.y);
+				floorVals[id].x = OptFastFloor(qb.Vertices[id].x + delta.x);
+				floorVals[id].y = OptFastFloor(qb.Vertices[id].y + delta.y);
 			}
 		}
 
 		// Then compute min max for all quads, and insert quad id in the quadGrid.
-		for(y=0; y<lenT; y++)
+		for (y = 0; y < lenT; y++)
 		{
-			for(x=0; x<lenS; x++)
+			for (x = 0; x < lenS; x++)
 			{
-				sint	minx, maxx, miny, maxy;
-				sint	id= y*NL_PATCH_BLOCK_MAX_VERTEX + x;
+				sint minx, maxx, miny, maxy;
+				sint id = y * NL_PATCH_BLOCK_MAX_VERTEX + x;
 				// Compute min max of the 4 vertices.
-				minx= floorVals[id].x; maxx= floorVals[id].x;
-				miny= floorVals[id].y; maxy= floorVals[id].y;
+				minx = floorVals[id].x;
+				maxx = floorVals[id].x;
+				miny = floorVals[id].y;
+				maxy = floorVals[id].y;
 				id++;
-				minx= min(minx, floorVals[id].x); maxx= max(maxx, floorVals[id].x);
-				miny= min(miny, floorVals[id].y); maxy= max(maxy, floorVals[id].y);
-				id+= NL_PATCH_BLOCK_MAX_VERTEX;
-				minx= min(minx, floorVals[id].x); maxx= max(maxx, floorVals[id].x);
-				miny= min(miny, floorVals[id].y); maxy= max(maxy, floorVals[id].y);
+				minx = min(minx, floorVals[id].x);
+				maxx = max(maxx, floorVals[id].x);
+				miny = min(miny, floorVals[id].y);
+				maxy = max(maxy, floorVals[id].y);
+				id += NL_PATCH_BLOCK_MAX_VERTEX;
+				minx = min(minx, floorVals[id].x);
+				maxx = max(maxx, floorVals[id].x);
+				miny = min(miny, floorVals[id].y);
+				maxy = max(maxy, floorVals[id].y);
 				id--;
-				minx= min(minx, floorVals[id].x); maxx= max(maxx, floorVals[id].x);
-				miny= min(miny, floorVals[id].y); maxy= max(maxy, floorVals[id].y);
+				minx = min(minx, floorVals[id].x);
+				maxx = max(maxx, floorVals[id].x);
+				miny = min(miny, floorVals[id].y);
+				maxy = max(maxy, floorVals[id].y);
 
 				// store minmax in the quad.
-				sint	quadId= y*NL_PATCH_BLOCK_MAX_QUAD + x;
+				sint quadId = y * NL_PATCH_BLOCK_MAX_QUAD + x;
 				addQuadToGrid(i, quadId, minx, maxx, miny, maxy);
 			}
 		}
@@ -154,86 +156,82 @@ void			CLandscapeCollisionGrid::build(const std::vector<CPatchQuadBlock*>	&quadB
 	OptFastFloorEnd();
 }
 
-
 // ***************************************************************************
-void			CLandscapeCollisionGrid::addQuadToGrid(uint16 paBlockId, uint16 quadId, sint x0, sint x1, sint y0, sint y1)
+void CLandscapeCollisionGrid::addQuadToGrid(uint16 paBlockId, uint16 quadId, sint x0, sint x1, sint y0, sint y1)
 {
 	// coordinate should be positive.
-	nlassert(x0>=0 && x1>=x0);
-	nlassert(y0>=0 && y1>=y0);
+	nlassert(x0 >= 0 && x1 >= x0);
+	nlassert(y0 >= 0 && y1 >= y0);
 
 	// first, transform coordinate (in meters) in quadgrid eltSize (ie 2 meters).
-	x0= (x0>>1);		// floor().
-	x1= (x1>>1) + 1;	// equivalent of ceil().
-	y0= (y0>>1);		// floor().
-	y1= (y1>>1) + 1;	// equivalent of ceil().
+	x0 = (x0 >> 1); // floor().
+	x1 = (x1 >> 1) + 1; // equivalent of ceil().
+	y0 = (y0 >> 1); // floor().
+	y1 = (y1 >> 1) + 1; // equivalent of ceil().
 
 	// setup bounds in quadgrid coordinate.
-	if(x1-x0>=NL_COLGRID_SIZE)
-		x0=0, x1= NL_COLGRID_SIZE;
+	if (x1 - x0 >= NL_COLGRID_SIZE)
+		x0 = 0, x1 = NL_COLGRID_SIZE;
 	else
 	{
-		x0&= NL_COLGRID_SIZE-1;
-		x1&= NL_COLGRID_SIZE-1;
-		if(x1<=x0)
-			x1+=NL_COLGRID_SIZE;
+		x0 &= NL_COLGRID_SIZE - 1;
+		x1 &= NL_COLGRID_SIZE - 1;
+		if (x1 <= x0)
+			x1 += NL_COLGRID_SIZE;
 	}
-	if(y1-y0>=NL_COLGRID_SIZE)
-		y0=0, y1= NL_COLGRID_SIZE;
+	if (y1 - y0 >= NL_COLGRID_SIZE)
+		y0 = 0, y1 = NL_COLGRID_SIZE;
 	else
 	{
-		y0&= NL_COLGRID_SIZE-1;
-		y1&= NL_COLGRID_SIZE-1;
-		if(y1<=y0)
-			y1+=NL_COLGRID_SIZE;
+		y0 &= NL_COLGRID_SIZE - 1;
+		y1 &= NL_COLGRID_SIZE - 1;
+		if (y1 <= y0)
+			y1 += NL_COLGRID_SIZE;
 	}
 
 	// fill all cases with element.
-	sint	x,y;
-	for(y= y0;y<y1;y++)
+	sint x, y;
+	for (y = y0; y < y1; y++)
 	{
-		sint	xe,ye;
-		ye= y &(NL_COLGRID_SIZE-1);
-		for(x= x0;x<x1;x++)
+		sint xe, ye;
+		ye = y & (NL_COLGRID_SIZE - 1);
+		for (x = x0; x < x1; x++)
 		{
-			xe= x &(NL_COLGRID_SIZE-1);
+			xe = x & (NL_COLGRID_SIZE - 1);
 			// which case we add the element.
-			sint gridId= (ye<<_SizePower)+xe;
+			sint gridId = (ye << _SizePower) + xe;
 
 			// allocate element.
-			CVisualTileDescNode		*elt= _Owner->newVisualTileDescNode();
+			CVisualTileDescNode *elt = _Owner->newVisualTileDescNode();
 
 			// fill elt.
-			elt->PatchQuadBlocId= paBlockId;
-			elt->QuadId= quadId;
+			elt->PatchQuadBlocId = paBlockId;
+			elt->QuadId = quadId;
 
 			// bind elt to the list.
-			elt->Next= _Grid[gridId];
-			_Grid[gridId]= elt;
+			elt->Next = _Grid[gridId];
+			_Grid[gridId] = elt;
 		}
 	}
 }
 
-
 // ***************************************************************************
-CVisualTileDescNode			*CLandscapeCollisionGrid::select(const NLMISC::CVector &pos)
+CVisualTileDescNode *CLandscapeCollisionGrid::select(const NLMISC::CVector &pos)
 {
 	// compute pos in the quadgrid.
-	CVector		localPos;
-	localPos= pos + _Delta;
+	CVector localPos;
+	localPos = pos + _Delta;
 	// cases are 2x2 meters.
-	localPos/=2;
+	localPos /= 2;
 
 	// floor, bound in quadgrid coordinate.
-	sint	x,y;
-	x= (sint)floor(localPos.x);
-	y= (sint)floor(localPos.y);
-	x&= NL_COLGRID_SIZE-1;
-	y&= NL_COLGRID_SIZE-1;
+	sint x, y;
+	x = (sint)floor(localPos.x);
+	y = (sint)floor(localPos.y);
+	x &= NL_COLGRID_SIZE - 1;
+	y &= NL_COLGRID_SIZE - 1;
 
-	return _Grid[y*NL_COLGRID_SIZE+x];
+	return _Grid[y * NL_COLGRID_SIZE + x];
 }
-
-
 
 } // NL3D

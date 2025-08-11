@@ -22,7 +22,6 @@
 
 namespace NL3D {
 
-
 /**
  * This texture is a helper to build a DsDt texture from a height map (provided it is supported by hardware)
  * The height map should be convertible to a RGBA bitmap
@@ -40,36 +39,35 @@ public:
 	~CTextureBump();
 
 	/// set the height map used to generate this bump map
-	void				setHeightMap(ITexture *heightMap);
+	void setHeightMap(ITexture *heightMap);
 	/// get the height map used to generate this bumpmap
-	ITexture			*getHeightMap() { return _HeightMap; };
+	ITexture *getHeightMap() { return _HeightMap; };
 	/// get the height map used to generate this bumpmap (const version)
-	const ITexture		*getHeightMap() const { return _HeightMap; };
+	const ITexture *getHeightMap() const { return _HeightMap; };
 
 	// serial this texture datas
-	virtual void	serial(NLMISC::IStream &f);
+	virtual void serial(NLMISC::IStream &f);
 
-	virtual bool			supportSharing() const;
+	virtual bool supportSharing() const;
 
-	virtual std::string		getShareName() const;
+	virtual std::string getShareName() const;
 
-	void					enableSharing(bool enabled = true) { _DisableSharing = !enabled; }
+	void enableSharing(bool enabled = true) { _DisableSharing = !enabled; }
 
-	bool					isSharingEnabled() const { return !_DisableSharing; }
-
+	bool isSharingEnabled() const { return !_DisableSharing; }
 
 	/** Force normalization of this texture when it is generated, so that the deltas reach their maximum amplitude.
-	  * After the texture generation, the factor needed to normalize can be obtained
-	  */
-	void					forceNormalize(bool force = true) { _ForceNormalize = force; }
+	 * After the texture generation, the factor needed to normalize can be obtained
+	 */
+	void forceNormalize(bool force = true) { _ForceNormalize = force; }
 
 	/// Test whether normalization is forced with that texture
-	bool				    isNormalizationForced() const { return _ForceNormalize; }
+	bool isNormalizationForced() const { return _ForceNormalize; }
 
 	/** Get the normalization factor. This is valid only if the texture has been generated
-	  * NB : make this virtual because it access static object (_NameToNF) from both DLL and main app, so don't want duplication
-	  */
-	virtual float					getNormalizationFactor();
+	 * NB : make this virtual because it access static object (_NameToNF) from both DLL and main app, so don't want duplication
+	 */
+	virtual float getNormalizationFactor();
 
 	// inherited from ITexture. release this texture, and its datas
 	virtual void release();
@@ -80,18 +78,17 @@ public:
 protected:
 	// inherited from ITexture. Generate this bumpmap pixels
 	virtual void doGenerate(bool async = false);
-	NLMISC::CSmartPtr<ITexture>  _HeightMap;
-	float						 *_NormalizationFactor;
-	bool						 _DisableSharing;
-	bool						 _ForceNormalize;
+	NLMISC::CSmartPtr<ITexture> _HeightMap;
+	float *_NormalizationFactor;
+	bool _DisableSharing;
+	bool _ForceNormalize;
+
 private:
 	/// we don't allow for mipmap for bump so we redefine this to prevent the user from doing this on the base class Itexture
-	virtual         void setFilterMode(TMagFilter magf, TMinFilter minf);
+	virtual void setFilterMode(TMagFilter magf, TMinFilter minf);
 };
 
-
 } // NL3D
-
 
 #endif // NL_TEXTURE_BUMP_H
 

@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_CONTINUOUS_ACTION_H
 #define NL_CONTINUOUS_ACTION_H
 
@@ -24,7 +22,6 @@
 //
 
 #include "action.h"
-
 
 namespace CLFECOMMON {
 
@@ -36,20 +33,19 @@ class CContinuousAction : public CAction
 {
 public:
 	/// Returns true always (continuous action by essence)
-	bool			isContinuous() const { return true; }
+	bool isContinuous() const { return true; }
 
 	/*virtual bool	isDelta() const = 0;
 	virtual bool	hasGaranty() const = 0;
 	virtual void	setGaranty(bool g=true) = 0;
 	virtual void	packDelta(const CAction::TValue &origin) = 0;
 	virtual void	unpackDelta(const CAction::TValue &origin) = 0;*/
-	virtual TValue	getValue() const = 0;
-	//virtual TValue	getValue(const CAction::TValue &origin) const = 0;
+	virtual TValue getValue() const = 0;
+	// virtual TValue	getValue(const CAction::TValue &origin) const = 0;
 
 protected:
-
 	/// Default ctor that initialize Timeout value
-	CContinuousAction ();
+	CContinuousAction();
 
 	friend class CActionFactory;
 };

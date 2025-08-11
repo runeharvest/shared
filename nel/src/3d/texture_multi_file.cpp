@@ -23,33 +23,30 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 static std::string DummyTexName("CTextureMultiFile:Dummy");
 
 ///===========================================================
-CTextureMultiFile::CTextureMultiFile(uint numTexs /* = 0 */) : _CurrSelectedTexture(0), _FileNames(numTexs)
+CTextureMultiFile::CTextureMultiFile(uint numTexs /* = 0 */)
+    : _CurrSelectedTexture(0)
+    , _FileNames(numTexs)
 {
 }
-
 
 ///===========================================================
 void CTextureMultiFile::setNumTextures(uint numTexs)
 {
 	_FileNames.resize(numTexs);
-	_CurrSelectedTexture = (uint) std::min((sint) _CurrSelectedTexture, std::min((sint) 0, (sint) (numTexs - 1)));
+	_CurrSelectedTexture = (uint)std::min((sint)_CurrSelectedTexture, std::min((sint)0, (sint)(numTexs - 1)));
 }
-
 
 ///===========================================================
 void CTextureMultiFile::setFileName(uint index, const char *fileName)
 {
 	_FileNames[index] = fileName;
 	if (index == _CurrSelectedTexture) touch();
-
 }
-
 
 ///===========================================================
 sint CTextureMultiFile::getTexIndex(uint index) const
@@ -66,7 +63,6 @@ sint CTextureMultiFile::getTexIndex(uint index) const
 	return usedTexture;
 }
 
-
 ///===========================================================
 void CTextureMultiFile::doGenerate(bool async)
 {
@@ -82,7 +78,7 @@ void CTextureMultiFile::doGenerate(bool async)
 }
 
 ///===========================================================
-void	CTextureMultiFile::serial(NLMISC::IStream &f)
+void CTextureMultiFile::serial(NLMISC::IStream &f)
 {
 	(void)f.serialVersion(0);
 
@@ -92,10 +88,9 @@ void	CTextureMultiFile::serial(NLMISC::IStream &f)
 	f.serialCont(_FileNames);
 	f.serial(_CurrSelectedTexture);
 
-	if(f.isReading())
+	if (f.isReading())
 		touch();
 }
-
 
 ///===========================================================
 const std::string &CTextureMultiFile::getTexNameByIndex(uint index) const
@@ -104,9 +99,8 @@ const std::string &CTextureMultiFile::getTexNameByIndex(uint index) const
 	return usedTexture == -1 ? DummyTexName : _FileNames[usedTexture];
 }
 
-
 ///===========================================================
-std::string		CTextureMultiFile::getShareName() const
+std::string CTextureMultiFile::getShareName() const
 {
 	return getTexNameByIndex(_CurrSelectedTexture);
 }
@@ -121,16 +115,14 @@ void CTextureMultiFile::selectTexture(uint index)
 	}
 }
 
-
 ///===========================================================
 ITexture *CTextureMultiFile::buildNonSelectableVersion(uint index)
 {
 	CTextureFile *tf = new CTextureFile(getTexNameByIndex(index));
 	// copy tex parameters
-	(ITexture &) *tf = (ITexture &) *this; // invoke ITexture = op for basics parameters
+	(ITexture &)*tf = (ITexture &)*this; // invoke ITexture = op for basics parameters
 	//
 	return tf;
 }
-
 
 } // NL3D

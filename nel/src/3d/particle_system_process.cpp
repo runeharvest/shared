@@ -30,7 +30,7 @@ std::string PSCurrName;
 // ***********************************************************************************************************
 CPSEnterLeave::CPSEnterLeave(const char *name)
 {
-	++ PSEnterLeaveDepth;
+	++PSEnterLeaveDepth;
 	Name = name;
 	if (PSEnterLeaveDepth <= PSEnterLeaveMaxDepth)
 	{
@@ -47,12 +47,10 @@ CPSEnterLeave::~CPSEnterLeave()
 		std::string indent(PSEnterLeaveDepth, ' ');
 		nlinfo("Leaving %s in %s", Name.c_str(), PSCurrName.c_str());
 	}
-	-- PSEnterLeaveDepth;
+	--PSEnterLeaveDepth;
 }
 
-
 namespace NL3D {
-
 
 /////////////////////////////////////////////
 // CParticleSystemProcess implementation   //
@@ -72,7 +70,6 @@ void CParticleSystemProcess::setOwner(CParticleSystem *ps)
 	if (_Owner) _Owner->addRefForUserSysCoordInfo(getUserMatrixUsageCount());
 }
 
-
 // ***********************************************************************************************************
 uint CParticleSystemProcess::getUserMatrixUsageCount() const
 {
@@ -84,7 +81,7 @@ uint CParticleSystemProcess::getUserMatrixUsageCount() const
 void CParticleSystemProcess::setMatrixMode(TPSMatrixMode matrixMode)
 {
 	NL_PS_FUNC(CParticleSystemProcess_setMatrixMode)
-	nlassert((uint) matrixMode <= PSMatrixModeCount);
+	nlassert((uint)matrixMode <= PSMatrixModeCount);
 	if (matrixMode == _MatrixMode) return;
 	if (_Owner) // notify the system that matrix mode has changed for that object
 	{
@@ -92,7 +89,6 @@ void CParticleSystemProcess::setMatrixMode(TPSMatrixMode matrixMode)
 	}
 	_MatrixMode = matrixMode;
 }
-
 
 // ***********************************************************************************************************
 CFontGenerator *CParticleSystemProcess::getFontGenerator(void)
@@ -125,8 +121,6 @@ const CFontManager *CParticleSystemProcess::getFontManager(void) const
 	nlassert(_Owner);
 	return _Owner->getFontManager();
 }
-
-
 
 // ***********************************************************************************************************
 void CParticleSystemProcess::serial(NLMISC::IStream &f)

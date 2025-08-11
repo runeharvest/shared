@@ -25,9 +25,7 @@
 
 // NOT TESTED, JUST COMPILED. FOR PURPOSE ONLY.
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 /**
@@ -37,37 +35,33 @@ namespace NL3D
  * \author Nevrax France
  * \date 2001
  */
-template<class T>
+template <class T>
 class CKey
 {
 public:
 	/// synonym for T.
-	typedef	T	TValueType;
+	typedef T TValueType;
 
 public:
-
 	/// Serial
-	void serial (NLMISC::IStream& f)
+	void serial(NLMISC::IStream &f)
 	{
 		// Version number
-		(void)f.serialVersion (0);
+		(void)f.serialVersion(0);
 
 		// Serial the value
-		f.serial (Value);
+		f.serial(Value);
 	};
 
 	/// The key value
-	T					Value;
+	T Value;
 
-
-// *********************
+	// *********************
 public:
 	// PRIVATE. used by ITrackKeyFramer, not serialised (compiled).
 	// 1/(nextKeyTime-thisKeyTime).
-	float				OODeltaTime;
-
+	float OODeltaTime;
 };
-
 
 // ***************************************************************************
 /**
@@ -77,44 +71,40 @@ public:
  * \author Nevrax France
  * \date 2001
  */
-template<class T>
+template <class T>
 class CKeyTCB : public CKey<T>
 {
 public:
-
 	/// Serial
-	void serial (NLMISC::IStream& f)
+	void serial(NLMISC::IStream &f)
 	{
 		// Version number
-		(void)f.serialVersion (0);
+		(void)f.serialVersion(0);
 
 		// Serial the value
-		f.serial (this->Value);
-		f.serial (Tension);
-		f.serial (Continuity);
-		f.serial (Bias);
-		f.serial (EaseTo);
-		f.serial (EaseFrom);
+		f.serial(this->Value);
+		f.serial(Tension);
+		f.serial(Continuity);
+		f.serial(Bias);
+		f.serial(EaseTo);
+		f.serial(EaseFrom);
 	};
 
-	float	Tension;
-	float	Continuity;
-	float	Bias;
-	float	EaseTo;
-	float	EaseFrom;
+	float Tension;
+	float Continuity;
+	float Bias;
+	float EaseTo;
+	float EaseFrom;
 
-
-// *********************
+	// *********************
 public:
 	// PRIVATE. used by ITrackKeyFramer, not serialised (compiled).
 	// computed tangents.
-	T		TanTo, TanFrom;
+	T TanTo, TanFrom;
 	// computed ease parameters, with next key.
-	float	Ease0, Ease1;
-	float	EaseK, EaseKOverEase0, EaseKOverEase1;
-
+	float Ease0, Ease1;
+	float EaseK, EaseKOverEase0, EaseKOverEase1;
 };
-
 
 // ***************************************************************************
 /**
@@ -124,22 +114,21 @@ public:
  * \author Nevrax France
  * \date 2001
  */
-template<class T>
+template <class T>
 class CKeyBezier : public CKey<T>
 {
 public:
-
 	/// Serial
-	void serial (NLMISC::IStream& f)
+	void serial(NLMISC::IStream &f)
 	{
 		// Version number
-		(void)f.serialVersion (0);
+		(void)f.serialVersion(0);
 
 		// Serial the value
-		f.serial (this->Value);
-		f.serial (InTan);
-		f.serial (OutTan);
-		f.serial (Step);
+		f.serial(this->Value);
+		f.serial(InTan);
+		f.serial(OutTan);
+		f.serial(Step);
 	};
 
 	/// \name Tangents.
@@ -153,17 +142,15 @@ public:
 	 *
 	 */
 	// @{
-	T		InTan;
-	T		OutTan;
-	bool	Step;
+	T InTan;
+	T OutTan;
+	bool Step;
 	// @}
 };
-
 
 // ***************************************************************************
 // Special implementation for Quaternions.
 // ***************************************************************************
-
 
 // ***************************************************************************
 /**
@@ -175,44 +162,42 @@ public:
  * \author Nevrax France
  * \date 2001
  */
-template<> class	CKeyTCB<NLMISC::CAngleAxis> : public CKey<NLMISC::CAngleAxis>
+template <>
+class CKeyTCB<NLMISC::CAngleAxis> : public CKey<NLMISC::CAngleAxis>
 {
 public:
-
 	/// Serial
-	void serial (NLMISC::IStream& f)
+	void serial(NLMISC::IStream &f)
 	{
 		// Version number
-		(void)f.serialVersion (0);
+		(void)f.serialVersion(0);
 
 		// Serial the value
-		f.serial (Value);
-		f.serial (Tension);
-		f.serial (Continuity);
-		f.serial (Bias);
-		f.serial (EaseTo);
-		f.serial (EaseFrom);
+		f.serial(Value);
+		f.serial(Tension);
+		f.serial(Continuity);
+		f.serial(Bias);
+		f.serial(EaseTo);
+		f.serial(EaseFrom);
 	};
 
-	float	Tension;
-	float	Continuity;
-	float	Bias;
-	float	EaseTo;
-	float	EaseFrom;
+	float Tension;
+	float Continuity;
+	float Bias;
+	float EaseTo;
+	float EaseFrom;
 
-
-// *********************
+	// *********************
 public:
 	// PRIVATE. used by ITrackKeyFramer, not serialised (compiled).
 	// Local AngleAxis to the preceding Key (axis is in local basis, unlike "Value" where the axis is in World space ).
-	NLMISC::CAngleAxis	LocalAngleAxis;
+	NLMISC::CAngleAxis LocalAngleAxis;
 	// computed quaternions/tangents.
-	NLMISC::CQuat		Quat, A, B;
+	NLMISC::CQuat Quat, A, B;
 	// computed ease parameters, with next key.
-	float	Ease0, Ease1;
-	float	EaseK, EaseKOverEase0, EaseKOverEase1;
+	float Ease0, Ease1;
+	float EaseK, EaseKOverEase0, EaseKOverEase1;
 };
-
 
 // ***************************************************************************
 /**
@@ -223,60 +208,54 @@ public:
  * \author Nevrax France
  * \date 2001
  */
-template<> class	CKeyBezier<NLMISC::CQuat> : public CKey<NLMISC::CQuat>
+template <>
+class CKeyBezier<NLMISC::CQuat> : public CKey<NLMISC::CQuat>
 {
 public:
-
 	/// Serial
-	void serial (NLMISC::IStream& f)
+	void serial(NLMISC::IStream &f)
 	{
 		// Version number
-		(void)f.serialVersion (0);
+		(void)f.serialVersion(0);
 
 		// Serial the value
-		f.serial (Value);
+		f.serial(Value);
 	};
 
-
-// *********************
+	// *********************
 public:
 	// PRIVATE. used by ITrackKeyFramer, not serialised (compiled).
 	// computed quaternions/tangents.
-	NLMISC::CQuat		A;
+	NLMISC::CQuat A;
 };
-
 
 // ***************************************************************************
 // Predefined types
 // ***************************************************************************
 
 // ** Const - Linear keys
-typedef	CKey<std::string>		CKeyString;
-typedef	CKey<bool>				CKeyBool;
-typedef	CKey<float>				CKeyFloat;
-typedef	CKey<NLMISC::CVector>	CKeyVector;
-typedef	CKey<NLMISC::CQuat>		CKeyQuat;
-typedef	CKey<NLMISC::CRGBA>		CKeyRGBA;
-typedef	CKey<sint32>			CKeyInt;
+typedef CKey<std::string> CKeyString;
+typedef CKey<bool> CKeyBool;
+typedef CKey<float> CKeyFloat;
+typedef CKey<NLMISC::CVector> CKeyVector;
+typedef CKey<NLMISC::CQuat> CKeyQuat;
+typedef CKey<NLMISC::CRGBA> CKeyRGBA;
+typedef CKey<sint32> CKeyInt;
 // NB: For precision and optimisation (space/speed), RGBA and sint32 const/linear tracks use CKeyRGBA and CKeyInt keys repsectively.
 
-
 // ** TCB keys
-typedef	CKeyTCB<float>				CKeyTCBFloat;
-typedef	CKeyTCB<NLMISC::CVector>	CKeyTCBVector;
-typedef	CKeyTCB<NLMISC::CAngleAxis>	CKeyTCBQuat;
+typedef CKeyTCB<float> CKeyTCBFloat;
+typedef CKeyTCB<NLMISC::CVector> CKeyTCBVector;
+typedef CKeyTCB<NLMISC::CAngleAxis> CKeyTCBQuat;
 // NB: RGBA and sint32 TCB tracks use CKeyTCBVector and CKeyTCBFloat respectively.
 
 // ** Bezier keys
-typedef	CKeyBezier<float>			CKeyBezierFloat;
-typedef	CKeyBezier<NLMISC::CVector>	CKeyBezierVector;
-typedef	CKeyBezier<NLMISC::CQuat>	CKeyBezierQuat;
+typedef CKeyBezier<float> CKeyBezierFloat;
+typedef CKeyBezier<NLMISC::CVector> CKeyBezierVector;
+typedef CKeyBezier<NLMISC::CQuat> CKeyBezierQuat;
 // NB: RGBA and sint32 bezier tracks use CKeyBezierVector and CKeyBezierFloat respectively.
 
-
-
 } // NL3D
-
 
 #endif // NL_KEY_H
 

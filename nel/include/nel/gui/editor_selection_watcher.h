@@ -20,15 +20,12 @@
 #include <string>
 #include <vector>
 
-namespace NLGUI
+namespace NLGUI {
+/// Watches the currently selected GUI widget
+class IEditorSelectionWatcher
 {
-	/// Watches the currently selected GUI widget
-	class IEditorSelectionWatcher
-	{
-	public:
-
-		/// Notifies the watcher about the change
-		virtual void selectionChanged() = 0;
-	};
+public:
+	/// Notifies the watcher about the change
+	virtual void selectionChanged() = 0;
+};
 }
-

@@ -22,34 +22,32 @@
 
 #include "nel/gui/group_editbox.h"
 
-namespace NLGUI
+namespace NLGUI {
+/// Decorated CGroupEditBox
+class CGroupEditBoxDecor : public CGroupEditBox
 {
-	/// Decorated CGroupEditBox
-	class CGroupEditBoxDecor : public CGroupEditBox
-	{
-	public:
-		DECLARE_UI_CLASS( CGroupEditBoxDecor )
+public:
+	DECLARE_UI_CLASS(CGroupEditBoxDecor)
 
-		CGroupEditBoxDecor( const TCtorParam &param );
-		~CGroupEditBoxDecor();
+	CGroupEditBoxDecor(const TCtorParam &param);
+	~CGroupEditBoxDecor();
 
-		void moveBy( sint32 x, sint32 y );
+	void moveBy(sint32 x, sint32 y);
 
-		void setIdRecurse( const std::string &newID );
+	void setIdRecurse(const std::string &newID);
 
-		std::string getProperty( const std::string &name ) const;
-		void setProperty( const std::string &name, const std::string &value );
-		xmlNodePtr serialize( xmlNodePtr parentNode, const char *type ) const;
-		bool parse( xmlNodePtr cur, CInterfaceGroup *parent );
-		void draw();
-		void updateCoords();
+	std::string getProperty(const std::string &name) const;
+	void setProperty(const std::string &name, const std::string &value);
+	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
+	bool parse(xmlNodePtr cur, CInterfaceGroup *parent);
+	void draw();
+	void updateCoords();
 
-		static void forceLink();
+	static void forceLink();
 
-	private:
-		class EBDPrivate *_Pvt;
-	};
+private:
+	class EBDPrivate *_Pvt;
+};
 }
 
 #endif
-

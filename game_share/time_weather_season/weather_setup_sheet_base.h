@@ -14,25 +14,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_WEATHER_SETUP_SHEET_BASE_H
 #define RY_WEATHER_SETUP_SHEET_BASE_H
-
 
 #include "../fog_type.h"
 #include "nel/misc/string_mapper.h"
 #include "nel/misc/rgba.h"
 
-namespace NLGEORGES
-{
-	class UForm;
-	class UFormElm;
+namespace NLGEORGES {
+class UForm;
+class UFormElm;
 }
 
-namespace NLMISC
-{
-	class CSheetId;
+namespace NLMISC {
+class CSheetId;
 }
 
 // state of weather, not including clouds
@@ -44,49 +39,49 @@ public:
 	struct CFXInfos
 	{
 		std::string Name;
-		float		Ratio;
+		float Ratio;
 
 		CFXInfos() { Ratio = 0.0f; }
 
-		void		serial(NLMISC::IStream &f)
+		void serial(NLMISC::IStream &f)
 		{
 			f.serial(Name, Ratio);
 		}
 	};
 	// Fog (main & canopy)
-	float		  FogRatio;
+	float FogRatio;
 	NLMISC::CRGBA FogColorDay;
 	NLMISC::CRGBA FogColorDusk;
 	NLMISC::CRGBA FogColorNight;
-	float         FogNear[NumFogType];
-	float		  FogFar[NumFogType];
-	float		  FogGradientFactor; // factor for the fog gradient
+	float FogNear[NumFogType];
+	float FogFar[NumFogType];
+	float FogGradientFactor; // factor for the fog gradient
 	// Lighting
-	float		  Lighting;
+	float Lighting;
 	/** Bg read from the sheet
- 	  */
-	std::string   DayBackground;
-	std::string   DuskBackground;
-	std::string   NightBackground;
+	 */
+	std::string DayBackground;
+	std::string DuskBackground;
+	std::string NightBackground;
 
 	// Wind
-	float		  WindIntensity;
+	float WindIntensity;
 	// FX
 	std::vector<CFXInfos> FXInfos;
 	// Thunder
-	float		  ThunderIntensity;
+	float ThunderIntensity;
 	NLMISC::CRGBA ThunderColor;
 
-	std::string   LocalizedName;
+	std::string LocalizedName;
 
 public:
 	// default ctor
 	CWeatherStateSheet();
 	/** Build that weather state from a georges sheet
-	  */
-	void				 build(const NLGEORGES::UFormElm &item);
+	 */
+	void build(const NLGEORGES::UFormElm &item);
 	//
-	void				 serial(NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 };
 
 // state of weather, including clouds
@@ -99,16 +94,16 @@ public:
 	NLMISC::CRGBA DiffuseNight;
 	NLMISC::CRGBA AmbientDusk;
 	NLMISC::CRGBA DiffuseDusk;
-	uint32		  NumClouds;
-	float		  DiffusionSpeed;
+	uint32 NumClouds;
+	float DiffusionSpeed;
+
 public:
 	CCloudStateSheet();
 	// Build from a georges sheet
-	void				 build(const NLGEORGES::UFormElm &item);
+	void build(const NLGEORGES::UFormElm &item);
 	//
-	void				serial(NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 };
-
 
 /**
  * Class to manage weather setup sheets
@@ -120,8 +115,9 @@ class CWeatherSetupSheetBase
 {
 public:
 	CWeatherStateSheet WeatherState;
-	CCloudStateSheet   CloudState;
-	NLMISC::TStringId  SetupName;
+	CCloudStateSheet CloudState;
+	NLMISC::TStringId SetupName;
+
 public:
 	// ctor
 	CWeatherSetupSheetBase();
@@ -130,13 +126,9 @@ public:
 	virtual void serial(NLMISC::IStream &f);
 
 	//
-	void readGeorges (const NLGEORGES::UForm *form, const NLMISC::CSheetId &sheetId);
-	void removed() const {}
+	void readGeorges(const NLGEORGES::UForm *form, const NLMISC::CSheetId &sheetId);
+	void removed() const { }
 	static uint32 getVersion() { return 0; }
 };
-
-
-
-
 
 #endif

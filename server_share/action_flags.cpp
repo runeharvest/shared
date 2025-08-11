@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 // nel
@@ -27,28 +25,24 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace RYZOMACTIONFLAGS
+namespace RYZOMACTIONFLAGS {
+// The conversion table
+const CStringConversion<TActionFlag>::CPair stringTable[] = {
+	{ "Attacks", Attacks },
+	{ "Undefined", Undefined },
+};
+
+CStringConversion<TActionFlag> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]), Undefined);
+
+// convert item family id to item family name string
+const std::string &toString(TActionFlag flag)
 {
-	// The conversion table
-	const CStringConversion<TActionFlag>::CPair stringTable [] =
-	{
-		{ "Attacks", Attacks },
-		{ "Undefined", Undefined },
-	};		
+	return conversion.toString(flag);
+}
 
-	CStringConversion<TActionFlag> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]),  Undefined);
-	
-
-	// convert item family id to item family name string
-	const std::string& toString( TActionFlag flag )
-	{
-		return conversion.toString(flag);
-	}
-
-	
-	// convert item type name to item type enum value
-	TActionFlag toActionFlag( const std::string& str )
-	{
-		return conversion.fromString(str);
-	}
+// convert item type name to item type enum value
+TActionFlag toActionFlag(const std::string &str)
+{
+	return conversion.fromString(str);
+}
 }; // RYZOMACTIONFLAGS

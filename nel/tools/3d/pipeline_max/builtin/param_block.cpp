@@ -42,14 +42,13 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CParamBlock::CParamBlock(CScene *scene) : CReferenceTarget(scene)
+CParamBlock::CParamBlock(CScene *scene)
+    : CReferenceTarget(scene)
 {
-
 }
 
 CParamBlock::~CParamBlock()
 {
-
 }
 
 } /* namespace BUILTIN */

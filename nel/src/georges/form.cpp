@@ -33,33 +33,32 @@
 
 using namespace NLMISC;
 
-namespace NLGEORGES
-{
+namespace NLGEORGES {
 
 // ***************************************************************************
 // Misc
 // ***************************************************************************
 
-void warning (bool exception, const char *format, ... )
+void warning(bool exception, const char *format, ...)
 {
 	// Make a buffer string
 	va_list args;
-	va_start( args, format );
+	va_start(args, format);
 	char buffer[1024];
-	vsnprintf( buffer, 1024, format, args );
-	va_end( args );
+	vsnprintf(buffer, 1024, format, args);
+	va_end(args);
 
 	// Set the warning
 	if (exception)
 	{
 		// Make an error message
 		char tmp[1024];
-		smprintf (tmp, 1024, "NeL::Georges %s", buffer);
-		throw EXmlParsingError (tmp);
+		smprintf(tmp, 1024, "NeL::Georges %s", buffer);
+		throw EXmlParsingError(tmp);
 	}
 	else
 	{
-		nlwarning ("NeL::Georges %s", buffer);
+		nlwarning("NeL::Georges %s", buffer);
 	}
 }
 
@@ -67,20 +66,20 @@ void warning (bool exception, const char *format, ... )
 // UForm
 // ***************************************************************************
 
-UForm::~UForm ()
+UForm::~UForm()
 {
 }
 
 // ***************************************************************************
 
-UFormElm& CForm::getRootNode ()
+UFormElm &CForm::getRootNode()
 {
 	return Elements;
 }
 
 // ***************************************************************************
 
-const UFormElm& CForm::getRootNode () const
+const UFormElm &CForm::getRootNode() const
 {
 	return Elements;
 }
@@ -89,21 +88,22 @@ const UFormElm& CForm::getRootNode () const
 // CForm
 // ***************************************************************************
 
-CForm::CForm () : Elements (this, NULL, NULL, 0xffffffff)
+CForm::CForm()
+    : Elements(this, NULL, NULL, 0xffffffff)
 {
 	uint i;
-	for (i=0; i<HeldElementCount; i++)
+	for (i = 0; i < HeldElementCount; i++)
 	{
-		HeldElements[i] = new CFormElmStruct (this, NULL, NULL, 0xffffffff);
+		HeldElements[i] = new CFormElmStruct(this, NULL, NULL, 0xffffffff);
 	}
 }
 
 // ***************************************************************************
 
-CForm::~CForm ()
+CForm::~CForm()
 {
 	uint i;
-	for (i=0; i<HeldElementCount; i++)
+	for (i = 0; i < HeldElementCount; i++)
 	{
 		delete HeldElements[i];
 	}
@@ -111,61 +111,61 @@ CForm::~CForm ()
 
 // ***************************************************************************
 
-void CForm::write (xmlDocPtr doc, const std::string &filename)
+void CForm::write(xmlDocPtr doc, const std::string &filename)
 {
 	// Save the filename
 	if (!filename.empty())
-		_Filename = CFile::getFilename (filename);
+		_Filename = CFile::getFilename(filename);
 
 	// Create the first node
-	xmlNodePtr node = xmlNewDocNode (doc, NULL, (const xmlChar*)"FORM", NULL);
-	xmlDocSetRootElement (doc, node);
+	xmlNodePtr node = xmlNewDocNode(doc, NULL, (const xmlChar *)"FORM", NULL);
+	xmlDocSetRootElement(doc, node);
 
 	// List of parent
-	for (uint parent=0; parent<ParentList.size (); parent++)
+	for (uint parent = 0; parent < ParentList.size(); parent++)
 	{
 		// Parent name not empty ?
 		if (!(ParentList[parent].ParentFilename.empty()))
 		{
 			// Add a parent node
-			xmlNodePtr parentNode = xmlNewChild ( node, NULL, (const xmlChar*)"PARENT", NULL );
-			xmlSetProp (parentNode, (const xmlChar*)"Filename", (const xmlChar*)ParentList[parent].ParentFilename.c_str());
+			xmlNodePtr parentNode = xmlNewChild(node, NULL, (const xmlChar *)"PARENT", NULL);
+			xmlSetProp(parentNode, (const xmlChar *)"Filename", (const xmlChar *)ParentList[parent].ParentFilename.c_str());
 		}
 	}
 
 	// Write elements
-	Elements.write (node, this, std::string(), true);
+	Elements.write(node, this, std::string(), true);
 
 	// Write held elements
 	uint i;
-	for (i=0; i<HeldElementCount; i++)
+	for (i = 0; i < HeldElementCount; i++)
 	{
-		HeldElements[i]->write (node, this, std::string(), true);
+		HeldElements[i]->write(node, this, std::string(), true);
 	}
 
 	// Header
-	Header.write (node);
+	Header.write(node);
 }
 
 // ***************************************************************************
 
-void CForm::readParent (const char *parent, CFormLoader &loader)
+void CForm::readParent(const char *parent, CFormLoader &loader)
 {
 	// Load the parent
-	CForm *theParent = (CForm*)loader.loadForm (parent);
+	CForm *theParent = (CForm *)loader.loadForm(parent);
 	if (theParent != NULL)
 	{
 		// Set the parent
-		if (!insertParent (getParentCount (), parent, theParent))
+		if (!insertParent(getParentCount(), parent, theParent))
 		{
 			// Make an error message
 			std::string parentName = parent;
 
 			// Delete the value
-			xmlFree ((void*)parent);
+			xmlFree((void *)parent);
 
 			// Throw exception
-			warning (true, "readParent", "Can't set the parent FORM named (%s). Check if it is the same form or if it use a differnt formDfn.", parentName.c_str ());
+			warning(true, "readParent", "Can't set the parent FORM named (%s). Check if it is the same form or if it use a differnt formDfn.", parentName.c_str());
 		}
 	}
 	else
@@ -174,123 +174,123 @@ void CForm::readParent (const char *parent, CFormLoader &loader)
 		std::string parentName = parent;
 
 		// Delete the value
-		xmlFree ((void*)parent);
+		xmlFree((void *)parent);
 
 		// Throw exception
-		warning (true, "readParent", "Can't load the parent FORM named (%s).", parentName.c_str ());
+		warning(true, "readParent", "Can't load the parent FORM named (%s).", parentName.c_str());
 	}
 }
 
 // ***************************************************************************
 
-void CForm::read (xmlNodePtr node, CFormLoader &loader, CFormDfn *dfn, const std::string &filename)
+void CForm::read(xmlNodePtr node, CFormLoader &loader, CFormDfn *dfn, const std::string &filename)
 {
 	// Save the filename
-	_Filename = CFile::getFilename (filename);
+	_Filename = CFile::getFilename(filename);
 
 	// Reset form
-	clean ();
+	clean();
 
 	// Save the dfn
 	_Dfn = dfn;
 
 	// Check node name
-	if ( ((const char*)node->name == NULL) || (strcmp ((const char*)node->name, "FORM") != 0) )
+	if (((const char *)node->name == NULL) || (strcmp((const char *)node->name, "FORM") != 0))
 	{
 		// Make an error message
-		warning (true, "read", "XML Syntax error in block line %d, node (%s) should be FORM.",
-			(sint)node->line, node->name);
+		warning(true, "read", "XML Syntax error in block line %d, node (%s) should be FORM.",
+		    (sint)node->line, node->name);
 	}
 
 	// Get first struct node
-	xmlNodePtr child = CIXml::getFirstChildNode (node, "STRUCT");
+	xmlNodePtr child = CIXml::getFirstChildNode(node, "STRUCT");
 	if (child == NULL)
 	{
 		// Throw exception
-		warning (true, "read", "Syntax error in block line %d, node (%s) should have a STRUCT child node.",
-			(sint)node->line, node->name);
+		warning(true, "read", "Syntax error in block line %d, node (%s) should have a STRUCT child node.",
+		    (sint)node->line, node->name);
 	}
 
 	// Read the struct
-	Elements.read (child, loader, dfn, this);
+	Elements.read(child, loader, dfn, this);
 
 	// Get next struct node
-	child = CIXml::getNextChildNode (node, "STRUCT");
+	child = CIXml::getNextChildNode(node, "STRUCT");
 	uint index = 0;
-	while ( (child != NULL) && (index < HeldElementCount))
+	while ((child != NULL) && (index < HeldElementCount))
 	{
-		HeldElements[index]->read (child, loader, dfn, this);
+		HeldElements[index]->read(child, loader, dfn, this);
 		index++;
 	}
 	while (index < HeldElementCount)
 	{
 		// Build the Form
-		HeldElements[index]->build (dfn);
+		HeldElements[index]->build(dfn);
 		index++;
 	}
 
 	// Get the old parent parameter
-	const char *parent = (const char*)xmlGetProp (node, (xmlChar*)"Parent");
+	const char *parent = (const char *)xmlGetProp(node, (xmlChar *)"Parent");
 	if (parent)
 	{
 		// Add a parent, xmlFree is done by readParent
-		readParent (parent, loader);
+		readParent(parent, loader);
 	}
 
 	// Read the new parent nodes
-	uint parentCount = CIXml::countChildren (node, "PARENT");
+	uint parentCount = CIXml::countChildren(node, "PARENT");
 
 	// Reserve some parents
-	ParentList.reserve (ParentList.size () + parentCount);
+	ParentList.reserve(ParentList.size() + parentCount);
 
 	// Enum children node
-	child = CIXml::getFirstChildNode (node, "PARENT");
+	child = CIXml::getFirstChildNode(node, "PARENT");
 	while (child)
 	{
-		parent = (const char*)xmlGetProp (child, (xmlChar*)"Filename");
+		parent = (const char *)xmlGetProp(child, (xmlChar *)"Filename");
 
 		// Add a parent, xmlFree is done by readParent
-		readParent (parent, loader);
+		readParent(parent, loader);
 
 		// Next node <PARENT>
-		child = CIXml::getNextChildNode (child, "PARENT");
+		child = CIXml::getNextChildNode(child, "PARENT");
 	}
 
 	// Read the header
-	Header.read (node);
+	Header.read(node);
 }
 
 // ***************************************************************************
 
-const std::string &CForm::getComment () const
+const std::string &CForm::getComment() const
 {
 	return Header.Comments;
 }
 
 // ***************************************************************************
 
-void CForm::write (NLMISC::IStream &stream)
+void CForm::write(NLMISC::IStream &stream)
 {
 	// Xml stream
 	COXml xmlStream;
-	xmlStream.init (&stream);
+	xmlStream.init(&stream);
 
 	// Write the file
-	write (xmlStream.getDocument (), std::string());
+	write(xmlStream.getDocument(), std::string());
 }
 
 // ***************************************************************************
 
-bool CForm::insertParent (uint before, const std::string &filename, CForm *parent)
+bool CForm::insertParent(uint before, const std::string &filename, CForm *parent)
 {
 	// Set or reset ?
-	nlassert (parent);
+	nlassert(parent);
 
 	// Must have the same DFN
 	if (parent->Elements.FormDfn == Elements.FormDfn)
 	{
 		// Set members
-		std::vector<CParent>::iterator ite = ParentList.insert (ParentList.begin() + before, CParent());
+		std::vector<CParent>::iterator ite = ParentList.insert(ParentList.begin() + before, CParent());
 		ite->Parent = parent;
 		ite->ParentFilename = filename;
 
@@ -299,7 +299,7 @@ bool CForm::insertParent (uint before, const std::string &filename, CForm *paren
 	else
 	{
 		// Output an error
-		warning (false, "insertParent", "Can't insert parent form (%s) that has not the same DFN.", filename.c_str());
+		warning(false, "insertParent", "Can't insert parent form (%s) that has not the same DFN.", filename.c_str());
 	}
 
 	return false;
@@ -307,106 +307,105 @@ bool CForm::insertParent (uint before, const std::string &filename, CForm *paren
 
 // ***************************************************************************
 
-void CForm::removeParent (uint parent)
+void CForm::removeParent(uint parent)
 {
-	ParentList.erase (ParentList.begin() + parent);
+	ParentList.erase(ParentList.begin() + parent);
 }
 
 // ***************************************************************************
 
-CForm *CForm::getParent (uint parent) const
+CForm *CForm::getParent(uint parent) const
 {
 	return ParentList[parent].Parent;
 }
 
 // ***************************************************************************
 
-const std::string &CForm::getParentFilename (uint parent) const
+const std::string &CForm::getParentFilename(uint parent) const
 {
 	return ParentList[parent].ParentFilename;
 }
 
 // ***************************************************************************
 
-uint CForm::getParentCount () const
+uint CForm::getParentCount() const
 {
-	return (uint)ParentList.size ();
+	return (uint)ParentList.size();
 }
 
 // ***************************************************************************
 
-void CForm::clean ()
+void CForm::clean()
 {
-	clearParents ();
+	clearParents();
 }
 
 // ***************************************************************************
 
-void CForm::clearParents ()
+void CForm::clearParents()
 {
-	ParentList.clear ();
+	ParentList.clear();
 }
 
 // ***************************************************************************
 
-const std::string &CForm::getFilename () const
+const std::string &CForm::getFilename() const
 {
 	return _Filename;
 }
 
 // ***************************************************************************
 
-void CForm::warning (bool exception, const std::string &function, const char *format, ... ) const
+void CForm::warning(bool exception, const std::string &function, const char *format, ...) const
 {
 	// Make a buffer string
 	va_list args;
-	va_start( args, format );
+	va_start(args, format);
 	char buffer[1024];
-	vsnprintf( buffer, 1024, format, args );
-	va_end( args );
+	vsnprintf(buffer, 1024, format, args);
+	va_end(args);
 
 	// Set the warning
-	NLGEORGES::warning (exception, "(CForm::%s) in form (%s) : %s", function.c_str(), _Filename.c_str (), buffer);
+	NLGEORGES::warning(exception, "(CForm::%s) in form (%s) : %s", function.c_str(), _Filename.c_str(), buffer);
 }
 
 // ***************************************************************************
 
-void CForm::getDependencies (std::set<std::string> &dependencies) const
+void CForm::getDependencies(std::set<std::string> &dependencies) const
 {
 	// Add me
-	if (dependencies.insert (toLowerAscii(CFile::getFilename (_Filename))).second)
+	if (dependencies.insert(toLowerAscii(CFile::getFilename(_Filename))).second)
 	{
 		// Add parents
 		uint i;
-		for (i=0; i<ParentList.size (); i++)
+		for (i = 0; i < ParentList.size(); i++)
 		{
 			if (ParentList[i].Parent)
 			{
-				ParentList[i].Parent->getDependencies (dependencies);
+				ParentList[i].Parent->getDependencies(dependencies);
 			}
 		}
 
 		// Add elements
-		Elements.getDependencies (dependencies);
+		Elements.getDependencies(dependencies);
 	}
 }
 
 // ***************************************************************************
 
-uint CForm::getNumParent () const
+uint CForm::getNumParent() const
 {
 	return getParentCount();
 }
 
 // ***************************************************************************
 
-UForm *CForm::getParentForm (uint parent) const
+UForm *CForm::getParentForm(uint parent) const
 {
-	CForm *form = getParent (parent);
+	CForm *form = getParent(parent);
 	return form;
 }
 
 // ***************************************************************************
 
 } // NLGEORGES
-

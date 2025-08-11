@@ -26,40 +26,40 @@
 #include "nel/misc/atomic.h"
 
 #ifdef NL_OS_WINDOWS
-#	ifndef NL_COMP_MINGW
-#		define NOMINMAX
-#	endif
-#	include <winsock2.h>
-#   include <ws2ipdef.h>
-#	include <windows.h>
-#	define socklen_t int
-#	define ERROR_NUM WSAGetLastError()
-#	define ERROR_WOULDBLOCK WSAEWOULDBLOCK
+#ifndef NL_COMP_MINGW
+#define NOMINMAX
+#endif
+#include <winsock2.h>
+#include <ws2ipdef.h>
+#include <windows.h>
+#define socklen_t int
+#define ERROR_NUM WSAGetLastError()
+#define ERROR_WOULDBLOCK WSAEWOULDBLOCK
 
 #elif defined NL_OS_UNIX
 
-#	include <unistd.h>
-#	include <sys/types.h>
-#	include <sys/time.h>
-#	include <sys/socket.h>
-#	include <sys/ioctl.h>
-#	include <netinet/in.h>
-#	include <netinet/tcp.h>
-#	include <arpa/inet.h>
-#	include <netdb.h>
-#	include <fcntl.h>
-#	include <cerrno>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <fcntl.h>
+#include <cerrno>
 
-#	define SOCKET_ERROR -1
-#	define INVALID_SOCKET -1
-#	define ERROR_NUM errno
-#	define ERROR_WOULDBLOCK EWOULDBLOCK
-#	define ERROR_MSG strerror(errno)
+#define SOCKET_ERROR -1
+#define INVALID_SOCKET -1
+#define ERROR_NUM errno
+#define ERROR_WOULDBLOCK EWOULDBLOCK
+#define ERROR_MSG strerror(errno)
 
 // BSD compatible constant
-#	ifndef FNDELAY
-#		define FNDELAY O_NDELAY
-#	endif
+#ifndef FNDELAY
+#define FNDELAY O_NDELAY
+#endif
 
 typedef int SOCKET;
 
@@ -83,7 +83,6 @@ using namespace NLMISC;
 
 namespace NLNET {
 
-
 namespace /* anonymous */ {
 NLMISC::CAtomicBool s_Initialized;
 #ifdef NL_OS_WINDOWS
@@ -94,28 +93,28 @@ NLMISC::CAtomicInt s_WsaInitCount;
 /*
  * ESocket constructor
  */
-ESocket::ESocket( const char *reason, bool systemerror, CInetHost *addr )
+ESocket::ESocket(const char *reason, bool systemerror, CInetHost *addr)
 {
-/*it doesnt work on linux, should do something more cool
-  	std::stringstream ss;
-	ss << "Socket error: " << reason;
-	if ( systemerror )
-	{
-		ss << " (" << ERROR_NUM;
-#ifdef NL_OS_UNIX
-		ss << ": " << ERROR_MSG;
-#endif
-		ss << ") " << std::endl;
-	}
-	_Reason = ss.str();
-  */
-  	_Reason = "Socket error: ";
+	/*it doesnt work on linux, should do something more cool
+	    std::stringstream ss;
+	    ss << "Socket error: " << reason;
+	    if ( systemerror )
+	    {
+	        ss << " (" << ERROR_NUM;
+	#ifdef NL_OS_UNIX
+	        ss << ": " << ERROR_MSG;
+	#endif
+	        ss << ") " << std::endl;
+	    }
+	    _Reason = ss.str();
+	  */
+	_Reason = "Socket error: ";
 	uint errornum = CSock::getLastError();
 	char str[256];
-	if ( addr != NULL )
+	if (addr != NULL)
 	{
 		// Version with address
-		smprintf( str, 256, reason, addr->toStringLong().c_str() ); // reason *must* contain "%s"
+		smprintf(str, 256, reason, addr->toStringLong().c_str()); // reason *must* contain "%s"
 		_Reason += str;
 	}
 	else
@@ -123,22 +122,20 @@ ESocket::ESocket( const char *reason, bool systemerror, CInetHost *addr )
 		// Version without address
 		_Reason += reason;
 	}
-	if ( systemerror )
+	if (systemerror)
 	{
 		_Reason += " (";
-		smprintf( str, 256, "%d", errornum );
+		smprintf(str, 256, "%d", errornum);
 		_Reason += str;
-		if ( errornum != 0 )
+		if (errornum != 0)
 		{
 			_Reason += ": ";
-			_Reason += CSock::errorString( errornum );
+			_Reason += CSock::errorString(errornum);
 		}
 		_Reason += ")";
 	}
-	LNETL0_INFO( "LNETL0: Exception will be launched: %s", _Reason.c_str() );
-
+	LNETL0_INFO("LNETL0: Exception will be launched: %s", _Reason.c_str());
 }
-
 
 /*
  * Initializes the network engine if it is not already done (under Windows, calls WSAStartup()).
@@ -148,11 +145,11 @@ void CSock::initNetwork()
 #ifdef NL_OS_WINDOWS
 	if (!s_Initialized.load(NLMISC::TMemoryOrderRelaxed))
 	{
-		WORD winsock_version = MAKEWORD( 2, 2 );
+		WORD winsock_version = MAKEWORD(2, 2);
 		WSADATA wsaData;
-		if ( WSAStartup( winsock_version, &wsaData ) != 0 )
+		if (WSAStartup(winsock_version, &wsaData) != 0)
 		{
-			throw ESocket( "Winsock initialization failed" );
+			throw ESocket("Winsock initialization failed");
 		}
 		s_Initialized = true;
 		// Ok if it gets initialized more than once due to multiple threads reaching here,
@@ -192,7 +189,6 @@ void CSock::releaseNetwork()
 #endif
 }
 
-
 /* Returns the code of the last error that has occurred.
  * Note: This code is platform-dependant. On Unix, it is errno; on Windows it is the Winsock error code.
  * See also errorString()
@@ -202,48 +198,44 @@ uint CSock::getLastError()
 	return (uint)ERROR_NUM;
 }
 
-
 /*
  * Returns a string explaining the network error (see getLastError())
  */
-std::string CSock::errorString( uint errorcode )
+std::string CSock::errorString(uint errorcode)
 {
 #ifdef NL_OS_WINDOWS
-	switch( errorcode )
+	switch (errorcode)
 	{
-	case WSAEINTR		 /*10004*/: return "Blocking operation interrupted";
-	case WSAEINVAL		 /*10022*/: return "Invalid socket (maybe not bound) or argument";
-	case WSAEMFILE		 /*10024*/: return "Too many open sockets";
-	case WSAENOTSOCK	 /*10038*/: return "Socket operation on nonsocket (maybe invalid select descriptor)";
-	case WSAEMSGSIZE	 /*10040*/: return "Message too long";
-	case WSAEADDRINUSE   /*10048*/: return "Address already in use (is this service already running in this computer?)";
-	case WSAEADDRNOTAVAIL/*10049*/: return "Address not available";
-	case WSAENETDOWN	 /*10050*/: return "Network is down";
-	case WSAENETUNREACH  /*10051*/: return "Network is unreachable";
-	case WSAECONNRESET   /*10054*/: return "Connection reset by peer";
-	case WSAENOBUFS		 /*10055*/: return "No buffer space available; please close applications or reboot";
-	case WSAESHUTDOWN	 /*10058*/: return "Cannot send/receive after socket shutdown";
-	case WSAETIMEDOUT	 /*10060*/: return "Connection timed-out";
-	case WSAECONNREFUSED /*10061*/:	return "Connection refused, the server may be offline";
+	case WSAEINTR /*10004*/: return "Blocking operation interrupted";
+	case WSAEINVAL /*10022*/: return "Invalid socket (maybe not bound) or argument";
+	case WSAEMFILE /*10024*/: return "Too many open sockets";
+	case WSAENOTSOCK /*10038*/: return "Socket operation on nonsocket (maybe invalid select descriptor)";
+	case WSAEMSGSIZE /*10040*/: return "Message too long";
+	case WSAEADDRINUSE /*10048*/: return "Address already in use (is this service already running in this computer?)";
+	case WSAEADDRNOTAVAIL /*10049*/: return "Address not available";
+	case WSAENETDOWN /*10050*/: return "Network is down";
+	case WSAENETUNREACH /*10051*/: return "Network is unreachable";
+	case WSAECONNRESET /*10054*/: return "Connection reset by peer";
+	case WSAENOBUFS /*10055*/: return "No buffer space available; please close applications or reboot";
+	case WSAESHUTDOWN /*10058*/: return "Cannot send/receive after socket shutdown";
+	case WSAETIMEDOUT /*10060*/: return "Connection timed-out";
+	case WSAECONNREFUSED /*10061*/: return "Connection refused, the server may be offline";
 	case WSAEHOSTUNREACH /*10065*/: return "Remote host is unreachable";
 	case WSANOTINITIALISED /*093*/: return "'Windows Sockets' not initialized";
-	default:						return "";
+	default: return "";
 	}
 #elif defined NL_OS_UNIX
-	return std::string( strerror( errorcode ) );
+	return std::string(strerror(errorcode));
 #endif
-
 }
-
-
 
 /*
  * Constructor
  */
 CSock::CSock(bool logging)
     : _Sock(INVALID_SOCKET)
-	, _LocalAddr(false)
-	, _RemoteAddr(false)
+    , _LocalAddr(false)
+    , _RemoteAddr(false)
     , _Logging(logging)
     , _NonBlocking(false)
     , _BytesReceived(0)
@@ -257,8 +249,8 @@ CSock::CSock(bool logging)
 {
 	nlassert(s_Initialized);
 	/*{
-		CSynchronized<bool>::CAccessor sync( &_SyncConnected );
-		sync.value() = false;
+	    CSynchronized<bool>::CAccessor sync( &_SyncConnected );
+	    sync.value() = false;
 	}*/
 	_Connected = false;
 }
@@ -279,15 +271,15 @@ CSock::CSock(SOCKET sock, const CInetAddress &remoteaddr)
 {
 	nlassert(s_Initialized);
 	/*{
-		CSynchronized<bool>::CAccessor sync( &_SyncConnected );
-		sync.value() = true;
+	    CSynchronized<bool>::CAccessor sync( &_SyncConnected );
+	    sync.value() = true;
 	}*/
 	_Connected = true;
 
 	// Check remote address
-	if ( ! _RemoteAddr.isValid() )
+	if (!_RemoteAddr.isValid())
 	{
-		throw ESocket( "Could not init a socket object with an invalid address", false );
+		throw ESocket("Could not init a socket object with an invalid address", false);
 	}
 
 	// Get local socket name
@@ -314,7 +306,7 @@ static SOCKET createSocketInternal(int &family, int familyA, int familyB, int ty
 	if (res == INVALID_SOCKET)
 	{
 		// Fallback to IPv4
-		nlwarning("Could not create a socket of the preferred socket family %i, create a socket with family %i, the system may lack IPv6 support", familyA , familyB);
+		nlwarning("Could not create a socket of the preferred socket family %i, create a socket with family %i, the system may lack IPv6 support", familyA, familyB);
 		res = (SOCKET)socket(familyB, type, protocol);
 		if (res == INVALID_SOCKET)
 		{
@@ -367,9 +359,9 @@ void CSock::createSocket(int type, int protocol)
 		}
 	}
 
-	if ( _Logging )
+	if (_Logging)
 	{
-//		LNETL0_DEBUG( "LNETL0: Socket %d open (TCP)", _Sock );
+		//		LNETL0_DEBUG( "LNETL0: Socket %d open (TCP)", _Sock );
 	}
 
 #ifdef NL_OS_UNIX
@@ -384,56 +376,53 @@ void CSock::createSocket(int type, int protocol)
 	ioctl(_Sock, FIOCLEX, NULL);
 	// fcntl should be more portable but not tested fcntl(_Sock, F_SETFD, FD_CLOEXEC);
 #endif
-
 }
-
 
 /*
  * Closes the listening socket
  */
 void CSock::close()
 {
-	if ( _Logging )
+	if (_Logging)
 	{
-		LNETL0_DEBUG( "LNETL0: Socket %d closing for %s at %s", _Sock, _RemoteAddr.asString().c_str(), _LocalAddr.asString().c_str() );
+		LNETL0_DEBUG("LNETL0: Socket %d closing for %s at %s", _Sock, _RemoteAddr.asString().c_str(), _LocalAddr.asString().c_str());
 	}
 	SOCKET sockToClose = _Sock;
 	// preset to invalid to bypass exception in listen thread
 	_Sock = INVALID_SOCKET;
 #ifdef NL_OS_WINDOWS
-	closesocket( sockToClose );
+	closesocket(sockToClose);
 #elif defined NL_OS_UNIX
-	::close( sockToClose );
+	::close(sockToClose);
 #endif
 	_Connected = false;
 	_AddressFamily = AF_UNSPEC;
 }
-
 
 /*
  * Destructor
  */
 CSock::~CSock()
 {
-	//nlinfo( "Report for %s socket %s: Max send time: %u Max recv time: %u", _NonBlocking?"non-blocking":"blocking", remoteAddr().asString().c_str(), _MaxSendTime, _MaxReceiveTime );
-	//nlinfo( "Max send time: %u", _MaxSendTime);
-	if ( _Sock != INVALID_SOCKET )
+	// nlinfo( "Report for %s socket %s: Max send time: %u Max recv time: %u", _NonBlocking?"non-blocking":"blocking", remoteAddr().asString().c_str(), _MaxSendTime, _MaxReceiveTime );
+	// nlinfo( "Max send time: %u", _MaxSendTime);
+	if (_Sock != INVALID_SOCKET)
 	{
-		if ( _Logging )
+		if (_Logging)
 		{
-			LNETL0_DEBUG( "LNETL0: Socket %d closing for %s at %s", _Sock, _RemoteAddr.asString().c_str(), _LocalAddr.asString().c_str() );
+			LNETL0_DEBUG("LNETL0: Socket %d closing for %s at %s", _Sock, _RemoteAddr.asString().c_str(), _LocalAddr.asString().c_str());
 		}
 
-		if ( connected() )
+		if (connected())
 		{
 #ifdef NL_OS_WINDOWS
-			shutdown( _Sock, SD_BOTH );
+			shutdown(_Sock, SD_BOTH);
 		}
-		closesocket( _Sock );
+		closesocket(_Sock);
 #elif defined NL_OS_UNIX
-			shutdown( _Sock, SHUT_RDWR );
+			shutdown(_Sock, SHUT_RDWR);
 		}
-		::close( _Sock );
+		::close(_Sock);
 #endif
 		_Sock = INVALID_SOCKET;
 		_AddressFamily = AF_UNSPEC;
@@ -481,13 +470,13 @@ void CSock::connect(const CInetHost &addrs)
 		if (::connect(_Sock, (const sockaddr *)(&sockAddr), sizeOfSockAddr(sockAddr)) != 0)
 		{
 			/*		if ( _Logging )
-					{
+			        {
 			#ifdef NL_OS_WINDOWS
-						nldebug( "Impossible to connect socket %d to %s %s (%d)", _Sock, addr.hostName().c_str(), addr.asIPString().c_str(), ERROR_NUM );
+			            nldebug( "Impossible to connect socket %d to %s %s (%d)", _Sock, addr.hostName().c_str(), addr.asIPString().c_str(), ERROR_NUM );
 			#elif defined NL_OS_UNIX
-						nldebug( "Impossible to connect socket %d to %s %s (%d:%s)", _Sock, addr.hostName().c_str(), addr.asIPString().c_str(), ERROR_NUM, strerror(ERROR_NUM) );
+			            nldebug( "Impossible to connect socket %d to %s %s (%d:%s)", _Sock, addr.hostName().c_str(), addr.asIPString().c_str(), ERROR_NUM, strerror(ERROR_NUM) );
 			#endif
-					}
+			        }
 			*/
 			LNETL0_DEBUG("LNETL0: Socket %d failed to connect to %s", _Sock, addrs.toStringLong(ai).c_str());
 			continue;
@@ -518,7 +507,6 @@ void CSock::connect(const CInetHost &addrs)
 	_Connected = true;
 }
 
-
 /*
  * Checks if there is some data to receive
  */
@@ -526,24 +514,23 @@ bool CSock::dataAvailable()
 {
 	if (_Sock == INVALID_SOCKET)
 		throw ESocket("CSock::dataAvailable(): invalid socket");
-	
+
 	fd_set fdset;
-	FD_ZERO( &fdset );
-	FD_SET( _Sock, &fdset );
+	FD_ZERO(&fdset);
+	FD_SET(_Sock, &fdset);
 	timeval tv;
 	tv.tv_sec = _TimeoutS;
 	tv.tv_usec = _TimeoutUs;
 
 	// Test for message received.
-	int res = select( _Sock+1, &fdset, NULL, NULL, &tv );
-	switch ( res  )
+	int res = select(_Sock + 1, &fdset, NULL, NULL, &tv);
+	switch (res)
 	{
-		case  0 : return false;
-		case -1 : throw ESocket( "CSock::dataAvailable(): select failed" );
-		default : return true;
+	case 0: return false;
+	case -1: throw ESocket("CSock::dataAvailable(): select failed");
+	default: return true;
 	}
 }
-
 
 /*
  * Sets the local address
@@ -570,43 +557,42 @@ void CSock::setLocalAddress()
 	}
 }
 
-
 /*
  * Sends data, or returns false if it would block
  */
-CSock::TSockResult CSock::send( const uint8 *buffer, uint32& len, bool throw_exception )
+CSock::TSockResult CSock::send(const uint8 *buffer, uint32 &len, bool throw_exception)
 {
 	TTicks before = CTime::getPerformanceTime();
-	len = ::send( _Sock, (const char*)buffer, len, 0 );
-	_MaxSendTime = max( (uint32)(CTime::ticksToSecond(CTime::getPerformanceTime()-before)*1000.0f), _MaxSendTime );
+	len = ::send(_Sock, (const char *)buffer, len, 0);
+	_MaxSendTime = max((uint32)(CTime::ticksToSecond(CTime::getPerformanceTime() - before) * 1000.0f), _MaxSendTime);
 
-//	nldebug ("CSock::send(): Sent %d bytes to %d (%d)", len, _Sock, ERROR_NUM);
+	//	nldebug ("CSock::send(): Sent %d bytes to %d (%d)", len, _Sock, ERROR_NUM);
 
-	if ( _Logging )
+	if (_Logging)
 	{
-//		LNETL0_DEBUG ("LNETL0: CSock::send(): Sent %d bytes to %d res: %d (%d)", realLen, _Sock, len, ERROR_NUM);
+		//		LNETL0_DEBUG ("LNETL0: CSock::send(): Sent %d bytes to %d res: %d (%d)", realLen, _Sock, len, ERROR_NUM);
 	}
 
-	if ( ((int)len) == SOCKET_ERROR )
+	if (((int)len) == SOCKET_ERROR)
 	{
-		if ( ERROR_NUM == ERROR_WOULDBLOCK )
+		if (ERROR_NUM == ERROR_WOULDBLOCK)
 		{
 			H_AUTO(L0SendWouldBlock);
 			len = 0;
-			//nlSleep(10);
+			// nlSleep(10);
 			if (!_Blocking)
 			{
-				//nldebug("SendWouldBlock - %s / %s Entering snooze mode",_LocalAddr.asString().c_str(),_RemoteAddr.asString().c_str());
-				_Blocking= true;
+				// nldebug("SendWouldBlock - %s / %s Entering snooze mode",_LocalAddr.asString().c_str(),_RemoteAddr.asString().c_str());
+				_Blocking = true;
 			}
 			return Ok;
 		}
-		if ( throw_exception )
+		if (throw_exception)
 		{
 #ifdef NL_OS_WINDOWS
-			throw ESocket( NLMISC::toString( "Unable to send data: error %u", GetLastError() ).c_str() );
+			throw ESocket(NLMISC::toString("Unable to send data: error %u", GetLastError()).c_str());
 #else
-			throw ESocket( "Unable to send data" );
+			throw ESocket("Unable to send data");
 #endif
 		}
 		return Error;
@@ -615,71 +601,67 @@ CSock::TSockResult CSock::send( const uint8 *buffer, uint32& len, bool throw_exc
 
 	if (_Blocking)
 	{
-		//nldebug("SendWouldBlock - %s / %s Leaving snooze mode",_LocalAddr.asString().c_str(),_RemoteAddr.asString().c_str());
-		_Blocking= false;
+		// nldebug("SendWouldBlock - %s / %s Leaving snooze mode",_LocalAddr.asString().c_str(),_RemoteAddr.asString().c_str());
+		_Blocking = false;
 	}
 	return Ok;
 }
 
-
-
 /*
  * Receives data
  */
-CSock::TSockResult CSock::receive( uint8 *buffer, uint32& len, bool throw_exception )
+CSock::TSockResult CSock::receive(uint8 *buffer, uint32 &len, bool throw_exception)
 {
-	if ( _NonBlocking )
+	if (_NonBlocking)
 	{
 		// Receive incoming message (only the received part)
 		TTicks before = CTime::getPerformanceTime();
 
-		sint retLen = ::recv( _Sock, (char*)buffer, len, 0 );
+		sint retLen = ::recv(_Sock, (char *)buffer, len, 0);
 
-		//nlinfo ("CSock::receive(): NBM Received %d bytes to %d res: %d (%d)", realLen, _Sock, len, ERROR_NUM);
+		// nlinfo ("CSock::receive(): NBM Received %d bytes to %d res: %d (%d)", realLen, _Sock, len, ERROR_NUM);
 
-		if ( _Logging )
+		if (_Logging)
 		{
-//			LNETL0_DEBUG ("LNETL0: CSock::receive(): NBM Received %d bytes to %d res: %d (%d)", realLen, _Sock, len, ERROR_NUM);
+			//			LNETL0_DEBUG ("LNETL0: CSock::receive(): NBM Received %d bytes to %d res: %d (%d)", realLen, _Sock, len, ERROR_NUM);
 		}
 
-		_MaxReceiveTime = max( (uint32)(CTime::ticksToSecond(CTime::getPerformanceTime()-before)*1000.0f), _MaxReceiveTime );
+		_MaxReceiveTime = max((uint32)(CTime::ticksToSecond(CTime::getPerformanceTime() - before) * 1000.0f), _MaxReceiveTime);
 
 		switch (retLen)
 		{
-			// Graceful disconnection
-			case 0 :
+		// Graceful disconnection
+		case 0: {
+			/*{
+			    CSynchronized<bool>::CAccessor sync( &_SyncConnected );
+			    sync.value() = false;
+			}*/
+			_Connected = false;
+			if (throw_exception)
 			{
-				/*{
-					CSynchronized<bool>::CAccessor sync( &_SyncConnected );
-					sync.value() = false;
-				}*/
-				_Connected = false;
-				if ( throw_exception )
-				{
-					throw ESocketConnectionClosed();
-				}
-				return CSock::ConnectionClosed;
+				throw ESocketConnectionClosed();
 			}
+			return CSock::ConnectionClosed;
+		}
 
-			// Socket error or call would block
-			case SOCKET_ERROR :
+		// Socket error or call would block
+		case SOCKET_ERROR: {
+			len = 0;
+			if (ERROR_NUM == ERROR_WOULDBLOCK)
 			{
-				len = 0;
-				if ( ERROR_NUM == ERROR_WOULDBLOCK )
-				{
-					// Call would block
-					return CSock::WouldBlock;
-				}
-				else
-				{
-					// Socket error
-					if ( throw_exception )
-					{
-						throw ESocket( "Unable to receive data" );
-					}
-					return CSock::Error;
-				}
+				// Call would block
+				return CSock::WouldBlock;
 			}
+			else
+			{
+				// Socket error
+				if (throw_exception)
+				{
+					throw ESocket("Unable to receive data");
+				}
+				return CSock::Error;
+			}
+		}
 		}
 
 		len = (uint32)retLen;
@@ -690,47 +672,45 @@ CSock::TSockResult CSock::receive( uint8 *buffer, uint32& len, bool throw_except
 		uint total = 0;
 		sint brecvd;
 
-		while ( total < len )
+		while (total < len)
 		{
 			TTicks before = CTime::getPerformanceTime();
-			brecvd = ::recv( _Sock, (char*)(buffer+total), len-total, 0 );
+			brecvd = ::recv(_Sock, (char *)(buffer + total), len - total, 0);
 
-//			nlinfo ("CSock::receive(): BM Received %d bytes to %d res: %d (%d) total %d", len, _Sock, brecvd, ERROR_NUM, total);
+			//			nlinfo ("CSock::receive(): BM Received %d bytes to %d res: %d (%d) total %d", len, _Sock, brecvd, ERROR_NUM, total);
 
-			_MaxReceiveTime = max( (uint32)(CTime::ticksToSecond(CTime::getPerformanceTime()-before)*1000.0f), _MaxReceiveTime );
+			_MaxReceiveTime = max((uint32)(CTime::ticksToSecond(CTime::getPerformanceTime() - before) * 1000.0f), _MaxReceiveTime);
 
-			switch ( brecvd )
+			switch (brecvd)
 			{
-				// Graceful disconnection
-				case 0 :
+			// Graceful disconnection
+			case 0: {
+				/*{
+				    CSynchronized<bool>::CAccessor sync( &_SyncConnected );
+				    sync.value() = false;
+				}*/
+				_Connected = false;
+				len = total;
+				_BytesReceived += len;
+
+				if (throw_exception)
 				{
-					/*{
-						CSynchronized<bool>::CAccessor sync( &_SyncConnected );
-						sync.value() = false;
-					}*/
-					_Connected = false;
-					len = total;
-					_BytesReceived += len;
-
-					if ( throw_exception )
-					{
-						throw ESocketConnectionClosed();
-					}
-					return CSock::ConnectionClosed;
+					throw ESocketConnectionClosed();
 				}
+				return CSock::ConnectionClosed;
+			}
 
-				// Socket error
-				case SOCKET_ERROR :
+			// Socket error
+			case SOCKET_ERROR: {
+				len = total;
+				_BytesReceived += len;
+
+				if (throw_exception)
 				{
-					len = total;
-					_BytesReceived += len;
-
-					if ( throw_exception )
-					{
-						throw ESocket( "Unable to receive data" );
-					}
-					return CSock::Error;
+					throw ESocket("Unable to receive data");
 				}
+				return CSock::Error;
+			}
 			}
 			total += brecvd;
 		}
@@ -738,40 +718,38 @@ CSock::TSockResult CSock::receive( uint8 *buffer, uint32& len, bool throw_except
 
 	/*if ( _Logging )
 	{
-		LNETL0_DEBUG( "LNETL0: Socket %d received %d bytes", _Sock, len );
+	    LNETL0_DEBUG( "LNETL0: Socket %d received %d bytes", _Sock, len );
 	}*/
 	_BytesReceived += len;
 	return CSock::Ok;
 }
 
-
 /*
  * Sets the socket in nonblocking mode
  */
-void CSock::setNonBlockingMode ( bool bm )
+void CSock::setNonBlockingMode(bool bm)
 {
-	if ( _NonBlocking != bm )
+	if (_NonBlocking != bm)
 	{
 #ifdef NL_OS_WINDOWS
 		u_long b = bm;
-		if ( ioctlsocket( _Sock, FIONBIO, &b ) != 0 )
+		if (ioctlsocket(_Sock, FIONBIO, &b) != 0)
 #else
-		if ( fcntl( _Sock, F_SETFL, FNDELAY | fcntl( _Sock, F_GETFL, 0 ) ) == -1 )
+		if (fcntl(_Sock, F_SETFL, FNDELAY | fcntl(_Sock, F_GETFL, 0)) == -1)
 #endif
 		{
-			throw ESocket( "Cannot set nonblocking mode" );
+			throw ESocket("Cannot set nonblocking mode");
 		}
 		_NonBlocking = bm;
 	}
 }
 
-
 /*
  * Sets the send buffer size
  */
-void CSock::setSendBufferSize( sint32 size )
+void CSock::setSendBufferSize(sint32 size)
 {
-  setsockopt( _Sock, SOL_SOCKET, SO_SNDBUF, (char*)(&size), (socklen_t)sizeof(size) );
+	setsockopt(_Sock, SOL_SOCKET, SO_SNDBUF, (char *)(&size), (socklen_t)sizeof(size));
 }
 
 /*
@@ -779,7 +757,7 @@ void CSock::setSendBufferSize( sint32 size )
  */
 sint32 CSock::getSendBufferSize()
 {
-  int size = -1;
+	int size = -1;
 	socklen_t bufsize = sizeof(size);
 	getsockopt(_Sock, SOL_SOCKET, SO_SNDBUF, (char *)(&size), &bufsize);
 	return size;

@@ -25,24 +25,22 @@ class CTile_browser_dlg : public QDialog
 {
 	Q_OBJECT
 
-public:	
-
+public:
 	enum TileLabel
-	{ 
+	{
 		Index = 0,
 		FileName = 1
 	};
 
 	enum TileZoom
-	{ 
+	{
 		Small = 32,
-		Normal =64,
+		Normal = 64,
 		Big = 128
 	};
 
 	CTile_browser_dlg(QWidget *parent = 0, Qt::WindowFlags f = 0);
-	void initDialog(const int&);   
-	
+	void initDialog(const int &);
 
 private slots:
 	void on_tileTypeButtonGroup_clicked(int);
@@ -55,7 +53,7 @@ private slots:
 	void on_exportBorderPushButton_clicked();
 	void on_importBorderPushButton_clicked();
 
-	void on_tiles_model_selectionChanged ( const QItemSelection & selected, const QItemSelection & deselected );
+	void on_tiles_model_selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
 	void on_actionAddTile_triggered(bool);
 	void on_actionDeleteTile_triggered(bool);
@@ -63,7 +61,7 @@ private slots:
 	void on_actionDeleteImage_triggered(bool);
 
 protected:
-    void closeEvent(QCloseEvent *event);
+	void closeEvent(QCloseEvent *event);
 	void accept();
 	void reject();
 
@@ -72,10 +70,10 @@ private:
 	tiles_model *tileViewModel;
 	TileList browserModel;
 
-	QButtonGroup* tileTypeButtonGroup;
-	QButtonGroup* tileTextureButtonGroup;
-	QButtonGroup* tileLabelButtonGroup;
-	QButtonGroup* tileZoomButtonGroup;
+	QButtonGroup *tileTypeButtonGroup;
+	QButtonGroup *tileTextureButtonGroup;
+	QButtonGroup *tileLabelButtonGroup;
+	QButtonGroup *tileZoomButtonGroup;
 
 	void RefreshView();
 	void EnableBrowserInteractions();
@@ -83,6 +81,5 @@ private:
 
 	Ui::TileBrowserDialog ui;
 };
-
 
 #endif

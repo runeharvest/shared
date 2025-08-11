@@ -35,13 +35,13 @@
 // Project includes
 
 namespace NLMISC {
-	class CBitmap;
-	class IThread;
+class CBitmap;
+class IThread;
 }
 
 namespace NLTOOLS {
-	class CMainWindow;
-	class CColorThread;
+class CMainWindow;
+class CColorThread;
 
 /**
  * CPanoplyPreview
@@ -52,7 +52,7 @@ namespace NLTOOLS {
 class CPanoplyPreview : public QWidget
 {
 	Q_OBJECT
-	
+
 public:
 	CPanoplyPreview(CMainWindow *parent);
 	virtual ~CPanoplyPreview();
@@ -96,13 +96,13 @@ private:
 private:
 	CPanoplyPreview(const CPanoplyPreview &);
 	CPanoplyPreview &operator=(const CPanoplyPreview &);
-	
+
 }; /* class CPanoplyPreview */
 
 class CSliderTextEdit : public QSlider
 {
 	Q_OBJECT
-	
+
 public:
 	CSliderTextEdit(QWidget *parent, QLineEdit *lineEdit, float scale);
 	virtual ~CSliderTextEdit();
@@ -115,7 +115,6 @@ private:
 	QLineEdit *m_LineEdit;
 	bool m_Updating;
 	float m_Scale;
-
 };
 
 } /* namespace NLTOOLS */

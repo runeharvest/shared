@@ -19,10 +19,7 @@
 
 #include "types_nl.h"
 
-
-namespace NLMISC
-{
-
+namespace NLMISC {
 
 /**
  * Thread dependant storage class
@@ -37,31 +34,27 @@ namespace NLMISC
 class CTDS
 {
 public:
-
 	/// Constructor. The pointer is initialized with NULL.
-	CTDS ();
+	CTDS();
 
 	/// Destructor
-	~CTDS ();
+	~CTDS();
 
 	/// Get the thread specific pointer
-	void	*getPointer () const;
+	void *getPointer() const;
 
 	/// Set the thread specific pointer
-	void	setPointer (void* pointer);
+	void setPointer(void *pointer);
 
 private:
 #ifdef NL_OS_WINDOWS
-	uint32			_Handle;
+	uint32 _Handle;
 #else // NL_OS_WINDOWS
-	pthread_key_t	_Key;
+	pthread_key_t _Key;
 #endif // NL_OS_WINDOWS
-
 };
 
-
 } // NLMISC
-
 
 #endif // NL_TDS_H
 

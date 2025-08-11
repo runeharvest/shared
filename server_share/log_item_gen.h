@@ -17,8 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef _LOG_GEN_ITEM_H
 #define _LOG_GEN_ITEM_H
 
@@ -26,7 +24,6 @@
 #include "nel/misc/entity_id.h"
 #include "nel/misc/sheet_id.h"
 #include "game_share/inventories.h"
-
 
 struct TLogContext_Item_BuyItem
 {
@@ -39,8 +36,6 @@ struct TLogContext_Item_BuyItem
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_CreateGuild
@@ -54,8 +49,6 @@ struct TLogContext_Item_CreateGuild
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_BuyGuildOption
@@ -69,8 +62,6 @@ struct TLogContext_Item_BuyGuildOption
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_Forage
@@ -84,8 +75,6 @@ struct TLogContext_Item_Forage
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_QuarterOrLoot
@@ -99,8 +88,6 @@ struct TLogContext_Item_QuarterOrLoot
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_OtherTempPickup
@@ -114,8 +101,6 @@ struct TLogContext_Item_OtherTempPickup
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_AutoMissionLoot
@@ -129,8 +114,6 @@ struct TLogContext_Item_AutoMissionLoot
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_Craft
@@ -144,8 +127,6 @@ struct TLogContext_Item_Craft
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_Mission
@@ -159,8 +140,6 @@ struct TLogContext_Item_Mission
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_Sell
@@ -174,8 +153,6 @@ struct TLogContext_Item_Sell
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_Destroy
@@ -189,8 +166,6 @@ struct TLogContext_Item_Destroy
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_DropTempInventory
@@ -204,8 +179,6 @@ struct TLogContext_Item_DropTempInventory
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_DestroySaleStore
@@ -219,8 +192,6 @@ struct TLogContext_Item_DestroySaleStore
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_SaleStoreTimeout
@@ -234,8 +205,6 @@ struct TLogContext_Item_SaleStoreTimeout
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_CheckSaleStore
@@ -249,8 +218,6 @@ struct TLogContext_Item_CheckSaleStore
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_SaleStoreSold
@@ -264,8 +231,6 @@ struct TLogContext_Item_SaleStoreSold
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_ConsumeAmmo
@@ -279,8 +244,6 @@ struct TLogContext_Item_ConsumeAmmo
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_ConsumeFaberMp
@@ -294,8 +257,6 @@ struct TLogContext_Item_ConsumeFaberMp
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_Consume
@@ -309,8 +270,6 @@ struct TLogContext_Item_Consume
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_Exchange
@@ -324,8 +283,6 @@ struct TLogContext_Item_Exchange
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_BadSheet
@@ -339,8 +296,6 @@ struct TLogContext_Item_BadSheet
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_Swap
@@ -354,8 +309,6 @@ struct TLogContext_Item_Swap
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_Command
@@ -369,8 +322,6 @@ struct TLogContext_Item_Command
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_PetDespawn
@@ -384,8 +335,6 @@ struct TLogContext_Item_PetDespawn
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_NoRent
@@ -399,8 +348,6 @@ struct TLogContext_Item_NoRent
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_OutpostDriller
@@ -414,8 +361,6 @@ struct TLogContext_Item_OutpostDriller
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_EnchantPhrase
@@ -429,8 +374,6 @@ struct TLogContext_Item_EnchantPhrase
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_EnchantOrRecharge
@@ -444,8 +387,6 @@ struct TLogContext_Item_EnchantOrRecharge
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
 
 struct TLogContext_Item_SapRechargeSpell
@@ -459,10 +400,7 @@ struct TLogContext_Item_SapRechargeSpell
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
-
 
 /// No context context. Use this to disable any contextual log underneath
 struct TLogNoContext_Item
@@ -470,8 +408,6 @@ struct TLogNoContext_Item
 	TLogNoContext_Item();
 	~TLogNoContext_Item();
 };
-
-
 
 void _log_Item_Create(INVENTORIES::TItemId itemId, const NLMISC::CSheetId &sheetId, uint32 quantity, uint32 quality, const char *_filename_, uint _lineNo_);
 #define log_Item_Create(itemId, sheetId, quantity, quality) \
@@ -513,6 +449,4 @@ void _log_Item_ExchangeWithNPC(const char *_filename_, uint _lineNo_);
 #define log_Item_ExchangeWithNPC() \
 	_log_Item_ExchangeWithNPC(__FILE__, __LINE__)
 
-
 #endif
-

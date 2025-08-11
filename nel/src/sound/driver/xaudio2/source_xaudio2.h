@@ -22,10 +22,10 @@
 #include "nel/sound/driver/buffer.h"
 
 namespace NLSOUND {
-	class CSoundDriverXAudio2;
-	class CBufferXAudio2;
-	class CAdpcmXAudio2;
-	class CEffectXAudio2;
+class CSoundDriverXAudio2;
+class CBufferXAudio2;
+class CAdpcmXAudio2;
+class CEffectXAudio2;
 
 /**
  * \brief CSourceXAudio2
@@ -43,13 +43,13 @@ private:
 	CBufferXAudio2 *_StaticBuffer;
 	/// Last buffer that was prepared for playing.
 	CBufferXAudio2 *_LastPreparedBuffer;
-	
+
 	// -- Pointers --
 	/// Source voice, can be NULL!
 	IXAudio2SourceVoice *_SourceVoice;
 	/// Adpcm helper, can be NULL!
 	CAdpcmXAudio2 *_AdpcmUtility;
-	
+
 	// -- System vars 2d --
 	/// Unique operation set
 	uint32 _OperationSet;
@@ -65,10 +65,10 @@ private:
 	NLMISC::TTime _PlayStart;
 	/// Buffer loading system
 	bool _BufferStreaming;
-	
+
 	// -- System vars 3d --
 	float _Doppler;
-	
+
 	// -- User vars 3d --
 	X3DAUDIO_EMITTER _Emitter;
 	X3DAUDIO_CONE _Cone;
@@ -83,7 +83,7 @@ private:
 	/// Alpha for manual rolloff.
 	double _Alpha;
 
-	// -- Output path vars --	
+	// -- Output path vars --
 	/// Voices
 	IXAudio2Voice *_DirectDryVoice, *_DirectFilterVoice, *_EffectDryVoice, *_EffectFilterVoice;
 	/// Path enabled settings
@@ -97,7 +97,7 @@ private:
 	float _EffectFilterLowFrequency, _EffectFilterHighFrequency;
 	/// Filter settings
 	XAUDIO2_FILTER_PARAMETERS _DirectFilter, _EffectFilter;
-	
+
 	// -- User vars 2d --
 	/// True if play() or pause(), false if stop().
 	bool _IsPlaying;
@@ -109,7 +109,7 @@ private:
 	float _Pitch;
 	/// Volume set by user.
 	float _Gain;
-	
+
 	// -- Combined vars --
 	// _FreqRatio = (float)_StaticBuffer->getFreq() / _FreqVoice;
 	// 3D PITCH = (_FreqRatio * _Pitch * _Doppler)
@@ -119,15 +119,15 @@ public:
 	CSourceXAudio2(CSoundDriverXAudio2 *soundDriver);
 	virtual ~CSourceXAudio2();
 	void release();
-	
+
 	void commit3DChanges();
 	void update3DChanges();
 	void updateState();
-	
+
 	/// (Internal) Initialize voice with this format, if no voice has been created yet.
 	bool initFormat(IBuffer::TBufferFormat bufferFormat, uint8 channels, uint8 bitsPerSample);
 	/// (Internal) Returns the XAudio2 source voice.
-	inline IXAudio2SourceVoice * getSourceVoice() { return _SourceVoice; }
+	inline IXAudio2SourceVoice *getSourceVoice() { return _SourceVoice; }
 	/// (Internal) Submit a buffer to the XAudio2 source voice.
 	void submitBuffer(CBufferXAudio2 *ibuffer);
 	/// (Internal) Prepare to play. Stop the currently playing buffers, and set the correct voice settings.
@@ -140,7 +140,7 @@ public:
 	void setupDirectFilter();
 	/// (Internal) Setup the effect send filter.
 	void setupEffectFilter();
-	
+
 	/// \name Initialization
 	//@{
 	/// Enable or disable streaming mode. Source must be stopped to call this.
@@ -158,14 +158,14 @@ public:
 	/// Return the amount of buffers in the queue (playing and waiting). 3 buffers is optimal.
 	virtual uint countStreamingBuffers() const;
 	//@}
-	
+
 	/// \name Playback control
 	//@{
 	/// Set looping on/off for future playbacks (default: off), not available for streaming
 	virtual void setLooping(bool l);
 	/// Return the looping state
 	virtual bool getLooping() const;
-	
+
 	/** Play the static buffer (or stream in and play).
 	 *	This method can return false if the sample for this sound is unloaded.
 	 */
@@ -183,26 +183,26 @@ public:
 	/// Returns the number of milliseconds the source has been playing
 	virtual uint32 getTime();
 	//@}
-	
+
 	/// \name Source properties
 	//@{
 	/** Set the position vector (default: (0,0,0)).
 	 * 3D mode -> 3D position
 	 * st mode -> x is the pan value (from left (-1) to right (1)), set y and z to 0
 	 */
-	virtual void setPos(const NLMISC::CVector& pos, bool deffered = true);
+	virtual void setPos(const NLMISC::CVector &pos, bool deffered = true);
 	/** Get the position vector.
 	 * See setPos() for details.
 	 */
 	virtual const NLMISC::CVector &getPos() const;
 	/// Set the velocity vector (3D mode only, ignored in stereo mode) (default: (0,0,0))
-	virtual void setVelocity(const NLMISC::CVector& vel, bool deferred = true);
+	virtual void setVelocity(const NLMISC::CVector &vel, bool deferred = true);
 	/// Get the velocity vector
-	virtual void getVelocity(NLMISC::CVector& vel) const;
+	virtual void getVelocity(NLMISC::CVector &vel) const;
 	/// Set the direction vector (3D mode only, ignored in stereo mode) (default: (0,0,0) as non-directional)
-	virtual void setDirection(const NLMISC::CVector& dir);
+	virtual void setDirection(const NLMISC::CVector &dir);
 	/// Get the direction vector
-	virtual void getDirection(NLMISC::CVector& dir) const;
+	virtual void getDirection(NLMISC::CVector &dir) const;
 	/** Set the gain (volume value inside [0 , 1]). (default: 1)
 	 * 0.0 -> silence
 	 * 0.5 -> -6dB
@@ -225,11 +225,11 @@ public:
 	/// Set the min and max distances (default: 1, MAX_FLOAT) (3D mode only)
 	virtual void setMinMaxDistances(float mindist, float maxdist, bool deferred = true);
 	/// Get the min and max distances
-	virtual void getMinMaxDistances(float& mindist, float& maxdist) const;
+	virtual void getMinMaxDistances(float &mindist, float &maxdist) const;
 	/// Set the cone angles (in radian) and gain (in [0 , 1]) (default: 2PI, 2PI, 0)
 	virtual void setCone(float innerAngle, float outerAngle, float outerGain);
 	/// Get the cone angles (in radian)
-	virtual void getCone(float& innerAngle, float& outerAngle, float& outerGain) const;
+	virtual void getCone(float &innerAngle, float &outerAngle, float &outerGain) const;
 	/** Set the alpha value for the volume-distance curve
 	 *
 	 *	Useful only with OptionManualRolloff. value from -1 to 1 (default 0)
@@ -245,7 +245,7 @@ public:
 	 */
 	virtual void setAlpha(double a);
 	//@}
-	
+
 	/// \name Direct output
 	//@{
 	/// Enable or disable direct output [true/false], default: true
@@ -256,7 +256,7 @@ public:
 	virtual void setDirectGain(float gain);
 	/// Get the gain for the direct path
 	virtual float getDirectGain() const;
-	
+
 	/// Enable or disable the filter for the direct channel
 	virtual void enableDirectFilter(bool enable = true);
 	/// Check if the filter on the direct channel is enabled
@@ -270,7 +270,7 @@ public:
 	/// Get the direct filter gain
 	virtual float getDirectFilterPassGain() const;
 	//@}
-	
+
 	/// \name Effect output
 	//@{
 	/// Set the effect send for this source, NULL to disable. [IEffect], default: NULL
@@ -281,7 +281,7 @@ public:
 	virtual void setEffectGain(float gain);
 	/// Get the gain for the effect path
 	virtual float getEffectGain() const;
-	
+
 	/// Enable or disable the filter for the effect channel
 	virtual void enableEffectFilter(bool enable = true);
 	/// Check if the filter on the effect channel is enabled
@@ -295,7 +295,7 @@ public:
 	/// Get the effect filter gain
 	virtual float getEffectFilterPassGain() const;
 	//@}
-	
+
 }; /* class CSourceXAudio2 */
 
 } /* namespace NLSOUND */

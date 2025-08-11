@@ -19,43 +19,45 @@ class CStatePage : public CPropertyPage
 {
 	DECLARE_DYNCREATE(CStatePage)
 
-// Construction
+	// Construction
 public:
 	CStatePage();
 	~CStatePage();
 
-
 	void Update();
 
-	void addState( CLogic_editorDoc *pDoc, CState * state);
+	void addState(CLogic_editorDoc *pDoc, CState *state);
 
 public:
-	CState	*	m_pSelectedState;
-	CEvent	*	m_pSelectedEvent;
+	CState *m_pSelectedState;
+	CEvent *m_pSelectedEvent;
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CStatePage)
-	enum { IDD = IDD_PAGE_STATES };
-	int		m_nEventMessage;
-	CString	m_sConditionName;
-	CString	m_sNextStateName;
-	CString	m_sStateName;
-	CString	m_sMessageID;
-	CString	m_sArgument;
-	CString	m_sDestination;
+	enum
+	{
+		IDD = IDD_PAGE_STATES
+	};
+	int m_nEventMessage;
+	CString m_sConditionName;
+	CString m_sNextStateName;
+	CString m_sStateName;
+	CString m_sMessageID;
+	CString m_sArgument;
+	CString m_sDestination;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CStatePage)
-	public:
+public:
 	virtual BOOL OnSetActive();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(CStatePage)
@@ -70,7 +72,6 @@ protected:
 	afx_msg void OnButtonEventRemove();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-
 };
 
 //{{AFX_INSERT_LOCATION}}

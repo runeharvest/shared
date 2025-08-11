@@ -15,9 +15,9 @@ static char THIS_FILE[] = __FILE__;
 // CSource_sounds_builderApp
 
 BEGIN_MESSAGE_MAP(CSource_sounds_builderApp, CWinApp)
-	//{{AFX_MSG_MAP(CSource_sounds_builderApp)
-	//}}AFX_MSG
-	ON_COMMAND(ID_HELP, CWinApp::OnHelp)
+//{{AFX_MSG_MAP(CSource_sounds_builderApp)
+//}}AFX_MSG
+ON_COMMAND(ID_HELP, CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -40,9 +40,9 @@ BOOL CSource_sounds_builderApp::InitInstance()
 	// Standard initialization
 
 #ifdef _AFXDLL
-	Enable3dControls();			// Call this when using MFC in a shared DLL
+	Enable3dControls(); // Call this when using MFC in a shared DLL
 #else
-	Enable3dControlsStatic();	// Call this when linking to MFC statically
+	Enable3dControlsStatic(); // Call this when linking to MFC statically
 #endif
 
 	CSource_sounds_builderDlg dlg;

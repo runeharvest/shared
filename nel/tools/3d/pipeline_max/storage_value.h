@@ -41,7 +41,7 @@
 namespace PIPELINE {
 namespace MAX {
 
-template<typename T>
+template <typename T>
 class CStorageValue : public IStorageObject
 {
 public:

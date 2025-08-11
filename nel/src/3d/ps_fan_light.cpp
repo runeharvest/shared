@@ -24,45 +24,35 @@
 #include "nel/3d/driver.h"
 #include "nel/3d/debug_vb.h"
 
-
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
-
+namespace NL3D {
 
 //////////////////////////////
 // fan light implementation //
 //////////////////////////////
 
-
 uint8 CPSFanLight::_RandomPhaseTab[32][128];
 bool CPSFanLight::_RandomPhaseTabInitialized = false;
 
-CPSFanLight::TVBMap				CPSFanLight::_VBMap; // fanlight, no texture
-CPSFanLight::TVBMap				CPSFanLight::_TexVBMap; // fanlight, textured
-CPSFanLight::TVBMap				CPSFanLight::_ColoredVBMap; // fanlight, no texture, varying color
-CPSFanLight::TVBMap				CPSFanLight::_ColoredTexVBMap; // fanlight, textured, varying color
-CPSFanLight::TIBMap				CPSFanLight::_IBMap;
+CPSFanLight::TVBMap CPSFanLight::_VBMap; // fanlight, no texture
+CPSFanLight::TVBMap CPSFanLight::_TexVBMap; // fanlight, textured
+CPSFanLight::TVBMap CPSFanLight::_ColoredVBMap; // fanlight, no texture, varying color
+CPSFanLight::TVBMap CPSFanLight::_ColoredTexVBMap; // fanlight, textured, varying color
+CPSFanLight::TIBMap CPSFanLight::_IBMap;
 
-
-static const uint FanLightBufSize  = 128; // the size of a buffer of particle to deal with at a time
+static const uint FanLightBufSize = 128; // the size of a buffer of particle to deal with at a time
 static const uint NumVertsInBuffer = 4 * FanLightBufSize;
-
-
-
-
 
 ///====================================================================================
 
 /** Well, we could have put a method template in CPSFanLight, but some compilers
-  * want the definition of the methods in the header, and some compilers
-  * don't want friend with function template, so we use a static method template of a friend class instead,
-  * which gives us the same result :)
-  */
+ * want the definition of the methods in the header, and some compilers
+ * don't want friend with function template, so we use a static method template of a friend class instead,
+ * which gives us the same result :)
+ */
 class CPSFanLightHelper
 {
 public:
@@ -78,7 +68,7 @@ public:
 		const CVector K = f.computeK();
 		//
 		CVertexBuffer *vb;
-		CIndexBuffer  *ib;
+		CIndexBuffer *ib;
 		// get (and build if necessary) the vb and the ib
 		f.getVBnIB(vb, ib);
 		// tmp
@@ -93,21 +83,17 @@ public:
 
 		sint32 k; // helps to count the fans
 
-
-		 // if so, we need to deal process separatly group of particles
+		// if so, we need to deal process separatly group of particles
 		const uint32 stride = vb->getVertexSize();
 
 		float currentAngle;
 		const float angleStep = 256.0f / f._NbFans;
 
-
 		float *currentSizePt; // it points either the particle constant size, or a size in a table
 		float *currentAnglePt; // it points either the particle constant angle, or an angle in a table
 
-
 		const uint32 currentSizePtIncrement = f._SizeScheme ? 1 : 0; // increment to get the next size for the size pointer. It is 0 if the size is constant
 		const uint32 currentAnglePtIncrement = f._Angle2DScheme ? 1 : 0; // increment to get the next angle for the angle pointer. It is 0 if the size is constant
-
 
 		uint leftToDo = size;
 		if (f._ColorScheme)
@@ -121,9 +107,9 @@ public:
 			vb->setNumVertices(toProcess * f._NbFans * 3);
 			{
 				CVertexBufferReadWrite vba;
-				vb->lock (vba);
+				vb->lock(vba);
 
-				uint8 *ptVect = (uint8 *) vba.getVertexCoordPointer();
+				uint8 *ptVect = (uint8 *)vba.getVertexCoordPointer();
 				// compute individual colors if needed
 				if (f._ColorScheme)
 				{
@@ -132,7 +118,7 @@ public:
 				}
 				if (f._SizeScheme)
 				{
-					currentSizePt  = (float *) (f._SizeScheme->make(f._Owner, size - leftToDo, pSizes, sizeof(float), toProcess, true, srcStep));
+					currentSizePt = (float *)(f._SizeScheme->make(f._Owner, size - leftToDo, pSizes, sizeof(float), toProcess, true, srcStep));
 					currentSizePt = pSizes;
 				}
 				else
@@ -141,61 +127,61 @@ public:
 				}
 				if (f._Angle2DScheme)
 				{
-					currentAnglePt = (float *) (f._Angle2DScheme->make(f._Owner, size - leftToDo, pAngles, sizeof(float), toProcess, true, srcStep));
+					currentAnglePt = (float *)(f._Angle2DScheme->make(f._Owner, size - leftToDo, pAngles, sizeof(float), toProcess, true, srcStep));
 				}
 				else
 				{
 					currentAnglePt = &f._Angle2D;
 				}
 				//
-				float fSize, firstSize, sizeStepBase=0.0, sizeStep;
+				float fSize, firstSize, sizeStepBase = 0.0, sizeStep;
 				if (f._PhaseSmoothness)
 				{
 					sizeStepBase = 1.f / f._PhaseSmoothness;
 				}
 				endPosIt = posIt + toProcess;
-				for (;posIt != endPosIt; ++posIt, ++timeIt)
+				for (; posIt != endPosIt; ++posIt, ++timeIt)
 				{
 
 					CHECK_VERTEX_BUFFER(*vb, ptVect);
-					*(CVector *) ptVect = *posIt;
+					*(CVector *)ptVect = *posIt;
 					// the start angle
 					currentAngle = *currentAnglePt;
-					const uint8 phaseAdd = (uint8) (f._PhaseSpeed * (*timeIt));
+					const uint8 phaseAdd = (uint8)(f._PhaseSpeed * (*timeIt));
 					ptVect += stride;
 					const float fanSize = *currentSizePt * 0.5f;
 					const float moveIntensity = f._MoveIntensity * fanSize;
 					// compute radius & vect for first fan
-					firstSize  = fanSize + (moveIntensity * CPSUtil::getCos(randomPhaseTab[0] + phaseAdd));
-					*(CVector *) ptVect = (*posIt) + I * firstSize * (CPSUtil::getCos((sint32) currentAngle))
-										  + K * firstSize * (CPSUtil::getSin((sint32) currentAngle));
+					firstSize = fanSize + (moveIntensity * CPSUtil::getCos(randomPhaseTab[0] + phaseAdd));
+					*(CVector *)ptVect = (*posIt) + I * firstSize * (CPSUtil::getCos((sint32)currentAngle))
+					    + K * firstSize * (CPSUtil::getSin((sint32)currentAngle));
 					currentAngle += angleStep;
 					ptVect += stride;
 					fSize = firstSize;
 					// computes other fans
-					const sint32 upperBound = (sint32) (f._NbFans - f._PhaseSmoothness - 1);
+					const sint32 upperBound = (sint32)(f._NbFans - f._PhaseSmoothness - 1);
 					for (k = 1; k <= upperBound; ++k)
 					{
-						fSize  = fanSize + (moveIntensity * CPSUtil::getCos(randomPhaseTab[k] + phaseAdd));
-						*(CVector *) ptVect = (*posIt) + I * fSize * (CPSUtil::getCos((sint32) currentAngle))
-											  + K * fSize * (CPSUtil::getSin((sint32) currentAngle));
+						fSize = fanSize + (moveIntensity * CPSUtil::getCos(randomPhaseTab[k] + phaseAdd));
+						*(CVector *)ptVect = (*posIt) + I * fSize * (CPSUtil::getCos((sint32)currentAngle))
+						    + K * fSize * (CPSUtil::getSin((sint32)currentAngle));
 						currentAngle += angleStep;
 						ptVect += stride;
 					}
 
 					// interpolate radius, so that the fanlight loops correctly
 					sizeStep = sizeStepBase * (firstSize - fSize);
-					for (; k <= (sint32) (f._NbFans - 1); ++k)
+					for (; k <= (sint32)(f._NbFans - 1); ++k)
 					{
-						*(CVector *) ptVect = (*posIt) + I * fSize * (CPSUtil::getCos((sint32) currentAngle))
-											  + K * fSize * (CPSUtil::getSin((sint32) currentAngle));
+						*(CVector *)ptVect = (*posIt) + I * fSize * (CPSUtil::getCos((sint32)currentAngle))
+						    + K * fSize * (CPSUtil::getSin((sint32)currentAngle));
 						currentAngle += angleStep;
 						ptVect += stride;
-						fSize  += sizeStep;
+						fSize += sizeStep;
 					}
 					// last fan
-					*(CVector *) ptVect = (*posIt) + I * firstSize * (CPSUtil::getCos((sint32) *currentAnglePt))
-											  + K * firstSize * (CPSUtil::getSin((sint32) *currentAnglePt));
+					*(CVector *)ptVect = (*posIt) + I * firstSize * (CPSUtil::getCos((sint32)*currentAnglePt))
+					    + K * firstSize * (CPSUtil::getSin((sint32)*currentAnglePt));
 					ptVect += stride;
 					currentSizePt += currentSizePtIncrement;
 					currentAnglePt += currentAnglePtIncrement;
@@ -205,12 +191,10 @@ public:
 			driver->activeVertexBuffer(*vb);
 			driver->renderTriangles(f._Mat, 0, toProcess * f._NbFans);
 			leftToDo -= toProcess;
-		}
-		while (leftToDo != 0);
+		} while (leftToDo != 0);
 		PARTICLES_CHECK_MEM;
 	}
 };
-
 
 ///====================================================================================
 // this blur a tab of bytes once
@@ -218,9 +202,9 @@ static void BlurBytesTab(const uint8 *src, uint8 *dest, uint size)
 {
 	NL_PS_FUNC(BlurBytesTab)
 	std::vector<uint8> b(src, src + size);
-	for (sint k = 1 ; k < (sint) (size - 1); ++k)
+	for (sint k = 1; k < (sint)(size - 1); ++k)
 	{
-		dest[k] = (uint8) (((uint16) b[k - 1] + (uint16) b[k + 1])>>1);
+		dest[k] = (uint8)(((uint16)b[k - 1] + (uint16)b[k + 1]) >> 1);
 	}
 }
 
@@ -230,19 +214,19 @@ void CPSFanLight::initFanLightPrecalc(void)
 	NL_PS_FUNC(CPSFanLight_initFanLightPrecalc)
 	// build several random tab, and linearly interpolate between l values
 	float currPhase, nextPhase, phaseStep;
-	for (uint l = 0; l < 32 ; l++)
+	for (uint l = 0; l < 32; l++)
 	{
-		nextPhase = (float) (uint8) (rand()&0xFF);
+		nextPhase = (float)(uint8)(rand() & 0xFF);
 		uint32 k = 0;
 		while (k < 128)
 		{
 			currPhase = nextPhase;
-			nextPhase = (float) (uint8) (rand()&0xFF);
+			nextPhase = (float)(uint8)(rand() & 0xFF);
 			phaseStep = (nextPhase - currPhase) / (l + 1);
 
 			for (uint32 m = 0; m <= l; ++m)
 			{
-				_RandomPhaseTab[l][k] = (uint8) currPhase;
+				_RandomPhaseTab[l][k] = (uint8)currPhase;
 				currPhase += phaseStep;
 				++k;
 				if (k >= 128) break;
@@ -251,9 +235,9 @@ void CPSFanLight::initFanLightPrecalc(void)
 		for (uint m = 0; m < 2 * l; ++m)
 			BlurBytesTab(&_RandomPhaseTab[l][0], &_RandomPhaseTab[l][0], 128);
 	}
-	//#ifdef NL_DEBUG
-		_RandomPhaseTabInitialized = true;
-	//#endif
+	// #ifdef NL_DEBUG
+	_RandomPhaseTabInitialized = true;
+	// #endif
 }
 
 ///====================================================================================
@@ -261,7 +245,7 @@ uint32 CPSFanLight::getNumWantedTris() const
 {
 	NL_PS_FUNC(CPSFanLight_getNumWantedTris)
 	nlassert(_Owner);
-	//return _Owner->getMaxSize() * _NbFans;
+	// return _Owner->getMaxSize() * _NbFans;
 	return _Owner->getSize() * _NbFans;
 }
 
@@ -269,7 +253,7 @@ uint32 CPSFanLight::getNumWantedTris() const
 bool CPSFanLight::hasTransparentFaces(void)
 {
 	NL_PS_FUNC(CPSFanLight_hasTransparentFaces)
-	return getBlendingMode() != CPSMaterial::alphaTest ;
+	return getBlendingMode() != CPSMaterial::alphaTest;
 }
 
 ///====================================================================================
@@ -354,17 +338,16 @@ inline void CPSFanLight::setupMaterial()
 	}
 }
 
-
 ///====================================================================================
 void CPSFanLight::draw(bool opaque)
 {
-//	if (!FilterPS[3]) return;
+	//	if (!FilterPS[3]) return;
 	NL_PS_FUNC(CPSFanLight_draw)
 	PARTICLES_CHECK_MEM;
 	if (!_Owner->getSize()) return;
 
 	uint32 step;
-	uint   numToProcess;
+	uint numToProcess;
 	computeSrcStep(step, numToProcess);
 	if (!numToProcess) return;
 
@@ -373,20 +356,18 @@ void CPSFanLight::draw(bool opaque)
 	if (step == (1 << 16))
 	{
 		CPSFanLightHelper::drawFanLight(_Owner->getPos().begin(),
-									    _Owner->getTime().begin(),
-									   *this,
-										numToProcess,
-										step
-									   );
+		    _Owner->getTime().begin(),
+		    *this,
+		    numToProcess,
+		    step);
 	}
 	else
 	{
 		CPSFanLightHelper::drawFanLight(TIteratorVectStep1616(_Owner->getPos().begin(), 0, step),
-										TIteratorTimeStep1616(_Owner->getTime().begin(), 0, step),
-									    *this,
-									    numToProcess,
-									    step
-									   );
+		    TIteratorTimeStep1616(_Owner->getTime().begin(), 0, step),
+		    *this,
+		    numToProcess,
+		    step);
 	}
 
 	PARTICLES_CHECK_MEM;
@@ -408,7 +389,7 @@ void CPSFanLight::serial(NLMISC::IStream &f)
 		f.serial(_PhaseSmoothness, _MoveIntensity);
 		ITexture *tex = _Tex;
 		f.serialPolyPtr(tex);
-		if (f.isReading()) _Tex = tex ;
+		if (f.isReading()) _Tex = tex;
 	}
 	if (f.isReading())
 	{
@@ -426,20 +407,19 @@ bool CPSFanLight::completeBBox(NLMISC::CAABBox &box) const
 }
 
 ///====================================================================================
-CPSFanLight::CPSFanLight(uint32 nbFans) : _NbFans(nbFans),
-										  _PhaseSmoothness(0),
-										  _MoveIntensity(1.5f),
-										  _Tex(NULL),
-										  _PhaseSpeed(256)
+CPSFanLight::CPSFanLight(uint32 nbFans)
+    : _NbFans(nbFans)
+    , _PhaseSmoothness(0)
+    , _MoveIntensity(1.5f)
+    , _Tex(NULL)
+    , _PhaseSpeed(256)
 {
 	NL_PS_FUNC(CPSFanLight_CPSFanLight)
 	nlassert(nbFans >= 3);
 
-
 	init();
 	if (CParticleSystem::getSerializeIdentifierFlag()) _Name = std::string("FanLight");
 }
-
 
 ///====================================================================================
 CPSFanLight::~CPSFanLight()
@@ -447,14 +427,13 @@ CPSFanLight::~CPSFanLight()
 	NL_PS_FUNC(CPSFanLight_CPSFanLight)
 }
 
-
 ///====================================================================================
 void CPSFanLight::setNbFans(uint32 nbFans)
 {
 	NL_PS_FUNC(CPSFanLight_setNbFans)
 	_NbFans = nbFans;
 	resize(_Owner->getMaxSize());
-	//notifyOwnerMaxNumFacesChanged();
+	// notifyOwnerMaxNumFacesChanged();
 }
 
 ///====================================================================================
@@ -465,7 +444,6 @@ void CPSFanLight::resize(uint32 size)
 	resizeColor(size);
 	resizeAngle2D(size);
 	resizeSize(size);
-
 }
 
 ///====================================================================================
@@ -484,28 +462,28 @@ void CPSFanLight::init(void)
 void CPSFanLight::updateMatAndVbForColor(void)
 {
 	NL_PS_FUNC(CPSFanLight_updateMatAndVbForColor)
-	//touch();
+	// touch();
 }
 
 ///====================================================================================
 void CPSFanLight::getVBnIB(CVertexBuffer *&retVb, CIndexBuffer *&retIb)
 {
 	NL_PS_FUNC(CPSFanLight_getVBnIB)
-	TVBMap &vbMap = _ColorScheme ? (_Tex == NULL  ? _ColoredVBMap : _ColoredTexVBMap)
-								 : (_Tex == NULL  ? _VBMap : _TexVBMap);
-	#ifdef NL_NAMED_INDEX_BUFFER
-		const char *ibName = _ColorScheme ? (_Tex == NULL  ? "_ColoredVBMap" : "_ColoredTexVBMap")
-					                    : (_Tex == NULL  ? "_VBMap" : "_TexVBMap");
-	#endif
+	TVBMap &vbMap = _ColorScheme ? (_Tex == NULL ? _ColoredVBMap : _ColoredTexVBMap)
+	                             : (_Tex == NULL ? _VBMap : _TexVBMap);
+#ifdef NL_NAMED_INDEX_BUFFER
+	const char *ibName = _ColorScheme ? (_Tex == NULL ? "_ColoredVBMap" : "_ColoredTexVBMap")
+	                                  : (_Tex == NULL ? "_VBMap" : "_TexVBMap");
+#endif
 	TVBMap::iterator vbIt = vbMap.find(_NbFans);
 	if (vbIt != vbMap.end())
 	{
 		retVb = &(vbIt->second);
 		TIBMap::iterator pbIt = _IBMap.find(_NbFans);
 		nlassert(pbIt != _IBMap.end());
-		#ifdef NL_NAMED_INDEX_BUFFER
-			if (pbIt->second.getName().empty()) NL_SET_IB_NAME(pbIt->second, ibName);
-		#endif
+#ifdef NL_NAMED_INDEX_BUFFER
+		if (pbIt->second.getName().empty()) NL_SET_IB_NAME(pbIt->second, ibName);
+#endif
 		retIb = &(pbIt->second);
 	}
 	else // we need to create the vb
@@ -514,10 +492,7 @@ void CPSFanLight::getVBnIB(CVertexBuffer *&retVb, CIndexBuffer *&retIb)
 		CVertexBuffer &vb = vbMap[_NbFans]; // create a vb
 		CIndexBuffer &ib = _IBMap[_NbFans]; // eventually create a pb
 		const uint32 size = getNumFanlightsInVB();
-		vb.setVertexFormat(CVertexBuffer::PositionFlag |
-						   CVertexBuffer::PrimaryColorFlag |
-						   (_Tex != NULL ?  CVertexBuffer::TexCoord0Flag : 0)
-						  );
+		vb.setVertexFormat(CVertexBuffer::PositionFlag | CVertexBuffer::PrimaryColorFlag | (_Tex != NULL ? CVertexBuffer::TexCoord0Flag : 0));
 		vb.setNumVertices(size * (2 + _NbFans));
 		vb.setPreferredMemory(CVertexBuffer::AGPVolatile, true); // keep local memory because of interleaved format
 		vb.setName("CPSFanLight");
@@ -525,11 +500,11 @@ void CPSFanLight::getVBnIB(CVertexBuffer *&retVb, CIndexBuffer *&retIb)
 		ib.setNumIndexes(size * _NbFans * 3);
 		// pointer on the current index to fill
 		CIndexBufferReadWrite iba;
-		ib.lock (iba);
-		TIndexType *ptIndex = (TIndexType *) iba.getPtr();
+		ib.lock(iba);
+		TIndexType *ptIndex = (TIndexType *)iba.getPtr();
 
 		CVertexBufferReadWrite vba;
-		vb.lock (vba);
+		vb.lock(vba);
 
 		// index of the first vertex of the current fanFilght
 		uint currVertFan = 0;
@@ -541,9 +516,9 @@ void CPSFanLight::getVBnIB(CVertexBuffer *&retVb, CIndexBuffer *&retIb)
 		{
 			for (l = 0; l < _NbFans; ++l)
 			{
-				*ptIndex++ = (TIndexType) currVertFan;
-				*ptIndex++ = (TIndexType) (currVertFan + (l + 1));
-				*ptIndex++ = (TIndexType) (currVertFan + (l + 2));
+				*ptIndex++ = (TIndexType)currVertFan;
+				*ptIndex++ = (TIndexType)(currVertFan + (l + 1));
+				*ptIndex++ = (TIndexType)(currVertFan + (l + 2));
 			}
 			currVertFan += 2 + _NbFans;
 		}
@@ -560,17 +535,17 @@ void CPSFanLight::getVBnIB(CVertexBuffer *&retVb, CIndexBuffer *&retIb)
 			}
 			if (!_Tex)
 			{
-				for(l = 1; l <= _NbFans + 1; ++l)
+				for (l = 1; l <= _NbFans + 1; ++l)
 				{
 					vba.setColor(l + k * (_NbFans + 2), CRGBA(0, 0, 0));
 				}
 			}
 			else
 			{
-				for(l = 1; l <= _NbFans + 1; ++l)
+				for (l = 1; l <= _NbFans + 1; ++l)
 				{
 					vba.setColor(l + k * (_NbFans + 2), CRGBA(0, 0, 0));
-					vba.setTexCoord(l + k * (_NbFans + 2), 0, NLMISC::CUV((l - 1) / (float) _NbFans, 1));
+					vba.setTexCoord(l + k * (_NbFans + 2), 0, NLMISC::CUV((l - 1) / (float)_NbFans, 1));
 				}
 			}
 		}
@@ -589,7 +564,7 @@ uint CPSFanLight::getNumFanlightsInVB() const
 }
 
 ///====================================================================================
-void CPSFanLight::enumTexs(std::vector<NLMISC::CSmartPtr<ITexture> > &dest, IDriver &drv)
+void CPSFanLight::enumTexs(std::vector<NLMISC::CSmartPtr<ITexture>> &dest, IDriver &drv)
 {
 	NL_PS_FUNC(CPSFanLight_enumTexs)
 	if (_Tex)

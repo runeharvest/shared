@@ -26,43 +26,43 @@
 #include "nel/3d/ps_located.h"
 #include "nel/3d/particle_system.h"
 
-
 #include "editable_range.h"
 #include "direction_attr.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CPSMoverDlg dialog
 
-
-CPSMoverDlg::CPSMoverDlg(CParticleWorkspace::CNode *ownerNode, CWnd *parent, NL3D::CEvent3dMouseListener *ml,  NL3D::CPSLocated *editedLocated, uint32 editedLocatedIndex)   // standard constructor
-	: CDialog(CPSMoverDlg::IDD, parent),
-	  _Node(ownerNode),
-	  _EditedLocated(editedLocated),
-	  _EditedLocatedIndex(editedLocatedIndex),
-	  _DirectionDlg(NULL),
-	  _MouseListener(ml),
-	  _Scale(NULL), _XScale(NULL), _YScale(NULL), _ZScale(NULL),
-	  _ScaleText(NULL), _XScaleText(NULL), _YScaleText(NULL), _ZScaleText(NULL)
+CPSMoverDlg::CPSMoverDlg(CParticleWorkspace::CNode *ownerNode, CWnd *parent, NL3D::CEvent3dMouseListener *ml, NL3D::CPSLocated *editedLocated, uint32 editedLocatedIndex) // standard constructor
+    : CDialog(CPSMoverDlg::IDD, parent)
+    , _Node(ownerNode)
+    , _EditedLocated(editedLocated)
+    , _EditedLocatedIndex(editedLocatedIndex)
+    , _DirectionDlg(NULL)
+    , _MouseListener(ml)
+    , _Scale(NULL)
+    , _XScale(NULL)
+    , _YScale(NULL)
+    , _ZScale(NULL)
+    , _ScaleText(NULL)
+    , _XScaleText(NULL)
+    , _YScaleText(NULL)
+    , _ZScaleText(NULL)
 {
 
-	
-
 	const NLMISC::CVector &pos = _EditedLocated->getPos()[_EditedLocatedIndex];
-	
+
 	m_X.Format(_T("%.3g"), pos.x);
 	m_Y.Format(_T("%.3g"), pos.y);
 	m_Z.Format(_T("%.3g"), pos.z);
 
 	//{{AFX_DATA_INIT(CPSMoverDlg)
 	//}}AFX_DATA_INIT
-
-
 }
 
 CPSMoverDlg::~CPSMoverDlg()
 {
 	cleanScaleCtrl();
-	if (_DirectionDlg) 
+	if (_DirectionDlg)
 	{
 		_DirectionDlg->DestroyWindow();
 		delete _DirectionDlg;
@@ -71,7 +71,7 @@ CPSMoverDlg::~CPSMoverDlg()
 
 void CPSMoverDlg::updateListener(void)
 {
-	if(_ParticleDlg->MainFrame->isMoveElement())
+	if (_ParticleDlg->MainFrame->isMoveElement())
 	{
 		const NLMISC::CVector &pos = _EditedLocated->getPos()[_EditedLocatedIndex];
 		NLMISC::CMatrix m;
@@ -86,7 +86,7 @@ void CPSMoverDlg::updatePosition(void)
 {
 	UpdateData();
 	const NLMISC::CVector &pos = _EditedLocated->getPos()[_EditedLocatedIndex];
-	
+
 	m_X.Format(_T("%.3g"), pos.x);
 	m_Y.Format(_T("%.3g"), pos.y);
 	m_Z.Format(_T("%.3g"), pos.z);
@@ -94,7 +94,7 @@ void CPSMoverDlg::updatePosition(void)
 	UpdateData(FALSE);
 }
 
-void CPSMoverDlg::DoDataExchange(CDataExchange* pDX)
+void CPSMoverDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CPSMoverDlg)
@@ -105,20 +105,19 @@ void CPSMoverDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CPSMoverDlg, CDialog)
-	//{{AFX_MSG_MAP(CPSMoverDlg)
-	ON_BN_CLICKED(IDC_UPDATE_XPOS, OnUpdateXpos)
-	ON_BN_CLICKED(IDC_UPDATE_YPOS, OnUpdateYpos)
-	ON_BN_CLICKED(IDC_UPDATE_ZPOS, OnUpdateZpos)
-	ON_LBN_SELCHANGE(IDC_SUB_COMPONENT, OnSelchangeSubComponent)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CPSMoverDlg)
+ON_BN_CLICKED(IDC_UPDATE_XPOS, OnUpdateXpos)
+ON_BN_CLICKED(IDC_UPDATE_YPOS, OnUpdateYpos)
+ON_BN_CLICKED(IDC_UPDATE_ZPOS, OnUpdateZpos)
+ON_LBN_SELCHANGE(IDC_SUB_COMPONENT, OnSelchangeSubComponent)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CPSMoverDlg message handlers
 
-void CPSMoverDlg::OnUpdateXpos() 
+void CPSMoverDlg::OnUpdateXpos()
 {
 	UpdateData();
 	NLMISC::CVector &pos = _EditedLocated->getPos()[_EditedLocatedIndex];
@@ -135,7 +134,7 @@ void CPSMoverDlg::OnUpdateXpos()
 	UpdateData(FALSE);
 }
 
-void CPSMoverDlg::OnUpdateYpos() 
+void CPSMoverDlg::OnUpdateYpos()
 {
 	UpdateData();
 	NLMISC::CVector &pos = _EditedLocated->getPos()[_EditedLocatedIndex];
@@ -149,10 +148,10 @@ void CPSMoverDlg::OnUpdateYpos()
 	{
 		MessageBox(_T("invalid entry"), _T("error"));
 	}
-	UpdateData(FALSE);	
+	UpdateData(FALSE);
 }
 
-void CPSMoverDlg::OnUpdateZpos() 
+void CPSMoverDlg::OnUpdateZpos()
 {
 	UpdateData();
 	NLMISC::CVector &pos = _EditedLocated->getPos()[_EditedLocatedIndex];
@@ -160,21 +159,21 @@ void CPSMoverDlg::OnUpdateZpos()
 	if (NLMISC::fromString(NLMISC::tStrToUtf8(m_Z), z))
 	{
 		pos.z = z;
-		updateListener();		
+		updateListener();
 	}
 	else
 	{
 		MessageBox(_T("invalid entry"), _T("error"));
 	}
-	UpdateData(FALSE);	
+	UpdateData(FALSE);
 }
 
-BOOL CPSMoverDlg::OnInitDialog() 
+BOOL CPSMoverDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
 	uint numBound = _EditedLocated->getNbBoundObjects();
-	
+
 	uint nbCandidates = 0;
 
 	for (uint k = 0; k < numBound; ++k)
@@ -182,25 +181,31 @@ BOOL CPSMoverDlg::OnInitDialog()
 		if (dynamic_cast<NL3D::IPSMover *>(_EditedLocated->getBoundObject(k)))
 		{
 			uint insertedLine = m_SubComponentCtrl.AddString(nlUtf8ToTStr(_EditedLocated->getBoundObject(k)->getName()));
-			m_SubComponentCtrl.SetItemData(insertedLine, (DWORD_PTR) _EditedLocated->getBoundObject(k));
-			++nbCandidates;			
+			m_SubComponentCtrl.SetItemData(insertedLine, (DWORD_PTR)_EditedLocated->getBoundObject(k));
+			++nbCandidates;
 		}
 	}
 
 	if (nbCandidates > 0)
 	{
-		m_SubComponentCtrl.SetCurSel(0);	
-		_EditedLocated->getOwner()->setCurrentEditedElement(_EditedLocated, _EditedLocatedIndex, (NL3D::CPSLocatedBindable *) m_SubComponentCtrl.GetItemData(0));
+		m_SubComponentCtrl.SetCurSel(0);
+		_EditedLocated->getOwner()->setCurrentEditedElement(_EditedLocated, _EditedLocatedIndex, (NL3D::CPSLocatedBindable *)m_SubComponentCtrl.GetItemData(0));
 	}
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void CPSMoverDlg::cleanScaleCtrl(void)
 {
-	#define REMOVE_WINDOW(w) if (w) { w->DestroyWindow(); delete w; w = NULL; }
-									
+#define REMOVE_WINDOW(w)    \
+	if (w)                  \
+	{                       \
+		w->DestroyWindow(); \
+		delete w;           \
+		w = NULL;           \
+	}
+
 	REMOVE_WINDOW(_Scale);
 	REMOVE_WINDOW(_XScale);
 	REMOVE_WINDOW(_YScale);
@@ -217,18 +222,15 @@ void CPSMoverDlg::createScaleControls(void)
 {
 	cleanScaleCtrl();
 
-			
 	NL3D::IPSMover *m = getMoverInterface();
 	if (!m) return;
 
 	const sint xPos = 10;
 	sint yPos = 330;
-	
-
 
 	RECT r;
 
-	if (m->supportUniformScaling() && ! m->supportNonUniformScaling() )
+	if (m->supportUniformScaling() && !m->supportNonUniformScaling())
 	{
 		_Scale = new CEditableRangeFloat("UNIFORM SCALE", _Node, 0.f, 4.f);
 		_UniformScaleWrapper.M = m;
@@ -238,15 +240,14 @@ void CPSMoverDlg::createScaleControls(void)
 		_Scale->init(100 + xPos, yPos, this);
 
 		_ScaleText = new CStatic;
-		_ScaleText ->Create(_T("Scale : "), SS_LEFT, CRect(xPos, yPos + 10, xPos + 60, yPos + 32), this);
-		_ScaleText ->ShowWindow(SW_SHOW);
+		_ScaleText->Create(_T("Scale : "), SS_LEFT, CRect(xPos, yPos + 10, xPos + 60, yPos + 32), this);
+		_ScaleText->ShowWindow(SW_SHOW);
 
 		_Scale->GetClientRect(&r);
 		yPos += r.bottom;
 	}
 	else if (m->supportNonUniformScaling())
 	{
-		
 
 		// dialog for edition of x scale
 		_XScale = new CEditableRangeFloat("X SCALE", _Node, 0.f, 4.f);
@@ -257,8 +258,8 @@ void CPSMoverDlg::createScaleControls(void)
 		_XScale->GetClientRect(&r);
 
 		_XScaleText = new CStatic;
-		_XScaleText ->Create(_T("x Scale : "), SS_LEFT, CRect(xPos, yPos + 10, xPos + 60, yPos + 32), this);
-		_XScaleText ->ShowWindow(SW_SHOW);
+		_XScaleText->Create(_T("x Scale : "), SS_LEFT, CRect(xPos, yPos + 10, xPos + 60, yPos + 32), this);
+		_XScaleText->ShowWindow(SW_SHOW);
 
 		yPos += r.bottom;
 
@@ -269,11 +270,10 @@ void CPSMoverDlg::createScaleControls(void)
 		_YScale->setWrapper(&_YScaleWrapper);
 		_YScale->init(xPos + 70, yPos, this);
 		_YScale->GetClientRect(&r);
-		
 
 		_YScaleText = new CStatic;
-		_YScaleText ->Create(_T("y Scale : "), SS_LEFT, CRect(xPos, yPos + 10, xPos + 60, yPos + 32), this);
-		_YScaleText ->ShowWindow(SW_SHOW);
+		_YScaleText->Create(_T("y Scale : "), SS_LEFT, CRect(xPos, yPos + 10, xPos + 60, yPos + 32), this);
+		_YScaleText->ShowWindow(SW_SHOW);
 
 		yPos += r.bottom;
 
@@ -284,12 +284,11 @@ void CPSMoverDlg::createScaleControls(void)
 		_ZScale->setWrapper(&_ZScaleWrapper);
 		_ZScale->init(xPos + 70, yPos, this);
 		_ZScale->GetClientRect(&r);
-		
-		_ZScaleText = new CStatic;
-		_ZScaleText ->Create(_T("z Scale : "), SS_LEFT, CRect(xPos, yPos + 10, xPos + 60, yPos + 32), this);
-		_ZScaleText ->ShowWindow(SW_SHOW);
-	}
 
+		_ZScaleText = new CStatic;
+		_ZScaleText->Create(_T("z Scale : "), SS_LEFT, CRect(xPos, yPos + 10, xPos + 60, yPos + 32), this);
+		_ZScaleText->ShowWindow(SW_SHOW);
+	}
 
 	if (m->onlyStoreNormal())
 	{
@@ -299,37 +298,33 @@ void CPSMoverDlg::createScaleControls(void)
 		_DirectionWrapper.Index = _EditedLocatedIndex;
 		_DirectionDlg->setWrapper(&_DirectionWrapper);
 	}
-
-	
 }
 
-void CPSMoverDlg::OnSelchangeSubComponent() 
+void CPSMoverDlg::OnSelchangeSubComponent()
 {
-	UpdateData();	
+	UpdateData();
 	createScaleControls();
 	_EditedLocated->getOwner()->setCurrentEditedElement(_EditedLocated, _EditedLocatedIndex, getLocatedBindable());
 	UpdateData(FALSE);
 }
-
 
 NL3D::IPSMover *CPSMoverDlg::getMoverInterface(void)
 {
 	UpdateData();
 	nlassert(_EditedLocated);
 	sint currIndex = m_SubComponentCtrl.GetCurSel();
-	if (currIndex == -1) return NULL;	
+	if (currIndex == -1) return NULL;
 	return dynamic_cast<NL3D::IPSMover *>((NL3D::CPSLocatedBindable *)(m_SubComponentCtrl.GetItemData(currIndex)));
 }
 
-void CPSMoverDlg::init(CParticleDlg	*parent)
+void CPSMoverDlg::init(CParticleDlg *parent)
 {
-	_ParticleDlg= parent;
+	_ParticleDlg = parent;
 
 	Create(CPSMoverDlg::IDD, parent);
 	ShowWindow(SW_SHOW);
 	createScaleControls();
 }
-
 
 NL3D::CPSLocatedBindable *CPSMoverDlg::getLocatedBindable(void)
 {
@@ -337,8 +332,6 @@ NL3D::CPSLocatedBindable *CPSMoverDlg::getLocatedBindable(void)
 	nlassert(_EditedLocated);
 	sint currIndex = m_SubComponentCtrl.GetCurSel();
 	if (currIndex == -1) return NULL;
-	
-	return (NL3D::CPSLocatedBindable *) m_SubComponentCtrl.GetItemData(currIndex);
+
+	return (NL3D::CPSLocatedBindable *)m_SubComponentCtrl.GetItemData(currIndex);
 }
-
-

@@ -27,133 +27,130 @@
 #include "vegetable_refresh.h"
 #include "vegetable_list_box.h"
 
+class CObjectViewer;
+class CVegetableApperancePage;
+class CVegetableDensityPage;
+class CVegetableScalePage;
+class CVegetableRotatePage;
+class CVegetableWindDlg;
 
-class	CObjectViewer;
-class	CVegetableApperancePage;
-class	CVegetableDensityPage;
-class	CVegetableScalePage;
-class	CVegetableRotatePage;
-class	CVegetableWindDlg;
-
-namespace	NL3D
-{
-	class	CVegetable;
-	class	CTileVegetableDesc;
+namespace NL3D {
+class CVegetable;
+class CTileVegetableDesc;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CVegetableDlg dialog
 
 class CVegetableDlg : public CDialog, public IVegetableRefresh
 {
-// Construction
+	// Construction
 public:
-	CVegetableDlg(CObjectViewer *viewer, CWnd* pParent = NULL);   // standard constructor
+	CVegetableDlg(CObjectViewer *viewer, CWnd *pParent = NULL); // standard constructor
 
 	~CVegetableDlg();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CVegetableDlg)
-	enum { IDD = IDD_VEGETABLE_DLG };
-	CVegetableListBox	VegetableList;
-	CStatic	StaticPolyCount;
-	CButton	CheckSnapToGround;
-	CButton	CheckEnableVegetable;
-	CButton	CheckAutomaticRefresh;
-	CButton	ButtonRefreshLandscape;
-	CButton	CheckShowLandscape;
-	CStatic	SelectVegetableStaticText;
+	enum
+	{
+		IDD = IDD_VEGETABLE_DLG
+	};
+	CVegetableListBox VegetableList;
+	CStatic StaticPolyCount;
+	CButton CheckSnapToGround;
+	CButton CheckEnableVegetable;
+	CButton CheckAutomaticRefresh;
+	CButton ButtonRefreshLandscape;
+	CButton CheckShowLandscape;
+	CStatic SelectVegetableStaticText;
 	//}}AFX_DATA
 
-
 	// IVegetableRefresh implementation: only if automatic refresh is checked
-	virtual	void		refreshVegetableDisplay();
-
+	virtual void refreshVegetableDisplay();
 
 public:
-	
 	// get count of vegetable in the dlg
-	uint				getNumVegetables() const;
-	std::string			getVegetableName(uint id) const;
-	void				updateCurSelVegetableName();
-	NL3D::CVegetable	*getVegetable(uint id) const;
+	uint getNumVegetables() const;
+	std::string getVegetableName(uint id) const;
+	void updateCurSelVegetableName();
+	NL3D::CVegetable *getVegetable(uint id) const;
 
 	// Change the hiden state of the id vegetable.
-	void				setShowHideVegetable (uint id, bool visible, bool refreshDisplay);
-	void				swapShowHideVegetable (uint id);
-	bool				isVegetableVisible (uint id);
+	void setShowHideVegetable(uint id, bool visible, bool refreshDisplay);
+	void swapShowHideVegetable(uint id);
+	bool isVegetableVisible(uint id);
 
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CVegetableDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 	/** set the vegetble to edit. NULL will hide all the windows.
 	 *	Called by ListBox selection.
 	 */
-	void			setVegetableToEdit(NL3D::CVegetable *vegetable);
+	void setVegetableToEdit(NL3D::CVegetable *vegetable);
 
-// Implementation
+	// Implementation
 protected:
-	CObjectViewer				*_ObjView;
-	friend	class	CVegetableListBox;
+	CObjectViewer *_ObjView;
+	friend class CVegetableListBox;
 
 	// Name to save.
-	std::string					_LastVegetSetName;
+	std::string _LastVegetSetName;
 
 	// A desc of vegetable to edit.
-	struct	CVegetableDesc
+	struct CVegetableDesc
 	{
 		// The vegetable
-		NL3D::CVegetable		*Vegetable;
+		NL3D::CVegetable *Vegetable;
 		// The name of this vegetable.
-		std::string				VegetableName;
+		std::string VegetableName;
 		// Visibility. Editor feature only
-		bool					Visible;
+		bool Visible;
 
 		CVegetableDesc();
 
 		// init the vegetable
-		void		initDefaultVegetable();
-		void		initVegetable(const NL3D::CVegetable &vegetable);
+		void initDefaultVegetable();
+		void initVegetable(const NL3D::CVegetable &vegetable);
 		// update VegetableName according to Vegetable
-		void		updateVegetableName();
+		void updateVegetableName();
 		// delete the vegetable
-		void		deleteVegetable();
+		void deleteVegetable();
 	};
 
 	// The vegetable List.
-	std::vector<CVegetableDesc>	_Vegetables;
+	std::vector<CVegetableDesc> _Vegetables;
 
 	// The property sheet.
-	CPropertySheet				*_PropertySheet;
-	CVegetableDensityPage		*_VegetableDensityPage;
-	CVegetableApperancePage		*_VegetableApperancePage;
-	CVegetableScalePage			*_VegetableScalePage;
-	CVegetableRotatePage		*_VegetableRotatePage;
+	CPropertySheet *_PropertySheet;
+	CVegetableDensityPage *_VegetableDensityPage;
+	CVegetableApperancePage *_VegetableApperancePage;
+	CVegetableScalePage *_VegetableScalePage;
+	CVegetableRotatePage *_VegetableRotatePage;
 
 	// Extra wind dlg
-	CVegetableWindDlg			*_VegetableWindDlg;
+	CVegetableWindDlg *_VegetableWindDlg;
 
 	// refresh vegetable display even if box unchecked.
-	void			doRefreshVegetableDisplay();
+	void doRefreshVegetableDisplay();
 
 	// clear all vegetables.
-	void			clearVegetables();
+	void clearVegetables();
 	// load a vegetSet with a FileDialog
-	bool			loadVegetableSet(NL3D::CTileVegetableDesc &vegetSet, const TCHAR *title);
+	bool loadVegetableSet(NL3D::CTileVegetableDesc &vegetSet, const TCHAR *title);
 	/** build the vegetSet from the current _Vegetables
 	 * NB: transform Rotate Angle in Radians.
 	 * \param keepDefaultShapeName if true, then vegetables with a ShapeName.empty() are kept.
 	 * \param keepHiden if true, then vegetables maked as hiden in ObjectViewer are kept.
 	 */
-	void			buildVegetableSet(NL3D::CTileVegetableDesc &vegetSet, bool keepDefaultShapeName= true, bool keepHiden= true );
+	void buildVegetableSet(NL3D::CTileVegetableDesc &vegetSet, bool keepDefaultShapeName = true, bool keepHiden = true);
 	// append the vegetSet to the current _Vegetables
 	// NB: transform Rotate Angle in Degrees.
-	void			appendVegetableSet(NL3D::CTileVegetableDesc &vegetSet);
+	void appendVegetableSet(NL3D::CTileVegetableDesc &vegetSet);
 
 	// Generated message map functions
 	//{{AFX_MSG(CVegetableDlg)

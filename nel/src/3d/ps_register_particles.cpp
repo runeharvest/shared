@@ -16,7 +16,6 @@
 
 #include "std3d.h"
 
-
 #include "nel/3d/ps_util.h"
 #include "nel/3d/ps_particle.h"
 #include "nel/3d/ps_particle2.h"
@@ -26,26 +25,25 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
+namespace NL3D {
+void CPSUtil::registerParticles()
 {
-	void CPSUtil::registerParticles()
-	{
-		NL_PS_FUNC(	CPSUtil_registerParticles)
-		NLMISC_REGISTER_CLASS(CPSFanLight);
-		NLMISC_REGISTER_CLASS(CPSTailDot);
-		NLMISC_REGISTER_CLASS(CPSRibbon);
-		NLMISC_REGISTER_CLASS(CPSRibbonLookAt);
-		NLMISC_REGISTER_CLASS(CPSShockWave);
-		NLMISC_REGISTER_CLASS(CPSFace);
-		NLMISC_REGISTER_CLASS(CPSMesh);
-		NLMISC_REGISTER_CLASS(CPSConstraintMesh);
-		NLMISC_REGISTER_CLASS(CPSDot);
-		NLMISC_REGISTER_CLASS(CPSFaceLookAt);
+	NL_PS_FUNC(CPSUtil_registerParticles)
+	NLMISC_REGISTER_CLASS(CPSFanLight);
+	NLMISC_REGISTER_CLASS(CPSTailDot);
+	NLMISC_REGISTER_CLASS(CPSRibbon);
+	NLMISC_REGISTER_CLASS(CPSRibbonLookAt);
+	NLMISC_REGISTER_CLASS(CPSShockWave);
+	NLMISC_REGISTER_CLASS(CPSFace);
+	NLMISC_REGISTER_CLASS(CPSMesh);
+	NLMISC_REGISTER_CLASS(CPSConstraintMesh);
+	NLMISC_REGISTER_CLASS(CPSDot);
+	NLMISC_REGISTER_CLASS(CPSFaceLookAt);
 
-		CPSRotated2DParticle::initRotTable(); // init the precalc rot table for face lookat
-		CPSFanLight::initFanLightPrecalc();
-		CPSDot::initVertexBuffers();
-		CPSQuad::initVertexBuffers();
-		CPSConstraintMesh::initPrerotVB();
-	}
+	CPSRotated2DParticle::initRotTable(); // init the precalc rot table for face lookat
+	CPSFanLight::initFanLightPrecalc();
+	CPSDot::initVertexBuffers();
+	CPSQuad::initVertexBuffers();
+	CPSConstraintMesh::initPrerotVB();
+}
 } // NL3D

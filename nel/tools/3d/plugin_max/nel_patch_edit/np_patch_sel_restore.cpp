@@ -13,7 +13,7 @@ extern void Cancel2StepPatchModes(IObjParam *ip);
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-PatchSelRestore::PatchSelRestore(EditPatchData* pd, EditPatchMod* mod, PatchMesh *patch)
+PatchSelRestore::PatchSelRestore(EditPatchData *pd, EditPatchMod *mod, PatchMesh *patch)
 {
 	gotRedo = FALSE;
 	epd = pd;
@@ -45,17 +45,16 @@ void PatchSelRestore::Restore(int isUndo)
 		patch->patchSel = oldPSel;
 		epd->TempData(mod)->Invalidate(PART_GEOM | PART_TOPO | PART_SELECT);
 	}
-	else
-		if (epd->tempData)
-		{
-			epd->TempData(mod)->Invalidate(PART_GEOM | PART_TOPO | PART_SELECT, FALSE);
-		}
-		if (mod->ip)
-			Cancel2StepPatchModes(mod->ip);
-		mod->InvalidateSurfaceUI();
-		//	mod->PatchSelChanged();
-		//	mod->UpdateSelectDisplay();
-		mod->NotifyDependents(FOREVER, PART_GEOM | PART_TOPO | PART_SELECT, REFMSG_CHANGE);
+	else if (epd->tempData)
+	{
+		epd->TempData(mod)->Invalidate(PART_GEOM | PART_TOPO | PART_SELECT, FALSE);
+	}
+	if (mod->ip)
+		Cancel2StepPatchModes(mod->ip);
+	mod->InvalidateSurfaceUI();
+	//	mod->PatchSelChanged();
+	//	mod->UpdateSelectDisplay();
+	mod->NotifyDependents(FOREVER, PART_GEOM | PART_TOPO | PART_SELECT, REFMSG_CHANGE);
 }
 
 void PatchSelRestore::Redo()
@@ -63,7 +62,7 @@ void PatchSelRestore::Redo()
 	if (epd->tempData && epd->TempData(mod)->PatchCached(t))
 	{
 		RPatchMesh *rpatch;
-		PatchMesh *patch = epd->TempData(mod)->GetPatch(t,rpatch);
+		PatchMesh *patch = epd->TempData(mod)->GetPatch(t, rpatch);
 		if (patch)
 		{
 			patch->vertSel = newVSel;
@@ -72,16 +71,14 @@ void PatchSelRestore::Redo()
 		}
 		epd->TempData(mod)->Invalidate(PART_GEOM | PART_TOPO | PART_SELECT);
 	}
-	else
-		if (epd->tempData)
-		{
-			epd->TempData(mod)->Invalidate(PART_GEOM | PART_TOPO | PART_SELECT, FALSE);
-		}
-		if (mod->ip)
-			Cancel2StepPatchModes(mod->ip);
-		mod->InvalidateSurfaceUI();
-		//	mod->PatchSelChanged();
-		//	mod->UpdateSelectDisplay();
-		mod->NotifyDependents(FOREVER, PART_GEOM | PART_TOPO | PART_SELECT, REFMSG_CHANGE);
+	else if (epd->tempData)
+	{
+		epd->TempData(mod)->Invalidate(PART_GEOM | PART_TOPO | PART_SELECT, FALSE);
+	}
+	if (mod->ip)
+		Cancel2StepPatchModes(mod->ip);
+	mod->InvalidateSurfaceUI();
+	//	mod->PatchSelChanged();
+	//	mod->UpdateSelectDisplay();
+	mod->NotifyDependents(FOREVER, PART_GEOM | PART_TOPO | PART_SELECT, REFMSG_CHANGE);
 }
-

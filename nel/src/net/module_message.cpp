@@ -14,15 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdnet.h"
 #include "nel/net/module_message.h"
 
 // a stupid function to remove some more stupid visual warnings
-void foo_module_message() {}
+void foo_module_message() { }
 
-namespace NLNET
-{
+namespace NLNET {
 //	CModuleMessage::CModuleMessage(const CMessage &messageBody)
 //		: MessageType(mt_invalid),
 //		SenderModuleId(INVALID_MODULE_ID),
@@ -43,6 +41,5 @@ namespace NLNET
 //		s.serial(AddresseeModuleId);
 //		MessageBody.serialMessage()
 //	}
-
 
 } // namespace NLNET

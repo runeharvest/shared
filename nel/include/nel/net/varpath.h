@@ -22,36 +22,33 @@
 class CVarPath
 {
 public:
-
-	CVarPath (const std::string &raw) : RawVarPath(raw)
+	CVarPath(const std::string &raw)
+	    : RawVarPath(raw)
 	{
-		decode ();
+		decode();
 	}
 
-	void decode ();
+	void decode();
 
-	std::vector<std::pair<std::string, std::string> > Destination;
+	std::vector<std::pair<std::string, std::string>> Destination;
 
-	void display ();
+	void display();
 
 	/// returns true if there's no more . in the path
-	bool isFinal ();
+	bool isFinal();
 
-	bool empty ()
+	bool empty()
 	{
 		return Destination.empty();
 	}
 
 private:
-
-	std::string getToken ();
+	std::string getToken();
 
 	std::string RawVarPath;
 
 	uint32 TokenPos;
-
 };
-
 
 #endif // NL_VARPATH_H
 

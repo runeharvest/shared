@@ -17,38 +17,36 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RZ_GROUP_CONTAINER_H
 #define RZ_GROUP_CONTAINER_H
 
 #include "nel/gui/interface_group.h"
 
-namespace NLGUI
+namespace NLGUI {
+
+// Special group to handle the mouse wheel message
+class CInterfaceGroupWheel : public CInterfaceGroup
 {
+public:
+	DECLARE_UI_CLASS(CInterfaceGroupWheel)
 
-	// Special group to handle the mouse wheel message
-	class CInterfaceGroupWheel : public CInterfaceGroup
-	{
-	public:
-        DECLARE_UI_CLASS( CInterfaceGroupWheel )
+	/// Constructor
+	CInterfaceGroupWheel(const TCtorParam &param);
 
-		/// Constructor
-		CInterfaceGroupWheel(const TCtorParam &param);
+	std::string getProperty(const std::string &name) const;
+	void setProperty(const std::string &name, const std::string &value);
+	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
 
-		std::string getProperty( const std::string &name ) const;
-		void setProperty( const std::string &name, const std::string &value );
-		xmlNodePtr serialize( xmlNodePtr parentNode, const char *type ) const;
+	/// Coming from CInterfaceElement
+	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+	virtual bool handleEvent(const NLGUI::CEventDescriptor &event);
 
-		/// Coming from CInterfaceElement
-		virtual bool parse(xmlNodePtr cur, CInterfaceGroup * parentGroup);
-		virtual bool handleEvent (const NLGUI::CEventDescriptor &event);
-	private:
-		IActionHandler *_AHWheelUp;
-		CStringShared	_AHWheelUpParams;
-		IActionHandler *_AHWheelDown;
-		CStringShared	_AHWheelDownParams;
-	};
+private:
+	IActionHandler *_AHWheelUp;
+	CStringShared _AHWheelUpParams;
+	IActionHandler *_AHWheelDown;
+	CStringShared _AHWheelDownParams;
+};
 
 }
 

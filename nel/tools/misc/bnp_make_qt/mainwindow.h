@@ -8,54 +8,53 @@
 
 #include "ui_mainwindow.h"
 
-namespace Ui
-{
-  class MainWindow;
+namespace Ui {
+class MainWindow;
 }
 
 class MainWindow : public QMainWindow
 {
-  Q_OBJECT
+	Q_OBJECT
 
-  public:
-    explicit MainWindow(QWidget * parent = 0);
-    ~MainWindow();
+public:
+	explicit MainWindow(QWidget *parent = 0);
+	~MainWindow();
 
-  public slots:
-    void onButtonListBrowseClicked();
-    void onButtonListClicked();
-    void onProcessListComplete();
+public slots:
+	void onButtonListBrowseClicked();
+	void onButtonListClicked();
+	void onProcessListComplete();
 
-    void onButtonSearchBrowseClicked();
-    void onButtonSearchClicked();
-    void onProcessSearchComplete();
+	void onButtonSearchBrowseClicked();
+	void onButtonSearchClicked();
+	void onProcessSearchComplete();
 
-    void onButtonPackBrowseClicked();
-    void onButtonPackClicked();
-    void onProcessPackComplete();
+	void onButtonPackBrowseClicked();
+	void onButtonPackClicked();
+	void onProcessPackComplete();
 
-    void onButtonUnpackBrowseClicked();
-    void onButtonUnpackClicked();
-    void onProcessUnpackComplete();
+	void onButtonUnpackBrowseClicked();
+	void onButtonUnpackClicked();
+	void onProcessUnpackComplete();
 
-    void onButtonBnpMakeBrowseClicked();
-    void onButtonDataPathBrowseClicked();
+	void onButtonBnpMakeBrowseClicked();
+	void onButtonDataPathBrowseClicked();
 
-  private:
-    Ui::MainWindow *  uiMainWindow_;
-    QSettings *       settings_;
-    QString           bnpMakeBinary_;
-    QString           dataPath_;
+private:
+	Ui::MainWindow *uiMainWindow_;
+	QSettings *settings_;
+	QString bnpMakeBinary_;
+	QString dataPath_;
 
-    QProcess *        processList_;
+	QProcess *processList_;
 
-    QProcess *        processSearch_;
-    int               fileInfoListIndex_;
-    QFileInfoList     fileInfoList_;
+	QProcess *processSearch_;
+	int fileInfoListIndex_;
+	QFileInfoList fileInfoList_;
 
-    QProcess *        processPack_;
+	QProcess *processPack_;
 
-    QProcess *        processUnpack_;
+	QProcess *processUnpack_;
 };
 
 #endif // MAINWINDOW_H

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef FILE_DESCRIPTION_CONTAINER_H
-#define	FILE_DESCRIPTION_CONTAINER_H
+#define FILE_DESCRIPTION_CONTAINER_H
 
 //-----------------------------------------------------------------------------
 // Includes
@@ -26,7 +26,6 @@
 #include "nel/misc/sstring.h"
 
 #include <vector>
-
 
 //-----------------------------------------------------------------------------
 // class CFileDescription
@@ -40,38 +39,37 @@ public:
 	uint32 FileSize;
 
 	// ctor
-	CFileDescription(const std::string& name=std::string(),uint32 time=0,uint32 size=0);
+	CFileDescription(const std::string &name = std::string(), uint32 time = 0, uint32 size = 0);
 
 	// setup the record for a given file
 	// if file exists then initialises file size and time stamp accordingly and return true
 	// else zeros file size and timestamp and returns false
-	bool set(const std::string& name);
+	bool set(const std::string &name);
 
 	// serialise...
-	void serial(NLMISC::IStream& stream);
+	void serial(NLMISC::IStream &stream);
 
 	// generate a complete string description of the file
 	// the 'maxFileNameLen' is used to generate padding spaces to allign file lengths nicely
-	NLMISC::CSString toString(uint32 maxFileNameLen=0) const;
+	NLMISC::CSString toString(uint32 maxFileNameLen = 0) const;
 
 	// remove the provided string if found at the beginning of FileName
-	void stripFilename(const std::string& header) { removeHeaderFromFileName(header); }
+	void stripFilename(const std::string &header) { removeHeaderFromFileName(header); }
 
 	// comparison operator for use with STL
-	bool operator<(const CFileDescription& other) const;
+	bool operator<(const CFileDescription &other) const;
 
 protected:
 	// remove the provided string if found at the beginning of FileName
-	void removeHeaderFromFileName( const std::string& header )
+	void removeHeaderFromFileName(const std::string &header)
 	{
 		uint hdsize = (uint)header.size();
-		if ( FileName.substr( 0, hdsize ) == header )
+		if (FileName.substr(0, hdsize) == header)
 		{
-			FileName = FileName.substr( hdsize );
+			FileName = FileName.substr(hdsize);
 		}
 	}
 };
-
 
 //-----------------------------------------------------------------------------
 // class CFileDescriptionContainer
@@ -81,30 +79,30 @@ class CFileDescriptionContainer
 {
 public:
 	// add a specific named file to the container
-	void addFile(const CFileDescription& fileDescription);
+	void addFile(const CFileDescription &fileDescription);
 
 	// add a specific named file to the container
-	void addFile(const std::string& fileName, uint32 timeStamp, uint32 size);
+	void addFile(const std::string &fileName, uint32 timeStamp, uint32 size);
 
 	// add a specific named file to the container
 	// the file size and timestamp are looked up on the disk
-	void addFile(const std::string& fileName);
+	void addFile(const std::string &fileName);
 
 	// add all files matching the given file spec to the container
-	void addFileSpec(const std::string& fileSpec, bool Recurse=false);
+	void addFileSpec(const std::string &fileSpec, bool Recurse = false);
 
 	// add all files in a given directory that match any of the supplied wildcards to the container
-	void addFiles(const std::string& directory, const std::vector<std::string>& wildcards, bool recurse=false);
-	void addFiles(const std::string& directory, const NLMISC::CVectorSString& wildcards, bool recurse=false);
+	void addFiles(const std::string &directory, const std::vector<std::string> &wildcards, bool recurse = false);
+	void addFiles(const std::string &directory, const NLMISC::CVectorSString &wildcards, bool recurse = false);
 
 	// add the contents of another fdc to this one
-	void addFiles(const CFileDescriptionContainer& other);
+	void addFiles(const CFileDescriptionContainer &other);
 
 	// display a list of the files in the container to the named output log
-	void display(NLMISC::CLog* log) const;
+	void display(NLMISC::CLog *log) const;
 
 	// serialise...
-	void serial(NLMISC::IStream& stream);
+	void serial(NLMISC::IStream &stream);
 
 	// get number of elemnts in the container
 	uint32 size() const;
@@ -116,22 +114,21 @@ public:
 	void clear();
 
 	// get the nth element of the container (const)
-	const CFileDescription& operator[](uint32 idx) const;
+	const CFileDescription &operator[](uint32 idx) const;
 
 	// get the nth element of the container (non-const)
-	CFileDescription& operator[](uint32 idx);
+	CFileDescription &operator[](uint32 idx);
 
 	// remove the 'n'th element from a file description container
 	void removeFile(uint32 idx);
 
 	// remove the provided string if found at the beginning of FileName
-	void stripFilename(const std::string& header);
+	void stripFilename(const std::string &header);
 
 private:
 	typedef std::vector<CFileDescription> TFileDescriptions;
 	TFileDescriptions _FileDescriptions;
 };
-
 
 //-------------------------------------------------------------------------------------------------
 #endif

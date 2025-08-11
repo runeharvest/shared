@@ -20,9 +20,7 @@
 #include "nel/misc/types_nl.h"
 #include "nel/3d/texture.h"
 
-
 namespace NL3D {
-
 
 /**
  * This is a helper texture that helps to blend between 2 others textures. It may help where sharing is needed.
@@ -43,28 +41,36 @@ public:
 	CTextureBlend();
 
 	/// Set one of the textures between which to blend. If set to NULL, the result texture will be a dummy texture
-	void			setBlendTexture(uint index, ITexture *tex);
+	void setBlendTexture(uint index, ITexture *tex);
 
 	/// Get a blend texture
-	ITexture		*getBlendtexture(uint index)	   { nlassert(index < 2); return (ITexture *) _BlendTex[index]; }
-	const ITexture	*getBlendtexture(uint index) const { nlassert(index < 2); return (ITexture *) _BlendTex[index]; }
+	ITexture *getBlendtexture(uint index)
+	{
+		nlassert(index < 2);
+		return (ITexture *)_BlendTex[index];
+	}
+	const ITexture *getBlendtexture(uint index) const
+	{
+		nlassert(index < 2);
+		return (ITexture *)_BlendTex[index];
+	}
 
 	/** Set the blend factor between textures. It must range from 0 to 256.
-	  * \return true if the texture has been touched
-	  */
-	bool		setBlendFactor(uint16 factor);
+	 * \return true if the texture has been touched
+	 */
+	bool setBlendFactor(uint16 factor);
 
 	/// Get the blend factor between the textures (from 0 to 255)
-	uint16	        getBlendFactor() const { return _BlendFactor; }
+	uint16 getBlendFactor() const { return _BlendFactor; }
 
 	///\name Texture sharing
 	// @{
-	virtual bool			supportSharing() const;
-	virtual std::string		getShareName() const;
+	virtual bool supportSharing() const;
+	virtual std::string getShareName() const;
 	/// enable / disable sharing support
-	void					enableSharing(bool enabled = false);
+	void enableSharing(bool enabled = false);
 	/// test whether texture sharing is enabled
-	bool					isSharingEnabled() const { return _SharingEnabled; }
+	bool isSharingEnabled() const { return _SharingEnabled; }
 	// @}
 
 	/// Generate this texture data's.
@@ -74,17 +80,15 @@ public:
 	virtual void release();
 
 	// serial this texture datas
-	virtual void	serial(NLMISC::IStream &f);
+	virtual void serial(NLMISC::IStream &f);
 
 private:
-	uint16						_BlendFactor;
+	uint16 _BlendFactor;
 	NLMISC::CSmartPtr<ITexture> _BlendTex[2];
-	bool						_SharingEnabled;
+	bool _SharingEnabled;
 };
 
-
 } // NL3D
-
 
 #endif // NL_TEXTURE_BLEND_H
 

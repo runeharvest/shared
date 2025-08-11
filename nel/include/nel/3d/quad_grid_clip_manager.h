@@ -25,25 +25,21 @@
 #include "nel/3d/transform.h"
 
 #ifdef _X
-#	undef _X
+#undef _X
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
-using	NLMISC::CVector;
-using	NLMISC::CPlane;
-
+using NLMISC::CPlane;
+using NLMISC::CVector;
 
 class CScene;
 class CTransformShape;
 class CClipTrav;
 
-
 // ***************************************************************************
 // ClassIds.
-const NLMISC::CClassId		QuadGridClipManagerId=NLMISC::CClassId(0x1ffb079a, 0x6c536a96);
-
+const NLMISC::CClassId QuadGridClipManagerId = NLMISC::CClassId(0x1ffb079a, 0x6c536a96);
 
 // ***************************************************************************
 /**
@@ -56,10 +52,9 @@ class CQuadGridClipManager : public CTransform
 {
 public:
 	/// Call at the beginning of the program, to register the model
-	static	void	registerBasic();
+	static void registerBasic();
 
 public:
-
 	/// Constructor
 	CQuadGridClipManager();
 	~CQuadGridClipManager();
@@ -69,62 +64,57 @@ public:
 	 *	there is maxDists.size()+1  clusters created by case of clusterSize*clusterSize. And as so many test.
 	 *	\param radiusMax a square of radiusMax*2 x radiusMax*2  of CQuadGridCluster are ensured to be created.
 	 */
-	void				init(float clusterSize, uint numDist, float maxDist, float radiusMax );
+	void init(float clusterSize, uint numDist, float maxDist, float radiusMax);
 
 	/// delete clusters from scene, and reset the manager.
-	void				reset();
+	void reset();
 
 	/** create / delete QuadGridClusters around us.
 	 */
-	void				updateClustersFromCamera(const CVector &camPos);
-
+	void updateClustersFromCamera(const CVector &camPos);
 
 	/** link a model to the best cluster possible, and update the bbox of this cluster.
 	 *	if out of range (no cluster found), don't link to any and return false.
 	 *	NB: pTfmShp->getFirstParent() should be NULL.
 	 */
-	bool				linkModel(CTransformShape *pTfmShp);
+	bool linkModel(CTransformShape *pTfmShp);
 
 	/**	output (nlinfo) Stats for Usage of the QuadClip
 	 */
-	void				profile() const;
+	void profile() const;
 
 	/// \name CTransform traverse specialisation. Only clip is special
 	// @{
-	virtual void	traverseHrc() {}
-	virtual void	traverseClip();
-	virtual void	traverseAnimDetail() {}
-	virtual void	traverseLoadBalancing() {}
-	virtual void	traverseLight() {}
-	virtual void	traverseRender() {}
-	virtual	void	profileRender() {}
+	virtual void traverseHrc() { }
+	virtual void traverseClip();
+	virtual void traverseAnimDetail() { }
+	virtual void traverseLoadBalancing() { }
+	virtual void traverseLight() { }
+	virtual void traverseRender() { }
+	virtual void profileRender() { }
 	// @}
 
 private:
-	static CTransform	*creator() {return new CQuadGridClipManager;}
+	static CTransform *creator() { return new CQuadGridClipManager; }
 
 private:
-	float							_ClusterSize;
-	float							_RadiusMax;
-	float							_MaxDist;
-	uint							_NumDist;
-	sint							_X, _Y;
-	sint							_Width, _Height;
-	std::vector<CQuadGridClipCluster*>	_QuadGridClusterCases;
+	float _ClusterSize;
+	float _RadiusMax;
+	float _MaxDist;
+	uint _NumDist;
+	sint _X, _Y;
+	sint _Width, _Height;
+	std::vector<CQuadGridClipCluster *> _QuadGridClusterCases;
 
 	// List of not empty QuadGridClusters
-	typedef CFastPtrList<CQuadGridClipCluster>	TClusterList;
-	TClusterList					_NotEmptyQuadGridClipClusters;
+	typedef CFastPtrList<CQuadGridClipCluster> TClusterList;
+	TClusterList _NotEmptyQuadGridClipClusters;
 
-
-	void				deleteCaseModels(CClipTrav *pClipTrav, sint x, sint y);
-	void				newCaseModels(CQuadGridClipCluster	*&clusterCase, const NLMISC::CAABBox &pivotBbox);
-
+	void deleteCaseModels(CClipTrav *pClipTrav, sint x, sint y);
+	void newCaseModels(CQuadGridClipCluster *&clusterCase, const NLMISC::CAABBox &pivotBbox);
 };
 
-
 } // NL3D
-
 
 #endif // NL_QUAD_GRID_CLIP_MANAGER_H
 

@@ -19,9 +19,7 @@
 
 #include "nel/misc/types_nl.h"
 
-
-namespace NLPACS
-{
+namespace NLPACS {
 
 class CMovePrimitive;
 class CCollisionDesc;
@@ -36,18 +34,14 @@ class CCollisionDesc;
 class ICollisionCallback
 {
 public:
-
 	/// destructor
-	virtual ~ICollisionCallback () { }
+	virtual ~ICollisionCallback() { }
 
 	/// Give a collision reaction
-	virtual	bool			reaction (CMovePrimitive& first, CMovePrimitive& second, const CCollisionDesc& desc)=0;
-
+	virtual bool reaction(CMovePrimitive &first, CMovePrimitive &second, const CCollisionDesc &desc) = 0;
 };
 
-
 } // NLPACS
-
 
 #endif // NL_COLLISION_CALLBACK_H
 

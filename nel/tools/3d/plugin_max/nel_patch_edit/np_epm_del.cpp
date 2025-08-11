@@ -7,7 +7,7 @@
 #define DBGWELD_ACTIONx
 #define DBG_NAMEDSELSx
 
-#define PROMPT_TIME	2000
+#define PROMPT_TIME 2000
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -19,7 +19,7 @@ extern void DeletePatchParts(PatchMesh *patch, RPatchMesh *rpatch, BitArray &del
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void EditPatchMod::DoDeleteSelected() 
+void EditPatchMod::DoDeleteSelected()
 {
 	switch (GetSubobjectLevel())
 	{
@@ -40,25 +40,25 @@ void EditPatchMod::DoDeleteSelected()
 static void DeleteSelPatches(PatchMesh *patch, RPatchMesh *rpatch)
 {
 	if (!patch->patchSel.NumberSet())
-		return;		// Nothing to do!
-	
+		return; // Nothing to do!
+
 	int patches = patch->getNumPatches();
 	int verts = patch->getNumVerts();
-	
+
 	// Tag the patches that are selected
 	BitArray delPatches(patches);
 	delPatches = patch->patchSel;
-	
+
 	BitArray delVerts(verts);
 	delVerts.ClearAll();
-	
+
 	DeletePatchParts(patch, rpatch, delVerts, delPatches);
 	patch->computeInteriors();
 }
 
 // ---------------------------------------------------------------------------
 
-BOOL PatchDeleteRecord::Redo(PatchMesh *patch, RPatchMesh *rpatch, int reRecord) 
+BOOL PatchDeleteRecord::Redo(PatchMesh *patch, RPatchMesh *rpatch, int reRecord)
 {
 	if (reRecord)
 	{
@@ -71,37 +71,37 @@ BOOL PatchDeleteRecord::Redo(PatchMesh *patch, RPatchMesh *rpatch, int reRecord)
 
 // ---------------------------------------------------------------------------
 
-void EditPatchMod::DoPatchDelete() 
+void EditPatchMod::DoPatchDelete()
 {
-	ModContextList mcList;		
+	ModContextList mcList;
 	INodeTab nodes;
 	TimeValue t = ip->GetTime();
 	int holdNeeded = 0;
-	
+
 	if (!ip)
 		return;
-	
+
 	ip->GetModContexts(mcList, nodes);
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
-	
+
 	theHold.Begin();
 	RecordTopologyTags();
 	for (int i = 0; i < mcList.Count(); i++)
 	{
 		int altered = 0;
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
 			continue;
-		
+
 		// If the mesh isn't yet cache, this will cause it to get cached.
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(t, rpatch);
 		if (!patch)
 			continue;
 		patchData->RecordTopologyTags(patch);
-		
+
 		// If this is the first edit, then the delta arrays will be allocated
 		patchData->BeginEdit(t);
 
@@ -118,18 +118,18 @@ void EditPatchMod::DoPatchDelete()
 		}
 		patchData->SetFlag(EPD_BEENDONE, TRUE);
 	}
-	
+
 	if (holdNeeded)
 	{
 		ResolveTopoChanges();
 		theHold.Accept(GetString(IDS_TH_PATCHDELETE));
 	}
-	else 
+	else
 	{
 		ip->DisplayTempPrompt(GetString(IDS_TH_NOPATCHESSEL), PROMPT_TIME);
 		theHold.End();
 	}
-	
+
 	nodes.DisposeTemporary();
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 	NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
@@ -138,20 +138,20 @@ void EditPatchMod::DoPatchDelete()
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void DeleteSelVerts(PatchMesh *patch, RPatchMesh *rpatch) 
+void DeleteSelVerts(PatchMesh *patch, RPatchMesh *rpatch)
 {
 	if (!patch->vertSel.NumberSet())
-		return;		// Nothing to do!
-	
+		return; // Nothing to do!
+
 	int patches = patch->getNumPatches();
 	int verts = patch->getNumVerts();
-	
+
 	// Tag the patches that use selected vertices
 	BitArray delPatches(patches);
 	delPatches.ClearAll();
 	for (int i = 0; i < patches; ++i)
 	{
-		Patch& p = patch->patches[i];
+		Patch &p = patch->patches[i];
 		for (int j = 0; j < p.type; ++j)
 		{
 			if (patch->vertSel[p.v[j]])
@@ -160,9 +160,9 @@ void DeleteSelVerts(PatchMesh *patch, RPatchMesh *rpatch)
 				goto next_patch;
 			}
 		}
-next_patch:;
+	next_patch:;
 	}
-	
+
 	BitArray delVerts(verts);
 	delVerts = patch->vertSel;
 	DeletePatchParts(patch, rpatch, delVerts, delPatches);
@@ -172,40 +172,40 @@ next_patch:;
 // ---------------------------------------------------------------------------
 
 // Vertex Delete modifier method
-void EditPatchMod::DoVertDelete() 
+void EditPatchMod::DoVertDelete()
 {
-	ModContextList mcList;		
+	ModContextList mcList;
 	INodeTab nodes;
 	TimeValue t = ip->GetTime();
 	int holdNeeded = 0;
-	
+
 	if (!ip)
 		return;
-	
+
 	ip->GetModContexts(mcList, nodes);
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
-	
+
 	theHold.Begin();
 	RecordTopologyTags();
 	for (int i = 0; i < mcList.Count(); i++)
 	{
 		int altered = 0;
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
 			continue;
-		
+
 		// If the mesh isn't yet cache, this will cause it to get cached.
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(t, rpatch);
 		if (!patch)
 			continue;
 		patchData->RecordTopologyTags(patch);
-		
+
 		// If this is the first edit, then the delta arrays will be allocated
 		patchData->BeginEdit(t);
-		
+
 		// If any bits are set in the selection set, let's DO IT!!
 		if (patch->vertSel.NumberSet())
 		{
@@ -219,18 +219,18 @@ void EditPatchMod::DoVertDelete()
 		}
 		patchData->SetFlag(EPD_BEENDONE, TRUE);
 	}
-	
+
 	if (holdNeeded)
 	{
 		ResolveTopoChanges();
 		theHold.Accept(GetString(IDS_TH_VERTDELETE));
 	}
-	else 
+	else
 	{
 		ip->DisplayTempPrompt(GetString(IDS_TH_NOVERTSSEL), PROMPT_TIME);
 		theHold.End();
 	}
-	
+
 	nodes.DisposeTemporary();
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 	NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
@@ -240,40 +240,40 @@ void EditPatchMod::DoVertDelete()
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Edger Delete modifier method
-void EditPatchMod::DoEdgeDelete() 
+void EditPatchMod::DoEdgeDelete()
 {
-	ModContextList mcList;		
+	ModContextList mcList;
 	INodeTab nodes;
 	TimeValue t = ip->GetTime();
 	int holdNeeded = 0;
-	
+
 	if (!ip)
 		return;
-	
+
 	ip->GetModContexts(mcList, nodes);
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
-	
+
 	theHold.Begin();
 	RecordTopologyTags();
 	for (int i = 0; i < mcList.Count(); i++)
 	{
 		int altered = 0;
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
 			continue;
-		
+
 		// If the mesh isn't yet cache, this will cause it to get cached.
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(t, rpatch);
 		if (!patch)
 			continue;
 		patchData->RecordTopologyTags(patch);
-		
+
 		// If this is the first edit, then the delta arrays will be allocated
 		patchData->BeginEdit(t);
-		
+
 		// If any bits are set in the selection set, let's DO IT!!
 		if (patch->edgeSel.NumberSet())
 		{
@@ -283,11 +283,11 @@ void EditPatchMod::DoEdgeDelete()
 			int edges = patch->getNumEdges();
 			int patches = patch->getNumPatches();
 			int verts = patch->getNumVerts();
-			
+
 			// Tag the patches that are attached to selected edges
 			BitArray delPatches(patches);
 			delPatches.ClearAll();
-			
+
 			for (int i = 0; i < edges; ++i)
 			{
 				if (patch->edgeSel[i])
@@ -303,30 +303,30 @@ void EditPatchMod::DoEdgeDelete()
 #endif // (MAX_RELEASE < 4000)
 				}
 			}
-			
+
 			BitArray delVerts(verts);
 			delVerts.ClearAll();
-			
+
 			DeletePatchParts(patch, rpatch, delVerts, delPatches);
 			patch->computeInteriors();
-			
+
 			patchData->UpdateChanges(patch, rpatch);
 			patchData->TempData(this)->Invalidate(PART_TOPO);
 		}
 		patchData->SetFlag(EPD_BEENDONE, TRUE);
 	}
-	
+
 	if (holdNeeded)
 	{
 		ResolveTopoChanges();
 		theHold.Accept(GetString(IDS_TH_EDGEDELETE));
 	}
-	else 
+	else
 	{
 		ip->DisplayTempPrompt(GetString(IDS_TH_NOEDGESSEL), PROMPT_TIME);
 		theHold.End();
 	}
-	
+
 	nodes.DisposeTemporary();
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 	NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
@@ -338,7 +338,7 @@ void EditPatchMod::DoEdgeDelete()
 // Deletes any vertices tagged, also any patches tagged.  Automatically deletes the vectors that
 // are deleted as a result of the patch deletion and sweeps any vertices floating in space.
 
-void DeletePatchParts(PatchMesh *patch, RPatchMesh *rpatch, BitArray &delVerts, BitArray &delPatches) 
+void DeletePatchParts(PatchMesh *patch, RPatchMesh *rpatch, BitArray &delVerts, BitArray &delPatches)
 {
 	int patches = patch->getNumPatches();
 	int verts = patch->getNumVerts();
@@ -356,9 +356,9 @@ void DeletePatchParts(PatchMesh *patch, RPatchMesh *rpatch, BitArray &delVerts, 
 	{
 		if (!delPatches[i])
 		{
-			Patch& p = patch->patches[i];
+			Patch &p = patch->patches[i];
 			int j;
-			for (j = 0; j <(p.type * 2); ++j)
+			for (j = 0; j < (p.type * 2); ++j)
 			{
 				delVectors.Clear(p.vec[j]);
 			}
@@ -375,7 +375,7 @@ void DeletePatchParts(PatchMesh *patch, RPatchMesh *rpatch, BitArray &delVerts, 
 	{
 		if (!delPatches[i])
 		{
-			Patch& p = patch->patches[i];
+			Patch &p = patch->patches[i];
 			for (int j = 0; j < p.type; ++j)
 			{
 				usedVerts.Set(p.v[j]);
@@ -401,8 +401,8 @@ void DeletePatchParts(PatchMesh *patch, RPatchMesh *rpatch, BitArray &delVerts, 
 			{
 				if (!delPatches[i])
 				{
-					Patch& p = patch->patches[i];
-					TVPatch& tp = patch->tvPatches[chan][i];
+					Patch &p = patch->patches[i];
+					TVPatch &tp = patch->tvPatches[chan][i];
 					for (int j = 0; j < p.type; ++j)
 						delTVerts.Clear(tp.tv[j]);
 				}
@@ -434,15 +434,16 @@ void DeletePatchParts(PatchMesh *patch, RPatchMesh *rpatch, BitArray &delVerts, 
 			{
 				if (!delPatches[i])
 				{
-					Patch& p = patch->patches[i];
-					TVPatch& tp = newArray[dest++];
+					Patch &p = patch->patches[i];
+					TVPatch &tp = newArray[dest++];
 					tp = patch->tvPatches[chan][i];
 					for (int j = 0; j < p.type; ++j)
 						tp.tv[j] = tVertIndex[tp.tv[j]];
 				}
 			}
 			delete[] patch->tvPatches[chan];
-			patch->tvPatches[chan] = newArray;;
+			patch->tvPatches[chan] = newArray;
+			;
 		}
 	}
 #else /* #if (MAX_RELEASE < 4000) #else */
@@ -450,29 +451,29 @@ void DeletePatchParts(PatchMesh *patch, RPatchMesh *rpatch, BitArray &delVerts, 
 	for (int chan = -NUM_HIDDENMAPS; chan < patch->getNumMaps(); ++chan)
 	{
 		int tverts = patch->getNumMapVerts(chan);
-		if(tverts && patch->mapPatches(chan)) 
+		if (tverts && patch->mapPatches(chan))
 		{
 			BitArray delTVerts(tverts);
 			delTVerts.SetAll();
-			for (int i = 0; i < patches; ++i) 
+			for (int i = 0; i < patches; ++i)
 			{
-				if (!delPatches[i]) 
+				if (!delPatches[i])
 				{
-					Patch& p = patch->patches[i];
-					TVPatch& tp = patch->mapPatches(chan)[i];
-					for(int j = 0; j < p.type; ++j)
+					Patch &p = patch->patches[i];
+					TVPatch &tp = patch->mapPatches(chan)[i];
+					for (int j = 0; j < p.type; ++j)
 					{
 						delTVerts.Clear(tp.tv[j]);
-						//watje 255081 to handle new TV handles and interiors 
+						// watje 255081 to handle new TV handles and interiors
 						if (patch->ArePatchesCurvedMapped(i))
 						{
-							if (tp.handles[j*2]!=-1)
-								delTVerts.Clear(tp.handles[j*2]);
-							if (tp.handles[j*2+1]!=-1)
-								delTVerts.Clear(tp.handles[j*2+1]);
-							if (!(p.flags&PATCH_AUTO))
+							if (tp.handles[j * 2] != -1)
+								delTVerts.Clear(tp.handles[j * 2]);
+							if (tp.handles[j * 2 + 1] != -1)
+								delTVerts.Clear(tp.handles[j * 2 + 1]);
+							if (!(p.flags & PATCH_AUTO))
 							{
-								if (tp.interiors[j]!=-1)
+								if (tp.interiors[j] != -1)
 									delTVerts.Clear(tp.interiors[j]);
 							}
 						}
@@ -486,16 +487,16 @@ void DeletePatchParts(PatchMesh *patch, RPatchMesh *rpatch, BitArray &delVerts, 
 			tVertIndex.SetCount(tverts);
 			PatchTVert *newTVertArray = new PatchTVert[newTVerts];
 			dest = 0;
-			for(int i = 0; i < tverts; ++i) 
+			for (int i = 0; i < tverts; ++i)
 			{
-				if(!delTVerts[i])
+				if (!delTVerts[i])
 				{
 					newTVertArray[dest] = patch->mapVerts(chan)[i];
 					tVertIndex[i] = dest++;
 				}
 			}
-			patch->setNumMapVerts (chan, newTVerts);
-			if (newTVerts) memcpy (patch->mapVerts(chan), newTVertArray, newTVerts * sizeof (PatchTVert));
+			patch->setNumMapVerts(chan, newTVerts);
+			if (newTVerts) memcpy(patch->mapVerts(chan), newTVertArray, newTVerts * sizeof(PatchTVert));
 			delete[] newTVertArray;
 
 			// Now, copy the untagged texture patches to a new array
@@ -503,26 +504,26 @@ void DeletePatchParts(PatchMesh *patch, RPatchMesh *rpatch, BitArray &delVerts, 
 			int newTVPatches = patches - delPatches.NumberSet();
 			TVPatch *newArray = new TVPatch[newTVPatches];
 			dest = 0;
-			for(int i = 0; i < patches; ++i)
+			for (int i = 0; i < patches; ++i)
 			{
-				if(!delPatches[i]) 
+				if (!delPatches[i])
 				{
-					Patch& p = patch->patches[i];
-					TVPatch& tp = newArray[dest++];
+					Patch &p = patch->patches[i];
+					TVPatch &tp = newArray[dest++];
 					tp = patch->mapPatches(chan)[i];
-					for(int j = 0; j < p.type; ++j)
+					for (int j = 0; j < p.type; ++j)
 					{
 						tp.tv[j] = tVertIndex[tp.tv[j]];
-						//watje 255081 to handle new TV handles and interiors
+						// watje 255081 to handle new TV handles and interiors
 						if (patch->ArePatchesCurvedMapped(i))
 						{
-							if (tp.handles[j*2]!=-1)
-								 tp.handles[j*2] = tVertIndex[tp.handles[j*2]];
-							if (tp.handles[j*2+1]!=-1)
-								 tp.handles[j*2+1] = tVertIndex[tp.handles[j*2+1]];
-							if (!(p.flags&PATCH_AUTO))
+							if (tp.handles[j * 2] != -1)
+								tp.handles[j * 2] = tVertIndex[tp.handles[j * 2]];
+							if (tp.handles[j * 2 + 1] != -1)
+								tp.handles[j * 2 + 1] = tVertIndex[tp.handles[j * 2 + 1]];
+							if (!(p.flags & PATCH_AUTO))
 							{
-								if (tp.interiors[j]!=-1)
+								if (tp.interiors[j] != -1)
 									tp.interiors[j] = tVertIndex[tp.interiors[j]];
 							}
 						}
@@ -571,14 +572,14 @@ void DeletePatchParts(PatchMesh *patch, RPatchMesh *rpatch, BitArray &delVerts, 
 			newVertArray[dest] = patch->verts[i];
 			newVertSel.Set(dest, patch->vertSel[i]);
 			// redirect & adjust attached vector list
-			PatchVert& v = newVertArray[dest];
+			PatchVert &v = newVertArray[dest];
 			for (int j = 0; j < v.vectors.Count(); ++j)
 			{
 				v.vectors[j] = vecIndex[v.vectors[j]];
 				if (v.vectors[j] < 0)
 				{
 					v.vectors.Delete(j, 1);
-					j--;	// realign index
+					j--; // realign index
 				}
 			}
 			vertIndex[i] = dest++;
@@ -601,11 +602,11 @@ void DeletePatchParts(PatchMesh *patch, RPatchMesh *rpatch, BitArray &delVerts, 
 		if (!delPatches[i])
 		{
 			newArray[dest] = patch->patches[i];
-			Patch& p = newArray[dest];
+			Patch &p = newArray[dest];
 			int j;
 			for (j = 0; j < p.type; ++j)
 				p.v[j] = vertIndex[p.v[j]];
-			for (j = 0; j <(p.type * 2); ++j)
+			for (j = 0; j < (p.type * 2); ++j)
 				p.vec[j] = vecIndex[p.vec[j]];
 			for (j = 0; j < p.type; ++j)
 				p.interior[j] = vecIndex[p.interior[j]];
@@ -614,13 +615,13 @@ void DeletePatchParts(PatchMesh *patch, RPatchMesh *rpatch, BitArray &delVerts, 
 	}
 
 	// Rebuild info in rpatch
-	rpatch->DeleteAndSweep (delVerts, delPatches, *patch);
+	rpatch->DeleteAndSweep(delVerts, delPatches, *patch);
 
 	delete[] patch->patches;
-	patch->patches = newArray;;
+	patch->patches = newArray;
+	;
 	patch->numPatches = newPatches;
 	patch->patchSel.SetSize(newPatches, TRUE);
 	patch->patchSel = newPatchSel;
 	patch->buildLinkages();
 }
-

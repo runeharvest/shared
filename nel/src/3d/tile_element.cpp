@@ -23,68 +23,60 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
-
-void	CTileElement::setTileOrient(sint i, uint8 orient)
+void CTileElement::setTileOrient(sint i, uint8 orient)
 {
-	nlassert(i>=0 && i<=2);
-	nlassert(orient<=3);
-	sint	where= NL_TILE_ELM_SIZE_ROTATE*i+NL_TILE_ELM_OFFSET_ROTATE;
-	Flags&= ~(NL_TILE_ELM_MASK_ROTATE<<where);
-	Flags|= orient<<where;
+	nlassert(i >= 0 && i <= 2);
+	nlassert(orient <= 3);
+	sint where = NL_TILE_ELM_SIZE_ROTATE * i + NL_TILE_ELM_OFFSET_ROTATE;
+	Flags &= ~(NL_TILE_ELM_MASK_ROTATE << where);
+	Flags |= orient << where;
 }
 
-
-uint8	CTileElement::getTileOrient(sint i) const
+uint8 CTileElement::getTileOrient(sint i) const
 {
-	nlassert(i>=0 && i<=2);
-	sint	where= NL_TILE_ELM_SIZE_ROTATE*i+NL_TILE_ELM_OFFSET_ROTATE;
-	return uint8 ((Flags>>where) & NL_TILE_ELM_MASK_ROTATE);
+	nlassert(i >= 0 && i <= 2);
+	sint where = NL_TILE_ELM_SIZE_ROTATE * i + NL_TILE_ELM_OFFSET_ROTATE;
+	return uint8((Flags >> where) & NL_TILE_ELM_MASK_ROTATE);
 }
 
-
-void	CTileElement::setTile256Info(bool is256x256, uint8 uvOff)
+void CTileElement::setTile256Info(bool is256x256, uint8 uvOff)
 {
-	nlassert(uvOff<=3);
-	sint	where= NL_TILE_ELM_OFFSET_UVINFO;
-	sint	info= uvOff+(is256x256?4:0);
-	Flags&= ~(NL_TILE_ELM_MASK_UVINFO<<where);
-	Flags|= info<<where;
+	nlassert(uvOff <= 3);
+	sint where = NL_TILE_ELM_OFFSET_UVINFO;
+	sint info = uvOff + (is256x256 ? 4 : 0);
+	Flags &= ~(NL_TILE_ELM_MASK_UVINFO << where);
+	Flags |= info << where;
 }
 
-
-void	CTileElement::getTile256Info(bool &is256x256, uint8 &uvOff) const
+void CTileElement::getTile256Info(bool &is256x256, uint8 &uvOff) const
 {
-	sint	where= NL_TILE_ELM_OFFSET_UVINFO;
-	sint	info= ((Flags>>where) & NL_TILE_ELM_MASK_UVINFO);
-	uvOff= info&3;
-	is256x256= (info&4)?true:false;
+	sint where = NL_TILE_ELM_OFFSET_UVINFO;
+	sint info = ((Flags >> where) & NL_TILE_ELM_MASK_UVINFO);
+	uvOff = info & 3;
+	is256x256 = (info & 4) ? true : false;
 }
 
-
-void	CTileElement::setTileSubNoise(uint8 subNoise)
+void CTileElement::setTileSubNoise(uint8 subNoise)
 {
-	nlassert(subNoise<=15);
-	sint	where= NL_TILE_ELM_OFFSET_SUBNOISE;
-	Flags&= ~(NL_TILE_ELM_MASK_SUBNOISE<<where);
-	Flags|= subNoise<<where;
+	nlassert(subNoise <= 15);
+	sint where = NL_TILE_ELM_OFFSET_SUBNOISE;
+	Flags &= ~(NL_TILE_ELM_MASK_SUBNOISE << where);
+	Flags |= subNoise << where;
 }
 
-
-void	CTileElement::serial(NLMISC::IStream &f)
+void CTileElement::serial(NLMISC::IStream &f)
 {
-	f.xmlSerial (Flags, "FLAGS");
-	f.xmlSerial (Tile[0], Tile[1], Tile[2], "TILES_ID");
+	f.xmlSerial(Flags, "FLAGS");
+	f.xmlSerial(Tile[0], Tile[1], Tile[2], "TILES_ID");
 }
 
-
-void	CTileElement::setVegetableState(TVegetableInfo state)
+void CTileElement::setVegetableState(TVegetableInfo state)
 {
 	nlassert(state < VegetInfoLast);
 	const uint16 mask = NL_TILE_ELM_MASK_VEGETABLE << NL_TILE_ELM_OFFSET_VEGETABLE;
-	Flags = (Flags & ~mask) | ((uint16) state << NL_TILE_ELM_OFFSET_VEGETABLE);
+	Flags = (Flags & ~mask) | ((uint16)state << NL_TILE_ELM_OFFSET_VEGETABLE);
 }
 
 } // NL3D

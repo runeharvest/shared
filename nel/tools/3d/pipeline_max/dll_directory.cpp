@@ -46,9 +46,10 @@ namespace MAX {
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-CDllDirectory::CDllDirectory() : m_DllEntryBuiltin(&DllPluginDescBuiltin), m_DllEntryScript(&DllPluginDescScript)
+CDllDirectory::CDllDirectory()
+    : m_DllEntryBuiltin(&DllPluginDescBuiltin)
+    , m_DllEntryScript(&DllPluginDescScript)
 {
-
 }
 
 // Parallel to CClassDirectory3
@@ -93,21 +94,23 @@ void CDllDirectory::toString(std::ostream &ostream, const std::string &pad) cons
 			switch (id)
 			{
 			case 0x2038: // DllEntry
+			{
+				uint subi = 0;
+				for (std::vector<CDllEntry *>::const_iterator subit = m_Entries.begin(), subend = m_Entries.end(); subit != subend; ++subit)
 				{
-					uint subi = 0;
-					for (std::vector<CDllEntry *>::const_iterator subit = m_Entries.begin(), subend = m_Entries.end(); subit != subend; ++subit)
-					{
-						ostream << "\n" << pad << "Entries[" << subi << "]: ";
-						(*subit)->toString(ostream, padpad);
-						++subi;
-					}
+					ostream << "\n"
+					        << pad << "Entries[" << subi << "]: ";
+					(*subit)->toString(ostream, padpad);
+					++subi;
 				}
-				break;
+			}
+			break;
 			default:
 				std::stringstream ss;
 				ss << std::hex << std::setfill('0');
 				ss << std::setw(4) << it->first;
-				ostream << "\n" << pad << "0x" << ss.str() << ": ";
+				ostream << "\n"
+				        << pad << "0x" << ss.str() << ": ";
 				it->second->toString(ostream, padpad);
 				++i;
 				break;
@@ -139,20 +142,20 @@ void CDllDirectory::parse(uint16 version, uint filter)
 		switch (id)
 		{
 		case 0x2038: // DllEntry
+		{
+			if (parsedDllEntry && (lastCached != id))
+				throw EStorageParse(); // There were chunks inbetween
+			if (!parsedDllEntry)
 			{
-				if (parsedDllEntry && (lastCached != id))
-					throw EStorageParse(); // There were chunks inbetween
-				if (!parsedDllEntry)
-				{
-					m_ChunkCache.push_back(TStorageObjectWithId(id, NULL)); // Dummy entry to know the location
-					lastCached = id;
-					parsedDllEntry = true;
-				}
-				CDllEntry *dllEntry = static_cast<CDllEntry *>(it->second);
-				m_InternalNameToIndex[NLMISC::toLower(dllEntry->dllFilename())] = m_Entries.size();
-				m_Entries.push_back(dllEntry);
+				m_ChunkCache.push_back(TStorageObjectWithId(id, NULL)); // Dummy entry to know the location
+				lastCached = id;
+				parsedDllEntry = true;
 			}
-			break;
+			CDllEntry *dllEntry = static_cast<CDllEntry *>(it->second);
+			m_InternalNameToIndex[NLMISC::toLower(dllEntry->dllFilename())] = m_Entries.size();
+			m_Entries.push_back(dllEntry);
+		}
+		break;
 		default:
 			m_ChunkCache.push_back(*it); // Dummy entry to know the location
 			lastCached = id;
@@ -323,12 +326,15 @@ IStorageObject *CDllDirectory::createChunkById(uint16 id, bool container)
 // 	DllDescription: ...
 // 	DllFilename: ... }
 
-CDllEntry::CDllEntry() : m_DllDescription(NULL), m_DllFilename(NULL)
+CDllEntry::CDllEntry()
+    : m_DllDescription(NULL)
+    , m_DllFilename(NULL)
 {
-
 }
 
-CDllEntry::CDllEntry(const IDllPluginDescInternal *dllPluginDesc) : m_DllDescription(new CStorageValue<ucstring>()), m_DllFilename(new CStorageValue<ucstring>())
+CDllEntry::CDllEntry(const IDllPluginDescInternal *dllPluginDesc)
+    : m_DllDescription(new CStorageValue<ucstring>())
+    , m_DllFilename(new CStorageValue<ucstring>())
 {
 	m_Chunks.push_back(TStorageObjectWithId(0x2039, m_DllDescription));
 	m_Chunks.push_back(TStorageObjectWithId(0x2037, m_DllFilename));
@@ -338,7 +344,6 @@ CDllEntry::CDllEntry(const IDllPluginDescInternal *dllPluginDesc) : m_DllDescrip
 
 CDllEntry::~CDllEntry()
 {
-
 }
 
 std::string CDllEntry::className() const
@@ -352,8 +357,10 @@ void CDllEntry::toString(std::ostream &ostream, const std::string &pad) const
 	{
 		ostream << "(" << className() << ") [" << m_Chunks.size() << "] PARSED { ";
 		std::string padpad = pad + "\t";
-		ostream << "\n" << pad << "DllDescription: " << m_DllDescription->Value.toUtf8();
-		ostream << "\n" << pad << "DllFilename: " << m_DllFilename->Value.toUtf8();
+		ostream << "\n"
+		        << pad << "DllDescription: " << m_DllDescription->Value.toUtf8();
+		ostream << "\n"
+		        << pad << "DllFilename: " << m_DllFilename->Value.toUtf8();
 		ostream << " } ";
 	}
 	else

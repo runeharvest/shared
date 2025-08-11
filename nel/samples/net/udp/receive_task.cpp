@@ -19,14 +19,13 @@
 
 #include "receive_task.h"
 
-
 #ifdef NL_OS_WINDOWS
-#	ifndef NL_COMP_MINGW
-#		define NOMINMAX
-#	endif
+#ifndef NL_COMP_MINGW
+#define NOMINMAX
+#endif
 #include <winsock2.h>
 #include <ws2tcpip.h>
-#	include <windows.h>
+#include <windows.h>
 #elif defined NL_OS_UNIX
 
 #include <unistd.h>
@@ -39,10 +38,8 @@
 
 #endif
 
-
 using namespace NLMISC;
 using namespace NLNET;
-
 
 /*
  * TReceivedMessage
@@ -55,47 +52,43 @@ TReceivedMessage::TReceivedMessage()
 }
 
 /// Return a vector containing the address info
-void	TReceivedMessage::addressToVector()
+void TReceivedMessage::addressToVector()
 {
 	AddrFrom.fromSockAddrInet6((sockaddr_in6 *)&*VAddrFrom.begin());
 }
 
 /// Set address with address info from specified vector
-void	TReceivedMessage::vectorToAddress()
+void TReceivedMessage::vectorToAddress()
 {
 	AddrFrom.toSockAddrInet6((sockaddr_in6 *)&*VAddrFrom.begin());
 }
 
-
 /*
  * Constructor
  */
-CReceiveTask::CReceiveTask( uint16 port, uint32 msgsize ) :
-	_DatagramLength( msgsize ),
-	_ReceivedMessage(),
-	_WriteQueue( "WriteQueue" ), // value unspecified
-	_ExitRequired( false )
+CReceiveTask::CReceiveTask(uint16 port, uint32 msgsize)
+    : _DatagramLength(msgsize)
+    , _ReceivedMessage()
+    , _WriteQueue("WriteQueue")
+    , // value unspecified
+    _ExitRequired(false)
 {
 	// Socket
-	DataSock = new CUdpSock( false );
-	nlassert( DataSock );
+	DataSock = new CUdpSock(false);
+	nlassert(DataSock);
 
-	DataSock->bind( port );
+	DataSock->bind(port);
 }
-
-
 
 /*
  * Destructor
  */
 CReceiveTask::~CReceiveTask()
 {
-	nlassert( DataSock != NULL );
+	nlassert(DataSock != NULL);
 	delete DataSock;
 	DataSock = NULL;
-
 }
-
 
 /*
  * Run
@@ -103,46 +96,44 @@ CReceiveTask::~CReceiveTask()
 void CReceiveTask::run()
 {
 	uint maxrecvlength = _DatagramLength;
-	while ( ! _ExitRequired )
+	while (!_ExitRequired)
 	{
 		sint64 d;
 		try
 		{
 			// Receive into _ReceivedMessage
 			_DatagramLength = maxrecvlength;
-			_ReceivedMessage.resizeData( _DatagramLength );
-			_ReceivedMessage.setTypeEvent( TReceivedMessage::User );
-			DataSock->receivedFrom( _ReceivedMessage.userDataW(), _DatagramLength, _ReceivedMessage.AddrFrom );
-			d = CTime::getLocalTime ();
+			_ReceivedMessage.resizeData(_DatagramLength);
+			_ReceivedMessage.setTypeEvent(TReceivedMessage::User);
+			DataSock->receivedFrom(_ReceivedMessage.userDataW(), _DatagramLength, _ReceivedMessage.AddrFrom);
+			d = CTime::getLocalTime();
 		}
-		catch (const ESocket&)
+		catch (const ESocket &)
 		{
 			// Remove the client corresponding to the address
-			_ReceivedMessage.setTypeEvent( TReceivedMessage::RemoveClient );
+			_ReceivedMessage.setTypeEvent(TReceivedMessage::RemoveClient);
 			_DatagramLength = 0;
 		}
 
 		// Push into the write queue
 		_ReceivedMessage.addressToVector();
-		_ReceivedMessage.resizeData( _DatagramLength ); // _DatagramLength was modified by receivedFrom()
-		_ReceivedMessage.setDate ();
+		_ReceivedMessage.resizeData(_DatagramLength); // _DatagramLength was modified by receivedFrom()
+		_ReceivedMessage.setDate();
 		{
-			CSynchronized<CBufFIFO*>::CAccessor wq( &_WriteQueue );
-			wq.value()->push( _ReceivedMessage.data() );
-			wq.value()->push( _ReceivedMessage.VAddrFrom );
+			CSynchronized<CBufFIFO *>::CAccessor wq(&_WriteQueue);
+			wq.value()->push(_ReceivedMessage.data());
+			wq.value()->push(_ReceivedMessage.VAddrFrom);
 		}
 	}
 
-	nlinfo( "Exiting from front-end receive task" );
+	nlinfo("Exiting from front-end receive task");
 }
-
 
 /*
  * Set new write queue
  */
-void CReceiveTask::setWriteQueue( CBufFIFO *writequeue )
+void CReceiveTask::setWriteQueue(CBufFIFO *writequeue)
 {
-	CSynchronized<CBufFIFO*>::CAccessor wq( &_WriteQueue );
+	CSynchronized<CBufFIFO *>::CAccessor wq(&_WriteQueue);
 	wq.value() = writequeue;
 }
-

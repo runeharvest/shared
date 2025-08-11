@@ -7,16 +7,16 @@
 #define DBGWELD_ACTIONx
 #define DBG_NAMEDSELSx
 
-#define PROMPT_TIME	2000
+#define PROMPT_TIME 2000
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
 int EditPatchMod::GetSelMatIndex()
-	{
-	ModContextList mcList;	
+{
+	ModContextList mcList;
 	INodeTab nodes;
 	BOOL first = 1;
-	int mat=-1;
+	int mat = -1;
 
 	if (!ip)
 		return -1;
@@ -25,7 +25,7 @@ int EditPatchMod::GetSelMatIndex()
 
 	for (int i = 0; i < mcList.Count(); i++)
 	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
@@ -42,39 +42,40 @@ int EditPatchMod::GetSelMatIndex()
 				if (first)
 				{
 					first = FALSE;
-					mat   =(int)patch->getPatchMtlIndex(j);					
-				} else 
+					mat = (int)patch->getPatchMtlIndex(j);
+				}
+				else
 				{
 					if ((int)patch->getPatchMtlIndex(j) != mat)
 					{
 						return -1;
-						}
 					}
 				}
 			}
 		}
-	
+	}
+
 	nodes.DisposeTemporary();
 	return mat;
-	}
+}
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
 void EditPatchMod::SetSelMatIndex(int index)
 {
-	ModContextList mcList;	
+	ModContextList mcList;
 	INodeTab nodes;
 	BOOL holdNeeded = FALSE;
 
 	if (!ip)
 		return;
 	ip->GetModContexts(mcList, nodes);
-	ClearPatchDataFlag(mcList, EPD_BEENDONE);	
+	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 
 	theHold.Begin();
 	for (int i = 0; i < mcList.Count(); i++)
 	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		BOOL altered = FALSE;
 		if (!patchData)
 			continue;
@@ -90,32 +91,32 @@ void EditPatchMod::SetSelMatIndex(int index)
 		if (theHold.Holding())
 		{
 			theHold.Put(new PatchRestore(patchData, this, patch, rpatch, _T("SetSelMatIndex")));
-			}
+		}
 
 		for (int j = 0; j < patch->getNumPatches(); j++)
-		{			
+		{
 			if (patch->patchSel[j])
 			{
 				altered = holdNeeded = TRUE;
-				patch->setPatchMtlIndex(j, (MtlID)index);			
-				}
+				patch->setPatchMtlIndex(j, (MtlID)index);
 			}
-		
+		}
+
 		if (altered)
 		{
 			patchData->UpdateChanges(patch, rpatch, FALSE);
 			patchData->TempData(this)->Invalidate(PART_TOPO);
-			}
-		patchData->SetFlag(EPD_BEENDONE, TRUE);		
-		}	
-	
+		}
+		patchData->SetFlag(EPD_BEENDONE, TRUE);
+	}
+
 	if (holdNeeded)
 		theHold.Accept(GetString(IDS_TH_PATCHMTLCHANGE));
-	else 
+	else
 	{
 		ip->DisplayTempPrompt(GetString(IDS_TH_NOPATCHESSEL), PROMPT_TIME);
 		theHold.End();
-		}
+	}
 
 	nodes.DisposeTemporary();
 	InvalidateSurfaceUI();
@@ -127,10 +128,10 @@ void EditPatchMod::SetSelMatIndex(int index)
 
 int EditPatchMod::GetSelTessU()
 {
-	ModContextList mcList;	
+	ModContextList mcList;
 	INodeTab nodes;
 	BOOL first = 1;
-	int mat=-1;
+	int mat = -1;
 
 	if (!ip)
 		return -1;
@@ -139,7 +140,7 @@ int EditPatchMod::GetSelTessU()
 
 	for (int i = 0; i < mcList.Count(); i++)
 	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
@@ -156,11 +157,11 @@ int EditPatchMod::GetSelTessU()
 				if (first)
 				{
 					first = FALSE;
-					mat = (int)rpatch->getUIPatch (j).NbTilesU;
-				} 
-				else 
+					mat = (int)rpatch->getUIPatch(j).NbTilesU;
+				}
+				else
 				{
-					if ((int)rpatch->getUIPatch (j).NbTilesU != mat)
+					if ((int)rpatch->getUIPatch(j).NbTilesU != mat)
 					{
 						return -1;
 					}
@@ -168,7 +169,7 @@ int EditPatchMod::GetSelTessU()
 			}
 		}
 	}
-	
+
 	nodes.DisposeTemporary();
 	return mat;
 }
@@ -177,10 +178,10 @@ int EditPatchMod::GetSelTessU()
 
 int EditPatchMod::GetSelTessV()
 {
-	ModContextList mcList;	
+	ModContextList mcList;
 	INodeTab nodes;
 	BOOL first = 1;
-	int mat=-1;
+	int mat = -1;
 
 	if (!ip)
 		return -1;
@@ -189,7 +190,7 @@ int EditPatchMod::GetSelTessV()
 
 	for (int i = 0; i < mcList.Count(); i++)
 	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
@@ -206,11 +207,11 @@ int EditPatchMod::GetSelTessV()
 				if (first)
 				{
 					first = FALSE;
-					mat = (int)rpatch->getUIPatch (j).NbTilesV;
-				} 
-				else 
+					mat = (int)rpatch->getUIPatch(j).NbTilesV;
+				}
+				else
 				{
-					if ((int)rpatch->getUIPatch (j).NbTilesV != mat)
+					if ((int)rpatch->getUIPatch(j).NbTilesV != mat)
 					{
 						return -1;
 					}
@@ -218,7 +219,7 @@ int EditPatchMod::GetSelTessV()
 			}
 		}
 	}
-	
+
 	nodes.DisposeTemporary();
 	return mat;
 }
@@ -227,19 +228,19 @@ int EditPatchMod::GetSelTessV()
 
 void EditPatchMod::SetSelTess(int nU, int nV)
 {
-	ModContextList mcList;	
+	ModContextList mcList;
 	INodeTab nodes;
 	BOOL holdNeeded = FALSE;
 
 	if (!ip)
 		return;
 	ip->GetModContexts(mcList, nodes);
-	ClearPatchDataFlag(mcList, EPD_BEENDONE);	
+	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 
 	theHold.Begin();
 	for (int i = 0; i < mcList.Count(); i++)
 	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		BOOL altered = FALSE;
 		if (!patchData)
 			continue;
@@ -258,26 +259,26 @@ void EditPatchMod::SetSelTess(int nU, int nV)
 		}
 
 		for (int j = 0; j < patch->getNumPatches(); j++)
-		{			
+		{
 			if (patch->patchSel[j])
 			{
 				altered = holdNeeded = TRUE;
-				rpatch->getUIPatch (j).Init (nU, nV, true);
+				rpatch->getUIPatch(j).Init(nU, nV, true);
 			}
 		}
-		
+
 		if (altered)
 		{
 			patchData->UpdateChanges(patch, rpatch, FALSE);
 			patchData->TempData(this)->Invalidate(PART_TOPO);
 		}
 
-		patchData->SetFlag(EPD_BEENDONE, TRUE);		
-	}	
-	
+		patchData->SetFlag(EPD_BEENDONE, TRUE);
+	}
+
 	if (holdNeeded)
 		theHold.Accept(_M("Tile count in U and V change"));
-	else 
+	else
 	{
 		ip->DisplayTempPrompt(GetString(IDS_TH_NOPATCHESSEL), PROMPT_TIME);
 		theHold.End();
@@ -291,12 +292,12 @@ void EditPatchMod::SetSelTess(int nU, int nV)
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-int EditPatchMod::getSmoothFlags ()
+int EditPatchMod::getSmoothFlags()
 {
-	ModContextList mcList;	
+	ModContextList mcList;
 	INodeTab nodes;
-	bool notFlagged=false;
-	bool flagged=false;
+	bool notFlagged = false;
+	bool flagged = false;
 
 	if (!ip)
 		return -1;
@@ -305,7 +306,7 @@ int EditPatchMod::getSmoothFlags ()
 
 	for (int i = 0; i < mcList.Count(); i++)
 	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
@@ -324,10 +325,9 @@ int EditPatchMod::getSmoothFlags ()
 			{
 				// Patch num
 #if (MAX_RELEASE < 4000)
-				int p0=patch->edges[j].patch1;
-				int p1=patch->edges[j].patch2;
-				bool edgeFlag = ((p0!=-1)&&(rpatch->getUIPatch (p0).getEdgeFlag (WhereIsTheEdge (p0, j, *patch)))) ||
-					((p1!=-1)&&(rpatch->getUIPatch (p1).getEdgeFlag (WhereIsTheEdge (p1, j, *patch))));
+				int p0 = patch->edges[j].patch1;
+				int p1 = patch->edges[j].patch2;
+				bool edgeFlag = ((p0 != -1) && (rpatch->getUIPatch(p0).getEdgeFlag(WhereIsTheEdge(p0, j, *patch)))) || ((p1 != -1) && (rpatch->getUIPatch(p1).getEdgeFlag(WhereIsTheEdge(p1, j, *patch))));
 #else // (MAX_RELEASE < 4000)
 				bool edgeFlag = false;
 				for (int pn = 0; pn < patch->edges[j].patches.Count(); ++pn)
@@ -345,38 +345,38 @@ int EditPatchMod::getSmoothFlags ()
 				if (edgeFlag)
 				{
 					// Flagged !
-					flagged=true;
+					flagged = true;
 				}
 				else
 				{
 					// Not flagged !
-					notFlagged=true;
+					notFlagged = true;
 				}
 			}
 		}
 	}
-	
+
 	nodes.DisposeTemporary();
-	return flagged?(notFlagged?2:1):0;
+	return flagged ? (notFlagged ? 2 : 1) : 0;
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void EditPatchMod::setSmoothFlags (bool smooth)
+void EditPatchMod::setSmoothFlags(bool smooth)
 {
-	ModContextList mcList;	
+	ModContextList mcList;
 	INodeTab nodes;
 	BOOL holdNeeded = FALSE;
 
 	if (!ip)
 		return;
 	ip->GetModContexts(mcList, nodes);
-	ClearPatchDataFlag(mcList, EPD_BEENDONE);	
+	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 
 	theHold.Begin();
 	for (int i = 0; i < mcList.Count(); i++)
 	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		BOOL altered = FALSE;
 		if (!patchData)
 			continue;
@@ -402,29 +402,29 @@ void EditPatchMod::setSmoothFlags (bool smooth)
 			{
 #if (MAX_RELEASE < 4000)
 				// Patch num
-				int p0=patch->edges[j].patch1;
-				int p1=patch->edges[j].patch2;
-				
+				int p0 = patch->edges[j].patch1;
+				int p1 = patch->edges[j].patch2;
+
 				// Patch exist ?
-				if (p0!=-1)
+				if (p0 != -1)
 				{
 					// Set the flag
-					rpatch->getUIPatch (p0).setEdgeFlag (WhereIsTheEdge (p0, j, *patch), smooth);
+					rpatch->getUIPatch(p0).setEdgeFlag(WhereIsTheEdge(p0, j, *patch), smooth);
 
 					// Touched
-					altered=TRUE;
-					holdNeeded=TRUE;
+					altered = TRUE;
+					holdNeeded = TRUE;
 				}
 
 				// idem patch #2
-				if (p1!=-1)
+				if (p1 != -1)
 				{
 					// Set the flag
-					rpatch->getUIPatch (p1).setEdgeFlag (WhereIsTheEdge (p1, j, *patch), smooth);
+					rpatch->getUIPatch(p1).setEdgeFlag(WhereIsTheEdge(p1, j, *patch), smooth);
 
 					// Touched
-					altered=TRUE;
-					holdNeeded=TRUE;
+					altered = TRUE;
+					holdNeeded = TRUE;
 				}
 #else // (MAX_RELEASE < 4000)
 				for (int pe = 0; pe < patch->edges[j].patches.Count(); ++pe)
@@ -435,13 +435,13 @@ void EditPatchMod::setSmoothFlags (bool smooth)
 					rpatch->getUIPatch(pn).setEdgeFlag(WhereIsTheEdge(pn, j, *patch), smooth);
 
 					// Touched
-					altered=TRUE;
-					holdNeeded=TRUE;
+					altered = TRUE;
+					holdNeeded = TRUE;
 				}
 #endif // (MAX_RELEASE < 4000)
 			}
 		}
-		
+
 		// If touched
 		if (altered)
 		{
@@ -449,12 +449,12 @@ void EditPatchMod::setSmoothFlags (bool smooth)
 			patchData->TempData(this)->Invalidate(PART_TOPO);
 		}
 
-		patchData->SetFlag(EPD_BEENDONE, TRUE);		
-	}	
-	
+		patchData->SetFlag(EPD_BEENDONE, TRUE);
+	}
+
 	if (holdNeeded)
 		theHold.Accept(_M("Tile count in U and V change"));
-	else 
+	else
 	{
 		ip->DisplayTempPrompt(GetString(IDS_TH_NOPATCHESSEL), PROMPT_TIME);
 		theHold.End();
@@ -468,63 +468,63 @@ void EditPatchMod::setSmoothFlags (bool smooth)
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void EditPatchMod::BalanceSelPatch (int patch, int size, bool balanceU, std::set<int>& visitedU, std::set<int>& visitedV, RPatchMesh* rpatch, PatchMesh *ppatch)
+void EditPatchMod::BalanceSelPatch(int patch, int size, bool balanceU, std::set<int> &visitedU, std::set<int> &visitedV, RPatchMesh *rpatch, PatchMesh *ppatch)
 {
 	// already visited ?
-	if ((balanceU&&(visitedU.find(patch)!=visitedU.end()))||((!balanceU)&&(visitedV.find(patch)!=visitedV.end())))
+	if ((balanceU && (visitedU.find(patch) != visitedU.end())) || ((!balanceU) && (visitedV.find(patch) != visitedV.end())))
 		return;
 
 	// insert in the visit set
 	if (balanceU)
-		visitedU.insert (patch);
+		visitedU.insert(patch);
 	else
-		visitedV.insert (patch);
+		visitedV.insert(patch);
 
 	// Get patch tess level..
-	int nU=rpatch->getUIPatch (patch).NbTilesU;
-	int nV=rpatch->getUIPatch (patch).NbTilesV;
+	int nU = rpatch->getUIPatch(patch).NbTilesU;
+	int nV = rpatch->getUIPatch(patch).NbTilesV;
 	if (balanceU)
-		nU=size;
+		nU = size;
 	else
-		nV=size;
+		nV = size;
 
 	// Resize the patch
-	rpatch->getUIPatch (patch).Init (nU, nV, true);
+	rpatch->getUIPatch(patch).Init(nU, nV, true);
 
 	// Call neiborhood
-	for (int i=0; i<4; i++)
+	for (int i = 0; i < 4; i++)
 	{
-		int nEdge=ppatch->patches[patch].edge[i];
+		int nEdge = ppatch->patches[patch].edge[i];
 #if (MAX_RELEASE < 4000)
-		int nOtherPatch=(ppatch->edges[nEdge].patch1==patch)?ppatch->edges[nEdge].patch2:ppatch->edges[nEdge].patch1;
+		int nOtherPatch = (ppatch->edges[nEdge].patch1 == patch) ? ppatch->edges[nEdge].patch2 : ppatch->edges[nEdge].patch1;
 #else // (MAX_RELEASE < 4000)
 		int nOtherPatch = (ppatch->edges[nEdge].patches.Count() > 0 && ppatch->edges[nEdge].patches[0] == patch)
-						? (ppatch->edges[nEdge].patches.Count() > 1 ? ppatch->edges[nEdge].patches[1] : -1)
-						: (ppatch->edges[nEdge].patches.Count() > 0 ? ppatch->edges[nEdge].patches[0] : -1);
+		    ? (ppatch->edges[nEdge].patches.Count() > 1 ? ppatch->edges[nEdge].patches[1] : -1)
+		    : (ppatch->edges[nEdge].patches.Count() > 0 ? ppatch->edges[nEdge].patches[0] : -1);
 #endif // (MAX_RELEASE < 4000)
-		if (nOtherPatch>=0)
+		if (nOtherPatch >= 0)
 		{
-			int nNeiborEdge=WhereIsTheEdge (nOtherPatch, nEdge, *ppatch);
-			BalanceSelPatch (nOtherPatch, (i&1)?nU:nV, (nNeiborEdge&1)!=0, visitedU, visitedV, rpatch, ppatch);
+			int nNeiborEdge = WhereIsTheEdge(nOtherPatch, nEdge, *ppatch);
+			BalanceSelPatch(nOtherPatch, (i & 1) ? nU : nV, (nNeiborEdge & 1) != 0, visitedU, visitedV, rpatch, ppatch);
 		}
 	}
 }
 
-void EditPatchMod::BalanceSelPatch ()
+void EditPatchMod::BalanceSelPatch()
 {
-	ModContextList mcList;	
+	ModContextList mcList;
 	INodeTab nodes;
 	BOOL holdNeeded = FALSE;
 
 	if (!ip)
 		return;
 	ip->GetModContexts(mcList, nodes);
-	ClearPatchDataFlag(mcList, EPD_BEENDONE);	
+	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 
 	theHold.Begin();
 	for (int i = 0; i < mcList.Count(); i++)
 	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		BOOL altered = FALSE;
 		if (!patchData)
 			continue;
@@ -545,52 +545,51 @@ void EditPatchMod::BalanceSelPatch ()
 		std::set<int> visitedU;
 		std::set<int> visitedV;
 		for (int j = 0; j < patch->getNumPatches(); j++)
-		{			
+		{
 			if (patch->patchSel[j])
 			{
 				altered = holdNeeded = TRUE;
-				
+
 				// insert it
-				visitedU.insert (j);
-				visitedV.insert (j);
+				visitedU.insert(j);
+				visitedV.insert(j);
 
 				// Get patch tess level..
-				int nU=rpatch->getUIPatch (j).NbTilesU;
-				int nV=rpatch->getUIPatch (j).NbTilesV;
-				
+				int nU = rpatch->getUIPatch(j).NbTilesU;
+				int nV = rpatch->getUIPatch(j).NbTilesV;
+
 				// Call neiborhood
-				for (int i=0; i<4; i++)
+				for (int i = 0; i < 4; i++)
 				{
-					int nEdge=patch->patches[j].edge[i];
+					int nEdge = patch->patches[j].edge[i];
 #if (MAX_RELEASE < 4000)
-					int nOtherPatch=(patch->edges[nEdge].patch1==j)?patch->edges[nEdge].patch2:patch->edges[nEdge].patch1;
+					int nOtherPatch = (patch->edges[nEdge].patch1 == j) ? patch->edges[nEdge].patch2 : patch->edges[nEdge].patch1;
 #else // (MAX_RELEASE < 4000)
 					int nOtherPatch = (patch->edges[nEdge].patches.Count() > 0 && patch->edges[nEdge].patches[0] == j)
-						? (patch->edges[nEdge].patches.Count() > 1 ? patch->edges[nEdge].patches[1] : -1)
-						: (patch->edges[nEdge].patches.Count() > 0 ? patch->edges[nEdge].patches[0] : -1);
+					    ? (patch->edges[nEdge].patches.Count() > 1 ? patch->edges[nEdge].patches[1] : -1)
+					    : (patch->edges[nEdge].patches.Count() > 0 ? patch->edges[nEdge].patches[0] : -1);
 #endif // (MAX_RELEASE < 4000)
-					if (nOtherPatch>=0)
+					if (nOtherPatch >= 0)
 					{
-						int nNeiborEdge=WhereIsTheEdge (nOtherPatch, nEdge, *patch);
-						BalanceSelPatch (nOtherPatch, (i&1)?nU:nV, (nNeiborEdge&1)!=0, visitedU, visitedV, rpatch, patch);
+						int nNeiborEdge = WhereIsTheEdge(nOtherPatch, nEdge, *patch);
+						BalanceSelPatch(nOtherPatch, (i & 1) ? nU : nV, (nNeiborEdge & 1) != 0, visitedU, visitedV, rpatch, patch);
 					}
 				}
-
 			}
 		}
-		
+
 		if (altered)
 		{
 			patchData->UpdateChanges(patch, rpatch, FALSE);
 			patchData->TempData(this)->Invalidate(PART_TOPO);
 		}
 
-		patchData->SetFlag(EPD_BEENDONE, TRUE);		
-	}	
-	
+		patchData->SetFlag(EPD_BEENDONE, TRUE);
+	}
+
 	if (holdNeeded)
 		theHold.Accept(_M("Balance tile"));
-	else 
+	else
 	{
 		ip->DisplayTempPrompt(GetString(IDS_TH_NOPATCHESSEL), PROMPT_TIME);
 		theHold.End();
@@ -606,285 +605,285 @@ void EditPatchMod::BalanceSelPatch ()
 
 /*void EditPatchMod::SetTileNum (ULONG nU)
 {
-	ModContextList mcList;	
-	INodeTab nodes;
-	BOOL holdNeeded = FALSE;
+    ModContextList mcList;
+    INodeTab nodes;
+    BOOL holdNeeded = FALSE;
 
-	if (!ip)
-		return;
-	ip->GetModContexts(mcList, nodes);
-	ClearPatchDataFlag(mcList, EPD_BEENDONE);	
+    if (!ip)
+        return;
+    ip->GetModContexts(mcList, nodes);
+    ClearPatchDataFlag(mcList, EPD_BEENDONE);
 
-	theHold.Begin();
-	for (int i = 0; i < mcList.Count(); i++)
-	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
-		BOOL altered = FALSE;
-		if (!patchData)
-			continue;
-		if (patchData->GetFlag(EPD_BEENDONE))
-			continue;
-		patchData->BeginEdit(ip->GetTime());
-		RPatchMesh *rpatch;
-		PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
-		if (!patch)
-			continue;
+    theHold.Begin();
+    for (int i = 0; i < mcList.Count(); i++)
+    {
+        EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+        BOOL altered = FALSE;
+        if (!patchData)
+            continue;
+        if (patchData->GetFlag(EPD_BEENDONE))
+            continue;
+        patchData->BeginEdit(ip->GetTime());
+        RPatchMesh *rpatch;
+        PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
+        if (!patch)
+            continue;
 
-		// Start a restore object...
-		if (theHold.Holding())
-		{
-			theHold.Put(new PatchRestore(patchData, this, patch, rpatch, "SetTileNum"));
-		}
+        // Start a restore object...
+        if (theHold.Holding())
+        {
+            theHold.Put(new PatchRestore(patchData, this, patch, rpatch, "SetTileNum"));
+        }
 
-		nlassert (patch->numPatches==(int)rpatch->UIPatch.size());
-		for (int j = 0; j < patch->getNumPatches(); j++)
-		{
-			int nTileU=1<<rpatch->UIPatch[j].NbTilesU;
-			int nTileV=1<<rpatch->UIPatch[j].NbTilesV;
+        nlassert (patch->numPatches==(int)rpatch->UIPatch.size());
+        for (int j = 0; j < patch->getNumPatches(); j++)
+        {
+            int nTileU=1<<rpatch->UIPatch[j].NbTilesU;
+            int nTileV=1<<rpatch->UIPatch[j].NbTilesV;
 
-			for (int v = 0; v < nTileV; v++)
-			for (int u= 0; u < nTileU; u++)
-			{
-				if (rpatch->tileSel[rpatch->GetTileNumber(j, u, v)])
-				{
-					altered = holdNeeded = TRUE;
-					rpatch->UIPatch[j].Tile[u+v*nTileU].MatID = nU;
-				}
-			}
-		}
-		
-		if (altered)
-		{
-			patchData->UpdateChanges(patch, rpatch, FALSE);
-			patchData->TempData(this)->Invalidate(PART_TOPO);
-		}
+            for (int v = 0; v < nTileV; v++)
+            for (int u= 0; u < nTileU; u++)
+            {
+                if (rpatch->tileSel[rpatch->GetTileNumber(j, u, v)])
+                {
+                    altered = holdNeeded = TRUE;
+                    rpatch->UIPatch[j].Tile[u+v*nTileU].MatID = nU;
+                }
+            }
+        }
 
-		patchData->SetFlag(EPD_BEENDONE, TRUE);		
-	}	
-	
-	if (holdNeeded)
-		theHold.Accept("Tile number change");
-	else 
-	{
-		ip->DisplayTempPrompt("No tile selected", PROMPT_TIME);
-		theHold.End();
-	}
+        if (altered)
+        {
+            patchData->UpdateChanges(patch, rpatch, FALSE);
+            patchData->TempData(this)->Invalidate(PART_TOPO);
+        }
 
-	nodes.DisposeTemporary();
-	InvalidateSurfaceUI();
-	NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
-	ip->RedrawViews(ip->GetTime());
+        patchData->SetFlag(EPD_BEENDONE, TRUE);
+    }
+
+    if (holdNeeded)
+        theHold.Accept("Tile number change");
+    else
+    {
+        ip->DisplayTempPrompt("No tile selected", PROMPT_TIME);
+        theHold.End();
+    }
+
+    nodes.DisposeTemporary();
+    InvalidateSurfaceUI();
+    NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
+    ip->RedrawViews(ip->GetTime());
 }*/
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
 /*ULONG EditPatchMod::GetTileNum ()
 {
-	ModContextList mcList;	
-	INodeTab nodes;
-	BOOL first = 1;
-	ULONG num=0xffffffff;
+    ModContextList mcList;
+    INodeTab nodes;
+    BOOL first = 1;
+    ULONG num=0xffffffff;
 
-	if (!ip)
-		return -1;
-	ip->GetModContexts(mcList, nodes);
-	ClearPatchDataFlag(mcList, EPD_BEENDONE);
+    if (!ip)
+        return -1;
+    ip->GetModContexts(mcList, nodes);
+    ClearPatchDataFlag(mcList, EPD_BEENDONE);
 
-	for (int i = 0; i < mcList.Count(); i++)
-	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
-		if (!patchData)
-			continue;
-		if (patchData->GetFlag(EPD_BEENDONE))
-			continue;
-		patchData->BeginEdit(ip->GetTime());
-		RPatchMesh *rpatch;
-		PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
-		if (!patch)
-			continue;
+    for (int i = 0; i < mcList.Count(); i++)
+    {
+        EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+        if (!patchData)
+            continue;
+        if (patchData->GetFlag(EPD_BEENDONE))
+            continue;
+        patchData->BeginEdit(ip->GetTime());
+        RPatchMesh *rpatch;
+        PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
+        if (!patch)
+            continue;
 
-		nlassert (patch->numPatches==(int)rpatch->UIPatch.size());
-		for (int j = 0; j < patch->getNumPatches(); j++)
-		{
-			int nTileU=1<<rpatch->UIPatch[j].NbTilesU;
-			int nTileV=1<<rpatch->UIPatch[j].NbTilesV;
+        nlassert (patch->numPatches==(int)rpatch->UIPatch.size());
+        for (int j = 0; j < patch->getNumPatches(); j++)
+        {
+            int nTileU=1<<rpatch->UIPatch[j].NbTilesU;
+            int nTileV=1<<rpatch->UIPatch[j].NbTilesV;
 
-			for (int v = 0; v < nTileV; v++)
-			for (int u= 0; u < nTileU; u++)
-			{
-				if (rpatch->tileSel[rpatch->GetTileNumber(j, u, v)])
-				{
-					if (first)
-					{
-						first = FALSE;
-						num = rpatch->UIPatch[j].Tile[u+v*nTileU].MatID;
-					} 
-					else 
-					{
-						if (rpatch->UIPatch[j].Tile[u+v*nTileU].MatID != num)
-						{
-							return 0xffffffff;
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	nodes.DisposeTemporary();
-	return num;
+            for (int v = 0; v < nTileV; v++)
+            for (int u= 0; u < nTileU; u++)
+            {
+                if (rpatch->tileSel[rpatch->GetTileNumber(j, u, v)])
+                {
+                    if (first)
+                    {
+                        first = FALSE;
+                        num = rpatch->UIPatch[j].Tile[u+v*nTileU].MatID;
+                    }
+                    else
+                    {
+                        if (rpatch->UIPatch[j].Tile[u+v*nTileU].MatID != num)
+                        {
+                            return 0xffffffff;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    nodes.DisposeTemporary();
+    return num;
 }*/
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
 /*void EditPatchMod::SetTileRot (int nRot)
 {
-	ModContextList mcList;	
-	INodeTab nodes;
-	BOOL holdNeeded = FALSE;
+    ModContextList mcList;
+    INodeTab nodes;
+    BOOL holdNeeded = FALSE;
 
-	if (!ip)
-		return;
-	ip->GetModContexts(mcList, nodes);
-	ClearPatchDataFlag(mcList, EPD_BEENDONE);	
+    if (!ip)
+        return;
+    ip->GetModContexts(mcList, nodes);
+    ClearPatchDataFlag(mcList, EPD_BEENDONE);
 
-	theHold.Begin();
-	for (int i = 0; i < mcList.Count(); i++)
-	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
-		BOOL altered = FALSE;
-		if (!patchData)
-			continue;
-		if (patchData->GetFlag(EPD_BEENDONE))
-			continue;
-		patchData->BeginEdit(ip->GetTime());
-		RPatchMesh *rpatch;
-		PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
-		if (!patch)
-			continue;
+    theHold.Begin();
+    for (int i = 0; i < mcList.Count(); i++)
+    {
+        EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+        BOOL altered = FALSE;
+        if (!patchData)
+            continue;
+        if (patchData->GetFlag(EPD_BEENDONE))
+            continue;
+        patchData->BeginEdit(ip->GetTime());
+        RPatchMesh *rpatch;
+        PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
+        if (!patch)
+            continue;
 
-		// Start a restore object...
-		if (theHold.Holding())
-		{
-			theHold.Put(new PatchRestore(patchData, this, patch, rpatch, "SetTileRot"));
-		}
+        // Start a restore object...
+        if (theHold.Holding())
+        {
+            theHold.Put(new PatchRestore(patchData, this, patch, rpatch, "SetTileRot"));
+        }
 
-		nlassert (patch->numPatches==(int)rpatch->UIPatch.size());
-		for (int j = 0; j < patch->getNumPatches(); j++)
-		{
-			int nTileU=1<<rpatch->UIPatch[j].NbTilesU;
-			int nTileV=1<<rpatch->UIPatch[j].NbTilesV;
+        nlassert (patch->numPatches==(int)rpatch->UIPatch.size());
+        for (int j = 0; j < patch->getNumPatches(); j++)
+        {
+            int nTileU=1<<rpatch->UIPatch[j].NbTilesU;
+            int nTileV=1<<rpatch->UIPatch[j].NbTilesV;
 
-			for (int v = 0; v < nTileV; v++)
-			for (int u= 0; u < nTileU; u++)
-			{
-				if (rpatch->tileSel[rpatch->GetTileNumber(j, u, v)])
-				{
-					altered = holdNeeded = TRUE;
-					rpatch->UIPatch[j].Tile[u+v*nTileU].Rotate = nRot;
-				}
-			}
-		}
-		
-		if (altered)
-		{
-			patchData->UpdateChanges(patch, rpatch, FALSE);
-			patchData->TempData(this)->Invalidate(PART_TOPO);
-		}
+            for (int v = 0; v < nTileV; v++)
+            for (int u= 0; u < nTileU; u++)
+            {
+                if (rpatch->tileSel[rpatch->GetTileNumber(j, u, v)])
+                {
+                    altered = holdNeeded = TRUE;
+                    rpatch->UIPatch[j].Tile[u+v*nTileU].Rotate = nRot;
+                }
+            }
+        }
 
-		patchData->SetFlag(EPD_BEENDONE, TRUE);		
-	}	
-	
-	if (holdNeeded)
-		theHold.Accept("Tile rotation change");
-	else 
-	{
-		ip->DisplayTempPrompt("No tile selected", PROMPT_TIME);
-		theHold.End();
-	}
+        if (altered)
+        {
+            patchData->UpdateChanges(patch, rpatch, FALSE);
+            patchData->TempData(this)->Invalidate(PART_TOPO);
+        }
 
-	nodes.DisposeTemporary();
-	InvalidateSurfaceUI();
-	NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
-	ip->RedrawViews(ip->GetTime());
+        patchData->SetFlag(EPD_BEENDONE, TRUE);
+    }
+
+    if (holdNeeded)
+        theHold.Accept("Tile rotation change");
+    else
+    {
+        ip->DisplayTempPrompt("No tile selected", PROMPT_TIME);
+        theHold.End();
+    }
+
+    nodes.DisposeTemporary();
+    InvalidateSurfaceUI();
+    NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
+    ip->RedrawViews(ip->GetTime());
 }*/
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
 /*int EditPatchMod::GetTileRot ()
 {
-	ModContextList mcList;	
-	INodeTab nodes;
-	BOOL first = 1;
-	int rot=-1;
+    ModContextList mcList;
+    INodeTab nodes;
+    BOOL first = 1;
+    int rot=-1;
 
-	if (!ip)
-		return -1;
-	ip->GetModContexts(mcList, nodes);
-	ClearPatchDataFlag(mcList, EPD_BEENDONE);
+    if (!ip)
+        return -1;
+    ip->GetModContexts(mcList, nodes);
+    ClearPatchDataFlag(mcList, EPD_BEENDONE);
 
-	for (int i = 0; i < mcList.Count(); i++)
-	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
-		if (!patchData)
-			continue;
-		if (patchData->GetFlag(EPD_BEENDONE))
-			continue;
-		patchData->BeginEdit(ip->GetTime());
-		RPatchMesh *rpatch;
-		PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
-		if (!patch)
-			continue;
+    for (int i = 0; i < mcList.Count(); i++)
+    {
+        EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+        if (!patchData)
+            continue;
+        if (patchData->GetFlag(EPD_BEENDONE))
+            continue;
+        patchData->BeginEdit(ip->GetTime());
+        RPatchMesh *rpatch;
+        PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
+        if (!patch)
+            continue;
 
-		nlassert (patch->numPatches==(int)rpatch->UIPatch.size());
-		for (int j = 0; j < patch->getNumPatches(); j++)
-		{
-			int nTileU=1<<rpatch->UIPatch[j].NbTilesU;
-			int nTileV=1<<rpatch->UIPatch[j].NbTilesV;
+        nlassert (patch->numPatches==(int)rpatch->UIPatch.size());
+        for (int j = 0; j < patch->getNumPatches(); j++)
+        {
+            int nTileU=1<<rpatch->UIPatch[j].NbTilesU;
+            int nTileV=1<<rpatch->UIPatch[j].NbTilesV;
 
-			for (int v = 0; v < nTileV; v++)
-			for (int u= 0; u < nTileU; u++)
-			{
-				if (rpatch->tileSel[rpatch->GetTileNumber(j, u, v)])
-				{
-					if (first)
-					{
-						first = FALSE;
-						rot = rpatch->UIPatch[j].Tile[u+v*nTileU].Rotate;
-					} 
-					else 
-					{
-						if (rpatch->UIPatch[j].Tile[u+v*nTileU].Rotate != rot)
-						{
-							return -1;
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	nodes.DisposeTemporary();
-	return rot;
+            for (int v = 0; v < nTileV; v++)
+            for (int u= 0; u < nTileU; u++)
+            {
+                if (rpatch->tileSel[rpatch->GetTileNumber(j, u, v)])
+                {
+                    if (first)
+                    {
+                        first = FALSE;
+                        rot = rpatch->UIPatch[j].Tile[u+v*nTileU].Rotate;
+                    }
+                    else
+                    {
+                        if (rpatch->UIPatch[j].Tile[u+v*nTileU].Rotate != rot)
+                        {
+                            return -1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    nodes.DisposeTemporary();
+    return rot;
 }*/
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
 void EditPatchMod::SelectByMat(int index, BOOL clear)
-	{
-	ModContextList mcList;	
+{
+	ModContextList mcList;
 	INodeTab nodes;
 
 	if (!ip)
 		return;
 	ip->GetModContexts(mcList, nodes);
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
-	
+
 	theHold.Begin();
 
 	for (int i = 0; i < mcList.Count(); i++)
 	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
@@ -899,37 +898,37 @@ void EditPatchMod::SelectByMat(int index, BOOL clear)
 		if (theHold.Holding())
 		{
 			theHold.Put(new PatchSelRestore(patchData, this, patch));
-			}
-		
+		}
+
 		if (clear)
 			patch->patchSel.ClearAll();
 
 		for (int j = 0; j < patch->getNumPatches(); j++)
-		{			
+		{
 			if (patch->getPatchMtlIndex(j) == index)
 				patch->patchSel.Set(j);
-			}
-		
+		}
+
 		patchData->UpdateChanges(patch, rpatch, FALSE);
 		patchData->SetFlag(EPD_BEENDONE, TRUE);
 		patchData->TempData(this)->Invalidate(PART_SELECT);
-		}
-		
+	}
+
 	PatchSelChanged();
 	theHold.Accept(GetString(IDS_RB_SELECTBYMATID));
-	
+
 	nodes.DisposeTemporary();
 	NotifyDependents(FOREVER, PART_SELECT, REFMSG_CHANGE);
 	ip->RedrawViews(ip->GetTime());
-	}
+}
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-MtlID EditPatchMod::GetNextAvailMtlID(ModContext* mc) 
+MtlID EditPatchMod::GetNextAvailMtlID(ModContext *mc)
 {
 	if (!mc)
 		return 1;
-	EditPatchData *patchData =(EditPatchData*)mc->localData;
+	EditPatchData *patchData = (EditPatchData *)mc->localData;
 	if (!patchData)
 		return 1;
 
@@ -938,13 +937,13 @@ MtlID EditPatchMod::GetNextAvailMtlID(ModContext* mc)
 	PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
 	if (!patch)
 		return 1;
-	
+
 	int mtlID = GetSelFaceUniqueMtlID(mc);
 
 	if (mtlID == -1)
 	{
 		int i;
- 		
+
 		MtlID min, max;
 		BOOL first = TRUE;
 
@@ -956,18 +955,16 @@ MtlID EditPatchMod::GetNextAvailMtlID(ModContext* mc)
 			{
 				min = max = thisID;
 				first = FALSE;
-				}
-			else
-			if (thisID < min)
-				min = thisID;
-			else
-			if (thisID > max)
-				max = thisID;
 			}
+			else if (thisID < min)
+				min = thisID;
+			else if (thisID > max)
+				max = thisID;
+		}
 		// If room below, return it
 		if (min > 0)
 			return min - 1;
-		// Build a bit array to find any gaps		
+		// Build a bit array to find any gaps
 		BitArray b;
 		int bits = max - min + 1;
 		b.SetSize(bits);
@@ -978,23 +975,23 @@ MtlID EditPatchMod::GetNextAvailMtlID(ModContext* mc)
 		{
 			if (!b[i])
 				return (MtlID)(i + min);
-			}
+		}
 		// No gaps!  If room above, return it
 		if (max < 65535)
 			return max + 1;
-		}
-	return (MtlID)mtlID;
 	}
+	return (MtlID)mtlID;
+}
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-BOOL EditPatchMod::HasFaceSelection(ModContext* mc) 
+BOOL EditPatchMod::HasFaceSelection(ModContext *mc)
 {
 	// Are we the edited object?
 	if (ip == NULL)
 		return FALSE;
 
-	EditPatchData *patchData =(EditPatchData*)mc->localData;
+	EditPatchData *patchData = (EditPatchData *)mc->localData;
 	if (!patchData)
 		return FALSE;
 
@@ -1007,16 +1004,16 @@ BOOL EditPatchMod::HasFaceSelection(ModContext* mc)
 	// Is Patch selection active?
 	if (selLevel == EP_PATCH && patch->patchSel.NumberSet())
 		return TRUE;
-	
+
 	return FALSE;
-	}
+}
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void EditPatchMod::SetSelFaceMtlID(ModContext* mc, MtlID id, BOOL bResetUnsel) 
+void EditPatchMod::SetSelFaceMtlID(ModContext *mc, MtlID id, BOOL bResetUnsel)
 {
 	int altered = 0;
-	EditPatchData *patchData =(EditPatchData*)mc->localData;
+	EditPatchData *patchData = (EditPatchData *)mc->localData;
 	if (!patchData)
 		return;
 
@@ -1025,7 +1022,7 @@ void EditPatchMod::SetSelFaceMtlID(ModContext* mc, MtlID id, BOOL bResetUnsel)
 	PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
 	if (!patch)
 		return;
-	
+
 	// If this is the first edit, then the delta arrays will be allocated
 	patchData->BeginEdit(ip->GetTime());
 
@@ -1038,30 +1035,30 @@ void EditPatchMod::SetSelFaceMtlID(ModContext* mc, MtlID id, BOOL bResetUnsel)
 		{
 			altered = TRUE;
 			patch->setPatchMtlIndex(p, id);
-			}
 		}
+	}
 
 	if (altered)
 	{
 		patchData->UpdateChanges(patch, rpatch, FALSE);
 		InvalidateSurfaceUI();
-		}
+	}
 
 	NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
 	ip->RedrawViews(ip->GetTime());
-	}
+}
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-int	EditPatchMod::GetSelFaceUniqueMtlID(ModContext* mc) 
+int EditPatchMod::GetSelFaceUniqueMtlID(ModContext *mc)
 {
-	int	mtlID;
+	int mtlID;
 
 	mtlID = GetSelFaceAnyMtlID(mc);
 	if (mtlID == -1)
 		return mtlID;
 
-	EditPatchData *patchData =(EditPatchData*)mc->localData;
+	EditPatchData *patchData = (EditPatchData *)mc->localData;
 	if (!patchData)
 		return 1;
 
@@ -1078,18 +1075,18 @@ int	EditPatchMod::GetSelFaceUniqueMtlID(ModContext* mc)
 		if (patch->getPatchMtlIndex(p) != mtlID)
 			continue;
 		mtlID = -1;
-		}
-	return mtlID;
 	}
+	return mtlID;
+}
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-int	EditPatchMod::GetSelFaceAnyMtlID(ModContext* mc) 
+int EditPatchMod::GetSelFaceAnyMtlID(ModContext *mc)
 {
-	int				mtlID = -1;
-	BOOL			bGotFirst = FALSE;
+	int mtlID = -1;
+	BOOL bGotFirst = FALSE;
 
-	EditPatchData *patchData =(EditPatchData*)mc->localData;
+	EditPatchData *patchData = (EditPatchData *)mc->localData;
 	if (!patchData)
 		return 1;
 
@@ -1109,24 +1106,24 @@ int	EditPatchMod::GetSelFaceAnyMtlID(ModContext* mc)
 			{
 				mtlID = -1;
 				break;
-				}
 			}
-		else 
+		}
+		else
 		{
 			mtlID = patch->getPatchMtlIndex(p);
 			bGotFirst = TRUE;
-			}
 		}
-	return mtlID;
 	}
+	return mtlID;
+}
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-int	EditPatchMod::GetMaxMtlID(ModContext* mc) 
+int EditPatchMod::GetMaxMtlID(ModContext *mc)
 {
 	MtlID mtlID = 0;
 
-	EditPatchData *patchData =(EditPatchData*)mc->localData;
+	EditPatchData *patchData = (EditPatchData *)mc->localData;
 	if (!patchData)
 		return 1;
 
@@ -1140,9 +1137,6 @@ int	EditPatchMod::GetMaxMtlID(ModContext* mc)
 		mtlID = std::max(mtlID, patch->getPatchMtlIndex(p));
 
 	return mtlID;
-	}
+}
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-

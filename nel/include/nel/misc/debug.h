@@ -30,12 +30,12 @@
 #include <cstdio>
 #include <set>
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 #ifdef ASSERT_THROW_EXCEPTION
 #define ASSERT_THROW_EXCEPTION_CODE(exp) ASSERT_THROW_EXCEPTION_CODE_EX(exp, #exp)
-#define ASSERT_THROW_EXCEPTION_CODE_EX(exp, str) if(!(exp)) throw NLMISC::Exception(str" returns false");
+#define ASSERT_THROW_EXCEPTION_CODE_EX(exp, str) \
+	if (!(exp)) throw NLMISC::Exception(str " returns false");
 #else
 #define ASSERT_THROW_EXCEPTION_CODE(exp)
 #define ASSERT_THROW_EXCEPTION_CODE_EX(exp, str)
@@ -54,14 +54,14 @@ private:
 	typedef CLog *(INelContext::*TAccessor)();
 
 	// Method to access the Log
-	TAccessor	_Accessor;
+	TAccessor _Accessor;
+
 public:
 	CImposterLog(TAccessor accessor);
-	CLog* operator -> ();
-	operator CLog*();
-	CLog &operator ()();
+	CLog *operator->();
+	operator CLog *();
+	CLog &operator()();
 };
-
 
 //
 // Externals
@@ -69,22 +69,21 @@ public:
 
 // NOTE: The following are all NULL until createDebug() has been called at least once
 // NOTE2: You must not use this class before the main() (not inside a static class ctor)
-extern CImposterLog		ErrorLog;
-extern CImposterLog		WarningLog;
-extern CImposterLog		InfoLog;
-extern CImposterLog		DebugLog;
-extern CImposterLog		AssertLog;
+extern CImposterLog ErrorLog;
+extern CImposterLog WarningLog;
+extern CImposterLog InfoLog;
+extern CImposterLog DebugLog;
+extern CImposterLog AssertLog;
 
 extern CMemDisplayer *DefaultMemDisplayer;
 extern CMsgBoxDisplayer *DefaultMsgBoxDisplayer;
-
 
 //
 // Functions
 //
 
 // internal use only
-void createDebug (const char *logPath = NULL, bool logInFile = true, bool eraseLastLog = false);
+void createDebug(const char *logPath = NULL, bool logInFile = true, bool eraseLastLog = false);
 
 /// Do not call this, unless you know what you're trying to do (it kills debug)!
 void destroyDebug();
@@ -99,15 +98,14 @@ void changeLogDirectory(const std::string &dir);
 std::string getLogDirectory();
 
 // internal breakpoint window
-void enterBreakpoint (const char *message);
+void enterBreakpoint(const char *message);
 
 // if true, the assert generates an assert
 // if false, the assert just displays a warning and continue
-void setAssert (bool assert);
+void setAssert(bool assert);
 
 // Beep (Windows only, no effect elsewhere)
-void beep( uint freq, uint duration );
-
+void beep(uint freq, uint duration);
 
 typedef std::string (*TCrashCallback)();
 
@@ -115,15 +113,13 @@ typedef std::string (*TCrashCallback)();
 void setCrashCallback(TCrashCallback crashCallback);
 
 // For Crash report window. allow to know if a crash has already raised in the application
-bool	isCrashAlreadyReported();
-void	setCrashAlreadyReported(bool state);
-
+bool isCrashAlreadyReported();
+void setCrashAlreadyReported(bool state);
 
 // This very amazing macro __FUNCTION__ doesn't exist on VC6, map it to NULL
 #ifdef NL_COMP_VC6
-#	define __FUNCTION__ NULL
+#define __FUNCTION__ NULL
 #endif
-
 
 // Macros
 
@@ -160,15 +156,15 @@ void	setCrashAlreadyReported(bool state);
 #define NL_LOC_MSG __FILE__ "(" NL_MACRO_TO_STR(__LINE__) ") : Message: "
 #define NL_LOC_WRN __FILE__ "(" NL_MACRO_TO_STR(__LINE__) ") : Warning Msg: "
 
- //
- // Following are internal functions, you should never use them
- //
+//
+// Following are internal functions, you should never use them
+//
 
- /// Never use this function (internal use only)
-void nlFatalError (const char *format, ...);
+/// Never use this function (internal use only)
+void nlFatalError(const char *format, ...);
 
 /// Never use this function but call the nlerror macro (internal use only)
-void nlError (const char *format, ...);
+void nlError(const char *format, ...);
 
 struct CSetLogPosition
 {
@@ -176,7 +172,8 @@ private:
 	CLog *m_Log;
 
 public:
-	inline CSetLogPosition(CLog *log, sint line, const char *fileName, const char *funcName = NULL) : m_Log(log)
+	inline CSetLogPosition(CLog *log, sint line, const char *fileName, const char *funcName = NULL)
+	    : m_Log(log)
 	{
 		log->setPosition(line, fileName, funcName);
 	};
@@ -186,12 +183,11 @@ public:
 	}
 
 	CLog *log() const { return m_Log; }
-	
+
 	typedef void (*TError)(const char *format, ...);
 	TError error() { return NLMISC::nlError; }
 	TError fatalError() { return NLMISC::nlFatalError; }
 };
-
 
 /**
  * \def nldebug(exp)
@@ -199,22 +195,24 @@ public:
  *
  * Example:
  *\code
-	void function(sint type)
-	{
-		// display the type value.
-		nldebug("type is %d", type);
-	}
+    void function(sint type)
+    {
+        // display the type value.
+        nldebug("type is %d", type);
+    }
  *\endcode
  */
 #ifdef NL_NO_DEBUG
-#	if defined(NL_COMP_VC) && NL_COMP_VC_VERSION >= 71
-#		define nldebug __noop
-#	else
-#		define nldebug 0&&
-#	endif
+#if defined(NL_COMP_VC) && NL_COMP_VC_VERSION >= 71
+#define nldebug __noop
+#else
+#define nldebug 0 &&
+#endif
 #else // NL_NO_DEBUG
-	extern bool DisableNLDebug;
-#	define nldebug if (NLMISC::DisableNLDebug) {} else (NLMISC::createDebug(), NLMISC::CSetLogPosition(NLMISC::INelContext::getInstance().getDebugLog(), __LINE__, __FILE__, __FUNCTION__ ).log())->displayNL
+extern bool DisableNLDebug;
+#define nldebug                     \
+	if (NLMISC::DisableNLDebug) { } \
+	else (NLMISC::createDebug(), NLMISC::CSetLogPosition(NLMISC::INelContext::getInstance().getDebugLog(), __LINE__, __FILE__, __FUNCTION__).log())->displayNL
 #endif // NL_NO_DEBUG
 
 /**
@@ -222,13 +220,13 @@ public:
  * Same as nldebug but it will be display in debug and in release mode.
  */
 #ifdef NL_NO_DEBUG
-#	if defined(NL_COMP_VC) && NL_COMP_VC_VERSION >= 71
-#		define nlinfo __noop
-#	else
-#		define nlinfo 0&&
-#	endif
+#if defined(NL_COMP_VC) && NL_COMP_VC_VERSION >= 71
+#define nlinfo __noop
+#else
+#define nlinfo 0 &&
+#endif
 #else // NL_NO_DEBUG
-#	define nlinfo (NLMISC::createDebug(), NLMISC::CSetLogPosition(NLMISC::INelContext::getInstance().getInfoLog(), __LINE__, __FILE__, __FUNCTION__ ).log())->displayNL
+#define nlinfo (NLMISC::createDebug(), NLMISC::CSetLogPosition(NLMISC::INelContext::getInstance().getInfoLog(), __LINE__, __FILE__, __FUNCTION__).log())->displayNL
 #endif // NL_NO_DEBUG
 
 /**
@@ -237,26 +235,26 @@ public:
  *
  * Example:
  *\code
-	void function(char *str)
-	{
-		// display the type value.
-		if (str==NULL)
-		{
-			nlwarning("in function(), str should not be NULL, assume it's an empty string");
-			str="";
-		}
-	}
+    void function(char *str)
+    {
+        // display the type value.
+        if (str==NULL)
+        {
+            nlwarning("in function(), str should not be NULL, assume it's an empty string");
+            str="";
+        }
+    }
  *\endcode
  */
 
 #ifdef NL_NO_DEBUG
-#	if defined(NL_COMP_VC) && NL_COMP_VC_VERSION >= 71
-#		define nlwarning __noop
-#	else
-#		define nlwarning 0&&
-#	endif
+#if defined(NL_COMP_VC) && NL_COMP_VC_VERSION >= 71
+#define nlwarning __noop
+#else
+#define nlwarning 0 &&
+#endif
 #else // NL_NO_DEBUG
-#	define nlwarning (NLMISC::createDebug(), NLMISC::CSetLogPosition(NLMISC::INelContext::getInstance().getWarningLog(), __LINE__, __FILE__, __FUNCTION__ ).log())->displayNL
+#define nlwarning (NLMISC::createDebug(), NLMISC::CSetLogPosition(NLMISC::INelContext::getInstance().getWarningLog(), __LINE__, __FILE__, __FUNCTION__).log())->displayNL
 #endif // NL_NO_DEBUG
 
 /**
@@ -265,26 +263,24 @@ public:
  * automatically. nlerror must be in a try/catch because it generates an EFatalError exception to exit the application.
  *
  *\code
-	void function(char *filename)
-	{
-		FILE *fp = nlfopen (filename, "r");
-		if (fp==NULL)
-		{
-			nlerror("file not found");
-		}
-	}
+    void function(char *filename)
+    {
+        FILE *fp = nlfopen (filename, "r");
+        if (fp==NULL)
+        {
+            nlerror("file not found");
+        }
+    }
  *\endcode
  */
-#define nlerror (NLMISC::createDebug (), NLMISC::CSetLogPosition(NLMISC::INelContext::getInstance().getErrorLog(), __LINE__, __FILE__, __FUNCTION__ ).fatalError())
-
+#define nlerror (NLMISC::createDebug(), NLMISC::CSetLogPosition(NLMISC::INelContext::getInstance().getErrorLog(), __LINE__, __FILE__, __FUNCTION__).fatalError())
 
 /**
  * \def nlerrornoex(exp)
  * Same as nlerror but it doesn't generate any exceptions. It's used only in very specific case, for example, when you
  * call a nlerror in a catch block (look the service.cpp)
  */
-#define nlerrornoex (NLMISC::createDebug (), NLMISC::CSetLogPosition(NLMISC::INelContext::getInstance().getErrorLog(), __LINE__, __FILE__, __FUNCTION__ ).error())
-
+#define nlerrornoex (NLMISC::createDebug(), NLMISC::CSetLogPosition(NLMISC::INelContext::getInstance().getErrorLog(), __LINE__, __FILE__, __FUNCTION__).error())
 
 /**
  * \def nlassert(exp)
@@ -293,11 +289,11 @@ public:
  *
  * Example:
  *\code
-	void function(char *string)
-	{
-		// the string must not be NULL.
-		nlassert(string!=NULL);
-	}
+    void function(char *string)
+    {
+        // the string must not be NULL.
+        nlassert(string!=NULL);
+    }
  *\endcode
  */
 
@@ -308,11 +304,11 @@ public:
  *
  * Example:
  *\code
-	for (int i = 0; i < Vect.size(); i++)
-	{
-		// all string must not be NULL, but if it's happen, log only the first time.
-		nlassertonce(Vect[i].string!=NULL);
-	}
+    for (int i = 0; i < Vect.size(); i++)
+    {
+        // all string must not be NULL, but if it's happen, log only the first time.
+        nlassertonce(Vect[i].string!=NULL);
+    }
  *\endcode
  */
 
@@ -323,12 +319,12 @@ public:
  *
  * Example:
  *\code
-	void function(sint type)
-	{
-		// the \c type must be between 0 and 15.
-		nlassertex(type>=0&&type<=16, ("type was %d", type));
-		// it'll display something like "assertion failed line 10 of test.cpp: type>=&&type<=16, type was 423555463"
-	}
+    void function(sint type)
+    {
+        // the \c type must be between 0 and 15.
+        nlassertex(type>=0&&type<=16, ("type was %d", type));
+        // it'll display something like "assertion failed line 10 of test.cpp: type>=&&type<=16, type was 423555463"
+    }
  *\endcode
  */
 
@@ -338,17 +334,17 @@ public:
  *
  * Example:
  *\code
-	// Load a file and assert if the load failed. This example will work \b only in debug mode because in release mode,
-	// nlassert do nothing, the load function will not be called...
-	nlassert(load("test.tga"));
+    // Load a file and assert if the load failed. This example will work \b only in debug mode because in release mode,
+    // nlassert do nothing, the load function will not be called...
+    nlassert(load("test.tga"));
 
-	// If you want to do that anyway, you could call nlverify. In release mode, the assertion will not be tested but
-	// the \c load function will be called.
-	nlverify(load("test.tga"));
+    // If you want to do that anyway, you could call nlverify. In release mode, the assertion will not be tested but
+    // the \c load function will be called.
+    nlverify(load("test.tga"));
 
-	// You can also do this:
-	bool res = load ("test.tga"));
-	assert(res);
+    // You can also do this:
+    bool res = load ("test.tga"));
+    assert(res);
 
  *\endcode
  */
@@ -368,12 +364,12 @@ public:
  * It stop the application at this point. It's exactly the same thing as "nlassert(false)".
  * Example:
  *\code
-	switch(type)
-	{
-	case 1: ... break;
-	case 2: ... break;
-	default: nlstop;	// it should never happen...
-	}
+    switch(type)
+    {
+    case 1: ... break;
+    case 2: ... break;
+    default: nlstop;	// it should never happen...
+    }
  *\endcode
  */
 
@@ -396,7 +392,9 @@ public:
 #define NLMISC_BREAKPOINT abort()
 #endif
 #else
-#define NLMISC_BREAKPOINT do { } while (0)
+#define NLMISC_BREAKPOINT \
+	do {                  \
+	} while (0)
 #endif
 
 // Internal, don't use it (make smaller assert code)
@@ -407,141 +405,169 @@ extern bool _assertex_stop_1(bool &ignoreNextTime);
 // removed because we always check assert (even in release mode) #if defined(NL_DEBUG)
 
 #if defined(_MSC_VER) && _MSC_VER >= 1500
-#define nlassume(exp) do { __analysis_assume(exp); } while (0) // __analysis_assume doesn't evaluate the expression at runtime
+#define nlassume(exp)           \
+	do {                        \
+		__analysis_assume(exp); \
+	} while (0) // __analysis_assume doesn't evaluate the expression at runtime
 #else
-#define nlassume(exp) do { } while (0)
+#define nlassume(exp) \
+	do {              \
+	} while (0)
 #endif
 
 #if defined(NL_COMP_GCC) && (GCC_VERSION >= 40500)
 // This may evaluate the expression at runtime if it has side effects, so it is not a desirable nlassume implementation in release mode
-#define nlassumeex(exp) do { if (!(exp)) __builtin_unreachable(); } while (0)
+#define nlassumeex(exp)                      \
+	do {                                     \
+		if (!(exp)) __builtin_unreachable(); \
+	} while (0)
 #else
 #define nlassumeex(exp) nlassume(exp)
 #endif
 
 #ifdef NL_NO_DEBUG
-#	define nlassert(exp) nlassume(exp)
-#	define nlassertonce(exp) nlassume(exp)
-#	define nlassertex(exp, str) nlassume(exp)
-#	define nlverify(exp) do { exp; nlassume(exp); } while (0)
-#	define nlverifyonce(exp) do { exp; nlassume(exp); } while (0)
-#	define nlverifyex(exp, str) do { exp; nlassume(exp); } while (0)
+#define nlassert(exp) nlassume(exp)
+#define nlassertonce(exp) nlassume(exp)
+#define nlassertex(exp, str) nlassume(exp)
+#define nlverify(exp)  \
+	do {               \
+		exp;           \
+		nlassume(exp); \
+	} while (0)
+#define nlverifyonce(exp) \
+	do {                  \
+		exp;              \
+		nlassume(exp);    \
+	} while (0)
+#define nlverifyex(exp, str) \
+	do {                     \
+		exp;                 \
+		nlassume(exp);       \
+	} while (0)
 #else // NL_NO_DEBUG
 
-#	ifdef NL_OS_UNIX
+#ifdef NL_OS_UNIX
 
 // Linux set of asserts is reduced due to that there is no message box displayer
 
-#define nlassert(exp) \
-do { \
-	bool _expResult_ = (exp) ? true : false; \
-	if (!(_expResult_)) { \
-		NLMISC::createDebug (); \
-		NLMISC::CSetLogPosition logPos__(NLMISC::INelContext::getInstance().getAssertLog(), __LINE__, __FILE__, __FUNCTION__); \
-		NLMISC::INelContext::getInstance().getAssertLog()->displayNL ("\"%s\" ", #exp); \
-		NLMISC_BREAKPOINT; \
-	} \
-	nlassume(_expResult_); \
-} while(0)
+#define nlassert(exp)                                                                                                              \
+	do {                                                                                                                           \
+		bool _expResult_ = (exp) ? true : false;                                                                                   \
+		if (!(_expResult_))                                                                                                        \
+		{                                                                                                                          \
+			NLMISC::createDebug();                                                                                                 \
+			NLMISC::CSetLogPosition logPos__(NLMISC::INelContext::getInstance().getAssertLog(), __LINE__, __FILE__, __FUNCTION__); \
+			NLMISC::INelContext::getInstance().getAssertLog()->displayNL("\"%s\" ", #exp);                                         \
+			NLMISC_BREAKPOINT;                                                                                                     \
+		}                                                                                                                          \
+		nlassume(_expResult_);                                                                                                     \
+	} while (0)
 
 #define nlassertonce(exp) nlassert(exp)
 
-#define nlassertex(exp, str) \
-do { \
-	bool _expResult_ = (exp) ? true : false; \
-	if (!(_expResult_)) { \
-		NLMISC::createDebug (); \
-		NLMISC::CSetLogPosition logPos__(NLMISC::INelContext::getInstance().getAssertLog(), __LINE__, __FILE__, __FUNCTION__); \
-		NLMISC::INelContext::getInstance().getAssertLog()->displayNL ("\"%s\" ", #exp); \
-		NLMISC::INelContext::getInstance().getAssertLog()->displayRawNL str; \
-		NLMISC_BREAKPOINT; \
-	} \
-	nlassume(_expResult_); \
-} while(0)
+#define nlassertex(exp, str)                                                                                                       \
+	do {                                                                                                                           \
+		bool _expResult_ = (exp) ? true : false;                                                                                   \
+		if (!(_expResult_))                                                                                                        \
+		{                                                                                                                          \
+			NLMISC::createDebug();                                                                                                 \
+			NLMISC::CSetLogPosition logPos__(NLMISC::INelContext::getInstance().getAssertLog(), __LINE__, __FILE__, __FUNCTION__); \
+			NLMISC::INelContext::getInstance().getAssertLog()->displayNL("\"%s\" ", #exp);                                         \
+			NLMISC::INelContext::getInstance().getAssertLog()->displayRawNL str;                                                   \
+			NLMISC_BREAKPOINT;                                                                                                     \
+		}                                                                                                                          \
+		nlassume(_expResult_);                                                                                                     \
+	} while (0)
 
 #define nlverify(exp) nlassert(exp)
 #define nlverifyonce(exp) nlassert(exp)
 #define nlverifyex(exp, str) nlassertex(exp, str)
 
-#	else // NL_OS_UNIX
+#else // NL_OS_UNIX
 
-#define nlassert(exp) \
-do { \
-	static bool ignoreNextTime = false; \
-	bool _expResult_ = (exp) ? true : false; \
-	if (!ignoreNextTime && !_expResult_) { \
-		if(NLMISC::_assert_stop(ignoreNextTime, __LINE__, __FILE__, __FUNCTION__, #exp)) \
-			NLMISC_BREAKPOINT; \
-	} \
-	ASSERT_THROW_EXCEPTION_CODE_EX(_expResult_, #exp) \
-	nlassume(_expResult_); \
-} while(0)
+#define nlassert(exp)                                                                         \
+	do {                                                                                      \
+		static bool ignoreNextTime = false;                                                   \
+		bool _expResult_ = (exp) ? true : false;                                              \
+		if (!ignoreNextTime && !_expResult_)                                                  \
+		{                                                                                     \
+			if (NLMISC::_assert_stop(ignoreNextTime, __LINE__, __FILE__, __FUNCTION__, #exp)) \
+				NLMISC_BREAKPOINT;                                                            \
+		}                                                                                     \
+		ASSERT_THROW_EXCEPTION_CODE_EX(_expResult_, #exp)                                     \
+		nlassume(_expResult_);                                                                \
+	} while (0)
 
-#define nlassertonce(exp) \
-do { \
-	static bool ignoreNextTime = false; \
-	bool _expResult_ = (exp) ? true : false; \
-	if (!ignoreNextTime && !(_expResult_)) { \
-		ignoreNextTime = true; \
-		if(NLMISC::_assert_stop(ignoreNextTime, __LINE__, __FILE__, __FUNCTION__, #exp)) \
-			NLMISC_BREAKPOINT; \
-	} \
-	nlassume(_expResult_); \
-} while(0)
+#define nlassertonce(exp)                                                                     \
+	do {                                                                                      \
+		static bool ignoreNextTime = false;                                                   \
+		bool _expResult_ = (exp) ? true : false;                                              \
+		if (!ignoreNextTime && !(_expResult_))                                                \
+		{                                                                                     \
+			ignoreNextTime = true;                                                            \
+			if (NLMISC::_assert_stop(ignoreNextTime, __LINE__, __FILE__, __FUNCTION__, #exp)) \
+				NLMISC_BREAKPOINT;                                                            \
+		}                                                                                     \
+		nlassume(_expResult_);                                                                \
+	} while (0)
 
-#define nlassertex(exp, str) \
-do { \
-	static bool ignoreNextTime = false; \
-	bool _expResult_ = (exp) ? true : false; \
-	if (!ignoreNextTime && !_expResult_) { \
-		NLMISC::_assertex_stop_0(ignoreNextTime, __LINE__, __FILE__, __FUNCTION__, #exp); \
-		NLMISC::INelContext::getInstance().getAssertLog()->displayRawNL str; \
-		if(NLMISC::_assertex_stop_1(ignoreNextTime)) \
-			NLMISC_BREAKPOINT; \
-	} \
-	ASSERT_THROW_EXCEPTION_CODE_EX(_expResult_, #exp) \
-	nlassume(_expResult_); \
-} while(0)
+#define nlassertex(exp, str)                                                                  \
+	do {                                                                                      \
+		static bool ignoreNextTime = false;                                                   \
+		bool _expResult_ = (exp) ? true : false;                                              \
+		if (!ignoreNextTime && !_expResult_)                                                  \
+		{                                                                                     \
+			NLMISC::_assertex_stop_0(ignoreNextTime, __LINE__, __FILE__, __FUNCTION__, #exp); \
+			NLMISC::INelContext::getInstance().getAssertLog()->displayRawNL str;              \
+			if (NLMISC::_assertex_stop_1(ignoreNextTime))                                     \
+				NLMISC_BREAKPOINT;                                                            \
+		}                                                                                     \
+		ASSERT_THROW_EXCEPTION_CODE_EX(_expResult_, #exp)                                     \
+		nlassume(_expResult_);                                                                \
+	} while (0)
 
-#define nlverify(exp) \
-do { \
-	static bool ignoreNextTime = false; \
-	bool _expResult_ = (exp) ? true : false; \
-	if (!_expResult_ && !ignoreNextTime) { \
-		if(NLMISC::_assert_stop(ignoreNextTime, __LINE__, __FILE__, __FUNCTION__, #exp)) \
-			NLMISC_BREAKPOINT; \
-	} \
-	ASSERT_THROW_EXCEPTION_CODE_EX(_expResult_, #exp) \
-	nlassume(_expResult_); \
-} while(0)
+#define nlverify(exp)                                                                         \
+	do {                                                                                      \
+		static bool ignoreNextTime = false;                                                   \
+		bool _expResult_ = (exp) ? true : false;                                              \
+		if (!_expResult_ && !ignoreNextTime)                                                  \
+		{                                                                                     \
+			if (NLMISC::_assert_stop(ignoreNextTime, __LINE__, __FILE__, __FUNCTION__, #exp)) \
+				NLMISC_BREAKPOINT;                                                            \
+		}                                                                                     \
+		ASSERT_THROW_EXCEPTION_CODE_EX(_expResult_, #exp)                                     \
+		nlassume(_expResult_);                                                                \
+	} while (0)
 
-#define nlverifyonce(exp) \
-do { \
-	static bool ignoreNextTime = false; \
-	bool _expResult_ = (exp) ? true : false; \
-	if (!_expResult_ && !ignoreNextTime) { \
-		ignoreNextTime = true; \
-		if(NLMISC::_assert_stop(ignoreNextTime, __LINE__, __FILE__, __FUNCTION__, #exp)) \
-			NLMISC_BREAKPOINT; \
-	} \
-	nlassume(_expResult_); \
-} while(0)
+#define nlverifyonce(exp)                                                                     \
+	do {                                                                                      \
+		static bool ignoreNextTime = false;                                                   \
+		bool _expResult_ = (exp) ? true : false;                                              \
+		if (!_expResult_ && !ignoreNextTime)                                                  \
+		{                                                                                     \
+			ignoreNextTime = true;                                                            \
+			if (NLMISC::_assert_stop(ignoreNextTime, __LINE__, __FILE__, __FUNCTION__, #exp)) \
+				NLMISC_BREAKPOINT;                                                            \
+		}                                                                                     \
+		nlassume(_expResult_);                                                                \
+	} while (0)
 
-#define nlverifyex(exp, str) \
-do { \
-	static bool ignoreNextTime = false; \
-	bool _expResult_ = (exp) ? true : false; \
-	if (!_expResult_ && !ignoreNextTime) { \
-		NLMISC::_assertex_stop_0(ignoreNextTime, __LINE__, __FILE__, __FUNCTION__, #exp); \
-		NLMISC::INelContext::getInstance().getAssertLog()->displayRawNL str; \
-		if(NLMISC::_assertex_stop_1(ignoreNextTime)) \
-			NLMISC_BREAKPOINT; \
-	} \
-	ASSERT_THROW_EXCEPTION_CODE_EX(_expResult_, #exp) \
-	nlassume(_expResult_); \
-} while(0)
+#define nlverifyex(exp, str)                                                                  \
+	do {                                                                                      \
+		static bool ignoreNextTime = false;                                                   \
+		bool _expResult_ = (exp) ? true : false;                                              \
+		if (!_expResult_ && !ignoreNextTime)                                                  \
+		{                                                                                     \
+			NLMISC::_assertex_stop_0(ignoreNextTime, __LINE__, __FILE__, __FUNCTION__, #exp); \
+			NLMISC::INelContext::getInstance().getAssertLog()->displayRawNL str;              \
+			if (NLMISC::_assertex_stop_1(ignoreNextTime))                                     \
+				NLMISC_BREAKPOINT;                                                            \
+		}                                                                                     \
+		ASSERT_THROW_EXCEPTION_CODE_EX(_expResult_, #exp)                                     \
+		nlassume(_expResult_);                                                                \
+	} while (0)
 
-#	endif // NL_OS_UNIX
+#endif // NL_OS_UNIX
 
 #endif // NL_NO_DEBUG
 
@@ -551,47 +577,55 @@ do { \
 #define nlverifyverbose(exp) nlverify(exp)
 #else
 #define nlassertverbose(exp) nlassume(exp)
-#define nlverifyverbose(exp) do { exp; nlassume(exp); } while (0)
+#define nlverifyverbose(exp) \
+	do {                     \
+		exp;                 \
+		nlassume(exp);       \
+	} while (0)
 #endif
 
 #define nlunreferenced(identifier) (void)identifier
 
-#define nlstop \
-do { \
-	static bool ignoreNextTime = false; \
-	if (!ignoreNextTime) { \
-		if(NLMISC::_assert_stop(ignoreNextTime, __LINE__, __FILE__, __FUNCTION__, NULL)) \
-			NLMISC_BREAKPOINT; \
-	} \
-	ASSERT_THROW_EXCEPTION_CODE(false) \
-} while(0)
+#define nlstop                                                                                \
+	do {                                                                                      \
+		static bool ignoreNextTime = false;                                                   \
+		if (!ignoreNextTime)                                                                  \
+		{                                                                                     \
+			if (NLMISC::_assert_stop(ignoreNextTime, __LINE__, __FILE__, __FUNCTION__, NULL)) \
+				NLMISC_BREAKPOINT;                                                            \
+		}                                                                                     \
+		ASSERT_THROW_EXCEPTION_CODE(false)                                                    \
+	} while (0)
 
-#define nlstoponce \
-do { \
-	static bool ignoreNextTime = false; \
-	if (!ignoreNextTime) { \
-		ignoreNextTime = true; \
-		if(NLMISC::_assert_stop(ignoreNextTime, __LINE__, __FILE__, __FUNCTION__, NULL)) \
-			NLMISC_BREAKPOINT; \
-	} \
-} while(0)
+#define nlstoponce                                                                            \
+	do {                                                                                      \
+		static bool ignoreNextTime = false;                                                   \
+		if (!ignoreNextTime)                                                                  \
+		{                                                                                     \
+			ignoreNextTime = true;                                                            \
+			if (NLMISC::_assert_stop(ignoreNextTime, __LINE__, __FILE__, __FUNCTION__, NULL)) \
+				NLMISC_BREAKPOINT;                                                            \
+		}                                                                                     \
+	} while (0)
 
-
-#define nlstopex(str) \
-do { \
-	static bool ignoreNextTime = false; \
-	if (!ignoreNextTime) { \
-		NLMISC::_assertex_stop_0(ignoreNextTime, __LINE__, __FILE__, __FUNCTION__, NULL); \
-		NLMISC::INelContext::getInstance().getAssertLog()->displayRawNL str; \
-		if(NLMISC::_assertex_stop_1(ignoreNextTime)) \
-			NLMISC_BREAKPOINT; \
-	} \
-} while(0)
-
+#define nlstopex(str)                                                                         \
+	do {                                                                                      \
+		static bool ignoreNextTime = false;                                                   \
+		if (!ignoreNextTime)                                                                  \
+		{                                                                                     \
+			NLMISC::_assertex_stop_0(ignoreNextTime, __LINE__, __FILE__, __FUNCTION__, NULL); \
+			NLMISC::INelContext::getInstance().getAssertLog()->displayRawNL str;              \
+			if (NLMISC::_assertex_stop_1(ignoreNextTime))                                     \
+				NLMISC_BREAKPOINT;                                                            \
+		}                                                                                     \
+	} while (0)
 
 struct EFatalError : public Exception
 {
-	EFatalError() : Exception( "nlerror() called" ) {}
+	EFatalError()
+	    : Exception("nlerror() called")
+	{
+	}
 };
 
 class ETrapDebug : public Exception
@@ -603,29 +637,29 @@ class ETrapDebug : public Exception
 // this makes it compatible with zeroc's ICE network library
 
 #ifdef NL_MAP_ASSERT
-#	ifdef assert
-#		undef assert
-#		define assert nlassert
-#	endif
-#else
-#	ifdef assert
-#		undef assert
-#		define assert(a) you_must_not_use_assert___use_nl_assert___read_debug_h_file
-#	endif
+#ifdef assert
+#undef assert
+#define assert nlassert
 #endif
-
+#else
+#ifdef assert
+#undef assert
+#define assert(a) you_must_not_use_assert___use_nl_assert___read_debug_h_file
+#endif
+#endif
 
 /// Get the call stack and set it with result
 void getCallStack(std::string &result, sint skipNFirst = 0);
 
 /// Get the call stack and the logs and set it with result
-void getCallStackAndLog (std::string &result, sint skipNFirst = 0);
+void getCallStackAndLog(std::string &result, sint skipNFirst = 0);
 
 /**
  * safe_cast<>: this is a function which nlassert() a dynamic_cast in Debug, and just do a static_cast in release.
  * So slow check is made in debug, but only fast cast is made in release.
  */
-template<class T, class U>	inline T	safe_cast(U o)
+template <class T, class U>
+inline T safe_cast(U o)
 {
 	// NB: must check debug because assert may still be here in release
 #ifdef NL_DEBUG
@@ -639,7 +673,8 @@ template<class T, class U>	inline T	safe_cast(U o)
  * So slow check is made in debug, but only fast cast is made in release.
  * Differs from safe_cast by allowinf NULL objets. (ask Stephane LE DORZE for more explanations).
  */
-template<class T, class U>	inline T	type_cast(U o)
+template <class T, class U>
+inline T type_cast(U o)
 {
 	// NB: must check debug because assert may still be here in release
 #ifdef NL_DEBUG
@@ -653,35 +688,35 @@ template<class T, class U>	inline T	type_cast(U o)
 	}
 	else
 	{
-		return (o==0)?0:static_cast<T>(o);
+		return (o == 0) ? 0 : static_cast<T>(o);
 	}
 }
 
 /** Compile time assertion
-  */
+ */
 #ifdef NL_ISO_CPP0X_AVAILABLE
-#	define nlctassert(cond) static_assert((cond), "Compile time assert in "#cond)
+#define nlctassert(cond) static_assert((cond), "Compile time assert in " #cond)
 #else
-#	define nlctassert(cond) (void)sizeof(uint[(cond) ? 1 : 0])
+#define nlctassert(cond) (void)sizeof(uint[(cond) ? 1 : 0])
 #endif
 
 /**
-*	Allow to verify an object was accessed before its destructor call.
-*	For instance, it could be used to check if the user take care of method call return.
-*	ex:
-*		CMustConsume<TErrorCode>	foo()
-*		{
-*			...
-*			return	ErrorInvalidateType;		//	part of TErrorCode enum.
-*		}
-*	Exclusive implementation samples:
-*		TerrorCode code=foo().consumeValue();	//	Good!
-*		foo().consume();						//	Good!
-*		TerrorCode code=foo();					//	Mistake!
-*		foo();									//	Will cause an assert at next ending brace during execution time.
-*		TerrorCode code=foo().Value();			//	Will cause an assert at next ending brace during execution time.
-*	(ask Stephane LE DORZE for more explanations).
-*/
+ *	Allow to verify an object was accessed before its destructor call.
+ *	For instance, it could be used to check if the user take care of method call return.
+ *	ex:
+ *		CMustConsume<TErrorCode>	foo()
+ *		{
+ *			...
+ *			return	ErrorInvalidateType;		//	part of TErrorCode enum.
+ *		}
+ *	Exclusive implementation samples:
+ *		TerrorCode code=foo().consumeValue();	//	Good!
+ *		foo().consume();						//	Good!
+ *		TerrorCode code=foo();					//	Mistake!
+ *		foo();									//	Will cause an assert at next ending brace during execution time.
+ *		TerrorCode code=foo().Value();			//	Will cause an assert at next ending brace during execution time.
+ *	(ask Stephane LE DORZE for more explanations).
+ */
 
 // Need a breakpoint in the assert / verify macro
 extern bool DebugNeedAssert;
@@ -689,14 +724,14 @@ extern bool DebugNeedAssert;
 // Internal process, don't use it
 extern bool NoAssert;
 
-
-template<class T>
+template <class T>
 class CMustConsume
 {
 public:
-	CMustConsume(const T &val) : Value(val)
+	CMustConsume(const T &val)
+	    : Value(val)
 #if !FINAL_VERSION
-	, Consumed(false)
+	    , Consumed(false)
 #endif
 	{
 	}
@@ -739,19 +774,19 @@ public:
 	}
 
 private:
-	T				Value;
+	T Value;
 #if !FINAL_VERSION
-	mutable	bool	Consumed;
+	mutable bool Consumed;
 #endif
 };
 
 /// Data for instance counting
 struct TInstanceCounterData
 {
-	sint32		_InstanceCounter;
-	sint32		_DeltaCounter;
-	const char	*_ClassName;
-	bool		_Touched;
+	sint32 _InstanceCounter;
+	sint32 _DeltaCounter;
+	const char *_ClassName;
+	bool _Touched;
 
 	TInstanceCounterData(const char *className);
 
@@ -764,37 +799,38 @@ class CInstanceCounterLocalManager;
 // The singleton used to display the instance counter
 class CInstanceCounterManager
 {
-//	NLMISC_SAFE_SINGLETON_DECL(CInstanceCounterManager);
-	private:
-		/* declare private constructors*/
-		CInstanceCounterManager () {}
-		CInstanceCounterManager (const CInstanceCounterManager &) {}
-		/* the local static pointer to the singleton instance */
-		static CInstanceCounterManager	*_Instance;
-	public:
-		static CInstanceCounterManager &getInstance()
-		{
-			if (_Instance == NULL)
-			{
-				/* the nel context MUST be initialised */
-//				nlassert(NLMISC::NelContext != NULL);
-				void *ptr = NLMISC::INelContext::getInstance().getSingletonPointer("CInstanceCounterManager");
-				if (ptr == NULL)
-				{
-					/* allocate the singleton and register it */
-					_Instance = new CInstanceCounterManager;
-					NLMISC::INelContext::getInstance().setSingletonPointer("CInstanceCounterManager", _Instance);
-				}
-				else
-				{
-					_Instance = reinterpret_cast<CInstanceCounterManager*>(ptr);
-				}
-			}
-			return *_Instance;
-		}
-	private:
-public:
+	//	NLMISC_SAFE_SINGLETON_DECL(CInstanceCounterManager);
+private:
+	/* declare private constructors*/
+	CInstanceCounterManager() { }
+	CInstanceCounterManager(const CInstanceCounterManager &) { }
+	/* the local static pointer to the singleton instance */
+	static CInstanceCounterManager *_Instance;
 
+public:
+	static CInstanceCounterManager &getInstance()
+	{
+		if (_Instance == NULL)
+		{
+			/* the nel context MUST be initialised */
+			//				nlassert(NLMISC::NelContext != NULL);
+			void *ptr = NLMISC::INelContext::getInstance().getSingletonPointer("CInstanceCounterManager");
+			if (ptr == NULL)
+			{
+				/* allocate the singleton and register it */
+				_Instance = new CInstanceCounterManager;
+				NLMISC::INelContext::getInstance().setSingletonPointer("CInstanceCounterManager", _Instance);
+			}
+			else
+			{
+				_Instance = reinterpret_cast<CInstanceCounterManager *>(ptr);
+			}
+		}
+		return *_Instance;
+	}
+
+private:
+public:
 	std::string displayCounters() const;
 
 	void resetDeltaCounter();
@@ -803,14 +839,13 @@ public:
 	sint32 getInstanceCounterDelta(const std::string &className) const;
 
 private:
-
 	friend class CInstanceCounterLocalManager;
 
 	void registerInstaceCounterLocalManager(CInstanceCounterLocalManager *localMgr);
 	void unregisterInstaceCounterLocalManager(CInstanceCounterLocalManager *localMgr);
 
-//	static CInstanceCounterManager		*_Instance;
-	std::set<CInstanceCounterLocalManager*>	_InstanceCounterMgrs;
+	//	static CInstanceCounterManager		*_Instance;
+	std::set<CInstanceCounterLocalManager *> _InstanceCounterMgrs;
 };
 
 //
@@ -862,10 +897,9 @@ private:
 		CInstanceCounterManager::getInstance().registerInstaceCounterLocalManager(this);
 	}
 
-	static CInstanceCounterLocalManager		*_Instance;
-	std::set<TInstanceCounterData*>			_InstanceCounters;
+	static CInstanceCounterLocalManager *_Instance;
+	std::set<TInstanceCounterData *> _InstanceCounters;
 };
-
 
 /** Utility to count instance of class.
  *	This class is designed to be lightweight and to trace
@@ -889,37 +923,38 @@ private:
  *	In the cpp :
  *	NL_INSTANCE_COUNTER_IMPL(foo);
  */
-#define NL_INSTANCE_COUNTER_DECL(className) \
-public: \
-	struct className##InstanceCounter \
-	{ \
-		className##InstanceCounter() \
-		{ \
-			_InstanceCounterData._InstanceCounter++; \
-			_InstanceCounterData._Touched = true; \
-		} \
-		className##InstanceCounter(const className##InstanceCounter &/* other */) \
-		{ \
-			_InstanceCounterData._InstanceCounter++; \
-			_InstanceCounterData._Touched = true; \
-		} \
-		\
-		~className##InstanceCounter()\
-		{ \
-			_InstanceCounterData._InstanceCounter--; \
-		} \
-		static sint32 getInstanceCounter() \
-		{ \
-			return _InstanceCounterData._InstanceCounter; \
-		} \
-		static sint32 getInstanceCounterDelta() \
-		{ \
+#define NL_INSTANCE_COUNTER_DECL(className)                                                    \
+public:                                                                                        \
+	struct className##InstanceCounter                                                          \
+	{                                                                                          \
+		className##InstanceCounter()                                                           \
+		{                                                                                      \
+			_InstanceCounterData._InstanceCounter++;                                           \
+			_InstanceCounterData._Touched = true;                                              \
+		}                                                                                      \
+		className##InstanceCounter(const className##InstanceCounter & /* other */)             \
+		{                                                                                      \
+			_InstanceCounterData._InstanceCounter++;                                           \
+			_InstanceCounterData._Touched = true;                                              \
+		}                                                                                      \
+                                                                                               \
+		~className##InstanceCounter()                                                          \
+		{                                                                                      \
+			_InstanceCounterData._InstanceCounter--;                                           \
+		}                                                                                      \
+		static sint32 getInstanceCounter()                                                     \
+		{                                                                                      \
+			return _InstanceCounterData._InstanceCounter;                                      \
+		}                                                                                      \
+		static sint32 getInstanceCounterDelta()                                                \
+		{                                                                                      \
 			return _InstanceCounterData._InstanceCounter - _InstanceCounterData._DeltaCounter; \
-		} \
-		static NLMISC::TInstanceCounterData	_InstanceCounterData; \
-	}; \
-	 \
-	className##InstanceCounter	_##className##InstanceCounter; \
+		}                                                                                      \
+		static NLMISC::TInstanceCounterData _InstanceCounterData;                              \
+	};                                                                                         \
+                                                                                               \
+	className##InstanceCounter _##className##InstanceCounter;                                  \
+                                                                                               \
 private:
 
 /// The macro to make the implementation of the counter
@@ -946,7 +981,6 @@ int getLastError();
 
 /// Return a readable text according to the error code submited
 std::string formatErrorMessage(int errorCode);
-
 
 //-------------------------------------------------------------------------------------------------
 // A handy 'nldebug', 'nlinfo' & 'nlwarning' override system
@@ -980,18 +1014,19 @@ class CNLDebugOverride
 public:
 	CNLDebugOverride(NLMISC::CLog *debugLog)
 	{
-		nlassert(debugLog!=NULL);
-		_OldValue=NLMISC::DebugLog;
-		nlassert(_OldValue!=NULL);
+		nlassert(debugLog != NULL);
+		_OldValue = NLMISC::DebugLog;
+		nlassert(_OldValue != NULL);
 		NLMISC::INelContext::getInstance().setDebugLog(debugLog);
 	}
 	~CNLDebugOverride()
 	{
 		NLMISC::INelContext::getInstance().setDebugLog(_OldValue);
 	}
+
 private:
 	// prohibit copy
-	CNLDebugOverride(const CNLDebugOverride&);
+	CNLDebugOverride(const CNLDebugOverride &);
 	NLMISC::CLog *_OldValue;
 };
 
@@ -1002,18 +1037,19 @@ class CNLInfoOverride
 public:
 	CNLInfoOverride(NLMISC::CLog *infoLog)
 	{
-		nlassert(infoLog!=NULL);
-		_OldValue=NLMISC::InfoLog;
-		nlassert(_OldValue!=NULL);
+		nlassert(infoLog != NULL);
+		_OldValue = NLMISC::InfoLog;
+		nlassert(_OldValue != NULL);
 		NLMISC::INelContext::getInstance().setInfoLog(infoLog);
 	}
 	~CNLInfoOverride()
 	{
 		NLMISC::INelContext::getInstance().setInfoLog(_OldValue);
 	}
+
 private:
 	// prohibit copy
-	CNLInfoOverride(const CNLInfoOverride&);
+	CNLInfoOverride(const CNLInfoOverride &);
 	NLMISC::CLog *_OldValue;
 };
 
@@ -1024,18 +1060,19 @@ class CNLWarningOverride
 public:
 	CNLWarningOverride(NLMISC::CLog *warningLog)
 	{
-		nlassert(warningLog!=NULL);
-		_OldValue=NLMISC::WarningLog;
-		nlassert(_OldValue!=NULL);
+		nlassert(warningLog != NULL);
+		_OldValue = NLMISC::WarningLog;
+		nlassert(_OldValue != NULL);
 		NLMISC::INelContext::getInstance().setWarningLog(warningLog);
 	}
 	~CNLWarningOverride()
 	{
 		NLMISC::INelContext::getInstance().setWarningLog(_OldValue);
 	}
+
 private:
 	// prohibit copy
-	CNLWarningOverride(const CNLWarningOverride&);
+	CNLWarningOverride(const CNLWarningOverride &);
 	NLMISC::CLog *_OldValue;
 };
 
@@ -1044,34 +1081,36 @@ private:
 class CNLLogOverride
 {
 public:
-	CNLLogOverride(NLMISC::CLog *commonLog): _DebugLog(commonLog), _InfoLog(commonLog), _WarningLog(commonLog)	{}
+	CNLLogOverride(NLMISC::CLog *commonLog)
+	    : _DebugLog(commonLog)
+	    , _InfoLog(commonLog)
+	    , _WarningLog(commonLog)
+	{
+	}
 
 private:
-	CNLDebugOverride	_DebugLog;
-	CNLInfoOverride		_InfoLog;
-	CNLWarningOverride	_WarningLog;
+	CNLDebugOverride _DebugLog;
+	CNLInfoOverride _InfoLog;
+	CNLWarningOverride _WarningLog;
 };
-
 
 //-------------------------------------------------------------------------------------------------
 
 class CNLSmartLogOverride
 {
 public:
-	CNLSmartLogOverride(NLMISC::CLog *commonLog):
-		_DebugLog(commonLog==NLMISC::InfoLog?NLMISC::DebugLog:commonLog),
-		_InfoLog(commonLog),
-		_WarningLog(commonLog==NLMISC::InfoLog?NLMISC::WarningLog:commonLog)
-		{}
+	CNLSmartLogOverride(NLMISC::CLog *commonLog)
+	    : _DebugLog(commonLog == NLMISC::InfoLog ? NLMISC::DebugLog : commonLog)
+	    , _InfoLog(commonLog)
+	    , _WarningLog(commonLog == NLMISC::InfoLog ? NLMISC::WarningLog : commonLog)
+	{
+	}
 
 private:
-	CNLDebugOverride	_DebugLog;
-	CNLInfoOverride		_InfoLog;
-	CNLWarningOverride	_WarningLog;
+	CNLDebugOverride _DebugLog;
+	CNLInfoOverride _InfoLog;
+	CNLWarningOverride _WarningLog;
 };
-
-
-
 
 } // NLMISC
 

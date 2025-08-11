@@ -23,16 +23,13 @@
 #define new DEBUG_NEW
 #endif
 
-namespace	NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
-void	CCamera::registerBasic()
+void CCamera::registerBasic()
 {
 	CScene::registerModel(CameraId, TransformId, CCamera::creator);
 }
-
 
 // ***************************************************************************
 CCamera::CCamera()
@@ -42,51 +39,50 @@ CCamera::CCamera()
 	// IAnimatable.
 	IAnimatable::resize(AnimValueLast);
 
-	_FovAnimationEnabled= false;
-	_TargetAnimationEnabled= false;
-	_FovAnimationAspectRatio= 4.0f/3.0f;
+	_FovAnimationEnabled = false;
+	_TargetAnimationEnabled = false;
+	_FovAnimationAspectRatio = 4.0f / 3.0f;
 
 	// Default Anims.
-	_Fov.Value= (float)NLMISC::Pi/2;
-	_Target.Value= CVector::Null;
-	_Roll.Value= 0;
+	_Fov.Value = (float)NLMISC::Pi / 2;
+	_Target.Value = CVector::Null;
+	_Roll.Value = 0;
 }
 // ***************************************************************************
-void		CCamera::setFrustum(float left, float right, float bottom, float top, float znear, float zfar, bool perspective)
+void CCamera::setFrustum(float left, float right, float bottom, float top, float znear, float zfar, bool perspective)
 {
-	_Frustum.init( left, right,bottom, top, znear, zfar, perspective);
+	_Frustum.init(left, right, bottom, top, znear, zfar, perspective);
 }
 // ***************************************************************************
-void		CCamera::setFrustum(float width, float height, float znear, float zfar, bool perspective)
+void CCamera::setFrustum(float width, float height, float znear, float zfar, bool perspective)
 {
 	_Frustum.init(width, height, znear, zfar, perspective);
 }
 // ***************************************************************************
-void		CCamera::setPerspective(float fov, float aspectRatio, float znear, float zfar)
+void CCamera::setPerspective(float fov, float aspectRatio, float znear, float zfar)
 {
 	_Frustum.initPerspective(fov, aspectRatio, znear, zfar);
 }
 // ***************************************************************************
-void		CCamera::getFrustum(float &left, float &right, float &bottom, float &top, float &znear, float &zfar) const
+void CCamera::getFrustum(float &left, float &right, float &bottom, float &top, float &znear, float &zfar) const
 {
-	left= _Frustum.Left;
-	right= _Frustum.Right;
-	bottom=	_Frustum.Bottom;
-	top= _Frustum.Top;
-	znear= _Frustum.Near;
-	zfar= _Frustum.Far;
+	left = _Frustum.Left;
+	right = _Frustum.Right;
+	bottom = _Frustum.Bottom;
+	top = _Frustum.Top;
+	znear = _Frustum.Near;
+	zfar = _Frustum.Far;
 }
 // ***************************************************************************
-bool		CCamera::isOrtho() const
+bool CCamera::isOrtho() const
 {
 	return !_Frustum.Perspective;
 }
 // ***************************************************************************
-bool		CCamera::isPerspective() const
+bool CCamera::isPerspective() const
 {
 	return _Frustum.Perspective;
 }
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -94,55 +90,52 @@ bool		CCamera::isPerspective() const
 // ***************************************************************************
 // ***************************************************************************
 
-
-
 // ***************************************************************************
-IAnimatedValue* CCamera::getValue (uint valueId)
+IAnimatedValue *CCamera::getValue(uint valueId)
 {
 	// what value ?
 	switch (valueId)
 	{
-	case FovValue:			return &_Fov;
-	case TargetValue:		return &_Target;
-	case RollValue:			return &_Roll;
+	case FovValue: return &_Fov;
+	case TargetValue: return &_Target;
+	case RollValue: return &_Roll;
 	}
 
 	return CTransform::getValue(valueId);
 }
 // ***************************************************************************
-const char *CCamera::getValueName (uint valueId) const
+const char *CCamera::getValueName(uint valueId) const
 {
 	// what value ?
 	switch (valueId)
 	{
-	case FovValue:			return getFovValueName();
-	case TargetValue:		return getTargetValueName();
-	case RollValue:			return getRollValueName();
+	case FovValue: return getFovValueName();
+	case TargetValue: return getTargetValueName();
+	case RollValue: return getRollValueName();
 	}
 
 	return CTransform::getValueName(valueId);
 }
 
 // ***************************************************************************
-CTrackDefaultFloat		CCamera::DefaultFov( (float)NLMISC::Pi/2 );
-CTrackDefaultFloat		CCamera::DefaultRoll( 0 );
+CTrackDefaultFloat CCamera::DefaultFov((float)NLMISC::Pi / 2);
+CTrackDefaultFloat CCamera::DefaultRoll(0);
 
-
-ITrack* CCamera::getDefaultTrack (uint valueId)
+ITrack *CCamera::getDefaultTrack(uint valueId)
 {
 	// what value ?
 	switch (valueId)
 	{
-	case PosValue:			return &_DefaultPos;
-	case FovValue:			return &DefaultFov;
-	case TargetValue:		return &_DefaultTargetPos;
-	case RollValue:			return &DefaultRoll;
+	case PosValue: return &_DefaultPos;
+	case FovValue: return &DefaultFov;
+	case TargetValue: return &_DefaultTargetPos;
+	case RollValue: return &DefaultRoll;
 	}
 
 	return CTransform::getDefaultTrack(valueId);
 }
 // ***************************************************************************
-void	CCamera::registerToChannelMixer(CChannelMixer *chanMixer, const std::string &prefix)
+void CCamera::registerToChannelMixer(CChannelMixer *chanMixer, const std::string &prefix)
 {
 	// For CCamera, channels are not detailled.
 	addValue(chanMixer, FovValue, OwnerBit, prefix, false);
@@ -152,16 +145,14 @@ void	CCamera::registerToChannelMixer(CChannelMixer *chanMixer, const std::string
 	CTransform::registerToChannelMixer(chanMixer, prefix);
 }
 
-
-
 // ***************************************************************************
-void	CCamera::update()
+void CCamera::update()
 {
 	// test animations
-	if(IAnimatable::isTouched(OwnerBit) || IAnimatable::isTouched(ITransformable::OwnerBit))
+	if (IAnimatable::isTouched(OwnerBit) || IAnimatable::isTouched(ITransformable::OwnerBit))
 	{
 		// FOV.
-		if( _FovAnimationEnabled && IAnimatable::isTouched(FovValue))
+		if (_FovAnimationEnabled && IAnimatable::isTouched(FovValue))
 		{
 			// keep the same near/far.
 			setPerspective(_Fov.Value, _FovAnimationAspectRatio, _Frustum.Near, _Frustum.Far);
@@ -170,9 +161,9 @@ void	CCamera::update()
 
 		// Target / Roll.
 		// If target/Roll is animated, compute our own quaternion.
-		if( _TargetAnimationEnabled && (IAnimatable::isTouched(TargetValue) || IAnimatable::isTouched(RollValue) || IAnimatable::isTouched(PosValue)) )
+		if (_TargetAnimationEnabled && (IAnimatable::isTouched(TargetValue) || IAnimatable::isTouched(RollValue) || IAnimatable::isTouched(PosValue)))
 		{
-			lookAt (getPos (), _Target.Value, -_Roll.Value);
+			lookAt(getPos(), _Target.Value, -_Roll.Value);
 
 			IAnimatable::clearFlag(TargetValue);
 			IAnimatable::clearFlag(RollValue);
@@ -185,9 +176,8 @@ void	CCamera::update()
 	IAnimatable::clearFlag(OwnerBit);
 }
 
-
 // ***************************************************************************
-void CCamera::build (const CCameraInfo &cameraInfo)
+void CCamera::build(const CCameraInfo &cameraInfo)
 {
 	// Target ?
 	enableTargetAnimation(cameraInfo.TargetMode);
@@ -195,22 +185,21 @@ void CCamera::build (const CCameraInfo &cameraInfo)
 	if (cameraInfo.TargetMode)
 	{
 		// Set the rot model
-		setTransformMode (ITransformable::RotQuat);
-		setTargetPos (cameraInfo.TargetPos);
-		_DefaultTargetPos.setDefaultValue (cameraInfo.TargetPos);
-		setRoll (cameraInfo.Roll);
+		setTransformMode(ITransformable::RotQuat);
+		setTargetPos(cameraInfo.TargetPos);
+		_DefaultTargetPos.setDefaultValue(cameraInfo.TargetPos);
+		setRoll(cameraInfo.Roll);
 	}
 	if (cameraInfo.UseFov)
 	{
-		setFov (cameraInfo.Fov);
+		setFov(cameraInfo.Fov);
 	}
-	setPos (cameraInfo.Pos);
-	_DefaultPos.setDefaultValue (cameraInfo.Pos);
+	setPos(cameraInfo.Pos);
+	_DefaultPos.setDefaultValue(cameraInfo.Pos);
 }
 
-
 // ***************************************************************************
-CCameraInfo::CCameraInfo ()
+CCameraInfo::CCameraInfo()
 {
 	Roll = 0;
 	Fov = 0;
@@ -218,44 +207,42 @@ CCameraInfo::CCameraInfo ()
 	UseFov = false;
 }
 
-
 // ***************************************************************************
-void CCameraInfo::serial (NLMISC::IStream &s)
+void CCameraInfo::serial(NLMISC::IStream &s)
 {
-	s.serialVersion (0);
+	s.serialVersion(0);
 
-	s.serial (Pos);
-	s.serial (TargetPos);
-	s.serial (Roll);
-	s.serial (Fov);
-	s.serial (TargetMode);
-	s.serial (UseFov);
+	s.serial(Pos);
+	s.serial(TargetPos);
+	s.serial(Roll);
+	s.serial(Fov);
+	s.serial(TargetMode);
+	s.serial(UseFov);
 }
 
-
 // ***************************************************************************
-void CCamera::buildCameraPyramid(std::vector<CPlane>	&pyramid, bool useWorldMatrix)
+void CCamera::buildCameraPyramid(std::vector<CPlane> &pyramid, bool useWorldMatrix)
 {
 	pyramid.resize(6);
 
 	// Compute pyramid in view basis.
-	CVector		pfoc(0,0,0);
-	CVector		lb(_Frustum.Left,  _Frustum.Near, _Frustum.Bottom );
-	CVector		lt(_Frustum.Left,  _Frustum.Near, _Frustum.Top    );
-	CVector		rb(_Frustum.Right, _Frustum.Near, _Frustum.Bottom );
-	CVector		rt(_Frustum.Right, _Frustum.Near, _Frustum.Top    );
+	CVector pfoc(0, 0, 0);
+	CVector lb(_Frustum.Left, _Frustum.Near, _Frustum.Bottom);
+	CVector lt(_Frustum.Left, _Frustum.Near, _Frustum.Top);
+	CVector rb(_Frustum.Right, _Frustum.Near, _Frustum.Bottom);
+	CVector rt(_Frustum.Right, _Frustum.Near, _Frustum.Top);
 
-	CVector		lbFar(_Frustum.Left,  _Frustum.Far, _Frustum.Bottom);
-	CVector		ltFar(_Frustum.Left,  _Frustum.Far, _Frustum.Top   );
-	CVector		rbFar(_Frustum.Right, _Frustum.Far, _Frustum.Bottom);
-	CVector		rtFar(_Frustum.Right, _Frustum.Far, _Frustum.Top   );
+	CVector lbFar(_Frustum.Left, _Frustum.Far, _Frustum.Bottom);
+	CVector ltFar(_Frustum.Left, _Frustum.Far, _Frustum.Top);
+	CVector rbFar(_Frustum.Right, _Frustum.Far, _Frustum.Bottom);
+	CVector rtFar(_Frustum.Right, _Frustum.Far, _Frustum.Top);
 
 	// near
 	pyramid[0].make(lt, lb, rt);
 	// far
 	pyramid[1].make(lbFar, ltFar, rtFar);
 
-	if(_Frustum.Perspective)
+	if (_Frustum.Perspective)
 	{
 		// left
 		pyramid[2].make(pfoc, lt, lb);
@@ -279,45 +266,40 @@ void CCamera::buildCameraPyramid(std::vector<CPlane>	&pyramid, bool useWorldMatr
 	}
 
 	// get invCamMatrix
-	CMatrix		invCamMatrix;
-	if(useWorldMatrix)
-		invCamMatrix= getWorldMatrix();
+	CMatrix invCamMatrix;
+	if (useWorldMatrix)
+		invCamMatrix = getWorldMatrix();
 	else
-		invCamMatrix= getMatrix();
+		invCamMatrix = getMatrix();
 	invCamMatrix.invert();
 
 	// Compute pyramid in World basis.
 	// The vector transformation M of a plane p is computed as p*M-1.
 	for (uint i = 0; i < 6; i++)
 	{
-		pyramid[i]= pyramid[i]*invCamMatrix;
+		pyramid[i] = pyramid[i] * invCamMatrix;
 	}
 }
 
 // ***************************************************************************
-void CCamera::buildCameraPyramidCorners(std::vector<NLMISC::CVector>	&pyramidCorners, bool useWorldMatrix)
+void CCamera::buildCameraPyramidCorners(std::vector<NLMISC::CVector> &pyramidCorners, bool useWorldMatrix)
 {
 	pyramidCorners.resize(8);
-	pyramidCorners[0].set(_Frustum.Left,  _Frustum.Near, _Frustum.Bottom );
-	pyramidCorners[1].set(_Frustum.Left,  _Frustum.Near, _Frustum.Top    );
-	pyramidCorners[2].set(_Frustum.Right, _Frustum.Near, _Frustum.Bottom );
-	pyramidCorners[3].set(_Frustum.Right, _Frustum.Near, _Frustum.Top    );
+	pyramidCorners[0].set(_Frustum.Left, _Frustum.Near, _Frustum.Bottom);
+	pyramidCorners[1].set(_Frustum.Left, _Frustum.Near, _Frustum.Top);
+	pyramidCorners[2].set(_Frustum.Right, _Frustum.Near, _Frustum.Bottom);
+	pyramidCorners[3].set(_Frustum.Right, _Frustum.Near, _Frustum.Top);
 	float f = _Frustum.Perspective ? (_Frustum.Far / _Frustum.Near) : 1.f;
-	pyramidCorners[4].set(f * _Frustum.Left,  _Frustum.Far, f * _Frustum.Bottom);
-	pyramidCorners[5].set(f * _Frustum.Left,  _Frustum.Far, f * _Frustum.Top   );
+	pyramidCorners[4].set(f * _Frustum.Left, _Frustum.Far, f * _Frustum.Bottom);
+	pyramidCorners[5].set(f * _Frustum.Left, _Frustum.Far, f * _Frustum.Top);
 	pyramidCorners[6].set(f * _Frustum.Right, _Frustum.Far, f * _Frustum.Bottom);
-	pyramidCorners[7].set(f * _Frustum.Right, _Frustum.Far, f * _Frustum.Top   );
+	pyramidCorners[7].set(f * _Frustum.Right, _Frustum.Far, f * _Frustum.Top);
 
 	const CMatrix &camMatrix = useWorldMatrix ? getWorldMatrix() : getMatrix();
-	for(uint k = 0; k < 8; ++k)
+	for (uint k = 0; k < 8; ++k)
 	{
 		pyramidCorners[k] = camMatrix * pyramidCorners[k];
 	}
 }
 
-
-
 }
-
-
-

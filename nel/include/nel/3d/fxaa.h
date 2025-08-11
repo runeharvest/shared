@@ -56,7 +56,7 @@ class CFXAA
 public:
 	CFXAA(NL3D::UDriver *driver);
 	virtual ~CFXAA();
-	
+
 	/// Apply effect to current render target. Render target must be managed by render target manager
 	virtual void applyEffect();
 

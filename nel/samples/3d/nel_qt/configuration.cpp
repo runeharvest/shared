@@ -36,22 +36,20 @@ namespace NLQT {
 
 CConfiguration::CConfiguration()
 {
-	
 }
 
 CConfiguration::~CConfiguration()
 {
-	
 }
 
 void CConfiguration::init()
-{	
+{
 	// verify data
 	nlassert(m_ConfigCallbacks.empty());
-	
+
 	// load config
 	m_ConfigFile.load(NLQT_CONFIG_FILE);
-	
+
 	// log config
 	CConfiguration::setAndCallback("NegFiltersDebug", CConfigCallback(this, &CConfiguration::cfcbLogFilter));
 	CConfiguration::setAndCallback("NegFiltersInfo", CConfigCallback(this, &CConfiguration::cfcbLogFilter));
@@ -90,25 +88,25 @@ void CConfiguration::release()
 	emptyVar.Name = "NegFiltersError";
 	CConfiguration::dropCallback(emptyVar.Name);
 	cfcbLogFilter(emptyVar);
-	
+
 	// save and release the config file
-	if (m_ConfigFile.exists("SaveConfig") && m_ConfigFile.getVarPtr("SaveConfig")->asBool()) 
+	if (m_ConfigFile.exists("SaveConfig") && m_ConfigFile.getVarPtr("SaveConfig")->asBool())
 	{
 		m_ConfigFile.save();
 	}
 	m_ConfigFile.clear();
-		
+
 	// release the search paths etc
 	CPath::releaseInstance();
-	
+
 	// verify data
 	nlassert(!m_ConfigCallbacks.size());
 }
 
 void CConfiguration::updateUtilities()
 {
-	//H_AUTO2
-	
+	// H_AUTO2
+
 	CConfigFile::checkConfigFiles();
 }
 
@@ -135,7 +133,7 @@ float CConfiguration::getValue(const string &varName, float defaultValue)
 {
 	if (m_ConfigFile.exists(varName)) return m_ConfigFile.getVar(varName).asFloat();
 	CConfigFile::CVar varToCopy;
-	varToCopy.forceAsDouble((double)defaultValue);	
+	varToCopy.forceAsDouble((double)defaultValue);
 	m_ConfigFile.insertVar(varName, varToCopy);
 	return defaultValue;
 }
@@ -144,7 +142,7 @@ double CConfiguration::getValue(const string &varName, double defaultValue)
 {
 	if (m_ConfigFile.exists(varName)) return m_ConfigFile.getVar(varName).asDouble();
 	CConfigFile::CVar varToCopy;
-	varToCopy.forceAsDouble(defaultValue);	
+	varToCopy.forceAsDouble(defaultValue);
 	m_ConfigFile.insertVar(varName, varToCopy);
 	return defaultValue;
 }
@@ -153,7 +151,7 @@ int CConfiguration::getValue(const string &varName, int defaultValue)
 {
 	if (m_ConfigFile.exists(varName)) return m_ConfigFile.getVar(varName).asInt();
 	CConfigFile::CVar varToCopy;
-	varToCopy.forceAsInt(defaultValue);	
+	varToCopy.forceAsInt(defaultValue);
 	m_ConfigFile.insertVar(varName, varToCopy);
 	return defaultValue;
 }
@@ -180,14 +178,14 @@ bool CConfiguration::getValue(const string &varName, bool defaultValue)
 {
 	if (m_ConfigFile.exists(varName)) return m_ConfigFile.getVar(varName).asBool();
 	CConfigFile::CVar varToCopy;
-	varToCopy.forceAsInt(defaultValue ? 1 : 0);	
+	varToCopy.forceAsInt(defaultValue ? 1 : 0);
 	m_ConfigFile.insertVar(varName, varToCopy);
 	return defaultValue;
 }
 
 CRGBA CConfiguration::getValue(const string &varName, const CRGBA &defaultValue)
 {
-	if (m_ConfigFile.exists(varName)) 
+	if (m_ConfigFile.exists(varName))
 	{
 		return getValue(m_ConfigFile.getVar(varName), defaultValue);
 	}
@@ -211,7 +209,7 @@ CRGBA CConfiguration::getValue(const CConfigFile::CVar &var, const CRGBA &defaul
 		if (var.size() > 4) nlwarning("RGBA value in config value '%s' is too long, ignoring unused values");
 		return CRGBA((uint8)var.asInt(0), (uint8)var.asInt(1), (uint8)var.asInt(2), var.size() >= 4 ? (uint8)var.asInt(3) : 255);
 	}
-	nlwarning("Invalid RGBA value in config value '%s', reverting to default { %i, %i, %i, %i }", var.Name.c_str(), (sint)defaultValue.R, (sint)defaultValue.G, (sint)defaultValue.B, (sint)defaultValue.A);	
+	nlwarning("Invalid RGBA value in config value '%s', reverting to default { %i, %i, %i, %i }", var.Name.c_str(), (sint)defaultValue.R, (sint)defaultValue.G, (sint)defaultValue.B, (sint)defaultValue.A);
 	return defaultValue;
 }
 
@@ -222,7 +220,7 @@ void CConfiguration::cbConfigCallback(NLMISC::CConfigFile::CVar &var)
 
 void CConfiguration::cfcbLogFilter(CConfigFile::CVar &var)
 {
-	// from nel/net/service.cpp	
+	// from nel/net/service.cpp
 	CLog *log = NULL;
 	if (var.Name == "NegFiltersDebug") log = DebugLog;
 	else if (var.Name == "NegFiltersInfo") log = InfoLog;
@@ -235,7 +233,7 @@ void CConfiguration::cfcbLogFilter(CConfigFile::CVar &var)
 	CConfigFile::CVar &oldvar = m_ConfigFile.getVar(var.Name);
 	for (uint j = 0; j < oldvar.size(); j++)
 		log->removeFilter(oldvar.asString(j).c_str());
-	
+
 	// add all new filters from config file
 	for (uint i = 0; i < var.size(); i++)
 		log->addNegativeFilter(var.asString(i).c_str());

@@ -22,7 +22,7 @@
 #include <nel/misc/types_nl.h>
 
 namespace NLMISC {
-	class CConfigFile;
+class CConfigFile;
 }
 
 #ifdef NL_OS_WINDOWS
@@ -58,7 +58,6 @@ private:
 
 	static TPathString s_RootPath;
 	static NLMISC::CConfigFile *s_ConfigFile;
-
 };
 
 } /* namespace NLPIPELINE */

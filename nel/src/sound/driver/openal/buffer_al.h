@@ -22,8 +22,7 @@
 
 #include "nel/sound/driver/buffer.h"
 
-namespace NLSOUND
-{
+namespace NLSOUND {
 
 /**
  * OpenAL buffer
@@ -40,13 +39,13 @@ class CBufferAL : public IBuffer
 {
 public:
 	/// Constructor
-	CBufferAL( ALuint buffername=0 );
+	CBufferAL(ALuint buffername = 0);
 	/// Destructor
 	virtual ~CBufferAL();
 
 	/// Return the buffer name (as an int)
 	inline ALuint bufferName() { return _BufferName; }
-	
+
 	/** Preset the name of the buffer. Used for async loading to give a name
 	 *	before the buffer is effectivly loaded.
 	 *	If the name after loading of the buffer doesn't match the preset name,
@@ -60,7 +59,7 @@ public:
 	virtual void setFormat(TBufferFormat format, uint8 channels, uint8 bitsPerSample, uint32 frequency);
 	/// Return the sample format information.
 	virtual void getFormat(TBufferFormat &format, uint8 &channels, uint8 &bitsPerSample, uint32 &frequency) const;
-		/// Set the storage mode of this buffer, call before filling this buffer. Storage mode is always software if OptionSoftwareBuffer is enabled. Default is auto.
+	/// Set the storage mode of this buffer, call before filling this buffer. Storage mode is always software if OptionSoftwareBuffer is enabled. Default is auto.
 	virtual void setStorageMode(TStorageMode storageMode = IBuffer::StorageAuto);
 	/// Get the storage mode of this buffer.
 	virtual TStorageMode getStorageMode();
@@ -71,16 +70,16 @@ public:
 	virtual bool unlock(uint size);
 	/// Copy the data with specified size into the buffer. A readable local copy is only guaranteed when OptionLocalBufferCopy is set. Returns true if ok.
 	virtual bool fill(const uint8 *src, uint size);
-	
+
 	/// Return the size of the buffer, in bytes.
 	virtual uint getSize() const;
 	/// Return the duration (in ms) of the sample in the buffer.
 	virtual float getDuration() const;
 	/// Return true if the buffer is stereo (multi-channel), false if mono.
-	virtual bool isStereo() const;	
+	virtual bool isStereo() const;
 	/// Return true if the buffer is loaded. Used for async load/unload.
 	virtual bool isBufferLoaded() const;
-	
+
 private:
 	/// Buffer name
 	ALuint _BufferName;
@@ -102,7 +101,6 @@ private:
 	IBuffer::TStorageMode _StorageMode;
 	/// Buffer loaded or not
 	bool _IsLoaded;
-
 };
 
 // TFrameStereo is used to access a sample pair of 8/16bit
@@ -112,26 +110,25 @@ private:
 // without adding alignment optimizations to it.
 
 #ifdef _MSC_VER
-#	pragma pack(push,1)
+#pragma pack(push, 1)
 #endif
 
-template <class T> struct TFrameStereo
+template <class T>
+struct TFrameStereo
 {
-	T	Channel1;
-	T	Channel2;
+	T Channel1;
+	T Channel2;
 }
 #ifdef __GNUC__
-	__attribute__ ((packed))
+__attribute__((packed))
 #endif
 ;
 
 #ifdef _MSC_VER
-#	pragma pack(pop)
+#pragma pack(pop)
 #endif
 
-
 } // NLSOUND
-
 
 #endif // NL_BUFFER_AL_H
 

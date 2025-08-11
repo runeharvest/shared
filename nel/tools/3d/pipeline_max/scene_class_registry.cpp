@@ -60,25 +60,31 @@ namespace MAX {
 
 CSceneClassRegistry::CSceneClassRegistry()
 {
-
 }
 
 CSceneClassRegistry::~CSceneClassRegistry()
 {
-
 }
 
 void CSceneClassRegistry::add(const ISceneClassDesc *desc)
 {
 	TKey key(desc->superClassId(), desc->classId());
-	if (m_ClassDescriptions.find(key) != m_ClassDescriptions.end()) { nlerror("Already added this class to the registry"); return; }
+	if (m_ClassDescriptions.find(key) != m_ClassDescriptions.end())
+	{
+		nlerror("Already added this class to the registry");
+		return;
+	}
 	m_ClassDescriptions[key] = desc;
 }
 
 void CSceneClassRegistry::remove(const TSClassId superClassId, const NLMISC::CClassId classId)
 {
 	TKey key(superClassId, classId);
-	if (m_ClassDescriptions.find(key) == m_ClassDescriptions.end()) { nlwarning("Try to remove class that is not found"); return; }
+	if (m_ClassDescriptions.find(key) == m_ClassDescriptions.end())
+	{
+		nlwarning("Try to remove class that is not found");
+		return;
+	}
 	m_ClassDescriptions.erase(key);
 }
 
@@ -86,14 +92,22 @@ void CSceneClassRegistry::remove(const TSClassId superClassId, const NLMISC::CCl
 void CSceneClassRegistry::add(const ISuperClassDesc *desc)
 {
 	// nldebug("Register superclass 0x%x", desc->superClassId());
-	if (m_SuperClassDescriptions.find(desc->superClassId()) != m_SuperClassDescriptions.end()) { nlerror("Already added this superclass to the registry"); return; }
+	if (m_SuperClassDescriptions.find(desc->superClassId()) != m_SuperClassDescriptions.end())
+	{
+		nlerror("Already added this superclass to the registry");
+		return;
+	}
 	m_SuperClassDescriptions[desc->superClassId()] = desc;
 }
 
 /// Remove a superclass from the registry
 void CSceneClassRegistry::remove(const TSClassId superClassId)
 {
-	if (m_SuperClassDescriptions.find(superClassId) == m_SuperClassDescriptions.end()) { nlwarning("Try to remove superclass that is not found"); return; }
+	if (m_SuperClassDescriptions.find(superClassId) == m_SuperClassDescriptions.end())
+	{
+		nlwarning("Try to remove superclass that is not found");
+		return;
+	}
 	m_SuperClassDescriptions.erase(superClassId);
 }
 
@@ -108,7 +122,11 @@ CSceneClass *CSceneClassRegistry::create(CScene *scene, const TSClassId superCla
 /// Create an unknown class by superclass id
 CSceneClass *CSceneClassRegistry::createUnknown(CScene *scene, TSClassId superClassId, const NLMISC::CClassId classId, const ucstring &displayName, const ucstring &dllFilename, const ucstring &dllDescription) const
 {
-	if (m_SuperClassDescriptions.find(superClassId) == m_SuperClassDescriptions.end()) { nlwarning("Creating superclass 0x%x (%s) %s that does not exist", superClassId, displayName.toUtf8().c_str(), classId.toString().c_str()); return NULL; }
+	if (m_SuperClassDescriptions.find(superClassId) == m_SuperClassDescriptions.end())
+	{
+		nlwarning("Creating superclass 0x%x (%s) %s that does not exist", superClassId, displayName.toUtf8().c_str(), classId.toString().c_str());
+		return NULL;
+	}
 	return m_SuperClassDescriptions.find(superClassId)->second->createUnknown(scene, classId, displayName, dllFilename, dllDescription);
 }
 
@@ -122,7 +140,11 @@ void CSceneClassRegistry::destroy(CSceneClass *sceneClass) const
 const ISceneClassDesc *CSceneClassRegistry::describe(const TSClassId superClassId, const NLMISC::CClassId classId) const
 {
 	TKey key(superClassId, classId);
-	if (m_ClassDescriptions.find(key) == m_ClassDescriptions.end()) { nldebug("Try to describe class that does not exist"); return NULL; }
+	if (m_ClassDescriptions.find(key) == m_ClassDescriptions.end())
+	{
+		nldebug("Try to describe class that does not exist");
+		return NULL;
+	}
 	return m_ClassDescriptions.find(key)->second;
 }
 
@@ -130,9 +152,10 @@ const ISceneClassDesc *CSceneClassRegistry::describe(const TSClassId superClassI
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-CSceneClassRegistry::TKey::TKey(TSClassId superClassId, NLMISC::CClassId classId) : SuperClassId(superClassId), ClassId(classId)
+CSceneClassRegistry::TKey::TKey(TSClassId superClassId, NLMISC::CClassId classId)
+    : SuperClassId(superClassId)
+    , ClassId(classId)
 {
-
 }
 
 bool CSceneClassRegistry::TKey::operator<(const CSceneClassRegistry::TKey &right) const

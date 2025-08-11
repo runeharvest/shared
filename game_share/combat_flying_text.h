@@ -14,27 +14,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef RY_COMBAT_FLYING_TEXT_H
 #define RY_COMBAT_FLYING_TEXT_H
 
 #include "nel/misc/types_nl.h"
 
-namespace COMBAT_FLYING_TEXT
+namespace COMBAT_FLYING_TEXT {
+// Type for message "COMBAT:FLYING_TEXT"
+enum TCombatFlyingText
 {
-	// Type for message "COMBAT:FLYING_TEXT"
-	enum TCombatFlyingText
-	{
-		None = 0,
-		TargetDodge,
-		TargetParry,
-		TargetEvade,
-		SelfEvade,
-		TargetResist,
-		SelfResist,
-		SelfInterrupt,
-		SelfFailure
-	};
+	None = 0,
+	TargetDodge,
+	TargetParry,
+	TargetEvade,
+	SelfEvade,
+	TargetResist,
+	SelfResist,
+	SelfInterrupt,
+	SelfFailure
+};
 }
 
 #endif

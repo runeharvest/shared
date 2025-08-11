@@ -49,12 +49,12 @@ namespace NLMISC {
 /// Input stream class for 7zip archive
 class CNel7ZipInStream : public ISeekInStream
 {
-	NLMISC::IStream		*_Stream;
+	NLMISC::IStream *_Stream;
 
 public:
 	/// Constructor, only allow file stream because 7zip will 'seek' in the stream
 	CNel7ZipInStream(NLMISC::IStream *s)
-		:	_Stream(s)
+	    : _Stream(s)
 	{
 		Read = readFunc;
 		Seek = seekFunc;
@@ -65,9 +65,9 @@ public:
 	{
 		try
 		{
-			CNel7ZipInStream *me = (CNel7ZipInStream*)object;
+			CNel7ZipInStream *me = (CNel7ZipInStream *)object;
 			uint len = (uint)*size;
-			me->_Stream->serialBuffer((uint8*)buffer, len);
+			me->_Stream->serialBuffer((uint8 *)buffer, len);
 			return SZ_OK;
 		}
 		catch (...)
@@ -81,7 +81,7 @@ public:
 	{
 		try
 		{
-			CNel7ZipInStream *me = (CNel7ZipInStream*)object;
+			CNel7ZipInStream *me = (CNel7ZipInStream *)object;
 			sint32 offset = (sint32)*pos;
 			bool ret = me->_Stream->seek(offset, (NLMISC::IStream::TSeekOrigin)origin);
 
@@ -101,7 +101,7 @@ public:
 
 bool unpack7Zip(const std::string &sevenZipFile, const std::string &destFileName)
 {
-	nlinfo("Uncompressing 7zip archive '%s' to '%s'", sevenZipFile.c_str(),	destFileName.c_str());
+	nlinfo("Uncompressing 7zip archive '%s' to '%s'", sevenZipFile.c_str(), destFileName.c_str());
 
 	// init seven zip
 	ISzAlloc allocImp;
@@ -123,7 +123,7 @@ bool unpack7Zip(const std::string &sevenZipFile, const std::string &destFileName
 	size_t bufferSize = 1024;
 
 	{
-		lookStream.buf = (Byte*)ISzAlloc_Alloc(&allocImp, bufferSize);
+		lookStream.buf = (Byte *)ISzAlloc_Alloc(&allocImp, bufferSize);
 
 		if (!lookStream.buf)
 		{
@@ -174,7 +174,7 @@ bool unpack7Zip(const std::string &sevenZipFile, const std::string &destFileName
 
 	// write filename into ucstring
 	SzArEx_GetFileNameUtf16(&db, 0, reinterpret_cast<UInt16 *>(&filename[0]));
-	
+
 	// write the extracted file
 	FILE *outputHandle = nlfopen(destFileName, "wb+");
 
@@ -188,7 +188,7 @@ bool unpack7Zip(const std::string &sevenZipFile, const std::string &destFileName
 
 	if (processedSize != outSizeProcessed)
 	{
-		nlerror("Failed to write %u char to output file '%s'", outSizeProcessed-processedSize, destFileName.c_str());
+		nlerror("Failed to write %u char to output file '%s'", outSizeProcessed - processedSize, destFileName.c_str());
 		return false;
 	}
 
@@ -239,7 +239,7 @@ bool unpackLZMA(const std::string &lzmaFile, const std::string &destFileName)
 		// read lzma content
 		inStream.serialBuffer(&inBuffer[0], inSize);
 	}
-	catch(const EReadError &e)
+	catch (const EReadError &e)
 	{
 		nlwarning("unpackLZMA: Error while reading '%s': %s", lzmaFile.c_str(), e.what());
 		return false;
@@ -269,7 +269,7 @@ bool unpackLZMA(const std::string &lzmaFile, const std::string &destFileName)
 		// write content
 		outStream.serialBuffer(&outBuffer[0], (uint)fileSize);
 	}
-	catch(const EFile &e)
+	catch (const EFile &e)
 	{
 		nlwarning("unpackLZMA: Error while writing '%s': %s", destFileName.c_str(), e.what());
 		CFile::deleteFile(destFileName);
@@ -315,7 +315,7 @@ bool unpackLZMA(const std::string &lzmaFile, const std::string &destFileName, CH
 		// read lzma content
 		inStream.serialBuffer(&inBuffer[0], inSize);
 	}
-	catch(const EReadError &e)
+	catch (const EReadError &e)
 	{
 		nlwarning("unpackLZMA: Error while reading '%s': %s", lzmaFile.c_str(), e.what());
 		return false;
@@ -348,7 +348,7 @@ bool unpackLZMA(const std::string &lzmaFile, const std::string &destFileName, CH
 		// write content
 		outStream.serialBuffer(&outBuffer[0], (uint)fileSize);
 	}
-	catch(const EFile &e)
+	catch (const EFile &e)
 	{
 		nlwarning("unpackLZMA: Error while writing '%s': %s", destFileName.c_str(), e.what());
 		CFile::deleteFile(destFileName);
@@ -381,7 +381,7 @@ bool packLZMA(const std::string &srcFileName, const std::string &lzmaFileName)
 		// read file in buffer
 		inStream.serialBuffer(&inBuffer[0], inSize);
 	}
-	catch(const EReadError &e)
+	catch (const EReadError &e)
 	{
 		nlwarning("packLZMA: Error while reading '%s': %s", srcFileName.c_str(), e.what());
 		return false;
@@ -398,59 +398,58 @@ bool packLZMA(const std::string &srcFileName, const std::string &lzmaFileName)
 	// compress with best compression and other default settings
 	sint res = LzmaCompress(&outBuffer[0], &outSize, &inBuffer[0], inSize, &outProps[0], &outPropsSize, 9, 1 << 27, -1, -1, -1, -1, 1);
 
-	switch(res)
+	switch (res)
 	{
-		case SZ_OK:
+	case SZ_OK: {
+		// store on output buffer
+		COFile outStream(lzmaFileName);
+
+		// unable to create file
+		if (!outStream.isOpen())
 		{
-			// store on output buffer
-			COFile outStream(lzmaFileName);
-
-			// unable to create file
-			if (!outStream.isOpen())
-			{
-				nlwarning("packLZMA: Unable to create '%s'", srcFileName.c_str());
-				return false;
-			}
-
-			try
-			{
-				// write props
-				outStream.serialBuffer(&outProps[0], (uint)outPropsSize);
-
-				// write uncompressed size
-				uint64 uncompressSize = inSize;
-				outStream.serial(uncompressSize);
-
-				// write content
-				outStream.serialBuffer(&outBuffer[0], (uint)outSize);
-			}
-			catch(const EFile &e)
-			{
-				nlwarning("packLZMA: Error while writing '%s': %s", lzmaFileName.c_str(), e.what());
-				CFile::deleteFile(lzmaFileName);
-				return false;
-			}
-
-			return true;
+			nlwarning("packLZMA: Unable to create '%s'", srcFileName.c_str());
+			return false;
 		}
 
-		case SZ_ERROR_MEM:
+		try
+		{
+			// write props
+			outStream.serialBuffer(&outProps[0], (uint)outPropsSize);
+
+			// write uncompressed size
+			uint64 uncompressSize = inSize;
+			outStream.serial(uncompressSize);
+
+			// write content
+			outStream.serialBuffer(&outBuffer[0], (uint)outSize);
+		}
+		catch (const EFile &e)
+		{
+			nlwarning("packLZMA: Error while writing '%s': %s", lzmaFileName.c_str(), e.what());
+			CFile::deleteFile(lzmaFileName);
+			return false;
+		}
+
+		return true;
+	}
+
+	case SZ_ERROR_MEM:
 		nlwarning("packLZMA: Memory allocation error while compressing '%s' (input buffer size: %u, output buffer size: %u)", srcFileName.c_str(), (uint)inSize, (uint)outSize);
 		break;
 
-		case SZ_ERROR_PARAM:
+	case SZ_ERROR_PARAM:
 		nlwarning("packLZMA: Incorrect parameter while compressing '%s'", srcFileName.c_str());
 		break;
 
-		case SZ_ERROR_OUTPUT_EOF:
+	case SZ_ERROR_OUTPUT_EOF:
 		nlwarning("packLZMA: Output buffer overflow while compressing '%s' (input buffer size: %u, output buffer size: %u)", srcFileName.c_str(), (uint)inSize, (uint)outSize);
 		break;
 
-		case SZ_ERROR_THREAD:
+	case SZ_ERROR_THREAD:
 		nlwarning("packLZMA: Errors in multithreading functions (only for Mt version)");
 		break;
 
-		default:
+	default:
 		nlwarning("packLZMA: Unknown error (%d) while compressing '%s'", res, srcFileName.c_str());
 	}
 

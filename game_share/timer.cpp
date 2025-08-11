@@ -24,7 +24,6 @@
 #include "nel/misc/variable.h"
 #include "timer.h"
 
-
 NLMISC::CVariable<uint32> NbProcessedEventsInTimerManagerUpdate("egs", "NbProcessedEventInTimerManagerUpdate", "", 0);
 NLMISC::CVariable<uint32> NbEventsToProcessInTimerManagerUpdate("egs", "NbEventsToProcessInTimerManagerUpdate", "", 0);
 
@@ -35,28 +34,28 @@ NL_INSTANCE_COUNTER_IMPL(CTimerEvent);
 //-------------------------------------------------------------------------------------------------
 void CTimerManager::syncTick()
 {
-	uint32 delta= CTickEventHandler::getGameCycle()-_LastTick;
+	uint32 delta = CTickEventHandler::getGameCycle() - _LastTick;
 
 	// update the time values
-	for (NLMISC::TGameCycle i=0;i<256;++i)
+	for (NLMISC::TGameCycle i = 0; i < 256; ++i)
 	{
-		TEventVector& vect= getEventVector(i);
-		for (uint32 j=0;j<vect.size();++j)
-			vect[j]->_Time+= delta;
+		TEventVector &vect = getEventVector(i);
+		for (uint32 j = 0; j < vect.size(); ++j)
+			vect[j]->_Time += delta;
 	}
 
 	// re-locate the event vectors to line them back up with the time values that they represent
-	for (NLMISC::TGameCycle i=0;i<256;++i)
+	for (NLMISC::TGameCycle i = 0; i < 256; ++i)
 	{
-		TEventVector& vect= _EventVectors[i];
-		while (!vect.empty() && ((uint8)vect[0]->_Time)!=i)
+		TEventVector &vect = _EventVectors[i];
+		while (!vect.empty() && ((uint8)vect[0]->_Time) != i)
 		{
-			uint8 swapPos= (uint8)_EventVectors[i][0]->_Time;
-			std::swap(_EventVectors[i],_EventVectors[swapPos]);
+			uint8 swapPos = (uint8)_EventVectors[i][0]->_Time;
+			std::swap(_EventVectors[i], _EventVectors[swapPos]);
 		}
 	}
 
-	_LastTick= CTickEventHandler::getGameCycle();
+	_LastTick = CTickEventHandler::getGameCycle();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -67,26 +66,26 @@ void CTimerManager::tickUpdate()
 	H_AUTO(CTimerManagerUpdate);
 
 	// select this game cycle's phrase event vector
-	NLMISC::TGameCycle time= CTickEventHandler::getGameCycle();
-	TEventVector &vect= getInstance()->getEventVector(time);
+	NLMISC::TGameCycle time = CTickEventHandler::getGameCycle();
+	TEventVector &vect = getInstance()->getEventVector(time);
 
 	// iterate through the vector processing its events
-	uint32 nextFreeSlot=0;
-	uint32 size=(uint32)vect.size();
-	for (uint32 i=0;i<size;++i)
+	uint32 nextFreeSlot = 0;
+	uint32 size = (uint32)vect.size();
+	for (uint32 i = 0; i < size; ++i)
 	{
-		NLMISC::CSmartPtr<CTimerEvent> eventPtr=vect[i];
+		NLMISC::CSmartPtr<CTimerEvent> eventPtr = vect[i];
 
 		// if the event is no longer valid then just skip it
-		if (eventPtr->getOwner()==NULL)
+		if (eventPtr->getOwner() == NULL)
 			continue;
 
 		// if the event isn't valid yet then keep it for later
 		// BUG when event time is too high, like 0xffffffff which is used in special cases, so change the test
-		//if ((sint32)(eventPtr->getTime()-time)>0)
+		// if ((sint32)(eventPtr->getTime()-time)>0)
 		if (eventPtr->getTime() > time)
 		{
-			vect[nextFreeSlot]=eventPtr;
+			vect[nextFreeSlot] = eventPtr;
 			++nextFreeSlot;
 			continue;
 		}
@@ -96,11 +95,10 @@ void CTimerManager::tickUpdate()
 	}
 	if (!vect.empty())
 	{
-		//nlinfo("TimerManagerUpdate: Processed %d of %d events",vect.size()-nextFreeSlot, vect.size());
+		// nlinfo("TimerManagerUpdate: Processed %d of %d events",vect.size()-nextFreeSlot, vect.size());
 		NbEventsToProcessInTimerManagerUpdate = (uint32)vect.size();
 		NbProcessedEventsInTimerManagerUpdate = NbEventsToProcessInTimerManagerUpdate.get() - nextFreeSlot;
 	}
 	// resize the vector back down to keep only the events that we haven't dealt with yet
 	vect.resize(nextFreeSlot);
 }
-

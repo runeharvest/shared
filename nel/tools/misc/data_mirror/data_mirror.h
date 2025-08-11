@@ -9,10 +9,10 @@
 #endif // _MSC_VER > 1000
 
 #ifndef __AFXWIN_H__
-	#error include 'stdafx.h' before including this file for PCH
+#error include 'stdafx.h' before including this file for PCH
 #endif
 
-#include "resource.h"		// main symbols
+#include "resource.h" // main symbols
 
 /////////////////////////////////////////////////////////////////////////////
 // CData_mirrorApp:
@@ -24,32 +24,32 @@ class CData_mirrorApp : public CWinApp
 public:
 	CData_mirrorApp();
 
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CData_mirrorApp)
-	public:
+public:
 	virtual BOOL InitInstance();
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 
 	//{{AFX_MSG(CData_mirrorApp)
-		// NOTE - the ClassWizard will add and remove member functions here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
+	// NOTE - the ClassWizard will add and remove member functions here.
+	//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
 
 // From the config file
-extern std::string				MainDirectory;
-extern std::string				MirrorDirectory;
-extern std::string				LogDirectory;
-extern std::string				IgnoreDirectory;
-extern std::string				CurrentDir;
-extern std::set<std::string>	IgnoreFiles;
-extern bool						BinaryCompare;
+extern std::string MainDirectory;
+extern std::string MirrorDirectory;
+extern std::string LogDirectory;
+extern std::string IgnoreDirectory;
+extern std::string CurrentDir;
+extern std::set<std::string> IgnoreFiles;
+extern bool BinaryCompare;
 
-bool RegisterDirectoryAppCommand (const char *appName, const char *command, const char *app);
+bool RegisterDirectoryAppCommand(const char *appName, const char *command, const char *app);
 
 /////////////////////////////////////////////////////////////////////////////
 

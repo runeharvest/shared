@@ -56,18 +56,18 @@
 #include <dxgi.h>
 #include <initguid.h>
 #include <cguid.h>
-#	include <objbase.h>
-#	ifdef _WIN32_WINNT_WIN7
-		// only supported by Windows 7 Platform SDK
-#		include <shobjidl.h>
-#		define TASKBAR_PROGRESS 1
-#	endif
+#include <objbase.h>
+#ifdef _WIN32_WINNT_WIN7
+// only supported by Windows 7 Platform SDK
+#include <shobjidl.h>
+#define TASKBAR_PROGRESS 1
+#endif
 #elif defined(NL_OS_UNIX) && !defined(NL_OS_MAC)
 #include "nel/misc/file.h"
 #endif
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
 using namespace std;
@@ -144,7 +144,7 @@ bool CSystemUtils::updateProgressBar(uint value, uint total)
 	else
 	{
 		// don't update anymore the progress
-		hr = pTaskbarList->SetProgressState(s_window, value == 0 ? TBPF_INDETERMINATE:TBPF_NOPROGRESS);
+		hr = pTaskbarList->SetProgressState(s_window, value == 0 ? TBPF_INDETERMINATE : TBPF_NOPROGRESS);
 	}
 
 	// release the interface
@@ -173,18 +173,16 @@ bool CSystemUtils::copyTextToClipboard(const std::string &text)
 		if (!isUnicode)
 		{
 			textMbcs = NLMISC::utf8ToMbcs(text); // Prefer system for API
-			if (text.size() && !textMbcs.size()) 
+			if (text.size() && !textMbcs.size())
 				textMbcs = CUtfStringView(text).toAscii(); // Fallback to 7-bit ASCII
 		}
 		else
 		{
 			textWide = NLMISC::utf8ToWide(text); // Prefer system for API
-			if (text.size() && !textWide.size()) 
+			if (text.size() && !textWide.size())
 				textWide = CUtfStringView(text).toWide();
 		}
-		HGLOBAL mem = GlobalAlloc(GHND | GMEM_DDESHARE, isUnicode 
-			? ((textWide.size() + 1) * sizeof(wchar_t))
-			: (textMbcs.size() + 1));
+		HGLOBAL mem = GlobalAlloc(GHND | GMEM_DDESHARE, isUnicode ? ((textWide.size() + 1) * sizeof(wchar_t)) : (textMbcs.size() + 1));
 
 		if (mem)
 		{
@@ -249,7 +247,7 @@ bool CSystemUtils::pasteTextFromClipboard(std::string &text)
 					else
 						text = CUtfStringView(text).toUtf8(true); // Sanitize UTF-8 user input
 				}
-				else 
+				else
 				{
 					const char *str = (const char *)hLock;
 					text = NLMISC::mbcsToUtf8(str); // Prefer system for API
@@ -318,17 +316,17 @@ bool CSystemUtils::isScreensaverEnabled()
 {
 	bool res = false;
 #ifdef NL_OS_WINDOWS
-//	old code, is not working anymore
-//	BOOL bRetValue;
-//	SystemParametersInfoA(SPI_GETSCREENSAVEACTIVE, 0, &bRetValue, 0);
-//	res = (bRetValue == TRUE);
+	//	old code, is not working anymore
+	//	BOOL bRetValue;
+	//	SystemParametersInfoA(SPI_GETSCREENSAVEACTIVE, 0, &bRetValue, 0);
+	//	res = (bRetValue == TRUE);
 	HKEY hKeyScreenSaver = NULL;
 	LSTATUS lReturn = RegOpenKeyExA(HKEY_CURRENT_USER, "Control Panel\\Desktop", 0, KEY_QUERY_VALUE, &hKeyScreenSaver);
 	if (lReturn == ERROR_SUCCESS)
 	{
 		DWORD dwType = 0L;
 		DWORD dwSize = KeyMaxLength;
-		unsigned char Buffer[KeyMaxLength] = {0};
+		unsigned char Buffer[KeyMaxLength] = { 0 };
 
 		lReturn = RegQueryValueExA(hKeyScreenSaver, "SCRNSAVE.EXE", NULL, &dwType, NULL, &dwSize);
 		// if SCRNSAVE.EXE is present, check also if it's empty
@@ -344,7 +342,7 @@ bool CSystemUtils::enableScreensaver(bool screensaver)
 {
 	bool res = false;
 #ifdef NL_OS_WINDOWS
-	res = (SystemParametersInfoA(SPI_SETSCREENSAVEACTIVE, screensaver ? TRUE:FALSE, NULL, 0) == TRUE);
+	res = (SystemParametersInfoA(SPI_SETSCREENSAVEACTIVE, screensaver ? TRUE : FALSE, NULL, 0) == TRUE);
 #endif
 	return res;
 }
@@ -367,8 +365,8 @@ string CSystemUtils::getRegKey(const string &entry)
 
 	if (RegOpenKeyExW(HKEY_CURRENT_USER, nlUtf8ToWide(RootKey), 0, KEY_READ, &hkey) == ERROR_SUCCESS)
 	{
-		DWORD	dwType	= 0L;
-		DWORD	dwSize	= KeyMaxLength;
+		DWORD dwType = 0L;
+		DWORD dwSize = KeyMaxLength;
 		wchar_t buffer[KeyMaxLength];
 
 		if (RegQueryValueExW(hkey, nlUtf8ToWide(entry), NULL, &dwType, (LPBYTE)buffer, &dwSize) != ERROR_SUCCESS)
@@ -425,7 +423,7 @@ uint CSystemUtils::getCurrentColorDepth()
 		HDC desktopDC = GetWindowDC(desktopWnd);
 		if (desktopDC)
 		{
-			depth = (uint) GetDeviceCaps(desktopDC, BITSPIXEL);
+			depth = (uint)GetDeviceCaps(desktopDC, BITSPIXEL);
 			ReleaseDC(desktopWnd, desktopDC);
 		}
 	}
@@ -435,8 +433,8 @@ uint CSystemUtils::getCurrentColorDepth()
 	Display *display = XOpenDisplay(NULL);
 	if (display)
 	{
-		depth = (uint) DefaultDepth(display, DefaultScreen(display));
-		XCloseDisplay(display);
+	    depth = (uint) DefaultDepth(display, DefaultScreen(display));
+	    XCloseDisplay(display);
 	}
 */
 #endif
@@ -455,11 +453,18 @@ bool CSystemUtils::detectWindowedApplication()
 
 #ifdef NL_OS_WINDOWS
 #ifndef SAFE_RELEASE
-#define SAFE_RELEASE(p)      { if (p) { (p)->Release(); (p) = NULL; } }
+#define SAFE_RELEASE(p)     \
+	{                       \
+		if (p)              \
+		{                   \
+			(p)->Release(); \
+			(p) = NULL;     \
+		}                   \
+	}
 #endif
 
-typedef HRESULT (WINAPI* LPDIRECTDRAWCREATE)(GUID FAR *lpGUID, LPDIRECTDRAW FAR *lplpDD, IUnknown FAR *pUnkOuter);
-typedef HRESULT (WINAPI* LPCREATEDXGIFACTORY)(REFIID, void**);
+typedef HRESULT(WINAPI *LPDIRECTDRAWCREATE)(GUID FAR *lpGUID, LPDIRECTDRAW FAR *lplpDD, IUnknown FAR *pUnkOuter);
+typedef HRESULT(WINAPI *LPCREATEDXGIFACTORY)(REFIID, void **);
 
 static std::string FormatError(HRESULT hr)
 {
@@ -491,7 +496,7 @@ static void EnumerateUsingDXGI(IDXGIFactory *pDXGIFactory)
 {
 	nlassert(pDXGIFactory != NULL);
 
-	for(uint index = 0; ; ++index)
+	for (uint index = 0;; ++index)
 	{
 		IDXGIAdapter *pAdapter = NULL;
 		HRESULT hr = pDXGIFactory->EnumAdapters(index, &pAdapter);
@@ -518,9 +523,9 @@ static void EnumerateUsingDXGI(IDXGIFactory *pDXGIFactory)
 	}
 }
 
-BOOL WINAPI DDEnumCallbackEx(GUID FAR* lpGUID, LPSTR lpDriverDescription, LPSTR lpDriverName, LPVOID lpContext, HMONITOR hm)
+BOOL WINAPI DDEnumCallbackEx(GUID FAR *lpGUID, LPSTR lpDriverDescription, LPSTR lpDriverName, LPVOID lpContext, HMONITOR hm)
 {
-	SAdapter * pAdapter = (SAdapter*)lpContext;
+	SAdapter *pAdapter = (SAdapter *)lpContext;
 
 	if (pAdapter->hMonitor == hm)
 	{
@@ -556,7 +561,7 @@ sint CSystemUtils::getTotalVideoMemory()
 		if (pCreateDXGIFactory)
 		{
 			IDXGIFactory *pDXGIFactory = NULL;
-			HRESULT hr = pCreateDXGIFactory(__uuidof(IDXGIFactory), (LPVOID*)&pDXGIFactory);
+			HRESULT hr = pCreateDXGIFactory(__uuidof(IDXGIFactory), (LPVOID *)&pDXGIFactory);
 
 			if (SUCCEEDED(hr))
 			{
@@ -602,7 +607,7 @@ sint CSystemUtils::getTotalVideoMemory()
 
 			if (pDirectDrawEnumerateEx && pDDCreate)
 			{
-				HRESULT hr = pDirectDrawEnumerateEx(DDEnumCallbackEx, (VOID*)&adapter, DDENUM_ATTACHEDSECONDARYDEVICES);
+				HRESULT hr = pDirectDrawEnumerateEx(DDEnumCallbackEx, (VOID *)&adapter, DDENUM_ATTACHEDSECONDARYDEVICES);
 
 				if (SUCCEEDED(hr) && adapter.found)
 				{
@@ -612,7 +617,7 @@ sint CSystemUtils::getTotalVideoMemory()
 					if (SUCCEEDED(hr))
 					{
 						LPDIRECTDRAW7 pDDraw7 = NULL;
-						hr = pDDraw->QueryInterface(IID_IDirectDraw7, (VOID**)&pDDraw7);
+						hr = pDDraw->QueryInterface(IID_IDirectDraw7, (VOID **)&pDDraw7);
 
 						if (SUCCEEDED(hr))
 						{
@@ -623,7 +628,7 @@ sint CSystemUtils::getTotalVideoMemory()
 							DWORD pdwAvailableVidMem;
 							hr = pDDraw7->GetAvailableVidMem(&ddscaps, &pdwAvailableVidMem, NULL);
 
- 							if (SUCCEEDED(hr))
+							if (SUCCEEDED(hr))
 							{
 								res = (sint)pdwAvailableVidMem / 1024;
 								nlinfo("DirectDraw Adapter: %s - DedicatedVideoMemory: %d KiB", adapter.name.c_str(), adapter.memory);
@@ -647,7 +652,7 @@ sint CSystemUtils::getTotalVideoMemory()
 				}
 				else
 				{
-					nlwarning("Unable to enumerate DirectDraw adapters (%s): %s", (adapter.found ? "found":"not found"), FormatError(hr).c_str());
+					nlwarning("Unable to enumerate DirectDraw adapters (%s): %s", (adapter.found ? "found" : "not found"), FormatError(hr).c_str());
 				}
 			}
 			else
@@ -680,14 +685,14 @@ sint CSystemUtils::getTotalVideoMemory()
 		{
 			std::vector<std::string> lines;
 			explode(out, std::string("\n"), lines, true);
-	
+
 			// process each line
-			for(uint i = 0; i < lines.size(); ++i)
+			for (uint i = 0; i < lines.size(); ++i)
 			{
 				//        Total                   : 62 MB
 
 				std::string line = lines[i];
-	
+
 				// find Total line
 				std::string::size_type pos = line.find("Total");
 				if (pos == std::string::npos) continue;
@@ -704,7 +709,7 @@ sint CSystemUtils::getTotalVideoMemory()
 				++posUnits;
 
 				// found device ID
-				std::string memory = line.substr(pos, posUnits-pos-1);
+				std::string memory = line.substr(pos, posUnits - pos - 1);
 				std::string units = line.substr(posUnits);
 
 				// convert video memory to sint
@@ -744,7 +749,7 @@ sint CSystemUtils::getTotalVideoMemory()
 	{
 		// under Linux, no method is really reliable...
 		NLMISC::CIFile file;
-	
+
 		std::string logFile = "/var/log/Xorg.0.log";
 
 		// parse last Xorg.0.log
@@ -752,10 +757,10 @@ sint CSystemUtils::getTotalVideoMemory()
 		{
 			char buffer[256];
 
-			while(!file.eof())
+			while (!file.eof())
 			{
 				file.getline(buffer, 256);
-			
+
 				if (buffer[0] == '\0') break;
 
 				std::string line(buffer);
@@ -778,8 +783,8 @@ sint CSystemUtils::getTotalVideoMemory()
 					// found units in KiB
 					if (posUnits == std::string::npos) continue;
 
-					std::string videoMemory = line.substr(pos, posUnits-pos);
-					
+					std::string videoMemory = line.substr(pos, posUnits - pos);
+
 					if (!NLMISC::fromString(videoMemory, res)) continue;
 
 					nlinfo("Xorg NVIDIA driver reported %d KiB of video memory", res);
@@ -803,8 +808,8 @@ sint CSystemUtils::getTotalVideoMemory()
 					// found units in KiB
 					if (posUnits == std::string::npos) continue;
 
-					std::string videoMemory = line.substr(pos, posUnits-pos);
-					
+					std::string videoMemory = line.substr(pos, posUnits - pos);
+
 					if (!NLMISC::fromString(videoMemory, res)) continue;
 
 					nlinfo("Xorg Intel driver reported %d KiB of video memory", res);
@@ -835,19 +840,17 @@ sint CSystemUtils::getTotalVideoMemory()
 			std::string deviceId;
 
 			explode(out, std::string("\n"), lines, true);
-	
+
 			// process each line
-			for(uint i = 0; i < lines.size(); ++i)
+			for (uint i = 0; i < lines.size(); ++i)
 			{
 				std::string line = lines[i];
-	
-				if (line.find("VGA") == std::string::npos &&
-					line.find("3D") == std::string::npos &&
-					line.find("2D") == std::string::npos)
+
+				if (line.find("VGA") == std::string::npos && line.find("3D") == std::string::npos && line.find("2D") == std::string::npos)
 					continue;
 
 				std::string::size_type pos = line.find(' ');
-			
+
 				if (pos == std::string::npos) continue;
 
 				// found device ID
@@ -874,10 +877,10 @@ sint CSystemUtils::getTotalVideoMemory()
 					explode(out, std::string("\n"), lines, true);
 
 					// process each line
-					for(uint i = 0; i < lines.size(); ++i)
+					for (uint i = 0; i < lines.size(); ++i)
 					{
 						std::string line = lines[i];
-	
+
 						// look for a size
 						std::string::size_type pos0 = line.find("[size=");
 						if (pos0 == std::string::npos) continue;
@@ -891,13 +894,13 @@ sint CSystemUtils::getTotalVideoMemory()
 
 						sint units;
 
-						if (line.substr(pos1-1, 1) == "M")
+						if (line.substr(pos1 - 1, 1) == "M")
 						{
 							// size in MiB
 							units = 1024;
 							--pos1;
 						}
-						else if (line.substr(pos1-1, 1) == "K")
+						else if (line.substr(pos1 - 1, 1) == "K")
 						{
 							// size in KiB
 							units = 1;
@@ -910,7 +913,7 @@ sint CSystemUtils::getTotalVideoMemory()
 						}
 
 						// extract the size
-						std::string sizeStr = line.substr(pos0, pos1-pos0);
+						std::string sizeStr = line.substr(pos0, pos1 - pos0);
 
 						// convert size to integer with right units
 						sint tmpSize;

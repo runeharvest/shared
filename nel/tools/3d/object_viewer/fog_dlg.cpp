@@ -21,13 +21,11 @@
 #include "object_viewer.h"
 #include "fog_dlg.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CFogDlg dialog
 
-
-CFogDlg::CFogDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CFogDlg::IDD, pParent)
+CFogDlg::CFogDlg(CWnd *pParent /*=NULL*/)
+    : CDialog(CFogDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CFogDlg)
 	m_FogStart = 0.0f;
@@ -35,8 +33,7 @@ CFogDlg::CFogDlg(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
-
-void CFogDlg::DoDataExchange(CDataExchange* pDX)
+void CFogDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CFogDlg)
@@ -45,11 +42,10 @@ void CFogDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CFogDlg, CDialog)
-	//{{AFX_MSG_MAP(CFogDlg)
-		// NOTE: the ClassWizard will add message map macros here
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CFogDlg)
+// NOTE: the ClassWizard will add message map macros here
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////

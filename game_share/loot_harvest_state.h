@@ -14,32 +14,27 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_LOOT_HARVEST_STATE_H
 #define RY_LOOT_HARVEST_STATE_H
 
 #include "nel/misc/types_nl.h"
 
-namespace LHSTATE
+namespace LHSTATE {
+// action nature
+enum TLHState
 {
-	// action nature
-	enum TLHState
-	{
-		NONE = 0,
-		LOOTABLE = 1,
-		HARVESTABLE = 2,
-		LOOTABLE_HARVESTABLE = 3
-	};
+	NONE = 0,
+	LOOTABLE = 1,
+	HARVESTABLE = 2,
+	LOOTABLE_HARVESTABLE = 3
+};
 
-
-	/**
-	 * get the right action nature the input string
-	 * \param str the input string
-	 * \return the TLHState associated to this string (NONE if the string cannot be interpreted)
-	 */
-	TLHState stringToLHState(const std::string &str);
-
+/**
+ * get the right action nature the input string
+ * \param str the input string
+ * \return the TLHState associated to this string (NONE if the string cannot be interpreted)
+ */
+TLHState stringToLHState(const std::string &str);
 
 }; // LHSTATE
 

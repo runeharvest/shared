@@ -27,12 +27,10 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
-bool				UInstanceMaterial::isTextureFile(uint stage) const
+bool UInstanceMaterial::isTextureFile(uint stage) const
 {
 	if (stage >= IDRV_MAT_MAXTEXTURES)
 	{
@@ -43,7 +41,7 @@ bool				UInstanceMaterial::isTextureFile(uint stage) const
 }
 
 // ***************************************************************************
-std::string			UInstanceMaterial::getTextureFileName(uint stage) const
+std::string UInstanceMaterial::getTextureFileName(uint stage) const
 {
 	if (stage >= IDRV_MAT_MAXTEXTURES)
 	{
@@ -52,7 +50,7 @@ std::string			UInstanceMaterial::getTextureFileName(uint stage) const
 	}
 
 	// If Async mode
-	if(_MBI->getAsyncTextureMode())
+	if (_MBI->getAsyncTextureMode())
 	{
 		nlassert(_AsyncTextureBlock->isTextureFile(stage));
 		// return name of the async one.
@@ -66,7 +64,7 @@ std::string			UInstanceMaterial::getTextureFileName(uint stage) const
 }
 
 // ***************************************************************************
-void				UInstanceMaterial::setTextureFileName(const std::string &fileName, uint stage)
+void UInstanceMaterial::setTextureFileName(const std::string &fileName, uint stage)
 {
 	if (stage >= IDRV_MAT_MAXTEXTURES)
 	{
@@ -75,15 +73,15 @@ void				UInstanceMaterial::setTextureFileName(const std::string &fileName, uint 
 	}
 
 	// If Async mode
-	if(_MBI->getAsyncTextureMode())
+	if (_MBI->getAsyncTextureMode())
 	{
-		if(!_AsyncTextureBlock->isTextureFile(stage))
+		if (!_AsyncTextureBlock->isTextureFile(stage))
 		{
 			nlwarning("UInstanceMaterialUser::setTextureFileName : the texture is not a texture file");
 			return;
 		}
 		// replace the fileName
-		_AsyncTextureBlock->TextureNames[stage]= fileName;
+		_AsyncTextureBlock->TextureNames[stage] = fileName;
 		// Flag the instance.
 		_MBI->setAsyncTextureDirty(true);
 	}
@@ -116,8 +114,8 @@ void UInstanceMaterial::emptyTexture(uint stage /*=0*/)
 // ***************************************************************************
 /*bool UInstanceMaterial::isSupportedByDriver(UDriver &drv, bool forceBaseCaps)
 {
-	IDriver *idrv = NLMISC::safe_cast<CDriverUser *>(&drv)->getDriver();
-	return _Object->isSupportedByDriver(*idrv, forceBaseCaps);
+    IDriver *idrv = NLMISC::safe_cast<CDriverUser *>(&drv)->getDriver();
+    return _Object->isSupportedByDriver(*idrv, forceBaseCaps);
 }*/
 
 // ***************************************************************************
@@ -128,152 +126,152 @@ void UInstanceMaterial::setTextureMem(uint stage, uint8 *data, uint32 length, bo
 		nlwarning("UInstanceMaterialUser::emptyTexture : invalid stage");
 		return;
 	}
-	_Object->setTexture((uint8) stage, new CTextureMem(data, length, _delete, isFile, width, height, texType));
+	_Object->setTexture((uint8)stage, new CTextureMem(data, length, _delete, isFile, width, height, texType));
 }
 
 // ***************************************************************************
-bool				UInstanceMaterial::isLighted() const
+bool UInstanceMaterial::isLighted() const
 {
 	return _Object->isLighted();
 }
 
 // ***************************************************************************
 void UInstanceMaterial::setLighting(bool active,
-									CRGBA emissive /*=CRGBA(0,0,0)*/,
-									CRGBA ambient /*=CRGBA(0,0,0)*/,
-									CRGBA diffuse /*=CRGBA(0,0,0)*/,
-									CRGBA specular /*=CRGBA(0,0,0)*/,
-									float shininess /*=10*/)
+    CRGBA emissive /*=CRGBA(0,0,0)*/,
+    CRGBA ambient /*=CRGBA(0,0,0)*/,
+    CRGBA diffuse /*=CRGBA(0,0,0)*/,
+    CRGBA specular /*=CRGBA(0,0,0)*/,
+    float shininess /*=10*/)
 {
 	_Object->setLighting(active, emissive, ambient, diffuse, specular, shininess);
 }
 
 // ***************************************************************************
 
-bool				UInstanceMaterial::isUserColor() const
+bool UInstanceMaterial::isUserColor() const
 {
-	return _Object->getShader()==CMaterial::UserColor;
+	return _Object->getShader() == CMaterial::UserColor;
 }
 
 // ***************************************************************************
 
-void				UInstanceMaterial::setEmissive( CRGBA emissive )
+void UInstanceMaterial::setEmissive(CRGBA emissive)
 {
 	_Object->setEmissive(emissive);
 }
 
 // ***************************************************************************
 
-void				UInstanceMaterial::setAmbient( CRGBA ambient )
+void UInstanceMaterial::setAmbient(CRGBA ambient)
 {
-	_Object->setAmbient( ambient);
+	_Object->setAmbient(ambient);
 }
 
 // ***************************************************************************
 
-void				UInstanceMaterial::setDiffuse( CRGBA diffuse )
+void UInstanceMaterial::setDiffuse(CRGBA diffuse)
 {
-	_Object->setDiffuse( diffuse);
+	_Object->setDiffuse(diffuse);
 }
 
 // ***************************************************************************
 
-void				UInstanceMaterial::setOpacity( uint8	opa )
+void UInstanceMaterial::setOpacity(uint8 opa)
 {
-	_Object->setOpacity( opa );
+	_Object->setOpacity(opa);
 }
 
 // ***************************************************************************
 
-void				UInstanceMaterial::setSpecular( CRGBA specular )
+void UInstanceMaterial::setSpecular(CRGBA specular)
 {
-	_Object->setSpecular( specular);
+	_Object->setSpecular(specular);
 }
 
 // ***************************************************************************
 
-void				UInstanceMaterial::setShininess( float shininess )
+void UInstanceMaterial::setShininess(float shininess)
 {
-	_Object->setShininess( shininess );
+	_Object->setShininess(shininess);
 }
 
 // ***************************************************************************
 
-CRGBA				UInstanceMaterial::getEmissive() const
+CRGBA UInstanceMaterial::getEmissive() const
 {
 	return _Object->getEmissive();
 }
 
 // ***************************************************************************
 
-CRGBA				UInstanceMaterial::getAmbient() const
+CRGBA UInstanceMaterial::getAmbient() const
 {
 	return _Object->getAmbient();
 }
 
 // ***************************************************************************
 
-CRGBA				UInstanceMaterial::getDiffuse() const
+CRGBA UInstanceMaterial::getDiffuse() const
 {
 	return _Object->getDiffuse();
 }
 
 // ***************************************************************************
 
-uint8				UInstanceMaterial::getOpacity() const
+uint8 UInstanceMaterial::getOpacity() const
 {
 	return _Object->getOpacity();
 }
 
 // ***************************************************************************
 
-CRGBA				UInstanceMaterial::getSpecular() const
+CRGBA UInstanceMaterial::getSpecular() const
 {
 	return _Object->getSpecular();
 }
 
 // ***************************************************************************
 
-float				UInstanceMaterial::getShininess() const
+float UInstanceMaterial::getShininess() const
 {
 	return _Object->getShininess();
 }
 
 // ***************************************************************************
 
-void				UInstanceMaterial::setColor(CRGBA rgba)
+void UInstanceMaterial::setColor(CRGBA rgba)
 {
-	_Object->setColor(rgba) ;
+	_Object->setColor(rgba);
 }
 
 // ***************************************************************************
 
-CRGBA				UInstanceMaterial::getColor(void) const
+CRGBA UInstanceMaterial::getColor(void) const
 {
 	return _Object->getColor();
 }
 
 // ***************************************************************************
 
-void				UInstanceMaterial::setUserColor(CRGBA userColor)
+void UInstanceMaterial::setUserColor(CRGBA userColor)
 {
-	if(isUserColor())
+	if (isUserColor())
 		_Object->setUserColor(userColor);
 }
 
 // ***************************************************************************
 
-CRGBA				UInstanceMaterial::getUserColor() const
+CRGBA UInstanceMaterial::getUserColor() const
 {
-	if(isUserColor())
+	if (isUserColor())
 		return _Object->getUserColor();
 	else
-		return CRGBA(0,0,0,0);
+		return CRGBA(0, 0, 0, 0);
 }
 
 // ***************************************************************************
 
-void				UInstanceMaterial::setConstantColor(uint stage, NLMISC::CRGBA color)
+void UInstanceMaterial::setConstantColor(uint stage, NLMISC::CRGBA color)
 {
 	if (stage >= IDRV_MAT_MAXTEXTURES)
 	{
@@ -285,7 +283,7 @@ void				UInstanceMaterial::setConstantColor(uint stage, NLMISC::CRGBA color)
 
 // ***************************************************************************
 
-NLMISC::CRGBA		UInstanceMaterial::getConstantColor(uint stage) const
+NLMISC::CRGBA UInstanceMaterial::getConstantColor(uint stage) const
 {
 	if (stage >= IDRV_MAT_MAXTEXTURES)
 	{
@@ -293,15 +291,14 @@ NLMISC::CRGBA		UInstanceMaterial::getConstantColor(uint stage) const
 		return NLMISC::CRGBA::Black;
 	}
 	return _Object->getTexConstantColor(stage);
-
 }
 
 // ***************************************************************************
 
-sint				UInstanceMaterial::getLastTextureStage() const
+sint UInstanceMaterial::getLastTextureStage() const
 {
 	sint lastStage = -1;
-	for(uint k = 0; k < IDRV_MAT_MAXTEXTURES; ++k)
+	for (uint k = 0; k < IDRV_MAT_MAXTEXTURES; ++k)
 	{
 		if (_Object->getTexture(k) != NULL)
 		{
@@ -313,35 +310,35 @@ sint				UInstanceMaterial::getLastTextureStage() const
 
 // ***************************************************************************
 
-void			UInstanceMaterial::setBlend(bool active)
+void UInstanceMaterial::setBlend(bool active)
 {
 	_Object->setBlend(active);
 }
 
 // ***************************************************************************
 
-void			UInstanceMaterial::setBlendFunc(TBlend src, TBlend dst)
+void UInstanceMaterial::setBlendFunc(TBlend src, TBlend dst)
 {
 	_Object->setBlendFunc((CMaterial::TBlend)(uint32)src, (CMaterial::TBlend)(uint32)dst);
 }
 
 // ***************************************************************************
 
-void			UInstanceMaterial::setSrcBlend(TBlend val)
+void UInstanceMaterial::setSrcBlend(TBlend val)
 {
 	_Object->setSrcBlend((CMaterial::TBlend)(uint32)val);
 }
 
 // ***************************************************************************
 
-void			UInstanceMaterial::setDstBlend(TBlend val)
+void UInstanceMaterial::setDstBlend(TBlend val)
 {
 	_Object->setDstBlend((CMaterial::TBlend)(uint32)val);
 }
 
 // ***************************************************************************
 
-void			UInstanceMaterial::setAlphaTestThreshold(float at)
+void UInstanceMaterial::setAlphaTestThreshold(float at)
 {
 	_Object->setAlphaTestThreshold(at);
 }
@@ -360,7 +357,7 @@ void UInstanceMaterial::setAlphaTest(bool active)
 
 // ***************************************************************************
 
-void			UInstanceMaterial::setZWrite(bool active)
+void UInstanceMaterial::setZWrite(bool active)
 {
 	_Object->setZWrite(active);
 }
@@ -368,33 +365,33 @@ void			UInstanceMaterial::setZWrite(bool active)
 // ***************************************************************************
 void UInstanceMaterial::setZFunc(ZFunc val)
 {
-		_Object->setZFunc((CMaterial::ZFunc) val);
+	_Object->setZFunc((CMaterial::ZFunc)val);
 }
 
 // ***************************************************************************
 
-bool			UInstanceMaterial::getBlend() const
+bool UInstanceMaterial::getBlend() const
 {
 	return _Object->getBlend();
 }
 
 // ***************************************************************************
 
-UInstanceMaterial::TBlend			UInstanceMaterial::getSrcBlend(void)  const
+UInstanceMaterial::TBlend UInstanceMaterial::getSrcBlend(void) const
 {
 	return (UInstanceMaterial::TBlend)(uint32)_Object->getSrcBlend();
 }
 
 // ***************************************************************************
 
-UInstanceMaterial::TBlend			UInstanceMaterial::getDstBlend(void)  const
+UInstanceMaterial::TBlend UInstanceMaterial::getDstBlend(void) const
 {
 	return (UInstanceMaterial::TBlend)(uint32)_Object->getDstBlend();
 }
 
 // ***************************************************************************
 
-void                    UInstanceMaterial::enableUserTexMat(uint stage, bool enabled)
+void UInstanceMaterial::enableUserTexMat(uint stage, bool enabled)
 {
 	if (stage >= IDRV_MAT_MAXTEXTURES)
 	{
@@ -406,7 +403,7 @@ void                    UInstanceMaterial::enableUserTexMat(uint stage, bool ena
 
 // ***************************************************************************
 
-bool                    UInstanceMaterial::isUserTexMatEnabled(uint stage) const
+bool UInstanceMaterial::isUserTexMatEnabled(uint stage) const
 {
 	if (stage >= IDRV_MAT_MAXTEXTURES)
 	{
@@ -418,7 +415,7 @@ bool                    UInstanceMaterial::isUserTexMatEnabled(uint stage) const
 
 // ***************************************************************************
 
-void					UInstanceMaterial::setUserTexMat(uint stage, const NLMISC::CMatrix &m)
+void UInstanceMaterial::setUserTexMat(uint stage, const NLMISC::CMatrix &m)
 {
 	if (stage >= IDRV_MAT_MAXTEXTURES)
 	{
@@ -434,7 +431,7 @@ void					UInstanceMaterial::setUserTexMat(uint stage, const NLMISC::CMatrix &m)
 
 // ***************************************************************************
 
-const NLMISC::CMatrix  &UInstanceMaterial::getUserTexMat(uint stage) const
+const NLMISC::CMatrix &UInstanceMaterial::getUserTexMat(uint stage) const
 {
 	if (stage >= IDRV_MAT_MAXTEXTURES)
 	{
@@ -451,50 +448,50 @@ const NLMISC::CMatrix  &UInstanceMaterial::getUserTexMat(uint stage) const
 
 // ***************************************************************************
 
-void				UInstanceMaterial::setWrapS(uint stage, TWrapMode mode)
+void UInstanceMaterial::setWrapS(uint stage, TWrapMode mode)
 {
 	if (stage >= IDRV_MAT_MAXTEXTURES || _Object->getTexture(stage) == NULL)
 	{
 		nlwarning("UInstanceMaterial::setWrapS : stage %d is invalid or there's no texture", stage);
 		return;
 	}
-	_Object->getTexture(stage)->setWrapS((ITexture::TWrapMode) mode);
+	_Object->getTexture(stage)->setWrapS((ITexture::TWrapMode)mode);
 }
 
 // ***************************************************************************
 
-void				UInstanceMaterial::setWrapT(uint stage, TWrapMode mode)
+void UInstanceMaterial::setWrapT(uint stage, TWrapMode mode)
 {
 	if (stage >= IDRV_MAT_MAXTEXTURES || _Object->getTexture(stage) == NULL)
 	{
 		nlwarning("UInstanceMaterial::setWrapT : stage %d is invalid or there's no texture", stage);
 		return;
 	}
-	_Object->getTexture(stage)->setWrapT((ITexture::TWrapMode) mode);
+	_Object->getTexture(stage)->setWrapT((ITexture::TWrapMode)mode);
 }
 
 // ***************************************************************************
 
-UInstanceMaterial::TWrapMode			UInstanceMaterial::getWrapS(uint stage) const
+UInstanceMaterial::TWrapMode UInstanceMaterial::getWrapS(uint stage) const
 {
 	if (stage >= IDRV_MAT_MAXTEXTURES || _Object->getTexture(uint8(stage)) == NULL)
 	{
 		nlwarning("UInstanceMaterial::getWrapS : stage %d is invalid or there's no texture", stage);
 		return Repeat;
 	}
-	return (TWrapMode) _Object->getTexture(uint8(stage))->getWrapS();
+	return (TWrapMode)_Object->getTexture(uint8(stage))->getWrapS();
 }
 
 // ***************************************************************************
 
-UInstanceMaterial::TWrapMode			UInstanceMaterial::getWrapT(uint stage) const
+UInstanceMaterial::TWrapMode UInstanceMaterial::getWrapT(uint stage) const
 {
 	if (stage >= IDRV_MAT_MAXTEXTURES || _Object->getTexture(uint8(stage)) == NULL)
 	{
 		nlwarning("UInstanceMaterial::getWrapT : stage %d is invalid or there's no texture", stage);
 		return Repeat;
 	}
-	return (TWrapMode) _Object->getTexture(uint8(stage))->getWrapT();
+	return (TWrapMode)_Object->getTexture(uint8(stage))->getWrapT();
 }
 
 // ***************************************************************************

@@ -14,21 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_EMOTE_LIST_PARSER_H
 #define RY_EMOTE_LIST_PARSER_H
 
 #include "nel/misc/types_nl.h"
 
-
-namespace EMOTE_LIST_PARSER
-{
-	/// fill the specified parameter with the emote names, linked with their index
-	bool initEmoteList( std::map<std::string, uint32>& 	emoteContainer );
+namespace EMOTE_LIST_PARSER {
+/// fill the specified parameter with the emote names, linked with their index
+bool initEmoteList(std::map<std::string, uint32> &emoteContainer);
 }
-
-
 
 #endif // RY_EMOTE_LIST_PARSER_H
 

@@ -20,11 +20,7 @@
 #include "types_nl.h"
 #include "vector.h"
 
-
-namespace NLMISC
-{
-
-
+namespace NLMISC {
 
 // ***************************************************************************
 /**
@@ -36,22 +32,22 @@ namespace NLMISC
 class CLine
 {
 public:
-	CVector		V0, V1;
+	CVector V0, V1;
 
 public:
 	/// default ctor
-	CLine() {}
+	CLine() { }
 	// ctor from 2 points
-	CLine(const CVector &v0, const CVector &v1) : V0(v0), V1(v1)
-	{}
+	CLine(const CVector &v0, const CVector &v1)
+	    : V0(v0)
+	    , V1(v1)
+	{
+	}
 	/// Project a vector on this line
 	void project(const CVector &inV, CVector &outV);
-
 };
 
-
 } // NLMISC
-
 
 #endif // NL_LINE_H
 

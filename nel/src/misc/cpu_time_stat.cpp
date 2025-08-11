@@ -32,26 +32,24 @@
 using namespace std;
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
-
+namespace NLMISC {
 
 // Get absolute ticks value for the whole cpu set
-bool	CCPUTimeStat::getCPUTicks(uint64& user, uint64& nice, uint64& system, uint64& idle, uint64& iowait)
+bool CCPUTimeStat::getCPUTicks(uint64 &user, uint64 &nice, uint64 &system, uint64 &idle, uint64 &iowait)
 {
 #ifdef NL_OS_UNIX
 
-	const char*	statfile = "/proc/stat";
-	FILE*		f = nlfopen(statfile, "r");
+	const char *statfile = "/proc/stat";
+	FILE *f = nlfopen(statfile, "r");
 
 	if (f == NULL)
 		return false;
 
 	// /proc/stat
-			// cpu  [user]     [nice]    [system]    [idle]     [iowait]   [irq] [softirq]
+	// cpu  [user]     [nice]    [system]    [idle]     [iowait]   [irq] [softirq]
 	if (fscanf(f, "cpu  %" NL_I64 "u %" NL_I64 "u %" NL_I64 "u %" NL_I64 "u %" NL_I64 "u", &user, &nice, &system, &idle, &iowait) != 5)
 		nlwarning("Failed to parse /proc/stat");
 
@@ -64,18 +62,18 @@ bool	CCPUTimeStat::getCPUTicks(uint64& user, uint64& nice, uint64& system, uint6
 }
 
 // Get absolute ticks values for a specified pid
-bool	CCPUTimeStat::getPIDTicks(uint64& utime, uint64& stime, uint64& cutime, uint64& cstime, uint pid)
+bool CCPUTimeStat::getPIDTicks(uint64 &utime, uint64 &stime, uint64 &cutime, uint64 &cstime, uint pid)
 {
 #ifdef NL_OS_UNIX
 
-	std::string	statfile = NLMISC::toString("/proc/%u/stat", pid);
-	FILE*	f = nlfopen(statfile, "r");
+	std::string statfile = NLMISC::toString("/proc/%u/stat", pid);
+	FILE *f = nlfopen(statfile, "r");
 
 	if (f == NULL)
 		return false;
 
 	// /proc/<pid>/stat
-			// pid com sta ppi pgi ses tty tpg fla mif maf cmi cma [utime]    [stime]    [cutime]   [cstime] ...
+	// pid com sta ppi pgi ses tty tpg fla mif maf cmi cma [utime]    [stime]    [cutime]   [cstime] ...
 	if (fscanf(f, "%*d %*s %*c %*d %*d %*d %*d %*d %*u %*u %*u %*u %*u %" NL_I64 "u %" NL_I64 "u %" NL_I64 "u %" NL_I64 "u", &utime, &stime, &cutime, &cstime) != 4)
 		nlwarning("Failed to parse /proc/<pid>/stat");
 
@@ -92,7 +90,11 @@ bool	CCPUTimeStat::getPIDTicks(uint64& utime, uint64& stime, uint64& cutime, uin
 #endif
 }
 
-CCPUTimeStat::CCPUTimeStat() :  _PID(0), _FirstTime(true), _LastCPUTicks(0), _LastPIDTicks(0)
+CCPUTimeStat::CCPUTimeStat()
+    : _PID(0)
+    , _FirstTime(true)
+    , _LastCPUTicks(0)
+    , _LastPIDTicks(0)
 {
 #ifdef NL_OS_UNIX
 
@@ -103,21 +105,19 @@ CCPUTimeStat::CCPUTimeStat() :  _PID(0), _FirstTime(true), _LastCPUTicks(0), _La
 	_PID = _getpid();
 
 #endif
-
 }
 
-
 // Peek measure
-void	CCPUTimeStat::peekMeasures()
+void CCPUTimeStat::peekMeasures()
 {
-	NLMISC::TTime	ctime = NLMISC::CTime::getLocalTime();
+	NLMISC::TTime ctime = NLMISC::CTime::getLocalTime();
 
-	uint64	u, n, s, i, io;
-	uint64	ut, st, cut, cst;
+	uint64 u, n, s, i, io;
+	uint64 ut, st, cut, cst;
 	if (getCPUTicks(u, n, s, i, io) && getPIDTicks(ut, st, cut, cst, _PID))
 	{
-		uint64	cpuTicks = u+n+s+i+io;
-		uint64	pidTicks = ut+st+cut+cst;
+		uint64 cpuTicks = u + n + s + i + io;
+		uint64 pidTicks = ut + st + cut + cst;
 
 		// only compute diff
 		if (_LastCPUTicks == cpuTicks || _LastPIDTicks == pidTicks)
@@ -138,7 +138,7 @@ void	CCPUTimeStat::peekMeasures()
 
 		if (!_FirstTime)
 		{
-			uint32	cpuTotal = _CPUUser.Diff+_CPUNice.Diff+_CPUSystem.Diff+_CPUIdle.Diff+_CPUIOWait.Diff;
+			uint32 cpuTotal = _CPUUser.Diff + _CPUNice.Diff + _CPUSystem.Diff + _CPUIdle.Diff + _CPUIOWait.Diff;
 
 			_CPUUser.computeLoad(cpuTotal, ctime);
 			_CPUNice.computeLoad(cpuTotal, ctime);
@@ -146,7 +146,7 @@ void	CCPUTimeStat::peekMeasures()
 			_CPUIdle.computeLoad(cpuTotal, ctime);
 			_CPUIOWait.computeLoad(cpuTotal, ctime);
 
-			uint32	pidTotal = _PIDUTime.Diff+_PIDSTime.Diff+_PIDCUTime.Diff+_PIDCSTime.Diff;
+			uint32 pidTotal = _PIDUTime.Diff + _PIDSTime.Diff + _PIDCUTime.Diff + _PIDCSTime.Diff;
 			if (pidTotal > cpuTotal)
 			{
 				// EEK! should not happen!!
@@ -162,6 +162,5 @@ void	CCPUTimeStat::peekMeasures()
 		_FirstTime = false;
 	}
 }
-
 
 }

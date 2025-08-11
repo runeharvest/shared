@@ -41,47 +41,48 @@
 #define INS_FIN 2
 #define INS_CURSEUR 3
 
-#define BUFFERSIZE 200 //le buffer ne peut pas contenir plus de 100 items
+#define BUFFERSIZE 200 // le buffer ne peut pas contenir plus de 100 items
 /////////////////////////////////////////////////////////////////////////////
 // TileCtrl window
 class TileInfo
 {
 public:
-	//constructeurs
+	// constructeurs
 	TileInfo();
 
-	//data
-	HBITMAP DibSection; BITMAPINFO BmpInfo; void *Bits;
+	// data
+	HBITMAP DibSection;
+	BITMAPINFO BmpInfo;
+	void *Bits;
 	char *path;
-	int Loaded; //tells if the tile was already loaded or not
-	int Selected; //tells if the tile is selected
-	int id; //numero du tile
-	int h,b,g,d; //index dans la liste des bordures pour le haut, le bas, la gauche et la droite du tile
+	int Loaded; // tells if the tile was already loaded or not
+	int Selected; // tells if the tile is selected
+	int id; // numero du tile
+	int h, b, g, d; // index dans la liste des bordures pour le haut, le bas, la gauche et la droite du tile
 };
 
-typedef std::list<TileInfo*> tilelist;
+typedef std::list<TileInfo *> tilelist;
 
 class TileList
 {
-public:	
+public:
 	TileList();
 	tilelist theList;
-	tilelist::iterator i; //pointeur sur le dernier element de la liste
-	int Add(const char *path); //ajoute un tile (bmp) dans la liste sans le charger
-	void Delete(tilelist::iterator i,int n); 
-	void DeleteAll(); //efface provisoirement les sections DIB et les *Bits;
-	void Reload(CDC *pDC,tilelist::iterator iFirst,int n); //recharge en memoire une tranche de tiles
+	tilelist::iterator i; // pointeur sur le dernier element de la liste
+	int Add(const char *path); // ajoute un tile (bmp) dans la liste sans le charger
+	void Delete(tilelist::iterator i, int n);
+	void DeleteAll(); // efface provisoirement les sections DIB et les *Bits;
+	void Reload(CDC *pDC, tilelist::iterator iFirst, int n); // recharge en memoire une tranche de tiles
 	int last_id;
-	tilelist::iterator iFirst,iLast; // first and last index loaded in memory
+	tilelist::iterator iFirst, iLast; // first and last index loaded in memory
 };
 
-
-class _Edge //permet de stocker toutes les bordures des tiles
+class _Edge // permet de stocker toutes les bordures des tiles
 {
 public:
 	_Edge();
 	~_Edge();
-	_Edge(const _Edge& edge);
+	_Edge(const _Edge &edge);
 
 	int size;
 	char *line;
@@ -95,40 +96,38 @@ public:
 
 typedef list<_Edge> edgelist;
 
-extern int CALLBACK CompareFunc(LPARAM lParam1,LPARAM lParam2,LPARAM lParamSort);
-extern int _LoadBitmap(const std::string& path,LPBITMAPINFO BitmapInfo, std::vector<NLMISC::CBGRA>&Tampon, std::vector<NLMISC::CBGRA>* Alpha, int rot);
-
-
+extern int CALLBACK CompareFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
+extern int _LoadBitmap(const std::string &path, LPBITMAPINFO BitmapInfo, std::vector<NLMISC::CBGRA> &Tampon, std::vector<NLMISC::CBGRA> *Alpha, int rot);
 
 class TileCtrl : public CListCtrl
 {
-// Construction
+	// Construction
 public:
-//owner functions
+	// owner functions
 	TileCtrl();
 	void Init();
 	void Delete();
-	void DrawTile(int i,CDC *pDC);
-	void UpdateBuffer(); //permet de charger et d'effacer tous les buffers inutiles des tiles invisible
-	int  LoadInListCtrl(tilelist::iterator iFirst,tilelist::iterator iLast);
+	void DrawTile(int i, CDC *pDC);
+	void UpdateBuffer(); // permet de charger et d'effacer tous les buffers inutiles des tiles invisible
+	int LoadInListCtrl(tilelist::iterator iFirst, tilelist::iterator iLast);
 	void DeleteTile(int i);
-	int  IsSelected(int i);
-	void CheckTile(TileInfo *theTile); //check si le tile est "tilable" avec un autre et initialise h,b,g,d dans TileInfo
-	void ShadeRect( CDC *pDC, CRect& rect ); //permet d'afficher un bitmap selectionne a la "windows style"
-	void InsertItemInCtrlList(tilelist::iterator iFirst,tilelist::iterator iLast);
-	void GetVisibility(int &First,int &Last);
-	int  GetNbTileLine(void);
-	int  GetNbTileColumn(void);
-	int	 GetIndex(LPPOINT pt);
+	int IsSelected(int i);
+	void CheckTile(TileInfo *theTile); // check si le tile est "tilable" avec un autre et initialise h,b,g,d dans TileInfo
+	void ShadeRect(CDC *pDC, CRect &rect); // permet d'afficher un bitmap selectionne a la "windows style"
+	void InsertItemInCtrlList(tilelist::iterator iFirst, tilelist::iterator iLast);
+	void GetVisibility(int &First, int &Last);
+	int GetNbTileLine(void);
+	int GetNbTileColumn(void);
+	int GetIndex(LPPOINT pt);
 	POINT GetPos(int i);
 
-//owner data	
+	// owner data
 	TileList InfoList;
-	edgelist EdgeList; //liste de toutes les bordures 
-	int sizetile_x,sizetile_y;
-	int sizeicon_x,sizeicon_y,spacing_x,spacing_y,spacing_tile_text;
+	edgelist EdgeList; // liste de toutes les bordures
+	int sizetile_x, sizetile_y;
+	int sizeicon_x, sizeicon_y, spacing_x, spacing_y, spacing_tile_text;
 	int scrollpos;
-	int Sort; //radio button state (1,2,3)
+	int Sort; // radio button state (1,2,3)
 	int Zoom;
 	int Texture;
 	int InfoTexte;
@@ -139,24 +138,21 @@ public:
 	int ViewTileMode;
 	TileInfo TileCroix;
 	CPoint MousePos;
-	int iFirst,iLast; //indexes du premier et du dernier item du buffer
-	int iFV,iLV; //index du premier et du dernier item visible
+	int iFirst, iLast; // indexes du premier et du dernier item du buffer
+	int iFV, iLV; // index du premier et du dernier item visible
 
-// Attributes
+	// Attributes
 public:
-
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(TileCtrl)
-	protected:
+protected:
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~TileCtrl();
 
@@ -168,7 +164,7 @@ protected:
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

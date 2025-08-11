@@ -20,9 +20,9 @@
 ********************* THIS CLASS IS DEPRECATED ****************************
 **************************************************************************/
 #ifdef NL_OS_WINDOWS
-#	pragma message(NL_LOC_WRN "You are using a deprecated feature of NeL, consider rewriting your code with replacement feature")
+#pragma message(NL_LOC_WRN "You are using a deprecated feature of NeL, consider rewriting your code with replacement feature")
 #else // NL_OS_UNIX
-#	warning "You are using a deprecated feature of NeL, consider rewriting your code with replacement feature"
+#warning "You are using a deprecated feature of NeL, consider rewriting your code with replacement feature"
 #endif
 
 #include "nel/misc/time_nl.h"
@@ -38,112 +38,108 @@ using namespace NLMISC;
 
 namespace NLNET {
 
+CNetManager::TBaseMap CNetManager::_BaseMap;
 
-CNetManager::TBaseMap	CNetManager::_BaseMap;
-
-CCallbackNetBase::TRecordingState	CNetManager::_RecordingState;
+CCallbackNetBase::TRecordingState CNetManager::_RecordingState;
 
 TTime CNetManager::_NextUpdateTime = 0;
 
-static void nmNewConnection (TSockId from, void *arg)
+static void nmNewConnection(TSockId from, void *arg)
 {
-	nlassert (arg != NULL);
+	nlassert(arg != NULL);
 	CBaseStruct *basest = (CBaseStruct *)arg;
 
-	nldebug("HNETL4: nmNewConnection() from service '%s'", basest->Name.c_str ());
+	nldebug("HNETL4: nmNewConnection() from service '%s'", basest->Name.c_str());
 
 	// call the client callback if necessary
 	if (basest->ConnectionCallback != NULL)
-		basest->ConnectionCallback (basest->Name, from, basest->ConnectionCbArg);
+		basest->ConnectionCallback(basest->Name, from, basest->ConnectionCbArg);
 }
 
-static void nmNewDisconnection (TSockId from, void *arg)
+static void nmNewDisconnection(TSockId from, void *arg)
 {
-	nlassert (arg != NULL);
+	nlassert(arg != NULL);
 	CBaseStruct *basest = (CBaseStruct *)arg;
 
-	nldebug("HNETL4: nmNewDisconnection() from service '%s'", basest->Name.c_str ());
+	nldebug("HNETL4: nmNewDisconnection() from service '%s'", basest->Name.c_str());
 
 	// call the client callback if necessary
 	if (basest->DisconnectionCallback != NULL)
-		basest->DisconnectionCallback (basest->Name, from, basest->DisconnectionCbArg);
+		basest->DisconnectionCallback(basest->Name, from, basest->DisconnectionCbArg);
 }
 
-
 // find a not connected callbackclient or create a new one and connect to the Addr
-void CNetManager::createConnection(CBaseStruct &Base, const CInetAddress &Addr, const string& name)
+void CNetManager::createConnection(CBaseStruct &Base, const CInetAddress &Addr, const string &name)
 {
 	uint i;
-	for (i = 0; i < Base.NetBase.size (); i++)
+	for (i = 0; i < Base.NetBase.size(); i++)
 	{
-		if (!Base.NetBase[i]->connected ())
+		if (!Base.NetBase[i]->connected())
 		{
 			break;
 		}
 	}
-	if (i == Base.NetBase.size ())
+	if (i == Base.NetBase.size())
 	{
-		CCallbackClient *cc = new CCallbackClient( _RecordingState, name+string(".nmr") );
-		Base.NetBase.push_back (cc);
+		CCallbackClient *cc = new CCallbackClient(_RecordingState, name + string(".nmr"));
+		Base.NetBase.push_back(cc);
 	}
 
 	CCallbackClient *cc = dynamic_cast<CCallbackClient *>(Base.NetBase[i]);
 
-	cc->CCallbackNetBase::setDisconnectionCallback (nmNewDisconnection, (void*) &Base);
+	cc->CCallbackNetBase::setDisconnectionCallback(nmNewDisconnection, (void *)&Base);
 
 	try
 	{
-		cc->connect (Addr);
+		cc->connect(Addr);
 
 		if (Base.ConnectionCallback != NULL)
-			Base.ConnectionCallback (Base.Name, cc->getSockId(), Base.ConnectionCbArg);
+			Base.ConnectionCallback(Base.Name, cc->getSockId(), Base.ConnectionCbArg);
 	}
 	catch (ESocketConnectionFailed &e)
 	{
-		nlinfo ("HNETL4: can't connect now (%s)", e.what ());
+		nlinfo("HNETL4: can't connect now (%s)", e.what());
 	}
 }
 
-
-void RegistrationBroadcast (const std::string &name, TServiceId sid, const vector<CInetAddress> &addr)
+void RegistrationBroadcast(const std::string &name, TServiceId sid, const vector<CInetAddress> &addr)
 {
-	nldebug("HNETL4: RegistrationBroadcast() of service %s-%hu", name.c_str (), (uint16)sid.get());
+	nldebug("HNETL4: RegistrationBroadcast() of service %s-%hu", name.c_str(), (uint16)sid.get());
 
 	// find if this new service is interesting
-	for (CNetManager::ItBaseMap itbm = CNetManager::_BaseMap.begin (); itbm != CNetManager::_BaseMap.end (); itbm++)
+	for (CNetManager::ItBaseMap itbm = CNetManager::_BaseMap.begin(); itbm != CNetManager::_BaseMap.end(); itbm++)
 	{
 		if ((*itbm).second.Type == CBaseStruct::Client && !(*itbm).second.NetBase[0]->connected())
 		{
 			if (name == (*itbm).first)
 			{
 				// ok! it's cool, the service is here, go and connect to him!
-// ace warning don't work if more than one connection
-				CNetManager::createConnection ((*itbm).second, addr[0], name);
+				// ace warning don't work if more than one connection
+				CNetManager::createConnection((*itbm).second, addr[0], name);
 			}
 		}
 		else if ((*itbm).second.Type == CBaseStruct::Group)
 		{
 			// ok, it's a group, try to see if it wants this!
-			for (uint i = 0; i < (*itbm).second.ServiceNames.size (); i++)
+			for (uint i = 0; i < (*itbm).second.ServiceNames.size(); i++)
 			{
 				if ((*itbm).second.ServiceNames[i] == name)
 				{
-// ace warning don't work if more than one connection
-					CNetManager::createConnection ((*itbm).second, addr[0], name);
+					// ace warning don't work if more than one connection
+					CNetManager::createConnection((*itbm).second, addr[0], name);
 					break;
 				}
 			}
 		}
 	}
-
 }
 
-static void UnregistrationBroadcast (const std::string &name, TServiceId sid, const vector<CInetAddress> &addr)
+static void UnregistrationBroadcast(const std::string &name, TServiceId sid, const vector<CInetAddress> &addr)
 {
-	nldebug("HNETL4: UnregistrationBroadcast() of service %s-%hu", name.c_str (), (uint16)sid.get());
+	nldebug("HNETL4: UnregistrationBroadcast() of service %s-%hu", name.c_str(), (uint16)sid.get());
 }
 
-void CNetManager::init (const CInetAddress *addr, CCallbackNetBase::TRecordingState rec )
+void CNetManager::init(const CInetAddress *addr, CCallbackNetBase::TRecordingState rec)
 {
 	if (addr == NULL) return;
 
@@ -152,88 +148,87 @@ void CNetManager::init (const CInetAddress *addr, CCallbackNetBase::TRecordingSt
 	// connect to the naming service (may generate a ESocketConnectionFailed exception)
 
 	vector<CInetAddress> laddr = CInetAddress::localAddresses();
-	CNamingClient::connect( *addr, _RecordingState, laddr );
+	CNamingClient::connect(*addr, _RecordingState, laddr);
 
 	// connect the callback to know when a new service comes in or goes down
-	CNamingClient::setRegistrationBroadcastCallback (RegistrationBroadcast);
-	CNamingClient::setUnregistrationBroadcastCallback (UnregistrationBroadcast);
+	CNamingClient::setRegistrationBroadcastCallback(RegistrationBroadcast);
+	CNamingClient::setUnregistrationBroadcastCallback(UnregistrationBroadcast);
 }
 
-void CNetManager::release ()
+void CNetManager::release()
 {
-	if (CNamingClient::connected ())
-		CNamingClient::disconnect ();
+	if (CNamingClient::connected())
+		CNamingClient::disconnect();
 
-	for (ItBaseMap itbm = _BaseMap.begin (); itbm != _BaseMap.end (); itbm++)
+	for (ItBaseMap itbm = _BaseMap.begin(); itbm != _BaseMap.end(); itbm++)
 	{
 		for (uint32 i = 0; i < (*itbm).second.NetBase.size(); i++)
 		{
-			(*itbm).second.NetBase[i]->disconnect ();
+			(*itbm).second.NetBase[i]->disconnect();
 			delete (*itbm).second.NetBase[i];
 		}
 	}
-	_BaseMap.clear ();
+	_BaseMap.clear();
 }
 
-void CNetManager::addServer (const std::string &serviceName, uint16 servicePort, bool external)
+void CNetManager::addServer(const std::string &serviceName, uint16 servicePort, bool external)
 {
 	TServiceId sid;
-	addServer (serviceName, servicePort, sid, external);
+	addServer(serviceName, servicePort, sid, external);
 }
 
-void CNetManager::addServer (const std::string &serviceName, uint16 servicePort, TServiceId &sid, bool external)
+void CNetManager::addServer(const std::string &serviceName, uint16 servicePort, TServiceId &sid, bool external)
 {
-	nldebug ("HNETL4: Adding server '%s' in CNetManager", serviceName.c_str ());
-	ItBaseMap itbm = find (serviceName);
+	nldebug("HNETL4: Adding server '%s' in CNetManager", serviceName.c_str());
+	ItBaseMap itbm = find(serviceName);
 
 	// check if it's a new server
-	nlassert ((*itbm).second.NetBase.empty());
+	nlassert((*itbm).second.NetBase.empty());
 
-	CCallbackServer *cs = new CCallbackServer( _RecordingState, serviceName+string(".nmr") );
-	(*itbm).second.NetBase.push_back (cs);
+	CCallbackServer *cs = new CCallbackServer(_RecordingState, serviceName + string(".nmr"));
+	(*itbm).second.NetBase.push_back(cs);
 
 	(*itbm).second.Type = CBaseStruct::Server;
 
 	// install the server
 
-	cs->setConnectionCallback (nmNewConnection, (void*) &((*itbm).second));
-	cs->CCallbackNetBase::setDisconnectionCallback (nmNewDisconnection, (void*) &((*itbm).second));
+	cs->setConnectionCallback(nmNewConnection, (void *)&((*itbm).second));
+	cs->CCallbackNetBase::setDisconnectionCallback(nmNewDisconnection, (void *)&((*itbm).second));
 
 	if (servicePort == 0)
 	{
-		nlassert (CNamingClient::connected ());
-		servicePort = CNamingClient::queryServicePort ();
+		nlassert(CNamingClient::connected());
+		servicePort = CNamingClient::queryServicePort();
 	}
 
-	cs->init (servicePort);
+	cs->init(servicePort);
 
 	// register the server to the naming service if we are connected to Naming Service
 
-	if (CNamingClient::connected () && !external)
+	if (CNamingClient::connected() && !external)
 	{
-		//CInetAddress addr = CInetAddress::localHost ();
-		//addr.setPort (servicePort);
+		// CInetAddress addr = CInetAddress::localHost ();
+		// addr.setPort (servicePort);
 		vector<CInetAddress> addr = CInetAddress::localAddresses();
 		for (uint i = 0; i < addr.size(); i++)
 			addr[i].setPort(servicePort);
 
 		if (sid.get() == 0)
 		{
-			CNamingClient::registerService (serviceName, addr, sid);
+			CNamingClient::registerService(serviceName, addr, sid);
 		}
 		else
 		{
-			CNamingClient::registerServiceWithSId (serviceName, addr, sid);
+			CNamingClient::registerServiceWithSId(serviceName, addr, sid);
 		}
 	}
-	nlinfo ("HNETL4: Server '%s' added, registered and listen to port %hu", serviceName.c_str (), servicePort);
+	nlinfo("HNETL4: Server '%s' added, registered and listen to port %hu", serviceName.c_str(), servicePort);
 }
 
-
-void CNetManager::addClient (const std::string &serviceName, const std::string &addr, bool autoRetry)
+void CNetManager::addClient(const std::string &serviceName, const std::string &addr, bool autoRetry)
 {
-	nldebug ("HNETL4: Adding client '%s' with addr '%s' in CNetManager", serviceName.c_str (), addr.c_str());
-	ItBaseMap itbm = find (serviceName);
+	nldebug("HNETL4: Adding client '%s' with addr '%s' in CNetManager", serviceName.c_str(), addr.c_str());
+	ItBaseMap itbm = find(serviceName);
 
 	// it's a new client, add the connection
 	(*itbm).second.Type = CBaseStruct::ClientWithAddr;
@@ -248,84 +243,79 @@ void CNetManager::addClient (const std::string &serviceName, const std::string &
 		(*itbm).second.ServiceNames[0] = addr;
 	}
 
-	nlassert ((*itbm).second.NetBase.size() < 2);
+	nlassert((*itbm).second.NetBase.size() < 2);
 
-	createConnection ((*itbm).second, addr, serviceName);
+	createConnection((*itbm).second, addr, serviceName);
 }
 
-
-void CNetManager::addClient (const std::string &serviceName)
+void CNetManager::addClient(const std::string &serviceName)
 {
-	nlassert (CNamingClient::connected ());
-	nldebug ("HNETL4: Adding client '%s' in CNetManager", serviceName.c_str ());
-	ItBaseMap itbm = find (serviceName);
+	nlassert(CNamingClient::connected());
+	nldebug("HNETL4: Adding client '%s' in CNetManager", serviceName.c_str());
+	ItBaseMap itbm = find(serviceName);
 
 	// check if it's a new client
-	nlassert ((*itbm).second.NetBase.empty());
+	nlassert((*itbm).second.NetBase.empty());
 
-	CCallbackClient *cc = new CCallbackClient( _RecordingState, serviceName+string(".nmr") ); // ? - would not work if several clients with the same name
-	(*itbm).second.NetBase.push_back (cc);
+	CCallbackClient *cc = new CCallbackClient(_RecordingState, serviceName + string(".nmr")); // ? - would not work if several clients with the same name
+	(*itbm).second.NetBase.push_back(cc);
 
 	(*itbm).second.Type = CBaseStruct::Client;
 
-	cc->CCallbackNetBase::setDisconnectionCallback (nmNewDisconnection, (void*) &((*itbm).second));
+	cc->CCallbackNetBase::setDisconnectionCallback(nmNewDisconnection, (void *)&((*itbm).second));
 
 	// find the service in the naming_service and connect if exists
-	if (CNamingClient::lookupAndConnect (serviceName, *cc))
+	if (CNamingClient::lookupAndConnect(serviceName, *cc))
 	{
 		// call the user that we are connected
 		if ((*itbm).second.ConnectionCallback != NULL)
-			(*itbm).second.ConnectionCallback (serviceName, cc->getSockId(), (*itbm).second.ConnectionCbArg);
+			(*itbm).second.ConnectionCallback(serviceName, cc->getSockId(), (*itbm).second.ConnectionCbArg);
 	}
 }
 
-
-
-void CNetManager::addGroup (const std::string &groupName, const std::string &serviceName)
+void CNetManager::addGroup(const std::string &groupName, const std::string &serviceName)
 {
-	nlassert (CNamingClient::connected ());
-	nldebug ("HNETL4: Adding '%s' to group '%s' in CNetManager", serviceName.c_str (), groupName.c_str());
-	ItBaseMap itbm = find (groupName);
+	nlassert(CNamingClient::connected());
+	nldebug("HNETL4: Adding '%s' to group '%s' in CNetManager", serviceName.c_str(), groupName.c_str());
+	ItBaseMap itbm = find(groupName);
 
 	(*itbm).second.Type = CBaseStruct::Group;
 
 	// check if you don't already add this service in this group
-	vector<string>::iterator it = std::find ((*itbm).second.ServiceNames.begin(), (*itbm).second.ServiceNames.end(), serviceName);
-	nlassert (it == (*itbm).second.ServiceNames.end());
+	vector<string>::iterator it = std::find((*itbm).second.ServiceNames.begin(), (*itbm).second.ServiceNames.end(), serviceName);
+	nlassert(it == (*itbm).second.ServiceNames.end());
 
 	(*itbm).second.ServiceNames.push_back(serviceName);
 
-
 	// find the service in the naming_service and connect if exists
 	vector<CInetAddress> addrs;
-	CNamingClient::lookupAll (serviceName, addrs);
+	CNamingClient::lookupAll(serviceName, addrs);
 
 	// connect to all these services
-	for (uint i = 0; i < addrs.size (); i++)
+	for (uint i = 0; i < addrs.size(); i++)
 	{
-		createConnection ((*itbm).second, addrs[i], serviceName);
+		createConnection((*itbm).second, addrs[i], serviceName);
 	}
 }
 
-
-void CNetManager::addCallbackArray (const std::string &serviceName, const TCallbackItem *callbackarray, CStringIdArray::TStringId arraysize)
+void CNetManager::addCallbackArray(const std::string &serviceName, const TCallbackItem *callbackarray, CStringIdArray::TStringId arraysize)
 {
-	nldebug ("HNETL4: addingCallabckArray() for service '%s'", serviceName.c_str ());
-	ItBaseMap itbm = find (serviceName);
+	nldebug("HNETL4: addingCallabckArray() for service '%s'", serviceName.c_str());
+	ItBaseMap itbm = find(serviceName);
 	for (uint32 i = 0; i < (*itbm).second.NetBase.size(); i++)
 	{
-//		if ((*itbm).second.NetBase[i]->connected())
-		(*itbm).second.NetBase[i]->addCallbackArray (callbackarray, arraysize);
+		//		if ((*itbm).second.NetBase[i]->connected())
+		(*itbm).second.NetBase[i]->addCallbackArray(callbackarray, arraysize);
 	}
 }
 
-void CNetManager::update (TTime timeout)
+void CNetManager::update(TTime timeout)
 {
-//	nldebug ("HNETL4: update()");
+	//	nldebug ("HNETL4: update()");
 
-//	sint64 p1 = CTime::getPerformanceTime ();
+	//	sint64 p1 = CTime::getPerformanceTime ();
 
-	TTime t0 = CTime::getLocalTime ();
+	TTime t0 = CTime::getLocalTime();
 
 	if (timeout > 0)
 	{
@@ -350,20 +340,20 @@ void CNetManager::update (TTime timeout)
 		}
 	}
 
-//	sint64 p2 = CTime::getPerformanceTime ();
+	//	sint64 p2 = CTime::getPerformanceTime ();
 
 	while (true)
 	{
-		for (ItBaseMap itbm = _BaseMap.begin (); itbm != _BaseMap.end (); itbm++)
+		for (ItBaseMap itbm = _BaseMap.begin(); itbm != _BaseMap.end(); itbm++)
 		{
 			for (uint32 i = 0; i < (*itbm).second.NetBase.size(); i++)
 			{
 				// we get and treat all messages in this connection
-				(*itbm).second.NetBase[i]->update (0);
+				(*itbm).second.NetBase[i]->update(0);
 				if ((*itbm).second.NetBase[i]->connected())
 				{
 					// if connected, update
-//					(*itbm).second.NetBase[i]->update ();
+					//					(*itbm).second.NetBase[i]->update ();
 				}
 				else
 				{
@@ -378,11 +368,11 @@ void CNetManager::update (TTime timeout)
 							CCallbackClient *cc = dynamic_cast<CCallbackClient *>((*itbm).second.NetBase[i]);
 							try
 							{
-								nlassert ((*itbm).second.ServiceNames.size()==1);
-								cc->connect (CInetAddress((*itbm).second.ServiceNames[0]));
+								nlassert((*itbm).second.ServiceNames.size() == 1);
+								cc->connect(CInetAddress((*itbm).second.ServiceNames[0]));
 
 								if ((*itbm).second.ConnectionCallback != NULL)
-									(*itbm).second.ConnectionCallback ((*itbm).second.Name, cc->getSockId(), (*itbm).second.ConnectionCbArg);
+									(*itbm).second.ConnectionCallback((*itbm).second.Name, cc->getSockId(), (*itbm).second.ConnectionCbArg);
 							}
 							catch (ESocketConnectionFailed &e)
 							{
@@ -401,110 +391,108 @@ void CNetManager::update (TTime timeout)
 
 		// Enable windows multithreading before rescanning all connections
 		// slow down the layer H_BEFORE (CNetManager_update_nlSleep);
-		nlSleep (1);
+		nlSleep(1);
 		// slow down the layer H_AFTER (CNetManager_update_nlSleep);
 	}
 
-//	sint64 p3 = CTime::getPerformanceTime ();
+	//	sint64 p3 = CTime::getPerformanceTime ();
 
-	if (CNamingClient::connected ())
-		CNamingClient::update ();
+	if (CNamingClient::connected())
+		CNamingClient::update();
 
-//	sint64 p4 = CTime::getPerformanceTime ();
+	//	sint64 p4 = CTime::getPerformanceTime ();
 
-//	nlinfo("time : %f %f %f %d", CTime::ticksToSecond(p2-p1), CTime::ticksToSecond(p3-p2), CTime::ticksToSecond(p4-p3), timeout);
+	//	nlinfo("time : %f %f %f %d", CTime::ticksToSecond(p2-p1), CTime::ticksToSecond(p3-p2), CTime::ticksToSecond(p4-p3), timeout);
 }
 
-
-void CNetManager::send (const std::string &serviceName, const CMessage &buffer, TSockId hostid)
+void CNetManager::send(const std::string &serviceName, const CMessage &buffer, TSockId hostid)
 {
-	nldebug ("HNETL4: send for service '%s' message %s to %s", serviceName.c_str(), buffer.toString().c_str(), hostid->asString().c_str());
-	ItBaseMap itbm = find (serviceName);
+	nldebug("HNETL4: send for service '%s' message %s to %s", serviceName.c_str(), buffer.toString().c_str(), hostid->asString().c_str());
+	ItBaseMap itbm = find(serviceName);
 	for (uint32 i = 0; i < (*itbm).second.NetBase.size(); i++)
 	{
 		if ((*itbm).second.NetBase[i]->connected())
-			(*itbm).second.NetBase[i]->send (buffer, hostid);
+			(*itbm).second.NetBase[i]->send(buffer, hostid);
 	}
 }
 
-CCallbackNetBase *CNetManager::getNetBase (const std::string &serviceName)
+CCallbackNetBase *CNetManager::getNetBase(const std::string &serviceName)
 {
-	ItBaseMap itbm = find (serviceName);
+	ItBaseMap itbm = find(serviceName);
 	return (*itbm).second.NetBase[0];
 }
 
-void CNetManager::setConnectionCallback (const std::string &serviceName, TNetManagerCallback cb, void *arg)
+void CNetManager::setConnectionCallback(const std::string &serviceName, TNetManagerCallback cb, void *arg)
 {
-	nldebug ("HNETL4: setConnectionCallback() for service '%s'", serviceName.c_str ());
-	ItBaseMap itbm = find (serviceName);
+	nldebug("HNETL4: setConnectionCallback() for service '%s'", serviceName.c_str());
+	ItBaseMap itbm = find(serviceName);
 	(*itbm).second.ConnectionCallback = cb;
 	(*itbm).second.ConnectionCbArg = arg;
 }
 
-void CNetManager::setDisconnectionCallback (const std::string &serviceName, TNetManagerCallback cb, void *arg)
+void CNetManager::setDisconnectionCallback(const std::string &serviceName, TNetManagerCallback cb, void *arg)
 {
-	nldebug ("HNETL4: setDisconnectionCallback() for service '%s'", serviceName.c_str ());
-	ItBaseMap itbm = find (serviceName);
+	nldebug("HNETL4: setDisconnectionCallback() for service '%s'", serviceName.c_str());
+	ItBaseMap itbm = find(serviceName);
 	(*itbm).second.DisconnectionCallback = cb;
 	(*itbm).second.DisconnectionCbArg = arg;
 }
 
-
-CNetManager::ItBaseMap CNetManager::find (const std::string &serviceName)
+CNetManager::ItBaseMap CNetManager::find(const std::string &serviceName)
 {
 	// find the service or add it if not found
 	pair<ItBaseMap, bool> p;
-	p = _BaseMap.insert (make_pair (serviceName, CBaseStruct (serviceName)));
+	p = _BaseMap.insert(make_pair(serviceName, CBaseStruct(serviceName)));
 	return p.first;
 }
 
-uint64 CNetManager::getBytesSent ()
+uint64 CNetManager::getBytesSent()
 {
 	uint64 sent = 0;
-	for (ItBaseMap itbm = _BaseMap.begin (); itbm != _BaseMap.end (); itbm++)
+	for (ItBaseMap itbm = _BaseMap.begin(); itbm != _BaseMap.end(); itbm++)
 	{
 		for (uint32 i = 0; i < (*itbm).second.NetBase.size(); i++)
 		{
-			sent += (*itbm).second.NetBase[i]->getBytesSent ();
+			sent += (*itbm).second.NetBase[i]->getBytesSent();
 		}
 	}
 	return sent;
 }
 
-uint64 CNetManager::getBytesReceived ()
+uint64 CNetManager::getBytesReceived()
 {
 	uint64 received = 0;
-	for (ItBaseMap itbm = _BaseMap.begin (); itbm != _BaseMap.end (); itbm++)
+	for (ItBaseMap itbm = _BaseMap.begin(); itbm != _BaseMap.end(); itbm++)
 	{
 		for (uint32 i = 0; i < (*itbm).second.NetBase.size(); i++)
 		{
-			received += (*itbm).second.NetBase[i]->getBytesReceived ();
+			received += (*itbm).second.NetBase[i]->getBytesReceived();
 		}
 	}
 	return received;
 }
 
-uint64 CNetManager::getSendQueueSize ()
+uint64 CNetManager::getSendQueueSize()
 {
 	uint64 val = 0;
-	for (ItBaseMap itbm = _BaseMap.begin (); itbm != _BaseMap.end (); itbm++)
+	for (ItBaseMap itbm = _BaseMap.begin(); itbm != _BaseMap.end(); itbm++)
 	{
 		for (uint32 i = 0; i < (*itbm).second.NetBase.size(); i++)
 		{
-			val += (*itbm).second.NetBase[i]->getSendQueueSize ();
+			val += (*itbm).second.NetBase[i]->getSendQueueSize();
 		}
 	}
 	return val;
 }
 
-uint64 CNetManager::getReceiveQueueSize ()
+uint64 CNetManager::getReceiveQueueSize()
 {
 	uint64 val = 0;
-	for (ItBaseMap itbm = _BaseMap.begin (); itbm != _BaseMap.end (); itbm++)
+	for (ItBaseMap itbm = _BaseMap.begin(); itbm != _BaseMap.end(); itbm++)
 	{
 		for (uint32 i = 0; i < (*itbm).second.NetBase.size(); i++)
 		{
-			val += (*itbm).second.NetBase[i]->getReceiveQueueSize ();
+			val += (*itbm).second.NetBase[i]->getReceiveQueueSize();
 		}
 	}
 	return val;

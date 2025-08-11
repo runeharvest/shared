@@ -102,9 +102,20 @@ public:
 		}
 	}
 
-	CColorThread() : PanoplyPreview(NULL), BitmapsOk(false), Hue(0), Lightness(0), Saturation(0), Luminosity(0), Contrast(0), Process(false), Running(true) { }
+	CColorThread()
+	    : PanoplyPreview(NULL)
+	    , BitmapsOk(false)
+	    , Hue(0)
+	    , Lightness(0)
+	    , Saturation(0)
+	    , Luminosity(0)
+	    , Contrast(0)
+	    , Process(false)
+	    , Running(true)
+	{
+	}
 	virtual ~CColorThread() { }
-	virtual void getName (std::string &result) const { result = "CColorThread"; }
+	virtual void getName(std::string &result) const { result = "CColorThread"; }
 
 private:
 	CColorModifier m_ColorModifier;
@@ -131,7 +142,8 @@ public:
 
 // *****************************************************************
 
-CPanoplyPreview::CPanoplyPreview(CMainWindow *parent) : QWidget(parent)
+CPanoplyPreview::CPanoplyPreview(CMainWindow *parent)
+    : QWidget(parent)
 {
 	connect(this, SIGNAL(tSigBitmap()), this, SLOT(tSlotBitmap()));
 
@@ -161,7 +173,7 @@ CPanoplyPreview::~CPanoplyPreview()
 	delete m_ColorThread;
 }
 
-void CPanoplyPreview::paintEvent(QPaintEvent* e)
+void CPanoplyPreview::paintEvent(QPaintEvent *e)
 {
 	QPainter painter(this);
 	painter.drawPixmap(0, 0, *m_Pixmap);
@@ -182,7 +194,7 @@ void CPanoplyPreview::displayBitmap(const CBitmap &bitmap) // Called from thread
 		m_Image = new QImage(bitmap.getWidth(), bitmap.getHeight(), QImage::Format_RGB32);
 		delete image;
 	}
-	
+
 	for (uint32 y = 0; y < bitmap.getHeight(); ++y)
 	{
 		uint8 *dst = (uint8 *)m_Image->scanLine(y);
@@ -196,7 +208,7 @@ void CPanoplyPreview::displayBitmap(const CBitmap &bitmap) // Called from thread
 			dst[xb + 3] = src[xb + 3];
 		}
 
-		//memcpy(m_Image->scanLine(y), &buffer[y * bitmap.getWidth() * sizeof(uint32)], sizeof(uint32) * bitmap.getWidth());
+		// memcpy(m_Image->scanLine(y), &buffer[y * bitmap.getWidth() * sizeof(uint32)], sizeof(uint32) * bitmap.getWidth());
 	}
 
 	m_ImageMutex.leave();
@@ -212,7 +224,7 @@ void CPanoplyPreview::tSlotBitmap()
 	m_ImageMutex.enter();
 
 	if (m_Image->width() != m_Pixmap->width()
-		|| m_Image->height() != m_Pixmap->height())
+	    || m_Image->height() != m_Pixmap->height())
 	{
 		QPixmap *pixmap = m_Pixmap;
 		m_Pixmap = new QPixmap(m_Image->width(), m_Image->height());
@@ -224,7 +236,6 @@ void CPanoplyPreview::tSlotBitmap()
 	repaint();
 
 	m_ImageMutex.leave();
-	
 }
 
 void CPanoplyPreview::colorEdited(const QString &text)
@@ -328,7 +339,11 @@ void CPanoplyPreview::contrastChanged(int value)
 
 // *****************************************************************
 
-CSliderTextEdit::CSliderTextEdit(QWidget *parent, QLineEdit *lineEdit, float scale) : QSlider(Qt::Horizontal, parent), m_LineEdit(lineEdit), m_Updating(false), m_Scale(scale)
+CSliderTextEdit::CSliderTextEdit(QWidget *parent, QLineEdit *lineEdit, float scale)
+    : QSlider(Qt::Horizontal, parent)
+    , m_LineEdit(lineEdit)
+    , m_Updating(false)
+    , m_Scale(scale)
 {
 	connect(this, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged(int)));
 	connect(lineEdit, SIGNAL(textEdited(const QString &)), this, SLOT(lineEditTextEdited(const QString &)));
@@ -336,7 +351,6 @@ CSliderTextEdit::CSliderTextEdit(QWidget *parent, QLineEdit *lineEdit, float sca
 
 CSliderTextEdit::~CSliderTextEdit()
 {
-	
 }
 
 void CSliderTextEdit::lineEditTextEdited(const QString &text)
@@ -428,7 +442,7 @@ void CPanoplyPreview::createDockWindows(CMainWindow *mainWindow)
 			label = new QLabel(groupBox);
 			label->setText(tr("Hue [0, 360]: "));
 			groupLayout->addWidget(label, 0, 0);
-			
+
 			edit = new QLineEdit(groupBox);
 			edit->setText("0");
 			groupLayout->addWidget(edit, 0, 1);
@@ -444,7 +458,7 @@ void CPanoplyPreview::createDockWindows(CMainWindow *mainWindow)
 			label = new QLabel(groupBox);
 			label->setText(tr("Lightness [-1, 1]: "));
 			groupLayout->addWidget(label, 2, 0);
-			
+
 			edit = new QLineEdit(groupBox);
 			edit->setText("0");
 			groupLayout->addWidget(edit, 2, 1);
@@ -460,7 +474,7 @@ void CPanoplyPreview::createDockWindows(CMainWindow *mainWindow)
 			label = new QLabel(groupBox);
 			label->setText(tr("Saturation [-1, 1]: "));
 			groupLayout->addWidget(label, 4, 0);
-			
+
 			edit = new QLineEdit(groupBox);
 			edit->setText("0");
 			groupLayout->addWidget(edit, 4, 1);
@@ -476,7 +490,7 @@ void CPanoplyPreview::createDockWindows(CMainWindow *mainWindow)
 			label = new QLabel(groupBox);
 			label->setText(tr("Luminosity [-100, 100]: "));
 			groupLayout->addWidget(label, 6, 0);
-			
+
 			edit = new QLineEdit(groupBox);
 			edit->setText("0");
 			groupLayout->addWidget(edit, 6, 1);
@@ -492,7 +506,7 @@ void CPanoplyPreview::createDockWindows(CMainWindow *mainWindow)
 			label = new QLabel(groupBox);
 			label->setText(tr("Contrast [-100, 100]: "));
 			groupLayout->addWidget(label, 8, 0);
-			
+
 			edit = new QLineEdit(groupBox);
 			edit->setText("0");
 			groupLayout->addWidget(edit, 8, 1);
@@ -504,7 +518,7 @@ void CPanoplyPreview::createDockWindows(CMainWindow *mainWindow)
 			groupLayout->addWidget(slider, 9, 0, 1, 2);
 
 			connect(slider, SIGNAL(valueChanged(int)), this, SLOT(contrastChanged(int)));
-			
+
 			groupBox->setLayout(groupLayout);
 			vboxLayout->addWidget(groupBox);
 		}

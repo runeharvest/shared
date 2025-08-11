@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef NL_SOUND_ANIM_VIEW
 #define NL_SOUND_ANIM_VIEW
 
@@ -22,17 +21,14 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-
 class CSoundAnimDlg;
 class CObjectViewer;
 class CAnimationDlg;
 
-namespace NLSOUND
-{
-	class CSoundAnimation;
-	class CSoundAnimMarker;
+namespace NLSOUND {
+class CSoundAnimation;
+class CSoundAnimMarker;
 }
-
 
 /**
  *  CSoundAnimationHolder is a placeholder for the animations in current
@@ -43,30 +39,30 @@ namespace NLSOUND
 class CSoundAnimationHolder
 {
 public:
-
 	// copy constructor
-	CSoundAnimationHolder(const CSoundAnimationHolder& a) 
+	CSoundAnimationHolder(const CSoundAnimationHolder &a)
 	{
 		_Anim = a._Anim;
 		_AnimStart = a._AnimStart;
 		_AnimEnd = a._AnimEnd;
 	}
 
-	CSoundAnimationHolder(NLSOUND::CSoundAnimation* anim = 0, float start = 0.0f, float end = 0.0f)
-		: _Anim(anim), _AnimStart(start), _AnimEnd(end) {}
+	CSoundAnimationHolder(NLSOUND::CSoundAnimation *anim = 0, float start = 0.0f, float end = 0.0f)
+	    : _Anim(anim)
+	    , _AnimStart(start)
+	    , _AnimEnd(end)
+	{
+	}
 
-	bool	inside(float time)		{ return (_AnimStart <= time) && (time <= _AnimEnd); }
-	float	offset(float time)		{ return time - _AnimStart; }
+	bool inside(float time) { return (_AnimStart <= time) && (time <= _AnimEnd); }
+	float offset(float time) { return time - _AnimStart; }
 
-	NLSOUND::CSoundAnimation*	_Anim;
-	float						_AnimStart;
-	float						_AnimEnd;
+	NLSOUND::CSoundAnimation *_Anim;
+	float _AnimStart;
+	float _AnimEnd;
 };
 
-
-typedef std::vector<CSoundAnimationHolder>  CAnimationVector;
-
-
+typedef std::vector<CSoundAnimationHolder> CAnimationVector;
 
 /**
  *  CSoundAnimView displays a time line of the current animation
@@ -78,84 +74,81 @@ typedef std::vector<CSoundAnimationHolder>  CAnimationVector;
 class CSoundAnimView : public CWnd
 {
 public:
+	CSoundAnimView()
+	    : CWnd()
+	{
+	}
+	virtual ~CSoundAnimView() { }
 
-	CSoundAnimView() : CWnd() {}
-	virtual ~CSoundAnimView() {}
+	virtual void Create(CObjectViewer *objView, CAnimationDlg *animDlg, CSoundAnimDlg *parent, const RECT &rect);
 
-	virtual void			Create(CObjectViewer* objView, CAnimationDlg* animDlg, CSoundAnimDlg* parent, const RECT& rect);  
+	void setAnimTime(float animStart, float animEnd);
+	void zoomIn();
+	void zoomOut();
+	void mark();
+	void save();
+	void deleteMarker();
+	void refresh(BOOL update);
+	void updateCursor();
+	void changeScroll(uint curpos);
 
-	void					setAnimTime(float animStart, float animEnd);
-	void					zoomIn();
-	void					zoomOut();
-	void					mark();
-	void					save();
-	void					deleteMarker();
-	void					refresh(BOOL update);
-	void					updateCursor();
-	void					changeScroll(uint curpos);
-
-	
 protected:
+	static bool registerClass();
+	static bool _Registered;
+	static CString _WndClass;
+	static uint _WndId;
+	static const float _Scale; // conversion time to pixels: pixel = time * _Zoom * _Scale
+	static const uint _ZoomCount;
+	static float _ZoomValue[];
+	static CBrush _FillBrush;
+	static CBrush _MarkerBrush;
+	static CBrush _SelectBrush;
+	static CFont _Font;
+	static CPen _RedPen;
 
-	static bool					registerClass();
-	static bool					_Registered;
-	static CString				_WndClass;
-	static uint					_WndId;
-	static const float			_Scale;       // conversion time to pixels: pixel = time * _Zoom * _Scale
-	static const uint			_ZoomCount;
-	static float				_ZoomValue[];
-	static CBrush				_FillBrush;
-	static CBrush				_MarkerBrush;
-	static CBrush				_SelectBrush;
-	static CFont				_Font;
-	static CPen					_RedPen;
+	sint32 timeToPixel(float time) { return (sint32)(time * _Zoom * _Scale); }
+	float pixelToTime(sint32 pixel) { return (float)pixel / _Zoom / _Scale; }
+	bool getAnimationAt(CSoundAnimationHolder &holder, float time);
+	NLSOUND::CSoundAnimMarker *getMarkerAt(CPoint point);
+	void insertMarkerAt(float time);
+	void changeTimeScale();
 
-	sint32						timeToPixel(float time)		{ return (sint32) (time * _Zoom * _Scale); }
-	float						pixelToTime(sint32 pixel)		{ return (float) pixel / _Zoom / _Scale; } 
-	bool						getAnimationAt(CSoundAnimationHolder& holder, float time);
-	NLSOUND::CSoundAnimMarker*	getMarkerAt(CPoint point);	
-	void						insertMarkerAt(float time);	
-	void						changeTimeScale();
+	CObjectViewer *_ObjView;
+	CAnimationDlg *_AnimationDlg;
+	CSoundAnimDlg *_SoundAnimDlg;
+	CAnimationVector _Animations;
+	float _Zoom;
+	uint _ZoomIndex;
+	sint _Cursor;
+	CSoundAnimationHolder _SelectedAnim;
+	NLSOUND::CSoundAnimMarker *_SelectedMarker;
 
+	bool _Dragging;
+	CPoint _DragStartPoint;
+	float _DragStartTime;
 
-	CObjectViewer				*_ObjView;
-	CAnimationDlg				*_AnimationDlg;
-	CSoundAnimDlg				*_SoundAnimDlg;
-	CAnimationVector			_Animations;
-	float						_Zoom;
-	uint						_ZoomIndex;
-	sint						_Cursor;
-	CSoundAnimationHolder		_SelectedAnim;
-	NLSOUND::CSoundAnimMarker	*_SelectedMarker;
+	float _TimeStart;
+	float _TimeEnd;
+	float _TimeOffset;
+	uint _PixelsTotal;
+	uint _PixelsOffset;
+	uint _PixelsViewH;
+	uint _PixelsViewV;
+	std::string _StringBuffer;
 
-	bool						_Dragging;
-	CPoint						_DragStartPoint;
-	float						_DragStartTime;
-	
-	float						_TimeStart;
-	float						_TimeEnd;
-	float						_TimeOffset;
-	uint						_PixelsTotal;
-	uint						_PixelsOffset;
-	uint						_PixelsViewH;
-	uint						_PixelsViewV;
-	std::string					_StringBuffer;
-	
-
-// MFC crap
+	// MFC crap
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CSoundAnimView)
-	protected:
+protected:
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 #ifdef _DEBUG
 	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	virtual void Dump(CDumpContext &dc) const;
 #endif
 
 	DECLARE_DYNCREATE(CSoundAnimView)
@@ -170,8 +163,6 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-
-
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

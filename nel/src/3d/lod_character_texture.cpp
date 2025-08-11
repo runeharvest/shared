@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "std3d.h"
 #include "nel/3d/lod_character_texture.h"
 
@@ -24,23 +23,20 @@
 
 namespace NL3D {
 
-
 // ***************************************************************************
 CLodCharacterTexture::CLodCharacterTexture()
 {
-	_Width= NL3D_CLOD_TEXT_WIDTH;
-	_Height= NL3D_CLOD_TEXT_HEIGHT;
+	_Width = NL3D_CLOD_TEXT_WIDTH;
+	_Height = NL3D_CLOD_TEXT_HEIGHT;
 }
 
-
 // ***************************************************************************
-void		CLodCharacterTexture::serial(NLMISC::IStream &f)
+void CLodCharacterTexture::serial(NLMISC::IStream &f)
 {
 	f.serialVersion(0);
 
 	f.serial(_Width, _Height);
 	f.serialCont(Texture);
 }
-
 
 } // NL3D

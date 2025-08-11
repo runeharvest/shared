@@ -20,9 +20,7 @@
 #include "nel/misc/types_nl.h"
 #include "nel/3d/index_buffer.h"
 
-
 namespace NL3D {
-
 
 // ***************************************************************************
 /**
@@ -34,7 +32,6 @@ namespace NL3D {
 class CStripifier
 {
 public:
-
 	/// Constructor
 	CStripifier();
 
@@ -43,13 +40,10 @@ public:
 	 *	any list of lines / quads in out are not modified.
 	 *	NB: &in == &out is possible.
 	 */
-	void		optimizeTriangles(const CIndexBuffer &in, CIndexBuffer &out, uint cacheSize= 10);
-
+	void optimizeTriangles(const CIndexBuffer &in, CIndexBuffer &out, uint cacheSize = 10);
 };
 
-
 } // NL3D
-
 
 #endif // NL_STRIPIFIER_H
 

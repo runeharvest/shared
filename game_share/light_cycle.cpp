@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "light_cycle.h"
 #include "nel/misc/smart_ptr.h"
@@ -23,18 +21,15 @@
 #include "nel/georges/u_form_loader.h"
 #include "nel/georges/u_form.h"
 
-
-
-
 //============================================================
-CSeasonLightCycle::CSeasonLightCycle() : DayHour(7),
-                                         DayToDuskHour(19),
-										 DuskToNightHour(20),
-										 NightHour(21),
-										 NightToDayHour(5)
+CSeasonLightCycle::CSeasonLightCycle()
+    : DayHour(7)
+    , DayToDuskHour(19)
+    , DuskToNightHour(20)
+    , NightHour(21)
+    , NightToDayHour(5)
 {
 }
-
 
 //============================================================
 /// Tool fct : get a value from a light cycle form, and display a warning if not available
@@ -59,14 +54,14 @@ void CSeasonLightCycle::build(const NLGEORGES::UFormElm &item)
 void CLightCycle::build(const NLGEORGES::UFormElm &item)
 {
 	// Load each season
-	for(uint k = 0; k < EGSPD::CSeason::Invalid; ++k)
+	for (uint k = 0; k < EGSPD::CSeason::Invalid; ++k)
 	{
 		const NLGEORGES::UFormElm *seasonsItem;
-		if (item.getNodeByName(&seasonsItem, EGSPD::CSeason::toString( (EGSPD::CSeason::TSeason) k)) && seasonsItem)
+		if (item.getNodeByName(&seasonsItem, EGSPD::CSeason::toString((EGSPD::CSeason::TSeason)k)) && seasonsItem)
 		{
 			SeasonLightCycle[k].build(*seasonsItem);
 		}
-		else nlwarning("CLightCycle::build : can't get infos about %s", EGSPD::CSeason::toString((EGSPD::CSeason::TSeason) k).c_str());
+		else nlwarning("CLightCycle::build : can't get infos about %s", EGSPD::CSeason::toString((EGSPD::CSeason::TSeason)k).c_str());
 	}
 	getLightCycleValue(item, RealDayLength, "RealDayLenght");
 	getLightCycleValue(item, MaxNumColorSteps, "MaxNumColorSteps");
@@ -89,13 +84,9 @@ void CLightCycle::build(const char *sheetName)
 }
 
 //============================================================
-CLightCycle::CLightCycle() : RealDayLength(3000),
-							 NumHours(24),
-							 MaxNumColorSteps(128)
+CLightCycle::CLightCycle()
+    : RealDayLength(3000)
+    , NumHours(24)
+    , MaxNumColorSteps(128)
 {
 }
-
-
-
-
-

@@ -29,23 +29,20 @@
 #include "nel/misc/file.h"
 #include "nel/misc/hierarchical_timer.h"
 
-
 using namespace NLMISC;
 using namespace std;
 
-H_AUTO_DECL ( NL3D_Load_Zone_IG )
-H_AUTO_DECL ( NL3D_Unload_Zone_IG )
+H_AUTO_DECL(NL3D_Load_Zone_IG)
+H_AUTO_DECL(NL3D_Unload_Zone_IG)
 
-#define	NL3D_HAUTO_LAND_MNGR_LOAD_ZONEIG	H_AUTO_USE( NL3D_Load_Zone_IG )
-#define	NL3D_HAUTO_LAND_MNGR_UNLOAD_ZONEIG	H_AUTO_USE( NL3D_Unload_Zone_IG )
+#define NL3D_HAUTO_LAND_MNGR_LOAD_ZONEIG H_AUTO_USE(NL3D_Load_Zone_IG)
+#define NL3D_HAUTO_LAND_MNGR_UNLOAD_ZONEIG H_AUTO_USE(NL3D_Unload_Zone_IG)
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 CLandscapeIGManager::CInstanceGroupElement::CInstanceGroupElement(UInstanceGroup *ig, const char *fileName)
@@ -57,34 +54,33 @@ CLandscapeIGManager::CInstanceGroupElement::CInstanceGroupElement(UInstanceGroup
 }
 
 // ***************************************************************************
-void	CLandscapeIGManager::CInstanceGroupElement::release()
+void CLandscapeIGManager::CInstanceGroupElement::release()
 {
 	delete Ig;
-	Ig= NULL;
+	Ig = NULL;
 }
-
 
 // ***************************************************************************
 CLandscapeIGManager::CLandscapeIGManager()
 {
-	_Scene=NULL;
+	_Scene = NULL;
 }
 // ***************************************************************************
 CLandscapeIGManager::~CLandscapeIGManager()
 {
 	// reset should have been called.
-	if(_Scene != NULL)
-		nlwarning ("CLandscapeIGManager not reseted");
+	if (_Scene != NULL)
+		nlwarning("CLandscapeIGManager not reseted");
 }
 // ***************************************************************************
-void	CLandscapeIGManager::initIG(UScene *scene, const std::string &igDesc, UDriver *driver, uint selectedTexture,
-									NLMISC::IProgressCallback * /* callBack */)
+void CLandscapeIGManager::initIG(UScene *scene, const std::string &igDesc, UDriver *driver, uint selectedTexture,
+    NLMISC::IProgressCallback * /* callBack */)
 {
 	nlassert(scene);
-	_Scene= scene;
+	_Scene = scene;
 
 	// Load the file.
-	if(igDesc.empty())
+	if (igDesc.empty())
 		return;
 
 	string igFile = CPath::lookup(igDesc);
@@ -92,45 +88,45 @@ void	CLandscapeIGManager::initIG(UScene *scene, const std::string &igDesc, UDriv
 	CIFile file;
 
 	// Shape to add should be empty !
-	nlassert(_ShapeAdded.empty ());
+	nlassert(_ShapeAdded.empty());
 
 	// if loading ok.
-	//if(file.is_open())
-	if (file.open (igFile))
+	// if(file.is_open())
+	if (file.open(igFile))
 	{
 		char tmpBuff[260];
 		char delimiterBox[] = "\t";
 		// While the end of the file is not reached.
-		while(!file.eof())
+		while (!file.eof())
 		{
 			// Get a line
 			file.getline(tmpBuff, 260);
 			char *token = strtok(tmpBuff, delimiterBox);
 			// create the instance group.
-			if(token != NULL)
+			if (token != NULL)
 			{
-				if( _ZoneInstanceGroupMap.find(token)!=_ZoneInstanceGroupMap.end() )
+				if (_ZoneInstanceGroupMap.find(token) != _ZoneInstanceGroupMap.end())
 					throw Exception("CLandscapeIGManager::initIG() found 2 igs with same name in %s", igFile.c_str());
 				else
 				{
 					// create the instanceGroup.
-					UInstanceGroup	*ig = UInstanceGroup::createInstanceGroup(token);
+					UInstanceGroup *ig = UInstanceGroup::createInstanceGroup(token);
 					if (ig)
 					{
 						// add it to the map.
-						string	tokId= toUpperAscii(string(token));
-						_ZoneInstanceGroupMap[tokId]= CInstanceGroupElement(ig, token);
+						string tokId = toUpperAscii(string(token));
+						_ZoneInstanceGroupMap[tokId] = CInstanceGroupElement(ig, token);
 
 						// Add a reference on the shapes
-						CInstanceGroup &_ig = static_cast<CInstanceGroupUser*>(ig)->getInternalIG();
-						CScene &_scene = static_cast<CSceneUser*>(scene)->getScene();
+						CInstanceGroup &_ig = static_cast<CInstanceGroupUser *>(ig)->getInternalIG();
+						CScene &_scene = static_cast<CSceneUser *>(scene)->getScene();
 						uint i;
-						for (i=0; i<_ig.getNumInstance(); i++)
+						for (i = 0; i < _ig.getNumInstance(); i++)
 						{
 							// Get the instance name
 							string shapeName;
 							_ig.getShapeName(i, shapeName);
-							if (!shapeName.empty ())
+							if (!shapeName.empty())
 							{
 								if (toLowerAscii(CFile::getExtension(shapeName)) != "pacs_prim")
 								{
@@ -140,9 +136,9 @@ void	CLandscapeIGManager::initIG(UScene *scene, const std::string &igDesc, UDriv
 										// Shape present ?
 										CShapeBank *shapeBank = _scene.getShapeBank();
 										IShape *shape = NULL;
-										if (shapeBank->getPresentState (shapeName) == CShapeBank::NotPresent)
-											shapeBank->load (shapeName);
-										if (shapeBank->getPresentState (shapeName) == CShapeBank::Present)
+										if (shapeBank->getPresentState(shapeName) == CShapeBank::NotPresent)
+											shapeBank->load(shapeName);
+										if (shapeBank->getPresentState(shapeName) == CShapeBank::Present)
 											shape = shapeBank->addRef(shapeName);
 
 										// Shape loaded ?
@@ -151,10 +147,10 @@ void	CLandscapeIGManager::initIG(UScene *scene, const std::string &igDesc, UDriv
 											// Insert the shape
 											CSmartPtr<IShape> *smartPtr = new CSmartPtr<IShape>;
 											*smartPtr = shape;
-											_ShapeAdded.insert (TShapeMap::value_type (shapeName, smartPtr));
+											_ShapeAdded.insert(TShapeMap::value_type(shapeName, smartPtr));
 
 											// Flush the shape
-											IDriver	*_driver = static_cast<CDriverUser*>(driver)->getDriver();
+											IDriver *_driver = static_cast<CDriverUser *>(driver)->getDriver();
 											shape->flushTextures(*_driver, selectedTexture);
 										}
 									}
@@ -164,7 +160,7 @@ void	CLandscapeIGManager::initIG(UScene *scene, const std::string &igDesc, UDriv
 					}
 					else
 					{
-						nlwarning ("CLandscapeIGManager::initIG() Can't load instance group '%s' in '%s'", token, igFile.c_str());
+						nlwarning("CLandscapeIGManager::initIG() Can't load instance group '%s' in '%s'", token, igFile.c_str());
 					}
 				}
 			}
@@ -173,7 +169,7 @@ void	CLandscapeIGManager::initIG(UScene *scene, const std::string &igDesc, UDriv
 	}
 	else
 	{
-		nlwarning ("Couldn't load '%s'", igFile.c_str());
+		nlwarning("Couldn't load '%s'", igFile.c_str());
 	}
 }
 // ***************************************************************************
@@ -181,24 +177,24 @@ UInstanceGroup *CLandscapeIGManager::loadZoneIG(const std::string &name)
 {
 	NL3D_HAUTO_LAND_MNGR_LOAD_ZONEIG
 
-	if(name.empty())
+	if (name.empty())
 		return NULL;
 
 	// try to find this InstanceGroup.
-	ItZoneInstanceGroupMap	it;
-	it= _ZoneInstanceGroupMap.find( translateName(name) );
+	ItZoneInstanceGroupMap it;
+	it = _ZoneInstanceGroupMap.find(translateName(name));
 
 	// if found.
-	if( it!= _ZoneInstanceGroupMap.end() )
+	if (it != _ZoneInstanceGroupMap.end())
 	{
 		// if not already added to the scene.
-		if( !it->second.AddedToScene )
+		if (!it->second.AddedToScene)
 		{
 			// add to the scene.
 			if (it->second.Ig != NULL)
 			{
 				it->second.Ig->addToScene(*_Scene);
-				it->second.AddedToScene= true;
+				it->second.AddedToScene = true;
 			}
 		}
 		return it->second.Ig;
@@ -209,14 +205,14 @@ UInstanceGroup *CLandscapeIGManager::loadZoneIG(const std::string &name)
 	}
 }
 // ***************************************************************************
-void	CLandscapeIGManager::loadArrayZoneIG(const std::vector<std::string> &names, std::vector<UInstanceGroup *> *dest /*= NULL*/)
+void CLandscapeIGManager::loadArrayZoneIG(const std::vector<std::string> &names, std::vector<UInstanceGroup *> *dest /*= NULL*/)
 {
 	if (dest)
 	{
 		dest->clear();
 		dest->reserve(names.size());
 	}
-	for(uint i=0; i<names.size(); i++)
+	for (uint i = 0; i < names.size(); i++)
 	{
 		UInstanceGroup *ig = loadZoneIG(names[i]);
 		if (dest && ig)
@@ -227,90 +223,88 @@ void	CLandscapeIGManager::loadArrayZoneIG(const std::vector<std::string> &names,
 }
 
 // ***************************************************************************
-void	CLandscapeIGManager::unloadArrayZoneIG(const std::vector<std::string> &names)
+void CLandscapeIGManager::unloadArrayZoneIG(const std::vector<std::string> &names)
 {
-	for(uint i=0; i<names.size(); i++)
+	for (uint i = 0; i < names.size(); i++)
 	{
 		unloadZoneIG(names[i]);
 	}
 }
 
 // ***************************************************************************
-void	CLandscapeIGManager::unloadZoneIG(const std::string &name)
+void CLandscapeIGManager::unloadZoneIG(const std::string &name)
 {
 	NL3D_HAUTO_LAND_MNGR_UNLOAD_ZONEIG
-	if(name.empty())
+	if (name.empty())
 		return;
 
 	// try to find this InstanceGroup.
-	ItZoneInstanceGroupMap	it;
-	it= _ZoneInstanceGroupMap.find( translateName(name) );
+	ItZoneInstanceGroupMap it;
+	it = _ZoneInstanceGroupMap.find(translateName(name));
 
 	// if found.
-	if( it!= _ZoneInstanceGroupMap.end() )
+	if (it != _ZoneInstanceGroupMap.end())
 	{
 		// if really added to the scene.
-		if( it->second.AddedToScene )
+		if (it->second.AddedToScene)
 		{
 			// remove from the scene.
 			it->second.Ig->removeFromScene(*_Scene);
-			it->second.AddedToScene= false;
+			it->second.AddedToScene = false;
 		}
 	}
 }
 
 // ***************************************************************************
-bool	CLandscapeIGManager::isIGAddedToScene(const std::string &name) const
+bool CLandscapeIGManager::isIGAddedToScene(const std::string &name) const
 {
-	if(name.empty())
+	if (name.empty())
 		return false;
 
 	// try to find this InstanceGroup.
-	ConstItZoneInstanceGroupMap	it;
-	it= _ZoneInstanceGroupMap.find( translateName(name) );
+	ConstItZoneInstanceGroupMap it;
+	it = _ZoneInstanceGroupMap.find(translateName(name));
 
 	// if found.
-	if( it!= _ZoneInstanceGroupMap.end() )
-		return	it->second.AddedToScene;
+	if (it != _ZoneInstanceGroupMap.end())
+		return it->second.AddedToScene;
 	else
 		return false;
 }
 
 // ***************************************************************************
-UInstanceGroup	*CLandscapeIGManager::getIG(const std::string &name) const
+UInstanceGroup *CLandscapeIGManager::getIG(const std::string &name) const
 {
-	if(name.empty())
+	if (name.empty())
 		return NULL;
 
 	// try to find this InstanceGroup.
-	ConstItZoneInstanceGroupMap	it;
-	it= _ZoneInstanceGroupMap.find( translateName(name) );
+	ConstItZoneInstanceGroupMap it;
+	it = _ZoneInstanceGroupMap.find(translateName(name));
 
 	// if found.
-	if( it!= _ZoneInstanceGroupMap.end() )
+	if (it != _ZoneInstanceGroupMap.end())
 		return it->second.Ig;
 	else
 		return NULL;
 }
 
-
 // ***************************************************************************
-std::string		CLandscapeIGManager::translateName(const std::string &name) const
+std::string CLandscapeIGManager::translateName(const std::string &name) const
 {
-	std::string		ret;
-	ret= toUpperAscii(name + ".ig");
+	std::string ret;
+	ret = toUpperAscii(name + ".ig");
 	return ret;
 }
 
-
 // ***************************************************************************
-void	CLandscapeIGManager::reset()
+void CLandscapeIGManager::reset()
 {
-	while( _ZoneInstanceGroupMap.begin() != _ZoneInstanceGroupMap.end() )
+	while (_ZoneInstanceGroupMap.begin() != _ZoneInstanceGroupMap.end())
 	{
-		string	name= _ZoneInstanceGroupMap.begin()->first;
+		string name = _ZoneInstanceGroupMap.begin()->first;
 		// first remove from scene
-		unloadZoneIG( name.substr(0, name.find('.')) );
+		unloadZoneIG(name.substr(0, name.find('.')));
 
 		// then delete this entry.
 		_ZoneInstanceGroupMap.begin()->second.release();
@@ -318,11 +312,11 @@ void	CLandscapeIGManager::reset()
 	}
 
 	// For all shape reference
-	TShapeMap::iterator ite = _ShapeAdded.begin ();
+	TShapeMap::iterator ite = _ShapeAdded.begin();
 	while (ite != _ShapeAdded.end())
 	{
 		// Unreference shape
-		CScene &_scene = static_cast<CSceneUser*>(_Scene)->getScene();
+		CScene &_scene = static_cast<CSceneUser *>(_Scene)->getScene();
 		CSmartPtr<IShape> *smartPtr = (CSmartPtr<IShape> *)(ite->second);
 		IShape *shapeToRelease = *smartPtr;
 		*smartPtr = NULL;
@@ -332,29 +326,28 @@ void	CLandscapeIGManager::reset()
 		// Next
 		ite++;
 	}
-	_ShapeAdded.clear ();
+	_ShapeAdded.clear();
 
-	_Scene=NULL;
+	_Scene = NULL;
 }
 
-
 // ***************************************************************************
-void	CLandscapeIGManager::reloadAllIgs()
+void CLandscapeIGManager::reloadAllIgs()
 {
-	vector<std::string>		bkupIgFileNameList;
-	vector<bool>			bkupIgAddedToScene;
+	vector<std::string> bkupIgFileNameList;
+	vector<bool> bkupIgAddedToScene;
 
 	// First, erase all igs.
-	while( _ZoneInstanceGroupMap.begin() != _ZoneInstanceGroupMap.end() )
+	while (_ZoneInstanceGroupMap.begin() != _ZoneInstanceGroupMap.end())
 	{
-		string	name= _ZoneInstanceGroupMap.begin()->first;
+		string name = _ZoneInstanceGroupMap.begin()->first;
 
 		// bkup the state of this ig.
 		bkupIgFileNameList.push_back(_ZoneInstanceGroupMap.begin()->second.FileName);
 		bkupIgAddedToScene.push_back(_ZoneInstanceGroupMap.begin()->second.AddedToScene);
 
 		// first remove from scene
-		unloadZoneIG( name.substr(0, name.find('.')) );
+		unloadZoneIG(name.substr(0, name.find('.')));
 
 		// then delete this entry.
 		_ZoneInstanceGroupMap.begin()->second.release();
@@ -362,22 +355,21 @@ void	CLandscapeIGManager::reloadAllIgs()
 	}
 
 	// Then reload all Igs.
-	for(uint i=0; i<bkupIgFileNameList.size(); i++)
+	for (uint i = 0; i < bkupIgFileNameList.size(); i++)
 	{
-		const	char	*token= bkupIgFileNameList[i].c_str();
-		UInstanceGroup	*ig = UInstanceGroup::createInstanceGroup(token);
+		const char *token = bkupIgFileNameList[i].c_str();
+		UInstanceGroup *ig = UInstanceGroup::createInstanceGroup(token);
 		// add it to the map.
-		string	tokId= toUpperAscii(token);
-		_ZoneInstanceGroupMap[tokId]= CInstanceGroupElement(ig, token);
+		string tokId = toUpperAscii(token);
+		_ZoneInstanceGroupMap[tokId] = CInstanceGroupElement(ig, token);
 
 		// If was addedToScene before, re-add to scene now.
-		if(bkupIgAddedToScene[i])
+		if (bkupIgAddedToScene[i])
 		{
-			loadZoneIG( tokId.substr(0, tokId.find('.')) );
+			loadZoneIG(tokId.substr(0, tokId.find('.')));
 		}
 	}
 }
-
 
 // ***************************************************************************
 void CLandscapeIGManager::getAllIG(std::vector<UInstanceGroup *> &dest) const
@@ -385,23 +377,22 @@ void CLandscapeIGManager::getAllIG(std::vector<UInstanceGroup *> &dest) const
 	dest.clear();
 	dest.reserve(_ZoneInstanceGroupMap.size());
 	// add the instances
-	for(TZoneInstanceGroupMap::const_iterator it = _ZoneInstanceGroupMap.begin(); it != _ZoneInstanceGroupMap.end(); ++it)
+	for (TZoneInstanceGroupMap::const_iterator it = _ZoneInstanceGroupMap.begin(); it != _ZoneInstanceGroupMap.end(); ++it)
 	{
 		dest.push_back(it->second.Ig);
 	}
 }
 
 // ***************************************************************************
-void CLandscapeIGManager::getAllIGWithNames(std::vector<std::pair<UInstanceGroup *, std::string> > &dest) const
+void CLandscapeIGManager::getAllIGWithNames(std::vector<std::pair<UInstanceGroup *, std::string>> &dest) const
 {
 	dest.clear();
 	dest.reserve(_ZoneInstanceGroupMap.size());
 	// add the instances
-	for(TZoneInstanceGroupMap::const_iterator it = _ZoneInstanceGroupMap.begin(); it != _ZoneInstanceGroupMap.end(); ++it)
+	for (TZoneInstanceGroupMap::const_iterator it = _ZoneInstanceGroupMap.begin(); it != _ZoneInstanceGroupMap.end(); ++it)
 	{
 		dest.push_back(std::make_pair(it->second.Ig, it->second.FileName));
 	}
 }
-
 
 } // NL3D

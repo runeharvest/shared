@@ -17,7 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdpch.h"
 #include "nel/gui/group_editbox_base.h"
 
@@ -25,20 +24,18 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NLGUI
+namespace NLGUI {
+
+CGroupEditBoxBase *CGroupEditBoxBase::_CurrSelection = NULL;
+
+CGroupEditBoxBase::CGroupEditBoxBase(const TCtorParam &param)
+    : CInterfaceGroup(param)
 {
-
-	CGroupEditBoxBase *CGroupEditBoxBase::_CurrSelection = NULL;
-
-	CGroupEditBoxBase::CGroupEditBoxBase( const TCtorParam &param ) :
-	CInterfaceGroup( param )
-	{
-		_RecoverFocusOnEnter = true;
-	}
-
-	CGroupEditBoxBase::~CGroupEditBoxBase()
-	{
-	}
-
+	_RecoverFocusOnEnter = true;
 }
 
+CGroupEditBoxBase::~CGroupEditBoxBase()
+{
+}
+
+}

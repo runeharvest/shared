@@ -17,8 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RYAI_SPAWN_COMMANDS_H
 #define RYAI_SPAWN_COMMANDS_H
 
@@ -27,10 +25,9 @@
 
 #include <string>
 
-
-//class CAISpawnCtrl
+// class CAISpawnCtrl
 //{
-//public:
+// public:
 //	static bool spawn		(const std::string &name, int	aiInstance=-1)		{ nlassert(_instance!=NULL); return _instance->_spawn(aiInstance, name); }
 //	static bool spawnMap	(const std::string &name, int	aiInstance=-1)	{ nlassert(_instance!=NULL); return _instance->_spawnMap(aiInstance, name); }
 //	static bool spawnMgr	(const std::string &name, int	aiInstance=-1)	{ nlassert(_instance!=NULL); return _instance->_spawnMgr(aiInstance, name); }
@@ -43,7 +40,7 @@
 //	static bool despawnGrp	(const std::string &name, int	aiInstance=-1)	{ nlassert(_instance!=NULL); return _instance->_despawnGrp(aiInstance, name); }
 //	static bool despawnAll	(int	aiInstance=-1)		{ nlassert(_instance!=NULL); return _instance->_despawnAll(aiInstance); }
 //
-//protected:
+// protected:
 //	virtual bool _spawn		(int	aiInstance, const std::string &name)=0;
 //	virtual bool _spawnMap	(int	aiInstance, const std::string &name)=0;
 //	virtual bool _spawnMgr	(int	aiInstance, const std::string &name)=0;
@@ -57,6 +54,6 @@
 //	virtual bool _despawnAll	(int	aiInstance)=0;
 //
 //	static CAISpawnCtrl *_instance;
-//};
+// };
 
 #endif

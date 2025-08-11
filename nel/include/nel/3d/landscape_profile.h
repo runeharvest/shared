@@ -21,48 +21,45 @@
 #include "nel/3d/tessellation.h"
 
 #ifdef NL_NO_DEBUG
-#	undef NL3D_PROFILE_LAND
+#undef NL3D_PROFILE_LAND
 #else
-#	define NL3D_PROFILE_LAND
+#define NL3D_PROFILE_LAND
 #endif
 
-#ifdef	NL3D_PROFILE_LAND
-#	define	NL3D_PROFILE_LAND_SET(_x_, _y_)	_x_=_y_
-#	define	NL3D_PROFILE_LAND_ADD(_x_, _y_)	_x_+=_y_
+#ifdef NL3D_PROFILE_LAND
+#define NL3D_PROFILE_LAND_SET(_x_, _y_) _x_ = _y_
+#define NL3D_PROFILE_LAND_ADD(_x_, _y_) _x_ += _y_
 #else
-#	define	NL3D_PROFILE_LAND_SET(_x_, _y_)
-#	define	NL3D_PROFILE_LAND_ADD(_x_, _y_)
+#define NL3D_PROFILE_LAND_SET(_x_, _y_)
+#define NL3D_PROFILE_LAND_ADD(_x_, _y_)
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 // Yoyo: for profile only.
-extern	sint		ProfNTessFace;
-extern	sint		ProfNRdrFar0;
-extern	sint		ProfNRdrFar1;
-extern	sint		ProfNRdrTile[NL3D_MAX_TILE_PASS];
-extern	sint		ProfNRefineFaces;
-extern	sint		ProfNRefineComputeFaces;
-extern	sint		ProfNRefineLeaves;
-extern	sint		ProfNSplits;
-extern	sint		ProfNMerges;
+extern sint ProfNTessFace;
+extern sint ProfNRdrFar0;
+extern sint ProfNRdrFar1;
+extern sint ProfNRdrTile[NL3D_MAX_TILE_PASS];
+extern sint ProfNRefineFaces;
+extern sint ProfNRefineComputeFaces;
+extern sint ProfNRefineLeaves;
+extern sint ProfNSplits;
+extern sint ProfNMerges;
 // New PriorityList vars.
-extern	sint		ProfNRefineInTileTransition;
-extern	sint		ProfNRefineWithLowDistance;
-extern	sint		ProfNSplitsPass;
+extern sint ProfNRefineInTileTransition;
+extern sint ProfNRefineWithLowDistance;
+extern sint ProfNSplitsPass;
 // Material setup Profile
-extern	sint		ProfNTileSetupMaterial;
-extern	sint		ProfNFar0SetupMaterial;
-extern	sint		ProfNFar1SetupMaterial;
+extern sint ProfNTileSetupMaterial;
+extern sint ProfNFar0SetupMaterial;
+extern sint ProfNFar1SetupMaterial;
 // Patch render
-extern	sint		ProfNPatchRdrFar0;
-extern	sint		ProfNPatchRdrFar1;
-
+extern sint ProfNPatchRdrFar0;
+extern sint ProfNPatchRdrFar1;
 
 } // NL3D
-
 
 #endif // NL_LANDSCAPE_PROFILE_H
 

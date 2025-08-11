@@ -25,34 +25,29 @@ using namespace std;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
-uint CMRMMeshFinal::CWedge::NumAttributesToCompare= 0;
-bool CMRMMeshFinal::CWedge::CompareSkinning= false;
-
+uint CMRMMeshFinal::CWedge::NumAttributesToCompare = 0;
+bool CMRMMeshFinal::CWedge::CompareSkinning = false;
 
 // ***************************************************************************
 CMRMMesh::CMRMMesh()
 {
-	NumAttributes= 0;
+	NumAttributes = 0;
 }
 
-
-
 // ***************************************************************************
-sint	CMRMMeshFinal::findInsertWedge(const CWedge &w)
+sint CMRMMeshFinal::findInsertWedge(const CWedge &w)
 {
-	sint	ret;
-	TWedgeMap::iterator		it;
-	it= _WedgeMap.find(w);
+	sint ret;
+	TWedgeMap::iterator it;
+	it = _WedgeMap.find(w);
 
 	// if not found, must add it.
-	if(it==_WedgeMap.end())
+	if (it == _WedgeMap.end())
 	{
-		ret= (sint)Wedges.size();
+		ret = (sint)Wedges.size();
 		// insert into the map, with good id.
 		_WedgeMap.insert(make_pair(w, ret));
 		// add it to the array.
@@ -60,7 +55,7 @@ sint	CMRMMeshFinal::findInsertWedge(const CWedge &w)
 	}
 	else
 	{
-		ret= it->second;
+		ret = it->second;
 	}
 
 	return ret;

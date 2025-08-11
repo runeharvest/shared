@@ -20,9 +20,7 @@
 #include "types_nl.h"
 #include "sstring.h"
 
-
 namespace NLMISC {
-
 
 /**
  * Words dictionary: allows to search for keys and words in <type>_words_<language>.txt
@@ -35,8 +33,8 @@ namespace NLMISC {
 class CWordsDictionary
 {
 	NL_INSTANCE_COUNTER_DECL(CWordsDictionary);
-public:
 
+public:
 	/// Constructor
 	CWordsDictionary();
 
@@ -48,7 +46,7 @@ public:
 	 * - Filter: "*" for all files (default) or a name (ex: "item").
 	 * - AdditionalFiles/AdditionalFileColumnTitles
 	 */
-	bool			init( const std::string& configFileName="words_dic.cfg" );
+	bool init(const std::string &configFileName = "words_dic.cfg");
 
 	/**
 	 * Set the result vector with strings corresponding to the input string:
@@ -59,41 +57,37 @@ public:
 	 * - mystring$ returns mystring only if it is at the end of a key or word
 	 * All returned words are in UTF8 string or ANSI string, depending of the config file.
 	 */
-	void			lookup( const CSString& inputStr, CVectorSString& resultVec )const;
+	void lookup(const CSString &inputStr, CVectorSString &resultVec) const;
 
 	/// Set the result vector with the word(s) corresponding to the key
-	void			exactLookupByKey( const CSString& key, CVectorSString& resultVec );
+	void exactLookupByKey(const CSString &key, CVectorSString &resultVec);
 
 	/// Return the key contained in the provided string returned by lookup() (without extension)
-	CSString		getWordsKey( const CSString& resultStr );
+	CSString getWordsKey(const CSString &resultStr);
 
 	// Accessors
-	const CVectorSString& getKeys() { return _Keys; }
-	const CVectorSString& getWords() { return _Words; }
+	const CVectorSString &getKeys() { return _Keys; }
+	const CVectorSString &getWords() { return _Words; }
 
 	/// Return the list of input file loaded at init
-	const std::vector<std::string>& getFileList() const { return _FileList; }
+	const std::vector<std::string> &getFileList() const { return _FileList; }
 
 protected:
-
 	/// Make a result string
-	static CSString		makeResult( const CSString &key, const CSString &word );
+	static CSString makeResult(const CSString &key, const CSString &word);
 
 private:
-
 	/// Keys (same indices as in _Words)
-	CVectorSString				_Keys;
+	CVectorSString _Keys;
 
 	/// Words (same indices as in _Keys)
-	CVectorSString				_Words;
+	CVectorSString _Words;
 
 	/// Input file list
-	std::vector<std::string>	_FileList;
+	std::vector<std::string> _FileList;
 };
 
-
 } // NLMISC
-
 
 #endif // NL_WORDS_DICTIONARY_H
 

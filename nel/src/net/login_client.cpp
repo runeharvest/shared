@@ -33,10 +33,8 @@ using namespace NLMISC;
 
 namespace NLNET {
 
-
 CLoginClient::TShardList CLoginClient::ShardList;
 CCallbackClient *CLoginClient::_LSCallbackClient;
-
 
 //
 // CALLBACK FROM THE FS (Front-end Service)
@@ -45,18 +43,17 @@ CCallbackClient *CLoginClient::_LSCallbackClient;
 // Callback for answer of the request shard
 static bool ShardValidate;
 static string ShardValidateReason;
-static void cbShardValidate (CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
+static void cbShardValidate(CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
 {
 	//
 	// S14: receive "SV" message from FES
 	//
 
-	msgin.serial (ShardValidateReason);
+	msgin.serial(ShardValidateReason);
 	ShardValidate = true;
 }
 
-static TCallbackItem FESCallbackArray[] =
-{
+static TCallbackItem FESCallbackArray[] = {
 	{ "SV", cbShardValidate },
 };
 
@@ -67,28 +64,28 @@ static TCallbackItem FESCallbackArray[] =
 // Callback for answer of the login password.
 static bool VerifyLoginPassword;
 static string VerifyLoginPasswordReason;
-static void cbVerifyLoginPassword (CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
+static void cbVerifyLoginPassword(CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
 {
 	//
 	// S04: receive the "VLP" message from LS
 	//
 
-	msgin.serial (VerifyLoginPasswordReason);
-	if(VerifyLoginPasswordReason.empty())
+	msgin.serial(VerifyLoginPasswordReason);
+	if (VerifyLoginPasswordReason.empty())
 	{
 		uint32 nbshard;
-		msgin.serial (nbshard);
+		msgin.serial(nbshard);
 
-		CLoginClient::ShardList.clear ();
+		CLoginClient::ShardList.clear();
 		VerifyLoginPasswordReason.clear();
 
 		// get the shard list
 		for (uint i = 0; i < nbshard; i++)
 		{
 			CLoginClient::CShardEntry se;
-			msgin.serial (se.Name, se.NbPlayers, se.Id);
-			CLoginClient::ShardList.push_back (se);
-		}		
+			msgin.serial(se.Name, se.NbPlayers, se.Id);
+			CLoginClient::ShardList.push_back(se);
+		}
 	}
 	VerifyLoginPassword = true;
 }
@@ -98,24 +95,23 @@ static bool ShardChooseShard;
 static string ShardChooseShardReason;
 static string ShardChooseShardAddr;
 static string ShardChooseShardCookie;
-static void cbShardChooseShard (CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
+static void cbShardChooseShard(CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
 {
 	//
 	// S11: receive "SCS" message from LS
 	//
 
-	msgin.serial (ShardChooseShardReason);
+	msgin.serial(ShardChooseShardReason);
 
 	if (ShardChooseShardReason.empty())
 	{
-		msgin.serial (ShardChooseShardCookie);
-		msgin.serial (ShardChooseShardAddr);
+		msgin.serial(ShardChooseShardCookie);
+		msgin.serial(ShardChooseShardAddr);
 	}
 	ShardChooseShard = true;
 }
 
-static TCallbackItem LSCallbackArray[] =
-{
+static TCallbackItem LSCallbackArray[] = {
 	{ "VLP", cbVerifyLoginPassword },
 	{ "SCS", cbShardChooseShard },
 };
@@ -125,7 +121,7 @@ string CLoginClient::authenticate(const string &loginServiceAddr, const ucstring
 	string result = authenticateBegin(loginServiceAddr, login, cpassword, application);
 	if (!result.empty()) return result;
 	while (CLoginClient::authenticateUpdate(result)) nlSleep(10);
-	return result;	
+	return result;
 }
 
 string CLoginClient::authenticateBegin(const string &loginServiceAddr, const ucstring &login, const string &cpassword, const string &application)
@@ -136,18 +132,18 @@ string CLoginClient::authenticateBegin(const string &loginServiceAddr, const ucs
 	// S01: connect to the LS
 	try
 	{
-		if(_LSCallbackClient == 0)
+		if (_LSCallbackClient == 0)
 		{
 			_LSCallbackClient = new CCallbackClient();
 			_LSCallbackClient->addCallbackArray(LSCallbackArray, sizeof(LSCallbackArray) / sizeof(LSCallbackArray[0]));
 		}
 
 		string addr = loginServiceAddr;
-		if(addr.find(":") == string::npos)
+		if (addr.find(":") == string::npos)
 			addr += ":43997";
-		if(_LSCallbackClient->connected())
+		if (_LSCallbackClient->connected())
 			_LSCallbackClient->disconnect();
-		_LSCallbackClient->connect (CInetHost(addr));
+		_LSCallbackClient->connect(CInetHost(addr));
 	}
 	catch (const ESocket &e)
 	{
@@ -156,12 +152,12 @@ string CLoginClient::authenticateBegin(const string &loginServiceAddr, const ucs
 		nlwarning("Connection refused to LS (addr:%s): %s", loginServiceAddr.c_str(), e.what());
 		return toString("Connection refused to LS (addr:%s): %s", loginServiceAddr.c_str(), e.what());
 	}
-	
+
 	// S02: create and send the "VLP" message
 	CMessage msgout("VLP");
-	msgout.serial(const_cast<ucstring&>(login));
-	msgout.serial(const_cast<string&>(cpassword));
-	msgout.serial(const_cast<string&>(application));
+	msgout.serial(const_cast<ucstring &>(login));
+	msgout.serial(const_cast<string &>(cpassword));
+	msgout.serial(const_cast<string &>(application));
 	_LSCallbackClient->send(msgout);
 
 	return "";
@@ -192,7 +188,7 @@ bool CLoginClient::authenticateUpdate(string &error)
 		if (!error.empty())
 		{
 			nlwarning("CLoginClient::authenticateUpdate(): %s", error.c_str());
-			_LSCallbackClient->disconnect ();
+			_LSCallbackClient->disconnect();
 			delete _LSCallbackClient;
 			_LSCallbackClient = 0;
 		}
@@ -203,26 +199,26 @@ bool CLoginClient::authenticateUpdate(string &error)
 
 string CLoginClient::connectToShard(CLoginCookie &lc, const std::string &addr, CCallbackClient &cnx)
 {
-	nlassert (!cnx.connected());
+	nlassert(!cnx.connected());
 
 	try
 	{
 		//
 		// S12: connect to the FES and send "SV" message to the FES
 		//
-		cnx.connect (CInetHost(addr));
-		cnx.addCallbackArray (FESCallbackArray, sizeof(FESCallbackArray)/sizeof(FESCallbackArray[0]));
+		cnx.connect(CInetHost(addr));
+		cnx.addCallbackArray(FESCallbackArray, sizeof(FESCallbackArray) / sizeof(FESCallbackArray[0]));
 
 		// send the cookie
-		CMessage msgout2 ("SV");
-		msgout2.serial (lc);
-		cnx.send (msgout2);
+		CMessage msgout2("SV");
+		msgout2.serial(lc);
+		cnx.send(msgout2);
 
 		// wait the answer of the connection
 		ShardValidate = false;
 		while (cnx.connected() && !ShardValidate)
 		{
-			cnx.update ();
+			cnx.update();
 			nlSleep(10);
 		}
 
@@ -231,15 +227,15 @@ string CLoginClient::connectToShard(CLoginCookie &lc, const std::string &addr, C
 	}
 	catch (const ESocket &e)
 	{
-		return string("FES refused the connection (") + e.what () + ")";
+		return string("FES refused the connection (") + e.what() + ")";
 	}
 
 	return ShardValidateReason;
 }
 
-string CLoginClient::connectToShard (const std::string &addr, CUdpSock &cnx)
+string CLoginClient::connectToShard(const std::string &addr, CUdpSock &cnx)
 {
-	nlassert (!cnx.connected());
+	nlassert(!cnx.connected());
 
 	try
 	{
@@ -251,21 +247,20 @@ string CLoginClient::connectToShard (const std::string &addr, CUdpSock &cnx)
 		// If the user denies the connection, the exception ESocket is thrown.
 		// Other firewalls such as Kerio make the send() fail instead.
 		//
-		cnx.connect (CInetHost(addr));
+		cnx.connect(CInetHost(addr));
 	}
 	catch (const ESocket &e)
 	{
-		return string("FES refused the connection (") + e.what () + ")";
+		return string("FES refused the connection (") + e.what() + ")";
 	}
 
 	return ShardValidateReason;
 }
 
-string CLoginClient::connectToShard (const std::string &addr, CUdpSimSock &cnx)
+string CLoginClient::connectToShard(const std::string &addr, CUdpSimSock &cnx)
 {
-	nlassert (!cnx.connected());
+	nlassert(!cnx.connected());
 
-	
 	try
 	{
 		//
@@ -273,11 +268,11 @@ string CLoginClient::connectToShard (const std::string &addr, CUdpSimSock &cnx)
 		//
 		// See firewall comment in connectToShard(string,CUdpSock)
 		//
-		cnx.connect (CInetHost(addr));
+		cnx.connect(CInetHost(addr));
 	}
 	catch (const ESocket &e)
 	{
-		return string("FES refused the connection (") + e.what () + ")";
+		return string("FES refused the connection (") + e.what() + ")";
 	}
 
 	return ShardValidateReason;
@@ -290,13 +285,13 @@ string CLoginClient::confirmConnection(sint32 shardId)
 	//
 	// S05: create and send the "CS" message with the shardid choice to the LS
 	//
-	
+
 	if (ShardList.empty())
 	{
 		_LSCallbackClient->disconnect();
 		return "No shard available";
 	}
-	
+
 	CLoginClient::CShardEntry *s = getShard(shardId);
 	if (!s)
 	{
@@ -305,15 +300,15 @@ string CLoginClient::confirmConnection(sint32 shardId)
 	}
 
 	// send CS
-	CMessage msgout ("CS");
-	msgout.serial (s->Id);
-	_LSCallbackClient->send (msgout);
+	CMessage msgout("CS");
+	msgout.serial(s->Id);
+	_LSCallbackClient->send(msgout);
 
 	// wait the answer
 	ShardChooseShard = false;
 	while (_LSCallbackClient->connected() && !ShardChooseShard)
 	{
-		_LSCallbackClient->update ();
+		_LSCallbackClient->update();
 		nlSleep(10);
 	}
 
@@ -326,7 +321,7 @@ string CLoginClient::confirmConnection(sint32 shardId)
 	}
 	else
 	{
-		_LSCallbackClient->disconnect ();
+		_LSCallbackClient->disconnect();
 		delete _LSCallbackClient;
 		_LSCallbackClient = 0;
 	}
@@ -357,7 +352,7 @@ string CLoginClient::wantToConnectToShard(sint32 shardId, string &ip, string &co
 string CLoginClient::selectShardBegin(sint32 shardId)
 {
 	nlassert(_LSCallbackClient != 0 && _LSCallbackClient->connected());
-	
+
 	ShardChooseShardReason.clear();
 	ShardChooseShard = false;
 
@@ -367,7 +362,7 @@ string CLoginClient::selectShardBegin(sint32 shardId)
 		delete _LSCallbackClient;
 		_LSCallbackClient = 0;
 		return "No shard available";
-	}	
+	}
 	CLoginClient::CShardEntry *s = getShard(shardId);
 	if (!s)
 	{
@@ -378,9 +373,9 @@ string CLoginClient::selectShardBegin(sint32 shardId)
 	}
 
 	// S05: create and send the "CS" message with the shardid choice to the LS
-	CMessage msgout ("CS");
-	msgout.serial (s->Id);
-	_LSCallbackClient->send (msgout);
+	CMessage msgout("CS");
+	msgout.serial(s->Id);
+	_LSCallbackClient->send(msgout);
 
 	return "";
 }
@@ -409,7 +404,7 @@ bool CLoginClient::selectShardUpdate(string &error, string &ip, string &cookie)
 		cookie = ShardChooseShardCookie;
 		if (!error.empty()) nlwarning("CLoginClient::selectShardUpdate(): %s", error.c_str());
 		else nlinfo("addr: '%s' cookie: %s", ShardChooseShardAddr.c_str(), ShardChooseShardCookie.c_str());
-		_LSCallbackClient->disconnect ();
+		_LSCallbackClient->disconnect();
 		delete _LSCallbackClient;
 		_LSCallbackClient = 0;
 		return false;
@@ -417,15 +412,14 @@ bool CLoginClient::selectShardUpdate(string &error, string &ip, string &cookie)
 	return true;
 }
 
-CLoginClient::CShardEntry *CLoginClient::getShard (sint32 shardId)
+CLoginClient::CShardEntry *CLoginClient::getShard(sint32 shardId)
 {
-	for(TShardList::iterator it=ShardList.begin();it!=ShardList.end();it++)
+	for (TShardList::iterator it = ShardList.begin(); it != ShardList.end(); it++)
 	{
-		if((*it).Id == shardId)
+		if ((*it).Id == shardId)
 			return &(*it);
 	}
 	return 0;
 }
-
 
 } // NLNET

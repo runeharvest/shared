@@ -51,9 +51,9 @@
 #endif
 
 #ifndef EGLAPIENTRY
-#define EGLAPIENTRY  KHRONOS_APIENTRY
+#define EGLAPIENTRY KHRONOS_APIENTRY
 #endif
-#define EGLAPIENTRYP EGLAPIENTRY*
+#define EGLAPIENTRYP EGLAPIENTRY *
 
 /* The types NativeDisplayType, NativeWindowType, and NativePixmapType
  * are aliases of window-system-dependent types, such as X Display * or
@@ -73,13 +73,13 @@
 #endif
 #include <windows.h>
 
-typedef HDC     EGLNativeDisplayType;
+typedef HDC EGLNativeDisplayType;
 typedef HBITMAP EGLNativePixmapType;
-typedef HWND    EGLNativeWindowType;
+typedef HWND EGLNativeWindowType;
 
-#elif defined(__WINSCW__) || defined(__SYMBIAN32__)  /* Symbian */
+#elif defined(__WINSCW__) || defined(__SYMBIAN32__) /* Symbian */
 
-typedef int   EGLNativeDisplayType;
+typedef int EGLNativeDisplayType;
 typedef void *EGLNativeWindowType;
 typedef void *EGLNativePixmapType;
 
@@ -90,8 +90,8 @@ typedef void *EGLNativePixmapType;
 #include <X11/Xutil.h>
 
 typedef Display *EGLNativeDisplayType;
-typedef Pixmap   EGLNativePixmapType;
-typedef Window   EGLNativeWindowType;
+typedef Pixmap EGLNativePixmapType;
+typedef Window EGLNativeWindowType;
 
 #else
 #error "Platform not recognized"
@@ -99,9 +99,8 @@ typedef Window   EGLNativeWindowType;
 
 /* EGL 1.2 types, renamed for consistency in EGL 1.3 */
 typedef EGLNativeDisplayType NativeDisplayType;
-typedef EGLNativePixmapType  NativePixmapType;
-typedef EGLNativeWindowType  NativeWindowType;
-
+typedef EGLNativePixmapType NativePixmapType;
+typedef EGLNativeWindowType NativeWindowType;
 
 /* Define EGLint. This must be a signed integral type large enough to contain
  * all legal attribute names and values passed into and out of EGL, whether

@@ -20,8 +20,7 @@
 #include "nel/misc/types_nl.h"
 #include <vector>
 
-namespace NLMISC
-{
+namespace NLMISC {
 class IStream;
 struct EStream;
 }
@@ -29,16 +28,16 @@ struct EStream;
 namespace NL3D {
 
 /**
-  * A skeleton template is a set of couple value_name / float.
-  *
-  * The value name is used to find a channel in the CChannelMixer.
-  * The float is a weight used on a slot of the channel mixer by
-  * the channel.
-  *
-  * \author Cyril 'Hulud' Corvazier
-  * \author Nevrax France
-  * \date 2001
-  */
+ * A skeleton template is a set of couple value_name / float.
+ *
+ * The value name is used to find a channel in the CChannelMixer.
+ * The float is a weight used on a slot of the channel mixer by
+ * the channel.
+ *
+ * \author Cyril 'Hulud' Corvazier
+ * \author Nevrax France
+ * \date 2001
+ */
 class CSkeletonWeight
 {
 public:
@@ -53,34 +52,32 @@ public:
 		float Weight;
 
 		/// Serial the node
-		void serial (NLMISC::IStream& f);
+		void serial(NLMISC::IStream &f);
 	};
 
 	/// A vector of template elements.
 	typedef std::vector<CNode> TNodeArray;
 
 	/// Get number of node in this template
-	uint getNumNode () const;
+	uint getNumNode() const;
 
 	/// Get a node name
-	const std::string& getNodeName (uint node) const;
+	const std::string &getNodeName(uint node) const;
 
 	/// Get a node weight
-	float getNodeWeight (uint node) const;
+	float getNodeWeight(uint node) const;
 
 	/// Build the template
-	void build (const TNodeArray& array);
+	void build(const TNodeArray &array);
 
 	/// Serial the template
-	void serial (NLMISC::IStream& f);
+	void serial(NLMISC::IStream &f);
 
 private:
-	TNodeArray		_Elements;
+	TNodeArray _Elements;
 };
 
-
 } // NL3D
-
 
 #endif // NL_SKELETON_WEIGHT_H
 

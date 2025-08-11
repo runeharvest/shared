@@ -21,17 +21,17 @@
 using namespace std;
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
 namespace NLMISC {
 
-	const uint64 CEntityId::MaxEntityId = ((uint64)1 << (CEntityId::ID_SIZE + 1)) - (uint64)1;
+const uint64 CEntityId::MaxEntityId = ((uint64)1 << (CEntityId::ID_SIZE + 1)) - (uint64)1;
 
-	CEntityId CEntityId::_NextEntityId;
+CEntityId CEntityId::_NextEntityId;
 
-	uint8 CEntityId::_ServerId = 0;
+uint8 CEntityId::_ServerId = 0;
 
-	const CEntityId CEntityId::Unknown (CEntityId::UNKNOWN_TYPE, 0, 0, 0);
+const CEntityId CEntityId::Unknown(CEntityId::UNKNOWN_TYPE, 0, 0, 0);
 
 } // NLMISC

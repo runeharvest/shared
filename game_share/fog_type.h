@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_FOG_TYPE_H
 #define RY_FOG_TYPE_H
 
@@ -25,6 +23,5 @@ enum TFogType
 	CanopyFog, /* fog for the canopee. Example : the big root in the fyros territory */
 	NumFogType
 };
-
 
 #endif

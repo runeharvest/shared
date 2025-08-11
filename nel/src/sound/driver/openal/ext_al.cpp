@@ -17,8 +17,7 @@
 #include "stdopenal.h"
 #include "ext_al.h"
 
-extern "C"
-{
+extern "C" {
 
 void alExtInit()
 {
@@ -52,10 +51,11 @@ void alExtInitDevice(ALCdevice *device)
 		}
 	}
 #endif
-	
+
 	// EAX-RAM
 	if ((AlExtXRam = ((alIsExtensionPresent("EAX-RAM") == AL_TRUE)
-		|| (alIsExtensionPresent("EAX_RAM") == AL_TRUE))) == true)
+	         || (alIsExtensionPresent("EAX_RAM") == AL_TRUE)))
+	    == true)
 	{
 		eaxSetBufferMode = (EAXSetBufferMode)alGetProcAddress("EAXSetBufferMode");
 		eaxGetBufferMode = (EAXGetBufferMode)alGetProcAddress("EAXGetBufferMode");

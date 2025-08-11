@@ -20,17 +20,14 @@
 #include "std3d.h"
 #include "nel/3d/hls_texture_bank.h"
 
-
-using	namespace std;
-using	namespace NLMISC;
+using namespace std;
+using namespace NLMISC;
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 // ***************************************************************************
@@ -38,71 +35,69 @@ namespace NL3D
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
 CHLSTextureBank::CHLSTextureBank()
 {
 }
 // ***************************************************************************
-void			CHLSTextureBank::reset()
+void CHLSTextureBank::reset()
 {
 	contReset(_ColorTextures);
 	contReset(_TextureInstanceData);
 	contReset(_TextureInstances);
 }
 // ***************************************************************************
-uint32			CHLSTextureBank::addColorTexture(const CHLSColorTexture &tex)
+uint32 CHLSTextureBank::addColorTexture(const CHLSColorTexture &tex)
 {
 	_ColorTextures.push_back(tex);
-	return (uint32)_ColorTextures.size()-1;
+	return (uint32)_ColorTextures.size() - 1;
 }
 // ***************************************************************************
-void			CHLSTextureBank::addTextureInstance(const std::string &name, uint32 colorTextureId, const vector<CHLSColorDelta> &cols)
+void CHLSTextureBank::addTextureInstance(const std::string &name, uint32 colorTextureId, const vector<CHLSColorDelta> &cols)
 {
-	string	nameLwr= toLowerAscii(name);
+	string nameLwr = toLowerAscii(name);
 
 	// checks
-	nlassert(colorTextureId<_ColorTextures.size());
-	CHLSColorTexture	&colText= _ColorTextures[colorTextureId];
-	nlassert(cols.size()==colText.getNumMasks());
+	nlassert(colorTextureId < _ColorTextures.size());
+	CHLSColorTexture &colText = _ColorTextures[colorTextureId];
+	nlassert(cols.size() == colText.getNumMasks());
 
 	// new instance
-	CTextureInstance	textInst;
-	textInst._ColorTextureId= colorTextureId;
-	textInst._DataIndex= (uint32)_TextureInstanceData.size();
+	CTextureInstance textInst;
+	textInst._ColorTextureId = colorTextureId;
+	textInst._DataIndex = (uint32)_TextureInstanceData.size();
 	// leave ptrs undefined
-	textInst._DataPtr= NULL;
-	textInst._ColorTexturePtr= NULL;
+	textInst._DataPtr = NULL;
+	textInst._ColorTexturePtr = NULL;
 
 	// allocate/fill data
-	uint32	nameSize= (uint32)(nameLwr.size()+1);
-	uint32	colSize= (uint32)cols.size()*sizeof(CHLSColorDelta);
+	uint32 nameSize = (uint32)(nameLwr.size() + 1);
+	uint32 colSize = (uint32)cols.size() * sizeof(CHLSColorDelta);
 	_TextureInstanceData.resize(_TextureInstanceData.size() + nameSize + colSize);
 	// copy name
 	if (nameSize != 0) memcpy(&_TextureInstanceData[textInst._DataIndex], nameLwr.c_str(), nameSize);
 	// copy cols
-	if (colSize != 0) memcpy(&_TextureInstanceData[textInst._DataIndex+nameSize], &cols[0], colSize);
+	if (colSize != 0) memcpy(&_TextureInstanceData[textInst._DataIndex + nameSize], &cols[0], colSize);
 
 	// add the instance.
 	_TextureInstances.push_back(textInst);
 }
 // ***************************************************************************
-void			CHLSTextureBank::compilePtrs()
+void CHLSTextureBank::compilePtrs()
 {
-	uint8	*data= &_TextureInstanceData[0];
+	uint8 *data = &_TextureInstanceData[0];
 
 	// For all texture instances, compute ptr.
-	for(uint i=0;i<_TextureInstances.size();i++)
+	for (uint i = 0; i < _TextureInstances.size(); i++)
 	{
-		CTextureInstance	&text= _TextureInstances[i];
-		text._DataPtr= data + text._DataIndex;
-		text._ColorTexturePtr= &_ColorTextures[text._ColorTextureId];
+		CTextureInstance &text = _TextureInstances[i];
+		text._DataPtr = data + text._DataIndex;
+		text._ColorTexturePtr = &_ColorTextures[text._ColorTextureId];
 	}
 }
 
-
 // ***************************************************************************
-void			CHLSTextureBank::compile()
+void CHLSTextureBank::compile()
 {
 	// compile the ptrs.
 	compilePtrs();
@@ -110,9 +105,8 @@ void			CHLSTextureBank::compile()
 	// No other ops for now.
 }
 
-
 // ***************************************************************************
-void			CHLSTextureBank::serial(NLMISC::IStream &f)
+void CHLSTextureBank::serial(NLMISC::IStream &f)
 {
 	f.serialVersion(0);
 
@@ -121,25 +115,23 @@ void			CHLSTextureBank::serial(NLMISC::IStream &f)
 	f.serialCont(_TextureInstances);
 
 	// Must compile ptrs.
-	if(f.isReading())
+	if (f.isReading())
 	{
 		// compile the ptrs only.
 		compilePtrs();
 	}
 }
 
-
 // ***************************************************************************
-void			CHLSTextureBank::fillHandleArray(std::vector<CTextureInstanceHandle> &array)
+void CHLSTextureBank::fillHandleArray(std::vector<CTextureInstanceHandle> &array)
 {
-	for(uint i=0;i<_TextureInstances.size();i++)
+	for (uint i = 0; i < _TextureInstances.size(); i++)
 	{
-		CTextureInstanceHandle	h;
-		h.Texture= &_TextureInstances[i];
+		CTextureInstanceHandle h;
+		h.Texture = &_TextureInstances[i];
 		array.push_back(h);
 	}
 }
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -147,9 +139,8 @@ void			CHLSTextureBank::fillHandleArray(std::vector<CTextureInstanceHandle> &arr
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
-void			CHLSTextureBank::CTextureInstance::serial(NLMISC::IStream &f)
+void CHLSTextureBank::CTextureInstance::serial(NLMISC::IStream &f)
 {
 	f.serialVersion(0);
 
@@ -157,38 +148,34 @@ void			CHLSTextureBank::CTextureInstance::serial(NLMISC::IStream &f)
 	f.serial(_ColorTextureId);
 }
 
-
 // ***************************************************************************
-bool			CHLSTextureBank::CTextureInstance::operator<(const CTextureInstance &t) const
+bool CHLSTextureBank::CTextureInstance::operator<(const CTextureInstance &t) const
 {
 	// compare the 2 strings.
-	return (strcmp((const char*)_DataPtr, (const char*)t._DataPtr)<0);
+	return (strcmp((const char *)_DataPtr, (const char *)t._DataPtr) < 0);
 }
 // ***************************************************************************
-bool			CHLSTextureBank::CTextureInstance::operator<=(const CTextureInstance &t) const
+bool CHLSTextureBank::CTextureInstance::operator<=(const CTextureInstance &t) const
 {
 	// compare the 2 strings.
-	return (strcmp((const char*)_DataPtr, (const char*)t._DataPtr)<=0);
+	return (strcmp((const char *)_DataPtr, (const char *)t._DataPtr) <= 0);
 }
 
-
 // ***************************************************************************
-bool			CHLSTextureBank::CTextureInstance::sameName(const char *str)
+bool CHLSTextureBank::CTextureInstance::sameName(const char *str)
 {
-	return (strcmp((const char*)_DataPtr, str)==0);
+	return (strcmp((const char *)_DataPtr, str) == 0);
 }
 
-
 // ***************************************************************************
-void			CHLSTextureBank::CTextureInstance::buildColorVersion(NLMISC::CBitmap &out)
+void CHLSTextureBank::CTextureInstance::buildColorVersion(NLMISC::CBitmap &out)
 {
 	// get ptr to color deltas.
-	uint	nameSize= (uint)strlen((const char*)_DataPtr)+1;
-	CHLSColorDelta		*colDeltas= (CHLSColorDelta*)(_DataPtr + nameSize);
+	uint nameSize = (uint)strlen((const char *)_DataPtr) + 1;
+	CHLSColorDelta *colDeltas = (CHLSColorDelta *)(_DataPtr + nameSize);
 
 	// build the texture.
 	_ColorTexturePtr->buildColorVersion(colDeltas, out);
 }
-
 
 } // NL3D

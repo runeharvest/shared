@@ -19,30 +19,28 @@
 
 #include <string>
 
-namespace PVP_MODE
+namespace PVP_MODE {
+enum TPVPMode
 {
-	enum TPVPMode
-	{
-		None				= 0,
-		PvpDuel				= 1,
-		PvpChallenge		= 2,
-		PvpZoneFree			= 4,
-		PvpZoneFaction		= 8,
-		PvpZoneGuild		= 16,
-		PvpZoneOutpost		= 32,
-		PvpFaction			= 64,
-		PvpFactionFlagged	= 128,
-		PvpZoneSafe			= 256,
-		PvpSafe				= 512,
+	None = 0,
+	PvpDuel = 1,
+	PvpChallenge = 2,
+	PvpZoneFree = 4,
+	PvpZoneFaction = 8,
+	PvpZoneGuild = 16,
+	PvpZoneOutpost = 32,
+	PvpFaction = 64,
+	PvpFactionFlagged = 128,
+	PvpZoneSafe = 256,
+	PvpSafe = 512,
 
-		Unknown,
-		NbModes = Unknown,
-		NbBits = 10 // number of bits needed to store all valid values
-	};
+	Unknown,
+	NbModes = Unknown,
+	NbBits = 10 // number of bits needed to store all valid values
+};
 
-
-	TPVPMode fromString(const std::string & str);
-	const std::string & toString(TPVPMode pvpMode);
+TPVPMode fromString(const std::string &str);
+const std::string &toString(TPVPMode pvpMode);
 
 } // namespace PVP_MODE
 

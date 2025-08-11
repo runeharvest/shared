@@ -25,7 +25,6 @@
 #include "event_emitter.h"
 #include "events.h"
 
-
 #ifdef NL_OS_WINDOWS
 
 namespace NLMISC {
@@ -37,15 +36,19 @@ namespace NLMISC {
 class CWinEventEmitter : public IEventEmitter
 {
 public:
-	CWinEventEmitter () : _Utf16Pair(0), _MouseEventsEnabled(true), _KeyboardEventsEnabled(true), _IMEEventsEnabled(true)
+	CWinEventEmitter()
+	    : _Utf16Pair(0)
+	    , _MouseEventsEnabled(true)
+	    , _KeyboardEventsEnabled(true)
+	    , _IMEEventsEnabled(true)
 	{
-		_HWnd=NULL;
-		resetButtonFlagState ();
+		_HWnd = NULL;
+		resetButtonFlagState();
 	}
-	void setHWnd (HWND hWnd)
+	void setHWnd(HWND hWnd)
 	{
-		_HWnd=hWnd;
-		resetButtonFlagState ();
+		_HWnd = hWnd;
+		resetButtonFlagState();
 	}
 
 	/**
@@ -53,13 +56,13 @@ public:
 	 * (should call CEventServer method postEvent() )
 	 * \param server
 	 */
-	virtual void submitEvents(CEventServer & server, bool allWindows);
+	virtual void submitEvents(CEventServer &server, bool allWindows);
 
 	/// Build the flags of the current buttons state
 	TMouseButton buildFlags() const;
 
 	// Reset button flag state
-	void resetButtonFlagState ();
+	void resetButtonFlagState();
 
 	// enable / disable mouse events to be processed. The default is enabled.
 	void enableMouseEvents(bool enabled = true) { _MouseEventsEnabled = enabled; }
@@ -75,50 +78,54 @@ public:
 
 	// Test whether keyboard events are enabled.
 	bool areKeyboardEventsEnabled() const { return _KeyboardEventsEnabled; }
+
 private:
-
-
 	// Private internal server message
 	class CWinEventServer : CEventServer
 	{
 		friend class CWinEventEmitter;
+
 	public:
-		void setServer (CEventServer *server)
+		void setServer(CEventServer *server)
 		{
-			_Server=server;
+			_Server = server;
 		}
+
 	private:
-		virtual bool pumpEvent(CEvent* event)
+		virtual bool pumpEvent(CEvent *event)
 		{
 			CEventServer::pumpEvent(event);
-			_Server->postEvent (event);
+			_Server->postEvent(event);
 			return false;
 		}
+
 	private:
 		CEventServer *_Server;
 	};
 
 public:
 	/** Process a win32 message.
-	  * Return true if the message must be trapped, false if DefWindowProc must be called afterwards
-	  */
-	bool processMessage (HWND hWnd, uint32 msg, WPARAM wParam, LPARAM lParam, CEventServer *server=NULL);
+	 * Return true if the message must be trapped, false if DefWindowProc must be called afterwards
+	 */
+	bool processMessage(HWND hWnd, uint32 msg, WPARAM wParam, LPARAM lParam, CEventServer *server = NULL);
 
 private:
-	CWinEventServer		_InternalServer;
-	HWND				_HWnd;
-	wchar_t				_Utf16Pair;
+	CWinEventServer _InternalServer;
+	HWND _HWnd;
+	wchar_t _Utf16Pair;
+
 public:
 	// private: may need to be in sync with direct input flags however...
-	bool				_CtrlButton;
-	bool				_ShiftButton;
-	bool				_AltButton;
-	bool				_MouseButtons[3];
-	bool				_MouseEventsEnabled;
-	bool				_KeyboardEventsEnabled;
-	bool				_IMEEventsEnabled;
+	bool _CtrlButton;
+	bool _ShiftButton;
+	bool _AltButton;
+	bool _MouseButtons[3];
+	bool _MouseEventsEnabled;
+	bool _KeyboardEventsEnabled;
+	bool _IMEEventsEnabled;
+
 private:
-	NLMISC::TMouseButton		getButtons() const;
+	NLMISC::TMouseButton getButtons() const;
 };
 
 } // NLMISC

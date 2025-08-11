@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /// NOTE: for private use, do not include this
 
 #ifndef NL_PS_MACRO_H
@@ -24,10 +23,10 @@
 
 // private usage : macro to check the memory integrity
 #if defined(NL_DEBUG) && defined(NL_OS_WINDOWS)
-	// #define PARTICLES_CHECK_MEM NLMEMORY::CheckHeap(true);
-	#define PARTICLES_CHECK_MEM
+// #define PARTICLES_CHECK_MEM NLMEMORY::CheckHeap(true);
+#define PARTICLES_CHECK_MEM
 #else
-	#define PARTICLES_CHECK_MEM
+#define PARTICLES_CHECK_MEM
 #endif
 
 #endif

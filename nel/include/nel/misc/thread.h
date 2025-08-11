@@ -23,9 +23,7 @@
 #include "types_nl.h"
 #include "common.h"
 
-
 namespace NLMISC {
-
 
 /**
  * Thread callback interface.
@@ -33,19 +31,19 @@ namespace NLMISC {
  *
  *\code
 
-	#include "thread.h"
+    #include "thread.h"
 
-	class HelloLoopThread : public IRunnable
-	{
-		void run ()
-		{
-			for(;;)	printf("Hello World\n");
-		}
+    class HelloLoopThread : public IRunnable
+    {
+        void run ()
+        {
+            for(;;)	printf("Hello World\n");
+        }
 
-	};
+    };
 
-	IThread *thread = IThread::create (new HelloLoopThread);
-	thread->start ();
+    IThread *thread = IThread::create (new HelloLoopThread);
+    thread->start ();
 
  *\endcode
  *
@@ -60,12 +58,12 @@ class IRunnable
 {
 public:
 	// Called when a thread is run.
-	virtual void run()=0;
+	virtual void run() = 0;
 	virtual ~IRunnable()
 	{
 	}
 	// Return the runnable name
-	virtual void getName (std::string &result) const
+	virtual void getName(std::string &result) const
 	{
 		result = "NoName";
 	}
@@ -90,67 +88,67 @@ enum TThreadPriority
 class IThread
 {
 public:
-
 	/**
-	  * Create a new thread.
-	  * Implemented in the derived class.
-	  */
+	 * Create a new thread.
+	 * Implemented in the derived class.
+	 */
 	static IThread *create(IRunnable *runnable, uint32 stackSize = 0);
 
 	/**
-	  * Return a pointer on the current thread.
-	  * Implemented in the derived class.
-	  */
-	static IThread *getCurrentThread ();
+	 * Return a pointer on the current thread.
+	 * Implemented in the derived class.
+	 */
+	static IThread *getCurrentThread();
 
-	virtual ~IThread () { }
+	virtual ~IThread() { }
 
 	// Starts the thread.
-	virtual void start()=0;
+	virtual void start() = 0;
 
 	// Check if the thread is still running
-	virtual bool isRunning() =0;
+	virtual bool isRunning() = 0;
 
 	// Terminate the thread (risky method, use only in extreme cases)
-	virtual void terminate()=0;
+	virtual void terminate() = 0;
 
 	// In the calling program, wait until the specified thread has exited. After wait() has returned, you can delete the thread object.
-	virtual void wait()=0;
+	virtual void wait() = 0;
 
 	/// Return a pointer to the runnable object
-	virtual IRunnable *getRunnable()=0;
+	virtual IRunnable *getRunnable() = 0;
 
 	/**
-	  * Set the CPU mask of this thread. Thread must have been started before.
-	  * The mask must be a subset of the CPU mask returned by IProcess::getCPUMask() thread process.
-	  */
-	virtual bool setCPUMask(uint64 cpuMask)=0;
+	 * Set the CPU mask of this thread. Thread must have been started before.
+	 * The mask must be a subset of the CPU mask returned by IProcess::getCPUMask() thread process.
+	 */
+	virtual bool setCPUMask(uint64 cpuMask) = 0;
 
 	/**
-	  * Get the CPU mask of this thread. Thread must have been started before.
-	  * The mask should be a subset of the CPU mask returned by IProcess::getCPUMask() thread process.
-	  */
-	virtual uint64 getCPUMask()=0;
+	 * Get the CPU mask of this thread. Thread must have been started before.
+	 * The mask should be a subset of the CPU mask returned by IProcess::getCPUMask() thread process.
+	 */
+	virtual uint64 getCPUMask() = 0;
 
 	/// Set the thread priority. Thread must have been started before.
 	virtual void setPriority(TThreadPriority priority) = 0;
 
 	/**
-	  * Get the thread user name.
-	  * Under Linux return thread owner, under windows return the name of the logon user.
-	  */
-	virtual std::string getUserName()=0;
+	 * Get the thread user name.
+	 * Under Linux return thread owner, under windows return the name of the logon user.
+	 */
+	virtual std::string getUserName() = 0;
 };
-
 
 /*
  * Thread exception
  */
 struct EThread : public Exception
 {
-	EThread (const char* message) : Exception (message) {}
+	EThread(const char *message)
+	    : Exception(message)
+	{
+	}
 };
-
 
 /**
  * Process base interface, must be implemented for all OS
@@ -161,28 +159,26 @@ struct EThread : public Exception
 class IProcess
 {
 public:
-	virtual ~IProcess() {}
+	virtual ~IProcess() { }
 
 	/**
-	  * Return a pointer on the current process.
-	  * Implemented in the derived class.
-	  */
-	static IProcess *getCurrentProcess ();
+	 * Return a pointer on the current process.
+	 * Implemented in the derived class.
+	 */
+	static IProcess *getCurrentProcess();
 
 	/**
-	  * Return process CPU mask. Each bit stand for a CPU usable by the process threads.
-	  */
-	virtual uint64 getCPUMask()=0;
+	 * Return process CPU mask. Each bit stand for a CPU usable by the process threads.
+	 */
+	virtual uint64 getCPUMask() = 0;
 
 	/**
-	  * Set the process CPU mask. Each bit stand for a CPU usable by the process threads.
-	  */
-	virtual bool setCPUMask(uint64 mask)=0;
+	 * Set the process CPU mask. Each bit stand for a CPU usable by the process threads.
+	 */
+	virtual bool setCPUMask(uint64 mask) = 0;
 };
 
-
 } // NLMISC
-
 
 #endif // NL_THREAD_H
 

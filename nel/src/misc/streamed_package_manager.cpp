@@ -22,12 +22,12 @@
 #include <nel/misc/path.h>
 #include <nel/misc/sha1.h>
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 NLMISC_SAFE_SINGLETON_IMPL(CStreamedPackageManager);
 
-CStreamedPackageManager::CStreamedPackageManager() : Provider(NULL)
+CStreamedPackageManager::CStreamedPackageManager()
+    : Provider(NULL)
 {
 	// init
 }

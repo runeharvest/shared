@@ -7,12 +7,12 @@
 #define DBGWELD_ACTIONx
 #define DBG_NAMEDSELSx
 
-#define PROMPT_TIME	2000
+#define PROMPT_TIME 2000
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // watje unhide all
-static void UnHidePatches(PatchMesh *patch) 
+static void UnHidePatches(PatchMesh *patch)
 {
 	// If positive vertex number, do it to just one vertex
 	int patches = patch->numPatches;
@@ -33,8 +33,9 @@ static void UnHidePatches(PatchMesh *patch)
 // --------------------------------------------------------------------------------
 
 // watje 12-10-98
-void EditPatchMod::DoUnHide() {
-	ModContextList mcList;		
+void EditPatchMod::DoUnHide()
+{
+	ModContextList mcList;
 	INodeTab nodes;
 	TimeValue t = ip->GetTime();
 	BOOL holdNeeded = FALSE;
@@ -51,7 +52,7 @@ void EditPatchMod::DoUnHide() {
 	for (int i = 0; i < mcList.Count(); i++)
 	{
 		BOOL altered = FALSE;
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
@@ -61,13 +62,13 @@ void EditPatchMod::DoUnHide() {
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(t, rpatch);
 		if (!patch)
-			continue;		
+			continue;
 		patchData->RecordTopologyTags(patch);
 		// If this is the first edit, then the delta arrays will be allocated
 		patchData->BeginEdit(t);
 
 		// If any bits are set in the selection set, let's DO IT!!
-//		if(patch->patchSel.NumberSet()) {
+		//		if(patch->patchSel.NumberSet()) {
 		if (1)
 		{
 			altered = holdNeeded = TRUE;
@@ -77,54 +78,54 @@ void EditPatchMod::DoUnHide() {
 			UnHidePatches(patch);
 			patchData->UpdateChanges(patch, rpatch);
 			patchData->TempData(this)->Invalidate(PART_TOPO);
-			}
-		patchData->SetFlag(EPD_BEENDONE, TRUE);
 		}
-	
+		patchData->SetFlag(EPD_BEENDONE, TRUE);
+	}
+
 	if (holdNeeded)
 	{
 		ResolveTopoChanges();
 		theHold.Accept(GetString(IDS_TH_PATCHCHANGE));
-		}
-	else 
+	}
+	else
 	{
 		ip->DisplayTempPrompt(GetString(IDS_TH_NOPATCHESSEL), PROMPT_TIME);
 		theHold.End();
-		}
+	}
 
 	nodes.DisposeTemporary();
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 	NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
 	ip->RedrawViews(ip->GetTime(), REDRAW_NORMAL);
-	}
+}
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void EditPatchMod::DoHide(int type) 
+void EditPatchMod::DoHide(int type)
 {
 	switch (type)
 	{
-		case EP_VERTEX:
-			DoVertHide();
-			break;
-		case EP_EDGE:
-			DoEdgeHide();
-			break;
-		case EP_PATCH:
-			DoPatchHide();
-			break;
-		}
+	case EP_VERTEX:
+		DoVertHide();
+		break;
+	case EP_EDGE:
+		DoEdgeHide();
+		break;
+	case EP_PATCH:
+		DoPatchHide();
+		break;
 	}
+}
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // watje
-static void FixUpVerts(PatchMesh *patch) 
+static void FixUpVerts(PatchMesh *patch)
 {
 	int patches = patch->numPatches;
 	for (int i = 0; i < patches; i++)
 	{
-		
+
 		if (!(patch->patches[i].IsHidden()))
 		{
 			int ct = 4;
@@ -135,16 +136,14 @@ static void FixUpVerts(PatchMesh *patch)
 				int a = patch->patches[i].v[k];
 				patch->verts[a].SetHidden(FALSE);
 			}
-			
 		}
 	}
-	
 }
 
 // --------------------------------------------------------------------------------
 
 // watje hide patch
-static void HidePatches(PatchMesh *patch) 
+static void HidePatches(PatchMesh *patch)
 {
 	// If positive vertex number, do it to just one vertex
 	int patches = patch->numPatches;
@@ -154,7 +153,7 @@ static void HidePatches(PatchMesh *patch)
 		if (psel[i])
 		{
 			patch->patches[i].SetHidden(TRUE);
-			// hide all 
+			// hide all
 			int ct = 4;
 			if (patch->patches[i].type == PATCH_TRI)
 				ct = 3;
@@ -170,9 +169,9 @@ static void HidePatches(PatchMesh *patch)
 
 // --------------------------------------------------------------------------------
 
-void EditPatchMod::DoPatchHide() 
-	{
-	ModContextList mcList;		
+void EditPatchMod::DoPatchHide()
+{
+	ModContextList mcList;
 	INodeTab nodes;
 	TimeValue t = ip->GetTime();
 	BOOL holdNeeded = FALSE;
@@ -189,7 +188,7 @@ void EditPatchMod::DoPatchHide()
 	for (int i = 0; i < mcList.Count(); i++)
 	{
 		BOOL altered = FALSE;
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
@@ -199,7 +198,7 @@ void EditPatchMod::DoPatchHide()
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(t, rpatch);
 		if (!patch)
-			continue;		
+			continue;
 		patchData->RecordTopologyTags(patch);
 		// If this is the first edit, then the delta arrays will be allocated
 		patchData->BeginEdit(t);
@@ -215,32 +214,31 @@ void EditPatchMod::DoPatchHide()
 			patch->patchSel.ClearAll();
 			patchData->UpdateChanges(patch, rpatch);
 			patchData->TempData(this)->Invalidate(PART_TOPO);
-			}
-		patchData->SetFlag(EPD_BEENDONE, TRUE);
 		}
-	
+		patchData->SetFlag(EPD_BEENDONE, TRUE);
+	}
+
 	if (holdNeeded)
 	{
 		ResolveTopoChanges();
 		theHold.Accept(GetString(IDS_TH_PATCHCHANGE));
-		}
-	else 
+	}
+	else
 	{
 		ip->DisplayTempPrompt(GetString(IDS_TH_NOPATCHESSEL), PROMPT_TIME);
 		theHold.End();
-		}
+	}
 
 	nodes.DisposeTemporary();
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 	NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
 	ip->RedrawViews(ip->GetTime(), REDRAW_NORMAL);
-
-	}
+}
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // watje hide patches by verts
-static void HideVerts(PatchMesh *patch) 
+static void HideVerts(PatchMesh *patch)
 {
 	// If positive vertex number, do it to just one vertex
 	int patches = patch->numPatches;
@@ -254,7 +252,7 @@ static void HideVerts(PatchMesh *patch)
 		for (int k = 0; k < ct; k++)
 		{
 			int a = patch->patches[i].v[k];
-			
+
 			if (vsel[a])
 			{
 				patch->patches[i].SetHidden(TRUE);
@@ -265,7 +263,7 @@ static void HideVerts(PatchMesh *patch)
 	{
 		if (patch->patches[i].IsHidden())
 		{
-			// hide all 
+			// hide all
 			int ct = 4;
 			if (patch->patches[i].type == PATCH_TRI)
 				ct = 3;
@@ -276,15 +274,15 @@ static void HideVerts(PatchMesh *patch)
 			}
 		}
 	}
-	
+
 	FixUpVerts(patch);
 }
 
 // --------------------------------------------------------------------------------
 
-void EditPatchMod::DoVertHide() 
-	{
-	ModContextList mcList;		
+void EditPatchMod::DoVertHide()
+{
+	ModContextList mcList;
 	INodeTab nodes;
 	TimeValue t = ip->GetTime();
 	BOOL holdNeeded = FALSE;
@@ -301,7 +299,7 @@ void EditPatchMod::DoVertHide()
 	for (int i = 0; i < mcList.Count(); i++)
 	{
 		BOOL altered = FALSE;
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
@@ -311,7 +309,7 @@ void EditPatchMod::DoVertHide()
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(t, rpatch);
 		if (!patch)
-			continue;		
+			continue;
 		patchData->RecordTopologyTags(patch);
 		// If this is the first edit, then the delta arrays will be allocated
 		patchData->BeginEdit(t);
@@ -327,32 +325,31 @@ void EditPatchMod::DoVertHide()
 			patch->vertSel.ClearAll();
 			patchData->UpdateChanges(patch, rpatch);
 			patchData->TempData(this)->Invalidate(PART_TOPO);
-			}
-		patchData->SetFlag(EPD_BEENDONE, TRUE);
 		}
-	
+		patchData->SetFlag(EPD_BEENDONE, TRUE);
+	}
+
 	if (holdNeeded)
 	{
 		ResolveTopoChanges();
 		theHold.Accept(GetString(IDS_TH_PATCHCHANGE));
-		}
-	else 
+	}
+	else
 	{
 		ip->DisplayTempPrompt(GetString(IDS_TH_NOPATCHESSEL), PROMPT_TIME);
 		theHold.End();
-		}
+	}
 
 	nodes.DisposeTemporary();
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 	NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
 	ip->RedrawViews(ip->GetTime(), REDRAW_NORMAL);
-
-	}
+}
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // watje hide patches by verts
-static void HideEdges(PatchMesh *patch) 
+static void HideEdges(PatchMesh *patch)
 {
 	// If positive vertex number, do it to just one vertex
 	int edges = patch->numEdges;
@@ -365,9 +362,9 @@ static void HideEdges(PatchMesh *patch)
 #if (MAX_RELEASE < 4000)
 			int a = patch->edges[i].patch1;
 			int b = patch->edges[i].patch2;
-			if (a>0)
+			if (a > 0)
 				patch->patches[a].SetHidden(TRUE);
-			if (b>0)
+			if (b > 0)
 				patch->patches[b].SetHidden(TRUE);
 #else // (MAX_RELEASE < 4000)
 			for (int pn = 0; pn < patch->edges[i].patches.Count(); ++pn)
@@ -380,7 +377,7 @@ static void HideEdges(PatchMesh *patch)
 	{
 		if (patch->patches[i].IsHidden())
 		{
-			// hide all 
+			// hide all
 			int ct = 4;
 			if (patch->patches[i].type == PATCH_TRI)
 				ct = 3;
@@ -396,9 +393,9 @@ static void HideEdges(PatchMesh *patch)
 
 // --------------------------------------------------------------------------------
 
-void EditPatchMod::DoEdgeHide() 
-	{
-	ModContextList mcList;		
+void EditPatchMod::DoEdgeHide()
+{
+	ModContextList mcList;
 	INodeTab nodes;
 	TimeValue t = ip->GetTime();
 	BOOL holdNeeded = FALSE;
@@ -415,7 +412,7 @@ void EditPatchMod::DoEdgeHide()
 	for (int i = 0; i < mcList.Count(); i++)
 	{
 		BOOL altered = FALSE;
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
@@ -425,7 +422,7 @@ void EditPatchMod::DoEdgeHide()
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(t, rpatch);
 		if (!patch)
-			continue;		
+			continue;
 		patchData->RecordTopologyTags(patch);
 		// If this is the first edit, then the delta arrays will be allocated
 		patchData->BeginEdit(t);
@@ -441,24 +438,23 @@ void EditPatchMod::DoEdgeHide()
 			patch->edgeSel.ClearAll();
 			patchData->UpdateChanges(patch, rpatch);
 			patchData->TempData(this)->Invalidate(PART_TOPO);
-			}
-		patchData->SetFlag(EPD_BEENDONE, TRUE);
 		}
-	
+		patchData->SetFlag(EPD_BEENDONE, TRUE);
+	}
+
 	if (holdNeeded)
 	{
 		ResolveTopoChanges();
 		theHold.Accept(GetString(IDS_TH_PATCHCHANGE));
-		}
-	else 
+	}
+	else
 	{
 		ip->DisplayTempPrompt(GetString(IDS_TH_NOPATCHESSEL), PROMPT_TIME);
 		theHold.End();
-		}
+	}
 
 	nodes.DisposeTemporary();
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 	NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
 	ip->RedrawViews(ip->GetTime(), REDRAW_NORMAL);
-
-	}
+}

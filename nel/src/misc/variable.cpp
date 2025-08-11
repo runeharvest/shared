@@ -22,29 +22,27 @@ using namespace std;
 using namespace NLMISC;
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
 namespace NLMISC {
 
-
-void cbVarChanged (CConfigFile::CVar &cvar)
+void cbVarChanged(CConfigFile::CVar &cvar)
 {
 	CCommandRegistry &cr = CCommandRegistry::getInstance();
 	for (CCommandRegistry::TCommand::iterator comm = cr._Commands.begin(); comm != cr._Commands.end(); comm++)
 	{
 		if (comm->second->Type == ICommand::Variable && comm->second->getName() == cvar.Name)
 		{
-			IVariable *var = static_cast<IVariable*>(comm->second);
+			IVariable *var = static_cast<IVariable *>(comm->second);
 			string val = cvar.asString();
-			nlinfo ("VAR: Setting variable '%s' with value '%s' from config file", cvar.Name.c_str(), val.c_str());
+			nlinfo("VAR: Setting variable '%s' with value '%s' from config file", cvar.Name.c_str(), val.c_str());
 			var->fromString(val, true);
 		}
 	}
 }
 
-
-void IVariable::init (NLMISC::CConfigFile &configFile)
+void IVariable::init(NLMISC::CConfigFile &configFile)
 {
 	CCommandRegistry::getInstance().initVariables(configFile);
 }
@@ -63,12 +61,12 @@ void CCommandRegistry::initVariables(NLMISC::CConfigFile &configFile)
 				if (cvar != 0)
 				{
 					string val = cvar->asString();
-					//nldebug("VAR: Setting variable '%s' with value '%s' from config file '%s'", var->_CommandName.c_str(), val.c_str(), configFile.getFilename().c_str());
+					// nldebug("VAR: Setting variable '%s' with value '%s' from config file '%s'", var->_CommandName.c_str(), val.c_str(), configFile.getFilename().c_str());
 					var->fromString(val, true);
 				}
 				else
 				{
-					//nldebug("VAR: No variable '%s' in config file '%s'", var->_CommandName.c_str(), configFile.getFilename().c_str());
+					// nldebug("VAR: No variable '%s' in config file '%s'", var->_CommandName.c_str(), configFile.getFilename().c_str());
 				}
 			}
 		}

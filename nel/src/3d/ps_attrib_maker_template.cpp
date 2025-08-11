@@ -22,9 +22,7 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 void computeGradient(const NLMISC::CRGBA *valueTab, uint32 numValues, uint32 nbStages, CPSVector<NLMISC::CRGBA>::V &grad, NLMISC::CRGBA &minValue, NLMISC::CRGBA &maxValue)
 {
@@ -35,7 +33,6 @@ void computeGradient(const NLMISC::CRGBA *valueTab, uint32 numValues, uint32 nbS
 	uint nbValues = (numValues - 1) * nbStages;
 	grad.resize(nbValues + 1);
 
-
 	float step = 1.0f / float(nbStages);
 	float alpha;
 
@@ -45,28 +42,28 @@ void computeGradient(const NLMISC::CRGBA *valueTab, uint32 numValues, uint32 nbS
 	if (NLMISC::CSystemInfo::hasMMX())
 	{
 		// do interpolation using mmx
-		for (uint32 k = 0; k  < (numValues - 1); ++k)
+		for (uint32 k = 0; k < (numValues - 1); ++k)
 		{
-			uint32 col0 = *(uint32 *) &valueTab[k];
+			uint32 col0 = *(uint32 *)&valueTab[k];
 			uint64 stepPacked;
-			sint16 *step = (sint16 *) &stepPacked;
-			step[0] = (sint16) (stepX127 * (valueTab[k + 1].R - valueTab[k].R));
-			step[1] = (sint16) (stepX127 * (valueTab[k + 1].G - valueTab[k].G));
-			step[2] = (sint16) (stepX127 * (valueTab[k + 1].B - valueTab[k].B));
-			step[3] = (sint16) (stepX127 * (valueTab[k + 1].A - valueTab[k].A));
+			sint16 *step = (sint16 *)&stepPacked;
+			step[0] = (sint16)(stepX127 * (valueTab[k + 1].R - valueTab[k].R));
+			step[1] = (sint16)(stepX127 * (valueTab[k + 1].G - valueTab[k].G));
+			step[2] = (sint16)(stepX127 * (valueTab[k + 1].B - valueTab[k].B));
+			step[3] = (sint16)(stepX127 * (valueTab[k + 1].A - valueTab[k].A));
 			__asm
-			{
-					pxor mm0, mm0		 // mm0 = 0
+			    {
+					pxor mm0, mm0 // mm0 = 0
 					movd mm1, col0
 					punpcklbw mm0, mm1 // store current col in mm0, each component is stored in 7:8 fixed integer
 					psrlw     mm0, 1
-					movq mm2, stepPacked       // store step for gradient
+					movq mm2, stepPacked // store step for gradient
 					mov  edi, dest
 					mov  eax, 4
 					mov  ecx, nbStages
 					sub  edi, eax
 				myLoop:
-					// unpack current color
+				                               // unpack current color
 					movq        mm1, mm0
 					add			edi, eax // advance destination
 					psrlw       mm1, 7
@@ -76,7 +73,7 @@ void computeGradient(const NLMISC::CRGBA *valueTab, uint32 numValues, uint32 nbS
 					dec ecx
 					jne myLoop
 					emms
-			}
+			    }
 			dest += nbStages;
 		}
 	}
@@ -84,11 +81,11 @@ void computeGradient(const NLMISC::CRGBA *valueTab, uint32 numValues, uint32 nbS
 #endif
 	{
 		// copy the tab performing linear interpolation between values given in parameter
-		for (uint32 k = 0; k  < (numValues - 1); ++k)
+		for (uint32 k = 0; k < (numValues - 1); ++k)
 		{
 			alpha = 0;
 
-			for(uint32 l = 0; l < nbStages; ++l)
+			for (uint32 l = 0; l < nbStages; ++l)
 			{
 				// use the right version of the template function PSValueBlend
 				// to do the job

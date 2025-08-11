@@ -190,9 +190,9 @@ void CInetAddress::parseNameAndPort(std::string &hostname, uint16 &port, const s
 	string::size_type pos6end = hostnameAndPort.find_last_of(']');
 	string::size_type pos = hostnameAndPort.find_last_of(':');
 	if (pos != string::npos
-		&& ((pos6end == string::npos && pos == hostnameAndPort.find(':')) || pos > pos6end)
+	    && ((pos6end == string::npos && pos == hostnameAndPort.find(':')) || pos > pos6end)
 	    && (pos == 0 || hostnameAndPort[pos - 1] != ':')
-		&& (hostnameAndPort.find('.', pos) == string::npos))
+	    && (hostnameAndPort.find('.', pos) == string::npos))
 	{
 		if (pos + 1 < hostnameAndPort.size())
 		{
@@ -485,7 +485,7 @@ uint32 stringToInternalIPAddress(const std::string &addr)
 std::string internalIPAddressToString(uint32 addr)
 {
 	string res;
-	res = toString((addr)&0xFF);
+	res = toString((addr) & 0xFF);
 	res += ".";
 	res += toString((addr >> 8) & 0xFF);
 	res += ".";

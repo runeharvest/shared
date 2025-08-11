@@ -10,12 +10,9 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-
 #include <afxtempl.h>
 
-
-namespace NLLOGIC
-{
+namespace NLLOGIC {
 class CLogicState;
 }
 
@@ -36,82 +33,74 @@ public:
 
 	const CString &getEventAsString() const;
 
-//attributes:
+	// attributes:
 public:
-	CString		m_sConditionName;
+	CString m_sConditionName;
 
 	/// bool, true if the event action is sending a message, false if it's changing state
-	bool		m_bActionIsMessage;
+	bool m_bActionIsMessage;
 
 	/// \name event message
 	//@{
-	///destination of the message (name of a .bot, .flaura, .var... file)
-	CString		m_sMessageDestination; 
+	/// destination of the message (name of a .bot, .flaura, .var... file)
+	CString m_sMessageDestination;
 	/// message ID (selected from valid ID for given destination (file extension))
-	CString		m_sMessageID;
+	CString m_sMessageID;
 	/// message arguments, syntax defined for given message ID
-	CString		m_sArguments;
+	CString m_sArguments;
 	//@}
 
 	/// \name state change event
 	//@{
 	/// destination state (if m_bActionIsMessage == false)
-	CString		m_sStateChange;
+	CString m_sStateChange;
 	//@]
 
 	/// temp string used to store the event as a string when requested
 	mutable CString eventString;
 
-	friend bool operator==( const CEvent &ev1, const CEvent &ev2);
+	friend bool operator==(const CEvent &ev1, const CEvent &ev2);
 };
 
-
-typedef CList< CEvent *, CEvent *&> TPEventList;
-
-
-
-
+typedef CList<CEvent *, CEvent *&> TPEventList;
 
 /**
  * class State
  */
-class CState  
+class CState
 {
 public:
 	/// constructor
-	CState( const CString &name = CString("") );
+	CState(const CString &name = CString(""));
 
 	/// copy constructor
-	CState( const CState &state );
+	CState(const CState &state);
 
 	virtual ~CState();
 
 	/// add an event to this State
-	inline void addEvent( CEvent *event) { m_evEvents.AddTail( event ) ; }
+	inline void addEvent(CEvent *event) { m_evEvents.AddTail(event); }
 
 	/// remove the specified event from the state object, return TRUE if done, FALSE if event not found
-	BOOL removeEvent( CEvent *event);
+	BOOL removeEvent(CEvent *event);
 
-	
-// attributes
-//private:
+	// attributes
+	// private:
 public:
-	CString		m_sName;
+	CString m_sName;
 
 	/// list of pointers on CEvent objects
-	TPEventList	m_evEvents;
+	TPEventList m_evEvents;
 };
 
+/**
+ * Set a CLogicState from a CState
+ */
+void cStateToCLogicState(CState &state, NLLOGIC::CLogicState &logicState);
 
 /**
- * Set a CLogicState from a CState 
+ * Set a CState from a CLogicState
  */
-void cStateToCLogicState( CState& state, NLLOGIC::CLogicState& logicState );
-
-/**
- * Set a CState from a CLogicState 
- */
-void cLogicStateToCState( const NLLOGIC::CLogicState& logicState, CState& state );
-
+void cLogicStateToCState(const NLLOGIC::CLogicState &logicState, CState &state);
 
 #endif // !defined(AFX_STATE_H__8501C0A2_320A_42B9_BD7E_3D77F27301ED__INCLUDED_)

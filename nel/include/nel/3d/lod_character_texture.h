@@ -20,17 +20,13 @@
 #include "nel/misc/types_nl.h"
 #include "nel/misc/stream.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 // A lod texture is 32*32 pixels. => 256 lods takes 500Ko in VRAM (16 bits)
-#define	NL3D_CLOD_TEXT_WIDTH	32
-#define	NL3D_CLOD_TEXT_HEIGHT	32
-#define	NL3D_CLOD_TEXT_SIZE		NL3D_CLOD_TEXT_WIDTH*NL3D_CLOD_TEXT_HEIGHT
-
+#define NL3D_CLOD_TEXT_WIDTH 32
+#define NL3D_CLOD_TEXT_HEIGHT 32
+#define NL3D_CLOD_TEXT_SIZE NL3D_CLOD_TEXT_WIDTH *NL3D_CLOD_TEXT_HEIGHT
 
 // ***************************************************************************
 /**
@@ -42,46 +38,41 @@ namespace NL3D
 class CLodCharacterTexture
 {
 public:
-
 	/// The Texture UV Quality info per pixel.
-	struct	CTUVQ
+	struct CTUVQ
 	{
 		// This is an index on the material in the Mesh. The stage0 texture is taken from this material.
-		uint8	T;
+		uint8 T;
 		// This is the compressed UV which index the pixel in the texture. NB: Ignored if the material is not textured.
-		uint8	U,V;
+		uint8 U, V;
 		// The lower, the better. This said how near this pixel is from the shape vertex.
-		uint8	Q;
+		uint8 Q;
 
-		void		serial(NLMISC::IStream &f)
+		void serial(NLMISC::IStream &f)
 		{
-			f.serial(T,U,V,Q);
+			f.serial(T, U, V, Q);
 		}
 	};
 
 public:
 	// Lookup information.
-	std::vector<CTUVQ>		Texture;
-
+	std::vector<CTUVQ> Texture;
 
 public:
 	/// Constructor
 	CLodCharacterTexture();
-	uint		getWidth() const {return _Width;}
-	uint		getHeight() const {return _Height;}
+	uint getWidth() const { return _Width; }
+	uint getHeight() const { return _Height; }
 
-	void		serial(NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 
-// ****************
+	// ****************
 private:
 	// Serialized width / Height. This must be equal to NL3D_CLOD_TEXT_WIDTH/NL3D_CLOD_TEXT_HEIGHT
-	uint32					_Width, _Height;
-
+	uint32 _Width, _Height;
 };
 
-
 } // NL3D
-
 
 #endif // NL_LOD_CHARACTER_TEXTURE_H
 

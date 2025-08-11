@@ -41,11 +41,11 @@ void CDriverGL::setFrustum(float left, float right, float bottom, float top, flo
 
 	if (perspective)
 	{
-		glFrustum(left,right,bottom,top,znear,zfar);
+		glFrustum(left, right, bottom, top, znear, zfar);
 	}
 	else
 	{
-		glOrtho(left,right,bottom,top,znear,zfar);
+		glOrtho(left, right, bottom, top, znear, zfar);
 	}
 
 	_ProjMatDirty = true;
@@ -63,7 +63,7 @@ void CDriverGL::setFrustumMatrix(CMatrix &frustumMatrix)
 	H_AUTO_OGL(CDriverGL_setFrustum)
 	glMatrixMode(GL_PROJECTION);
 
-	glLoadMatrixf(((GLfloat*)frustumMatrix.get()));
+	glLoadMatrixf(((GLfloat *)frustumMatrix.get()));
 
 	glMatrixMode(GL_MODELVIEW);
 }
@@ -78,7 +78,7 @@ CMatrix CDriverGL::getFrustumMatrix()
 
 	CMatrix frustumMatrix;
 	float frustum[16];
-	glGetFloatv(GL_PROJECTION_MATRIX, ((GLfloat*)&frustum));
+	glGetFloatv(GL_PROJECTION_MATRIX, ((GLfloat *)&frustum));
 	frustumMatrix.set(frustum);
 
 	glMatrixMode(GL_MODELVIEW);
@@ -87,70 +87,68 @@ CMatrix CDriverGL::getFrustumMatrix()
 }
 
 // ***************************************************************************
-void CDriverGL::setupViewMatrixEx(const CMatrix& mtx, const CVector &cameraPos)
+void CDriverGL::setupViewMatrixEx(const CMatrix &mtx, const CVector &cameraPos)
 {
 	H_AUTO_OGL(CDriverGL_setupViewMatrixEx)
-	_UserViewMtx= mtx;
+	_UserViewMtx = mtx;
 
 	// Setup the matrix to transform the CScene basis in openGL basis.
-	CMatrix		changeBasis;
-	CVector		I(1,0,0);
-	CVector		J(0,0,-1);
-	CVector		K(0,1,0);
+	CMatrix changeBasis;
+	CVector I(1, 0, 0);
+	CVector J(0, 0, -1);
+	CVector K(0, 1, 0);
 
 	changeBasis.identity();
-	changeBasis.setRot(I,J,K, true);
-	_ViewMtx=changeBasis*mtx;
+	changeBasis.setRot(I, J, K, true);
+	_ViewMtx = changeBasis * mtx;
 	// Reset the viewMtx position.
 	_ViewMtx.setPos(CVector::Null);
-	_PZBCameraPos= cameraPos;
+	_PZBCameraPos = cameraPos;
 
 	// Anything that depend on the view martix must be updated.
-	_LightSetupDirty= true;
-	_ModelViewMatrixDirty= true;
-	_RenderSetupDirty= true;
+	_LightSetupDirty = true;
+	_ModelViewMatrixDirty = true;
+	_RenderSetupDirty = true;
 	// All lights must be refresh.
-	for(uint i=0;i<MaxLight;i++)
-		_LightDirty[i]= true;
+	for (uint i = 0; i < MaxLight; i++)
+		_LightDirty[i] = true;
 
 	_SpecularTexMtx = _ViewMtx;
-	_SpecularTexMtx.setPos(CVector(0.0f,0.0f,0.0f));
+	_SpecularTexMtx.setPos(CVector(0.0f, 0.0f, 0.0f));
 	_SpecularTexMtx.invert();
-	_SpecularTexMtx = changeBasis *	_SpecularTexMtx;
+	_SpecularTexMtx = changeBasis * _SpecularTexMtx;
 }
 
-
 // ***************************************************************************
-void CDriverGL::setupViewMatrix(const CMatrix& mtx)
+void CDriverGL::setupViewMatrix(const CMatrix &mtx)
 {
 	H_AUTO_OGL(CDriverGL_setupViewMatrix)
-	_UserViewMtx= mtx;
+	_UserViewMtx = mtx;
 
 	// Setup the matrix to transform the CScene basis in openGL basis.
-	CMatrix		changeBasis;
-	CVector		I(1,0,0);
-	CVector		J(0,0,-1);
-	CVector		K(0,1,0);
+	CMatrix changeBasis;
+	CVector I(1, 0, 0);
+	CVector J(0, 0, -1);
+	CVector K(0, 1, 0);
 
 	changeBasis.identity();
-	changeBasis.setRot(I,J,K, true);
-	_ViewMtx=changeBasis*mtx;
+	changeBasis.setRot(I, J, K, true);
+	_ViewMtx = changeBasis * mtx;
 	// Just set the PZBCameraPos to 0.
-	_PZBCameraPos= CVector::Null;
+	_PZBCameraPos = CVector::Null;
 
 	// Anything that depend on the view martix must be updated.
-	_LightSetupDirty= true;
-	_ModelViewMatrixDirty= true;
-	_RenderSetupDirty= true;
+	_LightSetupDirty = true;
+	_ModelViewMatrixDirty = true;
+	_RenderSetupDirty = true;
 	// All lights must be refresh.
-	for(uint i=0;i<MaxLight;i++)
-		_LightDirty[i]= true;
+	for (uint i = 0; i < MaxLight; i++)
+		_LightDirty[i] = true;
 
 	_SpecularTexMtx = _ViewMtx;
-	_SpecularTexMtx.setPos(CVector(0.0f,0.0f,0.0f));
+	_SpecularTexMtx.setPos(CVector(0.0f, 0.0f, 0.0f));
 	_SpecularTexMtx.invert();
-	_SpecularTexMtx = changeBasis *	_SpecularTexMtx;
-
+	_SpecularTexMtx = changeBasis * _SpecularTexMtx;
 }
 
 // ***************************************************************************
@@ -161,23 +159,21 @@ CMatrix CDriverGL::getViewMatrix(void) const
 }
 
 // ***************************************************************************
-void CDriverGL::setupModelMatrix(const CMatrix& mtx)
+void CDriverGL::setupModelMatrix(const CMatrix &mtx)
 {
 	H_AUTO_OGL(CDriverGL_setupModelMatrix)
 	// profiling
 	_NbSetupModelMatrixCall++;
 
-
 	// Dirt flags.
-	_ModelViewMatrixDirty= true;
-	_RenderSetupDirty= true;
-
+	_ModelViewMatrixDirty = true;
+	_RenderSetupDirty = true;
 
 	// Put the matrix in the opengl eye space, and store it.
-	CMatrix		mat= mtx;
+	CMatrix mat = mtx;
 	// remove first the _PZBCameraPos
 	mat.setPos(mtx.getPos() - _PZBCameraPos);
-	_ModelViewMatrix= _ViewMtx*mat;
+	_ModelViewMatrix = _ViewMtx * mat;
 }
 
 // ***************************************************************************
@@ -187,25 +183,24 @@ void CDriverGL::doRefreshRenderSetup()
 	// Check if the light setup has been modified first
 	if (_LightSetupDirty)
 		// Recompute light setup
-		cleanLightSetup ();
+		cleanLightSetup();
 
 	// Check light setup is good
-	nlassert (_LightSetupDirty==false);
-
+	nlassert(_LightSetupDirty == false);
 
 	// Check if must update the modelViewMatrix
-	if( _ModelViewMatrixDirty )
+	if (_ModelViewMatrixDirty)
 	{
 		// By default, the first model matrix is active
-		glLoadMatrixf( _ModelViewMatrix.get() );
+		glLoadMatrixf(_ModelViewMatrix.get());
 		// enable normalize if matrix has scale.
-		enableGlNormalize( _ModelViewMatrix.hasScalePart() || _ForceNormalize );
+		enableGlNormalize(_ModelViewMatrix.hasScalePart() || _ForceNormalize);
 		// clear.
-		_ModelViewMatrixDirty= false;
+		_ModelViewMatrixDirty = false;
 	}
 
 	// render setup is cleaned.
-	_RenderSetupDirty= false;
+	_RenderSetupDirty = false;
 }
 
 #ifdef NL_STATIC

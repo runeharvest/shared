@@ -24,7 +24,6 @@
 
 #include <string>
 
-
 /**
  * CMainlandSummary
  *
@@ -34,7 +33,8 @@
  */
 struct CMainlandSummary
 {
-	CMainlandSummary(): Id(0)
+	CMainlandSummary()
+	    : Id(0)
 	{
 		LanguageCode = "en";
 		Online = false;
@@ -58,11 +58,11 @@ struct CMainlandSummary
 	/// serialisation coming from a stream (net message)
 	void serial(NLMISC::IStream &f)
 	{
-		f.serial( Id );
-		f.serial( Name );
-		f.serial( Description );
-		f.serial( LanguageCode );
-		f.serial( Online );
+		f.serial(Id);
+		f.serial(Name);
+		f.serial(Description);
+		f.serial(LanguageCode);
+		f.serial(Online);
 	}
 };
 

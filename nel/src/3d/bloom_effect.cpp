@@ -24,13 +24,12 @@
 #include "nel/3d/u_scene.h"
 #include "nel/3d/u_camera.h"
 
-//3D
+// 3D
 #include "nel/3d/driver_user.h"
 #include "nel/3d/texture_bloom.h"
 #include "nel/3d/texture_user.h"
 
 #include "nel/3d/bloom_effect.h"
-
 
 using namespace NLMISC;
 using namespace NL3D;
@@ -40,13 +39,10 @@ using namespace std;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // vertex program used to blur texture
-static const char *TextureOffset =
-"!!VP1.0																	\n\
+static const char *TextureOffset = "!!VP1.0																	\n\
 	MOV o[COL0].x, c[8].x;	          										\n\
 	MOV o[COL0].y, c[8].y;	          										\n\
 	MOV o[COL0].z, c[8].z;	          										\n\
@@ -61,9 +57,7 @@ static const char *TextureOffset =
 	ADD o[TEX3], v[TEX0], c[13];											\n\
 	END \n";
 
-
 static NLMISC::CSmartPtr<CVertexProgram> TextureOffsetVertexProgram;
-
 
 //-----------------------------------------------------------------------------------------------------------
 
@@ -122,12 +116,12 @@ void CBloomEffect::init()
 
 	// initialize blur material
 	_BlurMat = _Driver->createMaterial();
-	CMaterial * matObject = _BlurMat.getObjectPtr();
+	CMaterial *matObject = _BlurMat.getObjectPtr();
 	_BlurMat.initUnlit();
 	_BlurMat.setColor(CRGBA::White);
-	_BlurMat.setBlend (false);
-	_BlurMat.setAlphaTest (false);
-	matObject->setBlendFunc (CMaterial::one, CMaterial::zero);
+	_BlurMat.setBlend(false);
+	_BlurMat.setAlphaTest(false);
+	matObject->setBlendFunc(CMaterial::one, CMaterial::zero);
 	matObject->setZWrite(false);
 	matObject->setZFunc(CMaterial::always);
 	matObject->setDoubleSided(true);
@@ -164,7 +158,7 @@ void CBloomEffect::init()
 
 	// initialize linear blur material
 	_DisplayBlurMat = _Driver->createMaterial();
-	CMaterial * matObjectFinal = _DisplayBlurMat.getObjectPtr();
+	CMaterial *matObjectFinal = _DisplayBlurMat.getObjectPtr();
 	_DisplayBlurMat.initUnlit();
 	_DisplayBlurMat.setColor(CRGBA::White);
 	matObjectFinal->setBlend(true);
@@ -198,10 +192,10 @@ void CBloomEffect::init()
 	matObjectFinal->texEnvArg1RGB(1, CMaterial::Previous, CMaterial::SrcColor);
 
 	// initialize quads
-	_BlurQuad.V0 = CVector(-1.f, -1.f,	0.5f);
-	_BlurQuad.V1 = CVector(1.f,	 -1.f,	0.5f);
-	_BlurQuad.V2 = CVector(1.f,	 1.f,	0.5f);
-	_BlurQuad.V3 = CVector(-1.f, 1.f,	0.5f);
+	_BlurQuad.V0 = CVector(-1.f, -1.f, 0.5f);
+	_BlurQuad.V1 = CVector(1.f, -1.f, 0.5f);
+	_BlurQuad.V2 = CVector(1.f, 1.f, 0.5f);
+	_BlurQuad.V3 = CVector(-1.f, 1.f, 0.5f);
 	if (drv->textureCoordinateAlternativeMode())
 	{
 		_BlurQuad.Uv0 = CUV(0.f, 1.f);
@@ -230,7 +224,7 @@ void CBloomEffect::applyBloom()
 	// don't activate bloom when PolygonMode is different from Filled
 	if (_Driver->getPolygonMode() != UDriver::Filled) return;
 
-	if (_Driver->getWindowWidth()==0 || _Driver->getWindowHeight()==0)
+	if (_Driver->getWindowWidth() == 0 || _Driver->getWindowHeight() == 0)
 		return;
 
 	if (!_Init)
@@ -311,7 +305,7 @@ void CBloomEffect::applyBloom()
 
 void CBloomEffect::applyBlur()
 {
-	NL3D::IDriver *drvInternal = ((CDriverUser *) _Driver)->getDriver();
+	NL3D::IDriver *drvInternal = ((CDriverUser *)_Driver)->getDriver();
 
 	// initialize vertex program
 	drvInternal->activeVertexProgram(TextureOffsetVertexProgram);
@@ -320,7 +314,7 @@ void CBloomEffect::applyBlur()
 
 	// initialize blur material
 	UMaterial displayBlurMat;
-	if(_SquareBloom)
+	if (_SquareBloom)
 	{
 		displayBlurMat = _DisplaySquareBlurMat;
 	}
@@ -328,7 +322,7 @@ void CBloomEffect::applyBlur()
 	{
 		displayBlurMat = _DisplayBlurMat;
 	}
-	CMaterial * matObjectFinal = displayBlurMat.getObjectPtr();
+	CMaterial *matObjectFinal = displayBlurMat.getObjectPtr();
 
 	uint8 d = _DensityBloom;
 	CRGBA constCoeff(d, d, d, d);
@@ -346,8 +340,8 @@ void CBloomEffect::applyBlur()
 void CBloomEffect::doBlur(bool horizontalBlur)
 {
 	CVector2f blurVec;
-	ITexture * startTexture;
-	ITexture * endTexture;
+	ITexture *startTexture;
+	ITexture *endTexture;
 
 	// set displayed texture and render target texture of the pass
 	if (horizontalBlur)
@@ -363,10 +357,10 @@ void CBloomEffect::doBlur(bool horizontalBlur)
 		endTexture = _BlurFinalTex->getITexture();
 	}
 
-	NL3D::IDriver *drvInternal = ((CDriverUser *) _Driver)->getDriver();
+	NL3D::IDriver *drvInternal = ((CDriverUser *)_Driver)->getDriver();
 	CTextureUser txt(endTexture);
 	// initialize render target
-	if(!((CDriverUser *) _Driver)->setRenderTarget(txt, 0, 0, _BlurWidth, _BlurHeight))
+	if (!((CDriverUser *)_Driver)->setRenderTarget(txt, 0, 0, _BlurWidth, _BlurHeight))
 	{
 		nlwarning("setRenderTarget return false with blur texture for bloom effect\n");
 		return;
@@ -405,13 +399,13 @@ void CBloomEffect::doBlur(bool horizontalBlur)
 		decalR = 0.5f;
 		decal2R = 1.5f;
 	}
-	drvInternal->setUniform2f(IDriver::VertexProgram, 10, (decalR/(float)_BlurWidth)*blurVec.x,		(decalR/(float)_BlurHeight)*blurVec.y);
-	drvInternal->setUniform2f(IDriver::VertexProgram, 11, (decal2R/(float)_BlurWidth)*blurVec.x,		(decal2R/(float)_BlurHeight)*blurVec.y);
-	drvInternal->setUniform2f(IDriver::VertexProgram, 12, (decalL/(float)_BlurWidth)*blurVec.x,		(decalL/(float)_BlurHeight)*blurVec.y);
-	drvInternal->setUniform2f(IDriver::VertexProgram, 13, (decal2L/(float)_BlurWidth)*blurVec.x,		(decal2L/(float)_BlurHeight)*blurVec.y);
+	drvInternal->setUniform2f(IDriver::VertexProgram, 10, (decalR / (float)_BlurWidth) * blurVec.x, (decalR / (float)_BlurHeight) * blurVec.y);
+	drvInternal->setUniform2f(IDriver::VertexProgram, 11, (decal2R / (float)_BlurWidth) * blurVec.x, (decal2R / (float)_BlurHeight) * blurVec.y);
+	drvInternal->setUniform2f(IDriver::VertexProgram, 12, (decalL / (float)_BlurWidth) * blurVec.x, (decalL / (float)_BlurHeight) * blurVec.y);
+	drvInternal->setUniform2f(IDriver::VertexProgram, 13, (decal2L / (float)_BlurWidth) * blurVec.x, (decal2L / (float)_BlurHeight) * blurVec.y);
 
 	// initialize material textures
-	CMaterial * matObject = _BlurMat.getObjectPtr();
+	CMaterial *matObject = _BlurMat.getObjectPtr();
 	matObject->setTexture(0, startTexture);
 	matObject->setTexture(1, startTexture);
 	matObject->setTexture(2, startTexture);

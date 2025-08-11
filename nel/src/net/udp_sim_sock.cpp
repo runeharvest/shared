@@ -35,15 +35,17 @@ namespace NLNET {
 
 struct CBufferizedOutPacket
 {
-	CBufferizedOutPacket (CUdpSock *client, const uint8 *packet, uint32 packetSize, uint32 delay, const CInetAddress *addr):
-		Client(client), PacketSize(packetSize), Time(CTime::getLocalTime()+delay)
+	CBufferizedOutPacket(CUdpSock *client, const uint8 *packet, uint32 packetSize, uint32 delay, const CInetAddress *addr)
+	    : Client(client)
+	    , PacketSize(packetSize)
+	    , Time(CTime::getLocalTime() + delay)
 	{
-		nlassert (packetSize > 0);
-		nlassert (packet != NULL);
-		nlassert (client != NULL);
+		nlassert(packetSize > 0);
+		nlassert(packet != NULL);
+		nlassert(client != NULL);
 
 		Packet = new uint8[packetSize];
-		memcpy (Packet, packet, packetSize);
+		memcpy(Packet, packet, packetSize);
 
 		if (addr != NULL)
 		{
@@ -56,10 +58,10 @@ struct CBufferizedOutPacket
 		}
 	}
 
-	~CBufferizedOutPacket ()
+	~CBufferizedOutPacket()
 	{
-		nlassert (Packet != NULL);
-		delete [] Packet;
+		nlassert(Packet != NULL);
+		delete[] Packet;
 		Packet = NULL;
 		Client = NULL;
 		PacketSize = 0;
@@ -68,58 +70,57 @@ struct CBufferizedOutPacket
 			delete Addr;
 	}
 
-	CUdpSock		*Client;
-	uint8			*Packet;
-	uint32			 PacketSize;
-	TTime			 Time;
-	CInetAddress	*Addr;
+	CUdpSock *Client;
+	uint8 *Packet;
+	uint32 PacketSize;
+	TTime Time;
+	CInetAddress *Addr;
 };
-
 
 //
 // Variables
 //
 
-//queue<CBufferizedOutPacket*> CUdpSimSock::BufferizedOutPackets;
-//queue<CBufferizedOutPacket*> CUdpSimSock::BufferizedInPackets;
+// queue<CBufferizedOutPacket*> CUdpSimSock::BufferizedOutPackets;
+// queue<CBufferizedOutPacket*> CUdpSimSock::BufferizedInPackets;
 
-uint32	CUdpSimSock::_InLag = 0;
-uint8	CUdpSimSock::_InPacketLoss = 0;
+uint32 CUdpSimSock::_InLag = 0;
+uint8 CUdpSimSock::_InPacketLoss = 0;
 
-uint32	CUdpSimSock::_OutLag = 0;
-uint8	CUdpSimSock::_OutPacketLoss = 0;
-uint8	CUdpSimSock::_OutPacketDuplication = 0;
-uint8	CUdpSimSock::_OutPacketDisordering = 0;
+uint32 CUdpSimSock::_OutLag = 0;
+uint8 CUdpSimSock::_OutPacketLoss = 0;
+uint8 CUdpSimSock::_OutPacketDuplication = 0;
+uint8 CUdpSimSock::_OutPacketDisordering = 0;
 
 //
 // Functions
 //
 
-void CUdpSimSock::sendUDPNow (const uint8 *buffer, uint32 len, const CInetAddress *addr)
+void CUdpSimSock::sendUDPNow(const uint8 *buffer, uint32 len, const CInetAddress *addr)
 {
 	if (addr == NULL)
-		UdpSock.send (buffer, len);
+		UdpSock.send(buffer, len);
 	else
-		UdpSock.sendTo (buffer, len, *addr);
+		UdpSock.sendTo(buffer, len, *addr);
 }
 
-void CUdpSimSock::sendUDP (const uint8 *buffer, uint32& len, const CInetAddress *addr)
+void CUdpSimSock::sendUDP(const uint8 *buffer, uint32 &len, const CInetAddress *addr)
 {
-	nlassert (buffer != NULL);
-	nlassert (len > 0);
+	nlassert(buffer != NULL);
+	nlassert(len > 0);
 
-	if ((float)rand()/(float)(RAND_MAX)*100.0f >= _OutPacketLoss)
+	if ((float)rand() / (float)(RAND_MAX) * 100.0f >= _OutPacketLoss)
 	{
-		sint32 lag = _OutLag /*+ (rand()%40) - 20*/;// void disordering
+		sint32 lag = _OutLag /*+ (rand()%40) - 20*/; // void disordering
 
 		if (lag > 100)
 		{
 			// send the packet later
 
-			CBufferizedOutPacket *bp = new CBufferizedOutPacket (&UdpSock, buffer, len, lag, addr);
+			CBufferizedOutPacket *bp = new CBufferizedOutPacket(&UdpSock, buffer, len, lag, addr);
 
 			// duplicate the packet
-			if ((float)rand()/(float)(RAND_MAX)*100.0f < _OutPacketDisordering && !_BufferizedOutPackets.empty())
+			if ((float)rand() / (float)(RAND_MAX) * 100.0f < _OutPacketDisordering && !_BufferizedOutPackets.empty())
 			{
 				CBufferizedOutPacket *bp2 = _BufferizedOutPackets.back();
 
@@ -133,44 +134,42 @@ void CUdpSimSock::sendUDP (const uint8 *buffer, uint32& len, const CInetAddress 
 				bp = bp2;
 			}
 
-			_BufferizedOutPackets.push (bp);
+			_BufferizedOutPackets.push(bp);
 
 			// duplicate the packet
-			if ((float)rand()/(float)(RAND_MAX)*100.0f < _OutPacketDuplication)
+			if ((float)rand() / (float)(RAND_MAX) * 100.0f < _OutPacketDuplication)
 			{
-				CBufferizedOutPacket *bp = new CBufferizedOutPacket (&UdpSock, buffer, len, lag, addr);
-				_BufferizedOutPackets.push (bp);
+				CBufferizedOutPacket *bp = new CBufferizedOutPacket(&UdpSock, buffer, len, lag, addr);
+				_BufferizedOutPackets.push(bp);
 			}
 		}
 		else
 		{
 			// send the packet NOW
 
-			sendUDPNow (buffer, len, addr);
+			sendUDPNow(buffer, len, addr);
 
 			// duplicate the packet
-			if ((float)rand()/(float)(RAND_MAX)*100.0f < _OutPacketDuplication)
+			if ((float)rand() / (float)(RAND_MAX) * 100.0f < _OutPacketDuplication)
 			{
-				sendUDPNow (buffer, len, addr);
+				sendUDPNow(buffer, len, addr);
 			}
 		}
 	}
 }
 
-
-
-void CUdpSimSock::updateBufferizedPackets ()
+void CUdpSimSock::updateBufferizedPackets()
 {
-	TTime ct = CTime::getLocalTime ();
+	TTime ct = CTime::getLocalTime();
 	while (!_BufferizedOutPackets.empty())
 	{
-		CBufferizedOutPacket *bp = _BufferizedOutPackets.front ();
+		CBufferizedOutPacket *bp = _BufferizedOutPackets.front();
 		if (bp->Time <= ct)
 		{
 			// time to send the message
-			sendUDPNow (bp->Packet, bp->PacketSize, bp->Addr);
+			sendUDPNow(bp->Packet, bp->PacketSize, bp->Addr);
 			delete bp;
-			_BufferizedOutPackets.pop ();
+			_BufferizedOutPackets.pop();
 		}
 		else
 		{
@@ -179,98 +178,98 @@ void CUdpSimSock::updateBufferizedPackets ()
 	}
 }
 
-void				cbSimVar (CConfigFile::CVar &var)
+void cbSimVar(CConfigFile::CVar &var)
 {
-	     if (var.Name == "SimInLag") CUdpSimSock::_InLag = var.asInt ();
-	else if (var.Name == "SimInPacketLost") CUdpSimSock::_InPacketLoss = uint8(var.asInt ());
-	else if (var.Name == "SimOutLag") CUdpSimSock::_OutLag = var.asInt ();
-	else if (var.Name == "SimOutPacketLost") CUdpSimSock::_OutPacketLoss = uint8(var.asInt ());
-	else if (var.Name == "SimOutPacketDuplication") CUdpSimSock::_OutPacketDuplication = uint8(var.asInt ());
-	else if (var.Name == "SimOutPacketDisordering") CUdpSimSock::_OutPacketDisordering = uint8(var.asInt ());
+	if (var.Name == "SimInLag") CUdpSimSock::_InLag = var.asInt();
+	else if (var.Name == "SimInPacketLost") CUdpSimSock::_InPacketLoss = uint8(var.asInt());
+	else if (var.Name == "SimOutLag") CUdpSimSock::_OutLag = var.asInt();
+	else if (var.Name == "SimOutPacketLost") CUdpSimSock::_OutPacketLoss = uint8(var.asInt());
+	else if (var.Name == "SimOutPacketDuplication") CUdpSimSock::_OutPacketDuplication = uint8(var.asInt());
+	else if (var.Name == "SimOutPacketDisordering") CUdpSimSock::_OutPacketDisordering = uint8(var.asInt());
 	else nlstop;
 }
 
-void				CUdpSimSock::setSimValues (NLMISC::CConfigFile &cf)
+void CUdpSimSock::setSimValues(NLMISC::CConfigFile &cf)
 {
-	cf.setCallback ("SimInLag", cbSimVar);
-	cf.setCallback ("SimInPacketLost", cbSimVar);
-	cf.setCallback ("SimOutLag", cbSimVar);
-	cf.setCallback ("SimOutPacketLost", cbSimVar);
-	cf.setCallback ("SimOutPacketDuplication", cbSimVar);
-	cf.setCallback ("SimOutPacketDisordering", cbSimVar);
+	cf.setCallback("SimInLag", cbSimVar);
+	cf.setCallback("SimInPacketLost", cbSimVar);
+	cf.setCallback("SimOutLag", cbSimVar);
+	cf.setCallback("SimOutPacketLost", cbSimVar);
+	cf.setCallback("SimOutPacketDuplication", cbSimVar);
+	cf.setCallback("SimOutPacketDisordering", cbSimVar);
 
 	CConfigFile::CVar *pv;
 	pv = cf.getVarPtr("SimInLag");
-	if( pv )
-		cbSimVar( *pv );
+	if (pv)
+		cbSimVar(*pv);
 	pv = cf.getVarPtr("SimInPacketLost");
-	if( pv )
-		cbSimVar( *pv );
+	if (pv)
+		cbSimVar(*pv);
 	pv = cf.getVarPtr("SimOutLag");
-	if( pv )
-		cbSimVar( *pv );
+	if (pv)
+		cbSimVar(*pv);
 	pv = cf.getVarPtr("SimOutPacketLost");
-	if( pv )
-		cbSimVar( *pv );
+	if (pv)
+		cbSimVar(*pv);
 	pv = cf.getVarPtr("SimOutPacketDuplication");
-	if( pv )
-		cbSimVar( *pv );
+	if (pv)
+		cbSimVar(*pv);
 	pv = cf.getVarPtr("SimOutPacketDisordering");
-	if( pv )
-		cbSimVar( *pv );
+	if (pv)
+		cbSimVar(*pv);
 }
 
-void				CUdpSimSock::connect( const CInetHost& addrs )
+void CUdpSimSock::connect(const CInetHost &addrs)
 {
-	UdpSock.connect (addrs);
+	UdpSock.connect(addrs);
 }
 
-void				CUdpSimSock::close()
+void CUdpSimSock::close()
 {
-	UdpSock.close ();
+	UdpSock.close();
 }
 
-uint8 buffer [10000];
+uint8 buffer[10000];
 
-bool				CUdpSimSock::dataAvailable ()
+bool CUdpSimSock::dataAvailable()
 {
-	updateBufferizedPackets ();
+	updateBufferizedPackets();
 
 	if (_InLag > 0)
 	{
-		while (UdpSock.dataAvailable ())
+		while (UdpSock.dataAvailable())
 		{
 			CInetAddress addr;
 			uint len = 10000;
-			UdpSock.receivedFrom (buffer, len, addr);
+			UdpSock.receivedFrom(buffer, len, addr);
 
-			if ((float)rand()/(float)(RAND_MAX)*100.0f >= _InPacketLoss)
+			if ((float)rand() / (float)(RAND_MAX) * 100.0f >= _InPacketLoss)
 			{
-				CBufferizedOutPacket *bp = new CBufferizedOutPacket (&UdpSock, buffer, len, _InLag, &addr);
-				_BufferizedInPackets.push (bp);
+				CBufferizedOutPacket *bp = new CBufferizedOutPacket(&UdpSock, buffer, len, _InLag, &addr);
+				_BufferizedInPackets.push(bp);
 			}
 		}
 
-		TTime ct = CTime::getLocalTime ();
-		if (!_BufferizedInPackets.empty() && _BufferizedInPackets.front ()->Time <= ct)
+		TTime ct = CTime::getLocalTime();
+		if (!_BufferizedInPackets.empty() && _BufferizedInPackets.front()->Time <= ct)
 			return true;
 		else
 			return false;
 	}
 	else
 	{
-		if ((float)rand()/(float)(RAND_MAX)*100.0f >= _InPacketLoss)
+		if ((float)rand() / (float)(RAND_MAX) * 100.0f >= _InPacketLoss)
 		{
-			return UdpSock.dataAvailable ();
+			return UdpSock.dataAvailable();
 		}
 		else
 		{
 			// consume data
-			if (UdpSock.dataAvailable ())
+			if (UdpSock.dataAvailable())
 			{
 				CInetAddress addr;
 				uint len = 10000;
-				UdpSock.receivedFrom (buffer, len, addr);
+				UdpSock.receivedFrom(buffer, len, addr);
 			}
 
 			// packet lost
@@ -279,24 +278,24 @@ bool				CUdpSimSock::dataAvailable ()
 	}
 }
 
-bool				CUdpSimSock::receive (uint8 *buffer, uint32& len, bool throw_exception)
+bool CUdpSimSock::receive(uint8 *buffer, uint32 &len, bool throw_exception)
 {
-	if (_InLag> 0)
+	if (_InLag > 0)
 	{
 		if (_BufferizedInPackets.empty())
 		{
 			if (throw_exception)
-				throw Exception ("no data available");
+				throw Exception("no data available");
 			return false;
 		}
 
-		CBufferizedOutPacket *bp = _BufferizedInPackets.front ();
-		uint32 s = min (len, bp->PacketSize);
-		memcpy (buffer, bp->Packet, s);
+		CBufferizedOutPacket *bp = _BufferizedInPackets.front();
+		uint32 s = min(len, bp->PacketSize);
+		memcpy(buffer, bp->Packet, s);
 		len = s;
 
 		delete bp;
-		_BufferizedInPackets.pop ();
+		_BufferizedInPackets.pop();
 		return true;
 	}
 	else
@@ -305,20 +304,20 @@ bool				CUdpSimSock::receive (uint8 *buffer, uint32& len, bool throw_exception)
 	}
 }
 
-CSock::TSockResult	CUdpSimSock::send (const uint8 *buffer, uint32& len, bool /* throw_exception */)
+CSock::TSockResult CUdpSimSock::send(const uint8 *buffer, uint32 &len, bool /* throw_exception */)
 {
-	sendUDP (buffer, len);
+	sendUDP(buffer, len);
 	return CSock::Ok;
 }
 
-void CUdpSimSock::sendTo (const uint8 *buffer, uint32& len, const CInetAddress& addr)
+void CUdpSimSock::sendTo(const uint8 *buffer, uint32 &len, const CInetAddress &addr)
 {
-	sendUDP (buffer, len, &addr);
+	sendUDP(buffer, len, &addr);
 }
 
-bool				CUdpSimSock::connected()
+bool CUdpSimSock::connected()
 {
-	return UdpSock.connected ();
+	return UdpSock.connected();
 }
 
 } // NLNET

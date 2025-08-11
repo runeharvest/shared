@@ -14,18 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 #include "action_sync.h"
 
-
 // leave not static else this workaround don't work
-void	dummyToAvoidStupidCompilerWarning_game_share_action_sync_cpp()
+void dummyToAvoidStupidCompilerWarning_game_share_action_sync_cpp()
 {
 }
-
 
 namespace CLFECOMMON {
 
@@ -40,6 +36,3 @@ CActionSync::CActionSync()
 */
 
 }
-
-
-

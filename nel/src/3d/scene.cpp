@@ -56,7 +56,6 @@
 #include "nel/3d/water_env_map.h"
 #include "nel/3d/skeleton_spawn_script.h"
 
-
 #include <memory>
 
 #include "nel/misc/time_nl.h"
@@ -73,33 +72,28 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-#define NL3D_SCENE_COARSE_MANAGER_TEXTURE	"nel_coarse_texture.tga"
-
+#define NL3D_SCENE_COARSE_MANAGER_TEXTURE "nel_coarse_texture.tga"
 
 // The manager is limited to a square of 3000m*3000m around the camera. Beyond, models are clipped individually (bad!!).
-const	float	NL3D_QuadGridClipManagerRadiusMax= 1500;
-const	float	NL3D_QuadGridClipClusterSize= 400;
-const	uint	NL3D_QuadGridClipNumDist= 10;
-const	float	NL3D_QuadGridClipMaxDist= 1000;
+const float NL3D_QuadGridClipManagerRadiusMax = 1500;
+const float NL3D_QuadGridClipClusterSize = 400;
+const uint NL3D_QuadGridClipNumDist = 10;
+const float NL3D_QuadGridClipMaxDist = 1000;
 
+#define NL3D_SCENE_DEFAULT_SHADOW_MAP_SIZE 64
+#define NL3D_SCENE_DEFAULT_SHADOW_MAP_BLUR_SIZE 2
+#define NL3D_SCENE_DEFAULT_SHADOW_MAP_DIST_FADE_START 40
+#define NL3D_SCENE_DEFAULT_SHADOW_MAP_DIST_FADE_END 50
+#define NL3D_SCENE_DEFAULT_SHADOW_MAP_MAX_CASTER_IN_SCREEN 16
+#define NL3D_SCENE_DEFAULT_SHADOW_MAP_MAX_CASTER_AROUND 64
 
-#define	NL3D_SCENE_DEFAULT_SHADOW_MAP_SIZE		64
-#define	NL3D_SCENE_DEFAULT_SHADOW_MAP_BLUR_SIZE	2
-#define	NL3D_SCENE_DEFAULT_SHADOW_MAP_DIST_FADE_START			40
-#define	NL3D_SCENE_DEFAULT_SHADOW_MAP_DIST_FADE_END				50
-#define	NL3D_SCENE_DEFAULT_SHADOW_MAP_MAX_CASTER_IN_SCREEN		16
-#define	NL3D_SCENE_DEFAULT_SHADOW_MAP_MAX_CASTER_AROUND			64
-
-
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 // ***************************************************************************
 // ***************************************************************************
 
-
-void	CScene::registerBasics()
+void CScene::registerBasics()
 {
 	CTransform::registerBasic();
 	CCamera::registerBasic();
@@ -110,7 +104,7 @@ void	CScene::registerBasics()
 	CLandscapeModel::registerBasic();
 	CTransformShape::registerBasic();
 	CSkeletonModel::registerBasic();
-	CParticleSystemModel::registerBasic() ;
+	CParticleSystemModel::registerBasic();
 	CMeshMultiLodInstance::registerBasic();
 	CCluster::registerBasic();
 	CFlareModel::registerBasic();
@@ -123,68 +117,68 @@ void	CScene::registerBasics()
 	CQuadGridClipManager::registerBasic();
 }
 
-
 // ***************************************************************************
 // ***************************************************************************
 // ***************************************************************************
 
 // ***************************************************************************
-CScene::CScene(bool bSmallScene) : LightTrav(bSmallScene)
+CScene::CScene(bool bSmallScene)
+    : LightTrav(bSmallScene)
 {
-	HrcTrav.Scene= this;
-	ClipTrav.Scene= this;
-	LightTrav.Scene= this;
-	AnimDetailTrav.Scene= this;
-	LoadBalancingTrav.Scene= this;
-	RenderTrav.Scene= this;
+	HrcTrav.Scene = this;
+	ClipTrav.Scene = this;
+	LightTrav.Scene = this;
+	AnimDetailTrav.Scene = this;
+	LoadBalancingTrav.Scene = this;
+	RenderTrav.Scene = this;
 
 	_ShapeBank = NULL;
 
-	Root= NULL;
-	RootCluster= NULL;
-	SonsOfAncestorSkeletonModelGroup= NULL;
-	_QuadGridClipManager= NULL;
+	Root = NULL;
+	RootCluster = NULL;
+	SonsOfAncestorSkeletonModelGroup = NULL;
+	_QuadGridClipManager = NULL;
 
-	_CurrentTime = 0 ;
-	_EllapsedTime = 0 ;
-	_RealTime = 0 ;
-	_FirstAnimateCall = true ;
+	_CurrentTime = 0;
+	_EllapsedTime = 0;
+	_RealTime = 0;
+	_FirstAnimateCall = true;
 
-	_LightingSystemEnabled= false;
-	_CoarseMeshLightingUpdate= 50;
+	_LightingSystemEnabled = false;
+	_CoarseMeshLightingUpdate = 50;
 
-	_GlobalWindDirection.set(1,0,0);
+	_GlobalWindDirection.set(1, 0, 0);
 	// Default as Sithikt wants.
-	_GlobalWindPower= 0.2f;
+	_GlobalWindPower = 0.2f;
 
 	// global manager (created in CDriverUser)
-	_LodCharacterManager= NULL;
-	_AsyncTextureManager= NULL;
+	_LodCharacterManager = NULL;
+	_AsyncTextureManager = NULL;
 
 	_NumRender = 0;
 
-	_MaxSkeletonsInNotCLodForm= 20;
+	_MaxSkeletonsInNotCLodForm = 20;
 
 	_FilterRenderFlags = std::numeric_limits<uint32>::max();
 
-	_NextRenderProfile= false;
+	_NextRenderProfile = false;
 
 	// Init default _CoarseMeshManager
-	_CoarseMeshManager= new CCoarseMeshManager;
-	_CoarseMeshManager->setTextureFile (NL3D_SCENE_COARSE_MANAGER_TEXTURE);
+	_CoarseMeshManager = new CCoarseMeshManager;
+	_CoarseMeshManager->setTextureFile(NL3D_SCENE_COARSE_MANAGER_TEXTURE);
 
 	// Update model list to NULL
-	_UpdateModelList= NULL;
+	_UpdateModelList = NULL;
 
 	_FlareContext = 0;
 
-	_ShadowMapTextureSize= NL3D_SCENE_DEFAULT_SHADOW_MAP_SIZE;
-	_ShadowMapBlurSize= NL3D_SCENE_DEFAULT_SHADOW_MAP_BLUR_SIZE;
-	_ShadowMapDistFadeStart= NL3D_SCENE_DEFAULT_SHADOW_MAP_DIST_FADE_START;
-	_ShadowMapDistFadeEnd= NL3D_SCENE_DEFAULT_SHADOW_MAP_DIST_FADE_END;
-	_ShadowMapMaxCasterInScreen= NL3D_SCENE_DEFAULT_SHADOW_MAP_MAX_CASTER_IN_SCREEN;
-	_ShadowMapMaxCasterAround= NL3D_SCENE_DEFAULT_SHADOW_MAP_MAX_CASTER_AROUND;
-	_VisualCollisionManagerForShadow= NULL;
+	_ShadowMapTextureSize = NL3D_SCENE_DEFAULT_SHADOW_MAP_SIZE;
+	_ShadowMapBlurSize = NL3D_SCENE_DEFAULT_SHADOW_MAP_BLUR_SIZE;
+	_ShadowMapDistFadeStart = NL3D_SCENE_DEFAULT_SHADOW_MAP_DIST_FADE_START;
+	_ShadowMapDistFadeEnd = NL3D_SCENE_DEFAULT_SHADOW_MAP_DIST_FADE_END;
+	_ShadowMapMaxCasterInScreen = NL3D_SCENE_DEFAULT_SHADOW_MAP_MAX_CASTER_IN_SCREEN;
+	_ShadowMapMaxCasterAround = NL3D_SCENE_DEFAULT_SHADOW_MAP_MAX_CASTER_AROUND;
+	_VisualCollisionManagerForShadow = NULL;
 
 	_WaterCallback = NULL;
 	_PolyDrawingCallback = NULL;
@@ -197,82 +191,82 @@ CScene::CScene(bool bSmallScene) : LightTrav(bSmallScene)
 
 	_WaterEnvMap = NULL;
 
-	_GlobalSystemTime= 0.0;
+	_GlobalSystemTime = 0.0;
 
 	_RequestParticlesAnimate = false;
 }
 // ***************************************************************************
-void	CScene::release()
+void CScene::release()
 {
 	// reset the _QuadGridClipManager, => unlink models, and delete clusters.
-	if( _QuadGridClipManager )
+	if (_QuadGridClipManager)
 		_QuadGridClipManager->reset();
 
 	// First, delete models.
-	set<CTransform*>::iterator	it;
-	it= _Models.begin();
-	while( it!=_Models.end())
+	set<CTransform *>::iterator it;
+	it = _Models.begin();
+	while (it != _Models.end())
 	{
-		CTransform	*tr= *it;
+		CTransform *tr = *it;
 		// Don't delete The Roots, because used, for instance in ~CSkeletonModel()
-		if(tr!=Root && tr!=RootCluster && tr!=SonsOfAncestorSkeletonModelGroup)
+		if (tr != Root && tr != RootCluster && tr != SonsOfAncestorSkeletonModelGroup)
 			deleteModel(tr);
 		// temp erase from the list
 		else
 			_Models.erase(it);
 		// NB: important to take begin(), and not it++, cause ~CSkeletonModel() may delete ScriptSpawned models
-		it= _Models.begin();
+		it = _Models.begin();
 	}
 
 	// Then delete the roots
 	// reinsert
-	if(Root)									_Models.insert(Root);
-	if(RootCluster)								_Models.insert(RootCluster);
-	if(SonsOfAncestorSkeletonModelGroup)		_Models.insert(SonsOfAncestorSkeletonModelGroup);
+	if (Root) _Models.insert(Root);
+	if (RootCluster) _Models.insert(RootCluster);
+	if (SonsOfAncestorSkeletonModelGroup) _Models.insert(SonsOfAncestorSkeletonModelGroup);
 	// delete in the reverse order of initDefaultRoots()
-	if(SonsOfAncestorSkeletonModelGroup)
+	if (SonsOfAncestorSkeletonModelGroup)
 	{
 		deleteModel(SonsOfAncestorSkeletonModelGroup);
-		SonsOfAncestorSkeletonModelGroup= NULL;
+		SonsOfAncestorSkeletonModelGroup = NULL;
 	}
-	if(RootCluster)
+	if (RootCluster)
 	{
 		deleteModel(RootCluster);
-		RootCluster= NULL;
+		RootCluster = NULL;
 	}
-	if(Root)
+	if (Root)
 	{
 		deleteModel(Root);
-		Root= NULL;
+		Root = NULL;
 	}
 
 	// No models at all.
-	_UpdateModelList= NULL;
+	_UpdateModelList = NULL;
 
 	// reset ptrs
 	_ShapeBank = NULL;
-	Root= NULL;
-	RootCluster= NULL;
-	SonsOfAncestorSkeletonModelGroup= NULL;
-	CurrentCamera= NULL;
-	_QuadGridClipManager= NULL;
+	Root = NULL;
+	RootCluster = NULL;
+	SonsOfAncestorSkeletonModelGroup = NULL;
+	CurrentCamera = NULL;
+	_QuadGridClipManager = NULL;
 	ClipTrav.setQuadGridClipManager(NULL);
 
 	// DON'T reset the _LodCharacterManager, because it can be shared across scenes
 	/*
 	if(_LodCharacterManager)
-		_LodCharacterManager->reset();
+	    _LodCharacterManager->reset();
 	*/
-	_LodCharacterManager= NULL;
+	_LodCharacterManager = NULL;
 
 	// delete the coarseMeshManager
-	if(_CoarseMeshManager)
+	if (_CoarseMeshManager)
 	{
 		delete _CoarseMeshManager;
-		_CoarseMeshManager= NULL;
+		_CoarseMeshManager = NULL;
 	}
 
-	if(_GlobalInstanceGroup)
+	if (_GlobalInstanceGroup)
 	{
 		delete _GlobalInstanceGroup;
 		_GlobalInstanceGroup = NULL;
@@ -287,41 +281,41 @@ CScene::~CScene()
 	release();
 }
 // ***************************************************************************
-void	CScene::initDefaultRoots()
+void CScene::initDefaultRoots()
 {
 	// Create and set root the default models.
-	Root= static_cast<CTransform*>(createModel(TransformId));
+	Root = static_cast<CTransform *>(createModel(TransformId));
 
 	// The root is always freezed (never move).
 	Root->freeze();
 
 	// Init the instance group that represent the world
 	_GlobalInstanceGroup = new CInstanceGroup;
-	RootCluster= (CCluster*)createModel (ClusterId);
+	RootCluster = (CCluster *)createModel(ClusterId);
 	// unlink from hrc.
 	RootCluster->hrcUnlink();
 	RootCluster->Name = "ClusterRoot";
 	RootCluster->Group = _GlobalInstanceGroup;
-	_GlobalInstanceGroup->addCluster (RootCluster);
+	_GlobalInstanceGroup->addCluster(RootCluster);
 
 	// init the ClipTrav.RootCluster.
 	ClipTrav.RootCluster = RootCluster;
 
 	// Create a SonsOfAncestorSkeletonModelGroup, for models which have a skeleton ancestor
-	SonsOfAncestorSkeletonModelGroup= static_cast<CRootModel*>(createModel(RootModelId));
+	SonsOfAncestorSkeletonModelGroup = static_cast<CRootModel *>(createModel(RootModelId));
 	// must unlink it from all traversals, because special, only used in CClipTrav::traverse()
 	SonsOfAncestorSkeletonModelGroup->hrcUnlink();
 	Root->clipDelChild(SonsOfAncestorSkeletonModelGroup);
 }
 
 // ***************************************************************************
-void	CScene::initQuadGridClipManager ()
+void CScene::initQuadGridClipManager()
 {
 	// Init clip features.
-	if( !_QuadGridClipManager )
+	if (!_QuadGridClipManager)
 	{
 		// create the model
-		_QuadGridClipManager= static_cast<CQuadGridClipManager*>(createModel(QuadGridClipManagerId));
+		_QuadGridClipManager = static_cast<CQuadGridClipManager *>(createModel(QuadGridClipManagerId));
 		// unlink it from hrc, and link it only to RootCluster.
 		// NB: hence the quadGridClipManager may be clipped by the cluster system
 		_QuadGridClipManager->hrcUnlink();
@@ -330,37 +324,33 @@ void	CScene::initQuadGridClipManager ()
 
 		// init _QuadGridClipManager.
 		_QuadGridClipManager->init(NL3D_QuadGridClipClusterSize,
-			NL3D_QuadGridClipNumDist,
-			NL3D_QuadGridClipMaxDist,
-			NL3D_QuadGridClipManagerRadiusMax);
+		    NL3D_QuadGridClipNumDist,
+		    NL3D_QuadGridClipMaxDist,
+		    NL3D_QuadGridClipManagerRadiusMax);
 	}
 }
 
-
 // ***************************************************************************
-void	CScene::render(bool	doHrcPass)
+void CScene::render(bool doHrcPass)
 {
 	beginPartRender();
 	renderPart(UScene::RenderAll, doHrcPass);
 	endPartRender();
 }
 
-
 // ***************************************************************************
-void	CScene::beginPartRender()
+void CScene::beginPartRender()
 {
 	nlassert(!_IsRendering);
 
 	// Do not delete model during the rendering
 	// Also do not create model with CSkeletonSpawnScript model animation
 	_IsRendering = true;
-	_RenderedPart= UScene::RenderNothing;
-
+	_RenderedPart = UScene::RenderNothing;
 }
 
-
 // ***************************************************************************
-void	CScene::endPartRender(bool keepTrav)
+void CScene::endPartRender(bool keepTrav)
 {
 	nlassert(_IsRendering);
 	_IsRendering = false;
@@ -369,9 +359,9 @@ void	CScene::endPartRender(bool keepTrav)
 	{
 		// Delete model deleted during the rendering
 		uint i;
-		for (i=0; i<_ToDelete.size(); i++)
-			deleteModel (_ToDelete[i]);
-		_ToDelete.clear ();
+		for (i = 0; i < _ToDelete.size(); i++)
+			deleteModel(_ToDelete[i]);
+		_ToDelete.clear();
 
 		// Special for SkeletonSpawnScript animation. create models spawned now
 		flushSSSModelRequests();
@@ -382,12 +372,12 @@ void	CScene::endPartRender(bool keepTrav)
 
 		// Waiting Instance handling
 		double deltaT = _DeltaSystemTimeBetweenRender;
-		clamp (deltaT, 0.01, 0.1);
+		clamp(deltaT, 0.01, 0.1);
 		updateWaitingInstances(deltaT);
 	}
 
 	// Reset profiling
-	_NextRenderProfile= false;
+	_NextRenderProfile = false;
 
 	IDriver *drv = getDriver();
 	drv->activeVertexProgram(NULL);
@@ -399,109 +389,109 @@ void	CScene::endPartRender(bool keepTrav)
 
 	/*
 	uint64 total = PSStatsRegisterPSModelObserver +
-				  PSStatsRemovePSModelObserver +
-				  PSStatsUpdateOpacityInfos +
-				  PSStatsUpdateLightingInfos +
-				  PSStatsGetAABBox +
-				  PSStatsReallocRsc +
-				  PSStatsReleasePSPointer +
-				  PSStatsRefreshRscDeletion +
-				  PSStatsReleaseRsc +
-				  PSStatsReleaseRscAndInvalidate +
-				  PSStatsGetNumTriangles +
-				  PSStatsCheckAgainstPyramid +
-				  PSStatsTraverseAnimDetail +
-				  PSStatsDoAnimate +
-				  PSStatsTraverseRender +
-				  PSStatsTraverseClip +
-				  PSStatsCheckDestroyCondition +
-				  PSStatsForceInstanciate +
-				  PSStatsDoAnimatePart1 +
-				  PSStatsDoAnimatePart2 +
-				  PSStatsDoAnimatePart3 +
-				  PSStatsTraverseAnimDetailPart1 +
-				  PSStatsTraverseAnimDetailPart2 +
-				  PSStatsTraverseAnimDetailPart3 +
-				  PSStatsTraverseAnimDetailPart4 +
-				  PSAnim1 +
-				  PSAnim2+
-				  PSAnim3+
-				  PSAnim4+
-				  PSAnim5+
-				  PSAnim6+
-				  PSAnim7+
-				  PSAnim8+
-				  PSAnim9+
-				  PSAnim10+
-				  PSAnim11;
+	              PSStatsRemovePSModelObserver +
+	              PSStatsUpdateOpacityInfos +
+	              PSStatsUpdateLightingInfos +
+	              PSStatsGetAABBox +
+	              PSStatsReallocRsc +
+	              PSStatsReleasePSPointer +
+	              PSStatsRefreshRscDeletion +
+	              PSStatsReleaseRsc +
+	              PSStatsReleaseRscAndInvalidate +
+	              PSStatsGetNumTriangles +
+	              PSStatsCheckAgainstPyramid +
+	              PSStatsTraverseAnimDetail +
+	              PSStatsDoAnimate +
+	              PSStatsTraverseRender +
+	              PSStatsTraverseClip +
+	              PSStatsCheckDestroyCondition +
+	              PSStatsForceInstanciate +
+	              PSStatsDoAnimatePart1 +
+	              PSStatsDoAnimatePart2 +
+	              PSStatsDoAnimatePart3 +
+	              PSStatsTraverseAnimDetailPart1 +
+	              PSStatsTraverseAnimDetailPart2 +
+	              PSStatsTraverseAnimDetailPart3 +
+	              PSStatsTraverseAnimDetailPart4 +
+	              PSAnim1 +
+	              PSAnim2+
+	              PSAnim3+
+	              PSAnim4+
+	              PSAnim5+
+	              PSAnim6+
+	              PSAnim7+
+	              PSAnim8+
+	              PSAnim9+
+	              PSAnim10+
+	              PSAnim11;
 
 
 	 if (((double) total / (double) NLMISC::CSystemInfo::getProcessorFrequency()) > 0.01)
 	 {
-		  nlinfo("***** PS STATS ****");
-		  #define PS_STATS(var) \
-		  nlinfo("time for " #var " = %.2f", (float) (1000 * ((double) var / (double) CSystemInfo::getProcessorFrequency())));
+	      nlinfo("***** PS STATS ****");
+	      #define PS_STATS(var) \
+	      nlinfo("time for " #var " = %.2f", (float) (1000 * ((double) var / (double) CSystemInfo::getProcessorFrequency())));
 
-		  PS_STATS(PSStatsRegisterPSModelObserver)
-		  PS_STATS(PSStatsRemovePSModelObserver)
-		  PS_STATS(PSStatsUpdateOpacityInfos)
-		  PS_STATS(PSStatsUpdateLightingInfos)
-		  PS_STATS(PSStatsGetAABBox)
-		  PS_STATS(PSStatsReallocRsc)
-		  PS_STATS(PSStatsReleasePSPointer)
-		  PS_STATS(PSStatsRefreshRscDeletion)
-		  PS_STATS(PSStatsReleaseRsc)
-		  PS_STATS(PSStatsReleaseRscAndInvalidate)
-		  PS_STATS(PSStatsGetNumTriangles)
-		  PS_STATS(PSStatsCheckAgainstPyramid)
-		  PS_STATS(PSStatsTraverseAnimDetail)
-		  PS_STATS(PSStatsDoAnimate)
-		  PS_STATS(PSStatsTraverseRender)
-		  PS_STATS(PSStatsTraverseClip)
-		  PS_STATS(PSStatsClipSystemInstanciated);
-		  PS_STATS(PSStatsClipSystemNotInstanciated);
-		  PS_STATS(PSStatsClipSystemCheckAgainstPyramid);
-		  PS_STATS(PSStatsInsertInVisibleList);
-		  PS_STATS(PSStatsCheckDestroyCondition)
-		  PS_STATS(PSStatsForceInstanciate)
-		  PS_STATS(PSStatsDoAnimatePart1)
-		  PS_STATS(PSStatsDoAnimatePart2)
-		  PS_STATS(PSStatsDoAnimatePart3)
-		  PS_STATS(PSStatsTraverseAnimDetailPart1)
-		  PS_STATS(PSStatsTraverseAnimDetailPart2)
-		  PS_STATS(PSStatsTraverseAnimDetailPart3)
-		  PS_STATS(PSStatsTraverseAnimDetailPart4)
-		  PS_STATS(PSAnim1)
-		  PS_STATS(PSAnim2)
-		  PS_STATS(PSAnim3)
-		  PS_STATS(PSAnim4)
-		  PS_STATS(PSAnim5)
-		  PS_STATS(PSAnim6)
-		  PS_STATS(PSAnim7)
-		  PS_STATS(PSAnim8)
-		  PS_STATS(PSAnim9)
-		  PS_STATS(PSAnim10)
-		  PS_STATS(PSAnim11)
-		  PS_STATS(PSStatsZonePlane)
-		  PS_STATS(PSStatsZoneSphere)
-		  PS_STATS(PSStatsZoneDisc)
-		  PS_STATS(PSStatsZoneRectangle)
-		  PS_STATS(PSStatsZoneCylinder)
-		  PS_STATS(PSMotion1)
-		  PS_STATS(PSMotion2)
-		  PS_STATS(PSMotion3)
-		  PS_STATS(PSMotion4)
-		  PS_STATS(PSStatCollision)
-		  PS_STATS(PSStatEmit)
-		  PS_STATS(PSStatRender)
+	      PS_STATS(PSStatsRegisterPSModelObserver)
+	      PS_STATS(PSStatsRemovePSModelObserver)
+	      PS_STATS(PSStatsUpdateOpacityInfos)
+	      PS_STATS(PSStatsUpdateLightingInfos)
+	      PS_STATS(PSStatsGetAABBox)
+	      PS_STATS(PSStatsReallocRsc)
+	      PS_STATS(PSStatsReleasePSPointer)
+	      PS_STATS(PSStatsRefreshRscDeletion)
+	      PS_STATS(PSStatsReleaseRsc)
+	      PS_STATS(PSStatsReleaseRscAndInvalidate)
+	      PS_STATS(PSStatsGetNumTriangles)
+	      PS_STATS(PSStatsCheckAgainstPyramid)
+	      PS_STATS(PSStatsTraverseAnimDetail)
+	      PS_STATS(PSStatsDoAnimate)
+	      PS_STATS(PSStatsTraverseRender)
+	      PS_STATS(PSStatsTraverseClip)
+	      PS_STATS(PSStatsClipSystemInstanciated);
+	      PS_STATS(PSStatsClipSystemNotInstanciated);
+	      PS_STATS(PSStatsClipSystemCheckAgainstPyramid);
+	      PS_STATS(PSStatsInsertInVisibleList);
+	      PS_STATS(PSStatsCheckDestroyCondition)
+	      PS_STATS(PSStatsForceInstanciate)
+	      PS_STATS(PSStatsDoAnimatePart1)
+	      PS_STATS(PSStatsDoAnimatePart2)
+	      PS_STATS(PSStatsDoAnimatePart3)
+	      PS_STATS(PSStatsTraverseAnimDetailPart1)
+	      PS_STATS(PSStatsTraverseAnimDetailPart2)
+	      PS_STATS(PSStatsTraverseAnimDetailPart3)
+	      PS_STATS(PSStatsTraverseAnimDetailPart4)
+	      PS_STATS(PSAnim1)
+	      PS_STATS(PSAnim2)
+	      PS_STATS(PSAnim3)
+	      PS_STATS(PSAnim4)
+	      PS_STATS(PSAnim5)
+	      PS_STATS(PSAnim6)
+	      PS_STATS(PSAnim7)
+	      PS_STATS(PSAnim8)
+	      PS_STATS(PSAnim9)
+	      PS_STATS(PSAnim10)
+	      PS_STATS(PSAnim11)
+	      PS_STATS(PSStatsZonePlane)
+	      PS_STATS(PSStatsZoneSphere)
+	      PS_STATS(PSStatsZoneDisc)
+	      PS_STATS(PSStatsZoneRectangle)
+	      PS_STATS(PSStatsZoneCylinder)
+	      PS_STATS(PSMotion1)
+	      PS_STATS(PSMotion2)
+	      PS_STATS(PSMotion3)
+	      PS_STATS(PSMotion4)
+	      PS_STATS(PSStatCollision)
+	      PS_STATS(PSStatEmit)
+	      PS_STATS(PSStatRender)
 
 
-		nlinfo("num do animate = %d", (int) PSStatsNumDoAnimateCalls);
+	    nlinfo("num do animate = %d", (int) PSStatsNumDoAnimateCalls);
 
-		nlinfo("Max et = %.2f", PSMaxET);
-		nlinfo("Max ps nb pass = %d", (int) PSMaxNBPass);
+	    nlinfo("Max et = %.2f", PSMaxET);
+	    nlinfo("Max ps nb pass = %d", (int) PSMaxNBPass);
 
-		PS_STATS(total)
+	    PS_STATS(total)
 
 	 }
 
@@ -563,14 +553,13 @@ void	CScene::endPartRender(bool keepTrav)
 	 */
 }
 
-
 // ***************************************************************************
-void	CScene::renderPart(UScene::TRenderPart rp, bool	doHrcPass, bool doTrav, bool keepTrav)
+void CScene::renderPart(UScene::TRenderPart rp, bool doHrcPass, bool doTrav, bool keepTrav)
 {
 	nlassert(_IsRendering);
 
 	// if nothing (????), abort
-	if(rp==UScene::RenderNothing)
+	if (rp == UScene::RenderNothing)
 		return;
 
 	// If part asked already rendered, abort
@@ -584,18 +573,18 @@ void	CScene::renderPart(UScene::TRenderPart rp, bool	doHrcPass, bool doTrav, boo
 		if (doTrav)
 		{
 			// update water envmap
-			//updateWaterEnvmap();
+			// updateWaterEnvmap();
 			_FirstFlare = NULL;
 
 			double fNewGlobalSystemTime = NLMISC::CTime::ticksToSecond(NLMISC::CTime::getPerformanceTime());
-			if(_GlobalSystemTime==0)
-				_DeltaSystemTimeBetweenRender= 0.020;
+			if (_GlobalSystemTime == 0)
+				_DeltaSystemTimeBetweenRender = 0.020;
 			else
-				_DeltaSystemTimeBetweenRender= fNewGlobalSystemTime - _GlobalSystemTime;
+				_DeltaSystemTimeBetweenRender = fNewGlobalSystemTime - _GlobalSystemTime;
 			_GlobalSystemTime = fNewGlobalSystemTime;
 		}
 		//
-		++ _NumRender;
+		++_NumRender;
 		//
 		nlassert(CurrentCamera);
 
@@ -609,27 +598,25 @@ void	CScene::renderPart(UScene::TRenderPart rp, bool	doHrcPass, bool doTrav, boo
 		// setup basic camera.
 		ClipTrav.setFrustum(left, right, bottom, top, znear, zfar, CurrentCamera->isPerspective());
 
-		RenderTrav.setFrustum (left, right, bottom, top, znear, zfar, CurrentCamera->isPerspective());
-		RenderTrav.setViewport (_Viewport);
+		RenderTrav.setFrustum(left, right, bottom, top, znear, zfar, CurrentCamera->isPerspective());
+		RenderTrav.setViewport(_Viewport);
 
-		LoadBalancingTrav.setFrustum (left, right, bottom, top, znear, zfar, CurrentCamera->isPerspective());
-
+		LoadBalancingTrav.setFrustum(left, right, bottom, top, znear, zfar, CurrentCamera->isPerspective());
 
 		// Set Infos for cliptrav.
 		ClipTrav.Camera = CurrentCamera;
-		ClipTrav.setQuadGridClipManager (_QuadGridClipManager);
-
+		ClipTrav.setQuadGridClipManager(_QuadGridClipManager);
 
 		// **** For all render traversals, traverse them (except the Hrc one), in ascending order.
-		if( doHrcPass )
+		if (doHrcPass)
 			HrcTrav.traverse();
 		else
 			HrcTrav._MovingObjects.clear();
 
 		// Set Cam World Matrix for all trav that need it
 		ClipTrav.setCamMatrix(CurrentCamera->getWorldMatrix());
-		RenderTrav.setCamMatrix (CurrentCamera->getWorldMatrix());
-		LoadBalancingTrav.setCamMatrix (CurrentCamera->getWorldMatrix());
+		RenderTrav.setCamMatrix(CurrentCamera->getWorldMatrix());
+		LoadBalancingTrav.setCamMatrix(CurrentCamera->getWorldMatrix());
 
 		// clip
 		ClipTrav.traverse();
@@ -671,13 +658,12 @@ void	CScene::renderPart(UScene::TRenderPart rp, bool	doHrcPass, bool doTrav, boo
 			{
 				IDriver *drv = getDriver();
 				CFlareModel::updateOcclusionQueryBegin(drv);
-				CFlareModel	*currFlare = _FirstFlare;
+				CFlareModel *currFlare = _FirstFlare;
 				do
 				{
 					currFlare->updateOcclusionQuery(drv);
 					currFlare = currFlare->Next;
-				}
-				while(currFlare);
+				} while (currFlare);
 				CFlareModel::updateOcclusionQueryEnd(drv);
 			}
 		}
@@ -686,7 +672,7 @@ void	CScene::renderPart(UScene::TRenderPart rp, bool	doHrcPass, bool doTrav, boo
 			_FirstFlare = NULL;
 		}
 	}
-	_RenderedPart = (UScene::TRenderPart) (_RenderedPart | rp);
+	_RenderedPart = (UScene::TRenderPart)(_RenderedPart | rp);
 }
 
 // ***************************************************************************
@@ -694,27 +680,27 @@ void CScene::updateWaitingInstances(double systemTimeEllapsed)
 {
 	// First set up max AGP upload
 	double fMaxBytesToUp = 100 * 256 * 256 * systemTimeEllapsed;
-	_ShapeBank->setMaxBytesToUpload ((uint32)fMaxBytesToUp);
+	_ShapeBank->setMaxBytesToUpload((uint32)fMaxBytesToUp);
 	// Parse all the waiting instance
-	_ShapeBank->processWaitingShapes ();	// Process waiting shapes load shape, texture, and lightmaps
-											// and upload all maps to VRAM pieces by pieces
+	_ShapeBank->processWaitingShapes(); // Process waiting shapes load shape, texture, and lightmaps
+	                                    // and upload all maps to VRAM pieces by pieces
 	TWaitingInstancesMMap::iterator wimmIt = _WaitingInstances.begin();
-	while( wimmIt != _WaitingInstances.end() )
+	while (wimmIt != _WaitingInstances.end())
 	{
-		CShapeBank::TShapeState st = _ShapeBank->getPresentState (wimmIt->first);
+		CShapeBank::TShapeState st = _ShapeBank->getPresentState(wimmIt->first);
 		if (st == CShapeBank::AsyncLoad_Error)
 		{
 			// Delete the waiting instance - Nobody can be informed of that...
-			TWaitingInstancesMMap::iterator	itDel= wimmIt;
+			TWaitingInstancesMMap::iterator itDel = wimmIt;
 			++wimmIt;
 			_WaitingInstances.erase(itDel);
 		}
 		else if (st == CShapeBank::Present)
 		{
 			// Then create a reference to the shape
-			*(wimmIt->second) = _ShapeBank->addRef(wimmIt->first)->createInstance (*this);
+			*(wimmIt->second) = _ShapeBank->addRef(wimmIt->first)->createInstance(*this);
 			// Delete the waiting instance
-			TWaitingInstancesMMap::iterator	itDel= wimmIt;
+			TWaitingInstancesMMap::iterator itDel = wimmIt;
 			++wimmIt;
 			_WaitingInstances.erase(itDel);
 		}
@@ -726,17 +712,16 @@ void CScene::updateWaitingInstances(double systemTimeEllapsed)
 }
 
 // ***************************************************************************
-void	CScene::setDriver(IDriver *drv)
+void CScene::setDriver(IDriver *drv)
 {
 	RenderTrav.setDriver(drv);
 }
 
 // ***************************************************************************
-IDriver	*CScene::getDriver() const
+IDriver *CScene::getDriver() const
 {
-	return (const_cast<CScene*>(this))->RenderTrav.getDriver();
+	return (const_cast<CScene *>(this))->RenderTrav.getDriver();
 }
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -746,44 +731,44 @@ IDriver	*CScene::getDriver() const
 
 // ***************************************************************************
 
-void CScene::setShapeBank(CShapeBank*pShapeBank)
+void CScene::setShapeBank(CShapeBank *pShapeBank)
 {
 	_ShapeBank = pShapeBank;
 }
 
 // ***************************************************************************
 
-CTransformShape	*CScene::createInstance(const string &shapeName)
+CTransformShape *CScene::createInstance(const string &shapeName)
 {
 	// We must attach a bank to the scene (a ShapeBank handle the shape caches and
 	// the creation/deletion of the instances)
-	nlassert( _ShapeBank != NULL );
+	nlassert(_ShapeBank != NULL);
 
 	// If the shape is not present in the bank
-	if (_ShapeBank->getPresentState( shapeName ) != CShapeBank::Present)
+	if (_ShapeBank->getPresentState(shapeName) != CShapeBank::Present)
 	{
 		// Load it from file
-		_ShapeBank->load( shapeName );
-		if (_ShapeBank->getPresentState( shapeName ) != CShapeBank::Present)
+		_ShapeBank->load(shapeName);
+		if (_ShapeBank->getPresentState(shapeName) != CShapeBank::Present)
 		{
 			return NULL;
 		}
 	}
 	// Then create a reference to the shape
-	CTransformShape *pTShp = _ShapeBank->addRef( shapeName )->createInstance(*this);
+	CTransformShape *pTShp = _ShapeBank->addRef(shapeName)->createInstance(*this);
 	if (pTShp) pTShp->setDistMax(pTShp->Shape->getDistMax());
 
-	// Look if this instance get lightmap information
+		// Look if this instance get lightmap information
 #if defined(__GNUC__) && __GNUC__ < 3
-	CMeshBase *pMB = pTShp ? (CMeshBase*)((IShape*)(pTShp->Shape)) : NULL;
+	CMeshBase *pMB = pTShp ? (CMeshBase *)((IShape *)(pTShp->Shape)) : NULL;
 #else // not GNUC
-	CMeshBase *pMB = pTShp ? dynamic_cast<CMeshBase*>((IShape*)(pTShp->Shape)) : NULL;
+	CMeshBase *pMB = pTShp ? dynamic_cast<CMeshBase *>((IShape *)(pTShp->Shape)) : NULL;
 #endif // not GNUC
-	CMeshBaseInstance *pMBI = dynamic_cast<CMeshBaseInstance*>( pTShp );
-	if( ( pMB != NULL ) && ( pMBI != NULL ) )
+	CMeshBaseInstance *pMBI = dynamic_cast<CMeshBaseInstance *>(pTShp);
+	if ((pMB != NULL) && (pMBI != NULL))
 	{
 		// Init lightmap information
-		pMBI->initAnimatedLightIndex (*this);
+		pMBI->initAnimatedLightIndex(*this);
 
 		// Auto animations
 		//==========================
@@ -798,7 +783,7 @@ CTransformShape	*CScene::createInstance(const string &shapeName)
 				if (animID != CAnimationSet::NotFound)
 				{
 					CChannelMixer *chanMix = new CChannelMixer;
-					chanMix->setAnimationSet((CAnimationSet *) _AutomaticAnimationSet);
+					chanMix->setAnimationSet((CAnimationSet *)_AutomaticAnimationSet);
 					chanMix->setSlotAnimation(0, animID);
 
 					pMBI->registerToChannelMixer(chanMix, "");
@@ -809,11 +794,11 @@ CTransformShape	*CScene::createInstance(const string &shapeName)
 		}
 	}
 
-	CLandscapeModel *pLM = dynamic_cast<CLandscapeModel*>( pTShp );
-	if( pLM != NULL )
+	CLandscapeModel *pLM = dynamic_cast<CLandscapeModel *>(pTShp);
+	if (pLM != NULL)
 	{
 		// Init lightmap information
-		pLM->Landscape.initAnimatedLightIndex (*this);
+		pLM->Landscape.initAnimatedLightIndex(*this);
 	}
 
 	return pTShp;
@@ -825,15 +810,15 @@ void CScene::createInstanceAsync(const string &shapeName, CTransformShape **pIns
 {
 	// We must attach a bank to the scene (a ShapeBank handle the shape caches and
 	// the creation/deletion of the instances)
-	nlassert( _ShapeBank != NULL );
+	nlassert(_ShapeBank != NULL);
 	*pInstance = NULL;
 	// Add the instance request
-	_WaitingInstances.insert(TWaitingInstancesMMap::value_type(shapeName,pInstance));
+	_WaitingInstances.insert(TWaitingInstancesMMap::value_type(shapeName, pInstance));
 	// If the shape is not present in the bank
-	if (_ShapeBank->getPresentState( shapeName ) != CShapeBank::Present)
+	if (_ShapeBank->getPresentState(shapeName) != CShapeBank::Present)
 	{
 		// Load it from file asynchronously
-		_ShapeBank->loadAsync( toLowerAscii(shapeName), getDriver(), position, NULL, selectedTexture);
+		_ShapeBank->loadAsync(toLowerAscii(shapeName), getDriver(), position, NULL, selectedTexture);
 	}
 }
 
@@ -841,23 +826,22 @@ void CScene::createInstanceAsync(const string &shapeName, CTransformShape **pIns
 void CScene::deleteInstance(CTransformShape *pTrfmShp)
 {
 	IShape *pShp = NULL;
-	if( pTrfmShp == NULL )
+	if (pTrfmShp == NULL)
 		return;
 
 	pShp = pTrfmShp->Shape;
 
-	deleteModel( pTrfmShp );
+	deleteModel(pTrfmShp);
 
 	if (pShp)
 	{
 		// Even if model already deleted by smarptr the release function works
-		_ShapeBank->release( pShp );
+		_ShapeBank->release(pShp);
 	}
-
 }
 
 // ***************************************************************************
-void CScene::animate( TGlobalAnimationTime atTime )
+void CScene::animate(TGlobalAnimationTime atTime)
 {
 	// todo hulud remove
 	if (_FirstAnimateCall)
@@ -865,39 +849,39 @@ void CScene::animate( TGlobalAnimationTime atTime )
 		_InitTime = atTime;
 		_RealTime = atTime;
 		// dummy value for first frame
-		_EllapsedTime = 0.01f ;
-		_FirstAnimateCall = false ;
+		_EllapsedTime = 0.01f;
+		_FirstAnimateCall = false;
 	}
 	else
 	{
-		_EllapsedTime = (float) (atTime - _RealTime);
-		//nlassert(_EllapsedTime >= 0);
-		if (_EllapsedTime < 0.0f)	// NT WorkStation PATCH (Yes you are not dreaming
-			_EllapsedTime = 0.01f;	// deltaTime can be less than zero!!)
+		_EllapsedTime = (float)(atTime - _RealTime);
+		// nlassert(_EllapsedTime >= 0);
+		if (_EllapsedTime < 0.0f) // NT WorkStation PATCH (Yes you are not dreaming
+			_EllapsedTime = 0.01f; // deltaTime can be less than zero!!)
 		_EllapsedTime = fabsf(_EllapsedTime);
-		_RealTime = atTime ;
+		_RealTime = atTime;
 		_CurrentTime += _EllapsedTime;
 	}
 
-	_LMAnimsAuto.animate( atTime );
+	_LMAnimsAuto.animate(atTime);
 
 	// Change PointLightFactors of all pointLights in registered Igs.
 	//----------------
 
 	// First list all current AnimatedLightmaps (for faster vector iteration per ig)
-	const uint count = (uint)_AnimatedLightPtr.size ();
+	const uint count = (uint)_AnimatedLightPtr.size();
 	uint i;
-	for (i=0; i<count; i++)
+	for (i = 0; i < count; i++)
 	{
 		// Blend final colors
-		_AnimatedLightPtr[i]->updateGroupColors (*this);
+		_AnimatedLightPtr[i]->updateGroupColors(*this);
 	}
 
 	// For all registered igs.
-	ItAnimatedIgSet		itAnIgSet;
-	for(itAnIgSet= _AnimatedIgSet.begin(); itAnIgSet!=_AnimatedIgSet.end(); itAnIgSet++)
+	ItAnimatedIgSet itAnIgSet;
+	for (itAnIgSet = _AnimatedIgSet.begin(); itAnIgSet != _AnimatedIgSet.end(); itAnIgSet++)
 	{
-		CInstanceGroup	*ig= *itAnIgSet;
+		CInstanceGroup *ig = *itAnIgSet;
 
 		// Set the light factor
 		ig->setPointLightFactor(*this);
@@ -910,56 +894,51 @@ void CScene::animate( TGlobalAnimationTime atTime )
 	_RequestParticlesAnimate = true;
 }
 
-
 // ***************************************************************************
-float	CScene::getNbFaceAsked () const
+float CScene::getNbFaceAsked() const
 {
-	return LoadBalancingTrav.getNbFaceAsked ();
+	return LoadBalancingTrav.getNbFaceAsked();
 }
 
-
 // ***************************************************************************
-void	CScene::setGroupLoadMaxPolygon(const std::string &group, uint nFaces)
+void CScene::setGroupLoadMaxPolygon(const std::string &group, uint nFaces)
 {
-	nFaces= max(nFaces, (uint)1);
+	nFaces = max(nFaces, (uint)1);
 	LoadBalancingTrav.setGroupNbFaceWanted(group, nFaces);
 }
 // ***************************************************************************
-uint	CScene::getGroupLoadMaxPolygon(const std::string &group)
+uint CScene::getGroupLoadMaxPolygon(const std::string &group)
 {
 	return LoadBalancingTrav.getGroupNbFaceWanted(group);
 }
 // ***************************************************************************
-float	CScene::getGroupNbFaceAsked (const std::string &group) const
+float CScene::getGroupNbFaceAsked(const std::string &group) const
 {
 	return LoadBalancingTrav.getGroupNbFaceAsked(group);
 }
 
-
-
 // ***************************************************************************
-void	CScene::setPolygonBalancingMode(TPolygonBalancingMode polBalMode)
+void CScene::setPolygonBalancingMode(TPolygonBalancingMode polBalMode)
 {
-	LoadBalancingTrav.PolygonBalancingMode= (CLoadBalancingGroup::TPolygonBalancingMode)(uint)polBalMode;
+	LoadBalancingTrav.PolygonBalancingMode = (CLoadBalancingGroup::TPolygonBalancingMode)(uint)polBalMode;
 }
 
-
 // ***************************************************************************
-CScene::TPolygonBalancingMode	CScene::getPolygonBalancingMode() const
+CScene::TPolygonBalancingMode CScene::getPolygonBalancingMode() const
 {
 	return (CScene::TPolygonBalancingMode)(uint)LoadBalancingTrav.PolygonBalancingMode;
 }
 
 // ***************************************************************************
-void  CScene::setLayersRenderingOrder(bool directOrder /*= true*/)
+void CScene::setLayersRenderingOrder(bool directOrder /*= true*/)
 {
 	RenderTrav.setLayersRenderingOrder(directOrder);
 }
 
 // ***************************************************************************
-bool  CScene::getLayersRenderingOrder() const
+bool CScene::getLayersRenderingOrder() const
 {
-	return 	RenderTrav.getLayersRenderingOrder();
+	return RenderTrav.getLayersRenderingOrder();
 }
 
 // ***************************************************************************
@@ -969,14 +948,13 @@ CParticleSystemManager &CScene::getParticleSystemManager()
 }
 
 // ***************************************************************************
-void	CScene::enableElementRender(UScene::TRenderFilter elt, bool state)
+void CScene::enableElementRender(UScene::TRenderFilter elt, bool state)
 {
-	if(state)
-		_FilterRenderFlags|= (uint32)elt;
+	if (state)
+		_FilterRenderFlags |= (uint32)elt;
 	else
-		_FilterRenderFlags&= ~(uint32)elt;
+		_FilterRenderFlags &= ~(uint32)elt;
 }
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -984,108 +962,101 @@ void	CScene::enableElementRender(UScene::TRenderFilter elt, bool state)
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
-void			CScene::enableLightingSystem(bool enable)
+void CScene::enableLightingSystem(bool enable)
 {
-	_LightingSystemEnabled= enable;
+	_LightingSystemEnabled = enable;
 
 	// Set to RenderTrav and LightTrav
-	RenderTrav.LightingSystemEnabled= _LightingSystemEnabled;
-	LightTrav.LightingSystemEnabled= _LightingSystemEnabled;
+	RenderTrav.LightingSystemEnabled = _LightingSystemEnabled;
+	LightTrav.LightingSystemEnabled = _LightingSystemEnabled;
 }
-
 
 // ***************************************************************************
-void			CScene::setAmbientGlobal(NLMISC::CRGBA ambient)
+void CScene::setAmbientGlobal(NLMISC::CRGBA ambient)
 {
-	RenderTrav.AmbientGlobal= ambient;
+	RenderTrav.AmbientGlobal = ambient;
 }
-void			CScene::setSunAmbient(NLMISC::CRGBA ambient)
+void CScene::setSunAmbient(NLMISC::CRGBA ambient)
 {
-	RenderTrav.SunAmbient= ambient;
+	RenderTrav.SunAmbient = ambient;
 }
-void			CScene::setSunDiffuse(NLMISC::CRGBA diffuse)
+void CScene::setSunDiffuse(NLMISC::CRGBA diffuse)
 {
-	RenderTrav.SunDiffuse= diffuse;
+	RenderTrav.SunDiffuse = diffuse;
 }
-void			CScene::setSunSpecular(NLMISC::CRGBA specular)
+void CScene::setSunSpecular(NLMISC::CRGBA specular)
 {
-	RenderTrav.SunSpecular= specular;
+	RenderTrav.SunSpecular = specular;
 }
-void			CScene::setSunDirection(const NLMISC::CVector &direction)
+void CScene::setSunDirection(const NLMISC::CVector &direction)
 {
 	RenderTrav.setSunDirection(direction);
 }
 
-
 // ***************************************************************************
-NLMISC::CRGBA	CScene::getAmbientGlobal() const
+NLMISC::CRGBA CScene::getAmbientGlobal() const
 {
 	return RenderTrav.AmbientGlobal;
 }
-NLMISC::CRGBA	CScene::getSunAmbient() const
+NLMISC::CRGBA CScene::getSunAmbient() const
 {
 	return RenderTrav.SunAmbient;
 }
-NLMISC::CRGBA	CScene::getSunDiffuse() const
+NLMISC::CRGBA CScene::getSunDiffuse() const
 {
 	return RenderTrav.SunDiffuse;
 }
-NLMISC::CRGBA	CScene::getSunSpecular() const
+NLMISC::CRGBA CScene::getSunSpecular() const
 {
 	return RenderTrav.SunSpecular;
 }
-NLMISC::CVector	CScene::getSunDirection() const
+NLMISC::CVector CScene::getSunDirection() const
 {
 	return RenderTrav.getSunDirection();
 }
 
-
 // ***************************************************************************
-void		CScene::setMaxLightContribution(uint nlights)
+void CScene::setMaxLightContribution(uint nlights)
 {
 	LightTrav.LightingManager.setMaxLightContribution(nlights);
 }
-uint		CScene::getMaxLightContribution() const
+uint CScene::getMaxLightContribution() const
 {
 	return LightTrav.LightingManager.getMaxLightContribution();
 }
 
-void		CScene::setLightTransitionThreshold(float lightTransitionThreshold)
+void CScene::setLightTransitionThreshold(float lightTransitionThreshold)
 {
 	LightTrav.LightingManager.setLightTransitionThreshold(lightTransitionThreshold);
 }
-float		CScene::getLightTransitionThreshold() const
+float CScene::getLightTransitionThreshold() const
 {
 	return LightTrav.LightingManager.getLightTransitionThreshold();
 }
 
-
 // ***************************************************************************
-void		CScene::addInstanceGroupForLightAnimation(CInstanceGroup *ig)
+void CScene::addInstanceGroupForLightAnimation(CInstanceGroup *ig)
 {
-	nlassert( ig );
-	nlassert( _AnimatedIgSet.find(ig) == _AnimatedIgSet.end() );
+	nlassert(ig);
+	nlassert(_AnimatedIgSet.find(ig) == _AnimatedIgSet.end());
 	_AnimatedIgSet.insert(ig);
 }
 
 // ***************************************************************************
-void		CScene::removeInstanceGroupForLightAnimation(CInstanceGroup *ig)
+void CScene::removeInstanceGroupForLightAnimation(CInstanceGroup *ig)
 {
-	nlassert( ig );
-	ItAnimatedIgSet		itIg= _AnimatedIgSet.find(ig);
-	if ( itIg != _AnimatedIgSet.end() )
+	nlassert(ig);
+	ItAnimatedIgSet itIg = _AnimatedIgSet.find(ig);
+	if (itIg != _AnimatedIgSet.end())
 		_AnimatedIgSet.erase(itIg);
 }
 
-
 // ***************************************************************************
-void		CScene::setCoarseMeshLightingUpdate(uint8 period)
+void CScene::setCoarseMeshLightingUpdate(uint8 period)
 {
-	_CoarseMeshLightingUpdate= max((uint8)1, period);
+	_CoarseMeshLightingUpdate = max((uint8)1, period);
 }
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -1094,18 +1065,17 @@ void		CScene::setCoarseMeshLightingUpdate(uint8 period)
 // ***************************************************************************
 
 // ***************************************************************************
-void		CScene::setGlobalWindPower(float gwp)
+void CScene::setGlobalWindPower(float gwp)
 {
-	_GlobalWindPower= gwp;
+	_GlobalWindPower = gwp;
 }
 // ***************************************************************************
-void		CScene::setGlobalWindDirection(const CVector &gwd)
+void CScene::setGlobalWindDirection(const CVector &gwd)
 {
-	_GlobalWindDirection= gwd;
-	_GlobalWindDirection.z= 0;
+	_GlobalWindDirection = gwd;
+	_GlobalWindDirection.z = 0;
 	_GlobalWindDirection.normalize();
 }
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -1114,33 +1084,32 @@ void		CScene::setGlobalWindDirection(const CVector &gwd)
 // ***************************************************************************
 
 // ***************************************************************************
-CScene::ItSkeletonModelList	CScene::appendSkeletonModelToList(CSkeletonModel *skel)
+CScene::ItSkeletonModelList CScene::appendSkeletonModelToList(CSkeletonModel *skel)
 {
 	_SkeletonModelList.push_front(skel);
 	return _SkeletonModelList.begin();
 }
 
 // ***************************************************************************
-void					CScene::eraseSkeletonModelToList(CScene::ItSkeletonModelList	it)
+void CScene::eraseSkeletonModelToList(CScene::ItSkeletonModelList it)
 {
 	_SkeletonModelList.erase(it);
 }
 
 // ***************************************************************************
-void					CScene::registerShadowCasterToList(CTransform *sc)
+void CScene::registerShadowCasterToList(CTransform *sc)
 {
 	nlassert(sc);
 	_ShadowCasterList.push_front(sc);
-	sc->_ItShadowCasterInScene= _ShadowCasterList.begin();
+	sc->_ItShadowCasterInScene = _ShadowCasterList.begin();
 }
 
 // ***************************************************************************
-void					CScene::unregisterShadowCasterToList(CTransform *sc)
+void CScene::unregisterShadowCasterToList(CTransform *sc)
 {
 	nlassert(sc);
 	_ShadowCasterList.erase(sc->_ItShadowCasterInScene);
 }
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -1148,54 +1117,51 @@ void					CScene::unregisterShadowCasterToList(CTransform *sc)
 // ***************************************************************************
 // ***************************************************************************
 
+// ***************************************************************************
+set<CScene::CModelEntry> CScene::_RegModels;
 
 // ***************************************************************************
-set<CScene::CModelEntry>	CScene::_RegModels;
-
-
-// ***************************************************************************
-void	CScene::registerModel(const CClassId &idModel, const CClassId &idModelBase, CTransform* (*creator)())
+void CScene::registerModel(const CClassId &idModel, const CClassId &idModelBase, CTransform *(*creator)())
 {
-	nlassert(idModel!=CClassId::Null);
+	nlassert(idModel != CClassId::Null);
 	nlassert(creator);
 	// idModelBase may be Null...
 
-	CModelEntry		e;
-	e.BaseModelId= idModelBase;
-	e.ModelId= idModel;
-	e.Creator= creator;
+	CModelEntry e;
+	e.BaseModelId = idModelBase;
+	e.ModelId = idModel;
+	e.Creator = creator;
 
 	// Insert/replace e.
 	_RegModels.erase(e);
 	_RegModels.insert(e);
 }
 
-
 // ***************************************************************************
-CTransform	*CScene::createModel(const CClassId &idModel)
+CTransform *CScene::createModel(const CClassId &idModel)
 {
-	nlassert(idModel!=CClassId::Null);
+	nlassert(idModel != CClassId::Null);
 
-	CModelEntry	e;
-	e.ModelId= idModel;
-	set<CModelEntry>::iterator	itModel;
-	itModel= _RegModels.find(e);
+	CModelEntry e;
+	e.ModelId = idModel;
+	set<CModelEntry>::iterator itModel;
+	itModel = _RegModels.find(e);
 
-	if(itModel==_RegModels.end())
+	if (itModel == _RegModels.end())
 	{
-		nlstop;			// Warning, CScene::registerBasics () has not been called !
+		nlstop; // Warning, CScene::registerBasics () has not been called !
 		return NULL;
 	}
 	else
 	{
-		CTransform	*m= (*itModel).Creator();
-		if(!m)	return NULL;
+		CTransform *m = (*itModel).Creator();
+		if (!m) return NULL;
 
 		// Set the owner for the model.
-		m->_OwnerScene= this;
+		m->_OwnerScene = this;
 
 		// link model to Root in HRC and in clip. NB: if exist!! (case for the Root and RootCluster :) )
-		if(Root)
+		if (Root)
 		{
 			Root->hrcLinkSon(m);
 			Root->clipAddChild(m);
@@ -1221,16 +1187,16 @@ CTransform	*CScene::createModel(const CClassId &idModel)
 	}
 }
 // ***************************************************************************
-void	CScene::deleteModel(CTransform *model)
+void CScene::deleteModel(CTransform *model)
 {
-	if(model==NULL)
+	if (model == NULL)
 		return;
 
 	// No model delete during the render
 	if (_IsRendering)
 	{
 		// add ot list of object to delete
-		_ToDelete.push_back (model);
+		_ToDelete.push_back(model);
 		// remove this object from the RenderTrav, hence it won't be displayed
 		// still animDetail/Light/LoadBalance it. This is useless, but very rare
 		// and I prefer doing like this than to add a NULL ptr Test in each Traversal (which I then must do in CRenderTrav)
@@ -1239,8 +1205,8 @@ void	CScene::deleteModel(CTransform *model)
 	// standard delete
 	else
 	{
-		set<CTransform*>::iterator	it= _Models.find(model);
-		if(it!=_Models.end())
+		set<CTransform *>::iterator it = _Models.find(model);
+		if (it != _Models.end())
 		{
 			delete *it;
 			_Models.erase(it);
@@ -1248,51 +1214,47 @@ void	CScene::deleteModel(CTransform *model)
 	}
 }
 
-
 // ***************************************************************************
-void	CScene::updateModels()
+void CScene::updateModels()
 {
 	// check all the models which must be checked.
-	CTransform	*model= _UpdateModelList;
-	CTransform	*next;
-	while( model )
+	CTransform *model = _UpdateModelList;
+	CTransform *next;
+	while (model)
 	{
 		// next to update. get next now, because model->update() may remove model from the list.
-		next= model->_NextModelToUpdate;
+		next = model->_NextModelToUpdate;
 
 		// update the model.
 		model->update();
 
 		// next.
-		model= next;
+		model = next;
 	}
 }
 
-
 // ***************************************************************************
-void	CScene::setLightGroupColor(uint lightmapGroup, NLMISC::CRGBA color)
+void CScene::setLightGroupColor(uint lightmapGroup, NLMISC::CRGBA color)
 {
 	// If too small, resize with white
-	if (lightmapGroup >= _LightGroupColor.size ())
+	if (lightmapGroup >= _LightGroupColor.size())
 	{
-		_LightGroupColor.resize (lightmapGroup+1, CRGBA::White);
+		_LightGroupColor.resize(lightmapGroup + 1, CRGBA::White);
 	}
 
 	// Set the color
 	_LightGroupColor[lightmapGroup] = color;
 }
 
-
 // ***************************************************************************
-sint CScene::getAnimatedLightNameToIndex (const std::string &name) const
+sint CScene::getAnimatedLightNameToIndex(const std::string &name) const
 {
-	std::map<std::string, uint>::const_iterator ite = _AnimatedLightNameToIndex.find (name);
-	if (ite != _AnimatedLightNameToIndex.end ())
+	std::map<std::string, uint>::const_iterator ite = _AnimatedLightNameToIndex.find(name);
+	if (ite != _AnimatedLightNameToIndex.end())
 		return (sint)ite->second;
 	else
 		return -1;
 }
-
 
 // ***************************************************************************
 void CScene::setAutomaticAnimationSet(CAnimationSet *as)
@@ -1310,75 +1272,74 @@ void CScene::setAutomaticAnimationSet(CAnimationSet *as)
 	// Register each animation as lightmap
 	const uint count = _AutomaticAnimationSet->getNumAnimation();
 	uint i;
-	for (i=0; i<count; i++)
+	for (i = 0; i < count; i++)
 	{
 		// Pointer on the animation
 		CAnimation *pAnim = _AutomaticAnimationSet->getAnimation(i);
 
-/*		uint nAnimNb;
-		// Reset the automatic animation if no animation wanted
-		if( pAnim == NULL )
-		{
-			_AnimatedLight.clear();
-			_AnimatedLightPtr.clear();
-			_AnimatedLightNameToIndex.clear();
-			nAnimNb = _LightmapAnimations.getAnimationIdByName("Automatic");
-			if( nAnimNb != CAnimationSet::NotFound )
-			{
-				CAnimation *anim = _LightmapAnimations.getAnimation( nAnimNb );
-				delete anim;
-			}
-			_LightmapAnimations.reset();
-			_LMAnimsAuto.deleteAll();
-			return;
-		}
-		*/
+		/*		uint nAnimNb;
+		        // Reset the automatic animation if no animation wanted
+		        if( pAnim == NULL )
+		        {
+		            _AnimatedLight.clear();
+		            _AnimatedLightPtr.clear();
+		            _AnimatedLightNameToIndex.clear();
+		            nAnimNb = _LightmapAnimations.getAnimationIdByName("Automatic");
+		            if( nAnimNb != CAnimationSet::NotFound )
+		            {
+		                CAnimation *anim = _LightmapAnimations.getAnimation( nAnimNb );
+		                delete anim;
+		            }
+		            _LightmapAnimations.reset();
+		            _LMAnimsAuto.deleteAll();
+		            return;
+		        }
+		        */
 
 		set<string> setTrackNames;
-		pAnim->getTrackNames( setTrackNames );
+		pAnim->getTrackNames(setTrackNames);
 
 		// nAnimNb = _LightmapAnimations.addAnimation( "Automatic", pAnim );
 		// _LightmapAnimations.build();
 
 		set<string>::iterator itSel = setTrackNames.begin();
-		while ( itSel != setTrackNames.end() )
+		while (itSel != setTrackNames.end())
 		{
 			string ate = *itSel;
-			if( strncmp( itSel->c_str(), "LightmapController.", 19 ) == 0 )
+			if (strncmp(itSel->c_str(), "LightmapController.", 19) == 0)
 			{
 				// The light name
-				const char *lightName = strrchr ((*itSel).c_str (), '.')+1;
+				const char *lightName = strrchr((*itSel).c_str(), '.') + 1;
 
 				// Light animation doesn't exist ?
-				if (_AnimatedLightNameToIndex.find (lightName) == _AnimatedLightNameToIndex.end())
+				if (_AnimatedLightNameToIndex.find(lightName) == _AnimatedLightNameToIndex.end())
 				{
 					// Channel mixer for light anim
 					CChannelMixer *cm = new CChannelMixer();
-					cm->setAnimationSet( _AutomaticAnimationSet );
+					cm->setAnimationSet(_AutomaticAnimationSet);
 
 					// Add an automatic animation
-					_AnimatedLight.push_back ( CAnimatedLightmap ((uint)_LightGroupColor.size ()) );
-					_AnimatedLightPtr.push_back ( &_AnimatedLight.back () );
-					_AnimatedLightNameToIndex.insert ( std::map<std::string, uint>::value_type (lightName, (uint32)_AnimatedLightPtr.size ()-1 ) );
-					CAnimatedLightmap &animLM = _AnimatedLight.back ();
-					animLM.setName( *itSel );
+					_AnimatedLight.push_back(CAnimatedLightmap((uint)_LightGroupColor.size()));
+					_AnimatedLightPtr.push_back(&_AnimatedLight.back());
+					_AnimatedLightNameToIndex.insert(std::map<std::string, uint>::value_type(lightName, (uint32)_AnimatedLightPtr.size() - 1));
+					CAnimatedLightmap &animLM = _AnimatedLight.back();
+					animLM.setName(*itSel);
 
-					cm->addChannel( animLM.getName(), &animLM, animLM.getValue(CAnimatedLightmap::FactorValue),
-						animLM.getDefaultTrack(CAnimatedLightmap::FactorValue), CAnimatedLightmap::FactorValue,
-						CAnimatedLightmap::OwnerBit, false);
+					cm->addChannel(animLM.getName(), &animLM, animLM.getValue(CAnimatedLightmap::FactorValue),
+					    animLM.getDefaultTrack(CAnimatedLightmap::FactorValue), CAnimatedLightmap::FactorValue,
+					    CAnimatedLightmap::OwnerBit, false);
 
 					// Animated lightmap playlist
 					CAnimationPlaylist *pl = new CAnimationPlaylist();
-					pl->setAnimation( 0, i );
-					pl->setWrapMode( 0, CAnimationPlaylist::Repeat );
-					_LMAnimsAuto.addPlaylist(pl,cm);
+					pl->setAnimation(0, i);
+					pl->setWrapMode(0, CAnimationPlaylist::Repeat);
+					_LMAnimsAuto.addPlaylist(pl, cm);
 				}
 			}
 			++itSel;
 		}
 	}
 }
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -1387,204 +1348,200 @@ void CScene::setAutomaticAnimationSet(CAnimationSet *as)
 // ***************************************************************************
 
 // ***************************************************************************
-void					CScene::profileNextRender()
+void CScene::profileNextRender()
 {
-	_NextRenderProfile= true;
+	_NextRenderProfile = true;
 
 	// Reset All Stats.
 	BenchRes.reset();
 }
 
-
 // ***************************************************************************
-void			CScene::setShadowMapTextureSize(uint size)
+void CScene::setShadowMapTextureSize(uint size)
 {
-	size= max(size, 2U);
-	size= raiseToNextPowerOf2(size);
-	_ShadowMapTextureSize= size;
+	size = max(size, 2U);
+	size = raiseToNextPowerOf2(size);
+	_ShadowMapTextureSize = size;
 }
 
 // ***************************************************************************
-void			CScene::setShadowMapBlurSize(uint bs)
+void CScene::setShadowMapBlurSize(uint bs)
 {
-	_ShadowMapBlurSize= bs;
+	_ShadowMapBlurSize = bs;
 }
 
 // ***************************************************************************
-void			CScene::enableShadowPolySmooth(bool enable)
+void CScene::enableShadowPolySmooth(bool enable)
 {
 	RenderTrav.getShadowMapManager().enableShadowPolySmooth(enable);
 }
 
 // ***************************************************************************
-bool			CScene::getEnableShadowPolySmooth() const
+bool CScene::getEnableShadowPolySmooth() const
 {
 	return RenderTrav.getShadowMapManager().getEnableShadowPolySmooth();
 }
 
-
 // ***************************************************************************
-void			CScene::setShadowMapDistFadeStart(float dist)
+void CScene::setShadowMapDistFadeStart(float dist)
 {
-	_ShadowMapDistFadeStart= max(0.f, dist);
+	_ShadowMapDistFadeStart = max(0.f, dist);
 }
 // ***************************************************************************
-void			CScene::setShadowMapDistFadeEnd(float dist)
+void CScene::setShadowMapDistFadeEnd(float dist)
 {
-	_ShadowMapDistFadeEnd= max(0.f, dist);
+	_ShadowMapDistFadeEnd = max(0.f, dist);
 }
 // ***************************************************************************
-void			CScene::setShadowMapMaxCasterInScreen(uint num)
+void CScene::setShadowMapMaxCasterInScreen(uint num)
 {
-	_ShadowMapMaxCasterInScreen= num;
+	_ShadowMapMaxCasterInScreen = num;
 }
 // ***************************************************************************
-void			CScene::setShadowMapMaxCasterAround(uint num)
+void CScene::setShadowMapMaxCasterAround(uint num)
 {
-	_ShadowMapMaxCasterAround= num;
+	_ShadowMapMaxCasterAround = num;
 }
 
 // ***************************************************************************
 CInstanceGroup *CScene::findCameraClusterSystemFromRay(CInstanceGroup *startClusterSystem,
-											   const NLMISC::CVector &startPos, NLMISC::CVector &endPos)
+    const NLMISC::CVector &startPos, NLMISC::CVector &endPos)
 {
-	CInstanceGroup	*resultCS= NULL;
+	CInstanceGroup *resultCS = NULL;
 
-	CClipTrav	&clipTrav= getClipTrav();
+	CClipTrav &clipTrav = getClipTrav();
 
 	// **** Search all cluster where the startPos is in
-	static vector<CCluster*> vCluster;
+	static vector<CCluster *> vCluster;
 	vCluster.clear();
 
 	bool bInWorld = true;
-	clipTrav.Accel.select (startPos, startPos);
-	CQuadGrid<CCluster*>::CIterator itAcc = clipTrav.Accel.begin();
+	clipTrav.Accel.select(startPos, startPos);
+	CQuadGrid<CCluster *>::CIterator itAcc = clipTrav.Accel.begin();
 	while (itAcc != clipTrav.Accel.end())
 	{
 		CCluster *pCluster = *itAcc;
-		if( pCluster->Group == startClusterSystem &&
-			pCluster->isIn (startPos) )
+		if (pCluster->Group == startClusterSystem && pCluster->isIn(startPos))
 		{
-			vCluster.push_back (pCluster);
+			vCluster.push_back(pCluster);
 			bInWorld = false;
 		}
 		++itAcc;
 	}
 	if (bInWorld)
 	{
-		vCluster.push_back (RootCluster);
+		vCluster.push_back(RootCluster);
 	}
 
 	// **** Do a traverse starting from each start cluser, clipping the ray instead of the camera pyramid
-	uint	i;
-	static vector<CCluster*> vClusterVisited;
+	uint i;
+	static vector<CCluster *> vClusterVisited;
 	vClusterVisited.clear();
-	for(i=0;i<vCluster.size();i++)
+	for (i = 0; i < vCluster.size(); i++)
 	{
 		vCluster[i]->cameraRayClip(startPos, endPos, vClusterVisited);
 	}
 
 	// **** From each cluster, select possible clusterSystem
-	static vector<CInstanceGroup*> possibleClusterSystem;
+	static vector<CInstanceGroup *> possibleClusterSystem;
 	possibleClusterSystem.clear();
-	for(i=0;i<vClusterVisited.size();i++)
+	for (i = 0; i < vClusterVisited.size(); i++)
 	{
 		// select only cluster where the EndPos lies in. Important else in landscape, we'll always say
 		// that we are in a Son Cluster.
-		if(vClusterVisited[i]->isIn(endPos))
+		if (vClusterVisited[i]->isIn(endPos))
 		{
-			CInstanceGroup	*cs= vClusterVisited[i]->Group;
+			CInstanceGroup *cs = vClusterVisited[i]->Group;
 			// insert if not exist (NB: 1,2 possible clusterSystem so O(N2) is OK)
-			uint	j;
-			for(j=0;j<possibleClusterSystem.size();j++)
+			uint j;
+			for (j = 0; j < possibleClusterSystem.size(); j++)
 			{
-				if(possibleClusterSystem[j]==cs)
+				if (possibleClusterSystem[j] == cs)
 					break;
 			}
-			if(j==possibleClusterSystem.size())
+			if (j == possibleClusterSystem.size())
 				possibleClusterSystem.push_back(cs);
 		}
 	}
 
 	// If no cluster found, then we may be in a "Data Error case".
 	// In this case, ensure the Camera position in a cluster
-	if(possibleClusterSystem.empty())
+	if (possibleClusterSystem.empty())
 	{
-		CCluster	*bestCluster= NULL;
-		float		shortDist= FLT_MAX;
+		CCluster *bestCluster = NULL;
+		float shortDist = FLT_MAX;
 
-		for(i=0;i<vClusterVisited.size();i++)
+		for (i = 0; i < vClusterVisited.size(); i++)
 		{
 			// if the ray is at least partially in this cluster
-			CVector		a= startPos;
-			CVector		b= endPos;
-			if(vClusterVisited[i]->clipSegment(a, b))
+			CVector a = startPos;
+			CVector b = endPos;
+			if (vClusterVisited[i]->clipSegment(a, b))
 			{
-				float	dist= (endPos - b).norm();
-				if(dist<shortDist)
+				float dist = (endPos - b).norm();
+				if (dist < shortDist)
 				{
-					bestCluster= vClusterVisited[i];
-					shortDist= dist;
+					bestCluster = vClusterVisited[i];
+					shortDist = dist;
 				}
 			}
 		}
 
 		// if found
-		if(bestCluster)
+		if (bestCluster)
 		{
 			// append the best one to the possible Cluster System
 			possibleClusterSystem.push_back(bestCluster->Group);
 
 			// and modify endPos, so the camera will really lies into this cluster
-			const float	threshold= 0.05f;
-			shortDist+= threshold;
+			const float threshold = 0.05f;
+			shortDist += threshold;
 			// must not goes more than startPos!
-			float	rayDist= (startPos - endPos).norm();
-			shortDist= min(shortDist, rayDist);
-			endPos+= (startPos - endPos).normed() * shortDist;
+			float rayDist = (startPos - endPos).norm();
+			shortDist = min(shortDist, rayDist);
+			endPos += (startPos - endPos).normed() * shortDist;
 		}
 	}
 
 	// NB: still possible that the possibleClusterSystem is empty, if not in any cluster for instance :)
 
-
 	// **** From each possible clusterSystem, select the one that is the lower in hierarchy
 	// common case
-	if(possibleClusterSystem.empty())
-		resultCS= NULL;
-	else if(possibleClusterSystem.size()==1)
+	if (possibleClusterSystem.empty())
+		resultCS = NULL;
+	else if (possibleClusterSystem.size() == 1)
 	{
 		// if it is the rootCluster set NULL (should have the same behavior but do like standard case)
-		if(possibleClusterSystem[0]==RootCluster->getClusterSystem())
-			resultCS= NULL;
+		if (possibleClusterSystem[0] == RootCluster->getClusterSystem())
+			resultCS = NULL;
 		// set this cluster system
 		else
-			resultCS= possibleClusterSystem[0];
+			resultCS = possibleClusterSystem[0];
 	}
 	// conflict case
 	else
 	{
 		// compute the hierarchy level of each cluster system, take the highest
-		CInstanceGroup	*highest= NULL;
-		uint			highestLevel= 0;
-		for(i=0;i<possibleClusterSystem.size();i++)
+		CInstanceGroup *highest = NULL;
+		uint highestLevel = 0;
+		for (i = 0; i < possibleClusterSystem.size(); i++)
 		{
-			uint	level= 0;
-			CInstanceGroup	*ig= possibleClusterSystem[i];
-			while(ig)
+			uint level = 0;
+			CInstanceGroup *ig = possibleClusterSystem[i];
+			while (ig)
 			{
-				ig= ig->getParentClusterSystem();
+				ig = ig->getParentClusterSystem();
 				level++;
 			}
-			if(level>=highestLevel)
+			if (level >= highestLevel)
 			{
-				highestLevel= level;
-				highest= possibleClusterSystem[i];
+				highestLevel = level;
+				highest = possibleClusterSystem[i];
 			}
 		}
 
 		// set the highest cluster system
-		resultCS= highest;
+		resultCS = highest;
 	}
 
 	return resultCS;
@@ -1593,7 +1550,7 @@ CInstanceGroup *CScene::findCameraClusterSystemFromRay(CInstanceGroup *startClus
 // ***************************************************************************
 void CScene::renderOcclusionTestMeshsWithCurrMaterial()
 {
-	for(std::set<CTransform*>::iterator it = _Models.begin(); it != _Models.end(); ++it)
+	for (std::set<CTransform *>::iterator it = _Models.begin(); it != _Models.end(); ++it)
 	{
 		if ((*it)->isFlare())
 		{
@@ -1629,7 +1586,6 @@ void CScene::renderOcclusionTestMeshs()
 	getDriver()->setPolygonMode(oldPolygonMode);
 }
 
-
 // ***************************************************************************
 void CScene::updateWaterEnvMaps(TGlobalAnimationTime time)
 {
@@ -1641,7 +1597,6 @@ void CScene::updateWaterEnvMaps(TGlobalAnimationTime time)
 	}
 }
 
-
 // ***************************************************************************
 void CScene::addSSSModelRequest(const class CSSSModelRequest &req)
 {
@@ -1651,33 +1606,11 @@ void CScene::addSSSModelRequest(const class CSSSModelRequest &req)
 // ***************************************************************************
 void CScene::flushSSSModelRequests()
 {
-	for(uint i=0;i<_SSSModelRequests.size();i++)
+	for (uint i = 0; i < _SSSModelRequests.size(); i++)
 	{
 		_SSSModelRequests[i].execute();
 	}
 	_SSSModelRequests.clear();
 }
 
-
 } // NL3D
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

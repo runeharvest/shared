@@ -26,11 +26,10 @@
 
 #include "nel/misc/file.h"
 #include "nel/misc/command.h"
-//#include "game_share/utils.h"
+// #include "game_share/utils.h"
 #include "scenario_entry_points.h"
 #include "nel/misc/o_xml.h"
 #include "nel/misc/i_xml.h"
-
 
 //-----------------------------------------------------------------------------
 // namespaces
@@ -42,13 +41,12 @@ using namespace NLMISC;
 // R2 namespace
 //-----------------------------------------------------------------------------
 
-namespace R2
-{
-CScenarioEntryPoints	*CScenarioEntryPoints::_Instance = NULL;
+namespace R2 {
+CScenarioEntryPoints *CScenarioEntryPoints::_Instance = NULL;
 
 CScenarioEntryPoints::CScenarioEntryPoints()
 {
-	_IsLoaded= false;
+	_IsLoaded = false;
 	_CompleteIslandsLoaded = false;
 	_LastTestedCoords.set(FLT_MAX, FLT_MAX);
 	_LastFoundIsland = NULL;
@@ -73,7 +71,7 @@ void CScenarioEntryPoints::init()
 CScenarioEntryPoints &CScenarioEntryPoints::getInstance()
 {
 	// allocate our singleton if need be
-	if(!_Instance)
+	if (!_Instance)
 	{
 		_Instance = new CScenarioEntryPoints();
 	}
@@ -85,17 +83,17 @@ CScenarioEntryPoints &CScenarioEntryPoints::getInstance()
 //-----------------------------------------------------------------------------
 void CScenarioEntryPoints::releaseInstance()
 {
-	if( _Instance )
+	if (_Instance)
 		delete _Instance;
 	_Instance = NULL;
 }
 
 //-----------------------------------------------------------------------------
 
-const CScenarioEntryPoints::TEntryPoints& CScenarioEntryPoints::getEntryPoints()
+const CScenarioEntryPoints::TEntryPoints &CScenarioEntryPoints::getEntryPoints()
 {
 	// if need be load the entry points vector from disk file
-	if(!_IsLoaded)
+	if (!_IsLoaded)
 	{
 		loadFromFile();
 	}
@@ -104,15 +102,14 @@ const CScenarioEntryPoints::TEntryPoints& CScenarioEntryPoints::getEntryPoints()
 	return _EntryPoints;
 }
 
-
 void CScenarioEntryPoints::setFiles(const std::string &completeIslandsFilename, const std::string &entryPointsFilename)
 {
 	if (_CompleteIslandsFilenames.size() != 1
-		|| _CompleteIslandsFilenames[0] != completeIslandsFilename 
-		|| _EntryPointsFilename != entryPointsFilename)
+	    || _CompleteIslandsFilenames[0] != completeIslandsFilename
+	    || _EntryPointsFilename != entryPointsFilename)
 	{
 		_HardIslandsPath = completeIslandsFilename.find('/') != std::string::npos
-			|| completeIslandsFilename.find('\\') != std::string::npos;
+		    || completeIslandsFilename.find('\\') != std::string::npos;
 		_CompleteIslandsFilenames.clear();
 		_CompleteIslandsFilenames.push_back(completeIslandsFilename);
 		_EntryPointsFilename = entryPointsFilename;
@@ -126,17 +123,17 @@ void CScenarioEntryPoints::setFiles(const std::string &completeIslandsFilename, 
 
 //-----------------------------------------------------------------------------
 // TEMP
-uint32 CScenarioEntryPoints::getIslandId(const CSString& island)
+uint32 CScenarioEntryPoints::getIslandId(const CSString &island)
 {
 	// if need be load the entry points vector from disk file
 	loadCompleteIslands();
 
-	uint32 count=0;
+	uint32 count = 0;
 
-	for (uint32 i=0;i<_CompleteIslands.size();++i)
+	for (uint32 i = 0; i < _CompleteIslands.size(); ++i)
 	{
 		// if this entry point corresponds to the one we're looking for then stop here
-		if (island==_CompleteIslands[i].Island)
+		if (island == _CompleteIslands[i].Island)
 			return count;
 
 		// increment the entry point id each time we get here (ie for each entry point in package definition)
@@ -147,15 +144,15 @@ uint32 CScenarioEntryPoints::getIslandId(const CSString& island)
 }
 
 //-----------------------------------------------------------------------------
-CScenarioEntryPoints::CCompleteIsland * CScenarioEntryPoints::getIslandFromId(const NLMISC::CSString& islandId)
+CScenarioEntryPoints::CCompleteIsland *CScenarioEntryPoints::getIslandFromId(const NLMISC::CSString &islandId)
 {
 	// if need be load the entry points vector from disk file
 	loadCompleteIslands();
 
-	for (uint32 i=0;i<_CompleteIslands.size();++i)
+	for (uint32 i = 0; i < _CompleteIslands.size(); ++i)
 	{
 		// if this entry point corresponds to the one we're looking for then stop here
-		if (islandId==_CompleteIslands[i].Island)
+		if (islandId == _CompleteIslands[i].Island)
 			return &_CompleteIslands[i];
 	}
 
@@ -163,20 +160,20 @@ CScenarioEntryPoints::CCompleteIsland * CScenarioEntryPoints::getIslandFromId(co
 }
 
 //-----------------------------------------------------------------------------
-CScenarioEntryPoints::CShortEntryPoint * CScenarioEntryPoints::getEntryPointFromIds(const NLMISC::CSString& islandId,
-									   const NLMISC::CSString& entryPointId)
+CScenarioEntryPoints::CShortEntryPoint *CScenarioEntryPoints::getEntryPointFromIds(const NLMISC::CSString &islandId,
+    const NLMISC::CSString &entryPointId)
 {
 	// if need be load the entry points vector from disk file
 	loadCompleteIslands();
 
-	for (uint32 i=0;i<_CompleteIslands.size();++i)
+	for (uint32 i = 0; i < _CompleteIslands.size(); ++i)
 	{
 		// if this entry point corresponds to the one we're looking for then stop here
-		if (islandId==_CompleteIslands[i].Island)
+		if (islandId == _CompleteIslands[i].Island)
 		{
-			for (uint32 e=0;e<_CompleteIslands[i].EntryPoints.size();++e)
+			for (uint32 e = 0; e < _CompleteIslands[i].EntryPoints.size(); ++e)
 			{
-				if (entryPointId==_CompleteIslands[i].EntryPoints[e].Location)
+				if (entryPointId == _CompleteIslands[i].EntryPoints[e].Location)
 				{
 					return &_CompleteIslands[i].EntryPoints[e];
 				}
@@ -204,7 +201,7 @@ void CScenarioEntryPoints::loadFromFile()
 	// read the file contents into a string 's'
 	CSString s;
 	s.resize(inf.getFileSize());
-	inf.serialBuffer((uint8*)&s[0],(uint)s.size());
+	inf.serialBuffer((uint8 *)&s[0], (uint)s.size());
 
 	// close the file
 	inf.close();
@@ -214,10 +211,10 @@ void CScenarioEntryPoints::loadFromFile()
 	s.splitLines(lines);
 
 	// run through the lines looking for stuff that's valid
-	for (uint32 i=0;i<lines.size();++i)
+	for (uint32 i = 0; i < lines.size(); ++i)
 	{
 		// strip away any comment in the line and get rid of leading and trailing spaces
-		CSString line= lines[i].splitTo("//").strip();
+		CSString line = lines[i].splitTo("//").strip();
 		if (line.empty())
 			continue;
 
@@ -225,25 +222,25 @@ void CScenarioEntryPoints::loadFromFile()
 		CVectorSString words;
 		while (!line.empty())
 		{
-			CSString s= line.strtok(" \t");
+			CSString s = line.strtok(" \t");
 			words.push_back(s);
 		}
 
 		// make sure the syntax is correct
-		BOMB_IF((words.size()!=6)
-				|| NLMISC::toString("%u",words[3].atoui())!= words[3]
-				|| NLMISC::toString("%d",words[4].atosi())!= words[4],
-			NLMISC::toString("%s:%d: Invalid syntax: %s",_EntryPointsFilename.c_str(),i+1,lines[i].splitTo("//").c_str()), continue);
+		BOMB_IF((words.size() != 6)
+		        || NLMISC::toString("%u", words[3].atoui()) != words[3]
+		        || NLMISC::toString("%d", words[4].atosi()) != words[4],
+		    NLMISC::toString("%s:%d: Invalid syntax: %s", _EntryPointsFilename.c_str(), i + 1, lines[i].splitTo("//").c_str()), continue);
 
 		// display an info message
-		//nlinfo("Adding Entry point: %s",lines[i].splitTo("//").c_str());
+		// nlinfo("Adding Entry point: %s",lines[i].splitTo("//").c_str());
 
 		// split the line into constituent parts and feed it to the entry points vector
-		_EntryPoints.push_back(CEntryPoint(words[0],words[1],words[2],words[3].atoui(),words[4].atosi()));
+		_EntryPoints.push_back(CEntryPoint(words[0], words[1], words[2], words[3].atoui(), words[4].atosi()));
 	}
 
 	// flag the entry point set as 'loaded'
-	_IsLoaded= true;
+	_IsLoaded = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -252,25 +249,17 @@ CScenarioEntryPoints::CCompleteIsland *CScenarioEntryPoints::getCompleteIslandFr
 	loadCompleteIslands();
 	if (_LastFoundIsland)
 	{
-		if (pos.x >= (float) _LastFoundIsland->XMin &&
-			pos.x <= (float) _LastFoundIsland->XMax &&
-			pos.y >= (float) _LastFoundIsland->YMin &&
-			pos.y <= (float) _LastFoundIsland->YMax)
+		if (pos.x >= (float)_LastFoundIsland->XMin && pos.x <= (float)_LastFoundIsland->XMax && pos.y >= (float)_LastFoundIsland->YMin && pos.y <= (float)_LastFoundIsland->YMax)
 		{
 			return _LastFoundIsland;
 		}
 	}
-	if (!_LastFoundIsland || 
-		fabs((double) pos.x - _LastTestedCoords.x) > 20.f ||
-		fabs((double) pos.y - _LastTestedCoords.y) > 20.f)
+	if (!_LastFoundIsland || fabs((double)pos.x - _LastTestedCoords.x) > 20.f || fabs((double)pos.y - _LastTestedCoords.y) > 20.f)
 	{
 		_LastTestedCoords = pos;
-		for(uint k = 0; k < _CompleteIslands.size(); ++k)
+		for (uint k = 0; k < _CompleteIslands.size(); ++k)
 		{
-			if (pos.x >= (float) _CompleteIslands[k].XMin &&
-				pos.x <= (float) _CompleteIslands[k].XMax &&
-				pos.y >= (float) _CompleteIslands[k].YMin &&
-				pos.y <= (float) _CompleteIslands[k].YMax)
+			if (pos.x >= (float)_CompleteIslands[k].XMin && pos.x <= (float)_CompleteIslands[k].XMax && pos.y >= (float)_CompleteIslands[k].YMin && pos.y <= (float)_CompleteIslands[k].YMax)
 			{
 				_LastFoundIsland = &_CompleteIslands[k];
 				return _LastFoundIsland;
@@ -292,7 +281,7 @@ static bool getZonePosFromZoneName(const std::string &name, sint &x, sint &y)
 
 	if (name.empty())
 	{
-		nlwarning ("getPosFromZoneName(): empty name, can't getPosFromZoneName");
+		nlwarning("getPosFromZoneName(): empty name, can't getPosFromZoneName");
 		return false;
 	}
 
@@ -305,7 +294,8 @@ static bool getZonePosFromZoneName(const std::string &name, sint &x, sint &y)
 	while (zoneName[i] != '_')
 	{
 		if (!::isdigit(zoneName[i])) return false;
-		yStr += zoneName[i]; ++i;
+		yStr += zoneName[i];
+		++i;
 		if (i == zoneName.size())
 			return false;
 	}
@@ -313,7 +303,8 @@ static bool getZonePosFromZoneName(const std::string &name, sint &x, sint &y)
 	while (i < zoneName.size())
 	{
 		if (!::isalpha(zoneName[i])) return false;
-		xStr += (char) ::toupper(zoneName[i]); ++i;
+		xStr += (char)::toupper(zoneName[i]);
+		++i;
 	}
 	if (xStr.size() != 2) return false;
 	x = (xStr[0] - 'A') * 26 + (xStr[1] - 'A');
@@ -321,7 +312,6 @@ static bool getZonePosFromZoneName(const std::string &name, sint &x, sint &y)
 	y = -y;
 	return true;
 }
-
 
 //-----------------------------------------------------------------------------
 void CScenarioEntryPoints::loadFromXMLFile()
@@ -338,9 +328,9 @@ void CScenarioEntryPoints::loadFromXMLFile()
 		CIFile file;
 
 		// setup the file name
-		std::string pathFileName = _HardIslandsPath 
-			? _CompleteIslandsFilenames[i]
-			: CPath::lookup(_CompleteIslandsFilenames[i]);
+		std::string pathFileName = _HardIslandsPath
+		    ? _CompleteIslandsFilenames[i]
+		    : CPath::lookup(_CompleteIslandsFilenames[i]);
 
 		// Open the file
 		if (!file.open(pathFileName.c_str()))
@@ -377,9 +367,9 @@ void CScenarioEntryPoints::loadFromXMLFile()
 				/*
 				const char *package = (const char*) xmlGetProp(islandNode, (xmlChar*) "package");
 				if(package == 0)
-					nlinfo("no 'package' tag in %s island", island);
+				    nlinfo("no 'package' tag in %s island", island);
 				else
-					completeIsland.Package = CSString(package);
+				    completeIsland.Package = CSString(package);
 				*/
 
 				// continent
@@ -417,7 +407,7 @@ void CScenarioEntryPoints::loadFromXMLFile()
 				else
 					fromString(ymax, completeIsland.YMax);
 
-				//entry points and package
+				// entry points and package
 				TShortEntryPoints entryPoints;
 				std::string package;
 				for (uint e = 0; e < _EntryPoints.size(); e++)
@@ -491,14 +481,14 @@ void CScenarioEntryPoints::loadFromXMLFile()
 //-----------------------------------------------------------------------------
 void CScenarioEntryPoints::loadCompleteIslands()
 {
-	if(!_CompleteIslandsLoaded)
+	if (!_CompleteIslandsLoaded)
 	{
 		loadFromXMLFile();
 	}
 }
 
 //-----------------------------------------------------------------------------
-const CScenarioEntryPoints::TCompleteIslands &  CScenarioEntryPoints::getCompleteIslands()
+const CScenarioEntryPoints::TCompleteIslands &CScenarioEntryPoints::getCompleteIslands()
 {
 	loadCompleteIslands();
 
@@ -507,15 +497,16 @@ const CScenarioEntryPoints::TCompleteIslands &  CScenarioEntryPoints::getComplet
 }
 
 //-----------------------------------------------------------------------------
-void CScenarioEntryPoints::saveXMLFile(const TCompleteIslands & completeIslands, const std::string & fileName)
+void CScenarioEntryPoints::saveXMLFile(const TCompleteIslands &completeIslands, const std::string &fileName)
 {
 
 	// File stream
 	COFile file;
 
 	// setup the file name
-	std::string pathFilename = (fileName.find('/') != std::string::npos || fileName.find('\\') != std::string::npos) 
-		? fileName : CPath::lookup(fileName.c_str());
+	std::string pathFilename = (fileName.find('/') != std::string::npos || fileName.find('\\') != std::string::npos)
+	    ? fileName
+	    : CPath::lookup(fileName.c_str());
 
 	// Open the file
 	if (!file.open(pathFilename.c_str()))
@@ -528,43 +519,43 @@ void CScenarioEntryPoints::saveXMLFile(const TCompleteIslands & completeIslands,
 	COXml output;
 
 	// Init
-	if(output.init(&file, "1.0"))
+	if (output.init(&file, "1.0"))
 	{
 		xmlDocPtr xmlDoc = output.getDocument();
 
 		// Create the first node
-		xmlNodePtr root = xmlNewDocNode(xmlDoc, NULL, (const xmlChar*)"islands", NULL);
+		xmlNodePtr root = xmlNewDocNode(xmlDoc, NULL, (const xmlChar *)"islands", NULL);
 		xmlDocSetRootElement(xmlDoc, root);
 
-		std::map< std::string, xmlNodePtr > islandNodes;
-		for (uint32 i=0;i<completeIslands.size();++i)
+		std::map<std::string, xmlNodePtr> islandNodes;
+		for (uint32 i = 0; i < completeIslands.size(); ++i)
 		{
 			char s[64];
 			// island already exists?
-			if(islandNodes.find(completeIslands[i].Island) == islandNodes.end())
+			if (islandNodes.find(completeIslands[i].Island) == islandNodes.end())
 			{
-				xmlNodePtr islandNode = xmlNewChild(root, NULL, (const xmlChar*)"complete_island", NULL);
-				xmlSetProp(islandNode, (const xmlChar*)"island", (const xmlChar*)completeIslands[i].Island.c_str());
-				//xmlSetProp(islandNode, (const xmlChar*)"package", (const xmlChar*)completeIslands[i].Package.c_str());
-				xmlSetProp(islandNode, (const xmlChar*)"continent", (const xmlChar*)completeIslands[i].Continent.c_str());
+				xmlNodePtr islandNode = xmlNewChild(root, NULL, (const xmlChar *)"complete_island", NULL);
+				xmlSetProp(islandNode, (const xmlChar *)"island", (const xmlChar *)completeIslands[i].Island.c_str());
+				// xmlSetProp(islandNode, (const xmlChar*)"package", (const xmlChar*)completeIslands[i].Package.c_str());
+				xmlSetProp(islandNode, (const xmlChar *)"continent", (const xmlChar *)completeIslands[i].Continent.c_str());
 
 				smprintf(s, 64, "%i", completeIslands[i].XMin);
-				xmlSetProp(islandNode, (const xmlChar*)"xmin", (const xmlChar*)s);
+				xmlSetProp(islandNode, (const xmlChar *)"xmin", (const xmlChar *)s);
 
 				smprintf(s, 64, "%i", completeIslands[i].YMin);
-				xmlSetProp(islandNode, (const xmlChar*)"ymin", (const xmlChar*)s);
+				xmlSetProp(islandNode, (const xmlChar *)"ymin", (const xmlChar *)s);
 
 				smprintf(s, 64, "%i", completeIslands[i].XMax);
-				xmlSetProp(islandNode, (const xmlChar*)"xmax", (const xmlChar*)s);
+				xmlSetProp(islandNode, (const xmlChar *)"xmax", (const xmlChar *)s);
 
 				smprintf(s, 64, "%i", completeIslands[i].YMax);
-				xmlSetProp(islandNode, (const xmlChar*)"ymax", (const xmlChar*)s);
+				xmlSetProp(islandNode, (const xmlChar *)"ymax", (const xmlChar *)s);
 
 				std::list<std::string>::const_iterator itZone;
-				for(itZone=completeIslands[i].Zones.begin(); itZone!=completeIslands[i].Zones.end(); itZone++)
+				for (itZone = completeIslands[i].Zones.begin(); itZone != completeIslands[i].Zones.end(); itZone++)
 				{
-					xmlNodePtr zoneNode = xmlNewChild(islandNode, NULL, (const xmlChar*)"zone", NULL);
-					xmlSetProp(zoneNode, (const xmlChar*)"name", (const xmlChar*)(*itZone).c_str());
+					xmlNodePtr zoneNode = xmlNewChild(islandNode, NULL, (const xmlChar *)"zone", NULL);
+					xmlSetProp(zoneNode, (const xmlChar *)"name", (const xmlChar *)(*itZone).c_str());
 				}
 
 				islandNodes[completeIslands[i].Island] = islandNode;
@@ -584,129 +575,129 @@ void CScenarioEntryPoints::saveXMLFile(const TCompleteIslands & completeIslands,
 
 void CScenarioEntryPoints::getIslands(const CSString& packageDefinition, CVectorSString& islands)
 {
-	// if need be load the entry points vector from disk file
-	if (!_IsLoaded)
-	{
-		loadFromFile();
-	}
+    // if need be load the entry points vector from disk file
+    if (!_IsLoaded)
+    {
+        loadFromFile();
+    }
 
-	islands.clear();
-	std::set<CSString> found;
-	for (uint32 i=0;i<_EntryPoints.size();++i)
-	{
-		CSString& island= _EntryPoints[i].Island;
+    islands.clear();
+    std::set<CSString> found;
+    for (uint32 i=0;i<_EntryPoints.size();++i)
+    {
+        CSString& island= _EntryPoints[i].Island;
 
-		// skip entry points from inaccessible packages
-		if (!packageDefinition.contains(_EntryPoints[i].Package.c_str()))
-			continue;
+        // skip entry points from inaccessible packages
+        if (!packageDefinition.contains(_EntryPoints[i].Package.c_str()))
+            continue;
 
-		// skip dumplicate names
-		if (found.find(island)!=found.end())
-			continue;
+        // skip dumplicate names
+        if (found.find(island)!=found.end())
+            continue;
 
-		// add the island to the output vector and set of found islands
-		islands.push_back(island);
-		found.insert(island);
-	}
+        // add the island to the output vector and set of found islands
+        islands.push_back(island);
+        found.insert(island);
+    }
 }
 
 //-----------------------------------------------------------------------------
 
 void CScenarioEntryPoints::getEntryPoints(const CSString& packageDefinition, const CSString& island, CVectorSString& entryPoints)
 {
-	// if need be load the entry points vector from disk file
-	if (!_IsLoaded)
-	{
-		loadFromFile();
-	}
+    // if need be load the entry points vector from disk file
+    if (!_IsLoaded)
+    {
+        loadFromFile();
+    }
 
-	entryPoints.clear();
-	for (uint32 i=0;i<_EntryPoints.size();++i)
-	{
-		CSString& entryPoint= _EntryPoints[i].Location;
+    entryPoints.clear();
+    for (uint32 i=0;i<_EntryPoints.size();++i)
+    {
+        CSString& entryPoint= _EntryPoints[i].Location;
 
-		// skip entry points from inaccessible packages
-		if (!packageDefinition.contains(_EntryPoints[i].Package.c_str()))
-			continue;
+        // skip entry points from inaccessible packages
+        if (!packageDefinition.contains(_EntryPoints[i].Package.c_str()))
+            continue;
 
-		// skip entry points from the wrong island
-		if (island!=_EntryPoints[i].Island)
-			continue;
+        // skip entry points from the wrong island
+        if (island!=_EntryPoints[i].Island)
+            continue;
 
-		// add the island to the output vector and set of found islands
-		entryPoints.push_back(entryPoint);
-	}
+        // add the island to the output vector and set of found islands
+        entryPoints.push_back(entryPoint);
+    }
 }
 
 //-----------------------------------------------------------------------------
 
 uint32 CScenarioEntryPoints::getEntryPointId(const CSString& packageDefinition, const CSString& island, const CSString& entryPoint)
 {
-	// if need be load the entry points vector from disk file
-	if (!_IsLoaded)
-	{
-		loadFromFile();
-	}
+    // if need be load the entry points vector from disk file
+    if (!_IsLoaded)
+    {
+        loadFromFile();
+    }
 
-	uint32 count=0;
+    uint32 count=0;
 
-	for (uint32 i=0;i<_EntryPoints.size();++i)
-	{
-		// skip entry points from inaccessible packages
-		if (!packageDefinition.contains(_EntryPoints[i].Package.c_str()))
-			continue;
+    for (uint32 i=0;i<_EntryPoints.size();++i)
+    {
+        // skip entry points from inaccessible packages
+        if (!packageDefinition.contains(_EntryPoints[i].Package.c_str()))
+            continue;
 
-		// if this entry point corresponds to the one we're looking for then stop here
-		if (island==_EntryPoints[i].Island && entryPoint==_EntryPoints[i].Location)
-			return count;
+        // if this entry point corresponds to the one we're looking for then stop here
+        if (island==_EntryPoints[i].Island && entryPoint==_EntryPoints[i].Location)
+            return count;
 
-		// increment the entry point id each time we get here (ie for each entry point in package definition)
-		++count;
-	}
+        // increment the entry point id each time we get here (ie for each entry point in package definition)
+        ++count;
+    }
 
-	// bomb out - we didn't find a match - on live shards this case is to be ignored as it only means we have a data
-	// error and not necessarily a code bug... in debug we might as well STOP to flag that there's a problem
-	STOP("ERROR: entry point '"+island+":"+entryPoint+"' not found in package description: "+packageDefinition);
-	return count;
+    // bomb out - we didn't find a match - on live shards this case is to be ignored as it only means we have a data
+    // error and not necessarily a code bug... in debug we might as well STOP to flag that there's a problem
+    STOP("ERROR: entry point '"+island+":"+entryPoint+"' not found in package description: "+packageDefinition);
+    return count;
 }
 
 //-----------------------------------------------------------------------------
 
 void CScenarioEntryPoints::getEntryPointCoordsFromId(const CSString& packageDefinition, uint32 id, sint32& x, sint32& y)
 {
-	// if need be load the entry points vector from disk file
-	if (!_IsLoaded)
-	{
-		loadFromFile();
-	}
+    // if need be load the entry points vector from disk file
+    if (!_IsLoaded)
+    {
+        loadFromFile();
+    }
 
-	uint32 count=0;
+    uint32 count=0;
 
-	for (uint32 i=0;i<_EntryPoints.size();++i)
-	{
-		// skip entry points from inaccessible packages
-		if (!packageDefinition.contains(_EntryPoints[i].Package.c_str()))
-			continue;
+    for (uint32 i=0;i<_EntryPoints.size();++i)
+    {
+        // skip entry points from inaccessible packages
+        if (!packageDefinition.contains(_EntryPoints[i].Package.c_str()))
+            continue;
 
-		// if this entry point corresponds to the one we're looking for then stop here
-		if (count==id)
-		{
-			x= _EntryPoints[i].X;
-			y= _EntryPoints[i].Y;
-			return;
-		}
+        // if this entry point corresponds to the one we're looking for then stop here
+        if (count==id)
+        {
+            x= _EntryPoints[i].X;
+            y= _EntryPoints[i].Y;
+            return;
+        }
 
-		// increment the entry point id each time we get here (ie for each entry point in package definition)
-		++count;
-	}
+        // increment the entry point id each time we get here (ie for each entry point in package definition)
+        ++count;
+    }
 
-	// bomb out - we didn't find a match - on live shards this case is to be ignored as it only means we have a data
-	// error and not necessarily a code bug... in debug we might as well STOP to flag that there's a problem
-	STOP("ERROR: entry point '"+NLMISC::toString(id)+"' not found in package description: "+packageDefinition);
+    // bomb out - we didn't find a match - on live shards this case is to be ignored as it only means we have a data
+    // error and not necessarily a code bug... in debug we might as well STOP to flag that there's a problem
+    STOP("ERROR: entry point '"+NLMISC::toString(id)+"' not found in package description: "+packageDefinition);
 
-	x= y= 0;
+    x= y= 0;
 
-	return;
+    return;
 }
 */
 
@@ -715,48 +706,48 @@ void CScenarioEntryPoints::getEntryPointCoordsFromId(const CSString& packageDefi
 /*
 NLMISC_COMMAND(displayScenarioEntryPoints,"display the list of scenario entry points (either the complete list or the list for a given input string","[<package definition string>]")
 {
-	// check that we have a valid number of arguments
-	if (args.size()>1)
-		return false;
+    // check that we have a valid number of arguments
+    if (args.size()>1)
+        return false;
 
-	// setup the package definition string
-	CSString packageDefinition;
-	if (!args.empty())
-	{
-		packageDefinition= args[0];
-	}
+    // setup the package definition string
+    CSString packageDefinition;
+    if (!args.empty())
+    {
+        packageDefinition= args[0];
+    }
 
-	// display a fancy title line
-	nlinfo("Displaying scenario entry points correspoding to package definition: '%s'",packageDefinition.c_str());
+    // display a fancy title line
+    nlinfo("Displaying scenario entry points correspoding to package definition: '%s'",packageDefinition.c_str());
 
-	// get the vector of islands that we are allowed access to
-	CVectorSString islands;
-	R2::CScenarioEntryPoints::getInstance().getIslands(packageDefinition,islands);
+    // get the vector of islands that we are allowed access to
+    CVectorSString islands;
+    R2::CScenarioEntryPoints::getInstance().getIslands(packageDefinition,islands);
 
-	// run through the islands displaying them with their lists of entry points
-	for (uint32 i=0;i<islands.size();++i)
-	{
-		nlinfo("- Island: %s", islands[i].c_str());
+    // run through the islands displaying them with their lists of entry points
+    for (uint32 i=0;i<islands.size();++i)
+    {
+        nlinfo("- Island: %s", islands[i].c_str());
 
-		// get the set of valid entry points for this island
-		CVectorSString entryPoints;
-		R2::CScenarioEntryPoints::getInstance().getEntryPoints(packageDefinition,islands[i],entryPoints);
+        // get the set of valid entry points for this island
+        CVectorSString entryPoints;
+        R2::CScenarioEntryPoints::getInstance().getEntryPoints(packageDefinition,islands[i],entryPoints);
 
-		// for each entry point...
-		for (uint32 j=0;j<entryPoints.size();++j)
-		{
-			// lookup the entry point id from the package definition, island name and entry point name
-			uint32 entryPointId= R2::CScenarioEntryPoints::getInstance().getEntryPointId(packageDefinition,islands[i],entryPoints[j]);
+        // for each entry point...
+        for (uint32 j=0;j<entryPoints.size();++j)
+        {
+            // lookup the entry point id from the package definition, island name and entry point name
+            uint32 entryPointId= R2::CScenarioEntryPoints::getInstance().getEntryPointId(packageDefinition,islands[i],entryPoints[j]);
 
-			// get the coordinates for the given entry point
-			sint32 x, y;
-			R2::CScenarioEntryPoints::getInstance().getEntryPointCoordsFromId(packageDefinition,entryPointId,x,y);
+            // get the coordinates for the given entry point
+            sint32 x, y;
+            R2::CScenarioEntryPoints::getInstance().getEntryPointCoordsFromId(packageDefinition,entryPointId,x,y);
 
-			// display a debug message
-			nlinfo("    - Entry point %d: %s (%d,%d)", entryPointId, entryPoints[j].c_str(), x, y);
-		}
-	}
+            // display a debug message
+            nlinfo("    - Entry point %d: %s (%d,%d)", entryPointId, entryPoints[j].c_str(), x, y);
+        }
+    }
 
-	return true;
+    return true;
 }
 */

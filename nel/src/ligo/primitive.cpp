@@ -36,63 +36,60 @@ const uint32 NLLIGO_PRIMITIVE_VERSION = 1;
 #define new DEBUG_NEW
 #endif
 
-namespace NLLIGO
-{
+namespace NLLIGO {
 
-CPrimitiveContext	*CPrimitiveContext::_Instance = NULL;
-
+CPrimitiveContext *CPrimitiveContext::_Instance = NULL;
 
 // ***************************************************************************
 // XML helpers
 // ***************************************************************************
 
-void Error (const std::string &filename, const char *format, ...)
+void Error(const std::string &filename, const char *format, ...)
 {
 	va_list args;
-	va_start( args, format );
+	va_start(args, format);
 	char buffer[1024];
-	vsnprintf( buffer, 1024, format, args );
-	va_end( args );
+	vsnprintf(buffer, 1024, format, args);
+	va_end(args);
 
-	nlwarning ("In File (%s) %s", filename.c_str(), buffer);
+	nlwarning("In File (%s) %s", filename.c_str(), buffer);
 }
 
 // ***************************************************************************
 
-void XMLError (xmlNodePtr xmlNode, const std::string &filename, const char *format, ... )
+void XMLError(xmlNodePtr xmlNode, const std::string &filename, const char *format, ...)
 {
 	va_list args;
-	va_start( args, format );
+	va_start(args, format);
 	char buffer[1024];
-	vsnprintf( buffer, 1024, format, args );
-	va_end( args );
+	vsnprintf(buffer, 1024, format, args);
+	va_end(args);
 
-	Error (filename, "node (%s), line (%d) : %s", xmlNode->name, xmlNode->line, buffer);
+	Error(filename, "node (%s), line (%d) : %s", xmlNode->name, xmlNode->line, buffer);
 }
-
 
 // ***************************************************************************
 
-xmlNodePtr GetFirstChildNode (xmlNodePtr xmlNode, const std::string &filename, const std::string &childName)
+xmlNodePtr GetFirstChildNode(xmlNodePtr xmlNode, const std::string &filename, const std::string &childName)
 {
 	// Call the CIXml version
-	xmlNodePtr result = CIXml::getFirstChildNode (xmlNode, childName);
+	xmlNodePtr result = CIXml::getFirstChildNode(xmlNode, childName);
 	if (result) return result;
 
 	// Output a formated error
-	XMLError (xmlNode, filename.c_str(), "Can't find XML node named (%s)", childName.c_str());
+	XMLError(xmlNode, filename.c_str(), "Can't find XML node named (%s)", childName.c_str());
 	return NULL;
 }
 
 // ***************************************************************************
 
-bool GetPropertyString (string &result, const std::string &filename, xmlNodePtr xmlNode, const std::string &propName)
+bool GetPropertyString(string &result, const std::string &filename, xmlNodePtr xmlNode, const std::string &propName)
 {
 	// Call the CIXml version
-	if (!CIXml::getPropertyString (result, xmlNode, propName))
+	if (!CIXml::getPropertyString(result, xmlNode, propName))
 	{
 		// Output a formated error
-		XMLError (xmlNode, filename, "Can't find XML node property (%s)", propName.c_str());
+		XMLError(xmlNode, filename, "Can't find XML node property (%s)", propName.c_str());
 		return false;
 	}
 	return true;
@@ -100,12 +97,12 @@ bool GetPropertyString (string &result, const std::string &filename, xmlNodePtr 
 
 // ***************************************************************************
 
-bool ReadInt (const std::string &propName, int &result, const std::string &filename, xmlNodePtr xmlNode)
+bool ReadInt(const std::string &propName, int &result, const std::string &filename, xmlNodePtr xmlNode)
 {
 	string value;
-	if (GetPropertyString (value, filename, xmlNode, propName))
+	if (GetPropertyString(value, filename, xmlNode, propName))
 	{
-		result = atoi (value.c_str ());
+		result = atoi(value.c_str());
 		return true;
 	}
 	return false;
@@ -113,20 +110,20 @@ bool ReadInt (const std::string &propName, int &result, const std::string &filen
 
 // ***************************************************************************
 
-void WriteInt (const std::string &propName, int value, xmlNodePtr xmlNode)
+void WriteInt(const std::string &propName, int value, xmlNodePtr xmlNode)
 {
 	// Set properties
-	xmlSetProp (xmlNode, (const xmlChar*)propName.c_str(), (const xmlChar*)(toString (value).c_str ()));
+	xmlSetProp(xmlNode, (const xmlChar *)propName.c_str(), (const xmlChar *)(toString(value).c_str()));
 }
 
 // ***************************************************************************
 
-bool ReadUInt (const std::string &propName, uint &result, const std::string &filename, xmlNodePtr xmlNode)
+bool ReadUInt(const std::string &propName, uint &result, const std::string &filename, xmlNodePtr xmlNode)
 {
 	string value;
-	if (GetPropertyString (value, filename, xmlNode, propName))
+	if (GetPropertyString(value, filename, xmlNode, propName))
 	{
-		result = strtoul (value.c_str (), NULL, 10);
+		result = strtoul(value.c_str(), NULL, 10);
 		return true;
 	}
 	return false;
@@ -134,18 +131,18 @@ bool ReadUInt (const std::string &propName, uint &result, const std::string &fil
 
 // ***************************************************************************
 
-void WriteUInt (const std::string &propName, uint value, xmlNodePtr xmlNode)
+void WriteUInt(const std::string &propName, uint value, xmlNodePtr xmlNode)
 {
 	// Set properties
-	xmlSetProp (xmlNode, (const xmlChar*)propName.c_str(), (const xmlChar*)(toString (value).c_str ()));
+	xmlSetProp(xmlNode, (const xmlChar *)propName.c_str(), (const xmlChar *)(toString(value).c_str()));
 }
 
 // ***************************************************************************
 
-bool ReadFloat (const std::string &propName, float &result, const std::string &filename, xmlNodePtr xmlNode)
+bool ReadFloat(const std::string &propName, float &result, const std::string &filename, xmlNodePtr xmlNode)
 {
 	string value;
-	if (GetPropertyString (value, filename, xmlNode, propName))
+	if (GetPropertyString(value, filename, xmlNode, propName))
 	{
 		NLMISC::fromString(value, result);
 		return true;
@@ -155,26 +152,26 @@ bool ReadFloat (const std::string &propName, float &result, const std::string &f
 
 // ***************************************************************************
 
-void WriteFloat (const std::string &propName, float value, xmlNodePtr xmlNode)
+void WriteFloat(const std::string &propName, float value, xmlNodePtr xmlNode)
 {
 	// Set properties
-	xmlSetProp (xmlNode, (const xmlChar*)propName.c_str(), (const xmlChar*)(toString (value).c_str ()));
+	xmlSetProp(xmlNode, (const xmlChar *)propName.c_str(), (const xmlChar *)(toString(value).c_str()));
 }
 
 // ***************************************************************************
 
-bool ReadVector (CPrimVector &point, const std::string &filename, xmlNodePtr xmlNode)
+bool ReadVector(CPrimVector &point, const std::string &filename, xmlNodePtr xmlNode)
 {
 	CPrimVector pos;
-	if (ReadFloat ("X", pos.x, filename, xmlNode))
+	if (ReadFloat("X", pos.x, filename, xmlNode))
 	{
-		if (ReadFloat ("Y", pos.y, filename, xmlNode))
+		if (ReadFloat("Y", pos.y, filename, xmlNode))
 		{
-			if (ReadFloat ("Z", pos.z, filename, xmlNode))
+			if (ReadFloat("Z", pos.z, filename, xmlNode))
 			{
 				pos.Selected = false;
 				string result;
-				if (CIXml::getPropertyString (result, xmlNode, "SELECTED"))
+				if (CIXml::getPropertyString(result, xmlNode, "SELECTED"))
 				{
 					if (result == "true")
 						pos.Selected = true;
@@ -189,33 +186,32 @@ bool ReadVector (CPrimVector &point, const std::string &filename, xmlNodePtr xml
 
 // ***************************************************************************
 
-void WriteVector (const CPrimVector &point, xmlNodePtr xmlNode)
+void WriteVector(const CPrimVector &point, xmlNodePtr xmlNode)
 {
 	// Set properties
-	xmlSetProp (xmlNode, (const xmlChar*)"X", (const xmlChar*)(toString (point.x).c_str ()));
-	xmlSetProp (xmlNode, (const xmlChar*)"Y", (const xmlChar*)(toString (point.y).c_str ()));
-	xmlSetProp (xmlNode, (const xmlChar*)"Z", (const xmlChar*)(toString (point.z).c_str ()));
+	xmlSetProp(xmlNode, (const xmlChar *)"X", (const xmlChar *)(toString(point.x).c_str()));
+	xmlSetProp(xmlNode, (const xmlChar *)"Y", (const xmlChar *)(toString(point.y).c_str()));
+	xmlSetProp(xmlNode, (const xmlChar *)"Z", (const xmlChar *)(toString(point.z).c_str()));
 	if (point.Selected)
-		xmlSetProp (xmlNode, (const xmlChar*)"SELECTED", (const xmlChar*)"true");
+		xmlSetProp(xmlNode, (const xmlChar *)"SELECTED", (const xmlChar *)"true");
 }
-
 
 // ***************************************************************************
 
-bool GetNodeString (string &result, const std::string &filename, xmlNodePtr xmlNode, const std::string &nodeName)
+bool GetNodeString(string &result, const std::string &filename, xmlNodePtr xmlNode, const std::string &nodeName)
 {
 	// Look for the node
-	xmlNodePtr node = CIXml::getFirstChildNode (xmlNode, nodeName);
+	xmlNodePtr node = CIXml::getFirstChildNode(xmlNode, nodeName);
 	if (!node)
 	{
-		XMLError (xmlNode, filename, "Can't find XML node named (%s)", nodeName.c_str());
+		XMLError(xmlNode, filename, "Can't find XML node named (%s)", nodeName.c_str());
 		return false;
 	}
 
 	// Get the node string
-	if (!CIXml::getContentString (result, node))
+	if (!CIXml::getContentString(result, node))
 	{
-		XMLError (xmlNode, filename, "Can't find any text in the node named (%s)", nodeName.c_str());
+		XMLError(xmlNode, filename, "Can't find any text in the node named (%s)", nodeName.c_str());
 		return false;
 	}
 
@@ -224,12 +220,12 @@ bool GetNodeString (string &result, const std::string &filename, xmlNodePtr xmlN
 
 // ***************************************************************************
 
-bool GetContentString (string &result, const std::string &filename, xmlNodePtr xmlNode)
+bool GetContentString(string &result, const std::string &filename, xmlNodePtr xmlNode)
 {
 	// Get the node string
-	if (!CIXml::getContentString (result, xmlNode))
+	if (!CIXml::getContentString(result, xmlNode))
 	{
-		XMLError (xmlNode, filename, "Can't find any text in the node");
+		XMLError(xmlNode, filename, "Can't find any text in the node");
 		return false;
 	}
 
@@ -240,14 +236,14 @@ bool GetContentString (string &result, const std::string &filename, xmlNodePtr x
 // CPropertyString
 // ***************************************************************************
 
-CPropertyString::CPropertyString (const std::string &str)
+CPropertyString::CPropertyString(const std::string &str)
 {
 	String = str;
 }
 
 // ***************************************************************************
 
-CPropertyString::CPropertyString (const std::string &str, bool _default)
+CPropertyString::CPropertyString(const std::string &str, bool _default)
 {
 	String = str;
 	Default = _default;
@@ -257,14 +253,14 @@ CPropertyString::CPropertyString (const std::string &str, bool _default)
 // CPropertyStringArray
 // ***************************************************************************
 
-CPropertyStringArray::CPropertyStringArray (const std::vector<std::string> &stringArray)
+CPropertyStringArray::CPropertyStringArray(const std::vector<std::string> &stringArray)
 {
 	StringArray = stringArray;
 }
 
 // ***************************************************************************
 
-CPropertyStringArray::CPropertyStringArray (const std::vector<std::string> &stringArray, bool _default)
+CPropertyStringArray::CPropertyStringArray(const std::vector<std::string> &stringArray, bool _default)
 {
 	StringArray = stringArray;
 	Default = _default;
@@ -272,7 +268,7 @@ CPropertyStringArray::CPropertyStringArray (const std::vector<std::string> &stri
 
 // ***************************************************************************
 
-void CPrimPoint::serial (NLMISC::IStream &f)
+void CPrimPoint::serial(NLMISC::IStream &f)
 {
 	// serial base info
 	IPrimitive::serial(f);
@@ -281,7 +277,7 @@ void CPrimPoint::serial (NLMISC::IStream &f)
 }
 
 // ***************************************************************************
-void CPrimPath::serial (NLMISC::IStream &f)
+void CPrimPath::serial(NLMISC::IStream &f)
 {
 	IPrimitive::serial(f);
 	f.serialCont(VPoints);
@@ -289,7 +285,7 @@ void CPrimPath::serial (NLMISC::IStream &f)
 
 // ***************************************************************************
 
-bool CPrimZone::contains (const NLMISC::CVector &v, const std::vector<CPrimVector> &points)
+bool CPrimZone::contains(const NLMISC::CVector &v, const std::vector<CPrimVector> &points)
 {
 	uint32 i;
 	CVector vMin, vMax;
@@ -320,17 +316,17 @@ bool CPrimZone::contains (const NLMISC::CVector &v, const std::vector<CPrimVecto
 	for (i = 0; i < points.size(); ++i)
 	{
 		const CVector &p1 = points[i];
-		const CVector &p2 = points[(i+1)%points.size()];
+		const CVector &p2 = points[(i + 1) % points.size()];
 
-		if (((p1.y-v.y) <= 0.0)&&((p2.y-v.y) <= 0.0))
+		if (((p1.y - v.y) <= 0.0) && ((p2.y - v.y) <= 0.0))
 			continue;
-		if (((p1.y-v.y) > 0.0)&&((p2.y-v.y) > 0.0))
+		if (((p1.y - v.y) > 0.0) && ((p2.y - v.y) > 0.0))
 			continue;
-		float xinter = p1.x + (p2.x-p1.x) * ((v.y-p1.y)/(p2.y-p1.y));
+		float xinter = p1.x + (p2.x - p1.x) * ((v.y - p1.y) / (p2.y - p1.y));
 		if (xinter > v.x)
 			++nNbIntersection;
 	}
-	if ((nNbIntersection&1) == 1) // odd intersections so the vertex is inside
+	if ((nNbIntersection & 1) == 1) // odd intersections so the vertex is inside
 		return true;
 	else
 		return false;
@@ -338,7 +334,7 @@ bool CPrimZone::contains (const NLMISC::CVector &v, const std::vector<CPrimVecto
 
 // ***************************************************************************
 
-bool CPrimZone::contains (const NLMISC::CVector &v, const std::vector<NLMISC::CVector> &points)
+bool CPrimZone::contains(const NLMISC::CVector &v, const std::vector<NLMISC::CVector> &points)
 {
 	uint32 i;
 	CVector vMin, vMax;
@@ -369,17 +365,17 @@ bool CPrimZone::contains (const NLMISC::CVector &v, const std::vector<NLMISC::CV
 	for (i = 0; i < points.size(); ++i)
 	{
 		const CVector &p1 = points[i];
-		const CVector &p2 = points[(i+1)%points.size()];
+		const CVector &p2 = points[(i + 1) % points.size()];
 
-		if (((p1.y-v.y) <= 0.0)&&((p2.y-v.y) <= 0.0))
+		if (((p1.y - v.y) <= 0.0) && ((p2.y - v.y) <= 0.0))
 			continue;
-		if (((p1.y-v.y) > 0.0)&&((p2.y-v.y) > 0.0))
+		if (((p1.y - v.y) > 0.0) && ((p2.y - v.y) > 0.0))
 			continue;
-		float xinter = p1.x + (p2.x-p1.x) * ((v.y-p1.y)/(p2.y-p1.y));
+		float xinter = p1.x + (p2.x - p1.x) * ((v.y - p1.y) / (p2.y - p1.y));
 		if (xinter > v.x)
 			++nNbIntersection;
 	}
-	if ((nNbIntersection&1) == 1) // odd intersections so the vertex is inside
+	if ((nNbIntersection & 1) == 1) // odd intersections so the vertex is inside
 		return true;
 	else
 		return false;
@@ -389,39 +385,38 @@ bool CPrimZone::contains (const NLMISC::CVector &v, const std::vector<NLMISC::CV
 // CPrimNode
 // ***************************************************************************
 
-bool CPrimNode::read (xmlNodePtr xmlNode, const std::string &filename, uint version, CLigoConfig &config)
+bool CPrimNode::read(xmlNodePtr xmlNode, const std::string &filename, uint version, CLigoConfig &config)
 {
-	return IPrimitive::read (xmlNode, filename, version, config);
+	return IPrimitive::read(xmlNode, filename, version, config);
 }
 
 // ***************************************************************************
 
-uint CPrimNode::getNumVector () const
+uint CPrimNode::getNumVector() const
 {
 	return 0;
 }
 
 // ***************************************************************************
 
-const CPrimVector *CPrimNode::getPrimVector () const
+const CPrimVector *CPrimNode::getPrimVector() const
 {
 	return NULL;
 }
 
 // ***************************************************************************
 
-CPrimVector	*CPrimNode::getPrimVector ()
+CPrimVector *CPrimNode::getPrimVector()
 {
 	return NULL;
 }
 
 // ***************************************************************************
 
-NLLIGO::IPrimitive *CPrimNode::copy () const
+NLLIGO::IPrimitive *CPrimNode::copy() const
 {
-	return new CPrimNode (*this);
+	return new CPrimNode(*this);
 }
-
 
 // ***************************************************************************
 // CPrimNode
@@ -429,60 +424,60 @@ NLLIGO::IPrimitive *CPrimNode::copy () const
 
 /*void CPrimNode::operator= (const CPrimNode &node)
 {
-	// Copy the IPrimitive
-	IPrimitive::operator= (node);
+    // Copy the IPrimitive
+    IPrimitive::operator= (node);
 }
 
 // ***************************************************************************
 
 void CPrimPoint::operator= (const CPrimPoint &node)
 {
-	// Copy the IPrimitive
-	IPrimitive::operator= (node);
+    // Copy the IPrimitive
+    IPrimitive::operator= (node);
 }
 
 // ***************************************************************************
 
 void CPrimPath::operator= (const CPrimPath &node)
 {
-	// Copy the IPrimitive
+    // Copy the IPrimitive
 }
 
 // ***************************************************************************
 
 void CPrimZone::operator= (const CPrimZone &node)
 {
-	// Copy the IPrimitive
-	IPrimitive::operator= (node);
+    // Copy the IPrimitive
+    IPrimitive::operator= (node);
 }
 */
 
 // ***************************************************************************
 
-uint CPrimPoint::getNumVector () const
+uint CPrimPoint::getNumVector() const
 {
 	return 1;
 }
 
 // ***************************************************************************
 
-const CPrimVector *CPrimPoint::getPrimVector () const
+const CPrimVector *CPrimPoint::getPrimVector() const
 {
 	return &Point;
 }
 
 // ***************************************************************************
 
-CPrimVector	*CPrimPoint::getPrimVector ()
+CPrimVector *CPrimPoint::getPrimVector()
 {
 	return &Point;
 }
 
 // ***************************************************************************
 
-NLLIGO::IPrimitive *CPrimPoint::copy () const
+NLLIGO::IPrimitive *CPrimPoint::copy() const
 {
-	return new CPrimPoint (*this);
+	return new CPrimPoint(*this);
 }
 
 // ***************************************************************************
@@ -490,18 +485,18 @@ NLLIGO::IPrimitive *CPrimPoint::copy () const
 bool CPrimPoint::read(xmlNodePtr xmlNode, const std::string &filename, uint version, CLigoConfig &config)
 {
 	// Read points
-	xmlNodePtr ptNode = GetFirstChildNode (xmlNode, filename, "PT");
+	xmlNodePtr ptNode = GetFirstChildNode(xmlNode, filename, "PT");
 	if (ptNode)
 	{
 		// Read a vector
-		if (!ReadVector (Point, filename, ptNode))
+		if (!ReadVector(Point, filename, ptNode))
 			return false;
 
-		ptNode = CIXml::getFirstChildNode (xmlNode, "ANGLE");
+		ptNode = CIXml::getFirstChildNode(xmlNode, "ANGLE");
 		if (ptNode)
 		{
 			// Read a float
-			if (!ReadFloat ("VALUE", Angle, filename, ptNode))
+			if (!ReadFloat("VALUE", Angle, filename, ptNode))
 				return false;
 		}
 		else
@@ -512,55 +507,39 @@ bool CPrimPoint::read(xmlNodePtr xmlNode, const std::string &filename, uint vers
 		return false;
 	}
 
-	return IPrimitive::read (xmlNode, filename, version, config);
+	return IPrimitive::read(xmlNode, filename, version, config);
 }
 
 // ***************************************************************************
 
-void CPrimPoint::write (xmlNodePtr xmlNode, const std::string &filename) const
+void CPrimPoint::write(xmlNodePtr xmlNode, const std::string &filename) const
 {
 	// Save the point
-	xmlNodePtr ptNode = xmlNewChild ( xmlNode, NULL, (const xmlChar*)"PT", NULL);
-	WriteVector (Point, ptNode);
+	xmlNodePtr ptNode = xmlNewChild(xmlNode, NULL, (const xmlChar *)"PT", NULL);
+	WriteVector(Point, ptNode);
 
 	// Save the angle
 	if (Angle != 0)
 	{
-		xmlNodePtr ptNode = xmlNewChild ( xmlNode, NULL, (const xmlChar*)"ANGLE", NULL);
-		WriteFloat ("VALUE", Angle, ptNode);
+		xmlNodePtr ptNode = xmlNewChild(xmlNode, NULL, (const xmlChar *)"ANGLE", NULL);
+		WriteFloat("VALUE", Angle, ptNode);
 	}
 
-	IPrimitive::write (xmlNode, filename);
+	IPrimitive::write(xmlNode, filename);
 }
 
 // ***************************************************************************
 // CPrimPath
 // ***************************************************************************
 
-uint CPrimPath::getNumVector () const
+uint CPrimPath::getNumVector() const
 {
-	return (uint)VPoints.size ();
+	return (uint)VPoints.size();
 }
 
 // ***************************************************************************
 
-const CPrimVector *CPrimPath::getPrimVector () const
-{
-	if (VPoints.empty())
-		return NULL;
-	return &(VPoints[0]);
-}
-
-// ***************************************************************************
-
-NLLIGO::IPrimitive *CPrimPath::copy () const
-{
-	return new CPrimPath (*this);
-}
-
-// ***************************************************************************
-
-CPrimVector	*CPrimPath::getPrimVector ()
+const CPrimVector *CPrimPath::getPrimVector() const
 {
 	if (VPoints.empty())
 		return NULL;
@@ -569,55 +548,70 @@ CPrimVector	*CPrimPath::getPrimVector ()
 
 // ***************************************************************************
 
-bool CPrimPath::read (xmlNodePtr xmlNode, const std::string &filename, uint version, CLigoConfig &config)
+NLLIGO::IPrimitive *CPrimPath::copy() const
+{
+	return new CPrimPath(*this);
+}
+
+// ***************************************************************************
+
+CPrimVector *CPrimPath::getPrimVector()
+{
+	if (VPoints.empty())
+		return NULL;
+	return &(VPoints[0]);
+}
+
+// ***************************************************************************
+
+bool CPrimPath::read(xmlNodePtr xmlNode, const std::string &filename, uint version, CLigoConfig &config)
 {
 	// Read points
-	VPoints.clear ();
-	VPoints.reserve (CIXml::countChildren (xmlNode, "PT"));
-	xmlNodePtr ptNode = CIXml::getFirstChildNode (xmlNode, "PT");
+	VPoints.clear();
+	VPoints.reserve(CIXml::countChildren(xmlNode, "PT"));
+	xmlNodePtr ptNode = CIXml::getFirstChildNode(xmlNode, "PT");
 	if (ptNode)
 	{
 		do
 		{
 			// Read a vector
-			VPoints.push_back (CPrimVector ());
-			if (!ReadVector (VPoints.back (), filename, ptNode))
+			VPoints.push_back(CPrimVector());
+			if (!ReadVector(VPoints.back(), filename, ptNode))
 				return false;
 
-			ptNode = CIXml::getNextChildNode (ptNode, "PT");
-		}
-		while (ptNode);
+			ptNode = CIXml::getNextChildNode(ptNode, "PT");
+		} while (ptNode);
 	}
 
-	return IPrimitive::read (xmlNode, filename, version, config);
+	return IPrimitive::read(xmlNode, filename, version, config);
 }
 
 // ***************************************************************************
 
-void CPrimPath::write (xmlNodePtr xmlNode, const std::string &filename) const
+void CPrimPath::write(xmlNodePtr xmlNode, const std::string &filename) const
 {
 	// Save the points
-	for (uint i=0; i<VPoints.size (); i++)
+	for (uint i = 0; i < VPoints.size(); i++)
 	{
-		xmlNodePtr ptNode = xmlNewChild ( xmlNode, NULL, (const xmlChar*)"PT", NULL);
-		WriteVector (VPoints[i], ptNode);
+		xmlNodePtr ptNode = xmlNewChild(xmlNode, NULL, (const xmlChar *)"PT", NULL);
+		WriteVector(VPoints[i], ptNode);
 	}
 
-	IPrimitive::write (xmlNode, filename);
+	IPrimitive::write(xmlNode, filename);
 }
 
 // ***************************************************************************
 // CPrimZone
 // ***************************************************************************
 
-uint CPrimZone::getNumVector () const
+uint CPrimZone::getNumVector() const
 {
-	return (uint)VPoints.size ();
+	return (uint)VPoints.size();
 }
 
 // ***************************************************************************
 
-const CPrimVector *CPrimZone::getPrimVector () const
+const CPrimVector *CPrimZone::getPrimVector() const
 {
 	if (VPoints.empty())
 		return NULL;
@@ -626,61 +620,60 @@ const CPrimVector *CPrimZone::getPrimVector () const
 
 // ***************************************************************************
 
-NLLIGO::IPrimitive *CPrimZone::copy () const
+NLLIGO::IPrimitive *CPrimZone::copy() const
 {
-	return new CPrimZone (*this);
+	return new CPrimZone(*this);
 }
 
 // ***************************************************************************
 
-CPrimVector	*CPrimZone::getPrimVector ()
+CPrimVector *CPrimZone::getPrimVector()
 {
-	if(VPoints.empty()) return 0;
+	if (VPoints.empty()) return 0;
 	return &(VPoints[0]);
 }
 
 // ***************************************************************************
 
-bool CPrimZone::read (xmlNodePtr xmlNode, const std::string &filename, uint version, CLigoConfig &config)
+bool CPrimZone::read(xmlNodePtr xmlNode, const std::string &filename, uint version, CLigoConfig &config)
 {
 	// Read points
-	VPoints.clear ();
-	VPoints.reserve (CIXml::countChildren (xmlNode, "PT"));
-	xmlNodePtr ptNode = CIXml::getFirstChildNode (xmlNode, "PT");
+	VPoints.clear();
+	VPoints.reserve(CIXml::countChildren(xmlNode, "PT"));
+	xmlNodePtr ptNode = CIXml::getFirstChildNode(xmlNode, "PT");
 	if (ptNode)
 	{
 		do
 		{
 			// Read a vector
-			VPoints.push_back (CPrimVector ());
-			if (!ReadVector (VPoints.back (), filename, ptNode))
+			VPoints.push_back(CPrimVector());
+			if (!ReadVector(VPoints.back(), filename, ptNode))
 				return false;
 
-			ptNode = CIXml::getNextChildNode (ptNode, "PT");
-		}
-		while (ptNode);
+			ptNode = CIXml::getNextChildNode(ptNode, "PT");
+		} while (ptNode);
 	}
 
-	return IPrimitive::read (xmlNode, filename, version, config);
+	return IPrimitive::read(xmlNode, filename, version, config);
 }
 
 // ***************************************************************************
 
-void CPrimZone::write (xmlNodePtr xmlNode, const std::string &filename) const
+void CPrimZone::write(xmlNodePtr xmlNode, const std::string &filename) const
 {
 	// Save the points
-	for (uint i=0; i<VPoints.size (); i++)
+	for (uint i = 0; i < VPoints.size(); i++)
 	{
-		xmlNodePtr ptNode = xmlNewChild ( xmlNode, NULL, (const xmlChar*)"PT", NULL);
-		WriteVector (VPoints[i], ptNode);
+		xmlNodePtr ptNode = xmlNewChild(xmlNode, NULL, (const xmlChar *)"PT", NULL);
+		WriteVector(VPoints[i], ptNode);
 	}
 
-	IPrimitive::write (xmlNode, filename);
+	IPrimitive::write(xmlNode, filename);
 }
 
 // ***************************************************************************
 
-bool CPrimZone::contains (const NLMISC::CVector &v, const std::vector<CPrimVector> &points, float &distance, NLMISC::CVector &nearPos, bool isPath)
+bool CPrimZone::contains(const NLMISC::CVector &v, const std::vector<CPrimVector> &points, float &distance, NLMISC::CVector &nearPos, bool isPath)
 {
 	H_AUTO(NLLIGO_Contains1)
 	uint32 i;
@@ -704,13 +697,13 @@ bool CPrimZone::contains (const NLMISC::CVector &v, const std::vector<CPrimVecto
 		else
 		{
 			// compute nearest segment
-			for (i = 0; i < points.size()-1; ++i)
+			for (i = 0; i < points.size() - 1; ++i)
 			{
 				const CVector &p1 = points[i];
-				const CVector &p2 = points[i+1];
+				const CVector &p2 = points[i + 1];
 
 				float dist = getSegmentDist(v, p1, p2, pos);
-				if( dist < nearest)
+				if (dist < nearest)
 				{
 					nearest = dist;
 					nearPos = pos;
@@ -734,9 +727,9 @@ bool CPrimZone::contains (const NLMISC::CVector &v, const std::vector<CPrimVecto
 	if ((v.x < vMin.x) || (v.y < vMin.y) || (v.x > vMax.x) || (v.y > vMax.y))
 	{
 		// find the nearest distance of all segment
-		for (uint i=0; i<points.size(); ++i)
+		for (uint i = 0; i < points.size(); ++i)
 		{
-			float dist = getSegmentDist(v, points[i], points[(i+1) % points.size()], pos);
+			float dist = getSegmentDist(v, points[i], points[(i + 1) % points.size()], pos);
 
 			if (dist < nearest)
 			{
@@ -752,26 +745,26 @@ bool CPrimZone::contains (const NLMISC::CVector &v, const std::vector<CPrimVecto
 	for (i = 0; i < points.size(); ++i)
 	{
 		const CVector &p1 = points[i];
-		const CVector &p2 = points[(i+1)%points.size()];
+		const CVector &p2 = points[(i + 1) % points.size()];
 
 		float dist = getSegmentDist(v, p1, p2, pos);
-		if( dist < nearest)
+		if (dist < nearest)
 		{
 			nearest = dist;
 			nearPos = pos;
 		}
 
-		if (((p1.y-v.y) <= 0.0)&&((p2.y-v.y) <= 0.0))
+		if (((p1.y - v.y) <= 0.0) && ((p2.y - v.y) <= 0.0))
 			continue;
-		if (((p1.y-v.y) > 0.0)&&((p2.y-v.y) > 0.0))
+		if (((p1.y - v.y) > 0.0) && ((p2.y - v.y) > 0.0))
 			continue;
-		float xinter = p1.x + (p2.x-p1.x) * ((v.y-p1.y)/(p2.y-p1.y));
+		float xinter = p1.x + (p2.x - p1.x) * ((v.y - p1.y) / (p2.y - p1.y));
 		if (xinter > v.x)
 			++nNbIntersection;
 	}
 
 	distance = nearest;
-	if ((nNbIntersection&1) == 1) // odd intersections so the vertex is inside
+	if ((nNbIntersection & 1) == 1) // odd intersections so the vertex is inside
 		return true;
 	else
 		return false;
@@ -779,7 +772,7 @@ bool CPrimZone::contains (const NLMISC::CVector &v, const std::vector<CPrimVecto
 
 // ***************************************************************************
 
-bool CPrimZone::contains (const NLMISC::CVector &v, const std::vector<CVector> &points, float &distance, NLMISC::CVector &nearPos, bool isPath)
+bool CPrimZone::contains(const NLMISC::CVector &v, const std::vector<CVector> &points, float &distance, NLMISC::CVector &nearPos, bool isPath)
 {
 	H_AUTO(NLLIGO_Contains2)
 	uint32 i;
@@ -803,13 +796,13 @@ bool CPrimZone::contains (const NLMISC::CVector &v, const std::vector<CVector> &
 		else
 		{
 			// compute nearest segment
-			for (i = 0; i < points.size()-1; ++i)
+			for (i = 0; i < points.size() - 1; ++i)
 			{
 				const CVector &p1 = points[i];
-				const CVector &p2 = points[i+1];
+				const CVector &p2 = points[i + 1];
 
 				float dist = getSegmentDist(v, p1, p2, pos);
-				if( dist < nearest)
+				if (dist < nearest)
 				{
 					nearest = dist;
 					nearPos = pos;
@@ -833,9 +826,9 @@ bool CPrimZone::contains (const NLMISC::CVector &v, const std::vector<CVector> &
 	if ((v.x < vMin.x) || (v.y < vMin.y) || (v.x > vMax.x) || (v.y > vMax.y))
 	{
 		// find the nearest distance of all segment
-		for (uint i=0; i<points.size(); ++i)
+		for (uint i = 0; i < points.size(); ++i)
 		{
-			float dist = getSegmentDist(v, points[i], points[(i+1) % points.size()], pos);
+			float dist = getSegmentDist(v, points[i], points[(i + 1) % points.size()], pos);
 
 			if (dist < nearest)
 			{
@@ -851,26 +844,26 @@ bool CPrimZone::contains (const NLMISC::CVector &v, const std::vector<CVector> &
 	for (i = 0; i < points.size(); ++i)
 	{
 		const CVector &p1 = points[i];
-		const CVector &p2 = points[(i+1)%points.size()];
+		const CVector &p2 = points[(i + 1) % points.size()];
 
 		float dist = getSegmentDist(v, p1, p2, pos);
-		if( dist < nearest)
+		if (dist < nearest)
 		{
 			nearest = dist;
 			nearPos = pos;
 		}
 
-		if (((p1.y-v.y) <= 0.0)&&((p2.y-v.y) <= 0.0))
+		if (((p1.y - v.y) <= 0.0) && ((p2.y - v.y) <= 0.0))
 			continue;
-		if (((p1.y-v.y) > 0.0)&&((p2.y-v.y) > 0.0))
+		if (((p1.y - v.y) > 0.0) && ((p2.y - v.y) > 0.0))
 			continue;
-		float xinter = p1.x + (p2.x-p1.x) * ((v.y-p1.y)/(p2.y-p1.y));
+		float xinter = p1.x + (p2.x - p1.x) * ((v.y - p1.y) / (p2.y - p1.y));
 		if (xinter > v.x)
 			++nNbIntersection;
 	}
 
 	distance = nearest;
-	if ((nNbIntersection&1) == 1) // odd intersections so the vertex is inside
+	if ((nNbIntersection & 1) == 1) // odd intersections so the vertex is inside
 		return true;
 	else
 		return false;
@@ -881,49 +874,48 @@ bool CPrimZone::contains (const NLMISC::CVector &v, const std::vector<CVector> &
 float CPrimZone::getSegmentDist(const NLMISC::CVector v, const NLMISC::CVector &p1, const NLMISC::CVector &p2, NLMISC::CVector &nearPos)
 {
 	// two points, compute distance to the segment.
-	CVector V = (p2-p1).normed();
-	double	length= (p2-p1).norm();
+	CVector V = (p2 - p1).normed();
+	double length = (p2 - p1).norm();
 	float distance;
 
 	// case where p1==p2
-	if(length==0.0)
+	if (length == 0.0)
 	{
-		nearPos= p1;
-		distance = (p1-v).norm();
+		nearPos = p1;
+		distance = (p1 - v).norm();
 	}
 	// standard case
 	else
 	{
-		float t = (float)((double)((v-p1)*V)/length);
+		float t = (float)((double)((v - p1) * V) / length);
 		if (t < 0.0f)
 		{
 			nearPos = p1;
-			distance = (p1-v).norm();
+			distance = (p1 - v).norm();
 		}
 		else if (t > 1.0f)
 		{
 			nearPos = p2;
-			distance = (p2-v).norm();
+			distance = (p2 - v).norm();
 		}
 		else
 		{
-			nearPos = p1 + t*(p2-p1);
-			distance = (v-nearPos).norm();
+			nearPos = p1 + t * (p2 - p1);
+			distance = (v - nearPos).norm();
 		}
 	}
 
 	return distance;
 }
 
-
 // ***************************************************************************
 NLMISC::CVector CPrimZone::getBarycentre() const
 {
-	CVector sum( CVector::Null );
+	CVector sum(CVector::Null);
 	uint n = (uint)VPoints.size();
-	if ( n != 0 )
+	if (n != 0)
 	{
-		for ( uint i=0; i!=n; ++i )
+		for (uint i = 0; i != n; ++i)
 			sum += VPoints[i];
 		return sum / (float)n;
 	}
@@ -932,7 +924,7 @@ NLMISC::CVector CPrimZone::getBarycentre() const
 }
 
 // ***************************************************************************
-void CPrimZone::getAABox( NLMISC::CVector& cornerMin, NLMISC::CVector& cornerMax ) const
+void CPrimZone::getAABox(NLMISC::CVector &cornerMin, NLMISC::CVector &cornerMax) const
 {
 	cornerMin.x = FLT_MAX;
 	cornerMin.y = FLT_MAX;
@@ -940,79 +932,77 @@ void CPrimZone::getAABox( NLMISC::CVector& cornerMin, NLMISC::CVector& cornerMax
 	cornerMax.x = -FLT_MAX;
 	cornerMax.y = -FLT_MAX;
 	cornerMax.z = 0;
-	for ( uint i=0; i!=VPoints.size(); ++i )
+	for (uint i = 0; i != VPoints.size(); ++i)
 	{
-		const CVector& p = VPoints[i];
-		if ( p.x < cornerMin.x )
+		const CVector &p = VPoints[i];
+		if (p.x < cornerMin.x)
 			cornerMin.x = p.x;
-		if ( p.x > cornerMax.x )
+		if (p.x > cornerMax.x)
 			cornerMax.x = p.x;
-		if ( p.y < cornerMin.y )
+		if (p.y < cornerMin.y)
 			cornerMin.y = p.y;
-		if ( p.y > cornerMax.y )
+		if (p.y > cornerMax.y)
 			cornerMax.y = p.y;
 	}
 }
-
 
 // ***************************************************************************
 float CPrimZone::getAreaOfAABox() const
 {
 	CVector cornerMin, cornerMax;
-	getAABox( cornerMin, cornerMax );
-	return (cornerMax.x-cornerMin.x) * (cornerMax.y-cornerMin.y);
+	getAABox(cornerMin, cornerMax);
+	return (cornerMax.x - cornerMin.x) * (cornerMax.y - cornerMin.y);
 }
 
-
 // ***************************************************************************
-void CPrimZone::serial (NLMISC::IStream &f)
+void CPrimZone::serial(NLMISC::IStream &f)
 {
 	IPrimitive::serial(f);
 	f.serialCont(VPoints);
 }
 
 // ***************************************************************************
-void CPrimRegion::serial (NLMISC::IStream &f)
+void CPrimRegion::serial(NLMISC::IStream &f)
 {
-	f.xmlPushBegin ("REGION");
+	f.xmlPushBegin("REGION");
 
-	f.xmlSetAttrib ("NAME");
-	f.serial (Name);
+	f.xmlSetAttrib("NAME");
+	f.serial(Name);
 
 	f.xmlPushEnd();
 
 	sint version = 2;
-	version = f.serialVersion (version);
+	version = f.serialVersion(version);
 	string check = "REGION";
-	f.serialCheck (check);
+	f.serialCheck(check);
 
-	f.xmlPush ("POINTS");
-		f.serialCont (VPoints);
-	f.xmlPop ();
-	f.xmlPush ("PATHES");
-		f.serialCont (VPaths);
-	f.xmlPop ();
-	f.xmlPush ("ZONES");
-		f.serialCont (VZones);
-	f.xmlPop ();
+	f.xmlPush("POINTS");
+	f.serialCont(VPoints);
+	f.xmlPop();
+	f.xmlPush("PATHES");
+	f.serialCont(VPaths);
+	f.xmlPop();
+	f.xmlPush("ZONES");
+	f.serialCont(VZones);
+	f.xmlPop();
 
 	if (version > 1)
 	{
-		f.xmlPush ("HIDEPOINTS");
-			f.serialCont (VHidePoints);
-		f.xmlPop ();
-		f.xmlPush ("HIDEZONES");
-			f.serialCont (VHideZones);
-		f.xmlPop ();
-		f.xmlPush ("HIDEPATHS");
-			f.serialCont (VHidePaths);
-		f.xmlPop ();
+		f.xmlPush("HIDEPOINTS");
+		f.serialCont(VHidePoints);
+		f.xmlPop();
+		f.xmlPush("HIDEZONES");
+		f.serialCont(VHideZones);
+		f.xmlPop();
+		f.xmlPush("HIDEPATHS");
+		f.serialCont(VHidePaths);
+		f.xmlPop();
 	}
 	else
 	{
-		VHidePoints.resize	(VPoints.size(), false);
-		VHideZones.resize	(VZones.size(),	false);
-		VHidePaths.resize	(VPaths.size(), false);
+		VHidePoints.resize(VPoints.size(), false);
+		VHideZones.resize(VZones.size(), false);
+		VHidePaths.resize(VPaths.size(), false);
 	}
 }
 
@@ -1020,21 +1010,21 @@ void CPrimRegion::serial (NLMISC::IStream &f)
 // IPrimitive
 // ***************************************************************************
 
-IPrimitive::IPrimitive ()
+IPrimitive::IPrimitive()
 {
 	_Parent = NULL;
 }
 
-
-IPrimitive::IPrimitive (const IPrimitive &node) : IStreamable()
+IPrimitive::IPrimitive(const IPrimitive &node)
+    : IStreamable()
 {
 	_Parent = NULL;
-	IPrimitive::operator= (node);
+	IPrimitive::operator=(node);
 }
 
 // ***************************************************************************
 
-void IPrimitive::serial (NLMISC::IStream &f)
+void IPrimitive::serial(NLMISC::IStream &f)
 {
 	// NB : unparsed parameters are not binary serialized !
 
@@ -1043,7 +1033,7 @@ void IPrimitive::serial (NLMISC::IStream &f)
 	{
 		uint32 size;
 		f.serial(size);
-		for (uint i=0; i<size; ++i)
+		for (uint i = 0; i < size; ++i)
 		{
 			std::string s;
 			f.serial(s);
@@ -1055,10 +1045,10 @@ void IPrimitive::serial (NLMISC::IStream &f)
 	{
 		uint32 size = (uint32)_Properties.size();
 		f.serial(size);
-		std::map<std::string, IProperty*>::iterator first(_Properties.begin()), last(_Properties.end());
+		std::map<std::string, IProperty *>::iterator first(_Properties.begin()), last(_Properties.end());
 		for (; first != last; ++first)
 		{
-			std::string &s = const_cast<std::string&>(first->first);
+			std::string &s = const_cast<std::string &>(first->first);
 
 			f.serial(s);
 			f.serialPolyPtr(first->second);
@@ -1066,17 +1056,17 @@ void IPrimitive::serial (NLMISC::IStream &f)
 	}
 	f.serial(_ChildId);
 
-//	f.serial(Layer);
-//	f.serial(Name);
-//	f.serial(Expanded);
+	//	f.serial(Layer);
+	//	f.serial(Name);
+	//	f.serial(Expanded);
 
 	// serial the childrens
 	if (f.isReading())
 	{
-		std::vector<IPrimitive*> children;
+		std::vector<IPrimitive *> children;
 		f.serialContPolyPtr(children);
 		uint index = 0;
-		for(std::vector<IPrimitive*>::iterator it = children.begin(); it != children.end(); ++it, ++index)
+		for (std::vector<IPrimitive *>::iterator it = children.begin(); it != children.end(); ++it, ++index)
 		{
 			insertChild(*it, index);
 		}
@@ -1089,7 +1079,7 @@ void IPrimitive::serial (NLMISC::IStream &f)
 	if (f.isReading())
 	{
 		// reloc child link
-		vector<IPrimitive*>::iterator first(_Children.begin()), last(_Children.end());
+		vector<IPrimitive *>::iterator first(_Children.begin()), last(_Children.end());
 		for (; first != last; ++first)
 		{
 			if (*first)
@@ -1098,14 +1088,13 @@ void IPrimitive::serial (NLMISC::IStream &f)
 	}
 }
 
-
 // ***************************************************************************
 
-void IPrimitive::updateChildId (uint index)
+void IPrimitive::updateChildId(uint index)
 {
 	uint i;
-	uint count = (uint)_Children.size ();
-	for (i=index; i<count; i++)
+	uint count = (uint)_Children.size();
+	for (i = index; i < count; i++)
 		_Children[i]->_ChildId = i;
 }
 
@@ -1114,7 +1103,7 @@ void IPrimitive::updateChildId (uint index)
 void IPrimitive::branchLink()
 {
 	onBranchLink();
-	std::vector<IPrimitive*>::iterator first(_Children.begin()), last(_Children.end());
+	std::vector<IPrimitive *>::iterator first(_Children.begin()), last(_Children.end());
 	for (; first != last; ++first)
 	{
 		(*first)->branchLink();
@@ -1126,56 +1115,55 @@ void IPrimitive::branchLink()
 void IPrimitive::branchUnlink()
 {
 	onBranchUnlink();
-	std::vector<IPrimitive*>::iterator first(_Children.begin()), last(_Children.end());
+	std::vector<IPrimitive *>::iterator first(_Children.begin()), last(_Children.end());
 	for (; first != last; ++first)
 	{
 		(*first)->branchUnlink();
 	}
 }
 
-
 // ***************************************************************************
 
-void IPrimitive::operator= (const IPrimitive &node)
+void IPrimitive::operator=(const IPrimitive &node)
 {
 	// Clean dest
-	removeChildren ();
-	removeProperties ();
+	removeChildren();
+	removeProperties();
 
 	// copy deprecated param
-//	Layer = node.Layer;
-//	Name = node.Name;
+	//	Layer = node.Layer;
+	//	Name = node.Name;
 
 	// copy unparsed properties
 	_UnparsedProperties = node._UnparsedProperties;
 
 	// Copy the flags
-//	Expanded = node.Expanded;
+	//	Expanded = node.Expanded;
 	_ChildId = node._ChildId;
 
 	// Copy children
-	_Children.resize (node._Children.size ());
-	for (uint child = 0; child < node._Children.size (); child++)
+	_Children.resize(node._Children.size());
+	for (uint child = 0; child < node._Children.size(); child++)
 	{
 		// Copy the child
-		_Children[child] = node._Children[child]->copy ();
+		_Children[child] = node._Children[child]->copy();
 
 		// Set the parent
 		_Children[child]->_Parent = this;
 	}
 
 	// Copy properties
-	std::map<std::string, IProperty*>::const_iterator ite = node._Properties.begin ();
-	while (ite != node._Properties.end ())
+	std::map<std::string, IProperty *>::const_iterator ite = node._Properties.begin();
+	while (ite != node._Properties.end())
 	{
 		// Get the property
 		CPropertyString *propString = dynamic_cast<CPropertyString *>(ite->second);
 		if (propString)
 		{
 			// New property
-			CPropertyString *newProp = new CPropertyString ();
+			CPropertyString *newProp = new CPropertyString();
 			*newProp = *propString;
-			_Properties.insert (std::map<std::string, IProperty*>::value_type (ite->first, newProp));
+			_Properties.insert(std::map<std::string, IProperty *>::value_type(ite->first, newProp));
 		}
 		else
 		{
@@ -1183,19 +1171,19 @@ void IPrimitive::operator= (const IPrimitive &node)
 			if (propStringArray)
 			{
 				// New property
-				CPropertyStringArray *newProp = new CPropertyStringArray ();
+				CPropertyStringArray *newProp = new CPropertyStringArray();
 				*newProp = *propStringArray;
-				_Properties.insert (std::map<std::string, IProperty*>::value_type (ite->first, newProp));
+				_Properties.insert(std::map<std::string, IProperty *>::value_type(ite->first, newProp));
 			}
 			else
 			{
 				CPropertyColor *propColor = dynamic_cast<CPropertyColor *>(ite->second);
-				nlverify (propColor);
+				nlverify(propColor);
 
 				// New property
-				CPropertyColor *newProp = new CPropertyColor ();
+				CPropertyColor *newProp = new CPropertyColor();
 				*newProp = *propColor;
-				_Properties.insert (std::map<std::string, IProperty*>::value_type (ite->first, newProp));
+				_Properties.insert(std::map<std::string, IProperty *>::value_type(ite->first, newProp));
 			}
 		}
 
@@ -1208,75 +1196,74 @@ void IPrimitive::operator= (const IPrimitive &node)
 #endif
 }
 
-
-const	IPrimitive	*IPrimitive::getPrimitive	(const	std::string	&absoluteOrRelativePath)	const
+const IPrimitive *IPrimitive::getPrimitive(const std::string &absoluteOrRelativePath) const
 {
-	const	IPrimitive	*cursor=this;
-	string	path=absoluteOrRelativePath;
+	const IPrimitive *cursor = this;
+	string path = absoluteOrRelativePath;
 
-	if (path.find("//")==0)	//	an absolute path.
+	if (path.find("//") == 0) //	an absolute path.
 	{
 		while (cursor->getParent())
-			cursor=cursor->getParent();
-		path.erase(0,2);
+			cursor = cursor->getParent();
+		path.erase(0, 2);
 	}
 
 	while (!path.empty())
 	{
-		if	(path.find("/")==0)
+		if (path.find("/") == 0)
 		{
-			path.erase(0,1);
+			path.erase(0, 1);
 			continue;
 		}
-		if	(path.find("..")==0)
+		if (path.find("..") == 0)
 		{
-			cursor=cursor->getParent();
-			if	(!cursor)
-				return	NULL;
+			cursor = cursor->getParent();
+			if (!cursor)
+				return NULL;
 
-			path.erase(0,2);
+			path.erase(0, 2);
 			continue;
 		}
 
-		string::size_type indexStr=path.find("/");
-		string	          childName;
-		if (indexStr==string::npos)
+		string::size_type indexStr = path.find("/");
+		string childName;
+		if (indexStr == string::npos)
 		{
-			childName=path;
+			childName = path;
 			path.clear();
 		}
 		else
 		{
-			childName=path.substr(0,indexStr);
+			childName = path.substr(0, indexStr);
 			path.erase(0, indexStr);
 		}
-		childName=toUpperAscii(childName);
-		const	IPrimitive*child=NULL;
-		uint	childIndex;
-		for	(childIndex=0;childIndex<cursor->getNumChildren();childIndex++)
+		childName = toUpperAscii(childName);
+		const IPrimitive *child = NULL;
+		uint childIndex;
+		for (childIndex = 0; childIndex < cursor->getNumChildren(); childIndex++)
 		{
-			cursor->getChild(child,childIndex);
+			cursor->getChild(child, childIndex);
 			nlassert(child);
-			string	name;
-			if	(	child->getPropertyByName("class", name)
-				&&	toUpperAscii(name)==childName	)
+			string name;
+			if (child->getPropertyByName("class", name)
+			    && toUpperAscii(name) == childName)
 				break;
 		}
-		if	(childIndex>=cursor->getNumChildren())
-			return	NULL;
+		if (childIndex >= cursor->getNumChildren())
+			return NULL;
 
-		cursor=child;
+		cursor = child;
 	}
-	return	cursor;
+	return cursor;
 }
 
 // ***************************************************************************
 
-bool IPrimitive::getProperty (uint index, std::string &property_name, const IProperty *&result) const
+bool IPrimitive::getProperty(uint index, std::string &property_name, const IProperty *&result) const
 {
 	// Look for the property
-	std::map<std::string, IProperty*>::const_iterator ite = _Properties.begin ();
-	while (ite != _Properties.end ())
+	std::map<std::string, IProperty *>::const_iterator ite = _Properties.begin();
+	while (ite != _Properties.end())
 	{
 		if (index == 0)
 		{
@@ -1285,19 +1272,19 @@ bool IPrimitive::getProperty (uint index, std::string &property_name, const IPro
 			return true;
 		}
 		index--;
-		ite ++;
+		ite++;
 	}
-	nlwarning ("NLLIGO::IPrimitive::getProperty : invalid index (index : %u, size : %u).", index, (uint)_Properties.size ());
+	nlwarning("NLLIGO::IPrimitive::getProperty : invalid index (index : %u, size : %u).", index, (uint)_Properties.size());
 	return false;
 }
 
 // ***************************************************************************
 
-bool IPrimitive::getProperty (uint index, std::string &property_name, IProperty *&result)
+bool IPrimitive::getProperty(uint index, std::string &property_name, IProperty *&result)
 {
 	// Look for the property
-	std::map<std::string, IProperty*>::iterator ite = _Properties.begin ();
-	while (ite != _Properties.end ())
+	std::map<std::string, IProperty *>::iterator ite = _Properties.begin();
+	while (ite != _Properties.end())
 	{
 		if (index == 0)
 		{
@@ -1306,19 +1293,19 @@ bool IPrimitive::getProperty (uint index, std::string &property_name, IProperty 
 			return true;
 		}
 		index--;
-		ite ++;
+		ite++;
 	}
-	nlwarning ("NLLIGO::IPrimitive::getProperty : invalid index (index : %u, size : %u).", index, (uint)_Properties.size ());
+	nlwarning("NLLIGO::IPrimitive::getProperty : invalid index (index : %u, size : %u).", index, (uint)_Properties.size());
 	return false;
 }
 
 // ***************************************************************************
 
-bool IPrimitive::getPropertyByName (const std::string &property_name, const IProperty *&result) const
+bool IPrimitive::getPropertyByName(const std::string &property_name, const IProperty *&result) const
 {
 	// Look for the property
-	std::map<std::string, IProperty*>::const_iterator ite = _Properties.find (property_name);
-	if (ite != _Properties.end ())
+	std::map<std::string, IProperty *>::const_iterator ite = _Properties.find(property_name);
+	if (ite != _Properties.end())
 	{
 		result = ite->second;
 		return true;
@@ -1328,11 +1315,11 @@ bool IPrimitive::getPropertyByName (const std::string &property_name, const IPro
 
 // ***************************************************************************
 
-bool IPrimitive::getPropertyByName (const std::string &property_name, IProperty *&result) const
+bool IPrimitive::getPropertyByName(const std::string &property_name, IProperty *&result) const
 {
 	// Look for the property
-	std::map<std::string, IProperty*>::const_iterator ite = _Properties.find (property_name);
-	if (ite != _Properties.end ())
+	std::map<std::string, IProperty *>::const_iterator ite = _Properties.find(property_name);
+	if (ite != _Properties.end())
 	{
 		result = ite->second;
 		return true;
@@ -1342,13 +1329,13 @@ bool IPrimitive::getPropertyByName (const std::string &property_name, IProperty 
 
 // ***************************************************************************
 
-bool IPrimitive::getPropertyByName (const std::string &property_name, std::string *&result) const
+bool IPrimitive::getPropertyByName(const std::string &property_name, std::string *&result) const
 {
 	// Get the property
 	IProperty *prop;
-	if (getPropertyByName (property_name, prop))
+	if (getPropertyByName(property_name, prop))
 	{
-		CPropertyString *strProp = dynamic_cast<CPropertyString *> (prop);
+		CPropertyString *strProp = dynamic_cast<CPropertyString *>(prop);
 		if (strProp)
 		{
 			result = &(strProp->String);
@@ -1356,7 +1343,7 @@ bool IPrimitive::getPropertyByName (const std::string &property_name, std::strin
 		}
 		else
 		{
-			nlwarning ("NLLIGO::IPrimitive::getPropertyByName : property (%s) in not a string.", property_name.c_str());
+			nlwarning("NLLIGO::IPrimitive::getPropertyByName : property (%s) in not a string.", property_name.c_str());
 		}
 	}
 	return false;
@@ -1364,13 +1351,13 @@ bool IPrimitive::getPropertyByName (const std::string &property_name, std::strin
 
 // ***************************************************************************
 
-bool IPrimitive::getPropertyByName (const std::string &property_name, std::string &result) const
+bool IPrimitive::getPropertyByName(const std::string &property_name, std::string &result) const
 {
 	// Get the property
 	const IProperty *prop;
-	if (getPropertyByName (property_name, prop))
+	if (getPropertyByName(property_name, prop))
 	{
-		const CPropertyString *strProp = dynamic_cast<const CPropertyString *> (prop);
+		const CPropertyString *strProp = dynamic_cast<const CPropertyString *>(prop);
 		if (strProp)
 		{
 			result = strProp->String;
@@ -1378,7 +1365,7 @@ bool IPrimitive::getPropertyByName (const std::string &property_name, std::strin
 		}
 		else
 		{
-			nlwarning ("NLLIGO::IPrimitive::getPropertyByName : property (%s) in not a string.", property_name.c_str());
+			nlwarning("NLLIGO::IPrimitive::getPropertyByName : property (%s) in not a string.", property_name.c_str());
 		}
 	}
 	return false;
@@ -1386,13 +1373,13 @@ bool IPrimitive::getPropertyByName (const std::string &property_name, std::strin
 
 // ***************************************************************************
 
-bool IPrimitive::getPropertyByName (const std::string &property_name, std::vector<std::string> *&result) const
+bool IPrimitive::getPropertyByName(const std::string &property_name, std::vector<std::string> *&result) const
 {
 	// Get the property
 	IProperty *prop;
-	if (getPropertyByName (property_name, prop))
+	if (getPropertyByName(property_name, prop))
 	{
-		CPropertyStringArray *strProp = dynamic_cast<CPropertyStringArray *> (prop);
+		CPropertyStringArray *strProp = dynamic_cast<CPropertyStringArray *>(prop);
 		if (strProp)
 		{
 			result = &(strProp->StringArray);
@@ -1400,7 +1387,7 @@ bool IPrimitive::getPropertyByName (const std::string &property_name, std::vecto
 		}
 		else
 		{
-			nlwarning ("NLLIGO::IPrimitive::getPropertyByName : property (%s) in not a string.", property_name.c_str());
+			nlwarning("NLLIGO::IPrimitive::getPropertyByName : property (%s) in not a string.", property_name.c_str());
 		}
 	}
 	return false;
@@ -1408,13 +1395,13 @@ bool IPrimitive::getPropertyByName (const std::string &property_name, std::vecto
 
 // ***************************************************************************
 
-bool IPrimitive::getPropertyByName (const std::string &property_name, const std::vector<std::string> *&result) const
+bool IPrimitive::getPropertyByName(const std::string &property_name, const std::vector<std::string> *&result) const
 {
 	// Get the property
 	IProperty *prop;
-	if (getPropertyByName (property_name, prop))
+	if (getPropertyByName(property_name, prop))
 	{
-		const CPropertyStringArray *strProp = dynamic_cast<const CPropertyStringArray *> (prop);
+		const CPropertyStringArray *strProp = dynamic_cast<const CPropertyStringArray *>(prop);
 		if (strProp)
 		{
 			result = &(strProp->StringArray);
@@ -1422,7 +1409,7 @@ bool IPrimitive::getPropertyByName (const std::string &property_name, const std:
 		}
 		else
 		{
-			nlwarning ("NLLIGO::IPrimitive::getPropertyByName : property (%s) in not a string.", property_name.c_str());
+			nlwarning("NLLIGO::IPrimitive::getPropertyByName : property (%s) in not a string.", property_name.c_str());
 		}
 	}
 	return false;
@@ -1430,13 +1417,13 @@ bool IPrimitive::getPropertyByName (const std::string &property_name, const std:
 
 // ***************************************************************************
 
-bool IPrimitive::getPropertyByName (const std::string &property_name, NLMISC::CRGBA &result) const
+bool IPrimitive::getPropertyByName(const std::string &property_name, NLMISC::CRGBA &result) const
 {
 	// Get the property
 	IProperty *prop;
-	if (getPropertyByName (property_name, prop))
+	if (getPropertyByName(property_name, prop))
 	{
-		const CPropertyColor *colorProp = dynamic_cast<const CPropertyColor *> (prop);
+		const CPropertyColor *colorProp = dynamic_cast<const CPropertyColor *>(prop);
 		if (colorProp)
 		{
 			result = colorProp->Color;
@@ -1444,7 +1431,7 @@ bool IPrimitive::getPropertyByName (const std::string &property_name, NLMISC::CR
 		}
 		else
 		{
-			nlwarning ("NLLIGO::IPrimitive::getPropertyByName : property (%s) in not a color.", property_name.c_str());
+			nlwarning("NLLIGO::IPrimitive::getPropertyByName : property (%s) in not a color.", property_name.c_str());
 		}
 	}
 	return false;
@@ -1452,33 +1439,33 @@ bool IPrimitive::getPropertyByName (const std::string &property_name, NLMISC::CR
 
 // ***************************************************************************
 
-bool IPrimitive::removeProperty (uint index)
+bool IPrimitive::removeProperty(uint index)
 {
 	// Look for the property
-	std::map<std::string, IProperty*>::iterator ite = _Properties.begin ();
-	while (ite != _Properties.end ())
+	std::map<std::string, IProperty *>::iterator ite = _Properties.begin();
+	while (ite != _Properties.end())
 	{
 		if (index == 0)
 		{
-			_Properties.erase (ite);
+			_Properties.erase(ite);
 			return true;
 		}
 		index--;
-		ite ++;
+		ite++;
 	}
-	nlwarning ("NLLIGO::IPrimitive::removeProperty : invalid index (index : %u, size : %u).", index, (uint)_Properties.size ());
+	nlwarning("NLLIGO::IPrimitive::removeProperty : invalid index (index : %u, size : %u).", index, (uint)_Properties.size());
 	return false;
 }
 
 // ***************************************************************************
 
-bool IPrimitive::removePropertyByName (const std::string &property_name)
+bool IPrimitive::removePropertyByName(const std::string &property_name)
 {
 	// Look for the property
-	std::map<std::string, IProperty*>::iterator ite = _Properties.find (property_name);
-	if (ite != _Properties.end ())
+	std::map<std::string, IProperty *>::iterator ite = _Properties.find(property_name);
+	if (ite != _Properties.end())
 	{
-		_Properties.erase (ite);
+		_Properties.erase(ite);
 		return true;
 	}
 	return false;
@@ -1486,52 +1473,52 @@ bool IPrimitive::removePropertyByName (const std::string &property_name)
 
 // ***************************************************************************
 
-void IPrimitive::removeProperties ()
+void IPrimitive::removeProperties()
 {
-	std::map<std::string, IProperty*>::iterator ite = _Properties.begin ();
-	while (ite != _Properties.end ())
+	std::map<std::string, IProperty *>::iterator ite = _Properties.begin();
+	while (ite != _Properties.end())
 	{
 		delete ite->second;
 		ite++;
 	}
-	_Properties.clear ();
+	_Properties.clear();
 }
 
 // ***************************************************************************
 
-bool IPrimitive::getChild (const IPrimitive *&result, uint childId) const
+bool IPrimitive::getChild(const IPrimitive *&result, uint childId) const
 {
-	if (childId < _Children.size ())
+	if (childId < _Children.size())
 	{
 		result = _Children[childId];
 		return true;
 	}
 	else
 	{
-		nlwarning ("NLLIGO::IPrimitive::getChild : invalid index (index : %u, size %u).", childId, (uint)_Children.size ());
+		nlwarning("NLLIGO::IPrimitive::getChild : invalid index (index : %u, size %u).", childId, (uint)_Children.size());
 	}
 	return false;
 }
 
 // ***************************************************************************
 
-bool IPrimitive::getChild (IPrimitive *&result, uint childId)
+bool IPrimitive::getChild(IPrimitive *&result, uint childId)
 {
-	if (childId < _Children.size ())
+	if (childId < _Children.size())
 	{
 		result = _Children[childId];
 		return true;
 	}
 	else
 	{
-		nlwarning ("NLLIGO::IPrimitive::getChild : invalid index (index : %u, size %u).", childId, (uint)_Children.size ());
+		nlwarning("NLLIGO::IPrimitive::getChild : invalid index (index : %u, size %u).", childId, (uint)_Children.size());
 	}
 	return false;
 }
 
 // ***************************************************************************
 
-bool IPrimitive::removeChild (IPrimitive *child)
+bool IPrimitive::removeChild(IPrimitive *child)
 {
 	uint childId;
 	if (getChildId(childId, child))
@@ -1547,32 +1534,32 @@ bool IPrimitive::removeChild (IPrimitive *child)
 
 // ***************************************************************************
 
-bool IPrimitive::removeChild (uint childId)
+bool IPrimitive::removeChild(uint childId)
 {
-	if (childId < _Children.size ())
+	if (childId < _Children.size())
 	{
 		delete _Children[childId];
-		_Children.erase (_Children.begin()+childId);
-		updateChildId (childId);
+		_Children.erase(_Children.begin() + childId);
+		updateChildId(childId);
 		return true;
 	}
 	else
 	{
-		nlwarning ("NLLIGO::IPrimitive::removeChild : invalid index (index : %u, size %u).", childId, (uint)_Children.size ());
+		nlwarning("NLLIGO::IPrimitive::removeChild : invalid index (index : %u, size %u).", childId, (uint)_Children.size());
 	}
 	return false;
 }
 
 // ***************************************************************************
 
-void IPrimitive::removeChildren ()
+void IPrimitive::removeChildren()
 {
 	// Erase children
-	for (uint i=0; i<_Children.size (); i++)
+	for (uint i = 0; i < _Children.size(); i++)
 	{
 		delete _Children[i];
 	}
-	_Children.clear ();
+	_Children.clear();
 }
 
 // ***************************************************************************
@@ -1584,8 +1571,8 @@ bool IPrimitive::unlinkChild(IPrimitive *child)
 	{
 		child->onUnlinkFromParent();
 		child->branchUnlink();
-		_Children.erase (_Children.begin()+childId);
-		updateChildId (childId);
+		_Children.erase(_Children.begin() + childId);
+		updateChildId(childId);
 		child->_Parent = NULL;
 		child->_ChildId = 0;
 		return true;
@@ -1599,21 +1586,21 @@ bool IPrimitive::unlinkChild(IPrimitive *child)
 
 // ***************************************************************************
 
-bool IPrimitive::insertChild (IPrimitive *primitive, uint index)
+bool IPrimitive::insertChild(IPrimitive *primitive, uint index)
 {
 	// At the end ?
 	if (index == AtTheEnd)
-		index = (uint)_Children.size ();
+		index = (uint)_Children.size();
 
 	// Index valid ?
-	if (index>_Children.size ())
+	if (index > _Children.size())
 		return false;
 
 	// Insert
-	_Children.insert (_Children.begin () + index, primitive);
+	_Children.insert(_Children.begin() + index, primitive);
 
 	// Update child id
-	updateChildId (index);
+	updateChildId(index);
 
 	// Link to the parent
 	primitive->_Parent = this;
@@ -1627,13 +1614,13 @@ bool IPrimitive::insertChild (IPrimitive *primitive, uint index)
 
 // ***************************************************************************
 
-IPrimitive::~IPrimitive ()
+IPrimitive::~IPrimitive()
 {
 	// Remove children
-	removeChildren ();
+	removeChildren();
 
 	// Erase properties
-	removeProperties ();
+	removeProperties();
 }
 
 // ***************************************************************************
@@ -1646,9 +1633,9 @@ bool IPrimitive::checkProperty(const std::string &property_name) const
 
 // ***************************************************************************
 
-bool IPrimitive::addPropertyByName (const std::string &property_name, IProperty *result)
+bool IPrimitive::addPropertyByName(const std::string &property_name, IProperty *result)
 {
-	bool inserted = _Properties.insert (std::map<std::string, IProperty*>::value_type (property_name, result)).second;
+	bool inserted = _Properties.insert(std::map<std::string, IProperty *>::value_type(property_name, result)).second;
 	if (inserted)
 	{
 		return true;
@@ -1658,39 +1645,39 @@ bool IPrimitive::addPropertyByName (const std::string &property_name, IProperty 
 
 // ***************************************************************************
 
-bool IPrimitive::read (xmlNodePtr xmlNode, const std::string &filename, uint version, CLigoConfig &config)
+bool IPrimitive::read(xmlNodePtr xmlNode, const std::string &filename, uint version, CLigoConfig &config)
 {
 	// Erase old properties
-	_Properties.clear ();
+	_Properties.clear();
 
 	// Read the unparsed properties (for editor view)
 	xmlNodePtr commentNode = CIXml::getFirstChildNode(xmlNode, XML_COMMENT_NODE);
 	if (commentNode)
 	{
-		 if (!CIXml::getContentString(_UnparsedProperties, commentNode))
+		if (!CIXml::getContentString(_UnparsedProperties, commentNode))
 			_UnparsedProperties.clear();
 	}
 
 	// Read the expanded flag
-//	string expanded;
-//	Expanded = true;
-//	if (CIXml::getPropertyString (expanded, xmlNode, "EXPANDED"))
-//		Expanded = (expanded != "false");
+	//	string expanded;
+	//	Expanded = true;
+	//	if (CIXml::getPropertyString (expanded, xmlNode, "EXPANDED"))
+	//		Expanded = (expanded != "false");
 
 	// Read the properties
 	xmlNodePtr propNode;
-	propNode = CIXml::getFirstChildNode (xmlNode, "PROPERTY");
+	propNode = CIXml::getFirstChildNode(xmlNode, "PROPERTY");
 	if (propNode)
 	{
 		do
 		{
 			// Read the name
 			string name;
-			if (GetNodeString (name, filename, propNode, "NAME"))
+			if (GetNodeString(name, filename, propNode, "NAME"))
 			{
 				// Get the property type
 				string type;
-				if (GetPropertyString (type, filename, propNode, "TYPE"))
+				if (GetPropertyString(type, filename, propNode, "TYPE"))
 				{
 					// The property
 					IProperty *property = NULL;
@@ -1703,7 +1690,7 @@ bool IPrimitive::read (xmlNodePtr xmlNode, const std::string &filename, uint ver
 						property = propertyString;
 
 						// Read it
-						if (!GetNodeString (propertyString->String, filename, propNode, "STRING"))
+						if (!GetNodeString(propertyString->String, filename, propNode, "STRING"))
 						{
 							return false;
 						}
@@ -1716,46 +1703,42 @@ bool IPrimitive::read (xmlNodePtr xmlNode, const std::string &filename, uint ver
 
 						// Read strings
 						xmlNodePtr stringNode;
-						propertyStringArray->StringArray.reserve (CIXml::countChildren (propNode, "STRING"));
-						stringNode = CIXml::getFirstChildNode (propNode, "STRING");
+						propertyStringArray->StringArray.reserve(CIXml::countChildren(propNode, "STRING"));
+						stringNode = CIXml::getFirstChildNode(propNode, "STRING");
 						if (stringNode)
 						{
 							do
 							{
 								// Add the string
 								string content;
-								GetContentString (content, filename, stringNode);
-								propertyStringArray->StringArray.push_back (content);
+								GetContentString(content, filename, stringNode);
+								propertyStringArray->StringArray.push_back(content);
 
-								stringNode = CIXml::getNextChildNode (stringNode, "STRING");
-							}
-							while (stringNode);
+								stringNode = CIXml::getNextChildNode(stringNode, "STRING");
+							} while (stringNode);
 						}
 					}
 					else if (type == "color")
 					{
 						// Create a new property
-						CPropertyColor *propertyColor= new CPropertyColor;
+						CPropertyColor *propertyColor = new CPropertyColor;
 						property = propertyColor;
 
 						// Read strings
 						xmlNodePtr colorNode;
-						colorNode = CIXml::getFirstChildNode (xmlNode, "COLOR");
+						colorNode = CIXml::getFirstChildNode(xmlNode, "COLOR");
 						string R, G, B, A;
-						if (GetPropertyString (R, filename, colorNode, "R") &&
-							GetPropertyString (G, filename, colorNode, "G") &&
-							GetPropertyString (B, filename, colorNode, "B") &&
-							GetPropertyString (A, filename, colorNode, "A"))
+						if (GetPropertyString(R, filename, colorNode, "R") && GetPropertyString(G, filename, colorNode, "G") && GetPropertyString(B, filename, colorNode, "B") && GetPropertyString(A, filename, colorNode, "A"))
 						{
-							sint32 sR=0, sG=0, sB=0, sA=255;
-							sR = atoi (R.c_str ());
-							clamp (sR, 0, 255);
-							sG = atoi (G.c_str ());
-							clamp (sG, 0, 255);
-							sB = atoi (B.c_str ());
-							clamp (sB, 0, 255);
-							sA = atoi (A.c_str ());
-							clamp (sR, 0, 255);
+							sint32 sR = 0, sG = 0, sB = 0, sA = 255;
+							sR = atoi(R.c_str());
+							clamp(sR, 0, 255);
+							sG = atoi(G.c_str());
+							clamp(sG, 0, 255);
+							sB = atoi(B.c_str());
+							clamp(sB, 0, 255);
+							sA = atoi(A.c_str());
+							clamp(sR, 0, 255);
 							propertyColor->Color.R = (uint8)sR;
 							propertyColor->Color.G = (uint8)sG;
 							propertyColor->Color.B = (uint8)sB;
@@ -1768,12 +1751,12 @@ bool IPrimitive::read (xmlNodePtr xmlNode, const std::string &filename, uint ver
 					// Property found ?
 					if (property == NULL)
 					{
-						XMLError (propNode, filename, "IPrimitive::read : Unknown property type (%s)", type.c_str ());
+						XMLError(propNode, filename, "IPrimitive::read : Unknown property type (%s)", type.c_str());
 						return false;
 					}
 
 					// Add it
-					_Properties.insert (std::map<std::string, IProperty*>::value_type (name, property));
+					_Properties.insert(std::map<std::string, IProperty *>::value_type(name, property));
 				}
 				else
 				{
@@ -1785,65 +1768,62 @@ bool IPrimitive::read (xmlNodePtr xmlNode, const std::string &filename, uint ver
 				return false;
 			}
 
-			propNode = CIXml::getNextChildNode (propNode, "PROPERTY");
-		}
-		while (propNode);
+			propNode = CIXml::getNextChildNode(propNode, "PROPERTY");
+		} while (propNode);
 	}
 
 	// Initialise default value
-	initDefaultValues (config);
+	initDefaultValues(config);
 
 	// Read children
 	xmlNodePtr childNode;
-	childNode = CIXml::getFirstChildNode (xmlNode, "CHILD");
+	childNode = CIXml::getFirstChildNode(xmlNode, "CHILD");
 	if (childNode)
 	{
 		do
 		{
 			// Get the property class
 			string type;
-			if (GetPropertyString (type, filename, childNode, "TYPE"))
+			if (GetPropertyString(type, filename, childNode, "TYPE"))
 			{
 				// Primitive
-				if (type=="node")
-					type="CPrimNode";
-				if (type=="point")
-					type="CPrimPoint";
-				if (type=="path")
-					type="CPrimPath";
-				if (type=="zone")
-					type="CPrimZone";
-				if (type=="alias")
-					type="CPrimAlias";
-				IPrimitive *primitive = static_cast<IPrimitive *> (CClassRegistry::create (type));
+				if (type == "node")
+					type = "CPrimNode";
+				if (type == "point")
+					type = "CPrimPoint";
+				if (type == "path")
+					type = "CPrimPath";
+				if (type == "zone")
+					type = "CPrimZone";
+				if (type == "alias")
+					type = "CPrimAlias";
+				IPrimitive *primitive = static_cast<IPrimitive *>(CClassRegistry::create(type));
 
 				// Primitive type not found ?
 				if (primitive == NULL)
 				{
-					XMLError (childNode, filename, "IPrimitive::read : Unknown primitive type (%s)", type.c_str ());
+					XMLError(childNode, filename, "IPrimitive::read : Unknown primitive type (%s)", type.c_str());
 					return false;
 				}
 
 				// Read it
-				primitive->read (childNode, filename, version, config);
+				primitive->read(childNode, filename, version, config);
 
 				// Add it
-				insertChild (primitive);
-
+				insertChild(primitive);
 			}
 			else
 			{
 				return false;
 			}
 
-			childNode = CIXml::getNextChildNode (childNode, "CHILD");
-		}
-		while (childNode);
+			childNode = CIXml::getNextChildNode(childNode, "CHILD");
+		} while (childNode);
 	}
 
 #ifdef NLLIGO_DEBUG
 	// store debug data
- 	getPropertyByName("class", _DebugClassName);
+	getPropertyByName("class", _DebugClassName);
 	getPropertyByName("name", _DebugPrimitiveName);
 #endif
 	// Done
@@ -1852,34 +1832,34 @@ bool IPrimitive::read (xmlNodePtr xmlNode, const std::string &filename, uint ver
 
 // ***************************************************************************
 
-void IPrimitive::initDefaultValues (CLigoConfig &config)
+void IPrimitive::initDefaultValues(CLigoConfig &config)
 {
 	// Get the primitive class
-	const CPrimitiveClass *primitiveClass = config.getPrimitiveClass (*this);
+	const CPrimitiveClass *primitiveClass = config.getPrimitiveClass(*this);
 	if (primitiveClass)
 	{
 		// For each properties
-		uint count = (uint)primitiveClass->Parameters.size ();
+		uint count = (uint)primitiveClass->Parameters.size();
 		uint i;
-		for (i=0; i<count; i++)
+		for (i = 0; i < count; i++)
 		{
 			const CPrimitiveClass::CParameter &parameter = primitiveClass->Parameters[i];
 
 			// Get the property
 			IProperty *result;
-			if (!getPropertyByName (parameter.Name.c_str(), result))
+			if (!getPropertyByName(parameter.Name.c_str(), result))
 			{
 				// Create the property
 				if ((parameter.Type == CPrimitiveClass::CParameter::StringArray) || (parameter.Type == CPrimitiveClass::CParameter::ConstStringArray))
 					result = new CPropertyStringArray();
 				else
 					result = new CPropertyString();
-				nlverify (addPropertyByName (parameter.Name.c_str(), result));
+				nlverify(addPropertyByName(parameter.Name.c_str(), result));
 			}
 		}
 
 		// Set the default values
-		for (i=0; i<count; i++)
+		for (i = 0; i < count; i++)
 		{
 			const CPrimitiveClass::CParameter &parameter = primitiveClass->Parameters[i];
 
@@ -1887,10 +1867,10 @@ void IPrimitive::initDefaultValues (CLigoConfig &config)
 			CPropertyStringArray *pStringArray = NULL;
 
 			IProperty *result;
-			nlverify (getPropertyByName (parameter.Name.c_str(), result));
-			pString = dynamic_cast<CPropertyString*>(result);
+			nlverify(getPropertyByName(parameter.Name.c_str(), result));
+			pString = dynamic_cast<CPropertyString *>(result);
 			if (!pString)
-				pStringArray = dynamic_cast<CPropertyStringArray*>(result);
+				pStringArray = dynamic_cast<CPropertyStringArray *>(result);
 
 			// Property have default values ?
 			if (pString)
@@ -1900,7 +1880,7 @@ void IPrimitive::initDefaultValues (CLigoConfig &config)
 				{
 					// Set as default
 					pString->Default = true;
-					parameter.getDefaultValue (pString->String, *this, *primitiveClass);
+					parameter.getDefaultValue(pString->String, *this, *primitiveClass);
 				}
 			}
 			else if (pStringArray)
@@ -1910,7 +1890,7 @@ void IPrimitive::initDefaultValues (CLigoConfig &config)
 				{
 					// Set as default
 					pStringArray->Default = true;
-					parameter.getDefaultValue (pStringArray->StringArray, *this, *primitiveClass);
+					parameter.getDefaultValue(pStringArray->StringArray, *this, *primitiveClass);
 				}
 			}
 		}
@@ -1919,80 +1899,80 @@ void IPrimitive::initDefaultValues (CLigoConfig &config)
 
 // ***************************************************************************
 
-void IPrimitive::write (xmlNodePtr xmlNode, const std::string &filename) const
+void IPrimitive::write(xmlNodePtr xmlNode, const std::string &filename) const
 {
 	// Save the expanded flag
-//	if (!Expanded)
-//		xmlSetProp (xmlNode, (const xmlChar*)"EXPANDED", (const xmlChar*)"false");
+	//	if (!Expanded)
+	//		xmlSetProp (xmlNode, (const xmlChar*)"EXPANDED", (const xmlChar*)"false");
 
 	// Set the type
-	xmlSetProp (xmlNode, (const xmlChar*)"TYPE", (const xmlChar*)(const_cast<IPrimitive*> (this)->getClassName ().c_str ()));
+	xmlSetProp(xmlNode, (const xmlChar *)"TYPE", (const xmlChar *)(const_cast<IPrimitive *>(this)->getClassName().c_str()));
 
 	// Save the unparsed property
 	if (!_UnparsedProperties.empty())
 	{
-		xmlNodePtr commentNode = xmlNewComment((const xmlChar*)(_UnparsedProperties.c_str()));
+		xmlNodePtr commentNode = xmlNewComment((const xmlChar *)(_UnparsedProperties.c_str()));
 		nlverify(commentNode);
 		xmlAddChild(xmlNode, commentNode);
 	}
 
 	// Save the properties
-	std::map<std::string, IProperty*>::const_iterator ite =	_Properties.begin ();
-	while (ite != _Properties.end ())
+	std::map<std::string, IProperty *>::const_iterator ite = _Properties.begin();
+	while (ite != _Properties.end())
 	{
 		// Not a default property ?
 		if (!ite->second->Default)
 		{
 			// Create new nodes
-			xmlNodePtr propNode = xmlNewChild ( xmlNode, NULL, (const xmlChar*)"PROPERTY", NULL);
-			xmlNodePtr nameNode = xmlNewChild ( propNode, NULL, (const xmlChar*)"NAME", NULL);
-			xmlNodePtr textNode = xmlNewText ((const xmlChar *)(ite->first.c_str ()));
-			xmlAddChild (nameNode, textNode);
+			xmlNodePtr propNode = xmlNewChild(xmlNode, NULL, (const xmlChar *)"PROPERTY", NULL);
+			xmlNodePtr nameNode = xmlNewChild(propNode, NULL, (const xmlChar *)"NAME", NULL);
+			xmlNodePtr textNode = xmlNewText((const xmlChar *)(ite->first.c_str()));
+			xmlAddChild(nameNode, textNode);
 
 			// Type
-			const CPropertyString *str = dynamic_cast<const CPropertyString *> (ite->second);
+			const CPropertyString *str = dynamic_cast<const CPropertyString *>(ite->second);
 			if (str)
 			{
 				// Set the type
-				xmlSetProp (propNode, (const xmlChar*)"TYPE", (const xmlChar*)"string");
+				xmlSetProp(propNode, (const xmlChar *)"TYPE", (const xmlChar *)"string");
 
 				// Create new nodes
-				xmlNodePtr stringNode = xmlNewChild ( propNode, NULL, (const xmlChar*)"STRING", NULL);
-				xmlNodePtr textNode = xmlNewText ((const xmlChar *)(str->String.c_str ()));
-				xmlAddChild (stringNode, textNode);
+				xmlNodePtr stringNode = xmlNewChild(propNode, NULL, (const xmlChar *)"STRING", NULL);
+				xmlNodePtr textNode = xmlNewText((const xmlChar *)(str->String.c_str()));
+				xmlAddChild(stringNode, textNode);
 			}
 			else
 			{
 				// Should be an array
-				const CPropertyStringArray *array = dynamic_cast<const CPropertyStringArray *> (ite->second);
+				const CPropertyStringArray *array = dynamic_cast<const CPropertyStringArray *>(ite->second);
 				if (array)
 				{
 					// Set the type
-					xmlSetProp (propNode, (const xmlChar*)"TYPE", (const xmlChar*)"string_array");
+					xmlSetProp(propNode, (const xmlChar *)"TYPE", (const xmlChar *)"string_array");
 
 					// For each strings in the array
-					for (uint i=0; i<array->StringArray.size (); i++)
+					for (uint i = 0; i < array->StringArray.size(); i++)
 					{
 						// Create new nodes
-						xmlNodePtr stringNode = xmlNewChild ( propNode, NULL, (const xmlChar*)"STRING", NULL);
-						xmlNodePtr textNode = xmlNewText ((const xmlChar *)(array->StringArray[i].c_str ()));
-						xmlAddChild (stringNode, textNode);
+						xmlNodePtr stringNode = xmlNewChild(propNode, NULL, (const xmlChar *)"STRING", NULL);
+						xmlNodePtr textNode = xmlNewText((const xmlChar *)(array->StringArray[i].c_str()));
+						xmlAddChild(stringNode, textNode);
 					}
 				}
 				else
 				{
 					// Should be a color
-					const CPropertyColor *color = safe_cast<const CPropertyColor *> (ite->second);
+					const CPropertyColor *color = safe_cast<const CPropertyColor *>(ite->second);
 
 					// Set the type
-					xmlSetProp (propNode, (const xmlChar*)"TYPE", (const xmlChar*)"color");
+					xmlSetProp(propNode, (const xmlChar *)"TYPE", (const xmlChar *)"color");
 
 					// Create new nodes
-					xmlNodePtr colorNode = xmlNewChild ( propNode, NULL, (const xmlChar*)"COLOR", NULL);
-					xmlSetProp (colorNode, (const xmlChar*)"R", (const xmlChar*)toString (color->Color.R).c_str ());
-					xmlSetProp (colorNode, (const xmlChar*)"G", (const xmlChar*)toString (color->Color.G).c_str ());
-					xmlSetProp (colorNode, (const xmlChar*)"B", (const xmlChar*)toString (color->Color.B).c_str ());
-					xmlSetProp (colorNode, (const xmlChar*)"A", (const xmlChar*)toString (color->Color.A).c_str ());
+					xmlNodePtr colorNode = xmlNewChild(propNode, NULL, (const xmlChar *)"COLOR", NULL);
+					xmlSetProp(colorNode, (const xmlChar *)"R", (const xmlChar *)toString(color->Color.R).c_str());
+					xmlSetProp(colorNode, (const xmlChar *)"G", (const xmlChar *)toString(color->Color.G).c_str());
+					xmlSetProp(colorNode, (const xmlChar *)"B", (const xmlChar *)toString(color->Color.B).c_str());
+					xmlSetProp(colorNode, (const xmlChar *)"A", (const xmlChar *)toString(color->Color.A).c_str());
 				}
 			}
 		}
@@ -2001,19 +1981,19 @@ void IPrimitive::write (xmlNodePtr xmlNode, const std::string &filename) const
 	}
 
 	// Save the children
-	for (uint i=0; i<_Children.size (); i++)
+	for (uint i = 0; i < _Children.size(); i++)
 	{
 		// New node
-		xmlNodePtr childNode = xmlNewChild ( xmlNode, NULL, (const xmlChar*)"CHILD", NULL);
+		xmlNodePtr childNode = xmlNewChild(xmlNode, NULL, (const xmlChar *)"CHILD", NULL);
 
 		// Write it
-		_Children[i]->write (childNode, filename);
+		_Children[i]->write(childNode, filename);
 	}
 }
 
 // ***************************************************************************
 
-bool IPrimitive::getChildId (uint &childId, const IPrimitive *child) const
+bool IPrimitive::getChildId(uint &childId, const IPrimitive *child) const
 {
 	childId = child->_ChildId;
 	return true;
@@ -2021,16 +2001,16 @@ bool IPrimitive::getChildId (uint &childId, const IPrimitive *child) const
 
 // ***************************************************************************
 
-uint IPrimitive::getNumProperty () const
+uint IPrimitive::getNumProperty() const
 {
-	return (uint)_Properties.size ();
+	return (uint)_Properties.size();
 }
 
 // ***************************************************************************
 
-std::string		IPrimitive::getName() const
+std::string IPrimitive::getName() const
 {
-	std::string	ret;
+	std::string ret;
 	getPropertyByName("name", ret);
 	return ret;
 }
@@ -2053,14 +2033,14 @@ void IPrimitive::setUnparsedProperties(const std::string &unparsedProperties) co
 // CPrimAlias
 // ***************************************************************************
 
-CPrimAlias::CPrimAlias() :
-	_Alias(0),
-	_Container(NULL)
+CPrimAlias::CPrimAlias()
+    : _Alias(0)
+    , _Container(NULL)
 {
 }
 
 CPrimAlias::CPrimAlias(const CPrimAlias &other)
-	: IPrimitive(other)
+    : IPrimitive(other)
 {
 	// clear the container reference and alias
 	_Container = NULL;
@@ -2075,10 +2055,10 @@ CPrimAlias::~CPrimAlias()
 
 void CPrimAlias::onBranchLink()
 {
-	CPrimitiveContext	&ctx = CPrimitiveContext::instance();
+	CPrimitiveContext &ctx = CPrimitiveContext::instance();
 	// context must be set when handling alias
 	nlassert(ctx.CurrentPrimitive);
-	nlassert(_Container ==  NULL || _Container == ctx.CurrentPrimitive);
+	nlassert(_Container == NULL || _Container == ctx.CurrentPrimitive);
 
 	_Container = ctx.CurrentPrimitive;
 
@@ -2088,19 +2068,19 @@ void CPrimAlias::onBranchLink()
 
 void CPrimAlias::onBranchUnlink()
 {
-	nlassert(_Container !=  NULL);
+	nlassert(_Container != NULL);
 	_Container->releaseAlias(this, _Alias);
 	_Container = NULL;
 
 	// NB : we keep the alias value for next linkage
 }
 
-uint32	CPrimAlias::getAlias() const
+uint32 CPrimAlias::getAlias() const
 {
 	return _Alias;
 }
 
-uint32	CPrimAlias::getFullAlias() const
+uint32 CPrimAlias::getFullAlias() const
 {
 	nlassert(_Container != NULL);
 	return _Container->buildFullAlias(_Alias);
@@ -2114,24 +2094,23 @@ void CPrimAlias::regenAlias()
 	_Alias = _Container->genAlias(this, _Alias);
 }
 
-
 // Read the primitive
-bool CPrimAlias::read (xmlNodePtr xmlNode, const std::string &filename, uint version, CLigoConfig &config)
+bool CPrimAlias::read(xmlNodePtr xmlNode, const std::string &filename, uint version, CLigoConfig &config)
 {
 	// Read alias
-	xmlNodePtr ptNode = CIXml::getFirstChildNode (xmlNode, "ALIAS");
+	xmlNodePtr ptNode = CIXml::getFirstChildNode(xmlNode, "ALIAS");
 	if (ptNode)
 	{
 		sint val = 0;
-		if (ReadInt ("VALUE", val, filename, ptNode))
+		if (ReadInt("VALUE", val, filename, ptNode))
 		{
 			_Alias = uint32(val);
 
-//			nlassert( CPrimitiveContext::instance().CurrentPrimitive);
-////			nlassert(_Container);
-//			 CPrimitiveContext::instance().CurrentPrimitive->reserveAlias(_Alias);
-//			// set to null, it will be rewrited by onBranchLink callback
-////			_Container = NULL;
+			//			nlassert( CPrimitiveContext::instance().CurrentPrimitive);
+			////			nlassert(_Container);
+			//			 CPrimitiveContext::instance().CurrentPrimitive->reserveAlias(_Alias);
+			//			// set to null, it will be rewrited by onBranchLink callback
+			////			_Container = NULL;
 		}
 		else
 		{
@@ -2147,57 +2126,56 @@ bool CPrimAlias::read (xmlNodePtr xmlNode, const std::string &filename, uint ver
 		return false;
 	}
 
-	return IPrimitive::read (xmlNode, filename, version, config);
+	return IPrimitive::read(xmlNode, filename, version, config);
 }
 // Write the primitive
-void CPrimAlias::write (xmlNodePtr xmlNode, const std::string &filename) const
+void CPrimAlias::write(xmlNodePtr xmlNode, const std::string &filename) const
 {
 	// Write alias
-	xmlNodePtr ptNode = xmlNewChild(xmlNode, NULL, (const xmlChar*)"ALIAS", NULL);
+	xmlNodePtr ptNode = xmlNewChild(xmlNode, NULL, (const xmlChar *)"ALIAS", NULL);
 	WriteInt("VALUE", int(_Alias), ptNode);
 
-	IPrimitive::write (xmlNode, filename);
+	IPrimitive::write(xmlNode, filename);
 }
 
 // Create a copy of this primitive
-IPrimitive *CPrimAlias::copy () const
+IPrimitive *CPrimAlias::copy() const
 {
 	// NB : this will not call the reserveAlias on the container
 	CPrimAlias *pa = new CPrimAlias(*this);
 
 	// clear the alias and container reference
-//	pa->_Alias = 0;
-//	pa->_Container = 0;
+	//	pa->_Alias = 0;
+	//	pa->_Container = 0;
 
 	return pa;
 }
 // serial for binary save
-void CPrimAlias::serial (NLMISC::IStream &f)
+void CPrimAlias::serial(NLMISC::IStream &f)
 {
 	IPrimitive::serial(f);
 
 	f.serial(_Alias);
 
-//	if (f.isReading())
-//	{
-//		nlassert(_Container);
-//		_Container->reserveAlias(_Alias);
-//	}
+	//	if (f.isReading())
+	//	{
+	//		nlassert(_Container);
+	//		_Container->reserveAlias(_Alias);
+	//	}
 }
-
 
 // ***************************************************************************
 // CPrimitives
 // ***************************************************************************
 
-CPrimitives::CPrimitives () :
-	_LigoConfig(NULL)
+CPrimitives::CPrimitives()
+    : _LigoConfig(NULL)
 {
 	// init the alias generator
 	_LastGeneratedAlias = 0;
 	_AliasStaticPart = 0;
 
-	RootNode = static_cast<CPrimNode *> (CClassRegistry::create ("CPrimNode"));
+	RootNode = static_cast<CPrimNode *>(CClassRegistry::create("CPrimNode"));
 
 	// get the current ligo context (if any)
 	_LigoConfig = CPrimitiveContext::instance().CurrentLigoConfig;
@@ -2205,25 +2183,25 @@ CPrimitives::CPrimitives () :
 
 // ***************************************************************************
 
-CPrimitives::CPrimitives (const CPrimitives &other)
+CPrimitives::CPrimitives(const CPrimitives &other)
 {
-	operator =(other);
-//	_LastGeneratedAlias = other._LastGeneratedAlias;
-//	// get the current ligo context (if any)
-//	_LigoConfig = CPrimitiveContext::instance().CurrentLigoConfig;
-//
-//	CPrimitives *temp = CPrimitiveContext::instance().CurrentPrimitive;
-//	CPrimitiveContext::instance().CurrentPrimitive = this;
-//	// copy the nodes
-//	RootNode = static_cast<CPrimNode *> (((IPrimitive*)other.RootNode)->copy ());
-//	RootNode->branchLink();
-//
-//	CPrimitiveContext::instance().CurrentPrimitive = temp;
+	operator=(other);
+	//	_LastGeneratedAlias = other._LastGeneratedAlias;
+	//	// get the current ligo context (if any)
+	//	_LigoConfig = CPrimitiveContext::instance().CurrentLigoConfig;
+	//
+	//	CPrimitives *temp = CPrimitiveContext::instance().CurrentPrimitive;
+	//	CPrimitiveContext::instance().CurrentPrimitive = this;
+	//	// copy the nodes
+	//	RootNode = static_cast<CPrimNode *> (((IPrimitive*)other.RootNode)->copy ());
+	//	RootNode->branchLink();
+	//
+	//	CPrimitiveContext::instance().CurrentPrimitive = temp;
 }
 
 // ***************************************************************************
 
-CPrimitives::~CPrimitives ()
+CPrimitives::~CPrimitives()
 {
 	delete RootNode;
 }
@@ -2254,7 +2232,6 @@ uint32 CPrimitives::buildFullAlias(uint32 dynamicPart)
 		return dynamicPart;
 }
 
-
 // ***************************************************************************
 
 uint32 CPrimitives::genAlias(IPrimitive *prim, uint32 preferedAlias)
@@ -2267,11 +2244,11 @@ uint32 CPrimitives::genAlias(IPrimitive *prim, uint32 preferedAlias)
 		// only dynamic part allowed here
 		nlassert(preferedAlias == (preferedAlias & _LigoConfig->getDynamicAliasMask()));
 		// check is the prefered alias is not already in use
-		map<uint32, IPrimitive*>::iterator it(_AliasInUse.find(preferedAlias));
+		map<uint32, IPrimitive *>::iterator it(_AliasInUse.find(preferedAlias));
 		if (it == _AliasInUse.end())
 		{
 			// this alias is available, just use it
-//			nldebug("Alias: added alias %u, %u alias used", preferedAlias, _AliasInUse.size()+1);
+			//			nldebug("Alias: added alias %u, %u alias used", preferedAlias, _AliasInUse.size()+1);
 			_AliasInUse.insert(make_pair(preferedAlias, prim));
 			return preferedAlias;
 		}
@@ -2281,7 +2258,7 @@ uint32 CPrimitives::genAlias(IPrimitive *prim, uint32 preferedAlias)
 			if (it->second == prim)
 			{
 				// ok, the alias is already own by this primitive
-//				nldebug("Alias: using alias %u, %u alias used", preferedAlias, _AliasInUse.size()+1);
+				//				nldebug("Alias: using alias %u, %u alias used", preferedAlias, _AliasInUse.size()+1);
 				return preferedAlias;
 			}
 		}
@@ -2308,16 +2285,16 @@ uint32 CPrimitives::genAlias(IPrimitive *prim, uint32 preferedAlias)
 	}
 
 	// insert the alias
-//	nldebug("Alias: added alias %u, %u alias in use", ret, _AliasInUse.size()+1);
+	//	nldebug("Alias: added alias %u, %u alias in use", ret, _AliasInUse.size()+1);
 	_AliasInUse.insert(make_pair(ret, prim));
 
 	// callback
-	prim->onModifyPrimitive (*this);
+	prim->onModifyPrimitive(*this);
 
 	return ret;
 }
 
-//void CPrimitives::reserveAlias(uint32 dynamicAlias)
+// void CPrimitives::reserveAlias(uint32 dynamicAlias)
 //{
 //	// need ligo config
 //	nlassert(_LigoConfig);
@@ -2340,7 +2317,7 @@ uint32 CPrimitives::genAlias(IPrimitive *prim, uint32 preferedAlias)
 //	// insert the alias
 //	nldebug("Alias: added alias %u, %u alias in use", dynamicAlias, _AliasInUse.size()+1);
 //	_AliasInUse.insert(dynamicAlias);
-//}
+// }
 //
 void CPrimitives::releaseAlias(IPrimitive *prim, uint32 alias)
 {
@@ -2348,7 +2325,7 @@ void CPrimitives::releaseAlias(IPrimitive *prim, uint32 alias)
 	nlassert(_LigoConfig);
 	// only dynamic part allowed here
 	nlassert(alias == (alias & _LigoConfig->getDynamicAliasMask()));
-	std::map<uint32, IPrimitive*>::iterator it(_AliasInUse.find(alias));
+	std::map<uint32, IPrimitive *>::iterator it(_AliasInUse.find(alias));
 	// need to be found
 	nlassert(it != _AliasInUse.end());
 
@@ -2359,7 +2336,7 @@ void CPrimitives::releaseAlias(IPrimitive *prim, uint32 alias)
 	}
 
 	// remove this alias
-//	nldebug("Alias: remove alias %u, %u alias left", it->first, _AliasInUse.size()-1);
+	//	nldebug("Alias: remove alias %u, %u alias left", it->first, _AliasInUse.size()-1);
 	_AliasInUse.erase(it);
 }
 
@@ -2375,15 +2352,14 @@ void CPrimitives::forceAlias(CPrimAlias *prim, uint32 alias)
 	// store the alias in the primitive
 	prim->_Alias = alias;
 
-	std::map<uint32, IPrimitive*>::iterator it(_AliasInUse.find(alias));
+	std::map<uint32, IPrimitive *>::iterator it(_AliasInUse.find(alias));
 	if (it != _AliasInUse.end() && it->second != prim)
 	{
 		// we need to alloc and set a new alias for the current alias holder
-		CPrimAlias *pa = static_cast<CPrimAlias*>(const_cast<IPrimitive*>(it->second));
+		CPrimAlias *pa = static_cast<CPrimAlias *>(const_cast<IPrimitive *>(it->second));
 
 		// reserve the alias for the new primitive
 		it->second = prim;
-
 
 		// and regen an alias for the old
 		pa->regenAlias();
@@ -2393,7 +2369,6 @@ void CPrimitives::forceAlias(CPrimAlias *prim, uint32 alias)
 		// just store the association
 		_AliasInUse.insert(make_pair(alias, prim));
 	}
-
 }
 
 // ***************************************************************************
@@ -2405,7 +2380,7 @@ uint32 CPrimitives::getLastGeneratedAlias()
 
 // ***************************************************************************
 
-IPrimitive		*CPrimitives::getPrimitiveByAlias(uint32 primAlias)
+IPrimitive *CPrimitives::getPrimitiveByAlias(uint32 primAlias)
 {
 	// check the static part of the alias
 	uint32 staticAlias = _LigoConfig->getStaticAliasMask() & primAlias;
@@ -2416,7 +2391,7 @@ IPrimitive		*CPrimitives::getPrimitiveByAlias(uint32 primAlias)
 	// clear the static part before searching
 	primAlias &= _LigoConfig->getDynamicAliasMask();
 
-	std::map<uint32, IPrimitive*>::const_iterator it(_AliasInUse.find(primAlias));
+	std::map<uint32, IPrimitive *>::const_iterator it(_AliasInUse.find(primAlias));
 
 	if (it != _AliasInUse.end())
 		return it->second->getParent();
@@ -2426,11 +2401,11 @@ IPrimitive		*CPrimitives::getPrimitiveByAlias(uint32 primAlias)
 
 // ***************************************************************************
 
-void		CPrimitives::buildPrimitiveWithAliasList(std::map<uint32, IPrimitive*> &result)
+void CPrimitives::buildPrimitiveWithAliasList(std::map<uint32, IPrimitive *> &result)
 {
 	nlassert(_LigoConfig != NULL);
 
-	std::map<uint32, IPrimitive*>::iterator first(_AliasInUse.begin()), last(_AliasInUse.end());
+	std::map<uint32, IPrimitive *>::iterator first(_AliasInUse.begin()), last(_AliasInUse.end());
 	for (; first != last; ++first)
 	{
 		result.insert(make_pair(_LigoConfig->buildAlias(_AliasStaticPart, first->first), first->second->getParent()));
@@ -2439,10 +2414,10 @@ void		CPrimitives::buildPrimitiveWithAliasList(std::map<uint32, IPrimitive*> &re
 
 // ***************************************************************************
 
-CPrimitives& CPrimitives::operator= (const CPrimitives &other)
+CPrimitives &CPrimitives::operator=(const CPrimitives &other)
 {
-//	RootNode = static_cast<CPrimNode *> (((IPrimitive*)other.RootNode)->copy ());
-//	return *this;
+	//	RootNode = static_cast<CPrimNode *> (((IPrimitive*)other.RootNode)->copy ());
+	//	return *this;
 
 	_AliasStaticPart = other._AliasStaticPart;
 	_LastGeneratedAlias = other._LastGeneratedAlias;
@@ -2452,7 +2427,7 @@ CPrimitives& CPrimitives::operator= (const CPrimitives &other)
 	CPrimitives *temp = CPrimitiveContext::instance().CurrentPrimitive;
 	CPrimitiveContext::instance().CurrentPrimitive = this;
 	// copy the nodes
-	RootNode = static_cast<CPrimNode *> (((IPrimitive*)other.RootNode)->copy ());
+	RootNode = static_cast<CPrimNode *>(((IPrimitive *)other.RootNode)->copy());
 	RootNode->branchLink();
 
 	CPrimitiveContext::instance().CurrentPrimitive = temp;
@@ -2462,9 +2437,9 @@ CPrimitives& CPrimitives::operator= (const CPrimitives &other)
 
 // ***************************************************************************
 
-bool CPrimitives::read (xmlNodePtr xmlNode, const std::string &filename, CLigoConfig &config)
+bool CPrimitives::read(xmlNodePtr xmlNode, const std::string &filename, CLigoConfig &config)
 {
-	nlassert (xmlNode);
+	nlassert(xmlNode);
 
 	_Filename = CFile::getFilename(filename);
 	if (_LigoConfig)
@@ -2474,24 +2449,24 @@ bool CPrimitives::read (xmlNodePtr xmlNode, const std::string &filename, CLigoCo
 	}
 
 	// Clear the primitives
-	RootNode->removeChildren ();
-	RootNode->removeProperties ();
+	RootNode->removeChildren();
+	RootNode->removeProperties();
 
 	// Get the name
-	if (strcmp ((const char*)xmlNode->name, "PRIMITIVES") == 0)
+	if (strcmp((const char *)xmlNode->name, "PRIMITIVES") == 0)
 	{
 		// Get the version
 		string versionName = "0";
-		if (GetPropertyString (versionName, filename, xmlNode, "VERSION"))
+		if (GetPropertyString(versionName, filename, xmlNode, "VERSION"))
 		{
 			// Get the version
-			uint32 version = atoi (versionName.c_str ());
+			uint32 version = atoi(versionName.c_str());
 
 			// Check the version
 			if (version <= NLLIGO_PRIMITIVE_VERSION)
 			{
 				// Read the primitives
-				xmlNode = GetFirstChildNode (xmlNode, filename, "ROOT_PRIMITIVE");
+				xmlNode = GetFirstChildNode(xmlNode, filename, "ROOT_PRIMITIVE");
 				if (xmlNode)
 				{
 					if (version > 0)
@@ -2510,12 +2485,12 @@ bool CPrimitives::read (xmlNodePtr xmlNode, const std::string &filename, CLigoCo
 						_LastGeneratedAlias = 0;
 
 					// Read the primitive tree
-					((IPrimitive*)RootNode)->read (xmlNode, filename, version, config);
+					((IPrimitive *)RootNode)->read(xmlNode, filename, version, config);
 				}
 			}
 			else
 			{
-				Error (filename, "CPrimitives::read : Unknown file version (%u)", version);
+				Error(filename, "CPrimitives::read : Unknown file version (%u)", version);
 				return false;
 			}
 		}
@@ -2526,7 +2501,7 @@ bool CPrimitives::read (xmlNodePtr xmlNode, const std::string &filename, CLigoCo
 	}
 	else
 	{
-		XMLError (xmlNode, filename, "This XML document is not a NeL primitive file");
+		XMLError(xmlNode, filename, "This XML document is not a NeL primitive file");
 		return false;
 	}
 
@@ -2535,33 +2510,33 @@ bool CPrimitives::read (xmlNodePtr xmlNode, const std::string &filename, CLigoCo
 
 // ***************************************************************************
 
-void CPrimitives::write (xmlDocPtr doc, const std::string &filename) const
+void CPrimitives::write(xmlDocPtr doc, const std::string &filename) const
 {
-	nlassert (doc);
+	nlassert(doc);
 
 	// Primitive node
-	xmlNodePtr primNode = xmlNewDocNode (doc, NULL, (const xmlChar*)"PRIMITIVES", NULL);
-	xmlDocSetRootElement (doc, primNode);
+	xmlNodePtr primNode = xmlNewDocNode(doc, NULL, (const xmlChar *)"PRIMITIVES", NULL);
+	xmlDocSetRootElement(doc, primNode);
 
-	write (primNode, filename);
+	write(primNode, filename);
 }
 
 // ***************************************************************************
 
-void CPrimitives::write (xmlNodePtr root, const std::string &filename) const
+void CPrimitives::write(xmlNodePtr root, const std::string &filename) const
 {
-	nlassert (root);
+	nlassert(root);
 
 	// Version node
-	xmlSetProp (root, (const xmlChar*)"VERSION", (const xmlChar*)toString (NLLIGO_PRIMITIVE_VERSION).c_str ());
+	xmlSetProp(root, (const xmlChar *)"VERSION", (const xmlChar *)toString(NLLIGO_PRIMITIVE_VERSION).c_str());
 
 	// The primitive root node
-	xmlNodePtr nameNode = xmlNewChild ( root, NULL, (const xmlChar*)"ROOT_PRIMITIVE", NULL);
-	xmlNodePtr subNode = xmlNewChild ( nameNode, NULL, (const xmlChar*)"ALIAS", NULL);
+	xmlNodePtr nameNode = xmlNewChild(root, NULL, (const xmlChar *)"ROOT_PRIMITIVE", NULL);
+	xmlNodePtr subNode = xmlNewChild(nameNode, NULL, (const xmlChar *)"ALIAS", NULL);
 	WriteUInt("LAST_GENERATED", _LastGeneratedAlias, subNode);
 
 	// Write the primitive tree
-	((IPrimitive*)RootNode)->write (nameNode, filename);
+	((IPrimitive *)RootNode)->write(nameNode, filename);
 }
 
 // ***************************************************************************
@@ -2578,8 +2553,8 @@ void CPrimitives::serial(NLMISC::IStream &f)
 
 	if (f.isReading())
 	{
-		RootNode->removeChildren ();
-		RootNode->removeProperties ();
+		RootNode->removeChildren();
+		RootNode->removeProperties();
 	}
 	f.serialPolyPtr(RootNode);
 	f.serial(_Filename);
@@ -2591,7 +2566,7 @@ void CPrimitives::serial(NLMISC::IStream &f)
 
 // ***************************************************************************
 
-void CPrimitives::convertAddPrimitive (IPrimitive *child, const IPrimitive *prim, bool hidden)
+void CPrimitives::convertAddPrimitive(IPrimitive *child, const IPrimitive *prim, bool hidden)
 {
 	// The primitve
 	IPrimitive *primitive = NULL;
@@ -2601,7 +2576,7 @@ void CPrimitives::convertAddPrimitive (IPrimitive *child, const IPrimitive *prim
 	if (oldPoint)
 	{
 		// Create a primitive
-		CPrimPoint *point = static_cast<CPrimPoint *> (CClassRegistry::create ("CPrimPoint"));
+		CPrimPoint *point = static_cast<CPrimPoint *>(CClassRegistry::create("CPrimPoint"));
 		primitive = point;
 
 		// Copy it
@@ -2614,7 +2589,7 @@ void CPrimitives::convertAddPrimitive (IPrimitive *child, const IPrimitive *prim
 		if (oldPath)
 		{
 			// Create a primitive
-			CPrimPath *path = static_cast<CPrimPath *> (CClassRegistry::create ("CPrimPath"));
+			CPrimPath *path = static_cast<CPrimPath *>(CClassRegistry::create("CPrimPath"));
 			primitive = path;
 
 			// Copy it
@@ -2626,7 +2601,7 @@ void CPrimitives::convertAddPrimitive (IPrimitive *child, const IPrimitive *prim
 			if (oldZone)
 			{
 				// Create a primitive
-				CPrimZone *zone = static_cast<CPrimZone *> (CClassRegistry::create ("CPrimZone"));
+				CPrimZone *zone = static_cast<CPrimZone *>(CClassRegistry::create("CPrimZone"));
 				primitive = zone;
 
 				// Copy it
@@ -2640,10 +2615,10 @@ void CPrimitives::convertAddPrimitive (IPrimitive *child, const IPrimitive *prim
 	{
 		// Create a property for the name
 		CPropertyString *nameProp = new CPropertyString;
-//		nameProp->String = prim->Name;
+		//		nameProp->String = prim->Name;
 
 		// Add the property
-		primitive->addPropertyByName ("name", nameProp);
+		primitive->addPropertyByName("name", nameProp);
 
 		// The primitive is hidden ?
 		if (hidden)
@@ -2652,27 +2627,27 @@ void CPrimitives::convertAddPrimitive (IPrimitive *child, const IPrimitive *prim
 			nameProp = new CPropertyString;
 
 			// Add the property
-			primitive->addPropertyByName ("hidden", nameProp);
+			primitive->addPropertyByName("hidden", nameProp);
 		}
 
 		// Add the child
-		child->insertChild (primitive);
+		child->insertChild(primitive);
 	}
 }
 
 // ***************************************************************************
 
-void CPrimitives::convertPrimitive (const IPrimitive *prim, bool hidden)
+void CPrimitives::convertPrimitive(const IPrimitive *prim, bool hidden)
 {
 	// Look for the group
-	uint numChildren = RootNode->getNumChildren ();
+	uint numChildren = RootNode->getNumChildren();
 	uint j;
-	for (j=0; j<numChildren; j++)
+	for (j = 0; j < numChildren; j++)
 	{
 		IPrimitive *child;
-		nlverify (RootNode->getChild (child, j));
+		nlverify(RootNode->getChild(child, j));
 		const IProperty *prop;
-		if (child->getPropertyByName ("name", prop))
+		if (child->getPropertyByName("name", prop))
 		{
 			// Prop string
 			const CPropertyString *name = dynamic_cast<const CPropertyString *>(prop);
@@ -2689,69 +2664,67 @@ void CPrimitives::convertPrimitive (const IPrimitive *prim, bool hidden)
 	}
 
 	// Not found ?
-	if (j==numChildren)
+	if (j == numChildren)
 	{
 		// Create a node
-		CPrimNode *primNode = static_cast<CPrimNode *> (CClassRegistry::create ("CPrimNode"));
+		CPrimNode *primNode = static_cast<CPrimNode *>(CClassRegistry::create("CPrimNode"));
 
 		// Create a property for the layer
 		CPropertyString *nameProp = new CPropertyString;
-//		nameProp->String = prim->Layer;
+		//		nameProp->String = prim->Layer;
 
 		// Add the property
-		primNode->addPropertyByName ("name", nameProp);
+		primNode->addPropertyByName("name", nameProp);
 
 		// Add the child
-		RootNode->insertChild (primNode);
+		RootNode->insertChild(primNode);
 
 		// Add the primitive
-		convertAddPrimitive (primNode, prim, hidden);
+		convertAddPrimitive(primNode, prim, hidden);
 	}
 }
 
 // ***************************************************************************
 
-void CPrimitives::convert (const CPrimRegion &region)
+void CPrimitives::convert(const CPrimRegion &region)
 {
 	// Delete
-	RootNode->removeChildren ();
-	RootNode->removeProperties ();
+	RootNode->removeChildren();
+	RootNode->removeProperties();
 
 	// For each primitives
 	uint i;
-	for (i=0; i<region.VPoints.size (); i++)
+	for (i = 0; i < region.VPoints.size(); i++)
 	{
-		convertPrimitive (&(region.VPoints[i]), region.VHidePoints[i]);
+		convertPrimitive(&(region.VPoints[i]), region.VHidePoints[i]);
 	}
-	for (i=0; i<region.VPaths.size (); i++)
+	for (i = 0; i < region.VPaths.size(); i++)
 	{
-		convertPrimitive (&(region.VPaths[i]), region.VHidePaths[i]);
+		convertPrimitive(&(region.VPaths[i]), region.VHidePaths[i]);
 	}
-	for (i=0; i<region.VZones.size (); i++)
+	for (i = 0; i < region.VZones.size(); i++)
 	{
-		convertPrimitive (&(region.VZones[i]), region.VHideZones[i]);
+		convertPrimitive(&(region.VZones[i]), region.VHideZones[i]);
 	}
 }
 
 // ***************************************************************************
 
-CPrimitiveContext::CPrimitiveContext():
-	CurrentLigoConfig(NULL),
-	CurrentPrimitive(NULL)
+CPrimitiveContext::CPrimitiveContext()
+    : CurrentLigoConfig(NULL)
+    , CurrentPrimitive(NULL)
 {
 }
 
-
 static bool LIGORegistered = false;
 
-
-void Register ()
+void Register()
 {
-    if( LIGORegistered )
-    {
-        nlinfo( "LIGO classes have already been registered." );
-        return;
-    }
+	if (LIGORegistered)
+	{
+		nlinfo("LIGO classes have already been registered.");
+		return;
+	}
 
 	NLMISC_REGISTER_CLASS(CPropertyString);
 	NLMISC_REGISTER_CLASS(CPropertyStringArray);
@@ -2762,11 +2735,9 @@ void Register ()
 	NLMISC_REGISTER_CLASS(CPrimZone);
 	NLMISC_REGISTER_CLASS(CPrimAlias);
 
-    LIGORegistered = true;
+	LIGORegistered = true;
 }
 
 // ***************************************************************************
 
 } // namespace NLLIGO
-
-

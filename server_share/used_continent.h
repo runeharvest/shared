@@ -17,7 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef USED_CONTINENT_H
 #define USED_CONTINENT_H
 
@@ -27,25 +26,22 @@
 
 #include <algorithm>
 
-
 /** Singleton class to handle the list of continent used and instance number.
  *	This class also handle the physical continent name translation table
-*/
+ */
 class CUsedContinent
 {
 public:
-
 	struct TContinentInfo
 	{
-		std::string				ContinentName;
-		CONTINENT::TContinent	ContinentEnum;
-		uint32					ContinentInstance;
+		std::string ContinentName;
+		CONTINENT::TContinent ContinentEnum;
+		uint32 ContinentInstance;
 	};
 
-	typedef std::vector<TContinentInfo>		TUsedContinentCont;
+	typedef std::vector<TContinentInfo> TUsedContinentCont;
 
-
-	static CUsedContinent	&instance()
+	static CUsedContinent &instance()
 	{
 		if (_Instance == 0)
 			_Instance = new CUsedContinent;
@@ -59,93 +55,96 @@ public:
 	}
 
 	/* Return true if the continent is referenced in the used continent list.
-	*/
-	bool	isContinentUsed(const std::string &continentName) const;
+	 */
+	bool isContinentUsed(const std::string &continentName) const;
 
 	/** Return the static instance number associated with a continent name.
-	*	If the continent name is unknow, return std::numeric_limits<uint32>::max()
-	*/
-	uint32	getInstanceForContinent(const std::string &continentName) const;
+	 *	If the continent name is unknow, return std::numeric_limits<uint32>::max()
+	 */
+	uint32 getInstanceForContinent(const std::string &continentName) const;
 
 	/** Return the static instance number associated with a continent enum value
 	 *	If the continent name is unknow, return std::numeric_limits<uint32>::max()
 	 */
-	uint32	getInstanceForContinent(CONTINENT::TContinent continentEnum) const;
+	uint32 getInstanceForContinent(CONTINENT::TContinent continentEnum) const;
 
 	/** Return the continent name associated with a static instance number.
-	*	If the static instance number is unknow, return an empty string.
-	*/
+	 *	If the static instance number is unknow, return an empty string.
+	 */
 	const std::string &getContinentForInstance(uint32 instanceNumber) const;
 
-	/** Return the name of the physical continent associated to the given 
+	/** Return the name of the physical continent associated to the given
 	 *  logical continent name.
 	 *	If there is no translation for the logical name, then the logical name
 	 *	is returned as physical name.
 	 */
 	std::string getPhysicalContinentName(const std::string &locicalName) const;
-private:
 
+private:
 	// functor to search a continent from name
-	struct TFindContinent 
+	struct TFindContinent
 #ifndef NL_CPP17
-		: public std::unary_function<TContinentInfo, bool>
+	    : public std::unary_function<TContinentInfo, bool>
 #endif
-	{ 
-		bool operator ()(const TContinentInfo &ci) const
+	{
+		bool operator()(const TContinentInfo &ci) const
 		{
 			return ci.ContinentName == ContinentName;
 		}
 
 		TFindContinent(const std::string &continentName)
-			:	ContinentName(continentName)
-		{}
+		    : ContinentName(continentName)
+		{
+		}
 		const std::string &ContinentName;
 	};
 
 	// functor to search a continent from enum Value
-	struct TFindContinentFromEnum 
+	struct TFindContinentFromEnum
 #ifndef NL_CPP17
-		: public std::unary_function<TContinentInfo, bool>
+	    : public std::unary_function<TContinentInfo, bool>
 #endif
 	{
-		bool operator ()(const TContinentInfo &ci) const
+		bool operator()(const TContinentInfo &ci) const
 		{
 			return ci.ContinentEnum == ContinentEnum;
 		}
-		
+
 		TFindContinentFromEnum(CONTINENT::TContinent continentEnum)
-			:	ContinentEnum(continentEnum)
-		{}
+		    : ContinentEnum(continentEnum)
+		{
+		}
 
 		CONTINENT::TContinent ContinentEnum;
 	};
 
 	// functor to search an instance number
-	struct TFindInstance 
+	struct TFindInstance
 #ifndef NL_CPP17
-		: public std::unary_function<TContinentInfo, bool>
+	    : public std::unary_function<TContinentInfo, bool>
 #endif
-	{ 
-		bool operator ()(const TContinentInfo &ci) const
+	{
+		bool operator()(const TContinentInfo &ci) const
 		{
 			return ci.ContinentInstance == InstanceNumber;
 		}
 
 		TFindInstance(uint32 instanceNumber)
-			:	InstanceNumber(instanceNumber)
-		{}
+		    : InstanceNumber(instanceNumber)
+		{
+		}
 		const uint32 InstanceNumber;
 	};
 
 	// the singleton instance
-	static CUsedContinent	*_Instance;
+	static CUsedContinent *_Instance;
 	/// private constructor
 	CUsedContinent();
 	/// The continents
-	TUsedContinentCont		_Continents;
+	TUsedContinentCont _Continents;
 
 	/// Physical continent name translation table
-	std::map<std::string, std::string>	_PhysicalNames;
+	std::map<std::string, std::string> _PhysicalNames;
 };
 
 #endif // USED_CONTINENT_H

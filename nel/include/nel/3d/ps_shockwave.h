@@ -21,13 +21,9 @@
 #include "nel/3d/vertex_buffer.h"
 #include "nel/3d/index_buffer.h"
 
-namespace NL3D
-{
+namespace NL3D {
 
-class CPSShockWave : public CPSParticle, public CPSSizedParticle
-					, public CPSColoredParticle, public CPSTexturedParticle
-					, public CPSRotated3DPlaneParticle, public CPSRotated2DParticle
-					, public CPSMaterial
+class CPSShockWave : public CPSParticle, public CPSSizedParticle, public CPSColoredParticle, public CPSTexturedParticle, public CPSRotated3DPlaneParticle, public CPSRotated2DParticle, public CPSMaterial
 {
 public:
 	/** ctor
@@ -35,7 +31,7 @@ public:
 	 *  \param radiusCut : indicate how much to subtract to the outter radius to get the inner radius
 	 *  \param  tex : the texture that must be applied to the shockwave
 	 */
-	CPSShockWave(uint nbSeg = 9, float radiusCut = 0.8f , CSmartPtr<ITexture> tex = NULL);
+	CPSShockWave(uint nbSeg = 9, float radiusCut = 0.8f, CSmartPtr<ITexture> tex = NULL);
 
 	/** set a new number of seg (mus be >= 3 and <= 64)
 	 *  \see CPSShockWave()
@@ -59,7 +55,7 @@ public:
 	NLMISC_DECLARE_CLASS(CPSShockWave);
 
 	/// complete the bbox depending on the size of particles
-	virtual bool completeBBox(NLMISC::CAABBox &box) const  ;
+	virtual bool completeBBox(NLMISC::CAABBox &box) const;
 
 	/// return true if there are transparent faces in the object
 	virtual bool hasTransparentFaces(void);
@@ -71,51 +67,50 @@ public:
 	virtual uint32 getNumWantedTris() const;
 
 	/// set the U factor for textures
-	void			setUFactor(float value);
+	void setUFactor(float value);
 
 	/// get the U factor for textures
-	float			getUFactor(void) const { return _UFactor; }
+	float getUFactor(void) const { return _UFactor; }
 
 	/// from CPSParticle : return true if there are lightable faces in the object
-	virtual bool hasLightableFaces() { 	return false; }
+	virtual bool hasLightableFaces() { return false; }
 
 	// from CPSParticle
 	virtual bool supportGlobalColorLighting() const { return true; }
 
 	// from CPSLocatedBindable
-	virtual void enumTexs(std::vector<NLMISC::CSmartPtr<ITexture> > &dest, IDriver &drv);
+	virtual void enumTexs(std::vector<NLMISC::CSmartPtr<ITexture>> &dest, IDriver &drv);
 
 	// from CPSParticle
 	virtual void setZBias(float value) { CPSMaterial::setZBias(value); }
 	virtual float getZBias() const { return CPSMaterial::getZBias(); }
 
 protected:
-
 	/** calculate current color and texture coordinate before any rendering
 	 *  size can't be higher that shockWaveBufSize ...
 	 */
-	void			updateVbColNUVForRender(uint32 startIndex, uint32 size, uint32 srcStep, CVertexBuffer &vb, IDriver &drv);
+	void updateVbColNUVForRender(uint32 startIndex, uint32 size, uint32 srcStep, CVertexBuffer &vb, IDriver &drv);
 
 	/// update the material and the vb so that they match the color scheme. Inherited from CPSColoredParticle
-	virtual void	updateMatAndVbForColor(void);
+	virtual void updateMatAndVbForColor(void);
 
 	/// update the material and the vb so that they match the texture scheme.
-	virtual void	updateMatAndVbForTexture(void);
+	virtual void updateMatAndVbForTexture(void);
 
 	/**	Generate a new element for this bindable. They are generated according to the properties of the class
 	 */
-	virtual void	newElement(const CPSEmitterInfo &info);
+	virtual void newElement(const CPSEmitterInfo &info);
 
 	/** Delete an element given its index
 	 *  Attributes of the located that hold this bindable are still accessible for the index given
 	 *  index out of range -> nl_assert
 	 */
-	virtual void	deleteElement(uint32 index) ;
+	virtual void deleteElement(uint32 index);
 
 	/** Resize the bindable attributes containers. Size is the max number of element to be contained. DERIVERS MUST CALL THEIR PARENT VERSION
 	 * should not be called directly. Call CPSLocated::resize instead
 	 */
-	virtual void	resize(uint32 size);
+	virtual void resize(uint32 size);
 
 	virtual CPSLocated *getColorOwner(void) { return _Owner; }
 	virtual CPSLocated *getSizeOwner(void) { return _Owner; }
@@ -126,6 +121,7 @@ protected:
 private:
 	typedef CHashMap<uint, CVertexBuffer> TVBMap;
 	typedef CHashMap<uint, CIndexBuffer> TPBMap;
+
 private:
 	static TPBMap _PBMap; // the primitive blocks
 	static TVBMap _VBMap; // vb ith unanimated texture
@@ -137,7 +133,8 @@ private:
 	// ratio to get the inner circle radius from the outter circle radius
 	float _RadiusCut;
 	// texture factor
-	float		 _UFactor;
+	float _UFactor;
+
 private:
 	friend class CPSShockWaveHelper;
 	// setup and get the needed vb for display
@@ -148,12 +145,10 @@ private:
 	void setupUFactor();
 	virtual void draw(bool opaque);
 	/// initialisations
-	virtual void	init(void);
-
+	virtual void init(void);
 };
 
 } // NL3D
-
 
 #endif // NL_PS_SHOCKWAVE_H
 

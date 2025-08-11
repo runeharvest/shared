@@ -19,9 +19,7 @@
 
 #include "types_nl.h"
 
-
 namespace NLMISC {
-
 
 /**
  * Progress callback interface
@@ -32,57 +30,52 @@ namespace NLMISC {
 class IProgressCallback
 {
 public:
-
-	IProgressCallback ();
-	virtual ~IProgressCallback () {}
-
-	/**
-	  * Call back
-	  *
-	  * progressValue should be 0 ~ 1
-	  */
-	virtual void progress (float progressValue);
+	IProgressCallback();
+	virtual ~IProgressCallback() { }
 
 	/**
-	  * Push crop values
-	  */
-	void pushCropedValues (float min, float max);
+	 * Call back
+	 *
+	 * progressValue should be 0 ~ 1
+	 */
+	virtual void progress(float progressValue);
 
 	/**
-	  * Push crop values
-	  */
-	void popCropedValues ();
+	 * Push crop values
+	 */
+	void pushCropedValues(float min, float max);
 
 	/**
-	  * Get croped value
-	  */
-	float getCropedValue (float value) const;
+	 * Push crop values
+	 */
+	void popCropedValues();
+
+	/**
+	 * Get croped value
+	 */
+	float getCropedValue(float value) const;
 
 public:
-
 	/// Display string
-	std::string		DisplayString;
+	std::string DisplayString;
 
 private:
-
 	class CCropedValues
 	{
 	public:
-		CCropedValues (float min, float max)
+		CCropedValues(float min, float max)
 		{
 			Min = min;
 			Max = max;
 		}
-		float	Min;
-		float	Max;
+		float Min;
+		float Max;
 	};
 
-	std::vector<CCropedValues>	_CropedValues;
+	std::vector<CCropedValues> _CropedValues;
 };
 
-
 } // NLMISC
-
 
 #endif // NL_PROGRESS_CALLBACK_H
 

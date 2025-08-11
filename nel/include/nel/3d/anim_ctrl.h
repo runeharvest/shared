@@ -19,15 +19,11 @@
 
 #include "nel/misc/types_nl.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
-class	CBone;
-class	CSkeletonModel;
-
+class CBone;
+class CSkeletonModel;
 
 // ***************************************************************************
 /**
@@ -55,16 +51,13 @@ class	CSkeletonModel;
 class IAnimCtrl
 {
 public:
-	virtual	~IAnimCtrl() {}
+	virtual ~IAnimCtrl() { }
 
 	/// Called at compute() time.
-	virtual	void	execute(CSkeletonModel *model, CBone *bone) =0;
-
+	virtual void execute(CSkeletonModel *model, CBone *bone) = 0;
 };
 
-
 } // NL3D
-
 
 #endif // NL_ANIM_CTRL_H
 

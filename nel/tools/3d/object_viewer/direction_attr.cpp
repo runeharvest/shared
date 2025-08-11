@@ -25,14 +25,15 @@
 #include "nel/3d/ps_direction.h"
 #include "nel/3d/particle_system.h"
 
-
-
 /////////////////////////////////////////////////////////////////////////////
 // CDirectionAttr dialog
-CDirectionAttr::CDirectionAttr(const std::string &id): _DirectionDlg(NULL), _Wrapper(NULL), _DirectionWrapper(NULL)
+CDirectionAttr::CDirectionAttr(const std::string &id)
+    : _DirectionDlg(NULL)
+    , _Wrapper(NULL)
+    , _DirectionWrapper(NULL)
 {
 	//{{AFX_DATA_INIT(CDirectionAttr)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
@@ -53,75 +54,72 @@ void CDirectionAttr::init(uint32 x, uint32 y, CWnd *pParent)
 		GetDlgItem(IDC_GLOBAL_DIRECTION)->ShowWindow(TRUE);
 	}
 	EnableWindow(TRUE);
-	ShowWindow(SW_SHOW);	
+	ShowWindow(SW_SHOW);
 }
 
-
 //=======================================================================================
-void CDirectionAttr::DoDataExchange(CDataExchange* pDX)
+void CDirectionAttr::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CDirectionAttr)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CDirectionAttr, CDialog)
-	//{{AFX_MSG_MAP(CDirectionAttr)
-	ON_BN_CLICKED(IDC_VECT_I, OnVectI)
-	ON_BN_CLICKED(IDC_VECT_J, OnVectJ)
-	ON_BN_CLICKED(IDC_VECT_K, OnVectK)
-	ON_BN_CLICKED(IDC_VECT_MINUS_I, OnVectMinusI)
-	ON_BN_CLICKED(IDC_VECT_MINUS_J, OnVectMinusJ)
-	ON_BN_CLICKED(IDC_VECT_MINUS_K, OnVectMinusK)
-	ON_BN_CLICKED(IDC_CUSTOM_DIRECTION, OnCustomDirection)
-	ON_WM_DESTROY()
-	ON_BN_CLICKED(IDC_GLOBAL_DIRECTION, OnGlobalDirection)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CDirectionAttr)
+ON_BN_CLICKED(IDC_VECT_I, OnVectI)
+ON_BN_CLICKED(IDC_VECT_J, OnVectJ)
+ON_BN_CLICKED(IDC_VECT_K, OnVectK)
+ON_BN_CLICKED(IDC_VECT_MINUS_I, OnVectMinusI)
+ON_BN_CLICKED(IDC_VECT_MINUS_J, OnVectMinusJ)
+ON_BN_CLICKED(IDC_VECT_MINUS_K, OnVectMinusK)
+ON_BN_CLICKED(IDC_CUSTOM_DIRECTION, OnCustomDirection)
+ON_WM_DESTROY()
+ON_BN_CLICKED(IDC_GLOBAL_DIRECTION, OnGlobalDirection)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CDirectionAttr message handlers
 
-
 //=======================================================================================
-void CDirectionAttr::OnVectI() 
+void CDirectionAttr::OnVectI()
 {
-	nlassert(_Wrapper);	
+	nlassert(_Wrapper);
 	_Wrapper->setAndUpdateModifiedFlag(NLMISC::CVector::I);
 }
 
 //=======================================================================================
-void CDirectionAttr::OnVectJ() 
+void CDirectionAttr::OnVectJ()
 {
-	nlassert(_Wrapper);	
+	nlassert(_Wrapper);
 	_Wrapper->setAndUpdateModifiedFlag(NLMISC::CVector::J);
 }
 
 //=======================================================================================
-void CDirectionAttr::OnVectK() 
+void CDirectionAttr::OnVectK()
 {
 	_Wrapper->setAndUpdateModifiedFlag(NLMISC::CVector::K);
 }
 
 //=======================================================================================
-void CDirectionAttr::OnVectMinusI() 
+void CDirectionAttr::OnVectMinusI()
 {
-	_Wrapper->setAndUpdateModifiedFlag( - NLMISC::CVector::I);	
+	_Wrapper->setAndUpdateModifiedFlag(-NLMISC::CVector::I);
 }
 
 //=======================================================================================
-void CDirectionAttr::OnVectMinusJ() 
+void CDirectionAttr::OnVectMinusJ()
 {
-	_Wrapper->setAndUpdateModifiedFlag(- NLMISC::CVector::J);
+	_Wrapper->setAndUpdateModifiedFlag(-NLMISC::CVector::J);
 }
 
 //=======================================================================================
-void CDirectionAttr::OnVectMinusK() 
+void CDirectionAttr::OnVectMinusK()
 {
-	_Wrapper->setAndUpdateModifiedFlag(- NLMISC::CVector::K);	
-}	
+	_Wrapper->setAndUpdateModifiedFlag(-NLMISC::CVector::K);
+}
 
 //=======================================================================================
 BOOL CDirectionAttr::EnableWindow(BOOL bEnable)
@@ -130,7 +128,7 @@ BOOL CDirectionAttr::EnableWindow(BOOL bEnable)
 	if (_DirectionWrapper && _DirectionWrapper->supportGlobalVectorValue() && !_DirectionWrapper->getGlobalVectorValueName().empty())
 	{
 		enableUserDirection = FALSE;
-	}	
+	}
 	GetDlgItem(IDC_VECT_I)->EnableWindow(bEnable & enableUserDirection);
 	GetDlgItem(IDC_VECT_J)->EnableWindow(bEnable & enableUserDirection);
 	GetDlgItem(IDC_VECT_K)->EnableWindow(bEnable & enableUserDirection);
@@ -144,11 +142,11 @@ BOOL CDirectionAttr::EnableWindow(BOOL bEnable)
 }
 
 //=======================================================================================
-void CDirectionAttr::OnCustomDirection() 
+void CDirectionAttr::OnCustomDirection()
 {
 	_DirectionDlg = new CDirectionEdit(_Wrapper);
 	_DirectionDlg->init(this, this);
-	EnableWindow(FALSE);	
+	EnableWindow(FALSE);
 }
 
 //=======================================================================================
@@ -158,13 +156,12 @@ void CDirectionAttr::childPopupClosed(CWnd *)
 	delete _DirectionDlg;
 	_DirectionDlg = NULL;
 	EnableWindow(TRUE);
-
 }
 
 //=======================================================================================
-void CDirectionAttr::OnDestroy() 
+void CDirectionAttr::OnDestroy()
 {
-	CDialog::OnDestroy();	
+	CDialog::OnDestroy();
 	if (_DirectionDlg)
 	{
 		_DirectionDlg->DestroyWindow();
@@ -173,7 +170,7 @@ void CDirectionAttr::OnDestroy()
 }
 
 //=======================================================================================
-void CDirectionAttr::OnGlobalDirection() 
+void CDirectionAttr::OnGlobalDirection()
 {
 	nlassert(_DirectionWrapper);
 	CChooseName chooseName(nlUtf8ToTStr(_DirectionWrapper->getGlobalVectorValueName()));

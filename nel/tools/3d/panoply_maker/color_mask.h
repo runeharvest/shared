@@ -23,17 +23,14 @@
 struct CColorMask
 {
 	// the extension used for this color mask.
-	// Example : if this is named 'mask1', a base texture 
+	// Example : if this is named 'mask1', a base texture
 	// 'tex.tga' will use this mask if there's a tex_mask1.tga file
-	std::string			MaskExt;
+	std::string MaskExt;
 
 	/// the various color modifiers that must be applied on textures
-	TColorModifierVect	CMs;
+	TColorModifierVect CMs;
 };
 
 typedef std::vector<CColorMask> TColorMaskVect;
 
-
-
 #endif
-

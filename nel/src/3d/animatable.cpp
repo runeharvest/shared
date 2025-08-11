@@ -23,15 +23,14 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 
-sint	IAnimatable::addValue(CChannelMixer *chanMixer, uint valueId, uint ownerValueId, const std::string &prefix, bool detail)
+sint IAnimatable::addValue(CChannelMixer *chanMixer, uint valueId, uint ownerValueId, const std::string &prefix, bool detail)
 {
 	nlassert(chanMixer);
-	return chanMixer->addChannel(prefix+getValueName(valueId), this, getValue(valueId), getDefaultTrack(valueId), valueId, ownerValueId, detail);
+	return chanMixer->addChannel(prefix + getValueName(valueId), this, getValue(valueId), getDefaultTrack(valueId), valueId, ownerValueId, detail);
 }
 
 // ***************************************************************************

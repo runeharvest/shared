@@ -7,18 +7,18 @@
 #define DBGWELD_ACTIONx
 #define DBG_NAMEDSELSx
 
-#define PROMPT_TIME	2000
+#define PROMPT_TIME 2000
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
 extern HIMAGELIST hFaceImages;
-int patchHitOverride = 0;	// If zero, no override is done
+int patchHitOverride = 0; // If zero, no override is done
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-class EPImageListDestroyer 
+class EPImageListDestroyer
 {
-	~EPImageListDestroyer() 
+	~EPImageListDestroyer()
 	{
 		if (hFaceImages)
 			ImageList_Destroy(hFaceImages);
@@ -29,15 +29,15 @@ PatchRightMenu pMenu;
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void LoadImages() 
+void LoadImages()
 {
 	if (hFaceImages)
 		return;
-	
+
 	HBITMAP hBitmap, hMask;
 	hFaceImages = ImageList_Create(24, 23, ILC_COLOR | ILC_MASK, 6, 0);
-	hBitmap     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_PATCHSELTYPES));
-	hMask       = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_PATCHSELMASK));
+	hBitmap = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_PATCHSELTYPES));
+	hMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_PATCHSELMASK));
 	ImageList_Add(hFaceImages, hBitmap, hMask);
 	DeleteObject(hBitmap);
 	DeleteObject(hMask);
@@ -45,7 +45,7 @@ void LoadImages()
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void PatchRightMenu::Init(RightClickMenuManager* manager, HWND hWnd, IPoint2 m) 
+void PatchRightMenu::Init(RightClickMenuManager *manager, HWND hWnd, IPoint2 m)
 {
 	switch (ep->GetSubobjectLevel())
 	{
@@ -94,7 +94,7 @@ void PatchRightMenu::Init(RightClickMenuManager* manager, HWND hWnd, IPoint2 m)
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void PatchRightMenu::Selected(UINT id) 
+void PatchRightMenu::Selected(UINT id)
 {
 	switch (ep->GetSubobjectLevel())
 	{
@@ -109,8 +109,8 @@ void PatchRightMenu::Selected(UINT id)
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-int EditPatchMod::HitTest(TimeValue t, INode* inode, int type, int crossing, 
-		int flags, IPoint2 *p, ViewExp *vpt, ModContext* mc) 
+int EditPatchMod::HitTest(TimeValue t, INode *inode, int type, int crossing,
+    int flags, IPoint2 *p, ViewExp *vpt, ModContext *mc)
 {
 	Interval valid;
 	int savedLimits, res = 0;
@@ -119,43 +119,43 @@ int EditPatchMod::HitTest(TimeValue t, INode* inode, int type, int crossing,
 	MakeHitRegion(hr, type, crossing, 4, p);
 	gw->setHitRegion(&hr);
 	Matrix3 mat = inode->GetObjectTM(t);
-	gw->setTransform(mat);	
+	gw->setTransform(mat);
 	gw->setRndLimits(((savedLimits = gw->getRndLimits()) | GW_PICK) & ~GW_ILLUM);
 	gw->clearHitCode();
-	
+
 	if (mc->localData)
-	{		
-		EditPatchData *patchData =(EditPatchData*)mc->localData;
+	{
+		EditPatchData *patchData = (EditPatchData *)mc->localData;
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
 		if (!patch)
 			return FALSE;
-		
+
 		SubPatchHitList hitList;
 		PatchSubHitRec *rec;
 
-		rpatch->UpdateBinding (*patch, t);
+		rpatch->UpdateBinding(*patch, t);
 
-		if (selLevel!=EP_TILE)
+		if (selLevel != EP_TILE)
 		{
 			res = patch->SubObjectHitTest(gw, gw->getMaterial(), &hr,
-				flags | ((patchHitOverride) ? patchHitLevel[patchHitOverride] : patchHitLevel[selLevel]), hitList);
+			    flags | ((patchHitOverride) ? patchHitLevel[patchHitOverride] : patchHitLevel[selLevel]), hitList);
 		}
 		else
 		{
 			res = rpatch->SubObjectHitTest(gw, gw->getMaterial(), &hr,
-				flags | ((patchHitOverride) ? patchHitLevel[patchHitOverride] : patchHitLevel[selLevel]), hitList,
-				t, *patch);
+			    flags | ((patchHitOverride) ? patchHitLevel[patchHitOverride] : patchHitLevel[selLevel]), hitList,
+			    t, *patch);
 		}
-		
+
 		rec = hitList.First();
-		while (rec) 
+		while (rec)
 		{
 			vpt->LogHit(inode, mc, rec->dist, 123456, new PatchHitData(rec->patch, rec->index, rec->type));
 			rec = rec->Next();
 		}
 	}
-	
-	gw->setRndLimits(savedLimits);	
+
+	gw->setRndLimits(savedLimits);
 	return res;
 }

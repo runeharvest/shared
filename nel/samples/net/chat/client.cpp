@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /*
  * Login system example, client.
  *
@@ -53,21 +52,21 @@ using namespace NLNET;
 // Do not display what you are typing
 
 #ifdef NL_OS_WINDOWS
-#define KEY_ESC		27
-#define KEY_ENTER	13
+#define KEY_ESC 27
+#define KEY_ENTER 13
 #else
-#define KEY_ESC		27
-#define KEY_ENTER	10
+#define KEY_ESC 27
+#define KEY_ENTER 10
 #endif
 
 #ifndef CHAT_DIR
-#	define CHAT_DIR "."
+#define CHAT_DIR "."
 #endif
 
 string CurrentEditString;
 
 // ***************************************************************************
-void serverSentChat (CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
+void serverSentChat(CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
 {
 	// Called when the server sent a CHAT message
 	string text;
@@ -78,15 +77,14 @@ void serverSentChat (CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
 // ***************************************************************************
 // All messages handled by this server
 #define NB_CB 1
-TCallbackItem CallbackArray[NB_CB] =
-{
+TCallbackItem CallbackArray[NB_CB] = {
 	{ "CHAT", serverSentChat }
 };
 
 /*
  * main
  */
-int main (int argc, char **argv)
+int main(int argc, char **argv)
 {
 	NLMISC::CApplicationContext applicationContext;
 
@@ -95,21 +93,21 @@ int main (int argc, char **argv)
 	NLMISC::CPath::addSearchPath(CHAT_DIR);
 
 	// Read the host where to connect in the client.cfg file
-	CConfigFile ConfigFile;	
-	ConfigFile.load (NLMISC::CPath::lookup("client.cfg"));
+	CConfigFile ConfigFile;
+	ConfigFile.load(NLMISC::CPath::lookup("client.cfg"));
 	string LSHost(ConfigFile.getVar("LSHost").asString());
 
 	// Init and Connect the client to the server located on port 3333
 	Client = new CCallbackClient();
-	Client->addCallbackArray (CallbackArray, NB_CB);
+	Client->addCallbackArray(CallbackArray, NB_CB);
 
 	printf("Please wait connecting...\n");
 	try
 	{
-		CInetAddress addr(LSHost+":3333");
+		CInetAddress addr(LSHost + ":3333");
 		Client->connect(addr);
 	}
-	catch(const ESocket &e)
+	catch (const ESocket &e)
 	{
 		printf("%s\n", e.what());
 		return 0;
@@ -140,7 +138,7 @@ int main (int argc, char **argv)
 			{
 				CMessage msg;
 				msg.setType("CHAT");
-				msg.serial (CurrentEditString);
+				msg.serial(CurrentEditString);
 				Client->send(msg);
 				CurrentEditString = "";
 			}
@@ -150,8 +148,7 @@ int main (int argc, char **argv)
 			}
 		}
 		Client->update();
-	}
-	while (Client->connected());
+	} while (Client->connected());
 
 #ifdef NL_OS_UNIX
 	close_keyboard();

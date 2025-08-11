@@ -26,11 +26,9 @@
 
 #include <vector>
 
-namespace NLNET
-{
+namespace NLNET {
 
 extern const char *LockedSubMessageError;
-
 
 /**
  * Message memory stream for network. Can be serialized to/from (see SerialBuffer()). Can be sent or received
@@ -45,15 +43,25 @@ extern const char *LockedSubMessageError;
 class CMessage : public NLMISC::CMemStream
 {
 public:
-
-	enum TStreamFormat	{ UseDefault, Binary, String };
-	enum TMessageType	{ OneWay, Request, Response, Except};
+	enum TStreamFormat
+	{
+		UseDefault,
+		Binary,
+		String
+	};
+	enum TMessageType
+	{
+		OneWay,
+		Request,
+		Response,
+		Except
+	};
 
 	struct TFormat
 	{
-		uint8	StringMode : 1,	// true if the message body is string encoded, binary encoded if false otherwise
-				LongFormat : 1, // true if the message format is long (d'ho ? all message are long !?!, always true)
-				MessageType : 2; // type of the message (from TMessageType), classical message are 'OneWay'
+		uint8 StringMode : 1, // true if the message body is string encoded, binary encoded if false otherwise
+		    LongFormat : 1, // true if the message format is long (d'ho ? all message are long !?!, always true)
+		    MessageType : 2; // type of the message (from TMessageType), classical message are 'OneWay'
 
 		TFormat()
 		{
@@ -70,8 +78,8 @@ public:
 				uint8 b;
 				s.serial(b);
 				LongFormat = b & 1;
-				StringMode = (b>>1) & 1;
-				MessageType = (b>>2) & 3;
+				StringMode = (b >> 1) & 1;
+				MessageType = (b >> 2) & 3;
 			}
 			else
 			{
@@ -82,42 +90,46 @@ public:
 		}
 	};
 
-	CMessage (const std::string &name = "", bool inputStream = false, TStreamFormat streamformat = UseDefault, uint32 defaultCapacity = 1000);
+	CMessage(const std::string &name = "", bool inputStream = false, TStreamFormat streamformat = UseDefault, uint32 defaultCapacity = 1000);
 
-	CMessage (NLMISC::CMemStream &memstr);
+	CMessage(NLMISC::CMemStream &memstr);
 
 	/// Copy constructor
-	CMessage (const CMessage &other);
+	CMessage(const CMessage &other);
 
 	/// Assignment operator
-	CMessage &operator= (const CMessage &other);
+	CMessage &operator=(const CMessage &other);
 
 	/// exchange memory data
 	void swap(CMessage &other);
 
 #ifdef NL_CPP14
 	/// Move operator
-	CMessage &operator=(CMessage &&other) noexcept { swap(other); return *this; }
+	CMessage &operator=(CMessage &&other) noexcept
+	{
+		swap(other);
+		return *this;
+	}
 #endif
 
 	/// Sets the message type as a string and put it in the buffer if we are in writing mode
-	void setType (const std::string &name, TMessageType type=OneWay);
+	void setType(const std::string &name, TMessageType type = OneWay);
 
-	void changeType (const std::string &name);
+	void changeType(const std::string &name);
 
 	/// Returns the size, in byte of the header that contains the type name of the message or the type number
-	uint32 getHeaderSize () const;
+	uint32 getHeaderSize() const;
 
 	/** The message was filled with an CMemStream, Now, we'll get the message type on this buffer.
 	 * This method updates _LengthR with the actual size of the buffer (it calls resetLengthR()).
 	 */
-	void readType ();
+	void readType();
 
 	/// Get the message name (input message only) and advance the current pos
 	std::string readTypeAtCurrentPos() const;
 
 	// Returns true if the message type was already set
-	bool typeIsSet () const;
+	bool typeIsSet() const;
 
 	/**
 	 * Returns the length (size) of the message, in bytes.
@@ -125,9 +137,9 @@ public:
 	 * otherwise it is the number of bytes that have been written.
 	 * Overloaded because uses a specific version of lengthR().
 	 */
-	virtual uint32	length() const
+	virtual uint32 length() const
 	{
-		if ( isReading() )
+		if (isReading())
 		{
 			return lengthR();
 		}
@@ -137,33 +149,32 @@ public:
 		}
 	}
 
-	virtual uint32			lengthS() const
+	virtual uint32 lengthS() const
 	{
 		if (!hasLockedSubMessage())
-//			return _BufPos - _Buffer.getPtr();
+			//			return _BufPos - _Buffer.getPtr();
 			return _Buffer.Pos;
 		else
-//			return (_BufPos - _Buffer.getPtr()) - _SubMessagePosR;
+			//			return (_BufPos - _Buffer.getPtr()) - _SubMessagePosR;
 			return _Buffer.Pos - _SubMessagePosR;
-
 	}
 
 	/// Returns the "read" message size (number of bytes to read) (note: see comment about _LengthR)
-	uint32			lengthR() const
+	uint32 lengthR() const
 	{
 		return _LengthR;
 	}
 
-	virtual sint32	getPos() const
+	virtual sint32 getPos() const
 	{
-//		return (_BufPos - _Buffer.getPtr()) - _SubMessagePosR;
+		//		return (_BufPos - _Buffer.getPtr()) - _SubMessagePosR;
 		return _Buffer.Pos - _SubMessagePosR;
 	}
 
-//	virtual sint32			getPos() const
-//	{
-//		return (_BufPos - _Buffer.getPtr()) - _SubMessagePosR;
-//	}
+	//	virtual sint32			getPos() const
+	//	{
+	//		return (_BufPos - _Buffer.getPtr()) - _SubMessagePosR;
+	//	}
 
 	/**
 	 * Set an input message to look like, from a message callback's scope, as if it began at the current
@@ -186,15 +197,15 @@ public:
 	 * - Unless you call unlockSubMessage(), the following actions will assert or raise an exception:
 	 *   Serializing more than the sub message size, clear(), operator=() (from/to), invert().
 	 */
-	std::string			lockSubMessage( uint32 subMsgSize ) const
+	std::string lockSubMessage(uint32 subMsgSize) const
 	{
 		nlassert(!hasLockedSubMessage());
 		uint32 subMsgBeginPos = getPos();
 		uint32 subMsgEndPos = subMsgBeginPos + subMsgSize;
-		nlassertex( isReading() && (subMsgEndPos <= lengthR()), ("%s %u %u", isReading()?"R":"W", subMsgEndPos, lengthR()) );
+		nlassertex(isReading() && (subMsgEndPos <= lengthR()), ("%s %u %u", isReading() ? "R" : "W", subMsgEndPos, lengthR()));
 		std::string name = unconst(*this).readTypeAtCurrentPos();
 		_SubMessagePosR = subMsgBeginPos;
-//		_LengthR = subMsgEndPos;
+		//		_LengthR = subMsgEndPos;
 		_LengthR = subMsgSize;
 		return name;
 	}
@@ -209,35 +220,34 @@ public:
 	 * Postconditions:
 	 * - The current pos is the next byte after the sub message
 	 */
-	void			unlockSubMessage() const
+	void unlockSubMessage() const
 	{
-		nlassert( isReading() && hasLockedSubMessage() );
-		nlassertex( getPos() <= sint32(_SubMessagePosR+_LengthR), ("The callback for msg %s read more data than there is in the message (pos=%d len=%u)", getName().c_str(), getPos(), _LengthR) );
+		nlassert(isReading() && hasLockedSubMessage());
+		nlassertex(getPos() <= sint32(_SubMessagePosR + _LengthR), ("The callback for msg %s read more data than there is in the message (pos=%d len=%u)", getName().c_str(), getPos(), _LengthR));
 
 		uint32 subMsgEndPos = _SubMessagePosR + _LengthR;
 		resetSubMessageInternals();
-		seek( subMsgEndPos, IStream::begin );
+		seek(subMsgEndPos, IStream::begin);
 	}
 
 	/// Return true if a sub message has been locked
-	bool			hasLockedSubMessage() const
+	bool hasLockedSubMessage() const
 	{
 		return (_SubMessagePosR != 0);
 	}
 
 	/** If a sub message is locked, return the sub message part
-	*/
-	virtual const uint8		*buffer() const
+	 */
+	virtual const uint8 *buffer() const
 	{
 		if (hasLockedSubMessage())
 		{
-//			return _Buffer.getPtr() + _SubMessagePosR;
+			//			return _Buffer.getPtr() + _SubMessagePosR;
 			return _Buffer.getBuffer().getPtr() + _SubMessagePosR;
 		}
 		else
 			return CMemStream::buffer();
 	}
-
 
 	/**
 	 * Similar to operator=, but makes the current message contain *only* the locked sub message in msgin
@@ -252,35 +262,35 @@ public:
 	 *   sub message in msgin, otherwise the current message is exactly msgin
 	 * - The current message is an input message, it is not locked
 	 */
-	void			assignFromSubMessage( const CMessage& msgin );
+	void assignFromSubMessage(const CMessage &msgin);
 
 	/**
 	 * Transforms the message from input to output or from output to input
 	 */
 	void invert()
 	{
-		nlassertex( (!isReading()) || (!hasLockedSubMessage()), ("Inverting %s", LockedSubMessageError) );
+		nlassertex((!isReading()) || (!hasLockedSubMessage()), ("Inverting %s", LockedSubMessageError));
 
 		CMemStream::invert();
 
-		if ( isReading() )
+		if (isReading())
 		{
 			// Write -> Read: skip the header
 			_TypeSet = false;
-//			if ( _Buffer.size() != 0 )
-			if ( _Buffer.getBuffer().size() != 0 )
+			//			if ( _Buffer.size() != 0 )
+			if (_Buffer.getBuffer().size() != 0)
 				readType();
 		}
 		// For Read -> Write, please use clear()
 	}
 
 	// Clear the message. With this function, you can reuse a message to create another message
-	void clear ();
+	void clear();
 
 	/** Returns the type name in string if available. Be sure that the message have the name of the message type
 	 * In a callback driven by message name, getName() does not necessarily return the right name.
 	 */
-	std::string getName () const;
+	std::string getName() const;
 
 	/** Return the type of the message.
 	 */
@@ -291,48 +301,47 @@ public:
 	 * \param hexFormat If true, display all bytes in hexadecimal
 	 * \param textFormat If true, display all bytes as chars (above 31, otherwise '.')
 	 */
-	std::string toString ( bool hexFormat=false, bool textFormat=false ) const;
+	std::string toString(bool hexFormat = false, bool textFormat = false) const;
 
 	/// Set default stream mode
-	static void	setDefaultStringMode( bool stringmode ) { _DefaultStringMode = stringmode; }
+	static void setDefaultStringMode(bool stringmode) { _DefaultStringMode = stringmode; }
 
 	/// Return an input stream containing the stream beginning in the message at the specified pos
-	NLMISC::CMemStream	extractStreamFromPos( sint32 pos );
+	NLMISC::CMemStream extractStreamFromPos(sint32 pos);
 
 	/// Encapsulate/decapsulate another message inside the current message
-	void	serialMessage( CMessage& msg );
+	void serialMessage(CMessage &msg);
 
 protected:
+	/// Utility method
+	void init(const std::string &name, TStreamFormat streamformat);
 
 	/// Utility method
-	void		init( const std::string &name, TStreamFormat streamformat );
-
-	/// Utility method
-	void		resetSubMessageInternals() const
+	void resetSubMessageInternals() const
 	{
 		_SubMessagePosR = 0;
-//		_LengthR = _Buffer.size();
+		//		_LengthR = _Buffer.size();
 		_LengthR = _Buffer.getBuffer().size();
 	}
 
 private:
-	std::string							_Name;
+	std::string _Name;
 
-	mutable TMessageType				_Type;
+	mutable TMessageType _Type;
 
 	// When sub message lock mode is enabled, beginning position of sub message to read (before header)
-	mutable uint32						_SubMessagePosR;
+	mutable uint32 _SubMessagePosR;
 
 	// Length (can be smaller than _Buffer.size() if limitLength() is used) (updated in reading mode only)
-	mutable uint32						_LengthR;
+	mutable uint32 _LengthR;
 
 	// Size of the header (that contains the name type or number type)
-	uint32								_HeaderSize;
+	uint32 _HeaderSize;
 
-	bool								_TypeSet;
+	bool _TypeSet;
 
 	// Default stream format
-	static bool							_DefaultStringMode;
+	static bool _DefaultStringMode;
 };
 
 }

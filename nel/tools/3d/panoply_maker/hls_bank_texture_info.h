@@ -22,9 +22,7 @@
 #include "nel/misc/rgba.h"
 #include "nel/misc/bitmap.h"
 
-
 using NLMISC::CRGBA;
-
 
 // ***************************************************************************
 /**
@@ -36,62 +34,61 @@ using NLMISC::CRGBA;
 class CHLSBankTextureInfo
 {
 public:
-
-	struct	CMaskBitmap
+	struct CMaskBitmap
 	{
-		uint32				Width, Height;
-		std::vector<uint8>	Pixels;
+		uint32 Width, Height;
+		std::vector<uint8> Pixels;
 
-		void		serial(NLMISC::IStream &f)
+		void serial(NLMISC::IStream &f)
 		{
-			sint	ver= f.serialVersion(0);
+			sint ver = f.serialVersion(0);
 			f.serial(Width, Height);
 			f.serialCont(Pixels);
 		}
 
 		/// Compress a bitmap in a Alpha map
-		void		build(const NLMISC::CBitmap &src);
+		void build(const NLMISC::CBitmap &src);
 		/// build a RGBA bitmap.
-		void		buildBitmap(NLMISC::CBitmap &dst);
+		void buildBitmap(NLMISC::CBitmap &dst);
 	};
 
-	class	CDXTCBitmap
+	class CDXTCBitmap
 	{
 	public:
 		/// Compress a bitmap in DXTC5/mipmap
-		void		build(const NLMISC::CBitmap &src);
+		void build(const NLMISC::CBitmap &src);
 		/// build a DXTC5 bitmap.
-		void		buildBitmap(NLMISC::CBitmap &dst);
+		void buildBitmap(NLMISC::CBitmap &dst);
 		/// save/load
-		void		serial(NLMISC::IStream &f);
+		void serial(NLMISC::IStream &f);
 
 	private:
-		std::vector<uint8>	_Data;
+		std::vector<uint8> _Data;
 	};
 
-	struct	CHLSMod
+	struct CHLSMod
 	{
-		float	DHue;
-		float	DLum;
-		float	DSat;
+		float DHue;
+		float DLum;
+		float DSat;
 
-		void		serial(NLMISC::IStream &f)
+		void serial(NLMISC::IStream &f)
 		{
-			sint	ver= f.serialVersion(0);
+			sint ver = f.serialVersion(0);
 			f.serial(DHue, DLum, DSat);
 		}
 	};
 
-	struct	CTextureInstance
+	struct CTextureInstance
 	{
 		/// name of the texture (with .tga)
-		std::string				Name;
+		std::string Name;
 		/// List of modifier for each mask.
-		std::vector<CHLSMod>	Mods;
+		std::vector<CHLSMod> Mods;
 
-		void		serial(NLMISC::IStream &f)
+		void serial(NLMISC::IStream &f)
 		{
-			sint	ver= f.serialVersion(0);
+			sint ver = f.serialVersion(0);
 			f.serial(Name);
 			f.serialCont(Mods);
 		}
@@ -99,21 +96,20 @@ public:
 
 public:
 	// Info for panoply_maker. Tells if the original texture was in dir d4/ at the last compute
-	bool							DividedBy2;
+	bool DividedBy2;
 	// The LowDef version of the Bitmap. Compressed in DXTC5 with mipmaps
-	CDXTCBitmap						SrcBitmap;
+	CDXTCBitmap SrcBitmap;
 	// Array of Masks.
-	std::vector<CMaskBitmap>		Masks;
+	std::vector<CMaskBitmap> Masks;
 	// Array of colored version info
-	std::vector<CTextureInstance>	Instances;
+	std::vector<CTextureInstance> Instances;
 
 public:
 	/// Constructor
 	CHLSBankTextureInfo();
 
-	void			serial(NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 };
-
 
 #endif // NL_HLS_BANK_TEXTURE_INFO_H
 

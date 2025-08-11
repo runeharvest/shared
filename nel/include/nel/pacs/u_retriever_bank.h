@@ -19,13 +19,11 @@
 
 #include "nel/misc/types_nl.h"
 
-namespace NLMISC
-{
-	class IProgressCallback;
+namespace NLMISC {
+class IProgressCallback;
 }
 
 namespace NLPACS {
-
 
 /**
  * TODO Class description
@@ -36,24 +34,21 @@ namespace NLPACS {
 class URetrieverBank
 {
 public:
+	/**
+	 * Create a retriever bank.
+	 *
+	 * \param retrieverBank is the global retriever bank path file name. This method use CPath to find the retriever
+	 * \return the retriever bank interface or NULL if the bank was not found.
+	 */
+	static URetrieverBank *createRetrieverBank(const char *retrieverBank, bool loadAll = true);
 
 	/**
-	  * Create a retriever bank.
-	  *
-	  * \param retrieverBank is the global retriever bank path file name. This method use CPath to find the retriever
-	  * \return the retriever bank interface or NULL if the bank was not found.
-	  */
-	static URetrieverBank	*createRetrieverBank (const char* retrieverBank, bool loadAll = true);
-
-	/**
-	  * Delete a retriever bank.
-	  */
-	static void				deleteRetrieverBank (URetrieverBank *retrieverBank);
+	 * Delete a retriever bank.
+	 */
+	static void deleteRetrieverBank(URetrieverBank *retrieverBank);
 };
 
-
 } // NLPACS
-
 
 #endif // NL_U_RETRIEVER_BANK_H
 

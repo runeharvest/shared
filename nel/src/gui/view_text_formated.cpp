@@ -18,7 +18,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdpch.h"
 #include "nel/gui/view_text_formated.h"
 #include "nel/misc/xml_auto_ptr.h"
@@ -30,89 +29,87 @@
 
 NLMISC_REGISTER_OBJECT(CViewBase, CViewTextFormated, std::string, "text_formated");
 
-namespace NLGUI
+namespace NLGUI {
+
+CViewTextFormated::IViewTextFormatter *CViewTextFormated::textFormatter = NULL;
+
+std::string CViewTextFormated::getProperty(const std::string &name) const
 {
-
-	CViewTextFormated::IViewTextFormatter *CViewTextFormated::textFormatter = NULL;
-
-	std::string CViewTextFormated::getProperty(const std::string &name) const
-    {
-		if (name == "format")
-		{
-			return getFormatString();
-		}
-		else
-			return CViewText::getProperty(name);
-    }
-
-    void CViewTextFormated::setProperty(const std::string &name, const std::string &value)
-    {
-	    if (name == "format")
-	    {
-		    setFormatString(value);
-		    return;
-	    }
-	    else
-		    CViewText::setProperty(name, value);
-    }
-
-	xmlNodePtr CViewTextFormated::serialize( xmlNodePtr parentNode, const char *type ) const
+	if (name == "format")
 	{
-		xmlNodePtr node = CViewText::serialize( parentNode, type );
-		if( node == NULL )
-			return NULL;
-
-		xmlSetProp( node, BAD_CAST "type", BAD_CAST "text_formated" );
-		xmlSetProp( node, BAD_CAST "format", BAD_CAST getFormatString().c_str() );
-
-		return NULL;
+		return getFormatString();
 	}
-
-	// ****************************************************************************
-	bool CViewTextFormated::parse(xmlNodePtr cur,CInterfaceGroup * parentGroup)
-	{
-		if (!CViewText::parse(cur, parentGroup)) return false;
-		CXMLAutoPtr prop((const char*) xmlGetProp( cur, (xmlChar*)"format" ));
-		if (prop)
-			setFormatString((const char *)prop);
-		else
-			setFormatString("$t");
-		return true;
-	}
-
-	// ****************************************************************************
-	void CViewTextFormated::checkCoords()
-	{
-		if (!getActive()) return;
-		std::string formatedResult;
-		formatedResult = formatString(_FormatString, std::string());
-
-		//
-		setText (formatedResult);
-		CViewText::checkCoords();
-	}
-
-	// ****************************************************************************
-	void CViewTextFormated::setFormatString(const std::string &format)
-	{
-		if (NLMISC::startsWith(format, "ui"))
-			_FormatString = NLMISC::CI18N::get(format);
-		else
-			_FormatString = format;
-	}
-
-	// ****************************************************************************
-	std::string CViewTextFormated::formatString(const std::string &inputString, const std::string &paramString)
-	{
-		std::string formatedResult;
-
-		if( textFormatter == NULL )
-			formatedResult = inputString;
-		else
-			formatedResult = CViewTextFormated::textFormatter->formatString( inputString, paramString );
-
-		return formatedResult;
-	}
-
+	else
+		return CViewText::getProperty(name);
 }
 
+void CViewTextFormated::setProperty(const std::string &name, const std::string &value)
+{
+	if (name == "format")
+	{
+		setFormatString(value);
+		return;
+	}
+	else
+		CViewText::setProperty(name, value);
+}
+
+xmlNodePtr CViewTextFormated::serialize(xmlNodePtr parentNode, const char *type) const
+{
+	xmlNodePtr node = CViewText::serialize(parentNode, type);
+	if (node == NULL)
+		return NULL;
+
+	xmlSetProp(node, BAD_CAST "type", BAD_CAST "text_formated");
+	xmlSetProp(node, BAD_CAST "format", BAD_CAST getFormatString().c_str());
+
+	return NULL;
+}
+
+// ****************************************************************************
+bool CViewTextFormated::parse(xmlNodePtr cur, CInterfaceGroup *parentGroup)
+{
+	if (!CViewText::parse(cur, parentGroup)) return false;
+	CXMLAutoPtr prop((const char *)xmlGetProp(cur, (xmlChar *)"format"));
+	if (prop)
+		setFormatString((const char *)prop);
+	else
+		setFormatString("$t");
+	return true;
+}
+
+// ****************************************************************************
+void CViewTextFormated::checkCoords()
+{
+	if (!getActive()) return;
+	std::string formatedResult;
+	formatedResult = formatString(_FormatString, std::string());
+
+	//
+	setText(formatedResult);
+	CViewText::checkCoords();
+}
+
+// ****************************************************************************
+void CViewTextFormated::setFormatString(const std::string &format)
+{
+	if (NLMISC::startsWith(format, "ui"))
+		_FormatString = NLMISC::CI18N::get(format);
+	else
+		_FormatString = format;
+}
+
+// ****************************************************************************
+std::string CViewTextFormated::formatString(const std::string &inputString, const std::string &paramString)
+{
+	std::string formatedResult;
+
+	if (textFormatter == NULL)
+		formatedResult = inputString;
+	else
+		formatedResult = CViewTextFormated::textFormatter->formatString(inputString, paramString);
+
+	return formatedResult;
+}
+
+}

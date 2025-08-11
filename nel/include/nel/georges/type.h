@@ -25,108 +25,105 @@
 #include "nel/georges/u_form_elm.h"
 #include "header.h"
 
-namespace NLGEORGES
-{
+namespace NLGEORGES {
 
 class UFormElm;
 
 /**
-  * This class is a basic type used by atomic form element.
-  */
+ * This class is a basic type used by atomic form element.
+ */
 class CType : public UType
 {
 	friend class CFormLoader;
-public:
 
-	CType ();
-	virtual ~CType ();
+public:
+	CType();
+	virtual ~CType();
 
 	// ** UI
 	enum TUI
 	{
-		Edit,				// Default, for all types
-		EditSpin,			// For number types
-		NonEditableCombo,	// For all types
-		FileBrowser,		// Browse file
-		BigEdit,			// Edit a huge text
-		ColorEdit,			// Edit a color
-		IconWidget,			// Draw an icon
+		Edit, // Default, for all types
+		EditSpin, // For number types
+		NonEditableCombo, // For all types
+		FileBrowser, // Browse file
+		BigEdit, // Edit a huge text
+		ColorEdit, // Edit a color
+		IconWidget, // Draw an icon
 		UITypeCount
 	};
 
 	// Is a UI compatible with a type ?
-	static bool uiCompatible (TType type, TUI ui);
+	static bool uiCompatible(TType type, TUI ui);
 
 	// ** IO functions
-	void				write (xmlDocPtr doc) const;
+	void write(xmlDocPtr doc) const;
 
 	// Header
-	CFileHeader			Header;
+	CFileHeader Header;
 
 	// Type of the type
-	UType::TType		Type;
+	UType::TType Type;
 
 	// Type fo user interface
-	TUI					UIType;
+	TUI UIType;
 
 	// Default value
-	std::string			Default;
+	std::string Default;
 
 	// Min value
-	std::string			Min;
+	std::string Min;
 
 	// Max value
-	std::string			Max;
+	std::string Max;
 
 	// Increment step value
-	std::string			Increment;
+	std::string Increment;
 
 	// Evaluate a node
-	bool				getValue (std::string &result, const class CForm *form, const class CFormElmAtom *node, const class CFormDfn &parentDfn,
-									uint parentIndex, UFormElm::TEval evaluate, uint32 *where, uint32 round, const std::string &formName) const;
+	bool getValue(std::string &result, const class CForm *form, const class CFormElmAtom *node, const class CFormDfn &parentDfn,
+	    uint parentIndex, UFormElm::TEval evaluate, uint32 *where, uint32 round, const std::string &formName) const;
 
 	// Definitions
 	class CDefinition
 	{
 	public:
 		// Label of the definition
-		std::string		Label;
+		std::string Label;
 
 		// Value of the definition
-		std::string		Value;
+		std::string Value;
 	};
 
 	// Array of definition
-	std::vector<CDefinition>	Definitions;
+	std::vector<CDefinition> Definitions;
 
 	// Get the type names
-	static const char *getTypeName (UType::TType type);
-	static const char *getUIName (TUI type);
+	static const char *getTypeName(UType::TType type);
+	static const char *getUIName(TUI type);
 
 	// From UType
-	virtual TType				getType () const;
-	virtual const std::string	&getDefault () const;
-	virtual const std::string	&getMin () const;
-	virtual const std::string	&getMax () const;
-	virtual const std::string	&getIncrement () const;
-	virtual uint				getNumDefinition () const;
-	virtual bool				getDefinition (uint index, std::string &label, std::string &value) const;
-	virtual const std::string	&getComment () const;
-	virtual	void				getDependencies (std::set<std::string> &dependencies) const;
+	virtual TType getType() const;
+	virtual const std::string &getDefault() const;
+	virtual const std::string &getMin() const;
+	virtual const std::string &getMax() const;
+	virtual const std::string &getIncrement() const;
+	virtual uint getNumDefinition() const;
+	virtual bool getDefinition(uint index, std::string &label, std::string &value) const;
+	virtual const std::string &getComment() const;
+	virtual void getDependencies(std::set<std::string> &dependencies) const;
 
 private:
-
 	// Error handling
-	virtual void		warning (bool exception, const std::string &formName, const std::string &formFilename, const std::string &function, const char *format, ... ) const;
-	virtual void		warning2 (bool exception, const std::string &function, const char *format, ... ) const;
+	virtual void warning(bool exception, const std::string &formName, const std::string &formFilename, const std::string &function, const char *format, ...) const;
+	virtual void warning2(bool exception, const std::string &function, const char *format, ...) const;
 
 	// Type names
-	static const char	*TypeNames[];
-	static const char	*UITypeNames[];
+	static const char *TypeNames[];
+	static const char *UITypeNames[];
 
 	// CFormLoader call it
-	void				read (xmlNodePtr root);
-
+	void read(xmlNodePtr root);
 };
 
 } // NLGEORGES

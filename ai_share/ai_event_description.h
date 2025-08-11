@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
 #ifndef RYAI_AI_EVENT_ACTION_NODE_H
 #define RYAI_AI_EVENT_ACTION_NODE_H
 
@@ -32,19 +29,25 @@
 
 #include "ai_vector.h"
 
-class	CTmpPropertyZone : public NLMISC::CRefCount
+class CTmpPropertyZone : public NLMISC::CRefCount
 {
-public:	
-	enum TTarget { All, Fauna, Npc };
+public:
+	enum TTarget
+	{
+		All,
+		Fauna,
+		Npc
+	};
 	CTmpPropertyZone()
-		:verticalPos(AITYPES::vp_auto),
-		 Target(All)
-	{}
+	    : verticalPos(AITYPES::vp_auto)
+	    , Target(All)
+	{
+	}
 	typedef NLMISC::CSmartPtr<CTmpPropertyZone> TSmartPtr;
 
-	AITYPES::TVerticalPos	verticalPos;
-	std::vector <CAIVector> points;
-	AITYPES::CPropertySet	properties;	
+	AITYPES::TVerticalPos verticalPos;
+	std::vector<CAIVector> points;
+	AITYPES::CPropertySet properties;
 	TTarget Target;
 };
 
@@ -55,53 +58,69 @@ public:
 
 	std::string Action;
 	std::vector<std::string> Args;
-	std::vector<CTmpPropertyZone::TSmartPtr>	_PropertyZones;
+	std::vector<CTmpPropertyZone::TSmartPtr> _PropertyZones;
 	std::vector<TSmartPtr> Children;
 	uint32 Weight;
 	uint32 Alias;
 
-	void pushToPdr(CPersistentDataRecord& pdr) const
+	void pushToPdr(CPersistentDataRecord &pdr) const
 	{
-		pdr.push(pdr.addString("type"),Action);
+		pdr.push(pdr.addString("type"), Action);
 
-		if (Weight!=1) pdr.push(pdr.addString("weight"),Weight);
-		if (Alias!=0) pdr.push(pdr.addString("alias"),Alias);
+		if (Weight != 1) pdr.push(pdr.addString("weight"), Weight);
+		if (Alias != 0) pdr.push(pdr.addString("alias"), Alias);
 
-		for (uint32 i=0;i<Args.size();++i)
-			pdr.push(pdr.addString("arg"),	Args[i]);
+		for (uint32 i = 0; i < Args.size(); ++i)
+			pdr.push(pdr.addString("arg"), Args[i]);
 
 		// Note I haven't implemented property zones for now so make sure that we don't need them!
 		nlassert(_PropertyZones.empty());
 
-		for (uint32 i=0;i<Children.size();++i)
+		for (uint32 i = 0; i < Children.size(); ++i)
 		{
 			pdr.pushStructBegin(pdr.addString("child"));
 			Children[i]->pushToPdr(pdr);
 			pdr.pushStructEnd(pdr.addString("child"));
 		}
 	}
-	static CAIEventActionNode* popFromPdr(CPersistentDataRecord& pdr)
+	static CAIEventActionNode *popFromPdr(CPersistentDataRecord &pdr)
 	{
-		CAIEventActionNode* result= new CAIEventActionNode;
-		result->Weight= 1;
-		result->Alias= 0;
+		CAIEventActionNode *result = new CAIEventActionNode;
+		result->Weight = 1;
+		result->Alias = 0;
 
 		while (!pdr.isEndOfStruct())
 		{
-			uint16 token= pdr.peekNextToken();
-			const std::string& tokenName= pdr.peekNextTokenName();
-			if (tokenName=="type")		{ result->Action=			pdr.popNextArg(token).asString();	continue; }
-			if (tokenName=="weight")	{ result->Weight= (uint32)	pdr.popNextArg(token).asUint();		continue; }
-			if (tokenName=="alias")		{ result->Alias=  (uint32)	pdr.popNextArg(token).asUint();		continue; }
-			if (tokenName=="arg")		{ result->Args.push_back(	pdr.popNextArg(token).asString() );	continue; }
-			if (tokenName=="child")
+			uint16 token = pdr.peekNextToken();
+			const std::string &tokenName = pdr.peekNextTokenName();
+			if (tokenName == "type")
+			{
+				result->Action = pdr.popNextArg(token).asString();
+				continue;
+			}
+			if (tokenName == "weight")
+			{
+				result->Weight = (uint32)pdr.popNextArg(token).asUint();
+				continue;
+			}
+			if (tokenName == "alias")
+			{
+				result->Alias = (uint32)pdr.popNextArg(token).asUint();
+				continue;
+			}
+			if (tokenName == "arg")
+			{
+				result->Args.push_back(pdr.popNextArg(token).asString());
+				continue;
+			}
+			if (tokenName == "child")
 			{
 				pdr.popStructBegin(token);
-				vectAppend(result->Children)= CAIEventActionNode::popFromPdr(pdr);
+				vectAppend(result->Children) = CAIEventActionNode::popFromPdr(pdr);
 				pdr.popStructEnd(token);
 				continue;
 			}
-			WARN("Unrecognised content found in pdr: "+tokenName);
+			WARN("Unrecognised content found in pdr: " + tokenName);
 			if (pdr.isStartOfStruct())
 				pdr.skipStruct();
 			else
@@ -111,7 +130,6 @@ public:
 		return result;
 	}
 };
-
 
 class CAIEventDescription : public NLMISC::CRefCount
 {
@@ -126,23 +144,23 @@ public:
 
 	CAIEventActionNode::TSmartPtr Action;
 
-	void pushToPdr(CPersistentDataRecord& pdr) const
+	void pushToPdr(CPersistentDataRecord &pdr) const
 	{
-		pdr.push(pdr.addString("type"),EventType);
-		
-		for (uint32 i=0;i<StateKeywords.size();++i)
-			pdr.push(pdr.addString("stateKeyword"),	StateKeywords[i]);
+		pdr.push(pdr.addString("type"), EventType);
 
-		for (uint32 i=0;i<NamedStates.size();++i)
-			pdr.push(pdr.addString("state"),		NamedStates[i]);
+		for (uint32 i = 0; i < StateKeywords.size(); ++i)
+			pdr.push(pdr.addString("stateKeyword"), StateKeywords[i]);
 
-		for (uint32 i=0;i<GroupKeywords.size();++i)
-			pdr.push(pdr.addString("groupKeyword"),	GroupKeywords[i]);
+		for (uint32 i = 0; i < NamedStates.size(); ++i)
+			pdr.push(pdr.addString("state"), NamedStates[i]);
 
-		for (uint32 i=0;i<NamedGroups.size();++i)
-			pdr.push(pdr.addString("group"),		NamedGroups[i]);
+		for (uint32 i = 0; i < GroupKeywords.size(); ++i)
+			pdr.push(pdr.addString("groupKeyword"), GroupKeywords[i]);
 
-		if (Action!=NULL)
+		for (uint32 i = 0; i < NamedGroups.size(); ++i)
+			pdr.push(pdr.addString("group"), NamedGroups[i]);
+
+		if (Action != NULL)
 		{
 			pdr.pushStructBegin(pdr.addString("action"));
 			Action->pushToPdr(pdr);
@@ -150,28 +168,48 @@ public:
 		}
 	}
 
-	static CAIEventDescription* popFromPdr(CPersistentDataRecord& pdr)
+	static CAIEventDescription *popFromPdr(CPersistentDataRecord &pdr)
 	{
-		CAIEventDescription* result= new CAIEventDescription;
+		CAIEventDescription *result = new CAIEventDescription;
 
 		while (!pdr.isEndOfStruct())
 		{
-			uint16 token= pdr.peekNextToken();
-			const std::string& tokenName= pdr.peekNextTokenName();
-			if (tokenName=="type")			{ result->EventType=				pdr.popNextArg(token).asString();	continue; }
-			if (tokenName=="stateKeyword")	{ result->StateKeywords.push_back(	pdr.popNextArg(token).asString() );	continue; }
-			if (tokenName=="state")			{ result->NamedStates.push_back(	pdr.popNextArg(token).asString() );	continue; }
-			if (tokenName=="groupKeyword")	{ result->GroupKeywords.push_back(	pdr.popNextArg(token).asString() );	continue; }
-			if (tokenName=="group")			{ result->NamedGroups.push_back(	pdr.popNextArg(token).asString() );	continue; }
+			uint16 token = pdr.peekNextToken();
+			const std::string &tokenName = pdr.peekNextTokenName();
+			if (tokenName == "type")
+			{
+				result->EventType = pdr.popNextArg(token).asString();
+				continue;
+			}
+			if (tokenName == "stateKeyword")
+			{
+				result->StateKeywords.push_back(pdr.popNextArg(token).asString());
+				continue;
+			}
+			if (tokenName == "state")
+			{
+				result->NamedStates.push_back(pdr.popNextArg(token).asString());
+				continue;
+			}
+			if (tokenName == "groupKeyword")
+			{
+				result->GroupKeywords.push_back(pdr.popNextArg(token).asString());
+				continue;
+			}
+			if (tokenName == "group")
+			{
+				result->NamedGroups.push_back(pdr.popNextArg(token).asString());
+				continue;
+			}
 
-			if (tokenName=="action")
+			if (tokenName == "action")
 			{
 				pdr.popStructBegin(token);
-				result->Action= CAIEventActionNode::popFromPdr(pdr);
+				result->Action = CAIEventActionNode::popFromPdr(pdr);
 				pdr.popStructEnd(token);
 				continue;
 			}
-			WARN("Unrecognised content found in pdr: "+tokenName);
+			WARN("Unrecognised content found in pdr: " + tokenName);
 			if (pdr.isStartOfStruct())
 				pdr.skipStruct();
 			else
@@ -179,8 +217,6 @@ public:
 		}
 		return result;
 	}
-
 };
-
 
 #endif

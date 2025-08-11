@@ -12,22 +12,21 @@
 
 class CNumEdit : public CEdit
 {
-// Construction
+	// Construction
 public:
 	CNumEdit();
 
 	BOOL checkValidity();
-// Attributes
+	// Attributes
 
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CNumEdit)
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CNumEdit();
 

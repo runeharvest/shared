@@ -7,15 +7,15 @@
 #define PIXMAP_MARGIN 5
 
 class CTile_Widget : public QWidget
- {
-     Q_OBJECT
+{
+	Q_OBJECT
 
- public:
+public:
 	CTile_Widget(QWidget *parent = 0);
-	void initWidget(const QPixmap&, const int, const QString&);
+	void initWidget(const QPixmap &, const int, const QString &);
 
- private:
-	 Ui::TileWidget ui;
- };
+private:
+	Ui::TileWidget ui;
+};
 
 #endif

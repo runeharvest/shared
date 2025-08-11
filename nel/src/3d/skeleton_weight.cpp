@@ -23,20 +23,18 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 
-uint CSkeletonWeight::getNumNode () const
+uint CSkeletonWeight::getNumNode() const
 {
 	return (uint)_Elements.size();
 }
 
 // ***************************************************************************
 
-const std::string& CSkeletonWeight::getNodeName (uint node) const
+const std::string &CSkeletonWeight::getNodeName(uint node) const
 {
 	// Return the name of the n-th node
 	return _Elements[node].Name;
@@ -44,7 +42,7 @@ const std::string& CSkeletonWeight::getNodeName (uint node) const
 
 // ***************************************************************************
 
-float CSkeletonWeight::getNodeWeight (uint node) const
+float CSkeletonWeight::getNodeWeight(uint node) const
 {
 	// Return the name of the n-th node
 	return _Elements[node].Weight;
@@ -52,38 +50,38 @@ float CSkeletonWeight::getNodeWeight (uint node) const
 
 // ***************************************************************************
 
-void CSkeletonWeight::build (const TNodeArray& array)
+void CSkeletonWeight::build(const TNodeArray &array)
 {
 	// Copy the array
-	_Elements=array;
+	_Elements = array;
 }
 
 // ***************************************************************************
 
-void CSkeletonWeight::serial (NLMISC::IStream& f)
+void CSkeletonWeight::serial(NLMISC::IStream &f)
 {
 	// Serial a header
-	f.serialCheck (NELID("TWKS"));
+	f.serialCheck(NELID("TWKS"));
 
 	// Serial a version number
-	(void)f.serialVersion (0);
+	(void)f.serialVersion(0);
 
 	// Serial the array
-	f.serialCont (_Elements);
+	f.serialCont(_Elements);
 }
 
 // ***************************************************************************
 
-void CSkeletonWeight::CNode::serial (NLMISC::IStream& f)
+void CSkeletonWeight::CNode::serial(NLMISC::IStream &f)
 {
 	// Serial a version number
-	(void)f.serialVersion (0);
+	(void)f.serialVersion(0);
 
 	// Serial the name
-	f.serial (Name);
+	f.serial(Name);
 
 	// Serial the weight
-	f.serial (Weight);
+	f.serial(Weight);
 }
 
 // ***************************************************************************

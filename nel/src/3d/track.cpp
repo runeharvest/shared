@@ -27,13 +27,11 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
-H_AUTO_DECL( NL3D_UTrack_interpolate )
+H_AUTO_DECL(NL3D_UTrack_interpolate)
 
-#define	NL3D_HAUTO_UTRACK_INTERPOLATE			H_AUTO_USE( NL3D_UTrack_interpolate )
-
+#define NL3D_HAUTO_UTRACK_INTERPOLATE H_AUTO_USE(NL3D_UTrack_interpolate)
 
 // ***************************************************************************
 
@@ -49,23 +47,23 @@ CTrackDefaultBool ttoto15;
 */
 
 // ***************************************************************************
-static CAnimatedValueBlock		AnimatedValueBlock;
+static CAnimatedValueBlock AnimatedValueBlock;
 
 // ***************************************************************************
 
-bool ITrack::interpolate (TAnimationTime time, float& res)
+bool ITrack::interpolate(TAnimationTime time, float &res)
 {
 	NL3D_HAUTO_UTRACK_INTERPOLATE;
 
 	// Evaluate it
 	const CAnimatedValueFloat *value;
-	value= dynamic_cast<const CAnimatedValueFloat*>(&eval (time, AnimatedValueBlock));
+	value = dynamic_cast<const CAnimatedValueFloat *>(&eval(time, AnimatedValueBlock));
 
 	// Type is good ?
 	if (value)
 	{
 		// Ok, return the value
-		res=value->Value;
+		res = value->Value;
 		return true;
 	}
 	else
@@ -75,19 +73,19 @@ bool ITrack::interpolate (TAnimationTime time, float& res)
 
 // ***************************************************************************
 
-bool ITrack::interpolate (TAnimationTime time, sint32& res)
+bool ITrack::interpolate(TAnimationTime time, sint32 &res)
 {
 	NL3D_HAUTO_UTRACK_INTERPOLATE;
 
 	// Evaluate it
 	const CAnimatedValueInt *value;
-	value= dynamic_cast<const CAnimatedValueInt*>(&eval (time, AnimatedValueBlock));
+	value = dynamic_cast<const CAnimatedValueInt *>(&eval(time, AnimatedValueBlock));
 
 	// Type is good ?
 	if (value)
 	{
 		// Ok, return the value
-		res=value->Value;
+		res = value->Value;
 		return true;
 	}
 	else
@@ -97,19 +95,19 @@ bool ITrack::interpolate (TAnimationTime time, sint32& res)
 
 // ***************************************************************************
 
-bool ITrack::interpolate (TAnimationTime time, CRGBA& res)
+bool ITrack::interpolate(TAnimationTime time, CRGBA &res)
 {
 	NL3D_HAUTO_UTRACK_INTERPOLATE;
 
 	// Evaluate it
 	const CAnimatedValueRGBA *value;
-	value= dynamic_cast<const CAnimatedValueRGBA*>(&eval (time, AnimatedValueBlock));
+	value = dynamic_cast<const CAnimatedValueRGBA *>(&eval(time, AnimatedValueBlock));
 
 	// Type is good ?
 	if (value)
 	{
 		// Ok, return the value
-		res=value->Value;
+		res = value->Value;
 		return true;
 	}
 	else
@@ -119,19 +117,19 @@ bool ITrack::interpolate (TAnimationTime time, CRGBA& res)
 
 // ***************************************************************************
 
-bool ITrack::interpolate (TAnimationTime time, CVector& res)
+bool ITrack::interpolate(TAnimationTime time, CVector &res)
 {
 	NL3D_HAUTO_UTRACK_INTERPOLATE;
 
 	// Evaluate it
 	const CAnimatedValueVector *value;
-	value= dynamic_cast<const CAnimatedValueVector*>(&eval (time, AnimatedValueBlock));
+	value = dynamic_cast<const CAnimatedValueVector *>(&eval(time, AnimatedValueBlock));
 
 	// Type is good ?
 	if (value)
 	{
 		// Ok, return the value
-		res=value->Value;
+		res = value->Value;
 		return true;
 	}
 	else
@@ -141,19 +139,19 @@ bool ITrack::interpolate (TAnimationTime time, CVector& res)
 
 // ***************************************************************************
 
-bool ITrack::interpolate (TAnimationTime time, CQuat& res)
+bool ITrack::interpolate(TAnimationTime time, CQuat &res)
 {
 	NL3D_HAUTO_UTRACK_INTERPOLATE;
 
 	// Evaluate it
 	const CAnimatedValueQuat *value;
-	value= dynamic_cast<const CAnimatedValueQuat*>(&eval (time, AnimatedValueBlock));
+	value = dynamic_cast<const CAnimatedValueQuat *>(&eval(time, AnimatedValueBlock));
 
 	// Type is good ?
 	if (value)
 	{
 		// Ok, return the value
-		res=value->Value;
+		res = value->Value;
 		return true;
 	}
 	else
@@ -163,19 +161,19 @@ bool ITrack::interpolate (TAnimationTime time, CQuat& res)
 
 // ***************************************************************************
 
-bool ITrack::interpolate (TAnimationTime time, std::string& res)
+bool ITrack::interpolate(TAnimationTime time, std::string &res)
 {
 	NL3D_HAUTO_UTRACK_INTERPOLATE;
 
 	// Evaluate it
 	const CAnimatedValueString *value;
-	value= dynamic_cast<const CAnimatedValueString*>(&eval (time, AnimatedValueBlock));
+	value = dynamic_cast<const CAnimatedValueString *>(&eval(time, AnimatedValueBlock));
 
 	// Type is good ?
 	if (value)
 	{
 		// Ok, return the value
-		res=value->Value;
+		res = value->Value;
 		return true;
 	}
 	else
@@ -185,19 +183,19 @@ bool ITrack::interpolate (TAnimationTime time, std::string& res)
 
 // ***************************************************************************
 
-bool ITrack::interpolate (TAnimationTime time, bool& res)
+bool ITrack::interpolate(TAnimationTime time, bool &res)
 {
 	NL3D_HAUTO_UTRACK_INTERPOLATE;
 
 	// Evaluate it
 	const CAnimatedValueBool *value;
-	value= dynamic_cast<const CAnimatedValueBool*>(&eval (time, AnimatedValueBlock));
+	value = dynamic_cast<const CAnimatedValueBool *>(&eval(time, AnimatedValueBlock));
 
 	// Type is good ?
 	if (value)
 	{
 		// Ok, return the value
-		res=value->Value;
+		res = value->Value;
 		return true;
 	}
 	else

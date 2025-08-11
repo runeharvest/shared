@@ -20,12 +20,9 @@
 #include "nel/misc/types_nl.h"
 #include "nel/3d/material.h"
 
+namespace NL3D {
 
-namespace NL3D
-{
-
-
-class	IDriver;
+class IDriver;
 
 // ***************************************************************************
 /**
@@ -39,36 +36,32 @@ class	IDriver;
 class CMeshBlender
 {
 public:
-
 	/// Constructor
-	CMeshBlender() {}
+	CMeshBlender() { }
 
 	/// Modify the material and the driver for Global Alpha Use.
-	void		prepareRenderForGlobalAlpha(CMaterial &material, IDriver *drv, float globalAlpha, uint8 globalAlphaInt, bool gaDisableZWrite);
+	void prepareRenderForGlobalAlpha(CMaterial &material, IDriver *drv, float globalAlpha, uint8 globalAlphaInt, bool gaDisableZWrite);
 
 	/// Restore the material and driver in their initial state.
-	void		restoreRender(CMaterial &material, IDriver *drv, bool gaDisableZWrite);
+	void restoreRender(CMaterial &material, IDriver *drv, bool gaDisableZWrite);
 
 	/// Same method, but special for CoarseMesh (used by CMeshMultiLod::renderMeshGeom).
-	void		prepareRenderForGlobalAlphaCoarseMesh(CMaterial &material, IDriver *drv, NLMISC::CRGBA color, float globalAlpha, bool gaDisableZWrite);
+	void prepareRenderForGlobalAlphaCoarseMesh(CMaterial &material, IDriver *drv, NLMISC::CRGBA color, float globalAlpha, bool gaDisableZWrite);
 
 	/// Same method, but special for CoarseMesh (used by CMeshMultiLod::renderMeshGeom).
-	void		restoreRenderCoarseMesh(CMaterial &material, IDriver *drv, bool gaDisableZWrite);
+	void restoreRenderCoarseMesh(CMaterial &material, IDriver *drv, bool gaDisableZWrite);
 
 private:
-	uint8				_BkOpacity;
-	bool				_BkZWrite;
-	bool				_BkBlend;
-	CMaterial::TBlend	_BkSrcBlend;
-	CMaterial::TBlend	_BkDstBlend;
-	float				_BkAlphaTestThreshold;
-	NLMISC::CRGBA		_BkupColor;
-
+	uint8 _BkOpacity;
+	bool _BkZWrite;
+	bool _BkBlend;
+	CMaterial::TBlend _BkSrcBlend;
+	CMaterial::TBlend _BkDstBlend;
+	float _BkAlphaTestThreshold;
+	NLMISC::CRGBA _BkupColor;
 };
 
-
 } // NL3D
-
 
 #endif // NL_MESH_BLENDER_H
 

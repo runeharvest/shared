@@ -17,11 +17,9 @@
 #include "stdpch.h"
 #include "ryzom_database_banks.h"
 
-const char *CDBBankNames[INVALID_CDB_BANK+1] = { "PLR", "GUILD", /* "CONTINENT", */ "OUTPOST", /* "GLOBAL", */ "<NB>", "INVALID" };
-
+const char *CDBBankNames[INVALID_CDB_BANK + 1] = { "PLR", "GUILD", /* "CONTINENT", */ "OUTPOST", /* "GLOBAL", */ "<NB>", "INVALID" };
 
 // leave not static else this workaround don't work
-void	dummyToAvoidStupidCompilerWarning_game_share_ryzom_database_banks_cpp()
+void dummyToAvoidStupidCompilerWarning_game_share_ryzom_database_banks_cpp()
 {
 }
-

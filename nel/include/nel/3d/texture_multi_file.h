@@ -22,9 +22,7 @@
 
 #include <string>
 
-
 namespace NL3D {
-
 
 /**
  * This kind of texture is like a texture file except that it can encode several texture at once.
@@ -39,7 +37,6 @@ namespace NL3D {
 class CTextureMultiFile : public ITexture
 {
 public:
-
 	CTextureMultiFile(uint numTexs = 0);
 
 	/// set the number of textures that are encoded in that texture
@@ -49,41 +46,37 @@ public:
 	 * \param name of the file
 	 * \param index index of the texture
 	 */
-	void					setFileName(uint index, const char *);
+	void setFileName(uint index, const char *);
 	//
-	uint					getNumFileName() const { return (uint)_FileNames.size(); }
+	uint getNumFileName() const { return (uint)_FileNames.size(); }
 	/**
 	 * get the name of the file containing the texture for the given index
 	 * \return name of the file
 	 */
-	const std::string		&getFileName(uint index) const { return _FileNames[index]; }
+	const std::string &getFileName(uint index) const { return _FileNames[index]; }
 
-
-
-	virtual bool			supportSharing() const { return true; }
-	virtual std::string		getShareName() const;
-	virtual void			selectTexture(uint index);
-	virtual bool			isSelectable() const { return true; }
-	virtual ITexture		*buildNonSelectableVersion(uint index);
-
+	virtual bool supportSharing() const { return true; }
+	virtual std::string getShareName() const;
+	virtual void selectTexture(uint index);
+	virtual bool isSelectable() const { return true; }
+	virtual ITexture *buildNonSelectableVersion(uint index);
 
 	/// Generate the current selected texture, looking in CPath if necessary.
-	virtual void			doGenerate(bool async = false);
+	virtual void doGenerate(bool async = false);
 	/// Serial this object
-	virtual void			serial(NLMISC::IStream &f);
+	virtual void serial(NLMISC::IStream &f);
 	NLMISC_DECLARE_CLASS(CTextureMultiFile);
 
 private:
-	uint32					 _CurrSelectedTexture;
+	uint32 _CurrSelectedTexture;
 	std::vector<std::string> _FileNames;
+
 private:
-	sint					getTexIndex(uint index) const;
-	const std::string		&getTexNameByIndex(uint index) const;
+	sint getTexIndex(uint index) const;
+	const std::string &getTexNameByIndex(uint index) const;
 };
 
-
 } // NL3D
-
 
 #endif // NL_TEXTURE_MULTI_FILE_H
 

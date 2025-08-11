@@ -89,7 +89,7 @@ public:
 	/// The 3D scene
 	virtual bool wantScene();
 	/// Interface within the 3D scene
-	virtual bool wantInterface3D();	
+	virtual bool wantInterface3D();
 	/// 2D Interface
 	virtual bool wantInterface2D();
 
@@ -97,7 +97,6 @@ public:
 	virtual bool beginRenderTarget();
 	/// Returns true if a render target was fully drawn, always false if not using render targets
 	virtual bool endRenderTarget();
-
 
 	/// Get the HMD orientation
 	virtual NLMISC::CQuat getOrientation() const;
@@ -113,11 +112,9 @@ public:
 	/// Set the scale of the game in units per meter
 	virtual void setScale(float s);
 
-
 	static void listDevices(std::vector<CStereoDeviceInfo> &devicesOut);
 	static bool isLibraryInUse();
 	static void releaseLibrary();
-
 
 	/// Calculates internal camera information based on the reference camera
 	void initCamera(uint cid, const NL3D::UCamera *camera);

@@ -31,13 +31,13 @@ using NL3D::CDriverGL;
 
 @interface CocoaApplicationDelegate : NSObject
 #ifdef NL_MAC_VERSION_10_6_UP
-<NSApplicationDelegate>
+                                      <NSApplicationDelegate>
 #endif
 {
-	CDriverGL* _driver;
+	CDriverGL *_driver;
 }
 
--(id)initWithDriver:(CDriverGL*)driver;
--(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender;
+- (id)initWithDriver:(CDriverGL *)driver;
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender;
 
 @end

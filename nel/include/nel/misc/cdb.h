@@ -18,8 +18,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef CDB_H
 #define CDB_H
 
@@ -33,8 +31,7 @@
 typedef struct _xmlNode xmlNode;
 typedef xmlNode *xmlNodePtr;
 
-namespace NLMISC
-{
+namespace NLMISC {
 class IProgressCallback;
 class CBitMemStream;
 class CCDBNodeLeaf;
@@ -59,18 +56,139 @@ public:
 	{
 		UNKNOWN = 0,
 		// Unsigned
-		I1,  I2,  I3,  I4,  I5,  I6,  I7,  I8,  I9,  I10, I11, I12, I13, I14, I15, I16,
-		I17, I18, I19, I20, I21, I22, I23, I24, I25, I26, I27, I28, I29, I30, I31, I32,
-		I33, I34, I35, I36, I37, I38, I39, I40, I41, I42, I43, I44, I45, I46, I47, I48,
-		I49, I50, I51, I52, I53, I54, I55, I56, I57, I58, I59, I60, I61, I62, I63, I64,
+		I1,
+		I2,
+		I3,
+		I4,
+		I5,
+		I6,
+		I7,
+		I8,
+		I9,
+		I10,
+		I11,
+		I12,
+		I13,
+		I14,
+		I15,
+		I16,
+		I17,
+		I18,
+		I19,
+		I20,
+		I21,
+		I22,
+		I23,
+		I24,
+		I25,
+		I26,
+		I27,
+		I28,
+		I29,
+		I30,
+		I31,
+		I32,
+		I33,
+		I34,
+		I35,
+		I36,
+		I37,
+		I38,
+		I39,
+		I40,
+		I41,
+		I42,
+		I43,
+		I44,
+		I45,
+		I46,
+		I47,
+		I48,
+		I49,
+		I50,
+		I51,
+		I52,
+		I53,
+		I54,
+		I55,
+		I56,
+		I57,
+		I58,
+		I59,
+		I60,
+		I61,
+		I62,
+		I63,
+		I64,
 		// Signed
-		S1,  S2,  S3,  S4,  S5,  S6,  S7,  S8,  S9,  S10, S11, S12, S13, S14, S15, S16,
-		S17, S18, S19, S20, S21, S22, S23, S24, S25, S26, S27, S28, S29, S30, S31, S32,
-		S33, S34, S35, S36, S37, S38, S39, S40, S41, S42, S43, S44, S45, S46, S47, S48,
-		S49, S50, S51, S52, S53, S54, S55, S56, S57, S58, S59, S60, S61, S62, S63, S64,
-		TEXT, PACKED, Nb_Prop_Type
+		S1,
+		S2,
+		S3,
+		S4,
+		S5,
+		S6,
+		S7,
+		S8,
+		S9,
+		S10,
+		S11,
+		S12,
+		S13,
+		S14,
+		S15,
+		S16,
+		S17,
+		S18,
+		S19,
+		S20,
+		S21,
+		S22,
+		S23,
+		S24,
+		S25,
+		S26,
+		S27,
+		S28,
+		S29,
+		S30,
+		S31,
+		S32,
+		S33,
+		S34,
+		S35,
+		S36,
+		S37,
+		S38,
+		S39,
+		S40,
+		S41,
+		S42,
+		S43,
+		S44,
+		S45,
+		S46,
+		S47,
+		S48,
+		S49,
+		S50,
+		S51,
+		S52,
+		S53,
+		S54,
+		S55,
+		S56,
+		S57,
+		S58,
+		S59,
+		S60,
+		S61,
+		S62,
+		S63,
+		S64,
+		TEXT,
+		PACKED,
+		Nb_Prop_Type
 	};
-
 
 	/**
 	 * observer interface to a database property
@@ -80,12 +198,10 @@ public:
 	 */
 	class IPropertyObserver : public CRefCount
 	{
-	public :
-		virtual ~IPropertyObserver()	{}
-		virtual void update(ICDBNode* node ) = 0;
+	public:
+		virtual ~IPropertyObserver() { }
+		virtual void update(ICDBNode *node) = 0;
 	};
-
-
 
 	/**
 	 * Text id
@@ -99,24 +215,28 @@ public:
 		/**
 		 *	Default constructor
 		 */
-		CTextId(): _Idx(0) {}
+		CTextId()
+		    : _Idx(0)
+		{
+		}
 
 		/**
 		 * Init this text id from a string
 		 */
-		explicit CTextId( const std::string& str ): _Idx(0)
+		explicit CTextId(const std::string &str)
+		    : _Idx(0)
 		{
 			const std::string &s = str;
 			uint32 i, j;
-			for (i=0,j=0; i+j<s.size(); j++)
-				if (s[i+j]==':')
+			for (i = 0, j = 0; i + j < s.size(); j++)
+				if (s[i + j] == ':')
 				{
-					_Ids.push_back(s.substr(i,j));
-					i+=j+1;	// +1 to skip the ':'
-					j=0;
+					_Ids.push_back(s.substr(i, j));
+					i += j + 1; // +1 to skip the ':'
+					j = 0;
 				}
 			// deal with the last id in the string (terminated by a '\x0' and not a ':')
-			_Ids.push_back(s.substr(i,j));
+			_Ids.push_back(s.substr(i, j));
 		}
 
 		/**
@@ -125,16 +245,16 @@ public:
 		std::string toString() const
 		{
 			if (_Ids.empty()) return std::string("");
-			std::string str=_Ids[0];
-			for (uint i=1; i<_Ids.size(); i++)
-				str +=std::string(":")+ _Ids[i];
+			std::string str = _Ids[0];
+			for (uint i = 1; i < _Ids.size(); i++)
+				str += std::string(":") + _Ids[i];
 			return str;
 		}
 
 		/**
 		 * Push back a sub name id to this id
 		 */
-		void push( const std::string &str ) {	_Ids.push_back( str ); }
+		void push(const std::string &str) { _Ids.push_back(str); }
 
 		/**
 		 * Remove the last sub name id to this id
@@ -146,12 +266,12 @@ public:
 		 */
 		const std::string &readNext() const
 		{
-			nlassert( _Idx < _Ids.size() );
+			nlassert(_Idx < _Ids.size());
 			return _Ids[_Idx++];
 		}
 
 		/** return true if a call to readNext can be performed
-		  */
+		 */
 		bool hasElements() const { return _Idx < _Ids.size(); }
 
 		/**
@@ -169,7 +289,7 @@ public:
 		const std::string &getElement(uint idx)
 		{
 			static std::string empty;
-			if(idx>=size())
+			if (idx >= size())
 				return empty;
 			else
 				return _Ids[idx];
@@ -180,51 +300,49 @@ public:
 		mutable uint _Idx;
 	};
 
-//-----------------------------------------------------------------------
-// end of CDB sub-class definitions
+	//-----------------------------------------------------------------------
+	// end of CDB sub-class definitions
 
+	//-----------------------------------------------------------------------
+	// IDBNode interface definition
 
-//-----------------------------------------------------------------------
-// IDBNode interface definition
-
-public :
-
+public:
 	/**
 	 *	destructor
 	 */
-	virtual ~ICDBNode() {}
+	virtual ~ICDBNode() { }
 
 	/**
 	 *	Build the structure of the database from a file
 	 * \param f is the stream
 	 */
-	virtual void init( xmlNodePtr node, IProgressCallback &progressCallBack, bool mapBanks=false, CCDBBankHandler *bankHandler = NULL ) = 0;
+	virtual void init(xmlNodePtr node, IProgressCallback &progressCallBack, bool mapBanks = false, CCDBBankHandler *bankHandler = NULL) = 0;
 
 	/**
 	 * Save a backup of the database
 	 * \param id is the text id of the property/grp
 	 * \param f is the stream
 	 */
-	virtual void write( CTextId& id, FILE * f) = 0;
+	virtual void write(CTextId &id, FILE *f) = 0;
 
 	/**
 	 * Update the database from a stream coming from the FE
 	 * \param gc the server gameCycle of this update. Any outdated update are aborted
 	 * \param f : the stream.
 	 */
-	virtual void readDelta( TGameCycle gc, CBitMemStream & f ) = 0;
+	virtual void readDelta(TGameCycle gc, CBitMemStream &f) = 0;
 
 	/**
 	 * Get a node . Create it if it does not exist yet
 	 * \param id : the CTextId identifying the node
 	 */
-	virtual ICDBNode * getNode( const CTextId& id, bool bCreate = true )=0 ;
+	virtual ICDBNode *getNode(const CTextId &id, bool bCreate = true) = 0;
 
 	/**
 	 * Get a node
 	 * \param idx is the node index
 	 */
-	virtual ICDBNode * getNode( uint16 idx ) = 0;
+	virtual ICDBNode *getNode(uint16 idx) = 0;
 
 	/**
 	 * Get a node index
@@ -232,7 +350,7 @@ public :
 	 * \param index is a reference that receive the result
 	 * \return true if the node was found
 	 */
-	virtual bool getNodeIndex( ICDBNode* node , uint & index) = 0;
+	virtual bool getNodeIndex(ICDBNode *node, uint &index) = 0;
 
 	/**
 	 * Return the value of a property (the update flag is set to false)
@@ -240,7 +358,7 @@ public :
 	 * \param name is the name of the property
 	 * \return the value of the property
 	 */
-	virtual sint64 getProp( CTextId& id ) = 0;
+	virtual sint64 getProp(CTextId &id) = 0;
 
 	/**
 	 * Set the value of a property (the update flag is set to true)
@@ -249,10 +367,10 @@ public :
 	 * \param value is the value of the property
 	 * \return bool : 'true' if property found.
 	 */
-	virtual bool setProp( CTextId& id, sint64 value ) = 0;
+	virtual bool setProp(CTextId &id, sint64 value) = 0;
 
 	/// Reset all leaf data from this point
-	virtual void resetData(TGameCycle gc, bool forceReset=false) = 0;
+	virtual void resetData(TGameCycle gc, bool forceReset = false) = 0;
 
 	/**
 	 * Clear the node and his children
@@ -260,34 +378,38 @@ public :
 	virtual void clear() = 0;
 
 	/**
-	* add an observer to a property
-	* \param observer : pointer to an observer
-	* \param id text id identifying the property
-	* \return false if the node doesn't exist
-	*/
-	virtual bool addObserver(IPropertyObserver* observer, CTextId& id) = 0;
+	 * add an observer to a property
+	 * \param observer : pointer to an observer
+	 * \param id text id identifying the property
+	 * \return false if the node doesn't exist
+	 */
+	virtual bool addObserver(IPropertyObserver *observer, CTextId &id) = 0;
 
 	/** remove an obsever
 	 * \param observer : pointer to an observer
 	 * \param id text id identifying the property
 	 * \return false if the node or observer doesn t exist
 	 */
-	virtual bool removeObserver(IPropertyObserver* observer, CTextId& id) = 0;
+	virtual bool removeObserver(IPropertyObserver *observer, CTextId &id) = 0;
 
 	/**
 	 * Inform a node of its parenthood
 	 */
-	virtual void setParent(CCDBNodeBranch * /* parent */) { nlassertex(0,("setParent() not overloaded for given node type!")); }
+	virtual void setParent(CCDBNodeBranch * /* parent */) { nlassertex(0, ("setParent() not overloaded for given node type!")); }
 
 	/**
 	 * get the parent of a node
 	 */
-	virtual CCDBNodeBranch* getParent() { nlassertex(0,("getParent() not overloaded for given node type!")); return NULL; }
+	virtual CCDBNodeBranch *getParent()
+	{
+		nlassertex(0, ("getParent() not overloaded for given node type!"));
+		return NULL;
+	}
 
 	/**
 	 * get the name of this node
 	 */
-	const std::string * getName() const { return &_DBSM->localUnmap(_Name); }
+	const std::string *getName() const { return &_DBSM->localUnmap(_Name); }
 
 	/**
 	 * get the full name of this node separator is ':' (ie UI:INTERFACE:REDSTUFF)
@@ -296,25 +418,25 @@ public :
 	std::string getFullName();
 
 	/// Count the leaves
-	virtual uint			countLeaves() const = 0;
+	virtual uint countLeaves() const = 0;
 
 	/// Find the leaf which count is specified (if found, the returned value is non-null and count is 0)
-	virtual CCDBNodeLeaf	*findLeafAtCount( uint& count ) = 0;
+	virtual CCDBNodeLeaf *findLeafAtCount(uint &count) = 0;
 
 	/// Set the atomic branch flag (when all the modified nodes of a branch should be tranmitted at the same time)
-	void					setAtomic( bool atomicBranch ) { _AtomicFlag = atomicBranch; }
+	void setAtomic(bool atomicBranch) { _AtomicFlag = atomicBranch; }
 
 	/// Return true if the branch has the atomic flag
-	bool					isAtomic() const { return _AtomicFlag; }
+	bool isAtomic() const { return _AtomicFlag; }
 
 	// test if the node is a leaf
-	virtual bool			isLeaf() const = 0;
+	virtual bool isLeaf() const = 0;
 
 	/// Debug purpose
-	virtual void display (const std::string &/* prefix */){}
+	virtual void display(const std::string & /* prefix */) { }
 
 	/// Return the string id corresponding to the argument
-	static TStringId getStringId(const std::string& nodeName)
+	static TStringId getStringId(const std::string &nodeName)
 	{
 		if (_DBSM == NULL) _DBSM = CStringMapper::createLocalMapper();
 		return _DBSM->localMap(nodeName);
@@ -330,20 +452,21 @@ public :
 	/// release string mapper
 	static void releaseStringMapper();
 
-	static bool isDatabaseVerbose(){ return verboseDatabase; }
-	static void setVerboseDatabase( bool b ){ verboseDatabase = b; }
+	static bool isDatabaseVerbose() { return verboseDatabase; }
+	static void setVerboseDatabase(bool b) { verboseDatabase = b; }
 
 protected:
-
 	/// Constructor
-	ICDBNode() : _AtomicFlag(false)
+	ICDBNode()
+	    : _AtomicFlag(false)
 	{
 		if (_DBSM == NULL) _DBSM = CStringMapper::createLocalMapper();
 		_Name = CStringMapper::emptyId();
 	}
 
 	/// Constructor
-	ICDBNode (const std::string &name) : _AtomicFlag(false)
+	ICDBNode(const std::string &name)
+	    : _AtomicFlag(false)
 	{
 		if (_DBSM == NULL) _DBSM = CStringMapper::createLocalMapper();
 		_Name = _DBSM->localMap(name);
@@ -354,20 +477,17 @@ protected:
 	void _buildFullName(CSString &fullName);
 
 	/// Atomic flag: is the branch an atomic group, or is the leaf a member of an atomic group
-	bool			_AtomicFlag		: 1;
+	bool _AtomicFlag : 1;
 
 	/// Name of the node
-	TStringId	_Name;
-	//std::string _NameDbg;
+	TStringId _Name;
+	// std::string _NameDbg;
 
 	static CStringMapper *_DBSM;
 
 	static bool verboseDatabase;
-
 };
 
-
 }
-
 
 #endif // CDB_H

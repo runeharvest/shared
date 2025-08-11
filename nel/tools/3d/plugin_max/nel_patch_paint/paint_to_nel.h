@@ -13,13 +13,14 @@ class CNelPatchValue
 {
 public:
 	friend class CNelPatchChanger;
-	CNelPatchValue ();
-	~CNelPatchValue ();
+	CNelPatchValue();
+	~CNelPatchValue();
+
 private:
-	bool											TileLoaded;
-	bool											ColorLoaded;
-	std::vector<CTileElement>						*Tiles;
-	std::vector<CTileColor>							*TileColors;
+	bool TileLoaded;
+	bool ColorLoaded;
+	std::vector<CTileElement> *Tiles;
+	std::vector<CTileColor> *TileColors;
 };
 
 typedef std::map<CNelPatchKey, CNelPatchValue> CNelPatchMap;
@@ -29,25 +30,24 @@ class CNelPatchChanger
 {
 public:
 	// Construct the object
-	CNelPatchChanger (CLandscape *landscape)
+	CNelPatchChanger(CLandscape *landscape)
 	{
-		_Landscape=landscape;
+		_Landscape = landscape;
 	}
 
 	// Clear
-	void clear ();
+	void clear();
 
 	// Get a patch tile array
-	std::vector<CTileElement>* getTileArray (int mesh, int patch);
+	std::vector<CTileElement> *getTileArray(int mesh, int patch);
 
 	// Get a patch tile array
-	std::vector<CTileColor>* getColorArray (int mesh, int patch);
+	std::vector<CTileColor> *getColorArray(int mesh, int patch);
 
 	// Apply changes
-	void applyChanges (bool displace);
+	void applyChanges(bool displace);
 
 private:
-
-	CLandscape							*_Landscape;
-	CNelPatchMap						_MapNeLPatchInfo;
+	CLandscape *_Landscape;
+	CNelPatchMap _MapNeLPatchInfo;
 };

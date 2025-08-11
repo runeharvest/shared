@@ -23,14 +23,13 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 
-const char *UTransformable::getPosValueName ()
+const char *UTransformable::getPosValueName()
 {
-	return ITransformable::getPosValueName ();
+	return ITransformable::getPosValueName();
 }
 
 // ***************************************************************************
@@ -107,7 +106,7 @@ void UTransformable::setRotQuat(const CQuat &quat)
 
 void UTransformable::setRotQuat(const CVector &jdir)
 {
-	CMatrix	mat;
+	CMatrix mat;
 	mat.setRot(CVector::I, jdir, CVector::K);
 	mat.normalize(CMatrix::YZX);
 	setRotQuat(mat.getRot());
@@ -117,7 +116,7 @@ void UTransformable::setRotQuat(const CVector &jdir)
 
 void UTransformable::setRotQuat(const CVector &jdir, const CVector &vup)
 {
-	CMatrix	mat;
+	CMatrix mat;
 	mat.setRot(CVector::I, jdir, vup);
 	mat.normalize(CMatrix::YZX);
 	setRotQuat(mat.getRot());
@@ -186,17 +185,16 @@ void UTransformable::getPivot(CVector &pivot)
 	_Object->getPivot(pivot);
 }
 
-
 // ***************************************************************************
 
-CVector	UTransformable::getPos()
+CVector UTransformable::getPos()
 {
 	return _Object->getPos();
 }
 
 // ***************************************************************************
 
-CVector	UTransformable::getRotEuler()
+CVector UTransformable::getRotEuler()
 {
 	return _Object->getRotEuler();
 }
@@ -210,26 +208,25 @@ CQuat UTransformable::getRotQuat()
 
 // ***************************************************************************
 
-CVector	UTransformable::getScale()
+CVector UTransformable::getScale()
 {
 	return _Object->getScale();
 }
 
 // ***************************************************************************
 
-CVector	UTransformable::getPivot()
+CVector UTransformable::getPivot()
 {
 	return _Object->getPivot();
 }
 
 // ***************************************************************************
 
-void UTransformable::lookAt (const CVector& eye, const CVector& target, float roll)
+void UTransformable::lookAt(const CVector &eye, const CVector &target, float roll)
 {
 	_Object->lookAt(eye, target, roll);
 }
 
 // ***************************************************************************
-
 
 } // NL3D

@@ -18,7 +18,7 @@
 #define NLSOUND_EFFECT_AL_H
 
 namespace NLSOUND {
-	class CSoundDriverAL;
+class CSoundDriverAL;
 
 /**
  * \brief CEffectAL
@@ -31,19 +31,19 @@ class CEffectAL
 protected:
 	// outside pointers
 	CSoundDriverAL *_SoundDriver;
-	
+
 	// instances
 	ALuint _AlEffect;
 	ALuint _AlAuxEffectSlot;
-	
+
 public:
 	CEffectAL(CSoundDriverAL *soundDriver, ALuint alEffect, ALuint alAuxEffectSlot);
 	virtual ~CEffectAL();
 	virtual void release();
-	
+
 	inline ALuint getAlEffect() { return _AlEffect; }
 	inline ALuint getAuxEffectSlot() { return _AlAuxEffectSlot; }
-	
+
 }; /* class CEffectAL */
 
 /**
@@ -57,9 +57,9 @@ class CStandardReverbEffectAL : public IReverbEffect, public CEffectAL
 public:
 	CStandardReverbEffectAL(CSoundDriverAL *soundDriver, ALuint alEffect, ALuint alAuxEffectSlot);
 	virtual ~CStandardReverbEffectAL();
-	
+
 	virtual void setEnvironment(const CEnvironment &environment = CEnvironment(), float roomSize = 100.0f);
-	
+
 }; /* class CReverbEffectAL */
 
 #if EFX_CREATIVE_AVAILABLE
@@ -75,9 +75,9 @@ class CCreativeReverbEffectAL : public IReverbEffect, public CEffectAL
 public:
 	CCreativeReverbEffectAL(CSoundDriverAL *soundDriver, ALuint alEffect, ALuint alAuxEffectSlot);
 	virtual ~CCreativeReverbEffectAL();
-	
+
 	virtual void setEnvironment(const CEnvironment &environment = CEnvironment(), float roomSize = 100.0f);
-	
+
 }; /* class CReverbEffectAL */
 
 #endif /* #if EFX_CREATIVE_AVAILABLE */

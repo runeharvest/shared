@@ -22,10 +22,9 @@
 #define NL_BACKGROUND_SOURCE_H
 
 #include "nel/misc/types_nl.h"
-//#include "nel/sound/u_source.h"
+// #include "nel/sound/u_source.h"
 #include "nel/sound/source_common.h"
 #include "nel/sound/background_sound.h"
-
 
 namespace NLSOUND {
 
@@ -36,35 +35,33 @@ class CBackgroundSound;
  * \author Boris Boucher.
  * \author Nevrax
  */
-class CBackgroundSource : public CSourceCommon , public CAudioMixerUser::IMixerUpdate
+class CBackgroundSource : public CSourceCommon, public CAudioMixerUser::IMixerUpdate
 {
 public:
 	/// Constructor
-	CBackgroundSource	(CBackgroundSound *backgroundSound=NULL, bool spawn=false, TSpawnEndCallback cb=0, void *cbUserParam = 0, NL3D::CCluster *cluster = 0, CGroupController *groupController = NULL);
+	CBackgroundSource(CBackgroundSound *backgroundSound = NULL, bool spawn = false, TSpawnEndCallback cb = 0, void *cbUserParam = 0, NL3D::CCluster *cluster = 0, CGroupController *groupController = NULL);
 	/// Destructor
-	~CBackgroundSource	();
+	~CBackgroundSource();
 
 	/// Return the sound binded to the source (or NULL if there is no sound)
-	virtual TSoundId				getSound();
+	virtual TSoundId getSound();
 
-	virtual void					play();
+	virtual void play();
 	/// Stop playing
-	virtual void					stop();
+	virtual void stop();
 
-	TSOURCE_TYPE					getType() const								{return SOURCE_BACKGROUND;}
+	TSOURCE_TYPE getType() const { return SOURCE_BACKGROUND; }
 
-	void							setGain( float gain );
-	void							setRelativeGain( float gain );
+	void setGain(float gain);
+	void setRelativeGain(float gain);
 
-	void							setPos( const NLMISC::CVector& pos );
-	void							setVelocity( const NLMISC::CVector& vel );
-	void							setDirection( const NLMISC::CVector& dir );
+	void setPos(const NLMISC::CVector &pos);
+	void setVelocity(const NLMISC::CVector &vel);
+	void setDirection(const NLMISC::CVector &dir);
 
-	void							updateFilterValues(const float *filterValues);
-
+	void updateFilterValues(const float *filterValues);
 
 private:
-
 	/// Mixer update
 	void onUpdate();
 
@@ -83,21 +80,19 @@ private:
 	struct TSubSource
 	{
 		/// Sub source instance.
-		USource				*Source;
+		USource *Source;
 		/// Sub source status.
-		TSubSourceStatus	Status;
+		TSubSourceStatus Status;
 		/// Sub source filter.
-		UAudioMixer::TBackgroundFlags	Filter;
+		UAudioMixer::TBackgroundFlags Filter;
 	};
 
 	/// The sound static data.
-	CBackgroundSound			*_BackgroundSound;
+	CBackgroundSound *_BackgroundSound;
 
 	/// The sub sources container.
-	std::vector<TSubSource>		_Sources;
+	std::vector<TSubSource> _Sources;
 };
-
-
 
 } // NLSOOUND
 

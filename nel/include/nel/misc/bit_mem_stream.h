@@ -20,61 +20,58 @@
 #include "types_nl.h"
 #include "mem_stream.h"
 
-
 namespace NLMISC {
-
 
 /* In debugging stage, should be defined. In stable stage, undefine it!
  * Works along with the verboseAllTraffic command
  */
 #ifndef NL_NO_DEBUG
-#	ifdef NL_OS_WINDOWS
-#		define LOG_ALL_TRAFFIC
-#	else
-#		undef LOG_ALL_TRAFFIC
-#	endif
+#ifdef NL_OS_WINDOWS
+#define LOG_ALL_TRAFFIC
+#else
+#undef LOG_ALL_TRAFFIC
+#endif
 #endif
 
 #ifdef LOG_ALL_TRAFFIC
 
 extern bool VerboseAllTraffic;
 
-#define serialAndLog1( v ) \
-	_serialAndLog( #v, v );
+#define serialAndLog1(v) \
+	_serialAndLog(#v, v);
 
-#define serialAndLog2( v, s ) \
-	_serialAndLog( #v, v, s );
+#define serialAndLog2(v, s) \
+	_serialAndLog(#v, v, s);
 
-#define serialBitAndLog( v ) \
-	_serialBitAndLog( #v, v );
+#define serialBitAndLog(v) \
+	_serialBitAndLog(#v, v);
 
-#define	serialAdaptAndLog( argstr, b, type ) \
-	uint32 ub=0; \
-	if ( isReading() ) \
-	{ \
-		_serialAndLog( argstr, ub, sizeof(type)*8 ); \
-		b = (type)ub; \
-	} \
-	else \
-	{ \
-		ub = (uint32)b; \
-		_serialAndLog( argstr, ub, sizeof(type)*8 ); \
+#define serialAdaptAndLog(argstr, b, type)           \
+	uint32 ub = 0;                                   \
+	if (isReading())                                 \
+	{                                                \
+		_serialAndLog(argstr, ub, sizeof(type) * 8); \
+		b = (type)ub;                                \
+	}                                                \
+	else                                             \
+	{                                                \
+		ub = (uint32)b;                              \
+		_serialAndLog(argstr, ub, sizeof(type) * 8); \
 	}
 
 #ifdef NL_LITTLE_ENDIAN
 
-#define	serialAdapt64AndLog( argstr, b ) \
-	_serialAndLog( argstr, *((uint32*)(&b)), 32 ); \
-	_serialAndLog( argstr, *((uint32*)(&b)+1), 32 );
+#define serialAdapt64AndLog(argstr, b)            \
+	_serialAndLog(argstr, *((uint32 *)(&b)), 32); \
+	_serialAndLog(argstr, *((uint32 *)(&b) + 1), 32);
 
 #else
 
-#define	serialAdapt64AndLog( argstr, b ) \
-	serialAndLog( argstr, *((uint32*)(&b)+1), 32); \
-	serialAndLog( argstr, *((uint32*)(&b)), 32);
+#define serialAdapt64AndLog(argstr, b)               \
+	serialAndLog(argstr, *((uint32 *)(&b) + 1), 32); \
+	serialAndLog(argstr, *((uint32 *)(&b)), 32);
 
 #endif
-
 
 #else
 
@@ -82,67 +79,71 @@ extern bool VerboseAllTraffic;
 #define serialAndLog2 serial
 #define serialBitAndLog serialBit
 
-
 #endif
 
-#define	serialAdapt( b, type ) \
-	uint32 ub=0; \
-	if ( isReading() ) \
-	{ \
-		serial( ub, sizeof(type)*8 ); \
-		b = (type)ub; \
-	} \
-	else \
-	{ \
-		ub = (uint32)b; \
-		serial( ub, sizeof(type)*8 ); \
+#define serialAdapt(b, type)          \
+	uint32 ub = 0;                    \
+	if (isReading())                  \
+	{                                 \
+		serial(ub, sizeof(type) * 8); \
+		b = (type)ub;                 \
+	}                                 \
+	else                              \
+	{                                 \
+		ub = (uint32)b;               \
+		serial(ub, sizeof(type) * 8); \
 	}
 
 #ifdef NL_LITTLE_ENDIAN
 
-#define	serialAdapt64( b ) \
-	serial( *((uint32*)(&b)), 32); \
-	serial( *((uint32*)(&b)+1), 32);
+#define serialAdapt64(b)           \
+	serial(*((uint32 *)(&b)), 32); \
+	serial(*((uint32 *)(&b) + 1), 32);
 
 #else
 
-#define	serialAdapt64( b ) \
-	serial( *((uint32*)(&b)+1), 32); \
-	serial( *((uint32*)(&b)), 32);
+#define serialAdapt64(b)               \
+	serial(*((uint32 *)(&b) + 1), 32); \
+	serial(*((uint32 *)(&b)), 32);
 
 #endif
 
-
 class CBitSet;
-
 
 /*
  * Item of CBMSDbgInfo
  */
 struct TBMSSerialInfo
 {
-	enum TSerialType { B, U, U64, F, BF, Buffer, NbSerialTypes };
-
-	TBMSSerialInfo( uint32 bitpos, uint32 bitsize, TSerialType type, const char *symbol )
+	enum TSerialType
 	{
-		nlassert( bitpos < 800000 );
+		B,
+		U,
+		U64,
+		F,
+		BF,
+		Buffer,
+		NbSerialTypes
+	};
+
+	TBMSSerialInfo(uint32 bitpos, uint32 bitsize, TSerialType type, const char *symbol)
+	{
+		nlassert(bitpos < 800000);
 		BitPos = bitpos;
 		BitSize = bitsize;
 		Type = type;
 		Symbol = symbol;
 	}
 
-	uint32		BitPos;
-	uint32		BitSize;
-	TSerialType	Type;
-	const char	*Symbol;
+	uint32 BitPos;
+	uint32 BitSize;
+	TSerialType Type;
+	const char *Symbol;
 };
 
-extern const char * SerialTypeToCStr [ TBMSSerialInfo::NbSerialTypes ];
+extern const char *SerialTypeToCStr[TBMSSerialInfo::NbSerialTypes];
 
-
-typedef std::vector< TBMSSerialInfo > TBMSSerialInfoList;
-
+typedef std::vector<TBMSSerialInfo> TBMSSerialInfoList;
 
 /*
  * Data members struct for CBMSDbgInfo
@@ -150,19 +151,25 @@ typedef std::vector< TBMSSerialInfo > TBMSSerialInfoList;
 struct TBMSDbgInfoData
 {
 	/// Constructor
-	TBMSDbgInfoData() : List(), CurrentBrowsedItem(0), NextSymbol(NULL), AddEventIsEnabled(true) {}
+	TBMSDbgInfoData()
+	    : List()
+	    , CurrentBrowsedItem(0)
+	    , NextSymbol(NULL)
+	    , AddEventIsEnabled(true)
+	{
+	}
 
 	/// Vector of serial items
-	TBMSSerialInfoList				List;
+	TBMSSerialInfoList List;
 
 	/// Current browsed item in the list (valid only from beginEventBrowsing() until clear() or addSerial()/addPoke())
-	uint32							CurrentBrowsedItem;
+	uint32 CurrentBrowsedItem;
 
 	/// Symbol of next event
-	const char						*NextSymbol;
+	const char *NextSymbol;
 
 	/// Flag to enable/disable addSerial() and addPoke() (because CBitMemStream::getSerialItem() must not add events in the list)
-	bool							AddEventIsEnabled;
+	bool AddEventIsEnabled;
 };
 
 class CBitMemStream;
@@ -173,25 +180,29 @@ class CBitMemStream;
 class CBMSDbgInfo
 {
 public:
-
 #ifdef NL_DEBUG
 	/// Constructor
-	CBMSDbgInfo() : _DbgData(NULL) { init(); }
+	CBMSDbgInfo()
+	    : _DbgData(NULL)
+	{
+		init();
+	}
 #else
 	/// Constructor
-	CBMSDbgInfo() {}
+	CBMSDbgInfo() { }
 #endif
 
 #ifdef NL_DEBUG
 	/// Copy constructor
-	CBMSDbgInfo( const CBMSDbgInfo& src ) : _DbgData(NULL)
+	CBMSDbgInfo(const CBMSDbgInfo &src)
+	    : _DbgData(NULL)
 	{
 		init();
-		operator=( src );
+		operator=(src);
 	}
 
 	/// Operator=
-	CBMSDbgInfo&	operator=( const CBMSDbgInfo& src )
+	CBMSDbgInfo &operator=(const CBMSDbgInfo &src)
 	{
 		*_DbgData = *src._DbgData;
 		return *this;
@@ -215,17 +226,17 @@ public:
 	}
 
 	/// Add a serial event at the end
-	void	addSerial( uint32 bitpos, uint32 size, TBMSSerialInfo::TSerialType type )
+	void addSerial(uint32 bitpos, uint32 size, TBMSSerialInfo::TSerialType type)
 	{
 #ifdef NL_DEBUG
-		if ( ! _DbgData->AddEventIsEnabled )
+		if (!_DbgData->AddEventIsEnabled)
 		{
 			_DbgData->NextSymbol = NULL;
 			return;
 		}
 
-		TBMSSerialInfo serialItem( bitpos, size, type, _DbgData->NextSymbol );
-		_DbgData->List.push_back( serialItem );
+		TBMSSerialInfo serialItem(bitpos, size, type, _DbgData->NextSymbol);
+		_DbgData->List.push_back(serialItem);
 		_DbgData->NextSymbol = NULL;
 #else
 		nlunreferenced(bitpos);
@@ -235,23 +246,23 @@ public:
 	}
 
 	/// Add a serial event in the middle
-	void	addPoke( uint32 bitpos, uint32 size, TBMSSerialInfo::TSerialType type )
+	void addPoke(uint32 bitpos, uint32 size, TBMSSerialInfo::TSerialType type)
 	{
 #ifdef NL_DEBUG
-		if ( ! _DbgData->AddEventIsEnabled )
+		if (!_DbgData->AddEventIsEnabled)
 		{
 			_DbgData->NextSymbol = NULL;
 			return;
 		}
 
-		TBMSSerialInfo serialItem( bitpos, size, type, _DbgData->NextSymbol );
+		TBMSSerialInfo serialItem(bitpos, size, type, _DbgData->NextSymbol);
 
 		/// Find where to add it
 		bool found = false;
 		TBMSSerialInfoList::iterator itl;
-		for ( itl=_DbgData->List.begin(); itl!=_DbgData->List.end(); ++itl )
+		for (itl = _DbgData->List.begin(); itl != _DbgData->List.end(); ++itl)
 		{
-			if ( (*itl).BitPos == bitpos )
+			if ((*itl).BitPos == bitpos)
 			{
 				// Found, replace reserved by poked
 				(*itl) = serialItem;
@@ -259,9 +270,9 @@ public:
 				break;
 			}
 		}
-		if ( ! found )
+		if (!found)
 		{
-			nlwarning( "Missing reserve() corresponding to poke()" );
+			nlwarning("Missing reserve() corresponding to poke()");
 		}
 		_DbgData->NextSymbol = NULL;
 #else
@@ -272,7 +283,7 @@ public:
 	}
 
 	/// Set the symbol for the next event that will be added (optional)
-	void	setSymbolOfNextSerialEvent( const char *symbol )
+	void setSymbolOfNextSerialEvent(const char *symbol)
 	{
 #ifdef NL_DEBUG
 		_DbgData->NextSymbol = symbol;
@@ -282,7 +293,7 @@ public:
 	}
 
 	/// Clear
-	void	clear()
+	void clear()
 	{
 #ifdef NL_DEBUG
 		_DbgData->List.clear();
@@ -290,7 +301,7 @@ public:
 	}
 
 	/// Begin a browsing session of serial events, addSerial()/addPoke() is now disabled
-	void		beginEventBrowsing()
+	void beginEventBrowsing()
 	{
 #ifdef NL_DEBUG
 		_DbgData->CurrentBrowsedItem = 0;
@@ -299,7 +310,7 @@ public:
 	}
 
 	/// End a browsing session of serial events, and reenable addSerial()/addPoke()
-	void		endEventBrowsing()
+	void endEventBrowsing()
 	{
 #ifdef NL_DEBUG
 		_DbgData->AddEventIsEnabled = true;
@@ -307,18 +318,18 @@ public:
 	}
 
 	/// Return an eventId of serial event, or "" (and eventId -1) if nothing found at the specified bitpos
-	std::string	getEventIdAtBitPos( uint32 bitpos, sint32 *eventId )
+	std::string getEventIdAtBitPos(uint32 bitpos, sint32 *eventId)
 	{
 #ifdef NL_DEBUG
-		if ( _DbgData->CurrentBrowsedItem < _DbgData->List.size() )
+		if (_DbgData->CurrentBrowsedItem < _DbgData->List.size())
 		{
-			if ( bitpos == _DbgData->List[_DbgData->CurrentBrowsedItem].BitPos ) // works only with a vector!
+			if (bitpos == _DbgData->List[_DbgData->CurrentBrowsedItem].BitPos) // works only with a vector!
 			{
 				*eventId = (sint32)_DbgData->CurrentBrowsedItem;
 				++_DbgData->CurrentBrowsedItem;
-				return toString( "(%u)", _DbgData->CurrentBrowsedItem - 1 );
+				return toString("(%u)", _DbgData->CurrentBrowsedItem - 1);
 			}
-			//nlassert( bitpos < (*_List)[_CurrentBrowsedItem].BitPos ); // occurs if stream overflow
+			// nlassert( bitpos < (*_List)[_CurrentBrowsedItem].BitPos ); // occurs if stream overflow
 		}
 #else
 		nlunreferenced(bitpos);
@@ -328,22 +339,20 @@ public:
 	}
 
 	/// Return full info about a serial event, or "" if eventId is -1
-	std::string getEventLegendAtBitPos( CBitMemStream& bms, sint32 eventId );
+	std::string getEventLegendAtBitPos(CBitMemStream &bms, sint32 eventId);
 
 private:
-
 #ifdef NL_DEBUG
 	/// Explicit init
-	void	init()
+	void init()
 	{
 		_DbgData = new TBMSDbgInfoData();
 	}
 
 	/// List of serials
-	TBMSDbgInfoData			*_DbgData;
+	TBMSDbgInfoData *_DbgData;
 #endif
 };
-
 
 /**
  * Bit-oriented memory stream
@@ -368,17 +377,16 @@ private:
 class CBitMemStream : public CMemStream
 {
 public:
-
 	/// Constructor
-	CBitMemStream( bool inputStream=false, uint32 defaultcapacity=32 );
+	CBitMemStream(bool inputStream = false, uint32 defaultcapacity = 32);
 
 	/// Copy constructor
-	CBitMemStream( const CBitMemStream& other );
+	CBitMemStream(const CBitMemStream &other);
 
 	/// Assignment operator
-	CBitMemStream&	operator=( const CBitMemStream& other )
+	CBitMemStream &operator=(const CBitMemStream &other)
 	{
-		CMemStream::operator=( other );
+		CMemStream::operator=(other);
 		_FreeBits = other._FreeBits;
 		_DbgInfo = other._DbgInfo;
 		return *this;
@@ -394,17 +402,17 @@ public:
 	 * If you are using the stream only in output mode, you can use this method as a faster version
 	 * of clear() *if you don't serialize pointers*.
 	 */
-	virtual void		resetBufPos()
+	virtual void resetBufPos()
 	{
 		// This is ensured in CMemStream::CMemStream() and CMemStream::clear()
-		//if ( (!isReading()) && _Buffer.empty() )
+		// if ( (!isReading()) && _Buffer.empty() )
 		///	_Buffer.resize( 8 ); // at least 8 bytes
-		nlassert( ! ((!isReading()) && _Buffer.getBuffer().empty()) );
+		nlassert(!((!isReading()) && _Buffer.getBuffer().empty()));
 
 		CMemStream::resetBufPos();
-		if ( !isReading() )
-//			*_BufPos = 0; // partial prepareNextByte()
-			*(_Buffer.getBufferWrite().getPtr()+_Buffer.Pos) = 0;
+		if (!isReading())
+			//			*_BufPos = 0; // partial prepareNextByte()
+			*(_Buffer.getBufferWrite().getPtr() + _Buffer.Pos) = 0;
 		_FreeBits = 8;
 		_DbgInfo.clear();
 	}
@@ -415,15 +423,15 @@ public:
 	 * (the last byte may not be full, it may have free bits, see
 	 * also getPosInBit()).
 	 */
-	virtual uint32	length() const
+	virtual uint32 length() const
 	{
-		if ( isReading() )
+		if (isReading())
 		{
 			return lengthR();
 		}
 		else
 		{
-			if ( _FreeBits == 8 )
+			if (_FreeBits == 8)
 				return lengthS();
 			else
 				return lengthS() + 1;
@@ -431,104 +439,104 @@ public:
 	}
 
 	/// Transforms the message from input to output or from output to input
-	virtual void	invert()
+	virtual void invert()
 	{
-		if ( ! isReading() )
+		if (!isReading())
 		{
-//			++_BufPos; // write->read: extend to keep the last byte inside the payload
+			//			++_BufPos; // write->read: extend to keep the last byte inside the payload
 			++_Buffer.Pos; // write->read: extend to keep the last byte inside the payload
 		}
 		CMemStream::invert();
-		if ( ! isReading() )
+		if (!isReading())
 		{
 #ifdef NL_DEBUG
-//			nlassert( _BufPos == _Buffer.getPtr()+_Buffer.size() );
-			nlassert( _Buffer.Pos == _Buffer.getBuffer().size() );
+			//			nlassert( _BufPos == _Buffer.getPtr()+_Buffer.size() );
+			nlassert(_Buffer.Pos == _Buffer.getBuffer().size());
 #endif
-//			--_BufPos; // read->write: set the position on the last byte, not at the end as in CMemStream::invert()
+			//			--_BufPos; // read->write: set the position on the last byte, not at the end as in CMemStream::invert()
 			--(_Buffer.Pos); // read->write: set the position on the last byte, not at the end as in CMemStream::invert()
 		}
 		// Keep the same _FreeBits
 	}
 
 	/// Clears the message
-	virtual void	clear()
+	virtual void clear()
 	{
 		CMemStream::clear();
 		resetBufPos();
 	}
 
 	/// Returns the number of bit from the beginning of the buffer (in bit)
-	sint32	getPosInBit() const
+	sint32 getPosInBit() const
 	{
-//		return (_BufPos - _Buffer.getPtr() + 1)*8 - _FreeBits;
-		return (_Buffer.Pos + 1)*8 - _FreeBits;
+		//		return (_BufPos - _Buffer.getPtr() + 1)*8 - _FreeBits;
+		return (_Buffer.Pos + 1) * 8 - _FreeBits;
 	}
 
 	/// Returns the stream as a string with 0 and 1.
-	void			displayStream( const char *title="", CLog *log = NLMISC::DebugLog );
+	void displayStream(const char *title = "", CLog *log = NLMISC::DebugLog);
 
 	/// See doc in CMemStream::fill()
-	void			fill( const uint8 *srcbuf, uint32 len )
+	void fill(const uint8 *srcbuf, uint32 len)
 	{
 		_FreeBits = 8;
 		_DbgInfo.clear();
-		CMemStream::fill( srcbuf, len );
+		CMemStream::fill(srcbuf, len);
 	}
 
 	/// See doc in CMemStream::bufferToFill()
-	virtual uint8		*bufferToFill( uint32 msgsize )
+	virtual uint8 *bufferToFill(uint32 msgsize)
 	{
 		_FreeBits = 8;
 		_DbgInfo.clear();
-		return CMemStream::bufferToFill( msgsize );
+		return CMemStream::bufferToFill(msgsize);
 	}
 
 	/// Append the contents of a bitmemstream at the end of our bitmemstream (precondition: !isReading())
-	void			append( const CBitMemStream& newBits );
+	void append(const CBitMemStream &newBits);
 
 	/// Serialize a buffer
-	virtual void	serialBuffer(uint8 *buf, uint len);
+	virtual void serialBuffer(uint8 *buf, uint len);
 
 	/// Serialize one bit
-	virtual void	serialBit( bool& bit );
+	virtual void serialBit(bool &bit);
 
 #ifdef LOG_ALL_TRAFFIC
-	void			_serialAndLog( const char *argstr, uint32& value, uint nbits );
-	void			_serialAndLog( const char *argstr, uint64& value, uint nbits );
-	void			_serialBitAndLog( const char *argstr, bool& bit );
+	void _serialAndLog(const char *argstr, uint32 &value, uint nbits);
+	void _serialAndLog(const char *argstr, uint64 &value, uint nbits);
+	void _serialBitAndLog(const char *argstr, bool &bit);
 #endif
 
 	/**
 	 * Serialize only the nbits lower bits of value (nbits range: [1..32])
 	 * When using this method, always leave resetvalue to true.
 	 */
-	void			serial( uint32& value, uint nbits, bool resetvalue=true )
+	void serial(uint32 &value, uint nbits, bool resetvalue = true)
 	{
-		_DbgInfo.addSerial( getPosInBit(), nbits, TBMSSerialInfo::U );
-		internalSerial( value, nbits, resetvalue );
+		_DbgInfo.addSerial(getPosInBit(), nbits, TBMSSerialInfo::U);
+		internalSerial(value, nbits, resetvalue);
 	}
 
 	/**
 	 * Serialize only the nbits lower bits of 64-bit value (nbits range: [1..64])
 	 */
-	void			serial( uint64& value, uint nbits )
+	void serial(uint64 &value, uint nbits)
 	{
-		_DbgInfo.addSerial( getPosInBit(), nbits, TBMSSerialInfo::U64 );
-		internalSerial( value, nbits );
+		_DbgInfo.addSerial(getPosInBit(), nbits, TBMSSerialInfo::U64);
+		internalSerial(value, nbits);
 	}
 
 	/**
 	 * Same as CMemStream::reserve(). Warning, the return value is a byte pos (not bitpos)!
 	 * Consider using reserveBits() instead.
 	 */
-	sint32			reserve( uint byteLen );
+	sint32 reserve(uint byteLen);
 
 	/**
 	 * In a output bit stream, serialize nbits bits (no matter their value).
 	 * Works even if the number of bits to add is larger than 64. See also poke() and pokeBits().
 	 */
-	void			reserveBits( uint nbits );
+	void reserveBits(uint nbits);
 
 	/*
 	 * Rewrite the nbbits lowest bits of a value at the specified position bitpos of the current output bit stream.
@@ -537,46 +545,46 @@ public:
 	 * - bitpos+nbbits <= the current length in bit of the stream.
 	 * - The bits poked must have been reserved by reserveBits() (i.e. set to 0)
 	 */
-	void			poke( uint32 value, uint bitpos, uint nbits );
+	void poke(uint32 value, uint bitpos, uint nbits);
 
 	/**
 	 * Rewrite the bitfield at the specified position bitpos of the current output bit stream.
 	 * The size of the bitfield is *not* written into the stream (unlike serialCont()).
 	 * Precondition: bitpos+bitfield.size() <= the current length in bit of the stream. See also reserveBits().
 	 */
-	void			pokeBits( const NLMISC::CBitSet& bitfield, uint bitpos );
+	void pokeBits(const NLMISC::CBitSet &bitfield, uint bitpos);
 
 	/**
 	 * Read bitfield.size() bits from the input stream to fill the bitfield.
 	 * It means you have to know the size and to resize the bitfield yourself.
 	 */
-	void			readBits( NLMISC::CBitSet& bitfield );
+	void readBits(NLMISC::CBitSet &bitfield);
 
 	/// Display the bits of the stream just before the specified bitpos (or current pos if -1)
-	void			displayLastBits( sint nbits, sint bitpos=-1, NLMISC::CLog *log=NLMISC::DebugLog );
+	void displayLastBits(sint nbits, sint bitpos = -1, NLMISC::CLog *log = NLMISC::DebugLog);
 
 	/// Return a string showing the serial item
-	std::string		getSerialItem( const TBMSSerialInfo& serialItem );
+	std::string getSerialItem(const TBMSSerialInfo &serialItem);
 
 	/// Template serialisation (should take the one from IStream)
-    template<class T>
-	void			serial(T &obj)							{ obj.serial(*this); }
+	template <class T>
+	void serial(T &obj) { obj.serial(*this); }
 
 	// CMemStream::serialCont() will call CBitMemStream's virtual serialBuffer()
-	template<class T>
-	void			serialCont(std::vector<T> &cont) 		{CMemStream::serialCont(cont);}
-	template<class T>
-	void			serialCont(std::list<T> &cont) 			{CMemStream::serialCont(cont);}
-	template<class T>
-	void			serialCont(std::deque<T> &cont) 		{CMemStream::serialCont(cont);}
-	template<class T>
-	void			serialCont(std::set<T> &cont) 			{CMemStream::serialCont(cont);}
-	template<class T>
-	void			serialCont(std::multiset<T> &cont) 		{CMemStream::serialCont(cont);}
-	template<class K, class T>
-	void			serialCont(std::map<K, T> &cont) 		{CMemStream::serialCont(cont);}
-	template<class K, class T>
-	void			serialCont(std::multimap<K, T> &cont) 	{CMemStream::serialCont(cont);}
+	template <class T>
+	void serialCont(std::vector<T> &cont) { CMemStream::serialCont(cont); }
+	template <class T>
+	void serialCont(std::list<T> &cont) { CMemStream::serialCont(cont); }
+	template <class T>
+	void serialCont(std::deque<T> &cont) { CMemStream::serialCont(cont); }
+	template <class T>
+	void serialCont(std::set<T> &cont) { CMemStream::serialCont(cont); }
+	template <class T>
+	void serialCont(std::multiset<T> &cont) { CMemStream::serialCont(cont); }
+	template <class K, class T>
+	void serialCont(std::map<K, T> &cont) { CMemStream::serialCont(cont); }
+	template <class K, class T>
+	void serialCont(std::multimap<K, T> &cont) { CMemStream::serialCont(cont); }
 
 	/*template<class T0,class T1>
 	void			serial(T0 &a, T1 &b)
@@ -599,114 +607,111 @@ public:
 	 */
 	//@{
 
-
-/*
-#define	serialAdapt64( b, type ) \
-	uint32 ubl=0, ubh=0; \
-	if ( isReading() ) \
-	{ \
-		serial( ubh, sizeof(uint32)*8 ); \
-		serial( ubl, sizeof(uint32)*8 ); \
-		b = (((type)ubh)<<32)+ubl; \
-	} \
-	else \
-	{ \
-		ubh = (uint32)(b>>32); \
-		ubl = (uint32)(b); \
-		serial( ubh, sizeof(uint32)*8 ); \
-		serial( ubl, sizeof(uint32)*8 ); \
-	}
-*/
+	/*
+	#define	serialAdapt64( b, type ) \
+	    uint32 ubl=0, ubh=0; \
+	    if ( isReading() ) \
+	    { \
+	        serial( ubh, sizeof(uint32)*8 ); \
+	        serial( ubl, sizeof(uint32)*8 ); \
+	        b = (((type)ubh)<<32)+ubl; \
+	    } \
+	    else \
+	    { \
+	        ubh = (uint32)(b>>32); \
+	        ubl = (uint32)(b); \
+	        serial( ubh, sizeof(uint32)*8 ); \
+	        serial( ubl, sizeof(uint32)*8 ); \
+	    }
+	*/
 
 #ifdef LOG_ALL_TRAFFIC
-	void			_serialAndLog(const char *argstr, uint8 &b) { serialAdaptAndLog( argstr, b, uint8 ); }
-	void			_serialAndLog(const char *argstr, sint8 &b) { serialAdaptAndLog( argstr, b, sint8 ); }
-	void			_serialAndLog(const char *argstr, uint16 &b) { serialAdaptAndLog( argstr, b, uint16 ); }
-	void			_serialAndLog(const char *argstr, sint16 &b) { serialAdaptAndLog( argstr, b, sint16 ); }
-	void			_serialAndLog(const char *argstr, uint32 &b) { serialAdaptAndLog( argstr, b, uint32 ); }
-	void			_serialAndLog(const char *argstr, sint32 &b) { serialAdaptAndLog( argstr, b, sint32 ); }
-	void			_serialAndLog(const char *argstr, uint64 &b) { serialAdapt64AndLog( argstr, b ); }
-	void			_serialAndLog(const char *argstr, sint64 &b) { serialAdapt64AndLog( argstr, b ); }
-	void			_serialAndLog(const char *argstr, float &b);
-	void			_serialAndLog(const char *argstr, double &b) { serialAdapt64AndLog( argstr, b ); }
-	void			_serialAndLog(const char *argstr, bool &b) { _serialBitAndLog( argstr, b ); }
+	void _serialAndLog(const char *argstr, uint8 &b) { serialAdaptAndLog(argstr, b, uint8); }
+	void _serialAndLog(const char *argstr, sint8 &b) { serialAdaptAndLog(argstr, b, sint8); }
+	void _serialAndLog(const char *argstr, uint16 &b) { serialAdaptAndLog(argstr, b, uint16); }
+	void _serialAndLog(const char *argstr, sint16 &b) { serialAdaptAndLog(argstr, b, sint16); }
+	void _serialAndLog(const char *argstr, uint32 &b) { serialAdaptAndLog(argstr, b, uint32); }
+	void _serialAndLog(const char *argstr, sint32 &b) { serialAdaptAndLog(argstr, b, sint32); }
+	void _serialAndLog(const char *argstr, uint64 &b) { serialAdapt64AndLog(argstr, b); }
+	void _serialAndLog(const char *argstr, sint64 &b) { serialAdapt64AndLog(argstr, b); }
+	void _serialAndLog(const char *argstr, float &b);
+	void _serialAndLog(const char *argstr, double &b) { serialAdapt64AndLog(argstr, b); }
+	void _serialAndLog(const char *argstr, bool &b) { _serialBitAndLog(argstr, b); }
 #ifndef NL_OS_CYGWIN
-	virtual void	_serialAndLog(const char *argstr, char &b) { serialAdaptAndLog( argstr, b, char ); }
+	virtual void _serialAndLog(const char *argstr, char &b) { serialAdaptAndLog(argstr, b, char); }
 #endif
 #endif
 
-	virtual void	serial(uint8 &b) { serialAdapt( b, uint8 ); }
-	virtual void	serial(sint8 &b) { serialAdapt( b, sint8 ); }
-	virtual void	serial(uint16 &b) { serialAdapt( b, uint16 ); }
-	virtual void	serial(sint16 &b) { serialAdapt( b, sint16 ); }
-	virtual void	serial(uint32 &b) { serialAdapt( b, uint32 ); }
-	virtual void	serial(sint32 &b) { serialAdapt( b, sint32 ); }
-	virtual void	serial(uint64 &b) { serialAdapt64( b ); }
-	virtual void	serial(sint64 &b) { serialAdapt64( b ); }
-	virtual void	serial(float &b);
-	virtual void	serial(double &b) { serialAdapt64( b ); }
-	virtual void	serial(bool &b) { serialBit( b ); }
+	virtual void serial(uint8 &b) { serialAdapt(b, uint8); }
+	virtual void serial(sint8 &b) { serialAdapt(b, sint8); }
+	virtual void serial(uint16 &b) { serialAdapt(b, uint16); }
+	virtual void serial(sint16 &b) { serialAdapt(b, sint16); }
+	virtual void serial(uint32 &b) { serialAdapt(b, uint32); }
+	virtual void serial(sint32 &b) { serialAdapt(b, sint32); }
+	virtual void serial(uint64 &b) { serialAdapt64(b); }
+	virtual void serial(sint64 &b) { serialAdapt64(b); }
+	virtual void serial(float &b);
+	virtual void serial(double &b) { serialAdapt64(b); }
+	virtual void serial(bool &b) { serialBit(b); }
 #ifndef NL_OS_CYGWIN
-	virtual void	serial(char &b) { serialAdapt( b, char ); }
+	virtual void serial(char &b) { serialAdapt(b, char); }
 #endif
 
-	virtual void	serial(std::string &b);
-	virtual void	serial(ucstring &b);
+	virtual void serial(std::string &b);
+	virtual void serial(ucstring &b);
 
-	virtual void	serial(CBitMemStream &b) { serialMemStream(b); }
-	virtual void	serialMemStream(CMemStream &b);
-
+	virtual void serial(CBitMemStream &b) { serialMemStream(b); }
+	virtual void serialMemStream(CMemStream &b);
 
 	//@}
 
 	/// Specialisation of serialCont() for vector<uint8>
-	virtual void			serialCont(std::vector<uint8> &cont) { serialVector(cont); }
+	virtual void serialCont(std::vector<uint8> &cont) { serialVector(cont); }
 	/// Specialisation of serialCont() for vector<sint8>
-	virtual void			serialCont(std::vector<sint8> &cont) { serialVector(cont); }
+	virtual void serialCont(std::vector<sint8> &cont) { serialVector(cont); }
 	/// Specialisation of serialCont() for vector<bool>
-	virtual void			serialCont(std::vector<bool> &cont);
+	virtual void serialCont(std::vector<bool> &cont);
 
 protected:
-
 	/**
 	 * Helper for serial(uint32,uint)
 	 */
-	void			internalSerial( uint32& value, uint nbits, bool resetvalue=true );
+	void internalSerial(uint32 &value, uint nbits, bool resetvalue = true);
 
 	/**
 	 * Helper for serial(uint64,uint)
 	 */
-	void			internalSerial( uint64& value, uint nbits )
+	void internalSerial(uint64 &value, uint nbits)
 	{
-		if ( nbits > 32 )
+		if (nbits > 32)
 		{
-			if ( isReading() )
+			if (isReading())
 			{
 				// Reset and read MSD
 				uint32 msd = 0;
-				internalSerial( msd, nbits-32 );
+				internalSerial(msd, nbits - 32);
 				value = (uint64)msd << 32;
 				// Reset and read LSD
-				internalSerial( (uint32&)value, 32 );
+				internalSerial((uint32 &)value, 32);
 			}
 			else
 			{
 				// Write MSD
 				uint32 msd = (uint32)(value >> 32);
-				internalSerial( msd, nbits-32 );
+				internalSerial(msd, nbits - 32);
 				// Write LSD
-				internalSerial( (uint32&)value, 32 );
+				internalSerial((uint32 &)value, 32);
 			}
 		}
 		else
 		{
-			if ( isReading() )
+			if (isReading())
 			{
 				// Reset MSB (=0 is faster than value&=0xFFFFFFFF)
 				value = 0;
 			}
 			// Read or write LSB
-			internalSerial( (uint32&)value, nbits );
+			internalSerial((uint32 &)value, nbits);
 		}
 	}
 
@@ -720,11 +725,11 @@ protected:
 	 * - See the postconditions of increaseBufferIfNecessary() and pointNextByte()
 	 * - The new pointed byte is 0
 	 */
-	void			prepareNextByte()
+	void prepareNextByte()
 	{
 		pointNextByte();
 		increaseBufferIfNecessary();
-//		*_BufPos = 0;
+		//		*_BufPos = 0;
 		*(_Buffer.getBufferWrite().getPtr() + _Buffer.Pos) = 0;
 	}
 
@@ -735,15 +740,15 @@ protected:
 	 * - The last written byte, at pos _BufPos, is fully written (but _FreeBits may not be updated yet)
 	 *
 	 * Postconditions
- 	 * - The pos was incremented by 1, _FreeBits is 8
+	 * - The pos was incremented by 1, _FreeBits is 8
 	 */
-	void			pointNextByte()
+	void pointNextByte()
 	{
 #ifdef NL_DEBUG
-		nlassert( !isReading() );
+		nlassert(!isReading());
 #endif
 		_FreeBits = 8;
-//		++_BufPos;
+		//		++_BufPos;
 		++_Buffer.Pos;
 	}
 
@@ -758,56 +763,54 @@ protected:
 	 * Postconditions:
 	 * - getPos() < _Buffer.size()
 	 */
-	void			increaseBufferIfNecessary()
+	void increaseBufferIfNecessary()
 	{
 #ifdef NL_DEBUG
-//		nlassert( (!isReading()) && (!_Buffer.empty()) );
-		nlassert( (!isReading()) && (!_Buffer.getBuffer().empty()) );
-//		nlassert( _BufPos <= _Buffer.getPtr() + _Buffer.size() );
-		nlassert( _Buffer.Pos <= _Buffer.getBuffer().size() );
+		//		nlassert( (!isReading()) && (!_Buffer.empty()) );
+		nlassert((!isReading()) && (!_Buffer.getBuffer().empty()));
+		//		nlassert( _BufPos <= _Buffer.getPtr() + _Buffer.size() );
+		nlassert(_Buffer.Pos <= _Buffer.getBuffer().size());
 #endif
-//		uint32 bytepos = _BufPos - _Buffer.getPtr();
-//		uint32 bytepos = _BufPos;
-//		if ( bytepos == _Buffer.size() )
-		if ( _Buffer.Pos == _Buffer.getBuffer().size() )
+		//		uint32 bytepos = _BufPos - _Buffer.getPtr();
+		//		uint32 bytepos = _BufPos;
+		//		if ( bytepos == _Buffer.size() )
+		if (_Buffer.Pos == _Buffer.getBuffer().size())
 		{
-//			_Buffer.resize( bytepos * 2 );
-			_Buffer.getBufferWrite().resize( _Buffer.Pos * 2 );
-//			_BufPos = _Buffer.getPtr() + bytepos; // don't change the pos but update pointer (needed because the buffer may have moved when reallocating)
+			//			_Buffer.resize( bytepos * 2 );
+			_Buffer.getBufferWrite().resize(_Buffer.Pos * 2);
+			//			_BufPos = _Buffer.getPtr() + bytepos; // don't change the pos but update pointer (needed because the buffer may have moved when reallocating)
 		}
 	}
 
 	/**
-	* Helper for poke(), to write a value inside an output stream (works because reserveBits sets to 0)
-	* Warning: if _FreeBits == 8, increments _BufPos.
-	*/
-	void			serialPoke( uint32 value, uint nbits );
+	 * Helper for poke(), to write a value inside an output stream (works because reserveBits sets to 0)
+	 * Warning: if _FreeBits == 8, increments _BufPos.
+	 */
+	void serialPoke(uint32 value, uint nbits);
 
 	/// Number of bits unused at the current pos. If 8, means the current pos if full and we need to increment the pos!
-	uint			_FreeBits; // From 8 downto 1
+	uint _FreeBits; // From 8 downto 1
 
 	/// Debug details about what was serialised
-	CBMSDbgInfo		_DbgInfo;
+	CBMSDbgInfo _DbgInfo;
 };
 
-
 /// Display a part of a bitmemstream
-void	displayBitStream( const CBitMemStream& msg, sint beginbitpos, sint endbitpos, NLMISC::CLog *log=NLMISC::DebugLog );
-
+void displayBitStream(const CBitMemStream &msg, sint beginbitpos, sint endbitpos, NLMISC::CLog *log = NLMISC::DebugLog);
 
 /*
  * Return full info about a serial event, or "" if eventId is -1
  */
-inline std::string CBMSDbgInfo::getEventLegendAtBitPos( CBitMemStream& bms, sint32 eventId )
+inline std::string CBMSDbgInfo::getEventLegendAtBitPos(CBitMemStream &bms, sint32 eventId)
 {
 #ifdef NL_DEBUG
-	if ( eventId != -1 )
+	if (eventId != -1)
 	{
-		nlassert( eventId < (sint32)_DbgData->List.size() );
-		TBMSSerialInfo& serialItem = _DbgData->List[eventId]; // works only with a vector!
-		return toString( "(%d) BitPos %3u Type %s BitSize %2u Value %s %s\n",
-					eventId, serialItem.BitPos, SerialTypeToCStr[serialItem.Type], serialItem.BitSize,
-					bms.getSerialItem( serialItem ).c_str(), (serialItem.Symbol!=NULL)?serialItem.Symbol:"" );
+		nlassert(eventId < (sint32)_DbgData->List.size());
+		TBMSSerialInfo &serialItem = _DbgData->List[eventId]; // works only with a vector!
+		return toString("(%d) BitPos %3u Type %s BitSize %2u Value %s %s\n",
+		    eventId, serialItem.BitPos, SerialTypeToCStr[serialItem.Type], serialItem.BitSize,
+		    bms.getSerialItem(serialItem).c_str(), (serialItem.Symbol != NULL) ? serialItem.Symbol : "");
 	}
 #else
 	nlunreferenced(bms);
@@ -817,9 +820,7 @@ inline std::string CBMSDbgInfo::getEventLegendAtBitPos( CBitMemStream& bms, sint
 	return std::string();
 }
 
-
 } // NLMISC
-
 
 #endif // NL_BIT_MEM_STREAM_H
 

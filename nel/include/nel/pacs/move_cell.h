@@ -19,9 +19,7 @@
 
 #include "nel/misc/types_nl.h"
 
-
-namespace NLPACS
-{
+namespace NLPACS {
 
 class CMoveElement;
 
@@ -35,78 +33,74 @@ class CMoveElement;
 class CMoveCell
 {
 public:
-
 	/// Constructor
 	CMoveCell();
 
 	/// Update sorted lists for an element
-	void linkFirstX (CMoveElement *element)
+	void linkFirstX(CMoveElement *element)
 	{
-		linkX (NULL, element, _FirstX);
+		linkX(NULL, element, _FirstX);
 	}
 
 	/// Update sorted lists for an element
-	void linkLastX (CMoveElement *element)
+	void linkLastX(CMoveElement *element)
 	{
-		linkX (_LastX, element, NULL);
+		linkX(_LastX, element, NULL);
 	}
 
 	/*/// Update sorted lists for an element
 	void linkFirstY (CMoveElement *element)
 	{
-		linkY (NULL, element, _FirstY);
+	    linkY (NULL, element, _FirstY);
 	}
 
 	/// Update sorted lists for an element
 	void linkLastY (CMoveElement *element)
 	{
-		linkY (_LastY, element, NULL);
+	    linkY (_LastY, element, NULL);
 	}*/
 
 	/// Update sorted lists for an element
-	void updateSortedLists (CMoveElement *element, uint8 worldImage);
+	void updateSortedLists(CMoveElement *element, uint8 worldImage);
 
 	// Link / unlink method
-	void unlinkX (CMoveElement *element);
+	void unlinkX(CMoveElement *element);
 
 	// Link / unlink method
-	//void unlinkY (CMoveElement *element);
+	// void unlinkY (CMoveElement *element);
 
 	// Get first X
-	CMoveElement	*getFirstX () const
+	CMoveElement *getFirstX() const
 	{
 		return _FirstX;
 	}
 
 	// Get last X
-	CMoveElement	*getLastX () const
+	CMoveElement *getLastX() const
 	{
 		return _LastX;
 	}
 
 	// Get root X
-	CMoveElement		*getRootX ()
+	CMoveElement *getRootX()
 	{
 		return _FirstX;
 	}
 
 private:
+	// Link / unlink method
+	void linkX(CMoveElement *previous, CMoveElement *element, CMoveElement *next);
 
 	// Link / unlink method
-	void linkX (CMoveElement *previous, CMoveElement *element, CMoveElement *next);
+	// void linkY (CMoveElement *previous, CMoveElement *element, CMoveElement *next);
 
-	// Link / unlink method
-	//void linkY (CMoveElement *previous, CMoveElement *element, CMoveElement *next);
-
-	CMoveElement		*_FirstX;
-	CMoveElement		*_LastX;
+	CMoveElement *_FirstX;
+	CMoveElement *_LastX;
 	/*CMoveElement		*_FirstY;
 	CMoveElement		*_LastY;*/
 };
 
-
 } // NLPACS
-
 
 #endif // NL_MOVE_CELL_H
 

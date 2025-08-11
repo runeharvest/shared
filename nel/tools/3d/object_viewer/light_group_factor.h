@@ -30,44 +30,45 @@
 
 class CLightGroupFactor : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CLightGroupFactor(CWnd* pParent = NULL);   // standard constructor
+	CLightGroupFactor(CWnd *pParent = NULL); // standard constructor
 
-	void handle ();
+	void handle();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CLightGroupFactor)
-	enum { IDD = IDD_LIGHT_GROUP_FACTOR };
-	CColorButton	ColorStart0;
-	CColorButton	ColorStart1;
-	CColorButton	ColorStart2;
-	CColorButton	ColorEnd0;
-	CColorButton	ColorEnd1;
-	CColorButton	ColorEnd2;
-	CSliderCtrl	LightGroup3Ctrl;
-	CSliderCtrl	LightGroup2Ctrl;
-	CSliderCtrl	LightGroup1Ctrl;
-	int		LightGroup1;
-	int		LightGroup2;
-	int		LightGroup3;
+	enum
+	{
+		IDD = IDD_LIGHT_GROUP_FACTOR
+	};
+	CColorButton ColorStart0;
+	CColorButton ColorStart1;
+	CColorButton ColorStart2;
+	CColorButton ColorEnd0;
+	CColorButton ColorEnd1;
+	CColorButton ColorEnd2;
+	CSliderCtrl LightGroup3Ctrl;
+	CSliderCtrl LightGroup2Ctrl;
+	CSliderCtrl LightGroup1Ctrl;
+	int LightGroup1;
+	int LightGroup2;
+	int LightGroup3;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CLightGroupFactor)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CLightGroupFactor)
 	virtual BOOL OnInitDialog();
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
 	afx_msg void OnButtonColorEnd0();
 	afx_msg void OnButtonColorEnd1();
 	afx_msg void OnButtonColorEnd2();
@@ -77,7 +78,7 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	void	chooseColor(CColorButton &colbut);
+	void chooseColor(CColorButton &colbut);
 };
 
 //{{AFX_INSERT_LOCATION}}

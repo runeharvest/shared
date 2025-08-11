@@ -24,37 +24,32 @@
 #include "nel/misc/plane.h"
 #include "nel/misc/matrix.h"
 
+namespace NL3D {
 
-namespace	NL3D
-{
-
-using NLMISC::CVector;
-using NLMISC::CPlane;
 using NLMISC::CMatrix;
+using NLMISC::CPlane;
+using NLMISC::CVector;
 
-
-class	CRenderTrav;
-class	CAnimDetailTrav;
-class	CLoadBalancingTrav;
-class	CHrcTrav;
-class	CLightTrav;
-class	CCluster;
-class	CInstanceGroup;
-class	CCamera;
-class	CQuadGridClipManager;
-class	CTransform;
-class	CSkeletonModel;
-
+class CRenderTrav;
+class CAnimDetailTrav;
+class CLoadBalancingTrav;
+class CHrcTrav;
+class CLightTrav;
+class CCluster;
+class CInstanceGroup;
+class CCamera;
+class CQuadGridClipManager;
+class CTransform;
+class CSkeletonModel;
 
 // ***************************************************************************
 // This is the order of clip planes.
-#define	NL3D_CLIP_PLANE_NEAR	0
-#define	NL3D_CLIP_PLANE_FAR		1
-#define	NL3D_CLIP_PLANE_LEFT	2
-#define	NL3D_CLIP_PLANE_TOP		3
-#define	NL3D_CLIP_PLANE_RIGHT	4
-#define	NL3D_CLIP_PLANE_BOTTOM	5
-
+#define NL3D_CLIP_PLANE_NEAR 0
+#define NL3D_CLIP_PLANE_FAR 1
+#define NL3D_CLIP_PLANE_LEFT 2
+#define NL3D_CLIP_PLANE_TOP 3
+#define NL3D_CLIP_PLANE_RIGHT 4
+#define NL3D_CLIP_PLANE_BOTTOM 5
 
 // ***************************************************************************
 /**
@@ -76,40 +71,38 @@ class	CSkeletonModel;
 class CClipTrav : public CTravCameraScene
 {
 public:
-
 	/// Constructor
 	CClipTrav();
 	~CClipTrav();
 
 	/// traverse
-	void				traverse ();
+	void traverse();
 
-	void registerCluster (CCluster* pCluster);
-	void unregisterCluster (CCluster* pCluster);
+	void registerCluster(CCluster *pCluster);
+	void unregisterCluster(CCluster *pCluster);
 
 	/// Setup the render traversal (else traverse() won't work)
 	void setQuadGridClipManager(CQuadGridClipManager *mgr);
-	const CQuadGridClipManager *getQuadGridClipManager() const {return _QuadGridClipManager;}
+	const CQuadGridClipManager *getQuadGridClipManager() const { return _QuadGridClipManager; }
 
 	/// \name Visible List mgt. Those visible models are updated each traverse().
 	//@{
 	// NB: list is cleared at beginning of traverse().
-	void				addVisibleModel(CTransform *model)
+	void addVisibleModel(CTransform *model)
 	{
-		model->_IndexInVisibleList= _CurrentNumVisibleModels;
-		_VisibleList[_CurrentNumVisibleModels]= model;
+		model->_IndexInVisibleList = _CurrentNumVisibleModels;
+		_VisibleList[_CurrentNumVisibleModels] = model;
 		_CurrentNumVisibleModels++;
 	}
 	// for createModel().
-	void				reserveVisibleList(uint numModels);
+	void reserveVisibleList(uint numModels);
 	//@}
-
 
 	/// \name Cluster system related methods.
 	//@{
 	/** Retrieve a list of clusters for which the position is inside. At least return the RootCluster one
-	*/
-	bool fullSearch (std::vector<CCluster*>& result, const CVector& pos);
+	 */
+	bool fullSearch(std::vector<CCluster *> &result, const CVector &pos);
 
 	/// Set cluster tracking on/off (ie storage of the visible cluster during clip traversal)
 	void setClusterVisibilityTracking(bool track);
@@ -119,71 +112,65 @@ public:
 	void addVisibleCluster(CCluster *cluster);
 	/** Return the list of cluster visible after the clip traversal
 	 *	You must activate the cluster tracking to obtain a result.
-	*/
-	const std::vector<CCluster*> &getVisibleClusters();
+	 */
+	const std::vector<CCluster *> &getVisibleClusters();
 
-	bool						_TrackClusterVisibility;
-	std::vector<CCluster*>		_VisibleClusters;
+	bool _TrackClusterVisibility;
+	std::vector<CCluster *> _VisibleClusters;
 	//@}
 
-
 public:
-
 	/** \name FOR MODEL TRAVERSAL ONLY.  (Read only)
 	 * Those variables are valid only in traverse*().
 	 */
 	//@{
 	/// Vision Pyramid (6 normalized planes) in the view basis.
-	std::vector<CPlane>	ViewPyramid;
+	std::vector<CPlane> ViewPyramid;
 	/// Vision Pyramid (6 normalized planes) in the world basis. NB: NOT modified by the ClusterSystem.
-	std::vector<CPlane>	WorldFrustumPyramid;
+	std::vector<CPlane> WorldFrustumPyramid;
 	/// Vision Pyramid in the world basis. NB: may be modified by the ClusterSystem.
-	std::vector<CPlane>	WorldPyramid;
+	std::vector<CPlane> WorldPyramid;
 	//@}
-	sint64				CurrentDate;
+	sint64 CurrentDate;
 
-	CCluster			*RootCluster;
-	CCamera				*Camera;
+	CCluster *RootCluster;
+	CCamera *Camera;
 
-	CQuadGrid<CCluster*> Accel;
+	CQuadGrid<CCluster *> Accel;
 
 	/** for CQuadGridClipClusterClip only. This flag means models traversed do not need to clip,
 	 *	they are sure to be visible.
 	 */
-	bool				ForceNoFrustumClip;
+	bool ForceNoFrustumClip;
 
-
-// **********************
+	// **********************
 private:
-	friend	class	CTransform;
-	std::vector<CTransform*>	_VisibleList;
-	uint32						_CurrentNumVisibleModels;
+	friend class CTransform;
+	std::vector<CTransform *> _VisibleList;
+	uint32 _CurrentNumVisibleModels;
 
-	CQuadGridClipManager		*_QuadGridClipManager;
+	CQuadGridClipManager *_QuadGridClipManager;
 
 	// For skeleton CLod Load balancing
-	struct	CSkeletonKey
+	struct CSkeletonKey
 	{
-		uint				Priority;
-		CSkeletonModel		*SkeletonModel;
+		uint Priority;
+		CSkeletonModel *SkeletonModel;
 
-		bool	operator<(const CSkeletonKey &k) const
+		bool operator<(const CSkeletonKey &k) const
 		{
-			return Priority<k.Priority;
+			return Priority < k.Priority;
 		}
 	};
-	std::vector<CSkeletonKey>	_TmpSortSkeletons;
+	std::vector<CSkeletonKey> _TmpSortSkeletons;
 
-	void	loadBalanceSkeletonCLod();
+	void loadBalanceSkeletonCLod();
 
 	// clip the shadow casters to know if they still need some process
-	void	clipShadowCasters();
+	void clipShadowCasters();
 };
 
-
-
 }
-
 
 #endif // NL_CLIP_TRAV_H
 

@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #if !defined(AFX_FILTERDIALOG_H__916C1178_3FEE_4DD0_A4D7_2EE5B39A07D9__INCLUDED_)
 #define AFX_FILTERDIALOG_H__916C1178_3FEE_4DD0_A4D7_2EE5B39A07D9__INCLUDED_
 
@@ -31,37 +30,38 @@
 
 class CFilterDialog : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CFilterDialog(CWnd* pParent = NULL);   // standard constructor
+	CFilterDialog(CWnd *pParent = NULL); // standard constructor
 
 	///
-	std::vector<CString>	getPosFilter() const;
+	std::vector<CString> getPosFilter() const;
 
 	///
-	std::vector<CString>	getNegFilter() const;
+	std::vector<CString> getNegFilter() const;
 
-	bool					Trace;
-	
-// Dialog Data
+	bool Trace;
+
+	// Dialog Data
 	//{{AFX_DATA(CFilterDialog)
-	enum { IDD = IDD_FILTERDIALOG };
-	CString	m_NegFilter;
-	CString	m_PosFilter;
-	CString	m_Sep;
+	enum
+	{
+		IDD = IDD_FILTERDIALOG
+	};
+	CString m_NegFilter;
+	CString m_PosFilter;
+	CString m_Sep;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CFilterDialog)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CFilterDialog)
 	virtual BOOL OnInitDialog();

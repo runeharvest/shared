@@ -18,7 +18,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdgeorges.h"
 
 #include "nel/misc/i_xml.h"
@@ -39,196 +38,194 @@ using namespace std;
 #define stricmp strcasecmp
 #endif
 
-
-namespace NLGEORGES
-{
+namespace NLGEORGES {
 
 // ***************************************************************************
 
-void warning (bool exception, const char *format, ... );
+void warning(bool exception, const char *format, ...);
 
 // ***************************************************************************
 
-void CFormDfn::addEntry( const std::string &name )
+void CFormDfn::addEntry(const std::string &name)
 {
 	CEntry entry;
-	entry.setName( name.c_str() );
-	Entries.push_back( entry );
+	entry.setName(name.c_str());
+	Entries.push_back(entry);
 }
 
-void CFormDfn::removeEntry( uint idx )
+void CFormDfn::removeEntry(uint idx)
 {
-	std::vector< CEntry >::iterator itr = Entries.begin() + idx;
-	Entries.erase( itr );
+	std::vector<CEntry>::iterator itr = Entries.begin() + idx;
+	Entries.erase(itr);
 }
 
 // ***************************************************************************
 
-void CFormDfn::write (xmlDocPtr doc, const std::string &filename)
+void CFormDfn::write(xmlDocPtr doc, const std::string &filename)
 {
 	// Save filename
-	_Filename = CFile::getFilename (filename);
+	_Filename = CFile::getFilename(filename);
 
 	// Create the first node
-	xmlNodePtr node = xmlNewDocNode (doc, NULL, (const xmlChar*)"DFN", NULL);
-	xmlDocSetRootElement (doc, node);
+	xmlNodePtr node = xmlNewDocNode(doc, NULL, (const xmlChar *)"DFN", NULL);
+	xmlDocSetRootElement(doc, node);
 
 	// Write elements
 	uint parent;
-	for (parent=0; parent<Parents.size(); parent++)
+	for (parent = 0; parent < Parents.size(); parent++)
 	{
 		// Parent name not empty ?
-		if (!Parents[parent].ParentFilename.empty ())
+		if (!Parents[parent].ParentFilename.empty())
 		{
 			// Parent node
-			xmlNodePtr parentNode = xmlNewChild ( node, NULL, (const xmlChar*)"PARENT", NULL);
+			xmlNodePtr parentNode = xmlNewChild(node, NULL, (const xmlChar *)"PARENT", NULL);
 
 			// Save parent
-			xmlSetProp (parentNode, (const xmlChar*)"Name", (const xmlChar*)Parents[parent].ParentFilename.c_str());
+			xmlSetProp(parentNode, (const xmlChar *)"Name", (const xmlChar *)Parents[parent].ParentFilename.c_str());
 		}
 	}
 
 	// Write elements
 	uint elm;
-	for (elm=0; elm<Entries.size(); elm++)
+	for (elm = 0; elm < Entries.size(); elm++)
 	{
 		// Add a node
-		xmlNodePtr elmPtr = xmlNewChild ( node, NULL, (const xmlChar*)"ELEMENT", NULL);
-		xmlSetProp (elmPtr, (const xmlChar*)"Name", (const xmlChar*)Entries[elm].Name.c_str());
+		xmlNodePtr elmPtr = xmlNewChild(node, NULL, (const xmlChar *)"ELEMENT", NULL);
+		xmlSetProp(elmPtr, (const xmlChar *)"Name", (const xmlChar *)Entries[elm].Name.c_str());
 
 		// What kind of element
 		switch (Entries[elm].TypeElement)
 		{
 		case UFormDfn::EntryType:
-			xmlSetProp (elmPtr, (const xmlChar*)"Type", (const xmlChar*)"Type");
-			xmlSetProp (elmPtr, (const xmlChar*)"Filename", (const xmlChar*)Entries[elm].Filename.c_str());
-			if ((!Entries[elm].FilenameExt.empty ()) && Entries[elm].FilenameExt != "*.*")
-				xmlSetProp (elmPtr, (const xmlChar*)"FilenameExt", (const xmlChar*)Entries[elm].FilenameExt.c_str());
+			xmlSetProp(elmPtr, (const xmlChar *)"Type", (const xmlChar *)"Type");
+			xmlSetProp(elmPtr, (const xmlChar *)"Filename", (const xmlChar *)Entries[elm].Filename.c_str());
+			if ((!Entries[elm].FilenameExt.empty()) && Entries[elm].FilenameExt != "*.*")
+				xmlSetProp(elmPtr, (const xmlChar *)"FilenameExt", (const xmlChar *)Entries[elm].FilenameExt.c_str());
 			break;
 		case UFormDfn::EntryDfn:
-			xmlSetProp (elmPtr, (const xmlChar*)"Type", (const xmlChar*)"Dfn");
-			xmlSetProp (elmPtr, (const xmlChar*)"Filename", (const xmlChar*)Entries[elm].Filename.c_str());
+			xmlSetProp(elmPtr, (const xmlChar *)"Type", (const xmlChar *)"Dfn");
+			xmlSetProp(elmPtr, (const xmlChar *)"Filename", (const xmlChar *)Entries[elm].Filename.c_str());
 			break;
 		case UFormDfn::EntryVirtualDfn:
-			xmlSetProp (elmPtr, (const xmlChar*)"Type", (const xmlChar*)"DfnPointer");
+			xmlSetProp(elmPtr, (const xmlChar *)"Type", (const xmlChar *)"DfnPointer");
 			break;
 		}
 
 		// Is an array ?
 		if (Entries[elm].Array)
-			xmlSetProp (elmPtr, (const xmlChar*)"Array", (const xmlChar*)"true");
+			xmlSetProp(elmPtr, (const xmlChar *)"Array", (const xmlChar *)"true");
 
 		// Default value for type
-		if ((Entries[elm].TypeElement == UFormDfn::EntryType) && (!Entries[elm].Default.empty ()))
-			xmlSetProp (elmPtr, (const xmlChar*)"Default", (const xmlChar*)Entries[elm].Default.c_str ());
+		if ((Entries[elm].TypeElement == UFormDfn::EntryType) && (!Entries[elm].Default.empty()))
+			xmlSetProp(elmPtr, (const xmlChar *)"Default", (const xmlChar *)Entries[elm].Default.c_str());
 	}
 
 	// Header
-	Header.write (node);
+	Header.write(node);
 }
 
 // ***************************************************************************
 
-void CFormDfn::read (xmlNodePtr root, CFormLoader &loader, bool forceLoad, const std::string &filename)
+void CFormDfn::read(xmlNodePtr root, CFormLoader &loader, bool forceLoad, const std::string &filename)
 {
 	// Save filename
-	_Filename = CFile::getFilename (filename);
+	_Filename = CFile::getFilename(filename);
 
 	// Check node name
-	if ( ((const char*)root->name == NULL) || (strcmp ((const char*)root->name, "DFN") != 0) )
+	if (((const char *)root->name == NULL) || (strcmp((const char *)root->name, "DFN") != 0))
 	{
 		// Throw exception
-		warning (true, "read", "XML Syntax error in block line %d, node (%s) should be DFN.", (sint)root->line, root->name);
+		warning(true, "read", "XML Syntax error in block line %d, node (%s) should be DFN.", (sint)root->line, root->name);
 	}
 
 	// Count the parent
-	uint parentCount = CIXml::countChildren (root, "PARENT");
-	Parents.resize (parentCount);
+	uint parentCount = CIXml::countChildren(root, "PARENT");
+	Parents.resize(parentCount);
 
 	// For each element entry
 	uint parentNumber = 0;
-	xmlNodePtr parent = CIXml::getFirstChildNode (root, "PARENT");
-	while (parentNumber<parentCount)
+	xmlNodePtr parent = CIXml::getFirstChildNode(root, "PARENT");
+	while (parentNumber < parentCount)
 	{
 		// Get the Parent
-		const char *parentFilename = (const char*)xmlGetProp (parent, (xmlChar*)"Name");
+		const char *parentFilename = (const char *)xmlGetProp(parent, (xmlChar *)"Name");
 		if (parentFilename)
 		{
 			Parents[parentNumber].ParentFilename = parentFilename;
 
 			// Delete the value
-			xmlFree ((void*)parentFilename);
+			xmlFree((void *)parentFilename);
 
 			// Load the parent
-			Parents[parentNumber].Parent = loader.loadFormDfn (Parents[parentNumber].ParentFilename.c_str (), forceLoad);
+			Parents[parentNumber].Parent = loader.loadFormDfn(Parents[parentNumber].ParentFilename.c_str(), forceLoad);
 			if ((Parents[parentNumber].Parent == NULL) && !forceLoad)
 			{
 				// Throw exception
-				warning (true, "read", "Can't load parent DFN file (%s).", Parents[parentNumber].ParentFilename.c_str ());
+				warning(true, "read", "Can't load parent DFN file (%s).", Parents[parentNumber].ParentFilename.c_str());
 			}
 		}
 		else
 		{
 			// Throw exception
-			warning (true, "read", "XML Syntax error in block (%s) line %d, aguments Name not found.",
-				parent->name, (sint)parent->line);
+			warning(true, "read", "XML Syntax error in block (%s) line %d, aguments Name not found.",
+			    parent->name, (sint)parent->line);
 		}
 
 		// Next parent
-		parent = CIXml::getNextChildNode (parent, "PARENT");
+		parent = CIXml::getNextChildNode(parent, "PARENT");
 		parentNumber++;
 	}
 
 	// Count the element children
-	uint childCount = CIXml::countChildren (root, "ELEMENT");
+	uint childCount = CIXml::countChildren(root, "ELEMENT");
 
 	// Resize the element table
-	Entries.resize (childCount);
+	Entries.resize(childCount);
 
 	// For each element entry
 	uint childNumber = 0;
-	xmlNodePtr child = CIXml::getFirstChildNode (root, "ELEMENT");
-	while (childNumber<childCount)
+	xmlNodePtr child = CIXml::getFirstChildNode(root, "ELEMENT");
+	while (childNumber < childCount)
 	{
 		// Checks
-		nlassert (child);
+		nlassert(child);
 
 		// Get the name
-		const char *value = (const char*)xmlGetProp (child, (xmlChar*)"Name");
+		const char *value = (const char *)xmlGetProp(child, (xmlChar *)"Name");
 		if (value)
 		{
 			// Store the value
 			Entries[childNumber].Name = value;
 
 			// Delete the value
-			xmlFree ((void*)value);
+			xmlFree((void *)value);
 
 			// Reset
 			Entries[childNumber].Dfn = NULL;
 			Entries[childNumber].Type = NULL;
-			Entries[childNumber].Default.clear ();
+			Entries[childNumber].Default.clear();
 
-			const char *filename = (const char*)xmlGetProp (child, (xmlChar*)"Filename");
+			const char *filename = (const char *)xmlGetProp(child, (xmlChar *)"Filename");
 
-			if ( filename )
+			if (filename)
 			{
 				Entries[childNumber].Filename = filename;
 
 				// Delete the value
-				xmlFree ((void*)filename);
+				xmlFree((void *)filename);
 			}
 			else
 			{
-				Entries[childNumber].Filename.clear ();
+				Entries[childNumber].Filename.clear();
 			}
 
-			const char *filenameExt = (const char*)xmlGetProp (child, (xmlChar*)"FilenameExt");
-			if ( filenameExt )
+			const char *filenameExt = (const char *)xmlGetProp(child, (xmlChar *)"FilenameExt");
+			if (filenameExt)
 			{
 				Entries[childNumber].FilenameExt = filenameExt;
 
 				// Delete the value
-				xmlFree ((void*)filenameExt);
+				xmlFree((void *)filenameExt);
 			}
 			else
 			{
@@ -236,274 +233,274 @@ void CFormDfn::read (xmlNodePtr root, CFormLoader &loader, bool forceLoad, const
 			}
 
 			// Read the type
-			const char *typeName = (const char*)xmlGetProp (child, (xmlChar*)"Type");
+			const char *typeName = (const char *)xmlGetProp(child, (xmlChar *)"Type");
 			if (typeName)
 			{
 				bool type = false;
 				bool dfn = false;
-				if (stricmp (typeName, "Type") == 0)
+				if (stricmp(typeName, "Type") == 0)
 				{
 					Entries[childNumber].TypeElement = UFormDfn::EntryType;
 					type = true;
 
 					// Load the filename
-					if (!Entries[childNumber].Filename.empty ())
+					if (!Entries[childNumber].Filename.empty())
 					{
-						Entries[childNumber].Type = loader.loadType (Entries[childNumber].Filename.c_str ());
+						Entries[childNumber].Type = loader.loadType(Entries[childNumber].Filename.c_str());
 						if ((Entries[childNumber].Type == NULL) && !forceLoad)
 						{
 							// Throw exception
-							warning (true, "read", "In XML block (%s) line %d, file not found %s.",
-								child->name, (sint)child->line, Entries[childNumber].Filename.c_str ());
+							warning(true, "read", "In XML block (%s) line %d, file not found %s.",
+							    child->name, (sint)child->line, Entries[childNumber].Filename.c_str());
 						}
 
 						// Read the default value
-						const char *defaultName = (const char*)xmlGetProp (child, (xmlChar*)"Default");
+						const char *defaultName = (const char *)xmlGetProp(child, (xmlChar *)"Default");
 						if (defaultName)
 						{
 							Entries[childNumber].Default = defaultName;
 
 							// Delete the value
-							xmlFree ((void*)defaultName);
+							xmlFree((void *)defaultName);
 						}
 					}
 					else
 					{
 						// Throw exception
-						warning (true, "read", "XML In block (%s) line %d, no filename found for the .typ file.",
-							child->name, (sint)child->line);
+						warning(true, "read", "XML In block (%s) line %d, no filename found for the .typ file.",
+						    child->name, (sint)child->line);
 					}
 				}
-				else if (stricmp (typeName, "Dfn") == 0)
+				else if (stricmp(typeName, "Dfn") == 0)
 				{
 					Entries[childNumber].TypeElement = UFormDfn::EntryDfn;
 					dfn = true;
 
 					// Load the filename
-					if (!Entries[childNumber].Filename.empty ())
+					if (!Entries[childNumber].Filename.empty())
 					{
 						// Load the filename
-						Entries[childNumber].Dfn = loader.loadFormDfn (Entries[childNumber].Filename.c_str (), forceLoad);
+						Entries[childNumber].Dfn = loader.loadFormDfn(Entries[childNumber].Filename.c_str(), forceLoad);
 						if ((Entries[childNumber].Dfn == NULL) && !forceLoad)
 						{
 							// Throw exception
-							warning (true, "read", "XML In block (%s) line %d, file not found %s.",
-								child->name, (sint)child->line, Entries[childNumber].Filename.c_str ());
+							warning(true, "read", "XML In block (%s) line %d, file not found %s.",
+							    child->name, (sint)child->line, Entries[childNumber].Filename.c_str());
 						}
 					}
 					else
 					{
 						// Throw exception
-						warning (true, "read", "XML In block (%s) line %d, no filename found for the .typ file.",
-							child->name, (sint)child->line);
+						warning(true, "read", "XML In block (%s) line %d, no filename found for the .typ file.",
+						    child->name, (sint)child->line);
 					}
 				}
-				else if (stricmp (typeName, "DfnPointer") == 0)
+				else if (stricmp(typeName, "DfnPointer") == 0)
 				{
 					Entries[childNumber].TypeElement = UFormDfn::EntryVirtualDfn;
 				}
 				else
 				{
 					// Throw exception
-					warning (true, "read", "XML Syntax error in block (%s) line %d, element has not a valid type name attribut \"Type = %s\".",
-						child->name, (sint)child->line, typeName);
+					warning(true, "read", "XML Syntax error in block (%s) line %d, element has not a valid type name attribut \"Type = %s\".",
+					    child->name, (sint)child->line, typeName);
 				}
 
 				// Delete the value
-				xmlFree ((void*)typeName);
+				xmlFree((void *)typeName);
 			}
 			else
 			{
 				// Throw exception
-				warning (true, "read", "XML Syntax error in block (%s) line %d, element has no type name attribut \"Type = [Type][Dfn][DfnPointer]\".",
-					child->name, (sint)child->line);
+				warning(true, "read", "XML Syntax error in block (%s) line %d, element has no type name attribut \"Type = [Type][Dfn][DfnPointer]\".",
+				    child->name, (sint)child->line);
 			}
 
 			// Get the array attrib
 			Entries[childNumber].Array = false;
-			const char* arrayFlag = (const char*)xmlGetProp (child, (xmlChar*)"Array");
+			const char *arrayFlag = (const char *)xmlGetProp(child, (xmlChar *)"Array");
 			if (arrayFlag)
 			{
-				Entries[childNumber].Array =  (stricmp (arrayFlag, "true") == 0);
+				Entries[childNumber].Array = (stricmp(arrayFlag, "true") == 0);
 
 				// Delete the value
-				xmlFree ((void*)arrayFlag);
+				xmlFree((void *)arrayFlag);
 			}
 		}
 		else
 		{
 			// Throw exception
-			warning (true, "read", "XML Syntax error in block (%s) line %d, aguments Name not found.",
-				root->name, (sint)root->line);
+			warning(true, "read", "XML Syntax error in block (%s) line %d, aguments Name not found.",
+			    root->name, (sint)root->line);
 		}
 
 		// Next child
-		child = CIXml::getNextChildNode (child, "ELEMENT");
+		child = CIXml::getNextChildNode(child, "ELEMENT");
 		childNumber++;
 	}
 
 	// Read the header
-	Header.read (root);
+	Header.read(root);
 }
 
 // ***************************************************************************
 
-uint CFormDfn::countParentDfn (uint32 round) const
+uint CFormDfn::countParentDfn(uint32 round) const
 {
 	// Checkout recursive calls
 	if (round > NLGEORGES_MAX_RECURSION)
 	{
 		// Turn around..
-		warning (false, "countParentDfn", "Recursive call on the same DFN, look for loop inheritances.");
+		warning(false, "countParentDfn", "Recursive call on the same DFN, look for loop inheritances.");
 		return 0;
 	}
 
 	uint count = 0;
 	uint i;
-	for (i=0; i<Parents.size (); i++)
+	for (i = 0; i < Parents.size(); i++)
 	{
-		count += Parents[i].Parent->countParentDfn (round+1);
+		count += Parents[i].Parent->countParentDfn(round + 1);
 	}
-	return count+1;
+	return count + 1;
 }
 
 // ***************************************************************************
 
-void CFormDfn::getParentDfn (std::vector<CFormDfn*> &array, uint32 round)
+void CFormDfn::getParentDfn(std::vector<CFormDfn *> &array, uint32 round)
 {
 	// Checkout recursive calls
 	if (round > NLGEORGES_MAX_RECURSION)
 	{
 		// Turn around..
-		warning (false, "getParentDfn", "Recursive call on the same DFN, look for loop inheritances.");
+		warning(false, "getParentDfn", "Recursive call on the same DFN, look for loop inheritances.");
 		return;
 	}
 
-	//uint count = 0;
+	// uint count = 0;
 	uint i;
-	for (i=0; i<Parents.size (); i++)
+	for (i = 0; i < Parents.size(); i++)
 	{
-		Parents[i].Parent->getParentDfn (array, round+1);
+		Parents[i].Parent->getParentDfn(array, round + 1);
 	}
-	array.push_back (this);
+	array.push_back(this);
 }
 
 // ***************************************************************************
 
-void CFormDfn::getParentDfn (std::vector<const CFormDfn*> &array, uint32 round) const
+void CFormDfn::getParentDfn(std::vector<const CFormDfn *> &array, uint32 round) const
 {
 	// Checkout recursive calls
 	if (round > NLGEORGES_MAX_RECURSION)
 	{
 		// Turn around..
-		warning (false, "getParentDfn", "Recursive call on the same DFN, look for loop inheritances.");
+		warning(false, "getParentDfn", "Recursive call on the same DFN, look for loop inheritances.");
 		return;
 	}
 
-	//uint count = 0;
+	// uint count = 0;
 	uint i;
-	for (i=0; i<Parents.size (); i++)
+	for (i = 0; i < Parents.size(); i++)
 	{
-		Parents[i].Parent->getParentDfn (array, round+1);
+		Parents[i].Parent->getParentDfn(array, round + 1);
 	}
-	array.push_back (this);
+	array.push_back(this);
 }
 
 // ***************************************************************************
 
-uint CFormDfn::getNumParent () const
+uint CFormDfn::getNumParent() const
 {
-	return (uint)Parents.size ();
+	return (uint)Parents.size();
 }
 
 // ***************************************************************************
 
-CFormDfn *CFormDfn::getParent (uint parent) const
+CFormDfn *CFormDfn::getParent(uint parent) const
 {
 	return Parents[parent].Parent;
 }
 
 // ***************************************************************************
 
-const string& CFormDfn::getParentFilename (uint parent) const
+const string &CFormDfn::getParentFilename(uint parent) const
 {
 	return Parents[parent].ParentFilename;
 }
 
 // ***************************************************************************
 
-uint CFormDfn::getNumEntry () const
+uint CFormDfn::getNumEntry() const
 {
 	return (uint)Entries.size();
 }
 
 // ***************************************************************************
 
-void CFormDfn::setNumEntry (uint size)
+void CFormDfn::setNumEntry(uint size)
 {
-	Entries.resize (size);
+	Entries.resize(size);
 }
 
 // ***************************************************************************
 
-const CFormDfn::CEntry &CFormDfn::getEntry (uint entry) const
-{
-	return Entries[entry];
-}
-
-// ***************************************************************************
-
-CFormDfn::CEntry &CFormDfn::getEntry (uint entry)
+const CFormDfn::CEntry &CFormDfn::getEntry(uint entry) const
 {
 	return Entries[entry];
 }
 
 // ***************************************************************************
 
-void CFormDfn::setNumParent (uint size)
+CFormDfn::CEntry &CFormDfn::getEntry(uint entry)
 {
-	Parents.resize (size);
+	return Entries[entry];
 }
 
 // ***************************************************************************
 
-void CFormDfn::setParent (uint parent, CFormLoader &loader, const std::string &filename)
+void CFormDfn::setNumParent(uint size)
+{
+	Parents.resize(size);
+}
+
+// ***************************************************************************
+
+void CFormDfn::setParent(uint parent, CFormLoader &loader, const std::string &filename)
 {
 	if (filename.empty())
 		Parents[parent].Parent = NULL;
 	else
-		Parents[parent].Parent = loader.loadFormDfn (filename, false);
+		Parents[parent].Parent = loader.loadFormDfn(filename, false);
 	Parents[parent].ParentFilename = filename;
 }
 
 // ***************************************************************************
 
-void CFormDfn::CEntry::setType (CFormLoader &loader, const std::string &filename)
+void CFormDfn::CEntry::setType(CFormLoader &loader, const std::string &filename)
 {
 	TypeElement = EntryType;
 	Dfn = NULL;
 	Filename = filename;
-	Type = loader.loadType (filename);
+	Type = loader.loadType(filename);
 }
 
-void CFormDfn::CEntry::setType( TEntryType type )
+void CFormDfn::CEntry::setType(TEntryType type)
 {
 	TypeElement = type;
 }
 
 // ***************************************************************************
 
-void CFormDfn::CEntry::setDfn (CFormLoader &loader, const std::string &filename)
+void CFormDfn::CEntry::setDfn(CFormLoader &loader, const std::string &filename)
 {
 	TypeElement = EntryDfn;
 	Filename = filename;
 	Type = NULL;
-	Dfn = loader.loadFormDfn (filename, false);
+	Dfn = loader.loadFormDfn(filename, false);
 }
 
 // ***************************************************************************
 
-void CFormDfn::CEntry::setDfnPointer ()
+void CFormDfn::CEntry::setDfnPointer()
 {
 	TypeElement = EntryVirtualDfn;
 	Filename.clear();
@@ -513,49 +510,49 @@ void CFormDfn::CEntry::setDfnPointer ()
 
 // ***************************************************************************
 
-const std::string &CFormDfn::CEntry::getName () const
+const std::string &CFormDfn::CEntry::getName() const
 {
 	return Name;
 }
 
 // ***************************************************************************
 
-void CFormDfn::CEntry::setName (const std::string &name)
+void CFormDfn::CEntry::setName(const std::string &name)
 {
 	Name = name;
 }
 
 // ***************************************************************************
 
-const std::string &CFormDfn::CEntry::getDefault () const
+const std::string &CFormDfn::CEntry::getDefault() const
 {
 	return Default;
 }
 
 // ***************************************************************************
 
-void CFormDfn::CEntry::setDefault (const std::string &def)
+void CFormDfn::CEntry::setDefault(const std::string &def)
 {
 	Default = def;
 }
 
 // ***************************************************************************
 
-void CFormDfn::CEntry::setArrayFlag (bool flag)
+void CFormDfn::CEntry::setArrayFlag(bool flag)
 {
 	Array = flag;
 }
 
 // ***************************************************************************
 
-bool CFormDfn::CEntry::getArrayFlag () const
+bool CFormDfn::CEntry::getArrayFlag() const
 {
 	return Array;
 }
 
 // ***************************************************************************
 
-UFormDfn::TEntryType CFormDfn::CEntry::getType () const
+UFormDfn::TEntryType CFormDfn::CEntry::getType() const
 {
 	return TypeElement;
 }
@@ -569,57 +566,57 @@ const std::string &CFormDfn::CEntry::getFilename() const
 
 // ***************************************************************************
 
-void CFormDfn::CEntry::setFilename (const std::string &def)
+void CFormDfn::CEntry::setFilename(const std::string &def)
 {
 	Filename = def;
 }
 
 // ***************************************************************************
 
-CType *CFormDfn::CEntry::getTypePtr ()
+CType *CFormDfn::CEntry::getTypePtr()
 {
 	return Type;
 }
 
 // ***************************************************************************
 
-CFormDfn *CFormDfn::CEntry::getDfnPtr ()
+CFormDfn *CFormDfn::CEntry::getDfnPtr()
 {
 	return Dfn;
 }
 
 // ***************************************************************************
 
-const CType *CFormDfn::CEntry::getTypePtr () const
+const CType *CFormDfn::CEntry::getTypePtr() const
 {
 	return Type;
 }
 
 // ***************************************************************************
 
-const CFormDfn *CFormDfn::CEntry::getDfnPtr () const
+const CFormDfn *CFormDfn::CEntry::getDfnPtr() const
 {
 	return Dfn;
 }
 
 // ***************************************************************************
 
-CFormDfn *CFormDfn::getSubDfn (uint index, uint &dfnIndex)
+CFormDfn *CFormDfn::getSubDfn(uint index, uint &dfnIndex)
 {
 	// Get the sub DFN
-	vector<CFormDfn*> parentDfn;
-	parentDfn.reserve (countParentDfn ());
-	getParentDfn (parentDfn);
+	vector<CFormDfn *> parentDfn;
+	parentDfn.reserve(countParentDfn());
+	getParentDfn(parentDfn);
 
 	// For each parent
 	uint dfn;
 	dfnIndex = index;
 	uint parentSize = (uint)parentDfn.size();
-	for (dfn=0; dfn<parentSize; dfn++)
+	for (dfn = 0; dfn < parentSize; dfn++)
 	{
 		// Good element ?
-		uint size = (uint)parentDfn[dfn]->Entries.size ();
-		if (dfnIndex<size)
+		uint size = (uint)parentDfn[dfn]->Entries.size();
+		if (dfnIndex < size)
 			return parentDfn[dfn];
 		dfnIndex -= size;
 	}
@@ -631,22 +628,22 @@ CFormDfn *CFormDfn::getSubDfn (uint index, uint &dfnIndex)
 
 // ***************************************************************************
 
-const CFormDfn *CFormDfn::getSubDfn (uint index, uint &dfnIndex) const
+const CFormDfn *CFormDfn::getSubDfn(uint index, uint &dfnIndex) const
 {
 	// Get the sub DFN
-	vector<const CFormDfn*> parentDfn;
-	parentDfn.reserve (countParentDfn ());
-	getParentDfn (parentDfn);
+	vector<const CFormDfn *> parentDfn;
+	parentDfn.reserve(countParentDfn());
+	getParentDfn(parentDfn);
 
 	// For each parent
 	uint dfn;
 	dfnIndex = index;
 	uint parentSize = (uint)parentDfn.size();
-	for (dfn=0; dfn<parentSize; dfn++)
+	for (dfn = 0; dfn < parentSize; dfn++)
 	{
 		// Good element ?
-		uint size = (uint)parentDfn[dfn]->Entries.size ();
-		if (dfnIndex<size)
+		uint size = (uint)parentDfn[dfn]->Entries.size();
+		if (dfnIndex < size)
 			return parentDfn[dfn];
 		dfnIndex -= size;
 	}
@@ -658,85 +655,85 @@ const CFormDfn *CFormDfn::getSubDfn (uint index, uint &dfnIndex) const
 
 // ***************************************************************************
 
-bool CFormDfn::getEntryType (uint entry, TEntryType &type, bool &array) const
+bool CFormDfn::getEntryType(uint entry, TEntryType &type, bool &array) const
 {
-	if (entry < Entries.size ())
+	if (entry < Entries.size())
 	{
 		type = Entries[entry].TypeElement;
 		array = Entries[entry].Array;
 		return true;
 	}
-	warning (false, "getEntryType", "Wrong entry ID.");
+	warning(false, "getEntryType", "Wrong entry ID.");
 	return false;
 }
 
 // ***************************************************************************
 
-bool CFormDfn::getEntryFilename (uint entry, std::string& filename) const
+bool CFormDfn::getEntryFilename(uint entry, std::string &filename) const
 {
-	if (entry < Entries.size ())
+	if (entry < Entries.size())
 	{
 		if (Entries[entry].TypeElement != EntryVirtualDfn)
 		{
 			filename = Entries[entry].Filename;
 			return true;
 		}
-		warning (false, "getEntryFilename", "The entry is a virtual DFN.");
+		warning(false, "getEntryFilename", "The entry is a virtual DFN.");
 		return false;
 	}
-	warning (false, "getEntryFilename", "Wrong entry ID.");
+	warning(false, "getEntryFilename", "Wrong entry ID.");
 	return false;
 }
 
 // ***************************************************************************
 
-bool CFormDfn::getEntryFilenameExt (uint entry, std::string& filename) const
+bool CFormDfn::getEntryFilenameExt(uint entry, std::string &filename) const
 {
-	if (entry < Entries.size ())
+	if (entry < Entries.size())
 	{
 		filename = Entries[entry].FilenameExt;
 		return true;
 	}
-	warning (false, "getEntryFilenameExt", "Wrong entry ID.");
+	warning(false, "getEntryFilenameExt", "Wrong entry ID.");
 	return false;
 }
 
 // ***************************************************************************
 
-bool CFormDfn::getEntryIndexByName (uint &entry, const	std::string &name) const
+bool CFormDfn::getEntryIndexByName(uint &entry, const std::string &name) const
 {
-	uint	entryIndex=0;
-	while	(entryIndex<Entries.size ())
+	uint entryIndex = 0;
+	while (entryIndex < Entries.size())
 	{
-		if (Entries[entryIndex].Name==name)
+		if (Entries[entryIndex].Name == name)
 		{
-			entry=entryIndex;
-			return	true;
+			entry = entryIndex;
+			return true;
 		}
 		entryIndex++;
 	}
 	entry = std::numeric_limits<uint>::max();
-	return	false;
-}
-
-// ***************************************************************************
-
-bool CFormDfn::getEntryName (uint entry, std::string &name) const
-{
-	if (entry < Entries.size ())
-	{
-		name = Entries[entry].Name;
-		return true;
-	}
-	warning (false, "getEntryName", "Wrong entry ID.");
 	return false;
 }
 
 // ***************************************************************************
 
-bool	CFormDfn::getEntryDfn (uint entry, UFormDfn **dfn)
+bool CFormDfn::getEntryName(uint entry, std::string &name) const
 {
-	if (entry < Entries.size ())
+	if (entry < Entries.size())
+	{
+		name = Entries[entry].Name;
+		return true;
+	}
+	warning(false, "getEntryName", "Wrong entry ID.");
+	return false;
+}
+
+// ***************************************************************************
+
+bool CFormDfn::getEntryDfn(uint entry, UFormDfn **dfn)
+{
+	if (entry < Entries.size())
 	{
 		if (Entries[entry].TypeElement == EntryDfn)
 		{
@@ -744,56 +741,56 @@ bool	CFormDfn::getEntryDfn (uint entry, UFormDfn **dfn)
 			return true;
 		}
 		else
-			warning (false, "getEntryDfn", "This entry is not a DFN.");
+			warning(false, "getEntryDfn", "This entry is not a DFN.");
 	}
-	warning (false, "getEntryDfn", "Wrong entry ID.");
+	warning(false, "getEntryDfn", "Wrong entry ID.");
 	return false;
 }
 
-bool	CFormDfn::getEntryByName (const std::string &name, CFormDfn::CEntry **entry)
+bool CFormDfn::getEntryByName(const std::string &name, CFormDfn::CEntry **entry)
 {
-	int	entryIndex=(int)Entries.size ()-1;
-	while (entryIndex>=0)
+	int entryIndex = (int)Entries.size() - 1;
+	while (entryIndex >= 0)
 	{
-		CEntry	*entryPtr=&Entries[entryIndex];
-		if (entryPtr->getName()==name)
+		CEntry *entryPtr = &Entries[entryIndex];
+		if (entryPtr->getName() == name)
 		{
-			*entry=entryPtr;
-			return	true;
+			*entry = entryPtr;
+			return true;
 		}
 		entryIndex--;
 	}
-	*entry=NULL;
-	return	false;
+	*entry = NULL;
+	return false;
 }
 
-bool	CFormDfn::getEntryDfnByName (const std::string &name, UFormDfn **dfn)
+bool CFormDfn::getEntryDfnByName(const std::string &name, UFormDfn **dfn)
 {
-	CFormDfn::CEntry	*entry;
-	if	(getEntryByName (name, &entry))
+	CFormDfn::CEntry *entry;
+	if (getEntryByName(name, &entry))
 	{
-		*dfn=entry->getDfnPtr();
-		return	true;
+		*dfn = entry->getDfnPtr();
+		return true;
 	}
-	*dfn=NULL;
-	return	false;
+	*dfn = NULL;
+	return false;
 }
 
-bool	CFormDfn::isAnArrayEntryByName	(const std::string &name)	const
+bool CFormDfn::isAnArrayEntryByName(const std::string &name) const
 {
-	CFormDfn::CEntry	*entry;
-	if	(const_cast<CFormDfn*>(this)->getEntryByName (name, &entry))
+	CFormDfn::CEntry *entry;
+	if (const_cast<CFormDfn *>(this)->getEntryByName(name, &entry))
 	{
-		return	entry->getArrayFlag();
+		return entry->getArrayFlag();
 	}
-	return	false;
+	return false;
 }
 
 // ***************************************************************************
 
-bool CFormDfn::getEntryType (uint entry, UType **type)
+bool CFormDfn::getEntryType(uint entry, UType **type)
 {
-	if (entry < Entries.size ())
+	if (entry < Entries.size())
 	{
 		if (Entries[entry].TypeElement == EntryType)
 		{
@@ -801,49 +798,48 @@ bool CFormDfn::getEntryType (uint entry, UType **type)
 			return true;
 		}
 		else
-			warning (false, "getEntryType", "This entry is not a type.");
+			warning(false, "getEntryType", "This entry is not a type.");
 	}
-	warning (false, "getEntryType", "Wrong entry ID.");
+	warning(false, "getEntryType", "Wrong entry ID.");
 	return false;
 }
 
 // ***************************************************************************
 
-uint CFormDfn::getNumParents () const
+uint CFormDfn::getNumParents() const
 {
-	return (uint)Parents.size ();
+	return (uint)Parents.size();
 }
 
 // ***************************************************************************
 
-bool CFormDfn::getParent (uint parent, UFormDfn **parentRet)
+bool CFormDfn::getParent(uint parent, UFormDfn **parentRet)
 {
-	if (parent < Parents.size ())
+	if (parent < Parents.size())
 	{
 		*parentRet = Parents[parent].Parent;
 		return true;
 	}
-	warning (false, "getParent", "Wrong parent ID.");
+	warning(false, "getParent", "Wrong parent ID.");
 	return false;
 }
 
-
 // ***************************************************************************
 
-bool CFormDfn::getParentFilename (uint parent, std::string &filename) const
+bool CFormDfn::getParentFilename(uint parent, std::string &filename) const
 {
-	if (parent < Parents.size ())
+	if (parent < Parents.size())
 	{
 		filename = Parents[parent].ParentFilename;
 		return true;
 	}
-	warning (false, "getParentFilename", "Wrong parent ID.");
+	warning(false, "getParentFilename", "Wrong parent ID.");
 	return false;
 }
 
 // ***************************************************************************
 
-const std::string& CFormDfn::getComment () const
+const std::string &CFormDfn::getComment() const
 {
 	return Header.Comments;
 }
@@ -857,48 +853,48 @@ const std::string &CFormDfn::CEntry::getFilenameExt() const
 
 // ***************************************************************************
 
-void CFormDfn::CEntry::setFilenameExt (const std::string &ext)
+void CFormDfn::CEntry::setFilenameExt(const std::string &ext)
 {
 	FilenameExt = ext;
 }
 
 // ***************************************************************************
 
-void CFormDfn::warning (bool exception, const std::string &function, const char *format, ... ) const
+void CFormDfn::warning(bool exception, const std::string &function, const char *format, ...) const
 {
 	// Make a buffer string
 	va_list args;
-	va_start( args, format );
+	va_start(args, format);
 	char buffer[1024];
-	vsnprintf( buffer, 1024, format, args );
-	va_end( args );
+	vsnprintf(buffer, 1024, format, args);
+	va_end(args);
 
 	// Set the warning
-	NLGEORGES::warning (exception, "(CFormDfn::%s) in form DFN (%s) : %s", function.c_str(), _Filename.c_str (), buffer);
+	NLGEORGES::warning(exception, "(CFormDfn::%s) in form DFN (%s) : %s", function.c_str(), _Filename.c_str(), buffer);
 }
 
 // ***************************************************************************
 
-void CFormDfn::getDependencies (std::set<std::string> &dependencies) const
+void CFormDfn::getDependencies(std::set<std::string> &dependencies) const
 {
 	// Scan only if not already inserted
-	if (dependencies.insert (toLowerAscii(CFile::getFilename (_Filename))).second)
+	if (dependencies.insert(toLowerAscii(CFile::getFilename(_Filename))).second)
 	{
 		// Add parents
 		uint i;
-		for (i=0; i<Parents.size (); i++)
+		for (i = 0; i < Parents.size(); i++)
 		{
-			Parents[i].Parent->getDependencies (dependencies);
+			Parents[i].Parent->getDependencies(dependencies);
 		}
 
 		// Add entries
-		for (i=0; i<Entries.size (); i++)
+		for (i = 0; i < Entries.size(); i++)
 		{
-			if (Entries[i].getDfnPtr ())
-				Entries[i].getDfnPtr ()->getDependencies (dependencies);
-			if (Entries[i].getTypePtr ())
+			if (Entries[i].getDfnPtr())
+				Entries[i].getDfnPtr()->getDependencies(dependencies);
+			if (Entries[i].getTypePtr())
 			{
-				dependencies.insert (toLowerAscii(CFile::getFilename (Entries[i].getFilename())));
+				dependencies.insert(toLowerAscii(CFile::getFilename(Entries[i].getFilename())));
 			}
 		}
 	}

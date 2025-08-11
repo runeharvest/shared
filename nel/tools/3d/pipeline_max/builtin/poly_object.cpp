@@ -42,14 +42,13 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CPolyObject::CPolyObject(CScene *scene) : CGeomObject(scene)
+CPolyObject::CPolyObject(CScene *scene)
+    : CGeomObject(scene)
 {
-
 }
 
 CPolyObject::~CPolyObject()
 {
-
 }
 
 const ucstring CPolyObject::DisplayName = ucstring("PolyObject");

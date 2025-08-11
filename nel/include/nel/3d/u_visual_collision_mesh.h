@@ -19,10 +19,7 @@
 
 #include "nel/misc/types_nl.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 /**
@@ -34,27 +31,24 @@ namespace NL3D
 class UVisualCollisionMesh
 {
 public:
-
 	/// Proxy interface
 	UVisualCollisionMesh();
 	/// Attach a IShape to this proxy
-	void			attach(class CVisualCollisionMesh	*mesh);
+	void attach(class CVisualCollisionMesh *mesh);
 	/// return true if the proxy is empty() (not attached)
-	bool			empty() const {return _Mesh==NULL;}
+	bool empty() const { return _Mesh == NULL; }
 	/// For Advanced usage, get the Collision Mesh ptr
-	class CVisualCollisionMesh	*getMeshPtr() const {return _Mesh;}
+	class CVisualCollisionMesh *getMeshPtr() const { return _Mesh; }
 	// get vertices of the mesh
 	const std::vector<NLMISC::CVector> &getVertices() const;
 	// get triangles of the mesh
 	const std::vector<uint16> &getTriangles() const;
-private:
-	class CVisualCollisionMesh	*_Mesh;
 
+private:
+	class CVisualCollisionMesh *_Mesh;
 };
 
-
 } // NL3D
-
 
 #endif // NL_U_VISUAL_COLLISION_MESH_H
 

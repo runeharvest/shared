@@ -27,7 +27,6 @@ namespace NLSOUND {
 
 void dummyToAvoidStupidCompilerWarning_music_channel_cpp()
 {
-	
 }
 
 } /* namespace NLSOUND */

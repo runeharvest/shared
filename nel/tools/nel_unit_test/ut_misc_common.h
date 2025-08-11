@@ -110,7 +110,7 @@ struct CUTMiscCommon : public Test::Suite
 
 		// 1 mebibyte
 		bytes = NLMISC::humanReadableToBytes("1MiB");
-		TEST_ASSERT(bytes == 1024*1024);
+		TEST_ASSERT(bytes == 1024 * 1024);
 
 		// 1 kilobyte
 		bytes = NLMISC::humanReadableToBytes("1KB");
@@ -122,7 +122,7 @@ struct CUTMiscCommon : public Test::Suite
 
 		// 1 megabyte
 		bytes = NLMISC::humanReadableToBytes("1MB");
-		TEST_ASSERT(bytes == 1000*1000);
+		TEST_ASSERT(bytes == 1000 * 1000);
 
 		// 1 byte
 		bytes = NLMISC::humanReadableToBytes("1B");
@@ -142,7 +142,7 @@ struct CUTMiscCommon : public Test::Suite
 
 		// 1 mebibyte
 		bytes = NLMISC::humanReadableToBytes("1 MiB");
-		TEST_ASSERT(bytes == 1024*1024);
+		TEST_ASSERT(bytes == 1024 * 1024);
 
 		// 1 kilobyte
 		bytes = NLMISC::humanReadableToBytes("1 KB");
@@ -154,7 +154,7 @@ struct CUTMiscCommon : public Test::Suite
 
 		// 1 megabyte
 		bytes = NLMISC::humanReadableToBytes("1 MB");
-		TEST_ASSERT(bytes == 1000*1000);
+		TEST_ASSERT(bytes == 1000 * 1000);
 
 		// 1 byte
 		bytes = NLMISC::humanReadableToBytes("1 B");

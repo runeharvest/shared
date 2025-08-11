@@ -17,15 +17,12 @@
 #ifndef NL_SHAPE_INFO_H
 #define NL_SHAPE_INFO_H
 
-
 #include "nel/misc/triangle.h"
 #include "nel/misc/aabbox.h"
 //
 #include <vector>
 
-
-namespace NL3D
-{
+namespace NL3D {
 
 class CMeshGeom;
 class CMeshMRMGeom;
@@ -36,11 +33,13 @@ class CMeshBase;
 class CShapeInfo
 {
 public:
-	NLMISC::CAABBox					LocalBBox;
-	std::vector<NLMISC::CTriangle>	Tris;
+	NLMISC::CAABBox LocalBBox;
+	std::vector<NLMISC::CTriangle> Tris;
+
 public:
 	void build(const NL3D::IShape &shape);
 	void swap(CShapeInfo &other);
+
 private:
 	void build(const NL3D::CMeshBase &meshBase, const NL3D::CMeshGeom &meshGeom);
 	void build(const NL3D::CMeshBase &meshBase, const NL3D::CMeshMRMGeom &meshGeom);
@@ -53,6 +52,5 @@ typedef std::map<std::string, CShapeInfo> TShapeCache;
 std::string standardizeShapeName(const std::string &name);
 
 } // NL3D
-
 
 #endif

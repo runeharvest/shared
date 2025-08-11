@@ -17,9 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
 #ifndef RY_CHARACTER_TITLE_H
 #define RY_CHARACTER_TITLE_H
 
@@ -27,13 +24,12 @@
 
 // ***************************************************************************
 /** Enum of character (player) title
-  * \author Matthieu 'Trap' Besson
-  * \author Nevrax France
-  * \date October 2003
-  */
+ * \author Matthieu 'Trap' Besson
+ * \author Nevrax France
+ * \date October 2003
+ */
 
-namespace CHARACTER_TITLE
-{
+namespace CHARACTER_TITLE {
 
 enum ECharacterTitle
 {
@@ -268,7 +264,7 @@ enum ECharacterTitle
 	Title00079, // Wayfarer
 
 	// Special title for focus beta testers
-	WIND = Title00079,		// Title for player come from old Windermmer community
+	WIND = Title00079, // Title for player come from old Windermmer community
 	FBT,
 
 	// GM and GUIDE titles
@@ -289,24 +285,23 @@ enum ECharacterTitle
 };
 
 // Return the unlocalized string
-std::string toString (const ECharacterTitle &r);
+std::string toString(const ECharacterTitle &r);
 
-ECharacterTitle toCharacterTitle (const std::string& ct);
+ECharacterTitle toCharacterTitle(const std::string &ct);
 
 /// get a character title linked with a special privilege ( gm, guide,...)
-inline ECharacterTitle getGMTitleFromPriv (const std::string& priv)
+inline ECharacterTitle getGMTitleFromPriv(const std::string &priv)
 {
-	if ( priv.size() < 3 )
+	if (priv.size() < 3)
 		return NB_CHARACTER_TITLE;
-	std::string buf = priv.substr(1,priv.size() - 2 );
-	return toCharacterTitle( buf );
+	std::string buf = priv.substr(1, priv.size() - 2);
+	return toCharacterTitle(buf);
 }
 
-
 //----------------------------------------------------------------------
-inline bool isCsrTitle(const std::string& title)
+inline bool isCsrTitle(const std::string &title)
 {
-	ECharacterTitle titleEnum = toCharacterTitle( title );
+	ECharacterTitle titleEnum = toCharacterTitle(title);
 	bool bIsCsrTitle = (titleEnum >= SGM && titleEnum <= CM);
 
 	return bIsCsrTitle;
@@ -315,4 +310,3 @@ inline bool isCsrTitle(const std::string& title)
 } // CHARACTER_TITLE
 
 #endif
-

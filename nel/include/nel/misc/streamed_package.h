@@ -36,7 +36,6 @@ public:
 		uint32 LastModified;
 
 		void serial(NLMISC::IStream &f);
-
 	};
 
 public:
@@ -52,7 +51,7 @@ public:
 public:
 	typedef std::vector<CEntry> TEntries;
 	TEntries Entries;
-	
+
 }; /* class CStreamedPackage */
 
 } /* namespace NLMISC */

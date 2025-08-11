@@ -17,7 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #if !defined(AFX_PICK_SOUND_H__14638414_B951_439C_A087_5468A8CDFCE1__INCLUDED_)
 #define AFX_PICK_SOUND_H__14638414_B951_439C_A087_5468A8CDFCE1__INCLUDED_
 
@@ -30,10 +29,8 @@
 #include <vector>
 #include <string>
 
-
-namespace NLSOUND
-{
-	class USource;
+namespace NLSOUND {
+class USource;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -41,32 +38,33 @@ namespace NLSOUND
 
 class CPickSound : public CDialog
 {
-// Construction
+	// Construction
 public:
 	typedef std::vector<NLMISC::TStringId> TNameVect;
-	CPickSound(const TNameVect &names, CWnd* pParent = NULL);   // standard constructor
-
+	CPickSound(const TNameVect &names, CWnd *pParent = NULL); // standard constructor
 
 	const NLMISC::TStringId &getName(void) const { return _CurrName; }
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CPickSound)
-	enum { IDD = IDD_PICK_SOUND };
-	CListBox	m_NameList;
+	enum
+	{
+		IDD = IDD_PICK_SOUND
+	};
+	CListBox m_NameList;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CPickSound)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-	TNameVect			_Names;
-	NLMISC::TStringId	_CurrName;
+	TNameVect _Names;
+	NLMISC::TStringId _CurrName;
 
 	UINT_PTR _Timer;
 

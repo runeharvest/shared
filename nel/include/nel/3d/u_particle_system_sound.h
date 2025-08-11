@@ -22,24 +22,12 @@
 #include "u_ps_sound_interface.h"
 #include "u_ps_sound_impl.h"
 
-
-
-
-
 namespace NL3D {
 
 // if you include this, you must also have the NLSOUND library
 
-
-
-
-
-
-
-
 /// for private use only..
 void assignSoundServerToPS(UPSSoundServer *soundServer);
-
 
 /**
  * This init the sound for particle systems
@@ -54,9 +42,7 @@ public:
 	static void setPSSound(NLSOUND::UAudioMixer *audioMixer);
 };
 
-
 } // NL3D
-
 
 #endif // NL_U_PARTICLE_SYSTEM_SOUND_H
 

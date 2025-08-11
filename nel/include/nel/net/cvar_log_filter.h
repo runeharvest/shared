@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef NL_CVAR_LOG_FILTER_H
 #define NL_CVAR_LOG_FILTER_H
 
@@ -22,31 +21,31 @@
 #include "nel/net/service.h"
 
 /** Declare an info logging function that works as nlinfo but that is activated with the given service config file variable
-  * Example of use :
-  * DECLARE_CVAR_INFO_LOG_FUNCTION(my_info, MyInfoEnabled)
-  *
-  * my_info("my_message"); // no-op if "MyInfoEnabled = 0;" Is found in the service config file
-  */
+ * Example of use :
+ * DECLARE_CVAR_INFO_LOG_FUNCTION(my_info, MyInfoEnabled)
+ *
+ * my_info("my_message"); // no-op if "MyInfoEnabled = 0;" Is found in the service config file
+ */
 #ifdef NL_NO_DEBUG
-	#define NL_DECLARE_CVAR_INFO_LOG_FUNCTION(func, cvar, defaultValue)	inline void func(const char *format, ...) {}
+#define NL_DECLARE_CVAR_INFO_LOG_FUNCTION(func, cvar, defaultValue) \
+	inline void func(const char *format, ...) { }
 #else
-	#define NL_DECLARE_CVAR_INFO_LOG_FUNCTION(func, cvar, defaultValue)                                              \
-	inline void func(const char *format, ...)                                                                        \
-	{                                                                                                                \
-		bool logWanted = (defaultValue);                                                                             \
-		NLMISC::CConfigFile::CVar *logWantedPtr = NLNET::IService::getInstance()->ConfigFile.getVarPtr(#cvar);       \
-		if (logWantedPtr)                                                                                            \
-		{                                                                                                            \
-			logWanted = logWantedPtr->asInt() != 0;                                                                  \
-		}                                                                                                            \
-		if (logWanted)                                                                                               \
-		{                                                                                                            \
-			char *out;																								 \
-			NLMISC_CONVERT_VARGS(out, format, 256);                                                                  \
-			nlinfo(out);                                                                                             \
-		}                                                                                                            \
+#define NL_DECLARE_CVAR_INFO_LOG_FUNCTION(func, cvar, defaultValue)                                            \
+	inline void func(const char *format, ...)                                                                  \
+	{                                                                                                          \
+		bool logWanted = (defaultValue);                                                                       \
+		NLMISC::CConfigFile::CVar *logWantedPtr = NLNET::IService::getInstance()->ConfigFile.getVarPtr(#cvar); \
+		if (logWantedPtr)                                                                                      \
+		{                                                                                                      \
+			logWanted = logWantedPtr->asInt() != 0;                                                            \
+		}                                                                                                      \
+		if (logWanted)                                                                                         \
+		{                                                                                                      \
+			char *out;                                                                                         \
+			NLMISC_CONVERT_VARGS(out, format, 256);                                                            \
+			nlinfo(out);                                                                                       \
+		}                                                                                                      \
 	}
 #endif
-
 
 #endif

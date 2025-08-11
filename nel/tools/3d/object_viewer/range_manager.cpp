@@ -17,14 +17,13 @@
 #include "std_afx.h"
 #include "range_manager.h"
 
-
 // here instanciate static fields of tange_manager
 
 // the range manager for floats
-CRangeManager<float>::TRangeMap CRangeManager<float>::_RangeMap ;
+CRangeManager<float>::TRangeMap CRangeManager<float>::_RangeMap;
 
 // the range manager for unsigned ints
-CRangeManager<uint32>::TRangeMap CRangeManager<uint32>::_RangeMap ;
+CRangeManager<uint32>::TRangeMap CRangeManager<uint32>::_RangeMap;
 
 // the range manager for signed ints
-CRangeManager<sint32>::TRangeMap CRangeManager<sint32>::_RangeMap ;
+CRangeManager<sint32>::TRangeMap CRangeManager<sint32>::_RangeMap;

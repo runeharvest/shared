@@ -147,9 +147,11 @@ std::string CGeomPolyEdgeInfo::toString() const
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-CGeomPolyFaceInfo::CGeomPolyFaceInfo() : I1(0), Material(0), SmoothingGroups(0)
+CGeomPolyFaceInfo::CGeomPolyFaceInfo()
+    : I1(0)
+    , Material(0)
+    , SmoothingGroups(0)
 {
-
 }
 
 void CGeomPolyFaceInfo::serial(NLMISC::IStream &stream)
@@ -173,18 +175,33 @@ void CGeomPolyFaceInfo::serial(NLMISC::IStream &stream)
 	}
 	stream.serial(bitfield);
 	// nldebug("bitfield 0x%x", (uint32)bitfield);
-	if (bitfield & 0x0001) { /*nldebug("i1");*/ stream.serial(I1); nlassert(I1); bitfield &= ~0x0001; }
+	if (bitfield & 0x0001)
+	{ /*nldebug("i1");*/
+		stream.serial(I1);
+		nlassert(I1);
+		bitfield &= ~0x0001;
+	}
 	else I1 = 0;
-	if (bitfield & 0x0008) { /*nldebug("material");*/ stream.serial(Material); nlassert(Material); bitfield &= ~0x0008; }
+	if (bitfield & 0x0008)
+	{ /*nldebug("material");*/
+		stream.serial(Material);
+		nlassert(Material);
+		bitfield &= ~0x0008;
+	}
 	else Material = 0;
-	if (bitfield & 0x0010) { /*nldebug("smoothing");*/ stream.serial(SmoothingGroups); nlassert(SmoothingGroups); bitfield &= ~0x0010; }
+	if (bitfield & 0x0010)
+	{ /*nldebug("smoothing");*/
+		stream.serial(SmoothingGroups);
+		nlassert(SmoothingGroups);
+		bitfield &= ~0x0010;
+	}
 	else SmoothingGroups = 0;
 	if (bitfield & 0x0020)
 	{
 		/*nldebug("triangles");*/
 		if (stream.isReading()) Triangulation.resize(Vertices.size() - 3);
 		else nlassert(Triangulation.size() == Vertices.size() - 3);
-		for (std::vector<std::pair<uint32, uint32> >::size_type i = 0; i < Triangulation.size(); ++i)
+		for (std::vector<std::pair<uint32, uint32>>::size_type i = 0; i < Triangulation.size(); ++i)
 		{
 			stream.serial(Triangulation[i].first);
 			/*nldebug("cut from %i", Triangulation[i].first);*/
@@ -214,7 +231,7 @@ std::string CGeomPolyFaceInfo::toString() const
 	if (Triangulation.size())
 	{
 		ss << ", ( ";
-		for (std::vector<std::pair<uint32, uint32> >::size_type i = 0; i < Triangulation.size(); ++i)
+		for (std::vector<std::pair<uint32, uint32>>::size_type i = 0; i < Triangulation.size(); ++i)
 		{
 			ss << Triangulation[i].first << ":" << Triangulation[i].second << " ";
 		}
@@ -230,12 +247,10 @@ std::string CGeomPolyFaceInfo::toString() const
 
 CGeomBuffers::CGeomBuffers()
 {
-
 }
 
 CGeomBuffers::~CGeomBuffers()
 {
-
 }
 
 std::string CGeomBuffers::className() const
@@ -291,7 +306,7 @@ IStorageObject *CGeomBuffers::createChunkById(uint16 id, bool container)
 	{
 	//	nlassert(!container);
 	//	return new CStorageArray<float>();
-	//case PBMS_GEOM_BUFFERS_POLY_A_INDEX_B_CHUNK_ID:
+	// case PBMS_GEOM_BUFFERS_POLY_A_INDEX_B_CHUNK_ID:
 	//	nlassert(!container);
 	//	return new CStorageArray<uint32>();
 	case PBMS_GEOM_BUFFERS_POLY_A_VERTEX_CHUNK_ID:

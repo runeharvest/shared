@@ -27,11 +27,8 @@
 #include "ps_wrapper.h"
 #include "particle_workspace.h"
 
-
-
 class CAttribDlgFloat;
 class CAttribDlgRGBA;
-
 
 /* Edition of dynamic lights attributes in a particle system
  *
@@ -41,36 +38,38 @@ class CAttribDlgRGBA;
  */
 class CEditPSLight : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CEditPSLight(CParticleWorkspace::CNode *ownerNode, NL3D::CPSLight *light);   // standard constructor
+	CEditPSLight(CParticleWorkspace::CNode *ownerNode, NL3D::CPSLight *light); // standard constructor
 	~CEditPSLight();
 
-	void init(CWnd* pParent = NULL);
-// Dialog Data
+	void init(CWnd *pParent = NULL);
+	// Dialog Data
 	//{{AFX_DATA(CEditPSLight)
-	enum { IDD = IDD_PS_LIGHT };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_PS_LIGHT
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CEditPSLight)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	CParticleWorkspace::CNode *_Node;
-	NL3D::CPSLight			  *_Light;
-	CAttribDlgRGBA            *_ColorDlg;			
-	CAttribDlgFloat           *_AttenStartDlg;	
-	CAttribDlgFloat		      *_AttenEndDlg;
+	NL3D::CPSLight *_Light;
+	CAttribDlgRGBA *_ColorDlg;
+	CAttribDlgFloat *_AttenStartDlg;
+	CAttribDlgFloat *_AttenEndDlg;
 	// Generated message map functions
 	//{{AFX_MSG(CEditPSLight)
-		// NOTE: the ClassWizard will add member functions here
+	// NOTE: the ClassWizard will add member functions here
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 	///////////////////////////////////////

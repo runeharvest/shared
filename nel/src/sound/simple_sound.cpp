@@ -31,25 +31,23 @@
 using namespace std;
 using namespace NLMISC;
 
-
 namespace NLSOUND {
-
 
 /*
  * Constructor
  */
-CSimpleSound::CSimpleSound() :
-	_Registered(false),
-	_Buffer(NULL),
-	// _Detailed(false), // not used?
-	_Alpha(1.0),
-	_NeedContext(false)
+CSimpleSound::CSimpleSound()
+    : _Registered(false)
+    , _Buffer(NULL)
+    ,
+    // _Detailed(false), // not used?
+    _Alpha(1.0)
+    , _NeedContext(false)
 {
 	// init with NULL in case of unexecpted access
-	_Filename= NULL;
-	_Buffername= NULL;
+	_Filename = NULL;
+	_Buffername = NULL;
 }
-
 
 /*
  * Destructor
@@ -77,19 +75,17 @@ void CSimpleSound::setBuffer(IBuffer *buffer)
 	_Buffer = buffer;
 }
 
-
-void				CSimpleSound::getSubSoundList(std::vector<std::pair<std::string, CSound*> > &subsounds) const
+void CSimpleSound::getSubSoundList(std::vector<std::pair<std::string, CSound *>> &subsounds) const
 {
 	// A little hack, we use the reference vector to tag unavailable sample.
-	if (!(_Buffername == CStringMapper::emptyId()) && const_cast<CSimpleSound*>(this)->getBuffer() == 0)
-		subsounds.push_back(pair<string, CSound*>(CStringMapper::unmap(_Buffername)+" (sample)", (CSound*)NULL));
+	if (!(_Buffername == CStringMapper::emptyId()) && const_cast<CSimpleSound *>(this)->getBuffer() == 0)
+		subsounds.push_back(pair<string, CSound *>(CStringMapper::unmap(_Buffername) + " (sample)", (CSound *)NULL));
 }
-
 
 /*
  * Return the sample buffer of this sound
  */
-IBuffer*			CSimpleSound::getBuffer()
+IBuffer *CSimpleSound::getBuffer()
 {
 	if (_Buffer == 0)
 	{
@@ -102,15 +98,14 @@ IBuffer*			CSimpleSound::getBuffer()
 	return _Buffer;
 }
 
-
 /*
  * Return the length of the sound in ms
  */
-uint32				CSimpleSound::getDuration()
+uint32 CSimpleSound::getDuration()
 {
-	IBuffer* buffer = getBuffer();
+	IBuffer *buffer = getBuffer();
 
-	if ( buffer == NULL )
+	if (buffer == NULL)
 	{
 		return 0;
 	}
@@ -120,8 +115,7 @@ uint32				CSimpleSound::getDuration()
 	}
 }
 
-
-void				CSimpleSound::serial(NLMISC::IStream &s)
+void CSimpleSound::serial(NLMISC::IStream &s)
 {
 	std::string bufferName;
 	CSound::serial(s);
@@ -136,7 +130,7 @@ void				CSimpleSound::serial(NLMISC::IStream &s)
 		setBuffer(NULL);
 
 		// contain % so it need a context to play
-		if (bufferName.find ("%") != string::npos)
+		if (bufferName.find("%") != string::npos)
 		{
 			_NeedContext = true;
 		}
@@ -148,11 +142,10 @@ void				CSimpleSound::serial(NLMISC::IStream &s)
 	}
 }
 
-
 /**
  * 	Load the sound parameters from georges' form
  */
-void				CSimpleSound::importForm(const std::string& filename, NLGEORGES::UFormElm& root)
+void CSimpleSound::importForm(const std::string &filename, NLGEORGES::UFormElm &root)
 {
 	NLGEORGES::UFormElm *psoundType;
 	std::string dfnName;
@@ -178,20 +171,19 @@ void				CSimpleSound::importForm(const std::string& filename, NLGEORGES::UFormEl
 	setBuffer(NULL);
 
 	// contain % so it need a context to play
-	if (bufferName.find ("%") != string::npos)
+	if (bufferName.find("%") != string::npos)
 	{
 		_NeedContext = true;
 	}
 
 	// MaxDistance
- 	root.getValueByName(_MaxDist, ".SoundType.MaxDistance");
+	root.getValueByName(_MaxDist, ".SoundType.MaxDistance");
 
 	// MinDistance
 	root.getValueByName(_MinDist, ".SoundType.MinDistance");
 
 	// Alpha
 	root.getValueByName(_Alpha, ".SoundType.Alpha");
-
 }
 
 } // NLSOUND

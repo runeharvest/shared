@@ -14,15 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
 #include "stdpch.h"
 #include "weather_setup.h"
 #include "nel/georges/u_form_elm.h"
 
 using namespace NLMISC;
-
 
 //==================================================================================
 CWeatherState::CWeatherState()
@@ -31,15 +27,15 @@ CWeatherState::CWeatherState()
 
 //==================================================================================
 /** Tool fct to blend a color
-  */
+ */
 static inline void blendValue(NLMISC::CRGBA &dest, NLMISC::CRGBA c1, NLMISC::CRGBA c2, float blendFactor)
 {
-	dest.blendFromui(c1, c2, (uint) (blendFactor * 256.f));
+	dest.blendFromui(c1, c2, (uint)(blendFactor * 256.f));
 }
 
 //==================================================================================
 /** Tool fct to blend 2 floats
-  */
+ */
 static inline void blendValue(float &dest, float f1, float f2, float blendFactor)
 {
 	dest = blendFactor * f2 + (1.f - blendFactor) * f1;
@@ -47,14 +43,14 @@ static inline void blendValue(float &dest, float f1, float f2, float blendFactor
 
 //==================================================================================
 /** Tool fct to blend 2 uint32
-  */
+ */
 static inline void blendValue(uint32 &dest, uint32 u1, uint32 u2, float blendFactor)
 {
-	dest = (uint32) (blendFactor * u2 + (1.f - blendFactor) * u1);
+	dest = (uint32)(blendFactor * u2 + (1.f - blendFactor) * u1);
 }
 
 //==================================================================================
-void CWeatherState::blend(CWeatherState &dest,const CWeatherState &s1,const CWeatherState &s2, float blendFactor)
+void CWeatherState::blend(CWeatherState &dest, const CWeatherState &s1, const CWeatherState &s2, float blendFactor)
 {
 	dest.BlendFactor = blendFactor;
 	NLMISC::clamp(blendFactor, 0.f, 1.f);
@@ -75,7 +71,6 @@ void CWeatherState::blend(CWeatherState &dest,const CWeatherState &s1,const CWea
 		dest.LocalizedName = s2.LocalizedName;
 	}
 
-
 	// Fog
 	blendValue(dest.FogRatio, s1.FogRatio, s2.FogRatio, blendFactor);
 	blendValue(dest.FogColorDay, s1.FogColorDay, s2.FogColorDay, blendFactor);
@@ -83,10 +78,10 @@ void CWeatherState::blend(CWeatherState &dest,const CWeatherState &s1,const CWea
 	blendValue(dest.FogColorNight, s1.FogColorNight, s2.FogColorNight, blendFactor);
 	blendValue(dest.FogGradientFactor, s1.FogGradientFactor, s2.FogGradientFactor, blendFactor);
 	uint k;
-	for(k = 0; k < NumFogType; ++k)
+	for (k = 0; k < NumFogType; ++k)
 	{
-		blendValue(dest.FogNear[k],  s1.FogNear[k],  s2.FogNear[k],  blendFactor);
-		blendValue(dest.FogFar[k],   s1.FogFar[k],   s2.FogFar[k],   blendFactor);
+		blendValue(dest.FogNear[k], s1.FogNear[k], s2.FogNear[k], blendFactor);
+		blendValue(dest.FogFar[k], s1.FogFar[k], s2.FogFar[k], blendFactor);
 	}
 	// Lighting
 	blendValue(dest.Lighting, s1.Lighting, s2.Lighting, blendFactor);
@@ -102,8 +97,6 @@ void CWeatherState::blend(CWeatherState &dest,const CWeatherState &s1,const CWea
 	// Thunder color. NB : the thunder intensity is blended separatly
 	blendValue(dest.ThunderColor, s1.ThunderColor, s2.ThunderColor, blendFactor);
 }
-
-
 
 //==================================================================================
 void CCloudState::blend(CCloudState &dest, const CCloudState &s1, const CCloudState &s2, float blendFactor)

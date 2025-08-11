@@ -20,7 +20,7 @@
 #include "std3d.h"
 
 #include <string>
-//#include <sstream>
+// #include <sstream>
 
 #include "nel/3d/font_manager.h"
 #include "nel/3d/font_generator.h"
@@ -41,10 +41,8 @@ using namespace std;
 
 namespace NL3D {
 
-
-
 // ***************************************************************************
-CMaterial* CFontManager::getFontMaterial()
+CMaterial *CFontManager::getFontMaterial()
 {
 	if (_TexFont == NULL)
 	{
@@ -54,7 +52,7 @@ CMaterial* CFontManager::getFontMaterial()
 
 	if (_MatFont == NULL)
 	{
-		_MatFont= new CMaterial;
+		_MatFont = new CMaterial;
 		_MatFont->initUnlit();
 		_MatFont->setSrcBlend(CMaterial::srcalpha);
 		_MatFont->setDstBlend(CMaterial::invsrcalpha);
@@ -67,15 +65,15 @@ CMaterial* CFontManager::getFontMaterial()
 }
 
 // ***************************************************************************
-void CFontManager::computeString (NLMISC::CUtfStringView sv,
-								  CFontGenerator *fontGen,
-								  const NLMISC::CRGBA &color,
-								  uint32 fontSize,
-								  bool embolden,
-								  bool oblique,
-								  IDriver *driver,
-								  CComputedString &output,
-								  bool	keep800x600Ratio)
+void CFontManager::computeString(NLMISC::CUtfStringView sv,
+    CFontGenerator *fontGen,
+    const NLMISC::CRGBA &color,
+    uint32 fontSize,
+    bool embolden,
+    bool oblique,
+    IDriver *driver,
+    CComputedString &output,
+    bool keep800x600Ratio)
 {
 	output.Color = color;
 
@@ -83,25 +81,25 @@ void CFontManager::computeString (NLMISC::CUtfStringView sv,
 	if (keep800x600Ratio)
 	{
 		uint32 width, height;
-		driver->getWindowSize (width, height);
+		driver->getWindowSize(width, height);
 		if ((height == 0) || (width == 0))
 			return;
 
 		// keep the 800*600 ratio
-		fontSize = (uint32)floor(fontSize*height/600.f);
+		fontSize = (uint32)floor(fontSize * height / 600.f);
 		fontSize = max(fontSize, (uint32)2);
 	}
 
 	// Setting vertices format
-	output.Vertices.setNumVertices (4 * (uint32)sv.largestSize());
+	output.Vertices.setNumVertices(4 * (uint32)sv.largestSize());
 
 	// 1 character <-> 1 quad
 	sint32 penx = 0, dx;
 	sint32 penz = 0, dz;
 	float x1, z1, x2, z2;
 	float u1, v1, u2, v2;
-	CMaterial		*pMatFont = getFontMaterial();
-	CTextureFont	*pTexFont = (CTextureFont*)(pMatFont->getTexture (0));
+	CMaterial *pMatFont = getFontMaterial();
+	CTextureFont *pTexFont = (CTextureFont *)(pMatFont->getTexture(0));
 	float TexRatioW = 1.0f / pTexFont->getWidth();
 	float TexRatioH = 1.0f / pTexFont->getHeight();
 	/*float hlfPixTexW = 0.5f * TexRatioW;
@@ -114,14 +112,13 @@ void CFontManager::computeString (NLMISC::CUtfStringView sv,
 	float hlfPixScrW = 0;
 	float hlfPixScrH = 0;
 
-
 	CTextureFont::SLetterKey k;
 
 	// string bound.
-	output.XMin= FLT_MAX;
-	output.XMax= -FLT_MAX;
-	output.ZMin= FLT_MAX;
-	output.ZMax= -FLT_MAX;
+	output.XMin = FLT_MAX;
+	output.XMax = -FLT_MAX;
+	output.ZMin = FLT_MAX;
+	output.ZMax = -FLT_MAX;
 
 	// string info.
 	sint32 nMaxZ = -1000000, nMinZ = 1000000;
@@ -136,7 +133,7 @@ void CFontManager::computeString (NLMISC::CUtfStringView sv,
 	size_t idx = 0;
 	{
 		CVertexBufferReadWrite vba;
-		output.Vertices.lock (vba);
+		output.Vertices.lock(vba);
 
 		hlfPixScrW = 0.f;
 		hlfPixScrH = 0.f;
@@ -158,8 +155,8 @@ void CFontManager::computeString (NLMISC::CUtfStringView sv,
 			k.Embolden = embolden;
 			k.Oblique = oblique;
 			// render letter
-			CTextureFont::SLetterInfo *pLI = pTexFont->getLetterInfo (k, true);
-			if(pLI != NULL)
+			CTextureFont::SLetterInfo *pLI = pTexFont->getLetterInfo(k, true);
+			if (pLI != NULL)
 			{
 				if (pLI->glyph)
 				{
@@ -180,35 +177,35 @@ void CFontManager::computeString (NLMISC::CUtfStringView sv,
 					x2 = (penx + dx + (sint32)pLI->CharWidth) + hlfPixScrW;
 					z2 = (penz + dz + (sint32)pLI->CharHeight) + hlfPixScrH;
 
-					vba.setVertexCoord	(j, x1, 0, z1);
-					vba.setTexCoord		(j, 0, pLI->glyph->U0-hlfPixTexW, pLI->glyph->V1+hlfPixTexH);
+					vba.setVertexCoord(j, x1, 0, z1);
+					vba.setTexCoord(j, 0, pLI->glyph->U0 - hlfPixTexW, pLI->glyph->V1 + hlfPixTexH);
 					++j;
 
-					vba.setVertexCoord	(j, x2, 0, z1);
-					vba.setTexCoord		(j, 0, pLI->glyph->U1+hlfPixTexW, pLI->glyph->V1+hlfPixTexH);
+					vba.setVertexCoord(j, x2, 0, z1);
+					vba.setTexCoord(j, 0, pLI->glyph->U1 + hlfPixTexW, pLI->glyph->V1 + hlfPixTexH);
 					++j;
 
-					vba.setVertexCoord	(j, x2, 0, z2);
-					vba.setTexCoord		(j, 0, pLI->glyph->U1+hlfPixTexW, pLI->glyph->V0-hlfPixTexH);
+					vba.setVertexCoord(j, x2, 0, z2);
+					vba.setTexCoord(j, 0, pLI->glyph->U1 + hlfPixTexW, pLI->glyph->V0 - hlfPixTexH);
 					++j;
 
-					vba.setVertexCoord	(j, x1, 0, z2);
-					vba.setTexCoord		(j, 0, pLI->glyph->U0-hlfPixTexW, pLI->glyph->V0-hlfPixTexH);
+					vba.setVertexCoord(j, x1, 0, z2);
+					vba.setTexCoord(j, 0, pLI->glyph->U0 - hlfPixTexW, pLI->glyph->V0 - hlfPixTexH);
 					++j;
 
 					// String Bound
-					output.XMin= min(output.XMin, x1);
-					output.XMin= min(output.XMin, x2);
-					output.XMax= max(output.XMax, x1);
-					output.XMax= max(output.XMax, x2);
-					output.ZMin= min(output.ZMin, z1);
-					output.ZMin= min(output.ZMin, z2);
-					output.ZMax= max(output.ZMax, z1);
-					output.ZMax= max(output.ZMax, z2);
+					output.XMin = min(output.XMin, x1);
+					output.XMin = min(output.XMin, x2);
+					output.XMax = max(output.XMax, x1);
+					output.XMax = max(output.XMax, x2);
+					output.ZMin = min(output.ZMin, z1);
+					output.ZMin = min(output.ZMin, z2);
+					output.ZMax = max(output.ZMax, z1);
+					output.ZMax = max(output.ZMax, z2);
 
 					// String info
-					sint32	nZ1 = (sint32)pLI->Top-(sint32)pLI->CharHeight;
-					sint32	nZ2 = pLI->Top;
+					sint32 nZ1 = (sint32)pLI->Top - (sint32)pLI->CharHeight;
+					sint32 nZ2 = pLI->Top;
 
 					if (nZ1 < nMinZ) nMinZ = nZ1;
 					if (nZ2 > nMaxZ) nMaxZ = nZ2;
@@ -220,13 +217,13 @@ void CFontManager::computeString (NLMISC::CUtfStringView sv,
 			output.Material = pMatFont;
 		}
 	}
-	output.Vertices.setNumVertices (j);
+	output.Vertices.setNumVertices(j);
 	output.Length = idx;
 	nlassert(output.Length == NLMISC::CUtfStringView(output.Text).count());
 
 	// compile string info
 	output.StringWidth = (float)penx;
-	if(nMaxZ>nMinZ)
+	if (nMaxZ > nMinZ)
 	{
 		output.StringHeight = (float)(nMaxZ - nMinZ);
 		output.StringLine = -(float)nMinZ;
@@ -238,33 +235,31 @@ void CFontManager::computeString (NLMISC::CUtfStringView sv,
 	}
 }
 
-
 // ***************************************************************************
-void CFontManager::computeStringInfo (	NLMISC::CUtfStringView sv,
-										CFontGenerator *fontGen,
-										const NLMISC::CRGBA &color,
-										uint32 fontSize,
-										bool embolden,
-										bool oblique,
-										IDriver *driver,
-										CComputedString &output,
-										bool keep800x600Ratio	)
+void CFontManager::computeStringInfo(NLMISC::CUtfStringView sv,
+    CFontGenerator *fontGen,
+    const NLMISC::CRGBA &color,
+    uint32 fontSize,
+    bool embolden,
+    bool oblique,
+    IDriver *driver,
+    CComputedString &output,
+    bool keep800x600Ratio)
 {
 	computeStringInfo(sv, sv.largestSize(), fontGen, color, fontSize, embolden, oblique, driver, output, keep800x600Ratio);
 }
 
-
 // ***************************************************************************
-void CFontManager::computeStringInfo (	NLMISC::CUtfStringView sv,
-										size_t len,
-										CFontGenerator *fontGen,
-										const NLMISC::CRGBA &color,
-										uint32 fontSize,
-										bool embolden,
-										bool oblique,
-										IDriver *driver,
-										CComputedString &output,
-										bool keep800x600Ratio	)
+void CFontManager::computeStringInfo(NLMISC::CUtfStringView sv,
+    size_t len,
+    CFontGenerator *fontGen,
+    const NLMISC::CRGBA &color,
+    uint32 fontSize,
+    bool embolden,
+    bool oblique,
+    IDriver *driver,
+    CComputedString &output,
+    bool keep800x600Ratio)
 {
 	output.Color = color;
 
@@ -286,18 +281,18 @@ void CFontManager::computeStringInfo (	NLMISC::CUtfStringView sv,
 	if (keep800x600Ratio)
 	{
 		uint32 width, height;
-		driver->getWindowSize (width, height);
+		driver->getWindowSize(width, height);
 		if ((height == 0) || (width == 0))
 			return;
 		// keep the 800*600 ratio
-		fontSize = (uint32)floor(fontSize*height/600.f);
+		fontSize = (uint32)floor(fontSize * height / 600.f);
 		fontSize = max(fontSize, (uint32)2);
 	}
 
 	sint32 penx = 0;
 	sint32 nMaxZ = -1000000, nMinZ = 1000000;
-	CMaterial		*pMatFont = getFontMaterial();
-	CTextureFont	*pTexFont = (CTextureFont*)(pMatFont->getTexture (0));
+	CMaterial *pMatFont = getFontMaterial();
+	CTextureFont *pTexFont = (CTextureFont *)(pMatFont->getTexture(0));
 
 	CTextureFont::SLetterKey k;
 	CTextureFont::SLetterInfo *pLI;
@@ -316,14 +311,14 @@ void CFontManager::computeStringInfo (	NLMISC::CUtfStringView sv,
 		k.Size = fontSize;
 		k.Embolden = embolden;
 		k.Oblique = oblique;
-		pLI = pTexFont->getLetterInfo (k, false);
-		if(pLI != NULL)
+		pLI = pTexFont->getLetterInfo(k, false);
+		if (pLI != NULL)
 		{
 			if ((pLI->CharWidth > 0) && (pLI->CharHeight > 0))
 			{
 				// String info
-				sint32	nZ1 = (sint32)pLI->Top-(sint32)pLI->CharHeight;
-				sint32	nZ2 = pLI->Top;
+				sint32 nZ1 = (sint32)pLI->Top - (sint32)pLI->CharHeight;
+				sint32 nZ2 = pLI->Top;
 
 				if (nZ1 < nMinZ) nMinZ = nZ1;
 				if (nZ2 > nMaxZ) nMaxZ = nZ2;
@@ -336,7 +331,7 @@ void CFontManager::computeStringInfo (	NLMISC::CUtfStringView sv,
 
 	// compile string info
 	output.StringWidth = (float)penx;
-	if(nMaxZ>nMinZ)
+	if (nMaxZ > nMinZ)
 	{
 		output.StringHeight = (float)(nMaxZ - nMinZ);
 		output.StringLine = -(float)nMinZ;
@@ -346,9 +341,7 @@ void CFontManager::computeStringInfo (	NLMISC::CUtfStringView sv,
 		output.StringHeight = 0;
 		output.StringLine = 0;
 	}
-
 }
-
 
 // ***************************************************************************
 string CFontManager::getCacheInformation() const
@@ -369,7 +362,5 @@ void CFontManager::invalidate()
 
 	getFontMaterial()->setTexture(0, _TexFont);
 }
-
-
 
 } // NL3D

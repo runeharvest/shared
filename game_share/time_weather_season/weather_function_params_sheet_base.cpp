@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "weather_function_params_sheet_base.h"
 //
@@ -23,25 +21,22 @@
 #include "nel/georges/u_form.h"
 #include "nel/georges/u_form_loader.h"
 
-
-
 //=======================================================================
-CWeatherFunctionParamsSheetBase::CWeatherFunctionParamsSheetBase():
-							DayLength(24),
-							CycleLength(25),
-							MinThunderPeriod(1.f),
-							ThunderLength(0.5f),
-							CloudWindSpeedFactor(1.f),
-							CloudMinSpeed(0.f)
+CWeatherFunctionParamsSheetBase::CWeatherFunctionParamsSheetBase()
+    : DayLength(24)
+    , CycleLength(25)
+    , MinThunderPeriod(1.f)
+    , ThunderLength(0.5f)
+    , CloudWindSpeedFactor(1.f)
+    , CloudMinSpeed(0.f)
 {
 }
 
 //=======================================================================
-void CWeatherFunctionParamsSheetBase::readGeorges(const NLGEORGES::UForm *form, const NLMISC::CSheetId &/* sheetId */)
+void CWeatherFunctionParamsSheetBase::readGeorges(const NLGEORGES::UForm *form, const NLMISC::CSheetId & /* sheetId */)
 {
-	build( form->getRootNode() );
+	build(form->getRootNode());
 }
-
 
 //=======================================================================
 void CWeatherFunctionParamsSheetBase::build(const NLGEORGES::UFormElm &item)
@@ -76,8 +71,7 @@ void CWeatherFunctionParamsSheetBase::build(const std::string &sheetName)
 	}
 	else
 	{
-		nlwarning("Can't load form %s", sheetName.c_str ());
+		nlwarning("Can't load form %s", sheetName.c_str());
 	}
 	NLGEORGES::UFormLoader::releaseLoader(loader);
 }
-

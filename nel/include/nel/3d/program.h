@@ -36,21 +36,21 @@
 namespace NL3D {
 
 // List typedef.
-class	IDriver;
-class	IProgramDrvInfos;
-typedef	std::list<IProgramDrvInfos*>	TGPUPrgDrvInfoPtrList;
-typedef	TGPUPrgDrvInfoPtrList::iterator		ItGPUPrgDrvInfoPtrList;
+class IDriver;
+class IProgramDrvInfos;
+typedef std::list<IProgramDrvInfos *> TGPUPrgDrvInfoPtrList;
+typedef TGPUPrgDrvInfoPtrList::iterator ItGPUPrgDrvInfoPtrList;
 
 // Class for interaction of vertex program with Driver.
 // IProgramDrvInfos represent the real data of the GPU program, stored into the driver (eg: just a GLint for opengl).
 class IProgramDrvInfos : public NLMISC::CRefCount
 {
 private:
-	IDriver					*_Driver;
-	ItGPUPrgDrvInfoPtrList	_DriverIterator;
+	IDriver *_Driver;
+	ItGPUPrgDrvInfoPtrList _DriverIterator;
 
 public:
-	IProgramDrvInfos (IDriver *drv, ItGPUPrgDrvInfoPtrList it);
+	IProgramDrvInfos(IDriver *drv, ItGPUPrgDrvInfoPtrList it);
 	// The virtual dtor is important.
 	virtual ~IProgramDrvInfos(void);
 
@@ -58,7 +58,7 @@ public:
 };
 
 // Features exposed by a program. Used to set builtin parameters on user provided shaders.
-// This is only used for user provided shaders, not for builtin shaders, 
+// This is only used for user provided shaders, not for builtin shaders,
 // as it is a slow method which has to go through all of the options every time.
 // Builtin shaders should set all flags to 0.
 // Example:
@@ -72,24 +72,28 @@ public:
 // Note: May need additional flags related to scene sorting, etcetera.
 struct CProgramFeatures
 {
-	CProgramFeatures() : DriverFlags(0), MaterialFlags(0) { }
+	CProgramFeatures()
+	    : DriverFlags(0)
+	    , MaterialFlags(0)
+	{
+	}
 
 	// Driver builtin parameters
 	enum TDriverFlags
 	{
 		// Matrices
-		Matrices								= 0x00000001, 
+		Matrices = 0x00000001,
 
 		// Fog
-		Fog										= 0x00000002, 
+		Fog = 0x00000002,
 	};
 	uint32 DriverFlags;
 
 	enum TMaterialFlags
 	{
 		/// Use the CMaterial texture stages as the textures for a Pixel Program
-		TextureStages							= 0x00000001, 
-		TextureMatrices							= 0x00000002, 
+		TextureStages = 0x00000001,
+		TextureMatrices = 0x00000002,
 	};
 	// Material builtin parameters
 	uint32 MaterialFlags;
@@ -101,22 +105,22 @@ struct CProgramIndex
 {
 	enum TName
 	{
-		ModelView, 
-		ModelViewInverse, 
-		ModelViewTranspose, 
-		ModelViewInverseTranspose, 
+		ModelView,
+		ModelViewInverse,
+		ModelViewTranspose,
+		ModelViewInverseTranspose,
 
-		Projection, 
-		ProjectionInverse, 
-		ProjectionTranspose, 
-		ProjectionInverseTranspose, 
+		Projection,
+		ProjectionInverse,
+		ProjectionTranspose,
+		ProjectionInverseTranspose,
 
-		ModelViewProjection, 
-		ModelViewProjectionInverse, 
-		ModelViewProjectionTranspose, 
-		ModelViewProjectionInverseTranspose, 
+		ModelViewProjection,
+		ModelViewProjectionInverse,
+		ModelViewProjectionTranspose,
+		ModelViewProjectionInverseTranspose,
 
-		Fog, 
+		Fog,
 
 		NUM_UNIFORMS
 	};
@@ -153,11 +157,11 @@ public:
 		// vs_2_x = 0xD9010202, // not sure...
 		// vs_3_0 = 0xD9010300, // not supported
 		// pixel programs
-		ps_1_1 = 0xD9020101, 
-		ps_1_2 = 0xD9020102, 
-		ps_1_3 = 0xD9020103, 
-		ps_1_4 = 0xD9020104, 
-		ps_2_0 = 0xD9020200, 
+		ps_1_1 = 0xD9020101,
+		ps_1_2 = 0xD9020102,
+		ps_1_3 = 0xD9020103,
+		ps_1_4 = 0xD9020104,
+		ps_2_0 = 0xD9020200,
 		// ps_2_x = 0xD9020201, // not sure...
 		// ps_3_0 = 0xD9020300, // not supported
 
@@ -197,18 +201,38 @@ public:
 		const char *SourcePtr;
 		size_t SourceLen;
 		/// Copy the source code string
-		inline void setSource(const std::string &source) { SourceCopy = source; SourcePtr = &SourceCopy[0]; SourceLen = SourceCopy.size(); }
-		inline void setSource(const char *source) { SourceCopy = source; SourcePtr = &SourceCopy[0]; SourceLen = SourceCopy.size(); }
+		inline void setSource(const std::string &source)
+		{
+			SourceCopy = source;
+			SourcePtr = &SourceCopy[0];
+			SourceLen = SourceCopy.size();
+		}
+		inline void setSource(const char *source)
+		{
+			SourceCopy = source;
+			SourcePtr = &SourceCopy[0];
+			SourceLen = SourceCopy.size();
+		}
 		/// Set pointer to source code string without copying the string
-		inline void setSourcePtr(const char *sourcePtr, size_t sourceLen) { SourceCopy.clear(); SourcePtr = sourcePtr; SourceLen = sourceLen; }
-		inline void setSourcePtr(const char *sourcePtr) { SourceCopy.clear(); SourcePtr = sourcePtr; SourceLen = strlen(sourcePtr); }
+		inline void setSourcePtr(const char *sourcePtr, size_t sourceLen)
+		{
+			SourceCopy.clear();
+			SourcePtr = sourcePtr;
+			SourceLen = sourceLen;
+		}
+		inline void setSourcePtr(const char *sourcePtr)
+		{
+			SourceCopy.clear();
+			SourcePtr = sourcePtr;
+			SourceLen = strlen(sourcePtr);
+		}
 
 		/// CVertexProgramInfo/CPixelProgramInfo/... NeL features
 		CProgramFeatures Features;
 
 		/// Map with known parameter indices, used for assembly programs
 		std::map<std::string, uint> ParamIndices;
-		
+
 	private:
 		std::string SourceCopy;
 	};
@@ -221,8 +245,17 @@ public:
 	// Add multiple sources using different profiles, the driver will use the first one it supports.
 	inline size_t getSourceNb() const { return m_Sources.size(); };
 	inline CSource *getSource(size_t i) const { return m_Sources[i]; };
-	inline size_t addSource(CSource *source) { nlassert(!m_Source); m_Sources.push_back(source); return (m_Sources.size() - 1); }
-	inline void removeSource(size_t i) { nlassert(!m_Source); m_Sources.erase(m_Sources.begin() + i); }
+	inline size_t addSource(CSource *source)
+	{
+		nlassert(!m_Source);
+		m_Sources.push_back(source);
+		return (m_Sources.size() - 1);
+	}
+	inline void removeSource(size_t i)
+	{
+		nlassert(!m_Source);
+		m_Sources.erase(m_Sources.begin() + i);
+	}
 
 	// Get the idx of a parameter (ogl: uniform, d3d: constant, etcetera) by name. Invalid name returns ~0
 	inline uint getUniformIndex(const char *name) const { return m_DrvInfo->getUniformIndex(name); };
@@ -242,15 +275,15 @@ public:
 
 protected:
 	/// The progam source
-	std::vector<NLMISC::CSmartPtr<CSource> >				m_Sources;
+	std::vector<NLMISC::CSmartPtr<CSource>> m_Sources;
 
 	/// The source used for compilation
-	NLMISC::CSmartPtr<CSource>								m_Source;
-	CProgramIndex										m_Index;
+	NLMISC::CSmartPtr<CSource> m_Source;
+	CProgramIndex m_Index;
 
 public:
 	/// The driver information. For the driver implementation only.
-	NLMISC::CRefPtr<IProgramDrvInfos>					m_DrvInfo;
+	NLMISC::CRefPtr<IProgramDrvInfos> m_DrvInfo;
 
 }; /* class IProgram */
 

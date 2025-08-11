@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_PACT_H
 #define RY_PACT_H
 
@@ -27,43 +25,37 @@
 #include <string>
 
 // Name space People in game share
-namespace GSPACT
+namespace GSPACT {
+// All different people
+enum EPactNature
 {
-	// All different people
-	enum EPactNature
-	{
-		Unknown = 0,
-		Kamique,
-		Caravane,
+	Unknown = 0,
+	Kamique,
+	Caravane,
 
-		NUM_PACT_NATURE = Caravane // 2
-	};
+	NUM_PACT_NATURE = Caravane // 2
+};
 
-	enum EPactType
-	{
-		Type1 = 0,
-		Type2,
-		Type3,
-		Type4,
-		Type5,
-		Type6,
-		UnknownType,
+enum EPactType
+{
+	Type1 = 0,
+	Type2,
+	Type3,
+	Type4,
+	Type5,
+	Type6,
+	UnknownType,
 
-		NUM_PACT_TYPE = UnknownType // 6
-	};
-
+	NUM_PACT_TYPE = UnknownType // 6
+};
 
 /// Return a string according to the enum parameter
-const std::string& toString (EPactNature pactNature);
+const std::string &toString(EPactNature pactNature);
 
 /// Return a string according to the enum parameter
-const std::string& toString (EPactType pactType);
+const std::string &toString(EPactType pactType);
 
-};// namespace GSPACT
-
-
-
-
+}; // namespace GSPACT
 
 #endif // RY_PACT_H
 

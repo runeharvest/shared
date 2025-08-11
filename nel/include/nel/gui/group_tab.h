@@ -17,8 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_GROUP_TAB_H
 #define NL_GROUP_TAB_H
 
@@ -26,165 +24,160 @@
 #include "nel/gui/interface_group.h"
 #include "nel/gui/ctrl_text_button.h"
 
-namespace NLGUI
+namespace NLGUI {
+class CCtrlTabButton;
+
+// ***************************************************************************
+/**
+ * Group handling Ctrl Tab, to easily simulate Tab ctrl.
+ *	NB: controlled groups doesn't have to be child of the GroupTab, they are searched in order:
+ *		- in this group
+ *		- in the parent group
+ *		- in global
+ * \author Lionel Berenguier
+ * \author Nevrax France
+ * \date 2003
+ */
+class CGroupTab : public CInterfaceGroup
 {
-	class CCtrlTabButton;
+public:
+	DECLARE_UI_CLASS(CGroupTab)
 
+	/// Constructor
+	CGroupTab(const TCtorParam &param);
 
+	std::string getProperty(const std::string &name) const;
+	void setProperty(const std::string &name, const std::string &value);
+	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
 
-	// ***************************************************************************
-	/**
-	 * Group handling Ctrl Tab, to easily simulate Tab ctrl.
-	 *	NB: controlled groups doesn't have to be child of the GroupTab, they are searched in order:
-	 *		- in this group
-	 *		- in the parent group
-	 *		- in global
-	 * \author Lionel Berenguier
-	 * \author Nevrax France
-	 * \date 2003
-	 */
-	class CGroupTab : public CInterfaceGroup
-	{
-	public:
-        DECLARE_UI_CLASS( CGroupTab )
+	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+	virtual void updateCoords();
 
-		/// Constructor
-		CGroupTab(const TCtorParam &param);
+	// select the ctrl tab. -1 will invalidate all.
+	void select(sint index);
+	sint getSelection() const;
 
-		std::string getProperty( const std::string &name ) const;
-		void setProperty( const std::string &name, const std::string &value );
-		xmlNodePtr serialize( xmlNodePtr parentNode, const char *type ) const;
+	// select with a CCtrlTabButton ptr
+	void selectFromCtrl(CCtrlTabButton *button);
 
-		virtual bool parse (xmlNodePtr cur, CInterfaceGroup *parentGroup);
-		virtual void updateCoords ();
+	// select a default activated tab, if the current is a special ctrlTab
+	void selectDefault(CCtrlTabButton *ifSelectionIs);
 
-		// select the ctrl tab. -1 will invalidate all.
-		void	select(sint index);
-		sint	getSelection() const;
+	// select a default activated tab, if the current is hid
+	void selectDefaultIfCurrentHid();
 
-		// select with a CCtrlTabButton ptr
-		void	selectFromCtrl(CCtrlTabButton *button);
+	// add new tab
+	void addTab(CCtrlTabButton *tabB);
+	void addTab(CCtrlTabButton *tabB, sint index);
+	int luaAddTab(CLuaState &ls);
+	int luaAddTabWithOrder(CLuaState &ls);
 
-		// select a default activated tab, if the current is a special ctrlTab
-		void	selectDefault(CCtrlTabButton *ifSelectionIs);
+	// remove selected tab
+	void removeTab(sint index);
+	int luaRemoveTab(CLuaState &ls);
 
-		// select a default activated tab, if the current is hid
-		void	selectDefaultIfCurrentHid();
+	// remove all tabs
+	void removeAll();
+	int luaRemoveAll(CLuaState &ls);
 
-		// add new tab
-		void	addTab(CCtrlTabButton *tabB);
-		void	addTab(CCtrlTabButton *tabB, sint index);
-		int		luaAddTab(CLuaState &ls);
-		int		luaAddTabWithOrder(CLuaState &ls);
+	// tab number
+	void setTabButtonNb(sint32 /* val */) { }
+	sint32 getTabButtonNb() const { return (sint32)_Buttons.size(); }
 
-		// remove selected tab
-		void	removeTab(sint index);
-		int		luaRemoveTab(CLuaState &ls);
+	// selection index
+	void setIndexSelection(sint32 val) { select((sint)val); }
+	sint32 getIndexSelection() const { return (sint32)_NextSelection; }
 
-		// remove all tabs
-		void	removeAll();
-		int		luaRemoveAll(CLuaState &ls);
+	// selection index
+	void setAssociatedGroupSelection(const std::string & /* assG */) { }
+	std::string getAssociatedGroupSelection() const;
 
-		// tab number
-		void			setTabButtonNb(sint32 /* val */){}
-		sint32			getTabButtonNb() const {return (sint32)_Buttons.size();}
+	// get group from index
+	CInterfaceGroup *getGroup(sint index);
+	int luaGetGroup(CLuaState &ls);
 
-		// selection index
-		void			setIndexSelection(sint32 val){select((sint)val);}
-		sint32			getIndexSelection() const {return (sint32)_NextSelection;}
+	// get tab from index
+	CCtrlTabButton *getTabButton(sint index);
+	int luaGetTabButton(CLuaState &ls);
 
-		// selection index
-		void			setAssociatedGroupSelection(const std::string & /* assG */){}
-		std::string		getAssociatedGroupSelection() const;
+	// first showed tab button
+	sint32 getFirstTabButton() const { return (sint32)_FirstTabIndex; }
 
-		// get group from index
-		CInterfaceGroup*	getGroup(sint index);
-		int					luaGetGroup(CLuaState &ls);
+	// last showed tab button
+	sint32 getLastTabButton() const { return (sint32)_LastTabIndex; }
 
-		// get tab from index
-		CCtrlTabButton*	getTabButton(sint index);
-		int					luaGetTabButton(CLuaState &ls);
+	// update showed tab buttons on function of GroupTab width
+	void updateFirstTabButton();
+	int luaShowTabButton(CLuaState &ls);
 
-		// first showed tab button
-		sint32			getFirstTabButton() const {return (sint32)_FirstTabIndex;}
+	void dummySet(sint32 /* value */) { }
 
-		// last showed tab button
-		sint32			getLastTabButton() const {return (sint32)_LastTabIndex;}
+	REFLECT_EXPORT_START(CGroupTab, CInterfaceGroup)
+	REFLECT_LUA_METHOD("addTab", luaAddTab)
+	REFLECT_LUA_METHOD("addTabWithOrder", luaAddTabWithOrder)
+	REFLECT_LUA_METHOD("removeTab", luaRemoveTab)
+	REFLECT_LUA_METHOD("removeAll", luaRemoveAll)
+	REFLECT_LUA_METHOD("getGroup", luaGetGroup)
+	REFLECT_LUA_METHOD("getTabButton", luaGetTabButton)
+	REFLECT_LUA_METHOD("showTabButton", luaShowTabButton)
+	REFLECT_SINT32("tabButtonNb", getTabButtonNb, setTabButtonNb)
+	REFLECT_SINT32("selection", getIndexSelection, setIndexSelection)
+	REFLECT_SINT32("firstTabButton", getFirstTabButton, dummySet)
+	REFLECT_SINT32("lastTabButton", getLastTabButton, dummySet)
+	REFLECT_STRING("associatedGroupSelection", getAssociatedGroupSelection, setAssociatedGroupSelection)
+	REFLECT_EXPORT_END
 
-		// update showed tab buttons on function of GroupTab width
-		void				updateFirstTabButton();
-		int					luaShowTabButton(CLuaState &ls);
+private:
+	std::vector<CCtrlTabButton *> _Buttons; // can't be NULL.
+	std::vector<CInterfaceGroup *> _Groups; // may be NULL
+	sint _Selection;
+	sint _NextSelection;
+	sint _BaseRenderLayer;
+	bool _Setuped;
+	bool _HideOutTabs;
+	sint _FirstTabIndex;
+	sint _LastTabIndex;
 
-		void dummySet(sint32 /* value */){}
+	std::string _AHOnChange;
+	std::string _ParamsOnChange;
 
-		REFLECT_EXPORT_START(CGroupTab, CInterfaceGroup)
-			REFLECT_LUA_METHOD("addTab", luaAddTab)
-			REFLECT_LUA_METHOD("addTabWithOrder", luaAddTabWithOrder)
-			REFLECT_LUA_METHOD("removeTab", luaRemoveTab)
-			REFLECT_LUA_METHOD("removeAll", luaRemoveAll)
-			REFLECT_LUA_METHOD("getGroup", luaGetGroup)
-			REFLECT_LUA_METHOD("getTabButton", luaGetTabButton)
-			REFLECT_LUA_METHOD("showTabButton", luaShowTabButton)
-			REFLECT_SINT32 ("tabButtonNb", getTabButtonNb, setTabButtonNb)
-			REFLECT_SINT32 ("selection", getIndexSelection, setIndexSelection)
-			REFLECT_SINT32 ("firstTabButton", getFirstTabButton, dummySet)
-			REFLECT_SINT32 ("lastTabButton", getLastTabButton, dummySet)
-			REFLECT_STRING ("associatedGroupSelection", getAssociatedGroupSelection, setAssociatedGroupSelection)
-		REFLECT_EXPORT_END
+	void setup();
+};
 
-	private:
+// ***************************************************************************
+/**
+ *	Used with CGroupTab
+ */
+class CCtrlTabButton : public CCtrlTextButton
+{
+public:
+	DECLARE_UI_CLASS(CCtrlTabButton)
 
-		std::vector<CCtrlTabButton*>	_Buttons;	// can't be NULL.
-		std::vector<CInterfaceGroup*>	_Groups;	// may be NULL
-		sint							_Selection;
-		sint							_NextSelection;
-		sint							_BaseRenderLayer;
-		bool							_Setuped;
-		bool							_HideOutTabs;
-		sint							_FirstTabIndex;
-		sint							_LastTabIndex;
+	CCtrlTabButton(const TCtorParam &param);
 
-		std::string						_AHOnChange;
-		std::string						_ParamsOnChange;
+	void setProperty(const std::string &name, const std::string &value);
+	std::string getProperty(const std::string &name) const;
+	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
 
-		void		setup();
-	};
+	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
 
-	// ***************************************************************************
-	/**
-	 *	Used with CGroupTab
-	 */
-	class CCtrlTabButton : public CCtrlTextButton
-	{
-	public:
-        DECLARE_UI_CLASS( CCtrlTabButton )
+	virtual void setActive(bool state);
 
-		CCtrlTabButton(const TCtorParam &param);
+	virtual bool handleEvent(const NLGUI::CEventDescriptor &event);
 
-		void setProperty( const std::string &name, const std::string &value );
-		std::string getProperty( const std::string &name ) const;
-		xmlNodePtr serialize( xmlNodePtr parentNode, const char *type ) const;
+	void setBlink(bool b);
 
-		virtual bool parse (xmlNodePtr cur, CInterfaceGroup *parentGroup);
+	std::string _AssociatedGroup;
+	IActionHandler *_AHOnLeftClick2;
 
-		virtual void setActive(bool state);
-
-		virtual bool handleEvent (const NLGUI::CEventDescriptor &event);
-
-		void setBlink (bool b);
-
-		std::string		_AssociatedGroup;
-		IActionHandler *_AHOnLeftClick2;
-
-	private:
-
-		sint32			_DefaultX;
-		bool			_Blinking;
-		NLMISC::CRGBA	_TextColorNormalBlink;
-		bool			_TextModulateGlobalColorNormalBlink;
-		sint64			_BlinkDate;
-		bool			_BlinkState;
-	};
+private:
+	sint32 _DefaultX;
+	bool _Blinking;
+	NLMISC::CRGBA _TextColorNormalBlink;
+	bool _TextModulateGlobalColorNormalBlink;
+	sint64 _BlinkDate;
+	bool _BlinkState;
+};
 
 }
 

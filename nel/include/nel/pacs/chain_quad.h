@@ -25,21 +25,22 @@
 
 // _X is defined in some versions of linux/ctype.h
 #ifdef _X
-#	undef _X
+#undef _X
 #endif
 
-namespace NLPACS
-{
+namespace NLPACS {
 
-using	NLMISC::CVector;
-using	NLMISC::IStream;
+using NLMISC::CVector;
+using NLMISC::IStream;
 
 // ***************************************************************************
 struct EChainQuad : public NLMISC::Exception
 {
-	EChainQuad(const std::string &reason) : Exception(reason) { }
+	EChainQuad(const std::string &reason)
+	    : Exception(reason)
+	{
+	}
 };
-
 
 // ***************************************************************************
 /**
@@ -51,7 +52,6 @@ struct EChainQuad : public NLMISC::Exception
 class CChainQuad
 {
 public:
-
 	/// Constructor
 	CChainQuad();
 	/// Copy Constructor
@@ -61,10 +61,8 @@ public:
 	/// operator=.
 	CChainQuad &operator=(const CChainQuad &o);
 
-
 	/// build a chain quad, with a list of OrderedChains.
-	void			build(const std::vector<COrderedChain> &ochains);
-
+	void build(const std::vector<COrderedChain> &ochains);
 
 	/** look in the quad to select a list of chain from a bbox.
 	 * NB: The outpout do not contains any redundant edge. A OChain appears only one time in the result.
@@ -72,7 +70,7 @@ public:
 	 * \param cst the array of CEdgeChainEntry to fill. contain also OChainLUT, an array for internal use. In: must be filled with 0xFFFF. Out: still filled with 0xFFFF.
 	 * \return number of edgechain found. stored in cst.EdgeChainEntries (array cleared first).
 	 */
-	sint			selectEdges(const NLMISC::CAABBox &bbox, CCollisionSurfaceTemp &cst) const;
+	sint selectEdges(const NLMISC::CAABBox &bbox, CCollisionSurfaceTemp &cst) const;
 
 	/** look in the quad to select a list of chain from a bbox.
 	 * NB: The outpout do not contains any redundant edge. A OChain appears only one time in the result.
@@ -81,59 +79,51 @@ public:
 	 * \param cst the array of CEdgeChainEntry to fill. contain also OChainLUT, an array for internal use. In: must be filled with 0xFFFF. Out: still filled with 0xFFFF.
 	 * \return number of edgechain found. stored in cst.EdgeChainEntries (array cleared first).
 	 */
-	sint			selectEdges(CVector start, CVector end, CCollisionSurfaceTemp &cst) const;
-
+	sint selectEdges(CVector start, CVector end, CCollisionSurfaceTemp &cst) const;
 
 	/// serial.
-	void								serial(NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 
 	/// clear
-	void			clear()
+	void clear()
 	{
 		NLMISC::contReset(_Quad);
 		_Width = 0;
 		_Height = 0;
 		_X = 0;
 		_Y = 0;
-		delete [] _QuadData;
+		delete[] _QuadData;
 		_QuadData = NULL;
 		_QuadDataLen = 0;
 	}
 
-
-// **************************
+	// **************************
 private:
-
 	/** W*H pointers on array of CEdgeChainEntry. NULL if no edge in this quad.
 	 * Each array is 1xuint16(LEN) + LEN*CEdgeChainEntry.
 	 */
-	std::vector<uint8*>		_Quad;
+	std::vector<uint8 *> _Quad;
 	/// Width of the quadgrid.
-	uint32					_Width;
+	uint32 _Width;
 	/// Height of the quadgrid.
-	uint32					_Height;
+	uint32 _Height;
 	/// Postion of the chainquad.
-	sint32					_X, _Y;
+	sint32 _X, _Y;
 	/// Single memory block of CEdgeChainEntry chains.
-	uint8					*_QuadData;
+	uint8 *_QuadData;
 	/// size (in byte) of _QuadData.
-	uint32					_QuadDataLen;
+	uint32 _QuadDataLen;
 
-
-	static const	float	_QuadElementSize;	// = 4 meters.
-
+	static const float _QuadElementSize; // = 4 meters.
 
 private:
-	void			addEdgeToQuadNode(std::list<CEdgeChainEntry> &quadNode, sint ochainId, sint edgeId);
+	void addEdgeToQuadNode(std::list<CEdgeChainEntry> &quadNode, sint ochainId, sint edgeId);
 
 	// get local integer bounds in the grid.
-	void			getGridBounds(sint32 &x0, sint32 &y0, sint32 &x1, sint32 &y1, const CVector &minP, const CVector &maxP) const;
-
+	void getGridBounds(sint32 &x0, sint32 &y0, sint32 &x1, sint32 &y1, const CVector &minP, const CVector &maxP) const;
 };
 
-
 } // NLPACS
-
 
 #endif // NL_CHAIN_QUAD_H
 

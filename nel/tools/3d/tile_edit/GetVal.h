@@ -26,33 +26,33 @@
 /////////////////////////////////////////////////////////////////////////////
 // GetVal dialog
 
-
 class GetVal : public CDialog
 {
-// Construction
+	// Construction
 public:
 	TCHAR *name;
 	int NameOk;
-	GetVal(CWnd* pParent = NULL);   // standard constructor
+	GetVal(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(GetVal)
-	enum { IDD = IDD_GETSTR };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_GETSTR
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(GetVal)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(GetVal)
 	virtual void OnOK();

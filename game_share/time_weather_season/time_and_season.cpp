@@ -17,74 +17,67 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 #include "nel/misc/debug.h"
 #include "nel/misc/string_conversion.h"
 #include "time_and_season.h"
 
+namespace MONTH {
+NL_BEGIN_STRING_CONVERSION_TABLE(EMonth)
+NL_STRING_CONVERSION_TABLE_ENTRY(Winderly)
+NL_STRING_CONVERSION_TABLE_ENTRY(Germinally)
+NL_STRING_CONVERSION_TABLE_ENTRY(Folially)
+NL_STRING_CONVERSION_TABLE_ENTRY(Floris)
+NL_STRING_CONVERSION_TABLE_ENTRY(Medis)
+NL_STRING_CONVERSION_TABLE_ENTRY(Thermis)
+NL_STRING_CONVERSION_TABLE_ENTRY(Harvestor)
+NL_STRING_CONVERSION_TABLE_ENTRY(Frutor)
+NL_STRING_CONVERSION_TABLE_ENTRY(Fallenor)
+NL_STRING_CONVERSION_TABLE_ENTRY(Pluvia)
+NL_STRING_CONVERSION_TABLE_ENTRY(Mystia)
+NL_STRING_CONVERSION_TABLE_ENTRY(Nivia)
+NL_STRING_CONVERSION_TABLE_ENTRY(UNKNOWN)
+NL_END_STRING_CONVERSION_TABLE(EMonth, ConversionType, UNKNOWN)
 
-namespace MONTH
+///
+EMonth toMonth(const std::string &str)
 {
-	NL_BEGIN_STRING_CONVERSION_TABLE (EMonth)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Winderly)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Germinally)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Folially)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Floris)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Medis)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Thermis)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Harvestor)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Frutor)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Fallenor)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Pluvia)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Mystia)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Nivia)
-		NL_STRING_CONVERSION_TABLE_ENTRY(UNKNOWN)
-	NL_END_STRING_CONVERSION_TABLE(EMonth, ConversionType, UNKNOWN)
+	return ConversionType.fromString(str);
+}
 
-	///
-	EMonth toMonth( const std::string &str )
-	{
-		return ConversionType.fromString(str);
-	}
-
-	///
-	const std::string& toString( EMonth month )
-	{
-		return ConversionType.toString(month);
-	}
+///
+const std::string &toString(EMonth month)
+{
+	return ConversionType.toString(month);
+}
 
 }; // MONTH
 
+namespace WEEKDAY {
+NL_BEGIN_STRING_CONVERSION_TABLE(EWeekDay)
+NL_STRING_CONVERSION_TABLE_ENTRY(Prima)
+NL_STRING_CONVERSION_TABLE_ENTRY(Dua)
+NL_STRING_CONVERSION_TABLE_ENTRY(Tria)
+NL_STRING_CONVERSION_TABLE_ENTRY(Quarta)
+NL_STRING_CONVERSION_TABLE_ENTRY(Quinteth)
+NL_STRING_CONVERSION_TABLE_ENTRY(Holeth)
+NL_STRING_CONVERSION_TABLE_ENTRY(UNKNOWN)
+NL_END_STRING_CONVERSION_TABLE(EWeekDay, ConversionType, UNKNOWN)
 
-namespace WEEKDAY
+///
+EWeekDay toWeekDay(const std::string &str)
 {
-	NL_BEGIN_STRING_CONVERSION_TABLE (EWeekDay)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Prima)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Dua)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Tria)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Quarta)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Quinteth)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Holeth)
-		NL_STRING_CONVERSION_TABLE_ENTRY(UNKNOWN)
-	NL_END_STRING_CONVERSION_TABLE(EWeekDay, ConversionType, UNKNOWN)
+	return ConversionType.fromString(str);
+}
 
-	///
-	EWeekDay toWeekDay( const std::string &str )
-	{
-		return ConversionType.fromString(str);
-	}
-
-	///
-	const std::string& toString( EWeekDay day )
-	{
-		return ConversionType.toString(day);
-	}
+///
+const std::string &toString(EWeekDay day)
+{
+	return ConversionType.toString(day);
+}
 
 }; // WEEKDAY
-
 
 void CRyzomTime::updateRyzomClock(uint32 gameCyle)
 {
@@ -94,7 +87,7 @@ void CRyzomTime::updateRyzomClock(uint32 gameCyle)
 	uint32 days = totalTicks / RYZOM_DAY_IN_TICKS;
 	uint32 dayCycle = totalTicks - (days * RYZOM_DAY_IN_TICKS);
 	// Avoid rollover for low amount of days
-	if(days >= RYZOM_START_SPRING)
+	if (days >= RYZOM_START_SPRING)
 		days -= RYZOM_START_SPRING;
 	else
 		days = 0;

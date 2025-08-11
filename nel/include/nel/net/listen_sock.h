@@ -17,12 +17,9 @@
 #ifndef NL_LISTEN_SOCK_H
 #define NL_LISTEN_SOCK_H
 
-
 #include "tcp_sock.h"
 
-namespace NLNET
-{
-
+namespace NLNET {
 
 /**
  * CListenSock: listening socket for servers.
@@ -38,7 +35,6 @@ namespace NLNET
 class CListenSock : public CTcpSock
 {
 public:
-
 	/// Constructor
 	CListenSock();
 
@@ -46,27 +42,26 @@ public:
 	//@{
 
 	/// Prepares to receive connections on a specified port (bind+listen)
-	void			init( uint16 port );
+	void init(uint16 port);
 
 	/// Prepares to receive connections on a specified address/port (useful when the host has several addresses)
-	void			init( const CInetAddress& addr );
+	void init(const CInetAddress &addr);
 
 	/// Sets the number of the pending connections queue, or -1 for the maximum possible value.
-	void			setBacklog( sint backlog );
+	void setBacklog(sint backlog);
 
 	/// Returns the pending connections queue.
-	sint			backlog() const { return _BackLog; }
+	sint backlog() const { return _BackLog; }
 
 	//@}
 
 	/// Blocks until an incoming connection is requested, accepts it, and creates a new socket (you have to delete it after use)
-	CTcpSock		*accept();
+	CTcpSock *accept();
 
 private:
+	bool _Bound;
 
-	bool			_Bound;
-
-	sint			_BackLog;
+	sint _BackLog;
 };
 
 } // NLNET

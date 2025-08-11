@@ -20,12 +20,12 @@
 
 using namespace std;
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	// Help ?
-	if (argc<3)
+	if (argc < 3)
 	{
-		printf ("exec_timeout [timeout(ms)] [prog.exe] [arg0] [arg1]...\nReturn 0:error, 1:ok, 2:timeout\n");
+		printf("exec_timeout [timeout(ms)] [prog.exe] [arg0] [arg1]...\nReturn 0:error, 1:ok, 2:timeout\n");
 		return 0;
 	}
 	else
@@ -34,10 +34,10 @@ int main(int argc, char* argv[])
 		string argu;
 
 		// Build the argus
-		for (int i=2; i<argc; i++)
+		for (int i = 2; i < argc; i++)
 		{
 			argu += argv[i];
-			if (i<argc-1)
+			if (i < argc - 1)
 				argu += " ";
 		}
 
@@ -45,36 +45,36 @@ int main(int argc, char* argv[])
 		PROCESS_INFORMATION process_info;
 
 		// Timeout
-		DWORD timeout = atoi (argv[1]);
+		DWORD timeout = atoi(argv[1]);
 
 		// Startup info
 		STARTUPINFO startupInfo;
-		GetStartupInfo (&startupInfo);
+		GetStartupInfo(&startupInfo);
 
 		// Exec
-		if (CreateProcess( NULL, (char*)(argu.c_str()), NULL, NULL, TRUE, CREATE_NEW_PROCESS_GROUP, NULL, NULL, &startupInfo, &process_info))
+		if (CreateProcess(NULL, (char *)(argu.c_str()), NULL, NULL, TRUE, CREATE_NEW_PROCESS_GROUP, NULL, NULL, &startupInfo, &process_info))
 		{
 			// Return message
-			switch (WaitForSingleObject ( process_info.hProcess, timeout))
+			switch (WaitForSingleObject(process_info.hProcess, timeout))
 			{
 			case WAIT_OBJECT_0:
 				return 1;
 			case WAIT_ABANDONED:
 				return 0;
 			case WAIT_TIMEOUT:
-				if (TerminateProcess (process_info.hProcess, 0))
+				if (TerminateProcess(process_info.hProcess, 0))
 				{
-					nlwarning ("ERROR: Timeout in process %s", (char*)(argu.c_str()));
+					nlwarning("ERROR: Timeout in process %s", (char *)(argu.c_str()));
 					return 2;
 				}
 				else
-					nlwarning ("ERROR: Error while terminate current process %s", (char*)(argu.c_str()));
-					return 0;
+					nlwarning("ERROR: Error while terminate current process %s", (char *)(argu.c_str()));
+				return 0;
 			}
 		}
 		else
-			nlwarning ("ERROR: Error can't exec process %s", (char*)(argu.c_str()));
-			return 0;
+			nlwarning("ERROR: Error can't exec process %s", (char *)(argu.c_str()));
+		return 0;
 	}
 
 	// Ok

@@ -17,68 +17,63 @@
 #ifndef NL_PLANE_INLINE_H
 #define NL_PLANE_INLINE_H
 
-
-namespace NLMISC
-{
-
+namespace NLMISC {
 
 //============================================================
-inline	CVector	CPlane::getNormal() const
+inline CVector CPlane::getNormal() const
 {
-	return CVector(a,b,c);
+	return CVector(a, b, c);
 }
 //============================================================
-inline	float	CPlane::distance(const CVector &v) const
+inline float CPlane::distance(const CVector &v) const
 {
-	CPlane	p= normed();
-	return (float)fabs(p*v);
+	CPlane p = normed();
+	return (float)fabs(p * v);
 }
 //============================================================
-inline	float	CPlane::operator*(const CVector &p) const
+inline float CPlane::operator*(const CVector &p) const
 {
-	return a*p.x + b*p.y + c*p.z + d;
+	return a * p.x + b * p.y + c * p.z + d;
 }
 //============================================================
-inline	CVector CPlane::intersect(const CVector &p0,const CVector &p1) const
+inline CVector CPlane::intersect(const CVector &p0, const CVector &p1) const
 {
 	float decal;
-	float	da= (*this)*p0;
-	float	db= (*this)*p1;
-	if(db-da == 0)
+	float da = (*this) * p0;
+	float db = (*this) * p1;
+	if (db - da == 0)
 		return p0;
-	decal= ( 0-da ) / ( db - da );
-	return p0 + (p1-p0)*decal;
+	decal = (0 - da) / (db - da);
+	return p0 + (p1 - p0) * decal;
 }
 //============================================================
-inline	CVector CPlane::project(const CVector &p0) const
+inline CVector CPlane::project(const CVector &p0) const
 {
-	return intersect(p0, p0+getNormal());
+	return intersect(p0, p0 + getNormal());
 }
 
 //============================================================
-inline	void	CPlane::normalize()
+inline void CPlane::normalize()
 {
-	float	n= getNormal().norm();
-	if(n)
+	float n = getNormal().norm();
+	if (n)
 	{
-		float	oon= 1.0f/n;
-		a*= oon;
-		b*= oon;
-		c*= oon;
-		d*= oon;
+		float oon = 1.0f / n;
+		a *= oon;
+		b *= oon;
+		c *= oon;
+		d *= oon;
 	}
 }
 //============================================================
-inline	CPlane	CPlane::normed() const
+inline CPlane CPlane::normed() const
 {
-	CPlane	ret= *this;
+	CPlane ret = *this;
 	ret.normalize();
 	return ret;
 }
 
-
 }
-
 
 #endif // NL_PLANE_H
 

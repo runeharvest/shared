@@ -17,7 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdpch.h"
 #include "nel/misc/rgba.h"
 #include <map>
@@ -28,20 +27,17 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NLGUI
+namespace NLGUI {
+IParser::IParser()
 {
-	IParser::IParser()
-	{
-	}
+}
 
+IParser::~IParser()
+{
+}
 
-	IParser::~IParser()
-	{
-	}
-
-
-	IParser* IParser::createParser()
-	{
-		return new CInterfaceParser();
-	}
+IParser *IParser::createParser()
+{
+	return new CInterfaceParser();
+}
 }

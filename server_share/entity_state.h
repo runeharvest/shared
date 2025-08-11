@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_ENTITY_STATE_H
 #define RY_ENTITY_STATE_H
 
@@ -24,7 +22,6 @@
 
 #include "game_share/far_position.h"
 #include "game_share/mirror_prop_value.h"
-
 
 /**
  * CEntityState
@@ -43,11 +40,11 @@ public:
 
 	DECLARE_PERSISTENCE_METHODS
 
-	CMirrorPropValueAlice< sint32, CPropLocationPacked<2> > X;
-	CMirrorPropValueAlice< sint32, CPropLocationPacked<2> > Y;
-	CMirrorPropValueAlice< sint32, CPropLocationPacked<2> > Z;
-	
-	CMirrorPropValueAlice< float, CPropLocationPacked<2> > Heading;
+	CMirrorPropValueAlice<sint32, CPropLocationPacked<2>> X;
+	CMirrorPropValueAlice<sint32, CPropLocationPacked<2>> Y;
+	CMirrorPropValueAlice<sint32, CPropLocationPacked<2>> Z;
+
+	CMirrorPropValueAlice<float, CPropLocationPacked<2>> Heading;
 
 	CEntityState()
 	{
@@ -56,13 +53,13 @@ public:
 
 	void clear()
 	{
-		X=0;
-		Y=0;
-		Z=0;
-		Heading=0;
+		X = 0;
+		Y = 0;
+		Z = 0;
+		Heading = 0;
 	}
 
-	const CEntityState &operator = (const COfflineEntityState &s)
+	const CEntityState &operator=(const COfflineEntityState &s)
 	{
 		X = s.X;
 		Y = s.Y;
@@ -74,24 +71,23 @@ public:
 	/**
 	 *	operator=
 	 */
-	void setCOfflineEntityState( COfflineEntityState &s ) const
-	{ 
+	void setCOfflineEntityState(COfflineEntityState &s) const
+	{
 		s.X = X;
 		s.Y = Y;
 		s.Z = Z;
 		s.Heading = Heading;
 	}
 
-
 	/**
 	 *	Store temporaryly the state from an COfflineEntityState object (for later mirrorizing)
 	 */
-	void storeToTemp( const COfflineEntityState& state ) 
-	{ 
-		X= state.X;
-		Y= state.Y;
-		Z= state.Z;
-		Heading= state.Heading;
+	void storeToTemp(const COfflineEntityState &state)
+	{
+		X = state.X;
+		Y = state.Y;
+		Z = state.Z;
+		Heading = state.Heading;
 	}
 
 	/**
@@ -99,16 +95,16 @@ public:
 	 */
 	void serial(NLMISC::IStream &f)
 	{
-		X.serialRTWM( f );
-		Y.serialRTWM( f );
-		Z.serialRTWM( f );
-		Heading.serialRTWM( f );
+		X.serialRTWM(f);
+		Y.serialRTWM(f);
+		Z.serialRTWM(f);
+		Heading.serialRTWM(f);
 	}
 
 	/**
 	 * Fill vector in meter corresponding to state
 	 */
-	void getVector( NLMISC::CVector& v ) const
+	void getVector(NLMISC::CVector &v) const
 	{
 		v.x = X * 0.001f;
 		v.y = Y * 0.001f;
@@ -118,22 +114,20 @@ public:
 	/**
 	 * Fill a CVectorfD in meter corresponding to state
 	 */
-	void getVector2f( NLMISC::CVector2f& v ) const
+	void getVector2f(NLMISC::CVector2f &v) const
 	{
 		v.x = X * 0.001f;
 		v.y = Y * 0.001f;
 	}
 };
 
-
-inline COfflineEntityState::COfflineEntityState(const CEntityState& state)
+inline COfflineEntityState::COfflineEntityState(const CEntityState &state)
 {
 	X = state.X;
 	Y = state.Y;
 	Z = state.Z;
 	Heading = state.Heading;
 }
-
 
 #endif // RY_ENTITY_STATE_H
 /* entity_state.h */

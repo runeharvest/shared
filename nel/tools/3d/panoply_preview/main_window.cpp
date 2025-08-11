@@ -59,11 +59,13 @@ QString nli18n(const char *label)
 } /* anonymous namespace */
 
 CMainWindow::CMainWindow(const QMap<QString, QSize> &customSizeHints, QWidget *parent, Qt::WindowFlags flags)
-	: QMainWindow(parent, flags),
-	m_PanoplyPreview(NULL), 
-	m_CommandLog(NULL), m_CommandLogDock(NULL), 
-	m_WidgetsMenu(NULL), m_HelpMenu(NULL), 
-	m_AboutAct(NULL)
+    : QMainWindow(parent, flags)
+    , m_PanoplyPreview(NULL)
+    , m_CommandLog(NULL)
+    , m_CommandLogDock(NULL)
+    , m_WidgetsMenu(NULL)
+    , m_HelpMenu(NULL)
+    , m_AboutAct(NULL)
 {
 	setObjectName("CMainWindow");
 	setWindowTitle(tr("NeL Panoply Preview"));
@@ -75,13 +77,12 @@ CMainWindow::CMainWindow(const QMap<QString, QSize> &customSizeHints, QWidget *p
 
 	m_PanoplyPreview = new CPanoplyPreview(this);
 	setCentralWidget(m_PanoplyPreview);
-	
+
 	createDockWindows();
 }
 
 CMainWindow::~CMainWindow()
 {
-	
 }
 
 void CMainWindow::createActions()
@@ -96,7 +97,7 @@ void CMainWindow::createActions()
 void CMainWindow::createMenus()
 {
 	m_WidgetsMenu = menuBar()->addMenu(QString::null);
-	
+
 	m_HelpMenu = menuBar()->addMenu(QString::null);
 	m_HelpMenu->addAction(m_AboutAct);
 
@@ -106,7 +107,6 @@ void CMainWindow::createMenus()
 
 void CMainWindow::createToolBars()
 {
-	
 }
 
 void CMainWindow::createStatusBar()

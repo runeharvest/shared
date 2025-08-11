@@ -14,15 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "fog_map_build.h"
 
 //===================================================================
 void CFogMapBuild::serial(NLMISC::IStream &f)
 {
-	for(uint k = 0; k < NumMap; ++k)
+	for (uint k = 0; k < NumMap; ++k)
 	{
 		f.serial(Map[k]);
 	}

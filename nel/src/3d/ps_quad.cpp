@@ -28,15 +28,11 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
-
+namespace NL3D {
 
 ///////////////////////////
 // constant definition   //
 ///////////////////////////
-
 
 static const uint dotBufSize = 1024; // size used for point particles batching
 
@@ -80,50 +76,89 @@ CVertexBuffer RAMVBPosTex1ColTex2Anim;
 CVertexBuffer RAMVBPosTex1AnimTex2Anim;
 CVertexBuffer RAMVBPosTex1AnimColTex2Anim;
 
-
-
-
-CVertexBuffer    * const CPSQuad::_VbTab[] =
-{
-  // tex1 only
-  &_VBPos, &_VBPosCol, &_VBPosTex1,  &_VBPosTex1Col,
-  NULL,   NULL,		 &_VBPosTex1Anim, &_VBPosTex1AnimCol,
-  // tex1 & tex2
-  NULL, NULL, &_VBPosTex1Tex2, &_VBPosTex1ColTex2,
-  NULL,   NULL,		 &_VBPosTex1AnimTex2, &_VBPosTex1AnimColTex2,
-  // tex2 & !tex1 (invalid)
-  NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL,
-  // tex2 & !tex1 (invalid)
-  // tex1 & tex2
-  NULL, NULL, &_VBPosTex1Tex2Anim, &_VBPosTex1ColTex2Anim,
-  NULL,   NULL,		 &_VBPosTex1AnimTex2Anim, &_VBPosTex1AnimColTex2Anim,
-};
-
-CVertexBuffer    * const RAMVbTab[] =
-{
+CVertexBuffer *const CPSQuad::_VbTab[] = {
 	// tex1 only
-		&RAMVBPos, &RAMVBPosCol, &RAMVBPosTex1,  &RAMVBPosTex1Col,
-		NULL,   NULL,		 &RAMVBPosTex1Anim, &RAMVBPosTex1AnimCol,
-		// tex1 & tex2
-		NULL, NULL, &RAMVBPosTex1Tex2, &RAMVBPosTex1ColTex2,
-		NULL,   NULL,		 &RAMVBPosTex1AnimTex2, &RAMVBPosTex1AnimColTex2,
-		// tex2 & !tex1 (invalid)
-		NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL,
-		// tex2 & !tex1 (invalid)
-		// tex1 & tex2
-		NULL, NULL, &RAMVBPosTex1Tex2Anim, &RAMVBPosTex1ColTex2Anim,
-		NULL,   NULL,		 &RAMVBPosTex1AnimTex2Anim, &RAMVBPosTex1AnimColTex2Anim,
+	&_VBPos,
+	&_VBPosCol,
+	&_VBPosTex1,
+	&_VBPosTex1Col,
+	NULL,
+	NULL,
+	&_VBPosTex1Anim,
+	&_VBPosTex1AnimCol,
+	// tex1 & tex2
+	NULL,
+	NULL,
+	&_VBPosTex1Tex2,
+	&_VBPosTex1ColTex2,
+	NULL,
+	NULL,
+	&_VBPosTex1AnimTex2,
+	&_VBPosTex1AnimColTex2,
+	// tex2 & !tex1 (invalid)
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	// tex2 & !tex1 (invalid)
+	// tex1 & tex2
+	NULL,
+	NULL,
+	&_VBPosTex1Tex2Anim,
+	&_VBPosTex1ColTex2Anim,
+	NULL,
+	NULL,
+	&_VBPosTex1AnimTex2Anim,
+	&_VBPosTex1AnimColTex2Anim,
 };
 
-
-
+CVertexBuffer *const RAMVbTab[] = {
+	// tex1 only
+	&RAMVBPos,
+	&RAMVBPosCol,
+	&RAMVBPosTex1,
+	&RAMVBPosTex1Col,
+	NULL,
+	NULL,
+	&RAMVBPosTex1Anim,
+	&RAMVBPosTex1AnimCol,
+	// tex1 & tex2
+	NULL,
+	NULL,
+	&RAMVBPosTex1Tex2,
+	&RAMVBPosTex1ColTex2,
+	NULL,
+	NULL,
+	&RAMVBPosTex1AnimTex2,
+	&RAMVBPosTex1AnimColTex2,
+	// tex2 & !tex1 (invalid)
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	// tex2 & !tex1 (invalid)
+	// tex1 & tex2
+	NULL,
+	NULL,
+	&RAMVBPosTex1Tex2Anim,
+	&RAMVBPosTex1ColTex2Anim,
+	NULL,
+	NULL,
+	&RAMVBPosTex1AnimTex2Anim,
+	&RAMVBPosTex1AnimColTex2Anim,
+};
 
 //////////////////////////////////
 // CPSQuad implementation       //
 //////////////////////////////////
-
 
 ///==================================================================================
 /// fill textures coordinates for a quad vb
@@ -132,7 +167,7 @@ static void SetupQuadVBTexCoords(CVertexBuffer &vb, uint texCoordSet)
 	NL_PS_FUNC(SetupQuadVBTexCoords)
 	nlassert(texCoordSet < 2);
 	CVertexBufferReadWrite vba;
-	vb.lock (vba);
+	vb.lock(vba);
 	// the size used for buffer can't be higher than quad buf size
 	// to have too large buffer will broke the cache
 	for (uint32 k = 0; k < CPSQuad::quadBufSize; ++k)
@@ -159,57 +194,56 @@ void CPSQuad::initVertexBuffers()
 			vb->setPreferredMemory(CVertexBuffer::AGPVolatile, true);
 			uint32 vf = CVertexBuffer::PositionFlag;
 			/// setup vertex format
-			if (k & (uint) VBCol) vf |= CVertexBuffer::PrimaryColorFlag;
-			if (k & (uint) VBTex  || k & (uint) VBTexAnimated) vf |= CVertexBuffer::TexCoord0Flag;
-			if (k & (uint) VBTex2 || k & (uint) VBTex2Animated) vf |= CVertexBuffer::TexCoord1Flag;
+			if (k & (uint)VBCol) vf |= CVertexBuffer::PrimaryColorFlag;
+			if (k & (uint)VBTex || k & (uint)VBTexAnimated) vf |= CVertexBuffer::TexCoord0Flag;
+			if (k & (uint)VBTex2 || k & (uint)VBTex2Animated) vf |= CVertexBuffer::TexCoord1Flag;
 			vb->setVertexFormat(vf);
 			vb->setNumVertices(quadBufSize << 2);
 
-			if ((k & (uint) VBTex) && !(k & (uint) VBTexAnimated))
+			if ((k & (uint)VBTex) && !(k & (uint)VBTexAnimated))
 			{
 				SetupQuadVBTexCoords(*vb, 0);
 			}
 
-			if ((k & (uint) VBTex2) && !(k & (uint) VBTex2Animated))
+			if ((k & (uint)VBTex2) && !(k & (uint)VBTex2Animated))
 			{
 				SetupQuadVBTexCoords(*vb, 1);
 			}
-
 		}
 	}
 	/*
 	for (uint k = 0; k < 32; ++k)
 	{
-		CVertexBuffer *vb = RAMVbTab[k];
-		if (vb) // valid vb ?
-		{
-			vb->setName("CPSQuadRAM");
-			vb->setPreferredMemory(CVertexBuffer::RAMPreferred, false);
-			uint32 vf = CVertexBuffer::PositionFlag;
-			/// setup vertex format
-			if (k & (uint) VBCol) vf |= CVertexBuffer::PrimaryColorFlag;
-			if (k & (uint) VBTex  || k & (uint) VBTexAnimated) vf |= CVertexBuffer::TexCoord0Flag;
-			if (k & (uint) VBTex2 || k & (uint) VBTex2Animated) vf |= CVertexBuffer::TexCoord1Flag;
-			vb->setVertexFormat(vf);
-			vb->setNumVertices(quadBufSize << 2);
+	    CVertexBuffer *vb = RAMVbTab[k];
+	    if (vb) // valid vb ?
+	    {
+	        vb->setName("CPSQuadRAM");
+	        vb->setPreferredMemory(CVertexBuffer::RAMPreferred, false);
+	        uint32 vf = CVertexBuffer::PositionFlag;
+	        /// setup vertex format
+	        if (k & (uint) VBCol) vf |= CVertexBuffer::PrimaryColorFlag;
+	        if (k & (uint) VBTex  || k & (uint) VBTexAnimated) vf |= CVertexBuffer::TexCoord0Flag;
+	        if (k & (uint) VBTex2 || k & (uint) VBTex2Animated) vf |= CVertexBuffer::TexCoord1Flag;
+	        vb->setVertexFormat(vf);
+	        vb->setNumVertices(quadBufSize << 2);
 
-			if ((k & (uint) VBTex) && !(k & (uint) VBTexAnimated))
-			{
-				SetupQuadVBTexCoords(*vb, 0);
-			}
+	        if ((k & (uint) VBTex) && !(k & (uint) VBTexAnimated))
+	        {
+	            SetupQuadVBTexCoords(*vb, 0);
+	        }
 
-			if ((k & (uint) VBTex2) && !(k & (uint) VBTex2Animated))
-			{
-				SetupQuadVBTexCoords(*vb, 1);
-			}
+	        if ((k & (uint) VBTex2) && !(k & (uint) VBTex2Animated))
+	        {
+	            SetupQuadVBTexCoords(*vb, 1);
+	        }
 
-		}
+	    }
 	}
 	*/
 }
 
 // tmp
-//volatile bool TestWantAGPCPSQuad = true;
+// volatile bool TestWantAGPCPSQuad = true;
 
 ///==================================================================================
 /// choose the vertex buffex that we need
@@ -217,7 +251,7 @@ CVertexBuffer &CPSQuad::getNeededVB(IDriver &drv)
 {
 	NL_PS_FUNC(CPSQuad_getNeededVB)
 	uint flags = 0;
-	if (_ColorScheme) flags |= (uint) VBCol;
+	if (_ColorScheme) flags |= (uint)VBCol;
 	if (_TexGroup)
 	{
 		flags |= VBTex | VBTexAnimated;
@@ -234,7 +268,7 @@ CVertexBuffer &CPSQuad::getNeededVB(IDriver &drv)
 		{
 			if (isAlternateTextureUsed(drv) && _AlternateTexture2)
 			{
-				if ((flags & VBTex) && (_TexScrollAlternate[0].x != 0 || _TexScrollAlternate[0].y	!= 0)) flags |= VBTexAnimated;
+				if ((flags & VBTex) && (_TexScrollAlternate[0].x != 0 || _TexScrollAlternate[0].y != 0)) flags |= VBTexAnimated;
 				if (_AlternateOp != Decal && (_TexScrollAlternate[1].x != 0 || _TexScrollAlternate[1].y != 0))
 				{
 					flags |= VBTex2 | VBTex2Animated;
@@ -246,7 +280,7 @@ CVertexBuffer &CPSQuad::getNeededVB(IDriver &drv)
 			}
 			else
 			{
-				if ((flags & VBTex) && (_TexScroll[0].x != 0 || _TexScroll[0].y	!= 0)) flags |= VBTexAnimated;
+				if ((flags & VBTex) && (_TexScroll[0].x != 0 || _TexScroll[0].y != 0)) flags |= VBTexAnimated;
 				if (_Texture2)
 				{
 					if (_MainOp != Decal && (_TexScroll[1].x != 0 || _TexScroll[1].y != 0))
@@ -263,15 +297,15 @@ CVertexBuffer &CPSQuad::getNeededVB(IDriver &drv)
 	}
 	/*if (TestWantAGPCPSQuad)
 	{*/
-		nlassert((flags & ~VBFullMask) == 0); // check for overflow
-		nlassert(_VbTab[flags] != NULL);
-		return *(_VbTab[flags]); // get the vb
+	nlassert((flags & ~VBFullMask) == 0); // check for overflow
+	nlassert(_VbTab[flags] != NULL);
+	return *(_VbTab[flags]); // get the vb
 	/*}
 	else
 	{
-		nlassert((flags & ~VBFullMask) == 0); // check for overflow
-		nlassert(RAMVbTab[flags] != NULL);
-		return *(RAMVbTab[flags]); // get the vb
+	    nlassert((flags & ~VBFullMask) == 0); // check for overflow
+	    nlassert(RAMVbTab[flags] != NULL);
+	    return *(RAMVbTab[flags]); // get the vb
 	}*/
 }
 
@@ -285,10 +319,8 @@ CPSQuad::CPSQuad(CSmartPtr<ITexture> tex)
 	if (CParticleSystem::getSerializeIdentifierFlag()) _Name = std::string("quad");
 }
 
-
 ///==================================================================================
-CPSQuad::~CPSQuad()
-{
+CPSQuad::~CPSQuad() {
 	NL_PS_FUNC(CPSQuad_CPSQuadDtor)
 }
 
@@ -297,7 +329,7 @@ uint32 CPSQuad::getNumWantedTris() const
 {
 	NL_PS_FUNC(CPSQuad_getNumWantedTris)
 	nlassert(_Owner);
-	//return _Owner->getMaxSize() << 1;
+	// return _Owner->getMaxSize() << 1;
 	return _Owner->getSize() << 1;
 }
 
@@ -305,7 +337,7 @@ uint32 CPSQuad::getNumWantedTris() const
 bool CPSQuad::hasTransparentFaces(void)
 {
 	NL_PS_FUNC(CPSQuad_hasTransparentFaces)
-	return getBlendingMode() != CPSMaterial::alphaTest ;
+	return getBlendingMode() != CPSMaterial::alphaTest;
 }
 
 ///==================================================================================
@@ -322,7 +354,6 @@ void CPSQuad::init(void)
 	_Mat.setLighting(false);
 	_Mat.setDoubleSided(true);
 
-
 	updateMatAndVbForColor();
 	updateMatAndVbForTexture();
 }
@@ -337,7 +368,7 @@ void CPSQuad::updateMatAndVbForTexture(void)
 	}
 	else
 	{
-		_Mat.setTexture(0, _TexGroup ? (ITexture *) _TexGroup : (ITexture *) _Tex);
+		_Mat.setTexture(0, _TexGroup ? (ITexture *)_TexGroup : (ITexture *)_Tex);
 	}
 }
 
@@ -353,7 +384,7 @@ bool CPSQuad::completeBBox(NLMISC::CAABBox &box) const
 	{
 		CPSUtil::addRadiusToAABBox(box, std::max(fabsf(_SizeScheme->getMaxValue()), fabsf(_SizeScheme->getMinValue())));
 	}
-	return true ;
+	return true;
 }
 
 ///==================================================================================
@@ -371,14 +402,14 @@ void CPSQuad::updateMatAndVbForColor(void)
 {
 	NL_PS_FUNC(CPSQuad_updateMatAndVbForColor)
 	// no vb to setup, now..
-/*	if (!_ColorScheme)
-	{
-		_Mat.setColor(_Color);
-	}
-	else
-	{
-		_Mat.setColor(CRGBA::White);
-	}	*/
+	/*	if (!_ColorScheme)
+	    {
+	        _Mat.setColor(_Color);
+	    }
+	    else
+	    {
+	        _Mat.setColor(CRGBA::White);
+	    }	*/
 }
 
 //==============================================================
@@ -403,23 +434,20 @@ static void FillQuadCoords(uint8 *dest, uint stride, const NLMISC::CVector2f &sp
 {
 	NL_PS_FUNC(FillQuadCoords)
 	if (!num) return;
-	const float topV    = speed.y * time;
+	const float topV = speed.y * time;
 	const float bottomV = topV + 1.f;
-	const float leftU   = speed.x * time;
-	const float rightU  = leftU + 1.f;
-
+	const float leftU = speed.x * time;
+	const float rightU = leftU + 1.f;
 
 	do
 	{
-		((NLMISC::CUV *) dest)->set(leftU, topV);
-		((NLMISC::CUV *) (dest + stride))->set(rightU, topV);
-		((NLMISC::CUV *) (dest + (stride << 1)))->set(rightU, bottomV);
-		((NLMISC::CUV *) (dest + (stride * 3)))->set(leftU, bottomV);
-
+		((NLMISC::CUV *)dest)->set(leftU, topV);
+		((NLMISC::CUV *)(dest + stride))->set(rightU, topV);
+		((NLMISC::CUV *)(dest + (stride << 1)))->set(rightU, bottomV);
+		((NLMISC::CUV *)(dest + (stride * 3)))->set(leftU, bottomV);
 
 		dest += stride << 2;
-	}
-	while (--num);
+	} while (--num);
 }
 
 //==============================================================
@@ -434,40 +462,38 @@ static void FillQuadCoordsLocalTime(uint8 *dest, uint stride, const NLMISC::CVec
 		TPSAttribTime::iterator timePt = srcLoc.getTime().begin() + startIndex;
 		do
 		{
-			const float topV    = speed.y * *timePt;
+			const float topV = speed.y * *timePt;
 			const float bottomV = topV + 1.f;
-			const float leftU   = speed.x * *timePt;
-			const float rightU  = leftU + 1.f;
+			const float leftU = speed.x * *timePt;
+			const float rightU = leftU + 1.f;
 
-			((NLMISC::CUV *) dest)->set(leftU, topV);
-			((NLMISC::CUV *) (dest + stride))->set(rightU, topV);
-			((NLMISC::CUV *) (dest + (stride << 1)))->set(rightU, bottomV);
-			((NLMISC::CUV *) (dest + (stride * 3)))->set(leftU, bottomV);
+			((NLMISC::CUV *)dest)->set(leftU, topV);
+			((NLMISC::CUV *)(dest + stride))->set(rightU, topV);
+			((NLMISC::CUV *)(dest + (stride << 1)))->set(rightU, bottomV);
+			((NLMISC::CUV *)(dest + (stride * 3)))->set(leftU, bottomV);
 
 			dest += stride << 2;
 			++timePt;
-		}
-		while (--num);
+		} while (--num);
 	}
 	else
 	{
 		TIteratorTimeStep1616 timePt(srcLoc.getTime().begin(), startIndex, srcStep);
 		do
 		{
-			const float topV    = speed.y * *timePt;
+			const float topV = speed.y * *timePt;
 			const float bottomV = topV + 1.f;
-			const float leftU   = speed.x * *timePt;
-			const float rightU  = leftU + 1.f;
+			const float leftU = speed.x * *timePt;
+			const float rightU = leftU + 1.f;
 
-			((NLMISC::CUV *) dest)->set(leftU, topV);
-			((NLMISC::CUV *) (dest + stride))->set(rightU, topV);
-			((NLMISC::CUV *) (dest + (stride << 1)))->set(rightU, bottomV);
-			((NLMISC::CUV *) (dest + (stride * 3)))->set(leftU, bottomV);
+			((NLMISC::CUV *)dest)->set(leftU, topV);
+			((NLMISC::CUV *)(dest + stride))->set(rightU, topV);
+			((NLMISC::CUV *)(dest + (stride << 1)))->set(rightU, bottomV);
+			((NLMISC::CUV *)(dest + (stride * 3)))->set(leftU, bottomV);
 
 			dest += stride << 2;
 			++timePt;
-		}
-		while (--num);
+		} while (--num);
 	}
 }
 
@@ -480,7 +506,7 @@ void CPSQuad::updateVbColNUVForRender(CVertexBuffer &vb, uint32 startIndex, uint
 	if (!size) return;
 
 	CVertexBufferReadWrite vba;
-	vb.lock (vba);
+	vb.lock(vba);
 
 	if (_ColorScheme)
 	{
@@ -489,39 +515,37 @@ void CPSQuad::updateVbColNUVForRender(CVertexBuffer &vb, uint32 startIndex, uint
 		_ColorScheme->make4(_Owner, startIndex, vba.getColorPointer(), vb.getVertexSize(), size, srcStep);
 	}
 
-
 	if (_TexGroup) // if it has a constant texture we are sure it has been setupped before...
 	{
 		sint32 textureIndex[quadBufSize];
 		const uint32 stride = vb.getVertexSize(), stride2 = stride << 1, stride3 = stride2 + stride, stride4 = stride2 << 1;
-		uint8 *currUV = (uint8 *) vba.getTexCoordPointer();
-
+		uint8 *currUV = (uint8 *)vba.getTexCoordPointer();
 
 		const sint32 *currIndex;
 		uint32 currIndexIncr;
 
 		if (_TextureIndexScheme)
 		{
-			currIndex = (sint32 *) _TextureIndexScheme->make(_Owner, startIndex, textureIndex, sizeof(sint32), size, true, srcStep);
+			currIndex = (sint32 *)_TextureIndexScheme->make(_Owner, startIndex, textureIndex, sizeof(sint32), size, true, srcStep);
 			currIndexIncr = 1;
 		}
 		else
 		{
 			currIndex = &_TextureIndex;
-			currIndexIncr  = 0;
+			currIndexIncr = 0;
 		}
 
 		uint32 left = size;
 		while (left--)
 		{
 			// for now, we don't make texture index wrapping
-			const CTextureGrouped::TFourUV &uvGroup = _TexGroup->getUVQuad((uint32) *currIndex);
+			const CTextureGrouped::TFourUV &uvGroup = _TexGroup->getUVQuad((uint32)*currIndex);
 
 			// copy the 4 uv's for this face
-			*(CUV *) currUV = uvGroup.uv0;
-			*(CUV *) (currUV + stride) = uvGroup.uv1;
-			*(CUV *) (currUV + stride2) = uvGroup.uv2;
-			*(CUV *) (currUV + stride3) = uvGroup.uv3;
+			*(CUV *)currUV = uvGroup.uv0;
+			*(CUV *)(currUV + stride) = uvGroup.uv1;
+			*(CUV *)(currUV + stride2) = uvGroup.uv2;
+			*(CUV *)(currUV + stride3) = uvGroup.uv3;
 
 			// point the next face
 			currUV += stride4;
@@ -530,8 +554,7 @@ void CPSQuad::updateVbColNUVForRender(CVertexBuffer &vb, uint32 startIndex, uint
 	}
 
 	nlassert(_Owner && _Owner->getOwner());
-	const float date= (float) _Owner->getOwner()->getSystemDate();
-
+	const float date = (float)_Owner->getOwner()->getSystemDate();
 
 	/// todo: vertex program optimisation (& choose the vb accordingly)
 
@@ -548,11 +571,11 @@ void CPSQuad::updateVbColNUVForRender(CVertexBuffer &vb, uint32 startIndex, uint
 					// animation of texture 1 with main speed
 					if (!getUseLocalDate())
 					{
-						FillQuadCoords((uint8 *) vba.getTexCoordPointer(0, 0), vb.getVertexSize(), _TexScroll[0], date, size);
+						FillQuadCoords((uint8 *)vba.getTexCoordPointer(0, 0), vb.getVertexSize(), _TexScroll[0], date, size);
 					}
 					else
 					{
-						FillQuadCoordsLocalTime((uint8 *) vba.getTexCoordPointer(0, 0), vb.getVertexSize(), _TexScroll[0], *_Owner, startIndex, size, srcStep);
+						FillQuadCoordsLocalTime((uint8 *)vba.getTexCoordPointer(0, 0), vb.getVertexSize(), _TexScroll[0], *_Owner, startIndex, size, srcStep);
 					}
 				}
 			}
@@ -563,11 +586,11 @@ void CPSQuad::updateVbColNUVForRender(CVertexBuffer &vb, uint32 startIndex, uint
 					// animation of texture 1 with alternate speed
 					if (!getUseLocalDateAlt())
 					{
-						FillQuadCoords((uint8 *) vba.getTexCoordPointer(0, 0), vb.getVertexSize(), _TexScrollAlternate[0], date, size);
+						FillQuadCoords((uint8 *)vba.getTexCoordPointer(0, 0), vb.getVertexSize(), _TexScrollAlternate[0], date, size);
 					}
 					else
 					{
-						FillQuadCoordsLocalTime((uint8 *) vba.getTexCoordPointer(0, 0), vb.getVertexSize(), _TexScrollAlternate[0], *_Owner, startIndex, size, srcStep);
+						FillQuadCoordsLocalTime((uint8 *)vba.getTexCoordPointer(0, 0), vb.getVertexSize(), _TexScrollAlternate[0], *_Owner, startIndex, size, srcStep);
 					}
 				}
 			}
@@ -581,11 +604,11 @@ void CPSQuad::updateVbColNUVForRender(CVertexBuffer &vb, uint32 startIndex, uint
 				// animation of texture 2 with main speed
 				if (!getUseLocalDate())
 				{
-					FillQuadCoords((uint8 *) vba.getTexCoordPointer(0, 1), vb.getVertexSize(), _TexScroll[1], date, size);
+					FillQuadCoords((uint8 *)vba.getTexCoordPointer(0, 1), vb.getVertexSize(), _TexScroll[1], date, size);
 				}
 				else
 				{
-					FillQuadCoordsLocalTime((uint8 *) vba.getTexCoordPointer(0, 1), vb.getVertexSize(), _TexScroll[1], *_Owner, startIndex, size, srcStep);
+					FillQuadCoordsLocalTime((uint8 *)vba.getTexCoordPointer(0, 1), vb.getVertexSize(), _TexScroll[1], *_Owner, startIndex, size, srcStep);
 				}
 			}
 		}
@@ -596,18 +619,16 @@ void CPSQuad::updateVbColNUVForRender(CVertexBuffer &vb, uint32 startIndex, uint
 				// animation of texture 2 with alternate speed
 				if (!getUseLocalDateAlt())
 				{
-					FillQuadCoords((uint8 *) vba.getTexCoordPointer(0, 1), vb.getVertexSize(), _TexScrollAlternate[1], date, size);
+					FillQuadCoords((uint8 *)vba.getTexCoordPointer(0, 1), vb.getVertexSize(), _TexScrollAlternate[1], date, size);
 				}
 				else
 				{
-					FillQuadCoordsLocalTime((uint8 *) vba.getTexCoordPointer(0, 1), vb.getVertexSize(), _TexScrollAlternate[1], *_Owner, startIndex, size, srcStep);
+					FillQuadCoordsLocalTime((uint8 *)vba.getTexCoordPointer(0, 1), vb.getVertexSize(), _TexScrollAlternate[1], *_Owner, startIndex, size, srcStep);
 				}
 			}
 		}
-
 	}
 }
-
 
 ///==================================================================================
 void CPSQuad::updateMatBeforeRendering(IDriver *drv, CVertexBuffer &vb)
@@ -632,13 +653,7 @@ void CPSQuad::updateMatBeforeRendering(IDriver *drv, CVertexBuffer &vb)
 	else
 	{
 		/// update the material if the global color of the system is variable
-		if (_ColorScheme != NULL &&
-			(ps.getColorAttenuationScheme() != NULL ||
-			 ps.isUserColorUsed() ||
-			 ps.getForceGlobalColorLightingFlag() ||
-			 usesGlobalColorLighting()
-			)
-		   )
+		if (_ColorScheme != NULL && (ps.getColorAttenuationScheme() != NULL || ps.isUserColorUsed() || ps.getForceGlobalColorLightingFlag() || usesGlobalColorLighting()))
 		{
 			if (ps.getForceGlobalColorLightingFlag() || usesGlobalColorLighting())
 			{
@@ -671,7 +686,7 @@ void CPSQuad::updateMatBeforeRendering(IDriver *drv, CVertexBuffer &vb)
 }
 
 // *****************************************************************************************************
-void CPSQuad::enumTexs(std::vector<NLMISC::CSmartPtr<ITexture> > &dest, IDriver &drv)
+void CPSQuad::enumTexs(std::vector<NLMISC::CSmartPtr<ITexture>> &dest, IDriver &drv)
 {
 	NL_PS_FUNC(CPSQuad_enumTexs)
 	CPSTexturedParticle::enumTexs(dest);
@@ -684,7 +699,6 @@ void CPSQuad::setZBias(float value)
 	NL_PS_FUNC(CPSQuad_setZBias)
 	CPSMaterial::setZBias(value);
 }
-
 
 // *****************************************************************************************************
 void CPSQuad::setTexture(CSmartPtr<ITexture> tex)

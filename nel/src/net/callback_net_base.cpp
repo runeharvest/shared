@@ -22,74 +22,70 @@
 #include "nel/net/callback_net_base.h"
 #include "nel/net/net_log.h"
 
-
-
 #ifdef USE_MESSAGE_RECORDER
 #ifdef NL_OS_WINDOWS
-#pragma message ( "NeL Net layer 3: message recorder enabled" )
+#pragma message("NeL Net layer 3: message recorder enabled")
 #endif // NL_OS_WINDOWS
 #include "nel/net/message_recorder.h"
 #else
 #ifdef NL_OS_WINDOWS
-#pragma message ( "NeL Net layer 3: message recorder disabled" )
+#pragma message("NeL Net layer 3: message recorder disabled")
 #endif // NL_OS_WINDOWS
 #endif
-
 
 using namespace std;
 using namespace NLMISC;
 
 namespace NLNET {
 
-
 /*
  * Disconnection callback
  */
-void cbnbNewDisconnection (TSockId from, void *data)
+void cbnbNewDisconnection(TSockId from, void *data)
 {
-	nlassert (data != NULL);
+	nlassert(data != NULL);
 	CCallbackNetBase *base = (CCallbackNetBase *)data;
 
 	LNETL3_DEBUG("LNETL3NB: cbnbNewDisconnection()");
 
 #ifdef USE_MESSAGE_RECORDER
 	// Record or replay disconnection
-	base->noticeDisconnection( from );
+	base->noticeDisconnection(from);
 #endif
 
 	// Call the client callback if necessary
 	if (base->_DisconnectionCallback != NULL)
-		base->_DisconnectionCallback (from, base->_DisconnectionCbArg);
+		base->_DisconnectionCallback(from, base->_DisconnectionCbArg);
 }
-
 
 /*
  * Constructor
  */
-CCallbackNetBase::CCallbackNetBase(  TRecordingState /* rec */, const string& /* recfilename */, bool /* recordall */ )
-	:	_BytesSent(0),
-		_BytesReceived(0),
-		_NewDisconnectionCallback(cbnbNewDisconnection),
-		_DefaultCallback(NULL),
-		_PreDispatchCallback(NULL),
-		_FirstUpdate (true),
-		_UserData(NULL),
-		_DisconnectionCallback(NULL),
-		_DisconnectionCbArg(NULL)
+CCallbackNetBase::CCallbackNetBase(TRecordingState /* rec */, const string & /* recfilename */, bool /* recordall */)
+    : _BytesSent(0)
+    , _BytesReceived(0)
+    , _NewDisconnectionCallback(cbnbNewDisconnection)
+    , _DefaultCallback(NULL)
+    , _PreDispatchCallback(NULL)
+    , _FirstUpdate(true)
+    , _UserData(NULL)
+    , _DisconnectionCallback(NULL)
+    , _DisconnectionCbArg(NULL)
 #ifdef USE_MESSAGE_RECORDER
-		, _MR_RecordingState(rec), _MR_UpdateCounter(0)
+    , _MR_RecordingState(rec)
+    , _MR_UpdateCounter(0)
 #endif
 {
 	createDebug(); // for addNegativeFilter to work even in release and releasedebug modes
 
 #ifdef USE_MESSAGE_RECORDER
-	switch ( _MR_RecordingState )
+	switch (_MR_RecordingState)
 	{
-	case Record :
-		_MR_Recorder.startRecord( recfilename, recordall );
+	case Record:
+		_MR_Recorder.startRecord(recfilename, recordall);
 		break;
-	case Replay :
-		_MR_Recorder.startReplay( recfilename );
+	case Replay:
+		_MR_Recorder.startReplay(recfilename);
 		break;
 	default:;
 		// No recording
@@ -112,7 +108,7 @@ void *CCallbackNetBase::getUserData()
 /*
  *	Append callback array with the specified array
  */
-void CCallbackNetBase::addCallbackArray (const TCallbackItem *callbackarray, sint arraysize)
+void CCallbackNetBase::addCallbackArray(const TCallbackItem *callbackarray, sint arraysize)
 {
 	if (arraysize == 1 && callbackarray[0].Callback == NULL && strlen(callbackarray[0].Key) == 0)
 	{
@@ -123,37 +119,34 @@ void CCallbackNetBase::addCallbackArray (const TCallbackItem *callbackarray, sin
 	// resize the array
 	sint oldsize = (sint)_CallbackArray.size();
 
-	_CallbackArray.resize (oldsize + arraysize);
+	_CallbackArray.resize(oldsize + arraysize);
 
-//TOO MUCH MESSAGE	nldebug ("L3NB_CB: Adding %d callback to the array", arraysize);
+	// TOO MUCH MESSAGE	nldebug ("L3NB_CB: Adding %d callback to the array", arraysize);
 
 	for (sint i = 0; i < arraysize; i++)
 	{
 		sint ni = oldsize + i;
-//TOO MUCH MESSAGE		nldebug ("L3NB_CB: Adding callback to message '%s', id '%d'", callbackarray[i].Key, ni);
-		// copy callback value
+		// TOO MUCH MESSAGE		nldebug ("L3NB_CB: Adding callback to message '%s', id '%d'", callbackarray[i].Key, ni);
+		//  copy callback value
 
 		_CallbackArray[ni] = callbackarray[i];
-
 	}
 
-
-//	LNETL3_DEBUG ("LNETL3NB_CB: Added %d callback Now, there're %d callback associated with message type", arraysize, _CallbackArray.size ());
+	//	LNETL3_DEBUG ("LNETL3NB_CB: Added %d callback Now, there're %d callback associated with message type", arraysize, _CallbackArray.size ());
 }
-
 
 /*
  * processOneMessage()
  */
-void CCallbackNetBase::processOneMessage ()
+void CCallbackNetBase::processOneMessage()
 {
 	// slow down the layer H_AUTO (CCallbackNetBase_processOneMessage);
 
-	CMessage msgin ("", true);
+	CMessage msgin("", true);
 	TSockId tsid;
 	try
 	{
-		receive (msgin, &tsid);
+		receive(msgin, &tsid);
 	}
 	catch (const Exception &e)
 	{
@@ -161,13 +154,13 @@ void CCallbackNetBase::processOneMessage ()
 		return;
 	}
 
-	_BytesReceived += msgin.length ();
+	_BytesReceived += msgin.length();
 
 	// now, we have to call the good callback
 	sint pos = -1;
-	std::string name = msgin.getName ();
+	std::string name = msgin.getName();
 	sint i;
-	for (i = 0; i < (sint)_CallbackArray.size (); i++)
+	for (i = 0; i < (sint)_CallbackArray.size(); i++)
 	{
 		if (name == _CallbackArray[i].Key)
 		{
@@ -176,12 +169,12 @@ void CCallbackNetBase::processOneMessage ()
 		}
 	}
 
-	TMsgCallback	cb = NULL;
-	if (pos < 0 || pos >= (sint16) _CallbackArray.size ())
+	TMsgCallback cb = NULL;
+	if (pos < 0 || pos >= (sint16)_CallbackArray.size())
 	{
 		if (_DefaultCallback == NULL)
 		{
-			nlwarning ("LNETL3NB_CB: Callback %s not found in _CallbackArray", msgin.toString().c_str());
+			nlwarning("LNETL3NB_CB: Callback %s not found in _CallbackArray", msgin.toString().c_str());
 		}
 		else
 		{
@@ -193,20 +186,20 @@ void CCallbackNetBase::processOneMessage ()
 		cb = _CallbackArray[pos].Callback;
 	}
 
-	TSockId realid = getSockId (tsid);
+	TSockId realid = getSockId(tsid);
 
 	if (!realid->AuthorizedCallback.empty() && msgin.getName() != realid->AuthorizedCallback)
 	{
-		nlwarning ("LNETL3NB_CB: %s try to call the callback %s but only %s is authorized. Disconnect him!", tsid->asString().c_str(), msgin.toString().c_str(), tsid->AuthorizedCallback.c_str());
-		disconnect (tsid);
+		nlwarning("LNETL3NB_CB: %s try to call the callback %s but only %s is authorized. Disconnect him!", tsid->asString().c_str(), msgin.toString().c_str(), tsid->AuthorizedCallback.c_str());
+		disconnect(tsid);
 	}
 	else if (cb == NULL)
 	{
-		nlwarning ("LNETL3NB_CB: Callback %s is NULL, can't call it", msgin.toString().c_str());
+		nlwarning("LNETL3NB_CB: Callback %s is NULL, can't call it", msgin.toString().c_str());
 	}
 	else
 	{
-		LNETL3_DEBUG ("LNETL3NB_CB: Calling callback (%s)", msgin.getName().c_str());
+		LNETL3_DEBUG("LNETL3NB_CB: Calling callback (%s)", msgin.getName().c_str());
 
 		if (_PreDispatchCallback != NULL)
 		{
@@ -216,49 +209,48 @@ void CCallbackNetBase::processOneMessage ()
 		cb(msgin, realid, *this);
 	}
 
-/*
-	if (pos < 0 || pos >= (sint16) _CallbackArray.size ())
-	{
-		if (_DefaultCallback == NULL)
-			nlwarning ("LNETL3NB_CB: Callback %s not found in _CallbackArray", msgin.toString().c_str());
-		else
-		{
-			// ...
-		}
-	}
-	else
-	{
-		TSockId realid = getSockId (tsid);
+	/*
+	    if (pos < 0 || pos >= (sint16) _CallbackArray.size ())
+	    {
+	        if (_DefaultCallback == NULL)
+	            nlwarning ("LNETL3NB_CB: Callback %s not found in _CallbackArray", msgin.toString().c_str());
+	        else
+	        {
+	            // ...
+	        }
+	    }
+	    else
+	    {
+	        TSockId realid = getSockId (tsid);
 
-		if (!realid->AuthorizedCallback.empty() && msgin.getName() != realid->AuthorizedCallback)
-		{
-			nlwarning ("LNETL3NB_CB: %s try to call the callback %s but only %s is authorized. Disconnect him!", tsid->asString().c_str(), msgin.toString().c_str(), tsid->AuthorizedCallback.c_str());
-			disconnect (tsid);
-		}
-		else if (_CallbackArray[pos].Callback == NULL)
-		{
-			nlwarning ("LNETL3NB_CB: Callback %s is NULL, can't call it", msgin.toString().c_str());
-		}
-		else
-		{
-			LNETL3_DEBUG ("LNETL3NB_CB: Calling callback (%s)", _CallbackArray[pos].Key);
-			_CallbackArray[pos].Callback (msgin, realid, *this);
-		}
-	}
-*/
+	        if (!realid->AuthorizedCallback.empty() && msgin.getName() != realid->AuthorizedCallback)
+	        {
+	            nlwarning ("LNETL3NB_CB: %s try to call the callback %s but only %s is authorized. Disconnect him!", tsid->asString().c_str(), msgin.toString().c_str(), tsid->AuthorizedCallback.c_str());
+	            disconnect (tsid);
+	        }
+	        else if (_CallbackArray[pos].Callback == NULL)
+	        {
+	            nlwarning ("LNETL3NB_CB: Callback %s is NULL, can't call it", msgin.toString().c_str());
+	        }
+	        else
+	        {
+	            LNETL3_DEBUG ("LNETL3NB_CB: Calling callback (%s)", _CallbackArray[pos].Key);
+	            _CallbackArray[pos].Callback (msgin, realid, *this);
+	        }
+	    }
+	*/
 }
-
 
 /*
  * baseUpdate
  * Recorded : YES
  * Replayed : YES
  */
-void CCallbackNetBase::baseUpdate (sint32 timeout)
+void CCallbackNetBase::baseUpdate(sint32 timeout)
 {
 	H_AUTO(L3UpdateCallbackNetBase);
 #ifdef NL_DEBUG
-	nlassert( timeout >= -1 );
+	nlassert(timeout >= -1);
 #endif
 
 	TTime t0 = CTime::getLocalTime();
@@ -268,7 +260,7 @@ void CCallbackNetBase::baseUpdate (sint32 timeout)
 	//
 	if (_FirstUpdate)
 	{
-//		LNETL3_DEBUG("LNETL3NB: First update()");
+		//		LNETL3_DEBUG("LNETL3NB: First update()");
 		_FirstUpdate = false;
 		_LastUpdateTime = t0;
 		_LastMovedStringArray = t0;
@@ -285,9 +277,9 @@ void CCallbackNetBase::baseUpdate (sint32 timeout)
 	while (!exit)
 	{
 		// process all messages in the queue
-		while (dataAvailable ())
+		while (dataAvailable())
 		{
-			processOneMessage ();
+			processOneMessage();
 			if (timeout == -1)
 			{
 				exit = true;
@@ -304,27 +296,25 @@ void CCallbackNetBase::baseUpdate (sint32 timeout)
 		{
 			// enable multithreading on windows :-/
 			// slow down the layer H_AUTO (CCallbackNetBase_baseUpdate_nlSleep);
-			nlSleep (10);
+			nlSleep(10);
 		}
 	}
 
 #ifdef USE_MESSAGE_RECORDER
 	_MR_UpdateCounter++;
 #endif
-
 }
-
 
 /*
  * baseUpdate
  * Recorded : YES
  * Replayed : YES
  */
-void CCallbackNetBase::baseUpdate2 (sint32 timeout, sint32 mintime)
+void CCallbackNetBase::baseUpdate2(sint32 timeout, sint32 mintime)
 {
 	H_AUTO(L3UpdateCallbackNetBase2);
 #ifdef NL_DEBUG
-	nlassert( timeout >= -1 );
+	nlassert(timeout >= -1);
 #endif
 
 	TTime t0 = CTime::getLocalTime();
@@ -334,7 +324,7 @@ void CCallbackNetBase::baseUpdate2 (sint32 timeout, sint32 mintime)
 	//
 	if (_FirstUpdate)
 	{
-//		LNETL3_DEBUG("LNETL3NB: First update()");
+		//		LNETL3_DEBUG("LNETL3NB: First update()");
 		_FirstUpdate = false;
 		_LastUpdateTime = t0;
 		_LastMovedStringArray = t0;
@@ -372,7 +362,7 @@ void CCallbackNetBase::baseUpdate2 (sint32 timeout, sint32 mintime)
 	 *                    the loop will return immediately.
 	 *
 	 * Message Frame Option (TODO)
- 	 *   At the beginning of the loop, the number of pending messages would be read, and then
+	 *   At the beginning of the loop, the number of pending messages would be read, and then
 	 *   only these messages would be processed in this loop, no more. As a result, any messages
 	 *   received in the meantime would be postponed until the next call.
 	 *   However, to do this we need to add a fast method getMsgNb() in NLMISC::CBufFifo
@@ -388,53 +378,51 @@ void CCallbackNetBase::baseUpdate2 (sint32 timeout, sint32 mintime)
 	 *  See nel\tools\nel_unit_test\net_ut\layer3_test.cpp
 	 */
 
-//	// TODO: Flooding Detection Option (would work best with the Message Frame Option, otherwise
-//	// we won't detect here a flooding that would occur during the loop.
-//	if ( _FloodingDetectionEnabled )
-//	{
-//		if ( getDataAvailableFlagV() )
-//		{
-//			uint64 nbBytesToHandle = getReceiveQueueSize(); // see above about a possible getMsgNb()
-//			if ( nbBytesToHandle > _FloodingByteLimit )
-//			{
-//				// TODO: disconnect
-//			}
-//		}
-//	}
+	//	// TODO: Flooding Detection Option (would work best with the Message Frame Option, otherwise
+	//	// we won't detect here a flooding that would occur during the loop.
+	//	if ( _FloodingDetectionEnabled )
+	//	{
+	//		if ( getDataAvailableFlagV() )
+	//		{
+	//			uint64 nbBytesToHandle = getReceiveQueueSize(); // see above about a possible getMsgNb()
+	//			if ( nbBytesToHandle > _FloodingByteLimit )
+	//			{
+	//				// TODO: disconnect
+	//			}
+	//		}
+	//	}
 
 	// Outer loop
-	while ( true )
+	while (true)
 	{
 		// Inner loop
-		while ( dataAvailable () )
+		while (dataAvailable())
 		{
 			processOneMessage();
 
 			// ONE-SHOT MODE/"HARE AND TORTOISE" (or CONSTRAINED with no more time): break
-			if ( timeout == 0 )
+			if (timeout == 0)
 				break;
 			// CONTRAINED MODE: break if timeout reached even if more data are available
-			if ( (timeout > 0) && ((sint32)(CTime::getLocalTime() - t0) >= timeout) )
+			if ((timeout > 0) && ((sint32)(CTime::getLocalTime() - t0) >= timeout))
 				break;
 			// GREEDY MODE (timeout -1): loop until no more data are available
 		}
 
 		// If mintime provided, loop until mintime reached, otherwise exit
-		if ( mintime == 0 )
+		if (mintime == 0)
 			break;
 		if (((sint32)(CTime::getLocalTime() - t0) >= mintime))
 			break;
-		nlSleep( 0 ); // yield cpu
+		nlSleep(0); // yield cpu
 	}
 
 #ifdef USE_MESSAGE_RECORDER
 	_MR_UpdateCounter++;
 #endif
-
 }
 
-
-const	CInetAddress& CCallbackNetBase::hostAddress (TSockId /* hostid */)
+const CInetAddress &CCallbackNetBase::hostAddress(TSockId /* hostid */)
 {
 	// should never be called
 	nlstop;
@@ -442,17 +430,16 @@ const	CInetAddress& CCallbackNetBase::hostAddress (TSockId /* hostid */)
 	return tmp;
 }
 
-void	CCallbackNetBase::authorizeOnly (const char *callbackName, TSockId hostid)
+void CCallbackNetBase::authorizeOnly(const char *callbackName, TSockId hostid)
 {
-	LNETL3_DEBUG ("LNETL3NB: authorizeOnly (%s, %s)", callbackName, hostid->asString().c_str());
+	LNETL3_DEBUG("LNETL3NB: authorizeOnly (%s, %s)", callbackName, hostid->asString().c_str());
 
-	hostid = getSockId (hostid);
+	hostid = getSockId(hostid);
 
-	nlassert (hostid != InvalidSockId);
+	nlassert(hostid != InvalidSockId);
 
-	hostid->AuthorizedCallback = (callbackName == NULL)?"":callbackName;
+	hostid->AuthorizedCallback = (callbackName == NULL) ? "" : callbackName;
 }
-
 
 #ifdef USE_MESSAGE_RECORDER
 
@@ -461,41 +448,39 @@ void	CCallbackNetBase::authorizeOnly (const char *callbackName, TSockId hostid)
  */
 bool CCallbackNetBase::replayDataAvailable()
 {
-	nlassert( _MR_RecordingState == Replay );
+	nlassert(_MR_RecordingState == Replay);
 
-	if ( _MR_Recorder.ReceivedMessages.empty() )
+	if (_MR_Recorder.ReceivedMessages.empty())
 	{
 		// Fill the queue of received messages related to the present update
-		_MR_Recorder.replayNextDataAvailable( _MR_UpdateCounter );
+		_MR_Recorder.replayNextDataAvailable(_MR_UpdateCounter);
 	}
 
 	return replaySystemCallbacks();
 }
 
-
 /*
  * Record or replay disconnection
  */
-void CCallbackNetBase::noticeDisconnection( TSockId hostid )
+void CCallbackNetBase::noticeDisconnection(TSockId hostid)
 {
-	nlassert (hostid != InvalidSockId);	// invalid hostid
-	if ( _MR_RecordingState != Replay )
+	nlassert(hostid != InvalidSockId); // invalid hostid
+	if (_MR_RecordingState != Replay)
 	{
-		if ( _MR_RecordingState == Record )
+		if (_MR_RecordingState == Record)
 		{
 			// Record disconnection
 			CMessage emptymsg;
-			_MR_Recorder.recordNext( _MR_UpdateCounter, Disconnecting, hostid, emptymsg );
+			_MR_Recorder.recordNext(_MR_UpdateCounter, Disconnecting, hostid, emptymsg);
 		}
 	}
 	else
 	{
 		// Replay disconnection
-		hostid->disconnect( false );
+		hostid->disconnect(false);
 	}
 }
 
 #endif // USE_MESSAGE_RECORDER
 
 } // NLNET
-

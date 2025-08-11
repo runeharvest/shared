@@ -20,7 +20,6 @@
 #include "nel/misc/path.h"
 #include "nel/misc/file.h"
 
-
 using namespace std;
 using namespace NLMISC;
 
@@ -28,173 +27,168 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 CVegetableShape::CVegetableShape()
 {
-	Lighted= false;
-	DoubleSided= false;
-	PreComputeLighting= false;
-	AlphaBlend= false;
-	BestSidedPreComputeLighting= false;
+	Lighted = false;
+	DoubleSided = false;
+	PreComputeLighting = false;
+	AlphaBlend = false;
+	BestSidedPreComputeLighting = false;
 }
 
 // ***************************************************************************
-void		CVegetableShape::build(CVegetableShapeBuild &vbuild)
+void CVegetableShape::build(CVegetableShapeBuild &vbuild)
 {
 	// Must have TexCoord0.
-	nlassert( vbuild.VB.getVertexFormat() & CVertexBuffer::TexCoord0Flag );
+	nlassert(vbuild.VB.getVertexFormat() & CVertexBuffer::TexCoord0Flag);
 
 	// Header
 	//---------
 
 	// Lighted ?
-	if(vbuild.Lighted && ( vbuild.VB.getVertexFormat() & CVertexBuffer::NormalFlag) )
-		Lighted= true;
+	if (vbuild.Lighted && (vbuild.VB.getVertexFormat() & CVertexBuffer::NormalFlag))
+		Lighted = true;
 	else
-		Lighted= false;
+		Lighted = false;
 
 	// DoubleSided
-	DoubleSided= vbuild.DoubleSided;
+	DoubleSided = vbuild.DoubleSided;
 
 	// PreComputeLighting.
-	PreComputeLighting= Lighted && vbuild.PreComputeLighting;
+	PreComputeLighting = Lighted && vbuild.PreComputeLighting;
 
 	// AlphaBlend: valid only for 2Sided and Unlit (or similar PreComputeLighting) mode
-	AlphaBlend= vbuild.AlphaBlend && DoubleSided && (!Lighted || PreComputeLighting);
+	AlphaBlend = vbuild.AlphaBlend && DoubleSided && (!Lighted || PreComputeLighting);
 
 	// BestSidedPreComputeLighting
-	BestSidedPreComputeLighting= PreComputeLighting && vbuild.BestSidedPreComputeLighting;
+	BestSidedPreComputeLighting = PreComputeLighting && vbuild.BestSidedPreComputeLighting;
 
 	// BendCenterMode
-	BendCenterMode= vbuild.BendCenterMode;
+	BendCenterMode = vbuild.BendCenterMode;
 
 	// Format of the VB.
-	uint32	format;
-	format= CVertexBuffer::PositionFlag | CVertexBuffer::TexCoord0Flag | CVertexBuffer::TexCoord1Flag;
+	uint32 format;
+	format = CVertexBuffer::PositionFlag | CVertexBuffer::TexCoord0Flag | CVertexBuffer::TexCoord1Flag;
 	// lighted?
-	if(Lighted)
-		format|= CVertexBuffer::NormalFlag;
+	if (Lighted)
+		format |= CVertexBuffer::NormalFlag;
 	// set VB.
 	VB.setVertexFormat(format);
 
-
 	// Fill triangles.
 	//---------
-	uint	i;
+	uint i;
 	// resisz
 	TriangleIndices.resize(vbuild.PB.getNumIndexes());
 	CIndexBufferRead ibaRead;
-	vbuild.PB.lock (ibaRead);
-	const uint32	*srcTri= (const uint32 *) ibaRead.getPtr();
+	vbuild.PB.lock(ibaRead);
+	const uint32 *srcTri = (const uint32 *)ibaRead.getPtr();
 	// fill
-	for(i=0; i<vbuild.PB.getNumIndexes()/3; i++)
+	for (i = 0; i < vbuild.PB.getNumIndexes() / 3; i++)
 	{
-		TriangleIndices[i*3+0]= *(srcTri++);
-		TriangleIndices[i*3+1]= *(srcTri++);
-		TriangleIndices[i*3+2]= *(srcTri++);
+		TriangleIndices[i * 3 + 0] = *(srcTri++);
+		TriangleIndices[i * 3 + 1] = *(srcTri++);
+		TriangleIndices[i * 3 + 2] = *(srcTri++);
 	}
 
 	// Fill vertices.
 	//---------
 	// resize
-	uint32		nbVerts= vbuild.VB.getNumVertices();
+	uint32 nbVerts = vbuild.VB.getNumVertices();
 	VB.setNumVertices(nbVerts);
 
 	CVertexBufferRead vba;
-	vbuild.VB.lock (vba);
+	vbuild.VB.lock(vba);
 	CVertexBufferReadWrite vbaOut;
-	VB.lock (vbaOut);
+	VB.lock(vbaOut);
 
 	// if no vertex color,
-	float	maxZ= 0;
-	bool	bendFromColor= true;
-	if(! (vbuild.VB.getVertexFormat() & CVertexBuffer::PrimaryColorFlag) )
+	float maxZ = 0;
+	bool bendFromColor = true;
+	if (!(vbuild.VB.getVertexFormat() & CVertexBuffer::PrimaryColorFlag))
 	{
 		// must compute bendWeight from z.
-		bendFromColor= false;
+		bendFromColor = false;
 		// get the maximum Z.
-		for(i=0;i<nbVerts;i++)
+		for (i = 0; i < nbVerts; i++)
 		{
-			float	z= (vba.getVertexCoordPointer(i))->z;
-			maxZ= max(z, maxZ);
+			float z = (vba.getVertexCoordPointer(i))->z;
+			maxZ = max(z, maxZ);
 		}
 		// if no positive value, bend will always be 0.
-		if(maxZ==0)
-			maxZ= 1;
+		if (maxZ == 0)
+			maxZ = 1;
 	}
 
 	// For all vertices, fill
-	for(i=0;i<nbVerts;i++)
+	for (i = 0; i < nbVerts; i++)
 	{
 		// Position.
-		const CVector		*srcPos= vba.getVertexCoordPointer(i);
-		CVector		*dstPos= vbaOut.getVertexCoordPointer(i);
-		*dstPos= *srcPos;
+		const CVector *srcPos = vba.getVertexCoordPointer(i);
+		CVector *dstPos = vbaOut.getVertexCoordPointer(i);
+		*dstPos = *srcPos;
 
 		// Normal
-		if(Lighted)
+		if (Lighted)
 		{
-			const CVector *srcNormal= vba.getNormalCoordPointer(i);
-			CVector		*dstNormal= vbaOut.getNormalCoordPointer(i);
-			*dstNormal= *srcNormal;
+			const CVector *srcNormal = vba.getNormalCoordPointer(i);
+			CVector *dstNormal = vbaOut.getNormalCoordPointer(i);
+			*dstNormal = *srcNormal;
 		}
 
 		// Texture.
-		const CUV		*srcUV= vba.getTexCoordPointer(i, 0);
-		CUV		*dstUV= vbaOut.getTexCoordPointer(i, 0);
-		*dstUV= *srcUV;
+		const CUV *srcUV = vba.getTexCoordPointer(i, 0);
+		CUV *dstUV = vbaOut.getTexCoordPointer(i, 0);
+		*dstUV = *srcUV;
 
 		// Bend.
 		// copy to texture stage 1.
-		CUV		*dstUVBend= vbaOut.getTexCoordPointer(i, 1);
-		if(bendFromColor)
+		CUV *dstUVBend = vbaOut.getTexCoordPointer(i, 1);
+		if (bendFromColor)
 		{
 			// todo hulud d3d vertex color RGBA / BGRA
-			const CRGBA	*srcColor= (const CRGBA*)vba.getColorPointer(i);
+			const CRGBA *srcColor = (const CRGBA *)vba.getColorPointer(i);
 			// Copy and scale by MaxBendWeight
-			dstUVBend->U= (srcColor->R / 255.f) * vbuild.MaxBendWeight;
+			dstUVBend->U = (srcColor->R / 255.f) * vbuild.MaxBendWeight;
 		}
 		else
 		{
-			float	w= srcPos->z / maxZ;
-			w= max(w, 0.f);
+			float w = srcPos->z / maxZ;
+			w = max(w, 0.f);
 			// Copy and scale by MaxBendWeight
-			dstUVBend->U= w * vbuild.MaxBendWeight;
+			dstUVBend->U = w * vbuild.MaxBendWeight;
 		}
 	}
-
 
 	// Misc.
 	//---------
 	// prepare for instanciation
 	InstanceVertices.resize(VB.getNumVertices());
-
 }
 
 // ***************************************************************************
-bool		CVegetableShape::loadShape(const std::string &shape)
+bool CVegetableShape::loadShape(const std::string &shape)
 {
-	string	path= CPath::lookup(shape, false);
-	if( path.empty() )
+	string path = CPath::lookup(shape, false);
+	if (path.empty())
 		return false;
 	// read this file
-	CIFile	f(path);
+	CIFile f(path);
 	serial(f);
 	return true;
 }
 
 // ***************************************************************************
-void		CVegetableShape::serial(NLMISC::IStream &f)
+void CVegetableShape::serial(NLMISC::IStream &f)
 {
 	/*
 	Version 1:
-		- BestSidedPreComputeLighting
+	    - BestSidedPreComputeLighting
 	*/
-	sint	ver= f.serialVersion(1);
+	sint ver = f.serialVersion(1);
 	f.serialCheck(NELID("_LEN"));
 	f.serialCheck(NELID("GEV_"));
 	f.serialCheck(NELID("BATE"));
@@ -208,19 +202,17 @@ void		CVegetableShape::serial(NLMISC::IStream &f)
 	f.serial(VB);
 	f.serialCont(TriangleIndices);
 
-	if(ver>=1)
+	if (ver >= 1)
 		f.serial(BestSidedPreComputeLighting);
-	else if(f.isReading())
-		BestSidedPreComputeLighting= false;
+	else if (f.isReading())
+		BestSidedPreComputeLighting = false;
 
 	// if reading
-	if(f.isReading())
+	if (f.isReading())
 	{
 		// prepare for instanciation
 		InstanceVertices.resize(VB.getNumVertices());
 	}
 }
-
-
 
 } // NL3D

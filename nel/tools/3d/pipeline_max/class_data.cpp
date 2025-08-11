@@ -47,12 +47,10 @@ namespace MAX {
 
 CClassData::CClassData()
 {
-
 }
 
 CClassData::~CClassData()
 {
-
 }
 
 std::string CClassData::className() const
@@ -104,12 +102,10 @@ IStorageObject *CClassData::createChunkById(uint16 id, bool container)
 
 CClassDataEntry::CClassDataEntry()
 {
-
 }
 
 CClassDataEntry::~CClassDataEntry()
 {
-
 }
 
 std::string CClassDataEntry::className() const
@@ -166,12 +162,10 @@ IStorageObject *CClassDataEntry::createChunkById(uint16 id, bool container)
 
 CClassDataHeader::CClassDataHeader()
 {
-
 }
 
 CClassDataHeader::~CClassDataHeader()
 {
-
 }
 
 std::string CClassDataHeader::className() const
@@ -188,8 +182,10 @@ void CClassDataHeader::serial(NLMISC::IStream &stream)
 void CClassDataHeader::toString(std::ostream &ostream, const std::string &pad) const
 {
 	ostream << "(" << className() << ") { ";
-	ostream << "\n" << pad << "ClassID: " << NLMISC::toString(ClassID);
-	ostream << "\n" << pad << "SuperClassID: " << SuperClassID;
+	ostream << "\n"
+	        << pad << "ClassID: " << NLMISC::toString(ClassID);
+	ostream << "\n"
+	        << pad << "SuperClassID: " << SuperClassID;
 	ostream << " } ";
 }
 

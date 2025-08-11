@@ -27,24 +27,22 @@
 
 using namespace NLMISC;
 
-namespace NLSOUND
-{
+namespace NLSOUND {
 
-//CAsyncFileManagerSound	*CAsyncFileManagerSound::_Singleton;
+// CAsyncFileManagerSound	*CAsyncFileManagerSound::_Singleton;
 NLMISC_SAFE_SINGLETON_IMPL(CAsyncFileManagerSound);
-
 
 /*CAsyncFileManagerSound &CAsyncFileManagerSound::getInstance()
 {
-	if (_Singleton == NULL)
-	{
-		_Singleton = new CAsyncFileManagerSound();
-	}
-	return *_Singleton;
+    if (_Singleton == NULL)
+    {
+        _Singleton = new CAsyncFileManagerSound();
+    }
+    return *_Singleton;
 }
 */
 
-void	CAsyncFileManagerSound::terminate()
+void CAsyncFileManagerSound::terminate()
 {
 	if (_Instance != NULL)
 	{
@@ -54,19 +52,18 @@ void	CAsyncFileManagerSound::terminate()
 	}
 }
 
-void	CAsyncFileManagerSound::loadWavFile(IBuffer *pdestBuffer, const std::string &filename)
+void CAsyncFileManagerSound::loadWavFile(IBuffer *pdestBuffer, const std::string &filename)
 {
 	CAsyncFileManager::getInstance().addLoadTask(new CLoadWavFile(pdestBuffer, filename));
 }
 
-
 class CCancelLoadWavFile : public CAsyncFileManager::ICancelCallback
 {
-	std::string	_Filename;
+	std::string _Filename;
 
 	bool callback(const NLMISC::IRunnable *prunnable) const
 	{
-		const CAsyncFileManagerSound::CLoadWavFile *pLWF = dynamic_cast<const CAsyncFileManagerSound::CLoadWavFile*>(prunnable);
+		const CAsyncFileManagerSound::CLoadWavFile *pLWF = dynamic_cast<const CAsyncFileManagerSound::CLoadWavFile *>(prunnable);
 
 		if (pLWF != NULL)
 		{
@@ -77,25 +74,25 @@ class CCancelLoadWavFile : public CAsyncFileManager::ICancelCallback
 	}
 
 public:
-	CCancelLoadWavFile (const std::string &filename)
-		: _Filename (filename)
-	{}
+	CCancelLoadWavFile(const std::string &filename)
+	    : _Filename(filename)
+	{
+	}
 };
 
-void	CAsyncFileManagerSound::cancelLoadWaveFile(const std::string &/* filename */)
+void CAsyncFileManagerSound::cancelLoadWaveFile(const std::string & /* filename */)
 {
 	nlwarning("CAsyncFileManagerSound::cancelLoadWaveFile : not implemented yet !");
-//	CAsyncFileManager::getInstance().cancelLoadTask(CCancelLoadWavFile(filename));
+	//	CAsyncFileManager::getInstance().cancelLoadTask(CCancelLoadWavFile(filename));
 }
 
-
 // Do not use these methods with the bigfile manager
-void CAsyncFileManagerSound::loadFile (const std::string &fileName, uint8 **pPtr)
+void CAsyncFileManagerSound::loadFile(const std::string &fileName, uint8 **pPtr)
 {
 	CAsyncFileManager::getInstance().loadFile(fileName, pPtr);
 }
 
-void CAsyncFileManagerSound::loadFiles (const std::vector<std::string> &vFileNames, const std::vector<uint8**> &vPtrs)
+void CAsyncFileManagerSound::loadFiles(const std::vector<std::string> &vFileNames, const std::vector<uint8 **> &vPtrs)
 {
 	if (vFileNames.size() != vPtrs.size())
 	{
@@ -106,7 +103,7 @@ void CAsyncFileManagerSound::loadFiles (const std::vector<std::string> &vFileNam
 	CAsyncFileManager::getInstance().loadFiles(vFileNames, vPtrs);
 }
 
-void CAsyncFileManagerSound::signal (bool *pSgn)
+void CAsyncFileManagerSound::signal(bool *pSgn)
 {
 	if (pSgn == 0)
 	{
@@ -116,7 +113,7 @@ void CAsyncFileManagerSound::signal (bool *pSgn)
 	CAsyncFileManager::getInstance().signal(pSgn);
 }
 
-void CAsyncFileManagerSound::cancelSignal (bool *pSgn)
+void CAsyncFileManagerSound::cancelSignal(bool *pSgn)
 {
 	if (pSgn == 0)
 	{
@@ -126,10 +123,10 @@ void CAsyncFileManagerSound::cancelSignal (bool *pSgn)
 	CAsyncFileManager::getInstance().cancelSignal(pSgn);
 }
 
-
 // Load task.
-CAsyncFileManagerSound::CLoadWavFile::CLoadWavFile (IBuffer *pdestBuffer, const std::string &filename)
-: _pDestbuffer(pdestBuffer), _Filename(filename)
+CAsyncFileManagerSound::CLoadWavFile::CLoadWavFile(IBuffer *pdestBuffer, const std::string &filename)
+    : _pDestbuffer(pdestBuffer)
+    , _Filename(filename)
 {
 	if (_Filename.empty())
 	{
@@ -141,10 +138,10 @@ CAsyncFileManagerSound::CLoadWavFile::CLoadWavFile (IBuffer *pdestBuffer, const 
 	}
 }
 
-void CAsyncFileManagerSound::CLoadWavFile::run (void)
+void CAsyncFileManagerSound::CLoadWavFile::run(void)
 {
 	nldebug("Loading sample %s...", _Filename.c_str());
-//	nlSleep(500);
+	//	nlSleep(500);
 	CAudioMixerUser *mixer = CAudioMixerUser::instance();
 	if (mixer == 0)
 	{
@@ -202,12 +199,10 @@ void CAsyncFileManagerSound::CLoadWavFile::run (void)
 			return;
 		}
 	}
-	catch(...)
+	catch (...)
 	{
 		nlwarning("CAsyncFileManagerSound::CLoadWavFile::run : Exeption detected during IDriver::loadWavFile(%p, %s)", _pDestbuffer, _Filename.c_str());
 	}
 }
-
-
 
 } // NLSOUND

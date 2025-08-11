@@ -18,10 +18,10 @@
 #define STDDIRECT3D_H
 
 #if defined(_MSC_VER) && defined(_DEBUG)
-	#define _CRTDBG_MAP_ALLOC
-	#include <stdlib.h>
-	#include <crtdbg.h>
-	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
 // System includes
@@ -45,8 +45,8 @@
 #include "nel/misc/types_nl.h"
 
 #ifdef NL_DEBUG
-	// add Direct3D debug infos
-	#define D3D_DEBUG_INFO
+// add Direct3D debug infos
+#define D3D_DEBUG_INFO
 #endif
 
 // NeL includes
@@ -58,11 +58,11 @@
 #include "nel/misc/command.h"
 
 #ifdef NL_OS_WINDOWS
-#	define WIN32_LEAN_AND_MEAN
-#	ifndef NL_COMP_MINGW
-#		define NOMINMAX
-#	endif
-#	include <windows.h>
+#define WIN32_LEAN_AND_MEAN
+#ifndef NL_COMP_MINGW
+#define NOMINMAX
+#endif
+#include <windows.h>
 #endif
 
 // Directx includes

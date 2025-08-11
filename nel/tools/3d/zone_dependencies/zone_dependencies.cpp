@@ -35,8 +35,6 @@
 #include "nel/misc/aabbox.h"
 #include "nel/misc/path.h"
 
-
-
 #include <stdio.h>
 #include <map>
 
@@ -46,11 +44,9 @@ using namespace NL3D;
 
 typedef pair<sint, sint> CZoneDependenciesValue;
 
-
 #define BAR_LENGTH 21
 
-const char *progressbar[BAR_LENGTH]=
-{
+const char *progressbar[BAR_LENGTH] = {
 	"[                    ]",
 	"[.                   ]",
 	"[..                  ]",
@@ -74,69 +70,74 @@ const char *progressbar[BAR_LENGTH]=
 	"[....................]"
 };
 
-void progress (const char *message, float progress)
+void progress(const char *message, float progress)
 {
 	// Progress bar
 	char msg[512];
-	uint	pgId= (uint)(progress*(float)BAR_LENGTH);
-	pgId= min(pgId, (uint)(BAR_LENGTH-1));
-	sprintf (msg, "\r%s: %s", message, progressbar[pgId]);
+	uint pgId = (uint)(progress * (float)BAR_LENGTH);
+	pgId = min(pgId, (uint)(BAR_LENGTH - 1));
+	sprintf(msg, "\r%s: %s", message, progressbar[pgId]);
 	uint i;
-	for (i=(uint)strlen(msg); i<79; i++)
-		msg[i]=' ';
-	msg[i]=0;
-	printf ("%s\r", msg);
+	for (i = (uint)strlen(msg); i < 79; i++)
+		msg[i] = ' ';
+	msg[i] = 0;
+	printf("%s\r", msg);
 }
 
 class CZoneDependencies
 {
 public:
 	// Default Ctor
-	CZoneDependencies ()
+	CZoneDependencies()
 	{
 		// Not loaded
-		Loaded=false;
+		Loaded = false;
 	}
 
 	// Zone coordinates
-	sint		X;
-	sint		Y;
+	sint X;
+	sint Y;
 
 	// BBox
-	CAABBoxExt	BBox;
+	CAABBoxExt BBox;
 
 	// Loaded
-	bool							Loaded;
+	bool Loaded;
 
-	// List 
-	set<CZoneDependenciesValue>		Dependences;
+	// List
+	set<CZoneDependenciesValue> Dependences;
 };
 
 class CZoneDescriptorBB
 {
 public:
 	// Zone coordinates
-	sint		X;
-	sint		Y;
+	sint X;
+	sint Y;
 
 	// BBox
-	CAABBoxExt	BBox;
+	CAABBoxExt BBox;
 };
 
-
-
 // a bbox with a 'NULL' flad added
-class CPotentialBBox 
+class CPotentialBBox
 {
 public:
-	CPotentialBBox() : IsVoid(true) {}
-	CPotentialBBox(const CAABBox &b) : Box(b), IsVoid(false) {}
-	CAABBox Box; 
-	bool	IsVoid;
+	CPotentialBBox()
+	    : IsVoid(true)
+	{
+	}
+	CPotentialBBox(const CAABBox &b)
+	    : Box(b)
+	    , IsVoid(false)
+	{
+	}
+	CAABBox Box;
+	bool IsVoid;
 	void makeUnion(const CPotentialBBox &other)
 	{
 		if (IsVoid && other.IsVoid) return;
-		if( IsVoid)
+		if (IsVoid)
 		{
 			Box = other.Box;
 		}
@@ -150,19 +151,18 @@ public:
 	{
 		if (!IsVoid)
 		{
-			Box = NLMISC::CAABBox::transformAABBox(matrix, Box);			
+			Box = NLMISC::CAABBox::transformAABBox(matrix, Box);
 		}
 	}
 	// If the bbox has a null size, then mark it void
-	void removeVoid() 
-	{ 
+	void removeVoid()
+	{
 		if (!IsVoid && Box.getHalfSize() == CVector::Null)
 		{
 			IsVoid = true;
 		}
 	}
 };
-
 
 // a couple of bbox to identity occluding / receiving bbox
 struct CLightingBBox
@@ -181,8 +181,8 @@ public:
 		ReceivingBox.transform(matrix);
 	}
 	// If the bbox has a null size, then mark it void
-	void removeVoid() 
-	{ 
+	void removeVoid()
+	{
 		OccludingBox.removeVoid();
 		ReceivingBox.removeVoid();
 	}
@@ -192,36 +192,27 @@ typedef std::map<std::string, CLightingBBox> TString2LightingBBox;
 /// A map to cache the shapes bbox's
 typedef TString2LightingBBox TShapeMap;
 
-
-
 // compute the bbox of the igs in a zone
 static void computeZoneIGBBox(const char *zoneName, CLightingBBox &result, TShapeMap &shapeMap, const TString2LightingBBox &additionnalIG);
 // ryzom specific, see definition
-static void computeIGBBoxFromContinent(NLMISC::CConfigFile &parameter,									   
-									   TShapeMap &shapeMap,
-									   TString2LightingBBox &zone2BBox
-							          );
-
-
-
-
-
-
+static void computeIGBBoxFromContinent(NLMISC::CConfigFile &parameter,
+    TShapeMap &shapeMap,
+    TString2LightingBBox &zone2BBox);
 
 ///=========================================================
-int main (int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	// Filter addSearchPath
 	NLMISC::createDebug();
-	InfoLog->addNegativeFilter ("adding the path");
+	InfoLog->addNegativeFilter("adding the path");
 
 	TShapeMap shapeMap;
 
 	// Check number of args
-	if (argc<5)
+	if (argc < 5)
 	{
 		// Help message
-		printf ("zone_dependencies [properties.cfg] [firstZone.zone] [lastzone.zone] [output_dependencies.cfg]\n");
+		printf("zone_dependencies [properties.cfg] [firstZone.zone] [lastzone.zone] [output_dependencies.cfg]\n");
 	}
 	else
 	{
@@ -234,369 +225,358 @@ int main (int argc, char* argv[])
 		{
 			// Read the properties file
 			CConfigFile properties;
-			
+
 			// Load and parse the properties file
-			properties.load (argv[1]);
+			properties.load(argv[1]);
 
 			// Get the light direction
-			CConfigFile::CVar &sun_direction = properties.getVar ("sun_direction");
-			lightDirection.set (sun_direction.asFloat(0), sun_direction.asFloat(1), sun_direction.asFloat(2));
+			CConfigFile::CVar &sun_direction = properties.getVar("sun_direction");
+			lightDirection.set(sun_direction.asFloat(0), sun_direction.asFloat(1), sun_direction.asFloat(2));
 			lightDirection.normalize();
 
-
 			// Get the search pathes
-			CConfigFile::CVar &search_pathes = properties.getVar ("search_pathes");
+			CConfigFile::CVar &search_pathes = properties.getVar("search_pathes");
 			uint path;
 			for (path = 0; path < (uint)search_pathes.size(); path++)
 			{
 				// Add to search path
-				CPath::addSearchPath (search_pathes.asString(path));
+				CPath::addSearchPath(search_pathes.asString(path));
 			}
-/*
-			CConfigFile::CVar &ig_path = properties.getVar ("ig_path");
-			NLMISC::CPath::addSearchPath(ig_path.asString(), true, true);
+			/*
+			            CConfigFile::CVar &ig_path = properties.getVar ("ig_path");
+			            NLMISC::CPath::addSearchPath(ig_path.asString(), true, true);
 
-			CConfigFile::CVar &shapes_path = properties.getVar ("shapes_path");
-			NLMISC::CPath::addSearchPath(shapes_path.asString(), true, true);
-*/
-			CConfigFile::CVar &compute_dependencies_with_igs = properties.getVar ("compute_dependencies_with_igs");
-			bool computeDependenciesWithIgs = compute_dependencies_with_igs.asInt() != 0;								
-
+			            CConfigFile::CVar &shapes_path = properties.getVar ("shapes_path");
+			            NLMISC::CPath::addSearchPath(shapes_path.asString(), true, true);
+			*/
+			CConfigFile::CVar &compute_dependencies_with_igs = properties.getVar("compute_dependencies_with_igs");
+			bool computeDependenciesWithIgs = compute_dependencies_with_igs.asInt() != 0;
 
 			// Get the file extension
-			string ext=getExt (argv[2]);
+			string ext = getExt(argv[2]);
 
 			// Get the file directory
-			string dir=getDir (argv[2]);
+			string dir = getDir(argv[2]);
 
 			// Get output extension
-			string outExt=getExt (argv[4]);
+			string outExt = getExt(argv[4]);
 
 			// Get output directory
-			string outDir=getDir (argv[4]);
+			string outDir = getDir(argv[4]);
 
 			// Get the first and last name
-			string firstName=getName (argv[2]);
-			string lastName=getName (argv[3]);
+			string firstName = getName(argv[2]);
+			string lastName = getName(argv[3]);
 
 			// Get the coordinates
 			uint16 firstX, firstY;
 			uint16 lastX, lastY;
-			if (getZoneCoordByName (firstName.c_str(), firstX, firstY))
+			if (getZoneCoordByName(firstName.c_str(), firstX, firstY))
 			{
 				// Last zone
-				if (getZoneCoordByName (lastName.c_str(), lastX, lastY))
+				if (getZoneCoordByName(lastName.c_str(), lastX, lastY))
 				{
 					// Take care
-					if (lastX<firstX)
+					if (lastX < firstX)
 					{
-						uint16 tmp=firstX;
-						firstX=lastX;
-						lastX=firstX;
+						uint16 tmp = firstX;
+						firstX = lastX;
+						lastX = firstX;
 					}
-					if (lastY<firstY)
+					if (lastY < firstY)
 					{
-						uint16 tmp=firstY;
-						firstY=lastY;
-						lastY=firstY;
+						uint16 tmp = firstY;
+						firstY = lastY;
+						lastY = firstY;
 					}
 
 					// Min z
-					float minZ=FLT_MAX;
+					float minZ = FLT_MAX;
 
 					// Make a quad grid
-					CQuadGrid<CZoneDescriptorBB>	quadGrid;
-					quadGrid.create (256, 100);
+					CQuadGrid<CZoneDescriptorBB> quadGrid;
+					quadGrid.create(256, 100);
 
 					// The dependencies list
-					vector< CZoneDependencies > dependencies;
-					dependencies.resize ((lastX-firstX+1)*(lastY-firstY+1));
+					vector<CZoneDependencies> dependencies;
+					dependencies.resize((lastX - firstX + 1) * (lastY - firstY + 1));
 
 					// Ryzom specific: build bbox for villages
-					TString2LightingBBox villagesBBox;					
-					computeIGBBoxFromContinent(properties, shapeMap, villagesBBox);		
-
+					TString2LightingBBox villagesBBox;
+					computeIGBBoxFromContinent(properties, shapeMap, villagesBBox);
 
 					// Insert each zone in the quad tree
 					sint y, x;
-					for (y=firstY; y<=lastY; y++)
-					for (x=firstX; x<=lastX; x++)
-					{
-						
+					for (y = firstY; y <= lastY; y++)
+						for (x = firstX; x <= lastX; x++)
+						{
 
-						// Progress
-						progress ("Build bounding boxes", (float)(x+y*lastX)/(float)(lastX*lastY));
+							// Progress
+							progress("Build bounding boxes", (float)(x + y * lastX) / (float)(lastX * lastY));
 
-						// Make a zone file name
-						string zoneName;
-						getZoneNameByCoord (x, y, zoneName);
+							// Make a zone file name
+							string zoneName;
+							getZoneNameByCoord(x, y, zoneName);
 
-						// Open the file
-						CIFile file;
-						if (file.open (dir+zoneName+ext))
-						{							
-							// The zone
-							CZone zone;
-
-							try
+							// Open the file
+							CIFile file;
+							if (file.open(dir + zoneName + ext))
 							{
-								// Serial the zone
-								file.serial (zone);
+								// The zone
+								CZone zone;
 
-								/// get bbox from the ig of this zone
-								CLightingBBox igBBox;								
-								if (computeDependenciesWithIgs)
+								try
 								{
-									computeZoneIGBBox(zoneName.c_str(), igBBox, shapeMap, villagesBBox);
-								}								
-								// Create a zone descriptor
-								
+									// Serial the zone
+									file.serial(zone);
 
-								
-								NLMISC::CAABBox zoneBox;
-								zoneBox.setCenter(zone.getZoneBB().getCenter());
-								zoneBox.setHalfSize(zone.getZoneBB().getHalfSize());
+									/// get bbox from the ig of this zone
+									CLightingBBox igBBox;
+									if (computeDependenciesWithIgs)
+									{
+										computeZoneIGBBox(zoneName.c_str(), igBBox, shapeMap, villagesBBox);
+									}
+									// Create a zone descriptor
 
-								CLightingBBox zoneLBox;
-								zoneLBox.OccludingBox = zoneLBox.ReceivingBox = zoneBox; // can't be void
-								zoneLBox.makeUnion(igBBox);								
-								nlassert(!zoneLBox.ReceivingBox.IsVoid);
-								//
-								CZoneDescriptorBB zoneDesc;
-								zoneDesc.X=x;
-								zoneDesc.Y=y;
-								zoneDesc.BBox=zoneLBox.ReceivingBox.Box;
-								//
-								if (!zoneLBox.OccludingBox.IsVoid)
-								{
-									quadGrid.insert (zoneLBox.ReceivingBox.Box.getMin(), zoneLBox.ReceivingBox.Box.getMax(), zoneDesc);
+									NLMISC::CAABBox zoneBox;
+									zoneBox.setCenter(zone.getZoneBB().getCenter());
+									zoneBox.setHalfSize(zone.getZoneBB().getHalfSize());
+
+									CLightingBBox zoneLBox;
+									zoneLBox.OccludingBox = zoneLBox.ReceivingBox = zoneBox; // can't be void
+									zoneLBox.makeUnion(igBBox);
+									nlassert(!zoneLBox.ReceivingBox.IsVoid);
+									//
+									CZoneDescriptorBB zoneDesc;
+									zoneDesc.X = x;
+									zoneDesc.Y = y;
+									zoneDesc.BBox = zoneLBox.ReceivingBox.Box;
+									//
+									if (!zoneLBox.OccludingBox.IsVoid)
+									{
+										quadGrid.insert(zoneLBox.ReceivingBox.Box.getMin(), zoneLBox.ReceivingBox.Box.getMax(), zoneDesc);
+									}
+
+									// Insert in the dependencies
+									// Index
+									uint index = (x - firstX) + (y - firstY) * (lastX - firstX + 1);
+
+									// Loaded
+									dependencies[index].Loaded = true;
+									dependencies[index].X = x;
+									dependencies[index].Y = y;
+									dependencies[index].BBox = zoneLBox.OccludingBox.Box;
+
+									// ZMin
+									float newZ = zoneLBox.ReceivingBox.Box.getMin().z;
+									if (newZ < minZ)
+										minZ = newZ;
 								}
-																								
-								// Insert in the dependencies
-								// Index 
-								uint index=(x-firstX)+(y-firstY)*(lastX-firstX+1);
-								
-
-								// Loaded
-								dependencies[index].Loaded=true;
-								dependencies[index].X=x;
-								dependencies[index].Y=y;
-								dependencies[index].BBox=zoneLBox.OccludingBox.Box;
-
-								// ZMin
-								float newZ=zoneLBox.ReceivingBox.Box.getMin().z;
-								if (newZ<minZ)
-									minZ=newZ;
-							}
-							catch (const Exception& e)
-							{
-								// Error handling
-								nlwarning ("ERROR in file %s, %s", (dir+zoneName+ext).c_str(), e.what ());
+								catch (const Exception &e)
+								{
+									// Error handling
+									nlwarning("ERROR in file %s, %s", (dir + zoneName + ext).c_str(), e.what());
+								}
 							}
 						}
-					}
 
 					// Now select each zone in others and make a depencies list
-					for (y=firstY; y<=lastY; y++)
-					for (x=firstX; x<=lastX; x++)
-					{
-						// Progress
-						progress ("Compute dependencies", (float)(x+y*lastX)/(float)(lastX*lastY));
-
-						// Index 
-						uint index=(x-firstX)+(y-firstY)*(lastX-firstX+1);
-
-						// Loaded ?
-						if (dependencies[index].Loaded)
+					for (y = firstY; y <= lastY; y++)
+						for (x = firstX; x <= lastX; x++)
 						{
-							// Min max vectors
-							CVector vMin (dependencies[index].BBox.getMin());
-							CVector vMax (dependencies[index].BBox.getMax());
+							// Progress
+							progress("Compute dependencies", (float)(x + y * lastX) / (float)(lastX * lastY));
 
-							// Make a corner array 
-							CVector corners[4] = 
+							// Index
+							uint index = (x - firstX) + (y - firstY) * (lastX - firstX + 1);
+
+							// Loaded ?
+							if (dependencies[index].Loaded)
 							{
-								CVector (vMin.x, vMin.y, vMax.z), CVector (vMax.x, vMin.y, vMax.z), 
-								CVector (vMax.x, vMax.y, vMax.z), CVector (vMin.x, vMax.y, vMax.z)
-							};
+								// Min max vectors
+								CVector vMin(dependencies[index].BBox.getMin());
+								CVector vMax(dependencies[index].BBox.getMax());
 
-							// Extended bbox
-							CAABBox	bBox=dependencies[index].BBox.getAABBox();
+								// Make a corner array
+								CVector corners[4] = {
+									CVector(vMin.x, vMin.y, vMax.z), CVector(vMax.x, vMin.y, vMax.z),
+									CVector(vMax.x, vMax.y, vMax.z), CVector(vMin.x, vMax.y, vMax.z)
+								};
 
-							// For each corner
-							uint corner;
-							for (corner=0; corner<4; corner++)
-							{
-								// Target position
-								CVector target;
-								if (lightDirection.z!=0)
+								// Extended bbox
+								CAABBox bBox = dependencies[index].BBox.getAABBox();
+
+								// For each corner
+								uint corner;
+								for (corner = 0; corner < 4; corner++)
 								{
-									// Not horizontal target
-									target=corners[corner]+(lightDirection*((minZ-corners[corner].z)/lightDirection.z));
+									// Target position
+									CVector target;
+									if (lightDirection.z != 0)
+									{
+										// Not horizontal target
+										target = corners[corner] + (lightDirection * ((minZ - corners[corner].z) / lightDirection.z));
+									}
+									else
+									{
+										// Horizontal target, select 500 meters around.
+										target = (500 * lightDirection) + corners[corner];
+									}
+
+									// Extend the bbox
+									bBox.extend(target);
+								}
+
+								// Clear quad tree selection
+								quadGrid.clearSelection();
+
+								// Select
+								quadGrid.select(bBox.getMin(), bBox.getMax());
+
+								// Check selection
+								CQuadGrid<CZoneDescriptorBB>::CIterator it = quadGrid.begin();
+								while (it != quadGrid.end())
+								{
+									// Index
+									uint targetIndex = ((*it).X - firstX) + ((*it).Y - firstY) * (lastX - firstX + 1);
+
+									// Not the same
+									if (targetIndex != index)
+									{
+										// Target min z
+										float targetMinZ = dependencies[targetIndex].BBox.getMin().z;
+										if (targetMinZ < vMax.z)
+										{
+											// Min z inf to max z ?
+											// Target optimized bbox
+											CAABBox bBoxOptimized = dependencies[index].BBox.getAABBox();
+
+											// For each corner
+											for (corner = 0; corner < 4; corner++)
+											{
+												// Target position
+												CVector target;
+												if (lightDirection.z != 0)
+												{
+													// Not horizontal target
+													target = corners[corner] + (lightDirection * ((targetMinZ - corners[corner].z) / lightDirection.z));
+												}
+												else
+												{
+													// Horizontal target, select 500 meters around.
+													target = (500 * lightDirection) + corners[corner];
+												}
+
+												// Extend the bbox
+												bBoxOptimized.extend(target);
+											}
+
+											// Check it more presisly
+											// if ((*it).BBox.intersect (bBoxOptimized))
+											if ((*it).BBox.intersect(bBox))
+											{
+												// Insert in the set
+												dependencies[targetIndex].Dependences.insert(CZoneDependenciesValue(x, y));
+											}
+										}
+									}
+
+									// Next selected
+									it++;
+								}
+							}
+						}
+
+					// For each zone
+					for (y = firstY; y <= lastY; y++)
+						for (x = firstX; x <= lastX; x++)
+						{
+							// Progress
+							progress("Save depend files", (float)(x + y * lastX) / (float)(lastX * lastY));
+
+							// Index
+							uint index = (x - firstX) + (y - firstY) * (lastX - firstX + 1);
+
+							// Loaded ?
+							if (dependencies[index].Loaded)
+							{
+								// Make a file name
+								string outputFileName;
+								getZoneNameByCoord(x, y, outputFileName);
+								outputFileName = outDir + outputFileName + outExt;
+
+								// Write the dependencies file
+								FILE *outputFile;
+								if ((outputFile = nlfopen(toLowerAscii(outputFileName), "w")))
+								{
+									// Add a dependency entry
+									fprintf(outputFile, "dependencies =\n{\n");
+
+									// Add dependent zones
+									set<CZoneDependenciesValue>::iterator ite = dependencies[index].Dependences.begin();
+									while (ite != dependencies[index].Dependences.end())
+									{
+										// Name of the dependent zone
+										std::string zoneName;
+										getZoneNameByCoord(ite->first, ite->second, zoneName);
+
+										// Write it
+										string message = "\t\"" + zoneName + "\"";
+										fprintf(outputFile, "%s", toLowerAscii(message).c_str());
+
+										// Next ite;
+										ite++;
+										if (ite != dependencies[index].Dependences.end())
+											fprintf(outputFile, ",\n");
+									}
+
+									// Close the variable
+									fprintf(outputFile, "\n};\n\n");
 								}
 								else
 								{
-									// Horizontal target, select 500 meters around.
-									target=(500*lightDirection)+corners[corner];
+									nlwarning("ERROR can't open %s for writing.\n", outputFileName.c_str());
 								}
 
-								// Extend the bbox
-								bBox.extend (target);
-							}
-
-							// Clear quad tree selection
-							quadGrid.clearSelection ();
-
-							// Select
-							quadGrid.select (bBox.getMin(), bBox.getMax());
-
-							// Check selection
-							CQuadGrid<CZoneDescriptorBB>::CIterator it=quadGrid.begin();
-							while (it!=quadGrid.end())
-							{
-								// Index 
-								uint targetIndex=((*it).X-firstX)+((*it).Y-firstY)*(lastX-firstX+1);
-
-								// Not the same
-								if (targetIndex!=index)
-								{
-									// Target min z
-									float targetMinZ=dependencies[targetIndex].BBox.getMin().z;
-									if (targetMinZ<vMax.z)
-									{
-										// Min z inf to max z ?
-										// Target optimized bbox
-										CAABBox	bBoxOptimized=dependencies[index].BBox.getAABBox();
-
-										// For each corner
-										for (corner=0; corner<4; corner++)
-										{
-											// Target position
-											CVector target;
-											if (lightDirection.z!=0)
-											{
-												// Not horizontal target
-												target=corners[corner]+(lightDirection*((targetMinZ-corners[corner].z)
-													/lightDirection.z));
-											}
-											else
-											{
-												// Horizontal target, select 500 meters around.
-												target=(500*lightDirection)+corners[corner];
-											}
-
-											// Extend the bbox
-											bBoxOptimized.extend (target);
-										}
-
-										// Check it more presisly
-										//if ((*it).BBox.intersect (bBoxOptimized))
-										if ((*it).BBox.intersect (bBox))
-										{
-											// Insert in the set
-											dependencies[targetIndex].Dependences.insert (CZoneDependenciesValue (x, y));
-										}
-									}
-								}
-
-								// Next selected
-								it++;
+								// Close the file
+								fclose(outputFile);
 							}
 						}
-					}
-
-					// For each zone
-					for (y=firstY; y<=lastY; y++)
-					for (x=firstX; x<=lastX; x++)
-					{
-						// Progress
-						progress ("Save depend files", (float)(x+y*lastX)/(float)(lastX*lastY));
-
-						// Index 
-						uint index=(x-firstX)+(y-firstY)*(lastX-firstX+1);
-
-						// Loaded ?
-						if (dependencies[index].Loaded)
-						{
-							// Make a file name
-							string outputFileName;
-							getZoneNameByCoord(x, y, outputFileName);
-							outputFileName=outDir+outputFileName+outExt;
-
-							// Write the dependencies file
-							FILE *outputFile;
-							if ((outputFile = nlfopen (toLowerAscii (outputFileName), "w")))
-							{
-								// Add a dependency entry
-								fprintf (outputFile, "dependencies =\n{\n");
-
-								// Add dependent zones
-								set<CZoneDependenciesValue>::iterator ite=dependencies[index].Dependences.begin();
-								while (ite!=dependencies[index].Dependences.end())
-								{
-									// Name of the dependent zone
-									std::string zoneName;
-									getZoneNameByCoord(ite->first, ite->second, zoneName);
-
-									// Write it
-									string message="\t\""+zoneName+"\"";
-									fprintf (outputFile, "%s", toLowerAscii (message).c_str());
-
-									// Next ite;
-									ite++;
-									if (ite!=dependencies[index].Dependences.end())
-										fprintf (outputFile, ",\n");
-								}
-
-								// Close the variable
-								fprintf (outputFile, "\n};\n\n");
-							}
-							else
-							{
-								nlwarning ("ERROR can't open %s for writing.\n", outputFileName.c_str());
-							}
-
-							// Close the file
-							fclose (outputFile);
-						}
-					}
-
 				}
 				else
 				{
 					// Not valid
-					nlwarning ("ERROR %s is not a valid zone name.\n", lastName.c_str());
+					nlwarning("ERROR %s is not a valid zone name.\n", lastName.c_str());
 				}
 			}
 			else
 			{
 				// Not valid
-				nlwarning ("ERROR %s is not a valid zone name.\n", firstName.c_str());
+				nlwarning("ERROR %s is not a valid zone name.\n", firstName.c_str());
 			}
 		}
 		catch (const Exception &ee)
 		{
-			nlwarning ("ERROR %s\n", ee.what());
+			nlwarning("ERROR %s\n", ee.what());
 		}
 	}
 
 	return 0;
 }
 
-
 ///===========================================================================
 /** Load and compute the bbox of the models that are contained in a given instance group
-  * \return true if the computed bbox is valid
-  */
+ * \return true if the computed bbox is valid
+ */
 static void computeIGBBox(const NL3D::CInstanceGroup &ig, CLightingBBox &result, TShapeMap &shapeMap)
 {
 	result = CLightingBBox(); // starts with void result
-	bool firstBBox = true;	
+	bool firstBBox = true;
 	/// now, compute the union of all bboxs
 	for (CInstanceGroup::TInstanceArray::const_iterator it = ig._InstancesInfos.begin(); it != ig._InstancesInfos.end(); ++it)
-	{		
+	{
 		CLightingBBox currBBox;
-		
+
 		bool validBBox = false;
 		/// get the bbox from file or from map
 		if (shapeMap.count(it->Name)) // already loaded ?
@@ -605,48 +585,48 @@ static void computeIGBBox(const NL3D::CInstanceGroup &ig, CLightingBBox &result,
 			validBBox = true;
 		}
 		else // must load the shape to get its bbox
-		{		
+		{
 			std::string shapePathName;
 			std::string toLoad = it->Name;
 			if (getExt(toLoad).empty()) toLoad += ".shape";
 			shapePathName = NLMISC::CPath::lookup(toLoad, false, false);
-			
+
 			if (shapePathName.empty())
 			{
-				nlwarning("Unable to find shape '%s'", it->Name.c_str());				
+				nlwarning("Unable to find shape '%s'", it->Name.c_str());
 			}
-			else if (toLowerAscii (CFile::getExtension (shapePathName)) == "pacs_prim")
+			else if (toLowerAscii(CFile::getExtension(shapePathName)) == "pacs_prim")
 			{
 				nlwarning("EXPORT BUG: Can't read %s (not a shape), should not be part of .ig!", shapePathName.c_str());
 			}
 			else
 			{
 				CIFile shapeInputFile;
-				
-				if (shapeInputFile.open (shapePathName.c_str()))
-				{					
+
+				if (shapeInputFile.open(shapePathName.c_str()))
+				{
 					NL3D::CShapeStream shapeStream;
 					try
 					{
-						shapeStream.serial (shapeInputFile);
+						shapeStream.serial(shapeInputFile);
 						// NB Nico :
 						// Deal with water shape -> their 'Receiving' box is set to 'void'
 						// this prevent the case where a huge surface of water will cause the zone it is attached to (the 'Zone'
 						// field in the villages sheets) to load all the zones that the water surface cover. (This caused
 						// an 'out of memory error' in the zone lighter due to too many zone being loaded)
-						
-						// FIXME : test for water case hardcoded for now						
+
+						// FIXME : test for water case hardcoded for now
 						CWaterShape *ws = dynamic_cast<CWaterShape *>(shapeStream.getShapePointer());
 						if (ws)
 						{
 							CAABBox bbox;
 							shapeStream.getShapePointer()->getAABBox(bbox);
 							currBBox.OccludingBox = CPotentialBBox(bbox); // occluding box is used, though the water shape
-																		 // doesn't cast shadow -> the tiles flag ('above', 'intersect', 'below water')
-																		 // are updated inside the zone_lighter
+							                                              // doesn't cast shadow -> the tiles flag ('above', 'intersect', 'below water')
+							                                              // are updated inside the zone_lighter
 							currBBox.ReceivingBox.IsVoid = true; // no lighted by the zone lighter !!!
 							currBBox.removeVoid();
-							shapeMap[it->Name] = currBBox;							
+							shapeMap[it->Name] = currBBox;
 						}
 						else
 						{
@@ -660,11 +640,11 @@ static void computeIGBBox(const NL3D::CInstanceGroup &ig, CLightingBBox &result,
 						}
 						validBBox = true;
 					}
-					
+
 					catch (const NLMISC::Exception &e)
 					{
 						nlwarning("Error while loading shape %s. \n\t Reason : %s ", it->Name.c_str(), e.what());
-					}				
+					}
 				}
 				else
 				{
@@ -672,7 +652,6 @@ static void computeIGBBox(const NL3D::CInstanceGroup &ig, CLightingBBox &result,
 				}
 			}
 		}
-
 
 		if (validBBox)
 		{
@@ -686,36 +665,36 @@ static void computeIGBBox(const NL3D::CInstanceGroup &ig, CLightingBBox &result,
 
 			/// transform the bbox
 			currBBox.transform(mat);
-			currBBox.removeVoid();			
+			currBBox.removeVoid();
 			if (firstBBox)
 			{
 				result = currBBox;
 				firstBBox = false;
 			}
 			else // add to previous one
-			{						
+			{
 				result.makeUnion(currBBox);
-			}			
-		}		
-	}	
+			}
+		}
+	}
 }
 
 ///===========================================================================
 /** Load and compute the bbox of the models that are located in a given zone
-  * \param the zone whose bbox must be computed
-  * \param result the result bbox
-  * \param shapeMap for speedup (avoid loading the same shape twice)
-  * \param additionnalIG a map that gives an additionnal ig for a zone from its name (ryzom specific : used to compute village bbox)
-  * \return true if the computed bbox is valid
-  */
+ * \param the zone whose bbox must be computed
+ * \param result the result bbox
+ * \param shapeMap for speedup (avoid loading the same shape twice)
+ * \param additionnalIG a map that gives an additionnal ig for a zone from its name (ryzom specific : used to compute village bbox)
+ * \return true if the computed bbox is valid
+ */
 static void computeZoneIGBBox(const char *zoneName, CLightingBBox &result, TShapeMap &shapeMap, const TString2LightingBBox &additionnalIG)
 {
-	result = CLightingBBox(); // starts with a void box	
+	result = CLightingBBox(); // starts with a void box
 	std::string lcZoneName = NLMISC::toLowerAscii(std::string(zoneName));
 	TString2LightingBBox::const_iterator zoneIt = additionnalIG.find(lcZoneName);
 	if (zoneIt != additionnalIG.end())
-	{		
-		result = zoneIt->second;		
+	{
+		result = zoneIt->second;
 	}
 
 	std::string igFileName = zoneName + std::string(".ig");
@@ -727,7 +706,6 @@ static void computeZoneIGBBox(const char *zoneName, CLightingBBox &result, TShap
 		return;
 	}
 
-
 	/// Load the instance group of this zone
 	CIFile igFile;
 	if (!igFile.open(pathName))
@@ -738,7 +716,7 @@ static void computeZoneIGBBox(const char *zoneName, CLightingBBox &result, TShap
 
 	NL3D::CInstanceGroup ig;
 	try
-	{		
+	{
 		ig.serial(igFile);
 	}
 	catch (const NLMISC::Exception &e)
@@ -747,43 +725,40 @@ static void computeZoneIGBBox(const char *zoneName, CLightingBBox &result, TShap
 		return;
 	}
 	CLightingBBox tmpBBox;
-	computeIGBBox(ig, tmpBBox, shapeMap);		
-	result.makeUnion(tmpBBox);	
+	computeIGBBox(ig, tmpBBox, shapeMap);
+	result.makeUnion(tmpBBox);
 }
-
-
 
 //=======================================================================================
 // ryzom specific build bbox of a village in a zone
-static void computeBBoxFromVillage(const NLGEORGES::UFormElm *villageItem, 
-								   const std::string &continentName,
-								   uint villageIndex,
-								   TShapeMap &shapeMap,
-								   CLightingBBox &result
-								  )
-{	
+static void computeBBoxFromVillage(const NLGEORGES::UFormElm *villageItem,
+    const std::string &continentName,
+    uint villageIndex,
+    TShapeMap &shapeMap,
+    CLightingBBox &result)
+{
 	result = CLightingBBox();
 	const NLGEORGES::UFormElm *igNamesItem;
-	if (! (villageItem->getNodeByName (&igNamesItem, "IgList") && igNamesItem) )
+	if (!(villageItem->getNodeByName(&igNamesItem, "IgList") && igNamesItem))
 	{
 		nlwarning("No list of IGs was found in the continent form %s, village #%d", continentName.c_str(), villageIndex);
 		return;
-	}	
+	}
 	// Get number of village
 	uint numIgs;
-	nlverify (igNamesItem->getArraySize (numIgs));
+	nlverify(igNamesItem->getArraySize(numIgs));
 	const NLGEORGES::UFormElm *currIg;
-	for(uint l = 0; l < numIgs; ++l)
-	{														
-		if (!(igNamesItem->getArrayNode (&currIg, l) && currIg))
+	for (uint l = 0; l < numIgs; ++l)
+	{
+		if (!(igNamesItem->getArrayNode(&currIg, l) && currIg))
 		{
 			nlwarning("Couldn't get ig #%d in the continent form %s, in village #%d", l, continentName.c_str(), villageIndex);
 			continue;
-		}			
+		}
 		const NLGEORGES::UFormElm *igNameItem;
-		currIg->getNodeByName (&igNameItem, "IgName");
+		currIg->getNodeByName(&igNameItem, "IgName");
 		std::string igName;
-		if (!igNameItem->getValue (igName))
+		if (!igNameItem->getValue(igName))
 		{
 			nlwarning("Couldn't get ig name of ig #%d in the continent form %s, in village #%d", l, continentName.c_str(), villageIndex);
 			continue;
@@ -795,57 +770,55 @@ static void computeBBoxFromVillage(const NLGEORGES::UFormElm *villageItem,
 		}
 
 		igName = CFile::getFilenameWithoutExtension(igName) + ".ig";
-		string nameLookup = CPath::lookup (igName, false, true);
+		string nameLookup = CPath::lookup(igName, false, true);
 		if (!nameLookup.empty())
-		{		
+		{
 			CIFile inputFile;
 			// Try to open the file
-			if (inputFile.open (nameLookup))
-			{				
+			if (inputFile.open(nameLookup))
+			{
 				CInstanceGroup group;
 				try
 				{
 					CLightingBBox currBBox;
-					group.serial (inputFile);
-					computeIGBBox(group, currBBox, shapeMap);											
-					result.makeUnion(currBBox);					
+					group.serial(inputFile);
+					computeIGBBox(group, currBBox, shapeMap);
+					result.makeUnion(currBBox);
 				}
-				catch(const NLMISC::Exception &)
+				catch (const NLMISC::Exception &)
 				{
-					nlwarning ("Error while loading instance group %s\n", igName.c_str());	
+					nlwarning("Error while loading instance group %s\n", igName.c_str());
 					continue;
-				}								
-				inputFile.close();				
+				}
+				inputFile.close();
 			}
 			else
 			{
 				// Error
-				nlwarning ("Can't open instance group %s\n", igName.c_str());
+				nlwarning("Can't open instance group %s\n", igName.c_str());
 			}
-		}								
-	}	
+		}
+	}
 }
-
 
 //=======================================================================================
 /** Load additionnal ig from a continent (ryzom specific)
-  * \param parameter a config file that contains the name of the continent containing the zones we are processing
-  * \param zone2bbox This will be filled with the name of a zone and the bbox of the village it contains
-  * \param a map of shape
-  * \param a vector that will be filled with a zone name and the bbox of the village it contains
-  */
-static void computeIGBBoxFromContinent(NLMISC::CConfigFile &parameter,									   
-									   TShapeMap &shapeMap,
-									   TString2LightingBBox &zone2BBox									   
-							          )
+ * \param parameter a config file that contains the name of the continent containing the zones we are processing
+ * \param zone2bbox This will be filled with the name of a zone and the bbox of the village it contains
+ * \param a map of shape
+ * \param a vector that will be filled with a zone name and the bbox of the village it contains
+ */
+static void computeIGBBoxFromContinent(NLMISC::CConfigFile &parameter,
+    TShapeMap &shapeMap,
+    TString2LightingBBox &zone2BBox)
 {
-		
+
 	try
 	{
-		CConfigFile::CVar &continent_name_var = parameter.getVar ("continent_name");
-		CConfigFile::CVar &level_design_directory = parameter.getVar ("level_design_directory");
-		CConfigFile::CVar &level_design_world_directory = parameter.getVar ("level_design_world_directory");						
-		CConfigFile::CVar &level_design_dfn_directory = parameter.getVar ("level_design_dfn_directory");
+		CConfigFile::CVar &continent_name_var = parameter.getVar("continent_name");
+		CConfigFile::CVar &level_design_directory = parameter.getVar("level_design_directory");
+		CConfigFile::CVar &level_design_world_directory = parameter.getVar("level_design_world_directory");
+		CConfigFile::CVar &level_design_dfn_directory = parameter.getVar("level_design_dfn_directory");
 		CPath::addSearchPath(level_design_dfn_directory.asString(), true, false);
 		CPath::addSearchPath(level_design_world_directory.asString(), true, false);
 
@@ -857,19 +830,19 @@ static void computeIGBBoxFromContinent(NLMISC::CConfigFile &parameter,
 		//
 		std::string pathName = level_design_world_directory.asString() + "/" + continentName;
 		if (pathName.empty())
-		{		
+		{
 			nlwarning("Can't find continent form : %s", continentName.c_str());
 			return;
-		}		
+		}
 		NLGEORGES::UForm *villageForm;
 		villageForm = loader->loadForm(pathName.c_str());
-		if(villageForm != NULL)
+		if (villageForm != NULL)
 		{
 			NLGEORGES::UFormElm &rootItem = villageForm->getRootNode();
 			// try to get the village list
 			// Load the village list
 			NLGEORGES::UFormElm *villagesItem;
-			if(!(rootItem.getNodeByName (&villagesItem, "Villages") && villagesItem))
+			if (!(rootItem.getNodeByName(&villagesItem, "Villages") && villagesItem))
 			{
 				nlwarning("No villages where found in %s", continentName.c_str());
 				return;
@@ -877,20 +850,20 @@ static void computeIGBBoxFromContinent(NLMISC::CConfigFile &parameter,
 
 			// Get number of village
 			uint numVillage;
-			nlverify (villagesItem->getArraySize (numVillage));
+			nlverify(villagesItem->getArraySize(numVillage));
 
 			// For each village
-			for(uint k = 0; k < numVillage; ++k)
-			{				
+			for (uint k = 0; k < numVillage; ++k)
+			{
 				NLGEORGES::UFormElm *currVillage;
-				if (!(villagesItem->getArrayNode (&currVillage, k) && currVillage))
+				if (!(villagesItem->getArrayNode(&currVillage, k) && currVillage))
 				{
 					nlwarning("Couldn't get village %d in continent %s", continentName.c_str(), k);
 					continue;
 				}
 				// check that this village is in the dependency zones
 				NLGEORGES::UFormElm *zoneNameItem;
-				if (!currVillage->getNodeByName (&zoneNameItem, "Zone") && zoneNameItem)
+				if (!currVillage->getNodeByName(&zoneNameItem, "Zone") && zoneNameItem)
 				{
 					nlwarning("Couldn't get zone item of village %d in continent %s", continentName.c_str(), k);
 					continue;
@@ -901,21 +874,21 @@ static void computeIGBBoxFromContinent(NLMISC::CConfigFile &parameter,
 					nlwarning("Couldn't get zone name of village %d in continent %s", continentName.c_str(), k);
 					continue;
 				}
-				zoneName = NLMISC::toLowerAscii(CFile::getFilenameWithoutExtension(zoneName));				
-				CLightingBBox result;				
+				zoneName = NLMISC::toLowerAscii(CFile::getFilenameWithoutExtension(zoneName));
+				CLightingBBox result;
 				// ok, it is in the dependant zones
 				computeBBoxFromVillage(currVillage, continentName, k, shapeMap, result);
 				if (!result.OccludingBox.IsVoid || result.ReceivingBox.IsVoid)
 				{
-					zone2BBox[zoneName] = result;					
-				}										
-			}				
+					zone2BBox[zoneName] = result;
+				}
+			}
 		}
-		else 
+		else
 		{
 			nlwarning("Can't load continent form : %s", continentName.c_str());
-		}				
-	}	
+		}
+	}
 	catch (const NLMISC::EUnknownVar &e)
 	{
 		nlinfo(e.what());

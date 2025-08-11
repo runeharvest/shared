@@ -29,184 +29,186 @@ using namespace NLMISC;
 #undef NL_ISO_CPP0X_AVAILABLE
 #endif
 
-namespace NLGUI
+namespace NLGUI {
+CHttpCache *CHttpCache::instance = NULL;
+
+CHttpCache *CHttpCache::getInstance()
 {
-	CHttpCache* CHttpCache::instance = NULL;
-
-	CHttpCache* CHttpCache::getInstance()
+	if (!instance)
 	{
-		if (!instance)
-		{
-			instance = new CHttpCache();
-		}
-
-		return instance;
+		instance = new CHttpCache();
 	}
 
-	void CHttpCache::release()
+	return instance;
+}
+
+void CHttpCache::release()
+{
+	delete instance;
+	instance = NULL;
+}
+
+CHttpCache::CHttpCache()
+    : _Initialized(false)
+    , _MaxObjects(100) {};
+
+CHttpCache::~CHttpCache()
+{
+	flushCache();
+}
+
+void CHttpCache::setCacheIndex(const std::string &fname)
+{
+	_IndexFilename = fname;
+	_Initialized = false;
+}
+
+CHttpCacheObject CHttpCache::lookup(const std::string &fname)
+{
+	if (!_Initialized)
+		init();
+
+	if (_List.count(fname) > 0)
+		return _List[fname];
+
+	return CHttpCacheObject();
+}
+
+void CHttpCache::store(const std::string &fname, const CHttpCacheObject &data)
+{
+	if (!_Initialized)
+		init();
+
+	_List[fname] = data;
+}
+
+void CHttpCache::init()
+{
+	if (_Initialized)
+		return;
+
+	_Initialized = true;
+
+	if (_IndexFilename.empty() || !CFile::fileExists(_IndexFilename))
+		return;
+
+	CIFile in;
+	if (!in.open(_IndexFilename))
 	{
-		delete instance;
-		instance = NULL;
+		nlwarning("Unable to open %s for reading", _IndexFilename.c_str());
+		return;
 	}
 
-	CHttpCache::CHttpCache()
-		: _Initialized(false)
-		, _MaxObjects(100)
-	{ };
+	serial(in);
+}
 
-	CHttpCache::~CHttpCache()
-	{
-		flushCache();
-	}
+void CHttpCacheObject::serial(NLMISC::IStream &f)
+{
+	f.serialVersion(1);
+	f.serial(Expires);
+	f.serial(LastModified);
+	f.serial(Etag);
+}
 
-	void CHttpCache::setCacheIndex(const std::string& fname)
-	{
-		_IndexFilename = fname;
-		_Initialized = false;
-	}
-
-	CHttpCacheObject CHttpCache::lookup(const std::string& fname)
-	{
-		if (!_Initialized)
-			init();
-
-		if (_List.count(fname) > 0)
-			return _List[fname];
-
-		return CHttpCacheObject();
-	}
-
-	void CHttpCache::store(const std::string& fname, const CHttpCacheObject& data)
-	{
-		if (!_Initialized)
-			init();
-
-		_List[fname] = data;
-	}
-
-	void CHttpCache::init()
-	{
-		if (_Initialized)
-			return;
-
-		_Initialized = true;
-
-		if (_IndexFilename.empty() || !CFile::fileExists(_IndexFilename))
-			return;
-
-		CIFile in;
-		if (!in.open(_IndexFilename)) {
-			nlwarning("Unable to open %s for reading", _IndexFilename.c_str());
-			return;
-		}
-
-		serial(in);
-	}
-
-	void CHttpCacheObject::serial(NLMISC::IStream& f)
+void CHttpCache::serial(NLMISC::IStream &f)
+{
+	// saved state is ignored when version checks fail
+	try
 	{
 		f.serialVersion(1);
-		f.serial(Expires);
-		f.serial(LastModified);
-		f.serial(Etag);
-	}
 
-	void CHttpCache::serial(NLMISC::IStream& f)
-	{
-		// saved state is ignored when version checks fail
-		try {
-			f.serialVersion(1);
+		// CacheIdx
+		f.serialCheck(NELID("hcaC"));
+		f.serialCheck(NELID("xdIe"));
 
-			// CacheIdx
-			f.serialCheck(NELID("hcaC"));
-			f.serialCheck(NELID("xdIe"));
+		if (f.isReading())
+		{
+			uint32 numFiles;
+			f.serial(numFiles);
 
-			if (f.isReading())
-			{
-				uint32 numFiles;
-				f.serial(numFiles);
-
-				_List.clear();
-				for (uint k = 0; k < numFiles; ++k)
-				{
-					std::string fname;
-					f.serial(fname);
-
-					CHttpCacheObject obj;
-					obj.serial(f);
-
-					_List[fname] = obj;
-				}
-			}
-			else
-			{
-				uint32 numFiles = _List.size();
-				f.serial(numFiles);
-
-				for (THttpCacheMap::iterator it = _List.begin(); it != _List.end(); ++it)
-				{
-					std::string fname(it->first);
-					f.serial(fname);
-
-					(*it).second.serial(f);
-				}
-			}
-		} catch (...) {
 			_List.clear();
-			nlwarning("Invalid cache index format (%s)", _IndexFilename.c_str());
-			return;
+			for (uint k = 0; k < numFiles; ++k)
+			{
+				std::string fname;
+				f.serial(fname);
+
+				CHttpCacheObject obj;
+				obj.serial(f);
+
+				_List[fname] = obj;
+			}
+		}
+		else
+		{
+			uint32 numFiles = _List.size();
+			f.serial(numFiles);
+
+			for (THttpCacheMap::iterator it = _List.begin(); it != _List.end(); ++it)
+			{
+				std::string fname(it->first);
+				f.serial(fname);
+
+				(*it).second.serial(f);
+			}
 		}
 	}
-
-	void CHttpCache::pruneCache()
+	catch (...)
 	{
-		if (_List.size() < _MaxObjects)
-			return;
+		_List.clear();
+		nlwarning("Invalid cache index format (%s)", _IndexFilename.c_str());
+		return;
+	}
+}
 
-		size_t mustDrop = _List.size() - _MaxObjects;
+void CHttpCache::pruneCache()
+{
+	if (_List.size() < _MaxObjects)
+		return;
 
-		time_t currentTime;
-		time(&currentTime);
+	size_t mustDrop = _List.size() - _MaxObjects;
 
-		// if we over object limit, then start removing expired objects
-		// this does not guarantee that max limit is reached
-		for (THttpCacheMap::iterator it = _List.begin(); it != _List.end();)
+	time_t currentTime;
+	time(&currentTime);
+
+	// if we over object limit, then start removing expired objects
+	// this does not guarantee that max limit is reached
+	for (THttpCacheMap::iterator it = _List.begin(); it != _List.end();)
+	{
+		if (it->second.Expires <= currentTime)
 		{
-			if (it->second.Expires <= currentTime)
-			{
 #ifdef NL_ISO_CPP0X_AVAILABLE
-				it = _List.erase(it);
+			it = _List.erase(it);
 #else
-				THttpCacheMap::iterator itToErase = it++;
-				_List.erase(itToErase);
+			THttpCacheMap::iterator itToErase = it++;
+			_List.erase(itToErase);
 #endif
 
-				--mustDrop;
-				if (mustDrop == 0)
-					break;
-			}
-			else
-			{
-				++it;
-			}
+			--mustDrop;
+			if (mustDrop == 0)
+				break;
 		}
-	}
-
-	void CHttpCache::flushCache()
-	{
-		if (_IndexFilename.empty())
-			return;
-
-		pruneCache();
-
-		COFile out;
-		if (!out.open(_IndexFilename))
+		else
 		{
-			nlwarning("Unable to open %s for writing", _IndexFilename.c_str());
-			return;
+			++it;
 		}
-
-		serial(out);
-		out.close();
 	}
+}
+
+void CHttpCache::flushCache()
+{
+	if (_IndexFilename.empty())
+		return;
+
+	pruneCache();
+
+	COFile out;
+	if (!out.open(_IndexFilename))
+	{
+		nlwarning("Unable to open %s for writing", _IndexFilename.c_str());
+		return;
+	}
+
+	serial(out);
+	out.close();
+}
 }

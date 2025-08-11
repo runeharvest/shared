@@ -23,8 +23,8 @@
 #include <stdlib.h>
 
 #ifdef NL_OS_WINDOWS
-#	include <io.h>
-#	include <direct.h>
+#include <io.h>
+#include <direct.h>
 #endif
 
 #include <vector>
@@ -46,10 +46,10 @@ using namespace NLMISC;
 class CWildCard
 {
 public:
-	string		Expression;
-	bool		Not;
+	string Expression;
+	bool Not;
 };
-std::vector<CWildCard>	WildCards;
+std::vector<CWildCard> WildCards;
 
 std::string SourceDirectory;
 std::string PackageFileName;
@@ -59,13 +59,13 @@ CStreamedPackage Package;
 
 // ---------------------------------------------------------------------------
 
-bool keepFile (const char *fileName)
+bool keepFile(const char *fileName)
 {
 	uint i;
 	bool ifPresent = false;
 	bool ifTrue = false;
-	string file = toLowerAscii(CFile::getFilename (fileName));
-	for (i=0; i<WildCards.size(); i++)
+	string file = toLowerAscii(CFile::getFilename(fileName));
+	for (i = 0; i < WildCards.size(); i++)
 	{
 		if (WildCards[i].Not)
 		{
@@ -86,14 +86,14 @@ bool keepFile (const char *fileName)
 // ---------------------------------------------------------------------------
 void usage()
 {
-	printf ("USAGE : \n");
-	printf ("   snp_make -p <directory_name> <package_file> <stream_directory> [option] ... [option]\n");
-	printf ("   option : \n");
-	printf ("      -if wildcard : add the file if it matches the wilcard (at least one 'if' conditions must be met for a file to be adding)\n");
-	printf ("      -ifnot wildcard : add the file if it doesn't match the wilcard (all the 'ifnot' conditions must be met for a file to be adding)\n");
-	printf (" Pack the directory to a snp file\n");
-	printf ("   snp_make -l <package_file>\n");
-	printf (" List the files contained in the snp file\n");
+	printf("USAGE : \n");
+	printf("   snp_make -p <directory_name> <package_file> <stream_directory> [option] ... [option]\n");
+	printf("   option : \n");
+	printf("      -if wildcard : add the file if it matches the wilcard (at least one 'if' conditions must be met for a file to be adding)\n");
+	printf("      -ifnot wildcard : add the file if it doesn't match the wilcard (all the 'ifnot' conditions must be met for a file to be adding)\n");
+	printf(" Pack the directory to a snp file\n");
+	printf("   snp_make -l <package_file>\n");
+	printf(" List the files contained in the snp file\n");
 }
 
 // ---------------------------------------------------------------------------
@@ -111,35 +111,35 @@ void generateLZMA(const std::string &sourceFile, const std::string &outputFile)
 #else // NL_OS_WINDOWS
 	sint error = system (cmd.c_str());
 	if (error)
-		nlwarning("'%s' failed with error code %d", cmd.c_str(), error);
+	    nlwarning("'%s' failed with error code %d", cmd.c_str(), error);
 #endif // NL_OS_WINDOWS
 	*/
 }
 
 // ---------------------------------------------------------------------------
 
-uint readOptions (int nNbArg, char **ppArgs)
+uint readOptions(int nNbArg, char **ppArgs)
 {
 	uint i;
 	uint optionCount = 0;
-	for (i=0; i<(uint)nNbArg; i++)
+	for (i = 0; i < (uint)nNbArg; i++)
 	{
 		// If ?
-		if ((strcmp (ppArgs[i], "-if") == 0) && ((i+1)<(uint)nNbArg))
+		if ((strcmp(ppArgs[i], "-if") == 0) && ((i + 1) < (uint)nNbArg))
 		{
 			CWildCard card;
-			card.Expression = toLower(string(ppArgs[i+1]));
+			card.Expression = toLower(string(ppArgs[i + 1]));
 			card.Not = false;
-			WildCards.push_back (card);
+			WildCards.push_back(card);
 			optionCount += 2;
 		}
 		// If not ?
-		if ((strcmp (ppArgs[i], "-ifnot") == 0) && ((i+1)<(uint)nNbArg))
+		if ((strcmp(ppArgs[i], "-ifnot") == 0) && ((i + 1) < (uint)nNbArg))
 		{
 			CWildCard card;
-			card.Expression = toLower(string(ppArgs[i+1]));
+			card.Expression = toLower(string(ppArgs[i + 1]));
 			card.Not = true;
-			WildCards.push_back (card);
+			WildCards.push_back(card);
 			optionCount += 2;
 		}
 	}
@@ -147,7 +147,7 @@ uint readOptions (int nNbArg, char **ppArgs)
 }
 
 // ---------------------------------------------------------------------------
-int main (int nNbArg, char **ppArgs)
+int main(int nNbArg, char **ppArgs)
 {
 	NLMISC::CApplicationContext myApplicationContext;
 
@@ -157,8 +157,7 @@ int main (int nNbArg, char **ppArgs)
 		return -1;
 	}
 
-	if ((strcmp(ppArgs[1], "/p") == 0) || (strcmp(ppArgs[1], "/P") == 0) ||
-		(strcmp(ppArgs[1], "-p") == 0) || (strcmp(ppArgs[1], "-P") == 0))
+	if ((strcmp(ppArgs[1], "/p") == 0) || (strcmp(ppArgs[1], "/P") == 0) || (strcmp(ppArgs[1], "-p") == 0) || (strcmp(ppArgs[1], "-P") == 0))
 	{
 		if (nNbArg < 5)
 		{
@@ -170,7 +169,7 @@ int main (int nNbArg, char **ppArgs)
 		PackageFileName = ppArgs[3];
 		StreamDirectory = ppArgs[4];
 		readOptions(nNbArg, ppArgs);
-		
+
 		nldebug("Make streamed package: '%s'", PackageFileName.c_str());
 
 		if (CFile::fileExists(PackageFileName))
@@ -221,7 +220,7 @@ int main (int nNbArg, char **ppArgs)
 		for (CStreamedPackage::TEntries::size_type i = 0; i < Package.Entries.size(); ++i)
 		{
 			const CStreamedPackage::CEntry &entry = Package.Entries[i];
-			
+
 			sint foundIndex = -1; // find index in found file list
 			for (std::vector<std::string>::size_type j = 0; j < pathContent.size(); ++j)
 			{
@@ -323,10 +322,9 @@ int main (int nNbArg, char **ppArgs)
 		}
 
 		return 0;
-	}	
+	}
 
-	if ((strcmp(ppArgs[1], "/l") == 0) || (strcmp(ppArgs[1], "/L") == 0) ||
-		(strcmp(ppArgs[1], "-l") == 0) || (strcmp(ppArgs[1], "-L") == 0))
+	if ((strcmp(ppArgs[1], "/l") == 0) || (strcmp(ppArgs[1], "/L") == 0) || (strcmp(ppArgs[1], "-l") == 0) || (strcmp(ppArgs[1], "-L") == 0))
 	{
 		PackageFileName = ppArgs[2];
 		if (!CFile::fileExists(PackageFileName))
@@ -354,10 +352,10 @@ int main (int nNbArg, char **ppArgs)
 			printf("List files in '%s'", PackageFileName.c_str());
 			printf("%s { Hash: '%s', Size: '%u', LastModified: '%u' }", entry.Name.c_str(), entry.Hash.toString().c_str(), entry.Size, entry.LastModified);
 		}
-		
+
 		return 0;
 	}
 
-	usage ();
+	usage();
 	return -1;
 }

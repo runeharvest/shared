@@ -14,17 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "animals_orders.h"
 using namespace std;
 
-namespace ANIMALS_ORDERS
-{
+namespace ANIMALS_ORDERS {
 // orders table
-const std::string  BeastOrders[] =
-{
+const std::string BeastOrders[] = {
 	"follow",
 	"stop",
 	"free",
@@ -43,9 +39,9 @@ const std::string  BeastOrders[] =
 EBeastOrder stringToBeastOrder(const std::string &str)
 {
 	sint i = 0;
-	for (i = 0; i< BEAST_ORDERS_SIZE; i++ )
+	for (i = 0; i < BEAST_ORDERS_SIZE; i++)
 	{
-		if ( str == BeastOrders[i] )
+		if (str == BeastOrders[i])
 			return (EBeastOrder)i;
 	}
 	return (EBeastOrder)i;

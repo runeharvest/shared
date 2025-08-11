@@ -22,8 +22,7 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 template <class T>
 void ITrackKeyFramer<T>::getKeysInRange(TAnimationTime t1, TAnimationTime t2, std::vector<TAnimationTime> &result)
@@ -39,10 +38,6 @@ void ITrackKeyFramer<T>::getKeysInRange(TAnimationTime t1, TAnimationTime t2, st
 	}
 }
 
-
-
-
-
 // Some compilation check: force Visual to compile to template
 CTrackKeyFramerTCBFloat ttoto0;
 CTrackKeyFramerTCBVector ttoto1;
@@ -50,42 +45,37 @@ CTrackKeyFramerTCBQuat ttoto2;
 CTrackKeyFramerTCBInt ttoto3;
 CTrackKeyFramerTCBRGBA ttoto8;
 
-
 CTrackKeyFramerBezierFloat ttoto4;
 CTrackKeyFramerBezierVector ttoto5;
 CTrackKeyFramerBezierQuat ttoto6;
 CTrackKeyFramerBezierInt ttoto7;
 CTrackKeyFramerBezierRGBA ttoto9;
 
+CTrackKeyFramerLinearFloat lattoto10;
+CTrackKeyFramerLinearVector lattoto11;
+CTrackKeyFramerLinearQuat lattoto12;
+CTrackKeyFramerLinearInt lattoto13;
+CTrackKeyFramerLinearRGBA lattoto14;
 
-CTrackKeyFramerLinearFloat	lattoto10;
-CTrackKeyFramerLinearVector	lattoto11;
-CTrackKeyFramerLinearQuat	lattoto12;
-CTrackKeyFramerLinearInt	lattoto13;
-CTrackKeyFramerLinearRGBA	lattoto14;
+CTrackKeyFramerConstFloat attoto10;
+CTrackKeyFramerConstVector attoto11;
+CTrackKeyFramerConstQuat attoto12;
+CTrackKeyFramerConstInt attoto13;
+CTrackKeyFramerConstRGBA attoto16;
+CTrackKeyFramerConstString attoto14;
+CTrackKeyFramerConstBool attoto15;
 
-
-CTrackKeyFramerConstFloat	attoto10;
-CTrackKeyFramerConstVector	attoto11;
-CTrackKeyFramerConstQuat	attoto12;
-CTrackKeyFramerConstInt		attoto13;
-CTrackKeyFramerConstRGBA	attoto16;
-CTrackKeyFramerConstString	attoto14;
-CTrackKeyFramerConstBool	attoto15;
-
-
-UTrackKeyframer	*UTrackKeyframer::createLinearFloatTrack()
+UTrackKeyframer *UTrackKeyframer::createLinearFloatTrack()
 {
 	return new CTrackKeyFramerLinearFloat;
 }
-UTrackKeyframer	*UTrackKeyframer::createBezierFloatTrack()
+UTrackKeyframer *UTrackKeyframer::createBezierFloatTrack()
 {
 	return new CTrackKeyFramerBezierFloat;
 }
-UTrackKeyframer	*UTrackKeyframer::createTCBFloatTrack()
+UTrackKeyframer *UTrackKeyframer::createTCBFloatTrack()
 {
 	return new CTrackKeyFramerTCBFloat;
 }
-
 
 } // NL3D

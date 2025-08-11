@@ -33,50 +33,51 @@ class CVertexNeighborhood
 {
 public:
 	// Default constructor reserve a good array.
-	CVertexNeighborhood ();
+	CVertexNeighborhood();
 
-	// build it 
-	void build (const PatchMesh& patch);
+	// build it
+	void build(const PatchMesh &patch);
 
 	// Get neighbor index
-	uint getNeighborCount (uint neighborId) const
+	uint getNeighborCount(uint neighborId) const
 	{
-		return _VectorIndex[2*neighborId];
+		return _VectorIndex[2 * neighborId];
 	}
 
 	// Get neighbor index
-	uint& getNeighborCountRef (uint neighborId)
+	uint &getNeighborCountRef(uint neighborId)
 	{
-		return _VectorIndex[2*neighborId];
+		return _VectorIndex[2 * neighborId];
 	}
 
 	// Get neighbor list
-	const uint* getNeighborList (uint neighborId) const
+	const uint *getNeighborList(uint neighborId) const
 	{
 		// Const iterator
-		std::vector<uint>::const_iterator ite=_VectorIndex.begin();
-		return (&*ite) + getNeighborIndex (neighborId);
+		std::vector<uint>::const_iterator ite = _VectorIndex.begin();
+		return (&*ite) + getNeighborIndex(neighborId);
 	}
 
 	// Get neighbor list
-	uint* getNeighborList (uint neighborId)
+	uint *getNeighborList(uint neighborId)
 	{
-		return &_VectorIndex[getNeighborIndex (neighborId)];
+		return &_VectorIndex[getNeighborIndex(neighborId)];
 	}
 
 	// Get neighbor count
-	uint getNeighborIndex (uint neighborId) const
+	uint getNeighborIndex(uint neighborId) const
 	{
-		return _VectorIndex[2*neighborId+1];
+		return _VectorIndex[2 * neighborId + 1];
 	}
 
 	// Get neighbor count
-	uint& getNeighborIndexRef (uint neighborId)
+	uint &getNeighborIndexRef(uint neighborId)
 	{
-		return _VectorIndex[2*neighborId+1];
+		return _VectorIndex[2 * neighborId + 1];
 	}
+
 private:
-	std::vector<uint>	_VectorIndex;
+	std::vector<uint> _VectorIndex;
 };
 
 extern CVertexNeighborhood vertexNeighborhoodGlobal;

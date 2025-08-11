@@ -24,65 +24,61 @@
 #include "nel/misc/smart_ptr.h"
 #include <set>
 
-namespace NLMISC
-{
+namespace NLMISC {
 class IStream;
 }
 
-namespace NLGEORGES
-{
+namespace NLGEORGES {
 
 class UFormElm;
 
 /**
-  * This class provide an interface to access Georges form
-  */
+ * This class provide an interface to access Georges form
+ */
 class UForm : public NLMISC::CRefCount
 {
 public:
-
-	virtual ~UForm ();
+	virtual ~UForm();
 
 	/**
-	  * Access form nodes
-	  */
+	 * Access form nodes
+	 */
 
 	/// Get a mutable pointer on the root element of the form. It is a struct node.
-	virtual UFormElm&		getRootNode () = 0;
+	virtual UFormElm &getRootNode() = 0;
 
 	/// Get a const pointer on the root element of the form. It is a struct node.
-	virtual const UFormElm& getRootNode () const = 0;
+	virtual const UFormElm &getRootNode() const = 0;
 
 	/** Write the form in a stream.
-	  *
-	  * \param stream is the stream used to write the form
-	  */
-	virtual void			write (NLMISC::IStream &stream) = 0;
+	 *
+	 * \param stream is the stream used to write the form
+	 */
+	virtual void write(NLMISC::IStream &stream) = 0;
 
 	/**
-	  * Access form parents
-	  */
+	 * Access form parents
+	 */
 
 	/// Get a mutable pointer on the root element of the form. It is a struct node.
-	virtual uint			getNumParent () const = 0;
+	virtual uint getNumParent() const = 0;
 
 	/// Get a mutable pointer on the root element of the form. It is a struct node.
-	virtual UForm			*getParentForm (uint parent) const = 0;
+	virtual UForm *getParentForm(uint parent) const = 0;
 
 	// Get the form filename with extension
-	virtual const std::string &getFilename () const = 0;
+	virtual const std::string &getFilename() const = 0;
 
 	/**
-	  * Get the comment
-	  */
-	virtual const std::string &getComment () const = 0;
+	 * Get the comment
+	 */
+	virtual const std::string &getComment() const = 0;
 
 	/**
-	  * Get dependency files
-	  */
-	virtual void	getDependencies (std::set<std::string> &dependencies) const = 0;
+	 * Get dependency files
+	 */
+	virtual void getDependencies(std::set<std::string> &dependencies) const = 0;
 };
-
 
 } // NLGEORGES
 

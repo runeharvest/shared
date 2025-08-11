@@ -14,10 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef HANDY_COMMANDS_H
 #define HANDY_COMMANDS_H
-
 
 //-------------------------------------------------------------------------------------------------
 // fake variable to force a link to the handy_commands module
@@ -26,9 +24,7 @@
 static struct CHandyCommandIncluderClass
 {
 	CHandyCommandIncluderClass();
-}
-IncludeHandyCommand;
-
+} IncludeHandyCommand;
 
 //-------------------------------------------------------------------------------------------------
 #endif

@@ -19,8 +19,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-namespace NL3D 
-{
+namespace NL3D {
 
 #ifdef NL_STATIC
 #ifdef USE_OPENGLES
@@ -30,7 +29,7 @@ namespace NLDRIVERGL {
 #endif
 #endif
 
-	class CDriverGL;
+class CDriverGL;
 
 #ifdef NL_STATIC
 } // NLDRIVERGL/ES
@@ -48,17 +47,17 @@ using NL3D::NLDRIVERGL::CDriverGL;
 using NL3D::CDriverGL;
 #endif
 
-@interface CocoaOpenGLView : NSOpenGLView<NSTextInputClient>
+@interface CocoaOpenGLView : NSOpenGLView <NSTextInputClient>
 {
-	NSMutableAttributedString* _characterStorage;
+	NSMutableAttributedString *_characterStorage;
 	NSRange _markedRange;
-	CDriverGL* _driver;
+	CDriverGL *_driver;
 }
 
--(id)initWithFrame:(NSRect)frame;
--(void)dealloc;
--(void)keyDown:(NSEvent*)event;
--(void)setDriver:(CDriverGL*)driver;
--(void)resizeWithOldSuperviewSize:(NSSize)oldBoundsSize;
+- (id)initWithFrame:(NSRect)frame;
+- (void)dealloc;
+- (void)keyDown:(NSEvent *)event;
+- (void)setDriver:(CDriverGL *)driver;
+- (void)resizeWithOldSuperviewSize:(NSSize)oldBoundsSize;
 
 @end

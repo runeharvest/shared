@@ -22,9 +22,7 @@
 
 #include "sock.h"
 
-
 namespace NLNET {
-
 
 /**
  * CTcpSock: Reliable socket via TCP.
@@ -45,7 +43,6 @@ namespace NLNET {
 class CTcpSock : public CSock
 {
 public:
-
 	/// @name Socket setup
 	//@{
 
@@ -53,55 +50,51 @@ public:
 	 * Constructor.
 	 * \param logging Disable logging if the server socket object is used by the logging system, to avoid infinite recursion
 	 */
-	CTcpSock( bool logging = true );
+	CTcpSock(bool logging = true);
 
 	/// Construct a CTcpSock object using an already connected socket descriptor and its associated remote address
-	CTcpSock( SOCKET sock, const CInetAddress& remoteaddr );
-	
+	CTcpSock(SOCKET sock, const CInetAddress &remoteaddr);
+
 	/** Connection. You can reconnect a socket after being disconnected.
 	 * This method does not return a boolean, otherwise a programmer could ignore the result and no
 	 * exception would be thrown if connection fails :
 	 * - If addr is not valid, an exception ESocket is thrown
 	 * - If connect() fails for another reason, an exception ESocketConnectionFailed is thrown
 	 */
-	virtual void		connect( const CInetHost& addr ) NL_OVERRIDE;
+	virtual void connect(const CInetHost &addr) NL_OVERRIDE;
 
 	/** Sets a custom TCP Window size (SO_RCVBUF and SO_SNDBUF).
 	 * You must close the socket is necessary, before calling this method.
 	 *
 	 * See http://www.ncsa.uiuc.edu/People/vwelch/net_perf/tcp_windows.html
 	 */
-	void				connectWithCustomWindowSize( const CInetAddress& addr, int windowsize );
+	void connectWithCustomWindowSize(const CInetAddress &addr, int windowsize);
 
 	/// Returns the TCP Window Size for the current socket
-	uint32				getWindowSize();
+	uint32 getWindowSize();
 
 	/** Sets/unsets SO_KEEPALIVE (true by default).
 	 */
-	void		setKeepAlive( bool keepAlive);
+	void setKeepAlive(bool keepAlive);
 
 	/** Sets/unsets TCP_NODELAY (by default, it is off, i.e. the Nagle buffering algorithm is enabled).
 	 * You must call this method *after* connect().
 	 */
-	virtual void		setNoDelay( bool value );
+	virtual void setNoDelay(bool value);
 
 	/// Active disconnection for download way only (partial shutdown)
-	void				shutdownReceiving();
+	void shutdownReceiving();
 
 	/// Active disconnection for upload way only (partial shutdown)
-	void				shutdownSending();
+	void shutdownSending();
 
 	/// Active disconnection (shutdown) (mutexed). connected() becomes false.
-	virtual void		disconnect();
-
+	virtual void disconnect();
 
 	//@}
-
 };
 
-
 } // NLNET
-
 
 #endif // NL_TCP_SOCK_H
 

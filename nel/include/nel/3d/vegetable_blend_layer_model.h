@@ -20,20 +20,15 @@
 #include "nel/misc/types_nl.h"
 #include "nel/3d/transform.h"
 
+namespace NL3D {
 
-namespace	NL3D
-{
-
-
-class	CVegetableManager;
-class	CVegetableSortBlock;
-class	IDriver;
-
+class CVegetableManager;
+class CVegetableSortBlock;
+class IDriver;
 
 // ***************************************************************************
 // ClassIds.
-const NLMISC::CClassId		VegetableBlendLayerModelId=NLMISC::CClassId(0x77375163, 0x2fca1003);
-
+const NLMISC::CClassId VegetableBlendLayerModelId = NLMISC::CClassId(0x77375163, 0x2fca1003);
 
 // ***************************************************************************
 /**
@@ -49,55 +44,47 @@ class CVegetableBlendLayerModel : public CTransform
 {
 public:
 	/// Call at the beginning of the program, to register the model
-	static	void	registerBasic();
+	static void registerBasic();
 
 public:
-
 	/** The vegetableManager which create us, and will delete us.
 	 */
-	CVegetableManager		*VegetableManager;
-
+	CVegetableManager *VegetableManager;
 
 	/** Public (for vegetableManager only!!) list of vegetable SortBlocks to render.
 	 *	this is a vector<> because not so much reallocation, and it is just an array of ptrs, so
 	 *	very little memory load.
 	 */
-	std::vector<CVegetableSortBlock*>		SortBlocks;
-
+	std::vector<CVegetableSortBlock *> SortBlocks;
 
 	/** Ugly but it works: setup directly both the worldMatrix and the localMatrix.
 	 *	NB: LayerModels are always created in the root.
 	 */
-	void		setWorldPos(const CVector &pos);
-
+	void setWorldPos(const CVector &pos);
 
 	/// \name CTransform traverse specialisation
 	// @{
-	virtual	bool	clip()
+	virtual bool clip()
 	{
 		return true;
 	}
-	virtual void	traverseRender();
+	virtual void traverseRender();
 	// @}
 
 protected:
 	/// Constructor
 	CVegetableBlendLayerModel();
 	/// Destructor
-	virtual ~CVegetableBlendLayerModel() {}
-
+	virtual ~CVegetableBlendLayerModel() { }
 
 private:
-	static CTransform	*creator() {return new CVegetableBlendLayerModel();}
+	static CTransform *creator() { return new CVegetableBlendLayerModel(); }
 
 	/// render method
-	void			render(IDriver *driver);
-
+	void render(IDriver *driver);
 };
 
-
 } // NL3D
-
 
 #endif // NL_VEGETABLE_BLEND_LAYER_MODEL_H
 

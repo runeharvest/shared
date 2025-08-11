@@ -27,8 +27,7 @@ using namespace std;
 #define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 #ifdef USE_GIF
 
@@ -57,13 +56,13 @@ static int readGIFData(GifFileType *gif, GifByteType *data, int length)
 {
 	NLMISC::IStream *f = static_cast<NLMISC::IStream *>(gif->UserData);
 
-	if(!f->isReading()) return 0;
+	if (!f->isReading()) return 0;
 
 	try
 	{
-		f->serialBuffer((uint8*) data, length);
+		f->serialBuffer((uint8 *)data, length);
 	}
-	catch(...)
+	catch (...)
 	{
 		nlwarning("error while reading GIF image");
 
@@ -74,11 +73,11 @@ static int readGIFData(GifFileType *gif, GifByteType *data, int length)
 }
 
 /*-------------------------------------------------------------------*\
-							readGIF
+                            readGIF
 \*-------------------------------------------------------------------*/
-uint8 CBitmap::readGIF( NLMISC::IStream &f )
+uint8 CBitmap::readGIF(NLMISC::IStream &f)
 {
-	if(!f.isReading()) return false;
+	if (!f.isReading()) return false;
 
 	{
 		// check gif canvas dimension
@@ -92,7 +91,7 @@ uint8 CBitmap::readGIF( NLMISC::IStream &f )
 
 		// limit image size as we are using 32bit pixels
 		// 4000x4000x4 ~ 61MiB
-		if (width*height > 4000*4000)
+		if (width * height > 4000 * 4000)
 		{
 			nlwarning("GIF image size is too big (width=%d, height=%d)", width, height);
 			return 0;
@@ -134,7 +133,7 @@ uint8 CBitmap::readGIF( NLMISC::IStream &f )
 
 	// resize target buffer
 	uint32 dstChannels = 4; // RGBA
-	resize (gif->SWidth, gif->SHeight, RGBA);
+	resize(gif->SWidth, gif->SHeight, RGBA);
 
 	// make transparent
 	_Data[0].fill(0);
@@ -159,16 +158,16 @@ uint8 CBitmap::readGIF( NLMISC::IStream &f )
 
 		if (curFrame->ExtensionBlockCount > 0)
 		{
-			for(sint e = 0; e < curFrame->ExtensionBlockCount; e++)
+			for (sint e = 0; e < curFrame->ExtensionBlockCount; e++)
 			{
 				ExtensionBlock *ext = &curFrame->ExtensionBlocks[e];
 
 				if (ext->Function == GRAPHICS_EXT_FUNC_CODE)
 				{
 					uint8 flag = ext->Bytes[0];
-					//delay = (ext.Bytes[1] << 8) | ext.Bytes[2];
+					// delay = (ext.Bytes[1] << 8) | ext.Bytes[2];
 					transparency = (flag & GIF_TRANSPARENT_MASK) ? ext->Bytes[3] : GIF_NOT_TRANSPARENT;
-					//dispose = ((flag >> 2) & GIF_DISPOSE_MASK);
+					// dispose = ((flag >> 2) & GIF_DISPOSE_MASK);
 				}
 			}
 		}
@@ -178,8 +177,7 @@ uint8 CBitmap::readGIF( NLMISC::IStream &f )
 		{
 			ColorMap = curFrame->ImageDesc.ColorMap;
 		}
-		else
-		if (gif->SColorMap)
+		else if (gif->SColorMap)
 		{
 			ColorMap = gif->SColorMap;
 		}
@@ -210,7 +208,7 @@ uint8 CBitmap::readGIF( NLMISC::IStream &f )
 					if (y != nextLine)
 						continue;
 
-					uint32 dstOffset = (y + offset_y)*gif->SWidth*dstChannels + offset_x*dstChannels;
+					uint32 dstOffset = (y + offset_y) * gif->SWidth * dstChannels + offset_x * dstChannels;
 					nextLine += INTERLACED_JUMP[pass];
 
 					for (uint32 x = 0; x < width; x++)
@@ -243,62 +241,62 @@ uint8 CBitmap::readGIF( NLMISC::IStream &f )
 							r = g = b = a = 0;
 						}
 
-						_Data[0][dstOffset]   = r;
-						_Data[0][dstOffset+1] = g;
-						_Data[0][dstOffset+2] = b;
-						_Data[0][dstOffset+3] = a;
+						_Data[0][dstOffset] = r;
+						_Data[0][dstOffset + 1] = g;
+						_Data[0][dstOffset + 2] = b;
+						_Data[0][dstOffset + 3] = a;
 
 						srcOffset++;
-						dstOffset+= dstChannels;
+						dstOffset += dstChannels;
 					} // x loop
 				} // y loop
 			} // pass loop
 		}
 		else
 #endif
-		for (uint32 y = 0; y < height; y++)
-		{
-			uint32 srcOffset = y*width;
-			uint32 dstOffset = (y + offset_y)*gif->SWidth*dstChannels + offset_x*dstChannels;
-			for (uint32 x = 0; x < width; x++)
+			for (uint32 y = 0; y < height; y++)
 			{
-				uint32 index = curFrame->RasterBits[srcOffset];
-
-				if ((sint32)index != transparency)
+				uint32 srcOffset = y * width;
+				uint32 dstOffset = (y + offset_y) * gif->SWidth * dstChannels + offset_x * dstChannels;
+				for (uint32 x = 0; x < width; x++)
 				{
-					// make sure color index is not outside colormap
-					if (ColorMap)
+					uint32 index = curFrame->RasterBits[srcOffset];
+
+					if ((sint32)index != transparency)
 					{
-						if ((sint)index > ColorMap->ColorCount)
+						// make sure color index is not outside colormap
+						if (ColorMap)
 						{
-							index = 0;
+							if ((sint)index > ColorMap->ColorCount)
+							{
+								index = 0;
+							}
+							r = ColorMap->Colors[index].Red;
+							g = ColorMap->Colors[index].Green;
+							b = ColorMap->Colors[index].Blue;
 						}
-						r = ColorMap->Colors[index].Red;
-						g = ColorMap->Colors[index].Green;
-						b = ColorMap->Colors[index].Blue;
+						else
+						{
+							// broken gif, no colormap
+							r = g = b = 0;
+						}
+						a = 255;
 					}
 					else
 					{
-						// broken gif, no colormap
-						r = g = b = 0;
+						// transparent
+						r = g = b = a = 0;
 					}
-					a = 255;
-				}
-				else
-				{
-					// transparent
-					r = g = b = a = 0;
-				}
 
-				_Data[0][dstOffset]   = r;
-				_Data[0][dstOffset+1] = g;
-				_Data[0][dstOffset+2] = b;
-				_Data[0][dstOffset+3] = a;
+					_Data[0][dstOffset] = r;
+					_Data[0][dstOffset + 1] = g;
+					_Data[0][dstOffset + 2] = b;
+					_Data[0][dstOffset + 3] = a;
 
-				srcOffset++;
-				dstOffset+= dstChannels;
-			} // x loop
-		} // y loop
+					srcOffset++;
+					dstOffset += dstChannels;
+				} // x loop
+			} // y loop
 	}
 
 	// clean up after the read, and free any memory allocated
@@ -308,17 +306,17 @@ uint8 CBitmap::readGIF( NLMISC::IStream &f )
 	DGifCloseFile(gif);
 #endif
 
-	//return the size of a pixel as 32bits
+	// return the size of a pixel as 32bits
 	return 32;
 }
 
 #else
 
-uint8 CBitmap::readGIF( NLMISC::IStream &/* f */)
+uint8 CBitmap::readGIF(NLMISC::IStream & /* f */)
 {
-	nlwarning ("You must compile NLMISC with USE_GIF if you want gif support");
+	nlwarning("You must compile NLMISC with USE_GIF if you want gif support");
 	return 0;
 }
 
 #endif
-}//namespace
+} // namespace

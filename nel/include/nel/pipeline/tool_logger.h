@@ -48,13 +48,13 @@
 #endif
 
 #ifdef NL_DEBUG_H
-#define tlerror(toolLogger, path, error, ...) nlwarning(error, ## __VA_ARGS__), toolLogger.writeError(NLPIPELINE::ERROR, path, error, ## __VA_ARGS__)
-#define tlwarning(toolLogger, path, error, ...) nlwarning(error, ## __VA_ARGS__), toolLogger.writeError(NLPIPELINE::WARNING, path, error, ## __VA_ARGS__)
-#define tlmessage(toolLogger, path, error, ...) nlinfo(error, ## __VA_ARGS__), toolLogger.writeError(NLPIPELINE::MESSAGE, path, error, ## __VA_ARGS__)
+#define tlerror(toolLogger, path, error, ...) nlwarning(error, ##__VA_ARGS__), toolLogger.writeError(NLPIPELINE::ERROR, path, error, ##__VA_ARGS__)
+#define tlwarning(toolLogger, path, error, ...) nlwarning(error, ##__VA_ARGS__), toolLogger.writeError(NLPIPELINE::WARNING, path, error, ##__VA_ARGS__)
+#define tlmessage(toolLogger, path, error, ...) nlinfo(error, ##__VA_ARGS__), toolLogger.writeError(NLPIPELINE::MESSAGE, path, error, ##__VA_ARGS__)
 #else
-#define tlerror(toolLogger, path, error, ...) toolLogger.writeError(NLPIPELINE::ERROR, path, error, ## __VA_ARGS__)
-#define tlwarning(toolLogger, path, error, ...) toolLogger.writeError(NLPIPELINE::WARNING, path, error, ## __VA_ARGS__)
-#define tlmessage(toolLogger, path, error, ...) toolLogger.writeError(NLPIPELINE::MESSAGE, path, error, ## __VA_ARGS__)
+#define tlerror(toolLogger, path, error, ...) toolLogger.writeError(NLPIPELINE::ERROR, path, error, ##__VA_ARGS__)
+#define tlwarning(toolLogger, path, error, ...) toolLogger.writeError(NLPIPELINE::WARNING, path, error, ##__VA_ARGS__)
+#define tlmessage(toolLogger, path, error, ...) toolLogger.writeError(NLPIPELINE::MESSAGE, path, error, ##__VA_ARGS__)
 #endif
 
 namespace NLPIPELINE {
@@ -89,9 +89,10 @@ private:
 	FILE *m_DependLog;
 
 public:
-	inline CToolLogger() : m_ErrorLog(NULL), m_DependLog(NULL)
+	inline CToolLogger()
+	    : m_ErrorLog(NULL)
+	    , m_DependLog(NULL)
 	{
-
 	}
 
 	inline ~CToolLogger()
@@ -107,7 +108,6 @@ public:
 		fwrite(s_ErrorHeader.c_str(), 1, s_ErrorHeader.length(), m_ErrorLog);
 		fwrite("\n", 1, 1, m_ErrorLog);
 		fflush(m_ErrorLog);
-
 	}
 
 	inline void initDepend(const std::string &dependLog)

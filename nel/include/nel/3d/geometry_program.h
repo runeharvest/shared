@@ -38,11 +38,10 @@ public:
 	/// Constructor
 	CGeometryProgram();
 	/// Destructor
-	virtual ~CGeometryProgram ();
+	virtual ~CGeometryProgram();
 };
 
 } // NL3D
-
 
 #endif // NL_GEOMETRY_PROGRAM_H
 

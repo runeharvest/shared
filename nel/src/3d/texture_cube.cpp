@@ -29,13 +29,12 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
-	CTextureCube::CTextureCube()
+CTextureCube::CTextureCube()
 {
-	for( uint i = 0; i < 6; ++i )
+	for (uint i = 0; i < 6; ++i)
 		_Textures[i] = NULL;
 }
 
@@ -50,8 +49,8 @@ string CTextureCube::getShareName() const
 {
 	string sTemp;
 
-	for( uint i = 0; i < 6; ++i )
-		if( _Textures[i] != NULL )
+	for (uint i = 0; i < 6; ++i)
+		if (_Textures[i] != NULL)
 			sTemp += _Textures[i]->getShareName();
 	return sTemp;
 }
@@ -62,14 +61,14 @@ void CTextureCube::doGenerate(bool /* async */)
 	uint i;
 	ITexture *pRefTex = NULL;
 
-	for( i = 0; i < 6; ++i )
-		if( _Textures[i] != NULL )
+	for (i = 0; i < 6; ++i)
+		if (_Textures[i] != NULL)
 		{
 			pRefTex = _Textures[i];
 			break;
 		}
 
-	if( pRefTex == NULL )
+	if (pRefTex == NULL)
 		return; // There are NO texture
 
 	pRefTex->generate();
@@ -78,89 +77,88 @@ void CTextureCube::doGenerate(bool /* async */)
 	/*
 	if( ( !isPowerOf2(pRefTex->getWidth()) ) || ( pRefTex->getWidth() != pRefTex->getHeight() ) )
 	{
-		uint32 nNewSize = pRefTex->getWidth();
-		if( !isPowerOf2(nNewSize) )
-		{
-			nNewSize = raiseToNextPowerOf2(nNewSize);	// 5 -> 8 | 20 -> 32
-			nNewSize = getPowerOf2(nNewSize);			// 8 -> 3 | 32 -> 5
-			nNewSize -= 1;								// 3 -> 2 | 5 -> 4
-			nNewSize = 1<<nNewSize;						// 2 -> 4 | 4 -> 16
-		}
+	    uint32 nNewSize = pRefTex->getWidth();
+	    if( !isPowerOf2(nNewSize) )
+	    {
+	        nNewSize = raiseToNextPowerOf2(nNewSize);	// 5 -> 8 | 20 -> 32
+	        nNewSize = getPowerOf2(nNewSize);			// 8 -> 3 | 32 -> 5
+	        nNewSize -= 1;								// 3 -> 2 | 5 -> 4
+	        nNewSize = 1<<nNewSize;						// 2 -> 4 | 4 -> 16
+	    }
 
-		pRefTex->resample( nNewSize, nNewSize );
+	    pRefTex->resample( nNewSize, nNewSize );
 	}
 	*/
 
 	// All textures must be like the reference texture
-	for( i = 0; i < 6; ++i )
+	for (i = 0; i < 6; ++i)
 	{
-		if( _Textures[i] != NULL )
+		if (_Textures[i] != NULL)
 			_Textures[i]->generate();
 		else
 			_Textures[i] = pRefTex;
 
 		// The texture must have the same UpLoadFormat
-		if( _Textures[i]->getUploadFormat()!=pRefTex->getUploadFormat() )
+		if (_Textures[i]->getUploadFormat() != pRefTex->getUploadFormat())
 		{
 			nlwarning("Bad TextureCube: different UpLoad format: %s and %s",
-				_Textures[i]->getShareName().c_str(), pRefTex->getShareName().c_str() );
+			    _Textures[i]->getShareName().c_str(), pRefTex->getShareName().c_str());
 			// => replace the texture with the reference
 			_Textures[i] = pRefTex;
 		}
 		// if Auto format, must have the same PixelFormat
-		else if( _Textures[i]->getUploadFormat()==ITexture::Auto && _Textures[i]->getPixelFormat()!=pRefTex->getPixelFormat() )
+		else if (_Textures[i]->getUploadFormat() == ITexture::Auto && _Textures[i]->getPixelFormat() != pRefTex->getPixelFormat())
 		{
 			nlwarning("Bad TextureCube: different Pixel format: %s and %s",
-				_Textures[i]->getShareName().c_str(), pRefTex->getShareName().c_str() );
+			    _Textures[i]->getShareName().c_str(), pRefTex->getShareName().c_str());
 			// => replace the texture with the reference
 			_Textures[i] = pRefTex;
 		}
 
 		// The textures must have the same size.
-		if( ( _Textures[i]->getWidth()  != pRefTex->getWidth()  ) ||
-			( _Textures[i]->getHeight() != pRefTex->getHeight() ) )
+		if ((_Textures[i]->getWidth() != pRefTex->getWidth()) || (_Textures[i]->getHeight() != pRefTex->getHeight()))
 		{
 			// If can't resample the bitmap
-			if( _Textures[i]->getPixelFormat()!=CBitmap::RGBA )
+			if (_Textures[i]->getPixelFormat() != CBitmap::RGBA)
 			{
 				nlwarning("Bad TextureCube: different Size (not RGBA): %s and %s",
-					_Textures[i]->getShareName().c_str(), pRefTex->getShareName().c_str() );
+				    _Textures[i]->getShareName().c_str(), pRefTex->getShareName().c_str());
 				// => replace the texture with the reference
 				_Textures[i] = pRefTex;
 			}
 			else
 			{
 				// Ok, can resample the bitmap.
-				_Textures[i]->resample( pRefTex->getWidth(), pRefTex->getHeight() );
+				_Textures[i]->resample(pRefTex->getWidth(), pRefTex->getHeight());
 			}
 		}
 	}
 }
 
 // ***************************************************************************
-void	CTextureCube::release()
+void CTextureCube::release()
 {
 	uint i;
-	for( i = 0; i < 6; ++i )
-		if( _Textures[i] != NULL )
+	for (i = 0; i < 6; ++i)
+		if (_Textures[i] != NULL)
 			_Textures[i]->release();
 }
 
 // ***************************************************************************
-void	CTextureCube::serial(NLMISC::IStream &f)
+void CTextureCube::serial(NLMISC::IStream &f)
 {
-	sint	ver= f.serialVersion(2);
+	sint ver = f.serialVersion(2);
 
 	// serial the base part of ITexture.
 	ITexture::serial(f);
 
-	for( uint i = 0; i < 6; ++i )
+	for (uint i = 0; i < 6; ++i)
 	{
 		ITexture *tex = _Textures[i];
-		f.serialPolyPtr( tex );
+		f.serialPolyPtr(tex);
 		_Textures[i] = tex;
 	}
-	if( f.isReading() )
+	if (f.isReading())
 		touch();
 
 	if (ver == 1)
@@ -170,12 +168,10 @@ void	CTextureCube::serial(NLMISC::IStream &f)
 	}
 }
 
-
-
 // ***************************************************************************
 void CTextureCube::selectTexture(uint index)
 {
-	for( uint i = 0; i < 6; ++i )
+	for (uint i = 0; i < 6; ++i)
 	{
 		if (_Textures[i]) _Textures[i]->selectTexture(index);
 	}
@@ -185,7 +181,7 @@ void CTextureCube::selectTexture(uint index)
 // ***************************************************************************
 bool CTextureCube::isSelectable() const
 {
-	for( uint i = 0; i < 6; ++i )
+	for (uint i = 0; i < 6; ++i)
 	{
 		if (_Textures[i] && _Textures[i]->isSelectable()) return true;
 	}
@@ -199,14 +195,13 @@ ITexture *CTextureCube::buildNonSelectableVersion(uint index)
 	CUniquePtr<CTextureCube> tc(new CTextureCube);
 
 	// copy basic texture parameters
-	(ITexture &) *tc.get() = (ITexture &) *this; // invoke ITexture = op for basics parameters
+	(ITexture &)*tc.get() = (ITexture &)*this; // invoke ITexture = op for basics parameters
 
-	for( uint i = 0; i < 6; ++i )
+	for (uint i = 0; i < 6; ++i)
 	{
 		tc->_Textures[i] = _Textures[i]->buildNonSelectableVersion(index);
 	}
 	return tc.release();
 }
-
 
 } // NL3D

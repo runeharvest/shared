@@ -23,58 +23,55 @@
 // vegetable_wind_dlg.h : header file
 //
 
-
-class	CObjectViewer;
-
+class CObjectViewer;
 
 /////////////////////////////////////////////////////////////////////////////
 // CVegetableWindDlg dialog
 
 class CVegetableWindDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CVegetableWindDlg(CObjectViewer *objViewer, CWnd* pParent = NULL);   // standard constructor
+	CVegetableWindDlg(CObjectViewer *objViewer, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CVegetableWindDlg)
-	enum { IDD = IDD_VEGETABLE_WIND };
-	CStatic	StaticPower;
-	CStatic	StaticFrequency;
-	CStatic	StaticBendStart;
-	CSliderCtrl	SliderPower;
-	CSliderCtrl	SliderFrequency;
-	CSliderCtrl	SliderBendStart;
+	enum
+	{
+		IDD = IDD_VEGETABLE_WIND
+	};
+	CStatic StaticPower;
+	CStatic StaticFrequency;
+	CStatic StaticBendStart;
+	CSliderCtrl SliderPower;
+	CSliderCtrl SliderFrequency;
+	CSliderCtrl SliderBendStart;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CVegetableWindDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CVegetableWindDlg)
-	afx_msg void OnReleasedcaptureSliderVegetableWindBendstart(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnReleasedcaptureSliderVegetableWindFrequency(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnReleasedcaptureSliderVegetableWindPower(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnReleasedcaptureSliderVegetableWindBendstart(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnReleasedcaptureSliderVegetableWindFrequency(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnReleasedcaptureSliderVegetableWindPower(NMHDR *pNMHDR, LRESULT *pResult);
 	virtual BOOL OnInitDialog();
 	afx_msg void OnButtonClose();
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	CObjectViewer	*_ObjViewer;
+	CObjectViewer *_ObjViewer;
 
 	// update sliders and static according to objViewer wind setup
-	void	updateView();
-
-
+	void updateView();
 };
 
 //{{AFX_INSERT_LOCATION}}

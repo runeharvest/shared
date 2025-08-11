@@ -27,52 +27,50 @@
 class CObjectViewer;
 class CAnimationDlg;
 
-namespace NLSOUND
-{
-	class CSoundAnimation;
-	class CSoundAnimMarker;
+namespace NLSOUND {
+class CSoundAnimation;
+class CSoundAnimMarker;
 }
 
 class CSoundAnimDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CSoundAnimDlg(CObjectViewer* objView, CAnimationDlg* animDlg, CWnd* pParent = NULL); 
+	CSoundAnimDlg(CObjectViewer *objView, CAnimationDlg *animDlg, CWnd *pParent = NULL);
 
-	void						setAnimTime(float animStart, float animEnd);
-	void						handle();
-	void						refresh(BOOL update)	{ _AnimView.refresh(update); }
-	void						updateScroll(uint pos, uint min, uint max);
-	void						selectMarker(NLSOUND::CSoundAnimMarker* marker);
+	void setAnimTime(float animStart, float animEnd);
+	void handle();
+	void refresh(BOOL update) { _AnimView.refresh(update); }
+	void updateScroll(uint pos, uint min, uint max);
+	void selectMarker(NLSOUND::CSoundAnimMarker *marker);
 
 protected:
+	void updateSounds();
 
-	void						updateSounds();
-
-	CObjectViewer				*_ObjView;
-	CAnimationDlg				*_AnimationDlg;
-	CSoundAnimView				_AnimView;
-	NLSOUND::CSoundAnimMarker	*_SelectedMarker;
+	CObjectViewer *_ObjView;
+	CAnimationDlg *_AnimationDlg;
+	CSoundAnimView _AnimView;
+	NLSOUND::CSoundAnimMarker *_SelectedMarker;
 
 public:
-
 	// VC++ wizardry
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CSoundAnimDlg)
-	enum { IDD = IDD_SOUND_ANIM_DLG };
+	enum
+	{
+		IDD = IDD_SOUND_ANIM_DLG
+	};
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	//{{AFX_VIRTUAL(CSoundAnimDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CSoundAnimDlg)
 	afx_msg void OnAddSound();
@@ -84,7 +82,7 @@ protected:
 	afx_msg void OnDelete();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	virtual BOOL OnInitDialog();
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

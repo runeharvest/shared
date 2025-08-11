@@ -22,7 +22,7 @@
 class CUTMiscVariable : public Test::Suite
 {
 public:
-	CUTMiscVariable ()
+	CUTMiscVariable()
 	{
 		TEST_ADD(CUTMiscVariable ::declareVar)
 	}

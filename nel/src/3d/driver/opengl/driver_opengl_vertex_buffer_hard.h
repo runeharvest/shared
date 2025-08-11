@@ -19,7 +19,6 @@
 
 #include "nel/misc/types_nl.h"
 
-
 namespace NL3D {
 
 #ifdef NL_STATIC
@@ -30,20 +29,17 @@ namespace NLDRIVERGL {
 #endif
 #endif
 
-class	CDriverGL;
-class	IVertexBufferHardGL;
-class   CVertexBufferInfo;
-class	CVertexBufferHardGLMapObjectATI;
-class	CVertexBufferHardARB;
+class CDriverGL;
+class IVertexBufferHardGL;
+class CVertexBufferInfo;
+class CVertexBufferHardGLMapObjectATI;
+class CVertexBufferHardARB;
 
 // ***************************************************************************
 // ***************************************************************************
 // VBHard interface for both NVidia / ATI extension.
 // ***************************************************************************
 // ***************************************************************************
-
-
-
 
 // ***************************************************************************
 /** Interface to a Big block of AGP memory either throurgh NVVertexArrayRange or ATIVertexObject
@@ -52,29 +48,27 @@ class IVertexArrayRange
 {
 public:
 	IVertexArrayRange(CDriverGL *drv);
-	virtual	~IVertexArrayRange();
+	virtual ~IVertexArrayRange();
 
 	/// allocate a vertex array space. false if error. client must free before re-allocate.
-	virtual	bool					allocate(uint32 size, CVertexBuffer::TPreferredMemory vbType)= 0;
+	virtual bool allocate(uint32 size, CVertexBuffer::TPreferredMemory vbType) = 0;
 	/// free this space.
-	virtual	void					freeBlock()= 0;
+	virtual void freeBlock() = 0;
 	/// create a IVertexBufferHardGL
-	virtual	IVertexBufferHardGL		*createVBHardGL(uint size, CVertexBuffer *vb) =0;
+	virtual IVertexBufferHardGL *createVBHardGL(uint size, CVertexBuffer *vb) = 0;
 	/// return the size allocated. 0 if not allocated or failure
-	virtual	uint					sizeAllocated() const =0;
+	virtual uint sizeAllocated() const = 0;
 	// Check & invalidate lost buffers. Default assume they can't be lost
-	virtual void updateLostBuffers() {}
+	virtual void updateLostBuffers() { }
 	// Get driver
-	CDriverGL	*getDriver() const { return _Driver; }
-	// tmp, for debug
-	#ifdef NL_DEBUG
-		virtual void		 dumpMappedBuffers() {}
-	#endif
+	CDriverGL *getDriver() const { return _Driver; }
+// tmp, for debug
+#ifdef NL_DEBUG
+	virtual void dumpMappedBuffers() { }
+#endif
 protected:
-	CDriverGL	*_Driver;
+	CDriverGL *_Driver;
 };
-
-
 
 // ***************************************************************************
 /** Common interface for both NVidia and ATI extenstion
@@ -83,38 +77,42 @@ protected:
 class IVertexBufferHardGL
 {
 public:
-
 	IVertexBufferHardGL(CDriverGL *drv, CVertexBuffer *vb);
-	virtual	~IVertexBufferHardGL();
-
+	virtual ~IVertexBufferHardGL();
 
 	// ATI and NVidia have their own methods.
-	virtual	void		*lock() = 0;
-	virtual	void		unlock() = 0;
-	virtual void		unlock(uint start, uint end) = 0;
-	virtual void		*getPointer() = 0;
+	virtual void *lock() = 0;
+	virtual void unlock() = 0;
+	virtual void unlock(uint start, uint end) = 0;
+	virtual void *getPointer() = 0;
 
-	virtual	void			enable() =0;
-	virtual	void			disable() =0;
+	virtual void enable() = 0;
+	virtual void disable() = 0;
 
-	virtual void		setupVBInfos(CVertexBufferInfo &vb) = 0;
+	virtual void setupVBInfos(CVertexBufferInfo &vb) = 0;
 
-	enum TVBType { NVidiaVB, ATIVB, ATIMapObjectVB, ARBVB, UnknownVB };
+	enum TVBType
+	{
+		NVidiaVB,
+		ATIVB,
+		ATIMapObjectVB,
+		ARBVB,
+		UnknownVB
+	};
 	// true if NVidia vertex buffer hard.
-	TVBType	 VBType;
+	TVBType VBType;
 	// For Fence access. Ignored for ATI.
-	bool				GPURenderingAfterFence;
+	bool GPURenderingAfterFence;
 
 	// test if buffer content is invalid. If so, no rendering should occurs (rendering should silently fail)
-	bool							isInvalid() { return _Invalid; }
+	bool isInvalid() { return _Invalid; }
 
 public:
-
-	CVertexBuffer		*VB;
+	CVertexBuffer *VB;
 
 protected:
-	CDriverGL			*_Driver;
-	bool		 _Invalid;
+	CDriverGL *_Driver;
+	bool _Invalid;
 };
 
 #ifndef USE_OPENGLES
@@ -125,7 +123,6 @@ protected:
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
 /** Work only if ARRAY_RANGE_NV is enabled. else, only call to ctor/dtor/free() is valid.
  *	any call to allocateVB() will return NULL.
@@ -135,100 +132,87 @@ class CVertexArrayRangeNVidia : public IVertexArrayRange
 public:
 	CVertexArrayRangeNVidia(CDriverGL *drv);
 
-
 	/// \name Implementation
 	// @{
 	/// allocate a vertex array sapce. false if error. must free before re-allocate.
-	virtual	bool					allocate(uint32 size, CVertexBuffer::TPreferredMemory vbType);
+	virtual bool allocate(uint32 size, CVertexBuffer::TPreferredMemory vbType);
 	/// free this space.
-	virtual	void					freeBlock();
+	virtual void freeBlock();
 	/// create a IVertexBufferHardGL
-	virtual	IVertexBufferHardGL		*createVBHardGL(uint size, CVertexBuffer *vb);
+	virtual IVertexBufferHardGL *createVBHardGL(uint size, CVertexBuffer *vb);
 	/// return the size allocated. 0 if not allocated or failure
-	virtual	uint					sizeAllocated() const;
+	virtual uint sizeAllocated() const;
 	// @}
-
 
 	// Those methods read/write in _Driver->_CurrentVertexArrayRange.
 	/// active this VertexArrayRange as the current vertex array range used. no-op if already setup.
-	void			enable();
+	void enable();
 	/// disable this VertexArrayRange. _Driver->_CurrentVertexArrayRange= NULL;
-	void			disable();
+	void disable();
 
 	/// free a VB allocated with allocateVB. No-op if NULL.
-	void			freeVB(void	*ptr);
+	void freeVB(void *ptr);
 
-
-// *************************
+	// *************************
 private:
-	void		*_VertexArrayPtr;
-	uint32		_VertexArraySize;
+	void *_VertexArrayPtr;
+	uint32 _VertexArraySize;
 
 	// Allocator.
-	NLMISC::CHeapMemory		_HeapMemory;
+	NLMISC::CHeapMemory _HeapMemory;
 
 	/// true if allocated.
-	bool			allocated() const {return _VertexArrayPtr!=NULL;}
+	bool allocated() const { return _VertexArrayPtr != NULL; }
 	/// Allocate a small subset of the memory. NULL if not enough mem.
-	void			*allocateVB(uint32 size);
-
+	void *allocateVB(uint32 size);
 };
-
-
 
 // ***************************************************************************
 /// Work only if ARRAY_RANGE_NV is enabled.
 class CVertexBufferHardGLNVidia : public IVertexBufferHardGL
 {
 public:
-
 	CVertexBufferHardGLNVidia(CDriverGL *drv, CVertexBuffer *vb);
-	virtual	~CVertexBufferHardGLNVidia();
-
+	virtual ~CVertexBufferHardGLNVidia();
 
 	/// \name Implementation
 	// @{
-	virtual	void		*lock();
-	virtual	void		unlock();
-	virtual void		unlock(uint start, uint end);
-	virtual void		*getPointer();
-	virtual	void		enable();
-	virtual	void		disable();
-	virtual void		lockHintStatic(bool staticLock);
-	virtual void		setupVBInfos(CVertexBufferInfo &vb);
+	virtual void *lock();
+	virtual void unlock();
+	virtual void unlock(uint start, uint end);
+	virtual void *getPointer();
+	virtual void enable();
+	virtual void disable();
+	virtual void lockHintStatic(bool staticLock);
+	virtual void setupVBInfos(CVertexBufferInfo &vb);
 	// @}
 
-
 	// setup ptrs allocated by createVBHard(), and init Fence.
-	void					initGL(CVertexArrayRangeNVidia *var, void *vertexPtr);
-
+	void initGL(CVertexArrayRangeNVidia *var, void *vertexPtr);
 
 	// true if a setFence() has been done, without a finishFence(). NB: not the same thing as nglTestFenceNV()!!
-	bool			isFenceSet() const {return _FenceSet;}
+	bool isFenceSet() const { return _FenceSet; }
 	// set or re-set the fence, whatever isFenceSet().
-	void			setFence();
+	void setFence();
 	// if(isFenceSet()), finish the fence, else no-op
-	void			finishFence();
+	void finishFence();
 	// if fence is not set, no-op, else test nglTestFenceNV(), and update local _FenceSet flag.
-	void			testFence();
+	void testFence();
 
-	bool			getLockHintStatic() const {return _LockHintStatic;}
+	bool getLockHintStatic() const { return _LockHintStatic; }
 
-// *************************
+	// *************************
 private:
-	CVertexArrayRangeNVidia		*_VertexArrayRange;
-	void						*_VertexPtr;
+	CVertexArrayRangeNVidia *_VertexArrayRange;
+	void *_VertexPtr;
 
 	// The fence inserted in command stream
-	GLuint				_Fence;
+	GLuint _Fence;
 	// True if a setFence() has been done, without a finishFence().
-	bool				_FenceSet;
+	bool _FenceSet;
 
-	bool				_LockHintStatic;
-
+	bool _LockHintStatic;
 };
-
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -236,12 +220,10 @@ private:
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
 // This is a fake value to simulate allocation on CHeapMemory for ATI mgt.
 // NB: can set 0, since won't work for multiple reasons....
-#define	NL3D_DRV_ATI_FAKE_MEM_START	0x10000
-
+#define NL3D_DRV_ATI_FAKE_MEM_START 0x10000
 
 // ***************************************************************************
 /** Work only if ATIVertexArrayObject is enabled. else, only call to ctor/dtor/free() is valid.
@@ -252,212 +234,191 @@ class CVertexArrayRangeATI : public IVertexArrayRange
 public:
 	CVertexArrayRangeATI(CDriverGL *drv);
 
-
 	/// \name Implementation
 	// @{
 	/// allocate a vertex array sapce. false if error. must free before re-allocate.
-	virtual	bool					allocate(uint32 size, CVertexBuffer::TPreferredMemory vbType);
+	virtual bool allocate(uint32 size, CVertexBuffer::TPreferredMemory vbType);
 	/// free this space.
-	virtual	void					freeBlock();
+	virtual void freeBlock();
 	/// create a IVertexBufferHardGL
-	virtual	IVertexBufferHardGL		*createVBHardGL(uint size, CVertexBuffer *vb);
+	virtual IVertexBufferHardGL *createVBHardGL(uint size, CVertexBuffer *vb);
 	/// return the size allocated. 0 if not allocated or failure
-	virtual	uint					sizeAllocated() const;
+	virtual uint sizeAllocated() const;
 	// @}
-
 
 	// Those methods read/write in _Driver->_CurrentVertexArrayRange.
 	/** active this VertexArrayRange as the current vertex array range used. no-op if already setup.
 	 *	NB: no-op for ATI, but ensure correct _Driver->_CurrentVertexArrayRange value.
 	 */
-	void			enable();
+	void enable();
 	/** disable this VertexArrayRange. _Driver->_CurrentVertexArrayRange= NULL;
 	 *	NB: no-op for ATI, but ensure correct _Driver->_CurrentVertexArrayRange value.
 	 */
-	void			disable();
+	void disable();
 
 	/// free a VB allocated with allocateVB. No-op if NULL.
-	void			freeVB(void	*ptr);
-
+	void freeVB(void *ptr);
 
 	/// get Handle of the ATI buffer.
-	uint			getATIVertexObjectId() const {return _VertexObjectId;}
+	uint getATIVertexObjectId() const { return _VertexObjectId; }
 
-// *************************
+	// *************************
 private:
-	uint		_VertexObjectId;
-	bool		_Allocated;
-	uint32		_VertexArraySize;
+	uint _VertexObjectId;
+	bool _Allocated;
+	uint32 _VertexArraySize;
 
 	// Allocator. NB: We don't have any Mem Ptr For ATI extension, so use a Fake Ptr: NL3D_DRV_ATI_FAKE_MEM_START
-	NLMISC::CHeapMemory		_HeapMemory;
+	NLMISC::CHeapMemory _HeapMemory;
 
 	/// Allocate a small subset of the memory. NULL if not enough mem.
-	void			*allocateVB(uint32 size);
-
+	void *allocateVB(uint32 size);
 };
-
-
-
 
 // ***************************************************************************
 /// Work only if ARRAY_RANGE_NV is enabled.
 class CVertexBufferHardGLATI : public IVertexBufferHardGL
 {
 public:
-
 	CVertexBufferHardGLATI(CDriverGL *drv, CVertexBuffer *vb);
-	virtual	~CVertexBufferHardGLATI();
-
+	virtual ~CVertexBufferHardGLATI();
 
 	/// \name Implementation
 	// @{
-	virtual	void		*lock();
-	virtual	void		unlock();
-	virtual void		unlock(uint start, uint end);
-	virtual void		*getPointer();
-	virtual	void		enable();
-	virtual	void		disable();
-	virtual void		lockHintStatic(bool staticLock);
-	virtual void		setupVBInfos(CVertexBufferInfo &vb);
+	virtual void *lock();
+	virtual void unlock();
+	virtual void unlock(uint start, uint end);
+	virtual void *getPointer();
+	virtual void enable();
+	virtual void disable();
+	virtual void lockHintStatic(bool staticLock);
+	virtual void setupVBInfos(CVertexBufferInfo &vb);
 	// @}
 
-
 	/// try to create a RAM mirror that 'll contain a copy of the VB.
-	bool					createRAMMirror(uint memSize);
+	bool createRAMMirror(uint memSize);
 
 	/**	setup ptrs allocated by createVBHard()
 	 */
-	void					initGL(CVertexArrayRangeATI *var, void *vertexPtr);
-
+	void initGL(CVertexArrayRangeATI *var, void *vertexPtr);
 
 public:
-
 	/// get Handle of the ATI buffer.
-	uint					getATIVertexObjectId() const {return _VertexArrayRange->getATIVertexObjectId();}
+	uint getATIVertexObjectId() const { return _VertexArrayRange->getATIVertexObjectId(); }
 
-
-// *************************
+	// *************************
 private:
-	CVertexArrayRangeATI		*_VertexArrayRange;
-	void						*_VertexPtr;
-	void						*_RAMMirrorVertexPtr;
-	uint						_RAMMirrorVertexSize;
-
+	CVertexArrayRangeATI *_VertexArrayRange;
+	void *_VertexPtr;
+	void *_RAMMirrorVertexPtr;
+	uint _RAMMirrorVertexSize;
 };
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /** TEMP nico : test if better with ATI_map_object_buffer
-  * We don't manage a heap there, we just allocate separate objects (can't get a pointer on a portion of the buffer only ..)
-  * todo : test if such maneer is still efficient (because of vb switching)
-  * NB : this is available only it GL_ATI_map_object_buffer is available
-  */
+ * We don't manage a heap there, we just allocate separate objects (can't get a pointer on a portion of the buffer only ..)
+ * todo : test if such maneer is still efficient (because of vb switching)
+ * NB : this is available only it GL_ATI_map_object_buffer is available
+ */
 class CVertexArrayRangeMapObjectATI : public IVertexArrayRange
 {
 public:
 	CVertexArrayRangeMapObjectATI(CDriverGL *drv);
 
-
 	/// \name Implementation
 	// @{
 	/** Allocate a vertex array space. false if error. must free before re-allocate.
-	  * Will always succeed, because vb are not managed in a heap, but are rather kept as separate objects
-	  */
-	virtual	bool					allocate(uint32 size, CVertexBuffer::TPreferredMemory vbType);
+	 * Will always succeed, because vb are not managed in a heap, but are rather kept as separate objects
+	 */
+	virtual bool allocate(uint32 size, CVertexBuffer::TPreferredMemory vbType);
 	/// free this space.
-	virtual	void					freeBlock();
+	virtual void freeBlock();
 	/// create a IVertexBufferHardGL
-	virtual	IVertexBufferHardGL		*createVBHardGL(uint size, CVertexBuffer *vb);
+	virtual IVertexBufferHardGL *createVBHardGL(uint size, CVertexBuffer *vb);
 	/// return the size allocated. 0 if not allocated or failure
-	virtual	uint					sizeAllocated() const { return _SizeAllocated; }
+	virtual uint sizeAllocated() const { return _SizeAllocated; }
 	// @}
-
 
 	// Those methods read/write in _Driver->_CurrentVertexArrayRange.
 	/** active this VertexArrayRange as the current vertex array range used. no-op if already setup.
 	 *	NB: no-op for ATI, but ensure correct _Driver->_CurrentVertexArrayRange value.
 	 */
-	void			enable();
+	void enable();
 	/** disable this VertexArrayRange. _Driver->_CurrentVertexArrayRange= NULL;
 	 *	NB: no-op for ATI, but ensure correct _Driver->_CurrentVertexArrayRange value.
 	 */
-	void			disable();
+	void disable();
 
 	CVertexBuffer::TPreferredMemory getVBType() const { return _VBType; }
 
 	// check & invalidate lost buffers
 	void updateLostBuffers();
 
-	// tmp for debug
-	#ifdef NL_DEBUG
-		void dumpMappedBuffers();
-	#endif
+// tmp for debug
+#ifdef NL_DEBUG
+	void dumpMappedBuffers();
+#endif
 
-// *************************
+	// *************************
 private:
 	CVertexBuffer::TPreferredMemory _VBType;
-	uint32				 _SizeAllocated;
+	uint32 _SizeAllocated;
+
 public:
 	// for use by CVertexBufferHardGLMapObjectATI
 	std::list<CVertexBufferHardGLMapObjectATI *> _LostVBList;
-	#ifdef NL_DEBUG
-		std::list<CVertexBufferHardGLMapObjectATI *> _MappedVBList;
-	#endif
+#ifdef NL_DEBUG
+	std::list<CVertexBufferHardGLMapObjectATI *> _MappedVBList;
+#endif
 };
 
-
 /** vb hard using the ATI_map_object_buffer extension. Buffer are kept separate rather than managed in a heap
-  */
+ */
 class CVertexBufferHardGLMapObjectATI : public IVertexBufferHardGL
 {
 public:
-
 	CVertexBufferHardGLMapObjectATI(CDriverGL *drv, CVertexBuffer *vb);
-	virtual	~CVertexBufferHardGLMapObjectATI();
-
+	virtual ~CVertexBufferHardGLMapObjectATI();
 
 	/// \name Implementation
 	// @{
-	virtual	void		*lock();
-	virtual	void		unlock();
-	virtual void		unlock(uint start, uint end);
-	virtual void		*getPointer();
-	virtual	void		enable();
-	virtual	void		disable();
-	virtual void		lockHintStatic(bool staticLock);
-	virtual void		setupVBInfos(CVertexBufferInfo &vb);
+	virtual void *lock();
+	virtual void unlock();
+	virtual void unlock(uint start, uint end);
+	virtual void *getPointer();
+	virtual void enable();
+	virtual void disable();
+	virtual void lockHintStatic(bool staticLock);
+	virtual void setupVBInfos(CVertexBufferInfo &vb);
 	// @}
 
-   /**	setup ptrs allocated by createVBHard()
+	/**	setup ptrs allocated by createVBHard()
 	 */
-	void					initGL(CVertexArrayRangeMapObjectATI *var, uint vertexObjectID);
-
+	void initGL(CVertexArrayRangeMapObjectATI *var, uint vertexObjectID);
 
 public:
-
 	/// get Handle of the ATI buffer.
-	uint					getATIVertexObjectId() const { return _VertexObjectId;}
+	uint getATIVertexObjectId() const { return _VertexObjectId; }
 
-
-// *************************
+	// *************************
 private:
-	void						   *_VertexPtr; // pointer on current datas. Null if not locked
-	CVertexArrayRangeMapObjectATI  *_VertexArrayRange;
+	void *_VertexPtr; // pointer on current datas. Null if not locked
+	CVertexArrayRangeMapObjectATI *_VertexArrayRange;
 	// if buffer has been invalidated, returns a dummy memory block and silently fails rendering
-	std::vector<uint8>				_DummyVB;
+	std::vector<uint8> _DummyVB;
 	// Invalidate the buffer (when it is lost, or when a lock fails)
-	void							invalidate();
+	void invalidate();
+
 public:
 	// for use by CVertexArrayRangeMapObjectATI
 	std::list<CVertexBufferHardGLMapObjectATI *>::iterator _IteratorInLostVBList;
-	uint						   _VertexObjectId;
-	// tmp for debug
-	#ifdef NL_DEBUG
-		bool							_Unmapping;
-		std::list<CVertexBufferHardGLMapObjectATI *>::iterator _IteratorInMappedVBList;
-	#endif
+	uint _VertexObjectId;
+// tmp for debug
+#ifdef NL_DEBUG
+	bool _Unmapping;
+	std::list<CVertexBufferHardGLMapObjectATI *>::iterator _IteratorInMappedVBList;
+#endif
 };
 
 #endif
@@ -472,109 +433,103 @@ class CVertexArrayRangeARB : public IVertexArrayRange
 public:
 	CVertexArrayRangeARB(CDriverGL *drv);
 
-
 	/// \name Implementation
 	// @{
 	/** Allocate a vertex array space. false if error. must free before re-allocate.
-	  * Will always succeed, because vb are not managed in a heap, but are rather kept as separate objects
-	  */
-	virtual	bool					allocate(uint32 size, CVertexBuffer::TPreferredMemory vbType);
+	 * Will always succeed, because vb are not managed in a heap, but are rather kept as separate objects
+	 */
+	virtual bool allocate(uint32 size, CVertexBuffer::TPreferredMemory vbType);
 	/// free this space.
-	virtual	void					freeBlock();
+	virtual void freeBlock();
 	/// create a IVertexBufferHardGL
-	virtual	IVertexBufferHardGL		*createVBHardGL(uint size, CVertexBuffer *vb);
+	virtual IVertexBufferHardGL *createVBHardGL(uint size, CVertexBuffer *vb);
 	/// return the size allocated. 0 if not allocated or failure
-	virtual	uint					sizeAllocated() const { return _SizeAllocated; }
+	virtual uint sizeAllocated() const { return _SizeAllocated; }
 	// @}
-
 
 	// Those methods read/write in _Driver->_CurrentVertexArrayRange.
 	/** active this VertexArrayRange as the current vertex array range used. no-op if already setup.
 	 *	NB: no-op for ARB, but ensure correct _Driver->_CurrentVertexArrayRange value.
 	 */
-	void			enable();
+	void enable();
 	/** disable this VertexArrayRange. _Driver->_CurrentVertexArrayRange= NULL;
 	 *	NB: no-op for ARB, but ensure correct _Driver->_CurrentVertexArrayRange value.
 	 */
-	void			disable();
+	void disable();
 	// check & invalidate lost buffers
 	void updateLostBuffers();
-	//
-	#ifdef NL_DEBUG
-		virtual void		 dumpMappedBuffers();
-	#endif
-// *************************
+//
+#ifdef NL_DEBUG
+	virtual void dumpMappedBuffers();
+#endif
+	// *************************
 private:
 	CVertexBuffer::TPreferredMemory _VBType;
-	uint32							_SizeAllocated;
+	uint32 _SizeAllocated;
 	// for use by CVertexBufferHardARB
 public:
 	std::list<CVertexBufferHardARB *> _LostVBList;
-	#ifdef NL_DEBUG
-		std::list<CVertexBufferHardARB *> _MappedVBList;
-	#endif
+#ifdef NL_DEBUG
+	std::list<CVertexBufferHardARB *> _MappedVBList;
+#endif
 };
 
-
 /** vb hard using the ARB_vertex_buffer_object extension. Buffer are kept separate rather than managed in a heap
-  */
+ */
 class CVertexBufferHardARB : public IVertexBufferHardGL
 {
 public:
-
 	CVertexBufferHardARB(CDriverGL *drv, CVertexBuffer *vb);
-	virtual	~CVertexBufferHardARB();
-
+	virtual ~CVertexBufferHardARB();
 
 	/// \name Implementation
 	// @{
-	virtual	void		*lock();
-	virtual	void		unlock();
-	virtual void		unlock(uint startVert, uint endVert);
-	virtual void		*getPointer();
-	virtual	void		enable();
-	virtual	void		disable();
-	virtual void		lockHintStatic(bool staticLock);
-	virtual void		setupVBInfos(CVertexBufferInfo &vb);
+	virtual void *lock();
+	virtual void unlock();
+	virtual void unlock(uint startVert, uint endVert);
+	virtual void *getPointer();
+	virtual void enable();
+	virtual void disable();
+	virtual void lockHintStatic(bool staticLock);
+	virtual void setupVBInfos(CVertexBufferInfo &vb);
 	// @}
 
-   /**	setup ptrs allocated by createVBHard()
+	/**	setup ptrs allocated by createVBHard()
 	 */
-	void					initGL(uint vertexObjectID, CVertexArrayRangeARB *var, CVertexBuffer::TPreferredMemory memType);
-
+	void initGL(uint vertexObjectID, CVertexArrayRangeARB *var, CVertexBuffer::TPreferredMemory memType);
 
 public:
-
 	/// get Handle of the ARB buffer.
-	uint					getARBVertexObjectId() const { return _VertexObjectId;}
+	uint getARBVertexObjectId() const { return _VertexObjectId; }
 
 	// Invalidate the buffer (when it is lost, or when a lock fails)
-	void							invalidate();
+	void invalidate();
 
 	// tmp
 	void checkMappedVBList();
 
-// *************************
+	// *************************
 private:
-	CVertexArrayRangeARB			*_VertexArrayRange;
+	CVertexArrayRangeARB *_VertexArrayRange;
 	CVertexBuffer::TPreferredMemory _MemType;
-	void							*_VertexPtr; // pointer on current datas. Null if not locked
+	void *_VertexPtr; // pointer on current datas. Null if not locked
 #ifdef USE_OPENGLES
-	uint8							*_Buffer;
-	uint32							_BufferSize;
-	uint32							_LastBufferSize;
+	uint8 *_Buffer;
+	uint32 _BufferSize;
+	uint32 _LastBufferSize;
 #endif
 	// if buffer has been invalidated, returns a dummy memory block and silently fails rendering
-	std::vector<uint8>				_DummyVB;
+	std::vector<uint8> _DummyVB;
 	// for use by CVertexArrayRangeARB
 	std::list<CVertexBufferHardARB *>::iterator _IteratorInLostVBList;
+
 public:
-	uint							_VertexObjectId;
-	// tmp for debug
-	#ifdef NL_DEBUG
-		bool _Unmapping;
-		std::list<CVertexBufferHardARB *>::iterator _IteratorInMappedVBList;
-	#endif
+	uint _VertexObjectId;
+// tmp for debug
+#ifdef NL_DEBUG
+	bool _Unmapping;
+	std::list<CVertexBufferHardARB *>::iterator _IteratorInMappedVBList;
+#endif
 };
 
 #ifdef NL_STATIC
@@ -582,7 +537,6 @@ public:
 #endif
 
 } // NL3D
-
 
 #endif // NL_DRIVER_OPENGL_VERTEX_BUFFER_HARD_H
 

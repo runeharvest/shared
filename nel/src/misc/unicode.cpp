@@ -22,20 +22,19 @@
 #include "nel/misc/utf_string_view.h"
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace	NLMISC
-{
+namespace NLMISC {
 
-ucstring toLower (const ucstring &str)
+ucstring toLower(const ucstring &str)
 {
 	return ucstring::makeFromUtf8(toLower(str.toUtf8()));
 }
 
 // ***************************************************************************
 
-void toLower (ucchar *str)
+void toLower(ucchar *str)
 {
 	while (*str)
 	{
@@ -46,7 +45,7 @@ void toLower (ucchar *str)
 
 // ***************************************************************************
 
-ucchar toLower (ucchar c)
+ucchar toLower(ucchar c)
 {
 	if ((c & 0xF800) == 0xD800)
 		return c;
@@ -61,14 +60,14 @@ ucchar toLower (ucchar c)
 
 // ***************************************************************************
 
-ucstring toUpper (const ucstring &str)
+ucstring toUpper(const ucstring &str)
 {
 	return ucstring::makeFromUtf8(toUpper(str.toUtf8()));
 }
 
 // ***************************************************************************
 
-void toUpper (ucchar *str)
+void toUpper(ucchar *str)
 {
 	while (*str)
 	{
@@ -79,7 +78,7 @@ void toUpper (ucchar *str)
 
 // ***************************************************************************
 
-ucchar toUpper (ucchar c)
+ucchar toUpper(ucchar c)
 {
 	if ((c & 0xF800) == 0xD800)
 		return c;

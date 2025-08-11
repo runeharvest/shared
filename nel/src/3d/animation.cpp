@@ -26,7 +26,6 @@
 #include "nel/misc/hierarchical_timer.h"
 #include "nel/misc/algo.h"
 
-
 using namespace std;
 using namespace NLMISC;
 
@@ -34,108 +33,107 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
-H_AUTO_DECL( NL3D_UI_Animation )
+H_AUTO_DECL(NL3D_UI_Animation)
 
-#define	NL3D_HAUTO_UI_ANIMATION						H_AUTO_USE( NL3D_UI_Animation )
-
+#define NL3D_HAUTO_UI_ANIMATION H_AUTO_USE(NL3D_UI_Animation)
 
 // ***************************************************************************
 
-CAnimation::CAnimation() : _BeginTimeTouched(true), _EndTimeTouched(true), _AnimLoopTouched(true)
+CAnimation::CAnimation()
+    : _BeginTimeTouched(true)
+    , _EndTimeTouched(true)
+    , _AnimLoopTouched(true)
 {
 	_MinEndTime = -FLT_MAX;
-	_TrackSamplePack= NULL;
-	_AnimationSetOwner= NULL;
+	_TrackSamplePack = NULL;
+	_AnimationSetOwner = NULL;
 }
 
 // ***************************************************************************
 
-CAnimation::~CAnimation ()
+CAnimation::~CAnimation()
 {
 	// Delete all the pointers in the array
-	for (uint i=0; i<_TrackVector.size(); i++)
+	for (uint i = 0; i < _TrackVector.size(); i++)
 		// Delete
 		delete _TrackVector[i];
 
 	// if created, release the _TrackSamplePack
-	if(_TrackSamplePack)
+	if (_TrackSamplePack)
 		delete _TrackSamplePack;
-	_TrackSamplePack= NULL;
+	_TrackSamplePack = NULL;
 }
 
 // ***************************************************************************
 
-void CAnimation::addTrack (const std::string& name, ITrack* pChannel)
+void CAnimation::addTrack(const std::string &name, ITrack *pChannel)
 {
 	// must not already be HeaderOptimized
 	nlassert(_IdByChannelId.empty());
 
 	// Add an entry in the map
-	_IdByName.insert (TMapStringUInt::value_type (name, (uint32)_TrackVector.size()));
+	_IdByName.insert(TMapStringUInt::value_type(name, (uint32)_TrackVector.size()));
 
 	// Add an entry in the array
-	_TrackVector.push_back (pChannel);
+	_TrackVector.push_back(pChannel);
 
 	//
-	_BeginTimeTouched = _EndTimeTouched = _AnimLoopTouched= true;
-
+	_BeginTimeTouched = _EndTimeTouched = _AnimLoopTouched = true;
 }
 
 // ***************************************************************************
 
-void CAnimation::serial (NLMISC::IStream& f)
+void CAnimation::serial(NLMISC::IStream &f)
 {
 	// cannot save if anim header compressed
 	nlassert(_IdByChannelId.empty());
 
 	// Serial a header
-	f.serialCheck (NELID("_LEN"));
-	f.serialCheck (NELID("MINA"));
+	f.serialCheck(NELID("_LEN"));
+	f.serialCheck(NELID("MINA"));
 
 	// Serial a version
-	sint version=f.serialVersion (2);
+	sint version = f.serialVersion(2);
 
 	// Serial the name
-	f.serial (_Name);
+	f.serial(_Name);
 
 	// Serial the name/id map
 	f.serialCont(_IdByName);
 
 	// Serial the vector
-	f.serialContPolyPtr (_TrackVector);
+	f.serialContPolyPtr(_TrackVector);
 
 	// Serial the min end time
-	if (version>=1)
+	if (version >= 1)
 	{
-		f.serial (_MinEndTime);
+		f.serial(_MinEndTime);
 	}
 
 	// Serial the SSS shapes
-	if (version>=2)
+	if (version >= 2)
 	{
-		f.serialCont (_SSSShapes);
+		f.serialCont(_SSSShapes);
 	}
 
 	// TestYoyo
-	//nlinfo("ANIMYOYO: Anim NumTracks: %d", _TrackVector.size());
+	// nlinfo("ANIMYOYO: Anim NumTracks: %d", _TrackVector.size());
 }
 
-
 // ***************************************************************************
-uint CAnimation::getIdTrackByName (const std::string& name) const
+uint CAnimation::getIdTrackByName(const std::string &name) const
 {
 
 	// if not be HeaderOptimized
 	if (_IdByChannelId.empty())
 	{
 		// Find an entry in the name/id map
-		TMapStringUInt::const_iterator ite=_IdByName.find (name);
+		TMapStringUInt::const_iterator ite = _IdByName.find(name);
 
 		// Not found ?
-		if (ite==_IdByName.end ())
+		if (ite == _IdByName.end())
 			// yes, error
 			return NotFound;
 		else
@@ -146,8 +144,8 @@ uint CAnimation::getIdTrackByName (const std::string& name) const
 	{
 		nlassert(_AnimationSetOwner);
 		// get the channel id from name
-		uint	channelId= _AnimationSetOwner->getChannelIdByName(name);
-		if(channelId==CAnimationSet::NotFound)
+		uint channelId = _AnimationSetOwner->getChannelIdByName(name);
+		if (channelId == CAnimationSet::NotFound)
 			return CAnimation::NotFound;
 		else
 			return getIdTrackByChannelId(channelId);
@@ -155,18 +153,18 @@ uint CAnimation::getIdTrackByName (const std::string& name) const
 }
 
 // ***************************************************************************
-void CAnimation::getTrackNames (std::set<std::string>& setString) const
+void CAnimation::getTrackNames(std::set<std::string> &setString) const
 {
 
 	// if not be HeaderOptimized
 	if (_IdByChannelId.empty())
 	{
 		// For each track name
-		TMapStringUInt::const_iterator ite=_IdByName.begin();
-		while (ite!=_IdByName.end())
+		TMapStringUInt::const_iterator ite = _IdByName.begin();
+		while (ite != _IdByName.end())
 		{
 			// Add the name in the map
-			setString.insert (ite->first);
+			setString.insert(ite->first);
 
 			// Next track
 			ite++;
@@ -176,36 +174,36 @@ void CAnimation::getTrackNames (std::set<std::string>& setString) const
 	{
 		nlassert(_AnimationSetOwner);
 		// For each track channel Id,
-		for(uint i=0;i<_IdByChannelId.size();i++)
+		for (uint i = 0; i < _IdByChannelId.size(); i++)
 		{
 			// Add in the map the channel name => same as track name
-			setString.insert ( _AnimationSetOwner->getChannelName(_IdByChannelId[i]) );
+			setString.insert(_AnimationSetOwner->getChannelName(_IdByChannelId[i]));
 		}
 	}
 }
 
 // ***************************************************************************
-TAnimationTime CAnimation::getBeginTime () const
+TAnimationTime CAnimation::getBeginTime() const
 {
 	NL3D_HAUTO_UI_ANIMATION;
 
 	if (_BeginTimeTouched)
 	{
 		// Track count
-		uint trackCount=(uint)_TrackVector.size();
+		uint trackCount = (uint)_TrackVector.size();
 
 		// Track count empty ?
-		if (trackCount==0)
+		if (trackCount == 0)
 			return 0.f;
 
 		// Look for the lowest
-		_BeginTime=_TrackVector[0]->getBeginTime ();
+		_BeginTime = _TrackVector[0]->getBeginTime();
 
 		// Scan all keys
-		for (uint t=1; t<trackCount; t++)
+		for (uint t = 1; t < trackCount; t++)
 		{
-			if (_TrackVector[t]->getBeginTime ()<_BeginTime)
-				_BeginTime=_TrackVector[t]->getBeginTime ();
+			if (_TrackVector[t]->getBeginTime() < _BeginTime)
+				_BeginTime = _TrackVector[t]->getBeginTime();
 		}
 
 		_BeginTimeTouched = false;
@@ -216,27 +214,27 @@ TAnimationTime CAnimation::getBeginTime () const
 
 // ***************************************************************************
 
-TAnimationTime CAnimation::getEndTime () const
+TAnimationTime CAnimation::getEndTime() const
 {
 	NL3D_HAUTO_UI_ANIMATION;
 
 	if (_EndTimeTouched)
 	{
 		// Track count
-		uint trackCount=(uint)_TrackVector.size();
+		uint trackCount = (uint)_TrackVector.size();
 
 		// Track count empty ?
-		if (trackCount==0)
+		if (trackCount == 0)
 			return 0.f;
 
 		// Look for the highest
-		_EndTime=_TrackVector[0]->getEndTime ();
+		_EndTime = _TrackVector[0]->getEndTime();
 
 		// Scan tracks keys
-		for (uint t=1; t<trackCount; t++)
+		for (uint t = 1; t < trackCount; t++)
 		{
-			if (_TrackVector[t]->getEndTime ()>_EndTime)
-				_EndTime=_TrackVector[t]->getEndTime ();
+			if (_TrackVector[t]->getEndTime() > _EndTime)
+				_EndTime = _TrackVector[t]->getEndTime();
 		}
 
 		// Check min end time
@@ -250,24 +248,24 @@ TAnimationTime CAnimation::getEndTime () const
 }
 
 // ***************************************************************************
-bool			CAnimation::allTrackLoop() const
+bool CAnimation::allTrackLoop() const
 {
 	NL3D_HAUTO_UI_ANIMATION;
 
-	if(_AnimLoopTouched)
+	if (_AnimLoopTouched)
 	{
 		// Track count
-		uint trackCount=(uint)_TrackVector.size();
+		uint trackCount = (uint)_TrackVector.size();
 
 		// Default is true
-		_AnimLoop= true;
+		_AnimLoop = true;
 
 		// Scan tracks keys
-		for (uint t=0; t<trackCount; t++)
+		for (uint t = 0; t < trackCount; t++)
 		{
 			if (!_TrackVector[t]->getLoopMode())
 			{
-				_AnimLoop= false;
+				_AnimLoop = false;
 				break;
 			}
 		}
@@ -279,25 +277,25 @@ bool			CAnimation::allTrackLoop() const
 
 // ***************************************************************************
 
-UTrack* CAnimation::getTrackByName (const char* name)
+UTrack *CAnimation::getTrackByName(const char *name)
 {
 	NL3D_HAUTO_UI_ANIMATION;
 
 	// Get track id
-	uint id=getIdTrackByName (name);
+	uint id = getIdTrackByName(name);
 
 	// Not found ?
-	if (id==CAnimation::NotFound)
+	if (id == CAnimation::NotFound)
 		// Error, return NULL
 		return NULL;
 	else
 		// No error, return the track
-		return getTrack (id);
+		return getTrack(id);
 }
 
 // ***************************************************************************
 
-void CAnimation::releaseTrack (UTrack* /* track */)
+void CAnimation::releaseTrack(UTrack * /* track */)
 {
 	NL3D_HAUTO_UI_ANIMATION;
 
@@ -306,29 +304,29 @@ void CAnimation::releaseTrack (UTrack* /* track */)
 
 // ***************************************************************************
 
-void CAnimation::setMinEndTime (TAnimationTime minEndTime)
+void CAnimation::setMinEndTime(TAnimationTime minEndTime)
 {
 	_MinEndTime = minEndTime;
 }
 
 // ***************************************************************************
 
-UAnimation* UAnimation::createAnimation (const char* sPath)
+UAnimation *UAnimation::createAnimation(const char *sPath)
 {
 	NL3D_HAUTO_UI_ANIMATION;
 
 	// Allocate an animation
-	CUniquePtr<CAnimation> anim (new CAnimation);
+	CUniquePtr<CAnimation> anim(new CAnimation);
 
 	// Read it
 	NLMISC::CIFile file;
-	if (file.open ( NLMISC::CPath::lookup( sPath ) ) )
+	if (file.open(NLMISC::CPath::lookup(sPath)))
 	{
 		// Serial the animation
-		file.serial (*anim);
+		file.serial(*anim);
 
 		// Return pointer
-		CAnimation *ret=anim.release ();
+		CAnimation *ret = anim.release();
 
 		// Return the animation interface
 		return ret;
@@ -339,67 +337,66 @@ UAnimation* UAnimation::createAnimation (const char* sPath)
 
 // ***************************************************************************
 
-void UAnimation::releaseAnimation (UAnimation* animation)
+void UAnimation::releaseAnimation(UAnimation *animation)
 {
 	NL3D_HAUTO_UI_ANIMATION;
 
 	// Cast the pointer
-	CAnimation* release=(CAnimation*)animation;
+	CAnimation *release = (CAnimation *)animation;
 
 	// Delete it
 	delete release;
 }
 
 // ***************************************************************************
-void	CAnimation::applySampleDivisor(uint sampleDivisor)
+void CAnimation::applySampleDivisor(uint sampleDivisor)
 {
 	NL3D_HAUTO_UI_ANIMATION;
 
-	for(uint i=0;i<_TrackVector.size();i++)
+	for (uint i = 0; i < _TrackVector.size(); i++)
 	{
-		ITrack	*track= _TrackVector[i];
-		if(track)
+		ITrack *track = _TrackVector[i];
+		if (track)
 			track->applySampleDivisor(sampleDivisor);
 	}
 }
 
-
 // ***************************************************************************
-void	CAnimation::applyTrackQuatHeaderCompression()
+void CAnimation::applyTrackQuatHeaderCompression()
 {
 	NL3D_HAUTO_UI_ANIMATION;
 
 	// if the header compression has already been donne, no op
-	if(_TrackSamplePack)
+	if (_TrackSamplePack)
 		return;
 
 	// **** First pass: count the number of keys to allocate
-	CTrackSampleCounter		sampleCounter;
-	bool					someTrackOK= false;
-	for(uint i=0;i<_TrackVector.size();i++)
+	CTrackSampleCounter sampleCounter;
+	bool someTrackOK = false;
+	for (uint i = 0; i < _TrackVector.size(); i++)
 	{
-		ITrack	*track= _TrackVector[i];
-		if(track)
+		ITrack *track = _TrackVector[i];
+		if (track)
 		{
 			// return true only for CTrackSampledQuat
-			if(track->applyTrackQuatHeaderCompressionPass0(sampleCounter))
-				someTrackOK= true;
+			if (track->applyTrackQuatHeaderCompressionPass0(sampleCounter))
+				someTrackOK = true;
 		}
 	}
 
 	// **** second pass: fill, onlmy if some track matchs (fails for instance for big animations)
-	if(someTrackOK)
+	if (someTrackOK)
 	{
-		uint	i;
+		uint i;
 
 		// must create the Sample packer
-		_TrackSamplePack= new CTrackSamplePack;
+		_TrackSamplePack = new CTrackSamplePack;
 
 		// just copy the built track headers
 		_TrackSamplePack->TrackHeaders.resize((uint32)sampleCounter.TrackHeaders.size());
-		for(i=0;i<_TrackSamplePack->TrackHeaders.size();i++)
+		for (i = 0; i < _TrackSamplePack->TrackHeaders.size(); i++)
 		{
-			_TrackSamplePack->TrackHeaders[i]= sampleCounter.TrackHeaders[i];
+			_TrackSamplePack->TrackHeaders[i] = sampleCounter.TrackHeaders[i];
 		}
 
 		// and allocate keys
@@ -407,98 +404,94 @@ void	CAnimation::applyTrackQuatHeaderCompression()
 		_TrackSamplePack->Keys.resize(sampleCounter.NumKeys);
 
 		// start the counter for Pass1 to work
-		uint	globalKeyOffset= 0;
+		uint globalKeyOffset = 0;
 
 		// fill it for each track
-		for(i=0;i<_TrackVector.size();i++)
+		for (i = 0; i < _TrackVector.size(); i++)
 		{
-			ITrack	*track= _TrackVector[i];
-			if(track)
+			ITrack *track = _TrackVector[i];
+			if (track)
 			{
-				ITrack	*newTrack= track->applyTrackQuatHeaderCompressionPass1(globalKeyOffset, *_TrackSamplePack);
+				ITrack *newTrack = track->applyTrackQuatHeaderCompressionPass1(globalKeyOffset, *_TrackSamplePack);
 				// if compressed
-				if(newTrack)
+				if (newTrack)
 				{
 					// delete the old track, and replace with compressed one
 					delete _TrackVector[i];
-					_TrackVector[i]= newTrack;
+					_TrackVector[i] = newTrack;
 				}
 			}
 		}
 
 		nlassert(globalKeyOffset == _TrackSamplePack->Keys.size());
 	}
-
-
 }
-
 
 // ***************************************************************************
 struct CTempTrackInfo
 {
-	uint16	ChannelId;
-	ITrack	*Track;
+	uint16 ChannelId;
+	ITrack *Track;
 
 	bool operator<(const CTempTrackInfo &o) const
 	{
 		return ChannelId < o.ChannelId;
 	}
 };
-void	CAnimation::applyAnimHeaderCompression(CAnimationSet *animationSetOwner, const std::map <std::string, uint32> &channelMap)
+void CAnimation::applyAnimHeaderCompression(CAnimationSet *animationSetOwner, const std::map<std::string, uint32> &channelMap)
 {
-	uint	i;
+	uint i;
 	nlassert(animationSetOwner);
 	// must not be already done
 	nlassert(_IdByChannelId.empty());
 
 	// fill the track info, with Track
-	std::vector<CTempTrackInfo>		tempTrackInfo;
+	std::vector<CTempTrackInfo> tempTrackInfo;
 	tempTrackInfo.resize(_TrackVector.size());
-	for(i=0;i<tempTrackInfo.size();i++)
+	for (i = 0; i < tempTrackInfo.size(); i++)
 	{
-		tempTrackInfo[i].Track= _TrackVector[i];
+		tempTrackInfo[i].Track = _TrackVector[i];
 	}
 
 	// fill the track info, with ChannelId
-	TMapStringUInt::iterator	it;
-	for(it= _IdByName.begin();it!=_IdByName.end();it++)
+	TMapStringUInt::iterator it;
+	for (it = _IdByName.begin(); it != _IdByName.end(); it++)
 	{
 		// search this track in the channelMap
-		std::map <std::string, uint32>::const_iterator	itChan= channelMap.find(it->first);
-		nlassert(itChan!=channelMap.end());
+		std::map<std::string, uint32>::const_iterator itChan = channelMap.find(it->first);
+		nlassert(itChan != channelMap.end());
 		// store the channelId in the associated track
-		tempTrackInfo[it->second].ChannelId= (uint16)itChan->second;
+		tempTrackInfo[it->second].ChannelId = (uint16)itChan->second;
 	}
 
 	// sort by channelId
 	sort(tempTrackInfo.begin(), tempTrackInfo.end());
 
 	// refill the TrackVector (sorted)
-	_IdByChannelId.resize( tempTrackInfo.size() );
-	for(i=0;i<tempTrackInfo.size();i++)
+	_IdByChannelId.resize(tempTrackInfo.size());
+	for (i = 0; i < tempTrackInfo.size(); i++)
 	{
-		_TrackVector[i]= tempTrackInfo[i].Track;
-		_IdByChannelId[i]= tempTrackInfo[i].ChannelId;
+		_TrackVector[i] = tempTrackInfo[i].Track;
+		_IdByChannelId[i] = tempTrackInfo[i].ChannelId;
 	}
 
 	// clear the no more needed track map
 	contReset(_IdByName);
 
 	// must keep the animSet
-	_AnimationSetOwner= animationSetOwner;
+	_AnimationSetOwner = animationSetOwner;
 }
 
-
 // ***************************************************************************
-uint	CAnimation::getIdTrackByChannelId (uint16 channelId) const
+uint CAnimation::getIdTrackByChannelId(uint16 channelId) const
 {
-	if(_IdByChannelId.empty())
+	if (_IdByChannelId.empty())
 		return CAnimation::NotFound;
 	else
 	{
-		uint	trackId= searchLowerBound(_IdByChannelId, channelId);
+		uint trackId = searchLowerBound(_IdByChannelId, channelId);
 		// verify that the channel is really found
-		if(_IdByChannelId[trackId]==channelId)
+		if (_IdByChannelId[trackId] == channelId)
 		{
 			return trackId;
 		}
@@ -508,10 +501,9 @@ uint	CAnimation::getIdTrackByChannelId (uint16 channelId) const
 }
 
 // ***************************************************************************
-void	CAnimation::addSSSShape(const std::string &shape)
+void CAnimation::addSSSShape(const std::string &shape)
 {
 	_SSSShapes.push_back(shape);
 }
-
 
 } // NL3D

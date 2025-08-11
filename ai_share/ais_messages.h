@@ -17,8 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RYAI_AIS_MESSAGES_H
 #define RYAI_AIS_MESSAGES_H
 
@@ -28,7 +26,6 @@
 #include "nel/misc/entity_id.h"
 
 #include "nel/net/transport_class.h"
-
 
 //----------------------------------------------------------------
 // AIDS -> AIS: Upload a manager definition script
@@ -41,21 +38,20 @@ public:
 	CMsgAIUploadActions()
 	{
 	}
-	
-	CMsgAIUploadActions(std::string data) 
+
+	CMsgAIUploadActions(std::string data)
 	{
-		Data=data;
+		Data = data;
 	}
 
-	virtual void description ()
+	virtual void description()
 	{
-		className ("CMsgAIUploadActions");
-		property ("data", PropString, std::string(), Data);
+		className("CMsgAIUploadActions");
+		property("data", PropString, std::string(), Data);
 	}
 
-	virtual void callback (const std::string &name, NLNET::TServiceId id);
+	virtual void callback(const std::string &name, NLNET::TServiceId id);
 };
-
 
 //----------------------------------------------------------------
 // AIDS -> AIS: Start Managers
@@ -63,26 +59,25 @@ public:
 class CMsgAISpawnMgrs : public NLNET::CTransportClass
 {
 public:
-	std::vector <uint16> MgrId;
+	std::vector<uint16> MgrId;
 
 	CMsgAISpawnMgrs()
 	{
 	}
-	
-	CMsgAISpawnMgrs(uint16 mgrId,const std::string &name) 
+
+	CMsgAISpawnMgrs(uint16 mgrId, const std::string &name)
 	{
 		MgrId.push_back(mgrId);
 	}
 
-	virtual void description ()
+	virtual void description()
 	{
-		className ("CMsgAISpawnMgrs");
-		propertyCont ("mgrId", PropUInt16, MgrId);
+		className("CMsgAISpawnMgrs");
+		propertyCont("mgrId", PropUInt16, MgrId);
 	}
 
-	virtual void callback (const std::string &name, NLNET::TServiceId id);
+	virtual void callback(const std::string &name, NLNET::TServiceId id);
 };
-
 
 //----------------------------------------------------------------
 // AIDS -> AIS: Save, stop and unload Managers
@@ -90,26 +85,25 @@ public:
 class CMsgAIDespawnMgrs : public NLNET::CTransportClass
 {
 public:
-	std::vector <uint16> MgrId;
+	std::vector<uint16> MgrId;
 
 	CMsgAIDespawnMgrs()
 	{
 	}
-	
-	CMsgAIDespawnMgrs(uint16 mgrId) 
+
+	CMsgAIDespawnMgrs(uint16 mgrId)
 	{
 		MgrId.push_back(mgrId);
 	}
 
-	virtual void description ()
+	virtual void description()
 	{
-		className ("CMsgAIDespawnMgrs");
-		propertyCont ("mgrId", PropUInt16, MgrId);
+		className("CMsgAIDespawnMgrs");
+		propertyCont("mgrId", PropUInt16, MgrId);
 	}
 
-	virtual void callback (const std::string &name, NLNET::TServiceId id);
+	virtual void callback(const std::string &name, NLNET::TServiceId id);
 };
-
 
 //----------------------------------------------------------------
 // AIDS -> AIS: Save managers' backups
@@ -117,26 +111,25 @@ public:
 class CMsgAIBackupMgrs : public NLNET::CTransportClass
 {
 public:
-	std::vector <uint16> MgrId;
+	std::vector<uint16> MgrId;
 
 	CMsgAIBackupMgrs()
 	{
 	}
-	
-	CMsgAIBackupMgrs(uint16 mgrId) 
+
+	CMsgAIBackupMgrs(uint16 mgrId)
 	{
 		MgrId.push_back(mgrId);
 	}
 
-	virtual void description ()
+	virtual void description()
 	{
-		className ("CMsgAIBackupMgrs");
-		propertyCont ("mgrId", PropUInt16, MgrId);
+		className("CMsgAIBackupMgrs");
+		propertyCont("mgrId", PropUInt16, MgrId);
 	}
 
-	virtual void callback (const std::string &name, NLNET::TServiceId id);
+	virtual void callback(const std::string &name, NLNET::TServiceId id);
 };
-
 
 //----------------------------------------------------------------
 // AIDS -> AIS: Close managers and unload from RAM
@@ -144,26 +137,24 @@ public:
 class CMsgAICloseMgrs : public NLNET::CTransportClass
 {
 public:
-	std::vector <uint16> MgrId;
+	std::vector<uint16> MgrId;
 
 	CMsgAICloseMgrs()
 	{
 	}
-	
-	CMsgAICloseMgrs(uint16 mgrId) 
+
+	CMsgAICloseMgrs(uint16 mgrId)
 	{
 		MgrId.push_back(mgrId);
 	}
 
-	virtual void description ()
+	virtual void description()
 	{
-		className ("CMsgAICloseMgrs");
-		propertyCont ("mgrId", PropUInt16, MgrId);
+		className("CMsgAICloseMgrs");
+		propertyCont("mgrId", PropUInt16, MgrId);
 	}
 
-	virtual void callback (const std::string &name, NLNET::TServiceId id);
+	virtual void callback(const std::string &name, NLNET::TServiceId id);
 };
 
-
 #endif
-

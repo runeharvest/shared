@@ -27,14 +27,11 @@
 #include "nel/3d/texture_emboss.h"
 #include "nel/3d/driver.h"
 
-
-namespace MISC
-{
-	class CVector;
+namespace MISC {
+class CVector;
 }
 
 namespace NL3D {
-
 
 class CWaterPoolManager;
 class CWaterShape;
@@ -74,24 +71,24 @@ public:
 	static CTransform *creator() { return new CWaterModel; }
 
 	// get default tracks
-	virtual ITrack* getDefaultTrack (uint valueId);
+	virtual ITrack *getDefaultTrack(uint valueId);
 
 	/// inherited from UWaterInstance
-	virtual uint32	getWaterHeightMapID() const;
+	virtual uint32 getWaterHeightMapID() const;
 
 	/// inherited from UWaterInstance
-	virtual float	getHeightFactor() const;
+	virtual float getHeightFactor() const;
 
 	/// inherited from UWaterInstance
-	virtual float   getHeight(const NLMISC::CVector2f &pos);
+	virtual float getHeight(const NLMISC::CVector2f &pos);
 
 	/// inherited from UWaterInstance
-	virtual float   getAttenuatedHeight(const NLMISC::CVector2f &pos, const NLMISC::CVector &viewer);
+	virtual float getAttenuatedHeight(const NLMISC::CVector2f &pos, const NLMISC::CVector &viewer);
 
 	/// \name CTransform traverse specialisation
 	// @{
-	virtual void	traverseRender();
-	virtual	bool	clip();
+	virtual void traverseRender();
+	virtual bool clip();
 	// @}
 
 	// get num wanted vertices for current frame (& precache clipped triangles)
@@ -104,8 +101,8 @@ public:
 	static void setupVertexBuffer(CVertexBuffer &vb, uint numWantedVertices, IDriver *drv);
 
 	// For Debug purpose
-	void	debugDumpMem(void* &clippedPolyBegin, void* &clippedPolyEnd);
-	void	debugClearClippedPoly();
+	void debugDumpMem(void *&clippedPolyBegin, void *&clippedPolyEnd);
+	void debugClearClippedPoly();
 
 protected:
 	friend class CWaterShape;
@@ -115,37 +112,40 @@ protected:
 	// compute the clipped poly for cards that have vertex shaders
 	void computeClippedPoly();
 	// simple rendering version
-	//void doSimpleRender(IDriver *drv);
+	// void doSimpleRender(IDriver *drv);
 private:
 	static NLMISC::CRefPtr<IDriver> _CurrDrv;
 	CSmartPtr<CTextureEmboss> _EmbossTexture;
 	// Matrix to compute uv of diffuse map
-	NLMISC::CVector2f		  _ColorMapMatColumn0, _ColorMapMatColumn1, _ColorMapMatPos;
-	uint64					  _MatrixUpdateDate;
+	NLMISC::CVector2f _ColorMapMatColumn0, _ColorMapMatColumn1, _ColorMapMatPos;
+	uint64 _MatrixUpdateDate;
 	// vertex buffer for simple rendering
-	static CMaterial		  _WaterMat;
-	static CMaterial		  _SimpleWaterMat;
+	static CMaterial _WaterMat;
+	static CMaterial _SimpleWaterMat;
 	// grid cells that are exactly inside the poly
-	NLMISC::CPolygon2D::TRasterVect	 _Inside;
-	sint							 _MinYInside;
+	NLMISC::CPolygon2D::TRasterVect _Inside;
+	sint _MinYInside;
 	// water surface clipped by frustum
-	NLMISC::CPolygon		   _ClippedPoly;
+	NLMISC::CPolygon _ClippedPoly;
 	// link into list of water model to display
 public:
 	CWaterModel **_Prev;
 	CWaterModel *_Next;
+
 private:
 	// clipped tris of the shape after it has been projected on grid, all packed in a single vector
 	std::vector<NLMISC::CVector2f> _ClippedTris;
 	// for each clipped tri, gives it number of vertices
-	std::vector<uint>		   _ClippedTriNumVerts;
+	std::vector<uint> _ClippedTriNumVerts;
 	// vertex range into global vb for current render
-	uint32					   _StartTri;
-	uint32                     _NumTris;
+	uint32 _StartTri;
+	uint32 _NumTris;
+
 public:
 	// for use by CScene
 	void unlink();
 	void link();
+
 private:
 	void updateDiffuseMapMatrix(bool force = false);
 	uint fillVBHard(void *dataStart, uint startIndex);
@@ -157,17 +157,16 @@ private:
 /// This model can create wave where it is located. It has no display...
 class CWaveMakerModel : public CTransformShape
 {
-	public:
-
+public:
 	CWaveMakerModel();
 
 	// register this model
-	static void		registerBasic();
+	static void registerBasic();
 
 	static CTransform *creator() { return new CWaveMakerModel; }
 
 	// get default tracks
-	virtual ITrack* getDefaultTrack (uint valueId);
+	virtual ITrack *getDefaultTrack(uint valueId);
 
 	/// \name CTransform traverse specialisation
 	// @{
@@ -175,20 +174,18 @@ class CWaveMakerModel : public CTransformShape
 	 *  - call CTransformShape::traverseAnimDetail()
 	 *  - perform perturbation
 	 */
-	virtual void	traverseAnimDetail();
+	virtual void traverseAnimDetail();
 	// @}
 
 protected:
-
-	friend class	CWaveMakerShape;
-	TAnimationTime  _Time;
+	friend class CWaveMakerShape;
+	TAnimationTime _Time;
 };
 
 // tmp for debug
 extern uint8 *waterVBEnd;
 
 } // NL3D
-
 
 #endif // NL_WATER_MODEL_H
 

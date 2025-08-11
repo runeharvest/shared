@@ -17,7 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef INPUT_HANDLER_H
 #define INPUT_HANDLER_H
 
@@ -25,36 +24,35 @@
 #include "nel/gui/event_descriptor.h"
 #include "nel/gui/input_event_listener.h"
 
-namespace NLGUI{
-	
-	/**
-	  @brief The input event entry point of the GUI library.
+namespace NLGUI {
 
-	  Translates the NEL input events and forwards them.
-	*/
-	class CInputHandler
-	{
-	public:
-		CInputHandler();
-		~CInputHandler();
+/**
+  @brief The input event entry point of the GUI library.
 
-		bool handleEvent( const NLMISC::CEvent &evnt );
-		bool handleSetFocusEvent( const NLMISC::CEvent &evnt );
-		bool handleKeyboardEvent( const NLMISC::CEvent &evnt );
-		bool handleMouseEvent( const NLMISC::CEvent &evnt );
-		bool handleMouseMoveEvent( const NLMISC::CEvent &evnt );
-		bool handleMouseButtonDownEvent( const NLMISC::CEvent &evnt );
-		bool handleMouseButtonUpEvent( const NLMISC::CEvent &evnt );
-		bool handleMouseDblClickEvent( const NLMISC::CEvent &evnt );
-		bool handleMouseWheelEvent( const NLMISC::CEvent &evnt );
+  Translates the NEL input events and forwards them.
+*/
+class CInputHandler
+{
+public:
+	CInputHandler();
+	~CInputHandler();
 
-		void setListener( IInputEventListener* listener );
+	bool handleEvent(const NLMISC::CEvent &evnt);
+	bool handleSetFocusEvent(const NLMISC::CEvent &evnt);
+	bool handleKeyboardEvent(const NLMISC::CEvent &evnt);
+	bool handleMouseEvent(const NLMISC::CEvent &evnt);
+	bool handleMouseMoveEvent(const NLMISC::CEvent &evnt);
+	bool handleMouseButtonDownEvent(const NLMISC::CEvent &evnt);
+	bool handleMouseButtonUpEvent(const NLMISC::CEvent &evnt);
+	bool handleMouseDblClickEvent(const NLMISC::CEvent &evnt);
+	bool handleMouseWheelEvent(const NLMISC::CEvent &evnt);
 
-	private:
-		IInputEventListener *listener;
-	};
+	void setListener(IInputEventListener *listener);
+
+private:
+	IInputEventListener *listener;
+};
 
 }
 
 #endif
-

@@ -28,67 +28,67 @@ CVertexNeighborhood vertexNeighborhoodGlobal;
 CVertexNeighborhood::CVertexNeighborhood()
 {
 	// Reserve a table for 1000 points
-	_VectorIndex.reserve (2*AVERAGE_NUM_POINT+AVERAGE_NUM_POINT*5);
+	_VectorIndex.reserve(2 * AVERAGE_NUM_POINT + AVERAGE_NUM_POINT * 5);
 }
 
 // **********************************************************************
 
-void CVertexNeighborhood::build (const PatchMesh& patch)
+void CVertexNeighborhood::build(const PatchMesh &patch)
 {
 	// Resize the table for the index entry
-	_VectorIndex.resize (patch.numVerts*2, 0);
+	_VectorIndex.resize(patch.numVerts * 2, 0);
 
 	// Count number of neighbor by vertex
 	int i;
-	for (i=0; i<patch.numEdges; i++)
+	for (i = 0; i < patch.numEdges; i++)
 	{
-		if (patch.edges[i].v1!=-1)
-			getNeighborCountRef (patch.edges[i].v1)++;
-		if (patch.edges[i].v2!=-1)
-			getNeighborCountRef (patch.edges[i].v2)++;
+		if (patch.edges[i].v1 != -1)
+			getNeighborCountRef(patch.edges[i].v1)++;
+		if (patch.edges[i].v2 != -1)
+			getNeighborCountRef(patch.edges[i].v2)++;
 	}
-	
+
 	// Commpute the offset for each vertices
-	uint finalSize=2*patch.numVerts;
-	for (i=0; i<patch.numVerts; i++)
+	uint finalSize = 2 * patch.numVerts;
+	for (i = 0; i < patch.numVerts; i++)
 	{
 		// Set the offset
-		getNeighborIndexRef (i)=finalSize;
+		getNeighborIndexRef(i) = finalSize;
 
 		// Increment this offset
-		finalSize+=getNeighborCountRef (i);
+		finalSize += getNeighborCountRef(i);
 
 		// Set size to 0
-		getNeighborCountRef (i)=0;
+		getNeighborCountRef(i) = 0;
 	}
 
 	// Resize the table for final size without erasing offsets
-	_VectorIndex.resize (finalSize);
+	_VectorIndex.resize(finalSize);
 
 	// Fill the neighborhood info for each vertex
-	for (i=0; i<patch.numEdges; i++)
+	for (i = 0; i < patch.numEdges; i++)
 	{
-		if (patch.edges[i].v1!=-1)
+		if (patch.edges[i].v1 != -1)
 		{
 			// Get the vertex id
-			uint vertexId=patch.edges[i].v1;
+			uint vertexId = patch.edges[i].v1;
 
 			// Add the edge to the list
-			_VectorIndex[getNeighborIndexRef (vertexId)+getNeighborCountRef (vertexId)]=i;
+			_VectorIndex[getNeighborIndexRef(vertexId) + getNeighborCountRef(vertexId)] = i;
 
 			// Add a vertex in the list
-			getNeighborCountRef (vertexId)++;
+			getNeighborCountRef(vertexId)++;
 		}
-		if (patch.edges[i].v2!=-1)
+		if (patch.edges[i].v2 != -1)
 		{
 			// Get the vertex id
-			uint vertexId=patch.edges[i].v2;
+			uint vertexId = patch.edges[i].v2;
 
 			// Add the edge to the list
-			_VectorIndex[getNeighborIndexRef (vertexId)+getNeighborCountRef (vertexId)]=i;
+			_VectorIndex[getNeighborIndexRef(vertexId) + getNeighborCountRef(vertexId)] = i;
 
 			// Add a vertex in the list
-			getNeighborCountRef (vertexId)++;
+			getNeighborCountRef(vertexId)++;
 		}
 	}
 }

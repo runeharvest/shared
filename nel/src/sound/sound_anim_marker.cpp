@@ -38,13 +38,13 @@ CSoundAnimMarker::~CSoundAnimMarker()
 
 // ********************************************************
 
-void CSoundAnimMarker::play(UAudioMixer* mixer, NL3D::CCluster *cluster, CSoundContext &context)
+void CSoundAnimMarker::play(UAudioMixer *mixer, NL3D::CCluster *cluster, CSoundContext &context)
 {
 	TMarkerSoundSet::iterator first(_Sounds.begin()), last(_Sounds.end());
 
 	for (; first != last; ++first)
 	{
-		USource* source = mixer->createSource((*first), true, NULL, NULL, cluster, &context);
+		USource *source = mixer->createSource((*first), true, NULL, NULL, cluster, &context);
 		if (source != NULL)
 		{
 			source->setRelativeGain(context.RelativeGain);
@@ -56,7 +56,7 @@ void CSoundAnimMarker::play(UAudioMixer* mixer, NL3D::CCluster *cluster, CSoundC
 
 // ********************************************************
 
-void CSoundAnimMarker::addSound(const NLMISC::TStringId& soundName)
+void CSoundAnimMarker::addSound(const NLMISC::TStringId &soundName)
 {
 	pair<TMarkerSoundSet::iterator, bool> inserted;
 	inserted = _Sounds.insert(soundName);
@@ -71,7 +71,7 @@ void CSoundAnimMarker::addSound(const NLMISC::TStringId& soundName)
 void CSoundAnimMarker::removeSound(const NLMISC::TStringId &soundName)
 {
 	TMarkerSoundSet::iterator iter = _Sounds.find(soundName);
-    if (iter != _Sounds.end())
+	if (iter != _Sounds.end())
 	{
 		_Sounds.erase(iter);
 	}
@@ -87,14 +87,12 @@ void CSoundAnimMarker::getSounds(vector<NLMISC::TStringId> &sounds)
 {
 	sounds.insert(sounds.end(), _Sounds.begin(), _Sounds.end());
 
-/*	TMarkerSoundSet::iterator first(_Sounds.begin()), last(_Sounds.end());
-	for (; first != last; ++first)
-	{
-		sounds.push_back((*first).c_str());
-	}
-*/
+	/*	TMarkerSoundSet::iterator first(_Sounds.begin()), last(_Sounds.end());
+	    for (; first != last; ++first)
+	    {
+	        sounds.push_back((*first).c_str());
+	    }
+	*/
 }
-
-
 
 } // namespace NLSOUND

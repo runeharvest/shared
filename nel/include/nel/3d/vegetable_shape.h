@@ -21,11 +21,7 @@
 #include "nel/3d/vertex_buffer.h"
 #include "nel/3d/index_buffer.h"
 
-
-namespace NL3D
-{
-
-
+namespace NL3D {
 
 // ***************************************************************************
 /**
@@ -37,12 +33,16 @@ namespace NL3D
 class CVegetableShapeBuild
 {
 public:
-
 	/** Bend center controls how each vertex is bended.
 	 *	BendCenterNull: For each Center of bend is made on (0,0,0).
 	 *	BendCenterZ: Center of bend is made on (vertx, verty, 0), perfect for "comb-like" vegetation.
 	 */
-	enum	TBendCenterMode	{BendCenterNull=0, BendCenterZ, BendCenterModeCount};
+	enum TBendCenterMode
+	{
+		BendCenterNull = 0,
+		BendCenterZ,
+		BendCenterModeCount
+	};
 
 	/** The standard input vertexBuffer
 	 *	If it has vertexColor, then BendWeight is read from color.R, and scale to take MaxBendWeight at max.
@@ -50,45 +50,42 @@ public:
 	 *	If it has normal, and Lighted==true, then it is lighted.
 	 *	Must have TexCoord0.
 	 */
-	CVertexBuffer		VB;
+	CVertexBuffer VB;
 	/// only triangles of PB are used.
-	CIndexBuffer		PB;
+	CIndexBuffer PB;
 	/// If this shape must be lighted
-	bool				Lighted;
+	bool Lighted;
 	/// if Lighted && PreComputeLighting, lighting is precomputed per instance.
-	bool				PreComputeLighting;
+	bool PreComputeLighting;
 	/// If this shape must be 2Sided
-	bool				DoubleSided;
+	bool DoubleSided;
 	/** If this shape must be AlphaBlended (and hence ZSorted).
 	 *	NB: valid ONLY if (!Lighted || PreComputeLighting) && DoubleSided.
 	 */
-	bool				AlphaBlend;
+	bool AlphaBlend;
 	/** true If this shape must take one sided lighting. ie max(normal, -normal) is computed
-	*	during ligthing compute
+	 *	during ligthing compute
 	 *	NB: valid ONLY if (PreComputeLighting)
 	 */
-	bool				BestSidedPreComputeLighting;
+	bool BestSidedPreComputeLighting;
 	/// The maximum BendWeight to apply.
-	float				MaxBendWeight;
+	float MaxBendWeight;
 	/// The BendCenter mode
-	TBendCenterMode		BendCenterMode;
+	TBendCenterMode BendCenterMode;
 
 public:
 	CVegetableShapeBuild()
 	{
-		Lighted= false;
-		DoubleSided= false;
-		PreComputeLighting= false;
-		AlphaBlend= false;
-		BestSidedPreComputeLighting= false;
-		MaxBendWeight= 0;
-		BendCenterMode= BendCenterNull;
+		Lighted = false;
+		DoubleSided = false;
+		PreComputeLighting = false;
+		AlphaBlend = false;
+		BestSidedPreComputeLighting = false;
+		MaxBendWeight = 0;
+		BendCenterMode = BendCenterNull;
 		NL_SET_IB_NAME(PB, "CVegetableShapeBuild");
 	}
-
 };
-
-
 
 // ***************************************************************************
 /**
@@ -100,55 +97,49 @@ public:
 class CVegetableShape
 {
 public:
-
 	/// Constructor
 	CVegetableShape();
 
 	/**	build a vegetable shape, with a standard shape.
 	 *
 	 */
-	void		build(CVegetableShapeBuild &vbuild);
-
+	void build(CVegetableShapeBuild &vbuild);
 
 	/** load a vegetable shape (.veget), lookup into CPath, and serial
 	 */
-	bool		loadShape(const std::string &shape);
+	bool loadShape(const std::string &shape);
 
 	/// \name Shape def
 	// @{
 
 	/// Type of this shape.
-	bool					Lighted;
-	bool					DoubleSided;
-	bool					PreComputeLighting;
-	bool					AlphaBlend;
-	bool					BestSidedPreComputeLighting;
-	CVegetableShapeBuild::TBendCenterMode			BendCenterMode;
+	bool Lighted;
+	bool DoubleSided;
+	bool PreComputeLighting;
+	bool AlphaBlend;
+	bool BestSidedPreComputeLighting;
+	CVegetableShapeBuild::TBendCenterMode BendCenterMode;
 	/** VertexBuffer of this Shape, ready to be transformed and copied into vegetable manager
 	 *	Format is Pos/Normal/Tex0/Tex1 (no Normal if !Lighted). where Tex1.U==BendWeigth
 	 */
-	CVertexBuffer			VB;
+	CVertexBuffer VB;
 	/// list of triangles index
-	std::vector<uint32>		TriangleIndices;
+	std::vector<uint32> TriangleIndices;
 	// @}
-
 
 	/// \name Temporary for easy Instanciation (correct size)
 	// @{
 	/// For each vertex of the shape, gives the index in the VegetableManager
-	std::vector<uint32>		InstanceVertices;
+	std::vector<uint32> InstanceVertices;
 	// @}
 
-
 	/// serial
-	void		serial(NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 
 private:
 };
 
-
 } // NL3D
-
 
 #endif // NL_VEGETABLE_SHAPE_H
 

@@ -48,12 +48,10 @@ namespace MAX {
 
 CConfig::CConfig()
 {
-
 }
 
 CConfig::~CConfig()
 {
-
 }
 
 std::string CConfig::className() const
@@ -115,12 +113,10 @@ IStorageObject *CConfig::createChunkById(uint16 id, bool container)
 
 CConfig20a0::CConfig20a0()
 {
-
 }
 
 CConfig20a0::~CConfig20a0()
 {
-
 }
 
 std::string CConfig20a0::className() const
@@ -180,12 +176,10 @@ IStorageObject *CConfig20a0::createChunkById(uint16 id, bool container)
 
 CConfig20a0Entry::CConfig20a0Entry()
 {
-
 }
 
 CConfig20a0Entry::~CConfig20a0Entry()
 {
-
 }
 
 std::string CConfig20a0Entry::className() const
@@ -272,12 +266,10 @@ IStorageObject *CConfig20a0Entry::createChunkById(uint16 id, bool container)
 
 CConfigScript::CConfigScript()
 {
-
 }
 
 CConfigScript::~CConfigScript()
 {
-
 }
 
 std::string CConfigScript::className() const
@@ -329,12 +321,10 @@ IStorageObject *CConfigScript::createChunkById(uint16 id, bool container)
 
 CConfigScriptEntry::CConfigScriptEntry()
 {
-
 }
 
 CConfigScriptEntry::~CConfigScriptEntry()
 {
-
 }
 
 std::string CConfigScriptEntry::className() const
@@ -394,12 +384,10 @@ IStorageObject *CConfigScriptEntry::createChunkById(uint16 id, bool container)
 
 CConfigScriptHeader::CConfigScriptHeader()
 {
-
 }
 
 CConfigScriptHeader::~CConfigScriptHeader()
 {
-
 }
 
 std::string CConfigScriptHeader::className() const
@@ -416,8 +404,10 @@ void CConfigScriptHeader::serial(NLMISC::IStream &stream)
 void CConfigScriptHeader::toString(std::ostream &ostream, const std::string &pad) const
 {
 	ostream << "(" << className() << ") { ";
-	ostream << "\n" << pad << "SuperClassID: " << SuperClassID;
-	ostream << "\n" << pad << "ClassID: " << NLMISC::toString(ClassID);
+	ostream << "\n"
+	        << pad << "SuperClassID: " << SuperClassID;
+	ostream << "\n"
+	        << pad << "ClassID: " << NLMISC::toString(ClassID);
 	ostream << " } ";
 }
 
@@ -427,12 +417,10 @@ void CConfigScriptHeader::toString(std::ostream &ostream, const std::string &pad
 
 CConfigScriptMetaContainer::CConfigScriptMetaContainer()
 {
-
 }
 
 CConfigScriptMetaContainer::~CConfigScriptMetaContainer()
 {
-
 }
 
 std::string CConfigScriptMetaContainer::className() const
@@ -506,12 +494,10 @@ IStorageObject *CConfigScriptMetaContainer::createChunkById(uint16 id, bool cont
 
 CConfigScriptMetaString::CConfigScriptMetaString()
 {
-
 }
 
 CConfigScriptMetaString::~CConfigScriptMetaString()
 {
-
 }
 
 std::string CConfigScriptMetaString::className() const

@@ -17,13 +17,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace EGSPD
-{
+namespace EGSPD {
 
 /* -----------------------------------------
-* Inline implementation of CSeason
-* ----------------------------------------- */
-inline const std::string&		CSeason::toString(TSeason v)
+ * Inline implementation of CSeason
+ * ----------------------------------------- */
+inline const std::string &CSeason::toString(TSeason v)
 {
 	if (v < 0 || v >= ___TSeason_useSize)
 	{
@@ -36,17 +35,17 @@ inline const std::string&		CSeason::toString(TSeason v)
 	}
 	return _StrTable[v];
 }
-inline CSeason::TSeason			CSeason::fromString(const std::string& v)
+inline CSeason::TSeason CSeason::fromString(const std::string &v)
 {
 	if (!_Initialised)
 	{
 		init();
 	}
-	if(v==_UnknownString)
+	if (v == _UnknownString)
 	{
 		return Unknown;
 	}
-	const std::map<std::string, TSeason>::const_iterator	it = _ValueMap.find(NLMISC::toLowerAscii(v));
+	const std::map<std::string, TSeason>::const_iterator it = _ValueMap.find(NLMISC::toLowerAscii(v));
 	if (it == _ValueMap.end())
 	{
 		nlwarning("TSeason::toString(): string '%s' is not matched, 'Unknown' enum value returned", v.c_str());
@@ -55,6 +54,5 @@ inline CSeason::TSeason			CSeason::fromString(const std::string& v)
 	return (*it).second;
 }
 // End of inline implementation of CSeason
-
 
 } // End of EGSPD

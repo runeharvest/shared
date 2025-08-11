@@ -20,14 +20,13 @@
 #ifndef LUA_LOADLIB_H
 #define LUA_LOADLIB_H
 
-extern "C"
-{
+extern "C" {
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
 }
 
 // load the lua dll, return 1 on success
-//int loadLuaDLL();
+// int loadLuaDLL();
 
 #endif

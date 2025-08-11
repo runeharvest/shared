@@ -22,21 +22,18 @@
 #include "nel/sound/listener_user.h"
 #include "nel/sound/audio_mixer_user.h"
 
-
 namespace NLSOUND {
-
 
 /*
  * Set the position vector (default: (0,0,0)) (3D mode only)
  */
-void	CListenerUser::setPos( const NLMISC::CVector& pos )
+void CListenerUser::setPos(const NLMISC::CVector &pos)
 {
 	// Change position
-	_DrvListener->setPos( pos );
+	_DrvListener->setPos(pos);
 
 	// Select environment effect
-	CAudioMixerUser::instance()->applyListenerMove( pos );
+	CAudioMixerUser::instance()->applyListenerMove(pos);
 }
-
 
 } // NLSOUND

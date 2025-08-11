@@ -22,22 +22,21 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // Some compilation check: force Visual to compile the template
-CKeyTCBFloat		ktoto0;
-CKeyTCBVector		ktoto1;
-CKeyTCBQuat			ktoto2;
+CKeyTCBFloat ktoto0;
+CKeyTCBVector ktoto1;
+CKeyTCBQuat ktoto2;
 
-CKeyBezierFloat		ktoto4;
-CKeyBezierVector	ktoto5;
-CKeyBezierQuat		ktoto6;
+CKeyBezierFloat ktoto4;
+CKeyBezierVector ktoto5;
+CKeyBezierQuat ktoto6;
 
-CKeyString			ktoto8;
-CKeyBool			ktoto9;
-CKeyFloat			ktoto10;
-CKeyVector			ktoto11;
-CKeyQuat			ktoto12;
+CKeyString ktoto8;
+CKeyBool ktoto9;
+CKeyFloat ktoto10;
+CKeyVector ktoto11;
+CKeyQuat ktoto12;
 
 } // NL3D

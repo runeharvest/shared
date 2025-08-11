@@ -29,13 +29,11 @@
 #include "local_retriever.h"
 #include "edge_quad.h"
 
-namespace NLPACS
-{
+namespace NLPACS {
 class CCollisionSurfaceTemp;
 
 /// Precision of Snap. 1/1024 meter. If you change this, CEdgeCollide::testPointMove() won't work.
-const	float	SnapPrecision= 1024;
-
+const float SnapPrecision = 1024;
 
 /**
  * An instance of a local retriever.
@@ -53,15 +51,20 @@ public:
 	class CLink
 	{
 	public:
-		uint16				Instance;
-		uint16				BorderChainId;
-		uint16				ChainId;
-		uint16				SurfaceId;
+		uint16 Instance;
+		uint16 BorderChainId;
+		uint16 ChainId;
+		uint16 SurfaceId;
 		CLink() { reset(); }
-		void	reset() { Instance = 0xFFFF; BorderChainId = 0xFFFF; ChainId = 0xFFFF; SurfaceId = 0xFFFF; }
-		void	serial(NLMISC::IStream &f) { f.serial(Instance, BorderChainId, ChainId, SurfaceId); }
+		void reset()
+		{
+			Instance = 0xFFFF;
+			BorderChainId = 0xFFFF;
+			ChainId = 0xFFFF;
+			SurfaceId = 0xFFFF;
+		}
+		void serial(NLMISC::IStream &f) { f.serial(Instance, BorderChainId, ChainId, SurfaceId); }
 	};
-
 
 protected:
 	friend class CGlobalRetriever;
@@ -74,14 +77,19 @@ protected:
 	 */
 	struct CAStarNodeAccess
 	{
-		sint32	InstanceId;
-		uint16	NodeId;
-		uint16	ThroughChain;
+		sint32 InstanceId;
+		uint16 NodeId;
+		uint16 ThroughChain;
 
-		CAStarNodeAccess() :InstanceId(-1), NodeId(0xffff), ThroughChain(0xffff) {}
+		CAStarNodeAccess()
+		    : InstanceId(-1)
+		    , NodeId(0xffff)
+		    , ThroughChain(0xffff)
+		{
+		}
 
-		bool	operator == (const CAStarNodeAccess &node) const { return InstanceId == node.InstanceId && NodeId == node.NodeId; }
-		bool	operator != (const CAStarNodeAccess &node) const { return InstanceId != node.InstanceId || NodeId != node.NodeId; }
+		bool operator==(const CAStarNodeAccess &node) const { return InstanceId == node.InstanceId && NodeId == node.NodeId; }
+		bool operator!=(const CAStarNodeAccess &node) const { return InstanceId != node.InstanceId || NodeId != node.NodeId; }
 	};
 
 	/**
@@ -93,36 +101,36 @@ protected:
 	struct CAStarNodeInfo
 	{
 		/// The position of this node.
-		NLMISC::CVector2f	Position;
+		NLMISC::CVector2f Position;
 
 		/// The cost to this node.
-		float				Cost;
-		float				F;
+		float Cost;
+		float F;
 
 		/// The parent link.
-		CAStarNodeAccess	Parent;
+		CAStarNodeAccess Parent;
 	};
 
 	///
-	std::vector<CAStarNodeInfo>			_NodesInformation;
+	std::vector<CAStarNodeInfo> _NodesInformation;
 
 protected:
 	/// The id of this instance.
-	sint32								_InstanceId;
+	sint32 _InstanceId;
 
 	/// The id of the retrievable surface pattern.
-	sint32								_RetrieverId;
+	sint32 _RetrieverId;
 
 	/// The type of the instance (see CLocalRetriever::_Type)
-	CLocalRetriever::EType				_Type;
+	CLocalRetriever::EType _Type;
 
 	/// @name Instance displacement.
 	// @{
-	uint8								_Orientation;
-	NLMISC::CVector						_Origin;
+	uint8 _Orientation;
+	NLMISC::CVector _Origin;
 
 	/// The BBox of the instance.
-	NLMISC::CAABBox						_BBox;
+	NLMISC::CAABBox _BBox;
 
 	// @}
 
@@ -130,19 +138,19 @@ protected:
 	// @{
 
 	/// The instance ids of the neighbors.
-	std::vector<sint32>					_Neighbors;
+	std::vector<sint32> _Neighbors;
 
 	/// The neighbor chains on the border.
-	std::vector<CLink>					_BorderChainLinks;
+	std::vector<CLink> _BorderChainLinks;
 	// @}
 
 	/// @name Interior instance coolision management.
 	// @{
 
 	/** The edges of the exterior collision mesh, stored in a quad grid.
-		The edges are stored in the instance rather than in the local retriever.
+	    The edges are stored in the instance rather than in the local retriever.
 	*/
-	CEdgeQuad							_ExteriorEdgeQuad;
+	CEdgeQuad _ExteriorEdgeQuad;
 
 	// @}
 
@@ -151,36 +159,36 @@ public:
 	CRetrieverInstance();
 
 	/// Resets the instance. This doesn't affect any neighboring instances...
-	void								reset();
+	void reset();
 	/// Resets links to the given instance. This doesn't affect any neighbor.
-	void								resetLinks(uint32 id);
+	void resetLinks(uint32 id);
 	/// Resets links of the instance. This doesn't affect any neighboring instances...
-	void								resetLinks();
+	void resetLinks();
 
 	/// Returns the id of this instance.
-	sint32								getInstanceId() const { return _InstanceId; }
+	sint32 getInstanceId() const { return _InstanceId; }
 	/// Returns the id of the retriever associated to this instance.
-	sint32								getRetrieverId() const { return _RetrieverId; }
+	sint32 getRetrieverId() const { return _RetrieverId; }
 	/// Returns the orientation of the instance in relation to the retriever.
-	uint8								getOrientation() const { return _Orientation; }
+	uint8 getOrientation() const { return _Orientation; }
 	/// Returns the origin translation of this instance.
-	NLMISC::CVector						getOrigin() const { return _Origin; }
+	NLMISC::CVector getOrigin() const { return _Origin; }
 	/// Returns the type of the instance
-	CLocalRetriever::EType				getType() const { return _Type; }
+	CLocalRetriever::EType getType() const { return _Type; }
 
 	/// Gets the neighbors.
-	std::vector<sint32>					getNeighbors() const { return _Neighbors; }
+	std::vector<sint32> getNeighbors() const { return _Neighbors; }
 	/// Gets the id of the neighbor on the edge.
-	sint32								getNeighbor(uint n) const { return _Neighbors[n]; }
+	sint32 getNeighbor(uint n) const { return _Neighbors[n]; }
 
 	/// Gets the ids of the neighbor chains on the given edge.
-	const std::vector<CLink>			&getBorderChainLinks() const { return _BorderChainLinks; }
+	const std::vector<CLink> &getBorderChainLinks() const { return _BorderChainLinks; }
 	/// Gets the id of the nth neighbor chain on the given edge.
-	CLink								getBorderChainLink(uint n) const { return _BorderChainLinks[n]; }
+	CLink getBorderChainLink(uint n) const { return _BorderChainLinks[n]; }
 	/// Resets border chains links
-	void								resetBorderChainLinks(const std::vector<uint> &links);
+	void resetBorderChainLinks(const std::vector<uint> &links);
 	/// Forces border chain link
-	void								forceBorderChainLink(uint border, uint frontInstance, uint frontBorder, uint frontChain, uint frontSurface)
+	void forceBorderChainLink(uint border, uint frontInstance, uint frontBorder, uint frontChain, uint frontSurface)
 	{
 		if (border >= _BorderChainLinks.size())
 		{
@@ -188,10 +196,7 @@ public:
 			return;
 		}
 
-		if (_BorderChainLinks[border].Instance != 0xffff ||
-			_BorderChainLinks[border].BorderChainId != 0xffff ||
-			_BorderChainLinks[border].ChainId != 0xffff ||
-			_BorderChainLinks[border].SurfaceId != 0xffff)
+		if (_BorderChainLinks[border].Instance != 0xffff || _BorderChainLinks[border].BorderChainId != 0xffff || _BorderChainLinks[border].ChainId != 0xffff || _BorderChainLinks[border].SurfaceId != 0xffff)
 		{
 			nlwarning("forceBorderChainLink(): forces border %d on instance %d whereas link is initialised yet, incoherences may appear!", border, _InstanceId);
 		}
@@ -203,76 +208,74 @@ public:
 	}
 
 	/// Returns the number of the edge on the instance corresponding to the edge on the retriever.
-	uint8								getInstanceEdge(uint8 retrieverEdge) const { return (retrieverEdge+_Orientation)%4; }
+	uint8 getInstanceEdge(uint8 retrieverEdge) const { return (retrieverEdge + _Orientation) % 4; }
 	/// Returns the number of the edge on the retriever corresponding to the edge on the instance.
-	uint8								getRetrieverEdge(uint8 instanceEdge) const { return (instanceEdge+4-_Orientation)%4; }
+	uint8 getRetrieverEdge(uint8 instanceEdge) const { return (instanceEdge + 4 - _Orientation) % 4; }
 
 	/// Returns the bbox of the instance (using the translation and orientation of the retriever)
-	const NLMISC::CAABBox				&getBBox() const { return _BBox; }
+	const NLMISC::CAABBox &getBBox() const { return _BBox; }
 
 	/// Inits the instance (after a serial for instance.)
-	void								init(const CLocalRetriever &retriever);
+	void init(const CLocalRetriever &retriever);
 
 	/** Inits the edgequad (only for Interior instances, and only after all the landscape
 	 * instances have been built.
 	 */
-	void								initEdgeQuad(CGlobalRetriever &gr);
+	void initEdgeQuad(CGlobalRetriever &gr);
 	/// link the edge quad of the interior with the landscape instances
-	void								linkEdgeQuad(CGlobalRetriever &gr);
+	void linkEdgeQuad(CGlobalRetriever &gr);
 
 	/// Builds the instance.
-	void								make(sint32 instanceId, sint32 retrieverId, const CLocalRetriever &retriever,
-											 uint8 orientation, const NLMISC::CVector &origin);
+	void make(sint32 instanceId, sint32 retrieverId, const CLocalRetriever &retriever,
+	    uint8 orientation, const NLMISC::CVector &origin);
 
 	/// Links the instance to a given neighbor on the given edge.
-	void								link(CRetrieverInstance &neighbor,
-											 const std::vector<CLocalRetriever> &retrievers);
+	void link(CRetrieverInstance &neighbor,
+	    const std::vector<CLocalRetriever> &retrievers);
 
 	/// Unlinks the instance. The neighbor instance are AFFECTED.
-	void								unlink(std::vector<CRetrieverInstance> &instances);
-
+	void unlink(std::vector<CRetrieverInstance> &instances);
 
 	/**
 	 * Retrieves the position in the instance from an estimated position.
 	 * WARNING: the estimated position is a GLOBAL position, and the returned position
 	 * is a LOCAL position (to the retriever).
 	 */
-//	CLocalRetriever::CLocalPosition		retrievePosition(const NLMISC::CVector &estimated, const CLocalRetriever &retriever, CCollisionSurfaceTemp &cst) const;
-	void								retrievePosition(const NLMISC::CVector &estimated, const CLocalRetriever &retriever, CCollisionSurfaceTemp &cst, bool sortByDistance=true) const;
+	//	CLocalRetriever::CLocalPosition		retrievePosition(const NLMISC::CVector &estimated, const CLocalRetriever &retriever, CCollisionSurfaceTemp &cst) const;
+	void retrievePosition(const NLMISC::CVector &estimated, const CLocalRetriever &retriever, CCollisionSurfaceTemp &cst, bool sortByDistance = true) const;
 	/**
 	 * Retrieves the position in the instance from an estimated position (double instead.)
 	 * WARNING: the estimated position is a GLOBAL position, and the returned position
 	 * is a LOCAL position (to the retriever).
 	 */
-	void								retrievePosition(const NLMISC::CVectorD &estimated, const CLocalRetriever &retriever, CCollisionSurfaceTemp &cst, bool sortByDistance=true) const;
+	void retrievePosition(const NLMISC::CVectorD &estimated, const CLocalRetriever &retriever, CCollisionSurfaceTemp &cst, bool sortByDistance = true) const;
 	/**
 	 * Retrieves the position in the instance from an estimated position (double instead.)
 	 * WARNING: the estimated position is a GLOBAL position, and the returned position
 	 * is a LOCAL position (to the retriever).
 	 */
-	//void								retrieveAccuratePosition(const NLMISC::CVectorD &estimated, const CLocalRetriever &retriever, CCollisionSurfaceTemp &cst, ) const;
+	// void								retrieveAccuratePosition(const NLMISC::CVectorD &estimated, const CLocalRetriever &retriever, CCollisionSurfaceTemp &cst, ) const;
 
 	/// For the interior instances, snaps the point to the ground.
-	void								snapToInteriorGround(ULocalPosition &position, const CLocalRetriever &retriever) const;
+	void snapToInteriorGround(ULocalPosition &position, const CLocalRetriever &retriever) const;
 
 	///
-	void								snap(ULocalPosition &position, const CLocalRetriever &retriever) const;
+	void snap(ULocalPosition &position, const CLocalRetriever &retriever) const;
 
 	/// Serialises this CRetrieverInstance.
-	void								serial(NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 
 	/// Computes the position in the local axis of the retriever from a global position.
-	NLMISC::CVector						getLocalPosition(const NLMISC::CVector &globalPosition) const;
+	NLMISC::CVector getLocalPosition(const NLMISC::CVector &globalPosition) const;
 	/// Computes the position in the local axis of the retriever from a global position.
-	NLMISC::CVector						getLocalPosition(const NLMISC::CVectorD &globalPosition) const;
+	NLMISC::CVector getLocalPosition(const NLMISC::CVectorD &globalPosition) const;
 	/// Computes the position in the global axis from a local position (in the retriever axis).
-	NLMISC::CVector						getGlobalPosition(const NLMISC::CVector &localPosition) const;
+	NLMISC::CVector getGlobalPosition(const NLMISC::CVector &localPosition) const;
 	/// Computes the position (as double) in the global axis from a local position (in the retriever axis).
-	NLMISC::CVectorD					getDoubleGlobalPosition(const NLMISC::CVector &localPosition) const;
+	NLMISC::CVectorD getDoubleGlobalPosition(const NLMISC::CVector &localPosition) const;
 
 	/// Returns the bbox of the instance.
-//	NLMISC::CAABBox						getBBox() { return _BBox; }
-
+	//	NLMISC::CAABBox						getBBox() { return _BBox; }
 
 	/// \name Vector Snapping.
 	// @{
@@ -280,18 +283,18 @@ public:
 	 * Doing this, we are sure we have precision of 9+10 bits, which is enough for 24 bits float precision.
 	 * NB: z is not snapped.
 	 */
-	static void	snapVector(CVector &v)
+	static void snapVector(CVector &v)
 	{
-		v.x= (float)floor(v.x*SnapPrecision)/SnapPrecision;
-		v.y= (float)floor(v.y*SnapPrecision)/SnapPrecision;
+		v.x = (float)floor(v.x * SnapPrecision) / SnapPrecision;
+		v.y = (float)floor(v.y * SnapPrecision) / SnapPrecision;
 	}
 	/** Snap a vector at 1mm (1/1024). v must be a local position (ie range from -80 to +240).
 	 * Doing this, we are sure we have precision of 9+10 bits, which is enough for 24 bits float precision.
 	 */
-	static void	snapVector(CVector2f &v)
+	static void snapVector(CVector2f &v)
 	{
-		v.x= (float)floor(v.x*SnapPrecision)/SnapPrecision;
-		v.y= (float)floor(v.y*SnapPrecision)/SnapPrecision;
+		v.x = (float)floor(v.x * SnapPrecision) / SnapPrecision;
+		v.y = (float)floor(v.y * SnapPrecision) / SnapPrecision;
 	}
 	// @}
 
@@ -299,13 +302,13 @@ public:
 	// @{
 
 	/** Test for collisions with the exterior mesh of an interior instance.
-		This only works for interior instances !!
-		see also testCollision() in CLocalRetriever
+	    This only works for interior instances !!
+	    see also testCollision() in CLocalRetriever
 	*/
-	void								testExteriorCollision(CCollisionSurfaceTemp &cst,
-															  const NLMISC::CAABBox &bboxMoveLocal,
-															  const NLMISC::CVector2f &transBase,
-															  const CLocalRetriever &localRetriever) const;
+	void testExteriorCollision(CCollisionSurfaceTemp &cst,
+	    const NLMISC::CAABBox &bboxMoveLocal,
+	    const NLMISC::CVector2f &transBase,
+	    const CLocalRetriever &localRetriever) const;
 
 	// @}
 };

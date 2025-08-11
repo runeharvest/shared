@@ -25,12 +25,12 @@
 
 #if (MAX_VERSION_MAJOR < 15)
 #define GET_OBJECT_NAME_CONST
-#define NOTIFY_REF_PARAMS Interval changeInt, RefTargetHandle hTarget, PartID& partID,  RefMessage message
+#define NOTIFY_REF_PARAMS Interval changeInt, RefTargetHandle hTarget, PartID &partID, RefMessage message
 #define NOTIFY_REF_PROPAGATE , BOOL propagate
 #define nl_p_end end
 #else
 #define GET_OBJECT_NAME_CONST const
-#define NOTIFY_REF_PARAMS const Interval &changeInt, RefTargetHandle hTarget, PartID& partID,  RefMessage message, BOOL propagate
+#define NOTIFY_REF_PARAMS const Interval &changeInt, RefTargetHandle hTarget, PartID &partID, RefMessage message, BOOL propagate
 #define nl_p_end p_end
 #endif
 
@@ -55,7 +55,7 @@ static TSTR MaxTStrFromUtf8(const std::string &src)
 	return dst;
 }
 
-static std::string MaxTStrToUtf8(const TSTR& src)
+static std::string MaxTStrToUtf8(const TSTR &src)
 {
 #if (MAX_VERSION_MAJOR < 15)
 	return NLMISC::tStrToUtf8(src.data());

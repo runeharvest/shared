@@ -30,8 +30,13 @@ using namespace NLMISC;
 namespace NLSOUND {
 
 CListenerXAudio2::CListenerXAudio2(CSoundDriverXAudio2 *soundDriver)
-: _DryVoice(NULL), _FilterVoice(NULL), _ListenerOk(false), _SoundDriver(soundDriver), 
-_DopplerScaler(1.0f), _Pos(0.0f, 0.0f, 0.0f), _RolloffScaler(1.0f)
+    : _DryVoice(NULL)
+    , _FilterVoice(NULL)
+    , _ListenerOk(false)
+    , _SoundDriver(soundDriver)
+    , _DopplerScaler(1.0f)
+    , _Pos(0.0f, 0.0f, 0.0f)
+    , _RolloffScaler(1.0f)
 {
 	nlwarning(NLSOUND_XAUDIO2_PREFIX "Initializing CListenerXAudio2");
 
@@ -55,10 +60,20 @@ _DopplerScaler(1.0f), _Pos(0.0f, 0.0f, 0.0f), _RolloffScaler(1.0f)
 	soundDriver->getMasteringVoice()->GetVoiceDetails(&voice_details);
 
 	if (FAILED(hr = soundDriver->getXAudio2()->CreateSubmixVoice(&_DryVoice, voice_details.InputChannels, voice_details.InputSampleRate, 0, 9010, NULL, NULL)))
-		{ release(); _SoundDriver = NULL; throw ESoundDriver(NLSOUND_XAUDIO2_PREFIX "FAILED CreateSubmixVoice _DryVoice!"); return; }
+	{
+		release();
+		_SoundDriver = NULL;
+		throw ESoundDriver(NLSOUND_XAUDIO2_PREFIX "FAILED CreateSubmixVoice _DryVoice!");
+		return;
+	}
 
 	if (FAILED(hr = soundDriver->getXAudio2()->CreateSubmixVoice(&_FilterVoice, voice_details.InputChannels, voice_details.InputSampleRate, 0, 9000, NULL, NULL)))
-		{ release(); _SoundDriver = NULL; throw ESoundDriver(NLSOUND_XAUDIO2_PREFIX "FAILED CreateSubmixVoice _FilterVoice!"); return; }
+	{
+		release();
+		_SoundDriver = NULL;
+		throw ESoundDriver(NLSOUND_XAUDIO2_PREFIX "FAILED CreateSubmixVoice _FilterVoice!");
+		return;
+	}
 
 	XAUDIO2_VOICE_SENDS voiceSends;
 	XAUDIO2_SEND_DESCRIPTOR sendDescriptor;
@@ -67,7 +82,7 @@ _DopplerScaler(1.0f), _Pos(0.0f, 0.0f, 0.0f), _RolloffScaler(1.0f)
 	sendDescriptor.Flags = 0;
 	sendDescriptor.pOutputVoice = _DryVoice;
 	_FilterVoice->SetOutputVoices(&voiceSends);
-	
+
 	_ListenerOk = true;
 }
 
@@ -79,8 +94,13 @@ CListenerXAudio2::~CListenerXAudio2()
 	if (soundDriver) soundDriver->removeListener(this);
 }
 
-#define NLSOUND_XAUDIO2_RELEASE_EX(pointer, command) if (_ListenerOk) nlassert(pointer); \
-	if (pointer) { command; pointer = NULL; }
+#define NLSOUND_XAUDIO2_RELEASE_EX(pointer, command) \
+	if (_ListenerOk) nlassert(pointer);              \
+	if (pointer)                                     \
+	{                                                \
+		command;                                     \
+		pointer = NULL;                              \
+	}
 
 void CListenerXAudio2::release()
 {
@@ -93,7 +113,7 @@ void CListenerXAudio2::release()
 /// \name Listener properties
 //@{
 /// Set the position vector (default: (0,0,0)) (3D mode only)
-void CListenerXAudio2::setPos(const NLMISC::CVector& pos)
+void CListenerXAudio2::setPos(const NLMISC::CVector &pos)
 {
 	_Pos = pos;
 	NLSOUND_XAUDIO2_X3DAUDIO_VECTOR_FROM_VECTOR(_Listener.Position, pos);
@@ -108,19 +128,19 @@ const NLMISC::CVector &CListenerXAudio2::getPos() const
 }
 
 /// Set the velocity vector (3D mode only, ignored in stereo mode) (default: (0,0,0))
-void CListenerXAudio2::setVelocity(const NLMISC::CVector& vel)
+void CListenerXAudio2::setVelocity(const NLMISC::CVector &vel)
 {
 	NLSOUND_XAUDIO2_X3DAUDIO_VECTOR_FROM_VECTOR(_Listener.Velocity, vel);
 }
 
 /// Get the velocity vector
-void CListenerXAudio2::getVelocity(NLMISC::CVector& vel) const
+void CListenerXAudio2::getVelocity(NLMISC::CVector &vel) const
 {
 	NLSOUND_XAUDIO2_VECTOR_FROM_X3DAUDIO_VECTOR(vel, _Listener.Velocity);
 }
 
 /// Set the orientation vectors (3D mode only, ignored in stereo mode) (default: (0,1,0), (0,0,-1))
-void CListenerXAudio2::setOrientation(const NLMISC::CVector& front, const NLMISC::CVector& up)
+void CListenerXAudio2::setOrientation(const NLMISC::CVector &front, const NLMISC::CVector &up)
 {
 	// nldebug("--- orientation --- %s --- %s ---", front.toString().c_str(), up.toString().c_str());
 
@@ -129,7 +149,7 @@ void CListenerXAudio2::setOrientation(const NLMISC::CVector& front, const NLMISC
 }
 
 /// Get the orientation vectors
-void CListenerXAudio2::getOrientation(NLMISC::CVector& front, NLMISC::CVector& up) const
+void CListenerXAudio2::getOrientation(NLMISC::CVector &front, NLMISC::CVector &up) const
 {
 	NLSOUND_XAUDIO2_VECTOR_FROM_X3DAUDIO_VECTOR(front, _Listener.OrientFront);
 	NLSOUND_XAUDIO2_VECTOR_FROM_X3DAUDIO_VECTOR(up, _Listener.OrientTop);

@@ -61,7 +61,7 @@ private:
 
 	typedef std::map<std::string, const CStreamedPackage::CEntry *> TEntries;
 	TEntries m_Entries;
-	
+
 }; /* class CStreamedPackageManager */
 
 } /* namespace NLMISC */

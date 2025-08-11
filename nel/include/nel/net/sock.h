@@ -24,11 +24,10 @@
 #include "nel/misc/mutex.h"
 #include "nel/misc/atomic.h"
 #include "inet_host.h"
-//#include <sstream>
+// #include <sstream>
 
 /// This namespace contains all network class
 namespace NLNET {
-
 
 /**
  * Network exceptions
@@ -43,46 +42,51 @@ struct ESocket : public NLMISC::Exception
 	 * where the address should be written. Moreover, the length of reason plus
 	 * the length of the address when displayed by asString() should no exceed 256.
 	 */
-	ESocket( const char *reason="", bool systemerror=true, CInetHost *addr=NULL );
+	ESocket(const char *reason = "", bool systemerror = true, CInetHost *addr = NULL);
 };
-
 
 /// Exception raised when connect() fails
 struct ESocketConnectionFailed : public ESocket
 {
-	ESocketConnectionFailed( CInetHost addr ) : ESocket( "Connection to %s failed", true, &addr ) {}
+	ESocketConnectionFailed(CInetHost addr)
+	    : ESocket("Connection to %s failed", true, &addr)
+	{
+	}
 };
-
 
 /// Exception raised when a connection is gracefully closed by peer
 struct ESocketConnectionClosed : public ESocket
 {
-	ESocketConnectionClosed() : ESocket( "Connection closed" ) {}
+	ESocketConnectionClosed()
+	    : ESocket("Connection closed")
+	{
+	}
 };
-
 
 /// Exception raised when an unauthorized access has been done
 struct EAccessDenied : public ESocket
 {
-	EAccessDenied( std::string s ): ESocket( (std::string("Access denied: ")+s).c_str(), false ) {}
+	EAccessDenied(std::string s)
+	    : ESocket((std::string("Access denied: ") + s).c_str(), false)
+	{
+	}
 };
-
 
 /// Exception raised when a the NS does not find the service looked-up
 struct EServiceNotFound : public ESocket
 {
-	EServiceNotFound( std::string s ): ESocket( (std::string("Service not found: ")+s).c_str(), false ) {}
+	EServiceNotFound(std::string s)
+	    : ESocket((std::string("Service not found: ") + s).c_str(), false)
+	{
+	}
 };
 
-
-//typedef SOCKET;
+// typedef SOCKET;
 #ifdef NL_OS_WINDOWS
-	typedef uint SOCKET;
+typedef uint SOCKET;
 #elif defined NL_OS_UNIX
-	typedef int SOCKET;
+typedef int SOCKET;
 #endif
-
-
 
 /**
  * CSock: base socket class.
@@ -116,29 +120,34 @@ struct EServiceNotFound : public ESocket
 class CSock
 {
 public:
-
-	enum TSockResult { Ok, WouldBlock, ConnectionClosed, Error };
+	enum TSockResult
+	{
+		Ok,
+		WouldBlock,
+		ConnectionClosed,
+		Error
+	};
 
 	/// Initialize the network engine, if it is not already done
-	static void			initNetwork();
+	static void initNetwork();
 
 	/// Releases the network engine
-	static void			releaseNetwork();
+	static void releaseNetwork();
 
 	/** Returns the code of the last error that has occurred.
 	 * Note: This code is platform-dependant. On Unix, it is errno; on Windows it is the Winsock error code.
 	 * See also errorString()
 	 */
-	static uint			getLastError();
+	static uint getLastError();
 
 	/// Returns a string explaining the network error (see getLastError())
-	static std::string	errorString( uint errorcode );
+	static std::string errorString(uint errorcode);
 
 	/// Change the time out value used in getDataAvailable(), which is 0 by default
-	void				setTimeOutValue( long sec, long ms )
+	void setTimeOutValue(long sec, long ms)
 	{
 		_TimeoutS = sec;
-		if ( ms > 999 )
+		if (ms > 999)
 			ms = 999;
 		_TimeoutUs = ms * 1000;
 	}
@@ -152,34 +161,33 @@ public:
 	 * - If addr is not valid, an exception ESocket is thrown
 	 * - If connect() fails for another reason, an exception ESocketConnectionFailed is thrown
 	 */
-	virtual void		connect( const CInetHost& addrs );
+	virtual void connect(const CInetHost &addrs);
 
 	/** Sets the socket in nonblocking mode. Call this method *after* connect(), otherwise you will get
 	 * an "would block" error (10035 on Windows). In nonblocking mode, use received() and sent() instead of receive() and send()
 	 */
-	void				setNonBlockingMode ( bool bm );
+	void setNonBlockingMode(bool bm);
 
 	/// Returns the nonblocking mode
-	bool				nonBlockingMode() const { return _NonBlocking; }
+	bool nonBlockingMode() const { return _NonBlocking; }
 
 	/** Closes the socket (without shutdown)
 	 * In general you don't need to call this method. But you can call it to:
 	 * - close a listening socket (i.e. stop accepting connections), or
 	 * - stop a select() in progress in another thread (in this case, just calling the destructor is not enough)
 	 */
-	virtual void		close();
+	virtual void close();
 
 	/// Destructor (shutdown + close)
 	virtual ~CSock();
 
 	//@}
 
-
 	/// @name Receiving data
 	//@{
 
 	/// Checks if there is some data to receive, waiting (blocking) at most for the time out value.
-	bool				dataAvailable();
+	bool dataAvailable();
 
 	/** Receive a partial or an entire block of data, depending on nonblocking mode.
 	 *
@@ -198,10 +206,9 @@ public:
 	 * - the return value is CSock::Error or an ESocket exception is thrown.
 	 * You may want to close the connection manually.
 	 */
-	CSock::TSockResult	receive( uint8 *buffer, uint32& len, bool throw_exception=true );
+	CSock::TSockResult receive(uint8 *buffer, uint32 &len, bool throw_exception = true);
 
 	//@}
-
 
 	/// @name Sending data
 	//@{
@@ -216,109 +223,103 @@ public:
 	 *
 	 * \return CSock::Ok or CSock::Error (in case of failure).
 	 * When throw_exception is true, the method throws an ESocket exception in case of failure.
-     */
-	CSock::TSockResult	send( const uint8 *buffer, uint32& len, bool throw_exception=true );
+	 */
+	CSock::TSockResult send(const uint8 *buffer, uint32 &len, bool throw_exception = true);
 
 	//@}
-
 
 	/// @name Properties
 	//@{
 
 	/// Returns if the socket is connected (volatile)
-	bool				connected() { return _Connected; }
+	bool connected() { return _Connected; }
 
 	/// Returns a const reference on the local address
-	const CInetAddress&	localAddr() const {	return _LocalAddr; }
+	const CInetAddress &localAddr() const { return _LocalAddr; }
 
 	/// Returns the address of the remote host
-	const CInetAddress&	remoteAddr() const { return _RemoteAddr; }
+	const CInetAddress &remoteAddr() const { return _RemoteAddr; }
 
 	/// Returns the socket descriptor
-	SOCKET				descriptor() const { return _Sock; }
+	SOCKET descriptor() const { return _Sock; }
 
 	/// Returns the time out value in millisecond
-	uint32				timeOutValue() const { return _TimeoutS*1000 + _TimeoutUs/1000; }
+	uint32 timeOutValue() const { return _TimeoutS * 1000 + _TimeoutUs / 1000; }
 
 	//@}
 
 	/// Returns the number of bytes received since the latest connection
-	uint64				bytesReceived() const { return _BytesReceived; }
+	uint64 bytesReceived() const { return _BytesReceived; }
 
 	/// Returns the number of bytes sent since the latest connection
-	uint64				bytesSent() const { return _BytesSent; }
+	uint64 bytesSent() const { return _BytesSent; }
 
 	/// Sets the send buffer size
-	void				setSendBufferSize( sint32 size );
+	void setSendBufferSize(sint32 size);
 
 	/// Gets the send buffer size
-	sint32				getSendBufferSize();
+	sint32 getSendBufferSize();
 
 protected:
-
 	/**
 	 * Constructor.
 	 * \param logging Disable logging if the server socket object is used by the logging system, to avoid infinite recursion
 	 */
-	CSock( bool logging = true );
+	CSock(bool logging = true);
 
 	/// Construct a CSock object using an existing connected socket descriptor and its associated remote address
-	CSock( SOCKET sock, const CInetAddress& remoteaddr );
+	CSock(SOCKET sock, const CInetAddress &remoteaddr);
 
 	/// Creates the socket and get a valid descriptor
-	void			createSocket( int type, int protocol );
+	void createSocket(int type, int protocol);
 
 	/// Sets the local address
-	void			setLocalAddress();
+	void setLocalAddress();
 
 	/// Socket descriptor
-	SOCKET			_Sock;
+	SOCKET _Sock;
 
 	/// Address of local host (valid if connected)
-	CInetAddress	_LocalAddr;
+	CInetAddress _LocalAddr;
 
 	/// Address of the remote host (valid if connected)
-	CInetAddress	_RemoteAddr;
+	CInetAddress _RemoteAddr;
 
 	/// If false, do not log any information
-	bool			_Logging;
+	bool _Logging;
 
 	/// If true, the socket is in nonblocking mode
-	bool			_NonBlocking;
+	bool _NonBlocking;
 
 	/// True after calling connect()
-	//NLMISC::CSynchronized<bool>	_SyncConnected;
+	// NLMISC::CSynchronized<bool>	_SyncConnected;
 	NLMISC::CAtomicBool _Connected;
 
 	/// Number of bytes received on this socket
-	uint64			_BytesReceived;
+	uint64 _BytesReceived;
 
 	/// Number of bytes sent on this socket
-	uint64			_BytesSent;
+	uint64 _BytesSent;
 
 	/// Main time out value (sec) for select in dataAvailable()
-	long			_TimeoutS;
+	long _TimeoutS;
 
 	/// Secondary time out value (microsec) for select in dataAvailable()
-	long			_TimeoutUs;
+	long _TimeoutUs;
 
 	/// Socket address family used for creating the socket
-	int				_AddressFamily;
+	int _AddressFamily;
 
 private:
-
 	// Test: send & receive duration (ms)
-	uint32			_MaxReceiveTime;
-	uint32			_MaxSendTime;
+	uint32 _MaxReceiveTime;
+	uint32 _MaxSendTime;
 
 	/// Flag used to determine the moments at which sends atrta an stop blocking
-	bool			_Blocking;
-
+	bool _Blocking;
 };
 
-
 } // NLNET
-
 
 #endif // NL_SOCK_H
 

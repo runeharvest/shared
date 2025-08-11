@@ -23,8 +23,8 @@
 #include <stdlib.h>
 
 #ifdef NL_OS_WINDOWS
-#	include <io.h>
-#	include <direct.h>
+#include <io.h>
+#include <direct.h>
 #endif
 
 #include <vector>
@@ -38,7 +38,6 @@
 #include "nel/misc/big_file.h"
 #include "nel/misc/cmd_args.h"
 
-
 using namespace std;
 using namespace NLMISC;
 
@@ -47,20 +46,20 @@ using namespace NLMISC;
 class CWildCard
 {
 public:
-	string		Expression;
-	bool		Not;
+	string Expression;
+	bool Not;
 };
-std::vector<CWildCard>	WildCards;
+std::vector<CWildCard> WildCards;
 
 // ---------------------------------------------------------------------------
 
-bool keepFile (const std::string &fileName)
+bool keepFile(const std::string &fileName)
 {
 	uint i;
 	bool ifPresent = false;
 	bool ifTrue = false;
-	string file = toLowerAscii(CFile::getFilename (fileName));
-	for (i=0; i<WildCards.size(); i++)
+	string file = toLowerAscii(CFile::getFilename(fileName));
+	for (i = 0; i < WildCards.size(); i++)
 	{
 		if (WildCards[i].Not)
 		{
@@ -85,32 +84,32 @@ NLMISC::CBigFile::BNP gBNPHeader;
 // ---------------------------------------------------------------------------
 bool i_comp(const string &s0, const string &s1)
 {
-	return nlstricmp (CFile::getFilename(s0).c_str(), CFile::getFilename(s1).c_str()) < 0;
+	return nlstricmp(CFile::getFilename(s0).c_str(), CFile::getFilename(s1).c_str()) < 0;
 }
 
 bool packSubRecurse(const std::string &srcDirectory)
 {
-	vector<string>	pathContent;
+	vector<string> pathContent;
 
-	printf ("Treating directory: %s\n", srcDirectory.c_str());
+	printf("Treating directory: %s\n", srcDirectory.c_str());
 	CPath::getPathContent(srcDirectory, true, false, true, pathContent);
 
 	if (pathContent.empty()) return true;
 
 	// Sort filename
-	sort (pathContent.begin(), pathContent.end(), i_comp);
+	sort(pathContent.begin(), pathContent.end(), i_comp);
 
 	// check for files with same name
-	for(uint i = 1, len = pathContent.size(); i < len; ++i)
+	for (uint i = 1, len = pathContent.size(); i < len; ++i)
 	{
-		if (toLowerAscii(CFile::getFilename(pathContent[i-1])) == toLowerAscii(CFile::getFilename(pathContent[i])))
+		if (toLowerAscii(CFile::getFilename(pathContent[i - 1])) == toLowerAscii(CFile::getFilename(pathContent[i])))
 		{
 			nlwarning("File %s is not unique in BNP!", CFile::getFilename(pathContent[i]).c_str());
 			return false;
 		}
 	}
 
-	for (uint i=0; i<pathContent.size(); ++i)
+	for (uint i = 0; i < pathContent.size(); ++i)
 	{
 		if (keepFile(pathContent[i]))
 		{
@@ -150,7 +149,7 @@ int main(int argc, char **argv)
 	if (args.haveArg("p"))
 	{
 		std::vector<std::string> filters;
-			
+
 		// If ?
 		filters = args.getLongArg("if");
 
@@ -203,7 +202,7 @@ int main(int argc, char **argv)
 
 		if (!packSubRecurse(srcDirectory)) return 1;
 
-		return gBNPHeader.appendHeader() ? 0:-1;
+		return gBNPHeader.appendHeader() ? 0 : -1;
 	}
 
 	if (args.haveArg("u"))
@@ -223,7 +222,7 @@ int main(int argc, char **argv)
 		}
 
 		// Unpack a bnp file
-		return gBNPHeader.unpack(dirName) ? 0:-1;
+		return gBNPHeader.unpack(dirName) ? 0 : -1;
 	}
 
 	if (args.haveArg("l"))

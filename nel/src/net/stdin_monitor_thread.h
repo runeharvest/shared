@@ -14,30 +14,28 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef NL_STDIN_MONITOR_THREAD_H
 #define NL_STDIN_MONITOR_THREAD_H
 
-namespace NLNET
+namespace NLNET {
+//-----------------------------------------------------------------------------
+// class IStdinMonitorSingleton
+//-----------------------------------------------------------------------------
+
+class IStdinMonitorSingleton
 {
-	//-----------------------------------------------------------------------------
-	// class IStdinMonitorSingleton
-	//-----------------------------------------------------------------------------
+public:
+	// static for getting hold of the singleton instance
+	static IStdinMonitorSingleton *getInstance();
 
-	class IStdinMonitorSingleton
-	{
-	public:
-		// static for getting hold of the singleton instance
-		static IStdinMonitorSingleton* getInstance();
+	// methods required by IStdinMonitorSingleton
+	virtual void init() = 0;
+	virtual void update() = 0;
+	virtual void release() = 0;
 
-		// methods required by IStdinMonitorSingleton
-		virtual void init()=0;
-		virtual void update()=0;
-		virtual void release()=0;
-
-		// virtual destructor
-		virtual ~IStdinMonitorSingleton() { }
-	};
+	// virtual destructor
+	virtual ~IStdinMonitorSingleton() { }
+};
 
 } // NLMISC
 

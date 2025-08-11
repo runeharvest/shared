@@ -26,20 +26,17 @@
 
 #include "nel/3d/particle_system.h"
 
-
-
 /////////////////////////////////////////////////////////////////////////////
 // CEmitterDlg dialog
 
-
 CEmitterDlg::CEmitterDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSEmitter *emitter, CParticleDlg *particleDlg)
-	  : _Node(ownerNode),
-		_Emitter(emitter),
-	    _PeriodDlg(NULL),
-		_GenNbDlg(NULL),
-	    _StrenghtModulateDlg(NULL),
-	    _SpeedInheritanceFactorDlg(NULL),
-	    _ParticleDlg(particleDlg)
+    : _Node(ownerNode)
+    , _Emitter(emitter)
+    , _PeriodDlg(NULL)
+    , _GenNbDlg(NULL)
+    , _StrenghtModulateDlg(NULL)
+    , _SpeedInheritanceFactorDlg(NULL)
+    , _ParticleDlg(particleDlg)
 {
 	nlassert(_Emitter);
 	nlassert(_ParticleDlg);
@@ -66,30 +63,29 @@ CEmitterDlg::~CEmitterDlg()
 	delete _MaxEmissionCountDlg;
 }
 
-
-void CEmitterDlg::init(CWnd* pParent)
+void CEmitterDlg::init(CWnd *pParent)
 {
-	Create(IDD_EMITTER_DIALOG, pParent);	
-	// fill the emitted type combo box with all the types of located	
-	initEmittedType();	
-	m_EmissionTypeCtrl.SetCurSel((int) _Emitter->getEmissionType() );
-	ShowWindow(SW_SHOW); 
+	Create(IDD_EMITTER_DIALOG, pParent);
+	// fill the emitted type combo box with all the types of located
+	initEmittedType();
+	m_EmissionTypeCtrl.SetCurSel((int)_Emitter->getEmissionType());
+	ShowWindow(SW_SHOW);
 	UpdateData(FALSE);
 }
 
 void CEmitterDlg::initEmittedType()
-{	
+{
 	m_EmittedTypeCtrl.ResetContent();
 	NL3D::CParticleSystem *ps = _Emitter->getOwner()->getOwner();
-	uint nbLocated = ps->getNbProcess(); 
-	m_EmittedTypeCtrl.InitStorage(nbLocated, 16);	
+	uint nbLocated = ps->getNbProcess();
+	m_EmittedTypeCtrl.InitStorage(nbLocated, 16);
 	for (uint k = 0; k < nbLocated; ++k)
 	{
 		NL3D::CPSLocated *loc = dynamic_cast<NL3D::CPSLocated *>(ps->getProcess(k));
 		if (loc) // is this a located
 		{
 			m_EmittedTypeCtrl.AddString(nlUtf8ToTStr(loc->getName()));
-			_LocatedList.push_back(loc);			
+			_LocatedList.push_back(loc);
 			if (loc == _Emitter->getEmittedType())
 			{
 				m_EmittedTypeCtrl.SetCurSel(k);
@@ -98,40 +94,39 @@ void CEmitterDlg::initEmittedType()
 	}
 }
 
-void CEmitterDlg::DoDataExchange(CDataExchange* pDX)
+void CEmitterDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CEmitterDlg)
 	DDX_Control(pDX, IDC_DIRECTION_MODE, m_DirectionModeCtrl);
 	DDX_Control(pDX, IDC_TYPE_OF_EMISSION, m_EmissionTypeCtrl);
-	DDX_Control(pDX, IDC_EMITTED_TYPE, m_EmittedTypeCtrl);	
+	DDX_Control(pDX, IDC_EMITTED_TYPE, m_EmittedTypeCtrl);
 	DDX_Check(pDX, IDC_CONSISTENT_EMISSION, m_ConsistentEmission);
 	DDX_Check(pDX, IDC_BYPASS_AUTOLOD, m_BypassAutoLOD);
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CEmitterDlg, CDialog)
-	//{{AFX_MSG_MAP(CEmitterDlg)
-	ON_CBN_SELCHANGE(IDC_EMITTED_TYPE, OnSelchangeEmittedType)
-	ON_CBN_SELCHANGE(IDC_TYPE_OF_EMISSION, OnSelchangeTypeOfEmission)	
-	ON_BN_CLICKED(IDC_CONSISTENT_EMISSION, OnConsistentEmission)
-	ON_BN_CLICKED(IDC_BYPASS_AUTOLOD, OnBypassAutoLOD)
-	ON_CBN_SELCHANGE(IDC_DIRECTION_MODE, OnSelchangeDirectionMode)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CEmitterDlg)
+ON_CBN_SELCHANGE(IDC_EMITTED_TYPE, OnSelchangeEmittedType)
+ON_CBN_SELCHANGE(IDC_TYPE_OF_EMISSION, OnSelchangeTypeOfEmission)
+ON_BN_CLICKED(IDC_CONSISTENT_EMISSION, OnConsistentEmission)
+ON_BN_CLICKED(IDC_BYPASS_AUTOLOD, OnBypassAutoLOD)
+ON_CBN_SELCHANGE(IDC_DIRECTION_MODE, OnSelchangeDirectionMode)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CEmitterDlg message handlers
 
-void CEmitterDlg::OnSelchangeEmittedType() 
+void CEmitterDlg::OnSelchangeEmittedType()
 {
 	UpdateData();
 	uint k = m_EmittedTypeCtrl.GetCurSel();
 	if (!_Emitter->setEmittedType(_LocatedList[k]))
 	{
 		if (_Emitter->getOwner()->getOwner()->getBehaviourType() == NL3D::CParticleSystem::SpellFX || _Emitter->getOwner()->getOwner()->getBypassMaxNumIntegrationSteps())
-		{		
+		{
 			MessageBox(_T("Can't perform operation : the system is flagged with 'No max nb steps' or uses the preset 'Spell FX', and thus, should have a finite duration. This operation create a loop in the system, and so is forbidden."), _T("Error"), MB_ICONEXCLAMATION);
 		}
 		else
@@ -139,29 +134,28 @@ void CEmitterDlg::OnSelchangeEmittedType()
 			MessageBox(_T("Loops with emitters are forbidden."), _T("Error"), MB_ICONEXCLAMATION);
 		}
 		initEmittedType();
-	}	
+	}
 	_ParticleDlg->StartStopDlg->resetAutoCount(_Node);
 	updateModifiedFlag();
 }
 
-void CEmitterDlg::OnSelchangeTypeOfEmission() 
+void CEmitterDlg::OnSelchangeTypeOfEmission()
 {
 	UpdateData();
-	if (!_Emitter->setEmissionType((NL3D::CPSEmitter::TEmissionType) m_EmissionTypeCtrl.GetCurSel()))
+	if (!_Emitter->setEmissionType((NL3D::CPSEmitter::TEmissionType)m_EmissionTypeCtrl.GetCurSel()))
 	{
 		CString mess;
 		mess.LoadString(IDS_PS_NO_FINITE_DURATION);
 		CString errorStr;
 		errorStr.LoadString(IDS_ERROR);
-		MessageBox((LPCTSTR) mess, (LPCTSTR) errorStr, MB_ICONEXCLAMATION);
-		m_EmissionTypeCtrl.SetCurSel((int) _Emitter->getEmissionType());		
+		MessageBox((LPCTSTR)mess, (LPCTSTR)errorStr, MB_ICONEXCLAMATION);
+		m_EmissionTypeCtrl.SetCurSel((int)_Emitter->getEmissionType());
 	}
 
 	updatePeriodDlg();
 	_ParticleDlg->StartStopDlg->resetAutoCount(_Node);
 	updateModifiedFlag();
 }
-
 
 void CEmitterDlg::updatePeriodDlg(void)
 {
@@ -171,21 +165,21 @@ void CEmitterDlg::updatePeriodDlg(void)
 	_MaxEmissionCountDlg->EnableWindow(bEnable);
 }
 
-BOOL CEmitterDlg::OnInitDialog() 
+BOOL CEmitterDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	RECT r;
 
-	 GetDlgItem(IDC_SPEED_INHERITANCE_FACTOR_FRAME)->GetWindowRect(&r);
-	 ScreenToClient(&r);
+	GetDlgItem(IDC_SPEED_INHERITANCE_FACTOR_FRAME)->GetWindowRect(&r);
+	ScreenToClient(&r);
 	_SpeedInheritanceFactorDlg = new CEditableRangeFloat("SPEED_INHERITANCE_FACTOR", _Node, -1.f, 1.f);
 	_SpeedInheritanceFactorWrapper.E = _Emitter;
 	_SpeedInheritanceFactorDlg->setWrapper(&_SpeedInheritanceFactorWrapper);
 	_SpeedInheritanceFactorDlg->init(r.left, r.top, this);
 
-	 GetDlgItem(IDC_DELAYED_EMISSION_FRAME)->GetWindowRect(&r);
-	 ScreenToClient(&r);
+	GetDlgItem(IDC_DELAYED_EMISSION_FRAME)->GetWindowRect(&r);
+	ScreenToClient(&r);
 	_DelayedEmissionDlg = new CEditableRangeFloat("DELAYED_EMISSION", _Node, 0.f, 10.f);
 	_DelayedEmissionDlg->enableLowerBound(0.f, false);
 	_DelayedEmissionWrapper.E = _Emitter;
@@ -195,25 +189,23 @@ BOOL CEmitterDlg::OnInitDialog()
 	_DelayedEmissionDlg->init(r.left, r.top, this);
 
 	GetDlgItem(IDC_MAX_EMISSION_COUNT_FRAME)->GetWindowRect(&r);
-	 ScreenToClient(&r);
+	ScreenToClient(&r);
 	_MaxEmissionCountDlg = new CEditableRangeUInt("MAX_EMISSION_COUNT", _Node, 0, 100);
 	_MaxEmissionCountDlg->enableUpperBound(256, false);
 	_MaxEmissionCountWrapper.E = _Emitter;
 	_MaxEmissionCountWrapper.Node = _Node;
 	_MaxEmissionCountWrapper.SSPS = _ParticleDlg->StartStopDlg;
-	_MaxEmissionCountWrapper.HWnd = (HWND) (*this);
+	_MaxEmissionCountWrapper.HWnd = (HWND)(*this);
 	_MaxEmissionCountDlg->setWrapper(&_MaxEmissionCountWrapper);
 	_MaxEmissionCountDlg->init(r.left, r.top, this);
 	_MaxEmissionCountWrapper.MaxEmissionCountDlg = _MaxEmissionCountDlg;
 
-
-
 	uint posX = 13;
-	uint posY = r.bottom + 5;	
+	uint posY = r.bottom + 5;
 
 	// setup the dialog for the period of emission edition
 
-	_PeriodDlg = new CAttribDlgFloat("EMISSION_PERIOD", _Node, 0.f, 2.f);	
+	_PeriodDlg = new CAttribDlgFloat("EMISSION_PERIOD", _Node, 0.f, 2.f);
 	_PeriodWrapper.E = _Emitter;
 	_PeriodWrapper.Node = _Node;
 	_PeriodWrapper.SSPS = _ParticleDlg->StartStopDlg;
@@ -225,7 +217,7 @@ BOOL CEmitterDlg::OnInitDialog()
 
 	// setup the dialog that helps tuning the number of particle being emitted at a time
 
-	_GenNbDlg = new CAttribDlgUInt("EMISSION_GEN_NB",  _Node, 1, 11);
+	_GenNbDlg = new CAttribDlgUInt("EMISSION_GEN_NB", _Node, 1, 11);
 	_GenNbWrapper.E = _Emitter;
 	_GenNbWrapper.Node = _Node;
 	_GenNbWrapper.SSPS = _ParticleDlg->StartStopDlg;
@@ -237,7 +229,7 @@ BOOL CEmitterDlg::OnInitDialog()
 
 	if (dynamic_cast<NL3D::CPSModulatedEmitter *>(_Emitter))
 	{
-		_StrenghtModulateDlg = new CAttribDlgFloat("EMISSION_GEN_NB",  _Node, 1, 11);
+		_StrenghtModulateDlg = new CAttribDlgFloat("EMISSION_GEN_NB", _Node, 1, 11);
 		_ModulatedStrenghtWrapper.E = dynamic_cast<NL3D::CPSModulatedEmitter *>(_Emitter);
 		_StrenghtModulateDlg->setWrapper(&_ModulatedStrenghtWrapper);
 		_StrenghtModulateDlg->setSchemeWrapper(&_ModulatedStrenghtWrapper);
@@ -250,7 +242,7 @@ BOOL CEmitterDlg::OnInitDialog()
 	if (dynamic_cast<NL3D::CPSDirection *>(_Emitter))
 	{
 		CDirectionAttr *da = new CDirectionAttr(std::string("DIRECTION"));
-		pushWnd(da);		
+		pushWnd(da);
 		_DirectionWrapper.E = dynamic_cast<NL3D::CPSDirection *>(_Emitter);
 		da->setWrapper(&_DirectionWrapper);
 		da->setDirectionWrapper(dynamic_cast<NL3D::CPSDirection *>(_Emitter));
@@ -270,14 +262,14 @@ BOOL CEmitterDlg::OnInitDialog()
 
 		CStatic *s = new CStatic;
 		pushWnd(s);
-		s->Create(_T("Radius :"), SS_LEFT, CRect(posX, posY + 10 , posX + 70, posY + 32), this);
-		s->SetFont(CFont::FromHandle((HFONT) GetStockObject(DEFAULT_GUI_FONT)));
+		s->Create(_T("Radius :"), SS_LEFT, CRect(posX, posY + 10, posX + 70, posY + 32), this);
+		s->SetFont(CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT)));
 		s->ShowWindow(SW_SHOW);
 
 		ecr->GetClientRect(&r);
 		posY += r.bottom;
 	}
-	
+
 	if (_Emitter->isSpeedBasisEmissionEnabled())
 	{
 		m_DirectionModeCtrl.SetCurSel((int)AlignOnEmitterDirection);
@@ -301,16 +293,16 @@ BOOL CEmitterDlg::OnInitDialog()
 	else
 	{
 		nlassert(0);
-	}	
+	}
 
 	updatePeriodDlg();
 
 	// bypass auto LOD
 	nlassert(_Emitter->getOwner() && _Emitter->getOwner()->getOwner());
 	NL3D::CParticleSystem &ps = *_Emitter->getOwner()->getOwner();
-	CButton *button = (CButton *) GetDlgItem(IDC_BYPASS_AUTOLOD);
+	CButton *button = (CButton *)GetDlgItem(IDC_BYPASS_AUTOLOD);
 	if (ps.isAutoLODEnabled() && !ps.isSharingEnabled())
-	{		
+	{
 		button->EnableWindow(TRUE);
 		m_BypassAutoLOD = _Emitter->getBypassAutoLOD();
 	}
@@ -319,11 +311,11 @@ BOOL CEmitterDlg::OnInitDialog()
 		button->EnableWindow(FALSE);
 	}
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CEmitterDlg::OnConsistentEmission() 
+void CEmitterDlg::OnConsistentEmission()
 {
 	UpdateData();
 	_Emitter->enableConsistenEmission(m_ConsistentEmission != 0 ? true : false /* VC6 warning */);
@@ -331,56 +323,56 @@ void CEmitterDlg::OnConsistentEmission()
 	UpdateData(TRUE);
 }
 
-void CEmitterDlg::OnBypassAutoLOD() 
+void CEmitterDlg::OnBypassAutoLOD()
 {
 	UpdateData();
 	_Emitter->setBypassAutoLOD(m_BypassAutoLOD ? true : false);
-	UpdateData(TRUE);	
+	UpdateData(TRUE);
 	updateModifiedFlag();
 }
 
 void CEmitterDlg::CMaxEmissionCountWrapper::set(const uint32 &count)
 {
-   if (!E->setMaxEmissionCount((uint8) count))
-   {
-	   CString mess;
-	   mess.LoadString(IDS_PS_NO_FINITE_DURATION);
-	   CString errorStr;
-	   errorStr.LoadString(IDS_ERROR);
-	   ::MessageBox(HWnd, (LPCTSTR) mess, (LPCTSTR) errorStr, MB_ICONEXCLAMATION);	   
-	   MaxEmissionCountDlg->updateValueFromReader();
-   }
-   SSPS->resetAutoCount(Node);
+	if (!E->setMaxEmissionCount((uint8)count))
+	{
+		CString mess;
+		mess.LoadString(IDS_PS_NO_FINITE_DURATION);
+		CString errorStr;
+		errorStr.LoadString(IDS_ERROR);
+		::MessageBox(HWnd, (LPCTSTR)mess, (LPCTSTR)errorStr, MB_ICONEXCLAMATION);
+		MaxEmissionCountDlg->updateValueFromReader();
+	}
+	SSPS->resetAutoCount(Node);
 }
 
-void CEmitterDlg::OnSelchangeDirectionMode() 
+void CEmitterDlg::OnSelchangeDirectionMode()
 {
 	UpdateData();
 	nlassert(_Emitter);
-	switch(m_DirectionModeCtrl.GetCurSel())
+	switch (m_DirectionModeCtrl.GetCurSel())
 	{
-		case Default:
-			_Emitter->enableSpeedBasisEmission(false);
-			_Emitter->enableUserMatrixModeForEmissionDirection(false);
+	case Default:
+		_Emitter->enableSpeedBasisEmission(false);
+		_Emitter->enableUserMatrixModeForEmissionDirection(false);
 		break;
-		case AlignOnEmitterDirection:
-			_Emitter->enableSpeedBasisEmission(true);
-			_Emitter->enableUserMatrixModeForEmissionDirection(false);
+	case AlignOnEmitterDirection:
+		_Emitter->enableSpeedBasisEmission(true);
+		_Emitter->enableUserMatrixModeForEmissionDirection(false);
 		break;
-		case InWorld:
-			_Emitter->enableSpeedBasisEmission(false);
-			_Emitter->enableUserMatrixModeForEmissionDirection(true);
-			_Emitter->setUserMatrixModeForEmissionDirection(NL3D::PSIdentityMatrix);
+	case InWorld:
+		_Emitter->enableSpeedBasisEmission(false);
+		_Emitter->enableUserMatrixModeForEmissionDirection(true);
+		_Emitter->setUserMatrixModeForEmissionDirection(NL3D::PSIdentityMatrix);
 		break;
-		case LocalToSystem:
-			_Emitter->enableSpeedBasisEmission(false);
-			_Emitter->enableUserMatrixModeForEmissionDirection(true);
-			_Emitter->setUserMatrixModeForEmissionDirection(NL3D::PSFXWorldMatrix);
+	case LocalToSystem:
+		_Emitter->enableSpeedBasisEmission(false);
+		_Emitter->enableUserMatrixModeForEmissionDirection(true);
+		_Emitter->setUserMatrixModeForEmissionDirection(NL3D::PSFXWorldMatrix);
 		break;
-		case LocalToFatherSkeleton:
-			_Emitter->enableSpeedBasisEmission(false);
-			_Emitter->enableUserMatrixModeForEmissionDirection(true);
-			_Emitter->setUserMatrixModeForEmissionDirection(NL3D::PSUserMatrix);
+	case LocalToFatherSkeleton:
+		_Emitter->enableSpeedBasisEmission(false);
+		_Emitter->enableUserMatrixModeForEmissionDirection(true);
+		_Emitter->setUserMatrixModeForEmissionDirection(NL3D::PSUserMatrix);
 		break;
 	}
 	updateModifiedFlag();

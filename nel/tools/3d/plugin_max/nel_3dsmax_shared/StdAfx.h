@@ -26,9 +26,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-
 // Insert your headers here
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
 
 #include <assert.h>
 #include <max.h>
@@ -38,8 +37,8 @@
 #include <utilapi.h>
 
 #ifdef min
-#	undef min
-#	undef max
+#undef min
+#undef max
 #endif
 
 //{{AFX_INSERT_LOCATION}}

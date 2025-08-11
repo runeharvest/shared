@@ -35,34 +35,88 @@ class IStream;
 class CUtfStringView
 {
 public:
-	inline CUtfStringView() : m_Str(NULL), m_Size(0), m_Iterator(utf32Iterator) {}
+	inline CUtfStringView()
+	    : m_Str(NULL)
+	    , m_Size(0)
+	    , m_Iterator(utf32Iterator)
+	{
+	}
 
-	inline CUtfStringView(const std::string &utf8Str) : m_Str(utf8Str.c_str()), m_Size(utf8Str.size()), m_Iterator(utf8Iterator) {}
-	inline CUtfStringView(const char *utf8Str) : m_Str(utf8Str), m_Size(strlen(utf8Str)), m_Iterator(utf8Iterator) {}
-	inline CUtfStringView(const char *utf8Str, size_t len): m_Str(utf8Str), m_Size(len), m_Iterator(utf8Iterator)
+	inline CUtfStringView(const std::string &utf8Str)
+	    : m_Str(utf8Str.c_str())
+	    , m_Size(utf8Str.size())
+	    , m_Iterator(utf8Iterator)
+	{
+	}
+	inline CUtfStringView(const char *utf8Str)
+	    : m_Str(utf8Str)
+	    , m_Size(strlen(utf8Str))
+	    , m_Iterator(utf8Iterator)
+	{
+	}
+	inline CUtfStringView(const char *utf8Str, size_t len)
+	    : m_Str(utf8Str)
+	    , m_Size(len)
+	    , m_Iterator(utf8Iterator)
 	{
 		nlassert(len <= strlen(utf8Str));
 	}
 
-	inline CUtfStringView(CStringView utf8Str) : m_Str(utf8Str.data()), m_Size(utf8Str.size()), m_Iterator(utf8Iterator) {}
+	inline CUtfStringView(CStringView utf8Str)
+	    : m_Str(utf8Str.data())
+	    , m_Size(utf8Str.size())
+	    , m_Iterator(utf8Iterator)
+	{
+	}
 
 #if defined(NL_OS_WINDOWS)
-	inline CUtfStringView(const wchar_t *utf16Str) : m_Str(utf16Str), m_Size(wcslen(utf16Str)), m_Iterator(utf16Iterator) {}
-	inline CUtfStringView(const wchar_t *utf16Str, size_t len): m_Str(utf16Str), m_Size(len), m_Iterator(utf16Iterator)
+	inline CUtfStringView(const wchar_t *utf16Str)
+	    : m_Str(utf16Str)
+	    , m_Size(wcslen(utf16Str))
+	    , m_Iterator(utf16Iterator)
+	{
+	}
+	inline CUtfStringView(const wchar_t *utf16Str, size_t len)
+	    : m_Str(utf16Str)
+	    , m_Size(len)
+	    , m_Iterator(utf16Iterator)
 	{
 		nlassert(len <= wcslen(utf16Str));
 	}
 #else
-	inline CUtfStringView(const wchar_t *utf32Str) : m_Str(utf32Str), m_Size(wcslen(utf32Str)), m_Iterator(utf32Iterator) {}
-	inline CUtfStringView(const wchar_t *utf32Str, size_t len): m_Str(utf32Str), m_Size(len), m_Iterator(utf32Iterator)
+	inline CUtfStringView(const wchar_t *utf32Str)
+	    : m_Str(utf32Str)
+	    , m_Size(wcslen(utf32Str))
+	    , m_Iterator(utf32Iterator)
+	{
+	}
+	inline CUtfStringView(const wchar_t *utf32Str, size_t len)
+	    : m_Str(utf32Str)
+	    , m_Size(len)
+	    , m_Iterator(utf32Iterator)
 	{
 		nlassert(len <= wcslen(utf32Str));
 	}
 #endif
 
-	inline CUtfStringView(const ucstring &utf16Str) : m_Str(utf16Str.c_str()), m_Size(utf16Str.size() << 1), m_Iterator(utf16Iterator) {}
-	inline CUtfStringView(const ucchar *utf16Str) : m_Str(utf16Str), m_Size(strlen((const char *)utf16Str) & (ptrdiff_t)(-2)), m_Iterator(utf16Iterator) {}
-	inline CUtfStringView(const ::u32string &utf32Str) : m_Str(utf32Str.c_str()), m_Size(utf32Str.size() << 2), m_Iterator(utf32Iterator) {}
+	inline CUtfStringView(const ucstring &utf16Str)
+	    : m_Str(utf16Str.c_str())
+	    , m_Size(utf16Str.size() << 1)
+	    , m_Iterator(utf16Iterator)
+	{
+	}
+	inline CUtfStringView(const ucchar *utf16Str)
+	    : m_Str(utf16Str)
+	    , m_Size(strlen((const char *)utf16Str) & (ptrdiff_t)(-2))
+	    , m_Iterator(utf16Iterator)
+	{
+	}
+	inline CUtfStringView(const ::u32string &utf32Str)
+	    : m_Str(utf32Str.c_str())
+	    , m_Size(utf32Str.size() << 2)
+	    , m_Iterator(utf32Iterator)
+	{
+	}
 
 	std::string toUtf8(bool reEncode = false) const; // Makes a copy
 	ucstring toUtf16(bool reEncode = false) const; // Makes a copy
@@ -95,24 +149,40 @@ public:
 		inline bool operator!=(const const_iterator &o) const { return m_Addr != o.m_Addr; }
 		inline bool operator==(const const_iterator &o) const { return m_Addr == o.m_Addr; }
 		inline const u32char &operator*() const { return m_Char; }
-		const_iterator() : m_View(*(CUtfStringView *)NULL), m_Addr(NULL), m_Char(0) { }
+		const_iterator()
+		    : m_View(*(CUtfStringView *)NULL)
+		    , m_Addr(NULL)
+		    , m_Char(0)
+		{
+		}
 
 		const_iterator &operator=(const const_iterator &other)
 		{
 			if (this == &other) return *this;
 			this->~const_iterator();
-			return *new(this) const_iterator(other);
+			return *new (this) const_iterator(other);
 		}
 
 		const void *ptr() const { return m_Addr; }
+
 	private:
 		friend class CUtfStringView;
-		inline const_iterator(const CUtfStringView &view, const void *addr) : m_View(view), m_Addr(addr), m_Next(addr), m_Char(view.m_Iterator(&m_Next))
+		inline const_iterator(const CUtfStringView &view, const void *addr)
+		    : m_View(view)
+		    , m_Addr(addr)
+		    , m_Next(addr)
+		    , m_Char(view.m_Iterator(&m_Next))
 		{
 			if ((ptrdiff_t)m_Next > ((ptrdiff_t)m_View.m_Str + m_View.m_Size))
 				m_Next = (void *)((ptrdiff_t)m_View.m_Str + m_View.m_Size);
 		}
-		inline const_iterator(const CUtfStringView &view) : m_View(view), m_Addr((char *)view.m_Str + view.m_Size), m_Next((char *)view.m_Str + view.m_Size + 1), m_Char(0) { }
+		inline const_iterator(const CUtfStringView &view)
+		    : m_View(view)
+		    , m_Addr((char *)view.m_Str + view.m_Size)
+		    , m_Next((char *)view.m_Str + view.m_Size + 1)
+		    , m_Char(0)
+		{
+		}
 		const CUtfStringView &m_View;
 		const void *m_Addr; // Current address
 		const void *m_Next; // Next address
@@ -132,20 +202,26 @@ public:
 	const void *ptr() const { return m_Str; }
 
 	size_t count() const; //< Slow count of UTF-32 codepoints
-	ptrdiff_t offset(ptrdiff_t i); const //< Get byte offset by utf-32 codepoint index
+	ptrdiff_t offset(ptrdiff_t i);
+	const //< Get byte offset by utf-32 codepoint index
 
-	inline CUtfStringView substr(const iterator &begin, const iterator &end) const
+	    inline CUtfStringView
+	    substr(const iterator &begin, const iterator &end) const
 	{
 		return CUtfStringView(begin.m_Addr, (ptrdiff_t)end.m_Addr - (ptrdiff_t)begin.m_Addr, m_Iterator);
 	}
-	
-	inline bool endsWith(char c) { nlassert(c < 0x80); return *((char *)m_Str + m_Size - 1) == c; }
 
-	CUtfStringView &operator=(const CUtfStringView &other) 
-	{  
-		if(this == &other) return *this;
+	inline bool endsWith(char c)
+	{
+		nlassert(c < 0x80);
+		return *((char *)m_Str + m_Size - 1) == c;
+	}
+
+	CUtfStringView &operator=(const CUtfStringView &other)
+	{
+		if (this == &other) return *this;
 		this->~CUtfStringView();
-		return *new(this) CUtfStringView(other);
+		return *new (this) CUtfStringView(other);
 	}
 
 	static void append(std::string &str, u32char c);
@@ -163,12 +239,17 @@ private:
 	static u32char utf16Iterator(const void **addr);
 	static u32char utf32Iterator(const void **addr);
 
-	inline CUtfStringView(const void *str, size_t len, TIterator it) : m_Str(str), m_Size(len), m_Iterator(it) { }
+	inline CUtfStringView(const void *str, size_t len, TIterator it)
+	    : m_Str(str)
+	    , m_Size(len)
+	    , m_Iterator(it)
+	{
+	}
 
 	const void *const m_Str; // String
 	const size_t m_Size; // Size in bytes
 	const TIterator m_Iterator;
-	
+
 }; /* class CUtfStringView */
 
 } /* namespace NLMISC */

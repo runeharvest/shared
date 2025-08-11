@@ -51,7 +51,7 @@ using namespace std;
 // Variables
 //
 
-vector<CGraph*> *CGraph::_Graphs = NULL;
+vector<CGraph *> *CGraph::_Graphs = NULL;
 
 bool CGraph::Display = true;
 bool CGraph::DisplayAverageValue = true;
@@ -60,48 +60,47 @@ bool CGraph::DisplayAverageValue = true;
 // Classes
 //
 
-void CGraph::render (NL3D::UDriver *Driver, NL3D::UTextContext *TextContext)
+void CGraph::render(NL3D::UDriver *Driver, NL3D::UTextContext *TextContext)
 {
 	// Display the background
 	uint32 w, h;
-	Driver->getWindowSize (w, h);
-	float ScreenWidth = (float) w;
-	float ScreenHeight = (float) h;
-	Driver->setMatrixMode2D (CFrustum (0.0f, ScreenWidth, 0.0f, ScreenHeight, 0.0f, 1.0f, false));
-	Driver->drawQuad (X, Y, X+Width, Y+Height, BackColor);
+	Driver->getWindowSize(w, h);
+	float ScreenWidth = (float)w;
+	float ScreenHeight = (float)h;
+	Driver->setMatrixMode2D(CFrustum(0.0f, ScreenWidth, 0.0f, ScreenHeight, 0.0f, 1.0f, false));
+	Driver->drawQuad(X, Y, X + Width, Y + Height, BackColor);
 
 	Peak = 0.0f;
 	float sum = 0.0f;
-	
-	CMaterial		material;
-	material.initUnlit ();
-	material.setColor (CRGBA (255,255,255,BackColor.A));
-	material.setBlend (true);
 
-	
-	CVertexBuffer	vbuffer;
-	vbuffer.setVertexFormat (CVertexBuffer::PositionFlag);
-	vbuffer.setNumVertices ((uint32)Values.size() * 2);
+	CMaterial material;
+	material.initUnlit();
+	material.setColor(CRGBA(255, 255, 255, BackColor.A));
+	material.setBlend(true);
 
-	float pos = X+Width-1;
+	CVertexBuffer vbuffer;
+	vbuffer.setVertexFormat(CVertexBuffer::PositionFlag);
+	vbuffer.setNumVertices((uint32)Values.size() * 2);
+
+	float pos = X + Width - 1;
 	uint i = 0;
 	for (deque<float>::reverse_iterator it = Values.rbegin(); it != Values.rend(); it++)
 	{
 		// get a read accessor to the VB
 		CVertexBufferRead vba;
-		vbuffer.lock (vba);
+		vbuffer.lock(vba);
 
 		float value = (*it) * Height / MaxValue;
 		if (value > Height) value = Height;
 
-		CVector *vect1 = (CVector*)vba.getVertexCoordPointer(i*2+0);
+		CVector *vect1 = (CVector *)vba.getVertexCoordPointer(i * 2 + 0);
 		vect1->x = pos;
 		vect1->y = Y;
-		CVector *vect2 = (CVector*)vba.getVertexCoordPointer(i*2+1);
+		CVector *vect2 = (CVector *)vba.getVertexCoordPointer(i * 2 + 1);
 		vect2->x = pos;
-		vect2->y = Y+value;
+		vect2->y = Y + value;
 
-//		Driver->drawLine (pos, Y, pos, Y+value, CRGBA (255,255,255,BackColor.A));
+		//		Driver->drawLine (pos, Y, pos, Y+value, CRGBA (255,255,255,BackColor.A));
 		pos--;
 		if ((*it) > Peak) Peak = *it;
 		sum += *it;
@@ -109,71 +108,70 @@ void CGraph::render (NL3D::UDriver *Driver, NL3D::UTextContext *TextContext)
 	}
 
 	// Render
-	IDriver	*drv = ((CDriverUser*)Driver)->getDriver();
+	IDriver *drv = ((CDriverUser *)Driver)->getDriver();
 	drv->activeVertexBuffer(vbuffer);
 
 	// Display max
 	float value = Peak * Height / MaxValue;
 	if (value > Height) value = Height;
-	CRGBA frontCol (min(BackColor.R*2,255),min(BackColor.G*2,255),min(BackColor.B*2,255),min(BackColor.A*2,255));
-	float peakval = Y+value;
-	Driver->drawLine (X, peakval, X+Width, peakval, frontCol);
-	
-	TextContext->setHotSpot (UTextContext::MiddleLeft);
-	TextContext->setColor (frontCol);
-	TextContext->setFontSize (10);
-	TextContext->printfAt ((X+Width+2)/ScreenWidth, (Y+value)/ScreenHeight, "%.2f", Peak);
+	CRGBA frontCol(min(BackColor.R * 2, 255), min(BackColor.G * 2, 255), min(BackColor.B * 2, 255), min(BackColor.A * 2, 255));
+	float peakval = Y + value;
+	Driver->drawLine(X, peakval, X + Width, peakval, frontCol);
+
+	TextContext->setHotSpot(UTextContext::MiddleLeft);
+	TextContext->setColor(frontCol);
+	TextContext->setFontSize(10);
+	TextContext->printfAt((X + Width + 2) / ScreenWidth, (Y + value) / ScreenHeight, "%.2f", Peak);
 
 	// Display average
 	float average = sum / (float)Values.size();
 	value = average * Height / MaxValue;
 	if (value > Height) value = Height;
-	float avrval = Y+value;
-	Driver->drawLine (X, avrval, X+Width, avrval, frontCol);
+	float avrval = Y + value;
+	Driver->drawLine(X, avrval, X + Width, avrval, frontCol);
 
 	if (DisplayAverageValue)
 	{
-		if (avrval+10<peakval-10 || avrval-10>peakval+10)
+		if (avrval + 10 < peakval - 10 || avrval - 10 > peakval + 10)
 		{
-			TextContext->setHotSpot (UTextContext::MiddleLeft);
-			TextContext->setColor (frontCol);
-			TextContext->setFontSize (10);
-			TextContext->printfAt ((X+Width+2)/ScreenWidth, (Y+value)/ScreenHeight, "%.2f", average);
+			TextContext->setHotSpot(UTextContext::MiddleLeft);
+			TextContext->setColor(frontCol);
+			TextContext->setFontSize(10);
+			TextContext->printfAt((X + Width + 2) / ScreenWidth, (Y + value) / ScreenHeight, "%.2f", average);
 		}
 	}
 
 	// Display name
-	TextContext->setHotSpot (UTextContext::TopLeft);
-	TextContext->printfAt ((X+1)/ScreenWidth, (Y+Height-1)/ScreenHeight, Name.c_str());
+	TextContext->setHotSpot(UTextContext::TopLeft);
+	TextContext->printfAt((X + 1) / ScreenWidth, (Y + Height - 1) / ScreenHeight, Name.c_str());
 }
 
-void CGraph::addOneValue (float value)
+void CGraph::addOneValue(float value)
 {
 	if (value < 0.0f) value = 0.0f;
 
-	Values.push_back (value);
-	while (Values.size () > Width)
-		Values.pop_front ();
+	Values.push_back(value);
+	while (Values.size() > Width)
+		Values.pop_front();
 
-//	if (Values.back() > Peak)
-//		Peak = Values.back();
+	//	if (Values.back() > Peak)
+	//		Peak = Values.back();
 }
 
-
-void CGraph::addValue (float value)
+void CGraph::addValue(float value)
 {
-	TTime currentTime = CTime::getLocalTime ();
+	TTime currentTime = CTime::getLocalTime();
 
-	while (Values.size () == 0 || currentTime > CurrentQuantumStart + Quantum)
+	while (Values.size() == 0 || currentTime > CurrentQuantumStart + Quantum)
 	{
 		CurrentQuantumStart += Quantum;
-		addOneValue ();
+		addOneValue();
 	}
 
 	Values.back() += value;
 
-//	if (Values.back() > Peak)
-//		Peak = Values.back();
+	//	if (Values.back() > Peak)
+	//		Peak = Values.back();
 }
 
 //
@@ -202,7 +200,7 @@ CGraph SeenEntitiesGraph( "seen entities", 150.0f, 10.0f, 100.0f, 100.0f, CRGBA(
 // Functions
 //
 
-void CGraph::render (NL3D::UDriver &driver, NL3D::UTextContext &tc)
+void CGraph::render(NL3D::UDriver &driver, NL3D::UTextContext &tc)
 {
 	if (!Display) return;
 
@@ -210,7 +208,7 @@ void CGraph::render (NL3D::UDriver &driver, NL3D::UTextContext &tc)
 
 	for (uint i = 0; i < _Graphs->size(); i++)
 	{
-		(*_Graphs)[i]->render (&driver, &tc);
+		(*_Graphs)[i]->render(&driver, &tc);
 	}
 }
 

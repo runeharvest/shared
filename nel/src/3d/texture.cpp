@@ -24,29 +24,25 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 /*==================================================================*\
-							ITEXTURE
+                            ITEXTURE
 \*==================================================================*/
-
 
 // ***************************************************************************
 ITexture::ITexture()
 {
-	_Touched= false;
+	_Touched = false;
 	_FilterOrWrapModeTouched = false;
-	_GoodGenerate= false;
-	_Releasable= true;
-	_RenderTarget= false;
-	_WrapS= _WrapT= Repeat;
-	_UploadFormat= Auto;
-	_MagFilter= Linear;
-	_MinFilter= LinearMipMapLinear;
+	_GoodGenerate = false;
+	_Releasable = true;
+	_RenderTarget = false;
+	_WrapS = _WrapT = Repeat;
+	_UploadFormat = Auto;
+	_MagFilter = Linear;
+	_MinFilter = LinearMipMapLinear;
 }
-
 
 // ***************************************************************************
 ITexture::~ITexture()
@@ -55,70 +51,64 @@ ITexture::~ITexture()
 	releaseDriverSetup();
 }
 
-
 // ***************************************************************************
-void	ITexture::releaseDriverSetup()
+void ITexture::releaseDriverSetup()
 {
 	// Must kill the drv mirror of this texture.
 	if (TextureDrvShare) TextureDrvShare.kill();
 }
-
 
 // ***************************************************************************
 ITexture &ITexture::operator=(const ITexture &tex)
 {
 	// The operator= do not copy drv info
 	// set touched=true. _Releasable is copied.
-	_UploadFormat= tex._UploadFormat;
-	_Releasable= tex._Releasable;
-	_WrapS= tex._WrapS;
-	_WrapT= tex._WrapT;
-	_MagFilter= tex._MagFilter;
-	_MinFilter= tex._MinFilter;
-	_RenderTarget= tex._RenderTarget;
+	_UploadFormat = tex._UploadFormat;
+	_Releasable = tex._Releasable;
+	_WrapS = tex._WrapS;
+	_WrapT = tex._WrapT;
+	_MagFilter = tex._MagFilter;
+	_MinFilter = tex._MinFilter;
+	_RenderTarget = tex._RenderTarget;
 	_FilterOrWrapModeTouched = tex._FilterOrWrapModeTouched;
 	touch();
 	return *this;
 }
 
-
 // ***************************************************************************
-void		ITexture::setUploadFormat(TUploadFormat pf)
+void ITexture::setUploadFormat(TUploadFormat pf)
 {
-	if(pf!=_UploadFormat)
+	if (pf != _UploadFormat)
 	{
-		_UploadFormat= pf;
+		_UploadFormat = pf;
 		// All the texture may be reloaded...
 		touch();
 	}
 }
 
-
 // ***************************************************************************
-void		ITexture::setFilterMode(TMagFilter magf, TMinFilter minf)
+void ITexture::setFilterMode(TMagFilter magf, TMinFilter minf)
 {
 	if (_MagFilter != magf)
 	{
-		_MagFilter= magf;
+		_MagFilter = magf;
 		_FilterOrWrapModeTouched = true;
 	}
 	// If the MipMap mode has switched Off/On, then must recompute...
-	bool	precOff= mipMapOff();
+	bool precOff = mipMapOff();
 	if (_MinFilter != minf)
 	{
-		_MinFilter= minf;
+		_MinFilter = minf;
 		_FilterOrWrapModeTouched = true;
 	}
-	bool	nowOff= mipMapOff();
+	bool nowOff = mipMapOff();
 
-	if(precOff!=nowOff)
+	if (precOff != nowOff)
 	{
 		// Must recompute mipmaps!!
 		touch();
 	}
 }
-
-
 
 // ***************************************************************************
 CTextureDrvShare::~CTextureDrvShare()
@@ -130,41 +120,39 @@ ITextureDrvInfos::~ITextureDrvInfos()
 {
 	// NB: _Driver may be NULL because texture may not be stored in the share texture map.
 	// so there is no need to remove it from this map!!
-	if(_Driver)
+	if (_Driver)
 		_Driver->removeTextureDrvInfoPtr(_DriverIterator);
 }
 
-
 // ***************************************************************************
-void	ITexture::serial(NLMISC::IStream &f)
+void ITexture::serial(NLMISC::IStream &f)
 {
 	/*
 	Version 1:
-		- _LoadGrayscaleAsAlpha
+	    - _LoadGrayscaleAsAlpha
 	Version 0:
-		- base version.
+	    - base version.
 	*/
 
-	sint	ver= f.serialVersion(1);
+	sint ver = f.serialVersion(1);
 
 	f.serialEnum(_UploadFormat);
 	f.serialEnum(_WrapS);
 	f.serialEnum(_WrapT);
 	f.serialEnum(_MinFilter);
 	f.serialEnum(_MagFilter);
-	if(ver>=1)
+	if (ver >= 1)
 		f.serial(_LoadGrayscaleAsAlpha);
 }
 
 // ***************************************************************************
 
-void ITexture::setRenderTarget (bool enable)
+void ITexture::setRenderTarget(bool enable)
 {
 	_RenderTarget = enable;
-	touch ();
+	touch();
 }
 
 // ***************************************************************************
-
 
 } // NL3D

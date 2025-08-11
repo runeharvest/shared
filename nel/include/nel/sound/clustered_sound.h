@@ -25,19 +25,16 @@
 #include <vector>
 #include <map>
 
-namespace NLMISC
-{
-	class CAABBox;
+namespace NLMISC {
+class CAABBox;
 }
-namespace NL3D
-{
-	class UScene;
-	class CScene;
-	class CCluster;
+namespace NL3D {
+class UScene;
+class CScene;
+class CCluster;
 }
 
-namespace NLSOUND
-{
+namespace NLSOUND {
 
 class USource;
 class CFilterMaterial;
@@ -56,92 +53,93 @@ public:
 	struct CClusterSoundStatus
 	{
 		/// The relative gain of sound in the cluster
-		float			Gain;
+		float Gain;
 		/// The distance from listener.
-		float			Dist;
+		float Dist;
 		/// The ratio distance/max earing distance
-		float			DistFactor;
+		float DistFactor;
 		/// The sound virtual position (in fact Dist * Direction)
-		NLMISC::CVector	Position;
+		NLMISC::CVector Position;
 		/// The blending factor between real sound pos and virtual pos (1 mean virtual pos, 0 mean real pos).
-		float			PosAlpha;
+		float PosAlpha;
 		/// The direction vector for the virtual sound source.
-		NLMISC::CVector	Direction;
+		NLMISC::CVector Direction;
 		/// The occlusion att.
-		float			Occlusion;
+		float Occlusion;
 		/// The occlusion LF factor (see EAX spec)
-		float			OcclusionLFFactor;
+		float OcclusionLFFactor;
 		/// The occlusion romm ration
-		float			OcclusionRoomRatio;
+		float OcclusionRoomRatio;
 		/// The obsctruction att db
-		float			Obstruction;
+		float Obstruction;
 		/// Occlusion low pass cutoff frequency
-		float			DirectCutoffFrequency;
+		float DirectCutoffFrequency;
 		/// Occlusion low pass cutoff frequency
-		float			EffectCutoffFrequency;
+		float EffectCutoffFrequency;
 	};
 
 	/// Container for audible cluster status
-	typedef std::map<NL3D::CCluster*, CClusterSoundStatus>	TClusterStatusMap;
+	typedef std::map<NL3D::CCluster *, CClusterSoundStatus> TClusterStatusMap;
 
 	/// This structure is used when we traverse the cluster/portal graph.
 	struct CSoundTravContext
 	{
 		/// The current gain.
-		float			Gain;
-		float			Occlusion;
-		float			OcclusionLFFactor;
-		float			OcclusionRoomRatio;
-		float			Obstruction;
-		float			DirectCutoffFrequency;
-		float			EffectCutoffFrequency;
+		float Gain;
+		float Occlusion;
+		float OcclusionLFFactor;
+		float OcclusionRoomRatio;
+		float Obstruction;
+		float DirectCutoffFrequency;
+		float EffectCutoffFrequency;
 		/// The distance acumulator
-		float			Dist;
+		float Dist;
 		/// A flag that indicate if we need to filter the unvisible child.
-		bool			FilterUnvisibleChild;
+		bool FilterUnvisibleChild;
 		/// A flag that iindicate if we need to filter the unvisible father.
-		bool			FilterUnvisibleFather;
+		bool FilterUnvisibleFather;
 		/// The number of traversed portals
-		uint			NbPortal;
+		uint NbPortal;
 		/// A blending factor to compute virtual source position.
-		float			Alpha;
+		float Alpha;
 		/// The direction vector from listener to the first portal/cluster
-		NLMISC::CVector	Direction1;
+		NLMISC::CVector Direction1;
 		/// The direction vector from the first portal/cluster to the second one.
-		NLMISC::CVector	Direction2;
+		NLMISC::CVector Direction2;
 		/// The current blended direction used to place vitual source.
-		NLMISC::CVector	Direction;
+		NLMISC::CVector Direction;
 		/// The previously traversed cluster. Used to stop back traversal.
-		NL3D::CCluster	*PreviousCluster;
+		NL3D::CCluster *PreviousCluster;
 		/// The previous sound propagation vector
-		NLMISC::CVector	PreviousVector;
+		NLMISC::CVector PreviousVector;
 
 		/// The last pseudo listener position
-		NLMISC::CVector	ListenerPos;
+		NLMISC::CVector ListenerPos;
 
 		/// Constructor. Init all default value.
 		CSoundTravContext(const NLMISC::CVector &listenerPos,
-			bool filterUnvisibleChild, bool filterUnvisibleFather)
-			:	Gain(1.0f),
-				Occlusion(0),
-				OcclusionLFFactor(1.0f),
-				OcclusionRoomRatio(1.0f),
-				Obstruction(0),
-				Dist(0),
-				FilterUnvisibleChild(filterUnvisibleChild),
-				FilterUnvisibleFather(filterUnvisibleFather),
-				NbPortal(0),
-				Alpha(0.0f),
-				Direction1(NLMISC::CVector::Null),
-				Direction2(NLMISC::CVector::Null),
-				Direction(NLMISC::CVector::Null),
-				PreviousCluster(0),
-				PreviousVector(NLMISC::CVector::Null),
-				ListenerPos(listenerPos)
-		{}
+		    bool filterUnvisibleChild, bool filterUnvisibleFather)
+		    : Gain(1.0f)
+		    , Occlusion(0)
+		    , OcclusionLFFactor(1.0f)
+		    , OcclusionRoomRatio(1.0f)
+		    , Obstruction(0)
+		    , Dist(0)
+		    , FilterUnvisibleChild(filterUnvisibleChild)
+		    , FilterUnvisibleFather(filterUnvisibleFather)
+		    , NbPortal(0)
+		    , Alpha(0.0f)
+		    , Direction1(NLMISC::CVector::Null)
+		    , Direction2(NLMISC::CVector::Null)
+		    , Direction(NLMISC::CVector::Null)
+		    , PreviousCluster(0)
+		    , PreviousVector(NLMISC::CVector::Null)
+		    , ListenerPos(listenerPos)
+		{
+		}
 
 		/// Assignment operator.
-		CSoundTravContext &operator = (const CSoundTravContext &other)
+		CSoundTravContext &operator=(const CSoundTravContext &other)
 		{
 			Gain = other.Gain;
 			Occlusion = other.Occlusion;
@@ -166,14 +164,12 @@ public:
 	///
 	struct CClusterSound
 	{
-		USource		*Source;
-		float		Distance;
+		USource *Source;
+		float Distance;
 	};
 
-
 	/// Container for the next traversal step
-	typedef std::map<NL3D::CCluster*, CSoundTravContext>	TClusterTravContextMap;
-
+	typedef std::map<NL3D::CCluster *, CSoundTravContext> TClusterTravContextMap;
 
 	/// Constructor
 	CClusteredSound();
@@ -184,33 +180,31 @@ public:
 	 *	\param maxEarDist The maximum traversal distance to limit graph traversal.
 	 *	\param minGain The minimun gain to stop traversal.
 	 */
-	void		init(NL3D::CScene *scene, float portalInterpolate, float maxEarDistance, float minGain, bool enableOcclusionObstruction, bool enableReverb);
+	void init(NL3D::CScene *scene, float portalInterpolate, float maxEarDistance, float minGain, bool enableOcclusionObstruction, bool enableReverb);
 
 	/** Update the cluster sound system.
 	 */
-	void		update(const NLMISC::CVector &listenerPos, const NLMISC::CVector &view, const NLMISC::CVector &up);
+	void update(const NLMISC::CVector &listenerPos, const NLMISC::CVector &view, const NLMISC::CVector &up);
 
-	NL3D::CCluster	*getRootCluster();
-
+	NL3D::CCluster *getRootCluster();
 
 	const CClusterSoundStatus *getClusterSoundStatus(NL3D::CCluster *cluster);
 
-	const TClusterStatusMap &getAudibleClusters() {return _AudibleClusters;}
+	const TClusterStatusMap &getAudibleClusters() { return _AudibleClusters; }
 
-	const std::vector<std::pair<NLMISC::CVector, NLMISC::CVector> >	&getAudioPath() { return _AudioPath;}
+	const std::vector<std::pair<NLMISC::CVector, NLMISC::CVector>> &getAudioPath() { return _AudioPath; }
 
 	static void buildSheets(const std::string &packedSheetPath);
 
 private:
-
 	/// Traverse the cluster system to build/update the audible cluster set and theire respective status.
-	void		soundTraverse(const std::vector<NL3D::CCluster *> &clusters, CSoundTravContext &travContext);
+	void soundTraverse(const std::vector<NL3D::CCluster *> &clusters, CSoundTravContext &travContext);
 	/// Add a cluster for the next traversal step
-	void		addNextTraverse(NL3D::CCluster *cluster, CSoundTravContext &travContext);
+	void addNextTraverse(NL3D::CCluster *cluster, CSoundTravContext &travContext);
 	/// Add a cluster into the list of audible cluster.
-	bool		addAudibleCluster(NL3D::CCluster *cluster, CClusterSoundStatus &soundStatus);
+	bool addAudibleCluster(NL3D::CCluster *cluster, CClusterSoundStatus &soundStatus);
 	/// Compute a positional blending depending on context.
-	NLMISC::CVector		interpolateSourceDirection(const CSoundTravContext &context, float portalDist, const NLMISC::CVector &nearPoint, const NLMISC::CVector &realListener, NLMISC::CVector &d1, NLMISC::CVector &d2, float &alpha);
+	NLMISC::CVector interpolateSourceDirection(const CSoundTravContext &context, float portalDist, const NLMISC::CVector &nearPoint, const NLMISC::CVector &realListener, NLMISC::CVector &d1, NLMISC::CVector &d2, float &alpha);
 	//\name Utility method
 	//@{
 	/** Compute the point on the poly that is the nearest from a given position.
@@ -222,7 +216,7 @@ private:
 	 *	\param nearPoint The nearest point (out var).
 	 *	\return The distance between pos and nearPoint.
 	 */
-	float		getPolyNearestPos(const std::vector<NLMISC::CVector> &poly, const NLMISC::CVector &pos, NLMISC::CVector &nearPoint);
+	float getPolyNearestPos(const std::vector<NLMISC::CVector> &poly, const NLMISC::CVector &pos, NLMISC::CVector &nearPoint);
 
 	/** Compute the point in the bounding box that is the nearest from a given position.
 	 *	This point can be in the volume of the box, on a segment of one of the vertex.
@@ -233,39 +227,38 @@ private:
 	 *	\param nearPoint The nearest point (out var).
 	 *	\return The distance between pos and nearPoint.
 	 */
-	float		getAABoxNearestPos(const NLMISC::CAABBox &box, const NLMISC::CVector &pos, NLMISC::CVector &nearPos);
+	float getAABoxNearestPos(const NLMISC::CAABBox &box, const NLMISC::CVector &pos, NLMISC::CVector &nearPos);
 	//@}
 
 	/// The scene of interest
-	NL3D::CScene	*_Scene;
+	NL3D::CScene *_Scene;
 	/// Interpolation distance when listener is near a portal.
-	float			_PortalInterpolate;
+	float _PortalInterpolate;
 	/// Maximum earing distance.
-	float			_MaxEarDistance;
+	float _MaxEarDistance;
 	/// Minimum gain.
-	float			_MinGain;
+	float _MinGain;
 	/// The root cluster of the scene.
-	NL3D::CCluster	*_RootCluster;
-
+	NL3D::CCluster *_RootCluster;
 
 	/// The current audible cluster
-	TClusterStatusMap		_AudibleClusters;
+	TClusterStatusMap _AudibleClusters;
 	/// The cluster for the next travesal step
-	TClusterTravContextMap	_NextTraversalStep;
+	TClusterTravContextMap _NextTraversalStep;
 	/// The last setted environement.
-	NLMISC::TStringId				_LastEnv;
+	NLMISC::TStringId _LastEnv;
 	/// The last set environment size.
-	float					_LastEnvSize;
+	float _LastEnvSize;
 	/// The segment of all the audio path.
-	std::vector<std::pair<NLMISC::CVector, NLMISC::CVector> >	_AudioPath;
+	std::vector<std::pair<NLMISC::CVector, NLMISC::CVector>> _AudioPath;
 
-	typedef CHashMap<NLMISC::TStringId, CClusterSound, NLMISC::CStringIdHashMapTraits>	TClusterSoundCont;
+	typedef CHashMap<NLMISC::TStringId, CClusterSound, NLMISC::CStringIdHashMapTraits> TClusterSoundCont;
 	/// The current cluster playing source indexed with sound group id
-	TClusterSoundCont		_Sources;
+	TClusterSoundCont _Sources;
 
 	typedef CHashMap<NLMISC::TStringId, NLMISC::TStringId, NLMISC::CStringIdHashMapTraits> TStringStringMap;
 	/// The sound_group to sound assoc
-	TStringStringMap	_SoundGroupToSound;
+	TStringStringMap _SoundGroupToSound;
 
 	typedef std::map<NLMISC::TStringId, CFilterMaterial> TFilterMaterialsMap;
 	/// Filter material presets

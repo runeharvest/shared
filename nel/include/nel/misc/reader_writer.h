@@ -54,7 +54,7 @@ public:
 		m_Mutex.unlock();
 	}
 };
-	
+
 #else
 
 /**
@@ -66,47 +66,45 @@ public:
 class CReaderWriter
 {
 private:
-
-	CMutex	_Fairness;
-	CMutex	_ReadersMutex;
-	CMutex	_RWMutex;
-	sint	_ReadersLevel;
+	CMutex _Fairness;
+	CMutex _ReadersMutex;
+	CMutex _RWMutex;
+	sint _ReadersLevel;
 
 public:
-
 	CReaderWriter();
 	~CReaderWriter();
 
-	void			enterReader()
+	void enterReader()
 	{
-		const_cast<CMutex&>(_Fairness).enter();
-		const_cast<CMutex&>(_ReadersMutex).enter();
+		const_cast<CMutex &>(_Fairness).enter();
+		const_cast<CMutex &>(_ReadersMutex).enter();
 		++_ReadersLevel;
 		if (_ReadersLevel == 1)
-			const_cast<CMutex&>(_RWMutex).enter();
-		const_cast<CMutex&>(_ReadersMutex).leave();
-		const_cast<CMutex&>(_Fairness).leave();
+			const_cast<CMutex &>(_RWMutex).enter();
+		const_cast<CMutex &>(_ReadersMutex).leave();
+		const_cast<CMutex &>(_Fairness).leave();
 	}
 
-	void			leaveReader()
+	void leaveReader()
 	{
-		const_cast<CMutex&>(_ReadersMutex).enter();
+		const_cast<CMutex &>(_ReadersMutex).enter();
 		--_ReadersLevel;
 		if (_ReadersLevel == 0)
-			const_cast<CMutex&>(_RWMutex).leave();
-		const_cast<CMutex&>(_ReadersMutex).leave();
+			const_cast<CMutex &>(_RWMutex).leave();
+		const_cast<CMutex &>(_ReadersMutex).leave();
 	}
 
-	void			enterWriter()
+	void enterWriter()
 	{
-		const_cast<CMutex&>(_Fairness).enter();
-		const_cast<CMutex&>(_RWMutex).enter();
-		const_cast<CMutex&>(_Fairness).leave();
+		const_cast<CMutex &>(_Fairness).enter();
+		const_cast<CMutex &>(_RWMutex).enter();
+		const_cast<CMutex &>(_Fairness).leave();
 	}
 
-	void			leaveWriter()
+	void leaveWriter()
 	{
-		const_cast<CMutex&>(_RWMutex).leave();
+		const_cast<CMutex &>(_RWMutex).leave();
 	}
 };
 
@@ -122,50 +120,47 @@ template <class T>
 class CRWSynchronized
 {
 public:
-
 	class CReadAccessor
 	{
-		CRWSynchronized<T>		*_RWSynchronized;
+		CRWSynchronized<T> *_RWSynchronized;
 
 	public:
-
 		CReadAccessor(CRWSynchronized<T> *cs)
 		{
 			_RWSynchronized = cs;
-			const_cast<CReaderWriter&>(_RWSynchronized->_RWSync).enterReader();
+			const_cast<CReaderWriter &>(_RWSynchronized->_RWSync).enterReader();
 		}
 
 		~CReadAccessor()
 		{
-			const_cast<CReaderWriter&>(_RWSynchronized->_RWSync).leaveReader();
+			const_cast<CReaderWriter &>(_RWSynchronized->_RWSync).leaveReader();
 		}
 
-		const T		&value()
+		const T &value()
 		{
-			return const_cast<const T&>(_RWSynchronized->_Value);
+			return const_cast<const T &>(_RWSynchronized->_Value);
 		}
 	};
 
 	class CWriteAccessor
 	{
-		CRWSynchronized<T>		*_RWSynchronized;
+		CRWSynchronized<T> *_RWSynchronized;
 
 	public:
-
 		CWriteAccessor(CRWSynchronized<T> *cs)
 		{
 			_RWSynchronized = cs;
-			const_cast<CReaderWriter&>(_RWSynchronized->_RWSync).enterWriter();
+			const_cast<CReaderWriter &>(_RWSynchronized->_RWSync).enterWriter();
 		}
 
 		~CWriteAccessor()
 		{
-			const_cast<CReaderWriter&>(_RWSynchronized->_RWSync).leaveWriter();
+			const_cast<CReaderWriter &>(_RWSynchronized->_RWSync).leaveWriter();
 		}
 
-		T		&value()
+		T &value()
 		{
-			return const_cast<T&>(_RWSynchronized->_Value);
+			return const_cast<T &>(_RWSynchronized->_Value);
 		}
 	};
 
@@ -173,14 +168,12 @@ private:
 	friend class CRWSynchronized::CReadAccessor;
 	friend class CRWSynchronized::CWriteAccessor;
 
-	CReaderWriter		_RWSync;
+	CReaderWriter _RWSync;
 
-	T					_Value;
-
+	T _Value;
 };
 
 } // NLMISC
-
 
 #endif // NL_READER_WRITER_H
 

@@ -47,7 +47,9 @@ int a_UndoCommandId = 9000;
 ///////////////////////////////////////////////////////////////////////
 
 CUndoRedoBinderButton::CUndoRedoBinderButton(QAbstractButton *abstractButton, QUndoStack *undoStack)
-	: QObject(abstractButton), m_AbstractButton(abstractButton), m_UndoStack(undoStack)
+    : QObject(abstractButton)
+    , m_AbstractButton(abstractButton)
+    , m_UndoStack(undoStack)
 {
 	nlassert(m_AbstractButton);
 	bool c;
@@ -83,16 +85,18 @@ void CUndoRedoBinderButton::abstractButtonToggled(bool checked)
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-CUndoRedoCommandButton::CUndoRedoCommandButton(CUndoRedoBinderButton *binder, QAbstractButton *abstractButton, bool undo/*, bool redo*/)
-	: QUndoCommand(), m_Binder(binder), m_AbstractButton(abstractButton), m_Undo(undo)/*, m_Redo(redo)*/
+CUndoRedoCommandButton::CUndoRedoCommandButton(CUndoRedoBinderButton *binder, QAbstractButton *abstractButton, bool undo /*, bool redo*/)
+    : QUndoCommand()
+    , m_Binder(binder)
+    , m_AbstractButton(abstractButton)
+    , m_Undo(undo) /*, m_Redo(redo)*/
 {
 	// nldebug("CUndoRedoCommandButton::CUndoRedoCommandButton()");
-	nlassert(m_AbstractButton);	
+	nlassert(m_AbstractButton);
 }
 
 CUndoRedoCommandButton::~CUndoRedoCommandButton()
 {
-	
 }
 
 void CUndoRedoCommandButton::undo()
@@ -122,7 +126,9 @@ void CUndoRedoCommandButton::redo()
 ///////////////////////////////////////////////////////////////////////
 
 CUndoRedoBinderLineEdit::CUndoRedoBinderLineEdit(QLineEdit *lineEdit, QUndoStack *undoStack)
-	: QObject(lineEdit), m_LineEdit(lineEdit), m_UndoStack(undoStack)
+    : QObject(lineEdit)
+    , m_LineEdit(lineEdit)
+    , m_UndoStack(undoStack)
 {
 	nlassert(m_LineEdit);
 	m_Id = ++a_UndoCommandId;
@@ -168,7 +174,12 @@ void CUndoRedoBinderLineEdit::lineEditTextChanged(const QString &text)
 ///////////////////////////////////////////////////////////////////////
 
 CUndoRedoCommandLineEdit::CUndoRedoCommandLineEdit(CUndoRedoBinderLineEdit *binder, QLineEdit *lineEdit, const QString &undo, const QString &redo, int id)
-	: QUndoCommand(), m_Binder(binder), m_LineEdit(lineEdit), m_Undo(undo), m_Redo(redo), m_Id(id)
+    : QUndoCommand()
+    , m_Binder(binder)
+    , m_LineEdit(lineEdit)
+    , m_Undo(undo)
+    , m_Redo(redo)
+    , m_Id(id)
 {
 	// nldebug("CUndoRedoCommandLineEdit::CUndoRedoCommandLineEdit()");
 	nlassert(m_LineEdit);
@@ -176,7 +187,6 @@ CUndoRedoCommandLineEdit::CUndoRedoCommandLineEdit(CUndoRedoBinderLineEdit *bind
 
 CUndoRedoCommandLineEdit::~CUndoRedoCommandLineEdit()
 {
-	
 }
 
 bool CUndoRedoCommandLineEdit::mergeWith(const QUndoCommand *other)
@@ -190,7 +200,7 @@ void CUndoRedoCommandLineEdit::undo()
 {
 	// nldebug("CUndoRedoCommandLineEdit::undo()");
 	// nlassert(m_LineEdit);
-	
+
 	m_Binder->enable(false);
 	if (m_LineEdit->text() != m_Undo)
 		m_LineEdit->setText(m_Undo);
@@ -213,7 +223,9 @@ void CUndoRedoCommandLineEdit::redo()
 ///////////////////////////////////////////////////////////////////////
 
 CUndoRedoBinderComboBox::CUndoRedoBinderComboBox(QComboBox *comboBox, QUndoStack *undoStack)
-	: QObject(comboBox), m_ComboBox(comboBox), m_UndoStack(undoStack)
+    : QObject(comboBox)
+    , m_ComboBox(comboBox)
+    , m_UndoStack(undoStack)
 {
 	nlassert(m_ComboBox);
 	bool c;
@@ -250,7 +262,11 @@ void CUndoRedoBinderComboBox::comboBoxCurrentIndexChanged(int index)
 ///////////////////////////////////////////////////////////////////////
 
 CUndoRedoCommandComboBox::CUndoRedoCommandComboBox(CUndoRedoBinderComboBox *binder, QComboBox *comboBox, int undo, int redo)
-	: QUndoCommand(), m_Binder(binder), m_ComboBox(comboBox), m_Undo(undo), m_Redo(redo)
+    : QUndoCommand()
+    , m_Binder(binder)
+    , m_ComboBox(comboBox)
+    , m_Undo(undo)
+    , m_Redo(redo)
 {
 	// nldebug("CUndoRedoCommandComboBox::CUndoRedoCommandComboBox()");
 	nlassert(m_ComboBox);
@@ -258,14 +274,13 @@ CUndoRedoCommandComboBox::CUndoRedoCommandComboBox(CUndoRedoBinderComboBox *bind
 
 CUndoRedoCommandComboBox::~CUndoRedoCommandComboBox()
 {
-	
 }
 
 void CUndoRedoCommandComboBox::undo()
 {
 	// nldebug("CUndoRedoCommandComboBox::undo()");
 	// nlassert(m_ComboBox);
-	
+
 	m_Binder->enable(false);
 	if (m_ComboBox->currentIndex() != m_Undo)
 		m_ComboBox->setCurrentIndex(m_Undo);
@@ -288,7 +303,9 @@ void CUndoRedoCommandComboBox::redo()
 ///////////////////////////////////////////////////////////////////////
 
 CUndoRedoBinderColorPicker::CUndoRedoBinderColorPicker(QtColorPicker *colorPicker, QUndoStack *undoStack)
-	: QObject(colorPicker), m_ColorPicker(colorPicker), m_UndoStack(undoStack)
+    : QObject(colorPicker)
+    , m_ColorPicker(colorPicker)
+    , m_UndoStack(undoStack)
 {
 	nlassert(m_ColorPicker);
 	bool c;
@@ -325,7 +342,11 @@ void CUndoRedoBinderColorPicker::colorPickerColorChanged(const QColor &col)
 ///////////////////////////////////////////////////////////////////////
 
 CUndoRedoCommandColorPicker::CUndoRedoCommandColorPicker(CUndoRedoBinderColorPicker *binder, QtColorPicker *colorPicker, const QColor &undo, const QColor &redo)
-	: QUndoCommand(), m_Binder(binder), m_ColorPicker(colorPicker), m_Undo(undo), m_Redo(redo)
+    : QUndoCommand()
+    , m_Binder(binder)
+    , m_ColorPicker(colorPicker)
+    , m_Undo(undo)
+    , m_Redo(redo)
 {
 	// nldebug("CUndoRedoCommandColorPicker::CUndoRedoCommandColorPicker()");
 	nlassert(m_ColorPicker);
@@ -333,14 +354,13 @@ CUndoRedoCommandColorPicker::CUndoRedoCommandColorPicker(CUndoRedoBinderColorPic
 
 CUndoRedoCommandColorPicker::~CUndoRedoCommandColorPicker()
 {
-	
 }
 
 void CUndoRedoCommandColorPicker::undo()
 {
 	// nldebug("CUndoRedoCommandColorPicker::undo()");
 	// nlassert(m_ColorPicker);
-	
+
 	m_Binder->enable(false);
 	if (m_ColorPicker->currentColor() != m_Undo)
 		m_ColorPicker->setCurrentColor(m_Undo);

@@ -28,7 +28,7 @@
 #include <map>
 #include <set>
 #include <algorithm>
-//#include <sstream>
+// #include <sstream>
 #include <exception>
 #include <utility>
 #include <deque>
@@ -47,4 +47,3 @@
 #include "nel/misc/aabbox.h"
 #include "nel/misc/pool_memory.h"
 #include "nel/misc/plane.h"
-

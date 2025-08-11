@@ -22,9 +22,7 @@
 #include "nel/misc/stream.h"
 #include "nel/misc/common.h"
 
-
 namespace NLNET {
-
 
 /**
  * Manage cookie during the authenticate procedure.
@@ -40,29 +38,31 @@ namespace NLNET {
 class CLoginCookie
 {
 public:
+	CLoginCookie(uint32 addr, uint32 id);
+	CLoginCookie()
+	    : _Valid(false)
+	{
+	}
 
-	CLoginCookie (uint32 addr, uint32 id);
-	CLoginCookie () : _Valid(false) { }
-
-	void serial (NLMISC::IStream &s)
+	void serial(NLMISC::IStream &s)
 	{
 		// verify that we initialized the cookie before writing it
-		if (!s.isReading() && !_Valid) nlwarning ("LC: serialize a non valid cookie");
+		if (!s.isReading() && !_Valid) nlwarning("LC: serialize a non valid cookie");
 
-		s.serial (_UserAddr);
-		s.serial (_UserKey);
-		s.serial (_UserId);
+		s.serial(_UserAddr);
+		s.serial(_UserKey);
+		s.serial(_UserId);
 
 		if (s.isReading()) _Valid = true;
 	}
 
-	std::string setToString () const
+	std::string setToString() const
 	{
 		if (_Valid)
 		{
-			char cstr[8*3+2+1];
-			NLMISC::smprintf(cstr, 8*3+2+1, "%08X|%08X|%08X", _UserAddr, _UserKey, _UserId);
-			nlinfo ("LC: setToString %s -> %s", toString().c_str (), cstr);
+			char cstr[8 * 3 + 2 + 1];
+			NLMISC::smprintf(cstr, 8 * 3 + 2 + 1, "%08X|%08X|%08X", _UserAddr, _UserKey, _UserId);
+			nlinfo("LC: setToString %s -> %s", toString().c_str(), cstr);
 			return cstr;
 		}
 		else
@@ -71,19 +71,19 @@ public:
 		}
 	}
 
-	void setFromString (const std::string &str)
+	void setFromString(const std::string &str)
 	{
 		sscanf(str.c_str(), "%08X|%08X|%08X", &_UserAddr, &_UserKey, &_UserId);
 
-		if(str.empty () || (_UserAddr==0 && _UserKey==0 && _UserId==0))
+		if (str.empty() || (_UserAddr == 0 && _UserKey == 0 && _UserId == 0))
 			_Valid = 0;
 		else
 			_Valid = 1;
 
-		//nlinfo ("LC: setFromString %s -> %s, isValid: %d", str.c_str (), toString().c_str (), _Valid);
+		// nlinfo ("LC: setFromString %s -> %s, isValid: %d", str.c_str (), toString().c_str (), _Valid);
 	}
 
-	std::string toString () const
+	std::string toString() const
 	{
 		if (_Valid)
 			return "'" + NLMISC::toString("%08X", (unsigned int)_UserAddr) + "|" + NLMISC::toString("%08X", (unsigned int)_UserKey) + "|" + NLMISC::toString("%08X", (unsigned int)_UserId) + "'";
@@ -91,52 +91,66 @@ public:
 			return "<InvalidCookie>";
 	}
 
-	uint32	getUserAddr () const { nlassert (_Valid); return _UserAddr; }
-	uint32	getUserKey () const { nlassert (_Valid); return _UserKey; }
-	uint32	getUserId () const { nlassert (_Valid); return _UserId; }
+	uint32 getUserAddr() const
+	{
+		nlassert(_Valid);
+		return _UserAddr;
+	}
+	uint32 getUserKey() const
+	{
+		nlassert(_Valid);
+		return _UserKey;
+	}
+	uint32 getUserId() const
+	{
+		nlassert(_Valid);
+		return _UserId;
+	}
 
-	void	set (uint32 ua, uint32 uk, uint32 ui) { _Valid = true; _UserAddr = ua; _UserKey = uk; _UserId = ui; }
+	void set(uint32 ua, uint32 uk, uint32 ui)
+	{
+		_Valid = true;
+		_UserAddr = ua;
+		_UserKey = uk;
+		_UserId = ui;
+	}
 
-	bool	isValid() const { return _Valid; }
-	void	clear () { _Valid = false; }
+	bool isValid() const { return _Valid; }
+	void clear() { _Valid = false; }
 
-	uint32	generateKey();
+	uint32 generateKey();
 
 	/// Comparison == operator
-	friend bool operator== (const CLoginCookie &c1, const CLoginCookie &c2);
+	friend bool operator==(const CLoginCookie &c1, const CLoginCookie &c2);
 
 	/// Strict weak ordering operator
-	bool operator <(const CLoginCookie &other) const
+	bool operator<(const CLoginCookie &other) const
 	{
-		if(_UserAddr != other._UserAddr)
+		if (_UserAddr != other._UserAddr)
 			return _UserAddr < other._UserAddr;
-		if(_UserKey != other._UserKey)
+		if (_UserKey != other._UserKey)
 			return _UserKey < other._UserKey;
 		return _UserId < other._UserId;
 	}
 
 private:
+	bool _Valid;
 
-	bool	_Valid;
-
-	uint32	_UserAddr;
-	uint32	_UserKey;
-	uint32	_UserId;
-
+	uint32 _UserAddr;
+	uint32 _UserKey;
+	uint32 _UserId;
 };
 
 /*
  * Comparison == operator
  */
-bool operator== (const CLoginCookie &c1, const CLoginCookie &c2);
+bool operator==(const CLoginCookie &c1, const CLoginCookie &c2);
 /*
  * Comparison != operator
  */
-bool operator!= (const CLoginCookie &c1, const CLoginCookie &c2);
+bool operator!=(const CLoginCookie &c1, const CLoginCookie &c2);
 
 } // NLNET
-
-
 
 #endif // NL_LOGIN_COOKIE_H
 

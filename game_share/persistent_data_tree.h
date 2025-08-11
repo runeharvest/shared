@@ -15,14 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
-  *  This file contains an extension of the 'persistent data record' system
-  *  It represents the contents of arbitrary CPersistentDataRecord records in a tree structure
-  *  that can be interrogated or written to / read from easy to read text files
-  *
-  **/
+ *  This file contains an extension of the 'persistent data record' system
+ *  It represents the contents of arbitrary CPersistentDataRecord records in a tree structure
+ *  that can be interrogated or written to / read from easy to read text files
+ *
+ **/
 
 #ifndef PERSISTENT_DATA_TREE_H
-#define	PERSISTENT_DATA_TREE_H
+#define PERSISTENT_DATA_TREE_H
 
 //-----------------------------------------------------------------------------
 // Includes
@@ -31,40 +31,39 @@
 #include "nel/misc/smart_ptr.h"
 #include "persistent_data.h"
 
-
 //-----------------------------------------------------------------------------
 // class CPersistentDataTreeNode
 //-----------------------------------------------------------------------------
 
-class CPersistentDataTreeNode: public NLMISC::CRefCount
+class CPersistentDataTreeNode : public NLMISC::CRefCount
 {
 public:
 	// typedefs
 	typedef NLMISC::CSString TValue;
-	typedef NLMISC::CSmartPtr<CPersistentDataTreeNode>	TNodePtr;
-	typedef NLMISC::CRefPtr<CPersistentDataTreeNode>	TNodeRefPtr;
+	typedef NLMISC::CSmartPtr<CPersistentDataTreeNode> TNodePtr;
+	typedef NLMISC::CRefPtr<CPersistentDataTreeNode> TNodeRefPtr;
 	typedef std::vector<TNodePtr> TChildren;
-	typedef std::map<NLMISC::CSString,TNodePtr> TChildIndex;
-	typedef std::map<NLMISC::CSString,int> TNextPoundValue;
+	typedef std::map<NLMISC::CSString, TNodePtr> TChildIndex;
+	typedef std::map<NLMISC::CSString, int> TNextPoundValue;
 
 	// ctor
-	CPersistentDataTreeNode(const NLMISC::CSString& name=NLMISC::CSString(),CPersistentDataTreeNode* parent=NULL);
-	CPersistentDataTreeNode(const NLMISC::CSString& name,CPersistentDataTreeNode* parent,uint32 idx);
+	CPersistentDataTreeNode(const NLMISC::CSString &name = NLMISC::CSString(), CPersistentDataTreeNode *parent = NULL);
+	CPersistentDataTreeNode(const NLMISC::CSString &name, CPersistentDataTreeNode *parent, uint32 idx);
 
 	// attaching a node to a parent node
 	// - note: it is not possible to detach a node once attached
-	bool attachToParent(CPersistentDataTreeNode* parent);
-	bool attachToParent(CPersistentDataTreeNode* parent,uint32 idx);
+	bool attachToParent(CPersistentDataTreeNode *parent);
+	bool attachToParent(CPersistentDataTreeNode *parent, uint32 idx);
 
 	// reading / writing pdr objects
-	bool readFromPdr(CPersistentDataRecord& pdr);
-	bool writeToPdr(CPersistentDataRecord& pdr) const;
+	bool readFromPdr(CPersistentDataRecord &pdr);
+	bool writeToPdr(CPersistentDataRecord &pdr) const;
 
 	// writing to a text buffer
-	bool writeToBuffer(NLMISC::CSString& buffer) const;
+	bool writeToBuffer(NLMISC::CSString &buffer) const;
 
 	// 'name' accessors
-	const NLMISC::CSString& getName() const;
+	const NLMISC::CSString &getName() const;
 	NLMISC::CSString getNodeName() const;
 
 	// accessor to find out whether this is a standard property or a map entry
@@ -75,35 +74,34 @@ public:
 	bool flagAsMap();
 
 	// 'value' accessors
-	void	setValue(const TValue& value);
-	const	TValue& getValue() const;
-	const	TValue& getValue(const NLMISC::CSString& nameList) const;
+	void setValue(const TValue &value);
+	const TValue &getValue() const;
+	const TValue &getValue(const NLMISC::CSString &nameList) const;
 
 	// 'child' accessors
-	const CPersistentDataTreeNode* getChild(const NLMISC::CSString& name) const;
-	CPersistentDataTreeNode* getChild(const NLMISC::CSString& name);
-	const TChildren& getChildren() const;
-	CPersistentDataTreeNode* getDescendant(const NLMISC::CSString& nameList,bool createIfNotExist=false);
+	const CPersistentDataTreeNode *getChild(const NLMISC::CSString &name) const;
+	CPersistentDataTreeNode *getChild(const NLMISC::CSString &name);
+	const TChildren &getChildren() const;
+	CPersistentDataTreeNode *getDescendant(const NLMISC::CSString &nameList, bool createIfNotExist = false);
 
 	// compare two tree nodes (verify that their contents are eqivalent)
-	bool operator==(const CPersistentDataTreeNode& other) const;
+	bool operator==(const CPersistentDataTreeNode &other) const;
 
 private:
 	// private data common to all nodes
-	NLMISC::CSString	_Name;
-	TNodeRefPtr			_Parent;
-	bool				_IsValue;
+	NLMISC::CSString _Name;
+	TNodeRefPtr _Parent;
+	bool _IsValue;
 
 	// value for leaf nodes
-	TValue				_Value;
+	TValue _Value;
 
 	// containers for children and associated indexes etc for branch nodes
-	TChildren			_Children;
-	TChildIndex			_ChildIndex;
-	TNextPoundValue		_NextPoundValue;
-	bool				_IsMap;
+	TChildren _Children;
+	TChildIndex _ChildIndex;
+	TNextPoundValue _NextPoundValue;
+	bool _IsMap;
 };
-
 
 //-----------------------------------------------------------------------------
 // class CPersistentDataTree
@@ -120,30 +118,29 @@ public:
 	CPersistentDataTree();
 
 	// reading from different sources
-	bool readFromBuffer(const NLMISC::CSString& buffer);
-	bool readFromFile(const NLMISC::CSString& fileName);
-	bool readFromPdr(CPersistentDataRecord& pdr);
+	bool readFromBuffer(const NLMISC::CSString &buffer);
+	bool readFromFile(const NLMISC::CSString &fileName);
+	bool readFromPdr(CPersistentDataRecord &pdr);
 
 	// writing to different sources
-	bool writeToBuffer(NLMISC::CSString& buffer) const;
-	bool writeToFile(const NLMISC::CSString& fileName) const;
-	bool writeToPdr(CPersistentDataRecord& pdr) const;
+	bool writeToBuffer(NLMISC::CSString &buffer) const;
+	bool writeToFile(const NLMISC::CSString &fileName) const;
+	bool writeToPdr(CPersistentDataRecord &pdr) const;
 
 	// 'value' accessors
-	void   setValue(const TValue& nodeName,const NLMISC::CSString& value);
-	const  TValue&  getValue(const NLMISC::CSString& nodeName) const;
+	void setValue(const TValue &nodeName, const NLMISC::CSString &value);
+	const TValue &getValue(const NLMISC::CSString &nodeName) const;
 
 	// accessors for navigaiting in the tree
-	CPersistentDataTreeNode* getNode(const NLMISC::CSString& nodeName);
+	CPersistentDataTreeNode *getNode(const NLMISC::CSString &nodeName);
 
 	// compare two data trees (verify that their contents are eqivalent)
-	bool operator==(const CPersistentDataTree& other) const;
+	bool operator==(const CPersistentDataTree &other) const;
 
 private:
 	// private data
 	TNodePtr _Child;
 };
-
 
 //-----------------------------------------------------------------------------
 #endif

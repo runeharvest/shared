@@ -27,12 +27,12 @@
 #include "nel/net/net_log.h"
 
 #ifdef NL_OS_WINDOWS
-#	ifndef NL_COMP_MINGW
-#		define NOMINMAX
-#	endif
-#	include <windows.h>
+#ifndef NL_COMP_MINGW
+#define NOMINMAX
+#endif
+#include <windows.h>
 #elif defined NL_OS_UNIX
-#	include <netinet/in.h>
+#include <netinet/in.h>
 #endif
 
 #ifdef DEBUG_NEW
@@ -42,12 +42,9 @@
 using namespace NLMISC;
 using namespace std;
 
-
 namespace NLNET {
 
-
-uint32 	NbClientReceiveTask = 0;
-
+uint32 NbClientReceiveTask = 0;
 
 /***************************************************************************************************
  * User main thread (initialization)
@@ -57,31 +54,33 @@ uint32 	NbClientReceiveTask = 0;
  * Constructor
  */
 #ifdef NL_OS_UNIX
-CBufClient::CBufClient( bool nodelay, bool replaymode, bool initPipeForDataAvailable ) :
-	CBufNetBase( initPipeForDataAvailable ),
+CBufClient::CBufClient(bool nodelay, bool replaymode, bool initPipeForDataAvailable)
+    : CBufNetBase(initPipeForDataAvailable)
+    ,
 #else
-CBufClient::CBufClient( bool nodelay, bool replaymode, bool ) :
-	CBufNetBase(),
+CBufClient::CBufClient(bool nodelay, bool replaymode, bool)
+    : CBufNetBase()
+    ,
 #endif
-	_NoDelay( nodelay ),
-	_PrevBytesDownloaded( 0 ),
-	_PrevBytesUploaded( 0 ),
-	_RecvTask( NULL ),
-	_RecvThread( NULL )
-	/*_PrevBytesReceived( 0 ),
-	_PrevBytesSent( 0 )*/
+    _NoDelay(nodelay)
+    , _PrevBytesDownloaded(0)
+    , _PrevBytesUploaded(0)
+    , _RecvTask(NULL)
+    , _RecvThread(NULL)
+/*_PrevBytesReceived( 0 ),
+_PrevBytesSent( 0 )*/
 {
-	nlnettrace( "CBufClient::CBufClient" ); // don't define a global object
+	nlnettrace("CBufClient::CBufClient"); // don't define a global object
 
-	if ( replaymode )
+	if (replaymode)
 	{
-		_BufSock = new CNonBlockingBufSock( new CDummyTcpSock(), CBufNetBase::DefaultMaxExpectedBlockSize );
+		_BufSock = new CNonBlockingBufSock(new CDummyTcpSock(), CBufNetBase::DefaultMaxExpectedBlockSize);
 	}
 	else
 	{
 
-		_BufSock = new CNonBlockingBufSock( NULL, CBufNetBase::DefaultMaxExpectedBlockSize );
-		_RecvTask = new CClientReceiveTask( this, _BufSock );
+		_BufSock = new CNonBlockingBufSock(NULL, CBufNetBase::DefaultMaxExpectedBlockSize);
+		_RecvTask = new CClientReceiveTask(this, _BufSock);
 	}
 }
 
@@ -91,10 +90,10 @@ CBufClient::CBufClient( bool nodelay, bool replaymode, bool ) :
  */
 void CBufClient::connect(const CInetHost &addrs)
 {
-	nlnettrace( "CBufClient::connect" );
-	nlassert( ! _BufSock->Sock->connected() );
-	_BufSock->setMaxExpectedBlockSize( maxExpectedBlockSize() );
-	_BufSock->connect( addrs, _NoDelay, true );
+	nlnettrace("CBufClient::connect");
+	nlassert(!_BufSock->Sock->connected());
+	_BufSock->setMaxExpectedBlockSize(maxExpectedBlockSize());
+	_BufSock->connect(addrs, _NoDelay, true);
 	_BufSock->setNonBlocking(); // ADDED: non-blocking client connection
 	_PrevBytesDownloaded = 0;
 	_PrevBytesUploaded = 0;
@@ -102,44 +101,41 @@ void CBufClient::connect(const CInetHost &addrs)
 	_PrevBytesSent = 0;*/
 
 	// Allow reconnection
-	if ( _RecvThread != NULL )
+	if (_RecvThread != NULL)
 	{
 		delete _RecvThread;
 	}
 
-	_RecvThread = IThread::create( _RecvTask, 1024*4*4 );
+	_RecvThread = IThread::create(_RecvTask, 1024 * 4 * 4);
 	_RecvThread->start();
 }
-
 
 /***************************************************************************************************
  * User main thread (running)
  **************************************************************************************************/
 
-void CBufClient::displayThreadStat (NLMISC::CLog *log)
+void CBufClient::displayThreadStat(NLMISC::CLog *log)
 {
-	log->displayNL ("client thread %p nbloop %d", _RecvTask, _RecvTask->NbLoop);
+	log->displayNL("client thread %p nbloop %d", _RecvTask, _RecvTask->NbLoop);
 }
-
 
 /*
  * Sends a message to the remote host
  */
-void CBufClient::send( const NLMISC::CMemStream& buffer )
+void CBufClient::send(const NLMISC::CMemStream &buffer)
 {
-	nlnettrace( "CBufClient::send" );
-	nlassert( buffer.length() > 0 );
-	nlassert( buffer.length() <= maxSentBlockSize() );
+	nlnettrace("CBufClient::send");
+	nlassert(buffer.length() > 0);
+	nlassert(buffer.length() <= maxSentBlockSize());
 
 	// slow down the layer H_AUTO (CBufServer_send);
 
-	if ( ! _BufSock->pushBuffer( buffer ) )
+	if (!_BufSock->pushBuffer(buffer))
 	{
 		// Disconnection event if disconnected
-		_BufSock->advertiseDisconnection( this, NULL );
+		_BufSock->advertiseDisconnection(this, NULL);
 	}
 }
-
 
 /*
  * Checks if there are some data to receive
@@ -152,24 +148,24 @@ bool CBufClient::dataAvailable()
 		 * If there are user data available, enter the 'while' and return true immediately (1 volatile test + 1 short locking)
 		 * If there is a disconnection event (rare), call the callback and loop
 		 */
-		while ( dataAvailableFlag() )
+		while (dataAvailableFlag())
 		{
 			// Because _DataAvailable is true, the receive queue is not empty at this point
 			uint8 val;
 			{
-				CFifoAccessor recvfifo( &receiveQueue() );
-				val = recvfifo.value().frontLast ();
+				CFifoAccessor recvfifo(&receiveQueue());
+				val = recvfifo.value().frontLast();
 			}
 
 #ifdef NL_OS_UNIX
 			uint8 b;
-			if ( read( _DataAvailablePipeHandle[PipeRead], &b, 1 ) == -1 )
-				nlwarning( "LNETL1: Read pipe failed in dataAvailable" );
-			//nldebug( "Pipe: 1 byte read (client %p)", this );
+			if (read(_DataAvailablePipeHandle[PipeRead], &b, 1) == -1)
+				nlwarning("LNETL1: Read pipe failed in dataAvailable");
+				// nldebug( "Pipe: 1 byte read (client %p)", this );
 #endif
 
 			// Test if it the next block is a system event
-			switch ( val )
+			switch (val)
 			{
 
 			// Normal message available
@@ -179,13 +175,13 @@ bool CBufClient::dataAvailable()
 			// Process disconnection event
 			case CBufNetBase::Disconnection:
 
-				LNETL1_DEBUG( "LNETL1: Disconnection event" );
-				_BufSock->setConnectedState( false );
+				LNETL1_DEBUG("LNETL1: Disconnection event");
+				_BufSock->setConnectedState(false);
 
 				// Call callback if needed
-				if ( disconnectionCallback() != NULL )
+				if (disconnectionCallback() != NULL)
 				{
-					disconnectionCallback()( id(), argOfDisconnectionCallback() );
+					disconnectionCallback()(id(), argOfDisconnectionCallback());
 				}
 
 				// Unlike the server version, we do not delete the CBufSock object here,
@@ -194,224 +190,210 @@ bool CBufClient::dataAvailable()
 				break;
 
 			default: // should not occur
-				{
-					CFifoAccessor recvfifo( &receiveQueue() );
-					vector<uint8> buffer;
-					recvfifo.value().front (buffer);
-					LNETL1_INFO( "LNETL1: Invalid block type: %hu (should be = %hu)", (uint16)(buffer[buffer.size()-1]), (uint16)val );
-					LNETL1_INFO( "LNETL1: Buffer (%d B): [%s]", buffer.size(), stringFromVector(buffer).c_str() );
-					LNETL1_INFO( "LNETL1: Receive queue:" );
-					recvfifo.value().display();
-					nlerror( "LNETL1: Invalid system event type in client receive queue" );
-				}
+			{
+				CFifoAccessor recvfifo(&receiveQueue());
+				vector<uint8> buffer;
+				recvfifo.value().front(buffer);
+				LNETL1_INFO("LNETL1: Invalid block type: %hu (should be = %hu)", (uint16)(buffer[buffer.size() - 1]), (uint16)val);
+				LNETL1_INFO("LNETL1: Buffer (%d B): [%s]", buffer.size(), stringFromVector(buffer).c_str());
+				LNETL1_INFO("LNETL1: Receive queue:");
+				recvfifo.value().display();
+				nlerror("LNETL1: Invalid system event type in client receive queue");
+			}
 			}
 			// Extract system event
 			{
-				CFifoAccessor recvfifo( &receiveQueue() );
+				CFifoAccessor recvfifo(&receiveQueue());
 				recvfifo.value().pop();
-				setDataAvailableFlag( ! recvfifo.value().empty() );
+				setDataAvailableFlag(!recvfifo.value().empty());
 			}
-
 		}
 		// _DataAvailable is false here
 		return false;
 	}
 }
 
-
 #ifdef NL_OS_UNIX
 /* Wait until the receive queue contains something to read (implemented with a select()).
  * This is where the connection/disconnection callbacks can be called.
  * \param usecMax Max time to wait in microsecond (up to 1 sec)
  */
-void	CBufClient::sleepUntilDataAvailable( uint usecMax )
+void CBufClient::sleepUntilDataAvailable(uint usecMax)
 {
 	// Prevent looping infinitely if the system time was changed
-	if ( usecMax > 999999 ) // limit not told in Linux man but here: http://docs.hp.com/en/B9106-90009/select.2.html
+	if (usecMax > 999999) // limit not told in Linux man but here: http://docs.hp.com/en/B9106-90009/select.2.html
 		usecMax = 999999;
 
 	fd_set readers;
 	timeval tv;
 	do
 	{
-		FD_ZERO( &readers );
-		FD_SET( _DataAvailablePipeHandle[PipeRead], &readers );
+		FD_ZERO(&readers);
+		FD_SET(_DataAvailablePipeHandle[PipeRead], &readers);
 		tv.tv_sec = 0;
 		tv.tv_usec = usecMax;
-		int res = ::select( _DataAvailablePipeHandle[PipeRead]+1, &readers, NULL, NULL, &tv );
-		if ( res == -1 )
-			nlerror( "LNETL1: Select failed in sleepUntilDataAvailable (code %u)", CSock::getLastError() );
-	}
-	while ( ! dataAvailable() ); // will loop if only a connection/disconnection event was read
+		int res = ::select(_DataAvailablePipeHandle[PipeRead] + 1, &readers, NULL, NULL, &tv);
+		if (res == -1)
+			nlerror("LNETL1: Select failed in sleepUntilDataAvailable (code %u)", CSock::getLastError());
+	} while (!dataAvailable()); // will loop if only a connection/disconnection event was read
 }
 #endif
-
 
 /*
  * Receives next block of data in the specified buffer (resizes the vector)
  * Precond: dataAvailable() has returned true
  */
-void CBufClient::receive( NLMISC::CMemStream& buffer )
+void CBufClient::receive(NLMISC::CMemStream &buffer)
 {
-	nlnettrace( "CBufClient::receive" );
-	//nlassert( dataAvailable() );
+	nlnettrace("CBufClient::receive");
+	// nlassert( dataAvailable() );
 
 	// Extract buffer from the receive queue
 	{
-		CFifoAccessor recvfifo( &receiveQueue() );
-		nlassert( ! recvfifo.value().empty() );
-		recvfifo.value().front( buffer );
+		CFifoAccessor recvfifo(&receiveQueue());
+		nlassert(!recvfifo.value().empty());
+		recvfifo.value().front(buffer);
 		recvfifo.value().pop();
-		setDataAvailableFlag( ! recvfifo.value().empty() );
+		setDataAvailableFlag(!recvfifo.value().empty());
 	}
 
 	// Extract event type
-	nlassert( buffer.buffer()[buffer.size()-1] == CBufNetBase::User );
-	//commented for optimisation LNETL1_DEBUG( "LNETL1: Client read buffer (%d+%d B)", buffer.size(), sizeof(TSockId)+1 );
-	buffer.resize( buffer.size()-1 );
+	nlassert(buffer.buffer()[buffer.size() - 1] == CBufNetBase::User);
+	// commented for optimisation LNETL1_DEBUG( "LNETL1: Client read buffer (%d+%d B)", buffer.size(), sizeof(TSockId)+1 );
+	buffer.resize(buffer.size() - 1);
 }
-
 
 /*
  * Update the network (call this method evenly)
  */
 void CBufClient::update()
 {
-	//nlnettrace( "CBufClient::update" );
+	// nlnettrace( "CBufClient::update" );
 
 	// Update sending
 	bool sendingok = _BufSock->update();
 
 	// Disconnection event if disconnected
-	if ( ! ( _BufSock->Sock->connected() && sendingok ) )
+	if (!(_BufSock->Sock->connected() && sendingok))
 	{
-		if ( _BufSock->Sock->connected() )
+		if (_BufSock->Sock->connected())
 		{
 			_BufSock->Sock->disconnect();
 		}
-		_BufSock->advertiseDisconnection( this, NULL );
+		_BufSock->advertiseDisconnection(this, NULL);
 	}
 }
-
 
 /*
  * Disconnect the remote host
  */
-void CBufClient::disconnect( bool quick )
+void CBufClient::disconnect(bool quick)
 {
-	nlnettrace( "CBufClient::disconnect" );
+	nlnettrace("CBufClient::disconnect");
 
 	// Do not allow to disconnect a socket that is not connected
-	nlassert( _BufSock->connectedState() );
+	nlassert(_BufSock->connectedState());
 
 	// When the NS tells us to remove this connection AND the connection has physically
 	// disconnected but not yet logically (i.e. disconnection event not processed yet),
 	// skip flushing and physical active disconnection
-	if ( _BufSock->Sock->connected() )
+	if (_BufSock->Sock->connected())
 	{
 		// Flush sending is asked for
-		if ( ! quick )
+		if (!quick)
 		{
 			_BufSock->flush();
 		}
 
 		// Disconnect and prevent from advertising the disconnection
-		_BufSock->disconnect( false );
+		_BufSock->disconnect(false);
 	}
 
 	// Empty the receive queue
 	{
-		CFifoAccessor recvfifo( &receiveQueue() );
+		CFifoAccessor recvfifo(&receiveQueue());
 		recvfifo.value().clear();
-		setDataAvailableFlag( false );
+		setDataAvailableFlag(false);
 	}
 }
 
-
 // Utility function for newBytes...()
-inline uint64 updateStatCounter( uint64& counter, uint64 newvalue )
+inline uint64 updateStatCounter(uint64 &counter, uint64 newvalue)
 {
 	uint64 result = newvalue - counter;
 	counter = newvalue;
 	return result;
 }
 
-
 /*
  * Returns the number of bytes downloaded since the previous call to this method
  */
 uint64 CBufClient::newBytesDownloaded()
 {
-	return updateStatCounter( _PrevBytesDownloaded, bytesDownloaded() );
+	return updateStatCounter(_PrevBytesDownloaded, bytesDownloaded());
 }
-
 
 /*
  * Returns the number of bytes uploaded since the previous call to this method
  */
 uint64 CBufClient::newBytesUploaded()
 {
-	return updateStatCounter( _PrevBytesUploaded, bytesUploaded() );
+	return updateStatCounter(_PrevBytesUploaded, bytesUploaded());
 }
-
 
 /*
  * Returns the number of bytes popped by receive() since the previous call to this method
  */
 /*uint64 CBufClient::newBytesReceived()
 {
-	return updateStatCounter( _PrevBytesReceived, bytesReceived() );
+    return updateStatCounter( _PrevBytesReceived, bytesReceived() );
 }*/
-
 
 /*
  * Returns the number of bytes pushed by send() since the previous call to this method
  */
 /*uint64 CBufClient::newBytesSent()
 {
-	return updateStatCounter( _PrevBytesSent, bytesSent() );
+    return updateStatCounter( _PrevBytesSent, bytesSent() );
 }*/
-
 
 /*
  * Destructor
  */
 CBufClient::~CBufClient()
 {
-	nlnettrace( "CBufClient::~CBufClient" );
+	nlnettrace("CBufClient::~CBufClient");
 
 	// Disconnect if not done
-	if ( _BufSock->Sock->connected() )
+	if (_BufSock->Sock->connected())
 	{
-		nlassert( _BufSock->connectedState() );
+		nlassert(_BufSock->connectedState());
 
-		disconnect( true );
+		disconnect(true);
 	}
 
 	// Clean thread termination
-	if ( _RecvThread != NULL )
+	if (_RecvThread != NULL)
 	{
-		LNETL1_DEBUG( "LNETL1: Waiting for the end of the receive thread..." );
+		LNETL1_DEBUG("LNETL1: Waiting for the end of the receive thread...");
 		_RecvThread->wait();
 	}
 
-	if ( _RecvTask != NULL )
+	if (_RecvTask != NULL)
 		delete _RecvTask;
 
-	if ( _RecvThread != NULL )
+	if (_RecvThread != NULL)
 		delete _RecvThread;
 
-	if ( _BufSock != NULL )
+	if (_BufSock != NULL)
 		delete _BufSock;
 
-	nlnettrace( "Exiting CBufClient::~CBufClient" );
+	nlnettrace("Exiting CBufClient::~CBufClient");
 }
-
 
 /***************************************************************************************************
  * Receive thread
  **************************************************************************************************/
-
 
 /*
  * Code of receiving thread for clients
@@ -420,26 +402,26 @@ void CClientReceiveTask::run()
 {
 	NbClientReceiveTask++;
 	NbNetworkTask++;
-	nlnettrace( "CClientReceiveTask::run" );
+	nlnettrace("CClientReceiveTask::run");
 
 	// 18/08/2005 : sonix : Changed time out from 60s to 1s, in some case, it
 	//						can generate a 60 s wait on destruction of the CBufSock
 	//						By the way, checking every 1s is not a time consuming
-	_NBBufSock->Sock->setTimeOutValue( 1, 0 );
+	_NBBufSock->Sock->setTimeOutValue(1, 0);
 
 	bool connected = true;
-	while ( connected && _NBBufSock->Sock->connected())
+	while (connected && _NBBufSock->Sock->connected())
 	{
 		try
 		{
 			// ADDED: non-blocking client connection
 
 			// Wait until some data are received (sleepin' select inside)
-			while ( ! _NBBufSock->Sock->dataAvailable() )
+			while (!_NBBufSock->Sock->dataAvailable())
 			{
-				if ( ! _NBBufSock->Sock->connected() )
+				if (!_NBBufSock->Sock->connected())
 				{
-					LNETL1_DEBUG( "LNETL1: Client connection %s closed", sockId()->asString().c_str() );
+					LNETL1_DEBUG("LNETL1: Client connection %s closed", sockId()->asString().c_str());
 					// The socket went to _Connected=false when throwing the exception
 					connected = false;
 					break;
@@ -447,33 +429,31 @@ void CClientReceiveTask::run()
 			}
 
 			// Process the data received
-			if ( _NBBufSock->receivePart( 1 ) ) // 1 for the event type
+			if (_NBBufSock->receivePart(1)) // 1 for the event type
 			{
-				//commented out for optimisation: LNETL1_DEBUG( "LNETL1: Client %s received buffer (%u bytes)", _SockId->asString().c_str(), buffer.size()/*, stringFromVector(buffer).c_str()*/ );
-				// Add event type
+				// commented out for optimisation: LNETL1_DEBUG( "LNETL1: Client %s received buffer (%u bytes)", _SockId->asString().c_str(), buffer.size()/*, stringFromVector(buffer).c_str()*/ );
+				//  Add event type
 				_NBBufSock->fillEventTypeOnly();
 
 				// Push message into receive queue
-				_Client->pushMessageIntoReceiveQueue( _NBBufSock->receivedBuffer() );
+				_Client->pushMessageIntoReceiveQueue(_NBBufSock->receivedBuffer());
 			}
 
 			NbLoop++;
 		}
-		catch (const ESocket&)
+		catch (const ESocket &)
 		{
-			LNETL1_DEBUG( "LNETL1: Client connection %s broken", sockId()->asString().c_str() );
+			LNETL1_DEBUG("LNETL1: Client connection %s broken", sockId()->asString().c_str());
 			sockId()->Sock->disconnect();
 			connected = false;
 		}
 	}
 
-	nlnettrace( "Exiting CClientReceiveTask::run()" );
+	nlnettrace("Exiting CClientReceiveTask::run()");
 	NbClientReceiveTask--;
 	NbNetworkTask--;
 }
 
 NLMISC_CATEGORISED_VARIABLE(nel, uint32, NbClientReceiveTask, "Number of client receive thread");
-
-
 
 } // NLNET

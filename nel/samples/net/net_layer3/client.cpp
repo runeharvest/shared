@@ -14,14 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /*
  * Layer 3 example, client.
  *
  * This client connects to a front-end server at localhost:37000.
  * It sends pings and expects pongs (ping replies).
  */
-
 
 // We're using NeL
 #include "nel/misc/types_nl.h"
@@ -33,7 +31,6 @@ using namespace NLMISC;
 #include "nel/net/message.h"
 #include "nel/net/callback_client.h"
 using namespace NLNET;
-
 
 /*
  * Callback function called when receiving a "PONG" message
@@ -49,62 +46,59 @@ using namespace NLNET;
  * Output (sent message): PING
  * - uint32: new ping counter
  */
-void cbPong( CMessage& msgin, TSockId from, CCallbackNetBase& client )
+void cbPong(CMessage &msgin, TSockId from, CCallbackNetBase &client)
 {
 	uint32 counter;
 
 	// Input
-	msgin.serial( counter );
-	nlinfo( "Received PONG number %u", counter );
+	msgin.serial(counter);
+	nlinfo("Received PONG number %u", counter);
 	counter++;
 
 	// Output
-	CMessage msgout ( "PING" );
-	msgout.serial( counter );
-	client.send( msgout );
-	nlinfo( "Sent PING number %u", counter );
+	CMessage msgout("PING");
+	msgout.serial(counter);
+	client.send(msgout);
+	nlinfo("Sent PING number %u", counter);
 }
-
 
 /*
  * Callback array
  */
-TCallbackItem CallbackArray[] =
-{
-	{ "PONG", cbPong }	// when receiving a "PONG" message, call cbPong()
+TCallbackItem CallbackArray[] = {
+	{ "PONG", cbPong } // when receiving a "PONG" message, call cbPong()
 };
-
 
 /*
  * main
  */
-void main( int argc, char **argv )
+void main(int argc, char **argv)
 {
 	try
 	{
 		// Initialize and connect to the front-end server at localhost:37000
 		CCallbackClient client;
-		client.addCallbackArray( CallbackArray, sizeof(CallbackArray)/sizeof(CallbackArray[0]) );
-		client.connect( CInetAddress( "localhost" , 37000 ) );
+		client.addCallbackArray(CallbackArray, sizeof(CallbackArray) / sizeof(CallbackArray[0]));
+		client.connect(CInetAddress("localhost", 37000));
 
 		// Send a PING message
 		uint32 counter = 0;
-		CMessage msg( "PING" );	// create the message
-		msg.serial( counter );						// serialize the counter into the message
-		client.send( msg );							// put into the send queue
-		nlinfo( "Sent PING number %u", counter );
+		CMessage msg("PING"); // create the message
+		msg.serial(counter); // serialize the counter into the message
+		client.send(msg); // put into the send queue
+		nlinfo("Sent PING number %u", counter);
 
 		// Main loop
-		while ( client.connected() )
+		while (client.connected())
 		{
 			// Perform sends and receives, call callbacks
 			client.update();
 		}
 
-		nlinfo( "Disconnected" );
+		nlinfo("Disconnected");
 	}
-	catch ( Exception &e )
+	catch (Exception &e)
 	{
-		nlerror( "Error: %s", e.what() );
+		nlerror("Error: %s", e.what());
 	}
 }

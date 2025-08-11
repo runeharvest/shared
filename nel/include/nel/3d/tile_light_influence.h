@@ -20,10 +20,7 @@
 #include "nel/misc/types_nl.h"
 #include "nel/misc/stream.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 /**
  *	For landscape.
@@ -36,39 +33,34 @@ namespace NL3D
 class CTileLightInfluence
 {
 public:
-
 	/// We support only 2 light per corner. Should never be changed.
-	enum	{NumLightPerCorner= 2};
+	enum
+	{
+		NumLightPerCorner = 2
+	};
 
 public:
 	/// Constructor
-	CTileLightInfluence() {}
-
+	CTileLightInfluence() { }
 
 	/** List of lights.
 	 *	Id==0xFF => no light. if Light[i]==0xFF, then Light[j] with j>i is supposed disalbed too.
 	 */
-	uint8			Light[NumLightPerCorner];
+	uint8 Light[NumLightPerCorner];
 
 	/// i: 0 or 1. factor E [0..255] is the factor of influence (gouraud) of the ith light. NB: stored on 4 bits.
-	void			setDiffuseLightFactor(uint i, uint8 factor);
+	void setDiffuseLightFactor(uint i, uint8 factor);
 	/// see setDiffuseLightFactor(). return uint8 E [0, 255]
-	uint8			getDiffuseLightFactor(uint i) const;
+	uint8 getDiffuseLightFactor(uint i) const;
 
-
-	void			serial(NLMISC::IStream &f);
-
+	void serial(NLMISC::IStream &f);
 
 private:
-
 	/// Packed
-	uint8			PackedLightFactor;
-
+	uint8 PackedLightFactor;
 };
 
-
 } // NL3D
-
 
 #endif // NL_TILE_LIGHT_INFLUENCE_H
 

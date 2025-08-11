@@ -20,10 +20,7 @@
 #include "nel/misc/types_nl.h"
 #include <set>
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 /**
@@ -34,17 +31,17 @@ namespace NL3D
  * \author Nevrax France
  * \date 2001
  */
-template<class T>	class CPtrSet
+template <class T>
+class CPtrSet
 {
 public:
-	std::set<T*>	Set;
+	std::set<T *> Set;
 
 public:
-
 	/// \name Object
 	// @{
-	CPtrSet() {}
-	~CPtrSet() {clear();}
+	CPtrSet() { }
+	~CPtrSet() { clear(); }
 	// @}
 
 	/// \name insertion/deletion.
@@ -52,7 +49,7 @@ public:
 	/** insert a new element to the set. You should pass a conventionnal allocated object.
 	 * For simplicity, return newObject!!!
 	 */
-	T				*insert(T *newObject)
+	T *insert(T *newObject)
 	{
 		Set.insert(newObject);
 		return newObject;
@@ -60,21 +57,21 @@ public:
 	/** erase an element from the set. nlerror(errorString) if not found!! NO OP if NULL.
 	 * For simplicity, return newObject!!!
 	 */
-	void			erase(T *objectToRemove, const char *errorString= "Object do not exist in the set")
+	void erase(T *objectToRemove, const char *errorString = "Object do not exist in the set")
 	{
-		if(!objectToRemove)
+		if (!objectToRemove)
 			return;
-		if(Set.erase(objectToRemove)!=1)
+		if (Set.erase(objectToRemove) != 1)
 			nlerror(errorString);
 		else
 			delete objectToRemove;
 	}
 	/** Delete all element from the set, and clear the set
 	 */
-	void			clear()
+	void clear()
 	{
-		typename std::set<T*>::iterator it;
-		for(it= Set.begin();it!=Set.end();it++)
+		typename std::set<T *>::iterator it;
+		for (it = Set.begin(); it != Set.end(); it++)
 		{
 			delete *it;
 		}
@@ -83,12 +80,9 @@ public:
 	}
 
 	// @}
-
 };
 
-
 } // NL3D
-
 
 #endif // NL_PTR_SET_H
 

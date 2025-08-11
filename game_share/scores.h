@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_SCORES_H
 #define RY_SCORES_H
 
@@ -23,33 +21,32 @@
 
 #include <string>
 
-namespace SCORES
+namespace SCORES {
+enum TScores
 {
-	enum TScores
-	{
-		hit_points = 0,
-		stamina,
-		sap,
-		focus,
+	hit_points = 0,
+	stamina,
+	sap,
+	focus,
 
-		NUM_SCORES,
-		unknown = NUM_SCORES
-	};
+	NUM_SCORES,
+	unknown = NUM_SCORES
+};
 
-	/**
-	 * get the right score enum from the input string
-	 * \param str the input string
-	 * \return the TScores associated to this string (Unknown if the string cannot be interpreted)
-	 */
-	TScores toScore( const std::string &str );
+/**
+ * get the right score enum from the input string
+ * \param str the input string
+ * \return the TScores associated to this string (Unknown if the string cannot be interpreted)
+ */
+TScores toScore(const std::string &str);
 
-	/**
-	 * get the right score string from the gived enum
-	 * \param s is the enum number
-	 * \return the string associated to this enum number (Unknown if the enum number not exist)
-	 */
-	const std::string& toString( TScores s );
-	const std::string& toString( uint s );
+/**
+ * get the right score string from the gived enum
+ * \param s is the enum number
+ * \return the string associated to this enum number (Unknown if the enum number not exist)
+ */
+const std::string &toString(TScores s);
+const std::string &toString(uint s);
 
 }; // SCORES
 

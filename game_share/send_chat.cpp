@@ -26,9 +26,9 @@
  */
 void chatToPlayer(const NLMISC::CEntityId &id, const std::string &chatString)
 {
-	NLNET::CMessage	msgout("CHAT");
-	bool	talkToPlayer = true;
-	msgout.serial(talkToPlayer, const_cast<NLMISC::CEntityId&>(id), const_cast<std::string&>(chatString));
+	NLNET::CMessage msgout("CHAT");
+	bool talkToPlayer = true;
+	msgout.serial(talkToPlayer, const_cast<NLMISC::CEntityId &>(id), const_cast<std::string &>(chatString));
 	sendMessageViaMirror("IOS", msgout);
 }
 
@@ -38,9 +38,9 @@ void chatToPlayer(const NLMISC::CEntityId &id, const std::string &chatString)
  */
 void chatToGroup(const NLMISC::CEntityId &id, const std::string &chatString)
 {
-	NLNET::CMessage	msgout("CHAT");
-	bool	talkToPlayer = false;
-	msgout.serial(talkToPlayer, const_cast<NLMISC::CEntityId&>(id), const_cast<std::string&>(chatString));
+	NLNET::CMessage msgout("CHAT");
+	bool talkToPlayer = false;
+	msgout.serial(talkToPlayer, const_cast<NLMISC::CEntityId &>(id), const_cast<std::string &>(chatString));
 	sendMessageViaMirror("IOS", msgout);
 }
 
@@ -52,19 +52,19 @@ void chatToGroup(const NLMISC::CEntityId &id, const std::string &chatString)
  */
 void npcChatParamToChannel(const TDataSetRow &senderId, CChatGroup::TGroupType groupType, const std::string &phraseId, const std::vector<STRING_MANAGER::TParam> &params)
 {
-	NLNET::CMessage	msgout("NPC_CHAT_PARAM");
-	msgout.serial(const_cast<TDataSetRow&>(senderId));
+	NLNET::CMessage msgout("NPC_CHAT_PARAM");
+	msgout.serial(const_cast<TDataSetRow &>(senderId));
 	msgout.serialEnum(groupType);
-	msgout.serial(const_cast<std::string&>(phraseId));
+	msgout.serial(const_cast<std::string &>(phraseId));
 
 	uint32 size = (uint32)params.size();
 	msgout.serial(size);
-//	params.resize(size);
-	for ( uint i = 0; i < size; i++ )
+	//	params.resize(size);
+	for (uint i = 0; i < size; i++)
 	{
 		uint8 type8 = params[i].Type;
-		msgout.serial( type8 );
-		const_cast<STRING_MANAGER::TParam&>(params[i]).serialParam( false, msgout, (STRING_MANAGER::TParamType) type8 );
+		msgout.serial(type8);
+		const_cast<STRING_MANAGER::TParam &>(params[i]).serialParam(false, msgout, (STRING_MANAGER::TParamType)type8);
 	}
 
 	sendMessageViaMirror("IOS", msgout);
@@ -77,10 +77,10 @@ void npcChatParamToChannel(const TDataSetRow &senderId, CChatGroup::TGroupType g
  */
 void npcChatToChannel(const TDataSetRow &senderId, CChatGroup::TGroupType groupType, const std::string &phraseId)
 {
-	NLNET::CMessage	msgout("NPC_CHAT");
-	msgout.serial(const_cast<TDataSetRow&>(senderId));
+	NLNET::CMessage msgout("NPC_CHAT");
+	msgout.serial(const_cast<TDataSetRow &>(senderId));
 	msgout.serialEnum(groupType);
-	msgout.serial(const_cast<std::string&>(phraseId));
+	msgout.serial(const_cast<std::string &>(phraseId));
 	sendMessageViaMirror("IOS", msgout);
 }
 
@@ -91,8 +91,8 @@ void npcChatToChannel(const TDataSetRow &senderId, CChatGroup::TGroupType groupT
  */
 void npcChatToChannelEx(const TDataSetRow &senderId, CChatGroup::TGroupType groupType, uint32 phraseId)
 {
-	NLNET::CMessage	msgout("NPC_CHAT_EX");
-	msgout.serial(const_cast<TDataSetRow&>(senderId));
+	NLNET::CMessage msgout("NPC_CHAT_EX");
+	msgout.serial(const_cast<TDataSetRow &>(senderId));
 	msgout.serialEnum(groupType);
 	msgout.serial(phraseId);
 	sendMessageViaMirror("IOS", msgout);
@@ -103,10 +103,10 @@ void npcChatToChannelEx(const TDataSetRow &senderId, CChatGroup::TGroupType grou
  *	Chat group can be constructed from CChatGroup class.
  *	sentence is the sentence to be sent.
  */
-void npcChatToChannelSentence(const TDataSetRow &senderId, CChatGroup::TGroupType groupType, ucstring& sentence)
+void npcChatToChannelSentence(const TDataSetRow &senderId, CChatGroup::TGroupType groupType, ucstring &sentence)
 {
-	NLNET::CMessage	msgout("NPC_CHAT_SENTENCE");
-	msgout.serial(const_cast<TDataSetRow&>(senderId));
+	NLNET::CMessage msgout("NPC_CHAT_SENTENCE");
+	msgout.serial(const_cast<TDataSetRow &>(senderId));
 	msgout.serialEnum(groupType);
 	msgout.serial(sentence);
 	sendMessageViaMirror("IOS", msgout);
@@ -117,15 +117,15 @@ void npcChatToChannelSentence(const TDataSetRow &senderId, CChatGroup::TGroupTyp
  *	Chat group can be constructed from CChatGroup class.
  *	sentenceId is the id of the sentence that must be sent by the DSS
  */
-void forwardToDss(const TDataSetRow &senderId, CChatGroup::TGroupType groupType, std::string& sentenceId,uint32 scenarioId)
+void forwardToDss(const TDataSetRow &senderId, CChatGroup::TGroupType groupType, std::string &sentenceId, uint32 scenarioId)
 {
-	nlinfo( ("forwarding to DSS : id: "+sentenceId).c_str());
-	NLNET::CMessage	msgout("translateAndForward");
-	msgout.serial(const_cast<TDataSetRow&>(senderId));
+	nlinfo(("forwarding to DSS : id: " + sentenceId).c_str());
+	NLNET::CMessage msgout("translateAndForward");
+	msgout.serial(const_cast<TDataSetRow &>(senderId));
 	msgout.serialEnum(groupType);
 	msgout.serial(sentenceId);
 	msgout.serial(scenarioId);
-	NLNET::CUnifiedNetwork::getInstance()->send("DSS",msgout);
+	NLNET::CUnifiedNetwork::getInstance()->send("DSS", msgout);
 }
 
 /**
@@ -133,21 +133,21 @@ void forwardToDss(const TDataSetRow &senderId, CChatGroup::TGroupType groupType,
  *	Chat group can be constructed from CChatGroup class.
  *	sentenceId is the id of the sentence that must be sent by the DSS
  */
-void forwardToDssArg(const TDataSetRow &senderId, CChatGroup::TGroupType groupType, std::string& sentenceId,uint32 scenarioId,std::vector<float>& argValues)
+void forwardToDssArg(const TDataSetRow &senderId, CChatGroup::TGroupType groupType, std::string &sentenceId, uint32 scenarioId, std::vector<float> &argValues)
 {
-	nlinfo( ("forwarding to DSS : id: "+sentenceId).c_str());
-	NLNET::CMessage	msgout("translateAndForwardArg");
-	msgout.serial(const_cast<TDataSetRow&>(senderId));
+	nlinfo(("forwarding to DSS : id: " + sentenceId).c_str());
+	NLNET::CMessage msgout("translateAndForwardArg");
+	msgout.serial(const_cast<TDataSetRow &>(senderId));
 	msgout.serialEnum(groupType);
 	msgout.serial(sentenceId);
 	msgout.serial(scenarioId);
-	uint32 size=(uint32)argValues.size(),i=0;
+	uint32 size = (uint32)argValues.size(), i = 0;
 	msgout.serial(size);
-	for(;i<size;++i)
+	for (; i < size; ++i)
 	{
 		msgout.serial(argValues[i]);
 	}
-	NLNET::CUnifiedNetwork::getInstance()->send("DSS",msgout);
+	NLNET::CUnifiedNetwork::getInstance()->send("DSS", msgout);
 }
 
 /**
@@ -156,18 +156,18 @@ void forwardToDssArg(const TDataSetRow &senderId, CChatGroup::TGroupType groupTy
  */
 void npcTellToPlayer(const TDataSetRow &senderId, const TDataSetRow &receiverId, const std::string &phraseId, bool needSenderNpc)
 {
-	NLNET::CMessage	msgout;
-	if ( needSenderNpc )
+	NLNET::CMessage msgout;
+	if (needSenderNpc)
 	{
 		msgout.setType("NPC_TELL");
-		msgout.serial(const_cast<TDataSetRow&>(senderId));
+		msgout.serial(const_cast<TDataSetRow &>(senderId));
 	}
 	else
 	{
 		msgout.setType("GHOST_TELL");
 	}
-	msgout.serial(const_cast<TDataSetRow&>(receiverId));
-	msgout.serial(const_cast<std::string&>(phraseId));
+	msgout.serial(const_cast<TDataSetRow &>(receiverId));
+	msgout.serial(const_cast<std::string &>(phraseId));
 	sendMessageViaMirror("IOS", msgout);
 }
 
@@ -177,9 +177,9 @@ void npcTellToPlayer(const TDataSetRow &senderId, const TDataSetRow &receiverId,
  */
 void npcTellToPlayerEx(const TDataSetRow &senderId, const TDataSetRow &receiverId, uint32 phraseId)
 {
-	NLNET::CMessage	msgout("NPC_TELL_EX");
-	msgout.serial(const_cast<TDataSetRow&>(senderId));
-	msgout.serial(const_cast<TDataSetRow&>(receiverId));
+	NLNET::CMessage msgout("NPC_TELL_EX");
+	msgout.serial(const_cast<TDataSetRow &>(senderId));
+	msgout.serial(const_cast<TDataSetRow &>(receiverId));
 	msgout.serial(phraseId);
 	sendMessageViaMirror("IOS", msgout);
 }

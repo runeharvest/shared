@@ -20,16 +20,13 @@
 #include "nel/misc/types_nl.h"
 #include "nel/misc/stream.h"
 
-
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 // How many pixels per tile. must be a power of 2.
-#define	NL3D_TILE_NOISE_MAP_TILE_FACTOR	4
+#define NL3D_TILE_NOISE_MAP_TILE_FACTOR 4
 // size of the map. must be a power of 2.
-#define	NL3D_TILE_NOISE_MAP_SIZE		32
-
+#define NL3D_TILE_NOISE_MAP_SIZE 32
 
 // ***************************************************************************
 /**
@@ -41,18 +38,13 @@ namespace NL3D
 class CTileNoiseMap
 {
 public:
-
 	// The array of pixels. -127 is mapped to -NL3D_NOISE_MAX, and +127 is mapped to NL3D_NOISE_MAX.
-	sint8		Pixels[NL3D_TILE_NOISE_MAP_SIZE * NL3D_TILE_NOISE_MAP_SIZE];
+	sint8 Pixels[NL3D_TILE_NOISE_MAP_SIZE * NL3D_TILE_NOISE_MAP_SIZE];
 
-
-	void		serial(NLMISC::IStream &f);
-
+	void serial(NLMISC::IStream &f);
 };
 
-
 } // NL3D
-
 
 #endif // NL_TILE_NOISE_MAP_H
 

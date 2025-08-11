@@ -29,13 +29,12 @@
 #include "../nel_mesh_lib/export_nel.h"
 #include "../nel_mesh_lib/export_appdata.h"
 
-
 using namespace NL3D;
 using namespace NLMISC;
 
 // --------------------------------------------------
 
-bool CNelExport::exportMesh (const std::string &sPath, INode& node, TimeValue time)
+bool CNelExport::exportMesh(const std::string &sPath, INode &node, TimeValue time)
 {
 	// Result to return
 	bool bRet = false;
@@ -54,12 +53,12 @@ bool CNelExport::exportMesh (const std::string &sPath, INode& node, TimeValue ti
 		if (os.obj)
 		{
 			// Skeleton shape
-			CSkeletonShape * skeletonShape = NULL;
-			TInodePtrInt *mapIdPtr=NULL;
+			CSkeletonShape *skeletonShape = NULL;
+			TInodePtrInt *mapIdPtr = NULL;
 			TInodePtrInt mapId;
 
 			// If model skinned ?
-			if (CExportNel::isSkin (node))
+			if (CExportNel::isSkin(node))
 			{
 				// Create a skeleton
 				INode *skeletonRoot = CExportNel::getSkeletonRootBone(node);
@@ -72,13 +71,13 @@ bool CNelExport::exportMesh (const std::string &sPath, INode& node, TimeValue ti
 
 					// Add skeleton bind pos info
 					CExportNel::mapBoneBindPos boneBindPos;
-					CExportNel::addSkeletonBindPos (node, boneBindPos);
+					CExportNel::addSkeletonBindPos(node, boneBindPos);
 
 					// Build the skeleton based on the bind pos information
 					_ExportNel->buildSkeletonShape(*skeletonShape, *skeletonRoot, &boneBindPos, mapId, time);
 
 					// Set the pointer to not NULL
-					mapIdPtr=&mapId;
+					mapIdPtr = &mapId;
 
 					// Erase the skeleton
 					skeletonShape = NULL;
@@ -91,7 +90,7 @@ bool CNelExport::exportMesh (const std::string &sPath, INode& node, TimeValue ti
 			// Export in mesh format
 			IShape *pShape = _ExportNel->buildShape(node, time, mapIdPtr, true);
 			if (InfoLog)
-				InfoLog->display("End buildShape in %d ms \n", timeGetTime()-t);
+				InfoLog->display("End buildShape in %d ms \n", timeGetTime() - t);
 
 			// Conversion success ?
 			if (pShape)
@@ -123,7 +122,6 @@ bool CNelExport::exportMesh (const std::string &sPath, INode& node, TimeValue ti
 						}
 						catch (...)
 						{
-
 						}
 
 						CFile::deleteFile(tempFileName);
@@ -184,7 +182,6 @@ bool CNelExport::exportMesh (const std::string &sPath, INode& node, TimeValue ti
 					CFile::deleteFile(tempFileName);
 					bRet = false;
 				}
-
 			}
 		}
 	}
@@ -206,31 +203,31 @@ bool CNelExport::exportMesh (const std::string &sPath, INode& node, TimeValue ti
 
 // --------------------------------------------------
 
-bool CNelExport::exportVegetable (const std::string &sPath, INode& node, TimeValue time)
+bool CNelExport::exportVegetable(const std::string &sPath, INode &node, TimeValue time)
 {
-	bool bRet=false;
+	bool bRet = false;
 
 	// Build a vegetable
 	NL3D::CVegetableShape vegetable;
-	if (_ExportNel->buildVegetableShape (vegetable, node, time))
+	if (_ExportNel->buildVegetableShape(vegetable, node, time))
 	{
 		// Open a file
 		COFile file;
-		if (file.open (sPath))
+		if (file.open(sPath))
 		{
 			try
 			{
 				// Serial the shape
-				vegetable.serial (file);
+				vegetable.serial(file);
 
 				// All is good
-				bRet=true;
+				bRet = true;
 			}
 			catch (const Exception &e)
 			{
 				// Message box
 				const char *message = e.what();
-				_ExportNel->outputErrorMessage ("Error during vegetable serialisation");
+				_ExportNel->outputErrorMessage("Error during vegetable serialisation");
 			}
 		}
 	}
@@ -239,10 +236,10 @@ bool CNelExport::exportVegetable (const std::string &sPath, INode& node, TimeVal
 
 // --------------------------------------------------
 
-bool CNelExport::exportAnim (const std::string &sPath, std::vector<INode*>& vectNode, TimeValue time, bool scene)
+bool CNelExport::exportAnim(const std::string &sPath, std::vector<INode *> &vectNode, TimeValue time, bool scene)
 {
 	// Result to return
-	bool bRet=false;
+	bool bRet = false;
 	std::string tempFileName;
 	std::string tempPathBuffer;
 
@@ -255,48 +252,48 @@ bool CNelExport::exportAnim (const std::string &sPath, std::vector<INode*>& vect
 		CAnimation animFile;
 
 		// For each node to export
-		for (uint n=0; n<vectNode.size(); n++)
+		for (uint n = 0; n < vectNode.size(); n++)
 		{
 			// Get name
 			std::string nodeName;
 
 			// Get NEL3D_APPDATA_EXPORT_ANIMATION_PREFIXE_NAME
-			int prefixe = CExportNel::getScriptAppData (vectNode[n], NEL3D_APPDATA_EXPORT_ANIMATION_PREFIXE_NAME, 0);
+			int prefixe = CExportNel::getScriptAppData(vectNode[n], NEL3D_APPDATA_EXPORT_ANIMATION_PREFIXE_NAME, 0);
 
 			// Set the name only if it is a scene animation
 			if (scene || prefixe)
 			{
 				// try to get the prefix from the appData if present. If not, takes it from the node name
-				nodeName = CExportNel::getScriptAppData (vectNode[n], NEL3D_APPDATA_INSTANCE_NAME, "");
+				nodeName = CExportNel::getScriptAppData(vectNode[n], NEL3D_APPDATA_INSTANCE_NAME, "");
 				if (nodeName.empty()) // not found ?
 				{
-					nodeName=CExportNel::getName (*vectNode[n]);
+					nodeName = CExportNel::getName(*vectNode[n]);
 				}
-				nodeName+=".";
+				nodeName += ".";
 			}
 
 			// Is a root ?
-			bool root = vectNode[n]->GetParentNode () == _Ip->GetRootNode();
+			bool root = vectNode[n]->GetParentNode() == _Ip->GetRootNode();
 
 			// Add animation
-			_ExportNel->addAnimation (animFile, *vectNode[n], nodeName.c_str(), root);
+			_ExportNel->addAnimation(animFile, *vectNode[n], nodeName.c_str(), root);
 		}
 
 		if (vectNode.size())
 		{
 			// Open a file
 			COFile file;
-			if (file.open (tempFileName))
+			if (file.open(tempFileName))
 			{
 				try
 				{
 					nldebug("Serialize the animation");
 					// Serial the animation
-					animFile.serial (file);
+					animFile.serial(file);
 					// Close the file
 					file.close();
 					// All is good
-					bRet=true;
+					bRet = true;
 					// Verify the file
 					nldebug("Verify exported anim file");
 					try
@@ -329,20 +326,20 @@ bool CNelExport::exportAnim (const std::string &sPath, std::vector<INode*>& vect
 						bRet = false;
 					}
 				}
-				catch (const Exception& e)
+				catch (const Exception &e)
 				{
 					if (_ErrorInDialog)
-						MessageBoxA (NULL, e.what(), "NeL export", MB_OK|MB_ICONEXCLAMATION);
+						MessageBoxA(NULL, e.what(), "NeL export", MB_OK | MB_ICONEXCLAMATION);
 					else
-						nlwarning ("ERROR : %s", e.what ());
+						nlwarning("ERROR : %s", e.what());
 				}
 			}
 			else
 			{
 				if (_ErrorInDialog)
-					MessageBox (NULL, _T("Can't open the file for writing."), _T("NeL export"), MB_OK|MB_ICONEXCLAMATION);
+					MessageBox(NULL, _T("Can't open the file for writing."), _T("NeL export"), MB_OK | MB_ICONEXCLAMATION);
 				else
-					nlwarning ("ERROR : Can't open the file (%s) for writing", tempFileName.c_str());
+					nlwarning("ERROR : Can't open the file (%s) for writing", tempFileName.c_str());
 				if (_TerminateOnFileOpenIssues)
 					nelExportTerminateProcess();
 			}
@@ -365,34 +362,34 @@ bool CNelExport::exportAnim (const std::string &sPath, std::vector<INode*>& vect
 
 // --------------------------------------------------
 
-bool CNelExport::exportSkeleton	(const std::string &sPath, INode* pNode, TimeValue time)
+bool CNelExport::exportSkeleton(const std::string &sPath, INode *pNode, TimeValue time)
 {
 	// Result to return
-	bool bRet=false;
+	bool bRet = false;
 
 	// Build the skeleton format
-	CSkeletonShape *skeletonShape=new CSkeletonShape();
+	CSkeletonShape *skeletonShape = new CSkeletonShape();
 	TInodePtrInt mapId;
-	_ExportNel->buildSkeletonShape (*skeletonShape, *pNode, NULL, mapId, time);
+	_ExportNel->buildSkeletonShape(*skeletonShape, *pNode, NULL, mapId, time);
 
 	// Open a file
 	COFile file;
-	if (file.open (sPath))
+	if (file.open(sPath))
 	{
 		try
 		{
 			// Create a streamable shape
-			CShapeStream shapeStream (skeletonShape);
+			CShapeStream shapeStream(skeletonShape);
 
 			// Serial the shape
-			shapeStream.serial (file);
+			shapeStream.serial(file);
 
 			// All is good
-			bRet=true;
+			bRet = true;
 		}
 		catch (const Exception &e)
 		{
-			nlwarning (e.what());
+			nlwarning(e.what());
 		}
 	}
 
@@ -404,10 +401,10 @@ bool CNelExport::exportSkeleton	(const std::string &sPath, INode* pNode, TimeVal
 
 // --------------------------------------------------
 
-bool CNelExport::exportLodCharacter (const std::string &sPath, INode& node, TimeValue time)
+bool CNelExport::exportLodCharacter(const std::string &sPath, INode &node, TimeValue time)
 {
 	// Result to return
-	bool bRet=false;
+	bool bRet = false;
 
 	// Eval the object a time
 	ObjectState os = node.EvalWorldState(time);
@@ -416,31 +413,31 @@ bool CNelExport::exportLodCharacter (const std::string &sPath, INode& node, Time
 	if (os.obj)
 	{
 		// Skeleton shape
-		CSkeletonShape *skeletonShape=NULL;
-		TInodePtrInt *mapIdPtr=NULL;
+		CSkeletonShape *skeletonShape = NULL;
+		TInodePtrInt *mapIdPtr = NULL;
 		TInodePtrInt mapId;
 
 		// If model skinned ?
-		if (CExportNel::isSkin (node))
+		if (CExportNel::isSkin(node))
 		{
 			// Create a skeleton
-			INode *skeletonRoot=CExportNel::getSkeletonRootBone (node);
+			INode *skeletonRoot = CExportNel::getSkeletonRootBone(node);
 
 			// Skeleton exist ?
 			if (skeletonRoot)
 			{
 				// Build a skeleton
-				skeletonShape=new CSkeletonShape();
+				skeletonShape = new CSkeletonShape();
 
 				// Add skeleton bind pos info
 				CExportNel::mapBoneBindPos boneBindPos;
-				CExportNel::addSkeletonBindPos (node, boneBindPos);
+				CExportNel::addSkeletonBindPos(node, boneBindPos);
 
 				// Build the skeleton based on the bind pos information
-				_ExportNel->buildSkeletonShape (*skeletonShape, *skeletonRoot, &boneBindPos, mapId, time);
+				_ExportNel->buildSkeletonShape(*skeletonShape, *skeletonRoot, &boneBindPos, mapId, time);
 
 				// Set the pointer to not NULL
-				mapIdPtr=&mapId;
+				mapIdPtr = &mapId;
 
 				// Erase the skeleton
 				if (skeletonShape)
@@ -449,20 +446,20 @@ bool CNelExport::exportLodCharacter (const std::string &sPath, INode& node, Time
 		}
 
 		// Conversion success ?
-		CLodCharacterShapeBuild		lodBuild;
-		if (_ExportNel->buildLodCharacter (lodBuild, node, time, mapIdPtr) )
+		CLodCharacterShapeBuild lodBuild;
+		if (_ExportNel->buildLodCharacter(lodBuild, node, time, mapIdPtr))
 		{
 			// Open a file
 			COFile file;
-			if (file.open (sPath))
+			if (file.open(sPath))
 			{
 				try
 				{
 					// Serial the shape
-					lodBuild.serial (file);
+					lodBuild.serial(file);
 
 					// All is good
-					bRet=true;
+					bRet = true;
 				}
 				catch (...)
 				{

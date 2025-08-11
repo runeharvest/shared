@@ -24,23 +24,22 @@
 #include "nel/3d/animation_optimizer.h"
 #include "nel/3d/register_3d.h"
 
-
 using namespace std;
 using namespace NLMISC;
 using namespace NL3D;
 
 // ***************************************************************************
-void	skipLog(const char *str)
+void skipLog(const char *str)
 {
 	DebugLog->addNegativeFilter(str);
 	WarningLog->addNegativeFilter(str);
 }
 
 // ***************************************************************************
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	// Register 3d
-	registerSerial3d ();
+	registerSerial3d();
 
 	// Avoid some stupids warnings.
 	NLMISC::createDebug();
@@ -50,31 +49,30 @@ int main(int argc, char* argv[])
 	InfoLog->addNegativeFilter("FEHTIMER>");
 	InfoLog->addNegativeFilter("adding the path");
 
-
 	// Good number of args ?
-	if (argc<4)
+	if (argc < 4)
 	{
 		// Help message
-		printf ("anim_builder [directoryIn] [pathOut] [parameter_file] \n");
+		printf("anim_builder [directoryIn] [pathOut] [parameter_file] \n");
 	}
 	else
 	{
 		try
 		{
-			string	directoryIn= argv[1];
-			string	pathOut= argv[2];
-			string	paramFile= argv[3];
+			string directoryIn = argv[1];
+			string pathOut = argv[2];
+			string paramFile = argv[3];
 
 			// Verify directoryIn.
-			directoryIn= CPath::standardizePath(directoryIn);
-			if( !CFile::isDirectory(directoryIn) )
+			directoryIn = CPath::standardizePath(directoryIn);
+			if (!CFile::isDirectory(directoryIn))
 			{
 				printf("DirectoryIn %s is not a directory", directoryIn.c_str());
 				return -1;
 			}
 			// Verify pathOut.
-			pathOut= CPath::standardizePath(pathOut);
-			if( !CFile::isDirectory(pathOut) )
+			pathOut = CPath::standardizePath(pathOut);
+			if (!CFile::isDirectory(pathOut))
 			{
 				printf("PathOut %s is not a directory", pathOut.c_str());
 				return -1;
@@ -82,28 +80,27 @@ int main(int argc, char* argv[])
 
 			// Our Animation optimizer.
 			//=================
-			CAnimationOptimizer		animationOptimizer;
+			CAnimationOptimizer animationOptimizer;
 			// Leave thresholds as default.
 			animationOptimizer.clearLowPrecisionTracks();
-
 
 			// Load and setup configFile.
 			//=================
 			CConfigFile parameter;
 			// Load and parse the param file
-			parameter.load (paramFile);
+			parameter.load(paramFile);
 
 			// Get the Low Precision Track Key Names
 			try
 			{
-				CConfigFile::CVar &anim_low_precision_tracks = parameter.getVar ("anim_low_precision_tracks");
+				CConfigFile::CVar &anim_low_precision_tracks = parameter.getVar("anim_low_precision_tracks");
 				uint lpt;
 				for (lpt = 0; lpt < (uint)anim_low_precision_tracks.size(); lpt++)
 				{
 					animationOptimizer.addLowPrecisionTrack(anim_low_precision_tracks.asString(lpt));
 				}
 			}
-			catch(const EUnknownVar &)
+			catch (const EUnknownVar &)
 			{
 				nlwarning("\"anim_low_precision_tracks\" not found in the parameter file. Add \"Finger\" and \"Ponytail\" by default");
 				animationOptimizer.addLowPrecisionTrack("Finger");
@@ -113,10 +110,10 @@ int main(int argc, char* argv[])
 			// Sample Rate.
 			try
 			{
-				CConfigFile::CVar &anim_sample_rate = parameter.getVar ("anim_sample_rate");
-				float	sr= anim_sample_rate.asFloat(0);
+				CConfigFile::CVar &anim_sample_rate = parameter.getVar("anim_sample_rate");
+				float sr = anim_sample_rate.asFloat(0);
 				// Consider values > 1000 as error values.
-				if(sr<=0 || sr>1000)
+				if (sr <= 0 || sr > 1000)
 				{
 					nlwarning("Bad \"anim_sample_rate\" value. Use Default of 30 fps.");
 					animationOptimizer.setSampleFrameRate(30);
@@ -126,57 +123,56 @@ int main(int argc, char* argv[])
 					animationOptimizer.setSampleFrameRate(sr);
 				}
 			}
-			catch(const EUnknownVar &)
+			catch (const EUnknownVar &)
 			{
 				nlwarning("\"anim_sample_rate\" not found in the parameter file. Use Default of 30 fps.");
 				animationOptimizer.setSampleFrameRate(30);
 			}
 
-
 			// Scan and load all files .ig in directories
 			//=================
-			uint		numSkipped= 0;
-			uint		numBuilded= 0;
-			vector<string>				listFile;
+			uint numSkipped = 0;
+			uint numBuilded = 0;
+			vector<string> listFile;
 			CPath::getPathContent(directoryIn, false, false, true, listFile);
-			for(uint iFile=0; iFile<listFile.size(); iFile++)
+			for (uint iFile = 0; iFile < listFile.size(); iFile++)
 			{
-				string	&igFile= listFile[iFile];
+				string &igFile = listFile[iFile];
 				// verify it is a .anim.
-				if( CFile::getExtension(igFile) == "anim" )
+				if (CFile::getExtension(igFile) == "anim")
 				{
-					string	fileNameIn= CFile::getFilename(igFile);
-					string	fileNameOut= pathOut + fileNameIn;
+					string fileNameIn = CFile::getFilename(igFile);
+					string fileNameOut = pathOut + fileNameIn;
 
 					// skip the file?
-					bool	mustSkip= false;
+					bool mustSkip = false;
 
-					// If File Out exist 
-					if(CFile::fileExists(fileNameOut))
+					// If File Out exist
+					if (CFile::fileExists(fileNameOut))
 					{
 						// If newer than file In, skip
-						uint32		fileOutDate= CFile::getFileModificationDate(fileNameOut);
-						if(	fileOutDate > CFile::getFileModificationDate(igFile) )
+						uint32 fileOutDate = CFile::getFileModificationDate(fileNameOut);
+						if (fileOutDate > CFile::getFileModificationDate(igFile))
 						{
-							mustSkip= true;
+							mustSkip = true;
 						}
 					}
 
 					// If must process the file.
-					if(!mustSkip)
+					if (!mustSkip)
 					{
 						// Read the animation.
-						CAnimation	animIn;
-						CIFile	fin;
+						CAnimation animIn;
+						CIFile fin;
 						fin.open(CPath::lookup(igFile));
 						fin.serial(animIn);
 
 						// process.
-						CAnimation	animOut;
+						CAnimation animOut;
 						animationOptimizer.optimize(animIn, animOut);
 
 						// Save this animation.
-						COFile	fout;
+						COFile fout;
 						fout.open(fileNameOut);
 						fout.serial(animOut);
 						fout.close();
@@ -196,12 +192,11 @@ int main(int argc, char* argv[])
 			// Add some info in the log.
 			nlinfo("Anim builded: %4d", numBuilded);
 			nlinfo("Anim skipped: %4d", numSkipped);
-
 		}
-		catch (const Exception& except)
+		catch (const Exception &except)
 		{
 			// Error message
-			nlwarning ("ERROR %s\n", except.what());
+			nlwarning("ERROR %s\n", except.what());
 		}
 	}
 

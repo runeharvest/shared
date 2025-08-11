@@ -6,7 +6,6 @@
  * CAudioDecoderVorbis
  */
 
-
 // NeL - MMORPG Framework <https://wiki.ryzom.dev/>
 // Copyright (C) 2008-2012  Jan BOON (Kaetemi) <jan.boon@kaetemi.be>
 //
@@ -34,12 +33,12 @@
 
 // 3rd Party includes
 #ifdef NL_OS_WINDOWS
-#	pragma warning( push )
-#	pragma warning( disable : 4244 )
+#pragma warning(push)
+#pragma warning(disable : 4244)
 #endif
 #include <vorbis/vorbisfile.h>
 #ifdef NL_OS_WINDOWS
-#	pragma warning( pop )
+#pragma warning(pop)
 #endif
 
 // NeL includes
@@ -63,13 +62,14 @@ protected:
 	NLMISC::IStream *_Stream;
 
 	// pointers
-	
+
 	// instances
 	OggVorbis_File _OggVorbisFile;
 	bool _Loop;
 	bool _IsMusicEnded;
 	sint32 _StreamOffset;
 	sint32 _StreamSize;
+
 public:
 	CAudioDecoderVorbis(NLMISC::IStream *stream, bool loop);
 	virtual ~CAudioDecoderVorbis();

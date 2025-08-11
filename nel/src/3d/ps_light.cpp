@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "std3d.h"
 #include "nel/3d/ps_light.h"
 #include "nel/3d/point_light_model.h"
@@ -29,42 +28,40 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************************************************
-CPSLight::CPSLight() : _Color(CRGBA::White),
-					   _ColorScheme(NULL),
-					   _AttenStart(0.1f),
-					   _AttenStartScheme(NULL),
-					   _AttenEnd(1.f),
-					   _AttenEndScheme(NULL)
-{
-	NL_PS_FUNC(CPSLight_CPSLight)
-}
+CPSLight::CPSLight()
+    : _Color(CRGBA::White)
+    , _ColorScheme(NULL)
+    , _AttenStart(0.1f)
+    , _AttenStartScheme(NULL)
+    , _AttenEnd(1.f)
+    , _AttenEndScheme(NULL) {
+	    NL_PS_FUNC(CPSLight_CPSLight)
+    }
 
-// ***************************************************************************************************************
-CPSLight::~CPSLight()
+    // ***************************************************************************************************************
+    CPSLight::~CPSLight()
 {
 	NL_PS_FUNC(CPSLight_CPSLight)
 	if (_Owner && _Owner->getOwner())
 	{
 		// check that all lights have been deleted
-		for(uint k = 0; k < _Lights.getSize(); ++k)
+		for (uint k = 0; k < _Lights.getSize(); ++k)
 		{
 			if (_Lights[k]) _Owner->getOwner()->getScene()->deleteModel(_Lights[k]);
 		}
 	}
 	else
 	{
-		#ifdef NL_DEBUG
-			// check that all lights have been deleted
-			for(uint k = 0; k < _Lights.getSize(); ++k)
-			{
-				nlassert(_Lights[k] == NULL); // error there's	leak!
-			}
-		#endif
+#ifdef NL_DEBUG
+		// check that all lights have been deleted
+		for (uint k = 0; k < _Lights.getSize(); ++k)
+		{
+			nlassert(_Lights[k] == NULL); // error there's	leak!
+		}
+#endif
 	}
 	delete _ColorScheme;
 	delete _AttenStartScheme;
@@ -124,7 +121,7 @@ void CPSLight::serial(NLMISC::IStream &f)
 		if (_Owner)
 		{
 			resize(_Owner->getMaxSize());
-			for(uint k = 0; k < _Owner->getSize(); ++k)
+			for (uint k = 0; k < _Owner->getSize(); ++k)
 			{
 				CPSEmitterInfo ei;
 				ei.setDefaults();
@@ -148,7 +145,7 @@ uint32 CPSLight::getType(void) const
 // ***************************************************************************************************************
 void CPSLight::onShow(bool shown)
 {
-	for(uint k = 0; k < _Lights.getSize(); ++k)
+	for (uint k = 0; k < _Lights.getSize(); ++k)
 	{
 		if (_Lights[k])
 		{
@@ -182,10 +179,10 @@ void CPSLight::step(TPSProcessPass pass)
 	const uint32 BATCH_SIZE = 512;
 	uint32 numLeftLights = _Lights.getSize();
 	// avoid ctor call for color array
-	uint8		   colorArray[BATCH_SIZE * sizeof(NLMISC::CRGBA)];
-	NLMISC::CRGBA *colors = (NLMISC::CRGBA *) colorArray;
-	float		  attenStart[BATCH_SIZE];
-	float		  attenEnd[BATCH_SIZE];
+	uint8 colorArray[BATCH_SIZE * sizeof(NLMISC::CRGBA)];
+	NLMISC::CRGBA *colors = (NLMISC::CRGBA *)colorArray;
+	float attenStart[BATCH_SIZE];
+	float attenEnd[BATCH_SIZE];
 	CPSAttrib<CPointLightModel *>::iterator lightIt = _Lights.begin();
 	const CMatrix *convMat = &(getLocalToWorldMatrix());
 	TPSAttribVector::const_iterator posIt = _Owner->getPos().begin();
@@ -195,10 +192,10 @@ void CPSLight::step(TPSProcessPass pass)
 		uint32 toProcess = std::min(numLeftLights, BATCH_SIZE);
 		// compute colors
 		NLMISC::CRGBA *colPointer;
-		uint   colStride;
+		uint colStride;
 		if (_ColorScheme)
 		{
-			colPointer = (CRGBA *) _ColorScheme->make(_Owner, _Lights.getSize() - numLeftLights, colors, sizeof(CRGBA), toProcess, true);
+			colPointer = (CRGBA *)_ColorScheme->make(_Owner, _Lights.getSize() - numLeftLights, colors, sizeof(CRGBA), toProcess, true);
 			colStride = 1;
 		}
 		else
@@ -208,10 +205,10 @@ void CPSLight::step(TPSProcessPass pass)
 		}
 		// compute start attenuation
 		float *attenStartPointer;
-		uint   attenStartStride;
+		uint attenStartStride;
 		if (_AttenStartScheme)
 		{
-			attenStartPointer = (float *) _AttenStartScheme->make(_Owner, _Lights.getSize() - numLeftLights, attenStart, sizeof(float), toProcess, true);
+			attenStartPointer = (float *)_AttenStartScheme->make(_Owner, _Lights.getSize() - numLeftLights, attenStart, sizeof(float), toProcess, true);
 			attenStartStride = 1;
 		}
 		else
@@ -221,10 +218,10 @@ void CPSLight::step(TPSProcessPass pass)
 		}
 		// compute end attenuation
 		float *attenEndPointer;
-		uint   attenEndStride;
+		uint attenEndStride;
 		if (_AttenEndScheme)
 		{
-			attenEndPointer = (float *) _AttenEndScheme->make(_Owner, _Lights.getSize() - numLeftLights, attenEnd, sizeof(float), toProcess, true);
+			attenEndPointer = (float *)_AttenEndScheme->make(_Owner, _Lights.getSize() - numLeftLights, attenEnd, sizeof(float), toProcess, true);
 			attenEndStride = 1;
 		}
 		else
@@ -253,7 +250,6 @@ void CPSLight::step(TPSProcessPass pass)
 				CPointLightModel *plm = *lightIt;
 				if (pos != plm->getPos()) plm->setPos(pos);
 
-
 				if (CParticleSystem::OwnerModel)
 				{
 					// make sure the visibility is the same
@@ -276,18 +272,16 @@ void CPSLight::step(TPSProcessPass pass)
 				}
 				colPointer += colStride;
 				if (*attenStartPointer != plm->PointLight.getAttenuationBegin()
-				    || *attenEndPointer != plm->PointLight.getAttenuationEnd()
-				   )
+				    || *attenEndPointer != plm->PointLight.getAttenuationEnd())
 				{
 					plm->PointLight.setupAttenuation(*attenStartPointer, *attenEndPointer);
 				}
 				attenStartPointer += attenStartStride;
 				attenEndPointer += attenEndStride;
 			}
-			++ lightIt;
-			++ posIt;
-		}
-		while(--toProcess);
+			++lightIt;
+			++posIt;
+		} while (--toProcess);
 	}
 }
 
@@ -318,7 +312,7 @@ void CPSLight::setAttenStart(float radius)
 	NL_PS_FUNC(CPSLight_setAttenStart)
 	nlassert(radius > 0.f);
 	delete _AttenStartScheme;
-	_AttenStartScheme =	NULL;
+	_AttenStartScheme = NULL;
 	_AttenStart = radius;
 }
 
@@ -397,7 +391,7 @@ void CPSLight::releaseAllRef()
 	NL_PS_FUNC(CPSLight_releaseAllRef)
 	CPSLocatedBindable::releaseAllRef();
 	// delete all lights, because pointer to the scene is lost after detaching from a system.
-	for(uint k = 0; k < _Lights.getSize(); ++k)
+	for (uint k = 0; k < _Lights.getSize(); ++k)
 	{
 		if (_Lights[k])
 		{
@@ -424,7 +418,6 @@ void CPSLight::show()
 	NLMISC::CMatrix yzMat;
 	yzMat.setRot(CVector::J, CVector::K, CVector::Null);
 
-
 	getDriver()->setupModelMatrix(NLMISC::CMatrix::Identity);
 	const uint numSubdiv = 32;
 	// for each element, see if it is the selected element, and if yes, display in red
@@ -433,8 +426,8 @@ void CPSLight::show()
 		float radiusStart = _AttenStartScheme ? _AttenStartScheme->get(_Owner, k) : _AttenStart;
 		float radiusEnd = _AttenEndScheme ? _AttenEndScheme->get(_Owner, k) : _AttenEnd;
 		NLMISC::clamp(radiusStart, 0.f, radiusEnd);
-		const NLMISC::CRGBA colStart = (((lb == NULL || this == lb) && loc == _Owner && index == k)  ? CRGBA::Blue : CRGBA(0, 0, 127));
-		const NLMISC::CRGBA colEnd = (((lb == NULL || this == lb) && loc == _Owner && index == k)  ? CRGBA::Red : CRGBA(127, 0, 0));
+		const NLMISC::CRGBA colStart = (((lb == NULL || this == lb) && loc == _Owner && index == k) ? CRGBA::Blue : CRGBA(0, 0, 127));
+		const NLMISC::CRGBA colEnd = (((lb == NULL || this == lb) && loc == _Owner && index == k) ? CRGBA::Red : CRGBA(127, 0, 0));
 		//
 		CPSUtil::displayDisc(*getDriver(), radiusStart, getLocalToWorldMatrix() * _Owner->getPos()[k], xzMat, numSubdiv, colStart);
 		CPSUtil::displayDisc(*getDriver(), radiusStart, getLocalToWorldMatrix() * _Owner->getPos()[k], xyMat, numSubdiv, colStart);

@@ -42,14 +42,13 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CEditablePatch::CEditablePatch(CScene *scene) : CPatchObject(scene)
+CEditablePatch::CEditablePatch(CScene *scene)
+    : CPatchObject(scene)
 {
-
 }
 
 CEditablePatch::~CEditablePatch()
 {
-
 }
 
 const ucstring CEditablePatch::DisplayName = ucstring("EditablePatch");

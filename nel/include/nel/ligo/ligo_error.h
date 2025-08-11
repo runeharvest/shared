@@ -21,8 +21,7 @@
 
 #include <vector>
 
-namespace NLLIGO
-{
+namespace NLLIGO {
 
 /**
  * Error handling
@@ -37,7 +36,7 @@ public:
 	enum TError
 	{
 		/// No error
-		NoError				=0,
+		NoError = 0,
 
 		/// No vertices in the edge list
 		NoEdgeVertices,
@@ -95,56 +94,53 @@ public:
 	CLigoError();
 
 	/// Clear the container
-	void clear ();
+	void clear();
 
 	/// Push a vertex error code
-	void pushVertexError (TError code, uint id, uint edge=0xffffffff);
+	void pushVertexError(TError code, uint id, uint edge = 0xffffffff);
 
 	/// Get num vertex error
-	uint numVertexError () const;
+	uint numVertexError() const;
 
 	/// Get a vertex error
-	TError getVertexError (uint error, uint &id, uint &edge) const;
+	TError getVertexError(uint error, uint &id, uint &edge) const;
 
 	/// Get an error string
-	static const char* getStringError (TError errorCode);
+	static const char *getStringError(TError errorCode);
 
 public:
-
 	/// Main error code
-	TError		MainError;
+	TError MainError;
 
 private:
-
 	/// Vertex error
 	class CVertex
 	{
 	public:
-
 		/// Constructor
-		CVertex (TError code, uint id, uint edge)
+		CVertex(TError code, uint id, uint edge)
 		{
 			Code = code;
 			Id = id;
 			Edge = edge;
 		}
-	public:
 
+	public:
 		/// Error code on this vertex
-		TError	Code;
+		TError Code;
 
 		/// Vertex id
-		uint	Id;
+		uint Id;
 
 		/// Edge id (no always used)
-		uint	Edge;
+		uint Edge;
 	};
 
 	/// Vertex error
-	std::vector<CVertex>		_VertexError;
+	std::vector<CVertex> _VertexError;
 
 	/// Error string
-	static const char* _StringError[];
+	static const char *_StringError[];
 };
 
 }

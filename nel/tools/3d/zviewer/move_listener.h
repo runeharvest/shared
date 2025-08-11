@@ -26,11 +26,7 @@
 #include <nel/3d/camera.h>
 #include <nel/3d/driver.h>
 
-
-
-namespace NL3D 
-{
-
+namespace NL3D {
 
 /**
  * CMoveListener is a listener that handle a 3d matrix with mouse events.
@@ -41,10 +37,9 @@ namespace NL3D
 class CMoveListener : public NLMISC::IEventListener
 {
 
-public :
-	
-	/** 
-	 * TMoveMode. 
+public:
+	/**
+	 * TMoveMode.
 	 * moving modes
 	 */
 	enum TMoveMode
@@ -54,49 +49,48 @@ public :
 	};
 
 private:
-	
 	/// Internal use
-	virtual void operator()(const NLMISC::CEvent& event);
+	virtual void operator()(const NLMISC::CEvent &event);
 
 	/// moving mode
 	TMoveMode _Mode;
-	
+
 	/// view matrix
 	NLMISC::CMatrix _ViewMatrix;
 
 	/// viewport
-	NL3D::CViewport	_Viewport;
-	
+	NL3D::CViewport _Viewport;
+
 	/// true if first setMousePos done
 	bool _CursorInit;
 
-	CScene * _Scene;
-	
+	CScene *_Scene;
+
 	/// screen width
 	uint _Width;
 
 	/// screen height
 	uint _Height;
 
-	///frustum parameters
+	/// frustum parameters
 	float _Top;
 	float _Bottom;
 	float _Left;
 	float _Right;
 	float _Depth;
-	
+
 	/// current position
 	CVector _Pos;
 
 	/// eyes height
 	float _EyesHeight;
 
-	///current rotation z angle
+	/// current rotation z angle
 	float _RotZ;
 
-	///current rotation x angle
+	/// current rotation x angle
 	float _RotX;
-	
+
 	/// last local time measured
 	NLMISC::TTime _LastTime;
 
@@ -113,34 +107,31 @@ private:
 	bool _MouseFree;
 
 public:
-	
-	
-	/** 
-	 * Constructor. 
+	/**
+	 * Constructor.
 	 * You should call init then.
 	 */
 	CMoveListener();
 
-
-	/** 
-	 * Constructor. 
+	/**
+	 * Constructor.
 	 * You should call init then.
 	 * \param scene the scene
 	 * \param w screen width in pixels
 	 * \param h screen height in pixels
 	 * \param camera the camera
 	 */
-	void init(CScene * scene, uint w, uint h, const class CCamera& camera)
+	void init(CScene *scene, uint w, uint h, const class CCamera &camera)
 	{
 		_Scene = scene;
 		_Width = w;
 		_Height = h;
-		
+
 		_Viewport = scene->getViewport();
 
 		float dummy;
-		_ViewMatrix = camera.getMatrix ();
-		camera.getFrustum (_Left, _Right, _Bottom, _Top, _Depth, dummy);
+		_ViewMatrix = camera.getMatrix();
+		camera.getFrustum(_Left, _Right, _Bottom, _Top, _Depth, dummy);
 	}
 
 	/**
@@ -154,7 +145,7 @@ public:
 
 	void swapMode()
 	{
-		if(_Mode==WALK)
+		if (_Mode == WALK)
 		{
 			_Mode = FREE;
 		}
@@ -171,15 +162,15 @@ public:
 
 	void changeViewMatrix();
 
-	/** 
-     * Register the listener to the server.
+	/**
+	 * Register the listener to the server.
 	 */
-	void addToServer (NLMISC::CEventServer& server);
+	void addToServer(NLMISC::CEventServer &server);
 
-	/** 
-	  * Unregister the listener to the server.
-	  */
-	void removeFromServer (NLMISC::CEventServer& server);
+	/**
+	 * Unregister the listener to the server.
+	 */
+	void removeFromServer(NLMISC::CEventServer &server);
 
 	void setEyesHeight(float eh) { _EyesHeight = eh; }
 	float getEyesHeight() const { return _EyesHeight; }
@@ -208,20 +199,18 @@ public:
 		return deltaTimeInMilliseconds() * 0.001f;
 	}
 
-
 	void changeControlMode()
 	{
-		_MouseFree = ! _MouseFree;
-		if(_MouseFree)
+		_MouseFree = !_MouseFree;
+		if (_MouseFree)
 		{
 			_Scene->getDriver()->showCursor(true);
 		}
 		else
 		{
 			_Scene->getDriver()->showCursor(false);
-		}	
+		}
 	}
-		
 
 }; // NL3D
 

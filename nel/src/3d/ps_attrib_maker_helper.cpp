@@ -21,9 +21,7 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***********************************************************************************
 void CPSAttribMakerMemory<uint32>::serial(NLMISC::IStream &f)
@@ -34,7 +32,7 @@ void CPSAttribMakerMemory<uint32>::serial(NLMISC::IStream &f)
 		if (_T.getSize() != 0)
 		{
 			_MinValue = _MaxValue = _T[0];
-			for(uint k = 1; k < _T.getSize(); ++k)
+			for (uint k = 1; k < _T.getSize(); ++k)
 			{
 				_MinValue = std::min(_MinValue, _T[k]);
 				_MaxValue = std::max(_MaxValue, _T[k]);
@@ -67,7 +65,7 @@ void CPSAttribMakerMemory<sint32>::serial(NLMISC::IStream &f)
 		if (_T.getSize() != 0)
 		{
 			_MinValue = _MaxValue = _T[0];
-			for(uint k = 1; k < _T.getSize(); ++k)
+			for (uint k = 1; k < _T.getSize(); ++k)
 			{
 				_MinValue = std::min(_MinValue, _T[k]);
 				_MaxValue = std::max(_MaxValue, _T[k]);
@@ -100,7 +98,7 @@ void CPSAttribMakerMemory<float>::serial(NLMISC::IStream &f)
 		if (_T.getSize() != 0)
 		{
 			_MinValue = _MaxValue = _T[0];
-			for(uint k = 1; k < _T.getSize(); ++k)
+			for (uint k = 1; k < _T.getSize(); ++k)
 			{
 				_MinValue = std::min(_MinValue, _T[k]);
 				_MaxValue = std::max(_MaxValue, _T[k]);
@@ -123,6 +121,5 @@ void CPSAttribMakerMemory<float>::newElement(const CPSEmitterInfo &info)
 		_MinValue = _MaxValue = _T[0];
 	}
 }
-
 
 } // NL3D

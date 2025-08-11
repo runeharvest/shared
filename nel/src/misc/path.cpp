@@ -18,7 +18,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdmisc.h"
 
 #include "nel/misc/path.h"
@@ -30,29 +29,29 @@
 #include "nel/misc/streamed_package_manager.h"
 
 #ifdef NL_OS_WINDOWS
-#	include <sys/types.h>
-#	include <sys/stat.h>
-#	include <direct.h>
-#	include <io.h>
-#	include <fcntl.h>
-#	include <sys/types.h>
-#	include <sys/stat.h>
-#	include <shlobj.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <direct.h>
+#include <io.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <shlobj.h>
 #else
-#   include <sys/types.h>
-#   include <sys/stat.h>
-#	include <dirent.h>
-#   include <unistd.h>
-#	include <cstdio>
-#   include <cerrno>
-#   include <sys/types.h>
-#   include <utime.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <cstdio>
+#include <cerrno>
+#include <sys/types.h>
+#include <utime.h>
 #endif // NL_OS_WINDOWS
 
 using namespace std;
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
 namespace NLMISC {
@@ -62,18 +61,17 @@ namespace NLMISC {
 //
 
 // Use this define if you want to display info about the CPath.
-//#define	NL_DEBUG_PATH
+// #define	NL_DEBUG_PATH
 
-#ifdef	NL_DEBUG_PATH
-#	define	NL_DISPLAY_PATH	nlinfo
+#ifdef NL_DEBUG_PATH
+#define NL_DISPLAY_PATH nlinfo
 #else
-#	ifdef __GNUC__
-#		define	NL_DISPLAY_PATH(format, args...)
-#	else // __GNUC__
-#		define	NL_DISPLAY_PATH if(false)
-#	endif // __GNUC__
+#ifdef __GNUC__
+#define NL_DISPLAY_PATH(format, args...)
+#else // __GNUC__
+#define NL_DISPLAY_PATH if (false)
+#endif // __GNUC__
 #endif
-
 
 //
 // Variables
@@ -81,14 +79,13 @@ namespace NLMISC {
 
 NLMISC_SAFE_SINGLETON_IMPL(CPath);
 
-
 //
 // Functions
 //
 
 CFileContainer::~CFileContainer()
 {
-	if( _AllFileNames )
+	if (_AllFileNames)
 	{
 		delete[] _AllFileNames;
 		_AllFileNames = NULL;
@@ -105,7 +102,6 @@ void CPath::releaseInstance()
 	}
 }
 
-
 void CPath::getFileList(const std::string &extension, std::vector<std::string> &filenames)
 {
 	getInstance()->_FileContainer.getFileList(extension, filenames);
@@ -117,9 +113,9 @@ void CFileContainer::getFileList(const std::string &extension, std::vector<std::
 	{
 		TFiles::iterator first(_Files.begin()), last(_Files.end());
 
-		if( !extension.empty() )
+		if (!extension.empty())
 		{
-			for (; first != last; ++ first)
+			for (; first != last; ++first)
 			{
 				string ext = SSMext.get(first->second.idExt);
 				if (ext == extension)
@@ -131,7 +127,7 @@ void CFileContainer::getFileList(const std::string &extension, std::vector<std::
 		// if extension is empty we keep all files
 		else
 		{
-			for (; first != last; ++ first)
+			for (; first != last; ++first)
 			{
 				filenames.push_back(first->first);
 			}
@@ -142,9 +138,9 @@ void CFileContainer::getFileList(const std::string &extension, std::vector<std::
 		// compressed memory version
 		std::vector<CFileContainer::CMCFileEntry>::iterator first(_MCFiles.begin()), last(_MCFiles.end());
 
-		if( !extension.empty() )
+		if (!extension.empty())
 		{
-			for (; first != last; ++ first)
+			for (; first != last; ++first)
 			{
 				string ext = SSMext.get(first->idExt);
 				if (ext == extension)
@@ -156,7 +152,7 @@ void CFileContainer::getFileList(const std::string &extension, std::vector<std::
 		// if extension is empty we keep all files
 		else
 		{
-			for (; first != last; ++ first)
+			for (; first != last; ++first)
 			{
 				filenames.push_back(first->Name);
 			}
@@ -175,9 +171,9 @@ void CFileContainer::getFileListByName(const std::string &extension, const std::
 	{
 		TFiles::iterator first(_Files.begin()), last(_Files.end());
 
-		if( !name.empty() )
+		if (!name.empty())
 		{
-			for (; first != last; ++ first)
+			for (; first != last; ++first)
 			{
 				string ext = SSMext.get(first->second.idExt);
 				if (first->first.find(name) != string::npos && (ext == extension || extension.empty()))
@@ -189,7 +185,7 @@ void CFileContainer::getFileListByName(const std::string &extension, const std::
 		// if extension is empty we keep all files
 		else
 		{
-			for (; first != last; ++ first)
+			for (; first != last; ++first)
 			{
 				filenames.push_back(first->first);
 			}
@@ -200,9 +196,9 @@ void CFileContainer::getFileListByName(const std::string &extension, const std::
 		// compressed memory version
 		std::vector<CFileContainer::CMCFileEntry>::iterator first(_MCFiles.begin()), last(_MCFiles.end());
 
-		if( !name.empty() )
+		if (!name.empty())
 		{
-			for (; first != last; ++ first)
+			for (; first != last; ++first)
 			{
 				string ext = SSMext.get(first->idExt);
 				if (strstr(first->Name, name.c_str()) != NULL && (ext == extension || extension.empty()))
@@ -214,8 +210,8 @@ void CFileContainer::getFileListByName(const std::string &extension, const std::
 		// if extension is empty we keep all files
 		else
 		{
-			for (; first != last; ++ first)
-		{
+			for (; first != last; ++first)
+			{
 				filenames.push_back(first->Name);
 			}
 		}
@@ -233,9 +229,9 @@ void CFileContainer::getFileListByPath(const std::string &extension, const std::
 	{
 		TFiles::iterator first(_Files.begin()), last(_Files.end());
 
-		if( !path.empty() )
+		if (!path.empty())
 		{
-			for (; first != last; ++ first)
+			for (; first != last; ++first)
 			{
 				string ext = SSMext.get(first->second.idExt);
 				string p = SSMpath.get(first->second.idPath);
@@ -248,7 +244,7 @@ void CFileContainer::getFileListByPath(const std::string &extension, const std::
 		// if extension is empty we keep all files
 		else
 		{
-			for (; first != last; ++ first)
+			for (; first != last; ++first)
 			{
 				filenames.push_back(first->first);
 			}
@@ -259,9 +255,9 @@ void CFileContainer::getFileListByPath(const std::string &extension, const std::
 		// compressed memory version
 		std::vector<CFileContainer::CMCFileEntry>::iterator first(_MCFiles.begin()), last(_MCFiles.end());
 
-		if( !path.empty() )
+		if (!path.empty())
 		{
-			for (; first != last; ++ first)
+			for (; first != last; ++first)
 			{
 				string ext = SSMext.get(first->idExt);
 				string p = SSMpath.get(first->idPath);
@@ -275,34 +271,34 @@ void CFileContainer::getFileListByPath(const std::string &extension, const std::
 		// if extension is empty we keep all files
 		else
 		{
-			for (; first != last; ++ first)
-		{
+			for (; first != last; ++first)
+			{
 				filenames.push_back(first->Name);
 			}
 		}
 	}
 }
 
-void CPath::clearMap ()
+void CPath::clearMap()
 {
 	getInstance()->_FileContainer.clearMap();
 }
 
-void CFileContainer::clearMap ()
+void CFileContainer::clearMap()
 {
 	nlassert(!_MemoryCompressed);
-	_Files.clear ();
-	CBigFile::getInstance().removeAll ();
-	CStreamedPackageManager::getInstance().unloadAll ();
+	_Files.clear();
+	CBigFile::getInstance().removeAll();
+	CStreamedPackageManager::getInstance().unloadAll();
 	NL_DISPLAY_PATH("PATH: CPath::clearMap(): map directory cleared");
 }
 
-CFileContainer::CMCFileEntry *CFileContainer::MCfind (const std::string &filename)
+CFileContainer::CMCFileEntry *CFileContainer::MCfind(const std::string &filename)
 {
 	nlassert(_MemoryCompressed);
 	vector<CMCFileEntry>::iterator it;
 	CMCFileEntry temp_cmc_file;
-	temp_cmc_file.Name = (char*)filename.c_str();
+	temp_cmc_file.Name = (char *)filename.c_str();
 	it = lower_bound(_MCFiles.begin(), _MCFiles.end(), temp_cmc_file, CMCFileComp());
 	if (it != _MCFiles.end())
 	{
@@ -313,9 +309,9 @@ CFileContainer::CMCFileEntry *CFileContainer::MCfind (const std::string &filenam
 	return NULL;
 }
 
-sint CFileContainer::findExtension (const string &ext1, const string &ext2)
+sint CFileContainer::findExtension(const string &ext1, const string &ext2)
 {
-	for (uint i = 0; i < _Extensions.size (); i++)
+	for (uint i = 0; i < _Extensions.size(); i++)
 	{
 		if (_Extensions[i].first == ext1 && _Extensions[i].second == ext2)
 		{
@@ -325,12 +321,12 @@ sint CFileContainer::findExtension (const string &ext1, const string &ext2)
 	return -1;
 }
 
-void CPath::remapExtension (const string &ext1, const string &ext2, bool substitute)
+void CPath::remapExtension(const string &ext1, const string &ext2, bool substitute)
 {
 	getInstance()->_FileContainer.remapExtension(ext1, ext2, substitute);
 }
 
-void CFileContainer::remapExtension (const string &ext1, const string &ext2, bool substitute)
+void CFileContainer::remapExtension(const string &ext1, const string &ext2, bool substitute)
 {
 	nlassert(!_MemoryCompressed);
 
@@ -339,31 +335,31 @@ void CFileContainer::remapExtension (const string &ext1, const string &ext2, boo
 
 	if (ext1lwr.empty() || ext2lwr.empty())
 	{
-		nlwarning ("PATH: CPath::remapExtension(%s, %s, %d): can't remap empty extension", ext1lwr.c_str(), ext2lwr.c_str(), substitute);
+		nlwarning("PATH: CPath::remapExtension(%s, %s, %d): can't remap empty extension", ext1lwr.c_str(), ext2lwr.c_str(), substitute);
 	}
 
 	if (ext1lwr == "bnp" || ext2lwr == "bnp" || ext1lwr == "snp" || ext2lwr == "snp")
 	{
-		nlwarning ("PATH: CPath::remapExtension(%s, %s, %d): you can't remap a big file", ext1lwr.c_str(), ext2lwr.c_str(), substitute);
+		nlwarning("PATH: CPath::remapExtension(%s, %s, %d): you can't remap a big file", ext1lwr.c_str(), ext2lwr.c_str(), substitute);
 	}
 
 	if (!substitute)
 	{
 		// remove the mapping from the mapping list
-		sint n = findExtension (ext1lwr, ext2lwr);
-		nlassert (n != -1);
-		_Extensions.erase (_Extensions.begin() + n);
+		sint n = findExtension(ext1lwr, ext2lwr);
+		nlassert(n != -1);
+		_Extensions.erase(_Extensions.begin() + n);
 
 		// remove mapping in the map
 		TFiles::iterator it = _Files.begin();
 		TFiles::iterator nit = it;
-		while (it != _Files.end ())
+		while (it != _Files.end())
 		{
 			nit++;
 			string ext = SSMext.get((*it).second.idExt);
 			if ((*it).second.Remapped && ext == ext2lwr)
 			{
-				_Files.erase (it);
+				_Files.erase(it);
 			}
 			it = nit;
 		}
@@ -371,34 +367,34 @@ void CFileContainer::remapExtension (const string &ext1, const string &ext2, boo
 	}
 	else
 	{
-		sint n = findExtension (ext1lwr, ext2lwr);
+		sint n = findExtension(ext1lwr, ext2lwr);
 		if (n != -1)
 		{
-			nlwarning ("PATH: CPath::remapExtension(%s, %s, %d): remapping already set", ext1lwr.c_str(), ext2lwr.c_str(), substitute);
+			nlwarning("PATH: CPath::remapExtension(%s, %s, %d): remapping already set", ext1lwr.c_str(), ext2lwr.c_str(), substitute);
 			return;
 		}
 
 		// adding mapping into the mapping list
-		_Extensions.push_back (make_pair (ext1lwr, ext2lwr));
+		_Extensions.push_back(make_pair(ext1lwr, ext2lwr));
 
 		// adding mapping into the map
 		vector<string> newFiles;
 		TFiles::iterator it = _Files.begin();
-		while (it != _Files.end ())
+		while (it != _Files.end())
 		{
 			string ext = SSMext.get((*it).second.idExt);
 			if (!(*it).second.Remapped && ext == ext1lwr)
 			{
 				// find if already exist
-				string::size_type pos = (*it).first.find_last_of (".");
+				string::size_type pos = (*it).first.find_last_of(".");
 				if (pos != string::npos)
 				{
-					string file = (*it).first.substr (0, pos + 1);
+					string file = (*it).first.substr(0, pos + 1);
 					file += ext2lwr;
 
-// TODO perhaps a problem because I insert in the current map that I process
+					// TODO perhaps a problem because I insert in the current map that I process
 					string path = SSMpath.get((*it).second.idPath);
-					insertFileInMap (file, path+file, true, ext1lwr);
+					insertFileInMap(file, path + file, true, ext1lwr);
 				}
 			}
 			it++;
@@ -408,12 +404,12 @@ void CFileContainer::remapExtension (const string &ext1, const string &ext2, boo
 }
 
 // ***************************************************************************
-void CPath::remapFile (const std::string &file1, const std::string &file2)
+void CPath::remapFile(const std::string &file1, const std::string &file2)
 {
 	getInstance()->_FileContainer.remapFile(file1, file2);
 }
 
-void CFileContainer::remapFile (const std::string &file1, const std::string &file2)
+void CFileContainer::remapFile(const std::string &file1, const std::string &file2)
 {
 	if (file1.empty()) return;
 	if (file2.empty()) return;
@@ -427,25 +423,25 @@ static void removeAllUnusedChar(string &str)
 	while (!str.empty() && (i != str.size()))
 	{
 		if ((str[i] == ' ' || str[i] == '\t' || str[i] == '\r' || str[i] == '\n'))
-			str.erase(str.begin()+i);
+			str.erase(str.begin() + i);
 		else
 			i++;
 	}
 }
 
 // ***************************************************************************
-void CPath::loadRemappedFiles (const std::string &file)
+void CPath::loadRemappedFiles(const std::string &file)
 {
 	getInstance()->_FileContainer.loadRemappedFiles(file);
 }
 
-void CFileContainer::loadRemappedFiles (const std::string &file)
+void CFileContainer::loadRemappedFiles(const std::string &file)
 {
 	string fullName = lookup(file, false, true, true);
 	CIFile f;
-	f.setCacheFileOnOpen (true);
+	f.setCacheFileOnOpen(true);
 
-	if (!f.open (fullName))
+	if (!f.open(fullName))
 		return;
 
 	char sTmp[514];
@@ -462,33 +458,31 @@ void CFileContainer::loadRemappedFiles (const std::string &file)
 			if (!str.empty())
 			{
 				pos = str.find(',');
-				remapFile( str.substr(0,pos), str.substr(pos+1, str.size()) );
+				remapFile(str.substr(0, pos), str.substr(pos + 1, str.size()));
 			}
 		}
 	}
 }
 
-
 // ***************************************************************************
-string CPath::lookup (const string &filename, bool throwException, bool displayWarning, bool lookupInLocalDirectory)
+string CPath::lookup(const string &filename, bool throwException, bool displayWarning, bool lookupInLocalDirectory)
 {
 	return getInstance()->_FileContainer.lookup(filename, throwException, displayWarning, lookupInLocalDirectory);
 }
 
-string CFileContainer::lookup (const string &filename, bool throwException, bool displayWarning, bool lookupInLocalDirectory)
+string CFileContainer::lookup(const string &filename, bool throwException, bool displayWarning, bool lookupInLocalDirectory)
 {
 	/* ***********************************************
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
 	 *	It can be loaded/called through CAsyncFileManager for instance
 	 * ***********************************************/
 	/*
-		NB: CPath access static instance getInstance() of course, so user must ensure
-		that no mutator is called while async loading
+	    NB: CPath access static instance getInstance() of course, so user must ensure
+	    that no mutator is called while async loading
 	*/
 
-
 	// If the file already contains a @, it means that a lookup already proceed and returning a big file, do nothing
-	if (filename.find ("@") != string::npos)
+	if (filename.find("@") != string::npos)
 	{
 		NL_DISPLAY_PATH("PATH: CPath::lookup(%s):	already found", filename.c_str());
 		return filename;
@@ -500,9 +494,9 @@ string CFileContainer::lookup (const string &filename, bool throwException, bool
 	string str = CFile::getFilename(toLowerAscii(filename));
 
 	// Remove end spaces
-	while ((!str.empty()) && (str[str.size()-1] == ' '))
+	while ((!str.empty()) && (str[str.size() - 1] == ' '))
 	{
-		str.resize (str.size()-1);
+		str.resize(str.size() - 1);
 	}
 
 	map<string, string>::iterator itss = _RemappedFiles.find(str);
@@ -528,7 +522,7 @@ string CFileContainer::lookup (const string &filename, bool throwException, bool
 	else // NOT memory compressed
 	{
 
-		TFiles::iterator it = _Files.find (str);
+		TFiles::iterator it = _Files.find(str);
 		// If found in the map, returns it
 		if (it != _Files.end())
 		{
@@ -543,12 +537,11 @@ string CFileContainer::lookup (const string &filename, bool throwException, bool
 		}
 	}
 
-
 	// Try to find in the alternative directories
 	for (uint i = 0; i < _AlternativePaths.size(); i++)
 	{
 		string s = _AlternativePaths[i] + str;
-		if ( CFile::fileExists(s) )
+		if (CFile::fileExists(s))
 		{
 			NL_DISPLAY_PATH("PATH: CPath::lookup(%s): found in the alternative directory: '%s'", str.c_str(), s.c_str());
 			return s;
@@ -557,10 +550,10 @@ string CFileContainer::lookup (const string &filename, bool throwException, bool
 		// try with the remapping
 		for (uint j = 0; j < _Extensions.size(); j++)
 		{
-			if (toLowerAscii(CFile::getExtension (str)) == _Extensions[j].second)
+			if (toLowerAscii(CFile::getExtension(str)) == _Extensions[j].second)
 			{
-				string rs = _AlternativePaths[i] + CFile::getFilenameWithoutExtension (filename) + "." + _Extensions[j].first;
-				if ( CFile::fileExists(rs) )
+				string rs = _AlternativePaths[i] + CFile::getFilenameWithoutExtension(filename) + "." + _Extensions[j].first;
+				if (CFile::fileExists(rs))
 				{
 					NL_DISPLAY_PATH("PATH: CPath::lookup(%s): found in the alternative directory: '%s'", str.c_str(), rs.c_str());
 					return rs;
@@ -570,7 +563,7 @@ string CFileContainer::lookup (const string &filename, bool throwException, bool
 	}
 
 	// Try to find in the current directory
-	if ( lookupInLocalDirectory && CFile::fileExists(filename) )
+	if (lookupInLocalDirectory && CFile::fileExists(filename))
 	{
 		NL_DISPLAY_PATH("PATH: CPath::lookup(%s): found in the current directory: '%s'", str.c_str(), filename.c_str());
 		return filename;
@@ -579,32 +572,32 @@ string CFileContainer::lookup (const string &filename, bool throwException, bool
 	// Not found
 	if (displayWarning)
 	{
-		if(filename.empty())
-			nlwarning ("PATH: Try to lookup for an empty filename. TODO: check why.");
+		if (filename.empty())
+			nlwarning("PATH: Try to lookup for an empty filename. TODO: check why.");
 		else
-			nlwarning ("PATH: File (%s) not found (%s)", str.c_str(), filename.c_str());
+			nlwarning("PATH: File (%s) not found (%s)", str.c_str(), filename.c_str());
 	}
 
 	if (throwException)
-		throw EPathNotFound (filename);
+		throw EPathNotFound(filename);
 
 	return "";
 }
 
-bool CPath::exists (const std::string &filename)
+bool CPath::exists(const std::string &filename)
 {
 	return getInstance()->_FileContainer.exists(filename);
 }
 
-bool CFileContainer::exists (const std::string &filename)
+bool CFileContainer::exists(const std::string &filename)
 {
 	// Try to find in the map directories
 	string str = toLowerAscii(filename);
 
 	// Remove end spaces
-	while ((!str.empty()) && (str[str.size()-1] == ' '))
+	while ((!str.empty()) && (str[str.size() - 1] == ' '))
 	{
-		str.resize (str.size()-1);
+		str.resize(str.size() - 1);
 	}
 
 	if (_MemoryCompressed)
@@ -616,7 +609,7 @@ bool CFileContainer::exists (const std::string &filename)
 	}
 	else
 	{
-		TFiles::iterator it = _Files.find (str);
+		TFiles::iterator it = _Files.find(str);
 		// If found in the map, returns it
 		if (it != _Files.end())
 			return true;
@@ -625,12 +618,12 @@ bool CFileContainer::exists (const std::string &filename)
 	return false;
 }
 
-string CPath::standardizePath (const string &path, bool addFinalSlash)
+string CPath::standardizePath(const string &path, bool addFinalSlash)
 {
 	return getInstance()->_FileContainer.standardizePath(path, addFinalSlash);
 }
 
-string CFileContainer::standardizePath (const string &path, bool addFinalSlash)
+string CFileContainer::standardizePath(const string &path, bool addFinalSlash)
 {
 	// check empty path
 	if (path.empty())
@@ -646,19 +639,19 @@ string CFileContainer::standardizePath (const string &path, bool addFinalSlash)
 	}
 
 	// add terminal slash
-	if (addFinalSlash && newPath[path.size()-1] != '/')
+	if (addFinalSlash && newPath[path.size() - 1] != '/')
 		newPath += '/';
 
 	return newPath;
 }
 
 // replace / with backslash
-std::string	CPath::standardizeDosPath (const std::string &path)
+std::string CPath::standardizeDosPath(const std::string &path)
 {
 	return getInstance()->_FileContainer.standardizeDosPath(path);
 }
 
-std::string	CFileContainer::standardizeDosPath (const std::string &path)
+std::string CFileContainer::standardizeDosPath(const std::string &path)
 {
 	string newPath;
 
@@ -668,61 +661,60 @@ std::string	CFileContainer::standardizeDosPath (const std::string &path)
 			newPath += '\\';
 		// Yoyo: supress toLower. Not useful!?!
 		/*else if (isupper(path[i]))
-			newPath += tolower(path[i]);*/
+		    newPath += tolower(path[i]);*/
 		else
 			newPath += path[i];
 	}
 
-	if (CFile::isExists(path) && CFile::isDirectory(path) && newPath[newPath.size()-1] != '\\')
+	if (CFile::isExists(path) && CFile::isDirectory(path) && newPath[newPath.size() - 1] != '\\')
 		newPath += '\\';
 
 	return newPath;
 }
 
-
-std::string CPath::getCurrentPath ()
+std::string CPath::getCurrentPath()
 {
 	return getInstance()->_FileContainer.getCurrentPath();
 }
 
-std::string CFileContainer::getCurrentPath ()
+std::string CFileContainer::getCurrentPath()
 {
 #ifdef NL_OS_WINDOWS
 	wchar_t buffer[1024];
 	return standardizePath(wideToUtf8(_wgetcwd(buffer, 1024)), false);
 #else
-	char buffer [1024];
+	char buffer[1024];
 	return standardizePath(getcwd(buffer, 1024), false);
 #endif
 }
 
-bool CPath::setCurrentPath (const std::string &path)
+bool CPath::setCurrentPath(const std::string &path)
 {
 	return getInstance()->_FileContainer.setCurrentPath(path);
 }
 
-bool CFileContainer::setCurrentPath (const std::string &path)
+bool CFileContainer::setCurrentPath(const std::string &path)
 {
 	int res;
-	//nldebug("Change current path to '%s' (current path is '%s')", path.c_str(), getCurrentPath().c_str());
+	// nldebug("Change current path to '%s' (current path is '%s')", path.c_str(), getCurrentPath().c_str());
 #ifdef NL_OS_WINDOWS
 	res = _wchdir(nlUtf8ToWide(path));
 #else
 	res = chdir(path.c_str());
 #endif
-	if(res != 0) nlwarning("Cannot change current path to '%s' (current path is '%s') res: %d errno: %d (%s)", path.c_str(), getCurrentPath().c_str(), res, errno, strerror(errno));
+	if (res != 0) nlwarning("Cannot change current path to '%s' (current path is '%s') res: %d errno: %d (%s)", path.c_str(), getCurrentPath().c_str(), res, errno, strerror(errno));
 	return res == 0;
 }
 
-std::string CPath::getFullPath (const std::string &path, bool addFinalSlash)
+std::string CPath::getFullPath(const std::string &path, bool addFinalSlash)
 {
 	return getInstance()->_FileContainer.getFullPath(path, addFinalSlash);
 }
 
-std::string CFileContainer::getFullPath (const std::string &path, bool addFinalSlash)
+std::string CFileContainer::getFullPath(const std::string &path, bool addFinalSlash)
 {
-	string currentPath = standardizePath (getCurrentPath ());
-	string sPath = standardizePath (path, addFinalSlash);
+	string currentPath = standardizePath(getCurrentPath());
+	string sPath = standardizePath(path, addFinalSlash);
 
 	// current path
 	if (path.empty() || sPath == "." || sPath == "./")
@@ -741,13 +733,12 @@ std::string CFileContainer::getFullPath (const std::string &path, bool addFinalS
 		return sPath;
 	}
 
-
 	// from root
-	if (path [0] == '/' || path[0] == '\\')
+	if (path[0] == '/' || path[0] == '\\')
 	{
 		if (currentPath.size() > 2 && currentPath[1] == ':')
 		{
-			return currentPath.substr(0,3) + sPath.substr(1);
+			return currentPath.substr(0, 3) + sPath.substr(1);
 		}
 		else
 		{
@@ -759,20 +750,18 @@ std::string CFileContainer::getFullPath (const std::string &path, bool addFinalS
 	return currentPath + sPath;
 }
 
-
-
 #ifdef NL_OS_WINDOWS
-#	define dirent	WIN32_FIND_DATAW
-#	define DIR		void
+#define dirent WIN32_FIND_DATAW
+#define DIR void
 
 static string sDir;
 static WIN32_FIND_DATAW findData;
 static HANDLE hFind;
 
-DIR *opendir (const char *path)
+DIR *opendir(const char *path)
 {
-	nlassert (path != NULL);
-	nlassert (path[0] != '\0');
+	nlassert(path != NULL);
+	nlassert(path[0] != '\0');
 
 	if (!CFile::isDirectory(path))
 		return NULL;
@@ -784,16 +773,16 @@ DIR *opendir (const char *path)
 	return (void *)1;
 }
 
-int closedir (DIR *dir)
+int closedir(DIR *dir)
 {
 	FindClose(hFind);
 	return 0;
 }
 
-dirent *readdir (DIR *dir)
+dirent *readdir(DIR *dir)
 {
 	// FIX : call to SetCurrentDirectory() and SetCurrentDirectory() removed to improve speed
-	nlassert (!sDir.empty());
+	nlassert(!sDir.empty());
 
 	// first visit in this directory : FindFirstFile()
 	if (hFind == NULL)
@@ -803,13 +792,12 @@ dirent *readdir (DIR *dir)
 	// directory already visited : FindNextFile()
 	else
 	{
-		if (!FindNextFileW (hFind, &findData))
+		if (!FindNextFileW(hFind, &findData))
 			return NULL;
 	}
 
 	return &findData;
 }
-
 
 #endif // NL_OS_WINDOWS
 
@@ -817,38 +805,38 @@ dirent *readdir (DIR *dir)
 string BasePathgetPathContent;
 #endif
 
-bool isdirectory (dirent *de)
+bool isdirectory(dirent *de)
 {
-	nlassert (de != NULL);
+	nlassert(de != NULL);
 #ifdef NL_OS_WINDOWS
 	return ((de->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0) && ((de->dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) == 0);
 #else
-	//nlinfo ("isdirectory filename %s -> 0x%08x", de->d_name, de->d_type);
-	// we can't use "de->d_type & DT_DIR" because it s always NULL on libc2.1
-	//return (de->d_type & DT_DIR) != 0;
+	// nlinfo ("isdirectory filename %s -> 0x%08x", de->d_name, de->d_type);
+	//  we can't use "de->d_type & DT_DIR" because it s always NULL on libc2.1
+	// return (de->d_type & DT_DIR) != 0;
 
-	return CFile::isDirectory (BasePathgetPathContent + de->d_name);
+	return CFile::isDirectory(BasePathgetPathContent + de->d_name);
 
 #endif // NL_OS_WINDOWS
 }
 
-bool isfile (dirent *de)
+bool isfile(dirent *de)
 {
-	nlassert (de != NULL);
+	nlassert(de != NULL);
 #ifdef NL_OS_WINDOWS
 	return ((de->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) && ((de->dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) == 0);
 #else
 	// we can't use "de->d_type & DT_DIR" because it s always NULL on libc2.1
-	//return (de->d_type & DT_DIR) == 0;
+	// return (de->d_type & DT_DIR) == 0;
 
-	return !CFile::isDirectory (BasePathgetPathContent + de->d_name);
+	return !CFile::isDirectory(BasePathgetPathContent + de->d_name);
 
 #endif // NL_OS_WINDOWS
 }
 
-string getname (dirent *de)
+string getname(dirent *de)
 {
-	nlassert (de != NULL);
+	nlassert(de != NULL);
 #ifdef NL_OS_WINDOWS
 	return wideToUtf8(de->cFileName);
 #else
@@ -856,26 +844,26 @@ string getname (dirent *de)
 #endif // NL_OS_WINDOWS
 }
 
-void CPath::getPathContent (const string &path, bool recurse, bool wantDir, bool wantFile, vector<string> &result, class IProgressCallback *progressCallBack, bool showEverything)
+void CPath::getPathContent(const string &path, bool recurse, bool wantDir, bool wantFile, vector<string> &result, class IProgressCallback *progressCallBack, bool showEverything)
 {
 	getInstance()->_FileContainer.getPathContent(path, recurse, wantDir, wantFile, result, progressCallBack, showEverything);
 
 	sort(result.begin(), result.end());
 }
 
-void CFileContainer::getPathContent (const string &path, bool recurse, bool wantDir, bool wantFile, vector<string> &result, class IProgressCallback *progressCallBack, bool showEverything)
+void CFileContainer::getPathContent(const string &path, bool recurse, bool wantDir, bool wantFile, vector<string> &result, class IProgressCallback *progressCallBack, bool showEverything)
 {
-	if(	path.empty() )
+	if (path.empty())
 	{
 		NL_DISPLAY_PATH("PATH: CPath::getPathContent(): Empty input Path");
 		return;
 	}
 
 #ifndef NL_OS_WINDOWS
-	BasePathgetPathContent = CPath::standardizePath (path);
+	BasePathgetPathContent = CPath::standardizePath(path);
 #endif
 
-	DIR *dir = opendir (path.c_str());
+	DIR *dir = opendir(path.c_str());
 
 	if (dir == NULL)
 	{
@@ -886,7 +874,7 @@ void CFileContainer::getPathContent (const string &path, bool recurse, bool want
 	// contains path that we have to recurs into
 	vector<string> recursPath;
 
-	for(;;)
+	for (;;)
 	{
 		dirent *de = readdir(dir);
 		if (de == NULL)
@@ -895,7 +883,7 @@ void CFileContainer::getPathContent (const string &path, bool recurse, bool want
 			break;
 		}
 
-		string fn = getname (de);
+		string fn = getname(de);
 
 		// skip . and ..
 		if (fn == "." || fn == "..")
@@ -914,19 +902,19 @@ void CFileContainer::getPathContent (const string &path, bool recurse, bool want
 			if (recurse)
 			{
 				NL_DISPLAY_PATH("PATH: CPath::getPathContent(%s, %d, %d, %d): need to recurse into '%s'", path.c_str(), recurse, wantDir, wantFile, stdName.c_str());
-				recursPath.push_back (stdName);
+				recursPath.push_back(stdName);
 			}
 
 			if (wantDir)
 			{
 				NL_DISPLAY_PATH("PATH: CPath::getPathContent(%s, %d, %d, %d): adding path '%s'", path.c_str(), recurse, wantDir, wantFile, stdName.c_str());
-				result.push_back (stdName);
+				result.push_back(stdName);
 			}
 		}
 
 		if (wantFile && isfile(de))
 		{
-			if ( (!showEverything) && (fn.size() >= 4 && fn.substr (fn.size()-4) == ".log"))
+			if ((!showEverything) && (fn.size() >= 4 && fn.substr(fn.size() - 4) == ".log"))
 			{
 				NL_DISPLAY_PATH("PATH: CPath::getPathContent(%s, %d, %d, %d): skip *.log files (%s)", path.c_str(), recurse, wantDir, wantFile, fn.c_str());
 				continue;
@@ -935,95 +923,94 @@ void CFileContainer::getPathContent (const string &path, bool recurse, bool want
 			string stdName = standardizePath(path) + getname(de);
 
 			NL_DISPLAY_PATH("PATH: CPath::getPathContent(%s, %d, %d, %d): adding file '%s'", path.c_str(), recurse, wantDir, wantFile, stdName.c_str());
-			result.push_back (stdName);
+			result.push_back(stdName);
 		}
 	}
 
-	closedir (dir);
+	closedir(dir);
 
 #ifndef NL_OS_WINDOWS
 	BasePathgetPathContent.clear();
 #endif
 
 	// let's recurse
-	for (uint i = 0; i < recursPath.size (); i++)
+	for (uint i = 0; i < recursPath.size(); i++)
 	{
 		// Progress bar
 		if (progressCallBack)
 		{
-			progressCallBack->progress ((float)i/(float)recursPath.size ());
-			progressCallBack->pushCropedValues ((float)i/(float)recursPath.size (), (float)(i+1)/(float)recursPath.size ());
+			progressCallBack->progress((float)i / (float)recursPath.size());
+			progressCallBack->pushCropedValues((float)i / (float)recursPath.size(), (float)(i + 1) / (float)recursPath.size());
 		}
 
-		getPathContent (recursPath[i], recurse, wantDir, wantFile, result, progressCallBack, showEverything);
+		getPathContent(recursPath[i], recurse, wantDir, wantFile, result, progressCallBack, showEverything);
 
 		// Progress bar
 		if (progressCallBack)
 		{
-			progressCallBack->popCropedValues ();
+			progressCallBack->popCropedValues();
 		}
 	}
 }
 
-void CPath::removeAllAlternativeSearchPath ()
+void CPath::removeAllAlternativeSearchPath()
 {
 	getInstance()->_FileContainer.removeAllAlternativeSearchPath();
 }
 
-void CFileContainer::removeAllAlternativeSearchPath ()
+void CFileContainer::removeAllAlternativeSearchPath()
 {
-	_AlternativePaths.clear ();
+	_AlternativePaths.clear();
 	NL_DISPLAY_PATH("PATH: CPath::RemoveAllAternativeSearchPath(): removed");
 }
 
-
-void CPath::addSearchPath (const string &path, bool recurse, bool alternative, class IProgressCallback *progressCallBack)
+void CPath::addSearchPath(const string &path, bool recurse, bool alternative, class IProgressCallback *progressCallBack)
 {
 	getInstance()->_FileContainer.addSearchPath(path, recurse, alternative, progressCallBack);
 }
 
-void CFileContainer::addSearchPath (const string &path, bool recurse, bool alternative, class IProgressCallback *progressCallBack)
+void CFileContainer::addSearchPath(const string &path, bool recurse, bool alternative, class IProgressCallback *progressCallBack)
 {
-	//H_AUTO_INST(addSearchPath);
+	// H_AUTO_INST(addSearchPath);
 
 	nlassert(!_MemoryCompressed);
 
 	// check empty directory
 	if (path.empty())
 	{
-		nlwarning ("PATH: CPath::addSearchPath(%s, %s, %s): can't add empty directory, skip it",
-			path.c_str(),
-			recurse ? "recursive" : "not recursive",
-			alternative ? "alternative" : "not alternative");
+		nlwarning("PATH: CPath::addSearchPath(%s, %s, %s): can't add empty directory, skip it",
+		    path.c_str(),
+		    recurse ? "recursive" : "not recursive",
+		    alternative ? "alternative" : "not alternative");
 		return;
 	}
 
 	// check if it s a directory
-	if (!CFile::isDirectory (path))
+	if (!CFile::isDirectory(path))
 	{
-		nlinfo ("PATH: CPath::addSearchPath(%s, %s, %s): '%s' is not a directory, I'll call addSearchFile()",
-			path.c_str(),
-			recurse ? "recursive" : "not recursive",
-			alternative ? "alternative" : "not alternative",
-			path.c_str());
-		addSearchFile (path, false, "", progressCallBack);
+		nlinfo("PATH: CPath::addSearchPath(%s, %s, %s): '%s' is not a directory, I'll call addSearchFile()",
+		    path.c_str(),
+		    recurse ? "recursive" : "not recursive",
+		    alternative ? "alternative" : "not alternative",
+		    path.c_str());
+		addSearchFile(path, false, "", progressCallBack);
 		return;
 	}
 
 	string newPath = standardizePath(path);
 
 	// check if it s a directory
-	if (!CFile::isExists (newPath))
+	if (!CFile::isExists(newPath))
 	{
-		nlwarning ("PATH: CPath::addSearchPath(%s, %s, %s): '%s' is not found, skip it",
-			path.c_str(),
-			recurse ? "recursive" : "not recursive",
-			alternative ? "alternative" : "not alternative",
-			newPath.c_str());
+		nlwarning("PATH: CPath::addSearchPath(%s, %s, %s): '%s' is not found, skip it",
+		    path.c_str(),
+		    recurse ? "recursive" : "not recursive",
+		    alternative ? "alternative" : "not alternative",
+		    newPath.c_str());
 		return;
 	}
 
-	nlinfo ("PATH: CPath::addSearchPath(%s, %d, %d): adding the path '%s'", path.c_str(), recurse, alternative, newPath.c_str());
+	nlinfo("PATH: CPath::addSearchPath(%s, %d, %d): adding the path '%s'", path.c_str(), recurse, alternative, newPath.c_str());
 
 	NL_DISPLAY_PATH("PATH: CPath::addSearchPath(%s, %d, %d): try to add '%s'", path.c_str(), recurse, alternative, newPath.c_str());
 
@@ -1032,12 +1019,12 @@ void CFileContainer::addSearchPath (const string &path, bool recurse, bool alter
 		vector<string> pathsToProcess;
 
 		// add the current path
-		pathsToProcess.push_back (newPath);
+		pathsToProcess.push_back(newPath);
 
 		if (recurse)
 		{
 			// find all path and subpath
-			getPathContent (newPath, recurse, true, false, pathsToProcess, progressCallBack);
+			getPathContent(newPath, recurse, true, false, pathsToProcess, progressCallBack);
 
 			// sort files
 			sort(pathsToProcess.begin(), pathsToProcess.end());
@@ -1055,20 +1042,20 @@ void CFileContainer::addSearchPath (const string &path, bool recurse, bool alter
 			if (i == _AlternativePaths.size())
 			{
 				// add them in the alternative directory
-				_AlternativePaths.push_back (pathsToProcess[p]);
+				_AlternativePaths.push_back(pathsToProcess[p]);
 				NL_DISPLAY_PATH("PATH: CPath::addSearchPath(%s, %s, %s): path '%s' added",
-					newPath.c_str(),
-					recurse ? "recursive" : "not recursive",
-					alternative ? "alternative" : "not alternative",
-					pathsToProcess[p].c_str());
+				    newPath.c_str(),
+				    recurse ? "recursive" : "not recursive",
+				    alternative ? "alternative" : "not alternative",
+				    pathsToProcess[p].c_str());
 			}
 			else
 			{
-				nlwarning ("PATH: CPath::addSearchPath(%s, %s, %s): path '%s' already added",
-					newPath.c_str(),
-					recurse ? "recursive" : "not recursive",
-					alternative ? "alternative" : "not alternative",
-					pathsToProcess[p].c_str());
+				nlwarning("PATH: CPath::addSearchPath(%s, %s, %s): path '%s' already added",
+				    newPath.c_str(),
+				    recurse ? "recursive" : "not recursive",
+				    alternative ? "alternative" : "not alternative",
+				    pathsToProcess[p].c_str());
 			}
 		}
 	}
@@ -1079,12 +1066,12 @@ void CFileContainer::addSearchPath (const string &path, bool recurse, bool alter
 		// Progress bar
 		if (progressCallBack)
 		{
-			progressCallBack->progress (0);
-			progressCallBack->pushCropedValues (0, 0.5f);
+			progressCallBack->progress(0);
+			progressCallBack->pushCropedValues(0, 0.5f);
 		}
 
 		// find all files in the path and subpaths
-		getPathContent (newPath, recurse, false, true, filesToProcess, progressCallBack);
+		getPathContent(newPath, recurse, false, true, filesToProcess, progressCallBack);
 
 		// sort files
 		sort(filesToProcess.begin(), filesToProcess.end());
@@ -1092,9 +1079,9 @@ void CFileContainer::addSearchPath (const string &path, bool recurse, bool alter
 		// Progress bar
 		if (progressCallBack)
 		{
-			progressCallBack->popCropedValues ();
-			progressCallBack->progress (0.5);
-			progressCallBack->pushCropedValues (0.5f, 1);
+			progressCallBack->popCropedValues();
+			progressCallBack->progress(0.5);
+			progressCallBack->pushCropedValues(0.5f, 1);
 		}
 
 		// add them in the map
@@ -1103,36 +1090,36 @@ void CFileContainer::addSearchPath (const string &path, bool recurse, bool alter
 			// Progree bar
 			if (progressCallBack)
 			{
-				progressCallBack->progress ((float)f/(float)filesToProcess.size());
-				progressCallBack->pushCropedValues ((float)f/(float)filesToProcess.size(), (float)(f+1)/(float)filesToProcess.size());
+				progressCallBack->progress((float)f / (float)filesToProcess.size());
+				progressCallBack->pushCropedValues((float)f / (float)filesToProcess.size(), (float)(f + 1) / (float)filesToProcess.size());
 			}
 
-			string filename = CFile::getFilename (filesToProcess[f]);
-			string filepath = CFile::getPath (filesToProcess[f]);
-//			insertFileInMap (filename, filepath, false, CFile::getExtension(filename));
-			addSearchFile (filesToProcess[f], false, "", progressCallBack);
+			string filename = CFile::getFilename(filesToProcess[f]);
+			string filepath = CFile::getPath(filesToProcess[f]);
+			//			insertFileInMap (filename, filepath, false, CFile::getExtension(filename));
+			addSearchFile(filesToProcess[f], false, "", progressCallBack);
 
 			// Progress bar
 			if (progressCallBack)
 			{
-				progressCallBack->popCropedValues ();
+				progressCallBack->popCropedValues();
 			}
 		}
 
 		// Progress bar
 		if (progressCallBack)
 		{
-			progressCallBack->popCropedValues ();
+			progressCallBack->popCropedValues();
 		}
 	}
 }
 
-void CPath::addSearchFile (const string &file, bool remap, const string &virtual_ext, NLMISC::IProgressCallback *progressCallBack)
+void CPath::addSearchFile(const string &file, bool remap, const string &virtual_ext, NLMISC::IProgressCallback *progressCallBack)
 {
 	getInstance()->_FileContainer.addSearchFile(file, remap, virtual_ext, progressCallBack);
 }
 
-void CFileContainer::addSearchFile (const string &file, bool remap, const string &virtual_ext, NLMISC::IProgressCallback *progressCallBack)
+void CFileContainer::addSearchFile(const string &file, bool remap, const string &virtual_ext, NLMISC::IProgressCallback *progressCallBack)
 {
 	nlassert(!_MemoryCompressed);
 
@@ -1141,30 +1128,30 @@ void CFileContainer::addSearchFile (const string &file, bool remap, const string
 	// check empty file
 	if (newFile.empty())
 	{
-		nlwarning ("PATH: CPath::addSearchFile(%s, %d, '%s'): can't add empty file, skip it", file.c_str(), remap, virtual_ext.c_str());
+		nlwarning("PATH: CPath::addSearchFile(%s, %d, '%s'): can't add empty file, skip it", file.c_str(), remap, virtual_ext.c_str());
 		return;
 	}
 
 	// check if the file exists
-	if (!CFile::isExists (newFile))
+	if (!CFile::isExists(newFile))
 	{
-		nlwarning ("PATH: CPath::addSearchFile(%s, %d, '%s'): '%s' is not found, skip it (current dir is '%s'",
-			file.c_str(),
-			remap,
-			virtual_ext.c_str(),
-			newFile.c_str(),
-			CPath::getCurrentPath().c_str());
+		nlwarning("PATH: CPath::addSearchFile(%s, %d, '%s'): '%s' is not found, skip it (current dir is '%s'",
+		    file.c_str(),
+		    remap,
+		    virtual_ext.c_str(),
+		    newFile.c_str(),
+		    CPath::getCurrentPath().c_str());
 		return;
 	}
 
 	// check if it s a file
-	if (CFile::isDirectory (newFile))
+	if (CFile::isDirectory(newFile))
 	{
-		nlwarning ("PATH: CPath::addSearchFile(%s, %d, '%s'): '%s' is not a file, skip it",
-			file.c_str(),
-			remap,
-			virtual_ext.c_str(),
-			newFile.c_str());
+		nlwarning("PATH: CPath::addSearchFile(%s, %d, '%s'): '%s' is not a file, skip it",
+		    file.c_str(),
+		    remap,
+		    virtual_ext.c_str(),
+		    newFile.c_str());
 		return;
 	}
 
@@ -1173,7 +1160,7 @@ void CFileContainer::addSearchFile (const string &file, bool remap, const string
 	// check if it s a big file
 	if (fileExtension == "bnp")
 	{
-		NL_DISPLAY_PATH ("PATH: CPath::addSearchFile(%s, %d, '%s'): '%s' is a big file, add it", file.c_str(), remap, virtual_ext.c_str(), newFile.c_str());
+		NL_DISPLAY_PATH("PATH: CPath::addSearchFile(%s, %d, '%s'): '%s' is a big file, add it", file.c_str(), remap, virtual_ext.c_str(), newFile.c_str());
 		addSearchBigFile(file, false, false, progressCallBack);
 		return;
 	}
@@ -1181,7 +1168,7 @@ void CFileContainer::addSearchFile (const string &file, bool remap, const string
 	// check if it s a streamed package
 	if (fileExtension == "snp")
 	{
-		NL_DISPLAY_PATH ("PATH: CPath::addSearchStreamedPackage(%s, %d, '%s'): '%s' is a streamed package, add it", file.c_str(), remap, virtual_ext.c_str(), newFile.c_str());
+		NL_DISPLAY_PATH("PATH: CPath::addSearchStreamedPackage(%s, %d, '%s'): '%s' is a streamed package, add it", file.c_str(), remap, virtual_ext.c_str(), newFile.c_str());
 		addSearchStreamedPackage(file, false, false, progressCallBack);
 		return;
 	}
@@ -1189,66 +1176,66 @@ void CFileContainer::addSearchFile (const string &file, bool remap, const string
 	// check if it s an xml pack file
 	if (fileExtension == "xml_pack")
 	{
-		NL_DISPLAY_PATH ("PATH: CPath::addSearchFile(%s, %d, '%s'): '%s' is an xml pack file, add it", file.c_str(), remap, virtual_ext.c_str(), newFile.c_str());
+		NL_DISPLAY_PATH("PATH: CPath::addSearchFile(%s, %d, '%s'): '%s' is an xml pack file, add it", file.c_str(), remap, virtual_ext.c_str(), newFile.c_str());
 		addSearchXmlpackFile(file, false, false, progressCallBack);
 		return;
 	}
 
-	string filenamewoext = CFile::getFilenameWithoutExtension (newFile);
+	string filenamewoext = CFile::getFilenameWithoutExtension(newFile);
 	string filename, ext;
 
 	if (virtual_ext.empty())
 	{
-		filename = CFile::getFilename (newFile);
-		ext = CFile::getExtension (filename);
+		filename = CFile::getFilename(newFile);
+		ext = CFile::getExtension(filename);
 	}
 	else
 	{
 		filename = filenamewoext + "." + virtual_ext;
-		ext = CFile::getExtension (newFile);
+		ext = CFile::getExtension(newFile);
 	}
 
-	insertFileInMap (filename, newFile, remap, ext);
+	insertFileInMap(filename, newFile, remap, ext);
 
 	if (!remap && !ext.empty())
 	{
 		// now, we have to see extension and insert in the map the remapped files
-		for (uint i = 0; i < _Extensions.size (); i++)
+		for (uint i = 0; i < _Extensions.size(); i++)
 		{
 			if (_Extensions[i].first == toLowerAscii(ext))
 			{
 				// need to remap
-				addSearchFile (newFile, true, _Extensions[i].second, progressCallBack);
+				addSearchFile(newFile, true, _Extensions[i].second, progressCallBack);
 			}
 		}
 	}
 }
 
-void CPath::addSearchListFile (const string &filename, bool recurse, bool alternative)
+void CPath::addSearchListFile(const string &filename, bool recurse, bool alternative)
 {
 	getInstance()->_FileContainer.addSearchListFile(filename, recurse, alternative);
 }
 
-void CFileContainer::addSearchListFile (const string &filename, bool recurse, bool alternative)
+void CFileContainer::addSearchListFile(const string &filename, bool recurse, bool alternative)
 {
 	// check empty file
 	if (filename.empty())
 	{
-		nlwarning ("PATH: CPath::addSearchListFile(%s, %d, %d): can't add empty file, skip it", filename.c_str(), recurse, alternative);
+		nlwarning("PATH: CPath::addSearchListFile(%s, %d, %d): can't add empty file, skip it", filename.c_str(), recurse, alternative);
 		return;
 	}
 
 	// check if the file exists
-	if (!CFile::isExists (filename))
+	if (!CFile::isExists(filename))
 	{
-		nlwarning ("PATH: CPath::addSearchListFile(%s, %d, %d): '%s' is not found, skip it", filename.c_str(), recurse, alternative, filename.c_str());
+		nlwarning("PATH: CPath::addSearchListFile(%s, %d, %d): '%s' is not found, skip it", filename.c_str(), recurse, alternative, filename.c_str());
 		return;
 	}
 
 	// check if it s a file
-	if (CFile::isDirectory (filename))
+	if (CFile::isDirectory(filename))
 	{
-		nlwarning ("PATH: CPath::addSearchListFile(%s, %d, %d): '%s' is not a file, skip it", filename.c_str(), recurse, alternative, filename.c_str());
+		nlwarning("PATH: CPath::addSearchListFile(%s, %d, %d): '%s' is not a file, skip it", filename.c_str(), recurse, alternative, filename.c_str());
 		return;
 	}
 
@@ -1256,54 +1243,54 @@ void CFileContainer::addSearchListFile (const string &filename, bool recurse, bo
 }
 
 // WARNING : recurse is not used
-void CPath::addSearchBigFile (const string &sBigFilename, bool recurse, bool alternative, NLMISC::IProgressCallback *progressCallBack)
+void CPath::addSearchBigFile(const string &sBigFilename, bool recurse, bool alternative, NLMISC::IProgressCallback *progressCallBack)
 {
 	getInstance()->_FileContainer.addSearchBigFile(sBigFilename, recurse, alternative, progressCallBack);
 }
 
-void CFileContainer::addSearchBigFile (const string &sBigFilename, bool recurse, bool alternative, NLMISC::IProgressCallback *progressCallBack)
+void CFileContainer::addSearchBigFile(const string &sBigFilename, bool recurse, bool alternative, NLMISC::IProgressCallback *progressCallBack)
 {
 	// Check if filename is not empty
 	if (sBigFilename.empty())
 	{
-		nlwarning ("PATH: CPath::addSearchBigFile(%s, %d, %d): can't add empty file, skip it", sBigFilename.c_str(), recurse, alternative);
+		nlwarning("PATH: CPath::addSearchBigFile(%s, %d, %d): can't add empty file, skip it", sBigFilename.c_str(), recurse, alternative);
 		return;
 	}
 	// Check if the file exists
-	if (!CFile::isExists (sBigFilename))
+	if (!CFile::isExists(sBigFilename))
 	{
-		nlwarning ("PATH: CPath::addSearchBigFile(%s, %d, %d): '%s' is not found, skip it", sBigFilename.c_str(), recurse, alternative, sBigFilename.c_str());
+		nlwarning("PATH: CPath::addSearchBigFile(%s, %d, %d): '%s' is not found, skip it", sBigFilename.c_str(), recurse, alternative, sBigFilename.c_str());
 		return;
 	}
 	// Check if it s a file
-	if (CFile::isDirectory (sBigFilename))
+	if (CFile::isDirectory(sBigFilename))
 	{
-		nlwarning ("PATH: CPath::addSearchBigFile(%s, %d, %d): '%s' is not a file, skip it", sBigFilename.c_str(), recurse, alternative, sBigFilename.c_str());
+		nlwarning("PATH: CPath::addSearchBigFile(%s, %d, %d): '%s' is not a file, skip it", sBigFilename.c_str(), recurse, alternative, sBigFilename.c_str());
 		return;
 	}
 	// Open and read the big file header
 	nlassert(!_MemoryCompressed);
 
-	FILE *Handle = nlfopen (sBigFilename, "rb");
+	FILE *Handle = nlfopen(sBigFilename, "rb");
 	if (Handle == NULL)
 	{
-		nlwarning ("PATH: CPath::addSearchBigFile(%s, %d, %d): can't open file, skip it", sBigFilename.c_str(), recurse, alternative);
+		nlwarning("PATH: CPath::addSearchBigFile(%s, %d, %d): can't open file, skip it", sBigFilename.c_str(), recurse, alternative);
 		return;
 	}
 
 	// add the link with the CBigFile singleton
-	if (CBigFile::getInstance().add (sBigFilename, BF_ALWAYS_OPENED | BF_CACHE_FILE_ON_OPEN))
+	if (CBigFile::getInstance().add(sBigFilename, BF_ALWAYS_OPENED | BF_CACHE_FILE_ON_OPEN))
 	{
 		// also add the bigfile name in the map to retrieve the full path of a .bnp when we want modification date of the bnp for example
-		insertFileInMap (CFile::getFilename (sBigFilename), sBigFilename, false, CFile::getExtension(sBigFilename));
+		insertFileInMap(CFile::getFilename(sBigFilename), sBigFilename, false, CFile::getExtension(sBigFilename));
 
 		// parse the big file to add file in the map
-		uint32 nFileSize=CFile::getFileSize (Handle);
-		//nlfseek64 (Handle, 0, SEEK_END);
-		//uint32 nFileSize = ftell (Handle);
-		nlfseek64 (Handle, nFileSize-4, SEEK_SET);
+		uint32 nFileSize = CFile::getFileSize(Handle);
+		// nlfseek64 (Handle, 0, SEEK_END);
+		// uint32 nFileSize = ftell (Handle);
+		nlfseek64(Handle, nFileSize - 4, SEEK_SET);
 		uint32 nOffsetFromBeginning;
-		if (fread (&nOffsetFromBeginning, sizeof(uint32), 1, Handle) != 1)
+		if (fread(&nOffsetFromBeginning, sizeof(uint32), 1, Handle) != 1)
 		{
 			fclose(Handle);
 			return;
@@ -1313,9 +1300,9 @@ void CFileContainer::addSearchBigFile (const string &sBigFilename, bool recurse,
 		NLMISC_BSWAP32(nOffsetFromBeginning);
 #endif
 
-		nlfseek64 (Handle, nOffsetFromBeginning, SEEK_SET);
+		nlfseek64(Handle, nOffsetFromBeginning, SEEK_SET);
 		uint32 nNbFile;
-		if (fread (&nNbFile, sizeof(uint32), 1, Handle) != 1)
+		if (fread(&nNbFile, sizeof(uint32), 1, Handle) != 1)
 		{
 			fclose(Handle);
 			return;
@@ -1330,13 +1317,13 @@ void CFileContainer::addSearchBigFile (const string &sBigFilename, bool recurse,
 			// Progress bar
 			if (progressCallBack)
 			{
-				progressCallBack->progress ((float)i/(float)nNbFile);
-				progressCallBack->pushCropedValues ((float)i/(float)nNbFile, (float)(i+1)/(float)nNbFile);
+				progressCallBack->progress((float)i / (float)nNbFile);
+				progressCallBack->pushCropedValues((float)i / (float)nNbFile, (float)(i + 1) / (float)nNbFile);
 			}
 
 			char FileName[256];
 			uint8 nStringSize;
-			if (fread (&nStringSize, 1, 1, Handle) != 1)
+			if (fread(&nStringSize, 1, 1, Handle) != 1)
 			{
 				fclose(Handle);
 				return;
@@ -1351,7 +1338,7 @@ void CFileContainer::addSearchBigFile (const string &sBigFilename, bool recurse,
 			}
 			FileName[nStringSize] = 0;
 			uint32 nFileSize2;
-			if (fread (&nFileSize2, sizeof(uint32), 1, Handle) != 1)
+			if (fread(&nFileSize2, sizeof(uint32), 1, Handle) != 1)
 			{
 				fclose(Handle);
 				return;
@@ -1362,7 +1349,7 @@ void CFileContainer::addSearchBigFile (const string &sBigFilename, bool recurse,
 #endif
 
 			uint32 nFilePos;
-			if (fread (&nFilePos, sizeof(uint32), 1, Handle) != 1)
+			if (fread(&nFilePos, sizeof(uint32), 1, Handle) != 1)
 			{
 				fclose(Handle);
 				return;
@@ -1375,65 +1362,65 @@ void CFileContainer::addSearchBigFile (const string &sBigFilename, bool recurse,
 			string sTmp = toLowerAscii(string(FileName));
 			if (sTmp.empty())
 			{
-				nlwarning ("PATH: CPath::addSearchBigFile(%s, %d, %d): can't add empty file, skip it", sBigFilename.c_str(), recurse, alternative);
+				nlwarning("PATH: CPath::addSearchBigFile(%s, %d, %d): can't add empty file, skip it", sBigFilename.c_str(), recurse, alternative);
 				continue;
 			}
-			string bigfilenamealone = CFile::getFilename (sBigFilename);
-			string filenamewoext = CFile::getFilenameWithoutExtension (sTmp);
+			string bigfilenamealone = CFile::getFilename(sBigFilename);
+			string filenamewoext = CFile::getFilenameWithoutExtension(sTmp);
 			string ext = toLowerAscii(CFile::getExtension(sTmp));
 
-			insertFileInMap (sTmp, bigfilenamealone + "@" + sTmp, false, ext);
+			insertFileInMap(sTmp, bigfilenamealone + "@" + sTmp, false, ext);
 
-			for (uint j = 0; j < _Extensions.size (); j++)
+			for (uint j = 0; j < _Extensions.size(); j++)
 			{
 				if (_Extensions[j].first == ext)
 				{
 					// need to remap
-					insertFileInMap (filenamewoext+"."+_Extensions[j].second,
-									bigfilenamealone + "@" + sTmp,
-									true,
-									_Extensions[j].first);
+					insertFileInMap(filenamewoext + "." + _Extensions[j].second,
+					    bigfilenamealone + "@" + sTmp,
+					    true,
+					    _Extensions[j].first);
 				}
 			}
 
 			// Progress bar
 			if (progressCallBack)
 			{
-				progressCallBack->popCropedValues ();
+				progressCallBack->popCropedValues();
 			}
 		}
 	}
 	else
 	{
-		nlwarning ("PATH: CPath::addSearchBigFile(%s, %d, %d): can't add the big file", sBigFilename.c_str(), recurse, alternative);
+		nlwarning("PATH: CPath::addSearchBigFile(%s, %d, %d): can't add the big file", sBigFilename.c_str(), recurse, alternative);
 	}
 
-	fclose (Handle);
+	fclose(Handle);
 }
 
-void CPath::addSearchStreamedPackage (const string &filename, bool recurse, bool alternative, NLMISC::IProgressCallback *progressCallBack)
+void CPath::addSearchStreamedPackage(const string &filename, bool recurse, bool alternative, NLMISC::IProgressCallback *progressCallBack)
 {
 	getInstance()->_FileContainer.addSearchBigFile(filename, recurse, alternative, progressCallBack);
 }
 
-void CFileContainer::addSearchStreamedPackage (const string &filename, bool recurse, bool alternative, NLMISC::IProgressCallback *progressCallBack)
+void CFileContainer::addSearchStreamedPackage(const string &filename, bool recurse, bool alternative, NLMISC::IProgressCallback *progressCallBack)
 {
 	// Check if filename is not empty
 	if (filename.empty())
 	{
-		nlwarning ("PATH: CPath::addSearchStreamedPackage(%s, %d, %d): can't add empty file, skip it", filename.c_str(), recurse, alternative);
+		nlwarning("PATH: CPath::addSearchStreamedPackage(%s, %d, %d): can't add empty file, skip it", filename.c_str(), recurse, alternative);
 		return;
 	}
 	// Check if the file exists
 	if (!CFile::isExists(filename))
 	{
-		nlwarning ("PATH: CPath::addSearchStreamedPackage(%s, %d, %d): '%s' is not found, skip it", filename.c_str(), recurse, alternative, filename.c_str());
+		nlwarning("PATH: CPath::addSearchStreamedPackage(%s, %d, %d): '%s' is not found, skip it", filename.c_str(), recurse, alternative, filename.c_str());
 		return;
 	}
 	// Check if it s a file
 	if (CFile::isDirectory(filename))
 	{
-		nlwarning ("PATH: CPath::addSearchStreamedPackage(%s, %d, %d): '%s' is not a file, skip it", filename.c_str(), recurse, alternative, filename.c_str());
+		nlwarning("PATH: CPath::addSearchStreamedPackage(%s, %d, %d): '%s' is not a file, skip it", filename.c_str(), recurse, alternative, filename.c_str());
 		return;
 	}
 
@@ -1456,13 +1443,13 @@ void CFileContainer::addSearchStreamedPackage (const string &filename, bool recu
 
 			// Remapped extensions
 			std::string ext = CFile::getExtension(*it);
-			for (uint j = 0; j < _Extensions.size (); j++)
+			for (uint j = 0; j < _Extensions.size(); j++)
 			{
 				if (_Extensions[j].first == ext)
 				{
 					// Need to remap
 					insertFileInMap(CFile::getFilenameWithoutExtension(*it) + "." + _Extensions[j].second,
-						filePackageName, true, _Extensions[j].first);
+					    filePackageName, true, _Extensions[j].first);
 				}
 			}
 		}
@@ -1470,90 +1457,89 @@ void CFileContainer::addSearchStreamedPackage (const string &filename, bool recu
 }
 
 // WARNING : recurse is not used
-void CPath::addSearchXmlpackFile (const string &sXmlpackFilename, bool recurse, bool alternative, NLMISC::IProgressCallback *progressCallBack)
+void CPath::addSearchXmlpackFile(const string &sXmlpackFilename, bool recurse, bool alternative, NLMISC::IProgressCallback *progressCallBack)
 {
 	getInstance()->_FileContainer.addSearchXmlpackFile(sXmlpackFilename, recurse, alternative, progressCallBack);
 }
 
-void CFileContainer::addSearchXmlpackFile (const string &sXmlpackFilename, bool recurse, bool alternative, NLMISC::IProgressCallback *progressCallBack)
+void CFileContainer::addSearchXmlpackFile(const string &sXmlpackFilename, bool recurse, bool alternative, NLMISC::IProgressCallback *progressCallBack)
 {
 	// Check if filename is not empty
 	if (sXmlpackFilename.empty())
 	{
-		nlwarning ("PATH: CPath::addSearchXmlpackFile(%s, %d, %d): can't add empty file, skip it", sXmlpackFilename.c_str(), recurse, alternative);
+		nlwarning("PATH: CPath::addSearchXmlpackFile(%s, %d, %d): can't add empty file, skip it", sXmlpackFilename.c_str(), recurse, alternative);
 		return;
 	}
 	// Check if the file exists
-	if (!CFile::isExists (sXmlpackFilename))
+	if (!CFile::isExists(sXmlpackFilename))
 	{
-		nlwarning ("PATH: CPath::addSearchXmlpackFile(%s, %d, %d): '%s' is not found, skip it", sXmlpackFilename.c_str(), recurse, alternative, sXmlpackFilename.c_str());
+		nlwarning("PATH: CPath::addSearchXmlpackFile(%s, %d, %d): '%s' is not found, skip it", sXmlpackFilename.c_str(), recurse, alternative, sXmlpackFilename.c_str());
 		return;
 	}
 	// Check if it s a file
-	if (CFile::isDirectory (sXmlpackFilename))
+	if (CFile::isDirectory(sXmlpackFilename))
 	{
-		nlwarning ("PATH: CPath::addSearchXmlpackFile(%s, %d, %d): '%s' is not a file, skip it", sXmlpackFilename.c_str(), recurse, alternative, sXmlpackFilename.c_str());
+		nlwarning("PATH: CPath::addSearchXmlpackFile(%s, %d, %d): '%s' is not a file, skip it", sXmlpackFilename.c_str(), recurse, alternative, sXmlpackFilename.c_str());
 		return;
 	}
 	// Open and read the xmlpack file header
 
-	FILE *Handle = nlfopen (sXmlpackFilename, "rb");
+	FILE *Handle = nlfopen(sXmlpackFilename, "rb");
 	if (Handle == NULL)
 	{
-		nlwarning ("PATH: CPath::addSearchXmlpackFile(%s, %d, %d): can't open file, skip it", sXmlpackFilename.c_str(), recurse, alternative);
+		nlwarning("PATH: CPath::addSearchXmlpackFile(%s, %d, %d): can't open file, skip it", sXmlpackFilename.c_str(), recurse, alternative);
 		return;
 	}
 
 	// add the link with the CXMLPack singleton
-	if (CXMLPack::getInstance().add (sXmlpackFilename))
+	if (CXMLPack::getInstance().add(sXmlpackFilename))
 	{
 		// also add the xmlpack file name in the map to retrieve the full path of a .xml_pack when we want modification date of the xml_pack for example
-		insertFileInMap (sXmlpackFilename, sXmlpackFilename, false, CFile::getExtension(sXmlpackFilename));
+		insertFileInMap(sXmlpackFilename, sXmlpackFilename, false, CFile::getExtension(sXmlpackFilename));
 
-
-		vector<string>	filenames;
+		vector<string> filenames;
 		CXMLPack::getInstance().list(sXmlpackFilename, filenames);
 
-		for (uint i=0; i<filenames.size(); ++i)
+		for (uint i = 0; i < filenames.size(); ++i)
 		{
 			// Progress bar
 			if (progressCallBack)
 			{
-				progressCallBack->progress ((float)i/(float)filenames.size());
-				progressCallBack->pushCropedValues ((float)i/(float)filenames.size(), (float)(i+1)/(float)filenames.size());
+				progressCallBack->progress((float)i / (float)filenames.size());
+				progressCallBack->pushCropedValues((float)i / (float)filenames.size(), (float)(i + 1) / (float)filenames.size());
 			}
 
 			string packfilenamealone = sXmlpackFilename;
-			string filenamewoext = CFile::getFilenameWithoutExtension (filenames[i]);
+			string filenamewoext = CFile::getFilenameWithoutExtension(filenames[i]);
 			string ext = toLowerAscii(CFile::getExtension(filenames[i]));
 
-			insertFileInMap (filenames[i], packfilenamealone + "@@" + filenames[i], false, ext);
+			insertFileInMap(filenames[i], packfilenamealone + "@@" + filenames[i], false, ext);
 
-			for (uint j = 0; j < _Extensions.size (); j++)
+			for (uint j = 0; j < _Extensions.size(); j++)
 			{
 				if (_Extensions[j].first == ext)
 				{
 					// need to remap
-					insertFileInMap (filenamewoext+"."+_Extensions[j].second,
-									packfilenamealone + "@@" + filenames[i],
-									true,
-									_Extensions[j].first);
+					insertFileInMap(filenamewoext + "." + _Extensions[j].second,
+					    packfilenamealone + "@@" + filenames[i],
+					    true,
+					    _Extensions[j].first);
 				}
 			}
 
 			// Progress bar
 			if (progressCallBack)
 			{
-				progressCallBack->popCropedValues ();
+				progressCallBack->popCropedValues();
 			}
 		}
 	}
 	else
 	{
-		nlwarning ("PATH: CPath::addSearchXmlpackFile(%s, %d, %d): can't add the xml pack file", sXmlpackFilename.c_str(), recurse, alternative);
+		nlwarning("PATH: CPath::addSearchXmlpackFile(%s, %d, %d): can't add the xml pack file", sXmlpackFilename.c_str(), recurse, alternative);
 	}
 
-	fclose (Handle);
+	fclose(Handle);
 }
 
 void CPath::addIgnoredDoubleFile(const std::string &ignoredFile)
@@ -1566,20 +1552,20 @@ void CFileContainer::addIgnoredDoubleFile(const std::string &ignoredFile)
 	IgnoredFiles.push_back(ignoredFile);
 }
 
-void CFileContainer::insertFileInMap (const string &filename, const string &filepath, bool remap, const string &extension)
+void CFileContainer::insertFileInMap(const string &filename, const string &filepath, bool remap, const string &extension)
 {
 	nlassert(!_MemoryCompressed);
 	// find if the file already exist
-	TFiles::iterator it = _Files.find (toLowerAscii(filename));
-	if (it != _Files.end ())
+	TFiles::iterator it = _Files.find(toLowerAscii(filename));
+	if (it != _Files.end())
 	{
 		string path = SSMpath.get((*it).second.idPath);
 		if (path.find("@") != string::npos && filepath.find("@") == string::npos)
 		{
 			// if there's a file in a big file and a file in a path, the file in path wins
 			// replace with the new one
-			nlinfo ("PATH: CPath::insertFileInMap(%s, %s, %d, %s): already inserted from '%s' but special case so override it", filename.c_str(), filepath.c_str(), remap, extension.c_str(), path.c_str());
-			string sTmp = filepath.substr(0,filepath.rfind('/')+1);
+			nlinfo("PATH: CPath::insertFileInMap(%s, %s, %d, %s): already inserted from '%s' but special case so override it", filename.c_str(), filepath.c_str(), remap, extension.c_str(), path.c_str());
+			string sTmp = filepath.substr(0, filepath.rfind('/') + 1);
 			(*it).second.idPath = SSMpath.add(sTmp);
 			(*it).second.Remapped = remap;
 			(*it).second.idExt = SSMext.add(extension);
@@ -1587,30 +1573,30 @@ void CFileContainer::insertFileInMap (const string &filename, const string &file
 		}
 		else
 		{
-			for(uint i = 0; i < IgnoredFiles.size(); i++)
+			for (uint i = 0; i < IgnoredFiles.size(); i++)
 			{
 				// if we don't want to display a warning, skip it
-				if(filename == IgnoredFiles[i])
+				if (filename == IgnoredFiles[i])
 					return;
 			}
 			// if the path is the same, don't warn
 			string path2 = SSMpath.get((*it).second.idPath);
 			string sPathOnly;
-			if(filepath.rfind("@@") != string::npos)
-				sPathOnly = filepath.substr(0,filepath.rfind("@@")+2);
-			else if(filepath.rfind('@') != string::npos)
-				sPathOnly = filepath.substr(0,filepath.rfind('@')+1);
+			if (filepath.rfind("@@") != string::npos)
+				sPathOnly = filepath.substr(0, filepath.rfind("@@") + 2);
+			else if (filepath.rfind('@') != string::npos)
+				sPathOnly = filepath.substr(0, filepath.rfind('@') + 1);
 			else
 				sPathOnly = CFile::getPath(filepath);
 
 			if (path2 == sPathOnly)
 				return;
-			nlwarning ("PATH: CPath::insertFileInMap(%s, %s, %d, %s): already inserted from '%s', skip it",
-				filename.c_str(),
-				filepath.c_str(),
-				remap,
-				extension.c_str(),
-				path2.c_str());
+			nlwarning("PATH: CPath::insertFileInMap(%s, %s, %d, %s): already inserted from '%s', skip it",
+			    filename.c_str(),
+			    filepath.c_str(),
+			    remap,
+			    extension.c_str(),
+			    path2.c_str());
 		}
 	}
 	else
@@ -1620,30 +1606,30 @@ void CFileContainer::insertFileInMap (const string &filename, const string &file
 		fe.Remapped = remap;
 		string sTmp;
 		if (filepath.find("@") == string::npos)
-			sTmp = filepath.substr(0,filepath.rfind('/')+1);
+			sTmp = filepath.substr(0, filepath.rfind('/') + 1);
 		else if (filepath.find("@@") != string::npos)
-			sTmp = filepath.substr(0,filepath.rfind("@@")+2);
+			sTmp = filepath.substr(0, filepath.rfind("@@") + 2);
 		else
-			sTmp = filepath.substr(0,filepath.rfind('@')+1);
+			sTmp = filepath.substr(0, filepath.rfind('@') + 1);
 
 		fe.idPath = SSMpath.add(sTmp);
 		fe.Name = filename;
 
-		_Files.insert (make_pair(toLowerAscii(filename), fe));
+		_Files.insert(make_pair(toLowerAscii(filename), fe));
 		NL_DISPLAY_PATH("PATH: CPath::insertFileInMap(%s, %s, %d, %s): added", toLowerAscii(filename).c_str(), filepath.c_str(), remap, toLowerAscii(extension).c_str());
 	}
 }
 
-void CPath::display ()
+void CPath::display()
 {
 	getInstance()->_FileContainer.display();
 }
 
-void CFileContainer::display ()
+void CFileContainer::display()
 {
-	nlinfo ("PATH: Contents of the map:");
-	nlinfo ("PATH: %-25s %-5s %-5s %s", "filename", "ext", "remap", "full path");
-	nlinfo ("PATH: ----------------------------------------------------");
+	nlinfo("PATH: Contents of the map:");
+	nlinfo("PATH: %-25s %-5s %-5s %s", "filename", "ext", "remap", "full path");
+	nlinfo("PATH: ----------------------------------------------------");
 	if (_MemoryCompressed)
 	{
 		for (uint i = 0; i < _MCFiles.size(); ++i)
@@ -1651,31 +1637,31 @@ void CFileContainer::display ()
 			const CMCFileEntry &fe = _MCFiles[i];
 			string ext = SSMext.get(fe.idExt);
 			string path = SSMpath.get(fe.idPath);
-			nlinfo ("PATH: %-25s %-5s %-5d %s", fe.Name, ext.c_str(), fe.Remapped, path.c_str());
+			nlinfo("PATH: %-25s %-5s %-5d %s", fe.Name, ext.c_str(), fe.Remapped, path.c_str());
 		}
 	}
 	else
 	{
-		for (TFiles::iterator it = _Files.begin(); it != _Files.end (); it++)
+		for (TFiles::iterator it = _Files.begin(); it != _Files.end(); it++)
 		{
 			string ext = SSMext.get((*it).second.idExt);
 			string path = SSMpath.get((*it).second.idPath);
-			nlinfo ("PATH: %-25s %-5s %-5d %s", (*it).first.c_str(), ext.c_str(), (*it).second.Remapped, path.c_str());
+			nlinfo("PATH: %-25s %-5s %-5d %s", (*it).first.c_str(), ext.c_str(), (*it).second.Remapped, path.c_str());
 		}
 	}
-	nlinfo ("PATH: ");
-	nlinfo ("PATH: Contents of the alternative directory:");
+	nlinfo("PATH: ");
+	nlinfo("PATH: Contents of the alternative directory:");
 	for (uint i = 0; i < _AlternativePaths.size(); i++)
 	{
-		nlinfo ("PATH: '%s'", _AlternativePaths[i].c_str ());
+		nlinfo("PATH: '%s'", _AlternativePaths[i].c_str());
 	}
-	nlinfo ("PATH: ");
-	nlinfo ("PATH: Contents of the remapped entension table:");
+	nlinfo("PATH: ");
+	nlinfo("PATH: Contents of the remapped entension table:");
 	for (uint j = 0; j < _Extensions.size(); j++)
 	{
-		nlinfo ("PATH: '%s' -> '%s'", _Extensions[j].first.c_str (), _Extensions[j].second.c_str ());
+		nlinfo("PATH: '%s' -> '%s'", _Extensions[j].first.c_str(), _Extensions[j].second.c_str());
 	}
-	nlinfo ("PATH: End of display");
+	nlinfo("PATH: End of display");
 }
 
 void CPath::removeBigFiles(const std::vector<std::string> &bnpFilenames)
@@ -1705,10 +1691,10 @@ void CFileContainer::removeBigFiles(const std::vector<std::string> &bnpFilenames
 	if (bnpStrIds.empty()) return;
 	//	remove remapped files
 	std::map<std::string, std::string>::iterator remapIt, remapCurrIt;
-	for(remapIt = _RemappedFiles.begin(); remapIt != _RemappedFiles.end();)
+	for (remapIt = _RemappedFiles.begin(); remapIt != _RemappedFiles.end();)
 	{
 		remapCurrIt = remapIt;
-		++ remapIt;
+		++remapIt;
 		const std::string &filename = remapCurrIt->second;
 		fileIt = _Files.find(filename);
 		if (fileIt != _Files.end())
@@ -1721,19 +1707,16 @@ void CFileContainer::removeBigFiles(const std::vector<std::string> &bnpFilenames
 		}
 	}
 	//	remove file entries
-	for(fileIt = _Files.begin(); fileIt != _Files.end();)
+	for (fileIt = _Files.begin(); fileIt != _Files.end();)
 	{
 		fileCurrIt = fileIt;
-		++ fileIt;
+		++fileIt;
 		if (bnpStrIds.count(fileCurrIt->second.idPath))
 		{
 			_Files.erase(fileCurrIt);
 		}
 	}
-
-
 }
-
 
 void CPath::memoryCompress()
 {
@@ -1748,7 +1731,7 @@ void CFileContainer::memoryCompress()
 	uint nDbg = (uint)_Files.size();
 	uint nDbg2 = SSMext.getCount();
 	uint nDbg3 = SSMpath.getCount();
-	nlinfo ("PATH: Number of file: %d, extension: %d, path: %d", nDbg, nDbg2, nDbg3);
+	nlinfo("PATH: Number of file: %d, extension: %d, path: %d", nDbg, nDbg2, nDbg3);
 
 	// Convert from _Files to _MCFiles
 	uint nSize = 0, nNb = 0;
@@ -1781,18 +1764,18 @@ void CFileContainer::memoryCompress()
 		string sTmp = SSMpath.get(rFE.idPath);
 		if ((sTmp.find("@") == string::npos) || (sTmp.find("@@") != string::npos) || (sTmp.find("snp@") != string::npos) || rFE.Remapped)
 		{
-			strcpy(_AllFileNames+nSize, rFE.Name.c_str());
-			_MCFiles[nNb].Name = _AllFileNames+nSize;
+			strcpy(_AllFileNames + nSize, rFE.Name.c_str());
+			_MCFiles[nNb].Name = _AllFileNames + nSize;
 			nSize += (uint)rFE.Name.size() + 1;
 		}
 		else
 		{
 			// This is a file included in a bigfile (so the name is in the bigfile manager)
-			sTmp = sTmp.substr(0, sTmp.size()-1);
+			sTmp = sTmp.substr(0, sTmp.size() - 1);
 			_MCFiles[nNb].Name = CBigFile::getInstance().getFileNamePtr(rFE.Name, sTmp);
 			if (_MCFiles[nNb].Name == NULL)
 			{
-				nlerror("memoryCompress: failed to find named file in big file: %s",SSMpath.get(rFE.idPath));
+				nlerror("memoryCompress: failed to find named file in big file: %s", SSMpath.get(rFE.idPath));
 			}
 		}
 
@@ -1817,7 +1800,7 @@ void CFileContainer::memoryUncompress()
 {
 	SSMext.memoryUncompress();
 	SSMpath.memoryUncompress();
-	for(std::vector<CMCFileEntry>::iterator it = _MCFiles.begin(); it != _MCFiles.end(); ++it)
+	for (std::vector<CMCFileEntry>::iterator it = _MCFiles.begin(); it != _MCFiles.end(); ++it)
 	{
 		CFileEntry fe;
 		fe.Name = it->Name;
@@ -1881,7 +1864,7 @@ std::string CFileContainer::getApplicationDirectory(const std::string &appName, 
 		appPath = CPath::standardizePath(wideToUtf8(buffer));
 #else
 		// get user home directory from HOME environment variable
-		const char* homePath = getenv("HOME");
+		const char *homePath = getenv("HOME");
 		appPath = CPath::standardizePath(homePath ? homePath : ".");
 
 #if defined(NL_OS_MAC)
@@ -1937,58 +1920,58 @@ std::string CFileContainer::getTemporaryDirectory()
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::string::size_type CFile::getLastSeparator (const string &filename)
+std::string::size_type CFile::getLastSeparator(const string &filename)
 {
-	string::size_type pos = filename.find_last_of ('/');
+	string::size_type pos = filename.find_last_of('/');
 	if (pos == string::npos)
 	{
-		pos = filename.find_last_of ('\\');
+		pos = filename.find_last_of('\\');
 		if (pos == string::npos)
 		{
-			pos = filename.find_last_of ('@');
+			pos = filename.find_last_of('@');
 		}
 	}
 	return pos;
 }
 
-string CFile::getFilename (const string &filename)
+string CFile::getFilename(const string &filename)
 {
 	string::size_type pos = CFile::getLastSeparator(filename);
 	if (pos != string::npos)
-		return filename.substr (pos + 1);
+		return filename.substr(pos + 1);
 	else
 		return filename;
 }
 
-string CFile::getFilenameWithoutExtension (const string &filename)
+string CFile::getFilenameWithoutExtension(const string &filename)
 {
-	string filename2 = getFilename (filename);
-	string::size_type pos = filename2.find_last_of ('.');
+	string filename2 = getFilename(filename);
+	string::size_type pos = filename2.find_last_of('.');
 	if (pos == string::npos)
 		return filename2;
 	else
-		return filename2.substr (0, pos);
+		return filename2.substr(0, pos);
 }
 
-string CFile::getExtension (const string &filename)
+string CFile::getExtension(const string &filename)
 {
-	string::size_type pos = filename.find_last_of ('.');
+	string::size_type pos = filename.find_last_of('.');
 	if (pos == string::npos)
 		return "";
 	else
-		return filename.substr (pos + 1);
+		return filename.substr(pos + 1);
 }
 
-string CFile::getPath (const string &filename)
+string CFile::getPath(const string &filename)
 {
 	string::size_type pos = CFile::getLastSeparator(filename);
 	if (pos != string::npos)
-		return filename.substr (0, pos + 1);
+		return filename.substr(0, pos + 1);
 	else
 		return "";
 }
 
-bool CFile::isDirectory (const string &filename)
+bool CFile::isDirectory(const string &filename)
 {
 #ifdef NL_OS_WINDOWS
 	DWORD res = GetFileAttributesW(nlUtf8ToWide(filename));
@@ -2000,7 +1983,7 @@ bool CFile::isDirectory (const string &filename)
 	return (res & FILE_ATTRIBUTE_DIRECTORY) != 0;
 #else // NL_OS_WINDOWS
 	struct stat buf;
-	int res = stat (filename.c_str (), &buf);
+	int res = stat(filename.c_str(), &buf);
 	if (res == -1)
 	{
 		// There was previously a warning message here but that was incorrect as it is defined that isDirectory returns false if the directory doesn't exist
@@ -2011,32 +1994,32 @@ bool CFile::isDirectory (const string &filename)
 #endif // NL_OS_WINDOWS
 }
 
-bool CFile::isExists (const string &filename)
+bool CFile::isExists(const string &filename)
 {
 #ifdef NL_OS_WINDOWS
 	return GetFileAttributesW(nlUtf8ToWide(filename)) != INVALID_FILE_ATTRIBUTES;
 #else // NL_OS_WINDOWS
 	struct stat buf;
-	return stat (filename.c_str (), &buf) == 0;
+	return stat(filename.c_str(), &buf) == 0;
 #endif // NL_OS_WINDOWS
 }
 
-bool CFile::createEmptyFile (const std::string& filename)
+bool CFile::createEmptyFile(const std::string &filename)
 {
-	FILE *file = nlfopen (filename, "wb");
+	FILE *file = nlfopen(filename, "wb");
 
 	if (file)
 	{
-		fclose (file);
+		fclose(file);
 		return true;
 	}
 
 	return false;
 }
 
-bool CFile::fileExists (const string& filename)
+bool CFile::fileExists(const string &filename)
 {
-	//H_AUTO(FileExists);
+	// H_AUTO(FileExists);
 	FILE *file = nlfopen(filename, "rb");
 
 	if (file)
@@ -2048,15 +2031,14 @@ bool CFile::fileExists (const string& filename)
 	return false;
 }
 
-
-string CFile::findNewFile (const string &filename)
+string CFile::findNewFile(const string &filename)
 {
-	string::size_type pos = filename.find_last_of ('.');
+	string::size_type pos = filename.find_last_of('.');
 	if (pos == string::npos)
 		return filename;
 
-	string start = filename.substr (0, pos);
-	string end = filename.substr (pos);
+	string start = filename.substr(0, pos);
+	string end = filename.substr(pos);
 
 	uint num = 0;
 	char numchar[4];
@@ -2064,89 +2046,88 @@ string CFile::findNewFile (const string &filename)
 	do
 	{
 		npath = start;
-		smprintf(numchar,4,"%03d",num++);
+		smprintf(numchar, 4, "%03d", num++);
 		npath += numchar;
 		npath += end;
 		if (!CFile::fileExists(npath)) break;
-	}
-	while (num<999);
+	} while (num < 999);
 	return npath;
 }
 
 // \warning doesn't work with big file
-uint32	CFile::getFileSize (const std::string &filename)
+uint32 CFile::getFileSize(const std::string &filename)
 {
 	std::string::size_type pos;
 	if (filename.find("@@") != string::npos)
 	{
 		uint32 fs = 0, bfo;
 		bool c, d;
-		CXMLPack::getInstance().getFile (filename, fs, bfo, c, d);
+		CXMLPack::getInstance().getFile(filename, fs, bfo, c, d);
 		return fs;
 	}
 	else if ((pos = filename.find('@')) != string::npos)
 	{
-		if (pos > 3 && filename[pos-3] == 's' && filename[pos-2] == 'n' && filename[pos-1] == 'p')
+		if (pos > 3 && filename[pos - 3] == 's' && filename[pos - 2] == 'n' && filename[pos - 1] == 'p')
 		{
 			uint32 fs = 0;
-			CStreamedPackageManager::getInstance().getFileSize (fs, filename.substr(pos+1));
+			CStreamedPackageManager::getInstance().getFileSize(fs, filename.substr(pos + 1));
 			return fs;
 		}
 		else
 		{
 			uint32 fs = 0, bfo;
 			bool c, d;
-			CBigFile::getInstance().getFile (filename, fs, bfo, c, d);
+			CBigFile::getInstance().getFile(filename, fs, bfo, c, d);
 			return fs;
 		}
 	}
 	else
 	{
-#if defined (NL_OS_WINDOWS)
+#if defined(NL_OS_WINDOWS)
 		struct _stat buf;
 		int result = _wstat(nlUtf8ToWide(filename), &buf);
-#elif defined (NL_OS_UNIX)
+#elif defined(NL_OS_UNIX)
 		struct stat buf;
-		int result = stat (filename.c_str (), &buf);
+		int result = stat(filename.c_str(), &buf);
 #endif
 		if (result != 0) return 0;
 		else return buf.st_size;
 	}
 }
 
-uint32	CFile::getFileSize (FILE *f)
+uint32 CFile::getFileSize(FILE *f)
 {
-#if defined (NL_OS_WINDOWS)
+#if defined(NL_OS_WINDOWS)
 	struct _stat buf;
-	int result = _fstat (fileno(f), &buf);
-#elif defined (NL_OS_UNIX)
+	int result = _fstat(fileno(f), &buf);
+#elif defined(NL_OS_UNIX)
 	struct stat buf;
-	int result = fstat (fileno(f), &buf);
+	int result = fstat(fileno(f), &buf);
 #endif
 	if (result != 0) return 0;
 	else return buf.st_size;
 }
 
-uint32	CFile::getFileModificationDate(const std::string &filename)
+uint32 CFile::getFileModificationDate(const std::string &filename)
 {
 	string::size_type pos;
 	string fn;
-	if ((pos=filename.find("@@")) != string::npos)
+	if ((pos = filename.find("@@")) != string::npos)
 	{
-		fn = filename.substr (0, pos);
+		fn = filename.substr(0, pos);
 	}
-	else if ((pos=filename.find('@')) != string::npos)
+	else if ((pos = filename.find('@')) != string::npos)
 	{
-		fn = CPath::lookup(filename.substr (0, pos));
+		fn = CPath::lookup(filename.substr(0, pos));
 	}
 	else
 	{
 		fn = filename;
 	}
 
-#if defined (NL_OS_WINDOWS)
-//	struct _stat buf;
-//	int result = _stat (fn.c_str (), &buf);
+#if defined(NL_OS_WINDOWS)
+	//	struct _stat buf;
+	//	int result = _stat (fn.c_str (), &buf);
 	// Changed 06-06-2007 : boris : _stat have an incoherent and hard to reproduce
 	// on windows : if the system clock is adjusted according to daylight saving
 	// time, the file date reported by _stat may (not always!) be adjusted by 3600s
@@ -2180,22 +2161,22 @@ uint32	CFile::getFileModificationDate(const std::string &filename)
 	// hey Mr Gates, why 1601 ?
 
 	// first, convert it into second since jan1, 1601
-	uint64 t = modTime.dwLowDateTime | (uint64(modTime.dwHighDateTime)<<32);
+	uint64 t = modTime.dwLowDateTime | (uint64(modTime.dwHighDateTime) << 32);
 
 	// adjust time base to unix epoch base
 	t -= CTime::getWindowsToUnixBaseTimeOffset();
 
 	// convert the resulting time into seconds
-	t /= 10;	// microsec
-	t /= 1000;	// millisec
-	t /= 1000;	// sec
+	t /= 10; // microsec
+	t /= 1000; // millisec
+	t /= 1000; // sec
 
 	// return the resulting time
 	return uint32(t);
 
-#elif defined (NL_OS_UNIX)
+#elif defined(NL_OS_UNIX)
 	struct stat buf;
-	int result = stat (fn.c_str (), &buf);
+	int result = stat(fn.c_str(), &buf);
 	if (result != 0)
 	{
 		nlwarning("Can't get modification date on file '%s' : %s", fn.c_str(), NLMISC::formatErrorMessage(NLMISC::getLastError()).c_str());
@@ -2204,23 +2185,22 @@ uint32	CFile::getFileModificationDate(const std::string &filename)
 	else
 		return (uint32)buf.st_mtime;
 #endif
-
 }
 
-bool	CFile::setFileModificationDate(const std::string &filename, uint32 modTime)
+bool CFile::setFileModificationDate(const std::string &filename, uint32 modTime)
 {
 	string::size_type pos;
 	string fn;
-	if ((pos=filename.find('@')) != string::npos)
+	if ((pos = filename.find('@')) != string::npos)
 	{
-		fn = CPath::lookup(filename.substr (0, pos));
+		fn = CPath::lookup(filename.substr(0, pos));
 	}
 	else
 	{
 		fn = filename;
 	}
 
-#if defined (NL_OS_WINDOWS)
+#if defined(NL_OS_WINDOWS)
 
 	// Use the WIN32 API to set the file times in UTC
 
@@ -2249,9 +2229,9 @@ bool	CFile::setFileModificationDate(const std::string &filename, uint32 modTime)
 	// convert the unix time into a windows file time
 	uint64 t = modTime;
 	// convert to 10th of microsec
-	t *= 1000;	// millisec
-	t *= 1000;	// microsec
-	t *= 10;	// 10th of micro sec (rez of windows file time is 100ns <=> 1/10 us
+	t *= 1000; // millisec
+	t *= 1000; // microsec
+	t *= 10; // 10th of micro sec (rez of windows file time is 100ns <=> 1/10 us
 
 	// apply the windows to unix base time offset
 	t += CTime::getWindowsToUnixBaseTimeOffset();
@@ -2275,10 +2255,10 @@ bool	CFile::setFileModificationDate(const std::string &filename, uint32 modTime)
 
 	return true;
 
-#elif defined (NL_OS_UNIX)
+#elif defined(NL_OS_UNIX)
 	// first, read the current time of the file
 	struct stat buf;
-	int result = stat (fn.c_str (), &buf);
+	int result = stat(fn.c_str(), &buf);
 	if (result != 0)
 		return false;
 
@@ -2292,28 +2272,27 @@ bool	CFile::setFileModificationDate(const std::string &filename, uint32 modTime)
 		nlwarning("Can't set modification date on file '%s': %s", fn.c_str(), formatErrorMessage(getLastError()).c_str());
 	return res != -1;
 #endif
-
 }
 
-uint32	CFile::getFileCreationDate(const std::string &filename)
+uint32 CFile::getFileCreationDate(const std::string &filename)
 {
 	string::size_type pos;
 	string fn;
-	if ((pos=filename.find('@')) != string::npos)
+	if ((pos = filename.find('@')) != string::npos)
 	{
-		fn = CPath::lookup(filename.substr (0, pos));
+		fn = CPath::lookup(filename.substr(0, pos));
 	}
 	else
 	{
 		fn = filename;
 	}
 
-#if defined (NL_OS_WINDOWS)
+#if defined(NL_OS_WINDOWS)
 	struct _stat buf;
 	int result = _wstat(nlUtf8ToWide(fn), &buf);
-#elif defined (NL_OS_UNIX)
+#elif defined(NL_OS_UNIX)
 	struct stat buf;
-	int result = stat(fn.c_str (), &buf);
+	int result = stat(fn.c_str(), &buf);
 #endif
 
 	if (result != 0) return 0;
@@ -2322,7 +2301,9 @@ uint32	CFile::getFileCreationDate(const std::string &filename)
 
 struct CFileEntry
 {
-	CFileEntry (const string &filename, void (*callback)(const string &filename)) : FileName (filename), Callback (callback)
+	CFileEntry(const string &filename, void (*callback)(const string &filename))
+	    : FileName(filename)
+	    , Callback(callback)
 	{
 		LastModified = CFile::getFileModificationDate(filename);
 	}
@@ -2331,9 +2312,9 @@ struct CFileEntry
 	uint32 LastModified;
 };
 
-static vector <CFileEntry> FileToCheck;
+static vector<CFileEntry> FileToCheck;
 
-void CFile::removeFileChangeCallback (const std::string &filename)
+void CFile::removeFileChangeCallback(const std::string &filename)
 {
 	string fn = CPath::lookup(filename, false, false);
 	if (fn.empty())
@@ -2342,27 +2323,27 @@ void CFile::removeFileChangeCallback (const std::string &filename)
 	}
 	for (uint i = 0; i < FileToCheck.size(); i++)
 	{
-		if(FileToCheck[i].FileName == fn)
+		if (FileToCheck[i].FileName == fn)
 		{
-			nlinfo ("PATH: CFile::removeFileChangeCallback: '%s' is removed from checked files modification", fn.c_str());
-			FileToCheck.erase(FileToCheck.begin()+i);
+			nlinfo("PATH: CFile::removeFileChangeCallback: '%s' is removed from checked files modification", fn.c_str());
+			FileToCheck.erase(FileToCheck.begin() + i);
 			return;
 		}
 	}
 }
 
-void CFile::addFileChangeCallback (const std::string &filename, void (*cb)(const string &filename))
+void CFile::addFileChangeCallback(const std::string &filename, void (*cb)(const string &filename))
 {
 	string fn = CPath::lookup(filename, false, false);
 	if (fn.empty())
 	{
 		fn = filename;
 	}
-	nlinfo ("PATH: CFile::addFileChangeCallback: I'll check the modification date for this file '%s'", fn.c_str());
+	nlinfo("PATH: CFile::addFileChangeCallback: I'll check the modification date for this file '%s'", fn.c_str());
 	FileToCheck.push_back(CFileEntry(fn, cb));
 }
 
-void CFile::checkFileChange (TTime frequency)
+void CFile::checkFileChange(TTime frequency)
 {
 	static TTime lastChecked = CTime::getLocalTime();
 
@@ -2370,10 +2351,10 @@ void CFile::checkFileChange (TTime frequency)
 	{
 		for (uint i = 0; i < FileToCheck.size(); i++)
 		{
-			if(CFile::getFileModificationDate(FileToCheck[i].FileName) != FileToCheck[i].LastModified)
+			if (CFile::getFileModificationDate(FileToCheck[i].FileName) != FileToCheck[i].LastModified)
 			{
 				// need to reload it
-				if(FileToCheck[i].Callback != NULL)
+				if (FileToCheck[i].Callback != NULL)
 					FileToCheck[i].Callback(FileToCheck[i].FileName);
 
 				FileToCheck[i].LastModified = CFile::getFileModificationDate(FileToCheck[i].FileName);
@@ -2387,11 +2368,11 @@ void CFile::checkFileChange (TTime frequency)
 static bool CopyMoveFile(const std::string &dest, const std::string &src, bool copyFile, bool failIfExists = false, IProgressCallback *progress = NULL)
 {
 	if (dest.empty() || src.empty()) return false;
-	std::string sdest = CPath::standardizePath(dest,false);
-	std::string ssrc = CPath::standardizePath(src,false);
+	std::string sdest = CPath::standardizePath(dest, false);
+	std::string ssrc = CPath::standardizePath(src, false);
 
 	if (progress) progress->progress(0.f);
-	if(copyFile)
+	if (copyFile)
 	{
 		uint32 totalSize = 0;
 		uint32 readSize = 0;
@@ -2402,16 +2383,16 @@ static bool CopyMoveFile(const std::string &dest, const std::string &src, bool c
 		FILE *fp1 = nlfopen(ssrc, "rb");
 		if (fp1 == NULL)
 		{
-			nlwarning ("PATH: CopyMoveFile error: can't fopen in read mode '%s'", ssrc.c_str());
+			nlwarning("PATH: CopyMoveFile error: can't fopen in read mode '%s'", ssrc.c_str());
 			return false;
 		}
 		FILE *fp2 = nlfopen(sdest, "wb");
 		if (fp2 == NULL)
 		{
-			nlwarning ("PATH: CopyMoveFile error: can't fopen in read write mode '%s'", sdest.c_str());
+			nlwarning("PATH: CopyMoveFile error: can't fopen in read write mode '%s'", sdest.c_str());
 			return false;
 		}
-		static char buffer [1000];
+		static char buffer[1000];
 		size_t s;
 
 		s = fread(buffer, 1, sizeof(buffer), fp1);
@@ -2420,15 +2401,15 @@ static bool CopyMoveFile(const std::string &dest, const std::string &src, bool c
 			if (progress)
 			{
 				readSize += (uint32)s;
-				progress->progress((float) readSize / totalSize);
+				progress->progress((float)readSize / totalSize);
 			}
 			size_t ws = fwrite(buffer, s, 1, fp2);
 			if (ws != 1)
 			{
 				nlwarning("Error copying '%s' to '%s', trying to write %u bytes failed.",
-					ssrc.c_str(),
-					sdest.c_str(),
-					s);
+				    ssrc.c_str(),
+				    sdest.c_str(),
+				    s);
 				fclose(fp1);
 				fclose(fp2);
 				nlwarning("Errno = %d", errno);
@@ -2447,16 +2428,16 @@ static bool CopyMoveFile(const std::string &dest, const std::string &src, bool c
 		if (MoveFileW(nlUtf8ToWide(ssrc), nlUtf8ToWide(sdest)) == 0)
 		{
 			sint lastError = NLMISC::getLastError();
-			nlwarning ("PATH: CopyMoveFile error: can't link/move '%s' into '%s', error %u (%s)",
-				ssrc.c_str(),
-				sdest.c_str(),
-				lastError,
-				NLMISC::formatErrorMessage(lastError).c_str());
+			nlwarning("PATH: CopyMoveFile error: can't link/move '%s' into '%s', error %u (%s)",
+			    ssrc.c_str(),
+			    sdest.c_str(),
+			    lastError,
+			    NLMISC::formatErrorMessage(lastError).c_str());
 
 			return false;
 		}
 #else
-		if (rename (ssrc.c_str(), sdest.c_str()) == -1)
+		if (rename(ssrc.c_str(), sdest.c_str()) == -1)
 		{
 			// unable to move because file systems are different
 			if (errno == EXDEV)
@@ -2479,9 +2460,9 @@ static bool CopyMoveFile(const std::string &dest, const std::string &src, bool c
 			else
 			{
 				nlwarning("PATH: CopyMoveFile error: can't rename '%s' into '%s', error %u",
-					ssrc.c_str(),
-					sdest.c_str(),
-					errno);
+				    ssrc.c_str(),
+				    sdest.c_str(),
+				    errno);
 
 				return false;
 			}
@@ -2515,22 +2496,22 @@ bool CFile::quickFileCompare(const std::string &fileName0, const std::string &fi
 	return true;
 }
 
-bool CFile::thoroughFileCompare(const std::string &fileName0, const std::string &fileName1,uint32 maxBufSize)
+bool CFile::thoroughFileCompare(const std::string &fileName0, const std::string &fileName1, uint32 maxBufSize)
 {
 	// make sure the files both exist
 	if (!fileExists(fileName0) || !fileExists(fileName1))
 		return false;
 
 	// setup the size variable from file length of first file
-	uint32 fileSize=getFileSize(fileName0);
+	uint32 fileSize = getFileSize(fileName0);
 
 	// compare file sizes
 	if (fileSize != getFileSize(fileName1))
 		return false;
 
 	// allocate a couple of data buffers for our 2 files
-	uint32 bufSize= maxBufSize/2;
-	nlassert(sint32(bufSize)>0);
+	uint32 bufSize = maxBufSize / 2;
+	nlassert(sint32(bufSize) > 0);
 	std::vector<uint8> buf0(bufSize);
 	std::vector<uint8> buf1(bufSize);
 
@@ -2538,12 +2519,12 @@ bool CFile::thoroughFileCompare(const std::string &fileName0, const std::string 
 	CIFile file0(fileName0);
 	CIFile file1(fileName1);
 
-	for (uint32 i=0;i<fileSize;i+=bufSize)
+	for (uint32 i = 0; i < fileSize; i += bufSize)
 	{
 		// for the last block in the file reduce buf size to represent the amount of data left in file
-		if (i+bufSize>fileSize)
+		if (i + bufSize > fileSize)
 		{
-			bufSize= fileSize-i;
+			bufSize = fileSize - i;
 			buf0.resize(bufSize);
 			buf1.resize(bufSize);
 		}
@@ -2553,7 +2534,7 @@ bool CFile::thoroughFileCompare(const std::string &fileName0, const std::string 
 		file1.serialBuffer(&buf1[0], bufSize);
 
 		// compare the contents of the 2 data buffers
-		if (buf0!=buf1)
+		if (buf0 != buf1)
 			return false;
 	}
 
@@ -2572,82 +2553,82 @@ bool CFile::createDirectory(const std::string &filename)
 	return _wmkdir(nlUtf8ToWide(filename)) == 0;
 #else
 	// set rwxrwxr-x permissions
-	return mkdir(filename.c_str(), S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP|S_IROTH|S_IXOTH)==0;
+	return mkdir(filename.c_str(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IXOTH) == 0;
 #endif
 }
 
 bool CFile::createDirectoryTree(const std::string &filename)
 {
-	bool lastResult=true;
-	uint32 i=0;
+	bool lastResult = true;
+	uint32 i = 0;
 
 	// skip dos drive name eg "a:"
-	if (filename.size()>1 && filename[1]==':')
-		i=2;
+	if (filename.size() > 1 && filename[1] == ':')
+		i = 2;
 
 	// iterate over the set of directories in the routine's argument
-	while (i<filename.size())
+	while (i < filename.size())
 	{
 		// skip passed leading slashes
-		for (;i<filename.size();++i)
-			if (filename[i]!='\\' && filename[i]!='/')
+		for (; i < filename.size(); ++i)
+			if (filename[i] != '\\' && filename[i] != '/')
 				break;
 
 		// if the file name ended with a '/' then there's no extra directory to create
-		if (i==filename.size())
+		if (i == filename.size())
 			break;
 
 		// skip forwards to next slash
-		for (;i<filename.size();++i)
-			if (filename[i]=='\\' || filename[i]=='/')
+		for (; i < filename.size(); ++i)
+			if (filename[i] == '\\' || filename[i] == '/')
 				break;
 
 		// try to create directory
-		std::string s= filename.substr(0,i);
-		lastResult= createDirectory(s);
+		std::string s = filename.substr(0, i);
+		lastResult = createDirectory(s);
 	}
 
 	return lastResult;
 }
 
-bool CPath::makePathRelative (const std::string &basePath, std::string &relativePath)
+bool CPath::makePathRelative(const std::string &basePath, std::string &relativePath)
 {
 	// Standard path with final slash
-	string tmp = standardizePath (basePath, true);
-	string src = standardizePath (relativePath, true);
+	string tmp = standardizePath(basePath, true);
+	string src = standardizePath(relativePath, true);
 	string prefix;
 
-	for(;;)
+	for (;;)
 	{
 		// Compare with relativePath
-		if (strncmp (tmp.c_str (), src.c_str (), tmp.length ()) == 0)
+		if (strncmp(tmp.c_str(), src.c_str(), tmp.length()) == 0)
 		{
 			// Truncate
-			uint size = (uint)tmp.length ();
+			uint size = (uint)tmp.length();
 
 			// Same path ?
-			if (size == src.length ())
+			if (size == src.length())
 			{
 				relativePath = ".";
 				return true;
 			}
 
-			relativePath = prefix+relativePath.substr (size, relativePath.length () - size);
+			relativePath = prefix + relativePath.substr(size, relativePath.length() - size);
 			return true;
 		}
 
 		// Too small ?
-		if (tmp.length ()<2)
+		if (tmp.length() < 2)
 			break;
 
 		// Remove last directory
-		string::size_type lastPos = tmp.rfind ('/', tmp.length ()-2);
-		string::size_type previousPos = tmp.find ('/');
+		string::size_type lastPos = tmp.rfind('/', tmp.length() - 2);
+		string::size_type previousPos = tmp.find('/');
 		if ((lastPos == previousPos) || (lastPos == string::npos))
 			break;
 
 		// Troncate
-		tmp = tmp.substr (0, lastPos+1);
+		tmp = tmp.substr(0, lastPos + 1);
 
 		// New prefix
 		prefix += "../";
@@ -2656,11 +2637,11 @@ bool CPath::makePathRelative (const std::string &basePath, std::string &relative
 	return false;
 }
 
-std::string CPath::makePathAbsolute( const std::string &relativePath, const std::string &directory, bool simplify )
+std::string CPath::makePathAbsolute(const std::string &relativePath, const std::string &directory, bool simplify)
 {
-	if( relativePath.empty() )
+	if (relativePath.empty())
 		return "";
-	if( directory.empty() )
+	if (directory.empty())
 		return "";
 
 	std::string absolutePath;
@@ -2680,37 +2661,36 @@ std::string CPath::makePathAbsolute( const std::string &relativePath, const std:
 	}
 	else
 #endif
-	// Unix filesystem absolute path (works also under Windows)
-	if (relativePath[0] == '/')
-	{
-		absolutePath = relativePath;
-	}
-	else
-	{
-		// Add a slash to the directory if necessary.
-		// If the relative path starts with dots we need a slash.
-		// If the relative path starts with a slash we don't.
-		// If it starts with neither, we need a slash.
-		bool needSlash = true;
-		char c = relativePath[0];
-		if ((c == '\\') || (c == '/'))
-			needSlash = false;
-
-		bool hasSlash = false;
-		absolutePath = directory;
-		c = absolutePath[absolutePath.size() - 1];
-		if ((c == '\\') || (c == '/'))
-			hasSlash = true;
-
-		if (needSlash && !hasSlash)
-			absolutePath += '/';
+		// Unix filesystem absolute path (works also under Windows)
+		if (relativePath[0] == '/')
+		{
+			absolutePath = relativePath;
+		}
 		else
-		if (hasSlash && !needSlash)
-			absolutePath.resize(absolutePath.size() - 1);
+		{
+			// Add a slash to the directory if necessary.
+			// If the relative path starts with dots we need a slash.
+			// If the relative path starts with a slash we don't.
+			// If it starts with neither, we need a slash.
+			bool needSlash = true;
+			char c = relativePath[0];
+			if ((c == '\\') || (c == '/'))
+				needSlash = false;
 
-		// Now build the new absolute path
-		absolutePath += relativePath;
-	}
+			bool hasSlash = false;
+			absolutePath = directory;
+			c = absolutePath[absolutePath.size() - 1];
+			if ((c == '\\') || (c == '/'))
+				hasSlash = true;
+
+			if (needSlash && !hasSlash)
+				absolutePath += '/';
+			else if (hasSlash && !needSlash)
+				absolutePath.resize(absolutePath.size() - 1);
+
+			// Now build the new absolute path
+			absolutePath += relativePath;
+		}
 
 	absolutePath = standardizePath(absolutePath, true);
 
@@ -2723,7 +2703,7 @@ std::string CPath::makePathAbsolute( const std::string &relativePath, const std:
 		std::vector<std::string> directoryParts;
 
 		// process all components
-		for(uint i = 0, len = tokens.size(); i < len; ++i)
+		for (uint i = 0, len = tokens.size(); i < len; ++i)
 		{
 			std::string token = tokens[i];
 
@@ -2749,7 +2729,7 @@ std::string CPath::makePathAbsolute( const std::string &relativePath, const std:
 			absolutePath = directoryParts[0];
 
 			// rebuild the whole absolute path
-			for(uint i = 1, len = directoryParts.size(); i < len; ++i)
+			for (uint i = 1, len = directoryParts.size(); i < len; ++i)
 			{
 				if (!directoryParts[i].empty())
 					absolutePath += "/" + directoryParts[i];
@@ -2778,7 +2758,7 @@ bool CPath::isAbsolutePath(const std::string &path)
 	if (path[0] == '\\') return true;
 
 	// Normal Windows absolute path. Eg.: C:\something
-	if (path.length() > 2 && isalpha(path[0]) && (path[1] == ':' ) && ((path[2] == '\\') || (path[2] == '/' ))) return true;
+	if (path.length() > 2 && isalpha(path[0]) && (path[1] == ':') && ((path[2] == '\\') || (path[2] == '/'))) return true;
 #endif
 
 	// Unix filesystem absolute path (works also under Windows)
@@ -2793,38 +2773,38 @@ bool CFile::setRWAccess(const std::string &filename)
 	std::wstring wideFile = NLMISC::utf8ToWide(filename);
 
 	// if the file exists and there's no write access
-	if (_waccess (wideFile.c_str(), 00) == 0 && _waccess (wideFile.c_str(), 06) == -1)
+	if (_waccess(wideFile.c_str(), 00) == 0 && _waccess(wideFile.c_str(), 06) == -1)
 	{
 		// try to set the read/write access
-		if (_wchmod (wideFile.c_str(), _S_IREAD | _S_IWRITE) == -1)
+		if (_wchmod(wideFile.c_str(), _S_IREAD | _S_IWRITE) == -1)
 		{
 			if (INelContext::getInstance().getAlreadyCreateSharedAmongThreads())
 			{
-				nlwarning ("PATH: Can't set RW access to file '%s': %d %s", filename.c_str(), errno, strerror(errno));
+				nlwarning("PATH: Can't set RW access to file '%s': %d %s", filename.c_str(), errno, strerror(errno));
 			}
 			return false;
 		}
 	}
 #else
 	// if the file exists and there's no write access
-	if (access (filename.c_str(), F_OK) == 0)
+	if (access(filename.c_str(), F_OK) == 0)
 	{
 		// try to set the read/write access
 		// rw-rw-r--
-		mode_t mode = S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH;
+		mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
 
 		// set +x only for directory
 		// rwxrwxr-x
 		if (CFile::isDirectory(filename))
 		{
-			mode |= S_IXUSR|S_IXGRP|S_IXOTH;
+			mode |= S_IXUSR | S_IXGRP | S_IXOTH;
 		}
 
-		if (chmod (filename.c_str(), mode) == -1)
+		if (chmod(filename.c_str(), mode) == -1)
 		{
 			if (INelContext::getInstance().getAlreadyCreateSharedAmongThreads())
 			{
-				nlwarning ("PATH: Can't set RW access to file '%s': %d %s", filename.c_str(), errno, strerror(errno));
+				nlwarning("PATH: Can't set RW access to file '%s': %d %s", filename.c_str(), errno, strerror(errno));
 			}
 			return false;
 		}
@@ -2836,7 +2816,7 @@ bool CFile::setRWAccess(const std::string &filename)
 		{
 			nlwarning("PATH: Can't access to file '%s'", filename.c_str());
 		}
-//		return false;
+		//		return false;
 	}
 	return true;
 }
@@ -2845,14 +2825,14 @@ bool CFile::setExecutable(const std::string &filename)
 {
 #ifndef NL_OS_WINDOWS
 	struct stat buf;
-	if (stat(filename.c_str (), &buf) == 0)
+	if (stat(filename.c_str(), &buf) == 0)
 	{
 		mode_t mode = buf.st_mode | S_IXUSR | S_IXGRP | S_IXOTH;
 		if (chmod(filename.c_str(), mode) == -1)
 		{
 			if (INelContext::getInstance().getAlreadyCreateSharedAmongThreads())
 			{
-				nlwarning ("PATH: Can't set +x flag on file '%s': %d %s", filename.c_str(), errno, strerror(errno));
+				nlwarning("PATH: Can't set +x flag on file '%s': %d %s", filename.c_str(), errno, strerror(errno));
 			}
 			return false;
 		}
@@ -2881,7 +2861,7 @@ bool CFile::deleteFile(const std::string &filename)
 	{
 		if (INelContext::getInstance().getAlreadyCreateSharedAmongThreads())
 		{
-			nlwarning ("PATH: Can't delete file '%s': (errno %d) %s", filename.c_str(), errno, strerror(errno));
+			nlwarning("PATH: Can't delete file '%s': (errno %d) %s", filename.c_str(), errno, strerror(errno));
 		}
 		return false;
 	}
@@ -2898,17 +2878,17 @@ bool CFile::deleteDirectory(const std::string &filename)
 #endif
 	if (res == -1)
 	{
-		nlwarning ("PATH: Can't delete directory '%s': (errno %d) %s", filename.c_str(), errno, strerror(errno));
+		nlwarning("PATH: Can't delete directory '%s': (errno %d) %s", filename.c_str(), errno, strerror(errno));
 		return false;
 	}
 	return true;
 }
 
-void CFile::getTemporaryOutputFilename (const std::string &originalFilename, std::string &tempFilename)
+void CFile::getTemporaryOutputFilename(const std::string &originalFilename, std::string &tempFilename)
 {
 	uint i = 0;
 	do
-		tempFilename = originalFilename+".tmp"+toString (i++);
+		tempFilename = originalFilename + ".tmp" + toString(i++);
 	while (CFile::isExists(tempFilename));
 }
 

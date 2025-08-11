@@ -27,75 +27,73 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // GetVal dialog
 
-//#define CARACTERES_INVALIDE "/\:*?"<>|"
-char CaracteresInvalides[]={47,92,58,'*','?',34,60,62,124,0};
+// #define CARACTERES_INVALIDE "/\:*?"<>|"
+char CaracteresInvalides[] = { 47, 92, 58, '*', '?', 34, 60, 62, 124, 0 };
 
-GetVal::GetVal(CWnd* pParent /*=NULL*/)
-	: CDialog(GetVal::IDD, pParent)
+GetVal::GetVal(CWnd *pParent /*=NULL*/)
+    : CDialog(GetVal::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(GetVal)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void GetVal::DoDataExchange(CDataExchange* pDX)
+void GetVal::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(GetVal)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(GetVal, CDialog)
-	//{{AFX_MSG_MAP(GetVal)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(GetVal)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // GetVal message handlers
 
-
-void GetVal::OnOK() 
+void GetVal::OnOK()
 {
 	// TODO: Add extra validation here
-	NameOk=1;
-	CEdit *EditStr=(CEdit*)GetDlgItem(IDC_EDIT_ADD_TERRITOIRE);
+	NameOk = 1;
+	CEdit *EditStr = (CEdit *)GetDlgItem(IDC_EDIT_ADD_TERRITOIRE);
 	CString rString;
-	EditStr->GetWindowText( rString );
+	EditStr->GetWindowText(rString);
 	int size = rString.GetLength();
-	name = new TCHAR[size+1];
+	name = new TCHAR[size + 1];
 	_tcscpy(name, rString);
 	/**((short*)name)=size;
 	EditStr->GetLine(0,name,size);
 	for (int i=0;i<size;i++)
-		for (int c=0;c<strlen(CaracteresInvalides);c++)
-		{
-			if (name[i]==CaracteresInvalides[c])
-			{
-				char Message[100];
-				strcpy(Message,"Le message ne peut pas contenir les caracteres ");
-				strcat(Message,CaracteresInvalides);
-				MessageBox(Message,"Erreur de saisie");
-				return;
-			}
-		}*/
+	    for (int c=0;c<strlen(CaracteresInvalides);c++)
+	    {
+	        if (name[i]==CaracteresInvalides[c])
+	        {
+	            char Message[100];
+	            strcpy(Message,"Le message ne peut pas contenir les caracteres ");
+	            strcat(Message,CaracteresInvalides);
+	            MessageBox(Message,"Erreur de saisie");
+	            return;
+	        }
+	    }*/
 	CDialog::OnOK();
 }
 
-void GetVal::OnCancel() 
+void GetVal::OnCancel()
 {
 	// TODO: Add extra cleanup here
-	NameOk=0;	
+	NameOk = 0;
 	CDialog::OnCancel();
 }
 
-LRESULT GetVal::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
+LRESULT GetVal::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
 	// TODO: Add your specialized code here and/or call the base class
-	if (message==WM_INITDIALOG)
+	if (message == WM_INITDIALOG)
 	{
-		CEdit *ed = (CEdit*)GetDlgItem(IDC_EDIT_ADD_TERRITOIRE);
+		CEdit *ed = (CEdit *)GetDlgItem(IDC_EDIT_ADD_TERRITOIRE);
 		ed->SetFocus();
 		ed->SetLimitText(100);
 	}

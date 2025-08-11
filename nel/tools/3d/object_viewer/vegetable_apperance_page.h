@@ -23,19 +23,14 @@
 // VegetableApperancePage.h : header file
 //
 
-
 #include "vegetable_list_color.h"
 
-
-namespace	NL3D
-{
-	class	CVegetable;
+namespace NL3D {
+class CVegetable;
 }
 
-
-class	CVegetableNoiseValueDlg;
-class	CVegetableDlg;
-
+class CVegetableNoiseValueDlg;
+class CVegetableDlg;
 
 /////////////////////////////////////////////////////////////////////////////
 // CVegetableApperancePage dialog
@@ -44,35 +39,35 @@ class CVegetableApperancePage : public CPropertyPage
 {
 	DECLARE_DYNCREATE(CVegetableApperancePage)
 
-// Construction
+	// Construction
 public:
 	CVegetableApperancePage();
 	~CVegetableApperancePage();
-	void	initVegetableDlg(CVegetableDlg *vegetableDlg) {_VegetableDlg= vegetableDlg;}
+	void initVegetableDlg(CVegetableDlg *vegetableDlg) { _VegetableDlg = vegetableDlg; }
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CVegetableApperancePage)
-	enum { IDD = IDD_VEGETABLE_APPEARANCE_DLG };
-	CVegetableListColor	ColorList;
+	enum
+	{
+		IDD = IDD_VEGETABLE_APPEARANCE_DLG
+	};
+	CVegetableListColor ColorList;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CVegetableApperancePage)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
-
 
 public:
 	/** set the vegetble to edit. NULL will disable all the controls.
 	 *	Called by CVegetableDlg.
 	 */
-	void			setVegetableToEdit(NL3D::CVegetable *vegetable);
+	void setVegetableToEdit(NL3D::CVegetable *vegetable);
 
-
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(CVegetableApperancePage)
@@ -86,22 +81,18 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	// The "father" VegetableDlg.
-	CVegetableDlg					*_VegetableDlg;
-
+	CVegetableDlg *_VegetableDlg;
 
 	// The NoiseValue edition.
-	CVegetableNoiseValueDlg			*_BendPhaseDlg;
-	CVegetableNoiseValueDlg			*_BendFactorDlg;
-	CVegetableNoiseValueDlg			*_ColorDlg;
-
+	CVegetableNoiseValueDlg *_BendPhaseDlg;
+	CVegetableNoiseValueDlg *_BendFactorDlg;
+	CVegetableNoiseValueDlg *_ColorDlg;
 
 	// The vegetable to edit.
-	NL3D::CVegetable				*_Vegetable;
+	NL3D::CVegetable *_Vegetable;
 
-
-	void	writeToVegetableColor(NL3D::CVegetable *vegetable);
-	void	readFromVegetableColor(NL3D::CVegetable *vegetable);
-
+	void writeToVegetableColor(NL3D::CVegetable *vegetable);
+	void readFromVegetableColor(NL3D::CVegetable *vegetable);
 };
 
 //{{AFX_INSERT_LOCATION}}

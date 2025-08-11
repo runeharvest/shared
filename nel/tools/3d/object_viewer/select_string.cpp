@@ -21,24 +21,21 @@
 #include "object_viewer.h"
 #include "select_string.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CSelectString dialog
 
-
-CSelectString::CSelectString(const std::vector<std::string>& vectString, const std::string &title, CWnd* pParent, bool empty)
-	: CDialog(CSelectString::IDD, pParent)
+CSelectString::CSelectString(const std::vector<std::string> &vectString, const std::string &title, CWnd *pParent, bool empty)
+    : CDialog(CSelectString::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CSelectString)
 	//}}AFX_DATA_INIT
-	Title=title;
-	Strings=vectString;
-	Selection=-1;
-	Empty=empty;
+	Title = title;
+	Strings = vectString;
+	Selection = -1;
+	Empty = empty;
 }
 
-
-void CSelectString::DoDataExchange(CDataExchange* pDX)
+void CSelectString::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSelectString)
@@ -47,64 +44,63 @@ void CSelectString::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CSelectString, CDialog)
-	//{{AFX_MSG_MAP(CSelectString)
-	ON_LBN_DBLCLK(IDC_LIST, OnDblclkList)
-	ON_LBN_SELCHANGE(IDC_LIST, OnSelchangeList)
-	ON_BN_CLICKED(IDEMPTY, OnEmpty)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CSelectString)
+ON_LBN_DBLCLK(IDC_LIST, OnDblclkList)
+ON_LBN_SELCHANGE(IDC_LIST, OnSelchangeList)
+ON_BN_CLICKED(IDEMPTY, OnEmpty)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CSelectString message handlers
 
-void CSelectString::OnOK() 
+void CSelectString::OnOK()
 {
 	// TODO: Add extra validation here
-	if (Selection!=-1)
+	if (Selection != -1)
 		CDialog::OnOK();
 	else
 		CDialog::OnCancel();
 }
 
-void CSelectString::OnDblclkList() 
+void CSelectString::OnDblclkList()
 {
 	// TODO: Add your control notification handler code here
 	OnSelchangeList();
 	OnOK();
 }
 
-BOOL CSelectString::OnInitDialog() 
+BOOL CSelectString::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	// Change title
 	SetWindowText(nlUtf8ToTStr(Title));
 
 	// Empty button ?
-	EmptyCtrl.ShowWindow (Empty?SW_SHOW:SW_HIDE);
+	EmptyCtrl.ShowWindow(Empty ? SW_SHOW : SW_HIDE);
 
 	// Add string
-	for (uint s=0; s<Strings.size(); s++)
+	for (uint s = 0; s < Strings.size(); s++)
 		ListCtrl.InsertString(-1, nlUtf8ToTStr(Strings[s]));
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CSelectString::OnSelchangeList() 
+void CSelectString::OnSelchangeList()
 {
 	// Get selection
-	UpdateData ();
-	Selection=ListCtrl.GetCurSel ();
-	if (Selection==LB_ERR)
-		Selection=-1;
+	UpdateData();
+	Selection = ListCtrl.GetCurSel();
+	if (Selection == LB_ERR)
+		Selection = -1;
 }
 
-void CSelectString::OnEmpty() 
+void CSelectString::OnEmpty()
 {
 	// TODO: Add your control notification handler code here
-	Selection=-1;
+	Selection = -1;
 	CDialog::OnOK();
 }

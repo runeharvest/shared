@@ -29,58 +29,54 @@ using namespace std;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 // The number of byte to process per block
-const	uint	NL_BlockByteL1= 4096;
+const uint NL_BlockByteL1 = 4096;
 
 // Number of vertices per block to process For ShadowMap generation
-uint	CShadowSkin::NumCacheVertexShadow= NL_BlockByteL1 / sizeof(CShadowVertex);
-
+uint CShadowSkin::NumCacheVertexShadow = NL_BlockByteL1 / sizeof(CShadowVertex);
 
 // ***************************************************************************
-void		CShadowSkin::applySkin(CVector *dst, std::vector<CMatrix3x4> &boneMat3x4)
+void CShadowSkin::applySkin(CVector *dst, std::vector<CMatrix3x4> &boneMat3x4)
 {
-	if(Vertices.empty())
+	if (Vertices.empty())
 		return;
-	uint	numVerts= (uint)Vertices.size();
-	CShadowVertex	*src= &Vertices[0];
+	uint numVerts = (uint)Vertices.size();
+	CShadowVertex *src = &Vertices[0];
 
 	// Then do the skin
-	for(;numVerts>0;)
+	for (; numVerts > 0;)
 	{
 		// number of vertices to process for this block.
-		uint	nBlockInf= min(NumCacheVertexShadow, numVerts);
+		uint nBlockInf = min(NumCacheVertexShadow, numVerts);
 		// next block.
-		numVerts-= nBlockInf;
+		numVerts -= nBlockInf;
 
 		// cache the data in L1 cache.
 		CFastMem::precache(src, nBlockInf * sizeof(CShadowVertex));
 
 		//  for all InfluencedVertices only.
-		for(;nBlockInf>0;nBlockInf--, src++, dst++)
+		for (; nBlockInf > 0; nBlockInf--, src++, dst++)
 		{
-			boneMat3x4[ src->MatrixId ].mulSetPoint( src->Vertex, *dst );
+			boneMat3x4[src->MatrixId].mulSetPoint(src->Vertex, *dst);
 		}
 	}
 }
 
-
 // ***************************************************************************
-bool	CShadowSkin::getRayIntersection(const CMatrix &toRaySpace, CSkeletonModel &skeleton,
-							   const std::vector<uint32> &matrixInfluences, float &dist2D, float &distZ, bool computeDist2D)
+bool CShadowSkin::getRayIntersection(const CMatrix &toRaySpace, CSkeletonModel &skeleton,
+    const std::vector<uint32> &matrixInfluences, float &dist2D, float &distZ, bool computeDist2D)
 {
 	// *** render the shadow skin into a temp RAM buffer
 	// enlarge temp buffer
-	static std::vector<CVector>	skinInRaySpace;
-	if(Vertices.size()>skinInRaySpace.size())
+	static std::vector<CVector> skinInRaySpace;
+	if (Vertices.size() > skinInRaySpace.size())
 		skinInRaySpace.resize(Vertices.size());
 
 	// compute matrixes
-	static	vector<CMatrix3x4>		boneMat3x4;
+	static vector<CMatrix3x4> boneMat3x4;
 	computeBoneMatrixes3x4PreMul(boneMat3x4, toRaySpace, matrixInfluences, &skeleton);
 
 	// apply the skinning
@@ -89,7 +85,5 @@ bool	CShadowSkin::getRayIntersection(const CMatrix &toRaySpace, CSkeletonModel &
 	// *** return the distance to the ray intersection
 	return CRayMesh::getRayIntersection(skinInRaySpace, Triangles, dist2D, distZ, computeDist2D);
 }
-
-
 
 } // NL3D

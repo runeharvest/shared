@@ -38,14 +38,13 @@ using namespace std;
 
 namespace NLSOUND {
 
-CStreamFileSound::CStreamFileSound() : m_Async(true)
+CStreamFileSound::CStreamFileSound()
+    : m_Async(true)
 {
-	
 }
 
 CStreamFileSound::~CStreamFileSound()
 {
-	
 }
 
 void CStreamFileSound::importForm(const std::string &filename, NLGEORGES::UFormElm &root)

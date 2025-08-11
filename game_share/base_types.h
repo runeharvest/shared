@@ -17,12 +17,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
 #ifndef NL_BASE_TYPES_H
 #define NL_BASE_TYPES_H
-
 
 #include "nel/misc/types_nl.h"
 #include "nel/net/unified_network.h"
@@ -36,8 +32,14 @@
  * \seealso CMirrorDataSet::declareProperty for more info
  */
 typedef uint16 TPropSubscribingOptions;
-enum TPropSubscribingOpt { PSOReadWrite=0, PSOReadOnly=1, PSOWriteOnly=2, PSONotifyChanges=4, PSOMonitorAssignment=8 };
-
+enum TPropSubscribingOpt
+{
+	PSOReadWrite = 0,
+	PSOReadOnly = 1,
+	PSOWriteOnly = 2,
+	PSONotifyChanges = 4,
+	PSOMonitorAssignment = 8
+};
 
 /*
  * STORE_CHANGE_SERVICEIDS
@@ -51,7 +53,7 @@ enum TPropSubscribingOpt { PSOReadWrite=0, PSOReadOnly=1, PSOWriteOnly=2, PSONot
  * Define this macro to enable checking if a datasetrow is still valid every time we access the mirror
  * with it. A datasetrow becomes invalid when the corresponding entity is removed.
  */
-#define	CHECK_DATASETROW_VALIDITY
+#define CHECK_DATASETROW_VALIDITY
 
 #ifndef FINAL_VERSION
 #error "FINAL_VERSION missing"
@@ -62,11 +64,11 @@ enum TPropSubscribingOpt { PSOReadWrite=0, PSOReadOnly=1, PSOWriteOnly=2, PSONot
  * Define this macro to remove all runtime checks in mirror accessors.
  */
 #if FINAL_VERSION
-# ifndef FAST_MIRROR
-#  define FAST_MIRROR
-# endif
+#ifndef FAST_MIRROR
+#define FAST_MIRROR
+#endif
 #else
-# undef FAST_MIRROR
+#undef FAST_MIRROR
 #endif
 
 /*
@@ -74,20 +76,23 @@ enum TPropSubscribingOpt { PSOReadWrite=0, PSOReadOnly=1, PSOWriteOnly=2, PSONot
  * These two macros are equivalent to nlinfo & nldebug respectively except that they allow logging to be dissabled via the variable VerboseMIRROR
  */
 
-#define MIRROR_INFO if (!VerboseMIRROR.get()) {} else nlinfo
-#define MIRROR_DEBUG if (!VerboseMIRROR.get()) {} else nldebug
+#define MIRROR_INFO               \
+	if (!VerboseMIRROR.get()) { } \
+	else nlinfo
+#define MIRROR_DEBUG              \
+	if (!VerboseMIRROR.get()) { } \
+	else nldebug
 
 extern NLMISC::CVariable<bool> VerboseMIRROR;
 
-
-//#ifdef CHECK_DATASETROW_VALIDITY
+// #ifdef CHECK_DATASETROW_VALIDITY
 
 const uint32 INVALID_DATASET_INDEX = 0x00FFFFFF;
 
 // Always simple index
-//class TDataSetIndex
+// class TDataSetIndex
 //{
-//public:
+// public:
 //
 //	/// Default constructor (initializes to INVALID_DATASET_INDEX)
 //	TDataSetIndex() : _Index(INVALID_DATASET_INDEX) {}
@@ -116,7 +121,7 @@ const uint32 INVALID_DATASET_INDEX = 0x00FFFFFF;
 //	uint32	operator	-=(uint32 index)	{	_Index+=index;	return _Index; }
 //	uint32	operator	|=(uint32 index)		{	_Index|=index;	return _Index; }
 //
-//private:
+// private:
 //	uint32			_Index;
 //};
 
@@ -124,10 +129,9 @@ const uint32 INVALID_DATASET_INDEX = 0x00FFFFFF;
 
 //	const TDataSetIndex	LAST_CHANGED((uint32)(INVALID_DATASET_INDEX-1));
 
-typedef	uint32 TDataSetIndex;
-const TDataSetIndex NB_RESERVED_ROWS=1;
-const TDataSetIndex	LAST_CHANGED=INVALID_DATASET_INDEX-1;
-
+typedef uint32 TDataSetIndex;
+const TDataSetIndex NB_RESERVED_ROWS = 1;
+const TDataSetIndex LAST_CHANGED = INVALID_DATASET_INDEX - 1;
 
 /*
  * Version of TDataSetRow with embedded removal counter (to check validity)
@@ -137,20 +141,26 @@ class TDataSetRow
 {
 public:
 	/// Default constructor
-	TDataSetRow() : _EntityIndexAndRemCounter( INVALID_DATASET_INDEX ) {}
+	TDataSetRow()
+	    : _EntityIndexAndRemCounter(INVALID_DATASET_INDEX)
+	{
+	}
 
 	/// Copy constructor
-	TDataSetRow( const TDataSetRow& src ) : _EntityIndexAndRemCounter( src._EntityIndexAndRemCounter ) {}
+	TDataSetRow(const TDataSetRow &src)
+	    : _EntityIndexAndRemCounter(src._EntityIndexAndRemCounter)
+	{
+	}
 
 	/// Assignment
-	TDataSetRow& operator= ( const TDataSetRow& src )
+	TDataSetRow &operator=(const TDataSetRow &src)
 	{
 		_EntityIndexAndRemCounter = src._EntityIndexAndRemCounter;
 		return *this;
 	}
 
 	/// Explicit index
-	TDataSetIndex		getIndex() const { return _EntityIndexAndRemCounter & 0xFFFFFF; }
+	TDataSetIndex getIndex() const { return _EntityIndexAndRemCounter & 0xFFFFFF; }
 
 	/**
 	 * Get a compressed 20-bit index.
@@ -163,75 +173,100 @@ public:
 	 *   reassigned, so don't use this scheme if you don't check the uncompressed index
 	 *   before the min reassignment time.
 	 */
-	TDataSetIndex		getCompressedIndex() const
+	TDataSetIndex getCompressedIndex() const
 	{
-		//nlassert( datasetRow.getIndex() < 0xFFFFF );
+		// nlassert( datasetRow.getIndex() < 0xFFFFF );
 		return _EntityIndexAndRemCounter & 0xFFFFF;
 	}
 
-//	!!! be careful, I removed operator= because TDataSetIndex is an int and there is permissious side effects with the use of CEntityId.
-/// Assignment (no rem counter)
-//	TDataSetRow& operator= ( TDataSetIndex srcIndex )
-//	{
-//		_EntityIndexAndRemCounter = srcIndex;
-//		return *this;
-//	}
-//	/// Return the real index (without the packed counter)
-//	operator TDataSetIndex () const { return getIndex(); } // 24 lower bits
+	//	!!! be careful, I removed operator= because TDataSetIndex is an int and there is permissious side effects with the use of CEntityId.
+	/// Assignment (no rem counter)
+	//	TDataSetRow& operator= ( TDataSetIndex srcIndex )
+	//	{
+	//		_EntityIndexAndRemCounter = srcIndex;
+	//		return *this;
+	//	}
+	//	/// Return the real index (without the packed counter)
+	//	operator TDataSetIndex () const { return getIndex(); } // 24 lower bits
 
 	/// Prefix incrementation
-	TDataSetRow& operator++ () { ++_EntityIndexAndRemCounter; return *this; }
+	TDataSetRow &operator++()
+	{
+		++_EntityIndexAndRemCounter;
+		return *this;
+	}
 
 	/// Prefix decrementation
-	TDataSetRow& operator-- () { --_EntityIndexAndRemCounter; return *this; }
+	TDataSetRow &operator--()
+	{
+		--_EntityIndexAndRemCounter;
+		return *this;
+	}
 
 	/// Postfix incrementation
-	TDataSetRow  operator++ ( int ) { TDataSetIndex value = _EntityIndexAndRemCounter; ++_EntityIndexAndRemCounter; return TDataSetRow(value); }
+	TDataSetRow operator++(int)
+	{
+		TDataSetIndex value = _EntityIndexAndRemCounter;
+		++_EntityIndexAndRemCounter;
+		return TDataSetRow(value);
+	}
 
 	/// Postfix decrementation
-	TDataSetRow  operator-- ( int ) { TDataSetIndex value = _EntityIndexAndRemCounter; --_EntityIndexAndRemCounter; return TDataSetRow(value); }
+	TDataSetRow operator--(int)
+	{
+		TDataSetIndex value = _EntityIndexAndRemCounter;
+		--_EntityIndexAndRemCounter;
+		return TDataSetRow(value);
+	}
 
 	/// Add
-	TDataSetRow& operator+= ( uint32 delta ) { _EntityIndexAndRemCounter += delta; return *this; }
+	TDataSetRow &operator+=(uint32 delta)
+	{
+		_EntityIndexAndRemCounter += delta;
+		return *this;
+	}
 
 	/// Sub
-	TDataSetRow& operator-= ( uint32 delta ) { _EntityIndexAndRemCounter -= delta; return *this; }
+	TDataSetRow &operator-=(uint32 delta)
+	{
+		_EntityIndexAndRemCounter -= delta;
+		return *this;
+	}
 
 	//	Used by Less STL template method. ( it must be slow .. :( )
-	bool	operator	<(const	TDataSetRow	&other)		const	{	return	_EntityIndexAndRemCounter<other._EntityIndexAndRemCounter; 	}
-	bool	operator	!=(const	TDataSetRow	&other)	const	{	return	_EntityIndexAndRemCounter!=other._EntityIndexAndRemCounter; }
-	bool	operator	==(const	TDataSetRow	&other)	const	{	return	_EntityIndexAndRemCounter==other._EntityIndexAndRemCounter; }
+	bool operator<(const TDataSetRow &other) const { return _EntityIndexAndRemCounter < other._EntityIndexAndRemCounter; }
+	bool operator!=(const TDataSetRow &other) const { return _EntityIndexAndRemCounter != other._EntityIndexAndRemCounter; }
+	bool operator==(const TDataSetRow &other) const { return _EntityIndexAndRemCounter == other._EntityIndexAndRemCounter; }
 
-	bool	operator	!=(TDataSetIndex	val)	{	return	getIndex()!=val; 	}
-	bool	operator	==(TDataSetIndex	val)	{	return	getIndex()==val; 	}
+	bool operator!=(TDataSetIndex val) { return getIndex() != val; }
+	bool operator==(TDataSetIndex val) { return getIndex() == val; }
 
 	/// Return the entity binding counter
-	uint8		counter() const { return (uint8)(_EntityIndexAndRemCounter >> 24); }
-
+	uint8 counter() const { return (uint8)(_EntityIndexAndRemCounter >> 24); }
 
 	/// Return true if the datasetrow is initialised to a valid value
-	bool		isValid	()	const
+	bool isValid() const
 	{
-		return (getIndex()!=INVALID_DATASET_INDEX);
+		return (getIndex() != INVALID_DATASET_INDEX);
 	}
 
 	/// Return true if the datasetrow is not ininitialized
-	bool		isNull() const
+	bool isNull() const
 	{
-		return (getIndex()==INVALID_DATASET_INDEX);
+		return (getIndex() == INVALID_DATASET_INDEX);
 	}
 
 	/// Serial (index and removal counter)
-	void		serial( NLMISC::IStream& s )
+	void serial(NLMISC::IStream &s)
 	{
-		s.serial( _EntityIndexAndRemCounter );
+		s.serial(_EntityIndexAndRemCounter);
 	}
 
 	/// Return a string representing the datasetrow
-	std::string	toString() const;
+	std::string toString() const;
 
 	/// Set to LAST_CHANGED
-	void		initToLastChanged()
+	void initToLastChanged()
 	{
 		_EntityIndexAndRemCounter = LAST_CHANGED;
 	}
@@ -240,66 +275,72 @@ public:
 	class CHashCode
 	{
 	public:
+		CHashCode() { }
 
-		CHashCode() {}
+		enum
+		{
+			bucket_size = 4,
+			min_buckets = 8
+		};
 
-		enum { bucket_size = 4, min_buckets = 8 };
+		size_t operator()(const TDataSetRow &index) const { return index.getHashCode(); }
 
-		size_t	operator () ( const TDataSetRow &index ) const { return index.getHashCode(); }
-
-		bool operator() (const TDataSetRow &index1, const TDataSetRow &index2) const { return index1 < index2; }
+		bool operator()(const TDataSetRow &index1, const TDataSetRow &index2) const { return index1 < index2; }
 	};
 
 	/// Warning: method to avoid (use it only when using rows as a static array)
-	static TDataSetRow createFromRawIndex( TDataSetIndex entityIndex ) { return TDataSetRow(entityIndex); }
+	static TDataSetRow createFromRawIndex(TDataSetIndex entityIndex) { return TDataSetRow(entityIndex); }
 
 private:
 	friend class TDataSetRow::CHashCode;
 
 	//	allows full access to ..
-	friend	class	CMirror;
-	friend	class	CMirrors;
-	friend	class	CRangeList;
-	friend	class	CDataSetMS;
-	friend	class	CDeltaToMS;
-	friend	class	CDataSetBase;
-	friend	class	CMirrorService;
-	friend	class	CMirroredDataSet;
-	friend	class	CChangeTrackerBase;
-	friend	class	CChangeTrackerClient;
-	friend	class	CPropLocationUnpacked;
-	friend	class	CPropLocationPacked1DS;
+	friend class CMirror;
+	friend class CMirrors;
+	friend class CRangeList;
+	friend class CDataSetMS;
+	friend class CDeltaToMS;
+	friend class CDataSetBase;
+	friend class CMirrorService;
+	friend class CMirroredDataSet;
+	friend class CChangeTrackerBase;
+	friend class CChangeTrackerClient;
+	friend class CPropLocationUnpacked;
+	friend class CPropLocationPacked1DS;
 
-	friend	struct	monitorMirrorEntityClass;
-	friend	struct	TClientServiceInfoOwnedRange;
+	friend struct monitorMirrorEntityClass;
+	friend struct TClientServiceInfoOwnedRange;
 
 	//	hide this type of constructors ( only use it in mirror methods ).
 	/// Simple constructor (no rem counter)
-	explicit		TDataSetRow( TDataSetIndex entityIndex ) : _EntityIndexAndRemCounter( entityIndex ) {}
+	explicit TDataSetRow(TDataSetIndex entityIndex)
+	    : _EntityIndexAndRemCounter(entityIndex)
+	{
+	}
 
 	/// Constructor
-	explicit		TDataSetRow( TDataSetIndex entityIndex, uint8 remCounter )
+	explicit TDataSetRow(TDataSetIndex entityIndex, uint8 remCounter)
 	{
-//		_EntityIndexAndRemCounter = ((uint32)entityIndex) | ((uint32)remCounter << 24);
-		_EntityIndexAndRemCounter=entityIndex;
-		RemCounter=remCounter;
+		//		_EntityIndexAndRemCounter = ((uint32)entityIndex) | ((uint32)remCounter << 24);
+		_EntityIndexAndRemCounter = entityIndex;
+		RemCounter = remCounter;
 	}
 
 	/// Set the index, no rem counter (yet)
-	void			initFromIndex ( TDataSetIndex srcIndex )
+	void initFromIndex(TDataSetIndex srcIndex)
 	{
 		_EntityIndexAndRemCounter = srcIndex;
 	}
 
 	/// Fill the entity binding counter
-	void			setCounter( uint8 remCounter )
+	void setCounter(uint8 remCounter)
 	{
-//		_EntityIndexAndRemCounter |= ((uint32)remCounter << 24);
-		RemCounter=remCounter;
+		//		_EntityIndexAndRemCounter |= ((uint32)remCounter << 24);
+		RemCounter = remCounter;
 	}
 
 	/// Get Hash code
-	uint32		getHashCode() const
+	uint32 getHashCode() const
 	{
 		return NLMISC::wangHash((uint32)(getIndex()));
 	}
@@ -308,28 +349,27 @@ private:
 	{
 		struct
 		{
-			TDataSetIndex	_EntityIndexAndRemCounter;
+			TDataSetIndex _EntityIndexAndRemCounter;
 		};
 		struct
 		{
-			uint8	dummy[3];
-			uint8	RemCounter;
+			uint8 dummy[3];
+			uint8 RemCounter;
 		};
 	};
 };
 
-//#else
+// #else
 //// Row (which is mainly an index)
-//typedef sint32 TDataSetRow;
+// typedef sint32 TDataSetRow;
 //// Always simple index
-//typedef sint32 TDataSetIndex;
-//#endif
-
+// typedef sint32 TDataSetIndex;
+// #endif
 
 /*
  * Constants
  */
-const TDataSetIndex INVALID_DATASET_ROW ((uint32)0x00FFFFFF); // leaving blank the most significant byte (see removal counter when CHECK_DATASETROW_VALIDITY is enabled)
+const TDataSetIndex INVALID_DATASET_ROW((uint32)0x00FFFFFF); // leaving blank the most significant byte (see removal counter when CHECK_DATASETROW_VALIDITY is enabled)
 
 /*
  * Short datasetrow used to reduce network overhead
@@ -343,33 +383,30 @@ const TDataSetRow16 INVALID_DATASET_ROW_16 = (TDataSetRow16)~0;
 typedef uint8 TDataSetRow8;
 const TDataSetRow8 INVALID_DATASET_ROW_8 = (TDataSetRow8)~0;
 
-
 /*
  * Range entry
  */
 struct TRowRange
 {
-	TDataSetIndex				First;
-	TDataSetIndex				Last;
-	NLNET::TServiceId			OwnerServiceId;
-	NLNET::TServiceId			MirrorServiceId;
+	TDataSetIndex First;
+	TDataSetIndex Last;
+	NLNET::TServiceId OwnerServiceId;
+	NLNET::TServiceId MirrorServiceId;
 
-	void serial( NLMISC::IStream& s )
+	void serial(NLMISC::IStream &s)
 	{
-		s.serial( First );
-		s.serial( Last );
-		s.serial( OwnerServiceId );
+		s.serial(First);
+		s.serial(Last);
+		s.serial(OwnerServiceId);
 		// No need of the MirrorServiceId, currently
 	}
 };
-
 
 /*
  * Type for the index of property in a dataset
  */
 typedef sint16 TPropertyIndex;
 const TPropertyIndex INVALID_PROPERTY_INDEX = (TPropertyIndex)~0;
-
 
 /*
  * Type for the row in a shared list associated to a property in a dataset
@@ -385,7 +422,7 @@ const uint NB_SHAREDLIST_CELLS = 500000; // property+list container footprint wi
 #else
 
 typedef uint16 TSharedListRow;
-const TSharedListRow INVALID_SHAREDLIST_ROW = std::numeric_limits<uint16>::max()-1;
+const TSharedListRow INVALID_SHAREDLIST_ROW = std::numeric_limits<uint16>::max() - 1;
 const uint NB_SHAREDLIST_CELLS = INVALID_SHAREDLIST_ROW; // property+list container footprint with data size of 32 bit and 500000 rows: 1.3 MB
 
 #endif

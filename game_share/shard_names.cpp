@@ -14,13 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdpch.h"
 #include "shard_names.h"
 
 using namespace std;
 using namespace NLMISC;
-
 
 // ***************************************************************************
 void CShardNames::init(NLMISC::CConfigFile &configFile)
@@ -35,15 +33,14 @@ void CShardNames::init(NLMISC::CConfigFile &configFile)
 	{
 		uint32 sessionId;
 
-		for (uint i=0; i<sessionNames->size()/3; ++i)
+		for (uint i = 0; i < sessionNames->size() / 3; ++i)
 		{
 			TSessionName sn;
-			fromString(sessionNames->asString(i*3), sessionId);
+			fromString(sessionNames->asString(i * 3), sessionId);
 			sn.SessionId = (TSessionId)sessionId;
-			sn.DisplayName = sessionNames->asString(i*3+1);
-			sn.ShortName = sessionNames->asString(i*3+2);
+			sn.DisplayName = sessionNames->asString(i * 3 + 1);
+			sn.ShortName = sessionNames->asString(i * 3 + 2);
 			sn.DisplayNameId = CStringMapper::map(sn.DisplayName);
-
 
 			_SessionNames.push_back(sn);
 		}
@@ -52,12 +49,12 @@ void CShardNames::init(NLMISC::CConfigFile &configFile)
 	}
 
 	// read the var to append or not (). Use DontUseSU one for simplicity (but this is for server only...)
-	CConfigFile::CVar	*dontUseSU = configFile.getVarPtr("DontUseSU");
-	_AppendParenthesisWhenSessionNotFound= true;	// default
-	if(dontUseSU!=NULL)
+	CConfigFile::CVar *dontUseSU = configFile.getVarPtr("DontUseSU");
+	_AppendParenthesisWhenSessionNotFound = true; // default
+	if (dontUseSU != NULL)
 	{
 		// do not append () if DontUseSU==1
-		_AppendParenthesisWhenSessionNotFound= dontUseSU->asInt()==0;
+		_AppendParenthesisWhenSessionNotFound = dontUseSU->asInt() == 0;
 	}
 }
 
@@ -65,13 +62,13 @@ void CShardNames::init(NLMISC::CConfigFile &configFile)
 void CShardNames::saveShardNames(std::vector<string> &outData) const
 {
 	// backup a vector<string> version of the data
-	outData.resize(_SessionNames.size()*3);
-	for(uint i=0;i<_SessionNames.size();i++)
+	outData.resize(_SessionNames.size() * 3);
+	for (uint i = 0; i < _SessionNames.size(); i++)
 	{
-		const TSessionName &sn= _SessionNames[i];
-		outData[i*3+0]= toString(sn.SessionId);
-		outData[i*3+1]= sn.DisplayName;
-		outData[i*3+2]= sn.ShortName;
+		const TSessionName &sn = _SessionNames[i];
+		outData[i * 3 + 0] = toString(sn.SessionId);
+		outData[i * 3 + 1] = sn.DisplayName;
+		outData[i * 3 + 2] = sn.ShortName;
 	}
 }
 
@@ -84,13 +81,13 @@ void CShardNames::loadShardNames(const std::vector<string> &inData)
 	uint32 sessionId;
 
 	// parse the vector of string
-	for (uint i=0; i<inData.size()/3; ++i)
+	for (uint i = 0; i < inData.size() / 3; ++i)
 	{
 		TSessionName sn;
-		fromString(inData[i*3+0], sessionId);
+		fromString(inData[i * 3 + 0], sessionId);
 		sn.SessionId = (TSessionId)sessionId;
-		sn.DisplayName = inData[i*3+1];
-		sn.ShortName = inData[i*3+2];
+		sn.DisplayName = inData[i * 3 + 1];
+		sn.ShortName = inData[i * 3 + 2];
 		sn.DisplayNameId = CStringMapper::map(sn.DisplayName);
 
 		_SessionNames.push_back(sn);
@@ -100,7 +97,7 @@ void CShardNames::loadShardNames(const std::vector<string> &inData)
 // ***************************************************************************
 const std::string &CShardNames::getShardName(TSessionId shardId)
 {
-	for (uint i=0; i<_SessionNames.size(); ++i)
+	for (uint i = 0; i < _SessionNames.size(); ++i)
 	{
 		if (_SessionNames[i].SessionId == shardId)
 			return _SessionNames[i].DisplayName;
@@ -111,11 +108,10 @@ const std::string &CShardNames::getShardName(TSessionId shardId)
 	return empty;
 }
 
-
 /** Return the index in the shard names table of the shard. */
 uint32 CShardNames::getShardIndex(TSessionId shardId)
 {
-	for (uint i=0; i<_SessionNames.size(); ++i)
+	for (uint i = 0; i < _SessionNames.size(); ++i)
 	{
 		if (_SessionNames[i].SessionId == shardId)
 			return i;
@@ -128,7 +124,7 @@ uint32 CShardNames::getShardIndex(TSessionId shardId)
 // ***************************************************************************
 TSessionId CShardNames::getShardId(const std::string &shardName)
 {
-	for (uint i=0; i<_SessionNames.size(); ++i)
+	for (uint i = 0; i < _SessionNames.size(); ++i)
 	{
 		if (_SessionNames[i].DisplayName == shardName)
 			return _SessionNames[i].SessionId;
@@ -149,10 +145,10 @@ void CShardNames::parseRelativeName(TSessionId contextSessionId, const string &i
 	{
 		// we have a short name !
 		string shortName = inputCharName.substr(0, pos);
-		outCharName = inputCharName.substr(pos+1);
+		outCharName = inputCharName.substr(pos + 1);
 
 		// look in the session name table
-		for (uint i=0; i<_SessionNames.size(); ++i)
+		for (uint i = 0; i < _SessionNames.size(); ++i)
 		{
 			if (nlstricmp(_SessionNames[i].ShortName, shortName) == 0)
 			{
@@ -173,10 +169,11 @@ void CShardNames::parseRelativeName(TSessionId contextSessionId, const string &i
 		else
 		{
 			// we have the full session name
-			string sessionName = inputCharName.substr(pos+1, inputCharName.size()-pos-2);
-			outCharName = inputCharName.substr(0, pos);;
+			string sessionName = inputCharName.substr(pos + 1, inputCharName.size() - pos - 2);
+			outCharName = inputCharName.substr(0, pos);
+			;
 			// look in the session name table
-			for (uint i=0; i<_SessionNames.size(); ++i)
+			for (uint i = 0; i < _SessionNames.size(); ++i)
 			{
 				if (nlstricmp(_SessionNames[i].DisplayName, sessionName) == 0)
 				{
@@ -188,26 +185,24 @@ void CShardNames::parseRelativeName(TSessionId contextSessionId, const string &i
 	}
 }
 
-
 // ***************************************************************************
 std::string CShardNames::makeFullName(const std::string &charName, TSessionId homeSessionId)
 {
 	// look in the session name table
-	for (uint i=0; i<_SessionNames.size(); ++i)
+	for (uint i = 0; i < _SessionNames.size(); ++i)
 	{
 		if (_SessionNames[i].SessionId == homeSessionId)
 		{
-			return charName+"("+_SessionNames[i].DisplayName+")";
+			return charName + "(" + _SessionNames[i].DisplayName + ")";
 		}
 	}
 
 	// session not found
-	if(_AppendParenthesisWhenSessionNotFound)
-		return charName+toString("(%u)", homeSessionId.asInt());
+	if (_AppendParenthesisWhenSessionNotFound)
+		return charName + toString("(%u)", homeSessionId.asInt());
 	else
 		return charName;
 }
-
 
 // ***************************************************************************
 std::string CShardNames::makeFullNameFromRelative(TSessionId contextSessionId, const std::string &inputcharName)

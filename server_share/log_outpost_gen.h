@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef _LOG_GEN_OUTPOST_H
 #define _LOG_GEN_OUTPOST_H
 
@@ -24,16 +22,12 @@
 #include "nel/misc/sheet_id.h"
 #include "game_share/inventories.h"
 
-
-
 /// No context context. Use this to disable any contextual log underneath
 struct TLogNoContext_Outpost
 {
 	TLogNoContext_Outpost();
 	~TLogNoContext_Outpost();
 };
-
-
 
 void _log_Outpost_Challenge(const std::string &outpostName, const std::string &ownerGuildName, const std::string &challengerGuildName, const char *_filename_, uint _lineNo_);
 #define log_Outpost_Challenge(outpostName, ownerGuildName, challengerGuildName) \
@@ -51,6 +45,4 @@ void _log_Outpost_BuyOption(const std::string &outpostName, const std::string &o
 #define log_Outpost_BuyOption(outpostName, ownerGuildName, buildingSheet) \
 	_log_Outpost_BuyOption(outpostName, ownerGuildName, buildingSheet, __FILE__, __LINE__)
 
-
 #endif
-

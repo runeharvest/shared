@@ -39,7 +39,7 @@
 #include <nel/sound/stream_file_sound.h>
 
 namespace NLSOUND {
-	class IAudioDecoder;
+class IAudioDecoder;
 
 /**
  * \brief CStreamFileSource
@@ -54,16 +54,16 @@ public:
 	virtual ~CStreamFileSource();
 
 	/// Return the source type
-	TSOURCE_TYPE					getType() const								{ return SOURCE_STREAM_FILE; }
+	TSOURCE_TYPE getType() const { return SOURCE_STREAM_FILE; }
 
 	/// \name Playback control
 	//@{
 	/// Play
-	virtual void					play();
+	virtual void play();
 	/// Stop playing
-	virtual void					stop();
+	virtual void stop();
 	/// Get playing state. Return false even if the source has stopped on its own.
-	virtual bool					isPlaying();
+	virtual bool isPlaying();
 	/// Pause (following legacy music channel implementation)
 	void pause();
 	/// Resume (following legacy music channel implementation)
@@ -78,7 +78,7 @@ public:
 
 	/// \name Decoding thread
 	//@{
-	virtual void getName (std::string &result) const { result = "CStreamFileSource"; }
+	virtual void getName(std::string &result) const { result = "CStreamFileSource"; }
 	virtual void run();
 	//@}
 

@@ -24,18 +24,13 @@
 #include "nel/3d/mesh.h"
 #include <vector>
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 using NLMISC::CVector;
 using NLMISC::CVectorH;
 
-
 // ***************************************************************************
-#define	NL3D_MRM_MAX_ATTRIB		12
-
+#define NL3D_MRM_MAX_ATTRIB 12
 
 // ***************************************************************************
 /**
@@ -44,19 +39,18 @@ using NLMISC::CVectorH;
  * \author Nevrax France
  * \date 2000
  */
-struct	CMRMCorner
+struct CMRMCorner
 {
 	// The id of the vertex.
-	sint	Vertex;
+	sint Vertex;
 	// The ids of the wedges. Points on Attributes of the mesh.
-	sint	Attributes[NL3D_MRM_MAX_ATTRIB];
+	sint Attributes[NL3D_MRM_MAX_ATTRIB];
 
 	// For CMRMMeshFinal computing, wedge ids.
-	sint	WedgeStartId;
-	sint	WedgeEndId;
-	sint	WedgeGeomId;
+	sint WedgeStartId;
+	sint WedgeEndId;
+	sint WedgeGeomId;
 };
-
 
 // ***************************************************************************
 /**
@@ -65,15 +59,14 @@ struct	CMRMCorner
  * \author Nevrax France
  * \date 2000
  */
-struct	CMRMFace
+struct CMRMFace
 {
 public:
 	// The 3 corner indices of the face.
-	CMRMCorner		Corner[3];
+	CMRMCorner Corner[3];
 	// The id of the material. Used for material boundaries.
-	sint			MaterialId;
+	sint MaterialId;
 };
-
 
 // ***************************************************************************
 /**
@@ -83,17 +76,16 @@ public:
  * \date 2000
  * \see CMRMBuilder
  */
-class	CMRMBlendShape
+class CMRMBlendShape
 {
 public:
 	// The vertices of the MRMMesh.
-	std::vector<CVector>		Vertices;
+	std::vector<CVector> Vertices;
 	// The attributes of the MRMMesh.
-	std::vector<CVectorH>		Attributes[NL3D_MRM_MAX_ATTRIB];
+	std::vector<CVectorH> Attributes[NL3D_MRM_MAX_ATTRIB];
 	// The number of used attributes of the MRMMesh.
-	sint						NumAttributes;
+	sint NumAttributes;
 };
-
 
 // ***************************************************************************
 /**
@@ -107,29 +99,25 @@ class CMRMMesh
 {
 public:
 	// The vertices of the MRMMesh.
-	std::vector<CVector>				Vertices;
+	std::vector<CVector> Vertices;
 	// The skinWeights of the MRMMesh. same size than Vertices.
-	std::vector<CMesh::CSkinWeight>		SkinWeights;
+	std::vector<CMesh::CSkinWeight> SkinWeights;
 	// The link to the original meshInterface vertex. same size than Vertices.
-	std::vector<CMesh::CInterfaceLink>	InterfaceLinks;
+	std::vector<CMesh::CInterfaceLink> InterfaceLinks;
 	// The attributes of the MRMMesh.
-	std::vector<CVectorH>		Attributes[NL3D_MRM_MAX_ATTRIB];
+	std::vector<CVectorH> Attributes[NL3D_MRM_MAX_ATTRIB];
 	// The number of used attributes of the MRMMesh.
-	sint						NumAttributes;
+	sint NumAttributes;
 	// The faces of the MRMMesh.
-	std::vector<CMRMFace>		Faces;
-
+	std::vector<CMRMFace> Faces;
 
 	/// List of BlendShapes.
-	std::vector<CMRMBlendShape>		BlendShapes;
-
+	std::vector<CMRMBlendShape> BlendShapes;
 
 public:
 	/// Constructor
 	CMRMMesh();
-
 };
-
 
 // ***************************************************************************
 /**
@@ -143,22 +131,20 @@ class CMRMMeshGeom : public CMRMMesh
 {
 public:
 	/// Same size than Faces, but points onto coarser Mesh verices. NB: MaterialId means nothing here.
-	std::vector<CMRMFace>		CoarserFaces;
+	std::vector<CMRMFace> CoarserFaces;
 
-
-	CMRMMeshGeom	&operator=(const CMRMMesh &o)
+	CMRMMeshGeom &operator=(const CMRMMesh &o)
 	{
-		(CMRMMesh&)(*this)= o;
+		(CMRMMesh &)(*this) = o;
 		// copy faces into CoarserFaces.
-		CoarserFaces= Faces;
+		CoarserFaces = Faces;
 		return *this;
 	}
 
 public:
 	/// Constructor
-	CMRMMeshGeom() {}
+	CMRMMeshGeom() { }
 };
-
 
 // ***************************************************************************
 /**
@@ -168,20 +154,18 @@ public:
  * \date 2000
  * \see CMRMBuilder
  */
-struct	CMRMWedgeGeom
+struct CMRMWedgeGeom
 {
 	/// The start wedge index of the geomorph.
-	uint32	Start;
+	uint32 Start;
 	/// The end wedge index of the geomorph.
-	uint32	End;
+	uint32 End;
 
-
-	void	serial(NLMISC::IStream &f)
+	void serial(NLMISC::IStream &f)
 	{
 		f.serial(Start, End);
 	}
 };
-
 
 // ***************************************************************************
 /**
@@ -191,44 +175,43 @@ struct	CMRMWedgeGeom
  * \date 2000
  * \see CMRMBuilder
  */
-class	CMRMMeshFinal
+class CMRMMeshFinal
 {
 public:
-
 	// An wedge value (vertex + all attribs).
-	struct	CWedge
+	struct CWedge
 	{
 		CWedge();
-		CMesh::CSkinWeight		VertexSkin;
+		CMesh::CSkinWeight VertexSkin;
 		// Number of matrix this wedge use.
-		uint		NSkinMatUsed;
-		CVector		Vertex;
-		CVectorH	Attributes[NL3D_MRM_MAX_ATTRIB];
-		static		uint	NumAttributesToCompare;
-		static		bool	CompareSkinning;
+		uint NSkinMatUsed;
+		CVector Vertex;
+		CVectorH Attributes[NL3D_MRM_MAX_ATTRIB];
+		static uint NumAttributesToCompare;
+		static bool CompareSkinning;
 
-		bool	operator<(const CWedge &o) const
+		bool operator<(const CWedge &o) const
 		{
-			if(Vertex!=o.Vertex)
-				return Vertex<o.Vertex;
+			if (Vertex != o.Vertex)
+				return Vertex < o.Vertex;
 			else
 			{
-				nlassert(NumAttributesToCompare<=NL3D_MRM_MAX_ATTRIB);
-				for(uint i=0; i<NumAttributesToCompare; i++)
+				nlassert(NumAttributesToCompare <= NL3D_MRM_MAX_ATTRIB);
+				for (uint i = 0; i < NumAttributesToCompare; i++)
 				{
-					if(Attributes[i]!=o.Attributes[i])
-						return Attributes[i]<o.Attributes[i];
+					if (Attributes[i] != o.Attributes[i])
+						return Attributes[i] < o.Attributes[i];
 				}
 			}
 
 			// They may be different by their skin Weight.
-			if(CompareSkinning)
+			if (CompareSkinning)
 			{
-				for(uint i=0; i<NL3D_MESH_SKINNING_MAX_MATRIX; i++)
+				for (uint i = 0; i < NL3D_MESH_SKINNING_MAX_MATRIX; i++)
 				{
-					if( VertexSkin.MatrixId[i] != o.VertexSkin.MatrixId[i] )
+					if (VertexSkin.MatrixId[i] != o.VertexSkin.MatrixId[i])
 						return VertexSkin.MatrixId[i] < o.VertexSkin.MatrixId[i];
-					if( VertexSkin.Weights[i] != o.VertexSkin.Weights[i] )
+					if (VertexSkin.Weights[i] != o.VertexSkin.Weights[i])
 						return VertexSkin.Weights[i] < o.VertexSkin.Weights[i];
 				}
 			}
@@ -239,79 +222,69 @@ public:
 	};
 
 	// a face.
-	struct	CFace
+	struct CFace
 	{
 		/// Three index on the wedegs.
-		sint		WedgeId[3];
+		sint WedgeId[3];
 		/// the material id.
-		sint		MaterialId;
+		sint MaterialId;
 	};
-
 
 	// A LOD information for the final MRM representation.
-	struct	CLod
+	struct CLod
 	{
 		/// this tells how many wedges in the Wedges array this lod requires. this is useful for partial loading.
-		sint						NWedges;
+		sint NWedges;
 		/// This is the face list for this LOD.
-		std::vector<CFace>			Faces;
+		std::vector<CFace> Faces;
 		/// List of geomorphs.
-		std::vector<CMRMWedgeGeom>	Geomorphs;
+		std::vector<CMRMWedgeGeom> Geomorphs;
 	};
 
-
-	struct	CMRMBlendShapeFinal
+	struct CMRMBlendShapeFinal
 	{
-		std::vector<CWedge>			Wedges;
+		std::vector<CWedge> Wedges;
 	};
 
 public:
 	/** The wedges of the final mesh. Contains all Wedges for all lods, sorted from LOD0 to LODN,
 	 * with additional empty wedges, for geomorph.
 	 */
-	std::vector<CWedge>			Wedges;
+	std::vector<CWedge> Wedges;
 	/// This tells the number of empty wedges, for geomorph.
-	sint						NGeomSpace;
+	sint NGeomSpace;
 	/// The number of used attributes of the MRMMesh.
-	sint						NumAttributes;
+	sint NumAttributes;
 	/// If the Mesh is skinned.
-	bool						Skinned;
+	bool Skinned;
 	/// the finals Lods of the MRM.
-	std::vector<CLod>			Lods;
+	std::vector<CLod> Lods;
 
-
-	std::vector<CMRMBlendShapeFinal>			MRMBlendShapesFinals;
-
+	std::vector<CMRMBlendShapeFinal> MRMBlendShapesFinals;
 
 	CMRMMeshFinal()
 	{
-		NumAttributes= 0;
+		NumAttributes = 0;
 	}
 
-
 	/// add a wedge to this mesh, or return id if exist yet.
-	sint	findInsertWedge(const CWedge &w);
+	sint findInsertWedge(const CWedge &w);
 
-
-	void	reset()
+	void reset()
 	{
 		Wedges.clear();
 		_WedgeMap.clear();
 		Lods.clear();
-		NumAttributes= 0;
+		NumAttributes = 0;
 	}
-
 
 private:
 	// The map of wedges to wedges index.
-	typedef std::map<CWedge, sint>		TWedgeMap;
-	TWedgeMap			_WedgeMap;
-
+	typedef std::map<CWedge, sint> TWedgeMap;
+	TWedgeMap _WedgeMap;
 };
 
-
 } // NL3D
-
 
 #endif // NL_MRM_MESH_H
 

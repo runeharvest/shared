@@ -24,10 +24,7 @@
 #include "nel/3d/animation_set_user.h"
 #include "nel/3d/ptr_set.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 /**
@@ -39,42 +36,34 @@ namespace NL3D
 class CPlayListManagerUser : public UPlayListManager
 {
 private:
-	CPlayListManager		_PlayListManager;
-	CPtrSet<CPlayListUser>	_PlayLists;
-
+	CPlayListManager _PlayListManager;
+	CPtrSet<CPlayListUser> _PlayLists;
 
 public:
-
 	/// Constructor
 	CPlayListManagerUser()
 	{
 	}
 
-
 	/** Create a playlist, instance of an animation set. nlerror if(animSet==NULL).
 	 */
-	virtual	UPlayList	*createPlayList(UAnimationSet	*animSet);
+	virtual UPlayList *createPlayList(UAnimationSet *animSet);
 	/** Delete a playlist. nlerror if not found. no-op if playList==NULL.
 	 */
-	virtual	void		deletePlayList(UPlayList *playList);
-
+	virtual void deletePlayList(UPlayList *playList);
 
 	/** Animate all the playlist. Only the globals channels are animated.
 	 * NB: all AnimationTime are in second.
 	 */
-	virtual	void		animate(TGlobalAnimationTime	time);
-
+	virtual void animate(TGlobalAnimationTime time);
 
 	/** Setup all the playlist.
 	 * NB: all AnimationTime are in second.
 	 */
-	virtual	void		setup(TGlobalAnimationTime	time);
-
+	virtual void setup(TGlobalAnimationTime time);
 };
 
-
 } // NL3D
-
 
 #endif // NL_PLAY_LIST_MANAGER_USER_H
 

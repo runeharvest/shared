@@ -16,11 +16,9 @@
 
 #include "nel/misc/thread.h"
 
-namespace NLSOUND
-{
+namespace NLSOUND {
 
 class IBuffer;
-
 
 /**
  * CAsyncFileManagerSound is a class that manage sound file loading in a seperate thread
@@ -33,28 +31,27 @@ class IBuffer;
 class CAsyncFileManagerSound
 {
 	NLMISC_SAFE_SINGLETON_DECL(CAsyncFileManagerSound);
+
 public:
-//	static	CAsyncFileManagerSound &getInstance();
-	static  void	terminate();
+	//	static	CAsyncFileManagerSound &getInstance();
+	static void terminate();
 
-
-	void	loadWavFile(IBuffer *pdestBuffer, const std::string &filename);
-	void	cancelLoadWaveFile(const std::string &filename);
+	void loadWavFile(IBuffer *pdestBuffer, const std::string &filename);
+	void cancelLoadWaveFile(const std::string &filename);
 
 	// Do not use these methods with the bigfile manager
-	void loadFile (const std::string &fileName, uint8 **pPtr);
-	void loadFiles (const std::vector<std::string> &vFileNames, const std::vector<uint8**> &vPtrs);
+	void loadFile(const std::string &fileName, uint8 **pPtr);
+	void loadFiles(const std::vector<std::string> &vFileNames, const std::vector<uint8 **> &vPtrs);
 
-	void signal (bool *pSgn); // Signal a end of loading for a group of "mesh or file" added
-	void cancelSignal (bool *pSgn);
+	void signal(bool *pSgn); // Signal a end of loading for a group of "mesh or file" added
+	void cancelSignal(bool *pSgn);
 
 private:
 	/// Constructor
-	CAsyncFileManagerSound() {}
+	CAsyncFileManagerSound() { }
 
 	/// Singleton instance.
-//	static CAsyncFileManagerSound	*_Singleton;
-
+	//	static CAsyncFileManagerSound	*_Singleton;
 
 	/// A non exported class for load canceling purpose.
 	friend class CCancelLoadWavFile;
@@ -62,15 +59,14 @@ private:
 	// Load task.
 	class CLoadWavFile : public NLMISC::IRunnable
 	{
-		IBuffer		*_pDestbuffer;
+		IBuffer *_pDestbuffer;
 
 	public:
-		std::string	_Filename;
+		std::string _Filename;
 
-		CLoadWavFile (IBuffer *pdestBuffer, const std::string &filename);
-		void run (void);
+		CLoadWavFile(IBuffer *pdestBuffer, const std::string &filename);
+		void run(void);
 	};
-
 };
 
 } // NLSOUND

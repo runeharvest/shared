@@ -26,11 +26,11 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 //===========================================================================
-CCloudScapeUser::CCloudScapeUser (CScene *scene) : UCloudScape ()
+CCloudScapeUser::CCloudScapeUser(CScene *scene)
+    : UCloudScape()
 {
 	nlassert(scene);
 	_Scene = scene;
@@ -38,33 +38,33 @@ CCloudScapeUser::CCloudScapeUser (CScene *scene) : UCloudScape ()
 }
 
 //===========================================================================
-CCloudScapeUser::~CCloudScapeUser ()
+CCloudScapeUser::~CCloudScapeUser()
 {
 	delete _CS;
 }
 
 //===========================================================================
-void CCloudScapeUser::init (SCloudScapeSetup *pCSS)
+void CCloudScapeUser::init(SCloudScapeSetup *pCSS)
 {
-	_CS->init (pCSS, _Scene->getCam());
+	_CS->init(pCSS, _Scene->getCam());
 }
 
 //===========================================================================
-void CCloudScapeUser::set (SCloudScapeSetup &css)
+void CCloudScapeUser::set(SCloudScapeSetup &css)
 {
-	_CS->set (css);
+	_CS->set(css);
 }
 
 //===========================================================================
-void CCloudScapeUser::anim (double dt)
+void CCloudScapeUser::anim(double dt)
 {
-	_CS->anim (dt, _Scene->getCam());
+	_CS->anim(dt, _Scene->getCam());
 }
 
 //===========================================================================
-void CCloudScapeUser::render ()
+void CCloudScapeUser::render()
 {
-	_CS->render ();
+	_CS->render();
 }
 
 //===========================================================================
@@ -74,28 +74,27 @@ uint32 CCloudScapeUser::getMemSize()
 }
 
 //===========================================================================
-void CCloudScapeUser::setQuality (float threshold)
+void CCloudScapeUser::setQuality(float threshold)
 {
-	_CS->setQuality (threshold);
+	_CS->setQuality(threshold);
 }
 
 //===========================================================================
-void CCloudScapeUser::setNbCloudToUpdateIn80ms (uint32 n)
+void CCloudScapeUser::setNbCloudToUpdateIn80ms(uint32 n)
 {
-	_CS->setNbCloudToUpdateIn80ms (n);
+	_CS->setNbCloudToUpdateIn80ms(n);
 }
 
 //===========================================================================
-bool CCloudScapeUser::isDebugQuadEnabled ()
+bool CCloudScapeUser::isDebugQuadEnabled()
 {
-	return _CS->isDebugQuadEnabled ();
+	return _CS->isDebugQuadEnabled();
 }
 
 //===========================================================================
-void CCloudScapeUser::setDebugQuad (bool b)
+void CCloudScapeUser::setDebugQuad(bool b)
 {
-	_CS->setDebugQuad (b);
+	_CS->setDebugQuad(b);
 }
 
 } // NL3D
-

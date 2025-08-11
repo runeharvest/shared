@@ -20,7 +20,7 @@
 #include "nel/sound/driver/buffer.h"
 
 namespace NLSOUND {
-	class CSoundDriverXAudio2;
+class CSoundDriverXAudio2;
 
 /**
  * \brief CBufferXAudio2
@@ -34,14 +34,14 @@ protected:
 	// outside pointers
 	/// The sound driver that owns this buffer, used for stats. (artificial limit)
 	CSoundDriverXAudio2 *_SoundDriver;
-	
+
 	// pointers
 	/// The sample data in this buffer. Aligned 16 byte.
 	uint8 *_DataAligned;
 	/// The actual pointer used for deletion.
 	uint8 *_DataPtr;
 	// instances
-	// XAudio2 buffer structure, could have one pre-configured 
+	// XAudio2 buffer structure, could have one pre-configured
 	// here for optimization (looping state unknown).
 	// XAUDIO2_BUFFER _Buffer;
 
@@ -53,12 +53,13 @@ protected:
 	NLMISC::TStringId _Name;
 	/// The sample format
 	TBufferFormat _Format;
-	/// The number of channels	
+	/// The number of channels
 	uint8 _Channels;
 	/// Bits per sample
 	uint8 _BitsPerSample;
 	/// The sample frequency
 	uint _Frequency;
+
 public:
 	CBufferXAudio2(CSoundDriverXAudio2 *soundDriver);
 	virtual ~CBufferXAudio2();
@@ -74,7 +75,7 @@ public:
 	inline uint8 getBitsPerSample() { return _BitsPerSample; }
 	/// Returns the sample rate.
 	inline uint getFrequency() { return _Frequency; }
-	
+
 	/** Preset the name of the buffer. Used for async loading to give a name
 	 *	before the buffer is effectivly loaded.
 	 *	If the name after loading of the buffer doesn't match the preset name,
@@ -88,7 +89,7 @@ public:
 	virtual void setFormat(TBufferFormat format, uint8 channels, uint8 bitsPerSample, uint32 frequency);
 	/// Return the sample format information.
 	virtual void getFormat(TBufferFormat &format, uint8 &channels, uint8 &bitsPerSample, uint32 &frequency) const;
-		/// Set the storage mode of this buffer, call before filling this buffer. Storage mode is always software if OptionSoftwareBuffer is enabled. Default is auto.
+	/// Set the storage mode of this buffer, call before filling this buffer. Storage mode is always software if OptionSoftwareBuffer is enabled. Default is auto.
 	virtual void setStorageMode(TStorageMode storageMode = IBuffer::StorageAuto);
 	/// Get the storage mode of this buffer.
 	virtual TStorageMode getStorageMode();
@@ -99,16 +100,16 @@ public:
 	virtual bool unlock(uint size);
 	/// Copy the data with specified size into the buffer. A readable local copy is only guaranteed when OptionLocalBufferCopy is set. Returns true if ok.
 	virtual bool fill(const uint8 *src, uint size);
-	
+
 	/// Return the size of the buffer, in bytes.
 	virtual uint getSize() const;
 	/// Return the duration (in ms) of the sample in the buffer.
 	virtual float getDuration() const;
 	/// Return true if the buffer is stereo (multi-channel), false if mono.
-	virtual bool isStereo() const;	
+	virtual bool isStereo() const;
 	/// Return true if the buffer is loaded. Used for async load/unload.
 	virtual bool isBufferLoaded() const;
-	
+
 }; /* class CBufferXAudio2 */
 
 } /* namespace NLSOUND */

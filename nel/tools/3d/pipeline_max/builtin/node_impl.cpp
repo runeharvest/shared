@@ -47,14 +47,16 @@ namespace BUILTIN {
 #define PMB_NODE_PARENT_CHUNK_ID 0x0960
 #define PMB_NODE_NAME_CHUNK_ID 0x0962
 
-CNodeImpl::CNodeImpl(CScene *scene) : INode(scene), m_NodeVersion(0), m_ParentFlags(0), m_UserName(ucstring("Untitled Node"))
+CNodeImpl::CNodeImpl(CScene *scene)
+    : INode(scene)
+    , m_NodeVersion(0)
+    , m_ParentFlags(0)
+    , m_UserName(ucstring("Untitled Node"))
 {
-
 }
 
 CNodeImpl::~CNodeImpl()
 {
-
 }
 
 const ucstring CNodeImpl::DisplayName = ucstring("Node");
@@ -132,8 +134,10 @@ const ISceneClassDesc *CNodeImpl::classDesc() const
 void CNodeImpl::toStringLocal(std::ostream &ostream, const std::string &pad, uint filter) const
 {
 	INode::toStringLocal(ostream, pad);
-	ostream << "\n" << pad << "NodeVersion: " << m_NodeVersion;
-	ostream << "\n" << pad << "Parent: ";
+	ostream << "\n"
+	        << pad << "NodeVersion: " << m_NodeVersion;
+	ostream << "\n"
+	        << pad << "Parent: ";
 	INode *parent = m_Parent;
 	nlassert(parent);
 	if (parent)
@@ -153,8 +157,10 @@ void CNodeImpl::toStringLocal(std::ostream &ostream, const std::string &pad, uin
 	{
 		ostream << "NULL";
 	}
-	ostream << "\n" << pad << "ParentFlags: " << m_ParentFlags;
-	ostream << "\n" << pad << "UserName: " << m_UserName.toUtf8() << " ";
+	ostream << "\n"
+	        << pad << "ParentFlags: " << m_ParentFlags;
+	ostream << "\n"
+	        << pad << "UserName: " << m_UserName.toUtf8() << " ";
 }
 
 INode *CNodeImpl::parent()

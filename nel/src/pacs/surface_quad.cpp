@@ -40,7 +40,7 @@ NLPACS::CSurfaceQuadTree::CSurfaceQuadTree(const NLPACS::CSurfaceQuadTree &quad)
 	*this = quad;
 }
 
-NLPACS::CSurfaceQuadTree	&NLPACS::CSurfaceQuadTree::operator = (const NLPACS::CSurfaceQuadTree &quad)
+NLPACS::CSurfaceQuadTree &NLPACS::CSurfaceQuadTree::operator=(const NLPACS::CSurfaceQuadTree &quad)
 {
 	if (&quad == this)
 		return *this;
@@ -54,13 +54,13 @@ NLPACS::CSurfaceQuadTree	&NLPACS::CSurfaceQuadTree::operator = (const NLPACS::CS
 	{
 		if (quad._Root->isLeaf())
 		{
-			CQuadLeaf	*newLeaf = new CQuadLeaf();
+			CQuadLeaf *newLeaf = new CQuadLeaf();
 			*newLeaf = *((CQuadLeaf *)(quad._Root));
 			_Root = newLeaf;
 		}
 		else
 		{
-			CQuadBranch	*newBranch = new CQuadBranch();
+			CQuadBranch *newBranch = new CQuadBranch();
 			*newBranch = *((CQuadBranch *)(quad._Root));
 			_Root = newBranch;
 		}
@@ -69,13 +69,13 @@ NLPACS::CSurfaceQuadTree	&NLPACS::CSurfaceQuadTree::operator = (const NLPACS::CS
 	return *this;
 }
 
-void	NLPACS::CSurfaceQuadTree::clear()
+void NLPACS::CSurfaceQuadTree::clear()
 {
 	delete _Root;
 	_Root = NULL;
 }
 
-void	NLPACS::CSurfaceQuadTree::init(float maxThickness, uint maxLevel, const CVector &center, float halfSize)
+void NLPACS::CSurfaceQuadTree::init(float maxThickness, uint maxLevel, const CVector &center, float halfSize)
 {
 	nlassert(maxLevel > 0);
 	clear();
@@ -85,7 +85,7 @@ void	NLPACS::CSurfaceQuadTree::init(float maxThickness, uint maxLevel, const CVe
 	_BBox.setHalfSize(CVector(halfSize, halfSize, 10000.0f));
 }
 
-void	NLPACS::CSurfaceQuadTree::addVertex(const CVector &v)
+void NLPACS::CSurfaceQuadTree::addVertex(const CVector &v)
 {
 	if (!_BBox.include(v))
 		return;
@@ -112,49 +112,46 @@ void	NLPACS::CSurfaceQuadTree::addVertex(const CVector &v)
 	_Root->addVertex(v);
 }
 
-void	NLPACS::CSurfaceQuadTree::compile()
+void NLPACS::CSurfaceQuadTree::compile()
 {
-	if (_Root != NULL &&
-		!_Root->isLeaf() &&
-		_Root->getMaxHeight()-_Root->getMinHeight() <= _MaxThickness)
+	if (_Root != NULL && !_Root->isLeaf() && _Root->getMaxHeight() - _Root->getMinHeight() <= _MaxThickness)
 	{
-		CQuadLeaf	*leaf = new CQuadLeaf();
+		CQuadLeaf *leaf = new CQuadLeaf();
 		*((IQuadNode *)leaf) = *_Root;
 		delete _Root;
 		_Root = leaf;
 	}
-	else if (_Root != NULL &&
-			 !_Root->isLeaf())
+	else if (_Root != NULL && !_Root->isLeaf())
 	{
 		((CQuadBranch *)_Root)->reduceChildren();
 	}
 }
 
-
-NLPACS::CQuadBranch::CQuadBranch(const NLPACS::CQuadBranch &branch) : NLPACS::IQuadNode(branch)
+NLPACS::CQuadBranch::CQuadBranch(const NLPACS::CQuadBranch &branch)
+    : NLPACS::IQuadNode(branch)
 {
 	*this = branch;
 }
 
-NLPACS::CQuadBranch	&NLPACS::CQuadBranch::operator = (const NLPACS::CQuadBranch &branch)
+NLPACS::CQuadBranch &NLPACS::CQuadBranch::operator=(const NLPACS::CQuadBranch &branch)
 {
 	IQuadNode::operator=(branch);
 
-	uint	child;
-	for (child=0; child<4; ++child)
+	uint child;
+	for (child = 0; child < 4; ++child)
 	{
 		_Children[child] = NULL;
 		if (branch._Children[child] != NULL)
 		{
 			if (branch._Children[child]->isLeaf())
 			{
-				CQuadLeaf	*newLeaf = new CQuadLeaf();
+				CQuadLeaf *newLeaf = new CQuadLeaf();
 				*newLeaf = *((CQuadLeaf *)(branch._Children[child]));
 				_Children[child] = newLeaf;
 			}
 			else
 			{
-				CQuadBranch	*newBranch = new CQuadBranch();
+				CQuadBranch *newBranch = new CQuadBranch();
 				*newBranch = *((CQuadBranch *)(branch._Children[child]));
 				_Children[child] = newBranch;
 			}
@@ -163,33 +160,30 @@ NLPACS::CQuadBranch	&NLPACS::CQuadBranch::operator = (const NLPACS::CQuadBranch 
 	return *this;
 }
 
-void	NLPACS::CQuadBranch::reduceChildren()
+void NLPACS::CQuadBranch::reduceChildren()
 {
-	uint	i;
+	uint i;
 
-	for (i=0; i<4; ++i)
+	for (i = 0; i < 4; ++i)
 	{
-		if (_Children[i] != NULL &&
-			!_Children[i]->isLeaf() &&
-			_Children[i]->getMaxHeight()-_Children[i]->getMinHeight() <= _MaxThickness)
+		if (_Children[i] != NULL && !_Children[i]->isLeaf() && _Children[i]->getMaxHeight() - _Children[i]->getMinHeight() <= _MaxThickness)
 		{
-			CQuadLeaf	*leaf = new CQuadLeaf();
+			CQuadLeaf *leaf = new CQuadLeaf();
 			*((IQuadNode *)leaf) = *_Children[i];
 			delete _Children[i];
 			_Children[i] = leaf;
 		}
-		else if (_Children[i] != NULL &&
-				 !_Children[i]->isLeaf())
+		else if (_Children[i] != NULL && !_Children[i]->isLeaf())
 		{
 			((CQuadBranch *)_Children[i])->reduceChildren();
 		}
 	}
 }
 
-void	NLPACS::CQuadBranch::addVertex(const CVector &v)
+void NLPACS::CQuadBranch::addVertex(const CVector &v)
 {
 	IQuadNode::addVertex(v);
-	uint	child;
+	uint child;
 	if (v.x > _XCenter)
 		child = (v.y > _YCenter) ? 2 : 1;
 	else
@@ -199,55 +193,53 @@ void	NLPACS::CQuadBranch::addVertex(const CVector &v)
 	{
 		if (_Level == 2)
 		{
-			_Children[child] = new CQuadLeaf(_Level-1);
+			_Children[child] = new CQuadLeaf(_Level - 1);
 		}
 		else
 		{
-			_Children[child] = new CQuadBranch(_Level-1);
+			_Children[child] = new CQuadBranch(_Level - 1);
 		}
 
 		_Children[child]->_MaxThickness = _MaxThickness;
-		_Children[child]->_HalfSize = _HalfSize/2.0f;
+		_Children[child]->_HalfSize = _HalfSize / 2.0f;
 		_Children[child]->_MinHeight = FLT_MAX;
 		_Children[child]->_MaxHeight = -FLT_MAX;
-		_Children[child]->_XCenter = _XCenter+_Children[child]->_HalfSize*((child == 1 || child == 2) ? 1.0f : -1.0f);
-		_Children[child]->_YCenter = _YCenter+_Children[child]->_HalfSize*((child == 2 || child == 3) ? 1.0f : -1.0f);
+		_Children[child]->_XCenter = _XCenter + _Children[child]->_HalfSize * ((child == 1 || child == 2) ? 1.0f : -1.0f);
+		_Children[child]->_YCenter = _YCenter + _Children[child]->_HalfSize * ((child == 2 || child == 3) ? 1.0f : -1.0f);
 	}
 
 	_Children[child]->addVertex(v);
 }
 
-bool	NLPACS::CQuadBranch::check() const
+bool NLPACS::CQuadBranch::check() const
 {
 	if (!IQuadNode::check())
 		return false;
 
-	uint	child;
-	for (child=0; child<4; ++child)
+	uint child;
+	for (child = 0; child < 4; ++child)
 		if (_Children[child] != NULL && !_Children[child]->check())
 			return false;
 	return true;
 }
 
-
 /*
  * Serialization methods...
  */
 
-
-void	NLPACS::CQuadBranch::serial(NLMISC::IStream &f)
+void NLPACS::CQuadBranch::serial(NLMISC::IStream &f)
 {
 	IQuadNode::serial(f);
 
-	uint	child;
-	for (child=0; child<4; ++child)
+	uint child;
+	for (child = 0; child < 4; ++child)
 	{
-		uint8	childType = 0;
+		uint8 childType = 0;
 
 		if (f.isReading())
 		{
-			CQuadLeaf	*leaf;
-			CQuadBranch	*branch;
+			CQuadLeaf *leaf;
+			CQuadBranch *branch;
 			f.serial(childType);
 			switch (childType)
 			{
@@ -260,7 +252,8 @@ void	NLPACS::CQuadBranch::serial(NLMISC::IStream &f)
 				leaf->serial(f);
 				break;
 			case BranchChild:
-				branch = new CQuadBranch();;
+				branch = new CQuadBranch();
+				;
 				_Children[child] = branch;
 				branch->serial(f);
 				break;
@@ -286,25 +279,25 @@ void	NLPACS::CQuadBranch::serial(NLMISC::IStream &f)
 	}
 }
 
-bool	NLPACS::CSurfaceQuadTree::check() const
+bool NLPACS::CSurfaceQuadTree::check() const
 {
 	if (_Root != NULL)
 		return _Root->check();
 	return true;
 }
 
-const NLPACS::CQuadLeaf	*NLPACS::CSurfaceQuadTree::getLeaf(const CVector &v) const
+const NLPACS::CQuadLeaf *NLPACS::CSurfaceQuadTree::getLeaf(const CVector &v) const
 {
-	CVector	pos = CVector(v.x, v.y, 0.0f);
+	CVector pos = CVector(v.x, v.y, 0.0f);
 	if (_Root == NULL || !_BBox.include(pos))
 		return NULL;
 
-	const IQuadNode	*node = _Root;
+	const IQuadNode *node = _Root;
 
 	while (node != NULL && !node->isLeaf())
 	{
 		nlassert(node->getBBox().include(pos));
-		uint	child;
+		uint child;
 
 		if (pos.x > node->_XCenter)
 			child = ((pos.y > node->_YCenter) ? 2 : 1);
@@ -317,23 +310,22 @@ const NLPACS::CQuadLeaf	*NLPACS::CSurfaceQuadTree::getLeaf(const CVector &v) con
 	return (const CQuadLeaf *)node;
 }
 
-
-void	NLPACS::CSurfaceQuadTree::serial(NLMISC::IStream &f)
+void NLPACS::CSurfaceQuadTree::serial(NLMISC::IStream &f)
 {
 	/*
 	Version 0:
-		- base version.
+	    - base version.
 	*/
 	(void)f.serialVersion(0);
 
-	uint8	childType = 0;
+	uint8 childType = 0;
 	f.serial(_MaxThickness);
 	f.serial(_MaxLevel);
 	f.serial(_BBox);
 	if (f.isReading())
 	{
-		CQuadLeaf	*leaf;
-		CQuadBranch	*branch;
+		CQuadLeaf *leaf;
+		CQuadBranch *branch;
 
 		f.serial(childType);
 		switch (childType)
@@ -373,23 +365,23 @@ void	NLPACS::CSurfaceQuadTree::serial(NLMISC::IStream &f)
 }
 
 //
-float	NLPACS::CSurfaceQuadTree::getInterpZ(const CVector &v) const
+float NLPACS::CSurfaceQuadTree::getInterpZ(const CVector &v) const
 {
 	// first get final leaf for position
-	CVector	pos = CVector(v.x, v.y, 0.0f);
+	CVector pos = CVector(v.x, v.y, 0.0f);
 	if (_Root == NULL || !_BBox.include(pos))
-		return v.z;	// return unmodified z
+		return v.z; // return unmodified z
 
-	const IQuadNode				*node = _Root;
-	vector<uint>				children;
-	vector<const IQuadNode*>	nodes;
+	const IQuadNode *node = _Root;
+	vector<uint> children;
+	vector<const IQuadNode *> nodes;
 
 	while (node != NULL && !node->isLeaf())
 	{
 		nodes.push_back(node);
 
 		nlassert(node->getBBox().include(pos));
-		uint	child;
+		uint child;
 
 		if (pos.x > node->_XCenter)
 			child = ((pos.y > node->_YCenter) ? 2 : 1);
@@ -402,28 +394,28 @@ float	NLPACS::CSurfaceQuadTree::getInterpZ(const CVector &v) const
 	}
 
 	if (node == NULL)
-		return v.z;	// return unmodified z
+		return v.z; // return unmodified z
 
 	nodes.push_back(node);
 
-	vector<const CQuadLeaf*>	leaves;
-	vector<const IQuadNode*>	explore;
+	vector<const CQuadLeaf *> leaves;
+	vector<const IQuadNode *> explore;
 
-	leaves.push_back((const CQuadLeaf*)node);
+	leaves.push_back((const CQuadLeaf *)node);
 
 	// for each side of the leaf, find neighbor leaves
-	uint	side;
-	for (side=0; side<4; ++side)
+	uint side;
+	for (side = 0; side < 4; ++side)
 	{
-		static const sint	ct[4][4] = { {-1, 1, 3,-1}, {-1,-1, 2, 0}, { 1,-1,-1, 3}, { 0, 2,-1,-1} };	// child table
-		static const sint	nt[4][4] = { { 3, 1, 3, 1}, { 2, 0, 2, 0}, { 1, 3, 1, 3}, { 0, 2, 0, 2} };	// neighbor table
+		static const sint ct[4][4] = { { -1, 1, 3, -1 }, { -1, -1, 2, 0 }, { 1, -1, -1, 3 }, { 0, 2, -1, -1 } }; // child table
+		static const sint nt[4][4] = { { 3, 1, 3, 1 }, { 2, 0, 2, 0 }, { 1, 3, 1, 3 }, { 0, 2, 0, 2 } }; // neighbor table
 
-		sint	nlev = (sint)nodes.size()-1;
-		sint	child = -1;
+		sint nlev = (sint)nodes.size() - 1;
+		sint child = -1;
 
 		while (nlev > 0)
 		{
-			child = ct[children[nlev-1]][side];
+			child = ct[children[nlev - 1]][side];
 
 			if (child >= 0)
 				break;
@@ -436,11 +428,11 @@ float	NLPACS::CSurfaceQuadTree::getInterpZ(const CVector &v) const
 			continue;
 
 		// get father
-		node = nodes[nlev-1];
+		node = nodes[nlev - 1];
 
-		while (nlev < (sint)nodes.size() && node!=NULL && !node->isLeaf())
+		while (nlev < (sint)nodes.size() && node != NULL && !node->isLeaf())
 		{
-			child = nt[children[nlev-1]][side];
+			child = nt[children[nlev - 1]][side];
 			node = node->getChild(child);
 
 			++nlev;
@@ -451,7 +443,7 @@ float	NLPACS::CSurfaceQuadTree::getInterpZ(const CVector &v) const
 
 		if (node->isLeaf())
 		{
-			leaves.push_back((const CQuadLeaf*)node);
+			leaves.push_back((const CQuadLeaf *)node);
 		}
 		else
 		{
@@ -466,27 +458,27 @@ float	NLPACS::CSurfaceQuadTree::getInterpZ(const CVector &v) const
 					continue;
 
 				if (node->isLeaf())
-					leaves.push_back((const CQuadLeaf*)node);
+					leaves.push_back((const CQuadLeaf *)node);
 				else
 				{
-					explore.push_back(node->getChild((side+2)&3));
-					explore.push_back(node->getChild((side+3)&3));
+					explore.push_back(node->getChild((side + 2) & 3));
+					explore.push_back(node->getChild((side + 3) & 3));
 				}
 			}
 		}
 	}
 
-	uint			i;
-	float			di, wi;
-	float			sum = 0.0;
-	float			interpZ = 0.0;
+	uint i;
+	float di, wi;
+	float sum = 0.0;
+	float interpZ = 0.0;
 
-	for (i=0; i<leaves.size(); ++i)
+	for (i = 0; i < leaves.size(); ++i)
 	{
-		di = (float)sqrt(sqr(v.x-leaves[i]->_XCenter)+sqr(v.y-leaves[i]->_YCenter))*(float)pow(1.5, leaves[i]->_Level);
-		wi = 1.0f/di;
+		di = (float)sqrt(sqr(v.x - leaves[i]->_XCenter) + sqr(v.y - leaves[i]->_YCenter)) * (float)pow(1.5, leaves[i]->_Level);
+		wi = 1.0f / di;
 		sum += wi;
-		interpZ += (leaves[i]->getMinHeight()+leaves[i]->getMaxHeight())*0.5f*wi;
+		interpZ += (leaves[i]->getMinHeight() + leaves[i]->getMaxHeight()) * 0.5f * wi;
 	}
 
 	return interpZ / sum;

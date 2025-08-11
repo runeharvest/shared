@@ -14,13 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_STAT_DB_COMMON_H
 #define RY_STAT_DB_COMMON_H
 
-
 #include "../entities_game_service/common_pd.h"
-
 
 #endif // RY_STAT_DB_COMMON_H

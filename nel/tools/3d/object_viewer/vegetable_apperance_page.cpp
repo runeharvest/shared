@@ -27,16 +27,16 @@
 #include "nel/misc/noise_value.h"
 #include "nel/3d/vegetable.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CVegetableApperancePage property page
 
 IMPLEMENT_DYNCREATE(CVegetableApperancePage, CPropertyPage)
 
-
-
-CVegetableApperancePage::CVegetableApperancePage() : CPropertyPage(CVegetableApperancePage::IDD),
-	_BendPhaseDlg(NULL), _BendFactorDlg(NULL), _ColorDlg(NULL)
+CVegetableApperancePage::CVegetableApperancePage()
+    : CPropertyPage(CVegetableApperancePage::IDD)
+    , _BendPhaseDlg(NULL)
+    , _BendFactorDlg(NULL)
+    , _ColorDlg(NULL)
 {
 	//{{AFX_DATA_INIT(CVegetableApperancePage)
 	//}}AFX_DATA_INIT
@@ -44,13 +44,18 @@ CVegetableApperancePage::CVegetableApperancePage() : CPropertyPage(CVegetableApp
 
 CVegetableApperancePage::~CVegetableApperancePage()
 {
-	#define  REMOVE_WND(wnd) if (wnd) { wnd->DestroyWindow(); delete wnd; }
+#define REMOVE_WND(wnd)       \
+	if (wnd)                  \
+	{                         \
+		wnd->DestroyWindow(); \
+		delete wnd;           \
+	}
 	REMOVE_WND(_BendPhaseDlg);
 	REMOVE_WND(_BendFactorDlg);
 	REMOVE_WND(_ColorDlg);
 }
 
-void CVegetableApperancePage::DoDataExchange(CDataExchange* pDX)
+void CVegetableApperancePage::DoDataExchange(CDataExchange *pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CVegetableApperancePage)
@@ -58,32 +63,28 @@ void CVegetableApperancePage::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CVegetableApperancePage, CPropertyPage)
-	//{{AFX_MSG_MAP(CVegetableApperancePage)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_ADD, OnButtonVegetableAdd)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_GETOTHER, OnButtonVegetableGetother)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_INSERT, OnButtonVegetableInsert)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_REMOVE, OnButtonVegetableRemove)
-	ON_LBN_DBLCLK(IDC_LIST_VEGETABLE_COLOR, OnDblclkListVegetableColor)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CVegetableApperancePage)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_ADD, OnButtonVegetableAdd)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_GETOTHER, OnButtonVegetableGetother)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_INSERT, OnButtonVegetableInsert)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_REMOVE, OnButtonVegetableRemove)
+ON_LBN_DBLCLK(IDC_LIST_VEGETABLE_COLOR, OnDblclkListVegetableColor)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-
 // ***************************************************************************
 // ***************************************************************************
 // ***************************************************************************
 // ***************************************************************************
-
-
 
 // ***************************************************************************
 void CVegetableApperancePage::setVegetableToEdit(NL3D::CVegetable *vegetable)
 {
-	_Vegetable= vegetable;
+	_Vegetable = vegetable;
 
 	// If not NULL, init all controls.
-	if(_Vegetable)
+	if (_Vegetable)
 	{
 		// init noise dlg.
 		// ----------
@@ -94,9 +95,7 @@ void CVegetableApperancePage::setVegetableToEdit(NL3D::CVegetable *vegetable)
 		// init color dlg.
 		// ----------
 		readFromVegetableColor(_Vegetable);
-
 	}
-
 }
 
 // ***************************************************************************
@@ -105,9 +104,9 @@ void CVegetableApperancePage::readFromVegetableColor(NL3D::CVegetable *vegetable
 	// clear all
 	ColorList.clear();
 	// fill list.
-	for(uint i=0; i<vegetable->Color.Gradients.size(); i++)
+	for (uint i = 0; i < vegetable->Color.Gradients.size(); i++)
 	{
-		CRGBA	color= vegetable->Color.Gradients[i];
+		CRGBA color = vegetable->Color.Gradients[i];
 		ColorList.addValue(color);
 	}
 }
@@ -115,15 +114,14 @@ void CVegetableApperancePage::readFromVegetableColor(NL3D::CVegetable *vegetable
 // ***************************************************************************
 void CVegetableApperancePage::writeToVegetableColor(NL3D::CVegetable *vegetable)
 {
-	// setup the vegetable 
+	// setup the vegetable
 	vegetable->Color.Gradients.clear();
-	for(uint i=0; i<ColorList.getColors().size(); i++)
+	for (uint i = 0; i < ColorList.getColors().size(); i++)
 	{
-		CRGBA	color= ColorList.getColors()[i];
+		CRGBA color = ColorList.getColors()[i];
 		vegetable->Color.Gradients.push_back(color);
 	}
 }
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -131,59 +129,56 @@ void CVegetableApperancePage::writeToVegetableColor(NL3D::CVegetable *vegetable)
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
-BOOL CVegetableApperancePage::OnInitDialog() 
+BOOL CVegetableApperancePage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	
+
 	// position setup.
-	uint	x= 5;
+	uint x = 5;
 	// Position of the density DlgBox relative to CVegetableDensityPage.
-	uint	y= 10;
-	uint	spaceDy= 10;
+	uint y = 10;
+	uint spaceDy = 10;
 
 	// Init BendPhase Dialog.
-	_BendPhaseDlg = new CVegetableNoiseValueDlg (std::string("BendPhase"));
+	_BendPhaseDlg = new CVegetableNoiseValueDlg(std::string("BendPhase"));
 	_BendPhaseDlg->setDefaultRangeAbs(NL_VEGETABLE_BENDPHASE_RANGE_MIN, NL_VEGETABLE_BENDPHASE_RANGE_MAX);
 	_BendPhaseDlg->setDefaultRangeRand(NL_VEGETABLE_BENDPHASE_RANGE_MIN, NL_VEGETABLE_BENDPHASE_RANGE_MAX);
 	_BendPhaseDlg->setDefaultRangeFreq(NL_VEGETABLE_FREQ_RANGE_MIN, NL_VEGETABLE_FREQ_RANGE_MAX);
 	_BendPhaseDlg->init(x, y, this);
-	y+= CVegetableNoiseValueDlg::ControlHeight + spaceDy;
+	y += CVegetableNoiseValueDlg::ControlHeight + spaceDy;
 	// Init BendFactor Dialog.
-	_BendFactorDlg = new CVegetableNoiseValueDlg (std::string("BendFactor"));
+	_BendFactorDlg = new CVegetableNoiseValueDlg(std::string("BendFactor"));
 	_BendFactorDlg->setDefaultRangeAbs(NL_VEGETABLE_BENDFACTOR_RANGE_MIN, NL_VEGETABLE_BENDFACTOR_RANGE_MAX);
 	_BendFactorDlg->setDefaultRangeRand(NL_VEGETABLE_BENDFACTOR_RANGE_MIN, NL_VEGETABLE_BENDFACTOR_RANGE_MAX);
 	_BendFactorDlg->setDefaultRangeFreq(NL_VEGETABLE_FREQ_RANGE_MIN, NL_VEGETABLE_FREQ_RANGE_MAX);
 	_BendFactorDlg->init(x, y, this);
-	y+= CVegetableNoiseValueDlg::ControlHeight + spaceDy;
+	y += CVegetableNoiseValueDlg::ControlHeight + spaceDy;
 	// Init Color Dialog.
-	_ColorDlg = new CVegetableNoiseValueDlg (std::string("Color Noise"));
+	_ColorDlg = new CVegetableNoiseValueDlg(std::string("Color Noise"));
 	_ColorDlg->setDefaultRangeAbs(NL_VEGETABLE_COLOR_RANGE_MIN, NL_VEGETABLE_COLOR_RANGE_MAX);
 	_ColorDlg->setDefaultRangeRand(NL_VEGETABLE_COLOR_RANGE_MIN, NL_VEGETABLE_COLOR_RANGE_MAX);
 	_ColorDlg->setDefaultRangeFreq(NL_VEGETABLE_FREQ_RANGE_MIN, NL_VEGETABLE_FREQ_RANGE_MAX);
 	_ColorDlg->init(x, y, this);
-	y+= CVegetableNoiseValueDlg::ControlHeight + spaceDy;
+	y += CVegetableNoiseValueDlg::ControlHeight + spaceDy;
 
 	// Init color part
 	ColorList.setCtrlID(IDC_LIST_VEGETABLE_COLOR);
-	uint	size= 28;
-	ColorList.setupItem(size, size, size-10, size-10);
+	uint size = 28;
+	ColorList.setupItem(size, size, size - 10, size - 10);
 
-		
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-
 // ***************************************************************************
-void CVegetableApperancePage::OnButtonVegetableAdd() 
+void CVegetableApperancePage::OnButtonVegetableAdd()
 {
 	// copy the current selected color
-	CRGBA	color(255, 255, 255);
-	int		id= ColorList.GetCount()-1;
-	if(id!=-1)
-		color= ColorList.getValue(id);
+	CRGBA color(255, 255, 255);
+	int id = ColorList.GetCount() - 1;
+	if (id != -1)
+		color = ColorList.getValue(id);
 	// update view and vegetable
 	ColorList.addValue(color);
 	writeToVegetableColor(_Vegetable);
@@ -192,15 +187,14 @@ void CVegetableApperancePage::OnButtonVegetableAdd()
 	_VegetableDlg->refreshVegetableDisplay();
 }
 
-
 // ***************************************************************************
-void CVegetableApperancePage::OnButtonVegetableInsert() 
+void CVegetableApperancePage::OnButtonVegetableInsert()
 {
 	// copy the current selected color
-	CRGBA	color(255, 255, 255);
-	int		id= ColorList.GetCurSel();
-	if(id!=LB_ERR)
-		color= ColorList.getValue(id);
+	CRGBA color(255, 255, 255);
+	int id = ColorList.GetCurSel();
+	if (id != LB_ERR)
+		color = ColorList.getValue(id);
 	// update view and vegetable
 	ColorList.insertValueBeforeCurSel(color);
 	writeToVegetableColor(_Vegetable);
@@ -210,7 +204,7 @@ void CVegetableApperancePage::OnButtonVegetableInsert()
 }
 
 // ***************************************************************************
-void CVegetableApperancePage::OnButtonVegetableRemove() 
+void CVegetableApperancePage::OnButtonVegetableRemove()
 {
 	// remove curSel from the list
 	ColorList.removeCurSelValue();
@@ -220,20 +214,19 @@ void CVegetableApperancePage::OnButtonVegetableRemove()
 	_VegetableDlg->refreshVegetableDisplay();
 }
 
-
 // ***************************************************************************
-void CVegetableApperancePage::OnButtonVegetableGetother() 
+void CVegetableApperancePage::OnButtonVegetableGetother()
 {
 	// Open A dialog to select the other vegetable to copy color.
-	CVegetableSelectDlg		dlg(_VegetableDlg);
-	if( dlg.DoModal()==IDOK )
+	CVegetableSelectDlg dlg(_VegetableDlg);
+	if (dlg.DoModal() == IDOK)
 	{
-		int	id= dlg.VegetableSelected;
-		if(id != LB_ERR)
+		int id = dlg.VegetableSelected;
+		if (id != LB_ERR)
 		{
 			// read colors from this vegetable
-			NL3D::CVegetable	*otherVegetable= _VegetableDlg->getVegetable(id);
-			_Vegetable->Color.Gradients= otherVegetable->Color.Gradients;
+			NL3D::CVegetable *otherVegetable = _VegetableDlg->getVegetable(id);
+			_Vegetable->Color.Gradients = otherVegetable->Color.Gradients;
 			// update view
 			readFromVegetableColor(_Vegetable);
 
@@ -244,24 +237,24 @@ void CVegetableApperancePage::OnButtonVegetableGetother()
 }
 
 // ***************************************************************************
-void CVegetableApperancePage::OnDblclkListVegetableColor() 
+void CVegetableApperancePage::OnDblclkListVegetableColor()
 {
-	CRGBA	color;
+	CRGBA color;
 
 	// get the current color of the value.
-	int		id= ColorList.GetCurSel();
-	if(id!=LB_ERR)
+	int id = ColorList.GetCurSel();
+	if (id != LB_ERR)
 	{
-		color= ColorList.getValue(id);
-		
+		color = ColorList.getValue(id);
+
 		// Open a colorDialog.
-		CColorDialog	colorDialog(RGB(color.R, color.G, color.B), CC_FULLOPEN);
-		if( colorDialog.DoModal()==IDOK )
+		CColorDialog colorDialog(RGB(color.R, color.G, color.B), CC_FULLOPEN);
+		if (colorDialog.DoModal() == IDOK)
 		{
 			// update view
 			COLORREF cref = colorDialog.GetColor();
 			color.set(GetRValue(cref), GetGValue(cref), GetBValue(cref));
-   			ColorList.changeCurSelValue(color);
+			ColorList.changeCurSelValue(color);
 			// update vegetable
 			writeToVegetableColor(_Vegetable);
 

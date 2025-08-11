@@ -23,22 +23,17 @@
 
 #include "nel/3d/material.h"
 
-
-namespace NLMISC
-{
-	class CMatrix;
+namespace NLMISC {
+class CMatrix;
 }
 
-namespace NL3D
-{
+namespace NL3D {
 
-
-class	IDriver;
-class	CScene;
-class	CMeshBaseInstance;
-class	CLight;
-class	CVertexBuffer;
-
+class IDriver;
+class CScene;
+class CMeshBaseInstance;
+class CLight;
+class CVertexBuffer;
 
 /**
  * Interface to a CMeshGeom/CMeshMRMGeom Special VertexProgram Effect.
@@ -49,15 +44,13 @@ class	CVertexBuffer;
 class IMeshVertexProgram : public NLMISC::IStreamable, public NLMISC::CRefCount
 {
 public:
-
 	/// Constructor
-	IMeshVertexProgram() {}
-	virtual ~IMeshVertexProgram() {}
+	IMeshVertexProgram() { }
+	virtual ~IMeshVertexProgram() { }
 
 	/** Called at creation of an instance, to setup some information directly in the CMeshBaseInstance
 	 */
-	virtual	void	initInstance(CMeshBaseInstance *mbi) =0;
-
+	virtual void initInstance(CMeshBaseInstance *mbi) = 0;
 
 	/** Called to setup constant / activate VertexProgram. (called before activate of the VB).
 	 *  The result tells whether the vertex program will be used in the given context.
@@ -69,27 +62,27 @@ public:
 	 *  \param mat the matrix to use (may not be the one of mbi)
 	 *  \param viewerPos position of the viewer in world space.
 	 */
-	virtual	bool	begin(IDriver *drv,
-						  CScene *scene,
-						  CMeshBaseInstance *mbi,
-						  const NLMISC::CMatrix &invertedModelMat,
-						  const NLMISC::CVector &viewerPos
-						 ) =0;
+	virtual bool begin(IDriver *drv,
+	    CScene *scene,
+	    CMeshBaseInstance *mbi,
+	    const NLMISC::CMatrix &invertedModelMat,
+	    const NLMISC::CVector &viewerPos)
+	    = 0;
 	/** Typically disable the VertexProgram, or do some uninit.
 	 */
-	virtual	void	end(IDriver *drv) =0;
+	virtual void end(IDriver *drv) = 0;
 
 	/** Setup this shader for the given material. This may disable the shader if necessary.
-	  * This is why the vertex buffer is needed : when disabling the v.p we may need to reactivate it
-	  */
-	virtual void	setupForMaterial(const CMaterial &mat,
-									 IDriver *drv,
-									 CScene *scene,
-									 CVertexBuffer *vb) = 0;
+	 * This is why the vertex buffer is needed : when disabling the v.p we may need to reactivate it
+	 */
+	virtual void setupForMaterial(const CMaterial &mat,
+	    IDriver *drv,
+	    CScene *scene,
+	    CVertexBuffer *vb)
+	    = 0;
 
 	// Test whether this vertex program need tangent space information (stored in the last texture coordinate of the mesh)
-	virtual	bool	needTangentSpace() const { return false; }
-
+	virtual bool needTangentSpace() const { return false; }
 
 	/** \name MBR support.
 	 *	Actually, it's targeted to work optimally with WindTree.
@@ -102,25 +95,20 @@ public:
 	 *		- beginMBRInstance still can change of VertexProgram, but cannot disable VP!!
 	 */
 	// @{
-	virtual	bool	supportMeshBlockRendering() const { return false; }
-	virtual	bool	isMBRVpOk(IDriver * /* drv */) const {return false;}
-	virtual	void	beginMBRMesh(IDriver * /* drv */, CScene * /* scene */) {}
-	virtual	void	beginMBRInstance(IDriver * /* drv */, CScene * /* scene */, CMeshBaseInstance * /* mbi */, const NLMISC::CMatrix &/* invertedModelMat */) {}
-	virtual	void	endMBRMesh(IDriver * /* drv */) {}
+	virtual bool supportMeshBlockRendering() const { return false; }
+	virtual bool isMBRVpOk(IDriver * /* drv */) const { return false; }
+	virtual void beginMBRMesh(IDriver * /* drv */, CScene * /* scene */) { }
+	virtual void beginMBRInstance(IDriver * /* drv */, CScene * /* scene */, CMeshBaseInstance * /* mbi */, const NLMISC::CMatrix & /* invertedModelMat */) { }
+	virtual void endMBRMesh(IDriver * /* drv */) { }
 	// @}
-
 
 	/** This return the (over-evaluated) max delta the VertexProgram apply to vertex (in world basis)
 	 *	NB: This method call is relevant only after begin() or beginMBRInstance()
 	 */
-	virtual float	getMaxVertexMove() {return 0;}
-
-
+	virtual float getMaxVertexMove() { return 0; }
 };
 
-
 } // NL3D
-
 
 #endif // NL_MESH_VERTEX_PROGRAM_H
 

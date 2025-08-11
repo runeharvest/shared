@@ -21,12 +21,12 @@
 //----------------------------------------------------------------------------
 CModuleParent::~CModuleParent()
 {
-	MODULE_INFO( "Module parent destruction : calling the Ondestruction handler for all modules" );
+	MODULE_INFO("Module parent destruction : calling the Ondestruction handler for all modules");
 	// as module could be removed from thi parent in IModule::onParentDestruction, we have do remove modules with this strange way
-	std::vector< NLMISC::CRefPtr<IModule> > modules = _Modules;
-	for (uint i = 0; i < modules.size(); i++ )
+	std::vector<NLMISC::CRefPtr<IModule>> modules = _Modules;
+	for (uint i = 0; i < modules.size(); i++)
 	{
-		if ( modules[i] )
+		if (modules[i])
 		{
 			modules[i]->onParentDestruction();
 		}
@@ -34,14 +34,14 @@ CModuleParent::~CModuleParent()
 }
 
 //----------------------------------------------------------------------------
-void CModuleParent::removeChildModule(IModule* module)
+void CModuleParent::removeChildModule(IModule *module)
 {
-	MODULE_INFO( "Module parent : simply removing a child module" );
-	MODULE_AST( module );
+	MODULE_INFO("Module parent : simply removing a child module");
+	MODULE_AST(module);
 	MODULE_AST(_Owner);
 	NLMISC::CRefPtr<IModule> ref(module);
-	std::vector< NLMISC::CRefPtr<IModule> >::iterator it( std::find( _Modules.begin(), _Modules.end(), ref ) );
-	if ( it == _Modules.end() )
+	std::vector<NLMISC::CRefPtr<IModule>>::iterator it(std::find(_Modules.begin(), _Modules.end(), ref));
+	if (it == _Modules.end())
 	{
 		nlwarning("<MODULE> cant find the module to remove");
 		return;
@@ -50,16 +50,15 @@ void CModuleParent::removeChildModule(IModule* module)
 }
 
 //----------------------------------------------------------------------------
-void CModuleParent::addChildModule(IModule* module)
+void CModuleParent::addChildModule(IModule *module)
 {
-	MODULE_INFO( "Module parent : simply adding a child module" );
-	MODULE_AST( module );
-#ifdef RY_MODULE_DEBUG	
+	MODULE_INFO("Module parent : simply adding a child module");
+	MODULE_AST(module);
+#ifdef RY_MODULE_DEBUG
 	NLMISC::CRefPtr<IModule> ref(module);
-	std::vector< NLMISC::CRefPtr<IModule> >::iterator it( std::find( _Modules.begin(), _Modules.end(), ref ) );
-	if ( it != _Modules.end() )
+	std::vector<NLMISC::CRefPtr<IModule>>::iterator it(std::find(_Modules.begin(), _Modules.end(), ref));
+	if (it != _Modules.end())
 		nlerror("a module was added twice");
 #endif
 	_Modules.push_back(module);
 }
-

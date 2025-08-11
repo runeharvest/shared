@@ -15,7 +15,7 @@ using namespace NLLOGIC;
 
 #ifdef _DEBUG
 #undef THIS_FILE
-static char THIS_FILE[]=__FILE__;
+static char THIS_FILE[] = __FILE__;
 #define new DEBUG_NEW
 #endif
 
@@ -35,68 +35,64 @@ CCounter::CCounter(const CString &name)
 
 CCounter::~CCounter()
 {
-
 }
 
 //-----------------------------------------------------
 //	cCounterToCLogicCounter
 //
 //-----------------------------------------------------
-void cCounterToCLogicCounter( CCounter& counter, CLogicCounter& logicCounter )
+void cCounterToCLogicCounter(CCounter &counter, CLogicCounter &logicCounter)
 {
 	// counter name
 	logicCounter.setName(NLMISC::tStrToUtf8(counter.m_sName));
-	
+
 	// running mode
-	if( counter.m_sMode == "Shuttle" )
+	if (counter.m_sMode == "Shuttle")
 	{
-		logicCounter.Mode.setValue( CLogicCounter::SHUTTLE );
+		logicCounter.Mode.setValue(CLogicCounter::SHUTTLE);
 	}
-	else
-	if( counter.m_sMode == "Loop" )
+	else if (counter.m_sMode == "Loop")
 	{
-		logicCounter.Mode.setValue( CLogicCounter::LOOP );
+		logicCounter.Mode.setValue(CLogicCounter::LOOP);
 	}
-	else
-	if( counter.m_sMode == "Stop on arrival" )
+	else if (counter.m_sMode == "Stop on arrival")
 	{
-		logicCounter.Mode.setValue( CLogicCounter::STOP_AT_LIMIT );
+		logicCounter.Mode.setValue(CLogicCounter::STOP_AT_LIMIT);
 	}
 	else
 	{
 		// default value
-		logicCounter.Mode.setValue( CLogicCounter::STOP_AT_LIMIT );
+		logicCounter.Mode.setValue(CLogicCounter::STOP_AT_LIMIT);
 	}
-	
+
 	// running state
-	logicCounter.Control.setValue( CLogicCounter::RUN );
+	logicCounter.Control.setValue(CLogicCounter::RUN);
 
 	/// lower limit for counter
-	logicCounter.LowLimit.setValue( counter.m_nLowerLimit );
+	logicCounter.LowLimit.setValue(counter.m_nLowerLimit);
 
 	/// higher limit for counter
-	logicCounter.HighLimit.setValue( counter.m_nUpperLimit );
-	
+	logicCounter.HighLimit.setValue(counter.m_nUpperLimit);
+
 	// TODO : phase, period,...
 
 } // cCounterToCLogicCounter //
-
 
 //-----------------------------------------------------
 //	cLogicCounterToCCounter
 //
 //-----------------------------------------------------
-void cLogicCounterToCCounter( const CLogicCounter& logicCounter, CCounter& counter )
+void cLogicCounterToCCounter(const CLogicCounter &logicCounter, CCounter &counter)
 {
 	// counter name
-	counter.m_sName = CString( logicCounter.getName().c_str() );
+	counter.m_sName = CString(logicCounter.getName().c_str());
 
 	// running mode
-	switch( logicCounter.Mode.getValue() )
+	switch (logicCounter.Mode.getValue())
 	{
-		case CLogicCounter::SHUTTLE			: counter.m_sMode = "Shuttle";			break;
-		case CLogicCounter::LOOP			: counter.m_sMode = "Loop";				break;
-		case CLogicCounter::STOP_AT_LIMIT	: counter.m_sMode = "Stop on arrival";	break;
+	case CLogicCounter::SHUTTLE: counter.m_sMode = "Shuttle"; break;
+	case CLogicCounter::LOOP: counter.m_sMode = "Loop"; break;
+	case CLogicCounter::STOP_AT_LIMIT: counter.m_sMode = "Stop on arrival"; break;
 	}
 
 	// lower limit for counter
@@ -104,7 +100,5 @@ void cLogicCounterToCCounter( const CLogicCounter& logicCounter, CCounter& count
 
 	// higher limit for counter
 	counter.m_nUpperLimit = (long)logicCounter.HighLimit.getValue();
-
-
 
 } // cLogicCounterToCCounter //

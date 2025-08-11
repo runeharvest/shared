@@ -17,11 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-
-
 // ---------------------------------------------------------------------------
 
 #include <vector>
@@ -48,40 +43,40 @@ using namespace NL3D;
 
 // ---------------------------------------------------------------------------
 // Out a string to the stdout and log.log
-void outString (const string &sText)
+void outString(const string &sText)
 {
-	createDebug ();
+	createDebug();
 	InfoLog->displayRaw(sText.c_str());
-	//printf ("%s", sText.c_str());
+	// printf ("%s", sText.c_str());
 }
 
 // ---------------------------------------------------------------------------
 struct SExportOptions
 {
-	string	InputIGDir;
-	string	OutputIGDir;
-	float	CellSize;
-	string	HeightMapFile1;
-	float	ZFactor1;
-	string	HeightMapFile2;
-	float	ZFactor2;
-	bool	ExtendCoords;
-	string	LandFile;
+	string InputIGDir;
+	string OutputIGDir;
+	float CellSize;
+	string HeightMapFile1;
+	float ZFactor1;
+	string HeightMapFile2;
+	float ZFactor2;
+	bool ExtendCoords;
+	string LandFile;
 
 	// -----------------------------------------------------------------------
-	bool load (const string &sFilename)
+	bool load(const string &sFilename)
 	{
-		FILE * f = fopen (sFilename.c_str(), "rt");
+		FILE *f = fopen(sFilename.c_str(), "rt");
 		if (f == NULL)
 			return false;
-		else 
-			fclose (f);
+		else
+			fclose(f);
 
 		try
-		{			
+		{
 			CConfigFile cf;
 
-			cf.load (sFilename);
+			cf.load(sFilename);
 
 			// Out
 			CConfigFile::CVar &cvOutputIGDir = cf.getVar("OutputIGDir");
@@ -115,13 +110,12 @@ struct SExportOptions
 		catch (const EConfigFile &e)
 		{
 			string sTmp = string("ERROR : Error in config file : ") + e.what() + "\n";
-			outString (sTmp);
+			outString(sTmp);
 			return false;
 		}
 		return true;
 	}
 };
-
 
 struct CZoneLimits
 {
@@ -132,45 +126,44 @@ struct CZoneLimits
 };
 
 // ---------------------------------------------------------------------------
-CZoneRegion *loadLand (const string &filename)
+CZoneRegion *loadLand(const string &filename)
 {
 	CZoneRegion *ZoneRegion = NULL;
 	try
 	{
 		CIFile fileIn;
-		if (fileIn.open (filename))
+		if (fileIn.open(filename))
 		{
 			// Xml
-			CIXml xml (true);
-			nlverify (xml.init (fileIn));
+			CIXml xml(true);
+			nlverify(xml.init(fileIn));
 
 			ZoneRegion = new CZoneRegion;
-			ZoneRegion->serial (xml);
+			ZoneRegion->serial(xml);
 		}
 		else
 		{
-			outString (toString("Can't open the land files: %s", filename.c_str()));
+			outString(toString("Can't open the land files: %s", filename.c_str()));
 		}
 	}
-	catch (const Exception& e)
+	catch (const Exception &e)
 	{
 		outString(toString("Error in land file: %s", e.what()));
 	}
 	return ZoneRegion;
 }
 
-
 // ***************************************************************************
-CInstanceGroup* LoadInstanceGroup (const std::string &sFilename)
+CInstanceGroup *LoadInstanceGroup(const std::string &sFilename)
 {
 	CIFile file;
 	CInstanceGroup *newIG = new CInstanceGroup;
 
-	if( file.open( sFilename ) )
+	if (file.open(sFilename))
 	{
 		try
 		{
-			newIG->serial (file);
+			newIG->serial(file);
 		}
 		catch (const Exception &)
 		{
@@ -188,15 +181,15 @@ CInstanceGroup* LoadInstanceGroup (const std::string &sFilename)
 }
 
 // ***************************************************************************
-void SaveInstanceGroup (const std::string  &sFilename, CInstanceGroup *pIG)
+void SaveInstanceGroup(const std::string &sFilename, CInstanceGroup *pIG)
 {
 	COFile file;
 
-	if( file.open( sFilename ) )
+	if (file.open(sFilename))
 	{
 		try
 		{
-			pIG->serial (file);
+			pIG->serial(file);
 		}
 		catch (const Exception &e)
 		{
@@ -211,7 +204,7 @@ void SaveInstanceGroup (const std::string  &sFilename, CInstanceGroup *pIG)
 
 /** Get the Z of the height map at the given position
  */
-static float  getHeightMapZ(float x, float y, const CZoneLimits &zl, const SExportOptions &options, CBitmap *heightMap1, CBitmap *heightMap2)
+static float getHeightMapZ(float x, float y, const CZoneLimits &zl, const SExportOptions &options, CBitmap *heightMap1, CBitmap *heightMap2)
 {
 	float deltaZ = 0.0f, deltaZ2 = 0.0f;
 	CRGBAF color;
@@ -256,11 +249,11 @@ static float  getHeightMapZ(float x, float y, const CZoneLimits &zl, const SExpo
 		deltaZ2 *= options.ZFactor2;
 	}
 
-	return deltaZ + deltaZ2;	
+	return deltaZ + deltaZ2;
 }
 
 // ---------------------------------------------------------------------------
-int main(int nNbArg, char**ppArgs)
+int main(int nNbArg, char **ppArgs)
 {
 	if (!NLMISC::INelContext::isContextInitialised())
 		new CApplicationContext();
@@ -270,17 +263,17 @@ int main(int nNbArg, char**ppArgs)
 
 	if (nNbArg != 2)
 	{
-		printf ("Use : ig_elevation configfile.cfg\n");
-		printf ("\nExample of config.cfg\n\n");
-		printf ("InputIGDir = \"ig_land_max\";\n");
-		printf ("OutputIGDir = \"ig_land_max_elev\";\n");
-		printf ("CellSize = 160.0;\n");
-		printf ("HeightMapFile1 = \"R:/graphics/landscape/ligo/jungle/big.tga\";\n");
-		printf ("ZFactor1 = 1.0;\n");
-		printf ("HeightMapFile2 = \"R:/graphics/landscape/ligo/jungle/noise.tga\";\n");
-		printf ("ZFactor2 = 0.5;\n");
-		printf ("ExtendCoords = 0;\n");
-		printf ("LandFile = \"w:/matis.land\";\n");
+		printf("Use : ig_elevation configfile.cfg\n");
+		printf("\nExample of config.cfg\n\n");
+		printf("InputIGDir = \"ig_land_max\";\n");
+		printf("OutputIGDir = \"ig_land_max_elev\";\n");
+		printf("CellSize = 160.0;\n");
+		printf("HeightMapFile1 = \"R:/graphics/landscape/ligo/jungle/big.tga\";\n");
+		printf("ZFactor1 = 1.0;\n");
+		printf("HeightMapFile2 = \"R:/graphics/landscape/ligo/jungle/noise.tga\";\n");
+		printf("ZFactor2 = 0.5;\n");
+		printf("ExtendCoords = 0;\n");
+		printf("LandFile = \"w:/matis.land\";\n");
 
 		return EXIT_FAILURE;
 	}
@@ -299,10 +292,10 @@ int main(int nNbArg, char**ppArgs)
 	CZoneLimits zl;
 	if (ZoneRegion)
 	{
-		zl._ZoneMinX = ZoneRegion->getMinX() < 0	? 0		: ZoneRegion->getMinX();
-		zl._ZoneMaxX = ZoneRegion->getMaxX() > 255	? 255	: ZoneRegion->getMaxX();
-		zl._ZoneMinY = ZoneRegion->getMinY() > 0	? 0		: ZoneRegion->getMinY();
-		zl._ZoneMaxY = ZoneRegion->getMaxY() < -255 ? -255	: ZoneRegion->getMaxY();
+		zl._ZoneMinX = ZoneRegion->getMinX() < 0 ? 0 : ZoneRegion->getMinX();
+		zl._ZoneMaxX = ZoneRegion->getMaxX() > 255 ? 255 : ZoneRegion->getMaxX();
+		zl._ZoneMinY = ZoneRegion->getMinY() > 0 ? 0 : ZoneRegion->getMinY();
+		zl._ZoneMaxY = ZoneRegion->getMaxY() < -255 ? -255 : ZoneRegion->getMaxY();
 	}
 	else
 	{
@@ -318,12 +311,12 @@ int main(int nNbArg, char**ppArgs)
 	if (!options.HeightMapFile1.empty())
 	{
 		HeightMap1 = new CBitmap;
-		try 
+		try
 		{
 			CIFile inFile;
 			if (inFile.open(options.HeightMapFile1))
 			{
-				HeightMap1->load (inFile);
+				HeightMap1->load(inFile);
 			}
 			else
 			{
@@ -343,12 +336,12 @@ int main(int nNbArg, char**ppArgs)
 	if (!options.HeightMapFile2.empty())
 	{
 		HeightMap2 = new CBitmap;
-		try 
+		try
 		{
 			CIFile inFile;
 			if (inFile.open(options.HeightMapFile2))
 			{
-				HeightMap2->load (inFile);
+				HeightMap2->load(inFile);
 			}
 			else
 			{
@@ -359,7 +352,7 @@ int main(int nNbArg, char**ppArgs)
 		}
 		catch (const Exception &e)
 		{
-			outString (string("Cant load height map : ") + options.HeightMapFile2 + " : " + e.what() + "\n");
+			outString(string("Cant load height map : ") + options.HeightMapFile2 + " : " + e.what() + "\n");
 			delete HeightMap2;
 			HeightMap1 = NULL;
 		}
@@ -371,7 +364,7 @@ int main(int nNbArg, char**ppArgs)
 
 	// keep only .ig files
 	vector<string> vAllFiles;
-	for(uint i = 0, len = (uint)vAllFilesUnfiltered.size(); i < len; ++i)
+	for (uint i = 0, len = (uint)vAllFilesUnfiltered.size(); i < len; ++i)
 	{
 		if (toLowerAscii(CFile::getExtension(vAllFilesUnfiltered[i])) == "ig")
 		{
@@ -381,7 +374,7 @@ int main(int nNbArg, char**ppArgs)
 
 	for (uint32 i = 0; i < vAllFiles.size(); ++i)
 	{
-		CInstanceGroup *pIG = LoadInstanceGroup (vAllFiles[i]);
+		CInstanceGroup *pIG = LoadInstanceGroup(vAllFiles[i]);
 
 		if (pIG != NULL)
 		{
@@ -392,30 +385,29 @@ int main(int nNbArg, char**ppArgs)
 			vector<CCluster> Clusters;
 			vector<CPortal> Portals;
 			vector<CPointLightNamed> PLN;
-			pIG->retrieve (vGlobalPos, IA, Clusters, Portals, PLN);
+			pIG->retrieve(vGlobalPos, IA, Clusters, Portals, PLN);
 
 			if (IA.empty() && PLN.empty() && Portals.empty() && Clusters.empty()) continue;
-
 
 			uint k;
 
 			// elevate instance
-			for(k = 0; k < IA.size(); ++k)
+			for (k = 0; k < IA.size(); ++k)
 			{
 				CVector instancePos = vGlobalPos + IA[k].Pos;
 				IA[k].Pos.z += getHeightMapZ(instancePos.x, instancePos.y, zl, options, HeightMap1, HeightMap2);
 			}
 
 			// lights
-			for(k = 0; k < PLN.size(); ++k)
+			for (k = 0; k < PLN.size(); ++k)
 			{
 				CVector lightPos = vGlobalPos + PLN[k].getPosition();
-				PLN[k].setPosition( PLN[k].getPosition() + getHeightMapZ(lightPos.x, lightPos.y, zl, options, HeightMap1, HeightMap2) * CVector::K);
+				PLN[k].setPosition(PLN[k].getPosition() + getHeightMapZ(lightPos.x, lightPos.y, zl, options, HeightMap1, HeightMap2) * CVector::K);
 			}
 
 			// portals
 			std::vector<CVector> portal;
-			for(k = 0; k < Portals.size(); ++k)
+			for (k = 0; k < Portals.size(); ++k)
 			{
 				Portals[k].getPoly(portal);
 				if (portal.empty())
@@ -426,12 +418,12 @@ int main(int nNbArg, char**ppArgs)
 				// compute mean position of the poly
 				CVector meanPos(0, 0, 0);
 				uint l;
-				for(l = 0; l < portal.size(); ++l)
+				for (l = 0; l < portal.size(); ++l)
 					meanPos += portal[l];
-				meanPos /= (float) portal.size();
+				meanPos /= (float)portal.size();
 				meanPos += vGlobalPos;
 				float z = getHeightMapZ(meanPos.x, meanPos.y, zl, options, HeightMap1, HeightMap2);
-				for(l = 0; l < portal.size(); ++l)
+				for (l = 0; l < portal.size(); ++l)
 				{
 					portal[l].z += z;
 				}
@@ -441,7 +433,7 @@ int main(int nNbArg, char**ppArgs)
 			// clusters
 			std::vector<CPlane> volume;
 			CMatrix transMatrix;
-			for(k = 0; k < Clusters.size(); ++k)
+			for (k = 0; k < Clusters.size(); ++k)
 			{
 				CVector clusterPos = vGlobalPos + Clusters[k].getBBox().getCenter();
 				float z = getHeightMapZ(clusterPos.x, clusterPos.y, zl, options, HeightMap1, HeightMap2);
@@ -450,7 +442,7 @@ int main(int nNbArg, char**ppArgs)
 			}
 
 			CInstanceGroup *pIGout = new CInstanceGroup;
-			pIGout->build (vGlobalPos, IA, Clusters, Portals, PLN);
+			pIGout->build(vGlobalPos, IA, Clusters, Portals, PLN);
 			pIGout->enableRealTimeSunContribution(realTimeSunContribution);
 
 			std::string outFilePath = CPath::standardizePath(options.OutputIGDir, true) + CFile::getFilename(vAllFiles[i]);

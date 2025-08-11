@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #if !defined(AFX_PARTICLE_SYSTEM_EDIT_H__CD8281FA_CA1A_4D87_B54F_509D490066A9__INCLUDED_)
 #define AFX_PARTICLE_SYSTEM_EDIT_H__CD8281FA_CA1A_4D87_B54F_509D490066A9__INCLUDED_
 
@@ -28,11 +27,9 @@
 #include "editable_range.h"
 #include "particle_workspace.h"
 
-namespace NL3D
-{
-	class CParticleSystem;
+namespace NL3D {
+class CParticleSystem;
 }
-
 
 class CAutoLODDlg;
 class CParticleTreeCtrl;
@@ -46,12 +43,11 @@ public:
 	void set(const float &v);
 };
 
-
 class CTimeThresholdWrapper : public IPSWrapperFloat
 {
 public:
 	NL3D::CParticleSystem *PS;
-	float get(void) const;		
+	float get(void) const;
 	void set(const float &);
 };
 
@@ -59,7 +55,7 @@ class CMaxNbIntegrationWrapper : public IPSWrapperUInt
 {
 public:
 	NL3D::CParticleSystem *PS;
-	uint32 get(void) const;		
+	uint32 get(void) const;
 	void set(const uint32 &);
 };
 
@@ -67,7 +63,7 @@ class CMaxViewDistWrapper : public IPSWrapperFloat
 {
 public:
 	NL3D::CParticleSystem *PS;
-	float get(void) const;		
+	float get(void) const;
 	void set(const float &);
 };
 
@@ -75,7 +71,7 @@ class CLODRatioWrapper : public IPSWrapperFloat
 {
 public:
 	NL3D::CParticleSystem *PS;
-	float get(void) const;		
+	float get(void) const;
 	void set(const float &);
 };
 
@@ -84,64 +80,65 @@ public:
 
 class CParticleSystemEdit : public CDialog, public CDialogStack, public IPopupNotify
 {
-// Construction
+	// Construction
 public:
-	CParticleSystemEdit(CParticleWorkspace::CNode *ownerNode, CParticleTreeCtrl *ptc);   // standard constructor
+	CParticleSystemEdit(CParticleWorkspace::CNode *ownerNode, CParticleTreeCtrl *ptc); // standard constructor
 
 	~CParticleSystemEdit();
 
 	void init(CWnd *pParent);
 	void refresh();
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CParticleSystemEdit)
-	enum { IDD = IDD_EDIT_PARTICLE_SYSTEM };
-	CButton	m_BypassMaxNumStepsCtrl;
-	CButton	m_ForceLifeTimeUpdate;
-	CButton	m_DieWhenOutOfFrustumCtrl;
-	CButton	m_DieWhenOutOfRangeCtrl;
-	CComboBox	m_AnimTypeCtrl;
-	CComboBox	m_PresetCtrl;
-	CComboBox	m_DieOnEvent;
-	CButton	m_PrecomputeBBoxCtrl;
-	CEdit	m_BBoxZCtrl;
-	CEdit	m_BBoxYCtrl;
-	CEdit	m_BBoxXCtrl;
-	CButton	m_EnableSlowDownCtrl;
-	BOOL	m_AccurateIntegration;
-	BOOL	m_EnableSlowDown;
-	BOOL	m_DieWhenOutOfRange;
-	BOOL	m_DieWhenOutOfFrustum;
-	BOOL	m_EnableLoadBalancing;
-	BOOL	m_BypassMaxNumSteps;
-	BOOL	m_ForceLighting;
-	CString	m_BBoxX;
-	CString	m_BBoxY;
-	CString	m_BBoxZ;
+	enum
+	{
+		IDD = IDD_EDIT_PARTICLE_SYSTEM
+	};
+	CButton m_BypassMaxNumStepsCtrl;
+	CButton m_ForceLifeTimeUpdate;
+	CButton m_DieWhenOutOfFrustumCtrl;
+	CButton m_DieWhenOutOfRangeCtrl;
+	CComboBox m_AnimTypeCtrl;
+	CComboBox m_PresetCtrl;
+	CComboBox m_DieOnEvent;
+	CButton m_PrecomputeBBoxCtrl;
+	CEdit m_BBoxZCtrl;
+	CEdit m_BBoxYCtrl;
+	CEdit m_BBoxXCtrl;
+	CButton m_EnableSlowDownCtrl;
+	BOOL m_AccurateIntegration;
+	BOOL m_EnableSlowDown;
+	BOOL m_DieWhenOutOfRange;
+	BOOL m_DieWhenOutOfFrustum;
+	BOOL m_EnableLoadBalancing;
+	BOOL m_BypassMaxNumSteps;
+	BOOL m_ForceLighting;
+	CString m_BBoxX;
+	CString m_BBoxY;
+	CString m_BBoxZ;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CParticleSystemEdit)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	CParticleWorkspace::CNode *_Node;
-	CEditableRangeFloat		  *_TimeThresholdDlg, *_MaxViewDistDlg, *_LODRatioDlg;
-	CEditableRangeUInt		  *_MaxIntegrationStepDlg; 
-	CDialog					  *_AutoLODDlg;
-	CDialog					  *_GlobalColorDlg;
-	CParticleTreeCtrl		  *_ParticleTreeCtrl;
+	CEditableRangeFloat *_TimeThresholdDlg, *_MaxViewDistDlg, *_LODRatioDlg;
+	CEditableRangeUInt *_MaxIntegrationStepDlg;
+	CDialog *_AutoLODDlg;
+	CDialog *_GlobalColorDlg;
+	CParticleTreeCtrl *_ParticleTreeCtrl;
 
 	// Generated message map functions
 	//{{AFX_MSG(CParticleSystemEdit)
 	afx_msg void OnAccurateIntegration();
 	afx_msg void OnEnableSlowDown();
-	afx_msg void OnPrecomputeBbox();	
+	afx_msg void OnPrecomputeBbox();
 	afx_msg void OnIncBbox();
 	afx_msg void OnDecBbox();
 	afx_msg void OnDieWhenOutOfRange();
@@ -173,7 +170,6 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-
 	void updatePrecomputedBBoxParams();
 	void updateIntegrationParams();
 	void updateDieOnEventParams();
@@ -181,13 +177,16 @@ protected:
 	void childPopupClosed(CWnd *child);
 	void updateBBoxFromText();
 
-	static CTimeThresholdWrapper		_TimeThresholdWrapper;
-	static CMaxViewDistWrapper			_MaxViewDistWrapper;
-	static CMaxNbIntegrationWrapper		_MaxNbIntegrationWrapper;
-	static CLODRatioWrapper				_LODRatioWrapper;
-    /// wrapper to tune user parameters
-	static CUserParamWrapper			_UserParamWrapper[4];
-	void updateModifiedFlag() { if (_Node) _Node->setModified(true); }
+	static CTimeThresholdWrapper _TimeThresholdWrapper;
+	static CMaxViewDistWrapper _MaxViewDistWrapper;
+	static CMaxNbIntegrationWrapper _MaxNbIntegrationWrapper;
+	static CLODRatioWrapper _LODRatioWrapper;
+	/// wrapper to tune user parameters
+	static CUserParamWrapper _UserParamWrapper[4];
+	void updateModifiedFlag()
+	{
+		if (_Node) _Node->setModified(true);
+	}
 };
 
 //{{AFX_INSERT_LOCATION}}

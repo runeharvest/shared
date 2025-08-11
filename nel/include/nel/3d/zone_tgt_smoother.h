@@ -24,10 +24,7 @@
 #include <list>
 #include <vector>
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 /**
@@ -39,74 +36,69 @@ namespace NL3D
 class CZoneTgtSmoother
 {
 public:
-
 	/// Constructor
-	CZoneTgtSmoother() {}
+	CZoneTgtSmoother() { }
 
 	/// Doit method. zones are modified. zones[0] is the center zones. Other are border zones.
-	void		makeVerticesCoplanar(std::vector<CZoneInfo>  &zones);
+	void makeVerticesCoplanar(std::vector<CZoneInfo> &zones);
 
-
-// *************************
+	// *************************
 private:
-	struct	CPatchId
+	struct CPatchId
 	{
 		// The unique Id of the patch.
-		uint16			ZoneId;
-		uint16			PatchId;
+		uint16 ZoneId;
+		uint16 PatchId;
 		// a ptr on the patch.
-		CPatchInfo*		Patch;
+		CPatchInfo *Patch;
 		// [0,3]. which vertex of this patch points on the vertex.
-		sint			IdVert;
+		sint IdVert;
 
 		// local index on tangentes, around the vertex.
-		sint			Tangents[2];
+		sint Tangents[2];
 	};
-	struct	CTangentId
+	struct CTangentId
 	{
-		uint16			ZoneId;
-		uint16			PatchId;
-		sint			EdgeId;
+		uint16 ZoneId;
+		uint16 PatchId;
+		sint EdgeId;
 		// The two patchs which share the tangent.
-		CPatchInfo		*Patchs[2];
+		CPatchInfo *Patchs[2];
 		// The value of this tangent.
-		CVector			Tangent;
+		CVector Tangent;
 
-		bool			isOppositeOf(const CTangentId &tgt)
+		bool isOppositeOf(const CTangentId &tgt)
 		{
 			// 4x4 configuartion only.
 			// The opposite tangent do not have the same patchs which share this tangent.
-			if(Patchs[0]==tgt.Patchs[0])	return false;
-			if(Patchs[0]==tgt.Patchs[1])	return false;
-			if(Patchs[1]==tgt.Patchs[0])	return false;
-			if(Patchs[1]==tgt.Patchs[1])	return false;
+			if (Patchs[0] == tgt.Patchs[0]) return false;
+			if (Patchs[0] == tgt.Patchs[1]) return false;
+			if (Patchs[1] == tgt.Patchs[0]) return false;
+			if (Patchs[1] == tgt.Patchs[1]) return false;
 			return true;
 		}
 	};
 
-	struct	CVertexInfo
+	struct CVertexInfo
 	{
 		// neighbors patchs.
-		std::list<CPatchId>	Patchs;
-		bool				OnBorder;
+		std::list<CPatchId> Patchs;
+		bool OnBorder;
 
 		CVertexInfo()
 		{
-			OnBorder= false;
+			OnBorder = false;
 		}
 	};
 
-	typedef	std::map<sint, CVertexInfo>		TVertexMap;
-	typedef	TVertexMap::iterator			ItVertexMap;
+	typedef std::map<sint, CVertexInfo> TVertexMap;
+	typedef TVertexMap::iterator ItVertexMap;
 
 private:
-	TVertexMap		VertexMap;
-
+	TVertexMap VertexMap;
 };
 
-
 } // NL3D
-
 
 #endif // NL_ZONE_TGT_SMOOTHER_H
 

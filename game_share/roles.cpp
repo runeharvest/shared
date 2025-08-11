@@ -17,8 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "roles.h"
 #include "nel/misc/i18n.h"
@@ -27,12 +25,10 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace ROLES
-{
+namespace ROLES {
 
 // for convert enum to part of role definition sheet name
-static const string StringSheetArray[NB_ROLES]=
-{
+static const string StringSheetArray[NB_ROLES] = {
 	"Unknown",
 	"Fighter",
 	"Caster",
@@ -41,8 +37,7 @@ static const string StringSheetArray[NB_ROLES]=
 };
 
 // for convert enum to string role name
-static const string StringArray[NB_ROLES]=
-{
+static const string StringArray[NB_ROLES] = {
 	"Unknown",
 	"Fighter",
 	"Caster",
@@ -51,25 +46,25 @@ static const string StringArray[NB_ROLES]=
 };
 
 // convert role id to sheet string
-const std::string& toSheetString( ERole RoleId )
+const std::string &toSheetString(ERole RoleId)
 {
-	nlassert((sint)RoleId<NB_ROLES);
+	nlassert((sint)RoleId < NB_ROLES);
 	return StringSheetArray[RoleId];
 }
 
 // convert role id to role name string
-const std::string& toString( ERole RoleId )
+const std::string &toString(ERole RoleId)
 {
-	nlassert((sint)RoleId<NB_ROLES);
+	nlassert((sint)RoleId < NB_ROLES);
 	return StringArray[RoleId];
 }
 
 // convert role name string to role
-ERole toRoleId( const std::string& Role )
+ERole toRoleId(const std::string &Role)
 {
-	for(uint i=0;i<NB_ROLES;i++)
+	for (uint i = 0; i < NB_ROLES; i++)
 	{
-		if(nlstricmp(StringArray[i], Role)==0)
+		if (nlstricmp(StringArray[i], Role) == 0)
 			return (ERole)i;
 	}
 	return unknown;
@@ -78,7 +73,7 @@ ERole toRoleId( const std::string& Role )
 // Return the Translated name of the Job
 const std::string &roleToUCString(ERole r)
 {
-	return NLMISC::CI18N::get( toString( r ) );
+	return NLMISC::CI18N::get(toString(r));
 }
 
 } // ROLES

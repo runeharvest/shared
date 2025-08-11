@@ -17,8 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 //
@@ -42,10 +40,10 @@ using namespace NLNET;
 // Variables
 //
 
-static uint32	Lag = 0;
-static uint8	PacketLoss = 0;
-static uint8	PacketDuplication = 0;
-static uint8	PacketDisordering = 0;
+static uint32 Lag = 0;
+static uint8 PacketLoss = 0;
+static uint8 PacketDuplication = 0;
+static uint8 PacketDisordering = 0;
 
 //
 // Class
@@ -53,15 +51,17 @@ static uint8	PacketDisordering = 0;
 
 struct CBufferizedPacket
 {
-	CBufferizedPacket (CUdpSock *client, const uint8 *packet, uint32 packetSize, uint32 delay, const CInetAddress *addr):
-		Client(client), PacketSize(packetSize), Time(CTime::getLocalTime()+delay)
+	CBufferizedPacket(CUdpSock *client, const uint8 *packet, uint32 packetSize, uint32 delay, const CInetAddress *addr)
+	    : Client(client)
+	    , PacketSize(packetSize)
+	    , Time(CTime::getLocalTime() + delay)
 	{
-		nlassert (packetSize > 0);
-		nlassert (packet != NULL);
-		nlassert (client != NULL);
+		nlassert(packetSize > 0);
+		nlassert(packet != NULL);
+		nlassert(client != NULL);
 
 		Packet = new uint8[packetSize];
-		memcpy (Packet, packet, packetSize);
+		memcpy(Packet, packet, packetSize);
 
 		if (addr != NULL)
 		{
@@ -74,10 +74,10 @@ struct CBufferizedPacket
 		}
 	}
 
-	~CBufferizedPacket ()
+	~CBufferizedPacket()
 	{
-		nlassert (Packet != NULL);
-		delete [] Packet;
+		nlassert(Packet != NULL);
+		delete[] Packet;
 		Packet = NULL;
 		Client = NULL;
 		PacketSize = 0;
@@ -86,41 +86,41 @@ struct CBufferizedPacket
 			delete Addr;
 	}
 
-	CUdpSock	*Client;
-	uint8		*Packet;
-	uint32		 PacketSize;
-	TTime		 Time;
-	CInetAddress	*Addr;
+	CUdpSock *Client;
+	uint8 *Packet;
+	uint32 PacketSize;
+	TTime Time;
+	CInetAddress *Addr;
 };
 
 //
 // Variables
 //
 
-static queue<CBufferizedPacket*> BufferizedPackets;
+static queue<CBufferizedPacket *> BufferizedPackets;
 
 //
 // Prototypes
 //
 
-void sendUDPNow (CUdpSock *client, const uint8 *packet, uint32 packetSize, const CInetAddress *addr);
+void sendUDPNow(CUdpSock *client, const uint8 *packet, uint32 packetSize, const CInetAddress *addr);
 
 //
 // Functions
 //
 
-void updateBufferizedPackets ()
+void updateBufferizedPackets()
 {
-	TTime ct = CTime::getLocalTime ();
+	TTime ct = CTime::getLocalTime();
 	while (!BufferizedPackets.empty())
 	{
-		CBufferizedPacket *bp = BufferizedPackets.front ();
+		CBufferizedPacket *bp = BufferizedPackets.front();
 		if (bp->Time <= ct)
 		{
 			// time to send the message
-			sendUDPNow (bp->Client, bp->Packet, bp->PacketSize, bp->Addr);
+			sendUDPNow(bp->Client, bp->Packet, bp->PacketSize, bp->Addr);
 			delete bp;
-			BufferizedPackets.pop ();
+			BufferizedPackets.pop();
 		}
 		else
 		{
@@ -129,7 +129,7 @@ void updateBufferizedPackets ()
 	}
 }
 
-void setSimlagValues (sint32 lag, sint8 packetLoss, sint8 packetDuplication, sint8 packetDisordering)
+void setSimlagValues(sint32 lag, sint8 packetLoss, sint8 packetDuplication, sint8 packetDisordering)
 {
 	if (lag != -1) Lag = lag;
 	if (packetLoss != -1) PacketLoss = packetLoss;
@@ -137,36 +137,36 @@ void setSimlagValues (sint32 lag, sint8 packetLoss, sint8 packetDuplication, sin
 	if (packetDisordering != -1) PacketDisordering = packetDisordering;
 }
 
-void sendUDPNow (CUdpSock *client, const uint8 *packet, uint32 packetSize, const CInetAddress *addr)
+void sendUDPNow(CUdpSock *client, const uint8 *packet, uint32 packetSize, const CInetAddress *addr)
 {
 	if (addr == NULL)
-		client->send (packet, packetSize);
+		client->send(packet, packetSize);
 	else
-		client->sendTo (packet, packetSize, *addr);
+		client->sendTo(packet, packetSize, *addr);
 
-//	uint32 packetNumber = *(uint32 *)packet;
-//	nlinfo ("time %" NL_I64 "u sending now packet %5u", CTime::getLocalTime (), packetNumber);
+	//	uint32 packetNumber = *(uint32 *)packet;
+	//	nlinfo ("time %" NL_I64 "u sending now packet %5u", CTime::getLocalTime (), packetNumber);
 }
 
-void sendUDP (CUdpSock *client, const uint8 *packet, uint32 packetSize, const CInetAddress *addr)
+void sendUDP(CUdpSock *client, const uint8 *packet, uint32 packetSize, const CInetAddress *addr)
 {
-	nlassert (client != NULL);
-	nlassert (packet != NULL);
-	nlassert (packetSize > 0);
+	nlassert(client != NULL);
+	nlassert(packet != NULL);
+	nlassert(packetSize > 0);
 
 #if !FINAL_VERSION
-	if ((float)rand()/(float)(RAND_MAX)*100.0f >= PacketLoss)
+	if ((float)rand() / (float)(RAND_MAX) * 100.0f >= PacketLoss)
 	{
-		sint32 lag = Lag /*+ (rand()%40) - 20*/;// void disordering
+		sint32 lag = Lag /*+ (rand()%40) - 20*/; // void disordering
 
 		if (lag > 100)
 		{
 			// send the packet later
 
-			CBufferizedPacket *bp = new CBufferizedPacket (client, packet, packetSize, lag, addr);
+			CBufferizedPacket *bp = new CBufferizedPacket(client, packet, packetSize, lag, addr);
 
 			// duplicate the packet
-			if ((float)rand()/(float)(RAND_MAX)*100.0f < PacketDisordering && !BufferizedPackets.empty())
+			if ((float)rand() / (float)(RAND_MAX) * 100.0f < PacketDisordering && !BufferizedPackets.empty())
 			{
 				CBufferizedPacket *bp2 = BufferizedPackets.back();
 
@@ -180,13 +180,13 @@ void sendUDP (CUdpSock *client, const uint8 *packet, uint32 packetSize, const CI
 				bp = bp2;
 			}
 
-			BufferizedPackets.push (bp);
+			BufferizedPackets.push(bp);
 
 			// duplicate the packet
-			if ((float)rand()/(float)(RAND_MAX)*100.0f < PacketDuplication)
+			if ((float)rand() / (float)(RAND_MAX) * 100.0f < PacketDuplication)
 			{
-				CBufferizedPacket *bp = new CBufferizedPacket (client, packet, packetSize, lag, addr);
-				BufferizedPackets.push (bp);
+				CBufferizedPacket *bp = new CBufferizedPacket(client, packet, packetSize, lag, addr);
+				BufferizedPackets.push(bp);
 			}
 		}
 		else
@@ -194,12 +194,12 @@ void sendUDP (CUdpSock *client, const uint8 *packet, uint32 packetSize, const CI
 #endif
 			// send the packet NOW
 
-			sendUDPNow (client, packet, packetSize, addr);
+			sendUDPNow(client, packet, packetSize, addr);
 
 			// duplicate the packet
-			if ((float)rand()/(float)(RAND_MAX)*100.0f < PacketDuplication)
+			if ((float)rand() / (float)(RAND_MAX) * 100.0f < PacketDuplication)
 			{
-				sendUDPNow (client, packet, packetSize, addr);
+				sendUDPNow(client, packet, packetSize, addr);
 			}
 #if !FINAL_VERSION
 		}

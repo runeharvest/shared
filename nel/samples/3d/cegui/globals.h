@@ -59,4 +59,3 @@
 #include <nel/3d/u_particle_system_instance.h>
 
 static const float GScale = 0.01f;
-

@@ -27,7 +27,6 @@
 
 namespace NLNET {
 
-
 /**
  * Net Displayer. Sends the strings to a logger server (LOGS).
  * \ref log_howto
@@ -39,47 +38,42 @@ namespace NLNET {
 class CNetDisplayer : public NLMISC::IDisplayer
 {
 public:
-
 	/// Constructor
 	CNetDisplayer(bool autoConnect = true);
 
 	/** Sets logging server address. Call this method from outside only if you want to use a LOGS not registered within the NS.
 	 * It does nothing if the displayer is already connected to a server.
 	 */
-	void setLogServer( const CInetHost& logServerAddr );
+	void setLogServer(const CInetHost &logServerAddr);
 
 	/** Sets logging server with an already connected server.
 	 */
-	void setLogServer( CCallbackClient *server );
+	void setLogServer(CCallbackClient *server);
 
 	/// Returns true if the displayer is connected to a Logging Service.
-	bool connected () { return _Server->connected(); }
+	bool connected() { return _Server->connected(); }
 
 	/// Destructor
 	virtual ~CNetDisplayer();
 
 protected:
-
 	/** Sends the string to the logging server
 	 * \warning If not connected, tries to connect to the logging server each call. It can slow down your program a lot.
 	 */
-	virtual void doDisplay ( const NLMISC::CLog::TDisplayInfo& args, const char *message);
+	virtual void doDisplay(const NLMISC::CLog::TDisplayInfo &args, const char *message);
 
-	 /// Find the server (using the NS) and connect
+	/// Find the server (using the NS) and connect
 	void findAndConnect();
 
 private:
-
-	CInetHost	_ServerAddr;
-//	CCallbackClient	_Server;
-	CCallbackClient	*_Server;
-	bool			_ServerAllocated;
-//	uint32			_ServerNumber;
+	CInetHost _ServerAddr;
+	//	CCallbackClient	_Server;
+	CCallbackClient *_Server;
+	bool _ServerAllocated;
+	//	uint32			_ServerNumber;
 };
 
-
 } // NLNET
-
 
 #endif // NL_NET_DISPLAYER_H
 

@@ -20,12 +20,9 @@
 #include "nel/misc/types_nl.h"
 #include "nel/misc/vector.h"
 
-
-namespace NL3D
-{
+namespace NL3D {
 
 using NLMISC::CVector;
-
 
 // ***************************************************************************
 /**
@@ -41,10 +38,10 @@ using NLMISC::CVector;
 class CScissor
 {
 public:
-	float	X;
-	float	Y;
-	float	Width;
-	float	Height;
+	float X;
+	float Y;
+	float Width;
+	float Height;
 
 	/// Constructor. fullScreen.
 	CScissor()
@@ -54,37 +51,32 @@ public:
 	/// Constructor.
 	CScissor(float x, float y, float width, float height)
 	{
-		X= x;
-		Y= y;
-		Width= width;
-		Height= height;
+		X = x;
+		Y = y;
+		Width = width;
+		Height = height;
 	}
-
 
 	/// init. simple copy.
-	void	init (float x, float y, float width, float height)
+	void init(float x, float y, float width, float height)
 	{
-		X= x;
-		Y= y;
-		Width= width;
-		Height= height;
+		X = x;
+		Y = y;
+		Width = width;
+		Height = height;
 	}
-
 
 	/// reset to FullScreen
-	void	initFullScreen()
+	void initFullScreen()
 	{
-		X= 0;
-		Y= 0;
-		Width= 1;
-		Height=1;
+		X = 0;
+		Y = 0;
+		Width = 1;
+		Height = 1;
 	}
-
 };
 
-
 } // NL3D
-
 
 #endif // NL_SCISSOR_H
 

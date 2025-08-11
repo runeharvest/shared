@@ -19,23 +19,18 @@
 #include <nel/3d/driver.h>
 #include <nel/3d/nelu.h>
 
-
 using namespace NLMISC;
 
 namespace NL3D {
 
-
-
-
-
 /****************************************************************\
-						 CMoveListener()
+                         CMoveListener()
 \****************************************************************/
 CMoveListener::CMoveListener()
 {
 	_ViewMatrix.identity();
 	_Viewport.initFullScreen();
-	
+
 	_Mode = WALK;
 
 	_MouseFree = false;
@@ -45,11 +40,11 @@ CMoveListener::CMoveListener()
 	_Width = 0;
 	_Height = 0;
 
-	_Top=1.f;
-	_Bottom=1.f;
-	_Left=1.f;
-	_Right=1.f;
-	_Depth=1.f;
+	_Top = 1.f;
+	_Bottom = 1.f;
+	_Left = 1.f;
+	_Right = 1.f;
+	_Depth = 1.f;
 
 	_RotZ = 0;
 	_RotX = 0;
@@ -63,165 +58,160 @@ CMoveListener::CMoveListener()
 	_EyesHeight = 1.80f;
 }
 
-
 /****************************************************************\
-						 changeViewMatrix()
+                         changeViewMatrix()
 \****************************************************************/
 void CMoveListener::changeViewMatrix()
 {
 	const float time(deltaTimeInSeconds());
 
 	// Forward
-	if(CNELU::AsyncListener.isKeyDown(KeyUP))
+	if (CNELU::AsyncListener.isKeyDown(KeyUP))
 	{
-		if(_Mode==WALK)
+		if (_Mode == WALK)
 		{
-			_Pos.x -= time*_TransSpeed * (float)sin(_RotZ);
-			_Pos.y += time*_TransSpeed * (float)cos(_RotZ);
+			_Pos.x -= time * _TransSpeed * (float)sin(_RotZ);
+			_Pos.y += time * _TransSpeed * (float)cos(_RotZ);
 		}
 		else
 		{
-			_Pos.x -= time*_TransSpeed * (float)sin(_RotZ)*(float)cos(_RotX);
-			_Pos.y += time*_TransSpeed * (float)cos(_RotZ)*(float)cos(_RotX);
-			_Pos.z += time*_TransSpeed * (float)sin(_RotX);
+			_Pos.x -= time * _TransSpeed * (float)sin(_RotZ) * (float)cos(_RotX);
+			_Pos.y += time * _TransSpeed * (float)cos(_RotZ) * (float)cos(_RotX);
+			_Pos.z += time * _TransSpeed * (float)sin(_RotX);
 		}
 	}
 	// Backward
-	if(CNELU::AsyncListener.isKeyDown(KeyDOWN))
+	if (CNELU::AsyncListener.isKeyDown(KeyDOWN))
 	{
-		if(_Mode==WALK)
+		if (_Mode == WALK)
 		{
-			_Pos.x += time*_TransSpeed * (float)sin(_RotZ);
-			_Pos.y -= time*_TransSpeed * (float)cos(_RotZ);
+			_Pos.x += time * _TransSpeed * (float)sin(_RotZ);
+			_Pos.y -= time * _TransSpeed * (float)cos(_RotZ);
 		}
 		else
 		{
-			_Pos.x += time*_TransSpeed * (float)sin(_RotZ)*(float)cos(_RotX);
-			_Pos.y -= time*_TransSpeed * (float)cos(_RotZ)*(float)cos(_RotX);
-			_Pos.z -= time*_TransSpeed * (float)sin(_RotX);
+			_Pos.x += time * _TransSpeed * (float)sin(_RotZ) * (float)cos(_RotX);
+			_Pos.y -= time * _TransSpeed * (float)cos(_RotZ) * (float)cos(_RotX);
+			_Pos.z -= time * _TransSpeed * (float)sin(_RotX);
 		}
 	}
 
 	// Strafe left
-	if(CNELU::AsyncListener.isKeyDown(KeyLEFT))
+	if (CNELU::AsyncListener.isKeyDown(KeyLEFT))
 	{
-		_Pos.x = _Pos.x - time*_TransSpeed*(float)cos(_RotZ);
-		_Pos.y = _Pos.y - time*_TransSpeed*(float)sin(_RotZ);
+		_Pos.x = _Pos.x - time * _TransSpeed * (float)cos(_RotZ);
+		_Pos.y = _Pos.y - time * _TransSpeed * (float)sin(_RotZ);
 	}
 	// Strafe right
-	if(CNELU::AsyncListener.isKeyDown(KeyRIGHT))
+	if (CNELU::AsyncListener.isKeyDown(KeyRIGHT))
 	{
-		_Pos.x = _Pos.x + time*_TransSpeed*(float)cos(_RotZ);
-		_Pos.y = _Pos.y + time*_TransSpeed*(float)sin(_RotZ);
+		_Pos.x = _Pos.x + time * _TransSpeed * (float)cos(_RotZ);
+		_Pos.y = _Pos.y + time * _TransSpeed * (float)sin(_RotZ);
 	}
 	// Up
-	if(CNELU::AsyncListener.isKeyDown(KeySHIFT))
+	if (CNELU::AsyncListener.isKeyDown(KeySHIFT))
 	{
-		_Pos.z += time*_TransSpeed;
+		_Pos.z += time * _TransSpeed;
 	}
 	// Down
-	if(CNELU::AsyncListener.isKeyDown(KeyCONTROL))
+	if (CNELU::AsyncListener.isKeyDown(KeyCONTROL))
 	{
-		_Pos.z -= time*_TransSpeed;
+		_Pos.z -= time * _TransSpeed;
 	}
-	
-	if(CNELU::AsyncListener.isKeyPushed(Key1))
+
+	if (CNELU::AsyncListener.isKeyPushed(Key1))
 	{
-		_TransSpeed = 5/3.6f; // 5km/h
+		_TransSpeed = 5 / 3.6f; // 5km/h
 	}
-	if(CNELU::AsyncListener.isKeyPushed(Key2))
+	if (CNELU::AsyncListener.isKeyPushed(Key2))
 	{
-		_TransSpeed = 10/3.6f; // 10km/h
+		_TransSpeed = 10 / 3.6f; // 10km/h
 	}
-	if(CNELU::AsyncListener.isKeyPushed(Key3))
+	if (CNELU::AsyncListener.isKeyPushed(Key3))
 	{
-		_TransSpeed = 20/3.6f; // 20km/h
+		_TransSpeed = 20 / 3.6f; // 20km/h
 	}
-	if(CNELU::AsyncListener.isKeyPushed(Key4))
+	if (CNELU::AsyncListener.isKeyPushed(Key4))
 	{
-		_TransSpeed = 40/3.6f; //40km/h
+		_TransSpeed = 40 / 3.6f; // 40km/h
 	}
-	if(CNELU::AsyncListener.isKeyPushed(Key5))
+	if (CNELU::AsyncListener.isKeyPushed(Key5))
 	{
-		_TransSpeed = 80/3.6f; //80km/h
+		_TransSpeed = 80 / 3.6f; // 80km/h
 	}
-	if(CNELU::AsyncListener.isKeyPushed(Key6))
+	if (CNELU::AsyncListener.isKeyPushed(Key6))
 	{
-		_TransSpeed = 160/3.6f; //160km/h
+		_TransSpeed = 160 / 3.6f; // 160km/h
 	}
-	if(CNELU::AsyncListener.isKeyPushed(Key7))
+	if (CNELU::AsyncListener.isKeyPushed(Key7))
 	{
-		_TransSpeed = 320/3.6f; //320km/h
+		_TransSpeed = 320 / 3.6f; // 320km/h
 	}
-	if(CNELU::AsyncListener.isKeyPushed(Key8))
+	if (CNELU::AsyncListener.isKeyPushed(Key8))
 	{
-		_TransSpeed = 640/3.6f; //640km/h
+		_TransSpeed = 640 / 3.6f; // 640km/h
 	}
-	
+
 	// Transform view matrix
 	_ViewMatrix.identity();
-	_ViewMatrix.translate(CVector(0,0,_EyesHeight));
+	_ViewMatrix.translate(CVector(0, 0, _EyesHeight));
 	_ViewMatrix.translate(_Pos);
 	_ViewMatrix.rotateZ(_RotZ);
 	_ViewMatrix.rotateX(_RotX);
 
 	CNELU::Camera->setMatrix(_ViewMatrix);
-
 }
 
-
 /****************************************************************\
-						 operator()
+                         operator()
 \****************************************************************/
-void CMoveListener::operator()(const CEvent& event)
+void CMoveListener::operator()(const CEvent &event)
 {
 	static const float eps = 0.001f;
 
 	// Rotation
-	if (event==EventMouseMoveId)
+	if (event == EventMouseMoveId)
 	{
-		CEventMouse* mouseEvent=(CEventMouse*)&event;
+		CEventMouse *mouseEvent = (CEventMouse *)&event;
 
-		if(!_MouseFree)
+		if (!_MouseFree)
 		{
-			if(_CursorInit)
+			if (_CursorInit)
 			{
-				float difx =  0.5f-mouseEvent->X;
-				if ( (float)fabs(difx) > eps)
+				float difx = 0.5f - mouseEvent->X;
+				if ((float)fabs(difx) > eps)
 				{
-					_RotZ += _RotSpeed*(difx);
+					_RotZ += _RotSpeed * (difx);
 				}
-				float dify =  -(0.5f-mouseEvent->Y);
-				if ( (float)fabs(dify) > eps)
+				float dify = -(0.5f - mouseEvent->Y);
+				if ((float)fabs(dify) > eps)
 				{
-					_RotX += _RotSpeed*(dify);
-				}	
+					_RotX += _RotSpeed * (dify);
+				}
 			}
 			else
 			{
 				_CursorInit = true;
 			}
-			_Scene->getDriver()->setMousePos(0.5,0.5);
+			_Scene->getDriver()->setMousePos(0.5, 0.5);
 		}
 	}
 }
 
-
 /****************************************************************\
-						 addToServer()
+                         addToServer()
 \****************************************************************/
-void CMoveListener::addToServer(CEventServer& server)
+void CMoveListener::addToServer(CEventServer &server)
 {
-	server.addListener (EventMouseMoveId, this);
+	server.addListener(EventMouseMoveId, this);
 }
 
-
 /****************************************************************\
-						 removeFromServer()
+                         removeFromServer()
 \****************************************************************/
-void CMoveListener::removeFromServer (CEventServer& server)
+void CMoveListener::removeFromServer(CEventServer &server)
 {
-	server.removeListener (EventMouseMoveId, this);
+	server.removeListener(EventMouseMoveId, this);
 }
 
 }; // NL3D

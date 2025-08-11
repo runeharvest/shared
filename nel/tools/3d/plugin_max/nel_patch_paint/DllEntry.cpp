@@ -15,7 +15,7 @@ using namespace NLMISC;
 #endif
 
 /** public functions **/
-BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
 {
 	// initialize nel context
 	if (!NLMISC::INelContext::isContextInitialised())
@@ -26,7 +26,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
 
 	hInstance = hinstDLL;
 
-	if ( !controlsInit )
+	if (!controlsInit)
 	{
 		controlsInit = TRUE;
 
@@ -43,46 +43,46 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
 
 		// initialize Chicago controls
 		InitCommonControls();
-		}
-
-	switch(fdwReason) {
-		case DLL_PROCESS_ATTACH:
-			break;
-		case DLL_THREAD_ATTACH:
-			break;
-		case DLL_THREAD_DETACH:
-			break;
-		case DLL_PROCESS_DETACH:
-			break;
-		}
-	return(TRUE);
 	}
 
+	switch (fdwReason)
+	{
+	case DLL_PROCESS_ATTACH:
+		break;
+	case DLL_THREAD_ATTACH:
+		break;
+	case DLL_THREAD_DETACH:
+		break;
+	case DLL_PROCESS_DETACH:
+		break;
+	}
+	return (TRUE);
+}
 
 //------------------------------------------------------
 // This is the interface to Jaguar:
 //------------------------------------------------------
 
-__declspec( dllexport ) const TCHAR *
+__declspec(dllexport) const TCHAR *
 LibDescription()
 {
 	return _T("NeL patch painter");
 }
 
-
 #ifndef DESIGN_VER
 
 /// MUST CHANGE THIS NUMBER WHEN ADD NEW CLASS
-__declspec( dllexport ) int LibNumberClasses() {return 1;}
+__declspec(dllexport) int LibNumberClasses() { return 1; }
 
-__declspec( dllexport ) ClassDesc*
-LibClassDesc(int i) {
-	switch(i) {
-		case 0: return GetEditPatchModDesc();
-		default: return 0;
-		}
-
+__declspec(dllexport) ClassDesc *
+LibClassDesc(int i)
+{
+	switch (i)
+	{
+	case 0: return GetEditPatchModDesc();
+	default: return 0;
 	}
+}
 
 #else
 
@@ -91,52 +91,52 @@ LibClassDesc(int i) {
 //
 
 /// MUST CHANGE THIS NUMBER WHEN ADD NEW CLASS
-__declspec( dllexport ) int LibNumberClasses() {return 1;}
+__declspec(dllexport) int LibNumberClasses() { return 1; }
 
-__declspec( dllexport ) ClassDesc*
-LibClassDesc(int i) {
-	switch(i) {
-		case 0: return GetEditPatchModDesc();
-		default: return 0;
-		}
-
+__declspec(dllexport) ClassDesc *
+LibClassDesc(int i)
+{
+	switch (i)
+	{
+	case 0: return GetEditPatchModDesc();
+	default: return 0;
 	}
+}
 
 #endif
 
-
-
 // Return version so can detect obsolete DLLs
-__declspec( dllexport ) ULONG
+__declspec(dllexport) ULONG
 LibVersion() { return VERSION_3DSMAX; }
 
 // Let the plug-in register itself for deferred loading
-__declspec( dllexport ) ULONG CanAutoDefer()
+__declspec(dllexport) ULONG CanAutoDefer()
 {
 	return 1;
 }
 
 BOOL CALLBACK DefaultSOTProc(
-		HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
+    HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	IObjParam *ip = (IObjParam *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+
+	switch (msg)
 	{
-	IObjParam *ip = (IObjParam*)GetWindowLongPtr(hWnd,GWLP_USERDATA);
+	case WM_INITDIALOG:
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, lParam);
+		break;
 
-	switch (msg) {
-		case WM_INITDIALOG:
-			SetWindowLongPtr(hWnd,GWLP_USERDATA,lParam);
-			break;
-
-		default:
-			return FALSE;
-		}
-	return TRUE;
+	default:
+		return FALSE;
 	}
+	return TRUE;
+}
 
 TCHAR *GetString(int id)
-	{
+{
 	static TCHAR buf[256];
 
 	if (hInstance)
 		return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : NULL;
 	return NULL;
-	}
+}

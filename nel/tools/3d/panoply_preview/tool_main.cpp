@@ -20,9 +20,9 @@
 // STL includes
 #include <stdio.h>
 #ifdef NL_OS_WINDOWS
-#	include <windows.h>
-#	include <direct.h>
-#	include <tchar.h>
+#include <windows.h>
+#include <direct.h>
+#include <tchar.h>
 #endif
 
 // Qt includes
@@ -42,11 +42,11 @@
 #include <QtPlugin>
 
 #if defined(Q_OS_WIN32)
-	Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
+Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
 #elif defined(Q_OS_MAC)
-	Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
+Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
 #elif defined(Q_OS_UNIX)
-	Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)
+Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)
 #endif
 
 #endif
@@ -91,10 +91,12 @@ QMap<QString, QSize> parseCustomSizeHints(int argc, char **argv)
 
 	QMap<QString, QSize> result;
 
-	for (int i = 1; i < argc; ++i) {
+	for (int i = 1; i < argc; ++i)
+	{
 		QString arg = QString::fromLocal8Bit(argv[i]);
 
-		if (arg.startsWith(QLatin1String("-SizeHint"))) {
+		if (arg.startsWith(QLatin1String("-SizeHint")))
+		{
 			QString name = arg.mid(9);
 			if (name.isEmpty())
 				usage();
@@ -119,11 +121,11 @@ QMap<QString, QSize> parseCustomSizeHints(int argc, char **argv)
 }
 
 #ifdef NL_OS_WINDOWS
-#	ifdef _UNICODE
-#		define tstring wstring
-#	else
-#		define tstring string
-#	endif
+#ifdef _UNICODE
+#define tstring wstring
+#else
+#define tstring string
+#endif
 #endif
 
 sint main(int argc, char **argv)
@@ -146,21 +148,21 @@ sint main(int argc, char **argv)
 		WarningLog->addDisplayer(NLTOOLS::s_FileDisplayer);
 		AssertLog->addDisplayer(NLTOOLS::s_FileDisplayer);
 		ErrorLog->addDisplayer(NLTOOLS::s_FileDisplayer);
-#endif	
+#endif
 
 		nlinfo("Welcome to NeL!");
 	}
-	
+
 	// low fragmentation heap (windows)
 #if NLTOOLS_LOW_FRAGMENTATION_HEAP
 	ULONG heapFragValue = 2; // enable low fragmentation heap
-	if (HeapSetInformation(GetProcessHeap(), 
-		HeapCompatibilityInformation, 
-		&heapFragValue, sizeof(heapFragValue)))
+	if (HeapSetInformation(GetProcessHeap(),
+	        HeapCompatibilityInformation,
+	        &heapFragValue, sizeof(heapFragValue)))
 	{
 		nlinfo("HeapSetInformation OK!\n");
 	}
-	else 
+	else
 	{
 		nlwarning("HeapSetInformation FAIL! (%d)\n", GetLastError());
 	}

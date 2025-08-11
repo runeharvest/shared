@@ -33,7 +33,6 @@
 
 namespace NLMISC {
 
-
 /**
  * CEventEmitter UNIX implementation
  * \author Vianney Lecroart
@@ -43,7 +42,6 @@ namespace NLMISC {
 class CUnixEventEmitter : public IEventEmitter
 {
 public:
-
 	/// Constructor
 	CUnixEventEmitter();
 	virtual ~CUnixEventEmitter();
@@ -57,7 +55,7 @@ public:
 	 * sends all events to server
 	 * (should call CEventServer method postEvent() )
 	 */
-	virtual void submitEvents(CEventServer & server, bool allWindows);
+	virtual void submitEvents(CEventServer &server, bool allWindows);
 
 	/**
 	 * process input-related events (mouse and keyboard)
@@ -67,7 +65,7 @@ public:
 	/**
 	 * Copy a string to system clipboard.
 	 */
-        virtual bool copyTextToClipboard(const std::string &text);
+	virtual bool copyTextToClipboard(const std::string &text);
 
 	/*
 	 * Paste a string from system clipboard.
@@ -78,38 +76,39 @@ public:
 	void closeIM();
 
 private:
-
 	// Private internal server message
 	class CUnixEventServer : CEventServer
 	{
 		friend class CUnixEventEmitter;
+
 	public:
-		void setServer (CEventServer *server)
+		void setServer(CEventServer *server)
 		{
-			_Server=server;
+			_Server = server;
 		}
+
 	private:
-		virtual bool pumpEvent(CEvent* event)
+		virtual bool pumpEvent(CEvent *event)
 		{
 			CEventServer::pumpEvent(event);
-			_Server->postEvent (event);
+			_Server->postEvent(event);
 			return false;
 		}
+
 	private:
 		CEventServer *_Server;
 	};
 
-	Display*				_dpy;
-	Window					_win;
-	std::map<TKey, bool>	_PressedKeys;
-	XIM						_im;
-	XIC						_ic;
-	NL3D::IDriver*			_driver;
-	CUnixEventServer		_InternalServer;
-	std::string				_CopiedString;
-	bool					_SelectionOwned;
+	Display *_dpy;
+	Window _win;
+	std::map<TKey, bool> _PressedKeys;
+	XIM _im;
+	XIC _ic;
+	NL3D::IDriver *_driver;
+	CUnixEventServer _InternalServer;
+	std::string _CopiedString;
+	bool _SelectionOwned;
 };
-
 
 } // NLMISC
 

@@ -17,13 +17,10 @@
 #ifndef NL_PLANE_H
 #define NL_PLANE_H
 
+#include "stream.h"
+#include "vector.h"
 
-#include	"stream.h"
-#include	"vector.h"
-
-
-namespace NLMISC
-{
+namespace NLMISC {
 
 class CUV;
 
@@ -41,20 +38,30 @@ class CUV;
 class CPlane
 {
 public:
-	float	a,b,c,d;
+	float a, b, c, d;
 
 public:
-
 	/// \name Object.
 	//@{
 	/// Constructor that does nothing.
-	CPlane() {}
+	CPlane() { }
 	/// Constructor .
-	CPlane(float _a, float _b, float _c, float _d) : a(_a), b(_b), c(_c), d(_d) {}
+	CPlane(float _a, float _b, float _c, float _d)
+	    : a(_a)
+	    , b(_b)
+	    , c(_c)
+	    , d(_d)
+	{
+	}
 	/// Copy Constructor.
-	CPlane(const CPlane &v) : a(v.a), b(v.b), c(v.c), d(v.d) {}
+	CPlane(const CPlane &v)
+	    : a(v.a)
+	    , b(v.b)
+	    , c(v.c)
+	    , d(v.d)
+	{
+	}
 	//@}
-
 
 	/// \name Construction/Get.
 	//@{
@@ -62,28 +69,27 @@ public:
 	 * Make a plane with a normal and a vertex.
 	 * NB: the plane normal is normalized by make().
 	 */
-	void	make(const CVector &normal, const CVector &pos);
+	void make(const CVector &normal, const CVector &pos);
 	/**
 	 * Make a plane with 3 vertices.
 	 * NB: the plane normal is normalized by make().
 	 */
-	void	make(const CVector &p0, const CVector &p1, const CVector &p2);
+	void make(const CVector &p0, const CVector &p1, const CVector &p2);
 	/**
 	 * Return the normal vector of the plane.
 	 * Since the normal of the plane may not be normalized (if setuped without make()), the returned normal
 	 * may NOT be normalized.
 	 */
-	CVector	getNormal() const;
+	CVector getNormal() const;
 	/**
 	 * Normalize the plane, such that getNormal() return a normalized vector.
 	 */
-	void	normalize();
+	void normalize();
 	/**
 	 * return the normalized version of a plane. \see normalize()
 	 */
-	inline CPlane	normed() const;
+	inline CPlane normed() const;
 	//@}
-
 
 	/// \name Projection / clipping.
 	//@{
@@ -92,11 +98,11 @@ public:
 	 * Since the plane normal may not be normalized, distance() compute the distance with the normalized normal
 	 * of plane. If you are sure that your plane has a normalized normal, it is much faster to do a \c fabs(p*v).
 	 */
-	float	distance(const CVector &p) const;
+	float distance(const CVector &p) const;
 	/// Return plane*vector.
-	inline float	operator*(const CVector &p) const;
+	inline float operator*(const CVector &p) const;
 	/// Intersect a line onto a plane. p1 is returned if line // to plane.
-	CVector intersect(const CVector &p0,const CVector &p1) const;
+	CVector intersect(const CVector &p0, const CVector &p1) const;
 	/// Project a point onto a plane.
 	CVector project(const CVector &p0) const;
 
@@ -106,14 +112,14 @@ public:
 	 * \return false if segment entirely front, or true.
 	 * \sa clipSegmentFront()
 	 */
-	bool	clipSegmentBack(CVector &p0, CVector &p1) const;
+	bool clipSegmentBack(CVector &p0, CVector &p1) const;
 	/**
 	 * Clip a segment onto a plane.
 	 * The "front segment" is written in (p1,p2). If segment is entirely "back", (p1,p2) is not modified.
 	 * \return false if segment entirely back, or true.
 	 * \sa clipSegmentBack()
 	 */
-	bool	clipSegmentFront(CVector &p0, CVector &p1) const;
+	bool clipSegmentFront(CVector &p0, CVector &p1) const;
 
 	/** Clip a polygon by a plane. The "back polygon" is returned.
 	 * Nb: Out must be allocated to nIn+1 (at less).
@@ -122,9 +128,9 @@ public:
 	 * \param nIn number of vertices of input polygon
 	 * \return number of vertices of out. 0 is returned if In polygon entirely front, or if nIn<=2.
 	 */
-	sint	clipPolygonBack(CVector in[], CVector out[], sint nIn) const;
+	sint clipPolygonBack(CVector in[], CVector out[], sint nIn) const;
 	// Clip a polygon with uvs by a plane
-	sint	clipPolygonBack(const CVector in[], const CUV inUV[], CVector out[], CUV outUV[], sint nIn) const;
+	sint clipPolygonBack(const CVector in[], const CUV inUV[], CVector out[], CUV outUV[], sint nIn) const;
 	/** Clip a polygon by a plane. The "front polygon" is returned.
 	 * Nb: Out must be allocated to nIn+1 (at less).
 	 * \param in the input polygon
@@ -132,41 +138,37 @@ public:
 	 * \param nIn number of vertices of input polygon
 	 * \return number of vertices of out. 0 is returned if In polygon entirely back, or if nIn<=2.
 	 */
-	sint	clipPolygonFront(CVector in[], CVector out[], sint nIn) const;
+	sint clipPolygonFront(CVector in[], CVector out[], sint nIn) const;
 	//@}
 
 	/// \name normal inversion
 	//@{
-		/// get the inverted version of this plane (same position, but inverted normal)
-		CPlane  inverted() const;
+	/// get the inverted version of this plane (same position, but inverted normal)
+	CPlane inverted() const;
 
-		/// invert this plane (same position, but inverted normal)
-		void	invert();
+	/// invert this plane (same position, but inverted normal)
+	void invert();
 	//@}
 
 	/// \name Misc
 	//@{
-	void	serial(IStream &f)
+	void serial(IStream &f)
 	{
-		f.serial(a,b,c,d);
+		f.serial(a, b, c, d);
 	}
 
 	// Strict equality comparator
-	bool	operator==(const CPlane &o) const
+	bool operator==(const CPlane &o) const
 	{
-		return a==o.a && b==o.b && c==o.c && d==o.d;
+		return a == o.a && b == o.b && c == o.c && d == o.d;
 	}
 
 	//@}
-
 };
-
 
 }
 
-
 #include "plane_inline.h"
-
 
 #endif // NL_PLANE_H
 

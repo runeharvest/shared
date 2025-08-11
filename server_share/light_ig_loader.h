@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_LIGHT_IG_LOADER_H
 #define NL_LIGHT_IG_LOADER_H
 
@@ -32,7 +30,6 @@
 #include <string>
 #include <vector>
 
-
 /**
  * <Class description>
  * \author Benjamin Legros
@@ -42,67 +39,58 @@
 class CLightIGLoader
 {
 public:
-
 	/// Constructor
 	CLightIGLoader();
 
-
 	/// Load IG
-	void				loadIG(const std::string &filename);
-
+	void loadIG(const std::string &filename);
 
 	/// Num instances
-	uint				getNumInstance()
+	uint getNumInstance()
 	{
 		return (uint)_ShapeNames.size();
 	}
 
 	/// get shape name
-	const std::string	&getShapeName(uint i)
+	const std::string &getShapeName(uint i)
 	{
 		return _ShapeNames[i];
 	}
 
 	/// get shape name
-	const std::string	&getInstanceName(uint i)
+	const std::string &getInstanceName(uint i)
 	{
 		return _InstanceNames[i];
 	}
 
 	/// get instance matrix
-	void				getInstanceMatrix(uint i, NLMISC::CMatrix &matrix)
+	void getInstanceMatrix(uint i, NLMISC::CMatrix &matrix)
 	{
-		matrix.identity();	
+		matrix.identity();
 		matrix.translate(_ShapePos[i]);
 		matrix.rotate(_ShapeRots[i]);
-		matrix.scale(_ShapeScales[i]);	
+		matrix.scale(_ShapeScales[i]);
 	}
 
-
 protected:
-
 	/// File
-	NLMISC::CIFile		_File;
-
-
+	NLMISC::CIFile _File;
 
 	/// Shape names array
-	std::vector<std::string>		_ShapeNames;
+	std::vector<std::string> _ShapeNames;
 
 	/// Shape names array
-	std::vector<std::string>		_InstanceNames;
+	std::vector<std::string> _InstanceNames;
 
 	/// Shape pos array
-	std::vector<NLMISC::CVector>	_ShapePos;
+	std::vector<NLMISC::CVector> _ShapePos;
 
 	/// Shape Rots array
-	std::vector<NLMISC::CQuat>		_ShapeRots;
+	std::vector<NLMISC::CQuat> _ShapeRots;
 
 	/// Shape Scales array
-	std::vector<NLMISC::CVector>	_ShapeScales;
-
+	std::vector<NLMISC::CVector> _ShapeScales;
 };
-
 
 #endif // NL_LIGHT_IG_LOADER_H
 

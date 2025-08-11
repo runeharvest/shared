@@ -14,37 +14,32 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_ARMOR_TYPES_H
 #define RY_ARMOR_TYPES_H
 
 #include "nel/misc/types_nl.h"
 
-namespace ARMORTYPE
+namespace ARMORTYPE {
+// Mode
+enum EArmorType
 {
-	// Mode
-	enum EArmorType
-	{
-		UNKNOWN = 0,
-		HEAVY,
-		MEDIUM,
-		LIGHT,
-		ALL,
+	UNKNOWN = 0,
+	HEAVY,
+	MEDIUM,
+	LIGHT,
+	ALL,
 
-		NUM_ARMOR_TYPE
-	};
+	NUM_ARMOR_TYPE
+};
 
+/**
+ * get the right armor type from the input string
+ * \param str the input string
+ * \return the EDamageType associated to this string (UNKNOWN if the string cannot be interpreted)
+ */
+EArmorType toArmorType(const std::string &str);
 
-	/**
-	 * get the right armor type from the input string
-	 * \param str the input string
-	 * \return the EDamageType associated to this string (UNKNOWN if the string cannot be interpreted)
-	 */
-	EArmorType toArmorType(const std::string &str);
-
-	const std::string &toString(EArmorType e);
-
+const std::string &toString(EArmorType e);
 
 }; // ARMORTYPE
 

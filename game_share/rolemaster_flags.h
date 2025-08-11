@@ -14,36 +14,33 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_ROLEMASTER_FLAGS_H
 #define RY_ROLEMASTER_FLAGS_H
 
 #include "nel/misc/types_nl.h"
 
-namespace ROLEMASTER_FLAGS
+namespace ROLEMASTER_FLAGS {
+enum TRolemasterFlag
 {
-	enum TRolemasterFlag
-	{
-		FightActions = 0,
-		MagicActions = 1,
-		ForageActions = 2,
-		CraftActions = 3,
+	FightActions = 0,
+	MagicActions = 1,
+	ForageActions = 2,
+	CraftActions = 3,
 
-		CaracteristicUpgrades = 4,
-		SpecialPowers = 5,
+	CaracteristicUpgrades = 4,
+	SpecialPowers = 5,
 
-		NbFlags = 6,
-	};
+	NbFlags = 6,
+};
 
-	/// convert a TRolemasterFlag to a string
-	const std::string &toString(TRolemasterFlag type);
+/// convert a TRolemasterFlag to a string
+const std::string &toString(TRolemasterFlag type);
 
-	/// convert a string to a TRolemasterFlag
-	TRolemasterFlag fromString( const std::string &str);
+/// convert a string to a TRolemasterFlag
+TRolemasterFlag fromString(const std::string &str);
 
-	/// from a .sphrase sheet name, test if it can be sold by rolemaster Flags
-	bool	canSellPhrase(uint32 rmfBitField, const std::string &sheetName);
+/// from a .sphrase sheet name, test if it can be sold by rolemaster Flags
+bool canSellPhrase(uint32 rmfBitField, const std::string &sheetName);
 
 }; // ROLEMASTER_FLAGS
 

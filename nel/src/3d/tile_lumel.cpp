@@ -24,52 +24,50 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
-void CTileLumel::createUncompressed (uint8 interpolated, uint8 shaded)
+void CTileLumel::createUncompressed(uint8 interpolated, uint8 shaded)
 {
 	// Shading
-	Shaded=shaded;
+	Shaded = shaded;
 
 	// Same color ?
-	if (interpolated!=shaded)
+	if (interpolated != shaded)
 	{
 		// Compute compressed value
-		sint temp=((shaded<<3)/(sint)(interpolated?interpolated:1));
-		clamp (temp, 0, 15);
+		sint temp = ((shaded << 3) / (sint)(interpolated ? interpolated : 1));
+		clamp(temp, 0, 15);
 
 		// After decompression
-		uint decompressed=(((uint)interpolated*((uint)temp))>>3)+4;
-		if (decompressed>255)
-			decompressed=255;
+		uint decompressed = (((uint)interpolated * ((uint)temp)) >> 3) + 4;
+		if (decompressed > 255)
+			decompressed = 255;
 
 		// Need to compress ?
-		if (abs((sint)shaded-(sint)decompressed)>=abs((sint)shaded-(sint)interpolated))
+		if (abs((sint)shaded - (sint)decompressed) >= abs((sint)shaded - (sint)interpolated))
 		{
 			// Shadow not present
-			_ShadowValue=0xff;
+			_ShadowValue = 0xff;
 		}
 		else
 		{
 			// Shadow
-			_ShadowValue=temp;
+			_ShadowValue = temp;
 		}
 	}
 	else
 	{
 		// Shadow not present
-		_ShadowValue=0xff;
+		_ShadowValue = 0xff;
 	}
 }
 
 // ***************************************************************************
-void CTileLumel::pack (CStreamBit& stream) const
+void CTileLumel::pack(CStreamBit &stream) const
 {
 	// There is shadow here ?
-	if (isShadowed ())
+	if (isShadowed())
 	{
 		// Put a true
 		stream.pushBackBool(true);
@@ -82,8 +80,6 @@ void CTileLumel::pack (CStreamBit& stream) const
 		stream.pushBackBool(false);
 }
 
-
 } // NL3D
-
 
 /* End of tile_lumel.h */

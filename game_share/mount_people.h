@@ -19,20 +19,19 @@
 
 #include <string>
 
-namespace MOUNT_PEOPLE
+namespace MOUNT_PEOPLE {
+
+enum TMountPeople
 {
+	Unknown, // warning : keep this value to 0, this a special value in mirror
+	Fyros,
+	Matis,
+	Tryker,
+	Zorai
+};
 
-	enum TMountPeople
-	{
-		Unknown, // warning : keep this value to 0, this a special value in mirror
-		Fyros,
-		Matis,
-		Tryker,
-		Zorai
-	};
-
-	TMountPeople fromString(const std::string & str);
-	const std::string & toString(TMountPeople people);
+TMountPeople fromString(const std::string &str);
+const std::string &toString(TMountPeople people);
 
 } // namespace MOUNT_PEOPLE
 

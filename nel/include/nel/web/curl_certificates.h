@@ -25,17 +25,16 @@
 // forward declaration to avoid curl.h inclusion everywhere
 typedef void CURL;
 
-namespace NLWEB
+namespace NLWEB {
+class CCurlCertificates
 {
-	class CCurlCertificates
-	{
-	public:
-		// allow to use custom PEM certificates
-		static void addCertificateFile(const std::string &cert);
+public:
+	// allow to use custom PEM certificates
+	static void addCertificateFile(const std::string &cert);
 
-		// set all CURL options to use custom SSL context function
-		static void useCertificates(CURL *curl);
-	};
+	// set all CURL options to use custom SSL context function
+	static void useCertificates(CURL *curl);
+};
 
 } // namespace
 #endif

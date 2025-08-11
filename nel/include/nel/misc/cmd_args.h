@@ -25,8 +25,7 @@
 #include "nel/misc/types_nl.h"
 #include "nel/misc/sstring.h"
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 class CCmdArgs
 {
@@ -77,7 +76,7 @@ public:
 	bool parse(const std::vector<std::string> &args);
 
 	/// Returns arguments of the program pass from the user to the program using parameters (ie: "myprog param1 param2")
-	const TArgs& getArgs() const { return _Args; }
+	const TArgs &getArgs() const { return _Args; }
 
 	/// Returns true if the argument if present in the command line (ie: haveArg("p") will return true if -p is in the command line)
 	bool haveArg(const std::string &argName) const;
@@ -127,18 +126,18 @@ public:
 	/// Set or get version to display in -v
 	void setVersion(const std::string &version) { _Version = version; }
 	std::string getVersion() const { return _Version; }
+
 protected:
-	std::string		_ProgramName;	// filename of the program
-	std::string		_ProgramPath;	// full path of the program
-	std::string		_StartupPath;	// initial startup path
-	std::string		_Description;	// description of the program
-	std::string		_Version;		// version of the program
+	std::string _ProgramName; // filename of the program
+	std::string _ProgramPath; // full path of the program
+	std::string _StartupPath; // initial startup path
+	std::string _Description; // description of the program
+	std::string _Version; // version of the program
 
 	/// Array of arguments pass from the command line
-	TArgs			_Args;
+	TArgs _Args;
 }; // class CCmdArgs
 
 }; // NAMESPACE NLMISC
 
 #endif // NL_CMD_ARGS_H
-

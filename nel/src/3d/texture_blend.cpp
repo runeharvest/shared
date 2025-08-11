@@ -25,39 +25,35 @@
 
 namespace NL3D {
 
-
-
-CTextureBlend::CTextureBlend() : _BlendFactor(0), _SharingEnabled(true)
+CTextureBlend::CTextureBlend()
+    : _BlendFactor(0)
+    , _SharingEnabled(true)
 {
 }
 
-
 // ************************************************************************
-bool	CTextureBlend::supportSharing() const
+bool CTextureBlend::supportSharing() const
 {
 	return _BlendTex[0] && _BlendTex[0]->supportSharing()
-			&& _BlendTex[1] && _BlendTex[1]->supportSharing();
+	    && _BlendTex[1] && _BlendTex[1]->supportSharing();
 }
 
 // ************************************************************************
-std::string		CTextureBlend::getShareName() const
+std::string CTextureBlend::getShareName() const
 {
 	nlassert(supportSharing());
 	char fmt[1024];
 	NLMISC::smprintf(fmt, 1024, "BlendTex0:%s:BlendTex1:%s:blendFactor:%d",
-			 _BlendTex[0]->getShareName().c_str(), _BlendTex[1]->getShareName().c_str(),
-			 (uint) _BlendFactor
-			 );
+	    _BlendTex[0]->getShareName().c_str(), _BlendTex[1]->getShareName().c_str(),
+	    (uint)_BlendFactor);
 	return fmt;
 }
-
 
 // ************************************************************************
 void CTextureBlend::enableSharing(bool enabled /*= false*/)
 {
 	_SharingEnabled = enabled;
 }
-
 
 // ************************************************************************
 void CTextureBlend::release()
@@ -80,7 +76,6 @@ bool CTextureBlend::setBlendFactor(uint16 factor)
 	return false;
 }
 
-
 // ************************************************************************
 void CTextureBlend::setBlendTexture(uint index, ITexture *tex)
 {
@@ -92,7 +87,6 @@ void CTextureBlend::setBlendTexture(uint index, ITexture *tex)
 	}
 }
 
-
 // ************************************************************************
 void CTextureBlend::doGenerate(bool async)
 {
@@ -101,7 +95,7 @@ void CTextureBlend::doGenerate(bool async)
 		makeDummy();
 		return;
 	}
-	//NLMISC::TTicks start = NLMISC::CTime::getPerformanceTime();
+	// NLMISC::TTicks start = NLMISC::CTime::getPerformanceTime();
 	_BlendTex[0]->generate();
 	_BlendTex[1]->generate();
 
@@ -110,9 +104,8 @@ void CTextureBlend::doGenerate(bool async)
 	nlinfo("blend time = %.2f", (float) (1000 * NLMISC::CTime::ticksToSecond(end - start)));*/
 }
 
-
 // ************************************************************************
-void	CTextureBlend::serial(NLMISC::IStream &f)
+void CTextureBlend::serial(NLMISC::IStream &f)
 {
 	f.serialVersion(0);
 	ITexture::serial(f);

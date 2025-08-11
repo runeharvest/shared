@@ -14,35 +14,30 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_ANIMAL_TYPE_H
 #define RY_ANIMAL_TYPE_H
 
 #include "nel/misc/types_nl.h"
 
-
-namespace ANIMAL_TYPE
+namespace ANIMAL_TYPE {
+enum EAnimalType
 {
-	enum	EAnimalType
-	{
-		All = 0,
-		Mount,
-		Packer,
-		Demon,
+	All = 0,
+	Mount,
+	Packer,
+	Demon,
 
-		AnimalTypeSize
-	};
+	AnimalTypeSize
+};
 
-	// Special values for HUNGER database leaf
-	const uint DbHungryValue = 0;
-	const uint MaxDbSatiety = 31;
+// Special values for HUNGER database leaf
+const uint DbHungryValue = 0;
+const uint MaxDbSatiety = 31;
 
-	// Special value for DESPAWN_TIMER database leaf
-	const uint MaxDbTimeBeforeDespawn = 71;
+// Special value for DESPAWN_TIMER database leaf
+const uint MaxDbTimeBeforeDespawn = 71;
 
 }; // ANIMAL_TYPE
-
 
 #endif // RY_ANIMAL_TYPE_H
 

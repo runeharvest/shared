@@ -54,7 +54,10 @@ public:
 	};
 
 	// Constructs a null address
-	CIPv6Address() : m_Valid(false) { }
+	CIPv6Address()
+	    : m_Valid(false)
+	{
+	}
 
 	// Constructs an any listener address
 	static CIPv6Address any();
@@ -89,7 +92,7 @@ public:
 	// Constructs an address from a binary address
 	// IPv4 is 4 bytes, IPv6 is 16 bytes
 	CIPv6Address(const uint8 *addr, size_t len)
-		: m_Valid(set(addr, len))
+	    : m_Valid(set(addr, len))
 	{
 	}
 
@@ -121,7 +124,7 @@ public:
 
 	// Convert an IPv4 or the Any listener address to the sockaddr_in structure
 	bool toSockAddrInet(TSockAddrIn *addr) const;
-	
+
 	// Convert an IPv6 address to the sockaddr_in6 structure
 	bool toSockAddrInet6(TSockAddrIn6 *addr) const;
 
@@ -135,7 +138,8 @@ public:
 	{
 		if (!m_Valid)
 			return false;
-		NL_ALIGNAS(uint64_t) static const uint8 reference[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF };
+		NL_ALIGNAS(uint64_t)
+		static const uint8 reference[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF };
 #ifndef NL_CPP14
 		return memcmp(m_Address, reference, 12) == 0;
 #else
@@ -143,7 +147,7 @@ public:
 		    && ((const uint32_t *)reference)[2] == ((const uint32_t *)m_Address)[2];
 #endif
 	}
-	
+
 	TType getType() const;
 
 	// Get the default (widest) subnet for this address, returns null address if not applicable for this address
@@ -176,8 +180,9 @@ private:
 	// An IPv4 address is stored in the last 4 bytes, with 0xffff in the 2 bytes before.
 	// For example, IPv4 address 192.168.0.1 is stored as
 	// 0000:0000:0000:0000:0000:ffff:c0a8:0001
-	NL_ALIGNAS(uint64_t) uint8 m_Address[16];
-	
+	NL_ALIGNAS(uint64_t)
+	uint8 m_Address[16];
+
 	// If false, this structure is considered empty or null.
 	bool m_Valid;
 };
@@ -190,7 +195,7 @@ inline bool CIPv6Address::operator==(const CIPv6Address &other) const
 		return memcmp(m_Address, other.m_Address, 16) == 0;
 #else
 		return ((const uint64_t *)m_Address)[0] == ((const uint64_t *)other.m_Address)[0]
-			&& ((const uint64_t *)m_Address)[1] == ((const uint64_t *)other.m_Address)[1];
+		    && ((const uint64_t *)m_Address)[1] == ((const uint64_t *)other.m_Address)[1];
 #endif
 	}
 	else

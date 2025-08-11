@@ -7,7 +7,7 @@
 #define DBGWELD_ACTIONx
 #define DBG_NAMEDSELSx
 
-#define PROMPT_TIME	2000
+#define PROMPT_TIME 2000
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -17,7 +17,7 @@ extern void DeletePatchParts(PatchMesh *patch, RPatchMesh *rpatch, BitArray &del
 
 static TSTR detachName;
 
-static BOOL CALLBACK DetachDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) 
+static BOOL CALLBACK DetachDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	TCHAR tempName[256];
 	switch (message)
@@ -44,10 +44,10 @@ static BOOL CALLBACK DetachDialogProc(HWND hDlg, UINT message, WPARAM wParam, LP
 
 // ---------------------------------------------------------------------------
 
-static int GetDetachOptions(IObjParam *ip, TSTR& newName) 
+static int GetDetachOptions(IObjParam *ip, TSTR &newName)
 {
 	detachName = newName;
-	ip->MakeNameUnique(detachName);	
+	ip->MakeNameUnique(detachName);
 	if (DialogBox(hInstance, MAKEINTRESOURCE(IDD_DETACH), ip->GetMAXHWnd(), (DLGPROC)DetachDialogProc) == 1)
 	{
 		newName = detachName;
@@ -58,7 +58,7 @@ static int GetDetachOptions(IObjParam *ip, TSTR& newName)
 
 // ---------------------------------------------------------------------------
 
-static void MakeDummyMapPatches(int channel, PatchMesh *patch) 
+static void MakeDummyMapPatches(int channel, PatchMesh *patch)
 {
 	patch->setNumMapVerts(channel, 1);
 	patch->tVerts[channel][0] = UVVert(0, 0, 0);
@@ -67,18 +67,18 @@ static void MakeDummyMapPatches(int channel, PatchMesh *patch)
 	{
 		Patch &p = patch->patches[i];
 		TVPatch &tp = patch->tvPatches[channel][i];
-		tp.Init();	// Sets all indices to zero
-		}
+		tp.Init(); // Sets all indices to zero
 	}
+}
 
 // ---------------------------------------------------------------------------
 
 // Detach all selected patches
-void EditPatchMod::DoPatchDetach(int copy, int reorient) 
+void EditPatchMod::DoPatchDetach(int copy, int reorient)
 {
 	int dialoged = 0;
 	TSTR newName(GetString(IDS_TH_PATCH));
-	ModContextList mcList;		
+	ModContextList mcList;
 	INodeTab nodes;
 	TimeValue t = ip->GetTime();
 	int holdNeeded = 0;
@@ -101,11 +101,11 @@ void EditPatchMod::DoPatchDetach(int copy, int reorient)
 	int vecs = 0;
 	int patches = 0;
 
-	int multipleObjects =(mcList.Count() > 1) ? 1 : 0;
+	int multipleObjects = (mcList.Count() > 1) ? 1 : 0;
 	for (int i = 0; i < mcList.Count(); i++)
 	{
 		int altered = 0;
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
@@ -117,7 +117,7 @@ void EditPatchMod::DoPatchDetach(int copy, int reorient)
 		if (!patch)
 			continue;
 		patchData->RecordTopologyTags(patch);
-		
+
 		// If this is the first edit, then the delta arrays will be allocated
 		patchData->BeginEdit(t);
 
@@ -129,30 +129,30 @@ void EditPatchMod::DoPatchDetach(int copy, int reorient)
 				dialoged = 1;
 				if (!GetDetachOptions(ip, newName))
 					goto bail_out;
-				}
+			}
 			// Save the unmodified info.
 			if (theHold.Holding())
 			{
 				theHold.Put(new PatchRestore(patchData, this, patch, rpatch, _T("DoPatchDetach")));
-				}
+			}
 			PatchMesh wpatch = *patch;
 			RPatchMesh wrpatch = *rpatch;
 			BitArray vdel(wpatch.numVerts);
 			vdel.ClearAll();
-			BitArray pdel = wpatch.patchSel;	// Get inverse selection set
+			BitArray pdel = wpatch.patchSel; // Get inverse selection set
 			// If not copying, delete the patches from this object
 			if (!copy)
 				DeletePatchParts(patch, rpatch, vdel, pdel);
-			pdel = ~wpatch.patchSel;	// Get inverse selection set
+			pdel = ~wpatch.patchSel; // Get inverse selection set
 			if (pdel.NumberSet())
 			{
 				vdel.ClearAll();
 				DeletePatchParts(&wpatch, &wrpatch, vdel, pdel);
 			}
-			
+
 			// RPatchMesh validity
-			wrpatch.Validity (wpatch, true);
-			
+			wrpatch.Validity(wpatch, true);
+
 			// We've deleted everything that wasn't selected -- Now add this to the patch object accumulator
 			int oldVerts = pmesh.numVerts;
 			int oldVecs = pmesh.numVecs;
@@ -163,8 +163,8 @@ void EditPatchMod::DoPatchDetach(int copy, int reorient)
 			pmesh.setNumVerts(newVerts, TRUE);
 			pmesh.setNumVecs(newVecs, TRUE);
 			pmesh.setNumPatches(newPatches, TRUE);
-			prmesh.SetNumVerts (newVerts);
-			prmesh.SetNumPatches (newPatches);
+			prmesh.SetNumVerts(newVerts);
+			prmesh.SetNumPatches(newPatches);
 			altered = holdNeeded = 1;
 			Matrix3 tm(1);
 			if (multipleObjects && !reorient)
@@ -176,7 +176,7 @@ void EditPatchMod::DoPatchDetach(int copy, int reorient)
 				pmesh.verts[i2].p = pmesh.verts[i2].p * tm;
 
 				// Copy rpatch info
-				prmesh.getUIVertex (i2)=wrpatch.getUIVertex (i);
+				prmesh.getUIVertex(i2) = wrpatch.getUIVertex(i);
 			}
 			for (i = 0, i2 = oldVecs; i < wpatch.numVecs; ++i, ++i2)
 			{
@@ -195,11 +195,11 @@ void EditPatchMod::DoPatchDetach(int copy, int reorient)
 					p2.v[j] += oldVerts;
 					p2.interior[j] += oldVecs;
 				}
-				for (j = 0; j <(p2.type * 2); ++j)	// Adjust edge vectors
+				for (j = 0; j < (p2.type * 2); ++j) // Adjust edge vectors
 					p2.vec[j] += oldVecs;
 
 				// Copy rpatch info
-				prmesh.getUIPatch (i2)=wrpatch.getUIPatch (i);
+				prmesh.getUIPatch(i2) = wrpatch.getUIPatch(i);
 			}
 			// Now copy over mapping information
 			int dmaps = pmesh.getNumMaps();
@@ -219,8 +219,8 @@ void EditPatchMod::DoPatchDetach(int copy, int reorient)
 						MakeDummyMapPatches(chan, &pmesh);
 					if (!wpatch.tvPatches[chan])
 						MakeDummyMapPatches(chan, &wpatch);
-					}
 				}
+			}
 			for (chan = 0; chan < pmesh.getNumMaps(); ++chan)
 			{
 				if (chan < wpatch.getNumMaps())
@@ -238,20 +238,20 @@ void EditPatchMod::DoPatchDetach(int copy, int reorient)
 							TVPatch &tp = wpatch.tvPatches[chan][i];
 							TVPatch &tp2 = pmesh.tvPatches[chan][i2];
 							tp2 = tp;
-							for (int j = 0; j < p.type; ++j)	// Adjust vertices
+							for (int j = 0; j < p.type; ++j) // Adjust vertices
 								tp2.tv[j] += oldTVerts;
-							}
 						}
 					}
 				}
+			}
 			patchData->UpdateChanges(patch, rpatch);
 			patchData->TempData(this)->Invalidate(PART_TOPO);
-			}
-
-		bail_out:
-		patchData->SetFlag(EPD_BEENDONE, TRUE);
 		}
-	
+
+	bail_out:
+		patchData->SetFlag(EPD_BEENDONE, TRUE);
+	}
+
 	if (holdNeeded)
 	{
 		pmesh.computeInteriors();
@@ -266,32 +266,32 @@ void EditPatchMod::DoPatchDetach(int copy, int reorient)
 			if (!reorient)
 			{
 				Matrix3 tm = nodes[0]->GetObjectTM(t);
-				newNode->SetNodeTM(t, tm);	// Use this object's TM.
-				}
+				newNode->SetNodeTM(t, tm); // Use this object's TM.
 			}
-		else 
+		}
+		else
 		{
 			if (!reorient)
 			{
 				Matrix3 matrix;
 				matrix.IdentityMatrix();
-				newNode->SetNodeTM(t, matrix);	// Use identity TM
-				}
+				newNode->SetNodeTM(t, matrix); // Use identity TM
 			}
-		newNode->FlagForeground(t);		// WORKAROUND!
+		}
+		newNode->FlagForeground(t); // WORKAROUND!
 		ResolveTopoChanges();
 		theHold.Accept(GetString(IDS_TH_DETACHPATCH));
-		}
-	else 
+	}
+	else
 	{
-		delete patchOb;	// Didn't need it after all!
+		delete patchOb; // Didn't need it after all!
 		if (!dialoged)
 			ip->DisplayTempPrompt(GetString(IDS_TH_NOPATCHESSEL), PROMPT_TIME);
 		theHold.End();
-		}
+	}
 
 	nodes.DisposeTemporary();
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 	NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
 	ip->RedrawViews(t, REDRAW_NORMAL);
-	}
+}

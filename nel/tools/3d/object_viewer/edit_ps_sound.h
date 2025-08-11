@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 //
 
 #if !defined(AFX_EDIT_PS_SOUND_H__E11AAB2A_04BB_453A_B722_AA47DB840D5A__INCLUDED_)
@@ -29,14 +28,11 @@
 #include "editable_range.h"
 #include "particle_workspace.h"
 
-namespace NLSOUND
-{
-	class UAudioMixer;
+namespace NLSOUND {
+class UAudioMixer;
 }
 
-
 class CAttribDlgFloat;
-
 
 /// particle system sound system initialisation
 extern void setPSSoundSystem(NLSOUND::UAudioMixer *am);
@@ -44,48 +40,44 @@ extern void setPSSoundSystem(NLSOUND::UAudioMixer *am);
 /// release the particle system sound system
 extern void releasePSSoundSystem(void);
 
-
-
-
-
-
 /////////////////////////////////////////////////////////////////////////////
 // CEditPSSound dialog
 
 class CEditPSSound : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CEditPSSound(CParticleWorkspace::CNode *ownerNode, NL3D::CPSSound *sound);   // standard constructor
+	CEditPSSound(CParticleWorkspace::CNode *ownerNode, NL3D::CPSSound *sound); // standard constructor
 
 	~CEditPSSound();
 
+	void init(CWnd *pParent = NULL);
 
-	void init(CWnd* pParent = NULL);
-
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CEditPSSound)
-	enum { IDD = IDD_SOUND };
-	CString	m_SoundName;
-	BOOL	m_Spawn;
-	BOOL	m_Mute;
-	BOOL	m_KeepOriginalPitch;
+	enum
+	{
+		IDD = IDD_SOUND
+	};
+	CString m_SoundName;
+	BOOL m_Spawn;
+	BOOL m_Mute;
+	BOOL m_KeepOriginalPitch;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CEditPSSound)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-	NL3D::CPSSound            *_Sound;				// the sound being edited	
-	CAttribDlgFloat           *_GainDlg;			// dlg to tune sounds gain
-	CAttribDlgFloat		      *_PitchDlg;			// dlg to tune sounds pitch
-	CEditableRangeFloat		  *_PercentDlg;		    // dlg to tune the percent of sound emissions
+	NL3D::CPSSound *_Sound; // the sound being edited
+	CAttribDlgFloat *_GainDlg; // dlg to tune sounds gain
+	CAttribDlgFloat *_PitchDlg; // dlg to tune sounds pitch
+	CEditableRangeFloat *_PercentDlg; // dlg to tune the percent of sound emissions
 	CParticleWorkspace::CNode *_Node;
 
 	// Generated message map functions
@@ -99,7 +91,6 @@ protected:
 	afx_msg void OnKeepOriginalPitch();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-
 
 	/////////////////////////////////////////
 	// wrapper to set the gain of sounds //
@@ -130,10 +121,13 @@ protected:
 	{
 		NL3D::CPSSound *S;
 		float get(void) const { return S->getEmissionPercent(); }
-		void  set(const float &v) { S->setEmissionPercent(v); }	
+		void set(const float &v) { S->setEmissionPercent(v); }
 	} _EmissionPercentWrapper;
 
-	void updateModifiedFlag() { if (_Node) _Node->setModified(true); }
+	void updateModifiedFlag()
+	{
+		if (_Node) _Node->setModified(true);
+	}
 };
 
 //{{AFX_INSERT_LOCATION}}

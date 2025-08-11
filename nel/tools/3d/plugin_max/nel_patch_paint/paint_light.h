@@ -3,8 +3,7 @@
 
 /*-------------------------------------------------------------------*/
 
-namespace NL3D
-{
+namespace NL3D {
 class CLandscape;
 class CScene;
 }
@@ -12,16 +11,15 @@ class CScene;
 class CPaintLight
 {
 public:
-
 	// Setup the lights
-	void setup (NL3D::CLandscape &landscape, NL3D::CScene &scene);
+	void setup(NL3D::CLandscape &landscape, NL3D::CScene &scene);
 
 	// Build the lights
-	void build (Interface &ip, INode *node = NULL);
+	void build(Interface &ip, INode *node = NULL);
 
 private:
 	// Array of light
-	std::vector<SLightBuild>	_Lights;
+	std::vector<SLightBuild> _Lights;
 };
 
 /*-------------------------------------------------------------------*/

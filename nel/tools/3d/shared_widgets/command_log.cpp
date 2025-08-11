@@ -48,7 +48,8 @@ using namespace NLMISC;
 
 namespace NLQT {
 
-CCommandLog::CCommandLog(QWidget *parent) : QWidget(parent)
+CCommandLog::CCommandLog(QWidget *parent)
+    : QWidget(parent)
 {
 	m_DisplayerOutput = new QTextEdit();
 	m_DisplayerOutput->setReadOnly(true);
@@ -62,15 +63,13 @@ CCommandLog::CCommandLog(QWidget *parent) : QWidget(parent)
 
 	connect(m_CommandInput, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
 	connect(this, SIGNAL(tSigDisplay(const QColor &, const QString &)), this, SLOT(tSlotDisplay(const QColor &, const QString &)));
-
 }
 
 CCommandLog::~CCommandLog()
 {
-
 }
 
-void CCommandLog::doDisplay(const CLog::TDisplayInfo& args, const char *message)
+void CCommandLog::doDisplay(const CLog::TDisplayInfo &args, const char *message)
 {
 	QColor color;
 	switch (args.LogType)
@@ -121,7 +120,8 @@ void CCommandLog::returnPressed()
 	m_CommandInput->clear();
 }
 
-CCommandLogDisplayer::CCommandLogDisplayer(QWidget *parent) : CCommandLog(parent)
+CCommandLogDisplayer::CCommandLogDisplayer(QWidget *parent)
+    : CCommandLog(parent)
 {
 	connect(this, SIGNAL(execCommand(const std::string &)), this, SLOT(execCommandLog(const std::string &)));
 	DebugLog->addDisplayer(this);
@@ -142,7 +142,7 @@ CCommandLogDisplayer::~CCommandLogDisplayer()
 	m_Log.removeDisplayer(this);
 }
 
-void CCommandLogDisplayer::doDisplay(const NLMISC::CLog::TDisplayInfo& args, const char *message)
+void CCommandLogDisplayer::doDisplay(const NLMISC::CLog::TDisplayInfo &args, const char *message)
 {
 	CCommandLog::doDisplay(args, message);
 }

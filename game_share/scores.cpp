@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 #include "nel/misc/string_conversion.h"
@@ -24,33 +22,30 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace SCORES
+namespace SCORES {
+
+// The conversion table
+const CStringConversion<TScores>::CPair stringTable[] = {
+	{ "HitPoints", hit_points },
+	{ "Stamina", stamina },
+	{ "Sap", sap },
+	{ "Focus", focus },
+};
+
+CStringConversion<TScores> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]), unknown);
+
+TScores toScore(const std::string &str)
 {
+	return conversion.fromString(str);
+}
 
-	// The conversion table
-	const CStringConversion<TScores>::CPair stringTable [] =
-	{
-		{ "HitPoints", hit_points },
-		{ "Stamina", stamina },
-		{ "Sap", sap },
-		{ "Focus", focus },
-	};
+const std::string &toString(TScores s)
+{
+	return conversion.toString(s);
+}
 
-	CStringConversion<TScores> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]),  unknown);
-
-
-	TScores toScore( const std::string &str )
-	{
-		return conversion.fromString(str);
-	}
-
-	const std::string& toString( TScores s )
-	{
-		return conversion.toString(s);
-	}
-
-	const std::string& toString( uint s )
-	{
-		return conversion.toString((TScores)s);
-	}
+const std::string &toString(uint s)
+{
+	return conversion.toString((TScores)s);
+}
 }; // SCORES

@@ -20,38 +20,37 @@
 #include "nel/misc/debug.h"
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
-float IProgressCallback::getCropedValue (float value) const
+float IProgressCallback::getCropedValue(float value) const
 {
-	nlassert (_CropedValues.size ()>0);
-	const CCropedValues &values = _CropedValues.back ();
-	return value*(values.Max-values.Min)+values.Min;
+	nlassert(_CropedValues.size() > 0);
+	const CCropedValues &values = _CropedValues.back();
+	return value * (values.Max - values.Min) + values.Min;
 }
 
-IProgressCallback::IProgressCallback ()
+IProgressCallback::IProgressCallback()
 {
-	_CropedValues.push_back (CCropedValues (0, 1));
+	_CropedValues.push_back(CCropedValues(0, 1));
 }
 
-void IProgressCallback::pushCropedValues (float min, float max)
+void IProgressCallback::pushCropedValues(float min, float max)
 {
-	nlassert (_CropedValues.size ()>0);
-	//const CCropedValues &values = _CropedValues.back ();
-	_CropedValues.push_back (CCropedValues (getCropedValue (min), getCropedValue (max)));
+	nlassert(_CropedValues.size() > 0);
+	// const CCropedValues &values = _CropedValues.back ();
+	_CropedValues.push_back(CCropedValues(getCropedValue(min), getCropedValue(max)));
 }
 
-void IProgressCallback::popCropedValues ()
+void IProgressCallback::popCropedValues()
 {
-	nlassert (_CropedValues.size ()>1);
-	_CropedValues.pop_back ();
+	nlassert(_CropedValues.size() > 1);
+	_CropedValues.pop_back();
 }
 
-void IProgressCallback::progress (float /* progressValue */)
+void IProgressCallback::progress(float /* progressValue */)
 {
 }
 

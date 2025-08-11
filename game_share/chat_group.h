@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef CHAT_GROUP_H
 #define CHAT_GROUP_H
 
@@ -30,15 +28,9 @@
 // std
 #include <set>
 
-
 // group id
-//typedef uint32 TGroupId;
+// typedef uint32 TGroupId;
 typedef NLMISC::CEntityId TGroupId;
-
-
-
-
-
 
 /**
  * CChatGroup
@@ -48,7 +40,10 @@ typedef NLMISC::CEntityId TGroupId;
  */
 struct CChatGroup
 {
-	enum { MaxDynChanPerPlayer = 8 };
+	enum
+	{
+		MaxDynChanPerPlayer = 8
+	};
 	// group type
 	enum TGroupType
 	{
@@ -72,37 +67,37 @@ struct CChatGroup
 	/// group type
 	TGroupType Type;
 	/// Group name (for player chat channel)
-//	std::string GroupName;
-	NLMISC::TStringId	GroupName;
+	//	std::string GroupName;
+	NLMISC::TStringId GroupName;
 
-	typedef std::set<TDataSetRow>	TMemberCont;
+	typedef std::set<TDataSetRow> TMemberCont;
 	/// group members
-//	std::set<NLMISC::CEntityId> Members;
+	//	std::set<NLMISC::CEntityId> Members;
 	TMemberCont Members;
 
 	/**
 	 * Default constructor
 	 */
 	CChatGroup()
-		: Type(nbChatMode)
-	{}
+	    : Type(nbChatMode)
+	{
+	}
 
 	/**
 	 * Constructor
 	 */
-//	CChatGroup( TGroupType type, const std::string &groupName )
-	CChatGroup( TGroupType type, NLMISC::TStringId groupName)
-		: Type(type),
-		GroupName(groupName)
-	{ }
+	//	CChatGroup( TGroupType type, const std::string &groupName )
+	CChatGroup(TGroupType type, NLMISC::TStringId groupName)
+	    : Type(type)
+	    , GroupName(groupName)
+	{
+	}
 
 	/// convert a string to a group type
-	static TGroupType stringToGroupType( const std::string & str );
+	static TGroupType stringToGroupType(const std::string &str);
 	/// Convert a chat group to string
 	static const std::string &groupTypeToString(CChatGroup::TGroupType type);
-
 };
-
 
 #endif // CHAT_GROUP_H
 

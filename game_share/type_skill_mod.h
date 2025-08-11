@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_TYPE_SKILL_MOD_H
 #define RY_TYPE_SKILL_MOD_H
 
@@ -26,13 +24,16 @@
 
 struct CTypeSkillMod
 {
-	CTypeSkillMod() : Modifier(0),Type(EGSPD::CClassificationType::Unknown)
-	{}
+	CTypeSkillMod()
+	    : Modifier(0)
+	    , Type(EGSPD::CClassificationType::Unknown)
+	{
+	}
 
 	void serial(NLMISC::IStream &f)
 	{
-		f.serialEnum( Type );
-		f.serial( Modifier );
+		f.serialEnum(Type);
+		f.serial(Modifier);
 	}
 
 	sint32 Modifier;
@@ -40,7 +41,6 @@ struct CTypeSkillMod
 
 	DECLARE_PERSISTENCE_METHODS
 };
-
 
 #endif // RY_TYPE_SKILL_MOD_H
 

@@ -19,10 +19,7 @@
 
 #include "nel/misc/types_nl.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 /**
  * A simple tuple UV in 8 bits, for Dynamic Lightmap encoding in Alpha components of colors
@@ -33,14 +30,10 @@ namespace NL3D
 class CVegetableUV8
 {
 public:
-
-	uint8	U,V;
-
+	uint8 U, V;
 };
 
-
 } // NL3D
-
 
 #endif // NL_VEGETABLE_UV8_H
 

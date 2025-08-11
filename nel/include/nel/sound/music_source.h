@@ -24,9 +24,7 @@
 #include "nel/misc/types_nl.h"
 #include "nel/sound/source_common.h"
 
-
 namespace NLSOUND {
-
 
 // ***************************************************************************
 /**
@@ -39,27 +37,24 @@ class CMusicSource : public CSourceCommon
 {
 public:
 	/// Constructor
-	CMusicSource	(class CMusicSound *sound=NULL, bool spawn=false, TSpawnEndCallback cb=0, void *cbUserParam = 0, NL3D::CCluster *cluster = 0, CGroupController *groupController = NULL);
+	CMusicSource(class CMusicSound *sound = NULL, bool spawn = false, TSpawnEndCallback cb = 0, void *cbUserParam = 0, NL3D::CCluster *cluster = 0, CGroupController *groupController = NULL);
 	/// Destructor
-	~CMusicSource	();
+	~CMusicSource();
 
 	/// Return the sound binded to the source (or NULL if there is no sound)
-	virtual TSoundId				getSound();
+	virtual TSoundId getSound();
 
-	virtual void					play();
+	virtual void play();
 	/// Stop playing
-	virtual void					stop();
+	virtual void stop();
 
-	TSOURCE_TYPE					getType() const								{return SOURCE_MUSIC;}
+	TSOURCE_TYPE getType() const { return SOURCE_MUSIC; }
 
 private:
-
-	class CMusicSound				*_MusicSound;
+	class CMusicSound *_MusicSound;
 };
 
-
 } // NLSOUND
-
 
 #endif // NL_MUSIC_SOURCE_H
 

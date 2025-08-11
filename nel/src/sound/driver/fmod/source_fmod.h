@@ -22,7 +22,7 @@
 #include "nel/sound/driver/buffer.h"
 
 namespace NLSOUND {
-	class CBufferFMod;
+class CBufferFMod;
 
 // TODO: Doc comments in FMod driver are wrong.
 // Bad copy pastes from DSound & OpenAL drivers.
@@ -41,16 +41,16 @@ namespace NLSOUND {
 class CSourceFMod : public ISource
 {
 	friend class CSoundDriverFMod;
-	
+
 public:
 	/// Constructor
-	CSourceFMod( uint sourcename = 0 );
+	CSourceFMod(uint sourcename = 0);
 	/// Destructor
 	virtual ~CSourceFMod();
-	
-    /// Initialize the DirectSound buffers. Called by the sound driver only.
+
+	/// Initialize the DirectSound buffers. Called by the sound driver only.
 	void init();
-	
+
 	/// \name Initialization
 	//@{
 	/// Enable or disable streaming mode. Source must be stopped to call this.
@@ -68,14 +68,14 @@ public:
 	/// Return the amount of buffers in the queue (playing and waiting). 3 buffers is optimal.
 	virtual uint countStreamingBuffers() const;
 	//@}
-	
+
 	/// \name Playback control
 	//@{
 	/// Set looping on/off for future playbacks (default: off), not available for streaming
 	virtual void setLooping(bool l);
 	/// Return the looping state
 	virtual bool getLooping() const;
-	
+
 	/** Play the static buffer (or stream in and play).
 	 *	This method can return false if the sample for this sound is unloaded.
 	 */
@@ -93,26 +93,26 @@ public:
 	/// Returns the number of milliseconds the source has been playing
 	virtual uint32 getTime();
 	//@}
-	
+
 	/// \name Source properties
 	//@{
 	/** Set the position vector (default: (0,0,0)).
 	 * 3D mode -> 3D position
 	 * st mode -> x is the pan value (from left (-1) to right (1)), set y and z to 0
 	 */
-	virtual void setPos(const NLMISC::CVector& pos, bool deffered = true);
+	virtual void setPos(const NLMISC::CVector &pos, bool deffered = true);
 	/** Get the position vector.
 	 * See setPos() for details.
 	 */
 	virtual const NLMISC::CVector &getPos() const;
 	/// Set the velocity vector (3D mode only, ignored in stereo mode) (default: (0,0,0))
-	virtual void setVelocity(const NLMISC::CVector& vel, bool deferred = true);
+	virtual void setVelocity(const NLMISC::CVector &vel, bool deferred = true);
 	/// Get the velocity vector
-	virtual void getVelocity(NLMISC::CVector& vel) const;
+	virtual void getVelocity(NLMISC::CVector &vel) const;
 	/// Set the direction vector (3D mode only, ignored in stereo mode) (default: (0,0,0) as non-directional)
-	virtual void setDirection(const NLMISC::CVector& dir);
+	virtual void setDirection(const NLMISC::CVector &dir);
 	/// Get the direction vector
-	virtual void getDirection(NLMISC::CVector& dir) const;
+	virtual void getDirection(NLMISC::CVector &dir) const;
 	/** Set the gain (volume value inside [0 , 1]). (default: 1)
 	 * 0.0 -> silence
 	 * 0.5 -> -6dB
@@ -135,11 +135,11 @@ public:
 	/// Set the min and max distances (default: 1, MAX_FLOAT) (3D mode only)
 	virtual void setMinMaxDistances(float mindist, float maxdist, bool deferred = true);
 	/// Get the min and max distances
-	virtual void getMinMaxDistances(float& mindist, float& maxdist) const;
+	virtual void getMinMaxDistances(float &mindist, float &maxdist) const;
 	/// Set the cone angles (in radian) and gain (in [0 , 1]) (default: 2PI, 2PI, 0)
 	virtual void setCone(float innerAngle, float outerAngle, float outerGain);
 	/// Get the cone angles (in radian)
-	virtual void getCone(float& innerAngle, float& outerAngle, float& outerGain) const;
+	virtual void getCone(float &innerAngle, float &outerAngle, float &outerGain) const;
 	/** Set the alpha value for the volume-distance curve
 	 *
 	 *	Useful only with OptionManualRolloff. value from -1 to 1 (default 0)
@@ -155,7 +155,7 @@ public:
 	 */
 	virtual void setAlpha(double a);
 	//@}
-	
+
 	/// \name Direct output
 	//@{
 	/// Enable or disable direct output [true/false], default: true
@@ -166,7 +166,7 @@ public:
 	virtual void setDirectGain(float gain);
 	/// Get the gain for the direct path
 	virtual float getDirectGain() const;
-	
+
 	/// Enable or disable the filter for the direct channel
 	virtual void enableDirectFilter(bool enable = true);
 	/// Check if the filter on the direct channel is enabled
@@ -180,7 +180,7 @@ public:
 	/// Get the direct filter gain
 	virtual float getDirectFilterPassGain() const;
 	//@}
-	
+
 	/// \name Effect output
 	//@{
 	/// Set the effect send for this source, NULL to disable. [IEffect], default: NULL
@@ -191,7 +191,7 @@ public:
 	virtual void setEffectGain(float gain);
 	/// Get the gain for the effect path
 	virtual float getEffectGain() const;
-	
+
 	/// Enable or disable the filter for the effect channel
 	virtual void enableEffectFilter(bool enable = true);
 	/// Check if the filter on the effect channel is enabled
@@ -205,29 +205,29 @@ public:
 	/// Get the effect filter gain
 	virtual float getEffectFilterPassGain() const;
 	//@}
-	
+
 	/// Return the OpenAL source name
 	uint sourceName() { return _SourceName; }
-	
+
 	/// Reset the source before reuse
 	void reset();
-	
+
 	/// Update the source (e.g. continue to stream the data in)
 	bool update();
-	
+
 	/** Update the source's volume according to its distance and fade out curve.
 	 *  It takes the current position of the listener as argument.
 	 *	Called only with OptionManualRolloff
 	 */
-	void updateVolume(const NLMISC::CVector& listener);
-	
+	void updateVolume(const NLMISC::CVector &listener);
+
 	bool needsUpdate();
-	
+
 	void updateFModPosIfRelative();
-	
+
 private:
 	void copySampleTo16BitsTrack(void *dst, void *src, uint nbSample, TSampleFormat sourceFormat);
-	
+
 	enum TSourceState
 	{
 		source_stopped,
@@ -235,37 +235,34 @@ private:
 		source_silencing,
 		source_swap_pending
 	};
-	
+
 	/// Release all DirectSound resources
 	void release();
-	
+
 	// Source name
-	uint					_SourceName;
-	
-	TSourceState			_State;
-	
-	IBuffer					*_Sample;
-	IBuffer					*_NextSample;
-	sint					_FModChannel;
-	
-    // States
-	bool					_PosRelative;
-    bool					_Loop;
-	float					_Gain;
-	float					_Pitch;
-	double					_Alpha;
-	NLMISC::CVector			_Pos;
-	NLMISC::CVector			_Vel;
-	NLMISC::CVector			_Front;
-	float					_MinDist, _MaxDist;
-	
+	uint _SourceName;
+
+	TSourceState _State;
+
+	IBuffer *_Sample;
+	IBuffer *_NextSample;
+	sint _FModChannel;
+
+	// States
+	bool _PosRelative;
+	bool _Loop;
+	float _Gain;
+	float _Pitch;
+	double _Alpha;
+	NLMISC::CVector _Pos;
+	NLMISC::CVector _Vel;
+	NLMISC::CVector _Front;
+	float _MinDist, _MaxDist;
+
 	void updateFModPos();
-	
 };
 
-
 } // NLSOUND
-
 
 #endif // NL_SOURCE_FMOD_H
 

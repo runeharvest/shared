@@ -24,11 +24,11 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
 
-//#include "nel/misc/types_nl.h"
-// Max SDK includes
-//#define NOMINMAX
+// #include "nel/misc/types_nl.h"
+//  Max SDK includes
+// #define NOMINMAX
 #include <assert.h>
 #include <algorithm>
 #include <max.h>
@@ -37,11 +37,11 @@
 #include <iparamb2.h>
 #include <maxversion.h>
 #if MAX_VERSION_MAJOR >= 14
-#	include <maxscript/maxscript.h>
+#include <maxscript/maxscript.h>
 #else
-#	include <MaxScrpt/maxscrpt.h>
+#include <MaxScrpt/maxscrpt.h>
 #endif
-//#include <parser.h>
+// #include <parser.h>
 
 // Character Studio SDK include
 #include <bipexp.h>
@@ -72,6 +72,5 @@
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
 
 #endif // !defined(AFX_STDAFX_H__7B19FB21_D10C_11D4_9CD4_0050DAC3A412__INCLUDED_)

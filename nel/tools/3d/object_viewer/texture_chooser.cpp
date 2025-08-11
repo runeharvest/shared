@@ -34,15 +34,14 @@ const uint tSize = 25;
 /////////////////////////////////////////////////////////////////////////////
 // CTextureChooser dialog
 
-
-CTextureChooser::CTextureChooser(NL3D::CPSMultiTexturedParticle *mtp /*= NULL*/, CParticleWorkspace::CNode *ownerNode) 
-	: _CurrBitmap(0),
-	  _Wrapper(NULL),
-	  _Texture(NULL),
-	  _EnableRemoveButton(false),
-	  _MTP(mtp),
-	  _Node(ownerNode),
-	  _MultiTexDlg(NULL)
+CTextureChooser::CTextureChooser(NL3D::CPSMultiTexturedParticle *mtp /*= NULL*/, CParticleWorkspace::CNode *ownerNode)
+    : _CurrBitmap(0)
+    , _Wrapper(NULL)
+    , _Texture(NULL)
+    , _EnableRemoveButton(false)
+    , _MTP(mtp)
+    , _Node(ownerNode)
+    , _MultiTexDlg(NULL)
 
 {
 	//{{AFX_DATA_INIT(CTextureChooser)
@@ -60,19 +59,19 @@ CTextureChooser::~CTextureChooser()
 		::DeleteObject(_CurrBitmap);
 }
 
-BOOL CTextureChooser::EnableWindow( BOOL bEnable)
+BOOL CTextureChooser::EnableWindow(BOOL bEnable)
 {
 	GetDlgItem(IDC_BROWSE_TEXTURE)->EnableWindow(bEnable);
 	GetDlgItem(IDC_REMOVE_TEXTURE)->EnableWindow(bEnable);
 	if (_MTP)
 	{
 		GetDlgItem(IDC_ENABLE_MULTITEXTURING)->EnableWindow(bEnable);
-		GetDlgItem(IDC_EDIT_MULTITEXTURING)->EnableWindow((bEnable ? true: false /* VC WARNING */) & _MTP->isMultiTextureEnabled());
+		GetDlgItem(IDC_EDIT_MULTITEXTURING)->EnableWindow((bEnable ? true : false /* VC WARNING */) & _MTP->isMultiTextureEnabled());
 	}
 	return CEditAttribDlg::EnableWindow(bEnable);
 }
 
-void CTextureChooser::DoDataExchange(CDataExchange* pDX)
+void CTextureChooser::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CTextureChooser)
@@ -80,13 +79,12 @@ void CTextureChooser::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 void CTextureChooser::init(uint32 x, uint32 y, CWnd *pParent)
 {
 	Create(IDD_TEXTURE_CHOOSER, pParent);
 	RECT r;
 	GetClientRect(&r);
-	MoveWindow(x, y, r.right, r.bottom);	
+	MoveWindow(x, y, r.right, r.bottom);
 
 	if (!_EnableRemoveButton)
 	{
@@ -102,17 +100,16 @@ void CTextureChooser::init(uint32 x, uint32 y, CWnd *pParent)
 	{
 		if (_MTP->isMultiTextureEnabled())
 		{
-			m_MultiTexCtrl.SetCheck(1);	
+			m_MultiTexCtrl.SetCheck(1);
 		}
 		updateMultiTexCtrl();
 	}
 	ShowWindow(SW_SHOW);
 }
 
-
 void CTextureChooser::textureToBitmap()
 {
-	if (!_Texture) 
+	if (!_Texture)
 	{
 		if (_CurrBitmap)
 		{
@@ -122,59 +119,57 @@ void CTextureChooser::textureToBitmap()
 
 		return;
 	}
-	
+
 	if (_CurrBitmap)
 	{
-		::DeleteObject(_CurrBitmap);	
-	}	
+		::DeleteObject(_CurrBitmap);
+	}
 	// for a bumpmap, show its heightmap
-	NL3D::CTextureBump *tb = dynamic_cast<NL3D::CTextureBump *>( (NL3D::ITexture *) _Texture);
-	NL3D::ITexture *tex = tb ? tb->getHeightMap()  : _Texture;
+	NL3D::CTextureBump *tb = dynamic_cast<NL3D::CTextureBump *>((NL3D::ITexture *)_Texture);
+	NL3D::ITexture *tex = tb ? tb->getHeightMap() : _Texture;
 	if (!tex) tex = _Texture;
 	tex->generate();
 	// make copy of the texture
-	NLMISC::CBitmap cb(* ((NL3D::ITexture *) tex));
-	
+	NLMISC::CBitmap cb(*((NL3D::ITexture *)tex));
+
 	cb.convertToType(NLMISC::CBitmap::RGBA);
 	cb.resample(tSize, tSize);
 
-	uint32 *dat  = (uint32 *) &(cb.getPixels()[0]);
-	_CurrBitmap = ::CreateBitmap(tSize, tSize, 1, 32, dat);		
+	uint32 *dat = (uint32 *)&(cb.getPixels()[0]);
+	_CurrBitmap = ::CreateBitmap(tSize, tSize, 1, 32, dat);
 	tex->release();
 	Invalidate();
 	UpdateData(TRUE);
 }
 
-
-
 BEGIN_MESSAGE_MAP(CTextureChooser, CDialog)
-	//{{AFX_MSG_MAP(CTextureChooser)
-	ON_WM_PAINT()
-	ON_BN_CLICKED(IDC_REMOVE_TEXTURE, OnRemoveTexture)
-	ON_BN_CLICKED(IDC_EDIT_MULTITEXTURING, OnEditMultitexturing)
-	ON_BN_CLICKED(IDC_ENABLE_MULTITEXTURING, OnEnableMultitexturing)
-	ON_BN_CLICKED(IDC_BROWSE_TEXTURE, OnBrowseTexture)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CTextureChooser)
+ON_WM_PAINT()
+ON_BN_CLICKED(IDC_REMOVE_TEXTURE, OnRemoveTexture)
+ON_BN_CLICKED(IDC_EDIT_MULTITEXTURING, OnEditMultitexturing)
+ON_BN_CLICKED(IDC_ENABLE_MULTITEXTURING, OnEnableMultitexturing)
+ON_BN_CLICKED(IDC_BROWSE_TEXTURE, OnBrowseTexture)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CTextureChooser message handlers
 
-BOOL CTextureChooser::OnInitDialog() 
+BOOL CTextureChooser::OnInitDialog()
 {
-	CDialog::OnInitDialog();	
-	nlassert(_Wrapper);	
+	CDialog::OnInitDialog();
+	nlassert(_Wrapper);
 	_Texture = _Wrapper->get();
 
 	// generate the bitmap
-	
+
 	textureToBitmap();
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CTextureChooser::OnBrowseTexture() 
+void CTextureChooser::OnBrowseTexture()
 {
 	std::string texName("*.tga");
 	/// get the name of the previously set texture if there is one
@@ -198,20 +193,19 @@ void CTextureChooser::OnBrowseTexture()
 		catch (const NLMISC::Exception &e)
 		{
 			MessageBox(nlUtf8ToTStr(e.what()), _T("error loading texture"));
-		}		
-	
+		}
 	}
 }
 
-void CTextureChooser::OnPaint() 
+void CTextureChooser::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
-	
+
 	if (_CurrBitmap)
 	{
 		HDC bitmapDc = ::CreateCompatibleDC(dc);
 		HGDIOBJ old = ::SelectObject(bitmapDc, _CurrBitmap);
-		
+
 		::BitBlt(dc, 10, 10, tSize, tSize, bitmapDc, 0, 0, SRCCOPY);
 
 		::SelectObject(bitmapDc, old);
@@ -219,7 +213,7 @@ void CTextureChooser::OnPaint()
 	}
 }
 
-void CTextureChooser::OnRemoveTexture() 
+void CTextureChooser::OnRemoveTexture()
 {
 	if (_Texture)
 	{
@@ -230,8 +224,6 @@ void CTextureChooser::OnRemoveTexture()
 	textureToBitmap();
 	Invalidate();
 }
-	
-
 
 void CTextureChooser::childPopupClosed(CWnd *child)
 {
@@ -243,23 +235,20 @@ void CTextureChooser::childPopupClosed(CWnd *child)
 }
 
 void CTextureChooser::updateMultiTexCtrl()
-{	
-	GetDlgItem(IDC_EDIT_MULTITEXTURING)->EnableWindow(_MTP->isMultiTextureEnabled());	
-	
+{
+	GetDlgItem(IDC_EDIT_MULTITEXTURING)->EnableWindow(_MTP->isMultiTextureEnabled());
 }
 
-void CTextureChooser::OnEditMultitexturing() 
+void CTextureChooser::OnEditMultitexturing()
 {
 	nlassert(_MTP);
 	EnableWindow(FALSE);
 	_MultiTexDlg = new CMultiTexDlg(_Node, _MTP, this, this);
-	_MultiTexDlg->init(this);	
+	_MultiTexDlg->init(this);
 }
 
-void CTextureChooser::OnEnableMultitexturing() 
+void CTextureChooser::OnEnableMultitexturing()
 {
-	_MTP->enableMultiTexture(m_MultiTexCtrl.GetCheck() ? true : false /* VC warning */);	
-	updateMultiTexCtrl();	
+	_MTP->enableMultiTexture(m_MultiTexCtrl.GetCheck() ? true : false /* VC warning */);
+	updateMultiTexCtrl();
 }
-
-

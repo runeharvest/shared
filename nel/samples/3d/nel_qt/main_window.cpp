@@ -51,51 +51,65 @@ QString nli18n(const char *label)
 } /* anonymous namespace */
 
 CMainWindow::CMainWindow(const QMap<QString, QSize> &customSizeHints, QWidget *parent, Qt::WindowFlags flags)
-	: QMainWindow(parent, flags),
-	m_UndoStack(NULL), 
-	m_IsGraphicsInitialized(false), m_IsGraphicsEnabled(false), 
-	m_IsSoundInitialized(false), m_IsSoundEnabled(false), 
-	m_GraphicsViewport(NULL), 
-	m_CommandLog(NULL), m_CommandLogDock(NULL), 
-	m_GraphicsConfig(NULL), m_GraphicsConfigScroll(NULL), m_GraphicsConfigDock(NULL), 
-	m_FileMenu(NULL), m_EditMenu(NULL), m_ViewportMenu(NULL), m_WidgetsMenu(NULL), m_HelpMenu(NULL), 
-	m_FileToolBar(NULL), m_EditToolBar(NULL),
-	m_AboutAct(NULL), m_QuitAct(NULL), m_PrintDebugAct(NULL), 
-	m_UndoAct(NULL), m_RedoAct(NULL), m_SaveScreenshotAct(NULL)
+    : QMainWindow(parent, flags)
+    , m_UndoStack(NULL)
+    , m_IsGraphicsInitialized(false)
+    , m_IsGraphicsEnabled(false)
+    , m_IsSoundInitialized(false)
+    , m_IsSoundEnabled(false)
+    , m_GraphicsViewport(NULL)
+    , m_CommandLog(NULL)
+    , m_CommandLogDock(NULL)
+    , m_GraphicsConfig(NULL)
+    , m_GraphicsConfigScroll(NULL)
+    , m_GraphicsConfigDock(NULL)
+    , m_FileMenu(NULL)
+    , m_EditMenu(NULL)
+    , m_ViewportMenu(NULL)
+    , m_WidgetsMenu(NULL)
+    , m_HelpMenu(NULL)
+    , m_FileToolBar(NULL)
+    , m_EditToolBar(NULL)
+    , m_AboutAct(NULL)
+    , m_QuitAct(NULL)
+    , m_PrintDebugAct(NULL)
+    , m_UndoAct(NULL)
+    , m_RedoAct(NULL)
+    , m_SaveScreenshotAct(NULL)
 {
 	setObjectName("CMainWindow");
-	
+
 	m_UndoStack = new QUndoStack(this);
 
 	m_Configuration.init();
-	
+
 	m_OriginalPalette = QApplication::palette();
 	m_Configuration.setAndCallback("QtStyle", CConfigCallback(this, &CMainWindow::cfcbQtStyle));
 	m_Configuration.setAndCallback("QtPalette", CConfigCallback(this, &CMainWindow::cfcbQtPalette));
-	
+
 	m_Internationalization.init(&m_Configuration);
 	m_Internationalization.enableCallback(CEmptyCallback(this, &CMainWindow::incbLanguageCode));
 
 	m_GraphicsViewport = new CGraphicsViewport(this);
-    setCentralWidget(m_GraphicsViewport);
-	
+	setCentralWidget(m_GraphicsViewport);
+
 	createActions();
 	createMenus();
 	createToolBars();
 	createStatusBar();
 	createDockWindows();
-	
+
 	incbLanguageCode();
 
 	recalculateMinimumWidth();
-	
+
 	// As a special case, a QTimer with a timeout of 0 will time out as soon as all the events in the window system's event queue have been processed. This can be used to do heavy work while providing a snappy user interface.
 	QTimer *timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(updateRender()));
 	// timer->start(); // <- timeout 0
 	// it's heavy on cpu, though, when no 3d driver initialized :)
 	timer->start(40); // 25fps
-	
+
 	m_IsGraphicsEnabled = m_GraphicsConfig->getGraphicsEnabled();
 	connect(m_GraphicsConfig, SIGNAL(applyGraphicsConfig()), this, SLOT(applyGraphicsConfig()));
 	m_Configuration.setAndCallback("SoundEnabled", CConfigCallback(this, &CMainWindow::cfcbSoundEnabled));
@@ -103,7 +117,8 @@ CMainWindow::CMainWindow(const QMap<QString, QSize> &customSizeHints, QWidget *p
 
 CMainWindow::~CMainWindow()
 {
-	delete m_GraphicsConfig; m_GraphicsConfig = NULL;
+	delete m_GraphicsConfig;
+	m_GraphicsConfig = NULL;
 
 	m_Configuration.dropCallback("SoundEnabled");
 	updateInitialization(false);
@@ -171,7 +186,7 @@ void CMainWindow::updateInitialization(bool visible)
 				done = false;
 			}
 		}
-		
+
 		// Sound (AudioMixer)
 		if (m_IsSoundInitialized)
 		{
@@ -188,7 +203,7 @@ void CMainWindow::updateInitialization(bool visible)
 		{
 			if (wantSound)
 			{
-				
+
 				m_SoundUtilities.init(&m_Configuration, &m_Internationalization);
 				if (m_IsGraphicsInitialized)
 					m_SoundUtilities.initGraphics(m_GraphicsViewport);
@@ -203,9 +218,9 @@ void CMainWindow::updateInitialization(bool visible)
 void CMainWindow::createActions()
 {
 	m_QuitAct = new QAction(this);
-	m_QuitAct->setShortcuts(QKeySequence::Quit);	
+	m_QuitAct->setShortcuts(QKeySequence::Quit);
 	connect(m_QuitAct, SIGNAL(triggered()), this, SLOT(close()));
-	
+
 	m_AboutAct = new QAction(this);
 	connect(m_AboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
@@ -239,8 +254,8 @@ void CMainWindow::translateActions()
 void CMainWindow::createMenus()
 {
 	m_FileMenu = menuBar()->addMenu(QString::null);
-	//m_FileMenu->addAction(saveAct);
-	//m_FileMenu->addSeparator();
+	// m_FileMenu->addAction(saveAct);
+	// m_FileMenu->addSeparator();
 	m_FileMenu->addAction(m_QuitAct);
 
 	m_EditMenu = menuBar()->addMenu(QString::null);
@@ -249,11 +264,11 @@ void CMainWindow::createMenus()
 
 	m_ViewportMenu = menuBar()->addMenu(QString::null);
 	m_ViewportMenu->addAction(m_SaveScreenshotAct);
-	
+
 	m_WidgetsMenu = menuBar()->addMenu(QString::null);
-	
+
 	menuBar()->addSeparator();
-	
+
 	m_HelpMenu = menuBar()->addMenu(QString::null);
 	m_HelpMenu->addAction(m_AboutAct);
 }
@@ -290,25 +305,25 @@ void CMainWindow::createStatusBar()
 
 void CMainWindow::createDockWindows()
 {
-	//QDockWidget *dock = new QDockWidget(tr("Test1"), this);
-	//dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	//customerList = new QListWidget(dock);
-	//dock->setWidget(customerList);
-	//addDockWidget(Qt::RightDockWidgetArea, dock);
-	//m_WidgetsMenu->addAction(dock->toggleViewAction());
+	// QDockWidget *dock = new QDockWidget(tr("Test1"), this);
+	// dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	// customerList = new QListWidget(dock);
+	// dock->setWidget(customerList);
+	// addDockWidget(Qt::RightDockWidgetArea, dock);
+	// m_WidgetsMenu->addAction(dock->toggleViewAction());
 
-	//dock = new QDockWidget(tr("Test2"), this);
-	//paragraphsList = new QListWidget(dock);
-	//dock->setWidget(paragraphsList);
-	//addDockWidget(Qt::RightDockWidgetArea, dock);
-	//m_WidgetsMenu->addAction(dock->toggleViewAction());
+	// dock = new QDockWidget(tr("Test2"), this);
+	// paragraphsList = new QListWidget(dock);
+	// dock->setWidget(paragraphsList);
+	// addDockWidget(Qt::RightDockWidgetArea, dock);
+	// m_WidgetsMenu->addAction(dock->toggleViewAction());
 
-	//connect(customerList, SIGNAL(currentTextChanged(QString)),
+	// connect(customerList, SIGNAL(currentTextChanged(QString)),
 	//	this, SLOT(insertCustomer(QString)));
-	//connect(paragraphsList, SIGNAL(currentTextChanged(QString)),
+	// connect(paragraphsList, SIGNAL(currentTextChanged(QString)),
 	//	this, SLOT(addParagraph(QString)));
 
-	//dock = new QDockWidget(
+	// dock = new QDockWidget(
 
 	// CommandLog (Console)
 	{
@@ -357,7 +372,7 @@ void CMainWindow::translateDockWindows()
 
 void CMainWindow::recalculateMinimumWidth()
 {
-	if (m_GraphicsConfigScroll) 
+	if (m_GraphicsConfigScroll)
 		m_GraphicsConfigScroll->setMinimumWidth(m_GraphicsConfig->minimumSizeHint().width() + m_GraphicsConfigScroll->minimumSizeHint().width());
 }
 
@@ -407,7 +422,7 @@ void CMainWindow::about()
 void CMainWindow::updateRender()
 {
 	updateInitialization(isVisible());
-	
+
 	if (isVisible())
 	{
 
@@ -420,11 +435,11 @@ void CMainWindow::updateRender()
 
 		// 03. Update Receive (network, servertime, receive messages)
 		// ...
-		
+
 		// 04. Update Input (keyboard controls, etc)
 		if (m_IsGraphicsInitialized)
 			m_GraphicsViewport->updateInput();
-		
+
 		// 05. Update Weather (sky, snow, wind, fog, sun)
 		// ...
 
@@ -436,48 +451,48 @@ void CMainWindow::updateRender()
 
 		// 07. Update Landscape (async zone loading near entity)
 		// ...
-		
+
 		// 08. Update Collisions (entities)
 		//      - Update entities
 		//      - Update move container (swap with Update entities? todo: check code!)
 		//      - Update bullets
 		// ...
-		
+
 		// 09. Update Animations (playlists)
-		//      - Needs to be either before or after entities, not sure, 
+		//      - Needs to be either before or after entities, not sure,
 		//        there was a problem with wrong order a while ago!!!
 		// ...
-		
+
 		// 10. Update Camera (depends on entities)
 		// ...
-		
+
 		// 11. Update Interface (login, ui, etc)
 		// ...
-		
+
 		// 12. Update Sound (sound driver)
 		if (m_IsSoundInitialized)
 			m_SoundUtilities.updateSound();
-		
+
 		// 13. Update Send (network, send new position etc)
 		// ...
-		
+
 		// 14. Update Debug (stuff for dev)
 		// ...
-		
+
 		if (m_IsGraphicsInitialized && !m_GraphicsViewport->getDriver()->isLost())
 		{
-			// 01. Render Driver (background color)			
+			// 01. Render Driver (background color)
 			m_GraphicsViewport->renderDriver(); // clear all buffers
-				
+
 			// 02. Render Sky (sky scene)
 			// ...
-			
+
 			// 04. Render Scene (entity scene)
 			// ...
-			
+
 			// 05. Render Effects (flare)
 			// ...
-			
+
 			// 06. Render Interface 3D (player names)
 			// ...
 
@@ -486,7 +501,7 @@ void CMainWindow::updateRender()
 
 			// 08. Render Interface 2D (chatboxes etc, optionally does have 3d)
 			// ...
-				
+
 			// 09. Render Debug 2D (stuff for dev)
 			m_GraphicsViewport->renderDebug2D();
 

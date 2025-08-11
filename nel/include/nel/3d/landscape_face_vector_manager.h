@@ -21,7 +21,6 @@
 #include <vector>
 #include "nel/3d/index_buffer.h"
 
-
 namespace NL3D {
 
 // ***************************************************************************
@@ -34,33 +33,27 @@ namespace NL3D {
 class CLandscapeFaceVectorManager
 {
 public:
-
 	/// Constructor
 	CLandscapeFaceVectorManager();
 	~CLandscapeFaceVectorManager();
 
-
 	// Empty the Free List. All FaceVector must be deleted.
-	void					purge();
+	void purge();
 	/** return an Array of Tris with this Format: NumTris, index0, index1, index2....
 	 *	NB: NumTris really means number of triangles, not number of indexes (which is 3*)!
 	 */
-	TLandscapeIndexType					*createFaceVector(uint numTri);
+	TLandscapeIndexType *createFaceVector(uint numTri);
 	/// delete a faceVector. NB: no check.
-	void					deleteFaceVector(TLandscapeIndexType *fv);
-
+	void deleteFaceVector(TLandscapeIndexType *fv);
 
 private:
 	// Array of Free Blocks List. NB: actually, in place of a TLandscapeIndexType, it is a TLandscapeIndexType* we point here (for next!!)
-	std::vector<TLandscapeIndexType*>	_Blocks;
+	std::vector<TLandscapeIndexType *> _Blocks;
 
-	uint		getBlockIdFromNumTri(uint numTris);
-
+	uint getBlockIdFromNumTri(uint numTris);
 };
 
-
 } // NL3D
-
 
 #endif // NL_LANDSCAPE_FACE_VECTOR_MANAGER_H
 

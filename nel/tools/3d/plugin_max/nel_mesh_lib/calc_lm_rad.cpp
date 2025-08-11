@@ -19,8 +19,8 @@
 
 using namespace NL3D;
 
-bool CExportNel::calculateLMRad( CMesh::CMeshBuild *pZeMeshBuild, CMeshBase::CMeshBaseBuild *pZeMeshBaseBuild, INode& ZeNode, 
-							TimeValue tvTime)
+bool CExportNel::calculateLMRad(CMesh::CMeshBuild *pZeMeshBuild, CMeshBase::CMeshBaseBuild *pZeMeshBaseBuild, INode &ZeNode,
+    TimeValue tvTime)
 {
 	return true;
 }

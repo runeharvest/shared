@@ -64,13 +64,13 @@ void releaseCurl()
 // Ugly CURL callback
 size_t CCurlHttpClient::writeDataFromCurl(void *buffer, size_t size, size_t nmemb, void *pHttpClient)
 {
-	CCurlHttpClient * httpClient = static_cast<CCurlHttpClient*>(pHttpClient);
-	httpClient->pushReceivedData((uint8*)buffer, (uint)(size*nmemb));
-	return size*nmemb;
+	CCurlHttpClient *httpClient = static_cast<CCurlHttpClient *>(pHttpClient);
+	httpClient->pushReceivedData((uint8 *)buffer, (uint)(size * nmemb));
+	return size * nmemb;
 }
 
 // ***************************************************************************
-bool CCurlHttpClient::connect(const std::string &/* server */)
+bool CCurlHttpClient::connect(const std::string & /* server */)
 {
 	curl_version_info_data *vdata = curl_version_info(CURLVERSION_NOW);
 	nldebug("Libcurl v%s", vdata->version);
@@ -79,7 +79,7 @@ bool CCurlHttpClient::connect(const std::string &/* server */)
 
 	initCurl();
 	_Curl = curl_easy_init();
-	if(_Curl == NULL)
+	if (_Curl == NULL)
 	{
 		releaseCurl();
 		return false;
@@ -114,7 +114,7 @@ bool CCurlHttpClient::verifyServer(bool verify)
 }
 
 // ***************************************************************************
-bool CCurlHttpClient::sendRequest(const std::string& methodWB, const std::string &url, const std::string &cookieName, const std::string &cookieValue, const std::string& postParams, bool verbose)
+bool CCurlHttpClient::sendRequest(const std::string &methodWB, const std::string &url, const std::string &cookieName, const std::string &cookieValue, const std::string &postParams, bool verbose)
 {
 	if (verbose)
 		curl_easy_setopt(_Curl, CURLOPT_VERBOSE, 1);
@@ -141,7 +141,7 @@ bool CCurlHttpClient::sendRequest(const std::string& methodWB, const std::string
 	}
 	// Cookie
 	if (!cookieName.empty())
-		curl_easy_setopt(_Curl,	CURLOPT_COOKIE, string(cookieName+"="+cookieValue).c_str());
+		curl_easy_setopt(_Curl, CURLOPT_COOKIE, string(cookieName + "=" + cookieValue).c_str());
 
 	// Include the header in the response
 	curl_easy_setopt(_Curl, CURLOPT_HEADER, 1);
@@ -177,29 +177,29 @@ bool CCurlHttpClient::sendRequest(const std::string& methodWB, const std::string
 
 void CCurlHttpClient::pushReceivedData(uint8 *buffer, uint size)
 {
-	_ReceiveBuffer.insert(_ReceiveBuffer.end(), buffer, buffer+size);
+	_ReceiveBuffer.insert(_ReceiveBuffer.end(), buffer, buffer + size);
 }
 
 // ***************************************************************************
-bool CCurlHttpClient::sendGet(const string &url, const string& params, bool verbose)
+bool CCurlHttpClient::sendGet(const string &url, const string &params, bool verbose)
 {
 	return sendRequest("GET", url + (params.empty() ? "" : ("?" + params)), string(), string(), string(), verbose);
 }
 
 // ***************************************************************************
-bool CCurlHttpClient::sendGetWithCookie(const string &url, const string &name, const string &value, const string& params, bool verbose)
+bool CCurlHttpClient::sendGetWithCookie(const string &url, const string &name, const string &value, const string &params, bool verbose)
 {
 	return sendRequest("GET", url + (params.empty() ? "" : ("?" + params)), name, value, string(), verbose);
 }
 
 // ***************************************************************************
-bool CCurlHttpClient::sendPost(const string &url, const string& params, bool verbose)
+bool CCurlHttpClient::sendPost(const string &url, const string &params, bool verbose)
 {
 	return sendRequest("POST", url, string(), string(), params, verbose);
 }
 
 // ***************************************************************************
-bool CCurlHttpClient::sendPostWithCookie(const string &url, const string &name, const string &value, const string& params, bool verbose)
+bool CCurlHttpClient::sendPostWithCookie(const string &url, const string &name, const string &value, const string &params, bool verbose)
 {
 	return sendRequest("POST", url, name, value, params, verbose);
 }
@@ -214,7 +214,7 @@ bool CCurlHttpClient::receive(string &res, bool verbose)
 
 	res.clear();
 	if (!_ReceiveBuffer.empty())
-		res.assign((const char*)&(*(_ReceiveBuffer.begin())), _ReceiveBuffer.size());
+		res.assign((const char *)&(*(_ReceiveBuffer.begin())), _ReceiveBuffer.size());
 	_ReceiveBuffer.clear();
 	return true;
 }
@@ -225,7 +225,7 @@ void CCurlHttpClient::disconnect()
 	if (_Curl)
 	{
 		curl_easy_cleanup(_Curl);
-		_Curl= NULL;
+		_Curl = NULL;
 		releaseCurl();
 	}
 }

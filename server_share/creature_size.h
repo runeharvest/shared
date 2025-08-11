@@ -14,44 +14,38 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_CREATURE_SIZE_H
 #define RY_CREATURE_SIZE_H
 
 #include "nel/misc/types_nl.h"
 
-namespace CREATURE_SIZE
+namespace CREATURE_SIZE {
+// Size
+enum ECreatureSize
 {
-	// Size
-	enum ECreatureSize
-	{
-		SMALL = 0,
-		HOMIN,
-		BIG,
+	SMALL = 0,
+	HOMIN,
+	BIG,
 
-		// the number of size existing
-		NB_SIZE,
+	// the number of size existing
+	NB_SIZE,
 
-		UNKNOWN,
-	};
+	UNKNOWN,
+};
 
+/**
+ * get the ECreatureSize size from the input string
+ * \param str the input string
+ * \return the ECreatureSize associated to this string (UNKNOWN if the string cannot be interpreted)
+ */
+ECreatureSize stringToCreatureSize(const std::string &str);
 
-	/**
-	 * get the ECreatureSize size from the input string
-	 * \param str the input string
-	 * \return the ECreatureSize associated to this string (UNKNOWN if the string cannot be interpreted)
-	 */
-	ECreatureSize stringToCreatureSize(const std::string &str);
-
-
-	/**
-	 * get the ECreatureSize size as a string
-	 * \param size the ECreatureSize size
-	 * \return the string associated to this ECreatureSize
-	 */
-	const std::string &creatureSizeToString(ECreatureSize size);
-
+/**
+ * get the ECreatureSize size as a string
+ * \param size the ECreatureSize size
+ * \return the string associated to this ECreatureSize
+ */
+const std::string &creatureSizeToString(ECreatureSize size);
 
 }; // CREATURE_SIZE
 

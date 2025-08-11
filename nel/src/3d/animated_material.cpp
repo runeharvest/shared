@@ -25,43 +25,37 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
+namespace NL3D {
+
+// ***************************************************************************
+// ***************************************************************************
+// ***************************************************************************
+// ***************************************************************************
+
+// ***************************************************************************
+void CMaterialBase::CAnimatedTexture::serial(NLMISC::IStream &f)
 {
-
-
-// ***************************************************************************
-// ***************************************************************************
-// ***************************************************************************
-// ***************************************************************************
-
-
-
-// ***************************************************************************
-void	CMaterialBase::CAnimatedTexture::serial(NLMISC::IStream &f)
-{
-	ITexture	*text= NULL;
-	if(f.isReading())
+	ITexture *text = NULL;
+	if (f.isReading())
 	{
 		f.serialPolyPtr(text);
-		Texture= text;
+		Texture = text;
 	}
 	else
 	{
-		text= Texture;
+		text = Texture;
 		f.serialPolyPtr(text);
 	}
 }
 
-
-
 // ***************************************************************************
 CMaterialBase::CMaterialBase()
 {
-	DefaultAmbient.setDefaultValue(CRGBA(64,64,64));
-	DefaultDiffuse.setDefaultValue(CRGBA(128,128,128));
-	DefaultSpecular.setDefaultValue(CRGBA(0,0,0));
+	DefaultAmbient.setDefaultValue(CRGBA(64, 64, 64));
+	DefaultDiffuse.setDefaultValue(CRGBA(128, 128, 128));
+	DefaultSpecular.setDefaultValue(CRGBA(0, 0, 0));
 	DefaultShininess.setDefaultValue(10);
-	DefaultEmissive.setDefaultValue(CRGBA(128,128,128));
+	DefaultEmissive.setDefaultValue(CRGBA(128, 128, 128));
 	DefaultOpacity.setDefaultValue(1);
 	DefaultTexture.setDefaultValue(0x7FFFFFFF);
 	for (uint k = 0; k < IDRV_MAT_MAXTEXTURES; ++k)
@@ -70,11 +64,10 @@ CMaterialBase::CMaterialBase()
 	}
 }
 
-
 // ***************************************************************************
-void	CMaterialBase::serial(NLMISC::IStream &f)
+void CMaterialBase::serial(NLMISC::IStream &f)
 {
-	sint	ver= f.serialVersion(1);
+	sint ver = f.serialVersion(1);
 
 	f.serial(Name);
 	f.serial(DefaultAmbient, DefaultDiffuse, DefaultSpecular);
@@ -89,16 +82,15 @@ void	CMaterialBase::serial(NLMISC::IStream &f)
 	}
 }
 
-
 // ***************************************************************************
-void	CMaterialBase::copyFromMaterial(CMaterial *pMat)
+void CMaterialBase::copyFromMaterial(CMaterial *pMat)
 {
 	DefaultAmbient.setDefaultValue(pMat->getAmbient());
 	DefaultDiffuse.setDefaultValue(pMat->getDiffuse());
 	DefaultSpecular.setDefaultValue(pMat->getSpecular());
 	DefaultShininess.setDefaultValue(pMat->getShininess());
 	DefaultEmissive.setDefaultValue(pMat->getEmissive());
-	DefaultOpacity.setDefaultValue(pMat->getDiffuse().A/255.f);
+	DefaultOpacity.setDefaultValue(pMat->getDiffuse().A / 255.f);
 
 	/// get uv value from material
 	for (uint k = 0; k < IDRV_MAT_MAXTEXTURES; ++k)
@@ -116,55 +108,50 @@ void	CMaterialBase::copyFromMaterial(CMaterial *pMat)
 	}
 }
 
-
 // ***************************************************************************
-void			CMaterialBase::setAnimatedTexture(uint32 id, CSmartPtr<ITexture>  pText)
+void CMaterialBase::setAnimatedTexture(uint32 id, CSmartPtr<ITexture> pText)
 {
 	// add or replace the texture.
-	_AnimatedTextures[id].Texture= pText;
+	_AnimatedTextures[id].Texture = pText;
 }
 // ***************************************************************************
-bool			CMaterialBase::validAnimatedTexture(uint32 id)
+bool CMaterialBase::validAnimatedTexture(uint32 id)
 {
-	TAnimatedTextureMap::iterator	it;
-	it= _AnimatedTextures.find(id);
-	return it!=_AnimatedTextures.end();
+	TAnimatedTextureMap::iterator it;
+	it = _AnimatedTextures.find(id);
+	return it != _AnimatedTextures.end();
 }
 // ***************************************************************************
-ITexture*		CMaterialBase::getAnimatedTexture(uint32 id)
+ITexture *CMaterialBase::getAnimatedTexture(uint32 id)
 {
-	TAnimatedTextureMap::iterator	it;
-	it= _AnimatedTextures.find(id);
-	if( it!=_AnimatedTextures.end() )
+	TAnimatedTextureMap::iterator it;
+	it = _AnimatedTextures.find(id);
+	if (it != _AnimatedTextures.end())
 		return it->second.Texture;
 	else
 		return NULL;
 }
 
-
-
-
 // ***************************************************************************
 // ***************************************************************************
 // ***************************************************************************
 // ***************************************************************************
-
 
 // ***************************************************************************
 CAnimatedMaterial::CAnimatedMaterial(CMaterialBase *baseMat)
 {
 	nlassert(baseMat);
-	_MaterialBase= baseMat;
+	_MaterialBase = baseMat;
 
 	// IAnimatable.
 	IAnimatable::resize(AnimValueLast);
 
-	_Ambient.Value= _MaterialBase->DefaultAmbient.getDefaultValue();
-	_Diffuse.Value= _MaterialBase->DefaultDiffuse.getDefaultValue();
-	_Specular.Value= _MaterialBase->DefaultSpecular.getDefaultValue();
-	_Shininess.Value= _MaterialBase->DefaultShininess.getDefaultValue();
-	_Emissive.Value= _MaterialBase->DefaultEmissive.getDefaultValue();
-	_Opacity.Value= _MaterialBase->DefaultOpacity.getDefaultValue();
+	_Ambient.Value = _MaterialBase->DefaultAmbient.getDefaultValue();
+	_Diffuse.Value = _MaterialBase->DefaultDiffuse.getDefaultValue();
+	_Specular.Value = _MaterialBase->DefaultSpecular.getDefaultValue();
+	_Shininess.Value = _MaterialBase->DefaultShininess.getDefaultValue();
+	_Emissive.Value = _MaterialBase->DefaultEmissive.getDefaultValue();
+	_Opacity.Value = _MaterialBase->DefaultOpacity.getDefaultValue();
 
 	for (uint k = 0; k < IDRV_MAT_MAXTEXTURES; ++k)
 	{
@@ -172,35 +159,32 @@ CAnimatedMaterial::CAnimatedMaterial(CMaterialBase *baseMat)
 	}
 }
 
-
 // ***************************************************************************
-void	CAnimatedMaterial::setMaterial(CMaterial *pMat)
+void CAnimatedMaterial::setMaterial(CMaterial *pMat)
 {
-	_Material= pMat;
+	_Material = pMat;
 }
 
-
 // ***************************************************************************
-std::string		CAnimatedMaterial::getMaterialName() const
+std::string CAnimatedMaterial::getMaterialName() const
 {
 	nlassert(_MaterialBase);
 	return _MaterialBase->Name;
 }
 
-
 // ***************************************************************************
-void	CAnimatedMaterial::update()
+void CAnimatedMaterial::update()
 {
-	if(isTouched(OwnerBit) && _Material!=NULL /*&& _Material->isLighted()*/)
+	if (isTouched(OwnerBit) && _Material != NULL /*&& _Material->isLighted()*/)
 	{
 
 		// well, just update all...  :)
 
 		// diffuse part.
-		CRGBA	diff= _Diffuse.Value;
-		sint c= (sint)(_Opacity.Value*255);
+		CRGBA diff = _Diffuse.Value;
+		sint c = (sint)(_Opacity.Value * 255);
 		clamp(c, 0, 255);
-		diff.A= c;
+		diff.A = c;
 
 		// setup material.
 		if (_Material->isLighted())
@@ -220,16 +204,15 @@ void	CAnimatedMaterial::update()
 		clearFlag(EmissiveValue);
 		clearFlag(OpacityValue);
 
-
 		// Texture Anim.
-		if(isTouched(TextureValue))
+		if (isTouched(TextureValue))
 		{
 			nlassert(_MaterialBase);
 
-			uint32	id= _Texture.Value;
-			if(_MaterialBase->validAnimatedTexture(id))
+			uint32 id = _Texture.Value;
+			if (_MaterialBase->validAnimatedTexture(id))
 			{
-				_Material->setTexture(0, _MaterialBase->getAnimatedTexture(id) );
+				_Material->setTexture(0, _MaterialBase->getAnimatedTexture(id));
 			}
 			clearFlag(TextureValue);
 		}
@@ -248,10 +231,10 @@ void	CAnimatedMaterial::update()
 				float fSin = sinf(texMatAV._WRot.Value);
 				CMatrix SR;
 				SR.setRot(CVector(texMatAV._UScale.Value * fCos, texMatAV._VScale.Value * fSin, 0.f),
-						  CVector(- texMatAV._UScale.Value * fSin, texMatAV._VScale.Value * fCos, 0.f),
-						  CVector::K);
+				    CVector(-texMatAV._UScale.Value * fSin, texMatAV._VScale.Value * fCos, 0.f),
+				    CVector::K);
 				CVector half(0.5f, 0.5f, 0.f);
-				SR.setPos(SR.mulVector(- half - CVector(texMatAV._UTrans.Value, texMatAV._VTrans.Value, 0.f)) + half);
+				SR.setPos(SR.mulVector(-half - CVector(texMatAV._UTrans.Value, texMatAV._VTrans.Value, 0.f)) + half);
 				_Material->setUserTexMat(k, convMat * SR * convMat);
 			}
 		}
@@ -261,11 +244,10 @@ void	CAnimatedMaterial::update()
 	}
 }
 
-
 // ***************************************************************************
-IAnimatedValue* CAnimatedMaterial::getValue (uint valueId)
+IAnimatedValue *CAnimatedMaterial::getValue(uint valueId)
 {
-	switch(valueId)
+	switch (valueId)
 	{
 	case AmbientValue: return &_Ambient;
 	case DiffuseValue: return &_Diffuse;
@@ -278,18 +260,18 @@ IAnimatedValue* CAnimatedMaterial::getValue (uint valueId)
 		if (valueId >= TextureMatValues && valueId < AnimValueLast)
 		{
 			const uint baseId = valueId - TextureMatValues;
-			const uint texNum =   baseId / NumTexAnimatedValues; // stage index
-			const uint argID  =   baseId % NumTexAnimatedValues; // value for this stage
-			switch(argID)
+			const uint texNum = baseId / NumTexAnimatedValues; // stage index
+			const uint argID = baseId % NumTexAnimatedValues; // value for this stage
+			switch (argID)
 			{
-				case 0:	return &_TexAnimatedMatValues[texNum]._UTrans;
-				case 1:	return &_TexAnimatedMatValues[texNum]._VTrans;
-				case 2:	return &_TexAnimatedMatValues[texNum]._UScale;
-				case 3:	return &_TexAnimatedMatValues[texNum]._VScale;
-				case 4:	return &_TexAnimatedMatValues[texNum]._WRot;
+			case 0: return &_TexAnimatedMatValues[texNum]._UTrans;
+			case 1: return &_TexAnimatedMatValues[texNum]._VTrans;
+			case 2: return &_TexAnimatedMatValues[texNum]._UScale;
+			case 3: return &_TexAnimatedMatValues[texNum]._VScale;
+			case 4: return &_TexAnimatedMatValues[texNum]._WRot;
 			}
 		}
-	break;
+		break;
 	};
 
 	// shoudl not be here!!
@@ -297,9 +279,9 @@ IAnimatedValue* CAnimatedMaterial::getValue (uint valueId)
 	return NULL;
 }
 // ***************************************************************************
-const char *CAnimatedMaterial::getValueName (uint valueId) const
+const char *CAnimatedMaterial::getValueName(uint valueId) const
 {
-	switch(valueId)
+	switch (valueId)
 	{
 	case AmbientValue: return getAmbientValueName();
 	case DiffuseValue: return getDiffuseValueName();
@@ -312,18 +294,18 @@ const char *CAnimatedMaterial::getValueName (uint valueId) const
 		if (valueId >= TextureMatValues && valueId < AnimValueLast)
 		{
 			const uint baseId = valueId - TextureMatValues;
-			const uint texNum =   baseId / NumTexAnimatedValues;
-			const uint argID  =   baseId % NumTexAnimatedValues;
-			switch(argID)
+			const uint texNum = baseId / NumTexAnimatedValues;
+			const uint argID = baseId % NumTexAnimatedValues;
+			switch (argID)
 			{
-				case 0:	return getTexMatUTransName      (texNum);
-				case 1:	return getTexMatVTransName(texNum);
-				case 2:	return getTexMatUScaleName(texNum);
-				case 3:	return getTexMatVScaleName(texNum);
-				case 4:	return getTexMatWRotName(texNum);
+			case 0: return getTexMatUTransName(texNum);
+			case 1: return getTexMatVTransName(texNum);
+			case 2: return getTexMatUScaleName(texNum);
+			case 3: return getTexMatVScaleName(texNum);
+			case 4: return getTexMatWRotName(texNum);
 			}
 		}
-	break;
+		break;
 	};
 
 	// shoudl not be here!!
@@ -331,35 +313,35 @@ const char *CAnimatedMaterial::getValueName (uint valueId) const
 	return "";
 }
 // ***************************************************************************
-ITrack*	CAnimatedMaterial::getDefaultTrack (uint valueId)
+ITrack *CAnimatedMaterial::getDefaultTrack(uint valueId)
 {
 	nlassert(_MaterialBase);
 
-	switch(valueId)
+	switch (valueId)
 	{
-	case AmbientValue: return	&_MaterialBase->DefaultAmbient;
-	case DiffuseValue: return	&_MaterialBase->DefaultDiffuse;
-	case SpecularValue: return	&_MaterialBase->DefaultSpecular;
-	case ShininessValue: return	&_MaterialBase->DefaultShininess;
-	case EmissiveValue: return	&_MaterialBase->DefaultEmissive;
-	case OpacityValue: return	&_MaterialBase->DefaultOpacity;
-	case TextureValue: return	&_MaterialBase->DefaultTexture;
+	case AmbientValue: return &_MaterialBase->DefaultAmbient;
+	case DiffuseValue: return &_MaterialBase->DefaultDiffuse;
+	case SpecularValue: return &_MaterialBase->DefaultSpecular;
+	case ShininessValue: return &_MaterialBase->DefaultShininess;
+	case EmissiveValue: return &_MaterialBase->DefaultEmissive;
+	case OpacityValue: return &_MaterialBase->DefaultOpacity;
+	case TextureValue: return &_MaterialBase->DefaultTexture;
 	default: // this may be a texture animated value...
 		if (valueId >= TextureMatValues && valueId < AnimValueLast)
 		{
 			const uint baseId = valueId - TextureMatValues;
-			const uint texNum =   baseId / NumTexAnimatedValues;
-			const uint argID  =   baseId % NumTexAnimatedValues;
-			switch(argID)
+			const uint texNum = baseId / NumTexAnimatedValues;
+			const uint argID = baseId % NumTexAnimatedValues;
+			switch (argID)
 			{
-				case 0:	return 	&_MaterialBase->DefaultTexAnimTracks[texNum].DefaultUTrans;
-				case 1:	return 	&_MaterialBase->DefaultTexAnimTracks[texNum].DefaultVTrans;
-				case 2:	return 	&_MaterialBase->DefaultTexAnimTracks[texNum].DefaultUTrans;
-				case 3:	return 	&_MaterialBase->DefaultTexAnimTracks[texNum].DefaultVTrans;
-				case 4:	return 	&_MaterialBase->DefaultTexAnimTracks[texNum].DefaultWRot;
+			case 0: return &_MaterialBase->DefaultTexAnimTracks[texNum].DefaultUTrans;
+			case 1: return &_MaterialBase->DefaultTexAnimTracks[texNum].DefaultVTrans;
+			case 2: return &_MaterialBase->DefaultTexAnimTracks[texNum].DefaultUTrans;
+			case 3: return &_MaterialBase->DefaultTexAnimTracks[texNum].DefaultVTrans;
+			case 4: return &_MaterialBase->DefaultTexAnimTracks[texNum].DefaultWRot;
 			}
 		}
-	break;
+		break;
 	};
 
 	// shoudl not be here!!
@@ -367,7 +349,7 @@ ITrack*	CAnimatedMaterial::getDefaultTrack (uint valueId)
 	return NULL;
 }
 // ***************************************************************************
-void	CAnimatedMaterial::registerToChannelMixer(CChannelMixer *chanMixer, const std::string &prefix)
+void CAnimatedMaterial::registerToChannelMixer(CChannelMixer *chanMixer, const std::string &prefix)
 {
 	// For CAnimatedMaterial, channels are detailled (material rendered after clip)!
 	addValue(chanMixer, AmbientValue, OwnerBit, prefix, true);
@@ -421,7 +403,6 @@ const char *CAnimatedMaterial::getTexMatVTransName(uint stage)
 	return names[stage];
 }
 
-
 // ***************************************************************************
 const char *CAnimatedMaterial::getTexMatUScaleName(uint stage)
 {
@@ -457,7 +438,6 @@ const char *CAnimatedMaterial::getTexMatVScaleName(uint stage)
 	return names[stage];
 }
 
-
 // ***************************************************************************
 const char *CAnimatedMaterial::getTexMatWRotName(uint stage)
 {
@@ -475,7 +455,5 @@ const char *CAnimatedMaterial::getTexMatWRotName(uint stage)
 	}
 	return names[stage];
 }
-
-
 
 } // NL3D

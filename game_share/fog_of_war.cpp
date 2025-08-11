@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "fog_of_war.h"
 
@@ -38,26 +36,22 @@ void IFogOfWar::explore(float worldPosX, float worldPosY)
 	if (pData == NULL)
 		return;
 
-	if ((worldPosX < MinX) ||
-		(worldPosX > MaxX) ||
-		(worldPosY < MinY) ||
-		(worldPosY > MaxY))
+	if ((worldPosX < MinX) || (worldPosX > MaxX) || (worldPosY < MinY) || (worldPosY > MaxY))
 		return;
 
 	sint16 w = MapWidth;
 	sint16 h = MapHeight;
 
-	sint16 bmpPosX = sint16(sint32((w-1) * (worldPosX - MinX) / (MaxX - MinX) + 0.5));
-	sint16 bmpPosY = sint16(sint32((h-1) * (worldPosY - MinY) / (MaxY - MinY) + 0.5));
+	sint16 bmpPosX = sint16(sint32((w - 1) * (worldPosX - MinX) / (MaxX - MinX) + 0.5));
+	sint16 bmpPosY = sint16(sint32((h - 1) * (worldPosY - MinY) / (MaxY - MinY) + 0.5));
 
 	sint16 wReal = getRealWidth();
-	if ((bmpPosX >= 0) && (bmpPosX < w) &&
-		(bmpPosY >= 0) && (bmpPosY < h))
-	if (pData[bmpPosX+bmpPosY*wReal] == 0)
-	{
-		pData[bmpPosX+bmpPosY*wReal] = 255;
-		explored(bmpPosX, bmpPosY); // Launch callback
-	}
+	if ((bmpPosX >= 0) && (bmpPosX < w) && (bmpPosY >= 0) && (bmpPosY < h))
+		if (pData[bmpPosX + bmpPosY * wReal] == 0)
+		{
+			pData[bmpPosX + bmpPosY * wReal] = 255;
+			explored(bmpPosX, bmpPosY); // Launch callback
+		}
 }
 
 // ****************************************************************************
@@ -83,6 +77,5 @@ void IFogOfWar::serial(NLMISC::IStream &f)
 	}
 
 	for (uint16 i = 0; i < MapHeight; ++i)
-		f.serialBuffer(getData()+getRealWidth()*i, MapWidth);
+		f.serialBuffer(getData() + getRealWidth() * i, MapWidth);
 }
-

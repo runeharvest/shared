@@ -17,7 +17,6 @@
 #ifndef NL_OPENGL_EXTENSION_DEF_H
 #define NL_OPENGL_EXTENSION_DEF_H
 
-
 #include "nel/misc/types_nl.h"
 
 #ifdef __cplusplus
@@ -103,15 +102,15 @@ extern "C" {
 #ifndef NL_GLX_MESA_swap_control
 #define NL_GLX_MESA_swap_control 1
 
-typedef GLint (APIENTRY * NEL_PFNGLXSWAPINTERVALMESAPROC) (GLuint interval);
-typedef GLint (APIENTRY * NEL_PFNGLXGETSWAPINTERVALMESAPROC) ();
+typedef GLint(APIENTRY *NEL_PFNGLXSWAPINTERVALMESAPROC)(GLuint interval);
+typedef GLint(APIENTRY *NEL_PFNGLXGETSWAPINTERVALMESAPROC)();
 
 #endif // NL_GLX_MESA_swap_control
 
 #ifndef NL_GLX_NV_vertex_array_range
 #define NL_GLX_NV_vertex_array_range 1
-typedef void* (APIENTRY * NEL_PFNGLXALLOCATEMEMORYNVPROC) (GLsizei size, GLfloat readfreq, GLfloat writefreq, GLfloat priority);
-typedef void (APIENTRY * NEL_PFNGLXFREEMEMORYNVPROC) (void *pointer);
+typedef void *(APIENTRY *NEL_PFNGLXALLOCATEMEMORYNVPROC)(GLsizei size, GLfloat readfreq, GLfloat writefreq, GLfloat priority);
+typedef void(APIENTRY *NEL_PFNGLXFREEMEMORYNVPROC)(void *pointer);
 #endif // NL_GLX_NV_vertex_array_range
 
 #endif // NL_OS_MAC
@@ -123,4 +122,3 @@ typedef void (APIENTRY * NEL_PFNGLXFREEMEMORYNVPROC) (void *pointer);
 #endif
 
 #endif // NL_OPENGL_EXTENSION_DEF_H
-

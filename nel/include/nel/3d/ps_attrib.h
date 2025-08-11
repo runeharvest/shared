@@ -17,8 +17,6 @@
 #ifndef NL_PS_ATTRIB_H
 #define NL_PS_ATTRIB_H
 
-
-
 #include "nel/misc/types_nl.h"
 #include "nel/misc/stream.h"
 #include "nel/3d/animation_time.h"
@@ -27,11 +25,10 @@
 #include "nel/misc/rgba.h"
 #include "nel/misc/common.h"
 
-
 namespace NL3D {
 
 /** a container that is like a vector, but snapped to (1<<snapPower) byte memory pages
-  */
+ */
 template <class T, const uint snapPower = 5>
 class CSnappedVector
 {
@@ -40,7 +37,13 @@ public:
 	typedef const T *const_iterator;
 	typedef T value_type;
 
-	CSnappedVector() : _Size(0), _Capacity(0), _Start(NULL), _Tab(NULL) {}
+	CSnappedVector()
+	    : _Size(0)
+	    , _Capacity(0)
+	    , _Start(NULL)
+	    , _Tab(NULL)
+	{
+	}
 	~CSnappedVector()
 	{
 		nlassert(_Size <= _Capacity);
@@ -57,32 +60,32 @@ public:
 
 	T &operator[](uint index)
 	{
-		#ifdef NL_DEBUG
-			nlassert(index < _Size && _Size);
-		#endif
+#ifdef NL_DEBUG
+		nlassert(index < _Size && _Size);
+#endif
 		return _Tab[index];
 	}
 	const T &operator[](uint index) const
 	{
-		#ifdef NL_DEBUG
-			nlassert(index < _Size && _Size);
-		#endif
+#ifdef NL_DEBUG
+		nlassert(index < _Size && _Size);
+#endif
 		return _Tab[index];
 	}
 
 	T &back()
 	{
-		#ifdef NL_DEBUG
-			nlassert(_Size > 0);
-		#endif
+#ifdef NL_DEBUG
+		nlassert(_Size > 0);
+#endif
 		return _Tab[_Size - 1];
 	}
 
 	const T &back() const
 	{
-		#ifdef NL_DEBUG
-			nlassert(_Size > 0);
-		#endif
+#ifdef NL_DEBUG
+		nlassert(_Size > 0);
+#endif
 		return _Tab[_Size - 1];
 	}
 
@@ -96,15 +99,13 @@ public:
 		try
 		{
 			newStart = new uint8[sizeof(T) * capacity + (1 << snapPower)];
-			T *newTab = (T *) ( (size_t) (newStart + (1 << snapPower))  & ~((1 << snapPower) - 1)); // snap to a page
-
-
+			T *newTab = (T *)((size_t)(newStart + (1 << snapPower)) & ~((1 << snapPower) - 1)); // snap to a page
 
 			for (iterator src = _Tab, end = _Tab + (capacity < _Size ? capacity : _Size), dest = newTab;
 			     src != end;
-				 ++ src, ++dest)
+			     ++src, ++dest)
 			{
-				new ((void *) dest) T(*src); // copy object
+				new ((void *)dest) T(*src); // copy object
 			}
 
 			// swap datas
@@ -112,26 +113,24 @@ public:
 			std::swap(_Tab, newTab);
 
 			// destroy previous objects. We assume that we can't have exceptions raised from destructors
-			for (iterator it = newTab /* old tab */, endIt = newTab + _Size; it != endIt; ++ it)
+			for (iterator it = newTab /* old tab */, endIt = newTab + _Size; it != endIt; ++it)
 			{
 				it->~T();
 			}
 
 			// set new size
 			_Capacity = capacity;
-			_Size    = capacity < _Size ? capacity : _Size;
-
+			_Size = capacity < _Size ? capacity : _Size;
 
 			// delete old vect (that was swapped with the new one)
-			delete [] newStart;
+			delete[] newStart;
 			nlassert(_Size <= _Capacity);
 		}
 		catch (...)
 		{
-			delete [] newStart;
+			delete[] newStart;
 			throw;
 		}
-
 	}
 	void resize(uint size)
 	{
@@ -151,7 +150,7 @@ public:
 			}
 			for (iterator it = _Tab + _Size, endIt = _Tab + size; it != endIt; ++it)
 			{
-				new ((void *) it) T();
+				new ((void *)it) T();
 			}
 		}
 
@@ -164,17 +163,15 @@ public:
 		if (!_Size)
 		{
 			reserve(2);
-			new ((void *) _Tab) T(t);
+			new ((void *)_Tab) T(t);
 			_Size = 1;
 		}
-		else
-		if (_Size < _Capacity)
+		else if (_Size < _Capacity)
 		{
-			new ((void *) (_Tab + _Size)) T(t);
+			new ((void *)(_Tab + _Size)) T(t);
 			++_Size;
 		}
-		else
-		if (_Size == _Capacity)
+		else if (_Size == _Capacity)
 		{
 			if (_Capacity == 1)
 			{
@@ -182,10 +179,10 @@ public:
 			}
 			else
 			{
-				reserve(_Capacity + (_Capacity>>1));
+				reserve(_Capacity + (_Capacity >> 1));
 			}
 			nlassert(_Size <= _Capacity);
-			new ((void *) (_Tab + _Size)) T(t);
+			new ((void *)(_Tab + _Size)) T(t);
 			++_Size;
 		}
 	}
@@ -197,8 +194,7 @@ public:
 		--_Size;
 	}
 
-
-	uint capacity() const  { return _Capacity; }
+	uint capacity() const { return _Capacity; }
 	uint size() const { return _Size; }
 
 	/// serialization
@@ -231,17 +227,11 @@ public:
 	void clear() { resize(0); }
 
 protected:
-
-	uint8 *_Start;   // real allocation address
-	T *_Tab;       // first element
-	uint32 _Size;    // used elements
+	uint8 *_Start; // real allocation address
+	T *_Tab; // first element
+	uint32 _Size; // used elements
 	uint32 _Capacity; // max size
 };
-
-
-
-
-
 
 /**
  * This class is intended to store an attribute list in a located or in a located bindable
@@ -252,136 +242,126 @@ protected:
  * \date 2001
  */
 
-template <typename T> class CPSAttrib
+template <typename T>
+class CPSAttrib
 {
 public:
-
 	/// \name Object
 	//@{
-			/// ctor
-			CPSAttrib();
+	/// ctor
+	CPSAttrib();
 
-			/// Serialization method
-			void serial(NLMISC::IStream &f);
+	/// Serialization method
+	void serial(NLMISC::IStream &f);
 
-			// swap with another vector
-			void swap(CPSAttrib<T> &other);
+	// swap with another vector
+	void swap(CPSAttrib<T> &other);
 	//@}
 
 	/// \name Useful typedefs
 	//@{
-		/** Container used by this class to store its datas.
-		  * The container type is likely to change depending on memory requirement.
-		  */
-		//typedef CSnappedVector<T> TContType;
-		typedef typename CPSVector<T>::V TContType;
+	/** Container used by this class to store its datas.
+	 * The container type is likely to change depending on memory requirement.
+	 */
+	// typedef CSnappedVector<T> TContType;
+	typedef typename CPSVector<T>::V TContType;
 
-		/// The type used by the container. Its is the type used to instanciate this template.
-		typedef T value_type;
+	/// The type used by the container. Its is the type used to instanciate this template.
+	typedef T value_type;
 
-		/// an iterator on the datas
-		typedef typename TContType::iterator iterator;
-		/// a const iterator on the datas
-		typedef typename TContType::const_iterator const_iterator;
+	/// an iterator on the datas
+	typedef typename TContType::iterator iterator;
+	/// a const iterator on the datas
+	typedef typename TContType::const_iterator const_iterator;
 	//@}
-
 
 	/// \name Size of the container
 	//@{
-		/** Resize the attributes tab. This tells what is the max number of element in this tab, but don't add elements.
-		  * The behaviour is much like std::vector::reserve
-		  */
-		void					resize(uint32 nbInstances);
+	/** Resize the attributes tab. This tells what is the max number of element in this tab, but don't add elements.
+	 * The behaviour is much like std::vector::reserve
+	 */
+	void resize(uint32 nbInstances);
 
-		/// return the number of instance in the container
-		uint32 getSize(void) const { return (uint32)_Tab.size(); }
+	/// return the number of instance in the container
+	uint32 getSize(void) const { return (uint32)_Tab.size(); }
 
-		/// return the max number of instance in the container
-		uint32 getMaxSize(void) const { return _MaxSize; }
+	/// return the max number of instance in the container
+	uint32 getMaxSize(void) const { return _MaxSize; }
 
 	//@}
-
 
 	/// \name Element access.
 	//@{
-		/// get a const reference on an attribute instance
-		const T &				operator[](uint32 index) const
-		{
-			#ifdef NL_DEBUG
-				nlassert(index < _Tab.size());
-			#endif
-			return _Tab[index];
-		}
+	/// get a const reference on an attribute instance
+	const T &operator[](uint32 index) const
+	{
+#ifdef NL_DEBUG
+		nlassert(index < _Tab.size());
+#endif
+		return _Tab[index];
+	}
 
-		/// get a reference on an attribute instance
-		T &						operator[](uint32 index)
-		{
-			#ifdef NL_DEBUG
-				nlassert(index < _Tab.size());
-			#endif
-			return _Tab[index];
-		}
+	/// get a reference on an attribute instance
+	T &operator[](uint32 index)
+	{
+#ifdef NL_DEBUG
+		nlassert(index < _Tab.size());
+#endif
+		return _Tab[index];
+	}
 
-		// get a const reference on the last element
-		const T &back() const
-		{
-			return _Tab.back();
-		}
+	// get a const reference on the last element
+	const T &back() const
+	{
+		return _Tab.back();
+	}
 
-		// get a reference on the last element
-		T &back()
-		{
-			return _Tab.back();
-		}
-
+	// get a reference on the last element
+	T &back()
+	{
+		return _Tab.back();
+	}
 
 	//@}
-
-
 
 	/// \name Iterator / enumeration
 	//@{
 
+	/// Get an iterator at the beginning of the container
+	iterator begin(void) { return _Tab.begin(); }
 
-		/// Get an iterator at the beginning of the container
-		iterator				begin(void) { return _Tab.begin(); }
+	/// Get an iterator at the end of the container
+	iterator end(void) { return _Tab.end(); }
 
-		/// Get an iterator at the end of the container
-		iterator				end(void) { return _Tab.end(); }
+	/// Get a  const_iterator at the beginning of the container
+	const_iterator begin(void) const { return _Tab.begin(); }
 
-		/// Get a  const_iterator at the beginning of the container
-		const_iterator			begin(void) const { return _Tab.begin(); }
-
-		/// Get a  const_iterator at the end of the container
-		const_iterator			end(void) const { return _Tab.end(); }
+	/// Get a  const_iterator at the end of the container
+	const_iterator end(void) const { return _Tab.end(); }
 	//@}
 
 	/// \name Add / remove methods
 	//@{
-		/**
-		 * create a new object in the tab. It is append at the end of it
-		 * \return the index if there were enough room for it or -1 else
-		 */
-		sint32 insert(const T &t = T() );
+	/**
+	 * create a new object in the tab. It is append at the end of it
+	 * \return the index if there were enough room for it or -1 else
+	 */
+	sint32 insert(const T &t = T());
 
-		/// remove an object from the tab
-		void remove(uint32 index);
+	/// remove an object from the tab
+	void remove(uint32 index);
 
-		/// clear the container
-		void clear(void)
-		{
-			_Tab.clear();
-		}
+	/// clear the container
+	void clear(void)
+	{
+		_Tab.clear();
+	}
 	//@}
 
 protected:
 	TContType _Tab;
-	uint32    _MaxSize; // the max number of elements that can be stored
+	uint32 _MaxSize; // the max number of elements that can be stored
 };
-
-
-
-
 
 /////////////////////////////////////////////////////////////////////////
 //					IMPLEMENTATION									   //
@@ -393,7 +373,6 @@ CPSAttrib<T>::CPSAttrib()
 	_MaxSize = DefaultMaxLocatedInstance;
 }
 
-
 template <typename T>
 void CPSAttrib<T>::resize(uint32 nbInstances)
 {
@@ -401,7 +380,6 @@ void CPSAttrib<T>::resize(uint32 nbInstances)
 	_Tab.reserve(nbInstances);
 	_MaxSize = nbInstances;
 }
-
 
 template <typename T>
 sint32 CPSAttrib<T>::insert(const T &t)
@@ -414,7 +392,6 @@ sint32 CPSAttrib<T>::insert(const T &t)
 	return (sint32)_Tab.size() - 1;
 }
 
-
 template <typename T>
 void CPSAttrib<T>::remove(uint32 index)
 {
@@ -425,7 +402,6 @@ void CPSAttrib<T>::remove(uint32 index)
 		_Tab[index] = _Tab[_Tab.size() - 1];
 	}
 	_Tab.pop_back();
-
 }
 
 template <typename T>
@@ -437,7 +413,7 @@ void CPSAttrib<T>::serial(NLMISC::IStream &f)
 	// in the first version, size was duplicated, we were using a std::vector ...
 	if (ver == 1)
 	{
-		if(f.isReading())
+		if (f.isReading())
 		{
 			uint32 size;
 			f.serial(size);
@@ -446,7 +422,7 @@ void CPSAttrib<T>::serial(NLMISC::IStream &f)
 			f.serial(size); // useless but, we were previously doing a serialCont... compatibility purpose only
 			T tmp;
 			// Read the vector
-			for(uint i = 0; i < size; i++)
+			for (uint i = 0; i < size; i++)
 			{
 				f.serial(tmp);
 				_Tab.push_back(tmp);
@@ -460,7 +436,7 @@ void CPSAttrib<T>::serial(NLMISC::IStream &f)
 			f.serial(_MaxSize);
 			f.serial(size);
 			// write the vector
-			for(uint i = 0; i < size; i++)
+			for (uint i = 0; i < size; i++)
 			{
 				f.serial(_Tab[i]);
 			}
@@ -470,19 +446,18 @@ void CPSAttrib<T>::serial(NLMISC::IStream &f)
 	if (ver == 2) // this version didn't work well, it relied on the capacity of the container to store the max number of instances
 	{
 		nlassert(0);
-	/*	f.serial(_Tab);
-		if (f.isReading())
-		{
-			_MaxSize = _Tab.capacity();
-		}*/
+		/*	f.serial(_Tab);
+		    if (f.isReading())
+		    {
+		        _MaxSize = _Tab.capacity();
+		    }*/
 	}
 
 	if (ver >= 3)
 	{
 		f.serial(_MaxSize);
 		_Tab.reserve(_MaxSize);
-		//f.serial(_Tab);
-
+		// f.serial(_Tab);
 
 		if (f.isReading())
 		{
@@ -564,11 +539,11 @@ void CPSAttrib<T>::swap(CPSAttrib<T> &other)
 // here we give some definition for common types
 
 typedef CPSAttrib<NLMISC::CVector> TPSAttribVector;
-typedef CPSAttrib<NLMISC::CRGBA>   TPSAttribRGBA;
-typedef CPSAttrib<float>		   TPSAttribFloat;
-typedef CPSAttrib<uint32>		   TPSAttribUInt;
-typedef CPSAttrib<uint8>		   TPSAttribUInt8;
-typedef CPSAttrib<TAnimationTime>  TPSAttribTime;
+typedef CPSAttrib<NLMISC::CRGBA> TPSAttribRGBA;
+typedef CPSAttrib<float> TPSAttribFloat;
+typedef CPSAttrib<uint32> TPSAttribUInt;
+typedef CPSAttrib<uint8> TPSAttribUInt8;
+typedef CPSAttrib<TAnimationTime> TPSAttribTime;
 
 } // NL3D
 

@@ -22,10 +22,8 @@
 #include "driver/sound_driver.h"
 #include "driver/listener.h"
 
-
 // This namespace contains the sound classes
 namespace NLSOUND {
-
 
 /**
  * Implementation of UListener
@@ -40,57 +38,61 @@ namespace NLSOUND {
 class CListenerUser : public UListener
 {
 public:
-
 	/// Constructor
-	CListenerUser()	: _DrvListener (NULL) {}
+	CListenerUser()
+	    : _DrvListener(NULL)
+	{
+	}
 	/// Init
-	void			init( ISoundDriver *sd )					{  nlassert( sd ); _DrvListener = sd->createListener(); }
+	void init(ISoundDriver *sd)
+	{
+		nlassert(sd);
+		_DrvListener = sd->createListener();
+	}
 	/// Destructor
-	virtual			~CListenerUser()							{ if ( _DrvListener!=NULL ) delete _DrvListener; }
-
+	virtual ~CListenerUser()
+	{
+		if (_DrvListener != NULL) delete _DrvListener;
+	}
 
 	/// \name Listener properties
 	//@{
 	/// Set the position vector (default: (0,0,0)) (3D mode only)
-	virtual void	setPos( const NLMISC::CVector& pos );
+	virtual void setPos(const NLMISC::CVector &pos);
 	/** Get the position vector.
 	 * See setPos() for details.
 	 */
-	virtual const NLMISC::CVector &getPos() const		{ return _DrvListener->getPos(); }
+	virtual const NLMISC::CVector &getPos() const { return _DrvListener->getPos(); }
 	/// Set the velocity vector (3D mode only, ignored in stereo mode) (default: (0,0,0))
-	virtual void	setVelocity( const NLMISC::CVector& vel )	{ _DrvListener->setVelocity( vel ); }
+	virtual void setVelocity(const NLMISC::CVector &vel) { _DrvListener->setVelocity(vel); }
 	/// Get the velocity vector
-	virtual void	getVelocity( NLMISC::CVector& vel ) const	{ _DrvListener->getVelocity( vel ); }
+	virtual void getVelocity(NLMISC::CVector &vel) const { _DrvListener->getVelocity(vel); }
 	/// Set the orientation vectors (3D mode only, ignored in stereo mode) (default: (0,1,0), (0,0,1) )
-	virtual void	setOrientation( const NLMISC::CVector& front,
-									const NLMISC::CVector& up )	{ _DrvListener->setOrientation( front, up ); }
+	virtual void setOrientation(const NLMISC::CVector &front,
+	    const NLMISC::CVector &up) { _DrvListener->setOrientation(front, up); }
 	/// Get the orientation vectors
-	virtual void	getOrientation( NLMISC::CVector& front,
-									NLMISC::CVector& up ) const	{ _DrvListener->getOrientation( front, up ); }
+	virtual void getOrientation(NLMISC::CVector &front,
+	    NLMISC::CVector &up) const { _DrvListener->getOrientation(front, up); }
 	/** Set the gain (volume value inside [0 , 1]). (default: 1)
 	 * 0.0 -> silence
 	 * 0.5 -> -6dB
 	 * 1.0 -> no attenuation
 	 * values > 1 (amplification) not supported by most drivers
 	 */
-	virtual void	setGain( float gain )						{ _DrvListener->setGain( gain ); }
+	virtual void setGain(float gain) { _DrvListener->setGain(gain); }
 	/// Get the gain
-	virtual float	getGain() const								{ return _DrvListener->getGain(); }
+	virtual float getGain() const { return _DrvListener->getGain(); }
 	//@}
 
-
 	/// Direct access granted to the audio mixer
-	IListener		*getListener()								{ return _DrvListener; }
+	IListener *getListener() { return _DrvListener; }
 
 private:
-
 	/// Listener property
-	IListener		*_DrvListener;
+	IListener *_DrvListener;
 };
 
-
 } // NLSOUND
-
 
 #endif // NL_LISTENER_USER_H
 

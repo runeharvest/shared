@@ -14,17 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef TELEPORT_TYPES_H
 #define TELEPORT_TYPES_H
 
+namespace TELEPORT_TYPES {
 
-namespace TELEPORT_TYPES
-{
-
-
-//type of a teleport
+// type of a teleport
 enum TTeleportType
 {
 	KAMI,
@@ -32,11 +27,9 @@ enum TTeleportType
 	NONE,
 };
 
-
-//get the type of a teleport type from a string
-TTeleportType getTpTypeFromString(const std::string & str);
+// get the type of a teleport type from a string
+TTeleportType getTpTypeFromString(const std::string &str);
 
 }
 
-#endif //TELEPORT_TYPES_H
-
+#endif // TELEPORT_TYPES_H

@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef _LOG_GEN_CHAT_H
 #define _LOG_GEN_CHAT_H
 
@@ -24,8 +22,6 @@
 #include "nel/misc/sheet_id.h"
 #include "game_share/inventories.h"
 
-
-
 /// No context context. Use this to disable any contextual log underneath
 struct TLogNoContext_Chat
 {
@@ -33,9 +29,7 @@ struct TLogNoContext_Chat
 	~TLogNoContext_Chat();
 };
 
-
-
-void _log_Chat_Chat(std::string channel, const NLMISC::CEntityId &senderCharId, const std::string &chatText, const std::list< NLMISC::CEntityId > &receiverCharIds, const char *_filename_, uint _lineNo_);
+void _log_Chat_Chat(std::string channel, const NLMISC::CEntityId &senderCharId, const std::string &chatText, const std::list<NLMISC::CEntityId> &receiverCharIds, const char *_filename_, uint _lineNo_);
 #define log_Chat_Chat(channel, senderCharId, chatText, receiverCharIds) \
 	_log_Chat_Chat(channel, senderCharId, chatText, receiverCharIds, __FILE__, __LINE__)
 
@@ -43,6 +37,4 @@ void _log_Chat_Tell(const NLMISC::CEntityId &senderCharId, const NLMISC::CEntity
 #define log_Chat_Tell(senderCharId, receiverCharId, chatText) \
 	_log_Chat_Tell(senderCharId, receiverCharId, chatText, __FILE__, __LINE__)
 
-
 #endif
-

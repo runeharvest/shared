@@ -14,76 +14,69 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include <iostream>
 #include "nel/misc/types_nl.h"
 #include "nel/misc/file.h"
 
-
 using namespace NLMISC;
 using namespace std;
 
-
 /*******************************************************************\
-						getDir()
+                        getDir()
 \*******************************************************************/
-std::string getDir (const std::string& path)
+std::string getDir(const std::string &path)
 {
 	char tmpPath[512];
-	strcpy (tmpPath, path.c_str());
-	char* slash=strrchr (tmpPath, '/');
+	strcpy(tmpPath, path.c_str());
+	char *slash = strrchr(tmpPath, '/');
 	if (!slash)
 	{
-		slash=strrchr (tmpPath, '\\');
+		slash = strrchr(tmpPath, '\\');
 	}
 
 	if (!slash)
 		return "";
 
 	slash++;
-	*slash=0;
+	*slash = 0;
 	return tmpPath;
 }
 
-
 /*******************************************************************\
-						getName()
+                        getName()
 \*******************************************************************/
-std::string getName (const std::string& path)
+std::string getName(const std::string &path)
 {
-	std::string dir=getDir (path);
+	std::string dir = getDir(path);
 
 	char tmpPath[512];
-	strcpy (tmpPath, path.c_str());
+	strcpy(tmpPath, path.c_str());
 
-	char *name=tmpPath;
-	nlassert (dir.length()<=strlen(tmpPath));
-	name+=dir.length();
+	char *name = tmpPath;
+	nlassert(dir.length() <= strlen(tmpPath));
+	name += dir.length();
 
-	char* point=strrchr (name, '.');
+	char *point = strrchr(name, '.');
 	if (point)
-		*point=0;
+		*point = 0;
 
 	return name;
 }
 
-
 /*******************************************************************\
-						getExt()
+                        getExt()
 \*******************************************************************/
-std::string getExt (const std::string& path)
+std::string getExt(const std::string &path)
 {
-	std::string dir=getDir (path);
-	std::string name=getName (path);
+	std::string dir = getDir(path);
+	std::string name = getName(path);
 
 	char tmpPath[512];
-	strcpy (tmpPath, path.c_str());
+	strcpy(tmpPath, path.c_str());
 
-	char *ext=tmpPath;
-	nlassert (dir.length()+name.length()<=strlen(tmpPath));
-	ext+=dir.length()+name.length();
+	char *ext = tmpPath;
+	nlassert(dir.length() + name.length() <= strlen(tmpPath));
+	ext += dir.length() + name.length();
 
 	return ext;
 }
-
-

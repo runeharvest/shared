@@ -33,19 +33,22 @@
 
 extern bool EnableStlAllocatorChecker;
 
-void testStlMemoryAllocator(const char* context);
+void testStlMemoryAllocator(const char *context);
 
 class CStlAllocatorChecker
 {
 public:
-	CStlAllocatorChecker(const char* startContextName,const char* endContextName);
+	CStlAllocatorChecker(const char *startContextName, const char *endContextName);
 	~CStlAllocatorChecker();
+
 private:
-	const char* _StartContextName;
-	const char* _EndContextName;
+	const char *_StartContextName;
+	const char *_EndContextName;
 };
 
-inline CStlAllocatorChecker::CStlAllocatorChecker(const char* startContextName,const char* endContextName): _StartContextName(startContextName), _EndContextName(endContextName)
+inline CStlAllocatorChecker::CStlAllocatorChecker(const char *startContextName, const char *endContextName)
+    : _StartContextName(startContextName)
+    , _EndContextName(endContextName)
 {
 	if (EnableStlAllocatorChecker)
 		testStlMemoryAllocator(_StartContextName);
@@ -57,13 +60,15 @@ inline CStlAllocatorChecker::~CStlAllocatorChecker()
 		testStlMemoryAllocator(_EndContextName);
 }
 
-#define STL_ALLOC_CONTEXT _STL_ALLOC_CONTEXT1(__FILE__,__LINE__)
-#define _STL_ALLOC_CONTEXT1(file,line) _STL_ALLOC_CONTEXT2(file,line)
-#define _STL_ALLOC_CONTEXT2(file,line) _STL_ALLOC_CONTEXT3(file ":" #line)
-#define _STL_ALLOC_CONTEXT3(fileLine) CStlAllocatorChecker __StlAllocatorChecker__(fileLine ": @construction",fileLine ": @destruction");
+#define STL_ALLOC_CONTEXT _STL_ALLOC_CONTEXT1(__FILE__, __LINE__)
+#define _STL_ALLOC_CONTEXT1(file, line) _STL_ALLOC_CONTEXT2(file, line)
+#define _STL_ALLOC_CONTEXT2(file, line) _STL_ALLOC_CONTEXT3(file ":" #line)
+#define _STL_ALLOC_CONTEXT3(fileLine) CStlAllocatorChecker __StlAllocatorChecker__(fileLine ": @construction", fileLine ": @destruction");
 
-#define STL_ALLOC_TEST _STL_ALLOC_TEST1(__FILE__,__LINE__)
-#define _STL_ALLOC_TEST1(file,line) _STL_ALLOC_TEST2(file,line)
-#define _STL_ALLOC_TEST2(file,line) if (!EnableStlAllocatorChecker) {} else testStlMemoryAllocator(file ":" #line);
+#define STL_ALLOC_TEST _STL_ALLOC_TEST1(__FILE__, __LINE__)
+#define _STL_ALLOC_TEST1(file, line) _STL_ALLOC_TEST2(file, line)
+#define _STL_ALLOC_TEST2(file, line)    \
+	if (!EnableStlAllocatorChecker) { } \
+	else testStlMemoryAllocator(file ":" #line);
 
 #endif

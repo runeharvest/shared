@@ -42,14 +42,13 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CRootNode::CRootNode(CScene *scene) : INode(scene)
+CRootNode::CRootNode(CScene *scene)
+    : INode(scene)
 {
-
 }
 
 CRootNode::~CRootNode()
 {
-
 }
 
 const ucstring CRootNode::DisplayName = ucstring("RootNode");

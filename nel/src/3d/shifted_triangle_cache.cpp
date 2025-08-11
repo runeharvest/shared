@@ -21,16 +21,13 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
-void				CShiftedTriangleCache::clearArrays()
+void CShiftedTriangleCache::clearArrays()
 {
 	RawIndices.deleteAllIndexes();
 	RdrPass.clear();
 }
-
 
 } // NL3D

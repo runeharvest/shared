@@ -31,69 +31,65 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace	NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
-CLightTrav::CLightTrav(bool bSmallScene) : LightingManager(bSmallScene)
+CLightTrav::CLightTrav(bool bSmallScene)
+    : LightingManager(bSmallScene)
 {
 	_LightedList.resize(1024);
-	_CurrentNumVisibleModels= 0;
+	_CurrentNumVisibleModels = 0;
 
-	LightingSystemEnabled= false;
+	LightingSystemEnabled = false;
 }
 
 // ***************************************************************************
-void		CLightTrav::clearLightedList()
+void CLightTrav::clearLightedList()
 {
-	_CurrentNumVisibleModels= 0;
+	_CurrentNumVisibleModels = 0;
 }
 
-
 // ***************************************************************************
-void		CLightTrav::addPointLightModel(CPointLightModel *pl)
+void CLightTrav::addPointLightModel(CPointLightModel *pl)
 {
 	_DynamicLightList.insert(pl, &pl->_PointLightNode);
 }
 
-
 // ***************************************************************************
-void		CLightTrav::traverse()
+void CLightTrav::traverse()
 {
-	H_AUTO( NL3D_TravLight );
+	H_AUTO(NL3D_TravLight);
 
 	uint i;
 
-
 	// If lighting System disabled, skip
-	if(!LightingSystemEnabled)
+	if (!LightingSystemEnabled)
 		return;
 
 	/* for each visible lightable transform, reset them only if they have MergedPointLight.
-		NB: dynamic objetcs don't need it because already done in traverseHRC()
-		(but don't worry, reset state is flagged, so resetLighting() no op...)
-		This is important only for static object (freezeHRC()).
-		Why? because we are not sure the MergedPointLight does not represent moving DynamicPointLights.
-		Actually, it surely does. Because most of the static light setup return<=2 lights, and MaxLightContribution
-		is typically==3. So any additional light may surely be a dynamic one.
-		NB: this may not be useful since dynamicLights resetLighting() of all models in range. But this is important
-		when the dynamic light leave the model quiclky! (because don't dirt the model).
-		NB: this is also useful only if there is no dynamic light but the ones merged in MergedPointLight.
-		Because dynamic always reset their old attached models (see below). This still can arise if for example
-		_MaxLightContribution=2 and there is a FrozenStaticLightSetup of 2 lights....
+	    NB: dynamic objetcs don't need it because already done in traverseHRC()
+	    (but don't worry, reset state is flagged, so resetLighting() no op...)
+	    This is important only for static object (freezeHRC()).
+	    Why? because we are not sure the MergedPointLight does not represent moving DynamicPointLights.
+	    Actually, it surely does. Because most of the static light setup return<=2 lights, and MaxLightContribution
+	    is typically==3. So any additional light may surely be a dynamic one.
+	    NB: this may not be useful since dynamicLights resetLighting() of all models in range. But this is important
+	    when the dynamic light leave the model quiclky! (because don't dirt the model).
+	    NB: this is also useful only if there is no dynamic light but the ones merged in MergedPointLight.
+	    Because dynamic always reset their old attached models (see below). This still can arise if for example
+	    _MaxLightContribution=2 and there is a FrozenStaticLightSetup of 2 lights....
 	*/
-	for(i=0; i<_CurrentNumVisibleModels; i++ )
+	for (i = 0; i < _CurrentNumVisibleModels; i++)
 	{
 		// if the model has a MergedPointLight, reset him (NB: already done for dynamics models)
-		if(_LightedList[i]->useMergedPointLight())
+		if (_LightedList[i]->useMergedPointLight())
 		{
 			_LightedList[i]->resetLighting();
 		}
 	}
 
-
 	// By default, lightmaped objects are not lit by any light
-	CLight	noLight;
+	CLight noLight;
 	noLight.setupDirectional(CRGBA::Black, CRGBA::Black, CRGBA::Black, CVector::K);
 	Scene->getDriver()->setLightMapDynamicLight(false, noLight);
 
@@ -101,30 +97,27 @@ void		CLightTrav::traverse()
 	LightingManager.clearDynamicLights();
 
 	// for each lightModel, process her: recompute position, resetLightedModels(), and append to the quadGrid.
-	CPointLightModel	**pLight= _DynamicLightList.begin();
-	uint	numPls= _DynamicLightList.size();
-	for(;numPls>0;numPls--, pLight++)
+	CPointLightModel **pLight = _DynamicLightList.begin();
+	uint numPls = _DynamicLightList.size();
+	for (; numPls > 0; numPls--, pLight++)
 	{
 		(*pLight)->traverseLight();
 	}
 
 	// for each visible lightable transform
-	for(i=0; i<_CurrentNumVisibleModels; i++ )
+	for (i = 0; i < _CurrentNumVisibleModels; i++)
 	{
 		// traverse(), to recompute light contribution (if needed).
 		_LightedList[i]->traverseLight();
 	}
-
 }
-
 
 // ***************************************************************************
-void		CLightTrav::reserveLightedList(uint numModels)
+void CLightTrav::reserveLightedList(uint numModels)
 {
 	// enlarge only.
-	if(numModels>_LightedList.size())
+	if (numModels > _LightedList.size())
 		_LightedList.resize(numModels);
 }
-
 
 }

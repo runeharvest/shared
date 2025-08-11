@@ -19,9 +19,7 @@
 
 #include "nel/misc/types_nl.h"
 
-
 namespace NL3D {
-
 
 // ***************************************************************************
 /**
@@ -37,50 +35,45 @@ public:
 	 * SkinReductionMin is the fastest, and SkinReductionBest is the slowest (but the best).
 	 * Default is SkinReductionMax.
 	 */
-	enum	TSkinReduction
+	enum TSkinReduction
 	{
-		SkinReductionMin=0,		// NbMatrixOut= min(NbMatrixIn1, NbMatrixIn2).
-		SkinReductionMax, 		// NbMatrixOut= max(NbMatrixIn1, NbMatrixIn2).
-		SkinReductionBest, 		// NbMatrixOut= min(NbMatrixIn1 "+" NbMatrixIn2, NL3D_MESH_SKINNING_MAX_MATRIX).
+		SkinReductionMin = 0, // NbMatrixOut= min(NbMatrixIn1, NbMatrixIn2).
+		SkinReductionMax, // NbMatrixOut= max(NbMatrixIn1, NbMatrixIn2).
+		SkinReductionBest, // NbMatrixOut= min(NbMatrixIn1 "+" NbMatrixIn2, NL3D_MESH_SKINNING_MAX_MATRIX).
 	};
 
 public:
 	/// numbers of LODs wanted (11 by default).
-	uint32			NLods;
+	uint32 NLods;
 	/// minimum faces wanted (a divisor of number of faces in baseMesh, 20 by default)
-	uint32			Divisor;
+	uint32 Divisor;
 	/// If mesh is skinned, control the quality of the skinning redcution.
-	TSkinReduction	SkinReduction;
-
+	TSkinReduction SkinReduction;
 
 	/// \Degradation control.
 	// @{
 	/// The MRM has its max faces when dist<=DistanceFinest. nlassert if <0.
-	float			DistanceFinest;		// default : 5.
+	float DistanceFinest; // default : 5.
 	/// The MRM has 50% of its faces at dist==DistanceMiddle. nlassert if <= DistanceFinest.
-	float			DistanceMiddle;		// default : 30.
+	float DistanceMiddle; // default : 30.
 	/// The MRM has faces/Divisor when dist>=DistanceCoarsest. nlassert if <= DistanceMiddle.
-	float			DistanceCoarsest;	// default : 200.
+	float DistanceCoarsest; // default : 200.
 	// @}
-
 
 	/// Constructor
 	CMRMParameters()
 	{
-		NLods= 11;
-		Divisor= 20;
-		SkinReduction= SkinReductionMax;
+		NLods = 11;
+		Divisor = 20;
+		SkinReduction = SkinReductionMax;
 
-		DistanceFinest= 5;
-		DistanceMiddle= 30;
-		DistanceCoarsest= 200;
+		DistanceFinest = 5;
+		DistanceMiddle = 30;
+		DistanceCoarsest = 200;
 	}
-
 };
 
-
 } // NL3D
-
 
 #endif // NL_MRM_PARAMETERS_H
 

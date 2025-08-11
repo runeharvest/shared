@@ -24,130 +24,125 @@
 #include "nel/gui/css_style.h"
 #include "nel/gui/css_selector.h"
 
-namespace NLGUI
+namespace NLGUI {
+/**
+ * \brief CSS style parsing
+ * \date 2019-03-15 10:50 GMT
+ * \author Meelis Mägi (Nimetu)
+ */
+class CCssParser
 {
-	/**
-	 * \brief CSS style parsing
-	 * \date 2019-03-15 10:50 GMT
-	 * \author Meelis Mägi (Nimetu)
-	 */
-	class CCssParser {
-	public:
-		// parse style declaration, eg "color: red; font-size: 10px;"
-		static TStyleVec parseDecls(const std::string &styleString);
+public:
+	// parse style declaration, eg "color: red; font-size: 10px;"
+	static TStyleVec parseDecls(const std::string &styleString);
 
-		// parse css stylesheet
-		void parseStylesheet(const std::string &cssString, std::vector<CCssStyle::SStyleRule> &rules);
+	// parse css stylesheet
+	void parseStylesheet(const std::string &cssString, std::vector<CCssStyle::SStyleRule> &rules);
 
-	private:
-		// stylesheet currently parsed
-		std::string _Style;
-		// keep track of current position in _Style
-		size_t _Position;
+private:
+	// stylesheet currently parsed
+	std::string _Style;
+	// keep track of current position in _Style
+	size_t _Position;
 
-		std::vector<CCssStyle::SStyleRule> _Rules;
+	std::vector<CCssStyle::SStyleRule> _Rules;
 
-	private:
-		// @media ( .. ) { .. }
-		void readAtRule();
+private:
+	// @media ( .. ) { .. }
+	void readAtRule();
 
-		// a#id.class[attr=val] { .. }
-		void readRule();
+	// a#id.class[attr=val] { .. }
+	void readRule();
 
-		// move past whitespace
-		void skipWhitespace();
+	// move past whitespace
+	void skipWhitespace();
 
-		// skip valid IDENT
-		bool skipIdentifier();
+	// skip valid IDENT
+	bool skipIdentifier();
 
-		// skip over {}, (), or [] block
-		void skipBlock();
+	// skip over {}, (), or [] block
+	void skipBlock();
 
-		// skip over string quoted with ' or "
-		void skipString();
+	// skip over string quoted with ' or "
+	void skipString();
 
-		// backslash escape
-		void escape();
+	// backslash escape
+	void escape();
 
-		// normalize newline chars and remove comments
-		void preprocess();
+	// normalize newline chars and remove comments
+	void preprocess();
 
-		// parse selectors + combinators
-		std::vector<CCssSelector> parse_selector(const std::string &sel, std::string &pseudoElement, std::string::size_type &pos) const;
+	// parse selectors + combinators
+	std::vector<CCssSelector> parse_selector(const std::string &sel, std::string &pseudoElement, std::string::size_type &pos) const;
 
-		// parse selector and style
-		void parseRule(const std::string &selectorString, const std::string &styleString);
+	// parse selector and style
+	void parseRule(const std::string &selectorString, const std::string &styleString);
 
-		inline bool is_eof() const
-		{
-			return _Position >= _Style.size();
-		}
+	inline bool is_eof() const
+	{
+		return _Position >= _Style.size();
+	}
 
-		inline bool is_whitespace(char ch) const
-		{
-			return (ch == ' ' || ch == '\t' || ch == '\n');
-		}
+	inline bool is_whitespace(char ch) const
+	{
+		return (ch == ' ' || ch == '\t' || ch == '\n');
+	}
 
-		inline bool is_hex(char ch) const
-		{
-			return ((ch >= '0' && ch <= '9') ||
-					(ch >= 'a' && ch <= 'f') ||
-					(ch >= 'A' && ch <= 'F'));
-		}
+	inline bool is_hex(char ch) const
+	{
+		return ((ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F'));
+	}
 
-		inline bool maybe_escape() const
-		{
-			// escaping newline (\n) only allowed inside strings
-			return (_Style.size() - _Position) >= 1 && _Style[_Position] == '\\' && _Style[_Position+1] != '\n';
-		}
+	inline bool maybe_escape() const
+	{
+		// escaping newline (\n) only allowed inside strings
+		return (_Style.size() - _Position) >= 1 && _Style[_Position] == '\\' && _Style[_Position + 1] != '\n';
+	}
 
-		inline bool is_quote(char ch) const
-		{
-			return	ch== '"' || ch == '\'';
-		}
+	inline bool is_quote(char ch) const
+	{
+		return ch == '"' || ch == '\'';
+	}
 
-		inline bool is_block_open(char ch) const
-		{
-			return	ch == (char)'{' || ch == (char)'[' || ch == (char)'(';
-		}
+	inline bool is_block_open(char ch) const
+	{
+		return ch == (char)'{' || ch == (char)'[' || ch == (char)'(';
+	}
 
-		inline bool is_block_close(char ch, char open) const
-		{
-			return ((open == '{' && ch == (char)'}') ||
-					(open == '[' && ch == (char)']') ||
-					(open == '(' && ch == (char)')'));
-		}
+	inline bool is_block_close(char ch, char open) const
+	{
+		return ((open == '{' && ch == (char)'}') || (open == '[' && ch == (char)']') || (open == '(' && ch == (char)')'));
+	}
 
-		inline bool is_comment_open() const
-		{
-			if (_Position+1 > _Style.size())
-				return false;
+	inline bool is_comment_open() const
+	{
+		if (_Position + 1 > _Style.size())
+			return false;
 
-			return _Style[_Position] == (char)'/' && _Style[_Position+1] == (char)'*';
-		}
+		return _Style[_Position] == (char)'/' && _Style[_Position + 1] == (char)'*';
+	}
 
-		inline bool is_nonascii(char ch) const
-		{
-			return ch >= 0x80 /*&&  ch <= 255*/;
-		}
+	inline bool is_nonascii(char ch) const
+	{
+		return ch >= 0x80 /*&&  ch <= 255*/;
+	}
 
-		inline bool is_alpha(char ch) const
-		{
-			return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
-		}
+	inline bool is_alpha(char ch) const
+	{
+		return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+	}
 
-		inline bool is_digit(char ch) const
-		{
-			return ch >= '0' && ch <= '9';
-		}
+	inline bool is_digit(char ch) const
+	{
+		return ch >= '0' && ch <= '9';
+	}
 
-		inline bool is_nmchar(char ch) const
-		{
-			// checking escape here does not check if next char is '\n' or not
-			return ch == '_' || ch == '-' || is_alpha(ch) || is_digit(ch) || is_nonascii(ch) || ch == '\\'/*is_escape(ch)*/;
-		}
-	};
-}//namespace
+	inline bool is_nmchar(char ch) const
+	{
+		// checking escape here does not check if next char is '\n' or not
+		return ch == '_' || ch == '-' || is_alpha(ch) || is_digit(ch) || is_nonascii(ch) || ch == '\\' /*is_escape(ch)*/;
+	}
+};
+} // namespace
 
 #endif // CL_CSS_PARSER_H
-

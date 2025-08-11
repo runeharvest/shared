@@ -29,53 +29,52 @@ typedef xmlNode *xmlNodePtr;
 typedef struct _xmlDoc xmlDoc;
 typedef xmlDoc *xmlDocPtr;
 
-namespace NLGEORGES
-{
+namespace NLGEORGES {
 
 class CFileHeader
 {
 public:
 	/// Default constructor
-	CFileHeader ();
+	CFileHeader();
 
 	// Form states
 	enum TState
 	{
-		Modified =0,
+		Modified = 0,
 		Checked,
 		StateCount,
 	};
 
 	/// Add a log
-	void				addLog(const std::string &log);
+	void addLog(const std::string &log);
 
 	/// Set the comment
-	void				setComments (const std::string &comments);
+	void setComments(const std::string &comments);
 
 	/// Major version number
-	uint32				MajorVersion;
+	uint32 MajorVersion;
 
 	/// Minor version number
-	uint32				MinorVersion;
+	uint32 MinorVersion;
 
 	/// State of the form
-	TState				State;
+	TState State;
 
 	/// Comments of the form
-	std::string			Comments;
+	std::string Comments;
 
 	/// Log of the form
-	std::string			Log;
+	std::string Log;
 
 	/// ** IO functions
-	void				read (xmlNodePtr root);
-	void				write (xmlNodePtr node) const;
+	void read(xmlNodePtr root);
+	void write(xmlNodePtr node) const;
 
 	// Get state string
-	static const char	*getStateString (TState state);
+	static const char *getStateString(TState state);
 
 	// Error handling
-	void				warning (bool exception, const std::string &function, const char *format, ... ) const;
+	void warning(bool exception, const std::string &function, const char *format, ...) const;
 };
 
 } // NLGEORGES

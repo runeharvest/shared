@@ -18,7 +18,7 @@
 #define NLSOUND_EFFECT_XAUDIO2_H
 
 namespace NLSOUND {
-	class CSoundDriverXAudio2;
+class CSoundDriverXAudio2;
 
 /**
  * \brief CEffectXAudio2
@@ -65,7 +65,7 @@ public:
 	CReverbEffectXAudio2(CSoundDriverXAudio2 *soundDriver);
 	virtual ~CReverbEffectXAudio2();
 	virtual void release();
-	
+
 	/// Set the environment (you have full control now, have fun)
 	virtual void setEnvironment(const CEnvironment &environment = CEnvironment(), float roomSize = 100.0f);
 

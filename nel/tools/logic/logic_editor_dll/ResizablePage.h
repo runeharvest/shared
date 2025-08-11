@@ -14,9 +14,9 @@
 //
 // Free for non-commercial use.
 // You may change the code to your needs,
-// provided that credits to the original 
+// provided that credits to the original
 // author is given in the modified files.
-//  
+//
 /////////////////////////////////////////////////////////////////////////////
 
 // useful compatibility constants (the only one required is NOANCHOR)
@@ -25,10 +25,10 @@
 #define __SIZE_ANCHORS_
 
 const CSize
-	NOANCHOR(-1,-1),
-	TOP_LEFT(0,0), TOP_CENTER(50,0), TOP_RIGHT(100,0),
-	MIDDLE_LEFT(0,50), MIDDLE_CENTER(50,50), MIDDLE_RIGHT(100,50),
-	BOTTOM_LEFT(0,100), BOTTOM_CENTER(50,100), BOTTOM_RIGHT(100,100);
+    NOANCHOR(-1, -1),
+    TOP_LEFT(0, 0), TOP_CENTER(50, 0), TOP_RIGHT(100, 0),
+    MIDDLE_LEFT(0, 50), MIDDLE_CENTER(50, 50), MIDDLE_RIGHT(100, 50),
+    BOTTOM_LEFT(0, 100), BOTTOM_CENTER(50, 100), BOTTOM_RIGHT(100, 100);
 
 #endif // !defined(__SIZE_ANCHORS_)
 
@@ -39,23 +39,22 @@ class CResizablePage : public CPropertyPage
 {
 	DECLARE_DYNCREATE(CResizablePage)
 
-// Construction
+	// Construction
 public:
 	CResizablePage();
 	CResizablePage(UINT nIDTemplate, UINT nIDCaption = 0);
 	CResizablePage(LPCTSTR lpszTemplateName, UINT nIDCaption = 0);
 
-// Attributes
+	// Attributes
 public:
-
 private:
 	// internal status
-	CString m_sSection;			// section name and
-	CString m_sEntry;			// entry for save/restore
+	CString m_sSection; // section name and
+	CString m_sEntry; // entry for save/restore
 
-	BOOL m_bInitDone;			// if all internal vars initialized
+	BOOL m_bInitDone; // if all internal vars initialized
 
-	CPtrList m_plLayoutList;	// list of repositionable controls
+	CPtrList m_plLayoutList; // list of repositionable controls
 
 	class Layout
 	{
@@ -68,14 +67,14 @@ private:
 		// upper-left corner
 		SIZE tl_type;
 		SIZE tl_margin;
-		
+
 		// bottom-right corner
 		SIZE br_type;
 		SIZE br_margin;
-	
+
 	public:
-		Layout(HWND hw, SIZE tl_t, SIZE tl_m, 
-			SIZE br_t, SIZE br_m, BOOL hscroll, BOOL refresh)
+		Layout(HWND hw, SIZE tl_t, SIZE tl_m,
+		    SIZE br_t, SIZE br_m, BOOL hscroll, BOOL refresh)
 		{
 			hwnd = hw;
 
@@ -84,40 +83,39 @@ private:
 
 			tl_type = tl_t;
 			tl_margin = tl_m;
-			
+
 			br_type = br_t;
 			br_margin = br_m;
 		};
 	};
 
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CResizablePage)
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CResizablePage();
 
-// used internally
+	// used internally
 private:
 	void Construct();
 	void ArrangeLayout();
 
-// callable from derived classes
+	// callable from derived classes
 protected:
 	void AddAnchor(HWND wnd, CSize tl_type,
-		CSize br_type = NOANCHOR);	// add anchors to a control
+	    CSize br_type = NOANCHOR); // add anchors to a control
 	void AddAnchor(UINT ctrl_ID, CSize tl_type,
-		CSize br_type = NOANCHOR)	// add anchors to a control
+	    CSize br_type = NOANCHOR) // add anchors to a control
 	{
 		AddAnchor(::GetDlgItem(*this, ctrl_ID), tl_type, br_type);
 	};
 
-// Generated message map functions
+	// Generated message map functions
 protected:
 	//{{AFX_MSG(CResizablePage)
 	virtual BOOL OnInitDialog();

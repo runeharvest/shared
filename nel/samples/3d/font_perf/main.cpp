@@ -31,14 +31,14 @@
 #include "nel/3d/driver_user.h"
 
 #ifdef NL_OS_WINDOWS
-	#ifndef NL_COMP_MINGW
-		#define NOMINMAX
-	#endif
-	#include <windows.h>
+#ifndef NL_COMP_MINGW
+#define NOMINMAX
+#endif
+#include <windows.h>
 #endif // NL_OS_WINDOWS
 
 #ifndef FONT_DIR
-#	define FONT_DIR "."
+#define FONT_DIR "."
 #endif
 
 using namespace std;
@@ -48,7 +48,7 @@ using namespace NLMISC;
 int main(int argc, char **argv)
 {
 	// look at 3dinit example
-	CNELU::init (800, 600, CViewport(), 32, true, 0, false, false);
+	CNELU::init(800, 600, CViewport(), 32, true, 0, false, false);
 
 	NLMISC::CPath::addSearchPath(FONT_DIR);
 
@@ -60,18 +60,18 @@ int main(int argc, char **argv)
 
 	CTextContext tc;
 
-	tc.init (CNELU::Driver, &fontManager);
+	tc.init(CNELU::Driver, &fontManager);
 
 	// The first param is the font name (could be ttf, pfb, fon, etc...). The
 	// second one is optional, it's the font kerning file
-	tc.setFontGenerator (NLMISC::CPath::lookup("beteckna.ttf"));
+	tc.setFontGenerator(NLMISC::CPath::lookup("beteckna.ttf"));
 
 	NLMISC::CRandom rnd;
 
 	uint nbCount = 100000;
 	TTicks startTick = CTime::getPerformanceTime();
 	std::string txt;
-	for(uint i = 0; i < nbCount; ++i)
+	for (uint i = 0; i < nbCount; ++i)
 	{
 		uint fontSize = rnd.rand(200);
 		bool embolden = rnd.rand(1) == 1;
@@ -84,13 +84,13 @@ int main(int argc, char **argv)
 
 	TTicks endTick = CTime::getPerformanceTime();
 
-	double deltaTime = CTime::ticksToSecond(endTick-startTick);
+	double deltaTime = CTime::ticksToSecond(endTick - startTick);
 	std::string msg = toString("Generated %d strings in %.2fs\n", nbCount, deltaTime);
 
 	nlinfo("%s", msg.c_str());
 	printf("%s", msg.c_str());
 
-	fontManager.dumpCache ("font_pref_cache_dump.tga");
+	fontManager.dumpCache("font_pref_cache_dump.tga");
 
 	// look at 3dinit example
 	CNELU::release();

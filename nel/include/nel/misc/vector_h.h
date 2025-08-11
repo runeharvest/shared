@@ -20,9 +20,7 @@
 #include "types_nl.h"
 #include "vector.h"
 
-
 namespace NLMISC {
-
 
 /**
  * Homogeneus vector.
@@ -34,61 +32,77 @@ namespace NLMISC {
 class CVectorH
 {
 public:
-
 	/// Attributes
-	float	x, y, z, w;
+	float x, y, z, w;
 
 	/// Constructor
-	CVectorH() {}
+	CVectorH() { }
 	/// Constructor .
-	CVectorH(float	_x, float _y, float _z, float _w) : x(_x), y(_y), z(_z), w(_w) {}
+	CVectorH(float _x, float _y, float _z, float _w)
+	    : x(_x)
+	    , y(_y)
+	    , z(_z)
+	    , w(_w)
+	{
+	}
 	/// Copy Constructor.
-	CVectorH(const CVectorH &v) : x(v.x), y(v.y), z(v.z), w(v.w) {}
+	CVectorH(const CVectorH &v)
+	    : x(v.x)
+	    , y(v.y)
+	    , z(v.z)
+	    , w(v.w)
+	{
+	}
 	/// Constructor using a vector
-	CVectorH(const CVector &v) : x(v.x), y(v.y), z(v.z), w(1.0f) {}
+	CVectorH(const CVector &v)
+	    : x(v.x)
+	    , y(v.y)
+	    , z(v.z)
+	    , w(1.0f)
+	{
+	}
 
 	/// Set
-	void	set(float _x, float _y, float _z, float _w)
+	void set(float _x, float _y, float _z, float _w)
 	{
-		x=_x; y=_y; z=_z; w=_w;
+		x = _x;
+		y = _y;
+		z = _z;
+		w = _w;
 	}
 
 	/// Cast operator to a vector (ignoring w)
 	operator CVector() const
 	{
-		return CVector( x, y, z );
+		return CVector(x, y, z);
 	}
-
 
 	/// @name Misc.
 	//@{
-	bool	operator==(const CVectorH &v) const
+	bool operator==(const CVectorH &v) const
 	{
-		return x==v.x && y==v.y && z==v.z && w==v.w;
+		return x == v.x && y == v.y && z == v.z && w == v.w;
 	}
-	bool	operator!=(const CVectorH &v) const
+	bool operator!=(const CVectorH &v) const
 	{
-		return !(*this==v);
+		return !(*this == v);
 	}
 	/// This operator is here just for map/set insertion (no meaning). comparison order is x,y,z,w.
-	bool	operator<(const CVectorH &v) const
+	bool operator<(const CVectorH &v) const
 	{
-		if(x!=v.x)
-			return x<v.x;
-		if(y!=v.y)
-			return y<v.y;
-		if(z!=v.z)
-			return z<v.z;
-		return w<v.w;
+		if (x != v.x)
+			return x < v.x;
+		if (y != v.y)
+			return y < v.y;
+		if (z != v.z)
+			return z < v.z;
+		return w < v.w;
 	}
 
 	//@}
-
 };
 
-
 } // NLMISC
-
 
 #endif // NL_VECTOR_H_H
 

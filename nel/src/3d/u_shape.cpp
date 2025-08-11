@@ -14,13 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "std3d.h"
 #include "nel/3d/u_shape.h"
 #include "nel/3d/mesh.h"
 #include "nel/3d/mesh_multi_lod.h"
 #include "nel/3d/u_visual_collision_mesh.h"
-
 
 using namespace std;
 using namespace NLMISC;
@@ -29,37 +27,36 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
-bool		UShape::getMeshTriangles(std::vector<NLMISC::CVector> &vertices, std::vector<uint32> &indices) const
+bool UShape::getMeshTriangles(std::vector<NLMISC::CVector> &vertices, std::vector<uint32> &indices) const
 {
-	if(!_Object)
+	if (!_Object)
 		return false;
 
 	// **** try to get a CMeshGeom
-	CMesh				*mesh= dynamic_cast<CMesh*>(_Object);
-	CMeshMultiLod		*meshMulti= dynamic_cast<CMeshMultiLod*>(_Object);
-	const CMeshGeom		*meshGeom= NULL;
-	if(mesh)
+	CMesh *mesh = dynamic_cast<CMesh *>(_Object);
+	CMeshMultiLod *meshMulti = dynamic_cast<CMeshMultiLod *>(_Object);
+	const CMeshGeom *meshGeom = NULL;
+	if (mesh)
 	{
-		meshGeom= &mesh->getMeshGeom();
+		meshGeom = &mesh->getMeshGeom();
 	}
-	else if(meshMulti)
+	else if (meshMulti)
 	{
 		// get the first (bigger) meshGeom
-		if(meshMulti->getNumSlotMesh())
+		if (meshMulti->getNumSlotMesh())
 		{
-			meshGeom= dynamic_cast<const CMeshGeom*>(&meshMulti->getMeshGeom(0));
+			meshGeom = dynamic_cast<const CMeshGeom *>(&meshMulti->getMeshGeom(0));
 		}
 	}
 
-	if(!meshGeom)
+	if (!meshGeom)
 		return false;
 
 	// **** try to retrieve data
-	if(! (meshGeom->retrieveVertices(vertices) && meshGeom->retrieveTriangles(indices)) )
+	if (!(meshGeom->retrieveVertices(vertices) && meshGeom->retrieveTriangles(indices)))
 	{
 		vertices.clear();
 		indices.clear();
@@ -70,14 +67,13 @@ bool		UShape::getMeshTriangles(std::vector<NLMISC::CVector> &vertices, std::vect
 	return true;
 }
 
-
 // ***************************************************************************
-void		UShape::getVisualCollisionMesh(UVisualCollisionMesh	&colMesh) const
+void UShape::getVisualCollisionMesh(UVisualCollisionMesh &colMesh) const
 {
 	colMesh.attach(NULL);
 
-	CMeshBase			*mesh= dynamic_cast<CMeshBase*>(_Object);
-	if(mesh)
+	CMeshBase *mesh = dynamic_cast<CMeshBase *>(_Object);
+	if (mesh)
 	{
 		// attach the possible col mesh
 		colMesh.attach(mesh->getVisualCollisionMesh());
@@ -85,10 +81,10 @@ void		UShape::getVisualCollisionMesh(UVisualCollisionMesh	&colMesh) const
 }
 
 // ***************************************************************************
-uint				UShape::getNumMaterials() const
+uint UShape::getNumMaterials() const
 {
-	CMeshBase			*mesh= dynamic_cast<CMeshBase*>(_Object);
-	if(mesh)
+	CMeshBase *mesh = dynamic_cast<CMeshBase *>(_Object);
+	if (mesh)
 	{
 		return mesh->getNbMaterial();
 	}
@@ -98,12 +94,12 @@ uint				UShape::getNumMaterials() const
 }
 
 // ***************************************************************************
-UMaterial		UShape::getMaterial(uint materialId) const
+UMaterial UShape::getMaterial(uint materialId) const
 {
-	CMeshBase			*mesh= dynamic_cast<CMeshBase*>(_Object);
-	if(mesh)
+	CMeshBase *mesh = dynamic_cast<CMeshBase *>(_Object);
+	if (mesh)
 	{
-		if(materialId<mesh->getNbMaterial())
+		if (materialId < mesh->getNbMaterial())
 			return UMaterial(&mesh->getMaterial(materialId));
 	}
 
@@ -112,10 +108,10 @@ UMaterial		UShape::getMaterial(uint materialId) const
 }
 
 // ***************************************************************************
-bool			UShape::getDefaultOpacity() const
+bool UShape::getDefaultOpacity() const
 {
-	CMeshBase			*mesh= dynamic_cast<CMeshBase*>(_Object);
-	if(mesh)
+	CMeshBase *mesh = dynamic_cast<CMeshBase *>(_Object);
+	if (mesh)
 	{
 		return mesh->getDefaultOpacity();
 	}
@@ -124,16 +120,15 @@ bool			UShape::getDefaultOpacity() const
 }
 
 // ***************************************************************************
-bool			UShape::getDefaultTransparency() const
+bool UShape::getDefaultTransparency() const
 {
-	CMeshBase			*mesh= dynamic_cast<CMeshBase*>(_Object);
-	if(mesh)
+	CMeshBase *mesh = dynamic_cast<CMeshBase *>(_Object);
+	if (mesh)
 	{
 		return mesh->getDefaultTransparency();
 	}
 
 	return false;
 }
-
 
 } // NL3D

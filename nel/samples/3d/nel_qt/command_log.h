@@ -42,13 +42,13 @@ namespace NLQT {
 class CCommandLog : public QWidget, public NLMISC::IDisplayer
 {
 	Q_OBJECT
-	
+
 public:
 	CCommandLog(QWidget *parent);
 	virtual ~CCommandLog();
 
 protected:
-	virtual void doDisplay(const NLMISC::CLog::TDisplayInfo& args, const char *message);
+	virtual void doDisplay(const NLMISC::CLog::TDisplayInfo &args, const char *message);
 
 private slots:
 	void returnPressed();
@@ -60,7 +60,7 @@ private:
 private:
 	CCommandLog(const CCommandLog &);
 	CCommandLog &operator=(const CCommandLog &);
-	
+
 }; /* class CCommandLog */
 
 } /* namespace NLQT */

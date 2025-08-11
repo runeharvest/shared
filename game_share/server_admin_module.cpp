@@ -38,7 +38,6 @@
 #include "nel/net/module_manager.h"
 #include "nel/net/module_builder_parts.h"
 
-
 #include "nel/misc/command.h"
 #include "nel/misc/path.h"
 #include "nel/misc/types_nl.h"
@@ -48,31 +47,25 @@
 #include "nel/misc/o_xml.h"
 #include "nel/misc/i_xml.h"
 
-
 using namespace std;
 using namespace NLMISC;
 using namespace NLNET;
 using namespace R2;
 
-//static std::string AdminModuleSavePath;
+// static std::string AdminModuleSavePath;
 
-//NLMISC_VARIABLE( std::string, AdminModuleSavePath, "File where users adventure are stored." );
+// NLMISC_VARIABLE( std::string, AdminModuleSavePath, "File where users adventure are stored." );
 
-//const std::string CServerAdminModule::_AdminModuleSaveFilename( "server_admin_module_data.xml");
+// const std::string CServerAdminModule::_AdminModuleSaveFilename( "server_admin_module_data.xml");
 
-NLNET_REGISTER_MODULE_FACTORY(CServerAdminModule,"ServerAdminModule");
+NLNET_REGISTER_MODULE_FACTORY(CServerAdminModule, "ServerAdminModule");
 
-
-
-namespace R2
-{
-CServerAdminModule* CServerAdminModule::_Instance = 0;
+namespace R2 {
+CServerAdminModule *CServerAdminModule::_Instance = 0;
 
 //------------------------------------------------------------------------------
 
-
-
-CServerAdminModule& CServerAdminModule::getInstance()
+CServerAdminModule &CServerAdminModule::getInstance()
 {
 	nlassert(_Instance);
 	return *_Instance;
@@ -81,28 +74,26 @@ CServerAdminModule& CServerAdminModule::getInstance()
 TSessionId CServerAdminModule::getSessionIdByCharId(uint32 charId) const
 {
 	TSessionId editionSessionId = _Server->getEditionModule()->getSessionIdByCharId(charId);
-	if (editionSessionId.asInt()!=0) return editionSessionId;
+	if (editionSessionId.asInt() != 0) return editionSessionId;
 	TSessionId animationSessionId = _Server->getAnimationModule()->getSessionIdByCharId(charId);
-	if (animationSessionId.asInt()!=0) return animationSessionId;
+	if (animationSessionId.asInt() != 0) return animationSessionId;
 	return TSessionId(0);
 }
 
-
-bool CServerAdminModule::getPosition(TSessionId sessionId, double&x, double&y, double& orient, uint8& season, uint32 actId)
+bool CServerAdminModule::getPosition(TSessionId sessionId, double &x, double &y, double &orient, uint8 &season, uint32 actId)
 {
 
-
-	IServerAnimationModule* anim = _Server->getAnimationModule();
+	IServerAnimationModule *anim = _Server->getAnimationModule();
 	nlassert(anim);
-	IServerEditionModule* edit = _Server->getEditionModule();
+	IServerEditionModule *edit = _Server->getEditionModule();
 	nlassert(edit);
 
-	x=0;
-	y=0;
-	orient=0;
-	season=0;
+	x = 0;
+	y = 0;
+	orient = 0;
+	season = 0;
 
-	CScenario* scenario = edit->getScenarioById(sessionId);
+	CScenario *scenario = edit->getScenarioById(sessionId);
 
 	if (!scenario)
 	{
@@ -119,16 +110,12 @@ bool CServerAdminModule::getPosition(TSessionId sessionId, double&x, double&y, d
 		bool ok = anim->getPosition(sessionId, x, y, orient, season, actId);
 		if (!ok)
 		{
-			return edit->getPosition(sessionId, x, y, orient, season, actId);// return start position
+			return edit->getPosition(sessionId, x, y, orient, season, actId); // return start position
 		}
 		return ok;
-
 	}
 	return false;
 }
-
-
-
 
 void CServerAdminModule::onModuleUp(NLNET::IModuleProxy *moduleProxy)
 {
@@ -142,7 +129,6 @@ void CServerAdminModule::onModuleUp(NLNET::IModuleProxy *moduleProxy)
 	}
 }
 
-
 void CServerAdminModule::onModuleDown(NLNET::IModuleProxy *moduleProxy)
 {
 	if (moduleProxy->getModuleClassName() == "ServerAnimationModule")
@@ -155,81 +141,64 @@ void CServerAdminModule::onModuleDown(NLNET::IModuleProxy *moduleProxy)
 	}
 }
 
-
-void CServerAdminModule::init(NLNET::IModuleSocket* gateway, CDynamicMapService* server)
+void CServerAdminModule::init(NLNET::IModuleSocket *gateway, CDynamicMapService *server)
 {
 	_Server = server;
 	this->plugModule(gateway);
 }
 
-
 bool CServerAdminModule::onProcessModuleMessage(IModuleProxy * /* senderModuleProxy */, const CMessage &msgin)
 {
 	std::string operationName = msgin.getName();
 
-
-	nlwarning("R2Admin: Invalid Operation Name '%s'", operationName.c_str() );
+	nlwarning("R2Admin: Invalid Operation Name '%s'", operationName.c_str());
 
 	return false;
 }
 
-
 void CServerAdminModule::onModuleSecurityChange(IModuleProxy * /* moduleProxy */)
 {
 }
-
 
 CServerAdminModule::CServerAdminModule()
 {
 	_Instance = this;
 }
 
-
 CServerAdminModule::~CServerAdminModule()
 {
 	_Instance = 0;
 }
-
-
-
-
 
 NLMISC_CLASS_COMMAND_IMPL(CServerAdminModule, displayIslands)
 {
 	if (args.size() != 0)
 		return false;
 
-
-	CScenarioEntryPoints&  epManager = CScenarioEntryPoints::getInstance();
-	const CScenarioEntryPoints::TCompleteIslands& islands =  epManager.getCompleteIslands();
-
-
+	CScenarioEntryPoints &epManager = CScenarioEntryPoints::getInstance();
+	const CScenarioEntryPoints::TCompleteIslands &islands = epManager.getCompleteIslands();
 
 	CScenarioEntryPoints::TCompleteIslands::const_iterator first(islands.begin()), last(islands.end());
-
 
 	uint32 id = 0;
 	for (; first != last; ++first)
 	{
 		++id;
-		log.displayNL("%u: '%s' '%s' %s'",  id, first->Package.c_str(), first->Island.c_str(), first->Continent.c_str());
+		log.displayNL("%u: '%s' '%s' %s'", id, first->Package.c_str(), first->Island.c_str(), first->Continent.c_str());
 
 		CScenarioEntryPoints::TShortEntryPoints::const_iterator firstPoint(first->EntryPoints.begin()), lastPoint(first->EntryPoints.end());
 
 		for (; firstPoint != lastPoint; ++firstPoint)
 		{
 			log.displayNL("\t-> %u: '%s' '%d' '%d'",
-				id,
-				firstPoint->Location.c_str(),
-				firstPoint->X,
-				firstPoint->Y
-				);
+			    id,
+			    firstPoint->Location.c_str(),
+			    firstPoint->X,
+			    firstPoint->Y);
 		}
 	}
 
 	return true;
 }
-
-
 
 }

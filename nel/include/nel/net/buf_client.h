@@ -25,13 +25,10 @@
 #include "tcp_sock.h"
 #include "buf_sock.h"
 
-
 namespace NLNET {
-
 
 class CInetAddress;
 class CBufClient;
-
 
 /**
  * Code of receiving thread for clients
@@ -39,29 +36,30 @@ class CBufClient;
 class CClientReceiveTask : public NLMISC::IRunnable
 {
 public:
-
 	/// Constructor (increments the reference to the object pointed to by the smart pointer sockid)
-	CClientReceiveTask( CBufClient *client, CNonBlockingBufSock *bufsock ) : NbLoop(0), _Client(client), _NBBufSock(bufsock) {} // CHANGED: non-blocking client connection
+	CClientReceiveTask(CBufClient *client, CNonBlockingBufSock *bufsock)
+	    : NbLoop(0)
+	    , _Client(client)
+	    , _NBBufSock(bufsock)
+	{
+	} // CHANGED: non-blocking client connection
 
 	/// Run
 	virtual void run();
 
 	/// Returns a pointer to the bufsock object
-	CNonBlockingBufSock		*bufSock() { return _NBBufSock; } // CHANGED: non-blocking client connection (previously, returned _SockId->Sock)
+	CNonBlockingBufSock *bufSock() { return _NBBufSock; } // CHANGED: non-blocking client connection (previously, returned _SockId->Sock)
 
 	/// Returns the socket identifier
-	TSockId					sockId() { return (TSockId)_NBBufSock; }
+	TSockId sockId() { return (TSockId)_NBBufSock; }
 
-	uint32	NbLoop;
+	uint32 NbLoop;
 
 private:
+	CBufClient *_Client;
 
-	CBufClient					*_Client;
-
-	CNonBlockingBufSock			*_NBBufSock; // CHANGED: non-blocking client connection
+	CNonBlockingBufSock *_NBBufSock; // CHANGED: non-blocking client connection
 };
-
-
 
 /**
  * Client class for layer 1
@@ -87,18 +85,17 @@ private:
 class CBufClient : public CBufNetBase
 {
 public:
-
 	/** Constructor. Set nodelay to true to disable the Nagle buffering algorithm (see CTcpSock documentation)
 	 * initPipeForDataAvailable is for Linux only. Set it to false if you provide an external pipe with
 	 * setExternalPipeForDataAvailable().
 	 */
-	CBufClient( bool nodelay=true, bool replaymode=false, bool initPipeForDataAvailable=true );
+	CBufClient(bool nodelay = true, bool replaymode = false, bool initPipeForDataAvailable = true);
 
 	/// Destructor
 	virtual ~CBufClient();
 
 	/// Connects to the specified host
-	void	connect( const CInetHost &addr );
+	void connect(const CInetHost &addr);
 
 	/** Disconnects the remote host and empties the receive queue.
 	 * Before that, tries to flush pending data to send unless quick is true.
@@ -107,17 +104,17 @@ public:
 	 * The disconnection callback will *not* be called.
 	 * Do not call if the socket is not connected.
 	 */
-	void	disconnect( bool quick=false );
+	void disconnect(bool quick = false);
 
 	/** Sends a message to the remote host (in fact the message is buffered into the send queue)
 	 */
-	//void	send( const std::vector<uint8>& buffer );
-	void	send( const NLMISC::CMemStream& buffer );
+	// void	send( const std::vector<uint8>& buffer );
+	void send(const NLMISC::CMemStream &buffer);
 
 	/** Checks if there is some data to receive. Returns false if the receive queue is empty.
 	 * This is where the connection/disconnection callbacks can be called
 	 */
-	bool	dataAvailable();
+	bool dataAvailable();
 
 #ifdef NL_OS_UNIX
 	/** Wait until the receive queue contains something to read (implemented with a select()).
@@ -125,39 +122,37 @@ public:
 	 * If you use this method (blocking scheme), don't use dataAvailable() (non-blocking scheme).
 	 * \param usecMax Max time to wait in microsecond (up to 1 sec)
 	 */
-	void	sleepUntilDataAvailable( uint usecMax=100000 );
+	void sleepUntilDataAvailable(uint usecMax = 100000);
 #endif
 
 	/** Receives next block of data in the specified buffer (resizes the vector)
 	 * You must call dataAvailable() before every call to receive()
 	 */
-	//void	receive( std::vector<uint8>& buffer );
-	void	receive( NLMISC::CMemStream& buffer );
+	// void	receive( std::vector<uint8>& buffer );
+	void receive(NLMISC::CMemStream &buffer);
 
 	/// Update the network (call this method evenly)
-	void	update();
-
-
+	void update();
 
 	// Returns the size in bytes of the data stored in the send queue.
-	uint32	getSendQueueSize() const { return _BufSock->SendFifo.size(); }
+	uint32 getSendQueueSize() const { return _BufSock->SendFifo.size(); }
 
-	void displaySendQueueStat (NLMISC::CLog *log = NLMISC::InfoLog)
+	void displaySendQueueStat(NLMISC::CLog *log = NLMISC::InfoLog)
 	{
 		_BufSock->SendFifo.displayStats(log);
 	}
 
-	void displayThreadStat (NLMISC::CLog *log);
+	void displayThreadStat(NLMISC::CLog *log);
 
 	/** Sets the time flush trigger (in millisecond). When this time is elapsed,
 	 * all data in the send queue is automatically sent (-1 to disable this trigger)
 	 */
-	void	setTimeFlushTrigger( sint32 ms ) { _BufSock->setTimeFlushTrigger( ms ); }
+	void setTimeFlushTrigger(sint32 ms) { _BufSock->setTimeFlushTrigger(ms); }
 
 	/** Sets the size flush trigger. When the size of the send queue reaches or exceeds this
 	 * calue, all data in the send queue is automatically sent (-1 to disable this trigger )
 	 */
-	void	setSizeFlushTrigger( sint32 size ) { _BufSock->setSizeFlushTrigger( size ); }
+	void setSizeFlushTrigger(sint32 size) { _BufSock->setSizeFlushTrigger(size); }
 
 	/** Force to send data pending in the send queue now. If all the data could not be sent immediately,
 	 * the returned nbBytesRemaining value is non-zero.
@@ -165,30 +160,28 @@ public:
 	 * \returns False if an error has occurred (e.g. the remote host is disconnected).
 	 * To retrieve the reason of the error, call CSock::getLastError() and/or CSock::errorString()
 	 */
-	bool	flush( uint *nbBytesRemaining=NULL ) { return _BufSock->flush( nbBytesRemaining ); }
-
-
+	bool flush(uint *nbBytesRemaining = NULL) { return _BufSock->flush(nbBytesRemaining); }
 
 	/** Returns true if the connection is still connected (changed when a disconnection
 	 * event has reached the front of the receive queue, just before calling the disconnection callback
 	 * if there is one)
 	 */
-	bool	connected() const { return _BufSock->connectedState(); }
+	bool connected() const { return _BufSock->connectedState(); }
 
 	/// Returns the address of the remote host
-	const CInetAddress&	remoteAddress() const { return _BufSock->Sock->remoteAddr(); }
+	const CInetAddress &remoteAddress() const { return _BufSock->Sock->remoteAddr(); }
 
 	/// Returns the number of bytes downloaded (read or still in the receive buffer) since the latest connection
-	uint64	bytesDownloaded() const { return _BufSock->Sock->bytesReceived(); }
+	uint64 bytesDownloaded() const { return _BufSock->Sock->bytesReceived(); }
 
 	/// Returns the number of bytes uploaded (flushed) since the latest connection
-	uint64	bytesUploaded() const { return _BufSock->Sock->bytesSent(); }
+	uint64 bytesUploaded() const { return _BufSock->Sock->bytesSent(); }
 
 	/// Returns the number of bytes downloaded since the previous call to this method
-	uint64	newBytesDownloaded();
+	uint64 newBytesDownloaded();
 
 	/// Returns the number of bytes uploaded since the previous call to this method
-	uint64	newBytesUploaded();
+	uint64 newBytesUploaded();
 
 	/*//Not right because we add callbacks in the receive queue
 	/// Returns the number of bytes popped by receive() since the beginning (mutexed on the receive queue)
@@ -205,24 +198,22 @@ public:
 	*/
 
 	/// Returns the id of the connection
-	TSockId	id() const { return _BufSock; /*_RecvTask->sockId();*/ }
-
+	TSockId id() const { return _BufSock; /*_RecvTask->sockId();*/ }
 
 protected:
-
 	friend class CClientReceiveTask;
 
 	/// Send buffer and connection
 	CNonBlockingBufSock *_BufSock; // ADDED: non-blocking client connection
 
 	/// True when the Nagle algorithm must be disabled (TCP_NODELAY)
-	bool				_NoDelay;
+	bool _NoDelay;
 
 	/// Previous number of bytes downloaded
-	uint64				_PrevBytesDownloaded;
+	uint64 _PrevBytesDownloaded;
 
 	/// Previous number of bytes uploaded
-	uint64				_PrevBytesUploaded;
+	uint64 _PrevBytesUploaded;
 
 	/*
 	/// Previous number of bytes received
@@ -233,19 +224,14 @@ protected:
 	*/
 
 private:
-
 	/// Receive task
-	CClientReceiveTask	*_RecvTask;
+	CClientReceiveTask *_RecvTask;
 
 	/// Receive thread
-	NLMISC::IThread		*_RecvThread;
-
+	NLMISC::IThread *_RecvThread;
 };
 
-
-
 } // NLNET
-
 
 #endif // NL_BUF_CLIENT_H
 

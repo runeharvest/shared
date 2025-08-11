@@ -22,55 +22,56 @@
 
 #include "nel/misc/types_nl.h"
 
-namespace NLGUI
+namespace NLGUI {
+// ********************************************************************************
+struct SHSTSObject
 {
-	// ********************************************************************************
-	struct SHSTSObject
+public:
+	SHSTSObject(uint64 expires = 0, bool includeSubDomains = false)
+	    : Expires(expires)
+	    , IncludeSubDomains(includeSubDomains)
 	{
-	public:
-		SHSTSObject(uint64 expires = 0, bool includeSubDomains = false)
-			: Expires(expires)
-			, IncludeSubDomains(includeSubDomains)
-		{ }
+	}
 
-		uint64 Expires;
-		bool IncludeSubDomains;
-	};
+	uint64 Expires;
+	bool IncludeSubDomains;
+};
 
-	/**
-	 * Keeping track of HSTS header
-	 * \author Meelis Mägi (nimetu)
-	 * \date 2017
-	 */
-	class CStrictTransportSecurity
-	{
-	public:
-		typedef std::map<std::string, SHSTSObject> THSTSObjectMap;
+/**
+ * Keeping track of HSTS header
+ * \author Meelis Mägi (nimetu)
+ * \date 2017
+ */
+class CStrictTransportSecurity
+{
+public:
+	typedef std::map<std::string, SHSTSObject> THSTSObjectMap;
 
-		static CStrictTransportSecurity* getInstance();
-		static void release();
+	static CStrictTransportSecurity *getInstance();
+	static void release();
 
-	public:
-		bool isSecureHost(const std::string &domain) const;
+public:
+	bool isSecureHost(const std::string &domain) const;
 
-		// ************************************************************************
-		void init(const std::string& fname);
-		void save();
+	// ************************************************************************
+	void init(const std::string &fname);
+	void save();
 
-		void erase(const std::string &domain);
-		void set(const std::string &domain, uint64 expires, bool includeSubDomains);
-		bool get(const std::string &domain, SHSTSObject &hsts) const;
-		void setFromHeader(const std::string &domain, const std::string &header);
+	void erase(const std::string &domain);
+	void set(const std::string &domain, uint64 expires, bool includeSubDomains);
+	bool get(const std::string &domain, SHSTSObject &hsts) const;
+	void setFromHeader(const std::string &domain, const std::string &header);
 
-		void serial(NLMISC::IStream& f);
-	private:
-		static CStrictTransportSecurity* instance;
+	void serial(NLMISC::IStream &f);
 
-		~CStrictTransportSecurity();
+private:
+	static CStrictTransportSecurity *instance;
 
-		std::string _Filename;
-		THSTSObjectMap _Domains;
-	};
+	~CStrictTransportSecurity();
+
+	std::string _Filename;
+	THSTSObjectMap _Domains;
+};
 
 }
 #endif

@@ -26,35 +26,34 @@
 
 namespace NL3D {
 
-
 // ***************************************************************************
-void		CMeshBlender::prepareRenderForGlobalAlpha(CMaterial &material, IDriver *drv, float globalAlpha, uint8 globalAlphaInt, bool gaDisableZWrite)
+void CMeshBlender::prepareRenderForGlobalAlpha(CMaterial &material, IDriver *drv, float globalAlpha, uint8 globalAlphaInt, bool gaDisableZWrite)
 {
 	// Disable ZWrite??
-	if(gaDisableZWrite)
+	if (gaDisableZWrite)
 	{
 		// Backup and set new the zwrite
-		_BkZWrite=material.getZWrite ();
-		material.setZWrite (false);
+		_BkZWrite = material.getZWrite();
+		material.setZWrite(false);
 	}
 
 	// Backup blend
-	_BkBlend=material.getBlend ();
-	material.setBlend (true);
+	_BkBlend = material.getBlend();
+	material.setBlend(true);
 
 	// Backup opacity and blend
-	_BkOpacity= material.getOpacity ();
-	_BkSrcBlend= material.getSrcBlend();
-	_BkDstBlend= material.getDstBlend();
+	_BkOpacity = material.getOpacity();
+	_BkSrcBlend = material.getSrcBlend();
+	_BkDstBlend = material.getDstBlend();
 
 	// 2 ways: if Blend Constant Color is supported or not.
-	if(drv->supportBlendConstantColor())
+	if (drv->supportBlendConstantColor())
 	{
 		// Set opacity to 255 => If AlphaTest is used, AlphaTexture will be multiplied by 1.
-		material.setOpacity ( 255 );
+		material.setOpacity(255);
 
 		// set the Blend constant Alpha.
-		drv->setBlendConstantColor( CRGBA(0,0,0, globalAlphaInt) );
+		drv->setBlendConstantColor(CRGBA(0, 0, 0, globalAlphaInt));
 
 		// Active Blend with Blend Constant Alpha .
 		material.setSrcBlend(CMaterial::blendConstantAlpha);
@@ -70,7 +69,7 @@ void		CMeshBlender::prepareRenderForGlobalAlpha(CMaterial &material, IDriver *dr
 	else
 	{
 		// New opacity
-		material.setOpacity (globalAlphaInt);
+		material.setOpacity(globalAlphaInt);
 
 		// must ensure Std Blend.
 		material.setSrcBlend(CMaterial::srcalpha);
@@ -80,76 +79,74 @@ void		CMeshBlender::prepareRenderForGlobalAlpha(CMaterial &material, IDriver *dr
 			material.setDstBlend(CMaterial::invsrcalpha);
 
 		// if material is Alpha Test, must modulate AlphaTest limit to avoid Pop effects
-		if(material.getAlphaTest())
+		if (material.getAlphaTest())
 		{
-			_BkAlphaTestThreshold= material.getAlphaTestThreshold();
+			_BkAlphaTestThreshold = material.getAlphaTestThreshold();
 			material.setAlphaTestThreshold(_BkAlphaTestThreshold * globalAlpha);
 		}
 	}
-
 }
 
 // ***************************************************************************
-void		CMeshBlender::restoreRender(CMaterial &material, IDriver *drv, bool gaDisableZWrite)
+void CMeshBlender::restoreRender(CMaterial &material, IDriver *drv, bool gaDisableZWrite)
 {
 	// Resetup backuped zwrite
-	if(gaDisableZWrite)
+	if (gaDisableZWrite)
 	{
-		material.setZWrite (_BkZWrite);
+		material.setZWrite(_BkZWrite);
 	}
 
 	// Resetup backuped blend
-	material.setBlend (_BkBlend);
+	material.setBlend(_BkBlend);
 
 	// Resetup backuped opacity and blend factors
-	material.setOpacity (_BkOpacity);
+	material.setOpacity(_BkOpacity);
 	material.setSrcBlend(_BkSrcBlend);
 	material.setDstBlend(_BkDstBlend);
 
 	// 2 ways: if Blend Constant Color is supported or not.
-	if(drv->supportBlendConstantColor())
+	if (drv->supportBlendConstantColor())
 	{
 		// nop
 	}
 	else
 	{
 		// Resetup backuped AlphaTest threshold
-		if(material.getAlphaTest())
+		if (material.getAlphaTest())
 		{
 			material.setAlphaTestThreshold(_BkAlphaTestThreshold);
 		}
 	}
 }
 
-
 // ***************************************************************************
-void		CMeshBlender::prepareRenderForGlobalAlphaCoarseMesh(CMaterial &material, IDriver *drv, NLMISC::CRGBA color, float globalAlpha, bool gaDisableZWrite)
+void CMeshBlender::prepareRenderForGlobalAlphaCoarseMesh(CMaterial &material, IDriver *drv, NLMISC::CRGBA color, float globalAlpha, bool gaDisableZWrite)
 {
 	// Don't need to bkup some values, because CoarseMesh.
 
-	uint8	globalAlphaInt= (uint8)NLMISC::OptFastFloor(255 * globalAlpha);
+	uint8 globalAlphaInt = (uint8)NLMISC::OptFastFloor(255 * globalAlpha);
 
 	// Disable ZWrite??
-	if(gaDisableZWrite)
-		material.setZWrite (false);
+	if (gaDisableZWrite)
+		material.setZWrite(false);
 	// Enable blend
-	material.setBlend (true);
+	material.setBlend(true);
 
 	// bkup color and blend factors.
-	_BkupColor= material.getColor();
-	_BkSrcBlend= material.getSrcBlend();
-	_BkDstBlend= material.getDstBlend();
+	_BkupColor = material.getColor();
+	_BkSrcBlend = material.getSrcBlend();
+	_BkDstBlend = material.getDstBlend();
 
 	// 2 ways: if Blend Constant Color is supported or not.
-	if(drv->supportBlendConstantColor())
+	if (drv->supportBlendConstantColor())
 	{
 		// Set opacity to 255 => AlphaTexture will be multiplied by 1.
-		color.A= 255;
+		color.A = 255;
 		// change color
-		material.setColor ( color );
+		material.setColor(color);
 
 		// set the Blend constant Alpha.
-		drv->setBlendConstantColor( CRGBA(0,0,0, globalAlphaInt) );
+		drv->setBlendConstantColor(CRGBA(0, 0, 0, globalAlphaInt));
 
 		// Active Blend with Blend Constant Alpha .
 		material.setSrcBlend(CMaterial::blendConstantAlpha);
@@ -158,9 +155,9 @@ void		CMeshBlender::prepareRenderForGlobalAlphaCoarseMesh(CMaterial &material, I
 	else
 	{
 		// Set current Alpha blend transparency (in color becausematerial is unlit)
-		color.A= globalAlphaInt;
+		color.A = globalAlphaInt;
 		// change color
-		material.setColor ( color );
+		material.setColor(color);
 
 		// Active Blend with Blend Constant Alpha .
 		material.setSrcBlend(CMaterial::srcalpha);
@@ -172,21 +169,21 @@ void		CMeshBlender::prepareRenderForGlobalAlphaCoarseMesh(CMaterial &material, I
 }
 
 // ***************************************************************************
-void		CMeshBlender::restoreRenderCoarseMesh(CMaterial &material, IDriver *drv, bool gaDisableZWrite)
+void CMeshBlender::restoreRenderCoarseMesh(CMaterial &material, IDriver *drv, bool gaDisableZWrite)
 {
 	// Resetup backuped color and blend factors
-	material.setColor ( _BkupColor );
+	material.setColor(_BkupColor);
 	material.setSrcBlend(_BkSrcBlend);
 	material.setDstBlend(_BkDstBlend);
 
 	// ReEnable ZWrite??
-	if(gaDisableZWrite)
-		material.setZWrite (true);
+	if (gaDisableZWrite)
+		material.setZWrite(true);
 	// Reset blend
-	material.setBlend (false);
+	material.setBlend(false);
 
 	// 2 ways: if Blend Constant Color is supported or not.
-	if(drv->supportBlendConstantColor())
+	if (drv->supportBlendConstantColor())
 	{
 		// nop
 	}

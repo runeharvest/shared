@@ -17,8 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_CHANGE_TRACKER_BASE_H
 #define NL_CHANGE_TRACKER_BASE_H
 
@@ -26,17 +24,15 @@
 #include "base_types.h"
 #include <nel/misc/hierarchical_timer.h> // TEMP
 
-
-//#ifdef NL_OS_WINDOWS
+// #ifdef NL_OS_WINDOWS
 #define USE_FAST_MUTEX
-//#endif
+// #endif
 
 /*
  * Set this define for stats about the property changes (slower)
  * Important note: all the user services and the mirror service should have the same value!
  */
 #define COUNT_MIRROR_PROP_CHANGES
-
 
 /**
  * Header of a tracker
@@ -47,30 +43,29 @@ struct TChangeTrackerHeader
 	/** First changed item (useful to read the changed from the beginning).
 	 * When there is no change to read, First equals LAST_CHANGED.
 	 */
-	TDataSetIndex		First;
+	TDataSetIndex First;
 
 	/** Last changed item (useful to link the last changed to a newly changed item).
 	 * When there is no change yet, Last equals INVALID_DATASET_ROW.
 	 */
-	TDataSetIndex		Last;
+	TDataSetIndex Last;
 
 #ifdef USE_FAST_MUTEX
 	/// Fast mutex (TODO: use multi-processor version)
-	NLMISC::CFastMutex			FastMutex;
+	NLMISC::CFastMutex FastMutex;
 #endif
 	/*
 	 * Number of values set (used in COUNT_MIRROR_CHANGES mode only, always allocated for mode interoperability)
 	 * Currently, not implemented.
 	 */
-	//sint32				NbValuesSet;
+	// sint32				NbValuesSet;
 
 	/**
 	 * Number of changes really recorded (used in COUNT_MIRROR_CHANGES mode only, always allocated for mode interoperability).
 	 * NbValuesSet-NbDistinctChanges is the number of skipped changes.
 	 */
-	sint32					NbDistinctChanges;
+	sint32 NbDistinctChanges;
 };
-
 
 const uint16 LOCAL_TRACKER_SERVICE_ID = std::numeric_limits<uint16>::max();
 
@@ -84,10 +79,8 @@ struct TChangeTrackerItem
 	 * If it is 'changed', NextChanged is either the index of the next changed
 	 * item or the value LAST_CHANGED.
 	 */
-	TDataSetIndex				NextChanged;
+	TDataSetIndex NextChanged;
 };
-
-
 
 /**
  * Base class for change tracker
@@ -99,14 +92,19 @@ struct TChangeTrackerItem
 class CChangeTrackerBase
 {
 public:
-
 	/// Constructor
-	CChangeTrackerBase() : _SMId(-1), _MutId(-1), _Header(NULL), _Array(NULL) {}
+	CChangeTrackerBase()
+	    : _SMId(-1)
+	    , _MutId(-1)
+	    , _Header(NULL)
+	    , _Array(NULL)
+	{
+	}
 
 	/// Assignment operator
-	CChangeTrackerBase&		operator = ( const CChangeTrackerBase& src )
+	CChangeTrackerBase &operator=(const CChangeTrackerBase &src)
 	{
-		if ( &src == this )
+		if (&src == this)
 			return *this;
 
 		_SMId = src._SMId;
@@ -120,37 +118,39 @@ public:
 	}
 
 	/// Return the shared memory id
-	const sint32&			smid() const { return _SMId; }
+	const sint32 &smid() const { return _SMId; }
 
 	/// Return true if the tracker header and item array are already allocated
-	bool					isAllocated() const
-							{ return _Array != NULL; }
+	bool isAllocated() const
+	{
+		return _Array != NULL;
+	}
 
 	/// Return the pointer to the header (root of the shared memory segment)
-	TChangeTrackerHeader	*header() { return _Header; }
+	TChangeTrackerHeader *header() { return _Header; }
 
 	/// Record a change (push) (assumes isAllocated())
-	void					recordChange( TDataSetIndex entityIndex );
+	void recordChange(TDataSetIndex entityIndex);
 
 	/// Remove a change if found in the tracker (slow) (assumes isAllocated())
-	void					cancelChange( TDataSetIndex entityIndex );
+	void cancelChange(TDataSetIndex entityIndex);
 
 	/// Get the entity index of the first changed (assumes isAllocated()). Returns LAST_CHANGED if there is no change.
-	uint32					getFirstChanged() const { /*nlinfo( "Array = %p, First = %d, _Array[First].NextChanged = %d, _Array[0].NextChanged = %d", _Array, _Header->First, _Array[_Header->First].NextChanged, _Array[0].NextChanged );*/ return _Header->First; }
+	uint32 getFirstChanged() const { /*nlinfo( "Array = %p, First = %d, _Array[First].NextChanged = %d, _Array[0].NextChanged = %d", _Array, _Header->First, _Array[_Header->First].NextChanged, _Array[0].NextChanged );*/ return _Header->First; }
 
 	/// Pop the first change out of the tracker. Do not call if getFirstChanged() returned LAST_CHANGED.
-	void					popFirstChanged()
+	void popFirstChanged()
 	{
 		// Protect consistency of popFirstChanged() in parallel with recordChange()
 		// (there can't be two parallels calls to popFirstChanged()
 		NLMISC::CAutoMutex<NLMISC::CFastMutex> lock(trackerMutex());
 #ifdef NL_DEBUG
-		nlassert( _Header->First != LAST_CHANGED );
+		nlassert(_Header->First != LAST_CHANGED);
 #endif
 		TChangeTrackerItem *queueFront = &(_Array[_Header->First]);
 		_Header->First = queueFront->NextChanged;
 		queueFront->NextChanged = INVALID_DATASET_INDEX;
-		if ( _Header->First == LAST_CHANGED )
+		if (_Header->First == LAST_CHANGED)
 		{
 			_Header->Last = INVALID_DATASET_INDEX;
 		}
@@ -160,77 +160,54 @@ public:
 	}
 
 	/// Return the number of changes (assumes isAllocated()) (slow)
-	sint32					nbChanges() const;
+	sint32 nbChanges() const;
 
 #ifdef USE_FAST_MUTEX
 	/// Return the mutex
 	NLMISC::CFastMutex &trackerMutex() { return _Header->FastMutex; }
 #else
 	/// Return the mutex
-	NLMISC::CSharedMutex&	trackerMutex() { return _TrackerMutex; }
+	NLMISC::CSharedMutex &trackerMutex() { return _TrackerMutex; }
 #endif
 
 	/// Return the mutex id
-	const sint32&			mutid() const { return _MutId; }
+	const sint32 &mutid() const { return _MutId; }
 
 	/// Create the mutex (either create or use existing)
-	bool					createMutex( sint32 mutid, bool createNew );
+	bool createMutex(sint32 mutid, bool createNew);
 
 	/// Display debug info (1 line)
-	void					displayTrackerInfo( const char *headerStr="", const char *footerStrNotAllocd="", NLMISC::CLog *log=NLMISC::InfoLog ) const;
+	void displayTrackerInfo(const char *headerStr = "", const char *footerStrNotAllocd = "", NLMISC::CLog *log = NLMISC::InfoLog) const;
 
 	/// Serial ids
-	void					serial( NLMISC::IStream& s )
+	void serial(NLMISC::IStream &s)
 	{
-		s.serial( _SMId );
-		s.serial( _MutId );
+		s.serial(_SMId);
+		s.serial(_MutId);
 	}
 
 protected:
-
 	/// Get the entity index of the next changed (assumes isAllocated() and entityIndex is valid). Returns LAST_CHANGED if there is no more change.
-	TDataSetRow				getNextChanged( const TDataSetRow& entityIndex ) const { /*nlinfo( "_Array[%d].NextChanged = %d", entityIndex, _Array[entityIndex].NextChanged );*/ return TDataSetRow(_Array[entityIndex.getIndex()].NextChanged); }
+	TDataSetRow getNextChanged(const TDataSetRow &entityIndex) const { /*nlinfo( "_Array[%d].NextChanged = %d", entityIndex, _Array[entityIndex].NextChanged );*/ return TDataSetRow(_Array[entityIndex.getIndex()].NextChanged); }
 
 	/// Shared memory numeric id
-	sint32					_SMId;
+	sint32 _SMId;
 
 #ifndef USE_FAST_MUTEX
 	/// Mutex
-	NLMISC::CSharedMutex	_TrackerMutex;
+	NLMISC::CSharedMutex _TrackerMutex;
 #endif
 
 	/// Mutex id
-	sint32					_MutId;
+	sint32 _MutId;
 
 	/// Pointer to the handling variables of the tracker (may be pointing to shared memory)
-	TChangeTrackerHeader	*_Header;
+	TChangeTrackerHeader *_Header;
 
 	/// Pointer to the array of entities, indexed by TDataSetRow (may be pointing to shared memory)
-	TChangeTrackerItem		*_Array;
+	TChangeTrackerItem *_Array;
 };
-
 
 #endif // NL_CHANGE_TRACKER_BASE_H
 
 /* End of change_tracker_base.h */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

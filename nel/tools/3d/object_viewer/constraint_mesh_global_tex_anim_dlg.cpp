@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "std_afx.h"
 #include "object_viewer.h"
 #include "constraint_mesh_global_tex_anim_dlg.h"
@@ -23,17 +22,17 @@
 /////////////////////////////////////////////////////////////////////////////
 // CConstraintMeshGlobalTexAnimDlg dialog
 
-
-CConstraintMeshGlobalTexAnimDlg::CConstraintMeshGlobalTexAnimDlg(NL3D::CPSConstraintMesh *cm, uint stage, CWnd* pParent /*= NULL*/)
-	: _CM(cm), _Stage(stage), CDialog(CConstraintMeshGlobalTexAnimDlg::IDD, pParent)
+CConstraintMeshGlobalTexAnimDlg::CConstraintMeshGlobalTexAnimDlg(NL3D::CPSConstraintMesh *cm, uint stage, CWnd *pParent /*= NULL*/)
+    : _CM(cm)
+    , _Stage(stage)
+    , CDialog(CConstraintMeshGlobalTexAnimDlg::IDD, pParent)
 {
 	nlassert(_CM);
 	//{{AFX_DATA_INIT(CConstraintMeshGlobalTexAnimDlg)
 	//}}AFX_DATA_INIT
 }
 
-
-void CConstraintMeshGlobalTexAnimDlg::DoDataExchange(CDataExchange* pDX)
+void CConstraintMeshGlobalTexAnimDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CConstraintMeshGlobalTexAnimDlg)
@@ -54,30 +53,27 @@ void CConstraintMeshGlobalTexAnimDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 void CConstraintMeshGlobalTexAnimDlg::init(uint x, uint y, CWnd *pParent)
 {
 	Create(IDD_CONSTRAINT_MESH_GLOBAL_TEX_ANIM_DLG, pParent);
 	RECT r;
-	GetClientRect(&r);		
+	GetClientRect(&r);
 	MoveWindow(x, y, r.right, r.bottom);
 	ShowWindow(SW_SHOW);
 }
 
-
-
 BEGIN_MESSAGE_MAP(CConstraintMeshGlobalTexAnimDlg, CDialog)
-	//{{AFX_MSG_MAP(CConstraintMeshGlobalTexAnimDlg)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CConstraintMeshGlobalTexAnimDlg)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CConstraintMeshGlobalTexAnimDlg message handlers
 
-BOOL CConstraintMeshGlobalTexAnimDlg::OnInitDialog() 
+BOOL CConstraintMeshGlobalTexAnimDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	m_WRotSpeedCtrl.setType(CEditEx::FloatType);
 	m_WRotAccelCtrl.setType(CEditEx::FloatType);
 	m_VSpeedCtrl.setType(CEditEx::FloatType);
@@ -124,18 +120,17 @@ BOOL CConstraintMeshGlobalTexAnimDlg::OnInitDialog()
 	m_USpeedCtrl.setFloat(gta.TransSpeed.x);
 	m_UStartCtrl.setFloat(gta.TransOffset.x);
 	m_UScaleStartCtrl.setFloat(gta.ScaleStart.x);
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
-}
 
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
+}
 
 void CConstraintMeshGlobalTexAnimDlg::editExValueChanged(CEditEx *ctrl)
 {
 	NL3D::CPSConstraintMesh::CGlobalTexAnim gta;
 
-	gta.WRotSpeed    = m_WRotSpeedCtrl.getFloat();
-	gta.WRotAccel    = m_WRotAccelCtrl.getFloat();
+	gta.WRotSpeed = m_WRotSpeedCtrl.getFloat();
+	gta.WRotAccel = m_WRotAccelCtrl.getFloat();
 	gta.TransSpeed.y = m_VSpeedCtrl.getFloat();
 	gta.TransOffset.y = m_VStartCtrl.getFloat();
 	gta.ScaleStart.y = m_VScaleStartCtrl.getFloat();
@@ -150,5 +145,4 @@ void CConstraintMeshGlobalTexAnimDlg::editExValueChanged(CEditEx *ctrl)
 	gta.ScaleStart.x = m_UScaleStartCtrl.getFloat();
 
 	_CM->setGlobalTexAnim(_Stage, gta);
-
 }

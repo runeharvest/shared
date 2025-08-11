@@ -31,35 +31,33 @@ namespace CEGUI {
 
 NeLLogger::NeLLogger()
 {
-	
 }
 
 NeLLogger::~NeLLogger()
 {
-	
 }
 
-void NeLLogger::logEvent(const String& message, LoggingLevel level)
+void NeLLogger::logEvent(const String &message, LoggingLevel level)
 {
 	if (getLoggingLevel() >= level) switch (level)
-	{
-	case Insane:
-		nldebug("%s", message.c_str());
-		break;
-	case Informative:
-	case Standard:
-		nlinfo("%s", message.c_str());
-		break;
+		{
+		case Insane:
+			nldebug("%s", message.c_str());
+			break;
+		case Informative:
+		case Standard:
+			nlinfo("%s", message.c_str());
+			break;
 #if ((CEGUI_VERSION_MAJOR > 0) || ((CEGUI_VERSION_MAJOR >= 0) && (CEGUI_VERSION_MINOR >= 6)))
-	case Warnings:
+		case Warnings:
 #endif
-	case Errors:
-		nlwarning("%s", message.c_str());
-		break;
-	}
+		case Errors:
+			nlwarning("%s", message.c_str());
+			break;
+		}
 }
 
-void NeLLogger::setLogFilename(const String& filename, bool append)
+void NeLLogger::setLogFilename(const String &filename, bool append)
 {
 	// do nothing
 }

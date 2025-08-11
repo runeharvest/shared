@@ -14,27 +14,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_COMBAT_STATE_H
 #define NL_COMBAT_STATE_H
 
 #include "nel/misc/types_nl.h"
 
-namespace RYZOMCOMBATSTATE
+namespace RYZOMCOMBATSTATE {
+
+enum TCombatState
 {
+	NotEngaged = 0,
+	MovingTowardsTarget,
+	TargetUnreachable,
+	Engaged,
+	TargetLost
+};
 
-	enum TCombatState
-	{
-		NotEngaged = 0,
-		MovingTowardsTarget,
-		TargetUnreachable,
-		Engaged,
-		TargetLost
-	};
+}; // RYZOMCOMBATSTATE
 
-};	// RYZOMCOMBATSTATE
-
-#endif //NL_COMBAT_STATE_H
+#endif // NL_COMBAT_STATE_H
 
 /* End of combat_state.h */

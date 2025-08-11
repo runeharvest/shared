@@ -20,7 +20,6 @@
 
 using namespace std;
 
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -30,17 +29,15 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CLogSessions dialog
 
-
-CLogSessions::CLogSessions(CWnd* pParent /*=NULL*/)
-	: CDialog(CLogSessions::IDD, pParent)
+CLogSessions::CLogSessions(CWnd *pParent /*=NULL*/)
+    : CDialog(CLogSessions::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CLogSessions)
 	m_StartDate = _T("");
 	//}}AFX_DATA_INIT
 }
 
-
-void CLogSessions::DoDataExchange(CDataExchange* pDX)
+void CLogSessions::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CLogSessions)
@@ -49,24 +46,21 @@ void CLogSessions::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CLogSessions, CDialog)
-	//{{AFX_MSG_MAP(CLogSessions)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CLogSessions)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CLogSessions message handlers
 
-
 /*
  *
  */
-void CLogSessions::addLogSession( const CString& line )
+void CLogSessions::addLogSession(const CString &line)
 {
-	Sessions.push_back( line );
+	Sessions.push_back(line);
 }
-
 
 /*
  *
@@ -74,27 +68,27 @@ void CLogSessions::addLogSession( const CString& line )
 CString CLogSessions::getStartDate() const
 {
 	return m_StartDate;
-	
+
 	/*if ( m_ListBox.GetCurSel() == LB_ERR )
 	{
-		return "";
+	    return "";
 	}
 	else
 	{
-		CString res;
-		m_ListBox.GetText( m_ListBox.GetCurSel(), res );
-		return res;
+	    CString res;
+	    m_ListBox.GetText( m_ListBox.GetCurSel(), res );
+	    return res;
 	}*/
 }
 
-BOOL CLogSessions::OnInitDialog() 
+BOOL CLogSessions::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	vector<CString>::iterator il;
-	for (il=Sessions.begin(); il!=Sessions.end(); ++il )
+	for (il = Sessions.begin(); il != Sessions.end(); ++il)
 	{
-		m_ListBox.AddString( *il );
+		m_ListBox.AddString(*il);
 	}
 	Sessions.clear();
 

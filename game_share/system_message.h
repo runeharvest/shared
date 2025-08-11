@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_SYSTEM_MESSAGE_H
 #define NL_SYSTEM_MESSAGE_H
 
@@ -23,20 +21,20 @@
 
 namespace CLFECOMMON {
 
-const uint8				SYSTEM_LOGIN_CODE = 0;				// From client
-const uint8				SYSTEM_SYNC_CODE = 1;				// From server
-const uint8				SYSTEM_ACK_SYNC_CODE = 2;			// From client
-const uint8				SYSTEM_PROBE_CODE = 3;				// From server
-const uint8				SYSTEM_ACK_PROBE_CODE = 4;			// From client
-const uint8				SYSTEM_DISCONNECTION_CODE = 5;		// From client
-const uint8				SYSTEM_STALLED_CODE = 6;			// From server
-const uint8				SYSTEM_SERVER_DOWN_CODE = 7;		// From server
-const uint8				SYSTEM_QUIT_CODE = 8;				// From client
-const uint8				SYSTEM_ACK_QUIT_CODE = 9;			// From server
+const uint8 SYSTEM_LOGIN_CODE = 0; // From client
+const uint8 SYSTEM_SYNC_CODE = 1; // From server
+const uint8 SYSTEM_ACK_SYNC_CODE = 2; // From client
+const uint8 SYSTEM_PROBE_CODE = 3; // From server
+const uint8 SYSTEM_ACK_PROBE_CODE = 4; // From client
+const uint8 SYSTEM_DISCONNECTION_CODE = 5; // From client
+const uint8 SYSTEM_STALLED_CODE = 6; // From server
+const uint8 SYSTEM_SERVER_DOWN_CODE = 7; // From server
+const uint8 SYSTEM_QUIT_CODE = 8; // From client
+const uint8 SYSTEM_ACK_QUIT_CODE = 9; // From server
 
-const uint				NumBitsInLongAck = 512;
+const uint NumBitsInLongAck = 512;
 
-const static char*		SystemMessagesNames[32] = {
+const static char *SystemMessagesNames[32] = {
 	"LOGIN",
 	"SYNC",
 	"ACK_SYNC",

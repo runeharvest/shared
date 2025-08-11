@@ -22,16 +22,14 @@
 // comment / uncomment that to have a debug version of the library
 #define RY_MODULE_DEBUG
 
-
 #ifdef RY_MODULE_DEBUG
-	inline void MODULE_INFO(const char*,...) {}
-	#define MODULE_AST nlassert
-	#define MODULE_CAST static_cast
+inline void MODULE_INFO(const char *, ...) { }
+#define MODULE_AST nlassert
+#define MODULE_CAST static_cast
 #else
-	inline void MODULE_INFO(const char*,...) {}
-	inline void MODULE_AST(const char*,...) {}
-	#define MODULE_CAST dynamic_cast
+inline void MODULE_INFO(const char *, ...) { }
+inline void MODULE_AST(const char *, ...) { }
+#define MODULE_CAST dynamic_cast
 #endif
-
 
 #endif

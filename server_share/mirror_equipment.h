@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_MIRROR_EQUIPMENT_H
 #define RY_MIRROR_EQUIPMENT_H
 
@@ -24,7 +22,6 @@
 #include "nel/misc/sheet_id.h"
 #include "game_share/persistent_data.h"
 //
-
 
 /**
  * SMirrorEquipment
@@ -43,43 +40,49 @@ public:
 
 	DECLARE_PERSISTENCE_METHODS
 
-	NLMISC::CSheetId	IdSheet;
-	uint16				Quality;
+	NLMISC::CSheetId IdSheet;
+	uint16 Quality;
 
 	// Default contructor
-	SMirrorEquipment() { IdSheet = 0; Quality = 0; }
-	SMirrorEquipment( const NLMISC::CSheetId& id, uint16 Q ) { IdSheet = id; Quality = Q; }
+	SMirrorEquipment()
+	{
+		IdSheet = 0;
+		Quality = 0;
+	}
+	SMirrorEquipment(const NLMISC::CSheetId &id, uint16 Q)
+	{
+		IdSheet = id;
+		Quality = Q;
+	}
 
 	// operators
-	const SMirrorEquipment &operator = (const SMirrorEquipment &e)
+	const SMirrorEquipment &operator=(const SMirrorEquipment &e)
 	{
 		IdSheet = e.IdSheet;
 		Quality = e.Quality;
 		return *this;
 	}
 
-	virtual bool operator == (const SMirrorEquipment &e) const
+	virtual bool operator==(const SMirrorEquipment &e) const
 	{
-		return ( IdSheet == e.IdSheet && Quality == e.Quality);
+		return (IdSheet == e.IdSheet && Quality == e.Quality);
 	}
 
-	virtual bool operator != (const SMirrorEquipment &e) const
+	virtual bool operator!=(const SMirrorEquipment &e) const
 	{
-		return ( IdSheet != e.IdSheet || Quality != e.Quality);
+		return (IdSheet != e.IdSheet || Quality != e.Quality);
 	}
 
 	void serial(NLMISC::IStream &f)
 	{
-		f.serial( IdSheet );
-		f.serial( Quality );
+		f.serial(IdSheet);
+		f.serial(Quality);
 	}
 };
 
-namespace NLMISC
-{
-	std::string toString( const SMirrorEquipment& );
+namespace NLMISC {
+std::string toString(const SMirrorEquipment &);
 };
 
 #endif // RY_MIRROR_EQUIPMENT_H
 /* End of mirror_equipment.h */
-

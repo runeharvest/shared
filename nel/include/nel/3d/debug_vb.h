@@ -22,27 +22,26 @@
 /// this macro is used to see whether a write in a vertex buffer is correct
 
 #ifdef NL_DEBUG
-	//#define NL_DEBUG_VB
+// #define NL_DEBUG_VB
 #endif
 
 #ifdef NL_DEBUG_VB
 
-#define CHECK_VERTEX_BUFFER(vb, pt) nlCheckVertexBuffer((vb), (const uint8 *) (pt));
-#define CHECK_VBA(vba, pt) nlCheckVBA((vba), (const uint8 *) (pt));
-#define CHECK_VBA_RANGE(vba, ptStart, length) nlCheckVBARange((vba), (const uint8 *) (ptStart), (uint) (length));
-#define CHECK_IBA_RANGE(iba, ptStart, length) nlCheckIBARange((iba), (const uint8 *) (ptStart), (uint) (length));
-#define CHECK_IBA(iba, ptStart) nlCheckIBA((iba), (const uint8 *) (ptStart));
+#define CHECK_VERTEX_BUFFER(vb, pt) nlCheckVertexBuffer((vb), (const uint8 *)(pt));
+#define CHECK_VBA(vba, pt) nlCheckVBA((vba), (const uint8 *)(pt));
+#define CHECK_VBA_RANGE(vba, ptStart, length) nlCheckVBARange((vba), (const uint8 *)(ptStart), (uint)(length));
+#define CHECK_IBA_RANGE(iba, ptStart, length) nlCheckIBARange((iba), (const uint8 *)(ptStart), (uint)(length));
+#define CHECK_IBA(iba, ptStart) nlCheckIBA((iba), (const uint8 *)(ptStart));
 
 #else
-	#define CHECK_VERTEX_BUFFER(a,b)
-	#define CHECK_VBA(vbA, pt)
-	#define CHECK_VBA_RANGE(vba, ptStart, length)
-	#define CHECK_IBA_RANGE(iba, ptStart, length)
-	#define CHECK_IBA(iba, ptStart)
+#define CHECK_VERTEX_BUFFER(a, b)
+#define CHECK_VBA(vbA, pt)
+#define CHECK_VBA_RANGE(vba, ptStart, length)
+#define CHECK_IBA_RANGE(iba, ptStart, length)
+#define CHECK_IBA(iba, ptStart)
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 class CVertexBuffer;
 class CVertexBufferRead;
@@ -59,7 +58,6 @@ void nlCheckIBARange(CIndexBufferReadWrite &ibrw, const uint8 *ptStart, uint len
 void nlCheckIBARange(CIndexBufferRead &ibr, const uint8 *ptStart, uint length);
 void nlCheckIBA(CIndexBufferReadWrite &ibrw, const uint8 *ptStart);
 void nlCheckIBA(CIndexBufferRead &ibrw, const uint8 *ptStart);
-
 
 } // NL3D
 

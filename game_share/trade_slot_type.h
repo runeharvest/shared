@@ -14,18 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_TRADE_SLOT_TYPE_H
 #define RY_TRADE_SLOT_TYPE_H
 
-namespace TRADE_SLOT_TYPE
+namespace TRADE_SLOT_TYPE {
+enum TTradeSlotType
 {
-	enum TTradeSlotType
-	{
-		StandardBehaviour = 0,
-		Skill
-	};
+	StandardBehaviour = 0,
+	Skill
+};
 }
 
 #endif

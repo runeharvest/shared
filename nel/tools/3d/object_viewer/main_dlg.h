@@ -32,33 +32,35 @@
 
 class CMainDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CMainDlg(class CObjectViewer* main, CWnd* pParent = NULL);   // standard constructor
+	CMainDlg(class CObjectViewer *main, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CMainDlg)
-	enum { IDD = IDD_MAIN_DLG };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_MAIN_DLG
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-	void	setAnimTime (float animStart, float animEnd);
+	void setAnimTime(float animStart, float animEnd);
 
-	void	refresh (BOOL update);
+	void refresh(BOOL update);
 
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CMainDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 public:
-	CSlotDlg					Slots[NL3D::CChannelMixer::NumAnimationSlot];
-	CObjectViewer*				Main;
+	CSlotDlg Slots[NL3D::CChannelMixer::NumAnimationSlot];
+	CObjectViewer *Main;
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CMainDlg)
 	virtual BOOL OnInitDialog();

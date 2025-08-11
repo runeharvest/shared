@@ -29,33 +29,35 @@
 class CColorEdit;
 
 /** Dialog to choose the sun color in a 3D scene
-  *
-  * \author Nicolas Vizerie
-  * \author Nevrax France
-  * \date 2003
-  */
+ *
+ * \author Nicolas Vizerie
+ * \author Nevrax France
+ * \date 2003
+ */
 class CChooseSunColorDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CChooseSunColorDlg(NL3D::CScene *scene, CWnd* pParent = NULL);   // standard constructor
+	CChooseSunColorDlg(NL3D::CScene *scene, CWnd *pParent = NULL); // standard constructor
 	~CChooseSunColorDlg();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CChooseSunColorDlg)
-	enum { IDD = IDD_CHOOSE_SUN_COLOR };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_CHOOSE_SUN_COLOR
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CChooseSunColorDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	CColorEdit *_DiffuseColorEdit;
 	CColorEdit *_AmbientColorEdit;
@@ -65,21 +67,21 @@ protected:
 	{
 		NL3D::CScene *S;
 		void set(const NLMISC::CRGBA &col) { S->setSunDiffuse(col); }
-		NLMISC::CRGBA get() const  { return S->getSunDiffuse(); }
+		NLMISC::CRGBA get() const { return S->getSunDiffuse(); }
 	} _DiffuseColorWrapper;
 	//
 	struct CAmbientColorWrapper : public IPSWrapperRGBA
 	{
 		NL3D::CScene *S;
 		void set(const NLMISC::CRGBA &col) { S->setSunAmbient(col); }
-		NLMISC::CRGBA get() const  { return S->getSunAmbient(); }
+		NLMISC::CRGBA get() const { return S->getSunAmbient(); }
 	} _AmbientColorWrapper;
 	//
 	struct CSpecularColorWrapper : public IPSWrapperRGBA
 	{
 		NL3D::CScene *S;
 		void set(const NLMISC::CRGBA &col) { S->setSunSpecular(col); }
-		NLMISC::CRGBA get() const  { return S->getSunSpecular(); }
+		NLMISC::CRGBA get() const { return S->getSunSpecular(); }
 	} _SpecularColorWrapper;
 
 	// Generated message map functions

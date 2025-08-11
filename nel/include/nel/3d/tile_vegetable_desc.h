@@ -24,12 +24,9 @@
 #include "nel/3d/vegetable_def.h"
 #include <vector>
 
-namespace NL3D
-{
+namespace NL3D {
 
-
-class	CVegetableManager;
-
+class CVegetableManager;
 
 // ***************************************************************************
 /**
@@ -41,49 +38,45 @@ class	CVegetableManager;
 class CTileVegetableDesc
 {
 public:
-
 	/// Constructor
 	CTileVegetableDesc();
 
 	/// clear lists.
-	void		clear();
+	void clear();
 
 	/// Build the CTileVegetableDesc.
-	void		build(const std::vector<CVegetable> &vegetables);
+	void build(const std::vector<CVegetable> &vegetables);
 
 	/// register all Vegetables in this to the manager.
-	void		registerToManager(CVegetableManager *vegetableManager);
+	void registerToManager(CVegetableManager *vegetableManager);
 
 	/// serial.
-	void		serial(NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 
 	/// get the vegetable list for a specific distanceType
-	const	std::vector<CVegetable>		&getVegetableList(uint distType) const;
+	const std::vector<CVegetable> &getVegetableList(uint distType) const;
 
 	/// get the vegetable seed for a specific distanceType
-	uint		getVegetableSeed(uint distType) const;
+	uint getVegetableSeed(uint distType) const;
 
 	/// return true if no vegetable at all for any DistType
-	bool		empty() const {return _Empty;}
+	bool empty() const { return _Empty; }
 
 private:
-
 	/** List of vegetable to instanciate for a specific tile
 	 *	Grouped by distance Type.
 	 */
-	std::vector<CVegetable>		_VegetableList[NL3D_VEGETABLE_BLOCK_NUMDIST];
+	std::vector<CVegetable> _VegetableList[NL3D_VEGETABLE_BLOCK_NUMDIST];
 
-	uint32						_VegetableSeed[NL3D_VEGETABLE_BLOCK_NUMDIST];
+	uint32 _VegetableSeed[NL3D_VEGETABLE_BLOCK_NUMDIST];
 
 	// to know if no vegetable at all
-	bool						_Empty;
+	bool _Empty;
 
-	void	compileRunTime();
+	void compileRunTime();
 };
 
-
 } // NL3D
-
 
 #endif // NL_TILE_VEGETABLE_DESC_H
 

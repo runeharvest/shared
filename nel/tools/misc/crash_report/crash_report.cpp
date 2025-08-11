@@ -18,7 +18,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "crash_report_widget.h"
 #include <QApplication>
 #include <QMessageBox>
@@ -32,50 +31,50 @@
 class CCmdLineParser
 {
 public:
-	static void parse( int argc, char **argv, std::vector< std::pair< std::string, std::string > > &v )
+	static void parse(int argc, char **argv, std::vector<std::pair<std::string, std::string>> &v)
 	{
-		std::stack< std::string > stack;
+		std::stack<std::string> stack;
 		std::string key;
 		std::string value;
 
-		for( int i = argc - 1 ; i >= 0; i-- )
+		for (int i = argc - 1; i >= 0; i--)
 		{
-			stack.push( std::string( argv[ i ] ) );
+			stack.push(std::string(argv[i]));
 		}
 
-		while( !stack.empty() )
+		while (!stack.empty())
 		{
 			key = stack.top();
 			stack.pop();
 
 			// If not a real parameter ( they start with '-' ), discard.
-			if( key[ 0 ] != '-' )
+			if (key[0] != '-')
 				continue;
 
 			// Remove the '-'
-			key = key.substr( 1 );
+			key = key.substr(1);
 
 			// No more parameters
-			if( stack.empty() )
+			if (stack.empty())
 			{
-				v.push_back( std::make_pair( key, "" ) );
+				v.push_back(std::make_pair(key, ""));
 				break;
 			}
 
-			 value = stack.top();
+			value = stack.top();
 
-			 // If next parameter is a key, process it in the next iteration
-			 if( value[ 0 ] == '-' )
-			 {
-				 v.push_back( std::make_pair( key, "" ) );
-				 continue;
-			 }
-			 // Otherwise store the pair
-			 else
-			 {
-				 v.push_back( std::make_pair( key, value ) );
-				 stack.pop();
-			 }
+			// If next parameter is a key, process it in the next iteration
+			if (value[0] == '-')
+			{
+				v.push_back(std::make_pair(key, ""));
+				continue;
+			}
+			// Otherwise store the pair
+			else
+			{
+				v.push_back(std::make_pair(key, value));
+				stack.pop();
+			}
 		}
 	}
 };
@@ -85,14 +84,14 @@ public:
 #include <QtPlugin>
 
 #if defined(Q_OS_WIN32)
-	Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
+Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
 #elif defined(Q_OS_MAC)
-	Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
+Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
 #elif defined(Q_OS_UNIX)
-	Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)
+Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)
 #endif
 
-	Q_IMPORT_PLUGIN(QICOPlugin)
+Q_IMPORT_PLUGIN(QICOPlugin)
 
 #endif
 
@@ -116,9 +115,9 @@ int main(int argc, char **argv)
 
 	QApplication::setWindowIcon(QIcon(":/icons/nevraxpill.ico"));
 
-	std::vector< std::pair< std::string, std::string > > params;
+	std::vector<std::pair<std::string, std::string>> params;
 
-	CCmdLineParser::parse( argc, argv, params );
+	CCmdLineParser::parse(argc, argv, params);
 
 	CCrashReportWidget w;
 	w.setup(params);
@@ -126,7 +125,7 @@ int main(int argc, char **argv)
 
 	int ret = app.exec();
 
-	if(ret != EXIT_SUCCESS)
+	if (ret != EXIT_SUCCESS)
 		return ret;
 	else
 		return w.getReturnValue();

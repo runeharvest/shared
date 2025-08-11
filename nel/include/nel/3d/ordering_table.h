@@ -22,8 +22,7 @@
 #include "nel/misc/smart_ptr.h"
 #include <vector>
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 /**
@@ -32,11 +31,11 @@ namespace NL3D
  * \author Nevrax France
  * \date 2000
  */
-template<class T> class COrderingTable
+template <class T>
+class COrderingTable
 {
 
 public:
-
 	COrderingTable();
 	~COrderingTable();
 
@@ -46,12 +45,11 @@ public:
 	// assignement operator. NB : Allocator is not shared from source, and bahave like when reset(0) is called.
 	COrderingTable &operator=(const COrderingTable<T> &other);
 
-
 	/**
 	 * Initialization.
 	 * The ordering table has a range from 0 to nNbEntries-1
 	 */
-	void init( uint32 nNbEntries );
+	void init(uint32 nNbEntries);
 
 	/**
 	 * Just return the number of entries in the ordering table
@@ -65,9 +63,9 @@ public:
 	void reset(uint maxElementToInsert);
 
 	/** Share allocator between 2 or more ordering tables. So that calling reset will give the max number of insert
-      * for both tables. This is useful if several table are used for sorting (example : sort by priority with one table per possible priority)
-	  * NB : the table of "source table" becomes the used allocator
-	  */
+	 * for both tables. This is useful if several table are used for sorting (example : sort by priority with one table per possible priority)
+	 * NB : the table of "source table" becomes the used allocator
+	 */
 	void shareAllocator(COrderingTable<T> &sourceTable) { _Allocator = sourceTable._Allocator; }
 
 	/**
@@ -76,7 +74,7 @@ public:
 	 *	NB: nlassert in debug if num of insert() calls exceed value passed in reset()
 	 *	NB: nlassert in debug if nEntryPos is => getSize()
 	 */
-	void insert( uint32 nEntryPos, T *pValue );
+	void insert(uint32 nEntryPos, T *pValue);
 
 	/**
 	 * Traversing operations
@@ -95,20 +93,19 @@ public:
 	/**
 	 * Get the currently selected element.
 	 */
-	T* get();
+	T *get();
 
 	/**
 	 * Move selection pointer to the next element
 	 */
 	void next();
 
-// =================
-// =================
-// IMPLEMENTATION.
-// =================
-// =================
+	// =================
+	// =================
+	// IMPLEMENTATION.
+	// =================
+	// =================
 private:
-
 	struct CNode
 	{
 		T *val;
@@ -125,21 +122,23 @@ private:
 	{
 	public:
 		std::vector<CNode> NodePool;
-		CNode			   *CurAllocatedNode;
-		CAllocator() : CurAllocatedNode(NULL) {}
+		CNode *CurAllocatedNode;
+		CAllocator()
+		    : CurAllocatedNode(NULL)
+		{
+		}
 	};
 	// a raw allocator of node.
-	NLMISC::CSmartPtr<CAllocator>	_Allocator;
-
+	NLMISC::CSmartPtr<CAllocator> _Allocator;
 
 	uint32 _nNbElt;
-	CNode* _Array;
-	CNode* _SelNode;
-
+	CNode *_Array;
+	CNode *_SelNode;
 };
 
 // ***************************************************************************
-template<class T> COrderingTable<T>::COrderingTable()
+template <class T>
+COrderingTable<T>::COrderingTable()
 {
 	_nNbElt = 0;
 	_Array = NULL;
@@ -148,15 +147,17 @@ template<class T> COrderingTable<T>::COrderingTable()
 }
 
 // ***************************************************************************
-template<class T> COrderingTable<T>::~COrderingTable()
+template <class T>
+COrderingTable<T>::~COrderingTable()
 {
-	delete [] _Array;
+	delete[] _Array;
 }
 
 // ***************************************************************************
-template<class T> void COrderingTable<T>::init( uint32 nNbEntries )
+template <class T>
+void COrderingTable<T>::init(uint32 nNbEntries)
 {
-	delete [] _Array;
+	delete[] _Array;
 	_nNbElt = nNbEntries;
 	if (nNbEntries == 0) return;
 	_Array = new CNode[_nNbElt];
@@ -164,76 +165,81 @@ template<class T> void COrderingTable<T>::init( uint32 nNbEntries )
 }
 
 // ***************************************************************************
-template<class T> uint32 COrderingTable<T>::getSize()
+template <class T>
+uint32 COrderingTable<T>::getSize()
 {
 	return _nNbElt;
 }
 
 // ***************************************************************************
-template<class T> void COrderingTable<T>::reset(uint maxElementToInsert)
+template <class T>
+void COrderingTable<T>::reset(uint maxElementToInsert)
 {
 	// reset allocation
-	maxElementToInsert= std::max(1U, maxElementToInsert);
+	maxElementToInsert = std::max(1U, maxElementToInsert);
 	_Allocator->NodePool.resize(maxElementToInsert);
-	_Allocator->CurAllocatedNode= &_Allocator->NodePool[0];
+	_Allocator->CurAllocatedNode = &_Allocator->NodePool[0];
 
 	// reset OT.
-	for( uint32 i = 0; i < _nNbElt-1; ++i )
+	for (uint32 i = 0; i < _nNbElt - 1; ++i)
 	{
 		_Array[i].val = NULL;
-		_Array[i].next = &_Array[i+1];
+		_Array[i].next = &_Array[i + 1];
 	}
-	_Array[_nNbElt-1].val  = NULL;
-	_Array[_nNbElt-1].next = NULL;
+	_Array[_nNbElt - 1].val = NULL;
+	_Array[_nNbElt - 1].next = NULL;
 }
 
 // ***************************************************************************
-template<class T> void COrderingTable<T>::insert( uint32 nEntryPos, T *pValue )
+template <class T>
+void COrderingTable<T>::insert(uint32 nEntryPos, T *pValue)
 {
 #ifdef NL_DEBUG
 	// check not so many calls to insert()
-	nlassert( !_Allocator->NodePool.empty() && _Allocator->CurAllocatedNode < (&_Allocator->NodePool[0])+_Allocator->NodePool.size() );
+	nlassert(!_Allocator->NodePool.empty() && _Allocator->CurAllocatedNode < (&_Allocator->NodePool[0]) + _Allocator->NodePool.size());
 	// check good entry size
-	nlassert( nEntryPos < _nNbElt );
+	nlassert(nEntryPos < _nNbElt);
 #endif
 	// get the head list node
 	CNode *headNode = &_Array[nEntryPos];
 	// alocate a new node
 	CNode *nextNode = _Allocator->CurAllocatedNode++;
 	// fill this new node with data of head node
-	nextNode->val= headNode->val;
-	nextNode->next= headNode->next;
+	nextNode->val = headNode->val;
+	nextNode->next = headNode->next;
 	// and replace head node with new data: consequence is pValue is insert in front of the list
-	headNode->val= pValue;
-	headNode->next= nextNode;
+	headNode->val = pValue;
+	headNode->next = nextNode;
 	// NB: prec of headNode is still correclty linked to headNode.
 }
 
 // ***************************************************************************
-template<class T> void COrderingTable<T>::begin()
+template <class T>
+void COrderingTable<T>::begin()
 {
 	_SelNode = &_Array[0];
-	if( _SelNode->val == NULL )
+	if (_SelNode->val == NULL)
 		next();
 }
 
 // ***************************************************************************
-template<class T> T* COrderingTable<T>::get()
+template <class T>
+T *COrderingTable<T>::get()
 {
-	if( _SelNode != NULL )
+	if (_SelNode != NULL)
 		return _SelNode->val;
 	else
 		return NULL;
 }
 
 // ***************************************************************************
-template<class T> void COrderingTable<T>::next()
+template <class T>
+void COrderingTable<T>::next()
 {
 	_SelNode = _SelNode->next;
-	while( ( _SelNode != NULL )&&( _SelNode->val == NULL ) )
+	while ((_SelNode != NULL) && (_SelNode->val == NULL))
 		_SelNode = _SelNode->next;
 }
-
 
 // ***************************************************************************
 template <class T>
@@ -245,7 +251,6 @@ inline COrderingTable<T>::COrderingTable(const COrderingTable<T> &other)
 	*this = other;
 }
 
-
 // ***************************************************************************
 template <class T>
 inline COrderingTable<T> &COrderingTable<T>::operator=(const COrderingTable<T> &other)
@@ -255,10 +260,7 @@ inline COrderingTable<T> &COrderingTable<T>::operator=(const COrderingTable<T> &
 	return *this;
 }
 
-
-
 } // NL3D
-
 
 #endif // NL_ORDERING_TABLE_H
 

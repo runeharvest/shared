@@ -32,7 +32,7 @@ class CTile_edit_dlg : public QMainWindow
 	Q_OBJECT
 
 protected:
-     void closeEvent(QCloseEvent *event);
+	void closeEvent(QCloseEvent *event);
 
 public:
 	CTile_edit_dlg(QWidget *parent = 0);
@@ -48,7 +48,7 @@ private slots:
 	void on_chooseVegetPushButton_clicked();
 	void on_resetVegetPushButton_clicked();
 	void on_surfaceDataLineEdit_textChanged();
-	void on_orientedCheckBox_stateChanged ( int state );
+	void on_orientedCheckBox_stateChanged(int state);
 	void on_tileSetListWidget_itemSelectionChanged();
 	void on_landListWidget_itemSelectionChanged();
 
@@ -68,6 +68,5 @@ private:
 	void initDialog();
 	Ui::MainWindow ui;
 };
-
 
 #endif

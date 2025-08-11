@@ -35,8 +35,8 @@
 // Project includes
 
 namespace NLSOUND {
-	class ISoundDriver;
-	class IMusicChannel;
+class ISoundDriver;
+class IMusicChannel;
 
 /**
  * \brief CMusicChannelFader
@@ -49,7 +49,14 @@ class CMusicChannelFader
 private:
 	struct _CMusicFader
 	{
-		_CMusicFader() : MusicChannel(NULL), XFadeVolume(0.f), XFadeDVolume(0.f), Playing(false), Fade(false) { }
+		_CMusicFader()
+		    : MusicChannel(NULL)
+		    , XFadeVolume(0.f)
+		    , XFadeDVolume(0.f)
+		    , Playing(false)
+		    , Fade(false)
+		{
+		}
 		IMusicChannel *MusicChannel;
 		float XFadeVolume; // 0--1
 		float XFadeDVolume; // delta
@@ -60,7 +67,7 @@ private:
 		{
 			XFadeVolume = 0.f;
 			XFadeDVolume = 1000.f / xFadeTime;
-			Fade = true; 
+			Fade = true;
 		}
 
 		inline void fadeOut(uint xFadeTime)
@@ -76,14 +83,15 @@ protected:
 
 	// outside pointers
 	ISoundDriver *_SoundDriver;
-	
+
 	// pointers
 	_CMusicFader _MusicFader[_MaxMusicFader];
-	
+
 	// instances
 	uint _ActiveMusicFader;
 	float _Gain;
 	NLMISC::TTime _LastTime;
+
 public:
 	CMusicChannelFader();
 	virtual ~CMusicChannelFader();
@@ -103,25 +111,25 @@ public:
 	 *	NB: if an old music was played, it is first stop with stopMusic()
 	 *	\param filepath file path, CPath::lookup is done here
 	 *  \param async stream music from hard disk, preload in memory if false
-	 *	\param loop must be true to play the music in loop. 
+	 *	\param loop must be true to play the music in loop.
 	 */
-	bool play(const std::string &filepath, uint xFadeTime = 0, bool async = true, bool loop = true); 
+	bool play(const std::string &filepath, uint xFadeTime = 0, bool async = true, bool loop = true);
 
 	/// Stop the music previously loaded and played (the Memory is also freed)
 	bool stop(uint xFadeTime = 0);
 
 	/// Pause the music previously loaded and played (the Memory is not freed)
 	void pause();
-	
+
 	/// Resume the music previously paused
 	void resume();
 
 	/// Return true if all songs are finished.
 	bool isEnded();
-	
+
 	/// Return the total length (in second) of the music currently played
 	float getLength();
-	
+
 	/// Set the music volume (if any music played). (volume value inside [0 , 1]) (default: 1)
 	/// NB: the volume of music is NOT affected by IListener::setGain()
 	void setVolume(float gain);

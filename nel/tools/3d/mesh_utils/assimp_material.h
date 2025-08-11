@@ -19,7 +19,7 @@
 #include <nel/misc/types_nl.h>
 
 namespace NL3D {
-	class CMaterial;
+class CMaterial;
 }
 
 struct CMeshUtilsContext;

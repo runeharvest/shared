@@ -24,17 +24,16 @@
 #include "export_appdata.h"
 #include "export_nel.h"
 
-
 using namespace NL3D;
 
-IShape* CExportNel::buildParticleSystem(INode& node, TimeValue time)
+IShape *CExportNel::buildParticleSystem(INode &node, TimeValue time)
 {
 	ObjectState os = node.EvalWorldState(time);
-    Object *obj = os.obj;
+	Object *obj = os.obj;
 	nlassert(obj);
 	std::string shapeName;
-	// try to get the complete path	
-	if (!CExportNel::getValueByNameUsingParamBlock2(node, "ps_file_name", (ParamType2) TYPE_STRING, &shapeName, 0))
+	// try to get the complete path
+	if (!CExportNel::getValueByNameUsingParamBlock2(node, "ps_file_name", (ParamType2)TYPE_STRING, &shapeName, 0))
 	{
 		// if not found, get from the APP_DATAS
 		shapeName = CExportNel::getNelObjectName(node);
@@ -42,11 +41,11 @@ IShape* CExportNel::buildParticleSystem(INode& node, TimeValue time)
 		shapeName = NLMISC::CPath::lookup(shapeName, false);
 		if (shapeName.empty()) return NULL;
 	}
-	
+
 	//
-	
+
 	if (!shapeName.empty())
-	{											
+	{
 		NL3D::CShapeStream ss;
 		NLMISC::CIFile iF;
 		if (iF.open(shapeName.c_str()))
@@ -66,24 +65,24 @@ IShape* CExportNel::buildParticleSystem(INode& node, TimeValue time)
 
 			// Get the node matrix
 			Matrix3 localTM;
-			getLocalMatrix (localTM, node, time);
+			getLocalMatrix(localTM, node, time);
 
 			// Get the translation, rotation, scale of the node
 			CVector pos, scale;
 			CQuat rot;
-			decompMatrix (scale, rot, pos, localTM);
+			decompMatrix(scale, rot, pos, localTM);
 
 			// Set the default values
-			pss->getDefaultPos()->setDefaultValue(pos);					
-			pss->getDefaultScale()->setDefaultValue(scale);					
-			pss->getDefaultRotQuat()->setDefaultValue(rot);												
+			pss->getDefaultPos()->setDefaultValue(pos);
+			pss->getDefaultScale()->setDefaultValue(scale);
+			pss->getDefaultRotQuat()->setDefaultValue(rot);
 			return pss;
 		}
 		else
 		{
 			mprintf(_M("Error : Can't find %s while exporting a particle system\n"), MaxTStrFromUtf8(shapeName).data());
 			return NULL;
-		}				
+		}
 	}
 	return NULL;
 }

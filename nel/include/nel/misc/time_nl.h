@@ -24,23 +24,20 @@
 
 #ifdef NL_OS_WINDOWS
 // automatically add the win multimedia library if you use CTime class
-#	pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "winmm.lib")
 #endif
 
-namespace NLMISC
-{
-
+namespace NLMISC {
 
 /// New time types
-typedef double TGameTime;		// Time according to the game (used for determining day, night...) (double in seconds)
-typedef uint32 TGameCycle;		// Integer game cycle count from the game (in game ticks)
-typedef double TLocalTime;		// Time according to the machine's local clock (double in seconds)
-typedef sint64 TCPUCycle;		// Integer cycle count from the CPU (for profiling in cpu ticks)
+typedef double TGameTime; // Time according to the game (used for determining day, night...) (double in seconds)
+typedef uint32 TGameCycle; // Integer game cycle count from the game (in game ticks)
+typedef double TLocalTime; // Time according to the machine's local clock (double in seconds)
+typedef sint64 TCPUCycle; // Integer cycle count from the CPU (for profiling in cpu ticks)
 
 /// Old time type
 typedef sint64 TTime;
 typedef sint64 TTicks;
-
 
 /**
  * This class provide a independant local time system.
@@ -71,7 +68,7 @@ public:
 	 * daylight saving if applicable.
 	 * This values is the same on all computer if computers are synchronized (with NTP for example).
 	 */
-	static uint32	getSecondsSince1970 ();
+	static uint32 getSecondsSince1970();
 
 	/** Return the number of second since midnight (00:00:00), January 1, 1970,
 	 * coordinated universal time, according to the system clock.
@@ -79,7 +76,7 @@ public:
 	 * nor it have the daylight saving ajustement.
 	 * This values is the same on all computer if computers are synchronized (with NTP for example).
 	 */
-//	static uint32	getSecondsSince1970UTC ();
+	//	static uint32	getSecondsSince1970UTC ();
 
 	/** Return the local time in milliseconds.
 	 * Use it only to measure time difference, the absolute value does not mean anything.
@@ -89,7 +86,7 @@ public:
 	 * time that is the same on all computers.
 	 * \warning On Win32, the value is on 32 bits only, and uses the low-res timer unless probeTimerInfo was called and a high resolution timer can be used. It wraps around to 0 every about 49.71 days.
 	 */
-	static TTime	getLocalTime();
+	static TTime getLocalTime();
 
 	/** Return the time in processor ticks. Use it for profile purpose.
 	 * If the performance time is not supported on this hardware, it returns 0.
@@ -100,17 +97,17 @@ public:
 	 * power management), so profiling several times and computing the average could be
 	 * a wise choice.
 	 */
-	static TTicks	getPerformanceTime ();
+	static TTicks getPerformanceTime();
 
 	/** Convert a ticks count into second. If the performance time is not supported on this
 	 * hardware, it returns 0.0.
 	 */
-	static double	ticksToSecond (TTicks ticks);
+	static double ticksToSecond(TTicks ticks);
 
 	/** Build a human readable string of a time difference in second.
 	 *	The result will be of the form '1 years 2 months 2 days 10 seconds'
 	 */
-	static std::string	getHumanRelativeTime(sint32 nbSeconds);
+	static std::string getHumanRelativeTime(sint32 nbSeconds);
 
 #ifdef NL_OS_WINDOWS
 	/** Return the offset in 10th of micro sec between the windows base time (
@@ -120,7 +117,6 @@ public:
 	 */
 	static uint64 getWindowsToUnixBaseTimeOffset();
 #endif
-
 };
 
 } // NLMISC

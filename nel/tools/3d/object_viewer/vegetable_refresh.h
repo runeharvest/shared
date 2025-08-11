@@ -19,7 +19,6 @@
 
 #include "nel/misc/types_nl.h"
 
-
 /**
  * An interface to refresh display of vegetable.
  * \author Lionel Berenguier
@@ -29,11 +28,8 @@
 class IVegetableRefresh
 {
 public:
-
-	virtual	void	refreshVegetableDisplay() =0;
-
+	virtual void refreshVegetableDisplay() = 0;
 };
-
 
 #endif // NL_VEGETABLE_REFRESH_H
 

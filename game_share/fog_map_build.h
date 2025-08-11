@@ -14,24 +14,31 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_FOG_MAP_BUILD_H
 #define RY_FOG_MAP_BUILD_H
 
-
 /** Description of fog map parameters
-  */
+ */
 class CFogMapBuild
 {
 public:
 	// Various kind of fog maps
-	enum TMapType { Day = 0, Night, Dusk, Distance, Depth, NoPrecipitation, NumMap };
+	enum TMapType
+	{
+		Day = 0,
+		Night,
+		Dusk,
+		Distance,
+		Depth,
+		NoPrecipitation,
+		NumMap
+	};
 	// Name of each map
 	std::string Map[NumMap];
 	// Corner zone giving extent of the maps
 	std::string ZoneMin;
 	std::string ZoneMax;
+
 public:
 	void serial(NLMISC::IStream &f);
 };

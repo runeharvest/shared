@@ -23,23 +23,20 @@
 #include "nel/misc/types_nl.h"
 #include <string>
 
-namespace NLGUI
+namespace NLGUI {
+
+struct SLinkData
 {
-
-	struct SLinkData
-	{
-	public:
-		uint32 id;
-		std::string parent;
-		std::string expr;
-		std::string target;
-		std::string action;
-		std::string params;
-		std::string cond;
-	};
-
+public:
+	uint32 id;
+	std::string parent;
+	std::string expr;
+	std::string target;
+	std::string action;
+	std::string params;
+	std::string cond;
+};
 
 }
-
 
 #endif

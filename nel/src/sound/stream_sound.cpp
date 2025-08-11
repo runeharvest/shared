@@ -24,8 +24,7 @@
 #include "nel/sound/group_controller_root.h"
 #endif
 
-namespace NLSOUND
-{
+namespace NLSOUND {
 
 CStreamSound::CStreamSound()
     : m_Alpha(1.0f)

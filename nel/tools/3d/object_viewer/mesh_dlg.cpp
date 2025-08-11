@@ -29,8 +29,11 @@
 #include "nel/misc/path.h"
 
 ///==================================================================
-CMeshDlg::CMeshDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSShapeParticle *sp, CParticleDlg  *particleDlg)
-	: _Node(ownerNode), _ShapeParticle(sp), _EMMD(NULL), _ParticleDlg(particleDlg)
+CMeshDlg::CMeshDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSShapeParticle *sp, CParticleDlg *particleDlg)
+    : _Node(ownerNode)
+    , _ShapeParticle(sp)
+    , _EMMD(NULL)
+    , _ParticleDlg(particleDlg)
 {
 	//{{AFX_DATA_INIT(CMeshDlg)
 	//}}AFX_DATA_INIT
@@ -52,16 +55,17 @@ void CMeshDlg::init(CWnd *pParent, sint x, sint y)
 	Create(IDD_CHOOSE_MESH, pParent);
 	RECT r;
 	GetClientRect(&r);
-	r.top += y; r.bottom += y;
-	r.right += x; r.left += x;
-	MoveWindow(&r);	
+	r.top += y;
+	r.bottom += y;
+	r.right += x;
+	r.left += x;
+	MoveWindow(&r);
 
 	ShowWindow(SW_SHOW);
 }
 
-
 ///==================================================================
-void CMeshDlg::DoDataExchange(CDataExchange* pDX)
+void CMeshDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CMeshDlg)
@@ -70,29 +74,28 @@ void CMeshDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CMeshDlg, CDialog)
-	//{{AFX_MSG_MAP(CMeshDlg)
-	ON_BN_CLICKED(IDC_BROWSE_SHAPE, OnBrowseShape)
-	ON_BN_CLICKED(IDC_ENABLE_MORPHING, OnEnableMorphing)
-	ON_BN_CLICKED(IDC_EDIT_MORPH, OnEditMorph)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CMeshDlg)
+ON_BN_CLICKED(IDC_BROWSE_SHAPE, OnBrowseShape)
+ON_BN_CLICKED(IDC_ENABLE_MORPHING, OnEnableMorphing)
+ON_BN_CLICKED(IDC_EDIT_MORPH, OnEditMorph)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 ///==================================================================
 void CMeshDlg::touchPSState()
 {
 	if (_Node && _Node->getPSModel())
-	{	
+	{
 		_Node->getPSModel()->touchTransparencyState();
 		_Node->getPSModel()->touchLightableState();
 	}
 }
 
 ///==================================================================
-void CMeshDlg::OnBrowseShape() 
+void CMeshDlg::OnBrowseShape()
 {
-	
+
 	CFileDialog fd(TRUE, _T(".shape"), _T("*.shape"), 0, NULL, this);
 	if (fd.DoModal() == IDOK)
 	{
@@ -102,18 +105,18 @@ void CMeshDlg::OnBrowseShape()
 		std::string ext = NLMISC::CFile::getExtension(fullPath);
 
 		// Add search path for the texture
-		NLMISC::CPath::addSearchPath (NLMISC::CFile::getPath(fullPath));
+		NLMISC::CPath::addSearchPath(NLMISC::CFile::getPath(fullPath));
 
 		try
-		{		
-			_ShapeParticle->setShape(fname + "." + ext);		
+		{
+			_ShapeParticle->setShape(fname + "." + ext);
 			m_ShapeName = nlUtf8ToTStr(fname + "." + ext);
-			touchPSState();			
+			touchPSState();
 		}
 		catch (const NLMISC::Exception &e)
 		{
 			MessageBox(nlUtf8ToTStr(e.what()), _T("shape loading error"));
-		}		
+		}
 
 		updateMeshErrorString();
 	}
@@ -121,11 +124,10 @@ void CMeshDlg::OnBrowseShape()
 	UpdateData(FALSE);
 }
 
-
 ///==================================================================
-BOOL CMeshDlg::OnInitDialog() 
+BOOL CMeshDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();	
+	CDialog::OnInitDialog();
 	if (!dynamic_cast<NL3D::CPSConstraintMesh *>(_ShapeParticle))
 	{
 		// hide the unused fields
@@ -136,18 +138,18 @@ BOOL CMeshDlg::OnInitDialog()
 		UpdateData(FALSE);
 	}
 	else
-	{		
+	{
 		NL3D::CPSConstraintMesh *cm = NLMISC::safe_cast<NL3D::CPSConstraintMesh *>(_ShapeParticle);
 		if (cm->getNumShapes() > 1)
 		{
-			((CButton *) GetDlgItem(IDC_ENABLE_MORPHING))->SetCheck(TRUE);
+			((CButton *)GetDlgItem(IDC_ENABLE_MORPHING))->SetCheck(TRUE);
 		}
 		updateForMorph();
 	}
-	m_MeshErrorMsg.SetTextColor(RGB(255,  0,  0));
+	m_MeshErrorMsg.SetTextColor(RGB(255, 0, 0));
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 ///==================================================================
@@ -156,7 +158,7 @@ void CMeshDlg::updateForMorph()
 	NL3D::CPSConstraintMesh *cm = NLMISC::safe_cast<NL3D::CPSConstraintMesh *>(_ShapeParticle);
 	if (cm)
 	{
-		BOOL enable = cm->getNumShapes() > 1;						
+		BOOL enable = cm->getNumShapes() > 1;
 		GetDlgItem(IDC_EDIT_MORPH)->EnableWindow(enable);
 		GetDlgItem(IDC_BROWSE_SHAPE)->EnableWindow(!enable);
 		GetDlgItem(IDC_SHAPE_NAME)->EnableWindow(!enable);
@@ -174,14 +176,14 @@ void CMeshDlg::updateForMorph()
 }
 
 ///==================================================================
-void CMeshDlg::OnEnableMorphing() 
+void CMeshDlg::OnEnableMorphing()
 {
 	NL3D::CPSConstraintMesh *cm = NLMISC::safe_cast<NL3D::CPSConstraintMesh *>(_ShapeParticle);
-	if (((CButton *) GetDlgItem(IDC_ENABLE_MORPHING))->GetCheck())
+	if (((CButton *)GetDlgItem(IDC_ENABLE_MORPHING))->GetCheck())
 	{
-		// morphing enabled..		
-		std::string currName[2] = { cm->getShape(), cm->getShape()};
-		cm->setShapes(currName, 2);		
+		// morphing enabled..
+		std::string currName[2] = { cm->getShape(), cm->getShape() };
+		cm->setShapes(currName, 2);
 	}
 	else
 	{
@@ -195,7 +197,7 @@ void CMeshDlg::OnEnableMorphing()
 }
 
 ///==================================================================
-void CMeshDlg::OnEditMorph() 
+void CMeshDlg::OnEditMorph()
 {
 	nlassert(_EMMD == NULL);
 	NL3D::CPSConstraintMesh *cm = NLMISC::safe_cast<NL3D::CPSConstraintMesh *>(_ShapeParticle);
@@ -215,16 +217,15 @@ void CMeshDlg::childPopupClosed(CWnd *child)
 	updateMeshErrorString();
 }
 
-
 ///==================================================================
-BOOL CMeshDlg::EnableWindow( BOOL bEnable)
+BOOL CMeshDlg::EnableWindow(BOOL bEnable)
 {
 	if (!bEnable)
 	{
 		GetDlgItem(IDC_EDIT_MORPH)->EnableWindow(FALSE);
 		GetDlgItem(IDC_BROWSE_SHAPE)->EnableWindow(FALSE);
 		GetDlgItem(IDC_ENABLE_MORPHING)->EnableWindow(FALSE);
-		GetDlgItem(IDC_SHAPE_NAME)->EnableWindow(FALSE);	
+		GetDlgItem(IDC_SHAPE_NAME)->EnableWindow(FALSE);
 	}
 	else
 	{
@@ -246,13 +247,13 @@ void CMeshDlg::updateMeshErrorString()
 	if (numVerts.empty()) return;
 	if (numVerts.size() == 1)
 	{
-		GetDlgItem(IDC_MESH_ERROR)->SetWindowText((LPCTSTR) getShapeErrorString(numVerts[0]));
+		GetDlgItem(IDC_MESH_ERROR)->SetWindowText((LPCTSTR)getShapeErrorString(numVerts[0]));
 	}
 	else
 	{
 		// display error msg for morphed meshs
 		bool hasError = false;
-		for(uint k = 0; k < numVerts.size(); ++k)
+		for (uint k = 0; k < numVerts.size(); ++k)
 		{
 			if (numVerts[k] < 0)
 			{
@@ -264,7 +265,7 @@ void CMeshDlg::updateMeshErrorString()
 		{
 			CString errorInMorphMesh;
 			errorInMorphMesh.LoadString(IDS_ERROR_IN_MORPH_MESH);
-			GetDlgItem(IDC_MESH_ERROR)->SetWindowText((LPCTSTR) errorInMorphMesh);
+			GetDlgItem(IDC_MESH_ERROR)->SetWindowText((LPCTSTR)errorInMorphMesh);
 		}
 	}
 }
@@ -273,16 +274,13 @@ void CMeshDlg::updateMeshErrorString()
 CString CMeshDlg::getShapeErrorString(sint errorCode)
 {
 	CString str;
-	switch(errorCode)
+	switch (errorCode)
 	{
-		case NL3D::CPSConstraintMesh::ShapeFileIsNotAMesh: str.LoadString(IDS_SHAPE_FILE_NOT_MESH); break;
-		case NL3D::CPSConstraintMesh::ShapeFileNotLoaded: str.LoadString(IDS_SHAPE_NOT_LOADED); break;
-		case NL3D::CPSConstraintMesh::ShapeHasTooMuchVertices: str.LoadString(IDS_TOO_MUCH_VERTICES); break;
-		default:
+	case NL3D::CPSConstraintMesh::ShapeFileIsNotAMesh: str.LoadString(IDS_SHAPE_FILE_NOT_MESH); break;
+	case NL3D::CPSConstraintMesh::ShapeFileNotLoaded: str.LoadString(IDS_SHAPE_NOT_LOADED); break;
+	case NL3D::CPSConstraintMesh::ShapeHasTooMuchVertices: str.LoadString(IDS_TOO_MUCH_VERTICES); break;
+	default:
 		break;
 	};
 	return str;
 }
-
-
-

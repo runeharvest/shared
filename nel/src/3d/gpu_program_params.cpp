@@ -46,7 +46,9 @@ namespace NL3D {
 
 const size_t CGPUProgramParams::s_End = -1;
 
-CGPUProgramParams::CGPUProgramParams() : m_First(s_End), m_Last(s_End)
+CGPUProgramParams::CGPUProgramParams()
+    : m_First(s_End)
+    , m_Last(s_End)
 {
 }
 
@@ -78,7 +80,7 @@ void CGPUProgramParams::copy(CGPUProgramParams *params)
 			nlassert(!name.empty());
 			local = allocOffset(name, size, count, params->getTypeByOffset(offset));
 		}
-		
+
 		uint32 *src = params->getPtrUIByOffset(offset);
 		uint32 *dst = getPtrUIByOffset(local);
 
@@ -181,7 +183,7 @@ void CGPUProgramParams::set4ui(uint index, uint32 ui0, uint32 ui1, uint32 ui2, u
 	ui[3] = ui3;
 }
 
-void CGPUProgramParams::set3f(uint index, const NLMISC::CVector& v)
+void CGPUProgramParams::set3f(uint index, const NLMISC::CVector &v)
 {
 	float *f = getPtrFByOffset(allocOffset(index, 3, 1, Float));
 	f[0] = v.x;
@@ -189,7 +191,7 @@ void CGPUProgramParams::set3f(uint index, const NLMISC::CVector& v)
 	f[2] = v.z;
 }
 
-void CGPUProgramParams::set4f(uint index, const NLMISC::CVector& v, float f3)
+void CGPUProgramParams::set4f(uint index, const NLMISC::CVector &v, float f3)
 {
 	float *f = getPtrFByOffset(allocOffset(index, 4, 1, Float));
 	f[0] = v.x;
@@ -198,7 +200,7 @@ void CGPUProgramParams::set4f(uint index, const NLMISC::CVector& v, float f3)
 	f[3] = f3;
 }
 
-void CGPUProgramParams::set4x4f(uint index, const NLMISC::CMatrix& m)
+void CGPUProgramParams::set4x4f(uint index, const NLMISC::CMatrix &m)
 {
 	// TODO: Verify this!
 	float *f = getPtrFByOffset(allocOffset(index, 4, 4, Float));
@@ -330,7 +332,7 @@ void CGPUProgramParams::set4ui(const std::string &name, uint32 ui0, uint32 ui1, 
 	ui[3] = ui3;
 }
 
-void CGPUProgramParams::set3f(const std::string &name, const NLMISC::CVector& v)
+void CGPUProgramParams::set3f(const std::string &name, const NLMISC::CVector &v)
 {
 	float *f = getPtrFByOffset(allocOffset(name, 3, 1, Float));
 	f[0] = v.x;
@@ -338,7 +340,7 @@ void CGPUProgramParams::set3f(const std::string &name, const NLMISC::CVector& v)
 	f[2] = v.z;
 }
 
-void CGPUProgramParams::set4f(const std::string &name, const NLMISC::CVector& v, float f3)
+void CGPUProgramParams::set4f(const std::string &name, const NLMISC::CVector &v, float f3)
 {
 	float *f = getPtrFByOffset(allocOffset(name, 4, 1, Float));
 	f[0] = v.x;
@@ -347,7 +349,7 @@ void CGPUProgramParams::set4f(const std::string &name, const NLMISC::CVector& v,
 	f[3] = f3;
 }
 
-void CGPUProgramParams::set4x4f(const std::string &name, const NLMISC::CMatrix& m)
+void CGPUProgramParams::set4x4f(const std::string &name, const NLMISC::CMatrix &m)
 {
 	// TODO: Verify this!
 	float *f = getPtrFByOffset(allocOffset(name, 4, 4, Float));
@@ -568,7 +570,7 @@ void CGPUProgramParams::freeOffset(size_t offset)
 	}
 	else
 	{
-		nlassert(m_Meta[offset].Next != s_End);		
+		nlassert(m_Meta[offset].Next != s_End);
 		m_Meta[m_Meta[offset].Next].Prev = m_Meta[offset].Prev;
 	}
 	if (offset == m_First)

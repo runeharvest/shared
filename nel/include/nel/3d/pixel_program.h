@@ -38,11 +38,10 @@ public:
 	/// Constructor
 	CPixelProgram();
 	/// Destructor
-	virtual ~CPixelProgram ();
+	virtual ~CPixelProgram();
 };
 
 } // NL3D
-
 
 #endif // NL_PIXEL_PROGRAM_H
 

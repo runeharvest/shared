@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RYAI_AIDS_MESSAGES_H
 #define RYAI_AIDS_MESSAGES_H
 
@@ -25,9 +23,8 @@
 
 #include "nel/net/transport_class.h"
 
-
 //----------------------------------------------------------------
-// Message sent by AIS to AIDS in reaction to AIDS's service up 
+// Message sent by AIS to AIDS in reaction to AIDS's service up
 
 class CMsgAIServiceUp : public NLNET::CTransportClass
 {
@@ -36,29 +33,28 @@ public:
 	float RamAllocation;
 	std::vector<uint16> ManagersRunning;
 
-	CMsgAIServiceUp() 
+	CMsgAIServiceUp()
 	{
-		ProcessorAllocation=1.0f;
-		RamAllocation=1.0f;
-	}
-	
-	CMsgAIServiceUp(float processorAllocation,float ramAllocation) 
-	{
-		ProcessorAllocation=processorAllocation;
-		RamAllocation=ramAllocation;
+		ProcessorAllocation = 1.0f;
+		RamAllocation = 1.0f;
 	}
 
-	virtual void description ()
+	CMsgAIServiceUp(float processorAllocation, float ramAllocation)
 	{
-		className ("CMsgAIServiceUp");
-		property ("ProcessorAllocation", PropFloat, 1.0f, ProcessorAllocation);
-		property ("RamAllocation", PropFloat, 1.0f, RamAllocation);
-		propertyCont ("ManagersRunning", PropUInt16, ManagersRunning);
+		ProcessorAllocation = processorAllocation;
+		RamAllocation = ramAllocation;
 	}
 
-	virtual void callback (const std::string &name, NLNET::TServiceId id);
+	virtual void description()
+	{
+		className("CMsgAIServiceUp");
+		property("ProcessorAllocation", PropFloat, 1.0f, ProcessorAllocation);
+		property("RamAllocation", PropFloat, 1.0f, RamAllocation);
+		propertyCont("ManagersRunning", PropUInt16, ManagersRunning);
+	}
+
+	virtual void callback(const std::string &name, NLNET::TServiceId id);
 };
-
 
 //----------------------------------------------------------------
 // Message sent by AIS to AIDS each time new manager comes up
@@ -69,25 +65,24 @@ public:
 	uint16 MgrId;
 	std::string Name;
 
-	CMsgAIManagerUp() 
+	CMsgAIManagerUp()
 	{
-	}
-	
-	CMsgAIManagerUp(uint mgrId,std::string Name) 
-	{
-		MgrId=mgrId;
 	}
 
-	virtual void description ()
+	CMsgAIManagerUp(uint mgrId, std::string Name)
 	{
-		className ("CMsgAIManagerUp");
-		property ("MgrId", PropUInt16, uint16(0), MgrId);
-		property ("Name", PropString, std::string(), Name);
+		MgrId = mgrId;
 	}
 
-	virtual void callback (const std::string &name, NLNET::TServiceId id);
+	virtual void description()
+	{
+		className("CMsgAIManagerUp");
+		property("MgrId", PropUInt16, uint16(0), MgrId);
+		property("Name", PropString, std::string(), Name);
+	}
+
+	virtual void callback(const std::string &name, NLNET::TServiceId id);
 };
-
 
 //----------------------------------------------------------------
 // Message sent by AIS to AIDS any time there's an important info to display
@@ -100,25 +95,24 @@ public:
 	CMsgAIFeedback()
 	{
 	}
-	
+
 	CMsgAIFeedback(const std::string &message)
 	{
-		Message=message;
+		Message = message;
 	}
 
 	CMsgAIFeedback(const char *msgStr)
 	{
-		Message=std::string(msgStr);
+		Message = std::string(msgStr);
 	}
 
-	virtual void description ()
+	virtual void description()
 	{
-		className ("CMsgAIFeedback");
-		property ("Msg", PropString, std::string(), Message);
+		className("CMsgAIFeedback");
+		property("Msg", PropString, std::string(), Message);
 	}
 
-	virtual void callback (const std::string &name, NLNET::TServiceId id);
+	virtual void callback(const std::string &name, NLNET::TServiceId id);
 };
 
 #endif
-

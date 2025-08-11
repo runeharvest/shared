@@ -20,14 +20,11 @@
 #include "nel/misc/types_nl.h"
 #include "nel/3d/transform.h"
 
-
 namespace NL3D {
-
 
 // ***************************************************************************
 // ClassIds.
-const NLMISC::CClassId		RootModelId=NLMISC::CClassId(0x25f0505d, 0x75c69f9);
-
+const NLMISC::CClassId RootModelId = NLMISC::CClassId(0x25f0505d, 0x75c69f9);
 
 // ***************************************************************************
 /**
@@ -40,34 +37,29 @@ class CRootModel : public CTransform
 {
 public:
 	/// Call at the beginning of the program, to register the model
-	static	void	registerBasic();
-
+	static void registerBasic();
 
 	/// \name CTransform traverse specialisation
 	// @{
-	virtual void	traverseHrc();
-	virtual void	traverseClip();
-	virtual void	traverseAnimDetail();
-	virtual void	traverseLoadBalancing();
-	virtual void	traverseLight();
-	virtual void	traverseRender();
+	virtual void traverseHrc();
+	virtual void traverseClip();
+	virtual void traverseAnimDetail();
+	virtual void traverseLoadBalancing();
+	virtual void traverseLight();
+	virtual void traverseRender();
 	// @}
-
 
 protected:
 	/// Constructor
-	CRootModel() {}
+	CRootModel() { }
 	/// Destructor
-	virtual ~CRootModel() {}
+	virtual ~CRootModel() { }
 
 private:
-	static CTransform	*creator() {return new CRootModel;}
-
+	static CTransform *creator() { return new CRootModel; }
 };
 
-
 } // NL3D
-
 
 #endif // NL_ROOT_MODEL_H
 

@@ -26,17 +26,16 @@ using namespace NLMISC;
 using namespace std;
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace STRING_MANAGER
-{
+namespace STRING_MANAGER {
 
 uint64 makePhraseHash(const TPhrase &phrase)
 {
 	ucstring text;
 	text = phrase.Parameters;
-	for (uint i=0; i<phrase.Clauses.size(); ++i)
+	for (uint i = 0; i < phrase.Clauses.size(); ++i)
 	{
 		text += phrase.Clauses[i].Conditions;
 		text += phrase.Clauses[i].Identifier;
@@ -45,9 +44,6 @@ uint64 makePhraseHash(const TPhrase &phrase)
 
 	return CI18N::makeHash(text);
 }
-
-
-
 
 bool parseHashFromComment(const ucstring &comments, uint64 &hashValue)
 {
@@ -62,7 +58,6 @@ bool parseHashFromComment(const ucstring &comments, uint64 &hashValue)
 	hashValue = CI18N::stringToHash(hashStr);
 	return true;
 }
-
 
 uint32 countLine(const ucstring &text, const ucstring::const_iterator upTo)
 {
@@ -80,49 +75,49 @@ uint32 countLine(const ucstring &text, const ucstring::const_iterator upTo)
 
 bool loadStringFile(const std::string filename, vector<TStringInfo> &stringInfos, bool forceRehash, ucchar openMark, ucchar closeMark, bool specialCase)
 {
-/*	uint8 *buffer = 0;
-	uint	size;
+	/*	uint8 *buffer = 0;
+	    uint	size;
 
-	try
-	{
-		CIFile fp(filename);
-		size = fp.getFileSize();
-		buffer = new uint8[size];
-		fp.serialBuffer(buffer, size);
-	}
-	catch(const Exception &e)
-	{
-		nlinfo("Can't open file [%s] (%s)\n", filename.c_str(), e.what());
-		return true;
-	}
-*/
-/*	FILE *fp = nlfopen(filename, "rb");
+	    try
+	    {
+	        CIFile fp(filename);
+	        size = fp.getFileSize();
+	        buffer = new uint8[size];
+	        fp.serialBuffer(buffer, size);
+	    }
+	    catch(const Exception &e)
+	    {
+	        nlinfo("Can't open file [%s] (%s)\n", filename.c_str(), e.what());
+	        return true;
+	    }
+	*/
+	/*	FILE *fp = nlfopen(filename, "rb");
 
-	if (fp == NULL)
-	{
-		nlinfo("Can't open file [%s]\n", filename.c_str());
-		if (buffer != 0)
-			delete [] buffer;
-		return true;
-	}
+	    if (fp == NULL)
+	    {
+	        nlinfo("Can't open file [%s]\n", filename.c_str());
+	        if (buffer != 0)
+	            delete [] buffer;
+	        return true;
+	    }
 
-	// move to end of file
-	fseek(fp, 0, SEEK_END);
+	    // move to end of file
+	    fseek(fp, 0, SEEK_END);
 
-	fpos_t	pos;
-	fgetpos(fp, &pos);
+	    fpos_t	pos;
+	    fgetpos(fp, &pos);
 
-	uint8 *buffer = new uint8[uint(pos)];
+	    uint8 *buffer = new uint8[uint(pos)];
 
-	rewind(fp);
-	uint size = fread(buffer, 1, uint(pos), fp);
-	fclose (fp);
-*/
+	    rewind(fp);
+	    uint size = fread(buffer, 1, uint(pos), fp);
+	    fclose (fp);
+	*/
 	ucstring text;
 
 	CI18N::readTextFile(filename, text, false, true, CI18N::LINE_FMT_LF);
-//	CI18N::readTextBuffer(buffer, size, text);
-//	delete [] buffer;
+	//	CI18N::readTextBuffer(buffer, size, text);
+	//	delete [] buffer;
 
 	// ok, parse the file now.
 	ucstring::const_iterator first(text.begin()), last(text.end());
@@ -147,7 +142,7 @@ bool loadStringFile(const std::string filename, vector<TStringInfo> &stringInfos
 		if (CI18N::matchToken("#fileline", first, last))
 		{
 			// for now, just skip
-			uint32 lineCounter =0;	// we count line another way
+			uint32 lineCounter = 0; // we count line another way
 			CI18N::skipLine(first, last, lineCounter);
 
 			// begin parse of next line
@@ -158,9 +153,9 @@ bool loadStringFile(const std::string filename, vector<TStringInfo> &stringInfos
 		{
 			uint32 line = countLine(text, first);
 			nlwarning("DT: Fatal : In '%s', line %u: Invalid label after '%s'",
-				filename.c_str(),
-				line,
-				lastLabel.c_str());
+			    filename.c_str(),
+			    line,
+			    lastLabel.c_str());
 			return false;
 		}
 		lastLabel = si.Identifier;
@@ -171,9 +166,9 @@ bool loadStringFile(const std::string filename, vector<TStringInfo> &stringInfos
 		{
 			uint32 line = countLine(text, first);
 			nlwarning("DT: Fatal : In '%s', line %u: Invalid text value for label %s",
-				filename.c_str(),
-				line,
-				lastLabel.c_str());
+			    filename.c_str(),
+			    line,
+			    lastLabel.c_str());
 			return false;
 		}
 
@@ -185,45 +180,42 @@ bool loadStringFile(const std::string filename, vector<TStringInfo> &stringInfos
 			{
 				uint32 line = countLine(text, first);
 				nlwarning("DT: Fatal: In '%s' line %u: Invalid text2 value label %s",
-					filename.c_str(),
-					line,
-					lastLabel.c_str());
+				    filename.c_str(),
+				    line,
+				    lastLabel.c_str());
 				return false;
 			}
-
 		}
 
 		if (forceRehash || !parseHashFromComment(si.Comments, si.HashValue))
 		{
 			// compute the hash value from text.
 			si.HashValue = CI18N::makeHash(si.Text);
-//			nldebug("Generating hash for %s as %s", si.Identifier.c_str(), CI18N::hashToString(si.HashValue).c_str());
+			//			nldebug("Generating hash for %s as %s", si.Identifier.c_str(), CI18N::hashToString(si.HashValue).c_str());
 		}
 		else
 		{
-//			nldebug("Comment = [%s]", si.Comments.toString().c_str());
-//			nldebug("Retrieving hash for %s as %s", si.Identifier.c_str(), CI18N::hashToString(si.HashValue).c_str());
+			//			nldebug("Comment = [%s]", si.Comments.toString().c_str());
+			//			nldebug("Retrieving hash for %s as %s", si.Identifier.c_str(), CI18N::hashToString(si.HashValue).c_str());
 		}
 		stringInfos.push_back(si);
 	}
 
-
 	// check identifier uniqueness
 	{
 		bool error = false;
-		set<string>	unik;
+		set<string> unik;
 		set<string>::iterator it;
-		for (uint i=0; i<stringInfos.size(); ++i)
+		for (uint i = 0; i < stringInfos.size(); ++i)
 		{
 			it = unik.find(stringInfos[i].Identifier);
 			if (it != unik.end())
 			{
-				nlwarning("DT: loadStringFile : identifier '%s' exist twice", stringInfos[i].Identifier.c_str() );
+				nlwarning("DT: loadStringFile : identifier '%s' exist twice", stringInfos[i].Identifier.c_str());
 				error = true;
 			}
 			else
 				unik.insert(stringInfos[i].Identifier);
-
 		}
 		if (error)
 			return false;
@@ -231,7 +223,6 @@ bool loadStringFile(const std::string filename, vector<TStringInfo> &stringInfos
 
 	return true;
 }
-
 
 ucstring prepareStringFile(const vector<TStringInfo> &strings, bool removeDiffComments, bool noDiffInfo)
 {
@@ -247,31 +238,31 @@ ucstring prepareStringFile(const vector<TStringInfo> &strings, bool removeDiffCo
 		explode(comment, string("\n"), lines, true);
 
 		uint i;
-		for (i=0; i<lines.size(); ++i)
+		for (i = 0; i < lines.size(); ++i)
 		{
 			if (removeDiffComments)
 			{
 				if (lines[i].find("// DIFF ") != string::npos)
 				{
-					lines.erase(lines.begin()+i);
+					lines.erase(lines.begin() + i);
 					--i;
 					continue;
 				}
 			}
 			if (lines[i].find("// INDEX ") != string::npos)
 			{
-				lines.erase(lines.begin()+i);
+				lines.erase(lines.begin() + i);
 				--i;
 			}
 			else if (lines[i].find("// HASH_VALUE ") != string::npos)
 			{
-				lines.erase(lines.begin()+i);
+				lines.erase(lines.begin() + i);
 				--i;
 			}
 		}
 
 		comment.erase();
-		for (i=0; i<lines.size(); ++i)
+		for (i = 0; i < lines.size(); ++i)
 		{
 			comment += lines[i] + "\n";
 		}
@@ -281,11 +272,11 @@ ucstring prepareStringFile(const vector<TStringInfo> &strings, bool removeDiffCo
 		if (!si.Identifier.empty() || !si.Text.empty())
 		{
 			// add hash value comment if needed
-//			if (si.Comments.find(ucstring("// HASH_VALUE ")) == ucstring::npos)
+			//			if (si.Comments.find(ucstring("// HASH_VALUE ")) == ucstring::npos)
 			if (!noDiffInfo)
 			{
 				str += "// HASH_VALUE " + CI18N::hashToString(si.HashValue) + "\n";
-				str += "// INDEX " + NLMISC::toString("%u", first-strings.begin()) + "\n";
+				str += "// INDEX " + NLMISC::toString("%u", first - strings.begin()) + "\n";
 			}
 			str += si.Identifier + '\t';
 
@@ -295,21 +286,20 @@ ucstring prepareStringFile(const vector<TStringInfo> &strings, bool removeDiffCo
 			string::size_type pos;
 			while ((pos = text.find("\\n")) != string::npos)
 			{
-				text2 += text.substr(0, pos+2) + "\n\t";
-				text = text.substr(pos+2);
+				text2 += text.substr(0, pos + 2) + "\n\t";
+				text = text.substr(pos + 2);
 			}
-			text2 += text;//.substr(0, pos+2);
+			text2 += text; //.substr(0, pos+2);
 			str += text2 + "\n\n";
-//			str += CI18N::makeMarkedString('[', ']', si.Text) + nl + nl;
+			//			str += CI18N::makeMarkedString('[', ']', si.Text) + nl + nl;
 		}
 
-//		nldebug("Adding string [%s]", str.toString().c_str());
+		//		nldebug("Adding string [%s]", str.toString().c_str());
 		diff += str;
 	}
 
 	return ucstring::makeFromUtf8(diff);
 }
-
 
 bool readPhraseFile(const std::string &filename, vector<TPhrase> &phrases, bool forceRehash)
 {
@@ -320,14 +310,14 @@ bool readPhraseFile(const std::string &filename, vector<TPhrase> &phrases, bool 
 	return readPhraseFileFromString(doc, filename, phrases, forceRehash);
 }
 
-bool readPhraseFileFromString(ucstring const& doc, const std::string &filename, vector<TPhrase> &phrases, bool forceRehash)
+bool readPhraseFileFromString(ucstring const &doc, const std::string &filename, vector<TPhrase> &phrases, bool forceRehash)
 {
 	std::string lastRead("nothing");
 
 	ucstring::const_iterator first(doc.begin()), last(doc.end());
 	while (first != last)
 	{
-		TPhrase	phrase;
+		TPhrase phrase;
 		// parse the phrase
 		CI18N::skipWhiteSpace(first, last, &phrase.Comments);
 
@@ -345,7 +335,7 @@ bool readPhraseFileFromString(ucstring const& doc, const std::string &filename, 
 		if (CI18N::matchToken("#fileline", first, last))
 		{
 			// for now, just skip
-			uint32 lineCounter =0;	// we count line another way
+			uint32 lineCounter = 0; // we count line another way
 			CI18N::skipLine(first, last, lineCounter);
 
 			// begin parse of next line
@@ -356,21 +346,21 @@ bool readPhraseFileFromString(ucstring const& doc, const std::string &filename, 
 		{
 			uint32 line = countLine(doc, first);
 			nlwarning("DT: In '%s' line %u: Error parsing phrase identifier after %s\n",
-				filename.c_str(),
-				line,
-				lastRead.c_str());
+			    filename.c_str(),
+			    line,
+			    lastRead.c_str());
 			return false;
 		}
-//		nldebug("DT: parsing phrase '%s'", phrase.Identifier.c_str());
+		//		nldebug("DT: parsing phrase '%s'", phrase.Identifier.c_str());
 		lastRead = phrase.Identifier;
 		CI18N::skipWhiteSpace(first, last, &phrase.Comments);
 		if (!CI18N::parseMarkedString('(', ')', first, last, phrase.Parameters))
 		{
 			uint32 line = countLine(doc, first);
 			nlwarning("DT: in '%s', line %u: Error parsing parameter list for phrase %s\n",
-				filename.c_str(),
-				line,
-				phrase.Identifier.c_str());
+			    filename.c_str(),
+			    line,
+			    phrase.Identifier.c_str());
 			return false;
 		}
 		CI18N::skipWhiteSpace(first, last, &phrase.Comments);
@@ -378,9 +368,9 @@ bool readPhraseFileFromString(ucstring const& doc, const std::string &filename, 
 		{
 			uint32 line = countLine(doc, first);
 			nlwarning("DT: In '%s', line %u: Error parsing block opening '{' in phase %s\n",
-				filename.c_str(),
-				line,
-				phrase.Identifier.c_str());
+			    filename.c_str(),
+			    line,
+			    phrase.Identifier.c_str());
 			return false;
 		}
 		++first;
@@ -389,7 +379,7 @@ bool readPhraseFileFromString(ucstring const& doc, const std::string &filename, 
 
 		while (first != last && *first != '}')
 		{
-			TClause	clause;
+			TClause clause;
 			// append the comment preread at previous pass
 			clause.Comments = temp;
 			temp.erase();
@@ -412,10 +402,10 @@ bool readPhraseFileFromString(ucstring const& doc, const std::string &filename, 
 				{
 					uint32 line = countLine(doc, first);
 					nlwarning("DT: In '%s' line %u: Error parsing conditional expression in phrase %s, clause %u\n",
-						filename.c_str(),
-						line,
-						phrase.Identifier.c_str(),
-						phrase.Clauses.size()+1);
+					    filename.c_str(),
+					    line,
+					    phrase.Identifier.c_str(),
+					    phrase.Clauses.size() + 1);
 					return false;
 				}
 
@@ -429,8 +419,8 @@ bool readPhraseFileFromString(ucstring const& doc, const std::string &filename, 
 			if (first == last)
 			{
 				nlwarning("DT: in '%s': Found end of file in non closed block for phrase %s\n",
-					filename.c_str(),
-					phrase.Identifier.c_str());
+				    filename.c_str(),
+				    phrase.Identifier.c_str());
 				return false;
 			}
 			// read the idnetifier (if any)
@@ -447,13 +437,12 @@ bool readPhraseFileFromString(ucstring const& doc, const std::string &filename, 
 			{
 				uint32 line = countLine(doc, first);
 				nlwarning("DT: in '%s' line %u: Error reading text for clause %u (%s) in  phrase %s\n",
-					filename.c_str(),
-					line,
-					phrase.Clauses.size()+1,
-					clause.Identifier.c_str(),
-					phrase.Identifier.c_str());
+				    filename.c_str(),
+				    line,
+				    phrase.Clauses.size() + 1,
+				    clause.Identifier.c_str(),
+				    phrase.Identifier.c_str());
 				return false;
-
 			}
 
 			phrase.Clauses.push_back(clause);
@@ -463,9 +452,9 @@ bool readPhraseFileFromString(ucstring const& doc, const std::string &filename, 
 		{
 			uint32 line = countLine(doc, first);
 			nlwarning("DT: in '%s' line %u: Missing block closing tag '}' in phrase %s\n",
-				filename.c_str(),
-				line,
-				phrase.Identifier.c_str());
+			    filename.c_str(),
+			    line,
+			    phrase.Identifier.c_str());
 			return false;
 		}
 		++first;
@@ -486,21 +475,21 @@ bool readPhraseFileFromString(ucstring const& doc, const std::string &filename, 
 			}
 		}
 
-//		nldebug("DT : storing phrase '%s'", phrase.Identifier.c_str());
+		//		nldebug("DT : storing phrase '%s'", phrase.Identifier.c_str());
 		phrases.push_back(phrase);
 	}
 
 	// check identifier uniqueness
 	{
 		bool error = false;
-		set<string>	unik;
+		set<string> unik;
 		set<string>::iterator it;
-		for (uint i=0; i<phrases.size(); ++i)
+		for (uint i = 0; i < phrases.size(); ++i)
 		{
 			it = unik.find(phrases[i].Identifier);
 			if (it != unik.end())
 			{
-				nlwarning("DT: readPhraseFile : identifier '%s' exist twice", phrases[i].Identifier.c_str() );
+				nlwarning("DT: readPhraseFile : identifier '%s' exist twice", phrases[i].Identifier.c_str());
 				error = true;
 			}
 			else
@@ -517,7 +506,7 @@ ucstring tabLines(uint nbTab, const ucstring &str)
 	ucstring ret;
 	ucstring tabs;
 
-	for (uint i =0; i<nbTab; ++i)
+	for (uint i = 0; i < nbTab; ++i)
 		tabs.push_back('\t');
 
 	ret = tabs;
@@ -529,8 +518,8 @@ ucstring tabLines(uint nbTab, const ucstring &str)
 			ret += tabs;
 	}
 
-	while (ret[ret.size()-1] == '\t')
-		ret = ret.substr(0, ret.size()-1);
+	while (ret[ret.size() - 1] == '\t')
+		ret = ret.substr(0, ret.size() - 1);
 
 	return ret;
 }
@@ -546,21 +535,21 @@ ucstring preparePhraseFile(const vector<TPhrase> &phrases, bool removeDiffCommen
 		if (removeDiffComments)
 		{
 			string comment = p.Comments.toString();
-			vector<string>	lines;
+			vector<string> lines;
 			explode(comment, string("\n"), lines, true);
 
 			uint i;
-			for (i=0; i<lines.size(); ++i)
+			for (i = 0; i < lines.size(); ++i)
 			{
 				if (lines[i].find("// DIFF ") != string::npos)
 				{
-					lines.erase(lines.begin()+i);
+					lines.erase(lines.begin() + i);
 					--i;
 				}
 			}
 
 			comment.erase();
-			for (i=0; i<lines.size(); ++i)
+			for (i = 0; i < lines.size(); ++i)
 			{
 				comment += lines[i] + "\n";
 			}
@@ -573,12 +562,12 @@ ucstring preparePhraseFile(const vector<TPhrase> &phrases, bool removeDiffCommen
 			if (p.Comments.find(ucstring("// HASH_VALUE ")) == ucstring::npos)
 			{
 				// add the hash value.
-				ret += ucstring("// HASH_VALUE ")+CI18N::hashToString(p.HashValue) + nl;
+				ret += ucstring("// HASH_VALUE ") + CI18N::hashToString(p.HashValue) + nl;
 			}
-			ret += p.Identifier + " ("+p.Parameters + ")" + nl;
+			ret += p.Identifier + " (" + p.Parameters + ")" + nl;
 			ret += '{';
 			ret += nl;
-			for (uint i=0; i<p.Clauses.size(); ++i)
+			for (uint i = 0; i < p.Clauses.size(); ++i)
 			{
 				const TClause &c = p.Clauses[i];
 				if (!c.Comments.empty())
@@ -592,19 +581,20 @@ ucstring preparePhraseFile(const vector<TPhrase> &phrases, bool removeDiffCommen
 					ret += cond + nl;
 				}
 				ret += '\t';
-//				ucstring text = CI18N::makeMarkedString('[', ']', c.Text);
+				//				ucstring text = CI18N::makeMarkedString('[', ']', c.Text);
 
-				ucstring text = CI18N::makeMarkedString('[', ']', c.Text);;
+				ucstring text = CI18N::makeMarkedString('[', ']', c.Text);
+				;
 				ucstring text2;
 				// add new line and tab after each \n tag
 				ucstring::size_type pos;
 				const ucstring nlTag("\\n");
 				while ((pos = text.find(nlTag)) != ucstring::npos)
 				{
-					text2 += text.substr(0, pos+2) + nl;
-					text = text.substr(pos+2);
+					text2 += text.substr(0, pos + 2) + nl;
+					text = text.substr(pos + 2);
 				}
-				text2 += text;//.substr(0, pos+2);
+				text2 += text; //.substr(0, pos+2);
 
 				text.swap(text2);
 
@@ -624,8 +614,8 @@ ucstring preparePhraseFile(const vector<TPhrase> &phrases, bool removeDiffCommen
 bool loadExcelSheet(const string filename, TWorksheet &worksheet, bool checkUnique)
 {
 	// Yoyo: must test with CIFile because can be packed into a .bnp on client...
-	CIFile	fp;
-	if(!fp.open(filename))
+	CIFile fp;
+	if (!fp.open(filename))
 	{
 		nldebug("DT: Can't open file [%s]\n", filename.c_str());
 		return true;
@@ -643,30 +633,30 @@ bool loadExcelSheet(const string filename, TWorksheet &worksheet, bool checkUniq
 
 bool readExcelSheet(const ucstring &str, TWorksheet &worksheet, bool checkUnique)
 {
-	if(str.empty())
+	if (str.empty())
 		return true;
 
 	// copy the str to a big ucchar array => Avoid allocation / free
-	vector<ucchar>	strArray;
+	vector<ucchar> strArray;
 	// append a '\0'
-	strArray.resize(str.size()+1);
-	strArray[strArray.size()-1]= 0;
-	memcpy(&strArray[0], &str[0], str.size()*sizeof(ucchar));
+	strArray.resize(str.size() + 1);
+	strArray[strArray.size() - 1] = 0;
+	memcpy(&strArray[0], &str[0], str.size() * sizeof(ucchar));
 
 	// size of new line characters
 	size_t sizeOfNl = nl.length();
 
 	// **** Build array of lines. just point to strArray, and fill 0 where appropriated
-	vector<ucchar*> lines;
+	vector<ucchar *> lines;
 	lines.reserve(500);
 	ucstring::size_type pos = 0;
 	ucstring::size_type lastPos = 0;
 	while ((pos = str.find(nl, lastPos)) != ucstring::npos)
 	{
-		if (pos>lastPos)
+		if (pos > lastPos)
 		{
-			strArray[pos]= 0;
-//			nldebug("Found line : [%s]", ucstring(&strArray[lastPos]).toString().c_str());
+			strArray[pos] = 0;
+			//			nldebug("Found line : [%s]", ucstring(&strArray[lastPos]).toString().c_str());
 			lines.push_back(&strArray[lastPos]);
 		}
 		lastPos = pos + sizeOfNl;
@@ -675,34 +665,34 @@ bool readExcelSheet(const ucstring &str, TWorksheet &worksheet, bool checkUnique
 	// Must add last line if no \n ending
 	if (lastPos < str.size())
 	{
-		pos= str.size();
-		strArray[pos]= 0;
-//		nldebug("Found line : [%s]", ucstring(&strArray[lastPos]).toString().c_str());
+		pos = str.size();
+		strArray[pos] = 0;
+		//		nldebug("Found line : [%s]", ucstring(&strArray[lastPos]).toString().c_str());
 		lines.push_back(&strArray[lastPos]);
 	}
 
-//	nldebug("Found %u lines", lines.size());
+	//	nldebug("Found %u lines", lines.size());
 
 	// **** Do 2 pass.1st count the cell number, then fill. => avoid reallocation
-	uint		newColCount= 0;
-	uint		i;
-	for (i=0; i<lines.size(); ++i)
+	uint newColCount = 0;
+	uint i;
+	for (i = 0; i < lines.size(); ++i)
 	{
-		uint	numCells;
-		numCells= 0;
+		uint numCells;
+		numCells = 0;
 
-		ucchar	*first= lines[i];
+		ucchar *first = lines[i];
 		for (; *first != 0; ++first)
 		{
 			if (*first == '\t')
 			{
 				numCells++;
 			}
-			else if (*first == '"' && first==lines[i])
+			else if (*first == '"' && first == lines[i])
 			{
 				// read a quoted field.
 				first++;
-				while (*first != 0 && *first != '"' && *(first+1) != 0 && *(first+1) != '"')
+				while (*first != 0 && *first != '"' && *(first + 1) != 0 && *(first + 1) != '"')
 				{
 					first++;
 					if (*first != 0 && *first == '"')
@@ -721,10 +711,9 @@ bool readExcelSheet(const ucstring &str, TWorksheet &worksheet, bool checkUnique
 		{
 			newColCount = max(newColCount, numCells);
 			nldebug("At line %u, numCol changed to %u",
-				i, newColCount);
+			    i, newColCount);
 		}
 	}
-
 
 	// **** alloc / enlarge worksheet
 	// enlarge Worksheet column size, as needed
@@ -732,33 +721,32 @@ bool readExcelSheet(const ucstring &str, TWorksheet &worksheet, bool checkUnique
 		worksheet.insertColumn(worksheet.ColCount);
 
 	// enlarge Worksheet row size, as needed
-	uint	startLine= worksheet.size();
+	uint startLine = worksheet.size();
 	worksheet.resize(startLine + (uint)lines.size());
 
-
 	// **** fill worksheet
-	ucstring	cell;
-	for (i=0; i<lines.size(); ++i)
+	ucstring cell;
+	for (i = 0; i < lines.size(); ++i)
 	{
-		uint	numCells;
-		numCells= 0;
+		uint numCells;
+		numCells = 0;
 		cell.erase();
 
-		ucchar	*first= lines[i];
+		ucchar *first = lines[i];
 		for (; *first != 0; ++first)
 		{
 			if (*first == '\t')
 			{
-//				nldebug("Found cell [%s]", cell.toString().c_str());
+				//				nldebug("Found cell [%s]", cell.toString().c_str());
 				worksheet.setData(startLine + i, numCells, cell);
 				numCells++;
 				cell.erase();
 			}
-			else if (*first == '"' && first==lines[i])
+			else if (*first == '"' && first == lines[i])
 			{
 				// read a quoted field.
 				first++;
-				while (*first != 0 && *first != '"' && *(first+1) != 0 && *(first+1) != '"')
+				while (*first != 0 && *first != '"' && *(first + 1) != 0 && *(first + 1) != '"')
 				{
 					cell += *first;
 					first++;
@@ -774,14 +762,13 @@ bool readExcelSheet(const ucstring &str, TWorksheet &worksheet, bool checkUnique
 				cell += *first;
 			}
 		}
-//		nldebug("Found cell [%s]", cell.toString().c_str());
+		//		nldebug("Found cell [%s]", cell.toString().c_str());
 		/// append last cell
 		worksheet.setData(startLine + i, numCells, cell);
 		numCells++;
-		nlassertex(numCells<=newColCount, ("readExcelSheet: bad row format: at line %u, the row has %u cell, max is %u", i, numCells, newColCount));
-//		nldebug("Found %u cells in line %u", numCells, i);
+		nlassertex(numCells <= newColCount, ("readExcelSheet: bad row format: at line %u, the row has %u cell, max is %u", i, numCells, newColCount));
+		//		nldebug("Found %u cells in line %u", numCells, i);
 	}
-
 
 	// **** identifier uniqueness checking.
 	if (checkUnique)
@@ -793,18 +780,18 @@ bool readExcelSheet(const ucstring &str, TWorksheet &worksheet, bool checkUnique
 			while (nameCol < worksheet.ColCount && (*worksheet.getData(0, nameCol).begin() == uint16('*') || worksheet.getData(0, nameCol) == ucstring("DIFF_CMD")))
 				++nameCol;
 
-			if (nameCol < worksheet.ColCount )
+			if (nameCol < worksheet.ColCount)
 			{
 				// ok we can check unikness
 				bool error = false;
-				set<ucstring>	unik;
+				set<ucstring> unik;
 				set<ucstring>::iterator it;
-				for (uint j=0; j<worksheet.size(); ++j)
+				for (uint j = 0; j < worksheet.size(); ++j)
 				{
 					it = unik.find(worksheet.getData(j, nameCol));
 					if (it != unik.end())
 					{
-						nlwarning("DT: readExcelSheet : identifier '%s' exist twice", worksheet.getData(j, nameCol).toString().c_str() );
+						nlwarning("DT: readExcelSheet : identifier '%s' exist twice", worksheet.getData(j, nameCol).toString().c_str());
 						error = true;
 					}
 					else
@@ -834,22 +821,22 @@ void makeHashCode(TWorksheet &sheet, bool forceRehash)
 			}
 
 			// Check columns
-			vector<bool>	columnOk;
+			vector<bool> columnOk;
 			columnOk.resize(sheet.ColCount, false);
-			for (uint k=1; k<sheet.ColCount; ++k)
+			for (uint k = 1; k < sheet.ColCount; ++k)
 			{
 				if (sheet.Data[0][k].find(ucstring("*")) != 0 && sheet.Data[0][k].find(ucstring("DIFF ")) != 0)
 				{
-					columnOk[k]= true;
+					columnOk[k] = true;
 				}
 			}
 
 			// make hash for each line
 			ucstring str;
-			for (uint j=1; j<sheet.Data.size(); ++j)
+			for (uint j = 1; j < sheet.Data.size(); ++j)
 			{
 				str.erase();
-				for (uint k=1; k<sheet.ColCount; ++k)
+				for (uint k = 1; k < sheet.ColCount; ++k)
 				{
 					if (columnOk[k])
 					{
@@ -863,7 +850,7 @@ void makeHashCode(TWorksheet &sheet, bool forceRehash)
 		else
 		{
 			uint index = (uint)(it - sheet.Data[0].begin());
-			for (uint j=1; j<sheet.Data.size(); ++j)
+			for (uint j = 1; j < sheet.Data.size(); ++j)
 			{
 				ucstring &field = sheet.Data[j][index];
 
@@ -876,39 +863,39 @@ void makeHashCode(TWorksheet &sheet, bool forceRehash)
 
 ucstring prepareExcelSheet(const TWorksheet &worksheet)
 {
-	if(worksheet.Data.empty())
+	if (worksheet.Data.empty())
 		return ucstring();
 
 	// **** First pass: count approx the size
-	uint	approxSize= 0;
-	for (uint i=0; i<worksheet.Data.size(); ++i)
+	uint approxSize = 0;
+	for (uint i = 0; i < worksheet.Data.size(); ++i)
 	{
-		for (uint j=0; j<worksheet.Data[i].size(); ++j)
+		for (uint j = 0; j < worksheet.Data[i].size(); ++j)
 		{
-			approxSize+= (uint)worksheet.Data[i][j].size() + 1;
+			approxSize += (uint)worksheet.Data[i][j].size() + 1;
 		}
 		approxSize++;
 	}
 
 	// Hash value for each column?
-	vector<bool>	hashValue;
+	vector<bool> hashValue;
 	hashValue.resize(worksheet.Data[0].size());
-	for (uint j=0; j<worksheet.Data[0].size(); ++j)
+	for (uint j = 0; j < worksheet.Data[0].size(); ++j)
 	{
-		hashValue[j]= worksheet.Data[0][j] == ucstring("*HASH_VALUE");
+		hashValue[j] = worksheet.Data[0][j] == ucstring("*HASH_VALUE");
 	}
 
 	// **** Second pass: fill
 	ucstring text;
-	text.reserve(approxSize*2);
-	for (uint i=0; i<worksheet.Data.size(); ++i)
+	text.reserve(approxSize * 2);
+	for (uint i = 0; i < worksheet.Data.size(); ++i)
 	{
-		for (uint j=0; j<worksheet.Data[i].size(); ++j)
+		for (uint j = 0; j < worksheet.Data[i].size(); ++j)
 		{
 			if (i > 0 && hashValue[j] && (!worksheet.Data[i][j].empty() && worksheet.Data[i][j][0] != '_'))
 				text += "_";
 			text += worksheet.Data[i][j];
-			if (j != worksheet.Data[i].size()-1)
+			if (j != worksheet.Data[i].size() - 1)
 				text += '\t';
 		}
 		text += nl;
@@ -917,11 +904,4 @@ ucstring prepareExcelSheet(const TWorksheet &worksheet)
 	return text;
 }
 
-
-
-
-
-
-
-}	// namespace STRING_MANAGER
-
+} // namespace STRING_MANAGER

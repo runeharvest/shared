@@ -18,4 +18,3 @@
 #include "animal_hunger.h"
 
 using namespace NLMISC;
-

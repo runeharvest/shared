@@ -17,11 +17,11 @@
 #include <QtPlugin>
 
 #if defined(Q_OS_WIN32)
-	Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
+Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
 #elif defined(Q_OS_MAC)
-	Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
+Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
 #elif defined(Q_OS_UNIX)
-	Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)
+Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)
 #endif
 
 #endif
@@ -35,10 +35,9 @@ int main(int argc, char *argv[])
 	// the specific initialization routines you do not need.
 	NLMISC::CApplicationContext myApplicationContext;
 
-
 #ifdef NL_OS_UNIX
 	std::string homeDir = getenv("HOME");
-	NLMISC::CPath::addSearchPath( homeDir + "/.nel");
+	NLMISC::CPath::addSearchPath(homeDir + "/.nel");
 #endif // NL_OS_UNIX
 
 	NLMISC::CPath::addSearchPath(NL_WORDS_DIC_CFG);

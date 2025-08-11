@@ -19,12 +19,13 @@
 
 #include <nel/misc/command.h>
 
-vector<string>	callList;
+vector<string> callList;
 
 class TTest : public NLMISC::ICommandsHandler
 {
 protected:
 	std::string _Name;
+
 public:
 	const std::string &getCommandHandlerName() const
 	{
@@ -40,67 +41,63 @@ public:
 	}
 
 	NLMISC_COMMAND_HANDLER_TABLE_BEGIN(TTest)
-		NLMISC_COMMAND_HANDLER_ADD(TTest, theCommand1, "help", "args")
-		NLMISC_COMMAND_HANDLER_ADD(TTest, theCommand2, "other help", "other args")
+	NLMISC_COMMAND_HANDLER_ADD(TTest, theCommand1, "help", "args")
+	NLMISC_COMMAND_HANDLER_ADD(TTest, theCommand2, "other help", "other args")
 	NLMISC_COMMAND_HANDLER_TABLE_END
-
 
 	NLMISC_CLASS_COMMAND_DECL(theCommand1)
 	{
-		callList.push_back(_Name+".theCommand1");
+		callList.push_back(_Name + ".theCommand1");
 		return true;
 	}
 
 	NLMISC_CLASS_COMMAND_DECL(theCommand2)
 	{
-		callList.push_back(_Name+".theCommand2");
+		callList.push_back(_Name + ".theCommand2");
 		return true;
 	}
-
 };
 
 class TTestDerived : public TTest
 {
 public:
 	NLMISC_COMMAND_HANDLER_TABLE_EXTEND_BEGIN(TTestDerived, TTest)
-		NLMISC_COMMAND_HANDLER_ADD(TTestDerived, derivedCommand, "help", "args")
-		NLMISC_COMMAND_HANDLER_ADD(TTestDerived, commandToOverride, "help", "args")
+	NLMISC_COMMAND_HANDLER_ADD(TTestDerived, derivedCommand, "help", "args")
+	NLMISC_COMMAND_HANDLER_ADD(TTestDerived, commandToOverride, "help", "args")
 	NLMISC_COMMAND_HANDLER_TABLE_END
 
 	NLMISC_CLASS_COMMAND_DECL(derivedCommand)
 	{
-		callList.push_back(_Name+".derivedCommand");
+		callList.push_back(_Name + ".derivedCommand");
 		return true;
 	}
 
 	NLMISC_CLASS_COMMAND_DECL(commandToOverride)
 	{
-		callList.push_back(_Name+".commandToOverride");
+		callList.push_back(_Name + ".commandToOverride");
 		return true;
 	}
-
 };
 
 class TTestDerived2 : public TTestDerived
 {
 public:
 	NLMISC_COMMAND_HANDLER_TABLE_EXTEND_BEGIN(TTestDerived2, TTestDerived)
-		NLMISC_COMMAND_HANDLER_ADD(TTestDerived2, derivedCommand2, "help", "args")
-		NLMISC_COMMAND_HANDLER_ADD(TTestDerived2, commandToOverride, "help", "args")
+	NLMISC_COMMAND_HANDLER_ADD(TTestDerived2, derivedCommand2, "help", "args")
+	NLMISC_COMMAND_HANDLER_ADD(TTestDerived2, commandToOverride, "help", "args")
 	NLMISC_COMMAND_HANDLER_TABLE_END
 
 	NLMISC_CLASS_COMMAND_DECL(derivedCommand2)
 	{
-		callList.push_back(_Name+".derivedCommand2");
+		callList.push_back(_Name + ".derivedCommand2");
 		return true;
 	}
 
 	NLMISC_CLASS_COMMAND_DECL(commandToOverride)
 	{
-		callList.push_back(_Name+".command Overidden");
+		callList.push_back(_Name + ".command Overidden");
 		return true;
 	}
-
 };
 
 class TTestDerived3 : public TTestDerived2
@@ -112,19 +109,19 @@ class TTestDerived4 : public TTestDerived3
 {
 public:
 	NLMISC_COMMAND_HANDLER_TABLE_EXTEND_BEGIN(TTestDerived4, TTestDerived3)
-		NLMISC_COMMAND_HANDLER_ADD(TTestDerived4, derivedCommand4, "help", "args")
-		NLMISC_COMMAND_HANDLER_ADD(TTestDerived4, theCommand1, "help", "args")
+	NLMISC_COMMAND_HANDLER_ADD(TTestDerived4, derivedCommand4, "help", "args")
+	NLMISC_COMMAND_HANDLER_ADD(TTestDerived4, theCommand1, "help", "args")
 	NLMISC_COMMAND_HANDLER_TABLE_END
 
 	NLMISC_CLASS_COMMAND_DECL(derivedCommand4)
 	{
-		callList.push_back(_Name+".derivedCommand4");
+		callList.push_back(_Name + ".derivedCommand4");
 		return true;
 	}
 
 	NLMISC_CLASS_COMMAND_DECL(theCommand1)
 	{
-		callList.push_back(_Name+".recallBase");
+		callList.push_back(_Name + ".recallBase");
 		NLMISC_CLASS_COMMAND_CALL_BASE(TTestDerived3, theCommand1);
 		return true;
 	}
@@ -132,8 +129,9 @@ public:
 
 class CUTMiscCommand : public Test::Suite
 {
-	TTest	*t1;
-	TTest	*t2;
+	TTest *t1;
+	TTest *t2;
+
 public:
 	CUTMiscCommand()
 	{
@@ -146,7 +144,7 @@ public:
 
 	void derivedClassAndBaseCall()
 	{
-		TTestDerived4	t4;
+		TTestDerived4 t4;
 		t4.setName("T4");
 
 		callList.clear();
@@ -181,7 +179,6 @@ public:
 		NLMISC::ICommand::execute("T1.commandToOverride", *NLMISC::InfoLog);
 		TEST_ASSERT(callList.size() == 3);
 		TEST_ASSERT(callList[2] == "T1.commandToOverride");
-		
 
 		NLMISC::ICommand::execute("T2.theCommand1", *NLMISC::InfoLog);
 		TEST_ASSERT(callList.size() == 4);
@@ -196,7 +193,6 @@ public:
 		TEST_ASSERT(callList[5] == "T2.command Overidden");
 	}
 
-	
 	void createOneInstance()
 	{
 		t1 = new TTest;
@@ -245,9 +241,7 @@ public:
 		TEST_ASSERT(callList[1] == "inst1.theCommand2");
 		TEST_ASSERT(callList[2] == "inst2.theCommand1");
 		TEST_ASSERT(callList[3] == "inst2.theCommand2");
-
 	}
-
 };
 
 #endif

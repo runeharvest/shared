@@ -17,13 +17,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace EGSPD
-{
+namespace EGSPD {
 
 /* -----------------------------------------
-* Inline implementation of CGuildGrade
-* ----------------------------------------- */
-inline const std::string&		CGuildGrade::toString(TGuildGrade v)
+ * Inline implementation of CGuildGrade
+ * ----------------------------------------- */
+inline const std::string &CGuildGrade::toString(TGuildGrade v)
 {
 	if (v < 0 || v >= ___TGuildGrade_useSize)
 	{
@@ -36,17 +35,17 @@ inline const std::string&		CGuildGrade::toString(TGuildGrade v)
 	}
 	return _StrTable[v];
 }
-inline CGuildGrade::TGuildGrade	CGuildGrade::fromString(const std::string& v)
+inline CGuildGrade::TGuildGrade CGuildGrade::fromString(const std::string &v)
 {
 	if (!_Initialised)
 	{
 		init();
 	}
-	if(v==_UnknownString)
+	if (v == _UnknownString)
 	{
 		return Unknown;
 	}
-	const std::map<std::string, TGuildGrade>::const_iterator	it = _ValueMap.find(NLMISC::toLowerAscii(v));
+	const std::map<std::string, TGuildGrade>::const_iterator it = _ValueMap.find(NLMISC::toLowerAscii(v));
 	if (it == _ValueMap.end())
 	{
 		nlwarning("TGuildGrade::toString(): string '%s' is not matched, 'Unknown' enum value returned", v.c_str());
@@ -55,6 +54,5 @@ inline CGuildGrade::TGuildGrade	CGuildGrade::fromString(const std::string& v)
 	return (*it).second;
 }
 // End of inline implementation of CGuildGrade
-
 
 } // End of EGSPD

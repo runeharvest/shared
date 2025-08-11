@@ -26,7 +26,6 @@
 // ViewDialog.h : header file
 //
 
-
 class CViewDialog;
 
 /*
@@ -35,24 +34,22 @@ class CViewDialog;
 class CListCtrlEx : public CListCtrl
 {
 public:
-	void	initIt();
-	void	DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
-	void	RepaintSelectedItems();
-	//void	OnKillFocus(CWnd* pNewWnd);
-	//void	OnSetFocus(CWnd* pOldWnd);
-	
-	void	setViewDialog( CViewDialog *pt ) { _ViewDialog = pt; }
+	void initIt();
+	void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+	void RepaintSelectedItems();
+	// void	OnKillFocus(CWnd* pNewWnd);
+	// void	OnSetFocus(CWnd* pOldWnd);
+
+	void setViewDialog(CViewDialog *pt) { _ViewDialog = pt; }
 
 protected:
-
 	//{{AFX_MSG(CListCtrlEx)
-	afx_msg void OnKeyDown( UINT nChar, UINT nRepCnt, UINT nFlags );
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 private:
-
-	CViewDialog	*_ViewDialog;
+	CViewDialog *_ViewDialog;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -60,130 +57,132 @@ private:
 
 class CViewDialog : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CViewDialog(CWnd* pParent = NULL);   // standard constructor
+	CViewDialog(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CViewDialog)
-	enum { IDD = IDD_View };
-	CListCtrlEx	m_ListCtrl;
-	CString	m_Caption;
+	enum
+	{
+		IDD = IDD_View
+	};
+	CListCtrlEx m_ListCtrl;
+	CString m_Caption;
 	//}}AFX_DATA
 
 	///	 Load, using the current filters
-	void		reload();
+	void reload();
 
 	/// Load trace
-	void		reloadTrace();
+	void reloadTrace();
 
 	/// Set the filters (and backup the previous ones for bookmark translation)
-	void		setFilters( const std::vector<CString>& posFilter, const std::vector<CString>& negFilter );
-	
+	void setFilters(const std::vector<CString> &posFilter, const std::vector<CString> &negFilter);
+
 	/// Returns true if the string must be logged, according to the current filters
-	bool		passFilter( const char *text, const std::vector<CString>& posFilter, const std::vector<CString>& negFilter ) const;
+	bool passFilter(const char *text, const std::vector<CString> &posFilter, const std::vector<CString> &negFilter) const;
 
 	/// Resize
-	void		resizeView( int nbViews, int top, int left );
+	void resizeView(int nbViews, int top, int left);
 
 	/// Clear
-	void		clear();
+	void clear();
 
 	/// Return the nb of lines
-	int			getNbLines() const;
+	int getNbLines() const;
 
 	/// Return the nb of visible lines
-	int			getNbVisibleLines() const;
+	int getNbVisibleLines() const;
 
 	/// Set redraw state
-	void		setRedraw( bool redraw ) { m_ListCtrl.SetRedraw( redraw ); }
+	void setRedraw(bool redraw) { m_ListCtrl.SetRedraw(redraw); }
 
 	/// Fill from getNbLines() to maxNbLines with blank lines
-	void		fillGaps( int maxNbLines );
+	void fillGaps(int maxNbLines);
 
 	/// Load a log file or series
-	void		loadFileOrSeries( const std::vector<int>& bookmarksAbsoluteLines );
+	void loadFileOrSeries(const std::vector<int> &bookmarksAbsoluteLines);
 
 	/// Add one line
-	void		addLine( const CString& line ) { Buffer.push_back( line ); }
+	void addLine(const CString &line) { Buffer.push_back(line); }
 
 	/// Add several lines
-	void		addText( const CString& lines );
+	void addText(const CString &lines);
 
 	/// Commit the lines previously added
-	void		commitAddedLines();
+	void commitAddedLines();
 
 	/// Scroll
-	void		scrollTo( int index );
+	void scrollTo(int index);
 
 	/// Select
-	void		select( int index );
+	void select(int index);
 
 	/// Get selected index
-	int			getSelectionIndex() { return m_ListCtrl.GetSelectionMark(); }
-	
+	int getSelectionIndex() { return m_ListCtrl.GetSelectionMark(); }
+
 	/// Return the index of the top of the listbox
-	int			getScrollIndex() const;
+	int getScrollIndex() const;
 
 	/// Add the current scroll index to the bookmark list, or delete it if already inside the list
-	void		addBookmark();
+	void addBookmark();
 
 	/// Scroll the listbox to the next found stored bookmkark (downwards from the current scroll index)
-	void		recallNextBookmark();
+	void recallNextBookmark();
 
 	/// Display string
-	void		displayString();
+	void displayString();
 
 	/// Return the textcolor
-	COLORREF	getTextColorForLine( int index, bool selected );
+	COLORREF getTextColorForLine(int index, bool selected);
 
 	/// Return the background color
-	COLORREF	getBkColorForLine( int index, bool selected );
+	COLORREF getBkColorForLine(int index, bool selected);
 
 	///
-	std::string	corruptedLinesString( const std::vector<unsigned int>& corruptedLines );
+	std::string corruptedLinesString(const std::vector<unsigned int> &corruptedLines);
 
 	/// Reload with old filter to get bookmarks absolute line numbers (not called if there's no bookmark)
-	void		getBookmarksAbsoluteLines( std::vector<int>& bookmarksAbsoluteLines );
+	void getBookmarksAbsoluteLines(std::vector<int> &bookmarksAbsoluteLines);
 
 	//{{AFX_MSG(CViewDialog)
 	afx_msg void OnButtonFind();
 	//}}AFX_MSG
 
-	int						Index;
-	CString					Seriesname;
-	std::vector<CString>	Filenames;
-	std::vector<CString>	PosFilter, NegFilter, PreviousPosFilter, PreviousNegFilter;
-	CString					LogSessionStartDate;
-	bool					SessionDatePassed;
-	std::vector<CString>	Buffer;
-	int						BeginFindIndex;
-	CFindReplaceDialog		*FindDialog;
-	CString					FindStr;
-	bool					FindMatchCase, FindDownwards;
-	float					WidthR; // ratio to the app's client window
-	std::vector<int>		Bookmarks;
-	int						CurrentBookmark;
+	int Index;
+	CString Seriesname;
+	std::vector<CString> Filenames;
+	std::vector<CString> PosFilter, NegFilter, PreviousPosFilter, PreviousNegFilter;
+	CString LogSessionStartDate;
+	bool SessionDatePassed;
+	std::vector<CString> Buffer;
+	int BeginFindIndex;
+	CFindReplaceDialog *FindDialog;
+	CString FindStr;
+	bool FindMatchCase, FindDownwards;
+	float WidthR; // ratio to the app's client window
+	std::vector<int> Bookmarks;
+	int CurrentBookmark;
 
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CViewDialog)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	afx_msg LRESULT OnFindReplace(WPARAM wParam, LPARAM lParam);
 
 	// Generated message map functions
 	//{{AFX_MSG(CViewDialog)
 	afx_msg void OnButtonFilter();
 	virtual BOOL OnInitDialog();
-	afx_msg void OnGetdispinfoList1(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnItemchangedList1(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnSetfocusList1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnGetdispinfoList1(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnItemchangedList1(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnSetfocusList1(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

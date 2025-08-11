@@ -19,7 +19,6 @@
 
 #include "std_afx.h"
 
-
 #include "nel/3d/particle_system.h"
 #include "object_viewer.h"
 #include "located_target_dlg.h"
@@ -31,19 +30,20 @@
 /////////////////////////////////////////////////////////////////////////////
 // CLocatedTargetDlg dialog
 
-
 CLocatedTargetDlg::CLocatedTargetDlg(CParticleWorkspace::CNode *ownerNode,
-									 NL3D::CPSTargetLocatedBindable *lbTarget,
-									 CParticleDlg *particleDlg) : _Node(ownerNode), _LBTarget(lbTarget), _ParticleDlg(particleDlg)
+    NL3D::CPSTargetLocatedBindable *lbTarget,
+    CParticleDlg *particleDlg)
+    : _Node(ownerNode)
+    , _LBTarget(lbTarget)
+    , _ParticleDlg(particleDlg)
 {
 	nlassert(particleDlg);
 	//{{AFX_DATA_INIT(CLocatedTargetDlg)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void CLocatedTargetDlg::DoDataExchange(CDataExchange* pDX)
+void CLocatedTargetDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CLocatedTargetDlg)
@@ -52,26 +52,23 @@ void CLocatedTargetDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CLocatedTargetDlg, CDialog)
-	//{{AFX_MSG_MAP(CLocatedTargetDlg)
-	ON_BN_CLICKED(IDC_ADD_TARGET, OnAddTarget)
-	ON_BN_CLICKED(IDC_REMOVE_TARGET, OnRemoveTarget)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CLocatedTargetDlg)
+ON_BN_CLICKED(IDC_ADD_TARGET, OnAddTarget)
+ON_BN_CLICKED(IDC_REMOVE_TARGET, OnRemoveTarget)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CLocatedTargetDlg message handlers
 
-
-void CLocatedTargetDlg::init(CWnd* pParent)
+void CLocatedTargetDlg::init(CWnd *pParent)
 {
 	Create(IDD_LOCATED_TARGET_DLG, pParent);
 	ShowWindow(SW_SHOW);
 }
 
-
-void CLocatedTargetDlg::OnAddTarget() 
+void CLocatedTargetDlg::OnAddTarget()
 {
 	UpdateData();
 	int totalCount = m_AvailableTargets.GetCount();
@@ -84,11 +81,11 @@ void CLocatedTargetDlg::OnAddTarget()
 
 	// check that force isn't applied on a forever lasting object
 	if (dynamic_cast<NL3D::CPSForce *>(_LBTarget))
-	{	
+	{
 		bool forEverLastingTarget = false;
 		for (int k = 0; k < selCount; ++k)
 		{
-			NL3D::CPSLocated *loc = (NL3D::CPSLocated *) m_AvailableTargets.GetItemData(indexs[k] - k);
+			NL3D::CPSLocated *loc = (NL3D::CPSLocated *)m_AvailableTargets.GetItemData(indexs[k] - k);
 			nlassert(loc);
 			if (loc->getLastForever())
 			{
@@ -97,12 +94,12 @@ void CLocatedTargetDlg::OnAddTarget()
 			}
 		}
 		if (forEverLastingTarget)
-		{	
+		{
 			CString warningStr;
 			CString messStr;
 			warningStr.LoadString(IDS_WARNING);
 			messStr.LoadString(IDS_FORCE_APPLIED_ON_OBJECT_THAT_LAST_FOREVER);
-			if (MessageBox((LPCTSTR) messStr, (LPCTSTR) warningStr, MB_OKCANCEL) != IDOK)
+			if (MessageBox((LPCTSTR)messStr, (LPCTSTR)warningStr, MB_OKCANCEL) != IDOK)
 			{
 				return;
 			}
@@ -111,21 +108,21 @@ void CLocatedTargetDlg::OnAddTarget()
 	//
 	for (int k = 0; k < selCount; ++k)
 	{
-		NL3D::CPSLocated *loc = (NL3D::CPSLocated *) m_AvailableTargets.GetItemData(indexs[k] - k);
+		NL3D::CPSLocated *loc = (NL3D::CPSLocated *)m_AvailableTargets.GetItemData(indexs[k] - k);
 		nlassert(loc);
 		_LBTarget->attachTarget(loc);
 		m_AvailableTargets.DeleteString(indexs[k] - k);
 		int l = m_Targets.AddString(nlUtf8ToTStr(loc->getName()));
-		m_Targets.SetItemData(l, (DWORD_PTR) loc);
-	}	
+		m_Targets.SetItemData(l, (DWORD_PTR)loc);
+	}
 	UpdateData(FALSE);
 	//
 	updateModifiedFlag();
 }
 
-void CLocatedTargetDlg::OnRemoveTarget() 
+void CLocatedTargetDlg::OnRemoveTarget()
 {
-	UpdateData();	
+	UpdateData();
 	int totalCount = m_Targets.GetCount();
 	nlassert(totalCount);
 	std::vector<int> indexs;
@@ -134,22 +131,22 @@ void CLocatedTargetDlg::OnRemoveTarget()
 	std::sort(indexs.begin(), indexs.begin() + selCount); // we never know ...
 	for (int k = 0; k < selCount; ++k)
 	{
-		NL3D::CPSLocated *loc = (NL3D::CPSLocated *) m_Targets.GetItemData(indexs[k] - k);
+		NL3D::CPSLocated *loc = (NL3D::CPSLocated *)m_Targets.GetItemData(indexs[k] - k);
 		nlassert(loc);
 		_LBTarget->detachTarget(loc);
 		m_Targets.DeleteString(indexs[k] - k);
 		int l = m_AvailableTargets.AddString(nlUtf8ToTStr(loc->getName()));
-	
-		m_AvailableTargets.SetItemData(l, (DWORD_PTR) loc);
+
+		m_AvailableTargets.SetItemData(l, (DWORD_PTR)loc);
 	}
-	UpdateData(FALSE);	
+	UpdateData(FALSE);
 	updateModifiedFlag();
 }
 
-BOOL CLocatedTargetDlg::OnInitDialog() 
+BOOL CLocatedTargetDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	RECT r;
 
 	uint k;
@@ -160,20 +157,18 @@ BOOL CLocatedTargetDlg::OnInitDialog()
 	std::set<NL3D::CPSLocated *> targetSet;
 
 	// fill the box thta tells us what the target are
-	for(k = 0; k < nbTarg; ++k)
+	for (k = 0; k < nbTarg; ++k)
 	{
 		m_Targets.AddString(nlUtf8ToTStr(_LBTarget->getTarget(k)->getName()));
-		m_Targets.SetItemData(k, (DWORD_PTR) _LBTarget->getTarget(k));
+		m_Targets.SetItemData(k, (DWORD_PTR)_LBTarget->getTarget(k));
 		targetSet.insert(_LBTarget->getTarget(k));
 	};
 
 	// fill abox with the available targets
-	NL3D::CParticleSystem  *ps = _LBTarget->getOwner()->getOwner();
+	NL3D::CParticleSystem *ps = _LBTarget->getOwner()->getOwner();
 
 	uint nbLocated = ps->getNbProcess();
 
-
-	
 	m_AvailableTargets.InitStorage(nbTarg, 128);
 	for (k = 0; k < nbLocated; ++k)
 	{
@@ -183,7 +178,7 @@ BOOL CLocatedTargetDlg::OnInitDialog()
 			if (targetSet.find(loc) == targetSet.end())
 			{
 				int l = m_AvailableTargets.AddString(nlUtf8ToTStr(loc->getName()));
-				m_AvailableTargets.SetItemData(l, (DWORD_PTR) loc);
+				m_AvailableTargets.SetItemData(l, (DWORD_PTR)loc);
 			}
 		}
 	}
@@ -200,23 +195,21 @@ BOOL CLocatedTargetDlg::OnInitDialog()
 		czd->init(posX, posY, this);
 	}
 
-
 	// force with intensity case
 
 	if (dynamic_cast<NL3D::CPSForceIntensity *>(_LBTarget))
 	{
 		_ForceIntensityWrapper.F = dynamic_cast<NL3D::CPSForceIntensity *>(_LBTarget);
 		CAttribDlgFloat *fi = new CAttribDlgFloat(std::string("FORCE INTENSITY"), _Node, 0, 100);
-		pushWnd(fi);			
+		pushWnd(fi);
 		fi->setWrapper(&_ForceIntensityWrapper);
 		fi->setSchemeWrapper(&_ForceIntensityWrapper);
 
 		HBITMAP bmh = LoadBitmap(::AfxGetInstanceHandle(), MAKEINTRESOURCE(IDB_FORCE_INTENSITY));
 		fi->init(bmh, posX, posY, this);
-		
 
 		fi->GetClientRect(&r);
-		posY += r.bottom + 3;			
+		posY += r.bottom + 3;
 	}
 
 	// vortex (to tune viscosity)
@@ -230,9 +223,8 @@ BOOL CLocatedTargetDlg::OnInitDialog()
 		CStatic *s = new CStatic;
 		pushWnd(s);
 		s->Create(_T("Radial viscosity : "), SS_LEFT, CRect(posX, posY, posX + 139, posY + 32), this);
-		s->SetFont(CFont::FromHandle((HFONT) GetStockObject(DEFAULT_GUI_FONT)));		
+		s->SetFont(CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT)));
 		s->ShowWindow(SW_SHOW);
-
 
 		rv->GetClientRect(&r);
 		posY += r.bottom + 3;
@@ -243,7 +235,7 @@ BOOL CLocatedTargetDlg::OnInitDialog()
 		tv->setWrapper(&_TangentialViscosityWrapper);
 		tv->init(posX + 140, posY, this);
 
-		s = new CStatic;			
+		s = new CStatic;
 		pushWnd(s);
 		s->Create(_T("Tangential Viscosity : "), SS_LEFT, CRect(posX, posY, posX + 139, posY + 32), this);
 		s->ShowWindow(SW_SHOW);
@@ -256,7 +248,7 @@ BOOL CLocatedTargetDlg::OnInitDialog()
 	if (dynamic_cast<NL3D::CPSDirection *>(_LBTarget))
 	{
 		CDirectionAttr *da = new CDirectionAttr(std::string("DIRECTION"));
-		pushWnd(da);		
+		pushWnd(da);
 		_DirectionWrapper.E = dynamic_cast<NL3D::CPSDirection *>(_LBTarget);
 		da->setWrapper(&_DirectionWrapper);
 		da->setDirectionWrapper(dynamic_cast<NL3D::CPSDirection *>(_LBTarget));
@@ -276,17 +268,13 @@ BOOL CLocatedTargetDlg::OnInitDialog()
 		CStatic *s = new CStatic;
 		pushWnd(s);
 		s->Create(_T("Parametric factor : "), SS_LEFT, CRect(posX, posY, posX + 139, posY + 40), this);
-		s->SetFont(CFont::FromHandle((HFONT) GetStockObject(DEFAULT_GUI_FONT)));		
+		s->SetFont(CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT)));
 		s->ShowWindow(SW_SHOW);
 
 		rv->GetClientRect(&r);
 		posY += r.bottom + 3;
-	
 	}
 
-
-
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }

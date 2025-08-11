@@ -17,7 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdpch.h"
 #include "nel/gui/reflect_register.h"
 
@@ -56,46 +55,43 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NLGUI
+namespace NLGUI {
+void CReflectableRegister::registerClasses()
 {
-	void CReflectableRegister::registerClasses()
-	{
-		REGISTER_REFLECTABLE_CLASS(CInterfaceElement, CReflectable);
-		REGISTER_REFLECTABLE_CLASS(CViewBase, CInterfaceElement);
-		REGISTER_REFLECTABLE_CLASS(CViewText, CViewBase);
-		REGISTER_REFLECTABLE_CLASS(CViewTextID, CViewText);
-		REGISTER_REFLECTABLE_CLASS(CViewBitmap, CViewBase);
-		REGISTER_REFLECTABLE_CLASS(CViewTextMenu, CViewText);
-		REGISTER_REFLECTABLE_CLASS(CDBViewBar, CViewBitmap);
-		REGISTER_REFLECTABLE_CLASS(CDBViewBar3, CViewBitmap);
-		REGISTER_REFLECTABLE_CLASS(CCtrlBase, CViewBase);
-		REGISTER_REFLECTABLE_CLASS(CCtrlBaseButton, CCtrlBase);
-		REGISTER_REFLECTABLE_CLASS(CCtrlButton, CCtrlBaseButton);
-		REGISTER_REFLECTABLE_CLASS(CCtrlTextButton, CCtrlBaseButton);
-		REGISTER_REFLECTABLE_CLASS(CCtrlColPick, CCtrlBase);
-		REGISTER_REFLECTABLE_CLASS(CCtrlDraggable, CCtrlBase);
-		REGISTER_REFLECTABLE_CLASS(CInterfaceGroup, CCtrlBase);
-		REGISTER_REFLECTABLE_CLASS(CGroupFrame, CInterfaceGroup);
-		REGISTER_REFLECTABLE_CLASS(CGroupModal, CGroupFrame);
-		REGISTER_REFLECTABLE_CLASS(CGroupContainerBase, CInterfaceGroup);
-		REGISTER_REFLECTABLE_CLASS(CGroupContainer, CGroupContainerBase);
-		REGISTER_REFLECTABLE_CLASS(CDBGroupSelectNumber, CInterfaceGroup);
-		REGISTER_REFLECTABLE_CLASS(CGroupEditBoxBase, CInterfaceGroup);
-		REGISTER_REFLECTABLE_CLASS(CGroupEditBox, CGroupEditBoxBase);
-		REGISTER_REFLECTABLE_CLASS(CGroupTree, CInterfaceGroup);
-		REGISTER_REFLECTABLE_CLASS(CDBGroupComboBox, CInterfaceGroup);
-		REGISTER_REFLECTABLE_CLASS(CCtrlScrollBase, CCtrlBase);
-		REGISTER_REFLECTABLE_CLASS(CCtrlScroll, CCtrlScrollBase);
-		REGISTER_REFLECTABLE_CLASS(CGroupMenu, CGroupModal);
-		REGISTER_REFLECTABLE_CLASS(CGroupSubMenuBase, CGroupFrame);
-		REGISTER_REFLECTABLE_CLASS(CGroupSubMenu, CGroupSubMenuBase);
-		REGISTER_REFLECTABLE_CLASS(CGroupTab, CInterfaceGroup);
-		REGISTER_REFLECTABLE_CLASS(CGroupScrollText, CInterfaceGroup);
-		REGISTER_REFLECTABLE_CLASS(CGroupHTML, CGroupScrollText);
-		REGISTER_REFLECTABLE_CLASS(CGroupTree::SNode, CReflectable);
-		REGISTER_REFLECTABLE_CLASS(CGroupList, CInterfaceGroup);
-		REGISTER_REFLECTABLE_CLASS(CGroupHeader, CGroupList);
-	}
+	REGISTER_REFLECTABLE_CLASS(CInterfaceElement, CReflectable);
+	REGISTER_REFLECTABLE_CLASS(CViewBase, CInterfaceElement);
+	REGISTER_REFLECTABLE_CLASS(CViewText, CViewBase);
+	REGISTER_REFLECTABLE_CLASS(CViewTextID, CViewText);
+	REGISTER_REFLECTABLE_CLASS(CViewBitmap, CViewBase);
+	REGISTER_REFLECTABLE_CLASS(CViewTextMenu, CViewText);
+	REGISTER_REFLECTABLE_CLASS(CDBViewBar, CViewBitmap);
+	REGISTER_REFLECTABLE_CLASS(CDBViewBar3, CViewBitmap);
+	REGISTER_REFLECTABLE_CLASS(CCtrlBase, CViewBase);
+	REGISTER_REFLECTABLE_CLASS(CCtrlBaseButton, CCtrlBase);
+	REGISTER_REFLECTABLE_CLASS(CCtrlButton, CCtrlBaseButton);
+	REGISTER_REFLECTABLE_CLASS(CCtrlTextButton, CCtrlBaseButton);
+	REGISTER_REFLECTABLE_CLASS(CCtrlColPick, CCtrlBase);
+	REGISTER_REFLECTABLE_CLASS(CCtrlDraggable, CCtrlBase);
+	REGISTER_REFLECTABLE_CLASS(CInterfaceGroup, CCtrlBase);
+	REGISTER_REFLECTABLE_CLASS(CGroupFrame, CInterfaceGroup);
+	REGISTER_REFLECTABLE_CLASS(CGroupModal, CGroupFrame);
+	REGISTER_REFLECTABLE_CLASS(CGroupContainerBase, CInterfaceGroup);
+	REGISTER_REFLECTABLE_CLASS(CGroupContainer, CGroupContainerBase);
+	REGISTER_REFLECTABLE_CLASS(CDBGroupSelectNumber, CInterfaceGroup);
+	REGISTER_REFLECTABLE_CLASS(CGroupEditBoxBase, CInterfaceGroup);
+	REGISTER_REFLECTABLE_CLASS(CGroupEditBox, CGroupEditBoxBase);
+	REGISTER_REFLECTABLE_CLASS(CGroupTree, CInterfaceGroup);
+	REGISTER_REFLECTABLE_CLASS(CDBGroupComboBox, CInterfaceGroup);
+	REGISTER_REFLECTABLE_CLASS(CCtrlScrollBase, CCtrlBase);
+	REGISTER_REFLECTABLE_CLASS(CCtrlScroll, CCtrlScrollBase);
+	REGISTER_REFLECTABLE_CLASS(CGroupMenu, CGroupModal);
+	REGISTER_REFLECTABLE_CLASS(CGroupSubMenuBase, CGroupFrame);
+	REGISTER_REFLECTABLE_CLASS(CGroupSubMenu, CGroupSubMenuBase);
+	REGISTER_REFLECTABLE_CLASS(CGroupTab, CInterfaceGroup);
+	REGISTER_REFLECTABLE_CLASS(CGroupScrollText, CInterfaceGroup);
+	REGISTER_REFLECTABLE_CLASS(CGroupHTML, CGroupScrollText);
+	REGISTER_REFLECTABLE_CLASS(CGroupTree::SNode, CReflectable);
+	REGISTER_REFLECTABLE_CLASS(CGroupList, CInterfaceGroup);
+	REGISTER_REFLECTABLE_CLASS(CGroupHeader, CGroupList);
 }
-
-
+}

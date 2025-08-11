@@ -23,9 +23,9 @@
 #include "nel/pipeline/project_config.h"
 
 #ifdef NL_OS_WINDOWS
-#	include <windows.h>
+#include <windows.h>
 #else
-#	include <stdlib.h>
+#include <stdlib.h>
 #endif
 
 #include <algorithm>
@@ -95,7 +95,7 @@ bool CProjectConfig::init(const std::string &asset, Flags flags, bool partial)
 	}
 	uint32 configFileModification = CFile::getFileModificationDate(configPath);
 	bool assetConfigSame = configPath == s_AssetConfigPath && s_AssetConfigModification == configFileModification && s_InitFlags == flags;
-	
+
 	std::vector<TPathString> configRootPaths;
 	TPathString projectConfigPath;
 	uint32 projectConfigModification = 0;
@@ -120,7 +120,7 @@ bool CProjectConfig::init(const std::string &asset, Flags flags, bool partial)
 		CPath::getPathContent(CPath::getApplicationDirectory("NeL", true) + "/projects", false, false, true, files);
 		for (std::vector<std::string>::iterator it(files.begin()), end(files.end()); it != end; ++it)
 		{
-			const std::string& file = *it;
+			const std::string &file = *it;
 			if (file.length() >= 4 && (file.compare(file.length() - 4, 4, ".cfg") == 0))
 			{
 				CConfigFile project;
@@ -210,7 +210,7 @@ bool CProjectConfig::init(const std::string &asset, Flags flags, bool partial)
 
 	nlassert(s_ConfigFiles.size() == s_ConfigPaths.size());
 
-	if (flags & DatabaseTextureSearchPaths) 
+	if (flags & DatabaseTextureSearchPaths)
 	{
 		searchDirectories("DatabaseTextureSearchPaths");
 	}

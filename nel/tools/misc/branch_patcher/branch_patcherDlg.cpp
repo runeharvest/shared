@@ -42,9 +42,8 @@ const CString DIFF_ERRORS = "C:\\diffLog.txt";
 const CString PATCH_RESULT = "C:\\patchResult.txt";
 const CString PATCH_ERRORS = "C:\\patchErrors.txt";
 
-
-CBranch_patcherDlg::CBranch_patcherDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CBranch_patcherDlg::IDD, pParent)
+CBranch_patcherDlg::CBranch_patcherDlg(CWnd *pParent /*=NULL*/)
+    : CDialog(CBranch_patcherDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CBranch_patcherDlg)
 	m_SrcDir = _T("");
@@ -58,7 +57,7 @@ CBranch_patcherDlg::CBranch_patcherDlg(CWnd* pParent /*=NULL*/)
 	m_Display = NULL;
 }
 
-void CBranch_patcherDlg::DoDataExchange(CDataExchange* pDX)
+void CBranch_patcherDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CBranch_patcherDlg)
@@ -72,18 +71,18 @@ void CBranch_patcherDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CBranch_patcherDlg, CDialog)
-	//{{AFX_MSG_MAP(CBranch_patcherDlg)
-	ON_WM_PAINT()
-	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_ButtonSetSrcDir, OnButtonSetSrcDir)
-	ON_BN_CLICKED(IDC_ButtonSetDestDir, OnButtonSetDestDir)
-	ON_BN_CLICKED(IDC_ButtonPatch, OnButtonPatch)
-	ON_BN_CLICKED(IDC_DoPatch, OnDoPatch)
-	ON_WM_SIZE()
-	ON_WM_CLOSE()
-	ON_BN_CLICKED(IDC_ButtonExtractTokens, OnButtonExtractTokens)
-	ON_BN_CLICKED(IDC_ButtonClearTokens, OnButtonClearTokens)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CBranch_patcherDlg)
+ON_WM_PAINT()
+ON_WM_QUERYDRAGICON()
+ON_BN_CLICKED(IDC_ButtonSetSrcDir, OnButtonSetSrcDir)
+ON_BN_CLICKED(IDC_ButtonSetDestDir, OnButtonSetDestDir)
+ON_BN_CLICKED(IDC_ButtonPatch, OnButtonPatch)
+ON_BN_CLICKED(IDC_DoPatch, OnDoPatch)
+ON_WM_SIZE()
+ON_WM_CLOSE()
+ON_BN_CLICKED(IDC_ButtonExtractTokens, OnButtonExtractTokens)
+ON_BN_CLICKED(IDC_ButtonClearTokens, OnButtonClearTokens)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -93,16 +92,16 @@ BOOL CBranch_patcherDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	SetIcon(m_hIcon, TRUE);			// Set big icon
-	SetIcon(m_hIcon, FALSE);		// Set small icon
+	SetIcon(m_hIcon, TRUE); // Set big icon
+	SetIcon(m_hIcon, FALSE); // Set small icon
 
 	// Extra initialization here
 
 	RECT cltRect;
 	GetClientRect(&cltRect),
-		m_Display = new CRichEditCtrl();
+	    m_Display = new CRichEditCtrl();
 	m_Display->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_HSCROLL | WS_VSCROLL | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_MULTILINE,
-		CRect(20, 180, cltRect.right - 20, cltRect.bottom - 20), this, 1);
+	    CRect(20, 180, cltRect.right - 20, cltRect.bottom - 20), this, 1);
 
 	// Initialize directories
 	loadConfiguration();
@@ -113,9 +112,9 @@ BOOL CBranch_patcherDlg::OnInitDialog()
 	m_SrcDirLabel = "Source Dir";
 	m_TargetDirLabel = "Target Dir";
 	UpdateData(false);
-	((CButton*)GetDlgItem(IDC_DoPatch))->EnableWindow(FALSE);
+	((CButton *)GetDlgItem(IDC_DoPatch))->EnableWindow(FALSE);
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return TRUE; // return TRUE  unless you set the focus to a control
 }
 
 // If you add a minimize button to your dialog, you will need the code below
@@ -152,14 +151,13 @@ HCURSOR CBranch_patcherDlg::OnQueryDragIcon()
 	return (HCURSOR)m_hIcon;
 }
 
-
-void	CBranch_patcherDlg::setSrcDirectory(const CString& s)
+void CBranch_patcherDlg::setSrcDirectory(const CString &s)
 {
 	m_SrcDir = s;
 	UpdateData(false);
 }
 
-void	CBranch_patcherDlg::setDestDirectory(const CString& s)
+void CBranch_patcherDlg::setDestDirectory(const CString &s)
 {
 	m_DestDir = s;
 	UpdateData(false);
@@ -184,25 +182,16 @@ void CBranch_patcherDlg::OnButtonSetDestDir()
 	}
 }
 
-
-
-
-
-
-
-
 CDirDialog::CDirDialog()
-{////////////////////////////////////////////
-
+{ ////////////////////////////////////////////
 }
 
 CDirDialog::~CDirDialog()
-{///////////////////////////////////////////
-
+{ ///////////////////////////////////////////
 }
 
 int CDirDialog::DoBrowse()
-{/////////////////////////////////////////
+{ /////////////////////////////////////////
 
 	LPMALLOC pMalloc;
 	if (SHGetMalloc(&pMalloc) != NOERROR)
@@ -216,9 +205,9 @@ int CDirDialog::DoBrowse()
 
 	if (!m_strInitDir.IsEmpty())
 	{
-		OLECHAR       olePath[MAX_PATH];
-		ULONG         dwAttributes = 0;
-		HRESULT       hr;
+		OLECHAR olePath[MAX_PATH];
+		ULONG dwAttributes = 0;
+		HRESULT hr;
 		LPSHELLFOLDER pDesktopFolder;
 		// // Get a pointer to the Desktop's IShellFolder interface. //
 		if (SUCCEEDED(SHGetDesktopFolder(&pDesktopFolder)))
@@ -237,11 +226,11 @@ int CDirDialog::DoBrowse()
 			// Convert the path to an ITEMIDLIST.
 			//
 			hr = pDesktopFolder->ParseDisplayName(NULL,
-				NULL,
-				olePath,
-				NULL,
-				&pidl,
-				&dwAttributes);
+			    NULL,
+			    olePath,
+			    NULL,
+			    &pidl,
+			    &dwAttributes);
 
 			if (FAILED(hr))
 			{
@@ -281,7 +270,6 @@ int CDirDialog::DoBrowse()
 	return 1;
 }
 
-
 /*
  * Adapted from function by Jonah Bishop <jonahb@nc.rr.com>
  */
@@ -292,14 +280,14 @@ BOOL SendTextToClipboard(CString source)
 	if (OpenClipboard(NULL))
 	{
 		HGLOBAL clipbuffer;
-		TCHAR* buffer;
+		TCHAR *buffer;
 
 		EmptyClipboard(); // Empty whatever's already there
 
 		clipbuffer = GlobalAlloc(GMEM_DDESHARE, ((SIZE_T)source.GetLength() + 1) * sizeof(TCHAR));
 		if (clipbuffer)
 		{
-			buffer = (TCHAR*)GlobalLock(clipbuffer);
+			buffer = (TCHAR *)GlobalLock(clipbuffer);
 			if (buffer)
 			{
 				_tcscpy(buffer, LPCTSTR(source));
@@ -316,8 +304,7 @@ BOOL SendTextToClipboard(CString source)
 	return FALSE;
 }
 
-
-void CBranch_patcherDlg::displayMessage(const CString& msg, bool insertAtTop)
+void CBranch_patcherDlg::displayMessage(const CString &msg, bool insertAtTop)
 {
 	if (insertAtTop)
 		m_Display->SetSel(0, 0);
@@ -326,7 +313,6 @@ void CBranch_patcherDlg::displayMessage(const CString& msg, bool insertAtTop)
 	m_Display->ReplaceSel(msg);
 	SaveDiff = false;
 }
-
 
 void CBranch_patcherDlg::OnButtonPatch()
 {
@@ -346,10 +332,9 @@ void CBranch_patcherDlg::OnButtonPatch()
 			SaveDiff = true;
 			colorizeDiff();
 			m_Display->LineScroll(0);
-			((CButton*)GetDlgItem(IDC_DoPatch))->EnableWindow(TRUE);
+			((CButton *)GetDlgItem(IDC_DoPatch))->EnableWindow(TRUE);
 
-			if ((m_Display->GetLineCount() == 0) ||
-				(m_Display->GetLineCount() == 1 && m_Display->LineLength(0) < 2))
+			if ((m_Display->GetLineCount() == 0) || (m_Display->GetLineCount() == 1 && m_Display->LineLength(0) < 2))
 			{
 				displayFile(DIFF_ERRORS);
 				displayMessage("Diff is empty.\r\nIf this is not the expected result:\r\n- check if the source directory is part of a CVS tree\r\n- check if cvs.exe is in your PATH\r\n- check if you are logged to the cvs server with 'cvs login' (set your home cvs directory in the HOME environment variable if needed)\r\n- check if C:\\ has enough free space and access rights to write a file.\n\nHere is the log:\n\n", true);
@@ -371,25 +356,22 @@ void CBranch_patcherDlg::OnButtonPatch()
 	}
 }
 
-
 static unsigned long CALLBACK MyStreamInCallback(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 {
-	CFile* pFile = (CFile*)dwCookie;
+	CFile *pFile = (CFile *)dwCookie;
 	*pcb = pFile->Read(pbBuff, cb);
 	return 0;
 }
 
-
 static unsigned long CALLBACK MyStreamOutCallback(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 {
-	CFile* pFile = (CFile*)dwCookie;
+	CFile *pFile = (CFile *)dwCookie;
 	pFile->Write(pbBuff, cb);
 	*pcb = cb;
 	return 0;
 }
 
-
-void CBranch_patcherDlg::displayFile(const CString& filename)
+void CBranch_patcherDlg::displayFile(const CString &filename)
 {
 	CFile cFile(filename, CFile::modeRead);
 	EDITSTREAM es;
@@ -398,8 +380,7 @@ void CBranch_patcherDlg::displayFile(const CString& filename)
 	m_Display->StreamIn(SF_TEXT, es);
 }
 
-
-void CBranch_patcherDlg::saveFile(const CString& filename)
+void CBranch_patcherDlg::saveFile(const CString &filename)
 {
 	CFile cFile(filename, CFile::modeCreate | CFile::modeWrite);
 	EDITSTREAM es;
@@ -407,7 +388,6 @@ void CBranch_patcherDlg::saveFile(const CString& filename)
 	es.pfnCallback = MyStreamOutCallback;
 	m_Display->StreamOut(SF_TEXT, es);
 }
-
 
 void CBranch_patcherDlg::colorizeDiff()
 {
@@ -450,7 +430,6 @@ void CBranch_patcherDlg::colorizeDiff()
 	}
 }
 
-
 void CBranch_patcherDlg::OnDoPatch()
 {
 	UpdateData(true);
@@ -481,8 +460,7 @@ void CBranch_patcherDlg::OnDoPatch()
 			SaveDiff = false;
 			m_Display->LineScroll(0);
 
-			if ((m_Display->GetLineCount() == 0) ||
-				(m_Display->GetLineCount() == 1 && m_Display->LineLength(0) < 2))
+			if ((m_Display->GetLineCount() == 0) || (m_Display->GetLineCount() == 1 && m_Display->LineLength(0) < 2))
 			{
 				CString s;
 				s.Format(_T("Nothing was patched.\r\nIf this is not the expected result:\r\n- check if the good patch.exe is in %s\r\n- check if %s exists (generated by previous diff)\r\n- check if C:\\ has enough free space and access rights to write a file."), TEMP_DIFF_FILE);
@@ -505,7 +483,6 @@ void CBranch_patcherDlg::OnDoPatch()
 	}
 }
 
-
 void CBranch_patcherDlg::OnSize(UINT nType, int cx, int cy)
 {
 	CDialog::OnSize(nType, cx, cy);
@@ -526,7 +503,6 @@ void CBranch_patcherDlg::OnClose()
 	CDialog::OnClose();
 }
 
-
 void CBranch_patcherDlg::processCommandLine()
 {
 	CString cmdLine = theApp.m_lpCmdLine;
@@ -537,7 +513,6 @@ void CBranch_patcherDlg::processCommandLine()
 		guessDestDirectory();
 	}
 }
-
 
 void CBranch_patcherDlg::guessDestDirectory()
 {
@@ -556,7 +531,6 @@ void CBranch_patcherDlg::guessDestDirectory()
 		}
 	}
 }
-
 
 void CBranch_patcherDlg::extractDirTokens()
 {
@@ -618,22 +592,21 @@ void CBranch_patcherDlg::extractDirTokens()
 	Token1 = m_SrcDir.Mid(beginOfToken1, endOfToken1 - beginOfToken1);
 	Token2 = m_DestDir.Mid(beginOfToken2, endOfToken2 - beginOfToken2);
 
-	//endExtract:
-		/*if ( hasTokens() )
-		{
-			text.Format( "The two branch tokens '%s' and '%s' are now stored", Token1, Token2 );
-			::MessageBox( m_hWnd, text, "Tokens found", MB_OK | MB_ICONINFORMATION );
-			return;
-		}*/
-		//notfound:
-			//::MessageBox( m_hWnd, "Tokens not found in the directories", "Extracting tokens", MB_OK | MB_ICONEXCLAMATION );
+	// endExtract:
+	/*if ( hasTokens() )
+	{
+	    text.Format( "The two branch tokens '%s' and '%s' are now stored", Token1, Token2 );
+	    ::MessageBox( m_hWnd, text, "Tokens found", MB_OK | MB_ICONINFORMATION );
+	    return;
+	}*/
+	// notfound:
+	//::MessageBox( m_hWnd, "Tokens not found in the directories", "Extracting tokens", MB_OK | MB_ICONEXCLAMATION );
 }
-
 
 void CBranch_patcherDlg::loadConfiguration()
 {
 	// Read the dest directory from the registry
-	free((void*)theApp.m_pszRegistryKey);
+	free((void *)theApp.m_pszRegistryKey);
 	theApp.m_pszRegistryKey = _tcsdup(_T("Nevrax"));
 
 	CString savedSrcDir, savedTargetDir, token1, token2;
@@ -656,7 +629,6 @@ void CBranch_patcherDlg::loadConfiguration()
 	CvsDiffDirLevel = theApp.GetProfileInt(_T(""), _T("CvsDiffDirLevel"), 1); // 0 for old version of CVS, 1 for new version of CVS
 }
 
-
 void CBranch_patcherDlg::saveConfiguration()
 {
 	UpdateData(true);
@@ -668,7 +640,6 @@ void CBranch_patcherDlg::saveConfiguration()
 	theApp.WriteProfileString(_T(""), _T("Token1"), Token1);
 	theApp.WriteProfileString(_T(""), _T("Token2"), Token2);
 }
-
 
 void CBranch_patcherDlg::OnButtonExtractTokens()
 {
@@ -683,7 +654,7 @@ void CBranch_patcherDlg::OnButtonExtractTokens()
 		m_SrcDirLabel = "Enter Token 1";
 		m_TargetDirLabel = "Enter Token 2";
 		m_Filename = "The tokens above were extracted from the directories.";
-		((CButton*)GetDlgItem(IDC_ButtonExtractTokens))->SetWindowText(_T("Store Tokens"));
+		((CButton *)GetDlgItem(IDC_ButtonExtractTokens))->SetWindowText(_T("Store Tokens"));
 		GetDlgItem(IDC_TopText)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_ButtonClearTokens)->EnableWindow(FALSE);
 		GetDlgItem(IDC_ButtonPatch)->ShowWindow(SW_HIDE);
@@ -703,7 +674,7 @@ void CBranch_patcherDlg::OnButtonExtractTokens()
 		m_SrcDir = SrcDirBackup;
 		m_DestDir = TargetDirBackup;
 		m_Filename.Empty();
-		((CButton*)GetDlgItem(IDC_ButtonExtractTokens))->SetWindowText(_T("Enter Tokens"));
+		((CButton *)GetDlgItem(IDC_ButtonExtractTokens))->SetWindowText(_T("Enter Tokens"));
 		GetDlgItem(IDC_TopText)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_ButtonClearTokens)->EnableWindow(TRUE);
 		GetDlgItem(IDC_ButtonPatch)->ShowWindow(SW_SHOW);
@@ -714,7 +685,6 @@ void CBranch_patcherDlg::OnButtonExtractTokens()
 	}
 }
 
-
 void CBranch_patcherDlg::OnButtonClearTokens()
 {
 	Token1.Empty();
@@ -722,16 +692,14 @@ void CBranch_patcherDlg::OnButtonClearTokens()
 	displayTokens();
 }
 
-
 bool CBranch_patcherDlg::hasTokens() const
 {
 	return !(Token1.IsEmpty() || Token2.IsEmpty());
 }
 
-
 void CBranch_patcherDlg::displayTokens()
 {
-	((CButton*)GetDlgItem(IDC_ButtonClearTokens))->EnableWindow(hasTokens() ? TRUE : FALSE);
+	((CButton *)GetDlgItem(IDC_ButtonClearTokens))->EnableWindow(hasTokens() ? TRUE : FALSE);
 	if (hasTokens())
 	{
 		m_Tokens = "Tokens: '" + Token1 + "' and '" + Token2 + "'";

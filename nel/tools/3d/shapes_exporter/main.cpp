@@ -23,10 +23,10 @@
 #include "shapes_exporter.h"
 
 #ifdef NL_OS_WINDOWS
-#	ifndef NL_COMP_MINGW
-#		define NOMINMAX
-#	endif
-#	include <windows.h>
+#ifndef NL_COMP_MINGW
+#define NOMINMAX
+#endif
+#include <windows.h>
 #endif // NL_OS_WINDOWS
 
 using namespace NLMISC;
@@ -38,7 +38,7 @@ void split(const std::string &str, std::vector<std::string> &tokens, const std::
 	// Skip delimiters at beginning.
 	std::string::size_type lastPos = str.find_first_not_of(delimiters, 0);
 	// Find first "non-delimiter".
-	std::string::size_type pos     = str.find_first_of(delimiters, lastPos);
+	std::string::size_type pos = str.find_first_of(delimiters, lastPos);
 
 	while (std::string::npos != pos || std::string::npos != lastPos)
 	{
@@ -53,14 +53,14 @@ void split(const std::string &str, std::vector<std::string> &tokens, const std::
 
 static CHashKeyMD5 getNewMD5(const std::string &filename)
 {
-    CMD5Context	md5ctx;
-    CHashKeyMD5 Message_Digest;
+	CMD5Context md5ctx;
+	CHashKeyMD5 Message_Digest;
 	Message_Digest.clear();
 
 	CIFile ifile;
 	if (!ifile.open(filename))
 	{
-		nlwarning ("MD5: Can't open the file '%s'", filename.c_str());
+		nlwarning("MD5: Can't open the file '%s'", filename.c_str());
 		return Message_Digest;
 	}
 
@@ -72,18 +72,17 @@ static CHashKeyMD5 getNewMD5(const std::string &filename)
 	sint n, read = 0;
 	do
 	{
-		//bs = (int)fread (buffer, 1, bufferSize, fp);
-		n = std::min (bufferSize, fs-read);
-		//nlinfo ("read %d bytes", n);
+		// bs = (int)fread (buffer, 1, bufferSize, fp);
+		n = std::min(bufferSize, fs - read);
+		// nlinfo ("read %d bytes", n);
 		ifile.serialBuffer((uint8 *)buffer, n);
 
 		md5ctx.update(buffer, n);
 
 		read += n;
-	}
-	while (!ifile.eof());
+	} while (!ifile.eof());
 
-	ifile.close	();
+	ifile.close();
 
 	md5ctx.final(Message_Digest);
 
@@ -121,7 +120,7 @@ sint main(int argc, char **argv)
 	if (argc > 1)
 	{
 		// process all files specified on command line
-		for(int i = 1; i < argc; ++i)
+		for (int i = 1; i < argc; ++i)
 		{
 			// TODO: create a different directory for each of them
 			exporter.exportShape(argv[i], CPath::standardizePath(exporter.settings.output_path));
@@ -133,7 +132,7 @@ sint main(int argc, char **argv)
 
 		// search all .max files
 		CPath::getPathContent(exporter.settings.input_path, true, false, true, filenames);
-//		CPath::getFileList("max", filenames);
+		//		CPath::getFileList("max", filenames);
 		// search .max files corresponding to a filter
 		// fix bad textures
 		CPath::remapFile("ma_hof_armor_00_tibia_c1.tga", "ma_hof_armor00_tibia_c1.png");
@@ -151,20 +150,20 @@ sint main(int argc, char **argv)
 
 		CPath::remapFile("zo_hom_armor_00_mollet_c1.tga", "zo_hom_armor00_mollet_c1.png");
 		CPath::remapFile("zo_hom_armor_00_pied_c1.tga", "zo_hom_armor00_pied_c1.png");
-		
-//		CPath::getFileListByName("ps", "braziera", filenames);
-//		CPath::getFileListByName("ps", "fireworka", filenames);
-//		CPath::getFileListByName("ps", "fireworkf", filenames);
-//		CPath::getFileListByName("ps", "burntreeexplo", filenames);
-//		CPath::getFileListByName("ps", "dustdoor", filenames); // trop court
-//		CPath::getFileListByName("ps", "aura_recept", filenames);
-//		CPath::getFileListByName("ps", "bloblight", filenames);
+
+		//		CPath::getFileListByName("ps", "braziera", filenames);
+		//		CPath::getFileListByName("ps", "fireworka", filenames);
+		//		CPath::getFileListByName("ps", "fireworkf", filenames);
+		//		CPath::getFileListByName("ps", "burntreeexplo", filenames);
+		//		CPath::getFileListByName("ps", "dustdoor", filenames); // trop court
+		//		CPath::getFileListByName("ps", "aura_recept", filenames);
+		//		CPath::getFileListByName("ps", "bloblight", filenames);
 		CPath::getFileList("ps", filenames);
 		// search all .shape and .ps files
 		std::vector<std::string> shapes;
 		CPath::getFileList("shape", shapes);
 		CPath::getFileList("ps", shapes);
-		for(size_t i = 0; i < filenames.size(); ++i)
+		for (size_t i = 0; i < filenames.size(); ++i)
 		{
 			if (filenames[i].find(".max") == std::string::npos)
 				continue;
@@ -207,7 +206,7 @@ sint main(int argc, char **argv)
 					in.serialBuffer(buffer, size);
 					out.serialBuffer(buffer, size);
 
-					delete [] buffer;
+					delete[] buffer;
 				}
 			}
 
@@ -220,7 +219,7 @@ sint main(int argc, char **argv)
 				skeleton = ShapesExporter::findSkeleton(filenames[i]);
 
 				// TODO: take from cfg
-//				filtered_shapes.push_back();
+				//				filtered_shapes.push_back();
 				continue;
 
 				// no filter if it's a PS
@@ -228,7 +227,7 @@ sint main(int argc, char **argv)
 			}
 			else if (!shape.empty())
 			{
-//				skeleton = ShapesExporter::findSkeleton(shape);
+				//				skeleton = ShapesExporter::findSkeleton(shape);
 				// render shape
 			}
 			else if (!skeleton.empty())
@@ -239,17 +238,17 @@ sint main(int argc, char **argv)
 			else
 			{
 				continue;
-/*
-				// create a temporary list with shapes which could correspond to .max file
-				for(size_t j = 0; j < shapes.size(); ++j)
-				{
-					// only add files with the same beginning
-					if (shapes[j].find(baseFilename) == 0)
-					{
-						filtered_shapes.push_back(shapes[j]);
-					}
-				}
-*/
+				/*
+				                // create a temporary list with shapes which could correspond to .max file
+				                for(size_t j = 0; j < shapes.size(); ++j)
+				                {
+				                    // only add files with the same beginning
+				                    if (shapes[j].find(baseFilename) == 0)
+				                    {
+				                        filtered_shapes.push_back(shapes[j]);
+				                    }
+				                }
+				*/
 				// if there is no corresponding file, we can't render it
 				if (filtered_shapes.empty())
 				{

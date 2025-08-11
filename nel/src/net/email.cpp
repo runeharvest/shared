@@ -28,7 +28,6 @@
 using namespace std;
 using namespace NLMISC;
 
-
 namespace NLNET {
 
 static string DefaultSMTPServer, DefaultFrom, DefaultTo;
@@ -52,7 +51,7 @@ static char tbl[65] = {
  * buffer of at least 1+BASE64_LENGTH(length) bytes.
  * where BASE64_LENGTH(len) = (4 * ((LENGTH + 2) / 3))
  */
-static void uuencode (const char *s, const char *store, const int length)
+static void uuencode(const char *s, const char *store, const int length)
 {
 	int i;
 	unsigned char *p = (unsigned char *)store;
@@ -80,26 +79,26 @@ static void uuencode (const char *s, const char *store, const int length)
 	*p = '\0';
 }
 
-bool sendEMailCommand (CTcpSock &sock, const std::string &command, uint32 code = 250)
+bool sendEMailCommand(CTcpSock &sock, const std::string &command, uint32 code = 250)
 {
 	string buffer = command + "\r\n";
 	uint32 size = (uint32)buffer.size();
-	if(!command.empty())
+	if (!command.empty())
 	{
-		if (sock.send ((uint8 *)buffer.c_str(), size) != CSock::Ok)
+		if (sock.send((uint8 *)buffer.c_str(), size) != CSock::Ok)
 		{
-			nlwarning ("EMAIL: Can't send data to the server");
+			nlwarning("EMAIL: Can't send data to the server");
 			return false;
 		}
 	}
 
 	string res;
 	char c;
-	for(;;)
+	for (;;)
 	{
 		size = 1;
 
-		if (sock.receive((uint8*)&c, size, false) == CSock::Ok)
+		if (sock.receive((uint8 *)&c, size, false) == CSock::Ok)
 		{
 			res += c;
 			if (c == '\n')
@@ -108,7 +107,7 @@ bool sendEMailCommand (CTcpSock &sock, const std::string &command, uint32 code =
 				fromString(res, c);
 				if (c != code)
 				{
-					nlwarning ("EMAIL: EMail command '%s' returned '%s' instead of code %d on sock %s", command.substr(0, 20).c_str(), res.substr(0, res.size()-2).c_str(), code, sock.remoteAddr().asString().c_str());
+					nlwarning("EMAIL: EMail command '%s' returned '%s' instead of code %d on sock %s", command.substr(0, 20).c_str(), res.substr(0, res.size() - 2).c_str(), code, sock.remoteAddr().asString().c_str());
 					return false;
 				}
 				return true;
@@ -116,16 +115,15 @@ bool sendEMailCommand (CTcpSock &sock, const std::string &command, uint32 code =
 		}
 		else
 		{
-			nlwarning ("EMAIL: EMail connection closed before end of line, command '%s' returned '%s' on sock %s (code %d)", command.substr(0, 20).c_str(), res.c_str(), sock.remoteAddr().asString().c_str(), code);
+			nlwarning("EMAIL: EMail connection closed before end of line, command '%s' returned '%s' on sock %s (code %d)", command.substr(0, 20).c_str(), res.c_str(), sock.remoteAddr().asString().c_str(), code);
 			return false;
 		}
 	}
 }
 
-
-bool sendEmail (const string &smtpServer, const string &from, const string &to, const string &subject, const string &body, const string &attachedFile, bool onlyCheck)
+bool sendEmail(const string &smtpServer, const string &from, const string &to, const string &subject, const string &body, const string &attachedFile, bool onlyCheck)
 {
-	bool ok  = false;
+	bool ok = false;
 	CTcpSock sock;
 	uint i;
 
@@ -139,9 +137,9 @@ bool sendEmail (const string &smtpServer, const string &from, const string &to, 
 
 		if (smtpServer.empty())
 		{
-			if(DefaultSMTPServer.empty())
+			if (DefaultSMTPServer.empty())
 			{
-				nlwarning ("EMAIL: Can't send email because no SMTPServer was provided");
+				nlwarning("EMAIL: Can't send email because no SMTPServer was provided");
 				goto end;
 			}
 			else
@@ -158,15 +156,15 @@ bool sendEmail (const string &smtpServer, const string &from, const string &to, 
 
 		if (!sock.connected())
 		{
-			nlwarning ("EMAIL: Can't connect to email server %s", formatedSMTPServer.c_str());
+			nlwarning("EMAIL: Can't connect to email server %s", formatedSMTPServer.c_str());
 			goto end;
 		}
 
 		if (to.empty())
 		{
-			if(DefaultTo.empty())
+			if (DefaultTo.empty())
 			{
-				nlwarning ("EMAIL: Can't send email because no To was provided");
+				nlwarning("EMAIL: Can't send email because no To was provided");
 				goto end;
 			}
 			else
@@ -179,7 +177,7 @@ bool sendEmail (const string &smtpServer, const string &from, const string &to, 
 			formatedTo = to;
 		}
 
-		if(from.empty())
+		if (from.empty())
 		{
 			if (DefaultFrom.empty())
 			{
@@ -229,23 +227,23 @@ bool sendEmail (const string &smtpServer, const string &from, const string &to, 
 			formatedBody += "Content-Disposition: attachment;\r\n";
 
 			string lext = toLowerAscii(ext);
-			if(lext == "tga")
+			if (lext == "tga")
 			{
 				formatedBody += "Content-Type: image/x-targa;\r\n";
 			}
-			else if(lext == "bmp")
+			else if (lext == "bmp")
 			{
 				formatedBody += "Content-Type: image/bmp;\r\n";
 			}
-			else if(lext == "png")
+			else if (lext == "png")
 			{
 				formatedBody += "Content-Type: image/png;\r\n";
 			}
-			else if(lext == "jpg" || lext == "jpeg")
+			else if (lext == "jpg" || lext == "jpeg")
 			{
 				formatedBody += "Content-Type: image/jpeg;\r\n";
 			}
-			else if(lext == "dmp")
+			else if (lext == "dmp")
 			{
 				formatedBody += "Content-Type: application/octet-stream;\r\n";
 			}
@@ -254,23 +252,23 @@ bool sendEmail (const string &smtpServer, const string &from, const string &to, 
 				formatedBody += "Content-Type: text/plain; charset=us-ascii\r\n";
 			}
 
-			formatedBody += " name=\""+CFile::getFilename(attachedFile)+"\"\r\n";
+			formatedBody += " name=\"" + CFile::getFilename(attachedFile) + "\"\r\n";
 			formatedBody += "Content-Transfer-Encoding: base64\r\n";
-			formatedBody += " filename=\""+CFile::getFilename(attachedFile)+"\"\r\n";
+			formatedBody += " filename=\"" + CFile::getFilename(attachedFile) + "\"\r\n";
 			// empty line to say that it s the end of the header
 			formatedBody += "\r\n";
 
-			static const size_t src_buf_size = 45;// This *MUST* be a multiple of 3
+			static const size_t src_buf_size = 45; // This *MUST* be a multiple of 3
 			static const size_t dst_buf_size = 4 * ((src_buf_size + 2) / 3);
 			size_t write_size = dst_buf_size;
 			char src_buf[src_buf_size + 1];
 			char dst_buf[dst_buf_size + 1];
 			size_t size;
 
-			FILE *src_stream = nlfopen (attachedFile, "rb");
+			FILE *src_stream = nlfopen(attachedFile, "rb");
 			if (src_stream == NULL)
 			{
-				nlwarning ("EMAIL: Can't attach file '%s' to the email because the file can't be open", attachedFile.c_str());
+				nlwarning("EMAIL: Can't attach file '%s' to the email because the file can't be open", attachedFile.c_str());
 			}
 			else
 			{
@@ -279,7 +277,7 @@ bool sendEmail (const string &smtpServer, const string &from, const string &to, 
 					if (size != src_buf_size)
 					{
 						/* write_size is always 60 until the last line */
-						write_size=(4 * ((size + 2) / 3));
+						write_size = (4 * ((size + 2) / 3));
 						/* pad with 0s so we can just encode extra bits */
 						memset(&src_buf[size], 0, src_buf_size - size);
 					}
@@ -289,7 +287,7 @@ bool sendEmail (const string &smtpServer, const string &from, const string &to, 
 					formatedBody += dst_buf;
 					formatedBody += "\r\n";
 				}
-				fclose (src_stream);
+				fclose(src_stream);
 			}
 			formatedBody += "--Multipart_nel--";
 		}
@@ -299,50 +297,51 @@ bool sendEmail (const string &smtpServer, const string &from, const string &to, 
 		//	fwrite (formatedBody.c_str(), 1, formatedBody.size(), fp);
 		//	fclose (fp); }
 
-		if(!sendEMailCommand (sock, "", 220)) goto end;
+		if (!sendEMailCommand(sock, "", 220)) goto end;
 
-		if(onlyCheck)
+		if (onlyCheck)
 		{
-			if(!sendEMailCommand (sock, "HELO localhost")) goto end;
-			if(!sendEMailCommand (sock, "MAIL FROM: " + formatedFrom)) goto end;
-			if(!sendEMailCommand (sock, "RCPT TO: " + formatedTo)) goto end;
-			if(!sendEMailCommand (sock, "QUIT", 221)) goto end;
+			if (!sendEMailCommand(sock, "HELO localhost")) goto end;
+			if (!sendEMailCommand(sock, "MAIL FROM: " + formatedFrom)) goto end;
+			if (!sendEMailCommand(sock, "RCPT TO: " + formatedTo)) goto end;
+			if (!sendEMailCommand(sock, "QUIT", 221)) goto end;
 
 			ok = true;
 		}
 		else
 		{
-			if(!sendEMailCommand (sock, "HELO localhost")) goto end;
-			if(!sendEMailCommand (sock, "MAIL FROM: " + formatedFrom)) goto end;
-			if(!sendEMailCommand (sock, "RCPT TO: " + formatedTo)) goto end;
-			if(!sendEMailCommand (sock, "DATA", 354)) goto end;
+			if (!sendEMailCommand(sock, "HELO localhost")) goto end;
+			if (!sendEMailCommand(sock, "MAIL FROM: " + formatedFrom)) goto end;
+			if (!sendEMailCommand(sock, "RCPT TO: " + formatedTo)) goto end;
+			if (!sendEMailCommand(sock, "DATA", 354)) goto end;
 
-			string buffer =
-				"From: " + formatedFrom + "\r\n"
-				"To: " + formatedTo + "\r\n"
-				"Subject: " + subject + "\r\n"
-				+ formatedBody + "\r\n.";
+			string buffer = "From: " + formatedFrom + "\r\n"
+			                                          "To: "
+			    + formatedTo + "\r\n"
+			                   "Subject: "
+			    + subject + "\r\n"
+			    + formatedBody + "\r\n.";
 
-			if(!sendEMailCommand (sock, buffer)) goto end;
-			if(!sendEMailCommand (sock, "QUIT", 221)) goto end;
+			if (!sendEMailCommand(sock, buffer)) goto end;
+			if (!sendEMailCommand(sock, "QUIT", 221)) goto end;
 
 			ok = true;
 		}
 	}
 	catch (const Exception &e)
 	{
-		nlwarning ("EMAIL: Can't send email: %s", e.what());
+		nlwarning("EMAIL: Can't send email: %s", e.what());
 		goto end;
 	}
 
 end:
 	if (sock.connected())
-		sock.close ();
+		sock.close();
 
 	return ok;
 }
 
-void setDefaultEmailParams (const std::string &smtpServer, const std::string &from, const std::string &to)
+void setDefaultEmailParams(const std::string &smtpServer, const std::string &from, const std::string &to)
 {
 	DefaultSMTPServer = smtpServer;
 	DefaultFrom = from;

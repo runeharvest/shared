@@ -23,19 +23,18 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
-const float		UCamera::DefLx=0.26f;
-const float		UCamera::DefLy=0.2f;
-const float		UCamera::DefLzNear=0.15f;
-const float		UCamera::DefLzFar=1000.0f;
+const float UCamera::DefLx = 0.26f;
+const float UCamera::DefLy = 0.2f;
+const float UCamera::DefLzNear = 0.15f;
+const float UCamera::DefLzFar = 1000.0f;
 
 // ***************************************************************************
 
 void UCamera::setFrustum(const CFrustum &f)
 {
-	CCamera	*object = getObjectPtr();
+	CCamera *object = getObjectPtr();
 	object->setFrustum(f);
 }
 
@@ -43,7 +42,7 @@ void UCamera::setFrustum(const CFrustum &f)
 
 const CFrustum &UCamera::getFrustum() const
 {
-	CCamera	*object = getObjectPtr();
+	CCamera *object = getObjectPtr();
 	return object->getFrustum();
 }
 
@@ -51,7 +50,7 @@ const CFrustum &UCamera::getFrustum() const
 
 void UCamera::setFrustum(float left, float right, float bottom, float top, float znear, float zfar, bool perspective)
 {
-	CCamera	*object = getObjectPtr();
+	CCamera *object = getObjectPtr();
 	object->setFrustum(left, right, bottom, top, znear, zfar, perspective);
 }
 
@@ -59,7 +58,7 @@ void UCamera::setFrustum(float left, float right, float bottom, float top, float
 
 void UCamera::setFrustum(float width, float height, float znear, float zfar, bool perspective)
 {
-	CCamera	*object = getObjectPtr();
+	CCamera *object = getObjectPtr();
 	object->setFrustum(width, height, znear, zfar, perspective);
 }
 
@@ -67,7 +66,7 @@ void UCamera::setFrustum(float width, float height, float znear, float zfar, boo
 
 void UCamera::getFrustum(float &left, float &right, float &bottom, float &top, float &znear, float &zfar) const
 {
-	CCamera	*object = getObjectPtr();
+	CCamera *object = getObjectPtr();
 	object->getFrustum(left, right, bottom, top, znear, zfar);
 }
 
@@ -75,7 +74,7 @@ void UCamera::getFrustum(float &left, float &right, float &bottom, float &top, f
 
 bool UCamera::isOrtho() const
 {
-	CCamera	*object = getObjectPtr();
+	CCamera *object = getObjectPtr();
 	return object->isOrtho();
 }
 
@@ -83,7 +82,7 @@ bool UCamera::isOrtho() const
 
 bool UCamera::isPerspective() const
 {
-	CCamera	*object = getObjectPtr();
+	CCamera *object = getObjectPtr();
 	return object->isPerspective();
 }
 
@@ -91,22 +90,22 @@ bool UCamera::isPerspective() const
 
 void UCamera::setPerspective(float fov, float aspectRatio, float znear, float zfar)
 {
-	CCamera	*object = getObjectPtr();
+	CCamera *object = getObjectPtr();
 	object->setPerspective(fov, aspectRatio, znear, zfar);
 }
 
 // ***************************************************************************
 
-void UCamera::buildCameraPyramid(std::vector<NLMISC::CPlane>	&pyramid, bool useWorldMatrix)
+void UCamera::buildCameraPyramid(std::vector<NLMISC::CPlane> &pyramid, bool useWorldMatrix)
 {
-	CCamera	*object = getObjectPtr();
+	CCamera *object = getObjectPtr();
 	object->buildCameraPyramid(pyramid, useWorldMatrix);
 }
 
 // ***************************************************************************
-void UCamera::buildCameraPyramidCorners(std::vector<NLMISC::CVector>	&pyramidCorners, bool useWorldMatrix)
+void UCamera::buildCameraPyramidCorners(std::vector<NLMISC::CVector> &pyramidCorners, bool useWorldMatrix)
 {
-	CCamera	*object = getObjectPtr();
+	CCamera *object = getObjectPtr();
 	object->buildCameraPyramidCorners(pyramidCorners, useWorldMatrix);
 }
 

@@ -17,50 +17,48 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef CTRL_DRAGGABLE_H
 #define CTRL_DRAGGABLE_H
 
 #include "nel/gui/ctrl_base.h"
 
-namespace NLGUI
+namespace NLGUI {
+
+class CCtrlDraggable : public CCtrlBase
 {
+public:
+	DECLARE_UI_CLASS(CCtrlDraggable)
 
-	class CCtrlDraggable : public CCtrlBase
+	CCtrlDraggable(const TCtorParam &param);
+	virtual ~CCtrlDraggable() { }
+
+	static CCtrlDraggable *getDraggedSheet() { return _LastDraggedSheet; }
+	bool isDragged() const { return dragged; }
+	void setDragged(bool dragged) { this->dragged = dragged; }
+	bool isDraggable() const { return draggable; }
+	void setDraggable(bool draggable) { this->draggable = draggable; }
+
+	void abortDragging()
 	{
-	public:
-		DECLARE_UI_CLASS( CCtrlDraggable )
+		dragged = false;
+		_LastDraggedSheet = NULL;
+	}
 
-		CCtrlDraggable( const TCtorParam &param );
-		virtual ~CCtrlDraggable(){}
+	// Necessary because of reflection, no other purpose
+	void draw() { }
 
-		static CCtrlDraggable *getDraggedSheet(){ return _LastDraggedSheet; }
-		bool isDragged() const{ return dragged; }
-		void setDragged( bool dragged ){ this->dragged = dragged; }
-		bool isDraggable() const{ return draggable; }
-		void setDraggable( bool draggable ){ this->draggable = draggable; }
-		
-		void abortDragging()
-		{
-			dragged = false;
-			_LastDraggedSheet = NULL;
-		}
+	REFLECT_EXPORT_START(CCtrlDraggable, CCtrlBase)
+	REFLECT_BOOL("dragable", isDraggable, setDraggable);
+	REFLECT_EXPORT_END
 
-		// Necessary because of reflection, no other purpose
-		void draw(){}
+protected:
+	static void setDraggedSheet(CCtrlDraggable *draggable) { _LastDraggedSheet = draggable; }
 
-		REFLECT_EXPORT_START(CCtrlDraggable, CCtrlBase)
-			REFLECT_BOOL("dragable", isDraggable, setDraggable);
-		REFLECT_EXPORT_END
-
-	protected:
-		static void setDraggedSheet( CCtrlDraggable *draggable ){ _LastDraggedSheet = draggable; }
-
-	private:
-		static CCtrlDraggable *_LastDraggedSheet;
-		bool dragged;
-		bool draggable;
-	};
+private:
+	static CCtrlDraggable *_LastDraggedSheet;
+	bool dragged;
+	bool draggable;
+};
 
 }
 

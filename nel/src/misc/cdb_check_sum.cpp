@@ -24,7 +24,7 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NLMISC{
+namespace NLMISC {
 
 /*
  * Constructor
@@ -32,14 +32,14 @@ namespace NLMISC{
 
 CCDBCheckSum::CCDBCheckSum()
 {
-	//arbitrary values
+	// arbitrary values
 	_Sum = 0;
 	_Factor = 55665;
 	_Const1 = 52845;
 	_Const2 = 22719;
 };
 
-///add an uint8 to the sum
+/// add an uint8 to the sum
 void CCDBCheckSum::add(uint8 el)
 {
 	uint32 cipher = (el ^ (_Factor >> 8));
@@ -48,4 +48,3 @@ void CCDBCheckSum::add(uint8 el)
 }
 
 }
-

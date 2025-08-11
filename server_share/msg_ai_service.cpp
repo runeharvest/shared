@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
 //----------------------------------------------------------------------------
 
 #include "stdpch.h"
@@ -29,30 +26,37 @@ CQueryEgs::TFuns CQueryEgs::_Funs;
 
 void CQueryEgs::init()
 {
-#define InsertFun(X) _Funs.insert( std::make_pair(std::string(#	X), X));
+#define InsertFun(X) _Funs.insert(std::make_pair(std::string(#X), X));
 	InsertFun(Name);
-	InsertFun(Hp); InsertFun(MaxHp); InsertFun(RatioHp);
-	InsertFun(Sap); InsertFun(MaxSap); InsertFun(RatioSap);
-	InsertFun(Stamina); InsertFun(MaxStamina); InsertFun(RatioStamina);
-	InsertFun(Focus); InsertFun(MaxFocus); InsertFun(RatioFocus);
+	InsertFun(Hp);
+	InsertFun(MaxHp);
+	InsertFun(RatioHp);
+	InsertFun(Sap);
+	InsertFun(MaxSap);
+	InsertFun(RatioSap);
+	InsertFun(Stamina);
+	InsertFun(MaxStamina);
+	InsertFun(RatioStamina);
+	InsertFun(Focus);
+	InsertFun(MaxFocus);
+	InsertFun(RatioFocus);
 	InsertFun(BestSkillLevel);
 	InsertFun(Target);
-	InsertFun(IsInInventory); InsertFun(KnowBrick);
+	InsertFun(IsInInventory);
+	InsertFun(KnowBrick);
 #undef InsertFun
 }
 
-
-
-CQueryEgs::TFunEnum CQueryEgs::getFunEnum(const std::string& funName) const
+CQueryEgs::TFunEnum CQueryEgs::getFunEnum(const std::string &funName) const
 {
 	// lazy intialisation so function is const but can call non const fun
 	if (_Funs.empty())
 	{
-		const_cast<CQueryEgs*>(this)->init();
+		const_cast<CQueryEgs *>(this)->init();
 	}
 
 	TFuns::const_iterator found = _Funs.find(funName);
-	if ( found != _Funs.end())
+	if (found != _Funs.end())
 	{
 		return found->second;
 	}

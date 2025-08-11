@@ -14,31 +14,27 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 #include "nel/misc/debug.h"
 #include "loot_harvest_state.h"
 
-
-namespace LHSTATE
+namespace LHSTATE {
+TLHState stringToLHState(const std::string &str)
 {
-	TLHState stringToLHState(const std::string &str)
-	{
-		if (str == "NONE" || str == "None" )
-			return NONE;
-
-		if (str == "LOOTABLE" || str == "Lootable")
-			return LOOTABLE;
-
-		if (str == "HARVESTABLE" || str == "Harvestable")
-			return HARVESTABLE;
-
-		if (str == "LOOTABLE_HARVESTABLE" )
-			return LOOTABLE_HARVESTABLE;
-
-		nlwarning("<stringToLHState> Unknown type %s", str.c_str() );
+	if (str == "NONE" || str == "None")
 		return NONE;
-	}
+
+	if (str == "LOOTABLE" || str == "Lootable")
+		return LOOTABLE;
+
+	if (str == "HARVESTABLE" || str == "Harvestable")
+		return HARVESTABLE;
+
+	if (str == "LOOTABLE_HARVESTABLE")
+		return LOOTABLE_HARVESTABLE;
+
+	nlwarning("<stringToLHState> Unknown type %s", str.c_str());
+	return NONE;
+}
 }; // LHSTATE

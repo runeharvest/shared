@@ -29,9 +29,7 @@
 #include <map>
 #include <algorithm>
 
-
 namespace NLMISC {
-
 
 /**
  * Class for the internationalization. It's a singleton pattern.
@@ -41,12 +39,12 @@ namespace NLMISC {
  * Now, you can get a localized string with its association with \c get().
  *
  *\code
-	// load the language French
-	CI18N::load ("fr");
-	// display "Salut" that is the "hi" string in the selected language (French).
-	nlinfo (CI18N::get("Hi").c_str ());
-	// display "rms est un master", the French version of the string
-	nlinfo ("rms"+CI18N::get("Master").c_str ());
+    // load the language French
+    CI18N::load ("fr");
+    // display "Salut" that is the "hi" string in the selected language (French).
+    nlinfo (CI18N::get("Hi").c_str ());
+    // display "rms est un master", the French version of the string
+    nlinfo ("rms"+CI18N::get("Master").c_str ());
  *\endcode
  *
  *	Update 26-02-2002 Boris Boucher
@@ -67,7 +65,6 @@ namespace NLMISC {
 class CI18N
 {
 public:
-
 	/// Control over text loading
 	enum TLineFormat
 	{
@@ -88,8 +85,8 @@ public:
 	 */
 	struct ILoadProxy
 	{
-		virtual ~ILoadProxy() {}
-		virtual void loadStringFile(const std::string &filename, ucstring &text) =0;
+		virtual ~ILoadProxy() { }
+		virtual void loadStringFile(const std::string &filename, ucstring &text) = 0;
 	};
 
 	/// Set the load proxy class. Proxy can be NULL to unregister.
@@ -107,42 +104,42 @@ public:
 	 *	As in getLanguageNames(), the index in the vector can be used to call load()
 	 */
 	static const std::vector<std::string> &getLanguageCodes();
- 
+
 	/** Check if a language code is supported.
 	 *	Code are ISO 639-2 compliant.
 	 */
 	static bool isLanguageCodeSupported(const std::string &lang);
 
 	/// Load a language file depending of the language code("en", "fr", ...). Code are ISO 639-2 compliant.
-	static void load (const std::string &languageCode, const std::string &fallbackLanguageCode="");
+	static void load(const std::string &languageCode, const std::string &fallbackLanguageCode = "");
 
 	/** Load a language file from its filename
-	  * \param filename name of the language file to load, with its extension
-	  * \param reload The file is being reloaded so error message won't be issued for strings that are overwritten
-	  */
-	static void loadFromFilename (const std::string &filename, bool reload);
+	 * \param filename name of the language file to load, with its extension
+	 * \param reload The file is being reloaded so error message won't be issued for strings that are overwritten
+	 */
+	static void loadFromFilename(const std::string &filename, bool reload);
 
 	/// Returns the name of the language in the language name (English, Francais, ...)
-	static std::string getCurrentLanguageName ();
+	static std::string getCurrentLanguageName();
 
 	/// Returns the code of the language ("fr", "en", ...)
-	static std::string getCurrentLanguageCode ();
+	static std::string getCurrentLanguageCode();
 
 	/// Returns the code of the language ("fr", "en", ...) defined on system
-	static std::string getSystemLanguageCode ();
+	static std::string getSystemLanguageCode();
 
 	/// Define the code of the language ("fr", "en", ...) defined on system
-	static bool setSystemLanguageCode (const std::string &languageCode);
+	static bool setSystemLanguageCode(const std::string &languageCode);
 
 	/// Find a string in the selected language and return his association.
-	static const ucstring &getAsUtf16 (const std::string &label);
+	static const ucstring &getAsUtf16(const std::string &label);
 
 	/// Find a string in the selected language and return his association.
-	static const std::string &get (const std::string &label);
+	static const std::string &get(const std::string &label);
 
 	// Test if a string has a translation in the selected language.
 	// NB : The empty string is considered to have a translation
-	static bool			   hasTranslation(const std::string &label);
+	static bool hasTranslation(const std::string &label);
 
 	/** Read the content of a file as a Unicode text.
 	 *	The method support 16 bits or 8bits utf-8 tagged files.
@@ -154,11 +151,11 @@ public:
 	 *	Optionally, you can ask the reader to interpret #include commands.
 	 */
 	static void readTextFile(const std::string &filename,
-								ucstring &result,
-								bool fileLookup = true,
-								bool preprocess = false,
-								TLineFormat lineFmt = LINE_FMT_NO_CARE,
-							    bool warnIfIncludesNotFound = true);
+	    ucstring &result,
+	    bool fileLookup = true,
+	    bool preprocess = false,
+	    TLineFormat lineFmt = LINE_FMT_NO_CARE,
+	    bool warnIfIncludesNotFound = true);
 
 	/** Read the content of a buffer as a Unicode text.
 	 *	This is to read preloaded Unicode files.
@@ -175,7 +172,7 @@ public:
 	static void removeCComment(ucstring &commentedString);
 
 	/** Encode a Unicode string into a string using UTF-8 encoding.
-	*/
+	 */
 	static std::string encodeUTF8(const ucstring &str);
 
 	/** Write a Unicode text file using Unicode 16 or UTF-8 encoding.
@@ -192,59 +189,58 @@ public:
 	 *	This is useful if you want to keep the comments.
 	 *	NB : comments are appended to the comments string.
 	 */
-	static void		skipWhiteSpace		(ucstring::const_iterator &it, ucstring::const_iterator &last, ucstring *storeComments = NULL, bool newLineAsWhiteSpace = true);
+	static void skipWhiteSpace(ucstring::const_iterator &it, ucstring::const_iterator &last, ucstring *storeComments = NULL, bool newLineAsWhiteSpace = true);
 	/// Parse a label
-	static bool		parseLabel			(ucstring::const_iterator &it, ucstring::const_iterator &last, std::string &label);
+	static bool parseLabel(ucstring::const_iterator &it, ucstring::const_iterator &last, std::string &label);
 	/// Parse a marked string. NB : usually, we use [ and ] as string delimiters in translation files.
-	static bool		parseMarkedString	(ucchar openMark, ucchar closeMark, ucstring::const_iterator &it, ucstring::const_iterator &last, ucstring &result, uint32 *lineCounter = NULL, bool allowNewline = true);
+	static bool parseMarkedString(ucchar openMark, ucchar closeMark, ucstring::const_iterator &it, ucstring::const_iterator &last, ucstring &result, uint32 *lineCounter = NULL, bool allowNewline = true);
 	/** Try to read a given token at current position.
 	 *	The function will first skip any white space then try to read the token
 	 *	If found, the function return true and 'it' is advanced after the matched token,
 	 *	Otherwise, the function return false and 'it' is unchanged.
 	 */
-	static bool		matchToken(const char* token, ucstring::const_iterator &it, ucstring::const_iterator end);
+	static bool matchToken(const char *token, ucstring::const_iterator &it, ucstring::const_iterator end);
 	/// Advance iterator to the start of next line or to the end of string
-	static void		skipLine(ucstring::const_iterator &it, ucstring::const_iterator end, uint32 &lineCounter);
+	static void skipLine(ucstring::const_iterator &it, ucstring::const_iterator end, uint32 &lineCounter);
 	//@}
 
 	//@{
 	//\name Hash code tools.
 	// Generate a hash value for a given string
-	static uint64	makeHash(const ucstring &str);
+	static uint64 makeHash(const ucstring &str);
 	// convert a hash value to a readable string
 	static std::string hashToString(uint64 hash);
 	// convert a readable string into a hash value.
 	static uint64 stringToHash(const std::string &str);
 	// fast convert a hash value to a ucstring
-	static void	hashToUCString(uint64 hash, ucstring &dst);
+	static void hashToUCString(uint64 hash, ucstring &dst);
 	//@}
 
-	static void setNoResolution( bool b ){ noResolution = b; }
+	static void setNoResolution(bool b) { noResolution = b; }
 
 private:
+	typedef std::map<std::string, std::string> StrMapContainer;
+	typedef std::map<std::string, ucstring> StrMapContainer16;
 
-	typedef std::map<std::string, std::string>					StrMapContainer;
-	typedef std::map<std::string, ucstring>						StrMapContainer16;
+	static ILoadProxy *_LoadProxy;
 
-	static ILoadProxy											*_LoadProxy;
-
-	static StrMapContainer										_StrMap;
-	static StrMapContainer16									_StrMap16;
-	static bool													_StrMapLoaded;
+	static StrMapContainer _StrMap;
+	static StrMapContainer16 _StrMap16;
+	static bool _StrMapLoaded;
 
 	// the alternative language that will be used if the sentence is not found in the original language
-	static StrMapContainer										_StrMapFallback;
-	static StrMapContainer16									_StrMapFallback16;
+	static StrMapContainer _StrMapFallback;
+	static StrMapContainer16 _StrMapFallback16;
 
-	static std::vector<std::string>								_LanguageCodes;
-	static std::vector<std::string>								_LanguageNames;
-	static std::string											_SystemLanguageCode;
+	static std::vector<std::string> _LanguageCodes;
+	static std::vector<std::string> _LanguageNames;
+	static std::string _SystemLanguageCode;
 
-	static bool													_LanguagesNamesLoaded;
+	static bool _LanguagesNamesLoaded;
 
-	static std::string											_SelectedLanguageCode;
-	static const ucstring										_NotTranslatedValue16;
-	static const std::string									_NotTranslatedValue;
+	static std::string _SelectedLanguageCode;
+	static const ucstring _NotTranslatedValue16;
+	static const std::string _NotTranslatedValue;
 
 	/** Structure to hold contextual info during
 	 *	read of preprocessed file
@@ -252,15 +248,14 @@ private:
 	struct TReadContext
 	{
 		/// The defined symbols
-		std::set<std::string>		Defines;
+		std::set<std::string> Defines;
 
 		/// The if stack (push true until a bad test is found, push false for
 		/// all subsequent if imbrication)
-		std::vector<bool>			IfStack;
+		std::vector<bool> IfStack;
 	};
 
 private:
-
 	/// Init _LanguageCodes and _LanguageNames
 	static void initLanguages();
 
@@ -268,19 +263,18 @@ private:
 
 	/// The internal read function, it does the real job of readTextFile
 	static void _readTextFile(const std::string &filename,
-								ucstring &result,
-								bool fileLookup,
-								bool preprocess,
-								TLineFormat lineFmt,
-							    bool warnIfIncludesNotFound,
-								TReadContext &readContext);
+	    ucstring &result,
+	    bool fileLookup,
+	    bool preprocess,
+	    TLineFormat lineFmt,
+	    bool warnIfIncludesNotFound,
+	    TReadContext &readContext);
 
 	// Don't resolve labels
 	static bool noResolution;
 };
 
 } // NLMISC
-
 
 #endif // NL_I18N_H
 

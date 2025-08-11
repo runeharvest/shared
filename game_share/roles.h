@@ -17,16 +17,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
 #ifndef RY_ROLES_H
 #define RY_ROLES_H
 
 #include <string>
 
-namespace ROLES
-{
+namespace ROLES {
 
 enum ERole
 {
@@ -42,30 +38,29 @@ enum ERole
 };
 
 /**
-  * get the role sheet string from the given enum
-  * \param  R is the enum number
-  * \return the string associated to this enum number (Unknown if the enum number not exist)
-  */
-const std::string& toSheetString( ERole r );
+ * get the role sheet string from the given enum
+ * \param  R is the enum number
+ * \return the string associated to this enum number (Unknown if the enum number not exist)
+ */
+const std::string &toSheetString(ERole r);
 
 /**
-  * get the right role string from the given enum
-  * \param  R is the enum number
-  * \return the string associated to this enum number (Unknown if the enum number not exist)
-  */
-const std::string& toString( ERole r );
+ * get the right role string from the given enum
+ * \param  R is the enum number
+ * \return the string associated to this enum number (Unknown if the enum number not exist)
+ */
+const std::string &toString(ERole r);
 
 /**
-  * get the right role ID from its string
-  * \param str the input string
-  * \return the RoleId associated to this string (unknown if the string cannot be interpreted)
-  */
-ERole toRoleId( const std::string& Role );
+ * get the right role ID from its string
+ * \param str the input string
+ * \return the RoleId associated to this string (unknown if the string cannot be interpreted)
+ */
+ERole toRoleId(const std::string &Role);
 
 // Return the Translated name of the Job
-const std::string &roleToUCString (ERole r);
+const std::string &roleToUCString(ERole r);
 
 } // ROLES
 
 #endif
-

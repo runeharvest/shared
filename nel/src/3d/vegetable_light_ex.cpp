@@ -23,23 +23,19 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
+namespace NL3D {
+
+void CVegetableLightEx::computeCurrentColors()
 {
-
-
-
-void			CVegetableLightEx::computeCurrentColors()
-{
-	for(uint i=0;i<NumLights;i++)
+	for (uint i = 0; i < NumLights; i++)
 	{
 		// get the light.
-		CPointLightNamed	*pl= PointLight[i];
+		CPointLightNamed *pl = PointLight[i];
 		// get the attenuation
-		uint	att= PointLightFactor[i];
+		uint att = PointLightFactor[i];
 		// modulate the color with it. Use the Unanimated one!!
 		Color[i].modulateFromui(pl->getUnAnimatedDiffuse(), att);
 	}
 }
-
 
 } // NL3D

@@ -31,36 +31,37 @@
 class CAnimationSetDlg : public CDialog
 {
 	friend class CObjectViewer;
-// Construction
+	// Construction
 public:
-	CAnimationSetDlg (class CObjectViewer* objView, CWnd* pParent = NULL);   // standard constructor
+	CAnimationSetDlg(class CObjectViewer *objView, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CAnimationSetDlg)
-	enum { IDD = IDD_ANIMATION_SET };
-	CComboBox	EditedObject;
-	CListBox	PlayList;
-	CTreeCtrl	SkelTree;
-	CTreeCtrl	Tree;
-	int			UseMixer;
+	enum
+	{
+		IDD = IDD_ANIMATION_SET
+	};
+	CComboBox EditedObject;
+	CListBox PlayList;
+	CTreeCtrl SkelTree;
+	CTreeCtrl Tree;
+	int UseMixer;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CAnimationSetDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Load an animation
-	virtual void refresh (BOOL update);
+	virtual void refresh(BOOL update);
 
 	// Pointer on an animation set
-	CObjectViewer*		_ObjView;
+	CObjectViewer *_ObjView;
 
 	// Generated message map functions
 	//{{AFX_MSG(CAnimationSetDlg)

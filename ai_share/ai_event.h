@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
 #ifndef RY_AI_EVENT_H
 #define RY_AI_EVENT_H
 
@@ -46,7 +43,6 @@
 //		CEntityId EntityId
 //-----------------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------------
 // class CAIEventType
 //-----------------------------------------------------------------------------------
@@ -59,60 +55,62 @@ class CAIEventType
 {
 public:
 	CAIEventType()
-	{ _val = (uint64)0;}
+	{
+		_val = (uint64)0;
+	}
 
 	CAIEventType(const CAIEventType &other)
 	{
-		*this=other;
+		*this = other;
 	}
 
 	CAIEventType(const char *typeName)
 	{
 		// copy text from input string to _val variable
 		uint i;
-		for (i=0;i<8 && typeName[i];++i)
-			((char *)&_val)[i]=typeName[i];
+		for (i = 0; i < 8 && typeName[i]; ++i)
+			((char *)&_val)[i] = typeName[i];
 
 		// if type name is longer than 8 characters it won't fit in an int64!
-		nlassert(typeName[i]==0);
+		nlassert(typeName[i] == 0);
 
 		// pad out _val variable with 0s
-		while(i<8)
-			((char *)&_val)[i++]=0;
+		while (i < 8)
+			((char *)&_val)[i++] = 0;
 	}
 	CAIEventType(const std::string &typeName)
 	{
-		*this=CAIEventType(typeName.c_str());
+		*this = CAIEventType(typeName.c_str());
 	}
 
 	const CAIEventType &operator=(const CAIEventType &other)
 	{
-		_val=other._val;
+		_val = other._val;
 		return *this;
 	}
-	bool operator==(const CAIEventType &other)	const
+	bool operator==(const CAIEventType &other) const
 	{
-		return _val==other._val;
+		return _val == other._val;
 	}
-	bool operator!=(const CAIEventType &other)	const
+	bool operator!=(const CAIEventType &other) const
 	{
-		return _val!=other._val;
+		return _val != other._val;
 	}
-	bool operator<=(const CAIEventType &other)	const
+	bool operator<=(const CAIEventType &other) const
 	{
-		return _val<=other._val;
+		return _val <= other._val;
 	}
-	bool operator>=(const CAIEventType &other)	const
+	bool operator>=(const CAIEventType &other) const
 	{
-		return _val>=other._val;
+		return _val >= other._val;
 	}
-	bool operator<(const CAIEventType &other)	const
+	bool operator<(const CAIEventType &other) const
 	{
-		return _val<other._val;
+		return _val < other._val;
 	}
-	bool operator>(const CAIEventType &other)	const
+	bool operator>(const CAIEventType &other) const
 	{
-		return _val>other._val;
+		return _val > other._val;
 	}
 
 	void serial(NLMISC::IStream &f)
@@ -122,13 +120,12 @@ public:
 
 	std::string toString() const
 	{
-		return NLMISC::toString("%8.8s",&_val);
+		return NLMISC::toString("%8.8s", &_val);
 	}
 
 private:
 	uint64 _val;
 };
-
 
 //-----------------------------------------------------------------------------------
 // base class IAIEvent
@@ -140,9 +137,9 @@ private:
 class IAIEvent
 {
 	NL_INSTANCE_COUNTER_DECL(IAIEvent);
-public:
 
-	virtual ~IAIEvent() {}
+public:
+	virtual ~IAIEvent() { }
 
 	// this is the name of the class
 	// for now it is limited to 8 letters - wil be extended at a later date if need be
@@ -154,21 +151,24 @@ public:
 	virtual void serial(NLMISC::IStream &f) = 0;
 };
 
-
 /**
  * CAIStunEvent : event STUN
  * \author Fleury David
  * \author Nevrax France
  * \date 2003
  */
-class CAIStunEvent: public IAIEvent
+class CAIStunEvent : public IAIEvent
 {
 	NL_INSTANCE_COUNTER_DECL(CAIStunEvent);
-public:
 
+public:
 	// this is the name of the class
 	// for now it is limited to 8 letters - will be extended at a later date if need be
-	virtual const CAIEventType &type() const { static CAIEventType type("STUN"); return type; }
+	virtual const CAIEventType &type() const
+	{
+		static CAIEventType type("STUN");
+		return type;
+	}
 
 	// serial()
 	// note serial should serialise: <Type> <uint16 sizeof(EventClass)> <event_parameters>
@@ -177,9 +177,8 @@ public:
 
 public:
 	/// the stunned creature id
-	NLMISC::CEntityId	CreatureId;
+	NLMISC::CEntityId CreatureId;
 };
-
 
 /**
  * CAIStunEndEvent : event STUN_END
@@ -187,14 +186,18 @@ public:
  * \author Nevrax France
  * \date 2003
  */
-class CAIStunEndEvent: public IAIEvent
+class CAIStunEndEvent : public IAIEvent
 {
 	NL_INSTANCE_COUNTER_DECL(CAIStunEndEvent);
-public:
 
+public:
 	// this is the name of the class
 	// for now it is limited to 8 letters - will be extended at a later date if need be
-	virtual const CAIEventType &type() const { static CAIEventType type("STUN_END"); return type; }
+	virtual const CAIEventType &type() const
+	{
+		static CAIEventType type("STUN_END");
+		return type;
+	}
 
 	// serial()
 	// note serial should serialise: <Type> <uint16 sizeof(EventClass)> <event_parameters>
@@ -203,10 +206,8 @@ public:
 
 public:
 	/// the waked creature id
-	NLMISC::CEntityId	CreatureId;
+	NLMISC::CEntityId CreatureId;
 };
-
-
 
 /**
  * CAIAggroEvent : event AGGRO
@@ -214,15 +215,21 @@ public:
  * \author Nevrax France
  * \date 2003
  */
-class CAIAggroEvent: public IAIEvent
+class CAIAggroEvent : public IAIEvent
 {
 public:
-	CAIAggroEvent() : AggroModifier(0)
-	{}
+	CAIAggroEvent()
+	    : AggroModifier(0)
+	{
+	}
 
 	// this is the name of the class
 	// for now it is limited to 8 letters - will be extended at a later date if need be
-	virtual const CAIEventType &type() const { static CAIEventType type("AGGRO"); return type; }
+	virtual const CAIEventType &type() const
+	{
+		static CAIEventType type("AGGRO");
+		return type;
+	}
 
 	// serial()
 	// note serial should serialise: <Type> <uint16 sizeof(EventClass)> <event_parameters>
@@ -231,17 +238,14 @@ public:
 
 public:
 	/// the creature Id
-	NLMISC::CEntityId	CreatureId;
+	NLMISC::CEntityId CreatureId;
 
 	/// the entity Id affected by the aggro
-	NLMISC::CEntityId	EntityId;
+	NLMISC::CEntityId EntityId;
 
 	/// aggro modifier
-	sint32				AggroModifier;
+	sint32 AggroModifier;
 };
-
-
-
 
 /**
  * CAISurvivalInstinctEvent : event SURVIE
@@ -249,12 +253,16 @@ public:
  * \author Nevrax France
  * \date 2003
  */
-class CAISurvivalInstinctEvent: public IAIEvent
+class CAISurvivalInstinctEvent : public IAIEvent
 {
 public:
 	// this is the name of the class
 	// for now it is limited to 8 letters - will be extended at a later date if need be
-	virtual const CAIEventType &type() const { static CAIEventType type("SURVIE"); return type; }
+	virtual const CAIEventType &type() const
+	{
+		static CAIEventType type("SURVIE");
+		return type;
+	}
 
 	// serial()
 	// note serial should serialise: <Type> <uint16 sizeof(EventClass)> <event_parameters>
@@ -263,17 +271,14 @@ public:
 
 public:
 	/// the affected creature id
-	NLMISC::CEntityId	CreatureId;
+	NLMISC::CEntityId CreatureId;
 
 	/// the entity for which the creature survival instinct is modified
-	NLMISC::CEntityId	EntityId;
+	NLMISC::CEntityId EntityId;
 
 	/// the modifier
-	sint32				Modifier;
+	sint32 Modifier;
 };
-
-
-
 
 /**
  * CAIFearEvent : event FEAR
@@ -281,12 +286,16 @@ public:
  * \author Nevrax France
  * \date 2003
  */
-class CAIFearEvent: public IAIEvent
+class CAIFearEvent : public IAIEvent
 {
 public:
 	// this is the name of the class
 	// for now it is limited to 8 letters - will be extended at a later date if need be
-	virtual const CAIEventType &type() const { static CAIEventType type("FEAR"); return type; }
+	virtual const CAIEventType &type() const
+	{
+		static CAIEventType type("FEAR");
+		return type;
+	}
 
 	// serial()
 	// note serial should serialise: <Type> <uint16 sizeof(EventClass)> <event_parameters>
@@ -295,11 +304,10 @@ public:
 
 public:
 	/// the creature id
-	NLMISC::CEntityId	CreatureId;
+	NLMISC::CEntityId CreatureId;
 	/// the entity feared by the creature
-	NLMISC::CEntityId	EntityId;
+	NLMISC::CEntityId EntityId;
 };
-
 
 /**
  * CAIFearEndEvent : event FEAR_END
@@ -307,12 +315,16 @@ public:
  * \author Nevrax France
  * \date 2003
  */
-class CAIFearEndEvent: public IAIEvent
+class CAIFearEndEvent : public IAIEvent
 {
 public:
 	// this is the name of the class
 	// for now it is limited to 8 letters - will be extended at a later date if need be
-	virtual const CAIEventType &type() const { static CAIEventType type("FEAR_END"); return type; }
+	virtual const CAIEventType &type() const
+	{
+		static CAIEventType type("FEAR_END");
+		return type;
+	}
 
 	// serial()
 	// note serial should serialise: <Type> <uint16 sizeof(EventClass)> <event_parameters>
@@ -321,9 +333,9 @@ public:
 
 public:
 	/// the creature id
-	NLMISC::CEntityId	CreatureId;
+	NLMISC::CEntityId CreatureId;
 	/// the entity no longer feared by the creature
-	NLMISC::CEntityId	EntityId;
+	NLMISC::CEntityId EntityId;
 };
 
 /**
@@ -332,12 +344,16 @@ public:
  * \author Nevrax France
  * \date 2003
  */
-class CAIHungerEvent: public IAIEvent
+class CAIHungerEvent : public IAIEvent
 {
 public:
 	// this is the name of the class
 	// for now it is limited to 8 letters - will be extended at a later date if need be
-	virtual const CAIEventType &type() const { static CAIEventType type("HUNGER"); return type; }
+	virtual const CAIEventType &type() const
+	{
+		static CAIEventType type("HUNGER");
+		return type;
+	}
 
 	// serial()
 	// note serial should serialise: <Type> <uint16 sizeof(EventClass)> <event_parameters>
@@ -346,13 +362,10 @@ public:
 
 public:
 	/// the affected creature id
-	NLMISC::CEntityId	CreatureId;
+	NLMISC::CEntityId CreatureId;
 
 	/// the modifier
-	sint32				Modifier;
+	sint32 Modifier;
 };
 
-
-
 #endif
-

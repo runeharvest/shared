@@ -22,13 +22,7 @@
 #include "stream.h"
 #include "rgba.h"
 
-
-namespace NLMISC
-{
-
-
-
-
+namespace NLMISC {
 
 // ***************************************************************************
 /**
@@ -37,12 +31,12 @@ namespace NLMISC
  * \author Nevrax France
  * \date 2001
  */
-class	CNoiseValue
+class CNoiseValue
 {
 public:
-	float	Abs;
-	float	Rand;
-	float	Frequency;
+	float Abs;
+	float Rand;
+	float Frequency;
 
 public:
 	/// Default to 0, 1, 1.
@@ -52,23 +46,21 @@ public:
 	/** return Abs + Rand* noise(Pos*Frequency).  with noise() E [0..1].
 	 *	Warning! Use OptFastFloor()! So call must be enclosed with a OptFastFloorBegin()/OptFastFloorEnd().
 	 */
-	float	eval(const CVector &posInWorld) const;
+	float eval(const CVector &posInWorld) const;
 
 	/** same as eval, but eval just one random level for noise() => act much more like a random.
 	 *	Warning! Use OptFastFloor()! So call must be enclosed with a OptFastFloorBegin()/OptFastFloorEnd().
 	 */
-	float	evalOneLevelRandom(const CVector &posInWorld) const;
+	float evalOneLevelRandom(const CVector &posInWorld) const;
 
+	void serial(IStream &f);
 
-	void	serial(IStream &f);
-
-// *******************
+	// *******************
 private:
 	/// pos scale is in [0..1]
-	float	noise(const CVector &pos) const;
-	float	evalRandom(const CVector &pos) const;
+	float noise(const CVector &pos) const;
+	float evalRandom(const CVector &pos) const;
 };
-
 
 // ***************************************************************************
 /**
@@ -77,28 +69,24 @@ private:
  * \author Nevrax France
  * \date 2001
  */
-class	CNoiseColorGradient
+class CNoiseColorGradient
 {
 public:
 	/// Abs and Rand should be 0 and 1 here. If not, some colors may not be generated...
-	CNoiseValue					NoiseValue;
-	std::vector<CRGBAF>	Gradients;
-
+	CNoiseValue NoiseValue;
+	std::vector<CRGBAF> Gradients;
 
 public:
 	/** Use NoiseValue to compute a PerlinNoise E [0..1], and peek in Gradients, with linear interpolation.
 	 *	result unmodified if no colors. If only one color, copied into result.
 	 *	Warning! Use OptFastFloor()! So call must be enclosed with a OptFastFloorBegin()/OptFastFloorEnd().
 	 */
-	void	eval(const CVector &posInWorld, CRGBAF &result) const;
+	void eval(const CVector &posInWorld, CRGBAF &result) const;
 
-	void	serial(IStream &f);
+	void serial(IStream &f);
 };
 
-
-
 } // NL3D
-
 
 #endif // NL_NOISE_VALUE_H
 

@@ -41,8 +41,7 @@ using namespace NL3D;
 
 #define BAR_LENGTH 21
 
-const char *progressbar[BAR_LENGTH]=
-{
+const char *progressbar[BAR_LENGTH] = {
 	"[                    ]",
 	"[.                   ]",
 	"[..                  ]",
@@ -70,38 +69,35 @@ const char *progressbar[BAR_LENGTH]=
 class CMyIgZoneLighter : public CInstanceLighter
 {
 	// Progress bar
-	virtual void progress (const char *message, float progress)
+	virtual void progress(const char *message, float progress)
 	{
 		// Progress bar
 		char msg[512];
-		uint	pgId= (uint)(progress*(float)BAR_LENGTH);
-		pgId= min(pgId, (uint)(BAR_LENGTH-1));
-		sprintf (msg, "\r%s: %s", message, progressbar[pgId]);
+		uint pgId = (uint)(progress * (float)BAR_LENGTH);
+		pgId = min(pgId, (uint)(BAR_LENGTH - 1));
+		sprintf(msg, "\r%s: %s", message, progressbar[pgId]);
 		uint i;
-		for (i=(uint)strlen(msg); i<79; i++)
-			msg[i]=' ';
-		msg[i]=0;
-		printf ("%s\r", msg);
+		for (i = (uint)strlen(msg); i < 79; i++)
+			msg[i] = ' ';
+		msg[i] = 0;
+		printf("%s\r", msg);
 	}
 };
 
-
-
-
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	// Filter addSearchPath
 	NLMISC::createDebug();
-	InfoLog->addNegativeFilter ("adding the path");
+	InfoLog->addNegativeFilter("adding the path");
 
 	// Register 3d
-	registerSerial3d ();
+	registerSerial3d();
 
 	// Good number of args ?
-	if (argc<5)
+	if (argc < 5)
 	{
 		// Help message
-		printf ("%s [zonein.zonel] [igout.ig] [parameter_file] [dependancy_file]\n", argv[0]);
+		printf("%s [zonein.zonel] [igout.ig] [parameter_file] [dependancy_file]\n", argv[0]);
 	}
 	else
 	{
@@ -109,14 +105,14 @@ int main(int argc, char* argv[])
 		CIFile inputFile;
 
 		// Get extension
-		string ext=getExt (argv[1]);
-		string dir=getDir (argv[1]);
+		string ext = getExt(argv[1]);
+		string dir = getDir(argv[1]);
 
 		// Open it for reading
-		if (inputFile.open (argv[1]))
+		if (inputFile.open(argv[1]))
 		{
 			// Zone name
-			string zoneName=toLowerAscii (string ("zone_"+getName (argv[1])));
+			string zoneName = toLowerAscii(string("zone_" + getName(argv[1])));
 
 			// Load the zone
 			try
@@ -125,7 +121,7 @@ int main(int argc, char* argv[])
 				CConfigFile parameter;
 
 				// Load and parse the parameter file
-				parameter.load (argv[3]);
+				parameter.load(argv[3]);
 
 				// **********
 				// *** Build the lighter descriptor
@@ -134,52 +130,52 @@ int main(int argc, char* argv[])
 				CInstanceLighter::CLightDesc lighterDesc;
 
 				// Light direction
-				CConfigFile::CVar &sun_direction = parameter.getVar ("sun_direction");
-				lighterDesc.LightDirection.x=sun_direction.asFloat(0);
-				lighterDesc.LightDirection.y=sun_direction.asFloat(1);
-				lighterDesc.LightDirection.z=sun_direction.asFloat(2);
-				lighterDesc.LightDirection.normalize ();
+				CConfigFile::CVar &sun_direction = parameter.getVar("sun_direction");
+				lighterDesc.LightDirection.x = sun_direction.asFloat(0);
+				lighterDesc.LightDirection.y = sun_direction.asFloat(1);
+				lighterDesc.LightDirection.z = sun_direction.asFloat(2);
+				lighterDesc.LightDirection.normalize();
 
 				// Grid size
-				CConfigFile::CVar &quad_grid_size = parameter.getVar ("quad_grid_size");
-				lighterDesc.GridSize=quad_grid_size.asInt();
+				CConfigFile::CVar &quad_grid_size = parameter.getVar("quad_grid_size");
+				lighterDesc.GridSize = quad_grid_size.asInt();
 
 				// Grid size
-				CConfigFile::CVar &quad_grid_cell_size = parameter.getVar ("quad_grid_cell_size");
-				lighterDesc.GridCellSize=quad_grid_cell_size.asFloat();
+				CConfigFile::CVar &quad_grid_cell_size = parameter.getVar("quad_grid_cell_size");
+				lighterDesc.GridCellSize = quad_grid_cell_size.asFloat();
 
 				// Shadows enabled ?
-				CConfigFile::CVar &shadow = parameter.getVar ("shadow");
-				lighterDesc.Shadow=shadow.asInt ()!=0;
+				CConfigFile::CVar &shadow = parameter.getVar("shadow");
+				lighterDesc.Shadow = shadow.asInt() != 0;
 
 				// OverSampling
-				CConfigFile::CVar &ig_oversampling = parameter.getVar ("ig_oversampling");
-				lighterDesc.OverSampling= ig_oversampling.asInt ();
+				CConfigFile::CVar &ig_oversampling = parameter.getVar("ig_oversampling");
+				lighterDesc.OverSampling = ig_oversampling.asInt();
 				// validate value: 0, 2, 4, 8, 16
-				lighterDesc.OverSampling= raiseToNextPowerOf2(lighterDesc.OverSampling);
+				lighterDesc.OverSampling = raiseToNextPowerOf2(lighterDesc.OverSampling);
 				clamp(lighterDesc.OverSampling, 0U, 16U);
-				if(lighterDesc.OverSampling<2)
-					lighterDesc.OverSampling= 0;
+				if (lighterDesc.OverSampling < 2)
+					lighterDesc.OverSampling = 0;
 
 				// For ig of Zones, never disable Sun contrib !!!
-				lighterDesc.DisableSunContribution= false;
+				lighterDesc.DisableSunContribution = false;
 
 				// Get the search pathes
-				CConfigFile::CVar &search_pathes = parameter.getVar ("search_pathes");
+				CConfigFile::CVar &search_pathes = parameter.getVar("search_pathes");
 				uint path;
 				for (path = 0; path < (uint)search_pathes.size(); path++)
 				{
 					// Add to search path
-					CPath::addSearchPath (search_pathes.asString(path));
+					CPath::addSearchPath(search_pathes.asString(path));
 				}
 
 				// A landscape allocated with new: it is not delete because destruction take 3 secondes more!
-				CLandscape *landscape=new CLandscape;
+				CLandscape *landscape = new CLandscape;
 				landscape->init();
 
 				// A zone lighter
 				CMyIgZoneLighter lighter;
-				lighter.init ();
+				lighter.init();
 
 				// A vector of zone id
 				vector<uint> listZoneId;
@@ -188,84 +184,84 @@ int main(int argc, char* argv[])
 				CZone zone;
 
 				// List of ig
-				std::list<CInstanceGroup*> instanceGroup;
+				std::list<CInstanceGroup *> instanceGroup;
 
 				// Load
-				zone.serial (inputFile);
+				zone.serial(inputFile);
 				inputFile.close();
 
 				// Load ig of the zone
-				string igName = getName (argv[1])+".ig";
-				string igNameLookup = CPath::lookup (igName, false, false);
+				string igName = getName(argv[1]) + ".ig";
+				string igNameLookup = CPath::lookup(igName, false, false);
 				if (!igNameLookup.empty())
 					igName = igNameLookup;
 
 				bool zoneIgLoaded;
 
 				// Try to open the file
-				CInstanceGroup *centerInstanceGroup= NULL;
-				if (inputFile.open (igName))
+				CInstanceGroup *centerInstanceGroup = NULL;
+				if (inputFile.open(igName))
 				{
 					// load the center ig
-					centerInstanceGroup=new CInstanceGroup;
+					centerInstanceGroup = new CInstanceGroup;
 
 					// Serial it
-					centerInstanceGroup->serial (inputFile);
+					centerInstanceGroup->serial(inputFile);
 					inputFile.close();
 
 					// Add to the list
-					instanceGroup.push_back (centerInstanceGroup);
+					instanceGroup.push_back(centerInstanceGroup);
 					zoneIgLoaded = true;
 				}
 				else
 				{
 					// Warning
-					fprintf (stderr, "Warning: can't load instance group %s\n", igName.c_str());
+					fprintf(stderr, "Warning: can't load instance group %s\n", igName.c_str());
 					zoneIgLoaded = false;
 				}
 
 				// If can't load the center instanceGroup, skip it.
-				if(!zoneIgLoaded)
+				if (!zoneIgLoaded)
 					return 0;
 
 				// Get bank path
-				CConfigFile::CVar &bank_name_var = parameter.getVar ("bank_name");
-				string bank_name = bank_name_var.asString ();
-				string bank_name_lookup = CPath::lookup (bank_name);
+				CConfigFile::CVar &bank_name_var = parameter.getVar("bank_name");
+				string bank_name = bank_name_var.asString();
+				string bank_name_lookup = CPath::lookup(bank_name);
 				if (!bank_name_lookup.empty())
 					bank_name = bank_name_lookup;
 
 				// Load the bank
-				if (inputFile.open (bank_name))
+				if (inputFile.open(bank_name))
 				{
 					try
 					{
 						// Load
-						landscape->TileBank.serial (inputFile);
+						landscape->TileBank.serial(inputFile);
 						landscape->initTileBanks();
 					}
 					catch (const Exception &e)
 					{
 						// Error
-						nlwarning ("ERROR error loading tile bank %s\n%s\n", bank_name.c_str(), e.what());
+						nlwarning("ERROR error loading tile bank %s\n%s\n", bank_name.c_str(), e.what());
 					}
 				}
 				else
 				{
 					// Error
-					nlwarning ("ERROR can't load tile bank %s\n", bank_name.c_str());
+					nlwarning("ERROR can't load tile bank %s\n", bank_name.c_str());
 				}
 
 				// Add the zone
-				landscape->addZone (zone);
-				listZoneId.push_back (zone.getZoneId());
+				landscape->addZone(zone);
+				listZoneId.push_back(zone.getZoneId());
 
 				// Load instance group ?
-				CConfigFile::CVar &load_ig= parameter.getVar ("load_ig");
-				bool loadInstanceGroup = load_ig.asInt ()!=0;
+				CConfigFile::CVar &load_ig = parameter.getVar("load_ig");
+				bool loadInstanceGroup = load_ig.asInt() != 0;
 
 				// Continue to build ?
-				bool continu=true;
+				bool continu = true;
 
 				// Try to load additionnal instance group.
 				if (loadInstanceGroup)
@@ -273,38 +269,38 @@ int main(int argc, char* argv[])
 					// Additionnal instance group
 					try
 					{
-						CConfigFile::CVar &additionnal_ig = parameter.getVar ("additionnal_ig");									
-						for (uint add=0; add<(uint)additionnal_ig.size(); add++)
+						CConfigFile::CVar &additionnal_ig = parameter.getVar("additionnal_ig");
+						for (uint add = 0; add < (uint)additionnal_ig.size(); add++)
 						{
 							// Input file
 							CIFile inputFile;
 
 							// Name of the instance group
 							string name = additionnal_ig.asString(add);
-							string nameLookup = CPath::lookup (name, false, false);
+							string nameLookup = CPath::lookup(name, false, false);
 							if (!nameLookup.empty())
 								name = nameLookup;
 
 							// Try to open the file
-							if (inputFile.open (name))
+							if (inputFile.open(name))
 							{
 								// New ig
-								CInstanceGroup *group=new CInstanceGroup;
+								CInstanceGroup *group = new CInstanceGroup;
 
 								// Serial it
-								group->serial (inputFile);
+								group->serial(inputFile);
 								inputFile.close();
 
 								// Add to the list
-								instanceGroup.push_back (group);
+								instanceGroup.push_back(group);
 							}
 							else
 							{
 								// Error
-								nlwarning ("ERROR can't load instance group %s\n", name.c_str());
+								nlwarning("ERROR can't load instance group %s\n", name.c_str());
 
 								// Stop before build
-								continu=false;
+								continu = false;
 							}
 						}
 					}
@@ -313,66 +309,66 @@ int main(int argc, char* argv[])
 						nlinfo("No additionnal ig's to load");
 					}
 				}
-				
+
 				// Shadow ?
 				if (lighterDesc.Shadow)
 				{
 					// Load and parse the dependency file
 					CConfigFile dependency;
-					dependency.load (argv[4]);
+					dependency.load(argv[4]);
 
 					// *** Scan dependency file
-					CConfigFile::CVar &dependant_zones = dependency.getVar ("dependencies");
-					for (uint i=0; i<(uint)dependant_zones.size(); i++)
+					CConfigFile::CVar &dependant_zones = dependency.getVar("dependencies");
+					for (uint i = 0; i < (uint)dependant_zones.size(); i++)
 					{
 						// Get zone name
-						string zoneName=dependant_zones.asString(i);
+						string zoneName = dependant_zones.asString(i);
 
 						// Load the zone
 						CZone zoneBis;
 
 						// Open it for reading
-						if (inputFile.open (dir+zoneName+ext))
+						if (inputFile.open(dir + zoneName + ext))
 						{
 							// Read it
-							zoneBis.serial (inputFile);
+							zoneBis.serial(inputFile);
 							inputFile.close();
 
 							// Add the zone
-							landscape->addZone (zoneBis);
-							listZoneId.push_back (zoneBis.getZoneId());
+							landscape->addZone(zoneBis);
+							listZoneId.push_back(zoneBis.getZoneId());
 						}
 						else
 						{
 							// Error message and continue
-							nlwarning ("ERROR can't load zone %s\n", (dir+zoneName+ext).c_str());
+							nlwarning("ERROR can't load zone %s\n", (dir + zoneName + ext).c_str());
 						}
 
 						// Try to load an instance group.
 						if (loadInstanceGroup)
 						{
-							string name = zoneName+".ig";
-							string nameLookup = CPath::lookup (name, false, false);
+							string name = zoneName + ".ig";
+							string nameLookup = CPath::lookup(name, false, false);
 							if (!nameLookup.empty())
 								name = nameLookup;
 
 							// Name of the instance group
-							if (inputFile.open (name))
+							if (inputFile.open(name))
 							{
 								// New ig
-								CInstanceGroup *group=new CInstanceGroup;
+								CInstanceGroup *group = new CInstanceGroup;
 
 								// Serial it
-								group->serial (inputFile);
+								group->serial(inputFile);
 								inputFile.close();
 
 								// Add to the list
-								instanceGroup.push_back (group);
+								instanceGroup.push_back(group);
 							}
 							else
 							{
 								// Error message and continue
-								nlwarning ("WARNING can't load instance group %s\n", name.c_str());
+								nlwarning("WARNING can't load instance group %s\n", name.c_str());
 							}
 						}
 					}
@@ -385,35 +381,35 @@ int main(int argc, char* argv[])
 				// *** Build triangle array
 				// **********
 
-				landscape->checkBinds ();
+				landscape->checkBinds();
 
 				// Add triangles from landscape, for pointLight lighting.
-				landscape->enableAutomaticLighting (false);
-				lighter.addTriangles (*landscape, listZoneId, 0, vectorTriangle);
+				landscape->enableAutomaticLighting(false);
+				lighter.addTriangles(*landscape, listZoneId, 0, vectorTriangle);
 
 				// Load and add shapes
 
 				// Map of shape
-				std::map<string, IShape*> shapeMap;
+				std::map<string, IShape *> shapeMap;
 
 				// For each instance group
-				std::list<CInstanceGroup*>::iterator ite=instanceGroup.begin();
-				while (ite!=instanceGroup.end())
+				std::list<CInstanceGroup *>::iterator ite = instanceGroup.begin();
+				while (ite != instanceGroup.end())
 				{
 					// Instance group
-					CInstanceGroup *group=*ite;
+					CInstanceGroup *group = *ite;
 
 					// For each instance
-					for (uint instance=0; instance<group->getNumInstance(); instance++)
+					for (uint instance = 0; instance < group->getNumInstance(); instance++)
 					{
 						// Get the instance shape name
-						string name=group->getShapeName (instance);
+						string name = group->getShapeName(instance);
 
 						// Skip it?? use the DontCastShadowForExterior flag. See doc of this flag
-						if(group->getInstance(instance).DontCastShadow || group->getInstance(instance).DontCastShadowForExterior)
+						if (group->getInstance(instance).DontCastShadow || group->getInstance(instance).DontCastShadowForExterior)
 							continue;
 
-						if (toLowerAscii (CFile::getExtension (name)) == "pacs_prim")
+						if (toLowerAscii(CFile::getExtension(name)) == "pacs_prim")
 						{
 							nlwarning("EXPORT BUG: Can't read %s (not a shape), should not be part of .ig!", name.c_str());
 							continue;
@@ -426,67 +422,67 @@ int main(int argc, char* argv[])
 								name += ".shape";
 
 							// Find the file
-							string nameLookup = CPath::lookup (name, false, false);
+							string nameLookup = CPath::lookup(name, false, false);
 							if (!nameLookup.empty())
 								name = nameLookup;
 
 							// Find the shape in the bank
-							std::map<string, IShape*>::iterator iteMap=shapeMap.find (name);
-							if (iteMap==shapeMap.end())
+							std::map<string, IShape *>::iterator iteMap = shapeMap.find(name);
+							if (iteMap == shapeMap.end())
 							{
 								// Input file
 								CIFile inputFile;
 
-								if (inputFile.open (name))
+								if (inputFile.open(name))
 								{
 									// Load it
 									CShapeStream stream;
-									stream.serial (inputFile);
+									stream.serial(inputFile);
 
 									// Get the pointer
-									iteMap=shapeMap.insert (std::map<string, IShape*>::value_type (name, stream.getShapePointer ())).first;
+									iteMap = shapeMap.insert(std::map<string, IShape *>::value_type(name, stream.getShapePointer())).first;
 								}
 								else
 								{
 									// Error
-									nlwarning ("WARNING can't load shape %s\n", name.c_str());
+									nlwarning("WARNING can't load shape %s\n", name.c_str());
 								}
 							}
-							
+
 							// Loaded ?
-							if (iteMap!=shapeMap.end())
+							if (iteMap != shapeMap.end())
 							{
 								// Build the matrix
 								CMatrix scale;
-								scale.identity ();
-								scale.scale (group->getInstanceScale (instance));
+								scale.identity();
+								scale.scale(group->getInstanceScale(instance));
 								CMatrix rot;
-								rot.identity ();
-								rot.setRot (group->getInstanceRot (instance));
+								rot.identity();
+								rot.setRot(group->getInstanceRot(instance));
 								CMatrix pos;
-								pos.identity ();
-								pos.setPos (group->getInstancePos (instance));
-								CMatrix mt=pos*rot*scale;
+								pos.identity();
+								pos.setPos(group->getInstancePos(instance));
+								CMatrix mt = pos * rot * scale;
 
 								// If centerInstanceGroup, take good instanceId, to avoid selfShadowing
-								sint	instanceId;
-								if(group == centerInstanceGroup)
-									instanceId= instance;
+								sint instanceId;
+								if (group == centerInstanceGroup)
+									instanceId = instance;
 								else
-									instanceId= -1;
+									instanceId = -1;
 
 								// Add triangles
-								lighter.addTriangles (*iteMap->second, mt, vectorTriangle, instanceId);
+								lighter.addTriangles(*iteMap->second, mt, vectorTriangle, instanceId);
 							}
 						}
 					}
 
 					// For each point light of the ig
-					const std::vector<CPointLightNamed>	&pointLightList= group->getPointLightList();
-					for (uint plId=0; plId<pointLightList.size(); plId++)
+					const std::vector<CPointLightNamed> &pointLightList = group->getPointLightList();
+					for (uint plId = 0; plId < pointLightList.size(); plId++)
 					{
 						// Add it to the Ig.
-						lighter.addStaticPointLight(pointLightList[plId], igName.c_str ());
+						lighter.addStaticPointLight(pointLightList[plId], igName.c_str());
 					}
 
 					// Next instance group
@@ -501,65 +497,63 @@ int main(int argc, char* argv[])
 					// **********
 
 					// Start time
-					TTime time=CTime::getLocalTime ();
+					TTime time = CTime::getLocalTime();
 
 					// Output ig
-					CInstanceGroup	output;
+					CInstanceGroup output;
 
 					// Light the zone
-					lighter.light (*centerInstanceGroup, output, lighterDesc, vectorTriangle, landscape);
+					lighter.light(*centerInstanceGroup, output, lighterDesc, vectorTriangle, landscape);
 
 					// Compute time
-					printf ("\rCompute time: %d ms                                                      \r", 
-						(uint)(CTime::getLocalTime ()-time));
+					printf("\rCompute time: %d ms                                                      \r",
+					    (uint)(CTime::getLocalTime() - time));
 
 					// Save the zone
 					COFile outputFile;
 
 					// Open it
-					if (outputFile.open (argv[2]))
+					if (outputFile.open(argv[2]))
 					{
 						try
 						{
 							// Save the new ig
 							outputFile.serial(output);
 						}
-						catch (const Exception& except)
+						catch (const Exception &except)
 						{
 							// Error message
-							nlwarning ("ERROR writing %s: %s\n", argv[2], except.what());
+							nlwarning("ERROR writing %s: %s\n", argv[2], except.what());
 						}
 					}
 					else
 					{
 						// Error can't open the file
-						nlwarning ("ERROR Can't open %s for writing\n", argv[2]);
+						nlwarning("ERROR Can't open %s for writing\n", argv[2]);
 					}
 				}
 				else
 				{
 					// Error
-					nlwarning ("ERROR Abort: files are missing.\n");
+					nlwarning("ERROR Abort: files are missing.\n");
 				}
 			}
-			catch (const Exception& except)
+			catch (const Exception &except)
 			{
 				// Error message
-				nlwarning ("ERROR %s\n", except.what());
+				nlwarning("ERROR %s\n", except.what());
 			}
 		}
 		else
 		{
 			// Error can't open the file
-			nlwarning ("ERROR Can't open %s for reading\n", argv[1]);
+			nlwarning("ERROR Can't open %s for reading\n", argv[1]);
 		}
-
 	}
-	
 
 	// Landscape is not deleted, nor the instanceGroups, for faster quit.
 	// Must disalbe BlockMemory checks (for pointLights).
-	NL3D_BlockMemoryAssertOnPurge= false;
+	NL3D_BlockMemoryAssertOnPurge = false;
 
 	// exit.
 	return 0;

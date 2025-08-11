@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "action_generic.h"
 
@@ -30,13 +28,13 @@ using namespace NLNET;
 
 namespace CLFECOMMON {
 
-bool	CActionGeneric::ServerSide = false;
+bool CActionGeneric::ServerSide = false;
 
 //
 // Classes
 //
 
-void CActionGeneric::unpack (NLMISC::CBitMemStream &message)
+void CActionGeneric::unpack(NLMISC::CBitMemStream &message)
 {
 	// Prepare _Message for output
 	_Message.clear();
@@ -45,8 +43,8 @@ void CActionGeneric::unpack (NLMISC::CBitMemStream &message)
 
 	// Read size from message, and check to	avoid hacking!
 	uint32 size;
-	message.serial (size);
-	if ( size > 512 && ServerSide)
+	message.serial(size);
+	if (size > 512 && ServerSide)
 	{
 		throw EInvalidDataStream();
 	}
@@ -55,21 +53,21 @@ void CActionGeneric::unpack (NLMISC::CBitMemStream &message)
 	uint8 *ptr = _Message.bufferToFill(size);
 	message.serialBuffer(ptr, size);
 
-	//message.serial (_Message);
+	// message.serial (_Message);
 }
 
-void CActionGeneric::pack (NLMISC::CBitMemStream &message)
+void CActionGeneric::pack(NLMISC::CBitMemStream &message)
 {
-	message.serialBufferWithSize((uint8*)_Message.buffer(), _Message.length());
-//	message.serial (_Message);
+	message.serialBufferWithSize((uint8 *)_Message.buffer(), _Message.length());
+	//	message.serial (_Message);
 }
 
-void CActionGeneric::serial (NLMISC::IStream &/* f */)
+void CActionGeneric::serial(NLMISC::IStream & /* f */)
 {
-//	f.serial (Position);
+	//	f.serial (Position);
 }
 
-uint32 CActionGeneric::size ()
+uint32 CActionGeneric::size()
 {
 	// If you change this size, please update IMPULSE_ACTION_HEADER_SIZE in the front-end
 
@@ -77,29 +75,29 @@ uint32 CActionGeneric::size ()
 	return (4 + _Message.length()) * 8;
 }
 
-void CActionGeneric::set (CBitMemStream &message)
+void CActionGeneric::set(CBitMemStream &message)
 {
 	_Message = message;
 
 	if (!_Message.isReading())
-		_Message.invert ();
+		_Message.invert();
 }
 
 // Avoid to alloc a bitmemstream if not needed
-void CActionGeneric::setFromMessage (CMemStream &message, uint32 bytelen)
+void CActionGeneric::setFromMessage(CMemStream &message, uint32 bytelen)
 {
 	if (!_Message.isReading())
-		_Message.invert ();
+		_Message.invert();
 
-	nlassert( message.getPos() + bytelen <= message.length() );
+	nlassert(message.getPos() + bytelen <= message.length());
 	_Message.fill(message.buffer() + message.getPos(), bytelen);
 }
 
-CBitMemStream &CActionGeneric::get ()
+CBitMemStream &CActionGeneric::get()
 {
 	// when we get a the message, it s that you want to read it, so change the flux if needed
 	if (!_Message.isReading())
-		_Message.invert ();
+		_Message.invert();
 
 	// reset the flux to the start
 	_Message.resetBufPos();
@@ -108,5 +106,3 @@ CBitMemStream &CActionGeneric::get ()
 }
 
 }
-
-

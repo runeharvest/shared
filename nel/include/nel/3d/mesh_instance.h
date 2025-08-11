@@ -24,18 +24,13 @@
 #include "nel/3d/vertex_buffer.h"
 #include "nel/3d/index_buffer.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 class CMesh;
 
-
 // ***************************************************************************
 // ClassIds.
-const NLMISC::CClassId		MeshInstanceId=NLMISC::CClassId(0x6bfe0a34, 0x23b26dc9);
-
+const NLMISC::CClassId MeshInstanceId = NLMISC::CClassId(0x6bfe0a34, 0x23b26dc9);
 
 // ***************************************************************************
 /**
@@ -50,10 +45,9 @@ class CMeshInstance : public CMeshBaseInstance
 {
 public:
 	/// Call at the beginning of the program, to register the model
-	static	void	registerBasic();
+	static void registerBasic();
 
 public:
-
 protected:
 	/// Constructor
 	CMeshInstance();
@@ -64,23 +58,23 @@ protected:
 	/// \name Skinning Behavior.
 	// @{
 	/// I can be skinned if the mesh is.
-	virtual	bool	isSkinnable() const;
+	virtual bool isSkinnable() const;
 
 	/// Call when the skin is applied on the skeleton
-	virtual	void	setApplySkin(bool state);
+	virtual void setApplySkin(bool state);
 
 	/// Called for lod character coloring.
-	virtual const std::vector<sint32>	*getSkinBoneUsage() const;
+	virtual const std::vector<sint32> *getSkinBoneUsage() const;
 
 	/// Called for more precise clipping.
-	virtual const std::vector<NLMISC::CBSphere>	*getSkinBoneSphere() const;
+	virtual const std::vector<NLMISC::CBSphere> *getSkinBoneSphere() const;
 
 	/// Implementation of the renderSkin
-	virtual void	renderSkin(float alphaMRM);
+	virtual void renderSkin(float alphaMRM);
 
 	/// Skin intersection?
-	virtual	bool			supportIntersectSkin() const;
-	virtual	bool			intersectSkin(const CMatrix &toRaySpace, float &dist2D, float &distZ, bool computeDist2D);
+	virtual bool supportIntersectSkin() const;
+	virtual bool intersectSkin(const CMatrix &toRaySpace, float &dist2D, float &distZ, bool computeDist2D);
 
 	// @}
 
@@ -89,34 +83,31 @@ protected:
 	// @}
 
 	// called at instanciation
-	void			initRenderFilterType();
+	void initRenderFilterType();
 
 	/// \name ShadowMap Behavior.
 	// @{
-	virtual	void		generateShadowMap(const CVector &lightDir);
-	virtual	CShadowMap	*getShadowMap();
-	virtual bool		computeWorldBBoxForShadow(NLMISC::CAABBox &worldBB);
-	virtual void		renderIntoSkeletonShadowMap(CSkeletonModel *rootSkeleton, CMaterial	&castMat);
+	virtual void generateShadowMap(const CVector &lightDir);
+	virtual CShadowMap *getShadowMap();
+	virtual bool computeWorldBBoxForShadow(NLMISC::CAABBox &worldBB);
+	virtual void renderIntoSkeletonShadowMap(CSkeletonModel *rootSkeleton, CMaterial &castMat);
 	// @}
 
 private:
-	static CTransform	*creator() {return new CMeshInstance;}
-	friend	class CMesh;
+	static CTransform *creator() { return new CMeshInstance; }
+	friend class CMesh;
 
 	// MeshInstances can generate Shadow Map
-	CShadowMap			*_ShadowMap;
+	CShadowMap *_ShadowMap;
 
-	void			updateShadowMap(IDriver *driver);
+	void updateShadowMap(IDriver *driver);
+
 protected:
-	virtual void			createShadowMap();
-	virtual void			deleteShadowMap();
+	virtual void createShadowMap();
+	virtual void deleteShadowMap();
 };
 
-
-
-
 } // NL3D
-
 
 #endif // NL_MESH_INSTANCE_H
 

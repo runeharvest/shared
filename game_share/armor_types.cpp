@@ -14,35 +14,31 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 #include "nel/misc/debug.h"
 #include "nel/misc/string_conversion.h"
 #include "armor_types.h"
 
+namespace ARMORTYPE {
+NL_BEGIN_STRING_CONVERSION_TABLE(EArmorType)
+NL_STRING_CONVERSION_TABLE_ENTRY(HEAVY)
+NL_STRING_CONVERSION_TABLE_ENTRY(MEDIUM)
+NL_STRING_CONVERSION_TABLE_ENTRY(LIGHT)
+NL_STRING_CONVERSION_TABLE_ENTRY(ALL)
+NL_STRING_CONVERSION_TABLE_ENTRY(UNKNOWN)
+NL_END_STRING_CONVERSION_TABLE(EArmorType, ConversionType, UNKNOWN)
 
-namespace ARMORTYPE
+///
+EArmorType toArmorType(const std::string &str)
 {
-	NL_BEGIN_STRING_CONVERSION_TABLE (EArmorType)
-		NL_STRING_CONVERSION_TABLE_ENTRY(HEAVY)
-		NL_STRING_CONVERSION_TABLE_ENTRY(MEDIUM)
-		NL_STRING_CONVERSION_TABLE_ENTRY(LIGHT)
-		NL_STRING_CONVERSION_TABLE_ENTRY(ALL)
-		NL_STRING_CONVERSION_TABLE_ENTRY(UNKNOWN)
-	NL_END_STRING_CONVERSION_TABLE(EArmorType, ConversionType, UNKNOWN)
+	return ConversionType.fromString(str);
+}
 
-	///
-	EArmorType toArmorType( const std::string &str )
-	{
-		return ConversionType.fromString(str);
-	}
-
-	///
-	const std::string& toString( EArmorType type )
-	{
-		return ConversionType.toString(type);
-	}
+///
+const std::string &toString(EArmorType type)
+{
+	return ConversionType.toString(type);
+}
 
 }; // ARMORTYPE

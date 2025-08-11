@@ -14,14 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_ACTION_TARGET_SLOT_H
 #define NL_ACTION_TARGET_SLOT_H
 
 #include "nel/misc/types_nl.h"
 #include "action.h"
-
 
 namespace CLFECOMMON {
 
@@ -34,39 +31,48 @@ namespace CLFECOMMON {
 class CActionTargetSlot : public CAction
 {
 public:
-
 	/** This function creates initializes its fields using the buffer.
 	 * \param buffer pointer to the buffer where the data are
 	 * \size size of the buffer
 	 */
-	virtual void unpack (NLMISC::CBitMemStream &message) { message.serial( Slot ); message.serial( TargetOrPickup, 2 ); }
+	virtual void unpack(NLMISC::CBitMemStream &message)
+	{
+		message.serial(Slot);
+		message.serial(TargetOrPickup, 2);
+	}
 
 	/// This functions is used when you want to transform an action into an IStream.
-	virtual void serial (NLMISC::IStream &f) { f.serial( Slot ); f.serial( TargetOrPickup ); }
+	virtual void serial(NLMISC::IStream &f)
+	{
+		f.serial(Slot);
+		f.serial(TargetOrPickup);
+	}
 
 	/** Returns the size of this action when it will be send to the UDP connection:
 	 * the size is IN BITS, not in bytes (the actual size is this one plus the header size)
 	 */
-	virtual uint32 size () { return sizeof(Slot)*8 + 2; }
+	virtual uint32 size() { return sizeof(Slot) * 8 + 2; }
 
-	static CAction *create () { return new CActionTargetSlot(); }
+	static CAction *create() { return new CActionTargetSlot(); }
 
 	/// The slot value
-	TCLEntityId			Slot;
+	TCLEntityId Slot;
 
 	/// Type of targetting ( LHSTATE::TLHState, only 2 bits are transmitted )
-	uint32				TargetOrPickup;
+	uint32 TargetOrPickup;
 
 protected:
-
 	/** This function transform the internal field and transform them into a buffer for the UDP connection.
 	 * \param buffer pointer to the buffer where the data will be written
 	 * \size size of the buffer
 	 */
-	virtual void pack (NLMISC::CBitMemStream &message) { message.serial( Slot ); message.serial( TargetOrPickup, 2 ); }
+	virtual void pack(NLMISC::CBitMemStream &message)
+	{
+		message.serial(Slot);
+		message.serial(TargetOrPickup, 2);
+	}
 
 	friend class CActionFactory;
-
 };
 
 }

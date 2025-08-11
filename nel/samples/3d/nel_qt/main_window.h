@@ -41,30 +41,30 @@ class QUndoStack;
 class QScrollArea;
 
 namespace NLMISC {
-	class CConfigFile;
+class CConfigFile;
 }
 
 namespace NL3D {
-	class UDriver;
-	class UScene;
-	class UTextContext;
-	class UVisualCollisionManager;
+class UDriver;
+class UScene;
+class UTextContext;
+class UVisualCollisionManager;
 }
 
 namespace NLPACS {
-	class UMoveContainer;
-	class UGlobalRetriever;
+class UMoveContainer;
+class UGlobalRetriever;
 }
 
 namespace NLSOUND {
-	class UAudioMixer;
-	class CSoundAnimManager;
+class UAudioMixer;
+class CSoundAnimManager;
 }
 
 namespace NLQT {
-	class CCommandLog;
-	class CGraphicsViewport;
-	class CGraphicsConfig;
+class CCommandLog;
+class CGraphicsViewport;
+class CGraphicsConfig;
 
 /**
  * CMainWindow
@@ -140,7 +140,7 @@ private:
 	QTreeView *m_AssetTreeView;
 	QDirModel *m_AssetTreeModel;
 	QDockWidget *m_AssetTreeDock;
-	
+
 	QMenu *m_FileMenu;
 	QMenu *m_EditMenu;
 	QMenu *m_ViewportMenu;
@@ -157,27 +157,27 @@ private:
 	QAction *m_RedoAct;
 	QAction *m_SaveScreenshotAct;
 
-	//NLMISC::CConfigFile *ConfigFile; // owned by CConfiguration
-	//CLoadingScreen LoadingScreen; // owned by CLoading (special case, always available)
-	//NL3D::UDriver *Driver; // owned by CGraphics
-	//NL3D::UTextContext *TextContext; // owned by CGraphics
-	//NLSOUND::UAudioMixer *AudioMixer; // owned by CSound
-	//NLSOUND::CSoundAnimManager *SoundAnimManager; // owned by CSound
-	//THCOMMON::CSheetLoader *SheetLoader; // owned by initSheets and releaseSheets
-	//NL3D::UScene *Scene; // owned by CEnvironment
-	//NLPACS::UMoveContainer *MoveContainer; // owned by CEnvironment
-	//NLPACS::UGlobalRetriever *GlobalRetriever; /// The global retriever used for pacs // owned by CEnvironment
-	//NL3D::UVisualCollisionManager *VisualCollisionManager; /// The collision manager for ground snapping // owned by CEnvironment
-	//THCLIENT::CKeyBinder *KeyBinder; // owned by CInterface
+	// NLMISC::CConfigFile *ConfigFile; // owned by CConfiguration
+	// CLoadingScreen LoadingScreen; // owned by CLoading (special case, always available)
+	// NL3D::UDriver *Driver; // owned by CGraphics
+	// NL3D::UTextContext *TextContext; // owned by CGraphics
+	// NLSOUND::UAudioMixer *AudioMixer; // owned by CSound
+	// NLSOUND::CSoundAnimManager *SoundAnimManager; // owned by CSound
+	// THCOMMON::CSheetLoader *SheetLoader; // owned by initSheets and releaseSheets
+	// NL3D::UScene *Scene; // owned by CEnvironment
+	// NLPACS::UMoveContainer *MoveContainer; // owned by CEnvironment
+	// NLPACS::UGlobalRetriever *GlobalRetriever; /// The global retriever used for pacs // owned by CEnvironment
+	// NL3D::UVisualCollisionManager *VisualCollisionManager; /// The collision manager for ground snapping // owned by CEnvironment
+	// THCLIENT::CKeyBinder *KeyBinder; // owned by CInterface
 
-	//NLMISC::TLocalTime LocalTime; // use for delta only // owned by CGameTime
-	//NLMISC::TLocalTime LocalTimeDelta; // owned by CGameTime
-	//NL3D::TGlobalAnimationTime AnimationTime; // owned by CGameTime
-	//NL3D::TAnimationTime AnimationTimeDelta; // owned by CGameTime
-	//float FramesPerSecond; // owned by CGameTime
-	//float FramesPerSecondSmooth; // owned by CGameTime
+	// NLMISC::TLocalTime LocalTime; // use for delta only // owned by CGameTime
+	// NLMISC::TLocalTime LocalTimeDelta; // owned by CGameTime
+	// NL3D::TGlobalAnimationTime AnimationTime; // owned by CGameTime
+	// NL3D::TAnimationTime AnimationTimeDelta; // owned by CGameTime
+	// float FramesPerSecond; // owned by CGameTime
+	// float FramesPerSecondSmooth; // owned by CGameTime
 
-	//NLMISC::CVector DetailTargetPosition; // player or camera position for lod improvements // owned by camera
+	// NLMISC::CVector DetailTargetPosition; // player or camera position for lod improvements // owned by camera
 
 }; /* class CMainWindow */
 

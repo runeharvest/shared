@@ -19,25 +19,28 @@
 
 #include <nel/misc/types_nl.h>
 
-
 /// This class implement bound checking for values. Can be used in an edition dialog
 template <class T>
 class CBoundChecker
 {
 public:
 	/** ctor
-	  * the default doesn't enable bound checking
-	  */
-	CBoundChecker() : _UpperBoundEnabled(false), _LowerBoundEnabled(false) {}
+	 * the default doesn't enable bound checking
+	 */
+	CBoundChecker()
+	    : _UpperBoundEnabled(false)
+	    , _LowerBoundEnabled(false)
+	{
+	}
 
 	/** enable upper bound use (e.g. value must be < or <= upper bound )
 	 *  \param upperBoundExcluded if true then the test is <, otherwise its <=
 	 */
-	void enableUpperBound(T upperBound, bool upperBoundExcluded) 
-	{ 
+	void enableUpperBound(T upperBound, bool upperBoundExcluded)
+	{
 		_UpperBoundEnabled = true;
 		_UpperBoundExcluded = upperBoundExcluded;
-		_UpperBound = upperBound; 
+		_UpperBound = upperBound;
 	}
 
 	// disable upper bound usage
@@ -55,16 +58,16 @@ public:
 	/** enable lower bound use (e.g. value must be < or <= lower bound )
 	 *  \param lowerBoundExcluded if true then the test is <, otherwise its <=
 	 */
-	void enableLowerBound(T lowerBound, bool lowerBoundExcluded) 
-	{ 
+	void enableLowerBound(T lowerBound, bool lowerBoundExcluded)
+	{
 		_LowerBoundEnabled = true;
 		_LowerBoundExcluded = lowerBoundExcluded;
-		_LowerBound = lowerBound; 
+		_LowerBound = lowerBound;
 	}
-	
+
 	// disable lower bound
 	void disableLowerBound(void) { _LowerBoundEnabled = false; }
-	
+
 	// get the lower bound
 	T getLowerBound(void) const { return _LowerBound; }
 
@@ -85,7 +88,6 @@ public:
 		return _T("value too high");
 	}
 
-	
 	/** validate a value against lower bound. (if an lower bound was set
 	 *  \return NULL if ok or an error message
 	 */
@@ -100,15 +102,15 @@ public:
 	/// copy this bound checker object to another one
 	void duplicateBoundChecker(CBoundChecker<T> &dup)
 	{
-		dup._LowerBound				= _LowerBound;
-		dup._LowerBoundEnabled		= _LowerBoundEnabled;
-		dup._LowerBoundExcluded     = _LowerBoundExcluded;
-		dup._UpperBound				= _UpperBound;
-		dup._UpperBoundEnabled		= _UpperBoundEnabled;
-		dup._UpperBoundExcluded     = _UpperBoundExcluded;
-	}	
-protected:
+		dup._LowerBound = _LowerBound;
+		dup._LowerBoundEnabled = _LowerBoundEnabled;
+		dup._LowerBoundExcluded = _LowerBoundExcluded;
+		dup._UpperBound = _UpperBound;
+		dup._UpperBoundEnabled = _UpperBoundEnabled;
+		dup._UpperBoundExcluded = _UpperBoundExcluded;
+	}
 
+protected:
 	bool _UpperBoundEnabled;
 	bool _UpperBoundExcluded;
 	T _UpperBound;
@@ -118,13 +120,9 @@ protected:
 	T _LowerBound;
 };
 
-
 /// some typedefs
 typedef CBoundChecker<float> CBoundCheckerFloat;
 typedef CBoundChecker<uint32> CBoundCheckerUInt;
 typedef CBoundChecker<sint32> CBoundCheckerInt;
-
-
-
 
 #endif

@@ -28,8 +28,7 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NLGUI
-{
+namespace NLGUI {
 
 bool CSSLength::parseValue(const std::string &value, bool allowPercent, bool allowNegative)
 {
@@ -56,11 +55,11 @@ bool CSSLength::parseValue(const std::string &value, bool allowPercent, bool all
 	else if (allowNegative && value[0] == '-')
 		pos++;
 
-	while(pos < len)
+	while (pos < len)
 	{
 		bool isNumeric = (value[pos] >= '0' && value[pos] <= '9')
-			|| (pos == 0 && value[pos] == '.')
-			|| (pos > 0 && value[pos] == '.' && value[pos-1] >= '0' && value[pos-1] <= '9');
+		    || (pos == 0 && value[pos] == '.')
+		    || (pos > 0 && value[pos] == '.' && value[pos - 1] >= '0' && value[pos - 1] <= '9');
 
 		if (!isNumeric)
 			break;
@@ -109,51 +108,63 @@ void CSSLength::setUnit(const std::string &unit)
 	{
 		m_Unit = CSS_UNIT_PX;
 		m_Kind = Fixed;
-	} else if (unit == "pt")
+	}
+	else if (unit == "pt")
 	{
 		m_Unit = CSS_UNIT_PT;
 		m_Kind = Fixed;
-	} else if (unit == "%")
+	}
+	else if (unit == "%")
 	{
 		m_Unit = CSS_UNIT_PERCENT;
 		m_Kind = Relative;
-	} else if (unit == "em")
+	}
+	else if (unit == "em")
 	{
 		m_Unit = CSS_UNIT_EM;
 		m_Kind = Relative;
-	} else if (unit == "rem")
+	}
+	else if (unit == "rem")
 	{
 		m_Unit = CSS_UNIT_REM;
 		m_Kind = Relative;
-	} else if (unit == "vw")
+	}
+	else if (unit == "vw")
 	{
 		m_Unit = CSS_UNIT_VW;
 		m_Kind = Relative;
-	} else if (unit == "vh")
+	}
+	else if (unit == "vh")
 	{
 		m_Unit = CSS_UNIT_VH;
 		m_Kind = Relative;
-	} else if (unit == "vi")
+	}
+	else if (unit == "vi")
 	{
 		m_Unit = CSS_UNIT_VI;
 		m_Kind = Relative;
-	} else if (unit == "vb")
+	}
+	else if (unit == "vb")
 	{
 		m_Unit = CSS_UNIT_VB;
 		m_Kind = Relative;
-	} else if (unit == "vmin")
+	}
+	else if (unit == "vmin")
 	{
 		m_Unit = CSS_UNIT_VMIN;
 		m_Kind = Relative;
-	} else if (unit == "vmax")
+	}
+	else if (unit == "vmax")
 	{
 		m_Unit = CSS_UNIT_VMAX;
 		m_Kind = Relative;
-	} else if (unit == "auto")
+	}
+	else if (unit == "auto")
 	{
 		m_Unit = CSS_UNIT_NONE;
 		m_Kind = Auto;
-	} else
+	}
+	else
 	{
 		// fallback to auto
 		m_Unit = CSS_UNIT_NONE;
@@ -167,29 +178,29 @@ float CSSLength::calculate(uint32 relValue, uint32 emSize, uint32 remSize, uint3
 		return 0;
 
 	float value = getValue();
-	switch(m_Unit)
+	switch (m_Unit)
 	{
-		case CSS_UNIT_EM:
-			return emSize * value;
-		case CSS_UNIT_REM:
-			return remSize * value;
-		case CSS_UNIT_PERCENT:
-			return relValue * value;
-		case CSS_UNIT_PX:
-		case CSS_UNIT_PT:
-			return value;
-		case CSS_UNIT_VW:
-		case CSS_UNIT_VI:
-			// Vi for horizontal writing mode only
-			return (float)vwSize*0.01f;
-		case CSS_UNIT_VH:
-		case CSS_UNIT_VB:
-			// Vb for horizontal writing mode only
-			return (float)vhSize*0.01f;
-		case CSS_UNIT_VMIN:
-			return (float)std::min(vwSize, vhSize)*0.01f;
-		case CSS_UNIT_VMAX:
-			return (float)std::max(vwSize, vhSize)*0.01f;
+	case CSS_UNIT_EM:
+		return emSize * value;
+	case CSS_UNIT_REM:
+		return remSize * value;
+	case CSS_UNIT_PERCENT:
+		return relValue * value;
+	case CSS_UNIT_PX:
+	case CSS_UNIT_PT:
+		return value;
+	case CSS_UNIT_VW:
+	case CSS_UNIT_VI:
+		// Vi for horizontal writing mode only
+		return (float)vwSize * 0.01f;
+	case CSS_UNIT_VH:
+	case CSS_UNIT_VB:
+		// Vb for horizontal writing mode only
+		return (float)vhSize * 0.01f;
+	case CSS_UNIT_VMIN:
+		return (float)std::min(vwSize, vhSize) * 0.01f;
+	case CSS_UNIT_VMAX:
+		return (float)std::max(vwSize, vhSize) * 0.01f;
 	}
 
 	nldebug("Unknown CSS unit '%s'", toString().c_str());
@@ -205,7 +216,7 @@ std::string CSSLength::toString() const
 	ret += NLMISC::toString("%f", m_Value);
 
 	size_t pos = ret.find(".");
-	for( ; pos < ret.size(); ++pos)
+	for (; pos < ret.size(); ++pos)
 	{
 		if (ret[pos] != '0')
 			break;
@@ -213,24 +224,23 @@ std::string CSSLength::toString() const
 	if (pos == ret.size())
 		ret = ret.substr(0, ret.find("."));
 
-	switch(m_Unit)
+	switch (m_Unit)
 	{
-		case CSS_UNIT_NONE: break;
-		case CSS_UNIT_EM: ret += "em"; break;
-		case CSS_UNIT_REM: ret += "rem"; break;
-		case CSS_UNIT_PERCENT: ret += "%"; break;
-		case CSS_UNIT_PX: ret += "px"; break;
-		case CSS_UNIT_PT: ret += "pt"; break;
-		case CSS_UNIT_VW: ret += "vw"; break;
-		case CSS_UNIT_VH: ret += "vh"; break;
-		case CSS_UNIT_VI: ret += "vi"; break;
-		case CSS_UNIT_VB: ret += "vb"; break;
-		case CSS_UNIT_VMIN: ret += "vmin"; break;
-		case CSS_UNIT_VMAX: ret += "vmax"; break;
+	case CSS_UNIT_NONE: break;
+	case CSS_UNIT_EM: ret += "em"; break;
+	case CSS_UNIT_REM: ret += "rem"; break;
+	case CSS_UNIT_PERCENT: ret += "%"; break;
+	case CSS_UNIT_PX: ret += "px"; break;
+	case CSS_UNIT_PT: ret += "pt"; break;
+	case CSS_UNIT_VW: ret += "vw"; break;
+	case CSS_UNIT_VH: ret += "vh"; break;
+	case CSS_UNIT_VI: ret += "vi"; break;
+	case CSS_UNIT_VB: ret += "vb"; break;
+	case CSS_UNIT_VMIN: ret += "vmin"; break;
+	case CSS_UNIT_VMAX: ret += "vmax"; break;
 	}
 
 	return ret;
 }
 
 } // namespace
-

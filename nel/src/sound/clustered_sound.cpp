@@ -24,7 +24,7 @@
 #include "nel/georges/u_form.h"
 #include "nel/georges/u_form_elm.h"
 #include "nel/georges/load_form.h"
-//#include "nel/3d/std3d.h"
+// #include "nel/3d/std3d.h"
 #include "nel/3d/scene.h"
 #include "nel/3d/scene_user.h"
 #include "nel/3d/cluster.h"
@@ -39,17 +39,16 @@ using namespace std;
 using namespace NLMISC;
 using namespace NL3D;
 
-namespace NLSOUND
-{
+namespace NLSOUND {
 
 // An utility class to handle packed sheet loading/saving/updating
 class CSoundGroupSerializer
 {
 public:
-	std::vector<std::pair<NLMISC::TStringId, NLMISC::TStringId> >	_SoundGroupAssoc;
+	std::vector<std::pair<NLMISC::TStringId, NLMISC::TStringId>> _SoundGroupAssoc;
 
 	// load the values using the george sheet (called by GEORGE::loadForm)
-	void readGeorges (const NLMISC::CSmartPtr<NLGEORGES::UForm> &form, const std::string &/* name */)
+	void readGeorges(const NLMISC::CSmartPtr<NLGEORGES::UForm> &form, const std::string & /* name */)
 	{
 		try
 		{
@@ -59,7 +58,7 @@ public:
 			root.getNodeByName(&items, ".Items");
 			items->getArraySize(size);
 
-			for (uint i=0; i<size; ++i)
+			for (uint i = 0; i < size; ++i)
 			{
 				std::string soundGroup;
 				std::string sound;
@@ -82,13 +81,13 @@ public:
 				_SoundGroupAssoc.push_back(make_pair(CStringMapper::map(soundGroup), CStringMapper::map(sound)));
 			}
 		}
-		catch(...)
+		catch (...)
 		{
 		}
 	}
 
 	// load/save the values using the serial system (called by GEORGE::loadForm)
-	void serial (NLMISC::IStream &s)
+	void serial(NLMISC::IStream &s)
 	{
 		uint32 size;
 		if (!s.isReading())
@@ -97,7 +96,7 @@ public:
 		}
 		s.serial(size);
 
-		for (uint i=0; i<size; ++i)
+		for (uint i = 0; i < size; ++i)
 		{
 			if (s.isReading())
 			{
@@ -132,19 +131,18 @@ public:
 	}
 
 	// return the version of this class, increments this value when the content of this class changed
-	static uint getVersion () { return 1; }
-
+	static uint getVersion() { return 1; }
 };
 
 CClusteredSound::CClusteredSound()
-:	_Scene(0),
-	_RootCluster(0),
-	_LastEnv(CStringMapper::emptyId()),
-	_LastEnvSize(-1.0f), // size goes from 0.0f to 100.0f
-	m_EnableOcclusionObstruction(false),
-	m_EnableReverb(false)
+    : _Scene(0)
+    , _RootCluster(0)
+    , _LastEnv(CStringMapper::emptyId())
+    , _LastEnvSize(-1.0f)
+    , // size goes from 0.0f to 100.0f
+    m_EnableOcclusionObstruction(false)
+    , m_EnableReverb(false)
 {
-	
 }
 
 void CClusteredSound::buildSheets(const std::string &packedSheetPath)
@@ -177,7 +175,7 @@ void CClusteredSound::init(NL3D::CScene *scene, float portalInterpolate, float m
 
 	// load the sound_group sheets
 	std::map<std::string, CSoundGroupSerializer> container;
-	::loadForm("sound_group", CAudioMixerUser::instance()->getPackedSheetPath()+"sound_groups.packed_sheets", container, CAudioMixerUser::instance()->getPackedSheetUpdate(), false);
+	::loadForm("sound_group", CAudioMixerUser::instance()->getPackedSheetPath() + "sound_groups.packed_sheets", container, CAudioMixerUser::instance()->getPackedSheetUpdate(), false);
 
 	// copy the container data into internal structure
 	std::map<std::string, CSoundGroupSerializer>::iterator first(container.begin()), last(container.end());
@@ -189,12 +187,11 @@ void CClusteredSound::init(NL3D::CScene *scene, float portalInterpolate, float m
 	// and clear the temporary Container
 	container.clear();
 
-
 	_Scene = scene;
 	_PortalInterpolate = portalInterpolate;
 	_MaxEarDistance = maxEarDist;
 	_MinGain = minGain;
-	if(scene != 0)
+	if (scene != 0)
 	{
 		_RootCluster = _Scene->getClipTrav().RootCluster;
 	}
@@ -202,7 +199,7 @@ void CClusteredSound::init(NL3D::CScene *scene, float portalInterpolate, float m
 		_RootCluster = 0;
 }
 
-void CClusteredSound::update(const CVector &listenerPos, const CVector &/* view */, const CVector &/* up */)
+void CClusteredSound::update(const CVector &listenerPos, const CVector & /* view */, const CVector & /* up */)
 {
 	H_AUTO(NLSOUND_ClusteredSoundUpdate)
 	if (_Scene == 0)
@@ -217,12 +214,11 @@ void CClusteredSound::update(const CVector &listenerPos, const CVector &/* view 
 		return;
 	}
 
-	CClipTrav	&clipTrav = _Scene->getClipTrav ();
+	CClipTrav &clipTrav = _Scene->getClipTrav();
 
 	// Retreive the list of cluster where the listener is
-	vector<CCluster*> vCluster;
-	clipTrav.fullSearch (vCluster, listenerPos);
-
+	vector<CCluster *> vCluster;
+	clipTrav.fullSearch(vCluster, listenerPos);
 
 	// reset the audible cluster map
 	_AudibleClusters.clear();
@@ -237,12 +233,12 @@ void CClusteredSound::update(const CVector &listenerPos, const CVector &/* view 
 	// update the clustered sound (create and stop sound)
 	//-----------------------------------------------------
 
-//	std::hash_map<uint, CClusterSound>		newSources;
-	TClusterSoundCont		newSources;
+	//	std::hash_map<uint, CClusterSound>		newSources;
+	TClusterSoundCont newSources;
 
 	{
 		// fake the distance for all playing source
-//		std::map<std::string, CClusterSound>::iterator first(_Sources.begin()), last(_Sources.end());
+		//		std::map<std::string, CClusterSound>::iterator first(_Sources.begin()), last(_Sources.end());
 		TClusterSoundCont::iterator first(_Sources.begin()), last(_Sources.end());
 		for (; first != last; ++first)
 		{
@@ -250,9 +246,8 @@ void CClusteredSound::update(const CVector &listenerPos, const CVector &/* view 
 		}
 	}
 
-
 	TClusterStatusMap::const_iterator first(_AudibleClusters.begin()), last(_AudibleClusters.end());
-	for (; first != last; ++first )
+	for (; first != last; ++first)
 	{
 		static NLMISC::TStringId NO_SOUND_GROUP = CStringMapper::emptyId();
 		const CClusterSoundStatus &css = first->second;
@@ -260,7 +255,6 @@ void CClusteredSound::update(const CVector &listenerPos, const CVector &/* view 
 		NLMISC::TStringId soundGroup;
 
 		soundGroup = cluster->getSoundGroupId();
-
 
 		if (soundGroup != NO_SOUND_GROUP)
 		{
@@ -275,9 +269,9 @@ void CClusteredSound::update(const CVector &listenerPos, const CVector &/* view 
 				{
 					// this one is better !
 					cs.Distance = css.Dist;
-					cs.Source->setPos(listenerPos + css.Direction * css.Dist + CVector(0,0,2));
+					cs.Source->setPos(listenerPos + css.Direction * css.Dist + CVector(0, 0, 2));
 					if (css.DistFactor < 1.0f)
-						cs.Source->setRelativeGain(css.Gain * (1.0f - (css.DistFactor*css.DistFactor*css.DistFactor*css.DistFactor)));
+						cs.Source->setRelativeGain(css.Gain * (1.0f - (css.DistFactor * css.DistFactor * css.DistFactor * css.DistFactor)));
 					else
 						cs.Source->setRelativeGain(css.Gain);
 				}
@@ -287,7 +281,7 @@ void CClusteredSound::update(const CVector &listenerPos, const CVector &/* view 
 			{
 				// create a new source
 
-//				nldebug("Searching sound assoc for group [%s]", CStringMapper::unmap(soundGroup).c_str());
+				//				nldebug("Searching sound assoc for group [%s]", CStringMapper::unmap(soundGroup).c_str());
 
 				TStringStringMap::iterator it2(_SoundGroupToSound.find(soundGroup));
 				if (it2 != _SoundGroupToSound.end())
@@ -295,15 +289,15 @@ void CClusteredSound::update(const CVector &listenerPos, const CVector &/* view 
 					NLMISC::TStringId soundName = it2->second;
 					CClusterSound cs;
 
-//					nldebug("Found the sound [%s] for sound group [%s]", CStringMapper::unmap(soundName).c_str(), CStringMapper::unmap(soundGroup).c_str());
+					//					nldebug("Found the sound [%s] for sound group [%s]", CStringMapper::unmap(soundName).c_str(), CStringMapper::unmap(soundGroup).c_str());
 
 					cs.Distance = css.Dist;
 					cs.Source = CAudioMixerUser::instance()->createSource(soundName, false, NULL, NULL, cluster);
 					if (cs.Source != 0)
 					{
-						cs.Source->setPos(listenerPos + css.Direction * css.Dist + CVector(0,0,2));
+						cs.Source->setPos(listenerPos + css.Direction * css.Dist + CVector(0, 0, 2));
 						if (css.DistFactor < 1.0f)
-							cs.Source->setRelativeGain(css.Gain * (1.0f - (css.DistFactor*css.DistFactor/**css.DistFactor*css.DistFactor*/)));
+							cs.Source->setRelativeGain(css.Gain * (1.0f - (css.DistFactor * css.DistFactor /**css.DistFactor*css.DistFactor*/)));
 						else
 							cs.Source->setRelativeGain(css.Gain);
 						cs.Source->setLooping(true);
@@ -315,7 +309,7 @@ void CClusteredSound::update(const CVector &listenerPos, const CVector &/* view 
 	}
 	// check for source to stop
 	{
-		TClusterSoundCont	oldSources;
+		TClusterSoundCont oldSources;
 		oldSources.swap(_Sources);
 
 		TClusterSoundCont::iterator first(newSources.begin()), last(newSources.end());
@@ -344,7 +338,7 @@ void CClusteredSound::update(const CVector &listenerPos, const CVector &/* view 
 		TStringId fxId = vCluster[0]->getEnvironmentFxId();
 		const CAABBox &box = vCluster[0]->getBBox();
 		CVector vsize = box.getHalfSize();
-		float	size = NLMISC::minof(vsize.x, vsize.y, vsize.z) * 2;
+		float size = NLMISC::minof(vsize.x, vsize.y, vsize.z) * 2;
 
 		// special case for root cluster (ie, external)
 		if (vCluster[0] == _RootCluster)
@@ -381,8 +375,7 @@ const CClusteredSound::CClusterSoundStatus *CClusteredSound::getClusterSoundStat
 		return &(it->second);
 }
 
-
-NL3D::CCluster	*CClusteredSound::getRootCluster()
+NL3D::CCluster *CClusteredSound::getRootCluster()
 {
 	if (_Scene == 0)
 		return 0;
@@ -390,13 +383,12 @@ NL3D::CCluster	*CClusteredSound::getRootCluster()
 	return _Scene->getClipTrav().RootCluster;
 }
 
-
 void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSoundTravContext &travContext)
 {
 	H_AUTO(NLSOUND_soundTraverse)
-//	std::map<CCluster*, CSoundTravContext>	nextTraverse;
-	std::vector<std::pair<const CCluster*, CSoundTravContext> >	curClusters;
-	CVector		realListener (travContext.ListenerPos);
+	//	std::map<CCluster*, CSoundTravContext>	nextTraverse;
+	std::vector<std::pair<const CCluster *, CSoundTravContext>> curClusters;
+	CVector realListener(travContext.ListenerPos);
 
 	_AudioPath.clear();
 
@@ -413,14 +405,14 @@ void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSo
 	css.DirectCutoffFrequency = 1000.0f;
 	css.EffectCutoffFrequency = 1000.0f;
 	css.PosAlpha = 0;
-//	css.Position = CVector::Null;
+	//	css.Position = CVector::Null;
 	css.Position = realListener;
 
-	for (uint i=0; i<clusters.size(); ++i)
+	for (uint i = 0; i < clusters.size(); ++i)
 	{
 		bool valid = true;
 		// eliminate cluster when listener is behind their portals AND inside the other cluster
-		for (uint j=0; j<clusters[i]->getNbPortals(); j++)
+		for (uint j = 0; j < clusters[i]->getNbPortals(); j++)
 		{
 			CPortal *portal = clusters[i]->getPortal(j);
 			const std::vector<CVector> &poly = portal->getPoly();
@@ -428,11 +420,11 @@ void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSo
 			if (poly.size() < 3)
 			{
 				// only warn once, avoid log flooding !
-				static std::set<std::string>	warned;
+				static std::set<std::string> warned;
 				if (warned.find(clusters[i]->Name) == warned.end())
 				{
 					nlwarning("Cluster [%s] contains a portal [%s] with less than 3 vertex !",
-						clusters[i]->Name.c_str(), portal->getName().empty() ? "no name" : portal->getName().c_str());
+					    clusters[i]->Name.c_str(), portal->getName().empty() ? "no name" : portal->getName().c_str());
 					warned.insert(clusters[i]->Name);
 				}
 				valid = false;
@@ -458,25 +450,24 @@ void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSo
 					valid = false;
 					continue;
 				}
-
 			}
 
-/*
-			if (portal->getCluster(0) == clusters[i] && dist > 0)
-//				if (!portal->isInFront(realListener))
-			{
-				valid = false;
-				continue;
-			}
-			else if (portal->getCluster(1) == clusters[i] && dist < 0)
-//				if (portal->isInFront(realListener))
-			{
-				valid = false;
-				continue;
-			}
-*/
+			/*
+			            if (portal->getCluster(0) == clusters[i] && dist > 0)
+			//				if (!portal->isInFront(realListener))
+			            {
+			                valid = false;
+			                continue;
+			            }
+			            else if (portal->getCluster(1) == clusters[i] && dist < 0)
+			//				if (portal->isInFront(realListener))
+			            {
+			                valid = false;
+			                continue;
+			            }
+			*/
 		}
-		if( valid)
+		if (valid)
 		{
 			curClusters.push_back(make_pair(clusters[i], travContext));
 			addAudibleCluster(clusters[i], css);
@@ -491,7 +482,7 @@ void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSo
 
 		while (!curClusters.empty())
 		{
-			CCluster * cluster = const_cast<CCluster*>(curClusters.back().first);
+			CCluster *cluster = const_cast<CCluster *>(curClusters.back().first);
 			CSoundTravContext &travContext = curClusters.back().second;
 
 			CClusterSoundStatus css;
@@ -513,12 +504,12 @@ void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSo
 
 			// 1st, look each portal
 			uint i;
-			for (i=0; i<cluster->getNbPortals(); ++i)
+			for (i = 0; i < cluster->getNbPortals(); ++i)
 			{
 				CPortal *portal = cluster->getPortal(i);
 				// get the other cluster
 				CCluster *otherCluster = portal->getCluster(0);
-				bool	clusterInFront = true;
+				bool clusterInFront = true;
 				if (otherCluster == cluster)
 				{
 					otherCluster = portal->getCluster(1);
@@ -534,11 +525,11 @@ void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSo
 					if (poly.size() < 3)
 					{
 						// only warn once, avoid log flooding !
-						static std::set<std::string>	warned;
+						static std::set<std::string> warned;
 						if (warned.find(cluster->Name) == warned.end())
 						{
 							nlwarning("Cluster [%s] contains a portal [%s] with less than 3 vertex !",
-								cluster->Name.c_str(), portal->getName().empty() ? "no name" : portal->getName().c_str());
+							    cluster->Name.c_str(), portal->getName().empty() ? "no name" : portal->getName().c_str());
 							warned.insert(cluster->Name);
 						}
 					}
@@ -546,7 +537,7 @@ void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSo
 					{
 
 						// Test to skip portal with suface > 40 m2 (aprox)
-						float surface = ((poly[2]-poly[1]) ^ (poly[0]-poly[1])).norm();
+						float surface = ((poly[2] - poly[1]) ^ (poly[0] - poly[1])).norm();
 						if (surface > 340 /* && otherCluster->isIn(travContext.ListenerPos, travContext.MaxDist-travContext.Dist)*/)
 						{
 							float minDist;
@@ -573,13 +564,13 @@ void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSo
 								float alpha = travContext.Alpha;
 								CVector d1(travContext.Direction1), d2;
 
-								css.Direction = interpolateSourceDirection(travContext, css.Dist+travContext.Dist, nearPos, travContext.ListenerPos /*realListener*/, d1, d2, alpha);
+								css.Direction = interpolateSourceDirection(travContext, css.Dist + travContext.Dist, nearPos, travContext.ListenerPos /*realListener*/, d1, d2, alpha);
 								css.Position = nearPos + css.Dist * css.Direction;
 								css.PosAlpha = min(1.0f, css.Dist / _PortalInterpolate);
 
 								if (addAudibleCluster(otherCluster, css))
 								{
-	//								debugLines.push_back(CLine(travContext.ListenerPos, nearPos));
+									//								debugLines.push_back(CLine(travContext.ListenerPos, nearPos));
 									CSoundTravContext stc(travContext);
 									stc.FilterUnvisibleChild = true;
 									stc.Direction1 = d1;
@@ -601,7 +592,7 @@ void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSo
 
 							minDist = getPolyNearestPos(poly, travContext.ListenerPos, nearPos);
 
-							if (travContext.Dist+minDist < _MaxEarDistance)
+							if (travContext.Dist + minDist < _MaxEarDistance)
 							{
 								// TODO : compute relative gain according to portal behavior.
 								CClusterSoundStatus css;
@@ -676,20 +667,20 @@ void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSo
 								{
 									css.Obstruction = travContext.Obstruction;
 								}
-	//							css.Dist = travContext.Dist + float(sqrt(minDist));
+								//							css.Dist = travContext.Dist + float(sqrt(minDist));
 								css.Dist = travContext.Dist + minDist;
 								css.DistFactor = css.Dist / _MaxEarDistance;
-								float	portalDist = css.Dist;
-								float	alpha = travContext.Alpha;
+								float portalDist = css.Dist;
+								float alpha = travContext.Alpha;
 								CVector d1(travContext.Direction1), d2(travContext.Direction2);
 
-								css.Direction = interpolateSourceDirection(travContext, portalDist+travContext.Dist, nearPos, travContext.ListenerPos /*realListener*/, d1, d2, alpha);
+								css.Direction = interpolateSourceDirection(travContext, portalDist + travContext.Dist, nearPos, travContext.ListenerPos /*realListener*/, d1, d2, alpha);
 								css.Position = nearPos + css.Dist * css.Direction;
 								css.PosAlpha = min(1.0f, css.Dist / _PortalInterpolate);
 
 								if (addAudibleCluster(otherCluster, css))
 								{
-	//								debugLines.push_back(CLine(travContext.ListenerPos, nearPoint));
+									//								debugLines.push_back(CLine(travContext.ListenerPos, nearPoint));
 									CSoundTravContext tc(nearPos, travContext.FilterUnvisibleChild, !cluster->AudibleFromFather);
 									tc.Dist = css.Dist;
 									tc.Gain = css.Gain;
@@ -701,7 +692,7 @@ void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSo
 									tc.EffectCutoffFrequency = css.EffectCutoffFrequency;
 									tc.Direction1 = d1;
 									tc.Direction2 = d2;
-									tc.NbPortal = travContext.NbPortal+1;
+									tc.NbPortal = travContext.NbPortal + 1;
 									tc.Direction = css.Direction;
 									tc.PreviousCluster = cluster;
 									tc.Alpha = alpha;
@@ -717,7 +708,7 @@ void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSo
 			}
 
 			// 2nd, look each child cluster
-			for (i=0; i<cluster->Children.size(); ++i)
+			for (i = 0; i < cluster->Children.size(); ++i)
 			{
 				CCluster *c = cluster->Children[i];
 
@@ -725,7 +716,7 @@ void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSo
 				if (c != travContext.PreviousCluster)
 				{
 					// clip on distance.
-					if (c->AudibleFromFather && c->isIn(travContext.ListenerPos, _MaxEarDistance-travContext.Dist))
+					if (c->AudibleFromFather && c->isIn(travContext.ListenerPos, _MaxEarDistance - travContext.Dist))
 					{
 						float minDist;
 						CVector nearPos;
@@ -745,21 +736,21 @@ void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSo
 							css.Obstruction = travContext.Obstruction;
 							css.DirectCutoffFrequency = travContext.DirectCutoffFrequency;
 							css.EffectCutoffFrequency = travContext.EffectCutoffFrequency;
-/*							if (travContext.NbPortal == 0)
-								css.Direction = (nearPos - travContext.ListenerPos).normed();
-							else
-								css.Direction = travContext.Direction1;
-*/
+							/*							if (travContext.NbPortal == 0)
+							                                css.Direction = (nearPos - travContext.ListenerPos).normed();
+							                            else
+							                                css.Direction = travContext.Direction1;
+							*/
 							float alpha = travContext.Alpha;
 							CVector d1(travContext.Direction1), d2;
 
-							css.Direction = interpolateSourceDirection(travContext, css.Dist+travContext.Dist, nearPos, travContext.ListenerPos /*realListener*/, d1, d2, alpha);
+							css.Direction = interpolateSourceDirection(travContext, css.Dist + travContext.Dist, nearPos, travContext.ListenerPos /*realListener*/, d1, d2, alpha);
 							css.Position = nearPos + css.Dist * css.Direction;
 							css.PosAlpha = min(1.0f, css.Dist / _PortalInterpolate);
 
 							if (addAudibleCluster(c, css))
 							{
-//								debugLines.push_back(CLine(travContext.ListenerPos, nearPos));
+								//								debugLines.push_back(CLine(travContext.ListenerPos, nearPos));
 								CSoundTravContext stc(travContext);
 								stc.FilterUnvisibleChild = true;
 								stc.Direction1 = d1;
@@ -779,7 +770,7 @@ void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSo
 			// 3nd, look in father cluster
 			if (cluster->Father && cluster->Father != travContext.PreviousCluster && cluster->FatherAudible)
 			{
-//				if (!travContext.FilterUnvisibleFather || ((1.0f-travContext.Alpha) > travContext.MinGain))
+				//				if (!travContext.FilterUnvisibleFather || ((1.0f-travContext.Alpha) > travContext.MinGain))
 				{
 					CCluster *c = cluster->Father;
 					float minDist;
@@ -797,18 +788,18 @@ void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSo
 
 					CClusterSoundStatus css;
 					css.Gain = travContext.Gain;
-/*					if (travContext.FilterUnvisibleFather)
-					{
-						// compute a gain
-						float alpha = 1-(travContext.Dist / _PortalInterpolate);
-						alpha = alpha * alpha * alpha;
-						css.Gain = max(0.0f, alpha);
-					}
-					else
-						css.Gain = travContext.Gain;
-*/
-//					if (c->Name == "cluster_1")
-//						nldebug("Cluster 1 : gain = %f", css.Gain);
+					/*					if (travContext.FilterUnvisibleFather)
+					                    {
+					                        // compute a gain
+					                        float alpha = 1-(travContext.Dist / _PortalInterpolate);
+					                        alpha = alpha * alpha * alpha;
+					                        css.Gain = max(0.0f, alpha);
+					                    }
+					                    else
+					                        css.Gain = travContext.Gain;
+					*/
+					//					if (c->Name == "cluster_1")
+					//						nldebug("Cluster 1 : gain = %f", css.Gain);
 					float alpha = travContext.Alpha;
 					CVector d1(travContext.Direction1), d2;
 
@@ -817,7 +808,7 @@ void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSo
 					if (css.Gain > _MinGain)
 					{
 						css.Dist = travContext.Dist;
-//						css.Direction = CVector::Null;
+						//						css.Direction = CVector::Null;
 						css.DistFactor = css.Dist / _MaxEarDistance;
 						css.Occlusion = travContext.Occlusion;
 						css.OcclusionLFFactor = travContext.OcclusionLFFactor;
@@ -845,13 +836,12 @@ void CClusteredSound::soundTraverse(const std::vector<CCluster *> &clusters, CSo
 			}
 			curClusters.pop_back();
 		}
-	}
-	while (!_NextTraversalStep.empty());
+	} while (!_NextTraversalStep.empty());
 }
 
 void CClusteredSound::addNextTraverse(CCluster *cluster, CSoundTravContext &travContext)
 {
-	std::map<CCluster*, CSoundTravContext>::iterator it = _NextTraversalStep.find(cluster);
+	std::map<CCluster *, CSoundTravContext>::iterator it = _NextTraversalStep.find(cluster);
 
 	if (it != _NextTraversalStep.end())
 	{
@@ -862,7 +852,6 @@ void CClusteredSound::addNextTraverse(CCluster *cluster, CSoundTravContext &trav
 	}
 	else
 		_NextTraversalStep.insert(make_pair(cluster, travContext));
-
 }
 
 bool CClusteredSound::addAudibleCluster(CCluster *cluster, CClusterSoundStatus &soundStatus)
@@ -890,9 +879,9 @@ bool CClusteredSound::addAudibleCluster(CCluster *cluster, CClusterSoundStatus &
 	return false;
 }
 
-CVector CClusteredSound::interpolateSourceDirection(const CClusteredSound::CSoundTravContext &context, float portalDist, const CVector &nearPoint, const CVector &realListener, CVector &d1, CVector &/* d2 */, float &alpha)
+CVector CClusteredSound::interpolateSourceDirection(const CClusteredSound::CSoundTravContext &context, float portalDist, const CVector &nearPoint, const CVector &realListener, CVector &d1, CVector & /* d2 */, float &alpha)
 {
-	CVector direction;// (context.Direction);
+	CVector direction; // (context.Direction);
 
 	if (portalDist > _PortalInterpolate || alpha >= 1.0f)
 	{
@@ -900,12 +889,12 @@ CVector CClusteredSound::interpolateSourceDirection(const CClusteredSound::CSoun
 		if (context.NbPortal == 0)
 		{
 			// it's the first portal, compute the initial virtual sound direction
-			direction = d1 = (nearPoint-realListener).normed();
+			direction = d1 = (nearPoint - realListener).normed();
 		}
 		else
 		{
-			direction = (nearPoint-realListener).normed();
-			direction = (direction * (1-alpha) + d1 * (alpha)).normed();
+			direction = (nearPoint - realListener).normed();
+			direction = (direction * (1 - alpha) + d1 * (alpha)).normed();
 			d1 = direction;
 		}
 		alpha = 1;
@@ -917,133 +906,133 @@ CVector CClusteredSound::interpolateSourceDirection(const CClusteredSound::CSoun
 		{
 			// It's the first portal, compute the initial direction
 			alpha = (portalDist / _PortalInterpolate);
-//			alpha = alpha*alpha*alpha;
-			direction = d1 = (nearPoint-realListener).normed();
+			//			alpha = alpha*alpha*alpha;
+			direction = d1 = (nearPoint - realListener).normed();
 		}
-/*		else if (context.NbPortal == 1)
-		{
-			float factor = (1-alpha);
-//			factor = factor*factor*factor;
-			direction = (nearPoint-realListener).normed();
-			direction = d1 = (direction * factor + d1 * (1-factor)).normed();
+		/*		else if (context.NbPortal == 1)
+		        {
+		            float factor = (1-alpha);
+		//			factor = factor*factor*factor;
+		            direction = (nearPoint-realListener).normed();
+		            direction = d1 = (direction * factor + d1 * (1-factor)).normed();
 
-//			alpha = 1-factor;
-			alpha = factor;
-		}
-*/		else
+		//			alpha = 1-factor;
+		            alpha = factor;
+		        }
+		*/
+		else
 		{
 			// two or more portal
-			float factor = (portalDist / _PortalInterpolate) * (1-alpha);
-//			factor = factor*factor*factor;
-			direction = (nearPoint-realListener).normed();
+			float factor = (portalDist / _PortalInterpolate) * (1 - alpha);
+			//			factor = factor*factor*factor;
+			direction = (nearPoint - realListener).normed();
 			direction = d1 = (direction * factor + d1 * alpha).normed();
 
-//			alpha = 1-factor;
+			//			alpha = 1-factor;
 			alpha = factor;
 		}
 	}
 
 	nlassert(direction.norm() <= 1.01f);
 	return direction;
-/*
-	CVector direction (context.Direction);
-	d1 = context.Direction1;
-	d2 = context.Direction2;
+	/*
+	    CVector direction (context.Direction);
+	    d1 = context.Direction1;
+	    d2 = context.Direction2;
 
 
-	if (portalDist < _PortalInterpolate)
-	{
-		if (context.NbPortal == 0)
-		{
-			alpha = (portalDist / _PortalInterpolate);
-			direction = d1 = (nearPoint-realListener).normed() * alpha;
-			direction.normalize();
-		}
-		else if (context.NbPortal == 1)
-		{
-			alpha = alpha * (portalDist / _PortalInterpolate);
-//			d2 = (nearPoint-realListener).normed() * alpha;
-			d2 = (nearPoint-context.ListenerPos).normed() * (1-alpha);
-			direction = d1 + d2;
-			direction.normalize();
-		}
-		else
-		{
-			alpha = alpha * (portalDist / _PortalInterpolate);
-//			d1 = d1+d2;
-			d2 = (nearPoint-context.ListenerPos).normed() * (1-alpha);
-//			direction = d1 + d2 + (nearPoint-context.ListenerPos).normed() * (1-alpha);
-			direction = d1 + d2;
-			direction.normalize();
-		}
-	}
-	else
-	{
-//		alpha = 0.0f
-		if (context.NbPortal == 0)
-		{
-			direction = d1 = (nearPoint-realListener).normed();
-		}
-		else if (context.NbPortal == 1)
-		{
-			d2 = (nearPoint-context.ListenerPos).normed() * (1-alpha);
-//			d2 = d1; //(nearPoint-context.ListenerPos).normed(); // * (1-alpha);
-			direction = d1+d2;
-			direction.normalize();
-		}
-		else
-		{
-//			d2 = (nearPoint-context.ListenerPos).normed() * (1-alpha);
-			d1 = d1+d2;
-//			d2 = (nearPoint-realListener).normed();
-//			direction = d1+d2+(nearPoint-context.ListenerPos).normed() * (1-alpha);
-			direction.normalize();
-		}
-	}
+	    if (portalDist < _PortalInterpolate)
+	    {
+	        if (context.NbPortal == 0)
+	        {
+	            alpha = (portalDist / _PortalInterpolate);
+	            direction = d1 = (nearPoint-realListener).normed() * alpha;
+	            direction.normalize();
+	        }
+	        else if (context.NbPortal == 1)
+	        {
+	            alpha = alpha * (portalDist / _PortalInterpolate);
+	//			d2 = (nearPoint-realListener).normed() * alpha;
+	            d2 = (nearPoint-context.ListenerPos).normed() * (1-alpha);
+	            direction = d1 + d2;
+	            direction.normalize();
+	        }
+	        else
+	        {
+	            alpha = alpha * (portalDist / _PortalInterpolate);
+	//			d1 = d1+d2;
+	            d2 = (nearPoint-context.ListenerPos).normed() * (1-alpha);
+	//			direction = d1 + d2 + (nearPoint-context.ListenerPos).normed() * (1-alpha);
+	            direction = d1 + d2;
+	            direction.normalize();
+	        }
+	    }
+	    else
+	    {
+	//		alpha = 0.0f
+	        if (context.NbPortal == 0)
+	        {
+	            direction = d1 = (nearPoint-realListener).normed();
+	        }
+	        else if (context.NbPortal == 1)
+	        {
+	            d2 = (nearPoint-context.ListenerPos).normed() * (1-alpha);
+	//			d2 = d1; //(nearPoint-context.ListenerPos).normed(); // * (1-alpha);
+	            direction = d1+d2;
+	            direction.normalize();
+	        }
+	        else
+	        {
+	//			d2 = (nearPoint-context.ListenerPos).normed() * (1-alpha);
+	            d1 = d1+d2;
+	//			d2 = (nearPoint-realListener).normed();
+	//			direction = d1+d2+(nearPoint-context.ListenerPos).normed() * (1-alpha);
+	            direction.normalize();
+	        }
+	    }
 
-	return direction;
-*/
+	    return direction;
+	*/
 }
-
 
 float CClusteredSound::getPolyNearestPos(const std::vector<CVector> &poly, const CVector &pos, CVector &nearPoint)
 {
 	CPlane plane;
 	plane.make(poly[0], poly[1], poly[2]);
 	CVector proj = plane.project(pos);
-	float	minDist = FLT_MAX;
-	bool	projIn = true;
-	uint	nbVertex = (uint)poly.size();
+	float minDist = FLT_MAX;
+	bool projIn = true;
+	uint nbVertex = (uint)poly.size();
 
 	// loop throw all vertex
-	for (uint j=0; j<nbVertex; ++j)
+	for (uint j = 0; j < nbVertex; ++j)
 	{
-		float d = (pos-poly[j]).sqrnorm();
+		float d = (pos - poly[j]).sqrnorm();
 		// check if the vertex is the nearest point
 		if (d < minDist)
 		{
 			nearPoint = poly[j];
 			minDist = d;
 		}
-//		if (projIn /*&& j<poly.size()-1*/)
+		//		if (projIn /*&& j<poly.size()-1*/)
 		{
 			// check each segment
-			if (plane.getNormal()*((poly[(j+1)%nbVertex] - poly[j]) ^ (proj - poly[j])) < 0)
+			if (plane.getNormal() * ((poly[(j + 1) % nbVertex] - poly[j]) ^ (proj - poly[j])) < 0)
 			{
 				// the point is not inside the poly surface !
 				projIn = false;
 				// check if the nearest point is on this segment
-				CVector v1 = (poly[(j+1)%nbVertex] - poly[j]);
+				CVector v1 = (poly[(j + 1) % nbVertex] - poly[j]);
 				float v1Len = v1.norm();
 				v1 = v1 / v1Len;
 				CVector v2 = proj - poly[j];
 				// project v2 on v1
 				float p = v1 * v2;
-				if (p>=0 && p<=v1Len)
+				if (p >= 0 && p <= v1Len)
 				{
 					// the nearest point is on the segment!
 					nearPoint = poly[j] + v1 * p;
-					minDist = (nearPoint-pos).sqrnorm();
+					minDist = (nearPoint - pos).sqrnorm();
 					break;
 				}
 			}
@@ -1051,7 +1040,7 @@ float CClusteredSound::getPolyNearestPos(const std::vector<CVector> &poly, const
 	}
 	if (projIn)
 	{
-		float d = (proj-pos).sqrnorm();
+		float d = (proj - pos).sqrnorm();
 		if (d < minDist)
 		{
 			// the nearest point is on the surface
@@ -1069,7 +1058,6 @@ float CClusteredSound::getAABoxNearestPos(const CAABBox &box, const CVector &pos
 	box.getMin(vMin);
 	box.getMax(vMax);
 
-
 	nearPos = pos;
 	// X
 	clamp(nearPos.x, vMin.x, vMax.x);
@@ -1078,7 +1066,7 @@ float CClusteredSound::getAABoxNearestPos(const CAABBox &box, const CVector &pos
 	// Z
 	clamp(nearPos.z, vMin.z, vMax.z);
 
-	return (pos-nearPos).norm();
+	return (pos - nearPos).norm();
 }
 
 }

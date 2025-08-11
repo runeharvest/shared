@@ -19,11 +19,10 @@
 #include "nel/misc/contiguous_block_allocator.h"
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 // *********************************************************************************************************
 CContiguousBlockAllocator::CContiguousBlockAllocator()
@@ -32,10 +31,10 @@ CContiguousBlockAllocator::CContiguousBlockAllocator()
 	_NextAvailablePos = NULL;
 	_BlockEnd = 0;
 	_NumAllocatedBytes = 0;
-	#ifdef NL_DEBUG
-		_NumAlloc = 0;
-		_NumFree = 0;
-	#endif
+#ifdef NL_DEBUG
+	_NumAlloc = 0;
+	_NumFree = 0;
+#endif
 }
 
 // *********************************************************************************************************
@@ -48,7 +47,7 @@ CContiguousBlockAllocator::~CContiguousBlockAllocator()
 void CContiguousBlockAllocator::init(uint numBytes /*=0*/)
 {
 	if (_BlockStart) _DefaultAlloc.deallocate(_BlockStart, _BlockEnd - _BlockStart);
-	_BlockEnd =  NULL;
+	_BlockEnd = NULL;
 	_BlockStart = NULL;
 	_NumAllocatedBytes = 0;
 	_NextAvailablePos = NULL;
@@ -59,10 +58,10 @@ void CContiguousBlockAllocator::init(uint numBytes /*=0*/)
 		_BlockEnd = _BlockStart + numBytes;
 		_NumAllocatedBytes = 0;
 	}
-	#ifdef NL_DEBUG
-		_NumAlloc = 0;
-		_NumFree = 0;
-	#endif
+#ifdef NL_DEBUG
+	_NumAlloc = 0;
+	_NumFree = 0;
+#endif
 }
 
 // *********************************************************************************************************
@@ -76,16 +75,16 @@ void *CContiguousBlockAllocator::alloc(uint numBytes)
 		{
 			uint8 *block = _NextAvailablePos;
 			_NextAvailablePos += numBytes;
-			#ifdef NL_DEBUG
-				++ _NumAlloc;
-			#endif
+#ifdef NL_DEBUG
+			++_NumAlloc;
+#endif
 			return block;
 		}
 	}
-	// just uses standard new
-	#ifdef NL_DEBUG
-		++ _NumAlloc;
-	#endif
+// just uses standard new
+#ifdef NL_DEBUG
+	++_NumAlloc;
+#endif
 	return _DefaultAlloc.allocate(numBytes);
 }
 
@@ -93,14 +92,14 @@ void *CContiguousBlockAllocator::alloc(uint numBytes)
 void CContiguousBlockAllocator::freeBlock(void *block, uint numBytes)
 {
 	if (!block) return;
-	#ifdef NL_DEBUG
-		++ _NumFree;
-	#endif
+#ifdef NL_DEBUG
+	++_NumFree;
+#endif
 	// no-op if block not inside the big block (sub-block are never deallocated until init(0) is encountered)
 	if (block < _BlockStart || block >= _BlockEnd)
 	{
 		// the block was allocated with std allocator
-		_DefaultAlloc.deallocate((uint8 *) block, numBytes);
+		_DefaultAlloc.deallocate((uint8 *)block, numBytes);
 	}
 }
 

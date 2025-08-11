@@ -28,29 +28,27 @@
 
 class Popup : public CWnd
 {
-// Construction
+	// Construction
 public:
 	Popup();
-	virtual LRESULT DefWindowProc(UINT message,WPARAM wParam,LPARAM lParam);
-// Attributes
+	virtual LRESULT DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(Popup)
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~Popup();
 
 	// Generated message map functions
 protected:
 	//{{AFX_MSG(Popup)
-		// NOTE - the ClassWizard will add and remove member functions here.
+	// NOTE - the ClassWizard will add and remove member functions here.
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

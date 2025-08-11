@@ -33,7 +33,6 @@
 
 namespace NLMISC {
 
-
 /**
  * this displayer displays on a gtk windows.
  * MT = Main Thread, DT = Display Thread
@@ -44,32 +43,30 @@ namespace NLMISC {
 class CGtkDisplayer : public NLMISC::CWindowDisplayer
 {
 public:
+	CGtkDisplayer(const char *displayerName = "");
 
-	CGtkDisplayer (const char *displayerName = "");
-
-	virtual ~CGtkDisplayer ();
+	virtual ~CGtkDisplayer();
 
 private:
+	// called by DT only
+	void resizeLabels();
+	// called by DT only
+	void updateLabels();
 
 	// called by DT only
-	void	resizeLabels ();
+	void open(std::string titleBar, bool iconified, sint x, sint y, sint w, sint h, sint hs, sint fs, const std::string &fn, bool ww, CLog *log);
 	// called by DT only
-	void	updateLabels ();
+	void clear();
+	// called by DT only
+	void display_main();
 
-	// called by DT only
-	void	open (std::string titleBar, bool iconified, sint x, sint y, sint w, sint h, sint hs, sint fs, const std::string &fn, bool ww, CLog *log);
-	// called by DT only
-	void	clear ();
-	// called by DT only
-	void	display_main ();
+	virtual void setTitleBar(const std::string &titleBar);
 
-	virtual void	setTitleBar (const std::string &titleBar);
-
-	virtual void	getWindowPos (uint32 &x, uint32 &y, uint32 &w, uint32 &h);
+	virtual void getWindowPos(uint32 &x, uint32 &y, uint32 &w, uint32 &h);
 
 	// all these variables above are used only by the DT
 
-	friend gint updateInterf (gpointer data);
+	friend gint updateInterf(gpointer data);
 	friend gint ButtonClicked(GtkWidget *Widget, gpointer *Data);
 
 	// the MT must set the value to true to exit the thread

@@ -27,14 +27,12 @@
 #include "nel/misc/stream.h"
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace	NLMISC
-{
+namespace NLMISC {
 
-
-const	CClassId	CClassId::Null(0);
+const CClassId CClassId::Null(0);
 
 void CClassId::serial(NLMISC::IStream &s)
 {
@@ -69,6 +67,4 @@ std::string CClassId::toString() const
 	return ss.str();
 }
 
-
 }
-

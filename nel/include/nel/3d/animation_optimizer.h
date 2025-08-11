@@ -21,17 +21,15 @@
 #include "nel/misc/quat.h"
 #include "nel/misc/vectord.h"
 
+namespace NL3D {
 
-namespace NL3D
-{
+using NLMISC::CQuat;
+using NLMISC::CQuatD;
+using NLMISC::CVector;
+using NLMISC::CVectorD;
 
-using	NLMISC::CQuat;
-using	NLMISC::CQuatD;
-using	NLMISC::CVector;
-using	NLMISC::CVectorD;
-
-class	CAnimation;
-class	ITrack;
+class CAnimation;
+class ITrack;
 
 // ***************************************************************************
 /**
@@ -45,7 +43,6 @@ class	ITrack;
 class CAnimationOptimizer
 {
 public:
-
 	/// Constructor
 	CAnimationOptimizer();
 
@@ -58,7 +55,7 @@ public:
 	 *	Give 2 values, one For Low precision and High precision. Default setup use high precision. Use
 	 *	addLowPrecisionTrack() to drive low precision tracks.
 	 */
-	void		setQuaternionThreshold(double lowPrecThre, double highPrecThre);
+	void setQuaternionThreshold(double lowPrecThre, double highPrecThre);
 
 	/** Same principle as for setQuaternionThreshold(), but for vector tracks (positions/scale).
 	 *	Default is 0.001 and 0.0001. Above this value, 2 vectors are said different.
@@ -67,66 +64,61 @@ public:
 	 *	Give 2 values, one For Low precision and High precision. Default setup use high precision. Use
 	 *	addLowPrecisionTrack() to drive low precision tracks.
 	 */
-	void		setVectorThreshold(double lowPrecThre, double highPrecThre);
+	void setVectorThreshold(double lowPrecThre, double highPrecThre);
 
 	/** see setQuaternionThreshold(). Any track which contains this name will be considered as a
 	 *	low precision track. Default setup is empty, so all tracks are "high precision" tracks.
 	 *	A good setup is for example addLowPrecisionTrack("Finger") and addLowPrecisionTrack("Ponytail")
 	 *	Warning: case sensitive
 	 */
-	void		addLowPrecisionTrack(const std::string &name);
+	void addLowPrecisionTrack(const std::string &name);
 
 	/// see addLowPrecisionTrack. This clears the array.
-	void		clearLowPrecisionTracks();
+	void clearLowPrecisionTracks();
 
 	/** Set the Sample Frame Rate (>0)
 	 *	Default is 30 fps. NB: final numSamples must be <65535, else assert at optimize() time.
 	 */
-	void		setSampleFrameRate(float frameRate);
-
+	void setSampleFrameRate(float frameRate);
 
 	/** optimize an animation
 	 *	animOut is the same as animIn, but optimized.
 	 *	If a track can't be optimized, it is just duplicated in animOut.
 	 */
-	void		optimize(const CAnimation &animIn, CAnimation &animOut);
+	void optimize(const CAnimation &animIn, CAnimation &animOut);
 
-
-// ******************
+	// ******************
 private:
-	float		_SampleFrameRate;
-	double		_QuaternionThresholdLowPrec;
-	double		_QuaternionThresholdHighPrec;
-	double		_QuaternionThreshold;
-	double		_VectorThresholdLowPrec;
-	double		_VectorThresholdHighPrec;
-	double		_VectorThreshold;
-
+	float _SampleFrameRate;
+	double _QuaternionThresholdLowPrec;
+	double _QuaternionThresholdHighPrec;
+	double _QuaternionThreshold;
+	double _VectorThresholdLowPrec;
+	double _VectorThresholdHighPrec;
+	double _VectorThreshold;
 
 	// see addLowPrecisionTrack
-	std::vector<std::string>	_LowPrecTrackKeyName;
+	std::vector<std::string> _LowPrecTrackKeyName;
 
 	// For Sampling of Quaternion Tracks.
-	std::vector<uint16>		_TimeList;
-	std::vector<CQuat>		_QuatKeyList;
+	std::vector<uint16> _TimeList;
+	std::vector<CQuat> _QuatKeyList;
 
 	// For Sampling of Vector Tracks.
-	std::vector<CVector>	_VectorKeyList;
+	std::vector<CVector> _VectorKeyList;
 
 private:
-
 	// Clone a ITrack (using a CMemStream)
-	ITrack		*cloneTrack(const ITrack	*trackIn);
+	ITrack *cloneTrack(const ITrack *trackIn);
 
 	// true if the track can be optimized.
-	bool		isTrackOptimisable(const ITrack	*trackIn);
+	bool isTrackOptimisable(const ITrack *trackIn);
 
 	// return an optimized version of trackIn. Type returned should be different (eg: CTrackSampledQuat)
-	ITrack		*optimizeTrack(const ITrack	*trackIn);
+	ITrack *optimizeTrack(const ITrack *trackIn);
 
 	// see addLowPrecisionTrack()
-	bool		isLowPrecisionTrack(const std::string &trackName);
-
+	bool isLowPrecisionTrack(const std::string &trackName);
 
 	/// Quaternion optimisation.
 	// @{
@@ -135,24 +127,23 @@ private:
 	 *	key[0].Time==beginTime and key[numSamples-1].Time==endTime.
 	 *	NB: quaternions are normalized, and are makeClosest()-ed from sample to the next.
 	 */
-	void		sampleQuatTrack(const ITrack *trackIn, float beginTime, float endTime, uint numSamples);
+	void sampleQuatTrack(const ITrack *trackIn, float beginTime, float endTime, uint numSamples);
 
 	/** Test if the current track is constant (ie always same quaternion value)
 	 *	NB: test if q==qRef or q==-qRef of course.
 	 */
-	bool		testConstantQuatTrack();
+	bool testConstantQuatTrack();
 
 	/** optimze the current track
 	 */
-	void		optimizeQuatTrack();
+	void optimizeQuatTrack();
 
 	/** return true if suppose same quaternion. NB: quaternion must be normalized.
 	 *	NB: test if quat1==quat0 or quat1==-quat0 of course.
 	 */
-	bool		nearlySameQuaternion(const CQuatD &quat0, const CQuatD &quat1);
+	bool nearlySameQuaternion(const CQuatD &quat0, const CQuatD &quat1);
 
 	// @}
-
 
 	/// Vector optimisation.
 	// @{
@@ -160,27 +151,24 @@ private:
 	/** sample the track from beginTime to endTime, sample to numSamples, such that
 	 *	key[0].Time==beginTime and key[numSamples-1].Time==endTime.
 	 */
-	void		sampleVectorTrack(const ITrack *trackIn, float beginTime, float endTime, uint numSamples);
+	void sampleVectorTrack(const ITrack *trackIn, float beginTime, float endTime, uint numSamples);
 
 	/** Test if the current track is constant (ie always same Vector value)
 	 */
-	bool		testConstantVectorTrack();
+	bool testConstantVectorTrack();
 
 	/** optimze the current track
 	 */
-	void		optimizeVectorTrack();
+	void optimizeVectorTrack();
 
 	/** return true if suppose same vector.
 	 */
-	bool		nearlySameVector(const CVectorD &v0, const CVectorD &v1);
+	bool nearlySameVector(const CVectorD &v0, const CVectorD &v1);
 
 	// @}
-
 };
 
-
 } // NL3D
-
 
 #endif // NL_ANIMATION_OPTIMIZER_H
 

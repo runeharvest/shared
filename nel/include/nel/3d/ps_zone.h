@@ -24,16 +24,12 @@
 #include "nel/3d/ps_attrib.h"
 #include "nel/3d/ps_plane_basis.h"
 
-
 namespace NL3D {
 
-
 /** This epsilon is in meter and give a thickness to surfaces for tests. It must be above above 0
-* for the system to work correctly
-*/
+ * for the system to work correctly
+ */
 const float PSCollideEpsilon = 10E-3f;
-
-
 
 /**
  * This class hold any entity that has an effect over located : a sink , a bouncing zone etc
@@ -47,23 +43,26 @@ const float PSCollideEpsilon = 10E-3f;
 class CPSZone : public CPSTargetLocatedBindable
 {
 public:
-
 	/// behaviour when a collision occurs
 
-	enum TCollisionBehaviour { bounce = 0, destroy = 1 };
+	enum TCollisionBehaviour
+	{
+		bounce = 0,
+		destroy = 1
+	};
 
 	/// Constructor
 	CPSZone();
 
 	/**
-	*  Gives the type for this bindable.
-	*/
+	 *  Gives the type for this bindable.
+	 */
 	virtual uint32 getType(void) const { return PSZone; }
 
 	/**
-	* Get the priority of the bindable
-	* The more high it is, the earlier it is dealt with
-	*/
+	 * Get the priority of the bindable
+	 * The more high it is, the earlier it is dealt with
+	 */
 	virtual uint32 getPriority(void) const { return 3500; }
 
 	/**
@@ -72,18 +71,14 @@ public:
 	 */
 	virtual void step(TPSProcessPass pass);
 
-
 	/// Show the zone (edition mode).
 	virtual void show() = 0;
-
 
 	/// Add a new type of located for this zone to apply on. nlassert if already present
 	virtual void attachTarget(CPSLocated *ptr);
 
-
 	/// serialization, DERIVER must override this, and call the parent version
 	virtual void serial(NLMISC::IStream &f);
-
 
 	/** Inherited from CPSTargetLocatedBindable. It's called when one of the targets has been detroyed or detached
 	 *  The default behaviour, release collision infos from the located
@@ -91,29 +86,24 @@ public:
 
 	virtual void releaseTargetRsc(CPSLocated *target);
 
-
 	/// set the bounce factor. It has meaning only if the behaviour is set to bounce...
 	void setBounceFactor(float bounceFactor) { _BounceFactor = bounceFactor; }
 
 	/// get the bounce factor. It has meaning only if the behaviour is set to bounce...
-	float getBounceFactor(void) const { return  _BounceFactor; }
-
+	float getBounceFactor(void) const { return _BounceFactor; }
 
 	void setCollisionBehaviour(TCollisionBehaviour behaviour) { _CollisionBehaviour = behaviour; }
 
 	TCollisionBehaviour getCollisionBehaviour(void) const { return _CollisionBehaviour; }
 
 	/** Compute collisions for the given target. This will update the collisions infos.
-	  * The caller must provide pointer to arrays positions before and after time step.
-	  */
-	virtual	void computeCollisions(CPSLocated &target, uint firstInstanceIndex, const NLMISC::CVector *posBefore, const NLMISC::CVector *posAfter) = 0;
+	 * The caller must provide pointer to arrays positions before and after time step.
+	 */
+	virtual void computeCollisions(CPSLocated &target, uint firstInstanceIndex, const NLMISC::CVector *posBefore, const NLMISC::CVector *posAfter) = 0;
 
 protected:
-
-
 	// the bounce factor. 1.f mean no energy loss
 	float _BounceFactor;
-
 
 	TCollisionBehaviour _CollisionBehaviour;
 
@@ -126,13 +116,8 @@ protected:
 	 * \ellapsedTime the time ellapsed
 	 */
 
-//	void bounce(uint32 locatedIndex, const NLMISC::CVector &bouncePoint, const NLMISC::CVector &surfNormal, float elasticity, float ellapsedTime);
-
-
-
-
+	//	void bounce(uint32 locatedIndex, const NLMISC::CVector &bouncePoint, const NLMISC::CVector &surfNormal, float elasticity, float ellapsedTime);
 };
-
 
 /** A plane over which particles bounce
  * It has an interface to move each plane individually
@@ -140,36 +125,30 @@ protected:
 
 class CPSZonePlane : public CPSZone, public IPSMover
 {
-	public:
-		virtual	void computeCollisions(CPSLocated &target, uint firstInstanceIndex, const NLMISC::CVector *posBefore, const NLMISC::CVector *posAfter);
-		virtual void show();
+public:
+	virtual void computeCollisions(CPSLocated &target, uint firstInstanceIndex, const NLMISC::CVector *posBefore, const NLMISC::CVector *posAfter);
+	virtual void show();
 
+	NLMISC_DECLARE_CLASS(CPSZonePlane);
 
-		NLMISC_DECLARE_CLASS(CPSZonePlane);
+	virtual void setMatrix(uint32 index, const NLMISC::CMatrix &m);
+	virtual NLMISC::CMatrix getMatrix(uint32 index) const;
+	virtual bool onlyStoreNormal(void) const { return true; }
+	virtual NLMISC::CVector getNormal(uint32 index);
+	virtual void setNormal(uint32 index, NLMISC::CVector n);
 
+	virtual void serial(NLMISC::IStream &f);
 
+protected:
+	TPSAttribVector _Normal;
+	NLMISC::CMatrix buildBasis(uint32 index) const;
 
-		virtual void setMatrix(uint32 index, const NLMISC::CMatrix &m);
-		virtual NLMISC::CMatrix getMatrix(uint32 index) const;
-		virtual bool onlyStoreNormal(void) const { return true; }
-		virtual NLMISC::CVector getNormal(uint32 index);
-		virtual void setNormal(uint32 index, NLMISC::CVector n);
+	virtual void resize(uint32 size);
 
-		virtual void serial(NLMISC::IStream &f);
+	virtual void newElement(const CPSEmitterInfo &info);
 
-	protected:
-		TPSAttribVector _Normal;
-		NLMISC::CMatrix buildBasis(uint32 index) const;
-
-		virtual void resize(uint32 size);
-
-		virtual void newElement(const CPSEmitterInfo &info);
-
-		virtual void deleteElement(uint32 index);
+	virtual void deleteElement(uint32 index);
 };
-
-
-
 
 /// a radius and its suare in the same struct
 struct CRadiusPair
@@ -182,151 +161,127 @@ struct CRadiusPair
 	}
 };
 
-
 typedef CPSAttrib<CRadiusPair> TPSAttribRadiusPair;
 
 /** A sphere
  */
 
-
 class CPSZoneSphere : public CPSZone, public IPSMover
 {
-	public:
-		virtual	void computeCollisions(CPSLocated &target, uint firstInstanceIndex, const NLMISC::CVector *posBefore, const NLMISC::CVector *posAfter);
-		virtual void show();
+public:
+	virtual void computeCollisions(CPSLocated &target, uint firstInstanceIndex, const NLMISC::CVector *posBefore, const NLMISC::CVector *posAfter);
+	virtual void show();
 
+	NLMISC_DECLARE_CLASS(CPSZoneSphere);
 
-		NLMISC_DECLARE_CLASS(CPSZoneSphere);
+	CPSZoneSphere()
+	{
+		if (CParticleSystem::getSerializeIdentifierFlag()) _Name = std::string("ZoneSphere");
+	}
 
-		CPSZoneSphere()
-		{
-			if (CParticleSystem::getSerializeIdentifierFlag()) _Name = std::string("ZoneSphere");
-		}
+	virtual void serial(NLMISC::IStream &f);
 
+	// inherited from IPSMover
+	virtual bool supportUniformScaling(void) const { return true; }
+	virtual void setMatrix(uint32 index, const NLMISC::CMatrix &m);
+	virtual NLMISC::CMatrix getMatrix(uint32 index) const;
+	virtual void setScale(uint32 k, float scale);
+	virtual NLMISC::CVector getScale(uint32 k) const;
 
+protected:
+	TPSAttribRadiusPair _Radius;
 
-		virtual void serial(NLMISC::IStream &f);
+	NLMISC::CMatrix buildBasis(uint32 index) const;
 
+	virtual void resize(uint32 size);
 
-		// inherited from IPSMover
-		virtual bool supportUniformScaling(void) const { return true; }
-		virtual void setMatrix(uint32 index, const NLMISC::CMatrix &m);
-		virtual NLMISC::CMatrix getMatrix(uint32 index) const;
-		virtual void setScale(uint32 k, float scale);
-		virtual NLMISC::CVector getScale(uint32 k) const;
+	virtual void newElement(const CPSEmitterInfo &info);
 
-
-	protected:
-
-
-
-		TPSAttribRadiusPair _Radius;
-
-		NLMISC::CMatrix buildBasis(uint32 index) const;
-
-		virtual void resize(uint32 size);
-
-		virtual void newElement(const CPSEmitterInfo &info);
-
-		virtual void deleteElement(uint32 index);
+	virtual void deleteElement(uint32 index);
 };
 
 /// a disc
 
 class CPSZoneDisc : public CPSZone, public IPSMover
 {
-	public:
-		virtual	void computeCollisions(CPSLocated &target, uint firstInstanceIndex, const NLMISC::CVector *posBefore, const NLMISC::CVector *posAfter);
-		virtual void show();
+public:
+	virtual void computeCollisions(CPSLocated &target, uint firstInstanceIndex, const NLMISC::CVector *posBefore, const NLMISC::CVector *posAfter);
+	virtual void show();
 
-		CPSZoneDisc()
-		{
-			if (CParticleSystem::getSerializeIdentifierFlag()) _Name = std::string("ZoneDisc");
-		}
+	CPSZoneDisc()
+	{
+		if (CParticleSystem::getSerializeIdentifierFlag()) _Name = std::string("ZoneDisc");
+	}
 
-		NLMISC_DECLARE_CLASS(CPSZoneDisc);
+	NLMISC_DECLARE_CLASS(CPSZoneDisc);
 
+	// inherited from IPSMover
+	virtual bool supportUniformScaling(void) const { return true; }
+	virtual void setMatrix(uint32 index, const NLMISC::CMatrix &m);
+	virtual NLMISC::CMatrix getMatrix(uint32 index) const;
+	virtual void setScale(uint32 k, float scale);
+	virtual NLMISC::CVector getScale(uint32 k) const;
+	virtual bool onlyStoreNormal(void) const { return true; }
+	virtual NLMISC::CVector getNormal(uint32 index);
+	virtual void setNormal(uint32 index, NLMISC::CVector n);
 
-		// inherited from IPSMover
-		virtual bool supportUniformScaling(void) const { return true; }
-		virtual void setMatrix(uint32 index, const NLMISC::CMatrix &m);
-		virtual NLMISC::CMatrix getMatrix(uint32 index) const;
-		virtual void setScale(uint32 k, float scale);
-		virtual NLMISC::CVector getScale(uint32 k) const;
-		virtual bool onlyStoreNormal(void) const { return true; }
-		virtual NLMISC::CVector getNormal(uint32 index);
-		virtual void setNormal(uint32 index, NLMISC::CVector n);
+	virtual void serial(NLMISC::IStream &f);
 
-		virtual void serial(NLMISC::IStream &f);
+protected:
+	TPSAttribVector _Normal;
+	TPSAttribRadiusPair _Radius;
 
+	NLMISC::CMatrix buildBasis(uint32 index) const;
 
+	virtual void resize(uint32 size);
 
-	protected:
-		TPSAttribVector _Normal;
-		TPSAttribRadiusPair _Radius;
+	virtual void newElement(const CPSEmitterInfo &info);
 
-		NLMISC::CMatrix buildBasis(uint32 index) const;
-
-		virtual void resize(uint32 size);
-
-		virtual void newElement(const CPSEmitterInfo &info);
-
-		virtual void deleteElement(uint32 index);
-
+	virtual void deleteElement(uint32 index);
 };
-
-
 
 /// a caped cylinder
 
-
 class CPSZoneCylinder : public CPSZone, public IPSMover
 {
-	public:
-		virtual	void computeCollisions(CPSLocated &target, uint firstInstanceIndex, const NLMISC::CVector *posBefore, const NLMISC::CVector *posAfter);
-		virtual void show();
+public:
+	virtual void computeCollisions(CPSLocated &target, uint firstInstanceIndex, const NLMISC::CVector *posBefore, const NLMISC::CVector *posAfter);
+	virtual void show();
 
-		CPSZoneCylinder()
-		{
-			if (CParticleSystem::getSerializeIdentifierFlag()) _Name = std::string("ZoneCylinder");
-		}
+	CPSZoneCylinder()
+	{
+		if (CParticleSystem::getSerializeIdentifierFlag()) _Name = std::string("ZoneCylinder");
+	}
 
-		NLMISC_DECLARE_CLASS(CPSZoneCylinder);
+	NLMISC_DECLARE_CLASS(CPSZoneCylinder);
 
-		// inherited from IPSMover
-		virtual bool supportUniformScaling(void) const { return true; }
-		virtual bool supportNonUniformScaling(void) const { return true; }
-		virtual void setMatrix(uint32 index, const NLMISC::CMatrix &m);
-		virtual NLMISC::CMatrix getMatrix(uint32 index) const;
-		virtual void setScale(uint32 k, float scale);
-		virtual void setScale(uint32 k, const NLMISC::CVector &s);
-		virtual NLMISC::CVector getScale(uint32 k) const;
+	// inherited from IPSMover
+	virtual bool supportUniformScaling(void) const { return true; }
+	virtual bool supportNonUniformScaling(void) const { return true; }
+	virtual void setMatrix(uint32 index, const NLMISC::CMatrix &m);
+	virtual NLMISC::CMatrix getMatrix(uint32 index) const;
+	virtual void setScale(uint32 k, float scale);
+	virtual void setScale(uint32 k, const NLMISC::CVector &s);
+	virtual NLMISC::CVector getScale(uint32 k) const;
 
-		// serialization
-		virtual void serial(NLMISC::IStream &f);
+	// serialization
+	virtual void serial(NLMISC::IStream &f);
 
+protected:
+	// the I and J vector of the cylinder
+	CPSAttrib<CPlaneBasis> _Basis;
 
+	// dimension of cylinder in each direction, encoded in a vector
+	TPSAttribVector _Dim;
 
+	NLMISC::CMatrix buildBasis(uint32 index) const;
 
+	virtual void resize(uint32 size);
 
-	protected:
+	virtual void newElement(const CPSEmitterInfo &info);
 
-		// the I and J vector of the cylinder
-		CPSAttrib<CPlaneBasis> _Basis;
-
-		// dimension of cylinder in each direction, encoded in a vector
-		TPSAttribVector _Dim;
-
-		NLMISC::CMatrix buildBasis(uint32 index) const;
-
-		virtual void resize(uint32 size);
-
-		virtual void newElement(const CPSEmitterInfo &info);
-
-		virtual void deleteElement(uint32 index);
+	virtual void deleteElement(uint32 index);
 };
-
-
 
 /**
  *	The same as a plane, but with a rectangle. We don't encode the plane by its normal, however...
@@ -334,60 +289,48 @@ class CPSZoneCylinder : public CPSZone, public IPSMover
 
 class CPSZoneRectangle : public CPSZone, public IPSMover
 {
-	public:
-		virtual	void computeCollisions(CPSLocated &target, uint firstInstanceIndex, const NLMISC::CVector *posBefore, const NLMISC::CVector *posAfter);
-		virtual void show();
+public:
+	virtual void computeCollisions(CPSLocated &target, uint firstInstanceIndex, const NLMISC::CVector *posBefore, const NLMISC::CVector *posAfter);
+	virtual void show();
 
-		CPSZoneRectangle()
-		{
-			if (CParticleSystem::getSerializeIdentifierFlag()) _Name = std::string("CPSZoneRectangle");
-		}
+	CPSZoneRectangle()
+	{
+		if (CParticleSystem::getSerializeIdentifierFlag()) _Name = std::string("CPSZoneRectangle");
+	}
 
-		NLMISC_DECLARE_CLASS(CPSZoneRectangle);
+	NLMISC_DECLARE_CLASS(CPSZoneRectangle);
 
+	// serialization
+	virtual void serial(NLMISC::IStream &f);
 
+	// inherited from IPSMover
+	virtual bool supportUniformScaling(void) const { return true; }
+	virtual bool supportNonUniformScaling(void) const { return true; }
+	virtual void setMatrix(uint32 index, const NLMISC::CMatrix &m);
+	virtual NLMISC::CMatrix getMatrix(uint32 index) const;
+	virtual void setScale(uint32 index, float scale);
+	virtual void setScale(uint32 index, const NLMISC::CVector &s);
+	virtual NLMISC::CVector getScale(uint32 index) const;
 
+protected:
+	CPSAttrib<CPlaneBasis> _Basis;
 
+	//  width
+	TPSAttribFloat _Width;
 
-		// serialization
-		virtual void serial(NLMISC::IStream &f);
+	//  Height
+	TPSAttribFloat _Height;
 
-		// inherited from IPSMover
-		virtual bool supportUniformScaling(void) const { return true; }
-		virtual bool supportNonUniformScaling(void) const { return true; }
-		virtual void setMatrix(uint32 index, const NLMISC::CMatrix &m);
-		virtual NLMISC::CMatrix getMatrix(uint32 index) const;
-		virtual void setScale(uint32 index, float scale);
-		virtual void setScale(uint32 index, const NLMISC::CVector &s);
-		virtual NLMISC::CVector getScale(uint32 index) const;
+	NLMISC::CMatrix buildBasis(uint32 index) const;
 
-	protected:
+	virtual void resize(uint32 size);
 
+	virtual void newElement(const CPSEmitterInfo &info);
 
-		CPSAttrib<CPlaneBasis> _Basis;
-
-		//  width
-		TPSAttribFloat _Width;
-
-		//  Height
-		TPSAttribFloat _Height;
-
-
-		NLMISC::CMatrix buildBasis(uint32 index) const;
-
-		virtual void resize(uint32 size);
-
-		virtual void newElement(const CPSEmitterInfo &info);
-
-		virtual void deleteElement(uint32 index);
-
+	virtual void deleteElement(uint32 index);
 };
 
-
-
-
 } // NL3D
-
 
 #endif // NL_PS_ZONE_H
 

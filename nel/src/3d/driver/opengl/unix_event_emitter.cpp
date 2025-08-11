@@ -45,7 +45,12 @@ static Atom XA_WM_DELETE_WINDOW = 0;
 
 namespace NLMISC {
 
-CUnixEventEmitter::CUnixEventEmitter ():_dpy(NULL), _win(0), _im(NULL), _ic(NULL), _driver(NULL)
+CUnixEventEmitter::CUnixEventEmitter()
+    : _dpy(NULL)
+    , _win(0)
+    , _im(NULL)
+    , _ic(NULL)
+    , _driver(NULL)
 {
 	_SelectionOwned = false;
 }
@@ -61,7 +66,7 @@ void CUnixEventEmitter::init(Display *dpy, Window win, NL3D::IDriver *driver)
 	_win = win;
 	_driver = driver;
 
-	XSelectInput (_dpy, _win, KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask|PointerMotionMask|StructureNotifyMask|ExposureMask|EnterWindowMask|LeaveWindowMask|FocusChangeMask);
+	XSelectInput(_dpy, _win, KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask | StructureNotifyMask | ExposureMask | EnterWindowMask | LeaveWindowMask | FocusChangeMask);
 
 	// define Atoms used by clipboard
 	XA_CLIPBOARD = XInternAtom(dpy, "CLIPBOARD", False);
@@ -73,13 +78,13 @@ void CUnixEventEmitter::init(Display *dpy, Window win, NL3D::IDriver *driver)
 	XA_WM_DELETE_WINDOW = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
 	XSetWMProtocols(dpy, win, &XA_WM_DELETE_WINDOW, 1);
 
-/*
-	TODO: implements all useful events processing
-	ButtonMotionMask|Button1MotionMask|Button2MotionMask|
-	Button3MotionMask|Button4MotionMask|Button5MotionMask|KeymapStateMask|
-	SubstructureNotifyMask|VisibilityChangeMask|PropertyChangeMask|
-	ColormapChangeMask|OwnerGrabButtonMask
-*/
+	/*
+	    TODO: implements all useful events processing
+	    ButtonMotionMask|Button1MotionMask|Button2MotionMask|
+	    Button3MotionMask|Button4MotionMask|Button5MotionMask|KeymapStateMask|
+	    SubstructureNotifyMask|VisibilityChangeMask|PropertyChangeMask|
+	    ColormapChangeMask|OwnerGrabButtonMask
+	*/
 
 	createIM();
 }
@@ -93,7 +98,7 @@ void CUnixEventEmitter::createIM()
 	if (_im == NULL)
 	{
 		XSetLocaleModifiers("@im=local");
- 
+
 		_im = XOpenIM(_dpy, NULL, NULL, NULL);
 
 		if (_im == NULL)
@@ -108,10 +113,10 @@ void CUnixEventEmitter::createIM()
 			}
 		}
 	}
- 
- 	if (_im)
- 	{
- 		_ic = XCreateIC(_im, XNInputStyle, XIMPreeditNothing | XIMStatusNothing, XNClientWindow, _win, XNFocusWindow, _win, NULL);
+
+	if (_im)
+	{
+		_ic = XCreateIC(_im, XNInputStyle, XIMPreeditNothing | XIMStatusNothing, XNClientWindow, _win, XNFocusWindow, _win, NULL);
 
 		if (!_ic)
 		{
@@ -138,11 +143,11 @@ void CUnixEventEmitter::closeIM()
 #endif
 }
 
-void CUnixEventEmitter::submitEvents(CEventServer & server, bool allWindows)
+void CUnixEventEmitter::submitEvents(CEventServer &server, bool allWindows)
 {
 	while (XPending(_dpy))
 	{
-		XEvent	Event;
+		XEvent Event;
 		XNextEvent(_dpy, &Event);
 		if (allWindows || Event.xany.window == _win)
 		{
@@ -157,14 +162,14 @@ void CUnixEventEmitter::submitEvents(CEventServer & server, bool allWindows)
 			}
 			else
 			{
-				processMessage (Event, &server);
+				processMessage(Event, &server);
 			}
 		}
 	}
 
 	// Dispatch sent messages
-	_InternalServer.setServer (&server);
-	_InternalServer.pump (allWindows);
+	_InternalServer.setServer(&server);
+	_InternalServer.pump(allWindows);
 }
 
 static Bool isMouseMoveEvent(Display *display, XEvent *event, XPointer arg)
@@ -173,33 +178,33 @@ static Bool isMouseMoveEvent(Display *display, XEvent *event, XPointer arg)
 }
 
 #ifndef AltMask
-#  define AltMask     (Mod1Mask)
+#define AltMask (Mod1Mask)
 #endif
 
-TMouseButton getMouseButton (uint32 state)
+TMouseButton getMouseButton(uint32 state)
 {
-	uint32 button=noButton;
-	if (state&Button1Mask) button|=leftButton;
-	if (state&Button2Mask) button|=middleButton;
-	if (state&Button3Mask) button|=rightButton;
-	if (state&ControlMask) button|=ctrlButton;
-	if (state&ShiftMask)   button|=shiftButton;
-	if (state&AltMask)     button|=altButton;
+	uint32 button = noButton;
+	if (state & Button1Mask) button |= leftButton;
+	if (state & Button2Mask) button |= middleButton;
+	if (state & Button3Mask) button |= rightButton;
+	if (state & ControlMask) button |= ctrlButton;
+	if (state & ShiftMask) button |= shiftButton;
+	if (state & AltMask) button |= altButton;
 
 	return (TMouseButton)button;
 }
 
-TKeyButton getKeyButton (uint32 state)
+TKeyButton getKeyButton(uint32 state)
 {
-	uint32 button=noKeyButton;
-	if (state&ControlMask) button|=ctrlKeyButton;
-	if (state&ShiftMask)   button|=shiftKeyButton;
-	if (state&AltMask)     button|=altKeyButton;
+	uint32 button = noKeyButton;
+	if (state & ControlMask) button |= ctrlKeyButton;
+	if (state & ShiftMask) button |= shiftKeyButton;
+	if (state & AltMask) button |= altKeyButton;
 
 	return (TKeyButton)button;
 }
 
-TKey getKeyFromKeycode (uint keycode)
+TKey getKeyFromKeycode(uint keycode)
 {
 	// keycodes are depending on system
 	switch (keycode)
@@ -222,8 +227,9 @@ TKey getKeyFromKeycode (uint keycode)
 	case 0x30: return KeyTILDE;
 	case 0x31: return KeyAPOSTROPHE;
 	case 0x33: return KeyBACKSLASH;
-	case 0x5e: return KeyOEM_102;
-//	case 0x3a: return KeyCOMMA;
+	case 0x5e:
+		return KeyOEM_102;
+		//	case 0x3a: return KeyCOMMA;
 	case 0x3b: return KeyPERIOD;
 	case 0x3c: return KeySLASH;
 	case 0x3d: return KeyPARAGRAPH;
@@ -255,16 +261,16 @@ TKey getKeyFromKeycode (uint keycode)
 	case 0x39: return KeyN;
 	case 0x3a: return KeyM;
 	default:
-//	nlwarning("missing keycode 0x%x %d '%c'", keycode, keycode, keycode);
-	break;
+		//	nlwarning("missing keycode 0x%x %d '%c'", keycode, keycode, keycode);
+		break;
 	}
 
 	return KeyNOKEY;
 }
 
-TKey getKeyFromKeySym (KeySym keysym)
+TKey getKeyFromKeySym(KeySym keysym)
 {
-//	nlwarning("0x%x %d '%c'", keysym, keysym, keysym);
+	//	nlwarning("0x%x %d '%c'", keysym, keysym, keysym);
 	switch (keysym)
 	{
 	case XK_BackSpace: return KeyBACK;
@@ -311,8 +317,9 @@ TKey getKeyFromKeySym (KeySym keysym)
 	case XK_KP_Multiply: return KeyMULTIPLY;
 	case XK_KP_Add: return KeyADD;
 	case XK_KP_Subtract: return KeySUBTRACT;
-	case XK_KP_Decimal: return KeyDECIMAL;
-//	case XK_period: return KeyDECIMAL;
+	case XK_KP_Decimal:
+		return KeyDECIMAL;
+		//	case XK_period: return KeyDECIMAL;
 	case XK_KP_Divide: return KeyDIVIDE;
 	case XK_F1: return KeyF1;
 	case XK_F2: return KeyF2;
@@ -392,8 +399,8 @@ TKey getKeyFromKeySym (KeySym keysym)
 	case XK_Z:
 	case XK_z: return KeyZ;
 	default:
-	// other keys don't need to be processed here
-	break;
+		// other keys don't need to be processed here
+		break;
 	}
 	return KeyNOKEY;
 }
@@ -407,41 +414,38 @@ static bool keyRepeat(Display *display, XEvent *event)
 	{
 		XPeekEvent(display, &peekevent);
 
-		if ((peekevent.type == KeyPress) &&
-			(peekevent.xkey.keycode == event->xkey.keycode) &&
-			((peekevent.xkey.time-event->xkey.time) < 2))
+		if ((peekevent.type == KeyPress) && (peekevent.xkey.keycode == event->xkey.keycode) && ((peekevent.xkey.time - event->xkey.time) < 2))
 			return true;
 	}
 
 	return false;
 }
 
-bool CUnixEventEmitter::processMessage (XEvent &event, CEventServer *server)
+bool CUnixEventEmitter::processMessage(XEvent &event, CEventServer *server)
 {
 	if (!server)
-		server=&_InternalServer;
+		server = &_InternalServer;
 
 	XWindowAttributes xwa;
-	XGetWindowAttributes (_dpy, _win, &xwa);
+	XGetWindowAttributes(_dpy, _win, &xwa);
 
 	switch (event.type)
 	{
-	case ButtonPress:
-	{
-		//nlinfo("%d %d %d", event.xbutton.button, event.xbutton.x, event.xbutton.y);
-		float fX = (float) event.xbutton.x / (float) xwa.width;
-		float fY = 1.0f - (float) event.xbutton.y / (float) xwa.height;
-		TMouseButton button=getMouseButton(event.xbutton.state);
-		switch(event.xbutton.button)
+	case ButtonPress: {
+		// nlinfo("%d %d %d", event.xbutton.button, event.xbutton.x, event.xbutton.y);
+		float fX = (float)event.xbutton.x / (float)xwa.width;
+		float fY = 1.0f - (float)event.xbutton.y / (float)xwa.height;
+		TMouseButton button = getMouseButton(event.xbutton.state);
+		switch (event.xbutton.button)
 		{
 		case Button1:
-			server->postEvent(new CEventMouseDown(fX, fY, (TMouseButton)(leftButton|(button&~(leftButton|middleButton|rightButton))), this));
+			server->postEvent(new CEventMouseDown(fX, fY, (TMouseButton)(leftButton | (button & ~(leftButton | middleButton | rightButton))), this));
 			break;
 		case Button2:
-			server->postEvent(new CEventMouseDown(fX, fY, (TMouseButton)(middleButton|(button&~(leftButton|middleButton|rightButton))), this));
+			server->postEvent(new CEventMouseDown(fX, fY, (TMouseButton)(middleButton | (button & ~(leftButton | middleButton | rightButton))), this));
 			break;
 		case Button3:
-			server->postEvent(new CEventMouseDown(fX, fY, (TMouseButton)(rightButton|(button&~(leftButton|middleButton|rightButton))), this));
+			server->postEvent(new CEventMouseDown(fX, fY, (TMouseButton)(rightButton | (button & ~(leftButton | middleButton | rightButton))), this));
 			break;
 		case Button4:
 			server->postEvent(new CEventMouseWheel(fX, fY, button, true, this));
@@ -452,12 +456,11 @@ bool CUnixEventEmitter::processMessage (XEvent &event, CEventServer *server)
 		}
 		break;
 	}
-	case ButtonRelease:
-	{
-		//nlinfo("%d %d %d", event.xbutton.button, event.xbutton.x, event.xbutton.y);
-		float fX = (float) event.xbutton.x / (float) xwa.width;
-		float fY = 1.0f - (float) event.xbutton.y / (float) xwa.height;
-		switch(event.xbutton.button)
+	case ButtonRelease: {
+		// nlinfo("%d %d %d", event.xbutton.button, event.xbutton.x, event.xbutton.y);
+		float fX = (float)event.xbutton.x / (float)xwa.width;
+		float fY = 1.0f - (float)event.xbutton.y / (float)xwa.height;
+		switch (event.xbutton.button)
 		{
 		case Button1:
 			server->postEvent(new CEventMouseUp(fX, fY, leftButton, this));
@@ -471,21 +474,19 @@ bool CUnixEventEmitter::processMessage (XEvent &event, CEventServer *server)
 		}
 		break;
 	}
-	case MotionNotify:
-	{
-		TMouseButton button=getMouseButton (event.xbutton.state);
+	case MotionNotify: {
+		TMouseButton button = getMouseButton(event.xbutton.state);
 
 		// get the relative mouse position
-		float fX = (float) event.xbutton.x / (float) xwa.width;
-		float fY = 1.0f - (float) event.xbutton.y / (float) xwa.height;
+		float fX = (float)event.xbutton.x / (float)xwa.width;
+		float fY = 1.0f - (float)event.xbutton.y / (float)xwa.height;
 
 		// post a normal mouse move event to the event server
-		server->postEvent (new CEventMouseMove (fX, fY, button, this));
+		server->postEvent(new CEventMouseMove(fX, fY, button, this));
 
 		break;
 	}
-	case KeyPress:
-	{
+	case KeyPress: {
 		// save keycode because XFilterEvent could set it to 0
 		uint keyCode = event.xkey.keycode;
 		KeySym k;
@@ -526,7 +527,7 @@ bool CUnixEventEmitter::processMessage (XEvent &event, CEventServer *server)
 			// if key is not found or value is false, that's the first time
 			bool firstTime = (it == _PressedKeys.end()) || !it->second;
 
-			server->postEvent (new CEventKeyDown (key, getKeyButton(event.xbutton.state), firstTime, this));
+			server->postEvent(new CEventKeyDown(key, getKeyButton(event.xbutton.state), firstTime, this));
 			_PressedKeys[key] = true;
 
 			// don't send a control character when deleting
@@ -540,29 +541,28 @@ bool CUnixEventEmitter::processMessage (XEvent &event, CEventServer *server)
 #ifdef X_HAVE_UTF8_STRING
 			::u32string ucstr = NLMISC::CUtfStringView(Text).toUtf32();
 
-			CEventChar *charEvent = new CEventChar (ucstr[0], getKeyButton(event.xbutton.state), this);
+			CEventChar *charEvent = new CEventChar(ucstr[0], getKeyButton(event.xbutton.state), this);
 
 			// raw if not processed by IME
 			charEvent->setRaw(keyCode != 0);
 
-			server->postEvent (charEvent);
+			server->postEvent(charEvent);
 #else
 			// FIXME: Convert locale to UTF-32
 			for (int i = 0; i < c; i++)
 			{
-				CEventChar *charEvent = new CEventChar ((u32char)(unsigned char)Text[i], getKeyButton(event.xbutton.state), this);
+				CEventChar *charEvent = new CEventChar((u32char)(unsigned char)Text[i], getKeyButton(event.xbutton.state), this);
 
 				// raw if not processed by IME
 				charEvent->setRaw(keyCode != 0);
 
-				server->postEvent (charEvent);
+				server->postEvent(charEvent);
 			}
 #endif
 		}
 		break;
 	}
-	case KeyRelease:
-	{
+	case KeyRelease: {
 		if (!keyRepeat(_dpy, &event))
 		{
 			KeySym k;
@@ -570,24 +570,23 @@ bool CUnixEventEmitter::processMessage (XEvent &event, CEventServer *server)
 			int c = XLookupString(&event.xkey, NULL, 0, &k, NULL);
 
 			TKey key = getKeyFromKeySym(k);
-			if(key == KeyNOKEY)
+			if (key == KeyNOKEY)
 				key = getKeyFromKeycode(event.xkey.keycode);
 
-			server->postEvent (new CEventKeyUp (key, getKeyButton(event.xbutton.state), this));
+			server->postEvent(new CEventKeyUp(key, getKeyButton(event.xbutton.state), this));
 			_PressedKeys[key] = false;
 		}
 		break;
 	}
-	case SelectionRequest:
-	{
+	case SelectionRequest: {
 		XEvent respond;
 		XSelectionRequestEvent req = event.xselectionrequest;
 
-		respond.xselection.type= SelectionNotify;
-		respond.xselection.display= req.display;
-		respond.xselection.requestor= req.requestor;
-		respond.xselection.selection=req.selection;
-		respond.xselection.target= req.target;
+		respond.xselection.type = SelectionNotify;
+		respond.xselection.display = req.display;
+		respond.xselection.requestor = req.requestor;
+		respond.xselection.selection = req.selection;
+		respond.xselection.target = req.target;
 		respond.xselection.time = req.time;
 		respond.xselection.property = req.property;
 
@@ -597,8 +596,7 @@ bool CUnixEventEmitter::processMessage (XEvent &event, CEventServer *server)
 		}
 		if (req.target == XA_TARGETS)
 		{
-			Atom targets[] =
-			{
+			Atom targets[] = {
 				XA_TARGETS,
 				XA_STRING,
 				XA_UTF8_STRING
@@ -612,12 +610,12 @@ bool CUnixEventEmitter::processMessage (XEvent &event, CEventServer *server)
 		{
 			respond.xselection.property = req.property;
 			std::string str = _CopiedString; // NLMISC::CUtfStringView(_CopiedString).toAscii(); // FIXME: Convert UTF-8 to local
-			XChangeProperty(req.display, req.requestor, req.property, XA_STRING, 8, PropModeReplace, (const unsigned char*)str.c_str(), str.length());
+			XChangeProperty(req.display, req.requestor, req.property, XA_STRING, 8, PropModeReplace, (const unsigned char *)str.c_str(), str.length());
 		}
 		else if (req.target == XA_UTF8_STRING)
 		{
 			respond.xselection.property = req.property;
-			XChangeProperty(req.display, req.requestor, respond.xselection.property, XA_UTF8_STRING, 8, PropModeReplace, (const unsigned char*)_CopiedString.c_str(), _CopiedString.length());
+			XChangeProperty(req.display, req.requestor, respond.xselection.property, XA_UTF8_STRING, 8, PropModeReplace, (const unsigned char *)_CopiedString.c_str(), _CopiedString.length());
 		}
 		else
 		{
@@ -625,7 +623,7 @@ bool CUnixEventEmitter::processMessage (XEvent &event, CEventServer *server)
 			respond.xselection.property = None;
 		}
 
-		XSendEvent (_dpy, req.requestor, 0, 0, &respond);
+		XSendEvent(_dpy, req.requestor, 0, 0, &respond);
 
 		break;
 	}
@@ -633,8 +631,7 @@ bool CUnixEventEmitter::processMessage (XEvent &event, CEventServer *server)
 		_SelectionOwned = false;
 		_CopiedString.clear();
 		break;
-	case SelectionNotify:
-	{
+	case SelectionNotify: {
 		Atom target = event.xselection.target;
 
 		Atom actualType = 0;
@@ -647,7 +644,7 @@ bool CUnixEventEmitter::processMessage (XEvent &event, CEventServer *server)
 			Atom *supportedTargets = NULL;
 
 			// list NeL selection properties
-			if (XGetWindowProperty(_dpy, _win, XA_NEL_SEL, 0, XMaxRequestSize(_dpy), False, AnyPropertyType, &actualType, &actualFormat, &nitems, &bytesLeft, (unsigned char**)&supportedTargets) != Success)
+			if (XGetWindowProperty(_dpy, _win, XA_NEL_SEL, 0, XMaxRequestSize(_dpy), False, AnyPropertyType, &actualType, &actualFormat, &nitems, &bytesLeft, (unsigned char **)&supportedTargets) != Success)
 				return false;
 
 			if (bytesLeft > 0)
@@ -659,10 +656,10 @@ bool CUnixEventEmitter::processMessage (XEvent &event, CEventServer *server)
 			sint bestTargetElect = 0;
 
 			// Elect best type
-			for (uint i=0; i < nitems; i++)
+			for (uint i = 0; i < nitems; i++)
 			{
 				// nlwarning(" - Type=%s (%u)", XGetAtomName(_dpy, supportedTargets[i]), (uint)supportedTargets[i]);
-				if (supportedTargets[i] == XA_UTF8_STRING )
+				if (supportedTargets[i] == XA_UTF8_STRING)
 				{
 					if (bestTargetElect < 2)
 					{
@@ -670,7 +667,7 @@ bool CUnixEventEmitter::processMessage (XEvent &event, CEventServer *server)
 						bestTargetElect = 2;
 					}
 				}
-				else if (supportedTargets[i] == XA_STRING )
+				else if (supportedTargets[i] == XA_STRING)
 				{
 					if (bestTargetElect < 1)
 					{
@@ -696,10 +693,10 @@ bool CUnixEventEmitter::processMessage (XEvent &event, CEventServer *server)
 			uint8 *data = NULL;
 
 			// get selection
-			if (XGetWindowProperty(_dpy, _win, XA_NEL_SEL, 0, XMaxRequestSize(_dpy), False, AnyPropertyType, &actualType, &actualFormat, &nitems, &bytesLeft, (unsigned char**)&data) != Success)
+			if (XGetWindowProperty(_dpy, _win, XA_NEL_SEL, 0, XMaxRequestSize(_dpy), False, AnyPropertyType, &actualType, &actualFormat, &nitems, &bytesLeft, (unsigned char **)&data) != Success)
 				return false;
 
-			std::string text = (const char*)data;
+			std::string text = (const char *)data;
 			XFree(data);
 
 			// convert buffer to ucstring
@@ -718,7 +715,7 @@ bool CUnixEventEmitter::processMessage (XEvent &event, CEventServer *server)
 			}
 
 			// sent string event to event server
-			server->postEvent (new CEventString (text, this));
+			server->postEvent(new CEventString(text, this));
 		}
 		else
 		{
@@ -732,7 +729,7 @@ bool CUnixEventEmitter::processMessage (XEvent &event, CEventServer *server)
 #ifdef X_HAVE_UTF8_STRING
 		if (_ic) XSetICFocus(_ic);
 #endif
-		server->postEvent (new CEventSetFocus (true, this));
+		server->postEvent(new CEventSetFocus(true, this));
 		// server->postEvent(new CEventActivate(true, this));
 		break;
 	case FocusOut:
@@ -740,7 +737,7 @@ bool CUnixEventEmitter::processMessage (XEvent &event, CEventServer *server)
 #ifdef X_HAVE_UTF8_STRING
 		if (_ic) XUnsetICFocus(_ic);
 #endif
-		server->postEvent (new CEventSetFocus (false, this));
+		server->postEvent(new CEventSetFocus(false, this));
 		// server->postEvent(new CEventActivate(false, this));
 		break;
 	case KeymapNotify:
@@ -773,7 +770,7 @@ bool CUnixEventEmitter::copyTextToClipboard(const std::string &text)
 	_CopiedString = text;
 
 	// NeL window is the owner of clipboard
-	XSetSelectionOwner(_dpy,  XA_CLIPBOARD, _win, CurrentTime);
+	XSetSelectionOwner(_dpy, XA_CLIPBOARD, _win, CurrentTime);
 
 	// check we are owning the clipboard
 	if (XGetSelectionOwner(_dpy, XA_CLIPBOARD) != _win)

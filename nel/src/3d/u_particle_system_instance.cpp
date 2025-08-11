@@ -28,9 +28,8 @@
 
 namespace NL3D {
 
-
 // ***************************************************************************
-bool		UParticleSystemInstance::isSystemPresent(void) const
+bool UParticleSystemInstance::isSystemPresent(void) const
 {
 	if (!_Object) return false; // the system is not even valid
 	CParticleSystemModel *object = NLMISC::safe_cast<CParticleSystemModel *>(_Object);
@@ -38,7 +37,7 @@ bool		UParticleSystemInstance::isSystemPresent(void) const
 }
 
 // ***************************************************************************
-bool		UParticleSystemInstance::getSystemBBox(NLMISC::CAABBox &bbox)
+bool UParticleSystemInstance::getSystemBBox(NLMISC::CAABBox &bbox)
 {
 	if (!_Object) return false;
 	CParticleSystemModel *object = NLMISC::safe_cast<CParticleSystemModel *>(_Object);
@@ -46,7 +45,6 @@ bool		UParticleSystemInstance::getSystemBBox(NLMISC::CAABBox &bbox)
 	object->getPS()->computeBBox(bbox);
 	return true;
 }
-
 
 // ***************************************************************************
 void UParticleSystemInstance::setUserColor(NLMISC::CRGBA userColor)
@@ -63,7 +61,7 @@ NLMISC::CRGBA UParticleSystemInstance::getUserColor() const
 }
 
 // ***************************************************************************
-void		UParticleSystemInstance::setUserParam(uint index, float value)
+void UParticleSystemInstance::setUserParam(uint index, float value)
 {
 	if (index >= MaxPSUserParam)
 	{
@@ -78,15 +76,15 @@ void		UParticleSystemInstance::setUserParam(uint index, float value)
 }
 
 // ***************************************************************************
-float		UParticleSystemInstance::getUserParam(uint index) const
+float UParticleSystemInstance::getUserParam(uint index) const
 {
 	if (index >= MaxPSUserParam)
 	{
 		nlwarning("invalid user param index");
 		return 0.f;
 	}
-	CParticleSystemModel *object = NLMISC::safe_cast<CParticleSystemModel *>(_Object) ;
-	//return object->getPS()->getUserParam(index) ;
+	CParticleSystemModel *object = NLMISC::safe_cast<CParticleSystemModel *>(_Object);
+	// return object->getPS()->getUserParam(index) ;
 	IAnimatedValue *av = object->getValue(CParticleSystemModel::PSParam0 + index);
 	return NLMISC::safe_cast<CAnimatedValueFloat *>(av)->Value;
 }
@@ -94,23 +92,23 @@ float		UParticleSystemInstance::getUserParam(uint index) const
 // ***************************************************************************
 static inline uint32 IDToLittleEndian(uint32 input)
 {
-	#ifdef NL_LITTLE_ENDIAN
-		return input;
-	#else
-		return ((input & (0xff<<24))>>24)
-				| ((input & (0xff<<16))>>8)
-				| ((input & (0xff<<8))<<8)
-				| ((input & 0xff)<<24);
-	#endif
+#ifdef NL_LITTLE_ENDIAN
+	return input;
+#else
+	return ((input & (0xff << 24)) >> 24)
+	    | ((input & (0xff << 16)) >> 8)
+	    | ((input & (0xff << 8)) << 8)
+	    | ((input & 0xff) << 24);
+#endif
 }
 
 // ***************************************************************************
-bool	UParticleSystemInstance::emit(uint32 anId, uint quantity)
+bool UParticleSystemInstance::emit(uint32 anId, uint quantity)
 {
 	const uint32 id = IDToLittleEndian(anId);
 	nlassert(isSystemPresent());
 	CParticleSystem *ps = (NLMISC::safe_cast<CParticleSystemModel *>(_Object))->getPS();
-	uint numLb  = ps->getNumLocatedBindableByExternID(id);
+	uint numLb = ps->getNumLocatedBindableByExternID(id);
 	if (numLb == 0) return false; // INVALID ID !!
 	for (uint k = 0; k < numLb; ++k)
 	{
@@ -129,22 +127,20 @@ bool	UParticleSystemInstance::emit(uint32 anId, uint quantity)
 	return true;
 }
 
-
-
 // ***************************************************************************
 bool UParticleSystemInstance::removeByID(uint32 anId)
 {
 	const uint32 id = IDToLittleEndian(anId);
 	if (!isSystemPresent()) return false;
 	CParticleSystem *ps = (NLMISC::safe_cast<CParticleSystemModel *>(_Object))->getPS();
-	uint numLb  = ps->getNumLocatedBindableByExternID(id);
+	uint numLb = ps->getNumLocatedBindableByExternID(id);
 	if (numLb == 0) return false; // INVALID ID !!
 	for (uint k = 0; k < numLb; ++k)
 	{
 		CPSLocatedBindable *lb = ps->getLocatedBindableByExternID(id, k);
 		CPSLocated *owner = lb->getOwner();
 		nlassert(owner);
-		uint nbInstances  =  owner->getSize();
+		uint nbInstances = owner->getSize();
 		for (uint l = 0; l < nbInstances; ++l)
 		{
 			owner->deleteElement(0);
@@ -184,7 +180,7 @@ bool UParticleSystemInstance::setActive(uint32 anId, bool active)
 	const uint32 id = IDToLittleEndian(anId);
 	if (!isSystemPresent()) return false;
 	CParticleSystem *ps = (NLMISC::safe_cast<CParticleSystemModel *>(_Object))->getPS();
-	uint numLb  = ps->getNumLocatedBindableByExternID(id);
+	uint numLb = ps->getNumLocatedBindableByExternID(id);
 	if (numLb == 0) return false; // INVALID ID !!
 	for (uint k = 0; k < numLb; ++k)
 	{
@@ -225,9 +221,9 @@ bool UParticleSystemInstance::hasEmmiters() const
 bool UParticleSystemInstance::isShared() const
 {
 	CParticleSystemModel *object = NLMISC::safe_cast<CParticleSystemModel *>(_Object);
-	if(object->Shape)
+	if (object->Shape)
 	{
-		return NLMISC::safe_cast<CParticleSystemShape *>((IShape *) object->Shape)->isShared();
+		return NLMISC::safe_cast<CParticleSystemShape *>((IShape *)object->Shape)->isShared();
 	}
 	return false;
 }
@@ -255,7 +251,7 @@ float UParticleSystemInstance::getGlobalUserParamValue(const std::string &name)
 }
 
 // ***************************************************************************
-void UParticleSystemInstance::setGlobalVectorValue(const std::string &name,const NLMISC::CVector &v)
+void UParticleSystemInstance::setGlobalVectorValue(const std::string &name, const NLMISC::CVector &v)
 {
 	if (name.empty())
 	{
@@ -269,7 +265,6 @@ void UParticleSystemInstance::forceDisplayBBox(bool on)
 {
 	CParticleSystem::forceDisplayBBox(on);
 }
-
 
 // ***************************************************************************
 NLMISC::CVector UParticleSystemInstance::getGlobalVectorValue(const std::string &name)
@@ -319,7 +314,6 @@ void UParticleSystemInstance::forceSetUserMatrix(const NLMISC::CMatrix &userMat)
 	object->forceSetUserMatrix(userMat);
 }
 
-
 // ***************************************************************************
 void UParticleSystemInstance::forceInstanciate()
 {
@@ -338,7 +332,7 @@ void UParticleSystemInstance::setZBias(float value)
 
 void UParticleSystemInstance::cast(UInstance object)
 {
-	attach(dynamic_cast<CParticleSystemModel*> (object.getObjectPtr()));
+	attach(dynamic_cast<CParticleSystemModel *>(object.getObjectPtr()));
 }
 
 // ***************************************************************************
@@ -363,7 +357,6 @@ void UParticleSystemInstance::reactivateSound()
 	CParticleSystemModel *object = NLMISC::safe_cast<CParticleSystemModel *>(_Object);
 	object->reactivateSound();
 }
-
 
 // ***************************************************************************
 

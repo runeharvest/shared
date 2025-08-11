@@ -14,21 +14,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_VISUAL_FX_H
 #define RY_VISUAL_FX_H
 
 #include "magic_fx.h"
 
 /** Class to unpack / pack visual fx infos from a visual property
-  */
+ */
 class CVisualFX
 {
 public:
-	bool			 AuraReceipt;
+	bool AuraReceipt;
 	MAGICFX::TAuraFX Aura;
-	uint			 Link; // match the MAGICFX::TMagicFx enum, but with 1 added (0 means no link)
+	uint Link; // match the MAGICFX::TMagicFx enum, but with 1 added (0 means no link)
 public:
 	// build from a visual property
 	void unpack(sint64 src);
@@ -41,17 +39,17 @@ public:
 /////////////
 
 // **********************************************************************************************
-inline void	CVisualFX::unpack(sint64 vp)
+inline void CVisualFX::unpack(sint64 vp)
 {
-	Aura = (MAGICFX::TAuraFX) (vp & 31);
-	Link = (uint) ((vp >> 5) & 31);
+	Aura = (MAGICFX::TAuraFX)(vp & 31);
+	Link = (uint)((vp >> 5) & 31);
 	AuraReceipt = (vp & (1 << 10)) != 0;
 }
 
 // **********************************************************************************************
 inline void CVisualFX::pack(sint64 &dest)
 {
-	dest = ((sint64) AuraReceipt << 10) | ((sint64) (Aura & 31)) | ((sint64) (Link & 31) << 5);
+	dest = ((sint64)AuraReceipt << 10) | ((sint64)(Aura & 31)) | ((sint64)(Link & 31) << 5);
 }
 
 #endif

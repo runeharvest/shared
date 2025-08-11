@@ -22,22 +22,22 @@
 
 struct CNelExportSceneStruct
 {
-	bool bShadow;
-	bool bExportLighting;
-	std::string sExportLighting;
-	sint32 nExportLighting;
-	float rLumelSize;
-	sint32 nOverSampling;
+    bool bShadow;
+    bool bExportLighting;
+    std::string sExportLighting;
+    sint32 nExportLighting;
+    float rLumelSize;
+    sint32 nOverSampling;
 
-	void serial(NLMISC::IStream& stream)
-	{
-		stream.serial( bShadow );
-		stream.serial( bExportLighting );
-		stream.serial( sExportLighting );
-		stream.serial( nExportLighting );
-		stream.serial( rLumelSize );
-		stream.serial( nOverSampling );
-	}
+    void serial(NLMISC::IStream& stream)
+    {
+        stream.serial( bShadow );
+        stream.serial( bExportLighting );
+        stream.serial( sExportLighting );
+        stream.serial( nExportLighting );
+        stream.serial( rLumelSize );
+        stream.serial( nOverSampling );
+    }
 };
 
 extern CNelExportSceneStruct theExportSceneStruct;

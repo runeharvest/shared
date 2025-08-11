@@ -25,56 +25,51 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 CViewport::CViewport()
 {
-	initFullScreen ();
+	initFullScreen();
 }
 
-
-void CViewport::init (float x, float y, float width, float height)
+void CViewport::init(float x, float y, float width, float height)
 {
 	// Simply copy
-	_X=x;
-	clamp (_X, 0.f, 1.f);
-	_Y=y;
-	clamp (_Y, 0.f, 1.f);
-	_Width=width;
-	clamp (_Width, 0.f, 1.f-_X);
-	_Height=height;
-	clamp (_Height, 0.f, 1.f-_Y);
+	_X = x;
+	clamp(_X, 0.f, 1.f);
+	_Y = y;
+	clamp(_Y, 0.f, 1.f);
+	_Width = width;
+	clamp(_Width, 0.f, 1.f - _X);
+	_Height = height;
+	clamp(_Height, 0.f, 1.f - _Y);
 }
 
-
-void CViewport::initFullScreen ()
+void CViewport::initFullScreen()
 {
 	// Very easy
-	_X=0.f;
-	_Y=0.f;
-	_Width=1.f;
-	_Height=1.f;
+	_X = 0.f;
+	_Y = 0.f;
+	_Width = 1.f;
+	_Height = 1.f;
 }
 
-
-void CViewport::init16_9 ()
+void CViewport::init16_9()
 {
 	// Very easy
-	_X=0.f;
-	_Y=(1.f-0.75f)/2;
-	_Width=1.f;
-	_Height=0.75f;
+	_X = 0.f;
+	_Y = (1.f - 0.75f) / 2;
+	_Width = 1.f;
+	_Height = 0.75f;
 }
 
-
-void CViewport::getRayWithPoint (float x, float y, CVector& pos, CVector& dir, const CMatrix& camMatrix, const CFrustum& camFrust) const
+void CViewport::getRayWithPoint(float x, float y, CVector &pos, CVector &dir, const CMatrix &camMatrix, const CFrustum &camFrust) const
 {
-	float xVP=(x-_X)/_Width;
-	float yVP=(y-_Y)/_Height;
+	float xVP = (x - _X) / _Width;
+	float yVP = (y - _Y) / _Height;
 
 	// Pos of the ray
-	pos= camMatrix.getPos();
+	pos = camMatrix.getPos();
 
 	// Get camera frustrum
 	float left;
@@ -83,19 +78,17 @@ void CViewport::getRayWithPoint (float x, float y, CVector& pos, CVector& dir, c
 	float top;
 	float znear;
 	float zfar;
-	camFrust.getValues (left, right, bottom, top, znear, zfar);
+	camFrust.getValues(left, right, bottom, top, znear, zfar);
 
 	// Get a local direction
-	dir.x=left+(right-left)*xVP;
-	dir.y=znear;
-	dir.z=bottom+(top-bottom)*yVP;
+	dir.x = left + (right - left) * xVP;
+	dir.y = znear;
+	dir.z = bottom + (top - bottom) * yVP;
 
 	// Get a world direction
-	CMatrix mat=camMatrix;
-	mat.setPos (CVector (0,0,0));
-	dir=mat*dir;
+	CMatrix mat = camMatrix;
+	mat.setPos(CVector(0, 0, 0));
+	dir = mat * dir;
 }
 
-
 } // NL3D
-

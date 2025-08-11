@@ -19,40 +19,41 @@
 
 #if _MSC_VER > 1000
 #pragma once
-#endif 
+#endif
 
 class CObjectViewer;
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CDayNightDlg dialog
 
 class CDayNightDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CDayNightDlg(CObjectViewer *viewer, CWnd* pParent = NULL);   // standard constructor
+	CDayNightDlg(CObjectViewer *viewer, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CDayNightDlg)
-	enum { IDD = IDD_DAYNIGHT };
-	CScrollBar	m_DayNightCtrl;
+	enum
+	{
+		IDD = IDD_DAYNIGHT
+	};
+	CScrollBar m_DayNightCtrl;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDayNightDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	CObjectViewer *_ObjView;
 	// Generated message map functions
 	//{{AFX_MSG(CDayNightDlg)
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
 	virtual BOOL OnInitDialog();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

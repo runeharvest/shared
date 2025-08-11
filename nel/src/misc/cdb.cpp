@@ -35,11 +35,10 @@ using namespace std;
 #define new DEBUG_NEW
 #endif
 
-namespace NLMISC{
+namespace NLMISC {
 
 CStringMapper *ICDBNode::_DBSM = NULL;
 bool ICDBNode::verboseDatabase = false;
-
 
 std::string ICDBNode::getFullName()
 {
@@ -47,27 +46,27 @@ std::string ICDBNode::getFullName()
 	sTmp.reserve(256);
 	_buildFullName(sTmp);
 	return sTmp;
-//	CCDBNodeBranch *pParent = getParent();
-//	if (pParent == NULL)
-//		return _DBSM->localUnmap(_Name);
-//	CSString sTmp;
-//	_buildFullName(sTmp);
-//	sTmp << ":" << sTmp;
-//	return sTmp;
+	//	CCDBNodeBranch *pParent = getParent();
+	//	if (pParent == NULL)
+	//		return _DBSM->localUnmap(_Name);
+	//	CSString sTmp;
+	//	_buildFullName(sTmp);
+	//	sTmp << ":" << sTmp;
+	//	return sTmp;
 
-//	// climb the parent hierarchie
-//	while (pParent->getParent() != NULL)
-//		pParent = pParent->getParent();
-//
-//	// now build the full name in desc order
-//	while (p)
-//
-//	while (pParent->getParent() != NULL)
-//	{
-//		sTmp = *pParent->getName()) << ":" << sTmp;
-//		pParent = pParent->getParent();
-//	}
-//	return sTmp;
+	//	// climb the parent hierarchie
+	//	while (pParent->getParent() != NULL)
+	//		pParent = pParent->getParent();
+	//
+	//	// now build the full name in desc order
+	//	while (p)
+	//
+	//	while (pParent->getParent() != NULL)
+	//	{
+	//		sTmp = *pParent->getName()) << ":" << sTmp;
+	//		pParent = pParent->getParent();
+	//	}
+	//	return sTmp;
 }
 
 void ICDBNode::_buildFullName(CSString &fullName)
@@ -84,10 +83,9 @@ void ICDBNode::_buildFullName(CSString &fullName)
 
 void ICDBNode::releaseStringMapper()
 {
-	if( _DBSM )
+	if (_DBSM)
 		delete _DBSM;
 	_DBSM = NULL;
 }
 
 }
-

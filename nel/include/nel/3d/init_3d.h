@@ -19,8 +19,7 @@
 
 #include "nel/misc/types_nl.h"
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ****************************************************************************
 /**
@@ -29,10 +28,9 @@ namespace NL3D
  * \author Nevrax France
  * \date 2000
  */
-void init3d ();
+void init3d();
 
 } // NL3D
-
 
 #endif // NL_INIT_3D_H
 

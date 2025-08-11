@@ -14,23 +14,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 #include "client_action_type.h"
 #include "nel/misc/string_conversion.h"
 
-
 using namespace NLMISC;
 
-namespace CLIENT_ACTION_TYPE
-{
+namespace CLIENT_ACTION_TYPE {
 
 // ***************************************************************************
 // The conversion table
-const CStringConversion<TClientActionType>::CPair stringTable [] =
-{
+const CStringConversion<TClientActionType>::CPair stringTable[] = {
 	{ "None", None },
 
 	{ "Combat", Combat },
@@ -50,18 +45,16 @@ const CStringConversion<TClientActionType>::CPair stringTable [] =
 	{ "ConsumeItem", ConsumeItem },
 };
 
-
-CStringConversion<TClientActionType> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]),  None);
-
+CStringConversion<TClientActionType> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]), None);
 
 // ***************************************************************************
-const std::string	&toString(TClientActionType e)
+const std::string &toString(TClientActionType e)
 {
 	return conversion.toString(e);
 }
 
 // ***************************************************************************
-TClientActionType	fromString(const std::string &s)
+TClientActionType fromString(const std::string &s)
 {
 	return conversion.fromString(s);
 }

@@ -17,37 +17,32 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "change_tracker_client.h"
 
 using namespace NLMISC;
 
-
 /*
  * Access the tracker header and item array (shared memory)
  */
-void	CChangeTrackerClient::access( sint32 shmid )
+void CChangeTrackerClient::access(sint32 shmid)
 {
 	_SMId = shmid;
 
-	_Header = (TChangeTrackerHeader*)CSharedMemory::accessSharedMemory( toSharedMemId(_SMId) );
-	if ( ! _Header )
+	_Header = (TChangeTrackerHeader *)CSharedMemory::accessSharedMemory(toSharedMemId(_SMId));
+	if (!_Header)
 	{
 		// This can occur when a service disconnects from the MS when between the moment when
 		// the MS sent the "add trackers" message and the moment when we received and applied it:
 		// the MS deletes the tracker, thus the shared memory is immediatel destroyed as we did not
 		// accessed it yet.
-		nlwarning( "MIRROR: Cannot access shared memory for tracker" );
+		nlwarning("MIRROR: Cannot access shared memory for tracker");
 		return;
 	}
 
-	_Array = (TChangeTrackerItem*)(((uint8*)_Header) + sizeof( TChangeTrackerHeader ));
-	//nlinfo( "Setting _Array = %p + d% = %p", _Header, sizeof( TChangeTrackerHeader ), _Array );
+	_Array = (TChangeTrackerItem *)(((uint8 *)_Header) + sizeof(TChangeTrackerHeader));
+	// nlinfo( "Setting _Array = %p + d% = %p", _Header, sizeof( TChangeTrackerHeader ), _Array );
 }
-
-
 
 #if 0
 /*
@@ -108,15 +103,14 @@ void		CChangeTrackerClient::clean()
 }
 #endif
 
-
 /*
  * Release the tracker (unaccess shared memory + release mutex)
  */
-void		CChangeTrackerClient::release()
+void CChangeTrackerClient::release()
 {
-	if ( (_Header != NULL) && (! isPointingToGroupTracker()) )
+	if ((_Header != NULL) && (!isPointingToGroupTracker()))
 	{
-		NLMISC::CSharedMemory::closeSharedMemory( _Header );
+		NLMISC::CSharedMemory::closeSharedMemory(_Header);
 		_Header = NULL;
 		_Array = NULL;
 		_SMId = -1;
@@ -128,4 +122,3 @@ void		CChangeTrackerClient::release()
 #endif
 	}
 }
-

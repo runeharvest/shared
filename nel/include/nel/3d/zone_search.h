@@ -20,10 +20,7 @@
 #include <list>
 #include "nel/misc/types_nl.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 /**
  * CZoneSearch is a class that determine which zone cooresponding to a coordinate
@@ -35,34 +32,33 @@ namespace NL3D
 class CZoneSearch
 {
 public:
-
 	/// Constructor
 	CZoneSearch();
 
 	/**
-	* Get the zone name corresponding to coordinate
-	* \param x is axis X coordinate (in meters)
-	* \param y is axis Y coordinate (in meters)
-	* \param cx is axis X coordinate of center area (in meters)
-	* \param cy is axis Y coordinate of center area (in meters)
-	* \return a pair of the zone name and square distance between zone and center area (in zone unit)
-	*/
+	 * Get the zone name corresponding to coordinate
+	 * \param x is axis X coordinate (in meters)
+	 * \param y is axis Y coordinate (in meters)
+	 * \param cx is axis X coordinate of center area (in meters)
+	 * \param cy is axis Y coordinate of center area (in meters)
+	 * \return a pair of the zone name and square distance between zone and center area (in zone unit)
+	 */
 	std::pair<std::string, uint32> getZoneName(uint x, uint y, uint cx, uint cy);
 
 	/*
-	* Get a list of zone name around a position
-	* \param x is axis X ccordinate (in meter)
-	* \param y is axis Y coordinate (in meter)
-	* \param sizeArea is area of zone research (in meter)
-	* \param l is a reference to a list of pair of string and uint32
-	* \return a liste contained names of all zones around indicated position, square distance between zones and indicated position
-	*/
-	void getListZoneName(uint x, uint y, uint sizeArea, std::list< std::pair<std::string, uint32> >& l);
+	 * Get a list of zone name around a position
+	 * \param x is axis X ccordinate (in meter)
+	 * \param y is axis Y coordinate (in meter)
+	 * \param sizeArea is area of zone research (in meter)
+	 * \param l is a reference to a list of pair of string and uint32
+	 * \return a liste contained names of all zones around indicated position, square distance between zones and indicated position
+	 */
+	void getListZoneName(uint x, uint y, uint sizeArea, std::list<std::pair<std::string, uint32>> &l);
 
-	uint16 getZoneId (uint x, uint y) const;
-	void getZonePos (uint16 zoneId, uint &x, uint &y) const;
-	void getListZoneId (uint x, uint y, uint sizeArea, std::vector<uint16> &l, const std::vector<uint16> *validZoneIds = NULL);
-	std::string getZoneNameFromId (uint16 zoneid);
+	uint16 getZoneId(uint x, uint y) const;
+	void getZonePos(uint16 zoneId, uint &x, uint &y) const;
+	void getListZoneId(uint x, uint y, uint sizeArea, std::vector<uint16> &l, const std::vector<uint16> *validZoneIds = NULL);
+	std::string getZoneNameFromId(uint16 zoneid);
 
 private:
 	// Number zones on X axis of landscape
@@ -78,9 +74,7 @@ private:
 	uint _SizeZoneY;
 };
 
-
 } // NL3D
-
 
 #endif // NL_ZONE_SEARCH_H
 

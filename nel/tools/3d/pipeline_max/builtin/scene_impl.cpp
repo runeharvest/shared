@@ -42,14 +42,13 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CSceneImpl::CSceneImpl(CScene *scene) : CReferenceMaker(scene)
+CSceneImpl::CSceneImpl(CScene *scene)
+    : CReferenceMaker(scene)
 {
-
 }
 
 CSceneImpl::~CSceneImpl()
 {
-
 }
 
 const ucstring CSceneImpl::DisplayName = ucstring("Scene");

@@ -30,9 +30,11 @@ namespace NLSOUND {
 
 // ******************************************************************
 
-CEffectAL::CEffectAL(CSoundDriverAL *soundDriver, ALuint alEffect, ALuint alAuxEffectSlot) : _SoundDriver(soundDriver), _AlEffect(alEffect), _AlAuxEffectSlot(alAuxEffectSlot)
+CEffectAL::CEffectAL(CSoundDriverAL *soundDriver, ALuint alEffect, ALuint alAuxEffectSlot)
+    : _SoundDriver(soundDriver)
+    , _AlEffect(alEffect)
+    , _AlAuxEffectSlot(alAuxEffectSlot)
 {
-
 }
 
 CEffectAL::~CEffectAL()
@@ -44,14 +46,23 @@ CEffectAL::~CEffectAL()
 
 void CEffectAL::release()
 {
-	if (_AlAuxEffectSlot != AL_EFFECTSLOT_NULL) { alDeleteAuxiliaryEffectSlots(1, &_AlAuxEffectSlot); _AlAuxEffectSlot = AL_EFFECTSLOT_NULL; }
-	if (_AlEffect != AL_EFFECT_NULL) { alDeleteEffects(1, &_AlEffect); _AlEffect = AL_EFFECT_NULL; }
+	if (_AlAuxEffectSlot != AL_EFFECTSLOT_NULL)
+	{
+		alDeleteAuxiliaryEffectSlots(1, &_AlAuxEffectSlot);
+		_AlAuxEffectSlot = AL_EFFECTSLOT_NULL;
+	}
+	if (_AlEffect != AL_EFFECT_NULL)
+	{
+		alDeleteEffects(1, &_AlEffect);
+		_AlEffect = AL_EFFECT_NULL;
+	}
 	_SoundDriver = NULL;
 }
 
 // ******************************************************************
 
-CStandardReverbEffectAL::CStandardReverbEffectAL(CSoundDriverAL *soundDriver, ALuint alEffect, ALuint alAuxEffectSlot) : CEffectAL(soundDriver, alEffect, alAuxEffectSlot)
+CStandardReverbEffectAL::CStandardReverbEffectAL(CSoundDriverAL *soundDriver, ALuint alEffect, ALuint alAuxEffectSlot)
+    : CEffectAL(soundDriver, alEffect, alAuxEffectSlot)
 {
 	// unused params, set default values
 	alEffectf(_AlEffect, AL_REVERB_AIR_ABSORPTION_GAINHF, 0.994f);
@@ -63,7 +74,6 @@ CStandardReverbEffectAL::CStandardReverbEffectAL(CSoundDriverAL *soundDriver, AL
 
 CStandardReverbEffectAL::~CStandardReverbEffectAL()
 {
-
 }
 
 void CStandardReverbEffectAL::setEnvironment(const CEnvironment &environment, float roomSize)
@@ -73,26 +83,38 @@ void CStandardReverbEffectAL::setEnvironment(const CEnvironment &environment, fl
 	CEnvironment env = environment;
 	env.resize(roomSize);
 
-	alEffectf(_AlEffect, AL_REVERB_DENSITY, env.Density / 100.0f); alTestWarning("AL_REVERB_DENSITY");
-	alEffectf(_AlEffect, AL_REVERB_DIFFUSION, env.Diffusion / 100.0f); alTestWarning("AL_REVERB_DIFFUSION");
-	alEffectf(_AlEffect, AL_REVERB_GAIN, decibelsToAmplitudeRatio(env.RoomFilter)); alTestWarning("AL_REVERB_GAIN");
-	alEffectf(_AlEffect, AL_REVERB_GAINHF, decibelsToAmplitudeRatio(env.RoomFilterHF)); alTestWarning("AL_REVERB_GAINHF");
-	alEffectf(_AlEffect, AL_REVERB_DECAY_TIME, env.DecayTime); alTestWarning("AL_REVERB_DECAY_TIME");
-	alEffectf(_AlEffect, AL_REVERB_DECAY_HFRATIO, env.DecayHFRatio); alTestWarning("AL_REVERB_DECAY_HFRATIO");
-	alEffectf(_AlEffect, AL_REVERB_REFLECTIONS_GAIN, decibelsToAmplitudeRatio(env.Reflections)); alTestWarning("AL_REVERB_REFLECTIONS_GAIN");
-	alEffectf(_AlEffect, AL_REVERB_REFLECTIONS_DELAY, env.ReflectionsDelay); alTestWarning("AL_REVERB_REFLECTIONS_DELAY");
-	alEffectf(_AlEffect, AL_REVERB_LATE_REVERB_GAIN, decibelsToAmplitudeRatio(env.LateReverb)); alTestWarning("AL_REVERB_LATE_REVERB_GAIN");
-	alEffectf(_AlEffect, AL_REVERB_LATE_REVERB_DELAY, env.LateReverbDelay); alTestWarning("AL_REVERB_LATE_REVERB_DELAY");
+	alEffectf(_AlEffect, AL_REVERB_DENSITY, env.Density / 100.0f);
+	alTestWarning("AL_REVERB_DENSITY");
+	alEffectf(_AlEffect, AL_REVERB_DIFFUSION, env.Diffusion / 100.0f);
+	alTestWarning("AL_REVERB_DIFFUSION");
+	alEffectf(_AlEffect, AL_REVERB_GAIN, decibelsToAmplitudeRatio(env.RoomFilter));
+	alTestWarning("AL_REVERB_GAIN");
+	alEffectf(_AlEffect, AL_REVERB_GAINHF, decibelsToAmplitudeRatio(env.RoomFilterHF));
+	alTestWarning("AL_REVERB_GAINHF");
+	alEffectf(_AlEffect, AL_REVERB_DECAY_TIME, env.DecayTime);
+	alTestWarning("AL_REVERB_DECAY_TIME");
+	alEffectf(_AlEffect, AL_REVERB_DECAY_HFRATIO, env.DecayHFRatio);
+	alTestWarning("AL_REVERB_DECAY_HFRATIO");
+	alEffectf(_AlEffect, AL_REVERB_REFLECTIONS_GAIN, decibelsToAmplitudeRatio(env.Reflections));
+	alTestWarning("AL_REVERB_REFLECTIONS_GAIN");
+	alEffectf(_AlEffect, AL_REVERB_REFLECTIONS_DELAY, env.ReflectionsDelay);
+	alTestWarning("AL_REVERB_REFLECTIONS_DELAY");
+	alEffectf(_AlEffect, AL_REVERB_LATE_REVERB_GAIN, decibelsToAmplitudeRatio(env.LateReverb));
+	alTestWarning("AL_REVERB_LATE_REVERB_GAIN");
+	alEffectf(_AlEffect, AL_REVERB_LATE_REVERB_DELAY, env.LateReverbDelay);
+	alTestWarning("AL_REVERB_LATE_REVERB_DELAY");
 	// Not implemented: AL_REVERB_AIR_ABSORPTION_GAINHF
 	// Not implemented: AL_REVERB_ROOM_ROLLOFF_FACTOR
-	alEffecti(_AlEffect, AL_REVERB_DECAY_HFLIMIT, env.Flags & NLSOUND_ENVIRONMENT_DECAY_HF_LIMIT); alTestWarning("AL_REVERB_DECAY_HFLIMIT");
+	alEffecti(_AlEffect, AL_REVERB_DECAY_HFLIMIT, env.Flags & NLSOUND_ENVIRONMENT_DECAY_HF_LIMIT);
+	alTestWarning("AL_REVERB_DECAY_HFLIMIT");
 }
 
 // ******************************************************************
 
 #if EFX_CREATIVE_AVAILABLE
 
-CCreativeReverbEffectAL::CCreativeReverbEffectAL(CSoundDriverAL *soundDriver, ALuint alEffect, ALuint alAuxEffectSlot) : CEffectAL(soundDriver, alEffect, alAuxEffectSlot)
+CCreativeReverbEffectAL::CCreativeReverbEffectAL(CSoundDriverAL *soundDriver, ALuint alEffect, ALuint alAuxEffectSlot)
+    : CEffectAL(soundDriver, alEffect, alAuxEffectSlot)
 {
 	// set default environment
 	setEnvironment();
@@ -100,7 +122,6 @@ CCreativeReverbEffectAL::CCreativeReverbEffectAL(CSoundDriverAL *soundDriver, AL
 
 CCreativeReverbEffectAL::~CCreativeReverbEffectAL()
 {
-
 }
 
 void CCreativeReverbEffectAL::setEnvironment(const CEnvironment &environment, float roomSize)
@@ -140,29 +161,52 @@ void CCreativeReverbEffectAL::setEnvironment(const CEnvironment &environment, fl
 	EFXEAXREVERBPROPERTIES efxcreativereverb;
 	ConvertReverbParameters(&eaxreverb, &efxcreativereverb);
 	efxcreativereverb.flDensity = environment.Density / 100.0f;
-	alEffectf(_AlEffect, AL_EAXREVERB_DENSITY, efxcreativereverb.flDensity); alTestWarning("AL_EAXREVERB_DENSITY");
-	alEffectf(_AlEffect, AL_EAXREVERB_DIFFUSION, efxcreativereverb.flDiffusion); alTestWarning("AL_EAXREVERB_DIFFUSION");
-	alEffectf(_AlEffect, AL_EAXREVERB_GAIN, efxcreativereverb.flGain); alTestWarning("AL_EAXREVERB_GAIN");
-	alEffectf(_AlEffect, AL_EAXREVERB_GAINHF, efxcreativereverb.flGainHF); alTestWarning("AL_EAXREVERB_GAINHF");
-	alEffectf(_AlEffect, AL_EAXREVERB_GAINLF, efxcreativereverb.flGainLF); alTestWarning("AL_EAXREVERB_GAINLF");
-	alEffectf(_AlEffect, AL_EAXREVERB_DECAY_TIME, efxcreativereverb.flDecayTime); alTestWarning("AL_EAXREVERB_DECAY_TIME");
-	alEffectf(_AlEffect, AL_EAXREVERB_DECAY_HFRATIO, efxcreativereverb.flDecayHFRatio); alTestWarning("AL_EAXREVERB_DECAY_HFRATIO");
-	alEffectf(_AlEffect, AL_EAXREVERB_DECAY_LFRATIO, efxcreativereverb.flDecayLFRatio); alTestWarning("AL_EAXREVERB_DECAY_LFRATIO");
-	alEffectf(_AlEffect, AL_EAXREVERB_REFLECTIONS_GAIN, efxcreativereverb.flReflectionsGain); alTestWarning("AL_EAXREVERB_REFLECTIONS_GAIN");
-	alEffectf(_AlEffect, AL_EAXREVERB_REFLECTIONS_DELAY, efxcreativereverb.flReflectionsDelay); alTestWarning("AL_EAXREVERB_REFLECTIONS_DELAY");
-	alEffectfv(_AlEffect, AL_EAXREVERB_REFLECTIONS_PAN, efxcreativereverb.flReflectionsPan); alTestWarning("AL_EAXREVERB_REFLECTIONS_PAN");
-	alEffectf(_AlEffect, AL_EAXREVERB_LATE_REVERB_GAIN, efxcreativereverb.flLateReverbGain); alTestWarning("AL_EAXREVERB_LATE_REVERB_GAIN");
-	alEffectf(_AlEffect, AL_EAXREVERB_LATE_REVERB_DELAY, efxcreativereverb.flLateReverbDelay); alTestWarning("AL_EAXREVERB_LATE_REVERB_DELAY");
-	alEffectfv(_AlEffect, AL_EAXREVERB_LATE_REVERB_PAN, efxcreativereverb.flLateReverbPan); alTestWarning("AL_EAXREVERB_LATE_REVERB_PAN");
-	alEffectf(_AlEffect, AL_EAXREVERB_ECHO_TIME, efxcreativereverb.flEchoTime); alTestWarning("AL_EAXREVERB_ECHO_TIME");
-	alEffectf(_AlEffect, AL_EAXREVERB_ECHO_DEPTH, efxcreativereverb.flEchoDepth); alTestWarning("AL_EAXREVERB_ECHO_DEPTH");
-	alEffectf(_AlEffect, AL_EAXREVERB_MODULATION_TIME, efxcreativereverb.flModulationTime); alTestWarning("AL_EAXREVERB_MODULATION_TIME");
-	alEffectf(_AlEffect, AL_EAXREVERB_MODULATION_DEPTH, efxcreativereverb.flModulationDepth); alTestWarning("AL_EAXREVERB_MODULATION_DEPTH");
-	alEffectf(_AlEffect, AL_EAXREVERB_AIR_ABSORPTION_GAINHF, efxcreativereverb.flAirAbsorptionGainHF); alTestWarning("AL_EAXREVERB_AIR_ABSORPTION_GAINHF");
-	alEffectf(_AlEffect, AL_EAXREVERB_HFREFERENCE, efxcreativereverb.flHFReference); alTestWarning("AL_EAXREVERB_HFREFERENCE");
-	alEffectf(_AlEffect, AL_EAXREVERB_LFREFERENCE, efxcreativereverb.flLFReference); alTestWarning("AL_EAXREVERB_LFREFERENCE");
-	alEffectf(_AlEffect, AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, efxcreativereverb.flRoomRolloffFactor); alTestWarning("AL_EAXREVERB_ROOM_ROLLOFF_FACTOR");
-	alEffecti(_AlEffect, AL_EAXREVERB_DECAY_HFLIMIT, efxcreativereverb.iDecayHFLimit); alTestWarning("AL_EAXREVERB_DECAY_HFLIMIT"); // note: spec says AL_EAXREVERB_DECAYHF_LIMIT
+	alEffectf(_AlEffect, AL_EAXREVERB_DENSITY, efxcreativereverb.flDensity);
+	alTestWarning("AL_EAXREVERB_DENSITY");
+	alEffectf(_AlEffect, AL_EAXREVERB_DIFFUSION, efxcreativereverb.flDiffusion);
+	alTestWarning("AL_EAXREVERB_DIFFUSION");
+	alEffectf(_AlEffect, AL_EAXREVERB_GAIN, efxcreativereverb.flGain);
+	alTestWarning("AL_EAXREVERB_GAIN");
+	alEffectf(_AlEffect, AL_EAXREVERB_GAINHF, efxcreativereverb.flGainHF);
+	alTestWarning("AL_EAXREVERB_GAINHF");
+	alEffectf(_AlEffect, AL_EAXREVERB_GAINLF, efxcreativereverb.flGainLF);
+	alTestWarning("AL_EAXREVERB_GAINLF");
+	alEffectf(_AlEffect, AL_EAXREVERB_DECAY_TIME, efxcreativereverb.flDecayTime);
+	alTestWarning("AL_EAXREVERB_DECAY_TIME");
+	alEffectf(_AlEffect, AL_EAXREVERB_DECAY_HFRATIO, efxcreativereverb.flDecayHFRatio);
+	alTestWarning("AL_EAXREVERB_DECAY_HFRATIO");
+	alEffectf(_AlEffect, AL_EAXREVERB_DECAY_LFRATIO, efxcreativereverb.flDecayLFRatio);
+	alTestWarning("AL_EAXREVERB_DECAY_LFRATIO");
+	alEffectf(_AlEffect, AL_EAXREVERB_REFLECTIONS_GAIN, efxcreativereverb.flReflectionsGain);
+	alTestWarning("AL_EAXREVERB_REFLECTIONS_GAIN");
+	alEffectf(_AlEffect, AL_EAXREVERB_REFLECTIONS_DELAY, efxcreativereverb.flReflectionsDelay);
+	alTestWarning("AL_EAXREVERB_REFLECTIONS_DELAY");
+	alEffectfv(_AlEffect, AL_EAXREVERB_REFLECTIONS_PAN, efxcreativereverb.flReflectionsPan);
+	alTestWarning("AL_EAXREVERB_REFLECTIONS_PAN");
+	alEffectf(_AlEffect, AL_EAXREVERB_LATE_REVERB_GAIN, efxcreativereverb.flLateReverbGain);
+	alTestWarning("AL_EAXREVERB_LATE_REVERB_GAIN");
+	alEffectf(_AlEffect, AL_EAXREVERB_LATE_REVERB_DELAY, efxcreativereverb.flLateReverbDelay);
+	alTestWarning("AL_EAXREVERB_LATE_REVERB_DELAY");
+	alEffectfv(_AlEffect, AL_EAXREVERB_LATE_REVERB_PAN, efxcreativereverb.flLateReverbPan);
+	alTestWarning("AL_EAXREVERB_LATE_REVERB_PAN");
+	alEffectf(_AlEffect, AL_EAXREVERB_ECHO_TIME, efxcreativereverb.flEchoTime);
+	alTestWarning("AL_EAXREVERB_ECHO_TIME");
+	alEffectf(_AlEffect, AL_EAXREVERB_ECHO_DEPTH, efxcreativereverb.flEchoDepth);
+	alTestWarning("AL_EAXREVERB_ECHO_DEPTH");
+	alEffectf(_AlEffect, AL_EAXREVERB_MODULATION_TIME, efxcreativereverb.flModulationTime);
+	alTestWarning("AL_EAXREVERB_MODULATION_TIME");
+	alEffectf(_AlEffect, AL_EAXREVERB_MODULATION_DEPTH, efxcreativereverb.flModulationDepth);
+	alTestWarning("AL_EAXREVERB_MODULATION_DEPTH");
+	alEffectf(_AlEffect, AL_EAXREVERB_AIR_ABSORPTION_GAINHF, efxcreativereverb.flAirAbsorptionGainHF);
+	alTestWarning("AL_EAXREVERB_AIR_ABSORPTION_GAINHF");
+	alEffectf(_AlEffect, AL_EAXREVERB_HFREFERENCE, efxcreativereverb.flHFReference);
+	alTestWarning("AL_EAXREVERB_HFREFERENCE");
+	alEffectf(_AlEffect, AL_EAXREVERB_LFREFERENCE, efxcreativereverb.flLFReference);
+	alTestWarning("AL_EAXREVERB_LFREFERENCE");
+	alEffectf(_AlEffect, AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, efxcreativereverb.flRoomRolloffFactor);
+	alTestWarning("AL_EAXREVERB_ROOM_ROLLOFF_FACTOR");
+	alEffecti(_AlEffect, AL_EAXREVERB_DECAY_HFLIMIT, efxcreativereverb.iDecayHFLimit);
+	alTestWarning("AL_EAXREVERB_DECAY_HFLIMIT"); // note: spec says AL_EAXREVERB_DECAYHF_LIMIT
 }
 
 #endif /* #if EFX_CREATIVE_AVAILABLE */

@@ -32,8 +32,7 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 bool CTextureFile::_SupportNonPowerOfTwoTextures = false;
 
@@ -45,44 +44,44 @@ void CTextureFile::buildBitmapFromFile(NLMISC::CBitmap &dest, const std::string 
 	 *	It can be loaded/called through CAsyncFileManager for instance
 	 * ***********************************************/
 
-	H_AUTO( NL3D_buildBitmapFromFile )
+	H_AUTO(NL3D_buildBitmapFromFile)
 
 	NLMISC::CIFile f;
 
 	string file;
 	{
-		H_AUTO( NL3D_buildBitmapPathLookup )
+		H_AUTO(NL3D_buildBitmapPathLookup)
 		file = CPath::lookup(fileName, false);
 	}
-	if( file.empty() )
+	if (file.empty())
 	{
-		H_AUTO( NL3D_makeDummyBitmap )
+		H_AUTO(NL3D_makeDummyBitmap)
 		// Not found...
 		dest.makeDummy();
 		nlwarning("Missing textureFile: %s", fileName.c_str());
 		return;
 	}
 	{
-		H_AUTO( NL3D_buildBitmapFileCache )
+		H_AUTO(NL3D_buildBitmapFileCache)
 
-		f.setAsyncLoading (asyncload);
-		f.setCacheFileOnOpen(false);	//asyncload); //AJM: significant performance loss for caching when loading textures
-		f.allowBNPCacheFileOnOpen(false);	//asyncload);
+		f.setAsyncLoading(asyncload);
+		f.setCacheFileOnOpen(false); // asyncload); //AJM: significant performance loss for caching when loading textures
+		f.allowBNPCacheFileOnOpen(false); // asyncload);
 	}
 
 	{
-		H_AUTO( NL3D_openBitmapFile)
+		H_AUTO(NL3D_openBitmapFile)
 		// Load bitmap.
 		if (f.open(file))
 		{
-			H_AUTO( NL3D_loadBitmap )
+			H_AUTO(NL3D_loadBitmap)
 			// skip DDS mipmap if wanted
-			dest.load (f, mipMapSkip);
+			dest.load(f, mipMapSkip);
 		}
 		else
 		{
-			H_AUTO( NL3D_makeDummyBitmap )
-				// Not found...
+			H_AUTO(NL3D_makeDummyBitmap)
+			// Not found...
 			dest.makeDummy();
 			nlwarning("Missing textureFile: %s", fileName.c_str());
 			return;
@@ -93,25 +92,25 @@ void CTextureFile::buildBitmapFromFile(NLMISC::CBitmap &dest, const std::string 
 	// Texture not compressed ?
 	if (dest.PixelFormat == RGBA)
 	{
-		H_AUTO( NL3D_buildBitmapUserColor )
+		H_AUTO(NL3D_buildBitmapUserColor)
 		// Make a filename
 		string path = CFile::getFilename(fileName);
-		string ext = strrchr (fileName.c_str(), '.');
-		path.resize (path.size () - ext.size());
+		string ext = strrchr(fileName.c_str(), '.');
+		path.resize(path.size() - ext.size());
 		path += "_usercolor" + ext;
 
 		// Loopup the texture
-		string file2 = CPath::lookup( path, false, false);
+		string file2 = CPath::lookup(path, false, false);
 		if (!file2.empty())
 		{
 			// The file2 exist, load and compute it
 			CBitmap bitmap;
-			bitmap.loadGrayscaleAsAlpha (true);
+			bitmap.loadGrayscaleAsAlpha(true);
 
 			// Open and read the file2
 			NLMISC::CIFile f2;
-			f2.setAsyncLoading (asyncload);
-			f2.setCacheFileOnOpen (asyncload); // Same as async loading
+			f2.setAsyncLoading(asyncload);
+			f2.setCacheFileOnOpen(asyncload); // Same as async loading
 			if (f2.open(file2))
 			{
 				bitmap.load(f2);
@@ -128,57 +127,57 @@ void CTextureFile::buildBitmapFromFile(NLMISC::CBitmap &dest, const std::string 
 			if ((dest.getWidth() == bitmap.getWidth()) && (dest.getHeight() == bitmap.getHeight()))
 			{
 				// Convert in Alpha
-				if (bitmap.convertToType (CBitmap::Alpha))
+				if (bitmap.convertToType(CBitmap::Alpha))
 				{
 					// Compute it
-					uint8 *userColor = (uint8 *)&(bitmap.getPixels ()[0]);
-					CRGBA *color = (CRGBA *)&(dest.getPixels ()[0]);
+					uint8 *userColor = (uint8 *)&(bitmap.getPixels()[0]);
+					CRGBA *color = (CRGBA *)&(dest.getPixels()[0]);
 
 					// For each pixel
-					uint pixelCount = dest.getWidth()*dest.getHeight();
+					uint pixelCount = dest.getWidth() * dest.getHeight();
 					uint pixel;
-					for (pixel = 0; pixel<pixelCount; pixel++)
+					for (pixel = 0; pixel < pixelCount; pixel++)
 					{
-						if (userColor[pixel]==0)
+						if (userColor[pixel] == 0)
 						{
 							// New code: use new restrictions from IDriver.
-							float	Rt, Gt, Bt, At;
-							float	Lt;
-							float	Rtm, Gtm, Btm, Atm;
+							float Rt, Gt, Bt, At;
+							float Lt;
+							float Rtm, Gtm, Btm, Atm;
 
 							// read 0-1 RGB pixel.
-							Rt= (float)color[pixel].R/255;
-							Gt= (float)color[pixel].G/255;
-							Bt= (float)color[pixel].B/255;
-							Lt= Rt*0.3f + Gt*0.56f + Bt*0.14f;
+							Rt = (float)color[pixel].R / 255;
+							Gt = (float)color[pixel].G / 255;
+							Bt = (float)color[pixel].B / 255;
+							Lt = Rt * 0.3f + Gt * 0.56f + Bt * 0.14f;
 
 							// take Alpha from userColor src.
-							At= (float)userColor[pixel]/255;
-							Atm= 1-Lt*(1-At);
+							At = (float)userColor[pixel] / 255;
+							Atm = 1 - Lt * (1 - At);
 
 							// If normal case.
-							if(Atm>0)
+							if (Atm > 0)
 							{
-								Rtm= Rt*At / Atm;
-								Gtm= Gt*At / Atm;
-								Btm= Bt*At / Atm;
+								Rtm = Rt * At / Atm;
+								Gtm = Gt * At / Atm;
+								Btm = Bt * At / Atm;
 							}
 							// Else special case: At==0, and Lt==1.
 							else
 							{
-								Rtm= Gtm= Btm= 0;
+								Rtm = Gtm = Btm = 0;
 							}
 
 							// copy to buffer.
-							sint	r,g,b,a;
-							r= (sint)(Rtm*255+0.5f);
-							g= (sint)(Gtm*255+0.5f);
-							b= (sint)(Btm*255+0.5f);
-							a= (sint)(Atm*255+0.5f);
-							clamp(r, 0,255);
-							clamp(g, 0,255);
-							clamp(b, 0,255);
-							clamp(a, 0,255);
+							sint r, g, b, a;
+							r = (sint)(Rtm * 255 + 0.5f);
+							g = (sint)(Gtm * 255 + 0.5f);
+							b = (sint)(Btm * 255 + 0.5f);
+							a = (sint)(Atm * 255 + 0.5f);
+							clamp(r, 0, 255);
+							clamp(g, 0, 255);
+							clamp(b, 0, 255);
+							clamp(a, 0, 255);
 							color[pixel].R = (uint8)r;
 							color[pixel].G = (uint8)g;
 							color[pixel].B = (uint8)b;
@@ -188,19 +187,19 @@ void CTextureFile::buildBitmapFromFile(NLMISC::CBitmap &dest, const std::string 
 				}
 				else
 				{
-					nlinfo ("Can't convert the usercolor texture %s in alpha mode", file2.c_str());
+					nlinfo("Can't convert the usercolor texture %s in alpha mode", file2.c_str());
 				}
 			}
 			else
 			{
 				// Error
-				nlinfo ("User color texture is not the same size than the texture. (Tex : %s, Usercolor : %s)", file.c_str(), file2.c_str());
+				nlinfo("User color texture is not the same size than the texture. (Tex : %s, Usercolor : %s)", file.c_str(), file2.c_str());
 			}
 		}
 	}
-	if(!isPowerOf2(dest.getWidth()) || !isPowerOf2(dest.getHeight()) )
+	if (!isPowerOf2(dest.getWidth()) || !isPowerOf2(dest.getHeight()))
 	{
-		H_AUTO( NL3D_buildBitmapPowerOf2 )
+		H_AUTO(NL3D_buildBitmapPowerOf2)
 		// If the user want to correct those texture so that their canvas is enlarged
 		if (enlargeCanvasNonPOW2Tex)
 		{
@@ -222,13 +221,12 @@ void CTextureFile::buildBitmapFromFile(NLMISC::CBitmap &dest, const std::string 
 	}
 }
 
-
 /*==================================================================*\
-							CTEXTUREFILE
+                            CTEXTUREFILE
 \*==================================================================*/
 
 /*------------------------------------------------------------------*\
-							doGenerate()
+                            doGenerate()
 \*------------------------------------------------------------------*/
 void CTextureFile::doGenerate(bool async)
 {
@@ -236,54 +234,53 @@ void CTextureFile::doGenerate(bool async)
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
 	 *	It can be loaded/called through CAsyncFileManager for instance
 	 * ***********************************************/
-	H_AUTO( NL3D_TextureFileDoGenerate )
+	H_AUTO(NL3D_TextureFileDoGenerate)
 
 	buildBitmapFromFile(*this, _FileName, async, _MipMapSkipAtLoad, _EnlargeCanvasNonPOW2Tex);
 }
 
-
 // ***************************************************************************
-void	CTextureFile::serial(NLMISC::IStream &f)
+void CTextureFile::serial(NLMISC::IStream &f)
 {
 	/*
 	Version 1:
-		- AllowDegradation.
+	    - AllowDegradation.
 	Version 0:
-		- base version.
+	    - base version.
 	*/
-	sint	ver= f.serialVersion(1);
+	sint ver = f.serialVersion(1);
 
 	// serial the base part of ITexture.
 	ITexture::serial(f);
 
 	f.serial(_FileName);
-	if(ver>=1)
+	if (ver >= 1)
 		f.serial(_AllowDegradation);
-	else if(f.isReading())
-		_AllowDegradation= true;
+	else if (f.isReading())
+		_AllowDegradation = true;
 
-	if(f.isReading())
+	if (f.isReading())
 		touch();
 }
 
-
 // ***************************************************************************
-void	CTextureFile::setAllowDegradation(bool allow)
+void CTextureFile::setAllowDegradation(bool allow)
 {
-	_AllowDegradation= allow;
+	_AllowDegradation = allow;
 }
 
 // ***************************************************************************
-CTextureFile::CTextureFile(const CTextureFile &other) : ITexture(other)
+CTextureFile::CTextureFile(const CTextureFile &other)
+    : ITexture(other)
 {
 	dupInfo(other);
 }
 
 // ***************************************************************************
-CTextureFile &CTextureFile::operator = (const CTextureFile &other)
+CTextureFile &CTextureFile::operator=(const CTextureFile &other)
 {
 	// copy base infos
-	(ITexture &) *this = (ITexture &) other;
+	(ITexture &)*this = (ITexture &)other;
 	dupInfo(other);
 	return *this;
 }
@@ -291,31 +288,29 @@ CTextureFile &CTextureFile::operator = (const CTextureFile &other)
 // ***************************************************************************
 void CTextureFile::dupInfo(const CTextureFile &other)
 {
-	_FileName         = other._FileName;
+	_FileName = other._FileName;
 	_AllowDegradation = other._AllowDegradation;
-	_SupportSharing	  = other._SupportSharing;
+	_SupportSharing = other._SupportSharing;
 	_MipMapSkipAtLoad = other._MipMapSkipAtLoad;
-	_EnlargeCanvasNonPOW2Tex   = other._EnlargeCanvasNonPOW2Tex;
+	_EnlargeCanvasNonPOW2Tex = other._EnlargeCanvasNonPOW2Tex;
 }
 
-
 // ***************************************************************************
-void			CTextureFile::enableSharing(bool enable)
+void CTextureFile::enableSharing(bool enable)
 {
 	_SupportSharing = enable;
 }
 
 // ***************************************************************************
-void			CTextureFile::setMipMapSkipAtLoad(uint8 level)
+void CTextureFile::setMipMapSkipAtLoad(uint8 level)
 {
-	_MipMapSkipAtLoad= level;
+	_MipMapSkipAtLoad = level;
 }
 
 // ***************************************************************************
-std::string		CTextureFile::getShareName() const
+std::string CTextureFile::getShareName() const
 {
 	return toLowerAscii(_FileName);
 }
-
 
 } // NL3D

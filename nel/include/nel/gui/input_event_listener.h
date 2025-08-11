@@ -23,17 +23,16 @@
 #include "nel/misc/types_nl.h"
 #include "nel/gui/event_descriptor.h"
 
-namespace NLGUI
+namespace NLGUI {
+/**
+ @brief Interface for accepting GUI input events.
+ */
+class IInputEventListener
 {
-	/**
-	 @brief Interface for accepting GUI input events.
-	 */
-	class IInputEventListener
-	{
-	public:
-		virtual ~IInputEventListener(){}
-		virtual bool handleEvent( const CEventDescriptor &eventDesc ) = 0;
-	};
+public:
+	virtual ~IInputEventListener() { }
+	virtual bool handleEvent(const CEventDescriptor &eventDesc) = 0;
+};
 }
 
 #endif

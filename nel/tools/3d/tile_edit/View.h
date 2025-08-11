@@ -49,11 +49,11 @@
 #define INS_FIN 2
 #define INS_CURSEUR 3
 
-#define BUFFERSIZE 200 //le buffer ne peut pas contenir plus de 100 items
+#define BUFFERSIZE 200 // le buffer ne peut pas contenir plus de 100 items
 
-//extern int SortTile;
-//extern int sortMode;
-//extern __int64 flagGroupSort;
+// extern int SortTile;
+// extern int sortMode;
+// extern __int64 flagGroupSort;
 extern int showNULL;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -61,59 +61,57 @@ extern int showNULL;
 class TileInfo
 {
 public:
-	//constructeurs
+	// constructeurs
 	TileInfo();
 
-	bool Load (int index, std::vector<NLMISC::CBGRA>* Alpha);
-	void Delete ();
+	bool Load(int index, std::vector<NLMISC::CBGRA> *Alpha);
+	void Delete();
 
-	//data
-	BITMAPINFO BmpInfo; 
+	// data
+	BITMAPINFO BmpInfo;
 	std::vector<NLMISC::CBGRA> Bits;
-	BITMAPINFO alphaBmpInfo; 
+	BITMAPINFO alphaBmpInfo;
 	std::vector<NLMISC::CBGRA> alphaBits;
-	BITMAPINFO nightBmpInfo; 
+	BITMAPINFO nightBmpInfo;
 	std::vector<NLMISC::CBGRA> nightBits;
 
-	const std::string& getRelativeFileName (NL3D::CTile::TBitmap type, int index);
+	const std::string &getRelativeFileName(NL3D::CTile::TBitmap type, int index);
 
-	//int number; //son index dans la liste (different de son id selon les tris !)
-	int loaded, nightLoaded, alphaLoaded;	//tells if the tile was already loaded or not
-	int Selected;							//tells if the tile is selected
-	int id;									//numero du tile
+	// int number; //son index dans la liste (different de son id selon les tris !)
+	int loaded, nightLoaded, alphaLoaded; // tells if the tile was already loaded or not
+	int Selected; // tells if the tile is selected
+	int id; // numero du tile
 };
 
 typedef std::vector<TileInfo> tilelist;
 
-
-
 class TileList
 {
-public:	
+public:
 	TileList();
-	//ajoute un tile (bmp) dans la liste sans le charger
-	//int Add (const char *path,const char *pathNight,const char *pathBump, int hh, int bb, int gg, int dd, unsigned int flags); 
-	
-	int addTile128 ();
-	int addTile256 ();
+	// ajoute un tile (bmp) dans la liste sans le charger
+	// int Add (const char *path,const char *pathNight,const char *pathBump, int hh, int bb, int gg, int dd, unsigned int flags);
 
-	int setTile128 (int tile, const std::string& name, NL3D::CTile::TBitmap type);
-	int setTile256 (int tile, const std::string& name, NL3D::CTile::TBitmap type);
-	int setTileTransition (int tile, const std::string& name, NL3D::CTile::TBitmap type);
-	int setTileTransitionAlpha (int tile, const std::string& name, int rot);
-	int setDisplacement (int tile, const std::string& name);
+	int addTile128();
+	int addTile256();
 
-	void removeTile128 (int index);
-	void removeTile256 (int index);
+	int setTile128(int tile, const std::string &name, NL3D::CTile::TBitmap type);
+	int setTile256(int tile, const std::string &name, NL3D::CTile::TBitmap type);
+	int setTileTransition(int tile, const std::string &name, NL3D::CTile::TBitmap type);
+	int setTileTransitionAlpha(int tile, const std::string &name, int rot);
+	int setDisplacement(int tile, const std::string &name);
 
-	void clearTile128 (int index, NL3D::CTile::TBitmap bitmap);
-	void clearTile256 (int index, NL3D::CTile::TBitmap bitmap);
-	void clearTransition (int index, NL3D::CTile::TBitmap bitmap);
-	void clearDisplacement (int index);
-	
-	void Reload(int first, int count, int n); //recharge en memoire une tranche de tiles
-	
-	int  GetSize(int n);
+	void removeTile128(int index);
+	void removeTile256(int index);
+
+	void clearTile128(int index, NL3D::CTile::TBitmap bitmap);
+	void clearTile256(int index, NL3D::CTile::TBitmap bitmap);
+	void clearTransition(int index, NL3D::CTile::TBitmap bitmap);
+	void clearDisplacement(int index);
+
+	void Reload(int first, int count, int n); // recharge en memoire une tranche de tiles
+
+	int GetSize(int n);
 	tilelist::iterator GetFirst(int n);
 	tilelist::iterator GetLast(int n);
 	tilelist::iterator Get(int i, int n);
@@ -128,73 +126,72 @@ public:
 	int _tileSet;
 };
 
-//charge une image (bmp pour le moment, tga,png,jpg plus tard ?)
-extern int _LoadBitmap(const std::string& path,LPBITMAPINFO BitmapInfo,std::vector<NLMISC::CBGRA>& Tampon,std::vector<NLMISC::CBGRA>* Alpha, int rot);
+// charge une image (bmp pour le moment, tga,png,jpg plus tard ?)
+extern int _LoadBitmap(const std::string &path, LPBITMAPINFO BitmapInfo, std::vector<NLMISC::CBGRA> &Tampon, std::vector<NLMISC::CBGRA> *Alpha, int rot);
 
 class CTView : public CStatic
 {
-// Construction
+	// Construction
 public:
 	CTView();
-//owner functions
+	// owner functions
 	int TileCtrl();
 	void Init(int _land, int n);
 	void Delete();
-	void DrawTile(tilelist::iterator i,CDC *pDC,int clear,int n);
-	int  LoadInListCtrl(tilelist::iterator iFirst,tilelist::iterator iLast);
+	void DrawTile(tilelist::iterator i, CDC *pDC, int clear, int n);
+	int LoadInListCtrl(tilelist::iterator iFirst, tilelist::iterator iLast);
 	void DeleteTile(tilelist::iterator p);
-	int  IsSelected(int i);
+	int IsSelected(int i);
 	void RemoveSelection(int n);
-	void ShadeRect( CDC *pDC, CRect& rect ); //permet d'afficher un bitmap selectionne a la "windows style"
-	void InsertItemInCtrlList(tilelist::iterator iFirst,tilelist::iterator iLast);
-	void GetVisibility(int &First,int &Last, int n);
-	int  GetNbTileLine(void);
-	int  GetNbTileColumn(void);
-	int	 GetIndex(LPPOINT pt, int n);
+	void ShadeRect(CDC *pDC, CRect &rect); // permet d'afficher un bitmap selectionne a la "windows style"
+	void InsertItemInCtrlList(tilelist::iterator iFirst, tilelist::iterator iLast);
+	void GetVisibility(int &First, int &Last, int n);
+	int GetNbTileLine(void);
+	int GetNbTileColumn(void);
+	int GetIndex(LPPOINT pt, int n);
 	tilelist::iterator GetTileSelection(tilelist::iterator i);
 	POINT GetPos(int i);
-	void UpdateSelection(LPRECT rect_,int mode, int n);
-	void DrawDragRect(CDC *pDC,LPCRECT lpRect, SIZE size,LPCRECT lpRectLast, SIZE sizeLast, CBrush* pBrush = NULL, CBrush* pBrushLast = NULL);
+	void UpdateSelection(LPRECT rect_, int mode, int n);
+	void DrawDragRect(CDC *pDC, LPCRECT lpRect, SIZE size, LPCRECT lpRectLast, SIZE sizeLast, CBrush *pBrush = NULL, CBrush *pBrushLast = NULL);
 	void UpdateSize(int n);
-	void UpdateBar(int iFirst,int iLast, int n);
+	void UpdateBar(int iFirst, int iLast, int n);
 
-// Attributes
+	// Attributes
 public:
-//owner data
-	std::string	LastPath;
-	int		 smEdgeList; //semaphore
-	int		 lockInsertion;
+	// owner data
+	std::string LastPath;
+	int smEdgeList; // semaphore
+	int lockInsertion;
 	TileList InfoList;
-	//edgelist EdgeList; //liste de toutes les bordures 
-	int		 sizetile_x,sizetile_y,sizetext_y;
-	int		 sizeicon_x,sizeicon_y,spacing_x,spacing_y,spacing_tile_text;
-	int		 scrollpos,lastVBarPos;
-	int		 Sort; //radio button state (1,2,3)
-	int		 Zoom;
-	int		 Texture;
-	int		 InfoTexte;
+	// edgelist EdgeList; //liste de toutes les bordures
+	int sizetile_x, sizetile_y, sizetext_y;
+	int sizeicon_x, sizeicon_y, spacing_x, spacing_y, spacing_tile_text;
+	int scrollpos, lastVBarPos;
+	int Sort; // radio button state (1,2,3)
+	int Zoom;
+	int Texture;
+	int InfoTexte;
 	CImageList *pImList;
-	void	 *pipo_buffer;
-	CBitmap	 *bmp;
-	int		 count_;
-	int		 ViewTileMode;
+	void *pipo_buffer;
+	CBitmap *bmp;
+	int count_;
+	int ViewTileMode;
 	TileInfo TileCroix;
-	CPoint   MousePos;
-	int		 iFirst,iLast; //indexes du premier et du dernier item du buffer
-	int		 iFV,iLV; //index du premier et du dernier item visible
-	int		 bPopup; //permet de savoir s'il le menu popup est active
+	CPoint MousePos;
+	int iFirst, iLast; // indexes du premier et du dernier item du buffer
+	int iFV, iLV; // index du premier et du dernier item visible
+	int bPopup; // permet de savoir s'il le menu popup est active
 
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CTView)
-	protected:
+protected:
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CTView();
 

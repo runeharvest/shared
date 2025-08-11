@@ -70,9 +70,9 @@ private:
 	GsfInput *m_Input;
 	GsfOutput *m_Output;
 
-/* there exist compressed max files, so maybe we will need this at some point
-GsfInput *          gsf_input_uncompress                (GsfInput *src);
-*/
+	/* there exist compressed max files, so maybe we will need this at some point
+	GsfInput *          gsf_input_uncompress                (GsfInput *src);
+	*/
 
 }; /* class CStorageStream */
 

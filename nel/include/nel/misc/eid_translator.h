@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef	NL_EID_TRANSLATOR_H
-#define	NL_EID_TRANSLATOR_H
+#ifndef NL_EID_TRANSLATOR_H
+#define NL_EID_TRANSLATOR_H
 
 #include <string>
 #include <vector>
@@ -27,111 +27,111 @@
 #include "ucstring.h"
 #include "command.h"
 
-namespace	NLMISC
-{
+namespace NLMISC {
 
 class CEntityIdTranslator
 {
 	NLMISC_SAFE_SINGLETON_DECL_PTR(CEntityIdTranslator);
-public:
 
+public:
 	/** Descriptor for an entity in the translator */
 	struct CEntity
 	{
-		CEntity ()
-			:	EntityNameStringId(0),
-				EntitySlot(-1),
-				ShardId(0),
-				UId(std::numeric_limits<uint32>::max()),
-				Online(false)
-		{ }
+		CEntity()
+		    : EntityNameStringId(0)
+		    , EntitySlot(-1)
+		    , ShardId(0)
+		    , UId(std::numeric_limits<uint32>::max())
+		    , Online(false)
+		{
+		}
 
-		CEntity (const ucstring &entityName, uint32 uid, const std::string &userName, sint8 entitySlot, uint32 shardId =0)
-			:	EntityName(entityName),
-				EntityNameStringId(0),
-				EntitySlot(entitySlot),
-				ShardId(shardId),
-				UId(uid),
-				UserName(userName),
-				Online(false)
-		{ }
+		CEntity(const ucstring &entityName, uint32 uid, const std::string &userName, sint8 entitySlot, uint32 shardId = 0)
+		    : EntityName(entityName)
+		    , EntityNameStringId(0)
+		    , EntitySlot(entitySlot)
+		    , ShardId(shardId)
+		    , UId(uid)
+		    , UserName(userName)
+		    , Online(false)
+		{
+		}
 
 		/// The display name of the entity
-		ucstring	EntityName;
+		ucstring EntityName;
 		/// The mapped name of the entity (used to store IOS generated string id)
-		uint32		EntityNameStringId;
+		uint32 EntityNameStringId;
 		/// the character slot
-		sint8		EntitySlot;
+		sint8 EntitySlot;
 		/// Shard id of the entity (for multi shard systems)
-		uint32		ShardId;
+		uint32 ShardId;
 
 		/// User id the character owner (aka account id)
-		uint32		UId;
+		uint32 UId;
 		/// User name of the character owner (aka account name)
 		std::string UserName;
 
 		/// A flag stating if the character is online
-		bool		Online;
+		bool Online;
 
-		void serial (NLMISC::IStream &s);
+		void serial(NLMISC::IStream &s);
 	};
 
-	typedef std::map<NLMISC::CEntityId, CEntity>	TEntityCont;
+	typedef std::map<NLMISC::CEntityId, CEntity> TEntityCont;
 
 	/// clear all the registered entities from the translator.
-	void				clear();
+	void clear();
 	// performs all check on a name ( name validity + uniqueness )
-	bool				checkEntityName (const ucstring &entityName);
+	bool checkEntityName(const ucstring &entityName);
 	/// return true if a name already exists
-	bool				entityNameExists(const ucstring &entityName);
+	bool entityNameExists(const ucstring &entityName);
 	// register an entity in this manager
-	void				registerEntity (const CEntityId &eid, const ucstring &entityName, sint8 entitySlot, uint32 uid, const std::string &userName, uint32 shardId =0);
+	void registerEntity(const CEntityId &eid, const ucstring &entityName, sint8 entitySlot, uint32 uid, const std::string &userName, uint32 shardId = 0);
 	// register or update an entity in this manager
-	void				updateEntity (const CEntityId &eid, const ucstring &entityName, sint8 entitySlot, uint32 uid, const std::string &userName, uint32 shardId =0);
+	void updateEntity(const CEntityId &eid, const ucstring &entityName, sint8 entitySlot, uint32 uid, const std::string &userName, uint32 shardId = 0);
 	// unregister an entity from this manager
-	void				unregisterEntity (const CEntityId &eid);
+	void unregisterEntity(const CEntityId &eid);
 	// Check if an entity is registered
-	bool				isEntityRegistered(const CEntityId &eid);
+	bool isEntityRegistered(const CEntityId &eid);
 	// set an association entityName / entityStringId, return true if association has been set
-	bool				setEntityNameStringId(const ucstring &entityName, uint32 stringId);
+	bool setEntityNameStringId(const ucstring &entityName, uint32 stringId);
 	// set an association entityId / entityStringId, return true if association has been set
-	bool				setEntityNameStringId(const CEntityId &eid, uint32 stringId);
+	bool setEntityNameStringId(const CEntityId &eid, uint32 stringId);
 	// get string id for entityId
-	uint32				getEntityNameStringId(const CEntityId &eid);
+	uint32 getEntityNameStringId(const CEntityId &eid);
 	// get the shard id of an entity
-	uint32				getEntityShardId(const CEntityId &eid);
+	uint32 getEntityShardId(const CEntityId &eid);
 
 	// set an eid to online or not
-	void				setEntityOnline (const CEntityId &eid, bool online);
+	void setEntityOnline(const CEntityId &eid, bool online);
 
 	// is an entity in online
-	bool				isEntityOnline (const CEntityId &eid);
+	bool isEntityOnline(const CEntityId &eid);
 
 	// check if parameters are coherent with the content of the class, if not, set with the parameters and warn
-	void				checkEntity (const CEntityId &eid, const ucstring &entityName, uint32 uid, const std::string &userName);
+	void checkEntity(const CEntityId &eid, const ucstring &entityName, uint32 uid, const std::string &userName);
 
 	// the first param is the file where are all entities information, the second is a text file (one line per pattern using * and ?) with invalid entity name
-	void				load (const std::string &fileName, const std::string &invalidEntityNamesFilename);
+	void load(const std::string &fileName, const std::string &invalidEntityNamesFilename);
 
 	// you must call this function to save the data into the hard drive
-	void				save ();
+	void save();
 
 	// get eid using the entity name
-	CEntityId			getByEntity (const ucstring &entityName);
+	CEntityId getByEntity(const ucstring &entityName);
 
 	// get entity name using the eid
-	const ucstring		&getByEntity (const NLMISC::CEntityId &eid);
+	const ucstring &getByEntity(const NLMISC::CEntityId &eid);
 
-	void				getEntityIdInfo (const CEntityId &eid, ucstring &entityName, sint8 &entitySlot, uint32 &uid, std::string &userName, bool &online, std::string* additional = NULL);
+	void getEntityIdInfo(const CEntityId &eid, ucstring &entityName, sint8 &entitySlot, uint32 &uid, std::string &userName, bool &online, std::string *additional = NULL);
 
 	// transform a username ucstring into a string that can be compared with registered string
-	std::string			getRegisterableString( const ucstring & entityName);
+	std::string getRegisterableString(const ucstring &entityName);
 
 	/// return a vector of invalid names
-	const std::vector<std::string> & getInvalidNames(){ return InvalidEntityNames; }
+	const std::vector<std::string> &getInvalidNames() { return InvalidEntityNames; }
 
-
-	const TEntityCont	&getRegisteredEntities () { return RegisteredEntities; }
+	const TEntityCont &getRegisteredEntities() { return RegisteredEntities; }
 
 	static const uint Version;
 
@@ -142,34 +142,33 @@ public:
 	 * Format MUST be [InfoName InfoValue]* (e.g. a list of 2 strings, first being name for
 	 * the retrieved info, and second being the value of the info
 	 */
-	typedef std::string	(*TAdditionalInfoCb)(const CEntityId &eid);
+	typedef std::string (*TAdditionalInfoCb)(const CEntityId &eid);
 
-	TAdditionalInfoCb	EntityInfoCallback;
+	TAdditionalInfoCb EntityInfoCallback;
 
-	static void removeShardFromName(ucstring& name);
+	static void removeShardFromName(ucstring &name);
 
 private:
 	// get all eid for a user using the user name or the user id
-	void				getByUser (uint32 uid, std::vector<NLMISC::CEntityId> &res);
-	void				getByUser (const std::string &userName, std::vector<NLMISC::CEntityId> &res, bool exact=true);
+	void getByUser(uint32 uid, std::vector<NLMISC::CEntityId> &res);
+	void getByUser(const std::string &userName, std::vector<NLMISC::CEntityId> &res, bool exact = true);
 
-	void				getByEntity (const ucstring &entityName, std::vector<NLMISC::CEntityId> &res, bool exact);
+	void getByEntity(const ucstring &entityName, std::vector<NLMISC::CEntityId> &res, bool exact);
 
 	// return the user id and 0 if not found
-	uint32				getUId (const std::string &userName);
-	std::string			getUserName (uint32 uid);
+	uint32 getUId(const std::string &userName);
+	std::string getUserName(uint32 uid);
 
 	// Returns true if the username is valid.
 	// It means that there only alphabetic and numerical character and the name is at least 3 characters long.
-	bool isValidEntityName (const ucstring &entityName, NLMISC::CLog *log = NLMISC::InfoLog );
-
+	bool isValidEntityName(const ucstring &entityName, NLMISC::CLog *log = NLMISC::InfoLog);
 
 	/// The container for all entity in the translator
-	TEntityCont			RegisteredEntities;
+	TEntityCont RegisteredEntities;
 
-	typedef std::map<ucstring, NLMISC::CEntityId>	TNameIndexCont;
+	typedef std::map<ucstring, NLMISC::CEntityId> TNameIndexCont;
 	/// the reverse index to retreive entity by name
-	TNameIndexCont	NameIndex;
+	TNameIndexCont NameIndex;
 
 	// Singleton, no ctor access
 	CEntityIdTranslator() { EntityInfoCallback = NULL; }
@@ -180,10 +179,10 @@ private:
 
 	friend void cbInvalidEntityNamesFilename(const std::string &filename);
 	friend struct entityNameValidClass;
-	NLMISC_CATEGORISED_COMMAND_FRIEND(nel,findEIdByUser);
-	NLMISC_CATEGORISED_COMMAND_FRIEND(nel,findEIdByEntity);
-	NLMISC_CATEGORISED_COMMAND_FRIEND(nel,entityNameValid);
-	NLMISC_CATEGORISED_COMMAND_FRIEND(nel,playerInfo);
+	NLMISC_CATEGORISED_COMMAND_FRIEND(nel, findEIdByUser);
+	NLMISC_CATEGORISED_COMMAND_FRIEND(nel, findEIdByEntity);
+	NLMISC_CATEGORISED_COMMAND_FRIEND(nel, entityNameValid);
+	NLMISC_CATEGORISED_COMMAND_FRIEND(nel, playerInfo);
 };
 
 }
@@ -191,4 +190,3 @@ private:
 #endif // NL_EID_TRANSLATOR_H
 
 /* End of eid_translator.h */
-

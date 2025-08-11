@@ -25,10 +25,7 @@
 #include "nel/3d/text_context.h"
 #include "nel/3d/driver_user.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 /**
  * UTextContext implementation.
@@ -39,30 +36,28 @@ namespace NL3D
 class CTextContextUser : public UTextContext
 {
 private:
-	CTextContext	_TextContext;
-	CDriverUser		*_DriverUser;
-	IDriver			*_Driver;
+	CTextContext _TextContext;
+	CDriverUser *_DriverUser;
+	IDriver *_Driver;
 	CComputedString _CacheString; // Performance Optimisation
 
 public:
-
 	/// Constructor
 	CTextContextUser(const std::string fontFileName, const std::string fontExFileName, CDriverUser *drv, CFontManager *fmg)
 	{
 		nlassert(drv);
-		_DriverUser= drv;
+		_DriverUser = drv;
 
 		// The enum of CComputedString and UTextContext MUST be the same!!!
-		nlassert((uint)UTextContext::HotSpotCount== (uint)CComputedString::HotSpotCount);
+		nlassert((uint)UTextContext::HotSpotCount == (uint)CComputedString::HotSpotCount);
 
-		_Driver= drv->getDriver();
+		_Driver = drv->getDriver();
 		_TextContext.init(_Driver, fmg);
 		_TextContext.setFontGenerator(fontFileName, fontExFileName);
 	}
 	virtual ~CTextContextUser()
 	{
 	}
-
 
 	/// \name Text look.
 	// @{
@@ -84,66 +79,63 @@ public:
 	void setShadeOutline(bool b);
 	bool getShadeOutline() const;
 	void setShadeExtent(float x, float y);
-	void setShadeColor (NLMISC::CRGBA sc);
-	NLMISC::CRGBA getShadeColor () const;
+	void setShadeColor(NLMISC::CRGBA sc);
+	NLMISC::CRGBA getShadeColor() const;
 	void setKeep800x600Ratio(bool keep);
 	bool getKeep800x600Ratio() const;
 	// @}
-
 
 	/// \name Rendering.
 	/** All rendering are done in current UDriver matrix context. So verify your 2D/3D modes.
 	 *
 	 */
 	// @{
-	uint32 textPush(const char *format, ...)  ;
-	uint32 textPush(NLMISC::CUtfStringView sv)  ;
+	uint32 textPush(const char *format, ...);
+	uint32 textPush(NLMISC::CUtfStringView sv);
 	void setStringColor(uint32 i, CRGBA newCol);
 	void setStringSelection(uint32 i, uint32 selectStart, uint32 selectSize);
 	void resetStringSelection(uint32 i);
-	void erase(uint32 i)  ;
-	virtual	CStringInfo		getStringInfo (uint32 i);
-	virtual	CStringInfo		getStringInfo (NLMISC::CUtfStringView sv);
-	virtual	CStringInfo		getStringInfo (NLMISC::CUtfStringView sv, size_t len);
+	void erase(uint32 i);
+	virtual CStringInfo getStringInfo(uint32 i);
+	virtual CStringInfo getStringInfo(NLMISC::CUtfStringView sv);
+	virtual CStringInfo getStringInfo(NLMISC::CUtfStringView sv, size_t len);
 
-	void clear()  ;
-	void printAt(float x, float y, uint32 i) ;
-	void printClipAt(URenderStringBuffer &renderBuffer, float x, float y, uint32 i, float xmin, float ymin, float xmax, float ymax) ;
+	void clear();
+	void printAt(float x, float y, uint32 i);
+	void printClipAt(URenderStringBuffer &renderBuffer, float x, float y, uint32 i, float xmin, float ymin, float xmax, float ymax);
 	void printClipAtUnProjected(URenderStringBuffer &renderBuffer, class NL3D::CFrustum &frustum, const NLMISC::CMatrix &scaleMatrix, float x, float y, float depth, uint32 i, float xmin, float ymin, float xmax, float ymax);
-	void printClipAtOld (float x, float y, uint32 i, float xmin, float ymin, float xmax, float ymax);
+	void printClipAtOld(float x, float y, uint32 i, float xmin, float ymin, float xmax, float ymax);
 
-	void printAt(float x, float y, NLMISC::CUtfStringView sv) ;
-	void printfAt(float x, float y, const char * format, ...) ;
+	void printAt(float x, float y, NLMISC::CUtfStringView sv);
+	void printfAt(float x, float y, const char *format, ...);
 
-	void render3D(const CMatrix &mat, NLMISC::CUtfStringView sv) ;
-	void render3D(const CMatrix &mat, const char *format, ...) ;
+	void render3D(const CMatrix &mat, NLMISC::CUtfStringView sv);
+	void render3D(const CMatrix &mat, const char *format, ...);
 
-	float getLastXBound() const ;
+	float getLastXBound() const;
 	// @}
 
-	void			dumpCacheTexture (const char *filename);
+	void dumpCacheTexture(const char *filename);
 
-	virtual URenderStringBuffer		*createRenderBuffer();
-	virtual void					deleteRenderBuffer(URenderStringBuffer *buffer);
-	virtual void					flushRenderBuffer(URenderStringBuffer *buffer);
-	virtual void					flushRenderBufferUnProjected(URenderStringBuffer *buffer, bool zwrite);
+	virtual URenderStringBuffer *createRenderBuffer();
+	virtual void deleteRenderBuffer(URenderStringBuffer *buffer);
+	virtual void flushRenderBuffer(URenderStringBuffer *buffer);
+	virtual void flushRenderBufferUnProjected(URenderStringBuffer *buffer, bool zwrite);
 
-	CTextContext	&getTextContext() {return _TextContext;}
+	CTextContext &getTextContext() { return _TextContext; }
 
 	/// \letters colors in single line mode.
 	/** In single line mode you can assign several color to letters
 	 *
 	 */
 	// @{
-	virtual void setLetterColors(ULetterColors * letterColors, uint index);
-	virtual bool isSameLetterColors(ULetterColors * letterColors, uint index);
-	virtual ULetterColors * createLetterColors();
+	virtual void setLetterColors(ULetterColors *letterColors, uint index);
+	virtual bool isSameLetterColors(ULetterColors *letterColors, uint index);
+	virtual ULetterColors *createLetterColors();
 	// @}
 };
 
-
 } // NL3D
-
 
 #endif // NL_TEXT_CONTEXT_USER_H
 

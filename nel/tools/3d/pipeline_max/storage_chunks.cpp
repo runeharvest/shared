@@ -43,7 +43,9 @@
 namespace PIPELINE {
 namespace MAX {
 
-CStorageChunks::CStorageChunks(NLMISC::IStream &stream, sint64 size) : m_Stream(stream), m_Is64Bit(false)
+CStorageChunks::CStorageChunks(NLMISC::IStream &stream, sint64 size)
+    : m_Stream(stream)
+    , m_Is64Bit(false)
 {
 	if (size >= 2147483647L)
 		throw NLMISC::EStream("64bit chunks not supported");

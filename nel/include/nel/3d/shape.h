@@ -17,27 +17,22 @@
 #ifndef NL_SHAPE_H
 #define NL_SHAPE_H
 
-
 #include "nel/misc/types_nl.h"
 #include "nel/misc/smart_ptr.h"
 #include "nel/misc/matrix.h"
 #include "nel/misc/stream.h"
 #include "nel/misc/aabbox.h"
 
+namespace NL3D {
 
-namespace NL3D
-{
-
-
-using NLMISC::CPlane;
 using NLMISC::CMatrix;
+using NLMISC::CPlane;
 
-
-class	CTransformShape;
-class	IDriver;
-class	CScene;
-class	IMeshGeom;
-class	CRenderTrav;
+class CTransformShape;
+class IDriver;
+class CScene;
+class IMeshGeom;
+class CRenderTrav;
 
 // ***************************************************************************
 /**
@@ -67,18 +62,17 @@ class IShape : public NLMISC::CRefCount, public NLMISC::IStreamable
 	 * ***********************************************/
 
 public:
-
 	/// Constructor
 	IShape();
 	/// Dtor.
-	virtual ~IShape() {}
+	virtual ~IShape() { }
 
 	/** create an instance of this shape. The instance may be a CTransformShape, or a specialized version of it.
 	 * The default behavior is to createModel() a CTransformShape, and just assign to it the Shape.
 	 * \param scene the scene used to createModel().
 	 * \return the specialized instance for this shape.
 	 */
-	virtual	CTransformShape		*createInstance(CScene &scene);
+	virtual CTransformShape *createInstance(CScene &scene);
 
 	/** clip this shape with a pyramid.
 	 * the pyramid is given in world space.The world matrix of the object is given.
@@ -86,38 +80,37 @@ public:
 	 * \param worldMatrix the world matrix of the instance.
 	 * \return true if the object is visible, false otherwise. The default behavior is to return true (never clipped).
 	 */
-	virtual bool				clip(const std::vector<CPlane>& /* pyramid */, const CMatrix &/* worldMatrix */) {return true;}
+	virtual bool clip(const std::vector<CPlane> & /* pyramid */, const CMatrix & /* worldMatrix */) { return true; }
 
 	/** render() this shape in a driver, with the specified TransformShape information.
 	 * CTransfromShape call this method in the render traversal.
 	 * if opaquePass render the opaque materials else render the transparent materials.
 	 */
-	virtual void				render(IDriver *drv, CTransformShape *trans, bool opaquePass)=0;
+	virtual void render(IDriver *drv, CTransformShape *trans, bool opaquePass) = 0;
 
 	/** flush textures used by this shape.
 	 */
-	virtual void				flushTextures (IDriver &driver, uint selectedTexture)=0;
+	virtual void flushTextures(IDriver &driver, uint selectedTexture) = 0;
 
 	/** return the bounding box of the shape. Default is to return Null bbox.
 	 */
-	virtual	void				getAABBox(NLMISC::CAABBox &bbox) const;
+	virtual void getAABBox(NLMISC::CAABBox &bbox) const;
 
 	/** return the DistMax where the shape is no more displayed.
 	 *	Default is to return -1, meaning DistMax = infinite.
 	 */
-	float						getDistMax() const {return _DistMax;}
+	float getDistMax() const { return _DistMax; }
 
 	/** setup the DistMax where the shape is no more displayed.
 	 *  Take effect only for the next created instances.
 	 *	setting <0 means -1 and so means DistMax = infinite.
 	 */
-	void						setDistMax(float distMax);
+	void setDistMax(float distMax);
 
 	/** Profiling. Called in RenderPass if Current Frame profiled. No-Op by default
 	 *	Information must be added in rdrTrav->Scene
 	 */
-	virtual void				profileSceneRender(CRenderTrav * /* rdrTrav */, CTransformShape * /* trans */, bool /* opaquePass */) { }
-
+	virtual void profileSceneRender(CRenderTrav * /* rdrTrav */, CTransformShape * /* trans */, bool /* opaquePass */) { }
 
 	/// \name Load balancing methods
 	// @{
@@ -125,20 +118,18 @@ public:
 	/** get an approximation of the number of triangles this instance will render for a fixed distance.
 	 *	return 0 if do not support degradation.
 	 */
-	virtual float				getNumTriangles (float distance)=0;
+	virtual float getNumTriangles(float distance) = 0;
 
 	// @}
-
 
 	/// \name Lighting method
 	// @{
 
 	/** tells if the shape wants LocalAttenuation for RealTime lighting.  Default is false
 	 */
-	virtual bool				useLightingLocalAttenuation () const {return false;}
+	virtual bool useLightingLocalAttenuation() const { return false; }
 
 	// @}
-
 
 	/// \name Mesh Block Render Interface
 	// @{
@@ -151,7 +142,7 @@ public:
 	 *	\param polygonCount the number of polygons to render for the meshGeom returned
 	 *	\return the meshgeom to render per block if OK, else NULL (default)
 	 */
-	virtual IMeshGeom			*supportMeshBlockRendering (CTransformShape * /* trans */, float &/* polygonCount */ ) const {return NULL;}
+	virtual IMeshGeom *supportMeshBlockRendering(CTransformShape * /* trans */, float & /* polygonCount */) const { return NULL; }
 
 	// @}
 
@@ -159,13 +150,11 @@ public:
 	 *	NB: typically, this must be called just after load, because the vertexbuffer must not be resident
 	 *	Supported only on a subset of Shape, and specially not the skinned one (not useful since not relevant)
 	 */
-	virtual void				buildSystemGeometry() {}
+	virtual void buildSystemGeometry() { }
 
 protected:
-
 	/// Default to -1
-	float			_DistMax;
-
+	float _DistMax;
 };
 
 // ***************************************************************************
@@ -181,33 +170,33 @@ class CShapeStream
 {
 public:
 	/// Default constructor. Set the IShape pointer to NULL.
-	CShapeStream ();
+	CShapeStream();
 
 	/** Constructor. Get a IShape pointer. Used to output serialization.
 	 *  \param shape the pointer on the IShape derived object you want to serialize.
 	 */
-	CShapeStream (IShape* shape);
+	CShapeStream(IShape *shape);
 
-	virtual ~CShapeStream() {}
+	virtual ~CShapeStream() { }
 
 	/** Set the pointer to the IShape object. Used to serial a shape in output.
 	 *  \param shape the pointer on the IShape derived object you want to serialize.
 	 */
-	void						setShapePointer (IShape* shape);
+	void setShapePointer(IShape *shape);
 
 	/** Get the pointer to the IShape object. Used to serial a shape in input.
 	 *  \return shape the pointer on the IShape derived object serialized.
 	 */
-	IShape*						getShapePointer () const;
+	IShape *getShapePointer() const;
 
 	/// serial the shape.
-	virtual void				serial(NLMISC::IStream &f);
+	virtual void serial(NLMISC::IStream &f);
+
 private:
-	IShape*			_Shape;
+	IShape *_Shape;
 };
 
 } // NL3D
-
 
 #endif // NL_SHAPE_H
 

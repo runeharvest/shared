@@ -24,7 +24,6 @@
 
 namespace NL3D {
 
-
 /**
  * This texture is a helper to build a embossed texture from a height map.
  * \author Nicolas Vizerie
@@ -39,49 +38,62 @@ public:
 	CTextureEmboss();
 
 	/// set the height map used to generate this bump map
-	void				setHeightMap(ITexture *heightMap);
+	void setHeightMap(ITexture *heightMap);
 	/// get the height map used to generate this bumpmap
-	ITexture			*getHeightMap() { return _HeightMap; };
+	ITexture *getHeightMap() { return _HeightMap; };
 	/// get the height map used to generate this bumpmap (const version)
-	const ITexture		*getHeightMap() const { return _HeightMap; };
+	const ITexture *getHeightMap() const { return _HeightMap; };
 
 	// serial this texture datas
-	virtual void			serial(NLMISC::IStream &f);
-	virtual bool			supportSharing() const;
-	virtual std::string		getShareName() const;
+	virtual void serial(NLMISC::IStream &f);
+	virtual bool supportSharing() const;
+	virtual std::string getShareName() const;
 	//
-	void					enableSharing(bool enabled = true) { _DisableSharing = !enabled; }
-	bool					isSharingEnabled() const { return !_DisableSharing; }
+	void enableSharing(bool enabled = true) { _DisableSharing = !enabled; }
+	bool isSharingEnabled() const { return !_DisableSharing; }
 
 	// set the ambiant/ diffuse color to be added to the embossed texture
-	void					setAmbient(NLMISC::CRGBA ambient) { _Ambient = ambient; touch(); }
-	void					setDiffuse(NLMISC::CRGBA diffuse) { _Diffuse = diffuse; touch(); }
+	void setAmbient(NLMISC::CRGBA ambient)
+	{
+		_Ambient = ambient;
+		touch();
+	}
+	void setDiffuse(NLMISC::CRGBA diffuse)
+	{
+		_Diffuse = diffuse;
+		touch();
+	}
 	// Set the direction of light (usually should be normalized). The bitmap is in the x,y plane
-	void					setLightDir(const NLMISC::CVector &lightDir) { _LightDir = lightDir; touch(); }
+	void setLightDir(const NLMISC::CVector &lightDir)
+	{
+		_LightDir = lightDir;
+		touch();
+	}
 	// set a factor for the slope
-	void                    setSlopeFactor(float factor) { _SlopeFactor = factor; touch(); }
+	void setSlopeFactor(float factor)
+	{
+		_SlopeFactor = factor;
+		touch();
+	}
 	//
-	NLMISC::CRGBA			getAmbient() const { return _Ambient; }
-	NLMISC::CRGBA			getDiffuse() const { return _Diffuse; }
-	const NLMISC::CVector   &getLightDir() const { return _LightDir; }
-	float					getSlopeFactor() const { return _SlopeFactor; }
-
+	NLMISC::CRGBA getAmbient() const { return _Ambient; }
+	NLMISC::CRGBA getDiffuse() const { return _Diffuse; }
+	const NLMISC::CVector &getLightDir() const { return _LightDir; }
+	float getSlopeFactor() const { return _SlopeFactor; }
 
 	// inherited from ITexture. release this texture, and its datas
 	virtual void release();
-
 
 protected:
 	// inherited from ITexture. Generate this bumpmap pixels
 	virtual void doGenerate(bool async = false);
 	NLMISC::CSmartPtr<ITexture> _HeightMap;
-	NLMISC::CRGBA				_Ambient;
-	NLMISC::CRGBA				_Diffuse;
-	NLMISC::CVector				_LightDir;
-	bool						_DisableSharing;
-	float						_SlopeFactor;
+	NLMISC::CRGBA _Ambient;
+	NLMISC::CRGBA _Diffuse;
+	NLMISC::CVector _LightDir;
+	bool _DisableSharing;
+	float _SlopeFactor;
 };
-
 
 } // NL3D
 

@@ -28,7 +28,6 @@
 #ifndef SINGLETON_REGISTRY_H
 #define SINGLETON_REGISTRY_H
 
-
 //-------------------------------------------------------------------------------------------------
 // includes
 //-------------------------------------------------------------------------------------------------
@@ -43,28 +42,27 @@ class IServiceSingleton
 {
 public:
 	// overloadable method called at service initialisation
-	virtual void init()				{}
+	virtual void init() { }
 
 	// overloadable method called in the service update
-	virtual void serviceUpdate()	{}
+	virtual void serviceUpdate() { }
 
 	// overloadable method called in the tick update
-	virtual void tickUpdate()		{}
+	virtual void tickUpdate() { }
 
 	// overloadable method called at service release
-	virtual void release()			{}
+	virtual void release() { }
 
 protected:
 	// protect from untrolled instantiation
 	// this method registers the singleton with the singleton registry
 	IServiceSingleton();
-	virtual ~IServiceSingleton() {}
+	virtual ~IServiceSingleton() { }
 
 private:
 	// prohibit copy
-	IServiceSingleton(const IServiceSingleton&);
+	IServiceSingleton(const IServiceSingleton &);
 };
-
 
 //-------------------------------------------------------------------------------------------------
 // class CSingletonRegistry
@@ -74,10 +72,10 @@ class CSingletonRegistry
 {
 public:
 	// public interface for getting hold of the singleton instance
-	static CSingletonRegistry* getInstance();
+	static CSingletonRegistry *getInstance();
 
 	// registration of an IServiceSingleton object with the singleton
-	void registerSingleton(IServiceSingleton*);
+	void registerSingleton(IServiceSingleton *);
 
 	// methods called from the service loop
 	void init();
@@ -87,13 +85,12 @@ public:
 
 private:
 	// prohibit uncontrolled instantiation
-	CSingletonRegistry() {}
-	CSingletonRegistry(const CSingletonRegistry&);
+	CSingletonRegistry() { }
+	CSingletonRegistry(const CSingletonRegistry &);
 
-	typedef std::set<IServiceSingleton*> TSingletons;
+	typedef std::set<IServiceSingleton *> TSingletons;
 	TSingletons _Singletons;
 };
-
 
 //-------------------------------------------------------------------------------------------------
 // inlines IServiceSingleton
@@ -104,50 +101,48 @@ inline IServiceSingleton::IServiceSingleton()
 	CSingletonRegistry::getInstance()->registerSingleton(this);
 }
 
-
 //-------------------------------------------------------------------------------------------------
 // inlines CSingletonRegistry
 //-------------------------------------------------------------------------------------------------
 
-inline CSingletonRegistry* CSingletonRegistry::getInstance()
+inline CSingletonRegistry *CSingletonRegistry::getInstance()
 {
-	static CSingletonRegistry* instance= NULL;
-	if (instance==NULL)
+	static CSingletonRegistry *instance = NULL;
+	if (instance == NULL)
 	{
-		instance=new CSingletonRegistry;
+		instance = new CSingletonRegistry;
 	}
 	return instance;
 }
 
-inline void CSingletonRegistry::registerSingleton(IServiceSingleton* singleton)
+inline void CSingletonRegistry::registerSingleton(IServiceSingleton *singleton)
 {
 	_Singletons.insert(singleton);
 }
 
 inline void CSingletonRegistry::init()
 {
-	for (TSingletons::iterator it=_Singletons.begin(); it!=_Singletons.end();++it)
+	for (TSingletons::iterator it = _Singletons.begin(); it != _Singletons.end(); ++it)
 		(*it)->init();
 }
 
 inline void CSingletonRegistry::tickUpdate()
 {
-	for (TSingletons::iterator it=_Singletons.begin(); it!=_Singletons.end();++it)
+	for (TSingletons::iterator it = _Singletons.begin(); it != _Singletons.end(); ++it)
 		(*it)->tickUpdate();
 }
 
 inline void CSingletonRegistry::serviceUpdate()
 {
-	for (TSingletons::iterator it=_Singletons.begin(); it!=_Singletons.end();++it)
+	for (TSingletons::iterator it = _Singletons.begin(); it != _Singletons.end(); ++it)
 		(*it)->serviceUpdate();
 }
 
 inline void CSingletonRegistry::release()
 {
-	for (TSingletons::iterator it=_Singletons.begin(); it!=_Singletons.end();++it)
+	for (TSingletons::iterator it = _Singletons.begin(); it != _Singletons.end(); ++it)
 		(*it)->release();
 }
-
 
 //-------------------------------------------------------------------------------------------------
 #endif

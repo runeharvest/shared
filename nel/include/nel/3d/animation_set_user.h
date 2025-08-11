@@ -27,14 +27,10 @@
 
 #include "nel/3d/animation_set.h"
 
+namespace NL3D {
 
-namespace NL3D
-{
-
-
-class	CPlayListManagerUser;
-class	CDriverUser;
-
+class CPlayListManagerUser;
+class CDriverUser;
 
 // ***************************************************************************
 /**
@@ -46,35 +42,34 @@ class	CDriverUser;
 class CAnimationSetUser : public UAnimationSet
 {
 private:
-	NLMISC::CSmartPtr<CAnimationSet>		_AnimationSet;
-	CDriverUser								*_Owner;
+	NLMISC::CSmartPtr<CAnimationSet> _AnimationSet;
+	CDriverUser *_Owner;
 	friend class CPlayListManagerUser;
 	friend class CSceneUser;
 
 public:
-
 	/// Constructor
 	CAnimationSetUser(CDriverUser *owner, bool headerOptim = true)
 	{
 		nlassert(owner);
-		_Owner= owner;
+		_Owner = owner;
 
-		nlassert((uint)UAnimationSet::NotFound == (uint)CAnimationSet::NotFound );
+		nlassert((uint)UAnimationSet::NotFound == (uint)CAnimationSet::NotFound);
 
 		// create a smartptred animation set. Allow header compression
-		_AnimationSet= new CAnimationSet(headerOptim);
+		_AnimationSet = new CAnimationSet(headerOptim);
 	}
 
 	/// Constructor
-	CAnimationSetUser(CDriverUser *owner, NLMISC::IStream	&f)
+	CAnimationSetUser(CDriverUser *owner, NLMISC::IStream &f)
 	{
 		nlassert(owner);
-		_Owner= owner;
+		_Owner = owner;
 
-		nlassert((uint)UAnimationSet::NotFound == (uint)CAnimationSet::NotFound );
+		nlassert((uint)UAnimationSet::NotFound == (uint)CAnimationSet::NotFound);
 
 		// create a smartptred animation set. DO NOT Allow header compression, cause serial()
-		_AnimationSet= new CAnimationSet(false);
+		_AnimationSet = new CAnimationSet(false);
 
 		_AnimationSet->serial(f);
 	}
@@ -84,29 +79,29 @@ public:
 	virtual uint getAnimationSampleDivisor() const;
 
 	/**
-	  *  Add an animation in the animation set. After adding all your animations, call build().
-	  *
-	  * \param fileName is the animation filename
-	  * \param animName is the name of the animation in the animation set.
-	  * \return NotFound if the file is not found.
-	  */
-	uint addAnimation (const char* fileName, const char* animName, bool displayMissingFileWarning  = true)
+	 *  Add an animation in the animation set. After adding all your animations, call build().
+	 *
+	 * \param fileName is the animation filename
+	 * \param animName is the name of the animation in the animation set.
+	 * \return NotFound if the file is not found.
+	 */
+	uint addAnimation(const char *fileName, const char *animName, bool displayMissingFileWarning = true)
 	{
 		// Allocate an animation
-		CUniquePtr<CAnimation> anim (new CAnimation);
+		CUniquePtr<CAnimation> anim(new CAnimation);
 
 		// Read it
 		NLMISC::CIFile file;
-		std::string path = NLMISC::CPath::lookup (fileName, false, displayMissingFileWarning);
+		std::string path = NLMISC::CPath::lookup(fileName, false, displayMissingFileWarning);
 		if (path.empty())
 			path = fileName;
-		if ( file.open ( path ) )
+		if (file.open(path))
 		{
 			// Serial the animation
-			file.serial (*anim);
+			file.serial(*anim);
 
 			// Add the animation
-			uint id=_AnimationSet->addAnimation (animName, anim.release());
+			uint id = _AnimationSet->addAnimation(animName, anim.release());
 
 			// Return id
 			return id;
@@ -115,32 +110,32 @@ public:
 	}
 
 	/**
-	  *  Build the animation set. Call build after adding all your animations.
-	  */
-	virtual	void build ();
+	 *  Build the animation set. Call build after adding all your animations.
+	 */
+	virtual void build();
 
 	/**
-	  *  Add a skeleton weight in the animation set.
-	  *  This method use CPath to search the skeleton file.
-	  *
-	  * \param fileName is the skeleton weight filename
-	  * \param animName is the name of the skeleton weight in the animation set.
-	  * \return the id of the new skeleton or NotFound if the file is not found.
-	  */
-	virtual uint addSkeletonWeight (const char* fileName, const char* skelName)
+	 *  Add a skeleton weight in the animation set.
+	 *  This method use CPath to search the skeleton file.
+	 *
+	 * \param fileName is the skeleton weight filename
+	 * \param animName is the name of the skeleton weight in the animation set.
+	 * \return the id of the new skeleton or NotFound if the file is not found.
+	 */
+	virtual uint addSkeletonWeight(const char *fileName, const char *skelName)
 	{
 		// Allocate an animation
-		CUniquePtr<CSkeletonWeight> skeletonWeight (new CSkeletonWeight);
+		CUniquePtr<CSkeletonWeight> skeletonWeight(new CSkeletonWeight);
 
 		// Read it
 		NLMISC::CIFile file;
-		if (file.open ( NLMISC::CPath::lookup( fileName ) ) )
+		if (file.open(NLMISC::CPath::lookup(fileName)))
 		{
 			// Serial the animation
-			file.serial (*skeletonWeight);
+			file.serial(*skeletonWeight);
 
 			// Add the animation
-			uint id=_AnimationSet->addSkeletonWeight (skelName, skeletonWeight.release());
+			uint id = _AnimationSet->addSkeletonWeight(skelName, skeletonWeight.release());
 
 			// Return id
 			return id;
@@ -151,76 +146,74 @@ public:
 	/// \name Animations mgt.
 	// @{
 	/**
-	  * Get animations count.
-	  */
-	virtual	uint getNumAnimation () const
+	 * Get animations count.
+	 */
+	virtual uint getNumAnimation() const
 	{
 		return _AnimationSet->getNumAnimation();
 	}
 
 	/**
-	  * Get an animation ID by name. If no animation is found, method returns NotFound.
-	  */
-	virtual	uint getAnimationIdByName (const std::string& name) const
+	 * Get an animation ID by name. If no animation is found, method returns NotFound.
+	 */
+	virtual uint getAnimationIdByName(const std::string &name) const
 	{
 		return _AnimationSet->getAnimationIdByName(name);
 	}
 
 	/**
-	  * Get animation name.
-	  */
-	virtual	const std::string& getAnimationName (uint animationId) const
+	 * Get animation name.
+	 */
+	virtual const std::string &getAnimationName(uint animationId) const
 	{
-		if(animationId>=getNumAnimation())
+		if (animationId >= getNumAnimation())
 			nlerror("getAnimation*(): bad animation Id");
 		return _AnimationSet->getAnimationName(animationId);
 	}
 
 	/**
-	  * Get a writable animation pointer.
-	  *
-	  * \return the end time.
-	  */
-	virtual UAnimation* getAnimation (uint animationId);
+	 * Get a writable animation pointer.
+	 *
+	 * \return the end time.
+	 */
+	virtual UAnimation *getAnimation(uint animationId);
 
 	// @}
-
 
 	/// \name SkeletonWeight mgt.
 	// @{
 	/**
-	  * Get skeleton weight count.
-	  */
-	virtual	uint getNumSkeletonWeight () const
+	 * Get skeleton weight count.
+	 */
+	virtual uint getNumSkeletonWeight() const
 	{
 		return _AnimationSet->getNumSkeletonWeight();
 	}
 
 	/**
-	  * Get a SkeletonWeight ID by name. If no SkeletonWeight is found, method returns NotFound.
-	  */
-	virtual	uint getSkeletonWeightIdByName (const std::string& name) const
+	 * Get a SkeletonWeight ID by name. If no SkeletonWeight is found, method returns NotFound.
+	 */
+	virtual uint getSkeletonWeightIdByName(const std::string &name) const
 	{
 		return _AnimationSet->getSkeletonWeightIdByName(name);
 	}
 
 	/**
-	  * Get skeleton template name.
-	  */
-	virtual	const std::string& getSkeletonWeightName (uint skeletonId) const
+	 * Get skeleton template name.
+	 */
+	virtual const std::string &getSkeletonWeightName(uint skeletonId) const
 	{
-		if(skeletonId>=getNumSkeletonWeight())
+		if (skeletonId >= getNumSkeletonWeight())
 			nlerror("getSkeletonWeight*(): bad SkeletonWeight Id");
 		return _AnimationSet->getSkeletonWeightName(skeletonId);
 	}
 
 	// @}
 
-
 	/// \name Channel mgt.
 	// @{
 
-	virtual	uint getChannelIdByName (const std::string& name) const
+	virtual uint getChannelIdByName(const std::string &name) const
 	{
 		return _AnimationSet->getChannelIdByName(name);
 	}
@@ -228,11 +221,10 @@ public:
 	// @}
 
 	// Access the animation set
-	const CAnimationSet* getAnimationSet () const;
+	const CAnimationSet *getAnimationSet() const;
 };
 
 } // NL3D
-
 
 #endif // NL_ANIMATION_SET_USER_H
 

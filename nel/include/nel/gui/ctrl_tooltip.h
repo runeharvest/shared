@@ -17,46 +17,43 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RZ_CTRL_TOOLTIP_H
 #define RZ_CTRL_TOOLTIP_H
 
 #include "nel/gui/ctrl_base.h"
 #include "nel/3d/u_texture.h"
 
-namespace NLGUI
+namespace NLGUI {
+class CEventDescriptor;
+
+/**
+ * \author Matthieu 'Mr TRAP' Besson
+ * \author Nevrax France
+ * \date 2003
+ */
+class CCtrlToolTip : public CCtrlBase
 {
-	class CEventDescriptor;
-
-
-	/**
-	 * \author Matthieu 'Mr TRAP' Besson
-	 * \author Nevrax France
-	 * \date 2003
-	 */
-	class CCtrlToolTip : public CCtrlBase
+public:
+	DECLARE_UI_CLASS(CCtrlToolTip)
+	/// Constructor
+	CCtrlToolTip(const TCtorParam &param)
+	    : CCtrlBase(param)
 	{
-	public:
-		DECLARE_UI_CLASS(CCtrlToolTip)
-		/// Constructor
-		CCtrlToolTip(const TCtorParam &param) : CCtrlBase(param) {}
+	}
 
-		virtual bool handleEvent (const NLGUI::CEventDescriptor& eventDesc);
-		virtual void draw();
-		xmlNodePtr serialize( xmlNodePtr parentNode, const char *type ) const;
-		virtual bool		parse (xmlNodePtr cur, CInterfaceGroup *parentGroup);
-		// Can do nothing with tooltip (but display it :) )
-		virtual	bool		isCapturable() const {return false;}
-		virtual void        serial(NLMISC::IStream &f);
-	public:
+	virtual bool handleEvent(const NLGUI::CEventDescriptor &eventDesc);
+	virtual void draw();
+	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
+	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+	// Can do nothing with tooltip (but display it :) )
+	virtual bool isCapturable() const { return false; }
+	virtual void serial(NLMISC::IStream &f);
 
-	};
-
+public:
+};
 
 }
 
 #endif // RZ_CTRL_TOOLTIP_H
 
 /* End of ctrl_tooltip.h */
-

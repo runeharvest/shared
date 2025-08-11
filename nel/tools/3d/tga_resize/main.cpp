@@ -4,36 +4,32 @@
 #include "nel/misc/file.h"
 #include <vector>
 
-
 using namespace NLMISC;
 using namespace std;
 
-
-void	usage()
+void usage()
 {
 	printf("Usage: tga_resize tgaFileIn tgaFileOut divideRatio.\n   \
     eg: tga_resize pipo.tga pipo.tga 2\n \
         => pipo.tga widht and height are divided by 2 \n\n");
-
 }
-
 
 int main(int argc, char *argv[])
 {
-	if(argc != 4)
+	if (argc != 4)
 	{
 		usage();
 		return -1;
 	}
 	else
 	{
-		CBitmap		btmp;
-		CIFile		inFile;
-		COFile		outFile;
+		CBitmap btmp;
+		CIFile inFile;
+		COFile outFile;
 
-		uint	divideRatio;
+		uint divideRatio;
 		NLMISC::fromString(argv[3], divideRatio);
-		if(divideRatio==0 || !isPowerOf2(divideRatio))
+		if (divideRatio == 0 || !isPowerOf2(divideRatio))
 		{
 			printf("divideRatio must be a powerOf2 (1, 2, 4, 8 ...) \n");
 			return 0;
@@ -47,8 +43,8 @@ int main(int argc, char *argv[])
 				printf("Can't open input file %s \n", argv[1]);
 				return -1;
 			}
-			uint8	depth= btmp.load(inFile);
-			if(depth==0)
+			uint8 depth = btmp.load(inFile);
+			if (depth == 0)
 				throw Exception("Bad File Format");
 			inFile.close();
 
@@ -66,7 +62,7 @@ int main(int argc, char *argv[])
 		catch (const Exception &e)
 		{
 			printf("Error: %s\n", e.what());
-				return -1;
+			return -1;
 		}
 
 		return 0;

@@ -28,10 +28,10 @@ static char THIS_FILE[] = __FILE__;
 // CTile_edit_exeApp
 
 BEGIN_MESSAGE_MAP(CTile_edit_exeApp, CWinApp)
-	//{{AFX_MSG_MAP(CTile_edit_exeApp)
-	ON_BN_CLICKED(ID_SAVE_AS, OnSaveAs)
-	//}}AFX_MSG_MAP
-	ON_COMMAND(ID_HELP, CWinApp::OnHelp)
+//{{AFX_MSG_MAP(CTile_edit_exeApp)
+ON_BN_CLICKED(ID_SAVE_AS, OnSaveAs)
+//}}AFX_MSG_MAP
+ON_COMMAND(ID_HELP, CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ CTile_edit_exeApp theApp;
 
 BOOL CTile_edit_exeApp::InitInstance()
 {
-//	AfxEnableControlContainer();
+	//	AfxEnableControlContainer();
 
 	// Standard initialization
 	// If you are not using these features and wish to reduce the size
@@ -67,8 +67,7 @@ BOOL CTile_edit_exeApp::InitInstance()
 	return FALSE;
 }
 
-void CTile_edit_exeApp::OnSaveAs() 
+void CTile_edit_exeApp::OnSaveAs()
 {
 	// TODO: Add your control notification handler code here
-	
 }

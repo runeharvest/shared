@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef IOS_INTERFACE_H
-#define	IOS_INTERFACE_H
+#define IOS_INTERFACE_H
 
 //-------------------------------------------------------------------------------------------------
 // includes
@@ -36,28 +36,27 @@ struct CIOSMsgSetPhrase
 	std::string PhraseName;
 	ucstring Txt;
 
-	CIOSMsgSetPhrase(const std::string& phraseName, const ucstring& txt)
+	CIOSMsgSetPhrase(const std::string &phraseName, const ucstring &txt)
 	{
-		PhraseName= phraseName;
-		Txt= txt;
+		PhraseName = phraseName;
+		Txt = txt;
 	}
 
-	CIOSMsgSetPhrase(const std::string& phraseName, const std::string& txt)
+	CIOSMsgSetPhrase(const std::string &phraseName, const std::string &txt)
 	{
-		PhraseName= phraseName;
+		PhraseName = phraseName;
 		Txt.fromUtf8(txt);
 	}
 
 	void send() const
 	{
 		NLNET::CMessage msg("SET_PHRASE");
-		msg.serial(const_cast<CIOSMsgSetPhrase*>(this)->PhraseName);
-		ucstring ucTxt= ucstring(PhraseName+"(){[")+Txt+ucstring("]}");
+		msg.serial(const_cast<CIOSMsgSetPhrase *>(this)->PhraseName);
+		ucstring ucTxt = ucstring(PhraseName + "(){[") + Txt + ucstring("]}");
 		msg.serial(ucTxt);
-		NLNET::CUnifiedNetwork::getInstance()->send("IOS",msg);
+		NLNET::CUnifiedNetwork::getInstance()->send("IOS", msg);
 	}
 };
-
 
 //-------------------------------------------------------------------------------------------------
 #endif

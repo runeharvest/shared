@@ -26,33 +26,34 @@
 #include "nel/misc/event_server.h"
 #include "nel/misc/events.h"
 #include "nel/3d/driver.h"
-#import  "cocoa_opengl_view.h"
+#import "cocoa_opengl_view.h"
 
 #include <Carbon/Carbon.h>
-#import  <Cocoa/Cocoa.h>
+#import <Cocoa/Cocoa.h>
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 class CCocoaEventEmitter : public IEventEmitter
 {
-	bool             _eventLoop;
-	NL3D::IDriver*   _driver;
-	CocoaOpenGLView* _glView;
+	bool _eventLoop;
+	NL3D::IDriver *_driver;
+	CocoaOpenGLView *_glView;
 
 	// TODO like internal server in unix event emitter... review!
-	CEventServer*    _server;
+	CEventServer *_server;
 
 public:
-	CCocoaEventEmitter() :
-		_driver(NULL),
-		_glView(nil),
-		_server(NULL) { }
+	CCocoaEventEmitter()
+	    : _driver(NULL)
+	    , _glView(nil)
+	    , _server(NULL)
+	{
+	}
 
-	void         init(NL3D::IDriver*, CocoaOpenGLView*, bool eventLoop);
-	bool         processMessage(NSEvent* event, CEventServer* server = NULL);
-	virtual void submitEvents(CEventServer& server, bool allWindows);
-	bool         handleQuitRequest();
+	void init(NL3D::IDriver *, CocoaOpenGLView *, bool eventLoop);
+	bool processMessage(NSEvent *event, CEventServer *server = NULL);
+	virtual void submitEvents(CEventServer &server, bool allWindows);
+	bool handleQuitRequest();
 
 	virtual bool copyTextToClipboard(const std::string &text);
 	virtual bool pasteTextFromClipboard(std::string &text);

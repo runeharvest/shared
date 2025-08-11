@@ -6,7 +6,6 @@
  * CRenderTargetManager
  */
 
-
 // NeL - MMORPG Framework <https://wiki.ryzom.dev/>
 // Copyright (C) 2014  Jan BOON (Kaetemi) <jan.boon@kaetemi.be>
 //
@@ -53,7 +52,7 @@ struct CRenderTargetDescInt;
  * Usage: Call 'getRenderTarget' when you start using a render target,
  * call 'recycledRenderTarget' when the render target can be recycled.
  * At end of frame call cleanup.
- * Assumes semi-constant render target quantity between frames, 
+ * Assumes semi-constant render target quantity between frames,
  * except on changes of resolution or feature settings.
  */
 class CRenderTargetManager

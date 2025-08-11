@@ -23,42 +23,39 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 ITransformable::ITransformable()
 {
 	// Set number of animated values.
-	IAnimatable::resize (AnimValueLast);
+	IAnimatable::resize(AnimValueLast);
 
 	// Deriver note: just copy this line in each ctor.
 
 	// Init default values.
-	_Mode= RotQuat;
+	_Mode = RotQuat;
 	// matrix init to identity.
-	_Pos.Value= CVector::Null;
-	_RotEuler.Value= CVector::Null;
-	_RotQuat.Value= CQuat::Identity;
-	_Scale.Value= CVector(1,1,1);
-	_Pivot.Value= CVector::Null;
+	_Pos.Value = CVector::Null;
+	_RotEuler.Value = CVector::Null;
+	_RotQuat.Value = CQuat::Identity;
+	_Scale.Value = CVector(1, 1, 1);
+	_Pivot.Value = CVector::Null;
 
-	_LocalMatrixDate= 0;
+	_LocalMatrixDate = 0;
 }
 
-
 // ***************************************************************************
-IAnimatedValue*		ITransformable::getValue (uint valueId)
+IAnimatedValue *ITransformable::getValue(uint valueId)
 {
 	// what value ?
 	switch (valueId)
 	{
-	case PosValue:			return &_Pos;
-	case RotEulerValue:		return &_RotEuler;
-	case RotQuatValue:		return &_RotQuat;
-	case ScaleValue:		return &_Scale;
-	case PivotValue:		return &_Pivot;
+	case PosValue: return &_Pos;
+	case RotEulerValue: return &_RotEuler;
+	case RotQuatValue: return &_RotQuat;
+	case ScaleValue: return &_Scale;
+	case PivotValue: return &_Pivot;
 	}
 
 	// No, only ITrnasformable values!
@@ -68,16 +65,16 @@ IAnimatedValue*		ITransformable::getValue (uint valueId)
 	return NULL;
 }
 // ***************************************************************************
-const char 	*ITransformable::getValueName (uint valueId) const
+const char *ITransformable::getValueName(uint valueId) const
 {
 	// what value ?
 	switch (valueId)
 	{
-	case PosValue:			return getPosValueName ();
-	case RotEulerValue:		return getRotEulerValueName();
-	case RotQuatValue:		return getRotQuatValueName();
-	case ScaleValue:		return getScaleValueName();
-	case PivotValue:		return getPivotValueName();
+	case PosValue: return getPosValueName();
+	case RotEulerValue: return getRotEulerValueName();
+	case RotQuatValue: return getRotQuatValueName();
+	case ScaleValue: return getScaleValueName();
+	case PivotValue: return getPivotValueName();
 	}
 
 	// No, only ITrnasformable values!
@@ -88,36 +85,35 @@ const char 	*ITransformable::getValueName (uint valueId) const
 }
 
 // ***************************************************************************
-const char	*ITransformable::getPosValueName ()
+const char *ITransformable::getPosValueName()
 {
 	return "pos";
 }
 // ***************************************************************************
-const char	*ITransformable::getRotEulerValueName()
+const char *ITransformable::getRotEulerValueName()
 {
 	return "roteuler";
 }
 // ***************************************************************************
-const char	*ITransformable::getRotQuatValueName()
+const char *ITransformable::getRotQuatValueName()
 {
 	return "rotquat";
 }
 // ***************************************************************************
-const char	*ITransformable::getScaleValueName()
+const char *ITransformable::getScaleValueName()
 {
 	return "scale";
 }
 // ***************************************************************************
-const char	*ITransformable::getPivotValueName()
+const char *ITransformable::getPivotValueName()
 {
 	return "pivot";
 }
 
-
 // ***************************************************************************
-void	ITransformable::clearTransformFlags() const
+void ITransformable::clearTransformFlags() const
 {
-	ITransformable	*self= const_cast<ITransformable*>(this);
+	ITransformable *self = const_cast<ITransformable *>(this);
 
 	// clear my falgs.
 	self->clearFlag(PosValue);
@@ -130,12 +126,11 @@ void	ITransformable::clearTransformFlags() const
 	self->clearFlag(OwnerBit);
 }
 
-
 // ***************************************************************************
-void	ITransformable::updateMatrix() const
+void ITransformable::updateMatrix() const
 {
 	// should we update?
-	if(needCompute())
+	if (needCompute())
 	{
 		clearTransformFlags();
 		// update scale date (so sons are informed of change).
@@ -146,10 +141,10 @@ void	ITransformable::updateMatrix() const
 
 		// father scale will be herited.
 		// T*P
-		_LocalMatrix.translate(_Pos.Value+_Pivot.Value);
+		_LocalMatrix.translate(_Pos.Value + _Pivot.Value);
 
 		// R*S*P-1.
-		if(_Mode==RotEuler)
+		if (_Mode == RotEuler)
 			_LocalMatrix.rotate(_RotEuler.Value, _RotOrder);
 		else
 			_LocalMatrix.rotate(_RotQuat.Value);
@@ -158,50 +153,47 @@ void	ITransformable::updateMatrix() const
 	}
 }
 
-
 // ***************************************************************************
-void		ITransformable::lookAt (const CVector& eye, const CVector& target, float roll)
+void ITransformable::lookAt(const CVector &eye, const CVector &target, float roll)
 {
-	nlassert(_Mode==RotQuat || _Mode==DirectMatrix);
+	nlassert(_Mode == RotQuat || _Mode == DirectMatrix);
 
 	// Roll matrix
 	CMatrix rollMT;
 	rollMT.identity();
-	if (roll!=0.f)
-		rollMT.rotateY (roll);
+	if (roll != 0.f)
+		rollMT.rotateY(roll);
 
 	// Make the target base
-	CVector j=target;
-	j-=eye;
+	CVector j = target;
+	j -= eye;
 	j.normalize();
-	CVector i=j^CVector (0,0,1.f);
-	CVector k=i^j;
+	CVector i = j ^ CVector(0, 0, 1.f);
+	CVector k = i ^ j;
 	k.normalize();
-	i=j^k;
+	i = j ^ k;
 	i.normalize();
 
 	// Make the target matrix
 	CMatrix targetMT;
 	targetMT.identity();
-	targetMT.setRot (i, j, k);
-	targetMT.setPos (eye);
+	targetMT.setRot(i, j, k);
+	targetMT.setPos(eye);
 
 	// Compose matrix
-	targetMT*=rollMT;
+	targetMT *= rollMT;
 
 	// Set the matrix
-	if(_Mode==DirectMatrix)
-		setMatrix (targetMT);
+	if (_Mode == DirectMatrix)
+		setMatrix(targetMT);
 	else
 	{
 		// transfrom to quaternion mode.
-		setScale(CVector(1,1,1));
+		setScale(CVector(1, 1, 1));
 		setPivot(CVector::Null);
 		setPos(targetMT.getPos());
 		setRotQuat(targetMT.getRot());
 	}
 }
-
-
 
 } // NL3D

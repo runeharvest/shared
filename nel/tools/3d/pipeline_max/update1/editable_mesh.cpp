@@ -44,9 +44,9 @@ namespace PIPELINE {
 namespace MAX {
 namespace UPDATE1 {
 
-CEditableMesh::CEditableMesh(CScene *scene) : CTriObject(scene)
+CEditableMesh::CEditableMesh(CScene *scene)
+    : CTriObject(scene)
 {
-
 }
 
 CEditableMesh::~CEditableMesh()
@@ -74,7 +74,7 @@ void CEditableMesh::parse(uint16 version, uint filter)
 	if (so)
 	{
 		m_EditableMeshUnknown.push_back(TStorageObjectWithId(0x3001, so));
-		for (; ; )
+		for (;;)
 		{
 			if (peekChunk() == 0x2845)
 			{
@@ -94,7 +94,7 @@ void CEditableMesh::parse(uint16 version, uint filter)
 			else break;
 		}
 	}
-	for (; ; )
+	for (;;)
 	{
 		so = getChunk(0x3003);
 		if (so) m_EditableMeshUnknown.push_back(TStorageObjectWithId(0x3003, so));
@@ -176,7 +176,8 @@ void CEditableMesh::toStringLocal(std::ostream &ostream, const std::string &pad,
 		std::stringstream ss;
 		ss << std::hex << std::setfill('0');
 		ss << std::setw(4) << it->first;
-		ostream << "\n" << pad << "EditableMeshUnkown[" << i << "] 0x" << ss.str() << ": ";
+		ostream << "\n"
+		        << pad << "EditableMeshUnkown[" << i << "] 0x" << ss.str() << ": ";
 		it->second->toString(ostream, padpad);
 		++i;
 	}

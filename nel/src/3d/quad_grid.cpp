@@ -21,10 +21,9 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-	NLMISC::CPolygon2D CQuadGridBase::_ScaledPoly;
-	NLMISC::CPolygon2D::TRasterVect CQuadGridBase::_PolyBorders;
-	std::vector<uint> CQuadGridBase::_AlreadySelected;
-	uint CQuadGridBase::_SelectStamp = 0;
+namespace NL3D {
+NLMISC::CPolygon2D CQuadGridBase::_ScaledPoly;
+NLMISC::CPolygon2D::TRasterVect CQuadGridBase::_PolyBorders;
+std::vector<uint> CQuadGridBase::_AlreadySelected;
+uint CQuadGridBase::_SelectStamp = 0;
 } // NL3D

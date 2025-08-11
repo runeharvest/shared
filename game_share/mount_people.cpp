@@ -22,24 +22,23 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace MOUNT_PEOPLE
+namespace MOUNT_PEOPLE {
+
+NL_BEGIN_STRING_CONVERSION_TABLE(TMountPeople)
+NL_STRING_CONVERSION_TABLE_ENTRY(Unknown)
+NL_STRING_CONVERSION_TABLE_ENTRY(Fyros)
+NL_STRING_CONVERSION_TABLE_ENTRY(Matis)
+NL_STRING_CONVERSION_TABLE_ENTRY(Tryker)
+NL_END_STRING_CONVERSION_TABLE(TMountPeople, MountPeopleConversion, Zorai)
+
+TMountPeople fromString(const std::string &str)
 {
+	return MountPeopleConversion.fromString(str);
+}
 
-	NL_BEGIN_STRING_CONVERSION_TABLE (TMountPeople)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Unknown)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Fyros)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Matis)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Tryker)
-	NL_END_STRING_CONVERSION_TABLE(TMountPeople, MountPeopleConversion, Zorai)
-
-	TMountPeople fromString(const std::string & str)
-	{
-		return MountPeopleConversion.fromString(str);
-	}
-
-	const std::string & toString(TMountPeople people)
-	{
-		return MountPeopleConversion.toString(people);
-	}
+const std::string &toString(TMountPeople people)
+{
+	return MountPeopleConversion.toString(people);
+}
 
 } // namespace MOUNT_PEOPLE

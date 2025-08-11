@@ -14,9 +14,7 @@
 #include "State.h"
 #include "ChildFrm.h"
 
-
-namespace NLLOGIC
-{
+namespace NLLOGIC {
 class CLogicStateMachine;
 }
 
@@ -26,42 +24,39 @@ protected: // create from serialization only
 	CLogic_editorDoc();
 	DECLARE_DYNCREATE(CLogic_editorDoc)
 
-// Attributes
+	// Attributes
 public:
-	
 	/// the variables
-	CStringList			m_variables;
+	CStringList m_variables;
 
 	/// the counters, map counter name to counter object
-	CMapStringToPtr		m_counters;
+	CMapStringToPtr m_counters;
 
 	/// the states, map name to object
-	CMapStringToPtr		m_states;
+	CMapStringToPtr m_states;
 
 	/// the conditions, map name to object
-	CMapStringToPtr		m_conditions;
+	CMapStringToPtr m_conditions;
 
 	BOOL InitCounterPage;
 	BOOL InitConditionPage;
 	BOOL InitStatePage;
 
-
-// Operations
+	// Operations
 public:
-
 	/**
 	 * change a variable name (all it's occurence)
 	 * \param CString old the old name of the var (not a reference because we may delete the string when deleting the variable !!)
 	 * \param CString &newName the new name of the var
 	 * \return BOOL TRUE if the change has been made, FALSE if an error occurred
 	 */
-	BOOL changeVarName( CString old, const CString &newName);
+	BOOL changeVarName(CString old, const CString &newName);
 
 	/**
 	 * Delete a variable
 	 * \param CString name the name of the variable to delete
 	 */
-	void deleteVar( CString name);
+	void deleteVar(CString name);
 
 	/**
 	 * change a counter name (all it's occurence)
@@ -69,14 +64,13 @@ public:
 	 * \param CString &newName the new name of the counter
 	 * \return BOOL TRUE if the change has been made, FALSE if an error occurred
 	 */
-	BOOL changeCounterName( CString old, const CString &newName);
+	BOOL changeCounterName(CString old, const CString &newName);
 
 	/**
 	 * Delete a counter
 	 * \param CString name the name of the counter to delete
 	 */
-	void deleteCounter( CString name);
-
+	void deleteCounter(CString name);
 
 	/**
 	 * change a condition name (all it's occurence)
@@ -84,65 +78,62 @@ public:
 	 * \param CString &newName the new name of the condition
 	 * \return BOOL TRUE if the change has been made, FALSE if an error occurred
 	 */
-	BOOL changeConditionName( CString old, const CString &newName);
+	BOOL changeConditionName(CString old, const CString &newName);
 
 	/**
 	 * Delete a condition
 	 * \param CString &name the name of the condition to delete
 	 */
-	void deleteCondition( CString name);
+	void deleteCondition(CString name);
 
-	
 	/**
 	 * change a state name (all it's occurence)
 	 * \param CString old the old name of the state
 	 * \param CString &newName the new name of the state
 	 * \return BOOL TRUE if the change has been made, FALSE if an error occurred
 	 */
-	BOOL changeStateName( CString old, const CString &newName);
+	BOOL changeStateName(CString old, const CString &newName);
 
 	/**
 	 * Delete a state
 	 * \param CString name the name of the state to delete
 	 */
-	void deleteState( CString name);
+	void deleteState(CString name);
 
 	/**
 	 *	Load
 	 */
-	BOOL load( LPCTSTR fileName );
+	BOOL load(LPCTSTR fileName);
 
 	/**
 	 *	Create a new doc instance
 	 */
-	static CLogic_editorDoc * getNewDoc() { return new CLogic_editorDoc(); }
-	
+	static CLogic_editorDoc *getNewDoc() { return new CLogic_editorDoc(); }
 
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CLogic_editorDoc)
-	public:
+public:
 	virtual BOOL OnNewDocument();
-	virtual void Serialize(CArchive& ar);
+	virtual void Serialize(CArchive &ar);
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
 	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CLogic_editorDoc();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	virtual void Dump(CDumpContext &dc) const;
 #endif
 
 protected:
-
-// Generated message map functions
+	// Generated message map functions
 protected:
 	//{{AFX_MSG(CLogic_editorDoc)
-		// NOTE - the ClassWizard will add and remove member functions here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
+	// NOTE - the ClassWizard will add and remove member functions here.
+	//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

@@ -20,31 +20,22 @@
 #include "nel/3d/ps_particle_basic.h"
 #include "nel/3d/vertex_buffer.h"
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 class IDriver;
-
 
 /** This abstract class holds what is needed with quad particles (CPSFaceLookAt, CPSFace) e.g
  *  Index and vertex buffer and method to setup them
  *  Material, and method to setup them
  */
 
-class CPSQuad : public CPSParticle
-	           , public CPSColoredParticle
-			   , public CPSTexturedParticle
-			   , public CPSMultiTexturedParticle
-			   , public CPSSizedParticle
-			   , public CPSMaterial
+class CPSQuad : public CPSParticle, public CPSColoredParticle, public CPSTexturedParticle, public CPSMultiTexturedParticle, public CPSSizedParticle, public CPSMaterial
 {
 public:
 	/** create the quad by giving a texture. This can't be a CTextureGrouped (for animation)
-	* animation must be set later by using setTextureScheme
-	*/
+	 * animation must be set later by using setTextureScheme
+	 */
 	CPSQuad(CSmartPtr<ITexture> tex = NULL);
-
 
 	/// return true if there are transparent faces in the object
 	virtual bool hasTransparentFaces(void);
@@ -66,8 +57,7 @@ public:
 	virtual float getZBias() const { return CPSMaterial::getZBias(); }
 
 	// from CPSLocatedBindable
-	virtual void enumTexs(std::vector<NLMISC::CSmartPtr<ITexture> > &dest, IDriver &drv);
-
+	virtual void enumTexs(std::vector<NLMISC::CSmartPtr<ITexture>> &dest, IDriver &drv);
 
 protected:
 	// dtor
@@ -83,8 +73,8 @@ protected:
 	virtual void updateMatAndVbForTexture(void);
 
 	/** update material before rendering
-	  * This may also change the vb uv routing (if embm is used)
-	  */
+	 * This may also change the vb uv routing (if embm is used)
+	 */
 	void updateMatBeforeRendering(IDriver *drv, CVertexBuffer &vb);
 
 	/// this is inlined to save cost of call by derived class
@@ -121,12 +111,12 @@ protected:
 
 	enum VBType
 	{
-		VBCol			= 0x0001, // the vb has colors
-		VBTex			= 0x0002, // the vb has textures coordinates
-		VBTexAnimated	= 0x0004, // the texture coordinate can be animated (not precomputed)
-		VBTex2		    = 0x0008, // the vb has second texture coordinates
-		VBTex2Animated  = 0x0010, // the second texture coordinates can be animated (not precomputed)
-		VBFullMask      = 0x001f
+		VBCol = 0x0001, // the vb has colors
+		VBTex = 0x0002, // the vb has textures coordinates
+		VBTexAnimated = 0x0004, // the texture coordinate can be animated (not precomputed)
+		VBTex2 = 0x0008, // the vb has second texture coordinates
+		VBTex2Animated = 0x0010, // the second texture coordinates can be animated (not precomputed)
+		VBFullMask = 0x001f
 	};
 
 	/// the various kind of vertex buffers we need
@@ -150,27 +140,25 @@ protected:
 	/// get the vertex buffer that is needed for drawing
 	CVertexBuffer &getNeededVB(IDriver &drv);
 
-
 	/// used to get a pointer on the right vb dependant on its type (cf. values of VBType)
-	static CVertexBuffer    * const _VbTab[];
-
+	static CVertexBuffer *const _VbTab[];
 
 	// from CPSTexturedParticle / CPSMultiTexturedParticle  : gives us the opportunity to update wrap mode for quad particles
-	virtual void		 setTexture(CSmartPtr<ITexture> tex);
-	virtual void		 setTextureGroup(NLMISC::CSmartPtr<CTextureGrouped> texGroup);
-	virtual void		 setTexture2(ITexture *tex);
-	virtual void		 setTexture2Alternate(ITexture *tex);
-	virtual void		 updateTexWrapMode(IDriver &drv);
-
+	virtual void setTexture(CSmartPtr<ITexture> tex);
+	virtual void setTextureGroup(NLMISC::CSmartPtr<CTextureGrouped> texGroup);
+	virtual void setTexture2(ITexture *tex);
+	virtual void setTexture2Alternate(ITexture *tex);
+	virtual void updateTexWrapMode(IDriver &drv);
 
 public:
 	/// The number of quad to batche for each driver call.
-	enum { quadBufSize = 800 };
+	enum
+	{
+		quadBufSize = 800
+	};
 };
 
-
 } // NL3D
-
 
 #endif // NL_PS_QUAD_H
 

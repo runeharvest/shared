@@ -22,30 +22,29 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 // Yoyo: for profile only.
-sint		ProfNTessFace= 0;
-sint		ProfNRdrFar0= 0;
-sint		ProfNRdrFar1= 0;
-sint		ProfNRdrTile[NL3D_MAX_TILE_PASS];
-sint		ProfNRefineFaces;
-sint		ProfNRefineComputeFaces;
-sint		ProfNRefineLeaves;
-sint		ProfNSplits;
-sint		ProfNMerges;
+sint ProfNTessFace = 0;
+sint ProfNRdrFar0 = 0;
+sint ProfNRdrFar1 = 0;
+sint ProfNRdrTile[NL3D_MAX_TILE_PASS];
+sint ProfNRefineFaces;
+sint ProfNRefineComputeFaces;
+sint ProfNRefineLeaves;
+sint ProfNSplits;
+sint ProfNMerges;
 // New PriorityList vars.
-sint		ProfNRefineInTileTransition;
-sint		ProfNRefineWithLowDistance;
-sint		ProfNSplitsPass;
+sint ProfNRefineInTileTransition;
+sint ProfNRefineWithLowDistance;
+sint ProfNSplitsPass;
 // Material setup Profile
-sint		ProfNTileSetupMaterial= 0;
-sint		ProfNFar0SetupMaterial= 0;
-sint		ProfNFar1SetupMaterial= 0;
+sint ProfNTileSetupMaterial = 0;
+sint ProfNFar0SetupMaterial = 0;
+sint ProfNFar1SetupMaterial = 0;
 // Patch render
-sint		ProfNPatchRdrFar0=0;
-sint		ProfNPatchRdrFar1=0;
+sint ProfNPatchRdrFar0 = 0;
+sint ProfNPatchRdrFar1 = 0;
 
 } // NL3D

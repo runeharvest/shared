@@ -27,28 +27,31 @@
 #include <vector>
 #include <set>
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 // const string *  as  uint (the TStringId returned by CStringMapper is a pointer to a string object)
-//#ifdef HAVE_X86_64
-//typedef uint64 TStringId;
-//#else
-//typedef uint TStringId;
-//#endif
+// #ifdef HAVE_X86_64
+// typedef uint64 TStringId;
+// #else
+// typedef uint TStringId;
+// #endif
 
-typedef	const std::string *TStringId;
+typedef const std::string *TStringId;
 
 // Traits for hash_map using CStringId
 struct CStringIdHashMapTraits
 {
-	enum { bucket_size = 4, min_buckets = 8 };
-	CStringIdHashMapTraits() { }
-	size_t operator() (const NLMISC::TStringId &stringId) const
+	enum
 	{
-		return	(size_t)stringId;
+		bucket_size = 4,
+		min_buckets = 8
+	};
+	CStringIdHashMapTraits() { }
+	size_t operator()(const NLMISC::TStringId &stringId) const
+	{
+		return (size_t)stringId;
 	}
-	bool operator() (const NLMISC::TStringId &strId1, const NLMISC::TStringId &strId2) const
+	bool operator()(const NLMISC::TStringId &strId1, const NLMISC::TStringId &strId2) const
 	{
 		return (size_t)strId1 < (size_t)strId2;
 	}
@@ -171,16 +174,15 @@ typedef uint TSStringId;
 class CStaticStringMapper
 {
 
-	std::map<std::string, TSStringId>	_TempStringTable;
-	std::map<TSStringId, std::string>	_TempIdTable;
+	std::map<std::string, TSStringId> _TempStringTable;
+	std::map<TSStringId, std::string> _TempIdTable;
 
-	uint32	_IdCounter;
-	char	*_AllStrings;
-	std::vector<char*>	_IdToStr;
+	uint32 _IdCounter;
+	char *_AllStrings;
+	std::vector<char *> _IdToStr;
 	bool _MemoryCompressed; // If false use the 2 maps
 
 public:
-
 	CStaticStringMapper()
 	{
 		_IdCounter = 0;
@@ -195,32 +197,30 @@ public:
 	}
 
 	/// Globaly map a string into a unique Id
-	TSStringId			add(const std::string &str);
+	TSStringId add(const std::string &str);
 
 	// see if a string is already present in the map
-	bool				isAdded(const std::string &str) const;
+	bool isAdded(const std::string &str) const;
 
-	void				memoryCompress();
+	void memoryCompress();
 	// Uncompress the map.
-	void				memoryUncompress();
+	void memoryUncompress();
 	/// Globaly unmap a string
-	const char *		get(TSStringId stringId);
+	const char *get(TSStringId stringId);
 	/// Return the global id for the empty string (helper function)
-	static TSStringId	emptyId() { return 0; }
+	static TSStringId emptyId() { return 0; }
 
-	void				clear();
+	void clear();
 
 	uint32 getCount() { return _IdCounter; }
 
 	// helper serialize a string id as a string
-	void				serial(NLMISC::IStream &f, TSStringId &strId);
+	void serial(NLMISC::IStream &f, TSStringId &strId);
 
 	// helper serialize a string id vector
-	void				serial(NLMISC::IStream &f, std::vector<TSStringId> &strIdVect);
-
+	void serial(NLMISC::IStream &f, std::vector<TSStringId> &strIdVect);
 };
 
-} //namespace NLMISC
+} // namespace NLMISC
 
 #endif // STRING_MAPPER_H
-

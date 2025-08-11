@@ -23,20 +23,20 @@
 /////////////////////////////////////////////////////////////////////////////
 // CChooseFrameDelay dialog
 
-
 //*****************************************************************************************************
-CChooseFrameDelay::CChooseFrameDelay(CObjectViewer *objectViewer, CWnd* pParent)
-	: CDialog(CChooseFrameDelay::IDD, pParent), _LockToPS(false)
+CChooseFrameDelay::CChooseFrameDelay(CObjectViewer *objectViewer, CWnd *pParent)
+    : CDialog(CChooseFrameDelay::IDD, pParent)
+    , _LockToPS(false)
 {
 	nlassert(objectViewer);
 	_CFDWrapper.OV = objectViewer;
-	//{{AFX_DATA_INIT(CChooseFrameDelay)	
+	//{{AFX_DATA_INIT(CChooseFrameDelay)
 	//}}AFX_DATA_INIT
 	_ER = new CEditableRangeUInt("CHOOSE_FRAME_DELAY", NULL, 0, 500);
 	_ER->enableLowerBound(0, false);
-	_ER->enableUpperBound(10000, false);	
+	_ER->enableUpperBound(10000, false);
 	_ER->setWrapper(&_CFDWrapper);
-	//	
+	//
 	objectViewer->registerMainLoopCallBack(this);
 }
 
@@ -46,7 +46,7 @@ CChooseFrameDelay::~CChooseFrameDelay()
 	CObjectViewer *ov = _CFDWrapper.OV;
 	ov->removeMainLoopCallBack(this);
 	_ER->DestroyWindow();
-	delete _ER;	
+	delete _ER;
 }
 
 //*****************************************************************************************************
@@ -63,43 +63,42 @@ void CChooseFrameDelay::lockToPS(bool lock)
 }
 
 //*****************************************************************************************************
-void CChooseFrameDelay::DoDataExchange(CDataExchange* pDX)
+void CChooseFrameDelay::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CChooseFrameDelay)	
+	//{{AFX_DATA_MAP(CChooseFrameDelay)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CChooseFrameDelay, CDialog)
-	//{{AFX_MSG_MAP(CChooseFrameDelay)
-	ON_WM_DESTROY()
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CChooseFrameDelay)
+ON_WM_DESTROY()
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CChooseFrameDelay message handlers
 
 //*****************************************************************************************************
-BOOL CChooseFrameDelay::OnInitDialog() 
+BOOL CChooseFrameDelay::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	RECT r;
 	GetDlgItem(IDC_FRAME_DELAY)->GetWindowRect(&r);
 	ScreenToClient(&r);
 	_ER->init(r.left, r.top, this);
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 uint32 CChooseFrameDelay::CCFDWrapper::get(void) const { return OV->getFrameDelay(); }
-void   CChooseFrameDelay::CCFDWrapper::set(const uint32 &value) { OV->setFrameDelay(value); }
+void CChooseFrameDelay::CCFDWrapper::set(const uint32 &value) { OV->setFrameDelay(value); }
 
 //*****************************************************************************************************
-void CChooseFrameDelay::OnDestroy() 
+void CChooseFrameDelay::OnDestroy()
 {
-	setRegisterWindowState (this, REGKEY_CHOOSE_FRAME_DELAY_DLG);
-	CDialog::OnDestroy();		
+	setRegisterWindowState(this, REGKEY_CHOOSE_FRAME_DELAY_DLG);
+	CDialog::OnDestroy();
 }
 
 //*****************************************************************************************************
@@ -113,7 +112,7 @@ void CChooseFrameDelay::goPreRender()
 		// get integration step from ps
 		CObjectViewer *ov = _CFDWrapper.OV;
 		NL3D::CParticleSystem *ps = activeNode->getPSPointer();
-		uint integrationTime = (uint) (1000.f * ps->getTimeTheshold());
+		uint integrationTime = (uint)(1000.f * ps->getTimeTheshold());
 		if (!ps->getBypassMaxNumIntegrationSteps())
 		{
 			integrationTime *= ps->getMaxNbIntegrations();
@@ -122,6 +121,6 @@ void CChooseFrameDelay::goPreRender()
 		{
 			_CFDWrapper.set(integrationTime);
 			_ER->update();
-		}		
+		}
 	}
 }

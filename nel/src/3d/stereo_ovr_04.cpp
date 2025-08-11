@@ -21,12 +21,12 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-// 
+//
 // Linking this library statically or dynamically with other modules
 // is making a combined work based on this library.  Thus, the terms
 // and conditions of the GNU General Public License cover the whole
 // combination.
-// 
+//
 // As a special exception, the copyright holders of this library give
 // you permission to link this library with the Oculus SDK to produce
 // an executable, regardless of the license terms of the Oculus SDK,
@@ -78,9 +78,9 @@ namespace {
 class CStereoOVRSystem
 {
 public:
-	CStereoOVRSystem() : m_InitOk(false)
+	CStereoOVRSystem()
+	    : m_InitOk(false)
 	{
-
 	}
 
 	~CStereoOVRSystem()
@@ -116,7 +116,6 @@ public:
 
 private:
 	bool m_InitOk;
-
 };
 
 CStereoOVRSystem s_StereoOVRSystem;
@@ -155,7 +154,7 @@ static NLMISC::CVector2f toTex(NLMISC::CVector2f texCoord, NLMISC::CVector2f uvS
 	vec.x = 1.0f - vec.x;
 	vec.x += 0.5f;
 	vec.y *= 2.0f;
-	
+
 	vec.x = 1.0f - vec.x;
 
 	return vec;
@@ -166,7 +165,17 @@ static float lerp(float f0, float f1, float factor)
 	return (f1 * factor) + (f0 * (1.0f - factor));
 }
 
-CStereoOVR::CStereoOVR(const CStereoOVRDeviceFactory *factory) : m_DevicePtr(NULL), m_Stage(0), m_SubStage(0), m_OrientationCached(false), m_Driver(NULL), m_SceneTexture(NULL), m_GUITexture(NULL), m_EyePosition(0.0f, 0.09f, 0.15f), m_Scale(1.0f), m_AttachedDisplay(false)
+CStereoOVR::CStereoOVR(const CStereoOVRDeviceFactory *factory)
+    : m_DevicePtr(NULL)
+    , m_Stage(0)
+    , m_SubStage(0)
+    , m_OrientationCached(false)
+    , m_Driver(NULL)
+    , m_SceneTexture(NULL)
+    , m_GUITexture(NULL)
+    , m_EyePosition(0.0f, 0.09f, 0.15f)
+    , m_Scale(1.0f)
+    , m_AttachedDisplay(false)
 {
 	nlctassert(NL_OVR_EYE_COUNT == ovrEye_Count);
 
@@ -197,9 +206,9 @@ CStereoOVR::CStereoOVR(const CStereoOVRDeviceFactory *factory) : m_DevicePtr(NUL
 	// nldebug("OVR: DistortionK[0]: %f, DistortionK[1]: %f", m_DevicePtr->HMDInfo.DistortionK[0], m_DevicePtr->HMDInfo.DistortionK[1]);
 	// nldebug("OVR: DistortionK[2]: %f, DistortionK[3]: %f", m_DevicePtr->HMDInfo.DistortionK[2], m_DevicePtr->HMDInfo.DistortionK[3]);
 
-	if (!ovrHmd_ConfigureTracking(m_DevicePtr, 
-		ovrTrackingCap_Orientation | ovrTrackingCap_MagYawCorrection, // | ovrTrackingCap_Position
-		ovrTrackingCap_Orientation))
+	if (!ovrHmd_ConfigureTracking(m_DevicePtr,
+	        ovrTrackingCap_Orientation | ovrTrackingCap_MagYawCorrection, // | ovrTrackingCap_Position
+	        ovrTrackingCap_Orientation))
 	{
 		nlwarning("OVR: Cannot configure tracking");
 		ovrHmd_Destroy(m_DevicePtr);
@@ -207,7 +216,7 @@ CStereoOVR::CStereoOVR(const CStereoOVRDeviceFactory *factory) : m_DevicePtr(NUL
 		--s_DeviceCounter;
 		return;
 	}
-	
+
 	float nativeWidth = m_DevicePtr->Resolution.w;
 	float nativeHeight = m_DevicePtr->Resolution.h;
 
@@ -224,20 +233,20 @@ CStereoOVR::CStereoOVR(const CStereoOVRDeviceFactory *factory) : m_DevicePtr(NUL
 
 	// 2014/08/04 19:54:25 DBG  a60 snowballs_client.exe stereo_ovr_04.cpp 171 NL3D::CStereoOVR::CStereoOVR : OVR: Resolution.w: 1280, Resolution.h: 800
 	// 2014/08/04 19:54:25 DBG  a60 snowballs_client.exe stereo_ovr_04.cpp 189 NL3D::CStereoOVR::CStereoOVR : OVR: LEFT DistortedViewport: x: 0, y: 0, w: 640, h: 800
-	// 2014/08/04 19:54:25 DBG  a60 snowballs_client.exe stereo_ovr_04.cpp 190 NL3D::CStereoOVR::CStereoOVR : OVR: LEFT PixelsPerTanAngleAtCenter: x: 363.247864, y: 363.247864 
-	// 2014/08/04 19:54:25 DBG  a60 snowballs_client.exe stereo_ovr_04.cpp 191 NL3D::CStereoOVR::CStereoOVR : OVR: LEFT ViewAdjust: x: 0.031800, y: 0.000000, z: 0.000000 
+	// 2014/08/04 19:54:25 DBG  a60 snowballs_client.exe stereo_ovr_04.cpp 190 NL3D::CStereoOVR::CStereoOVR : OVR: LEFT PixelsPerTanAngleAtCenter: x: 363.247864, y: 363.247864
+	// 2014/08/04 19:54:25 DBG  a60 snowballs_client.exe stereo_ovr_04.cpp 191 NL3D::CStereoOVR::CStereoOVR : OVR: LEFT ViewAdjust: x: 0.031800, y: 0.000000, z: 0.000000
 	// 2014/08/04 19:55:46 DBG 2e18 snowballs_client.exe stereo_ovr_04.cpp 192 NL3D::CStereoOVR::CStereoOVR : OVR: RIGHT DistortedViewport: x: 640, y: 0, w: 640, h: 800
-	// 2014/08/04 19:55:46 DBG 2e18 snowballs_client.exe stereo_ovr_04.cpp 193 NL3D::CStereoOVR::CStereoOVR : OVR: RIGHT PixelsPerTanAngleAtCenter: x: 363.247864, y: 363.247864 
-	// 2014/08/04 19:55:46 DBG 2e18 snowballs_client.exe stereo_ovr_04.cpp 194 NL3D::CStereoOVR::CStereoOVR : OVR: RIGHT ViewAdjust: x: -0.031868, y: 0.000000, z: 0.000000 
+	// 2014/08/04 19:55:46 DBG 2e18 snowballs_client.exe stereo_ovr_04.cpp 193 NL3D::CStereoOVR::CStereoOVR : OVR: RIGHT PixelsPerTanAngleAtCenter: x: 363.247864, y: 363.247864
+	// 2014/08/04 19:55:46 DBG 2e18 snowballs_client.exe stereo_ovr_04.cpp 194 NL3D::CStereoOVR::CStereoOVR : OVR: RIGHT ViewAdjust: x: -0.031868, y: 0.000000, z: 0.000000
 
 	// find out the recommended render target size
 	ovrSizei fovTextureSize[ovrEye_Count];
 	fovTextureSize[ovrEye_Left] = ovrHmd_GetFovTextureSize(m_DevicePtr, ovrEye_Left, eyeRenderDesc[ovrEye_Left].Fov, 1.0f);
-    fovTextureSize[ovrEye_Right] = ovrHmd_GetFovTextureSize(m_DevicePtr, ovrEye_Right, eyeRenderDesc[ovrEye_Right].Fov, 1.0f);
-    m_RenderTargetWidth = fovTextureSize[ovrEye_Left].w + fovTextureSize[ovrEye_Right].w;
-    m_RenderTargetHeight = max(fovTextureSize[ovrEye_Left].h, fovTextureSize[ovrEye_Right].h);
+	fovTextureSize[ovrEye_Right] = ovrHmd_GetFovTextureSize(m_DevicePtr, ovrEye_Right, eyeRenderDesc[ovrEye_Right].Fov, 1.0f);
+	m_RenderTargetWidth = fovTextureSize[ovrEye_Left].w + fovTextureSize[ovrEye_Right].w;
+	m_RenderTargetHeight = max(fovTextureSize[ovrEye_Left].h, fovTextureSize[ovrEye_Right].h);
 	nldebug("OVR: RenderTarget: w: %u, h: %u", m_RenderTargetWidth, m_RenderTargetHeight);
-	
+
 	// 2014/08/04 20:22:03 DBG 30e4 snowballs_client.exe stereo_ovr_04.cpp 213 NL3D::CStereoOVR::CStereoOVR : OVR: RenderTarget: w: 2414, h: 1870 // That looks a bit excessive...
 
 	for (uint eye = 0; eye < ovrEye_Count; ++eye)
@@ -246,13 +255,13 @@ CStereoOVR::CStereoOVR(const CStereoOVRDeviceFactory *factory) : m_DevicePtr(NUL
 
 		// store data
 		m_EyeViewAdjustX[eye] = -eyeRenderDesc[eye].ViewAdjust.x;
-		
+
 		// setup viewport
 		m_EyeViewport[eye].init(
-			(float)eyeRenderDesc[eye].DistortedViewport.Pos.x / nativeWidth, 
-			(float)eyeRenderDesc[eye].DistortedViewport.Pos.y / nativeHeight, 
-			(float)eyeRenderDesc[eye].DistortedViewport.Size.w / nativeWidth, 
-			(float)eyeRenderDesc[eye].DistortedViewport.Size.h / nativeHeight);
+		    (float)eyeRenderDesc[eye].DistortedViewport.Pos.x / nativeWidth,
+		    (float)eyeRenderDesc[eye].DistortedViewport.Pos.y / nativeHeight,
+		    (float)eyeRenderDesc[eye].DistortedViewport.Size.w / nativeWidth,
+		    (float)eyeRenderDesc[eye].DistortedViewport.Size.h / nativeHeight);
 		nldebug("OVR: EyeViewport: x: %f, y: %f, w: %f, h: %f", m_EyeViewport[eye].getX(), m_EyeViewport[eye].getY(), m_EyeViewport[eye].getWidth(), m_EyeViewport[eye].getHeight());
 		ovrRecti eyeViewport;
 		eyeViewport.Pos.x = (eyeRenderDesc[eye].DistortedViewport.Pos.x * m_RenderTargetWidth) / m_DevicePtr->Resolution.w;
@@ -272,29 +281,29 @@ CStereoOVR::CStereoOVR(const CStereoOVRDeviceFactory *factory) : m_DevicePtr(NUL
 		nldebug("OVR: HFOV: %f, AR: %f", horizontalFullFovInRadians, aspectRatio);
 		m_EyeFrustumBase[eye].initPerspective(m_EyeHFov[eye], m_EyeAR[eye], 1.0f, 100.f);
 		nldebug("OVR: FOV: Left: %f, Right: %f, Down: %f, Up: %f", // DOUBLE CHECK
-			m_EyeFrustumBase[eye].Left, m_EyeFrustumBase[eye].Right, m_EyeFrustumBase[eye].Bottom, m_EyeFrustumBase[eye].Top);*/
+		    m_EyeFrustumBase[eye].Left, m_EyeFrustumBase[eye].Right, m_EyeFrustumBase[eye].Bottom, m_EyeFrustumBase[eye].Top);*/
 		m_EyeFrustumBase[eye].init(
-			-fov.LeftTan, // OVR provides positive values
-			fov.RightTan, // DEBUG: If renders shifted left and right, swap left and right
-			-fov.DownTan,
-			fov.UpTan, // DEBUG: If renders shifted up or down, swap down and up
-			1.0f, // dummy
-			100.f, // dummy
-			true);
-		nldebug("OVR: FOV: Left: %f, Right: %f, Down: %f, Up: %f", 
-			m_EyeFrustumBase[eye].Left, m_EyeFrustumBase[eye].Right, m_EyeFrustumBase[eye].Bottom, m_EyeFrustumBase[eye].Top);
+		    -fov.LeftTan, // OVR provides positive values
+		    fov.RightTan, // DEBUG: If renders shifted left and right, swap left and right
+		    -fov.DownTan,
+		    fov.UpTan, // DEBUG: If renders shifted up or down, swap down and up
+		    1.0f, // dummy
+		    100.f, // dummy
+		    true);
+		nldebug("OVR: FOV: Left: %f, Right: %f, Down: %f, Up: %f",
+		    m_EyeFrustumBase[eye].Left, m_EyeFrustumBase[eye].Right, m_EyeFrustumBase[eye].Bottom, m_EyeFrustumBase[eye].Top);
 
 		// get distortion mesh
 		ovrDistortionMesh meshData;
 		ovrHmd_CreateDistortionMesh(m_DevicePtr, (ovrEyeType)eye, fov,
-			ovrDistortionCap_Chromatic /*| ovrDistortionCap_TimeWarp*/ | ovrDistortionCap_Vignette, // I believe the timewarp gimmick screws with parallax
-			&meshData);
+		    ovrDistortionCap_Chromatic /*| ovrDistortionCap_TimeWarp*/ | ovrDistortionCap_Vignette, // I believe the timewarp gimmick screws with parallax
+		    &meshData);
 		ovrVector2f uvScaleOffset[2];
 
 		// get parameters for programs
 		ovrHmd_GetRenderScaleAndOffset(fov,
-			fovTextureSize[eye], eyeViewport,
-			(ovrVector2f *)uvScaleOffset);
+		    fovTextureSize[eye], eyeViewport,
+		    (ovrVector2f *)uvScaleOffset);
 		m_EyeUVScaleOffset[eye][0] = NLMISC::CVector2f(uvScaleOffset[0].x, uvScaleOffset[0].y);
 		m_EyeUVScaleOffset[eye][1] = NLMISC::CVector2f(uvScaleOffset[1].x, uvScaleOffset[1].y);
 
@@ -315,12 +324,12 @@ CStereoOVR::CStereoOVR(const CStereoOVRDeviceFactory *factory) : m_DevicePtr(NUL
 				ovrDistortionVertex &ov = meshData.pVertexData[i];
 				vba.setVertexCoord(i, (ov.ScreenPosNDC.x + 1.0f) * 0.5f, (ov.ScreenPosNDC.y + 1.0f) * 0.5f, 0.5f);
 				NLMISC::CVector2f texR(
-					lerp(ov.TanEyeAnglesG.x, ov.TanEyeAnglesR.x, chromaFactor), 
-					lerp(ov.TanEyeAnglesG.y, ov.TanEyeAnglesR.y, chromaFactor));
+				    lerp(ov.TanEyeAnglesG.x, ov.TanEyeAnglesR.x, chromaFactor),
+				    lerp(ov.TanEyeAnglesG.y, ov.TanEyeAnglesR.y, chromaFactor));
 				NLMISC::CVector2f texG(ov.TanEyeAnglesG.x, ov.TanEyeAnglesG.y);
 				NLMISC::CVector2f texB(
-					lerp(ov.TanEyeAnglesG.x, ov.TanEyeAnglesB.x, chromaFactor), 
-					lerp(ov.TanEyeAnglesG.y, ov.TanEyeAnglesB.y, chromaFactor));
+				    lerp(ov.TanEyeAnglesG.x, ov.TanEyeAnglesB.x, chromaFactor),
+				    lerp(ov.TanEyeAnglesG.y, ov.TanEyeAnglesB.y, chromaFactor));
 				texR = toTex(texR, m_EyeUVScaleOffset[eye]);
 				texG = toTex(texG, m_EyeUVScaleOffset[eye]);
 				texB = toTex(texB, m_EyeUVScaleOffset[eye]);
@@ -356,7 +365,7 @@ CStereoOVR::CStereoOVR(const CStereoOVRDeviceFactory *factory) : m_DevicePtr(NUL
 		// destroy ovr distortion mesh
 		ovrHmd_DestroyDistortionMesh(&meshData);
 	}
-	
+
 	// 2014/08/04 20:22:03 DBG 30e4 snowballs_client.exe stereo_ovr_04.cpp 222 NL3D::CStereoOVR::CStereoOVR : OVR: EyeViewport: x: 0.000000, y: 0.000000, w: 0.500000, h: 1.000000
 	// 2014/08/04 22:28:39 DBG 3040 snowballs_client.exe stereo_ovr_04.cpp 235 NL3D::CStereoOVR::CStereoOVR : OVR: HFOV: 2.339905, AR: 0.916641
 	// 2014/08/04 20:22:03 DBG 30e4 snowballs_client.exe stereo_ovr_04.cpp 222 NL3D::CStereoOVR::CStereoOVR : OVR: EyeViewport: x: 0.500000, y: 0.000000, w: 0.500000, h: 1.000000
@@ -403,15 +412,15 @@ void CStereoOVR::setDriver(NL3D::UDriver *driver)
 	m_UnlitMat = m_Driver->createMaterial();
 	m_UnlitMat.initUnlit();
 	m_UnlitMat.setColor(CRGBA::White);
-	m_UnlitMat.setBlend (false);
-	m_UnlitMat.setAlphaTest (false);
+	m_UnlitMat.setBlend(false);
+	m_UnlitMat.setAlphaTest(false);
 	NL3D::CMaterial *unlitMat = m_UnlitMat.getObjectPtr();
 	unlitMat->setShader(NL3D::CMaterial::Normal);
 	unlitMat->setBlendFunc(CMaterial::one, CMaterial::zero);
 	unlitMat->setZWrite(false);
 	unlitMat->setZFunc(CMaterial::always);
 	unlitMat->setDoubleSided(true);
-	
+
 	unlitMat->texConstantColor(0, NLMISC::CRGBA(255, 0, 0, 0));
 	unlitMat->texConstantColor(1, NLMISC::CRGBA(0, 255, 0, 0));
 	unlitMat->texConstantColor(2, NLMISC::CRGBA(0, 0, 255, 0));
@@ -489,9 +498,9 @@ void CStereoOVR::detachFromDisplay()
 {
 	/*if (!m_OriginalMode.Windowed)
 	{
-		m_OriginalMode.Windowed = true;
-		m_Driver->setMode(m_OriginalMode);
-		m_OriginalMode.Windowed = false;
+	    m_OriginalMode.Windowed = true;
+	    m_Driver->setMode(m_OriginalMode);
+	    m_OriginalMode.Windowed = false;
 	}*/
 	m_Driver->setMode(m_OriginalMode);
 	m_Driver->setWindowPos(m_OriginalWinPosX, m_OriginalWinPosY);
@@ -508,31 +517,31 @@ void CStereoOVR::initCamera(uint cid, const NL3D::UCamera *camera)
 	return;*/
 
 	m_LeftFrustum[cid].init(
-		m_EyeFrustumBase[ovrEye_Left].Left * camera->getFrustum().Near, 
-		m_EyeFrustumBase[ovrEye_Left].Right * camera->getFrustum().Near,
-		m_EyeFrustumBase[ovrEye_Left].Bottom * camera->getFrustum().Near,
-		m_EyeFrustumBase[ovrEye_Left].Top * camera->getFrustum().Near,
-		camera->getFrustum().Near,
-		camera->getFrustum().Far,
-		true);
+	    m_EyeFrustumBase[ovrEye_Left].Left * camera->getFrustum().Near,
+	    m_EyeFrustumBase[ovrEye_Left].Right * camera->getFrustum().Near,
+	    m_EyeFrustumBase[ovrEye_Left].Bottom * camera->getFrustum().Near,
+	    m_EyeFrustumBase[ovrEye_Left].Top * camera->getFrustum().Near,
+	    camera->getFrustum().Near,
+	    camera->getFrustum().Far,
+	    true);
 
 	m_RightFrustum[cid].init(
-		m_EyeFrustumBase[ovrEye_Right].Left * camera->getFrustum().Near, 
-		m_EyeFrustumBase[ovrEye_Right].Right * camera->getFrustum().Near,
-		m_EyeFrustumBase[ovrEye_Right].Bottom * camera->getFrustum().Near,
-		m_EyeFrustumBase[ovrEye_Right].Top * camera->getFrustum().Near,
-		camera->getFrustum().Near,
-		camera->getFrustum().Far,
-		true);
+	    m_EyeFrustumBase[ovrEye_Right].Left * camera->getFrustum().Near,
+	    m_EyeFrustumBase[ovrEye_Right].Right * camera->getFrustum().Near,
+	    m_EyeFrustumBase[ovrEye_Right].Bottom * camera->getFrustum().Near,
+	    m_EyeFrustumBase[ovrEye_Right].Top * camera->getFrustum().Near,
+	    camera->getFrustum().Near,
+	    camera->getFrustum().Far,
+	    true);
 
 	m_ClippingFrustum[cid].init(
-		min(m_EyeFrustumBase[ovrEye_Left].Left, m_EyeFrustumBase[ovrEye_Right].Left) * camera->getFrustum().Near, 
-		max(m_EyeFrustumBase[ovrEye_Left].Right, m_EyeFrustumBase[ovrEye_Right].Right) * camera->getFrustum().Near,
-		min(m_EyeFrustumBase[ovrEye_Left].Bottom, m_EyeFrustumBase[ovrEye_Right].Bottom) * camera->getFrustum().Near,
-		max(m_EyeFrustumBase[ovrEye_Left].Top, m_EyeFrustumBase[ovrEye_Right].Top) * camera->getFrustum().Near,
-		camera->getFrustum().Near,
-		camera->getFrustum().Far,
-		true);
+	    min(m_EyeFrustumBase[ovrEye_Left].Left, m_EyeFrustumBase[ovrEye_Right].Left) * camera->getFrustum().Near,
+	    max(m_EyeFrustumBase[ovrEye_Left].Right, m_EyeFrustumBase[ovrEye_Right].Right) * camera->getFrustum().Near,
+	    min(m_EyeFrustumBase[ovrEye_Left].Bottom, m_EyeFrustumBase[ovrEye_Right].Bottom) * camera->getFrustum().Near,
+	    max(m_EyeFrustumBase[ovrEye_Left].Top, m_EyeFrustumBase[ovrEye_Right].Top) * camera->getFrustum().Near,
+	    camera->getFrustum().Near,
+	    camera->getFrustum().Far,
+	    true);
 }
 
 /// Get the frustum to use for clipping
@@ -550,7 +559,7 @@ void CStereoOVR::getOriginalFrustum(uint cid, NL3D::UCamera *camera) const
 void CStereoOVR::updateCamera(uint cid, const NL3D::UCamera *camera)
 {
 	if (camera->getFrustum().Near != m_LeftFrustum[cid].Near
-		|| camera->getFrustum().Far != m_LeftFrustum[cid].Far)
+	    || camera->getFrustum().Far != m_LeftFrustum[cid].Far)
 		CStereoOVR::initCamera(cid, camera);
 	m_CameraMatrix[cid] = camera->getMatrix();
 }
@@ -686,7 +695,7 @@ bool CStereoOVR::wantClear()
 	}
 	return m_Driver->getPolygonMode() != UDriver::Filled;
 }
-	
+
 bool CStereoOVR::wantScene()
 {
 	switch (m_Stage)
@@ -782,8 +791,8 @@ bool CStereoOVR::beginRenderTarget()
 		static_cast<CDriverUser *>(m_Driver)->setRenderTarget(*m_SceneTexture);
 		return true;
 		/*nldebug("OVR: Begin render target");*/
-		//m_Driver->beginDefaultRenderTarget(m_RenderTargetWidth, m_RenderTargetHeight); // DEBUG
-		//return true;
+		// m_Driver->beginDefaultRenderTarget(m_RenderTargetWidth, m_RenderTargetHeight); // DEBUG
+		// return true;
 	}
 
 	return false;
@@ -797,57 +806,57 @@ void CStereoOVR::setInterfaceMatrix(const NL3D::CMatrix &matrix)
 void CStereoOVR::renderGUI()
 {
 	m_Driver->setModelMatrix(m_InterfaceCameraMatrix);
-/*
-	{
-		NLMISC::CLine line(NLMISC::CVector(0, 5, 2), NLMISC::CVector(0, 5, 3));
+	/*
+	    {
+	        NLMISC::CLine line(NLMISC::CVector(0, 5, 2), NLMISC::CVector(0, 5, 3));
 
-		NL3D::UMaterial mat = m_Driver->createMaterial();
-		mat.setZWrite(false);
-		// mat.setZFunc(UMaterial::always); // Not nice!
-		mat.setDoubleSided(true);
-		mat.setColor(NLMISC::CRGBA::Red);
-		mat.setBlend(false);
+	        NL3D::UMaterial mat = m_Driver->createMaterial();
+	        mat.setZWrite(false);
+	        // mat.setZFunc(UMaterial::always); // Not nice!
+	        mat.setDoubleSided(true);
+	        mat.setColor(NLMISC::CRGBA::Red);
+	        mat.setBlend(false);
 
-		m_Driver->drawLine(line, mat);
+	        m_Driver->drawLine(line, mat);
 
-		m_Driver->deleteMaterial(mat);
-	}
+	        m_Driver->deleteMaterial(mat);
+	    }
 
-	{
-		NL3D::UMaterial mat = m_Driver->createMaterial();
-		mat.setZWrite(false);
-		mat.setZFunc(UMaterial::always); // Not nice!
-		mat.setDoubleSided(true);
-		mat.setBlend(false);
-		NLMISC::CLine line;
+	    {
+	        NL3D::UMaterial mat = m_Driver->createMaterial();
+	        mat.setZWrite(false);
+	        mat.setZFunc(UMaterial::always); // Not nice!
+	        mat.setDoubleSided(true);
+	        mat.setBlend(false);
+	        NLMISC::CLine line;
 
-		mat.setColor(NLMISC::CRGBA::Red);
-		line = NLMISC::CLine(NLMISC::CVector(0, 3, -3), NLMISC::CVector(0, 3, 3)); // YPos
-		m_Driver->drawLine(line, mat);
+	        mat.setColor(NLMISC::CRGBA::Red);
+	        line = NLMISC::CLine(NLMISC::CVector(0, 3, -3), NLMISC::CVector(0, 3, 3)); // YPos
+	        m_Driver->drawLine(line, mat);
 
-		mat.setColor(NLMISC::CRGBA::Green);
-		line = NLMISC::CLine(NLMISC::CVector(3, 0, -3), NLMISC::CVector(3, 0, 3)); // XPos
-		m_Driver->drawLine(line, mat);
+	        mat.setColor(NLMISC::CRGBA::Green);
+	        line = NLMISC::CLine(NLMISC::CVector(3, 0, -3), NLMISC::CVector(3, 0, 3)); // XPos
+	        m_Driver->drawLine(line, mat);
 
-		mat.setColor(NLMISC::CRGBA::Magenta);
-		line = NLMISC::CLine(NLMISC::CVector(0, -3, -3), NLMISC::CVector(0, -3, 3)); // YNeg
-		m_Driver->drawLine(line, mat);
+	        mat.setColor(NLMISC::CRGBA::Magenta);
+	        line = NLMISC::CLine(NLMISC::CVector(0, -3, -3), NLMISC::CVector(0, -3, 3)); // YNeg
+	        m_Driver->drawLine(line, mat);
 
-		mat.setColor(NLMISC::CRGBA::Cyan);
-		line = NLMISC::CLine(NLMISC::CVector(-3, 0, -3), NLMISC::CVector(-3, 0, 3)); // XNeg
-		m_Driver->drawLine(line, mat);
+	        mat.setColor(NLMISC::CRGBA::Cyan);
+	        line = NLMISC::CLine(NLMISC::CVector(-3, 0, -3), NLMISC::CVector(-3, 0, 3)); // XNeg
+	        m_Driver->drawLine(line, mat);
 
-		mat.setColor(NLMISC::CRGBA::Blue);
-		line = NLMISC::CLine(NLMISC::CVector(0, -3, 3), NLMISC::CVector(0, 3, 3)); // ZPos
-		m_Driver->drawLine(line, mat);
+	        mat.setColor(NLMISC::CRGBA::Blue);
+	        line = NLMISC::CLine(NLMISC::CVector(0, -3, 3), NLMISC::CVector(0, 3, 3)); // ZPos
+	        m_Driver->drawLine(line, mat);
 
-		mat.setColor(NLMISC::CRGBA::Blue);
-		line = NLMISC::CLine(NLMISC::CVector(0, -3, -3), NLMISC::CVector(0, 3, -3)); // ZNeg
-		m_Driver->drawLine(line, mat);
+	        mat.setColor(NLMISC::CRGBA::Blue);
+	        line = NLMISC::CLine(NLMISC::CVector(0, -3, -3), NLMISC::CVector(0, 3, -3)); // ZNeg
+	        m_Driver->drawLine(line, mat);
 
-		m_Driver->deleteMaterial(mat);
-	}
-	*/
+	        m_Driver->deleteMaterial(mat);
+	    }
+	    */
 	{
 		nlassert(m_GUITexture);
 
@@ -886,15 +895,15 @@ void CStereoOVR::renderGUI()
 		quadUV.V1 = CVector((width * 0.5f), distance, -(height * 0.5f));
 		quadUV.V2 = CVector((width * 0.5f), distance, (height * 0.5f));
 		quadUV.V3 = CVector(-(width * 0.5f), distance, (height * 0.5f));
-		quadUV.Uv0 = CUV(0.f,  0.f);
+		quadUV.Uv0 = CUV(0.f, 0.f);
 		quadUV.Uv1 = CUV(1.f, 0.f);
 		quadUV.Uv2 = CUV(1.f, 1.f);
-		quadUV.Uv3 = CUV(0.f,  1.f);
-		
+		quadUV.Uv3 = CUV(0.f, 1.f);
+
 		const uint nbQuads = 128;
 		static CVertexBuffer vb;
 		static CIndexBuffer ib;
-		
+
 		vb.setVertexFormat(CVertexBuffer::PositionFlag | CVertexBuffer::TexCoord0Flag);
 		vb.setPreferredMemory(CVertexBuffer::RAMVolatile, false);
 		vb.setNumVertices((nbQuads + 1) * 2);
@@ -944,7 +953,7 @@ void CStereoOVR::renderGUI()
 		// m_Driver->setPolygonMode(UDriver::Line);
 		driver->activeVertexBuffer(vb);
 		driver->activeIndexBuffer(ib);
-		driver->renderTriangles(*umat.getObjectPtr(), 0, nbQuads * 2); //renderRawQuads(umat, 0, 128);
+		driver->renderTriangles(*umat.getObjectPtr(), 0, nbQuads * 2); // renderRawQuads(umat, 0, 128);
 		// m_Driver->setPolygonMode(UDriver::Filled);
 
 		// m_Driver->drawQuad(quadUV, umat);
@@ -952,21 +961,21 @@ void CStereoOVR::renderGUI()
 		m_Driver->deleteMaterial(umat);
 
 		/*{
-			// nldebug("Render GUI lines");
-			NL3D::UMaterial rmat = m_Driver->createMaterial();
-			rmat.setZWrite(false);
-			rmat.setZFunc(UMaterial::always); // Not nice!
-			rmat.setDoubleSided(true);
-			rmat.setColor(NLMISC::CRGBA::Red);
-			rmat.setBlend(false);
+		    // nldebug("Render GUI lines");
+		    NL3D::UMaterial rmat = m_Driver->createMaterial();
+		    rmat.setZWrite(false);
+		    rmat.setZFunc(UMaterial::always); // Not nice!
+		    rmat.setDoubleSided(true);
+		    rmat.setColor(NLMISC::CRGBA::Red);
+		    rmat.setBlend(false);
 
-			m_Driver->setPolygonMode(UDriver::Line);
-			driver->activeVertexBuffer(vb);
-			driver->activeIndexBuffer(ib);
-			driver->renderTriangles(*rmat.getObjectPtr(), 0, nbQuads * 2);
-			m_Driver->setPolygonMode(UDriver::Filled);
+		    m_Driver->setPolygonMode(UDriver::Line);
+		    driver->activeVertexBuffer(vb);
+		    driver->activeIndexBuffer(ib);
+		    driver->renderTriangles(*rmat.getObjectPtr(), 0, nbQuads * 2);
+		    m_Driver->setPolygonMode(UDriver::Filled);
 
-			m_Driver->deleteMaterial(rmat);
+		    m_Driver->deleteMaterial(rmat);
 		}*/
 	}
 }
@@ -1009,8 +1018,8 @@ bool CStereoOVR::endRenderTarget()
 	{
 		nlassert(m_SceneTexture);
 
-		//nldebug("OVR: End render target");
-		// m_Driver->endDefaultRenderTarget(NULL); // DEBUG
+		// nldebug("OVR: End render target");
+		//  m_Driver->endDefaultRenderTarget(NULL); // DEBUG
 
 		// end render target
 		CTextureUser texNull;
@@ -1025,7 +1034,7 @@ bool CStereoOVR::endRenderTarget()
 
 		CDriverUser *dru = static_cast<CDriverUser *>(m_Driver);
 		IDriver *drv = dru->getDriver();
-		
+
 		// set matrix mode
 		CViewport vp;
 		m_Driver->setViewport(vp);
@@ -1038,12 +1047,12 @@ bool CStereoOVR::endRenderTarget()
 			mat->setTexture(1, m_SceneTexture->getITexture());
 			mat->setTexture(2, m_SceneTexture->getITexture());
 			mat->setTexture(3, m_SceneTexture->getITexture());
-			
-			//m_Driver->setPolygonMode(UDriver::Line);
+
+			// m_Driver->setPolygonMode(UDriver::Line);
 			drv->activeVertexBuffer(m_VB[eye]);
 			drv->activeIndexBuffer(m_IB[eye]);
 			drv->renderTriangles(*mat, 0, m_NbTris[eye]);
-			//m_Driver->setPolygonMode(UDriver::Filled);
+			// m_Driver->setPolygonMode(UDriver::Filled);
 
 			mat->setTexture(0, NULL);
 			mat->setTexture(1, NULL);
@@ -1063,90 +1072,90 @@ bool CStereoOVR::endRenderTarget()
 
 	/*if (m_Driver && m_Stage == 6 && (m_Driver->getPolygonMode() == UDriver::Filled)) // set to 4 to turn off distortion of 2d gui
 	{
-		nlassert(m_SceneTexture);
+	    nlassert(m_SceneTexture);
 
-		CTextureUser texNull;
-		(static_cast<CDriverUser *>(m_Driver))->setRenderTarget(texNull);
-		bool fogEnabled = m_Driver->fogEnabled();
-		m_Driver->enableFog(false);
+	    CTextureUser texNull;
+	    (static_cast<CDriverUser *>(m_Driver))->setRenderTarget(texNull);
+	    bool fogEnabled = m_Driver->fogEnabled();
+	    m_Driver->enableFog(false);
 
-		m_Driver->setMatrixMode2D11();
-		CViewport vp = CViewport();
-		m_Driver->setViewport(vp);
-		uint32 width, height;
-		m_Driver->getWindowSize(width, height);
-		NL3D::IDriver *drvInternal = (static_cast<CDriverUser *>(m_Driver))->getDriver();
-		NL3D::CMaterial *barrelMat = m_BarrelMat.getObjectPtr();
-		barrelMat->setTexture(0, m_SceneTexture->getITexture());
+	    m_Driver->setMatrixMode2D11();
+	    CViewport vp = CViewport();
+	    m_Driver->setViewport(vp);
+	    uint32 width, height;
+	    m_Driver->getWindowSize(width, height);
+	    NL3D::IDriver *drvInternal = (static_cast<CDriverUser *>(m_Driver))->getDriver();
+	    NL3D::CMaterial *barrelMat = m_BarrelMat.getObjectPtr();
+	    barrelMat->setTexture(0, m_SceneTexture->getITexture());
 
-		drvInternal->activePixelProgram(m_PixelProgram);
+	    drvInternal->activePixelProgram(m_PixelProgram);
 
-		float w = float(m_BarrelQuadLeft.V1.x),// / float(width),
-			h = float(m_BarrelQuadLeft.V2.y),// / float(height),
-			x = float(m_BarrelQuadLeft.V0.x),/// / float(width),
-			y = float(m_BarrelQuadLeft.V0.y);// / float(height);
+	    float w = float(m_BarrelQuadLeft.V1.x),// / float(width),
+	        h = float(m_BarrelQuadLeft.V2.y),// / float(height),
+	        x = float(m_BarrelQuadLeft.V0.x),/// / float(width),
+	        y = float(m_BarrelQuadLeft.V0.y);// / float(height);
 
-		float lensOffset = m_DevicePtr->HMDInfo.LensSeparationDistance * 0.5f;
-		float lensShift = m_DevicePtr->HMDInfo.HScreenSize * 0.25f - lensOffset;
-		float lensViewportShift = 4.0f * lensShift / m_DevicePtr->HMDInfo.HScreenSize;
+	    float lensOffset = m_DevicePtr->HMDInfo.LensSeparationDistance * 0.5f;
+	    float lensShift = m_DevicePtr->HMDInfo.HScreenSize * 0.25f - lensOffset;
+	    float lensViewportShift = 4.0f * lensShift / m_DevicePtr->HMDInfo.HScreenSize;
 
-		float lensCenterX = x + (w + lensViewportShift * 0.5f) * 0.5f;
-		float lensCenterY = y + h * 0.5f;
-		float screenCenterX = x + w * 0.5f;
-		float screenCenterY = y + h * 0.5f;
-		float scaleX = (w / 2);
-		float scaleY = (h / 2);
-		float scaleInX = (2 / w);
-		float scaleInY = (2 / h);
-		
-
-		drvInternal->setUniform2f(IDriver::PixelProgram, 
-			m_PixelProgram->ovrIndices().LensCenter, 
-			lensCenterX, lensCenterY);
-
-		drvInternal->setUniform2f(IDriver::PixelProgram, 
-			m_PixelProgram->ovrIndices().ScreenCenter, 
-			screenCenterX, screenCenterY);
-
-		drvInternal->setUniform2f(IDriver::PixelProgram, 
-			m_PixelProgram->ovrIndices().Scale, 
-			scaleX, scaleY);
-
-		drvInternal->setUniform2f(IDriver::PixelProgram, 
-			m_PixelProgram->ovrIndices().ScaleIn, 
-			scaleInX, scaleInY);
+	    float lensCenterX = x + (w + lensViewportShift * 0.5f) * 0.5f;
+	    float lensCenterY = y + h * 0.5f;
+	    float screenCenterX = x + w * 0.5f;
+	    float screenCenterY = y + h * 0.5f;
+	    float scaleX = (w / 2);
+	    float scaleY = (h / 2);
+	    float scaleInX = (2 / w);
+	    float scaleInY = (2 / h);
 
 
-		drvInternal->setUniform4fv(IDriver::PixelProgram, 
-			m_PixelProgram->ovrIndices().HmdWarpParam, 
-			1, m_DevicePtr->HMDInfo.DistortionK);
+	    drvInternal->setUniform2f(IDriver::PixelProgram,
+	        m_PixelProgram->ovrIndices().LensCenter,
+	        lensCenterX, lensCenterY);
 
-		m_Driver->drawQuad(m_BarrelQuadLeft, m_BarrelMat);
+	    drvInternal->setUniform2f(IDriver::PixelProgram,
+	        m_PixelProgram->ovrIndices().ScreenCenter,
+	        screenCenterX, screenCenterY);
 
-		x = w;
-		lensCenterX = x + (w - lensViewportShift * 0.5f) * 0.5f;
-		screenCenterX = x + w * 0.5f;
+	    drvInternal->setUniform2f(IDriver::PixelProgram,
+	        m_PixelProgram->ovrIndices().Scale,
+	        scaleX, scaleY);
 
-
-		drvInternal->setUniform2f(IDriver::PixelProgram, 
-			m_PixelProgram->ovrIndices().LensCenter, 
-			lensCenterX, lensCenterY);
-
-		drvInternal->setUniform2f(IDriver::PixelProgram, 
-			m_PixelProgram->ovrIndices().ScreenCenter, 
-			screenCenterX, screenCenterY);
+	    drvInternal->setUniform2f(IDriver::PixelProgram,
+	        m_PixelProgram->ovrIndices().ScaleIn,
+	        scaleInX, scaleInY);
 
 
-		m_Driver->drawQuad(m_BarrelQuadRight, m_BarrelMat);
+	    drvInternal->setUniform4fv(IDriver::PixelProgram,
+	        m_PixelProgram->ovrIndices().HmdWarpParam,
+	        1, m_DevicePtr->HMDInfo.DistortionK);
 
-		drvInternal->activePixelProgram(NULL);
-		m_Driver->enableFog(fogEnabled);
+	    m_Driver->drawQuad(m_BarrelQuadLeft, m_BarrelMat);
 
-		// Recycle render target
-		m_Driver->getRenderTargetManager().recycleRenderTarget(m_SceneTexture);
-		m_SceneTexture = NULL;
+	    x = w;
+	    lensCenterX = x + (w - lensViewportShift * 0.5f) * 0.5f;
+	    screenCenterX = x + w * 0.5f;
 
-		return true;
+
+	    drvInternal->setUniform2f(IDriver::PixelProgram,
+	        m_PixelProgram->ovrIndices().LensCenter,
+	        lensCenterX, lensCenterY);
+
+	    drvInternal->setUniform2f(IDriver::PixelProgram,
+	        m_PixelProgram->ovrIndices().ScreenCenter,
+	        screenCenterX, screenCenterY);
+
+
+	    m_Driver->drawQuad(m_BarrelQuadRight, m_BarrelMat);
+
+	    drvInternal->activePixelProgram(NULL);
+	    m_Driver->enableFog(fogEnabled);
+
+	    // Recycle render target
+	    m_Driver->getRenderTargetManager().recycleRenderTarget(m_SceneTexture);
+	    m_SceneTexture = NULL;
+
+	    return true;
 	}*/
 
 	return false;
@@ -1170,10 +1179,22 @@ NLMISC::CQuat CStereoOVR::getOrientation() const
 		ovrQuatf quatovr = ts.HeadPose.ThePose.Orientation;
 		NLMISC::CMatrix coordsys;
 		float csys[] = {
-			1.0f, 0.0f, 0.0f, 0.0f, 
-			0.0f, 0.0f, -1.0f, 0.0f, 
-			0.0f, 1.0f, 0.0f, 0.0f, 
-			0.0f, 0.0f, 0.0f, 1.0f, 
+			1.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			-1.0f,
+			0.0f,
+			0.0f,
+			1.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			1.0f,
 		};
 		coordsys.set(csys);
 		NLMISC::CMatrix matovr;
@@ -1200,7 +1221,6 @@ NLMISC::CQuat CStereoOVR::getOrientation() const
 /// Get GUI shift
 void CStereoOVR::getInterface2DShift(uint cid, float &x, float &y, float distance) const
 {
-
 }
 
 void CStereoOVR::setEyePosition(const NLMISC::CVector &v)
@@ -1218,8 +1238,6 @@ void CStereoOVR::setScale(float s)
 	m_EyePosition = m_EyePosition * (s / m_Scale);
 	m_Scale = s;
 }
-
-
 
 void CStereoOVR::listDevices(std::vector<CStereoDeviceInfo> &devicesOut)
 {
@@ -1248,7 +1266,7 @@ void CStereoOVR::listDevices(std::vector<CStereoDeviceInfo> &devicesOut)
 		deviceInfoOut.Serial = hmd->SerialNumber;
 		ovrHmd_Destroy(hmd);
 	}
-	
+
 #if !FINAL_VERSION
 	// Debug DK1
 	{

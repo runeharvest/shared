@@ -19,28 +19,24 @@
 
 #include "nel/misc/types_nl.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 /** A basic list node.
  *
  */
-class	CTessNodeList
+class CTessNodeList
 {
 public:
-	CTessNodeList	*Prec;
-	CTessNodeList	*Next;
+	CTessNodeList *Prec;
+	CTessNodeList *Next;
 
 	CTessNodeList()
 	{
-		Prec= NULL;
-		Next= NULL;
+		Prec = NULL;
+		Next = NULL;
 	}
 };
-
 
 // ***************************************************************************
 /** A basic speed list gestion, to add/remove already created Object. Object must herit from CTessNodeList.
@@ -49,68 +45,70 @@ public:
  * \author Nevrax France
  * \date 2000
  */
-template<class T> class	CTessList
+template <class T>
+class CTessList
 {
 private:
-	T				*Root;
-	sint			Size;
+	T *Root;
+	sint Size;
 
 public:
-	CTessList()		{Root= NULL; Size= 0;}
+	CTessList()
+	{
+		Root = NULL;
+		Size = 0;
+	}
 
-	sint			size() const {return Size;}
-	T				*begin() {return Root;}
+	sint size() const { return Size; }
+	T *begin() { return Root; }
 
-	void			append(T *node)
+	void append(T *node)
 	{
 		Size++;
 		nlassert(node);
 		// inserted???
-		nlassert(node->Prec==NULL && Root!=node);
+		nlassert(node->Prec == NULL && Root != node);
 		// update Next.
-		node->Next= Root;
-		if(Root)
-			Root->Prec= node;
+		node->Next = Root;
+		if (Root)
+			Root->Prec = node;
 		// update Prec.
-		node->Prec= NULL;
-		Root= node;
+		node->Prec = NULL;
+		Root = node;
 	}
-	void			remove(T *node)
+	void remove(T *node)
 	{
 		Size--;
 		nlassert(node);
 		// inserted???
-		nlassert(node->Prec!=NULL || Root==node);
-		nlassert(Size>=0);
+		nlassert(node->Prec != NULL || Root == node);
+		nlassert(Size >= 0);
 		// update Prec.
-		if(!node->Prec)
+		if (!node->Prec)
 		{
-			nlassert(Root==node);
-			Root= (T*)node->Next;
+			nlassert(Root == node);
+			Root = (T *)node->Next;
 		}
 		else
 		{
-			node->Prec->Next= node->Next;
+			node->Prec->Next = node->Next;
 		}
 		// update Next.
-		if(node->Next)
-			node->Next->Prec= node->Prec;
-		node->Next= NULL;
-		node->Prec= NULL;
+		if (node->Next)
+			node->Next->Prec = node->Prec;
+		node->Next = NULL;
+		node->Prec = NULL;
 	}
 
 	// This only clear this list, not the elements. Also, Elements Next/Prec ptrs are NOT modified.
-	void			clear()
+	void clear()
 	{
-		Root= NULL;
-		Size= 0;
+		Root = NULL;
+		Size = 0;
 	}
-
 };
 
-
 } // NL3D
-
 
 #endif // NL_TESS_LIST_H
 

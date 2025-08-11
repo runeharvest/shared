@@ -31,14 +31,16 @@ using namespace NLMISC;
 
 namespace NLSOUND {
 
-CMusicChannelFader::CMusicChannelFader() : _SoundDriver(NULL), _ActiveMusicFader(0), _Gain(1.0f), _LastTime(0)
+CMusicChannelFader::CMusicChannelFader()
+    : _SoundDriver(NULL)
+    , _ActiveMusicFader(0)
+    , _Gain(1.0f)
+    , _LastTime(0)
 {
-
 }
 
 CMusicChannelFader::~CMusicChannelFader()
 {
-	
 }
 
 void CMusicChannelFader::init(ISoundDriver *soundDriver)
@@ -72,22 +74,24 @@ void CMusicChannelFader::release()
 {
 	if (_SoundDriver)
 	{
-		for (uint i = 0; i < _MaxMusicFader; ++i) if (_MusicFader[i].MusicChannel) 
-		{
-			delete _MusicFader[i].MusicChannel;
-			_MusicFader[i].MusicChannel = NULL;
-		}
+		for (uint i = 0; i < _MaxMusicFader; ++i)
+			if (_MusicFader[i].MusicChannel)
+			{
+				delete _MusicFader[i].MusicChannel;
+				_MusicFader[i].MusicChannel = NULL;
+			}
 		_SoundDriver = NULL;
 	}
 }
 
 void CMusicChannelFader::reset()
 {
-	for (uint i = 0; i < _MaxMusicFader; ++i) if (_MusicFader[i].MusicChannel) 
-	{
+	for (uint i = 0; i < _MaxMusicFader; ++i)
 		if (_MusicFader[i].MusicChannel)
-			_MusicFader[i].MusicChannel->reset();
-	}
+		{
+			if (_MusicFader[i].MusicChannel)
+				_MusicFader[i].MusicChannel->reset();
+		}
 }
 
 void CMusicChannelFader::update()
@@ -143,7 +147,7 @@ void CMusicChannelFader::updateVolume()
  *	NB: if an old music was played, it is first stop with stopMusic()
  *	\param filepath file path, CPath::lookup is done here
  *  \param async stream music from hard disk, preload in memory if false
- *	\param loop must be true to play the music in loop. 
+ *	\param loop must be true to play the music in loop.
  */
 bool CMusicChannelFader::play(const std::string &filepath, uint xFadeTime, bool async, bool loop)
 {
@@ -151,8 +155,12 @@ bool CMusicChannelFader::play(const std::string &filepath, uint xFadeTime, bool 
 
 	// Find the next best free music channel
 	uint nextFader = _MaxMusicFader;
-	for (uint i = 0; i < _MaxMusicFader; ++i) if (!_MusicFader[i].Playing)
-		{ nextFader = i; break; }
+	for (uint i = 0; i < _MaxMusicFader; ++i)
+		if (!_MusicFader[i].Playing)
+		{
+			nextFader = i;
+			break;
+		}
 	if (nextFader == _MaxMusicFader)
 	{
 		nextFader = (_ActiveMusicFader + 1) % _MaxMusicFader;
@@ -178,21 +186,23 @@ bool CMusicChannelFader::stop(uint xFadeTime)
 	if (xFadeTime)
 	{
 		bool stopped = true;
-		for (uint i = 0; i < _MaxMusicFader; ++i) if (_MusicFader[i].Playing)
-		{
-			_MusicFader[i].fadeOut(xFadeTime);
-			stopped = false; // fading
-		}
+		for (uint i = 0; i < _MaxMusicFader; ++i)
+			if (_MusicFader[i].Playing)
+			{
+				_MusicFader[i].fadeOut(xFadeTime);
+				stopped = false; // fading
+			}
 		return stopped;
 	}
 	else
 	{
-		for (uint i = 0; i < _MaxMusicFader; ++i) if (_MusicFader[i].Playing)
-		{
-			_MusicFader[i].MusicChannel->stop();
-			_MusicFader[i].Fade = false;
-			_MusicFader[i].Playing = false;
-		}
+		for (uint i = 0; i < _MaxMusicFader; ++i)
+			if (_MusicFader[i].Playing)
+			{
+				_MusicFader[i].MusicChannel->stop();
+				_MusicFader[i].Fade = false;
+				_MusicFader[i].Playing = false;
+			}
 		return true;
 	}
 }
@@ -200,7 +210,7 @@ bool CMusicChannelFader::stop(uint xFadeTime)
 /// Pause the music previously loaded and played (the Memory is not freed)
 void CMusicChannelFader::pause()
 {
-	for (uint i = 0; i < _MaxMusicFader; ++i) 
+	for (uint i = 0; i < _MaxMusicFader; ++i)
 		if (_MusicFader[i].Playing)
 			_MusicFader[i].MusicChannel->pause();
 }
@@ -208,7 +218,7 @@ void CMusicChannelFader::pause()
 /// Resume the music previously paused
 void CMusicChannelFader::resume()
 {
-	for (uint i = 0; i < _MaxMusicFader; ++i) 
+	for (uint i = 0; i < _MaxMusicFader; ++i)
 		if (_MusicFader[i].Playing)
 			_MusicFader[i].MusicChannel->resume();
 }
@@ -218,8 +228,9 @@ bool CMusicChannelFader::isEnded()
 {
 	for (uint i = 0; i < _MaxMusicFader; ++i)
 	{
-		if (_MusicFader[i].Playing) if (!_MusicFader[i].MusicChannel->isEnded())
-			return false; // at least one song still playing
+		if (_MusicFader[i].Playing)
+			if (!_MusicFader[i].MusicChannel->isEnded())
+				return false; // at least one song still playing
 	}
 	return true; // no song found that is still playing
 }

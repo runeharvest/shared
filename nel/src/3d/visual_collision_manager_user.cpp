@@ -25,12 +25,11 @@
 
 namespace NL3D {
 
-
 // ***************************************************************************
-uint		CVisualCollisionManagerUser::addMeshInstanceCollision(const UVisualCollisionMesh &mesh, const NLMISC::CMatrix &instanceMatrix, bool avoidCollisionWhenInside, bool avoidCollisionWhenOutside)
+uint CVisualCollisionManagerUser::addMeshInstanceCollision(const UVisualCollisionMesh &mesh, const NLMISC::CMatrix &instanceMatrix, bool avoidCollisionWhenInside, bool avoidCollisionWhenOutside)
 {
 	// if empty proxy abort
-	if(mesh.empty())
+	if (mesh.empty())
 		return 0;
 	return _Manager.addMeshInstanceCollision(mesh.getMeshPtr(), instanceMatrix, avoidCollisionWhenInside, avoidCollisionWhenOutside);
 }
@@ -41,7 +40,7 @@ void CVisualCollisionManagerUser::getMeshs(const NLMISC::CAABBox &aabbox, std::v
 	static std::vector<CVisualCollisionManager::CMeshInstanceColInfo> colInfos;
 	_Manager.getMeshs(aabbox, colInfos);
 	dest.resize(colInfos.size());
-	for(uint k = 0; k < colInfos.size(); ++k)
+	for (uint k = 0; k < colInfos.size(); ++k)
 	{
 		dest[k].Mesh.attach(colInfos[k].Mesh);
 		dest[k].WorldMatrix = colInfos[k].WorldMatrix;
@@ -50,26 +49,4 @@ void CVisualCollisionManagerUser::getMeshs(const NLMISC::CAABBox &aabbox, std::v
 	}
 }
 
-
 } // NL3D
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

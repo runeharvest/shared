@@ -16,13 +16,11 @@
 
 #include "nel/misc/types_nl.h"
 #include "game_share/r2_basic_types.h"
-//#include "game_share/r2_types.h"
+// #include "game_share/r2_types.h"
 #include "persistent_data.h"
-
 
 #ifndef NL_FAR_POSITION_H
 #define NL_FAR_POSITION_H
-
 
 class CEntityState;
 
@@ -30,11 +28,11 @@ class CEntityState;
 enum TCharConnectionState
 {
 	/// the character is offline
-	ccs_offline =0,
+	ccs_offline = 0,
 	/// the character is online on the same shard
-	ccs_online =1,
+	ccs_online = 1,
 	/// the character is online, but on another shard in the domain.
-	ccs_online_abroad =2
+	ccs_online_abroad = 2
 };
 
 /**
@@ -76,13 +74,13 @@ public:
 		Heading = 0;
 	}
 
-	COfflineEntityState(const CEntityState& state);
+	COfflineEntityState(const CEntityState &state);
 
 	// Comparison
-	bool operator== (const COfflineEntityState &other ) const;
+	bool operator==(const COfflineEntityState &other) const;
 
 	// Assignment
-	COfflineEntityState& operator= (const COfflineEntityState &src)
+	COfflineEntityState &operator=(const COfflineEntityState &src)
 	{
 		X = src.X;
 		Y = src.Y;
@@ -106,18 +104,16 @@ public:
 	std::string toString() const;
 };
 
-
 /*
  * Session identifier.
  * On a mainland shard, there is a main fixed TSessionId for the whole EGS.
  * On a ring shard (adventures, outlands), the DSS manages several sessions.
  * Each character is in a session.
  */
-//typedef uint32 TSessionId;
+// typedef uint32 TSessionId;
 
 // Special value to force saving the position stack without updating it from the outside anymore
 const TSessionId SessionLockPositionStack(~0u);
-
 
 /**
  * Session Id + Entity State (X,Y,Z,Theta)
@@ -128,19 +124,18 @@ const TSessionId SessionLockPositionStack(~0u);
 class CFarPosition
 {
 public:
-
 	DECLARE_PERSISTENCE_METHODS
 
-	TSessionId			SessionId;
-	COfflineEntityState	PosState;
+	TSessionId SessionId;
+	COfflineEntityState PosState;
 
 	CFarPosition();
 
 	// Comparison
-	bool operator== (const CFarPosition &other) const;
+	bool operator==(const CFarPosition &other) const;
 
 	// Assignment
-	CFarPosition& operator= (const CFarPosition &src)
+	CFarPosition &operator=(const CFarPosition &src)
 	{
 		SessionId = src.SessionId;
 		PosState = src.PosState;
@@ -155,10 +150,7 @@ public:
 		f.serial(SessionId);
 		f.serial(PosState);
 	}
-
-
 };
-
 
 #endif // NL_FAR_POSITION_H
 

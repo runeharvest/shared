@@ -25,22 +25,20 @@
 #include "callback_server.h"
 #include "login_cookie.h"
 
-namespace NLMISC
-{
-	class CConfigFile;
+namespace NLMISC {
+class CConfigFile;
 }
 
-namespace NLNET
-{
+namespace NLNET {
 
 /// Callback function type called when a new client is identified (with the login password procedure)
-typedef void (*TNewClientCallback) (TSockId from, const CLoginCookie &cookie);
+typedef void (*TNewClientCallback)(TSockId from, const CLoginCookie &cookie);
 
 /// Callback function type called when a new cookie is acceptable (aka as 'a player can connect with this cookie')
-typedef void (*TNewCookieCallback) (const CLoginCookie &cookie);
+typedef void (*TNewCookieCallback)(const CLoginCookie &cookie);
 
 /// Callback function type called when a client need to be disconnected (double login...)
-typedef void (*TDisconnectClientCallback) (uint32 userId, const std::string &reqServiceName);
+typedef void (*TDisconnectClientCallback)(uint32 userId, const std::string &reqServiceName);
 
 class CUdpSock;
 class IDisplayer;
@@ -55,33 +53,33 @@ class IDisplayer;
  * \author Nevrax France
  * \date 2001
  */
-class CLoginServer {
+class CLoginServer
+{
 public:
-
 	/// Create the connection to the Welcome Service and install callbacks to the callback server (for a TCP connection)
 	/// init() will try to find the ListenAddress in the config file and it will be used to say to the client
 	/// the address to connect to this frontend (using the login system). You can modify this in real time in
 	/// the config file or with the ls_listen_address command
 	/// The ListenAddress must be in the form of "itsalive.nevrax.org:38000" (ip+port)
-	static void init (CCallbackServer &server, TNewClientCallback ncl);
+	static void init(CCallbackServer &server, TNewClientCallback ncl);
 
 	/// Create the connection to the Welcome Service for an UDP connection
 	/// the dc will be call when the Welcome Service decides to disconnect a player (double login...)
-	static void init (CUdpSock &server, TDisconnectClientCallback dc);
+	static void init(CUdpSock &server, TDisconnectClientCallback dc);
 
 	/// Create the connection to the Welcome Service for a connection
 	/// the dc will be call when the Welcome Service decides to disconnect a player (double login...)
-	static void init (const std::string &listenAddr, TDisconnectClientCallback dc);
+	static void init(const std::string &listenAddr, TDisconnectClientCallback dc);
 
 	/// Add a callback to be warned when a new cookie become acceptable
 	static void addNewCookieCallback(TNewCookieCallback newCookieCb);
 
 	/// Used only in UDP, check if the cookie is valid. return empty string if valid, reason otherwise
-	static std::string isValidCookie (const CLoginCookie &lc, std::string &userName, std::string &userPriv, std::string &userExtended, uint32 &instanceId, uint32 &charSlot);
+	static std::string isValidCookie(const CLoginCookie &lc, std::string &userName, std::string &userPriv, std::string &userExtended, uint32 &instanceId, uint32 &charSlot);
 
 	/// Call this method when a user is disconnected or the server disconnect the user.
 	/// This method will warn the login system that the user is not here anymore
-	static void clientDisconnected (uint32 userId);
+	static void clientDisconnected(uint32 userId);
 
 	/// Call this method to retrieve the listen address
 	static const std::string &getListenAddress();
@@ -103,15 +101,12 @@ public:
 	static void refreshPendingList();
 
 private:
-
 	/// This function is used by init() to create the connection to the Welcome Service
-	static void connectToWS ();
+	static void connectToWS();
 
 	// called by other init()
-	static void init (const std::string &listenAddress);
-
+	static void init(const std::string &listenAddress);
 };
-
 
 } // NLNET
 

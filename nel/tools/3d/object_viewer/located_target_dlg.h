@@ -19,9 +19,7 @@
 
 #if _MSC_VER > 1000
 #pragma once
-#endif 
-
-
+#endif
 
 #include "nel/3d/ps_located.h"
 #include "nel/3d/ps_force.h"
@@ -29,45 +27,43 @@
 #include "ps_wrapper.h"
 #include "particle_workspace.h"
 
-
 class CParticleDlg;
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CLocatedTargetDlg dialog
 
 class CLocatedTargetDlg : public CDialog, public CDialogStack
 {
-// Construction
+	// Construction
 public:
-	CLocatedTargetDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSTargetLocatedBindable *blTarget, CParticleDlg *particleDlg);   // standard constructor
-
-
+	CLocatedTargetDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSTargetLocatedBindable *blTarget, CParticleDlg *particleDlg); // standard constructor
 
 	// init the dialog with the given parent
-	void init(CWnd* pParent);
+	void init(CWnd *pParent);
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CLocatedTargetDlg)
-	enum { IDD = IDD_LOCATED_TARGET_DLG };
-	CListBox	m_AvailableTargets;
-	CListBox	m_Targets;
+	enum
+	{
+		IDD = IDD_LOCATED_TARGET_DLG
+	};
+	CListBox m_AvailableTargets;
+	CListBox m_Targets;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CLocatedTargetDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// the target we're focusing on
 	NL3D::CPSTargetLocatedBindable *_LBTarget;
-	CParticleDlg				   *_ParticleDlg;
-	CParticleWorkspace::CNode	   *_Node;
+	CParticleDlg *_ParticleDlg;
+	CParticleWorkspace::CNode *_Node;
 
 	// Generated message map functions
 	//{{AFX_MSG(CLocatedTargetDlg)
@@ -84,33 +80,31 @@ protected:
 	{
 		NL3D::CPSForceIntensity *F;
 		float get(void) const { return F->getIntensity(); }
-		void set(const float &value) {F->setIntensity(value); }
+		void set(const float &value) { F->setIntensity(value); }
 		scheme_type *getScheme(void) const { return F->getIntensityScheme(); }
-		void setScheme(scheme_type *s) {F->setIntensityScheme(s); }
+		void setScheme(scheme_type *s) { F->setIntensityScheme(s); }
 	} _ForceIntensityWrapper;
 
 	///////////////////////////////////////////////////////
 	// wrapper to tune the radial viscosity for vortices //
 	///////////////////////////////////////////////////////
 
-
 	struct CRadialViscosityWrapper : public IPSWrapperFloat
 	{
 		NL3D::CPSCylindricVortex *V;
 		float get(void) const { return V->getRadialViscosity(); }
-		void set(const float &value) { V->setRadialViscosity(value); }		
+		void set(const float &value) { V->setRadialViscosity(value); }
 	} _RadialViscosityWrapper;
 
 	///////////////////////////////////////////////////////
 	// wrapper to tune the tangential viscosity for vortices //
 	///////////////////////////////////////////////////////
 
-
 	struct CTangentialViscosityWrapper : public IPSWrapperFloat
 	{
 		NL3D::CPSCylindricVortex *V;
 		float get(void) const { return V->getTangentialViscosity(); }
-		void set(const float &value) { V->setTangentialViscosity(value); }		
+		void set(const float &value) { V->setTangentialViscosity(value); }
 	} _TangentialViscosityWrapper;
 
 	////////////////////////////////////
@@ -119,9 +113,9 @@ protected:
 
 	struct CDirectionWrapper : public IPSWrapper<NLMISC::CVector>
 	{
-	   NL3D::CPSDirection *E;
-	   NLMISC::CVector get(void) const { return E->getDir(); }
-	   void set(const NLMISC::CVector &d){ E->setDir(d); }	
+		NL3D::CPSDirection *E;
+		NLMISC::CVector get(void) const { return E->getDir(); }
+		void set(const NLMISC::CVector &d) { E->setDir(d); }
 	} _DirectionWrapper;
 
 	//////////////////////////////////////////////////////////////
@@ -130,13 +124,15 @@ protected:
 
 	struct CParamFactorWrapper : public IPSWrapperFloat
 	{
-	   NL3D::CPSBrownianForce *F;
-	   float get(void) const { return F->getParametricFactor(); }
-	   void set(const float &f){ F->setParametricFactor(f); }	
+		NL3D::CPSBrownianForce *F;
+		float get(void) const { return F->getParametricFactor(); }
+		void set(const float &f) { F->setParametricFactor(f); }
 	} _ParamFactorWrapper;
 
-
-	void updateModifiedFlag() { if (_Node) _Node->setModified(true); }
+	void updateModifiedFlag()
+	{
+		if (_Node) _Node->setModified(true);
+	}
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -57,10 +57,10 @@ public:
 	virtual ~CUndoRedoBinderButton();
 
 	inline void enable(bool enabled) { m_Enabled = enabled; }
-	
+
 private slots:
 	void abstractButtonToggled(bool checked);
-	
+
 private:
 	bool m_Enabled; // binder enabled
 	bool m_Checked;
@@ -70,7 +70,7 @@ private:
 private:
 	CUndoRedoBinderButton(const CUndoRedoBinderButton &);
 	CUndoRedoBinderButton &operator=(const CUndoRedoBinderButton &);
-	
+
 }; /* class CUndoRedoBinderButton */
 
 ///////////////////////////////////////////////////////////////////////
@@ -85,12 +85,12 @@ private:
 class CUndoRedoCommandButton : public QUndoCommand
 {
 public:
-	CUndoRedoCommandButton(CUndoRedoBinderButton *binder, QAbstractButton *abstractButton, bool undo/*, bool redo*/);
+	CUndoRedoCommandButton(CUndoRedoBinderButton *binder, QAbstractButton *abstractButton, bool undo /*, bool redo*/);
 	virtual ~CUndoRedoCommandButton();
 
-    virtual void undo();
-    virtual void redo();
-	
+	virtual void undo();
+	virtual void redo();
+
 private:
 	bool m_Undo;
 	/*bool m_Redo;*/
@@ -101,7 +101,7 @@ private:
 private:
 	CUndoRedoCommandButton(const CUndoRedoCommandButton &);
 	CUndoRedoCommandButton &operator=(const CUndoRedoCommandButton &);
-	
+
 }; /* class CUndoRedoCommandButton */
 
 ///////////////////////////////////////////////////////////////////////
@@ -123,10 +123,10 @@ public:
 	virtual ~CUndoRedoBinderLineEdit();
 
 	inline void enable(bool enabled) { m_Enabled = enabled; }
-	
+
 private slots:
 	void lineEditTextChanged(const QString &text);
-	
+
 private:
 	bool m_Enabled; // binder enabled
 	QString m_LastValue;
@@ -137,7 +137,7 @@ private:
 private:
 	CUndoRedoBinderLineEdit(const CUndoRedoBinderLineEdit &);
 	CUndoRedoBinderLineEdit &operator=(const CUndoRedoBinderLineEdit &);
-	
+
 }; /* class CUndoRedoBinderLineEdit */
 
 ///////////////////////////////////////////////////////////////////////
@@ -155,11 +155,11 @@ public:
 	CUndoRedoCommandLineEdit(CUndoRedoBinderLineEdit *binder, QLineEdit *abtractLineEdit, const QString &undo, const QString &redo, int id);
 	virtual ~CUndoRedoCommandLineEdit();
 
-    virtual void undo();
-    virtual void redo();
-	
+	virtual void undo();
+	virtual void redo();
+
 	virtual int id() const { return m_Id; };
-    virtual bool mergeWith(const QUndoCommand *other);
+	virtual bool mergeWith(const QUndoCommand *other);
 
 private:
 	QString m_Undo;
@@ -172,7 +172,7 @@ private:
 private:
 	CUndoRedoCommandLineEdit(const CUndoRedoCommandLineEdit &);
 	CUndoRedoCommandLineEdit &operator=(const CUndoRedoCommandLineEdit &);
-	
+
 }; /* class CUndoRedoCommandLineEdit */
 
 ///////////////////////////////////////////////////////////////////////
@@ -194,10 +194,10 @@ public:
 	virtual ~CUndoRedoBinderComboBox();
 
 	inline void enable(bool enabled) { m_Enabled = enabled; }
-	
+
 private slots:
 	void comboBoxCurrentIndexChanged(int index);
-	
+
 private:
 	bool m_Enabled; // binder enabled
 	int m_LastValue;
@@ -207,7 +207,7 @@ private:
 private:
 	CUndoRedoBinderComboBox(const CUndoRedoBinderComboBox &);
 	CUndoRedoBinderComboBox &operator=(const CUndoRedoBinderComboBox &);
-	
+
 }; /* class CUndoRedoBinderComboBox */
 
 ///////////////////////////////////////////////////////////////////////
@@ -225,8 +225,8 @@ public:
 	CUndoRedoCommandComboBox(CUndoRedoBinderComboBox *binder, QComboBox *abtractComboBox, int undo, int redo);
 	virtual ~CUndoRedoCommandComboBox();
 
-    virtual void undo();
-    virtual void redo();
+	virtual void undo();
+	virtual void redo();
 
 private:
 	int m_Undo;
@@ -238,7 +238,7 @@ private:
 private:
 	CUndoRedoCommandComboBox(const CUndoRedoCommandComboBox &);
 	CUndoRedoCommandComboBox &operator=(const CUndoRedoCommandComboBox &);
-	
+
 }; /* class CUndoRedoCommandComboBox */
 
 ///////////////////////////////////////////////////////////////////////
@@ -260,10 +260,10 @@ public:
 	virtual ~CUndoRedoBinderColorPicker();
 
 	inline void enable(bool enabled) { m_Enabled = enabled; }
-	
+
 private slots:
 	void colorPickerColorChanged(const QColor &col);
-	
+
 private:
 	bool m_Enabled; // binder enabled
 	QColor m_LastValue;
@@ -273,7 +273,7 @@ private:
 private:
 	CUndoRedoBinderColorPicker(const CUndoRedoBinderColorPicker &);
 	CUndoRedoBinderColorPicker &operator=(const CUndoRedoBinderColorPicker &);
-	
+
 }; /* class CUndoRedoBinderColorPicker */
 
 ///////////////////////////////////////////////////////////////////////
@@ -291,8 +291,8 @@ public:
 	CUndoRedoCommandColorPicker(CUndoRedoBinderColorPicker *binder, QtColorPicker *abtractColorPicker, const QColor &undo, const QColor &redo);
 	virtual ~CUndoRedoCommandColorPicker();
 
-    virtual void undo();
-    virtual void redo();
+	virtual void undo();
+	virtual void redo();
 
 private:
 	QColor m_Undo;
@@ -304,7 +304,7 @@ private:
 private:
 	CUndoRedoCommandColorPicker(const CUndoRedoCommandColorPicker &);
 	CUndoRedoCommandColorPicker &operator=(const CUndoRedoCommandColorPicker &);
-	
+
 }; /* class CUndoRedoCommandColorPicker */
 
 ///////////////////////////////////////////////////////////////////////

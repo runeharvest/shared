@@ -32,30 +32,31 @@ class SelectionTerritoire;
 
 class CChooseVegetSet : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CChooseVegetSet(SelectionTerritoire* pParent, const std::string &oldFile);   // standard constructor
+	CChooseVegetSet(SelectionTerritoire *pParent, const std::string &oldFile); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CChooseVegetSet)
-	enum { IDD = IDD_CHOOSE_VEGET };
-	CButton	Name;
+	enum
+	{
+		IDD = IDD_CHOOSE_VEGET
+	};
+	CButton Name;
 	//}}AFX_DATA
 
-	SelectionTerritoire		*Parent;
-	std::string				FileName;
+	SelectionTerritoire *Parent;
+	std::string FileName;
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CChooseVegetSet)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CChooseVegetSet)
 	afx_msg void OnBrowse();

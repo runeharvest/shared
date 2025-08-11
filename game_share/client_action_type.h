@@ -14,41 +14,37 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_CLIENT_ACTION_TYPE_H
 #define NL_CLIENT_ACTION_TYPE_H
 
 #include "nel/misc/types_nl.h"
 
-
-namespace CLIENT_ACTION_TYPE
+namespace CLIENT_ACTION_TYPE {
+enum TClientActionType
 {
-	enum TClientActionType
-	{
-		None= 0,	// display nothing
+	None = 0, // display nothing
 
-		Combat,
-		Spell,
-		Faber,
-		Repair,
-		Refine,
-		Memorize,
-		Forage,
-		Harvest,
-		Training,
-		Tame,
-		Teleport,
-		Disconnect,
-		Mount,
-		Unmount,
-		ConsumeItem,
+	Combat,
+	Spell,
+	Faber,
+	Repair,
+	Refine,
+	Memorize,
+	Forage,
+	Harvest,
+	Training,
+	Tame,
+	Teleport,
+	Disconnect,
+	Mount,
+	Unmount,
+	ConsumeItem,
 
-		NumClientActionType
-	};
+	NumClientActionType
+};
 
-	const std::string	&toString(TClientActionType e);
-	TClientActionType	fromString(const std::string &s);
+const std::string &toString(TClientActionType e);
+TClientActionType fromString(const std::string &s);
 };
 
 #endif // NL_CLIENT_ACTION_TYPE_H

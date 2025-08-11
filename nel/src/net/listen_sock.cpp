@@ -22,11 +22,10 @@
 #include "nel/net/listen_sock.h"
 #include "nel/net/net_log.h"
 
-
 #ifdef NL_OS_WINDOWS
 
 #ifndef NL_COMP_MINGW
-#	define NOMINMAX
+#define NOMINMAX
 #endif
 #include <windows.h>
 // Windows includes for `sockaddr_in6` and `WSAStringToAddressW`
@@ -50,35 +49,32 @@ typedef int SOCKET;
 
 #endif
 
-
 using namespace std;
 
-
-namespace NLNET
-{
-
+namespace NLNET {
 
 /*
  * Constructor
  */
-CListenSock::CListenSock() : CTcpSock(), _Bound( false )
+CListenSock::CListenSock()
+    : CTcpSock()
+    , _Bound(false)
 {
 	// Create socket
-	createSocket( SOCK_STREAM, IPPROTO_TCP );
+	createSocket(SOCK_STREAM, IPPROTO_TCP);
 
-	setBacklog( -1 );
+	setBacklog(-1);
 }
-
 
 /*
  * Prepares to receive connections on a specified port
  */
-void CListenSock::init( uint16 port )
+void CListenSock::init(uint16 port)
 {
-    // Use any address
+	// Use any address
 	CInetAddress localaddr; // By default, INETADDR_ANY (useful for gateways that have several ip addresses)
-	localaddr.setPort( port );
-	init( localaddr );
+	localaddr.setPort(port);
+	init(localaddr);
 
 	// Now set the address visible from outside
 	try
@@ -101,11 +97,10 @@ inline static int sizeOfSockAddr(const sockaddr_storage &storage)
 	return sizeof(storage);
 }
 
-
 /*
  * Prepares to receive connections on a specified address/port (useful when the host has several addresses)
  */
-void CListenSock::init( const CInetAddress& addr )
+void CListenSock::init(const CInetAddress &addr)
 {
 	sockaddr_storage sockAddr;
 
@@ -118,7 +113,7 @@ void CListenSock::init( const CInetAddress& addr )
 	_RemoteAddr.setNull();
 	if (addr.getAddress().isAny())
 	{
-		LNETL0_DEBUG( "LNETL0: Binding listen socket to any address (%s), port %hu", addr.getAddress().toString().c_str(), addr.port() );
+		LNETL0_DEBUG("LNETL0: Binding listen socket to any address (%s), port %hu", addr.getAddress().toString().c_str(), addr.port());
 	}
 
 	if (!addr.toSockAddrStorage(&sockAddr, _AddressFamily))
@@ -129,9 +124,9 @@ void CListenSock::init( const CInetAddress& addr )
 #ifndef NL_OS_WINDOWS
 	// Set Reuse Address On (does not work on Win98 and is useless on Win2000)
 	int value = true;
-	if ( setsockopt( _Sock, SOL_SOCKET, SO_REUSEADDR, &value, sizeof(value) ) == SOCKET_ERROR )
+	if (setsockopt(_Sock, SOL_SOCKET, SO_REUSEADDR, &value, sizeof(value)) == SOCKET_ERROR)
 	{
-		throw ESocket( "ReuseAddr failed" );
+		throw ESocket("ReuseAddr failed");
 	}
 #endif
 
@@ -158,13 +153,12 @@ void CListenSock::init( const CInetAddress& addr )
 	_Bound = true;
 
 	// Listen
-	if ( ::listen( _Sock, _BackLog ) != 0 ) // SOMAXCONN = maximum length of the queue of pending connections
+	if (::listen(_Sock, _BackLog) != 0) // SOMAXCONN = maximum length of the queue of pending connections
 	{
-		throw ESocket( "Unable to listen on specified port" );
+		throw ESocket("Unable to listen on specified port");
 	}
-//	LNETL0_DEBUG( "LNETL0: Socket %d listening at %s", _Sock, _LocalAddr.asString().c_str() );
+	//	LNETL0_DEBUG( "LNETL0: Socket %d listening at %s", _Sock, _LocalAddr.asString().c_str() );
 }
-
 
 /*
  * Accepts an incoming connection, and creates a new socket
@@ -175,36 +169,35 @@ CTcpSock *CListenSock::accept()
 	sockaddr_storage sockAddr;
 	socklen_t saddrlen = (socklen_t)sizeof(sockAddr);
 	SOCKET newsock = (SOCKET)::accept(_Sock, (sockaddr *)(&sockAddr), &saddrlen);
-	if ( newsock == INVALID_SOCKET )
+	if (newsock == INVALID_SOCKET)
 	{
 		if (_Sock == INVALID_SOCKET)
 			// normal case, the listen sock have been closed, just return NULL.
 			return NULL;
 
-	  /*LNETL0_INFO( "LNETL0: Error accepting a connection");
-	  // See accept() man on Linux
-	  newsock = ::accept( _Sock, (sockaddr*)&saddr, &saddrlen );
-	  if ( newsock == INVALID_SOCKET )*/
-	    {
-			throw ESocket( "Accept returned an invalid socket");
-	    }
+		/*LNETL0_INFO( "LNETL0: Error accepting a connection");
+		// See accept() man on Linux
+		newsock = ::accept( _Sock, (sockaddr*)&saddr, &saddrlen );
+		if ( newsock == INVALID_SOCKET )*/
+		{
+			throw ESocket("Accept returned an invalid socket");
+		}
 	}
 
 	// Construct and save a CTcpSock object
 	CInetAddress addr;
 	addr.fromSockAddrStorage(&sockAddr);
-	LNETL0_DEBUG( "LNETL0: Socket %d accepted an incoming connection from %s, opening socket %d", _Sock, addr.asString().c_str(), newsock );
-	CTcpSock *connection = new CTcpSock( newsock, addr );
+	LNETL0_DEBUG("LNETL0: Socket %d accepted an incoming connection from %s, opening socket %d", _Sock, addr.asString().c_str(), newsock);
+	CTcpSock *connection = new CTcpSock(newsock, addr);
 	return connection;
 }
-
 
 /*
  * Sets the number of the pending connections queue. -1 for the maximum possible value.
  */
-void CListenSock::setBacklog( sint backlog )
+void CListenSock::setBacklog(sint backlog)
 {
-	if ( backlog == -1 )
+	if (backlog == -1)
 	{
 		_BackLog = SOMAXCONN; // SOMAXCONN = maximum length of the queue of pending connections
 	}
@@ -212,14 +205,13 @@ void CListenSock::setBacklog( sint backlog )
 	{
 		_BackLog = backlog;
 	}
-	if ( _Bound )
+	if (_Bound)
 	{
-		if ( ::listen( _Sock, _BackLog ) != 0 )
+		if (::listen(_Sock, _BackLog) != 0)
 		{
-			throw ESocket( "Unable to listen on specified port, while changing backlog" );
+			throw ESocket("Unable to listen on specified port, while changing backlog");
 		}
 	}
 }
-
 
 } // NLNET

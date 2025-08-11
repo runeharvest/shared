@@ -25,9 +25,8 @@
 #include "vegetable_copy_dlg.h"
 #include "vegetable_dlg.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
-CVegetableCopyDlg::CLastSetup		CVegetableCopyDlg::_LastSetup;
+CVegetableCopyDlg::CLastSetup CVegetableCopyDlg::_LastSetup;
 
 CVegetableCopyDlg::CLastSetup::CLastSetup()
 {
@@ -48,13 +47,12 @@ CVegetableCopyDlg::CLastSetup::CLastSetup()
 	AngleSetup = FALSE;
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CVegetableCopyDlg dialog
 
-
-CVegetableCopyDlg::CVegetableCopyDlg(CVegetableDlg *vegetableDlg, CWnd* pParent /*=NULL*/)
-	: CDialog(CVegetableCopyDlg::IDD, pParent), _VegetableDlg(vegetableDlg)
+CVegetableCopyDlg::CVegetableCopyDlg(CVegetableDlg *vegetableDlg, CWnd *pParent /*=NULL*/)
+    : CDialog(CVegetableCopyDlg::IDD, pParent)
+    , _VegetableDlg(vegetableDlg)
 {
 	//{{AFX_DATA_INIT(CVegetableCopyDlg)
 	SubsetCopy = FALSE;
@@ -76,8 +74,7 @@ CVegetableCopyDlg::CVegetableCopyDlg(CVegetableDlg *vegetableDlg, CWnd* pParent 
 	//}}AFX_DATA_INIT
 }
 
-
-void CVegetableCopyDlg::DoDataExchange(CDataExchange* pDX)
+void CVegetableCopyDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CVegetableCopyDlg)
@@ -116,30 +113,27 @@ void CVegetableCopyDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CVegetableCopyDlg, CDialog)
-	//{{AFX_MSG_MAP(CVegetableCopyDlg)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_APPEARANCE_NONE, OnButtonVegetableAppearanceNone)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_APPERANCE_ALL, OnButtonVegetableApperanceAll)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_GENERAL_ALL, OnButtonVegetableGeneralAll)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_GENERAL_NONE, OnButtonVegetableGeneralNone)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_POSITION_ALL, OnButtonVegetablePositionAll)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_POSITION_NONE, OnButtonVegetablePositionNone)
-	ON_BN_CLICKED(IDC_CHECK_VEGETABLE_SUBSET_COPY, OnCheckVegetableSubsetCopy)
-	ON_WM_DESTROY()
-	ON_LBN_DBLCLK(IDC_LIST1, OnDblclkList1)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CVegetableCopyDlg)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_APPEARANCE_NONE, OnButtonVegetableAppearanceNone)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_APPERANCE_ALL, OnButtonVegetableApperanceAll)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_GENERAL_ALL, OnButtonVegetableGeneralAll)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_GENERAL_NONE, OnButtonVegetableGeneralNone)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_POSITION_ALL, OnButtonVegetablePositionAll)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_POSITION_NONE, OnButtonVegetablePositionNone)
+ON_BN_CLICKED(IDC_CHECK_VEGETABLE_SUBSET_COPY, OnCheckVegetableSubsetCopy)
+ON_WM_DESTROY()
+ON_LBN_DBLCLK(IDC_LIST1, OnDblclkList1)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-
 // ***************************************************************************
 // ***************************************************************************
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
-void	CVegetableCopyDlg::enableChecks(bool enable)
+void CVegetableCopyDlg::enableChecks(bool enable)
 {
 	CheckScaleZ.EnableWindow(enable);
 	CheckScaleXY.EnableWindow(enable);
@@ -157,14 +151,13 @@ void	CVegetableCopyDlg::enableChecks(bool enable)
 	CheckAngleSetup.EnableWindow(enable);
 }
 
-
 // ***************************************************************************
 // ***************************************************************************
 // CVegetableCopyDlg message handlers
 // ***************************************************************************
 // ***************************************************************************
 
-void CVegetableCopyDlg::OnButtonVegetableGeneralAll() 
+void CVegetableCopyDlg::OnButtonVegetableGeneralAll()
 {
 	CheckMesh.SetCheck(1);
 	CheckDistance.SetCheck(1);
@@ -173,7 +166,7 @@ void CVegetableCopyDlg::OnButtonVegetableGeneralAll()
 	CheckAngleSetup.SetCheck(1);
 }
 
-void CVegetableCopyDlg::OnButtonVegetableGeneralNone() 
+void CVegetableCopyDlg::OnButtonVegetableGeneralNone()
 {
 	CheckMesh.SetCheck(0);
 	CheckDistance.SetCheck(0);
@@ -182,15 +175,14 @@ void CVegetableCopyDlg::OnButtonVegetableGeneralNone()
 	CheckAngleSetup.SetCheck(0);
 }
 
-
-void CVegetableCopyDlg::OnButtonVegetableApperanceAll() 
+void CVegetableCopyDlg::OnButtonVegetableApperanceAll()
 {
 	CheckBendPhase.SetCheck(1);
 	CheckBendFactor.SetCheck(1);
 	CheckColorNoise.SetCheck(1);
 	CheckColorSetup.SetCheck(1);
 }
-void CVegetableCopyDlg::OnButtonVegetableAppearanceNone() 
+void CVegetableCopyDlg::OnButtonVegetableAppearanceNone()
 {
 	CheckBendPhase.SetCheck(0);
 	CheckBendFactor.SetCheck(0);
@@ -198,7 +190,7 @@ void CVegetableCopyDlg::OnButtonVegetableAppearanceNone()
 	CheckColorSetup.SetCheck(0);
 }
 
-void CVegetableCopyDlg::OnButtonVegetablePositionAll() 
+void CVegetableCopyDlg::OnButtonVegetablePositionAll()
 {
 	CheckScaleXY.SetCheck(1);
 	CheckScaleZ.SetCheck(1);
@@ -207,7 +199,7 @@ void CVegetableCopyDlg::OnButtonVegetablePositionAll()
 	CheckRotateZ.SetCheck(1);
 }
 
-void CVegetableCopyDlg::OnButtonVegetablePositionNone() 
+void CVegetableCopyDlg::OnButtonVegetablePositionNone()
 {
 	CheckScaleXY.SetCheck(0);
 	CheckScaleZ.SetCheck(0);
@@ -216,77 +208,73 @@ void CVegetableCopyDlg::OnButtonVegetablePositionNone()
 	CheckRotateZ.SetCheck(0);
 }
 
-void CVegetableCopyDlg::OnCheckVegetableSubsetCopy() 
+void CVegetableCopyDlg::OnCheckVegetableSubsetCopy()
 {
 	// enable checks if needed.
-	enableChecks(CheckSubsetCopy.GetCheck()==1);
+	enableChecks(CheckSubsetCopy.GetCheck() == 1);
 }
 
-BOOL CVegetableCopyDlg::OnInitDialog() 
+BOOL CVegetableCopyDlg::OnInitDialog()
 {
 	// setup flags before the UpdateData
-	SubsetCopy= _LastSetup.SubsetCopy;
-	ScaleZ= _LastSetup.ScaleZ;
-	ScaleXY= _LastSetup.ScaleXY;
-	RotateZ= _LastSetup.RotateZ;
-	RotateY= _LastSetup.RotateY;
-	RotateX= _LastSetup.RotateX;
-	Mesh= _LastSetup.Mesh;
-	MaxDensity= _LastSetup.MaxDensity;
-	Distance= _LastSetup.Distance;
-	Density= _LastSetup.Density;
-	ColorSetup= _LastSetup.ColorSetup;
-	ColorNoise= _LastSetup.ColorNoise;
-	BendPhase= _LastSetup.BendPhase;
-	BendFactor= _LastSetup.BendFactor;
-	AngleSetup= _LastSetup.AngleSetup;
-
+	SubsetCopy = _LastSetup.SubsetCopy;
+	ScaleZ = _LastSetup.ScaleZ;
+	ScaleXY = _LastSetup.ScaleXY;
+	RotateZ = _LastSetup.RotateZ;
+	RotateY = _LastSetup.RotateY;
+	RotateX = _LastSetup.RotateX;
+	Mesh = _LastSetup.Mesh;
+	MaxDensity = _LastSetup.MaxDensity;
+	Distance = _LastSetup.Distance;
+	Density = _LastSetup.Density;
+	ColorSetup = _LastSetup.ColorSetup;
+	ColorNoise = _LastSetup.ColorNoise;
+	BendPhase = _LastSetup.BendPhase;
+	BendFactor = _LastSetup.BendFactor;
+	AngleSetup = _LastSetup.AngleSetup;
 
 	CDialog::OnInitDialog();
-	
+
 	// enable checks if needed.
-	enableChecks(CheckSubsetCopy.GetCheck()==1);
-	
+	enableChecks(CheckSubsetCopy.GetCheck() == 1);
 
 	// Init the control list.
-	uint	num= _VegetableDlg->getNumVegetables();
-	for(uint i=0; i<num; i++)
+	uint num = _VegetableDlg->getNumVegetables();
+	for (uint i = 0; i < num; i++)
 	{
 		VegetableList.AddString(nlUtf8ToTStr(_VegetableDlg->getVegetableName(i)));
 	}
-	
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CVegetableCopyDlg::OnDestroy() 
+void CVegetableCopyDlg::OnDestroy()
 {
 	CDialog::OnDestroy();
-	
+
 	// save setup in _LastSetup.
-	_LastSetup.SubsetCopy= SubsetCopy;
-	_LastSetup.ScaleZ= ScaleZ;
-	_LastSetup.ScaleXY= ScaleXY;
-	_LastSetup.RotateZ= RotateZ;
-	_LastSetup.RotateY= RotateY;
-	_LastSetup.RotateX= RotateX;
-	_LastSetup.Mesh= Mesh;
-	_LastSetup.MaxDensity= MaxDensity;
-	_LastSetup.Distance= Distance;
-	_LastSetup.Density= Density;
-	_LastSetup.ColorSetup= ColorSetup;
-	_LastSetup.ColorNoise= ColorNoise;
-	_LastSetup.BendPhase= BendPhase;
-	_LastSetup.BendFactor= BendFactor;
-	_LastSetup.AngleSetup= AngleSetup;
-	
+	_LastSetup.SubsetCopy = SubsetCopy;
+	_LastSetup.ScaleZ = ScaleZ;
+	_LastSetup.ScaleXY = ScaleXY;
+	_LastSetup.RotateZ = RotateZ;
+	_LastSetup.RotateY = RotateY;
+	_LastSetup.RotateX = RotateX;
+	_LastSetup.Mesh = Mesh;
+	_LastSetup.MaxDensity = MaxDensity;
+	_LastSetup.Distance = Distance;
+	_LastSetup.Density = Density;
+	_LastSetup.ColorSetup = ColorSetup;
+	_LastSetup.ColorNoise = ColorNoise;
+	_LastSetup.BendPhase = BendPhase;
+	_LastSetup.BendFactor = BendFactor;
+	_LastSetup.AngleSetup = AngleSetup;
 }
 
-void CVegetableCopyDlg::OnOK() 
+void CVegetableCopyDlg::OnOK()
 {
 	UpdateData();
-	if(VegetableSelected!=LB_ERR)
+	if (VegetableSelected != LB_ERR)
 	{
 		CDialog::OnOK();
 	}
@@ -296,7 +284,7 @@ void CVegetableCopyDlg::OnOK()
 	}
 }
 
-void CVegetableCopyDlg::OnDblclkList1() 
+void CVegetableCopyDlg::OnDblclkList1()
 {
 	UpdateData();
 	// DblClck select the name.

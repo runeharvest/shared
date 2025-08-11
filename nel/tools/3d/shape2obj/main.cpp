@@ -19,9 +19,9 @@
 
 #include <nel/misc/file.h>
 #include <nel/3d/mesh.h>
-#include <nel/3d/mesh_mrm.h> 
-#include <nel/3d/mesh_mrm_skinned.h> 
-#include <nel/3d/scene.h> 
+#include <nel/3d/mesh_mrm.h>
+#include <nel/3d/mesh_mrm_skinned.h>
+#include <nel/3d/scene.h>
 #include <nel/3d/register_3d.h>
 #include <nel/misc/app_context.h>
 #include <nel/misc/o_xml.h>
@@ -41,21 +41,21 @@ struct CVertex
 	CUV uv;
 };
 
-bool operator == (const CVertex &v1, const CVertex &v2)
+bool operator==(const CVertex &v1, const CVertex &v2)
 {
 	return (v1.vertex == v2.vertex) && (v1.normal == v2.normal) && (v1.uv == v2.uv);
 }
 
-bool operator < (const CVertex &v1, const CVertex &v2)
+bool operator<(const CVertex &v1, const CVertex &v2)
 {
 	/*
 	if (v1.vertex == v2.vertex)
 	{
-		if (v1.normal == v2.normal)
-		{
-			return (v1.uv < v2.uv);
-		}
-		return (v1.normal < v1.normal);
+	    if (v1.normal == v2.normal)
+	    {
+	        return (v1.uv < v2.uv);
+	    }
+	    return (v1.normal < v1.normal);
 	}
 	*/
 	return (v1.vertex < v2.vertex);
@@ -86,7 +86,7 @@ bool ProcessMeshMRMSkinned(const std::string &filename, IShape *shapeMesh);
 bool ProcessMeshMRM(const std::string &filename, IShape *shapeMesh);
 bool ProcessMesh(const std::string &filename, IShape *shapeMesh);
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
 		// Add the shape
 		shapeMesh = streamShape.getShapePointer();
 	}
-	catch (const Exception& e)
+	catch (const Exception &e)
 	{
 		cout << "Error : " << e.what() << endl;
 
@@ -135,138 +135,136 @@ int main(int argc, char* argv[])
 
 bool ProcessMeshMRMSkinned(const std::string &filename, IShape *shapeMesh)
 {
-	CMeshMRMSkinned *mesh = dynamic_cast<CMeshMRMSkinned*>(shapeMesh);
+	CMeshMRMSkinned *mesh = dynamic_cast<CMeshMRMSkinned *>(shapeMesh);
 
 	if (!mesh) return false;
 
 	COFile ofile;
 
-	CMeshMRMSkinnedGeom* meshIn = (CMeshMRMSkinnedGeom*)&mesh->getMeshGeom();
+	CMeshMRMSkinnedGeom *meshIn = (CMeshMRMSkinnedGeom *)&mesh->getMeshGeom();
 
-	std::vector<CMesh::CSkinWeight>	skinWeights;
+	std::vector<CMesh::CSkinWeight> skinWeights;
 	meshIn->getSkinWeights(skinWeights);
 	CVertexBuffer vertexBuffer;
 	meshIn->getVertexBuffer(vertexBuffer);
 
 	CVertexBufferRead vba;
-	vertexBuffer.lock (vba);
-	uint	i, j;
+	vertexBuffer.lock(vba);
+	uint i, j;
 
 	// **** Select the Lod.
-	uint	numLods= meshIn->getNbLod();
+	uint numLods = meshIn->getNbLod();
 
 	// get the max tris displayed
-	float	numMeshFacesMin= (float)meshIn->getLevelDetail().MinFaceUsed;
-	float	numMeshFacesMax= (float)meshIn->getLevelDetail().MaxFaceUsed;
+	float numMeshFacesMin = (float)meshIn->getLevelDetail().MinFaceUsed;
+	float numMeshFacesMax = (float)meshIn->getLevelDetail().MaxFaceUsed;
 	// find the lod
-	sint lodId = numLods-1;
+	sint lodId = numLods - 1;
 
 	// **** First, for the best lod indicate what vertex is used or not. Also index geomorphs to know what real vertex is used
-	vector<sint>		vertexUsed;
+	vector<sint> vertexUsed;
 	// -1 means "not used"
 	vertexUsed.resize(skinWeights.size(), -1);
 	// Parse all triangles.
-	for(i=0;i<meshIn->getNbRdrPass(lodId); ++i)
+	for (i = 0; i < meshIn->getNbRdrPass(lodId); ++i)
 	{
 		const CIndexBuffer *pb = getRdrPassPrimitiveBlock(meshIn, lodId, i);
 		CIndexBufferRead iba;
-		pb->lock (iba);
+		pb->lock(iba);
 		if (iba.getFormat() == CIndexBuffer::Indices32)
 		{
-			const uint32	*triPtr= (const uint32 *) iba.getPtr();
-			for(j=0;j<pb->getNumIndexes(); ++j)
+			const uint32 *triPtr = (const uint32 *)iba.getPtr();
+			for (j = 0; j < pb->getNumIndexes(); ++j)
 			{
-				uint	idx= *triPtr;
+				uint idx = *triPtr;
 				// Flag the vertex with its own index => used.
-				vertexUsed[idx]= idx;
+				vertexUsed[idx] = idx;
 				triPtr++;
 			}
 		}
 		else
 		{
-			const uint16	*triPtr= (const uint16 *) iba.getPtr();
-			for(j=0;j<pb->getNumIndexes(); ++j)
+			const uint16 *triPtr = (const uint16 *)iba.getPtr();
+			for (j = 0; j < pb->getNumIndexes(); ++j)
 			{
-				uint	idx= *triPtr;
+				uint idx = *triPtr;
 				// Flag the vertex with its own index => used.
-				vertexUsed[idx]= idx;
+				vertexUsed[idx] = idx;
 				triPtr++;
 			}
 		}
 	}
 	// Special for Geomorphs: must take The End target vertex.
-	const std::vector<CMRMWedgeGeom>	&geomorphs= meshIn->getGeomorphs(lodId);
-	for(i=0;i<geomorphs.size(); ++i)
+	const std::vector<CMRMWedgeGeom> &geomorphs = meshIn->getGeomorphs(lodId);
+	for (i = 0; i < geomorphs.size(); ++i)
 	{
-		uint	trueIdx= geomorphs[i].End;
+		uint trueIdx = geomorphs[i].End;
 		// map to the Geomorph Target.
-		vertexUsed[i]= trueIdx;
+		vertexUsed[i] = trueIdx;
 		// mark also the real vertex used as used.
-		vertexUsed[trueIdx]= trueIdx;
+		vertexUsed[trueIdx] = trueIdx;
 	}
 
-
 	// **** For all vertices used (not geomorphs), compute vertex Skins.
-	vector<CVertex>		shadowVertices;
-	vector<sint>		vertexToVSkin;
+	vector<CVertex> shadowVertices;
+	vector<sint> vertexToVSkin;
 	vertexToVSkin.resize(vertexUsed.size());
 	shadowVertices.reserve(vertexUsed.size());
 	// use a map to remove duplicates (because of UV/normal discontinuities before!!)
-	map<CVertex, uint>	shadowVertexMap;
-	uint						numMerged= 0;
+	map<CVertex, uint> shadowVertexMap;
+	uint numMerged = 0;
 	// Skip Geomorphs.
-	for(i=geomorphs.size();i<vertexUsed.size(); ++i)
+	for (i = geomorphs.size(); i < vertexUsed.size(); ++i)
 	{
 		// If this vertex is used.
-		if(vertexUsed[i]!=-1)
+		if (vertexUsed[i] != -1)
 		{
 			// Build the vertex
 			CVertex shadowVert;
 			CUV uv;
-			shadowVert.vertex = *(CVector*)vba.getVertexCoordPointer(i);
-			shadowVert.normal = *(CVector*)vba.getNormalCoordPointer(i);
-			shadowVert.uv = *(CUV*)vba.getTexCoordPointer(i);
-/*
-			// Select the best Matrix.
-			CMesh::CSkinWeight		sw= skinWeights[i];
-			float	maxW= 0;
-			uint	matId= 0;
-			for(j=0;j<NL3D_MESH_SKINNING_MAX_MATRIX;j++)
-			{
-				// if no more matrix influenced, stop
-				if(sw.Weights[j]==0)
-					break;
-				if(sw.Weights[j]>maxW)
-				{
-					matId= sw.MatrixId[j];
-					maxW= sw.Weights[j];
-				}
-			}
-//			shadowVert.MatrixId= matId;
-*/
+			shadowVert.vertex = *(CVector *)vba.getVertexCoordPointer(i);
+			shadowVert.normal = *(CVector *)vba.getNormalCoordPointer(i);
+			shadowVert.uv = *(CUV *)vba.getTexCoordPointer(i);
+			/*
+			            // Select the best Matrix.
+			            CMesh::CSkinWeight		sw= skinWeights[i];
+			            float	maxW= 0;
+			            uint	matId= 0;
+			            for(j=0;j<NL3D_MESH_SKINNING_MAX_MATRIX;j++)
+			            {
+			                // if no more matrix influenced, stop
+			                if(sw.Weights[j]==0)
+			                    break;
+			                if(sw.Weights[j]>maxW)
+			                {
+			                    matId= sw.MatrixId[j];
+			                    maxW= sw.Weights[j];
+			                }
+			            }
+			//			shadowVert.MatrixId= matId;
+			*/
 			// If dont find the shadowVertex in the map.
-			map<CVertex, uint>::iterator		it= shadowVertexMap.find(shadowVert);
-			if(it==shadowVertexMap.end())
+			map<CVertex, uint>::iterator it = shadowVertexMap.find(shadowVert);
+			if (it == shadowVertexMap.end())
 			{
 				// Append
-				uint	index= shadowVertices.size();
-				vertexToVSkin[i]= index;
+				uint index = shadowVertices.size();
+				vertexToVSkin[i] = index;
 				shadowVertices.push_back(shadowVert);
 				shadowVertexMap.insert(make_pair(shadowVert, index));
 			}
 			else
 			{
 				// Ok, map.
-				vertexToVSkin[i]= it->second;
+				vertexToVSkin[i] = it->second;
 				numMerged++;
 			}
-
 		}
 	}
 
 	ofstream ofs(string(filename + ".obj").c_str());
 
-	for(size_t y = 0; y < shadowVertices.size(); ++y)
+	for (size_t y = 0; y < shadowVertices.size(); ++y)
 	{
 		CVector v = shadowVertices[y].vertex;
 		CVector vn = shadowVertices[y].normal;
@@ -277,29 +275,29 @@ bool ProcessMeshMRMSkinned(const std::string &filename, IShape *shapeMesh)
 		ofs << "vt " << vt.U << " " << (1.0f - vt.V) << endl;
 	}
 
-	// **** Get All Faces 
+	// **** Get All Faces
 	// Final List Of Triangles that match the bone.
-	vector<uint32>			shadowTriangles;
+	vector<uint32> shadowTriangles;
 	shadowTriangles.reserve(1000);
 	// Parse all input tri of the mesh.
-	for(i=0; i<meshIn->getNbRdrPass(lodId); ++i)
+	for (i = 0; i < meshIn->getNbRdrPass(lodId); ++i)
 	{
 		ofs << "g pass" << i << endl;
 
 		const CIndexBuffer *pb = getRdrPassPrimitiveBlock(meshIn, lodId, i);
 		CIndexBufferRead iba;
-		pb->lock (iba);
+		pb->lock(iba);
 		if (iba.getFormat() == CIndexBuffer::Indices32)
 		{
-			const uint32	*triPtr= (const uint32 *) iba.getPtr();
+			const uint32 *triPtr = (const uint32 *)iba.getPtr();
 
-			for(j=0; j<pb->getNumIndexes(); ++j)
+			for (j = 0; j < pb->getNumIndexes(); ++j)
 			{
-				uint	idx= *triPtr;
+				uint idx = *triPtr;
 				// Get the real Vertex (ie not the geomporhed one).
-				idx= vertexUsed[idx];
+				idx = vertexUsed[idx];
 				// Get the ShadowVertex associated
-				idx= vertexToVSkin[idx];
+				idx = vertexToVSkin[idx];
 
 				shadowTriangles.push_back(idx);
 				triPtr++;
@@ -307,25 +305,25 @@ bool ProcessMeshMRMSkinned(const std::string &filename, IShape *shapeMesh)
 		}
 		else
 		{
-			const uint16	*triPtr= (const uint16 *) iba.getPtr();
-			for(j=0; j<pb->getNumIndexes(); ++j)
+			const uint16 *triPtr = (const uint16 *)iba.getPtr();
+			for (j = 0; j < pb->getNumIndexes(); ++j)
 			{
-				uint	idx= *triPtr;
+				uint idx = *triPtr;
 				// Get the real Vertex (ie not the geomporhed one).
-				idx= vertexUsed[idx];
+				idx = vertexUsed[idx];
 				// Get the ShadowVertex associated
-				idx= vertexToVSkin[idx];
+				idx = vertexToVSkin[idx];
 
 				shadowTriangles.push_back(idx);
 				triPtr++;
 			}
 		}
 
-		for(size_t pass = 0; pass<shadowTriangles.size(); pass += 3)
+		for (size_t pass = 0; pass < shadowTriangles.size(); pass += 3)
 		{
-			ofs << "f " << shadowTriangles[pass]+1 << "/" << shadowTriangles[pass]+1 << "/" << shadowTriangles[pass]+1 << " ";
-			ofs << shadowTriangles[pass+1]+1 << "/" << shadowTriangles[pass+1]+1 << "/" << shadowTriangles[pass+1]+1 << " ";
-			ofs << shadowTriangles[pass+2]+1 << "/" << shadowTriangles[pass+2]+1 << "/" << shadowTriangles[pass+2]+1 << endl;
+			ofs << "f " << shadowTriangles[pass] + 1 << "/" << shadowTriangles[pass] + 1 << "/" << shadowTriangles[pass] + 1 << " ";
+			ofs << shadowTriangles[pass + 1] + 1 << "/" << shadowTriangles[pass + 1] + 1 << "/" << shadowTriangles[pass + 1] + 1 << " ";
+			ofs << shadowTriangles[pass + 2] + 1 << "/" << shadowTriangles[pass + 2] + 1 << "/" << shadowTriangles[pass + 2] + 1 << endl;
 		}
 
 		shadowTriangles.clear();
@@ -338,136 +336,134 @@ bool ProcessMeshMRMSkinned(const std::string &filename, IShape *shapeMesh)
 
 bool ProcessMeshMRM(const std::string &filename, IShape *shapeMesh)
 {
-	CMeshMRM *mesh = dynamic_cast<CMeshMRM*>(shapeMesh);
+	CMeshMRM *mesh = dynamic_cast<CMeshMRM *>(shapeMesh);
 
 	if (!mesh) return false;
 
 	COFile ofile;
 
-	CMeshMRMGeom* meshIn = (CMeshMRMGeom*)&mesh->getMeshGeom();
+	CMeshMRMGeom *meshIn = (CMeshMRMGeom *)&mesh->getMeshGeom();
 
-	std::vector<CMesh::CSkinWeight>	skinWeights = meshIn->getSkinWeights();
+	std::vector<CMesh::CSkinWeight> skinWeights = meshIn->getSkinWeights();
 	CVertexBuffer vertexBuffer = meshIn->getVertexBuffer();
 
 	CVertexBufferRead vba;
-	vertexBuffer.lock (vba);
-	uint	i, j;
+	vertexBuffer.lock(vba);
+	uint i, j;
 
 	// **** Select the Lod.
-	uint	numLods= meshIn->getNbLod();
+	uint numLods = meshIn->getNbLod();
 
 	// get the max tris displayed
-	float	numMeshFacesMin= (float)meshIn->getLevelDetail().MinFaceUsed;
-	float	numMeshFacesMax= (float)meshIn->getLevelDetail().MaxFaceUsed;
+	float numMeshFacesMin = (float)meshIn->getLevelDetail().MinFaceUsed;
+	float numMeshFacesMax = (float)meshIn->getLevelDetail().MaxFaceUsed;
 	// find the lod
-	sint lodId = numLods-1;
+	sint lodId = numLods - 1;
 
 	// **** First, for the best lod indicate what vertex is used or not. Also index geomorphs to know what real vertex is used
-	vector<sint>		vertexUsed;
+	vector<sint> vertexUsed;
 	// -1 means "not used"
 	vertexUsed.resize(skinWeights.size(), -1);
 	// Parse all triangles.
-	for(i=0;i<meshIn->getNbRdrPass(lodId); ++i)
+	for (i = 0; i < meshIn->getNbRdrPass(lodId); ++i)
 	{
 		const CIndexBuffer *pb = getRdrPassPrimitiveBlock(meshIn, lodId, i);
 		CIndexBufferRead iba;
-		pb->lock (iba);
+		pb->lock(iba);
 		if (iba.getFormat() == CIndexBuffer::Indices32)
 		{
-			const uint32	*triPtr= (const uint32 *) iba.getPtr();
-			for(j=0;j<pb->getNumIndexes(); ++j)
+			const uint32 *triPtr = (const uint32 *)iba.getPtr();
+			for (j = 0; j < pb->getNumIndexes(); ++j)
 			{
-				uint	idx= *triPtr;
+				uint idx = *triPtr;
 				// Flag the vertex with its own index => used.
-				vertexUsed[idx]= idx;
+				vertexUsed[idx] = idx;
 				triPtr++;
 			}
 		}
 		else
 		{
-			const uint16	*triPtr= (const uint16 *) iba.getPtr();
-			for(j=0;j<pb->getNumIndexes(); ++j)
+			const uint16 *triPtr = (const uint16 *)iba.getPtr();
+			for (j = 0; j < pb->getNumIndexes(); ++j)
 			{
-				uint	idx= *triPtr;
+				uint idx = *triPtr;
 				// Flag the vertex with its own index => used.
-				vertexUsed[idx]= idx;
+				vertexUsed[idx] = idx;
 				triPtr++;
 			}
 		}
 	}
 	// Special for Geomorphs: must take The End target vertex.
-	const std::vector<CMRMWedgeGeom>	&geomorphs= meshIn->getGeomorphs(lodId);
-	for(i=0;i<geomorphs.size(); ++i)
+	const std::vector<CMRMWedgeGeom> &geomorphs = meshIn->getGeomorphs(lodId);
+	for (i = 0; i < geomorphs.size(); ++i)
 	{
-		uint	trueIdx= geomorphs[i].End;
+		uint trueIdx = geomorphs[i].End;
 		// map to the Geomorph Target.
-		vertexUsed[i]= trueIdx;
+		vertexUsed[i] = trueIdx;
 		// mark also the real vertex used as used.
-		vertexUsed[trueIdx]= trueIdx;
+		vertexUsed[trueIdx] = trueIdx;
 	}
 
-
 	// **** For all vertices used (not geomorphs), compute vertex Skins.
-	vector<CVertex>		shadowVertices;
-	vector<sint>		vertexToVSkin;
+	vector<CVertex> shadowVertices;
+	vector<sint> vertexToVSkin;
 	vertexToVSkin.resize(vertexUsed.size());
 	shadowVertices.reserve(vertexUsed.size());
 	// use a map to remove duplicates (because of UV/normal discontinuities before!!)
-	map<CVertex, uint>	shadowVertexMap;
-	uint						numMerged= 0;
+	map<CVertex, uint> shadowVertexMap;
+	uint numMerged = 0;
 	// Skip Geomorphs.
-	for(i=geomorphs.size();i<vertexUsed.size(); ++i)
+	for (i = geomorphs.size(); i < vertexUsed.size(); ++i)
 	{
 		// If this vertex is used.
-		if(vertexUsed[i]!=-1)
+		if (vertexUsed[i] != -1)
 		{
 			// Build the vertex
 			CVertex shadowVert;
 			CUV uv;
-			shadowVert.vertex = *(CVector*)vba.getVertexCoordPointer(i);
-			shadowVert.normal = *(CVector*)vba.getNormalCoordPointer(i);
-			shadowVert.uv = *(CUV*)vba.getTexCoordPointer(i);
-/*
-			// Select the best Matrix.
-			CMesh::CSkinWeight		sw= skinWeights[i];
-			float	maxW= 0;
-			uint	matId= 0;
-			for(j=0;j<NL3D_MESH_SKINNING_MAX_MATRIX;j++)
-			{
-				// if no more matrix influenced, stop
-				if(sw.Weights[j]==0)
-					break;
-				if(sw.Weights[j]>maxW)
-				{
-					matId= sw.MatrixId[j];
-					maxW= sw.Weights[j];
-				}
-			}
-//			shadowVert.MatrixId= matId;
-*/
+			shadowVert.vertex = *(CVector *)vba.getVertexCoordPointer(i);
+			shadowVert.normal = *(CVector *)vba.getNormalCoordPointer(i);
+			shadowVert.uv = *(CUV *)vba.getTexCoordPointer(i);
+			/*
+			            // Select the best Matrix.
+			            CMesh::CSkinWeight		sw= skinWeights[i];
+			            float	maxW= 0;
+			            uint	matId= 0;
+			            for(j=0;j<NL3D_MESH_SKINNING_MAX_MATRIX;j++)
+			            {
+			                // if no more matrix influenced, stop
+			                if(sw.Weights[j]==0)
+			                    break;
+			                if(sw.Weights[j]>maxW)
+			                {
+			                    matId= sw.MatrixId[j];
+			                    maxW= sw.Weights[j];
+			                }
+			            }
+			//			shadowVert.MatrixId= matId;
+			*/
 			// If dont find the shadowVertex in the map.
-			map<CVertex, uint>::iterator		it= shadowVertexMap.find(shadowVert);
-			if(it==shadowVertexMap.end())
+			map<CVertex, uint>::iterator it = shadowVertexMap.find(shadowVert);
+			if (it == shadowVertexMap.end())
 			{
 				// Append
-				uint	index= shadowVertices.size();
-				vertexToVSkin[i]= index;
+				uint index = shadowVertices.size();
+				vertexToVSkin[i] = index;
 				shadowVertices.push_back(shadowVert);
 				shadowVertexMap.insert(make_pair(shadowVert, index));
 			}
 			else
 			{
 				// Ok, map.
-				vertexToVSkin[i]= it->second;
+				vertexToVSkin[i] = it->second;
 				numMerged++;
 			}
-
 		}
 	}
 
 	ofstream ofs(string(filename + ".obj").c_str());
 
-	for(size_t y = 0; y < shadowVertices.size(); ++y)
+	for (size_t y = 0; y < shadowVertices.size(); ++y)
 	{
 		CVector v = shadowVertices[y].vertex;
 		CVector vn = shadowVertices[y].normal;
@@ -478,29 +474,29 @@ bool ProcessMeshMRM(const std::string &filename, IShape *shapeMesh)
 		ofs << "vt " << vt.U << " " << (1.0f - vt.V) << endl;
 	}
 
-	// **** Get All Faces 
+	// **** Get All Faces
 	// Final List Of Triangles that match the bone.
-	vector<uint32>			shadowTriangles;
+	vector<uint32> shadowTriangles;
 	shadowTriangles.reserve(1000);
 	// Parse all input tri of the mesh.
-	for(i=0; i<meshIn->getNbRdrPass(lodId); ++i)
+	for (i = 0; i < meshIn->getNbRdrPass(lodId); ++i)
 	{
 		ofs << "g pass" << i << endl;
 
 		const CIndexBuffer *pb = getRdrPassPrimitiveBlock(meshIn, lodId, i);
 		CIndexBufferRead iba;
-		pb->lock (iba);
+		pb->lock(iba);
 		if (iba.getFormat() == CIndexBuffer::Indices32)
 		{
-			const uint32	*triPtr= (const uint32 *) iba.getPtr();
+			const uint32 *triPtr = (const uint32 *)iba.getPtr();
 
-			for(j=0; j<pb->getNumIndexes(); ++j)
+			for (j = 0; j < pb->getNumIndexes(); ++j)
 			{
-				uint	idx= *triPtr;
+				uint idx = *triPtr;
 				// Get the real Vertex (ie not the geomporhed one).
-				idx= vertexUsed[idx];
+				idx = vertexUsed[idx];
 				// Get the ShadowVertex associated
-				idx= vertexToVSkin[idx];
+				idx = vertexToVSkin[idx];
 
 				shadowTriangles.push_back(idx);
 				triPtr++;
@@ -508,25 +504,25 @@ bool ProcessMeshMRM(const std::string &filename, IShape *shapeMesh)
 		}
 		else
 		{
-			const uint16	*triPtr= (const uint16 *) iba.getPtr();
-			for(j=0; j<pb->getNumIndexes(); ++j)
+			const uint16 *triPtr = (const uint16 *)iba.getPtr();
+			for (j = 0; j < pb->getNumIndexes(); ++j)
 			{
-				uint	idx= *triPtr;
+				uint idx = *triPtr;
 				// Get the real Vertex (ie not the geomporhed one).
-				idx= vertexUsed[idx];
+				idx = vertexUsed[idx];
 				// Get the ShadowVertex associated
-				idx= vertexToVSkin[idx];
+				idx = vertexToVSkin[idx];
 
 				shadowTriangles.push_back(idx);
 				triPtr++;
 			}
 		}
 
-		for(size_t pass = 0; pass<shadowTriangles.size(); pass += 3)
+		for (size_t pass = 0; pass < shadowTriangles.size(); pass += 3)
 		{
-			ofs << "f " << shadowTriangles[pass]+1 << "/" << shadowTriangles[pass]+1 << "/" << shadowTriangles[pass]+1 << " ";
-			ofs << shadowTriangles[pass+1]+1 << "/" << shadowTriangles[pass+1]+1 << "/" << shadowTriangles[pass+1]+1 << " ";
-			ofs << shadowTriangles[pass+2]+1 << "/" << shadowTriangles[pass+2]+1 << "/" << shadowTriangles[pass+2]+1 << endl;
+			ofs << "f " << shadowTriangles[pass] + 1 << "/" << shadowTriangles[pass] + 1 << "/" << shadowTriangles[pass] + 1 << " ";
+			ofs << shadowTriangles[pass + 1] + 1 << "/" << shadowTriangles[pass + 1] + 1 << "/" << shadowTriangles[pass + 1] + 1 << " ";
+			ofs << shadowTriangles[pass + 2] + 1 << "/" << shadowTriangles[pass + 2] + 1 << "/" << shadowTriangles[pass + 2] + 1 << endl;
 		}
 
 		shadowTriangles.clear();
@@ -537,10 +533,9 @@ bool ProcessMeshMRM(const std::string &filename, IShape *shapeMesh)
 	return true;
 }
 
-
 bool ProcessMesh(const std::string &filename, IShape *shapeMesh)
 {
-	CMesh *mesh = dynamic_cast<CMesh*>(shapeMesh);
+	CMesh *mesh = dynamic_cast<CMesh *>(shapeMesh);
 
 	if (!mesh) return false;
 
@@ -551,65 +546,64 @@ bool ProcessMesh(const std::string &filename, IShape *shapeMesh)
 	CVertexBuffer vertexBuffer = meshIn->getVertexBuffer();
 
 	CVertexBufferRead vba;
-	vertexBuffer.lock (vba);
-	uint	i, j;
+	vertexBuffer.lock(vba);
+	uint i, j;
 
 	// **** First, for the best lod indicate what vertex is used or not. Also index geomorphs to know what real vertex is used
-	vector<sint>		vertexUsed;
+	vector<sint> vertexUsed;
 	// -1 means "not used"
 	vertexUsed.resize(vertexBuffer.capacity(), -1);
 	// Parse all triangles.
-	for(i=0;i<meshIn->getNbRdrPass(0); ++i)
+	for (i = 0; i < meshIn->getNbRdrPass(0); ++i)
 	{
 		const CIndexBuffer *pb = getRdrPassPrimitiveBlock(meshIn, 0, i);
 		CIndexBufferRead iba;
-		pb->lock (iba);
+		pb->lock(iba);
 		if (iba.getFormat() == CIndexBuffer::Indices32)
 		{
-			const uint32	*triPtr= (const uint32 *) iba.getPtr();
-			for(j=0;j<pb->getNumIndexes(); ++j)
+			const uint32 *triPtr = (const uint32 *)iba.getPtr();
+			for (j = 0; j < pb->getNumIndexes(); ++j)
 			{
-				uint	idx= *triPtr;
+				uint idx = *triPtr;
 				// Flag the vertex with its own index => used.
-				vertexUsed[idx]= idx;
+				vertexUsed[idx] = idx;
 				triPtr++;
 			}
 		}
 		else
 		{
-			const uint16	*triPtr= (const uint16 *) iba.getPtr();
-			for(j=0;j<pb->getNumIndexes(); ++j)
+			const uint16 *triPtr = (const uint16 *)iba.getPtr();
+			for (j = 0; j < pb->getNumIndexes(); ++j)
 			{
-				uint	idx= *triPtr;
+				uint idx = *triPtr;
 				// Flag the vertex with its own index => used.
-				vertexUsed[idx]= idx;
+				vertexUsed[idx] = idx;
 				triPtr++;
 			}
 		}
 	}
 
-
 	// **** For all vertices used (not geomorphs), compute vertex Skins.
-	vector<CVertex>		shadowVertices;
-	vector<sint>		vertexToVSkin;
+	vector<CVertex> shadowVertices;
+	vector<sint> vertexToVSkin;
 	vertexToVSkin.resize(vertexUsed.size());
 	shadowVertices.reserve(vertexUsed.size());
-	
-	for(i=0;i<vertexUsed.size(); ++i)
+
+	for (i = 0; i < vertexUsed.size(); ++i)
 	{
 		// If this vertex is used.
-		if(vertexUsed[i]!=-1)
+		if (vertexUsed[i] != -1)
 		{
 			// Build the vertex
 			CVertex shadowVert;
 			CUV uv;
-			shadowVert.vertex = *(CVector*)vba.getVertexCoordPointer(i);
-			shadowVert.normal = *(CVector*)vba.getNormalCoordPointer(i);
-			shadowVert.uv = *(CUV*)vba.getTexCoordPointer(i);
+			shadowVert.vertex = *(CVector *)vba.getVertexCoordPointer(i);
+			shadowVert.normal = *(CVector *)vba.getNormalCoordPointer(i);
+			shadowVert.uv = *(CUV *)vba.getTexCoordPointer(i);
 
 			// Append
-			uint	index= shadowVertices.size();
-			vertexToVSkin[i]= index;
+			uint index = shadowVertices.size();
+			vertexToVSkin[i] = index;
 			shadowVertices.push_back(shadowVert);
 		}
 	}
@@ -638,13 +632,13 @@ bool ProcessMesh(const std::string &filename, IShape *shapeMesh)
 		}
 	}
 
-	for(size_t y = 0; y < weldedVertices.size(); ++y)
+	for (size_t y = 0; y < weldedVertices.size(); ++y)
 	{
 		CVector v = weldedVertices[y];
 		ofs << "v " << v.x << " " << v.y << " " << v.z << endl;
 	}
 
-	for(size_t y = 0; y < shadowVertices.size(); ++y)
+	for (size_t y = 0; y < shadowVertices.size(); ++y)
 	{
 		CVector vn = shadowVertices[y].normal;
 		CUV vt = shadowVertices[y].uv;
@@ -652,29 +646,29 @@ bool ProcessMesh(const std::string &filename, IShape *shapeMesh)
 		ofs << "vt " << vt.U << " " << (1.0f - vt.V) << endl;
 	}
 
-	// **** Get All Faces 
+	// **** Get All Faces
 	// Final List Of Triangles that match the bone.
-	vector<uint32>			shadowTriangles;
+	vector<uint32> shadowTriangles;
 	shadowTriangles.reserve(1000);
 	// Parse all input tri of the mesh.
-	for(i=0; i<meshIn->getNbRdrPass(0); ++i)
+	for (i = 0; i < meshIn->getNbRdrPass(0); ++i)
 	{
 		ofs << "g " << filename << endl;
 
 		const CIndexBuffer *pb = getRdrPassPrimitiveBlock(meshIn, 0, i);
 		CIndexBufferRead iba;
-		pb->lock (iba);
+		pb->lock(iba);
 		if (iba.getFormat() == CIndexBuffer::Indices32)
 		{
-			const uint32	*triPtr= (const uint32 *) iba.getPtr();
+			const uint32 *triPtr = (const uint32 *)iba.getPtr();
 
-			for(j=0; j<pb->getNumIndexes(); ++j)
+			for (j = 0; j < pb->getNumIndexes(); ++j)
 			{
-				uint	idx= *triPtr;
+				uint idx = *triPtr;
 				// Get the real Vertex (ie not the geomporhed one).
-				idx= vertexUsed[idx];
+				idx = vertexUsed[idx];
 				// Get the ShadowVertex associated
-				idx= vertexToVSkin[idx];
+				idx = vertexToVSkin[idx];
 
 				shadowTriangles.push_back(idx);
 				triPtr++;
@@ -682,25 +676,25 @@ bool ProcessMesh(const std::string &filename, IShape *shapeMesh)
 		}
 		else
 		{
-			const uint16	*triPtr= (const uint16 *) iba.getPtr();
-			for(j=0; j<pb->getNumIndexes(); ++j)
+			const uint16 *triPtr = (const uint16 *)iba.getPtr();
+			for (j = 0; j < pb->getNumIndexes(); ++j)
 			{
-				uint	idx= *triPtr;
+				uint idx = *triPtr;
 				// Get the real Vertex (ie not the geomporhed one).
-				idx= vertexUsed[idx];
+				idx = vertexUsed[idx];
 				// Get the ShadowVertex associated
-				idx= vertexToVSkin[idx];
+				idx = vertexToVSkin[idx];
 
 				shadowTriangles.push_back(idx);
 				triPtr++;
 			}
 		}
 
-		for(size_t pass = 0; pass<shadowTriangles.size(); pass += 3)
+		for (size_t pass = 0; pass < shadowTriangles.size(); pass += 3)
 		{
-			ofs << "f " << shadowToWelded[shadowTriangles[pass]]+1 << "/" << shadowTriangles[pass]+1 << "/" << shadowTriangles[pass]+1 << " ";
-			ofs << shadowToWelded[shadowTriangles[pass+1]]+1 << "/" << shadowTriangles[pass+1]+1 << "/" << shadowTriangles[pass+1]+1 << " ";
-			ofs << shadowToWelded[shadowTriangles[pass+2]]+1 << "/" << shadowTriangles[pass+2]+1 << "/" << shadowTriangles[pass+2]+1 << endl;
+			ofs << "f " << shadowToWelded[shadowTriangles[pass]] + 1 << "/" << shadowTriangles[pass] + 1 << "/" << shadowTriangles[pass] + 1 << " ";
+			ofs << shadowToWelded[shadowTriangles[pass + 1]] + 1 << "/" << shadowTriangles[pass + 1] + 1 << "/" << shadowTriangles[pass + 1] + 1 << " ";
+			ofs << shadowToWelded[shadowTriangles[pass + 2]] + 1 << "/" << shadowTriangles[pass + 2] + 1 << "/" << shadowTriangles[pass + 2] + 1 << endl;
 		}
 
 		shadowTriangles.clear();

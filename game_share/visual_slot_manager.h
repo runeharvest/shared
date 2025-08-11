@@ -17,8 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef CL_VISUAL_SLOT_MANAGER_H
 #define CL_VISUAL_SLOT_MANAGER_H
 
@@ -31,7 +29,6 @@
 // Game Share
 #include "slot_types.h"
 
-
 ///////////
 // CLASS //
 ///////////
@@ -43,8 +40,8 @@
  */
 class CVisualSlotManager
 {
-////////////
-// PUBLIC //
+	////////////
+	// PUBLIC //
 public:
 	/**
 	 * Instanciate CVisualSlotManager. There can be only one instance (singleton)
@@ -58,8 +55,8 @@ public:
 public:
 	typedef struct TElement
 	{
-		uint32				Index;
-		NLMISC::CSheetId	SheetId;
+		uint32 Index;
+		NLMISC::CSheetId SheetId;
 
 		/// Load/Save the values using the serial system
 		void serial(NLMISC::IStream &s)
@@ -87,12 +84,12 @@ public:
 		void updateMaps();
 	} TElementList;
 
-	typedef std::vector <TElementList> TVisualSlot;
+	typedef std::vector<TElementList> TVisualSlot;
 
 	typedef struct
 	{
-		uint32					Index;
-		SLOTTYPE::EVisualSlot	VisualSlot;
+		uint32 Index;
+		SLOTTYPE::EVisualSlot VisualSlot;
 	} TIdxbyVS;
 
 public:
@@ -103,32 +100,30 @@ public:
 	/// Return the visual index from a sheet Id and the visual slot.
 	uint32 sheet2Index(const NLMISC::CSheetId &id, SLOTTYPE::EVisualSlot slot);
 	// Return the sheet Id from visual index and the visual slot.
-	NLMISC::CSheetId * index2Sheet(uint32 index, SLOTTYPE::EVisualSlot slot);
+	NLMISC::CSheetId *index2Sheet(uint32 index, SLOTTYPE::EVisualSlot slot);
 	/// ...
 	void sheet2Index(const NLMISC::CSheetId &id, std::vector<TIdxbyVS> &result);
 	/// Return the number of different index for a visual slot.
 	uint32 getNbIndex(SLOTTYPE::EVisualSlot slot) const;
 
-
-///////////////
-// PROTECTED //
+	///////////////
+	// PROTECTED //
 protected:
 	/// Constructor
 	CVisualSlotManager();
 	/// Initialize the class
 	void init();
 
-
-/////////////
-// PRIVATE //
+	/////////////
+	// PRIVATE //
 private:
 	// The only one instance of the class
-	static CVisualSlotManager	*_Instance;
+	static CVisualSlotManager *_Instance;
+
 private:
 	//
-	TVisualSlot					_VisualSlot;
+	TVisualSlot _VisualSlot;
 };
-
 
 #endif // CL_VISUAL_SLOT_MANAGER_H
 

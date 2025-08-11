@@ -31,19 +31,23 @@ class QNelWidget : public QGLWidget
 {
 	Q_OBJECT
 
-///--QWidget Methods------------------------------------------------------------
+	///--QWidget Methods------------------------------------------------------------
 public:
-
-	QNelWidget(QWidget *parent = 0) : QGLWidget( parent ),_SceneRoot(NULL)
+	QNelWidget(QWidget *parent = 0)
+	    : QGLWidget(parent)
+	    , _SceneRoot(NULL)
 	{
 		// Initialize NeL
 		init();
 	}
 
 	// Do nothing.
-	QNelWidget(const QNelWidget &copy) : QGLWidget(copy.parentWidget()) { }
+	QNelWidget(const QNelWidget &copy)
+	    : QGLWidget(copy.parentWidget())
+	{
+	}
 
-	virtual ~QNelWidget ()
+	virtual ~QNelWidget()
 	{
 		// Destroy NeL.
 		// ...
@@ -52,11 +56,11 @@ public:
 	}
 
 	virtual void swapBuffers();
+
 protected:
 	virtual void initializeGL();
-	virtual void resizeGL( int, int );
+	virtual void resizeGL(int, int);
 	virtual void paintGL();
-
 
 	/// Initialize NeL
 	void init();

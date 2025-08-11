@@ -18,10 +18,10 @@
 #define NL_STDLOGIC_H
 
 #if defined(_MSC_VER) && defined(_DEBUG)
-	#define _CRTDBG_MAP_ALLOC
-	#include <stdlib.h>
-	#include <crtdbg.h>
-	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
 #include <vector>
@@ -38,17 +38,17 @@
 #include "nel/misc/stream.h"
 
 #ifdef NL_OS_WINDOWS
-#	define WIN32_LEAN_AND_MEAN
-#	define _WIN32_WINDOWS 0x0500
-#	ifndef _WIN32_WINNT
-#		define _WIN32_WINNT 0x0500
-#	endif
-#	ifndef NL_COMP_MINGW
-#		define WINVER 0x0500
-#		define NOMINMAX
-#	endif
-#	include <winsock2.h>
-#	include <windows.h>
+#define WIN32_LEAN_AND_MEAN
+#define _WIN32_WINDOWS 0x0500
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0500
+#endif
+#ifndef NL_COMP_MINGW
+#define WINVER 0x0500
+#define NOMINMAX
+#endif
+#include <winsock2.h>
+#include <windows.h>
 #endif
 
 #endif // NL_STDMISC_H

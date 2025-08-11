@@ -21,7 +21,7 @@
 #define _CRT_SECURE_NO_DEPRECATE
 #endif
 
-#pragma warning (disable : 4786)
+#pragma warning(disable : 4786)
 #include <assert.h>
 #include <Max.h>
 #include <istdplug.h>

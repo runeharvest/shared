@@ -25,10 +25,10 @@ using namespace NLMISC;
 
 // --------------------------------------------------
 
-bool CNelExport::exportZone (const std::string &sPath, INode& node, TimeValue time)
+bool CNelExport::exportZone(const std::string &sPath, INode &node, TimeValue time)
 {
 	// Result to return
-	bool bRet=false;
+	bool bRet = false;
 
 	// Eval the object a time
 	ObjectState os = node.EvalWorldState(time);
@@ -37,7 +37,7 @@ bool CNelExport::exportZone (const std::string &sPath, INode& node, TimeValue ti
 	if (os.obj)
 	{
 		// Object can convert itself to NeL patchmesh ?
-		RPO* pPatchObject = (RPO*) os.obj->ConvertToType(time, RYKOLPATCHOBJ_CLASS_ID);
+		RPO *pPatchObject = (RPO *)os.obj->ConvertToType(time, RYKOLPATCHOBJ_CLASS_ID);
 
 		// Conversion success ?
 		if (pPatchObject)
@@ -45,34 +45,34 @@ bool CNelExport::exportZone (const std::string &sPath, INode& node, TimeValue ti
 			// Build the zone
 			CZone zone;
 			CZoneSymmetrisation zoneSymmetry;
-			if (pPatchObject->rpatch->exportZone (&node, &pPatchObject->patch, zone, zoneSymmetry, 0, 160, 1, false))
+			if (pPatchObject->rpatch->exportZone(&node, &pPatchObject->patch, zone, zoneSymmetry, 0, 160, 1, false))
 			{
 				// Open a file
 				COFile file;
-				if (file.open (sPath))
+				if (file.open(sPath))
 				{
 					try
 					{
 						// Serial the zone
-						zone.serial (file);
+						zone.serial(file);
 
 						// All is good
-						bRet=true;
+						bRet = true;
 					}
 					catch (...)
 					{
 					}
 				}
-				file.close ();
+				file.close();
 			}
 
 #ifdef NL_DEBUG
 			// load the zone
 			CZone checkZone;
 			CIFile inputFile;
-			if (inputFile.open (sPath))
+			if (inputFile.open(sPath))
 			{
-				checkZone.serial (inputFile);
+				checkZone.serial(inputFile);
 
 				// Check zone
 				std::vector<CPatchInfo> patchs;
@@ -80,25 +80,20 @@ bool CNelExport::exportZone (const std::string &sPath, INode& node, TimeValue ti
 				checkZone.retrieve(patchs, borderVertices);
 
 				// Get Center and scal
-				float fScale=checkZone.getPatchScale();
-				CVector vCenter=checkZone.getPatchBias();
+				float fScale = checkZone.getPatchScale();
+				CVector vCenter = checkZone.getPatchBias();
 
 				// Watch points
-				for (sint nPatch=0; nPatch<(sint)patchs.size(); nPatch++)
+				for (sint nPatch = 0; nPatch < (sint)patchs.size(); nPatch++)
 				{
-					for (sint nVert=0; nVert<4; nVert++)
+					for (sint nVert = 0; nVert < 4; nVert++)
 					{
-						CVector v=patchs[nPatch].Patch.Vertices[nVert];
+						CVector v = patchs[nPatch].Patch.Vertices[nVert];
 					}
 				}
 			}
 #endif // NL_DEBUG
-
-
 		}
 	}
 	return bRet;
 }
-
-
-

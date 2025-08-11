@@ -21,9 +21,7 @@
 
 namespace NL3D {
 
-
 class CPointLight;
-
 
 /**
  * A pointLight Influence. Filled by Static Lighting system (landscape / Igs).
@@ -37,27 +35,23 @@ class CPointLightInfluence
 {
 public:
 	// The light of interest
-	CPointLight		*PointLight;
+	CPointLight *PointLight;
 	// The factor of influence (0..1) of this light, computed by the static light setup.
-	float			Influence;
+	float Influence;
 	// Internal Use only. Used by CLightingManager
-	float			BkupInfluence;
+	float BkupInfluence;
 	// Internal Use only. Used by CLightingManager
-	float			DistanceToModel;
+	float DistanceToModel;
 
 	// To sort by influence.
-	bool	operator<(const CPointLightInfluence &sl) const
+	bool operator<(const CPointLightInfluence &sl) const
 	{
 		// sort in growing order
-		return Influence>sl.Influence;
+		return Influence > sl.Influence;
 	}
-
 };
 
-
-
 } // NL3D
-
 
 #endif // NL_POINT_LIGHT_INFLUENCE_H
 

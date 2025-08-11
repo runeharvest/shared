@@ -29,18 +29,17 @@
 #include "nel/misc/noise_value.h"
 #include "nel/3d/vegetable.h"
 
-
-
-#define	NL_VEGETABLE_EDIT_ANGLE_SLIDER_SIZE	256
-
+#define NL_VEGETABLE_EDIT_ANGLE_SLIDER_SIZE 256
 
 /////////////////////////////////////////////////////////////////////////////
 // CVegetableDensityPage property page
 
 IMPLEMENT_DYNCREATE(CVegetableDensityPage, CPropertyPage)
 
-CVegetableDensityPage::CVegetableDensityPage() : CPropertyPage(CVegetableDensityPage::IDD),
-	_DensityDlg(NULL), _MaxDensityDlg(NULL)
+CVegetableDensityPage::CVegetableDensityPage()
+    : CPropertyPage(CVegetableDensityPage::IDD)
+    , _DensityDlg(NULL)
+    , _MaxDensityDlg(NULL)
 {
 	//{{AFX_DATA_INIT(CVegetableDensityPage)
 	//}}AFX_DATA_INIT
@@ -48,12 +47,17 @@ CVegetableDensityPage::CVegetableDensityPage() : CPropertyPage(CVegetableDensity
 
 CVegetableDensityPage::~CVegetableDensityPage()
 {
-	#define  REMOVE_WND(wnd) if (wnd) { wnd->DestroyWindow(); delete wnd; }
-	REMOVE_WND(_DensityDlg);	
-	REMOVE_WND(_MaxDensityDlg);	
+#define REMOVE_WND(wnd)       \
+	if (wnd)                  \
+	{                         \
+		wnd->DestroyWindow(); \
+		delete wnd;           \
+	}
+	REMOVE_WND(_DensityDlg);
+	REMOVE_WND(_MaxDensityDlg);
 }
 
-void CVegetableDensityPage::DoDataExchange(CDataExchange* pDX)
+void CVegetableDensityPage::DoDataExchange(CDataExchange *pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CVegetableDensityPage)
@@ -68,38 +72,35 @@ void CVegetableDensityPage::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CVegetableDensityPage, CPropertyPage)
-	//{{AFX_MSG_MAP(CVegetableDensityPage)
-	ON_BN_CLICKED(IDC_CHECK_MAX_DENSITY, OnCheckMaxDensity)
-	ON_CBN_SELCHANGE(IDC_COMBO_DIST_TYPE, OnSelchangeComboDistType)
-	ON_BN_CLICKED(IDC_RADIO_ANGLE_CEILING, OnRadioAngleCeiling)
-	ON_BN_CLICKED(IDC_RADIO_ANGLE_FLOOR, OnRadioAngleFloor)
-	ON_BN_CLICKED(IDC_RADIO_ANGLE_WALL, OnRadioAngleWall)
-	ON_NOTIFY(NM_RELEASEDCAPTURE, IDC_SLIDER_ANGLE_MAX, OnReleasedcaptureSliderAngleMax)
-	ON_NOTIFY(NM_RELEASEDCAPTURE, IDC_SLIDER_ANGLE_MIN, OnReleasedcaptureSliderAngleMin)
-	ON_EN_KILLFOCUS(IDC_EDIT_ANGLE_MIN, OnKillfocusEditAngleMin)
-	ON_EN_KILLFOCUS(IDC_EDIT_ANGLE_MAX, OnKillfocusEditAngleMax)
-	ON_EN_CHANGE(IDC_EDIT_ANGLE_MIN, OnChangeEditAngleMin)
-	ON_EN_CHANGE(IDC_EDIT_ANGLE_MAX, OnChangeEditAngleMax)
-	ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_BROWSE, OnButtonVegetableBrowse)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CVegetableDensityPage)
+ON_BN_CLICKED(IDC_CHECK_MAX_DENSITY, OnCheckMaxDensity)
+ON_CBN_SELCHANGE(IDC_COMBO_DIST_TYPE, OnSelchangeComboDistType)
+ON_BN_CLICKED(IDC_RADIO_ANGLE_CEILING, OnRadioAngleCeiling)
+ON_BN_CLICKED(IDC_RADIO_ANGLE_FLOOR, OnRadioAngleFloor)
+ON_BN_CLICKED(IDC_RADIO_ANGLE_WALL, OnRadioAngleWall)
+ON_NOTIFY(NM_RELEASEDCAPTURE, IDC_SLIDER_ANGLE_MAX, OnReleasedcaptureSliderAngleMax)
+ON_NOTIFY(NM_RELEASEDCAPTURE, IDC_SLIDER_ANGLE_MIN, OnReleasedcaptureSliderAngleMin)
+ON_EN_KILLFOCUS(IDC_EDIT_ANGLE_MIN, OnKillfocusEditAngleMin)
+ON_EN_KILLFOCUS(IDC_EDIT_ANGLE_MAX, OnKillfocusEditAngleMax)
+ON_EN_CHANGE(IDC_EDIT_ANGLE_MIN, OnChangeEditAngleMin)
+ON_EN_CHANGE(IDC_EDIT_ANGLE_MAX, OnChangeEditAngleMax)
+ON_BN_CLICKED(IDC_BUTTON_VEGETABLE_BROWSE, OnButtonVegetableBrowse)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-
 // ***************************************************************************
 // ***************************************************************************
 // ***************************************************************************
 // ***************************************************************************
-
 
 // ***************************************************************************
 void CVegetableDensityPage::setVegetableToEdit(NL3D::CVegetable *vegetable)
 {
-	_Vegetable= vegetable;
+	_Vegetable = vegetable;
 
 	// If not NULL, init all controls.
-	if(_Vegetable)
+	if (_Vegetable)
 	{
 		// Init ShapeName
 		// ----------
@@ -108,9 +109,9 @@ void CVegetableDensityPage::setVegetableToEdit(NL3D::CVegetable *vegetable)
 		// init Creation Distance.
 		// ----------
 		// normalize creation distance for this editor.
-		_Vegetable->DistType= std::min( (uint)_Vegetable->DistType, (uint)(DistTypeCombo.GetCount()-1) );
+		_Vegetable->DistType = std::min((uint)_Vegetable->DistType, (uint)(DistTypeCombo.GetCount() - 1));
 		// set Creation Distance.
-		DistTypeCombo.SetCurSel( _Vegetable->DistType );
+		DistTypeCombo.SetCurSel(_Vegetable->DistType);
 
 		// init _DensityDlg.
 		// ----------
@@ -118,15 +119,15 @@ void CVegetableDensityPage::setVegetableToEdit(NL3D::CVegetable *vegetable)
 
 		// init MaxDensity
 		// ----------
-		if(_Vegetable->MaxDensity == -1)
+		if (_Vegetable->MaxDensity == -1)
 		{
 			// Disable the checkBox and the slider.
 			MaxDensityCheckBox.SetCheck(0);
-			static	float dummy;
+			static float dummy;
 			_MaxDensityDlg->setFloat(&dummy, _VegetableDlg);
 			_MaxDensityDlg->EnableWindow(false);
 			// Init with a default value
-			_PrecMaxDensityValue= NL_VEGETABLE_EDIT_DEFAULT_MAX_DENSITY;
+			_PrecMaxDensityValue = NL_VEGETABLE_EDIT_DEFAULT_MAX_DENSITY;
 		}
 		else
 		{
@@ -138,24 +139,24 @@ void CVegetableDensityPage::setVegetableToEdit(NL3D::CVegetable *vegetable)
 
 		// init AngleSetup.
 		// ----------
-		NL3D::CVegetable::TAngleType	angType= _Vegetable->getAngleType();
+		NL3D::CVegetable::TAngleType angType = _Vegetable->getAngleType();
 		// disable 3 radio buttons.
-		((CButton*)GetDlgItem(IDC_RADIO_ANGLE_FLOOR))->SetCheck(0);
-		((CButton*)GetDlgItem(IDC_RADIO_ANGLE_WALL))->SetCheck(0);
-		((CButton*)GetDlgItem(IDC_RADIO_ANGLE_CEILING))->SetCheck(0);
+		((CButton *)GetDlgItem(IDC_RADIO_ANGLE_FLOOR))->SetCheck(0);
+		((CButton *)GetDlgItem(IDC_RADIO_ANGLE_WALL))->SetCheck(0);
+		((CButton *)GetDlgItem(IDC_RADIO_ANGLE_CEILING))->SetCheck(0);
 		// enable only the one of interest.
-		switch(angType)
+		switch (angType)
 		{
 		case NL3D::CVegetable::AngleGround:
-			((CButton*)GetDlgItem(IDC_RADIO_ANGLE_FLOOR))->SetCheck(1);
+			((CButton *)GetDlgItem(IDC_RADIO_ANGLE_FLOOR))->SetCheck(1);
 			enableAngleEdit(IDC_RADIO_ANGLE_FLOOR);
 			break;
 		case NL3D::CVegetable::AngleWall:
-			((CButton*)GetDlgItem(IDC_RADIO_ANGLE_WALL))->SetCheck(1);
+			((CButton *)GetDlgItem(IDC_RADIO_ANGLE_WALL))->SetCheck(1);
 			enableAngleEdit(IDC_RADIO_ANGLE_WALL);
 			break;
 		case NL3D::CVegetable::AngleCeiling:
-			((CButton*)GetDlgItem(IDC_RADIO_ANGLE_CEILING))->SetCheck(1);
+			((CButton *)GetDlgItem(IDC_RADIO_ANGLE_CEILING))->SetCheck(1);
 			enableAngleEdit(IDC_RADIO_ANGLE_CEILING);
 			break;
 		}
@@ -168,9 +169,8 @@ void CVegetableDensityPage::setVegetableToEdit(NL3D::CVegetable *vegetable)
 	}
 }
 
-
 // ***************************************************************************
-void		CVegetableDensityPage::enableAngleEdit(uint radioId)
+void CVegetableDensityPage::enableAngleEdit(uint radioId)
 {
 	// first disable all
 	AngleMinSlider.EnableWindow(false);
@@ -178,68 +178,66 @@ void		CVegetableDensityPage::enableAngleEdit(uint radioId)
 	AngleMaxSlider.EnableWindow(false);
 	AngleMaxEdit.EnableWindow(false);
 	// Then enable only what needed.
-	if(radioId == IDC_RADIO_ANGLE_WALL || radioId == IDC_RADIO_ANGLE_FLOOR)
+	if (radioId == IDC_RADIO_ANGLE_WALL || radioId == IDC_RADIO_ANGLE_FLOOR)
 	{
 		AngleMinSlider.EnableWindow(true);
 		AngleMinEdit.EnableWindow(true);
 	}
-	if(radioId == IDC_RADIO_ANGLE_WALL || radioId == IDC_RADIO_ANGLE_CEILING)
+	if (radioId == IDC_RADIO_ANGLE_WALL || radioId == IDC_RADIO_ANGLE_CEILING)
 	{
 		AngleMaxSlider.EnableWindow(true);
 		AngleMaxEdit.EnableWindow(true);
 	}
 }
 
-
 // ***************************************************************************
-void		CVegetableDensityPage::updateViewAngleMin()
+void CVegetableDensityPage::updateViewAngleMin()
 {
-	double	angle= _Vegetable->getCosAngleMin();
+	double angle = _Vegetable->getCosAngleMin();
 	NLMISC::clamp(angle, -1, 1);
-	angle= asin(angle);
+	angle = asin(angle);
 
-	sint	pos= (sint)(angle/(NLMISC::Pi/2) * NL_VEGETABLE_EDIT_ANGLE_SLIDER_SIZE);
+	sint pos = (sint)(angle / (NLMISC::Pi / 2) * NL_VEGETABLE_EDIT_ANGLE_SLIDER_SIZE);
 	NLMISC::clamp(pos, -NL_VEGETABLE_EDIT_ANGLE_SLIDER_SIZE, NL_VEGETABLE_EDIT_ANGLE_SLIDER_SIZE);
 	AngleMinSlider.SetPos(pos);
 
-	CString	stmp;
-	stmp.Format(_T("%.2f"), (double)(angle*180/NLMISC::Pi));
+	CString stmp;
+	stmp.Format(_T("%.2f"), (double)(angle * 180 / NLMISC::Pi));
 	AngleMinEdit.SetWindowText(stmp);
 }
 
 // ***************************************************************************
-void		CVegetableDensityPage::updateViewAngleMax()
+void CVegetableDensityPage::updateViewAngleMax()
 {
-	double	angle= _Vegetable->getCosAngleMax();
+	double angle = _Vegetable->getCosAngleMax();
 	NLMISC::clamp(angle, -1, 1);
-	angle= asin(angle);
+	angle = asin(angle);
 
-	sint	pos= (sint)(angle/(NLMISC::Pi/2) * NL_VEGETABLE_EDIT_ANGLE_SLIDER_SIZE);
+	sint pos = (sint)(angle / (NLMISC::Pi / 2) * NL_VEGETABLE_EDIT_ANGLE_SLIDER_SIZE);
 	NLMISC::clamp(pos, -NL_VEGETABLE_EDIT_ANGLE_SLIDER_SIZE, NL_VEGETABLE_EDIT_ANGLE_SLIDER_SIZE);
 	AngleMaxSlider.SetPos(pos);
 
-	CString	stmp;
+	CString stmp;
 	stmp.Format(_T("%.2f"), (double)(angle * 180 / NLMISC::Pi));
 	AngleMaxEdit.SetWindowText(stmp);
 }
 
-
 // ***************************************************************************
-void		CVegetableDensityPage::updateAngleMinFromEditText()
+void CVegetableDensityPage::updateAngleMinFromEditText()
 {
 	// get angles edited.
-	TCHAR	stmp[256];
+	TCHAR stmp[256];
 	AngleMinEdit.GetWindowText(stmp, 256);
-	float	angleMin;
+	float angleMin;
 	NLMISC::fromString(NLMISC::tStrToUtf8(stmp), angleMin);
 	NLMISC::clamp(angleMin, -90, 90);
 	// make a sinus, because 90 => 1, and -90 =>-1
-	float	cosAngleMin= (float)sin(angleMin*NLMISC::Pi/180.f);
+	float cosAngleMin = (float)sin(angleMin * NLMISC::Pi / 180.f);
 
 	// setup vegetable.
-	if(_Vegetable->getAngleType()== NL3D::CVegetable::AngleWall)
+	if (_Vegetable->getAngleType() == NL3D::CVegetable::AngleWall)
 		_Vegetable->setAngleWall(cosAngleMin, _Vegetable->getCosAngleMax());
-	else if(_Vegetable->getAngleType()== NL3D::CVegetable::AngleGround)
+	else if (_Vegetable->getAngleType() == NL3D::CVegetable::AngleGround)
 		_Vegetable->setAngleGround(cosAngleMin);
 
 	// update views
@@ -249,21 +247,21 @@ void		CVegetableDensityPage::updateAngleMinFromEditText()
 	_VegetableDlg->refreshVegetableDisplay();
 }
 // ***************************************************************************
-void		CVegetableDensityPage::updateAngleMaxFromEditText()
+void CVegetableDensityPage::updateAngleMaxFromEditText()
 {
 	// get angles edited.
-	TCHAR	stmp[256];
+	TCHAR stmp[256];
 	AngleMaxEdit.GetWindowText(stmp, 256);
-	float	angleMax;
+	float angleMax;
 	NLMISC::fromString(NLMISC::tStrToUtf8(stmp), angleMax);
 	NLMISC::clamp(angleMax, -90, 90);
 	// make a sinus, because 90 => 1, and -90 =>-1
-	float	cosAngleMax= (float)sin(angleMax*NLMISC::Pi/180.f);
+	float cosAngleMax = (float)sin(angleMax * NLMISC::Pi / 180.f);
 
 	// setup vegetable.
-	if(_Vegetable->getAngleType()== NL3D::CVegetable::AngleWall)
+	if (_Vegetable->getAngleType() == NL3D::CVegetable::AngleWall)
 		_Vegetable->setAngleWall(_Vegetable->getCosAngleMin(), cosAngleMax);
-	else if(_Vegetable->getAngleType()== NL3D::CVegetable::AngleCeiling)
+	else if (_Vegetable->getAngleType() == NL3D::CVegetable::AngleCeiling)
 		_Vegetable->setAngleCeiling(cosAngleMax);
 
 	// update views
@@ -273,72 +271,62 @@ void		CVegetableDensityPage::updateAngleMaxFromEditText()
 	_VegetableDlg->refreshVegetableDisplay();
 }
 
-
-
 // ***************************************************************************
 // ***************************************************************************
 // CVegetableDensityPage message handlers
 // ***************************************************************************
 // ***************************************************************************
 
-
-
 // ***************************************************************************
-BOOL CVegetableDensityPage::OnInitDialog() 
+BOOL CVegetableDensityPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	
-	
+
 	// position setup.
-	uint	x= 5;
+	uint x = 5;
 	// Position of the density DlgBox relative to CVegetableDensityPage.
-	uint	yDensity= 130;
+	uint yDensity = 130;
 	// y relative to MaxDensity Group
-	uint	yMaxDensity= 45;
+	uint yMaxDensity = 45;
 	// get y of MaxDensityStaticText relative to CVegetableDensityPage.
-	RECT	rectParent;
-	RECT	rect;
+	RECT rectParent;
+	RECT rect;
 	GetWindowRect(&rectParent);
 	MaxDensityStaticText.GetWindowRect(&rect);
 	// and apply.
-	yMaxDensity+= rect.top - rectParent.top;
-
+	yMaxDensity += rect.top - rectParent.top;
 
 	// Init Density Dialog.
-	_DensityDlg = new CVegetableNoiseValueDlg (std::string("Density"));
+	_DensityDlg = new CVegetableNoiseValueDlg(std::string("Density"));
 	_DensityDlg->setDefaultRangeAbs(NL_VEGETABLE_DENSITY_ABS_RANGE_MIN, NL_VEGETABLE_DENSITY_ABS_RANGE_MAX);
 	_DensityDlg->setDefaultRangeRand(NL_VEGETABLE_DENSITY_RAND_RANGE_MIN, NL_VEGETABLE_DENSITY_RAND_RANGE_MAX);
 	_DensityDlg->setDefaultRangeFreq(NL_VEGETABLE_FREQ_RANGE_MIN, NL_VEGETABLE_FREQ_RANGE_MAX);
 	_DensityDlg->init(x, yDensity, this);
 
-	
 	// Init MaxDensity Dialog.
-	_MaxDensityDlg = new CDirectEditableRangeFloat (std::string("VEGET_MAX_DENSITY"), 0, NL_VEGETABLE_EDIT_DEFAULT_MAX_DENSITY, 
-		"MaxDensity");
+	_MaxDensityDlg = new CDirectEditableRangeFloat(std::string("VEGET_MAX_DENSITY"), 0, NL_VEGETABLE_EDIT_DEFAULT_MAX_DENSITY,
+	    "MaxDensity");
 	_MaxDensityDlg->enableLowerBound(0, false);
-	_MaxDensityDlg->init(x+10, yMaxDensity, this);
-
+	_MaxDensityDlg->init(x + 10, yMaxDensity, this);
 
 	// Init angle sliders.
 	AngleMinSlider.SetRange(-NL_VEGETABLE_EDIT_ANGLE_SLIDER_SIZE, NL_VEGETABLE_EDIT_ANGLE_SLIDER_SIZE);
 	AngleMaxSlider.SetRange(-NL_VEGETABLE_EDIT_ANGLE_SLIDER_SIZE, NL_VEGETABLE_EDIT_ANGLE_SLIDER_SIZE);
 
-	
 	// Init ShapeName
 	StaticVegetableShape.SetWindowText(_T(""));
 
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 // ***************************************************************************
-void CVegetableDensityPage::OnCheckMaxDensity() 
+void CVegetableDensityPage::OnCheckMaxDensity()
 {
-	if(MaxDensityCheckBox.GetCheck() == 1)
+	if (MaxDensityCheckBox.GetCheck() == 1)
 	{
 		// check, restore maxDensity
-		_Vegetable->MaxDensity= _PrecMaxDensityValue;
+		_Vegetable->MaxDensity = _PrecMaxDensityValue;
 		// enable dlg.
 		_MaxDensityDlg->setFloat(&_Vegetable->MaxDensity, _VegetableDlg);
 		_MaxDensityDlg->EnableWindow(true);
@@ -346,13 +334,13 @@ void CVegetableDensityPage::OnCheckMaxDensity()
 	else
 	{
 		// uncheck, bkup maxDenstiy
-		_PrecMaxDensityValue= _Vegetable->MaxDensity;
+		_PrecMaxDensityValue = _Vegetable->MaxDensity;
 		// disable dlg
-		static	float dummy;
+		static float dummy;
 		_MaxDensityDlg->setFloat(&dummy, _VegetableDlg);
 		_MaxDensityDlg->EnableWindow(false);
 		// and setup vegetable (disable MaxDensity).
-		_Vegetable->MaxDensity= -1;
+		_Vegetable->MaxDensity = -1;
 	}
 
 	// update 3D view
@@ -360,10 +348,10 @@ void CVegetableDensityPage::OnCheckMaxDensity()
 }
 
 // ***************************************************************************
-void CVegetableDensityPage::OnSelchangeComboDistType() 
+void CVegetableDensityPage::OnSelchangeComboDistType()
 {
 	// Get the DistType, and just copy to vegetable.
-	_Vegetable->DistType= DistTypeCombo.GetCurSel();
+	_Vegetable->DistType = DistTypeCombo.GetCurSel();
 
 	// Since used to display name in selection listBox, must update the name
 	_VegetableDlg->updateCurSelVegetableName();
@@ -373,7 +361,7 @@ void CVegetableDensityPage::OnSelchangeComboDistType()
 }
 
 // ***************************************************************************
-void CVegetableDensityPage::OnRadioAngleCeiling() 
+void CVegetableDensityPage::OnRadioAngleCeiling()
 {
 	// Enable just the AngleMax slider.
 	enableAngleEdit(IDC_RADIO_ANGLE_CEILING);
@@ -389,7 +377,7 @@ void CVegetableDensityPage::OnRadioAngleCeiling()
 }
 
 // ***************************************************************************
-void CVegetableDensityPage::OnRadioAngleFloor() 
+void CVegetableDensityPage::OnRadioAngleFloor()
 {
 	// Enable just the AngleMin slider.
 	enableAngleEdit(IDC_RADIO_ANGLE_FLOOR);
@@ -405,7 +393,7 @@ void CVegetableDensityPage::OnRadioAngleFloor()
 }
 
 // ***************************************************************************
-void CVegetableDensityPage::OnRadioAngleWall() 
+void CVegetableDensityPage::OnRadioAngleWall()
 {
 	// Enable both sliders.
 	enableAngleEdit(IDC_RADIO_ANGLE_WALL);
@@ -422,19 +410,19 @@ void CVegetableDensityPage::OnRadioAngleWall()
 }
 
 // ***************************************************************************
-void CVegetableDensityPage::OnReleasedcaptureSliderAngleMax(NMHDR* pNMHDR, LRESULT* pResult) 
+void CVegetableDensityPage::OnReleasedcaptureSliderAngleMax(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	float	angle= 90 * (float)AngleMaxSlider.GetPos() / (float)NL_VEGETABLE_EDIT_ANGLE_SLIDER_SIZE;
+	float angle = 90 * (float)AngleMaxSlider.GetPos() / (float)NL_VEGETABLE_EDIT_ANGLE_SLIDER_SIZE;
 	NLMISC::clamp(angle, -90, 90);
 	// make a sinus, because 90 => 1, and -90 =>-1
-	float	cosAngleMax= (float)sin(angle*NLMISC::Pi/180.f);
+	float cosAngleMax = (float)sin(angle * NLMISC::Pi / 180.f);
 
 	// setup vegetable.
-	if(_Vegetable->getAngleType()== NL3D::CVegetable::AngleWall)
+	if (_Vegetable->getAngleType() == NL3D::CVegetable::AngleWall)
 		_Vegetable->setAngleWall(_Vegetable->getCosAngleMin(), cosAngleMax);
 	else
 		_Vegetable->setAngleCeiling(cosAngleMax);
-	
+
 	// update view
 	updateViewAngleMax();
 
@@ -445,19 +433,19 @@ void CVegetableDensityPage::OnReleasedcaptureSliderAngleMax(NMHDR* pNMHDR, LRESU
 }
 
 // ***************************************************************************
-void CVegetableDensityPage::OnReleasedcaptureSliderAngleMin(NMHDR* pNMHDR, LRESULT* pResult) 
+void CVegetableDensityPage::OnReleasedcaptureSliderAngleMin(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	float	angle= 90 * (float)AngleMinSlider.GetPos() / (float)NL_VEGETABLE_EDIT_ANGLE_SLIDER_SIZE;
+	float angle = 90 * (float)AngleMinSlider.GetPos() / (float)NL_VEGETABLE_EDIT_ANGLE_SLIDER_SIZE;
 	NLMISC::clamp(angle, -90, 90);
 	// make a sinus, because 90 => 1, and -90 =>-1
-	float	cosAngleMin= (float)sin(angle*NLMISC::Pi/180.f);
+	float cosAngleMin = (float)sin(angle * NLMISC::Pi / 180.f);
 
 	// setup vegetable.
-	if(_Vegetable->getAngleType()== NL3D::CVegetable::AngleWall)
+	if (_Vegetable->getAngleType() == NL3D::CVegetable::AngleWall)
 		_Vegetable->setAngleWall(cosAngleMin, _Vegetable->getCosAngleMax());
 	else
 		_Vegetable->setAngleGround(cosAngleMin);
-	
+
 	// update view
 	updateViewAngleMin();
 
@@ -468,33 +456,35 @@ void CVegetableDensityPage::OnReleasedcaptureSliderAngleMin(NMHDR* pNMHDR, LRESU
 }
 
 // ***************************************************************************
-void CVegetableDensityPage::OnKillfocusEditAngleMin() 
+void CVegetableDensityPage::OnKillfocusEditAngleMin()
 {
 	updateAngleMinFromEditText();
 }
-void CVegetableDensityPage::OnKillfocusEditAngleMax() 
+void CVegetableDensityPage::OnKillfocusEditAngleMax()
 {
 	updateAngleMaxFromEditText();
 }
 
-static	void concatEdit2Lines(CEdit &edit)
+static void concatEdit2Lines(CEdit &edit)
 {
-	const	uint lineLen= 1000;
-	uint	n;
+	const uint lineLen = 1000;
+	uint n;
 	// retrieve the 2 lines.
-	TCHAR	tmp0[2*lineLen];
-	TCHAR	tmp1[lineLen];
-	n= edit.GetLine(0, tmp0, lineLen);	tmp0[n]= 0;
-	n= edit.GetLine(1, tmp1, lineLen);	tmp1[n]= 0;
+	TCHAR tmp0[2 * lineLen];
+	TCHAR tmp1[lineLen];
+	n = edit.GetLine(0, tmp0, lineLen);
+	tmp0[n] = 0;
+	n = edit.GetLine(1, tmp1, lineLen);
+	tmp1[n] = 0;
 	// concat and update the CEdit.
 	edit.SetWindowText(_tcscat(tmp0, tmp1));
 }
 
-void CVegetableDensityPage::OnChangeEditAngleMin() 
+void CVegetableDensityPage::OnChangeEditAngleMin()
 {
 	// Trick to track "Enter" keypress: CEdit are multiline. If GetLineCount()>1, then
 	// user has press enter.
-	if(AngleMinEdit.GetLineCount()>1)
+	if (AngleMinEdit.GetLineCount() > 1)
 	{
 		// must ccat the 2 first lines.
 		concatEdit2Lines(AngleMinEdit);
@@ -502,11 +492,11 @@ void CVegetableDensityPage::OnChangeEditAngleMin()
 		updateAngleMinFromEditText();
 	}
 }
-void CVegetableDensityPage::OnChangeEditAngleMax() 
+void CVegetableDensityPage::OnChangeEditAngleMax()
 {
 	// Trick to track "Enter" keypress: CEdit are multiline. If GetLineCount()>1, then
 	// user has press enter.
-	if(AngleMaxEdit.GetLineCount()>1)
+	if (AngleMaxEdit.GetLineCount() > 1)
 	{
 		// must ccat the 2 first lines.
 		concatEdit2Lines(AngleMinEdit);
@@ -515,12 +505,10 @@ void CVegetableDensityPage::OnChangeEditAngleMax()
 	}
 }
 
-
-
 // ***************************************************************************
-void CVegetableDensityPage::OnButtonVegetableBrowse() 
+void CVegetableDensityPage::OnButtonVegetableBrowse()
 {
-	CFileDialog fd(TRUE, _T("veget"), _T("*.veget"), 0, NULL, this) ;
+	CFileDialog fd(TRUE, _T("veget"), _T("*.veget"), 0, NULL, this);
 	fd.m_ofn.lpstrTitle = _T("Open Vegetable Shape");
 
 	if (fd.DoModal() == IDOK)
@@ -530,7 +518,7 @@ void CVegetableDensityPage::OnButtonVegetableBrowse()
 
 		// Add search path for the .veget
 		std::string path = NLMISC::CFile::getPath(NLMISC::tStrToUtf8(fd.GetPathName()));
-		NLMISC::CPath::addSearchPath (path);
+		NLMISC::CPath::addSearchPath(path);
 
 		try
 		{

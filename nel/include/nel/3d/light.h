@@ -21,10 +21,7 @@
 #include "nel/misc/rgba.h"
 #include "nel/misc/vector.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 /**
  * Light class to work with driver.
@@ -63,145 +60,144 @@ public:
 	//@{
 
 	/// Quick setup a directional light
-	void setupDirectional (const NLMISC::CRGBA& ambiant, const NLMISC::CRGBA& diffuse, const NLMISC::CRGBA& specular, const NLMISC::CVector& direction,
-							float constant=1, float linear=0, float quadratic=0);
+	void setupDirectional(const NLMISC::CRGBA &ambiant, const NLMISC::CRGBA &diffuse, const NLMISC::CRGBA &specular, const NLMISC::CVector &direction,
+	    float constant = 1, float linear = 0, float quadratic = 0);
 
 	/// Quick setup a point light
-	void setupPointLight (const NLMISC::CRGBA& ambiant, const NLMISC::CRGBA& diffuse, const NLMISC::CRGBA& specular, const NLMISC::CVector& position,
-						const NLMISC::CVector& direction, float constant=1, float linear=0, float quadratic=0);
+	void setupPointLight(const NLMISC::CRGBA &ambiant, const NLMISC::CRGBA &diffuse, const NLMISC::CRGBA &specular, const NLMISC::CVector &position,
+	    const NLMISC::CVector &direction, float constant = 1, float linear = 0, float quadratic = 0);
 
 	/// Quick setup a spotlight
-	void setupSpotLight (const NLMISC::CRGBA& ambiant, const NLMISC::CRGBA& diffuse, const NLMISC::CRGBA& specular, const NLMISC::CVector& position,
-						const NLMISC::CVector& direction, float exponent, float cutoff, float constant=1, float linear=0, float quadratic=0);
+	void setupSpotLight(const NLMISC::CRGBA &ambiant, const NLMISC::CRGBA &diffuse, const NLMISC::CRGBA &specular, const NLMISC::CVector &position,
+	    const NLMISC::CVector &direction, float exponent, float cutoff, float constant = 1, float linear = 0, float quadratic = 0);
 
 	/**
-	  * Setup attenuation with begin and end attenuation distance.
-	  *
-	  * \param farAttenuationBegin is the distance of the begin of the attenuation (attenuation == 0.9f)
-	  * \param farAttenuationEnd is the distance of the end of the attenuation (attenuation == 0.1f)
-	  */
-	void setupAttenuation (float farAttenuationBegin, float farAttenuationEnd);
+	 * Setup attenuation with begin and end attenuation distance.
+	 *
+	 * \param farAttenuationBegin is the distance of the begin of the attenuation (attenuation == 0.9f)
+	 * \param farAttenuationEnd is the distance of the end of the attenuation (attenuation == 0.1f)
+	 */
+	void setupAttenuation(float farAttenuationBegin, float farAttenuationEnd);
 
 	/**
-	  * Set no attenuation.
-	  *
-	  * The light will not use attenuation.
-	  *
-	  */
-	void setNoAttenuation ();
+	 * Set no attenuation.
+	 *
+	 * The light will not use attenuation.
+	 *
+	 */
+	void setNoAttenuation();
 
 	/**
-	  * Setup spot exponent with angle of the hotspot.
-	  *
-	  * \param hotSpotAngle is the angle in radian between the axis of the spot and the vector from light
-	  * where attenuation is == 0.9.
-	  */
-	void setupSpotExponent (float hotSpotAngle);
+	 * Setup spot exponent with angle of the hotspot.
+	 *
+	 * \param hotSpotAngle is the angle in radian between the axis of the spot and the vector from light
+	 * where attenuation is == 0.9.
+	 */
+	void setupSpotExponent(float hotSpotAngle);
 
 	//@}
-
 
 	/// \name Set methods.
 	//@{
 
 	/**
-	  * Set the light mode.
-	  */
-	void setMode (TLightMode mode)
+	 * Set the light mode.
+	 */
+	void setMode(TLightMode mode)
 	{
-		_Mode=mode;
+		_Mode = mode;
 	}
 
 	/**
-	  * Set the ambiant color of the light.
-	  */
-	void setAmbiant (const NLMISC::CRGBA& ambiant)
+	 * Set the ambiant color of the light.
+	 */
+	void setAmbiant(const NLMISC::CRGBA &ambiant)
 	{
-		_Ambiant=ambiant;
+		_Ambiant = ambiant;
 	}
 
 	/**
-	  * Set the diffuse color of the light.
-	  */
-	void setDiffuse (const NLMISC::CRGBA& diffuse)
+	 * Set the diffuse color of the light.
+	 */
+	void setDiffuse(const NLMISC::CRGBA &diffuse)
 	{
-		_Diffuse=diffuse;
+		_Diffuse = diffuse;
 	}
 
 	/**
-	  * Set the specular color of the light.
-	  */
-	void setSpecular (const NLMISC::CRGBA& specular)
+	 * Set the specular color of the light.
+	 */
+	void setSpecular(const NLMISC::CRGBA &specular)
 	{
-		_Specular=specular;
+		_Specular = specular;
 	}
 
 	/**
-	  * Set the position of the light. Used only for SpotLight and PointLight.
-	  */
-	void setPosition (const NLMISC::CVector& position)
+	 * Set the position of the light. Used only for SpotLight and PointLight.
+	 */
+	void setPosition(const NLMISC::CVector &position)
 	{
-		_Position=position;
+		_Position = position;
 	}
 
 	/**
-	  * Set the direction of the light. Used only for DirectionalLight and SpotLight.
-	  */
-	void setDirection (const NLMISC::CVector& direction)
+	 * Set the direction of the light. Used only for DirectionalLight and SpotLight.
+	 */
+	void setDirection(const NLMISC::CVector &direction)
 	{
-		_Direction=direction;
+		_Direction = direction;
 	}
 
 	/**
-	  * Set the Intensity distribution of the light. Should be between [0, 1]. Used only for SpotLight.
-	  */
-	void setExponent (float exponent)
+	 * Set the Intensity distribution of the light. Should be between [0, 1]. Used only for SpotLight.
+	 */
+	void setExponent(float exponent)
 	{
-		_Exponent=exponent;
+		_Exponent = exponent;
 	}
 
 	/**
-	  * Set the cutoff of the light in radian. Should be between [0, Pi/2]. Used only for SpotLight.
-	  */
-	void setCutoff (float cutoff)
+	 * Set the cutoff of the light in radian. Should be between [0, Pi/2]. Used only for SpotLight.
+	 */
+	void setCutoff(float cutoff)
 	{
-		_Cutoff=cutoff;
+		_Cutoff = cutoff;
 	}
 
 	/**
-	  * Set constant attenuation.
-	  *
-	  * The intensity of the light is attenuated this way:
-	  * light_intensity = light_intensity / ( CONSTANT_ATTENUATION + vertex_light_distance * LINEAR_ATTENUATION +
-	  *	vertex_light_distance * vertex_light_distance * QUADRATIC_ATTENUATION );
-	  */
-	void setConstantAttenuation (float constant)
+	 * Set constant attenuation.
+	 *
+	 * The intensity of the light is attenuated this way:
+	 * light_intensity = light_intensity / ( CONSTANT_ATTENUATION + vertex_light_distance * LINEAR_ATTENUATION +
+	 *	vertex_light_distance * vertex_light_distance * QUADRATIC_ATTENUATION );
+	 */
+	void setConstantAttenuation(float constant)
 	{
-		_ConstantAttenuation=constant;
+		_ConstantAttenuation = constant;
 	}
 
 	/**
-	  * Set linear attenuation.
-	  *
-	  * The intensity of the light is attenuated this way:
-	  * light_intensity = light_intensity / ( CONSTANT_ATTENUATION + vertex_light_distance * LINEAR_ATTENUATION +
-	  *	vertex_light_distance * vertex_light_distance * QUADRATIC_ATTENUATION );
-	  */
-	void setLinearAttenuation (float linear)
+	 * Set linear attenuation.
+	 *
+	 * The intensity of the light is attenuated this way:
+	 * light_intensity = light_intensity / ( CONSTANT_ATTENUATION + vertex_light_distance * LINEAR_ATTENUATION +
+	 *	vertex_light_distance * vertex_light_distance * QUADRATIC_ATTENUATION );
+	 */
+	void setLinearAttenuation(float linear)
 	{
-		_LinearAttenuation=linear;
+		_LinearAttenuation = linear;
 	}
 
 	/**
-	  * Set quadratic attenuation.
-	  *
-	  * The intensity of the light is attenuated this way:
-	  * light_intensity = light_intensity / ( CONSTANT_ATTENUATION + vertex_light_distance * LINEAR_ATTENUATION +
-	  *	vertex_light_distance * vertex_light_distance * QUADRATIC_ATTENUATION );
-	  */
-	void setQuadraticAttenuation (float quadratic)
+	 * Set quadratic attenuation.
+	 *
+	 * The intensity of the light is attenuated this way:
+	 * light_intensity = light_intensity / ( CONSTANT_ATTENUATION + vertex_light_distance * LINEAR_ATTENUATION +
+	 *	vertex_light_distance * vertex_light_distance * QUADRATIC_ATTENUATION );
+	 */
+	void setQuadraticAttenuation(float quadratic)
 	{
-		_QuadraticAttenuation=quadratic;
+		_QuadraticAttenuation = quadratic;
 	}
 
 	//@}
@@ -210,101 +206,101 @@ public:
 	//@{
 
 	/**
-	  * Get the light mode.
-	  */
-	TLightMode getMode () const
+	 * Get the light mode.
+	 */
+	TLightMode getMode() const
 	{
 		return _Mode;
 	}
 
 	/**
-	  * Get the ambiant color of the light.
-	  */
-	NLMISC::CRGBA getAmbiant () const
+	 * Get the ambiant color of the light.
+	 */
+	NLMISC::CRGBA getAmbiant() const
 	{
 		return _Ambiant;
 	}
 
 	/**
-	  * Get the diffuse color of the light.
-	  */
-	NLMISC::CRGBA getDiffuse () const
+	 * Get the diffuse color of the light.
+	 */
+	NLMISC::CRGBA getDiffuse() const
 	{
 		return _Diffuse;
 	}
 
 	/**
-	  * Get the specular color of the light.
-	  */
-	NLMISC::CRGBA getSpecular () const
+	 * Get the specular color of the light.
+	 */
+	NLMISC::CRGBA getSpecular() const
 	{
 		return _Specular;
 	}
 
 	/**
-	  * Get the position of the light. Used only for SpotLight and PointLight.
-	  */
-	NLMISC::CVector getPosition () const
+	 * Get the position of the light. Used only for SpotLight and PointLight.
+	 */
+	NLMISC::CVector getPosition() const
 	{
 		return _Position;
 	}
 
 	/**
-	  * Get the direction of the light. Used only for DirectionalLight and SpotLight.
-	  */
-	NLMISC::CVector getDirection () const
+	 * Get the direction of the light. Used only for DirectionalLight and SpotLight.
+	 */
+	NLMISC::CVector getDirection() const
 	{
 		return _Direction;
 	}
 
 	/**
-	  * Get the exponent of the light. Used only for SpotLight.
-	  */
-	float getExponent () const
+	 * Get the exponent of the light. Used only for SpotLight.
+	 */
+	float getExponent() const
 	{
 		return _Exponent;
 	}
 
 	/**
-	  * Get the cutoff of the light in radian. Should be between [0, Pi/2]. Used only for SpotLight.
-	  */
-	float getCutoff () const
+	 * Get the cutoff of the light in radian. Should be between [0, Pi/2]. Used only for SpotLight.
+	 */
+	float getCutoff() const
 	{
 		return _Cutoff;
 	}
 
 	/**
-	  * Get constant attenuation.
-	  *
-	  * The intensity of the light is attenuated this way:
-	  * light_intensity = light_intensity / ( CONSTANT_ATTENUATION + vertex_light_distance * LINEAR_ATTENUATION +
-	  *	vertex_light_distance * vertex_light_distance * QUADRATIC_ATTENUATION );
-	  */
-	float getConstantAttenuation () const
+	 * Get constant attenuation.
+	 *
+	 * The intensity of the light is attenuated this way:
+	 * light_intensity = light_intensity / ( CONSTANT_ATTENUATION + vertex_light_distance * LINEAR_ATTENUATION +
+	 *	vertex_light_distance * vertex_light_distance * QUADRATIC_ATTENUATION );
+	 */
+	float getConstantAttenuation() const
 	{
 		return _ConstantAttenuation;
 	}
 
 	/**
-	  * Get linear attenuation.
-	  *
-	  * The intensity of the light is attenuated this way:
-	  * light_intensity = light_intensity / ( CONSTANT_ATTENUATION + vertex_light_distance * LINEAR_ATTENUATION +
-	  *	vertex_light_distance * vertex_light_distance * QUADRATIC_ATTENUATION );
-	  */
-	float getLinearAttenuation () const
+	 * Get linear attenuation.
+	 *
+	 * The intensity of the light is attenuated this way:
+	 * light_intensity = light_intensity / ( CONSTANT_ATTENUATION + vertex_light_distance * LINEAR_ATTENUATION +
+	 *	vertex_light_distance * vertex_light_distance * QUADRATIC_ATTENUATION );
+	 */
+	float getLinearAttenuation() const
 	{
 		return _LinearAttenuation;
 	}
 
 	/**
-	  * Get quadratic attenuation.
-	  *
-	  * The intensity of the light is attenuated this way:
-	  * light_intensity = light_intensity / ( CONSTANT_ATTENUATION + vertex_light_distance * LINEAR_ATTENUATION +
-	  *	vertex_light_distance * vertex_light_distance * QUADRATIC_ATTENUATION );
-	  */
-	float getQuadraticAttenuation () const
+	 * Get quadratic attenuation.
+	 *
+	 * The intensity of the light is attenuated this way:
+	 * light_intensity = light_intensity / ( CONSTANT_ATTENUATION + vertex_light_distance * LINEAR_ATTENUATION +
+	 *	vertex_light_distance * vertex_light_distance * QUADRATIC_ATTENUATION );
+	 */
+	float getQuadraticAttenuation() const
 	{
 		return _QuadraticAttenuation;
 	}
@@ -312,30 +308,28 @@ public:
 	//@}
 private:
 	// The light mode
-	TLightMode			_Mode;
+	TLightMode _Mode;
 
 	// The light color.
-	NLMISC::CRGBA		_Ambiant;
-	NLMISC::CRGBA		_Diffuse;
-	NLMISC::CRGBA		_Specular;
+	NLMISC::CRGBA _Ambiant;
+	NLMISC::CRGBA _Diffuse;
+	NLMISC::CRGBA _Specular;
 
 	// The position.
-	NLMISC::CVector		_Position;
-	NLMISC::CVector		_Direction;
+	NLMISC::CVector _Position;
+	NLMISC::CVector _Direction;
 
 	// The spotlight parameters.
-	float				_Exponent;
-	float				_Cutoff;
+	float _Exponent;
+	float _Cutoff;
 
 	// Attenuation
-	float				_ConstantAttenuation;
-	float				_LinearAttenuation;
-	float				_QuadraticAttenuation;
+	float _ConstantAttenuation;
+	float _LinearAttenuation;
+	float _QuadraticAttenuation;
 };
 
-
 } // NL3D
-
 
 #endif // NL_LIGHT_H
 

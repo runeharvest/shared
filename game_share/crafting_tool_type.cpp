@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "crafting_tool_type.h"
 // nel
@@ -24,33 +22,30 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace TOOL_TYPE
-{
-	// The conversion table
-	const CStringConversion<TCraftingToolType>::CPair stringTable [] =
-	{
-		{ "None" , Unknown },
-		{ "ArmorTool", ArmorTool },
-		{ "JewelryTool", JewelryTool },
-		{ "AmmoTool", AmmoTool },
-		{ "RangeWeaponTool", RangeWeaponTool },
-		{ "MeleeWeaponTool", MeleeWeaponTool },
-		{ "ToolMaker", ToolMaker },
-	};
+namespace TOOL_TYPE {
+// The conversion table
+const CStringConversion<TCraftingToolType>::CPair stringTable[] = {
+	{ "None", Unknown },
+	{ "ArmorTool", ArmorTool },
+	{ "JewelryTool", JewelryTool },
+	{ "AmmoTool", AmmoTool },
+	{ "RangeWeaponTool", RangeWeaponTool },
+	{ "MeleeWeaponTool", MeleeWeaponTool },
+	{ "ToolMaker", ToolMaker },
+};
 
-	CStringConversion<TCraftingToolType> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]),  Unknown);
+CStringConversion<TCraftingToolType> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]), Unknown);
 
 // convert type id to type name string
-const std::string& toString( TCraftingToolType type )
+const std::string &toString(TCraftingToolType type)
 {
 	return conversion.toString(type);
 }
 
 // convert type name to type enum value
-TCraftingToolType toToolType( const std::string& str )
+TCraftingToolType toToolType(const std::string &str)
 {
 	return conversion.fromString(str);
 }
-
 
 } // TOOL_TYPE

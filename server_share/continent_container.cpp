@@ -17,8 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include <memory>
 
@@ -37,12 +35,10 @@
 
 #include "light_ig_loader.h"
 
-
 using namespace std;
 using namespace NLMISC;
 using namespace NLPACS;
 using namespace NLGEORGES;
-
 
 // Constructor
 CContinentContainer::CContinentContainer()
@@ -50,7 +46,7 @@ CContinentContainer::CContinentContainer()
 }
 
 //
-void	CContinentContainer::init(uint gridWidth, uint gridHeight, double primitiveMaxSize, uint nbWorldImages, const string &packedSheetsDirectory, double cellSize, bool loadPacsPrims)
+void CContinentContainer::init(uint gridWidth, uint gridHeight, double primitiveMaxSize, uint nbWorldImages, const string &packedSheetsDirectory, double cellSize, bool loadPacsPrims)
 {
 	_GridWidth = gridWidth;
 	_GridHeight = gridHeight;
@@ -63,50 +59,49 @@ void	CContinentContainer::init(uint gridWidth, uint gridHeight, double primitive
 }
 
 //
-void	CContinentContainer::buildSheets(const string &packedSheetsDirectory)
+void CContinentContainer::buildSheets(const string &packedSheetsDirectory)
 {
 	std::vector<std::string> filters;
 	filters.push_back("continent");
 
 	// if the 'GeorgePaths' config file var exists then we try to perform a mini-scan for sheet files
-	if (NLNET::IService::isServiceInitialized() && (NLNET::IService::getInstance()->ConfigFile.getVarPtr(std::string("GeorgePaths"))!=NULL))
+	if (NLNET::IService::isServiceInitialized() && (NLNET::IService::getInstance()->ConfigFile.getVarPtr(std::string("GeorgePaths")) != NULL))
 	{
-		loadForm(filters, packedSheetsDirectory+"continents.packed_sheets", _SheetMap, false, false);
+		loadForm(filters, packedSheetsDirectory + "continents.packed_sheets", _SheetMap, false, false);
 	}
 
 	// if we haven't succeeded in minimal scan (or 'GeorgePaths' wasn't found in config file) then perform standard scan
 	if (_SheetMap.empty())
 	{
-		loadForm(filters, packedSheetsDirectory+"continents.packed_sheets", _SheetMap, true);
+		loadForm(filters, packedSheetsDirectory + "continents.packed_sheets", _SheetMap, true);
 	}
 }
 
 //
-void	CContinentContainer::loadContinent(string name, string file, sint index, bool allowAutoSpawn)
+void CContinentContainer::loadContinent(string name, string file, sint index, bool allowAutoSpawn)
 {
 	nlinfo("loadContinent(\"%s\", \"%s\", %d)", name.c_str(), file.c_str(), index);
 
 	// check if the continent is already loaded
-/*	{
-		TContinentContainer::iterator first(_Continents.begin()), last(_Continents.end());
-		for (; first != last; ++first)
-		{
-			if (first->Name == name)
-			{
-				nlinfo("loadContinent(\"%s\", \"%s\", %d) : continent already loaded, ignoring second load.", name.c_str(), file.c_str(), index);
-				return;
-			}
-		}
-	}
-*/
+	/*	{
+	        TContinentContainer::iterator first(_Continents.begin()), last(_Continents.end());
+	        for (; first != last; ++first)
+	        {
+	            if (first->Name == name)
+	            {
+	                nlinfo("loadContinent(\"%s\", \"%s\", %d) : continent already loaded, ignoring second load.", name.c_str(), file.c_str(), index);
+	                return;
+	            }
+	        }
+	    }
+	*/
 	nlassert(index >= 0);
 
-	TSheetMap::iterator	its, found = _SheetMap.end();
+	TSheetMap::iterator its, found = _SheetMap.end();
 
-	for (its=_SheetMap.begin(); its!=_SheetMap.end(); ++its)
+	for (its = _SheetMap.begin(); its != _SheetMap.end(); ++its)
 	{
-		if (NLMISC::toLowerAscii((*its).second.Name) == NLMISC::toLowerAscii(name+".continent") ||
-			NLMISC::toLowerAscii((*its).second.PacsRBank) == NLMISC::toLowerAscii(name+".rbank"))
+		if (NLMISC::toLowerAscii((*its).second.Name) == NLMISC::toLowerAscii(name + ".continent") || NLMISC::toLowerAscii((*its).second.PacsRBank) == NLMISC::toLowerAscii(name + ".rbank"))
 		{
 			if (found == _SheetMap.end())
 			{
@@ -129,7 +124,7 @@ void	CContinentContainer::loadContinent(string name, string file, sint index, bo
 		nlwarning("Couldn't find continent sheet for '%s', use name instead", name.c_str());
 	}
 
-	for (uint i=0; i<_Continents.size(); ++i)
+	for (uint i = 0; i < _Continents.size(); ++i)
 	{
 		if (_Continents[i].Name == name)
 		{
@@ -139,11 +134,9 @@ void	CContinentContainer::loadContinent(string name, string file, sint index, bo
 	}
 
 	if ((sint)_Continents.size() <= index)
-		_Continents.resize(index+1);
+		_Continents.resize(index + 1);
 
-	if (_Continents[index].RetrieverBank != NULL ||
-		_Continents[index].GlobalRetriever != NULL ||
-		_Continents[index].MoveContainer != NULL)
+	if (_Continents[index].RetrieverBank != NULL || _Continents[index].GlobalRetriever != NULL || _Continents[index].MoveContainer != NULL)
 	{
 		nlwarning("Init retriever bank failed, index %d already used by continent '%s'", index, _Continents[index].Name.c_str());
 		return;
@@ -152,44 +145,44 @@ void	CContinentContainer::loadContinent(string name, string file, sint index, bo
 	_Continents[index].Name = name;
 	_Continents[index].AllowAutoSpawn = allowAutoSpawn;
 
-	string	filename;
+	string filename;
 
 	// load the rbank
-	filename = file+".rbank";
-	_Continents[index].RetrieverBank = URetrieverBank::createRetrieverBank ( filename.c_str(), true );
-	if( _Continents[index].RetrieverBank == NULL )
+	filename = file + ".rbank";
+	_Continents[index].RetrieverBank = URetrieverBank::createRetrieverBank(filename.c_str(), true);
+	if (_Continents[index].RetrieverBank == NULL)
 	{
-		nlwarning("Init retriever bank failed, file load is %s", filename.c_str() );
+		nlwarning("Init retriever bank failed, file load is %s", filename.c_str());
 		return;
 	}
 
 	// load the gr
-	filename = file+".gr";
-	_Continents[index].GlobalRetriever = UGlobalRetriever::createGlobalRetriever ( filename.c_str(), _Continents[index].RetrieverBank );
-	if( _Continents[index].GlobalRetriever == NULL )
+	filename = file + ".gr";
+	_Continents[index].GlobalRetriever = UGlobalRetriever::createGlobalRetriever(filename.c_str(), _Continents[index].RetrieverBank);
+	if (_Continents[index].GlobalRetriever == NULL)
 	{
-		nlwarning("Init global retriever failed, file load is %s", filename.c_str() );
+		nlwarning("Init global retriever failed, file load is %s", filename.c_str());
 		URetrieverBank::deleteRetrieverBank(_Continents[index].RetrieverBank);
 		_Continents[index].RetrieverBank = NULL;
 		return;
 	}
 
-	uint	gw = _GridWidth;
-	uint	gh = _GridHeight;
+	uint gw = _GridWidth;
+	uint gh = _GridHeight;
 
 	if (_CellSize != 0.0)
 	{
-		CAABBox		cbox = _Continents[index].GlobalRetriever->getBBox();
+		CAABBox cbox = _Continents[index].GlobalRetriever->getBBox();
 
-		gw = (uint)(cbox.getHalfSize().x*2.0 / _CellSize) + 1;
-		gh = (uint)(cbox.getHalfSize().y*2.0 / _CellSize) + 1;
+		gw = (uint)(cbox.getHalfSize().x * 2.0 / _CellSize) + 1;
+		gh = (uint)(cbox.getHalfSize().y * 2.0 / _CellSize) + 1;
 	}
 
 	// create the move container
 	/// \todo Ben : correct init for the move container cells count
-	_Continents[index].MoveContainer = UMoveContainer::createMoveContainer ( _Continents[index].GlobalRetriever, gw, gh, _PrimitiveMaxSize, _NbWorldImages);
+	_Continents[index].MoveContainer = UMoveContainer::createMoveContainer(_Continents[index].GlobalRetriever, gw, gh, _PrimitiveMaxSize, _NbWorldImages);
 
-	if( _Continents[index].MoveContainer == NULL )
+	if (_Continents[index].MoveContainer == NULL)
 	{
 		nlwarning("Init Move container failed, continent %s", name.c_str());
 		URetrieverBank::deleteRetrieverBank(_Continents[index].RetrieverBank);
@@ -207,18 +200,14 @@ void	CContinentContainer::loadContinent(string name, string file, sint index, bo
 		loadPacsPrims((*found).second, _Continents[index].MoveContainer);
 }
 
-
 //
-void	CContinentContainer::removeContinent(sint index)
+void CContinentContainer::removeContinent(sint index)
 {
 	nlassert(index >= 0);
 
-	if (index >= (sint)_Continents.size() ||
-		(_Continents[index].RetrieverBank == NULL &&
-		_Continents[index].GlobalRetriever == NULL &&
-		_Continents[index].MoveContainer == NULL))
+	if (index >= (sint)_Continents.size() || (_Continents[index].RetrieverBank == NULL && _Continents[index].GlobalRetriever == NULL && _Continents[index].MoveContainer == NULL))
 	{
-		//nlwarning("Can't remove continent, index %d not used", index);
+		// nlwarning("Can't remove continent, index %d not used", index);
 		return;
 	}
 
@@ -239,19 +228,18 @@ void	CContinentContainer::removeContinent(sint index)
 	_Continents[index].RetrieverBank = NULL;
 }
 
-
 //
-void	CContinentContainer::initPacsPrim(const string &path)
+void CContinentContainer::initPacsPrim(const string &path)
 {
 	vector<string> fileNames;
 
 	if (CFile::fileExists(CPath::lookup(path, false, false)))
 	{
 		nlinfo("Peeking into '%s' file for pacs_prim files", path.c_str());
-		CIFile	primFile;
+		CIFile primFile;
 		if (primFile.open(CPath::lookup(path, false, false)))
 		{
-			char	primbuffer[1024];
+			char primbuffer[1024];
 			while (!primFile.eof())
 			{
 				primFile.getline(primbuffer, 1024);
@@ -266,7 +254,7 @@ void	CContinentContainer::initPacsPrim(const string &path)
 	else if (CFile::isExists(path))
 	{
 		nlinfo("Peeking into '%s' directory for pacs_prim files", path.c_str());
-		//CPath::getPathContent(path, true, false, true, fileNames);
+		// CPath::getPathContent(path, true, false, true, fileNames);
 		CPath::addSearchPath(path, true, false);
 		CPath::getFileList("pacs_prim", fileNames);
 	}
@@ -279,25 +267,25 @@ void	CContinentContainer::initPacsPrim(const string &path)
 	nlinfo("%d file found at lookup", fileNames.size());
 
 	//
-	uint	k;
-	uint	numPrims = 0;
-	for(k=0; k<fileNames.size(); ++k)
+	uint k;
+	uint numPrims = 0;
+	for (k = 0; k < fileNames.size(); ++k)
 	{
 		// check extension
 		if (NLMISC::toLowerAscii(CFile::getExtension(fileNames[k])) != "pacs_prim")
 		{
-			// not a pacs primitive, skip it..			
+			// not a pacs primitive, skip it..
 			continue;
 		}
 		try
-		{		
-			string	ppName = NLMISC::toLowerAscii(CFile::getFilenameWithoutExtension(fileNames[k]));
+		{
+			string ppName = NLMISC::toLowerAscii(CFile::getFilenameWithoutExtension(fileNames[k]));
 
 			if (_PacsPrimMap.find(ppName) != _PacsPrimMap.end())
 				continue;
 
-			CUniquePtr<UPrimitiveBlock>	pb(UPrimitiveBlock::createPrimitiveBlockFromFile(CPath::lookup(fileNames[k], false)));
-			UPrimitiveBlock*	ptr = pb.release();
+			CUniquePtr<UPrimitiveBlock> pb(UPrimitiveBlock::createPrimitiveBlockFromFile(CPath::lookup(fileNames[k], false)));
+			UPrimitiveBlock *ptr = pb.release();
 			if (ptr != NULL)
 			{
 				_PacsPrimMap[ppName] = ptr;
@@ -317,24 +305,23 @@ void	CContinentContainer::initPacsPrim(const string &path)
 	nlinfo("%d primitive blocs initialised", numPrims);
 }
 
-
 //
-void	CContinentContainer::loadPacsPrims(const CSheet &sheet, NLPACS::UMoveContainer *moveContainer)
+void CContinentContainer::loadPacsPrims(const CSheet &sheet, NLPACS::UMoveContainer *moveContainer)
 {
-	vector<string>	igs = sheet.ListIG;
+	vector<string> igs = sheet.ListIG;
 
-	string			igFilename = CPath::lookup(sheet.LandscapeIG, false);
+	string igFilename = CPath::lookup(sheet.LandscapeIG, false);
 
-	if(!igFilename.empty())
+	if (!igFilename.empty())
 	{
-		CIFile	igFile;
+		CIFile igFile;
 		if (igFile.open(igFilename))
 		{
-			char	igbuffer[1024];
+			char igbuffer[1024];
 			while (!igFile.eof())
 			{
 				igFile.getline(igbuffer, 1024);
-				if(strlen(igbuffer) > 0)
+				if (strlen(igbuffer) > 0)
 					igs.push_back(igbuffer);
 			}
 		}
@@ -350,56 +337,56 @@ void	CContinentContainer::loadPacsPrims(const CSheet &sheet, NLPACS::UMoveContai
 
 	nlinfo("Loading igs for continent %s", sheet.Name.c_str());
 
-	uint	numAddedPrimBlocs = 0;
-	uint	numFoundIgs = 0;
-	uint	i;
-	for (i=0; i<igs.size(); ++i)
+	uint numAddedPrimBlocs = 0;
+	uint numFoundIgs = 0;
+	uint i;
+	for (i = 0; i < igs.size(); ++i)
 	{
-		CLightIGLoader	igLoader;
+		CLightIGLoader igLoader;
 
 		try
 		{
-			igLoader.loadIG(CFile::getFilenameWithoutExtension(igs[i])+".ig");
+			igLoader.loadIG(CFile::getFilenameWithoutExtension(igs[i]) + ".ig");
 
 			++numFoundIgs;
 
-			uint numInstances = igLoader.getNumInstance();	
-			for(uint k = 0; k < numInstances; ++k)
+			uint numInstances = igLoader.getNumInstance();
+			for (uint k = 0; k < numInstances; ++k)
 			{
 				TPacsPrimMap::iterator pbIt;
 
-				string	shapeName = NLMISC::toLowerAscii(CFile::getFilenameWithoutExtension(igLoader.getShapeName(k)));
-				string	instanceName = NLMISC::toLowerAscii(CFile::getFilenameWithoutExtension(igLoader.getInstanceName(k)));
+				string shapeName = NLMISC::toLowerAscii(CFile::getFilenameWithoutExtension(igLoader.getShapeName(k)));
+				string instanceName = NLMISC::toLowerAscii(CFile::getFilenameWithoutExtension(igLoader.getInstanceName(k)));
 
-				bool	isTrigger = false;
-				bool	isZC = false;
+				bool isTrigger = false;
+				bool isZC = false;
 
 				if ((pbIt = _PacsPrimMap.find(shapeName)) != _PacsPrimMap.end() ||
-					// nice hardcoded trick that allows graphists to spawn ghost collisions in ZC
-					// when shapename is like 'bat_zc_0?', spaw a pacs prim bloc called gen_bt_col_ext, so nice I just shit my pants
-					(isZC = (testWildCard(shapeName.c_str(), "bat_zc_0?") && shapeName != "bat_zc_00" && (pbIt = _PacsPrimMap.find("gen_bt_col_ext")) != _PacsPrimMap.end())) ||	// the magic hack
-					(isTrigger = ((pbIt = _PacsPrimMap.find(instanceName)) != _PacsPrimMap.end())))
+				    // nice hardcoded trick that allows graphists to spawn ghost collisions in ZC
+				    // when shapename is like 'bat_zc_0?', spaw a pacs prim bloc called gen_bt_col_ext, so nice I just shit my pants
+				    (isZC = (testWildCard(shapeName.c_str(), "bat_zc_0?") && shapeName != "bat_zc_00" && (pbIt = _PacsPrimMap.find("gen_bt_col_ext")) != _PacsPrimMap.end())) || // the magic hack
+				    (isTrigger = ((pbIt = _PacsPrimMap.find(instanceName)) != _PacsPrimMap.end())))
 				{
 					if (_LoadPacsPrims || isTrigger)
 					{
 						// compute orientation and position
-						CMatrix						instanceMatrix;
+						CMatrix instanceMatrix;
 						igLoader.getInstanceMatrix(k, instanceMatrix);
-						CVector						pos;
-						float						angle;
+						CVector pos;
+						float angle;
 						UMoveContainer::getPACSCoordsFromMatrix(pos, angle, instanceMatrix);
 						// insert the matching primitive block
-						vector<UMovePrimitive*>		insertedPrimitives;
+						vector<UMovePrimitive *> insertedPrimitives;
 						moveContainer->addCollisionnablePrimitiveBlock(pbIt->second, 0, 1, &insertedPrimitives, angle, pos, true);
 
 						if (isTrigger)
 						{
-							uint	i;
-							for (i=0; i<insertedPrimitives.size(); ++i)
+							uint i;
+							for (i = 0; i < insertedPrimitives.size(); ++i)
 							{
-								UMovePrimitive	*prim = insertedPrimitives[i];
-								uint64			id = prim->UserData;
-								uint			triggerId = (uint)((prim->UserData & 0xffff0000) >> 16);
+								UMovePrimitive *prim = insertedPrimitives[i];
+								uint64 id = prim->UserData;
+								uint triggerId = (uint)((prim->UserData & 0xffff0000) >> 16);
 								_TriggerMap[triggerId] = prim->getFinalPosition(0);
 							}
 						}
@@ -409,7 +396,7 @@ void	CContinentContainer::loadPacsPrims(const CSheet &sheet, NLPACS::UMoveContai
 				}
 			}
 		}
-		catch(const Exception &e)
+		catch (const Exception &e)
 		{
 			nlwarning("Failed to load IG '%s': %s", igs[i].c_str(), e.what());
 		}
@@ -418,5 +405,3 @@ void	CContinentContainer::loadPacsPrims(const CSheet &sheet, NLPACS::UMoveContai
 	nlinfo("Loaded %d IGs", numFoundIgs);
 	nlinfo("Added %d primitive blocs", numAddedPrimBlocs);
 }
-
-

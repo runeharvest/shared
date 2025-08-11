@@ -45,9 +45,10 @@ namespace MAX {
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-CSceneClassUnknownDllPluginDesc::CSceneClassUnknownDllPluginDesc(const ucstring &dllFilename, const ucstring &dllDescription) : m_InternalName(dllFilename), m_DisplayName(dllDescription)
+CSceneClassUnknownDllPluginDesc::CSceneClassUnknownDllPluginDesc(const ucstring &dllFilename, const ucstring &dllDescription)
+    : m_InternalName(dllFilename)
+    , m_DisplayName(dllDescription)
 {
-
 }
 
 const ucchar *CSceneClassUnknownDllPluginDesc::internalName() const
@@ -64,9 +65,13 @@ const ucchar *CSceneClassUnknownDllPluginDesc::displayName() const
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-CSceneClassUnknownDesc::CSceneClassUnknownDesc(const NLMISC::CClassId classId, const TSClassId superClassId, const ucstring &displayName, const std::string &internalName, const ucstring &dllFilename, const ucstring &dllDescription) : m_DisplayName(displayName), m_InternalName(internalName), m_ClassId(classId), m_SuperClassId(superClassId), m_DllPluginDesc(dllFilename, dllDescription)
+CSceneClassUnknownDesc::CSceneClassUnknownDesc(const NLMISC::CClassId classId, const TSClassId superClassId, const ucstring &displayName, const std::string &internalName, const ucstring &dllFilename, const ucstring &dllDescription)
+    : m_DisplayName(displayName)
+    , m_InternalName(internalName)
+    , m_ClassId(classId)
+    , m_SuperClassId(superClassId)
+    , m_DllPluginDesc(dllFilename, dllDescription)
 {
-
 }
 
 CSceneClass *CSceneClassUnknownDesc::create(CScene *scene) const

@@ -29,8 +29,7 @@
 #include "nel/3d/u_material.h"
 #include "nel/3d/texture.h"
 
-namespace NL3D
-{
+namespace NL3D {
 
 class UDriver;
 class UScene;
@@ -49,7 +48,6 @@ class CTextureUser;
 class CBloomEffect : public NLMISC::CSingleton<CBloomEffect>
 {
 public:
-
 	/// Constructor
 	CBloomEffect();
 
@@ -61,11 +59,11 @@ public:
 
 	// must be called before init
 	void setDriver(UDriver *driver) { _Driver = driver; }
-	UDriver* getDriver() const { return _Driver; }
+	UDriver *getDriver() const { return _Driver; }
 
 	// must be called before applyBloom
 	void setScene(UScene *scene) { _Scene = scene; }
-	UScene* getScene() const { return _Scene; }
+	UScene *getScene() const { return _Scene; }
 
 	// enable or disable square bloom
 	void setSquareBloom(bool squareBloom) { _SquareBloom = squareBloom; }
@@ -100,7 +98,6 @@ public:
 	// void endInterfacesDisplayBloom();
 
 private:
-
 	// Initialize a bloom texture with new dimensions.
 	// void initTexture(NLMISC::CSmartPtr<NL3D::ITexture> & tex, bool isMode2D, uint32 width, uint32 height);
 
@@ -120,44 +117,43 @@ private:
 	void applyBlur();
 
 	// the driver to use
-	UDriver*	_Driver;
+	UDriver *_Driver;
 	// the scene to use
-	UScene*		_Scene;
+	UScene *_Scene;
 
 	// use square bloom
-	bool		_SquareBloom;
+	bool _SquareBloom;
 	// density of bloom
-	uint8		_DensityBloom;
+	uint8 _DensityBloom;
 
-/*
-	// render target textures
-	// used to display scene
-	NLMISC::CSmartPtr<NL3D::ITexture>  _InitText;
-	// used as stretched texture from _InitText, as displayed texture in first blur pass,
-	// and as render target in second blur pass.
-	NLMISC::CSmartPtr<NL3D::ITexture>  _BlurFinalTex;
-	// used as render target in first blur pass, and as displayed texture on second blur pass.
-	NLMISC::CSmartPtr<NL3D::ITexture>  _BlurHorizontalTex;
-	// original render target
-	NLMISC::CSmartPtr<NL3D::ITexture>  _OriginalRenderTarget;
-*/
-
+	/*
+	    // render target textures
+	    // used to display scene
+	    NLMISC::CSmartPtr<NL3D::ITexture>  _InitText;
+	    // used as stretched texture from _InitText, as displayed texture in first blur pass,
+	    // and as render target in second blur pass.
+	    NLMISC::CSmartPtr<NL3D::ITexture>  _BlurFinalTex;
+	    // used as render target in first blur pass, and as displayed texture on second blur pass.
+	    NLMISC::CSmartPtr<NL3D::ITexture>  _BlurHorizontalTex;
+	    // original render target
+	    NLMISC::CSmartPtr<NL3D::ITexture>  _OriginalRenderTarget;
+	*/
 
 	// materials
 	// used to display first texture in doBlur passes.
-	NL3D::UMaterial		_BlurMat;
+	NL3D::UMaterial _BlurMat;
 	// used to blend initial scene render target texture and blur texture according to a
 	// dest+src - dest*src blend operation.
-	NL3D::UMaterial		_DisplayBlurMat;
+	NL3D::UMaterial _DisplayBlurMat;
 	// used to blend initial scene render target texture and blur texture according to a
 	// dest+src - dest*src blend operation, with a square stage operation.
-	NL3D::UMaterial		_DisplaySquareBlurMat;
+	NL3D::UMaterial _DisplaySquareBlurMat;
 
 	// quads
-	NLMISC::CQuadUV		_BlurQuad;
+	NLMISC::CQuadUV _BlurQuad;
 
 	// textures and materials already initialized?
-	bool				_Init;
+	bool _Init;
 
 	// current window dimensions
 	/*uint32				_WndWidth;
@@ -165,13 +161,13 @@ private:
 
 	// Temporary variables used during applyBloom(...) ->
 	// current blur texture dimensions
-	uint32				_BlurWidth;
-	uint32				_BlurHeight;
+	uint32 _BlurWidth;
+	uint32 _BlurHeight;
 	// used as stretched texture from _InitText, as displayed texture in first blur pass,
 	// and as render target in second blur pass.
-	CTextureUser		*_BlurFinalTex;
+	CTextureUser *_BlurFinalTex;
 	// used as render target in first blur pass, and as displayed texture on second blur pass.
-	CTextureUser		*_BlurHorizontalTex;
+	CTextureUser *_BlurHorizontalTex;
 	// <-
 };
 

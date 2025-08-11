@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_BRICK_FLAGS_H
 #define RY_BRICK_FLAGS_H
 
@@ -24,90 +22,89 @@
 #include "slot_equipment.h"
 #include "effect_families.h"
 
-namespace BRICK_FLAGS
+namespace BRICK_FLAGS {
+enum TBrickFlag
 {
-	enum TBrickFlag
-	{
-		// If you modify this enums, modify the interface's version in config.xml
-		BeginCombatFlags = 0,
-			Miss = BeginCombatFlags,
-			Fumble,
-			Hit,
-			CriticalHit,
+	// If you modify this enums, modify the interface's version in config.xml
+	BeginCombatFlags = 0,
+	Miss = BeginCombatFlags,
+	Fumble,
+	Hit,
+	CriticalHit,
 
-			Parry,
-			Dodge,
-			ShieldUsed,
+	Parry,
+	Dodge,
+	ShieldUsed,
 
-			Head,
-			Chest,
-			Arms,
-			Hands,
-			Legs,
-			Feet,
+	Head,
+	Chest,
+	Arms,
+	Hands,
+	Legs,
+	Feet,
 
-			Feint,
+	Feint,
 
-			Stun,
-			Bleed,
-			SlowMove,
-			SlowAttacks,
-		EndCombatFlags = SlowAttacks,
+	Stun,
+	Bleed,
+	SlowMove,
+	SlowAttacks,
+	EndCombatFlags = SlowAttacks,
 
-		NbCombatFlags,
+	NbCombatFlags,
 
-		// END combat flags MUST be < 32
+	// END combat flags MUST be < 32
 
-		// WARNING Power Flags MUST be in the same order than in power_types.h
-		BeginPowerFlags = 32,
-			Taunt = BeginPowerFlags,
-			Shielding,
-			SpeedingUp,
-			LifeConcentration,
-			StaminaConcentration,
-			SapConcentration,
-			ConvertStamina,
-			ConvertSap,
-			Berserk,
-			BalanceHp,
-			Heal,
-			Invulnerability,
-			EnchantWeapon,
-			ChgCharac,
-			ModDefense,
-			ModCraftSuccess,
-			ModMeleeSuccess,
-			ModRangeSuccess,
-			ModMagicSuccess,
-			ModForageSuccess,
-			// consumable items related powers
-			HealHpC,
-			HealSapC,
-			HealStaC,
-			HealFocusC,
-		EndPowerFlags = HealFocusC,
+	// WARNING Power Flags MUST be in the same order than in power_types.h
+	BeginPowerFlags = 32,
+	Taunt = BeginPowerFlags,
+	Shielding,
+	SpeedingUp,
+	LifeConcentration,
+	StaminaConcentration,
+	SapConcentration,
+	ConvertStamina,
+	ConvertSap,
+	Berserk,
+	BalanceHp,
+	Heal,
+	Invulnerability,
+	EnchantWeapon,
+	ChgCharac,
+	ModDefense,
+	ModCraftSuccess,
+	ModMeleeSuccess,
+	ModRangeSuccess,
+	ModMagicSuccess,
+	ModForageSuccess,
+	// consumable items related powers
+	HealHpC,
+	HealSapC,
+	HealStaC,
+	HealFocusC,
+	EndPowerFlags = HealFocusC,
 
-		NbPowerFlags = EndPowerFlags - 31,
+	NbPowerFlags = EndPowerFlags - 31,
 
-		Aura = 63,
+	Aura = 63,
 
-		UnknownFlag,
-	};
+	UnknownFlag,
+};
 
-	/// convert a flag to a string
-	const std::string &toString(TBrickFlag flag);
+/// convert a flag to a string
+const std::string &toString(TBrickFlag flag);
 
-	/// convert a string to a flag
-	TBrickFlag toBrickFlag( const std::string &str);
+/// convert a string to a flag
+TBrickFlag toBrickFlag(const std::string &str);
 
-	/// convert a power family to a flag
-	TBrickFlag powerTypeToFlag( POWERS::TPowerType powerType );
+/// convert a power family to a flag
+TBrickFlag powerTypeToFlag(POWERS::TPowerType powerType);
 
-	/// convert a slot to a combat flag
-	TBrickFlag slotToFlag( SLOT_EQUIPMENT::TSlotEquipment slot );
+/// convert a slot to a combat flag
+TBrickFlag slotToFlag(SLOT_EQUIPMENT::TSlotEquipment slot);
 
-	/// convert an effect family to a flag
-	TBrickFlag effectFamilyToFlag( EFFECT_FAMILIES::TEffectFamily family );
+/// convert an effect family to a flag
+TBrickFlag effectFamilyToFlag(EFFECT_FAMILIES::TEffectFamily family);
 
 }; // BRICK_FLAGS
 

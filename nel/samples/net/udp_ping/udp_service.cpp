@@ -35,7 +35,7 @@ using namespace NLNET;
 // Variables
 //
 
-CUdpSock			*UdpSock = NULL;
+CUdpSock *UdpSock = NULL;
 
 //
 // Main Class
@@ -44,51 +44,49 @@ CUdpSock			*UdpSock = NULL;
 class CBenchService : public IService
 {
 public:
-	
 	void init()
 	{
 		uint16 port = ConfigFile.getVar("UdpPort").asInt();
-		nlinfo ("Starting external UDP socket on port %d", port);
-		UdpSock = new CUdpSock (false);
-		nlassert (UdpSock);
-		UdpSock->bind (port);
+		nlinfo("Starting external UDP socket on port %d", port);
+		UdpSock = new CUdpSock(false);
+		nlassert(UdpSock);
+		UdpSock->bind(port);
 	}
 
-	bool update ()
+	bool update()
 	{
 		try
 		{
 			uint len;
 			CInetAddress addr;
 			uint8 buffer[1000];
-			
+
 			while (UdpSock->dataAvailable())
 			{
 				len = 1000;
-				UdpSock->receivedFrom((uint8*)buffer, len, addr);
-				nlinfo ("Received UDP datagram size %d from %s", len, addr.asString().c_str());
+				UdpSock->receivedFrom((uint8 *)buffer, len, addr);
+				nlinfo("Received UDP datagram size %d from %s", len, addr.asString().c_str());
 
 				CMemStream msgout;
 				uint32 foo = 10;
-				msgout.serial (foo);
+				msgout.serial(foo);
 				uint32 size = msgout.length();
-				UdpSock->sendTo (msgout.buffer(), size, addr);
-				nldebug ("Sent UDP datagram size %d to %s", size, addr.asString().c_str());
+				UdpSock->sendTo(msgout.buffer(), size, addr);
+				nldebug("Sent UDP datagram size %d to %s", size, addr.asString().c_str());
 			}
 		}
 		catch (Exception &e)
 		{
-			nlwarning ("Exception catched: '%s'", e.what());
+			nlwarning("Exception catched: '%s'", e.what());
 		}
 		return true;
 	}
 
-	void release ()
+	void release()
 	{
 		if (UdpSock != NULL)
 			delete UdpSock;
 	}
 };
 
-
-NLNET_SERVICE_MAIN (CBenchService, "UDPS", "udp_service", 0, EmptyCallbackArray, "", "")
+NLNET_SERVICE_MAIN(CBenchService, "UDPS", "udp_service", 0, EmptyCallbackArray, "", "")

@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "std_afx.h"
 #include "object_viewer.h"
 #include "direction_edit.h"
@@ -26,17 +25,16 @@
 /////////////////////////////////////////////////////////////////////////////
 // CDirectionEdit dialog
 
-
-CDirectionEdit::CDirectionEdit(IPSWrapper<NLMISC::CVector> *wrapper) 
-: _Wrapper(wrapper), _MouseState(CDirectionEdit::Wait)
+CDirectionEdit::CDirectionEdit(IPSWrapper<NLMISC::CVector> *wrapper)
+    : _Wrapper(wrapper)
+    , _MouseState(CDirectionEdit::Wait)
 
 {
 	nlassert(wrapper);
 	//{{AFX_DATA_INIT(CDirectionEdit)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
-
 
 void CDirectionEdit::init(IPopupNotify *pn, CWnd *pParent)
 {
@@ -45,34 +43,31 @@ void CDirectionEdit::init(IPopupNotify *pn, CWnd *pParent)
 	ShowWindow(SW_SHOW);
 }
 
-
-void CDirectionEdit::DoDataExchange(CDataExchange* pDX)
+void CDirectionEdit::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CDirectionEdit)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CDirectionEdit, CDialog)
-	//{{AFX_MSG_MAP(CDirectionEdit)
-	ON_WM_PAINT()
-	ON_WM_LBUTTONDOWN()
-	ON_WM_MOUSEMOVE()
-	ON_WM_LBUTTONUP()
-	ON_WM_CLOSE()
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CDirectionEdit)
+ON_WM_PAINT()
+ON_WM_LBUTTONDOWN()
+ON_WM_MOUSEMOVE()
+ON_WM_LBUTTONUP()
+ON_WM_CLOSE()
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 // private : draw a basis with the given letters
 static void DrawBasis(CDC &dc, sint x, sint y, sint size, const char *xStr, const char *yStr)
 {
-	dc.FillSolidRect(x, y,  size, size, 0xffffff);
+	dc.FillSolidRect(x, y, size, size, 0xffffff);
 
 	CPen p;
-	p.CreatePen(PS_SOLID, 1, (COLORREF) 0);
+	p.CreatePen(PS_SOLID, 1, (COLORREF)0);
 
 	CPen *oldPen = dc.SelectObject(&p);
 
@@ -82,24 +77,22 @@ static void DrawBasis(CDC &dc, sint x, sint y, sint size, const char *xStr, cons
 	dc.LineTo(x + size / 2, y + size - 5);
 
 	dc.TextOut(x + size - 20, y + size / 2 - 18, CString(xStr));
-	dc.TextOut(x + 5 + size / 2,  y + 5, CString(yStr));
+	dc.TextOut(x + 5 + size / 2, y + 5, CString(yStr));
 
 	dc.SelectObject(oldPen);
 }
 
-
-/// private : draw a vector in a basis  
+/// private : draw a vector in a basis
 static void DrawVector(CDC &dc, float vx, float vy, sint x, sint y, sint size)
 {
 	CPen p;
-	p.CreatePen(PS_SOLID, 1, (COLORREF) 0xff);
+	p.CreatePen(PS_SOLID, 1, (COLORREF)0xff);
 	CPen *oldPen = dc.SelectObject(&p);
 
 	dc.MoveTo(x + size / 2, y + size / 2);
-	dc.LineTo(int(x + size / 2 + vx * 0.9f * size / 2), int(y + size / 2 - vy * 0.9f * size / 2));	
+	dc.LineTo(int(x + size / 2 + vx * 0.9f * size / 2), int(y + size / 2 - vy * 0.9f * size / 2));
 
 	dc.SelectObject(oldPen);
-	
 }
 
 // size in pixel of the basis that is drawn in the dialog
@@ -111,9 +104,6 @@ const uint32 BasisGap = 20;
 // the distance to the upper left corner for the basis drawing
 const uint CornerDist = 10;
 
-
-
-
 /// private get back a screen coord (pox, py) to a part of a vector. The basis of click is (x, y) - (x + size, y + size)
 static void ScreenToVect(float &vx, float &vy, sint px, sint py, sint x, sint y, sint size)
 {
@@ -121,22 +111,20 @@ static void ScreenToVect(float &vx, float &vy, sint px, sint py, sint x, sint y,
 	vy = ((y + size / 2) - py) / 0.9f;
 }
 
-void CDirectionEdit::OnPaint() 
+void CDirectionEdit::OnPaint()
 {
-	CPaintDC dc(this); 
+	CPaintDC dc(this);
 
 	// get the current vector;
 	NLMISC::CVector v = _Wrapper->get();
 
-
 	// draw a white square, and draw the vector in it
-	
+
 	DrawBasis(dc, CornerDist, CornerDist, BasisSize, "X", "Z");
 	DrawVector(dc, v.x, v.z, CornerDist, CornerDist, BasisSize);
 
-	DrawBasis(dc, CornerDist, CornerDist + BasisGap + BasisSize, BasisSize, "Y", "Z");	
+	DrawBasis(dc, CornerDist, CornerDist + BasisGap + BasisSize, BasisSize, "Y", "Z");
 	DrawVector(dc, v.y, v.z, CornerDist, CornerDist + BasisGap + BasisSize, BasisSize);
-	
 }
 
 void CDirectionEdit::selectNewVect(const CPoint &point)
@@ -144,10 +132,10 @@ void CDirectionEdit::selectNewVect(const CPoint &point)
 	const float epsilon = 10E-3f;
 	NLMISC::CVector v = _Wrapper->get();
 	if (point.x > CornerDist && point.y > CornerDist && point.x < (CornerDist + BasisSize) && point.y < (CornerDist + BasisSize))
-	{		
-		ScreenToVect(v.x, v.z, point.x, point.y, CornerDist, CornerDist, BasisSize);	
+	{
+		ScreenToVect(v.x, v.z, point.x, point.y, CornerDist, CornerDist, BasisSize);
 		float d = v.x * v.x + v.z * v.z;
-		float f; 
+		float f;
 		if (fabsf(d > epsilon))
 		{
 			f = sqrtf((1.f - v.y * v.y) / d);
@@ -162,10 +150,10 @@ void CDirectionEdit::selectNewVect(const CPoint &point)
 	}
 
 	if (point.x > CornerDist && point.y > (BasisGap + BasisSize + CornerDist) && point.x < (CornerDist + BasisSize) && point.y < (CornerDist + BasisGap + 2 * BasisSize))
-	{		
-		ScreenToVect(v.y, v.z, point.x, point.y, CornerDist, CornerDist + BasisGap + BasisSize, BasisSize);	
+	{
+		ScreenToVect(v.y, v.z, point.x, point.y, CornerDist, CornerDist + BasisGap + BasisSize, BasisSize);
 		float d = v.y * v.y + v.z * v.z;
-		float f; 
+		float f;
 		if (fabsf(d > epsilon))
 		{
 			f = sqrtf((1.f - v.x * v.x) / d);
@@ -183,36 +171,33 @@ void CDirectionEdit::selectNewVect(const CPoint &point)
 	_Wrapper->setAndUpdateModifiedFlag(v);
 
 	Invalidate();
-
 }
 
-void CDirectionEdit::OnLButtonDown(UINT nFlags, CPoint point) 
+void CDirectionEdit::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	selectNewVect(point);
 	_MouseState = Drag;
 	CDialog::OnLButtonDown(nFlags, point);
 }
 
-void CDirectionEdit::OnMouseMove(UINT nFlags, CPoint point) 
+void CDirectionEdit::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (_MouseState == Drag)
 	{
-			selectNewVect(point);
-
+		selectNewVect(point);
 	}
 	CDialog::OnMouseMove(nFlags, point);
 }
 
-void CDirectionEdit::OnLButtonUp(UINT nFlags, CPoint point) 
+void CDirectionEdit::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	_MouseState = Wait;	
+	_MouseState = Wait;
 	CDialog::OnLButtonUp(nFlags, point);
 }
 
-
-void CDirectionEdit::OnClose() 
-{	
-	nlassert(_Parent);	
+void CDirectionEdit::OnClose()
+{
+	nlassert(_Parent);
 	CDialog::OnClose();
 	_Parent->childPopupClosed(this);
 }

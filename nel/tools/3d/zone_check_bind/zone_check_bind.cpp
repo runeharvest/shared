@@ -31,66 +31,52 @@
 #include <memory>
 #include <set>
 
-
-
-
 using namespace NLMISC;
 using namespace NL3D;
 
-
-
 //=========================================================================================================================
-
 
 // a patch vertex info, for quadtree insertion
 struct CPatchVertexInfo
 {
-	uint	ZoneIndex;	  // this zone index, 0 for the midlle zone, and from 1 to 8 for the zones around
-	uint	PatchIndex;   // the Patch of this zone
-	uint	PatchVertex;  // the vertex of thi patch 0..3
+	uint ZoneIndex; // this zone index, 0 for the midlle zone, and from 1 to 8 for the zones around
+	uint PatchIndex; // the Patch of this zone
+	uint PatchVertex; // the vertex of thi patch 0..3
 	CVector Pos;
-	CPatchVertexInfo() {}
+	CPatchVertexInfo() { }
 	CPatchVertexInfo(uint zoneIndex,
-					 uint patchIndex,
-					 uint patchVertex,
-					 const CVector &pos
-					)
-					 : ZoneIndex(zoneIndex),
-					   PatchIndex(patchIndex),
-					   PatchVertex(patchVertex),
-					   Pos(pos)
+	    uint patchIndex,
+	    uint patchVertex,
+	    const CVector &pos)
+	    : ZoneIndex(zoneIndex)
+	    , PatchIndex(patchIndex)
+	    , PatchVertex(patchVertex)
+	    , Pos(pos)
 	{
 	}
 };
-
 
 // A pair of patch ident. This is used to identify errors (involves a pair of patchs)
 typedef std::pair<CPatchIdent, CPatchIdent> CPatchIdentPair;
 
 // for set insertion
-static inline bool operator < (const CPatchIdentPair &lhs, const CPatchIdentPair &rhs)
+static inline bool operator<(const CPatchIdentPair &lhs, const CPatchIdentPair &rhs)
 {
 	return lhs.first != rhs.first ? lhs.first < rhs.first
-								  : lhs.second < rhs.second;
+	                              : lhs.second < rhs.second;
 }
 
-
-
-
-
 typedef std::vector<CPatchVertexInfo *> TPVVect;
-typedef CQuadGrid<CPatchVertexInfo>   TPVQuadGrid;
-
+typedef CQuadGrid<CPatchVertexInfo> TPVQuadGrid;
 
 //=========================================================================================================================
 //=========================================================================================================================
 //=========================================================================================================================
-
 
 /** Load the given zone (name without extension)
-  * return a pointer to the zone, or NULL if not found
-  * Throw an exception if a read error occurred
-  */
+ * return a pointer to the zone, or NULL if not found
+ * Throw an exception if a read error occurred
+ */
 static CZone *LoadZone(uint16 xPos, uint16 yPos, std::string zoneExt)
 {
 	std::string zoneName;
@@ -110,32 +96,30 @@ static CZone *LoadZone(uint16 xPos, uint16 yPos, std::string zoneExt)
 
 //===========================================================================================================================
 /**  Test whether 2 vertices could be welded
-  */
+ */
 static inline bool CanWeld(const CVector &v1, const CVector &v2, float weldThreshold)
 {
 	return (v1 - v2).norm() < weldThreshold;
 }
 
-
 //===========================================================================================================================
 /**	Get all vertices that are near the given one
-  */
+ */
 static void GetCandidateVertices(const CVector &pos,
-								 TPVQuadGrid &qg,
-								 TPVVect &dest,
-								 uint patchToExclude,
-								 uint patchToExcludeZone,
-								 float weldThreshold
-								)
+    TPVQuadGrid &qg,
+    TPVVect &dest,
+    uint patchToExclude,
+    uint patchToExcludeZone,
+    float weldThreshold)
 {
 	dest.clear();
 	CVector half(weldThreshold, weldThreshold, weldThreshold);
 	qg.select(pos - half, pos + half);
 	for (TPVQuadGrid::CIterator it = qg.begin(); it != qg.end(); ++it)
 	{
-		if ( ::CanWeld((*it).Pos, pos, weldThreshold) )
+		if (::CanWeld((*it).Pos, pos, weldThreshold))
 		{
-			if (! ((*it).ZoneIndex == patchToExcludeZone && (*it).PatchIndex == patchToExclude) )
+			if (!((*it).ZoneIndex == patchToExcludeZone && (*it).PatchIndex == patchToExclude))
 			{
 				dest.push_back(&(*it));
 			}
@@ -145,13 +129,13 @@ static void GetCandidateVertices(const CVector &pos,
 
 //===========================================================================================================================
 /**	Search a vertex of a patch that can be welded with the given vertex
-  * return -1 if none
-  */
+ * return -1 if none
+ */
 static sint GetWeldableVertex(const CBezierPatch &bp, const CVector &pos, float weldThreshold)
 {
 	for (uint k = 0; k < 4; ++k)
 	{
-		if ( ::CanWeld(bp.Vertices[k], pos, weldThreshold) )
+		if (::CanWeld(bp.Vertices[k], pos, weldThreshold))
 		{
 			return k;
 		}
@@ -159,14 +143,13 @@ static sint GetWeldableVertex(const CBezierPatch &bp, const CVector &pos, float 
 	return -1;
 }
 
-
 //=========================================================================================================================
 /**  Check a zone and report the total number of errors
-  */
+ */
 static uint CheckZone(std::string middleZoneFile, float weldThreshold, float middleEdgeWeldThreshold)
 {
 	uint numErrors = 0;
-	uint k, l, m, n, p, q;	// some loop counters
+	uint k, l, m, n, p, q; // some loop counters
 	// This avoid reporting errors twice (for readability)
 	std::set<CPatchIdentPair> errorPairs;
 
@@ -174,72 +157,71 @@ static uint CheckZone(std::string middleZoneFile, float weldThreshold, float mid
 	// Load the zones around  //
 	////////////////////////////
 
-		CUniquePtr<CZone>		zones[9];
-		std::string					zoneNames[9];
-		CZoneInfo					zoneInfos[9];
-		uint16  xPos, yPos;
-		const sint16 posOffs[][2] = { {0, 0}, {1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1} };
+	CUniquePtr<CZone> zones[9];
+	std::string zoneNames[9];
+	CZoneInfo zoneInfos[9];
+	uint16 xPos, yPos;
+	const sint16 posOffs[][2] = { { 0, 0 }, { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 1 }, { -1, 0 }, { -1, -1 }, { 0, -1 }, { 1, -1 } };
 
-		std::string middleZoneName = CFile::getFilenameWithoutExtension(middleZoneFile);
-		::getZoneCoordByName(middleZoneName.c_str(), xPos, yPos);
-		try
+	std::string middleZoneName = CFile::getFilenameWithoutExtension(middleZoneFile);
+	::getZoneCoordByName(middleZoneName.c_str(), xPos, yPos);
+	try
+	{
+		std::string ext = CFile::getExtension(middleZoneFile);
+		zones[0].reset(::LoadZone(xPos, yPos, ext.empty() ? "" : "." + ext));
+		if (zones[0].get() == NULL)
 		{
-			std::string ext = CFile::getExtension(middleZoneFile);
-			zones[0].reset(::LoadZone(xPos, yPos, ext.empty() ? "" : "." + ext));
-			if (zones[0].get() == NULL)
-			{
-				nlwarning("Can't load zone  %s", middleZoneName.c_str());
-				return 0;
-			}
-			for (uint k = 1; k < 9; ++k)
-			{
-				zones[k].reset(::LoadZone(xPos + posOffs[k][0], yPos + posOffs[k][1], ext.empty() ? "" : "." + ext));
-			}
-		}
-		catch (const NLMISC::Exception &e)
-		{
-			nlinfo("Zones loading failed : %d", e.what());
+			nlwarning("Can't load zone  %s", middleZoneName.c_str());
 			return 0;
 		}
+		for (uint k = 1; k < 9; ++k)
+		{
+			zones[k].reset(::LoadZone(xPos + posOffs[k][0], yPos + posOffs[k][1], ext.empty() ? "" : "." + ext));
+		}
+	}
+	catch (const NLMISC::Exception &e)
+	{
+		nlinfo("Zones loading failed : %d", e.what());
+		return 0;
+	}
 
 	///////////////////////////////
 	// retrieve datas from zones //
 	///////////////////////////////
 
-		for (k = 0; k < 9; ++k)
-		{
-			::getZoneNameByCoord(xPos + posOffs[k][0], yPos + posOffs[k][1], zoneNames[k]);
-			if (zones[k].get() != NULL) zones[k]->retrieve(zoneInfos[k]);
-		}
+	for (k = 0; k < 9; ++k)
+	{
+		::getZoneNameByCoord(xPos + posOffs[k][0], yPos + posOffs[k][1], zoneNames[k]);
+		if (zones[k].get() != NULL) zones[k]->retrieve(zoneInfos[k]);
+	}
 
-		// fill the quad grid
-		CAABBox zoneBBox = zones[0]->getZoneBB().getAABBox();
-		float zoneSize = 2.f * weldThreshold + std::max(zoneBBox.getMax().x - zoneBBox.getMin().x,
-														 zoneBBox.getMax().y - zoneBBox.getMin().y);
-		TPVQuadGrid qg;
-		const uint numQGElt = 128;
-		qg.create(numQGElt, zoneSize / numQGElt);
+	// fill the quad grid
+	CAABBox zoneBBox = zones[0]->getZoneBB().getAABBox();
+	float zoneSize = 2.f * weldThreshold + std::max(zoneBBox.getMax().x - zoneBBox.getMin().x, zoneBBox.getMax().y - zoneBBox.getMin().y);
+	TPVQuadGrid qg;
+	const uint numQGElt = 128;
+	qg.create(numQGElt, zoneSize / numQGElt);
 
-		// insert vertices in quadgrid
-		for (k = 0; k < 9; ++k)
+	// insert vertices in quadgrid
+	for (k = 0; k < 9; ++k)
+	{
+		for (l = 0; l < zoneInfos[k].Patchs.size(); ++l)
 		{
-			for (l = 0; l < zoneInfos[k].Patchs.size(); ++l)
+			CPatchInfo &patch = zoneInfos[k].Patchs[l];
+			// for each base vertex of the patch
+			for (m = 0; m < 4; ++m)
 			{
-				CPatchInfo &patch = zoneInfos[k].Patchs[l];
-				// for each base vertex of the patch
-				for (m = 0; m < 4; ++m)
+				CVector &pos = patch.Patch.Vertices[m];
+				CBSphere s(pos, weldThreshold);
+				if (zoneBBox.intersect(s)) // does this vertex and its zone of influence intersect the bbox ?
 				{
-					CVector &pos = patch.Patch.Vertices[m];
-					CBSphere s(pos, weldThreshold);
-					if (zoneBBox.intersect(s)) // does this vertex and its zone of influence intersect the bbox ?
-					{
-						CVector half(weldThreshold, weldThreshold, weldThreshold);
-						// yes, insert it in the tree
-						qg.insert(pos - half, pos + half, CPatchVertexInfo(k, l, m, pos));
-					}
+					CVector half(weldThreshold, weldThreshold, weldThreshold);
+					// yes, insert it in the tree
+					qg.insert(pos - half, pos + half, CPatchVertexInfo(k, l, m, pos));
 				}
 			}
 		}
+	}
 
 	/////////////////////////////////////////////////
 	// check whether each patch is correctly bound //
@@ -255,10 +237,10 @@ static uint CheckZone(std::string middleZoneFile, float weldThreshold, float mid
 			if (patch.BindEdges[m].NPatchs == 0)
 			{
 				// maps from an index to  a (s, t) couple
-				static const float indexToST[][2] = {{0, 0}, {0, 1}, {1, 1}, {1, 0}};
+				static const float indexToST[][2] = { { 0, 0 }, { 0, 1 }, { 1, 1 }, { 1, 0 } };
 
 				// index of this border vertices
-				const uint vIndex[]  = { m, (m + 1) & 0x03 };
+				const uint vIndex[] = { m, (m + 1) & 0x03 };
 
 				bool errorFound = false;
 
@@ -267,10 +249,9 @@ static uint CheckZone(std::string middleZoneFile, float weldThreshold, float mid
 				// Get vertices from other patch that could be welded with this patch boder's vertices.
 				for (q = 0; q < 2; ++q)
 				{
-					//nlinfo("pos = %f, %f, %f", patch.Patch.Vertices[vIndex[q]].x, patch.Patch.Vertices[vIndex[q]].y, patch.Patch.Vertices[vIndex[q]].z);
+					// nlinfo("pos = %f, %f, %f", patch.Patch.Vertices[vIndex[q]].x, patch.Patch.Vertices[vIndex[q]].y, patch.Patch.Vertices[vIndex[q]].z);
 					::GetCandidateVertices(patch.Patch.Vertices[vIndex[q]], qg, verts[q], l, 0, weldThreshold);
 				}
-
 
 				///////////////////////////
 				// 1 - 1 connectivity ?  //
@@ -281,7 +262,7 @@ static uint CheckZone(std::string middleZoneFile, float weldThreshold, float mid
 					for (p = 0; p < verts[1].size() && !errorFound; ++p)
 					{
 						if (verts[0][n]->ZoneIndex == verts[1][p]->ZoneIndex
-							&& verts[0][n]->PatchIndex == verts[1][p]->PatchIndex)
+						    && verts[0][n]->PatchIndex == verts[1][p]->PatchIndex)
 						{
 							CPatchIdent pi1(0, l);
 							CPatchIdent pi2(verts[0][n]->ZoneIndex, verts[0][n]->PatchIndex);
@@ -290,7 +271,7 @@ static uint CheckZone(std::string middleZoneFile, float weldThreshold, float mid
 							if (std::find(errorPairs.begin(), errorPairs.end(), errPair) == errorPairs.end()) // error already displayed ?
 							{
 								nlinfo("**** Patch %d of zone %s has 1 - 1 connectivity error, try binding it with patch %d of zone %s",
-										l + 1, middleZoneName.c_str(), verts[0][n]->PatchIndex + 1, zoneNames[verts[0][n]->ZoneIndex].c_str());
+								    l + 1, middleZoneName.c_str(), verts[0][n]->PatchIndex + 1, zoneNames[verts[0][n]->ZoneIndex].c_str());
 								errorPairs.insert(std::make_pair(pi2, pi1));
 								++numErrors;
 							}
@@ -305,8 +286,8 @@ static uint CheckZone(std::string middleZoneFile, float weldThreshold, float mid
 				//////////////////////////
 
 				// get the position at the middle of that border
-				CVector middlePos = patch.Patch.eval( 0.5f * (indexToST[vIndex[0]][0] + indexToST[vIndex[1]][0]),
-													  0.5f * (indexToST[vIndex[0]][1] + indexToST[vIndex[1]][1]) );
+				CVector middlePos = patch.Patch.eval(0.5f * (indexToST[vIndex[0]][0] + indexToST[vIndex[1]][0]),
+				    0.5f * (indexToST[vIndex[0]][1] + indexToST[vIndex[1]][1]));
 
 				// for each vertex of this border
 				for (q = 0; q < 2 && !errorFound; ++q)
@@ -319,11 +300,10 @@ static uint CheckZone(std::string middleZoneFile, float weldThreshold, float mid
 						sint vertIndex = ::GetWeldableVertex(bPatch, pv.Pos, weldThreshold);
 						nlassert(vertIndex != -1); // should found one..
 						// Follow this patch edge and see if the next / previous vertex could be welded with the middle
-						const CVector &nextVertPos = bPatch.Vertices[(vertIndex +  1) & 0x03];
-						const CVector &prevVertPos = bPatch.Vertices[(vertIndex -  1) & 0x03];
+						const CVector &nextVertPos = bPatch.Vertices[(vertIndex + 1) & 0x03];
+						const CVector &prevVertPos = bPatch.Vertices[(vertIndex - 1) & 0x03];
 						if (::CanWeld(nextVertPos, middlePos, middleEdgeWeldThreshold)
-							|| ::CanWeld(prevVertPos, middlePos, middleEdgeWeldThreshold)
-						   )
+						    || ::CanWeld(prevVertPos, middlePos, middleEdgeWeldThreshold))
 						{
 							CPatchIdent pi1(0, l);
 							CPatchIdent pi2(pv.ZoneIndex, pv.PatchIndex);
@@ -332,7 +312,7 @@ static uint CheckZone(std::string middleZoneFile, float weldThreshold, float mid
 							if (std::find(errorPairs.begin(), errorPairs.end(), errPair) == errorPairs.end()) // error already displayed ?
 							{
 								nlinfo("**** Patch %d of zone %s has 1 - 2 connectivity error, try binding it with patch %d of zone %s",
-										l + 1, middleZoneName.c_str(), pv.PatchIndex + 1, zoneNames[pv.ZoneIndex].c_str());
+								    l + 1, middleZoneName.c_str(), pv.PatchIndex + 1, zoneNames[pv.ZoneIndex].c_str());
 								errorPairs.insert(std::make_pair(pi2, pi1));
 								++numErrors;
 							}
@@ -354,7 +334,7 @@ static uint CheckZone(std::string middleZoneFile, float weldThreshold, float mid
 				for (n = 0; n < 5; ++n)
 				{
 					borderPos[n] = patch.Patch.eval((1.f - lambda) * indexToST[vIndex[0]][0] + lambda * indexToST[vIndex[1]][0],
-													(1.f - lambda) * indexToST[vIndex[0]][1] + lambda * indexToST[vIndex[1]][1]);
+					    (1.f - lambda) * indexToST[vIndex[0]][1] + lambda * indexToST[vIndex[1]][1]);
 					lambda += 0.25f;
 				}
 
@@ -370,12 +350,11 @@ static uint CheckZone(std::string middleZoneFile, float weldThreshold, float mid
 						sint vertIndex = ::GetWeldableVertex(bPatch, pv.Pos, weldThreshold);
 						nlassert(vertIndex != -1); // should found one..
 						// Follow this patch edge and see if the next/ previous  vertex could be welded with the next point
-						const CVector &nextVertPos = bPatch.Vertices[(vertIndex +  1) & 0x03];
-						const CVector &prevVertPos = bPatch.Vertices[(vertIndex -  1) & 0x03];
+						const CVector &nextVertPos = bPatch.Vertices[(vertIndex + 1) & 0x03];
+						const CVector &prevVertPos = bPatch.Vertices[(vertIndex - 1) & 0x03];
 
 						if (::CanWeld(nextVertPos, borderPos[k + 1], middleEdgeWeldThreshold)
-							|| 	::CanWeld(prevVertPos, borderPos[k + 1], middleEdgeWeldThreshold)
-						   )
+						    || ::CanWeld(prevVertPos, borderPos[k + 1], middleEdgeWeldThreshold))
 						{
 							CPatchIdent pi1(0, l);
 							CPatchIdent pi2(pv.ZoneIndex, pv.PatchIndex);
@@ -384,7 +363,7 @@ static uint CheckZone(std::string middleZoneFile, float weldThreshold, float mid
 							if (std::find(errorPairs.begin(), errorPairs.end(), errPair) == errorPairs.end()) // error already displayed ?
 							{
 								nlinfo("**** Patch %d of zone %s has 1 - 4 connectivity error, try binding it with patch %d of zone %s",
-									   l + 1, middleZoneName.c_str(), pv.PatchIndex + 1, zoneNames[pv.ZoneIndex].c_str());
+								    l + 1, middleZoneName.c_str(), pv.PatchIndex + 1, zoneNames[pv.ZoneIndex].c_str());
 								++numErrors;
 								errorPairs.insert(std::make_pair(pi2, pi1));
 							}
@@ -405,7 +384,7 @@ static uint CheckZone(std::string middleZoneFile, float weldThreshold, float mid
 }
 
 //=========================================================================================================================
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	NLMISC::createDebug();
 	InfoLog->addNegativeFilter("adding the path");
@@ -433,7 +412,6 @@ int main(int argc, char* argv[])
 
 	std::string zonePaths(argv[1]);
 
-
 	if (zonePaths.empty())
 	{
 		nlinfo("Need a zone path");
@@ -460,5 +438,3 @@ int main(int argc, char* argv[])
 	nlinfo("=======================");
 	nlinfo("%d errors were found", numErrors);
 }
-
-

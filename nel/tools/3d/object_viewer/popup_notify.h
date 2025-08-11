@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef POPUP_NOTIFY_H
 #define POPUP_NOTIFY_H
 
@@ -26,6 +25,5 @@ struct IPopupNotify
 	/// call when the window implementing this has been destroyed
 	virtual void childPopupClosed(CWnd *child) = 0;
 };
-
 
 #endif

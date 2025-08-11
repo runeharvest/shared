@@ -14,18 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "player_visual_properties.h"
 //
 
-std::string SPropVisualA::toString( ) const	{ return NLMISC::toString( PropertyA ); }
-std::string SPropVisualB::toString( ) const	{ return NLMISC::toString( PropertyB ); }
-std::string SPropVisualC::toString( ) const	{ return NLMISC::toString( PropertyC ); }
-std::string SAltLookProp::toString( ) const	{ return NLMISC::toString( Summary ); }
-std::string SAltLookProp2::toString( ) const	{ return NLMISC::toString( Summary ); }
-
+std::string SPropVisualA::toString() const { return NLMISC::toString(PropertyA); }
+std::string SPropVisualB::toString() const { return NLMISC::toString(PropertyB); }
+std::string SPropVisualC::toString() const { return NLMISC::toString(PropertyC); }
+std::string SAltLookProp::toString() const { return NLMISC::toString(Summary); }
+std::string SAltLookProp2::toString() const { return NLMISC::toString(Summary); }
 
 /* End of player_visual_properties.cpp */
-

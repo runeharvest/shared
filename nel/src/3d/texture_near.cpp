@@ -23,14 +23,12 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 CTextureNear::CTextureNear(sint size)
 {
-	nlassert(size>=NL_TILE_LIGHTMAP_SIZE);
+	nlassert(size >= NL_TILE_LIGHTMAP_SIZE);
 	nlassert(NLMISC::isPowerOf2(size));
 
 	// The near texture always reside in memory...
@@ -43,30 +41,29 @@ CTextureNear::CTextureNear(sint size)
 	setFilterMode(ITexture::Linear, ITexture::LinearMipMapOff);
 
 	// Fill the array of free tiles.
-	uint	nbTilesByLine= size/NL_TILE_LIGHTMAP_SIZE;
-	_FreeTiles.resize(nbTilesByLine*nbTilesByLine);
-	_AvailableTiles.resize(nbTilesByLine*nbTilesByLine);
-	for(sint i=0;i<(sint)_FreeTiles.size();i++)
+	uint nbTilesByLine = size / NL_TILE_LIGHTMAP_SIZE;
+	_FreeTiles.resize(nbTilesByLine * nbTilesByLine);
+	_AvailableTiles.resize(nbTilesByLine * nbTilesByLine);
+	for (sint i = 0; i < (sint)_FreeTiles.size(); i++)
 	{
 		// This tile is free!!
-		_FreeTiles[i]=i;
-		_AvailableTiles[i]= true;
+		_FreeTiles[i] = i;
+		_AvailableTiles[i] = true;
 	}
-
 }
 
 // ***************************************************************************
-sint			CTextureNear::getNbAvailableTiles()
+sint CTextureNear::getNbAvailableTiles()
 {
 	return (sint)_FreeTiles.size();
 }
 // ***************************************************************************
-uint			CTextureNear::getTileAndFillRect(CRGBA  map[NL_TILE_LIGHTMAP_SIZE*NL_TILE_LIGHTMAP_SIZE])
+uint CTextureNear::getTileAndFillRect(CRGBA map[NL_TILE_LIGHTMAP_SIZE * NL_TILE_LIGHTMAP_SIZE])
 {
-	nlassert(getNbAvailableTiles()>0);
-	uint	id= _FreeTiles.back();
+	nlassert(getNbAvailableTiles() > 0);
+	uint id = _FreeTiles.back();
 	// This tile is now more free.
-	_AvailableTiles[id]= false;
+	_AvailableTiles[id] = false;
 	_FreeTiles.pop_back();
 
 	// Fill the texture
@@ -76,21 +73,21 @@ uint			CTextureNear::getTileAndFillRect(CRGBA  map[NL_TILE_LIGHTMAP_SIZE*NL_TILE
 }
 
 // ***************************************************************************
-void			CTextureNear::refillRect(uint id, CRGBA  map[NL_TILE_LIGHTMAP_SIZE*NL_TILE_LIGHTMAP_SIZE])
+void CTextureNear::refillRect(uint id, CRGBA map[NL_TILE_LIGHTMAP_SIZE * NL_TILE_LIGHTMAP_SIZE])
 {
-	uint	dstWidth= getWidth();
+	uint dstWidth = getWidth();
 	// Copy the map into the texture
-	uint	nbTilesByLine= dstWidth/NL_TILE_LIGHTMAP_SIZE;
-	uint	s= id% nbTilesByLine;
-	uint	t= id/ nbTilesByLine;
-	s*= NL_TILE_LIGHTMAP_SIZE;
-	t*= NL_TILE_LIGHTMAP_SIZE;
-	CRGBA	*src= map;
-	CRGBA	*dst= (CRGBA*)getPixels().getPtr();
-	dst+= t*dstWidth+s;
-	for(sint n= NL_TILE_LIGHTMAP_SIZE;n>0;n--, src+= NL_TILE_LIGHTMAP_SIZE, dst+= dstWidth)
+	uint nbTilesByLine = dstWidth / NL_TILE_LIGHTMAP_SIZE;
+	uint s = id % nbTilesByLine;
+	uint t = id / nbTilesByLine;
+	s *= NL_TILE_LIGHTMAP_SIZE;
+	t *= NL_TILE_LIGHTMAP_SIZE;
+	CRGBA *src = map;
+	CRGBA *dst = (CRGBA *)getPixels().getPtr();
+	dst += t * dstWidth + s;
+	for (sint n = NL_TILE_LIGHTMAP_SIZE; n > 0; n--, src += NL_TILE_LIGHTMAP_SIZE, dst += dstWidth)
 	{
-		memcpy(dst, src, NL_TILE_LIGHTMAP_SIZE*sizeof(CRGBA));
+		memcpy(dst, src, NL_TILE_LIGHTMAP_SIZE * sizeof(CRGBA));
 	}
 
 	// Invalidate the rectangle.
@@ -98,14 +95,13 @@ void			CTextureNear::refillRect(uint id, CRGBA  map[NL_TILE_LIGHTMAP_SIZE*NL_TIL
 }
 
 // ***************************************************************************
-void			CTextureNear::releaseTile(uint id)
+void CTextureNear::releaseTile(uint id)
 {
 	nlassert(!_AvailableTiles[id]);
 	// This tile is now free.
-	_AvailableTiles[id]= true;
+	_AvailableTiles[id] = true;
 	// insert this tile at the end of the free list.
 	_FreeTiles.push_back(id);
 }
-
 
 } // NL3D

@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef RY_SEASON_FILE_EXT_H
 #define RY_SEASON_FILE_EXT_H
 
@@ -32,8 +31,7 @@ class CSeasonFileExt
 public:
 	static const char *getExtension(uint16 s)
 	{
-		static const char *seasonEXT[] =
-		{
+		static const char *seasonEXT[] = {
 			"_Sp",
 			"_Su",
 			"_Au",
@@ -43,10 +41,7 @@ public:
 		if (s >= EGSPD::CSeason::Invalid) return seasonEXT[EGSPD::CSeason::Invalid];
 		return seasonEXT[s];
 	}
-
-
 };
-
 
 #endif // RY_SEASON_FILE_EXT_H
 

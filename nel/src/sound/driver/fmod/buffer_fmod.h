@@ -17,9 +17,7 @@
 #ifndef NL_BUFFER_FMOD_H
 #define NL_BUFFER_FMOD_H
 
-
 #include "nel/sound/driver/buffer.h"
-
 
 namespace NLSOUND {
 
@@ -41,35 +39,35 @@ private:
 	/// The name of the buffer
 	NLMISC::TStringId _Name;
 	/// The sample format
-    TSampleFormat _Format;
+	TSampleFormat _Format;
 	/// Locked data
 	void *_LockedData;
 	/// The sample frequency
-    uint _Freq;
-	
+	uint _Freq;
+
 	/// The sample data in this buffer.
 	FSOUND_SAMPLE *_FModSample;
 	/// The size of the buffer
 	uint _Size;
-	
+
 public:
 	/// Constructor
 	CBufferFMod();
 	/// Destructor
-	virtual	~CBufferFMod();
-	
+	virtual ~CBufferFMod();
+
 private:
 	/// (Internal) Read the audio data from a WAV format buffer.
 	bool readWavBuffer(const std::string &name, uint8 *wavData, uint dataSize);
 	/// (Internal) Read the audio data from a raw buffer.
 	bool readRawBuffer(const std::string &name, uint8 *rawData, uint dataSize, TSampleFormat sampleFormat, uint32 frequency);
-	
+
 	void loadDataToFMod(const uint8 *data);
-	
+
 	void *lock();
 	void unlock(void *ptr);
-	
-public:	
+
+public:
 	/** Preset the name of the buffer. Used for async loading to give a name
 	 *	before the buffer is effectivly loaded.
 	 *	If the name after loading of the buffer doesn't match the preset name,
@@ -83,7 +81,7 @@ public:
 	virtual void setFormat(TBufferFormat format, uint8 channels, uint8 bitsPerSample, uint32 frequency);
 	/// Return the sample format information.
 	virtual void getFormat(TBufferFormat &format, uint8 &channels, uint8 &bitsPerSample, uint32 &frequency) const;
-		/// Set the storage mode of this buffer, call before filling this buffer. Storage mode is always software if OptionSoftwareBuffer is enabled. Default is auto.
+	/// Set the storage mode of this buffer, call before filling this buffer. Storage mode is always software if OptionSoftwareBuffer is enabled. Default is auto.
 	virtual void setStorageMode(TStorageMode storageMode = IBuffer::StorageAuto);
 	/// Get the storage mode of this buffer.
 	virtual TStorageMode getStorageMode();
@@ -94,21 +92,17 @@ public:
 	virtual bool unlock(uint size);
 	/// Copy the data with specified size into the buffer. A readable local copy is only guaranteed when OptionLocalBufferCopy is set. Returns true if ok.
 	virtual bool fill(const uint8 *src, uint size);
-	
+
 	/// Return the size of the buffer, in bytes.
 	virtual uint getSize() const;
 	/// Return the duration (in ms) of the sample in the buffer.
 	virtual float getDuration() const;
 	/// Return true if the buffer is stereo (multi-channel), false if mono.
-	virtual bool isStereo() const;	
+	virtual bool isStereo() const;
 	/// Return true if the buffer is loaded. Used for async load/unload.
 	virtual bool isBufferLoaded() const;
-	
 };
-
 
 } // NLSOUND
 
-
 #endif // NL_BUFFER_FMOD_H
-

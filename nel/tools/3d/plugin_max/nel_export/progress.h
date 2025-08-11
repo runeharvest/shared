@@ -20,14 +20,12 @@
 #include <string>
 #include "../nel_mesh_lib/export_nel.h"
 
-
 // ---------------------------------------------------------------------------
 
 class CProgressBar : public IProgress
 {
-	
-public:
 
+public:
 	bool bCancelCalculation;
 	float rRatioCalculated;
 	double rTimeBegin;
@@ -36,22 +34,19 @@ public:
 	HWND hWndProgress;
 
 public:
-
 	CProgressBar();
 	~CProgressBar();
 
-	void initProgressBar (sint32 nNbMesh, Interface &ip);
+	void initProgressBar(sint32 nNbMesh, Interface &ip);
 	void uninitProgressBar();
-	void updateProgressBar( sint32 NMeshNb );
+	void updateProgressBar(sint32 NMeshNb);
 	bool isCanceledProgressBar();
 
 	// Interface implemenation
-	virtual void setLine (uint32 LineNumber, std::string &LineText);
+	virtual void setLine(uint32 LineNumber, std::string &LineText);
 	virtual void update();
 };
 
 // ---------------------------------------------------------------------------
-
-
 
 #endif

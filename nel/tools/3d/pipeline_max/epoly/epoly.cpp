@@ -47,12 +47,10 @@ namespace EPOLY {
 
 CEPoly::CEPoly()
 {
-
 }
 
 CEPoly::~CEPoly()
 {
-
 }
 
 void CEPoly::registerClasses(CSceneClassRegistry *registry)

@@ -23,11 +23,10 @@
 #include "nel/misc/debug.h"
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 // *****************************************************************************************************************
 CFixedSizeAllocator::CFixedSizeAllocator(uint numBytesPerBlock, uint numBlockPerChunk)
@@ -39,7 +38,7 @@ CFixedSizeAllocator::CFixedSizeAllocator(uint numBytesPerBlock, uint numBlockPer
 	const uint mask = NL_DEFAULT_MEMORY_ALIGNMENT - 1;
 	_NumBytesPerBlock = (_NumBytesPerBlock + mask) & ~mask;
 	nlassert(_NumBytesPerBlock >= numBytesPerBlock);
-	_NumBlockPerChunk = std::max(numBlockPerChunk, (uint) 3);
+	_NumBlockPerChunk = std::max(numBlockPerChunk, (uint)3);
 	_NumAlloc = 0;
 	_SpareMem = NULL;
 }
@@ -50,7 +49,7 @@ CFixedSizeAllocator::~CFixedSizeAllocator()
 	if (_NumAlloc != 0)
 	{
 #ifdef NL_DEBUG
-		nlwarning("%d blocks were not freed, leaking memory", (int) _NumAlloc);
+		nlwarning("%d blocks were not freed, leaking memory", (int)_NumAlloc);
 #endif
 	}
 	else
@@ -76,7 +75,7 @@ void *CFixedSizeAllocator::alloc()
 		CChunk *chunk = new CChunk; // link a new chunk to that object
 		chunk->init(this);
 	}
-	++ _NumAlloc;
+	++_NumAlloc;
 	return _FreeSpace->unlink();
 }
 
@@ -87,7 +86,7 @@ void CFixedSizeAllocator::freeBlock(void *block)
 {
 	if (!block) return;
 	/// get the node from the object
-	CNode *node = (CNode *) ((uint8 *) block - aligned_offsetof(CNode, Next));
+	CNode *node = (CNode *)((uint8 *)block - aligned_offsetof(CNode, Next));
 	//
 	nlassert(node->Chunk != NULL);
 	nlassert(node->Chunk->Allocator == this);
@@ -101,7 +100,8 @@ uint CFixedSizeAllocator::CChunk::getBlockSizeWithOverhead() const
 {
 	nlctassert((sizeof(CNode) % NL_DEFAULT_MEMORY_ALIGNMENT) == 0);
 	return std::max((uint)(sizeof(CNode) - aligned_offsetof(CNode, Next)),
-		(uint)(Allocator->getNumBytesPerBlock())) + aligned_offsetof(CNode, Next);
+	           (uint)(Allocator->getNumBytesPerBlock()))
+	    + aligned_offsetof(CNode, Next);
 }
 
 // *****************************************************************************************************************
@@ -121,9 +121,9 @@ CFixedSizeAllocator::CChunk::~CChunk()
 	}
 	nlassert(NumFreeObjs == 0);
 	nlassert(Allocator->_NumChunks > 0);
-	-- (Allocator->_NumChunks);
+	--(Allocator->_NumChunks);
 	if (Allocator->_SpareMem)
-		aligned_free(Mem); //delete[] Mem;
+		aligned_free(Mem); // delete[] Mem;
 	else
 		Allocator->_SpareMem = Mem;
 }
@@ -159,7 +159,7 @@ void CFixedSizeAllocator::CChunk::init(CFixedSizeAllocator *alloc)
 	}
 
 	getNode(NumFreeObjs - 1).Chunk = this;
-	getNode(NumFreeObjs - 1).Next  = alloc->_FreeSpace;
+	getNode(NumFreeObjs - 1).Next = alloc->_FreeSpace;
 	getNode(NumFreeObjs - 1).Prev = &(getNode(NumFreeObjs - 2).Next);
 
 	if (alloc->_FreeSpace) { alloc->_FreeSpace->Prev = &getNode(NumFreeObjs - 1).Next; }
@@ -172,7 +172,7 @@ CFixedSizeAllocator::CNode &CFixedSizeAllocator::CChunk::getNode(uint index)
 {
 	nlassert(Allocator != NULL);
 	nlassert(index < Allocator->getNumBlockPerChunk());
-	return *(CNode *) ((uint8 *) Mem + index * getBlockSizeWithOverhead());
+	return *(CNode *)((uint8 *)Mem + index * getBlockSizeWithOverhead());
 }
 
 // *****************************************************************************************************************
@@ -181,7 +181,7 @@ void CFixedSizeAllocator::CChunk::add()
 	nlassert(Allocator);
 	// a node of this chunk has been given back
 	nlassert(NumFreeObjs < Allocator->getNumBlockPerChunk());
-	++ NumFreeObjs;
+	++NumFreeObjs;
 	if (NumFreeObjs == Allocator->getNumBlockPerChunk()) // all objects back ?
 	{
 		if (Allocator->_NumChunks > 1) // we want to have at least one chunk left
@@ -196,14 +196,14 @@ void CFixedSizeAllocator::CChunk::grab()
 {
 	// a node of this chunk has been given back
 	nlassert(NumFreeObjs > 0);
-	-- NumFreeObjs;
+	--NumFreeObjs;
 }
 
 // *****************************************************************************************************************
 void *CFixedSizeAllocator::CNode::unlink()
 {
 	nlassert(Prev != NULL);
-	if (Next) { Next->Prev = Prev;}
+	if (Next) { Next->Prev = Prev; }
 	*Prev = Next;
 	nlassert(Chunk->NumFreeObjs > 0);
 	Chunk->grab(); // tells the containing chunk that a node has been allocated

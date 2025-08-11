@@ -25,31 +25,32 @@
 #include "nel/misc/md5.h"
 #include "game_share/r2_basic_types.h"
 
-
 /**
  * CSecurityCode
  */
 class CSecurityCode
 {
 public:
-	CSecurityCode() : AsNum(0) {}
-	void serial( NLMISC::IStream& s ) { s.serial(AsNum); } // dependency on msg.xml:CLIENT_QUIT_REQUEST format
+	CSecurityCode()
+	    : AsNum(0)
+	{
+	}
+	void serial(NLMISC::IStream &s) { s.serial(AsNum); } // dependency on msg.xml:CLIENT_QUIT_REQUEST format
 private:
 	union
 	{
-		uint8 Data [2];
+		uint8 Data[2];
 		uint16 AsNum;
 	};
 
 	friend class CSecurityCheckForFastDisconnection;
-	friend bool operator!=( const CSecurityCode& sc1, const CSecurityCode& sc2 );
+	friend bool operator!=(const CSecurityCode &sc1, const CSecurityCode &sc2);
 };
 
-inline bool operator!=( const CSecurityCode& sc1, const CSecurityCode& sc2 )
+inline bool operator!=(const CSecurityCode &sc1, const CSecurityCode &sc2)
 {
 	return sc1.AsNum != sc2.AsNum;
 }
-
 
 /**
  * CSecurityCheckForFastDisconnection
@@ -62,23 +63,23 @@ public:
 	/// Set session (or can be set by receiveSecurityCode())
 	void setSessionId(TSessionId sessionId) { Block.SessionId = sessionId; }
 	/// Set cookie
-	void setCookie(const NLNET::CLoginCookie& cookie) { Block.Cookie.set(cookie.getUserAddr(), cookie.getUserKey(), cookie.getUserId()); } // don't use the default generated bitwise assignment operator, because of padding junk that would be copied
+	void setCookie(const NLNET::CLoginCookie &cookie) { Block.Cookie.set(cookie.getUserAddr(), cookie.getUserKey(), cookie.getUserId()); } // don't use the default generated bitwise assignment operator, because of padding junk that would be copied
 	/// Return the security code
 	CSecurityCode encode(const char *passPhrase);
 	/// Check  the security code
 	void check(const char *passPhrase);
 
 	/// Read some data from stream
-	void receiveSecurityCode(NLMISC::IStream& msgin);
+	void receiveSecurityCode(NLMISC::IStream &msgin);
 	/// Write some data to stream
-	static void forwardSecurityCode(NLMISC::IStream& msgout, TSessionId sessionId, CSecurityCode& securityCode);
+	static void forwardSecurityCode(NLMISC::IStream &msgout, TSessionId sessionId, CSecurityCode &securityCode);
 
 private:
 	struct CBlock
 	{
 		TSessionId SessionId;
 		NLNET::CLoginCookie Cookie;
-		char PassPhrase [10];
+		char PassPhrase[10];
 	};
 	CBlock Block;
 	CSecurityCode SecurityCode;

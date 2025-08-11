@@ -55,7 +55,6 @@ public:
 private:
 	ucstring m_InternalName;
 	ucstring m_DisplayName;
-
 };
 
 /**
@@ -96,7 +95,11 @@ template <typename TSuperClass>
 class CSceneClassUnknown : public TSuperClass
 {
 public:
-	CSceneClassUnknown(CScene *scene, const NLMISC::CClassId classId, const TSClassId superClassId, const ucstring &displayName, const std::string &internalName, const ucstring &dllFilename, const ucstring &dllDescription) : TSuperClass(scene), m_Desc(classId, superClassId, displayName, internalName, dllFilename, dllDescription) { }
+	CSceneClassUnknown(CScene *scene, const NLMISC::CClassId classId, const TSClassId superClassId, const ucstring &displayName, const std::string &internalName, const ucstring &dllFilename, const ucstring &dllDescription)
+	    : TSuperClass(scene)
+	    , m_Desc(classId, superClassId, displayName, internalName, dllFilename, dllDescription)
+	{
+	}
 	virtual ~CSceneClassUnknown() { }
 
 	// inherited

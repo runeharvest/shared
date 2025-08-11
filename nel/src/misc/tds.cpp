@@ -23,70 +23,69 @@
 #include "nel/misc/debug.h"
 
 #ifdef NL_OS_WINDOWS
-#	ifndef NL_COMP_MINGW
-#		define NOMINMAX
-#	endif
-#	include <windows.h>
+#ifndef NL_COMP_MINGW
+#define NOMINMAX
+#endif
+#include <windows.h>
 #endif // NL_OS_WINDOWS
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 // *********************************************************
 
-CTDS::CTDS ()
+CTDS::CTDS()
 {
 	/* Please no assert in the constructor because it is called by the NeL memory allocator constructor */
 #ifdef NL_OS_WINDOWS
-	_Handle = TlsAlloc ();
-	TlsSetValue (_Handle, NULL);
+	_Handle = TlsAlloc();
+	TlsSetValue(_Handle, NULL);
 #else // NL_OS_WINDOWS
-//	nldebug("CTDS::CTDS...");
-	nlverify(pthread_key_create (&_Key, NULL) == 0);
-//	nldebug("CTDS::CTDS : create a new key %u", _Key);
+	//	nldebug("CTDS::CTDS...");
+	nlverify(pthread_key_create(&_Key, NULL) == 0);
+	//	nldebug("CTDS::CTDS : create a new key %u", _Key);
 	pthread_setspecific(_Key, NULL);
 #endif // NL_OS_WINDOWS
 }
 
 // *********************************************************
 
-CTDS::~CTDS ()
+CTDS::~CTDS()
 {
 #ifdef NL_OS_WINDOWS
-	nlverify (TlsFree (_Handle) != 0);
+	nlverify(TlsFree(_Handle) != 0);
 #else // NL_OS_WINDOWS
-//	nldebug("CTDS::~CTDS : deleting key %u", _Key);
-	nlverify (pthread_key_delete (_Key) == 0);
+	//	nldebug("CTDS::~CTDS : deleting key %u", _Key);
+	nlverify(pthread_key_delete(_Key) == 0);
 #endif // NL_OS_WINDOWS
 }
 
 // *********************************************************
 
-void *CTDS::getPointer () const
+void *CTDS::getPointer() const
 {
 #ifdef NL_OS_WINDOWS
-	return TlsGetValue (_Handle);
+	return TlsGetValue(_Handle);
 #else // NL_OS_WINDOWS
-//	nldebug("CTDS::getPointer for key %u...", _Key);
-	void *ret = pthread_getspecific (_Key);
-//	nldebug("CTDS::getPointer returing value %p", ret);
+	//	nldebug("CTDS::getPointer for key %u...", _Key);
+	void *ret = pthread_getspecific(_Key);
+	//	nldebug("CTDS::getPointer returing value %p", ret);
 	return ret;
 #endif // NL_OS_WINDOWS
 }
 
 // *********************************************************
 
-void CTDS::setPointer (void* pointer)
+void CTDS::setPointer(void *pointer)
 {
 #ifdef NL_OS_WINDOWS
-	nlverify (TlsSetValue (_Handle, pointer) != 0);
+	nlverify(TlsSetValue(_Handle, pointer) != 0);
 #else // NL_OS_WINDOWS
-//	nldebug("CTDS::setPointer for key %u to value %p", _Key, pointer);
-	nlverify (pthread_setspecific (_Key, pointer) == 0);
+	//	nldebug("CTDS::setPointer for key %u to value %p", _Key, pointer);
+	nlverify(pthread_setspecific(_Key, pointer) == 0);
 #endif // NL_OS_WINDOWS
 }
 

@@ -23,8 +23,8 @@
 #include <QUrl>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
-#   include <QUrlQuery>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QUrlQuery>
 #endif
 
 class CCrashReportSocketPvt
@@ -33,12 +33,12 @@ public:
 	QNetworkAccessManager mgr;
 };
 
-CCrashReportSocket::CCrashReportSocket( QObject *parent ) :
-QObject( parent )
+CCrashReportSocket::CCrashReportSocket(QObject *parent)
+    : QObject(parent)
 {
 	m_pvt = new CCrashReportSocketPvt();
 
-	connect( &m_pvt->mgr, SIGNAL( finished( QNetworkReply* ) ), this, SLOT( onFinished( QNetworkReply* ) ) );
+	connect(&m_pvt->mgr, SIGNAL(finished(QNetworkReply *)), this, SLOT(onFinished(QNetworkReply *)));
 }
 
 CCrashReportSocket::~CCrashReportSocket()
@@ -46,22 +46,22 @@ CCrashReportSocket::~CCrashReportSocket()
 	delete m_pvt;
 }
 
-void CCrashReportSocket::sendReport( const SCrashReportData &data )
+void CCrashReportSocket::sendReport(const SCrashReportData &data)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 	QUrlQuery params;
 #else
 	QUrl params;
 #endif
-	params.addQueryItem( "report", data.report );
-	params.addQueryItem( "descr", data.description );
+	params.addQueryItem("report", data.report);
+	params.addQueryItem("descr", data.description);
 	params.addQueryItem("email", data.email);
 
-	QUrl url( m_url );
-	QNetworkRequest request( url );
-	request.setRawHeader( "Connection", "close" );
+	QUrl url(m_url);
+	QNetworkRequest request(url);
+	request.setRawHeader("Connection", "close");
 
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 	QByteArray postData = params.query(QUrl::FullyEncoded).toUtf8();
 #else
 	QByteArray postData = params.encodedQuery();
@@ -70,11 +70,10 @@ void CCrashReportSocket::sendReport( const SCrashReportData &data )
 	m_pvt->mgr.post(request, postData);
 }
 
-void CCrashReportSocket::onFinished( QNetworkReply *reply )
+void CCrashReportSocket::onFinished(QNetworkReply *reply)
 {
-	if( reply->error() != QNetworkReply::NoError )
+	if (reply->error() != QNetworkReply::NoError)
 		Q_EMIT reportFailed();
 	else
 		Q_EMIT reportSent();
 }
-

@@ -21,17 +21,14 @@
 //
 #include "nel/misc/traits_nl.h"
 
-namespace NL3D
-{
+namespace NL3D {
 
 struct CPlaneBasisPair
 {
 	CPlaneBasis Basis;
-	CVector		Axis; // an axis for rotation
-	float		AngularVelocity; // an angular velocity
+	CVector Axis; // an axis for rotation
+	float AngularVelocity; // an angular velocity
 };
-
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,10 +55,7 @@ struct CPlaneBasisPair
  *
  */
 
-
-class CPSFace       : public CPSQuad
-					, public CPSRotated3DPlaneParticle
-					, public CPSHintParticleRotateTheSame
+class CPSFace : public CPSQuad, public CPSRotated3DPlaneParticle, public CPSHintParticleRotateTheSame
 {
 public:
 	/** Create the face
@@ -77,14 +71,11 @@ public:
 	 *	\param: the number of rotation configuration we have. The more high it is, the slower it'll be
 	 *          If this is too low, a lot of particles will have the same orientation
 	 *          If it is 0, then the hint is disabled
- 	 *  \param  minAngularVelocity : the maximum angular velocity for particle rotation
+	 *  \param  minAngularVelocity : the maximum angular velocity for particle rotation
 	 *  \param  maxAngularVelocity : the maximum angular velocity for particle rotation
 	 *  \see    CPSRotated3dPlaneParticle
 	 */
-	void hintRotateTheSame(uint32 nbConfiguration
-							, float minAngularVelocity = NLMISC::Pi
-							, float maxAngularVelocity = NLMISC::Pi
-						  );
+	void hintRotateTheSame(uint32 nbConfiguration, float minAngularVelocity = NLMISC::Pi, float maxAngularVelocity = NLMISC::Pi);
 
 	/** disable the hint 'hintRotateTheSame'
 	 *  The previous set scheme for roation is used
@@ -108,24 +99,22 @@ public:
 	}
 
 	/// from CPSParticle : return true if there are lightable faces in the object
-	virtual bool hasLightableFaces() { 	return false; }
-
+	virtual bool hasLightableFaces() { return false; }
 
 protected:
-
 	friend class CPSFaceHelper; /// for private use only
 
-	virtual void	step(TPSProcessPass pass);
-	virtual void	newElement(const CPSEmitterInfo &info);
-	virtual void	deleteElement(uint32 index);
-	virtual void	resize(uint32 size);
+	virtual void step(TPSProcessPass pass);
+	virtual void newElement(const CPSEmitterInfo &info);
+	virtual void deleteElement(uint32 index);
+	virtual void resize(uint32 size);
 	/// fill _IndexInPrecompBasis with index in the range [0.. nb configurations[
 	void fillIndexesInPrecompBasis(void);
 	virtual CPSLocated *getPlaneBasisOwner(void) { return _Owner; }
 
 	// we must store them for serialization
-	float			_MinAngularVelocity;
-	float			_MaxAngularVelocity;
+	float _MinAngularVelocity;
+	float _MaxAngularVelocity;
 
 	/// a set of precomp basis, before and after transfomation in world space, used if the hint 'RotateTheSame' has been called
 	CPSVector<CPlaneBasisPair>::V _PrecompBasis;
@@ -134,18 +123,12 @@ protected:
 	CPSVector<uint32>::V _IndexInPrecompBasis;
 };
 
-
-
-
-
 } // NL3D
 
 // special traits
-namespace NLMISC
-{
-	NL_TRIVIAL_TYPE_TRAITS(NL3D::CPlaneBasisPair)
+namespace NLMISC {
+NL_TRIVIAL_TYPE_TRAITS(NL3D::CPlaneBasisPair)
 }
-
 
 #endif // NL_PS_FACE_H
 

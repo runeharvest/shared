@@ -26,12 +26,12 @@
 #include <nel/misc/common.h>
 #include <nel/misc/cmd_args.h>
 #include <nel/misc/bitmap.h>
-//#include <nel/3d/quad_tree.h>
+// #include <nel/3d/quad_tree.h>
 #include <nel/3d/zone.h>
-//#include <nel/3d/landscape.h>
-//#include <nel/3d/zone_smoother.h>
-//#include <nel/3d/zone_tgt_smoother.h>
-//#include <nel/3d/zone_corner_smoother.h>
+// #include <nel/3d/landscape.h>
+// #include <nel/3d/zone_smoother.h>
+// #include <nel/3d/zone_tgt_smoother.h>
+// #include <nel/3d/zone_corner_smoother.h>
 #include <nel/ligo/zone_region.h>
 #include <vector>
 #include <set>
@@ -65,7 +65,7 @@ bool loadLand(const string &filename)
 	try
 	{
 		CIFile fileIn;
-		if (fileIn.open (filename))
+		if (fileIn.open(filename))
 		{
 			CIXml xml(true);
 			nlverify(xml.init(fileIn));
@@ -77,7 +77,7 @@ bool loadLand(const string &filename)
 			return false;
 		}
 	}
-	catch (const Exception& e)
+	catch (const Exception &e)
 	{
 		nlwarning("Error in land file: %s", e.what());
 		return true;
@@ -206,20 +206,20 @@ NLMISC::CVector getHeightNormal(float x, float y)
 void computeSubdividedTangents(uint numBinds, const NL3D::CBezierPatch &patch, uint edge, NLMISC::CVector subTangents[8])
 {
 	// Subdivide the Bezier patch to get the correct tangents to apply to neighbors
-	CBezierPatch	subPatchs1_2[2];
-	CBezierPatch	subPatchs1_4[4];
+	CBezierPatch subPatchs1_2[2];
+	CBezierPatch subPatchs1_4[4];
 
 	// subdivide on s if edge is horizontal
-	bool		subDivideOnS= (edge&1)==1;
+	bool subDivideOnS = (edge & 1) == 1;
 
 	// Subdivide one time.
-	if(subDivideOnS)	patch.subdivideS(subPatchs1_2[0], subPatchs1_2[1]);
-	else				patch.subdivideT(subPatchs1_2[0], subPatchs1_2[1]);
+	if (subDivideOnS) patch.subdivideS(subPatchs1_2[0], subPatchs1_2[1]);
+	else patch.subdivideT(subPatchs1_2[0], subPatchs1_2[1]);
 
 	// Subdivide again for bind 1/4.
-	if(numBinds==4)
+	if (numBinds == 4)
 	{
-		if(subDivideOnS)
+		if (subDivideOnS)
 		{
 			subPatchs1_2[0].subdivideS(subPatchs1_4[0], subPatchs1_4[1]);
 			subPatchs1_2[1].subdivideS(subPatchs1_4[2], subPatchs1_4[3]);
@@ -232,37 +232,37 @@ void computeSubdividedTangents(uint numBinds, const NL3D::CBezierPatch &patch, u
 	}
 
 	// Now, fill the tangents according to edge.
-	bool	invertPaSrc= edge>=2;
+	bool invertPaSrc = edge >= 2;
 	// Bind 1/2 case.
-	if(numBinds==2)
+	if (numBinds == 2)
 	{
 		// 4 tangents to fill.
-		for(uint i=0;i<4;i++)
+		for (uint i = 0; i < 4; i++)
 		{
 			// get patch id from 0 to 1.
-			uint	paSrcId= i/2;
+			uint paSrcId = i / 2;
 			// invert if edge is 2 or 3
-			if(invertPaSrc) paSrcId= 1-paSrcId;
+			if (invertPaSrc) paSrcId = 1 - paSrcId;
 			// get tg id in this patch.
-			uint	tgSrcId= (i&1) + edge*2;
+			uint tgSrcId = (i & 1) + edge * 2;
 			// fill result.
-			subTangents[i]= subPatchs1_2[paSrcId].Tangents[tgSrcId];
+			subTangents[i] = subPatchs1_2[paSrcId].Tangents[tgSrcId];
 		}
 	}
 	// Bind 1/4 case.
 	else
 	{
 		// 8 tangents to fill.
-		for(uint i=0;i<8;i++)
+		for (uint i = 0; i < 8; i++)
 		{
 			// get patch id from 0 to 3.
-			uint	paSrcId= i/2;
+			uint paSrcId = i / 2;
 			// invert if edge is 2 or 3
-			if(invertPaSrc) paSrcId= 3-paSrcId;
+			if (invertPaSrc) paSrcId = 3 - paSrcId;
 			// get tg id in this patch.
-			uint	tgSrcId= (i&1) + edge*2;
+			uint tgSrcId = (i & 1) + edge * 2;
 			// fill result.
-			subTangents[i]= subPatchs1_4[paSrcId].Tangents[tgSrcId];
+			subTangents[i] = subPatchs1_4[paSrcId].Tangents[tgSrcId];
 		}
 	}
 }
@@ -270,37 +270,35 @@ void computeSubdividedTangents(uint numBinds, const NL3D::CBezierPatch &patch, u
 // ***************************************************************************
 // bool CExport::applyVertexBind(NL3D::CPatchInfo &pa, NL3D::CPatchInfo &oldPa, uint edgeToModify, bool startEdge, ...
 bool applyVertexBind(NL3D::CPatchInfo &pa, NL3D::CPatchInfo &oldPa, uint edgeToModify, bool startEdge,
-	const NLMISC::CMatrix &oldTgSpace, const NLMISC::CMatrix &newTgSpace,
-	const NLMISC::CVector &bindedPos, const NLMISC::CVector &bindedTangent )
+    const NLMISC::CMatrix &oldTgSpace, const NLMISC::CMatrix &newTgSpace,
+    const NLMISC::CVector &bindedPos, const NLMISC::CVector &bindedTangent)
 {
 	// Get the vertex to modify according to edge/startEdge
-	uint	vertexToModify= edgeToModify + (startEdge?0:1);
-	vertexToModify&=3;
+	uint vertexToModify = edgeToModify + (startEdge ? 0 : 1);
+	vertexToModify &= 3;
 
 	// If already moved, no-op
-	if(pa.Patch.Vertices[vertexToModify]==bindedPos)
+	if (pa.Patch.Vertices[vertexToModify] == bindedPos)
 		return false;
 	else
 	{
 		// Change the vertex
-		pa.Patch.Vertices[vertexToModify]= bindedPos;
+		pa.Patch.Vertices[vertexToModify] = bindedPos;
 
 		// change the tangent, according to startEdge
-		pa.Patch.Tangents[edgeToModify*2 + (startEdge?0:1) ]= bindedTangent;
+		pa.Patch.Tangents[edgeToModify * 2 + (startEdge ? 0 : 1)] = bindedTangent;
 
 		// Must change the tangent which is on the other side of the vertex:
-		uint	tgToModify= 8 + edgeToModify*2 + (startEdge?-1:+2);
-		tgToModify&=7;
+		uint tgToModify = 8 + edgeToModify * 2 + (startEdge ? -1 : +2);
+		tgToModify &= 7;
 		/* To keep the same continuity aspect around the vertex, we compute the original tangent in a
 		special space: the Binded Patch Tangent Space. Once we have the original tangent in the original patch TgSpace,
 		we reapply it in the transformed patch TgSpace, to get the transformed tangent
 		*/
-		pa.Patch.Tangents[tgToModify]= newTgSpace * ( oldTgSpace.inverted() * oldPa.Patch.Tangents[tgToModify] );
-
+		pa.Patch.Tangents[tgToModify] = newTgSpace * (oldTgSpace.inverted() * oldPa.Patch.Tangents[tgToModify]);
 
 		// Do the same to the associated interior.
-		pa.Patch.Interiors[vertexToModify]= newTgSpace * ( oldTgSpace.inverted() * oldPa.Patch.Interiors[vertexToModify] );
-
+		pa.Patch.Interiors[vertexToModify] = newTgSpace * (oldTgSpace.inverted() * oldPa.Patch.Interiors[vertexToModify]);
 
 		// modified
 		return true;
@@ -409,10 +407,22 @@ void applyZoneHeightmap()
 						float ec = (float)(vb + 1) / (float)numBinds;
 						switch (j)
 						{
-						case 0:	bindS= 0;	 bindT= ec; break;
-						case 1:	bindS= ec;	 bindT= 1; break;
-						case 2:	bindS= 1;	 bindT= 1-ec; break;
-						case 3:	bindS= 1-ec; bindT= 0; break;
+						case 0:
+							bindS = 0;
+							bindT = ec;
+							break;
+						case 1:
+							bindS = ec;
+							bindT = 1;
+							break;
+						case 2:
+							bindS = 1;
+							bindT = 1 - ec;
+							break;
+						case 3:
+							bindS = 1 - ec;
+							bindT = 0;
+							break;
 						}
 
 						// compute the vertex position from big patch.
@@ -506,7 +516,7 @@ int main(int argc, char **argv)
 		sint32 zoneMinX, zoneMinY;
 		sint32 zoneMaxX, zoneMaxY;
 		if (!getXYFromZoneName(zoneMinX, zoneMinY, args.getLongArg("zonemin")[0])
-			|| !getXYFromZoneName(zoneMaxX, zoneMaxY, args.getLongArg("zonemax")[0]))
+		    || !getXYFromZoneName(zoneMaxX, zoneMaxY, args.getLongArg("zonemax")[0]))
 		{
 			goto Fail;
 		}

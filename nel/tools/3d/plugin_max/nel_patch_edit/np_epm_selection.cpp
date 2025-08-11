@@ -7,7 +7,7 @@
 #define DBGWELD_ACTIONx
 #define DBG_NAMEDSELSx
 
-#define PROMPT_TIME	2000
+#define PROMPT_TIME 2000
 
 INT_PTR CALLBACK PatchSurfDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK PatchTileDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
@@ -28,7 +28,7 @@ void EditPatchMod::SetSubobjectLevel(int level)
 	selLevel = level;
 	if (hSelectPanel)
 		RefreshSelType();
-	// Setup named selection sets	
+	// Setup named selection sets
 	SetupNamedSelDropDown();
 }
 
@@ -36,7 +36,7 @@ void EditPatchMod::SetSubobjectLevel(int level)
 
 static int butIDs[] = { 0, EP_VERTEX, EP_EDGE, EP_PATCH, EP_TILE };
 
-void EditPatchMod::RefreshSelType() 
+void EditPatchMod::RefreshSelType()
 {
 	if (!hSelectPanel)
 		return;
@@ -71,21 +71,21 @@ void EditPatchMod::RefreshSelType()
 		*/
 		if (selLevel == EP_PATCH)
 		{
-			hSurfPanel = ip->AddRollupPage(hInstance, MAKEINTRESOURCE(IDD_EDPATCH_SURF), PatchSurfDlgProc, GetString(IDS_TH_SURFACEPROPERTIES), (LPARAM) this, rsSurf ? 0 : APPENDROLL_CLOSED);
+			hSurfPanel = ip->AddRollupPage(hInstance, MAKEINTRESOURCE(IDD_EDPATCH_SURF), PatchSurfDlgProc, GetString(IDS_TH_SURFACEPROPERTIES), (LPARAM)this, rsSurf ? 0 : APPENDROLL_CLOSED);
 		}
 		if (selLevel == EP_TILE)
 		{
-			hTilePanel = ip->AddRollupPage(hInstance, MAKEINTRESOURCE(IDD_EDPATCH_TILE), PatchTileDlgProc, _M("Tile Properties"), (LPARAM) this, rsTile ? 0 : APPENDROLL_CLOSED);
+			hTilePanel = ip->AddRollupPage(hInstance, MAKEINTRESOURCE(IDD_EDPATCH_TILE), PatchTileDlgProc, _M("Tile Properties"), (LPARAM)this, rsTile ? 0 : APPENDROLL_CLOSED);
 		}
 		if (selLevel == EP_EDGE)
 		{
-			hEdgePanel = ip->AddRollupPage(hInstance, MAKEINTRESOURCE(IDD_EDPATCH_EDGE), PatchEdgeDlgProc, _M("Edge Properties"), (LPARAM) this, rsEdge ? 0 : APPENDROLL_CLOSED);
+			hEdgePanel = ip->AddRollupPage(hInstance, MAKEINTRESOURCE(IDD_EDPATCH_EDGE), PatchEdgeDlgProc, _M("Edge Properties"), (LPARAM)this, rsEdge ? 0 : APPENDROLL_CLOSED);
 		}
 		SetSurfDlgEnables();
 		SetTileDlgEnables();
 		SetEdgeDlgEnables();
 	}
-	
+
 	ICustToolbar *iToolbar = GetICustToolbar(GetDlgItem(hSelectPanel, IDC_SELTYPE));
 	ICustButton *but;
 	for (int i = 1; i < 5; i++)
@@ -101,7 +101,7 @@ void EditPatchMod::RefreshSelType()
 	PatchSelChanged();
 }
 
-void EditPatchMod::SelectionChanged() 
+void EditPatchMod::SelectionChanged()
 {
 	if (hSelectPanel)
 	{
@@ -109,9 +109,9 @@ void EditPatchMod::SelectionChanged()
 		InvalidateRect(hSelectPanel, NULL, FALSE);
 	}
 	// Now see if the selection set matches one of the named selections!
-	if (ip &&(selLevel != EP_OBJECT)&&(selLevel != EP_TILE))
+	if (ip && (selLevel != EP_OBJECT) && (selLevel != EP_TILE))
 	{
-		ModContextList mcList;		
+		ModContextList mcList;
 		INodeTab nodes;
 		TimeValue t = ip->GetTime();
 		ip->GetModContexts(mcList, nodes);
@@ -123,7 +123,7 @@ void EditPatchMod::SelectionChanged()
 			BOOL gotMatch = FALSE;
 			for (int i = 0; i < mcList.Count(); i++)
 			{
-				EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+				EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 				if (!patchData)
 					continue;
 				if (patchData->GetFlag(EPD_BEENDONE))
@@ -135,7 +135,7 @@ void EditPatchMod::SelectionChanged()
 				// See if this patch has the named selection set
 				switch (selLevel)
 				{
-				case EP_VERTEX: 
+				case EP_VERTEX:
 					for (dataSet = 0; dataSet < patchData->vselSet.Count(); ++dataSet)
 					{
 						if (*(patchData->vselSet.names[dataSet]) == *namedSel[sublevel][set])
@@ -180,13 +180,12 @@ void EditPatchMod::SelectionChanged()
 				ip->SetCurNamedSelSet(*namedSel[sublevel][set]);
 				goto namedSelUpdated;
 			}
-next_set:;
+		next_set:;
 		}
 		// No set matches, clear the named selection
 		ip->ClearCurNamedSelSet();
-		
-		
-namedSelUpdated:
+
+	namedSelUpdated:
 		nodes.DisposeTemporary();
 		ClearPatchDataFlag(mcList, EPD_BEENDONE);
 	}
@@ -194,7 +193,7 @@ namedSelUpdated:
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void EditPatchMod::SetSelDlgEnables() 
+void EditPatchMod::SetSelDlgEnables()
 {
 	if (!hSelectPanel)
 		return;
@@ -202,23 +201,23 @@ void EditPatchMod::SetSelDlgEnables()
 	but->Disable();
 	switch (GetSubobjectLevel())
 	{
-		case PO_VERTEX:
-			if (GetPatchNamedSelClip(CLIP_P_VERT))
-				but->Enable();
-			break;
-		case PO_EDGE:
-			if (GetPatchNamedSelClip(CLIP_P_EDGE))
-				but->Enable();
-			break;
-		case PO_PATCH:
-			if (GetPatchNamedSelClip(CLIP_P_PATCH))
-				but->Enable();
-			break;
-		case PO_TILE:
-			break;
-		}
-	ReleaseICustButton(but);
+	case PO_VERTEX:
+		if (GetPatchNamedSelClip(CLIP_P_VERT))
+			but->Enable();
+		break;
+	case PO_EDGE:
+		if (GetPatchNamedSelClip(CLIP_P_EDGE))
+			but->Enable();
+		break;
+	case PO_PATCH:
+		if (GetPatchNamedSelClip(CLIP_P_PATCH))
+			but->Enable();
+		break;
+	case PO_TILE:
+		break;
 	}
+	ReleaseICustButton(but);
+}
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -236,7 +235,7 @@ void EditPatchMod::SetSelLevel(DWORD level)
 void EditPatchMod::SelectSubPatch(int index)
 {
 	if (!ip)
-		return; 
+		return;
 	TimeValue t = ip->GetTime();
 
 	ip->ClearCurNamedSelSet();
@@ -247,18 +246,18 @@ void EditPatchMod::SelectSubPatch(int index)
 
 	for (int i = 0; i < mcList.Count(); i++)
 	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
-	
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
+
 		if (!patchData)
 			return;
-		
+
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(t, rpatch);
 		if (!patch)
 			return;
-		
+
 		patchData->BeginEdit(t);
-		if (theHold.Holding()) 
+		if (theHold.Holding())
 			theHold.Put(new PatchRestore(patchData, this, patch, rpatch, _T("SelectSubComponent")));
 
 		patch->patchSel.Set(index);
@@ -270,7 +269,7 @@ void EditPatchMod::SelectSubPatch(int index)
 		}
 	}
 	PatchSelChanged();
-		
+
 	UpdateSelectDisplay();
 	NotifyDependents(FOREVER, PART_SELECT, REFMSG_CHANGE);
 }
@@ -281,311 +280,299 @@ void EditPatchMod::SelectSubPatch(int index)
 // indicate any of the objects contained within the group of patches being edited, we need
 // to watch for control breaks in the patchData pointer within the HitRecord!
 
-	void EditPatchMod::SelectSubComponent(HitRecord *hitRec, BOOL selected, BOOL all, BOOL invert)
+void EditPatchMod::SelectSubComponent(HitRecord *hitRec, BOOL selected, BOOL all, BOOL invert)
 {
 	// Don't do anything if at vertex level with verts turned off
 	if (selLevel == EP_VERTEX && !filterVerts)
 		return;
 
 	if (!ip)
-		return; 
+		return;
 	TimeValue t = ip->GetTime();
 
 	ip->ClearCurNamedSelSet();
 
 	// Keep processing hit records as long as we have them!
-	while (hitRec) 
-	{	
-		EditPatchData *patchData =(EditPatchData*)hitRec->modContext->localData;
-		
+	while (hitRec)
+	{
+		EditPatchData *patchData = (EditPatchData *)hitRec->modContext->localData;
+
 		if (!patchData)
 			return;
-		
+
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(t, rpatch);
 		if (!patch)
 			return;
-		
+
 		patchData->BeginEdit(t);
-		if (theHold.Holding()) 
+		if (theHold.Holding())
 			theHold.Put(new PatchRestore(patchData, this, patch, rpatch, _T("SelectSubComponent")));
-		
+
 		switch (selLevel)
 		{
-		case EP_VERTEX: 
+		case EP_VERTEX: {
+			if (all)
 			{
-				if (all)
-				{				
-					if (invert)
-					{
-						while (hitRec) 
-						{
-							// If the object changes, we're done!
-							if (patchData !=(EditPatchData*)hitRec->modContext->localData)
-								goto vert_done;
-							int index =((PatchHitData *)(hitRec->hitData))->index;
-							if (((PatchHitData *)(hitRec->hitData))->type == PATCH_HIT_VERTEX)
-							{
-								if (patch->vertSel[index])
-									patch->vertSel.Clear(index);
-								else
-									patch->vertSel.Set(index);
-							}
-							hitRec = hitRec->Next();
-						}
-					}
-					else
-						if (selected)
-						{
-							while (hitRec) 
-							{
-								// If the object changes, we're done!
-								if (patchData !=(EditPatchData*)hitRec->modContext->localData)
-									goto vert_done;
-								PatchHitData *hit =(PatchHitData *)(hitRec->hitData);
-								if (hit->type == PATCH_HIT_VERTEX)
-									patch->vertSel.Set(hit->index);
-								hitRec = hitRec->Next();
-							}
-						}
-						else 
-						{
-							while (hitRec) 
-							{
-								// If the object changes, we're done!
-								if (patchData !=(EditPatchData*)hitRec->modContext->localData)
-									goto vert_done;
-								PatchHitData *hit =(PatchHitData *)(hitRec->hitData);
-								if (hit->type == PATCH_HIT_VERTEX)
-									patch->vertSel.Clear(hit->index);
-								hitRec = hitRec->Next();
-							}
-						}
-				}
-				else 
+				if (invert)
 				{
-					int index =((PatchHitData *)(hitRec->hitData))->index;
-					if (((PatchHitData *)(hitRec->hitData))->type == PATCH_HIT_VERTEX)
+					while (hitRec)
 					{
-						if (invert)
+						// If the object changes, we're done!
+						if (patchData != (EditPatchData *)hitRec->modContext->localData)
+							goto vert_done;
+						int index = ((PatchHitData *)(hitRec->hitData))->index;
+						if (((PatchHitData *)(hitRec->hitData))->type == PATCH_HIT_VERTEX)
 						{
 							if (patch->vertSel[index])
 								patch->vertSel.Clear(index);
 							else
 								patch->vertSel.Set(index);
 						}
-						else
-							if (selected)
- 								patch->vertSel.Set(index);
-							else
-								patch->vertSel.Clear(index);
+						hitRec = hitRec->Next();
 					}
-					hitRec = NULL;	// Reset it so we can exit	
 				}
-vert_done:
-				break;
-			}
-		case EP_EDGE: 
-			{
-				if (all)
-				{				
-					if (invert)
-					{
-						while (hitRec) 
-						{
-							// If the object changes, we're done!
-							if (patchData !=(EditPatchData*)hitRec->modContext->localData)
-								goto edge_done;
-							int index =((PatchHitData *)(hitRec->hitData))->index;
-							if (patch->edgeSel[index])
-								patch->edgeSel.Clear(index);
-							else
-								patch->edgeSel.Set(index);
-							hitRec = hitRec->Next();
-						}
-					}
-					else
-						if (selected)
-						{
-							while (hitRec) 
-							{
-								// If the object changes, we're done!
-								if (patchData !=(EditPatchData*)hitRec->modContext->localData)
-									goto edge_done;
-								patch->edgeSel.Set(((PatchHitData *)(hitRec->hitData))->index);
-								hitRec = hitRec->Next();
-							}
-						}
-						else 
-						{
-							while (hitRec) 
-							{
-								// If the object changes, we're done!
-								if (patchData !=(EditPatchData*)hitRec->modContext->localData)
-									goto edge_done;
-								patch->edgeSel.Clear(((PatchHitData *)(hitRec->hitData))->index);
-								hitRec = hitRec->Next();
-							}
-						}
-				}
-				else 
+				else if (selected)
 				{
-					int index =((PatchHitData *)(hitRec->hitData))->index;
+					while (hitRec)
+					{
+						// If the object changes, we're done!
+						if (patchData != (EditPatchData *)hitRec->modContext->localData)
+							goto vert_done;
+						PatchHitData *hit = (PatchHitData *)(hitRec->hitData);
+						if (hit->type == PATCH_HIT_VERTEX)
+							patch->vertSel.Set(hit->index);
+						hitRec = hitRec->Next();
+					}
+				}
+				else
+				{
+					while (hitRec)
+					{
+						// If the object changes, we're done!
+						if (patchData != (EditPatchData *)hitRec->modContext->localData)
+							goto vert_done;
+						PatchHitData *hit = (PatchHitData *)(hitRec->hitData);
+						if (hit->type == PATCH_HIT_VERTEX)
+							patch->vertSel.Clear(hit->index);
+						hitRec = hitRec->Next();
+					}
+				}
+			}
+			else
+			{
+				int index = ((PatchHitData *)(hitRec->hitData))->index;
+				if (((PatchHitData *)(hitRec->hitData))->type == PATCH_HIT_VERTEX)
+				{
 					if (invert)
 					{
+						if (patch->vertSel[index])
+							patch->vertSel.Clear(index);
+						else
+							patch->vertSel.Set(index);
+					}
+					else if (selected)
+						patch->vertSel.Set(index);
+					else
+						patch->vertSel.Clear(index);
+				}
+				hitRec = NULL; // Reset it so we can exit
+			}
+		vert_done:
+			break;
+		}
+		case EP_EDGE: {
+			if (all)
+			{
+				if (invert)
+				{
+					while (hitRec)
+					{
+						// If the object changes, we're done!
+						if (patchData != (EditPatchData *)hitRec->modContext->localData)
+							goto edge_done;
+						int index = ((PatchHitData *)(hitRec->hitData))->index;
 						if (patch->edgeSel[index])
 							patch->edgeSel.Clear(index);
 						else
 							patch->edgeSel.Set(index);
+						hitRec = hitRec->Next();
 					}
-					else
-						if (selected)
-						{
-							patch->edgeSel.Set(index);
-						}
-						else 
-						{
-							patch->edgeSel.Clear(index);
-						}
-						hitRec = NULL;	// Reset it so we can exit	
 				}
-edge_done:
-				break;
-			}
-		case EP_PATCH: 
-			{
-				if (all)
-				{				
-					if (invert)
-					{
-						while (hitRec) 
-						{
-							// If the object changes, we're done!
-							if (patchData !=(EditPatchData*)hitRec->modContext->localData)
-								goto patch_done;
-							int index =((PatchHitData *)(hitRec->hitData))->index;
-							if (patch->patchSel[index])
-								patch->patchSel.Clear(index);
-							else
-								patch->patchSel.Set(index);
-							hitRec = hitRec->Next();
-						}
-					}
-					else
-						if (selected)
-						{
-							while (hitRec) 
-							{
-								// If the object changes, we're done!
-								if (patchData !=(EditPatchData*)hitRec->modContext->localData)
-									goto patch_done;
-								patch->patchSel.Set(((PatchHitData *)(hitRec->hitData))->index);
-								hitRec = hitRec->Next();
-							}
-						}
-						else 
-						{
-							while (hitRec) 
-							{
-								// If the object changes, we're done!
-								if (patchData !=(EditPatchData*)hitRec->modContext->localData)
-									goto patch_done;
-								patch->patchSel.Clear(((PatchHitData *)(hitRec->hitData))->index);
-								hitRec = hitRec->Next();
-							}
-						}
-				}
-				else 
+				else if (selected)
 				{
-					int index =((PatchHitData *)(hitRec->hitData))->index;
-					if (invert)
+					while (hitRec)
 					{
+						// If the object changes, we're done!
+						if (patchData != (EditPatchData *)hitRec->modContext->localData)
+							goto edge_done;
+						patch->edgeSel.Set(((PatchHitData *)(hitRec->hitData))->index);
+						hitRec = hitRec->Next();
+					}
+				}
+				else
+				{
+					while (hitRec)
+					{
+						// If the object changes, we're done!
+						if (patchData != (EditPatchData *)hitRec->modContext->localData)
+							goto edge_done;
+						patch->edgeSel.Clear(((PatchHitData *)(hitRec->hitData))->index);
+						hitRec = hitRec->Next();
+					}
+				}
+			}
+			else
+			{
+				int index = ((PatchHitData *)(hitRec->hitData))->index;
+				if (invert)
+				{
+					if (patch->edgeSel[index])
+						patch->edgeSel.Clear(index);
+					else
+						patch->edgeSel.Set(index);
+				}
+				else if (selected)
+				{
+					patch->edgeSel.Set(index);
+				}
+				else
+				{
+					patch->edgeSel.Clear(index);
+				}
+				hitRec = NULL; // Reset it so we can exit
+			}
+		edge_done:
+			break;
+		}
+		case EP_PATCH: {
+			if (all)
+			{
+				if (invert)
+				{
+					while (hitRec)
+					{
+						// If the object changes, we're done!
+						if (patchData != (EditPatchData *)hitRec->modContext->localData)
+							goto patch_done;
+						int index = ((PatchHitData *)(hitRec->hitData))->index;
 						if (patch->patchSel[index])
 							patch->patchSel.Clear(index);
 						else
 							patch->patchSel.Set(index);
+						hitRec = hitRec->Next();
 					}
-					else
-						if (selected)
-						{
-							patch->patchSel.Set(index);
-						}
-						else 
-						{
-							patch->patchSel.Clear(index);
-						}
-						hitRec = NULL;	// Reset it so we can exit	
 				}
-patch_done:
-				break;
+				else if (selected)
+				{
+					while (hitRec)
+					{
+						// If the object changes, we're done!
+						if (patchData != (EditPatchData *)hitRec->modContext->localData)
+							goto patch_done;
+						patch->patchSel.Set(((PatchHitData *)(hitRec->hitData))->index);
+						hitRec = hitRec->Next();
+					}
+				}
+				else
+				{
+					while (hitRec)
+					{
+						// If the object changes, we're done!
+						if (patchData != (EditPatchData *)hitRec->modContext->localData)
+							goto patch_done;
+						patch->patchSel.Clear(((PatchHitData *)(hitRec->hitData))->index);
+						hitRec = hitRec->Next();
+					}
+				}
 			}
-		case EP_TILE:
+			else
 			{
-				if (all)
+				int index = ((PatchHitData *)(hitRec->hitData))->index;
+				if (invert)
 				{
-					if (invert)
-					{
-						while (hitRec)
-						{
-							// If the object changes, we're done!
-							if (patchData !=(EditPatchData*)hitRec->modContext->localData)
-								goto tile_done;
-							int index =((PatchHitData *)(hitRec->hitData))->index;
-							if (rpatch->tileSel[index])
-								rpatch->tileSel.Clear(index);
-							else
-								rpatch->tileSel.Set(index);
-							hitRec = hitRec->Next();
-						}
-					}
+					if (patch->patchSel[index])
+						patch->patchSel.Clear(index);
 					else
-						if (selected)
-						{
-							while (hitRec) 
-							{
-								// If the object changes, we're done!
-								if (patchData !=(EditPatchData*)hitRec->modContext->localData)
-									goto tile_done;
-								rpatch->tileSel.Set(((PatchHitData *)(hitRec->hitData))->index);
-								hitRec = hitRec->Next();
-							}
-						}
-						else 
-						{
-							while (hitRec) 
-							{
-								// If the object changes, we're done!
-								if (patchData !=(EditPatchData*)hitRec->modContext->localData)
-									goto tile_done;
-								rpatch->tileSel.Clear(((PatchHitData *)(hitRec->hitData))->index);
-								hitRec = hitRec->Next();
-							}
-						}
+						patch->patchSel.Set(index);
 				}
-				else 
+				else if (selected)
 				{
-					int index =((PatchHitData *)(hitRec->hitData))->index;
-					if (invert)
+					patch->patchSel.Set(index);
+				}
+				else
+				{
+					patch->patchSel.Clear(index);
+				}
+				hitRec = NULL; // Reset it so we can exit
+			}
+		patch_done:
+			break;
+		}
+		case EP_TILE: {
+			if (all)
+			{
+				if (invert)
+				{
+					while (hitRec)
 					{
+						// If the object changes, we're done!
+						if (patchData != (EditPatchData *)hitRec->modContext->localData)
+							goto tile_done;
+						int index = ((PatchHitData *)(hitRec->hitData))->index;
 						if (rpatch->tileSel[index])
 							rpatch->tileSel.Clear(index);
 						else
 							rpatch->tileSel.Set(index);
+						hitRec = hitRec->Next();
 					}
-					else
-						if (selected)
-						{
-							rpatch->tileSel.Set(index);
-						}
-						else 
-						{
-							rpatch->tileSel.Clear(index);
-						}
-						hitRec = NULL;	// Reset it so we can exit	
 				}
-tile_done:
-				break;
+				else if (selected)
+				{
+					while (hitRec)
+					{
+						// If the object changes, we're done!
+						if (patchData != (EditPatchData *)hitRec->modContext->localData)
+							goto tile_done;
+						rpatch->tileSel.Set(((PatchHitData *)(hitRec->hitData))->index);
+						hitRec = hitRec->Next();
+					}
+				}
+				else
+				{
+					while (hitRec)
+					{
+						// If the object changes, we're done!
+						if (patchData != (EditPatchData *)hitRec->modContext->localData)
+							goto tile_done;
+						rpatch->tileSel.Clear(((PatchHitData *)(hitRec->hitData))->index);
+						hitRec = hitRec->Next();
+					}
+				}
 			}
+			else
+			{
+				int index = ((PatchHitData *)(hitRec->hitData))->index;
+				if (invert)
+				{
+					if (rpatch->tileSel[index])
+						rpatch->tileSel.Clear(index);
+					else
+						rpatch->tileSel.Set(index);
+				}
+				else if (selected)
+				{
+					rpatch->tileSel.Set(index);
+				}
+				else
+				{
+					rpatch->tileSel.Clear(index);
+				}
+				hitRec = NULL; // Reset it so we can exit
+			}
+		tile_done:
+			break;
+		}
 		case EP_OBJECT:
 		default:
 			return;
@@ -597,67 +584,61 @@ tile_done:
 		}
 		PatchSelChanged();
 	}
-		
+
 	UpdateSelectDisplay();
 	NotifyDependents(FOREVER, PART_SELECT, REFMSG_CHANGE);
 }
 
-
-
-void EditPatchMod::ClearSelection(int selLevel) 
+void EditPatchMod::ClearSelection(int selLevel)
 {
 	// Don't do anything if at vertex level with verts turned off
 	if (selLevel == EP_VERTEX && !filterVerts)
 		return;
 	if (selLevel == EP_OBJECT)
 		return;
-	
+
 	ModContextList mcList;
 	INodeTab nodes;
-	
+
 	if (!ip)
-		return;	
+		return;
 	ip->ClearCurNamedSelSet();
 	ip->GetModContexts(mcList, nodes);
-	
+
 	for (int i = 0; i < mcList.Count(); i++)
 	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
-			continue;		
+			continue;
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
 		if (!patch)
 			continue;
-		
+
 		patchData->BeginEdit(ip->GetTime());
 		if (theHold.Holding())
 		{
 			theHold.Put(new PatchRestore(patchData, this, patch, rpatch, _T("ClearSelection")));
 		}
-		
+
 		switch (selLevel)
 		{
-		case EP_VERTEX: 
-			{
-				patch->vertSel.ClearAll();
-				break;
-			}
-		case EP_EDGE: 
-			{
-				patch->edgeSel.ClearAll();
-				break;
-			}
-		case EP_PATCH: 
-			{
-				patch->patchSel.ClearAll();
-				break;
-			}
-		case EP_TILE: 
-			{
-				rpatch->tileSel.ClearAll();
-				break;
-			}
+		case EP_VERTEX: {
+			patch->vertSel.ClearAll();
+			break;
+		}
+		case EP_EDGE: {
+			patch->edgeSel.ClearAll();
+			break;
+		}
+		case EP_PATCH: {
+			patch->patchSel.ClearAll();
+			break;
+		}
+		case EP_TILE: {
+			rpatch->tileSel.ClearAll();
+			break;
+		}
 		}
 		patchData->UpdateChanges(patch, rpatch, FALSE);
 		if (patchData->tempData)
@@ -676,96 +657,89 @@ void UnselectHiddenPatches(int level, PatchMesh *patch)
 {
 	switch (level)
 	{
-	case EP_VERTEX: 
+	case EP_VERTEX: {
+		for (int i = 0; i < patch->numVerts; i++)
 		{
-			for (int i = 0; i < patch->numVerts; i++)
-			{
-				if (patch->getVert(i).IsHidden())
-					patch->vertSel.Set(i, FALSE);
-			}
-			break;
+			if (patch->getVert(i).IsHidden())
+				patch->vertSel.Set(i, FALSE);
 		}
-	case EP_EDGE: 
+		break;
+	}
+	case EP_EDGE: {
+		for (int i = 0; i < patch->numEdges; i++)
 		{
-			for (int i = 0; i < patch->numEdges; i++)
-			{
-				int a, b;
-				a = patch->edges[i].v1;
-				b = patch->edges[i].v2;
-				if (patch->getVert(a).IsHidden() && patch->getVert(b).IsHidden())
-					patch->edgeSel.Set(i, FALSE);
-			}
-			break;
+			int a, b;
+			a = patch->edges[i].v1;
+			b = patch->edges[i].v2;
+			if (patch->getVert(a).IsHidden() && patch->getVert(b).IsHidden())
+				patch->edgeSel.Set(i, FALSE);
 		}
-	case EP_PATCH:
+		break;
+	}
+	case EP_PATCH: {
+		for (int i = 0; i < patch->numPatches; i++)
 		{
-			for (int i = 0; i < patch->numPatches; i++)
-			{
-				if (patch->patches[i].IsHidden())
-					patch->patchSel.Set(i, FALSE);
-			}
-			break;
+			if (patch->patches[i].IsHidden())
+				patch->patchSel.Set(i, FALSE);
 		}
+		break;
+	}
 	}
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void EditPatchMod::SelectAll(int selLevel) 
+void EditPatchMod::SelectAll(int selLevel)
 {
 	// Don't do anything if at vertex level with verts turned off
 	if (selLevel == EP_VERTEX && !filterVerts)
 		return;
 	if (selLevel == EP_OBJECT)
 		return;
-	
+
 	ModContextList mcList;
 	INodeTab nodes;
-	
+
 	if (!ip)
-		return;	
-	
+		return;
+
 	ip->GetModContexts(mcList, nodes);
 	ip->ClearCurNamedSelSet();
-	
+
 	for (int i = 0; i < mcList.Count(); i++)
 	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
-			continue;		
+			continue;
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
 		if (!patch)
 			continue;
-		
+
 		patchData->BeginEdit(ip->GetTime());
 		if (theHold.Holding())
 		{
 			theHold.Put(new PatchRestore(patchData, this, patch, rpatch, _T("SelectAll")));
 		}
-		
+
 		switch (selLevel)
 		{
-		case EP_VERTEX: 
-			{
-				patch->vertSel.SetAll();
-				break;
-			}
-		case EP_EDGE: 
-			{
-				patch->edgeSel.SetAll();
-				break;
-			}
-		case EP_PATCH: 
-			{
-				patch->patchSel.SetAll();
-				break;
-			}
-		case EP_TILE: 
-			{
-				rpatch->tileSel.SetAll();
-				break;
-			}
+		case EP_VERTEX: {
+			patch->vertSel.SetAll();
+			break;
+		}
+		case EP_EDGE: {
+			patch->edgeSel.SetAll();
+			break;
+		}
+		case EP_PATCH: {
+			patch->patchSel.SetAll();
+			break;
+		}
+		case EP_TILE: {
+			rpatch->tileSel.SetAll();
+			break;
+		}
 		}
 		UnselectHiddenPatches(selLevel, patch);
 		patchData->UpdateChanges(patch, rpatch, FALSE);
@@ -781,59 +755,55 @@ void EditPatchMod::SelectAll(int selLevel)
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void EditPatchMod::InvertSelection(int selLevel) 
+void EditPatchMod::InvertSelection(int selLevel)
 {
 	// Don't do anything if at vertex level with verts turned off
 	if (selLevel == EP_VERTEX && !filterVerts)
 		return;
 	if (selLevel == EP_OBJECT)
 		return;
-	
+
 	ModContextList mcList;
 	INodeTab nodes;
-	
+
 	if (!ip)
-		return;	
-	
+		return;
+
 	ip->GetModContexts(mcList, nodes);
 	ip->ClearCurNamedSelSet();
-	
+
 	for (int i = 0; i < mcList.Count(); i++)
 	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
-			continue;		
+			continue;
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
 		if (!patch)
 			continue;
-		
+
 		patchData->BeginEdit(ip->GetTime());
 		if (theHold.Holding())
 			theHold.Put(new PatchRestore(patchData, this, patch, rpatch, _T("InvertSelection")));
-		
+
 		switch (selLevel)
 		{
-		case EP_VERTEX: 
-			{
-				patch->vertSel = ~patch->vertSel;
-				break;
-			}
-		case EP_EDGE: 
-			{
-				patch->edgeSel = ~patch->edgeSel;
-				break;
-			}
-		case EP_PATCH: 
-			{
-				patch->patchSel = ~patch->patchSel;
-				break;
-			}
-		case EP_TILE: 
-			{
-				rpatch->tileSel = ~rpatch->tileSel;
-				break;
-			}
+		case EP_VERTEX: {
+			patch->vertSel = ~patch->vertSel;
+			break;
+		}
+		case EP_EDGE: {
+			patch->edgeSel = ~patch->edgeSel;
+			break;
+		}
+		case EP_PATCH: {
+			patch->patchSel = ~patch->patchSel;
+			break;
+		}
+		case EP_TILE: {
+			rpatch->tileSel = ~rpatch->tileSel;
+			break;
+		}
 		}
 		UnselectHiddenPatches(selLevel, patch);
 		patchData->UpdateChanges(patch, rpatch, FALSE);
@@ -849,8 +819,8 @@ void EditPatchMod::InvertSelection(int selLevel)
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void EditPatchMod::ActivateSubobjSel(int level, XFormModes& modes)
-{	
+void EditPatchMod::ActivateSubobjSel(int level, XFormModes &modes)
+{
 	ModContextList mcList;
 	INodeTab nodes;
 	int old = selLevel;
@@ -877,7 +847,6 @@ void EditPatchMod::ActivateSubobjSel(int level, XFormModes& modes)
 				SendMessage(hWnd, WM_LBUTTONUP, 0, 0);
 				ReleaseISpinner(spin);
 			}
-			
 		}
 		if (inExtrude)
 		{
@@ -890,35 +859,34 @@ void EditPatchMod::ActivateSubobjSel(int level, XFormModes& modes)
 				ReleaseISpinner(spin);
 			}
 		}
-	}	
+	}
 	if (level != EP_VERTEX)
 	{
 		if (ip->GetCommandMode() == bindMode)
 			ip->SetStdCommandMode(CID_OBJMOVE);
 	}
 
-
 	switch (level)
 	{
 	case EP_OBJECT:
 		// Not imp.
 		break;
-		
+
 	case EP_PATCH:
 		modes = XFormModes(moveMode, rotMode, nuscaleMode, uscaleMode, squashMode, selectMode);
 		break;
-		
+
 	case EP_EDGE:
 		modes = XFormModes(moveMode, rotMode, nuscaleMode, uscaleMode, squashMode, selectMode);
 		break;
-		
+
 	case EP_VERTEX:
-		
+
 		modes = XFormModes(moveMode, rotMode, nuscaleMode, uscaleMode, squashMode, selectMode);
 		break;
-		
+
 	case EP_TILE:
-		
+
 		modes = XFormModes(NULL, NULL, NULL, NULL, NULL, selectMode);
 		break;
 	}
@@ -926,16 +894,16 @@ void EditPatchMod::ActivateSubobjSel(int level, XFormModes& modes)
 	if (selLevel != old)
 	{
 		SetSubobjectLevel(level);
-		
+
 		// Modify the caches to reflect the new sel level.
 		for (int i = 0; i < mcList.Count(); i++)
 		{
-			EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+			EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 			if (!patchData)
-				continue;		
-			
+				continue;
+
 			if (patchData->tempData && patchData->TempData(this)->PatchCached(ip->GetTime()))
-			{		
+			{
 				RPatchMesh *rpatch;
 				PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
 				if (patch)
@@ -948,11 +916,11 @@ void EditPatchMod::ActivateSubobjSel(int level, XFormModes& modes)
 						patch->SetDispFlag(DISP_LATTICE);
 					patch->SetDispFlag(patchLevelDispFlags[selLevel]);
 					patch->selLevel = patchLevel[selLevel];
-					rpatch->SetSelLevel (selLevel);
+					rpatch->SetSelLevel(selLevel);
 				}
 			}
-		}		
-		
+		}
+
 		NotifyDependents(FOREVER, PART_SUBSEL_TYPE | PART_DISPLAY, REFMSG_CHANGE);
 		ip->PipeSelLevelChanged();
 		// Update selection UI display, named sel
@@ -964,38 +932,38 @@ void EditPatchMod::ActivateSubobjSel(int level, XFormModes& modes)
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void EditPatchMod::ChangeSelPatches(int type) 
+void EditPatchMod::ChangeSelPatches(int type)
 {
-	ModContextList mcList;		
+	ModContextList mcList;
 	INodeTab nodes;
 	TimeValue t = ip->GetTime();
 	BOOL holdNeeded = FALSE;
 	BOOL hadSelected = FALSE;
-	
+
 	if (!ip)
 		return;
-	
+
 	ip->GetModContexts(mcList, nodes);
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
-	
+
 	theHold.Begin();
 	for (int i = 0; i < mcList.Count(); i++)
 	{
 		BOOL altered = FALSE;
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
 			continue;
-		
+
 		// If the mesh isn't yet cache, this will cause it to get cached.
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(t, rpatch);
 		if (!patch)
-			continue;		
+			continue;
 		// If this is the first edit, then the delta arrays will be allocated
 		patchData->BeginEdit(t);
-		
+
 		// If any bits are set in the selection set, let's DO IT!!
 		if (patch->patchSel.NumberSet())
 		{
@@ -1009,15 +977,15 @@ void EditPatchMod::ChangeSelPatches(int type)
 		}
 		patchData->SetFlag(EPD_BEENDONE, TRUE);
 	}
-	
+
 	if (holdNeeded)
 		theHold.Accept(GetString(IDS_TH_PATCHCHANGE));
-	else 
+	else
 	{
 		ip->DisplayTempPrompt(GetString(IDS_TH_NOPATCHESSEL), PROMPT_TIME);
 		theHold.End();
 	}
-	
+
 	nodes.DisposeTemporary();
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 	NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
@@ -1026,7 +994,7 @@ void EditPatchMod::ChangeSelPatches(int type)
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void EditPatchMod::SetRememberedPatchType(int type) 
+void EditPatchMod::SetRememberedPatchType(int type)
 {
 	if (rememberedPatch)
 		ChangeRememberedPatch(type);
@@ -1036,39 +1004,39 @@ void EditPatchMod::SetRememberedPatchType(int type)
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void EditPatchMod::ChangeSelVerts(int type) 
+void EditPatchMod::ChangeSelVerts(int type)
 {
-	ModContextList mcList;		
+	ModContextList mcList;
 	INodeTab nodes;
 	TimeValue t = ip->GetTime();
 	BOOL holdNeeded = FALSE;
 	BOOL hadSelected = FALSE;
-	
+
 	if (!ip)
 		return;
-	
+
 	ip->GetModContexts(mcList, nodes);
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
-	
+
 	theHold.Begin();
 	for (int i = 0; i < mcList.Count(); i++)
 	{
 		BOOL altered = FALSE;
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
 			continue;
-		
+
 		// If the mesh isn't yet cache, this will cause it to get cached.
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(t, rpatch);
 		if (!patch)
 			continue;
-		
+
 		// If this is the first edit, then the delta arrays will be allocated
 		patchData->BeginEdit(t);
-		
+
 		// If any bits are set in the selection set, let's DO IT!!
 		if (patch->vertSel.NumberSet())
 		{
@@ -1082,15 +1050,15 @@ void EditPatchMod::ChangeSelVerts(int type)
 		}
 		patchData->SetFlag(EPD_BEENDONE, TRUE);
 	}
-	
+
 	if (holdNeeded)
 		theHold.Accept(GetString(IDS_TH_VERTCHANGE));
-	else 
+	else
 	{
 		ip->DisplayTempPrompt(GetString(IDS_TH_NOVERTSSEL), PROMPT_TIME);
 		theHold.End();
 	}
-	
+
 	nodes.DisposeTemporary();
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 	NotifyDependents(FOREVER, PART_TOPO, REFMSG_CHANGE);
@@ -1116,16 +1084,16 @@ void EditPatchMod::ActivateSubSelSet(TSTR &setName)
 	INodeTab nodes;
 	int index = FindSet(setName, selLevel);
 	if (index < 0 || !ip)
-		return;	
-	
+		return;
+
 	ip->GetModContexts(mcList, nodes);
-	
+
 	theHold.Begin();
 	for (int i = 0; i < mcList.Count(); i++)
 	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
-			continue;		
+			continue;
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
 		if (!patch)
@@ -1138,18 +1106,18 @@ void EditPatchMod::ActivateSubSelSet(TSTR &setName)
 		{
 			if (theHold.Holding())
 				theHold.Put(new PatchSelRestore(patchData, this, patch));
-			BitArray *psel = GetLevelSelectionSet(patch, rpatch);	// Get the appropriate selection set
-			AssignSetMatchSize(*psel, *set);				
+			BitArray *psel = GetLevelSelectionSet(patch, rpatch); // Get the appropriate selection set
+			AssignSetMatchSize(*psel, *set);
 			PatchSelChanged();
 		}
-		
+
 		patchData->UpdateChanges(patch, rpatch, FALSE);
 		if (patchData->tempData)
 			patchData->TempData(this)->Invalidate(PART_SELECT);
 	}
-	
+
 	theHold.Accept(GetString(IDS_DS_SELECT));
-	nodes.DisposeTemporary();	
+	nodes.DisposeTemporary();
 	NotifyDependents(FOREVER, PART_SELECT, REFMSG_CHANGE);
 	ip->RedrawViews(ip->GetTime());
 }
@@ -1159,62 +1127,65 @@ void EditPatchMod::ActivateSubSelSet(TSTR &setName)
 void EditPatchMod::NewSetFromCurSel(TSTR &setName)
 {
 	MaybeFixupNamedSels();
-	
+
 	ModContextList mcList;
-	INodeTab nodes;	
+	INodeTab nodes;
 	if (!ip)
 		return;
-	
+
 	ip->GetModContexts(mcList, nodes);
-	
+
 	for (int i = 0; i < mcList.Count(); i++)
 	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
-			continue;		
+			continue;
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
 		if (!patch)
 			continue;
 		GenericNamedSelSetList &sel = patchData->GetSelSet(this);
-		BitArray *exist = sel.GetSet(setName);	
+		BitArray *exist = sel.GetSet(setName);
 		switch (selLevel)
 		{
-		case EP_VERTEX:	
+		case EP_VERTEX:
 			if (exist)
 			{
 				*exist = patch->vertSel;
-			} else 
+			}
+			else
 			{
 				patchData->vselSet.AppendSet(patch->vertSel, 0, setName);
 			}
 			break;
-			
+
 		case EP_PATCH:
 			if (exist)
 			{
 				*exist = patch->patchSel;
-			} else 
+			}
+			else
 			{
 				patchData->pselSet.AppendSet(patch->patchSel, 0, setName);
 			}
 			break;
-			
+
 		case EP_EDGE:
 			if (exist)
 			{
 				*exist = patch->edgeSel;
-			} else 
+			}
+			else
 			{
 				patchData->eselSet.AppendSet(patch->edgeSel, 0, setName);
 			}
 			break;
 		}
-	}	
-	
+	}
+
 	int index = FindSet(setName, selLevel);
 	if (index < 0)
-		AddSet(setName, selLevel);		
+		AddSet(setName, selLevel);
 	nodes.DisposeTemporary();
 }
 
@@ -1223,20 +1194,20 @@ void EditPatchMod::NewSetFromCurSel(TSTR &setName)
 void EditPatchMod::RemoveSubSelSet(TSTR &setName)
 {
 	MaybeFixupNamedSels();
-	
+
 	ModContextList mcList;
 	INodeTab nodes;
-	
+
 	if (!ip)
-		return;	
-	
+		return;
+
 	ip->GetModContexts(mcList, nodes);
-	
+
 	for (int i = 0; i < mcList.Count(); i++)
 	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
-			continue;		
+			continue;
 		patchData->BeginEdit(ip->GetTime());
 		GenericNamedSelSetList &sel = patchData->GetSelSet(this);
 		sel.RemoveSet(setName);

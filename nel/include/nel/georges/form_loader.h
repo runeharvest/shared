@@ -24,9 +24,7 @@
 #include "nel/misc/smart_ptr.h"
 #include "nel/georges/u_form_loader.h"
 
-
-namespace NLGEORGES
-{
+namespace NLGEORGES {
 
 class UForm;
 class CType;
@@ -45,36 +43,33 @@ class CFormLoader : public UFormLoader
 public:
 	virtual ~CFormLoader();
 	// From UFormLoader
-	UForm		*loadForm (const std::string &filename);
-	UFormDfn	*loadFormDfn (const std::string &filename);
-	UType		*loadFormType (const std::string &filename);
+	UForm *loadForm(const std::string &filename);
+	UFormDfn *loadFormDfn(const std::string &filename);
+	UType *loadFormType(const std::string &filename);
 
 	// Load type and formDfn
-	CType		*loadType (const std::string &filename);
-	CFormDfn	*loadFormDfn (const std::string &filename, bool forceLoad);
+	CType *loadType(const std::string &filename);
+	CFormDfn *loadFormDfn(const std::string &filename, bool forceLoad);
 
 private:
-
 	// Error handling
-	virtual void		warning (bool exception, const std::string &function, const char *format, ... ) const;
+	virtual void warning(bool exception, const std::string &function, const char *format, ...) const;
 
-	typedef std::map<std::string, NLMISC::CRefPtr<CType> >		TTypeMap;
-	typedef std::map<std::string, NLMISC::CRefPtr<CFormDfn> >	TFormDfnMap;
-	typedef std::map<std::string, NLMISC::CRefPtr<CForm> >		TFormMap;
+	typedef std::map<std::string, NLMISC::CRefPtr<CType>> TTypeMap;
+	typedef std::map<std::string, NLMISC::CRefPtr<CFormDfn>> TFormDfnMap;
+	typedef std::map<std::string, NLMISC::CRefPtr<CForm>> TFormMap;
 
 	// Map of filename / CRefPtr<CType>
-	TTypeMap		_MapType;
+	TTypeMap _MapType;
 
 	// Map of filename / CRefPtr<CFormDfnCFormDfn>
-	TFormDfnMap		_MapFormDfn;
+	TFormDfnMap _MapFormDfn;
 
 	// Map of form / CRefPtr<CForm>
-	TFormMap		_MapForm;
+	TFormMap _MapForm;
 };
 
-
 } // NLGEORGES
-
 
 #endif // NL_FORM_LOADER_H
 

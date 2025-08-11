@@ -27,10 +27,10 @@
 #include "nel/net/callback_server.h"
 
 #ifdef NL_OS_WINDOWS
-#	ifndef NL_COMP_MINGW
-#		define NOMINMAX
-#	endif
-#	include <windows.h>
+#ifndef NL_COMP_MINGW
+#define NOMINMAX
+#endif
+#include <windows.h>
 #endif // NL_OS_WINDOWS
 
 using namespace std;
@@ -38,7 +38,7 @@ using namespace NLMISC;
 using namespace NLNET;
 
 #ifndef CHAT_DIR
-#	define CHAT_DIR ""
+#define CHAT_DIR ""
 #endif
 
 // THE SERVER
@@ -50,26 +50,26 @@ vector<TSockId> Clients;
 // MESSAGES
 
 // ***************************************************************************
-void clientWantsToConnect ( TSockId from, void *arg )
+void clientWantsToConnect(TSockId from, void *arg)
 {
 	// Called when a client wants to connect
-	Clients.push_back (from);
+	Clients.push_back(from);
 }
 
 // ***************************************************************************
-void clientWantsToDisconnect ( TSockId from, void *arg )
+void clientWantsToDisconnect(TSockId from, void *arg)
 {
 	// Called when a client wants to disconnect
 	for (uint i = 0; i < Clients.size(); ++i)
 		if (Clients[i] == from)
 		{
-			Clients.erase(Clients.begin()+i);
+			Clients.erase(Clients.begin() + i);
 			return;
 		}
 }
 
 // ***************************************************************************
-void clientSentChat (CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
+void clientSentChat(CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
 {
 	// Called when a client sent a CHAT message
 	string text;
@@ -84,8 +84,7 @@ void clientSentChat (CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
 // ***************************************************************************
 // All messages handled by this server
 #define NB_CB 1
-TCallbackItem CallbackArray[NB_CB] =
-{
+TCallbackItem CallbackArray[NB_CB] = {
 	{ "CHAT", clientSentChat }
 };
 
@@ -95,18 +94,17 @@ TCallbackItem CallbackArray[NB_CB] =
 class CChatService : public IService
 {
 public:
-
-	void init ()
+	void init()
 	{
 		// Init the server on port 3333
 		Server = new CCallbackServer();
-		Server->init (3333);
-		Server->setConnectionCallback (clientWantsToConnect, NULL);
-		Server->setDisconnectionCallback (clientWantsToDisconnect, NULL);
-		Server->addCallbackArray (CallbackArray, NB_CB);
+		Server->init(3333);
+		Server->setConnectionCallback(clientWantsToConnect, NULL);
+		Server->setDisconnectionCallback(clientWantsToDisconnect, NULL);
+		Server->addCallbackArray(CallbackArray, NB_CB);
 	}
 
-	bool update ()
+	bool update()
 	{
 		// this function is called every "loop". you return true if you want
 		// to continue or return false if you want to exit the service.
@@ -117,7 +115,7 @@ public:
 		return true;
 	}
 
-	void release ()
+	void release()
 	{
 		// Must delete the server here
 		delete Server;
@@ -128,4 +126,4 @@ public:
 // the second one is the name of the service used to register and find the service
 // using the naming service. the third one is the port where the listen socket will
 // be created. If you put 0, the system automatically finds a port.
-NLNET_SERVICE_MAIN (CChatService, "CS", "chat_service", 0, EmptyCallbackArray, CHAT_DIR, "");
+NLNET_SERVICE_MAIN(CChatService, "CS", "chat_service", 0, EmptyCallbackArray, CHAT_DIR, "");

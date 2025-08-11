@@ -22,20 +22,18 @@
 #include "nel/misc/vector.h"
 #include "nel/3d/matrix_3x4.h"
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 /**
  * Vertex for CShadowSkin
  */
-class		CShadowVertex
+class CShadowVertex
 {
 public:
-	NLMISC::CVector		Vertex;
-	uint32				MatrixId;
-	void				serial(NLMISC::IStream &f)
+	NLMISC::CVector Vertex;
+	uint32 MatrixId;
+	void serial(NLMISC::IStream &f)
 	{
 		(void)f.serialVersion(0);
 
@@ -44,19 +42,18 @@ public:
 	}
 
 	// operator for sort
-	bool		operator==(const CShadowVertex &v) const
+	bool operator==(const CShadowVertex &v) const
 	{
-		return MatrixId==v.MatrixId && Vertex==v.Vertex;
+		return MatrixId == v.MatrixId && Vertex == v.Vertex;
 	}
-	bool		operator<(const CShadowVertex &v) const
+	bool operator<(const CShadowVertex &v) const
 	{
-		if(MatrixId!=v.MatrixId)
-			return MatrixId<v.MatrixId;
+		if (MatrixId != v.MatrixId)
+			return MatrixId < v.MatrixId;
 		else
-			return Vertex<v.Vertex;
+			return Vertex < v.Vertex;
 	}
 };
-
 
 // ***************************************************************************
 /**
@@ -68,31 +65,27 @@ public:
 class CShadowSkin
 {
 public:
-	std::vector<CShadowVertex>		Vertices;
-	std::vector<uint32>				Triangles;
+	std::vector<CShadowVertex> Vertices;
+	std::vector<uint32> Triangles;
 
 public:
-
 	// skinning
-	void		applySkin(NLMISC::CVector *dst, std::vector<CMatrix3x4> &boneMat3x4);
+	void applySkin(NLMISC::CVector *dst, std::vector<CMatrix3x4> &boneMat3x4);
 
 	/** return ray intersection.
- 	 *	\return false if no triangles, true if can do the test (even if don't intersect!)
+	 *	\return false if no triangles, true if can do the test (even if don't intersect!)
 	 *	if intersect, dist2D=0, and distZ= Depth Distance
 	 *	if don't intersect, dist2D="nearest distance to the ray", and distZ=0
 	 *	\param computeDist2D if false and don't intersect, then return dist2D=FLT_MAX, and distZ=0
 	 */
-	bool		getRayIntersection(const NLMISC::CMatrix &toRaySpace, class CSkeletonModel &skeleton,
-		const std::vector<uint32> &matrixInfluences, float &dist2D, float &distZ, bool computeDist2D);
+	bool getRayIntersection(const NLMISC::CMatrix &toRaySpace, class CSkeletonModel &skeleton,
+	    const std::vector<uint32> &matrixInfluences, float &dist2D, float &distZ, bool computeDist2D);
 
 private:
-	static  uint	NumCacheVertexShadow;
-
+	static uint NumCacheVertexShadow;
 };
 
-
 } // NL3D
-
 
 #endif // NL_SHADOW_SKIN_H
 

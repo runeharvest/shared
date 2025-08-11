@@ -14,11 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_STAT_DB_TREE_VISITOR_H
 #define RY_STAT_DB_TREE_VISITOR_H
-
 
 class CStatDBBranch;
 class CStatDBValueLeaf;
@@ -34,13 +31,12 @@ class CStatDBTableLeaf;
 class CStatDBNodeVisitor
 {
 public:
-	virtual void visitBranch(CStatDBBranch * /* branch */, const std::string & /* path */) {}
-	virtual void visitValueLeaf(CStatDBValueLeaf * /* valueLeaf */, const std::string & /* path */) {}
-	virtual void visitTableLeaf(CStatDBTableLeaf * /* tableLeaf */, const std::string & /* path */) {}
+	virtual void visitBranch(CStatDBBranch * /* branch */, const std::string & /* path */) { }
+	virtual void visitValueLeaf(CStatDBValueLeaf * /* valueLeaf */, const std::string & /* path */) { }
+	virtual void visitTableLeaf(CStatDBTableLeaf * /* tableLeaf */, const std::string & /* path */) { }
 
 protected:
-	CStatDBNodeVisitor() {}
+	CStatDBNodeVisitor() { }
 };
-
 
 #endif // RY_STAT_DB_TREE_VISITOR_H

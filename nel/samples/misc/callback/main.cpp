@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 {
 	CTestClass tc;
 	tc.x = 42;
-	
+
 	TCallbackType cbMethod = TCallbackType(&tc, &CTestClass::helloWorld);
 	TCallbackType cbFunction = TCallbackType(functionCall);
 	cbMethod(100);

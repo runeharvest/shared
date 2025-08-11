@@ -21,10 +21,10 @@
 #define STDLIGO_H
 
 #if defined(_MSC_VER) && defined(_DEBUG)
-	#define _CRTDBG_MAP_ALLOC
-	#include <stdlib.h>
-	#include <crtdbg.h>
-	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
 #include <algorithm>
@@ -74,10 +74,10 @@
 #include "nel/misc/file.h"
 
 #ifdef NL_OS_WINDOWS
-	#ifndef NL_COMP_MINGW
-		#define NOMINMAX
-	#endif
-	#include <windows.h>
+#ifndef NL_COMP_MINGW
+#define NOMINMAX
+#endif
+#include <windows.h>
 #endif
 
 #endif

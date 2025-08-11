@@ -46,7 +46,7 @@ using namespace std;
 using namespace NLMISC;
 using namespace NL3D;
 using namespace NLGEORGES;
-//using namespace NLLIGO;
+// using namespace NLLIGO;
 
 namespace /* anonymous */
 {
@@ -92,60 +92,59 @@ struct CPoint
 	std::string Form; /* (FY_S2_savantree_B) */
 	std::string Name; /* Generated unique name (ilot_008_savantree 13) */
 	float Radius; /* Bounding radius (calculated from plant sheet and scale) (0.450252) */
-
 };
 
 /*
 <CHILD TYPE="CPrimPoint">
-	<PT X="26060.041016" Y="-1033.684692" Z="0.000000"/>
-	<ANGLE VALUE="4.806300"/>
-	<PROPERTY TYPE="string">
-		<NAME>class</NAME>
-		<STRING>prim</STRING>
-	</PROPERTY>
-	<PROPERTY TYPE="string">
-		<NAME>form</NAME>
-		<STRING>FY_S2_savantree_B</STRING>
-	</PROPERTY>
-	<PROPERTY TYPE="string">
-		<NAME>layer</NAME>
-		<STRING>0</STRING>
-	</PROPERTY>
-	<PROPERTY TYPE="string">
-		<NAME>name</NAME>
-		<STRING>ilot_008_savantree 15</STRING>
-	</PROPERTY>
-	<PROPERTY TYPE="string">
-		<NAME>radius</NAME>
-		<STRING>0.784730</STRING>
-	</PROPERTY>
-	<PROPERTY TYPE="string">
-		<NAME>scale</NAME>
-		<STRING>1.121043</STRING>
-	</PROPERTY>
+    <PT X="26060.041016" Y="-1033.684692" Z="0.000000"/>
+    <ANGLE VALUE="4.806300"/>
+    <PROPERTY TYPE="string">
+        <NAME>class</NAME>
+        <STRING>prim</STRING>
+    </PROPERTY>
+    <PROPERTY TYPE="string">
+        <NAME>form</NAME>
+        <STRING>FY_S2_savantree_B</STRING>
+    </PROPERTY>
+    <PROPERTY TYPE="string">
+        <NAME>layer</NAME>
+        <STRING>0</STRING>
+    </PROPERTY>
+    <PROPERTY TYPE="string">
+        <NAME>name</NAME>
+        <STRING>ilot_008_savantree 15</STRING>
+    </PROPERTY>
+    <PROPERTY TYPE="string">
+        <NAME>radius</NAME>
+        <STRING>0.784730</STRING>
+    </PROPERTY>
+    <PROPERTY TYPE="string">
+        <NAME>scale</NAME>
+        <STRING>1.121043</STRING>
+    </PROPERTY>
 </CHILD>
 */
 
 /*
 * <?xml version="1.0"?>
 <PRIMITIVES VERSION="1">
-	<ROOT_PRIMITIVE TYPE="CPrimNode">
-		<ALIAS LAST_GENERATED="0"/>
-		<CHILD TYPE="CPrimNode">
-			<PROPERTY TYPE="string">
-				<NAME>class</NAME>
-				<STRING>flora</STRING>
-			</PROPERTY>
-			<PROPERTY TYPE="string">
-				<NAME>name</NAME>
-				<STRING>R2 flora 1</STRING>
-			</PROPERTY>
-			<CHILD ... />
-			<CHILD ... />
-			<CHILD ... />
-			...
-		</CHILD>
-	</ROOT_PRIMITIVE>
+    <ROOT_PRIMITIVE TYPE="CPrimNode">
+        <ALIAS LAST_GENERATED="0"/>
+        <CHILD TYPE="CPrimNode">
+            <PROPERTY TYPE="string">
+                <NAME>class</NAME>
+                <STRING>flora</STRING>
+            </PROPERTY>
+            <PROPERTY TYPE="string">
+                <NAME>name</NAME>
+                <STRING>R2 flora 1</STRING>
+            </PROPERTY>
+            <CHILD ... />
+            <CHILD ... />
+            <CHILD ... />
+            ...
+        </CHILD>
+    </ROOT_PRIMITIVE>
 </PRIMITIVES>
 */
 
@@ -167,7 +166,15 @@ std::list<CPoint> s_Instances;
 bool loadLeveldesign()
 {
 	UFormLoader *formLoader = UFormLoader::createLoader();
-	struct CRel0 { CRel0(UFormLoader *v) : m(v) {} ~CRel0() { UFormLoader::releaseLoader(m); } UFormLoader *m; } rel0(formLoader);
+	struct CRel0
+	{
+		CRel0(UFormLoader *v)
+		    : m(v)
+		{
+		}
+		~CRel0() { UFormLoader::releaseLoader(m); }
+		UFormLoader *m;
+	} rel0(formLoader);
 
 	std::vector<std::string> plants;
 	CPath::getFileList("plant", plants);
@@ -175,7 +182,7 @@ bool loadLeveldesign()
 	for (std::vector<std::string>::iterator it(plants.begin()), end(plants.end()); it != end; ++it)
 	{
 		printf("%s\n", nlUtf8ToMbcs(*it));
-		CSmartPtr <UForm> form = formLoader->loadForm(*it);
+		CSmartPtr<UForm> form = formLoader->loadForm(*it);
 		if (!form)
 			continue;
 		CPlant plant;
@@ -240,7 +247,7 @@ bool loadInstances()
 				instance.Form = formIt->second.Form;
 				instance.Name = CFile::getFilenameWithoutExtension(instance.Form) + nlstr("_") + zoneLwr + nlstr("_") + toString(i);
 				instance.Radius = instance.Scale * formIt->second.Radius;
-				printf(" = %f, %f, %f, %f, %f, '%s', '%s', %f\n",  instance.Pos.x, instance.Pos.y, instance.Pos.z, instance.Angle, instance.Scale, nlUtf8ToMbcs(instance.Form), nlUtf8ToMbcs(instance.Name), instance.Radius);
+				printf(" = %f, %f, %f, %f, %f, '%s', '%s', %f\n", instance.Pos.x, instance.Pos.y, instance.Pos.z, instance.Angle, instance.Scale, nlUtf8ToMbcs(instance.Form), nlUtf8ToMbcs(instance.Name), instance.Radius);
 				instance.Plant = true;
 			}
 			else
@@ -289,8 +296,8 @@ bool eraseReference()
 			{
 				const CPoint &instance = *it;
 				if (instance.Pos.x == info.Pos.x
-					&& instance.Pos.y == info.Pos.y
-					&& instance.Shape == shape)
+				    && instance.Pos.y == info.Pos.y
+				    && instance.Shape == shape)
 				{
 					printf(" = Found and erased\n");
 					s_Instances.erase(it);
@@ -394,10 +401,10 @@ bool unbuildFlora()
 	CPath::addSearchPath(s_LeveldesignDir, true, false);
 
 	return loadLeveldesign()
-		&& loadInstances()
-		&& eraseReference()
-		&& eraseNonPlants()
-		&& writeFlora();
+	    && loadInstances()
+	    && eraseReference()
+	    && eraseNonPlants()
+	    && writeFlora();
 }
 
 bool unbuildFlora(NLMISC::CCmdArgs &args)

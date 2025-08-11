@@ -27,8 +27,7 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NLGUI
-{
+namespace NLGUI {
 
 void CSSBackground::setImage(const std::string &value)
 {
@@ -43,22 +42,22 @@ void CSSBackground::setPosition(const std::string &value)
 	if (parts.empty() || parts.size() > 4)
 		return;
 
-	switch(parts.size())
+	switch (parts.size())
 	{
-		case 1:
-			positionFromOne(parts);
-			break;
-		case 2:
-			positionFromTwo(parts);
-			break;
-		case 3:
-			positionFromThree(parts);
-			break;
-		case 4:
-			positionFromFour(parts);
-			break;
-		default:
-			return;
+	case 1:
+		positionFromOne(parts);
+		break;
+	case 2:
+		positionFromTwo(parts);
+		break;
+	case 3:
+		positionFromThree(parts);
+		break;
+	case 4:
+		positionFromFour(parts);
+		break;
+	default:
+		return;
 	}
 }
 
@@ -145,10 +144,9 @@ void CSSBackground::setRepeat(const std::string &value)
 			parts.push_back("no-repeat");
 		else if (parts[0] == "repeat-y")
 			parts.insert(parts.begin(), "no-repeat");
-		else //repeat, space, round, no-repeat
+		else // repeat, space, round, no-repeat
 			parts.push_back(parts[0]);
 	}
-
 
 	if (parts[0] == "repeat") repeatX = CSS_VALUE_REPEAT;
 	else if (parts[0] == "no-repeat") repeatX = CSS_VALUE_NOREPEAT;
@@ -176,7 +174,7 @@ void CSSBackground::setClip(const std::string &value)
 	if (value == "border-box") clip = CSS_VALUE_BORDER_BOX;
 	else if (value == "padding-box") clip = CSS_VALUE_PADDING_BOX;
 	else if (value == "content-box") clip = CSS_VALUE_CONTENT_BOX;
-	//else if (value == "text") clip = CSSValueType::Text;
+	// else if (value == "text") clip = CSSValueType::Text;
 	else clip = CSS_VALUE_PADDING_BOX;
 }
 
@@ -327,7 +325,7 @@ void CSSBackground::positionFromThree(const std::vector<std::string> &parts)
 	bool hasCenter = false;
 	bool hasX = false;
 	bool hasY = false;
-	for(uint index = 0; index < 3; index++)
+	for (uint index = 0; index < 3; index++)
 	{
 		if (parts[index] == "center")
 		{
@@ -339,7 +337,7 @@ void CSSBackground::positionFromThree(const std::vector<std::string> &parts)
 			if (hasX) return;
 			hasX = true;
 			newH = parts[index] == "left" ? CSS_VALUE_LEFT : CSS_VALUE_RIGHT;
-			if ((index+1) < parts.size() && getCssLength(fval, unit, parts[index+1], true))
+			if ((index + 1) < parts.size() && getCssLength(fval, unit, parts[index + 1], true))
 			{
 				newX.setFloatValue(fval, unit);
 				index++;
@@ -350,7 +348,7 @@ void CSSBackground::positionFromThree(const std::vector<std::string> &parts)
 			if (hasY) return;
 			hasY = true;
 			newV = parts[index] == "top" ? CSS_VALUE_TOP : CSS_VALUE_BOTTOM;
-			if ((index+1) < parts.size() && getCssLength(fval, unit, parts[index+1], true))
+			if ((index + 1) < parts.size() && getCssLength(fval, unit, parts[index + 1], true))
 			{
 				newY.setFloatValue(fval, unit);
 				index++;
@@ -390,7 +388,7 @@ void CSSBackground::positionFromFour(const std::vector<std::string> &parts)
 	std::string unit;
 	bool hasX = false;
 	bool hasY = false;
-	for(uint index = 0; index<4; index+=2)
+	for (uint index = 0; index < 4; index += 2)
 	{
 		if (parts[index] == "center")
 			return;
@@ -399,7 +397,7 @@ void CSSBackground::positionFromFour(const std::vector<std::string> &parts)
 		{
 			if (hasX) return;
 			hasX = true;
-			if (!getCssLength(fval, unit, parts[index+1], true)) return;
+			if (!getCssLength(fval, unit, parts[index + 1], true)) return;
 			newH = parts[index] == "left" ? CSS_VALUE_LEFT : CSS_VALUE_RIGHT;
 			newX.setFloatValue(fval, unit);
 		}
@@ -407,7 +405,7 @@ void CSSBackground::positionFromFour(const std::vector<std::string> &parts)
 		{
 			if (hasY) return;
 			hasY = true;
-			if (!getCssLength(fval, unit, parts[index+1], true)) return;
+			if (!getCssLength(fval, unit, parts[index + 1], true)) return;
 			newV = parts[index] == "top" ? CSS_VALUE_TOP : CSS_VALUE_BOTTOM;
 			newY.setFloatValue(fval, unit);
 		}
@@ -424,4 +422,3 @@ void CSSBackground::positionFromFour(const std::vector<std::string> &parts)
 }
 
 } // namespace
-

@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef R2_SERVER_ADMIN_MODULE_H
 #define R2_SERVER_ADMIN_MODULE_H
 
@@ -31,8 +30,7 @@
 
 #include <string>
 
-namespace R2
-{
+namespace R2 {
 class CDynamicMapService;
 class CPionieer;
 class CAdventure;
@@ -47,39 +45,34 @@ class CAdminMessageAdventureUserConnection;
 class CEditionMessageAdventureUserConnection;
 
 /** Management of Adventure.
-*
-* Management of features as package upload features needed by users. Features that are the same for two adventures are only store once.
-* Enable search upon adventures. (Database)
-* Manage right upon users (a users of level X that pays Y is allowed to use sheet A, B, C and put N elements).
-* Code to allow / refuse map creation, map edition, go Live ....
-* Store path of rt-data and et-data.
-* Store the xp policy (see David docs)
-* FAKE DB (Session Manager)
-* There is only one Admin Module but multiple Edition/Animation modules
-*/
-class CServerAdminModule :
-public IServerAdminModule,
-public NLNET::CEmptyModuleServiceBehav<NLNET::CEmptyModuleCommBehav<NLNET::CEmptySocketBehav <NLNET::CModuleBase> > >
+ *
+ * Management of features as package upload features needed by users. Features that are the same for two adventures are only store once.
+ * Enable search upon adventures. (Database)
+ * Manage right upon users (a users of level X that pays Y is allowed to use sheet A, B, C and put N elements).
+ * Code to allow / refuse map creation, map edition, go Live ....
+ * Store path of rt-data and et-data.
+ * Store the xp policy (see David docs)
+ * FAKE DB (Session Manager)
+ * There is only one Admin Module but multiple Edition/Animation modules
+ */
+class CServerAdminModule : public IServerAdminModule,
+                           public NLNET::CEmptyModuleServiceBehav<NLNET::CEmptyModuleCommBehav<NLNET::CEmptySocketBehav<NLNET::CModuleBase>>>
 {
 public:
-
 	// Simulation of Database Tables
 	// :XXX: To remove when DB is Ok
 
-
 public:
-
 	/*! Initialize the module
 	* plug the module to the gw
 	* \param gateway the module use by the module to communicate.
 
 	*/
-	void init(NLNET::IModuleSocket* gateway, CDynamicMapService* server);
+	void init(NLNET::IModuleSocket *gateway, CDynamicMapService *server);
 
 	CServerAdminModule();
 
 	~CServerAdminModule();
-
 
 	virtual void onModuleUp(NLNET::IModuleProxy *moduleProxy);
 
@@ -89,37 +82,30 @@ public:
 
 	virtual void onModuleSecurityChange(NLNET::IModuleProxy *moduleProxy);
 
-	bool getPosition(TSessionId sessionId, double&x, double&y, double& orient, uint8& season, uint32 locationIndex = 0);
+	bool getPosition(TSessionId sessionId, double &x, double &y, double &orient, uint8 &season, uint32 locationIndex = 0);
 
 	TSessionId getSessionIdByCharId(uint32 charId) const;
 
-
 	virtual bool isImmediateDispatchingSupported() const { return false; }
-	static CServerAdminModule& getInstance() ;
-
+	static CServerAdminModule &getInstance();
 
 	NLMISC_COMMAND_HANDLER_TABLE_EXTEND_BEGIN(CServerAdminModule, CModuleBase)
-		NLMISC_COMMAND_HANDLER_ADD(CServerAdminModule, displayIslands, "display islands", "no args")
+	NLMISC_COMMAND_HANDLER_ADD(CServerAdminModule, displayIslands, "display islands", "no args")
 	NLMISC_COMMAND_HANDLER_TABLE_END
 
 	/// Dump to stdout location infos
 	NLMISC_CLASS_COMMAND_DECL(displayIslands);
 
 private:
-
-
 private:
-	CDynamicMapService* _Server;
+	CDynamicMapService *_Server;
 
+	static CServerAdminModule *_Instance;
 
-	static CServerAdminModule* _Instance;
-
-	//:XXX: One Admin server but multiple Animation / Edition Modules???
-	NLNET::TModuleProxyPtr	_ServerAnimationProxy;
-	NLNET::TModuleProxyPtr	_ServerEditionProxy;
-
+	//: XXX: One Admin server but multiple Animation / Edition Modules???
+	NLNET::TModuleProxyPtr _ServerAnimationProxy;
+	NLNET::TModuleProxyPtr _ServerEditionProxy;
 };
 
 } // namespace DMS
-#endif //R2_SERVER_ADMIN_MODULE_H
-
+#endif // R2_SERVER_ADMIN_MODULE_H

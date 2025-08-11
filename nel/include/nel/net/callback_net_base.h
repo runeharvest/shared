@@ -34,7 +34,6 @@
 #include <functional>
 #include <vector>
 
-
 namespace NLNET {
 
 class CCallbackNetBase;
@@ -46,17 +45,15 @@ class CCallbackNetBase;
  */
 typedef std::function<void(CMessage &msgin, TSockId from, CCallbackNetBase &netbase)> TMsgCallback;
 
-
 /// Callback items. See CMsgSocket::update() for an explanation on how the callbacks are called.
 typedef struct
 {
 	/// Key C string. It is a message type name, or "C" for connection or "D" for disconnection
-	const char		*Key;
+	const char *Key;
 	/// The callback function
-	TMsgCallback	Callback;
+	TMsgCallback Callback;
 
 } TCallbackItem;
-
 
 /**
  * Layer 3
@@ -67,8 +64,7 @@ typedef struct
 class CCallbackNetBase
 {
 public:
-
-	virtual ~CCallbackNetBase() {}
+	virtual ~CCallbackNetBase() { }
 
 	/** Set the user data */
 	void setUserData(void *userData);
@@ -80,18 +76,18 @@ public:
 	 * On a client, the hostid isn't used.
 	 * On a server, you must provide a hostid. If you hostid = InvalidSockId, the message will be sent to all connected client.
 	 */
-	virtual void	send (const CMessage &buffer, TSockId hostid = InvalidSockId, bool log = true) = 0;
+	virtual void send(const CMessage &buffer, TSockId hostid = InvalidSockId, bool log = true) = 0;
 
-	uint64	getBytesSent () { return _BytesSent; }
-	uint64	getBytesReceived () { return _BytesReceived; }
+	uint64 getBytesSent() { return _BytesSent; }
+	uint64 getBytesReceived() { return _BytesReceived; }
 
-	virtual uint64	getReceiveQueueSize () = 0;
-	virtual uint64	getSendQueueSize () = 0;
+	virtual uint64 getReceiveQueueSize() = 0;
+	virtual uint64 getSendQueueSize() = 0;
 
-	virtual void displayReceiveQueueStat (NLMISC::CLog *log = NLMISC::InfoLog) = 0;
-	virtual void displaySendQueueStat (NLMISC::CLog *log = NLMISC::InfoLog, TSockId destid = InvalidSockId) = 0;
+	virtual void displayReceiveQueueStat(NLMISC::CLog *log = NLMISC::InfoLog) = 0;
+	virtual void displaySendQueueStat(NLMISC::CLog *log = NLMISC::InfoLog, TSockId destid = InvalidSockId) = 0;
 
-	virtual void displayThreadStat (NLMISC::CLog *log = NLMISC::InfoLog) = 0;
+	virtual void displayThreadStat(NLMISC::CLog *log = NLMISC::InfoLog) = 0;
 
 	/** Force to send all data pending in the send queue.
 	 * On a client, the hostid isn't used and must be InvalidSockId
@@ -100,122 +96,127 @@ public:
 	 * will the number of bytes that still remain in the sending queue after the
 	 * non-blocking flush attempt.
 	 */
-	virtual bool	flush (TSockId hostid = InvalidSockId, uint *nbBytesRemaining=NULL) = 0;
+	virtual bool flush(TSockId hostid = InvalidSockId, uint *nbBytesRemaining = NULL) = 0;
 
 	/**	Appends callback array with the specified array. You can add callback only *after* adding the server or the client.
 	 * \param arraysize is the number of callback items.
 	 */
-	void	addCallbackArray (const TCallbackItem *callbackarray, sint arraysize);
+	void addCallbackArray(const TCallbackItem *callbackarray, sint arraysize);
 
 	/// Sets default callback for unknown message types
-	void	setDefaultCallback(TMsgCallback defaultCallback) { _DefaultCallback = defaultCallback; }
+	void setDefaultCallback(TMsgCallback defaultCallback) { _DefaultCallback = defaultCallback; }
 
 	/// Set the pre dispatch callback. This callback is called before each message is dispatched
-	void	setPreDispatchCallback(TMsgCallback predispatchCallback) { _PreDispatchCallback = predispatchCallback;}
+	void setPreDispatchCallback(TMsgCallback predispatchCallback) { _PreDispatchCallback = predispatchCallback; }
 
 	/// Sets callback for disconnections (or NULL to disable callback)
-	void	setDisconnectionCallback (TNetCallback cb, void *arg) { _DisconnectionCallback = cb; _DisconnectionCbArg = arg; }
+	void setDisconnectionCallback(TNetCallback cb, void *arg)
+	{
+		_DisconnectionCallback = cb;
+		_DisconnectionCbArg = arg;
+	}
 
 	/// returns the sockid of a connection. On a server, this function returns the parameter. On a client, it returns the connection.
-	virtual TSockId	getSockId (TSockId hostid = InvalidSockId) = 0;
+	virtual TSockId getSockId(TSockId hostid = InvalidSockId) = 0;
 
 	/** Sets the callback that you want the other side calls. If it didn't call this callback, it will be disconnected
 	 * If cb is NULL, we authorize *all* callback.
 	 * On a client, the hostid must be InvalidSockId (or ommited).
 	 * On a server, you must provide a hostid.
 	 */
-	void	authorizeOnly (const char *callbackName, TSockId hostid = InvalidSockId);
+	void authorizeOnly(const char *callbackName, TSockId hostid = InvalidSockId);
 
 	/// Returns true if this is a CCallbackServer
-	bool	isAServer () const { return _IsAServer; }
+	bool isAServer() const { return _IsAServer; }
 
 	/// This function is implemented in the client and server class
-	virtual bool	dataAvailable () = 0;
+	virtual bool dataAvailable() = 0;
 	/// This function is implemented in the client and server class
-	virtual bool	getDataAvailableFlagV() const = 0;
+	virtual bool getDataAvailableFlagV() const = 0;
 	/// This function is implemented in the client and server class
-	virtual void	update2 ( sint32 timeout=0, sint32 mintime=0 ) = 0;
+	virtual void update2(sint32 timeout = 0, sint32 mintime = 0) = 0;
 	/// This function is implemented in the client and server class (legacy)
-	virtual void	update ( sint32 timeout=0 ) = 0;
+	virtual void update(sint32 timeout = 0) = 0;
 	/// This function is implemented in the client and server class
-	virtual bool	connected () const = 0;
+	virtual bool connected() const = 0;
 	/// This function is implemented in the client and server class
-	virtual void	disconnect (TSockId hostid = InvalidSockId) = 0;
+	virtual void disconnect(TSockId hostid = InvalidSockId) = 0;
 
 	/// Returns the address of the specified host
-	virtual const	CInetAddress& hostAddress (TSockId hostid);
+	virtual const CInetAddress &hostAddress(TSockId hostid);
 
 	// Defined even when USE_MESSAGE_RECORDER is not defined
-	enum TRecordingState { Off, Record, Replay };
+	enum TRecordingState
+	{
+		Off,
+		Record,
+		Replay
+	};
 
 protected:
-
-	uint64	_BytesSent, _BytesReceived;
+	uint64 _BytesSent, _BytesReceived;
 
 	/// Used by client and server class
 	TNetCallback _NewDisconnectionCallback;
 
 	/// Constructor.
-	CCallbackNetBase( TRecordingState rec=Off, const std::string& recfilename="", bool recordall=true );
+	CCallbackNetBase(TRecordingState rec = Off, const std::string &recfilename = "", bool recordall = true);
 
 	/** Used by client and server class
 	 * More info about timeout and mintime in the code.
 	 */
-	void baseUpdate2 ( sint32 timeout=-1, sint32 mintime=0 );
+	void baseUpdate2(sint32 timeout = -1, sint32 mintime = 0);
 
 	/// Used by client and server class (legacy)
-	void baseUpdate ( sint32 timeout=0 );
+	void baseUpdate(sint32 timeout = 0);
 
 	/// Read a message from the network and process it
-	void processOneMessage ();
+	void processOneMessage();
 
 	/// On this layer, you can't call directly receive, It s the update() function that receive and call your callaback
-	virtual void	receive (CMessage &buffer, TSockId *hostid) = 0;
+	virtual void receive(CMessage &buffer, TSockId *hostid) = 0;
 
 	// contains callbacks
-	std::vector<TCallbackItem>	_CallbackArray;
+	std::vector<TCallbackItem> _CallbackArray;
 
 	// called if the received message is not found in the callback array
-	TMsgCallback				_DefaultCallback;
+	TMsgCallback _DefaultCallback;
 
 	// If not null, called before each message is dispached to it's callback
-	TMsgCallback				_PreDispatchCallback;
+	TMsgCallback _PreDispatchCallback;
 
 	bool _IsAServer;
 	bool _FirstUpdate;
 
 	// ---------------------------------------
 #ifdef USE_MESSAGE_RECORDER
-	bool			replayDataAvailable();
-	virtual bool	replaySystemCallbacks() = 0;
-	void			noticeDisconnection( TSockId hostid );
+	bool replayDataAvailable();
+	virtual bool replaySystemCallbacks() = 0;
+	void noticeDisconnection(TSockId hostid);
 
-	TRecordingState						_MR_RecordingState;
-	sint64								_MR_UpdateCounter;
+	TRecordingState _MR_RecordingState;
+	sint64 _MR_UpdateCounter;
 
-	CMessageRecorder					_MR_Recorder;
+	CMessageRecorder _MR_Recorder;
 #endif
 	// ---------------------------------------
 
 private:
+	void *_UserData;
 
-	void				*_UserData;
+	NLMISC::TTime _LastUpdateTime;
+	NLMISC::TTime _LastMovedStringArray;
 
-	NLMISC::TTime		_LastUpdateTime;
-	NLMISC::TTime		_LastMovedStringArray;
+	TNetCallback _DisconnectionCallback;
+	void *_DisconnectionCbArg;
 
-	TNetCallback		 _DisconnectionCallback;
-	void				*_DisconnectionCbArg;
+	friend void cbnbMessageAskAssociations(CMessage &msgin, TSockId from, CCallbackNetBase &netbase);
+	friend void cbnbMessageRecvAssociations(CMessage &msgin, TSockId from, CCallbackNetBase &netbase);
 
-	friend void cbnbMessageAskAssociations (CMessage &msgin, TSockId from, CCallbackNetBase &netbase);
-	friend void cbnbMessageRecvAssociations (CMessage &msgin, TSockId from, CCallbackNetBase &netbase);
-
-	friend void cbnbNewDisconnection (TSockId from, void *data);
+	friend void cbnbNewDisconnection(TSockId from, void *data);
 };
 
-
 } // NLNET
-
 
 #endif // NL_CALLBACK_NET_BASE_H
 

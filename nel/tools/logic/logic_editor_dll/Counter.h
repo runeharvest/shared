@@ -9,18 +9,17 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-namespace NLLOGIC
-{
+namespace NLLOGIC {
 class CLogicCounter;
 }
 
 /**
-* Classe CCounter : represent counters in .LOGIC files
-*/
-class CCounter  
+ * Classe CCounter : represent counters in .LOGIC files
+ */
+class CCounter
 {
 public:
-	CCounter( const CString &name = "");
+	CCounter(const CString &name = "");
 
 	virtual ~CCounter();
 
@@ -30,42 +29,38 @@ public:
 	inline long upperLimit() const { return m_nUpperLimit; }
 	inline long lowerLimit() const { return m_nLowerLimit; }
 
-	inline void name( const CString &name) { m_sName = name; }
-	inline void way( const CString &way) { m_sWay = way; }
-	inline void mode( const CString &mode) { m_sMode = mode; }
-	inline void lowerLimit( long min) { m_nLowerLimit = min; }
-	inline void upperLimit( long max) { m_nUpperLimit = max; }
+	inline void name(const CString &name) { m_sName = name; }
+	inline void way(const CString &way) { m_sWay = way; }
+	inline void mode(const CString &mode) { m_sMode = mode; }
+	inline void lowerLimit(long min) { m_nLowerLimit = min; }
+	inline void upperLimit(long max) { m_nUpperLimit = max; }
 
-//attributes
+	// attributes
 public:
 	/// counter name
-	CString	m_sName;
+	CString m_sName;
 
 	/// mode (shuttle/loop/stop_on_arrival)
-	CString	m_sMode;
+	CString m_sMode;
 
 	/// way (up/down)
-	CString	m_sWay;
+	CString m_sWay;
 
 	/// lower limit
-	long	m_nLowerLimit;
+	long m_nLowerLimit;
 
 	/// upper limit
-	long	m_nUpperLimit;
+	long m_nUpperLimit;
 };
-
 
 /**
  * Set a CLogicCounter object from a CCounter
  */
-void cCounterToCLogicCounter( CCounter& counter, NLLOGIC::CLogicCounter& logicCounter );
-
+void cCounterToCLogicCounter(CCounter &counter, NLLOGIC::CLogicCounter &logicCounter);
 
 /**
  * Set a CCounter object from a CLogicCounter
  */
-void cLogicCounterToCCounter( const NLLOGIC::CLogicCounter& logicCounter, CCounter& counter );
-
-
+void cLogicCounterToCCounter(const NLLOGIC::CLogicCounter &logicCounter, CCounter &counter);
 
 #endif // !defined(AFX_COUNTER_H__0C20D48D_E90E_4B32_B53C_2C91974411DB__INCLUDED_)

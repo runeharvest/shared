@@ -23,60 +23,56 @@
 // attrib_list_box.h : header file
 //
 
-class CValueGradientDlg ;
-struct IValueGradientDlgClient ;
+class CValueGradientDlg;
+struct IValueGradientDlgClient;
 
 /////////////////////////////////////////////////////////////////////////////
 // CAttribListBox window
 
 class CAttribListBox : public CListBox
 {
-public:	
+public:
 	/// a function that can display a value in a gradient, with the given offset
-	typedef void (* TDisplayValue)(CDC *dc, uint index, sint x, sint y, void *lParam) ;
+	typedef void (*TDisplayValue)(CDC *dc, uint index, sint x, sint y, void *lParam);
 
-
-// Construction
+	// Construction
 public:
 	CAttribListBox();
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
 	void setDrawer(IValueGradientDlgClient *drawer)
 	{
-		_DrawerInterface = drawer ;
+		_DrawerInterface = drawer;
 	}
 
-	void setCtrlID(uint id) { _Id = id ; }
+	void setCtrlID(uint id) { _Id = id; }
 
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CAttribListBox)
-	public:
+public:
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 	virtual void MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct);
 	virtual int CompareItem(LPCOMPAREITEMSTRUCT lpCompareItemStruct);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CAttribListBox();
 
 	// Generated message map functions
 protected:
 	//{{AFX_MSG(CAttribListBox)
-		// NOTE - the ClassWizard will add and remove member functions here.
+	// NOTE - the ClassWizard will add and remove member functions here.
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
 
-
-	IValueGradientDlgClient *_DrawerInterface ;	
-	uint _Id ;
+	IValueGradientDlgClient *_DrawerInterface;
+	uint _Id;
 };
 
 /////////////////////////////////////////////////////////////////////////////

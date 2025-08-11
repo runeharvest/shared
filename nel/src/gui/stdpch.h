@@ -22,10 +22,10 @@
 #define NELGUI_H
 
 #if defined(_MSC_VER) && defined(_DEBUG)
-	#define _CRTDBG_MAP_ALLOC
-	#include <stdlib.h>
-	#include <crtdbg.h>
-	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
 #include <string>
@@ -45,11 +45,11 @@
 #include <libxml/parser.h>
 
 #ifdef NL_OS_WINDOWS
-	#ifndef NL_COMP_MINGW
-	#	define NOMINMAX
-	#endif
-	#include <winsock2.h>
-	#include <windows.h>
+#ifndef NL_COMP_MINGW
+#define NOMINMAX
+#endif
+#include <winsock2.h>
+#include <windows.h>
 #endif
 
 #endif

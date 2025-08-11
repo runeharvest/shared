@@ -22,48 +22,46 @@
 #include "nel/misc/command.h"
 #include "nel/3d/water_height_map.h"
 
-
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
 namespace NL3D {
 
-
 /*
 NLMISC_COMMAND(setWaterPool, "Setup a pool of water in the water pool manager",
-			   "<ID>,<Size>,<Damping>,<FilterWeight>,<UnitSize>,<WaveIntensity>,<WavePeriod>")
+               "<ID>,<Size>,<Damping>,<FilterWeight>,<UnitSize>,<WaveIntensity>,<WavePeriod>")
 {
-	CWaterPoolManager::CWaterHeightMapBuild whmb;
-	const uint numArgs = args.size();
-	if (numArgs == 0) return false;
-	if (numArgs == 1)
-	{
-		NLMISC::fromString(args[0], whmb.ID);
-	}
-	if (numArgs == 2)
-	{
-		NLMISC::fromString(args[1], whmb.Size);
-	}
-	if (numArgs == 3)
-	{
-		NLMISC::fromString(args[2], whmb.FilterWeight);
-	}
-	if (numArgs == 4)
-	{
-		NLMISC::fromString(args[3], whmb.UnitSize);
-	}
-	if (numArgs == 5)
-	{
-		NLMISC::fromString(args[4], whmb.WaveIntensity);
-	}
-	if (numArgs == 4)
-	{
-		NLMISC::fromString(args[5], whmb.WavePeriod);
-	}
-	// create the water pool
-	GetWaterPoolManager().createWaterPool(whmb);
-	return true;
+    CWaterPoolManager::CWaterHeightMapBuild whmb;
+    const uint numArgs = args.size();
+    if (numArgs == 0) return false;
+    if (numArgs == 1)
+    {
+        NLMISC::fromString(args[0], whmb.ID);
+    }
+    if (numArgs == 2)
+    {
+        NLMISC::fromString(args[1], whmb.Size);
+    }
+    if (numArgs == 3)
+    {
+        NLMISC::fromString(args[2], whmb.FilterWeight);
+    }
+    if (numArgs == 4)
+    {
+        NLMISC::fromString(args[3], whmb.UnitSize);
+    }
+    if (numArgs == 5)
+    {
+        NLMISC::fromString(args[4], whmb.WaveIntensity);
+    }
+    if (numArgs == 4)
+    {
+        NLMISC::fromString(args[5], whmb.WavePeriod);
+    }
+    // create the water pool
+    GetWaterPoolManager().createWaterPool(whmb);
+    return true;
 }
 */
 
@@ -77,7 +75,7 @@ CWaterPoolManager &GetWaterPoolManager()
 
 //===============================================================================================
 
-bool	CWaterPoolManager::hasPool(uint32 ID) const
+bool CWaterPoolManager::hasPool(uint32 ID) const
 {
 	return _PoolMap.count(ID) != 0;
 }
@@ -102,7 +100,7 @@ CWaterHeightMap *CWaterPoolManager::createWaterPool(const CWaterHeightMapBuild &
 
 CWaterHeightMap &CWaterPoolManager::getPoolByID(uint32 ID)
 {
-	if(_PoolMap.count(ID))
+	if (_PoolMap.count(ID))
 	{
 		return *_PoolMap[ID];
 	}
@@ -120,9 +118,8 @@ void CWaterPoolManager::reset()
 	{
 		delete it->second;
 	}
-	_PoolMap.clear ();
+	_PoolMap.clear();
 }
-
 
 //===============================================================================================
 
@@ -137,7 +134,7 @@ void CWaterPoolManager::registerWaterShape(CWaterShape *shape)
 void CWaterPoolManager::unRegisterWaterShape(CWaterShape *shape)
 {
 	TWaterShapeVect::iterator it = std::find(_WaterShapes.begin(), _WaterShapes.end(), shape);
-//	nlassert(it != _WaterShapes.end()); // shape not registered!
+	//	nlassert(it != _WaterShapes.end()); // shape not registered!
 	if (it != _WaterShapes.end())
 		_WaterShapes.erase(it);
 }
@@ -152,7 +149,7 @@ void CWaterPoolManager::setBlendFactor(IDriver *drv, float factor)
 		for (uint k = 0; k < 2; ++k)
 		{
 			tb = dynamic_cast<CTextureBlend *>((*it)->getEnvMap(k));
-			if (tb && tb->setBlendFactor((uint16) (256.f * factor)))
+			if (tb && tb->setBlendFactor((uint16)(256.f * factor)))
 			{
 				tb->setReleasable(false);
 				drv->setupTexture(*tb);
@@ -188,24 +185,24 @@ bool CWaterPoolManager::isWaterShapeObserver(const CWaterShape *shape) const
 
 //===============================================================================================
 
-uint		CWaterPoolManager::getNumPools() const
+uint CWaterPoolManager::getNumPools() const
 {
 	return (uint)_PoolMap.size();
 }
 
 //===============================================================================================
 
-uint		CWaterPoolManager::getPoolID(uint i) const
+uint CWaterPoolManager::getPoolID(uint i) const
 {
 	nlassert(i < getNumPools());
-	TPoolMap::const_iterator it =  _PoolMap.begin();
+	TPoolMap::const_iterator it = _PoolMap.begin();
 	while (i--) ++it;
 	return it->first;
 }
 
 //===============================================================================================
 
-void	CWaterPoolManager::removePool(uint32 ID)
+void CWaterPoolManager::removePool(uint32 ID)
 {
 	nlassert(hasPool(ID));
 	TPoolMap::iterator it = _PoolMap.find(ID);
@@ -223,14 +220,14 @@ void CWaterPoolManager::serial(NLMISC::IStream &f)
 	if (!f.isReading())
 	{
 		size = (uint32)_PoolMap.size();
-		it  = _PoolMap.begin();
+		it = _PoolMap.begin();
 	}
 	else
 	{
 		reset();
 	}
 	f.xmlSerial(size, "NUM_POOLS");
-	while (size --)
+	while (size--)
 	{
 		f.xmlPush("PoolDesc");
 		if (f.isReading())

@@ -24,29 +24,26 @@
 
 namespace NL3D {
 
-
 // ***************************************************************************
 CPointLightNamed::CPointLightNamed()
 {
 	// copy setup from current
-	_DefaultAmbient= getAmbient();
-	_DefaultDiffuse= getDiffuse();
-	_DefaultSpecular= getSpecular();
-	_UnAnimatedDiffuse= getDiffuse();
+	_DefaultAmbient = getAmbient();
+	_DefaultDiffuse = getDiffuse();
+	_DefaultSpecular = getSpecular();
+	_UnAnimatedDiffuse = getDiffuse();
 }
 
-
 // ***************************************************************************
-void			CPointLightNamed::setLightFactor(NLMISC::CRGBA nFactor)
+void CPointLightNamed::setLightFactor(NLMISC::CRGBA nFactor)
 {
 	setLightFactor(nFactor, nFactor);
 }
 
-
 // ***************************************************************************
-void			CPointLightNamed::setLightFactor(NLMISC::CRGBA nAnimatedFactor, NLMISC::CRGBA nUnAnimatedFactor)
+void CPointLightNamed::setLightFactor(NLMISC::CRGBA nAnimatedFactor, NLMISC::CRGBA nUnAnimatedFactor)
 {
-	CRGBA	col;
+	CRGBA col;
 	// setup current ambient.
 	col.modulateFromColor(_DefaultAmbient, nAnimatedFactor);
 	setAmbient(col);
@@ -59,12 +56,11 @@ void			CPointLightNamed::setLightFactor(NLMISC::CRGBA nAnimatedFactor, NLMISC::C
 
 	// special UnAnimatedDiffuse
 	col.modulateFromColor(_DefaultDiffuse, nUnAnimatedFactor);
-	_UnAnimatedDiffuse= col;
+	_UnAnimatedDiffuse = col;
 }
 
-
 // ***************************************************************************
-void			CPointLightNamed::serial(NLMISC::IStream &f)
+void CPointLightNamed::serial(NLMISC::IStream &f)
 {
 	sint ver = f.serialVersion(1);
 
@@ -77,13 +73,13 @@ void			CPointLightNamed::serial(NLMISC::IStream &f)
 	f.serial(_DefaultDiffuse);
 	f.serial(_DefaultSpecular);
 
-	if (ver>=1)
+	if (ver >= 1)
 		f.serial(LightGroup);
 
 	// read: and copy default _UnAnimatedDiffuse
-	if(f.isReading())
+	if (f.isReading())
 	{
-		_UnAnimatedDiffuse= getDiffuse();
+		_UnAnimatedDiffuse = getDiffuse();
 	}
 }
 

@@ -26,7 +26,6 @@
 #include "nel/misc/command.h"
 #include "nel/misc/variable.h"
 
-
 //
 // Commands
 //
@@ -39,7 +38,7 @@
 // need any parameters.
 // when the program is launched, you can type the name of the command with
 // parameters if needed and it will be executed.
-NLMISC_COMMAND(square,"display the square of the parameter","<value>")
+NLMISC_COMMAND(square, "display the square of the parameter", "<value>")
 {
 	// this code will be executed when the user will call this command.
 	// you have access to some variables:
@@ -51,7 +50,7 @@ NLMISC_COMMAND(square,"display the square of the parameter","<value>")
 
 	// this function must return true if the command successfully executed
 	// or false is something wrong happens. for example, if there are not enough
-	// parameters, return false. 
+	// parameters, return false.
 
 	// check args, if there is not the right number of parameters, return bad status.
 	if (args.size() != 1) return false;
@@ -60,7 +59,7 @@ NLMISC_COMMAND(square,"display the square of the parameter","<value>")
 	NLMISC::fromString(args[0], val);
 
 	// display the result.
-	log.displayNL("The square of %d is %d", val, val*val);
+	log.displayNL("The square of %d is %d", val, val * val);
 
 	// return ok status.
 	return true;
@@ -118,6 +117,7 @@ class CDynVar
 {
 private:
 	int _PrivateVar;
+
 public:
 	int get() { return _PrivateVar; }
 	void set(int val) { _PrivateVar = val; }
@@ -133,7 +133,7 @@ CDynVar dv;
 // when the program is executed, you can type the variable name with no parameter
 // to see the value of the variable or type the variable name with one parameter
 // (the value you want to set) to change the variable contents.
-NLMISC_DYNVARIABLE(int,PrivVar,"dummy variable")
+NLMISC_DYNVARIABLE(int, PrivVar, "dummy variable")
 {
 	// this code will be executed to get or set the variable.
 	// you have to provide a way to do that.
@@ -147,7 +147,6 @@ NLMISC_DYNVARIABLE(int,PrivVar,"dummy variable")
 		dv.set(*pointer);
 }
 
-
 //
 // Main
 //
@@ -157,7 +156,7 @@ NLMISC::CLog mylog;
 // look at the log sample
 NLMISC::CStdDisplayer mysd;
 
-int main (int argc, char **argv)
+int main(int argc, char **argv)
 {
 	// look at the debug sample
 	NLMISC::createDebug();
@@ -184,6 +183,6 @@ int main (int argc, char **argv)
 		// variable and call the associated code
 		NLMISC::ICommand::execute(commandLine, mylog);
 	}
-	
+
 	return EXIT_SUCCESS;
 }

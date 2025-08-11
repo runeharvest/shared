@@ -33,13 +33,12 @@
 using namespace std;
 using namespace NLMISC;
 
-
-namespace NLSOUND
-{
+namespace NLSOUND {
 
 #ifndef NL_STATIC
 
-class CSoundDriverFModNelLibrary : public NLMISC::INelLibrary {
+class CSoundDriverFModNelLibrary : public NLMISC::INelLibrary
+{
 	void onLibraryLoaded(bool /* firstTime */) { }
 	void onLibraryUnloaded(bool /* lastTime */) { }
 };
@@ -56,8 +55,8 @@ HINSTANCE CSoundDriverDllHandle = 0;
 // The main entry of the DLL. It's used to get a hold of the hModule handle.
 BOOL WINAPI DllMain(HANDLE hModule, DWORD /* ul_reason_for_call */, LPVOID /* lpReserved */)
 {
-  CSoundDriverDllHandle = (HINSTANCE) hModule;
-  return TRUE;
+	CSoundDriverDllHandle = (HINSTANCE)hModule;
+	return TRUE;
 }
 
 #endif /* #ifndef NL_STATIC */
@@ -65,11 +64,11 @@ BOOL WINAPI DllMain(HANDLE hModule, DWORD /* ul_reason_for_call */, LPVOID /* lp
 // ***************************************************************************
 
 #ifdef NL_STATIC
-ISoundDriver* createISoundDriverInstanceFMod
+ISoundDriver *createISoundDriverInstanceFMod
 #else
 __declspec(dllexport) ISoundDriver *NLSOUND_createISoundDriverInstance
 #endif
-	(ISoundDriver::IStringMapperProvider *stringMapper)
+    (ISoundDriver::IStringMapperProvider *stringMapper)
 {
 
 	return new CSoundDriverFMod(stringMapper);
@@ -93,7 +92,7 @@ void outputProfileFMod
 #else
 __declspec(dllexport) void NLSOUND_outputProfile
 #endif
-	(string &out)
+    (string &out)
 {
 	CSoundDriverFMod::getInstance()->writeProfile(out);
 }
@@ -109,14 +108,13 @@ __declspec(dllexport) ISoundDriver::TDriver NLSOUND_getDriverType()
 	return ISoundDriver::DriverFMod;
 }
 
-#elif defined (NL_OS_UNIX)
-extern "C"
-{
+#elif defined(NL_OS_UNIX)
+extern "C" {
 ISoundDriver *NLSOUND_createISoundDriverInstance(ISoundDriver::IStringMapperProvider *stringMapper)
 {
 	return new CSoundDriverFMod(stringMapper);
 }
-uint32 NLSOUND_interfaceVersion ()
+uint32 NLSOUND_interfaceVersion()
 {
 	return ISoundDriver::InterfaceVersion;
 }
@@ -126,16 +124,18 @@ uint32 NLSOUND_interfaceVersion ()
 // ******************************************************************
 
 CSoundDriverFMod::CSoundDriverFMod(ISoundDriver::IStringMapperProvider *stringMapper)
-: _StringMapper(stringMapper), _FModOk(false), _MasterGain(1.f), _ForceSoftwareBuffer(false)
+    : _StringMapper(stringMapper)
+    , _FModOk(false)
+    , _MasterGain(1.f)
+    , _ForceSoftwareBuffer(false)
 {
-	
 }
 
 // ******************************************************************
 
 CSoundDriverFMod::~CSoundDriverFMod()
 {
-	//nldebug("Destroying FMOD");
+	// nldebug("Destroying FMOD");
 
 	// Stop any played music
 	{
@@ -148,14 +148,12 @@ CSoundDriverFMod::~CSoundDriverFMod()
 		_MusicChannels.clear();
 	}
 
-
 	// Assure that the remaining sources have released all their channels before closing
-	set<CSourceFMod*>::iterator iter;
+	set<CSourceFMod *>::iterator iter;
 	for (iter = _Sources.begin(); iter != _Sources.end(); iter++)
 	{
 		(*iter)->release();
 	}
-
 
 	// Assure that the listener has released all resources before closing down FMod
 	if (CListenerFMod::getInstance() != 0)
@@ -164,10 +162,10 @@ CSoundDriverFMod::~CSoundDriverFMod()
 	}
 
 	// Close FMod
-	if(_FModOk)
+	if (_FModOk)
 	{
 		FSOUND_Close();
-		_FModOk= false;
+		_FModOk = false;
 
 #ifdef NL_OS_WINDOWS
 		// workaround for fmod bug
@@ -187,10 +185,9 @@ void CSoundDriverFMod::initDevice(const std::string &device, TSoundOptions optio
 {
 	// list of supported options in this driver
 	// no adpcm, no effects, no buffer streaming
-	const sint supportedOptions = 
-		OptionSoftwareBuffer
-		| OptionManualRolloff
-		| OptionLocalBufferCopy;
+	const sint supportedOptions = OptionSoftwareBuffer
+	    | OptionManualRolloff
+	    | OptionLocalBufferCopy;
 
 	// list of forced options in this driver
 	const sint forcedOptions = 0;
@@ -237,7 +234,7 @@ bool CSoundDriverFMod::getOption(ISoundDriver::TSoundOptions option)
 
 uint CSoundDriverFMod::countMaxSources()
 {
-	int		num2D, num3D, numTotal;
+	int num2D, num3D, numTotal;
 	FSOUND_GetNumHWChannels(&num2D, &num3D, &numTotal);
 
 	// Try the hardware 3d buffers first
@@ -258,18 +255,17 @@ uint CSoundDriverFMod::countMaxSources()
 
 // ******************************************************************
 
-void CSoundDriverFMod::writeProfile(string& out)
+void CSoundDriverFMod::writeProfile(string &out)
 {
-	out+= "\tFMod Driver\n";
+	out += "\tFMod Driver\n";
 
-    // Write the number of hardware buffers
-	int		num2D, num3D, numTotal;
+	// Write the number of hardware buffers
+	int num2D, num3D, numTotal;
 	FSOUND_GetNumHWChannels(&num2D, &num3D, &numTotal);
 
-    out += "\t3d hw buffers: " + toString ((uint32)num3D) + "\n";
-	out += "\t2d hw buffers: " + toString ((uint32)num2D) + "\n";
+	out += "\t3d hw buffers: " + toString((uint32)num3D) + "\n";
+	out += "\t2d hw buffers: " + toString((uint32)num2D) + "\n";
 }
-
 
 // ******************************************************************
 
@@ -277,8 +273,8 @@ void CSoundDriverFMod::update()
 {
 	H_AUTO(NLSOUND_FModUpdate)
 
-	set<CSourceFMod*>::iterator first(_Sources.begin()), last(_Sources.end());
-	for (;first != last; ++first)
+	set<CSourceFMod *>::iterator first(_Sources.begin()), last(_Sources.end());
+	for (; first != last; ++first)
 	{
 		if ((*first)->needsUpdate())
 		{
@@ -292,15 +288,15 @@ void CSoundDriverFMod::update()
 IListener *CSoundDriverFMod::createListener()
 {
 
-    if (CListenerFMod::isInitialized())
-    {
-        return CListenerFMod::getInstance();
-    }
+	if (CListenerFMod::isInitialized())
+	{
+		return CListenerFMod::getInstance();
+	}
 
-    if ( !_FModOk )
-        throw ESoundDriver("Corrupt driver");
+	if (!_FModOk)
+		throw ESoundDriver("Corrupt driver");
 
-    return new CListenerFMod();
+	return new CListenerFMod();
 }
 
 // ******************************************************************
@@ -308,10 +304,10 @@ IListener *CSoundDriverFMod::createListener()
 IBuffer *CSoundDriverFMod::createBuffer()
 {
 
-    if ( !_FModOk )
-        throw ESoundDriver("Corrupt driver");
+	if (!_FModOk)
+		throw ESoundDriver("Corrupt driver");
 
-    return new CBufferFMod();
+	return new CBufferFMod();
 }
 
 // ******************************************************************
@@ -325,22 +321,21 @@ void CSoundDriverFMod::removeBuffer(CBufferFMod * /* buffer */)
 ISource *CSoundDriverFMod::createSource()
 {
 
-    if ( !_FModOk )
-        throw ESoundDriver("Corrupt driver");
+	if (!_FModOk)
+		throw ESoundDriver("Corrupt driver");
 
-	CSourceFMod* src = new CSourceFMod(0);
+	CSourceFMod *src = new CSourceFMod(0);
 	src->init();
 	_Sources.insert(src);
 
 	return src;
 }
 
-
 // ******************************************************************
 
 void CSoundDriverFMod::removeSource(CSourceFMod *source)
 {
-	_Sources.erase((CSourceFMod*) source);
+	_Sources.erase((CSourceFMod *)source);
 }
 
 // ******************************************************************
@@ -354,7 +349,7 @@ void CSoundDriverFMod::removeMusicChannel(CMusicChannelFMod *musicChannel)
 
 void CSoundDriverFMod::commit3DChanges()
 {
-    if ( !_FModOk )
+	if (!_FModOk)
 		return;
 
 	if (getOption(OptionManualRolloff))
@@ -362,11 +357,11 @@ void CSoundDriverFMod::commit3DChanges()
 		// We handle the volume of the source according to the distance
 		// ourselves. Call updateVolume() to, well..., update the volume
 		// according to, euh ..., the new distance!
-		CListenerFMod* listener = CListenerFMod::getInstance();
-		if(listener)
+		CListenerFMod *listener = CListenerFMod::getInstance();
+		if (listener)
 		{
 			const CVector &origin = listener->getPos();
-			set<CSourceFMod*>::iterator iter;
+			set<CSourceFMod *>::iterator iter;
 			for (iter = _Sources.begin(); iter != _Sources.end(); iter++)
 			{
 				if ((*iter)->isPlaying())
@@ -378,7 +373,7 @@ void CSoundDriverFMod::commit3DChanges()
 	}
 
 	// We handle the "SourceRelative state" ourselves. Updates sources according to current listener position/velocity
-	set<CSourceFMod*>::iterator iter;
+	set<CSourceFMod *>::iterator iter;
 	for (iter = _Sources.begin(); iter != _Sources.end(); iter++)
 	{
 		(*iter)->updateFModPosIfRelative();
@@ -394,13 +389,12 @@ void CSoundDriverFMod::commit3DChanges()
 	FSOUND_Update();
 }
 
-
 // ******************************************************************
 
 uint CSoundDriverFMod::countPlayingSources()
 {
-    uint n = 0;
-	set<CSourceFMod*>::iterator iter;
+	uint n = 0;
+	set<CSourceFMod *>::iterator iter;
 
 	for (iter = _Sources.begin(); iter != _Sources.end(); iter++)
 	{
@@ -410,21 +404,20 @@ uint CSoundDriverFMod::countPlayingSources()
 		}
 	}
 
-    return n;
+	return n;
 }
-
 
 // ******************************************************************
 
-void CSoundDriverFMod::setGain( float gain )
+void CSoundDriverFMod::setGain(float gain)
 {
 	clamp(gain, 0.f, 1.f);
-	_MasterGain= gain;
+	_MasterGain = gain;
 
 	// set FMod volume
-    if ( _FModOk )
+	if (_FModOk)
 	{
-		uint	volume255= (uint)floor(_MasterGain*255);
+		uint volume255 = (uint)floor(_MasterGain * 255);
 		FSOUND_SetSFXMasterVolume(volume255);
 	}
 }
@@ -436,17 +429,16 @@ float CSoundDriverFMod::getGain()
 	return _MasterGain;
 }
 
-
 // ***************************************************************************
-void	CSoundDriverFMod::startBench()
+void CSoundDriverFMod::startBench()
 {
 	NLMISC::CHTimer::startBench();
 }
-void	CSoundDriverFMod::endBench()
+void CSoundDriverFMod::endBench()
 {
 	NLMISC::CHTimer::endBench();
 }
-void	CSoundDriverFMod::displayBench(CLog *log)
+void CSoundDriverFMod::displayBench(CLog *log)
 {
 	NLMISC::CHTimer::displayHierarchicalByExecutionPathSorted(log, CHTimer::TotalTime, true, 48, 2);
 	NLMISC::CHTimer::displayHierarchical(log, true, 48, 2);
@@ -454,13 +446,12 @@ void	CSoundDriverFMod::displayBench(CLog *log)
 	NLMISC::CHTimer::display(log, CHTimer::TotalTime);
 }
 
-
 // ***************************************************************************
-void	CSoundDriverFMod::toFModCoord(const CVector &in, float out[3])
+void CSoundDriverFMod::toFModCoord(const CVector &in, float out[3])
 {
-	out[0]= in.x;
-	out[1]= in.z;
-	out[2]= in.y;
+	out[0] = in.x;
+	out[1] = in.z;
+	out[2] = in.y;
 }
 
 /// Create a music channel
@@ -471,23 +462,22 @@ IMusicChannel *CSoundDriverFMod::createMusicChannel()
 	return static_cast<IMusicChannel *>(music_channel);
 }
 
-bool getTag (std::string &result, const char *tag, FSOUND_STREAM *stream)
+bool getTag(std::string &result, const char *tag, FSOUND_STREAM *stream)
 {
 	void *name;
 	int size;
 	char tmp[512];
-	int types[]=
-	{
+	int types[] = {
 		FSOUND_TAGFIELD_ID3V1,
 		FSOUND_TAGFIELD_ID3V2,
 		FSOUND_TAGFIELD_VORBISCOMMENT,
 	};
 	uint i;
-	for (i=0; i<sizeof(types)/sizeof(int); i++)
+	for (i = 0; i < sizeof(types) / sizeof(int); i++)
 	{
 		if (FSOUND_Stream_FindTagField(stream, types[i], tag, &name, &size))
 		{
-			strncpy (tmp, (const char*)name, min((int)sizeof(tmp),size));
+			strncpy(tmp, (const char *)name, min((int)sizeof(tmp), size));
 			result = trim(string(tmp));
 			return true;
 		}
@@ -495,7 +485,7 @@ bool getTag (std::string &result, const char *tag, FSOUND_STREAM *stream)
 	return false;
 }
 
-/** Get music info. Returns false if the song is not found or the function is not implemented. 
+/** Get music info. Returns false if the song is not found or the function is not implemented.
  *  \param filepath full path to file
  *  \param artist returns the song artist (empty if not available)
  *  \param title returns the title (empty if not available)
@@ -551,11 +541,11 @@ void CSoundDriverFMod::getMusicExtensions(std::vector<std::string> &extensions) 
 bool CSoundDriverFMod::isMusicExtensionSupported(const std::string &extension) const
 {
 	return (extension == "ogg")
-		|| (extension == "mp3")
-		|| (extension == "mp2")
-		|| (extension == "mp1")
-		|| (extension == "wav")
-		|| (extension == "raw");
+	    || (extension == "mp3")
+	    || (extension == "mp2")
+	    || (extension == "mp1")
+	    || (extension == "wav")
+	    || (extension == "raw");
 }
 
 } // NLSOUND

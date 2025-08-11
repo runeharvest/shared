@@ -19,10 +19,10 @@
 
 #include <nel/misc/variable.h>
 
-class CUTMiscTypes: public Test::Suite
+class CUTMiscTypes : public Test::Suite
 {
 public:
-	CUTMiscTypes ()
+	CUTMiscTypes()
 	{
 		TEST_ADD(CUTMiscTypes::basicTypes)
 	}
@@ -30,7 +30,7 @@ public:
 	void basicTypes()
 	{
 		// this doesn't work on 64bit architectures
-		//Test_ASSERT(sizeof(uint) == sizeof(void*));
+		// Test_ASSERT(sizeof(uint) == sizeof(void*));
 
 		TEST_ASSERT(sizeof(sint8) == 1);
 		TEST_ASSERT(sizeof(uint8) == 1);

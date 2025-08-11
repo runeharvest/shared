@@ -30,9 +30,7 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 
@@ -51,7 +49,7 @@ CD3DShaderFX::CD3DShaderFX()
 
 // ***************************************************************************
 
-void CD3DShaderFX::setText (const char *text)
+void CD3DShaderFX::setText(const char *text)
 {
 	_Text = text;
 	_ShaderChanged = true;
@@ -59,7 +57,7 @@ void CD3DShaderFX::setText (const char *text)
 
 // ***************************************************************************
 
-void CD3DShaderFX::setName (const char *name)
+void CD3DShaderFX::setName(const char *name)
 {
 	_Name = name;
 	_ShaderChanged = true;
@@ -67,7 +65,7 @@ void CD3DShaderFX::setName (const char *name)
 
 // ***************************************************************************
 
-bool CD3DShaderFX::loadShaderFile (const char *filename)
+bool CD3DShaderFX::loadShaderFile(const char *filename)
 {
 	_Text.clear();
 	// Lookup
@@ -75,34 +73,34 @@ bool CD3DShaderFX::loadShaderFile (const char *filename)
 	if (!_filename.empty())
 	{
 		// File length
-		uint size = NLMISC::CFile::getFileSize (_filename);
-		_Text.reserve (size+1);
+		uint size = NLMISC::CFile::getFileSize(_filename);
+		_Text.reserve(size + 1);
 
 		try
 		{
 			NLMISC::CIFile file;
-			if (file.open (_filename))
+			if (file.open(_filename))
 			{
 				// Read it
-				while (!file.eof ())
+				while (!file.eof())
 				{
 					char line[512];
-					file.getline (line, 512);
+					file.getline(line, 512);
 					_Text += line;
 				}
 
 				// Set the shader name
-				_Name = NLMISC::CFile::getFilename (filename);
+				_Name = NLMISC::CFile::getFilename(filename);
 				return true;
 			}
 			else
 			{
-				nlwarning ("Can't open the file %s for reading", _filename.c_str());
+				nlwarning("Can't open the file %s for reading", _filename.c_str());
 			}
 		}
 		catch (const Exception &e)
 		{
-			nlwarning ("Error while reading %s : %s", _filename.c_str(), e.what());
+			nlwarning("Error while reading %s : %s", _filename.c_str(), e.what());
 		}
 	}
 	return false;
@@ -122,7 +120,6 @@ void CDriverD3D::removeShaderDrvInfoPtr(ItShaderDrvInfoPtrList shaderIt)
 
 // mem allocator for state records
 std::allocator<uint8> CStateRecord::Allocator;
-
 
 // ***************************************************************************
 // The state manager with cache
@@ -155,7 +152,7 @@ ULONG CDriverD3D::Release(VOID)
 HRESULT CDriverD3D::LightEnable(DWORD Index, BOOL Enable)
 {
 	H_AUTO_D3D(CDriverD3D_LightEnable)
-	enableLight ((uint8)Index, Enable!=FALSE);
+	enableLight((uint8)Index, Enable != FALSE);
 	return D3D_OK;
 }
 
@@ -170,20 +167,20 @@ HRESULT CDriverD3D::SetFVF(DWORD /* FVF */)
 
 // ***************************************************************************
 
-HRESULT CDriverD3D::SetLight(DWORD Index, CONST D3DLIGHT9* pLight)
+HRESULT CDriverD3D::SetLight(DWORD Index, CONST D3DLIGHT9 *pLight)
 {
 	H_AUTO_D3D(CDriverD3D_SetLight)
 	_LightCache[Index].Light = *pLight;
-	touchRenderVariable (&_LightCache[Index]);
+	touchRenderVariable(&_LightCache[Index]);
 	return D3D_OK;
 }
 
 // ***************************************************************************
 
-HRESULT CDriverD3D::SetMaterial(CONST D3DMATERIAL9* pMaterial)
+HRESULT CDriverD3D::SetMaterial(CONST D3DMATERIAL9 *pMaterial)
 {
 	H_AUTO_D3D(CDriverD3D_SetMaterial)
-	setMaterialState( *pMaterial );
+	setMaterialState(*pMaterial);
 	return D3D_OK;
 }
 
@@ -201,40 +198,40 @@ HRESULT CDriverD3D::SetNPatchMode(FLOAT /* nSegments */)
 HRESULT CDriverD3D::SetPixelShader(LPDIRECT3DPIXELSHADER9 pShader)
 {
 	H_AUTO_D3D(CDriverD3D_SetPixelShader)
-	setPixelShader (pShader);
+	setPixelShader(pShader);
 	return D3D_OK;
 }
 
 // ***************************************************************************
 
-HRESULT CDriverD3D::SetPixelShaderConstantB(UINT StartRegister, CONST BOOL* pConstantData, UINT RegisterCount)
+HRESULT CDriverD3D::SetPixelShaderConstantB(UINT StartRegister, CONST BOOL *pConstantData, UINT RegisterCount)
 {
 	H_AUTO_D3D(CDriverD3D_SetPixelShaderConstantB)
 	uint i;
-	for (i=0; i<RegisterCount; i++)
-		setPixelShaderConstant (i+StartRegister, (int*)(pConstantData+i*4));
+	for (i = 0; i < RegisterCount; i++)
+		setPixelShaderConstant(i + StartRegister, (int *)(pConstantData + i * 4));
 	return D3D_OK;
 }
 
 // ***************************************************************************
 
-HRESULT CDriverD3D::SetPixelShaderConstantF(UINT StartRegister, CONST FLOAT* pConstantData, UINT RegisterCount)
+HRESULT CDriverD3D::SetPixelShaderConstantF(UINT StartRegister, CONST FLOAT *pConstantData, UINT RegisterCount)
 {
 	H_AUTO_D3D(CDriverD3D_SetPixelShaderConstantF)
 	uint i;
-	for (i=0; i<RegisterCount; i++)
-		setPixelShaderConstant (i+StartRegister, pConstantData+i*4);
+	for (i = 0; i < RegisterCount; i++)
+		setPixelShaderConstant(i + StartRegister, pConstantData + i * 4);
 	return D3D_OK;
 }
 
 // ***************************************************************************
 
-HRESULT CDriverD3D::SetPixelShaderConstantI(UINT StartRegister, CONST INT* pConstantData, UINT RegisterCount)
+HRESULT CDriverD3D::SetPixelShaderConstantI(UINT StartRegister, CONST INT *pConstantData, UINT RegisterCount)
 {
 	H_AUTO_D3D(CDriverD3D_SetPixelShaderConstantI)
 	uint i;
-	for (i=0; i<RegisterCount; i++)
-		setPixelShaderConstant (i+StartRegister, pConstantData+i*4);
+	for (i = 0; i < RegisterCount; i++)
+		setPixelShaderConstant(i + StartRegister, pConstantData + i * 4);
 	return D3D_OK;
 }
 
@@ -243,7 +240,7 @@ HRESULT CDriverD3D::SetPixelShaderConstantI(UINT StartRegister, CONST INT* pCons
 HRESULT CDriverD3D::SetRenderState(D3DRENDERSTATETYPE State, DWORD Value)
 {
 	H_AUTO_D3D(CDriverD3D_SetRenderState)
-	setRenderState (State, Value);
+	setRenderState(State, Value);
 	return D3D_OK;
 }
 
@@ -252,30 +249,30 @@ HRESULT CDriverD3D::SetRenderState(D3DRENDERSTATETYPE State, DWORD Value)
 HRESULT CDriverD3D::SetSamplerState(DWORD Sampler, D3DSAMPLERSTATETYPE Type, DWORD Value)
 {
 	H_AUTO_D3D(CDriverD3D_SetSamplerState)
-	setSamplerState (Sampler, Type, Value);
+	setSamplerState(Sampler, Type, Value);
 	return D3D_OK;
 }
 
 // ***************************************************************************
 
-HRESULT CDriverD3D::SetTexture (DWORD Stage, LPDIRECT3DBASETEXTURE9 pTexture)
+HRESULT CDriverD3D::SetTexture(DWORD Stage, LPDIRECT3DBASETEXTURE9 pTexture)
 {
-	H_AUTO_D3D(CDriverD3D_SetTexture )
+	H_AUTO_D3D(CDriverD3D_SetTexture)
 	// Look for the current texture
 	uint i;
 	const uint count = (uint)_CurrentShaderTextures.size();
-	for (i=0; i<count; i++)
+	for (i = 0; i < count; i++)
 	{
 		const CTextureRef &ref = _CurrentShaderTextures[i];
 		if (ref.D3DTexture == pTexture)
 		{
 			// Set the additionnal stage set by NeL texture (D3DSAMP_ADDRESSU, D3DSAMP_ADDRESSV, D3DSAMP_MAGFILTER, D3DSAMP_MINFILTER and D3DSAMP_MIPFILTER)
-			setTexture (Stage, ref.NeLTexture);
+			setTexture(Stage, ref.NeLTexture);
 			break;
 		}
 	}
 	if (i == count)
-		setTexture (Stage, pTexture);
+		setTexture(Stage, pTexture);
 
 	return D3D_OK;
 }
@@ -286,18 +283,18 @@ HRESULT CDriverD3D::SetTextureStageState(DWORD Stage, D3DTEXTURESTAGESTATETYPE T
 {
 	H_AUTO_D3D(CDriverD3D_SetTextureStageState)
 	if (Type == D3DTSS_TEXCOORDINDEX)
-		setTextureIndexUV (Stage, Value);
+		setTextureIndexUV(Stage, Value);
 	else
-		setTextureState (Stage, Type, Value);
+		setTextureState(Stage, Type, Value);
 	return D3D_OK;
 }
 
 // ***************************************************************************
 
-HRESULT CDriverD3D::SetTransform(D3DTRANSFORMSTATETYPE State, CONST D3DMATRIX* pMatrix)
+HRESULT CDriverD3D::SetTransform(D3DTRANSFORMSTATETYPE State, CONST D3DMATRIX *pMatrix)
 {
 	H_AUTO_D3D(CDriverD3D_SetTransform)
-	setMatrix (State, *pMatrix);
+	setMatrix(State, *pMatrix);
 	return D3D_OK;
 }
 
@@ -306,46 +303,47 @@ HRESULT CDriverD3D::SetTransform(D3DTRANSFORMSTATETYPE State, CONST D3DMATRIX* p
 HRESULT CDriverD3D::SetVertexShader(LPDIRECT3DVERTEXSHADER9 pShader)
 {
 	H_AUTO_D3D(CDriverD3D_SetVertexShader)
-	setVertexProgram (pShader, NULL);
+	setVertexProgram(pShader, NULL);
 	return D3D_OK;
 }
 
 // ***************************************************************************
 
-HRESULT CDriverD3D::SetVertexShaderConstantB(UINT StartRegister, CONST BOOL* pConstantData, UINT RegisterCount)
+HRESULT CDriverD3D::SetVertexShaderConstantB(UINT StartRegister, CONST BOOL *pConstantData, UINT RegisterCount)
 {
 	H_AUTO_D3D(CDriverD3D_SetVertexShaderConstantB)
 	uint i;
-	for (i=0; i<RegisterCount; i++)
-		setVertexProgramConstant (i+StartRegister, (int*)(pConstantData+i*4));
+	for (i = 0; i < RegisterCount; i++)
+		setVertexProgramConstant(i + StartRegister, (int *)(pConstantData + i * 4));
 	return D3D_OK;
 }
 
 // ***************************************************************************
 
-HRESULT CDriverD3D::SetVertexShaderConstantF(UINT StartRegister, CONST FLOAT* pConstantData, UINT RegisterCount)
+HRESULT CDriverD3D::SetVertexShaderConstantF(UINT StartRegister, CONST FLOAT *pConstantData, UINT RegisterCount)
 {
 	H_AUTO_D3D(CDriverD3D_SetVertexShaderConstantF)
 	uint i;
-	for (i=0; i<RegisterCount; i++)
-		setVertexProgramConstant (i+StartRegister, pConstantData+i*4);
+	for (i = 0; i < RegisterCount; i++)
+		setVertexProgramConstant(i + StartRegister, pConstantData + i * 4);
 	return D3D_OK;
 }
 
 // ***************************************************************************
 
-HRESULT CDriverD3D::SetVertexShaderConstantI(UINT StartRegister, CONST INT* pConstantData, UINT RegisterCount)
+HRESULT CDriverD3D::SetVertexShaderConstantI(UINT StartRegister, CONST INT *pConstantData, UINT RegisterCount)
 {
 	H_AUTO_D3D(CDriverD3D_SetVertexShaderConstantI)
 	uint i;
-	for (i=0; i<RegisterCount; i++)
-		setVertexProgramConstant (i+StartRegister, pConstantData+i*4);
+	for (i = 0; i < RegisterCount; i++)
+		setVertexProgramConstant(i + StartRegister, pConstantData + i * 4);
 	return D3D_OK;
 }
 
 // ***************************************************************************
 
-CShaderDrvInfosD3D::CShaderDrvInfosD3D(CDriverD3D *drv, ItShaderDrvInfoPtrList it) : IShaderDrvInfos(drv, it)
+CShaderDrvInfosD3D::CShaderDrvInfosD3D(CDriverD3D *drv, ItShaderDrvInfoPtrList it)
+    : IShaderDrvInfos(drv, it)
 {
 	H_AUTO_D3D(CShaderDrvInfosD3D_CShaderDrvInfosD3D)
 	Validated = false;
@@ -364,7 +362,7 @@ CShaderDrvInfosD3D::~CShaderDrvInfosD3D()
 bool CDriverD3D::validateShader(CD3DShaderFX *shader)
 {
 	H_AUTO_D3D(CDriverD3D_validateShader)
-	CShaderDrvInfosD3D *shaderInfo = static_cast<CShaderDrvInfosD3D*>((IShaderDrvInfos*)shader->_DrvInfo);
+	CShaderDrvInfosD3D *shaderInfo = static_cast<CShaderDrvInfosD3D *>((IShaderDrvInfos *)shader->_DrvInfo);
 
 	if (!shaderInfo->Validated)
 	{
@@ -376,22 +374,22 @@ bool CDriverD3D::validateShader(CD3DShaderFX *shader)
 			if (shaderInfo->Effect->FindNextValidTechnique(hCurrentTechnique, &hCurrentTechnique) != D3D_OK)
 				return false;
 
-			// Info
+				// Info
 
 #ifdef NL_FORCE_TEXTURE_STAGE_COUNT
 			D3DXTECHNIQUE_DESC desc;
-			nlverify (shaderInfo->Effect->GetTechniqueDesc(hCurrentTechnique, &desc) == D3D_OK);
+			nlverify(shaderInfo->Effect->GetTechniqueDesc(hCurrentTechnique, &desc) == D3D_OK);
 
 			// Check this is compatible
 			const uint len = strlen(desc.Name);
 			if (len)
 			{
-				char shaderStageCount = desc.Name[len-1];
-				if ((shaderStageCount>='0') && (shaderStageCount<='9'))
+				char shaderStageCount = desc.Name[len - 1];
+				if ((shaderStageCount >= '0') && (shaderStageCount <= '9'))
 				{
 					uint stageCount = NL_FORCE_TEXTURE_STAGE_COUNT;
 
-					if ((uint)(shaderStageCount-'0')<=stageCount)
+					if ((uint)(shaderStageCount - '0') <= stageCount)
 						// The good technique
 						hTechnique = hCurrentTechnique;
 				}
@@ -403,9 +401,9 @@ bool CDriverD3D::validateShader(CD3DShaderFX *shader)
 #ifdef NL_DEBUG_D3D
 			{
 				D3DXTECHNIQUE_DESC desc;
-				nlverify (shaderInfo->Effect->GetTechniqueDesc(hCurrentTechnique, &desc) == D3D_OK);
+				nlverify(shaderInfo->Effect->GetTechniqueDesc(hCurrentTechnique, &desc) == D3D_OK);
 				if (hTechnique)
-					nlinfo ("Shader \"%s\" : use technique \"%s\" with %d passes.", shader->getName(), desc.Name, desc.Passes);
+					nlinfo("Shader \"%s\" : use technique \"%s\" with %d passes.", shader->getName(), desc.Name, desc.Passes);
 			}
 #endif // NL_DEBUG_D3D
 		}
@@ -414,7 +412,7 @@ bool CDriverD3D::validateShader(CD3DShaderFX *shader)
 		shaderInfo->Effect->SetTechnique(hTechnique);
 
 		// Set the state manager
-		shaderInfo->Effect->SetStateManager (this);
+		shaderInfo->Effect->SetStateManager(this);
 
 		shaderInfo->Validated = true;
 	}
@@ -439,40 +437,40 @@ bool CDriverD3D::activeShader(CD3DShaderFX *shd)
 		shd->_DrvInfo.kill();
 
 		// Already setuped ?
-		CShaderDrvInfosD3D *shaderInfo = static_cast<CShaderDrvInfosD3D*>((IShaderDrvInfos*)shd->_DrvInfo);
-		if ( !shd->_DrvInfo )
+		CShaderDrvInfosD3D *shaderInfo = static_cast<CShaderDrvInfosD3D *>((IShaderDrvInfos *)shd->_DrvInfo);
+		if (!shd->_DrvInfo)
 		{
 			// insert into driver list. (so it is deleted when driver is deleted).
-			ItShaderDrvInfoPtrList	it= _ShaderDrvInfos.insert(_ShaderDrvInfos.end(), (NL3D::IShaderDrvInfos*)NULL);
+			ItShaderDrvInfoPtrList it = _ShaderDrvInfos.insert(_ShaderDrvInfos.end(), (NL3D::IShaderDrvInfos *)NULL);
 			// create and set iterator, for future deletion.
 			shaderInfo = new CShaderDrvInfosD3D(this, it);
-			*it= shd->_DrvInfo = shaderInfo;
+			*it = shd->_DrvInfo = shaderInfo;
 		}
 
 		// Assemble the shader
 		LPD3DXBUFFER pErrorMsgs;
-		HRESULT hr = D3DXCreateEffect(_DeviceInterface, shd->getText(), (UINT)strlen(shd->getText())+1, NULL, NULL, 0, NULL, &(shaderInfo->Effect), &pErrorMsgs);
+		HRESULT hr = D3DXCreateEffect(_DeviceInterface, shd->getText(), (UINT)strlen(shd->getText()) + 1, NULL, NULL, 0, NULL, &(shaderInfo->Effect), &pErrorMsgs);
 		if (hr == D3D_OK)
 		{
 			// Get the texture handle
 			uint i;
-			for (i=0; i<CShaderDrvInfosD3D::MaxShaderTexture; i++)
+			for (i = 0; i < CShaderDrvInfosD3D::MaxShaderTexture; i++)
 			{
-				string name = "texture" + toString (i);
+				string name = "texture" + toString(i);
 				shaderInfo->TextureHandle[i] = shaderInfo->Effect->GetParameterByName(NULL, name.c_str());
-				name = "color" + toString (i);
+				name = "color" + toString(i);
 				shaderInfo->ColorHandle[i] = shaderInfo->Effect->GetParameterByName(NULL, name.c_str());
-				name = "factor" + toString (i);
+				name = "factor" + toString(i);
 				shaderInfo->FactorHandle[i] = shaderInfo->Effect->GetParameterByName(NULL, name.c_str());
-				name = "scalarFloat" + toString (i);
+				name = "scalarFloat" + toString(i);
 				shaderInfo->ScalarFloatHandle[i] = shaderInfo->Effect->GetParameterByName(NULL, name.c_str());
 			}
 		}
 		else
 		{
-			nlwarning ("Can't create shader '%s' (0x%x):", shd->getName(), hr);
+			nlwarning("Can't create shader '%s' (0x%x):", shd->getName(), hr);
 			if (pErrorMsgs)
-				nlwarning ((const char*)pErrorMsgs->GetBufferPointer());
+				nlwarning((const char *)pErrorMsgs->GetBufferPointer());
 			shd->_ShaderChanged = false;
 			_CurrentShader = NULL;
 			return false;
@@ -488,20 +486,21 @@ bool CDriverD3D::activeShader(CD3DShaderFX *shd)
 	return true;
 }
 
-
 static void setFX(CD3DShaderFX &s, const char *name, const char *prog, CDriverD3D *drv)
 {
 	H_AUTO_D3D(setFX)
 
 	s.setName(name);
 	s.setText(prog);
-	nlverify (drv->activeShader (&s));
+	nlverify(drv->activeShader(&s));
 }
 
-#define setFx(a,b,c) { setFX(a, b, c, this); }
+#define setFx(a, b, c)        \
+	{                         \
+		setFX(a, b, c, this); \
+	}
 
-static const char *CloudFx =  
-"																	\n\
+static const char *CloudFx = "																	\n\
 texture texture0;													\n\
 texture texture1;													\n\
 float4 factor0;														\n\
@@ -529,8 +528,7 @@ technique two_stages_2												\n\
 																	\n\
 ";
 
-static const char *Lightmap0Fx =  
-"																	\n\
+static const char *Lightmap0Fx = "																	\n\
 texture texture0;													\n\
 																	\n\
 float4 g_black = { 0.0f, 0.0f, 0.0f, 1.0f };						\n\
@@ -559,8 +557,7 @@ technique one_stage_1												\n\
 																	\n\
 ";
 
-static const char *Lightmap0blendFx =  
-"																	\n\
+static const char *Lightmap0blendFx = "																	\n\
 texture texture0;													\n\
 																	\n\
 float4 g_black = { 0.0f, 0.0f, 0.0f, 1.0f };						\n\
@@ -591,8 +588,7 @@ technique one_stage_1												\n\
 																	\n\
 ";
 
-static const char *Lightmap0blend_x2Fx =  
-"																	\n\
+static const char *Lightmap0blend_x2Fx = "																	\n\
 texture texture0;													\n\
 																	\n\
 float4 g_black = { 0.0f, 0.0f, 0.0f, 1.0f };						\n\
@@ -623,8 +619,7 @@ technique one_stage_1												\n\
 																	\n\
 ";
 
-static const char *Lightmap0_x2Fx =  
-"																	\n\
+static const char *Lightmap0_x2Fx = "																	\n\
 texture texture0;													\n\
 																	\n\
 float4 g_black = { 0.0f, 0.0f, 0.0f, 1.0f };						\n\
@@ -653,8 +648,7 @@ technique one_stage_1												\n\
 																	\n\
 ";
 
-static const char *Lightmap1Fx =  
-"																	\n\
+static const char *Lightmap1Fx = "																	\n\
 texture texture0;													\n\
 texture texture1;													\n\
 // Color0 is the Ambient Added to the lightmap (for Lightmap 8 bit compression)\n\
@@ -701,8 +695,7 @@ technique two_stages_2												\n\
 																	\n\
 ";
 
-static const char *Lightmap1blendFx =  
-"																	\n\
+static const char *Lightmap1blendFx = "																	\n\
 texture texture0;													\n\
 texture texture1;													\n\
 // Color0 is the Ambient Added to the lightmap (for Lightmap 8 bit compression)\n\
@@ -752,8 +745,7 @@ technique two_stages_2												\n\
 																	\n\
 ";
 
-static const char *Lightmap1blend_x2Fx =  
-"																	\n\
+static const char *Lightmap1blend_x2Fx = "																	\n\
 texture texture0;													\n\
 texture texture1;													\n\
 // Color0 is the Ambient Added to the lightmap (for Lightmap 8 bit compression)\n\
@@ -804,8 +796,7 @@ technique two_stages_2												\n\
 																	\n\
 ";
 
-static const char *Lightmap1_x2Fx =  
-"																	\n\
+static const char *Lightmap1_x2Fx = "																	\n\
 texture texture0;													\n\
 texture texture1;													\n\
 // Color0 is the Ambient Added to the lightmap (for Lightmap 8 bit compression)\n\
@@ -853,8 +844,7 @@ technique two_stages_2												\n\
 																	\n\
 ";
 
-static const char *Lightmap2Fx =  
-"																	\n\
+static const char *Lightmap2Fx = "																	\n\
 texture texture0;													\n\
 texture texture1;													\n\
 texture texture2;													\n\
@@ -955,8 +945,7 @@ technique two_stages_2												\n\
 																	\n\
 ";
 
-static const char *Lightmap2blendFx =  
-"																	\n\
+static const char *Lightmap2blendFx = "																	\n\
 texture texture0;													\n\
 texture texture1;													\n\
 texture texture2;													\n\
@@ -1060,8 +1049,7 @@ technique two_stages_2												\n\
 																	\n\
 ";
 
-static const char *Lightmap2blend_x2Fx =  
-"																	\n\
+static const char *Lightmap2blend_x2Fx = "																	\n\
 texture texture0;													\n\
 texture texture1;													\n\
 texture texture2;													\n\
@@ -1166,8 +1154,7 @@ technique two_stages_2												\n\
 																	\n\
 ";
 
-static const char *Lightmap2_x2Fx =  
-"																	\n\
+static const char *Lightmap2_x2Fx = "																	\n\
 texture texture0;													\n\
 texture texture1;													\n\
 texture texture2;													\n\
@@ -1269,8 +1256,7 @@ technique two_stages_2												\n\
 																	\n\
 ";
 
-static const char *Lightmap3Fx =  
-"																	\n\
+static const char *Lightmap3Fx = "																	\n\
 texture texture0;													\n\
 texture texture1;													\n\
 texture texture2;													\n\
@@ -1452,8 +1438,7 @@ technique two_stages_2												\n\
 																	\n\
 ";
 
-static const char *Lightmap3blendFx =  
-"																	\n\
+static const char *Lightmap3blendFx = "																	\n\
 texture texture0;													\n\
 texture texture1;													\n\
 texture texture2;													\n\
@@ -1635,8 +1620,7 @@ technique two_stages_2												\n\
 																	\n\
 ";
 
-static const char *Lightmap3blend_x2Fx =  
-"																	\n\
+static const char *Lightmap3blend_x2Fx = "																	\n\
 texture texture0;													\n\
 texture texture1;													\n\
 texture texture2;													\n\
@@ -1819,8 +1803,7 @@ technique two_stages_2												\n\
 																	\n\
 ";
 
-static const char *Lightmap3_x2Fx =  
-"																	\n\
+static const char *Lightmap3_x2Fx = "																	\n\
 texture texture0;													\n\
 texture texture1;													\n\
 texture texture2;													\n\
@@ -2003,8 +1986,7 @@ technique two_stages_2												\n\
 																	\n\
 ";
 
-static const char *Lightmap4Fx =  
-"																	\n\
+static const char *Lightmap4Fx = "																	\n\
 texture texture0;													\n\
 texture texture1;													\n\
 texture texture2;													\n\
@@ -2257,8 +2239,7 @@ technique two_stages_2												\n\
 																	\n\
 ";
 
-static const char *Lightmap4blendFx =  
-"																	\n\
+static const char *Lightmap4blendFx = "																	\n\
 texture texture0;													\n\
 texture texture1;													\n\
 texture texture2;													\n\
@@ -2515,8 +2496,7 @@ technique two_stages_2												\n\
 																	\n\
 ";
 
-static const char *Lightmap4blend_x2Fx =  
-"																	\n\
+static const char *Lightmap4blend_x2Fx = "																	\n\
 texture texture0;													\n\
 texture texture1;													\n\
 texture texture2;													\n\
@@ -2773,8 +2753,7 @@ technique two_stages_2												\n\
 																	\n\
 ";
 
-static const char *Lightmap4_x2Fx =  
-"																	\n\
+static const char *Lightmap4_x2Fx = "																	\n\
 texture texture0;													\n\
 texture texture1;													\n\
 texture texture2;													\n\
@@ -3028,8 +3007,7 @@ technique two_stages_2												\n\
 																	\n\
 ";
 
-static const char *Water_diffuseFx =  
-"																	\n\
+static const char *Water_diffuseFx = "																	\n\
 texture texture0; // bumpmap0										\n\
 texture texture1; // bumpmap1										\n\
 texture texture2; // envmap											\n\
@@ -3140,8 +3118,7 @@ technique technique_water_diffuse_1_1								\n\
 																	\n\
 ";
 
-static const char *Water_no_diffuseFx =  
-"																	\n\
+static const char *Water_no_diffuseFx = "																	\n\
 texture texture0; // bumpmap0										\n\
 texture texture1; // bumpmap1										\n\
 texture texture2; // envmap											\n\
@@ -3241,36 +3218,33 @@ technique technique_water_no_diffuse_1_1							\n\
 																	\n\
 ";
 
-
-
 void CDriverD3D::initInternalShaders()
 {
 	H_AUTO_D3D(CDriverD3D_initInternalShaders)
-	setFx(_ShaderLightmap0,"lightmap0Fx", Lightmap0Fx);
-	setFx(_ShaderLightmap1,"lightmap1Fx", Lightmap1Fx);
-	setFx(_ShaderLightmap2,"lightmap2Fx", Lightmap2Fx);
-	setFx(_ShaderLightmap3,"lightmap3Fx", Lightmap3Fx);
-	setFx(_ShaderLightmap4,"lightmap4Fx", Lightmap4Fx);
-	setFx(_ShaderLightmap0Blend,"lightmap0blendFx", Lightmap0blendFx);
-	setFx(_ShaderLightmap1Blend,"lightmap1blendFx", Lightmap1blendFx);
-	setFx(_ShaderLightmap2Blend,"lightmap2blendFx", Lightmap2blendFx);
-	setFx(_ShaderLightmap3Blend,"lightmap3blendFx", Lightmap3blendFx);
-	setFx(_ShaderLightmap4Blend,"lightmap4blendFx", Lightmap4blendFx);
-	setFx(_ShaderLightmap0X2,"lightmap0_x2Fx", Lightmap0_x2Fx);
-	setFx(_ShaderLightmap1X2,"lightmap1_x2Fx", Lightmap1_x2Fx);
-	setFx(_ShaderLightmap2X2,"lightmap2_x2Fx", Lightmap2_x2Fx);
-	setFx(_ShaderLightmap3X2,"lightmap3_x2Fx", Lightmap3_x2Fx);
-	setFx(_ShaderLightmap4X2,"lightmap4_x2Fx", Lightmap4_x2Fx);
-	setFx(_ShaderLightmap0BlendX2,"lightmap0blend_x2Fx", Lightmap0blend_x2Fx);
-	setFx(_ShaderLightmap1BlendX2,"lightmap1blend_x2Fx", Lightmap1blend_x2Fx);
-	setFx(_ShaderLightmap2BlendX2,"lightmap2blend_x2Fx", Lightmap2blend_x2Fx);
-	setFx(_ShaderLightmap3BlendX2,"lightmap3blend_x2Fx", Lightmap3blend_x2Fx);
-	setFx(_ShaderLightmap4BlendX2,"lightmap4blend_x2Fx", Lightmap4blend_x2Fx);
+	setFx(_ShaderLightmap0, "lightmap0Fx", Lightmap0Fx);
+	setFx(_ShaderLightmap1, "lightmap1Fx", Lightmap1Fx);
+	setFx(_ShaderLightmap2, "lightmap2Fx", Lightmap2Fx);
+	setFx(_ShaderLightmap3, "lightmap3Fx", Lightmap3Fx);
+	setFx(_ShaderLightmap4, "lightmap4Fx", Lightmap4Fx);
+	setFx(_ShaderLightmap0Blend, "lightmap0blendFx", Lightmap0blendFx);
+	setFx(_ShaderLightmap1Blend, "lightmap1blendFx", Lightmap1blendFx);
+	setFx(_ShaderLightmap2Blend, "lightmap2blendFx", Lightmap2blendFx);
+	setFx(_ShaderLightmap3Blend, "lightmap3blendFx", Lightmap3blendFx);
+	setFx(_ShaderLightmap4Blend, "lightmap4blendFx", Lightmap4blendFx);
+	setFx(_ShaderLightmap0X2, "lightmap0_x2Fx", Lightmap0_x2Fx);
+	setFx(_ShaderLightmap1X2, "lightmap1_x2Fx", Lightmap1_x2Fx);
+	setFx(_ShaderLightmap2X2, "lightmap2_x2Fx", Lightmap2_x2Fx);
+	setFx(_ShaderLightmap3X2, "lightmap3_x2Fx", Lightmap3_x2Fx);
+	setFx(_ShaderLightmap4X2, "lightmap4_x2Fx", Lightmap4_x2Fx);
+	setFx(_ShaderLightmap0BlendX2, "lightmap0blend_x2Fx", Lightmap0blend_x2Fx);
+	setFx(_ShaderLightmap1BlendX2, "lightmap1blend_x2Fx", Lightmap1blend_x2Fx);
+	setFx(_ShaderLightmap2BlendX2, "lightmap2blend_x2Fx", Lightmap2blend_x2Fx);
+	setFx(_ShaderLightmap3BlendX2, "lightmap3blend_x2Fx", Lightmap3blend_x2Fx);
+	setFx(_ShaderLightmap4BlendX2, "lightmap4blend_x2Fx", Lightmap4blend_x2Fx);
 	setFx(_ShaderCloud, "cloudFx", CloudFx);
-	setFx(_ShaderWaterNoDiffuse,"water_no_diffuseFx", Water_no_diffuseFx);
+	setFx(_ShaderWaterNoDiffuse, "water_no_diffuseFx", Water_no_diffuseFx);
 	setFx(_ShaderWaterDiffuse, "water_diffuseFx", Water_diffuseFx);
 }
-
 
 // ***************************************************************************
 
@@ -3303,19 +3277,19 @@ void CDriverD3D::releaseInternalShaders()
 }
 
 // ***************************************************************************
-bool CDriverD3D::setShaderTexture (uint textureHandle, ITexture *texture, CFXCache *cache)
+bool CDriverD3D::setShaderTexture(uint textureHandle, ITexture *texture, CFXCache *cache)
 {
-	H_AUTO_D3D(CDriverD3D_setShaderTexture )
+	H_AUTO_D3D(CDriverD3D_setShaderTexture)
 	// Setup the texture
 	if (!setupTexture(*texture))
 		return false;
 
 	// Set the main texture
-	nlassert (_CurrentShader);
-	CShaderDrvInfosD3D *shaderInfo = static_cast<CShaderDrvInfosD3D*>((IShaderDrvInfos*)_CurrentShader->_DrvInfo);
-	nlassert (shaderInfo);
-	ID3DXEffect	*effect = shaderInfo->Effect;
-	CTextureDrvInfosD3D *d3dtext = getTextureD3D (*texture);
+	nlassert(_CurrentShader);
+	CShaderDrvInfosD3D *shaderInfo = static_cast<CShaderDrvInfosD3D *>((IShaderDrvInfos *)_CurrentShader->_DrvInfo);
+	nlassert(shaderInfo);
+	ID3DXEffect *effect = shaderInfo->Effect;
+	CTextureDrvInfosD3D *d3dtext = getTextureD3D(*texture);
 	if (texture)
 	{
 		if (cache)
@@ -3324,13 +3298,12 @@ bool CDriverD3D::setShaderTexture (uint textureHandle, ITexture *texture, CFXCac
 		}
 		else
 		{
-			effect->SetTexture (shaderInfo->TextureHandle[textureHandle], d3dtext->Texture);
+			effect->SetTexture(shaderInfo->TextureHandle[textureHandle], d3dtext->Texture);
 		}
 	}
 
-
 	// Add a ref on this texture
-	_CurrentShaderTextures.push_back (CTextureRef());
+	_CurrentShaderTextures.push_back(CTextureRef());
 	CTextureRef &ref = _CurrentShaderTextures.back();
 	ref.NeLTexture = texture;
 	ref.D3DTexture = d3dtext->Texture;
@@ -3349,12 +3322,10 @@ void CDriverD3D::disableHardwareTextureShader()
 	*/
 }
 
-
-
 // ***************************************************************************
 void CDriverD3D::notifyAllShaderDrvOfLostDevice()
 {
-	for(TShaderDrvInfoPtrList::iterator it = _ShaderDrvInfos.begin(); it != _ShaderDrvInfos.end(); ++it)
+	for (TShaderDrvInfoPtrList::iterator it = _ShaderDrvInfos.begin(); it != _ShaderDrvInfos.end(); ++it)
 	{
 		nlassert(*it);
 		CShaderDrvInfosD3D *drvInfo = NLMISC::safe_cast<CShaderDrvInfosD3D *>(*it);
@@ -3368,19 +3339,18 @@ void CDriverD3D::notifyAllShaderDrvOfLostDevice()
 // ***************************************************************************
 void CDriverD3D::notifyAllShaderDrvOfResetDevice()
 {
-	for(TShaderDrvInfoPtrList::iterator it = _ShaderDrvInfos.begin(); it != _ShaderDrvInfos.end(); ++it)
+	for (TShaderDrvInfoPtrList::iterator it = _ShaderDrvInfos.begin(); it != _ShaderDrvInfos.end(); ++it)
 	{
 		nlassert(*it);
 		CShaderDrvInfosD3D *drvInfo = NLMISC::safe_cast<CShaderDrvInfosD3D *>(*it);
 		if (drvInfo->Effect)
 		{
-			//nlverify(
+			// nlverify(
 			drvInfo->Effect->OnResetDevice();
 			//== D3D_OK);
 		}
 	}
 }
-
 
 // ***************************************************************************
 // state records (for .fx caching)
@@ -3390,26 +3360,36 @@ class CStateRecordLightEnable : public CStateRecord
 {
 public:
 	DWORD Index;
-	BOOL  Enable;
+	BOOL Enable;
+
 public:
-	CStateRecordLightEnable(DWORD index, BOOL enable) : Index(index), Enable(enable) {}
+	CStateRecordLightEnable(DWORD index, BOOL enable)
+	    : Index(index)
+	    , Enable(enable)
+	{
+	}
 	virtual void apply(class CDriverD3D &drv)
 	{
-		drv.enableLight ((uint8)Index, Enable!=FALSE);
+		drv.enableLight((uint8)Index, Enable != FALSE);
 	}
 };
 //
 class CStateRecordLight : public CStateRecord
 {
 public:
-	DWORD	  Index;
+	DWORD Index;
 	D3DLIGHT9 Light;
+
 public:
-	CStateRecordLight(DWORD index, const D3DLIGHT9 *pLight) : Index(index), Light(*pLight) {}
+	CStateRecordLight(DWORD index, const D3DLIGHT9 *pLight)
+	    : Index(index)
+	    , Light(*pLight)
+	{
+	}
 	virtual void apply(class CDriverD3D &drv)
 	{
 		drv._LightCache[Index].Light = Light;
-		drv.touchRenderVariable (&drv._LightCache[Index]);
+		drv.touchRenderVariable(&drv._LightCache[Index]);
 	}
 };
 //
@@ -3417,8 +3397,12 @@ class CStateRecordMaterial : public CStateRecord
 {
 public:
 	D3DMATERIAL9 Material;
+
 public:
-	CStateRecordMaterial(const D3DMATERIAL9 *pMaterial) : Material(*pMaterial) {}
+	CStateRecordMaterial(const D3DMATERIAL9 *pMaterial)
+	    : Material(*pMaterial)
+	{
+	}
 	virtual void apply(class CDriverD3D &drv)
 	{
 		drv.setMaterialState(Material);
@@ -3429,8 +3413,12 @@ class CStateRecordPixelShader : public CStateRecord
 {
 public:
 	LPDIRECT3DPIXELSHADER9 PixelShader;
+
 public:
-	CStateRecordPixelShader(LPDIRECT3DPIXELSHADER9 pixelShader) : PixelShader(pixelShader) {}
+	CStateRecordPixelShader(LPDIRECT3DPIXELSHADER9 pixelShader)
+	    : PixelShader(pixelShader)
+	{
+	}
 	virtual void apply(class CDriverD3D &drv)
 	{
 		drv.setPixelShader(PixelShader);
@@ -3441,9 +3429,11 @@ class CStateRecordPixelShaderConstantB : public CStateRecord
 {
 public:
 	std::vector<BOOL> Values;
-	uint			  StartRegister;
+	uint StartRegister;
+
 public:
-	CStateRecordPixelShaderConstantB(DWORD startRegister, const BOOL *values, DWORD countVec4) : StartRegister(startRegister)
+	CStateRecordPixelShaderConstantB(DWORD startRegister, const BOOL *values, DWORD countVec4)
+	    : StartRegister(startRegister)
 	{
 		Values.resize(countVec4 * 4);
 		std::copy(values, values + countVec4 * 4, Values.begin());
@@ -3455,9 +3445,9 @@ public:
 		uint i = StartRegister;
 		while (curr != last)
 		{
-			drv.setPixelShaderConstant (i, curr);
+			drv.setPixelShaderConstant(i, curr);
 			curr += 4;
-			++ i;
+			++i;
 		}
 	}
 };
@@ -3466,9 +3456,11 @@ class CStateRecordPixelShaderConstantF : public CStateRecord
 {
 public:
 	std::vector<FLOAT> Values;
-	uint			  StartRegister;
+	uint StartRegister;
+
 public:
-	CStateRecordPixelShaderConstantF(DWORD startRegister, const FLOAT *values, DWORD countVec4) : StartRegister(startRegister)
+	CStateRecordPixelShaderConstantF(DWORD startRegister, const FLOAT *values, DWORD countVec4)
+	    : StartRegister(startRegister)
 	{
 		Values.resize(countVec4 * 4);
 		std::copy(values, values + countVec4 * 4, Values.begin());
@@ -3480,9 +3472,9 @@ public:
 		uint i = StartRegister;
 		while (curr != last)
 		{
-			drv.setPixelShaderConstant (i, curr);
+			drv.setPixelShaderConstant(i, curr);
 			curr += 4;
-			++ i;
+			++i;
 		}
 	}
 };
@@ -3490,10 +3482,12 @@ public:
 class CStateRecordPixelShaderConstantI : public CStateRecord
 {
 public:
-	std::vector<INT>  Values;
-	uint			  StartRegister;
+	std::vector<INT> Values;
+	uint StartRegister;
+
 public:
-	CStateRecordPixelShaderConstantI(DWORD startRegister, const INT *values, DWORD countVec4) : StartRegister(startRegister)
+	CStateRecordPixelShaderConstantI(DWORD startRegister, const INT *values, DWORD countVec4)
+	    : StartRegister(startRegister)
 	{
 		Values.resize(countVec4 * 4);
 		std::copy(values, values + countVec4 * 4, Values.begin());
@@ -3505,9 +3499,9 @@ public:
 		uint i = StartRegister;
 		while (curr != last)
 		{
-			drv.setPixelShaderConstant (i, curr);
+			drv.setPixelShaderConstant(i, curr);
 			curr += 4;
-			++ i;
+			++i;
 		}
 	}
 };
@@ -3517,8 +3511,13 @@ class CStateRecordRenderState : public CStateRecord
 public:
 	D3DRENDERSTATETYPE State;
 	DWORD Value;
+
 public:
-	CStateRecordRenderState(D3DRENDERSTATETYPE state, DWORD value) : State(state), Value(value) {}
+	CStateRecordRenderState(D3DRENDERSTATETYPE state, DWORD value)
+	    : State(state)
+	    , Value(value)
+	{
+	}
 	virtual void apply(class CDriverD3D &drv)
 	{
 		drv.setRenderState(State, Value);
@@ -3531,8 +3530,14 @@ public:
 	DWORD Sampler;
 	D3DSAMPLERSTATETYPE Type;
 	DWORD Value;
+
 public:
-	CStateRecordSamplerState(DWORD sampler, D3DSAMPLERSTATETYPE type, DWORD value) : Sampler(sampler), Type(type), Value(value) {}
+	CStateRecordSamplerState(DWORD sampler, D3DSAMPLERSTATETYPE type, DWORD value)
+	    : Sampler(sampler)
+	    , Type(type)
+	    , Value(value)
+	{
+	}
 	virtual void apply(class CDriverD3D &drv)
 	{
 		drv.setSamplerState(Sampler, Type, Value);
@@ -3543,14 +3548,17 @@ class CStateRecordTexture : public CStateRecord
 {
 public:
 	DWORD Stage;
-	CRefPtr<ITexture>      TexRef;
+	CRefPtr<ITexture> TexRef;
 	LPDIRECT3DBASETEXTURE9 Texture;
 	BOOL IsNelTexture;
+
 public:
-	CStateRecordTexture(DWORD stage, LPDIRECT3DBASETEXTURE9 texture, ITexture *nelTexture) : Stage(stage), Texture(texture)
+	CStateRecordTexture(DWORD stage, LPDIRECT3DBASETEXTURE9 texture, ITexture *nelTexture)
+	    : Stage(stage)
+	    , Texture(texture)
 	{
 		nlassert(Texture);
-		H_AUTO_D3D(CDriverD3D_SetTexture )
+		H_AUTO_D3D(CDriverD3D_SetTexture)
 		// if not a NeL texture, should add a reference on texture, else use refptr instead
 		IsNelTexture = nelTexture != NULL;
 		TexRef = nelTexture;
@@ -3590,14 +3598,20 @@ public:
 	DWORD Stage;
 	D3DTEXTURESTAGESTATETYPE Type;
 	DWORD Value;
+
 public:
-	CStateRecordTextureStageState(DWORD stage, D3DTEXTURESTAGESTATETYPE type, DWORD value) : Stage(stage), Type(type), Value(value) {}
+	CStateRecordTextureStageState(DWORD stage, D3DTEXTURESTAGESTATETYPE type, DWORD value)
+	    : Stage(stage)
+	    , Type(type)
+	    , Value(value)
+	{
+	}
 	virtual void apply(class CDriverD3D &drv)
 	{
 		if (Type == D3DTSS_TEXCOORDINDEX)
-			drv.setTextureIndexUV (Stage, Value);
+			drv.setTextureIndexUV(Stage, Value);
 		else
-			drv.setTextureState (Stage, Type, Value);
+			drv.setTextureState(Stage, Type, Value);
 	}
 };
 //
@@ -3606,8 +3620,13 @@ class CStateRecordTransform : public CStateRecord
 public:
 	D3DTRANSFORMSTATETYPE State;
 	D3DMATRIX Matrix;
+
 public:
-	CStateRecordTransform(D3DTRANSFORMSTATETYPE state, const D3DMATRIX *pMatrix) : State(state), Matrix(*pMatrix) {}
+	CStateRecordTransform(D3DTRANSFORMSTATETYPE state, const D3DMATRIX *pMatrix)
+	    : State(state)
+	    , Matrix(*pMatrix)
+	{
+	}
 	virtual void apply(class CDriverD3D &drv)
 	{
 		drv.setMatrix(State, Matrix);
@@ -3618,12 +3637,16 @@ class CStateRecordVertexShader : public CStateRecord
 {
 public:
 	LPDIRECT3DVERTEXSHADER9 Shader;
+
 public:
-	CStateRecordVertexShader(LPDIRECT3DVERTEXSHADER9 shader) : Shader(shader) {}
-	virtual void apply(class CDriverD3D &/* drv */)
+	CStateRecordVertexShader(LPDIRECT3DVERTEXSHADER9 shader)
+	    : Shader(shader)
+	{
+	}
+	virtual void apply(class CDriverD3D & /* drv */)
 	{
 		nlassert(0); // not supported
-		//drv.setVertexProgram(Shader);
+		// drv.setVertexProgram(Shader);
 	}
 };
 //
@@ -3631,9 +3654,11 @@ class CStateRecordVertexShaderConstantB : public CStateRecord
 {
 public:
 	std::vector<BOOL> Values;
-	uint			  StartRegister;
+	uint StartRegister;
+
 public:
-	CStateRecordVertexShaderConstantB(DWORD startRegister, const BOOL *values, DWORD countVec4) : StartRegister(startRegister)
+	CStateRecordVertexShaderConstantB(DWORD startRegister, const BOOL *values, DWORD countVec4)
+	    : StartRegister(startRegister)
 	{
 		Values.resize(countVec4 * 4);
 		std::copy(values, values + countVec4 * 4, Values.begin());
@@ -3647,7 +3672,7 @@ public:
 		{
 			drv.setVertexProgramConstant(i, curr);
 			curr += 4;
-			++ i;
+			++i;
 		}
 	}
 };
@@ -3655,9 +3680,11 @@ class CStateRecordVertexShaderConstantF : public CStateRecord
 {
 public:
 	std::vector<FLOAT> Values;
-	uint			   StartRegister;
+	uint StartRegister;
+
 public:
-	CStateRecordVertexShaderConstantF(DWORD startRegister, const FLOAT *values, DWORD countVec4) : StartRegister(startRegister)
+	CStateRecordVertexShaderConstantF(DWORD startRegister, const FLOAT *values, DWORD countVec4)
+	    : StartRegister(startRegister)
 	{
 		Values.resize(countVec4 * 4);
 		std::copy(values, values + countVec4 * 4, Values.begin());
@@ -3671,7 +3698,7 @@ public:
 		{
 			drv.setVertexProgramConstant(i, curr);
 			curr += 4;
-			++ i;
+			++i;
 		}
 	}
 };
@@ -3679,9 +3706,11 @@ class CStateRecordVertexShaderConstantI : public CStateRecord
 {
 public:
 	std::vector<INT> Values;
-	uint			   StartRegister;
+	uint StartRegister;
+
 public:
-	CStateRecordVertexShaderConstantI(DWORD startRegister, const INT *values, DWORD countVec4) : StartRegister(startRegister)
+	CStateRecordVertexShaderConstantI(DWORD startRegister, const INT *values, DWORD countVec4)
+	    : StartRegister(startRegister)
 	{
 		Values.resize(countVec4 * 4);
 		std::copy(values, values + countVec4 * 4, Values.begin());
@@ -3695,7 +3724,7 @@ public:
 		{
 			drv.setVertexProgramConstant(i, curr);
 			curr += 4;
-			++ i;
+			++i;
 		}
 	}
 };
@@ -3733,7 +3762,7 @@ HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetFVF(DWORD /* FVF */)
 	return D3D_OK;
 }
 
-HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetLight(DWORD Index, CONST D3DLIGHT9* pLight)
+HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetLight(DWORD Index, CONST D3DLIGHT9 *pLight)
 {
 	nlassert(Driver);
 	nlassert(Target);
@@ -3741,7 +3770,7 @@ HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetLight(DWORD Index, CONST D3DLIGHT9
 	return D3D_OK;
 }
 
-HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetMaterial(CONST D3DMATERIAL9* pMaterial)
+HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetMaterial(CONST D3DMATERIAL9 *pMaterial)
 {
 	nlassert(Driver);
 	nlassert(Target);
@@ -3763,7 +3792,7 @@ HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetPixelShader(LPDIRECT3DPIXELSHADER9
 	return D3D_OK;
 }
 
-HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetPixelShaderConstantB(UINT StartRegister, CONST BOOL* pConstantData, UINT RegisterCount)
+HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetPixelShaderConstantB(UINT StartRegister, CONST BOOL *pConstantData, UINT RegisterCount)
 {
 	nlassert(Driver);
 	nlassert(Target);
@@ -3771,7 +3800,7 @@ HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetPixelShaderConstantB(UINT StartReg
 	return D3D_OK;
 }
 
-HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetPixelShaderConstantF(UINT StartRegister, CONST FLOAT* pConstantData, UINT RegisterCount)
+HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetPixelShaderConstantF(UINT StartRegister, CONST FLOAT *pConstantData, UINT RegisterCount)
 {
 	nlassert(Driver);
 	nlassert(Target);
@@ -3779,7 +3808,7 @@ HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetPixelShaderConstantF(UINT StartReg
 	return D3D_OK;
 }
 
-HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetPixelShaderConstantI(UINT StartRegister, CONST INT* pConstantData, UINT RegisterCount)
+HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetPixelShaderConstantI(UINT StartRegister, CONST INT *pConstantData, UINT RegisterCount)
 {
 	nlassert(Driver);
 	nlassert(Target);
@@ -3810,7 +3839,7 @@ HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetTexture(DWORD Stage, LPDIRECT3DBAS
 	// Look for the current texture
 	uint i;
 	const uint count = (uint)Driver->getCurrentShaderTextures().size();
-	for (i=0; i<count; i++)
+	for (i = 0; i < count; i++)
 	{
 		const CDriverD3D::CTextureRef &ref = Driver->getCurrentShaderTextures()[i];
 		if (ref.D3DTexture == pTexture)
@@ -3828,7 +3857,6 @@ HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetTexture(DWORD Stage, LPDIRECT3DBAS
 	return D3D_OK;
 }
 
-
 HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetTextureStageState(DWORD Stage, D3DTEXTURESTAGESTATETYPE Type, DWORD Value)
 {
 	nlassert(Driver);
@@ -3837,7 +3865,7 @@ HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetTextureStageState(DWORD Stage, D3D
 	return D3D_OK;
 }
 
-HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetTransform(D3DTRANSFORMSTATETYPE State, CONST D3DMATRIX* pMatrix)
+HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetTransform(D3DTRANSFORMSTATETYPE State, CONST D3DMATRIX *pMatrix)
 {
 	nlassert(Driver);
 	nlassert(Target);
@@ -3853,7 +3881,7 @@ HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetVertexShader(LPDIRECT3DVERTEXSHADE
 	return D3D_OK;
 }
 
-HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetVertexShaderConstantB(UINT StartRegister, CONST BOOL* pConstantData, UINT RegisterCount)
+HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetVertexShaderConstantB(UINT StartRegister, CONST BOOL *pConstantData, UINT RegisterCount)
 {
 	nlassert(Driver);
 	nlassert(Target);
@@ -3861,7 +3889,7 @@ HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetVertexShaderConstantB(UINT StartRe
 	return D3D_OK;
 }
 
-HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetVertexShaderConstantF(UINT StartRegister, CONST FLOAT* pConstantData, UINT RegisterCount)
+HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetVertexShaderConstantF(UINT StartRegister, CONST FLOAT *pConstantData, UINT RegisterCount)
 {
 	nlassert(Driver);
 	nlassert(Target);
@@ -3869,7 +3897,7 @@ HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetVertexShaderConstantF(UINT StartRe
 	return D3D_OK;
 }
 
-HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetVertexShaderConstantI(UINT StartRegister, CONST INT* pConstantData, UINT RegisterCount)
+HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetVertexShaderConstantI(UINT StartRegister, CONST INT *pConstantData, UINT RegisterCount)
 {
 	nlassert(Driver);
 	nlassert(Target);
@@ -3880,7 +3908,7 @@ HRESULT STDMETHODCALLTYPE CFXPassRecorder::SetVertexShaderConstantI(UINT StartRe
 //===================================================================================
 CFXPassRecord::~CFXPassRecord()
 {
-	for(std::vector<CStateRecord *>::iterator it = States.begin(); it != States.end(); ++it)
+	for (std::vector<CStateRecord *>::iterator it = States.begin(); it != States.end(); ++it)
 	{
 		delete *it;
 	}
@@ -3888,7 +3916,7 @@ CFXPassRecord::~CFXPassRecord()
 
 void CFXPassRecord::apply(CDriverD3D &drv)
 {
-	for(std::vector<CStateRecord *>::iterator it = States.begin(); it != States.end(); ++it)
+	for (std::vector<CStateRecord *>::iterator it = States.begin(); it != States.end(); ++it)
 	{
 		(*it)->apply(drv);
 	}
@@ -3901,10 +3929,10 @@ void CFXCache::setConstants(CShaderDrvInfosD3D *si)
 {
 	nlassert(si);
 	nlassert(si->Effect);
-	for(uint k = 0; k < CFXInputParams::MaxNumParams; ++k)
+	for (uint k = 0; k < CFXInputParams::MaxNumParams; ++k)
 	{
 		if (Params.Textures[k].Set) si->Effect->SetTexture(si->TextureHandle[k], Params.Textures[k].Value);
-		if (Params.Vectors[k].Set) si->Effect->SetFloatArray(si->FactorHandle[k], (CONST FLOAT *) &(Params.Vectors[k].Value), 4);
+		if (Params.Vectors[k].Set) si->Effect->SetFloatArray(si->FactorHandle[k], (CONST FLOAT *)&(Params.Vectors[k].Value), 4);
 		if (Params.Colors[k].Set) si->Effect->SetInt(si->ColorHandle[k], Params.Colors[k].Value);
 		if (Params.Floats[k].Set) si->Effect->SetFloat(si->ScalarFloatHandle[k], Params.Floats[k].Value);
 	}
@@ -3925,7 +3953,7 @@ void CFXCache::begin(CShaderDrvInfosD3D *si, CDriverD3D *driver)
 	}
 	if (!Params.Touched)
 	{
-		++ Steadyness;
+		++Steadyness;
 	}
 	if (Steadyness < NL_D3D_NUM_RENDER_FOR_FX_CACHING)
 	{
@@ -3943,10 +3971,10 @@ void CFXCache::begin(CShaderDrvInfosD3D *si, CDriverD3D *driver)
 		// Set constants
 		setConstants(si);
 		//
-		HRESULT r = si->Effect->Begin(&numPasses, D3DXFX_DONOTSAVESTATE|D3DXFX_DONOTSAVESHADERSTATE);
+		HRESULT r = si->Effect->Begin(&numPasses, D3DXFX_DONOTSAVESTATE | D3DXFX_DONOTSAVESHADERSTATE);
 		nlassert(r == D3D_OK);
 		Passes.resize(numPasses);
-		for(uint k = 0; k < numPasses; ++k)
+		for (uint k = 0; k < numPasses; ++k)
 		{
 			pr.Target = &Passes[k];
 #if (DIRECT3D_VERSION >= 0x0900) && (D3D_SDK_VERSION >= 32)
@@ -3971,7 +3999,7 @@ void CFXCache::applyPass(class CDriverD3D &drv, CShaderDrvInfosD3D *si, uint pas
 		// so uses the standard path
 		UINT numPasses;
 		setConstants(si);
-		HRESULT r = si->Effect->Begin(&numPasses, D3DXFX_DONOTSAVESTATE|D3DXFX_DONOTSAVESHADERSTATE);
+		HRESULT r = si->Effect->Begin(&numPasses, D3DXFX_DONOTSAVESTATE | D3DXFX_DONOTSAVESHADERSTATE);
 		nlassert(r == D3D_OK);
 		NumPasses = numPasses;
 	}
@@ -3980,7 +4008,7 @@ void CFXCache::applyPass(class CDriverD3D &drv, CShaderDrvInfosD3D *si, uint pas
 	{
 #if (DIRECT3D_VERSION >= 0x0900) && (D3D_SDK_VERSION >= 32)
 		HRESULT r = si->Effect->BeginPass(passIndex);
-		si->Effect->EndPass ();
+		si->Effect->EndPass();
 #else
 		HRESULT r = si->Effect->Pass(passIndex);
 #endif
@@ -4001,14 +4029,11 @@ void CFXCache::end(CShaderDrvInfosD3D *si)
 	}
 }
 
-
 void CFXCache::reset()
 {
 	Params.reset();
 	Passes.clear();
 	Steadyness = 0;
 }
-
-
 
 } // NL3D

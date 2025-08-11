@@ -19,4 +19,3 @@
 
 // remove stupid VC 6 warnings
 void foo_path_mesh_alloc_cpp() {};
-

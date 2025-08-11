@@ -43,7 +43,7 @@ public:
 
 	void init(CConfiguration *configuration);
 	void release();
-	
+
 	/// Sets the language code, but does not store to the config file
 	void setLanguageCode(const std::string &language);
 	/// Load the language code that was stored in the config file
@@ -65,7 +65,7 @@ private:
 private:
 	CInternationalization(const CInternationalization &);
 	CInternationalization &operator=(const CInternationalization &);
-	
+
 }; /* class CInternationalization */
 
 } /* namespace NLQT */

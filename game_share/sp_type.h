@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef SP_TYPE_H
 #define SP_TYPE_H
 
@@ -26,14 +25,11 @@
 
 // User #includes
 
-namespace EGSPD
-{
+namespace EGSPD {
 
 //
 // Forward declarations
 //
-
-
 
 //
 // Typedefs & Enums
@@ -46,7 +42,6 @@ class CSPType
 {
 
 public:
-
 	/// \name Enum values
 	// @{
 
@@ -63,9 +58,7 @@ public:
 
 	// @}
 
-
 public:
-
 	/// \name Conversion methods
 	// @{
 
@@ -73,30 +66,25 @@ public:
 	 * Use these methods to convert from enum value to string (and vice versa)
 	 */
 
-	static const std::string&		toString(TSPType v);
-	static CSPType::TSPType			fromString(const std::string& v);
+	static const std::string &toString(TSPType v);
+	static CSPType::TSPType fromString(const std::string &v);
 
 	// @}
 
-
 private:
-
 	/// \name Enum initialisation
 	// @{
 
-	static void						init();
-	static bool						_Initialised;
-	static std::string				_UnknownString;
-	static std::vector<std::string>	_StrTable;
-	static std::map<std::string, TSPType>	_ValueMap;
+	static void init();
+	static bool _Initialised;
+	static std::string _UnknownString;
+	static std::vector<std::string> _StrTable;
+	static std::map<std::string, TSPType> _ValueMap;
 
 	// @}
-
 };
 
-
 } // End of EGSPD
-
 
 //
 // Inline implementations

@@ -19,19 +19,18 @@
 
 #include <string>
 
-namespace PVP_RELATION
+namespace PVP_RELATION {
+enum TPVPRelation
 {
-	enum TPVPRelation
-	{
-		Neutral, // Only Heal, no propagation
-		NeutralPVP, // No Heal, No attack
-		Ally, // Only heal, propagation
-		Ennemy, // Only attack, propagation
-		Unknown
-	};
+	Neutral, // Only Heal, no propagation
+	NeutralPVP, // No Heal, No attack
+	Ally, // Only heal, propagation
+	Ennemy, // Only attack, propagation
+	Unknown
+};
 
-	TPVPRelation fromString(const std::string & str);
-	const std::string & toString(TPVPRelation relation);
+TPVPRelation fromString(const std::string &str);
+const std::string &toString(TPVPRelation relation);
 
 } // namespace PVP_RELATION
 

@@ -34,7 +34,8 @@ using namespace NLMISC;
 
 namespace NLQT {
 
-CCommandLog::CCommandLog(QWidget *parent) : QWidget(parent)
+CCommandLog::CCommandLog(QWidget *parent)
+    : QWidget(parent)
 {
 	m_DisplayerOutput = new QTextEdit();
 	m_DisplayerOutput->setReadOnly(true);
@@ -64,7 +65,7 @@ CCommandLog::~CCommandLog()
 	ErrorLog->removeDisplayer(this);
 }
 
-void CCommandLog::doDisplay(const CLog::TDisplayInfo& args, const char *message)
+void CCommandLog::doDisplay(const CLog::TDisplayInfo &args, const char *message)
 {
 	switch (args.LogType)
 	{
@@ -89,7 +90,7 @@ void CCommandLog::doDisplay(const CLog::TDisplayInfo& args, const char *message)
 	}
 
 	bool needSpace = false;
-	//stringstream ss;
+	// stringstream ss;
 	string str;
 
 	if (args.LogType != CLog::LOG_NO)
@@ -101,7 +102,11 @@ void CCommandLog::doDisplay(const CLog::TDisplayInfo& args, const char *message)
 	// Write thread identifier
 	if (args.ThreadId != 0)
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 #ifdef NL_OS_WINDOWS
 		str += NLMISC::toString("%4x", args.ThreadId);
 #else
@@ -112,54 +117,70 @@ void CCommandLog::doDisplay(const CLog::TDisplayInfo& args, const char *message)
 
 	if (args.FileName != NULL)
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 		str += NLMISC::toString("%20s", CFile::getFilename(args.FileName).c_str());
 		needSpace = true;
 	}
 
 	if (args.Line != -1)
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 		str += NLMISC::toString("%4u", args.Line);
-		//ss << setw(4) << args.Line;
+		// ss << setw(4) << args.Line;
 		needSpace = true;
 	}
 
 	if (args.FuncName != NULL)
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 		str += NLMISC::toString("%20s", args.FuncName);
 		needSpace = true;
 	}
 
-	if (needSpace) { str += ": "; needSpace = false; }
+	if (needSpace)
+	{
+		str += ": ";
+		needSpace = false;
+	}
 
 	uint nbl = 1;
 
 	char *npos, *pos = const_cast<char *>(message);
-	while ((npos = strchr (pos, '\n')))
+	while ((npos = strchr(pos, '\n')))
 	{
 		*npos = '\0';
 		str += pos;
 		/*if (needSlashR)
-			str += "\r";*/
+		    str += "\r";*/
 		str += "\n";
 		*npos = '\n';
-		pos = npos+1;
+		pos = npos + 1;
 		nbl++;
 	}
 	str += pos;
 
 	pos = const_cast<char *>(args.CallstackAndLog.c_str());
-	while ((npos = strchr (pos, '\n')))
+	while ((npos = strchr(pos, '\n')))
 	{
 		*npos = '\0';
 		str += pos;
 		/*if (needSlashR)
-			str += "\r";*/
+		    str += "\r";*/
 		str += "\n";
 		*npos = '\n';
-		pos = npos+1;
+		pos = npos + 1;
 		nbl++;
 	}
 	str += pos;

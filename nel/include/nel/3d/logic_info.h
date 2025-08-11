@@ -22,10 +22,7 @@
 #include "nel/3d/point_light_influence.h"
 #include <vector>
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 /**
  * An interface for UScene to retrieve client information for a specified UTransform
@@ -41,11 +38,9 @@ namespace NL3D
 class ILogicInfo
 {
 public:
-
 	/// Constructor
 	ILogicInfo();
-	virtual	~ILogicInfo();
-
+	virtual ~ILogicInfo();
 
 	/**
 	 *	This method must return the static light setup which influence the object attached with this ILogicInfo
@@ -59,15 +54,12 @@ public:
 	 *	localAmbient.A tells the fraction of this color to take (255 => full contribution of the localAmbient, and
 	 *	no contribution of the ambient of the sun)
 	 */
-	virtual	void		getStaticLightSetup(NLMISC::CRGBA sunAmbient, std::vector<CPointLightInfluence> &pointLightList,
-		uint8 &sunContribution, NLMISC::CRGBA &localAmbient) =0;
-
-
+	virtual void getStaticLightSetup(NLMISC::CRGBA sunAmbient, std::vector<CPointLightInfluence> &pointLightList,
+	    uint8 &sunContribution, NLMISC::CRGBA &localAmbient)
+	    = 0;
 };
 
-
 } // NL3D
-
 
 #endif // NL_LOGIC_INFO_H
 

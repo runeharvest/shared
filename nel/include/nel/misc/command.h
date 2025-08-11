@@ -24,13 +24,12 @@
 #include <map>
 #include <set>
 #include <vector>
-//#include <sstream>
+// #include <sstream>
 #include <istream>
 
 #include "stream.h"
 #include "config_file.h"
 #include "log.h"
-
 
 namespace NLMISC {
 
@@ -47,18 +46,18 @@ namespace NLMISC {
  *
  * Example:
  * \code
-	// I want to create a function that computes the square of the parameter and display the result
-	NLMISC_COMMAND(square,"display the square of the parameter","<value>")
-	{
-		// check args, if there s not the right number of parameter, return bad
-		if(args.size() != 1) return false;
-		// get the value
-		uint32 val;
-		fromString(args[0], val);
-		// display the result on the displayer
-		log.displayNL("The square of %d is %d", val, val*val);
-		return true;
-	}
+    // I want to create a function that computes the square of the parameter and display the result
+    NLMISC_COMMAND(square,"display the square of the parameter","<value>")
+    {
+        // check args, if there s not the right number of parameter, return bad
+        if(args.size() != 1) return false;
+        // get the value
+        uint32 val;
+        fromString(args[0], val);
+        // display the result on the displayer
+        log.displayNL("The square of %d is %d", val, val*val);
+        return true;
+    }
  * \endcode
  *
  * Please use the same casing than for the function (first letter in lower case and after each word first letter in upper case)
@@ -73,21 +72,24 @@ namespace NLMISC {
  * \author Nevrax France
  * \date 2001
  */
-#define NLMISC_COMMAND(__name,__help,__args) NLMISC_CATEGORISED_COMMAND(commands,__name,__help,__args)
-#define NLMISC_CATEGORISED_COMMAND(__category,__name,__help,__args) \
-struct __category##_##__name##Class: public NLMISC::ICommand \
-{ \
-	__category##_##__name##Class() : NLMISC::ICommand(#__category,#__name,__help,__args) { } \
-	virtual bool execute(const std::string &rawCommandString, const std::vector<std::string> &args, NLMISC::CLog &log, bool quiet, bool human); \
-}; \
-__category##_##__name##Class __category##_##__name##Instance; \
-bool __category##_##__name##Class::execute(const std::string &rawCommandString, const std::vector<std::string> &args, NLMISC::CLog &log, bool quiet, bool human)
+#define NLMISC_COMMAND(__name, __help, __args) NLMISC_CATEGORISED_COMMAND(commands, __name, __help, __args)
+#define NLMISC_CATEGORISED_COMMAND(__category, __name, __help, __args)                                                                              \
+	struct __category##_##__name##Class : public NLMISC::ICommand                                                                                   \
+	{                                                                                                                                               \
+		__category##_##__name##Class()                                                                                                              \
+		    : NLMISC::ICommand(#__category, #__name, __help, __args)                                                                                \
+		{                                                                                                                                           \
+		}                                                                                                                                           \
+		virtual bool execute(const std::string &rawCommandString, const std::vector<std::string> &args, NLMISC::CLog &log, bool quiet, bool human); \
+	};                                                                                                                                              \
+	__category##_##__name##Class __category##_##__name##Instance;                                                                                   \
+	bool __category##_##__name##Class::execute(const std::string &rawCommandString, const std::vector<std::string> &args, NLMISC::CLog &log, bool quiet, bool human)
 
 /** Helper to declare a command as friend of a class.
  *	Useful when you want to declare debug command that access private class method or data.
-*/
+ */
 #define NLMISC_COMMAND_FRIEND(__name) friend struct commands_##__name##Class
-#define NLMISC_CATEGORISED_COMMAND_FRIEND(__category,__name) friend struct __category##_##__name##Class
+#define NLMISC_CATEGORISED_COMMAND_FRIEND(__category, __name) friend struct __category##_##__name##Class
 
 /**
  * Create a function that can be call in realtime. Don't use this class directly but use the macro NLMISC_COMMAND
@@ -98,7 +100,6 @@ bool __category##_##__name##Class::execute(const std::string &rawCommandString, 
 class ICommand
 {
 public:
-
 	/// Constructor
 	ICommand(const char *categoryName, const char *commandName, const char *commandHelp, const char *commandArgs);
 
@@ -113,41 +114,46 @@ public:
 	std::string CommandArgs;
 
 	// is it a variable or a classic command?
-	enum TType { Unknown, Command, Variable };
+	enum TType
+	{
+		Unknown,
+		Command,
+		Variable
+	};
 	TType Type;
 
 	// static members
 
 	typedef std::map<std::string, ICommand *> TCommand;
-//	typedef std::set<std::string> TCategorySet;
+	//	typedef std::set<std::string> TCategorySet;
 
-	static TCommand		*LocalCommands;
-//	static TCategorySet	*LocalCategories;
-//	static TCommand		*LocalCommands;
-	static bool			LocalCommandsInit;
+	static TCommand *LocalCommands;
+	//	static TCategorySet	*LocalCategories;
+	//	static TCommand		*LocalCommands;
+	static bool LocalCommandsInit;
 
 	/// Executes the command and display output to the log
 	/// \param quiet true if you don't want to display the "executing the command ..."
-	static bool execute (const std::string &commandWithArgs, NLMISC::CLog &log, bool quiet = false, bool human = true);
+	static bool execute(const std::string &commandWithArgs, NLMISC::CLog &log, bool quiet = false, bool human = true);
 
 	/** Command name completion.
 	 * Case-sensitive. Displays the list after two calls with the same non-unique completion.
-     * Completes commands used with prefixes (such as "help " for example) as well.
+	 * Completes commands used with prefixes (such as "help " for example) as well.
 	 */
-	static void	expand (std::string &commandName, NLMISC::CLog &log=*InfoLog);
+	static void expand(std::string &commandName, NLMISC::CLog &log = *InfoLog);
 
-	static void serialCommands (IStream &f);
+	static void serialCommands(IStream &f);
 
 	/// returns true if the command exists
-	static bool exists (std::string const &commandName);
+	static bool exists(std::string const &commandName);
 
 	/// if the string begin with an upper case, it s a variable, otherwise, it s a command
-	static bool isCommand (const std::string &str);
+	static bool isCommand(const std::string &str);
 
 	/// Retrieve the interface over command object for the given command name.
 	static ICommand *getCommand(const std::string &commandName);
 
-	const std::string &getName () const { return _CommandName; }
+	const std::string &getName() const { return _CommandName; }
 
 	/** declare a command to "enable control char". By default all commands "enable control char"
 	 *
@@ -160,17 +166,14 @@ public:
 	 *
 	 *	hello;/"i/am/busy"/\never/disturb/me/please
 	 */
-	static void	enableControlCharForCommand(const std::string &commandName, bool state);
+	static void enableControlCharForCommand(const std::string &commandName, bool state);
 
 	/// see enableControlCharForCommand()
-	static bool	isControlCharForCommandEnabled(const std::string &commandName);
+	static bool isControlCharForCommandEnabled(const std::string &commandName);
 
 protected:
-
 	std::string _CommandName;
-
 };
-
 
 /** Struct to host data for one object command
  * \author Boris 'SoniX' Boucher
@@ -180,12 +183,12 @@ protected:
 struct TCommandHandlerInfo
 {
 	/// The help string of the command
-	std::string		CommandHelp;
+	std::string CommandHelp;
 	/// The argument required for the command
-	std::string		CommandArgs;
+	std::string CommandArgs;
 
 	/// A comparison operator need for STL container storage
-	bool operator ==(const TCommandHandlerInfo &other) const
+	bool operator==(const TCommandHandlerInfo &other) const
 	{
 		return (CommandHelp == other.CommandHelp) && (CommandArgs == other.CommandArgs);
 	}
@@ -199,18 +202,18 @@ struct TCommandHandlerInfo
 struct TCommandHandlerClassInfo
 {
 	/// Number of instance of object of this class
-	uint32			InstanceCount;
+	uint32 InstanceCount;
 
 	/// The list of command available on this class of object.
-	typedef std::map<std::string, TCommandHandlerInfo>	TCommandsInfo;
-	TCommandsInfo	_Commands;
+	typedef std::map<std::string, TCommandHandlerInfo> TCommandsInfo;
+	TCommandsInfo _Commands;
 
 	/// Constructor.
 	TCommandHandlerClassInfo()
-		: InstanceCount(0)
-	{}
+	    : InstanceCount(0)
+	{
+	}
 };
-
 
 /** Base class for command handler.
  *	Command handler are a mean to build object that support NeL commands
@@ -230,9 +233,9 @@ struct TCommandHandlerClassInfo
 class ICommandsHandler
 {
 	/// Store the class name after handler registration
-	const std::string		*_ClassName;
-public:
+	const std::string *_ClassName;
 
+public:
 	ICommandsHandler();
 
 	/** The derived class call this method to register the instance in
@@ -249,18 +252,18 @@ public:
 	 */
 	void unregisterCommandsHandler();
 
-	virtual const std::string &getCommandHandlerClassName() const =0;
+	virtual const std::string &getCommandHandlerClassName() const = 0;
 
 	/** This methods implemented by CCommandHandler is used by the
 	 *	command registry to retrieve the name of the object instance.
 	 */
-	virtual const std::string &getCommandHandlerName() const =0;
+	virtual const std::string &getCommandHandlerName() const = 0;
 
 	/** This methods implemented by CCommandHandler is used by the
 	 *	command registry to build the list of available commands
 	 *	on the object class.
 	 */
-	virtual void fillCommandsHandlerList(TCommandHandlerClassInfo::TCommandsInfo &commandList) =0;
+	virtual void fillCommandsHandlerList(TCommandHandlerClassInfo::TCommandsInfo &commandList) = 0;
 
 	/** Virtual destructor to unregister the object instance.
 	 *	When all the instance of a given class are deleted,
@@ -272,7 +275,7 @@ public:
 	/** This methods implemented by CCommandHandler is used by the
 	 *	command registry to start a command execution.
 	 */
-	virtual bool execute(const std::string &rawCommandString, const std::string &commandName, const std::vector<std::string> &args, NLMISC::CLog &log, bool quiet, bool human = true) =0;
+	virtual bool execute(const std::string &rawCommandString, const std::string &commandName, const std::vector<std::string> &args, NLMISC::CLog &log, bool quiet, bool human = true) = 0;
 };
 
 template <class T>
@@ -280,9 +283,8 @@ struct TCommandHandler : public TCommandHandlerInfo
 {
 	typedef bool (T::*TCommand)(const std::string &rawCommandString, const std::vector<std::string> &args, NLMISC::CLog &log, bool quiet, bool human);
 
-	TCommand	CommandHandler;
+	TCommand CommandHandler;
 };
-
 
 /** Template class used as base for derivation of object that support commands.
  *	To declare your object supporting commands, you must
@@ -334,10 +336,10 @@ struct TCommandHandler : public TCommandHandlerInfo
  * \author Nevrax France
  * \date 2005
  */
-//template <class T>
-//class CCommandsHandler : public ICommandsHandler
+// template <class T>
+// class CCommandsHandler : public ICommandsHandler
 //{
-//public:
+// public:
 //	/** Constructor, used to initialise the class name in the interface class */
 ////	CCommandsHandler()
 ////		: ICommandsHandler(T::getCommandHandlerClassName())
@@ -374,69 +376,68 @@ struct TCommandHandler : public TCommandHandlerInfo
 /** Macro to start a command handler table.
  *	Use it inside the class declaration.
  */
-#define NLMISC_COMMAND_HANDLER_TABLE_BEGIN(className)	\
-	/* Typedef a method pointer on the template class.		*/	\
-	/*	This type is the type of the command handler method.*/	\
-	/*	It have the same signature as global NeL commands.	*/	\
-	typedef bool (className::*TCommand)(const std::string &rawCommandString, const std::vector<std::string> &args, NLMISC::CLog &log, bool quiet, bool human);	\
-	\
-	/** Typedef for a container for command handler table. */	\
-	typedef std::map<std::string, NLMISC::TCommandHandler<className> >	TCommandsTable;	\
-	\
-	virtual const std::string &getCommandHandlerClassName()	const\
-	{	\
-		static std::string className(#className);	\
-		return className;	\
-	}	\
-	TCommand className##_getCommandHandler(const std::string &commandName)	\
-	{	\
-		TCommandsTable	commandTable = className##_getCommandsHandlerTable();	\
-		TCommandsTable::iterator it = commandTable.find(commandName);	\
-		\
-		if (it != commandTable.end())	\
-		{	\
-			/** ok, we have the command handler*/	\
-			return it->second.CommandHandler;	\
-		}	\
-		else	\
-			return NULL;	\
-	}	\
+#define NLMISC_COMMAND_HANDLER_TABLE_BEGIN(className)                                                                                                                          \
+	/* Typedef a method pointer on the template class.		*/                                                                                                                     \
+	/*	This type is the type of the command handler method.*/                                                                                                                  \
+	/*	It have the same signature as global NeL commands.	*/                                                                                                                   \
+	typedef bool (className::*TCommand)(const std::string &rawCommandString, const std::vector<std::string> &args, NLMISC::CLog &log, bool quiet, bool human);                 \
+                                                                                                                                                                               \
+	/** Typedef for a container for command handler table. */                                                                                                                  \
+	typedef std::map<std::string, NLMISC::TCommandHandler<className>> TCommandsTable;                                                                                          \
+                                                                                                                                                                               \
+	virtual const std::string &getCommandHandlerClassName() const                                                                                                              \
+	{                                                                                                                                                                          \
+		static std::string className(#className);                                                                                                                              \
+		return className;                                                                                                                                                      \
+	}                                                                                                                                                                          \
+	TCommand className##_getCommandHandler(const std::string &commandName)                                                                                                     \
+	{                                                                                                                                                                          \
+		TCommandsTable commandTable = className##_getCommandsHandlerTable();                                                                                                   \
+		TCommandsTable::iterator it = commandTable.find(commandName);                                                                                                          \
+                                                                                                                                                                               \
+		if (it != commandTable.end())                                                                                                                                          \
+		{                                                                                                                                                                      \
+			/** ok, we have the command handler*/                                                                                                                              \
+			return it->second.CommandHandler;                                                                                                                                  \
+		}                                                                                                                                                                      \
+		else                                                                                                                                                                   \
+			return NULL;                                                                                                                                                       \
+	}                                                                                                                                                                          \
 	virtual bool execute(const std::string &rawCommandString, const std::string &commandName, const std::vector<std::string> &args, NLMISC::CLog &log, bool quiet, bool human) \
-	{ \
-		TCommand cmd = className##_getCommandHandler(commandName); \
-		if (cmd != NULL) \
-		{ \
-			if (!quiet)\
-				log.displayNL("Execute command: %s", rawCommandString.c_str()); \
-			return (this->*cmd)(rawCommandString, args, log, quiet, human); \
-		} \
-		else \
-		{ \
-			log.displayNL("Command on object '%s' : unknow command '%s'", \
-				getCommandHandlerName().c_str(), \
-				commandName.c_str()); \
-			return false; \
-		} \
-	} \
-	virtual void fillCommandsHandlerList(NLMISC::TCommandHandlerClassInfo::TCommandsInfo &commandList)	\
-	{	\
-		const TCommandsTable	&commandTable = className##_getCommandsHandlerTable();	\
-		TCommandsTable::const_iterator first(commandTable.begin()), last(commandTable.end());	\
-		for (; first != last; ++first)	\
-		{	\
-			commandList.insert(std::make_pair(first->first, first->second));	\
-		}	\
-	}	\
-	\
-	const TCommandsTable &className##_getCommandsHandlerTable()	\
-	{	\
-		static bool initialized = false;	\
-		static TCommandsTable	commandsTable;	\
-	\
-		if (!initialized)	\
-		{	\
-			initialized = true; \
-
+	{                                                                                                                                                                          \
+		TCommand cmd = className##_getCommandHandler(commandName);                                                                                                             \
+		if (cmd != NULL)                                                                                                                                                       \
+		{                                                                                                                                                                      \
+			if (!quiet)                                                                                                                                                        \
+				log.displayNL("Execute command: %s", rawCommandString.c_str());                                                                                                \
+			return (this->*cmd)(rawCommandString, args, log, quiet, human);                                                                                                    \
+		}                                                                                                                                                                      \
+		else                                                                                                                                                                   \
+		{                                                                                                                                                                      \
+			log.displayNL("Command on object '%s' : unknow command '%s'",                                                                                                      \
+			    getCommandHandlerName().c_str(),                                                                                                                               \
+			    commandName.c_str());                                                                                                                                          \
+			return false;                                                                                                                                                      \
+		}                                                                                                                                                                      \
+	}                                                                                                                                                                          \
+	virtual void fillCommandsHandlerList(NLMISC::TCommandHandlerClassInfo::TCommandsInfo &commandList)                                                                         \
+	{                                                                                                                                                                          \
+		const TCommandsTable &commandTable = className##_getCommandsHandlerTable();                                                                                            \
+		TCommandsTable::const_iterator first(commandTable.begin()), last(commandTable.end());                                                                                  \
+		for (; first != last; ++first)                                                                                                                                         \
+		{                                                                                                                                                                      \
+			commandList.insert(std::make_pair(first->first, first->second));                                                                                                   \
+		}                                                                                                                                                                      \
+	}                                                                                                                                                                          \
+                                                                                                                                                                               \
+	const TCommandsTable &className##_getCommandsHandlerTable()                                                                                                                \
+	{                                                                                                                                                                          \
+		static bool initialized = false;                                                                                                                                       \
+		static TCommandsTable commandsTable;                                                                                                                                   \
+                                                                                                                                                                               \
+		if (!initialized)                                                                                                                                                      \
+		{                                                                                                                                                                      \
+			initialized = true;
 
 /** Macro to add a handler in the handler table.
  *	Use this macro between NLMISC_COMMAND_HANDLER_TABLE_BEGIN and
@@ -449,84 +450,83 @@ struct TCommandHandler : public TCommandHandlerInfo
  *
  */
 #define NLMISC_COMMAND_HANDLER_ADD(className, theCommandName, theCommandHelp, theCommandArgs) \
-			{	\
-				NLMISC::TCommandHandler<className> ch;	\
-				ch.CommandArgs = theCommandArgs;	\
-				ch.CommandHelp = theCommandHelp;	\
-				ch.CommandHandler = &className::cmdHandler_##theCommandName; \
-				commandsTable.insert(std::make_pair(std::string(#theCommandName), ch));	\
-			}	\
+	{                                                                                         \
+		NLMISC::TCommandHandler<className> ch;                                                \
+		ch.CommandArgs = theCommandArgs;                                                      \
+		ch.CommandHelp = theCommandHelp;                                                      \
+		ch.CommandHandler = &className::cmdHandler_##theCommandName;                          \
+		commandsTable.insert(std::make_pair(std::string(#theCommandName), ch));               \
+	}
 
 /** Macro to end the command handler table.
  *	Must be put after the last command handler adding.
  */
-#define NLMISC_COMMAND_HANDLER_TABLE_END	\
-		}	\
-		return commandsTable; \
-	}	\
+#define NLMISC_COMMAND_HANDLER_TABLE_END \
+	}                                    \
+	return commandsTable;                \
+	}
 
 /** Macro to add commands in a class that derive from a class
  *	that already declare a command handler table.
  *	the most derivative class will override base class commands
  *	if they have the same name.
  */
-#define NLMISC_COMMAND_HANDLER_TABLE_EXTEND_BEGIN(className, baseClassName)	\
-	typedef bool (className::*TCommand)(const std::string &rawCommandString, const std::vector<std::string> &args, NLMISC::CLog &log, bool quiet, bool human);	\
-	typedef std::map<std::string, NLMISC::TCommandHandler<className> >	TCommandsTable;	\
-	virtual const std::string &getCommandHandlerClassName()	const\
-	{	\
-		static std::string className(#className);	\
-		return className;	\
-	}	\
-	TCommand className##_getCommandHandler(const std::string &commandName)	\
-	{	\
-		TCommandsTable	commandTable = className##_getCommandsHandlerTable();	\
-		TCommandsTable::iterator it = commandTable.find(commandName);	\
-		\
-		if (it != commandTable.end())	\
-		{	\
-			/* ok, we have the command handler*/	\
-			return it->second.CommandHandler;	\
-		}	\
-		else	\
-		{ \
-			return NULL;\
-		} \
-	}	\
+#define NLMISC_COMMAND_HANDLER_TABLE_EXTEND_BEGIN(className, baseClassName)                                                                                                    \
+	typedef bool (className::*TCommand)(const std::string &rawCommandString, const std::vector<std::string> &args, NLMISC::CLog &log, bool quiet, bool human);                 \
+	typedef std::map<std::string, NLMISC::TCommandHandler<className>> TCommandsTable;                                                                                          \
+	virtual const std::string &getCommandHandlerClassName() const                                                                                                              \
+	{                                                                                                                                                                          \
+		static std::string className(#className);                                                                                                                              \
+		return className;                                                                                                                                                      \
+	}                                                                                                                                                                          \
+	TCommand className##_getCommandHandler(const std::string &commandName)                                                                                                     \
+	{                                                                                                                                                                          \
+		TCommandsTable commandTable = className##_getCommandsHandlerTable();                                                                                                   \
+		TCommandsTable::iterator it = commandTable.find(commandName);                                                                                                          \
+                                                                                                                                                                               \
+		if (it != commandTable.end())                                                                                                                                          \
+		{                                                                                                                                                                      \
+			/* ok, we have the command handler*/                                                                                                                               \
+			return it->second.CommandHandler;                                                                                                                                  \
+		}                                                                                                                                                                      \
+		else                                                                                                                                                                   \
+		{                                                                                                                                                                      \
+			return NULL;                                                                                                                                                       \
+		}                                                                                                                                                                      \
+	}                                                                                                                                                                          \
 	virtual bool execute(const std::string &rawCommandString, const std::string &commandName, const std::vector<std::string> &args, NLMISC::CLog &log, bool quiet, bool human) \
-	{ \
-		TCommand cmd = className##_getCommandHandler(commandName); \
-		if (cmd != NULL) \
-		{ \
-			return (this->*cmd)(rawCommandString, args, log, quiet, human); \
-		} \
-		else \
-		{ \
-			/* try with the base class */ \
-			return baseClassName::execute(rawCommandString, commandName, args, log, quiet, human);\
-		} \
-	} \
-	virtual void fillCommandsHandlerList(NLMISC::TCommandHandlerClassInfo::TCommandsInfo &commandList)	\
-	{	\
-		const TCommandsTable	&commandTable = className##_getCommandsHandlerTable();	\
-		TCommandsTable::const_iterator first(commandTable.begin()), last(commandTable.end());	\
-		for (; first != last; ++first)	\
-		{	\
-			commandList.insert(std::make_pair(first->first, first->second));	\
-		}	\
-		/* call base class to complete the command table */ \
-		baseClassName::fillCommandsHandlerList(commandList); \
-	}	\
-	\
-	const TCommandsTable &className##_getCommandsHandlerTable()	\
-	{	\
-		static bool initialized = false;	\
-		static TCommandsTable	commandsTable;	\
-	\
-		if (!initialized)	\
-		{	\
-			initialized = true; \
-
+	{                                                                                                                                                                          \
+		TCommand cmd = className##_getCommandHandler(commandName);                                                                                                             \
+		if (cmd != NULL)                                                                                                                                                       \
+		{                                                                                                                                                                      \
+			return (this->*cmd)(rawCommandString, args, log, quiet, human);                                                                                                    \
+		}                                                                                                                                                                      \
+		else                                                                                                                                                                   \
+		{                                                                                                                                                                      \
+			/* try with the base class */                                                                                                                                      \
+			return baseClassName::execute(rawCommandString, commandName, args, log, quiet, human);                                                                             \
+		}                                                                                                                                                                      \
+	}                                                                                                                                                                          \
+	virtual void fillCommandsHandlerList(NLMISC::TCommandHandlerClassInfo::TCommandsInfo &commandList)                                                                         \
+	{                                                                                                                                                                          \
+		const TCommandsTable &commandTable = className##_getCommandsHandlerTable();                                                                                            \
+		TCommandsTable::const_iterator first(commandTable.begin()), last(commandTable.end());                                                                                  \
+		for (; first != last; ++first)                                                                                                                                         \
+		{                                                                                                                                                                      \
+			commandList.insert(std::make_pair(first->first, first->second));                                                                                                   \
+		}                                                                                                                                                                      \
+		/* call base class to complete the command table */                                                                                                                    \
+		baseClassName::fillCommandsHandlerList(commandList);                                                                                                                   \
+	}                                                                                                                                                                          \
+                                                                                                                                                                               \
+	const TCommandsTable &className##_getCommandsHandlerTable()                                                                                                                \
+	{                                                                                                                                                                          \
+		static bool initialized = false;                                                                                                                                       \
+		static TCommandsTable commandsTable;                                                                                                                                   \
+                                                                                                                                                                               \
+		if (!initialized)                                                                                                                                                      \
+		{                                                                                                                                                                      \
+			initialized = true;
 
 // A macro to declare or implement inline the command method
 #define NLMISC_CLASS_COMMAND_DECL(commandName) \
@@ -537,7 +537,7 @@ struct TCommandHandler : public TCommandHandlerInfo
 	bool className::cmdHandler_##commandName(const std::string &rawCommandString, const std::vector<std::string> &args, NLMISC::CLog &log, bool quiet, bool human)
 
 // A macro to recall a base class command implementation
-#define NLMISC_CLASS_COMMAND_CALL_BASE(baseClassName, commandName)\
+#define NLMISC_CLASS_COMMAND_CALL_BASE(baseClassName, commandName) \
 	baseClassName::cmdHandler_##commandName(rawCommandString, args, log, quiet, human)
 
 /** The command registry is a singleton that hold all available
@@ -560,41 +560,39 @@ class CCommandRegistry
 {
 	// this class is a safe singleton (dll friendly)
 	NLMISC_SAFE_SINGLETON_DECL(CCommandRegistry);
-	CCommandRegistry() {}
+	CCommandRegistry() { }
 
 	NLMISC_CATEGORISED_COMMAND_FRIEND(nel, help);
 
-	friend void cbVarChanged (CConfigFile::CVar &var);
+	friend void cbVarChanged(CConfigFile::CVar &var);
 	friend class ICommand;
 	friend class ICommandsHandler;
 	friend class INelContext;
 
-	typedef std::map<std::string, ICommand *>	TCommand;
-	typedef std::set<std::string>				TCategorySet;
+	typedef std::map<std::string, ICommand *> TCommand;
+	typedef std::set<std::string> TCategorySet;
 
 	/// List of commands categories
-	TCategorySet	_Categories;
+	TCategorySet _Categories;
 	/// List of available command
-	TCommand		_Commands;
+	TCommand _Commands;
 
-	typedef CTwinMap<std::string, ICommandsHandler *>	TCommandsHandlers;
+	typedef CTwinMap<std::string, ICommandsHandler *> TCommandsHandlers;
 	/// Registry for commands handlers named instance
-	TCommandsHandlers			_CommandsHandlers;
+	TCommandsHandlers _CommandsHandlers;
 
-	typedef std::map<std::string, TCommandHandlerClassInfo >	TCommandsHandlersClass;
+	typedef std::map<std::string, TCommandHandlerClassInfo> TCommandsHandlersClass;
 	/// Registry for commands name and handler class
-	TCommandsHandlersClass		_CommandsHandlersClass;
+	TCommandsHandlersClass _CommandsHandlersClass;
 
-	std::set<std::string>		_CommandsDisablingControlChar;
+	std::set<std::string> _CommandsDisablingControlChar;
 
 	/// Used by ICommand to register themselves
 	void registerCommand(ICommand *command);
 	/// Used by ICommand to unregister themselves
 	void unregisterCommand(ICommand *command);
 
-
 public:
-
 	/// Called by command handlers to register themselves.
 	void registerNamedCommandHandler(ICommandsHandler *handler, const std::string &className);
 	/// Called by command handlers to unregister themselves.
@@ -602,24 +600,24 @@ public:
 
 	/// Executes the command and display output to the log
 	/// \param quiet true if you don't want to display the "executing the command ..."
-	bool execute (const std::string &commandWithArgs, NLMISC::CLog &log, bool quiet = false, bool human = true);
+	bool execute(const std::string &commandWithArgs, NLMISC::CLog &log, bool quiet = false, bool human = true);
 
 	/** Command name completion.
 	 * Case-sensitive. Displays the list after two calls with the same non-unique completion.
-     * Completes commands used with prefixes (such as "help " for example) as well.
+	 * Completes commands used with prefixes (such as "help " for example) as well.
 	 */
-	void expand (std::string &commandName, NLMISC::CLog &log=*InfoLog);
+	void expand(std::string &commandName, NLMISC::CLog &log = *InfoLog);
 
-	void serialCommands (IStream &f);
+	void serialCommands(IStream &f);
 
 	/// returns true if the command exists
-	bool exists (std::string const &commandName);
+	bool exists(std::string const &commandName);
 
 	/// Return true if a named command handler with that name is registered
 	bool isNamedCommandHandler(const std::string &handlerName);
 
 	/// if the string begin with an upper case, it s a variable, otherwise, it s a command
-	bool isCommand (const std::string &str);
+	bool isCommand(const std::string &str);
 
 	/// Retrieve the interface over command object for the given command name.
 	ICommand *getCommand(const std::string &commandName);
@@ -635,35 +633,40 @@ public:
 	 *
 	 *	hello;/"i/am/busy"/\never/disturb/me/please
 	 */
-	void	enableControlCharForCommand(const std::string &commandName, bool state);
+	void enableControlCharForCommand(const std::string &commandName, bool state);
 
 	/// see enableControlCharForCommand()
-	bool	isControlCharForCommandEnabled(const std::string &commandName);
+	bool isControlCharForCommandEnabled(const std::string &commandName);
 
 	// initialisation for IVariable management (variable are an extension of commands)
 	void initVariables(NLMISC::CConfigFile &configFile);
-
 };
 
 /** This class is only used to serialize easily a command for the admin service for example */
 struct CSerialCommand
 {
-	CSerialCommand () : Name ("<Unknown>"), Type(ICommand::Unknown) { }
-	CSerialCommand (std::string n, ICommand::TType t) : Name (n), Type(t) { }
+	CSerialCommand()
+	    : Name("<Unknown>")
+	    , Type(ICommand::Unknown)
+	{
+	}
+	CSerialCommand(std::string n, ICommand::TType t)
+	    : Name(n)
+	    , Type(t)
+	{
+	}
 
 	std::string Name;
 	ICommand::TType Type;
 
-	void serial (IStream &f)
+	void serial(IStream &f)
 	{
-		f.serial (Name);
-		f.serialEnum (Type);
+		f.serial(Name);
+		f.serialEnum(Type);
 	}
 };
 
-
 } // NLMISC
-
 
 #endif // NL_COMMAND_H
 

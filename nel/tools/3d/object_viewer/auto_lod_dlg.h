@@ -19,60 +19,59 @@
 
 #if _MSC_VER > 1000
 #pragma once
-#endif 
+#endif
 
 #include "ps_wrapper.h"
 #include "dialog_stack.h"
 #include "nel/3d/particle_system.h"
 #include "particle_workspace.h"
 
-namespace NL3D
-{
-	class CParticleSystem;
+namespace NL3D {
+class CParticleSystem;
 }
 struct IPopupNotify;
 
 class CAutoLODDlg : public CDialog, public CDialogStack
 {
-// Construction
+	// Construction
 public:
-	CAutoLODDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CParticleSystem *ps, IPopupNotify *pn, CWnd* pParent = NULL);   // standard constructor
+	CAutoLODDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CParticleSystem *ps, IPopupNotify *pn, CWnd *pParent = NULL); // standard constructor
 
 	void init(CWnd *pParent);
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CAutoLODDlg)
-	enum { IDD = IDD_AUTO_LOD };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_AUTO_LOD
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CAutoLODDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	CParticleWorkspace::CNode *_Node;
-	NL3D::CParticleSystem	  *_PS;
-	IPopupNotify		      *_PN;	
-	
-
+	NL3D::CParticleSystem *_PS;
+	IPopupNotify *_PN;
 
 	struct CDistRatioWrapper : IPSWrapperFloat
 	{
 		NL3D::CParticleSystem *PS;
-		virtual float get() const  { return PS->getAutoLODStartDistPercent(); }
-		virtual void  set(const float &v) { PS->setupAutoLOD(v, PS->getAutoLODDegradationExponent()); }
+		virtual float get() const { return PS->getAutoLODStartDistPercent(); }
+		virtual void set(const float &v) { PS->setupAutoLOD(v, PS->getAutoLODDegradationExponent()); }
 	} _DistRatioWrapper;
 
 	struct CMaxDistLODBiasWrapper : IPSWrapperFloat
 	{
 		NL3D::CParticleSystem *PS;
-		virtual float get() const  { return PS->getMaxDistLODBias(); }
-		virtual void  set(const float &v) { PS->setMaxDistLODBias(v); }
+		virtual float get() const { return PS->getMaxDistLODBias(); }
+		virtual void set(const float &v) { PS->setMaxDistLODBias(v); }
 	} _MaxDistLODBiasWrapper;
 
 	// Generated message map functions

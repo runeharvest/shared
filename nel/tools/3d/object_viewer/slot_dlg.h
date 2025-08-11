@@ -32,101 +32,103 @@
 
 class CSlotDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CSlotDlg(CWnd* pParent = NULL);   // standard constructor
+	CSlotDlg(CWnd *pParent = NULL); // standard constructor
 
-	void init (uint id, class CObjectViewer* mainDlg);
+	void init(uint id, class CObjectViewer *mainDlg);
 
 	bool isEmpty();
 
-	const NL3D::CAnimation *getAnimationPointer () const;
+	const NL3D::CAnimation *getAnimationPointer() const;
 
-	const NL3D::CSkeletonWeight *getSkeletonPointer () const;
+	const NL3D::CSkeletonWeight *getSkeletonPointer() const;
 
-	const NL3D::CAnimationSet	*getAnimationSetPointer () const;
+	const NL3D::CAnimationSet *getAnimationSetPointer() const;
 
-	class CSlotInfo				*getSlotInformation () const;
+	class CSlotInfo *getSlotInformation() const;
 
-	class CInstanceInfo			*getInstanceInformation () const;
+	class CInstanceInfo *getInstanceInformation() const;
 
-	void setWindowName ();
-	void validateTime ();
-	void updateScrollBar ();
-	void setAnimTime (float animStart, float animEnd);
-	float getTimeIncrement ();
-	float getStartTime ();
-	float getEndTime ();
-	void computeLength ();
+	void setWindowName();
+	void validateTime();
+	void updateScrollBar();
+	void setAnimTime(float animStart, float animEnd);
+	float getTimeIncrement();
+	float getStartTime();
+	float getEndTime();
+	void computeLength();
 
-	void RefreshData ();
+	void RefreshData();
 
 	// A CBlendWnd
-	uint					Id;
-	CBlendWnd				Blend;
-	CObjectViewer*			MainDlg;
+	uint Id;
+	CBlendWnd Blend;
+	CObjectViewer *MainDlg;
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CSlotDlg)
-	enum { IDD = IDD_SLOT };
-	CButton	InvertSkeletonWeightCtrl;
-	CButton	AlignBlendCtrl;
-	CButton	ClampCtrl;
-	CScrollBar	ScrollBarCtrl;
-	CSpinButtonCtrl	OffsetSpinCtrl;
-	CEdit	OffsetCtrl;
-	CSpinButtonCtrl	StartTimeSpinCtrl;
-	CSpinButtonCtrl	StartBlendSpinCtrl;
-	CSpinButtonCtrl	SpeedFactorSpinCtrl;
-	CSpinButtonCtrl	SmoothnessSpinCtrl;
-	CSpinButtonCtrl	EndTimeSpinCtrl;
-	CSpinButtonCtrl	EndBlendSpinCtrl;
-	CEdit	StartTimeCtrl;
-	CEdit	StartBlendCtrl;
-	CEdit	SpeddFactorCtrl;
-	CEdit	SmoothnessCtrl;
-	CEdit	EndTimeCtrl;
-	CEdit	EndBlendCtrl;
-	float	EndBlend;
-	float	Smoothness;
-	float	SpeedFactor;
-	float	StartBlend;
-	int		ClampMode;
-	BOOL	SkeletonWeightInverted;
-	int		Offset;
-	int		StartTime;
-	int		EndTime;
-	BOOL	enable;
+	enum
+	{
+		IDD = IDD_SLOT
+	};
+	CButton InvertSkeletonWeightCtrl;
+	CButton AlignBlendCtrl;
+	CButton ClampCtrl;
+	CScrollBar ScrollBarCtrl;
+	CSpinButtonCtrl OffsetSpinCtrl;
+	CEdit OffsetCtrl;
+	CSpinButtonCtrl StartTimeSpinCtrl;
+	CSpinButtonCtrl StartBlendSpinCtrl;
+	CSpinButtonCtrl SpeedFactorSpinCtrl;
+	CSpinButtonCtrl SmoothnessSpinCtrl;
+	CSpinButtonCtrl EndTimeSpinCtrl;
+	CSpinButtonCtrl EndBlendSpinCtrl;
+	CEdit StartTimeCtrl;
+	CEdit StartBlendCtrl;
+	CEdit SpeddFactorCtrl;
+	CEdit SmoothnessCtrl;
+	CEdit EndTimeCtrl;
+	CEdit EndBlendCtrl;
+	float EndBlend;
+	float Smoothness;
+	float SpeedFactor;
+	float StartBlend;
+	int ClampMode;
+	BOOL SkeletonWeightInverted;
+	int Offset;
+	int StartTime;
+	int EndTime;
+	BOOL enable;
 	//}}AFX_DATA
 
-	float	StartAnimTime;
-	float	EndAnimTime;
-	float	AnimationLength;
+	float StartAnimTime;
+	float EndAnimTime;
+	float AnimationLength;
 
-	void	refresh (BOOL update);
+	void refresh(BOOL update);
 
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CSlotDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
-	bool	_Empty;
+	bool _Empty;
 
 	// Generated message map functions
 	//{{AFX_MSG(CSlotDlg)
 	virtual BOOL OnInitDialog();
 	afx_msg void OnPaint();
-	afx_msg void OnDeltaposEndBlendSpin(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposEndTimeSpin(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposSmoothnessSpin(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposSpeedFactorSpin(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposStartBlendSpin(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposStartTimeSpin(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDeltaposEndBlendSpin(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnDeltaposEndTimeSpin(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnDeltaposSmoothnessSpin(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnDeltaposSpeedFactorSpin(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnDeltaposStartBlendSpin(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnDeltaposStartTimeSpin(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnChangeEndBlend();
 	afx_msg void OnChangeEndTime();
 	afx_msg void OnChangeSmoothness();
@@ -136,8 +138,8 @@ protected:
 	afx_msg void OnSetAnimation();
 	afx_msg void OnSetSkeleton();
 	afx_msg void OnChangeOffset();
-	afx_msg void OnDeltaposOffsetSpin(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnDeltaposOffsetSpin(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
 	afx_msg void OnClamp();
 	afx_msg void OnRepeat();
 	afx_msg void OnDisable();

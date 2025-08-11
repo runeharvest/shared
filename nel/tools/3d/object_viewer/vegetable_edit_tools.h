@@ -23,62 +23,58 @@
 // range_selector.h : header file
 //
 
-
 #include "nel/misc/types_nl.h"
 #include "editable_range.h"
 #include "vegetable_refresh.h"
 
-
 // ***************************************************************************
 // Defaults Sliders ranges.
-#define	NL_VEGETABLE_EDIT_DEFAULT_MAX_DENSITY	50.f
+#define NL_VEGETABLE_EDIT_DEFAULT_MAX_DENSITY 50.f
 
 // General Frequence
-#define	NL_VEGETABLE_FREQ_RANGE_MIN	0.0001f
-#define	NL_VEGETABLE_FREQ_RANGE_MAX	1.f
-#define	NL_VEGETABLE_FREQ_DEFAULT	0.1f
+#define NL_VEGETABLE_FREQ_RANGE_MIN 0.0001f
+#define NL_VEGETABLE_FREQ_RANGE_MAX 1.f
+#define NL_VEGETABLE_FREQ_DEFAULT 0.1f
 // Density
-#define	NL_VEGETABLE_DENSITY_ABS_RANGE_MIN	-10.f
-#define	NL_VEGETABLE_DENSITY_ABS_RANGE_MAX	10.f
-#define	NL_VEGETABLE_DENSITY_RAND_RANGE_MIN	0.f
-#define	NL_VEGETABLE_DENSITY_RAND_RANGE_MAX	10.f
-#define	NL_VEGETABLE_DENSITY_ABS_DEFAULT	0.f
-#define	NL_VEGETABLE_DENSITY_RAND_DEFAULT	0.25f
+#define NL_VEGETABLE_DENSITY_ABS_RANGE_MIN -10.f
+#define NL_VEGETABLE_DENSITY_ABS_RANGE_MAX 10.f
+#define NL_VEGETABLE_DENSITY_RAND_RANGE_MIN 0.f
+#define NL_VEGETABLE_DENSITY_RAND_RANGE_MAX 10.f
+#define NL_VEGETABLE_DENSITY_ABS_DEFAULT 0.f
+#define NL_VEGETABLE_DENSITY_RAND_DEFAULT 0.25f
 // BendPhase
-#define	NL_VEGETABLE_BENDPHASE_RANGE_MIN	0.f
-#define	NL_VEGETABLE_BENDPHASE_RANGE_MAX	2.f
-#define	NL_VEGETABLE_BENDPHASE_ABS_DEFAULT		0.f
-#define	NL_VEGETABLE_BENDPHASE_RAND_DEFAULT		2.f
+#define NL_VEGETABLE_BENDPHASE_RANGE_MIN 0.f
+#define NL_VEGETABLE_BENDPHASE_RANGE_MAX 2.f
+#define NL_VEGETABLE_BENDPHASE_ABS_DEFAULT 0.f
+#define NL_VEGETABLE_BENDPHASE_RAND_DEFAULT 2.f
 // BendFactor
-#define	NL_VEGETABLE_BENDFACTOR_RANGE_MIN	0.f
-#define	NL_VEGETABLE_BENDFACTOR_RANGE_MAX	1.f
-#define	NL_VEGETABLE_BENDFACTOR_ABS_DEFAULT		0.5f
-#define	NL_VEGETABLE_BENDFACTOR_RAND_DEFAULT	0.5f
+#define NL_VEGETABLE_BENDFACTOR_RANGE_MIN 0.f
+#define NL_VEGETABLE_BENDFACTOR_RANGE_MAX 1.f
+#define NL_VEGETABLE_BENDFACTOR_ABS_DEFAULT 0.5f
+#define NL_VEGETABLE_BENDFACTOR_RAND_DEFAULT 0.5f
 // ColorNoise
-#define	NL_VEGETABLE_COLOR_RANGE_MIN		-1.f
-#define	NL_VEGETABLE_COLOR_RANGE_MAX		3.f
-#define	NL_VEGETABLE_COLOR_ABS_DEFAULT		-1.f
-#define	NL_VEGETABLE_COLOR_RAND_DEFAULT		3.f
-// Scale									
-#define	NL_VEGETABLE_SCALE_RANGE_MIN		0.f
-#define	NL_VEGETABLE_SCALE_RANGE_MAX		1.f
-#define	NL_VEGETABLE_SCALE_ABS_DEFAULT		0.5f
-#define	NL_VEGETABLE_SCALE_RAND_DEFAULT		0.5f
-// Rotate									
-#define	NL_VEGETABLE_ROTATE_RANGE_MIN		-90.f
-#define	NL_VEGETABLE_ROTATE_RANGE_MAX		90.f
-#define	NL_VEGETABLE_ROTATEX_ABS_DEFAULT	-20.f
-#define	NL_VEGETABLE_ROTATEX_RAND_DEFAULT	40.f
-#define	NL_VEGETABLE_ROTATEY_ABS_DEFAULT	0.f
-#define	NL_VEGETABLE_ROTATEY_RAND_DEFAULT	0.f
-#define	NL_VEGETABLE_ROTATEZ_ABS_DEFAULT	0.f
-#define	NL_VEGETABLE_ROTATEZ_RAND_DEFAULT	3000.f
-#define	NL_VEGETABLE_ROTATEZ_FREQ_DEFAULT	10.f
-// BendFreq									
-#define	NL_VEGETABLE_BENDFREQ_RANGE_MIN		0.f
-#define	NL_VEGETABLE_BENDFREQ_RANGE_MAX		4.f
-
-
+#define NL_VEGETABLE_COLOR_RANGE_MIN -1.f
+#define NL_VEGETABLE_COLOR_RANGE_MAX 3.f
+#define NL_VEGETABLE_COLOR_ABS_DEFAULT -1.f
+#define NL_VEGETABLE_COLOR_RAND_DEFAULT 3.f
+// Scale
+#define NL_VEGETABLE_SCALE_RANGE_MIN 0.f
+#define NL_VEGETABLE_SCALE_RANGE_MAX 1.f
+#define NL_VEGETABLE_SCALE_ABS_DEFAULT 0.5f
+#define NL_VEGETABLE_SCALE_RAND_DEFAULT 0.5f
+// Rotate
+#define NL_VEGETABLE_ROTATE_RANGE_MIN -90.f
+#define NL_VEGETABLE_ROTATE_RANGE_MAX 90.f
+#define NL_VEGETABLE_ROTATEX_ABS_DEFAULT -20.f
+#define NL_VEGETABLE_ROTATEX_RAND_DEFAULT 40.f
+#define NL_VEGETABLE_ROTATEY_ABS_DEFAULT 0.f
+#define NL_VEGETABLE_ROTATEY_RAND_DEFAULT 0.f
+#define NL_VEGETABLE_ROTATEZ_ABS_DEFAULT 0.f
+#define NL_VEGETABLE_ROTATEZ_RAND_DEFAULT 3000.f
+#define NL_VEGETABLE_ROTATEZ_FREQ_DEFAULT 10.f
+// BendFreq
+#define NL_VEGETABLE_BENDFREQ_RANGE_MIN 0.f
+#define NL_VEGETABLE_BENDFREQ_RANGE_MAX 4.f
 
 // ***************************************************************************
 /**
@@ -91,10 +87,12 @@ class CDirectEditableRangeFloat : public CEditableRangeFloat
 {
 public:
 	// Approximate Height of this control
-	enum	{ControlHeight= 34};
+	enum
+	{
+		ControlHeight = 34
+	};
 
 public:
-
 	// ctor.
 	CDirectEditableRangeFloat(const std::string &id, float defaultMin, float defaultMax, const std::string &title);
 
@@ -102,40 +100,36 @@ public:
 	virtual void init(uint32 x, uint32 y, CWnd *pParent);
 
 	// Set our pointer to the float, and update view.
-	void		setFloat(float *value, IVegetableRefresh *vegetRefresh);
+	void setFloat(float *value, IVegetableRefresh *vegetRefresh);
 
 	// if false, nothgin will be written to the Float.
-	void		enableWrite(bool enb);
+	void enableWrite(bool enb);
 
-// *****************
+	// *****************
 private:
-
 	// Our easy wrapper.
 	class CDirectFloatWrapper : public IPSWrapperFloat
 	{
 	public:
 		CDirectFloatWrapper()
 		{
-			Value= NULL;
-			WriteEnabled= true;
+			Value = NULL;
+			WriteEnabled = true;
 		}
 
-		float				*Value ;
-		IVegetableRefresh	*VegetableRefresh;
-		bool	WriteEnabled;
+		float *Value;
+		IVegetableRefresh *VegetableRefresh;
+		bool WriteEnabled;
 		float get(void) const;
 		void set(const float &f);
 	};
 
-	CDirectFloatWrapper		_Wrapper;
-
+	CDirectFloatWrapper _Wrapper;
 
 	// Our Caption
-	std::string				_Title;
-	CStatic					_StaticText;
-
+	std::string _Title;
+	CStatic _StaticText;
 };
-
 
 #endif // NL_VEGETABLE_EDIT_TOOLS_H
 

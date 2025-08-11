@@ -23,20 +23,20 @@
 #include "resource.h"
 
 INT_PTR CALLBACK MyDialogProc(
-  HWND hwndDlg,  // handle to dialog box
-  UINT uMsg,     // message
-  WPARAM wParam, // first message parameter
-  LPARAM lParam  // second message parameter
+    HWND hwndDlg, // handle to dialog box
+    UINT uMsg, // message
+    WPARAM wParam, // first message parameter
+    LPARAM lParam // second message parameter
 )
 {
 	return FALSE;
 }
 
-void pump ()
+void pump()
 {
 
 	// Display the window
-	MSG	msg;
+	MSG msg;
 	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 	{
 		TranslateMessage(&msg);
@@ -46,89 +46,89 @@ void pump ()
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /* hPrevInstance */, LPTSTR /* lpCmdLine */, int /* nCmdShow */)
 {
 	// Windows
-	HWND hwnd = CreateDialog (hInstance, MAKEINTRESOURCE(IDD_WAIT), NULL, MyDialogProc);
+	HWND hwnd = CreateDialog(hInstance, MAKEINTRESOURCE(IDD_WAIT), NULL, MyDialogProc);
 	RECT rect;
 	RECT rectDesktop;
-	GetWindowRect (hwnd, &rect);
-	GetWindowRect (GetDesktopWindow (), &rectDesktop);
-	SetWindowPos (hwnd, HWND_TOPMOST, (rectDesktop.right-rectDesktop.left-rect.right+rect.left)/2, (rectDesktop.bottom-rectDesktop.top-rect.bottom+rect.top)/2 , 0, 0, SWP_NOSIZE);
-	ShowWindow (hwnd, SW_SHOW);
+	GetWindowRect(hwnd, &rect);
+	GetWindowRect(GetDesktopWindow(), &rectDesktop);
+	SetWindowPos(hwnd, HWND_TOPMOST, (rectDesktop.right - rectDesktop.left - rect.right + rect.left) / 2, (rectDesktop.bottom - rectDesktop.top - rect.bottom + rect.top) / 2, 0, 0, SWP_NOSIZE);
+	ShowWindow(hwnd, SW_SHOW);
 
-	pump ();
+	pump();
 
- 	// Get the temp directory
+	// Get the temp directory
 	TCHAR tempPath[1024];
 	if (GetTempPath(1024, tempPath))
 	{
 		TCHAR pathToDelete[1024];
-		_tcscpy (pathToDelete, tempPath);
-		_tcscat (pathToDelete, _T("Ryzom"));
+		_tcscpy(pathToDelete, tempPath);
+		_tcscat(pathToDelete, _T("Ryzom"));
 
 		CreateDirectory(tempPath, NULL);
-		_tcscat (tempPath, _T("Ryzom\\"));
+		_tcscat(tempPath, _T("Ryzom\\"));
 		CreateDirectory(tempPath, NULL);
 
 		// Copy the files
 
-		pump ();
+		pump();
 		// Setup.dat
 		TCHAR setupFile[1024];
-		_tcscpy (setupFile, tempPath);
+		_tcscpy(setupFile, tempPath);
 		_tcscat(setupFile, _T("setup.exe"));
-		SetFileAttributes(setupFile, GetFileAttributes(setupFile)&~FILE_ATTRIBUTE_READONLY);
-		BOOL deleted = DeleteFile (setupFile);
-		if (!CopyFile (_T("setup.dat"), setupFile, FALSE) && deleted)
-			MessageBox (NULL, _T("Not enough disk space"), _T("Setup"), MB_OK|MB_ICONERROR);
-		SetFileAttributes(setupFile, GetFileAttributes(setupFile)&~FILE_ATTRIBUTE_READONLY);
+		SetFileAttributes(setupFile, GetFileAttributes(setupFile) & ~FILE_ATTRIBUTE_READONLY);
+		BOOL deleted = DeleteFile(setupFile);
+		if (!CopyFile(_T("setup.dat"), setupFile, FALSE) && deleted)
+			MessageBox(NULL, _T("Not enough disk space"), _T("Setup"), MB_OK | MB_ICONERROR);
+		SetFileAttributes(setupFile, GetFileAttributes(setupFile) & ~FILE_ATTRIBUTE_READONLY);
 
-		pump ();
+		pump();
 		// Ryzom.msi
 		TCHAR msiFile[1024];
 		_tcscpy(msiFile, tempPath);
 		_tcscat(msiFile, _T("Ryzom.msi"));
-		SetFileAttributes(msiFile, GetFileAttributes(msiFile)&~FILE_ATTRIBUTE_READONLY);
-		deleted = DeleteFile (msiFile); 
-		if (!CopyFile (_T("Ryzom.msi"), msiFile, FALSE) && deleted)
-			MessageBox (NULL, _T("Not enough disk space"), _T("Setup"), MB_OK|MB_ICONERROR);
-		SetFileAttributes(msiFile, GetFileAttributes(msiFile)&~FILE_ATTRIBUTE_READONLY);
+		SetFileAttributes(msiFile, GetFileAttributes(msiFile) & ~FILE_ATTRIBUTE_READONLY);
+		deleted = DeleteFile(msiFile);
+		if (!CopyFile(_T("Ryzom.msi"), msiFile, FALSE) && deleted)
+			MessageBox(NULL, _T("Not enough disk space"), _T("Setup"), MB_OK | MB_ICONERROR);
+		SetFileAttributes(msiFile, GetFileAttributes(msiFile) & ~FILE_ATTRIBUTE_READONLY);
 
-		pump ();
+		pump();
 		// Generate the remove bat file
 		TCHAR batFile[1024];
-		_tcscpy (batFile, tempPath);
+		_tcscpy(batFile, tempPath);
 		_tcscat(batFile, _T("remove.bat"));
-		FILE *file = _tfopen (batFile, _T("w"));
-		_ftprintf (file, _T("@echo off\nrmdir /S /Q \"%s\" > NUL\ndeltree /Y \"%s\" > NUL\n"), pathToDelete, pathToDelete);
-		fclose (file);
+		FILE *file = _tfopen(batFile, _T("w"));
+		_ftprintf(file, _T("@echo off\nrmdir /S /Q \"%s\" > NUL\ndeltree /Y \"%s\" > NUL\n"), pathToDelete, pathToDelete);
+		fclose(file);
 
 		// Register the remove bat file
 		HKEY hKey;
-		RegCreateKey (HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Runonce"), &hKey);
+		RegCreateKey(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Runonce"), &hKey);
 		TCHAR batFileReg[1024];
-		_stprintf (batFileReg, _T("\"%s\""), batFile);
+		_stprintf(batFileReg, _T("\"%s\""), batFile);
 		RegSetValueEx(hKey, _T("RyzomSetupClean"), 0, REG_SZ, (const unsigned char *)batFileReg, (DWORD)(_tcslen(batFileReg) + 1) * sizeof(TCHAR));
 
-		pump ();
+		pump();
 		// Get the current path
 		TCHAR currentPath[1024];
-		GetCurrentDirectory (1024, currentPath);
+		GetCurrentDirectory(1024, currentPath);
 		if (currentPath[_tcslen(currentPath) - 1] == '\\')
 			currentPath[_tcslen(currentPath) - 1] = 0;
 
-		pump ();
+		pump();
 		// Build the command line : /z"f:\"
 		TCHAR option[1024];
 		_stprintf(option, _T("\"%s\" /z\"%s\""), setupFile, currentPath);
 
-		pump ();
+		pump();
 		// Execute the setup
-		STARTUPINFO         si;
+		STARTUPINFO si;
 		PROCESS_INFORMATION pi;
 		memset(&si, 0, sizeof(si));
 		memset(&pi, 0, sizeof(pi));
 		si.cb = sizeof(si);
 		// MessageBox (NULL, option, option, MB_OK);
-		if (CreateProcess (setupFile, option, NULL, NULL, FALSE, 0, NULL, tempPath, &si, &pi))
+		if (CreateProcess(setupFile, option, NULL, NULL, FALSE, 0, NULL, tempPath, &si, &pi))
 			return 0;
 	}
 

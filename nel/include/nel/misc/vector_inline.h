@@ -14,187 +14,179 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef NL_VECTOR_INLINE_H
 #define NL_VECTOR_INLINE_H
-
 
 #include "types_nl.h"
 #include "common.h"
 
-
-namespace	NLMISC
-{
-
+namespace NLMISC {
 
 // ============================================================================================
 // Base Maths.
-inline	CVector	&CVector::operator+=(const CVector &v)
+inline CVector &CVector::operator+=(const CVector &v)
 {
-	x+=v.x;
-	y+=v.y;
-	z+=v.z;
+	x += v.x;
+	y += v.y;
+	z += v.z;
 	return *this;
 }
-inline	CVector	&CVector::operator-=(const CVector &v)
+inline CVector &CVector::operator-=(const CVector &v)
 {
-	x-=v.x;
-	y-=v.y;
-	z-=v.z;
+	x -= v.x;
+	y -= v.y;
+	z -= v.z;
 	return *this;
 }
-inline	CVector	&CVector::operator*=(float f)
+inline CVector &CVector::operator*=(float f)
 {
-	x*=f;
-	y*=f;
-	z*=f;
+	x *= f;
+	y *= f;
+	z *= f;
 	return *this;
 }
-inline	CVector	&CVector::operator/=(float f)
+inline CVector &CVector::operator/=(float f)
 {
-	return *this*= (1.0f/f);
+	return *this *= (1.0f / f);
 }
-inline	CVector	CVector::operator+(const CVector &v) const
+inline CVector CVector::operator+(const CVector &v) const
 {
-	CVector	ret(x+v.x, y+v.y, z+v.z);
+	CVector ret(x + v.x, y + v.y, z + v.z);
 	return ret;
 }
-inline	CVector	CVector::operator-(const CVector &v) const
+inline CVector CVector::operator-(const CVector &v) const
 {
-	CVector	ret(x-v.x, y-v.y, z-v.z);
+	CVector ret(x - v.x, y - v.y, z - v.z);
 	return ret;
 }
-inline	CVector	CVector::operator*(float f) const
+inline CVector CVector::operator*(float f) const
 {
-	CVector	ret(x*f, y*f, z*f);
+	CVector ret(x * f, y * f, z * f);
 	return ret;
 }
-inline	CVector	CVector::operator/(float f) const
+inline CVector CVector::operator/(float f) const
 {
-	return *this*(1.0f/f);
+	return *this * (1.0f / f);
 }
-inline	CVector	CVector::operator-() const
+inline CVector CVector::operator-() const
 {
-	return CVector(-x,-y,-z);
+	return CVector(-x, -y, -z);
 }
-inline CVector	operator*(float f, const CVector &v)
+inline CVector operator*(float f, const CVector &v)
 {
-	CVector	ret(v.x*f, v.y*f, v.z*f);
+	CVector ret(v.x * f, v.y * f, v.z * f);
 	return ret;
 }
-
 
 // ============================================================================================
 // Advanced Maths.
-inline	float	CVector::operator*(const CVector &v) const
+inline float CVector::operator*(const CVector &v) const
 {
-	return x*v.x + y*v.y + z*v.z;
+	return x * v.x + y * v.y + z * v.z;
 }
-inline	CVector	CVector::operator^(const CVector &v) const
+inline CVector CVector::operator^(const CVector &v) const
 {
-	CVector	ret;
+	CVector ret;
 
-	ret.x= y*v.z - z*v.y;
-	ret.y= z*v.x - x*v.z;
-	ret.z= x*v.y - y*v.x;
+	ret.x = y * v.z - z * v.y;
+	ret.y = z * v.x - x * v.z;
+	ret.z = x * v.y - y * v.x;
 
 	return ret;
 }
-inline	float	CVector::sqrnorm() const
+inline float CVector::sqrnorm() const
 {
-	return (float)(x*x + y*y + z*z);
+	return (float)(x * x + y * y + z * z);
 }
-inline	float	CVector::norm() const
+inline float CVector::norm() const
 {
-	return (float)sqrt(x*x + y*y + z*z);
+	return (float)sqrt(x * x + y * y + z * z);
 }
-inline	void	CVector::normalize()
+inline void CVector::normalize()
 {
-	float	n=norm();
-	if(n)
-		*this/=n;
+	float n = norm();
+	if (n)
+		*this /= n;
 }
-inline	CVector	CVector::normed() const
+inline CVector CVector::normed() const
 {
-	CVector	ret;
-	ret= *this;
+	CVector ret;
+	ret = *this;
 	ret.normalize();
 	return ret;
 }
 
-
 // ============================================================================================
 // Misc.
-inline	void	CVector::set(float _x, float _y, float _z)
+inline void CVector::set(float _x, float _y, float _z)
 {
-	x=_x; y=_y; z=_z;
+	x = _x;
+	y = _y;
+	z = _z;
 }
-inline	bool	CVector::operator==(const CVector &v) const
+inline bool CVector::operator==(const CVector &v) const
 {
-	return x==v.x && y==v.y && z==v.z;
+	return x == v.x && y == v.y && z == v.z;
 }
-inline	bool	CVector::operator!=(const CVector &v) const
+inline bool CVector::operator!=(const CVector &v) const
 {
-	return !(*this==v);
+	return !(*this == v);
 }
-inline	bool	CVector::isNull() const
+inline bool CVector::isNull() const
 {
-	return *this==CVector::Null;
+	return *this == CVector::Null;
 }
-inline	bool	CVector::operator<(const CVector &v) const
+inline bool CVector::operator<(const CVector &v) const
 {
-	if(x!=v.x)
-		return x<v.x;
-	if(y!=v.y)
-		return y<v.y;
-	return z<v.z;
+	if (x != v.x)
+		return x < v.x;
+	if (y != v.y)
+		return y < v.y;
+	return z < v.z;
 }
 
-inline	void	CVector::cartesianToSpheric(float &r, float &theta,float &phi) const
+inline void CVector::cartesianToSpheric(float &r, float &theta, float &phi) const
 {
 	CVector v;
 
-	r= norm();
-	v= normed();
+	r = norm();
+	v = normed();
 
 	// phi E [-PI/2 et PI/2]
 	clamp(v.z, -1.0f, 1.0f);
-	phi= (float)asin(v.z);
+	phi = (float)asin(v.z);
 
 	// theta [-PI,PI]
-	theta= (float)atan2(v.y,v.x);
+	theta = (float)atan2(v.y, v.x);
 }
-inline	void	CVector::sphericToCartesian(float r, float theta,float phi)
+inline void CVector::sphericToCartesian(float r, float theta, float phi)
 {
-	double	ct= cos(theta);
-	double	st= sin(theta);
-	double	cp= cos(phi);
-	double	sp= sin(phi);
+	double ct = cos(theta);
+	double st = sin(theta);
+	double cp = cos(phi);
+	double sp = sin(phi);
 
-	x= (float)(r*ct*cp);
-	y= (float)(r*st*cp);
-	z= (float)(r*sp);
+	x = (float)(r * ct * cp);
+	y = (float)(r * st * cp);
+	z = (float)(r * sp);
 }
-inline	void	CVector::minof(const CVector &a, const CVector &b)
+inline void CVector::minof(const CVector &a, const CVector &b)
 {
-	x= std::min(a.x, b.x);
-	y= std::min(a.y, b.y);
-	z= std::min(a.z, b.z);
+	x = std::min(a.x, b.x);
+	y = std::min(a.y, b.y);
+	z = std::min(a.z, b.z);
 }
-inline	void	CVector::maxof(const CVector &a, const CVector &b)
+inline void CVector::maxof(const CVector &a, const CVector &b)
 {
-	x= std::max(a.x, b.x);
-	y= std::max(a.y, b.y);
-	z= std::max(a.z, b.z);
+	x = std::max(a.x, b.x);
+	y = std::max(a.y, b.y);
+	z = std::max(a.z, b.z);
 }
-inline	void	CVector::serial(IStream &f)
+inline void CVector::serial(IStream &f)
 {
-	f.serial(x,y,z);
-}
-
-
+	f.serial(x, y, z);
 }
 
+}
 
 #endif
-

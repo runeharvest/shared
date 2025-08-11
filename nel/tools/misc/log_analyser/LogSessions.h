@@ -30,40 +30,41 @@
 
 class CLogSessions : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CLogSessions(CWnd* pParent = NULL);   // standard constructor
+	CLogSessions(CWnd *pParent = NULL); // standard constructor
 
 	///
-	void		addLogSession( const CString& line );
+	void addLogSession(const CString &line);
 
 	///
-	void		clear() { Sessions.clear(); }
+	void clear() { Sessions.clear(); }
 
 	///
-	CString		getStartDate() const;
+	CString getStartDate() const;
 
 	std::vector<CString> Sessions;
 	std::vector<CString> Filenames;
-	
-// Dialog Data
+
+	// Dialog Data
 	//{{AFX_DATA(CLogSessions)
-	enum { IDD = IDD_LOGSESSIONS };
-	CListBox	m_ListBox;
-	CString	m_StartDate;
+	enum
+	{
+		IDD = IDD_LOGSESSIONS
+	};
+	CListBox m_ListBox;
+	CString m_StartDate;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CLogSessions)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CLogSessions)
 	virtual BOOL OnInitDialog();

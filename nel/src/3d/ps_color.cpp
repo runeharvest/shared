@@ -25,27 +25,23 @@
 
 namespace NL3D {
 
-using NLMISC::CRGBA ;
+using NLMISC::CRGBA;
 
-CRGBA CPSColorGradient::_DefaultGradient[] =
-{
+CRGBA CPSColorGradient::_DefaultGradient[] = {
 	CRGBA(0, 0, 0),
 	CRGBA(255, 255, 255)
 };
 
-
-
-
-CPSColorGradient::CPSColorGradient()  : CPSAttribMakerRGBA<CPSValueGradientFuncRGBA>(1.f)
+CPSColorGradient::CPSColorGradient()
+    : CPSAttribMakerRGBA<CPSValueGradientFuncRGBA>(1.f)
 {
 }
 
-
 ///======================================================================================
 CPSColorGradient::CPSColorGradient(const CRGBA *colorTab, uint32 nbValues, uint32 nbStages, float nbCycles)
-				: CPSAttribMakerRGBA<CPSValueGradientFuncRGBA>(nbCycles)
+    : CPSAttribMakerRGBA<CPSValueGradientFuncRGBA>(nbCycles)
 {
-	_F.setValues(colorTab, nbValues, nbStages) ;
+	_F.setValues(colorTab, nbValues, nbStages);
 }
 
 ///======================================================================================
@@ -121,16 +117,14 @@ void CPSValueGradientFuncRGBA::setColorType(CVertexBuffer::TVertexColorType colo
 	_ColorType = colorType;
 }
 
-void convertVBColor(NLMISC::CRGBA *array,uint numColor,CVertexBuffer::TVertexColorType format)
+void convertVBColor(NLMISC::CRGBA *array, uint numColor, CVertexBuffer::TVertexColorType format)
 {
 	if (!array || format == CVertexBuffer::TRGBA) return;
-	for(uint k = 0; k < numColor; ++k)
+	for (uint k = 0; k < numColor; ++k)
 	{
 		std::swap(array[k].B, array[k].R);
 	}
 }
-
-
 
 ///======================================================================================
 void CPSValueGradientFuncRGBA::getValues(NLMISC::CRGBA *tab) const
@@ -141,7 +135,7 @@ void CPSValueGradientFuncRGBA::getValues(NLMISC::CRGBA *tab) const
 }
 
 ///======================================================================================
-NLMISC::CRGBA CPSValueGradientFuncRGBA::getValue(uint index)	const
+NLMISC::CRGBA CPSValueGradientFuncRGBA::getValue(uint index) const
 {
 	return convertVBColor(CPSValueGradientFunc<NLMISC::CRGBA>::getValue(index), _ColorType);
 }
@@ -157,7 +151,7 @@ void CPSValueGradientFuncRGBA::setValues(const NLMISC::CRGBA *valueTab, uint32 n
 ///======================================================================================
 void CPSValueGradientFuncRGBA::setValuesUnpacked(const NLMISC::CRGBA *valueTab, uint32 numValues, uint32 nbStages)
 {
-	std::vector<NLMISC::CRGBA> convert(valueTab, valueTab + (numValues * nbStages + 1)) ;
+	std::vector<NLMISC::CRGBA> convert(valueTab, valueTab + (numValues * nbStages + 1));
 	convertVBColor(&convert[0], (numValues * nbStages + 1), _ColorType);
 	CPSValueGradientFunc<NLMISC::CRGBA>::setValuesUnpacked(&convert[0], numValues, nbStages);
 }

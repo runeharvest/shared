@@ -17,31 +17,27 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef EVENT_LISTENER
 #define EVENT_LISTENER
 
 #include "nel/misc/event_listener.h"
 #include "nel/gui/input_handler.h"
 
-namespace NLGUI
+namespace NLGUI {
+class CEventListener : public NLMISC::IEventListener
 {
-	class CEventListener : public NLMISC::IEventListener
-	{
-	public:
-		CEventListener();
-		~CEventListener();
-		void addToServer( NLMISC::CEventServer *server );
-		void removeFromServer();
-		void operator()( const NLMISC::CEvent &evnt );
+public:
+	CEventListener();
+	~CEventListener();
+	void addToServer(NLMISC::CEventServer *server);
+	void removeFromServer();
+	void operator()(const NLMISC::CEvent &evnt);
 
-	private:
-		NLGUI::CInputHandler inputHandler;
-		NLMISC::CEventServer *eventServer;
-	};
+private:
+	NLGUI::CInputHandler inputHandler;
+	NLMISC::CEventServer *eventServer;
+};
 
 }
 
 #endif
-
-

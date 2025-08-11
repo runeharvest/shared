@@ -23,14 +23,11 @@
 #include "nel/misc/o_xml.h"
 #include "nel/misc/i_xml.h"
 
-//#include "game_share/sid.h"
+// #include "game_share/sid.h"
 
-
-namespace NLLOGIC
-{
+namespace NLLOGIC {
 
 class CLogicStateMachine;
-
 
 /**
  * CLogicEventMessage
@@ -42,7 +39,6 @@ class CLogicStateMachine;
 class CLogicEventMessage
 {
 public:
-
 	/// true if the message has to be sent
 	bool ToSend;
 
@@ -70,21 +66,20 @@ public:
 		Sent = false;
 		Destination = "no_destination";
 		MessageId = "no_id";
-		DestinationId.setType( 0xfe );
-		DestinationId.setCreatorId( 0 );
-		DestinationId.setDynamicId( 0 );
+		DestinationId.setType(0xfe);
+		DestinationId.setCreatorId(0);
+		DestinationId.setDynamicId(0);
 		Arguments = "no_arguments";
 	}
 
 	/**
 	 * serial
 	 */
-	//void serial(NLMISC::IStream &f);
+	// void serial(NLMISC::IStream &f);
 
-	void write (xmlNodePtr node, const char *subName = "") const;
-	void read (xmlNodePtr node, const char *subName = "");
+	void write(xmlNodePtr node, const char *subName = "") const;
+	void read(xmlNodePtr node, const char *subName = "");
 };
-
 
 /**
  * CLogicEventAction
@@ -96,7 +91,6 @@ public:
 class CLogicEventAction
 {
 public:
-
 	/// true if this action consist in a state change, false if it's a message
 	bool IsStateChange;
 
@@ -122,13 +116,11 @@ public:
 	/**
 	 * serial
 	 */
-	//void serial(NLMISC::IStream &f);
+	// void serial(NLMISC::IStream &f);
 
-	void write (xmlNodePtr node) const;
-	void read (xmlNodePtr node);
+	void write(xmlNodePtr node) const;
+	void read(xmlNodePtr node);
 };
-
-
 
 /**
  * CLogicEvent
@@ -140,10 +132,9 @@ public:
 class CLogicEvent
 {
 	/// state machine managing this event
-	CLogicStateMachine * _LogicStateMachine;
+	CLogicStateMachine *_LogicStateMachine;
 
 public:
-
 	/// condition name
 	std::string ConditionName;
 
@@ -169,7 +160,7 @@ public:
 	 *
 	 * \param logicStateMachine is the state machine containing this block
 	 */
-	void setLogicStateMachine( CLogicStateMachine * logicStateMachine );
+	void setLogicStateMachine(CLogicStateMachine *logicStateMachine);
 
 	/**
 	 * Test the condition
@@ -181,15 +172,12 @@ public:
 	/**
 	 * serial
 	 */
-	//void serial(NLMISC::IStream &f);
+	// void serial(NLMISC::IStream &f);
 
-	void write (xmlNodePtr node) const;
-	void read (xmlNodePtr node);
+	void write(xmlNodePtr node) const;
+	void read(xmlNodePtr node);
 };
 
 } // NLLOGIC
 
-#endif //LOGIC_EVENT
-
-
-
+#endif // LOGIC_EVENT

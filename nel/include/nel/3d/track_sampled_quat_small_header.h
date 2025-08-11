@@ -20,28 +20,24 @@
 #include "nel/misc/types_nl.h"
 #include "nel/3d/track_sampled_quat.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 /** see CTrackSamplePack
  */
-class	CTrackSampleHeader
+class CTrackSampleHeader
 {
 public:
 	// Param of animation
-	bool					LoopMode;
-	float					BeginTime;
-	float					EndTime;
-	float					TotalRange;
-	float					OOTotalRange;
+	bool LoopMode;
+	float BeginTime;
+	float EndTime;
+	float TotalRange;
+	float OOTotalRange;
 	// The frame Time == (EndTime-BeginTime)/NumKeys
-	float					DeltaTime;
-	float					OODeltaTime;
+	float DeltaTime;
+	float OODeltaTime;
 };
-
 
 // ***************************************************************************
 /** Used to build a CTrackSamplePack from CTrackSampledQuat
@@ -49,15 +45,14 @@ public:
 class CTrackSampleCounter
 {
 public:
-	std:: vector<CTrackSampleHeader>	TrackHeaders;
-	uint								NumKeys;
+	std::vector<CTrackSampleHeader> TrackHeaders;
+	uint NumKeys;
 
 	CTrackSampleCounter()
 	{
-		NumKeys= 0;
+		NumKeys = 0;
 	}
 };
-
 
 // ***************************************************************************
 /** see CTrackSampledQuatSmallHeader usage
@@ -65,11 +60,10 @@ public:
 class CTrackSamplePack
 {
 public:
-	NLMISC::CObjectVector<CTrackSampleHeader, false>	TrackHeaders;
-	NLMISC::CObjectVector<uint8, false>					Times;
-	NLMISC::CObjectVector<CQuatPack, false>				Keys;
+	NLMISC::CObjectVector<CTrackSampleHeader, false> TrackHeaders;
+	NLMISC::CObjectVector<uint8, false> Times;
+	NLMISC::CObjectVector<CQuatPack, false> Keys;
 };
-
 
 // ***************************************************************************
 /** For minimum CTrackSampledQuat Header Overhead (44 bytes here). This is a compressed
@@ -83,44 +77,45 @@ public:
 class CTrackSampledQuatSmallHeader : public ITrack
 {
 public:
-
 	/// Constructor
 	CTrackSampledQuatSmallHeader(CTrackSamplePack *pack, uint8 headerIndex, uint8 numKeys, uint16 keyIndex);
 	virtual ~CTrackSampledQuatSmallHeader();
 	// not designed to be serialized
-	CTrackSampledQuatSmallHeader() {nlstop;}
-	NLMISC_DECLARE_CLASS (CTrackSampledQuatSmallHeader);
+	CTrackSampledQuatSmallHeader() { nlstop; }
+	NLMISC_DECLARE_CLASS(CTrackSampledQuatSmallHeader);
 
 	/// From UTrack/ITrack.
 	// @{
-	virtual bool					getLoopMode() const;
-	virtual TAnimationTime			getBeginTime () const;
-	virtual TAnimationTime			getEndTime () const;
-	virtual const IAnimatedValue	&eval (const TAnimationTime& date, CAnimatedValueBlock &avBlock);
+	virtual bool getLoopMode() const;
+	virtual TAnimationTime getBeginTime() const;
+	virtual TAnimationTime getEndTime() const;
+	virtual const IAnimatedValue &eval(const TAnimationTime &date, CAnimatedValueBlock &avBlock);
 	// NB: serial assert cause not serialised but compiled at runtime
-	virtual void					serial(NLMISC::IStream &f);
+	virtual void serial(NLMISC::IStream &f);
 	// NB: do not support sample division: it must be applied before compression
 	// @}
 
 protected:
 	// Ptr on global data. only one in CAnimation
-	CTrackSamplePack				*_TrackSamplePack;
+	CTrackSamplePack *_TrackSamplePack;
 	// The index of misc Anim header data in _TrackSamplePack->TrackHeaders
-	uint8							_IndexTrackHeader;
+	uint8 _IndexTrackHeader;
 	// The Number of Keys of this track
-	uint8							_NumKeys;
+	uint8 _NumKeys;
 	// The index of starting key in _TrackSamplePack->Times and in _TrackSamplePack->Keys
-	uint16							_KeyIndex;
+	uint16 _KeyIndex;
 
 	// same code than CTrackSampledCommon
-	enum	TEvalType	{EvalDiscard, EvalKey0, EvalInterpolate};
-	TEvalType						evalTime (const TAnimationTime& date, uint &keyId0, uint &keyId1, float &interpValue);
-
+	enum TEvalType
+	{
+		EvalDiscard,
+		EvalKey0,
+		EvalInterpolate
+	};
+	TEvalType evalTime(const TAnimationTime &date, uint &keyId0, uint &keyId1, float &interpValue);
 };
 
-
 } // NL3D
-
 
 #endif // NL_TRACK_SAMPLED_QUAT_SMALL_HEADER_H
 

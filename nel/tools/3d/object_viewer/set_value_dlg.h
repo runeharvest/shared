@@ -28,28 +28,30 @@
 
 class CSetValueDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CSetValueDlg(CWnd* pParent = NULL);   // standard constructor
+	CSetValueDlg(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CSetValueDlg)
-	enum { IDD = IDD_SET_VALUE };
-	CString	Value;
+	enum
+	{
+		IDD = IDD_SET_VALUE
+	};
+	CString Value;
 	//}}AFX_DATA
 
-	CString	Title;
+	CString Title;
 
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CSetValueDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CSetValueDlg)
 	virtual BOOL OnInitDialog();

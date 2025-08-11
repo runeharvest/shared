@@ -43,14 +43,13 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-INode::INode(CScene *scene) : CReferenceTarget(scene)
+INode::INode(CScene *scene)
+    : CReferenceTarget(scene)
 {
-
 }
 
 INode::~INode()
 {
-
 }
 
 const ucstring INode::DisplayName = ucstring("Node Interface");
@@ -101,15 +100,17 @@ void INode::toStringLocal(std::ostream &ostream, const std::string &pad, uint fi
 {
 	CReferenceTarget::toStringLocal(ostream, pad);
 	// Print the implied connected children
-	ostream << "\n" << pad << "Children: IMPLICIT { ";
+	ostream << "\n"
+	        << pad << "Children: IMPLICIT { ";
 	uint i = 0;
-	for (std::set<NLMISC::CRefPtr<INode> >::iterator it = m_Children.begin(), end = m_Children.end(); it != end; ++it)
+	for (std::set<NLMISC::CRefPtr<INode>>::iterator it = m_Children.begin(), end = m_Children.end(); it != end; ++it)
 	{
 		INode *node = (*it);
 		nlassert(node);
 		if (node)
 		{
-			ostream << "\n" << pad << "\t" << i << ": <ptr=0x";
+			ostream << "\n"
+			        << pad << "\t" << i << ": <ptr=0x";
 			{
 				std::stringstream ss;
 				ss << std::hex << std::setfill('0');
@@ -122,7 +123,8 @@ void INode::toStringLocal(std::ostream &ostream, const std::string &pad, uint fi
 		}
 		else
 		{
-			ostream << "\n" << pad << "\t" << i << ": NULL ";
+			ostream << "\n"
+			        << pad << "\t" << i << ": NULL ";
 		}
 		++i;
 	}
@@ -159,7 +161,7 @@ const ucstring &INode::userName() const
 INode *INode::find(const ucstring &userName) const
 {
 	ucstring unl = NLMISC::toLower(userName);
-	for (std::set<NLMISC::CRefPtr<INode> >::iterator it = m_Children.begin(), end = m_Children.end(); it != end; ++it)
+	for (std::set<NLMISC::CRefPtr<INode>>::iterator it = m_Children.begin(), end = m_Children.end(); it != end; ++it)
 	{
 		INode *node = (*it);
 		nlassert(node);
@@ -182,7 +184,8 @@ void INode::dumpNodes(std::ostream &ostream, const std::string &pad) const
 	CReferenceMaker *object = getReference(1);
 	if (object) // TODO: Implement!
 	{
-		ostream << "\n" << pad << "Object: ";
+		ostream << "\n"
+		        << pad << "Object: ";
 		ostream << "<ptr=0x";
 		{
 			std::stringstream ss;
@@ -193,13 +196,14 @@ void INode::dumpNodes(std::ostream &ostream, const std::string &pad) const
 		ostream << "> ";
 		ostream << ucstring(object->classDesc()->displayName()).toUtf8() << " ";
 	}
-	uint i = 0 ;
+	uint i = 0;
 	std::string padpad = pad + "\t";
-	for (std::set<NLMISC::CRefPtr<INode> >::iterator it = m_Children.begin(), end = m_Children.end(); it != end; ++it)
+	for (std::set<NLMISC::CRefPtr<INode>>::iterator it = m_Children.begin(), end = m_Children.end(); it != end; ++it)
 	{
 		INode *node = (*it);
 		nlassert(node);
-		ostream << "\n" << pad << i << ": ";
+		ostream << "\n"
+		        << pad << i << ": ";
 		node->dumpNodes(ostream, padpad);
 		++i;
 	}

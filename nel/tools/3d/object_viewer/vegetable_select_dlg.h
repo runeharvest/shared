@@ -23,36 +23,36 @@
 // vegetable_select_dlg.h : header file
 //
 
-
-class	CVegetableDlg;
+class CVegetableDlg;
 
 /////////////////////////////////////////////////////////////////////////////
 // CVegetableSelectDlg dialog
 
 class CVegetableSelectDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CVegetableSelectDlg(CVegetableDlg *vegetableDlg, CWnd* pParent = NULL);   // standard constructor
+	CVegetableSelectDlg(CVegetableDlg *vegetableDlg, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CVegetableSelectDlg)
-	enum { IDD = IDD_VEGETABLE_SELECT_OTHER };
-	CListBox	VegetableList;
-	int		VegetableSelected;
+	enum
+	{
+		IDD = IDD_VEGETABLE_SELECT_OTHER
+	};
+	CListBox VegetableList;
+	int VegetableSelected;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CVegetableSelectDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CVegetableSelectDlg)
 	virtual BOOL OnInitDialog();
@@ -61,8 +61,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	// dlg to get list of vegetagbles.
-	CVegetableDlg		*_VegetableDlg;
-
+	CVegetableDlg *_VegetableDlg;
 };
 
 //{{AFX_INSERT_LOCATION}}

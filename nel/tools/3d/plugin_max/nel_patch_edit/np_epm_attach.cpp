@@ -7,18 +7,18 @@
 #define DBGWELD_ACTIONx
 #define DBG_NAMEDSELSx
 
-#define PROMPT_TIME	2000
+#define PROMPT_TIME 2000
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-extern int		attachReorient;
+extern int attachReorient;
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-int EditPatchMod::DoAttach(INode *node, PatchMesh *attPatch, RPatchMesh *rattPatch, bool & canUndo) 
+int EditPatchMod::DoAttach(INode *node, PatchMesh *attPatch, RPatchMesh *rattPatch, bool &canUndo)
 {
-	ModContextList mcList;	
-	INodeTab nodes;	
+	ModContextList mcList;
+	INodeTab nodes;
 
 	if (!ip)
 		return 0;
@@ -31,7 +31,7 @@ int EditPatchMod::DoAttach(INode *node, PatchMesh *attPatch, RPatchMesh *rattPat
 		return 0;
 	}
 
-	EditPatchData *patchData =(EditPatchData*)mcList[0]->localData;
+	EditPatchData *patchData = (EditPatchData *)mcList[0]->localData;
 	if (!patchData)
 	{
 		nodes.DisposeTemporary();
@@ -65,10 +65,9 @@ int EditPatchMod::DoAttach(INode *node, PatchMesh *attPatch, RPatchMesh *rattPat
 		Point3 otherObjOffset = node->GetObjOffsetPos();
 		attMat = Inverse(otherPivTM) * thisPivTM;
 	}
-	else 
+	else
 	{
-		attMat = node->GetObjectTM(ip->GetTime()) *
-			Inverse(nodes[0]->GetObjectTM(ip->GetTime()));
+		attMat = node->GetObjectTM(ip->GetTime()) * Inverse(nodes[0]->GetObjectTM(ip->GetTime()));
 	}
 
 	// RB 3-17-96 : Check for mirroring
@@ -79,29 +78,29 @@ int EditPatchMod::DoAttach(INode *node, PatchMesh *attPatch, RPatchMesh *rattPat
 		int v[8], ct, ct2, j;
 		int tvInteriors[4], tvHandles[8];
 		Point3 p[9];
-		
+
 		for (int i = 0; i < attPatch->numPatches; i++)
 		{
 
 			// Re-order rpatch
 			if (attPatch->patches[i].type == PATCH_QUAD)
 			{
-				UI_PATCH rpatch=rattPatch->getUIPatch (i);
-				int ctU=rpatch.NbTilesU<<1;
-				int ctV=rpatch.NbTilesV<<1;
+				UI_PATCH rpatch = rattPatch->getUIPatch(i);
+				int ctU = rpatch.NbTilesU << 1;
+				int ctV = rpatch.NbTilesV << 1;
 				int nU;
-				for (nU=0; nU<ctU; nU++)
+				for (nU = 0; nU < ctU; nU++)
 				{
-					for (int nV=0; nV<ctV; nV++)
+					for (int nV = 0; nV < ctV; nV++)
 					{
-						rattPatch->getUIPatch (i).getTileDesc (nU+nV*ctU)=rpatch.getTileDesc (ctU-1-nU+(ctV-1-nV)*ctU);
+						rattPatch->getUIPatch(i).getTileDesc(nU + nV * ctU) = rpatch.getTileDesc(ctU - 1 - nU + (ctV - 1 - nV) * ctU);
 					}
 				}
-				for (nU=0; nU<ctU+1; nU++)
+				for (nU = 0; nU < ctU + 1; nU++)
 				{
-					for (int nV=0; nV<ctV+1; nV++)
+					for (int nV = 0; nV < ctV + 1; nV++)
 					{
-						rattPatch->getUIPatch (i).setColor (nU+nV*(ctU+1), rpatch.getColor (ctU-nU+(ctV-nV)*ctU));
+						rattPatch->getUIPatch(i).setColor(nU + nV * (ctU + 1), rpatch.getColor(ctU - nU + (ctV - nV) * ctU));
 					}
 				}
 			}
@@ -116,9 +115,9 @@ int EditPatchMod::DoAttach(INode *node, PatchMesh *attPatch, RPatchMesh *rattPat
 			{
 				attPatch->patches[i].v[j] = v[ct - j - 1];
 			}
-			
+
 			// Re-order vecs
-			ct  = attPatch->patches[i].type == PATCH_QUAD ? 8 : 6;
+			ct = attPatch->patches[i].type == PATCH_QUAD ? 8 : 6;
 			ct2 = attPatch->patches[i].type == PATCH_QUAD ? 5 : 3;
 			for (j = 0; j < ct; j++)
 			{
@@ -130,7 +129,7 @@ int EditPatchMod::DoAttach(INode *node, PatchMesh *attPatch, RPatchMesh *rattPat
 					ct2 = ct - 1;
 				attPatch->patches[i].vec[j] = v[ct2];
 			}
-			
+
 			// Re-order enteriors
 			if (attPatch->patches[i].type == PATCH_QUAD)
 			{
@@ -144,7 +143,7 @@ int EditPatchMod::DoAttach(INode *node, PatchMesh *attPatch, RPatchMesh *rattPat
 					attPatch->patches[i].interior[j] = v[ct - j - 1];
 				}
 			}
-			
+
 			// Re-order aux
 			if (attPatch->patches[i].type == PATCH_TRI)
 			{
@@ -158,7 +157,7 @@ int EditPatchMod::DoAttach(INode *node, PatchMesh *attPatch, RPatchMesh *rattPat
 					attPatch->patches[i].aux[j] = p[ct - j - 1];
 				}
 			}
-			
+
 #if (MAX_RELEASE < 4000) /* #if (MAX_RELEASE < 4000) */
 			// Re-order TV faces if present
 			for (int chan = 0; chan < patch->getNumMaps(); ++chan)
@@ -178,35 +177,35 @@ int EditPatchMod::DoAttach(INode *node, PatchMesh *attPatch, RPatchMesh *rattPat
 			}
 #else /* #if (MAX_RELEASE < 4000) #else */
 			// Re-order TV faces if present
-			for(int chan = -NUM_HIDDENMAPS; chan < patch->getNumMaps(); ++chan) 
+			for (int chan = -NUM_HIDDENMAPS; chan < patch->getNumMaps(); ++chan)
 			{
-				if (chan < attPatch->getNumMaps() && attPatch->mapPatches(chan)) 
+				if (chan < attPatch->getNumMaps() && attPatch->mapPatches(chan))
 				{
-					ct = attPatch->patches[i].type==PATCH_QUAD ? 4 : 3;
-					for (j=0; j<ct; j++) 
+					ct = attPatch->patches[i].type == PATCH_QUAD ? 4 : 3;
+					for (j = 0; j < ct; j++)
 					{
 						v[j] = attPatch->mapPatches(chan)[i].tv[j];
 						tvInteriors[j] = attPatch->mapPatches(chan)[i].interiors[j];
 						int a;
 						int b;
-						a = j*2-1;
-						b = j*2;
-						if (a<0) a = ct*2-1;
-						tvHandles[j*2] = attPatch->mapPatches(chan)[i].handles[a];
-						tvHandles[j*2+1] = attPatch->mapPatches(chan)[i].handles[b];
+						a = j * 2 - 1;
+						b = j * 2;
+						if (a < 0) a = ct * 2 - 1;
+						tvHandles[j * 2] = attPatch->mapPatches(chan)[i].handles[a];
+						tvHandles[j * 2 + 1] = attPatch->mapPatches(chan)[i].handles[b];
 					}
-					for (j=0; j<ct; j++) 
+					for (j = 0; j < ct; j++)
 					{
-						attPatch->mapPatches(chan)[i].tv[j] = v[ct-j-1];
-						attPatch->mapPatches(chan)[i].interiors[j] = tvInteriors[(ct)-(j)-1];
-						int index = ct-j-1;
+						attPatch->mapPatches(chan)[i].tv[j] = v[ct - j - 1];
+						attPatch->mapPatches(chan)[i].interiors[j] = tvInteriors[(ct) - (j)-1];
+						int index = ct - j - 1;
 						int a;
 						int b;
-						a = j*2-1;
-						b = j*2;
-						if (a<0) a = ct*2-1;
-						attPatch->mapPatches(chan)[i].handles[b] = tvHandles[index*2];
-						attPatch->mapPatches(chan)[i].handles[a] = tvHandles[index*2+1];
+						a = j * 2 - 1;
+						b = j * 2;
+						if (a < 0) a = ct * 2 - 1;
+						attPatch->mapPatches(chan)[i].handles[b] = tvHandles[index * 2];
+						attPatch->mapPatches(chan)[i].handles[a] = tvHandles[index * 2 + 1];
 					}
 				}
 			}
@@ -228,7 +227,7 @@ int EditPatchMod::DoAttach(INode *node, PatchMesh *attPatch, RPatchMesh *rattPat
 	Mtl *m1 = nodes[0]->GetMtl();
 	Mtl *m2 = node->GetMtl();
 	bool condenseMe = FALSE;
-	if (m1 && m2 &&(m1 != m2))
+	if (m1 && m2 && (m1 != m2))
 	{
 		if (attachMat == ATTACHMAT_IDTOMAT)
 		{
@@ -253,7 +252,7 @@ int EditPatchMod::DoAttach(INode *node, PatchMesh *attPatch, RPatchMesh *rattPat
 			m1 = FitMaterialToPatchIDs(*patch, m1);
 			m2 = FitMaterialToPatchIDs(*attPatch, m2);
 		}
-		
+
 		Mtl *multi = CombineMaterials(m1, m2, mat2Offset);
 		if (attachMat == ATTACHMAT_NEITHER)
 			mat2Offset = 0;
@@ -262,12 +261,12 @@ int EditPatchMod::DoAttach(INode *node, PatchMesh *attPatch, RPatchMesh *rattPat
 		DWORD oldSL = patch->selLevel;
 		DWORD roldSL = patch->selLevel;
 		patch->selLevel = PATCH_OBJECT;
-		rpatch->SetSelLevel (EP_OBJECT);
+		rpatch->SetSelLevel(EP_OBJECT);
 		nodes[0]->SetMtl(multi);
 		patch->selLevel = oldSL;
-		rpatch->SetSelLevel (roldSL);
+		rpatch->SetSelLevel(roldSL);
 		m1 = multi;
-		canUndo = FALSE;	// Absolutely cannot undo material combinations.
+		canUndo = FALSE; // Absolutely cannot undo material combinations.
 	}
 	if (!m1 && m2)
 	{
@@ -275,10 +274,10 @@ int EditPatchMod::DoAttach(INode *node, PatchMesh *attPatch, RPatchMesh *rattPat
 		DWORD oldSL = patch->selLevel;
 		DWORD roldSL = rpatch->GetSelLevel();
 		patch->selLevel = PATCH_OBJECT;
-		rpatch->SetSelLevel (EP_OBJECT);
+		rpatch->SetSelLevel(EP_OBJECT);
 		nodes[0]->SetMtl(m2);
 		patch->selLevel = oldSL;
-		rpatch->SetSelLevel (roldSL);
+		rpatch->SetSelLevel(roldSL);
 		m1 = m2;
 	}
 

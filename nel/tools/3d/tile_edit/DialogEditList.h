@@ -28,31 +28,32 @@
 
 class CDialogEditList : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CDialogEditList(CWnd* pParent = NULL);   // standard constructor
+	CDialogEditList(CWnd *pParent = NULL); // standard constructor
 
-	virtual void OnInit ()=0;
-	virtual void OnOk ()=0;
+	virtual void OnInit() = 0;
+	virtual void OnOk() = 0;
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CDialogEditList)
-	enum { IDD = IDD_EDIT_LIST };
-	CListBox	m_ctrlList;
-	CComboBox	m_ctrlCombo;
+	enum
+	{
+		IDD = IDD_EDIT_LIST
+	};
+	CListBox m_ctrlList;
+	CComboBox m_ctrlCombo;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDialogEditList)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CDialogEditList)
 	afx_msg void OnAdd();

@@ -17,19 +17,16 @@
 #include "std3d.h"
 #include "nel/3d/raw_skinned.h"
 
-
 using namespace NLMISC;
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
-void		CRawSkinnedNormalCache::clearArrays()
+void CRawSkinnedNormalCache::clearArrays()
 {
 	Vertices1.clear();
 	Vertices2.clear();

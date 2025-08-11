@@ -24,16 +24,12 @@
 #include "nel/3d/vertex_buffer.h"
 #include "nel/3d/index_buffer.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 class IDriver;
 class CShadowMap;
 class CShadowMapProjector;
 class CMaterial;
-
 
 // ***************************************************************************
 /**
@@ -50,20 +46,22 @@ public:
 	class CShadowContext
 	{
 	public:
-		IDriver				*Driver;
-		CShadowMap			*ShadowMap;
-		NLMISC::CVector		CasterPos;
-		NLMISC::CAABBox		ShadowWorldBB;
+		IDriver *Driver;
+		CShadowMap *ShadowMap;
+		NLMISC::CVector CasterPos;
+		NLMISC::CAABBox ShadowWorldBB;
 		CShadowMapProjector &ShadowMapProjector;
-		CMaterial			&ShadowMaterial;
-		CIndexBuffer		&IndexBuffer;
+		CMaterial &ShadowMaterial;
+		CIndexBuffer &IndexBuffer;
 
 	public:
-		CShadowContext(CMaterial &mat, CIndexBuffer &ib, CShadowMapProjector &smp) :
-		  ShadowMapProjector(smp), ShadowMaterial(mat), IndexBuffer(ib)
+		CShadowContext(CMaterial &mat, CIndexBuffer &ib, CShadowMapProjector &smp)
+		    : ShadowMapProjector(smp)
+		    , ShadowMaterial(mat)
+		    , IndexBuffer(ib)
 		{
-			Driver= NULL;
-			ShadowMap= NULL;
+			Driver = NULL;
+			ShadowMap = NULL;
 		}
 	};
 
@@ -73,23 +71,22 @@ public:
 	 *	It can be loaded/called through CAsyncFileManager for instance
 	 * ***********************************************/
 
-
 	/// Constructor
 	CVisualCollisionMesh();
 
 	/** build. NB: fails if too much vertices/triangles (>=65536) or if 0 vertices / triangles
 	 *	\param vbForShadowRender: a RefPtr is kept on this VB for shadow rendering
 	 */
-	bool		build(const std::vector<NLMISC::CVector> &vertices, const std::vector<uint32> &triangles, CVertexBuffer &vbForShadowRender);
+	bool build(const std::vector<NLMISC::CVector> &vertices, const std::vector<uint32> &triangles, CVertexBuffer &vbForShadowRender);
 
 	/// get collision with camera. [0,1] value
-	float		getCameraCollision(const NLMISC::CMatrix &instanceMatrix, class CCameraCol &camCol);
+	float getCameraCollision(const NLMISC::CMatrix &instanceMatrix, class CCameraCol &camCol);
 
 	/// compute the world bbox of an instance
-	NLMISC::CAABBox	computeWorldBBox(const NLMISC::CMatrix &instanceMatrix);
+	NLMISC::CAABBox computeWorldBBox(const NLMISC::CMatrix &instanceMatrix);
 
 	/// receive a shadowMap. render in driver the triangles that intersect the shadow
-	void		receiveShadowMap(const NLMISC::CMatrix &instanceMatrix, const CShadowContext &shadowContext);
+	void receiveShadowMap(const NLMISC::CMatrix &instanceMatrix, const CShadowContext &shadowContext);
 
 	// get vertices of the mesh
 	const std::vector<NLMISC::CVector> &getVertices() const { return _Vertices; }
@@ -97,12 +94,10 @@ public:
 	// get triangles of the mesh
 	const std::vector<uint16> &getTriangles() const { return _Triangles; }
 
-
-// *********************
+	// *********************
 private:
-
 	// A Static Grid Container. Only 65535 elements max can be inserted
-	class	CStaticGrid
+	class CStaticGrid
 	{
 		/* ***********************************************
 		 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
@@ -111,61 +106,58 @@ private:
 
 	public:
 		// create
-		void	create(uint nbQuads, uint nbElts, const NLMISC::CAABBox &gridBBox);
+		void create(uint nbQuads, uint nbElts, const NLMISC::CAABBox &gridBBox);
 
 		// add an element (bbox shoudl be included in gridBBox from create() )
-		void	add(uint16 id, const NLMISC::CAABBox &bbox);
+		void add(uint16 id, const NLMISC::CAABBox &bbox);
 
 		// compile
-		void	compile();
+		void compile();
 
 		// return the list of elements intersected. NB: the vector is enlarged to max, but real selection size is in the  return value
-		uint	select(const NLMISC::CAABBox &bbox, std::vector<uint16> &res);
+		uint select(const NLMISC::CAABBox &bbox, std::vector<uint16> &res);
 
 	private:
 		struct CEltBuild
 		{
-			uint32	X0,Y0;
-			uint32	X1,Y1;
+			uint32 X0, Y0;
+			uint32 X1, Y1;
 		};
 		// point to GridData
 		struct CCase
 		{
-			uint32	Start, NumElts;
+			uint32 Start, NumElts;
 		};
-		uint32										_GridSizePower;
-		uint32										_GridSize;
-		NLMISC::CVector								_GridPos;
-		NLMISC::CVector								_GridScale;
+		uint32 _GridSizePower;
+		uint32 _GridSize;
+		NLMISC::CVector _GridPos;
+		NLMISC::CVector _GridScale;
 		// The Grid
-		NLMISC::CObjectVector<CCase, false>			_Grid;
+		NLMISC::CObjectVector<CCase, false> _Grid;
 		// The raw elt data
-		NLMISC::CObjectVector<uint16, false>		_GridData;
+		NLMISC::CObjectVector<uint16, false> _GridData;
 		// Used at build only
-		NLMISC::CObjectVector<CEltBuild, false>		_EltBuild;
-		uint32										_GridDataSize;
+		NLMISC::CObjectVector<CEltBuild, false> _EltBuild;
+		uint32 _GridDataSize;
 
 		// For Fast selection
-		uint32										_ItSession;
+		uint32 _ItSession;
 		// For each element the session id. if same than _ItSession, then already inserted
-		NLMISC::CObjectVector<uint32, false>		_Sessions;
+		NLMISC::CObjectVector<uint32, false> _Sessions;
 	};
 
 private:
-
 	// Data
-	std::vector<NLMISC::CVector>	_Vertices;
-	std::vector<uint16>				_Triangles;
+	std::vector<NLMISC::CVector> _Vertices;
+	std::vector<uint16> _Triangles;
 	// The Local Triangle Quadgrid
-	CStaticGrid						_QuadGrid;
+	CStaticGrid _QuadGrid;
 
 	// For ShadowMap receiving. Point to the original Mesh VB (should be in AGP)
-	NLMISC::CRefPtr<CVertexBuffer>	_VertexBuffer;
+	NLMISC::CRefPtr<CVertexBuffer> _VertexBuffer;
 };
 
-
 } // NL3D
-
 
 #endif // NL_VISUAL_COLLISION_MESH_H
 

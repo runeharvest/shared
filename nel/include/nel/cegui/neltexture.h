@@ -21,15 +21,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /************************************************************************
-	purpose:	Interface for main Nevrax Engine GUI texture class
+    purpose:	Interface for main Nevrax Engine GUI texture class
 
-	For use with GUI Library:
-	Crazy Eddie's GUI System (http://crayzedsgui.sourceforge.net)
+    For use with GUI Library:
+    Crazy Eddie's GUI System (http://crayzedsgui.sourceforge.net)
     Copyright (C)2004 Paul D Turner (crayzed@users.sourceforge.net)
 
-	This file contains code that is specific to NeL (http://www.nevrax.org)
+    This file contains code that is specific to NeL (http://www.nevrax.org)
 *************************************************************************/
 
 #ifndef __NELTEXTURE_H__
@@ -68,54 +67,52 @@
 #include <nel/3d/u_particle_system_instance.h>
 #include <nel/3d/texture_mem.h>
 
-namespace CEGUI
+namespace CEGUI {
+class NeLTexture : public Texture
 {
-	class NeLTexture : public Texture
-	{
-	private:
-		friend Texture *NeLRenderer::createTexture(void);
-		friend Texture *NeLRenderer::createTexture(const String &filename, const String& resourceGroup);
-		friend Texture *NeLRenderer::createTexture(float size);
-		friend void NeLRenderer::destroyTexture(Texture *texture);
+private:
+	friend Texture *NeLRenderer::createTexture(void);
+	friend Texture *NeLRenderer::createTexture(const String &filename, const String &resourceGroup);
+	friend Texture *NeLRenderer::createTexture(float size);
+	friend void NeLRenderer::destroyTexture(Texture *texture);
 
-		NeLTexture(Renderer *owner);
-		virtual ~NeLTexture(void);
+	NeLTexture(Renderer *owner);
+	virtual ~NeLTexture(void);
 
-	public:
-		virtual ushort getWidth(void) const { return d_width; }
-		virtual ushort getHeight(void) const { return d_height; }
-		virtual void loadFromFile(const String &filename, const String& resourceGroup);
+public:
+	virtual ushort getWidth(void) const { return d_width; }
+	virtual ushort getHeight(void) const { return d_height; }
+	virtual void loadFromFile(const String &filename, const String &resourceGroup);
 
-		/**
-		 * \brief Creates a NeL Texture from a raw memory buffer.
-		 *
-		 * \param buffPtr The pointer to the buffer containing the texture.
-		 * \param buffWidth The width of the texture in pixels.
-		 * \param buffHeight The height of the texture in pixels.
-		 * \param pixelFormat The type of pixel packing used.
-		 * \todo Clean up CTextureMem creation and registration.
-		 */
-		virtual void loadFromMemory(const void *buffPtr, uint buffWidth, uint buffHeight, PixelFormat pixelFormat = CEGUI::Texture::PF_RGBA);
-		NL3D::UMaterial getNeLTexture(void);
-		void setNeLTextureSize(uint size);
+	/**
+	 * \brief Creates a NeL Texture from a raw memory buffer.
+	 *
+	 * \param buffPtr The pointer to the buffer containing the texture.
+	 * \param buffWidth The width of the texture in pixels.
+	 * \param buffHeight The height of the texture in pixels.
+	 * \param pixelFormat The type of pixel packing used.
+	 * \todo Clean up CTextureMem creation and registration.
+	 */
+	virtual void loadFromMemory(const void *buffPtr, uint buffWidth, uint buffHeight, PixelFormat pixelFormat = CEGUI::Texture::PF_RGBA);
+	NL3D::UMaterial getNeLTexture(void);
+	void setNeLTextureSize(uint size);
 
-	private:
-		/**
-		 * \brief Frees the texture from the NeL driver and deletes it.
-		 * \todo Fix the deletion of CTextureMem textures.
-		 */
-		void freeNeLTexture(void);
-		NL3D::UTextureFile	*m_TextureFile;
-		NL3D::CTextureMem	*m_TextureMem;
-		bool	m_UsingFile;
-		bool	m_UsingMem;
-		NL3D::UMaterial m_Material;
+private:
+	/**
+	 * \brief Frees the texture from the NeL driver and deletes it.
+	 * \todo Fix the deletion of CTextureMem textures.
+	 */
+	void freeNeLTexture(void);
+	NL3D::UTextureFile *m_TextureFile;
+	NL3D::CTextureMem *m_TextureMem;
+	bool m_UsingFile;
+	bool m_UsingMem;
+	NL3D::UMaterial m_Material;
 
-		NeLRenderer *m_Owner;
-		ushort d_width;
-		ushort d_height;
-	};
+	NeLRenderer *m_Owner;
+	ushort d_width;
+	ushort d_height;
+};
 } // end namespace CEGUI
 
 #endif // __NELTEXTURE_H__
-

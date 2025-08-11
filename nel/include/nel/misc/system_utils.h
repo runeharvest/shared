@@ -23,8 +23,7 @@
 #include "types_nl.h"
 #include "ucstring.h"
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 /*
  * Operating system miscellaneous functions (all methods and variables should be static)
@@ -34,8 +33,8 @@ namespace NLMISC
 class CSystemUtils
 {
 	static nlWindow s_window;
-public:
 
+public:
 	/// Initialize data which needs it before using them.
 	static bool init();
 

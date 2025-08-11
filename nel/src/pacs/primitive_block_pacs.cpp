@@ -19,13 +19,11 @@
 #include "nel/misc/stream.h"
 #include "nel/pacs/primitive_block.h"
 
-
-namespace NLPACS
-{
+namespace NLPACS {
 
 // ***************************************************************************
 
-CPrimitiveDesc::CPrimitiveDesc ()
+CPrimitiveDesc::CPrimitiveDesc()
 {
 	Attenuation = 1;
 	Type = UMovePrimitive::_2DOrientedBox;
@@ -38,40 +36,40 @@ CPrimitiveDesc::CPrimitiveDesc ()
 
 // ***************************************************************************
 
-void CPrimitiveDesc::serial (NLMISC::IStream &s)
+void CPrimitiveDesc::serial(NLMISC::IStream &s)
 {
 	// Serial the version
-	sint ver = s.serialVersion (1);
+	sint ver = s.serialVersion(1);
 
-	s.xmlPush ("LENGTH");
-	s.serial (Length[0]);
-	s.serial (Length[1]);
-	s.xmlPop ();
+	s.xmlPush("LENGTH");
+	s.serial(Length[0]);
+	s.serial(Length[1]);
+	s.xmlPop();
 
-	s.xmlSerial (Height, "HEIGHT");
-	s.xmlSerial (Attenuation, "ATTENUATION");
+	s.xmlSerial(Height, "HEIGHT");
+	s.xmlSerial(Attenuation, "ATTENUATION");
 
-	s.xmlPush ("TYPE");
-	s.serialEnum (Type);
-	s.xmlPop ();
+	s.xmlPush("TYPE");
+	s.serialEnum(Type);
+	s.xmlPop();
 
-	s.xmlPush ("REACTION");
-	s.serialEnum (Reaction);
-	s.xmlPop ();
+	s.xmlPush("REACTION");
+	s.serialEnum(Reaction);
+	s.xmlPop();
 
-	s.xmlPush ("TRIGGER");
-	s.serialEnum (Trigger);
-	s.xmlPop ();
+	s.xmlPush("TRIGGER");
+	s.serialEnum(Trigger);
+	s.xmlPop();
 
-	s.xmlSerial (Obstacle, "OBSTACLE");
-	s.xmlSerial (OcclusionMask, "OCCLUSION_MASK");
-	s.xmlSerial (CollisionMask, "COLLISION_MASK");
-	s.xmlSerial (Position, "POSITION");
-	s.xmlSerial (Orientation, "ORIENTATION");
+	s.xmlSerial(Obstacle, "OBSTACLE");
+	s.xmlSerial(OcclusionMask, "OCCLUSION_MASK");
+	s.xmlSerial(CollisionMask, "COLLISION_MASK");
+	s.xmlSerial(Position, "POSITION");
+	s.xmlSerial(Orientation, "ORIENTATION");
 
-	if (ver>=1)
+	if (ver >= 1)
 	{
-		s.xmlSerial (UserData, "USER_DATA");
+		s.xmlSerial(UserData, "USER_DATA");
 	}
 	else
 	{
@@ -81,21 +79,21 @@ void CPrimitiveDesc::serial (NLMISC::IStream &s)
 
 // ***************************************************************************
 
-void CPrimitiveBlock::serial (NLMISC::IStream &s)
+void CPrimitiveBlock::serial(NLMISC::IStream &s)
 {
-	s.xmlPush ("PRIMITIVE_BLOCK");
+	s.xmlPush("PRIMITIVE_BLOCK");
 
 	// Serial checks
-	s.serialCheck (NELID("KBRP"));
+	s.serialCheck(NELID("KBRP"));
 
 	// Serial the version
-	(void)s.serialVersion (0);
+	(void)s.serialVersion(0);
 
-	s.xmlPush ("PRIMITIVES");
-	s.serialCont (Primitives);
-	s.xmlPop ();
+	s.xmlPush("PRIMITIVES");
+	s.serialCont(Primitives);
+	s.xmlPop();
 
-	s.xmlPop ();
+	s.xmlPop();
 }
 
 // ***************************************************************************
@@ -117,7 +115,7 @@ UPrimitiveBlock *UPrimitiveBlock::createPrimitiveBlockFromFile(const std::string
 	{
 		NLMISC::CIXml xmlInput;
 		// Init
-		if (xmlInput.init (input))
+		if (xmlInput.init(input))
 		{
 			return createPrimitiveBlock(xmlInput);
 		}
@@ -128,8 +126,5 @@ UPrimitiveBlock *UPrimitiveBlock::createPrimitiveBlockFromFile(const std::string
 	}
 	return NULL;
 }
-
-
-
 
 } // NLPACS

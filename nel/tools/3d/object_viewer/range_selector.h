@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #if !defined(AFX_RANGE_SELECTOR_H__BF9974E6_D43D_447D_8BC5_625620BDBD8F__INCLUDED_)
 #define AFX_RANGE_SELECTOR_H__BF9974E6_D43D_447D_8BC5_625620BDBD8F__INCLUDED_
 
@@ -29,34 +28,35 @@
 
 class CRangeSelector : public CDialog
 {
-// Construction
-public:	
-	CRangeSelector(const CString &lowerBound, const CString &upperBound, class CEditableRange *er, CWnd* pParent = NULL);   // standard constructor
+	// Construction
+public:
+	CRangeSelector(const CString &lowerBound, const CString &upperBound, class CEditableRange *er, CWnd *pParent = NULL); // standard constructor
 
+	const CString &getUpperBound(void) const { return m_UpperBound; }
+	const CString &getLowerBound(void) const { return m_LowerBound; }
 
-	const CString &getUpperBound(void) const { return m_UpperBound ; }
-	const CString &getLowerBound(void) const { return m_LowerBound ; }
-
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CRangeSelector)
-	enum { IDD = IDD_SELECT_RANGE };
-	CEdit	m_UpperBoundCtrl;
-	CEdit	m_LowerBoundCtrl;
-	CString	m_LowerBound;
-	CString	m_UpperBound;
+	enum
+	{
+		IDD = IDD_SELECT_RANGE
+	};
+	CEdit m_UpperBoundCtrl;
+	CEdit m_LowerBoundCtrl;
+	CString m_LowerBound;
+	CString m_UpperBound;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CRangeSelector)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-	class CEditableRange *_EditableRange ;	
+	class CEditableRange *_EditableRange;
 
 	// Generated message map functions
 	//{{AFX_MSG(CRangeSelector)

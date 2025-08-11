@@ -1,1 +1,1 @@
-#define IDR_MAINFRAME                   128
+#define IDR_MAINFRAME 128

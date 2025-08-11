@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdmisc.h"
 #include "nel/misc/xml_auto_ptr.h"
 
@@ -42,7 +40,7 @@ CXMLAutoPtr::~CXMLAutoPtr()
 }
 
 //=======================================
-CXMLAutoPtr &CXMLAutoPtr::operator = (const char *other)
+CXMLAutoPtr &CXMLAutoPtr::operator=(const char *other)
 {
 	if (other == _Value) return *this;
 	destroy();

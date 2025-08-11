@@ -17,8 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef SEND_CHAT_H
 #define SEND_CHAT_H
 
@@ -61,7 +59,6 @@ void npcChatParamToChannel(const TDataSetRow &senderId, CChatGroup::TGroupType g
  */
 void npcChatToChannel(const TDataSetRow &senderId, CChatGroup::TGroupType groupType, const std::string &phraseId);
 
-
 /**
  *	Send a chat line from a bot (mainly NPC) in a chat channel (know as chat group).
  *	Chat group can be constructed from CChatGroup class.
@@ -74,35 +71,33 @@ void npcChatToChannelEx(const TDataSetRow &senderId, CChatGroup::TGroupType grou
  *	Chat group can be constructed from CChatGroup class.
  *	sentence is the sentence to be sent.
  */
-void npcChatToChannelSentence(const TDataSetRow &senderId, CChatGroup::TGroupType groupType, ucstring& sentence);
+void npcChatToChannelSentence(const TDataSetRow &senderId, CChatGroup::TGroupType groupType, ucstring &sentence);
 
 /**
  *	Request to the DSS to send a chat line from a bot in a chat channel
  *	Chat group can be constructed from CChatGroup class.
  *	sentenceId is the id of the sentence that must be sent by the DSS
  */
-void forwardToDss(const TDataSetRow &senderId, CChatGroup::TGroupType groupType, std::string& sentenceId,uint32 scenarioId);
+void forwardToDss(const TDataSetRow &senderId, CChatGroup::TGroupType groupType, std::string &sentenceId, uint32 scenarioId);
 
 /**
  *	Request to the DSS to send a chat line from a bot in a chat channel
  *	Chat group can be constructed from CChatGroup class.
  *	sentenceId is the id of the sentence that must be sent by the DSS
  */
-void forwardToDssArg(const TDataSetRow &senderId, CChatGroup::TGroupType groupType, std::string& sentenceId,uint32 scenarioId,std::vector<float>& argValues);
+void forwardToDssArg(const TDataSetRow &senderId, CChatGroup::TGroupType groupType, std::string &sentenceId, uint32 scenarioId, std::vector<float> &argValues);
 
 /**
  *	Send a tell line from a bot (mainly NPC) to a player
  *	phraseId is a phrase identifier in the phrase translation file.
  */
-void npcTellToPlayer(const TDataSetRow &senderId, const TDataSetRow &receiverId, const std::string &phraseId, bool needSenderNpc=true);
-
+void npcTellToPlayer(const TDataSetRow &senderId, const TDataSetRow &receiverId, const std::string &phraseId, bool needSenderNpc = true);
 
 /**
  *	Send a tell line from a bot (mainly NPC) to a player. Accept parametered strings
  *	phraseId is a phrase id obtained through the string manager
  */
 void npcTellToPlayerEx(const TDataSetRow &senderId, const TDataSetRow &receiverId, uint32 phraseId);
-
 
 #endif // SEND_CHAT_H
 

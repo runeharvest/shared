@@ -20,7 +20,6 @@
 #include "nel/misc/common.h"
 #include "nel/3d/vegetable_manager.h"
 
-
 using namespace NLMISC;
 using namespace std;
 
@@ -28,50 +27,47 @@ using namespace std;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
-
+namespace NL3D {
 
 // ***************************************************************************
 CTileVegetableDesc::CTileVegetableDesc()
 {
-	_Empty= true;
+	_Empty = true;
 }
 
 // ***************************************************************************
-void		CTileVegetableDesc::clear()
+void CTileVegetableDesc::clear()
 {
-	for(sint i=0; i<NL3D_VEGETABLE_BLOCK_NUMDIST; i++)
+	for (sint i = 0; i < NL3D_VEGETABLE_BLOCK_NUMDIST; i++)
 	{
 		_VegetableList[i].clear();
 	}
-	_Empty= true;
+	_Empty = true;
 }
 
 // ***************************************************************************
-void		CTileVegetableDesc::build(const std::vector<CVegetable> &vegetables)
+void CTileVegetableDesc::build(const std::vector<CVegetable> &vegetables)
 {
-	uint	i;
+	uint i;
 
 	// first clear().
 	clear();
 
 	// Parse all landscape vegetables, and store them in appropriate distance Type.
-	for(i=0;i<vegetables.size();i++)
+	for (i = 0; i < vegetables.size(); i++)
 	{
-		uint	distType= vegetables[i].DistType;
-		distType= min(distType, (uint)(NL3D_VEGETABLE_BLOCK_NUMDIST-1));
+		uint distType = vegetables[i].DistType;
+		distType = min(distType, (uint)(NL3D_VEGETABLE_BLOCK_NUMDIST - 1));
 		_VegetableList[distType].push_back(vegetables[i]);
 	}
 
 	// Compute Seed such that creation of one vegetable for a tile will never receive same seed.
-	uint	sumVeget= 0;
-	for(i=0; i<NL3D_VEGETABLE_BLOCK_NUMDIST; i++)
+	uint sumVeget = 0;
+	for (i = 0; i < NL3D_VEGETABLE_BLOCK_NUMDIST; i++)
 	{
-		_VegetableSeed[i]= sumVeget;
+		_VegetableSeed[i] = sumVeget;
 		// add number of vegetable for next seed.
-		sumVeget+= (uint)_VegetableList[i].size();
+		sumVeget += (uint)_VegetableList[i].size();
 	}
 
 	// compile some data
@@ -79,13 +75,13 @@ void		CTileVegetableDesc::build(const std::vector<CVegetable> &vegetables)
 }
 
 // ***************************************************************************
-void		CTileVegetableDesc::registerToManager(CVegetableManager *vegetableManager)
+void CTileVegetableDesc::registerToManager(CVegetableManager *vegetableManager)
 {
 	// Pasre all distanceType.
-	for(uint i=0; i<NL3D_VEGETABLE_BLOCK_NUMDIST; i++)
+	for (uint i = 0; i < NL3D_VEGETABLE_BLOCK_NUMDIST; i++)
 	{
 		// Parse all vegetables of the list.
-		for(uint j=0; j<_VegetableList[i].size(); j++)
+		for (uint j = 0; j < _VegetableList[i].size(); j++)
 		{
 			// register the vegetable to the manager
 			_VegetableList[i][j].registerToManager(vegetableManager);
@@ -94,24 +90,24 @@ void		CTileVegetableDesc::registerToManager(CVegetableManager *vegetableManager)
 }
 
 // ***************************************************************************
-void		CTileVegetableDesc::serial(NLMISC::IStream &f)
+void CTileVegetableDesc::serial(NLMISC::IStream &f)
 {
 	(void)f.serialVersion(0);
 
-	nlassert(NL3D_VEGETABLE_BLOCK_NUMDIST==5);
-	for(uint i=0; i<NL3D_VEGETABLE_BLOCK_NUMDIST; i++)
+	nlassert(NL3D_VEGETABLE_BLOCK_NUMDIST == 5);
+	for (uint i = 0; i < NL3D_VEGETABLE_BLOCK_NUMDIST; i++)
 	{
 		f.serialCont(_VegetableList[i]);
 		f.serial(_VegetableSeed[i]);
 	}
 
 	// compile some data
-	if(f.isReading())
+	if (f.isReading())
 		compileRunTime();
 }
 
 // ***************************************************************************
-const	std::vector<CVegetable>		&CTileVegetableDesc::getVegetableList(uint distType) const
+const std::vector<CVegetable> &CTileVegetableDesc::getVegetableList(uint distType) const
 {
 	nlassert(distType < NL3D_VEGETABLE_BLOCK_NUMDIST);
 
@@ -119,7 +115,7 @@ const	std::vector<CVegetable>		&CTileVegetableDesc::getVegetableList(uint distTy
 }
 
 // ***************************************************************************
-uint		CTileVegetableDesc::getVegetableSeed(uint distType) const
+uint CTileVegetableDesc::getVegetableSeed(uint distType) const
 {
 	nlassert(distType < NL3D_VEGETABLE_BLOCK_NUMDIST);
 
@@ -127,20 +123,18 @@ uint		CTileVegetableDesc::getVegetableSeed(uint distType) const
 }
 
 // ***************************************************************************
-void		CTileVegetableDesc::compileRunTime()
+void CTileVegetableDesc::compileRunTime()
 {
 	// Compute _Empty flag
-	_Empty= true;
-	for(uint i=0; i<NL3D_VEGETABLE_BLOCK_NUMDIST; i++)
+	_Empty = true;
+	for (uint i = 0; i < NL3D_VEGETABLE_BLOCK_NUMDIST; i++)
 	{
-		if(!_VegetableList[i].empty())
+		if (!_VegetableList[i].empty())
 		{
-			_Empty= false;
+			_Empty = false;
 			break;
 		}
 	}
 }
-
-
 
 } // NL3D

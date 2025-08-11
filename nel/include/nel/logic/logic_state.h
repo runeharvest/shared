@@ -25,12 +25,11 @@
 
 #include "nel/net/service.h"
 
-//#include "game_share/sid.h"
+// #include "game_share/sid.h"
 
 #include "logic_event.h"
 
-namespace NLLOGIC
-{
+namespace NLLOGIC {
 
 class CLogicStateMachine;
 
@@ -47,7 +46,6 @@ typedef std::map<std::string, NLMISC::CEntityId> TSIdMap;
 class CLogicState
 {
 public:
-
 	/// state name
 	std::string _StateName;
 
@@ -61,13 +59,12 @@ public:
 	std::vector<CLogicEvent> _Events;
 
 	/// state machine containing this state
-	CLogicStateMachine * _LogicStateMachine;
+	CLogicStateMachine *_LogicStateMachine;
 
 	/// messages to send by the service
 	std::multimap<NLMISC::CEntityId, NLNET::CMessage> _MessagesToSend;
 
 public:
-
 	/**
 	 *	Default constructor
 	 */
@@ -78,14 +75,14 @@ public:
 	 *
 	 * \param logicStateMachine is the state machine containing this block
 	 */
-	void setLogicStateMachine( CLogicStateMachine * logicStateMachine );
+	void setLogicStateMachine(CLogicStateMachine *logicStateMachine);
 
 	/**
 	 * set the state name
 	 *
 	 * \param name is the new state's name
 	 */
-	void setName( std::string name ) { _StateName = name; }
+	void setName(std::string name) { _StateName = name; }
 
 	/**
 	 * get the state name
@@ -99,14 +96,14 @@ public:
 	 *
 	 * \param event is the event to add
 	 */
-	void addEvent( CLogicEvent event );
+	void addEvent(CLogicEvent event);
 
 	/**
 	 * Associate message destination name with sid
 	 *
 	 * \param sIdMap is the map associating destination name with a destination id
 	 */
-	void addSIdMap( const TSIdMap& sIdMap );
+	void addSIdMap(const TSIdMap &sIdMap);
 
 	/**
 	 * Test the conditions of this state
@@ -116,9 +113,9 @@ public:
 	/**
 	 *	Get the messages to send
 	 *
-	  * \param msgs is the map associating all the message to send with their destination id
+	 * \param msgs is the map associating all the message to send with their destination id
 	 */
-	void getMessagesToSend( std::multimap<NLMISC::CEntityId,NLNET::CMessage>& msgs );
+	void getMessagesToSend(std::multimap<NLMISC::CEntityId, NLNET::CMessage> &msgs);
 
 	/**
 	 * send the entry messages
@@ -144,21 +141,17 @@ public:
 	 * Fill a map associating all the referenced var in the state with the id of service managing them
 	 * (debug purpose)
 	 */
-	void fillVarMap( std::multimap<NLMISC::CEntityId,std::string >& stateMachineVariables );
+	void fillVarMap(std::multimap<NLMISC::CEntityId, std::string> &stateMachineVariables);
 
 	/**
 	 * serial
 	 */
-	//void serial(NLMISC::IStream &f);
+	// void serial(NLMISC::IStream &f);
 
-	void write (xmlNodePtr node) const;
-	void read (xmlNodePtr node);
+	void write(xmlNodePtr node) const;
+	void read(xmlNodePtr node);
 };
-
 
 } // NLLOGIC
 
-#endif //LOGIC_STATE
-
-
-
+#endif // LOGIC_STATE

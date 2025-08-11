@@ -36,56 +36,52 @@
 
 #include "r2_share_itf.h"
 
-//#include "game_share/far_position.h"
+// #include "game_share/far_position.h"
 
-namespace R2
-{
-
+namespace R2 {
 
 class CObject;
 class CInstanceMap;
 class CInstanceMap;
 class CIdMaker;
 
-
-
-
-
-
 /*! Access Time optimised container Object Tree.
-* Transforms an object tree into a map for time access optimization to the different nodes.
-* The key used to find an element is set in the ctor
-*/
+ * Transforms an object tree into a map for time access optimization to the different nodes.
+ * The key used to find an element is set in the ctor
+ */
 class CInstanceMap
 {
 public:
 	/// Set the id Name (b.e. if "InstanceId" is used then look at the "InstanceId" attribute to Identify a node)
-	CInstanceMap(const std::string& idName):_IdName(idName){}
+	CInstanceMap(const std::string &idName)
+	    : _IdName(idName)
+	{
+	}
 
 	/// Sets the initial tree (clear the container and add)
-	void set(CObject* root);
+	void set(CObject *root);
 
 	/// Add a new tree (register all its node)
-	void add(CObject* root);
+	void add(CObject *root);
 
 	/// Remove a tree (unregister all its node)
-	void remove(CObject* root);
+	void remove(CObject *root);
 
 	/// Find a element by its id
-	CObject* find (const std::string& instanceId);
+	CObject *find(const std::string &instanceId);
 
-
-	//:XXX: Global functionality and specific must be in two different class
+	//: XXX: Global functionality and specific must be in two different class
 
 	/// Returns the maximum  of id used by a character .
-	sint32 getMaxId(const std::string& eid);
+	sint32 getMaxId(const std::string &eid);
 
 	void setMaxId(const std::string &eid, sint32 maxId);
+
 private:
 	/// Id to Object
-	std::map<std::string, CObject*> _Map;
+	std::map<std::string, CObject *> _Map;
 
-	//:XXX: Must not be here
+	//: XXX: Must not be here
 	/// UserId -> maximum id used
 	std::map<std::string, sint32> _MapEids;
 
@@ -93,45 +89,36 @@ private:
 	const std::string _IdName;
 };
 
-
-
 /*! Hold a scenario
-* Contain a scenario
-* - Edition data / Animation data
-* - Palette used to create elements
-* - InstanceMap to give quick access to tree Node
-* - List of Current characters connect to this scenario
-*/
+ * Contain a scenario
+ * - Edition data / Animation data
+ * - Palette used to create elements
+ * - InstanceMap to give quick access to tree Node
+ * - List of Current characters connect to this scenario
+ */
 
-//:XXX: _CurrentUsers will still be useful after session manager?
+//: XXX: _CurrentUsers will still be useful after session manager?
 class CScenario : public NLMISC::CRefCount
 {
 
-
-
-
 public:
 	/*! ctor
-	*	/param property the CObject node of the edition data.
-	*/
-	explicit CScenario(CObject* property, TScenarioSessionType sessionType = st_edit);
+	 *	/param property the CObject node of the edition data.
+	 */
+	explicit CScenario(CObject *property, TScenarioSessionType sessionType = st_edit);
 
-	///dtor
+	/// dtor
 	virtual ~CScenario();
 
-
-
 	/*! Reset the Edition data.
-	* /param /highLevle the edition data
-	*/
-	void setHighLevel(CObject* highLevel);
+	 * /param /highLevle the edition data
+	 */
+	void setHighLevel(CObject *highLevel);
 
 	/*! Reset the Animation data.
-	* /param /highLevle the edition data
-	*/
-	void setRtData(CObject* rtScenario);
-
-
+	 * /param /highLevle the edition data
+	 */
+	void setRtData(CObject *rtScenario);
 
 	/*!
 	Add, set, erase, move node of a scenario
@@ -139,36 +126,34 @@ public:
 	*/
 	///@{
 
-	bool setNode( const std::string& instanceId, const std::string& attrName, CObject* value);
+	bool setNode(const std::string &instanceId, const std::string &attrName, CObject *value);
 
-	bool insertNode(const std::string&  instanceId, const std::string & attrName, sint32 position,
-		const std::string& key, CObject* value);
+	bool insertNode(const std::string &instanceId, const std::string &attrName, sint32 position,
+	    const std::string &key, CObject *value);
 
-	bool eraseNode(const std::string&  instanceId, const std::string & attrName, sint32 position);
+	bool eraseNode(const std::string &instanceId, const std::string &attrName, sint32 position);
 
-	bool moveNode( const std::string& instanceId1, const std::string& attrName1, int position1,
-		const std::string& instanceId2, const std::string& attrName2, int position2);
+	bool moveNode(const std::string &instanceId1, const std::string &attrName1, int position1,
+	    const std::string &instanceId2, const std::string &attrName2, int position2);
 
 	///@}
 
 	/// Find a node from the scenario tree by its InstanceId.
-	CObject *find(const std::string& instanceId, const std::string& attrName = "", sint32 position = -1, const std::string &key ="");
+	CObject *find(const std::string &instanceId, const std::string &attrName = "", sint32 position = -1, const std::string &key = "");
 
 	/// Get the Edition Data tree
-	CObject* getHighLevel() const;
+	CObject *getHighLevel() const;
 
 	/// Get the Animation Data tree
-	CObject* getRtData() const;
+	CObject *getRtData() const;
 
 	/*! return the maxId used by a specific user
 	 *  /param eid the id of the pioneer
 	 *  /return The max InstanceId used by this user
 	 */
-	sint32 getMaxId(const std::string& eid);
+	sint32 getMaxId(const std::string &eid);
 
-	void setMaxId(const std::string& eid, sint32 range);
-
-
+	void setMaxId(const std::string &eid, sint32 range);
 
 	uint32 getMode() const { return _Mode; }
 
@@ -180,79 +165,75 @@ public:
 
 	bool isWaiting() const;
 
-	void setSessionType(const TScenarioSessionType& sessionType ) {  _SessionType = sessionType; }
+	void setSessionType(const TScenarioSessionType &sessionType) { _SessionType = sessionType; }
 
-	void registerUserComponent(const NLMISC::CHashKeyMD5& md5) { _CUserComponent.insert(md5); }
+	void registerUserComponent(const NLMISC::CHashKeyMD5 &md5) { _CUserComponent.insert(md5); }
 
-	void unregisterUserComponent(const NLMISC::CHashKeyMD5& md5) { _CUserComponent.erase(md5); }
+	void unregisterUserComponent(const NLMISC::CHashKeyMD5 &md5) { _CUserComponent.erase(md5); }
 
-	uint32 getInitialActIndex() const { return _InitialActIndex;}
+	uint32 getInitialActIndex() const { return _InitialActIndex; }
 
 	void setInitialActIndex(uint32 initialActIndex) { _InitialActIndex = initialActIndex; }
 
-	void serial( NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 
-	void setClean(bool clean){ _Clean = clean; }
+	void setClean(bool clean) { _Clean = clean; }
 	bool getClean() const { return _Clean; }
 
 private:
-	//time stamp?
+	// time stamp?
 
 	/// Palette used
 	// :XXX: useful?
-	CObject* _Palette;
+	CObject *_Palette;
 
-/// list of chars
+	/// list of chars
 	/// :XXX: useful?
-	uint32			_Mode;
+	uint32 _Mode;
 
 	// Runtime Data
-	CObject* _BasicBricks;
+	CObject *_BasicBricks;
 
-
-	CObject* _HighLevel;
-	CInstanceMap* _InstanceMap;
+	CObject *_HighLevel;
+	CInstanceMap *_InstanceMap;
 	TScenarioSessionType _SessionType;
 	uint32 _InitialActIndex;
 	bool _Clean;
 
-
-	struct CHashKeyMD5Less 
+	struct CHashKeyMD5Less
 #ifndef NL_CPP17
-		: public std::binary_function<NLMISC::CHashKeyMD5, NLMISC::CHashKeyMD5, bool>
+	    : public std::binary_function<NLMISC::CHashKeyMD5, NLMISC::CHashKeyMD5, bool>
 #endif
 	{
-		bool operator()(const NLMISC::CHashKeyMD5& x, const NLMISC::CHashKeyMD5& y) const { return x.operator<(y); }
+		bool operator()(const NLMISC::CHashKeyMD5 &x, const NLMISC::CHashKeyMD5 &y) const { return x.operator<(y); }
 	};
 
-
 	std::set<NLMISC::CHashKeyMD5, CHashKeyMD5Less> _CUserComponent;
-
-
 };
-
-
 
 class CUserComponent
 {
-public: //public type
-	enum TComponentType {Compressed, Dev} ;
+public: // public type
+	enum TComponentType
+	{
+		Compressed,
+		Dev
+	};
 
-public://public functions
+public: // public functions
 	CUserComponent();
 
 	CUserComponent(const std::string &filename,
-		uint8* uncompressedData,  uint32 uncompressedDataLength,
-		uint8* compressedData = 0,  uint32 compressedDataLength = 0
-		);
+	    uint8 *uncompressedData, uint32 uncompressedDataLength,
+	    uint8 *compressedData = 0, uint32 compressedDataLength = 0);
 
 	~CUserComponent();
 
 	void computeMd5();
 
-	void  serial(NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 
-	uint8* getUncompressedData() const;
+	uint8 *getUncompressedData() const;
 
 	uint32 getUncompressedDataLength() const;
 
@@ -262,8 +243,7 @@ public://public functions
 
 	std::string getFilename() const { return Filename; }
 
-
-public: //public value
+public: // public value
 	NLMISC::CHashKeyMD5 Md5;
 	NLMISC::CHashKeyMD5 Md5Id;
 	uint32 TimeStamp;
@@ -271,47 +251,44 @@ public: //public value
 	std::string Filename;
 	std::string Name;
 	std::string Description;
-	uint8* UncompressedData; //uncompressed
+	uint8 *UncompressedData; // uncompressed
 	uint32 UncompressedDataLength;
-	uint8* CompressedData;
+	uint8 *CompressedData;
 	uint32 CompressedDataLength;
 };
-
 
 class CEmoteBehavior
 {
 public:
 	CEmoteBehavior();
-	std::string get(const std::string& emoteId) const;
+	std::string get(const std::string &emoteId) const;
 
 private:
 	void load() const;
 
 private:
 	mutable std::map<std::string, std::string> _EmotesMap;
-
 };
-
 
 class CScenarioValidatorLoadSuccededCallback;
 
 class CScenarioValidator
 {
 public:
-	typedef std::vector< std::pair<std::string, std::string> >  TValues;
+	typedef std::vector<std::pair<std::string, std::string>> TValues;
 
 public:
 	static std::string AutoSaveSignature;
 
 public:
 	TValues _Values;
-	CScenarioValidator(CScenarioValidatorLoadSuccededCallback* loadCb = 0 );
+	CScenarioValidator(CScenarioValidatorLoadSuccededCallback *loadCb = 0);
 	~CScenarioValidator();
-	bool setScenarioToSave(const std::string& filename, CObject* scenario, const CScenarioValidator::TValues& value, std::string& md5);
-	bool setScenarioToLoad(const std::string& filename, CScenarioValidator::TValues& values, std::string& md5, std::string& signature, bool checkMD5);
+	bool setScenarioToSave(const std::string &filename, CObject *scenario, const CScenarioValidator::TValues &value, std::string &md5);
+	bool setScenarioToLoad(const std::string &filename, CScenarioValidator::TValues &values, std::string &md5, std::string &signature, bool checkMD5);
 
-	bool applySave(const std::string& signature);
-	void applyLoad(std::string& filename, std::string& body, CScenarioValidator::TValues& values);
+	bool applySave(const std::string &signature);
+	void applyLoad(std::string &filename, std::string &body, CScenarioValidator::TValues &values);
 	std::string getBodyMd5() const { return _BodyMd5; }
 
 private:
@@ -320,9 +297,7 @@ private:
 	std::string _HeaderMd5;
 	std::string _Filename;
 	std::string _BodyMd5;
-	CScenarioValidatorLoadSuccededCallback* _LoadCb;
-
-
+	CScenarioValidatorLoadSuccededCallback *_LoadCb;
 };
 
 // Verify that a scenario is not alterated by user
@@ -330,10 +305,8 @@ private:
 class CScenarioValidatorLoadSuccededCallback
 {
 public:
-	virtual ~CScenarioValidatorLoadSuccededCallback(){}
-	virtual void doOperation(const std::string& filename, const std::string& body, const CScenarioValidator::TValues& values) = 0;
-
-
+	virtual ~CScenarioValidatorLoadSuccededCallback() { }
+	virtual void doOperation(const std::string &filename, const std::string &body, const CScenarioValidator::TValues &values) = 0;
 };
 
 class CUserComponentValidatorLoadSuccededCallback;
@@ -341,23 +314,23 @@ class CUserComponentValidatorLoadSuccededCallback;
 class CUserComponentValidator
 {
 public:
-	typedef std::vector< std::pair<std::string, std::string> >  TValues;
+	typedef std::vector<std::pair<std::string, std::string>> TValues;
 
 public:
 	static std::string AutoSaveSignature;
 
 public:
 	TValues _Values;
-	CUserComponentValidator(CUserComponentValidatorLoadSuccededCallback* loadCb = 0 );
+	CUserComponentValidator(CUserComponentValidatorLoadSuccededCallback *loadCb = 0);
 	~CUserComponentValidator();
-	bool setUserComponentToSave(const std::string& filename, const CUserComponentValidator::TValues& value, std::string& md5, const std::string &body);
-	bool setUserComponentToLoad(const std::string& filename, CUserComponentValidator::TValues& values, std::string& md5, std::string& signature, bool checkMD5);
+	bool setUserComponentToSave(const std::string &filename, const CUserComponentValidator::TValues &value, std::string &md5, const std::string &body);
+	bool setUserComponentToLoad(const std::string &filename, CUserComponentValidator::TValues &values, std::string &md5, std::string &signature, bool checkMD5);
 
-	bool applySave(const std::string& signature);
-	void applyLoad(std::string& filename, std::string& body, CScenarioValidator::TValues& values);
+	bool applySave(const std::string &signature);
+	void applyLoad(std::string &filename, std::string &body, CScenarioValidator::TValues &values);
 	std::string getBodyMd5() const { return _BodyMd5; }
 
-	std::string getFilename() const{ return _Filename;}
+	std::string getFilename() const { return _Filename; }
 
 private:
 	std::string _HeaderBody;
@@ -365,19 +338,15 @@ private:
 	std::string _HeaderMd5;
 	std::string _Filename;
 	std::string _BodyMd5;
-	CUserComponentValidatorLoadSuccededCallback* _LoadCb;
-
-
+	CUserComponentValidatorLoadSuccededCallback *_LoadCb;
 };
 
 class CUserComponentValidatorLoadSuccededCallback
 {
 public:
-	virtual ~CUserComponentValidatorLoadSuccededCallback(){}
-	virtual void doOperation(const std::string& filename, const std::string& body, const CUserComponentValidator::TValues& values) = 0;
-
-
+	virtual ~CUserComponentValidatorLoadSuccededCallback() { }
+	virtual void doOperation(const std::string &filename, const std::string &body, const CUserComponentValidator::TValues &values) = 0;
 };
 
 } // namespace R2
-#endif //R2_SCENARIO_H
+#endif // R2_SCENARIO_H

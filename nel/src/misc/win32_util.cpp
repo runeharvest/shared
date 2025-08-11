@@ -21,12 +21,10 @@
 #ifdef NL_OS_WINDOWS
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
-
+namespace NLMISC {
 
 //*************************************************************************************
 void CWin32Util::localizeWindow(HWND wnd)
@@ -40,7 +38,7 @@ void CWin32Util::localizeWindow(HWND wnd)
 		std::string winText = wideToUtf8(str);
 		if (CI18N::hasTranslation(winText))
 		{
-			if (!SetWindowTextW(wnd, (const WCHAR *) CI18N::get(winText).c_str()))
+			if (!SetWindowTextW(wnd, (const WCHAR *)CI18N::get(winText).c_str()))
 			{
 				nlwarning("SetWindowText failed: %s", formatErrorMessage(getLastError()).c_str());
 			}
@@ -50,7 +48,7 @@ void CWin32Util::localizeWindow(HWND wnd)
 	if (currSon)
 	{
 		HWND lastSon = GetWindow(currSon, GW_HWNDLAST);
-		for(;;)
+		for (;;)
 		{
 			localizeWindow(currSon);
 			if (currSon == lastSon) break;
@@ -67,7 +65,7 @@ void CWin32Util::appendChildWindows(HWND parentWnd, std::vector<HWND> &childWind
 	if (currSon)
 	{
 		HWND lastSon = GetWindow(currSon, GW_HWNDLAST);
-		for(;;)
+		for (;;)
 		{
 			childWindows.push_back(currSon);
 			appendChildWindows(currSon, childWindows);
@@ -77,11 +75,6 @@ void CWin32Util::appendChildWindows(HWND parentWnd, std::vector<HWND> &childWind
 	}
 }
 
-
-
-
-
 } // NLMISC
-
 
 #endif

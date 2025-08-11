@@ -17,58 +17,54 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_VIEW_LINK_H
 #define NL_VIEW_LINK_H
 
 #include "nel/gui/view_text.h"
 
-namespace NLGUI
+namespace NLGUI {
+
+class CGroupHTML;
+
+/**
+ * class implementing a link view
+ * \author Cyril 'Hulud' Corvazier
+ * \author Nicolas Vizerie
+ * \author Nevrax France
+ * \date 2003
+ */
+class CViewLink : public CViewText
 {
+public:
+	DECLARE_UI_CLASS(CViewLink)
 
-	class CGroupHTML;
+	// Default constructor
+	CViewLink(const TCtorParam &param);
 
-	/**
-	 * class implementing a link view
-	 * \author Cyril 'Hulud' Corvazier
-	 * \author Nicolas Vizerie
-	 * \author Nevrax France
-	 * \date 2003
-	 */
-	class CViewLink : public CViewText
-	{
-	public:
-        DECLARE_UI_CLASS( CViewLink )
+	// The URI
+	std::string Link;
 
-		// Default constructor
-		CViewLink (const TCtorParam &param);
+	std::string LinkTitle;
 
-		// The URI
-		std::string		Link;
+	// Set the main group
+	void setHTMLView(CGroupHTML *html);
+	bool getMouseOverShape(std::string &texName, uint8 &rot, NLMISC::CRGBA &col);
 
-		std::string		LinkTitle;
+	void setActionOnLeftClick(const std::string &actionHandler) { _AHOnLeftClick = actionHandler; };
+	void setParamsOnLeftClick(const std::string &actionParams) { _AHOnLeftClickParams = actionParams; };
 
-		// Set the main group
-		void	setHTMLView( CGroupHTML *html);
-		bool	getMouseOverShape(std::string &texName, uint8 &rot, NLMISC::CRGBA &col);
+	const std::string &getActionOnLeftClick() const { return _AHOnLeftClick; }
+	const std::string &getParamsOnLeftClick() const { return _AHOnLeftClickParams; }
 
-		void setActionOnLeftClick(const std::string &actionHandler) { _AHOnLeftClick = actionHandler; };
-		void setParamsOnLeftClick(const std::string &actionParams) { _AHOnLeftClickParams = actionParams; };
+protected:
+	// The main HTML group
+	CGroupHTML *HTML;
 
-		const std::string &getActionOnLeftClick() const { return _AHOnLeftClick; }
-		const std::string &getParamsOnLeftClick() const { return _AHOnLeftClickParams; }
-	protected:
-
-		// The main HTML group
-		CGroupHTML		*HTML;
-
-		// Left mouse click action
-		// Don't use CStringShared as URLs change past values would be permanently remembered.
-		std::string		_AHOnLeftClick;
-		std::string		_AHOnLeftClickParams;
-
-	};
+	// Left mouse click action
+	// Don't use CStringShared as URLs change past values would be permanently remembered.
+	std::string _AHOnLeftClick;
+	std::string _AHOnLeftClickParams;
+};
 
 }
 

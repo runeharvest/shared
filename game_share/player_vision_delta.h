@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_PLAYER_VISION_DELTA_H
 #define NL_PLAYER_VISION_DELTA_H
 
@@ -38,51 +36,53 @@ public:
 	class CIdSlot
 	{
 	public:
-		//NLMISC::CEntityId	Id;
-		TDataSetRow			Index;
-		uint8				Slot;
+		// NLMISC::CEntityId	Id;
+		TDataSetRow Index;
+		uint8 Slot;
 
-		CIdSlot() {}
-		//CIdSlot(const NLMISC::CEntityId &id, uint8 slot) : Id(id), Slot(slot) {}
-		CIdSlot(TDataSetRow index, uint8 slot) : Index(index), Slot(slot) {}
-
-		void		serial(NLMISC::IStream &s)
+		CIdSlot() { }
+		// CIdSlot(const NLMISC::CEntityId &id, uint8 slot) : Id(id), Slot(slot) {}
+		CIdSlot(TDataSetRow index, uint8 slot)
+		    : Index(index)
+		    , Slot(slot)
 		{
-			//s.serial(Id);
+		}
+
+		void serial(NLMISC::IStream &s)
+		{
+			// s.serial(Id);
 			s.serial(Index);
 			s.serial(Slot);
 		}
 
 		std::string toString() const
 		{
-			return NLMISC::toString("[%u]=%s",Slot,Index.toString().c_str());
+			return NLMISC::toString("[%u]=%s", Slot, Index.toString().c_str());
 		}
 	};
 
 public:
-
 	/// Constructor
-	CPlayerVisionDelta() {}
-
+	CPlayerVisionDelta() { }
 
 public:
 	/// The Id of the player that has vision changes
-	//NLMISC::CEntityId			PlayerId;
-	TDataSetRow					PlayerIndex;
+	// NLMISC::CEntityId			PlayerId;
+	TDataSetRow PlayerIndex;
 
 	/// Entities in vision
-	std::vector<CIdSlot>		EntitiesIn;
+	std::vector<CIdSlot> EntitiesIn;
 
 	/// Entities out vision
-	std::vector<CIdSlot>		EntitiesOut;
+	std::vector<CIdSlot> EntitiesOut;
 
 	/// Entities replaced (not needed anymore)
-	//std::vector<CIdSlot>		EntitiesReplace;
+	// std::vector<CIdSlot>		EntitiesReplace;
 
 	/// clear fout the vision delta record without deallocating memory
 	void reset(TDataSetRow playerIndex)
 	{
-		PlayerIndex= playerIndex;
+		PlayerIndex = playerIndex;
 		EntitiesIn.clear();
 		EntitiesOut.clear();
 	}
@@ -97,34 +97,34 @@ public:
 	std::string toString() const
 	{
 		std::string result;
-		result+="In(";
-		for (uint32 i=0;i<EntitiesIn.size();++i)
+		result += "In(";
+		for (uint32 i = 0; i < EntitiesIn.size(); ++i)
 		{
-			if (i>1) result+=',';
-			result+= EntitiesIn[i].toString();
+			if (i > 1) result += ',';
+			result += EntitiesIn[i].toString();
 		}
-		result+=") Out(";
-		for (uint32 i=0;i<EntitiesOut.size();++i)
+		result += ") Out(";
+		for (uint32 i = 0; i < EntitiesOut.size(); ++i)
 		{
-			if (i>1) result+=',';
-			result+= EntitiesOut[i].toString();
+			if (i > 1) result += ',';
+			result += EntitiesOut[i].toString();
 		}
-		result+=")";
+		result += ")";
 		return result;
 	}
 
 	/// Serialises the whole vision delta
-	void		serial(NLMISC::IStream &s)
+	void serial(NLMISC::IStream &s)
 	{
-		//s.serial(PlayerId);
+		// s.serial(PlayerId);
 		s.serial(PlayerIndex);
 		s.serialCont(EntitiesIn);
 		s.serialCont(EntitiesOut);
-		//s.serialCont(EntitiesReplace);
+		// s.serialCont(EntitiesReplace);
 	}
 
 	/// Decodes a message containing a list of vision deltas sent by the gpms
-	static void	decodeVisionDelta(NLNET::CMessage &msgin, std::list<CPlayerVisionDelta> &listVisionDelta)
+	static void decodeVisionDelta(NLNET::CMessage &msgin, std::list<CPlayerVisionDelta> &listVisionDelta)
 	{
 		while ((uint)msgin.getPos() < (uint)msgin.length())
 		{
@@ -134,7 +134,7 @@ public:
 	}
 
 	/// Decodes a message containing a list of vision deltas sent by the gpms
-	static void	decodeVisionDelta(NLNET::CMessage &msgin, std::vector<CPlayerVisionDelta> &vectorVisionDelta)
+	static void decodeVisionDelta(NLNET::CMessage &msgin, std::vector<CPlayerVisionDelta> &vectorVisionDelta)
 	{
 		while ((uint)msgin.getPos() < (uint)msgin.length())
 		{
@@ -143,7 +143,6 @@ public:
 		}
 	}
 };
-
 
 #endif // NL_PLAYER_VISION_DELTA_H
 

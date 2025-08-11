@@ -25,24 +25,20 @@
 
 namespace NL3D {
 
-
 sint32 CPSIntGradient::_DefaultGradient[] = { 0, 10 };
 uint32 CPSUIntGradient::_DefaultGradient[] = { 0, 10 };
 
-
 CPSIntGradient::CPSIntGradient(const sint32 *intTab, uint32 nbValues, uint32 nbStages, float nbCycles)
-				: CPSValueGradient<sint32>(nbCycles)
+    : CPSValueGradient<sint32>(nbCycles)
 {
 	_F.setValues(intTab, nbValues, nbStages);
 }
-
 
 CPSUIntGradient::CPSUIntGradient(const uint32 *intTab, uint32 nbValues, uint32 nbStages, float nbCycles)
-				: CPSValueGradient<uint32>(nbCycles)
+    : CPSValueGradient<uint32>(nbCycles)
 {
 	_F.setValues(intTab, nbValues, nbStages);
 }
-
 
 /// Register attribute makers based on int (used in particle systems)
 void PSRegisterIntAttribs()
@@ -56,6 +52,5 @@ void PSRegisterIntAttribs()
 	NLMISC_REGISTER_CLASS(CPSUIntBinOp);
 	NLMISC_REGISTER_CLASS(CPSUIntGradient);
 }
-
 
 } // NL3D

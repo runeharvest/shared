@@ -22,15 +22,12 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
-ULight *ULight::createLight ()
+ULight *ULight::createLight()
 {
 	// return the new light
 	return new CLightUser;
 }
-
-
 
 } // NL3D

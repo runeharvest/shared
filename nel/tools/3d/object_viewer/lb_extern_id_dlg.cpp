@@ -17,42 +17,37 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 //
-
 
 #include "std_afx.h"
 #include "object_viewer.h"
 #include "lb_extern_id_dlg.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CLBExternIDDlg dialog
 
-
-CLBExternIDDlg::CLBExternIDDlg(uint32 id, CWnd* pParent /* = NULL*/)
-	: CDialog(CLBExternIDDlg::IDD, pParent), _ID(id)
+CLBExternIDDlg::CLBExternIDDlg(uint32 id, CWnd *pParent /* = NULL*/)
+    : CDialog(CLBExternIDDlg::IDD, pParent)
+    , _ID(id)
 {
 	//{{AFX_DATA_INIT(CLBExternIDDlg)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void CLBExternIDDlg::DoDataExchange(CDataExchange* pDX)
+void CLBExternIDDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CLBExternIDDlg)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CLBExternIDDlg, CDialog)
-	//{{AFX_MSG_MAP(CLBExternIDDlg)
-	ON_BN_CLICKED(IDC_ENABLE_EXTERN_ID, OnEnableExternId)
-	ON_EN_CHANGE(IDC_ID_VALUE, OnChangeIdValue)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CLBExternIDDlg)
+ON_BN_CLICKED(IDC_ENABLE_EXTERN_ID, OnEnableExternId)
+ON_EN_CHANGE(IDC_ID_VALUE, OnChangeIdValue)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -63,40 +58,38 @@ BOOL CLBExternIDDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	GetDlgItem(IDC_ID_VALUE)->EnableWindow(_ID != 0);
-	((CButton *) GetDlgItem(IDC_ENABLE_EXTERN_ID))->SetCheck(_ID != 0 ? 1 : 0);
+	((CButton *)GetDlgItem(IDC_ENABLE_EXTERN_ID))->SetCheck(_ID != 0 ? 1 : 0);
 
 	if (_ID)
 	{
 		TCHAR val[5];
 		for (uint k = 0; k < 4; ++k)
 		{
-			#ifdef NL_LITTLE_ENDIAN
-				val[k] = (unsigned char) (_ID >> ((3 - k) << 3));
-			#else
-				val[k] = (unsigned char) (_ID >> (k << 3));
-			#endif
+#ifdef NL_LITTLE_ENDIAN
+			val[k] = (unsigned char)(_ID >> ((3 - k) << 3));
+#else
+			val[k] = (unsigned char)(_ID >> (k << 3));
+#endif
 		}
 		val[4] = '\0';
 		GetDlgItem(IDC_ID_VALUE)->SetWindowText(val);
-
 	}
 	else
 	{
 		_ID = 0;
 	}
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
-
 
 static uint32 StringToID(const char *buf)
 {
 	uint32 id;
-	#ifdef NL_LITTLE_ENDIAN
-		id = ((uint32) buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | (buf[3]);
-	#else
-		id = *(uint32 *) buf;
-	#endif
+#ifdef NL_LITTLE_ENDIAN
+	id = ((uint32)buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | (buf[3]);
+#else
+	id = *(uint32 *)buf;
+#endif
 	return id;
 }
 
@@ -118,7 +111,7 @@ void CLBExternIDDlg::OnEnableExternId()
 
 void CLBExternIDDlg::OnChangeIdValue()
 {
-	if (!((CButton *) GetDlgItem(IDC_ENABLE_EXTERN_ID))->GetCheck()) return;
+	if (!((CButton *)GetDlgItem(IDC_ENABLE_EXTERN_ID))->GetCheck()) return;
 	TCHAR buf[6];
 	::memset(buf, 0, 6);
 	GetDlgItem(IDC_ID_VALUE)->GetWindowText(buf, 6);
@@ -138,5 +131,4 @@ void CLBExternIDDlg::OnChangeIdValue()
 		GetDlgItem(IDOK)->EnableWindow(FALSE);
 		GetDlgItem(IDC_ENABLE_EXTERN_ID)->EnableWindow(FALSE);
 	}
-
 }

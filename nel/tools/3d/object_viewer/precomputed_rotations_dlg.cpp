@@ -24,13 +24,13 @@
 #include "nel/3d/ps_mesh.h"
 #include "attrib_dlg.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CPrecomputedRotationsDlg dialog
 
-
-CPrecomputedRotationsDlg::CPrecomputedRotationsDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSHintParticleRotateTheSame *prts, CAttribDlg *toDisable)	
-	: _Node(ownerNode), _RotatedParticle(prts), _WndToDisable(toDisable)
+CPrecomputedRotationsDlg::CPrecomputedRotationsDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSHintParticleRotateTheSame *prts, CAttribDlg *toDisable)
+    : _Node(ownerNode)
+    , _RotatedParticle(prts)
+    , _WndToDisable(toDisable)
 {
 	float minValue, maxValue;
 	uint32 nbModels = prts->checkHintRotateTheSame(minValue, maxValue);
@@ -41,7 +41,6 @@ CPrecomputedRotationsDlg::CPrecomputedRotationsDlg(CParticleWorkspace::CNode *ow
 	m_NbModels = _T("");
 	//}}AFX_DATA_INIT
 }
-
 
 void CPrecomputedRotationsDlg::init(CWnd *pParent, sint x, sint y)
 {
@@ -55,8 +54,8 @@ void CPrecomputedRotationsDlg::init(CWnd *pParent, sint x, sint y)
 	wr.right = r.right + x;
 	MoveWindow(wr);
 	ShowWindow(SW_SHOW);
-	enablePrecompRotationControl(); 
-	updateFromReader();	
+	enablePrecompRotationControl();
+	updateFromReader();
 }
 
 void CPrecomputedRotationsDlg::enablePrecompRotationControl(void)
@@ -68,7 +67,7 @@ void CPrecomputedRotationsDlg::enablePrecompRotationControl(void)
 	m_NbModelsCtrl.EnableWindow(m_PrecomputedRotations);
 	GetDlgItem(IDC_UPDATE_MIN_ROT_SPEED)->EnableWindow(m_PrecomputedRotations);
 	GetDlgItem(IDC_UPDATE_MAX_ROT_SPEED)->EnableWindow(m_PrecomputedRotations);
-	GetDlgItem(IDC_UPDATE_NB_MODELS)->EnableWindow(m_PrecomputedRotations);	
+	GetDlgItem(IDC_UPDATE_NB_MODELS)->EnableWindow(m_PrecomputedRotations);
 	UpdateData(FALSE);
 }
 
@@ -96,8 +95,7 @@ void CPrecomputedRotationsDlg::updateFromReader(void)
 	UpdateData(FALSE);
 }
 
-
-void CPrecomputedRotationsDlg::DoDataExchange(CDataExchange* pDX)
+void CPrecomputedRotationsDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CPrecomputedRotationsDlg)
@@ -111,20 +109,19 @@ void CPrecomputedRotationsDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CPrecomputedRotationsDlg, CDialog)
-	//{{AFX_MSG_MAP(CPrecomputedRotationsDlg)
-	ON_BN_CLICKED(IDC_UPDATE_MIN_ROT_SPEED, OnUpdateMinRotSpeed)
-	ON_BN_CLICKED(IDC_UPDATE_MAX_ROT_SPEED, OnUpdateMaxRotSpeed)
-	ON_BN_CLICKED(IDC_UPDATE_NB_MODELS, OnUpdateNbModels)
-	ON_BN_CLICKED(IDC_HINT_PRECOMPUTED_ROTATIONS, OnHintPrecomputedRotations)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CPrecomputedRotationsDlg)
+ON_BN_CLICKED(IDC_UPDATE_MIN_ROT_SPEED, OnUpdateMinRotSpeed)
+ON_BN_CLICKED(IDC_UPDATE_MAX_ROT_SPEED, OnUpdateMaxRotSpeed)
+ON_BN_CLICKED(IDC_UPDATE_NB_MODELS, OnUpdateNbModels)
+ON_BN_CLICKED(IDC_HINT_PRECOMPUTED_ROTATIONS, OnHintPrecomputedRotations)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CPrecomputedRotationsDlg message handlers
 
-void CPrecomputedRotationsDlg::OnUpdateMinRotSpeed() 
+void CPrecomputedRotationsDlg::OnUpdateMinRotSpeed()
 {
 	nlassert(_RotatedParticle);
 	UpdateData();
@@ -144,7 +141,7 @@ void CPrecomputedRotationsDlg::OnUpdateMinRotSpeed()
 	updateModifiedFlag();
 }
 
-void CPrecomputedRotationsDlg::OnUpdateMaxRotSpeed() 
+void CPrecomputedRotationsDlg::OnUpdateMaxRotSpeed()
 {
 	nlassert(_RotatedParticle);
 	UpdateData();
@@ -164,7 +161,7 @@ void CPrecomputedRotationsDlg::OnUpdateMaxRotSpeed()
 	updateModifiedFlag();
 }
 
-void CPrecomputedRotationsDlg::OnUpdateNbModels() 
+void CPrecomputedRotationsDlg::OnUpdateNbModels()
 {
 	nlassert(_RotatedParticle);
 	UpdateData();
@@ -177,8 +174,8 @@ void CPrecomputedRotationsDlg::OnUpdateNbModels()
 	}
 	if (valid)
 	{
-		_RotatedParticle->checkHintRotateTheSame(valueMin, valueMax);	
-		_RotatedParticle->hintRotateTheSame((uint32) newNbModels, valueMin, valueMax);
+		_RotatedParticle->checkHintRotateTheSame(valueMin, valueMax);
+		_RotatedParticle->hintRotateTheSame((uint32)newNbModels, valueMin, valueMax);
 		updateModifiedFlag();
 	}
 	else
@@ -189,7 +186,7 @@ void CPrecomputedRotationsDlg::OnUpdateNbModels()
 	updateModifiedFlag();
 }
 
-void CPrecomputedRotationsDlg::OnHintPrecomputedRotations() 
+void CPrecomputedRotationsDlg::OnHintPrecomputedRotations()
 {
 	nlassert(_RotatedParticle);
 	UpdateData();
@@ -208,7 +205,7 @@ void CPrecomputedRotationsDlg::OnHintPrecomputedRotations()
 		updateModifiedFlag();
 	}
 
-	enablePrecompRotationControl(); 
+	enablePrecompRotationControl();
 	updateFromReader();
-	UpdateData(FALSE);	
+	UpdateData(FALSE);
 }

@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /*
  * Layer 4 and Service example, ping server.
  *
@@ -24,7 +23,6 @@
  * containing the location of the naming service (NSHost, NSPort)
  * in the working directory. The naming service must be running.
  */
-
 
 // We're using the NeL Service framework, and layer 5
 #include "nel/net/service.h"
@@ -36,17 +34,16 @@ using namespace std;
 using namespace NLNET;
 using namespace NLMISC;
 
-
 //
-const uint			NumThreads = 10;
-volatile TTime		PingDates[NumThreads];
-volatile bool		ServiceReady = false;
+const uint NumThreads = 10;
+volatile TTime PingDates[NumThreads];
+volatile bool ServiceReady = false;
 
 void cbPong(CMessage &msgin, const std::string &serviceName, TServiceId sid)
 {
-	uint32	counter;
-	msgin.serial( counter );
-	TTime	pingTime = CTime::getLocalTime()-PingDates[counter];
+	uint32 counter;
+	msgin.serial(counter);
+	TTime pingTime = CTime::getLocalTime() - PingDates[counter];
 	PingDates[counter] = 0;
 	nlinfo("Received PONG %u (%u ms)", counter, pingTime);
 
@@ -59,17 +56,17 @@ void sendPing(uint i)
 	PingDates[i] = CTime::getLocalTime();
 	uint32 counter = i;
 	CMessage msgout("PING");
-	msgout.serial( counter );
-	nlinfo( "Send PING %d", counter);
+	msgout.serial(counter);
+	nlinfo("Send PING %d", counter);
 	CUnifiedNetwork::getInstance()->send("PS", msgout);
-	nlinfo( "PING %d sent", counter);
+	nlinfo("PING %d sent", counter);
 }
 
 class CPinger : public IRunnable
 {
 private:
-	static volatile uint	_PingerCount;
-	uint					_PingerId;
+	static volatile uint _PingerCount;
+	uint _PingerId;
 
 public:
 	CPinger()
@@ -77,10 +74,10 @@ public:
 		_PingerId = _PingerCount++;
 	}
 
-	void	run()
+	void run()
 	{
-		uint	i;
-		uint	totalPing = 0;
+		uint i;
+		uint totalPing = 0;
 
 		while (!ServiceReady)
 		{
@@ -89,7 +86,7 @@ public:
 
 		while (totalPing < 200)
 		{
-			i = rand()*200/RAND_MAX+200;
+			i = rand() * 200 / RAND_MAX + 200;
 			nlSleep(i);
 			if (PingDates[_PingerId] == 0)
 			{
@@ -100,7 +97,7 @@ public:
 	}
 };
 
-volatile uint	CPinger::_PingerCount = 0;
+volatile uint CPinger::_PingerCount = 0;
 
 //
 void cbPos(CMessage &msgin, const std::string &serviceName, TServiceId sid)
@@ -108,12 +105,12 @@ void cbPos(CMessage &msgin, const std::string &serviceName, TServiceId sid)
 	CMessage msgout("POS");
 	CUnifiedNetwork::getInstance()->send("GPMS", msgout);
 
-	nlinfo( "Received POS from %s, send POS to GPMS", serviceName.c_str());
+	nlinfo("Received POS from %s, send POS to GPMS", serviceName.c_str());
 }
 
 void cbAckPos(CMessage &msgin, const std::string &serviceName, TServiceId sid)
 {
-	nlinfo( "Received ACK_POS from %s", serviceName.c_str());
+	nlinfo("Received ACK_POS from %s", serviceName.c_str());
 }
 
 //
@@ -138,24 +135,20 @@ void cbDownService(const std::string &serviceName, TServiceId sid, void *arg)
 	nlinfo("Service %s %d is down", serviceName.c_str(), sid.get());
 }
 
-
 /*
  * Callback array for messages received from a client
  */
-TUnifiedCallbackItem CallbackArray[] =
-{
+TUnifiedCallbackItem CallbackArray[] = {
 	{ "PONG", cbPong },
 	{ "POS", cbPos },
 	{ "ACK_POS", cbAckPos }
 };
 
-
 //
 class CFloodService : public IService
 {
 public:
-
-	bool	update()
+	bool update()
 	{
 		ServiceReady = true;
 		return true;
@@ -167,7 +160,7 @@ public:
 	void init()
 	{
 		// Connect to the ping service
-		CUnifiedNetwork	*instance = CUnifiedNetwork::getInstance();
+		CUnifiedNetwork *instance = CUnifiedNetwork::getInstance();
 
 		instance->setServiceUpCallback("PS", cbUpPS, NULL);
 		instance->setServiceDownCallback("PS", cbDownPS, NULL);
@@ -175,20 +168,19 @@ public:
 		instance->setServiceUpCallback("*", cbUpService, NULL);
 		instance->setServiceDownCallback("*", cbDownService, NULL);
 
-		uint	i;
+		uint i;
 
-		for (i=0; i<NumThreads; ++i)
+		for (i = 0; i < NumThreads; ++i)
 		{
-			IRunnable	*runnable = (IRunnable *)(new CPinger());
-			IThread		*thread = IThread::create(runnable);
+			IRunnable *runnable = (IRunnable *)(new CPinger());
+			IThread *thread = IThread::create(runnable);
 			thread->start();
 		}
 	}
 };
 
-
 /*
  * Declare a service with the class IService, the names "PS" (short) and "ping_service" (long).
  * The port is automatically allocated (0) and the main callback array is CallbackArray.
  */
-NLNET_SERVICE_MAIN( CFloodService, "FLS", "flood_service", 0, CallbackArray, "", "" )
+NLNET_SERVICE_MAIN(CFloodService, "FLS", "flood_service", 0, CallbackArray, "", "")

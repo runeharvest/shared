@@ -14,36 +14,31 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 #include "nel/misc/debug.h"
 #include "shield_types.h"
 
-
-namespace SHIELDTYPE
-{
+namespace SHIELDTYPE {
 
 // ***************************************************************************
 EShieldType stringToShieldType(const std::string &str)
 {
-	if (str == "SMALL_SHIELD" || str == "small shield" )
+	if (str == "SMALL_SHIELD" || str == "small shield")
 		return SMALL_SHIELD;
 
-	if (str == "LARGE_SHIELD" || str == "large shield" )
+	if (str == "LARGE_SHIELD" || str == "large shield")
 		return LARGE_SHIELD;
 
 	if (str == "NONE" || str == "none")
 		return NONE;
 
-	nlwarning("<stringToShieldType> Unknown type %s", str.c_str() );
+	nlwarning("<stringToShieldType> Unknown type %s", str.c_str());
 	return NONE;
 }
 
 // ***************************************************************************
-static const std::string StringArray[NUM_SHIELD_TYPE]=
-{
+static const std::string StringArray[NUM_SHIELD_TYPE] = {
 	"NONE",
 	"SMALL_SHIELD",
 	"LARGE_SHIELD",
@@ -52,19 +47,19 @@ static const std::string StringArray[NUM_SHIELD_TYPE]=
 // ***************************************************************************
 const std::string &toString(EShieldType e)
 {
-	nlassert(e<NUM_SHIELD_TYPE);
+	nlassert(e < NUM_SHIELD_TYPE);
 	return StringArray[e];
 }
 
 // ***************************************************************************
 /*SKILLS::ESkills		shieldTypeToSkill(EShieldType e)
 {
-	nlctassert( (sizeof(ShieldToSkill)/sizeof(ShieldToSkill[0])) == NUM_SHIELD_TYPE );
+    nlctassert( (sizeof(ShieldToSkill)/sizeof(ShieldToSkill[0])) == NUM_SHIELD_TYPE );
 
-	if(e>=NUM_SHIELD_TYPE)
-		return SKILLS::unknown;
+    if(e>=NUM_SHIELD_TYPE)
+        return SKILLS::unknown;
 
-	return ShieldToSkill[e];
+    return ShieldToSkill[e];
 }
 */
 

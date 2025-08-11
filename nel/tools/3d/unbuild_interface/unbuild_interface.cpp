@@ -75,7 +75,7 @@ int main(int nNbArg, char **ppArgs)
 		return EXIT_FAILURE;
 	}
 	string out_path_maps = ppArgs[2];
-	if (!CFile::isDirectory(out_path_maps)) 
+	if (!CFile::isDirectory(out_path_maps))
 	{
 		nlerrornoex("Directory %s does not exist", out_path_maps.c_str());
 		return EXIT_FAILURE;
@@ -112,9 +112,9 @@ int main(int nNbArg, char **ppArgs)
 			nlassertex((line_expl.size() == 5), ("Bad line entry count"));
 			CVectorH vh; // x, y, z, w;
 			if (!fromString(line_expl[1], vh.x)
-				|| !fromString(line_expl[2], vh.y)
-				|| !fromString(line_expl[3], vh.z)
-				|| !fromString(line_expl[4], vh.w))
+			    || !fromString(line_expl[2], vh.y)
+			    || !fromString(line_expl[3], vh.z)
+			    || !fromString(line_expl[4], vh.w))
 				nlerror("Bad line formatting '%s'", line.c_str());
 			vh.x *= (float)in_bitmap.getWidth();
 			nlassertex((vh.x == (float)(int)vh.x), ("Bad coordinate"));
@@ -125,7 +125,7 @@ int main(int nNbArg, char **ppArgs)
 			vh.w *= (float)in_bitmap.getHeight();
 			nlassertex((vh.w == (float)(int)vh.w), ("Bad coordinate"));
 			nlinfo("%s %f %f %f %f", line_expl[0].c_str(), vh.x, vh.y, vh.z, vh.w);
-			
+
 			// write to tga
 			CBitmap out_bitmap;
 			out_bitmap.resize((sint32)vh.z - (sint32)vh.x, (sint32)vh.w - (sint32)vh.y, CBitmap::RGBA, true);
@@ -145,7 +145,7 @@ int main(int nNbArg, char **ppArgs)
 		nlerrornoex("std::exception : %s", e.what());
 		return EXIT_FAILURE;
 	}
-	
+
 	return EXIT_SUCCESS;
 }
 

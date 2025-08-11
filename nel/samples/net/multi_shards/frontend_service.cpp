@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /*
  * multi shard example, front-end server.
  *
@@ -23,7 +22,6 @@
  *
  * The naming service, admin executor service, login service, welcome service must be running.
  */
-
 
 // We're using the NeL Service framework and layer 5.
 #include "nel/misc/config_file.h"
@@ -39,24 +37,23 @@ using namespace NLMISC;
 /*
  * Connection callback for a client
  */
-void onConnectionClient (TSockId from, const CLoginCookie &cookie)
+void onConnectionClient(TSockId from, const CLoginCookie &cookie)
 {
-	nlinfo ("The client with uniq Id %d is connected", cookie.getUserId ());
+	nlinfo("The client with uniq Id %d is connected", cookie.getUserId());
 
 	// store the user id in appId
-	from->setAppId (cookie.getUserId ());
+	from->setAppId(cookie.getUserId());
 }
-
 
 /*
  * Disonnection callback for a client
  */
-void onDisconnectClient (TSockId from, void *arg)
+void onDisconnectClient(TSockId from, void *arg)
 {
-	nlinfo ("A client with uniq Id %d has disconnected", from->appId ());
+	nlinfo("A client with uniq Id %d has disconnected", from->appId());
 
 	// tell the login system that this client is disconnected
-	CLoginServer::clientDisconnected ((uint32) from->appId ());
+	CLoginServer::clientDisconnected((uint32)from->appId());
 }
 
 /*
@@ -66,34 +63,33 @@ class CFrontEndService : public IService
 {
 private:
 	/// The server on which the clients connect
-	CCallbackServer		_FEServer;
+	CCallbackServer _FEServer;
 
 public:
-
 	/*
 	 * Initialization
 	 */
 	void init()
 	{
 		// create a special connection for client (using TCP on port 37373)
-		uint16	fesPort = 37373;
+		uint16 fesPort = 37373;
 		try
 		{
 			fesPort = IService::ConfigFile.getVar("FESPort").asInt();
 		}
-		catch ( EUnknownVar& )
+		catch (EUnknownVar &)
 		{
 		}
 		_FEServer.init(fesPort);
-		
+
 		// connect and identify this front end to the login system
-		CLoginServer::init (_FEServer, onConnectionClient); 
+		CLoginServer::init(_FEServer, onConnectionClient);
 
 		//
 		_FEServer.setDisconnectionCallback(onDisconnectClient, NULL);
 	}
 
-	bool	update()
+	bool update()
 	{
 		_FEServer.update();
 		return true;
@@ -104,4 +100,4 @@ public:
  * Declare a service with the class CFrontEndService, the names "FS" (short) and "frontend_service" (long).
  * The port is dynamicaly find and there s no callback array.
  */
-NLNET_SERVICE_MAIN (CFrontEndService, "FS", "frontend_service", 0, EmptyCallbackArray, "", "")
+NLNET_SERVICE_MAIN(CFrontEndService, "FS", "frontend_service", 0, EmptyCallbackArray, "", "")

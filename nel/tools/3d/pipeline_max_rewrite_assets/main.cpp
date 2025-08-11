@@ -16,7 +16,7 @@
  * License along with RYZOM CORE PIPELINE.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
- 
+
 #include <nel/misc/types_nl.h>
 #include <nel/misc/common.h>
 
@@ -99,12 +99,12 @@ const char *DatabaseDirectory = "w:\\database\\";
 const char *LinuxDatabaseDirectory = "/mnt/y/ryzom-assets/database/";
 bool RunningLinux = true;
 
-//const char *SrcDirectoryRecursive = "w:\\database\\interfaces\\";
-//const char *SrcDirectoryRecursive = "w:\\database\\";
-//const char *SrcDirectoryRecursive = "w:\\database\\stuff\\fyros\\city\\newpositionville\\";
+// const char *SrcDirectoryRecursive = "w:\\database\\interfaces\\";
+// const char *SrcDirectoryRecursive = "w:\\database\\";
+// const char *SrcDirectoryRecursive = "w:\\database\\stuff\\fyros\\city\\newpositionville\\";
 const char *SrcDirectoryRecursiveInit = "w:\\database\\";
-//const char *SrcDirectoryRecursiveHandle = "w:\\database\\stuff\\generique\\agents\\accessories\\";
-//const char *SrcDirectoryRecursiveHandle = "w:\\database\\landscape\\ligo\\primes_racines\\max\\";
+// const char *SrcDirectoryRecursiveHandle = "w:\\database\\stuff\\generique\\agents\\accessories\\";
+// const char *SrcDirectoryRecursiveHandle = "w:\\database\\landscape\\ligo\\primes_racines\\max\\";
 const char *SrcDirectoryRecursiveHandle = "w:\\database\\stuff\\fyros\\decors\\constructions\\";
 
 bool UseFallbackTga = false;
@@ -174,7 +174,7 @@ std::string standardizePath(const std::string &path, bool addFinalSlash)
 	newPath.resize(j);
 
 	// add terminal slash
-	if (addFinalSlash && newPath[newPath.size()-1] != '\\')
+	if (addFinalSlash && newPath[newPath.size() - 1] != '\\')
 		newPath += '\\';
 
 	return newPath;
@@ -207,7 +207,7 @@ inline char stripFrenchLocale(char c0)
 std::string rewritePath(const std::string &path, const std::string &databaseDirectory)
 {
 	// nldebug("Rewrite: %s", path.c_str());
-	
+
 	static std::set<std::string> fileNameCache;
 
 	std::string stdPath = standardizePath(path, false);
@@ -292,8 +292,8 @@ std::string rewritePath(const std::string &path, const std::string &databaseDire
 
 	/*if (stdPath.size() > path.size())
 	{
-		nlwarning("Path size becomes too large: '%s' -> '%s'", path.c_str(), stdPath.c_str());
-		return path;
+	    nlwarning("Path size becomes too large: '%s' -> '%s'", path.c_str(), stdPath.c_str());
+	    return path;
 	}*/
 
 	if (NLMISC::CFile::getFilename(stdPath) == stdPath)
@@ -310,8 +310,8 @@ std::string rewritePath(const std::string &path, const std::string &databaseDire
 					if (fileNameCache.find(stdPath) != fileNameCache.end())
 						break;
 				}
-				//#nlwarning("File name not known: '%s' ('%s')", path.c_str(), stdPath.c_str());
-				// MissingFiles.insert(path);
+				// #nlwarning("File name not known: '%s' ('%s')", path.c_str(), stdPath.c_str());
+				//  MissingFiles.insert(path);
 				return stdPath;
 			}
 		}
@@ -327,16 +327,24 @@ std::string rewritePath(const std::string &path, const std::string &databaseDire
 					return KnownFileCache[NLMISC::CFile::getFilename(stdPath)];
 
 				if (stdPath[stdPath.size() - 3] == 't' && stdPath[stdPath.size() - 2] == 'g' && stdPath[stdPath.size() - 1] == 'a')
-				{ stdPath[stdPath.size() - 3] = 'p'; stdPath[stdPath.size() - 2] = 'n'; stdPath[stdPath.size() - 1] = 'g'; }
+				{
+					stdPath[stdPath.size() - 3] = 'p';
+					stdPath[stdPath.size() - 2] = 'n';
+					stdPath[stdPath.size() - 1] = 'g';
+				}
 				if (KnownFileCache.find(NLMISC::CFile::getFilename(stdPath)) != KnownFileCache.end())
 					return KnownFileCache[NLMISC::CFile::getFilename(stdPath)];
 
 				if (stdPath[stdPath.size() - 3] == 'p' && stdPath[stdPath.size() - 2] == 'n' && stdPath[stdPath.size() - 1] == 'g')
-				{ stdPath[stdPath.size() - 3] = 't'; stdPath[stdPath.size() - 2] = 'g'; stdPath[stdPath.size() - 1] = 'a'; }
+				{
+					stdPath[stdPath.size() - 3] = 't';
+					stdPath[stdPath.size() - 2] = 'g';
+					stdPath[stdPath.size() - 1] = 'a';
+				}
 				if (KnownFileCache.find(NLMISC::CFile::getFilename(stdPath)) != KnownFileCache.end())
 					return KnownFileCache[NLMISC::CFile::getFilename(stdPath)];
 
-				//#nlwarning("Path not in database: '%s' ('%s')", path.c_str(), stdPath.c_str());
+				// #nlwarning("Path not in database: '%s' ('%s')", path.c_str(), stdPath.c_str());
 				MissingFiles.insert(path);
 				return stdPath;
 			}
@@ -384,13 +392,13 @@ std::string rewritePath(const std::string &path, const std::string &databaseDire
 						// try with vv2
 						/*if (stdPathVv2.size() > path.size())
 						{
-							nlwarning("Path with vv2 size becomes too large: '%s' -> '%s'", path.c_str(), stdPathVv2.c_str());
-							return stdPath;
+						    nlwarning("Path with vv2 size becomes too large: '%s' -> '%s'", path.c_str(), stdPathVv2.c_str());
+						    return stdPath;
 						}
 						else
 						{*/
-							stdPath = stdPathVv2;
-							break;
+						stdPath = stdPathVv2;
+						break;
 						//}
 					}
 				}
@@ -399,16 +407,24 @@ std::string rewritePath(const std::string &path, const std::string &databaseDire
 					return KnownFileCache[NLMISC::CFile::getFilename(stdPath)];
 
 				if (stdPath[stdPath.size() - 3] == 't' && stdPath[stdPath.size() - 2] == 'g' && stdPath[stdPath.size() - 1] == 'a')
-				{ stdPath[stdPath.size() - 3] = 'p'; stdPath[stdPath.size() - 2] = 'n'; stdPath[stdPath.size() - 1] = 'g'; }
+				{
+					stdPath[stdPath.size() - 3] = 'p';
+					stdPath[stdPath.size() - 2] = 'n';
+					stdPath[stdPath.size() - 1] = 'g';
+				}
 				if (KnownFileCache.find(NLMISC::CFile::getFilename(stdPath)) != KnownFileCache.end())
 					return KnownFileCache[NLMISC::CFile::getFilename(stdPath)];
 
 				if (stdPath[stdPath.size() - 3] == 'p' && stdPath[stdPath.size() - 2] == 'n' && stdPath[stdPath.size() - 1] == 'g')
-				{ stdPath[stdPath.size() - 3] = 't'; stdPath[stdPath.size() - 2] = 'g'; stdPath[stdPath.size() - 1] = 'a'; }
+				{
+					stdPath[stdPath.size() - 3] = 't';
+					stdPath[stdPath.size() - 2] = 'g';
+					stdPath[stdPath.size() - 1] = 'a';
+				}
 				if (KnownFileCache.find(NLMISC::CFile::getFilename(stdPath)) != KnownFileCache.end())
 					return KnownFileCache[NLMISC::CFile::getFilename(stdPath)];
 
-				//#nlwarning("Path file does not exist: '%s' ('%s')", path.c_str(), stdPath.c_str());
+				// #nlwarning("Path file does not exist: '%s' ('%s')", path.c_str(), stdPath.c_str());
 				MissingFiles.insert(path);
 				return stdPath;
 			}
@@ -485,10 +501,10 @@ void doFileScanner(const std::string &filePath)
 		// find paths
 		for (std::vector<char>::size_type i = 256; i < buffer.size(); ++i) // skip the first 256 lol :)
 		{
-			if (((NLMISC::toLower(buffer[i - 1]) == 'x' && NLMISC::toLower(buffer [i - 2]) == 'a' && NLMISC::toLower(buffer[i - 3]) == 'm')
-				|| (NLMISC::toLower(buffer[i - 1]) == 'a' && NLMISC::toLower(buffer [i - 2]) == 'g' && NLMISC::toLower(buffer[i - 3]) == 't')
-				|| (NLMISC::toLower(buffer[i - 1]) == 'g' && NLMISC::toLower(buffer [i - 2]) == 'n' && NLMISC::toLower(buffer[i - 3]) == 'p'))
-				&& (NLMISC::toLower(buffer[i - 4]) == '.'))
+			if (((NLMISC::toLower(buffer[i - 1]) == 'x' && NLMISC::toLower(buffer[i - 2]) == 'a' && NLMISC::toLower(buffer[i - 3]) == 'm')
+			        || (NLMISC::toLower(buffer[i - 1]) == 'a' && NLMISC::toLower(buffer[i - 2]) == 'g' && NLMISC::toLower(buffer[i - 3]) == 't')
+			        || (NLMISC::toLower(buffer[i - 1]) == 'g' && NLMISC::toLower(buffer[i - 2]) == 'n' && NLMISC::toLower(buffer[i - 3]) == 'p'))
+			    && (NLMISC::toLower(buffer[i - 4]) == '.'))
 			{
 				// buffer[i] is the character after the path! :)
 				std::vector<char>::size_type beginPath = 0;
@@ -514,15 +530,15 @@ void doFileScanner(const std::string &filePath)
 				if (beginPath != 0)
 				{
 					std::vector<char>::size_type sizePath = i - beginPath;
-					std::string foundPath = std::string(&buffer[beginPath], sizePath); //std::string(buffer.at(beginPath), buffer.at(i));
-					//nldebug("Found path: '%s' from %i to %i", foundPath.c_str(), (uint32)beginPath, (uint32)i);
+					std::string foundPath = std::string(&buffer[beginPath], sizePath); // std::string(buffer.at(beginPath), buffer.at(i));
+					// nldebug("Found path: '%s' from %i to %i", foundPath.c_str(), (uint32)beginPath, (uint32)i);
 					std::string fixedPath = rewritePath(foundPath, DatabaseDirectory);
-					//nldebug("Rewrite to: '%s'", fixedPath.c_str());
+					// nldebug("Rewrite to: '%s'", fixedPath.c_str());
 				}
 			}
 		}
 
-		//NLMISC::CFile::re
+		// NLMISC::CFile::re
 
 		// ...
 	}
@@ -620,7 +636,7 @@ void serializeStorageContainer(PIPELINE::MAX::CStorageContainer *storageContaine
 
 void serializeStorageContainer(PIPELINE::MAX::CStorageContainer *storageContainer, GsfOutfile *outfile, const char *streamName)
 {
-	//nldebug("write");
+	// nldebug("write");
 	GsfOutput *output = GSF_OUTPUT(gsf_outfile_new_child(outfile, streamName, false));
 	if (!output)
 	{
@@ -694,9 +710,7 @@ std::string rewritePathFinal(const std::string &str)
 {
 	std::string strtrimmed = cleanString(str);
 	std::string result = rewritePath(strtrimmed, DatabaseDirectory);
-	if (NLMISC::CFile::getFilename(result) != result && !NLMISC::CFile::fileExists(nativeDatabasePath(result)) &&
-		((result[result.size() - 3] == 't' && result[result.size() - 2] == 'g' && result[result.size() - 1] == 'a') || (result[result.size() - 3] == 'p' && result[result.size() - 2] == 'n' && result[result.size() - 1] == 'g'))
-		)
+	if (NLMISC::CFile::getFilename(result) != result && !NLMISC::CFile::fileExists(nativeDatabasePath(result)) && ((result[result.size() - 3] == 't' && result[result.size() - 2] == 'g' && result[result.size() - 1] == 'a') || (result[result.size() - 3] == 'p' && result[result.size() - 2] == 'n' && result[result.size() - 1] == 'g')))
 	{
 		// nlwarning("Replacing missing '%s' with '%s'", result.c_str(), FallbackTga);
 		if (UseFallbackTga)
@@ -718,14 +732,14 @@ std::string rewritePathFinal(const std::string &str)
 bool isImportantFilePath(const std::string &str)
 {
 	// nldebug("Is important? %s", str.c_str());
-	
+
 	std::string strtrimmed = cleanString(str);
 	if (strtrimmed.size() >= 4)
 	{
 		std::string strlw = NLMISC::toLower(strtrimmed);
 		return (strlw[strlw.size() - 3] == 'm' && strlw[strlw.size() - 2] == 'a' && strlw[strlw.size() - 1] == 'x')
-			|| (strlw[strlw.size() - 3] == 't' && strlw[strlw.size() - 2] == 'g' && strlw[strlw.size() - 1] == 'a')
-			|| (strlw[strlw.size() - 3] == 'p' && strlw[strlw.size() - 2] == 'n' && strlw[strlw.size() - 1] == 'g');
+		    || (strlw[strlw.size() - 3] == 't' && strlw[strlw.size() - 2] == 'g' && strlw[strlw.size() - 1] == 'a')
+		    || (strlw[strlw.size() - 3] == 'p' && strlw[strlw.size() - 2] == 'n' && strlw[strlw.size() - 1] == 'g');
 	}
 	return false;
 }
@@ -738,19 +752,19 @@ bool hasImportantFilePath(CStorageRaw *raw)
 		for (uint i = 0; i < raw->Value.size() - 3; ++i)
 		{
 			if (NLMISC::toLower(((char *)&raw->Value[0])[i]) == '.'
-				&& NLMISC::toLower(((char *)&raw->Value[0])[i + 1]) == 'm'
-				&& NLMISC::toLower(((char *)&raw->Value[0])[i + 2]) == 'a'
-				&& NLMISC::toLower(((char *)&raw->Value[0])[i + 3]) == 'x')
+			    && NLMISC::toLower(((char *)&raw->Value[0])[i + 1]) == 'm'
+			    && NLMISC::toLower(((char *)&raw->Value[0])[i + 2]) == 'a'
+			    && NLMISC::toLower(((char *)&raw->Value[0])[i + 3]) == 'x')
 				return true;
 			if (NLMISC::toLower(((char *)&raw->Value[0])[i]) == '.'
-				&& NLMISC::toLower(((char *)&raw->Value[0])[i + 1]) == 't'
-				&& NLMISC::toLower(((char *)&raw->Value[0])[i + 2]) == 'g'
-				&& NLMISC::toLower(((char *)&raw->Value[0])[i + 3]) == 'a')
+			    && NLMISC::toLower(((char *)&raw->Value[0])[i + 1]) == 't'
+			    && NLMISC::toLower(((char *)&raw->Value[0])[i + 2]) == 'g'
+			    && NLMISC::toLower(((char *)&raw->Value[0])[i + 3]) == 'a')
 				return true;
 			if (NLMISC::toLower(((char *)&raw->Value[0])[i]) == '.'
-				&& NLMISC::toLower(((char *)&raw->Value[0])[i + 1]) == 'p'
-				&& NLMISC::toLower(((char *)&raw->Value[0])[i + 2]) == 'n'
-				&& NLMISC::toLower(((char *)&raw->Value[0])[i + 3]) == 'g')
+			    && NLMISC::toLower(((char *)&raw->Value[0])[i + 1]) == 'p'
+			    && NLMISC::toLower(((char *)&raw->Value[0])[i + 2]) == 'n'
+			    && NLMISC::toLower(((char *)&raw->Value[0])[i + 3]) == 'g')
 				return true;
 		}
 	}
@@ -759,19 +773,19 @@ bool hasImportantFilePath(CStorageRaw *raw)
 		for (uint i = 0; i < raw->Value.size() - 6; ++i)
 		{
 			if (NLMISC::toLower(((char *)&raw->Value[0])[i]) == '.'
-				&& NLMISC::toLower(((char *)&raw->Value[0])[i + 2]) == 'm'
-				&& NLMISC::toLower(((char *)&raw->Value[0])[i + 4]) == 'a'
-				&& NLMISC::toLower(((char *)&raw->Value[0])[i + 6]) == 'x')
+			    && NLMISC::toLower(((char *)&raw->Value[0])[i + 2]) == 'm'
+			    && NLMISC::toLower(((char *)&raw->Value[0])[i + 4]) == 'a'
+			    && NLMISC::toLower(((char *)&raw->Value[0])[i + 6]) == 'x')
 				return true;
 			if (NLMISC::toLower(((char *)&raw->Value[0])[i]) == '.'
-				&& NLMISC::toLower(((char *)&raw->Value[0])[i + 2]) == 't'
-				&& NLMISC::toLower(((char *)&raw->Value[0])[i + 4]) == 'g'
-				&& NLMISC::toLower(((char *)&raw->Value[0])[i + 6]) == 'a')
+			    && NLMISC::toLower(((char *)&raw->Value[0])[i + 2]) == 't'
+			    && NLMISC::toLower(((char *)&raw->Value[0])[i + 4]) == 'g'
+			    && NLMISC::toLower(((char *)&raw->Value[0])[i + 6]) == 'a')
 				return true;
 			if (NLMISC::toLower(((char *)&raw->Value[0])[i]) == '.'
-				&& NLMISC::toLower(((char *)&raw->Value[0])[i + 2]) == 'p'
-				&& NLMISC::toLower(((char *)&raw->Value[0])[i + 4]) == 'n'
-				&& NLMISC::toLower(((char *)&raw->Value[0])[i + 6]) == 'g')
+			    && NLMISC::toLower(((char *)&raw->Value[0])[i + 2]) == 'p'
+			    && NLMISC::toLower(((char *)&raw->Value[0])[i + 4]) == 'n'
+			    && NLMISC::toLower(((char *)&raw->Value[0])[i + 6]) == 'g')
 				return true;
 		}
 	}
@@ -894,14 +908,14 @@ bool fixChunk(uint16 id, IStorageObject *chunk)
 						uint i = 0;
 						while ((sint)mem.getPos() != (sint)mem.size())
 						{
-							//nldebug("pos %i", mem.getPos());
-							//nldebug("size %i", mem.size());
+							// nldebug("pos %i", mem.getPos());
+							// nldebug("size %i", mem.size());
 							char funny;
 							mem.serial(funny);
 							nlassert(funny == '@');
 							sint32 size;
 							mem.serial(size);
-							//nldebug("size %i", size);
+							// nldebug("size %i", size);
 							if (!overrideFF && size == -1)
 							{
 								nldebug("size %i", size);
@@ -962,13 +976,13 @@ bool fixChunk(uint16 id, IStorageObject *chunk)
 					}
 					nlassert(foundone);
 					{
-						//nldebug("go");
+						// nldebug("go");
 						NLMISC::CMemStream mem;
 						mem.serialBuffer(nonsense, 11);
 						mem.serial(counter);
 						for (uint i = 0; i < strings.size(); ++i)
 						{
-							//nldebug("one");
+							// nldebug("one");
 							char funny = '@';
 							mem.serial(funny);
 							strings[i].resize(strings[i].size() + 1);
@@ -981,8 +995,8 @@ bool fixChunk(uint16 id, IStorageObject *chunk)
 						mem.invert();
 						asRaw->serial(mem);
 					}
-					//std::string x;
-					//std::cin >> x;
+					// std::string x;
+					// std::cin >> x;
 					return changed;
 				}
 				std::string str;
@@ -1090,10 +1104,18 @@ void handleFile(const std::string &path)
 	nlassert(metadata);
 
 	GsfInput *src = gsf_input_stdio_new(path.c_str(), &err);
-	if (err) { nlerror("GSF Failed to open %s", path.c_str()); return; }
+	if (err)
+	{
+		nlerror("GSF Failed to open %s", path.c_str());
+		return;
+	}
 
 	GsfInfile *infile = gsf_infile_msole_new(src, NULL);
-	if (!infile) { nlerror("GSF Failed to recognize %s", path.c_str()); return; }
+	if (!infile)
+	{
+		nlerror("GSF Failed to recognize %s", path.c_str());
+		return;
+	}
 	g_object_unref(src);
 
 	uint8 classId[16];
@@ -1167,7 +1189,7 @@ void handleFile(const std::string &path)
 		pathsChanged = pathsChanged || fixChunks(&classData);
 		pathsChanged = pathsChanged || fixChunks(&scene);
 	}
-	
+
 	if (ReplaceMapExt)
 	{
 		// Parse the scene
@@ -1326,20 +1348,21 @@ void handleFile(const std::string &path)
 							CStorageContainer::TStorageObjectContainer &meshChunks = const_cast<CStorageContainer::TStorageObjectContainer &>(editMesh->chunks());
 
 							// Ensure no selection
-							for (CStorageContainer::TStorageObjectIterator it = meshChunks.begin(), end = meshChunks.end(); it != end; )
+							for (CStorageContainer::TStorageObjectIterator it = meshChunks.begin(), end = meshChunks.end(); it != end;)
 							{
-								CStorageContainer::TStorageObjectIterator next = it; ++next;
+								CStorageContainer::TStorageObjectIterator next = it;
+								++next;
 								switch (it->first)
 								{
-									case 0x2800:
-										nldebug("Override selection");
-										{
-											delete it->second;
-											CStorageValue<uint16> *v = new CStorageValue<uint16>();
-											v->Value = 0;
-											it->second = v;
-										}
-										break;
+								case 0x2800:
+									nldebug("Override selection");
+									{
+										delete it->second;
+										CStorageValue<uint16> *v = new CStorageValue<uint16>();
+										v->Value = 0;
+										it->second = v;
+									}
+									break;
 								}
 								it = next;
 							}
@@ -1361,31 +1384,32 @@ void handleFile(const std::string &path)
 							CStorageContainer::TStorageObjectContainer &meshChunks = const_cast<CStorageContainer::TStorageObjectContainer &>(editableMesh->chunks());
 
 							// Ensure no selection
-							for (CStorageContainer::TStorageObjectIterator it = meshChunks.begin(), end = meshChunks.end(); it != end; )
+							for (CStorageContainer::TStorageObjectIterator it = meshChunks.begin(), end = meshChunks.end(); it != end;)
 							{
-								CStorageContainer::TStorageObjectIterator next = it; ++next;
+								CStorageContainer::TStorageObjectIterator next = it;
+								++next;
 								switch (it->first)
 								{
-									case 0x2845:
-									case 0x2846:
-									case 0x2847:
-									case 0x2849:
-									case 0x2850:
-									case 0x3001:
-									case 0x3003:
-									case 0x3004:
-										nldebug("Erase selection");
-										meshChunks.erase(it);
-										break;
-									case 0x4038:
-										nldebug("Override selection");
-										{
-											delete it->second;
-											CStorageValue<uint32> *v = new CStorageValue<uint32>();
-											v->Value = 0;
-											it->second = v;
-										}
-										break;
+								case 0x2845:
+								case 0x2846:
+								case 0x2847:
+								case 0x2849:
+								case 0x2850:
+								case 0x3001:
+								case 0x3003:
+								case 0x3004:
+									nldebug("Erase selection");
+									meshChunks.erase(it);
+									break;
+								case 0x4038:
+									nldebug("Override selection");
+									{
+										delete it->second;
+										CStorageValue<uint32> *v = new CStorageValue<uint32>();
+										v->Value = 0;
+										it->second = v;
+									}
+									break;
 								}
 								it = next;
 							}
@@ -1401,66 +1425,66 @@ void handleFile(const std::string &path)
 						std::cin >> x;
 						continue;
 					}
-/*
-					if (editableMesh == NULL || editMesh == NULL)
-					{
-						derivedObject->toString(std::cout);
-						nlwarning("editable mesh or edit mesh not found");
-						std::string x;
-						std::cin >> x;
-						continue;
-					}
+					/*
+					                    if (editableMesh == NULL || editMesh == NULL)
+					                    {
+					                        derivedObject->toString(std::cout);
+					                        nlwarning("editable mesh or edit mesh not found");
+					                        std::string x;
+					                        std::cin >> x;
+					                        continue;
+					                    }
 
-					//
-						//derivedObject->toString(std::cout);
-						//editableMesh->toString(std::cout);
+					                    //
+					                        //derivedObject->toString(std::cout);
+					                        //editableMesh->toString(std::cout);
 
-					// derivedObject -> 0x2500 -> 0x2512 -> 0x03e9 / 0x03eb
-					// editableMesh -> 0x08fe (geom) -> 0x0916 / 0x0918
+					                    // derivedObject -> 0x2500 -> 0x2512 -> 0x03e9 / 0x03eb
+					                    // editableMesh -> 0x08fe (geom) -> 0x0916 / 0x0918
 
-					CStorageContainer *editableMeshGeometry = dynamic_cast<CStorageContainer *>(editableMesh->findStorageObject(0x08fe));
-					// nlassert(editableMeshGeometry);
-					if (!editableMeshGeometry)
-					{
-						nlwarning("broken");
-						std::string x;
-						std::cin >> x;
-						continue;
-					}
-					CStorageRaw *editableVertices = dynamic_cast<CStorageRaw *>(editableMeshGeometry->findStorageObject(0x0916));
-					nlassert(editableVertices);
-					CStorageRaw *editableIndices = dynamic_cast<CStorageRaw *>(editableMeshGeometry->findStorageObject(0x0918));
-					nlassert(editableIndices);
+					                    CStorageContainer *editableMeshGeometry = dynamic_cast<CStorageContainer *>(editableMesh->findStorageObject(0x08fe));
+					                    // nlassert(editableMeshGeometry);
+					                    if (!editableMeshGeometry)
+					                    {
+					                        nlwarning("broken");
+					                        std::string x;
+					                        std::cin >> x;
+					                        continue;
+					                    }
+					                    CStorageRaw *editableVertices = dynamic_cast<CStorageRaw *>(editableMeshGeometry->findStorageObject(0x0916));
+					                    nlassert(editableVertices);
+					                    CStorageRaw *editableIndices = dynamic_cast<CStorageRaw *>(editableMeshGeometry->findStorageObject(0x0918));
+					                    nlassert(editableIndices);
 
-	//return new CStorageArraySizePre<NLMISC::CVector>();
-					if (derivedIndices->Value.size() != editableIndices->Value.size())
-					{
-						editableMesh->toString(std::cout);
-						derivedObject->toString(std::cout);
-						nlwarning("size mismatch");
-						std::string x;
-						std::cin >> x;
-						continue;
-					}
+					    //return new CStorageArraySizePre<NLMISC::CVector>();
+					                    if (derivedIndices->Value.size() != editableIndices->Value.size())
+					                    {
+					                        editableMesh->toString(std::cout);
+					                        derivedObject->toString(std::cout);
+					                        nlwarning("size mismatch");
+					                        std::string x;
+					                        std::cin >> x;
+					                        continue;
+					                    }
 
-					editableVertices->Value.clear();
-					editableIndices->Value.clear();
+					                    editableVertices->Value.clear();
+					                    editableIndices->Value.clear();
 
-					nlassert(derivedVertices->Value.size() % 12 == 0);
-					uint32 nbVertices = derivedVertices->Value.size() / 12;
-					NLMISC::CMemStream memVertices;
-					memVertices.serial(nbVertices);
-					derivedVertices->serial(memVertices);
-					memVertices.invert();
-					editableVertices->setSize(derivedVertices->Value.size() + 4);
-					editableVertices->serial(memVertices);
+					                    nlassert(derivedVertices->Value.size() % 12 == 0);
+					                    uint32 nbVertices = derivedVertices->Value.size() / 12;
+					                    NLMISC::CMemStream memVertices;
+					                    memVertices.serial(nbVertices);
+					                    derivedVertices->serial(memVertices);
+					                    memVertices.invert();
+					                    editableVertices->setSize(derivedVertices->Value.size() + 4);
+					                    editableVertices->serial(memVertices);
 
-					NLMISC::CMemStream memIndices;
-					derivedIndices->serial(memIndices);
-					memIndices.invert();
-					editableIndices->setSize(derivedIndices->Value.size());
-					editableIndices->serial(memIndices);
-					nldebug("ok!");*/
+					                    NLMISC::CMemStream memIndices;
+					                    derivedIndices->serial(memIndices);
+					                    memIndices.invert();
+					                    editableIndices->setSize(derivedIndices->Value.size());
+					                    editableIndices->serial(memIndices);
+					                    nldebug("ok!");*/
 				}
 			}
 		}
@@ -1474,7 +1498,7 @@ void handleFile(const std::string &path)
 			CClassEntry *classEntry = dynamic_cast<CClassEntry *>(it->second);
 			if (classEntry)
 			{
-				//nldebug("class entry %s", classEntry->classId().toString().c_str());
+				// nldebug("class entry %s", classEntry->classId().toString().c_str());
 				if (classEntry->classId() == fromClassId)
 				{
 					nldebug("Found class id to replace!");
@@ -1483,7 +1507,7 @@ void handleFile(const std::string &path)
 					dllEntry->overrideDllFilename(ucstring("uvwunwrap.dlm"));
 				}
 			}
-			//else nldebug("not class entry");
+			// else nldebug("not class entry");
 		}
 		// Disown the scene
 		scene.disown();
@@ -1494,11 +1518,15 @@ void handleFile(const std::string &path)
 	if (WriteModified && (ReplaceMapExt || pathsChanged))
 	{
 		const char *outpath = (WriteDummy ? "testdummy.max" : path.c_str());
-		GsfOutput  *output;
+		GsfOutput *output;
 		GsfOutfile *outfile;
 
 		output = gsf_output_stdio_new(outpath, &err);
-		if (err) { nlerror("GSF Failed to create %s", outpath); return; }
+		if (err)
+		{
+			nlerror("GSF Failed to create %s", outpath);
+			return;
+		}
 		outfile = gsf_outfile_msole_new(output);
 		g_object_unref(G_OBJECT(output));
 
@@ -1542,23 +1570,23 @@ int main(int argc, char **argv)
 	CUpdate1::registerClasses(&SceneClassRegistry);
 	CEPoly::registerClasses(&SceneClassRegistry);
 
-	//handleFile("/srv/work/database/interfaces/anims_max/cp_fy_hof_species.max");
+	// handleFile("/srv/work/database/interfaces/anims_max/cp_fy_hof_species.max");
 	runInitialize();
 	runHandler();
-	//handleFile(nativeDatabasePath("w:\\database\\landscape\\ligo\\desert\\max\\zonematerial-converted-brandon.max")); // overrideFF
-	//handleFile(nativeDatabasePath("w:\\database\\landscape\\ligo\\desert\\max\\zonematerial-converted-154_dz.max")); // overrideFF
-	//handleFile(nativeDatabasePath("w:\\database\\landscape\\ligo\\lacustre\\max\\zonematerial-converted-village_a.max"));
-	//handleFile(nativeDatabasePath("w:\\database\\stuff\\generique\\agents\\accessories\\ge_mission_reward_karavan_bigshield.max"));
-	//handleFile(nativeDatabasePath("w:\\database\\stuff\\generique\\agents\\accessories\\ge_acc_pick_o.max"));
-	//handleFile(nativeDatabasePath("w:\\database\\stuff\\generique\\agents\\accessories\\ge_zo_wea_trib_masse1m.max"));
-	//handleFile(nativeDatabasePath("w:\\database\\stuff\\generique\\agents\\accessories\\ge_fy_wea_trib_grand_bouclier.max"));
-	//handleFile(nativeDatabasePath("w:\\database\\stuff\\generique\\agents\\accessories\\ge_mission_entrepot.max"));
-	//handleFile(nativeDatabasePath("w:\\database\\stuff\\generique\\agents\\accessories\\mesh_wip\\all_trib_weapons.max"));
-	//handleFile(nativeDatabasePath("w:\\database\\stuff\\fyros\\decors\\constructions\\fy_cn_smokehouse.max"));
-	//handleFile("/srv/work/database/landscape/ligo/jungle/pipeline_max/zonematerial-foret-ruine_boss.max");
-	//handleFile("/srv/work/database/stuff/fyros/agents/actors/male/animation/anims_non_utilisees/fy_hom_assis_boire_verre.max");
-	//handleFile("/home/kaetemi/3dsMax/scenes/test_clear_add_uvw.max");
-	//runScanner();
+	// handleFile(nativeDatabasePath("w:\\database\\landscape\\ligo\\desert\\max\\zonematerial-converted-brandon.max")); // overrideFF
+	// handleFile(nativeDatabasePath("w:\\database\\landscape\\ligo\\desert\\max\\zonematerial-converted-154_dz.max")); // overrideFF
+	// handleFile(nativeDatabasePath("w:\\database\\landscape\\ligo\\lacustre\\max\\zonematerial-converted-village_a.max"));
+	// handleFile(nativeDatabasePath("w:\\database\\stuff\\generique\\agents\\accessories\\ge_mission_reward_karavan_bigshield.max"));
+	// handleFile(nativeDatabasePath("w:\\database\\stuff\\generique\\agents\\accessories\\ge_acc_pick_o.max"));
+	// handleFile(nativeDatabasePath("w:\\database\\stuff\\generique\\agents\\accessories\\ge_zo_wea_trib_masse1m.max"));
+	// handleFile(nativeDatabasePath("w:\\database\\stuff\\generique\\agents\\accessories\\ge_fy_wea_trib_grand_bouclier.max"));
+	// handleFile(nativeDatabasePath("w:\\database\\stuff\\generique\\agents\\accessories\\ge_mission_entrepot.max"));
+	// handleFile(nativeDatabasePath("w:\\database\\stuff\\generique\\agents\\accessories\\mesh_wip\\all_trib_weapons.max"));
+	// handleFile(nativeDatabasePath("w:\\database\\stuff\\fyros\\decors\\constructions\\fy_cn_smokehouse.max"));
+	// handleFile("/srv/work/database/landscape/ligo/jungle/pipeline_max/zonematerial-foret-ruine_boss.max");
+	// handleFile("/srv/work/database/stuff/fyros/agents/actors/male/animation/anims_non_utilisees/fy_hom_assis_boire_verre.max");
+	// handleFile("/home/kaetemi/3dsMax/scenes/test_clear_add_uvw.max");
+	// runScanner();
 
 	for (std::set<std::string>::iterator it = MissingFiles.begin(), end = MissingFiles.end(); it != end; ++it)
 		nlinfo("Missing: '%s'", (*it).c_str());
@@ -1567,4 +1595,3 @@ int main(int argc, char **argv)
 
 	return 0;
 }
-

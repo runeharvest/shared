@@ -17,60 +17,56 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_DBVIEW_NUMBER_H
 #define NL_DBVIEW_NUMBER_H
 
 #include "nel/misc/types_nl.h"
 #include "nel/gui/view_text.h"
 
-namespace NLGUI
+namespace NLGUI {
+
+// ***************************************************************************
+/**
+ * Display a text from a database number
+ * \author Lionel Berenguier
+ * \author Nevrax France
+ * \date 2002
+ */
+class CDBViewNumber : public CViewText
 {
+public:
+	DECLARE_UI_CLASS(CDBViewNumber)
 
-	// ***************************************************************************
-	/**
-	 * Display a text from a database number
-	 * \author Lionel Berenguier
-	 * \author Nevrax France
-	 * \date 2002
-	 */
-	class CDBViewNumber : public CViewText
+	/// Constructor
+	CDBViewNumber(const TCtorParam &param);
+
+	std::string getProperty(const std::string &name) const;
+	void setProperty(const std::string &name, const std::string &value);
+	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
+	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+	virtual void checkCoords();
+	virtual void draw();
+
+	void link(const std::string &dbprop)
 	{
-	public:
-        DECLARE_UI_CLASS( CDBViewNumber )
+		_Number.link(dbprop.c_str());
+	}
 
-		/// Constructor
-		CDBViewNumber(const TCtorParam &param);
+	static void forceLink();
 
-		std::string getProperty( const std::string &name ) const;
-		void setProperty( const std::string &name, const std::string &value );
-		xmlNodePtr serialize( xmlNodePtr parentNode, const char *type ) const;
-		virtual bool parse (xmlNodePtr cur, CInterfaceGroup * parentGroup);
-		virtual void checkCoords();
-		virtual void draw ();
+protected:
+	sint64 getVal();
 
-		void link (const std::string &dbprop)
-		{
-			_Number.link (dbprop.c_str());
-		}
-
-		static void forceLink();
-
-	protected:
-		sint64 getVal();
-
-	protected:
-
-		CInterfaceProperty		_Number;
-		sint64					_Cache;
-		bool                    _Positive; // only positive values are displayed
-		bool                    _Format; // the number will be formatted (like "1,000,000") if >= 10k
-		sint64					_Divisor, _Modulo;
-		// string to append to the value (eg: meters)
-		CStringShared			_Suffix;
-		CStringShared			_Prefix;
-	};
+protected:
+	CInterfaceProperty _Number;
+	sint64 _Cache;
+	bool _Positive; // only positive values are displayed
+	bool _Format; // the number will be formatted (like "1,000,000") if >= 10k
+	sint64 _Divisor, _Modulo;
+	// string to append to the value (eg: meters)
+	CStringShared _Suffix;
+	CStringShared _Prefix;
+};
 
 }
 

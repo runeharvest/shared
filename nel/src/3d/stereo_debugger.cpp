@@ -52,74 +52,72 @@ namespace NL3D {
 
 namespace {
 
-const char *a_arbfp1 =
-	"!!ARBfp1.0\n"
-	"PARAM c[1] = { { 1, 0, 0.5 } };\n"
-	"TEMP R0;\n"
-	"TEMP R1;\n"
-	"TEMP R2;\n"
-	"TEX R0, fragment.texcoord[0], texture[0], 2D;\n"
-	"TEX R1, fragment.texcoord[0], texture[1], 2D;\n"
-	"ADD R2, R0, -R1;\n"
-	"ADD R1, R0, R1;\n"
-	"MUL R1, R1, c[0].z;\n"
-	"ABS R2, R2;\n"
-	"CMP R2, -R2, c[0].x, c[0].y;\n"
-	"ADD_SAT R2.x, R2, R2.y;\n"
-	"ADD_SAT R2.x, R2, R2.z;\n"
-	"ADD_SAT R2.x, R2, R2.w;\n"
-	"ABS R2.x, R2;\n"
-	"CMP R2.x, -R2, c[0].y, c[0];\n"
-	"ABS R0.x, R2;\n"
-	"CMP R2.x, -R0, c[0].y, c[0];\n"
-	"MOV R0.xzw, R1;\n"
-	"MAD R0.y, R1, c[0].z, c[0].z;\n"
-	"CMP R0, -R2.x, R1, R0;\n"
-	"MAD R1.x, R0, c[0].z, c[0].z;\n"
-	"CMP result.color.x, -R2, R1, R0;\n"
-	"MOV result.color.yzw, R0;\n"
-	"END\n";
+const char *a_arbfp1 = "!!ARBfp1.0\n"
+                       "PARAM c[1] = { { 1, 0, 0.5 } };\n"
+                       "TEMP R0;\n"
+                       "TEMP R1;\n"
+                       "TEMP R2;\n"
+                       "TEX R0, fragment.texcoord[0], texture[0], 2D;\n"
+                       "TEX R1, fragment.texcoord[0], texture[1], 2D;\n"
+                       "ADD R2, R0, -R1;\n"
+                       "ADD R1, R0, R1;\n"
+                       "MUL R1, R1, c[0].z;\n"
+                       "ABS R2, R2;\n"
+                       "CMP R2, -R2, c[0].x, c[0].y;\n"
+                       "ADD_SAT R2.x, R2, R2.y;\n"
+                       "ADD_SAT R2.x, R2, R2.z;\n"
+                       "ADD_SAT R2.x, R2, R2.w;\n"
+                       "ABS R2.x, R2;\n"
+                       "CMP R2.x, -R2, c[0].y, c[0];\n"
+                       "ABS R0.x, R2;\n"
+                       "CMP R2.x, -R0, c[0].y, c[0];\n"
+                       "MOV R0.xzw, R1;\n"
+                       "MAD R0.y, R1, c[0].z, c[0].z;\n"
+                       "CMP R0, -R2.x, R1, R0;\n"
+                       "MAD R1.x, R0, c[0].z, c[0].z;\n"
+                       "CMP result.color.x, -R2, R1, R0;\n"
+                       "MOV result.color.yzw, R0;\n"
+                       "END\n";
 
-const char *a_ps_2_0 = 
-	"ps_2_0\n"
-	// cgc version 3.1.0013, build date Apr 18 2012
-	// command line args: -profile ps_2_0
-	// source file: pp_stereo_debug.cg
-	//vendor NVIDIA Corporation
-	//version 3.1.0.13
-	//profile ps_2_0
-	//program pp_stereo_debug
-	//semantic pp_stereo_debug.cTex0 : TEX0
-	//semantic pp_stereo_debug.cTex1 : TEX1
-	//var float2 texCoord : $vin.TEXCOORD0 : TEX0 : 0 : 1
-	//var sampler2D cTex0 : TEX0 : texunit 0 : 1 : 1
-	//var sampler2D cTex1 : TEX1 : texunit 1 : 2 : 1
-	//var float4 oCol : $vout.COLOR : COL : 3 : 1
-	//const c[0] = 0 1 0.5
-	"dcl_2d s0\n"
-	"dcl_2d s1\n"
-	"def c0, 0.00000000, 1.00000000, 0.50000000, 0\n"
-	"dcl t0.xy\n"
-	"texld r1, t0, s1\n"
-	"texld r2, t0, s0\n"
-	"add r0, r2, -r1\n"
-	"add r1, r2, r1\n"
-	"mul r1, r1, c0.z\n"
-	"abs r0, r0\n"
-	"cmp r0, -r0, c0.x, c0.y\n"
-	"add_pp_sat r0.x, r0, r0.y\n"
-	"add_pp_sat r0.x, r0, r0.z\n"
-	"add_pp_sat r0.x, r0, r0.w\n"
-	"abs_pp r0.x, r0\n"
-	"cmp_pp r0.x, -r0, c0.y, c0\n"
-	"abs_pp r0.x, r0\n"
-	"mov r2.xzw, r1\n"
-	"mad r2.y, r1, c0.z, c0.z\n"
-	"cmp r2, -r0.x, r1, r2\n"
-	"mad r1.x, r2, c0.z, c0.z\n"
-	"mov r0.yzw, r2\n"
-	"cmp r0.x, -r0, r1, r2\n"
-	"mov oC0, r0\n";
+const char *a_ps_2_0 = "ps_2_0\n"
+                       // cgc version 3.1.0013, build date Apr 18 2012
+                       // command line args: -profile ps_2_0
+                       // source file: pp_stereo_debug.cg
+                       // vendor NVIDIA Corporation
+                       // version 3.1.0.13
+                       // profile ps_2_0
+                       // program pp_stereo_debug
+                       // semantic pp_stereo_debug.cTex0 : TEX0
+                       // semantic pp_stereo_debug.cTex1 : TEX1
+                       // var float2 texCoord : $vin.TEXCOORD0 : TEX0 : 0 : 1
+                       // var sampler2D cTex0 : TEX0 : texunit 0 : 1 : 1
+                       // var sampler2D cTex1 : TEX1 : texunit 1 : 2 : 1
+                       // var float4 oCol : $vout.COLOR : COL : 3 : 1
+                       // const c[0] = 0 1 0.5
+                       "dcl_2d s0\n"
+                       "dcl_2d s1\n"
+                       "def c0, 0.00000000, 1.00000000, 0.50000000, 0\n"
+                       "dcl t0.xy\n"
+                       "texld r1, t0, s1\n"
+                       "texld r2, t0, s0\n"
+                       "add r0, r2, -r1\n"
+                       "add r1, r2, r1\n"
+                       "mul r1, r1, c0.z\n"
+                       "abs r0, r0\n"
+                       "cmp r0, -r0, c0.x, c0.y\n"
+                       "add_pp_sat r0.x, r0, r0.y\n"
+                       "add_pp_sat r0.x, r0, r0.z\n"
+                       "add_pp_sat r0.x, r0, r0.w\n"
+                       "abs_pp r0.x, r0\n"
+                       "cmp_pp r0.x, -r0, c0.y, c0\n"
+                       "abs_pp r0.x, r0\n"
+                       "mov r2.xzw, r1\n"
+                       "mad r2.y, r1, c0.z, c0.z\n"
+                       "cmp r2, -r0.x, r1, r2\n"
+                       "mad r1.x, r2, c0.z, c0.z\n"
+                       "mov r0.yzw, r2\n"
+                       "cmp r0.x, -r0, r1, r2\n"
+                       "mov oC0, r0\n";
 
 class CStereoDebuggerFactory : public IStereoDeviceFactory
 {
@@ -132,9 +130,14 @@ public:
 
 } /* anonymous namespace */
 
-CStereoDebugger::CStereoDebugger() : m_Driver(NULL), m_Stage(0), m_SubStage(0), m_LeftTexU(NULL), m_RightTexU(NULL), m_PixelProgram(NULL)
+CStereoDebugger::CStereoDebugger()
+    : m_Driver(NULL)
+    , m_Stage(0)
+    , m_SubStage(0)
+    , m_LeftTexU(NULL)
+    , m_RightTexU(NULL)
+    , m_PixelProgram(NULL)
 {
-	
 }
 
 CStereoDebugger::~CStereoDebugger()
@@ -154,7 +157,7 @@ CStereoDebugger::~CStereoDebugger()
 void CStereoDebugger::setDriver(NL3D::UDriver *driver)
 {
 	nlassert(!m_PixelProgram);
-	
+
 	m_Driver = driver;
 	NL3D::IDriver *drvInternal = (static_cast<CDriverUser *>(driver))->getDriver();
 
@@ -191,8 +194,8 @@ void CStereoDebugger::setDriver(NL3D::UDriver *driver)
 		m_Mat = m_Driver->createMaterial();
 		m_Mat.initUnlit();
 		m_Mat.setColor(CRGBA::White);
-		m_Mat.setBlend (false);
-		m_Mat.setAlphaTest (false);
+		m_Mat.setBlend(false);
+		m_Mat.setAlphaTest(false);
 		NL3D::CMaterial *mat = m_Mat.getObjectPtr();
 		mat->setShader(NL3D::CMaterial::Normal);
 		mat->setBlendFunc(CMaterial::one, CMaterial::zero);
@@ -205,10 +208,10 @@ void CStereoDebugger::setDriver(NL3D::UDriver *driver)
 		m_QuadUV.V2 = CVector(1.f, 1.f, 0.5f);
 		m_QuadUV.V3 = CVector(0.f, 1.f, 0.5f);
 
-		m_QuadUV.Uv0 = CUV(0.f,  0.f);
+		m_QuadUV.Uv0 = CUV(0.f, 0.f);
 		m_QuadUV.Uv1 = CUV(1.f, 0.f);
 		m_QuadUV.Uv2 = CUV(1.f, 1.f);
-		m_QuadUV.Uv3 = CUV(0.f,  1.f);
+		m_QuadUV.Uv3 = CUV(0.f, 1.f);
 	}
 }
 
@@ -219,7 +222,6 @@ bool CStereoDebugger::attachToDisplay()
 
 void CStereoDebugger::detachFromDisplay()
 {
-
 }
 
 void CStereoDebugger::getTextures()
@@ -250,75 +252,76 @@ void CStereoDebugger::recycleTextures()
 /*
 void CStereoDebugger::releaseTextures()
 {
-	if (!m_Mat.empty())
-	{
-		m_Mat.getObjectPtr()->setTexture(0, NULL);
-		m_Mat.getObjectPtr()->setTexture(1, NULL);
-		m_Driver->deleteMaterial(m_Mat);
-	}
+    if (!m_Mat.empty())
+    {
+        m_Mat.getObjectPtr()->setTexture(0, NULL);
+        m_Mat.getObjectPtr()->setTexture(1, NULL);
+        m_Driver->deleteMaterial(m_Mat);
+    }
 
-	delete m_LeftTexU;
-	m_LeftTexU = NULL;
-	m_LeftTex = NULL; // CSmartPtr
+    delete m_LeftTexU;
+    m_LeftTexU = NULL;
+    m_LeftTex = NULL; // CSmartPtr
 
-	delete m_RightTexU;
-	m_RightTexU = NULL;
-	m_RightTex = NULL; // CSmartPtr
+    delete m_RightTexU;
+    m_RightTexU = NULL;
+    m_RightTex = NULL; // CSmartPtr
 }
-*//*
+*/
+/*
 void CStereoDebugger::initTextures()
 {
-	uint32 width, height;
-	m_Driver->getWindowSize(width, height);
-	NL3D::IDriver *drvInternal = (static_cast<CDriverUser *>(m_Driver))->getDriver();	
+  uint32 width, height;
+  m_Driver->getWindowSize(width, height);
+  NL3D::IDriver *drvInternal = (static_cast<CDriverUser *>(m_Driver))->getDriver();
 
-	m_LeftTex = new CTextureBloom();
-	m_LeftTex->setRenderTarget(true);
-	m_LeftTex->setReleasable(false);
-	m_LeftTex->resize(width, height);
-	m_LeftTex->setFilterMode(ITexture::Linear, ITexture::LinearMipMapOff);
-	m_LeftTex->setWrapS(ITexture::Clamp);
-	m_LeftTex->setWrapT(ITexture::Clamp);
-	drvInternal->setupTexture(*m_LeftTex);
-	m_LeftTexU = new CTextureUser(m_LeftTex);
-	nlassert(!drvInternal->isTextureRectangle(m_LeftTex)); // not allowed
+  m_LeftTex = new CTextureBloom();
+  m_LeftTex->setRenderTarget(true);
+  m_LeftTex->setReleasable(false);
+  m_LeftTex->resize(width, height);
+  m_LeftTex->setFilterMode(ITexture::Linear, ITexture::LinearMipMapOff);
+  m_LeftTex->setWrapS(ITexture::Clamp);
+  m_LeftTex->setWrapT(ITexture::Clamp);
+  drvInternal->setupTexture(*m_LeftTex);
+  m_LeftTexU = new CTextureUser(m_LeftTex);
+  nlassert(!drvInternal->isTextureRectangle(m_LeftTex)); // not allowed
 
-	m_RightTex = new CTextureBloom();
-	m_RightTex->setRenderTarget(true);
-	m_RightTex->setReleasable(false);
-	m_RightTex->resize(width, height);
-	m_RightTex->setFilterMode(ITexture::Linear, ITexture::LinearMipMapOff);
-	m_RightTex->setWrapS(ITexture::Clamp);
-	m_RightTex->setWrapT(ITexture::Clamp);
-	drvInternal->setupTexture(*m_RightTex);
-	m_RightTexU = new CTextureUser(m_RightTex);
-	nlassert(!drvInternal->isTextureRectangle(m_RightTex)); // not allowed
+  m_RightTex = new CTextureBloom();
+  m_RightTex->setRenderTarget(true);
+  m_RightTex->setReleasable(false);
+  m_RightTex->resize(width, height);
+  m_RightTex->setFilterMode(ITexture::Linear, ITexture::LinearMipMapOff);
+  m_RightTex->setWrapS(ITexture::Clamp);
+  m_RightTex->setWrapT(ITexture::Clamp);
+  drvInternal->setupTexture(*m_RightTex);
+  m_RightTexU = new CTextureUser(m_RightTex);
+  nlassert(!drvInternal->isTextureRectangle(m_RightTex)); // not allowed
 }*/
 /*
 void CStereoDebugger::setTextures()
 {
-	NL3D::CMaterial *mat = m_Mat.getObjectPtr();
-	mat->setTexture(0, m_LeftTex);
-	mat->setTexture(1, m_RightTex);
+    NL3D::CMaterial *mat = m_Mat.getObjectPtr();
+    mat->setTexture(0, m_LeftTex);
+    mat->setTexture(1, m_RightTex);
 }*/
 /*
 void CStereoDebugger::verifyTextures()
 {
-	if (m_Driver)
-	{
-		uint32 width, height;
-		m_Driver->getWindowSize(width, height);
-		if (m_LeftTex->getWidth() != width 
-			|| m_RightTex->getWidth() != width 
-			|| m_LeftTex->getHeight() != height 
-			|| m_RightTex->getHeight() != height)
-		{
-			nldebug("Rebuild textures");
-			releaseTextures();
-			initTextures();
-			setTextures();
-		}
-	}
+    if (m_Driver)
+    {
+        uint32 width, height;
+        m_Driver->getWindowSize(width, height);
+        if (m_LeftTex->getWidth() != width
+            || m_RightTex->getWidth() != width
+            || m_LeftTex->getHeight() != height
+            || m_RightTex->getHeight() != height)
+        {
+            nldebug("Rebuild textures");
+            releaseTextures();
+            initTextures();
+            setTextures();
+        }
+    }
 }*/
 
 /// Gets the required screen resolution for this device
@@ -418,7 +421,7 @@ bool CStereoDebugger::wantClear()
 	m_SubStage = 1;
 	return m_Stage != 3;
 }
-	
+
 /// The 3D scene
 bool CStereoDebugger::wantScene()
 {
@@ -438,7 +441,7 @@ bool CStereoDebugger::wantInterface3D()
 	m_SubStage = 3;
 	return m_Stage == 3;
 }
-	
+
 /// 2D Interface
 bool CStereoDebugger::wantInterface2D()
 {

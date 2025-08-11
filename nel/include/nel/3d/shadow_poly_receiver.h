@@ -24,20 +24,17 @@
 #include "nel/3d/vertex_buffer.h"
 #include "nel/3d/index_buffer.h"
 
-
 namespace NL3D {
 
-class	IDriver;
-class	CMaterial;
-class	CShadowMap;
-
+class IDriver;
+class CMaterial;
+class CShadowMap;
 
 // ***************************************************************************
-#define		NL3D_SPR_NUM_CLIP_PLANE			7
-#define		NL3D_SPR_NUM_CLIP_PLANE_SHIFT	(1<<NL3D_SPR_NUM_CLIP_PLANE)
-#define		NL3D_SPR_NUM_CLIP_PLANE_MASK	(NL3D_SPR_NUM_CLIP_PLANE_SHIFT-1)
-#define		NL3D_SPR_MAX_REF_COUNT			255
-
+#define NL3D_SPR_NUM_CLIP_PLANE 7
+#define NL3D_SPR_NUM_CLIP_PLANE_SHIFT (1 << NL3D_SPR_NUM_CLIP_PLANE)
+#define NL3D_SPR_NUM_CLIP_PLANE_MASK (NL3D_SPR_NUM_CLIP_PLANE_SHIFT - 1)
+#define NL3D_SPR_MAX_REF_COUNT 255
 
 // ***************************************************************************
 /**
@@ -50,7 +47,7 @@ class	CShadowMap;
 class CShadowPolyReceiver
 {
 public:
-	enum	TCameraColTest
+	enum TCameraColTest
 	{
 		CameraColSimpleRay,
 		CameraColCylinder,
@@ -58,19 +55,18 @@ public:
 	};
 
 public:
-
 	/// Constructor
-	CShadowPolyReceiver(uint quadGridSize=32, float quadGridCellSize= 4.f);
+	CShadowPolyReceiver(uint quadGridSize = 32, float quadGridCellSize = 4.f);
 
 	/// Append a triangle to the poly receiver.
-	uint			addTriangle(const NLMISC::CTriangle &tri);
+	uint addTriangle(const NLMISC::CTriangle &tri);
 	/// remove a triangle from the poly receiver.
-	void			removeTriangle(uint id);
+	void removeTriangle(uint id);
 
 	/** clip, and render with a shadow map. Matrix setup should be OK.
 	 *	\param vertDelta (for landscape). add this value from vertices before rendering.
 	 */
-	void			render(IDriver *drv, CMaterial &shadowMat, const CShadowMap *shadowMap, const CVector &casterPos, const CVector &vertDelta);
+	void render(IDriver *drv, CMaterial &shadowMat, const CShadowMap *shadowMap, const CVector &casterPos, const CVector &vertDelta);
 
 	/** clip, and render with a shadow map. Matrix setup should be OK.
 	 *  Clipping here is done with the polygon rather than its bbox, with will scale better
@@ -78,85 +74,87 @@ public:
 	 *	\param vertDelta (for landscape). add this value from vertices before rendering.
 	 *	\return : number of tested grid cells
 	 */
-	void			renderWithPolyClip(IDriver *drv, CMaterial &shadowMat, const CShadowMap *shadowMap, const CVector &casterPos, const CVector &vertDelta,
-									   const NLMISC::CPolygon2D &poly
-									  );
+	void renderWithPolyClip(IDriver *drv, CMaterial &shadowMat, const CShadowMap *shadowMap, const CVector &casterPos, const CVector &vertDelta,
+	    const NLMISC::CPolygon2D &poly);
 
 	// a vertex
 	struct CRGBAVertex
 	{
 		CVector V;
 		CRGBA Color;
-		CRGBAVertex() {}
-		CRGBAVertex(const CVector &v, CRGBA c) : V(v), Color(c) {}
+		CRGBAVertex() { }
+		CRGBAVertex(const CVector &v, CRGBA c)
+		    : V(v)
+		    , Color(c)
+		{
+		}
 	};
 
 	/** Compute list of clipped tri under the shadow mat
-	  * useful for rendering of huge decal, that may consume a lot of fillrate, but change rarely.
-	  *
-	  */
-	void			computeClippedTrisWithPolyClip(const CShadowMap *shadowMap, const CVector &casterPos, const CVector &vertDelta, const NLMISC::CPolygon2D &vertices,
-												   std::vector<CRGBAVertex> &destTris, bool colorUpfacingVertices);
-
+	 * useful for rendering of huge decal, that may consume a lot of fillrate, but change rarely.
+	 *
+	 */
+	void computeClippedTrisWithPolyClip(const CShadowMap *shadowMap, const CVector &casterPos, const CVector &vertDelta, const NLMISC::CPolygon2D &vertices,
+	    std::vector<CRGBAVertex> &destTris, bool colorUpfacingVertices);
 
 	/** Use the triangles added for camera 3rd person collision
 	 *	return a [0,1] value. 0 => collision at start. 1 => no collision.
 	 *	\param testType is the type of intersection: simple ray, cylinder or cone
 	 *	\param radius is the radius of the 'cylinder' or 'cone' (not used for simpleRay test, radius goes to end for cone)
 	 */
-	float			getCameraCollision(const CVector &start, const CVector &end, TCameraColTest testType, float radius);
+	float getCameraCollision(const CVector &start, const CVector &end, TCameraColTest testType, float radius);
 
-// ************
+	// ************
 private:
-
 	// Vertices.
-	class	CVectorId : public CVector
+	class CVectorId : public CVector
 	{
 	public:
-		uint8			RefCount;
-		uint8			Flags;
-		sint16			VBIdx;
+		uint8 RefCount;
+		uint8 Flags;
+		sint16 VBIdx;
 
-		CVectorId() {RefCount=0;}
-		CVectorId(const CVector &v) {(*(CVector*)this)= v; RefCount=0;}
+		CVectorId() { RefCount = 0; }
+		CVectorId(const CVector &v)
+		{
+			(*(CVector *)this) = v;
+			RefCount = 0;
+		}
 	};
-	std::vector<CVectorId>				_Vertices;
-	std::vector<uint>					_FreeVertices;
-	typedef	std::map<CVector, uint>		TVertexMap;
-	TVertexMap							_VertexMap;
+	std::vector<CVectorId> _Vertices;
+	std::vector<uint> _FreeVertices;
+	typedef std::map<CVector, uint> TVertexMap;
+	TVertexMap _VertexMap;
 
 	// Triangles
-	struct	CTriangleId
+	struct CTriangleId
 	{
-		uint	Vertex[3];
+		uint Vertex[3];
 	};
-	typedef CQuadGrid<CTriangleId>			TTriangleGrid;
-	TTriangleGrid							_TriangleGrid;
-	std::vector<TTriangleGrid::CIterator>	_Triangles;
-	std::vector<uint>						_FreeTriangles;
+	typedef CQuadGrid<CTriangleId> TTriangleGrid;
+	TTriangleGrid _TriangleGrid;
+	std::vector<TTriangleGrid::CIterator> _Triangles;
+	std::vector<uint> _FreeTriangles;
 
 	// Render
 	// TODO_SHADOW: optim: VBHard.
-	CVertexBuffer						_VB;
-	CIndexBuffer						_RenderTriangles;
-
+	CVertexBuffer _VB;
+	CIndexBuffer _RenderTriangles;
 
 	// Vertex Mgt.
 	// Allocate a vertex. RefCount init to 0. _VertexMap modified.
-	uint				allocateVertex(const CVector &v);
+	uint allocateVertex(const CVector &v);
 	// Release a vertex, freeing him if no more unused => _VertexMap modified.
-	void				releaseVertex(uint id);
+	void releaseVertex(uint id);
 	// increment the Count of the ith vertex;
-	void				incVertexRefCount(uint id);
+	void incVertexRefCount(uint id);
 	// render, using current selection in the quad grid
-	void				renderSelection(IDriver *drv, CMaterial &shadowMat, const CShadowMap *shadowMap, const CVector &casterPos, const CVector &vertDelta);
+	void renderSelection(IDriver *drv, CMaterial &shadowMat, const CShadowMap *shadowMap, const CVector &casterPos, const CVector &vertDelta);
 	// select a polygon in the triangle grid
-	void				selectPolygon(const NLMISC::CPolygon2D &poly);
+	void selectPolygon(const NLMISC::CPolygon2D &poly);
 };
 
-
 } // NL3D
-
 
 #endif // NL_SHADOW_POLY_RECEIVER_H
 

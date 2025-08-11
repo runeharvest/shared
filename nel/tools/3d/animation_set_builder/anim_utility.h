@@ -21,8 +21,8 @@
 #include <vector>
 #include <set>
 
-std::string getDir (const std::string& path);
-std::string getName (const std::string& path);
-std::string getExt (const std::string& path);
+std::string getDir(const std::string &path);
+std::string getName(const std::string &path);
+std::string getExt(const std::string &path);
 
 #endif // NL_ZONE_UTILITY

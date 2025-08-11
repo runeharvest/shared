@@ -23,8 +23,8 @@
 
 namespace NL3D {
 
-class IDriver ;
-class CScene ;
+class IDriver;
+class CScene;
 
 /**
  * This perform  a heat haze effect at the horizon of the scene.
@@ -42,9 +42,7 @@ public:
 	static void performHeatHaze(uint width, uint height, CScene &s, IDriver *drv);
 };
 
-
 } // NL3D
-
 
 #endif // NL_HEAT_HAZE_H
 

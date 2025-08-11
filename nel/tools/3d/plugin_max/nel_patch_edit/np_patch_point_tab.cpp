@@ -13,28 +13,28 @@ extern Point3 zeroPoint;
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-PatchPointTab::PatchPointTab() 
+PatchPointTab::PatchPointTab()
 {
 }
 
-PatchPointTab::~PatchPointTab() 
+PatchPointTab::~PatchPointTab()
 {
 }
 
-void PatchPointTab::Empty() 
+void PatchPointTab::Empty()
 {
 	ptab.Delete(0, ptab.Count());
 	vtab.Delete(0, vtab.Count());
 	pttab.Delete(0, pttab.Count());
 }
 
-void PatchPointTab::Zero() 
+void PatchPointTab::Zero()
 {
 	// DebugPrint("Zeroing\n");
 	int points = ptab.Count();
 	int vectors = vtab.Count();
 	Point3 zero(0, 0, 0);
-	
+
 	int i;
 	for (i = 0; i < points; ++i)
 	{
@@ -45,7 +45,7 @@ void PatchPointTab::Zero()
 		vtab[i] = zero;
 }
 
-void PatchPointTab::MakeCompatible(PatchMesh& patch, int clear) 
+void PatchPointTab::MakeCompatible(PatchMesh &patch, int clear)
 {
 	int izero = 0;
 	if (clear)
@@ -89,7 +89,7 @@ void PatchPointTab::MakeCompatible(PatchMesh& patch, int clear)
 	}
 }
 
-PatchPointTab& PatchPointTab::operator=(PatchPointTab& from) 
+PatchPointTab &PatchPointTab::operator=(PatchPointTab &from)
 {
 	ptab = from.ptab;
 	vtab = from.vtab;
@@ -97,7 +97,7 @@ PatchPointTab& PatchPointTab::operator=(PatchPointTab& from)
 	return *this;
 }
 
-BOOL PatchPointTab::IsCompatible(PatchMesh &patch) 
+BOOL PatchPointTab::IsCompatible(PatchMesh &patch)
 {
 	if (ptab.Count() != patch.numVerts)
 		return FALSE;
@@ -108,12 +108,12 @@ BOOL PatchPointTab::IsCompatible(PatchMesh &patch)
 	return TRUE;
 }
 
-void PatchPointTab::RescaleWorldUnits(float f) 
+void PatchPointTab::RescaleWorldUnits(float f)
 {
 	Matrix3 stm = ScaleMatrix(Point3(f, f, f));
 	int points = ptab.Count();
 	int vectors = vtab.Count();
-	
+
 	int i;
 	for (i = 0; i < points; ++i)
 		ptab[i] = ptab[i] * stm;
@@ -121,12 +121,12 @@ void PatchPointTab::RescaleWorldUnits(float f)
 		vtab[i] = vtab[i] * stm;
 }
 
-#define PPT_VERT_CHUNK		0x1000
-#define PPT_VEC_CHUNK		0x1010
-#define PPT_VERTTYPE_CHUNK	0x1020
+#define PPT_VERT_CHUNK 0x1000
+#define PPT_VEC_CHUNK 0x1010
+#define PPT_VERTTYPE_CHUNK 0x1020
 
-IOResult PatchPointTab::Save(ISave *isave) 
-{	
+IOResult PatchPointTab::Save(ISave *isave)
+{
 	int i;
 	ULONG nb;
 	isave->BeginChunk(PPT_VERT_CHUNK);
@@ -150,14 +150,14 @@ IOResult PatchPointTab::Save(ISave *isave)
 	return IO_OK;
 }
 
-IOResult PatchPointTab::Load(ILoad *iload) 
-{	
+IOResult PatchPointTab::Load(ILoad *iload)
+{
 	int i, count;
 	Point3 workpt;
 	int workint;
 	IOResult res;
 	ULONG nb;
-	while (IO_OK == (res = iload->OpenChunk())) 
+	while (IO_OK == (res = iload->OpenChunk()))
 	{
 		switch (iload->CurChunkID())
 		{
@@ -190,7 +190,7 @@ IOResult PatchPointTab::Load(ILoad *iload)
 			break;
 		}
 		iload->CloseChunk();
-		if (res != IO_OK) 
+		if (res != IO_OK)
 			return res;
 	}
 	return IO_OK;

@@ -14,19 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "basic_effect.h"
-
 
 /// init effect counter
 uint32 CBasicEffect::_EffectCounter = 0;
 
-
-
 // leave not static else this workaround don't work
-void	dummyToAvoidStupidCompilerWarning_gameshare_basic_effect_cpp()
+void dummyToAvoidStupidCompilerWarning_gameshare_basic_effect_cpp()
 {
 }
-

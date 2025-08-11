@@ -30,27 +30,26 @@
 #include "nel/3d/noise_3d.h"
 #include "nel/3d/u_cloud_scape.h"
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ------------------------------------------------------------------------------------------------
 struct SCloudTexture3D
 {
 	uint32 Width, Height, Depth;
 	uint32 NbW, NbH; // Number of slice in width and height (NbW*NbH = Depth)
-	uint8									*Mem;
-	uint8									*Mem2;
-	uint8									*MemBuffer;
-	NLMISC::CSmartPtr<NL3D::CTextureMem>	Tex;
-	NLMISC::CSmartPtr<NL3D::CTextureMem>	Tex2;
-	NLMISC::CSmartPtr<NL3D::CTextureMem>	TexBuffer;
-	NL3D::CMaterial							ToLightRGB;
-	NL3D::CMaterial							ToLightAlpha;
-	NL3D::CMaterial							ToBill;
-	NL3D::CMaterial							MatCopy;
+	uint8 *Mem;
+	uint8 *Mem2;
+	uint8 *MemBuffer;
+	NLMISC::CSmartPtr<NL3D::CTextureMem> Tex;
+	NLMISC::CSmartPtr<NL3D::CTextureMem> Tex2;
+	NLMISC::CSmartPtr<NL3D::CTextureMem> TexBuffer;
+	NL3D::CMaterial ToLightRGB;
+	NL3D::CMaterial ToLightAlpha;
+	NL3D::CMaterial ToBill;
+	NL3D::CMaterial MatCopy;
 
-	SCloudTexture3D ();
-	void init (uint32 nWidth, uint32 nHeight, uint32 nDepth);
+	SCloudTexture3D();
+	void init(uint32 nWidth, uint32 nHeight, uint32 nDepth);
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -58,48 +57,45 @@ struct SCloudTextureClamp
 {
 	uint32 Width, Height, Depth;
 	uint32 NbW, NbH; // Number of slice in width and height (NbW*NbH = Depth)
-	uint8									*Mem;
-	NLMISC::CSmartPtr<NL3D::CTextureMem>	Tex;
-	NL3D::CMaterial							ToClamp;
+	uint8 *Mem;
+	NLMISC::CSmartPtr<NL3D::CTextureMem> Tex;
+	NL3D::CMaterial ToClamp;
 
-	SCloudTextureClamp ();
-	void init (uint32 nWidth, uint32 nHeight, uint32 nDepth, const std::string &filename);
+	SCloudTextureClamp();
+	void init(uint32 nWidth, uint32 nHeight, uint32 nDepth, const std::string &filename);
 };
 
 // ------------------------------------------------------------------------------------------------
 class CCloudScape
 {
 public:
+	CCloudScape(NL3D::IDriver *pDriver);
 
-	CCloudScape (NL3D::IDriver *pDriver);
+	~CCloudScape();
 
-	~CCloudScape ();
+	void init(SCloudScapeSetup *pCSS = NULL, NL3D::CCamera *pCamera = NULL);
 
-	void init (SCloudScapeSetup *pCSS = NULL, NL3D::CCamera *pCamera = NULL);
-
-	void set (SCloudScapeSetup &css);
+	void set(SCloudScapeSetup &css);
 
 	// Function that make cloud scape (work with screeen as temp buffer)
-	void anim (double dt, NL3D::CCamera *pCamera);
+	void anim(double dt, NL3D::CCamera *pCamera);
 
 	// Render all clouds to the screen
-	void render ();
+	void render();
 
 	uint32 getMemSize();
 
-	void setQuality (float threshold) { _LODQualityThreshold = threshold; }
+	void setQuality(float threshold) { _LODQualityThreshold = threshold; }
 
-	void setNbCloudToUpdateIn80ms (uint32 n) { _NbHalfCloudToUpdate = n; }
+	void setNbCloudToUpdateIn80ms(uint32 n) { _NbHalfCloudToUpdate = n; }
 
-	bool isDebugQuadEnabled () { return _DebugQuad; }
-	void setDebugQuad (bool b) { _DebugQuad = b; }
-
-private:
-
-	void makeHalfCloud ();
+	bool isDebugQuadEnabled() { return _DebugQuad; }
+	void setDebugQuad(bool b) { _DebugQuad = b; }
 
 private:
+	void makeHalfCloud();
 
+private:
 	uint32 _NbHalfCloudToUpdate; // In 40 ms
 	double _GlobalTime;
 	double _DeltaTime;
@@ -117,12 +113,12 @@ private:
 	SCloudScapeSetup _OldCSS;
 	double _TimeNewCSS;
 
-	bool				_IsIncomingCSS;
-	SCloudScapeSetup	_IncomingCSS;
+	bool _IsIncomingCSS;
+	SCloudScapeSetup _IncomingCSS;
 
-	CNoise3d	_Noise3D;
+	CNoise3d _Noise3D;
 
-	std::vector<CCloud>		_AllClouds;
+	std::vector<CCloud> _AllClouds;
 
 	// Cloud scheduler
 	struct SCloudSchedulerEntry
@@ -140,22 +136,21 @@ private:
 	};
 	struct SCloudSchedulerAccel
 	{
-		bool	ValidPos;
+		bool ValidPos;
 		std::list<SCloudSchedulerEntry>::iterator Pos;
-//		uint32	Frame;
+		//		uint32	Frame;
 
 		SCloudSchedulerAccel()
 		{
 			ValidPos = false;
 		}
 	};
-//	std::deque<SCloudSchedulerEntry>	_CloudScheduler;
-	std::list<SCloudSchedulerEntry>	_CloudScheduler;
+	//	std::deque<SCloudSchedulerEntry>	_CloudScheduler;
+	std::list<SCloudSchedulerEntry> _CloudScheduler;
 	uint32 _CloudSchedulerSize;
-	std::vector<SCloudSchedulerAccel>	_CloudSchedulerLastAdded;
+	std::vector<SCloudSchedulerAccel> _CloudSchedulerLastAdded;
 	uint32 _FrameCounter;
 	std::vector<float> _ExtrapolatedPriorities;
-
 
 	// Cloud sort
 	struct SSortedCloudEntry
@@ -165,32 +160,29 @@ private:
 	};
 	std::vector<SSortedCloudEntry> _SortedClouds;
 
-
-
 	float _LODQualityThreshold;
 	bool _DebugQuad;
 
-	NL3D::IDriver			*_Driver;
-	NL3D::CVertexBuffer		_VertexBuffer;
-	NL3D::CMaterial			_MatClear;
-	NL3D::CMaterial			_MatBill;
+	NL3D::IDriver *_Driver;
+	NL3D::CVertexBuffer _VertexBuffer;
+	NL3D::CMaterial _MatClear;
+	NL3D::CMaterial _MatBill;
 
-	NL3D::CCamera			*_ViewerCam;
+	NL3D::CCamera *_ViewerCam;
 
-	SCloudTexture3D			Tex3DTemp;
-	SCloudTextureClamp		TexClamp;
+	SCloudTexture3D Tex3DTemp;
+	SCloudTextureClamp TexClamp;
 
 	// Driver reset counter initial value
-	uint					_ResetCounter;
+	uint _ResetCounter;
 
 	friend class CCloud;
 
-	double					_LastAnimRenderTime;
-	double					_MaxDeltaTime;
+	double _LastAnimRenderTime;
+	double _MaxDeltaTime;
 };
 
 // ------------------------------------------------------------------------------------------------
 } // namespace NL3D
 
 #endif // NL_CLOUD_SCAPE_H
-

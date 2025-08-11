@@ -25,7 +25,7 @@
 #include <vector>
 
 namespace NLMISC {
-	class CConfigFile;
+class CConfigFile;
 }
 
 #ifdef NL_OS_WINDOWS
@@ -43,10 +43,10 @@ class CProjectConfig
 public:
 	enum Flags
 	{
-		DatabaseTextureSearchPaths =  0x0001,
+		DatabaseTextureSearchPaths = 0x0001,
 		DatabaseMaterialSearchPaths = 0x0002,
-		RuntimeTextureSearchPaths =   0x0100,
-		RuntimeShapeSearchPaths =     0x0200,
+		RuntimeTextureSearchPaths = 0x0100,
+		RuntimeShapeSearchPaths = 0x0200,
 	};
 
 public:
@@ -74,7 +74,6 @@ private:
 
 	static std::vector<TPathString> s_ConfigPaths;
 	static std::vector<NLMISC::CConfigFile *> s_ConfigFiles;
-
 };
 
 } /* namespace NLPIPELINE */

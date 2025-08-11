@@ -30,8 +30,7 @@
 #include "local_retriever.h"
 #include "nel/pacs/u_retriever_bank.h"
 
-namespace NLPACS
-{
+namespace NLPACS {
 
 /**
  * A bank of retrievers, shared by several global retrievers.
@@ -45,74 +44,82 @@ class CRetrieverBank : public URetrieverBank
 
 protected:
 	/// The retrievers stored in the retriever bank.
-	std::vector<CLocalRetriever>		_Retrievers;
+	std::vector<CLocalRetriever> _Retrievers;
 
 	/// All loaded ?
-	bool								_AllLoaded;
+	bool _AllLoaded;
 
 	/// Bank name prefix
-	std::string							_NamePrefix;
+	std::string _NamePrefix;
 
 	/// The loaded retrievers, if the retriever bank is not in loadAll mode
-	std::set<uint>						_LoadedRetrievers;
+	std::set<uint> _LoadedRetrievers;
 
 	///  Tells if retrievers should be read from rbank directly or streamed from disk
-	bool								_LrInRBank;
+	bool _LrInRBank;
 
 public:
 	/// Constructor
-	CRetrieverBank(bool allLoaded = true) : _AllLoaded(allLoaded), _LrInRBank(true) {}
+	CRetrieverBank(bool allLoaded = true)
+	    : _AllLoaded(allLoaded)
+	    , _LrInRBank(true)
+	{
+	}
 
 	/// Returns the vector of retrievers.
-	const std::vector<CLocalRetriever>	&getRetrievers() const { return _Retrievers; }
+	const std::vector<CLocalRetriever> &getRetrievers() const { return _Retrievers; }
 
 	/// Returns the number of retrievers in the bank.
-	uint								size() const { return (uint)_Retrievers.size(); }
+	uint size() const { return (uint)_Retrievers.size(); }
 
 	/// Gets nth retriever.
-	const CLocalRetriever				&getRetriever(uint n) const
+	const CLocalRetriever &getRetriever(uint n) const
 	{
 		nlassert(n < _Retrievers.size());
 		/* if (!_Retrievers[n].isLoaded())
-			nlwarning("Trying to access rbank '%s', retriever %d not loaded", _NamePrefix.c_str(), n); */
+		    nlwarning("Trying to access rbank '%s', retriever %d not loaded", _NamePrefix.c_str(), n); */
 		return _Retrievers[n];
 	}
 
 	/// Adds the given retriever to the bank.
-	uint								addRetriever(const CLocalRetriever &retriever) { _Retrievers.push_back(retriever); return (uint)_Retrievers.size()-1; }
+	uint addRetriever(const CLocalRetriever &retriever)
+	{
+		_Retrievers.push_back(retriever);
+		return (uint)_Retrievers.size() - 1;
+	}
 
 	/// Loads the retriever named 'filename' (using defined search paths) and adds it to the bank.
-	uint								addRetriever(const std::string &filename)
+	uint addRetriever(const std::string &filename)
 	{
-		NLMISC::CIFile	input;
-		_Retrievers.resize(_Retrievers.size()+1);
-		CLocalRetriever	&localRetriever = _Retrievers.back();
+		NLMISC::CIFile input;
+		_Retrievers.resize(_Retrievers.size() + 1);
+		CLocalRetriever &localRetriever = _Retrievers.back();
 		nldebug("load retriever file %s", filename.c_str());
 		input.open(filename);
 		localRetriever.serial(input);
 		input.close();
 
-		return (uint)_Retrievers.size()-1;
+		return (uint)_Retrievers.size() - 1;
 	}
 
 	/// Cleans the bank up.
-	void								clean();
+	void clean();
 
 	/// Set the lr status
-	void								setLrInFileFlag(bool status)	{ _LrInRBank = status; }
+	void setLrInFileFlag(bool status) { _LrInRBank = status; }
 
 	/// Serialises this CRetrieverBank.
-	void								serial(NLMISC::IStream &f)
+	void serial(NLMISC::IStream &f)
 	{
 		/*
 		Version 0:
-			- base version.
+		    - base version.
 		Version 1:
-			- saves & loads lr in rbank only if bool LrInFile true
+		    - saves & loads lr in rbank only if bool LrInFile true
 		*/
-		uint	ver = f.serialVersion(1);
+		uint ver = f.serialVersion(1);
 
-		bool	lrPresent = true;
+		bool lrPresent = true;
 		if (ver > 0)
 		{
 			lrPresent = _LrInRBank;
@@ -123,7 +130,7 @@ public:
 		{
 			if (!_AllLoaded)
 			{
-				uint32	num = 0;
+				uint32 num = 0;
 				f.serial(num);
 				nlinfo("Presetting RetrieverBank '%s', %d retriever slots allocated", _NamePrefix.c_str(), num);
 				_Retrievers.resize(num);
@@ -134,18 +141,18 @@ public:
 			}
 			else
 			{
-				uint32	num = 0;
+				uint32 num = 0;
 				f.serial(num);
 				_Retrievers.resize(num);
 
-				uint	i;
-				for (i=0; i<num; ++i)
+				uint i;
+				for (i = 0; i < num; ++i)
 				{
-					std::string	fname = NLMISC::CPath::lookup(_NamePrefix + "_" + NLMISC::toString(i) + ".lr", false, true);
+					std::string fname = NLMISC::CPath::lookup(_NamePrefix + "_" + NLMISC::toString(i) + ".lr", false, true);
 					if (fname.empty())
 						continue;
 
-					NLMISC::CIFile	f(fname);
+					NLMISC::CIFile f(fname);
 					try
 					{
 						f.serial(_Retrievers[i]);
@@ -166,27 +173,27 @@ public:
 			}
 			else
 			{
-				uint32	num = (uint32)_Retrievers.size();
+				uint32 num = (uint32)_Retrievers.size();
 				f.serial(num);
 			}
 		}
 	}
 
 	/// Write separate retrievers using dynamic filename convention
-	void								saveRetrievers(const std::string &path, const std::string &bankPrefix)
+	void saveRetrievers(const std::string &path, const std::string &bankPrefix)
 	{
-		uint	i;
-		for (i=0; i<_Retrievers.size(); ++i)
+		uint i;
+		for (i = 0; i < _Retrievers.size(); ++i)
 		{
-			NLMISC::COFile	f(NLMISC::CPath::standardizePath(path) + bankPrefix + "_" + NLMISC::toString(i) + ".lr");
+			NLMISC::COFile f(NLMISC::CPath::standardizePath(path) + bankPrefix + "_" + NLMISC::toString(i) + ".lr");
 			f.serial(_Retrievers[i]);
 		}
 	}
 
 	/// Write separate retrievers using dynamic filename convention
-	void								saveShortBank(const std::string &path, const std::string &bankPrefix, bool saveLr = true)
+	void saveShortBank(const std::string &path, const std::string &bankPrefix, bool saveLr = true)
 	{
-		NLMISC::COFile	f(NLMISC::CPath::standardizePath(path) + bankPrefix + ".rbank");
+		NLMISC::COFile f(NLMISC::CPath::standardizePath(path) + bankPrefix + ".rbank");
 
 		_LrInRBank = false;
 
@@ -200,21 +207,21 @@ public:
 	// @{
 
 	/// Diff loaded retrievers
-	void		diff(const std::set<uint> &newlr, std::set<uint> &in, std::set<uint> &out)
+	void diff(const std::set<uint> &newlr, std::set<uint> &in, std::set<uint> &out)
 	{
-		std::set<uint>::const_iterator	it;
+		std::set<uint>::const_iterator it;
 
-		for (it=_LoadedRetrievers.begin(); it!=_LoadedRetrievers.end(); ++it)
+		for (it = _LoadedRetrievers.begin(); it != _LoadedRetrievers.end(); ++it)
 		{
-			uint	n = *it;
+			uint n = *it;
 			if (n >= _Retrievers.size())
 				continue;
 			_Retrievers[n].LoadCheckFlag = true;
 		}
 
-		for (it=newlr.begin(); it!=newlr.end(); ++it)
+		for (it = newlr.begin(); it != newlr.end(); ++it)
 		{
-			uint	n = *it;
+			uint n = *it;
 			if (n >= _Retrievers.size())
 				continue;
 			if (!_Retrievers[n].LoadCheckFlag)
@@ -222,9 +229,9 @@ public:
 			_Retrievers[n].LoadCheckFlag = false;
 		}
 
-		for (it=_LoadedRetrievers.begin(); it!=_LoadedRetrievers.end(); ++it)
+		for (it = _LoadedRetrievers.begin(); it != _LoadedRetrievers.end(); ++it)
 		{
-			uint	n = *it;
+			uint n = *it;
 			if (n >= _Retrievers.size())
 				continue;
 			if (_Retrievers[n].LoadCheckFlag)
@@ -234,7 +241,7 @@ public:
 	}
 
 	/// Loads nth retriever from stream
-	void		loadRetriever(uint n, NLMISC::IStream &s)
+	void loadRetriever(uint n, NLMISC::IStream &s)
 	{
 		if (_AllLoaded || n >= _Retrievers.size() || _Retrievers[n].isLoaded())
 		{
@@ -247,13 +254,13 @@ public:
 	}
 
 	/// Insert a retriever in loaded list
-	void		setRetrieverAsLoaded(uint n)
+	void setRetrieverAsLoaded(uint n)
 	{
 		_LoadedRetrievers.insert(n);
 	}
 
 	/// Unload nth retriever
-	void		unloadRetriever(uint n)
+	void unloadRetriever(uint n)
 	{
 		if (_AllLoaded || n >= _Retrievers.size() || !_Retrievers[n].isLoaded())
 		{
@@ -266,16 +273,16 @@ public:
 	}
 
 	///
-	const std::string	&getNamePrefix() const	{ return _NamePrefix; }
+	const std::string &getNamePrefix() const { return _NamePrefix; }
 
 	///
-	void				setNamePrefix(const char *prefix) { _NamePrefix = prefix; }
+	void setNamePrefix(const char *prefix) { _NamePrefix = prefix; }
 
 	///
-	bool		allLoaded() const { return _AllLoaded; }
+	bool allLoaded() const { return _AllLoaded; }
 
 	/// Tells if retriever is loaded
-	bool		isLoaded(uint n) const
+	bool isLoaded(uint n) const
 	{
 		return (n < _Retrievers.size() && _Retrievers[n].isLoaded());
 	}

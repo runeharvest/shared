@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef RY_MSG_ENCYCLOPEDIA_H
 #define RY_MSG_ENCYCLOPEDIA_H
 
@@ -34,26 +33,26 @@
 class CEncyMsgThema
 {
 public:
-	uint32	Name;				// Server string
-	uint32	RewardText;			// Server string
-	uint32	RewardSheet;		// Sheet id (brick or phrase or item)
-	uint8	State : 2;			// 0 Inactive 1 Running 2 Finished
-	uint8	NbTask : 4;			// Max 8 tasks Min 1 task (the rite=task[0])
-	uint32	TaskName[8];		// Task 0 is the rite
-	uint32	TaskNPCName[8];		// Task 0 is the rite
+	uint32 Name; // Server string
+	uint32 RewardText; // Server string
+	uint32 RewardSheet; // Sheet id (brick or phrase or item)
+	uint8 State : 2; // 0 Inactive 1 Running 2 Finished
+	uint8 NbTask : 4; // Max 8 tasks Min 1 task (the rite=task[0])
+	uint32 TaskName[8]; // Task 0 is the rite
+	uint32 TaskNPCName[8]; // Task 0 is the rite
 
 	union
 	{
 		struct
 		{
-			uint16	RiteState  : 2;
-			uint16	Task0State : 2;
-			uint16	Task1State : 2;
-			uint16	Task2State : 2;
-			uint16	Task3State : 2;
-			uint16	Task4State : 2;
-			uint16	Task5State : 2;
-			uint16	Task6State : 2;
+			uint16 RiteState : 2;
+			uint16 Task0State : 2;
+			uint16 Task1State : 2;
+			uint16 Task2State : 2;
+			uint16 Task3State : 2;
+			uint16 Task4State : 2;
+			uint16 Task5State : 2;
+			uint16 Task6State : 2;
 		} Unpack;
 
 		uint16 RiteTaskStatePacked; // All states of the 8 tasks
@@ -100,16 +99,16 @@ public:
 	uint8 getTaskState(uint8 nTask)
 	{
 		nlassert(nTask < NbTask);
-		switch(nTask)
+		switch (nTask)
 		{
-			case 0: return Unpack.RiteState;
-			case 1: return Unpack.Task0State;
-			case 2: return Unpack.Task1State;
-			case 3: return Unpack.Task2State;
-			case 4: return Unpack.Task3State;
-			case 5: return Unpack.Task4State;
-			case 6: return Unpack.Task5State;
-			case 7: return Unpack.Task6State;
+		case 0: return Unpack.RiteState;
+		case 1: return Unpack.Task0State;
+		case 2: return Unpack.Task1State;
+		case 3: return Unpack.Task2State;
+		case 4: return Unpack.Task3State;
+		case 5: return Unpack.Task4State;
+		case 6: return Unpack.Task5State;
+		case 7: return Unpack.Task6State;
 		}
 		return 0;
 	}
@@ -125,10 +124,10 @@ public:
 class CEncyMsgAlbum
 {
 public:
-	uint32						Name;			// Server string
-	uint32						RewardBrick;	// Sheet id (brick that can unblock a title)
-	uint8						State;			// 0 Inactive 1 Running 2 Finished
-	std::vector<CEncyMsgThema>	Themas;			// All the themas
+	uint32 Name; // Server string
+	uint32 RewardBrick; // Sheet id (brick that can unblock a title)
+	uint8 State; // 0 Inactive 1 Running 2 Finished
+	std::vector<CEncyMsgThema> Themas; // All the themas
 
 	CEncyMsgAlbum()
 	{
@@ -150,7 +149,6 @@ public:
 				return &Themas[i];
 		return NULL;
 	}
-
 };
 
 /**
@@ -172,13 +170,12 @@ public:
 
 	TEncyUpdateType Type;
 
-	std::vector<CEncyMsgAlbum>	AllAlbums;
+	std::vector<CEncyMsgAlbum> AllAlbums;
 
-	CEncyMsgAlbum	Album;		// used for UpdateAlbum
+	CEncyMsgAlbum Album; // used for UpdateAlbum
 
-	uint32			AlbumName;	// used for UpdateThema
-	CEncyMsgThema	Thema;		// used for UpdateThema
-
+	uint32 AlbumName; // used for UpdateThema
+	CEncyMsgThema Thema; // used for UpdateThema
 
 	CEncyclopediaUpdateMsg()
 	{
@@ -189,21 +186,20 @@ public:
 	void serial(NLMISC::CBitMemStream &f)
 	{
 		f.serialEnum(Type);
-		switch(Type)
+		switch (Type)
 		{
-			case UpdateInit:
-				f.serialCont(AllAlbums);
+		case UpdateInit:
+			f.serialCont(AllAlbums);
 			break;
-			case UpdateAlbum:
-				f.serial(Album);
+		case UpdateAlbum:
+			f.serial(Album);
 			break;
-			case UpdateThema:
-				f.serial(AlbumName);
-				f.serial(Thema);
+		case UpdateThema:
+			f.serial(AlbumName);
+			f.serial(Thema);
 			break;
 		}
 	}
-
 };
 
 #endif // RY_MSG_ENCYCLOPEDIA_H

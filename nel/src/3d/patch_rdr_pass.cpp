@@ -23,39 +23,34 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 CRdrTileId::CRdrTileId()
 {
-	PatchRdrPass= NULL;
-	TileMaterial= NULL;
-	_Next= NULL;
+	PatchRdrPass = NULL;
+	TileMaterial = NULL;
+	_Next = NULL;
 }
-
 
 // ***************************************************************************
 CPatchRdrPass::CPatchRdrPass()
 {
-	RefCount= 0;
+	RefCount = 0;
 
 	clearAllRenderList();
 }
 
-
 // ***************************************************************************
-void	CPatchRdrPass::clearAllRenderList()
+void CPatchRdrPass::clearAllRenderList()
 {
-	_MaxRenderedFaces= 0;
-	_Far0ListRoot= NULL;
-	_Far1ListRoot= NULL;
-	for(uint i=0;i<NL3D_MAX_TILE_PASS; i++)
+	_MaxRenderedFaces = 0;
+	_Far0ListRoot = NULL;
+	_Far1ListRoot = NULL;
+	for (uint i = 0; i < NL3D_MAX_TILE_PASS; i++)
 	{
-		_TileListRoot[i]= NULL;
+		_TileListRoot[i] = NULL;
 	}
 }
-
 
 } // NL3D

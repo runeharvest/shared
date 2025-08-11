@@ -28,12 +28,12 @@
 #include <nel/misc/common.h>
 #include <nel/misc/cmd_args.h>
 #include <nel/misc/bitmap.h>
-//#include <nel/3d/quad_tree.h>
+// #include <nel/3d/quad_tree.h>
 #include <nel/3d/zone.h>
-//#include <nel/3d/landscape.h>
-//#include <nel/3d/zone_smoother.h>
-//#include <nel/3d/zone_tgt_smoother.h>
-//#include <nel/3d/zone_corner_smoother.h>
+// #include <nel/3d/landscape.h>
+// #include <nel/3d/zone_smoother.h>
+// #include <nel/3d/zone_tgt_smoother.h>
+// #include <nel/3d/zone_corner_smoother.h>
 #include <nel/ligo/zone_region.h>
 #include <vector>
 #include <set>
@@ -364,7 +364,7 @@ bool unbuildLand()
 				float rx = zonePatches[i].Patch.Vertices[j].x - off.x;
 				float ry = zonePatches[i].Patch.Vertices[j].y - off.y;
 				if (rx <= -th || rx >= th
-					|| ry <= -th || ry >= th)
+				    || ry <= -th || ry >= th)
 					goto SkipA;
 			}
 			for (ptrdiff_t j = 0; j < 4; ++j)
@@ -375,7 +375,7 @@ bool unbuildLand()
 			}
 		SkipA:;
 		}
-		
+
 		// centerVertices(vec);
 	}
 
@@ -414,7 +414,7 @@ bool unbuildLand()
 				float rx = zonePatches[i].Patch.Vertices[j].x - off.x;
 				float ry = zonePatches[i].Patch.Vertices[j].y - off.y;
 				if (rx <= -th || rx >= th
-					|| ry <= -th || ry >= th)
+				    || ry <= -th || ry >= th)
 					goto SkipB;
 			}
 			for (ptrdiff_t j = 0; j < 4; ++j)

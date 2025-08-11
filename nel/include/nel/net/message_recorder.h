@@ -22,7 +22,7 @@
 
 #include "nel/misc/types_nl.h"
 #include "buf_net_base.h"
-//#include "callback_net_base.h"
+// #include "callback_net_base.h"
 #include "message.h"
 #include "nel/misc/time_nl.h"
 #include "nel/misc/mem_stream.h"
@@ -33,19 +33,25 @@
 
 namespace NLNET {
 
-
 class CInetHost;
 
 /// Type of network events (if changed, don't forget to change EventToString() and StringToEvent()
-enum TNetworkEvent { Sending, Receiving, Connecting, ConnFailing, Accepting, Disconnecting, Error };
-
+enum TNetworkEvent
+{
+	Sending,
+	Receiving,
+	Connecting,
+	ConnFailing,
+	Accepting,
+	Disconnecting,
+	Error
+};
 
 /// TNetworkEvent -> string
-std::string EventToString( TNetworkEvent e );
+std::string EventToString(TNetworkEvent e);
 
 /// string -> TNetworkEvent
-TNetworkEvent StringToEvent( std::string& s );
-
+TNetworkEvent StringToEvent(std::string &s);
 
 /*
  * TMessageRecord
@@ -53,50 +59,58 @@ TNetworkEvent StringToEvent( std::string& s );
 struct TMessageRecord
 {
 	/// Default constructor
-	TMessageRecord( bool input = false ) : UpdateCounter(0), SockId(InvalidSockId), Message( "", input ) {}
+	TMessageRecord(bool input = false)
+	    : UpdateCounter(0)
+	    , SockId(InvalidSockId)
+	    , Message("", input)
+	{
+	}
 
 	/// Alt. constructor
-	TMessageRecord( TNetworkEvent event, TSockId sockid, CMessage& msg, sint64 updatecounter ) :
-		UpdateCounter(updatecounter), Event(event), SockId(sockid), Message(msg) {}
+	TMessageRecord(TNetworkEvent event, TSockId sockid, CMessage &msg, sint64 updatecounter)
+	    : UpdateCounter(updatecounter)
+	    , Event(event)
+	    , SockId(sockid)
+	    , Message(msg)
+	{
+	}
 
 	/// Serial to string stream
-	void serial( NLMISC::CMemStream& stream )
+	void serial(NLMISC::CMemStream &stream)
 	{
-		nlassert( stream.stringMode() );
+		nlassert(stream.stringMode());
 
 		uint32 len = 0;
 		std::string s_event;
-		stream.serial( UpdateCounter );
-		if ( stream.isReading() )
+		stream.serial(UpdateCounter);
+		if (stream.isReading())
 		{
-			stream.serial( s_event );
-			Event = StringToEvent( s_event );
+			stream.serial(s_event);
+			Event = StringToEvent(s_event);
 			uint32 sockId = (uint32)(size_t)SockId;
-			stream.serialHex( sockId );
-			stream.serial( len );
-			stream.serialBuffer( Message.bufferToFill( len ), len );
+			stream.serialHex(sockId);
+			stream.serial(len);
+			stream.serialBuffer(Message.bufferToFill(len), len);
 		}
 		else
 		{
-			s_event = EventToString( Event );
-			stream.serial( s_event );
+			s_event = EventToString(Event);
+			stream.serial(s_event);
 			uint32 sockId;
-			stream.serialHex( sockId );
+			stream.serialHex(sockId);
 			SockId = (NLNET::TSockId)(size_t)sockId;
 			len = Message.length();
-			stream.serial( len );
-			stream.serialBuffer( const_cast<uint8*>(Message.buffer()), len ); // assumes the message contains plain text
+			stream.serial(len);
+			stream.serialBuffer(const_cast<uint8 *>(Message.buffer()), len); // assumes the message contains plain text
 		}
 	}
 
-	//NLMISC::TTime		Time;
-	sint64				UpdateCounter;
-	TNetworkEvent		Event;
-	TSockId				SockId;
-	CMessage			Message;
+	// NLMISC::TTime		Time;
+	sint64 UpdateCounter;
+	TNetworkEvent Event;
+	TSockId SockId;
+	CMessage Message;
 };
-
-
 
 /**
  * Message recorder.
@@ -110,7 +124,6 @@ struct TMessageRecord
 class CMessageRecorder
 {
 public:
-
 	/// Constructor
 	CMessageRecorder();
 
@@ -118,64 +131,60 @@ public:
 	~CMessageRecorder();
 
 	/// Start recording
-	bool	startRecord( const std::string& filename, bool recordall=true );
+	bool startRecord(const std::string &filename, bool recordall = true);
 
 	/// Add a record
-	void	recordNext( sint64 updatecounter, TNetworkEvent event, TSockId sockid, CMessage& message );
+	void recordNext(sint64 updatecounter, TNetworkEvent event, TSockId sockid, CMessage &message);
 
 	/// Stop recording
-	void	stopRecord();
+	void stopRecord();
 
 	/// Start replaying
-	bool	startReplay( const std::string& filename );
+	bool startReplay(const std::string &filename);
 
 	/// Push the received blocks for this counter into the receive queue
-	void	replayNextDataAvailable( sint64 updatecounter );
+	void replayNextDataAvailable(sint64 updatecounter);
 
 	/**
 	 * Returns the event type if the counter of the next event is updatecounter,
 	 * and skip it; otherwise return Error.
 	 */
-	TNetworkEvent	checkNextOne( sint64 updatecounter );
+	TNetworkEvent checkNextOne(sint64 updatecounter);
 
 	/// Get the first stored connection attempt corresponding to addr
-	TNetworkEvent	replayConnectionAttempt( const CInetHost& addr );
+	TNetworkEvent replayConnectionAttempt(const CInetHost &addr);
 
 	/// Stop playback
-	void	stopReplay();
+	void stopReplay();
 
 	/// Receive queue (corresponding to one update count). Use empty(), front(), pop().
-	std::queue<NLNET::TMessageRecord>	ReceivedMessages;
+	std::queue<NLNET::TMessageRecord> ReceivedMessages;
 
 protected:
-
 	/// Load the next record from the file (throws EStreamOverflow)
-	bool	loadNext( TMessageRecord& record );
+	bool loadNext(TMessageRecord &record);
 
 	/// Get the next record (from the preloaded records, or from the file)
-	bool	getNext( TMessageRecord& record, sint64 updatecounter );
+	bool getNext(TMessageRecord &record, sint64 updatecounter);
 
 private:
-
 	// Input/output file
-	std::fstream								_File;
+	std::fstream _File;
 
 	// Filename
-	std::string									_Filename;
+	std::string _Filename;
 
 	// Preloaded records
-	std::deque<TMessageRecord>					_PreloadedRecords;
+	std::deque<TMessageRecord> _PreloadedRecords;
 
 	// Connection attempts
-	std::deque<TMessageRecord>					_ConnectionAttempts;
+	std::deque<TMessageRecord> _ConnectionAttempts;
 
 	// If true, record all events including sends
-	bool										_RecordAll;
+	bool _RecordAll;
 };
 
-
 } // NLNET
-
 
 #endif // NL_MESSAGE_RECORDER_H
 

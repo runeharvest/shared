@@ -61,9 +61,9 @@ namespace MAX {
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-CSceneClass::CSceneClass(CScene *scene) : m_Scene(scene)
+CSceneClass::CSceneClass(CScene *scene)
+    : m_Scene(scene)
 {
-
 }
 
 CSceneClass::~CSceneClass()
@@ -117,7 +117,8 @@ void CSceneClass::toString(std::ostream &ostream, const std::string &pad) const
 			std::stringstream ss;
 			ss << std::hex << std::setfill('0');
 			ss << std::setw(4) << it->first;
-			ostream << "\n" << pad << "Orphan[" << i << "] 0x" << ss.str() << ": ";
+			ostream << "\n"
+			        << pad << "Orphan[" << i << "] 0x" << ss.str() << ": ";
 			it->second->toString(ostream, padpad);
 			++i;
 		}
@@ -128,7 +129,11 @@ void CSceneClass::toString(std::ostream &ostream, const std::string &pad) const
 void CSceneClass::parse(uint16 version, uint filter)
 {
 	// Cannot be parsed yet
-	if (!m_ChunksOwnsPointers) { nlerror("Already parsed"); return; } // Already parsed, illegal to call twice
+	if (!m_ChunksOwnsPointers)
+	{
+		nlerror("Already parsed");
+		return;
+	} // Already parsed, illegal to call twice
 
 	// Parse all child chunks
 	CStorageContainer::parse(version);
@@ -146,8 +151,16 @@ void CSceneClass::parse(uint16 version, uint filter)
 
 void CSceneClass::clean()
 {
-	if (m_ChunksOwnsPointers) { nldebug("Not parsed, or disowned"); return; } // Must have local ownership, parsing may have failed
-	if (m_Chunks.size() == 0 && m_OrphanedChunks.size() != 0) { nlwarning("Already cleaned"); return; } // Already cleaned, should not call twice, not reliable because not all chunks have child chunks
+	if (m_ChunksOwnsPointers)
+	{
+		nldebug("Not parsed, or disowned");
+		return;
+	} // Must have local ownership, parsing may have failed
+	if (m_Chunks.size() == 0 && m_OrphanedChunks.size() != 0)
+	{
+		nlwarning("Already cleaned");
+		return;
+	} // Already cleaned, should not call twice, not reliable because not all chunks have child chunks
 
 	// Clear unneeded references from the parent
 	m_Chunks.clear();
@@ -170,8 +183,16 @@ void CSceneClass::clean()
 void CSceneClass::build(uint16 version, uint filter)
 {
 	// Must be clean first
-	if (!m_ChunksOwnsPointers && m_Chunks.size() != 0) { nlerror("Not cleaned"); return; } // Cannot call twice, illegal call
-	if (m_Chunks.size() != 0) { nldebug("Not parsed, or disowned"); return; } // Don't have local ownership, parsing may have failed, the built version is implicitly up to date
+	if (!m_ChunksOwnsPointers && m_Chunks.size() != 0)
+	{
+		nlerror("Not cleaned");
+		return;
+	} // Cannot call twice, illegal call
+	if (m_Chunks.size() != 0)
+	{
+		nldebug("Not parsed, or disowned");
+		return;
+	} // Don't have local ownership, parsing may have failed, the built version is implicitly up to date
 
 	// Store orphan chunks
 	m_Chunks.insert(m_Chunks.end(), m_OrphanedChunks.begin(), m_OrphanedChunks.end());
@@ -190,7 +211,11 @@ void CSceneClass::build(uint16 version, uint filter)
 void CSceneClass::disown()
 {
 	if (m_ChunksOwnsPointers) { nldebug("Not parsed"); }
-	if (!m_ChunksOwnsPointers && (m_Chunks.size() < m_OrphanedChunks.size())) { nlerror("Not built"); return; } // If chunks is not the owner, built chunks must match the parsed data. This check is not fully reliable
+	if (!m_ChunksOwnsPointers && (m_Chunks.size() < m_OrphanedChunks.size()))
+	{
+		nlerror("Not built");
+		return;
+	} // If chunks is not the owner, built chunks must match the parsed data. This check is not fully reliable
 
 	// Clear local references
 	m_OrphanedChunks.clear();

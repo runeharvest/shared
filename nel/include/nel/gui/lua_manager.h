@@ -22,63 +22,61 @@
 
 #include "nel/misc/smart_ptr.h"
 
-namespace NLGUI
+namespace NLGUI {
+class CLuaState;
+
+/**
+ Lua Manager
+
+ Provides a single global access point to the Lua state, and related stuff. :(
+ */
+class CLuaManager
 {
-	class CLuaState;
+public:
+	/// Get or create singleton
+	static CLuaManager &getInstance()
+	{
+		if (instance == NULL)
+		{
+			instance = new CLuaManager();
+		}
+		return *instance;
+	}
+
+	/// Release singleton
+	static void releaseInstance();
+
+	/// Enables attaching the Lua debugger in the CLuaState instance, only matters on startup.
+	static void enableLuaDebugging() { debugLua = true; }
+
+	/// Returns the Lua state.
+	NLGUI::CLuaState *getLuaState() const { return luaState; }
 
 	/**
-	 Lua Manager
-
-	 Provides a single global access point to the Lua state, and related stuff. :(
+	 Executes a Lua script
+	 @param luaScript   -  the script we want to execute ( the actual script, not the filename! )
+	 @param smallScript -  true if the script is very small, so it can be cached for the possible next execution.
 	 */
-	class CLuaManager
-	{
-	public:
+	bool executeLuaScript(const std::string &luaScript, bool smallScript = false);
 
-		/// Get or create singleton
-		static CLuaManager& getInstance()
-		{
-			if( instance == NULL )
-			{
-				instance = new CLuaManager();
-			}
-			return *instance;
-		}
+	/// Resets the Lua state, that is deallocates it and allocates a new one.
+	void ResetLuaState();
 
-		/// Release singleton
-		static void releaseInstance();
+	/// Forces the Garbage Collector to run.
+	void forceGarbageCollect();
 
-		/// Enables attaching the Lua debugger in the CLuaState instance, only matters on startup.
-		static void enableLuaDebugging(){ debugLua = true;	}
+	static void setEditorMode(bool b) { editorMode = b; }
 
-		/// Returns the Lua state.
-		NLGUI::CLuaState* getLuaState() const{ return luaState; }
+private:
+	CLuaManager();
+	~CLuaManager();
 
-		/**
-		 Executes a Lua script
-		 @param luaScript   -  the script we want to execute ( the actual script, not the filename! )
-		 @param smallScript -  true if the script is very small, so it can be cached for the possible next execution.
-		 */
-		bool executeLuaScript( const std::string &luaScript, bool smallScript = false );
+	static CLuaManager *instance;
+	static bool debugLua;
+	static bool editorMode;
 
-		/// Resets the Lua state, that is deallocates it and allocates a new one.
-		void ResetLuaState();
-
-		/// Forces the Garbage Collector to run.
-		void forceGarbageCollect();
-
-		static void setEditorMode( bool b ){ editorMode = b; }
-
-	private:
-		CLuaManager();
-		~CLuaManager();
-
-		static CLuaManager *instance;
-		static bool debugLua;
-		static bool editorMode;
-
-		NLGUI::CLuaState *luaState;
-	};
+	NLGUI::CLuaState *luaState;
+};
 
 }
 

@@ -22,8 +22,7 @@
 #include "nel/misc/o_xml.h"
 #include "nel/misc/i_xml.h"
 
-namespace NLLOGIC
-{
+namespace NLLOGIC {
 
 class CLogicStateMachine;
 class CLogicConditionNode;
@@ -38,10 +37,9 @@ class CLogicConditionNode;
 class CLogicComparisonBlock
 {
 	/// state machine managing this comparison block
-	CLogicStateMachine * _LogicStateMachine;
+	CLogicStateMachine *_LogicStateMachine;
 
 public:
-
 	/// variable name
 	std::string VariableName;
 
@@ -67,7 +65,7 @@ public:
 	 *
 	 * \param logicStateMachine is the state machine containing this block
 	 */
-	void setLogicStateMachine( CLogicStateMachine * logicStateMachine );
+	void setLogicStateMachine(CLogicStateMachine *logicStateMachine);
 
 	/**
 	 *	Test the condition
@@ -79,15 +77,11 @@ public:
 	/**
 	 * serial
 	 */
-	//void serial(NLMISC::IStream &f);
+	// void serial(NLMISC::IStream &f);
 
-	void write (xmlNodePtr node) const;
-	void read (xmlNodePtr node);
+	void write(xmlNodePtr node) const;
+	void read(xmlNodePtr node);
 };
-
-
-
-
 
 /**
  * CLogicConditionLogicBlock
@@ -99,10 +93,9 @@ public:
 class CLogicConditionLogicBlock
 {
 	/// state machine managing this logic block
-	CLogicStateMachine * _LogicStateMachine;
+	CLogicStateMachine *_LogicStateMachine;
 
 public:
-
 	/// all condition logic block types
 	enum TLogicConditionLogicBlockType
 	{
@@ -141,7 +134,7 @@ public:
 	 *
 	 * \param logicStateMachine is the state machine containing this block
 	 */
-	void setLogicStateMachine( CLogicStateMachine * logicStateMachine );
+	void setLogicStateMachine(CLogicStateMachine *logicStateMachine);
 
 	/**
 	 *	Test the condition
@@ -155,18 +148,16 @@ public:
 	 *
 	 * \param condVars a set to store the variable names
 	 */
-	void fillVarSet( std::set<std::string>& condVars );
+	void fillVarSet(std::set<std::string> &condVars);
 
 	/**
 	 * serial
 	 */
-	//void serial(NLMISC::IStream &f);
+	// void serial(NLMISC::IStream &f);
 
-	void write (xmlNodePtr node) const;
-	void read (xmlNodePtr node);
+	void write(xmlNodePtr node) const;
+	void read(xmlNodePtr node);
 };
-
-
 
 /**
  * CLogicConditionNode
@@ -178,10 +169,9 @@ public:
 class CLogicConditionNode
 {
 	/// state machine managing this logic block
-	CLogicStateMachine * _LogicStateMachine;
+	CLogicStateMachine *_LogicStateMachine;
 
 public:
-
 	/// all condition node types
 	enum TConditionNodeType
 	{
@@ -213,14 +203,14 @@ public:
 	 *
 	 * \param logicStateMachine is the state machine containing this block
 	 */
-	void setLogicStateMachine( CLogicStateMachine * logicStateMachine );
+	void setLogicStateMachine(CLogicStateMachine *logicStateMachine);
 
 	/**
 	 * add a node in the subtree
 	 *
 	 * \param node is the new node to add
 	 */
-	void addNode( CLogicConditionNode * node );
+	void addNode(CLogicConditionNode *node);
 
 	/**
 	 *	Test the condition
@@ -234,24 +224,21 @@ public:
 	 *
 	 * \param condVars is a set to store the variable names
 	 */
-	void fillVarSet( std::set<std::string>& condVars );
+	void fillVarSet(std::set<std::string> &condVars);
 
 	/**
 	 * serial
 	 */
-	//void serial(NLMISC::IStream &f);
+	// void serial(NLMISC::IStream &f);
 
 	/**
 	 * Destructor
 	 */
 	~CLogicConditionNode();
 
-	void write (xmlNodePtr node) const;
-	void read (xmlNodePtr node);
+	void write(xmlNodePtr node) const;
+	void read(xmlNodePtr node);
 };
-
-
-
 
 /**
  * CLogicCondition
@@ -266,7 +253,6 @@ class CLogicCondition
 	std::string _ConditionName;
 
 public:
-
 	/// condition tree
 	std::vector<CLogicConditionNode> Nodes;
 
@@ -283,28 +269,28 @@ public:
 	 *
 	 * \param logicStateMachine is the state machine containing this block
 	 */
-	void setLogicStateMachine( CLogicStateMachine * logicStateMachine );
+	void setLogicStateMachine(CLogicStateMachine *logicStateMachine);
 
 	/**
 	 *	Set the condition's name
 	 *
 	 * \param name is the condition's name
 	 */
-	void setName( std::string name ) { _ConditionName = name; }
+	void setName(std::string name) { _ConditionName = name; }
 
 	/**
 	 *	Get the condition's name
 	 *
 	 * \return the condition's name
 	 */
-	std::string getName() const {	return _ConditionName; }
+	std::string getName() const { return _ConditionName; }
 
 	/**
 	 *	Add a condition node
 	 *
 	 * \param node is the new node to add
 	 */
-	void addNode( CLogicConditionNode node ) { Nodes.push_back( node ); }
+	void addNode(CLogicConditionNode node) { Nodes.push_back(node); }
 
 	/**
 	 *	Test the condition
@@ -318,20 +304,17 @@ public:
 	 *
 	 * \param condVars is a set to store the variable names
 	 */
-	void fillVarSet( std::set<std::string>& condVars );
+	void fillVarSet(std::set<std::string> &condVars);
 
 	/**
 	 * serial
 	 */
-	//void serial(NLMISC::IStream &f);
+	// void serial(NLMISC::IStream &f);
 
-	void write (xmlNodePtr node) const;
-	void read (xmlNodePtr node);
+	void write(xmlNodePtr node) const;
+	void read(xmlNodePtr node);
 };
 
 } // NLLOGIC
 
-#endif //LOGIC_CONDITION
-
-
-
+#endif // LOGIC_CONDITION

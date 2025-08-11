@@ -38,7 +38,7 @@
 // Project includes
 
 namespace NLSOUND {
-	class CGroupControllerRoot;
+class CGroupControllerRoot;
 
 /**
  * \brief CGroupController
@@ -54,10 +54,10 @@ public:
 private:
 	CGroupController *m_Parent;
 	std::map<std::string, CGroupController *> m_Children;
-	
+
 	/// Gain as set by the interface
 	float m_Gain;
-	
+
 	/// Gain including parent gain
 	float m_FinalGain;
 
@@ -69,17 +69,25 @@ public:
 
 	/// \name UGroupController
 	//@{
-	virtual void setGain(float gain) { NLMISC::clamp(gain, 0.0f, 1.0f); if (m_Gain != gain) { m_Gain = gain; updateSourceGain(); } }
+	virtual void setGain(float gain)
+	{
+		NLMISC::clamp(gain, 0.0f, 1.0f);
+		if (m_Gain != gain)
+		{
+			m_Gain = gain;
+			updateSourceGain();
+		}
+	}
 	virtual float getGain() { return m_Gain; }
 	//@}
-	
+
 	inline float getFinalGain() const { return m_FinalGain; }
-	
+
 	void addSource(CSourceCommon *source);
 	void removeSource(CSourceCommon *source);
-	
+
 	virtual std::string getPath();
-	
+
 protected:
 	virtual ~CGroupController(); // subnodes can only be deleted by the root
 

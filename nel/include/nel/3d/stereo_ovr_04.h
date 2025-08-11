@@ -21,12 +21,12 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-// 
+//
 // Linking this library statically or dynamically with other modules
 // is making a combined work based on this library.  Thus, the terms
 // and conditions of the GNU General Public License cover the whole
 // combination.
-// 
+//
 // As a special exception, the copyright holders of this library give
 // you permission to link this library with the Oculus SDK to produce
 // an executable, regardless of the license terms of the Oculus SDK,
@@ -113,13 +113,13 @@ public:
 	virtual void getCurrentMatrix(uint cid, NL3D::UCamera *camera) const;
 
 	/// At the start of a new render target
-	virtual bool wantClear();		
+	virtual bool wantClear();
 	/// The 3D scene
 	virtual bool wantScene();
 	/// Scene post processing effects
 	virtual bool wantSceneEffects();
 	/// Interface within the 3D scene
-	virtual bool wantInterface3D();	
+	virtual bool wantInterface3D();
 	/// 2D Interface
 	virtual bool wantInterface2D();
 
@@ -132,7 +132,6 @@ public:
 	virtual bool beginRenderTarget();
 	/// Returns true if a render target was fully drawn, always false if not using render targets
 	virtual bool endRenderTarget();
-
 
 	/// Get the HMD orientation
 	virtual NLMISC::CQuat getOrientation() const;

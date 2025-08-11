@@ -28,30 +28,31 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace  NLSOUND
-{
+namespace NLSOUND {
 
 signed char F_CALLBACKAPI streamEndCallBack(
-	FSOUND_STREAM *stream,
-	void * /* buff */,
-	int /* len */,
-	void *userdata
-	)
+    FSOUND_STREAM *stream,
+    void * /* buff */,
+    int /* len */,
+    void *userdata)
 {
 	// Avoid any problem, check that the sound driver is still allocated
 	if (!CSoundDriverFMod::getInstance()) return false;
 
 	// mark this fader as music ended
 	CSoundDriverFMod::getInstance()->markMusicChannelEnded(stream, static_cast<CMusicChannelFMod *>(userdata));
-	
+
 	return true;
 }
 
-CMusicChannelFMod::CMusicChannelFMod(CSoundDriverFMod *soundDriver) 
-: _Gain(1.0f), _MusicStream(NULL), _MusicBuffer(NULL), 
-_MusicChannel(-1), _CallBackEnded(false), _SoundDriver(soundDriver)
+CMusicChannelFMod::CMusicChannelFMod(CSoundDriverFMod *soundDriver)
+    : _Gain(1.0f)
+    , _MusicStream(NULL)
+    , _MusicBuffer(NULL)
+    , _MusicChannel(-1)
+    , _CallBackEnded(false)
+    , _SoundDriver(soundDriver)
 {
-	
 }
 
 CMusicChannelFMod::~CMusicChannelFMod()
@@ -61,18 +62,18 @@ CMusicChannelFMod::~CMusicChannelFMod()
 }
 
 /// Play async, if bnp give path of bnp and position and size of file inside, else just path to file with fileSize 0.
-bool CMusicChannelFMod::playAsync(const std::string &filepath, bool loop, uint fileOffset , uint fileSize)
+bool CMusicChannelFMod::playAsync(const std::string &filepath, bool loop, uint fileOffset, uint fileSize)
 {
 	nlassert(!_MusicBuffer);
 
 	// open fmod stream async
 	_MusicStream = FSOUND_Stream_Open((const char *)filepath.c_str(),
-		FSOUND_2D | ( loop ? FSOUND_LOOP_NORMAL : FSOUND_LOOP_OFF) | FSOUND_NONBLOCKING, fileOffset, fileSize);
+	    FSOUND_2D | (loop ? FSOUND_LOOP_NORMAL : FSOUND_LOOP_OFF) | FSOUND_NONBLOCKING, fileOffset, fileSize);
 	nlassert(_MusicStream);
-	
+
 	// with FSOUND_NONBLOCKING, the file is surely not ready, but still try now (will retry to replay at each updateMusic())
 	playStream();
-	
+
 	nlassert(!_MusicBuffer);
 	return true;
 }
@@ -87,34 +88,45 @@ bool CMusicChannelFMod::playSync(const std::string &filepath, bool loop)
 
 	// try to load the music in memory
 	uint32 fs = ifile.getFileSize();
-	if (!fs) { nlwarning("NLSOUND FMod Driver: Empty music file"); return false; }
-	
+	if (!fs)
+	{
+		nlwarning("NLSOUND FMod Driver: Empty music file");
+		return false;
+	}
+
 	// read Buffer
 	nlassert(!_MusicBuffer);
 	_MusicBuffer = new uint8[fs];
-	try { ifile.serialBuffer(_MusicBuffer, fs); }
-	catch (...) 
-	{ 
-		nlwarning("NLSOUND FMod Driver: Error while reading music file"); 
-		delete[] _MusicBuffer; _MusicBuffer = NULL; 
-		return false; 
+	try
+	{
+		ifile.serialBuffer(_MusicBuffer, fs);
+	}
+	catch (...)
+	{
+		nlwarning("NLSOUND FMod Driver: Error while reading music file");
+		delete[] _MusicBuffer;
+		_MusicBuffer = NULL;
+		return false;
 	}
 
 	// open FMOD stream
-	_MusicStream = FSOUND_Stream_Open((const char*)_MusicBuffer,
-		FSOUND_2D | FSOUND_LOADMEMORY | (loop ? FSOUND_LOOP_NORMAL : FSOUND_LOOP_OFF), 0, fs);
+	_MusicStream = FSOUND_Stream_Open((const char *)_MusicBuffer,
+	    FSOUND_2D | FSOUND_LOADMEMORY | (loop ? FSOUND_LOOP_NORMAL : FSOUND_LOOP_OFF), 0, fs);
 	if (!_MusicStream)
-	{ 
-		nlwarning("NLSOUND FMod Driver: Error while creating the FMOD stream for music file"); 
-		delete[] _MusicBuffer; _MusicBuffer = NULL; 
-		return false; 
+	{
+		nlwarning("NLSOUND FMod Driver: Error while creating the FMOD stream for music file");
+		delete[] _MusicBuffer;
+		_MusicBuffer = NULL;
+		return false;
 	}
 
 	if (!playStream())
 	{
-		nlwarning("NLSOUND FMod Driver: Error While trying to play sync music file"); 
-		FSOUND_Stream_Close(_MusicStream); _MusicStream = NULL; 
-		delete[] _MusicBuffer; _MusicBuffer = NULL; 
+		nlwarning("NLSOUND FMod Driver: Error While trying to play sync music file");
+		FSOUND_Stream_Close(_MusicStream);
+		_MusicStream = NULL;
+		delete[] _MusicBuffer;
+		_MusicBuffer = NULL;
 		return false;
 	}
 
@@ -126,7 +138,8 @@ bool CMusicChannelFMod::playStream()
 	if (FSOUND_Stream_GetOpenState(_MusicStream) == -3)
 	{
 		nlwarning("NLSOUND FMod Driver: stream failed to open. (file not found, out of memory or other error)");
-		FSOUND_Stream_Close(_MusicStream); _MusicStream = NULL; 
+		FSOUND_Stream_Close(_MusicStream);
+		_MusicStream = NULL;
 		return false;
 	}
 
@@ -163,12 +176,12 @@ void CMusicChannelFMod::update()
 
 void CMusicChannelFMod::updateWaitingForClose()
 {
-	std::list<FSOUND_STREAM*>::iterator	it= _WaitingForClose.begin();
+	std::list<FSOUND_STREAM *>::iterator it = _WaitingForClose.begin();
 	while (it != _WaitingForClose.end())
 	{
 		// try to stop, will fail if still loading
 		bool ok = FSOUND_Stream_Stop(*it) != 0;
-		if (ok) ok = FSOUND_Stream_Close(*it) !=0;
+		if (ok) ok = FSOUND_Stream_Close(*it) != 0;
 		// erase from list, or next
 		if (ok) it = _WaitingForClose.erase(it);
 		else ++it;
@@ -185,7 +198,7 @@ void CMusicChannelFMod::markMusicChannelEnded(void *stream)
  *	NB: if an old music was played, it is first stop with stopMusic()
  *	\param filepath file path, CPath::lookup is done here
  *  \param async stream music from hard disk, preload in memory if false
- *	\param loop must be true to play the music in loop. 
+ *	\param loop must be true to play the music in loop.
  */
 bool CMusicChannelFMod::play(const std::string &filepath, bool async, bool loop)
 {
@@ -287,7 +300,7 @@ bool CMusicChannelFMod::isEnded()
 			return true;
 
 		// NB: the preceding code don't work with .ogg vorbis encoded mp3. Thus test also the end with a callback
-		if(_CallBackEnded)
+		if (_CallBackEnded)
 			return true;
 	}
 	// if playing, but not starting because of async, not ended (because not even really started)

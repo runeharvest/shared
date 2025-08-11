@@ -14,23 +14,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "range_weapon_type.h"
 //
 #include "nel/misc/string_conversion.h"
 
-namespace RANGE_WEAPON_TYPE
-{
+namespace RANGE_WEAPON_TYPE {
 
-NL_BEGIN_STRING_CONVERSION_TABLE (TRangeWeaponType)
-	NL_STRING_CONVERSION_TABLE_ENTRY (Generic)
-	NL_STRING_CONVERSION_TABLE_ENTRY (Gatlin)
-	NL_STRING_CONVERSION_TABLE_ENTRY (Missile)
+NL_BEGIN_STRING_CONVERSION_TABLE(TRangeWeaponType)
+NL_STRING_CONVERSION_TABLE_ENTRY(Generic)
+NL_STRING_CONVERSION_TABLE_ENTRY(Gatlin)
+NL_STRING_CONVERSION_TABLE_ENTRY(Missile)
 NL_END_STRING_CONVERSION_TABLE(TRangeWeaponType, RangeWeaponTypeConversion, Unknown)
-
-
 
 // *********************************************************************************
 TRangeWeaponType stringToRangeWeaponType(const std::string &str)

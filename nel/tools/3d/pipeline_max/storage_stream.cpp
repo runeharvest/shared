@@ -47,14 +47,18 @@
 namespace PIPELINE {
 namespace MAX {
 
-CStorageStream::CStorageStream(GsfInput *input) : NLMISC::IStream(true), m_Input(input), m_Output(NULL)
+CStorageStream::CStorageStream(GsfInput *input)
+    : NLMISC::IStream(true)
+    , m_Input(input)
+    , m_Output(NULL)
 {
-
 }
 
-CStorageStream::CStorageStream(GsfOutput *output) : NLMISC::IStream(false), m_Input(NULL), m_Output(output)
+CStorageStream::CStorageStream(GsfOutput *output)
+    : NLMISC::IStream(false)
+    , m_Input(NULL)
+    , m_Output(output)
 {
-
 }
 
 CStorageStream::~CStorageStream()

@@ -31,41 +31,41 @@
 #include <typeinfo>
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
 namespace NLMISC {
 
-CWinThread MainThread ((void*)GetCurrentThread (), GetCurrentThreadId());
+CWinThread MainThread((void *)GetCurrentThread(), GetCurrentThreadId());
 DWORD TLSThreadPointer = 0xFFFFFFFF;
 
 // the IThread static creator
-IThread *IThread::create (IRunnable *runnable, uint32 stackSize)
+IThread *IThread::create(IRunnable *runnable, uint32 stackSize)
 {
-	return new CWinThread (runnable, stackSize);
+	return new CWinThread(runnable, stackSize);
 }
 
-IThread *IThread::getCurrentThread ()
+IThread *IThread::getCurrentThread()
 {
 	// TLS alloc must have been done
-	nlassert (TLSThreadPointer != 0xffffffff);
+	nlassert(TLSThreadPointer != 0xffffffff);
 
 	// Get the thread pointer
-	IThread *thread = (IThread*)TlsGetValue (TLSThreadPointer);
+	IThread *thread = (IThread *)TlsGetValue(TLSThreadPointer);
 
 	// Return current thread
 	return thread;
 }
 
-static unsigned long __stdcall ProxyFunc (void *arg)
+static unsigned long __stdcall ProxyFunc(void *arg)
 {
-	CWinThread *parent = (CWinThread *) arg;
+	CWinThread *parent = (CWinThread *)arg;
 
 	// TLS alloc must have been done
-	nlassert (TLSThreadPointer != 0xffffffff);
+	nlassert(TLSThreadPointer != 0xffffffff);
 
 	// Set the thread pointer in TLS memory
-	nlverify (TlsSetValue (TLSThreadPointer, (void*)parent) != 0);
+	nlverify(TlsSetValue(TLSThreadPointer, (void *)parent) != 0);
 
 	// Attach exception handler
 	attachExceptionHandler();
@@ -76,7 +76,7 @@ static unsigned long __stdcall ProxyFunc (void *arg)
 	return 0;
 }
 
-CWinThread::CWinThread (IRunnable *runnable, uint32 stackSize)
+CWinThread::CWinThread(IRunnable *runnable, uint32 stackSize)
 {
 	_StackSize = stackSize;
 	this->Runnable = runnable;
@@ -90,6 +90,7 @@ class CWinCriticalSection
 {
 private:
 	CRITICAL_SECTION cs;
+
 public:
 	CWinCriticalSection() { InitializeCriticalSection(&cs); }
 	~CWinCriticalSection() { DeleteCriticalSection(&cs); }
@@ -97,9 +98,9 @@ public:
 	inline void leave() { LeaveCriticalSection(&cs); }
 };
 CWinCriticalSection s_CS;
-}/* anonymous namespace */
+} /* anonymous namespace */
 
-CWinThread::CWinThread (void* threadHandle, uint32 threadId)
+CWinThread::CWinThread(void *threadHandle, uint32 threadId)
 {
 	// Main thread
 	_MainThread = true;
@@ -108,22 +109,22 @@ CWinThread::CWinThread (void* threadHandle, uint32 threadId)
 	ThreadId = threadId;
 
 	// TLS alloc must have been done
-	TLSThreadPointer = TlsAlloc ();
-	nlassert (TLSThreadPointer!=0xffffffff);
+	TLSThreadPointer = TlsAlloc();
+	nlassert(TLSThreadPointer != 0xffffffff);
 
 	// Set the thread pointer in TLS memory
-	nlverify (TlsSetValue (TLSThreadPointer, (void*)this) != 0);
+	nlverify(TlsSetValue(TLSThreadPointer, (void *)this) != 0);
 
 	if (GetCurrentThreadId() == threadId)
 	{
 		_SuspendCount = 0; // is calling thread call this itself, well, if we reach this place
-						   // there are chances that it is not suspended ...
+		                   // there are chances that it is not suspended ...
 	}
 	else
 	{
 		// initialized from another thread (very unlikely ...)
 		nlassert(0); // WARNING: following code has not tested! don't know if it work fo real ...
-					 // This is just a suggestion of a possible solution, should this situation one day occur ...
+		             // This is just a suggestion of a possible solution, should this situation one day occur ...
 		// Ensure that this thread don't get deleted, or we could suspend the main thread
 		s_CS.enter();
 		// the 2 following statement must be executed atomicaly among the threads of the current process !
@@ -133,14 +134,13 @@ CWinThread::CWinThread (void* threadHandle, uint32 threadId)
 	}
 }
 
-
 void CWinThread::incSuspendCount()
 {
 	nlassert(ThreadHandle); // start was not called !!
 	int newSuspendCount = ::SuspendThread(ThreadHandle) + 1;
 	nlassert(newSuspendCount != 0xffffffff); // more infos with 'GetLastError'
 	nlassert(newSuspendCount == _SuspendCount + 1); // is this assert fire , then 'SuspendThread' or 'ResumeThread'
-													// have been called outside of this object interface! (on this thread handle ...)
+	                                                // have been called outside of this object interface! (on this thread handle ...)
 	_SuspendCount = newSuspendCount;
 }
 
@@ -151,7 +151,7 @@ void CWinThread::decSuspendCount()
 	int newSuspendCount = ::ResumeThread(ThreadHandle) - 1;
 	nlassert(newSuspendCount != 0xffffffff); // more infos with 'GetLastError'
 	nlassert(newSuspendCount == _SuspendCount - 1); // is this assert fire , then 'SuspendThread' or 'ResumeThread'
-													// have been called outside of this object interface! (on this thread handle ...)
+	                                                // have been called outside of this object interface! (on this thread handle ...)
 	_SuspendCount = newSuspendCount;
 }
 
@@ -184,15 +184,14 @@ void CWinThread::enablePriorityBoost(bool enabled)
 	SetThreadPriorityBoost(ThreadHandle, enabled ? TRUE : FALSE);
 }
 
-
-CWinThread::~CWinThread ()
+CWinThread::~CWinThread()
 {
 	// If not the main thread
 	if (_MainThread)
 	{
 		// Free TLS memory
-		nlassert (TLSThreadPointer!=0xffffffff);
-		TlsFree (TLSThreadPointer);
+		nlassert(TLSThreadPointer != 0xffffffff);
+		TlsFree(TLSThreadPointer);
 	}
 	else
 	{
@@ -200,20 +199,20 @@ CWinThread::~CWinThread ()
 	}
 }
 
-void CWinThread::start ()
+void CWinThread::start()
 {
 	if (isRunning())
-		throw EThread("Starting a thread that is already started, existing thread will continue running, this should not happen");	
+		throw EThread("Starting a thread that is already started, existing thread will continue running, this should not happen");
 
-//	ThreadHandle = (void *) ::CreateThread (NULL, _StackSize, ProxyFunc, this, 0, (DWORD *)&ThreadId);
-	ThreadHandle = (void *) ::CreateThread (NULL, 0, ProxyFunc, this, 0, (DWORD *)&ThreadId);
-//	nldebug("NLMISC: thread %x started for runnable '%x'", typeid( Runnable ).name());
-//	OutputDebugString(toString(NL_LOC_MSG " NLMISC: thread %x started for runnable '%s'\n", ThreadId, typeid( *Runnable ).name()).c_str());
+	//	ThreadHandle = (void *) ::CreateThread (NULL, _StackSize, ProxyFunc, this, 0, (DWORD *)&ThreadId);
+	ThreadHandle = (void *)::CreateThread(NULL, 0, ProxyFunc, this, 0, (DWORD *)&ThreadId);
+	//	nldebug("NLMISC: thread %x started for runnable '%x'", typeid( Runnable ).name());
+	//	OutputDebugString(toString(NL_LOC_MSG " NLMISC: thread %x started for runnable '%s'\n", ThreadId, typeid( *Runnable ).name()).c_str());
 	if (ThreadHandle == NULL)
 	{
-		throw EThread ( "Cannot create new thread" );
+		throw EThread("Cannot create new thread");
 	}
-	SetThreadPriorityBoost (ThreadHandle, TRUE); // FALSE == Enable Priority Boost
+	SetThreadPriorityBoost(ThreadHandle, TRUE); // FALSE == Enable Priority Boost
 
 	_SuspendCount = 0;
 }
@@ -230,8 +229,7 @@ bool CWinThread::isRunning()
 	return exitCode == STILL_ACTIVE;
 }
 
-
-void CWinThread::terminate ()
+void CWinThread::terminate()
 {
 	TerminateThread((HANDLE)ThreadHandle, 0);
 	CloseHandle((HANDLE)ThreadHandle);
@@ -239,7 +237,7 @@ void CWinThread::terminate ()
 	_SuspendCount = -1;
 }
 
-void CWinThread::wait ()
+void CWinThread::wait()
 {
 	if (ThreadHandle == NULL) return;
 
@@ -256,7 +254,7 @@ bool CWinThread::setCPUMask(uint64 cpuMask)
 		return false;
 
 	// Ask the system for number of processor available for this process
-	return SetThreadAffinityMask ((HANDLE)ThreadHandle, (DWORD_PTR)cpuMask) != 0;
+	return SetThreadAffinityMask((HANDLE)ThreadHandle, (DWORD_PTR)cpuMask) != 0;
 }
 
 uint64 CWinThread::getCPUMask()
@@ -266,16 +264,16 @@ uint64 CWinThread::getCPUMask()
 		return 1;
 
 	// Get the current process mask
-	uint64 mask=IProcess::getCurrentProcess ()->getCPUMask ();
+	uint64 mask = IProcess::getCurrentProcess()->getCPUMask();
 
 	// Get thread affinity mask
-	DWORD_PTR old = SetThreadAffinityMask ((HANDLE)ThreadHandle, (DWORD_PTR)mask);
-	nlassert (old != 0);
+	DWORD_PTR old = SetThreadAffinityMask((HANDLE)ThreadHandle, (DWORD_PTR)mask);
+	nlassert(old != 0);
 	if (old == 0)
 		return 1;
 
 	// Reset it
-	SetThreadAffinityMask ((HANDLE)ThreadHandle, old);
+	SetThreadAffinityMask((HANDLE)ThreadHandle, old);
 
 	// Return the mask
 	return (uint64)old;
@@ -285,22 +283,22 @@ std::string CWinThread::getUserName()
 {
 	wchar_t userName[512];
 	DWORD size = 512;
-	GetUserNameW (userName, &size);
+	GetUserNameW(userName, &size);
 	return wideToUtf8(userName);
 }
 
 // **** Process
 
 // The current process
-CWinProcess CurrentProcess ((void*)GetCurrentProcess());
+CWinProcess CurrentProcess((void *)GetCurrentProcess());
 
 // Get the current process
-IProcess *IProcess::getCurrentProcess ()
+IProcess *IProcess::getCurrentProcess()
 {
 	return &CurrentProcess;
 }
 
-CWinProcess::CWinProcess (void *handle)
+CWinProcess::CWinProcess(void *handle)
 {
 	// Get the current process handle
 	_ProcessHandle = handle;
@@ -323,8 +321,8 @@ uint64 CWinProcess::getCPUMask()
 bool CWinProcess::setCPUMask(uint64 mask)
 {
 	// Ask the system for number of processor available for this process
-	DWORD_PTR processAffinityMask= (DWORD_PTR)mask;
-	return SetProcessAffinityMask((HANDLE)_ProcessHandle, processAffinityMask)!=0;
+	DWORD_PTR processAffinityMask = (DWORD_PTR)mask;
+	return SetProcessAffinityMask((HANDLE)_ProcessHandle, processAffinityMask) != 0;
 }
 
 // ****************************************************************************************************************
@@ -338,29 +336,31 @@ bool CWinProcess::setCPUMask(uint64 mask)
 class CPSAPILib
 {
 public:
-	typedef BOOL  (WINAPI *EnumProcessesFunPtr)(DWORD *lpidProcess, DWORD cb, DWORD *cbNeeded);
-	typedef DWORD (WINAPI *GetModuleFileNameExWFunPtr)(HANDLE hProcess, HMODULE hModule, LPWSTR lpFilename, DWORD nSize);
-	typedef BOOL  (WINAPI *EnumProcessModulesFunPtr)(HANDLE hProcess, HMODULE *lphModule, DWORD cb, LPDWORD lpcbNeeded);
-	EnumProcessesFunPtr		  EnumProcesses;
+	typedef BOOL(WINAPI *EnumProcessesFunPtr)(DWORD *lpidProcess, DWORD cb, DWORD *cbNeeded);
+	typedef DWORD(WINAPI *GetModuleFileNameExWFunPtr)(HANDLE hProcess, HMODULE hModule, LPWSTR lpFilename, DWORD nSize);
+	typedef BOOL(WINAPI *EnumProcessModulesFunPtr)(HANDLE hProcess, HMODULE *lphModule, DWORD cb, LPDWORD lpcbNeeded);
+	EnumProcessesFunPtr EnumProcesses;
 	GetModuleFileNameExWFunPtr GetModuleFileNameExW;
-	EnumProcessModulesFunPtr  EnumProcessModules;
+	EnumProcessModulesFunPtr EnumProcessModules;
+
 public:
 	CPSAPILib();
 	~CPSAPILib();
 	bool init();
+
 private:
 	HINSTANCE _PSAPILibHandle;
-	bool	  _LoadFailed;
+	bool _LoadFailed;
 };
 
 // ****************************************************************************************************************
 CPSAPILib::CPSAPILib()
 {
 	_LoadFailed = false;
-	_PSAPILibHandle     = NULL;
-	EnumProcesses       = NULL;
+	_PSAPILibHandle = NULL;
+	EnumProcesses = NULL;
 	GetModuleFileNameExW = NULL;
-	EnumProcessModules  = NULL;
+	EnumProcessModules = NULL;
 }
 
 // ****************************************************************************************************************
@@ -386,13 +386,10 @@ bool CPSAPILib::init()
 			_LoadFailed = true;
 			return false;
 		}
-		EnumProcesses		= (EnumProcessesFunPtr)		  GetProcAddress(_PSAPILibHandle, "EnumProcesses");
-		GetModuleFileNameExW = (GetModuleFileNameExWFunPtr) GetProcAddress(_PSAPILibHandle, "GetModuleFileNameExW");
-		EnumProcessModules  = (EnumProcessModulesFunPtr)  GetProcAddress(_PSAPILibHandle, "EnumProcessModules");
-		if (!EnumProcesses ||
-			!GetModuleFileNameExW ||
-			!EnumProcessModules
-		   )
+		EnumProcesses = (EnumProcessesFunPtr)GetProcAddress(_PSAPILibHandle, "EnumProcesses");
+		GetModuleFileNameExW = (GetModuleFileNameExWFunPtr)GetProcAddress(_PSAPILibHandle, "GetModuleFileNameExW");
+		EnumProcessModules = (EnumProcessModulesFunPtr)GetProcAddress(_PSAPILibHandle, "EnumProcessModules");
+		if (!EnumProcesses || !GetModuleFileNameExW || !EnumProcessModules)
 		{
 			nlwarning("Failed to import functions from psapi.dll!");
 			_LoadFailed = true;
@@ -402,10 +399,7 @@ bool CPSAPILib::init()
 	return true;
 }
 
-
 static CPSAPILib PSAPILib;
-
-
 
 // ****************************************************************************************************************
 bool CWinProcess::enumProcessesId(std::vector<uint32> &processesId)
@@ -416,7 +410,7 @@ bool CWinProcess::enumProcessesId(std::vector<uint32> &processesId)
 	for (;;)
 	{
 		DWORD cbNeeded;
-		if (!PSAPILib.EnumProcesses((DWORD *) &prcIds[0], (DWORD)(prcIds.size() * sizeof(DWORD)), &cbNeeded))
+		if (!PSAPILib.EnumProcesses((DWORD *)&prcIds[0], (DWORD)(prcIds.size() * sizeof(DWORD)), &cbNeeded))
 		{
 			nlwarning("Processes enumeration failed!");
 			return false;
@@ -437,16 +431,16 @@ bool CWinProcess::enumProcessesId(std::vector<uint32> &processesId)
 bool CWinProcess::enumProcessModules(uint32 processId, std::vector<std::string> &moduleNames)
 {
 	if (!PSAPILib.init()) return false;
-	HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION|PROCESS_VM_READ, FALSE, (DWORD) processId);
+	HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, (DWORD)processId);
 	if (!hProcess) return false;
 	// list of modules
 	std::vector<HMODULE> prcModules(2);
 	for (;;)
 	{
 		DWORD cbNeeded;
-		if (!PSAPILib.EnumProcessModules(hProcess, (HMODULE *) &prcModules[0], (DWORD)(prcModules.size() * sizeof(HMODULE)), &cbNeeded))
+		if (!PSAPILib.EnumProcessModules(hProcess, (HMODULE *)&prcModules[0], (DWORD)(prcModules.size() * sizeof(HMODULE)), &cbNeeded))
 		{
-			//nlwarning("Processe modules enumeration failed!");
+			// nlwarning("Processe modules enumeration failed!");
 			return false;
 		}
 		if (cbNeeded < prcModules.size() * sizeof(HMODULE))
@@ -497,9 +491,9 @@ uint32 CWinProcess::getProcessIdFromModuleFilename(const std::string &moduleFile
 bool CWinProcess::terminateProcess(uint32 processId, uint exitCode)
 {
 	if (!processId) return false;
-	HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, (DWORD) processId);
+	HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, (DWORD)processId);
 	if (!hProcess) return false;
-	BOOL ok = TerminateProcess(hProcess, (UINT) exitCode);
+	BOOL ok = TerminateProcess(hProcess, (UINT)exitCode);
 	CloseHandle(hProcess);
 	return ok != FALSE;
 }
@@ -510,11 +504,9 @@ bool CWinProcess::terminateProcessFromModuleName(const std::string &moduleName, 
 	return terminateProcess(getProcessIdFromModuleFilename(moduleName), exitCode);
 }
 
-
 ///////////////////
 // CProcessWatch //
 ///////////////////
-
 
 /*
 
@@ -523,92 +515,92 @@ bool CWinProcess::terminateProcessFromModuleName(const std::string &moduleName, 
 class CProcessWatchTask : public IRunnable
 {
 public:
-	HANDLE HProcess;
+    HANDLE HProcess;
 public:
-	CProcessWatchTask(HANDLE hProcess) : HProcess(hProcess)
-	{
-	}
-	virtual void run()
-	{
-		WaitForSingleObject(HProcess, INFINITE);
-	}
+    CProcessWatchTask(HANDLE hProcess) : HProcess(hProcess)
+    {
+    }
+    virtual void run()
+    {
+        WaitForSingleObject(HProcess, INFINITE);
+    }
 };
 
 class CProcessWatchImpl
 {
 public:
-	bool Launched;
-	IThread				*WatchThread;
-	CProcessWatchTask	*WatchTask;
+    bool Launched;
+    IThread				*WatchThread;
+    CProcessWatchTask	*WatchTask;
 public:
-	CProcessWatchImpl() : Launched(false), WatchThread(NULL), WatchTask(NULL)
-	{
-	}
-	~CProcessWatchImpl()
-	{
-		reset();
-	}
-	void reset()
-	{
-		if (WatchThread)
-		{
-			if (WatchThread->isRunning())
-			{
-				WatchThread->terminate();
-			}
-			delete WatchTask;
-			delete WatchThread;
-			WatchTask = NULL;
-			WatchThread = NULL;
-			Launched = false;
-		}
-	}
-	bool launch(const std::string &programName, const std::string &arguments)
-	{
-		if (isRunning()) return false;
-		PROCESS_INFORMATION processInfo;
-		STARTUPINFO startupInfo = {0};
-		startupInfo.cb = sizeof(STARTUPINFO);
-		if (CreateProcessW(programName.c_str(), const_cast<LPTSTR>(arguments.c_str()), NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInfo))
-		{
-			WatchTask = new CProcessWatchTask(processInfo.hProcess);
-			WatchThread = IThread::create(WatchTask);
-			WatchThread->start();
-			Launched = true;
-			return true;
-		}
-		return false;
-	}
-	bool isRunning()
-	{
-		if (!Launched) return false;
-		nlassert(WatchThread);
-		nlassert(WatchTask);
-		if (WatchThread->isRunning()) return true;
-		reset();
-		return false;
-	}
+    CProcessWatchImpl() : Launched(false), WatchThread(NULL), WatchTask(NULL)
+    {
+    }
+    ~CProcessWatchImpl()
+    {
+        reset();
+    }
+    void reset()
+    {
+        if (WatchThread)
+        {
+            if (WatchThread->isRunning())
+            {
+                WatchThread->terminate();
+            }
+            delete WatchTask;
+            delete WatchThread;
+            WatchTask = NULL;
+            WatchThread = NULL;
+            Launched = false;
+        }
+    }
+    bool launch(const std::string &programName, const std::string &arguments)
+    {
+        if (isRunning()) return false;
+        PROCESS_INFORMATION processInfo;
+        STARTUPINFO startupInfo = {0};
+        startupInfo.cb = sizeof(STARTUPINFO);
+        if (CreateProcessW(programName.c_str(), const_cast<LPTSTR>(arguments.c_str()), NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInfo))
+        {
+            WatchTask = new CProcessWatchTask(processInfo.hProcess);
+            WatchThread = IThread::create(WatchTask);
+            WatchThread->start();
+            Launched = true;
+            return true;
+        }
+        return false;
+    }
+    bool isRunning()
+    {
+        if (!Launched) return false;
+        nlassert(WatchThread);
+        nlassert(WatchTask);
+        if (WatchThread->isRunning()) return true;
+        reset();
+        return false;
+    }
 };
 
 
 CProcessWatch::CProcessWatch()
 {
-	_PImpl = new CProcessWatchImpl;
+    _PImpl = new CProcessWatchImpl;
 }
 
 CProcessWatch::~CProcessWatch()
 {
-	delete _PImpl;
+    delete _PImpl;
 }
 
 bool CProcessWatch::launch(const std::string &programName, const std::string &arguments)
 {
-	return _PImpl->launch(programName, arguments);
+    return _PImpl->launch(programName, arguments);
 }
 
 bool CProcessWatch::isRunning() const
 {
-	return _PImpl->isRunning();
+    return _PImpl->isRunning();
 }
 
 */

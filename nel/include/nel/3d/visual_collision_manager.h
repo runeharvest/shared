@@ -24,10 +24,7 @@
 #include "quad_grid.h"
 #include "visual_collision_mesh.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 class CVisualCollisionEntity;
 class CLandscapeCollisionGrid;
@@ -36,7 +33,6 @@ class CShadowMap;
 class CShadowMapProjector;
 class CMaterial;
 
-
 // ***************************************************************************
 /**
  * Server to Client collision manager. Snap logic position to Visual position.
@@ -44,17 +40,16 @@ class CMaterial;
  * \author Nevrax France
  * \date 2001
  */
-class	CVisualTileDescNode
+class CVisualTileDescNode
 {
 public:
 	/// If od the patchblock containing this tile.
-	uint16		PatchQuadBlocId;
+	uint16 PatchQuadBlocId;
 	/// id in this patchblock of the tile.
-	uint16		QuadId;
+	uint16 QuadId;
 	/// for the quadgrid of chain list of CVisualTileDescNode.
-	CVisualTileDescNode		*Next;
+	CVisualTileDescNode *Next;
 };
-
 
 // ***************************************************************************
 /**
@@ -73,7 +68,7 @@ public:
 	class CMeshInstanceColInfo
 	{
 	public:
-		CVisualCollisionMesh  *Mesh;
+		CVisualCollisionMesh *Mesh;
 		const NLMISC::CMatrix *WorldMatrix;
 		const NLMISC::CAABBox *WorldBBox;
 		uint ID;
@@ -83,22 +78,19 @@ public:
 	CVisualCollisionManager();
 	~CVisualCollisionManager();
 
-
 	/** setup the landscape used for this collision manager. ptr is kept, and manager and all entities must be cleared
 	 * when the landscape is deleted.
 	 */
-	void						setLandscape(CLandscape *landscape);
-
+	void setLandscape(CLandscape *landscape);
 
 	/** create an entity. NB: CVisualCollisionManager do not owns this ptr for now, and you must delete it with deleteEntity().
 	 * NB: CVisualCollisionEntity are no more valid when this manager is deleted.
 	 */
-	CVisualCollisionEntity		*createEntity();
+	CVisualCollisionEntity *createEntity();
 
 	/** delete an entity.
 	 */
-	void						deleteEntity(CVisualCollisionEntity	*entity);
-
+	void deleteEntity(CVisualCollisionEntity *entity);
 
 	/** for CVisualCollisionEntity::getStaticLightSetup().
 	 *  \see CVisualCollisionEntity::getStaticLightSetup()
@@ -111,8 +103,7 @@ public:
 	 *
 	 *	Default is 0.5 (=> sqrt) for power and 0.5 for maxThreshold.
 	 */
-	void						setSunContributionPower(float power, float maxThreshold);
-
+	void setSunContributionPower(float power, float maxThreshold);
 
 	/** Inform the VisualCollisionManager if the player is "inside" or "outside".
 	 *	set it to true if the player is not on Landscape.
@@ -120,8 +111,7 @@ public:
 	 *	"interior building that can be bigger than reality"
 	 *	It is used at getCameraCollision(), and receiveShadowMap() time
 	 */
-	void						setPlayerInside(bool state);
-
+	void setPlayerInside(bool state);
 
 	/** Get Typical Camera 3rd person collision.
 	 *	For landscape, it is done only against TileFaces (ie only under approx 50 m)
@@ -129,13 +119,13 @@ public:
 	 *	\param radius is the radius of the 'cylinder'
 	 *	\param cone if true, the object tested is a cone (radius goes to end)
 	 */
-	float						getCameraCollision(const CVector &start, const CVector &end, float radius, bool cone);
+	float getCameraCollision(const CVector &start, const CVector &end, float radius, bool cone);
 
 	/** Get a Ray collision.
 	 *	For landscape, it is done only against TileFaces (ie only under approx 50 m)
 	 *	\return true if some collision found
 	 */
-	bool						getRayCollision(const NLMISC::CVector &start, const NLMISC::CVector &end, bool landscapeOnly= false);
+	bool getRayCollision(const NLMISC::CVector &start, const NLMISC::CVector &end, bool landscapeOnly = false);
 
 	/** Add a Mesh Instance to the collision manager. For now it is used only for Camera Collision
 	 *	\param mesh the collision mesh (keep a refptr on it)
@@ -144,12 +134,11 @@ public:
 	 *	\param avoidCollisionWhenOutside special flag for the IBBR problem. if true this collision instance won't be tested if the player is "outside"
 	 *	\return the id used for remove, 0 if not succeed
 	 */
-	uint						addMeshInstanceCollision(CVisualCollisionMesh *mesh, const CMatrix &instanceMatrix, bool avoidCollisionWhenInside, bool avoidCollisionWhenOutside);
+	uint addMeshInstanceCollision(CVisualCollisionMesh *mesh, const CMatrix &instanceMatrix, bool avoidCollisionWhenInside, bool avoidCollisionWhenOutside);
 
 	/** Remove a Mesh from the collision manager.
 	 */
-	void						removeMeshCollision(uint id);
-
+	void removeMeshCollision(uint id);
 
 	/** Use the MeshInstance Collision to rended a ShadowMap on them.
 	 *	NB: only the minimum faces touched by the shadowmap are rendered
@@ -159,80 +148,75 @@ public:
 	 *		- light0 setup is modified internally
 	 *	\see CTransform::receiveShadowMap() for more information
 	 */
-	void						receiveShadowMap(IDriver *drv, CShadowMap *shadowMap, const CVector &casterPos, CMaterial &shadowMat, CShadowMapProjector &smp);
+	void receiveShadowMap(IDriver *drv, CShadowMap *shadowMap, const CVector &casterPos, CMaterial &shadowMat, CShadowMapProjector &smp);
 
 	// Get collision meshs instances that are inside the given box
-	void						getMeshs(const NLMISC::CAABBox &aabbox, std::vector<CMeshInstanceColInfo> &dest);
+	void getMeshs(const NLMISC::CAABBox &aabbox, std::vector<CMeshInstanceColInfo> &dest);
 
-// ***************************
+	// ***************************
 private:
 	/// The landscape used to generate tiles, and to snap position to tesselated ground.
-	NLMISC::CRefPtr<CLandscape>			_Landscape;
+	NLMISC::CRefPtr<CLandscape> _Landscape;
 
 	/// Allocators.
-	CBlockMemory<CVisualTileDescNode>	_TileDescNodeAllocator;
-	CBlockMemory<CPatchQuadBlock>		_PatchQuadBlockAllocator;
+	CBlockMemory<CVisualTileDescNode> _TileDescNodeAllocator;
+	CBlockMemory<CPatchQuadBlock> _PatchQuadBlockAllocator;
 
 	// An instance of a Mesh collision
 	class CMeshInstanceCol
 	{
 	public:
 		// A ref to the visual col mesh
-		CRefPtr<CVisualCollisionMesh>		Mesh;
+		CRefPtr<CVisualCollisionMesh> Mesh;
 		// The Matrix to apply to the mesh to get instance
-		CMatrix								WorldMatrix;
+		CMatrix WorldMatrix;
 		// The World BBox
-		NLMISC::CAABBox						WorldBBox;
+		NLMISC::CAABBox WorldBBox;
 		// The pos in Mesh Instance quadgrid
-		CQuadGrid<CMeshInstanceCol*>::CIterator	QuadGridIt;
+		CQuadGrid<CMeshInstanceCol *>::CIterator QuadGridIt;
 		// see addMeshInstanceCollision for those special flags
-		bool								AvoidCollisionWhenPlayerInside;
-		bool								AvoidCollisionWhenPlayerOutside;
-		uint								ID;
+		bool AvoidCollisionWhenPlayerInside;
+		bool AvoidCollisionWhenPlayerOutside;
+		uint ID;
+
 	public:
 		/// get collision with camera. [0,1] value
-		float		getCameraCollision(class CCameraCol &camCol);
+		float getCameraCollision(class CCameraCol &camCol);
 
 		/// receive a shadow map
-		void		receiveShadowMap(const CVisualCollisionMesh::CShadowContext &shadowContext);
+		void receiveShadowMap(const CVisualCollisionMesh::CShadowContext &shadowContext);
 	};
 
 	// The map of Meshes Instance
-	typedef	std::map<uint32, CMeshInstanceCol>	TMeshColMap;
-	TMeshColMap						_Meshs;
+	typedef std::map<uint32, CMeshInstanceCol> TMeshColMap;
+	TMeshColMap _Meshs;
 	// The QuadGrid of Collision meshs
-	CQuadGrid<CMeshInstanceCol*>	_MeshQuadGrid;
+	CQuadGrid<CMeshInstanceCol *> _MeshQuadGrid;
 	// The pool of id.
-	uint32							_MeshIdPool;
-
+	uint32 _MeshIdPool;
 
 private:
 	friend class CVisualCollisionEntity;
 	friend class CLandscapeCollisionGrid;
 
 	// Allocators.
-	CVisualTileDescNode			*newVisualTileDescNode();
-	void						deleteVisualTileDescNode(CVisualTileDescNode *ptr);
+	CVisualTileDescNode *newVisualTileDescNode();
+	void deleteVisualTileDescNode(CVisualTileDescNode *ptr);
 
-	CPatchQuadBlock				*newPatchQuadBlock();
-	void						deletePatchQuadBlock(CPatchQuadBlock *ptr);
-
+	CPatchQuadBlock *newPatchQuadBlock();
+	void deletePatchQuadBlock(CPatchQuadBlock *ptr);
 
 	// setSunContributionPower Table.
-	uint8						_SunContributionLUT[256];
-
+	uint8 _SunContributionLUT[256];
 
 	// PlayerInside state
-	bool						_PlayerInside;
-
+	bool _PlayerInside;
 
 	// Same IndexBuffer filled at each CVisalCollisionMesh::receiveShadowMap()
-	CIndexBuffer				_ShadowIndexBuffer;
+	CIndexBuffer _ShadowIndexBuffer;
 };
 
-
 } // NL3D
-
 
 #endif // NL_VISUAL_COLLISION_MANAGER_H
 

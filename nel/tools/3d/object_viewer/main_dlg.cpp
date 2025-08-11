@@ -25,98 +25,94 @@ using namespace NL3D;
 /////////////////////////////////////////////////////////////////////////////
 // CMainDlg dialog
 
-
-CMainDlg::CMainDlg(CObjectViewer* main, CWnd* pParent /*=NULL*/)
-	: CDialog(CMainDlg::IDD, pParent)
+CMainDlg::CMainDlg(CObjectViewer *main, CWnd *pParent /*=NULL*/)
+    : CDialog(CMainDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CMainDlg)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	Main=main;
+	Main = main;
 }
 
-
-void CMainDlg::DoDataExchange(CDataExchange* pDX)
+void CMainDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CMainDlg)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CMainDlg, CDialog)
-	//{{AFX_MSG_MAP(CMainDlg)
-	ON_WM_DESTROY()
-	ON_WM_CREATE()
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CMainDlg)
+ON_WM_DESTROY()
+ON_WM_CREATE()
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CMainDlg message handlers
 
-BOOL CMainDlg::OnInitDialog() 
+BOOL CMainDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
 	// Get size
 	RECT rect;
-		
+
 	// Init Slots
-	for (uint s=0; s<CChannelMixer::NumAnimationSlot; s++)
+	for (uint s = 0; s < CChannelMixer::NumAnimationSlot; s++)
 	{
 		// Init the slot s
-		BOOL initialized=Slots[s].Create (IDD_SLOT, this);
+		BOOL initialized = Slots[s].Create(IDD_SLOT, this);
 
 		// Position
-		Slots[s].init (s, Main);
-		Slots[s].GetClientRect (&rect);
-		Slots[s].SetWindowPos( NULL, 0, s*(rect.bottom-rect.top), 0, 0, SWP_NOSIZE|SWP_NOOWNERZORDER|SWP_NOZORDER|SWP_SHOWWINDOW);
+		Slots[s].init(s, Main);
+		Slots[s].GetClientRect(&rect);
+		Slots[s].SetWindowPos(NULL, 0, s * (rect.bottom - rect.top), 0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_SHOWWINDOW);
 	}
 
 	// Resize the main window
 	RECT client;
 	RECT window;
-	GetClientRect (&client);
-	GetWindowRect (&window);
-	SetWindowPos( NULL, 0, 0, rect.right-rect.left+window.right-window.left-client.right+client.left, 
-		NL3D::CChannelMixer::NumAnimationSlot*(rect.bottom-rect.top)+window.bottom-window.top-client.bottom+client.top, 
-		SWP_NOMOVE|SWP_NOOWNERZORDER|SWP_NOZORDER);
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	GetClientRect(&client);
+	GetWindowRect(&window);
+	SetWindowPos(NULL, 0, 0, rect.right - rect.left + window.right - window.left - client.right + client.left,
+	    NL3D::CChannelMixer::NumAnimationSlot * (rect.bottom - rect.top) + window.bottom - window.top - client.bottom + client.top,
+	    SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
+
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CMainDlg::setAnimTime (float animStart, float animEnd)
+void CMainDlg::setAnimTime(float animStart, float animEnd)
 {
 	// Init Slots
-	for (uint s=0; s<CChannelMixer::NumAnimationSlot; s++)
-		Slots[s].setAnimTime (animStart, animEnd);
+	for (uint s = 0; s < CChannelMixer::NumAnimationSlot; s++)
+		Slots[s].setAnimTime(animStart, animEnd);
 }
 
-void CMainDlg::OnDestroy() 
+void CMainDlg::OnDestroy()
 {
-	setRegisterWindowState (this, REGKEY_OBJ_VIEW_SLOT_DLG);
+	setRegisterWindowState(this, REGKEY_OBJ_VIEW_SLOT_DLG);
 
 	CDialog::OnDestroy();
-	
+
 	// TODO: Add your message handler code here
-	
 }
 
-int CMainDlg::OnCreate(LPCREATESTRUCT lpCreateStruct) 
+int CMainDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	lpCreateStruct->style&=~WS_VISIBLE;
+	lpCreateStruct->style &= ~WS_VISIBLE;
 	if (CDialog::OnCreate(lpCreateStruct) == -1)
 		return -1;
-	
+
 	// TODO: Add your specialized creation code here
-	
+
 	return 0;
 }
 
-void CMainDlg::refresh (BOOL update)
+void CMainDlg::refresh(BOOL update)
 {
-	for (uint s=0; s<CChannelMixer::NumAnimationSlot; s++)
-		Slots[s].refresh (update);
+	for (uint s = 0; s < CChannelMixer::NumAnimationSlot; s++)
+		Slots[s].refresh(update);
 }

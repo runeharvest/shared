@@ -32,14 +32,13 @@
 
 namespace NLMISC {
 
-
 /**
  * A class derived from IRunnable to get a position
  */
 class IRunnablePos : public NLMISC::IRunnable
 {
 public:
-	NLMISC::CVector	Position;
+	NLMISC::CVector Position;
 };
 
 /**
@@ -51,7 +50,6 @@ public:
 class CTaskManager : public IRunnable
 {
 public:
-
 	/// Constructor
 	CTaskManager();
 
@@ -62,7 +60,7 @@ public:
 	void run(void);
 
 	/// Add a task to TaskManager and its priority
-	void addTask(IRunnable *, float priority=0);
+	void addTask(IRunnable *, float priority = 0);
 
 	/// Delete a task, only if task is not running, return true if found and deleted
 	bool deleteTask(IRunnable *r);
@@ -74,33 +72,32 @@ public:
 	uint taskListSize(void);
 
 	/// return false if exit() is required. task added with addTask() should test this flag.
-	bool	isThreadRunning() const {return _ThreadRunning;}
+	bool isThreadRunning() const { return _ThreadRunning; }
 
 	/// Dump task list
-	void	dump (std::vector<std::string> &result);
+	void dump(std::vector<std::string> &result);
 
 	/// Clear the dump of Done files
-	void	clearDump();
+	void clearDump();
 
 	/// Get number of waiting task
-	uint	getNumWaitingTasks();
+	uint getNumWaitingTasks();
 
 	/// Is there a current task ?
-	bool	isTaskRunning() const {return _IsTaskRunning;}
+	bool isTaskRunning() const { return _IsTaskRunning; }
 
 	/// A callback to modify the task priority
 	class IChangeTaskPriority
 	{
 	public:
-		virtual ~IChangeTaskPriority() {}
+		virtual ~IChangeTaskPriority() { }
 		virtual float getTaskPriority(const IRunnable &runable) = 0;
 	};
 
 	/// Register task priority callback
-	void	registerTaskPriorityCallback (IChangeTaskPriority *callback);
+	void registerTaskPriorityCallback(IChangeTaskPriority *callback);
 
 protected:
-
 	/** If any, wait the current running task to complete
 	 *	this function MUST be called in a 'accessor to the _TaskQueue' statement because a mutex is required
 	 *	eg:
@@ -111,33 +108,32 @@ protected:
 	 *	}
 	 *	\endcode
 	 */
-	void	waitCurrentTaskToComplete ();
+	void waitCurrentTaskToComplete();
 
 protected:
-
 	// A task in the waiting queue with its parameters
 	class CWaitingTask
 	{
 	public:
-		CWaitingTask (IRunnable *task, float priority)
+		CWaitingTask(IRunnable *task, float priority)
 		{
 			Task = task;
 			Priority = priority;
 		}
-		IRunnable		*Task;
-		float			Priority;
+		IRunnable *Task;
+		float Priority;
 
 		// For the sort
-		bool			operator< (const CWaitingTask &other) const
+		bool operator<(const CWaitingTask &other) const
 		{
 			return Priority < other.Priority;
 		}
 	};
 
 	/// queue of tasks, using list container instead of queue for DeleteTask methode
-	CSynchronized<std::string>				_RunningTask;
-	CSynchronized<std::list<CWaitingTask> >	_TaskQueue;
-	CSynchronized<std::deque<std::string> >	_DoneTaskQueue;
+	CSynchronized<std::string> _RunningTask;
+	CSynchronized<std::list<CWaitingTask>> _TaskQueue;
+	CSynchronized<std::deque<std::string>> _DoneTaskQueue;
 
 	/// thread pointer
 	CUniquePtr<IThread> _Thread;
@@ -146,22 +142,17 @@ protected:
 	CAtomicBool _ThreadRunning;
 
 private:
-
 	/// Register task priority callback
-	void	changeTaskPriority(CSynchronized<std::list<CWaitingTask>>::CAccessor &acces);
+	void changeTaskPriority(CSynchronized<std::list<CWaitingTask>>::CAccessor &acces);
 
 	/// The callback
-	IChangeTaskPriority		*_ChangePriorityCallback;
+	IChangeTaskPriority *_ChangePriorityCallback;
 
 private:
-
 	CAtomicBool _IsTaskRunning;
-
 };
 
-
 } // NLMISC
-
 
 #endif // NL_TASK_MANAGER_H
 

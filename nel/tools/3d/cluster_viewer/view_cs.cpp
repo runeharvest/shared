@@ -17,11 +17,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 // ---------------------------------------------------------------------------
 // Includes
 // ---------------------------------------------------------------------------
-
 
 #include "nel/misc/types_nl.h"
 
@@ -41,20 +39,19 @@
 #include "nel/3d/event_mouse_listener.h"
 
 #ifdef NL_OS_WINDOWS
-#	ifndef NL_COMP_MINGW
-#		define NOMINMAX
-#	endif
-#	include <windows.h>
+#ifndef NL_COMP_MINGW
+#define NOMINMAX
+#endif
+#include <windows.h>
 #endif // NL_OS_WINDOWS
 
 #ifndef CV_DIR
-#	define CV_DIR "."
+#define CV_DIR "."
 #endif
 
 using namespace std;
 using namespace NL3D;
 using namespace NLMISC;
-
 
 // ---------------------------------------------------------------------------
 struct SDispCS
@@ -63,10 +60,9 @@ struct SDispCS
 	CInstanceGroup *pIG;
 };
 
-
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
-char *readLine (char*out, char*in)
+char *readLine(char *out, char *in)
 {
 	out[0] = 0;
 
@@ -77,26 +73,25 @@ char *readLine (char*out, char*in)
 		++in;
 		*out = 0;
 	}
-	
+
 	while ((*in == '\r') || (*in == '\n'))
 		++in;
 	return in;
 }
 
-
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
-CInstanceGroup* LoadInstanceGroup(const char* sFilename)
+CInstanceGroup *LoadInstanceGroup(const char *sFilename)
 {
 	CIFile file;
 	CInstanceGroup *newIG = new CInstanceGroup;
 
-	if( file.open( CPath::lookup( string(sFilename) ) ) )
+	if (file.open(CPath::lookup(string(sFilename))))
 	{
 		try
 		{
 			// Serial the skeleton
-			newIG->serial (file);
+			newIG->serial(file);
 			// All is good
 		}
 		catch (const Exception &)
@@ -111,94 +106,92 @@ CInstanceGroup* LoadInstanceGroup(const char* sFilename)
 
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
-void LoadSceneScript (const char *ScriptName, CScene* pScene, vector<SDispCS> &DispCS, CVector &CameraStart)
+void LoadSceneScript(const char *ScriptName, CScene *pScene, vector<SDispCS> &DispCS, CVector &CameraStart)
 {
 	char nameIG[256];
 	float posx, posy, posz;
 	float roti, rotj, rotk;
-	
-	FILE *f = fopen (ScriptName,"rb");
-	fseek (f, 0, SEEK_END);
-	uint file_size = ftell (f);
-	fseek (f, 0, SEEK_SET);
-	char *file_buf = (char*)malloc(file_size+1);
-	if (fread (file_buf, 1, file_size, f) != file_size)
+
+	FILE *f = fopen(ScriptName, "rb");
+	fseek(f, 0, SEEK_END);
+	uint file_size = ftell(f);
+	fseek(f, 0, SEEK_SET);
+	char *file_buf = (char *)malloc(file_size + 1);
+	if (fread(file_buf, 1, file_size, f) != file_size)
 		nlwarning("Can't read %d elements", file_size);
 
 	file_buf[file_size] = 0;
 	++file_size;
-	fclose (f);
+	fclose(f);
 	char *buf_ptr = file_buf;
 	sint nLastNbPlus = 0;
-	vector<CInstanceGroup*> pile;
-	pile.clear ();
+	vector<CInstanceGroup *> pile;
+	pile.clear();
 
-	do 
+	do
 	{
 		char Line[256], *line_ptr;
 		sint nNbPlus = 0;
 		line_ptr = &Line[0];
-		buf_ptr = readLine (line_ptr, buf_ptr);
+		buf_ptr = readLine(line_ptr, buf_ptr);
 
 		while ((*line_ptr == '\t') || (*line_ptr == ' ') || (*line_ptr == '+'))
 		{
-			if (*line_ptr == '+') 
+			if (*line_ptr == '+')
 				++nNbPlus;
 			++line_ptr;
 		}
 
-		if (strlen (line_ptr) == 0)
+		if (strlen(line_ptr) == 0)
 			break;
 
 		if (*line_ptr == '/')
 			continue;
 
 		posx = posy = posz = roti = rotj = rotk = 0.0f;
-		sscanf (line_ptr, "%s %f %f %f %f %f %f", nameIG, &posx, &posy, &posz, &roti, &rotj, &rotk);
+		sscanf(line_ptr, "%s %f %f %f %f %f %f", nameIG, &posx, &posy, &posz, &roti, &rotj, &rotk);
 
-		if (stricmp (nameIG, "CAMERA_START") == 0)
+		if (stricmp(nameIG, "CAMERA_START") == 0)
 		{
 			CameraStart = CVector(posx, posy, posz);
 		}
 		else
 		{
 			if (nLastNbPlus >= nNbPlus)
-			for (int i = 0; i < ((nLastNbPlus-nNbPlus)+1); ++i)
-				if (!pile.empty())
-					pile.pop_back();
-		
+				for (int i = 0; i < ((nLastNbPlus - nNbPlus) + 1); ++i)
+					if (!pile.empty())
+						pile.pop_back();
+
 			nLastNbPlus = nNbPlus;
 
 			CInstanceGroup *father = pScene->getGlobalInstanceGroup();
-			
+
 			if (!pile.empty())
 				father = pile.back();
-		
-			CInstanceGroup *ITemp = LoadInstanceGroup (nameIG);
+
+			CInstanceGroup *ITemp = LoadInstanceGroup(nameIG);
 			if (ITemp != NULL)
 			{
 				SDispCS dcsTemp;
-				for (sint32 i = 0; i < (1+nNbPlus); ++i)
+				for (sint32 i = 0; i < (1 + nNbPlus); ++i)
 					dcsTemp.Name += "   ";
 				dcsTemp.Name += nameIG;
 				dcsTemp.pIG = ITemp;
-				DispCS.push_back (dcsTemp);
-				
-				ITemp->createRoot (*pScene);
-				ITemp->setPos (CVector(posx, posy, posz));
-				ITemp->setRotQuat (ITemp->getRotQuat() * CQuat(CVector::I, roti));
-				ITemp->setRotQuat (ITemp->getRotQuat() * CQuat(CVector::J, rotj));
-				ITemp->setRotQuat (ITemp->getRotQuat() * CQuat(CVector::K, rotk));
-				ITemp->setClusterSystemForInstances (father);
-				ITemp->addToScene (*pScene);
-			}
-			pile.push_back (ITemp);
-		}
-	} 
-	while (strlen(buf_ptr) > 0);
-	free (file_buf);
-}
+				DispCS.push_back(dcsTemp);
 
+				ITemp->createRoot(*pScene);
+				ITemp->setPos(CVector(posx, posy, posz));
+				ITemp->setRotQuat(ITemp->getRotQuat() * CQuat(CVector::I, roti));
+				ITemp->setRotQuat(ITemp->getRotQuat() * CQuat(CVector::J, rotj));
+				ITemp->setRotQuat(ITemp->getRotQuat() * CQuat(CVector::K, rotk));
+				ITemp->setClusterSystemForInstances(father);
+				ITemp->addToScene(*pScene);
+			}
+			pile.push_back(ITemp);
+		}
+	} while (strlen(buf_ptr) > 0);
+	free(file_buf);
+}
 
 // ---------------------------------------------------------------------------
 // Main
@@ -221,50 +214,49 @@ int nltmain(int argc, NLMISC::tchar **argv)
 
 	SDispCS dcsTemp;
 
-
-	CNELU::init (800, 600, CViewport(), 32, true);
+	CNELU::init(800, 600, CViewport(), 32, true);
 
 	CNELU::Scene->enableLightingSystem(true);
-	CNELU::Scene->setAmbientGlobal(CRGBA(128,128,128));
+	CNELU::Scene->setAmbientGlobal(CRGBA(128, 128, 128));
 
 	CPath::addSearchPath(CV_DIR);
-	CPath::addSearchPath(CV_DIR"/shapes");
-	CPath::addSearchPath(CV_DIR"/groups");
-	CPath::addSearchPath(CV_DIR"/fonts");
+	CPath::addSearchPath(CV_DIR "/shapes");
+	CPath::addSearchPath(CV_DIR "/groups");
+	CPath::addSearchPath(CV_DIR "/fonts");
 
 	CFontManager FontManager;
 	CTextContext TextContext;
 
-	TextContext.init (CNELU::Driver, &FontManager);	
-	TextContext.setFontGenerator (NLMISC::CPath::lookup("n019003l.pfb"));
-	TextContext.setHotSpot (CComputedString::TopLeft);
-	TextContext.setColor (CRGBA(255,255,255));
-	TextContext.setFontSize (20);
+	TextContext.init(CNELU::Driver, &FontManager);
+	TextContext.setFontGenerator(NLMISC::CPath::lookup("n019003l.pfb"));
+	TextContext.setHotSpot(CComputedString::TopLeft);
+	TextContext.setColor(CRGBA(255, 255, 255));
+	TextContext.setFontSize(20);
 
 	CEvent3dMouseListener MouseListener;
-	MouseListener.addToServer (CNELU::EventServer);
-	MouseListener.setFrustrum (CNELU::Camera->getFrustum());
-	MouseListener.setMouseMode (CEvent3dMouseListener::firstPerson);
-	
-	CNELU::Camera->setTransformMode (ITransformable::DirectMatrix);
+	MouseListener.addToServer(CNELU::EventServer);
+	MouseListener.setFrustrum(CNELU::Camera->getFrustum());
+	MouseListener.setMouseMode(CEvent3dMouseListener::firstPerson);
+
+	CNELU::Camera->setTransformMode(ITransformable::DirectMatrix);
 	// Force to automatically find the cluster system
-	CNELU::Camera->setClusterSystem ((CInstanceGroup*)-1); 
+	CNELU::Camera->setClusterSystem((CInstanceGroup *)-1);
 
 	CClipTrav *pClipTrav = &CNELU::Scene->getClipTrav();
 	dcsTemp.Name = "Root";
 	dcsTemp.pIG = NULL;
-	DispCS.push_back (dcsTemp);
+	DispCS.push_back(dcsTemp);
 
 	// Add all instance that create the scene
-	// --------------------------------------	
+	// --------------------------------------
 	// Beginning of script reading
 	CVector CameraStart;
 
-	LoadSceneScript ("view_cs.txt", CNELU::Scene, DispCS, CameraStart);
+	LoadSceneScript("view_cs.txt", CNELU::Scene, DispCS, CameraStart);
 
 	CMatrix m = MouseListener.getViewMatrix();
-	m.setPos (CameraStart);
-	MouseListener.setMatrix (m);
+	m.setPos(CameraStart);
+	MouseListener.setMatrix(m);
 	// End of script reading
 
 	// Main loop
@@ -274,154 +266,150 @@ int nltmain(int argc, NLMISC::tchar **argv)
 		rDeltaTime = rGlobalTime - rOldGlobalTime;
 		rOldGlobalTime = rGlobalTime;
 
-
-		CNELU::Scene->animate ((float)rGlobalTime);
+		CNELU::Scene->animate((float)rGlobalTime);
 
 		CNELU::EventServer.pump();
 
-		CNELU::clearBuffers (CRGBA(0,0,0));
+		CNELU::clearBuffers(CRGBA(0, 0, 0));
 
-		CNELU::Scene->render ();
+		CNELU::Scene->render();
 
 		// -----------------------------------------------------
 		// -----------------------------------------------------
 		if (bDisplay)
 		{
-			vector<CCluster*> vCluster;
+			vector<CCluster *> vCluster;
 			DispCS[0].pIG = pClipTrav->RootCluster->Group;
-			TextContext.setColor (CRGBA(255,255,255,255));
+			TextContext.setColor(CRGBA(255, 255, 255, 255));
 			if (bAutoDetect)
 			{
-				TextContext.printfAt (0, 1, "AutoDetect : ON");
-				
-				pClipTrav->fullSearch (vCluster, pClipTrav->CamPos);
+				TextContext.printfAt(0, 1, "AutoDetect : ON");
+
+				pClipTrav->fullSearch(vCluster, pClipTrav->CamPos);
 
 				for (uint32 i = 0; i < DispCS.size(); ++i)
 				{
-					TextContext.setColor (CRGBA(255,255,255,255));
-					for( uint32 j = 0; j < vCluster.size(); ++j)
+					TextContext.setColor(CRGBA(255, 255, 255, 255));
+					for (uint32 j = 0; j < vCluster.size(); ++j)
 					{
 						if (DispCS[i].pIG == vCluster[j]->Group)
 						{
-							TextContext.setColor (CRGBA(255,0,0,255));
+							TextContext.setColor(CRGBA(255, 0, 0, 255));
 							break;
 						}
 					}
 
-					TextContext.printfAt (0, 1-(i+2)*0.028f, DispCS[i].Name.c_str());
+					TextContext.printfAt(0, 1 - (i + 2) * 0.028f, DispCS[i].Name.c_str());
 				}
-
 			}
 			else
 			{
-				TextContext.printfAt (0, 1, "AutoDetect : OFF");
+				TextContext.printfAt(0, 1, "AutoDetect : OFF");
 
 				CInstanceGroup *pCurIG = CNELU::Camera->getClusterSystem();
 				for (uint32 i = 0; i < DispCS.size(); ++i)
 				{
 					if (DispCS[i].pIG == pCurIG)
-						TextContext.setColor (CRGBA(255,0,0,255));
+						TextContext.setColor(CRGBA(255, 0, 0, 255));
 					else
-						TextContext.setColor (CRGBA(255,255,255,255));
+						TextContext.setColor(CRGBA(255, 255, 255, 255));
 
-					TextContext.printfAt (0, 1-(i+2)*0.028f, DispCS[i].Name.c_str());
+					TextContext.printfAt(0, 1 - (i + 2) * 0.028f, DispCS[i].Name.c_str());
 				}
 
-				TextContext.setColor (CRGBA(255,255,255,255));
+				TextContext.setColor(CRGBA(255, 255, 255, 255));
 
-				pClipTrav->Accel.select (pClipTrav->CamPos, pClipTrav->CamPos);
-				CQuadGrid<CCluster*>::CIterator itAcc = pClipTrav->Accel.begin();
+				pClipTrav->Accel.select(pClipTrav->CamPos, pClipTrav->CamPos);
+				CQuadGrid<CCluster *>::CIterator itAcc = pClipTrav->Accel.begin();
 				while (itAcc != pClipTrav->Accel.end())
 				{
 					CCluster *pCluster = *itAcc;
 					if (pCluster->Group == pClipTrav->Camera->getClusterSystem())
-					if (pCluster->isIn (pClipTrav->CamPos))
-					{
-						vCluster.push_back (pCluster);
-					}
+						if (pCluster->isIn(pClipTrav->CamPos))
+						{
+							vCluster.push_back(pCluster);
+						}
 					++itAcc;
 				}
 				if (vCluster.empty() && (DispCS[0].pIG == pCurIG))
 				{
-					vCluster.push_back (pClipTrav->RootCluster);
+					vCluster.push_back(pClipTrav->RootCluster);
 				}
+			}
 
-			}			
-
-			TextContext.setColor (CRGBA(255,255,255,255));
+			TextContext.setColor(CRGBA(255, 255, 255, 255));
 
 			string sAllClusters;
-			for( uint32 j = 0; j < vCluster.size(); ++j)
+			for (uint32 j = 0; j < vCluster.size(); ++j)
 			{
 				sAllClusters += vCluster[j]->Name;
-				if (j < (vCluster.size()-1))
+				if (j < (vCluster.size() - 1))
 					sAllClusters += ",  ";
 			}
-			TextContext.printfAt (0, 1-0.028f, sAllClusters.c_str());
+			TextContext.printfAt(0, 1 - 0.028f, sAllClusters.c_str());
 		}
 
 		// -----------------------------------------------------
 		// -----------------------------------------------------
 
-		CNELU::Driver->swapBuffers ();
+		CNELU::Driver->swapBuffers();
 
 		// Keys management
 		// ---------------
 
-		if (CNELU::AsyncListener.isKeyDown (KeySHIFT))
-			MouseListener.setSpeed (50.0f);
+		if (CNELU::AsyncListener.isKeyDown(KeySHIFT))
+			MouseListener.setSpeed(50.0f);
 		else
-			MouseListener.setSpeed (10.0f);
+			MouseListener.setSpeed(10.0f);
 
-		CNELU::Camera->setMatrix (MouseListener.getViewMatrix());
+		CNELU::Camera->setMatrix(MouseListener.getViewMatrix());
 
 		if (CNELU::AsyncListener.isKeyPushed(KeyL))
 		{
-			CNELU::Driver->setPolygonMode (IDriver::Line);
+			CNELU::Driver->setPolygonMode(IDriver::Line);
 		}
 
-		if (CNELU::AsyncListener.isKeyPushed (KeyP))
+		if (CNELU::AsyncListener.isKeyPushed(KeyP))
 		{
-			CNELU::Driver->setPolygonMode (IDriver::Filled);
+			CNELU::Driver->setPolygonMode(IDriver::Filled);
 		}
 
-		if (CNELU::AsyncListener.isKeyPushed (KeyTAB))
+		if (CNELU::AsyncListener.isKeyPushed(KeyTAB))
 			bDisplay = !bDisplay;
 
-		if (CNELU::AsyncListener.isKeyPushed (KeyA))
+		if (CNELU::AsyncListener.isKeyPushed(KeyA))
 		{
 			if (bAutoDetect)
 			{
 				bAutoDetect = false;
-				CNELU::Camera->setClusterSystem (NULL);
+				CNELU::Camera->setClusterSystem(NULL);
 				nSelected = 0;
 			}
 			else
 			{
 				bAutoDetect = true;
-				CNELU::Camera->setClusterSystem ((CInstanceGroup*)-1);
+				CNELU::Camera->setClusterSystem((CInstanceGroup *)-1);
 			}
 		}
 
 		if (!bAutoDetect)
 		{
-			if (CNELU::AsyncListener.isKeyPushed (KeyZ))
+			if (CNELU::AsyncListener.isKeyPushed(KeyZ))
 			{
 				nSelected--;
-				if(nSelected == -1)
-					nSelected = (sint32)DispCS.size()-1;
+				if (nSelected == -1)
+					nSelected = (sint32)DispCS.size() - 1;
 			}
-			if (CNELU::AsyncListener.isKeyPushed (KeyS))
+			if (CNELU::AsyncListener.isKeyPushed(KeyS))
 			{
 				nSelected++;
-				if(nSelected == (sint32)DispCS.size())
+				if (nSelected == (sint32)DispCS.size())
 					nSelected = 0;
 			}
-			CNELU::Camera->setClusterSystem (DispCS[nSelected].pIG);
+			CNELU::Camera->setClusterSystem(DispCS[nSelected].pIG);
 		}
 
-	}
-	while ((!CNELU::AsyncListener.isKeyPushed(KeyESCAPE)) && CNELU::Driver->isActive());
+	} while ((!CNELU::AsyncListener.isKeyPushed(KeyESCAPE)) && CNELU::Driver->isActive());
 
 	return EXIT_SUCCESS;
 }

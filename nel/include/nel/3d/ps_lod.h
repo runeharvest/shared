@@ -19,26 +19,17 @@
 
 #include "nel/misc/types_nl.h"
 
-
 namespace NL3D {
-
 
 /// lod for located bindables. (see ps_located.h)
 enum TPSLod
 {
 	PSLod1n2 = 0, // the object is dealt with for every distance (his is the default)
-	PSLod1,  // the object is dealt when the system center is near
-	PSLod2,  // the object is dealt when the system center is far
+	PSLod1, // the object is dealt when the system center is near
+	PSLod2, // the object is dealt when the system center is far
 };
 
-
-
-
-
-
-
 } // NL3D
-
 
 #endif // NL_PS_LOD_H
 

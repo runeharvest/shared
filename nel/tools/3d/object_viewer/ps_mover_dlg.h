@@ -19,17 +19,14 @@
 
 #if _MSC_VER > 1000
 #pragma once
-#endif 
+#endif
 
-
-namespace NL3D
-{
-	class CEvent3dMouseListener ;
+namespace NL3D {
+class CEvent3dMouseListener;
 }
 
-namespace NLMISC
-{
-	class CVector ;
+namespace NLMISC {
+class CVector;
 }
 
 #include "nel/3d/ps_edit.h"
@@ -37,8 +34,7 @@ namespace NLMISC
 #include "editable_range.h"
 #include "particle_workspace.h"
 
-
-class CDirectionAttr ;
+class CDirectionAttr;
 class CParticleDlg;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -46,74 +42,71 @@ class CParticleDlg;
 
 class CPSMoverDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
 	// construct the object with a pointer to the item being edited, and to the mouse listener to update its model matrix
-	CPSMoverDlg(CParticleWorkspace::CNode *ownerNode, CWnd *parent, NL3D::CEvent3dMouseListener *ml,  NL3D::CPSLocated *editedLocated, uint32 editedLocatedIndex);   // standard constructor
+	CPSMoverDlg(CParticleWorkspace::CNode *ownerNode, CWnd *parent, NL3D::CEvent3dMouseListener *ml, NL3D::CPSLocated *editedLocated, uint32 editedLocatedIndex); // standard constructor
 
 	// dtor
-	~CPSMoverDlg() ;
+	~CPSMoverDlg();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CPSMoverDlg)
-	enum { IDD = IDD_PS_MOVER };
-	CListBox	m_SubComponentCtrl;
-	CString	m_X;
-	CString	m_Y;
-	CString	m_Z;
+	enum
+	{
+		IDD = IDD_PS_MOVER
+	};
+	CListBox m_SubComponentCtrl;
+	CString m_X;
+	CString m_Y;
+	CString m_Z;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CPSMoverDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
-
 
 public:
 	// position has to be updated (for mouse edition)
-	void updatePosition(void) ;
+	void updatePosition(void);
 
-
-	void init(CParticleDlg	*parent) ;
+	void init(CParticleDlg *parent);
 
 	// get the current moving interface, or NULL, if the selected object has no IPSMover interface
-	NL3D::IPSMover *getMoverInterface(void)  ;
+	NL3D::IPSMover *getMoverInterface(void);
 
 	// get the located being edited
-	NL3D::CPSLocated *getLocated(void) { return _EditedLocated ; }
-	const NL3D::CPSLocated *getLocated(void) const { return _EditedLocated ; }
+	NL3D::CPSLocated *getLocated(void) { return _EditedLocated; }
+	const NL3D::CPSLocated *getLocated(void) const { return _EditedLocated; }
 
 	// get the index of the current edited item
-	uint32 getLocatedIndex(void) const { return _EditedLocatedIndex ; }
+	uint32 getLocatedIndex(void) const { return _EditedLocatedIndex; }
 
 	// ghet the current located bindable being edited, or null
-	NL3D::CPSLocatedBindable *getLocatedBindable(void) ;
-	
+	NL3D::CPSLocatedBindable *getLocatedBindable(void);
 
-// Implementation
+	// Implementation
 protected:
 	CParticleWorkspace::CNode *_Node;
-	CParticleDlg			  *_ParticleDlg;
-	NL3D::CPSLocated		  *_EditedLocated ;
-	uint32 _EditedLocatedIndex ;
-	NL3D::CEvent3dMouseListener *_MouseListener ;
+	CParticleDlg *_ParticleDlg;
+	NL3D::CPSLocated *_EditedLocated;
+	uint32 _EditedLocatedIndex;
+	NL3D::CEvent3dMouseListener *_MouseListener;
 
+	CEditableRangeFloat *_Scale, *_XScale, *_YScale, *_ZScale;
 
-	CEditableRangeFloat *_Scale, *_XScale, *_YScale, *_ZScale ;
+	CStatic *_ScaleText, *_XScaleText, *_YScaleText, *_ZScaleText;
 
-	CStatic  *_ScaleText, *_XScaleText, *_YScaleText, *_ZScaleText ;
-
-	CDirectionAttr *_DirectionDlg ;
+	CDirectionAttr *_DirectionDlg;
 
 	// this generate control for scaling
-	void createScaleControls(void) ;
+	void createScaleControls(void);
 
 	// delete scale controls if presents
-	void cleanScaleCtrl(void) ;
-
+	void cleanScaleCtrl(void);
 
 	// Generated message map functions
 	//{{AFX_MSG(CPSMoverDlg)
@@ -125,70 +118,66 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-
 	// wrappers to scale objects
 	struct CUniformScaleWrapper : public IPSWrapperFloat
 	{
-		uint32 Index ;
-		NL3D::IPSMover *M ;
-		float get(void) const { return M->getScale(Index).x ; }
-		void set(const float &v) { M->setScale(Index, v) ; }
-	} _UniformScaleWrapper ;
+		uint32 Index;
+		NL3D::IPSMover *M;
+		float get(void) const { return M->getScale(Index).x; }
+		void set(const float &v) { M->setScale(Index, v); }
+	} _UniformScaleWrapper;
 
 	/// wrapper to scale the X coordinate
 	struct CXScaleWrapper : public IPSWrapperFloat
 	{
-		uint32 Index ;
-		NL3D::IPSMover *M ;
-		float get(void) const { return M->getScale(Index).x ; }
-		void set(const float &s) 
-		{ 
-			NLMISC::CVector v = M->getScale(Index) ;
-			M->setScale(Index, NLMISC::CVector(s, v.y, v.z)) ; 
+		uint32 Index;
+		NL3D::IPSMover *M;
+		float get(void) const { return M->getScale(Index).x; }
+		void set(const float &s)
+		{
+			NLMISC::CVector v = M->getScale(Index);
+			M->setScale(Index, NLMISC::CVector(s, v.y, v.z));
 		}
-	} _XScaleWrapper ;
+	} _XScaleWrapper;
 
 	/// wrapper to scale the Y coordinate
 	struct CYScaleWrapper : public IPSWrapperFloat
 	{
-		uint32 Index ;
-		NL3D::IPSMover *M ;
-		float get(void) const { return M->getScale(Index).y ; }
-		void set(const float &s) 
-		{ 
-			NLMISC::CVector v = M->getScale(Index) ;
-			M->setScale(Index, NLMISC::CVector(v.x, s, v.z) ) ; 
+		uint32 Index;
+		NL3D::IPSMover *M;
+		float get(void) const { return M->getScale(Index).y; }
+		void set(const float &s)
+		{
+			NLMISC::CVector v = M->getScale(Index);
+			M->setScale(Index, NLMISC::CVector(v.x, s, v.z));
 		}
-	} _YScaleWrapper ;
+	} _YScaleWrapper;
 
 	/// wrapper to scale the Z coordinate
 	struct CZScaleWrapper : public IPSWrapperFloat
 	{
-		uint32 Index ;
-		NL3D::IPSMover *M ;
-		float get(void) const { return M->getScale(Index).z ; }
-		void set(const float &s) 
-		{ 
-			NLMISC::CVector v = M->getScale(Index) ;
-			M->setScale(Index, NLMISC::CVector(v.x, v.y, s) ) ; 
+		uint32 Index;
+		NL3D::IPSMover *M;
+		float get(void) const { return M->getScale(Index).z; }
+		void set(const float &s)
+		{
+			NLMISC::CVector v = M->getScale(Index);
+			M->setScale(Index, NLMISC::CVector(v.x, v.y, s));
 		}
-	} _ZScaleWrapper ;
+	} _ZScaleWrapper;
 
 	/// wrapper for direction
 	struct CDirectionWrapper : public IPSWrapper<NLMISC::CVector>
 	{
-		uint32 Index ;
-		NL3D::IPSMover *M ;
-		NLMISC::CVector get(void) const { return M->getNormal(Index) ; }
-		void set(const NLMISC::CVector &v) { M->setNormal(Index, v) ; }
+		uint32 Index;
+		NL3D::IPSMover *M;
+		NLMISC::CVector get(void) const { return M->getNormal(Index); }
+		void set(const NLMISC::CVector &v) { M->setNormal(Index, v); }
 
-
-	} _DirectionWrapper ;
-	 
+	} _DirectionWrapper;
 
 	// update the mouse listener position when the user entered a value with the keyboard
-	void CPSMoverDlg::updateListener(void) ;
-
+	void CPSMoverDlg::updateListener(void);
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -30,19 +30,18 @@
 
 namespace NLNET {
 
-
 class CBufSock;
 
 /// Socket identifier
 typedef CBufSock *TSockId;
 
-static const TSockId InvalidSockId = (TSockId) NULL;
+static const TSockId InvalidSockId = (TSockId)NULL;
 
 /// Callback function for message processing
-typedef void (*TNetCallback) ( TSockId from, void *arg );
+typedef void (*TNetCallback)(TSockId from, void *arg);
 
 /// Storing a TNetCallback call for future call
-typedef std::pair<TNetCallback,TSockId> TStoredNetCallback;
+typedef std::pair<TNetCallback, TSockId> TStoredNetCallback;
 
 /// Synchronized FIFO buffer
 typedef NLMISC::CSynchronized<NLMISC::CBufFIFO> CSynchronizedFIFO;
@@ -53,17 +52,20 @@ typedef CSynchronizedFIFO::CAccessor CFifoAccessor;
 /// Size of a block
 typedef uint32 TBlockSize;
 
-extern uint32 	NbNetworkTask;
+extern uint32 NbNetworkTask;
 
 #ifdef NL_OS_UNIX
 /// Access to the wake-up pipe (Unix only)
-enum TPipeWay { PipeRead, PipeWrite };
+enum TPipeWay
+{
+	PipeRead,
+	PipeWrite
+};
 #endif
 
 #ifdef NL_OS_WINDOWS
 typedef void *HANDLE;
 #endif
-
 
 /**
  * Layer 1
@@ -79,9 +81,13 @@ typedef void *HANDLE;
 class CBufNetBase
 {
 public:
-
 	/// Type of incoming events (max 256)
-	enum TEventType { User = 'U', Connection = 'C', Disconnection = 'D' };
+	enum TEventType
+	{
+		User = 'U',
+		Connection = 'C',
+		Disconnection = 'D'
+	};
 
 	/// Destructor
 	virtual ~CBufNetBase();
@@ -92,7 +98,7 @@ public:
 	 * Then don't call sleepUntilDataAvailable() but use select() on the pipe.
 	 * The pipe will be written one byte when receiving a message.
 	 */
-	void	setExternalPipeForDataAvailable( int *twoPipeHandles )
+	void setExternalPipeForDataAvailable(int *twoPipeHandles)
 	{
 		_DataAvailablePipeHandle[PipeRead] = twoPipeHandles[PipeRead];
 		_DataAvailablePipeHandle[PipeWrite] = twoPipeHandles[PipeWrite];
@@ -105,18 +111,22 @@ public:
 #endif
 
 	/// Sets callback for detecting a disconnection (or NULL to disable callback)
-	void	setDisconnectionCallback( TNetCallback cb, void* arg ) { _DisconnectionCallback = cb; _DisconnectionCbArg = arg; }
+	void setDisconnectionCallback(TNetCallback cb, void *arg)
+	{
+		_DisconnectionCallback = cb;
+		_DisconnectionCbArg = arg;
+	}
 
 	/// Returns the size of the receive queue (mutexed)
-	uint32	getReceiveQueueSize()
+	uint32 getReceiveQueueSize()
 	{
-		CFifoAccessor syncfifo( &_RecvFifo );
+		CFifoAccessor syncfifo(&_RecvFifo);
 		return syncfifo.value().size();
 	}
 
-	void displayReceiveQueueStat (NLMISC::CLog *log = NLMISC::InfoLog)
+	void displayReceiveQueueStat(NLMISC::CLog *log = NLMISC::InfoLog)
 	{
-		CFifoAccessor syncfifo( &_RecvFifo );
+		CFifoAccessor syncfifo(&_RecvFifo);
 		syncfifo.value().displayStats(log);
 	}
 
@@ -129,9 +139,9 @@ public:
 	 * Warning: you can call this method only at initialization time, before connecting (for a client)
 	 * or calling init() (for a server) !
 	 */
-	void	setMaxExpectedBlockSize( sint32 limit )
+	void setMaxExpectedBlockSize(sint32 limit)
 	{
-		if ( limit < 0 )
+		if (limit < 0)
 			_MaxExpectedBlockSize = DefaultMaxExpectedBlockSize;
 		else
 			_MaxExpectedBlockSize = (uint32)limit;
@@ -146,22 +156,22 @@ public:
 	 * Warning: you can call this method only at initialization time, before connecting (for a client)
 	 * or calling init() (for a server) !
 	 */
-	void	setMaxSentBlockSize( sint32 limit )
+	void setMaxSentBlockSize(sint32 limit)
 	{
-		if ( limit < 0 )
+		if (limit < 0)
 			_MaxSentBlockSize = DefaultMaxSentBlockSize;
 		else
 			_MaxSentBlockSize = (uint32)limit;
 	}
 
 	/// Returns the max size of the received messages (default: 2^31-1)
-	uint32	maxExpectedBlockSize() const
+	uint32 maxExpectedBlockSize() const
 	{
 		return _MaxExpectedBlockSize;
 	}
 
 	/// Returns the max size of the sent messages (default: 2^31-1)
-	uint32	maxSentBlockSize() const
+	uint32 maxSentBlockSize() const
 	{
 		return _MaxSentBlockSize;
 	}
@@ -171,7 +181,7 @@ public:
 	 * Return the handle for reading the 'data available pipe'. Use it if you want to do a select on
 	 * multiple CBufNetClient/CBufNetServer objects (then, don't call sleepUntilDataAvailable() on them).
 	 */
-	int		dataAvailablePipeReadHandle() const { return _DataAvailablePipeHandle[PipeRead]; }
+	int dataAvailablePipeReadHandle() const { return _DataAvailablePipeHandle[PipeRead]; }
 #endif
 
 	/// The value that will be used if setMaxExpectedBlockSize() is not called (or called with a negative argument)
@@ -181,74 +191,70 @@ public:
 	static uint32 DefaultMaxSentBlockSize;
 
 protected:
-
 	friend class NLNET::CBufSock;
 
 #ifdef NL_OS_UNIX
 	/// Constructor
-	CBufNetBase( bool isDataAvailablePipeSelfManaged );
+	CBufNetBase(bool isDataAvailablePipeSelfManaged);
 #else
 	/// Constructor
 	CBufNetBase();
 #endif
 
 	/// Access to the receive queue
-	CSynchronizedFIFO&	receiveQueue() { return _RecvFifo; }
+	CSynchronizedFIFO &receiveQueue() { return _RecvFifo; }
 
 	/// Returns the disconnection callback
-	TNetCallback		disconnectionCallback() const { return _DisconnectionCallback; }
+	TNetCallback disconnectionCallback() const { return _DisconnectionCallback; }
 
 	/// Returns the argument of the disconnection callback
-	void*				argOfDisconnectionCallback() const { return _DisconnectionCbArg; }
+	void *argOfDisconnectionCallback() const { return _DisconnectionCbArg; }
 
 	/// Push message into receive queue (mutexed)
 	// TODO OPTIM never use this function
-	void				pushMessageIntoReceiveQueue( const std::vector<uint8>& buffer );
+	void pushMessageIntoReceiveQueue(const std::vector<uint8> &buffer);
 
 	/// Push message into receive queue (mutexed)
-	void				pushMessageIntoReceiveQueue( const uint8 *buffer, uint32 size );
+	void pushMessageIntoReceiveQueue(const uint8 *buffer, uint32 size);
 
 	/// Sets _DataAvailable
-	void				setDataAvailableFlag( bool da ) { _DataAvailable = da; }
+	void setDataAvailableFlag(bool da) { _DataAvailable = da; }
 
 	/// Return _DataAvailable
-	bool				dataAvailableFlag() const { return _DataAvailable; }
+	bool dataAvailableFlag() const { return _DataAvailable; }
 
 #if defined(NL_OS_UNIX)
 	/// Pipe to select() on data available
-	int					_DataAvailablePipeHandle [2];
+	int _DataAvailablePipeHandle[2];
 #elif defined(NL_OS_WINDOWS)
-	HANDLE				_DataAvailableHandle;
+	HANDLE _DataAvailableHandle;
 #endif
 
 private:
-
 	/// The receive queue, protected by a mutex-like device
-	CSynchronizedFIFO	_RecvFifo;
+	CSynchronizedFIFO _RecvFifo;
 
 	/// Callback for disconnection
-	TNetCallback		_DisconnectionCallback;
+	TNetCallback _DisconnectionCallback;
 
 	/// Argument of the disconnection callback
-	void*				_DisconnectionCbArg;
+	void *_DisconnectionCbArg;
 
 	/// Max size of received messages (limited by the user)
-	uint32				_MaxExpectedBlockSize;
+	uint32 _MaxExpectedBlockSize;
 
 	/// Max size of sent messages (limited by the user)
-	uint32				_MaxSentBlockSize;
+	uint32 _MaxSentBlockSize;
 
 	/// True if there is data available (avoids locking a mutex)
-	NLMISC::CAtomicBool	_DataAvailable;
+	NLMISC::CAtomicBool _DataAvailable;
 
 #ifdef NL_OS_UNIX
 	bool _IsDataAvailablePipeSelfManaged;
 #endif
 };
 
-
 } // NLNET
-
 
 #endif // NL_BUF_NET_BASE_H
 

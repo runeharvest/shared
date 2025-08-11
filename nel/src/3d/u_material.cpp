@@ -16,7 +16,6 @@
 
 #include "std3d.h"
 
-
 #include "nel/3d/u_material.h"
 #include "nel/3d/u_driver.h"
 #include "nel/3d/texture_user.h"
@@ -26,8 +25,7 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 
@@ -71,24 +69,24 @@ float UMaterial::getAlphaTestThreshold() const
 
 // ***************************************************************************
 
-void UMaterial::setTexture(UTexture* ptex)
+void UMaterial::setTexture(UTexture *ptex)
 {
-	setTexture (0, ptex);
+	setTexture(0, ptex);
 }
 
 // ***************************************************************************
 
-void UMaterial::setTexture(uint stage, UTexture* ptex)
+void UMaterial::setTexture(uint stage, UTexture *ptex)
 {
 	CMaterial *object = getObjectPtr();
-	CTextureUser	*text= dynamic_cast<CTextureUser*>(ptex);
+	CTextureUser *text = dynamic_cast<CTextureUser *>(ptex);
 	if (text != NULL)
 	{
-		object->setTexture (stage, text->getITexture());
+		object->setTexture(stage, text->getITexture());
 	}
 	else
 	{
-		object->setTexture (stage, NULL);
+		object->setTexture(stage, NULL);
 	}
 	// NB: _Material smartpoint to this ITexture. But this is correct because so does CTextureUser.
 }
@@ -97,15 +95,15 @@ void UMaterial::setTexture(uint stage, UTexture* ptex)
 
 bool UMaterial::texturePresent()
 {
-	return texturePresent (0);
+	return texturePresent(0);
 }
 
 // ***************************************************************************
 
-bool UMaterial::texturePresent (uint stage)
+bool UMaterial::texturePresent(uint stage)
 {
 	CMaterial *object = getObjectPtr();
-	return object->texturePresent (stage);
+	return object->texturePresent(stage);
 }
 
 // ***************************************************************************
@@ -158,7 +156,7 @@ bool UMaterial::getBlend() const
 
 // ***************************************************************************
 
-UMaterial::TBlend UMaterial::getSrcBlend(void)  const
+UMaterial::TBlend UMaterial::getSrcBlend(void) const
 {
 	CMaterial *object = getObjectPtr();
 	return (UMaterial::TBlend)(uint32)object->getSrcBlend();
@@ -166,7 +164,7 @@ UMaterial::TBlend UMaterial::getSrcBlend(void)  const
 
 // ***************************************************************************
 
-UMaterial::TBlend UMaterial::getDstBlend(void)  const
+UMaterial::TBlend UMaterial::getDstBlend(void) const
 {
 	CMaterial *object = getObjectPtr();
 	return (UMaterial::TBlend)(uint32)object->getDstBlend();
@@ -182,26 +180,26 @@ void UMaterial::texEnvOpRGB(uint stage, TTexOperator ope)
 
 // ***************************************************************************
 
-void UMaterial::texEnvArg0RGB (uint stage, TTexSource src, TTexOperand oper)
+void UMaterial::texEnvArg0RGB(uint stage, TTexSource src, TTexOperand oper)
 {
 	CMaterial *object = getObjectPtr();
-	object->texEnvArg0RGB (stage, (CMaterial::TTexSource)(uint32)src, (CMaterial::TTexOperand)(uint32)oper);
+	object->texEnvArg0RGB(stage, (CMaterial::TTexSource)(uint32)src, (CMaterial::TTexOperand)(uint32)oper);
 }
 
 // ***************************************************************************
 
-void UMaterial::texEnvArg1RGB (uint stage, TTexSource src, TTexOperand oper)
+void UMaterial::texEnvArg1RGB(uint stage, TTexSource src, TTexOperand oper)
 {
 	CMaterial *object = getObjectPtr();
-	object->texEnvArg1RGB (stage, (CMaterial::TTexSource)(uint32)src, (CMaterial::TTexOperand)(uint32)oper);
+	object->texEnvArg1RGB(stage, (CMaterial::TTexSource)(uint32)src, (CMaterial::TTexOperand)(uint32)oper);
 }
 
 // ***************************************************************************
 
-void UMaterial::texEnvArg2RGB (uint stage, TTexSource src, TTexOperand oper)
+void UMaterial::texEnvArg2RGB(uint stage, TTexSource src, TTexOperand oper)
 {
 	CMaterial *object = getObjectPtr();
-	object->texEnvArg2RGB (stage, (CMaterial::TTexSource)(uint32)src, (CMaterial::TTexOperand)(uint32)oper);
+	object->texEnvArg2RGB(stage, (CMaterial::TTexSource)(uint32)src, (CMaterial::TTexOperand)(uint32)oper);
 }
 
 // ***************************************************************************
@@ -209,7 +207,7 @@ void UMaterial::texEnvArg2RGB (uint stage, TTexSource src, TTexOperand oper)
 void UMaterial::texEnvOpAlpha(uint stage, TTexOperator ope)
 {
 	CMaterial *object = getObjectPtr();
-	object->texEnvOpAlpha (stage, (CMaterial::TTexOperator)(uint32)ope);
+	object->texEnvOpAlpha(stage, (CMaterial::TTexOperator)(uint32)ope);
 }
 
 // ***************************************************************************
@@ -217,7 +215,7 @@ void UMaterial::texEnvOpAlpha(uint stage, TTexOperator ope)
 void UMaterial::texEnvArg0Alpha(uint stage, TTexSource src, TTexOperand oper)
 {
 	CMaterial *object = getObjectPtr();
-	object->texEnvArg0Alpha (stage, (CMaterial::TTexSource)(uint32)src, (CMaterial::TTexOperand)(uint32)oper);
+	object->texEnvArg0Alpha(stage, (CMaterial::TTexSource)(uint32)src, (CMaterial::TTexOperand)(uint32)oper);
 }
 
 // ***************************************************************************
@@ -225,7 +223,7 @@ void UMaterial::texEnvArg0Alpha(uint stage, TTexSource src, TTexOperand oper)
 void UMaterial::texEnvArg1Alpha(uint stage, TTexSource src, TTexOperand oper)
 {
 	CMaterial *object = getObjectPtr();
-	object->texEnvArg1Alpha (stage, (CMaterial::TTexSource)(uint32)src, (CMaterial::TTexOperand)(uint32)oper);
+	object->texEnvArg1Alpha(stage, (CMaterial::TTexSource)(uint32)src, (CMaterial::TTexOperand)(uint32)oper);
 }
 
 // ***************************************************************************
@@ -233,20 +231,20 @@ void UMaterial::texEnvArg1Alpha(uint stage, TTexSource src, TTexOperand oper)
 void UMaterial::texEnvArg2Alpha(uint stage, TTexSource src, TTexOperand oper)
 {
 	CMaterial *object = getObjectPtr();
-	object->texEnvArg2Alpha (stage, (CMaterial::TTexSource)(uint32)src, (CMaterial::TTexOperand)(uint32)oper);
+	object->texEnvArg2Alpha(stage, (CMaterial::TTexSource)(uint32)src, (CMaterial::TTexOperand)(uint32)oper);
 }
 
 // ***************************************************************************
 
-void			UMaterial::setZFunc(ZFunc val)
+void UMaterial::setZFunc(ZFunc val)
 {
 	CMaterial *object = getObjectPtr();
-	object->setZFunc((CMaterial::ZFunc)(uint32) val);
+	object->setZFunc((CMaterial::ZFunc)(uint32)val);
 }
 
 // ***************************************************************************
 
-void			UMaterial::setZWrite(bool active)
+void UMaterial::setZWrite(bool active)
 {
 	CMaterial *object = getObjectPtr();
 	object->setZWrite(active);
@@ -254,7 +252,7 @@ void			UMaterial::setZWrite(bool active)
 
 // ***************************************************************************
 
-void			UMaterial::setZBias(float val)
+void UMaterial::setZBias(float val)
 {
 	CMaterial *object = getObjectPtr();
 	object->setZBias(val);
@@ -262,7 +260,7 @@ void			UMaterial::setZBias(float val)
 
 // ***************************************************************************
 
-UMaterial::ZFunc			UMaterial::getZFunc(void)  const
+UMaterial::ZFunc UMaterial::getZFunc(void) const
 {
 	CMaterial *object = getObjectPtr();
 	return (UMaterial::ZFunc)(uint32)object->getZFunc();
@@ -270,7 +268,7 @@ UMaterial::ZFunc			UMaterial::getZFunc(void)  const
 
 // ***************************************************************************
 
-bool			UMaterial::getZWrite(void)  const
+bool UMaterial::getZWrite(void) const
 {
 	CMaterial *object = getObjectPtr();
 	return object->getZWrite();
@@ -278,7 +276,7 @@ bool			UMaterial::getZWrite(void)  const
 
 // ***************************************************************************
 
-float			UMaterial::getZBias(void)  const
+float UMaterial::getZBias(void) const
 {
 	CMaterial *object = getObjectPtr();
 	return object->getZBias();
@@ -286,7 +284,7 @@ float			UMaterial::getZBias(void)  const
 
 // ***************************************************************************
 
-void			UMaterial::setColor(CRGBA rgba)
+void UMaterial::setColor(CRGBA rgba)
 {
 	CMaterial *object = getObjectPtr();
 	object->setColor(rgba);
@@ -294,7 +292,7 @@ void			UMaterial::setColor(CRGBA rgba)
 
 // ***************************************************************************
 
-CRGBA			UMaterial::getColor(void) const
+CRGBA UMaterial::getColor(void) const
 {
 	CMaterial *object = getObjectPtr();
 	return object->getColor();
@@ -302,7 +300,7 @@ CRGBA			UMaterial::getColor(void) const
 
 // ***************************************************************************
 
-void			UMaterial::setDoubleSided(bool doubleSided)
+void UMaterial::setDoubleSided(bool doubleSided)
 {
 	CMaterial *object = getObjectPtr();
 	object->setDoubleSided(doubleSided);
@@ -310,7 +308,7 @@ void			UMaterial::setDoubleSided(bool doubleSided)
 
 // ***************************************************************************
 
-bool			UMaterial::getDoubleSided() const
+bool UMaterial::getDoubleSided() const
 {
 	CMaterial *object = getObjectPtr();
 	return object->getDoubleSided();
@@ -318,51 +316,50 @@ bool			UMaterial::getDoubleSided() const
 
 // ***************************************************************************
 
-void			UMaterial::initUnlit()
+void UMaterial::initUnlit()
 {
 	CMaterial *object = getObjectPtr();
 	object->initUnlit();
 }
 
-
 // ***************************************************************************
-bool			UMaterial::isLighted() const
+bool UMaterial::isLighted() const
 {
 	CMaterial *object = getObjectPtr();
 	return object->isLighted();
 }
 // ***************************************************************************
-CRGBA			UMaterial::getEmissive() const
+CRGBA UMaterial::getEmissive() const
 {
 	CMaterial *object = getObjectPtr();
 	return object->getEmissive();
 }
 // ***************************************************************************
-CRGBA			UMaterial::getAmbient() const
+CRGBA UMaterial::getAmbient() const
 {
 	CMaterial *object = getObjectPtr();
 	return object->getAmbient();
 }
 // ***************************************************************************
-CRGBA			UMaterial::getDiffuse() const
+CRGBA UMaterial::getDiffuse() const
 {
 	CMaterial *object = getObjectPtr();
 	return object->getDiffuse();
 }
 // ***************************************************************************
-uint8			UMaterial::getOpacity() const
+uint8 UMaterial::getOpacity() const
 {
 	CMaterial *object = getObjectPtr();
 	return object->getOpacity();
 }
 // ***************************************************************************
-CRGBA			UMaterial::getSpecular() const
+CRGBA UMaterial::getSpecular() const
 {
 	CMaterial *object = getObjectPtr();
 	return object->getSpecular();
 }
 // ***************************************************************************
-float			UMaterial::getShininess() const
+float UMaterial::getShininess() const
 {
 	CMaterial *object = getObjectPtr();
 	return object->getShininess();

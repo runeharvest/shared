@@ -19,13 +19,12 @@
 
 #if _MSC_VER > 1000
 #pragma once
-#endif 
+#endif
 
 #include "particle_workspace.h"
 
-namespace NL3D
-{
-	struct CPSTailParticle;
+namespace NL3D {
+struct CPSTailParticle;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -33,37 +32,39 @@ namespace NL3D
 
 class CTailParticleDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CTailParticleDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSTailParticle *tp);   // standard constructor
+	CTailParticleDlg(CParticleWorkspace::CNode *ownerNode, NL3D::CPSTailParticle *tp); // standard constructor
 
 	void init(CWnd *pParent, sint x, sint y);
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CTailParticleDlg)
-	enum { IDD = IDD_TAIL_PARTICLE };
-	CComboBox	m_TailShape;
-	CButton	m_TailPersistAfterDeathCtrl;
-	BOOL	m_TailFade;	
-	BOOL	m_TailPersistAfterDeath;
+	enum
+	{
+		IDD = IDD_TAIL_PARTICLE
+	};
+	CComboBox m_TailShape;
+	CButton m_TailPersistAfterDeathCtrl;
+	BOOL m_TailFade;
+	BOOL m_TailPersistAfterDeath;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CTailParticleDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// the particle being edited
-	NL3D::CPSTailParticle	  *_TailParticle;
+	NL3D::CPSTailParticle *_TailParticle;
 	CParticleWorkspace::CNode *_Node;
 
 	// Generated message map functions
 	//{{AFX_MSG(CTailParticleDlg)
-	afx_msg void OnTailFade();	
+	afx_msg void OnTailFade();
 	afx_msg void OnTailPersistAfterDeath();
 	afx_msg void OnSelchangeTailShape();
 	afx_msg void OnPaint();

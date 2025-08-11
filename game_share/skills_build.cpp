@@ -14,17 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "skills_build.h"
 #include "skills.h"
 #include "nel/georges/u_form_elm.h"
 
-void loadSkillsSummaryFromSheet(const NLGEORGES::UFormElm &item,const std::string &prefix,std::vector<CSkillSummary> &dest)
+void loadSkillsSummaryFromSheet(const NLGEORGES::UFormElm &item, const std::string &prefix, std::vector<CSkillSummary> &dest)
 {
 	dest.clear();
-	for(uint k = 0; k < SKILLS::NUM_SKILLS; ++k)
+	for (uint k = 0; k < SKILLS::NUM_SKILLS; ++k)
 	{
 		uint16 skillValue;
 		std::string skillName = prefix;
@@ -32,7 +30,7 @@ void loadSkillsSummaryFromSheet(const NLGEORGES::UFormElm &item,const std::strin
 		skillName += rTmp;
 		skillName += ".";
 		skillName += SKILLS::toString(k);
-		if(item.getValueByName(skillValue, skillName.c_str()))
+		if (item.getValueByName(skillValue, skillName.c_str()))
 		{
 			if (skillValue != 0)
 			{
@@ -40,5 +38,4 @@ void loadSkillsSummaryFromSheet(const NLGEORGES::UFormElm &item,const std::strin
 			}
 		}
 	}
-
 }

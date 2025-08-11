@@ -21,13 +21,11 @@
 
 #include "nel/sound/mixing_track.h"
 
-
 // leave not static else this workaround don't work
-void	dummyToAvoidStupidCompilerWarning_sound_mixing_track_cpp()
+void dummyToAvoidStupidCompilerWarning_sound_mixing_track_cpp()
 {
 }
 
 namespace NLSOUND {
-
 
 } // NLSOUND

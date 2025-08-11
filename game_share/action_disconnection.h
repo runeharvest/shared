@@ -14,15 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_ACTION_DISCONNECTION_H
 #define NL_ACTION_DISCONNECTION_H
 
 #include "nel/misc/types_nl.h"
 
 #include "action.h"
-
 
 namespace CLFECOMMON {
 
@@ -36,11 +33,9 @@ namespace CLFECOMMON {
 class CActionDisconnection : public CActionImpulsion
 {
 public:
-
-	static CAction *create () { return new CActionDisconnection(); }
+	static CAction *create() { return new CActionDisconnection(); }
 
 protected:
-
 	friend class CActionFactory;
 
 	/// This method intialises the action with a default state

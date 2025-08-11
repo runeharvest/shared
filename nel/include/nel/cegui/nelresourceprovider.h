@@ -21,15 +21,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /************************************************************************
-	purpose:	Interface for main Nevrax Engine GUI renderer class
+    purpose:	Interface for main Nevrax Engine GUI renderer class
 
-	For use with GUI Library:
-	Crazy Eddie's GUI System (http://crayzedsgui.sourceforge.net)
+    For use with GUI Library:
+    Crazy Eddie's GUI System (http://crayzedsgui.sourceforge.net)
     Copyright (C)2004 Paul D Turner (crayzed@users.sourceforge.net)
 
-	This file contains code that is specific to NeL (http://www.nevrax.org)
+    This file contains code that is specific to NeL (http://www.nevrax.org)
 *************************************************************************/
 
 #ifndef __NELRESOURCEPROVIDER_H__
@@ -70,24 +69,23 @@
 #ifdef NL_OS_WINDOWS
 #ifdef NEL_CEGUIRENDERER_EXPORTS
 #define DLLSPEC __declspec(dllexport)
-#else //NEL_CEGUI_RENDERER_EXPORTS
+#else // NEL_CEGUI_RENDERER_EXPORTS
 #define DLLSPEC __declspec(dllimport)
 #endif // NEL_CEGUI_RENDERER_EXPORTS
 #else // NL_OS_WINDOWS
-#define DLLSPEC 
+#define DLLSPEC
 #endif // NL_OS_WINDOWS
 
 // Start of CEGUI namespace section
-namespace CEGUI
+namespace CEGUI {
+class DLLSPEC NeLResourceProvider : public ResourceProvider
 {
-	class DLLSPEC NeLResourceProvider : public ResourceProvider
-	{
-	public:
-		NeLResourceProvider();
-		~NeLResourceProvider();
+public:
+	NeLResourceProvider();
+	~NeLResourceProvider();
 
-		void loadRawDataContainer(const String& filename, RawDataContainer& output, const String& resourceGroup);
-	};
+	void loadRawDataContainer(const String &filename, RawDataContainer &output, const String &resourceGroup);
+};
 }; // end namespace CEGUI
 
 #endif // end __NELRESOURCEPROVIDER_H__

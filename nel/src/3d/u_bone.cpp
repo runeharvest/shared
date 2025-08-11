@@ -23,22 +23,21 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
-const CMatrix	&UBone::getLastWorldMatrixComputed() const
+const CMatrix &UBone::getLastWorldMatrixComputed() const
 {
 	CBone *object = getObjectPtr();
 	return object->getWorldMatrix();
 }
 
-void			UBone::setSkinScale(CVector &skinScale)
+void UBone::setSkinScale(CVector &skinScale)
 {
 	CBone *object = getObjectPtr();
 	object->setSkinScale(skinScale);
 }
 
-const CVector	&UBone::getSkinScale() const
+const CVector &UBone::getSkinScale() const
 {
 	CBone *object = getObjectPtr();
 	return object->getSkinScale();

@@ -24,8 +24,7 @@
 #include "nel/misc/rect.h"
 #include "nel/3d/texture.h"
 
-namespace NL3D
-{
+namespace NL3D {
 
 class CFontGenerator;
 
@@ -37,7 +36,6 @@ class CTextureFont : public ITexture
 {
 
 public:
-
 	struct SLetterKey
 	{
 		u32char Char;
@@ -46,17 +44,22 @@ public:
 		bool Oblique;
 		CFontGenerator *FontGenerator;
 
-		SLetterKey() : Char(0), Size(0), Embolden(false), Oblique(false), FontGenerator(NULL)
+		SLetterKey()
+		    : Char(0)
+		    , Size(0)
+		    , Embolden(false)
+		    , Oblique(false)
+		    , FontGenerator(NULL)
 		{
 		}
 
 		// Does not use FontGenerator in return value
 		inline uint64 getVal() const
 		{
-			return Char                           // 32 bits
-				| (uint64(Size & 0xFFFF) << 32)   // 16 bits
-				| (uint64(Embolden) << (32+16))   // 1 bit
-				| (uint64(Oblique) << (32+16+1)); // 1 bit
+			return Char // 32 bits
+			    | (uint64(Size & 0xFFFF) << 32) // 16 bits
+			    | (uint64(Embolden) << (32 + 16)) // 1 bit
+			    | (uint64(Oblique) << (32 + 16 + 1)); // 1 bit
 		}
 
 		bool operator<(const SLetterKey &rhs) const
@@ -86,9 +89,18 @@ public:
 		float U0, V0, U1, V1;
 
 		SGlyphInfo()
-			: CacheVersion(0), GlyphIndex(0),
-			  U0(0.f), V0(0.f), U1(0.f), V1(0.f),
-			  X(0), Y(0), W(0), H(0), CharWidth(0), CharHeight(0)
+		    : CacheVersion(0)
+		    , GlyphIndex(0)
+		    , U0(0.f)
+		    , V0(0.f)
+		    , U1(0.f)
+		    , V1(0.f)
+		    , X(0)
+		    , Y(0)
+		    , W(0)
+		    , H(0)
+		    , CharWidth(0)
+		    , CharHeight(0)
 		{
 		}
 	};
@@ -97,23 +109,27 @@ public:
 	struct SLetterInfo : SLetterKey
 	{
 		uint32 GlyphIndex;
-		uint32 CharWidth;	// Displayed glyph height
-		uint32 CharHeight;	// Displayed glyph height
-		sint32 Top;			// Distance between origin and top of the texture
-		sint32 Left;		// Distance between origin and left of the texture
-		sint32 AdvX;		// Advance to the next caracter
+		uint32 CharWidth; // Displayed glyph height
+		uint32 CharHeight; // Displayed glyph height
+		sint32 Top; // Distance between origin and top of the texture
+		sint32 Left; // Distance between origin and left of the texture
+		sint32 AdvX; // Advance to the next caracter
 
-		SGlyphInfo* glyph;
+		SGlyphInfo *glyph;
 
 		SLetterInfo()
-			: GlyphIndex(0), CharWidth(0), CharHeight(0), Top(0), Left(0), AdvX(0),
-			  glyph(NULL)
+		    : GlyphIndex(0)
+		    , CharWidth(0)
+		    , CharHeight(0)
+		    , Top(0)
+		    , Left(0)
+		    , AdvX(0)
+		    , glyph(NULL)
 		{
 		}
 	};
 
 public:
-
 	/**
 	 * Default constructor
 	 */
@@ -121,13 +137,13 @@ public:
 	virtual ~CTextureFont();
 
 	// Generate the texture
-	void doGenerate (bool async = false);
+	void doGenerate(bool async = false);
 
 	// This function manage the cache if the letter wanted does not exist
 	// \param render Set to true if letter is currently visible on screen
-	SLetterInfo* getLetterInfo (SLetterKey& k, bool render);
+	SLetterInfo *getLetterInfo(SLetterKey &k, bool render);
 
-	void dumpTextureFont (const char *filename);
+	void dumpTextureFont(const char *filename);
 
 	// Version is increased with each rebuild of font atlas
 	uint32 getCacheVersion() const { return _CacheVersion; }
@@ -155,7 +171,7 @@ private:
 	std::map<SLetterKey, SLetterInfo> _Letters;
 
 	// lookup letter from letter cache or create new
-	SLetterInfo* findLetter(SLetterKey& k, bool insert);
+	SLetterInfo *findLetter(SLetterKey &k, bool insert);
 
 	// lower/upper bound of glyphs to render, sizes outside are scaled bitmaps
 	uint _MinGlyphSize;
@@ -167,13 +183,13 @@ private:
 
 	// rendered glyph cache
 	std::map<SLetterKey, SGlyphInfo> _GlyphCache;
-	SGlyphInfo* findLetterGlyph(SLetterInfo *letter, bool insert);
+	SGlyphInfo *findLetterGlyph(SLetterInfo *letter, bool insert);
 
 	// render letter glyph into glyph cache
-	SGlyphInfo* renderLetterGlyph(SLetterInfo *letter, uint32 bitmapFontSize);
+	SGlyphInfo *renderLetterGlyph(SLetterInfo *letter, uint32 bitmapFontSize);
 
 	// copy glyph bitmap into texture and invalidate that region
-	void copyGlyphBitmap(uint8* bitmap, uint32 bitmapW, uint32 bitmapH, uint32 atlasX, uint32 atlasY);
+	void copyGlyphBitmap(uint8 *bitmap, uint32 bitmapW, uint32 bitmapH, uint32 atlasX, uint32 atlasY);
 
 	// Find best fit for WxH rect in atlas
 	uint fitRegion(uint index, uint width, uint height);
@@ -197,14 +213,11 @@ private:
 
 	/// Todo: serialize a font texture.
 public:
-	virtual void	serial(NLMISC::IStream &/* f */) {nlstop;}
+	virtual void serial(NLMISC::IStream & /* f */) { nlstop; }
 	NLMISC_DECLARE_CLASS(CTextureFont);
-
 };
 
-
 } // NL3D
-
 
 #endif // NL_TEXTURE_FONT_H
 

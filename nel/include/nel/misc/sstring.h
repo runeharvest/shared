@@ -20,7 +20,7 @@
 #ifndef NL_SSTRING_H
 #define NL_SSTRING_H
 
-//#include "types_nl.h"
+// #include "types_nl.h"
 #include <string>
 #include <vector>
 #include <cstdio>
@@ -29,11 +29,10 @@
 #include "path.h"
 #include "string_common.h"
 
-namespace	NLMISC
-{
+namespace NLMISC {
 
 // advanced class declaration...
-//class CVectorSString;
+// class CVectorSString;
 class CSString;
 typedef std::vector<CSString> CVectorSString;
 
@@ -44,7 +43,7 @@ typedef std::vector<CSString> CVectorSString;
  * \author Nevrax
  * \date 2003
  */
-class CSString: public std::string
+class CSString : public std::string
 {
 public:
 	///	ctor
@@ -56,17 +55,17 @@ public:
 	///	ctor
 	CSString(char c);
 	///	ctor
-	CSString(int i,const char *fmt="%d");
+	CSString(int i, const char *fmt = "%d");
 	///	ctor
-	CSString(uint32 u,const char *fmt="%u");
+	CSString(uint32 u, const char *fmt = "%u");
 	/// ctor
-	CSString(double d,const char *fmt="%f");
+	CSString(double d, const char *fmt = "%f");
 	///	ctor
-	CSString(const char *s,const char *fmt);
+	CSString(const char *s, const char *fmt);
 	///	ctor
-	CSString(const std::string &s,const char *fmt);
+	CSString(const std::string &s, const char *fmt);
 	///	ctor
-	CSString(const std::vector<NLMISC::CSString>& v,const std::string& separator="\n");
+	CSString(const std::vector<NLMISC::CSString> &v, const std::string &separator = "\n");
 
 	/// Const [] operator
 	std::string::const_reference operator[](std::string::size_type idx) const;
@@ -90,15 +89,15 @@ public:
 
 	/// Return sub string up to but not including first instance of given character, starting at 'iterator'
 	/// on exit 'iterator' indexes first character after extracted string segment
-	CSString splitToWithIterator(char c,uint32& iterator) const;
+	CSString splitToWithIterator(char c, uint32 &iterator) const;
 	/// Return sub string up to but not including first instance of given character
 	CSString splitTo(char c) const;
 	/// Return sub string up to but not including first instance of given character
-	CSString splitTo(char c,bool truncateThis=false,bool absorbSeparator=true);
+	CSString splitTo(char c, bool truncateThis = false, bool absorbSeparator = true);
 	/// Return sub string up to but not including first instance of given character
-	CSString splitTo(const char *s,bool truncateThis=false);
+	CSString splitTo(const char *s, bool truncateThis = false);
 	/// Return sub string up to but not including first non-quote encapsulated '//'
-	CSString splitToLineComment(bool truncateThis=false, bool useSlashStringEscape=true);
+	CSString splitToLineComment(bool truncateThis = false, bool useSlashStringEscape = true);
 
 	/// Return sub string from character following first instance of given character on
 	CSString splitFrom(char c) const;
@@ -107,13 +106,13 @@ public:
 
 	/// Behave like a s strtok() routine, returning the sun string extracted from (and removed from) *this
 	CSString strtok(const char *separators,
-					bool useSmartExtensions=false,			// if true then match brackets etc (and refine with following args)
-					bool useAngleBrace=false,				// - treat '<' and '>' as brackets
-					bool useSlashStringEscape=true,			// - treat '\' as escape char so "\"" == '"'
-					bool useRepeatQuoteStringEscape=true);	// - treat """" as '"')
+	    bool useSmartExtensions = false, // if true then match brackets etc (and refine with following args)
+	    bool useAngleBrace = false, // - treat '<' and '>' as brackets
+	    bool useSlashStringEscape = true, // - treat '\' as escape char so "\"" == '"'
+	    bool useRepeatQuoteStringEscape = true); // - treat """" as '"')
 
 	/// Return first word (blank separated) - can remove extracted word from source string
-	CSString firstWord(bool truncateThis=false);
+	CSString firstWord(bool truncateThis = false);
 	///	Return first word (blank separated)
 	CSString firstWordConst() const;
 	/// Return sub string remaining after the first word
@@ -124,18 +123,18 @@ public:
 	CSString word(uint32 idx) const;
 
 	/// Return first word or quote-encompassed sub-string - can remove extracted sub-string from source string
-	CSString firstWordOrWords(bool truncateThis=false,bool useSlashStringEscape=true,bool useRepeatQuoteStringEscape=true);
+	CSString firstWordOrWords(bool truncateThis = false, bool useSlashStringEscape = true, bool useRepeatQuoteStringEscape = true);
 	///	Return first word or quote-encompassed sub-string
-	CSString firstWordOrWordsConst(bool useSlashStringEscape=true,bool useRepeatQuoteStringEscape=true) const;
+	CSString firstWordOrWordsConst(bool useSlashStringEscape = true, bool useRepeatQuoteStringEscape = true) const;
 	/// Return sub string following first word (or quote-encompassed sub-string)
-	CSString tailFromFirstWordOrWords(bool useSlashStringEscape=true,bool useRepeatQuoteStringEscape=true) const;
+	CSString tailFromFirstWordOrWords(bool useSlashStringEscape = true, bool useRepeatQuoteStringEscape = true) const;
 	/// Count the number of words (or quote delimited sub-strings) in a string
-	uint32 countWordOrWords(bool useSlashStringEscape=true,bool useRepeatQuoteStringEscape=true) const;
+	uint32 countWordOrWords(bool useSlashStringEscape = true, bool useRepeatQuoteStringEscape = true) const;
 	/// Extract the given words (or quote delimited sub-strings)
-	CSString wordOrWords(uint32 idx,bool useSlashStringEscape=true,bool useRepeatQuoteStringEscape=true) const;
+	CSString wordOrWords(uint32 idx, bool useSlashStringEscape = true, bool useRepeatQuoteStringEscape = true) const;
 
 	/// Return first line - can remove extracted line from source string
-	CSString firstLine(bool truncateThis=false);
+	CSString firstLine(bool truncateThis = false);
 	///	Return first line
 	CSString firstLineConst() const;
 	/// Return sub string remaining after the first line
@@ -148,13 +147,13 @@ public:
 	/// A handy utility routine for knowing if a character is a white space character or not (' ','\t','\n','\r',26)
 	static bool isWhiteSpace(char c);
 	///	Test whether character matches '{', '(','[' or '<' (the '<' test depends on the useAngleBrace parameter
-	static bool isOpeningDelimiter(char c,bool useAngleBrace=false);
+	static bool isOpeningDelimiter(char c, bool useAngleBrace = false);
 	///	Test whether character matches '}', ')',']' or '>' (the '>' test depends on the useAngleBrace parameter
-	static bool isClosingDelimiter(char c,bool useAngleBrace=false);
+	static bool isClosingDelimiter(char c, bool useAngleBrace = false);
 	///	Test whether character matches '\'' or '\"'
 	static bool isStringDelimiter(char c);
 	///	Tests whether the character 'b' is the closing delimiter or string delimiter corresponding to character 'a'
-	static bool isMatchingDelimiter(char a,char b);
+	static bool isMatchingDelimiter(char a, char b);
 
 	/// A handy utility routine for knowing if a character is a valid component of a file name
 	static bool isValidFileNameChar(char c);
@@ -185,112 +184,112 @@ public:
 	// a handy routine that tests whether or not a given string is a valid keyword
 	bool isValidKeyword() const;
 	// a handy routine that tests whether or not a given string is quote encapsulated
-	bool isQuoted(	bool useAngleBrace=false,						// treat '<' and '>' as brackets
-					bool useSlashStringEscape=true,					// treat '\' as escape char so "\"" == '"'
-					bool useRepeatQuoteStringEscape=true) const;	// treat """" as '"'
+	bool isQuoted(bool useAngleBrace = false, // treat '<' and '>' as brackets
+	    bool useSlashStringEscape = true, // treat '\' as escape char so "\"" == '"'
+	    bool useRepeatQuoteStringEscape = true) const; // treat """" as '"'
 
 	///	Search for the closing delimiter matching the opening delimiter at position 'startPos' in the 'this' string
 	/// on error returns startPos
-	uint32 findMatchingDelimiterPos(bool useAngleBrace,bool useSlashStringEscape,bool useRepeatQuoteStringEscape,uint32 startPos=0) const;
+	uint32 findMatchingDelimiterPos(bool useAngleBrace, bool useSlashStringEscape, bool useRepeatQuoteStringEscape, uint32 startPos = 0) const;
 
 	///	Extract a chunk from the 'this' string
 	/// if first non-blank character is a string delimiter or an opening delimiter then extracts up to the matching closing delimiter
 	/// in all other cases an empty string is returned
 	/// the return string includes the opening blank characters (it isn't stripped)
-	CSString matchDelimiters(bool truncateThis=false,
-							 bool useAngleBrace=false,				// treat '<' and '>' as brackets
-							 bool useSlashStringEscape=true,		// treat '\' as escape char so "\"" == '"'
-							 bool useRepeatQuoteStringEscape=true);	// treat """" as '"'
+	CSString matchDelimiters(bool truncateThis = false,
+	    bool useAngleBrace = false, // treat '<' and '>' as brackets
+	    bool useSlashStringEscape = true, // treat '\' as escape char so "\"" == '"'
+	    bool useRepeatQuoteStringEscape = true); // treat """" as '"'
 
 	/// copy out section of string up to separator character, respecting quotes (but not brackets etc)
 	/// on error tail after returned string doesn't begin with valid separator character
-	CSString splitToStringSeparator(	char separator,
-										bool truncateThis=false,
-										bool useSlashStringEscape=true,			// treat '\' as escape char so "\"" == '"'
-										bool useRepeatQuoteStringEscape=true,	// treat """" as '"'
-										bool truncateSeparatorCharacter=false);	// if true tail begins after separator char
+	CSString splitToStringSeparator(char separator,
+	    bool truncateThis = false,
+	    bool useSlashStringEscape = true, // treat '\' as escape char so "\"" == '"'
+	    bool useRepeatQuoteStringEscape = true, // treat """" as '"'
+	    bool truncateSeparatorCharacter = false); // if true tail begins after separator char
 
 	/// copy out section of string up to separator character, respecting quotes, brackets, etc
 	/// on error tail after returned string doesn't begin with valid separator character
 	/// eg: splitToSeparator(','); - this might be used to split some sort of ',' separated input
-	CSString splitToSeparator(	char separator,
-								bool truncateThis=false,
-								bool useAngleBrace=false,				// treat '<' and '>' as brackets
-								bool useSlashStringEscape=true,			// treat '\' as escape char so "\"" == '"'
-								bool useRepeatQuoteStringEscape=true,	// treat """" as '"'
-								bool truncateSeparatorCharacter=false);	// if true tail begins after separator char
+	CSString splitToSeparator(char separator,
+	    bool truncateThis = false,
+	    bool useAngleBrace = false, // treat '<' and '>' as brackets
+	    bool useSlashStringEscape = true, // treat '\' as escape char so "\"" == '"'
+	    bool useRepeatQuoteStringEscape = true, // treat """" as '"'
+	    bool truncateSeparatorCharacter = false); // if true tail begins after separator char
 
-	CSString splitToSeparator(	char separator,
-								bool useAngleBrace=false,						// treat '<' and '>' as brackets
-								bool useSlashStringEscape=true,					// treat '\' as escape char so "\"" == '"'
-								bool useRepeatQuoteStringEscape=true) const;	// treat """" as '"'
+	CSString splitToSeparator(char separator,
+	    bool useAngleBrace = false, // treat '<' and '>' as brackets
+	    bool useSlashStringEscape = true, // treat '\' as escape char so "\"" == '"'
+	    bool useRepeatQuoteStringEscape = true) const; // treat """" as '"'
 
 	/// copy out section of string up to any of a given set of separator characters, respecting quotes, brackets, etc
 	/// on error tail after returned string doesn't begin with valid separator character
 	/// eg: splitToOneOfSeparators(",;",true,false,false,true); - this might be used to split a string read from a CSV file
-	CSString splitToOneOfSeparators(	const CSString& separators,
-										bool truncateThis=false,
-										bool useAngleBrace=false,				// treat '<' and '>' as brackets
-										bool useSlashStringEscape=true,			// treat '\' as escape char so "\"" == '"'
-										bool useRepeatQuoteStringEscape=true,	// treat """" as '"'
-										bool truncateSeparatorCharacter=false,	// if true tail begins after separator char
-										bool splitStringAtBrackets=true);		// if true consider brackets as breaks in the string
+	CSString splitToOneOfSeparators(const CSString &separators,
+	    bool truncateThis = false,
+	    bool useAngleBrace = false, // treat '<' and '>' as brackets
+	    bool useSlashStringEscape = true, // treat '\' as escape char so "\"" == '"'
+	    bool useRepeatQuoteStringEscape = true, // treat """" as '"'
+	    bool truncateSeparatorCharacter = false, // if true tail begins after separator char
+	    bool splitStringAtBrackets = true); // if true consider brackets as breaks in the string
 
-	CSString splitToOneOfSeparators(	const CSString& separators,
-										bool useAngleBrace=false,						// treat '<' and '>' as brackets
-										bool useSlashStringEscape=true,					// treat '\' as escape char so "\"" == '"'
-										bool useRepeatQuoteStringEscape=true) const;	// treat """" as '"'
+	CSString splitToOneOfSeparators(const CSString &separators,
+	    bool useAngleBrace = false, // treat '<' and '>' as brackets
+	    bool useSlashStringEscape = true, // treat '\' as escape char so "\"" == '"'
+	    bool useRepeatQuoteStringEscape = true) const; // treat """" as '"'
 
 	/// Return true if the string is a single block encompassed by a pair of delimiters
 	/// eg: "((a)(b)(c))" or "(abc)" return true wheras "(a)(b)(c)" or "abc" return false
-	bool isDelimitedMonoBlock(	bool useAngleBrace=false,				// treat '<' and '>' as brackets
-								bool useSlashStringEscape=true,			// treat '\' as escape char so "\"" == '"'
-								bool useRepeatQuoteStringEscape=true	// treat """" as '"'
-							 ) const;
+	bool isDelimitedMonoBlock(bool useAngleBrace = false, // treat '<' and '>' as brackets
+	    bool useSlashStringEscape = true, // treat '\' as escape char so "\"" == '"'
+	    bool useRepeatQuoteStringEscape = true // treat """" as '"'
+	) const;
 
 	/// Return the sub string with leading and trailing delimiters ( such as '(' and ')' or '[' and ']' ) removed
 	/// if the string isn't a delimited monoblock then the complete string is returned
 	/// eg "((a)b(c))" returns "(a)b(c)" whereas "(a)b(c)" returns the identical "(a)b(c)"
-	CSString stripBlockDelimiters(	bool useAngleBrace=false,				// treat '<' and '>' as brackets
-									bool useSlashStringEscape=true,			// treat '\' as escape char so "\"" == '"'
-									bool useRepeatQuoteStringEscape=true	// treat """" as '"'
-								 ) const;
+	CSString stripBlockDelimiters(bool useAngleBrace = false, // treat '<' and '>' as brackets
+	    bool useSlashStringEscape = true, // treat '\' as escape char so "\"" == '"'
+	    bool useRepeatQuoteStringEscape = true // treat """" as '"'
+	) const;
 
 	/// Append the individual words in the string to the result vector
 	/// retuns true on success
-	bool splitWords(CVectorSString& result) const;
+	bool splitWords(CVectorSString &result) const;
 
 	/// Append the individual "wordOrWords" elements in the string to the result vector
 	/// retuns true on success
-	bool splitWordOrWords(CVectorSString& result,bool useSlashStringEscape=true,bool useRepeatQuoteStringEscape=true) const;
+	bool splitWordOrWords(CVectorSString &result, bool useSlashStringEscape = true, bool useRepeatQuoteStringEscape = true) const;
 
 	/// Append the individual lines in the string to the result vector
 	/// retuns true on success
-	bool splitLines(CVectorSString& result) const;
+	bool splitLines(CVectorSString &result) const;
 
 	/// Append the separator-separated elements in the string to the result vector
 	/// retuns true on success
-	bool splitBySeparator(	char separator, CVectorSString& result,
-							bool useAngleBrace=false,				// treat '<' and '>' as brackets
-							bool useSlashStringEscape=true,			// treat '\' as escape char so "\"" == '"'
-							bool useRepeatQuoteStringEscape=true,	// treat """" as '"'
-							bool skipBlankEntries=false				// dont add blank entries to the result vector
-						 ) const;
+	bool splitBySeparator(char separator, CVectorSString &result,
+	    bool useAngleBrace = false, // treat '<' and '>' as brackets
+	    bool useSlashStringEscape = true, // treat '\' as escape char so "\"" == '"'
+	    bool useRepeatQuoteStringEscape = true, // treat """" as '"'
+	    bool skipBlankEntries = false // dont add blank entries to the result vector
+	) const;
 
 	/// Append the separator-separated elements in the string to the result vector
 	/// retuns true on success
-	bool splitByOneOfSeparators(	const CSString& separators, CVectorSString& result,
-									bool useAngleBrace=false,				// treat '<' and '>' as brackets
-									bool useSlashStringEscape=true,			// treat '\' as escape char so "\"" == '"'
-									bool useRepeatQuoteStringEscape=true,	// treat """" as '"'
-									bool retainSeparators=false,			// have the separators turn up in the result vector
-									bool skipBlankEntries=false				// dont add blank entries to the result vector
-								 ) const;
+	bool splitByOneOfSeparators(const CSString &separators, CVectorSString &result,
+	    bool useAngleBrace = false, // treat '<' and '>' as brackets
+	    bool useSlashStringEscape = true, // treat '\' as escape char so "\"" == '"'
+	    bool useRepeatQuoteStringEscape = true, // treat """" as '"'
+	    bool retainSeparators = false, // have the separators turn up in the result vector
+	    bool skipBlankEntries = false // dont add blank entries to the result vector
+	) const;
 
 	/// join an array of strings to form a single string (appends to the existing content of this string)
 	/// if this string is not empty then a separator is added between this string and the following
-	const CSString& join(const std::vector<CSString>& strings, const CSString& separator="");
-	const CSString& join(const std::vector<CSString>& strings, char separator);
+	const CSString &join(const std::vector<CSString> &strings, const CSString &separator = "");
+	const CSString &join(const std::vector<CSString> &strings, char separator);
 
 	/// Return a copy of the string with leading and trainling spaces removed
 	CSString strip() const;
@@ -306,33 +305,32 @@ public:
 	CSString toLower() const;
 
 	/// encapsulate string in quotes, adding escape characters as necessary
-	CSString quote(	bool useSlashStringEscape=true,			// treat '\' as escape char so "\"" == '"'
-					bool useRepeatQuoteStringEscape=true	// treat """" as '"'
-					) const;
+	CSString quote(bool useSlashStringEscape = true, // treat '\' as escape char so "\"" == '"'
+	    bool useRepeatQuoteStringEscape = true // treat """" as '"'
+	) const;
 
 	/// if a string is not already encapsulated in quotes then return quote() else return *this
-	CSString quoteIfNotQuoted(	bool useSlashStringEscape=true,			// treat '\' as escape char so "\"" == '"'
-								bool useRepeatQuoteStringEscape=true	// treat """" as '"'
-								) const;
+	CSString quoteIfNotQuoted(bool useSlashStringEscape = true, // treat '\' as escape char so "\"" == '"'
+	    bool useRepeatQuoteStringEscape = true // treat """" as '"'
+	) const;
 
 	/// if a string is not a single word and is not already encapsulated in quotes then return quote() else return *this
-	CSString quoteIfNotAtomic(	bool useSlashStringEscape=true,			// treat '\' as escape char so "\"" == '"'
-								bool useRepeatQuoteStringEscape=true	// treat """" as '"'
-								) const;
+	CSString quoteIfNotAtomic(bool useSlashStringEscape = true, // treat '\' as escape char so "\"" == '"'
+	    bool useRepeatQuoteStringEscape = true // treat """" as '"'
+	) const;
 
 	/// strip delimiting quotes and clear through escape characters as necessary
-	CSString unquote(bool useSlashStringEscape=true,		// treat '\' as escape char so "\"" == '"'
-					 bool useRepeatQuoteStringEscape=true	// treat """" as '"'
-					) const;
+	CSString unquote(bool useSlashStringEscape = true, // treat '\' as escape char so "\"" == '"'
+	    bool useRepeatQuoteStringEscape = true // treat """" as '"'
+	) const;
 
 	/// equivalent to if (isQuoted()) unquote()
-	CSString unquoteIfQuoted(bool useSlashStringEscape=true,
-					 bool useRepeatQuoteStringEscape=true
-					) const;
+	CSString unquoteIfQuoted(bool useSlashStringEscape = true,
+	    bool useRepeatQuoteStringEscape = true) const;
 
 	///	encode special characters such as quotes, gt, lt, etc to xml encoding
 	/// the isParameter paramter is true if the string is to be used in an XML parameter block
-	CSString encodeXML(bool isParameter=false) const;
+	CSString encodeXML(bool isParameter = false) const;
 
 	///	decode special characters such as quotes, gt, lt, etc from xml encoding
 	CSString decodeXML() const;
@@ -343,16 +341,16 @@ public:
 	/// verifies whether a string contains any XML incompatible characters
 	/// in this case the string can be converted to xml compatible format via encodeXML()
 	/// the isParameter paramter is true if the string is to be used in an XML parameter block
-	bool isXMLCompatible(bool isParameter=false) const;
+	bool isXMLCompatible(bool isParameter = false) const;
 
 	/// Replacing all occurences of one string with another
-	CSString replace(const char *toFind,const char *replacement) const;
+	CSString replace(const char *toFind, const char *replacement) const;
 
 	/// Find index at which a sub-string starts (case not sensitive) - if sub-string not found then returns string::npos
-	std::string::size_type find(const char *toFind, std::string::size_type startLocation=0) const;
+	std::string::size_type find(const char *toFind, std::string::size_type startLocation = 0) const;
 
 	/// Find index at which a sub-string starts (case NOT sensitive) - if sub-string not found then returns string::npos
-	std::string::size_type findNS(const char *toFind, std::string::size_type startLocation=0) const;
+	std::string::size_type findNS(const char *toFind, std::string::size_type startLocation = 0) const;
 
 	/// Return true if this contains given sub string
 	bool contains(const char *toFind) const;
@@ -372,97 +370,97 @@ public:
 	double atof() const;
 
 	/// assignment operator
-	CSString& operator=(const char *s);
+	CSString &operator=(const char *s);
 	/// assignment operator
-	CSString& operator=(const std::string &s);
+	CSString &operator=(const std::string &s);
 	/// assignment operator
-	CSString& operator=(char c);
+	CSString &operator=(char c);
 	/// assignment operator
-	CSString& operator=(int i);
+	CSString &operator=(int i);
 	/// assignment operator
-	CSString& operator=(uint32 u);
+	CSString &operator=(uint32 u);
 	/// assignment operator
-	CSString& operator=(double d);
+	CSString &operator=(double d);
 
 	/// Case insensitive string compare
 	bool operator==(const CSString &other) const;
 	/// Case insensitive string compare
 	bool operator==(const std::string &other) const;
 	/// Case insensitive string compare
-	bool operator==(const char* other) const;
+	bool operator==(const char *other) const;
 
 	/// Case insensitive string compare
 	bool operator!=(const CSString &other) const;
 	/// Case insensitive string compare
 	bool operator!=(const std::string &other) const;
 	/// Case insensitive string compare
-	bool operator!=(const char* other) const;
+	bool operator!=(const char *other) const;
 
 	/// Case insensitive string compare
 	bool operator<=(const CSString &other) const;
 	/// Case insensitive string compare
 	bool operator<=(const std::string &other) const;
 	/// Case insensitive string compare
-	bool operator<=(const char* other) const;
+	bool operator<=(const char *other) const;
 
 	/// Case insensitive string compare
 	bool operator>=(const CSString &other) const;
 	/// Case insensitive string compare
 	bool operator>=(const std::string &other) const;
 	/// Case insensitive string compare
-	bool operator>=(const char* other) const;
+	bool operator>=(const char *other) const;
 
 	/// Case insensitive string compare
 	bool operator>(const CSString &other) const;
 	/// Case insensitive string compare
 	bool operator>(const std::string &other) const;
 	/// Case insensitive string compare
-	bool operator>(const char* other) const;
+	bool operator>(const char *other) const;
 
 	/// Case insensitive string compare
 	bool operator<(const CSString &other) const;
 	/// Case insensitive string compare
 	bool operator<(const std::string &other) const;
 	/// Case insensitive string compare
-	bool operator<(const char* other) const;
+	bool operator<(const char *other) const;
 
 	//@{
 	//@name Easy concatenation operator to build strings
 	template <class T>
-	CSString &operator <<(const T &value)
+	CSString &operator<<(const T &value)
 	{
-		operator +=(NLMISC::toString(value));
+		operator+=(NLMISC::toString(value));
 
 		return *this;
 	}
 
 	// specialisation for C string
-	CSString &operator <<(const char *value)
+	CSString &operator<<(const char *value)
 	{
-		static_cast<std::string*>(this)->operator +=(value);
+		static_cast<std::string *>(this)->operator+=(value);
 
 		return *this;
 	}
 
 	// specialisation for character
-	CSString &operator <<(char value)
+	CSString &operator<<(char value)
 	{
-		static_cast<std::string*>(this)->operator +=(value);
+		static_cast<std::string *>(this)->operator+=(value);
 
 		return *this;
 	}
 
 	// specialisation for std::string
-	CSString &operator <<(const std::string &value)
+	CSString &operator<<(const std::string &value)
 	{
-		static_cast<std::string*>(this)->operator +=(value);
+		static_cast<std::string *>(this)->operator+=(value);
 
 		return *this;
 	}
 	// specialisation for CSString
-	CSString &operator <<(const CSString &value)
+	CSString &operator<<(const CSString &value)
 	{
-		static_cast<std::string*>(this)->operator +=(value);
+		static_cast<std::string *>(this)->operator+=(value);
 
 		return *this;
 	}
@@ -472,40 +470,38 @@ public:
 	bool icompare(const std::string &other) const;
 
 	/// Serial
-	void serial( NLMISC::IStream& s );
+	void serial(NLMISC::IStream &s);
 
 	/// Read a text file into a string
-	bool readFromFile(const CSString& fileName);
+	bool readFromFile(const CSString &fileName);
 
 	/// Write a string to a text file
 	// returns true on success, false on failure
-	bool writeToFile(const CSString& fileName) const;
+	bool writeToFile(const CSString &fileName) const;
 
 	/// Write a string to a text file
 	// if the file already exists and its content is identicall to our own then it is not overwritten
 	// returns true on success (including the case where the file exists and is not overwritten), false on failure
-	bool writeToFileIfDifferent(const CSString& fileName) const;
+	bool writeToFileIfDifferent(const CSString &fileName) const;
 };
-
 
 /*
  * Vector of CSString compatible with vector<string>
  */
-//typedef std::vector<CSString> CVectorSString;
-
+// typedef std::vector<CSString> CVectorSString;
 
 /*CVectorSString &operator = (CVectorSString &left, const std::vector<std::string> &right)
 {
-	left = reinterpret_cast<CVectorSString&>(right);
+    left = reinterpret_cast<CVectorSString&>(right);
 }
 CVectorSString &operator = (CVectorSString &left, const std::vector<CSString> &right)
 {
-	left = reinterpret_cast<CVectorSString&>(right);
+    left = reinterpret_cast<CVectorSString&>(right);
 }
 */
-//class CVectorSString : public std::vector<CSString>
+// class CVectorSString : public std::vector<CSString>
 //{
-//public:
+// public:
 //	// cast to and convert from std::vector<std::string>
 //	operator std::vector<std::string>& ()
 //	{
@@ -531,8 +527,7 @@ CVectorSString &operator = (CVectorSString &left, const std::vector<CSString> &r
 //
 //	// ctor for extracting sub_section of another vector
 //	CVectorSString( const const_iterator& first, const const_iterator& last ):	std::vector<CSString>(first,last)	{}
-//};
-
+// };
 
 /*
  * Inlines
@@ -544,61 +539,61 @@ inline CSString::CSString()
 
 inline CSString::CSString(const char *s)
 {
-	*(std::string *)this=s;
+	*(std::string *)this = s;
 }
 
 inline CSString::CSString(const std::string &s)
 {
-	*(std::string *)this=s;
+	*(std::string *)this = s;
 }
 
 inline CSString::CSString(char c)
 {
-	*(std::string *)this=c;
+	*(std::string *)this = c;
 }
 
-inline CSString::CSString(int i,const char *fmt)
+inline CSString::CSString(int i, const char *fmt)
 {
 	char buf[1024];
-	sprintf(buf,fmt,i);
-	*this=buf;
+	sprintf(buf, fmt, i);
+	*this = buf;
 }
 
-inline CSString::CSString(uint32 u,const char *fmt)
+inline CSString::CSString(uint32 u, const char *fmt)
 {
 	char buf[1024];
-	sprintf(buf,fmt,u);
-	*this=buf;
+	sprintf(buf, fmt, u);
+	*this = buf;
 }
 
-inline CSString::CSString(double d,const char *fmt)
+inline CSString::CSString(double d, const char *fmt)
 {
 	char buf[1024];
-	sprintf(buf,fmt,d);
-	*this=buf;
+	sprintf(buf, fmt, d);
+	*this = buf;
 }
 
-inline CSString::CSString(const char *s,const char *fmt)
+inline CSString::CSString(const char *s, const char *fmt)
 {
 	char buf[1024];
-	sprintf(buf,fmt,s);
-	*this=buf;
+	sprintf(buf, fmt, s);
+	*this = buf;
 }
 
-inline CSString::CSString(const std::string &s,const char *fmt)
+inline CSString::CSString(const std::string &s, const char *fmt)
 {
 	char buf[1024];
-	sprintf(buf,fmt,s.c_str());
-	*this=buf;
+	sprintf(buf, fmt, s.c_str());
+	*this = buf;
 }
 
-inline CSString::CSString(const std::vector<NLMISC::CSString>& v,const std::string& separator)
+inline CSString::CSString(const std::vector<NLMISC::CSString> &v, const std::string &separator)
 {
-	for (uint32 i=0;i<v.size();++i)
+	for (uint32 i = 0; i < v.size(); ++i)
 	{
-		if (i>0)
-			*this+=separator;
-		*this+=v[i];
+		if (i > 0)
+			*this += separator;
+		*this += v[i];
 	}
 }
 
@@ -611,190 +606,188 @@ inline char CSString::operator*()
 
 inline char CSString::back() const
 {
-	return (*this)[size()-1];
+	return (*this)[size() - 1];
 }
 
 inline CSString CSString::right(uint32 count) const
 {
-	if (count>=size())
+	if (count >= size())
 		return *this;
-	return substr(size()-count);
+	return substr(size() - count);
 }
 
 inline CSString CSString::rightCrop(uint32 count) const
 {
-	if (count>=size())
+	if (count >= size())
 		return CSString();
-	return substr(0,size()-count);
+	return substr(0, size() - count);
 }
 
 inline CSString CSString::left(uint32 count) const
 {
-	return substr(0,count);
+	return substr(0, count);
 }
 
 inline CSString CSString::leftCrop(uint32 count) const
 {
-	if (count>=size())
+	if (count >= size())
 		return CSString();
 	return substr(count);
 }
 
-inline CSString CSString::splitToWithIterator(char c,uint32& iterator) const
+inline CSString CSString::splitToWithIterator(char c, uint32 &iterator) const
 {
 	uint32 i;
 	CSString result;
-	for (i=iterator;i<size() && (*this)[i]!=c;++i)
-		result+=(*this)[i];
-	iterator= i;
+	for (i = iterator; i < size() && (*this)[i] != c; ++i)
+		result += (*this)[i];
+	iterator = i;
 	return result;
 }
 
 inline bool CSString::isWhiteSpace(char c)
 {
-	return c==' ' || c=='\t' || c=='\n' || c=='\r' || c==26;
+	return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == 26;
 }
 
-inline bool CSString::isOpeningDelimiter(char c,bool useAngleBrace)
+inline bool CSString::isOpeningDelimiter(char c, bool useAngleBrace)
 {
-	return c=='(' || c=='[' || c=='{' || (useAngleBrace && c=='<');
+	return c == '(' || c == '[' || c == '{' || (useAngleBrace && c == '<');
 }
 
-inline bool CSString::isClosingDelimiter(char c,bool useAngleBrace)
+inline bool CSString::isClosingDelimiter(char c, bool useAngleBrace)
 {
-	return c==')' || c==']' || c=='}' || (useAngleBrace && c=='>');
+	return c == ')' || c == ']' || c == '}' || (useAngleBrace && c == '>');
 }
 
 inline bool CSString::isStringDelimiter(char c)
 {
-	return c=='\"' || c=='\'';
+	return c == '\"' || c == '\'';
 }
 
-inline bool CSString::isMatchingDelimiter(char a,char b)
+inline bool CSString::isMatchingDelimiter(char a, char b)
 {
-	return	(a=='(' && b==')') || (a=='[' && b==']') ||
-			(a=='{' && b=='}') || (a=='<' && b=='>') ||
-			(a=='\"' && b=='\"') || (a=='\'' && b=='\'');
+	return (a == '(' && b == ')') || (a == '[' && b == ']') || (a == '{' && b == '}') || (a == '<' && b == '>') || (a == '\"' && b == '\"') || (a == '\'' && b == '\'');
 }
 
 inline bool CSString::isValidFileNameChar(char c)
 {
-	if (c>='a' && c<='z') return true;
-	if (c>='A' && c<='Z') return true;
-	if (c>='0' && c<='9') return true;
-	if (c=='_') return true;
-	if (c==':') return true;
-	if (c=='/') return true;
-	if (c=='\\') return true;
-	if (c=='.') return true;
-	if (c=='#') return true;
-	if (c=='-') return true;
+	if (c >= 'a' && c <= 'z') return true;
+	if (c >= 'A' && c <= 'Z') return true;
+	if (c >= '0' && c <= '9') return true;
+	if (c == '_') return true;
+	if (c == ':') return true;
+	if (c == '/') return true;
+	if (c == '\\') return true;
+	if (c == '.') return true;
+	if (c == '#') return true;
+	if (c == '-') return true;
 	return false;
 }
 
 inline bool CSString::isPrintable(char c)
 {
 	if (isValidFileNameChar(c)) return true;
-	if (c==' ') return true;
-	if (c=='*') return true;
-	if (c=='?') return true;
-	if (c=='!') return true;
-	if (c=='@') return true;
-	if (c=='&') return true;
-	if (c=='|') return true;
-	if (c=='+') return true;
-	if (c=='=') return true;
-	if (c=='%') return true;
-	if (c=='<') return true;
-	if (c=='>') return true;
-	if (c=='(') return true;
-	if (c==')') return true;
-	if (c=='[') return true;
-	if (c==']') return true;
-	if (c=='{') return true;
-	if (c=='}') return true;
-	if (c==',') return true;
-	if (c==';') return true;
-	if (c=='$') return true;
-	if ((uint8)c==156) return true; // Sterling Pound char causing error in gcc 4.1.2
-	if (c=='^') return true;
-	if (c=='~') return true;
-	if (c=='\'') return true;
-	if (c=='\"') return true;
+	if (c == ' ') return true;
+	if (c == '*') return true;
+	if (c == '?') return true;
+	if (c == '!') return true;
+	if (c == '@') return true;
+	if (c == '&') return true;
+	if (c == '|') return true;
+	if (c == '+') return true;
+	if (c == '=') return true;
+	if (c == '%') return true;
+	if (c == '<') return true;
+	if (c == '>') return true;
+	if (c == '(') return true;
+	if (c == ')') return true;
+	if (c == '[') return true;
+	if (c == ']') return true;
+	if (c == '{') return true;
+	if (c == '}') return true;
+	if (c == ',') return true;
+	if (c == ';') return true;
+	if (c == '$') return true;
+	if ((uint8)c == 156) return true; // Sterling Pound char causing error in gcc 4.1.2
+	if (c == '^') return true;
+	if (c == '~') return true;
+	if (c == '\'') return true;
+	if (c == '\"') return true;
 	return false;
 }
 
-inline bool CSString::isQuoted(bool useAngleBrace,bool useSlashStringEscape,bool useRepeatQuoteStringEscape) const
+inline bool CSString::isQuoted(bool useAngleBrace, bool useSlashStringEscape, bool useRepeatQuoteStringEscape) const
 {
-	return (left(1)=="\"") && (right(1)=="\"") && isDelimitedMonoBlock(useAngleBrace,useSlashStringEscape,useRepeatQuoteStringEscape);
+	return (left(1) == "\"") && (right(1) == "\"") && isDelimitedMonoBlock(useAngleBrace, useSlashStringEscape, useRepeatQuoteStringEscape);
 }
 
 inline bool CSString::isValidKeywordFirstChar(char c)
 {
-	if (c>='a' && c<='z') return true;
-	if (c>='A' && c<='Z') return true;
-	if (c=='_') return true;
+	if (c >= 'a' && c <= 'z') return true;
+	if (c >= 'A' && c <= 'Z') return true;
+	if (c == '_') return true;
 	return false;
 }
 
 inline bool CSString::isValidKeywordChar(char c)
 {
-	if (c>='a' && c<='z') return true;
-	if (c>='A' && c<='Z') return true;
-	if (c>='0' && c<='9') return true;
-	if (c=='_') return true;
+	if (c >= 'a' && c <= 'z') return true;
+	if (c >= 'A' && c <= 'Z') return true;
+	if (c >= '0' && c <= '9') return true;
+	if (c == '_') return true;
 	return false;
 }
 
 inline bool CSString::isHexDigit(char c)
 {
-	if (c>='0' && c<='9') return true;
-	if (c>='A' && c<='F') return true;
-	if (c>='a' && c<='f') return true;
+	if (c >= '0' && c <= '9') return true;
+	if (c >= 'A' && c <= 'F') return true;
+	if (c >= 'a' && c <= 'f') return true;
 	return false;
 }
 
 inline char CSString::convertHexDigit(char c)
 {
-	if (c>='0' && c<='9') return c-'0';
-	if (c>='A' && c<='F') return c-'A'+10;
-	if (c>='a' && c<='f') return c-'a'+10;
+	if (c >= '0' && c <= '9') return c - '0';
+	if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+	if (c >= 'a' && c <= 'f') return c - 'a' + 10;
 	return 0;
 }
 
-inline CSString& CSString::operator=(const char *s)
+inline CSString &CSString::operator=(const char *s)
 {
-	*(std::string *)this=s;
+	*(std::string *)this = s;
 	return *this;
 }
 
-inline CSString& CSString::operator=(const std::string &s)
+inline CSString &CSString::operator=(const std::string &s)
 {
-	*(std::string *)this=s;
+	*(std::string *)this = s;
 	return *this;
 }
 
-inline CSString& CSString::operator=(char c)
+inline CSString &CSString::operator=(char c)
 {
-	*(std::string *)this=c;
+	*(std::string *)this = c;
 	return *this;
 }
 
-inline CSString& CSString::operator=(int i)
+inline CSString &CSString::operator=(int i)
 {
 	CSString other(i);
 	*this = other;
 	return *this;
 }
 
-inline CSString& CSString::operator=(uint32 u)
+inline CSString &CSString::operator=(uint32 u)
 {
 	CSString other(u);
 	*this = other;
 	return *this;
 }
 
-inline CSString& CSString::operator=(double d)
+inline CSString &CSString::operator=(double d)
 {
 	CSString other(d);
 	*this = other;
@@ -803,97 +796,97 @@ inline CSString& CSString::operator=(double d)
 
 inline bool CSString::operator==(const CSString &other) const
 {
-	return stricmp(c_str(),other.c_str())==0;
+	return stricmp(c_str(), other.c_str()) == 0;
 }
 
 inline bool CSString::operator==(const std::string &other) const
 {
-	return stricmp(c_str(),other.c_str())==0;
+	return stricmp(c_str(), other.c_str()) == 0;
 }
 
-inline bool CSString::operator==(const char* other) const
+inline bool CSString::operator==(const char *other) const
 {
-	return stricmp(c_str(),other)==0;
+	return stricmp(c_str(), other) == 0;
 }
 
 inline bool CSString::operator!=(const CSString &other) const
 {
-	return stricmp(c_str(),other.c_str())!=0;
+	return stricmp(c_str(), other.c_str()) != 0;
 }
 
 inline bool CSString::operator!=(const std::string &other) const
 {
-	return stricmp(c_str(),other.c_str())!=0;
+	return stricmp(c_str(), other.c_str()) != 0;
 }
 
-inline bool CSString::operator!=(const char* other) const
+inline bool CSString::operator!=(const char *other) const
 {
-	return stricmp(c_str(),other)!=0;
+	return stricmp(c_str(), other) != 0;
 }
 
 inline bool CSString::operator<=(const CSString &other) const
 {
-	return stricmp(c_str(),other.c_str())<=0;
+	return stricmp(c_str(), other.c_str()) <= 0;
 }
 
 inline bool CSString::operator<=(const std::string &other) const
 {
-	return stricmp(c_str(),other.c_str())<=0;
+	return stricmp(c_str(), other.c_str()) <= 0;
 }
 
-inline bool CSString::operator<=(const char* other) const
+inline bool CSString::operator<=(const char *other) const
 {
-	return stricmp(c_str(),other)<=0;
+	return stricmp(c_str(), other) <= 0;
 }
 
 inline bool CSString::operator>=(const CSString &other) const
 {
-	return stricmp(c_str(),other.c_str())>=0;
+	return stricmp(c_str(), other.c_str()) >= 0;
 }
 
 inline bool CSString::operator>=(const std::string &other) const
 {
-	return stricmp(c_str(),other.c_str())>=0;
+	return stricmp(c_str(), other.c_str()) >= 0;
 }
 
-inline bool CSString::operator>=(const char* other) const
+inline bool CSString::operator>=(const char *other) const
 {
-	return stricmp(c_str(),other)>=0;
+	return stricmp(c_str(), other) >= 0;
 }
 
 inline bool CSString::operator>(const CSString &other) const
 {
-	return stricmp(c_str(),other.c_str())>0;
+	return stricmp(c_str(), other.c_str()) > 0;
 }
 
 inline bool CSString::operator>(const std::string &other) const
 {
-	return stricmp(c_str(),other.c_str())>0;
+	return stricmp(c_str(), other.c_str()) > 0;
 }
 
-inline bool CSString::operator>(const char* other) const
+inline bool CSString::operator>(const char *other) const
 {
-	return stricmp(c_str(),other)>0;
+	return stricmp(c_str(), other) > 0;
 }
 
 inline bool CSString::operator<(const CSString &other) const
 {
-	return stricmp(c_str(),other.c_str())<0;
+	return stricmp(c_str(), other.c_str()) < 0;
 }
 
 inline bool CSString::operator<(const std::string &other) const
 {
-	return stricmp(c_str(),other.c_str())<0;
+	return stricmp(c_str(), other.c_str()) < 0;
 }
 
-inline bool CSString::operator<(const char* other) const
+inline bool CSString::operator<(const char *other) const
 {
-	return stricmp(c_str(),other)<0;
+	return stricmp(c_str(), other) < 0;
 }
 
 inline std::string::const_reference CSString::operator[](std::string::size_type idx) const
 {
-	static char zero=0;
+	static char zero = 0;
 	if (idx >= size())
 		return zero;
 	return data()[idx];
@@ -901,49 +894,48 @@ inline std::string::const_reference CSString::operator[](std::string::size_type 
 
 inline std::string::reference CSString::operator[](std::string::size_type idx)
 {
-	static char zero=0;
+	static char zero = 0;
 	if (idx >= size())
 		return zero;
-	return const_cast<std::string::value_type&>(data()[idx]);
+	return const_cast<std::string::value_type &>(data()[idx]);
 }
-
 
 inline bool CSString::icompare(const std::string &other) const
 {
-	return stricmp(c_str(),other.c_str())<0;
+	return stricmp(c_str(), other.c_str()) < 0;
 }
 
-inline void CSString::serial( NLMISC::IStream& s )
+inline void CSString::serial(NLMISC::IStream &s)
 {
-	s.serial( reinterpret_cast<std::string&>( *this ) );
+	s.serial(reinterpret_cast<std::string &>(*this));
 }
 
 /*
 inline CSString operator+(const CSString& s0,char s1)
 {
-	return CSString(s0)+s1;
+    return CSString(s0)+s1;
 }
 
 inline CSString operator+(const CSString& s0,const char* s1)
 {
-	return CSString(s0)+s1;
+    return CSString(s0)+s1;
 }
 
 inline CSString operator+(const CSString& s0,const std::string& s1)
 {
-	return CSString(s0)+s1;
+    return CSString(s0)+s1;
 }
 inline CSString operator+(const CSString& s0,const CSString& s1)
 {
-	return CSString(s0)+s1;
+    return CSString(s0)+s1;
 }
 */
-inline CSString operator+(char s0,const CSString& s1)
+inline CSString operator+(char s0, const CSString &s1)
 {
 	return CSString(s0) + s1.c_str();
 }
 
-inline CSString operator+(const char* s0,const CSString& s1)
+inline CSString operator+(const char *s0, const CSString &s1)
 {
 	return CSString(s0) + s1.c_str();
 }
@@ -953,7 +945,7 @@ inline CSString operator+(const char* s0,const CSString& s1)
 // *** The following was commented out by Sadge because there were strange compilation/ link issues ***
 // *** The '<' operator was implemented instead ***
 //_STLP_BEGIN_NAMESPACE
-//namespace std
+// namespace std
 //{
 //	/*
 //	 * less<CSString> is case insensitive
@@ -965,7 +957,7 @@ inline CSString operator+(const char* s0,const CSString& s1)
 //	};
 //} // std
 //_STLP_END_NAMESPACE
-//namespace std
+// namespace std
 //{
 
 //	/*
@@ -980,20 +972,19 @@ inline CSString operator+(const char* s0,const CSString& s1)
 //_STLP_END_NAMESPACE
 
 /**
-  * Instead of overriding std::less, please use the following predicate.
-  * For example, declare your map as:
-  *   std::map<NLMISC::CSString, CMyDataClass, NLMISC::CUnsensitiveSStringLessPred> MyMap;
-  * Caution: a map declared without CUnsensitiveSStringLessPred will behave as a
-  * standard string map.
-  *
-  * \see also CUnsensitiveStrLessPred in misc/string_conversion.h
-  * for a similar predicate with std::string.
-  */
+ * Instead of overriding std::less, please use the following predicate.
+ * For example, declare your map as:
+ *   std::map<NLMISC::CSString, CMyDataClass, NLMISC::CUnsensitiveSStringLessPred> MyMap;
+ * Caution: a map declared without CUnsensitiveSStringLessPred will behave as a
+ * standard string map.
+ *
+ * \see also CUnsensitiveStrLessPred in misc/string_conversion.h
+ * for a similar predicate with std::string.
+ */
 struct CUnsensitiveSStringLessPred : public std::less<NLMISC::CSString>
 {
-	bool operator()(const NLMISC::CSString& x, const NLMISC::CSString& y) const { return x < y; /*.icompare(y);*/ }
+	bool operator()(const NLMISC::CSString &x, const NLMISC::CSString &y) const { return x < y; /*.icompare(y);*/ }
 };
-
 
 #endif // NL_SSTRING_H
 

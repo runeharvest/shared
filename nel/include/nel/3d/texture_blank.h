@@ -20,9 +20,7 @@
 #include "nel/misc/types_nl.h"
 #include "nel/3d/texture.h"
 
-
 namespace NL3D {
-
 
 /**
  * This texture does generate nothing, and it is releasable. There's no particular reason to use it,
@@ -33,18 +31,17 @@ namespace NL3D {
 class CTextureBlank : public ITexture
 {
 public:
-NLMISC_DECLARE_CLASS(CTextureBlank);
-protected:
+	NLMISC_DECLARE_CLASS(CTextureBlank);
 
+protected:
 	/// inherited from ITexture. Does nothing ...
-	void doGenerate(bool async) ;
+	void doGenerate(bool async);
+
 public:
-	virtual ~CTextureBlank() {}
+	virtual ~CTextureBlank() { }
 };
 
-
 } // NL3D
-
 
 #endif // NL_TEXTURE_BLANK_H
 

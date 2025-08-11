@@ -23,9 +23,7 @@
 #include <deque>
 #include <string>
 
-
 namespace NLMISC {
-
 
 /**
  * Display into a string vector
@@ -37,33 +35,39 @@ class CMemDisplayer : public IDisplayer
 {
 public:
 	/// Constructor
-	CMemDisplayer (const char *displayerName = "");
+	CMemDisplayer(const char *displayerName = "");
 
 	/// Set Parameter of the displayer if not set at the ctor time
-	void			setParam (uint32 maxStrings = 50);
+	void setParam(uint32 maxStrings = 50);
 
 	/// Write N last line into a displayer (InfoLog by default)
-	void			write (CLog *log = NULL, bool quiet=true);
-	void			write (std::string &str, bool crLf=false);
+	void write(CLog *log = NULL, bool quiet = true);
+	void write(std::string &str, bool crLf = false);
 
-	const std::deque<std::string>	&lockStrings () { _CanUseStrings = false; return _Strings; }
+	const std::deque<std::string> &lockStrings()
+	{
+		_CanUseStrings = false;
+		return _Strings;
+	}
 
 	void unlockStrings() { _CanUseStrings = true; }
 
-	void clear () { if (_CanUseStrings) _Strings.clear (); }
+	void clear()
+	{
+		if (_CanUseStrings) _Strings.clear();
+	}
 
 protected:
 	/// Put the string into the file.
-    virtual void	doDisplay ( const CLog::TDisplayInfo& args, const char *message );
+	virtual void doDisplay(const CLog::TDisplayInfo &args, const char *message);
 
-	bool						_NeedHeader;
+	bool _NeedHeader;
 
-	uint32						_MaxStrings;	// number of string in the _Strings queue (default is 50)
+	uint32 _MaxStrings; // number of string in the _Strings queue (default is 50)
 
-	bool						_CanUseStrings;
+	bool _CanUseStrings;
 
-	std::deque<std::string>		_Strings;
-
+	std::deque<std::string> _Strings;
 };
 
 /**
@@ -76,17 +80,17 @@ class CLightMemDisplayer : public CMemDisplayer
 {
 public:
 	/// Constructor
-	CLightMemDisplayer (const char *displayerName = "") : CMemDisplayer(displayerName) { }
+	CLightMemDisplayer(const char *displayerName = "")
+	    : CMemDisplayer(displayerName)
+	{
+	}
 
 protected:
 	/// Put the string into the file.
-    virtual void	doDisplay ( const CLog::TDisplayInfo& args, const char *message );
+	virtual void doDisplay(const CLog::TDisplayInfo &args, const char *message);
 };
 
-
-
 } // NLMISC
-
 
 #endif // NL_MEM_DISPLAYER_H
 

@@ -19,13 +19,12 @@
 #include "nel/misc/line.h"
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
-void CLine::project(const CVector &inV,CVector &outV)
+void CLine::project(const CVector &inV, CVector &outV)
 {
 	CVector seg = V1 - V0;
 	float n = seg.sqrnorm();
@@ -36,10 +35,8 @@ void CLine::project(const CVector &inV,CVector &outV)
 	else
 	{
 		float dp = (inV - V0) * seg;
-		outV = V0 + (dp /  n) * seg;
+		outV = V0 + (dp / n) * seg;
 	}
 }
-
-
 
 } // NLMISC

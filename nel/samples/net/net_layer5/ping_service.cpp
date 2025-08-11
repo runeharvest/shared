@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /*
  * Layer 5 and Service example, ping server.
  *
@@ -24,7 +23,6 @@
  * containing the location of the naming service (NSHost, NSPort)
  * in the working directory. The naming service must be running.
  */
-
 
 // We're using the NeL Service framework, and layer 5
 #include "nel/net/service.h"
@@ -54,14 +52,14 @@ void cbPing(CMessage &msgin, const std::string &serviceName, TServiceId sid)
 	uint32 counter;
 
 	// Input
-	msgin.serial( counter );
+	msgin.serial(counter);
 
 	// Output (uses layer 4 but this is not really necessary, see server.cpp in layer 3 example)
 	CMessage msgout("PONG");
-	msgout.serial( counter );
+	msgout.serial(counter);
 	CUnifiedNetwork::getInstance()->send(sid, msgout);
 
-	nlinfo( "PING -> PONG %u", counter );
+	nlinfo("PING -> PONG %u", counter);
 }
 
 //
@@ -72,7 +70,7 @@ void cbUpService(const std::string &serviceName, TServiceId sid, void *arg)
 	// Output (uses layer 4 but this is not really necessary, see server.cpp in layer 3 example)
 	CMessage msgout("PONG");
 	uint32 counter = 0xFFFFFFFF;
-	msgout.serial( counter );
+	msgout.serial(counter);
 	CUnifiedNetwork::getInstance()->send(sid, msgout);
 }
 
@@ -81,42 +79,37 @@ void cbDownService(const std::string &serviceName, TServiceId sid, void *arg)
 	nlinfo("Service %s %d is down", serviceName.c_str(), sid.get());
 }
 
-
 /*
  * Callback array for messages received from a client
  */
-TUnifiedCallbackItem CallbackArray[] =
-{
+TUnifiedCallbackItem CallbackArray[] = {
 	{ "PING", cbPing }
 };
-
 
 //
 class CPingService : public IService
 {
 public:
-
 	/*
 	 * Initialization
 	 */
 	void init()
 	{
-		DebugLog->addDisplayer (&fd);
-		InfoLog->addDisplayer (&fd);
-		WarningLog->addDisplayer (&fd);
-		ErrorLog->addDisplayer (&fd);
+		DebugLog->addDisplayer(&fd);
+		InfoLog->addDisplayer(&fd);
+		WarningLog->addDisplayer(&fd);
+		ErrorLog->addDisplayer(&fd);
 
 		// Connect to the ping service
-		CUnifiedNetwork	*instance = CUnifiedNetwork::getInstance();
+		CUnifiedNetwork *instance = CUnifiedNetwork::getInstance();
 
 		instance->setServiceUpCallback("*", cbUpService, NULL);
 		instance->setServiceDownCallback("*", cbDownService, NULL);
 	}
 };
 
-
 /*
  * Declare a service with the class IService, the names "PS" (short) and "ping_service" (long).
  * The port is automatically allocated (0) and the main callback array is CallbackArray.
  */
-NLNET_SERVICE_MAIN( CPingService, "PS", "ping_service", 0, CallbackArray, "", "" )
+NLNET_SERVICE_MAIN(CPingService, "PS", "ping_service", 0, CallbackArray, "", "")

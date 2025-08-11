@@ -20,7 +20,7 @@
 #include "std3d.h"
 
 #ifdef NL_HAS_SSE2
-#	include <xmmintrin.h>
+#include <xmmintrin.h>
 #endif
 
 #include "nel/misc/bsphere.h"
@@ -37,15 +37,10 @@
 #include "nel/3d/matrix_3x4.h"
 #include "nel/3d/raw_skin.h"
 
-
 using namespace NLMISC;
 using namespace std;
 
-
-namespace NL3D
-{
-
-
+namespace NL3D {
 
 // ***************************************************************************
 // ***************************************************************************
@@ -53,133 +48,122 @@ namespace NL3D
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
-void	CMeshMRMGeom::applySkin(CLod &lod, const CSkeletonModel *skeleton)
+void CMeshMRMGeom::applySkin(CLod &lod, const CSkeletonModel *skeleton)
 {
 	nlassert(_Skinned);
-	if(_SkinWeights.empty())
+	if (_SkinWeights.empty())
 		return;
 
 	// get vertexPtr.
 	//===========================
 	CVertexBufferReadWrite vba;
-	_VBufferFinal.lock (vba);
-	uint8		*destVertexPtr= (uint8*)vba.getVertexCoordPointer();
-	uint		flags= _VBufferFinal.getVertexFormat();
-	sint32		vertexSize= _VBufferFinal.getVertexSize();
+	_VBufferFinal.lock(vba);
+	uint8 *destVertexPtr = (uint8 *)vba.getVertexCoordPointer();
+	uint flags = _VBufferFinal.getVertexFormat();
+	sint32 vertexSize = _VBufferFinal.getVertexSize();
 	// must have XYZ.
 	nlassert(flags & CVertexBuffer::PositionFlag);
 
-
 	// compute src array.
-	CMesh::CSkinWeight	*srcSkinPtr;
-	CVector				*srcVertexPtr;
-	srcSkinPtr= &_SkinWeights[0];
-	srcVertexPtr= &_OriginalSkinVertices[0];
-
-
+	CMesh::CSkinWeight *srcSkinPtr;
+	CVector *srcVertexPtr;
+	srcSkinPtr = &_SkinWeights[0];
+	srcVertexPtr = &_OriginalSkinVertices[0];
 
 	// Compute useful Matrix for this lod.
 	//===========================
 	// Those arrays map the array of bones in skeleton.
-	static	vector<CMatrix3x4>			boneMat3x4;
+	static vector<CMatrix3x4> boneMat3x4;
 	computeBoneMatrixes3x4(boneMat3x4, lod.MatrixInfluences, skeleton);
-
 
 	// apply skinning.
 	//===========================
 	// assert, code below is written especially for 4 per vertex.
-	nlassert(NL3D_MESH_SKINNING_MAX_MATRIX==4);
-	for(uint i=0;i<NL3D_MESH_SKINNING_MAX_MATRIX;i++)
+	nlassert(NL3D_MESH_SKINNING_MAX_MATRIX == 4);
+	for (uint i = 0; i < NL3D_MESH_SKINNING_MAX_MATRIX; i++)
 	{
-		uint		nInf= (uint)lod.InfluencedVertices[i].size();
-		if( nInf==0 )
+		uint nInf = (uint)lod.InfluencedVertices[i].size();
+		if (nInf == 0)
 			continue;
-		uint32		*infPtr= &(lod.InfluencedVertices[i][0]);
+		uint32 *infPtr = &(lod.InfluencedVertices[i][0]);
 
 		// apply the skin to the vertices
-		switch(i)
+		switch (i)
 		{
 		//=========
 		case 0:
 			// Special case for Vertices influenced by one matrix. Just copy result of mul.
 			//  for all InfluencedVertices only.
-			for(;nInf>0;nInf--, infPtr++)
+			for (; nInf > 0; nInf--, infPtr++)
 			{
-				uint	index= *infPtr;
-				CMesh::CSkinWeight	*srcSkin= srcSkinPtr + index;
-				CVector				*srcVertex= srcVertexPtr + index;
-				uint8				*dstVertexVB= destVertexPtr + index * vertexSize;
-				CVector				*dstVertex= (CVector*)(dstVertexVB);
-
+				uint index = *infPtr;
+				CMesh::CSkinWeight *srcSkin = srcSkinPtr + index;
+				CVector *srcVertex = srcVertexPtr + index;
+				uint8 *dstVertexVB = destVertexPtr + index * vertexSize;
+				CVector *dstVertex = (CVector *)(dstVertexVB);
 
 				// Vertex.
-				boneMat3x4[ srcSkin->MatrixId[0] ].mulSetPoint( *srcVertex, *dstVertex);
+				boneMat3x4[srcSkin->MatrixId[0]].mulSetPoint(*srcVertex, *dstVertex);
 			}
 			break;
 
 		//=========
 		case 1:
 			//  for all InfluencedVertices only.
-			for(;nInf>0;nInf--, infPtr++)
+			for (; nInf > 0; nInf--, infPtr++)
 			{
-				uint	index= *infPtr;
-				CMesh::CSkinWeight	*srcSkin= srcSkinPtr + index;
-				CVector				*srcVertex= srcVertexPtr + index;
-				uint8				*dstVertexVB= destVertexPtr + index * vertexSize;
-				CVector				*dstVertex= (CVector*)(dstVertexVB);
-
+				uint index = *infPtr;
+				CMesh::CSkinWeight *srcSkin = srcSkinPtr + index;
+				CVector *srcVertex = srcVertexPtr + index;
+				uint8 *dstVertexVB = destVertexPtr + index * vertexSize;
+				CVector *dstVertex = (CVector *)(dstVertexVB);
 
 				// Vertex.
-				boneMat3x4[ srcSkin->MatrixId[0] ].mulSetPoint( *srcVertex, srcSkin->Weights[0], *dstVertex);
-				boneMat3x4[ srcSkin->MatrixId[1] ].mulAddPoint( *srcVertex, srcSkin->Weights[1], *dstVertex);
+				boneMat3x4[srcSkin->MatrixId[0]].mulSetPoint(*srcVertex, srcSkin->Weights[0], *dstVertex);
+				boneMat3x4[srcSkin->MatrixId[1]].mulAddPoint(*srcVertex, srcSkin->Weights[1], *dstVertex);
 			}
 			break;
 
 		//=========
 		case 2:
 			//  for all InfluencedVertices only.
-			for(;nInf>0;nInf--, infPtr++)
+			for (; nInf > 0; nInf--, infPtr++)
 			{
-				uint	index= *infPtr;
-				CMesh::CSkinWeight	*srcSkin= srcSkinPtr + index;
-				CVector				*srcVertex= srcVertexPtr + index;
-				uint8				*dstVertexVB= destVertexPtr + index * vertexSize;
-				CVector				*dstVertex= (CVector*)(dstVertexVB);
-
+				uint index = *infPtr;
+				CMesh::CSkinWeight *srcSkin = srcSkinPtr + index;
+				CVector *srcVertex = srcVertexPtr + index;
+				uint8 *dstVertexVB = destVertexPtr + index * vertexSize;
+				CVector *dstVertex = (CVector *)(dstVertexVB);
 
 				// Vertex.
-				boneMat3x4[ srcSkin->MatrixId[0] ].mulSetPoint( *srcVertex, srcSkin->Weights[0], *dstVertex);
-				boneMat3x4[ srcSkin->MatrixId[1] ].mulAddPoint( *srcVertex, srcSkin->Weights[1], *dstVertex);
-				boneMat3x4[ srcSkin->MatrixId[2] ].mulAddPoint( *srcVertex, srcSkin->Weights[2], *dstVertex);
+				boneMat3x4[srcSkin->MatrixId[0]].mulSetPoint(*srcVertex, srcSkin->Weights[0], *dstVertex);
+				boneMat3x4[srcSkin->MatrixId[1]].mulAddPoint(*srcVertex, srcSkin->Weights[1], *dstVertex);
+				boneMat3x4[srcSkin->MatrixId[2]].mulAddPoint(*srcVertex, srcSkin->Weights[2], *dstVertex);
 			}
 			break;
 
 		//=========
 		case 3:
 			//  for all InfluencedVertices only.
-			for(;nInf>0;nInf--, infPtr++)
+			for (; nInf > 0; nInf--, infPtr++)
 			{
-				uint	index= *infPtr;
-				CMesh::CSkinWeight	*srcSkin= srcSkinPtr + index;
-				CVector				*srcVertex= srcVertexPtr + index;
-				uint8				*dstVertexVB= destVertexPtr + index * vertexSize;
-				CVector				*dstVertex= (CVector*)(dstVertexVB);
-
+				uint index = *infPtr;
+				CMesh::CSkinWeight *srcSkin = srcSkinPtr + index;
+				CVector *srcVertex = srcVertexPtr + index;
+				uint8 *dstVertexVB = destVertexPtr + index * vertexSize;
+				CVector *dstVertex = (CVector *)(dstVertexVB);
 
 				// Vertex.
-				boneMat3x4[ srcSkin->MatrixId[0] ].mulSetPoint( *srcVertex, srcSkin->Weights[0], *dstVertex);
-				boneMat3x4[ srcSkin->MatrixId[1] ].mulAddPoint( *srcVertex, srcSkin->Weights[1], *dstVertex);
-				boneMat3x4[ srcSkin->MatrixId[2] ].mulAddPoint( *srcVertex, srcSkin->Weights[2], *dstVertex);
-				boneMat3x4[ srcSkin->MatrixId[3] ].mulAddPoint( *srcVertex, srcSkin->Weights[3], *dstVertex);
+				boneMat3x4[srcSkin->MatrixId[0]].mulSetPoint(*srcVertex, srcSkin->Weights[0], *dstVertex);
+				boneMat3x4[srcSkin->MatrixId[1]].mulAddPoint(*srcVertex, srcSkin->Weights[1], *dstVertex);
+				boneMat3x4[srcSkin->MatrixId[2]].mulAddPoint(*srcVertex, srcSkin->Weights[2], *dstVertex);
+				boneMat3x4[srcSkin->MatrixId[3]].mulAddPoint(*srcVertex, srcSkin->Weights[3], *dstVertex);
 			}
 			break;
-
 		}
 	}
 }
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -187,30 +171,26 @@ void	CMeshMRMGeom::applySkin(CLod &lod, const CSkeletonModel *skeleton)
 // ***************************************************************************
 // ***************************************************************************
 
-
 // RawSkin Cache constants
 //===============
 // The number of byte to process per block
-const	uint	NL_BlockByteL1= 4096;
+const uint NL_BlockByteL1 = 4096;
 
 // Number of vertices per block to process with 1 matrix.
-uint	CMeshMRMGeom::NumCacheVertexNormal1= NL_BlockByteL1 / sizeof(CRawVertexNormalSkin1);
+uint CMeshMRMGeom::NumCacheVertexNormal1 = NL_BlockByteL1 / sizeof(CRawVertexNormalSkin1);
 // Number of vertices per block to process with 2 matrix.
-uint	CMeshMRMGeom::NumCacheVertexNormal2= NL_BlockByteL1 / sizeof(CRawVertexNormalSkin2);
+uint CMeshMRMGeom::NumCacheVertexNormal2 = NL_BlockByteL1 / sizeof(CRawVertexNormalSkin2);
 // Number of vertices per block to process with 3 matrix.
-uint	CMeshMRMGeom::NumCacheVertexNormal3= NL_BlockByteL1 / sizeof(CRawVertexNormalSkin3);
+uint CMeshMRMGeom::NumCacheVertexNormal3 = NL_BlockByteL1 / sizeof(CRawVertexNormalSkin3);
 // Number of vertices per block to process with 4 matrix.
-uint	CMeshMRMGeom::NumCacheVertexNormal4= NL_BlockByteL1 / sizeof(CRawVertexNormalSkin4);
-
+uint CMeshMRMGeom::NumCacheVertexNormal4 = NL_BlockByteL1 / sizeof(CRawVertexNormalSkin4);
 
 /* Old School template: include the same file with define switching,
-	Was used before to reuse same code for and without SSE.
-	Useless now because SSE removed, but keep it for possible future work on it.
+    Was used before to reuse same code for and without SSE.
+    Useless now because SSE removed, but keep it for possible future work on it.
 */
 #define ADD_MESH_MRM_SKIN_TEMPLATE
 #include "mesh_mrm_skin_template.cpp"
-
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -218,6 +198,4 @@ uint	CMeshMRMGeom::NumCacheVertexNormal4= NL_BlockByteL1 / sizeof(CRawVertexNorm
 // ***************************************************************************
 // ***************************************************************************
 
-
 } // NL3D
-

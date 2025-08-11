@@ -23,16 +23,14 @@
 #include "nel/misc/string_conversion.h"
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
 namespace NLMISC {
 
-
 // ***************************************************************************
 // The conversion table
-static const CStringConversion<TKey>::CPair stringTable [] =
-{
+static const CStringConversion<TKey>::CPair stringTable[] = {
 	// BUFFER
 	{ "Key0", Key0 },
 	{ "Key1", Key1 },
@@ -192,22 +190,18 @@ static const CStringConversion<TKey>::CPair stringTable [] =
 	{ "KeyOEM_CLEAR", KeyOEM_CLEAR }
 };
 
-
-static	CStringConversion<TKey> KeyConversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]),  KeyCount);
-
+static CStringConversion<TKey> KeyConversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]), KeyCount);
 
 // ***************************************************************************
-TKey				CEventKey::getKeyFromString(const std::string &str)
+TKey CEventKey::getKeyFromString(const std::string &str)
 {
 	return KeyConversion.fromString(str);
 }
 
 // ***************************************************************************
-const std::string	&CEventKey::getStringFromKey(TKey k)
+const std::string &CEventKey::getStringFromKey(TKey k)
 {
 	return KeyConversion.toString(k);
 }
-
-
 
 } // NLMISC

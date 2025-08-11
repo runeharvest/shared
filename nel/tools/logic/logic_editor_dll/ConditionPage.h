@@ -7,15 +7,12 @@
 // ConditionPage.h : header file
 //
 
-//#include "ResizablePage.h"
+// #include "ResizablePage.h"
 
 #include "NumEdit.h"
 #include "Condition.h"
 
-
-
 class CLogic_editorDoc;
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CConditionPage dialog
@@ -24,7 +21,7 @@ class CConditionPage : public CPropertyPage
 {
 	DECLARE_DYNCREATE(CConditionPage)
 
-// Construction
+	// Construction
 public:
 	CConditionPage();
 	~CConditionPage();
@@ -33,35 +30,38 @@ public:
 
 	BOOL checkNodeValidity();
 
-	void addCondition( CLogic_editorDoc *pDoc, CCondition * condition );
+	void addCondition(CLogic_editorDoc *pDoc, CCondition *condition);
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CConditionPage)
-	enum { IDD = IDD_PAGE_CONDITIONS };
-	CNumEdit	m_ctrlComparand;
-	CString	m_sType;
-	CString	m_sOperator;
-	CString	m_sVarName;
-	CString	m_sSubCondName;
-	CString	m_sConditionName;
-	double	m_dComparand;
+	enum
+	{
+		IDD = IDD_PAGE_CONDITIONS
+	};
+	CNumEdit m_ctrlComparand;
+	CString m_sType;
+	CString m_sOperator;
+	CString m_sVarName;
+	CString m_sSubCondName;
+	CString m_sConditionName;
+	double m_dComparand;
 	//}}AFX_DATA
 
 public:
-	CCondition *		m_pSelectedCondition;
-	CConditionNode *	m_pSelectedConditionNode;
+	CCondition *m_pSelectedCondition;
+	CConditionNode *m_pSelectedConditionNode;
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CConditionPage)
-	public:
+public:
 	virtual BOOL OnSetActive();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(CConditionPage)
@@ -75,7 +75,6 @@ protected:
 	afx_msg void OnButtonDeleteNode();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-
 };
 
 //{{AFX_INSERT_LOCATION}}

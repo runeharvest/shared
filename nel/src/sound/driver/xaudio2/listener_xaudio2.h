@@ -21,7 +21,7 @@
 #include "nel/sound/driver/sound_driver.h"
 
 namespace NLSOUND {
-	class CSoundDriverXAudio2;
+class CSoundDriverXAudio2;
 
 /**
  * \brief CListenerXAudio2
@@ -41,7 +41,7 @@ protected:
 	IXAudio2SubmixVoice *_DryVoice;
 	/// Dummy passtrough submix voice for the setting up the filtered send
 	IXAudio2SubmixVoice *_FilterVoice;
-	
+
 	// instances
 	/// X3DAudio data for listener position in space.
 	X3DAUDIO_LISTENER _Listener;
@@ -55,6 +55,7 @@ protected:
 	float _DopplerScaler;
 	/// Distance/Roloff scaler
 	float _RolloffScaler;
+
 public:
 	CListenerXAudio2(CSoundDriverXAudio2 *soundDriver);
 	virtual ~CListenerXAudio2();
@@ -70,19 +71,19 @@ public:
 	/// \name Listener properties
 	//@{
 	/// Set the position vector (default: (0,0,0)) (3D mode only)
-	virtual void setPos(const NLMISC::CVector& pos);
+	virtual void setPos(const NLMISC::CVector &pos);
 	/** Get the position vector.
 	 * See setPos() for details.
 	 */
 	virtual const NLMISC::CVector &getPos() const;
 	/// Set the velocity vector (3D mode only, ignored in stereo mode) (default: (0,0,0))
-	virtual void setVelocity(const NLMISC::CVector& vel);
+	virtual void setVelocity(const NLMISC::CVector &vel);
 	/// Get the velocity vector
-	virtual void getVelocity(NLMISC::CVector& vel) const;
+	virtual void getVelocity(NLMISC::CVector &vel) const;
 	/// Set the orientation vectors (3D mode only, ignored in stereo mode) (default: (0,1,0), (0,0,-1))
-	virtual void setOrientation(const NLMISC::CVector& front, const NLMISC::CVector& up);
+	virtual void setOrientation(const NLMISC::CVector &front, const NLMISC::CVector &up);
 	/// Get the orientation vectors
-	virtual void getOrientation(NLMISC::CVector& front, NLMISC::CVector& up) const;
+	virtual void getOrientation(NLMISC::CVector &front, NLMISC::CVector &up) const;
 	/** Set the gain (volume value inside [0 , 1]). (default: 1)
 	 * 0.0 -> silence
 	 * 0.5 -> -6dB

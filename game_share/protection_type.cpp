@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 #include "nel/misc/debug.h"
@@ -26,36 +24,32 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace PROTECTION_TYPE
+namespace PROTECTION_TYPE {
+NL_BEGIN_STRING_CONVERSION_TABLE(TProtectionType)
+NL_STRING_CONVERSION_TABLE_ENTRY(Cold)
+NL_STRING_CONVERSION_TABLE_ENTRY(Acid)
+NL_STRING_CONVERSION_TABLE_ENTRY(Rot)
+NL_STRING_CONVERSION_TABLE_ENTRY(Fire)
+NL_STRING_CONVERSION_TABLE_ENTRY(Shockwave)
+NL_STRING_CONVERSION_TABLE_ENTRY(Poison)
+NL_STRING_CONVERSION_TABLE_ENTRY(Electricity)
+NL_STRING_CONVERSION_TABLE_ENTRY(None)
+NL_END_STRING_CONVERSION_TABLE(TProtectionType, ProtectionTypeConversion, None)
+
+//-----------------------------------------------
+// fromString:
+//-----------------------------------------------
+TProtectionType fromString(const std::string &str)
 {
-	NL_BEGIN_STRING_CONVERSION_TABLE (TProtectionType)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Cold)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Acid)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Rot)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Fire)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Shockwave)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Poison)
-		NL_STRING_CONVERSION_TABLE_ENTRY(Electricity)
-		NL_STRING_CONVERSION_TABLE_ENTRY(None)
-	NL_END_STRING_CONVERSION_TABLE(TProtectionType, ProtectionTypeConversion, None)
+	return ProtectionTypeConversion.fromString(str);
+}
 
-
-	//-----------------------------------------------
-	// fromString:
-	//-----------------------------------------------
-	TProtectionType fromString(const std::string &str)
-	{
-		return ProtectionTypeConversion.fromString(str);
-	}
-
-
-	//-----------------------------------------------
-	// toString :
-	//-----------------------------------------------
-	const std::string& toString(TProtectionType protection_type)
-	{
-		return ProtectionTypeConversion.toString(protection_type);
-	}
+//-----------------------------------------------
+// toString :
+//-----------------------------------------------
+const std::string &toString(TProtectionType protection_type)
+{
+	return ProtectionTypeConversion.toString(protection_type);
+}
 
 }; // PROTECTION_TYPE
-

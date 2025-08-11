@@ -24,20 +24,20 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace NL3D
-{
+namespace NL3D {
 
 // *************************************************************************************
-CDriverD3D::CCursor::CCursor() : ColorDepth(CDriverD3D::ColorDepth32),
-								OrigHeight(32),
-								HotspotScale(1.f),
-								HotspotOffsetX(0),
-								HotspotOffsetY(0),
-								HotSpotX(0),
-								HotSpotY(0),
-								Cursor(EmptyCursor),
-								Col(CRGBA::White),
-								Rot(0)
+CDriverD3D::CCursor::CCursor()
+    : ColorDepth(CDriverD3D::ColorDepth32)
+    , OrigHeight(32)
+    , HotspotScale(1.f)
+    , HotspotOffsetX(0)
+    , HotspotOffsetY(0)
+    , HotSpotX(0)
+    , HotSpotY(0)
+    , Cursor(EmptyCursor)
+    , Col(CRGBA::White)
+    , Rot(0)
 {
 }
 
@@ -57,7 +57,7 @@ void CDriverD3D::CCursor::reset()
 }
 
 // *************************************************************************************
-CDriverD3D::CCursor& CDriverD3D::CCursor::operator= (const CDriverD3D::CCursor& from)
+CDriverD3D::CCursor &CDriverD3D::CCursor::operator=(const CDriverD3D::CCursor &from)
 {
 	if (&from == this)
 		return *this;
@@ -88,7 +88,7 @@ bool CDriverD3D::isAlphaBlendedCursorSupported()
 		osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 		if (GetVersionEx(&osvi))
 		{
-			_AlphaBlendedCursorSupported = (osvi.dwMajorVersion	>= 5);
+			_AlphaBlendedCursorSupported = (osvi.dwMajorVersion >= 5);
 		}
 
 		_AlphaBlendedCursorSupportRetrieved = true;
@@ -106,7 +106,7 @@ void CDriverD3D::addCursor(const std::string &name, const NLMISC::CBitmap &curso
 	nlassert(cursorBitmap.getHeight() != 0);
 
 	// find used part base on alpha, to avoid too much shrinking
-	const CRGBA *pixels = (const CRGBA *) &cursorBitmap.getPixels()[0];
+	const CRGBA *pixels = (const CRGBA *)&cursorBitmap.getPixels()[0];
 	uint minX, maxX, minY, maxY;
 	uint width = cursorBitmap.getWidth();
 	uint height = cursorBitmap.getHeight();
@@ -118,7 +118,7 @@ void CDriverD3D::addCursor(const std::string &name, const NLMISC::CBitmap &curso
 		minX = x;
 		for (uint y = 0; y < height; ++y)
 		{
-			if(pixels[x + y * width].A != 0)
+			if (pixels[x + y * width].A != 0)
 			{
 				stop = true;
 				break;
@@ -131,10 +131,10 @@ void CDriverD3D::addCursor(const std::string &name, const NLMISC::CBitmap &curso
 	for (sint x = width - 1; x >= 0; --x)
 	{
 		bool stop = false;
-		maxX = (uint) x;
+		maxX = (uint)x;
 		for (uint y = 0; y < height; ++y)
 		{
-			if(pixels[x + y * width].A != 0)
+			if (pixels[x + y * width].A != 0)
 			{
 				stop = true;
 				break;
@@ -150,7 +150,7 @@ void CDriverD3D::addCursor(const std::string &name, const NLMISC::CBitmap &curso
 		minY = y;
 		for (uint x = 0; x < width; ++x)
 		{
-			if(pixels[x + y * width].A != 0)
+			if (pixels[x + y * width].A != 0)
 			{
 				stop = true;
 				break;
@@ -163,10 +163,10 @@ void CDriverD3D::addCursor(const std::string &name, const NLMISC::CBitmap &curso
 	for (sint y = height - 1; y >= 0; --y)
 	{
 		bool stop = false;
-		maxY = (uint) y;
+		maxY = (uint)y;
 		for (uint x = 0; x < width; ++x)
 		{
-			if(pixels[x + y * width].A != 0)
+			if (pixels[x + y * width].A != 0)
 			{
 				stop = true;
 				break;
@@ -194,7 +194,7 @@ void CDriverD3D::addCursor(const std::string &name, const NLMISC::CBitmap &curso
 	curs.HotspotScale = _CursorScale;
 	clamp(curs.HotspotScale, 0.f, 1.f);
 	// first resampling, same for all cursors
-	tmpSize = (uint) (tmpSize * curs.HotspotScale);
+	tmpSize = (uint)(tmpSize * curs.HotspotScale);
 	if (tmpSize == 0) tmpSize = 1;
 
 	if (curs.HotspotScale < 1.f)
@@ -258,7 +258,7 @@ void CDriverD3D::setCursor(const std::string &name, NLMISC::CRGBA col, uint8 rot
 	// cursor has to be changed next time
 	if (_CurrName.empty()) return;
 
-	if (rot >	3) rot = 3; // same than 'CViewRenderer::drawRotFlipBitmapTiled
+	if (rot > 3) rot = 3; // same than 'CViewRenderer::drawRotFlipBitmapTiled
 
 	TCursorMap::iterator it = _Cursors.find(name);
 
@@ -268,16 +268,9 @@ void CDriverD3D::setCursor(const std::string &name, NLMISC::CRGBA col, uint8 rot
 	{
 		// Update cursor if modified or not already built
 		CCursor &curs = it->second;
-		hotSpotX = (sint) (curs.HotspotScale * (hotSpotX - curs.HotspotOffsetX));
-		hotSpotY = (sint) (curs.HotspotScale * ((curs.OrigHeight - hotSpotY) - curs.HotspotOffsetY));
-		if (curs.Cursor == EmptyCursor ||
-			curs.HotSpotX != hotSpotX ||
-			curs.HotSpotY != hotSpotY ||
-			curs.Col != col ||
-			curs.Rot != rot ||
-			curs.ColorDepth != _ColorDepth ||
-			forceRebuild
-		   )
+		hotSpotX = (sint)(curs.HotspotScale * (hotSpotX - curs.HotspotOffsetX));
+		hotSpotY = (sint)(curs.HotspotScale * ((curs.OrigHeight - hotSpotY) - curs.HotspotOffsetY));
+		if (curs.Cursor == EmptyCursor || curs.HotSpotX != hotSpotX || curs.HotSpotY != hotSpotY || curs.Col != col || curs.Rot != rot || curs.ColorDepth != _ColorDepth || forceRebuild)
 		{
 			curs.reset();
 			curs.Cursor = buildCursor(curs.Src, col, rot, hotSpotX, hotSpotY);
@@ -292,13 +285,12 @@ void CDriverD3D::setCursor(const std::string &name, NLMISC::CRGBA col, uint8 rot
 
 	if (isSystemCursorInClientArea() || isSystemCursorCaptured() || forceRebuild)
 	{
-//		if (CInputHandlerManager::getInstance()->hasFocus())
+		//		if (CInputHandlerManager::getInstance()->hasFocus())
 		{
 			::SetCursor(cursorHandle);
-			SetClassLongPtr(_HWnd, GCLP_HCURSOR, (LONG_PTR) cursorHandle); // set default mouse icon to the last one
+			SetClassLongPtr(_HWnd, GCLP_HCURSOR, (LONG_PTR)cursorHandle); // set default mouse icon to the last one
 		}
 	}
-
 }
 
 // *************************************************************************************
@@ -317,20 +309,22 @@ nlCursor CDriverD3D::buildCursor(const CBitmap &src, NLMISC::CRGBA col, uint8 ro
 
 	CBitmap rotSrc = src;
 	if (rot > 3) rot = 3; // mimic behavior of 'CViewRenderer::drawRotFlipBitmapTiled' (why not rot & 3 ??? ...)
-	switch(rot)
+	switch (rot)
 	{
-		case 0: break;
-		case 1: rotSrc.rot90CW(); break;
-		case 2: rotSrc.rot90CW(); rotSrc.rot90CW(); break;
-		case 3: rotSrc.rot90CCW(); break;
+	case 0: break;
+	case 1: rotSrc.rot90CW(); break;
+	case 2:
+		rotSrc.rot90CW();
+		rotSrc.rot90CW();
+		break;
+	case 3: rotSrc.rot90CCW(); break;
 	}
 
 	// create a cursor from bitmap
 	nlCursor result = NULL;
-	convertBitmapToCursor(rotSrc, result, mouseW, mouseH, _ColorDepth == ColorDepth16 ? 16:32, col, hotSpotX, hotSpotY);
+	convertBitmapToCursor(rotSrc, result, mouseW, mouseH, _ColorDepth == ColorDepth16 ? 16 : 32, col, hotSpotX, hotSpotY);
 	return result;
 }
-
 
 // *************************************************************************************
 void CDriverD3D::setSystemArrow()
@@ -343,7 +337,7 @@ void CDriverD3D::setSystemArrow()
 	}
 
 	// set default mouse icon to the default one
-	SetClassLongPtr(_HWnd, GCLP_HCURSOR, (LONG_PTR) _DefaultCursor);
+	SetClassLongPtr(_HWnd, GCLP_HCURSOR, (LONG_PTR)_DefaultCursor);
 }
 
 // ***************************************************************************
@@ -359,13 +353,11 @@ void CDriverD3D::showCursor(bool b)
 		// update current hardware icon to avoid to have the plain arrow
 		updateCursor(true);
 
-		while (ShowCursor(b) < 0)
-			;
+		while (ShowCursor(b) < 0);
 	}
 	else
 	{
-		while (ShowCursor(b) >= 0)
-			;
+		while (ShowCursor(b) >= 0);
 	}
 }
 
@@ -378,19 +370,19 @@ void CDriverD3D::setMousePos(float x, float y)
 		return;
 
 	// convert position size from float to pixels
-	sint x1 = (sint)((float)_CurrentMode.Width*x);
-	sint y1 = (sint)((float)_CurrentMode.Height*(1.0f-y));
+	sint x1 = (sint)((float)_CurrentMode.Width * x);
+	sint y1 = (sint)((float)_CurrentMode.Height * (1.0f - y));
 
 	// NeL window coordinate to MSWindows coordinates
 	POINT pt;
 	pt.x = x1;
 	pt.y = y1;
-	ClientToScreen (_HWnd, &pt);
+	ClientToScreen(_HWnd, &pt);
 	SetCursorPos(pt.x, pt.y);
 }
 
 // ***************************************************************************
-void CDriverD3D::setCapture (bool b)
+void CDriverD3D::setCapture(bool b)
 {
 	H_AUTO_D3D(CDriverD3D_setCapture);
 

@@ -21,9 +21,7 @@
 #include "nel/pacs/u_move_primitive.h"
 #include "nel/pacs/u_primitive_block.h"
 
-
-namespace NLPACS
-{
+namespace NLPACS {
 
 /**
  * PACS primitive description
@@ -34,49 +32,48 @@ namespace NLPACS
 class CPrimitiveDesc
 {
 public:
-
 	// Default constructor
-	CPrimitiveDesc ();
+	CPrimitiveDesc();
 
 	// The length of the 4 edges. The first is the width, the second is the depth
 	// For cylinder, the first is the radius
-	float							Length[2];
+	float Length[2];
 
 	// This is the height of the box or of the cylinder.
-	float							Height;
+	float Height;
 
 	// Attenuation
-	float							Attenuation;
+	float Attenuation;
 
 	// Primitive type
-	UMovePrimitive::TType			Type;
+	UMovePrimitive::TType Type;
 
 	// Reaction type
-	UMovePrimitive::TReaction		Reaction;
+	UMovePrimitive::TReaction Reaction;
 
 	// Reaction type
-	UMovePrimitive::TTrigger		Trigger;
+	UMovePrimitive::TTrigger Trigger;
 
 	// Obstacle flag
-	bool							Obstacle;
+	bool Obstacle;
 
 	// Occlusion mask
-	UMovePrimitive::TCollisionMask	OcclusionMask;
+	UMovePrimitive::TCollisionMask OcclusionMask;
 
 	// Collision mask
-	UMovePrimitive::TCollisionMask	CollisionMask;
+	UMovePrimitive::TCollisionMask CollisionMask;
 
 	// Position of the primitive
-	NLMISC::CVector					Position;
+	NLMISC::CVector Position;
 
 	// Orientation of the primitive
-	float							Orientation;
+	float Orientation;
 
 	// User data
-	UMovePrimitive::TUserData		UserData;
+	UMovePrimitive::TUserData UserData;
 
 	// Serial methods
-	void serial (NLMISC::IStream &s);
+	void serial(NLMISC::IStream &s);
 };
 
 /**
@@ -85,29 +82,29 @@ public:
  * \author Nevrax France
  * \date 2002
  */
-class CPrimitiveBlock	: public UPrimitiveBlock
+class CPrimitiveBlock : public UPrimitiveBlock
 {
 public:
-
 	// Array of primitives
-	std::vector<CPrimitiveDesc>		Primitives;
+	std::vector<CPrimitiveDesc> Primitives;
 
 	// Serial methods
-	void serial (NLMISC::IStream &s);
+	void serial(NLMISC::IStream &s);
 
 	///\name from UPrimitive block, create a P.B. from a stream
 	//@{
 	static UPrimitiveBlock *createPrimitiveBlock(NLMISC::IStream &src);
 	static UPrimitiveBlock *createPrimitiveBlockFromFile(const std::string &fileName);
-	uint						getNbPrimitive() { return (uint)Primitives.size(); }
-	UMovePrimitive::TUserData	getUserData(uint nPrimNb) { nlassert(nPrimNb < Primitives.size());
-															return Primitives[nPrimNb].UserData; }
+	uint getNbPrimitive() { return (uint)Primitives.size(); }
+	UMovePrimitive::TUserData getUserData(uint nPrimNb)
+	{
+		nlassert(nPrimNb < Primitives.size());
+		return Primitives[nPrimNb].UserData;
+	}
 	//@}
 };
 
-
 } // NLPACS
-
 
 #endif // NL_PRIMITIVE_BLOCK_PACS_H
 

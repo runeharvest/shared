@@ -23,8 +23,7 @@
 
 using namespace NLMISC;
 
-namespace NLSOUND
-{
+namespace NLSOUND {
 
 // common method used only with OptionManualRolloff. return the volume in 1/100th DB ( = mB) modified
 sint32 ISource::computeManualRollOff(sint32 volumeMB, sint32 mbMin, sint32 mbMax, double alpha, float sqrdist, float distMin, float distMax)
@@ -41,25 +40,28 @@ sint32 ISource::computeManualRollOff(sint32 volumeMB, sint32 mbMin, sint32 mbMax
 	}
 	else
 	{
-		double dist = (double) sqrt(sqrdist);
+		double dist = (double)sqrt(sqrdist);
 
 		// linearly descending volume on a dB scale
 		double db1 = mbMin * (dist - distMin) / (distMax - distMin);
 
-		if (alpha == 0.0) {
-			volumeMB += (sint32) db1;
-
-		} else if (alpha > 0.0) {
+		if (alpha == 0.0)
+		{
+			volumeMB += (sint32)db1;
+		}
+		else if (alpha > 0.0)
+		{
 			double amp2 = 0.0001 + 0.9999 * (distMax - dist) / (distMax - distMin); // linear amp between 0.00001 and 1.0
 			double db2 = 2000.0 * log10(amp2); // convert to 1/100th decibels
-			volumeMB += (sint32) ((1.0 - alpha) * db1 + alpha * db2);
-
-		} else if (alpha < 0.0) {
+			volumeMB += (sint32)((1.0 - alpha) * db1 + alpha * db2);
+		}
+		else if (alpha < 0.0)
+		{
 			double amp3 = distMin / dist; // linear amplitude is 1/distance
 			double db3 = 2000.0 * log10(amp3); // convert to 1/100th decibels
-			volumeMB += (sint32) ((1.0 + alpha) * db1 - alpha * db3);
+			volumeMB += (sint32)((1.0 + alpha) * db1 - alpha * db3);
 		}
-		
+
 		clamp(volumeMB, mbMin, mbMax);
 		return volumeMB;
 	}
@@ -74,10 +76,10 @@ float ISource::computeManualRolloff(double alpha, float sqrdist, float distMin, 
 	float rolloffGain = (float)pow(10.0, (double)rolloffMb / 2000.0);
 	clamp(rolloffGain, 0.0f, 1.0f);
 	return rolloffGain;*/
-	
+
 	static const double mbMin = -10000;
 	static const double mbMax = 0;
-	
+
 	if (sqrdist < distMin * distMin)
 	{
 		// no attenuation

@@ -17,38 +17,53 @@
 #ifndef NL_TRAITS_H
 #define NL_TRAITS_H
 
-
 #include "rgba.h"
 #include "vector.h"
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 /** Class that gives information about a type. Useful to do some optimization in templates functions / class
-  * This class is intended to be specialized and taylored for each type of interest
-  *
-  * \author Nicolas Vizerie
-  * \author Nevrax France
-  * \date 2004
-  */
+ * This class is intended to be specialized and taylored for each type of interest
+ *
+ * \author Nicolas Vizerie
+ * \author Nevrax France
+ * \date 2004
+ */
 template <class T>
 struct CTraits
 {
-	enum { HasTrivialCtor = false };     // if true, the default ctor does nothing useful (example  : built-in types or Plain Old Datas structs)
-	enum { HasTrivialDtor = false };     // the dtor does nothing useful and is not worth calling. Useful to optimize containers clean-up
-	enum { SupportRawCopy = false };     // the object supports raw copy with memcpy
+	enum
+	{
+		HasTrivialCtor = false
+	}; // if true, the default ctor does nothing useful (example  : built-in types or Plain Old Datas structs)
+	enum
+	{
+		HasTrivialDtor = false
+	}; // the dtor does nothing useful and is not worth calling. Useful to optimize containers clean-up
+	enum
+	{
+		SupportRawCopy = false
+	}; // the object supports raw copy with memcpy
 	// to be completed ..
 };
 
-
-#define NL_TRIVIAL_TYPE_TRAITS(type)     \
-template <>								 \
-struct CTraits<type>                     \
-{                                        \
-	enum { HasTrivialCtor = true };      \
-	enum { HasTrivialDtor = true };      \
-	enum { SupportRawCopy = true };      \
-};
+#define NL_TRIVIAL_TYPE_TRAITS(type) \
+	template <>                      \
+	struct CTraits<type>             \
+	{                                \
+		enum                         \
+		{                            \
+			HasTrivialCtor = true    \
+		};                           \
+		enum                         \
+		{                            \
+			HasTrivialDtor = true    \
+		};                           \
+		enum                         \
+		{                            \
+			SupportRawCopy = true    \
+		};                           \
+	};
 
 // integral types
 NL_TRIVIAL_TYPE_TRAITS(bool);
@@ -84,5 +99,3 @@ NL_TRIVIAL_TYPE_TRAITS(CRGBA);
 } // NLMISC
 
 #endif
-
-

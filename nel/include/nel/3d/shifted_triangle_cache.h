@@ -21,10 +21,7 @@
 #include "nel/misc/object_vector.h"
 #include "nel/3d/index_buffer.h"
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 /**
@@ -37,40 +34,37 @@ namespace NL3D
 class CShiftedTriangleCache
 {
 public:
-	struct	CRdrPass
+	struct CRdrPass
 	{
 		/// Point to CShiftedTriangleCache::Triangles
-		uint32				Triangles;
-		uint32				NumTriangles;
+		uint32 Triangles;
+		uint32 NumTriangles;
 	};
 
 public:
 	/// The Raw triangles array
-	CIndexBuffer								RawIndices;
+	CIndexBuffer RawIndices;
 	/// List of triangles, per rdrPass
-	NLMISC::CObjectVector<CRdrPass, false>		RdrPass;
+	NLMISC::CObjectVector<CRdrPass, false> RdrPass;
 
 	/// What MRM lod this cache represent. -1 if NULL
-	sint					LodId;
+	sint LodId;
 	/// To see if same Data than in the CMeshMRMGeom
-	uint					MeshDataId;
+	uint MeshDataId;
 	/// the shift value used to compute this indices.
-	uint					BaseVertex;
+	uint BaseVertex;
 
 	// free up the memory
-	void				clearArrays();
+	void clearArrays();
 
 	// ctor
 	CShiftedTriangleCache()
 	{
 		NL_SET_IB_NAME(RawIndices, "CShiftedTriangleCache");
 	}
-
 };
 
-
 } // NL3D
-
 
 #endif // NL_SHIFTED_TRIANGLE_CACHE_H
 

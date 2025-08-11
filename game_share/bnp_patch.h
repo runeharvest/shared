@@ -30,7 +30,6 @@
 #include "nel/misc/sha1.h"
 #include "persistent_data.h"
 
-
 //-----------------------------------------------------------------------------
 // class IVersionNumberGenerator
 //-----------------------------------------------------------------------------
@@ -39,13 +38,12 @@ class IVersionNumberGenerator
 {
 public:
 	// reserver the next version number (if we don't already have one)
-	virtual void grabVersionNumber() =0;
+	virtual void grabVersionNumber() = 0;
 
 	// get the current reserved version number
 	// return ~0u if none reserved
-	virtual uint32 getPackageVersionNumber() =0;
+	virtual uint32 getPackageVersionNumber() = 0;
 };
-
 
 //-----------------------------------------------------------------------------
 // class CBNPFileVersion
@@ -78,18 +76,18 @@ public:
 	NLMISC::CHashKey getHashKey() const;
 
 	// == operator
-	bool operator==(const CBNPFileVersion& other) const;
+	bool operator==(const CBNPFileVersion &other) const;
 
 	// != operator
-	bool operator!=(const CBNPFileVersion& other) const;
+	bool operator!=(const CBNPFileVersion &other) const;
 
 private:
-	uint32				_VersionNumber;
-	uint32				_FileTime;
-	uint32				_FileSize;
-	uint32				_7ZFileSize;
-	uint32				_PatchSize;
-	std::vector<uint32>	_HashKey;
+	uint32 _VersionNumber;
+	uint32 _FileTime;
+	uint32 _FileSize;
+	uint32 _7ZFileSize;
+	uint32 _PatchSize;
+	std::vector<uint32> _HashKey;
 };
 
 //-----------------------------------------------------------------------------
@@ -107,24 +105,24 @@ public:
 
 	// add a version to the file
 	// returns false if file not found
-	bool addVersion(const std::string& bnpDirectory, const std::string& refDirectory, IVersionNumberGenerator& version);
+	bool addVersion(const std::string &bnpDirectory, const std::string &refDirectory, IVersionNumberGenerator &version);
 
 	// get the last existing version number less than or equal to parameter in the file's history
-	uint32 getLatestVersionNumber(uint32 max=~0u) const;
+	uint32 getLatestVersionNumber(uint32 max = ~0u) const;
 
 	// get number of versions in the versions vector
 	uint32 versionCount() const;
 
 	// get the nth version from the version vector
-	const CBNPFileVersion& getVersion(uint32 idx) const;
+	const CBNPFileVersion &getVersion(uint32 idx) const;
 
-	CBNPFileVersion& getVersion(uint32 idx);
+	CBNPFileVersion &getVersion(uint32 idx);
 
 	// _FileName write accessor
-	void setFileName(const std::string& fileName);
+	void setFileName(const std::string &fileName);
 
 	// _FileName read accessor
-	const std::string& getFileName() const;
+	const std::string &getFileName() const;
 
 	// _Incrmental flag write accessor
 	void setIncremental(bool value);
@@ -150,18 +148,18 @@ public:
 public:
 	// add a version to the file
 	// returns highest version number in files after operation
-	uint32 addVersion(const std::string& bnpDirectory, const std::string& refDirectory, IVersionNumberGenerator& version);
+	uint32 addVersion(const std::string &bnpDirectory, const std::string &refDirectory, IVersionNumberGenerator &version);
 	// look through the refferenced files for the highest version number
 	uint32 getVersionNumber() const;
 
 	void clear();
 
 	uint32 fileCount() const;
-	const CBNPFile& getFile(uint32 idx) const;
-	const CBNPFile* getFileByName(const std::string& fileName) const;
-	CBNPFile& getFile(uint32 idx);
-	CBNPFile* getFileByName(const std::string& fileName);
-	void addFile(const std::string& fileName,bool isIncremental=true);
+	const CBNPFile &getFile(uint32 idx) const;
+	const CBNPFile *getFileByName(const std::string &fileName) const;
+	CBNPFile &getFile(uint32 idx);
+	CBNPFile *getFileByName(const std::string &fileName);
+	void addFile(const std::string &fileName, bool isIncremental = true);
 
 	void removeFile(const std::string &filename);
 
@@ -182,8 +180,8 @@ public:
 	// ctor
 	CBNPCategory();
 
-	const std::string& getName() const;
-	void setName(const std::string& name);
+	const std::string &getName() const;
+	void setName(const std::string &name);
 
 	void setOptional(bool value);
 	bool isOptional() const;
@@ -201,21 +199,20 @@ public:
 	bool isHidden() const;
 
 	uint32 fileCount() const;
-	const std::string& getFile(uint32 idx) const;
-	void addFile(const std::string& fileName);
+	const std::string &getFile(uint32 idx) const;
+	void addFile(const std::string &fileName);
 
 	bool hasFile(const std::string &fileName) const;
 
 private:
-	std::string		_Name;
-	bool			_IsOptional;
-	std::string		_UnpackTo;
-	bool			_IsIncremental;
-	std::string		_CatRequired;	// Name of the category required
-	bool			_Hidden;		// If optional but not displayed
+	std::string _Name;
+	bool _IsOptional;
+	std::string _UnpackTo;
+	bool _IsIncremental;
+	std::string _CatRequired; // Name of the category required
+	bool _Hidden; // If optional but not displayed
 	std::vector<std::string> _Files;
 };
-
 
 //-----------------------------------------------------------------------------
 // class CBNPCategorySet
@@ -231,28 +228,27 @@ public:
 
 	// file accessors
 	uint32 fileCount() const;
-	const std::string& getFile(uint32 idx) const;
+	const std::string &getFile(uint32 idx) const;
 
 	// category accessors
 	uint32 categoryCount() const;
-	CBNPCategory& getCategory(uint32 idx);
-	const CBNPCategory& getCategory(uint32 idx) const;
+	CBNPCategory &getCategory(uint32 idx);
+	const CBNPCategory &getCategory(uint32 idx) const;
 	void deleteCategory(uint32 index);
 
 	// check whether a named category exists and add a new one if need be
-	const CBNPCategory* getCategory(const std::string& categoryName) const;
-	CBNPCategory* getCategory(const std::string& categoryName, bool addIfNotExist);
-	void addFile(const std::string& categoryName,const std::string& fileName);
+	const CBNPCategory *getCategory(const std::string &categoryName) const;
+	CBNPCategory *getCategory(const std::string &categoryName, bool addIfNotExist);
+	void addFile(const std::string &categoryName, const std::string &fileName);
 
 	// lookup a file and check whether it's flagged as non-incremental
-	bool isFileIncremental(const std::string& fileName) const;
+	bool isFileIncremental(const std::string &fileName) const;
 
-	const CBNPCategory* getCategoryFromFile(const std::string &fileName) const;
+	const CBNPCategory *getCategoryFromFile(const std::string &fileName) const;
 
 private:
-	std::vector<CBNPCategory>	_Category;
+	std::vector<CBNPCategory> _Category;
 };
-
 
 //-----------------------------------------------------------------------------
 // class CProductDescriptionForClient
@@ -275,7 +271,7 @@ public:
 	void getFiles(CPersistentDataRecord &pdr);
 
 	// load from file
-	bool load(const std::string& filePath);
+	bool load(const std::string &filePath);
 
 	const CBNPCategorySet &getCategories() { return _Categories; }
 	const CBNPFileSet &getFiles() { return _Files; }
@@ -283,26 +279,25 @@ public:
 	void serial(NLMISC::IStream &f);
 
 private:
-	CBNPCategorySet	_Categories;
-	CBNPFileSet		_Files;
+	CBNPCategorySet _Categories;
+	CBNPFileSet _Files;
 };
 
-
 //================================================================================================
 //================================================================================================
 //================================================================================================
 //================================================================================================
 
-//#if 0
+// #if 0
 //
 ////-----------------------------------------------------------------------------
 //// class CBNPPatchDescription
 ////-----------------------------------------------------------------------------
 //// a little object used to describe patches in CBNPUnpatcher class
 //
-//class CBNPPatchDescription
+// class CBNPPatchDescription
 //{
-//public:
+// public:
 //	// ctor
 //	CBNPPatchDescription(const std::string& targetFileName,uint32 version,uint32 size,bool requiresDownload);
 //
@@ -316,7 +311,7 @@ private:
 //	// accessors for the patcher
 //	std::string			getPatchFileName() const;
 //
-//private:
+// private:
 //	std::string _TargetFileName;
 //	uint32		_Version;
 //	uint32		_Size;
@@ -330,9 +325,9 @@ private:
 //// This class, derived from CProductDescriptionForClient is used on the client
 //// to read and interpret the index file retrieved from the patch server
 //
-//class CBNPUnpatcher: public CProductDescriptionForClient
+// class CBNPUnpatcher: public CProductDescriptionForClient
 //{
-//public:
+// public:
 //	//-------------------------------------------------------------------------
 //	// initialisation
 //
@@ -440,7 +435,7 @@ private:
 //	void getAllDownloadPatches(std::vector<CBNPPatchDescription>& result);
 //
 //
-//private:
+// private:
 //
 //	//-------------------------------------------------------------------------
 //	// private utility routines
@@ -459,6 +454,6 @@ private:
 //	std::set<std::string> _SelectedCategories;
 //};
 //
-//#endif
+// #endif
 
 #endif

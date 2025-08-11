@@ -22,8 +22,7 @@
 #include "nel/misc/o_xml.h"
 #include "nel/misc/i_xml.h"
 
-namespace NLLOGIC
-{
+namespace NLLOGIC {
 
 /**
  * CLogicVariable
@@ -35,7 +34,6 @@ namespace NLLOGIC
 class CLogicVariable
 {
 protected:
-
 	/// variable value
 	sint64 _Value;
 
@@ -46,7 +44,6 @@ protected:
 	bool _Verbose;
 
 public:
-
 	/**
 	 * Default constructor
 	 */
@@ -57,7 +54,7 @@ public:
 	 *
 	 * \param name is the name of the variable
 	 */
-	void setName( std::string name ) { _Name = name; }
+	void setName(std::string name) { _Name = name; }
 
 	/**
 	 * Get the variable name
@@ -71,7 +68,7 @@ public:
 	 *
 	 * \param value is the new value of the variable
 	 */
-	void setValue( sint64 value );
+	void setValue(sint64 value);
 
 	/**
 	 * Get the variable value
@@ -86,7 +83,7 @@ public:
 	 * \param varName is the name of the variable
 	 * \param b is true to activate the verbose mode, false else
 	 */
-	void setVerbose( bool b ) { _Verbose = b; }
+	void setVerbose(bool b) { _Verbose = b; }
 
 	/**
 	 * Apply modifications on a variable
@@ -94,7 +91,7 @@ public:
 	 * \param op can be one of these operators :"SET"("set"),"ADD"("add"),"SUB"("sub"),"MUL"("mul"),"DIV"("div")
 	 * \param value is the value to use along with the modificator
 	 */
-	void applyModification( std::string op, sint64 value );
+	void applyModification(std::string op, sint64 value);
 
 	/**
 	 * update the variable
@@ -104,14 +101,11 @@ public:
 	/**
 	 * serial
 	 */
-	//virtual void serial(NLMISC::IStream &f);
+	// virtual void serial(NLMISC::IStream &f);
 
-	virtual void write (xmlNodePtr node) const;
-	virtual void read (xmlNodePtr node);
+	virtual void write(xmlNodePtr node) const;
+	virtual void read(xmlNodePtr node);
 };
-
-
-
 
 /**
  * CLogicCounter
@@ -125,7 +119,6 @@ class CLogicCounter : public CLogicVariable
 	uint _TickCount;
 
 public:
-
 	/// counter running mode
 	enum TLogicCounterRule
 	{
@@ -145,7 +138,6 @@ public:
 		FAST_FORWARD,
 	};
 
-
 	/// period between inc( measured in game ticks )
 	CLogicVariable Period;
 
@@ -160,7 +152,6 @@ public:
 
 	/// higher limit for counter
 	CLogicVariable HighLimit;
-
 
 	/// running mode
 	CLogicVariable Mode;
@@ -186,15 +177,12 @@ public:
 	/**
 	 * serial
 	 */
-	//void serial(NLMISC::IStream &f);
+	// void serial(NLMISC::IStream &f);
 
-	virtual void write (xmlNodePtr node) const;
-	virtual void read (xmlNodePtr node);
+	virtual void write(xmlNodePtr node) const;
+	virtual void read(xmlNodePtr node);
 };
 
 } // NLLOGIC
 
-#endif //LOGIC_VARIABLE
-
-
-
+#endif // LOGIC_VARIABLE

@@ -20,14 +20,11 @@
 #include "nel/misc/types_nl.h"
 #include "u_shape.h"
 
-
-namespace NLMISC
-{
-	class IProgressCallback;
+namespace NLMISC {
+class IProgressCallback;
 }
 
-namespace NL3D
-{
+namespace NL3D {
 
 /**
  * Game interface for managing shape bank
@@ -39,34 +36,33 @@ namespace NL3D
 class UShapeBank
 {
 public:
-	virtual ~UShapeBank() {}
+	virtual ~UShapeBank() { }
 
 	/**
-	  * Add a new ShapeCache. If already exist do nothing.
-	  */
+	 * Add a new ShapeCache. If already exist do nothing.
+	 */
 	virtual void addShapeCache(const std::string &shapeCacheName) = 0;
 
 	/**
-	  * Remove a ShapeCache. All shapes in the shape cache are deleted. All links are redirected
-	  * to the default ShapeCache.
-	  */
+	 * Remove a ShapeCache. All shapes in the shape cache are deleted. All links are redirected
+	 * to the default ShapeCache.
+	 */
 	virtual void removeShapeCache(const std::string &shapeCacheName) = 0;
 
 	/**
-	  * Remove all ShapeCache and suppress all links (even the link to the default cache are removed)
-	  */
+	 * Remove all ShapeCache and suppress all links (even the link to the default cache are removed)
+	 */
 	virtual void reset() = 0;
 
 	/**
-	  * Set the shapeCache shapeCacheName the new size.(delete shapes if maxsize<shapeCacheSize).
-	  */
+	 * Set the shapeCache shapeCacheName the new size.(delete shapes if maxsize<shapeCacheSize).
+	 */
 	virtual void setShapeCacheSize(const std::string &shapeCacheName, sint32 maxSize) = 0;
 
 	/**
-	  * Link a shape to a ShapeCache. The ShapeCache must exist and must not contains the shape.
-	  */
+	 * Link a shape to a ShapeCache. The ShapeCache must exist and must not contains the shape.
+	 */
 	virtual void linkShapeToShapeCache(const std::string &shapeName, const std::string &shapeCacheName) = 0;
-
 
 	/** PreLoad all shapes (.shape, .ps, .skel...) files from a directory into a shapeCache.
 	 *	Shapes are Loaded if not present, assigned to the given cache, and fit in the cache Size as max possible.
@@ -76,8 +72,9 @@ public:
 	 *	\param wildcard a filter string like: "*.shape", "??_HOM*.shape". NB: toLower-ed internally
 	 *	\param recurs true if want to recurs in sub directory
 	 */
-	virtual void	preLoadShapesFromDirectory(const std::string &shapeCacheName,
-		const std::string &path, const std::string &wildCard, bool recurs= false, NLMISC::IProgressCallback *progress = NULL, bool flushTextures = false) =0;
+	virtual void preLoadShapesFromDirectory(const std::string &shapeCacheName,
+	    const std::string &path, const std::string &wildCard, bool recurs = false, NLMISC::IProgressCallback *progress = NULL, bool flushTextures = false)
+	    = 0;
 
 	/** PreLoad all shapes (.shape, .ps, .skel...) files from a directory into a shapeCache.
 	 *	same as preLoadShapesFromDirectory() but take a BNP name which must have been added with
@@ -85,24 +82,22 @@ public:
 	 *	\param bnpName eg: "characters.bnp" (NB: set the bigFileNAme without any path).
 	 *  \param flushTex : true to flush the texture of each shape when it is loaded
 	 */
-	virtual void	preLoadShapesFromBNP(const std::string &shapeCacheName,
-		const std::string &bnpName, const std::string &wildCard, NLMISC::IProgressCallback *progress = NULL, bool flushTextures = false) =0;
+	virtual void preLoadShapesFromBNP(const std::string &shapeCacheName,
+	    const std::string &bnpName, const std::string &wildCard, NLMISC::IProgressCallback *progress = NULL, bool flushTextures = false)
+	    = 0;
 
 	/** Return a UShape proxy from this name. NB: if not found the mesh is not loaded, and the proxy
 	 *	returned will be empty
 	 */
-	virtual UShape	getShape(const std::string &shapeName) = 0;
+	virtual UShape getShape(const std::string &shapeName) = 0;
 
 	/** Mark this shape name as needing a buildSystemGeometry() (typically used for selection)
 	 *	NB: this will take effect only for shapes on a subsequent add(), load() or loadAsync()
 	 */
-	virtual void	buildSystemGeometryForshape(const std::string &shapeName) = 0;
-
+	virtual void buildSystemGeometryForshape(const std::string &shapeName) = 0;
 };
 
-
 } // NL3D
-
 
 #endif // NL_U_SHAPE_BANK_H
 

@@ -23,8 +23,7 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 //////////////////////
 // CWaterEnvMapUser //
 //////////////////////
@@ -39,27 +38,25 @@ void CWaterEnvMapUser::init(uint cubeMapSize, uint projection2DSize, TGlobalAnim
 // CWaterEnvMapRenderHelper //
 //////////////////////////////
 
-
 // ***********************************************************************************
 void CWaterEnvMapRenderHelper::render(TFace face, TGlobalAnimationTime time, UDriver &drv)
 {
 	CMatrix mat;
 	using NLMISC::CVector;
-	switch(face)
+	switch (face)
 	{
-		case IWaterEnvMapRender::positive_x: mat.setRot(CVector::J, -CVector::I, -CVector::K); break;
-		case IWaterEnvMapRender::negative_x: mat.setRot(-CVector::J, CVector::I, -CVector::K); break;
-		case IWaterEnvMapRender::positive_y: mat.setRot(CVector::I, CVector::J, -CVector::K); break;
-		case IWaterEnvMapRender::negative_y: mat.setRot(-CVector::I, -CVector::J, -CVector::K); break;
-		case IWaterEnvMapRender::positive_z: mat.setRot(-CVector::I, CVector::K, -CVector::J); break;
-		case IWaterEnvMapRender::negative_z: mat.setRot(-CVector::I, -CVector::K, CVector::J); break;
-		default:
-			nlassert(0);
-			break;
+	case IWaterEnvMapRender::positive_x: mat.setRot(CVector::J, -CVector::I, -CVector::K); break;
+	case IWaterEnvMapRender::negative_x: mat.setRot(-CVector::J, CVector::I, -CVector::K); break;
+	case IWaterEnvMapRender::positive_y: mat.setRot(CVector::I, CVector::J, -CVector::K); break;
+	case IWaterEnvMapRender::negative_y: mat.setRot(-CVector::I, -CVector::J, -CVector::K); break;
+	case IWaterEnvMapRender::positive_z: mat.setRot(-CVector::I, CVector::K, -CVector::J); break;
+	case IWaterEnvMapRender::negative_z: mat.setRot(-CVector::I, -CVector::K, CVector::J); break;
+	default:
+		nlassert(0);
+		break;
 	}
 	doRender(mat, time, drv);
 }
-
 
 //////////////////////////////////
 // CWaterEnvMapRenderFromUScene //
@@ -84,7 +81,6 @@ void CWaterEnvMapRenderFromUScene::setScene(UScene *scene, UCamera cam)
 		nlassert(!_Cam.empty());
 	}
 }
-
 
 // ***********************************************************************************
 void CWaterEnvMapRenderFromUScene::doRender(const CMatrix &camMatrix, TGlobalAnimationTime time, UDriver &drv)

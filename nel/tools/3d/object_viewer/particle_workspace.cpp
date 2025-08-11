@@ -33,8 +33,6 @@
 #include "nel/misc/file.h"
 //
 
-
-
 //***********************************************************************************************
 CParticleWorkspace::CNode::CNode()
 {
@@ -49,9 +47,8 @@ CParticleWorkspace::CNode::CNode()
 
 //***********************************************************************************************
 CParticleWorkspace::CNode::~CNode()
-{	
+{
 	unload();
-	
 }
 
 //***********************************************************************************************
@@ -78,9 +75,9 @@ bool CParticleWorkspace::CNode::isStateMemorized() const
 
 //**************************************************************************************************************************
 void CParticleWorkspace::CNode::stickPSToSkeleton(NL3D::CSkeletonModel *skel,
-												  uint bone,
-												  const std::string &parentSkelName,
-												  const std::string &parentBoneName)
+    uint bone,
+    const std::string &parentSkelName,
+    const std::string &parentBoneName)
 {
 	nlassert(_WS);
 	if (!_PSM) return;
@@ -91,7 +88,7 @@ void CParticleWorkspace::CNode::stickPSToSkeleton(NL3D::CSkeletonModel *skel,
 	{
 		skel->stickObject(_PSM, bone);
 		_PSM->setMatrix(NLMISC::CMatrix::Identity);
-		_ParentSkel = skel;		
+		_ParentSkel = skel;
 	}
 	if (_WS->getModificationCallback())
 	{
@@ -109,23 +106,23 @@ void CParticleWorkspace::CNode::unstickPSFromSkeleton()
 	if (_ParentSkel)
 	{
 		_ParentSkel->detachSkeletonSon(_PSM);
-		_ParentSkel = NULL;		
-	}	
+		_ParentSkel = NULL;
+	}
 }
 
 //***********************************************************************************************
 void CParticleWorkspace::CNode::removeLocated(NL3D::CPSLocated *loc)
-{	
+{
 	nlassert(_WS);
 	if (_InitialPos.isStateMemorized())
-	{	
+	{
 		_InitialPos.removeLocated(loc);
 	}
 }
 
 //***********************************************************************************************
 void CParticleWorkspace::CNode::removeLocatedBindable(NL3D::CPSLocatedBindable *lb)
-{	
+{
 	nlassert(_WS);
 	if (_InitialPos.isStateMemorized())
 	{
@@ -137,7 +134,7 @@ void CParticleWorkspace::CNode::removeLocatedBindable(NL3D::CPSLocatedBindable *
 void CParticleWorkspace::CNode::setModified(bool modified)
 {
 	nlassert(_WS);
-	if (_Modified == modified) return;		
+	if (_Modified == modified) return;
 	_Modified = modified;
 	_WS->nodeModified(*this);
 }
@@ -154,38 +151,37 @@ void CParticleWorkspace::CNode::unload()
 		NL3D::CNELU::Scene->setShapeBank(oldSB);
 		_PSM = NULL;
 	}
-	delete _ShapeBank;	
+	delete _ShapeBank;
 	_ShapeBank = NULL;
 	_PS = NULL;
 	_ParentSkel = NULL;
 }
-
 
 //***********************************************************************************************
 void CParticleWorkspace::CNode::setup(NL3D::CParticleSystemModel &psm)
 {
 	nlassert(_WS);
 	psm.setTransformMode(NL3D::CTransform::DirectMatrix);
-	psm.setMatrix(NLMISC::CMatrix::Identity);					
+	psm.setMatrix(NLMISC::CMatrix::Identity);
 	nlassert(_WS->getObjectViewer());
 	psm.setEditionMode(true); // this also force the system instanciation
-	for(uint k = 0; k < NL3D::MaxPSUserParam; ++k)
+	for (uint k = 0; k < NL3D::MaxPSUserParam; ++k)
 	{
 		psm.bypassGlobalUserParamValue(k);
 	}
 	psm.enableAutoGetEllapsedTime(false);
-	psm.setEllapsedTime(0.f); // system is paused	
+	psm.setEllapsedTime(0.f); // system is paused
 	// initialy, the ps is hidden
 	psm.hide();
 	// link to the root for manipulation
 	_WS->getObjectViewer()->getSceneRoot()->hrcLinkSon(&psm);
-	NL3D::CParticleSystem  *ps  = psm.getPS();
+	NL3D::CParticleSystem *ps = psm.getPS();
 	nlassert(ps);
 	ps->setFontManager(_WS->getFontManager());
 	ps->setFontGenerator(_WS->getFontGenerator());
-	ps->stopSound();		
+	ps->stopSound();
 	// flush textures
-	psm.Shape->flushTextures(*NL3D::CNELU::Driver, 0);	
+	psm.Shape->flushTextures(*NL3D::CNELU::Driver, 0);
 }
 
 //***********************************************************************************************
@@ -197,22 +193,21 @@ void CParticleWorkspace::CNode::setTriggerAnim(const std::string &anim)
 	_TriggerAnim = anim;
 }
 
-
 //***********************************************************************************************
 void CParticleWorkspace::CNode::createEmptyPS()
-{	
+{
 	nlassert(_WS);
-	NL3D::CParticleSystem emptyPS;	
+	NL3D::CParticleSystem emptyPS;
 	NL3D::CParticleSystemShape *pss = new NL3D::CParticleSystemShape;
-	pss->buildFromPS(emptyPS);	
+	pss->buildFromPS(emptyPS);
 	CUniquePtr<NL3D::CShapeBank> sb(new NL3D::CShapeBank);
 	std::string shapeName = NLMISC::CFile::getFilename(_RelativePath);
 	sb->add(shapeName, pss);
 	NL3D::CShapeBank *oldSB = NL3D::CNELU::Scene->getShapeBank();
 	NL3D::CNELU::Scene->setShapeBank(sb.get());
 	NL3D::CParticleSystemModel *psm = NLMISC::safe_cast<NL3D::CParticleSystemModel *>(NL3D::CNELU::Scene->createInstance(shapeName));
-	nlassert(psm);	
-	NL3D::CNELU::Scene->setShapeBank(oldSB);				
+	nlassert(psm);
+	NL3D::CNELU::Scene->setShapeBank(oldSB);
 	setup(*psm);
 	unload();
 	// commit new values
@@ -223,8 +218,8 @@ void CParticleWorkspace::CNode::createEmptyPS()
 }
 
 //***********************************************************************************************
-void CParticleWorkspace::CNode::init(CParticleWorkspace *ws)		
-{		
+void CParticleWorkspace::CNode::init(CParticleWorkspace *ws)
+{
 	nlassert(ws);
 	_WS = ws;
 }
@@ -238,21 +233,21 @@ void CParticleWorkspace::CNode::setRelativePath(const std::string &relativePath)
 
 //***********************************************************************************************
 void CParticleWorkspace::CNode::serial(NLMISC::IStream &f)
-{	
+{
 	nlassert(_WS);
 	f.xmlPush("PROJECT_FILE");
-		sint version = f.serialVersion(2);
-		f.xmlSerial(_RelativePath, "RELATIVE_PATH");
-		if (version >= 1)
-		{
-			f.xmlSerial(_TriggerAnim, "TRIGGER_ANIMATION");
-		}
-		if (version >= 2)
-		{			
-			f.xmlSerial(_ParentSkelName, "PARENT_SKEL_NAME");
-			f.xmlSerial(_ParentBoneName, "PARENT_BONE_NAME");
-		}
-	f.xmlPop();		
+	sint version = f.serialVersion(2);
+	f.xmlSerial(_RelativePath, "RELATIVE_PATH");
+	if (version >= 1)
+	{
+		f.xmlSerial(_TriggerAnim, "TRIGGER_ANIMATION");
+	}
+	if (version >= 2)
+	{
+		f.xmlSerial(_ParentSkelName, "PARENT_SKEL_NAME");
+		f.xmlSerial(_ParentBoneName, "PARENT_BONE_NAME");
+	}
+	f.xmlPop();
 }
 
 //***********************************************************************************************
@@ -261,18 +256,17 @@ void CParticleWorkspace::CNode::savePS()
 	savePSAs(getFullPath());
 }
 
-
 //***********************************************************************************************
 void CParticleWorkspace::CNode::savePSAs(const std::string &fullPath)
 {
 	nlassert(_WS);
-	if (!_PS) return;	
+	if (!_PS) return;
 	// build a shape from our system, and save it
-	NL3D::CParticleSystemShape psc;	
+	NL3D::CParticleSystemShape psc;
 	psc.buildFromPS(*_PS);
 	NL3D::CShapeStream st(&psc);
 	NLMISC::COFile oFile(fullPath);
-	oFile.serial(st);	
+	oFile.serial(st);
 }
 
 //***********************************************************************************************
@@ -284,7 +278,7 @@ std::string CParticleWorkspace::CNode::getFullPath() const
 
 //***********************************************************************************************
 bool CParticleWorkspace::CNode::loadPS()
-{	
+{
 	nlassert(_WS);
 	// manually load the PS shape (so that we can deal with exceptions)
 	NL3D::CShapeStream ss;
@@ -310,7 +304,7 @@ bool CParticleWorkspace::CNode::loadPS()
 		NL3D::CNELU::Scene->deleteInstance(trs);
 		return false;
 	}
-	NL3D::CNELU::Scene->setShapeBank(oldSB);		
+	NL3D::CNELU::Scene->setShapeBank(oldSB);
 	setup(*psm);
 	unload();
 	// commit new values
@@ -318,9 +312,8 @@ bool CParticleWorkspace::CNode::loadPS()
 	_PSM = psm;
 	_ShapeBank = sb.release();
 	_Modified = false;
-	return true; 
+	return true;
 }
-
 
 //***********************************************************************************************
 CParticleWorkspace::CParticleWorkspace()
@@ -339,16 +332,15 @@ CParticleWorkspace::~CParticleWorkspace()
 
 //***********************************************************************************************
 void CParticleWorkspace::init(CObjectViewer *ov,
-							  const std::string &filename,
-							  NL3D::CFontManager	*fontManager, 
-							  NL3D::CFontGenerator	*fontGenerator 
-							 )
-{	
+    const std::string &filename,
+    NL3D::CFontManager *fontManager,
+    NL3D::CFontGenerator *fontGenerator)
+{
 	nlassert(!_OV);
 	nlassert(ov);
 	_OV = ov;
 	_Filename = filename;
-	_FontManager   = fontManager;
+	_FontManager = fontManager;
 	_FontGenerator = fontGenerator;
 }
 //***********************************************************************************************
@@ -358,16 +350,15 @@ void CParticleWorkspace::setName(const std::string &name)
 	touch();
 }
 
-
 //***********************************************************************************************
 CParticleWorkspace::CNode *CParticleWorkspace::addNode(const std::string &filenameWithFullPath)
-{	
-	nlassert(_OV);				
-	// Check that file is not already inserted 	
+{
+	nlassert(_OV);
+	// Check that file is not already inserted
 	std::string fileName = NLMISC::CFile::getFilename(filenameWithFullPath);
-	for(uint k = 0; k < _Nodes.size(); ++k)
+	for (uint k = 0; k < _Nodes.size(); ++k)
 	{
-		if (NLMISC::nlstricmp(_Nodes[k]->getFilename(), fileName) == 0) return NULL;		
+		if (NLMISC::nlstricmp(_Nodes[k]->getFilename(), fileName) == 0) return NULL;
 	}
 
 	// TODO: replace with NeL methods
@@ -376,7 +367,7 @@ CParticleWorkspace::CNode *CParticleWorkspace::addNode(const std::string &filena
 	std::string relativePath;
 	if (!PathRelativePathTo(resultPath, nlUtf8ToTStr(dosPath), FILE_ATTRIBUTE_DIRECTORY, nlUtf8ToTStr(filenameWithFullPath), 0))
 	{
-		relativePath = filenameWithFullPath; 
+		relativePath = filenameWithFullPath;
 	}
 	else
 	{
@@ -396,7 +387,7 @@ CParticleWorkspace::CNode *CParticleWorkspace::addNode(const std::string &filena
 	newNode->setRelativePath(relativePath);
 	_Nodes.push_back(newNode);
 	setModifiedFlag(true);
-	return newNode;	
+	return newNode;
 }
 
 //***********************************************************************************************
@@ -414,7 +405,7 @@ void CParticleWorkspace::removeNode(CNode *ptr)
 {
 	sint index = getIndexFromNode(ptr);
 	nlassert(index != -1);
-	removeNode((uint) index);
+	removeNode((uint)index);
 }
 
 //***********************************************************************************************
@@ -444,26 +435,26 @@ void CParticleWorkspace::serial(NLMISC::IStream &f)
 {
 	f.xmlPush("PARTICLE_WORKSPACE");
 	f.serialVersion(0);
-	f.xmlSerial(_Name, "NAME");	
+	f.xmlSerial(_Name, "NAME");
 	f.xmlPush("PS_LIST");
 	uint32 numNodes = (uint32)_Nodes.size();
 	// TODO : avoid to store the number of nodes
-	f.xmlSerial(numNodes, "NUM_NODES");		
+	f.xmlSerial(numNodes, "NUM_NODES");
 	if (f.isReading())
 	{
-		for(uint k = 0; k < numNodes; ++k)
-		{		
-			_Nodes.push_back(new CNode());						
+		for (uint k = 0; k < numNodes; ++k)
+		{
+			_Nodes.push_back(new CNode());
 			_Nodes.back()->init(this);
 			f.serial(*_Nodes.back());
-		}	
+		}
 	}
 	else
 	{
-		for(uint k = 0; k < numNodes; ++k)
+		for (uint k = 0; k < numNodes; ++k)
 		{
 			f.serial(*_Nodes[k]);
-		}		
+		}
 	}
 	f.xmlPop();
 	f.xmlPop();
@@ -480,9 +471,9 @@ sint CParticleWorkspace::getIndexFromNode(CNode *node) const
 {
 	nlassert(node);
 	nlassert(node->getWorkspace() == this);
-	for(uint k = 0; k < _Nodes.size(); ++k)
+	for (uint k = 0; k < _Nodes.size(); ++k)
 	{
-		if (node == _Nodes[k]) return (sint) k;
+		if (node == _Nodes[k]) return (sint)k;
 	}
 	return -1;
 }
@@ -490,7 +481,7 @@ sint CParticleWorkspace::getIndexFromNode(CNode *node) const
 //***********************************************************************************************
 bool CParticleWorkspace::containsFile(std::string filename) const
 {
-	for(uint k = 0; k < _Nodes.size(); ++k)
+	for (uint k = 0; k < _Nodes.size(); ++k)
 	{
 		if (NLMISC::nlstricmp(filename, _Nodes[k]->getFilename()) == 0) return true;
 	}
@@ -510,7 +501,7 @@ void CParticleWorkspace::nodeModified(CNode &node)
 //***********************************************************************************************
 CParticleWorkspace::CNode *CParticleWorkspace::getNodeFromPS(NL3D::CParticleSystem *ps) const
 {
-	for(uint k = 0; k < _Nodes.size(); ++k)
+	for (uint k = 0; k < _Nodes.size(); ++k)
 	{
 		if (_Nodes[k]->getPSPointer() == ps) return _Nodes[k];
 	}
@@ -549,7 +540,7 @@ void CParticleWorkspace::sort(ISort &predicate)
 //***********************************************************************************************
 bool CParticleWorkspace::isContentModified() const
 {
-	for(uint k = 0; k < _Nodes.size(); ++k)
+	for (uint k = 0; k < _Nodes.size(); ++k)
 	{
 		if (_Nodes[k]->isModified()) return true;
 	}
@@ -559,32 +550,30 @@ bool CParticleWorkspace::isContentModified() const
 //***********************************************************************************************
 void CParticleWorkspace::restickAllObjects(CObjectViewer *ov)
 {
-	for(uint k = 0; k < _Nodes.size(); ++k)
+	for (uint k = 0; k < _Nodes.size(); ++k)
 	{
 		std::string parentSkelName = _Nodes[k]->getParentSkelName();
 		std::string parentBoneName = _Nodes[k]->getParentBoneName();
 		//
 		_Nodes[k]->unstickPSFromSkeleton();
 		if (!parentSkelName.empty())
-		// find instance to stick to in the scene
-		for(uint l = 0; l < ov->getNumInstance(); ++l)
-		{
-			CInstanceInfo *ii = ov->getInstance(l);
-			if (ii->TransformShape && ii->Saved.ShapeFilename == parentSkelName)
+			// find instance to stick to in the scene
+			for (uint l = 0; l < ov->getNumInstance(); ++l)
 			{
-				NL3D::CSkeletonModel *skel = dynamic_cast<NL3D::CSkeletonModel *>(ii->TransformShape);
-				if (skel)
+				CInstanceInfo *ii = ov->getInstance(l);
+				if (ii->TransformShape && ii->Saved.ShapeFilename == parentSkelName)
 				{
-					sint boneID = skel->getBoneIdByName(parentBoneName);
-					if (boneID != -1)
+					NL3D::CSkeletonModel *skel = dynamic_cast<NL3D::CSkeletonModel *>(ii->TransformShape);
+					if (skel)
 					{
-						_Nodes[k]->stickPSToSkeleton(skel, (uint) boneID, parentSkelName, parentBoneName);
-						break;
+						sint boneID = skel->getBoneIdByName(parentBoneName);
+						if (boneID != -1)
+						{
+							_Nodes[k]->stickPSToSkeleton(skel, (uint)boneID, parentSkelName, parentBoneName);
+							break;
+						}
 					}
 				}
 			}
-		}
 	}
 }
-
-

@@ -31,54 +31,54 @@
 
 class CAnimationDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CAnimationDlg(class CObjectViewer * main, CWnd* pParent = NULL);   // standard constructor
+	CAnimationDlg(class CObjectViewer *main, CWnd *pParent = NULL); // standard constructor
 
-	BOOL  EnableWindow(BOOL enable = TRUE);
-// Dialog Data
+	BOOL EnableWindow(BOOL enable = TRUE);
+	// Dialog Data
 	//{{AFX_DATA(CAnimationDlg)
-	enum { IDD = IDD_ANIMATION };
-	CButton	FRWCtrl;
-	CButton	FFWCtrl;
-	CSliderCtrl	TimeLineCtrl;
-	CButton	PlayCtrl;
-	CButton	StopCtrl;
-	float	End;
-	float	Speed;
-	float	Start;
-	BOOL	Loop;
-	int		UICurrentFrame;
-	BOOL	Inplace;
-	BOOL	IncPos;
+	enum
+	{
+		IDD = IDD_ANIMATION
+	};
+	CButton FRWCtrl;
+	CButton FFWCtrl;
+	CSliderCtrl TimeLineCtrl;
+	CButton PlayCtrl;
+	CButton StopCtrl;
+	float End;
+	float Speed;
+	float Start;
+	BOOL Loop;
+	int UICurrentFrame;
+	BOOL Inplace;
+	BOOL IncPos;
 	//}}AFX_DATA
 
-	bool					Playing;
-	uint64					LastTime;
-	CObjectViewer*			Main;
-	float					CurrentFrame;
-	float					LastFrame;
+	bool Playing;
+	uint64 LastTime;
+	CObjectViewer *Main;
+	float CurrentFrame;
+	float LastFrame;
 
-	void setCurrentFrame (float currentFrame);
-	void handle ();
-	void setAnimTime (float animStart, float animEnd);
-	void updateBar ();
-	NL3D::TAnimationTime getTime ();
-	NL3D::TAnimationTime getLastTime ();
+	void setCurrentFrame(float currentFrame);
+	void handle();
+	void setAnimTime(float animStart, float animEnd);
+	void updateBar();
+	NL3D::TAnimationTime getTime();
+	NL3D::TAnimationTime getLastTime();
 	float getSpeed() { return Speed; }
 
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CAnimationDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-
-
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CAnimationDlg)
 	afx_msg void OnEnd();
@@ -89,7 +89,7 @@ protected:
 	afx_msg void OnChangeSpeed();
 	afx_msg void OnStart();
 	afx_msg void OnChangeStartEdit();
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
 	virtual BOOL OnInitDialog();
 	afx_msg void OnDestroy();
 	//}}AFX_MSG

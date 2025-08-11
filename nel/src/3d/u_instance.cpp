@@ -26,42 +26,39 @@
 #include "nel/3d/scene.h"
 #include "nel/3d/shape_bank.h"
 
-
-using	namespace NLMISC;
+using namespace NLMISC;
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 
 void UInstance::getShapeAABBox(NLMISC::CAABBox &bbox) const
 {
-	CTransformShape	*object = getObjectPtr();
+	CTransformShape *object = getObjectPtr();
 	object->getAABBox(bbox);
 }
 
 // ***************************************************************************
-void UInstance::setBlendShapeFactor (const std::string &blendShapeName, float factor, bool /* dynamic */)
+void UInstance::setBlendShapeFactor(const std::string &blendShapeName, float factor, bool /* dynamic */)
 {
-	CTransformShape	*object = getObjectPtr();
-	CMeshBaseInstance	*mi= dynamic_cast<CMeshBaseInstance*>(object);
+	CTransformShape *object = getObjectPtr();
+	CMeshBaseInstance *mi = dynamic_cast<CMeshBaseInstance *>(object);
 
 	if (mi)
 	{
-		mi->setBlendShapeFactor (blendShapeName, factor);
+		mi->setBlendShapeFactor(blendShapeName, factor);
 	}
 }
 
 // ***************************************************************************
-void		UInstance::changeMRMDistanceSetup(float distanceFinest, float distanceMiddle, float distanceCoarsest)
+void UInstance::changeMRMDistanceSetup(float distanceFinest, float distanceMiddle, float distanceCoarsest)
 {
-	CTransformShape	*object = getObjectPtr();
-	CMeshBaseInstance	*mi= dynamic_cast<CMeshBaseInstance*>(object);
+	CTransformShape *object = getObjectPtr();
+	CMeshBaseInstance *mi = dynamic_cast<CMeshBaseInstance *>(object);
 
 	// Just for CMeshBaseInstance.
 	if (mi)
@@ -70,22 +67,21 @@ void		UInstance::changeMRMDistanceSetup(float distanceFinest, float distanceMidd
 	}
 }
 
-
 // ***************************************************************************
-void		UInstance::setShapeDistMax(float distMax)
+void UInstance::setShapeDistMax(float distMax)
 {
-	CTransformShape	*object = getObjectPtr();
-	if(object && object->Shape)
+	CTransformShape *object = getObjectPtr();
+	if (object && object->Shape)
 	{
 		object->Shape->setDistMax(distMax);
 	}
 }
 
 // ***************************************************************************
-float		UInstance::getShapeDistMax() const
+float UInstance::getShapeDistMax() const
 {
-	CTransformShape	*object = getObjectPtr();
-	if(object && object->Shape)
+	CTransformShape *object = getObjectPtr();
+	if (object && object->Shape)
 	{
 		return object->Shape->getDistMax();
 	}
@@ -93,100 +89,98 @@ float		UInstance::getShapeDistMax() const
 		return -1;
 }
 
-
 // ***************************************************************************
-void		UInstance::selectTextureSet(uint id)
+void UInstance::selectTextureSet(uint id)
 {
-	CTransformShape	*object = getObjectPtr();
-	CMeshBaseInstance *mbi  = dynamic_cast<CMeshBaseInstance *>(object);
+	CTransformShape *object = getObjectPtr();
+	CMeshBaseInstance *mbi = dynamic_cast<CMeshBaseInstance *>(object);
 	if (mbi)
 		mbi->selectTextureSet(id);
 }
 
-
 // ***************************************************************************
-void		UInstance::enableAsyncTextureMode(bool enable)
+void UInstance::enableAsyncTextureMode(bool enable)
 {
-	CTransformShape	*object = getObjectPtr();
-	if(object->isMeshBaseInstance())
+	CTransformShape *object = getObjectPtr();
+	if (object->isMeshBaseInstance())
 	{
-		CMeshBaseInstance *mbi  = static_cast<CMeshBaseInstance *>(object);
-		mbi->enableAsyncTextureMode(enable) ;
+		CMeshBaseInstance *mbi = static_cast<CMeshBaseInstance *>(object);
+		mbi->enableAsyncTextureMode(enable);
 	}
 }
 // ***************************************************************************
-bool		UInstance::getAsyncTextureMode() const
+bool UInstance::getAsyncTextureMode() const
 {
-	CTransformShape	*object = getObjectPtr();
-	if(object->isMeshBaseInstance())
+	CTransformShape *object = getObjectPtr();
+	if (object->isMeshBaseInstance())
 	{
-		CMeshBaseInstance *mbi  = static_cast<CMeshBaseInstance *>(object);
-		return mbi->getAsyncTextureMode() ;
+		CMeshBaseInstance *mbi = static_cast<CMeshBaseInstance *>(object);
+		return mbi->getAsyncTextureMode();
 	}
 	else
 		return false;
 }
 // ***************************************************************************
-void		UInstance::startAsyncTextureLoading()
+void UInstance::startAsyncTextureLoading()
 {
-	CTransformShape	*object = getObjectPtr();
-	if(object->isMeshBaseInstance())
+	CTransformShape *object = getObjectPtr();
+	if (object->isMeshBaseInstance())
 	{
-		CMeshBaseInstance *mbi  = static_cast<CMeshBaseInstance *>(object);
+		CMeshBaseInstance *mbi = static_cast<CMeshBaseInstance *>(object);
 		mbi->startAsyncTextureLoading(getPos());
 	}
 }
 // ***************************************************************************
-bool		UInstance::isAsyncTextureReady()
+bool UInstance::isAsyncTextureReady()
 {
-	CTransformShape	*object = getObjectPtr();
-	if(object->isMeshBaseInstance())
+	CTransformShape *object = getObjectPtr();
+	if (object->isMeshBaseInstance())
 	{
-		CMeshBaseInstance *mbi  = static_cast<CMeshBaseInstance *>(object);
+		CMeshBaseInstance *mbi = static_cast<CMeshBaseInstance *>(object);
 		return mbi->isAsyncTextureReady();
 	}
 	else
 		return true;
 }
 // ***************************************************************************
-void		UInstance::setAsyncTextureDistance(float dist)
+void UInstance::setAsyncTextureDistance(float dist)
 {
-	CTransformShape	*object = getObjectPtr();
-	if(object->isMeshBaseInstance())
+	CTransformShape *object = getObjectPtr();
+	if (object->isMeshBaseInstance())
 	{
-		CMeshBaseInstance *mbi  = static_cast<CMeshBaseInstance *>(object);
+		CMeshBaseInstance *mbi = static_cast<CMeshBaseInstance *>(object);
 		mbi->setAsyncTextureDistance(dist);
 	}
 }
 // ***************************************************************************
-float		UInstance::getAsyncTextureDistance() const
+float UInstance::getAsyncTextureDistance() const
 {
-	CTransformShape	*object = getObjectPtr();
-	if(object->isMeshBaseInstance())
+	CTransformShape *object = getObjectPtr();
+	if (object->isMeshBaseInstance())
 	{
-		CMeshBaseInstance *mbi  = static_cast<CMeshBaseInstance *>(object);
+		CMeshBaseInstance *mbi = static_cast<CMeshBaseInstance *>(object);
 		return mbi->getAsyncTextureDistance();
 	}
 	else
 		return 0.f;
 }
 // ***************************************************************************
-void		UInstance::setAsyncTextureDirty(bool flag)
+void UInstance::setAsyncTextureDirty(bool flag)
 {
-	CTransformShape	*object = getObjectPtr();
-	if(object->isMeshBaseInstance())
+	CTransformShape *object = getObjectPtr();
+	if (object->isMeshBaseInstance())
 	{
-		CMeshBaseInstance *mbi  = static_cast<CMeshBaseInstance *>(object);
+		CMeshBaseInstance *mbi = static_cast<CMeshBaseInstance *>(object);
 		mbi->setAsyncTextureDirty(flag);
 	}
 }
 // ***************************************************************************
-bool		UInstance::isAsyncTextureDirty() const
+bool UInstance::isAsyncTextureDirty() const
 {
-	CTransformShape	*object = getObjectPtr();
-	if(object->isMeshBaseInstance())
+	CTransformShape *object = getObjectPtr();
+	if (object->isMeshBaseInstance())
 	{
-		CMeshBaseInstance *mbi  = static_cast<CMeshBaseInstance *>(object);
+		CMeshBaseInstance *mbi = static_cast<CMeshBaseInstance *>(object);
 		return mbi->isAsyncTextureDirty();
 	}
 	else
@@ -196,7 +190,7 @@ bool		UInstance::isAsyncTextureDirty() const
 // ***************************************************************************
 void UInstance::setCoarseMeshDist(float dist)
 {
-	CTransformShape	*object = getObjectPtr();
+	CTransformShape *object = getObjectPtr();
 	CMeshMultiLodInstance *mmli = dynamic_cast<CMeshMultiLodInstance *>(object);
 	if (mmli) mmli->setCoarseMeshDist(dist);
 }
@@ -204,7 +198,7 @@ void UInstance::setCoarseMeshDist(float dist)
 // ***************************************************************************
 float UInstance::getCoarseMeshDist() const
 {
-	CTransformShape	*object = getObjectPtr();
+	CTransformShape *object = getObjectPtr();
 	CMeshMultiLodInstance *mmli = dynamic_cast<CMeshMultiLodInstance *>(object);
 	return mmli ? mmli->getCoarseMeshDist() : -1.f;
 }
@@ -212,7 +206,7 @@ float UInstance::getCoarseMeshDist() const
 // ***************************************************************************
 void UInstance::setSliceTime(float duration)
 {
-	CTransformShape	*object = getObjectPtr();
+	CTransformShape *object = getObjectPtr();
 	CSegRemanence *sr = dynamic_cast<CSegRemanence *>(object);
 	if (!sr) return;
 	sr->setSliceTime(duration);
@@ -221,7 +215,7 @@ void UInstance::setSliceTime(float duration)
 // ***************************************************************************
 float UInstance::getSliceTime() const
 {
-	CTransformShape	*object = getObjectPtr();
+	CTransformShape *object = getObjectPtr();
 	CSegRemanence *sr = dynamic_cast<CSegRemanence *>(object);
 	if (!sr) return 0.f;
 	return sr->getSliceTime();
@@ -230,13 +224,13 @@ float UInstance::getSliceTime() const
 // ***************************************************************************
 bool UInstance::supportMaterialRendering(UDriver &drv, bool forceBaseCaps)
 {
-	CTransformShape	*object = getObjectPtr();
-	IDriver *driver = static_cast<CDriverUser*>(&drv)->getDriver ();
-	const uint count = object->getNumMaterial ();
+	CTransformShape *object = getObjectPtr();
+	IDriver *driver = static_cast<CDriverUser *>(&drv)->getDriver();
+	const uint count = object->getNumMaterial();
 	uint i;
-	for (i=0; i<count; i++)
+	for (i = 0; i < count; i++)
 	{
-		if (!object->getMaterial (i)->isSupportedByDriver(*driver, forceBaseCaps))
+		if (!object->getMaterial(i)->isSupportedByDriver(*driver, forceBaseCaps))
 			return false;
 	}
 	return true;
@@ -246,8 +240,8 @@ bool UInstance::supportMaterialRendering(UDriver &drv, bool forceBaseCaps)
 
 uint UInstance::getNumMaterials() const
 {
-	CMeshBaseInstance	*mi= dynamic_cast<CMeshBaseInstance*>(_Object);
-	if(mi)
+	CMeshBaseInstance *mi = dynamic_cast<CMeshBaseInstance *>(_Object);
+	if (mi)
 		return (uint)mi->Materials.size();
 	else
 		return 0;
@@ -257,18 +251,18 @@ uint UInstance::getNumMaterials() const
 
 UInstanceMaterial UInstance::getMaterial(uint materialId)
 {
-	CMeshBaseInstance	*mi= dynamic_cast<CMeshBaseInstance*>(_Object);
-	nlassertex (mi, ("Should be a CMeshBaseInstance object. Call getNumMaterials() first."));
+	CMeshBaseInstance *mi = dynamic_cast<CMeshBaseInstance *>(_Object);
+	nlassertex(mi, ("Should be a CMeshBaseInstance object. Call getNumMaterials() first."));
 
 	// create user mats.
-	return UInstanceMaterial (mi, &mi->Materials[materialId], &mi->AsyncTextures[materialId]);
+	return UInstanceMaterial(mi, &mi->Materials[materialId], &mi->AsyncTextures[materialId]);
 }
 
 // ***************************************************************************
 
 bool UInstance::canStartStop()
 {
-	CTransformShape	*object = getObjectPtr();
+	CTransformShape *object = getObjectPtr();
 	return object->canStartStop();
 }
 
@@ -276,7 +270,7 @@ bool UInstance::canStartStop()
 
 void UInstance::start()
 {
-	CTransformShape	*object = getObjectPtr();
+	CTransformShape *object = getObjectPtr();
 	object->start();
 }
 
@@ -284,7 +278,7 @@ void UInstance::start()
 
 void UInstance::stop()
 {
-	CTransformShape	*object = getObjectPtr();
+	CTransformShape *object = getObjectPtr();
 	object->stop();
 }
 
@@ -292,7 +286,7 @@ void UInstance::stop()
 
 bool UInstance::isStarted() const
 {
-	CTransformShape	*object = getObjectPtr();
+	CTransformShape *object = getObjectPtr();
 	return object->isStarted();
 }
 
@@ -300,7 +294,7 @@ bool UInstance::isStarted() const
 
 float UInstance::getDistMax() const
 {
-	CTransformShape	*object = getObjectPtr();
+	CTransformShape *object = getObjectPtr();
 	return object->getDistMax();
 }
 
@@ -308,16 +302,16 @@ float UInstance::getDistMax() const
 
 void UInstance::setDistMax(float distMax)
 {
-	CTransformShape	*object = getObjectPtr();
+	CTransformShape *object = getObjectPtr();
 	object->setDistMax(distMax);
 }
 
 // ***************************************************************************
-UShape		UInstance::getShape() const
+UShape UInstance::getShape() const
 {
 
-	CTransformShape	*object = getObjectPtr();
-	if(!object)
+	CTransformShape *object = getObjectPtr();
+	if (!object)
 		return UShape();
 
 	// get the shape name
@@ -330,89 +324,88 @@ const std::string &UInstance::getShapeName() const
 
 	static std::string emptyStr;
 
-	CTransformShape	*object = getObjectPtr();
-	if(!object)
+	CTransformShape *object = getObjectPtr();
+	if (!object)
 		return emptyStr;
 
 	// get the shape bank
-	CScene *scene= object->getOwnerScene();
-	CShapeBank	*sb= scene->getShapeBank();
-	if(!sb)
+	CScene *scene = object->getOwnerScene();
+	CShapeBank *sb = scene->getShapeBank();
+	if (!sb)
 		return emptyStr;
 
 	// get the shape name
-	const std::string *str= sb->getShapeNameFromShapePtr(object->Shape);
-	if(str)
+	const std::string *str = sb->getShapeNameFromShapePtr(object->Shape);
+	if (str)
 		return *str;
 	else
 		return emptyStr;
 }
 
 // ***************************************************************************
-void	UInstance::cast(UTransform object)
+void UInstance::cast(UTransform object)
 {
-	attach(dynamic_cast<CTransformShape*>(object.getObjectPtr()));
+	attach(dynamic_cast<CTransformShape *>(object.getObjectPtr()));
 }
 
 // ***************************************************************************
-bool	UInstance::getDefaultPos (CVector &pos) const
+bool UInstance::getDefaultPos(CVector &pos) const
 {
-	CTransformShape	*object = getObjectPtr();
-	if(object && object->isMeshBaseInstance())
+	CTransformShape *object = getObjectPtr();
+	if (object && object->isMeshBaseInstance())
 	{
-		CMeshBaseInstance *mbi  = static_cast<CMeshBaseInstance *>(object);
-		CMeshBase *mb= (CMeshBase*)(IShape*)(mbi->Shape);
-		pos= mb->getDefaultPos()->getDefaultValue();
+		CMeshBaseInstance *mbi = static_cast<CMeshBaseInstance *>(object);
+		CMeshBase *mb = (CMeshBase *)(IShape *)(mbi->Shape);
+		pos = mb->getDefaultPos()->getDefaultValue();
 		return true;
 	}
 	return false;
 }
 
 // ***************************************************************************
-bool	UInstance::getDefaultRotQuat (CQuat &rotQuat) const
+bool UInstance::getDefaultRotQuat(CQuat &rotQuat) const
 {
-	CTransformShape	*object = getObjectPtr();
-	if(object && object->isMeshBaseInstance())
+	CTransformShape *object = getObjectPtr();
+	if (object && object->isMeshBaseInstance())
 	{
-		CMeshBaseInstance *mbi  = static_cast<CMeshBaseInstance *>(object);
-		CMeshBase *mb= (CMeshBase*)(IShape*)(mbi->Shape);
-		rotQuat= mb->getDefaultRotQuat()->getDefaultValue();
+		CMeshBaseInstance *mbi = static_cast<CMeshBaseInstance *>(object);
+		CMeshBase *mb = (CMeshBase *)(IShape *)(mbi->Shape);
+		rotQuat = mb->getDefaultRotQuat()->getDefaultValue();
 		return true;
 	}
 	return false;
 }
 
 // ***************************************************************************
-bool	UInstance::getDefaultScale (CVector &scale) const
+bool UInstance::getDefaultScale(CVector &scale) const
 {
-	CTransformShape	*object = getObjectPtr();
-	if(object && object->isMeshBaseInstance())
+	CTransformShape *object = getObjectPtr();
+	if (object && object->isMeshBaseInstance())
 	{
-		CMeshBaseInstance *mbi  = static_cast<CMeshBaseInstance *>(object);
-		CMeshBase *mb= (CMeshBase*)(IShape*)(mbi->Shape);
-		scale= mb->getDefaultScale()->getDefaultValue();
+		CMeshBaseInstance *mbi = static_cast<CMeshBaseInstance *>(object);
+		CMeshBase *mb = (CMeshBase *)(IShape *)(mbi->Shape);
+		scale = mb->getDefaultScale()->getDefaultValue();
 		return true;
 	}
 	return false;
 }
 
 // ***************************************************************************
-void	UInstance::setRelativeScale (const CVector &rs)
+void UInstance::setRelativeScale(const CVector &rs)
 {
-	CTransformShape	*object = getObjectPtr();
-	if(object && object->isMeshBaseInstance())
+	CTransformShape *object = getObjectPtr();
+	if (object && object->isMeshBaseInstance())
 	{
 		// get the default scale
-		CMeshBaseInstance *mbi  = static_cast<CMeshBaseInstance *>(object);
-		CMeshBase *mb= (CMeshBase*)(IShape*)(mbi->Shape);
-		CVector scale= mb->getDefaultScale()->getDefaultValue();
+		CMeshBaseInstance *mbi = static_cast<CMeshBaseInstance *>(object);
+		CMeshBase *mb = (CMeshBase *)(IShape *)(mbi->Shape);
+		CVector scale = mb->getDefaultScale()->getDefaultValue();
 		// scale it by the relative one
-		scale.x*= rs.x;
-		scale.y*= rs.y;
-		scale.z*= rs.z;
+		scale.x *= rs.x;
+		scale.y *= rs.y;
+		scale.z *= rs.z;
 		object->setScale(scale);
 	}
 }
-
 
 } // NL3D

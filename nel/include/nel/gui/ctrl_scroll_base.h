@@ -22,42 +22,38 @@
 
 #include "nel/gui/ctrl_base.h"
 
-namespace NLGUI
+namespace NLGUI {
+
+class CInterfaceGroup;
+
+class CCtrlScrollBase : public CCtrlBase
 {
+public:
+	DECLARE_UI_CLASS(CCtrlScrollBase)
 
-	class CInterfaceGroup;
+	CCtrlScrollBase(const TCtorParam &param);
+	virtual ~CCtrlScrollBase();
 
-	class CCtrlScrollBase : public CCtrlBase
-	{
-	public:
-		DECLARE_UI_CLASS( CCtrlScrollBase )
+	virtual void setTarget(CInterfaceGroup *pIG);
+	CInterfaceGroup *getTarget() { return _Target; }
+	virtual sint32 moveTrackX(sint32 dx);
+	virtual sint32 moveTrackY(sint32 dy);
 
-		CCtrlScrollBase( const TCtorParam &param );
-		virtual ~CCtrlScrollBase();
-		
-		virtual void setTarget( CInterfaceGroup *pIG );
-		CInterfaceGroup* getTarget(){ return _Target; }
-		virtual sint32 moveTrackX( sint32 dx );
-		virtual sint32 moveTrackY( sint32 dy );
+	/** Move the Target Ofs with a Delta, and recompute TrackPos from this Ofs.
+	 *	Useful for finer controled group scrolling when the list is very big (with mouseWheel or scroll buttons)
+	 */
+	virtual void moveTargetX(sint32 dx);
+	virtual void moveTargetY(sint32 dy);
 
-		/** Move the Target Ofs with a Delta, and recompute TrackPos from this Ofs.
-		 *	Useful for finer controled group scrolling when the list is very big (with mouseWheel or scroll buttons)
-		 */
-		virtual void moveTargetX( sint32 dx );
-		virtual void moveTargetY( sint32 dy );
+	// Necessary because of reflection, no other purpose
+	void draw() { }
 
+protected:
+	CInterfaceGroup *_Target; // If NULL the scroller is a value scroller
 
-		// Necessary because of reflection, no other purpose
-		void draw(){}
-
-	protected:
-		CInterfaceGroup *_Target; // If NULL the scroller is a value scroller
-
-	private:
-
-	};
+private:
+};
 
 }
 
 #endif
-

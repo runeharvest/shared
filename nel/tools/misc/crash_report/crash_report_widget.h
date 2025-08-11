@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef RCERROR_WIDGET
 #define RCERROR_WIDGET
 
@@ -31,24 +30,23 @@ class CCrashReportWidget : public QWidget
 {
 	Q_OBJECT
 public:
-
 	enum EReturnValue
 	{
-		ERET_NULL          = 0,
+		ERET_NULL = 0,
 		ERET_ALWAYS_IGNORE = 21,
-		ERET_IGNORE        = 22,
-		ERET_ABORT         = 23,
-		ERET_BREAK         = 24
+		ERET_IGNORE = 22,
+		ERET_ABORT = 23,
+		ERET_BREAK = 24
 	};
 
-	CCrashReportWidget( QWidget *parent = NULL );
+	CCrashReportWidget(QWidget *parent = NULL);
 	~CCrashReportWidget();
 
-	void setFileName( const char *fn ){ m_fileName = fn; }
+	void setFileName(const char *fn) { m_fileName = fn; }
 
-	void setup( const std::vector< std::pair< std::string, std::string > > &params );
+	void setup(const std::vector<std::pair<std::string, std::string>> &params);
 
-	EReturnValue getReturnValue() const{ return m_returnValue; }
+	EReturnValue getReturnValue() const { return m_returnValue; }
 
 private Q_SLOTS:
 	void onLoad();
@@ -61,7 +59,7 @@ private Q_SLOTS:
 	void onIgnoreClicked();
 	void onAbortClicked();
 	void onBreakClicked();
-	
+
 	void onReportSent();
 	void onReportFailed();
 
@@ -79,4 +77,3 @@ private:
 };
 
 #endif
-

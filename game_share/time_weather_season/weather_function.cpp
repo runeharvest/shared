@@ -17,8 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "weather_function_sheet.h"
 #include "weather_function.h"
@@ -34,8 +32,6 @@ CWeatherFunction::CWeatherFunction()
 	_TotalWeight = 0;
 }
 
-
-
 //==================================================================
 void CWeatherFunction::buildFromSheet(const CWeatherFunctionSheet &sheet, const CWeatherManager &wm)
 {
@@ -44,10 +40,10 @@ void CWeatherFunction::buildFromSheet(const CWeatherFunctionSheet &sheet, const 
 	// get pointer on the setup from their names
 	_WeatherSetups.resize(sheet.SetupNames.size());
 	nlassert(sheet.SetupWeights.size() == sheet.SetupNames.size());
-	for(uint k = 0; k < sheet.SetupNames.size(); ++k)
+	for (uint k = 0; k < sheet.SetupNames.size(); ++k)
 	{
 		_WeatherSetups[k].WS = wm.getSetup(sheet.SetupNames[k].c_str());
-		if(!_WeatherSetups[k].WS)
+		if (!_WeatherSetups[k].WS)
 		{
 			nlwarning("Unknown weather setup : %s", sheet.SetupNames[k].c_str());
 		}
@@ -55,7 +51,6 @@ void CWeatherFunction::buildFromSheet(const CWeatherFunctionSheet &sheet, const 
 		_TotalWeight += _WeatherSetups[k].Weight;
 	}
 }
-
 
 //==================================================================
 void CWeatherFunction::getWeatherState(float weatherValue, CWeatherState &dest) const
@@ -72,8 +67,7 @@ void CWeatherFunction::getWeatherState(float weatherValue, CWeatherState &dest) 
 	{
 		dest = ceilSetup->WeatherState;
 	}
-	else
-	if (!ceilSetup)
+	else if (!ceilSetup)
 	{
 		dest = floorSetup->WeatherState;
 	}
@@ -100,15 +94,14 @@ void CWeatherFunction::getClosestWeatherSetups(float weatherValue, const CWeathe
 		blendValue = 0.f;
 		return;
 	}
-	NLMISC::clamp(weatherValue, 0.f, (float) (_WeatherSetups.size() - 1));
-	uint start = (uint) weatherValue;
+	NLMISC::clamp(weatherValue, 0.f, (float)(_WeatherSetups.size() - 1));
+	uint start = (uint)weatherValue;
 	uint end = start + 1;
 	end = std::min((uint)_WeatherSetups.size() - 1, end);
 	floorSetup = _WeatherSetups[start].WS;
 	ceilSetup = _WeatherSetups[end].WS;
-	blendValue = weatherValue - (float) start;
+	blendValue = weatherValue - (float)start;
 }
-
 
 //==================================================================
 void CWeatherFunction::getCloudState(float weatherValue, CCloudState &dest) const
@@ -125,8 +118,7 @@ void CWeatherFunction::getCloudState(float weatherValue, CCloudState &dest) cons
 	{
 		dest = ceilSetup->CloudState;
 	}
-	else
-	if (!ceilSetup)
+	else if (!ceilSetup)
 	{
 		dest = floorSetup->CloudState;
 	}
@@ -147,9 +139,3 @@ float CWeatherFunction::getThunderIntensity(float weatherValue) const
 	if (!ceilSetup) return floorSetup->WeatherState.ThunderIntensity;
 	return blendFactor * ceilSetup->WeatherState.ThunderIntensity + (1.f - blendFactor) * floorSetup->WeatherState.ThunderIntensity;
 }
-
-
-
-
-
-

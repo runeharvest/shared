@@ -38,9 +38,10 @@ using namespace std;
 
 namespace NLSOUND {
 
-CSourceMusicChannel::CSourceMusicChannel() : m_Source(NULL), m_Gain(1.0f)
+CSourceMusicChannel::CSourceMusicChannel()
+    : m_Source(NULL)
+    , m_Gain(1.0f)
 {
-	
 }
 
 CSourceMusicChannel::~CSourceMusicChannel()

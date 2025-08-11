@@ -15,15 +15,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
-	------------------------------------------------------------------------
-	ClanLib, the platform independent game SDK.
+    ------------------------------------------------------------------------
+    ClanLib, the platform independent game SDK.
 
-	This library is distributed under the GNU LIBRARY GENERAL PUBLIC LICENSE
-	version 2. See COPYING for details.
+    This library is distributed under the GNU LIBRARY GENERAL PUBLIC LICENSE
+    version 2. See COPYING for details.
 
-	For a total list of contributers see CREDITS.
+    For a total list of contributers see CREDITS.
 
-	------------------------------------------------------------------------
+    ------------------------------------------------------------------------
 */
 
 #ifndef header_thread_win32
@@ -37,7 +37,7 @@ class CL_Thread_Win32 : public CL_Thread
 public:
 	CL_Thread_Win32(CL_Runnable *runnable);
 	virtual ~CL_Thread_Win32();
-	
+
 	virtual void start();
 	virtual void terminate();
 	virtual void wait();
@@ -51,4 +51,3 @@ private:
 };
 
 #endif
-

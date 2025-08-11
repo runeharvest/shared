@@ -32,8 +32,7 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace NLSOUND
-{
+namespace NLSOUND {
 
 // Currently, the OpenAL headers are different between Windows and Linux versions !
 // AL_INVALID_XXXX are part of the spec, though.
@@ -42,7 +41,6 @@ namespace NLSOUND
 #define AL_INVALID_OPERATION AL_ILLEGAL_COMMAND
 #endif*/
 
-
 #ifdef NL_DEBUG
 // Test error in debug mode
 void alTestError()
@@ -50,7 +48,7 @@ void alTestError()
 	ALuint errcode = alGetError();
 	switch (errcode)
 	{
-	case AL_NO_ERROR : break;
+	case AL_NO_ERROR: break;
 	case AL_INVALID_NAME: nlerror("OpenAL: Invalid name");
 	case AL_INVALID_ENUM: nlerror("OpenAL: Invalid enum");
 	case AL_INVALID_VALUE: nlerror("OpenAL: Invalid value");
@@ -101,18 +99,17 @@ NLMISC_DECL_PURE_LIB(CSoundDriverALNelLibrary)
 #ifdef NL_OS_WINDOWS
 #ifdef NL_COMP_MINGW
 #ifndef NL_STATIC
-extern "C"
-{
+extern "C" {
 #endif
 #endif
 // ******************************************************************
 
 #ifdef NL_STATIC
-ISoundDriver* createISoundDriverInstanceOpenAl
+ISoundDriver *createISoundDriverInstanceOpenAl
 #else
 __declspec(dllexport) ISoundDriver *NLSOUND_createISoundDriverInstance
 #endif
-	(ISoundDriver::IStringMapperProvider *stringMapper)
+    (ISoundDriver::IStringMapperProvider *stringMapper)
 {
 	return new CSoundDriverAL(stringMapper);
 }
@@ -135,7 +132,7 @@ void outputProfileOpenAl
 #else
 __declspec(dllexport) void NLSOUND_outputProfile
 #endif
-	(string &out)
+    (string &out)
 {
 	CSoundDriverAL::getInstance()->writeProfile(out);
 }
@@ -157,23 +154,22 @@ __declspec(dllexport) ISoundDriver::TDriver NLSOUND_getDriverType()
 }
 #endif
 #endif
-#elif defined (NL_OS_UNIX)
+#elif defined(NL_OS_UNIX)
 
 #ifndef NL_STATIC
-extern "C"
-{
+extern "C" {
 #endif
 
 #ifdef NL_STATIC
-ISoundDriver* createISoundDriverInstanceOpenAl(ISoundDriver::IStringMapperProvider *stringMapper)
+ISoundDriver *createISoundDriverInstanceOpenAl(ISoundDriver::IStringMapperProvider *stringMapper)
 #else
-ISoundDriver* NLSOUND_createISoundDriverInstance(ISoundDriver::IStringMapperProvider *stringMapper)
+ISoundDriver *NLSOUND_createISoundDriverInstance(ISoundDriver::IStringMapperProvider *stringMapper)
 #endif
 {
 	return new CSoundDriverAL(stringMapper);
 }
 
-uint32 NLSOUND_interfaceVersion ()
+uint32 NLSOUND_interfaceVersion()
 {
 	return ISoundDriver::InterfaceVersion;
 }
@@ -187,9 +183,13 @@ uint32 NLSOUND_interfaceVersion ()
 /*
  * Constructor
  */
-CSoundDriverAL::CSoundDriverAL(ISoundDriver::IStringMapperProvider *stringMapper) 
-: _StringMapper(stringMapper), _AlDevice(NULL), _AlContext(NULL), 
-_NbExpBuffers(0), _NbExpSources(0), _RolloffFactor(1.f)
+CSoundDriverAL::CSoundDriverAL(ISoundDriver::IStringMapperProvider *stringMapper)
+    : _StringMapper(stringMapper)
+    , _AlDevice(NULL)
+    , _AlContext(NULL)
+    , _NbExpBuffers(0)
+    , _NbExpSources(0)
+    , _RolloffFactor(1.f)
 {
 	alExtInit();
 }
@@ -199,9 +199,9 @@ _NbExpBuffers(0), _NbExpSources(0), _RolloffFactor(1.f)
  */
 CSoundDriverAL::~CSoundDriverAL()
 {
-	// WARNING: Only internal resources are released here, 
+	// WARNING: Only internal resources are released here,
 	// the created instances must still be released by the user!
-	
+
 	// Remove the allocated (but not exported) source and buffer names-
 	// Release internal resources of all remaining ISource instances
 	if (!_Sources.empty())
@@ -211,7 +211,7 @@ CSoundDriverAL::~CSoundDriverAL()
 		for (; it != end; ++it) (*it)->release(); // CSourceAL will be deleted by user
 		_Sources.clear();
 	}
-	if (!_Buffers.empty()) alDeleteBuffers(compactAliveNames(_Buffers, alIsBuffer), &*_Buffers.begin());	
+	if (!_Buffers.empty()) alDeleteBuffers(compactAliveNames(_Buffers, alIsBuffer), &*_Buffers.begin());
 	// Release internal resources of all remaining IEffect instances
 	if (!_Effects.empty())
 	{
@@ -222,8 +222,16 @@ CSoundDriverAL::~CSoundDriverAL()
 	}
 
 	// OpenAL exit
-	if (_AlContext) { alcDestroyContext(_AlContext); _AlContext = NULL; }
-	if (_AlDevice) { alcCloseDevice(_AlDevice); _AlDevice = NULL; }
+	if (_AlContext)
+	{
+		alcDestroyContext(_AlContext);
+		_AlContext = NULL;
+	}
+	if (_AlDevice)
+	{
+		alcCloseDevice(_AlDevice);
+		_AlDevice = NULL;
+	}
 }
 
 /// Return a list of available devices for the user. The value at index 0 is empty, and is used for automatic device selection.
@@ -232,17 +240,17 @@ void CSoundDriverAL::getDevices(std::vector<std::string> &devices)
 	devices.push_back(""); // empty
 
 	if (AlEnumerateAllExt)
-	{	
-		const ALchar* deviceNames = alcGetString(NULL, ALC_ALL_DEVICES_SPECIFIER);
+	{
+		const ALchar *deviceNames = alcGetString(NULL, ALC_ALL_DEVICES_SPECIFIER);
 		// const ALchar* defaultDevice = NULL;
-		if(!strlen(deviceNames))
+		if (!strlen(deviceNames))
 		{
 			nldebug("AL: No audio devices");
 		}
 		else
 		{
 			nldebug("AL: Listing devices: ");
-			while(deviceNames && *deviceNames)
+			while (deviceNames && *deviceNames)
 			{
 				nldebug("AL:   - %s", deviceNames);
 				devices.push_back(deviceNames);
@@ -260,9 +268,9 @@ static const ALchar *getDeviceInternal(const std::string &device)
 {
 	if (device.empty()) return NULL;
 	if (AlEnumerateAllExt)
-	{	
-		const ALchar* deviceNames = alcGetString(NULL, ALC_ALL_DEVICES_SPECIFIER);
-		if(!strlen(deviceNames))
+	{
+		const ALchar *deviceNames = alcGetString(NULL, ALC_ALL_DEVICES_SPECIFIER);
+		if (!strlen(deviceNames))
 		{
 			nldebug("AL: No audio devices");
 		}
@@ -289,20 +297,19 @@ void CSoundDriverAL::initDevice(const std::string &device, ISoundDriver::TSoundO
 {
 	// list of supported options in this driver
 	// no adpcm, no manual rolloff (for now)
-	const sint supportedOptions = 
-		OptionSoftwareBuffer
-		| OptionManualRolloff
-		| OptionLocalBufferCopy
-		| OptionHasBufferStreaming
-		| OptionReverbEffect
-		| OptionFilterEffect;
+	const sint supportedOptions = OptionSoftwareBuffer
+	    | OptionManualRolloff
+	    | OptionLocalBufferCopy
+	    | OptionHasBufferStreaming
+	    | OptionReverbEffect
+	    | OptionFilterEffect;
 
 	// list of forced options in this driver
 	const sint forcedOptions = 0;
 
 	// set the options
 	_Options = (TSoundOptions)(((sint)options & supportedOptions) | forcedOptions);
-	
+
 	/* TODO: multichannel */
 
 	// OpenAL initialization
@@ -312,12 +319,16 @@ void CSoundDriverAL::initDevice(const std::string &device, ISoundDriver::TSoundO
 	_AlDevice = alcOpenDevice(dev);
 	if (!_AlDevice) throw ESoundDriver("AL: Failed to open device");
 	nldebug("AL: ALC_DEVICE_SPECIFIER: '%s'", alcGetString(_AlDevice, ALC_DEVICE_SPECIFIER));
-	//int attrlist[] = { ALC_FREQUENCY, 48000,
-	//                   ALC_MONO_SOURCES, 12, 
-	//                   ALC_STEREO_SOURCES, 4, 
-	//                   ALC_INVALID };
+	// int attrlist[] = { ALC_FREQUENCY, 48000,
+	//                    ALC_MONO_SOURCES, 12,
+	//                    ALC_STEREO_SOURCES, 4,
+	//                    ALC_INVALID };
 	_AlContext = alcCreateContext(_AlDevice, NULL); // attrlist);
-	if (!_AlContext) { alcCloseDevice(_AlDevice); throw ESoundDriver("AL: Failed to create context"); }
+	if (!_AlContext)
+	{
+		alcCloseDevice(_AlDevice);
+		throw ESoundDriver("AL: Failed to create context");
+	}
 	alcMakeContextCurrent(_AlContext);
 	alTestError();
 
@@ -334,20 +345,20 @@ void CSoundDriverAL::initDevice(const std::string &device, ISoundDriver::TSoundO
 	// Load and display extensions
 	alExtInitDevice(_AlDevice);
 #if EAX_AVAILABLE
-	nlinfo("AL: EAX: %s, EAX-RAM: %s, ALC_EXT_EFX: %s", 
-		AlExtEax ? "Present" : "Not available", 
-		AlExtXRam ? "Present" : "Not available", 
-		AlExtEfx ? "Present" : "Not available");
+	nlinfo("AL: EAX: %s, EAX-RAM: %s, ALC_EXT_EFX: %s",
+	    AlExtEax ? "Present" : "Not available",
+	    AlExtXRam ? "Present" : "Not available",
+	    AlExtEfx ? "Present" : "Not available");
 #else
-	nldebug("AL: EAX-RAM: %s, ALC_EXT_EFX: %s", 
-		AlExtXRam ? "Present" : "Not available", 
-		AlExtEfx ? "Present" : "Not available");
+	nldebug("AL: EAX-RAM: %s, ALC_EXT_EFX: %s",
+	    AlExtXRam ? "Present" : "Not available",
+	    AlExtEfx ? "Present" : "Not available");
 #endif
 	alTestError();
 
 	nldebug("AL: Max. sources: %u, Max. effects: %u", (uint32)countMaxSources(), (uint32)countMaxEffects());
 
-	if (getOption(OptionReverbEffect)) 
+	if (getOption(OptionReverbEffect))
 	{
 		if (!AlExtEfx)
 		{
@@ -355,7 +366,7 @@ void CSoundDriverAL::initDevice(const std::string &device, ISoundDriver::TSoundO
 			_Options = (TSoundOptions)((uint)_Options & ~OptionReverbEffect);
 		}
 		else if (!countMaxEffects())
-		{		
+		{
 			nlwarning("AL: No effects available, environment effects disabled");
 			_Options = (TSoundOptions)((uint)_Options & ~OptionReverbEffect);
 		}
@@ -387,24 +398,23 @@ bool CSoundDriverAL::getOption(ISoundDriver::TSoundOptions option)
  * Allocate nb new items
  */
 void CSoundDriverAL::allocateNewItems(TGenFunctionAL algenfunc, TTestFunctionAL altestfunc,
-									  vector<ALuint>& names, uint index, uint nb )
+    vector<ALuint> &names, uint index, uint nb)
 {
-	nlassert( index == names.size() );
-	names.resize( index + nb );
+	nlassert(index == names.size());
+	names.resize(index + nb);
 	// FIXME assumption about inner workings of std::vector;
 	// &(names[...]) only works with "names.size() - nbalive == 1"
-	generateItems( algenfunc, altestfunc, nb, &(names[index]) );
+	generateItems(algenfunc, altestfunc, nb, &(names[index]));
 }
-
 
 /*
  * throwGenException
  */
-void ThrowGenException( TGenFunctionAL algenfunc )
+void ThrowGenException(TGenFunctionAL algenfunc)
 {
-	if ( algenfunc == alGenBuffers )
+	if (algenfunc == alGenBuffers)
 		throw ESoundDriverGenBuf();
-	else if ( algenfunc == alGenSources )
+	else if (algenfunc == alGenSources)
 		throw ESoundDriverGenSrc();
 	else
 		nlstop;
@@ -413,24 +423,24 @@ void ThrowGenException( TGenFunctionAL algenfunc )
 /*
  * Generate nb buffers/sources
  */
-void CSoundDriverAL::generateItems( TGenFunctionAL algenfunc, TTestFunctionAL altestfunc, uint nb, ALuint *array )
+void CSoundDriverAL::generateItems(TGenFunctionAL algenfunc, TTestFunctionAL altestfunc, uint nb, ALuint *array)
 {
 	// array is actually a std::vector element address!
-	algenfunc( nb, array );
+	algenfunc(nb, array);
 
 	// Error handling
-	if ( alGetError() != AL_NO_ERROR )
+	if (alGetError() != AL_NO_ERROR)
 	{
-		ThrowGenException( algenfunc );
+		ThrowGenException(algenfunc);
 	}
 
 	// Check buffers
 	uint i;
-	for ( i=0; i!=nb; i++ )
+	for (i = 0; i != nb; i++)
 	{
-		if ( ! altestfunc( array[i] ) )
+		if (!altestfunc(array[i]))
 		{
-			ThrowGenException( algenfunc );
+			ThrowGenException(algenfunc);
 		}
 	}
 }
@@ -443,7 +453,6 @@ IBuffer *CSoundDriverAL::createBuffer()
 	CBufferAL *buffer = new CBufferAL(createItem(alGenBuffers, alIsBuffer, _Buffers, _NbExpBuffers, BUFFER_ALLOC_RATE));
 	return buffer;
 }
-
 
 /*
  * Create a source
@@ -460,7 +469,7 @@ IReverbEffect *CSoundDriverAL::createReverbEffect()
 {
 	IReverbEffect *ieffect = NULL;
 	CEffectAL *effectal = NULL;
-	
+
 	ALuint slot = AL_NONE;
 	alGenAuxiliaryEffectSlots(1, &slot);
 	if (alGetError() != AL_NO_ERROR)
@@ -468,7 +477,7 @@ IReverbEffect *CSoundDriverAL::createReverbEffect()
 		nlwarning("AL: alGenAuxiliaryEffectSlots failed");
 		return NULL;
 	}
-	
+
 	ALuint effect = AL_NONE;
 	alGenEffects(1, &effect);
 	if (alGetError() != AL_NO_ERROR)
@@ -486,16 +495,19 @@ IReverbEffect *CSoundDriverAL::createReverbEffect()
 	}
 	else
 	{
-		alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, effect); alTestError();
-		alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_AUXILIARY_SEND_AUTO, AL_TRUE); alTestError(); // auto only for reverb!
+		alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, effect);
+		alTestError();
+		alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_AUXILIARY_SEND_AUTO, AL_TRUE);
+		alTestError(); // auto only for reverb!
 		CCreativeReverbEffectAL *eff = new CCreativeReverbEffectAL(this, effect, slot);
 		ieffect = static_cast<IReverbEffect *>(eff);
 		effectal = static_cast<CEffectAL *>(eff);
-		nlassert(ieffect); nlassert(effectal);
+		nlassert(ieffect);
+		nlassert(effectal);
 		_Effects.insert(effectal);
 		return ieffect;
 	}
-#endif		
+#endif
 
 	alEffecti(effect, AL_EFFECT_TYPE, AL_EFFECT_REVERB);
 	if (alGetError() != AL_NO_ERROR)
@@ -507,33 +519,35 @@ IReverbEffect *CSoundDriverAL::createReverbEffect()
 	}
 	else
 	{
-		alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, effect); alTestError();
-		alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_AUXILIARY_SEND_AUTO, AL_TRUE); alTestError(); // auto only for reverb!
+		alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, effect);
+		alTestError();
+		alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_AUXILIARY_SEND_AUTO, AL_TRUE);
+		alTestError(); // auto only for reverb!
 		CStandardReverbEffectAL *eff = new CStandardReverbEffectAL(this, effect, slot);
 		ieffect = static_cast<IReverbEffect *>(eff);
 		effectal = static_cast<CEffectAL *>(eff);
-		nlassert(ieffect); nlassert(effectal);
+		nlassert(ieffect);
+		nlassert(effectal);
 		_Effects.insert(effectal);
 		return ieffect;
 	}
 }
-
 
 static uint getMaxNumSourcesInternal()
 {
 	ALuint sources[256];
 	memset(sources, 0, sizeofarray(sources));
 	uint sourceCount = 0;
-	
+
 	alGetError();
-	
+
 	for (; sourceCount < 256; ++sourceCount)
 	{
 		alGenSources(1, &sources[sourceCount]);
 		if (alGetError() != AL_NO_ERROR)
 			break;
 	}
-	
+
 	alDeleteSources(sourceCount, sources);
 	if (alGetError() != AL_NO_ERROR)
 	{
@@ -572,18 +586,18 @@ uint CSoundDriverAL::countMaxEffects()
  * Create a sound buffer or a sound source
  */
 ALuint CSoundDriverAL::createItem(TGenFunctionAL algenfunc, TTestFunctionAL altestfunc,
-								  vector<ALuint>& names, uint& index, uint allocrate)
+    vector<ALuint> &names, uint &index, uint allocrate)
 {
-	nlassert( index <= names.size() );
-	if ( index == names.size() )
+	nlassert(index <= names.size());
+	if (index == names.size())
 	{
 		// Generate new items
-		uint nbalive = compactAliveNames( names, altestfunc );
-		if ( nbalive == names.size() )
+		uint nbalive = compactAliveNames(names, altestfunc);
+		if (nbalive == names.size())
 		{
 			// Extend vector of names
 			// FIXME? assumption about inner workings of std::vector
-			allocateNewItems( algenfunc, altestfunc, names, index, allocrate );
+			allocateNewItems(algenfunc, altestfunc, names, index, allocrate);
 		}
 		else
 		{
@@ -597,33 +611,31 @@ ALuint CSoundDriverAL::createItem(TGenFunctionAL algenfunc, TTestFunctionAL alte
 	}
 
 	// Return the name of the item
-	nlassert( index < names.size() );
+	nlassert(index < names.size());
 	ALuint itemname = names[index];
 	index++;
 	return itemname;
 }
 
-
 /*
  * Remove names of deleted buffers and return the number of valid buffers
  */
-uint CSoundDriverAL::compactAliveNames( vector<ALuint>& names, TTestFunctionAL altestfunc )
+uint CSoundDriverAL::compactAliveNames(vector<ALuint> &names, TTestFunctionAL altestfunc)
 {
 	vector<ALuint>::iterator iball, ibcompacted;
-	for ( iball=names.begin(), ibcompacted=names.begin(); iball!=names.end(); ++iball )
+	for (iball = names.begin(), ibcompacted = names.begin(); iball != names.end(); ++iball)
 	{
 		// iball is incremented every iteration
 		// ibcompacted is not incremented if a buffer is not valid anymore
-		if ( altestfunc( *iball ) )
+		if (altestfunc(*iball))
 		{
 			*ibcompacted = *iball;
 			++ibcompacted;
 		}
 	}
-	nlassert( ibcompacted <= names.end() );
+	nlassert(ibcompacted <= names.end());
 	return (uint)(ibcompacted - names.begin());
 }
-
 
 void CSoundDriverAL::commit3DChanges()
 {
@@ -636,7 +648,7 @@ void CSoundDriverAL::commit3DChanges()
 }
 
 /// Write information about the driver to the output stream.
-void CSoundDriverAL::writeProfile(std::string& out)
+void CSoundDriverAL::writeProfile(std::string &out)
 {
 	out = toString("OpenAL\n");
 	out += toString("Source size: %u\n", (uint32)_Sources.size());
@@ -668,7 +680,7 @@ void CSoundDriverAL::displayBench(NLMISC::CLog *log)
 void CSoundDriverAL::removeBuffer(CBufferAL *buffer)
 {
 	nlassert(buffer != NULL);
-	if (!deleteItem( buffer->bufferName(), alDeleteBuffers, _Buffers))
+	if (!deleteItem(buffer->bufferName(), alDeleteBuffers, _Buffers))
 		nlwarning("AL: Deleting buffer: name not found");
 }
 
@@ -687,14 +699,14 @@ void CSoundDriverAL::removeEffect(CEffectAL *effect)
 }
 
 /// Delete a buffer or a source
-bool CSoundDriverAL::deleteItem( ALuint name, TDeleteFunctionAL aldeletefunc, vector<ALuint>& names )
+bool CSoundDriverAL::deleteItem(ALuint name, TDeleteFunctionAL aldeletefunc, vector<ALuint> &names)
 {
-	vector<ALuint>::iterator ibn = find( names.begin(), names.end(), name );
-	if ( ibn == names.end() )
+	vector<ALuint>::iterator ibn = find(names.begin(), names.end(), name);
+	if (ibn == names.end())
 	{
 		return false;
 	}
-	aldeletefunc( 1, &*ibn );
+	aldeletefunc(1, &*ibn);
 	*ibn = AL_NONE;
 	alTestError();
 	return true;
@@ -708,7 +720,7 @@ IListener *CSoundDriverAL::createListener()
 }
 
 /// Apply changes of rolloff factor to all sources
-void CSoundDriverAL::applyRolloffFactor( float f )
+void CSoundDriverAL::applyRolloffFactor(float f)
 {
 	_RolloffFactor = f;
 	if (!getOption(OptionManualRolloff))
@@ -720,15 +732,15 @@ void CSoundDriverAL::applyRolloffFactor( float f )
 }
 
 /// Helper for loadWavFile()
-TSampleFormat ALtoNLSoundFormat( ALenum alformat )
+TSampleFormat ALtoNLSoundFormat(ALenum alformat)
 {
-	switch ( alformat )
+	switch (alformat)
 	{
-	case AL_FORMAT_MONO8 : return Mono8;
-	case AL_FORMAT_MONO16 : return Mono16;
-	case AL_FORMAT_STEREO8 : return Stereo8;
-	case AL_FORMAT_STEREO16 : return Stereo16;
-	default : nlstop; return Mono8;
+	case AL_FORMAT_MONO8: return Mono8;
+	case AL_FORMAT_MONO16: return Mono16;
+	case AL_FORMAT_STEREO8: return Stereo8;
+	case AL_FORMAT_STEREO16: return Stereo16;
+	default: nlstop; return Mono8;
 	}
 }
 

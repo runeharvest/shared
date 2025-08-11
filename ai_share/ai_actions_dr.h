@@ -27,15 +27,13 @@
 #include "ai_share.h"
 #include "ai_actions.h"
 
-namespace AI_SHARE
-{
+namespace AI_SHARE {
 
 class CAIActionsDataRecordPtr
 {
 public:
-
-	CAIActionsDataRecordPtr(){ _PdrPtr = 0; }
-	void init(CPersistentDataRecord* pdr) { _PdrPtr = pdr ; }
+	CAIActionsDataRecordPtr() { _PdrPtr = 0; }
+	void init(CPersistentDataRecord *pdr) { _PdrPtr = pdr; }
 	//----------------------------------------------------------------------------
 	// general management interface
 
@@ -45,40 +43,38 @@ public:
 	void display();
 	void serial(NLMISC::IStream &stream);
 
-
-
 	//----------------------------------------------------------------------------
 	// interface used to setup the data record
 
 	void addOpenFile(const std::string &fileName);
 	void addCloseFile(const std::string &fileName);
-	void addExecute(uint64 action,const std::vector <CAIActions::CArg> &args);
+	void addExecute(uint64 action, const std::vector<CAIActions::CArg> &args);
 	void addBegin(uint32 contextAlias);
 	void addEnd(uint32 contextAlias);
-
 
 	//----------------------------------------------------------------------------
 	// interface used to retrieve the contents of the data record
 
-	void applyToExecutor(CAIActions::IExecutor& executor);
-
+	void applyToExecutor(CAIActions::IExecutor &executor);
 
 private:
 	// private data
-	CPersistentDataRecord* _PdrPtr;
+	CPersistentDataRecord *_PdrPtr;
 };
 
 class CAIActionsDataRecord : public CAIActionsDataRecordPtr
 {
 public:
-	CAIActionsDataRecord():CAIActionsDataRecordPtr() { init( &_Pdr); }
-private:	
+	CAIActionsDataRecord()
+	    : CAIActionsDataRecordPtr()
+	{
+		init(&_Pdr);
+	}
+
+private:
 	CPersistentDataRecordRyzomStore _Pdr;
 };
 
-
-
-} //namespace AI_SHARE
+} // namespace AI_SHARE
 
 #endif
-

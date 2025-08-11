@@ -16,17 +16,16 @@
 
 #include "stdafx.h"
 
-extern ClassDesc2* GetTile_editDesc();
+extern ClassDesc2 *GetTile_editDesc();
 
 HINSTANCE hInstance;
 int controlsInit = FALSE;
 
-// This function is called by Windows when the DLL is loaded.  This 
+// This function is called by Windows when the DLL is loaded.  This
 // function may also be called many times during time critical operations
 // like rendering.  Therefore developers need to be careful what they
 // do inside this function.  In the code below, note how after the DLL is
 // loaded the first time only a few statements are executed.
-
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -34,20 +33,19 @@ int controlsInit = FALSE;
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
 class CMfcdllApp : public CWinApp
 {
 public:
 	CMfcdllApp();
-	virtual BOOL InitInstance( );
-// Overrides
+	virtual BOOL InitInstance();
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CMfcdllApp)
 	//}}AFX_VIRTUAL
 
 	//{{AFX_MSG(CMfcdllApp)
-		// NOTE - the ClassWizard will add and remove member functions here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
+	// NOTE - the ClassWizard will add and remove member functions here.
+	//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
@@ -70,7 +68,7 @@ public:
 //
 //		It is very important that this macro appear in each
 //		function, prior to any calls into MFC.  This means that
-//		it must appear as the first statement within the 
+//		it must appear as the first statement within the
 //		function, even before any object variable declarations
 //		as their constructors may generate calls into the MFC
 //		DLL.
@@ -83,10 +81,10 @@ public:
 // CMfcdllApp
 
 BEGIN_MESSAGE_MAP(CMfcdllApp, CWinApp)
-	//{{AFX_MSG_MAP(CMfcdllApp)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-		//    DO NOT EDIT what you see in these blocks of generated code!
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CMfcdllApp)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//    DO NOT EDIT what you see in these blocks of generated code!
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -103,55 +101,56 @@ CMfcdllApp::CMfcdllApp()
 
 CMfcdllApp theApp;
 
-BOOL CMfcdllApp::InitInstance( )
+BOOL CMfcdllApp::InitInstance()
 {
-	hInstance = m_hInstance;				// Hang on to this DLL's instance handle.
+	hInstance = m_hInstance; // Hang on to this DLL's instance handle.
 
-	if (!controlsInit) {
+	if (!controlsInit)
+	{
 		controlsInit = TRUE;
-		InitCustomControls(hInstance);	// Initialize MAX's custom controls
-		InitCommonControls();			// Initialize Win95 controls
+		InitCustomControls(hInstance); // Initialize MAX's custom controls
+		InitCommonControls(); // Initialize Win95 controls
 	}
-			
+
 	return (TRUE);
 }
 
 // This function returns a string that describes the DLL and where the user
 // could purchase the DLL if they don't have it.
-__declspec( dllexport ) const TCHAR* LibDescription()
+__declspec(dllexport) const TCHAR *LibDescription()
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 	return GetString(IDS_LIBDESCRIPTION);
 }
 
 // This function returns the number of plug-in classes this DLL
-//TODO: Must change this number when adding a new class
-__declspec( dllexport ) int LibNumberClasses()
+// TODO: Must change this number when adding a new class
+__declspec(dllexport) int LibNumberClasses()
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-	
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
 	return 1;
 }
 
 // This function returns the number of plug-in classes this DLL
-__declspec( dllexport ) ClassDesc* LibClassDesc(int i)
+__declspec(dllexport) ClassDesc *LibClassDesc(int i)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	switch(i) 
+	switch (i)
 	{
-		case 0: return GetTile_editDesc();
-		default: return 0;
+	case 0: return GetTile_editDesc();
+	default: return 0;
 	}
 }
 
-// This function returns a pre-defined constant indicating the version of 
+// This function returns a pre-defined constant indicating the version of
 // the system under which it was compiled.  It is used to allow the system
 // to catch obsolete DLLs.
-__declspec( dllexport ) ULONG LibVersion()
+__declspec(dllexport) ULONG LibVersion()
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 	return VERSION_3DSMAX;
 }
@@ -164,4 +163,3 @@ TCHAR *GetString(int id)
 		return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : NULL;
 	return NULL;
 }
-

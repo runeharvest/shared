@@ -27,11 +27,9 @@
 
 namespace NLSOUND {
 
-//class ISoundDriver;
-//class IBuffer;
-//class CSound;
-
-
+// class ISoundDriver;
+// class IBuffer;
+// class CSound;
 
 /**
  * A background sound static properties
@@ -47,29 +45,29 @@ public:
 	/// Destructor
 	~CBackgroundSound();
 
-	TSOUND_TYPE getSoundType()							{ return SOUND_BACKGROUND;}
+	TSOUND_TYPE getSoundType() { return SOUND_BACKGROUND; }
 
 	/// Load the sound parameters from georges' form
-	virtual void		importForm(const std::string& filename, NLGEORGES::UFormElm& formRoot);
+	virtual void importForm(const std::string &filename, NLGEORGES::UFormElm &formRoot);
 
 	/// Return true if cone is meaningful
-	bool				isDetailed() const				{ return false;}
+	bool isDetailed() const { return false; }
 	/// Return the length of the sound in ms
-	virtual uint32		getDuration();
+	virtual uint32 getDuration();
 	/// Return the name (must be unique)
 
 	/// Used by the george sound plugin to check sound recursion (ie sound 'toto' use sound 'titi' witch also use sound 'toto' ...).
-	virtual void		getSubSoundList(std::vector<std::pair<std::string, CSound*> > &subsounds) const;
+	virtual void getSubSoundList(std::vector<std::pair<std::string, CSound *>> &subsounds) const;
 
-	virtual float		getMaxDistance() const;
+	virtual float getMaxDistance() const;
 
-	void				serial(NLMISC::IStream &s);
+	void serial(NLMISC::IStream &s);
 
 	/// Associtation clas for storage of sound / filter.
 	struct TSoundInfo
 	{
-		NLMISC::TStringId		SoundName;
-		UAudioMixer::TBackgroundFlags		Filter;
+		NLMISC::TStringId SoundName;
+		UAudioMixer::TBackgroundFlags Filter;
 
 		void serial(NLMISC::IStream &s)
 		{
@@ -88,22 +86,18 @@ public:
 		}
 	};
 
-	const std::vector<TSoundInfo> &getSounds() const			{ return _Sounds;}
+	const std::vector<TSoundInfo> &getSounds() const { return _Sounds; }
 
 private:
-
-
 	/// The list of sound composing the background sound with there repective filter.
-	std::vector<TSoundInfo>		_Sounds;
-
+	std::vector<TSoundInfo> _Sounds;
 
 	// Duration of sound.
-	uint32						_Duration;
+	uint32 _Duration;
 	// flag for validity of duration (after first evaluation).
-	bool						_DurationValid;
+	bool _DurationValid;
 };
 
 } // NLSOUND
 
 #endif // NL_BACKGROUND_SOUND_H
-

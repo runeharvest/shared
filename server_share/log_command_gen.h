@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef _LOG_GEN_COMMAND_H
 #define _LOG_GEN_COMMAND_H
 
@@ -23,7 +21,6 @@
 #include "nel/misc/entity_id.h"
 #include "nel/misc/sheet_id.h"
 #include "game_share/inventories.h"
-
 
 struct TLogContext_Command_ExecCtx
 {
@@ -36,10 +33,7 @@ struct TLogContext_Command_ExecCtx
 private:
 	/// The name of the context
 	static const std::string _ContextName;
-
-
 };
-
 
 /// No context context. Use this to disable any contextual log underneath
 struct TLogNoContext_Command
@@ -47,8 +41,6 @@ struct TLogNoContext_Command
 	TLogNoContext_Command();
 	~TLogNoContext_Command();
 };
-
-
 
 void _log_Command_Exec(const std::string &cmdName, const std::string &cmdArg, const char *_filename_, uint _lineNo_);
 #define log_Command_Exec(cmdName, cmdArg) \
@@ -62,6 +54,4 @@ void _log_Command_TPOutsideNewbieland(const NLMISC::CEntityId &movedCharId, cons
 #define log_Command_TPOutsideNewbieland(movedCharId) \
 	_log_Command_TPOutsideNewbieland(movedCharId, __FILE__, __LINE__)
 
-
 #endif
-

@@ -48,17 +48,27 @@ QString nli18n(const char *label)
 
 } /* anonymous namespace */
 
-CGraphicsConfig::CGraphicsConfig(QWidget *parent, CConfiguration *configuration, CInternationalization *internationalization, QUndoStack *undoStack) 
-	: QWidget(parent), m_Configuration(configuration), m_Internationalization(internationalization), m_UndoStack(undoStack), 
-	m_DriverGroup(NULL), m_Enabled(NULL), m_DriverLabel(NULL), m_Driver(NULL),
-	m_FontNameLabel(NULL), m_FontName(NULL), m_Apply(NULL),
-	m_RenderGroup(NULL), m_BackgroundColor(NULL), m_FontShadow(NULL), 
-	m_ScreenshotGroup(NULL)
+CGraphicsConfig::CGraphicsConfig(QWidget *parent, CConfiguration *configuration, CInternationalization *internationalization, QUndoStack *undoStack)
+    : QWidget(parent)
+    , m_Configuration(configuration)
+    , m_Internationalization(internationalization)
+    , m_UndoStack(undoStack)
+    , m_DriverGroup(NULL)
+    , m_Enabled(NULL)
+    , m_DriverLabel(NULL)
+    , m_Driver(NULL)
+    , m_FontNameLabel(NULL)
+    , m_FontName(NULL)
+    , m_Apply(NULL)
+    , m_RenderGroup(NULL)
+    , m_BackgroundColor(NULL)
+    , m_FontShadow(NULL)
+    , m_ScreenshotGroup(NULL)
 {
 	nlassert(m_Configuration);
 	nlassert(m_Internationalization);
 	nlassert(m_UndoStack);
-	
+
 	QVBoxLayout *vboxLayout = new QVBoxLayout();
 
 	// Driver
@@ -87,7 +97,7 @@ CGraphicsConfig::CGraphicsConfig(QWidget *parent, CConfiguration *configuration,
 			hboxLayout->setStretch(1, 1);
 			groupVboxLayout->addLayout(hboxLayout);
 		}
-		
+
 		// Font Name
 		{
 			QHBoxLayout *hboxLayout = new QHBoxLayout();
@@ -110,7 +120,7 @@ CGraphicsConfig::CGraphicsConfig(QWidget *parent, CConfiguration *configuration,
 			groupVboxLayout->addWidget(m_Apply);
 			connect(m_Apply, SIGNAL(pressed()), this, SLOT(applyPressed()));
 		}
-		
+
 		m_DriverGroup->setLayout(groupVboxLayout);
 		vboxLayout->addWidget(m_DriverGroup);
 	}
@@ -128,7 +138,7 @@ CGraphicsConfig::CGraphicsConfig(QWidget *parent, CConfiguration *configuration,
 			groupVboxLayout->addWidget(m_BackgroundColor);
 			connect(m_BackgroundColor, SIGNAL(colorChanged(const QColor &)), this, SLOT(uicbBackgroundColor(const QColor &)));
 		}
-				
+
 		// Font Shadow
 		{
 			nlassert(!m_FontShadow);
@@ -136,7 +146,7 @@ CGraphicsConfig::CGraphicsConfig(QWidget *parent, CConfiguration *configuration,
 			groupVboxLayout->addWidget(m_FontShadow);
 			connect(m_FontShadow, SIGNAL(toggled(bool)), this, SLOT(uicbFontShadow(bool)));
 		}
-		
+
 		m_RenderGroup->setLayout(groupVboxLayout);
 		vboxLayout->addWidget(m_RenderGroup);
 	}
@@ -146,22 +156,22 @@ CGraphicsConfig::CGraphicsConfig(QWidget *parent, CConfiguration *configuration,
 		nlassert(!m_ScreenshotGroup);
 		m_ScreenshotGroup = new QGroupBox();
 		QVBoxLayout *groupVboxLayout = new QVBoxLayout();
-		
+
 		m_ScreenshotGroup->setLayout(groupVboxLayout);
-		vboxLayout->addWidget(m_ScreenshotGroup);		
+		vboxLayout->addWidget(m_ScreenshotGroup);
 	}
 
 	vboxLayout->addStretch();
 	setLayout(vboxLayout);
-	
+
 	// setup config file callbacks and initialize values
 	m_Configuration->setAndCallback("GraphicsEnabled", CConfigCallback(this, &CGraphicsConfig::cfcbGraphicsEnabled));
 	m_Configuration->setCallback("GraphicsDriver", CConfigCallback(this, &CGraphicsConfig::cfcbGraphicsDriver));
 	m_Configuration->setAndCallback("GraphicsDrivers", CConfigCallback(this, &CGraphicsConfig::cfcbGraphicsDrivers));
 	m_Configuration->setAndCallback("FontName", CConfigCallback(this, &CGraphicsConfig::cfcbFontName));
-	m_Configuration->setAndCallback("BackgroundColor", CConfigCallback(this, &CGraphicsConfig::cfcbBackgroundColor));		
-	m_Configuration->setAndCallback("FontShadow", CConfigCallback(this, &CGraphicsConfig::cfcbFontShadow));		
-	
+	m_Configuration->setAndCallback("BackgroundColor", CConfigCallback(this, &CGraphicsConfig::cfcbBackgroundColor));
+	m_Configuration->setAndCallback("FontShadow", CConfigCallback(this, &CGraphicsConfig::cfcbFontShadow));
+
 	// setup translation callback and initialize translation
 	m_Internationalization->enableCallback(CEmptyCallback(this, &CGraphicsConfig::incbTranslate));
 	incbTranslate();
@@ -177,7 +187,7 @@ CGraphicsConfig::CGraphicsConfig(QWidget *parent, CConfiguration *configuration,
 CGraphicsConfig::~CGraphicsConfig()
 {
 	m_Internationalization->disableCallback(CEmptyCallback(this, &CGraphicsConfig::incbTranslate));
-	
+
 	m_Configuration->dropCallback("FontShadow");
 	m_Configuration->dropCallback("BackgroundColor");
 	m_Configuration->dropCallback("FontName");

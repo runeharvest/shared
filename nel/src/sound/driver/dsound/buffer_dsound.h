@@ -35,13 +35,13 @@ class CBufferDSound : public IBuffer
 public:
 	/// Constructor
 	CBufferDSound();
-	
+
 	/// Destructor
 	virtual ~CBufferDSound();
-	
+
 	/// Return a pointer to the sample data
-    inline const uint8 *getData() const { return _Data; }
-	
+	inline const uint8 *getData() const { return _Data; }
+
 	/** Preset the name of the buffer. Used for async loading to give a name
 	 *	before the buffer is effectivly loaded.
 	 *	If the name after loading of the buffer doesn't match the preset name,
@@ -55,7 +55,7 @@ public:
 	virtual void setFormat(TBufferFormat format, uint8 channels, uint8 bitsPerSample, uint32 frequency);
 	/// Return the sample format information.
 	virtual void getFormat(TBufferFormat &format, uint8 &channels, uint8 &bitsPerSample, uint32 &frequency) const;
-		/// Set the storage mode of this buffer, call before filling this buffer. Storage mode is always software if OptionSoftwareBuffer is enabled. Default is auto.
+	/// Set the storage mode of this buffer, call before filling this buffer. Storage mode is always software if OptionSoftwareBuffer is enabled. Default is auto.
 	virtual void setStorageMode(TStorageMode storageMode = IBuffer::StorageAuto);
 	/// Get the storage mode of this buffer.
 	virtual TStorageMode getStorageMode();
@@ -66,37 +66,33 @@ public:
 	virtual bool unlock(uint size);
 	/// Copy the data with specified size into the buffer. A readable local copy is only guaranteed when OptionLocalBufferCopy is set. Returns true if ok.
 	virtual bool fill(const uint8 *src, uint size);
-	
+
 	/// Return the size of the buffer, in bytes.
 	virtual uint getSize() const;
 	/// Return the duration (in ms) of the sample in the buffer.
 	virtual float getDuration() const;
 	/// Return true if the buffer is stereo (multi-channel), false if mono.
-	virtual bool isStereo() const;	
+	virtual bool isStereo() const;
 	/// Return true if the buffer is loaded. Used for async load/unload.
 	virtual bool isBufferLoaded() const;
-	
+
 private:
 	NLMISC::TStringId _Name;
 	/// The sample data in this buffer.
-    uint8 *_Data;
+	uint8 *_Data;
 	/// The capacity of the buffer
 	uint _Capacity;
 	/// The size of the data in the buffer
 	uint _Size;
-    TSampleFormat _Format;
-    uint _Freq;
-	
-#if USE_LOCDEFER
-    LPDIRECTSOUNDBUFFER _SecondaryBuffer;
-    LPDIRECTSOUND3DBUFFER _3DBuffer;
-#endif
-	
-};
+	TSampleFormat _Format;
+	uint _Freq;
 
+#if USE_LOCDEFER
+	LPDIRECTSOUNDBUFFER _SecondaryBuffer;
+	LPDIRECTSOUND3DBUFFER _3DBuffer;
+#endif
+};
 
 } // NLSOUND
 
-
 #endif // NL_BUFFER_DSOUND_H
-

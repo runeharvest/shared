@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
 /////////////
 // INCLUDE //
 /////////////
@@ -29,7 +26,6 @@
 #include "slot_types.h"
 #include "visual_slot_manager.h"
 
-
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
@@ -37,8 +33,7 @@
 ////////////////////
 // STATIC MEMBERS //
 ////////////////////
-CVisualSlotManager	*CVisualSlotManager::_Instance = 0;
-
+CVisualSlotManager *CVisualSlotManager::_Instance = 0;
 
 ////////////////////
 // STATIC METHODS //
@@ -48,21 +43,21 @@ CVisualSlotManager	*CVisualSlotManager::_Instance = 0;
 // Instanciate CVisualSlotManager. There can be only one instance (singleton)
 // \return CVisualSlotManager * : Pointer on CVisualSlotManager.
 //---------------------------------------------------
-CVisualSlotManager * CVisualSlotManager::getInstance()
+CVisualSlotManager *CVisualSlotManager::getInstance()
 {
-	if(_Instance == 0)
+	if (_Instance == 0)
 	{
 		_Instance = new CVisualSlotManager();
-		if(_Instance)
+		if (_Instance)
 			_Instance->init();
 	}
 	return _Instance;
-}// getInstance //
+} // getInstance //
 
 // release memory
 void CVisualSlotManager::releaseInstance()
 {
-	if( _Instance )
+	if (_Instance)
 		delete _Instance;
 	_Instance = NULL;
 }
@@ -76,8 +71,7 @@ void CVisualSlotManager::releaseInstance()
 //-----------------------------------------------
 CVisualSlotManager::CVisualSlotManager()
 {
-}// CVisualSlotManager //
-
+} // CVisualSlotManager //
 
 //-----------------------------------------------
 // init :
@@ -89,7 +83,7 @@ void CVisualSlotManager::init()
 
 	// Open the file.
 	NLMISC::CIFile f;
-	if(f.open(NLMISC::CPath::lookup(filename, false, false)))
+	if (f.open(NLMISC::CPath::lookup(filename, false, false)))
 	{
 		// Dump entities.
 		f.serialCont(_VisualSlot);
@@ -98,22 +92,22 @@ void CVisualSlotManager::init()
 		f.close();
 
 		// Display elements read.
-		for(uint i=0, len = _VisualSlot.size(); i<len; ++i)
+		for (uint i = 0, len = _VisualSlot.size(); i < len; ++i)
 		{
 			_VisualSlot[i].updateMaps();
-//			for(uint j=0; j<_VisualSlot[i].Element.size(); ++j)
-//				nlinfo("Visu: %d Num: %d Id: %d sheet: %s", i, _VisualSlot[i].Element[j].Index, _VisualSlot[i].Element[j].SheetId.asInt(), _VisualSlot[i].Element[j].SheetId.toString().c_str());
+			//			for(uint j=0; j<_VisualSlot[i].Element.size(); ++j)
+			//				nlinfo("Visu: %d Num: %d Id: %d sheet: %s", i, _VisualSlot[i].Element[j].Index, _VisualSlot[i].Element[j].SheetId.asInt(), _VisualSlot[i].Element[j].SheetId.toString().c_str());
 		}
 	}
 	else
 		nlwarning("VSMngr:load: cannot open the file '%s'.", filename.c_str());
-}// init //
+} // init //
 
 void CVisualSlotManager::TElementList::updateMaps()
 {
 	SheetIdToIndexMap.clear();
 
-	for(uint i=0, len = Element.size(); i<len; ++i)
+	for (uint i = 0, len = Element.size(); i < len; ++i)
 	{
 		const TElement &e = Element[i];
 		SheetIdToIndexMap[e.SheetId] = e.Index;
@@ -127,8 +121,7 @@ void CVisualSlotManager::TElementList::updateMaps()
 uint32 CVisualSlotManager::rightItem2Index(const NLMISC::CSheetId &id)
 {
 	return sheet2Index(id, SLOTTYPE::RIGHT_HAND_SLOT);
-}// rightItem2Index //
-
+} // rightItem2Index //
 
 //-----------------------------------------------
 // leftItem2Index :
@@ -137,8 +130,7 @@ uint32 CVisualSlotManager::rightItem2Index(const NLMISC::CSheetId &id)
 uint32 CVisualSlotManager::leftItem2Index(const NLMISC::CSheetId &id)
 {
 	return sheet2Index(id, SLOTTYPE::LEFT_HAND_SLOT);
-}// leftItem2Index //
-
+} // leftItem2Index //
 
 //-----------------------------------------------
 // sheet2Index :
@@ -146,7 +138,7 @@ uint32 CVisualSlotManager::leftItem2Index(const NLMISC::CSheetId &id)
 //-----------------------------------------------
 uint32 CVisualSlotManager::sheet2Index(const NLMISC::CSheetId &id, SLOTTYPE::EVisualSlot slot)
 {
-	if((uint)slot < _VisualSlot.size())
+	if ((uint)slot < _VisualSlot.size())
 	{
 		const TElementList &el = _VisualSlot[slot];
 		TElementList::SheetIdToIndexMapType::const_iterator it = el.SheetIdToIndexMap.find(id);
@@ -157,18 +149,18 @@ uint32 CVisualSlotManager::sheet2Index(const NLMISC::CSheetId &id, SLOTTYPE::EVi
 
 	// No Item
 	return 0;
-}// sheet2Index //
+} // sheet2Index //
 
 //-----------------------------------------------
 // index2Sheet :
 // Return the sheet Id from visual index and the visual slot.
 //-----------------------------------------------
-NLMISC::CSheetId * CVisualSlotManager::index2Sheet(uint32 index, SLOTTYPE::EVisualSlot slot)
+NLMISC::CSheetId *CVisualSlotManager::index2Sheet(uint32 index, SLOTTYPE::EVisualSlot slot)
 {
-	if((uint)slot < _VisualSlot.size())
+	if ((uint)slot < _VisualSlot.size())
 	{
-		for(uint i=0; i<_VisualSlot[slot].Element.size(); ++i)
-			if(_VisualSlot[slot].Element[i].Index == index)
+		for (uint i = 0; i < _VisualSlot[slot].Element.size(); ++i)
+			if (_VisualSlot[slot].Element[i].Index == index)
 				return &_VisualSlot[slot].Element[i].SheetId;
 	}
 	else
@@ -184,21 +176,20 @@ NLMISC::CSheetId * CVisualSlotManager::index2Sheet(uint32 index, SLOTTYPE::EVisu
 //-----------------------------------------------
 void CVisualSlotManager::sheet2Index(const NLMISC::CSheetId &id, std::vector<TIdxbyVS> &result)
 {
-	for(uint i=0; i<_VisualSlot.size(); ++i)
+	for (uint i = 0; i < _VisualSlot.size(); ++i)
 	{
-		for(uint j=0; j<_VisualSlot[i].Element.size(); ++j)
+		for (uint j = 0; j < _VisualSlot[i].Element.size(); ++j)
 		{
-			if(_VisualSlot[i].Element[j].SheetId == id)
+			if (_VisualSlot[i].Element[j].SheetId == id)
 			{
 				TIdxbyVS idxbyVS;
-				idxbyVS.Index      = _VisualSlot[i].Element[j].Index;
+				idxbyVS.Index = _VisualSlot[i].Element[j].Index;
 				idxbyVS.VisualSlot = (SLOTTYPE::EVisualSlot)i;
 				result.push_back(idxbyVS);
 			}
 		}
 	}
-}// sheet2Index //
-
+} // sheet2Index //
 
 //-----------------------------------------------
 // getNbIndex :
@@ -208,10 +199,10 @@ uint32 CVisualSlotManager::getNbIndex(SLOTTYPE::EVisualSlot slot) const
 {
 	uint32 count = 0;
 
-	if((uint)slot < _VisualSlot.size())
+	if ((uint)slot < _VisualSlot.size())
 	{
-		for(uint i=0; i<_VisualSlot[slot].Element.size(); ++i)
-			if(_VisualSlot[slot].Element[i].Index > count)
+		for (uint i = 0; i < _VisualSlot[slot].Element.size(); ++i)
+			if (_VisualSlot[slot].Element[i].Index > count)
 				count = _VisualSlot[slot].Element[i].Index;
 	}
 	else
@@ -219,4 +210,4 @@ uint32 CVisualSlotManager::getNbIndex(SLOTTYPE::EVisualSlot slot) const
 
 	// No Item
 	return count;
-}// getNbIndex //
+} // getNbIndex //

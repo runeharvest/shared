@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_EFFECT_MANAGER_H
 #define RY_EFFECT_MANAGER_H
 
@@ -27,11 +25,12 @@
 class TEffectVector : public std::vector<CBasicEffect>
 {
 	NL_INSTANCE_COUNTER_DECL(TEffectVector);
+
 public:
 };
 
-//typedef std::vector< CBasicEffect >	TEffectVector;
-typedef std::map< TDataSetRow, TEffectVector* > TEntitiesEffectMap;
+// typedef std::vector< CBasicEffect >	TEffectVector;
+typedef std::map<TDataSetRow, TEffectVector *> TEntitiesEffectMap;
 
 /**
  * Singleton managing effects for EGS and AIS
@@ -55,21 +54,21 @@ public:
 	static void update();
 
 	/// add a effect to given entity
-	inline static void addEffect( const TDataSetRow &entityRow, const CBasicEffect &effect )
+	inline static void addEffect(const TDataSetRow &entityRow, const CBasicEffect &effect)
 	{
 		TEntitiesEffectMap::iterator it = _Effects.find(entityRow);
-		if ( it != _Effects.end())
+		if (it != _Effects.end())
 		{
-			if ( (*it).second != NULL)
+			if ((*it).second != NULL)
 			{
 				(*it).second->push_back(effect);
 			}
 			else
 			{
-				nlwarning("<CEffectManager::addEffect> NULL pointer instead of effect vector for entity RowId %u", entityRow.getIndex() );
+				nlwarning("<CEffectManager::addEffect> NULL pointer instead of effect vector for entity RowId %u", entityRow.getIndex());
 				(*it).second = new TEffectVector();
-				if ( (*it).second) 
-					(*it).second->push_back(effect);				
+				if ((*it).second)
+					(*it).second->push_back(effect);
 			}
 		}
 		else
@@ -79,7 +78,7 @@ public:
 			if (vector)
 			{
 				vector->push_back(effect);
-				_Effects.insert( std::make_pair(entityRow, vector) );
+				_Effects.insert(std::make_pair(entityRow, vector));
 			}
 		}
 
@@ -87,21 +86,21 @@ public:
 	}
 
 	/// add a vector of spells to given entity
-	inline static void addEffects( const TDataSetRow &entityRow, const std::vector<CBasicEffect> &spells )
+	inline static void addEffects(const TDataSetRow &entityRow, const std::vector<CBasicEffect> &spells)
 	{
 		TEntitiesEffectMap::iterator it = _Effects.find(entityRow);
-		if ( it != _Effects.end())
+		if (it != _Effects.end())
 		{
-			if ( (*it).second != NULL)
+			if ((*it).second != NULL)
 			{
-				(*it).second->insert( (*it).second->end(), spells.begin(), spells.end() );
+				(*it).second->insert((*it).second->end(), spells.begin(), spells.end());
 			}
 			else
 			{
-				nlwarning("<CEffectManager::addEffect> NULL pointer instead of effect vector for entity RowId %u", entityRow.getIndex() );
+				nlwarning("<CEffectManager::addEffect> NULL pointer instead of effect vector for entity RowId %u", entityRow.getIndex());
 				(*it).second = new TEffectVector();
-				if ( (*it).second) 
-					(*it).second->insert( (*it).second->end(), spells.begin(), spells.end() );
+				if ((*it).second)
+					(*it).second->insert((*it).second->end(), spells.begin(), spells.end());
 			}
 		}
 		else
@@ -110,35 +109,35 @@ public:
 			TEffectVector *vector = new TEffectVector();
 			if (vector)
 			{
-				vector->insert( vector->end(), spells.begin(), spells.end() );
-				_Effects.insert( std::make_pair(entityRow, vector) );
+				vector->insert(vector->end(), spells.begin(), spells.end());
+				_Effects.insert(std::make_pair(entityRow, vector));
 			}
 		}
 
-		_NewEffects.insert(_NewEffects.end(), spells.begin(), spells.end() );
+		_NewEffects.insert(_NewEffects.end(), spells.begin(), spells.end());
 	}
 
 	/// remove a effect
-	inline static void removeEffect( const TDataSetRow &entityRow, uint32 effectId )
+	inline static void removeEffect(const TDataSetRow &entityRow, uint32 effectId)
 	{
 		TEntitiesEffectMap::iterator it = _Effects.find(entityRow);
-		if ( it == _Effects.end())
+		if (it == _Effects.end())
 		{
 			return;
 		}
 
-		if ( (*it).second == NULL)
+		if ((*it).second == NULL)
 		{
-			nlwarning("<CEffectManager::addEffect> NULL pointer instead of effect vector for entity RowId %u", entityRow.getIndex() );
+			nlwarning("<CEffectManager::addEffect> NULL pointer instead of effect vector for entity RowId %u", entityRow.getIndex());
 			return;
 		}
-		
+
 		// parse vector
 		TEffectVector::iterator itEffect;
 		const TEffectVector::const_iterator itEnd = (*it).second->end();
-		for ( itEffect = (*it).second->begin() ; itEffect != itEnd ; ++itEffect)
+		for (itEffect = (*it).second->begin(); itEffect != itEnd; ++itEffect)
 		{
-			if ( (*itEffect).effectId() == effectId )
+			if ((*itEffect).effectId() == effectId)
 			{
 				_RemovedEffects.push_back(*itEffect);
 				(*it).second->erase(itEffect);
@@ -157,47 +156,45 @@ public:
 	}
 
 	/// remove an entity
-	inline void removeEntity( const TDataSetRow &entityRow )
+	inline void removeEntity(const TDataSetRow &entityRow)
 	{
 		TEntitiesEffectMap::iterator it = _Effects.find(entityRow);
-		if ( it != _Effects.end())
+		if (it != _Effects.end())
 		{
-			if ( (*it).second != NULL)
+			if ((*it).second != NULL)
 			{
 				delete (*it).second;
-				(*it).second = NULL;					
+				(*it).second = NULL;
 			}
 			_Effects.erase(it);
 		}
 	}
 
 	/// register a service
-	inline void static registerService( NLNET::TServiceId serviceId ) 
+	inline void static registerService(NLNET::TServiceId serviceId)
 	{
-		_RegisteredServices.insert( serviceId );
+		_RegisteredServices.insert(serviceId);
 	}
 
 	/// unregister a service
-	inline void static unregisterService( NLNET::TServiceId serviceId ) 
+	inline void static unregisterService(NLNET::TServiceId serviceId)
 	{
-		_RegisteredServices.erase( serviceId );
+		_RegisteredServices.erase(serviceId);
 	}
 
 private:
 	/// map entities to their active spells
-	static TEntitiesEffectMap			_Effects;
+	static TEntitiesEffectMap _Effects;
 
 	/// the spells created since last update
-	static std::vector< CBasicEffect >	_NewEffects;
+	static std::vector<CBasicEffect> _NewEffects;
 
 	/// the spells deleted since last update
-	static std::vector< CBasicEffect >	_RemovedEffects;
+	static std::vector<CBasicEffect> _RemovedEffects;
 
 	/// list of services registered to new and removed spells/effects
-	static std::set<NLNET::TServiceId>	_RegisteredServices;
-
+	static std::set<NLNET::TServiceId> _RegisteredServices;
 };
-
 
 #endif // RY_EFFECT_MANAGER_H
 

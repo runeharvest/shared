@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_ACTION_BLOCK_H
 #define NL_ACTION_BLOCK_H
 
@@ -29,7 +27,6 @@
 
 namespace CLFECOMMON {
 
-
 class CAction;
 
 /**
@@ -41,22 +38,27 @@ class CAction;
 class CActionBlock
 {
 public:
-	NLMISC::TGameCycle			Cycle;
-	TPacketNumber				FirstPacket;
-	std::vector<CAction*>		Actions;
-	bool						Success;
+	NLMISC::TGameCycle Cycle;
+	TPacketNumber FirstPacket;
+	std::vector<CAction *> Actions;
+	bool Success;
 
 	/// Constructor
-	CActionBlock() : Cycle(0), FirstPacket(0), Success(true) {}
+	CActionBlock()
+	    : Cycle(0)
+	    , FirstPacket(0)
+	    , Success(true)
+	{
+	}
 
 	/// Destructor
 	~CActionBlock();
 
 	/// serialisation method
-	void	serial(NLMISC::CBitMemStream &msg);
+	void serial(NLMISC::CBitMemStream &msg);
 
 	///
-	static uint32	getHeaderSizeInBits() { return (sizeof(NLMISC::TGameCycle)+sizeof(uint8))*8; }
+	static uint32 getHeaderSizeInBits() { return (sizeof(NLMISC::TGameCycle) + sizeof(uint8)) * 8; }
 };
 
 } // CLFECOMMON

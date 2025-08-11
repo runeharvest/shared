@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "std_afx.h"
 #include "object_viewer.h"
 #include "ps_global_color_dlg.h"
@@ -22,36 +21,32 @@
 #include "attrib_dlg.h"
 #include "nel/3d/particle_system.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CPSGlobalColorDlg dialog
 
-
-CPSGlobalColorDlg::CPSGlobalColorDlg(CParticleWorkspace::CNode *ownerNode, IPopupNotify *pn, CWnd* pParent /* = NULL */)
-	: _Node(ownerNode),
-	  _PN(pn),
-	  CDialog(CPSGlobalColorDlg::IDD, pParent)
+CPSGlobalColorDlg::CPSGlobalColorDlg(CParticleWorkspace::CNode *ownerNode, IPopupNotify *pn, CWnd *pParent /* = NULL */)
+    : _Node(ownerNode)
+    , _PN(pn)
+    , CDialog(CPSGlobalColorDlg::IDD, pParent)
 {
 	nlassert(_Node);
 	//{{AFX_DATA_INIT(CPSGlobalColorDlg)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void CPSGlobalColorDlg::DoDataExchange(CDataExchange* pDX)
+void CPSGlobalColorDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CPSGlobalColorDlg)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CPSGlobalColorDlg, CDialog)
-	//{{AFX_MSG_MAP(CPSGlobalColorDlg)
-	ON_WM_CLOSE()
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CPSGlobalColorDlg)
+ON_WM_CLOSE()
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 ///===========================================================
@@ -74,24 +69,23 @@ void CPSGlobalColorDlg::CGlobalColorWrapper::setScheme(CPSGlobalColorDlg::CGloba
 	PS->setColorAttenuationScheme(s);
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CPSGlobalColorDlg message handlers
 
-void CPSGlobalColorDlg::OnClose() 
-{		
+void CPSGlobalColorDlg::OnClose()
+{
 	CDialog::OnClose();
 	if (_PN)
 		_PN->childPopupClosed(this);
 }
 
 ///===========================================================
-BOOL CPSGlobalColorDlg::OnInitDialog() 
-{		
+BOOL CPSGlobalColorDlg::OnInitDialog()
+{
 	CDialog::OnInitDialog();
 	_GlobalColorWrapper.PS = _Node->getPSPointer();
-	RECT r;	
-	CAttribDlgRGBA *adr = new CAttribDlgRGBA("GLOBAL_PS_COLOR", _Node);	
+	RECT r;
+	CAttribDlgRGBA *adr = new CAttribDlgRGBA("GLOBAL_PS_COLOR", _Node);
 	adr->setSchemeWrapper(&_GlobalColorWrapper);
 	adr->enableMemoryScheme(false);
 	adr->enableNbCycles(false);
@@ -103,7 +97,6 @@ BOOL CPSGlobalColorDlg::OnInitDialog()
 	adr->init(bmh, r.left, r.top, this);
 	pushWnd(adr);
 
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }

@@ -210,7 +210,10 @@ template <typename T>
 class CSceneClassDesc : public ISceneClassDesc
 {
 public:
-	CSceneClassDesc(const IDllPluginDescInternal *dllPluginDesc) : m_DllPluginDesc(dllPluginDesc) { }
+	CSceneClassDesc(const IDllPluginDescInternal *dllPluginDesc)
+	    : m_DllPluginDesc(dllPluginDesc)
+	{
+	}
 	virtual CSceneClass *create(CScene *scene) const { return static_cast<CSceneClass *>(new T(scene)); }
 	virtual void destroy(CSceneClass *sc) const { delete static_cast<T *>(sc); }
 	virtual const ucchar *displayName() const { return T::DisplayName.c_str(); }
@@ -218,6 +221,7 @@ public:
 	virtual NLMISC::CClassId classId() const { return T::ClassId; }
 	virtual TSClassId superClassId() const { return T::SuperClassId; }
 	virtual const IDllPluginDescInternal *dllPluginDesc() const { return m_DllPluginDesc; }
+
 private:
 	const IDllPluginDescInternal *m_DllPluginDesc;
 

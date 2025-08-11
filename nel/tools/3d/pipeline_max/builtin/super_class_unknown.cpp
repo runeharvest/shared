@@ -44,12 +44,10 @@ namespace BUILTIN {
 
 CSuperClassUnknown::CSuperClassUnknown()
 {
-
 }
 
 CSuperClassUnknown::~CSuperClassUnknown()
 {
-
 }
 
 } /* namespace BUILTIN */

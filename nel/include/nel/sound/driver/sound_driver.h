@@ -28,17 +28,16 @@
 #include "effect.h"
 
 /// This namespace contains the sound classes
-namespace NLSOUND
-{
-	class IBuffer;
-	class IListener;
-	class ISource;
-	class IMusicChannel;
-	class ISubmix;
+namespace NLSOUND {
+class IBuffer;
+class IListener;
+class ISource;
+class IMusicChannel;
+class ISubmix;
 
 // don't use eax.h anymore
-#if !defined( EAX_AVAILABLE )
-#	define EAX_AVAILABLE 0
+#if !defined(EAX_AVAILABLE)
+#define EAX_AVAILABLE 0
 #endif
 
 /*
@@ -46,7 +45,15 @@ namespace NLSOUND
  * For compatibility with old code.
  * Do not modify.
  */
-enum TSampleFormat { Mono8, Mono16ADPCM, Mono16, Stereo8, Stereo16, SampleFormatUnknown = (~0) };
+enum TSampleFormat
+{
+	Mono8,
+	Mono16ADPCM,
+	Mono16,
+	Stereo8,
+	Stereo16,
+	SampleFormatUnknown = (~0)
+};
 
 /**
  * Abstract sound driver (implemented in sound driver dynamic library)
@@ -84,9 +91,9 @@ public:
 	enum TSoundOptions
 	{
 		/// Allow the user to use the ADPCM encoding. (verify availability with getOption)
-		OptionAllowADPCM = 0x02, 
+		OptionAllowADPCM = 0x02,
 		/// Force software buffering (always true for XAudio2).
-		OptionSoftwareBuffer = 0x04, 
+		OptionSoftwareBuffer = 0x04,
 		/**
 		 *	Configuration to use manual or API (directx or open AL) rolloff factor.
 		 *	0 => API (directx, open AL, etc) rollOff control.
@@ -96,11 +103,11 @@ public:
 		 *		ISource::setAlpha() change the shape of attenuation (change the curve)
 		 *		IListener::setRollOffFactor() will fail
 		 */
-		OptionManualRolloff = 0x08, 
+		OptionManualRolloff = 0x08,
 		/// Enable local copy of buffer (used by OpenAL driver, required to build sample bank).
-		OptionLocalBufferCopy = 0x10, 
+		OptionLocalBufferCopy = 0x10,
 		/// Use to check availability of buffer streaming. (verify with getOption)
-		OptionHasBufferStreaming = 0x20, 
+		OptionHasBufferStreaming = 0x20,
 		/// Enable reverb
 		OptionReverbEffect = 0x40,
 		/// Enable occlusion & obstruction
@@ -117,7 +124,7 @@ public:
 	class IStringMapperProvider
 	{
 	public:
-		virtual ~IStringMapperProvider() {}
+		virtual ~IStringMapperProvider() { }
 		/// map a string
 		virtual NLMISC::TStringId map(const std::string &str) = 0;
 		/// unmap a string
@@ -138,17 +145,17 @@ public:
 	/** The static method which builds the sound driver instance
 	 * In case of failure, can throw one of these ESoundDriver exception objects:
 	 * ESoundDriverNotFound, ESoundDriverCorrupted, ESoundDriverOldVersion, ESoundDriverUnknownVersion
-	*/
+	 */
 	static ISoundDriver *createDriver(IStringMapperProvider *stringMapper, TDriver driverType = DriverAuto);
 
 	/// Constructor
 	ISoundDriver() { }
 	/// Destructor
-	virtual	~ISoundDriver() {}
+	virtual ~ISoundDriver() { }
 
 	/// Return a list of available devices for the user. The value at index 0 is empty, and is used for automatic device selection.
 	virtual void getDevices(std::vector<std::string> &devices) = 0;
-	/** Initialize the driver with a user selected device. 
+	/** Initialize the driver with a user selected device.
 	 * In case of failure, can throw one of these ESoundDriver exception objects:
 	 * ESoundDriverNotFound, ESoundDriverCorrupted, ESoundDriverOldVersion, ESoundDriverUnknownVersion
 	 * The driver instance should be deleted by the user after init failure.
@@ -159,7 +166,7 @@ public:
 	 *
 	 *	\param device If device.empty(), the default or most appropriate device is used.
 	 *	\param options The features you want enabled. Verify after init() with getOption() or getOptions().
-	*/
+	 */
 	virtual void initDevice(const std::string &device, TSoundOptions options) = 0;
 
 	/// Return options that are enabled (including those that cannot be disabled on this driver).
@@ -171,21 +178,21 @@ public:
 	virtual void commit3DChanges() = 0;
 
 	/// Create the listener instance
-	virtual	IListener *createListener() = 0;
+	virtual IListener *createListener() = 0;
 	/// Create a source, destroy with delete
-	virtual	ISource *createSource() = 0;
+	virtual ISource *createSource() = 0;
 	/// Create a sound buffer, destroy with delete
-	virtual	IBuffer *createBuffer() = 0;
+	virtual IBuffer *createBuffer() = 0;
 	/// Create a reverb effect
 	virtual IReverbEffect *createReverbEffect() { return NULL; }
 	/// Return the maximum number of sources that can created
 	virtual uint countMaxSources() = 0;
 	/// Return the maximum number of effects that can be created
 	virtual uint countMaxEffects() { return 0; }
-	
+
 	/// Write information about the driver to the output stream.
-	virtual void writeProfile(std::string& out) = 0;
-	
+	virtual void writeProfile(std::string &out) = 0;
+
 	/// Stuff
 	virtual void startBench() = 0;
 	virtual void endBench() = 0;
@@ -193,7 +200,7 @@ public:
 
 	/// Filled at createDriver()
 	const std::string &getDllName() const { return _DllName; }
-	
+
 	/// \name Stuff for drivers that have native music support
 	//@{
 	/// Create a native music channel, only supported by the FMod driver.
@@ -203,17 +210,22 @@ public:
 	 *  \param artist returns the song artist (empty if not available)
 	 *  \param title returns the title (empty if not available)
 	 */
-	virtual bool getMusicInfo(const std::string &/* filepath */, std::string &artist, std::string &title, float &length) { artist.clear(); title.clear(); length = 0.f; return false; }
+	virtual bool getMusicInfo(const std::string & /* filepath */, std::string &artist, std::string &title, float &length)
+	{
+		artist.clear();
+		title.clear();
+		length = 0.f;
+		return false;
+	}
 	/// Get audio/container extensions that are supported natively by the driver implementation.
 	virtual void getMusicExtensions(std::vector<std::string> &extensions) const = 0;
 	/// Return if a music extension is supported by the driver's music channel.
 	virtual bool isMusicExtensionSupported(const std::string &extension) const = 0;
 	//@}
-	
+
 private:
 	std::string _DllName;
 };
-
 
 /**
  * Sound driver exceptions
@@ -221,11 +233,19 @@ private:
 class ESoundDriver : public NLMISC::Exception
 {
 public:
-	ESoundDriver() : NLMISC::Exception( "Sound driver error" ) {}
-	ESoundDriver( const char *reason ) : NLMISC::Exception( reason ) {}
-	ESoundDriver( const std::string &reason ) : NLMISC::Exception( reason.c_str() ) {}
+	ESoundDriver()
+	    : NLMISC::Exception("Sound driver error")
+	{
+	}
+	ESoundDriver(const char *reason)
+	    : NLMISC::Exception(reason)
+	{
+	}
+	ESoundDriver(const std::string &reason)
+	    : NLMISC::Exception(reason.c_str())
+	{
+	}
 };
-
 
 /**
  * ESoundDriverNotFound
@@ -233,9 +253,11 @@ public:
 class ESoundDriverNotFound : public ESoundDriver
 {
 public:
-	ESoundDriverNotFound(const std::string &dllName) : ESoundDriver( dllName + " or third-party library not found" ) {}
+	ESoundDriverNotFound(const std::string &dllName)
+	    : ESoundDriver(dllName + " or third-party library not found")
+	{
+	}
 };
-
 
 /**
  * ESoundDriverCorrupted
@@ -243,9 +265,11 @@ public:
 class ESoundDriverCorrupted : public ESoundDriver
 {
 public:
-	ESoundDriverCorrupted(const std::string &dllName) : ESoundDriver( std::string("Can't get NLSOUND_createISoundDriverInstance from ") + dllName + " (Bad dll?)" ) {}
+	ESoundDriverCorrupted(const std::string &dllName)
+	    : ESoundDriver(std::string("Can't get NLSOUND_createISoundDriverInstance from ") + dllName + " (Bad dll?)")
+	{
+	}
 };
-
 
 /**
  * ESoundDriverOldVersion
@@ -253,9 +277,11 @@ public:
 class ESoundDriverOldVersion : public ESoundDriver
 {
 public:
-	ESoundDriverOldVersion(const std::string &dllName) : ESoundDriver( dllName + " is a too old version. Ask for a more recent file" ) {}
+	ESoundDriverOldVersion(const std::string &dllName)
+	    : ESoundDriver(dllName + " is a too old version. Ask for a more recent file")
+	{
+	}
 };
-
 
 /**
  * ESoundDriverUnknownVersion
@@ -263,9 +289,11 @@ public:
 class ESoundDriverUnknownVersion : public ESoundDriver
 {
 public:
-	ESoundDriverUnknownVersion(const std::string &dllName) : ESoundDriver( dllName + " is more recent than the application" ) {}
+	ESoundDriverUnknownVersion(const std::string &dllName)
+	    : ESoundDriver(dllName + " is more recent than the application")
+	{
+	}
 };
-
 
 /**
  * ESoundDriverCantCreateDriver
@@ -273,9 +301,11 @@ public:
 class ESoundDriverCantCreateDriver : public ESoundDriver
 {
 public:
-	ESoundDriverCantCreateDriver(const std::string &dllName) : ESoundDriver( dllName + " can't create driver" ) {}
+	ESoundDriverCantCreateDriver(const std::string &dllName)
+	    : ESoundDriver(dllName + " can't create driver")
+	{
+	}
 };
-
 
 /**
  * ESoundDriverGenBuf
@@ -283,9 +313,11 @@ public:
 class ESoundDriverGenBuf : public ESoundDriver
 {
 public:
-	ESoundDriverGenBuf() : ESoundDriver( "Unable to generate sound buffers" ) {}
+	ESoundDriverGenBuf()
+	    : ESoundDriver("Unable to generate sound buffers")
+	{
+	}
 };
-
 
 /**
  * ESoundDriverGenBuf
@@ -293,9 +325,11 @@ public:
 class ESoundDriverGenSrc : public ESoundDriver
 {
 public:
-	ESoundDriverGenSrc() : ESoundDriver( "Unable to generate sound sources" ) {}
+	ESoundDriverGenSrc()
+	    : ESoundDriver("Unable to generate sound sources")
+	{
+	}
 };
-
 
 /**
  * ESoundDriverNotSupp
@@ -303,11 +337,19 @@ public:
 class ESoundDriverNotSupp : public ESoundDriver
 {
 public:
-	ESoundDriverNotSupp() : ESoundDriver("Operation is not supported by the current sound driver") { }
-	ESoundDriverNotSupp(const char *reason) : ESoundDriver(reason) { }
-	ESoundDriverNotSupp(const std::string &reason) : ESoundDriver(reason.c_str()) { }
+	ESoundDriverNotSupp()
+	    : ESoundDriver("Operation is not supported by the current sound driver")
+	{
+	}
+	ESoundDriverNotSupp(const char *reason)
+	    : ESoundDriver(reason)
+	{
+	}
+	ESoundDriverNotSupp(const std::string &reason)
+	    : ESoundDriver(reason.c_str())
+	{
+	}
 };
-
 
 /**
  * ESoundDriverNoEnvironmentEffects : ESoundDriverNotSupp : ESoundDriver : NLMISC::Exception
@@ -315,9 +357,11 @@ public:
 class ESoundDriverNoEnvironmentEffects : public ESoundDriverNotSupp
 {
 public:
-	ESoundDriverNoEnvironmentEffects() : ESoundDriverNotSupp("Environment effects are not supported by the current sound driver") { }
+	ESoundDriverNoEnvironmentEffects()
+	    : ESoundDriverNotSupp("Environment effects are not supported by the current sound driver")
+	{
+	}
 };
-
 
 /**
  * ESoundDriverNoADPCM : ESoundDriverNotSupp : ESoundDriver : NLMISC::Exception
@@ -325,9 +369,11 @@ public:
 class ESoundDriverNoADPCM : public ESoundDriverNotSupp
 {
 public:
-	ESoundDriverNoADPCM() : ESoundDriverNotSupp("ADPCM is not supported by the current sound driver") { }
+	ESoundDriverNoADPCM()
+	    : ESoundDriverNotSupp("ADPCM is not supported by the current sound driver")
+	{
+	}
 };
-
 
 /**
  * ESoundDriverNoBufferStreaming : ESoundDriverNotSupp : ESoundDriver : NLMISC::Exception
@@ -335,9 +381,11 @@ public:
 class ESoundDriverNoBufferStreaming : public ESoundDriverNotSupp
 {
 public:
-	ESoundDriverNoBufferStreaming() : ESoundDriverNotSupp("Buffer streaming is not supported by the current sound driver") { }
+	ESoundDriverNoBufferStreaming()
+	    : ESoundDriverNotSupp("Buffer streaming is not supported by the current sound driver")
+	{
+	}
 };
-
 
 /**
  * ESoundDriverNoManualRolloff : ESoundDriverNotSupp : ESoundDriver : NLMISC::Exception
@@ -345,12 +393,13 @@ public:
 class ESoundDriverNoManualRolloff : public ESoundDriverNotSupp
 {
 public:
-	ESoundDriverNoManualRolloff() : ESoundDriverNotSupp("Manual rolloff alpha is not supported by the current sound driver") { }
+	ESoundDriverNoManualRolloff()
+	    : ESoundDriverNotSupp("Manual rolloff alpha is not supported by the current sound driver")
+	{
+	}
 };
 
-
 } // NLSOUND
-
 
 #endif // NL_SOUND_DRIVER_H
 

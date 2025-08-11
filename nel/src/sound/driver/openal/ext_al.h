@@ -29,19 +29,18 @@
 #endif
 
 #if EAX_AVAILABLE
-#	define OPENAL
-#	ifdef NL_OS_WINDOWS
-#		include <objbase.h>
-#	endif
-#	include <eax.h>
+#define OPENAL
+#ifdef NL_OS_WINDOWS
+#include <objbase.h>
+#endif
+#include <eax.h>
 #endif
 #if EFX_CREATIVE_AVAILABLE
-#	include <efx-creative.h>
-#	include <EFX-Util.h>
+#include <efx-creative.h>
+#include <EFX-Util.h>
 #endif
 
-extern "C"
-{
+extern "C" {
 
 void alExtInit();
 void alExtInitDevice(ALCdevice *device);
@@ -59,33 +58,33 @@ extern bool AlEnumerationExt;
 // ALC_ENUMERATE_ALL_EXT
 extern bool AlEnumerateAllExt;
 #ifndef ALC_DEFAULT_ALL_DEVICES_SPECIFIER
-#	define ALC_DEFAULT_ALL_DEVICES_SPECIFIER 0x1012
+#define ALC_DEFAULT_ALL_DEVICES_SPECIFIER 0x1012
 #endif
 #ifndef ALC_ALL_DEVICES_SPECIFIER
-#	define ALC_ALL_DEVICES_SPECIFIER 0x1013
+#define ALC_ALL_DEVICES_SPECIFIER 0x1013
 #endif
 
 // EAX-RAM (see OpenAL Programmer's Guide.pdf and http://icculus.org/alextreg/)
 extern bool AlExtXRam;
-typedef ALboolean (AL_APIENTRY *EAXSetBufferMode)(ALsizei n, ALuint *buffers, ALint value);
+typedef ALboolean(AL_APIENTRY *EAXSetBufferMode)(ALsizei n, ALuint *buffers, ALint value);
 extern EAXSetBufferMode eaxSetBufferMode;
-typedef ALenum (AL_APIENTRY *EAXGetBufferMode)(ALuint buffer, ALint *value);
+typedef ALenum(AL_APIENTRY *EAXGetBufferMode)(ALuint buffer, ALint *value);
 extern EAXGetBufferMode eaxGetBufferMode;
 
 // ALC_EXT_EFX (see Effects Extension Guide.pdf and http://icculus.org/alextreg/)
 extern bool AlExtEfx;
 #define ALC_MAX_AUXILIARY_SENDS 0x20003
-typedef void (AL_APIENTRY *LPALGENEFXOBJECTS)(ALsizei n, ALuint* objects);
-typedef void (AL_APIENTRY *LPALDELETEEFXOBJECTS)(ALsizei n, ALuint* objects);
-typedef ALboolean (AL_APIENTRY *LPALISEFXOBJECT)(ALuint id);
-typedef void (AL_APIENTRY *LPALEFXOBJECTI)(ALuint id, ALenum param, ALint value);
-typedef void (AL_APIENTRY *LPALEFXOBJECTIV)(ALuint id, ALenum param, ALint* values);
-typedef void (AL_APIENTRY *LPALEFXOBJECTF)(ALuint id, ALenum param, ALfloat value);
-typedef void (AL_APIENTRY *LPALEFXOBJECTFV)(ALuint id, ALenum param, ALfloat* values);
-typedef void (AL_APIENTRY *LPALGETEFXOBJECTI)(ALuint id, ALenum pname, ALint* value);
-typedef void (AL_APIENTRY *LPALGETEFXOBJECTIV)(ALuint id, ALenum pname, ALint* values);
-typedef void (AL_APIENTRY *LPALGETEFXOBJECTF)(ALuint id, ALenum pname, ALfloat* value);
-typedef void (AL_APIENTRY *LPALGETEFXOBJECTFV)(ALuint id, ALenum pname, ALfloat* values);
+typedef void(AL_APIENTRY *LPALGENEFXOBJECTS)(ALsizei n, ALuint *objects);
+typedef void(AL_APIENTRY *LPALDELETEEFXOBJECTS)(ALsizei n, ALuint *objects);
+typedef ALboolean(AL_APIENTRY *LPALISEFXOBJECT)(ALuint id);
+typedef void(AL_APIENTRY *LPALEFXOBJECTI)(ALuint id, ALenum param, ALint value);
+typedef void(AL_APIENTRY *LPALEFXOBJECTIV)(ALuint id, ALenum param, ALint *values);
+typedef void(AL_APIENTRY *LPALEFXOBJECTF)(ALuint id, ALenum param, ALfloat value);
+typedef void(AL_APIENTRY *LPALEFXOBJECTFV)(ALuint id, ALenum param, ALfloat *values);
+typedef void(AL_APIENTRY *LPALGETEFXOBJECTI)(ALuint id, ALenum pname, ALint *value);
+typedef void(AL_APIENTRY *LPALGETEFXOBJECTIV)(ALuint id, ALenum pname, ALint *values);
+typedef void(AL_APIENTRY *LPALGETEFXOBJECTF)(ALuint id, ALenum pname, ALfloat *value);
+typedef void(AL_APIENTRY *LPALGETEFXOBJECTFV)(ALuint id, ALenum pname, ALfloat *values);
 // source objects
 #define AL_DIRECT_FILTER 0x20005
 #define AL_AUXILIARY_SEND_FILTER 0x20006
@@ -122,7 +121,7 @@ extern LPALGETEFXOBJECTFV alGetEffectfv;
 #define AL_REVERB_REFLECTIONS_DELAY 0x0008
 #define AL_REVERB_LATE_REVERB_GAIN 0x0009
 #define AL_REVERB_LATE_REVERB_DELAY 0x000A
-#define AL_REVERB_AIR_ABSORPTION_GAINHF 0x000B 
+#define AL_REVERB_AIR_ABSORPTION_GAINHF 0x000B
 #define AL_REVERB_ROOM_ROLLOFF_FACTOR 0x000C
 #define AL_REVERB_DECAY_HFLIMIT 0x000D
 // filter objects
@@ -148,7 +147,7 @@ extern LPALGETEFXOBJECTFV alGetFilterfv;
 #define AL_FILTER_LAST_PARAMETER 0x8000
 #define AL_FILTER_TYPE 0x8001
 #define AL_FILTER_NULL 0x0000
-#define	AL_FILTER_LOWPASS 0x0001
+#define AL_FILTER_LOWPASS 0x0001
 #define AL_FILTER_HIGHPASS 0x0002
 #define AL_FILTER_BANDPASS 0x0003
 // submix objects
@@ -164,10 +163,9 @@ extern LPALGETEFXOBJECTIV alGetAuxiliaryEffectSlotiv;
 extern LPALGETEFXOBJECTF alGetAuxiliaryEffectSlotf;
 extern LPALGETEFXOBJECTFV alGetAuxiliaryEffectSlotfv;
 #define AL_EFFECTSLOT_EFFECT 0x0001
-#define AL_EFFECTSLOT_GAIN  0x0002
+#define AL_EFFECTSLOT_GAIN 0x0002
 #define AL_EFFECTSLOT_AUXILIARY_SEND_AUTO 0x0003
 #define AL_EFFECTSLOT_NULL 0x0000
-
 }
 
 #endif /* #ifndef NL_EXT_AL_H */

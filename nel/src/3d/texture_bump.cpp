@@ -21,8 +21,6 @@
 
 #include "nel/3d/texture_bump.h"
 
-
-
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
@@ -34,17 +32,18 @@ namespace /* anonymous */ {
 // Map that give the normalization factor for each map from its sharename. This avoid to generate several time the maps to get the normalization factor if a bumpmap is shared by severals CTextureBump instances;
 struct CNormalizationInfo
 {
-	uint  NumRefs;
+	uint NumRefs;
 	float NormalizationFactor;
 };
 typedef std::map<std::string, CNormalizationInfo> TNameToNI; // sharename to the normalization factor
-class CNameToNFStatic {
+class CNameToNFStatic
+{
 public:
 	TNameToNI Map;
 	bool Initialized;
-	CNameToNFStatic() : Initialized(true)
+	CNameToNFStatic()
+	    : Initialized(true)
 	{
-		
 	}
 	~CNameToNFStatic()
 	{
@@ -55,38 +54,37 @@ CNameToNFStatic s_NameToNF;
 
 } /* anonymous namespace */
 
-#define GET_HGT(x, y) ((sint) ((src[(uint) (x) % width + ((uint) (y) % height) * width] & 0x00ff00) >> 8))
+#define GET_HGT(x, y) ((sint)((src[(uint)(x) % width + ((uint)(y) % height) * width] & 0x00ff00) >> 8))
 /// create a DsDt texture from a height map (red component of a rgba bitmap)
 static void BuildDsDt(uint32 *src, sint width, sint height, uint16 *dest)
 {
-	#define GET_HGT(x, y) ((sint) ((src[(uint) (x) % width + ((uint) (y) % height) * width] & 0x00ff00) >> 8))
+#define GET_HGT(x, y) ((sint)((src[(uint)(x) % width + ((uint)(y) % height) * width] & 0x00ff00) >> 8))
 	sint x, y;
 	for (x = 0; x < width; ++x)
 	{
 		for (y = 0; y < height; ++y)
 		{
 			sint off = x + y * width;
-			sint16 ds = (sint16) (GET_HGT(x + 1, y) - GET_HGT(x - 1, y));
-			sint16 dt = (sint16) (GET_HGT(x, y + 1) - GET_HGT(x, y - 1));
-			dest[off] = (uint16) ((ds & 0xff)  | ((dt & 0xff) << 8));
+			sint16 ds = (sint16)(GET_HGT(x + 1, y) - GET_HGT(x - 1, y));
+			sint16 dt = (sint16)(GET_HGT(x, y + 1) - GET_HGT(x, y - 1));
+			dest[off] = (uint16)((ds & 0xff) | ((dt & 0xff) << 8));
 		}
 	}
 }
 
-
 /// create a rgba gradient texture from a height map (red component of a rgba bitmap)
 static void BuildDsDtAsRGBA(uint32 *src, sint width, sint height, uint32 *dest)
 {
-	#define GET_HGT(x, y) ((sint) ((src[(uint) (x) % width + ((uint) (y) % height) * width] & 0x00ff00) >> 8))
+#define GET_HGT(x, y) ((sint)((src[(uint)(x) % width + ((uint)(y) % height) * width] & 0x00ff00) >> 8))
 	sint x, y;
 	for (x = 0; x < width; ++x)
 	{
 		for (y = 0; y < height; ++y)
 		{
 			sint off = x + y * width;
-			sint16 ds = (sint16) (GET_HGT(x + 1, y) - GET_HGT(x - 1, y));
-			sint16 dt = (sint16) (GET_HGT(x, y + 1) - GET_HGT(x, y - 1));
-			dest[off] = 0xff000000 | (uint32) ((ds + 0x80) & 0xff) | (uint32) ((dt + 0x80) << 8);
+			sint16 ds = (sint16)(GET_HGT(x + 1, y) - GET_HGT(x - 1, y));
+			sint16 dt = (sint16)(GET_HGT(x, y + 1) - GET_HGT(x, y - 1));
+			dest[off] = 0xff000000 | (uint32)((ds + 0x80) & 0xff) | (uint32)((dt + 0x80) << 8);
 		}
 	}
 }
@@ -100,8 +98,8 @@ static float NormalizeDsDt(uint16 *src, sint width, sint height)
 
 	for (k = 0; k < size; ++k)
 	{
-		highestDelta = std::max(highestDelta, (uint) ::abs((sint) (sint8) (src[k] & 255)));
-		highestDelta = std::max(highestDelta, (uint) ::abs((sint) (sint8) (src[k] >> 8)));
+		highestDelta = std::max(highestDelta, (uint)::abs((sint)(sint8)(src[k] & 255)));
+		highestDelta = std::max(highestDelta, (uint)::abs((sint)(sint8)(src[k] >> 8)));
 	}
 
 	if (highestDelta == 0)
@@ -111,13 +109,13 @@ static float NormalizeDsDt(uint16 *src, sint width, sint height)
 	float normalizationFactor = 127.f / highestDelta;
 	for (k = 0; k < size; ++k)
 	{
-		float fdu = (sint8) (src[k] & 255) * normalizationFactor;
-		float fdv = (sint8) (src[k] >> 8) * normalizationFactor;
+		float fdu = (sint8)(src[k] & 255) * normalizationFactor;
+		float fdv = (sint8)(src[k] >> 8) * normalizationFactor;
 		NLMISC::clamp(fdu, -128, 127);
 		NLMISC::clamp(fdv, -128, 127);
-		uint8 du = (uint8) (sint8) fdu;
-		uint8 dv = (uint8) (sint8) fdv;
-		src[k] = (uint16) du | (((uint16) dv) << 8);
+		uint8 du = (uint8)(sint8)fdu;
+		uint8 dv = (uint8)(sint8)fdv;
+		src[k] = (uint16)du | (((uint16)dv) << 8);
 	}
 	return 1.f / normalizationFactor;
 }
@@ -131,8 +129,8 @@ static float NormalizeDsDtAsRGBA(uint32 *src, sint width, sint height)
 	/// first, get the highest delta
 	for (k = 0; k < size; ++k)
 	{
-		highestDelta = std::max(highestDelta, (uint) abs((sint8) ((src[k] & 0xff) - 0x80)));
-		highestDelta = std::max(highestDelta, (uint) abs((sint8) (((src[k] >> 8) & 0xff) - 0x80)));
+		highestDelta = std::max(highestDelta, (uint)abs((sint8)((src[k] & 0xff) - 0x80)));
+		highestDelta = std::max(highestDelta, (uint)abs((sint8)(((src[k] >> 8) & 0xff) - 0x80)));
 	}
 
 	if (highestDelta == 0)
@@ -142,33 +140,28 @@ static float NormalizeDsDtAsRGBA(uint32 *src, sint width, sint height)
 	float normalizationFactor = 127.f / highestDelta;
 	for (k = 0; k < size; ++k)
 	{
-		float fdu = ((sint8) ((src[k] & 255) - 0x80)) * normalizationFactor;
-		float fdv = ((sint8) (((src[k] >> 8) & 0xff) - 0x80)) * normalizationFactor;
+		float fdu = ((sint8)((src[k] & 255) - 0x80)) * normalizationFactor;
+		float fdv = ((sint8)(((src[k] >> 8) & 0xff) - 0x80)) * normalizationFactor;
 		NLMISC::clamp(fdu, -128, 127);
 		NLMISC::clamp(fdv, -128, 127);
-		uint8 du = (uint8) ((sint8) fdu + 0x80);
-		uint8 dv = (uint8) ((sint8) fdv + 0x80);
-		src[k] = (src[k] & 0xffff0000) | (uint32) du | (uint32) (((uint16) dv) << 8);
+		uint8 du = (uint8)((sint8)fdu + 0x80);
+		uint8 dv = (uint8)((sint8)fdv + 0x80);
+		src[k] = (src[k] & 0xffff0000) | (uint32)du | (uint32)(((uint16)dv) << 8);
 	}
 	return 1.f / normalizationFactor;
-
 }
-
-
-
-
 
 /*
  * Constructor
  */
-CTextureBump::CTextureBump() : _NormalizationFactor(NULL),
-							   _DisableSharing(false),
-							   _ForceNormalize(true)
+CTextureBump::CTextureBump()
+    : _NormalizationFactor(NULL)
+    , _DisableSharing(false)
+    , _ForceNormalize(true)
 {
 	// mipmapping not supported for now, disable it
 	ITexture::setFilterMode(ITexture::Linear, ITexture::LinearMipMapOff);
 }
-
 
 ///==============================================================================================
 void CTextureBump::setFilterMode(TMagFilter magf, TMinFilter minf)
@@ -184,7 +177,6 @@ void CTextureBump::setHeightMap(ITexture *heightMap)
 		touch();
 	}
 }
-
 
 ///==============================================================================================
 void CTextureBump::serial(NLMISC::IStream &f)
@@ -245,11 +237,11 @@ void CTextureBump::doGenerate(bool async)
 	// build the DsDt map
 	if (getUploadFormat() == RGBA8888)
 	{
-		BuildDsDtAsRGBA((uint32 *) &(_HeightMap->getPixels()[0]), width, height, (uint32 *) &(getPixels()[0]));
+		BuildDsDtAsRGBA((uint32 *)&(_HeightMap->getPixels()[0]), width, height, (uint32 *)&(getPixels()[0]));
 	}
 	else
 	{
-		BuildDsDt((uint32 *) &(_HeightMap->getPixels()[0]), width, height, (uint16 *) &(getPixels()[0]));
+		BuildDsDt((uint32 *)&(_HeightMap->getPixels()[0]), width, height, (uint16 *)&(getPixels()[0]));
 	}
 
 	float normalizationFactor = 1.0f;
@@ -258,11 +250,11 @@ void CTextureBump::doGenerate(bool async)
 	{
 		if (getUploadFormat() == RGBA8888)
 		{
-			normalizationFactor = NormalizeDsDtAsRGBA((uint32 *) &(getPixels()[0]), width, height);
+			normalizationFactor = NormalizeDsDtAsRGBA((uint32 *)&(getPixels()[0]), width, height);
 		}
 		else
 		{
-			normalizationFactor = NormalizeDsDt((uint16 *) &(getPixels()[0]), width, height);
+			normalizationFactor = NormalizeDsDt((uint16 *)&(getPixels()[0]), width, height);
 		}
 	}
 	// create entry in the map for the normalization factor
@@ -304,16 +296,14 @@ void CTextureBump::release()
 	}
 }
 
-
 ///==============================================================================================
-bool	CTextureBump::supportSharing() const
+bool CTextureBump::supportSharing() const
 {
 	return !_DisableSharing && _HeightMap && _HeightMap->supportSharing();
 }
 
-
 ///==============================================================================================
-std::string	CTextureBump::getShareName() const
+std::string CTextureBump::getShareName() const
 {
 	nlassert(supportSharing());
 	return "BumpDsDt:" + _HeightMap->getShareName();
@@ -360,8 +350,5 @@ CTextureBump::~CTextureBump()
 		}
 	}
 }
-
-
-
 
 } // NL3D

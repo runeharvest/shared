@@ -19,15 +19,12 @@
 #include "nel/pacs/move_element.h"
 #include "nel/pacs/move_element_inline.h"
 
-
 // leave not static else this workaround don't work
-void	dummyToAvoidStupidCompilerWarning_pacs_move_element_cpp()
+void dummyToAvoidStupidCompilerWarning_pacs_move_element_cpp()
 {
 }
 
-
-namespace NLPACS
-{
+namespace NLPACS {
 
 // ***************************************************************************
 

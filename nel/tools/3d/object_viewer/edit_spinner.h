@@ -14,13 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #if !defined(AFX_EDIT_SPINNER_H__CFDBE30D_F8C9_432E_9F17_0AFACE143BB0__INCLUDED_)
 #define AFX_EDIT_SPINNER_H__CFDBE30D_F8C9_432E_9F17_0AFACE143BB0__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
-#endif 
+#endif
 
 struct IPopupNotify;
 
@@ -33,7 +32,7 @@ class CDirectionAttr;
 
 class CEditSpinner : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CEditSpinner(NL3D::CPSBasisSpinner *sf, CParticleWorkspace::CNode *ownerNode, CWnd *pParent, IPopupNotify *pn);
 
@@ -43,26 +42,28 @@ public:
 	/// init this dialog
 	void init(CWnd *pParent);
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CEditSpinner)
-	enum { IDD = IDD_EDITSPINNER };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_EDITSPINNER
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CEditSpinner)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-	NL3D::CPSBasisSpinner     *_Spinner; // the spinner being edited
-	CDirectionAttr			  *_DirDlg;
-	CEditableRangeUInt		  *_NbSamplesDlg;
-	IPopupNotify			  *_PN;
+	NL3D::CPSBasisSpinner *_Spinner; // the spinner being edited
+	CDirectionAttr *_DirDlg;
+	CEditableRangeUInt *_NbSamplesDlg;
+	IPopupNotify *_PN;
 	CParticleWorkspace::CNode *_Node;
 
 	// Generated message map functions
@@ -74,20 +75,18 @@ protected:
 	// wrapper to set the number of samples in the spinner
 	struct CNbSampleWrapper : public IPSWrapperUInt
 	{
-		NL3D::CPSBasisSpinner     *S;
+		NL3D::CPSBasisSpinner *S;
 		uint32 get(void) const { return S->_F.getNumSamples(); }
 		void set(const uint32 &val) { S->_F.setNumSamples(val); }
 	} _NbSampleWrapper;
 
-
 	// wrapper to set the axis of the spinner
 	struct CAxisWrapper : public IPSWrapper<NLMISC::CVector>
 	{
-		NL3D::CPSBasisSpinner     *S;
+		NL3D::CPSBasisSpinner *S;
 		NLMISC::CVector get(void) const { return S->_F.getAxis(); }
 		void set(const NLMISC::CVector &axis) { S->_F.setAxis(axis); }
 	} _AxisWrapper;
-	
 
 	DECLARE_MESSAGE_MAP()
 };

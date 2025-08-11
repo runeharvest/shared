@@ -57,7 +57,7 @@ public:
 	uint Height;
 	bool Mode2D;
 	UTexture::TUploadFormat Format;
-	
+
 	// Data
 	NL3D::CTextureUser *TextureUser;
 	NLMISC::CSmartPtr<NL3D::ITexture> TextureInterface;
@@ -65,9 +65,9 @@ public:
 	bool Used;
 };
 
-CRenderTargetManager::CRenderTargetManager() : m_Driver(NULL)
+CRenderTargetManager::CRenderTargetManager()
+    : m_Driver(NULL)
 {
-	
 }
 
 CRenderTargetManager::~CRenderTargetManager()

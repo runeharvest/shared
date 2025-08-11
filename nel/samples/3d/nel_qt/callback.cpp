@@ -31,9 +31,21 @@ namespace NLQT {
 
 typedef CCallback<bool, const int &> CTestCallback;
 bool test_blah(const int &) { return false; }
-class CTestMeeeee { public: CTestMeeeee() { } bool test_method(const int &) { return true; } };
-void dummy_callback_cpp() { int whaha = 0; CTestCallback testCallback; testCallback.callback(whaha); testCallback = CTestCallback(test_blah); 
-	CTestMeeeee blahsomething; testCallback = CTestCallback(&blahsomething, &CTestMeeeee::test_method); }
+class CTestMeeeee
+{
+public:
+	CTestMeeeee() { }
+	bool test_method(const int &) { return true; }
+};
+void dummy_callback_cpp()
+{
+	int whaha = 0;
+	CTestCallback testCallback;
+	testCallback.callback(whaha);
+	testCallback = CTestCallback(test_blah);
+	CTestMeeeee blahsomething;
+	testCallback = CTestCallback(&blahsomething, &CTestMeeeee::test_method);
+}
 
 } /* namespace NLQT */
 

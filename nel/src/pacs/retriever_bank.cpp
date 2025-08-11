@@ -27,13 +27,13 @@ using namespace NLMISC;
 
 // CRetrieverBank methods implementation
 
-NLPACS::URetrieverBank *NLPACS::URetrieverBank::createRetrieverBank (const char *retrieverBank, bool loadAll)
+NLPACS::URetrieverBank *NLPACS::URetrieverBank::createRetrieverBank(const char *retrieverBank, bool loadAll)
 {
 
-	CIFile	file;
-	if (file.open( CPath::lookup(retrieverBank) ))
+	CIFile file;
+	if (file.open(CPath::lookup(retrieverBank)))
 	{
-		CRetrieverBank	*bank = new CRetrieverBank();
+		CRetrieverBank *bank = new CRetrieverBank();
 
 		bank->_AllLoaded = loadAll;
 		bank->_NamePrefix = CFile::getFilenameWithoutExtension(retrieverBank);
@@ -46,21 +46,20 @@ NLPACS::URetrieverBank *NLPACS::URetrieverBank::createRetrieverBank (const char 
 		return NULL;
 }
 
-
-void	NLPACS::URetrieverBank::deleteRetrieverBank (NLPACS::URetrieverBank *retrieverBank)
+void NLPACS::URetrieverBank::deleteRetrieverBank(NLPACS::URetrieverBank *retrieverBank)
 {
 	// Cast
-//	nlassert (dynamic_cast<NLPACS::CRetrieverBank*>(retrieverBank));
-	NLPACS::CRetrieverBank* r=static_cast<NLPACS::CRetrieverBank*>(retrieverBank);
+	//	nlassert (dynamic_cast<NLPACS::CRetrieverBank*>(retrieverBank));
+	NLPACS::CRetrieverBank *r = static_cast<NLPACS::CRetrieverBank *>(retrieverBank);
 
 	// Delete
 	delete r;
 }
 
-void	NLPACS::CRetrieverBank::clean()
+void NLPACS::CRetrieverBank::clean()
 {
-	uint	i;
-	for (i=0; i<_Retrievers.size(); ++i)
+	uint i;
+	for (i = 0; i < _Retrievers.size(); ++i)
 	{
 		_Retrievers[i].flushFullOrderedChains();
 	}

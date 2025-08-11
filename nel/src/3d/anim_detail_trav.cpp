@@ -23,50 +23,46 @@
 #include "nel/misc/hierarchical_timer.h"
 #include "nel/misc/debug.h"
 
-
 using namespace NLMISC;
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 CAnimDetailTrav::CAnimDetailTrav()
 {
-	CurrentDate=0;
+	CurrentDate = 0;
 	// prepare some space
 	_VisibleList.resize(1024);
-	_CurrentNumVisibleModels= 0;
+	_CurrentNumVisibleModels = 0;
 }
 
 // ***************************************************************************
-void				CAnimDetailTrav::clearVisibleList()
+void CAnimDetailTrav::clearVisibleList()
 {
-	_CurrentNumVisibleModels= 0;
+	_CurrentNumVisibleModels = 0;
 }
 
-
 // ***************************************************************************
-void				CAnimDetailTrav::traverse()
+void CAnimDetailTrav::traverse()
 {
-	H_AUTO( NL3D_TravAnimDetail );
+	H_AUTO(NL3D_TravAnimDetail);
 
 	// Inc the date.
 	CurrentDate++;
 
 	// Traverse all nodes of the visibility list.
-	for(uint i=0; i<_CurrentNumVisibleModels; i++)
+	for (uint i = 0; i < _CurrentNumVisibleModels; i++)
 	{
 		// NB: some model creation may be done by CParticleSystemModel during this pass.
 		// createModel() may resize _VisibleList.
 		// Hence, must test the actual _VisibleList vector, and not a temporary pointer.
-		CTransform		*model= _VisibleList[i];
+		CTransform *model = _VisibleList[i];
 		// If this object has an ancestorSkeletonModel
-		if(model->_AncestorSkeletonModel)
+		if (model->_AncestorSkeletonModel)
 		{
 			// then just skip it! because it will be parsed hierarchically by the first
 			// skeletonModel whith _AncestorSkeletonModel==NULL. (only if this one is visible)
@@ -77,7 +73,7 @@ void				CAnimDetailTrav::traverse()
 			// If this is a skeleton model, and because _AncestorSkeletonModel==NULL,
 			// then it means that it is the Root of a hierarchy of transform that have
 			// _AncestorSkeletonModel!=NULL.
-			if( model->isSkeleton() )
+			if (model->isSkeleton())
 			{
 				// Then I must update hierarchically me and the sons (according to HRC hierarchy graph) of this model.
 				traverseHrcRecurs(model);
@@ -91,28 +87,24 @@ void				CAnimDetailTrav::traverse()
 	}
 }
 
-
 // ***************************************************************************
-void	CAnimDetailTrav::traverseHrcRecurs(CTransform *model)
+void CAnimDetailTrav::traverseHrcRecurs(CTransform *model)
 {
 	// first, just doIt me
 	model->traverseAnimDetail();
 
-
 	// then doIt my sons in Hrc.
-	uint	num= model->hrcGetNumChildren();
-	for(uint i=0;i<num;i++)
+	uint num = model->hrcGetNumChildren();
+	for (uint i = 0; i < num; i++)
 		traverseHrcRecurs(model->hrcGetChild(i));
 }
 
-
 // ***************************************************************************
-void	CAnimDetailTrav::reserveVisibleList(uint numModels)
+void CAnimDetailTrav::reserveVisibleList(uint numModels)
 {
 	// enlarge only.
-	if(numModels>_VisibleList.size())
+	if (numModels > _VisibleList.size())
 		_VisibleList.resize(numModels);
 }
-
 
 } // NL3D

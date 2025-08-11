@@ -22,62 +22,65 @@
 #include "nel/gui/css_types.h"
 #include "nel/gui/css_length.h"
 
-namespace NLGUI
+namespace NLGUI {
+/**
+ * \brief CSS background info
+ * \date 2021-07-02 11:36 GMT
+ * \author Meelis Mägi (Nimetu)
+ */
+class CSSBackground
 {
-	/**
-	 * \brief CSS background info
-	 * \date 2021-07-02 11:36 GMT
-	 * \author Meelis Mägi (Nimetu)
-	 */
-	class CSSBackground
+public:
+	CSSBackground()
+	    : color(NLMISC::CRGBA::Transparent)
+	    , repeatX(CSS_VALUE_REPEAT)
+	    , repeatY(CSS_VALUE_REPEAT)
+	    , attachment(CSS_VALUE_SCROLL)
+	    , xAnchor(CSS_VALUE_LEFT)
+	    , yAnchor(CSS_VALUE_TOP)
+	    , clip(CSS_VALUE_BORDER_BOX)
+	    , origin(CSS_VALUE_PADDING_BOX)
+	    , size(CSS_VALUE_AUTO)
 	{
-	public:
-		CSSBackground()
-		:color(NLMISC::CRGBA::Transparent),
-			repeatX(CSS_VALUE_REPEAT), repeatY(CSS_VALUE_REPEAT), attachment(CSS_VALUE_SCROLL),
-			xAnchor(CSS_VALUE_LEFT), yAnchor(CSS_VALUE_TOP),
-			clip(CSS_VALUE_BORDER_BOX), origin(CSS_VALUE_PADDING_BOX), size(CSS_VALUE_AUTO)
-		{}
+	}
 
-		void setImage(const std::string &value);
-		void setPosition(const std::string &value);
-		void setSize(const std::string &value);
-		void setRepeat(const std::string &value);
-		void setOrigin(const std::string &value);
-		void setClip(const std::string &value);
-		void setAttachment(const std::string &value);
-		void setColor(const std::string &value);
+	void setImage(const std::string &value);
+	void setPosition(const std::string &value);
+	void setSize(const std::string &value);
+	void setRepeat(const std::string &value);
+	void setOrigin(const std::string &value);
+	void setClip(const std::string &value);
+	void setAttachment(const std::string &value);
+	void setColor(const std::string &value);
 
-	public:
-		// TODO: only final layer has color
-		NLMISC::CRGBA color;
-		std::string image;
+public:
+	// TODO: only final layer has color
+	NLMISC::CRGBA color;
+	std::string image;
 
-		CSSValueType repeatX;
-		CSSValueType repeatY;
-		CSSValueType attachment;
+	CSSValueType repeatX;
+	CSSValueType repeatY;
+	CSSValueType attachment;
 
-		CSSValueType xAnchor;
-		CSSValueType yAnchor;
-		CSSLength xPosition;
-		CSSLength yPosition;
+	CSSValueType xAnchor;
+	CSSValueType yAnchor;
+	CSSLength xPosition;
+	CSSLength yPosition;
 
-		CSSValueType clip;
-		CSSValueType origin;
+	CSSValueType clip;
+	CSSValueType origin;
 
-		CSSValueType size;
-		CSSLength width;
-		CSSLength height;
+	CSSValueType size;
+	CSSLength width;
+	CSSLength height;
 
-	private:
-		void positionFromOne(const std::vector<std::string> &parts);
-		void positionFromTwo(const std::vector<std::string> &parts);
-		void positionFromThree(const std::vector<std::string> &parts);
-		void positionFromFour(const std::vector<std::string> &parts);
-	};
+private:
+	void positionFromOne(const std::vector<std::string> &parts);
+	void positionFromTwo(const std::vector<std::string> &parts);
+	void positionFromThree(const std::vector<std::string> &parts);
+	void positionFromFour(const std::vector<std::string> &parts);
+};
 
-}//namespace
+} // namespace
 
 #endif // CL_CSS_BACKGROUND_H
-
-

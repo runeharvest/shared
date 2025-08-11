@@ -27,8 +27,7 @@
 //   - 0xD83C 0xDF0D
 //   - 0x0001F30D
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 NL_FORCE_INLINE void appendUtf8(std::string &str, u32char c)
 {

@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 #include "nel/misc/debug.h"
@@ -23,70 +21,67 @@
 
 using namespace std;
 
-namespace CREATURE_SIZE
+namespace CREATURE_SIZE {
+static map<string, ECreatureSize> StringToSizeMap;
+static map<ECreatureSize, string> SizeToStringMap;
+
+static bool mapInitialized = false;
+const static string unknown_str = "UNKNOWN";
+
+//-----------------------------------------------
+// initMap :
+//-----------------------------------------------
+void initMap()
 {
-	static map< string, ECreatureSize > StringToSizeMap;
-	static map< ECreatureSize, string > SizeToStringMap;	
+	mapInitialized = true;
 
-	static bool mapInitialized = false;
-	const static string unknown_str = "UNKNOWN";
+	StringToSizeMap.insert(make_pair(string("SMALL"), SMALL));
+	SizeToStringMap.insert(make_pair(SMALL, string("SMALL")));
 
+	StringToSizeMap.insert(make_pair(string("HOMIN"), HOMIN));
+	SizeToStringMap.insert(make_pair(HOMIN, string("HOMIN")));
 
-	//-----------------------------------------------
-	// initMap :
-	//-----------------------------------------------
-	void initMap()
+	StringToSizeMap.insert(make_pair(string("BIG"), BIG));
+	SizeToStringMap.insert(make_pair(BIG, string("BIG")));
+
+} // initMap //
+
+//-----------------------------------------------
+// stringToCreatureSize :
+//-----------------------------------------------
+ECreatureSize stringToCreatureSize(const string &str)
+{
+	if (!mapInitialized)
+		initMap();
+
+	map<string, ECreatureSize>::const_iterator it = StringToSizeMap.find(str);
+	if (it != StringToSizeMap.end())
 	{
-		mapInitialized = true;
-
-		StringToSizeMap.insert( make_pair( string("SMALL"), SMALL) );
-		SizeToStringMap.insert( make_pair( SMALL, string("SMALL") ) );
-
-		StringToSizeMap.insert( make_pair( string("HOMIN"), HOMIN) );
-		SizeToStringMap.insert( make_pair( HOMIN, string("HOMIN") ) );
-
-		StringToSizeMap.insert( make_pair( string("BIG"), BIG) );
-		SizeToStringMap.insert( make_pair( BIG, string("BIG") ) );
-
-	} // initMap //
-
-	//-----------------------------------------------
-	// stringToCreatureSize :
-	//-----------------------------------------------
-	ECreatureSize stringToCreatureSize(const string &str)
+		return (*it).second;
+	}
+	else
 	{
-		if ( !mapInitialized)
-			initMap();
+		return UNKNOWN;
+	}
+} // stringToCreatureSize //
 
-		map< string, ECreatureSize >::const_iterator it = StringToSizeMap.find( str );
-		if (it != StringToSizeMap.end() )
-		{
-			return (*it).second;
-		}
-		else
-		{
-			return UNKNOWN;
-		}
-	} // stringToCreatureSize //
+//-----------------------------------------------
+// creatureSizeToString :
+//-----------------------------------------------
+const string &creatureSizeToString(ECreatureSize size)
+{
+	if (!mapInitialized)
+		initMap();
 
-
-	//-----------------------------------------------
-	// creatureSizeToString :
-	//-----------------------------------------------
-	const string &creatureSizeToString(ECreatureSize size)
+	map<ECreatureSize, string>::const_iterator it = SizeToStringMap.find(size);
+	if (it != SizeToStringMap.end())
 	{
-		if ( !mapInitialized)
-			initMap();
-
-		map< ECreatureSize, string >::const_iterator it = SizeToStringMap.find( size );
-		if (it != SizeToStringMap.end() )
-		{
-			return (*it).second;
-		}
-		else
-		{
-			return unknown_str;
-		}
-	} // creatureSizeToString //
+		return (*it).second;
+	}
+	else
+	{
+		return unknown_str;
+	}
+} // creatureSizeToString //
 
 }; // CREATURE_SIZE

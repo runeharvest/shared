@@ -23,36 +23,34 @@
 // vegetable_list_box.h : header file
 //
 
-
-class	CVegetableDlg;
+class CVegetableDlg;
 
 /////////////////////////////////////////////////////////////////////////////
 // CVegetableListBox window
 
 class CVegetableListBox : public CListBox
 {
-// Construction
+	// Construction
 public:
 	CVegetableListBox();
 
-// Attributes
+	// Attributes
 public:
 	// Owner. Must be init
-	CVegetableDlg	*VegetableDlg;
+	CVegetableDlg *VegetableDlg;
 
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CVegetableListBox)
-	public:
-	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
+public:
+	virtual BOOL OnCmdMsg(UINT nID, int nCode, void *pExtra, AFX_CMDHANDLERINFO *pHandlerInfo);
 	virtual void MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct);
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CVegetableListBox();
 

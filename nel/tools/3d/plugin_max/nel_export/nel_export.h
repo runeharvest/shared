@@ -31,92 +31,89 @@ extern TCHAR *GetString(int id);
 
 extern HINSTANCE hInstance;
 
-#define CNELEXPORT_CLASS_ID	Class_ID(0x8c02158, 0x5a9e252b)
+#define CNELEXPORT_CLASS_ID Class_ID(0x8c02158, 0x5a9e252b)
 
-namespace NL3D
-{
-	class CSkeletonShape;
+namespace NL3D {
+class CSkeletonShape;
 }
 
-class CNelExport : public UtilityObj 
+class CNelExport : public UtilityObj
 {
 private:
-
 public:
-	
-	void BeginEditParams(Interface *ip,IUtil *iu);
-	void EndEditParams(Interface *ip,IUtil *iu);
+	void BeginEditParams(Interface *ip, IUtil *iu);
+	void EndEditParams(Interface *ip, IUtil *iu);
 	void Init(HWND hWnd);
 	void Destroy(HWND hWnd);
-	void DeleteThis() { }		
+	void DeleteThis() { }
 
-	CNelExport ();
+	CNelExport();
 
 	virtual ~CNelExport();
 
-	void init (bool view, bool errorInDialog, Interface	*ip, bool loadStruct);
+	void init(bool view, bool errorInDialog, Interface *ip, bool loadStruct);
 
-	TCHAR* fixupName(TCHAR* name);
-	bool nodeEnum(INode* pNode, bool selected);
-	bool doExport(bool selected=false);
+	TCHAR *fixupName(TCHAR *name);
+	bool nodeEnum(INode *pNode, bool selected);
+	bool doExport(bool selected = false);
 	bool freeExported(void);
-	void getSelectedNode (std::vector<INode*>& vectNode);
+	void getSelectedNode(std::vector<INode *> &vectNode);
 
-	bool	exportZone	(const std::string &sName, INode& node, TimeValue time);
-	bool	exportMesh	(const std::string &sPath, INode& node, TimeValue time);
-	bool	exportAnim	(const std::string &sPath, std::vector<INode*>& vectNode, TimeValue time, bool scene);
-	bool	exportSWT	(const std::string &sPath, std::vector<INode*>& vectNode);
+	bool exportZone(const std::string &sName, INode &node, TimeValue time);
+	bool exportMesh(const std::string &sPath, INode &node, TimeValue time);
+	bool exportAnim(const std::string &sPath, std::vector<INode *> &vectNode, TimeValue time, bool scene);
+	bool exportSWT(const std::string &sPath, std::vector<INode *> &vectNode);
 
-	bool	exportInstanceGroup	(std::string filename, std::vector<INode*>& vectNode);
-	bool	exportSkeleton	(const std::string &sPath, INode* pNode, TimeValue time);
+	bool exportInstanceGroup(std::string filename, std::vector<INode *> &vectNode);
+	bool exportSkeleton(const std::string &sPath, INode *pNode, TimeValue time);
 
-	bool	exportCollision	(const std::string &sPath, std::vector<INode *> &nodes, TimeValue time);
+	bool exportCollision(const std::string &sPath, std::vector<INode *> &nodes, TimeValue time);
 
-	bool	exportPACSPrimitives (const std::string &sPath, std::vector<INode *> &nodes, TimeValue time);
+	bool exportPACSPrimitives(const std::string &sPath, std::vector<INode *> &nodes, TimeValue time);
 
-	bool	exportVegetable (const std::string &sPath, INode& node, TimeValue time);
+	bool exportVegetable(const std::string &sPath, INode &node, TimeValue time);
 
-	bool	exportLodCharacter (const std::string &sPath, INode& node, TimeValue time);
+	bool exportLodCharacter(const std::string &sPath, INode &node, TimeValue time);
 
-	void	viewMesh (TimeValue time);
+	void viewMesh(TimeValue time);
 
 	static void initOptions(); // read the CNelExportSceneStruct from disk or init it
-	static void deleteLM(INode& ZeNode); // the export scene struct MUST be initialized before calling this fn
-	void			OnNodeProperties (const std::set<INode*> &listNode);
+	static void deleteLM(INode &ZeNode); // the export scene struct MUST be initialized before calling this fn
+	void OnNodeProperties(const std::set<INode *> &listNode);
 
-	ULONG SelectFileForSave(HWND Parent, const TCHAR* Title, const TCHAR* Mask, std::string &FileName);
-	ULONG SelectDir(HWND Parent, const TCHAR* Title, std::string &Path);
+	ULONG SelectFileForSave(HWND Parent, const TCHAR *Title, const TCHAR *Mask, std::string &FileName);
+	ULONG SelectDir(HWND Parent, const TCHAR *Title, std::string &Path);
 
 	// The nel export objtect
-	CExportNel		*_ExportNel;
+	CExportNel *_ExportNel;
 
 	// The interface pointer
-	Interface		*_Ip;
+	Interface *_Ip;
 
 	// View
 	// bool			_View;
 
 	// View
-	bool			_ErrorInDialog;
+	bool _ErrorInDialog;
 
 	// Handle problematic file handles with max.
-	bool			_TerminateOnFileOpenIssues;
+	bool _TerminateOnFileOpenIssues;
 };
 
-class CNelExportClassDesc:public ClassDesc2 
+class CNelExportClassDesc : public ClassDesc2
 {
-	public:
-	int 			IsPublic() {return 1;}
-	void *			Create(BOOL loading = FALSE);
-	const MCHAR *	ClassName() {return _M("NeL Export");}
+public:
+	int IsPublic() { return 1; }
+	void *Create(BOOL loading = FALSE);
+	const MCHAR *ClassName() { return _M("NeL Export"); }
 #if (MAX_VERSION_MAJOR >= 24)
 	virtual const TCHAR *NonLocalizedClassName() NL_OVERRIDE { return _M("NeL Export"); }
 #endif
-	SClass_ID		SuperClassID() {return UTILITY_CLASS_ID;}
-	Class_ID		ClassID() {return CNELEXPORT_CLASS_ID;}
-	const MCHAR* 	Category() {return _M("NeL Tools");}
-	const MCHAR*	InternalName() { return _M("NeL export and view"); }	// returns fixed parsable name (scripter-visible name)
-	HINSTANCE		HInstance() { return hInstance; }				// returns owning module handle
+	SClass_ID SuperClassID() { return UTILITY_CLASS_ID; }
+	Class_ID ClassID() { return CNELEXPORT_CLASS_ID; }
+	const MCHAR *Category() { return _M("NeL Tools"); }
+	const MCHAR *InternalName() { return _M("NeL export and view"); } // returns fixed parsable name (scripter-visible name)
+	HINSTANCE HInstance() { return hInstance; } // returns owning module handle
 };
 
 extern CNelExportClassDesc CNelExportDesc;
@@ -124,6 +121,5 @@ extern CNelExportClassDesc CNelExportDesc;
 extern CNelExport theCNelExport;
 
 void nelExportTerminateProcess();
-
 
 #endif // __NEL_EXPORT__H

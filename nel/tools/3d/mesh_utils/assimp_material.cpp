@@ -71,16 +71,16 @@ void assimpMaterial(NL3D::CMaterial &mat, CMeshUtilsContext &context, const aiMa
 		mat.setDoubleSided(i != 0);
 
 	if (am->Get(AI_MATKEY_BLEND_FUNC, i) == aiReturn_SUCCESS) switch ((aiBlendMode)i)
-	{
-	case aiBlendMode_Default:
-		mat.setSrcBlend(CMaterial::srcalpha);
-		mat.setDstBlend(CMaterial::invsrcalpha);
-		break;
-	case aiBlendMode_Additive:
-		mat.setSrcBlend(CMaterial::one);
-		mat.setDstBlend(CMaterial::one);
-		break;
-	}
+		{
+		case aiBlendMode_Default:
+			mat.setSrcBlend(CMaterial::srcalpha);
+			mat.setDstBlend(CMaterial::invsrcalpha);
+			break;
+		case aiBlendMode_Additive:
+			mat.setSrcBlend(CMaterial::one);
+			mat.setDstBlend(CMaterial::one);
+			break;
+		}
 
 	// Colors follow GL convention
 	// "While the ambient, diffuse, specular and emission
@@ -114,10 +114,10 @@ void assimpMaterial(NL3D::CMaterial &mat, CMeshUtilsContext &context, const aiMa
 	if (texCount > IDRV_MAT_MAXTEXTURES)
 	{
 		tlwarning(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
-			"Material '%s' has more than %i textures (%i textures found)", amname.C_Str(), IDRV_MAT_MAXTEXTURES, texCount);
+		    "Material '%s' has more than %i textures (%i textures found)", amname.C_Str(), IDRV_MAT_MAXTEXTURES, texCount);
 		texCount = IDRV_MAT_MAXTEXTURES;
 	}
-	
+
 	for (unsigned int ti = 0; ti < texCount; ++ti)
 	{
 		aiString path;
@@ -129,7 +129,7 @@ void assimpMaterial(NL3D::CMaterial &mat, CMeshUtilsContext &context, const aiMa
 		if (am->GetTexture(aiTextureType_DIFFUSE, ti, &path, &mapping, &uvindex, &blend, &op, &mapmode) != aiReturn_SUCCESS)
 		{
 			tlerror(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
-				"Failed to get texture %i in material '%s'", ti, amname.C_Str());
+			    "Failed to get texture %i in material '%s'", ti, amname.C_Str());
 			break;
 		}
 
@@ -137,8 +137,8 @@ void assimpMaterial(NL3D::CMaterial &mat, CMeshUtilsContext &context, const aiMa
 		std::string knownPath = CPath::lookup(fileName, false, false, false);
 		if (knownPath.empty())
 		{
-			tlwarning(context.ToolLogger, context.Settings.SourceFilePath.c_str(), 
-				"Texture '%s' referenced in material '%s' but not found in the database search paths", fileName.c_str(), amname.C_Str());
+			tlwarning(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
+			    "Texture '%s' referenced in material '%s' but not found in the database search paths", fileName.c_str(), amname.C_Str());
 		}
 
 		// NeL supports bitmap and cubemap, but we import only basic bitmap here. Cubemap can be inserted from the mesh editor tool
@@ -209,19 +209,19 @@ void assimpMaterials(CMeshUtilsContext &context)
 		if (am->Get(AI_MATKEY_NAME, amname) != aiReturn_SUCCESS)
 		{
 			tlerror(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
-				"Material has no name");
+			    "Material has no name");
 			continue;
 		}
 
 		if (materialNames.find(amname.C_Str()) != materialNames.end())
 		{
 			tlerror(context.ToolLogger, context.Settings.SourceFilePath.c_str(),
-				"Material name '%s' used more than once", amname.C_Str());
+			    "Material name '%s' used more than once", amname.C_Str());
 			continue;
 		}
-		
+
 		if (context.SceneMeta.Materials.find(amname.C_Str())
-			== context.SceneMeta.Materials.end())
+		    == context.SceneMeta.Materials.end())
 		{
 			materialNames.insert(amname.C_Str());
 			context.SceneMeta.Materials[amname.C_Str()] = assimpMaterial(context, am);

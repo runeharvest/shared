@@ -26,19 +26,15 @@
 #include "nel/sound/sound.h"
 #include <string>
 
-namespace NLSOUND
-{
+namespace NLSOUND {
 
 class ISoundController;
 
-
-typedef std::basic_string<uint16>	uint16_string;
-
+typedef std::basic_string<uint16> uint16_string;
 
 class CComplexSound : public CSound
 {
 public:
-
 	enum TPATTERN_MODE
 	{
 		MODE_UNDEFINED,
@@ -47,19 +43,18 @@ public:
 		MODE_SPARSE
 	};
 
-	bool							isDetailed() const;
-	uint32							getDuration();
+	bool isDetailed() const;
+	uint32 getDuration();
 
+	TPATTERN_MODE getPatternMode() { return _PatternMode; }
+	void setPatternMode(TPATTERN_MODE patternMode) { _PatternMode = patternMode; }
 
-	TPATTERN_MODE					getPatternMode()							{ return _PatternMode;}
-	void							setPatternMode(TPATTERN_MODE patternMode)	{ _PatternMode = patternMode;}
+	const std::vector<uint32> &getSoundSeq() const { return _SoundSeq; }
+	const std::vector<uint32> &getDelaySeq() const { return _DelaySeq; }
+	NLMISC::TStringId getSound(uint index) const { return !_Sounds.empty() ? _Sounds[index % _Sounds.size()] : 0; }
+	const std::vector<NLMISC::TStringId> &getSounds() const { return _Sounds; }
 
-	const std::vector<uint32>		&getSoundSeq() const						{ return _SoundSeq;}
-	const std::vector<uint32>		&getDelaySeq() const						{ return _DelaySeq;}
-	NLMISC::TStringId				getSound(uint index) const					{ return !_Sounds.empty() ? _Sounds[index%_Sounds.size()]:0;}
-	const std::vector<NLMISC::TStringId>	&getSounds() const					{ return _Sounds;}
-
-	uint32							getFadeLength() const						{ return _XFadeLength;}
+	uint32 getFadeLength() const { return _XFadeLength; }
 
 	/** Constructor */
 	CComplexSound();
@@ -68,51 +63,48 @@ public:
 	virtual ~CComplexSound();
 
 	/// Load the sound parameters from georges' form
-	virtual void					importForm(const std::string& filename, NLGEORGES::UFormElm& formRoot);
+	virtual void importForm(const std::string &filename, NLGEORGES::UFormElm &formRoot);
 
 	/// \name Tempo
 	//@{
-	virtual float					getTicksPerSecond()							{ return _TicksPerSeconds; }
-	virtual void					setTicksPerSecond(float ticks)				{ _TicksPerSeconds = ticks; }
+	virtual float getTicksPerSecond() { return _TicksPerSeconds; }
+	virtual void setTicksPerSecond(float ticks) { _TicksPerSeconds = ticks; }
 	//@}
 
-	TSOUND_TYPE						getSoundType() {return SOUND_COMPLEX;};
+	TSOUND_TYPE getSoundType() { return SOUND_COMPLEX; };
 
-	void							getSubSoundList(std::vector<std::pair<std::string, CSound*> > &subsounds) const;
-	bool							doFadeIn()								{ return _DoFadeIn; }
-	bool							doFadeOut()								{ return _DoFadeOut; }
+	void getSubSoundList(std::vector<std::pair<std::string, CSound *>> &subsounds) const;
+	bool doFadeIn() { return _DoFadeIn; }
+	bool doFadeOut() { return _DoFadeOut; }
 
-	void							serial(NLMISC::IStream &s);
-
+	void serial(NLMISC::IStream &s);
 
 private:
+	void parseSequence(const std::string &str, std::vector<uint32> &seq, uint scale = 1);
+	virtual float getMaxDistance() const;
 
-	void							parseSequence(const std::string &str, std::vector<uint32> &seq, uint scale = 1);
-	virtual float					getMaxDistance() const;
-
-	TPATTERN_MODE					_PatternMode;
-	std::vector<NLMISC::TStringId>	_Sounds;
-	float							_TicksPerSeconds;
-	std::vector<uint32>				_SoundSeq;
+	TPATTERN_MODE _PatternMode;
+	std::vector<NLMISC::TStringId> _Sounds;
+	float _TicksPerSeconds;
+	std::vector<uint32> _SoundSeq;
 	/// Sequence of delay in millisec.
-	std::vector<uint32>			_DelaySeq;
+	std::vector<uint32> _DelaySeq;
 
 	/// Duration of xfade in millisec.
-	uint32						_XFadeLength;
+	uint32 _XFadeLength;
 	/// Flag for fade in
-	bool						_DoFadeIn;
+	bool _DoFadeIn;
 	/// Flag for fade out (only on normal termination, not explicit stop).
-	bool						_DoFadeOut;
+	bool _DoFadeOut;
 
-	mutable bool				_MaxDistValid;
+	mutable bool _MaxDistValid;
 
 	// Duration of sound.
-	uint32						_Duration;
+	uint32 _Duration;
 	// flag for validity of duration (after first evaluation).
-	bool						_DurationValid;
+	bool _DurationValid;
 };
 
 } // namespace
 
 #endif // NL_COMPLEX_SOUND_H
-

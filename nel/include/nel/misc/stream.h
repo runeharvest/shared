@@ -20,26 +20,23 @@
 #ifndef NL_STREAM_H
 #define NL_STREAM_H
 
-#include	"types_nl.h"
-#include	"ucstring.h"
-#include	"class_registry.h"
-#include	"common.h"
+#include "types_nl.h"
+#include "ucstring.h"
+#include "class_registry.h"
+#include "common.h"
 
-#include	<utility>
-#include	<string>
-#include	<vector>
-#include	<deque>
-#include	<list>
-#include	<set>
-#include	<map>
+#include <utility>
+#include <string>
+#include <vector>
+#include <deque>
+#include <list>
+#include <set>
+#include <map>
 
-namespace	NLMISC
-{
+namespace NLMISC {
 
-
-class	IStream;
-class	CMemStream;
-
+class IStream;
+class CMemStream;
 
 // ======================================================================================================
 // ======================================================================================================
@@ -48,19 +45,19 @@ class	CMemStream;
 // ======================================================================================================
 
 // For Big/little Endian.
-#  define NLMISC_BSWAP16(src)	(src) = (((src)>>8)&0xFF) | (((src)&0xFF)<<8)
-#  if defined(NL_OS_WINDOWS) && !defined(NL_NO_ASM)
-#    define NLMISC_BSWAP32(src) _asm mov eax,(src) _asm bswap eax _asm mov (src),eax
-#  else
-#    define NLMISC_BSWAP32(src) (src) = (((src)>>24)&0xFF) | ((((src)>>16)&0xFF)<<8) | ((((src)>>8)&0xFF)<<16) | (((src)&0xFF)<<24)
-#  endif
-#  define NLMISC_BSWAP64(src) (src) = (((src)>>56)&0xFF) | ((((src)>>48)&0xFF)<<8) | ((((src)>>40)&0xFF)<<16) | ((((src)>>32)&0xFF)<<24) | ((((src)>>24)&0xFF)<<32) | ((((src)>>16)&0xFF)<<40) | ((((src)>>8)&0xFF)<<48) | (((src)&0xFF)<<56)
+#define NLMISC_BSWAP16(src) (src) = (((src) >> 8) & 0xFF) | (((src) & 0xFF) << 8)
+#if defined(NL_OS_WINDOWS) && !defined(NL_NO_ASM)
+#define NLMISC_BSWAP32(src) _asm mov eax, (src) _asm bswap eax _asm mov(src), eax
+#else
+#define NLMISC_BSWAP32(src) (src) = (((src) >> 24) & 0xFF) | ((((src) >> 16) & 0xFF) << 8) | ((((src) >> 8) & 0xFF) << 16) | (((src) & 0xFF) << 24)
+#endif
+#define NLMISC_BSWAP64(src) (src) = (((src) >> 56) & 0xFF) | ((((src) >> 48) & 0xFF) << 8) | ((((src) >> 40) & 0xFF) << 16) | ((((src) >> 32) & 0xFF) << 24) | ((((src) >> 24) & 0xFF) << 32) | ((((src) >> 16) & 0xFF) << 40) | ((((src) >> 8) & 0xFF) << 48) | (((src) & 0xFF) << 56)
 
 // convert a 4 characters string to uint32
 #ifdef NL_LITTLE_ENDIAN
-#	define NELID(x) (uint32((x[0] << 24) | (x[1] << 16) | (x[2] << 8) | (x[3])))
+#define NELID(x) (uint32((x[0] << 24) | (x[1] << 16) | (x[2] << 8) | (x[3])))
 #else
-#	define NELID(x) (uint32((x[3] << 24) | (x[2] << 16) | (x[1] << 8) | (x[0])))
+#define NELID(x) (uint32((x[3] << 24) | (x[2] << 16) | (x[1] << 8) | (x[0])))
 #endif
 
 // ======================================================================================================
@@ -73,36 +70,60 @@ class	CMemStream;
  */
 struct EStream : public Exception
 {
-	EStream() : Exception( "Stream Error" ) {}
+	EStream()
+	    : Exception("Stream Error")
+	{
+	}
 
-	EStream( const std::string& str ) : Exception( str ) {}
+	EStream(const std::string &str)
+	    : Exception(str)
+	{
+	}
 
-	EStream( const IStream &f );
+	EStream(const IStream &f);
 
-	EStream( const IStream &f, const std::string& str );
+	EStream(const IStream &f, const std::string &str);
 
-	virtual ~EStream() NL_OVERRIDE {}
+	virtual ~EStream() NL_OVERRIDE { }
 
 	// May Not be Filled...
-	std::string	StreamName;
+	std::string StreamName;
 };
 
 struct EOlderStream : public EStream
 {
-	EOlderStream() : EStream("The version in stream is older than the class" ) {}
-	EOlderStream(const IStream &f) : EStream(f, "The version in stream is older than the class" ) {}
+	EOlderStream()
+	    : EStream("The version in stream is older than the class")
+	{
+	}
+	EOlderStream(const IStream &f)
+	    : EStream(f, "The version in stream is older than the class")
+	{
+	}
 };
 
 struct ENewerStream : public EStream
 {
-	ENewerStream() : EStream("The version in stream is newer than the class" ) {}
-	ENewerStream(const IStream &f) : EStream(f, "The version in stream is newer than the class" ) {}
+	ENewerStream()
+	    : EStream("The version in stream is newer than the class")
+	{
+	}
+	ENewerStream(const IStream &f)
+	    : EStream(f, "The version in stream is newer than the class")
+	{
+	}
 };
 
 struct EInvalidDataStream : public EStream
 {
-	EInvalidDataStream() : EStream("Invalid data format" ) {}
-	EInvalidDataStream(const IStream &f) : EStream(f, "Invalid data format" ) {}
+	EInvalidDataStream()
+	    : EStream("Invalid data format")
+	{
+	}
+	EInvalidDataStream(const IStream &f)
+	    : EStream(f, "Invalid data format")
+	{
+	}
 
 	// msg must contain "%u" for the position of 'size'
 	EInvalidDataStream(const char *msg, uint size);
@@ -110,33 +131,52 @@ struct EInvalidDataStream : public EStream
 
 struct ESeekNotSupported : public EStream
 {
-	ESeekNotSupported() : EStream("Seek fonctionnality is not supported" ) {}
-	ESeekNotSupported(const IStream &f) : EStream(f, "Seek fonctionnality is not supported" ) {}
+	ESeekNotSupported()
+	    : EStream("Seek fonctionnality is not supported")
+	{
+	}
+	ESeekNotSupported(const IStream &f)
+	    : EStream(f, "Seek fonctionnality is not supported")
+	{
+	}
 };
 
 struct ENotOutputStream : public EStream
 {
-	ENotOutputStream() : EStream("The stream is NOT an output stream, can't write in" ) {}
-	ENotOutputStream(const IStream &f) : EStream(f, "The stream is NOT an output stream, can't write in" ) {}
+	ENotOutputStream()
+	    : EStream("The stream is NOT an output stream, can't write in")
+	{
+	}
+	ENotOutputStream(const IStream &f)
+	    : EStream(f, "The stream is NOT an output stream, can't write in")
+	{
+	}
 };
 struct ENotInputStream : public EStream
 {
-	ENotInputStream () : EStream("The stream is NOT an input stream, cannot read in" ) {}
-	ENotInputStream (const IStream &f) : EStream(f, "The stream is NOT an input stream, cannot read in" ) {}
+	ENotInputStream()
+	    : EStream("The stream is NOT an input stream, cannot read in")
+	{
+	}
+	ENotInputStream(const IStream &f)
+	    : EStream(f, "The stream is NOT an input stream, cannot read in")
+	{
+	}
 };
 
 /// This exception is raised when someone tries to serialize in more than there is.
 struct EStreamOverflow : public EStream
 {
-	EStreamOverflow() : EStream( "Stream Overflow Error" ) {}
+	EStreamOverflow()
+	    : EStream("Stream Overflow Error")
+	{
+	}
 
 	// msg must contain "%u" for the position of 'size'
 	EStreamOverflow(const char *msg, uint size);
 };
 
-
-class	IStreamable;
-
+class IStreamable;
 
 // ======================================================================================================
 /**
@@ -172,22 +212,22 @@ class	IStreamable;
  class A
  {
  public:
-	float	x;
-	uint32	y;
-	Class1	a;		// this class must provide a serial() method too...
-	Base	*c,*d;	// Base must derive from IStreamable
-	vector<Class2>	tab;
+    float	x;
+    uint32	y;
+    Class1	a;		// this class must provide a serial() method too...
+    Base	*c,*d;	// Base must derive from IStreamable
+    vector<Class2>	tab;
 
  public:
-	void	serial(IStream &f)
-	{
-		sint	streamver= f.serialVersion(3);
-		f.serial(x,y,a);
-		f.serialPtr(c);
-		f.serialCont(tab);
-		if(streamver>=2)
-			f.serialPtr(d);
-	}
+    void	serial(IStream &f)
+    {
+        sint	streamver= f.serialVersion(3);
+        f.serial(x,y,a);
+        f.serialPtr(c);
+        f.serialCont(tab);
+        if(streamver>=2)
+            f.serialPtr(d);
+    }
  };
  \endcode
  *
@@ -208,16 +248,14 @@ public:
 	 * By default, the behavior is throwOnOlder=false, throwOnNewer=true.
 	 * \see serialVersion() getVersionException()
 	 */
-	static	void	setVersionException(bool throwOnOlder, bool throwOnNewer);
+	static void setVersionException(bool throwOnOlder, bool throwOnNewer);
 	/**
 	 * Get the behavior of IStream regarding input stream that are older/newer than the class.
 	 * \see serialVersion() setVersionException()
 	 */
-	static	void	getVersionException(bool &throwOnOlder, bool &throwOnNewer);
-
+	static void getVersionException(bool &throwOnOlder, bool &throwOnNewer);
 
 public:
-
 	/**
 	 * Constructor.
 	 * Notice that those behavior can be set at construction only.
@@ -226,22 +264,22 @@ public:
 	explicit IStream(bool inputStream);
 
 	/// Destructor.
-	virtual ~IStream() {}
+	virtual ~IStream() { }
 
 	/// Copy constructor
-	IStream( const IStream& other );
+	IStream(const IStream &other);
 
 	/// Assignment operator
-	IStream&		operator=( const IStream& other );
+	IStream &operator=(const IStream &other);
 
 	/// exchange
-	void			swap(IStream &other);
+	void swap(IStream &other);
 
 	/// Is this stream a Read/Input stream?
-	bool			isReading() const;
+	bool isReading() const;
 
 	// is it a xml stream ?
-	bool			isXML() const { return _XML; }
+	bool isXML() const { return _XML; }
 
 	/**
 	 * Template Object serialisation.
@@ -251,38 +289,39 @@ public:
 	 * a serial() method to your object. Or you may have use serial with a int / uint / sint type. REMEMBER YOU CANNOT
 	 * do this, since those type have unspecified length.
 	 */
-    template<class T>
-	void			serial(T &obj)  { obj.serial(*this); }
+	template <class T>
+	void serial(T &obj) { obj.serial(*this); }
 
 	// an utility template to unconst a type
-	template <class T> static T& unconst(const T &t) { return const_cast<T&>(t);}
+	template <class T>
+	static T &unconst(const T &t) { return const_cast<T &>(t); }
 
-#define nlWriteSerial(_stream, _obj) 		\
-	if ((_stream).isReading())			\
-		throw NLMISC::ENotOutputStream();	\
+#define nlWriteSerial(_stream, _obj)      \
+	if ((_stream).isReading())            \
+		throw NLMISC::ENotOutputStream(); \
 	(_stream).serial(NLMISC::IStream::unconst(_obj));
 
-#define nlWrite(_stream, _serialType, _obj)	\
-	if ((_stream).isReading())			\
-		throw NLMISC::ENotOutputStream();	\
+#define nlWrite(_stream, _serialType, _obj) \
+	if ((_stream).isReading())              \
+		throw NLMISC::ENotOutputStream();   \
 	(_stream)._serialType(NLMISC::IStream::unconst(_obj));
 
-#define nlReadSerial(_stream, _obj) 		\
-	if (!(_stream).isReading())			\
-		throw NLMISC::ENotInputStream();	\
+#define nlReadSerial(_stream, _obj)      \
+	if (!(_stream).isReading())          \
+		throw NLMISC::ENotInputStream(); \
 	NLMISC::IStream::unconst(_stream).serial(_obj);
 
-#define nlRead(_stream, _serialType, _obj)	\
-	if (!(_stream).isReading())			\
-		throw NLMISC::ENotInputStream();	\
+#define nlRead(_stream, _serialType, _obj) \
+	if (!(_stream).isReading())            \
+		throw NLMISC::ENotInputStream();   \
 	NLMISC::IStream::unconst(_stream)._serialType(_obj);
 
 // helper macro to serialize boolean encoded as 'bool foo : 1' (they can't be referenced)
 #define nlSerialBitBool(_stream, _boolean) \
-	{ \
-		bool tmpBool = _boolean; \
-		_stream.serial(tmpBool); \
-		_boolean = tmpBool; \
+	{                                      \
+		bool tmpBool = _boolean;           \
+		_stream.serial(tmpBool);           \
+		_boolean = tmpBool;                \
 	}
 
 	/** \name Base type serialization.
@@ -290,31 +329,30 @@ public:
 	 */
 	//@{
 
-	virtual void	serial(uint8 &b) ;
-	virtual void	serial(sint8 &b) ;
-	virtual void	serial(uint16 &b) ;
-	virtual void	serial(sint16 &b) ;
-	virtual void	serial(uint32 &b) ;
-	virtual void	serial(sint32 &b) ;
-	virtual void	serial(uint64 &b) ;
-	virtual void	serial(sint64 &b) ;
-	virtual void	serial(float &b) ;
-	virtual void	serial(double &b) ;
-	virtual void	serial(bool &b) ;
+	virtual void serial(uint8 &b);
+	virtual void serial(sint8 &b);
+	virtual void serial(uint16 &b);
+	virtual void serial(sint16 &b);
+	virtual void serial(uint32 &b);
+	virtual void serial(sint32 &b);
+	virtual void serial(uint64 &b);
+	virtual void serial(sint64 &b);
+	virtual void serial(float &b);
+	virtual void serial(double &b);
+	virtual void serial(bool &b);
 #ifndef NL_OS_CYGWIN
-	virtual void	serial(char &b) ;
+	virtual void serial(char &b);
 #endif
-	virtual void	serial(std::string &b) ;
-	virtual void	serial(ucstring &b) ;
+	virtual void serial(std::string &b);
+	virtual void serial(ucstring &b);
 	//@}
 
-
 	/// Template enum serialisation. Serialized as a sint32.
-    template<class T>
-	void			serialEnum(T &em)
+	template <class T>
+	void serialEnum(T &em)
 	{
-		sint32	i;
-		if(isReading())
+		sint32 i;
+		if (isReading())
 		{
 			serial(i);
 			em = (T)i;
@@ -326,11 +364,11 @@ public:
 		}
 	}
 	/// Template short enum serialisation. Serialized as a uint8 (with checking).
-    template<class T>
-	void			serialShortEnum(T &em)
+	template <class T>
+	void serialShortEnum(T &em)
 	{
-		uint8	i;
-		if(isReading())
+		uint8 i;
+		if (isReading())
 		{
 			serial(i);
 			em = (T)i;
@@ -344,7 +382,7 @@ public:
 	}
 
 	/// Serial memstream, bitmemstream...
-	virtual void serialMemStream( CMemStream &b );
+	virtual void serialMemStream(CMemStream &b);
 
 	/** \name BitField serialisation.
 	 * Unlike other serial method, The reading bitfield is returned!! If !this->isReading(), bf is returned.
@@ -355,57 +393,80 @@ public:
 	 */
 	//@{
 	/// Serialisation of bitfield <=8 bits.
-	uint8			serialBitField8(uint8  bf);
+	uint8 serialBitField8(uint8 bf);
 	/// Serialisation of bitfield <=16 bits.
-	uint16			serialBitField16(uint16  bf);
+	uint16 serialBitField16(uint16 bf);
 	/// Serialisation of bitfield <=32 bits.
-	uint32			serialBitField32(uint32  bf);
+	uint32 serialBitField32(uint32 bf);
 	//@}
-
 
 	/** \name Multiple serialisation.
 	 * Template for easy multiple serialisation.
 	 */
 	//@{
-	template<class T0,class T1>
-	void			serial(T0 &a, T1 &b)
-	{ serial(a); serial(b);}
-	template<class T0,class T1,class T2>
-	void			serial(T0 &a, T1 &b, T2 &c)
-	{ serial(a); serial(b); serial(c);}
-	template<class T0,class T1,class T2,class T3>
-	void			serial(T0 &a, T1 &b, T2 &c, T3 &d)
-	{ serial(a); serial(b); serial(c); serial(d);}
-	template<class T0,class T1,class T2,class T3,class T4>
-	void			serial(T0 &a, T1 &b, T2 &c, T3 &d, T4 &e)
-	{ serial(a); serial(b); serial(c); serial(d); serial(e);}
-	template<class T0,class T1,class T2,class T3,class T4,class T5>
-	void			serial(T0 &a, T1 &b, T2 &c, T3 &d, T4 &e, T5 &f)
-	{ serial(a); serial(b); serial(c); serial(d); serial(e); serial(f);}
+	template <class T0, class T1>
+	void serial(T0 &a, T1 &b)
+	{
+		serial(a);
+		serial(b);
+	}
+	template <class T0, class T1, class T2>
+	void serial(T0 &a, T1 &b, T2 &c)
+	{
+		serial(a);
+		serial(b);
+		serial(c);
+	}
+	template <class T0, class T1, class T2, class T3>
+	void serial(T0 &a, T1 &b, T2 &c, T3 &d)
+	{
+		serial(a);
+		serial(b);
+		serial(c);
+		serial(d);
+	}
+	template <class T0, class T1, class T2, class T3, class T4>
+	void serial(T0 &a, T1 &b, T2 &c, T3 &d, T4 &e)
+	{
+		serial(a);
+		serial(b);
+		serial(c);
+		serial(d);
+		serial(e);
+	}
+	template <class T0, class T1, class T2, class T3, class T4, class T5>
+	void serial(T0 &a, T1 &b, T2 &c, T3 &d, T4 &e, T5 &f)
+	{
+		serial(a);
+		serial(b);
+		serial(c);
+		serial(d);
+		serial(e);
+		serial(f);
+	}
 	//@}
-
 
 	/** \name standard STL containers serialisation.
 	 * Known Supported containers: vector<>, list<>, deque<>, set<>, multiset<>, map<>, multimap<>
 	 * Support up to sint32 length containers.
 	 * \see serialContPtr() serialContPolyPtr()
 	 */
-	template<class T, class Allocator>
-	void			serialCont(std::vector<T, Allocator> &cont)	{serialVector(cont);}
-	template<class T>
-	void			serialCont(std::list<T> &cont) 	{serialSTLCont(cont);}
-	template<class T>
-	void			serialCont(std::deque<T> &cont) 	{serialSTLCont(cont);}
-	template<class T>
-	void			serialCont(std::set<T> &cont) 		{serialSTLCont(cont);}
-	template<class T>
-	void			serialCont(std::multiset<T> &cont) 	{serialSTLCont(cont);}
-	template<class K, class T>
-	void			serialCont(std::map<K, T> &cont) 			{serialMap(cont);}
-	template<class K, class T, class H>
-	void			serialCont(CHashMap<K, T, H> &cont) 			{serialMap(cont);}
-	template<class K, class T>
-	void			serialCont(std::multimap<K, T> &cont) 	{serialMultimap(cont);}
+	template <class T, class Allocator>
+	void serialCont(std::vector<T, Allocator> &cont) { serialVector(cont); }
+	template <class T>
+	void serialCont(std::list<T> &cont) { serialSTLCont(cont); }
+	template <class T>
+	void serialCont(std::deque<T> &cont) { serialSTLCont(cont); }
+	template <class T>
+	void serialCont(std::set<T> &cont) { serialSTLCont(cont); }
+	template <class T>
+	void serialCont(std::multiset<T> &cont) { serialSTLCont(cont); }
+	template <class K, class T>
+	void serialCont(std::map<K, T> &cont) { serialMap(cont); }
+	template <class K, class T, class H>
+	void serialCont(CHashMap<K, T, H> &cont) { serialMap(cont); }
+	template <class K, class T>
+	void serialCont(std::multimap<K, T> &cont) { serialMultimap(cont); }
 
 	/** \name standard STL containers serialisation.
 	 * Thse variants suppose contained type is a NeL smart pointer.
@@ -413,17 +474,15 @@ public:
 	 * Support up to sint32 length containers.
 	 * \see serialCont() serialContPtr() serialContPolyPtr()
 	 */
-	template<class K, class T>
-	void	serialPtrCont(std::map<K, T> &cont)	{serialPtrMap(cont);}
-
+	template <class K, class T>
+	void serialPtrCont(std::map<K, T> &cont) { serialPtrMap(cont); }
 
 	/// Specialisation of serialCont() for vector<uint8>
-	virtual void			serialCont(std::vector<uint8> &cont) ;
+	virtual void serialCont(std::vector<uint8> &cont);
 	/// Specialisation of serialCont() for vector<sint8>
-	virtual void			serialCont(std::vector<sint8> &cont) ;
+	virtual void serialCont(std::vector<sint8> &cont);
 	/// Specialisation of serialCont() for vector<bool>
-	virtual void			serialCont(std::vector<bool> &cont) ;
-
+	virtual void serialCont(std::vector<bool> &cont);
 
 	/** \name standard STL containers serialisation. Elements must be pointers on a base type (uint...) or on a
 	 * object providing "void serial(IStream&)" method.
@@ -431,36 +490,34 @@ public:
 	 * Support up to sint32 length containers.
 	 * \see serialCont() serialContPolyPtr()
 	 */
-	template<class T, class Allocator>
-	void			serialContPtr(std::vector<T, Allocator> &cont) 	{serialVectorPtr(cont);}
-	template<class T>
-	void			serialContPtr(std::list<T> &cont) 	{serialSTLContPtr(cont);}
-	template<class T>
-	void			serialContPtr(std::deque<T> &cont) 	{serialSTLContPtr(cont);}
-	template<class T>
-	void			serialContPtr(std::set<T> &cont) 			{serialSTLContPtr(cont);}
-	template<class T>
-	void			serialContPtr(std::multiset<T> &cont) 	{serialSTLContPtr(cont);}
-
+	template <class T, class Allocator>
+	void serialContPtr(std::vector<T, Allocator> &cont) { serialVectorPtr(cont); }
+	template <class T>
+	void serialContPtr(std::list<T> &cont) { serialSTLContPtr(cont); }
+	template <class T>
+	void serialContPtr(std::deque<T> &cont) { serialSTLContPtr(cont); }
+	template <class T>
+	void serialContPtr(std::set<T> &cont) { serialSTLContPtr(cont); }
+	template <class T>
+	void serialContPtr(std::multiset<T> &cont) { serialSTLContPtr(cont); }
 
 	/** \name standard STL containers serialisation. Elements must be pointers on a IStreamable object.
 	 * Known Supported containers: vector<>, list<>, deque<>, set<>, multiset<>
 	 * Support up to sint32 length containers.
 	 * \see serialCont() serialContPtr()
 	 */
-	template<class T, class Allocator>
-	void			serialContPolyPtr(std::vector<T, Allocator> &cont) 	{serialVectorPolyPtr(cont);}
-	template<class T>
-	void			serialContPolyPtr(std::list<T> &cont) 	{serialSTLContPolyPtr(cont);}
-	template<class T>
-	void			serialContPolyPtr(std::deque<T> &cont) 	{serialSTLContPolyPtr(cont);}
-	template<class T>
-	void			serialContPolyPtr(std::set<T> &cont) 			{serialSTLContPolyPtr(cont);}
-	template<class T>
-	void			serialContPolyPtr(std::multiset<T> &cont) 	{serialSTLContPolyPtr(cont);}
-	template<class K, class T>
-	void			serialContPolyPtr(std::map<K, T> &cont) 	{serialMapPolyPtr(cont);}
-
+	template <class T, class Allocator>
+	void serialContPolyPtr(std::vector<T, Allocator> &cont) { serialVectorPolyPtr(cont); }
+	template <class T>
+	void serialContPolyPtr(std::list<T> &cont) { serialSTLContPolyPtr(cont); }
+	template <class T>
+	void serialContPolyPtr(std::deque<T> &cont) { serialSTLContPolyPtr(cont); }
+	template <class T>
+	void serialContPolyPtr(std::set<T> &cont) { serialSTLContPolyPtr(cont); }
+	template <class T>
+	void serialContPolyPtr(std::multiset<T> &cont) { serialSTLContPolyPtr(cont); }
+	template <class K, class T>
+	void serialContPolyPtr(std::map<K, T> &cont) { serialMapPolyPtr(cont); }
 
 	/**
 	 * Serialize Non Polymorphic Objet Ptr.
@@ -469,65 +526,65 @@ public:
 	 * \param ptr a pointer on a base type or an object.
 	 * \see resetPtrTable()
 	 */
-	template<class T>
-	void			serialPtr(T* &ptr)
+	template <class T>
+	void serialPtr(T *&ptr)
 	{
-		uint64	node;
+		uint64 node;
 
 		// Open the node header
-		xmlPushBegin ("PTR");
+		xmlPushBegin("PTR");
 
-		xmlSetAttrib ("id");
+		xmlSetAttrib("id");
 
-		if(isReading())
+		if (isReading())
 		{
 			serial(node);
 
 			// Close the header
-			xmlPushEnd ();
+			xmlPushEnd();
 
-			if(node==0)
-				ptr=NULL;
+			if (node == 0)
+				ptr = NULL;
 			else
 			{
-				ItIdMap	it;
-				it= _IdMap.find(node);
+				ItIdMap it;
+				it = _IdMap.find(node);
 
 				// Test if object already created/read.
-				if( it==_IdMap.end() )
+				if (it == _IdMap.end())
 				{
 					// Construct object.
-					ptr= new T;
-					if(ptr==NULL)
+					ptr = new T;
+					if (ptr == NULL)
 						throw EStream();
 
 					// Insert the node.
-					_IdMap.insert( ValueIdMap(node, ptr) );
+					_IdMap.insert(ValueIdMap(node, ptr));
 
 					// Read the object!
 					serial(*ptr);
 				}
 				else
-					ptr= static_cast<T*>(it->second);
+					ptr = static_cast<T *>(it->second);
 			}
 		}
 		else
 		{
-			if(ptr==NULL)
+			if (ptr == NULL)
 			{
-				node= 0;
+				node = 0;
 				serial(node);
 
 				// Close the header
-				xmlPushEnd ();
+				xmlPushEnd();
 			}
 			else
 			{
-				ItIdMap	it;
+				ItIdMap it;
 				it = _IdMap.find((uint64)ptr);
 
 				// Test if object has been already written
-				if( it==_IdMap.end() )
+				if (it == _IdMap.end())
 				{
 					// Not yet written
 
@@ -538,10 +595,10 @@ public:
 					serial(node);
 
 					// Insert the pointer in the map with the id
-					_IdMap.insert( ValueIdMap((uint64)ptr, (void*)node) );
+					_IdMap.insert(ValueIdMap((uint64)ptr, (void *)node));
 
 					// Close the header
-					xmlPushEnd ();
+					xmlPushEnd();
 
 					// Write the object
 					serial(*ptr);
@@ -554,15 +611,14 @@ public:
 					serial(node);
 
 					// Close the header
-					xmlPushEnd ();
+					xmlPushEnd();
 				}
 			}
 		}
 
 		// Close the node
-		xmlPop ();
+		xmlPop();
 	}
-
 
 	/**
 	 * Serialize Polymorphic Objet Ptr.
@@ -571,10 +627,13 @@ public:
 	 * \param ptr a pointer on a IStreamable object.
 	 * \see resetPtrTable()
 	 */
-	template<class T>
-	void			serialPolyPtr(T* &ptr)
-	{ IStreamable *p=ptr; serialIStreamable(p); ptr= static_cast<T*>(p);}
-
+	template <class T>
+	void serialPolyPtr(T *&ptr)
+	{
+		IStreamable *p = ptr;
+		serialIStreamable(p);
+		ptr = static_cast<T *>(p);
+	}
 
 	/**
 	 * Serialize a version number.
@@ -586,8 +645,7 @@ public:
 	 * \return the version of the stream. If the stream is an Output stream, currentVersion is returned.
 	 * \see setVersionException() getVersionException()
 	 */
-	uint			serialVersion(uint currentVersion) ;
-
+	uint serialVersion(uint currentVersion);
 
 	/**
 	 * Serialize a check value.
@@ -599,26 +657,26 @@ public:
 	 * \param value the value used to the check.
 	 * \see EInvalidDataStream
 	 */
-	template<class T>
-	void			serialCheck(const T& value)
+	template <class T>
+	void serialCheck(const T &value)
 	{
 		// Open a node
-		xmlPush ("CHECK");
+		xmlPush("CHECK");
 
 		if (isReading())
 		{
 			T read;
-			serial (read);
-			if (read!=value)
+			serial(read);
+			if (read != value)
 				throw EInvalidDataStream(*this);
 		}
 		else
 		{
-			serial (const_cast<T&>(value));
+			serial(const_cast<T &>(value));
 		}
 
 		// Close the node
-		xmlPop ();
+		xmlPop();
 	}
 
 	/// \name Seek fonctionnality
@@ -629,7 +687,12 @@ public:
 	 * current seek from the current location of the stream pointer.
 	 * end seek from the end of the stream.
 	 */
-	enum TSeekOrigin { begin, current, end };
+	enum TSeekOrigin
+	{
+		begin,
+		current,
+		end
+	};
 
 	/**
 	 * Moves the stream pointer to a specified location.
@@ -642,8 +705,7 @@ public:
 	 * \return true if seek sucessfull.
 	 * \see ESeekNotSupported SeekOrigin getPos
 	 */
-	virtual bool		seek (sint32 offset, TSeekOrigin origin) const;
-
+	virtual bool seek(sint32 offset, TSeekOrigin origin) const;
 
 	/**
 	 * Get the location of the stream pointer.
@@ -656,61 +718,60 @@ public:
 	 * \return the new offset regarding from the origin.
 	 * \see ESeekNotSupported SeekOrigin seek
 	 */
-	virtual sint32		getPos () const;
-
+	virtual sint32 getPos() const;
 
 	/** Get a name for this stream. maybe a fileName if FileStream.
 	 *	Default is to return "".
 	 */
-	virtual std::string		getStreamName() const;
+	virtual std::string getStreamName() const;
 
 	/** \name XML user interface
 	  *
 	  * Those functions are used to add information in your stream to structure it like
 	  * a XML document. Exemple of a serial sequence :
 	  \code
-		// Start the opening of a new node named Identity
-		stream.xmlPush ("Identity")
+	    // Start the opening of a new node named Identity
+	    stream.xmlPush ("Identity")
 
-			// Serial some infos
-			stream.serial (name);
-			stream.serial (pseudo);
+	        // Serial some infos
+	        stream.serial (name);
+	        stream.serial (pseudo);
 
-			// Open a new node header named Address
-			stream.xmlPushBegin ("Address");
+	        // Open a new node header named Address
+	        stream.xmlPushBegin ("Address");
 
-					// Set a property name
-					stream.xmlSetAttrib ("Street")
+	                // Set a property name
+	                stream.xmlSetAttrib ("Street")
 
-					// Serial the property
-					stream.serial ("Street");
+	                // Serial the property
+	                stream.serial ("Street");
 
-				// Close the new node header
-				stream.xmlPushEnd ();
+	            // Close the new node header
+	            stream.xmlPushEnd ();
 
-				// Serial in this node
-				stream.serial (cityName);
+	            // Serial in this node
+	            stream.serial (cityName);
 
-			// Close the address node
-			stream.xmlPop ();
+	        // Close the address node
+	        stream.xmlPop ();
 
-			// Add a comment
-			stream.xmlComment ("Hello");
+	        // Add a comment
+	        stream.xmlComment ("Hello");
 
-		// Close the identity node
-		stream.xmlPop ();
-      \endcode
+	    // Close the identity node
+	    stream.xmlPop ();
+	  \endcode
 	  *
 	  * The result will be an xml document structured like this:
 	  *
 	  \code
-		<Identity>
-			Corvazier Hulud
-			<Address Street="rue du Faubourg Saint Antoine">
-				Paris
-			<\Address>
-			<!-- Hello -->
-		<\Identity>
+	    <Identity>
+	        Corvazier Hulud
+	        <Address Street="rue du Faubourg Saint Antoine">
+	            Paris
+	        <\Address>
+	        <!-- Hello -->
+	    <\Identity>
 	  \endcode
 	  *
 	  * Node header serials are the serialisations done between xmlPushBegin() and xmlPushEnd() call. There is some restrictions on them:
@@ -724,73 +785,73 @@ public:
 	  */
 
 	/**
-	  * xmlSerial() serial a values into a node.
-	  */
-	template<class T>
-	void xmlSerial (T& value0, const std::string &nodeName)
+	 * xmlSerial() serial a values into a node.
+	 */
+	template <class T>
+	void xmlSerial(T &value0, const std::string &nodeName)
 	{
 		// Open the node
-		xmlPush (nodeName);
+		xmlPush(nodeName);
 
 		// Serial the value
-		serial (value0);
+		serial(value0);
 
 		// Close the node
-		xmlPop ();
+		xmlPop();
 	}
-	template<class T>
-	void xmlSerial (T& value0, T& value1, const std::string &nodeName)
+	template <class T>
+	void xmlSerial(T &value0, T &value1, const std::string &nodeName)
 	{
 		// Open the node
-		xmlPush (nodeName);
+		xmlPush(nodeName);
 
 		// Serial the values
-		serial (value0, value1);
+		serial(value0, value1);
 
 		// Close the node
-		xmlPop ();
+		xmlPop();
 	}
-	template<class T>
-	void xmlSerial (T& value0, T& value1, T& value2, const std::string &nodeName)
+	template <class T>
+	void xmlSerial(T &value0, T &value1, T &value2, const std::string &nodeName)
 	{
 		// Open the node
-		xmlPush (nodeName);
+		xmlPush(nodeName);
 
 		// Serial the values
-		serial (value0, value1, value2);
+		serial(value0, value1, value2);
 
 		// Close the node
-		xmlPop ();
+		xmlPop();
 	}
-	template<class T>
-	void xmlSerial (T& value0, T& value1, T& value2, T& value3, const std::string &nodeName)
+	template <class T>
+	void xmlSerial(T &value0, T &value1, T &value2, T &value3, const std::string &nodeName)
 	{
 		// Open the node
-		xmlPush (nodeName);
+		xmlPush(nodeName);
 
 		// Serial the values
-		serial (value0, value1, value2, value3);
+		serial(value0, value1, value2, value3);
 
 		// Close the node
-		xmlPop ();
+		xmlPop();
 	}
 
 	/**
-	  * xmlPush() open recurcively a new node. You must call xmlPop to close this node.
-	  *
-	  * \name is the name of the node to open
-	  * \return true if you can open the node, false if the stream is between a xmlPushBegin() and a xmlPushEnd() call.
-	  */
-	bool xmlPush (const std::string &name)
+	 * xmlPush() open recurcively a new node. You must call xmlPop to close this node.
+	 *
+	 * \name is the name of the node to open
+	 * \return true if you can open the node, false if the stream is between a xmlPushBegin() and a xmlPushEnd() call.
+	 */
+	bool xmlPush(const std::string &name)
 	{
 		// XML Mode ?
 		if (_XML)
 		{
 			// Open the header
-			bool res=xmlPushBeginInternal (name);
+			bool res = xmlPushBeginInternal(name);
 			if (res)
 				// close the header
-				xmlPushEndInternal ();
+				xmlPushEndInternal();
 			// Return the result
 			return res;
 		}
@@ -800,17 +861,17 @@ public:
 	}
 
 	/**
-	  * xmlPushBegin() open recurcively a new node and open its header. You must call xmlPushEnd() to close the header and xmlPop() to close this node.
-	  *
-	  * \name is the name of the node to open
-	  * \return true if you can open the node header, false if the stream is between a xmlPushBegin() and a xmlPushEnd() call.
-	  */
-	bool xmlPushBegin (const std::string &name)
+	 * xmlPushBegin() open recurcively a new node and open its header. You must call xmlPushEnd() to close the header and xmlPop() to close this node.
+	 *
+	 * \name is the name of the node to open
+	 * \return true if you can open the node header, false if the stream is between a xmlPushBegin() and a xmlPushEnd() call.
+	 */
+	bool xmlPushBegin(const std::string &name)
 	{
 		// XML Mode ?
 		if (_XML)
 		{
-			return xmlPushBeginInternal (name);
+			return xmlPushBeginInternal(name);
 		}
 
 		// Return ok
@@ -818,16 +879,16 @@ public:
 	}
 
 	/**
-	  * xmlPushEnd() close the node header.
-	  *
-	  * \return true if you can close the node header, false if no node header have been opened with xmlPushBegin().
-	  */
-	bool xmlPushEnd ()
+	 * xmlPushEnd() close the node header.
+	 *
+	 * \return true if you can close the node header, false if no node header have been opened with xmlPushBegin().
+	 */
+	bool xmlPushEnd()
 	{
 		// XML Mode ?
 		if (_XML)
 		{
-			return xmlPushEndInternal ();
+			return xmlPushEndInternal();
 		}
 
 		// Return ok
@@ -835,16 +896,16 @@ public:
 	}
 
 	/**
-	  * xmlPop() close the node.
-	  *
-	  * \return true if you can close the node, false if the node can't be closed (its header is still opened) or if there is no node to close.
-	  */
-	bool xmlPop ()
+	 * xmlPop() close the node.
+	 *
+	 * \return true if you can close the node, false if the node can't be closed (its header is still opened) or if there is no node to close.
+	 */
+	bool xmlPop()
 	{
 		// XML Mode ?
 		if (_XML)
 		{
-			return xmlPopInternal ();
+			return xmlPopInternal();
 		}
 
 		// Return ok
@@ -852,17 +913,17 @@ public:
 	}
 
 	/**
-	  * xmlSetAttrib() set the name of the next node header attribute serialised.
-	  *
-	  * \param name is the name of the node header attribute serialised.
-	  * \return true if the attribute name have been set, false if the node header is not open (the call is not between xmlPushBegin and xmlPushEnd)
-	  */
-	bool xmlSetAttrib (const std::string &name)
+	 * xmlSetAttrib() set the name of the next node header attribute serialised.
+	 *
+	 * \param name is the name of the node header attribute serialised.
+	 * \return true if the attribute name have been set, false if the node header is not open (the call is not between xmlPushBegin and xmlPushEnd)
+	 */
+	bool xmlSetAttrib(const std::string &name)
 	{
 		// XML Mode ?
 		if (_XML)
 		{
-			return xmlSetAttribInternal (name);
+			return xmlSetAttribInternal(name);
 		}
 
 		// Return ok
@@ -870,16 +931,16 @@ public:
 	}
 
 	/**
-	  * xmlBreakLine() insert a break line in the XML stream.
-	  *
-	  * \return true if the break line is added, return false if no node is opened.
-	  */
-	bool xmlBreakLine ()
+	 * xmlBreakLine() insert a break line in the XML stream.
+	 *
+	 * \return true if the break line is added, return false if no node is opened.
+	 */
+	bool xmlBreakLine()
 	{
 		// XML Mode ?
 		if (_XML)
 		{
-			return xmlBreakLineInternal ();
+			return xmlBreakLineInternal();
 		}
 
 		// Return ok
@@ -887,16 +948,16 @@ public:
 	}
 
 	/**
-	  * xmlComment() insert a comment line in the XML stream.
-	  *
-	  * \return true if the comment is added, return false if no node is opened.
-	  */
-	bool xmlComment (const std::string &comment)
+	 * xmlComment() insert a comment line in the XML stream.
+	 *
+	 * \return true if the comment is added, return false if no node is opened.
+	 */
+	bool xmlComment(const std::string &comment)
 	{
 		// XML Mode ?
 		if (_XML)
 		{
-			return xmlCommentInternal (comment);
+			return xmlCommentInternal(comment);
 		}
 
 		// Return ok
@@ -904,57 +965,56 @@ public:
 	}
 
 protected:
-
 	/// \name XML implementation interface
 
 	/** Set the XML mode
-	  * \param on is true to enable XML mode else false
-	  */
-	void setXMLMode (bool on);
+	 * \param on is true to enable XML mode else false
+	 */
+	void setXMLMode(bool on);
 
 	/// xmlPushBegin implementation
-	virtual bool		xmlPushBeginInternal (const std::string &/* name */) { return true; };
+	virtual bool xmlPushBeginInternal(const std::string & /* name */) { return true; };
 
 	/// xmlPushEnd implementation
-	virtual bool		xmlPushEndInternal () { return true; };
+	virtual bool xmlPushEndInternal() { return true; };
 
 	/// xmlPop implementation
-	virtual bool		xmlPopInternal () { return true; };
+	virtual bool xmlPopInternal() { return true; };
 
 	/// xmlBreakLine implementation
-	virtual bool		xmlSetAttribInternal (const std::string &/* name */) { return true; };
+	virtual bool xmlSetAttribInternal(const std::string & /* name */) { return true; };
 
 	/// xmlBreakLine implementation
-	virtual bool		xmlBreakLineInternal () { return true; };
+	virtual bool xmlBreakLineInternal() { return true; };
 
 	/// xmlComment implementation
-	virtual	bool		xmlCommentInternal (const std::string &/* comment */) { return true; };
+	virtual bool xmlCommentInternal(const std::string & /* comment */) { return true; };
 
 	/**
 	 * for Deriver: reset the PtrTable in the stream.
 	 * If Derived stream provide reset()-like methods, they must call this method in their reset() methods.
 	 * For example, CFile::close() must call it, so it will work correctly with next serialPtr()
 	 */
-	void				resetPtrTable();
+	void resetPtrTable();
 
 	/**
 	 * Change, in live, the state of the inputStream. This could be useful in certain case.
 	 * The deriver which would want to do such a thing must call this method, and implement his own behavior.
 	 * In certain case, it should call resetPtrTable() if he want to reset the stream ptr info (maybe always)...
 	 */
-	void				setInOut(bool inputStream);
+	void setInOut(bool inputStream);
 
 	/** Get the size for this stream. return 0 by default. Only implemented for input stream that know their size.
 	 *	Used internally to detect OverFlow with vector<> for instance
 	 */
-	virtual uint			getDbgStreamSize() const {return 0;}
+	virtual uint getDbgStreamSize() const { return 0; }
 
 	/**
 	 * Elementarily check at least n bytes can be serialized from this stream (or throw EStreamOverflow)
 	 */
-	void				checkStreamSize(uint numBytes) const
+	void checkStreamSize(uint numBytes) const
 	{
-		uint			ssize = getDbgStreamSize();
+		uint ssize = getDbgStreamSize();
 		if (ssize > 0 && ssize < numBytes)
 			throw EStreamOverflow("stream does not contain at least %u bytes for check", numBytes);
 	}
@@ -965,75 +1025,72 @@ public:
 	 * \warning Do not call these methods from outside, unless you really know what you are doing.
 	 * Using them instead of serial() can lead to communication problems between different platforms !
 	 */
-	virtual void		serialBuffer(uint8 *buf, uint len) =0;
-	virtual void		serialBit(bool &bit) =0;
+	virtual void serialBuffer(uint8 *buf, uint len) = 0;
+	virtual void serialBit(bool &bit) = 0;
 	//@}
 
 	/// This method first serializes the size of the buffer and after the buffer itself, it enables
 	/// the possibility to serial with a serialCont() on the other side.
-	virtual void		serialBufferWithSize(uint8 *buf, uint32 len)
+	virtual void serialBufferWithSize(uint8 *buf, uint32 len)
 	{
-		serial (len);
-		serialBuffer (buf, len);
+		serial(len);
+		serialBuffer(buf, len);
 	}
 
 private:
-	bool	_InputStream;
-	static	bool	_ThrowOnOlder;
-	static	bool	_ThrowOnNewer;
+	bool _InputStream;
+	static bool _ThrowOnOlder;
+	static bool _ThrowOnNewer;
 
 	// Ptr registry. We store 64 bit Id, to be compatible with future 64+ bits pointers.
-	uint32								_NextSerialPtrId;
-	CHashMap<uint64, void*>		_IdMap;
-	typedef CHashMap<uint64, void*>::iterator	ItIdMap;
-	typedef CHashMap<uint64, void*>::value_type	ValueIdMap;
+	uint32 _NextSerialPtrId;
+	CHashMap<uint64, void *> _IdMap;
+	typedef CHashMap<uint64, void *>::iterator ItIdMap;
+	typedef CHashMap<uint64, void *>::value_type ValueIdMap;
 
 	// Ptr serialization.
-	void			serialIStreamable(IStreamable* &ptr) ;
-
-
+	void serialIStreamable(IStreamable *&ptr);
 
 private:
 	/**
 	 * standard STL containers serialization. Don't work with map<> and multimap<>.
 	 * Support up to sint32 length containers. serialize just len  element of the container.
 	 */
-	template<class T>
-	void			serialSTLContLen(T &cont, sint32 len)
+	template <class T>
+	void serialSTLContLen(T &cont, sint32 len)
 	{
 		typedef typename T::value_type __value_type;
 		typedef typename T::iterator __iterator;
 
-		if(isReading())
+		if (isReading())
 		{
 			// check stream holds enough bytes (avoid STL to crash on resize)
 			checkStreamSize(len);
 
-			for(sint i=0;i<len;i++)
+			for (sint i = 0; i < len; i++)
 			{
-				xmlPush ("ELM");
+				xmlPush("ELM");
 
 				__value_type v;
 				serial(v);
 				(void)cont.insert(cont.end(), v);
 
-				xmlPop ();
+				xmlPop();
 			}
 		}
 		else
 		{
-			__iterator		it= cont.begin();
-			for(sint i=0;i<len;i++, it++)
+			__iterator it = cont.begin();
+			for (sint i = 0; i < len; i++, it++)
 			{
-				xmlPush ("ELM");
+				xmlPush("ELM");
 
-				serial(const_cast<__value_type&>(*it));
+				serial(const_cast<__value_type &>(*it));
 
-				xmlPop ();
+				xmlPop();
 			}
 		}
 	}
-
 
 	/**
 	 * standard STL containers serialisation. Don't work with map<> and multimap<>.
@@ -1051,57 +1108,55 @@ private:
 	 * Known Supported containers: vector<>, list<>, deque<>, set<>, multiset<>.
 	 * \param cont a STL container (vector<>, set<> ...).
 	 */
-	template<class T>
-	void			serialSTLCont(T &cont)
+	template <class T>
+	void serialSTLCont(T &cont)
 	{
 		// Open a node header
-		xmlPushBegin ("CONTAINER");
+		xmlPushBegin("CONTAINER");
 
 		// Attrib size
-		xmlSetAttrib ("size");
+		xmlSetAttrib("size");
 
-		sint32	len=0;
-		if(isReading())
+		sint32 len = 0;
+		if (isReading())
 		{
 			serial(len);
 			cont.clear();
 		}
 		else
 		{
-			len= (sint32)cont.size();
+			len = (sint32)cont.size();
 			serial(len);
 		}
 
 		// Close the header
-		xmlPushEnd ();
+		xmlPushEnd();
 
 		serialSTLContLen(cont, len);
 
 		// Close the node
-		xmlPop ();
+		xmlPop();
 	}
 
-
 protected:
-
 	/**
 	 * special version for serializing a vector.
 	 * Support up to sint32 length containers.
 	 */
-	template<class T>
-	void			serialVector(T &cont)
+	template <class T>
+	void serialVector(T &cont)
 	{
 		typedef typename T::value_type __value_type;
 		typedef typename T::iterator __iterator;
 
 		// Open a node header
-		xmlPushBegin ("VECTOR");
+		xmlPushBegin("VECTOR");
 
 		// Attrib size
-		xmlSetAttrib ("size");
+		xmlSetAttrib("size");
 
-		sint32	len=0;
-		if(isReading())
+		sint32 len = 0;
+		if (isReading())
 		{
 			serial(len);
 
@@ -1109,20 +1164,20 @@ protected:
 			checkStreamSize(len);
 
 			// Open a node header
-			xmlPushEnd ();
+			xmlPushEnd();
 
 			// special version for vector: adjut good size.
 			contReset(cont);
-			cont.resize (len);
+			cont.resize(len);
 
 			// Read the vector
-			for(sint i=0;i<len;i++)
+			for (sint i = 0; i < len; i++)
 			{
-				xmlPush ("ELM");
+				xmlPush("ELM");
 
 				serial(cont[i]);
 
-				xmlPop ();
+				xmlPop();
 			}
 		}
 		else
@@ -1131,112 +1186,109 @@ protected:
 			serial(len);
 
 			// Close the node header
-			xmlPushEnd ();
+			xmlPushEnd();
 
 			// Write the vector
-			__iterator		it= cont.begin();
-			for(sint i=0;i<len;i++, it++)
+			__iterator it = cont.begin();
+			for (sint i = 0; i < len; i++, it++)
 			{
-				xmlPush ("ELM");
+				xmlPush("ELM");
 
-				serial(const_cast<__value_type&>(*it));
+				serial(const_cast<__value_type &>(*it));
 
-				xmlPop ();
+				xmlPop();
 			}
 		}
 
 		// Close the node
-		xmlPop ();
+		xmlPop();
 	}
-
 
 private:
 	/**
 	 * standard STL containers serialisation. Don't work with map<> and multimap<>.  Ptr version.
 	 * Support up to sint32 length containers. serialize just len  element of the container.
 	 */
-	template<class T>
-	void			serialSTLContLenPtr(T &cont, sint32 len)
+	template <class T>
+	void serialSTLContLenPtr(T &cont, sint32 len)
 	{
 		typedef typename T::value_type __value_type;
 		typedef typename T::iterator __iterator;
 
-		if(isReading())
+		if (isReading())
 		{
 			// check stream holds enough bytes (avoid STL to crash on resize)
 			checkStreamSize(len);
 
-			for(sint i=0;i<len;i++)
+			for (sint i = 0; i < len; i++)
 			{
-				__value_type	v;
+				__value_type v;
 				serialPtr(v);
 				cont.insert(cont.end(), v);
 			}
 		}
 		else
 		{
-			__iterator		it= cont.begin();
-			for(sint i=0;i<len;i++, it++)
+			__iterator it = cont.begin();
+			for (sint i = 0; i < len; i++, it++)
 			{
-				serialPtr(const_cast<__value_type&>(*it));
+				serialPtr(const_cast<__value_type &>(*it));
 			}
 		}
 	}
-
 
 	/**
 	 * standard STL containers serialisation. Don't work with map<> and multimap<>.  Ptr version.
 	 * Support up to sint32 length containers.
 	 */
-	template<class T>
-	void			serialSTLContPtr(T &cont)
+	template <class T>
+	void serialSTLContPtr(T &cont)
 	{
 		// Open a node header
-		xmlPushBegin ("CONTAINER");
+		xmlPushBegin("CONTAINER");
 
 		// Attrib size
-		xmlSetAttrib ("size");
+		xmlSetAttrib("size");
 
-		sint32	len=0;
-		if(isReading())
+		sint32 len = 0;
+		if (isReading())
 		{
 			serial(len);
 			cont.clear();
 		}
 		else
 		{
-			len= cont.size();
+			len = cont.size();
 			serial(len);
 		}
 
 		// Close the node header
-		xmlPushEnd ();
+		xmlPushEnd();
 
 		serialSTLContLenPtr(cont, len);
 
 		// Close the node
-		xmlPop ();
+		xmlPop();
 	}
-
 
 	/**
 	 * special version for serializing a vector.  Ptr version.
 	 * Support up to sint32 length containers.
 	 */
-	template<class T>
-	void			serialVectorPtr(T &cont)
+	template <class T>
+	void serialVectorPtr(T &cont)
 	{
 		typedef typename T::value_type __value_type;
 		typedef typename T::iterator __iterator;
 
 		// Open a node header
-		xmlPushBegin ("VECTOR");
+		xmlPushBegin("VECTOR");
 
 		// Attrib size
-		xmlSetAttrib ("size");
+		xmlSetAttrib("size");
 
-		sint32	len=0;
-		if(isReading())
+		sint32 len = 0;
+		if (isReading())
 		{
 			serial(len);
 			// special version for vector: adjut good size.
@@ -1249,49 +1301,48 @@ private:
 		}
 		else
 		{
-			len= (sint32)cont.size();
+			len = (sint32)cont.size();
 			serial(len);
 		}
 
 		// Close the node header
-		xmlPushEnd ();
+		xmlPushEnd();
 
 		serialSTLContLenPtr(cont, len);
 
 		// Close the node
-		xmlPop ();
+		xmlPop();
 	}
-
 
 private:
 	/**
 	 * standard STL containers serialisation. Don't work with map<> and multimap<>. PolyPtr version
 	 * Support up to sint32 length containers. serialize just len  element of the container.
 	 */
-	template<class T>
-	void			serialSTLContLenPolyPtr(T &cont, sint32 len)
+	template <class T>
+	void serialSTLContLenPolyPtr(T &cont, sint32 len)
 	{
 		typedef typename T::value_type __value_type;
 		typedef typename T::iterator __iterator;
 
-		if(isReading())
+		if (isReading())
 		{
 			// check stream holds enough bytes (avoid STL to crash on resize)
 			checkStreamSize(len);
 
-			for(sint i=0;i<len;i++)
+			for (sint i = 0; i < len; i++)
 			{
-				__value_type	v=NULL;
+				__value_type v = NULL;
 				serialPolyPtr(v);
 				cont.insert(cont.end(), v);
 			}
 		}
 		else
 		{
-			__iterator		it= cont.begin();
-			for(sint i=0;i<len;i++, it++)
+			__iterator it = cont.begin();
+			for (sint i = 0; i < len; i++, it++)
 			{
-				serialPolyPtr(const_cast<__value_type&>(*it));
+				serialPolyPtr(const_cast<__value_type &>(*it));
 			}
 		}
 	}
@@ -1300,98 +1351,96 @@ private:
 	 * Map serialisation. PolyPtr version
 	 * Support up to sint32 length containers. serialize just len  element of the container.
 	 */
-	template<class T>
-	void			serialMapContLenPolyPtr(T &cont, sint32 len)
+	template <class T>
+	void serialMapContLenPolyPtr(T &cont, sint32 len)
 	{
 		typedef typename T::key_type __key_type;
 		typedef typename T::data_type __data_type;
 		typedef typename T::iterator __iterator;
 
-		if(isReading())
+		if (isReading())
 		{
 			// check stream holds enough bytes (avoid STL to crash on resize)
 			checkStreamSize(len);
 			// Close the node header
-			xmlPushEnd ();
+			xmlPushEnd();
 
-			for(sint i=0;i<len;i++)
+			for (sint i = 0; i < len; i++)
 			{
 				__key_type k;
 
-				xmlPush ("KEY");
-				serial ( k );
-				xmlPop ();
+				xmlPush("KEY");
+				serial(k);
+				xmlPop();
 
-				xmlPush ("ELM");
-				__data_type	v=NULL;
+				xmlPush("ELM");
+				__data_type v = NULL;
 				v.serialPolyPtr(*this);
 				cont[k] = v;
-				xmlPop ();
+				xmlPop();
 			}
 		}
 		else
 		{
-			__iterator		it= cont.begin();
+			__iterator it = cont.begin();
 
 			// Close the node header
-			xmlPushEnd ();
+			xmlPushEnd();
 
-			for(sint i=0;i<len;i++, it++)
+			for (sint i = 0; i < len; i++, it++)
 			{
-				xmlPush ("KEY");
-				serial( const_cast<__key_type&>((*it).first) );
-				xmlPop ();
+				xmlPush("KEY");
+				serial(const_cast<__key_type &>((*it).first));
+				xmlPop();
 
-				xmlPush ("ELM");
-				__data_type	v= const_cast<__data_type&>(it->second);
+				xmlPush("ELM");
+				__data_type v = const_cast<__data_type &>(it->second);
 				v.serialPolyPtr(*this);
-				xmlPop ();
+				xmlPop();
 			}
 		}
 	}
-
 
 	/**
 	 * standard STL containers serialisation. Don't work with map<> and multimap<>. PolyPtr version
 	 * Support up to sint32 length containers.
 	 */
-	template<class T>
-	void			serialSTLContPolyPtr(T &cont)
+	template <class T>
+	void serialSTLContPolyPtr(T &cont)
 	{
-		sint32	len=0;
-		if(isReading())
+		sint32 len = 0;
+		if (isReading())
 		{
 			serial(len);
 			cont.clear();
 		}
 		else
 		{
-			len= cont.size();
+			len = cont.size();
 			serial(len);
 		}
 
 		serialSTLContLenPolyPtr(cont, len);
 	}
 
-
 	/**
 	 * special version for serializing a vector. PolyPtr version
 	 * Support up to sint32 length containers.
 	 */
-	template<class T>
-	void			serialVectorPolyPtr(T &cont)
+	template <class T>
+	void serialVectorPolyPtr(T &cont)
 	{
 		typedef typename T::value_type __value_type;
 		typedef typename T::iterator __iterator;
 
 		// Open a node header
-		xmlPushBegin ("VECTOR");
+		xmlPushBegin("VECTOR");
 
 		// Attrib size
-		xmlSetAttrib ("size");
+		xmlSetAttrib("size");
 
-		sint32	len=0;
-		if(isReading())
+		sint32 len = 0;
+		if (isReading())
 		{
 			serial(len);
 			// special version for vector: adjut good size.
@@ -1404,53 +1453,50 @@ private:
 		}
 		else
 		{
-			len= (sint32)cont.size();
+			len = (sint32)cont.size();
 			serial(len);
 		}
 
 		// Close the node header
-		xmlPushEnd ();
+		xmlPushEnd();
 
 		serialSTLContLenPolyPtr(cont, len);
 
 		// Close the node
-		xmlPop ();
+		xmlPop();
 	}
 
 	/**
 	 * special version for serializing a map. PolyPtr version
 	 * Support up to sint32 length containers.
 	 */
-	template<class K, class T>
-	void			serialMapPolyPtr(std::map<K, T> &cont)
+	template <class K, class T>
+	void serialMapPolyPtr(std::map<K, T> &cont)
 	{
 		// Open a node header
-		xmlPushBegin ("MAP");
+		xmlPushBegin("MAP");
 		// Attrib size
-		xmlSetAttrib ("size");
+		xmlSetAttrib("size");
 
-		sint32	len=0;
-		if(isReading())
+		sint32 len = 0;
+		if (isReading())
 		{
 			serial(len);
 			cont.clear();
 		}
 		else
 		{
-			len= cont.size();
+			len = cont.size();
 			serial(len);
 		}
 
 		serialMapContLenPolyPtr(cont, len);
 
 		// Close the node
-		xmlPop ();
+		xmlPop();
 	}
 
-
-
 private:
-
 	/**
 	 * STL map<> and multimap<> serialisation.
 	 * Support up to sint32 length containers.
@@ -1468,21 +1514,21 @@ private:
 	 * Known Supported containers: map<>, multimap<>.
 	 * \param cont a STL map<> or multimap<> container.
 	 */
-	template<class T>
-	void			serialMultimap(T &cont)
+	template <class T>
+	void serialMultimap(T &cont)
 	{
 		typedef typename T::value_type __value_type;
 		typedef typename T::key_type __key_type;
 		typedef typename T::iterator __iterator;
 
 		// Open a node header
-		xmlPushBegin ("MULTIMAP");
+		xmlPushBegin("MULTIMAP");
 
 		// Attrib size
-		xmlSetAttrib ("size");
+		xmlSetAttrib("size");
 
-		sint32	len;
-		if(isReading())
+		sint32 len;
+		if (isReading())
 		{
 			cont.clear();
 			serial(len);
@@ -1491,57 +1537,55 @@ private:
 			checkStreamSize(len);
 
 			// Close the node header
-			xmlPushEnd ();
+			xmlPushEnd();
 
-			for(sint i=0;i<len;i++)
+			for (sint i = 0; i < len; i++)
 			{
 				__value_type v;
 
-				xmlPush ("KEY");
+				xmlPush("KEY");
 
-				serial ( const_cast<__key_type&>(v.first) );
+				serial(const_cast<__key_type &>(v.first));
 
-				xmlPop ();
+				xmlPop();
 
+				xmlPush("ELM");
 
-				xmlPush ("ELM");
+				serial(v.second);
 
-				serial (v.second);
-
-				xmlPop ();
+				xmlPop();
 
 				cont.insert(cont.end(), v);
 			}
 		}
 		else
 		{
-			len= (sint32)cont.size();
+			len = (sint32)cont.size();
 			serial(len);
-			__iterator		it= cont.begin();
+			__iterator it = cont.begin();
 
 			// Close the node header
-			xmlPushEnd ();
+			xmlPushEnd();
 
-			for(sint i=0;i<len;i++, it++)
+			for (sint i = 0; i < len; i++, it++)
 			{
-				xmlPush ("KEY");
+				xmlPush("KEY");
 
-				serial( const_cast<__key_type&>((*it).first) );
+				serial(const_cast<__key_type &>((*it).first));
 
-				xmlPop ();
+				xmlPop();
 
-				xmlPush ("ELM");
+				xmlPush("ELM");
 
 				serial((*it).second);
 
-				xmlPop ();
+				xmlPop();
 			}
 		}
 
 		// Close the node
-		xmlPop ();
+		xmlPop();
 	}
-
 
 	/**
 	 * STL map<>
@@ -1560,65 +1604,65 @@ private:
 	 * Known Supported containers: map<>
 	 * \param cont a STL map<> container.
 	 */
-	template<class T>
-	void			serialMap(T &cont)
+	template <class T>
+	void serialMap(T &cont)
 	{
 		typedef typename T::value_type __value_type;
 		typedef typename T::key_type __key_type;
 		typedef typename T::iterator __iterator;
 
 		// Open a node header
-		xmlPushBegin ("MAP");
+		xmlPushBegin("MAP");
 		// Attrib size
-		xmlSetAttrib ("size");
+		xmlSetAttrib("size");
 
-		sint32	len;
-		if(isReading())
+		sint32 len;
+		if (isReading())
 		{
 			cont.clear();
 			serial(len);
 			// check stream holds enough bytes (avoid STL to crash on resize)
 			checkStreamSize(len);
 			// Close the node header
-			xmlPushEnd ();
+			xmlPushEnd();
 
-			for(sint i=0;i<len;i++)
+			for (sint i = 0; i < len; i++)
 			{
 				// MALKAV 05/07/02 : prevent a copy of the value, copy the key instead
 				__key_type k;
 
-				xmlPush ("KEY");
-				serial ( k );
-				xmlPop ();
+				xmlPush("KEY");
+				serial(k);
+				xmlPop();
 
-				xmlPush ("ELM");
-				serial (cont[k]);
-				xmlPop ();
+				xmlPush("ELM");
+				serial(cont[k]);
+				xmlPop();
 			}
 		}
 		else
 		{
-			len= (sint32)cont.size();
+			len = (sint32)cont.size();
 			serial(len);
-			__iterator		it= cont.begin();
+			__iterator it = cont.begin();
 
 			// Close the node header
-			xmlPushEnd ();
+			xmlPushEnd();
 
-			for(sint i=0;i<len;i++, it++)
+			for (sint i = 0; i < len; i++, it++)
 			{
-				xmlPush ("KEY");
-				serial( const_cast<__key_type&>((*it).first) );
-				xmlPop ();
+				xmlPush("KEY");
+				serial(const_cast<__key_type &>((*it).first));
+				xmlPop();
 
-				xmlPush ("ELM");
+				xmlPush("ELM");
 				serial((*it).second);
-				xmlPop ();
+				xmlPop();
 			}
 		}
 
 		// Close the node
-		xmlPop ();
+		xmlPop();
 	}
 
 	/**
@@ -1638,8 +1682,8 @@ private:
 	 * Known Supported containers: map<>
 	 * \param cont a STL map<> container.
 	 */
-	template<class T>
-	void			serialPtrMap(T &cont)
+	template <class T>
+	void serialPtrMap(T &cont)
 	{
 		typedef typename T::value_type::second_type __ptr_type;
 		typedef typename __ptr_type::element_type __value_type;
@@ -1647,71 +1691,69 @@ private:
 		typedef typename T::iterator __iterator;
 
 		// Open a node header
-		xmlPushBegin ("MAP");
+		xmlPushBegin("MAP");
 		// Attrib size
-		xmlSetAttrib ("size");
+		xmlSetAttrib("size");
 
-		sint32	len;
-		if(isReading())
+		sint32 len;
+		if (isReading())
 		{
 			cont.clear();
 			serial(len);
 			// check stream holds enough bytes (avoid STL to crash on resize)
 			checkStreamSize(len);
 			// Close the node header
-			xmlPushEnd ();
+			xmlPushEnd();
 
-			for(sint i=0;i<len;i++)
+			for (sint i = 0; i < len; i++)
 			{
 				// MALKAV 05/07/02 : prevent a copy of the value, copy the key instead
 				__key_type k;
 
-				xmlPush ("KEY");
-				serial ( k );
-				xmlPop ();
+				xmlPush("KEY");
+				serial(k);
+				xmlPop();
 
-				xmlPush ("ELM");
+				xmlPush("ELM");
 				cont[k] = __ptr_type(new __value_type());
-				serial (*cont[k]);
-				xmlPop ();
+				serial(*cont[k]);
+				xmlPop();
 			}
 		}
 		else
 		{
-			len= (sint32)cont.size();
+			len = (sint32)cont.size();
 			serial(len);
-			__iterator		it= cont.begin();
+			__iterator it = cont.begin();
 
 			// Close the node header
-			xmlPushEnd ();
+			xmlPushEnd();
 
-			for(sint i=0;i<len;i++, it++)
+			for (sint i = 0; i < len; i++, it++)
 			{
-				xmlPush ("KEY");
-				serial( const_cast<__key_type&>((*it).first) );
-				xmlPop ();
+				xmlPush("KEY");
+				serial(const_cast<__key_type &>((*it).first));
+				xmlPop();
 
-				xmlPush ("ELM");
+				xmlPush("ELM");
 				serial(*(*it).second);
-				xmlPop ();
+				xmlPop();
 			}
 		}
 
 		// Close the node
-		xmlPop ();
+		xmlPop();
 	}
 
 	// Mode XML
-	bool	_XML;
+	bool _XML;
 };
-
 
 // ======================================================================================================
 // ======================================================================================================
 // Handle for streaming Polymorphic classes.
 // ======================================================================================================
 // ======================================================================================================
-
 
 // ======================================================================================================
 /**
@@ -1725,16 +1767,13 @@ private:
 class IStreamable : public IClassable
 {
 public:
-	virtual void		serial(IStream	&f) =0;
+	virtual void serial(IStream &f) = 0;
 };
-
 
 } // NLMISC.
 
-
 // Inline Implementation.
 #include "stream_inline.h"
-
 
 #endif // NL_STREAM_H
 

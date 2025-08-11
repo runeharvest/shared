@@ -14,40 +14,35 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef DIALOG_STACK_H
 #define DIALOG_STACK_H
 
-
 /** this helps to record dynamically created window or dialog
-  * Just deriv from this and call the method pushWnd to register a new window
-  * They'll be deleted in the dtor
-  */
-
+ * Just deriv from this and call the method pushWnd to register a new window
+ * They'll be deleted in the dtor
+ */
 
 class CDialogStack
 {
-	public:
-		void pushWnd(CWnd *wnd)
+public:
+	void pushWnd(CWnd *wnd)
+	{
+		// a window must be registered only once
+		nlassert(std::find(_WndList.begin(), _WndList.end(), wnd) == _WndList.end());
+		_WndList.push_back(wnd);
+	}
+
+	~CDialogStack()
+	{
+		for (std::vector<CWnd *>::iterator it = _WndList.begin(); it != _WndList.end(); ++it)
 		{
-			// a window must be registered only once
-			nlassert(std::find(_WndList.begin(), _WndList.end() , wnd) == _WndList.end()) ; 			
-			_WndList.push_back(wnd) ;
+			(*it)->DestroyWindow();
+			delete *it;
 		}
+	}
 
-		~CDialogStack()
-		{
-			for (std::vector<CWnd *>::iterator it = _WndList.begin() ; it != _WndList.end() ; ++it)
-			{
-				(*it)->DestroyWindow() ;
-				delete *it ;
-			}
-		}
-
-	protected:
-
-		std::vector<CWnd *> _WndList ;
-
-} ;
+protected:
+	std::vector<CWnd *> _WndList;
+};
 
 #endif

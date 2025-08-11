@@ -14,27 +14,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 //
 
 #include "std_afx.h"
 #include "object_viewer.h"
 #include "edit_user_param.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CEditUserParam dialog
 
-
-CEditUserParam::CEditUserParam(uint32 userParamIndex, CWnd* pParent /*=NULL*/)
-	: _UserParamIndex(userParamIndex), CDialog(CEditUserParam::IDD, pParent)
+CEditUserParam::CEditUserParam(uint32 userParamIndex, CWnd *pParent /*=NULL*/)
+    : _UserParamIndex(userParamIndex)
+    , CDialog(CEditUserParam::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CEditUserParam)
 	//}}AFX_DATA_INIT
 }
 
-
-void CEditUserParam::DoDataExchange(CDataExchange* pDX)
+void CEditUserParam::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CEditUserParam)
@@ -42,28 +39,27 @@ void CEditUserParam::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CEditUserParam, CDialog)
-	//{{AFX_MSG_MAP(CEditUserParam)
-	ON_CBN_SELCHANGE(IDC_USER_PARAM_INDEX, OnSelchangeUserParamIndex)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CEditUserParam)
+ON_CBN_SELCHANGE(IDC_USER_PARAM_INDEX, OnSelchangeUserParamIndex)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CEditUserParam message handlers
 
-BOOL CEditUserParam::OnInitDialog() 
+BOOL CEditUserParam::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
-	m_UserParamIndex.SetCurSel(_UserParamIndex) ;	
-	UpdateData(FALSE) ;
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+
+	m_UserParamIndex.SetCurSel(_UserParamIndex);
+	UpdateData(FALSE);
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CEditUserParam::OnSelchangeUserParamIndex() 
+void CEditUserParam::OnSelchangeUserParamIndex()
 {
-	UpdateData() ;
-	_UserParamIndex = m_UserParamIndex.GetCurSel() ;
+	UpdateData();
+	_UserParamIndex = m_UserParamIndex.GetCurSel();
 }

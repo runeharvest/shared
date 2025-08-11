@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef RY_FOG_OF_WAR_H
 #define RY_FOG_OF_WAR_H
 
@@ -28,12 +27,10 @@ class IFogOfWar
 {
 
 protected:
-
-	sint16 MapWidth, MapHeight;		// Size of the map in pixel
-	float MinX, MinY, MaxX, MaxY;	// World Coords (same as continent ones)
+	sint16 MapWidth, MapHeight; // Size of the map in pixel
+	float MinX, MinY, MaxX, MaxY; // World Coords (same as continent ones)
 
 public:
-
 	IFogOfWar();
 	virtual ~IFogOfWar();
 
@@ -60,7 +57,6 @@ public:
 	float getMaxY() const { return MaxY; }
 	sint16 getMapWidth() const { return MapWidth; }
 	sint16 getMapHeight() const { return MapHeight; }
-
 
 	// Serialize the map
 	void serial(NLMISC::IStream &f);

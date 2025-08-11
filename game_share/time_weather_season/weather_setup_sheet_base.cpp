@@ -17,8 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "weather_setup_sheet_base.h"
 //
@@ -29,32 +27,31 @@
 
 //=====================================================================================================================
 /**Tool fct to extract a value from a sheet, and to display a warning if it failed.
-  */
-template <class T> static void GetWeatherFormValue(const NLGEORGES::UFormElm &item, T &destItem, const char *name)
+ */
+template <class T>
+static void GetWeatherFormValue(const NLGEORGES::UFormElm &item, T &destItem, const char *name)
 {
 	nlassert(name);
 	if (!item.getValueByName(destItem, name)) nlwarning("WeatherSetup : can't get %s value, keeping default", name);
 }
 
-
 //==================================================================================
-CWeatherStateSheet::CWeatherStateSheet()	: 	FogRatio(0),
-												FogColorDay(NLMISC::CRGBA::Black),
-												FogColorDusk(NLMISC::CRGBA::Black),
-												FogColorNight(NLMISC::CRGBA::Black),
-												FogGradientFactor(1.f),
-												Lighting(1.f),
-												WindIntensity(0),
-												ThunderIntensity(0)
+CWeatherStateSheet::CWeatherStateSheet()
+    : FogRatio(0)
+    , FogColorDay(NLMISC::CRGBA::Black)
+    , FogColorDusk(NLMISC::CRGBA::Black)
+    , FogColorNight(NLMISC::CRGBA::Black)
+    , FogGradientFactor(1.f)
+    , Lighting(1.f)
+    , WindIntensity(0)
+    , ThunderIntensity(0)
 
 {
-	for(uint k = 0; k < NumFogType; ++k)
+	for (uint k = 0; k < NumFogType; ++k)
 	{
 		FogNear[k] = FogFar[k] = 0.f;
 	}
 }
-
-
 
 //=====================================================================================================================
 void CWeatherStateSheet::build(const NLGEORGES::UFormElm &item)
@@ -108,8 +105,6 @@ void CWeatherStateSheet::build(const NLGEORGES::UFormElm &item)
 	GetWeatherFormValue(item, LocalizedName, "LocalizedName");
 }
 
-
-
 //==================================================================================
 void CWeatherStateSheet::serial(NLMISC::IStream &f)
 {
@@ -118,7 +113,7 @@ void CWeatherStateSheet::serial(NLMISC::IStream &f)
 	f.serial(FogColorDay);
 	f.serial(FogColorDusk);
 	f.serial(FogColorNight);
-	for(uint k = 0; k < NumFogType; ++k)
+	for (uint k = 0; k < NumFogType; ++k)
 	{
 		f.serial(FogNear[k], FogFar[k]);
 	}
@@ -140,14 +135,15 @@ void CWeatherStateSheet::serial(NLMISC::IStream &f)
 }
 
 //==================================================================================
-CCloudStateSheet::CCloudStateSheet() : AmbientDay(120, 150, 155),
-									 DiffuseDay(220, 250, 255),
-									 AmbientNight(60, 75, 125),
-									 DiffuseNight(110, 125, 200),
-									 AmbientDusk(210, 116, 21),
-									 DiffuseDusk(234, 183, 77),
-									 NumClouds(50),
-									 DiffusionSpeed(8.f)
+CCloudStateSheet::CCloudStateSheet()
+    : AmbientDay(120, 150, 155)
+    , DiffuseDay(220, 250, 255)
+    , AmbientNight(60, 75, 125)
+    , DiffuseNight(110, 125, 200)
+    , AmbientDusk(210, 116, 21)
+    , DiffuseDusk(234, 183, 77)
+    , NumClouds(50)
+    , DiffusionSpeed(8.f)
 {
 }
 
@@ -183,9 +179,9 @@ CWeatherSetupSheetBase::CWeatherSetupSheetBase()
 {
 }
 
-void CWeatherSetupSheetBase::readGeorges (const NLGEORGES::UForm *form, const NLMISC::CSheetId &/* sheetId */)
+void CWeatherSetupSheetBase::readGeorges(const NLGEORGES::UForm *form, const NLMISC::CSheetId & /* sheetId */)
 {
-	build( form->getRootNode() );
+	build(form->getRootNode());
 }
 
 //==================================================================================

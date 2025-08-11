@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 //
 
 #if !defined(AFX_LB_EXTERN_ID_DLG_H__A045B811_4473_4F2B_A27E_580B4407837C__INCLUDED_)
@@ -22,11 +21,10 @@
 
 #if _MSC_VER > 1000
 #pragma once
-#endif 
+#endif
 
-namespace NL3D
-{
-	class CPSLocatedBindable;
+namespace NL3D {
+class CPSLocatedBindable;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -34,28 +32,30 @@ namespace NL3D
 
 class CLBExternIDDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CLBExternIDDlg(uint32 id, CWnd* pParent = NULL);   // standard constructor
+	CLBExternIDDlg(uint32 id, CWnd *pParent = NULL); // standard constructor
 
 	uint32 getNewID(void) const { return _ID; } // the id after edition by this dialog
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CLBExternIDDlg)
-	enum { IDD = IDD_LB_EXTERN_ID };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_LB_EXTERN_ID
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CLBExternIDDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
-protected:	
-	uint32					  _ID; // the current ID
+	// Implementation
+protected:
+	uint32 _ID; // the current ID
 
 	// Generated message map functions
 	//{{AFX_MSG(CLBExternIDDlg)

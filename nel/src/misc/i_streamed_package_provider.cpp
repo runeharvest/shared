@@ -19,8 +19,7 @@
 // Project includes
 #include <nel/misc/i_streamed_package_provider.h>
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 IStreamedPackageProvider::IStreamedPackageProvider()
 {

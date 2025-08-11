@@ -31,8 +31,7 @@
 
 #include <vector>
 
-namespace NLMISC
-{
+namespace NLMISC {
 class CRGBA;
 class IStream;
 struct EStream;
@@ -49,17 +48,17 @@ struct IAddRemoveInstance;
 struct IIGAddBegin;
 
 /**
-  * A CInstanceGroup is a group of mesh instance and so composed by
-  *  - A reference to a mesh (refered by the name)
-  *  - The transformations to get it to the world
-  *  - The parent
-  *
-  * This class can initialize a scene and be serialized.
-  *
-  * \author Matthieu Besson
-  * \author Nevrax France
-  * \date 2001
-  */
+ * A CInstanceGroup is a group of mesh instance and so composed by
+ *  - A reference to a mesh (refered by the name)
+ *  - The transformations to get it to the world
+ *  - The parent
+ *
+ * This class can initialize a scene and be serialized.
+ *
+ * \author Matthieu Besson
+ * \author Nevrax France
+ * \date 2001
+ */
 class CInstanceGroup : public NLMISC::CRefCount
 {
 	/* ***********************************************
@@ -68,13 +67,20 @@ class CInstanceGroup : public NLMISC::CRefCount
 	 * ***********************************************/
 
 public:
-
 	/// Should Never be changed
-	enum	{NumStaticLightPerInstance= 2};
-	enum TState { StateNotAdded = 0, StateAdding, StateAdded, StateError };
+	enum
+	{
+		NumStaticLightPerInstance = 2
+	};
+	enum TState
+	{
+		StateNotAdded = 0,
+		StateAdding,
+		StateAdded,
+		StateError
+	};
 
 public:
-
 	/**
 	 * Instance part
 	 */
@@ -101,42 +107,41 @@ public:
 		std::string InstanceName;
 
 		/// If true, then the shape is even not loaded/displayed (used for shadow casting?)
-		bool	DontAddToScene;
+		bool DontAddToScene;
 
 		/// If false, the shape is load but hid by default (NB: can be used for camera collision)
-		bool	Visible;
+		bool Visible;
 
 		/// Precomputed Lighting.
 		// If true (false by default), then the instance don't cast shadow (used by ig_lighter).
-		bool	DontCastShadow;
+		bool DontCastShadow;
 		// If true (false by default), then the instance's lighting will not be precomputed.
-		bool	AvoidStaticLightPreCompute;
+		bool AvoidStaticLightPreCompute;
 		// This part is precomputed.
-		bool	StaticLightEnabled;		// If false, then the instance 's lighting is not pre-computed.
-		uint8 	SunContribution;		// Contribution of the Sun.
+		bool StaticLightEnabled; // If false, then the instance 's lighting is not pre-computed.
+		uint8 SunContribution; // Contribution of the Sun.
 		// Ids of the lights. FF == disabled. if Lights[i]==FF, then all lights >=i are considered disabled.
-		uint8	Light[NumStaticLightPerInstance];
+		uint8 Light[NumStaticLightPerInstance];
 		/** Id of the ambiant Light to take for this instance. Ambient light are stored too in ig->getPointLigths()
 		 *	If 0xFF => take Ambient of the sun.
 		 */
-		uint8	LocalAmbientId;
+		uint8 LocalAmbientId;
 		/** if true (false by default), the instance don't cast shadow, but ONLY FOR ig_lighter (ig_lighter_lib)
 		 *	(zone_lighter and zone_ig_lighter ignore it).
 		 *	This is a special trick for the "Matis Serre" where the exterior mesh cast shadow in the interior, but
 		 *	is not visible in the interior in realTime because of cluster clipping.... omg :(
 		 */
-		bool	DontCastShadowForInterior;
+		bool DontCastShadowForInterior;
 		/** This is the opposite of DontCastShadowForInterior. zone_lighter or zone_ig_lighter test it and if true,
 		 *	assume this instance dont cast shadow
 		 */
-		bool	DontCastShadowForExterior;
-
+		bool DontCastShadowForExterior;
 
 		/// Constructor
-		CInstance ();
+		CInstance();
 
 		/// Serial the instance
-		void serial (NLMISC::IStream& f);
+		void serial(NLMISC::IStream &f);
 	};
 
 	/// A vector of instance.
@@ -145,34 +150,34 @@ public:
 	/// Remove all of these methods. For the moment DO NOT USE THEM !!!
 
 	/// Get number of instance in this group
-	uint					getNumInstance () const;
+	uint getNumInstance() const;
 
 	/// Get the name of the mesh referenced
-	const std::string&		getShapeName (uint instanceNb) const;
+	const std::string &getShapeName(uint instanceNb) const;
 
 	/// Get the instance name
-	const std::string&		getInstanceName (uint instanceNb) const;
+	const std::string &getInstanceName(uint instanceNb) const;
 
 	/// Get an instance position
-	const NLMISC::CVector&	getInstancePos (uint instanceNb) const;
+	const NLMISC::CVector &getInstancePos(uint instanceNb) const;
 
 	/// Get an instance rotation
-	const NLMISC::CQuat&	getInstanceRot (uint instanceNb) const;
+	const NLMISC::CQuat &getInstanceRot(uint instanceNb) const;
 
 	// Get an instance scale
-	const NLMISC::CVector&	getInstanceScale (uint instanceNb) const;
+	const NLMISC::CVector &getInstanceScale(uint instanceNb) const;
 
 	// Get instance matrix (no pivot added)
-	void					getInstanceMatrix(uint instanceNb, NLMISC::CMatrix &dest) const;
+	void getInstanceMatrix(uint instanceNb, NLMISC::CMatrix &dest) const;
 
 	// Get the instance father (-1 if this is a root)
-	sint32					getInstanceParent (uint instanceNb) const;
+	sint32 getInstanceParent(uint instanceNb) const;
 
 	// Get a const ref on the instance
-	const CInstance			&getInstance(uint instanceNb) const;
+	const CInstance &getInstance(uint instanceNb) const;
 
 	// Get a mutable ref on the instance
-	CInstance				&getInstance(uint instanceNb);
+	CInstance &getInstance(uint instanceNb);
 
 	// Get the ig global pos
 	const NLMISC::CVector &getGlobalPos() const { return _GlobalPos; }
@@ -180,7 +185,7 @@ public:
 	/** Get the instance added to the scene. NULL if instanceNb too big, if addToScene not called,
 	 *	or if instance is DontAddToScene
 	 */
-	CTransformShape			*getTransformShape(uint instanceNb) const;
+	CTransformShape *getTransformShape(uint instanceNb) const;
 
 	/**
 	 * Construct, serialize and link to scene
@@ -192,36 +197,36 @@ public:
 	/** Build the group
 	 *	Build with an empty list of light
 	 */
-	void build (const CVector &vGlobalPos, const TInstanceArray& array,
-				const std::vector<CCluster>& Clusters,
-				const std::vector<CPortal>& Portals);
+	void build(const CVector &vGlobalPos, const TInstanceArray &array,
+	    const std::vector<CCluster> &Clusters,
+	    const std::vector<CPortal> &Portals);
 
 	/** Build the group
 	 *	Build also the list of light. NB: sort by LightGroupName the array.
 	 *	Give also a ptr on a retrieverGridMap to build surfaces (if not NULL).
 	 */
-	void build (const CVector &vGlobalPos, const TInstanceArray& array,
-				const std::vector<CCluster>& Clusters,
-				const std::vector<CPortal>& Portals,
-				const std::vector<CPointLightNamed> &pointLightList,
-				const CIGSurfaceLight::TRetrieverGridMap *retrieverGridMap= NULL,
-				float igSurfaceLightCellSize= 0);
+	void build(const CVector &vGlobalPos, const TInstanceArray &array,
+	    const std::vector<CCluster> &Clusters,
+	    const std::vector<CPortal> &Portals,
+	    const std::vector<CPointLightNamed> &pointLightList,
+	    const CIGSurfaceLight::TRetrieverGridMap *retrieverGridMap = NULL,
+	    float igSurfaceLightCellSize = 0);
 
 	/** Retreive group information. NB: data may have changed, eg: order of lights.
 	 */
-	void retrieve (CVector &vGlobalPos, TInstanceArray& array,
-				std::vector<CCluster>& Clusters,
-				std::vector<CPortal>& Portals,
-				std::vector<CPointLightNamed> &pointLightList) const;
+	void retrieve(CVector &vGlobalPos, TInstanceArray &array,
+	    std::vector<CCluster> &Clusters,
+	    std::vector<CPortal> &Portals,
+	    std::vector<CPointLightNamed> &pointLightList) const;
 
 	/// Serial the group
-	void serial (NLMISC::IStream& f);
+	void serial(NLMISC::IStream &f);
 
 	/// Add all the instances to the scene
-	void createRoot (CScene& scene);
+	void createRoot(CScene &scene);
 
 	/// Setup the callback in charge of changing name at the addToScene moment
-	void setTransformNameCallback (ITransformName *pTN);
+	void setTransformNameCallback(ITransformName *pTN);
 
 	/// Set a callback to know when an instance has been added / removed
 	void setAddRemoveInstanceCallback(IAddRemoveInstance *callback);
@@ -229,214 +234,200 @@ public:
 	/// Set a callback to know when an instance group is being created, and how many instances it contains
 	void setIGAddBeginCallback(IIGAddBegin *callback);
 
-
+	/**
+	 * Add all the instances to the scene. By default, freezeHRC() those instances and the root.
+	 *
+	 * \param scene is the scene in which you want to add the instance group.
+	 * \param driver is a pointer to a driver. If this pointer is not NULL, the textures used by
+	 * the shapes will be preloaded in this driver. If the pointer is NULL (default), textures
+	 * will ve loaded when the shape will be used.
+	 */
+	bool addToScene(CScene &scene, IDriver *driver = NULL, uint selectedTexture = 0);
+	bool addToSceneAsync(CScene &scene, IDriver *driver = NULL, uint selectedTexture = 0);
+	void stopAddToSceneAsync();
+	TState getAddToSceneState();
 
 	/**
-	  * Add all the instances to the scene. By default, freezeHRC() those instances and the root.
-	  *
-	  * \param scene is the scene in which you want to add the instance group.
-	  * \param driver is a pointer to a driver. If this pointer is not NULL, the textures used by
-	  * the shapes will be preloaded in this driver. If the pointer is NULL (default), textures
-	  * will ve loaded when the shape will be used.
-	  */
-	bool addToScene (CScene& scene, IDriver *driver=NULL, uint selectedTexture=0);
-	bool addToSceneAsync (CScene& scene, IDriver *driver=NULL, uint selectedTexture=0);
-	void stopAddToSceneAsync ();
-	TState getAddToSceneState ();
-
-	/**
-	  * Get the instance name to create as written in the instance group.
-	  */
-	void getShapeName (uint instanceIndex, std::string &shapeName) const;
+	 * Get the instance name to create as written in the instance group.
+	 */
+	void getShapeName(uint instanceIndex, std::string &shapeName) const;
 
 	/// User Interface related: yes it is ugly....
-	void					setUserInterface(class UInstanceGroup *uig) {_UserIg= uig;}
-	class UInstanceGroup	*getUserInterface() const {return _UserIg;}
+	void setUserInterface(class UInstanceGroup *uig) { _UserIg = uig; }
+	class UInstanceGroup *getUserInterface() const { return _UserIg; }
 
 	/** For Debug Display of clusters. The view matrix and frustum should have been setuped
 	 *	NB: the ModelMatrix is modified by this method
 	 */
-	void					displayDebugClusters(IDriver *drv, class CTextContext *txtCtx);
+	void displayDebugClusters(IDriver *drv, class CTextContext *txtCtx);
 
 private:
-	bool addToSceneWhenAllShapesLoaded (CScene& scene, IDriver *driver, uint selectedTexture);
+	bool addToSceneWhenAllShapesLoaded(CScene &scene, IDriver *driver, uint selectedTexture);
 
 public:
 	/// Remove all the instances from the scene
-	bool removeFromScene (CScene& scene);
-
+	bool removeFromScene(CScene &scene);
 
 	/**
 	 * LightMap part
 	 */
 
 	/// Get all lights (lightmaps) from an instance group
-	void getLights (std::set<std::string> &LightNames);
-
-
+	void getLights(std::set<std::string> &LightNames);
 
 	/**
 	 * BlendShape part
 	 */
 
 	/// Get all the blendshapes from an instance group
-	void getBlendShapes (std::set<std::string> &BlendShapeNames);
+	void getBlendShapes(std::set<std::string> &BlendShapeNames);
 
 	/// Set the blendshape factor for the whole instance group (-100 -> 100)
-	void setBlendShapeFactor (const std::string &BlendShapeName, float rFactor);
-
+	void setBlendShapeFactor(const std::string &BlendShapeName, float rFactor);
 
 	/**
 	 * Cluster/Portal system part
 	 */
 
 	/// To construct the cluster system by hand
-	void addCluster (CCluster *pCluster);
+	void addCluster(CCluster *pCluster);
 
 	/// Set the cluster system to test for instances that are not in a cluster of this IG
-	void setClusterSystemForInstances (CInstanceGroup *pIG);
+	void setClusterSystemForInstances(CInstanceGroup *pIG);
 
 	/// Get all dynamic portals of an instance group
-	void getDynamicPortals (std::vector<std::string> &names);
+	void getDynamicPortals(std::vector<std::string> &names);
 
 	/// Set the state of a dynamic portal (true=opened, false=closed)
-	void setDynamicPortal (std::string& name, bool opened);
+	void setDynamicPortal(std::string &name, bool opened);
 
 	/// Get the state of a dynamic portal (true=opened, false=closed)
-	bool getDynamicPortal (std::string& name);
-
+	bool getDynamicPortal(std::string &name);
 
 	/**
 	 * Transformation part
 	 */
 
 	/// link the root of the ig to a node. No-op if not added to scene. Pass NULL to reset by default
-	void linkRoot (CScene &scene, CTransform *father);
+	void linkRoot(CScene &scene, CTransform *father);
 
 	/// Set the position of the IG
-	void setPos (const CVector &pos);
+	void setPos(const CVector &pos);
 
 	/// Set the rotation of the IG
-	void setRotQuat (const CQuat &quat);
+	void setRotQuat(const CQuat &quat);
 
 	/// Get the position of the IG
-	CVector getPos ();
+	CVector getPos();
 
 	/// Get the rotation of the IG
-	CQuat getRotQuat ();
+	CQuat getRotQuat();
 
 	/// see CTransform::freezeHRC(). Do it for all instances (not clusters), and for the root of the IG.
-	void		freezeHRC();
+	void freezeHRC();
 
 	/// see CTransform::unfreezeHRC(). Do it for all instances (not clusters), and for the root of the IG.
-	void		unfreezeHRC();
-
+	void unfreezeHRC();
 
 public:
-
 	/// \name RealTime lighting part
 	// @{
 
 	/// get the list of light. NB: the array is sorted by LightGroupName.
-	const std::vector<CPointLightNamed> &getPointLightList() const {return _PointLightArray.getPointLights();}
+	const std::vector<CPointLightNamed> &getPointLightList() const { return _PointLightArray.getPointLights(); }
 
 	/// Get the number of point lights
-	uint								 getNumPointLights() const { return (uint)_PointLightArray.getPointLights().size(); }
+	uint getNumPointLights() const { return (uint)_PointLightArray.getPointLights().size(); }
 
 	/// Get a mutable ref on a point light named
-	CPointLightNamed					&getPointLightNamed(uint index)
+	CPointLightNamed &getPointLightNamed(uint index)
 	{
 		return _PointLightArray.getPointLights()[index];
 	}
 
 	/// set the Light factor for all pointLights "lightGroupName".
-	void			setPointLightFactor(const CScene &scene);
+	void setPointLightFactor(const CScene &scene);
 
 	/// See CIGSurfaceLight::getStaticLightSetup()
-	bool			getStaticLightSetup(NLMISC::CRGBA sunAmbient, uint retrieverIdentifier, sint surfaceId, const CVector &localPos,
-		std::vector<CPointLightInfluence> &pointLightList, uint8 &sunContribution, NLMISC::CRGBA &localAmbient)
+	bool getStaticLightSetup(NLMISC::CRGBA sunAmbient, uint retrieverIdentifier, sint surfaceId, const CVector &localPos,
+	    std::vector<CPointLightInfluence> &pointLightList, uint8 &sunContribution, NLMISC::CRGBA &localAmbient)
 	{
 		return _IGSurfaceLight.getStaticLightSetup(sunAmbient, retrieverIdentifier, surfaceId, localPos,
-			pointLightList, sunContribution, localAmbient);
+		    pointLightList, sunContribution, localAmbient);
 	}
 
 	/// Get the SurfaceLight info, for debug purposes.
-	const CIGSurfaceLight	&getIGSurfaceLight() const {return _IGSurfaceLight;}
+	const CIGSurfaceLight &getIGSurfaceLight() const { return _IGSurfaceLight; }
 
 	/// Setuped at export, tells if the ig is touched by the sun. true by default.
-	void			enableRealTimeSunContribution(bool enable);
-	bool			getRealTimeSunContribution() const {return _RealTimeSunContribution;}
-
+	void enableRealTimeSunContribution(bool enable);
+	bool getRealTimeSunContribution() const { return _RealTimeSunContribution; }
 
 	// @}
 
 	/** Look through all hierarchy our clusters that must be linked to our parent
-	  */
-	bool linkToParent (CInstanceGroup*pFather);
+	 */
+	bool linkToParent(CInstanceGroup *pFather);
 
 	/** Get the parent ClusterSystem
 	 */
-	CInstanceGroup	*getParentClusterSystem() const {return _ParentClusterSystem;}
+	CInstanceGroup *getParentClusterSystem() const { return _ParentClusterSystem; }
 
 public:
+	TInstanceArray _InstancesInfos;
+	std::vector<CTransformShape *> _Instances;
 
-	TInstanceArray					_InstancesInfos;
-	std::vector<CTransformShape*>	_Instances;
+	std::vector<CPortal> _Portals;
+	std::vector<CCluster> _ClusterInfos;
+	std::vector<CCluster *> _ClusterInstances;
 
-	std::vector<CPortal>	_Portals;
-	std::vector<CCluster>	_ClusterInfos;
-	std::vector<CCluster*>	_ClusterInstances;
+	CTransform *_Root;
 
-	CTransform		*_Root;
-
-	CClipTrav		*_ClipTrav;
+	CClipTrav *_ClipTrav;
 	// The cluster system used to link unclustered instances (setClusterSystemForInstances)
-	CInstanceGroup	*_ClusterSystemForInstances;
+	CInstanceGroup *_ClusterSystemForInstances;
 	// The cluster system parent of us (linkToParent() call)
-	CInstanceGroup	*_ParentClusterSystem;
+	CInstanceGroup *_ParentClusterSystem;
 
 	NLMISC::CVector _GlobalPos;
-
 
 private:
 	/// \name PointLight part
 	// @{
 
 	/// RealTimeSunContribution. Used for ig_lighter and zone_ig_lighter
-	bool							_RealTimeSunContribution;
+	bool _RealTimeSunContribution;
 
 	/// Array of pointLights
-	CPointLightNamedArray			_PointLightArray;
+	CPointLightNamedArray _PointLightArray;
 
 	/// Build the list of light. NB: sort by LightGroupName the array, and return index remap.
-	void			buildPointLightList(const std::vector<CPointLightNamed> &pointLightList,
-										std::vector<uint>	&plRemap);
+	void buildPointLightList(const std::vector<CPointLightNamed> &pointLightList,
+	    std::vector<uint> &plRemap);
 
 	///	The object used to light dynamic models in town and buildings
-	CIGSurfaceLight					_IGSurfaceLight;
+	CIGSurfaceLight _IGSurfaceLight;
 
 	// @}
 
 	/// \name Async loading part
 	// @{
-	bool		_AddToSceneSignal;
-	TState		_AddToSceneState;
-	CScene		*_AddToSceneTempScene;
-	IDriver		*_AddToSceneTempDriver;
-	uint		_AddToSceneTempSelectTexture;
+	bool _AddToSceneSignal;
+	TState _AddToSceneState;
+	CScene *_AddToSceneTempScene;
+	IDriver *_AddToSceneTempDriver;
+	uint _AddToSceneTempSelectTexture;
 	// @}
 
-	ITransformName       *_TransformName;
-	IAddRemoveInstance   *_AddRemoveInstance;
-	IIGAddBegin			 *_IGAddBeginCallback;
+	ITransformName *_TransformName;
+	IAddRemoveInstance *_AddRemoveInstance;
+	IIGAddBegin *_IGAddBeginCallback;
 
 	// Yes this is ugly, but impossible otherwise with the actual user interface system...
-	UInstanceGroup		 *_UserIg;
+	UInstanceGroup *_UserIg;
 };
 
-
 } // NL3D
-
 
 #endif // NL_SCENE_GROUP_H
 

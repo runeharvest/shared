@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef MODULE_SECURITY_H
 #define MODULE_SECURITY_H
 
@@ -26,18 +25,17 @@ enum TRyzomModuleSecurityTag
 	rmst_client_info,
 };
 
-
 struct TClientInfo : public NLNET::TSecurityData
 {
 	TClientInfo(const NLNET::TSecurityData::TCtorParam &param)
-		: TSecurityData(param)
+	    : TSecurityData(param)
 	{
 	}
 
-	uint32				UserId;
-	NLMISC::CEntityId	ClientEid;
-	std::string			UserPriv;
-	std::string			ExtendedPriv;
+	uint32 UserId;
+	NLMISC::CEntityId ClientEid;
+	std::string UserPriv;
+	std::string ExtendedPriv;
 
 	void serial(NLMISC::CMemStream &s)
 	{
@@ -46,7 +44,6 @@ struct TClientInfo : public NLNET::TSecurityData
 		s.serial(UserPriv);
 		s.serial(ExtendedPriv);
 	}
-
 };
 
 NLMISC_REGISTER_OBJECT(NLNET::TSecurityData, TClientInfo, uint8, rmst_client_info);

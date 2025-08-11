@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_MIRROR_H
 #define NL_MIRROR_H
 
@@ -27,7 +25,6 @@
 #include "mirror_misc_types.h"
 #include "property_allocator_client.h"
 #include "nel/net/transport_class.h"
-
 
 class CMirror;
 
@@ -49,7 +46,7 @@ class CMirror;
  *    // User code
  * }
  */
-typedef void (*TMirrorReadyCallback) (CMirror*);
+typedef void (*TMirrorReadyCallback)(CMirror *);
 
 /**
  * Callback type for notification function
@@ -67,8 +64,7 @@ typedef void (*TMirrorReadyCallback) (CMirror*);
  *    (...) // optional property changes notifications
  * }
  */
-typedef void (*TNotificationCallback) (void);
-
+typedef void (*TNotificationCallback)(void);
 
 /**
  * This class allows a service to share, access and modify the values
@@ -128,7 +124,6 @@ typedef void (*TNotificationCallback) (void);
 class CMirror
 {
 public:
-
 	/// Constructor
 	CMirror();
 
@@ -165,18 +160,18 @@ public:
 	 * the property then A modifies it (on the same entity), C won't be notified of it at connection.
 	 * Forbidden value: ExcludedTag.
 	 */
-	void				init( std::vector<std::string>& dataSetsToLoad,
-							  TMirrorReadyCallback cbLevel1,
-							  TNotificationCallback tickUpdateFunc,
-							  TNotificationCallback tickSyncFunc = NULL,
-							  TNotificationCallback tickReleaseFunc = NULL,
-							  TMTRTag tag=AllTag );
+	void init(std::vector<std::string> &dataSetsToLoad,
+	    TMirrorReadyCallback cbLevel1,
+	    TNotificationCallback tickUpdateFunc,
+	    TNotificationCallback tickSyncFunc = NULL,
+	    TNotificationCallback tickReleaseFunc = NULL,
+	    TMTRTag tag = AllTag);
 
 	/**
 	 * Deinitialize. You must call this method in your release code if your CMirror
 	 * object is a static object!
 	 */
-	void				release();
+	void release();
 
 	/**
 	 * Set a callback to call when a particular service has its mirror system ready.
@@ -198,7 +193,7 @@ public:
 	 * moment to allow you to spawn or despawn entities (see isRunningSynchronizedCode()), instead
 	 * of calling it as soon as received.
 	 */
-	void				setServiceMirrorUpCallback( const std::string &serviceName, NLNET::TUnifiedNetCallback cb, void *arg=0, bool back=true, bool synchronizedCallback=true );
+	void setServiceMirrorUpCallback(const std::string &serviceName, NLNET::TUnifiedNetCallback cb, void *arg = 0, bool back = true, bool synchronizedCallback = true);
 
 	/**
 	 * This is the counterpart of setServiceMirrorUpCallback().
@@ -212,26 +207,26 @@ public:
 	 * For callbacks provided to CUnifiedNetwork::setServiceDownCallback(),
 	 * the behaviour with a false synchronizedCallback flag are applied.
 	 */
-	void				setServiceMirrorDownCallback( const std::string &serviceName, NLNET::TUnifiedNetCallback cb, void *arg=0, bool back=true, bool synchronizedCallback=true );
+	void setServiceMirrorDownCallback(const std::string &serviceName, NLNET::TUnifiedNetCallback cb, void *arg = 0, bool back = true, bool synchronizedCallback = true);
 
 	/**
 	 * This is similar to CUnifiedNetwork::setServiceUpCallback() but it allows you to spawn or despawn
 	 * entities in the callback if you set synchronizedCallback to true (see isRunningSynchronizedCode())
 	 * \seealso setServiceMirrorUpCallback()
 	 */
-	void				setServiceUpCallback( const std::string &serviceName, NLNET::TUnifiedNetCallback cb, void *arg=0, bool back=true, bool synchronizedCallback=true );
+	void setServiceUpCallback(const std::string &serviceName, NLNET::TUnifiedNetCallback cb, void *arg = 0, bool back = true, bool synchronizedCallback = true);
 
 	/**
 	 * This is similar to CUnifiedNetwork::setServiceUpCallback() but it allows you to spawn or despawn
 	 * entities in the callback if you set synchronizedCallback to true (see isRunningSynchronizedCode())
 	 * \seealso setServiceMirrorDownCallback()
 	 */
-	void				setServiceDownCallback( const std::string &serviceName, NLNET::TUnifiedNetCallback cb, void *arg=0, bool back=true, bool synchronizedCallback=true );
+	void setServiceDownCallback(const std::string &serviceName, NLNET::TUnifiedNetCallback cb, void *arg = 0, bool back = true, bool synchronizedCallback = true);
 
 	/**
 	 * Call this method every cycle (in your update routine) if you use mirror watches
 	 */
-	void				updateWatches();
+	void updateWatches();
 
 	//--- ENTITY ADDITION/REMOVAL --------------------------------------------------------------------------
 
@@ -244,7 +239,7 @@ public:
 	 * the entities created by other owners; of course the service is always aware of the
 	 * entities it creates, although the mirror system does not notify them to itself.
 	 */
-	//void				declareEntityTypeUser( uint8 entityTypeId );
+	// void				declareEntityTypeUser( uint8 entityTypeId );
 
 	/**
 	 * Declare the current service as an owner of the entities of the specified entity type.
@@ -258,7 +253,7 @@ public:
 	 * *Important*: after calling this method, wait until mirrorIsReady() (mirror ready
 	 * level 2) returns true before adding any entity, otherwise the adding would fail.
 	 */
-	void				declareEntityTypeOwner( uint8 entityTypeId, sint32 maxNbEntities );
+	void declareEntityTypeOwner(uint8 entityTypeId, sint32 maxNbEntities);
 
 	/**
 	 * Provide a callback that will be called the first time mirrorIsReady() returns true.
@@ -267,7 +262,7 @@ public:
 	 * Note: immediately after having called all the callbacks passed to this method, the
 	 * commands founds in StartCommandsWhenMirrorReady (in the config file) will be executed.
 	 */
-	void				addCallbackWhenMirrorReadyForUse( TMirrorReadyCallback cbLevel2 );
+	void addCallbackWhenMirrorReadyForUse(TMirrorReadyCallback cbLevel2);
 
 	/**
 	 * Add an entity into the mirror. The caller must be an owner of the corresponding
@@ -285,7 +280,7 @@ public:
 	 * Returns false if part or all of the process failed (for example, if the entity
 	 * already exists in a dataset).
 	 */
-	bool				createEntity( NLMISC::CEntityId& entityId, bool fillEntityId=false );
+	bool createEntity(NLMISC::CEntityId &entityId, bool fillEntityId = false);
 
 	/**
 	 * Declare the entity (previously added by createEntity()) in all datasets
@@ -301,7 +296,7 @@ public:
 	 *
 	 * \seealso CMirroredDataSet::declareEntity() for alternate version.
 	 */
-	bool				declareEntity( const NLMISC::CEntityId& entityId );
+	bool declareEntity(const NLMISC::CEntityId &entityId);
 
 	/**
 	 * Create + declare an entity. Previously known as addEntity().
@@ -312,7 +307,7 @@ public:
 	 * Returns false if part or all of the process failed (for example, if the entity
 	 * already exists in a dataset).
 	 */
-	bool				createAndDeclareEntity( const NLMISC::CEntityId& entityId ) { return addEntity( false, const_cast<NLMISC::CEntityId&>(entityId), true ); }
+	bool createAndDeclareEntity(const NLMISC::CEntityId &entityId) { return addEntity(false, const_cast<NLMISC::CEntityId &>(entityId), true); }
 
 	/**
 	 * Public for backward compatibility, usage is deprecated. See createAndDeclareEntity().
@@ -320,7 +315,7 @@ public:
 	 * IMPORTANT: You are allowed to call this method only in code synchronized with the mirror.
 	 * Refer to isRunningSynchronizedCode() to know the conditions.
 	 */
-	bool				addEntity( bool fillEntityId, NLMISC::CEntityId& entityId, bool declare=true );
+	bool addEntity(bool fillEntityId, NLMISC::CEntityId &entityId, bool declare = true);
 
 	/**
 	 * Remove an entity from the mirror. The caller must be an owner of the corresponding
@@ -334,7 +329,7 @@ public:
 	 *
 	 * Returns false if part or all of the process failed.
 	 */
-	bool				removeEntity( const NLMISC::CEntityId& entityId );
+	bool removeEntity(const NLMISC::CEntityId &entityId);
 
 	/**
 	 * Provide a callback in which you will process the notifications of entities and property
@@ -344,8 +339,7 @@ public:
 	 * IMPORTANT: The notifications of entity additions must be browsed before the notifications
 	 * of entity removals.
 	 */
-	void				setNotificationCallback( TNotificationCallback cb ) { _NotificationCallback = cb; }
-
+	void setNotificationCallback(TNotificationCallback cb) { _NotificationCallback = cb; }
 
 	//--- MIRROR STATUS ------------------------------------------------------------------------------------
 
@@ -353,28 +347,28 @@ public:
 	 * Return true if the mirror system and all requested properties are ready
 	 * for use (level 2) (the level 1 means "ready for dataset initialization").
 	 */
-	bool				mirrorIsReady() const { return _MirrorAllReady; }
+	bool mirrorIsReady() const { return _MirrorAllReady; }
 
 	/// Return true if the specified service is known as "mirror ready"
-	bool				serviceHasMirrorReady( NLNET::TServiceId serviceId ) const;
+	bool serviceHasMirrorReady(NLNET::TServiceId serviceId) const;
 
 	/// Return the serviceId of the local Mirror Service
-	NLNET::TServiceId	localMSId() const { return _PropAllocator.mirrorServiceId(); }
+	NLNET::TServiceId localMSId() const { return _PropAllocator.mirrorServiceId(); }
 
 	/// Info: display the properties allocated on the mirror
-	void				displayProperties( NLMISC::CLog& log=*NLMISC::InfoLog ) const;
+	void displayProperties(NLMISC::CLog &log = *NLMISC::InfoLog) const;
 
 	/// Info: display the number of active entities, created by the current mirror
-	void				displayEntityTypesOwned( NLMISC::CLog& log=*NLMISC::InfoLog ) const;
+	void displayEntityTypesOwned(NLMISC::CLog &log = *NLMISC::InfoLog) const;
 
 	/// Info: display the contents of the rows corresponding to the entity id
-	void				displayRows( const NLMISC::CEntityId& entityId, NLMISC::CLog& log=*NLMISC::InfoLog ) const;
+	void displayRows(const NLMISC::CEntityId &entityId, NLMISC::CLog &log = *NLMISC::InfoLog) const;
 
 	/// Debug: change a value from a string
-	void				changeValue( const NLMISC::CEntityId& entityId, const std::string& propName, const std::string& valueStr );
+	void changeValue(const NLMISC::CEntityId &entityId, const std::string &propName, const std::string &valueStr);
 
 	/// Scan the entities to find if some are unknown by this service, and add them if requested (debug feature)
-	void				rescanExistingEntities( CMirroredDataSet& dataset, NLMISC::CLog& log=*NLMISC::InfoLog, bool addUnknown=false );
+	void rescanExistingEntities(CMirroredDataSet &dataset, NLMISC::CLog &log = *NLMISC::InfoLog, bool addUnknown = false);
 
 	/**
 	 * Return true when we are running code synchronized with the mirror service.
@@ -390,10 +384,10 @@ public:
 	 * - in the callback tickReleaseFunc provided to init(), called before quitting.
 	 * It will be false in any other case.
 	 */
-	bool				isRunningSynchronizedCode() const { return _IsExecutingSynchronizedCode; }
+	bool isRunningSynchronizedCode() const { return _IsExecutingSynchronizedCode; }
 
 	/// Return the Mirror Traffic Reduction tag
-	TMTRTag				tag() const { return _MTRTag; }
+	TMTRTag tag() const { return _MTRTag; }
 
 	//--- DATASETS ACCESSORS -------------------------------------------------------------------------------
 
@@ -404,13 +398,13 @@ public:
 	TNDataSets::iterator dsEnd() { return _NDataSets.end(); }
 
 	/// Get a dataset by name. If not found, throws EMirror() (does not create a new dataset).
-	CMirroredDataSet&	getDataSet( const std::string& dataSetName ) { return _NDataSets[dataSetName]; }
+	CMirroredDataSet &getDataSet(const std::string &dataSetName) { return _NDataSets[dataSetName]; }
 
 	/// Check if a dataset exist
-	bool				isDataSetExist(const std::string &dataSetName) { return _NDataSets.find(dataSetName) != _NDataSets.end(); }
+	bool isDataSetExist(const std::string &dataSetName) { return _NDataSets.find(dataSetName) != _NDataSets.end(); }
 
 	/// Return the number of dataSet availables
-	uint32				getDataSetCount() const	{ return (uint32)_NDataSets.size(); }
+	uint32 getDataSetCount() const { return (uint32)_NDataSets.size(); }
 
 	/// Destructor
 	~CMirror();
@@ -418,128 +412,125 @@ public:
 	typedef uint8 TServiceEventType;
 
 protected:
-
 	/// Set the local MS id if the service reported by cbServiceDown("MS") or cbServiceUp("MS") is the local Mirror Service
-	bool				detectLocalMS( NLNET::TServiceId serviceId, bool upOrDown );
+	bool detectLocalMS(NLNET::TServiceId serviceId, bool upOrDown);
 
 	/// Return true if the mirror service is up and the entity ranges are ready
-	bool				mirrorIsUp() const { return mirrorServiceIsUp() && (_PendingEntityTypesRanges == 0); }
+	bool mirrorIsUp() const { return mirrorServiceIsUp() && (_PendingEntityTypesRanges == 0); }
 
 	/// Return true if the specified property is ready
-	bool				propIsAllocated( const std::string& propName ) const { return _PropAllocator.getPropertySegment( propName ) != NULL; }
+	bool propIsAllocated(const std::string &propName) const { return _PropAllocator.getPropertySegment(propName) != NULL; }
 
 	/// Receiving green light for level1
-	void				initAfterMirrorUp();
+	void initAfterMirrorUp();
 
 	/// Init mirror, level1
-	void				doInitMirrorLevel1();
+	void doInitMirrorLevel1();
 
 	/// Set _MirrorAllReady (level2) to true if the conditions are met
-	void				testMirrorReadyStatus();
+	void testMirrorReadyStatus();
 
 	/// Set the segment pointer in the property container
-	void				setPropertyInfo( std::string& propName, void *segmentPt, uint32 dataTypeSize );
+	void setPropertyInfo(std::string &propName, void *segmentPt, uint32 dataTypeSize);
 
 	/// Access segments for non-subscribed properties allocated on the local MS (useful for cleaning a whole row when creating an entity)
-	void				applyListOfOtherProperties( NLNET::CMessage& msgin, uint nbProps, const char *msgName, bool isInitial );
+	void applyListOfOtherProperties(NLNET::CMessage &msgin, uint nbProps, const char *msgName, bool isInitial);
 
 	/// Return the dataset corresponding to a property (or NULL if not found)
-	CMirroredDataSet	*getDataSetByPropName( std::string& propName, TPropertyIndex& propIndex ) { return _PropAllocator._PropertiesInMirror.getDataSetByPropName( propName, propIndex ); }
+	CMirroredDataSet *getDataSetByPropName(std::string &propName, TPropertyIndex &propIndex) { return _PropAllocator._PropertiesInMirror.getDataSetByPropName(propName, propIndex); }
 
 	/// Return true if the local MS was found
-	bool				mirrorServiceIsUp() const { return (localMSId() != NLNET::TServiceId(~0)); }
+	bool mirrorServiceIsUp() const { return (localMSId() != NLNET::TServiceId(~0)); }
 
 	/// Return the inited state (ready at level 1)
-	bool				mirrorInited() const { return _MirrorGotReadyLevel1; }
+	bool mirrorInited() const { return _MirrorGotReadyLevel1; }
 
 	/// Receive the broadcasting of a service that has its mirror system ready
-	void				receiveServiceHasMirrorReady( const std::string& serviceName, NLNET::TServiceId serviceId, NLNET::CMessage& msgin );
+	void receiveServiceHasMirrorReady(const std::string &serviceName, NLNET::TServiceId serviceId, NLNET::CMessage &msgin);
 
 	/// Return a property value as string
-	void				getPropValueStr ( const NLMISC::CEntityId& entityId, const std::string& propName, std::string& result ) const;
+	void getPropValueStr(const NLMISC::CEntityId &entityId, const std::string &propName, std::string &result) const;
 
 	/// Send to a reconnecting MS the state of our mirror info
-	void				resyncMirrorInfo();
+	void resyncMirrorInfo();
 
 	/// Main mirror update
-	void				updateMirrorAndReceiveMessages( NLNET::CMessage& msgin );
+	void updateMirrorAndReceiveMessages(NLNET::CMessage &msgin);
 
 	/// Return true if the dataset is found in the entity types owned
-	bool				datasetMatchesEntityTypesOwned( const CMirroredDataSet& dataset ) const;
+	bool datasetMatchesEntityTypesOwned(const CMirroredDataSet &dataset) const;
 
 	/// Execute user callback when receiving first game cycle
-	void				userSyncCallback();
+	void userSyncCallback();
 
 	/// Rescan
-	void				scanAndResyncEntitiesExceptIgnored( const std::vector<NLNET::TServiceId8>& creatorIdsToIgnore );
+	void scanAndResyncEntitiesExceptIgnored(const std::vector<NLNET::TServiceId8> &creatorIdsToIgnore);
 
 	/// Execute start callbacks & commands
-	void				executeMirrorReady2CallbacksAndStartCommands();
+	void executeMirrorReady2CallbacksAndStartCommands();
 
 	/// Execute commands when mirror is released
-	void				executeMirrorReleaseCommands();
+	void executeMirrorReleaseCommands();
 
 	/// Tick update
-	void				onTick();
+	void onTick();
 
 	/// Closure clearance callback
-	bool				requestClosure();
+	bool requestClosure();
 
 	/// Set service mirror/up/down callback
-	void				setServiceMUDCallback( const std::string &serviceName, NLNET::TUnifiedNetCallback cb, void *arg, bool back, bool synchronizedCallback, TServiceEventType et );
+	void setServiceMUDCallback(const std::string &serviceName, NLNET::TUnifiedNetCallback cb, void *arg, bool back, bool synchronizedCallback, TServiceEventType et);
 
 	/// React to a service mirror/up/down event
-	void				processServiceEvent( const std::string &serviceName, NLNET::TServiceId serviceId, TServiceEventType et );
+	void processServiceEvent(const std::string &serviceName, NLNET::TServiceId serviceId, TServiceEventType et);
 
-	void				pushEntityRanges( NLNET::CMessage& msgout );
-	void				receiveSMIdToAccessPropertySegment( NLNET::CMessage& msgin );
-	void				receiveRangesForEntityType( NLNET::CMessage& msgin );
-	void				receiveTracker( bool entitiesOrProp, NLNET::CMessage& msgin );
-	void				releaseTrackers( NLNET::CMessage& msgin );
-	void				receiveAcknowledgeAddEntityTracker( NLNET::CMessage& msgin, NLNET::TServiceId serviceId );
-	void				receiveAcknowledgeAddPropTracker( NLNET::CMessage& msgin, NLNET::TServiceId serviceId );
-	void				deleteTracker( CChangeTrackerClient& tracker, std::vector<CChangeTrackerClient>& vect );
-	friend void			cbMSUpDn( const std::string& serviceName, NLNET::TServiceId serviceId, void *upOrDn );
-	friend void			cbAnyServiceUpDn( const std::string& serviceName, NLNET::TServiceId serviceId, void *vEventType );
-	friend void			cbRecvSMIdToAccessPropertySegment( NLNET::CMessage& msgin, const std::string &serviceName, NLNET::TServiceId serviceId );
-	friend void			cbRecvRangesForEntityType( NLNET::CMessage& msgin, const std::string &serviceName, NLNET::TServiceId serviceId );
-	friend void			cbRecvAddPropTracker( NLNET::CMessage& msgin, const std::string &serviceName, NLNET::TServiceId serviceId );
-	friend void			cbRecvAddEntityTracker( NLNET::CMessage& msgin, const std::string &serviceName, NLNET::TServiceId serviceId );
-	friend void			cbRecvAcknowledgeAddEntityTracker( NLNET::CMessage& msgin, const std::string &serviceName, NLNET::TServiceId serviceId );
-	friend void			cbRecvAcknowledgeAddPropTracker( NLNET::CMessage& msgin, const std::string &serviceName, NLNET::TServiceId serviceId );
-	friend void			cbReleaseTrackers( NLNET::CMessage& msgin, const std::string &serviceName, NLNET::TServiceId serviceId );
-	friend void			cbAllMirrorsOnline( NLNET::CMessage& msgin, const std::string &serviceName, NLNET::TServiceId serviceId );
-	friend void			cbGrantStartService( NLNET::CMessage &msgin, const std::string&, NLNET::TServiceId );
-	friend void			cbRecvServiceHasMirrorReadyBroadcast( NLNET::CMessage& msgin, const std::string &serviceName, NLNET::TServiceId serviceId );
-	friend void			cbRecvServiceHasMirrorReadyReply( NLNET::CMessage& msgin, const std::string &serviceName, NLNET::TServiceId serviceId );
-	friend void			cbUpdateMirrorAndReceiveMessages( NLNET::CMessage &msgin, const std::string&, NLNET::TServiceId );
-	friend void			cbSyncGameCycle();
-	friend void			cbServiceMirrorUpForSMIRUB( const std::string& serviceName, NLNET::TServiceId serviceId, void * );
-	friend void			cbscanAndResyncEntitiesExceptIgnored( NLNET::CMessage &msgin, const std::string&, NLNET::TServiceId );
-	friend void			cbApplyListOfOtherProperties( NLNET::CMessage &msgin, const std::string&, NLNET::TServiceId );
-	friend void			cbAddListOfOtherProperties( NLNET::CMessage &msgin, const std::string&, NLNET::TServiceId );
-	friend void			cbTickUpdateFunc();
-	friend bool			cbRequestClosure();
-
+	void pushEntityRanges(NLNET::CMessage &msgout);
+	void receiveSMIdToAccessPropertySegment(NLNET::CMessage &msgin);
+	void receiveRangesForEntityType(NLNET::CMessage &msgin);
+	void receiveTracker(bool entitiesOrProp, NLNET::CMessage &msgin);
+	void releaseTrackers(NLNET::CMessage &msgin);
+	void receiveAcknowledgeAddEntityTracker(NLNET::CMessage &msgin, NLNET::TServiceId serviceId);
+	void receiveAcknowledgeAddPropTracker(NLNET::CMessage &msgin, NLNET::TServiceId serviceId);
+	void deleteTracker(CChangeTrackerClient &tracker, std::vector<CChangeTrackerClient> &vect);
+	friend void cbMSUpDn(const std::string &serviceName, NLNET::TServiceId serviceId, void *upOrDn);
+	friend void cbAnyServiceUpDn(const std::string &serviceName, NLNET::TServiceId serviceId, void *vEventType);
+	friend void cbRecvSMIdToAccessPropertySegment(NLNET::CMessage &msgin, const std::string &serviceName, NLNET::TServiceId serviceId);
+	friend void cbRecvRangesForEntityType(NLNET::CMessage &msgin, const std::string &serviceName, NLNET::TServiceId serviceId);
+	friend void cbRecvAddPropTracker(NLNET::CMessage &msgin, const std::string &serviceName, NLNET::TServiceId serviceId);
+	friend void cbRecvAddEntityTracker(NLNET::CMessage &msgin, const std::string &serviceName, NLNET::TServiceId serviceId);
+	friend void cbRecvAcknowledgeAddEntityTracker(NLNET::CMessage &msgin, const std::string &serviceName, NLNET::TServiceId serviceId);
+	friend void cbRecvAcknowledgeAddPropTracker(NLNET::CMessage &msgin, const std::string &serviceName, NLNET::TServiceId serviceId);
+	friend void cbReleaseTrackers(NLNET::CMessage &msgin, const std::string &serviceName, NLNET::TServiceId serviceId);
+	friend void cbAllMirrorsOnline(NLNET::CMessage &msgin, const std::string &serviceName, NLNET::TServiceId serviceId);
+	friend void cbGrantStartService(NLNET::CMessage &msgin, const std::string &, NLNET::TServiceId);
+	friend void cbRecvServiceHasMirrorReadyBroadcast(NLNET::CMessage &msgin, const std::string &serviceName, NLNET::TServiceId serviceId);
+	friend void cbRecvServiceHasMirrorReadyReply(NLNET::CMessage &msgin, const std::string &serviceName, NLNET::TServiceId serviceId);
+	friend void cbUpdateMirrorAndReceiveMessages(NLNET::CMessage &msgin, const std::string &, NLNET::TServiceId);
+	friend void cbSyncGameCycle();
+	friend void cbServiceMirrorUpForSMIRUB(const std::string &serviceName, NLNET::TServiceId serviceId, void *);
+	friend void cbscanAndResyncEntitiesExceptIgnored(NLNET::CMessage &msgin, const std::string &, NLNET::TServiceId);
+	friend void cbApplyListOfOtherProperties(NLNET::CMessage &msgin, const std::string &, NLNET::TServiceId);
+	friend void cbAddListOfOtherProperties(NLNET::CMessage &msgin, const std::string &, NLNET::TServiceId);
+	friend void cbTickUpdateFunc();
+	friend bool cbRequestClosure();
 
 private:
-
 	/// Type of callback and its user data
 	struct TCallbackArgItemM
 	{
-		NLNET::TUnifiedNetCallback	Cb;
-		void*						Arg;
-		bool						Synchronized;
-		TServiceEventType			EventType;
+		NLNET::TUnifiedNetCallback Cb;
+		void *Arg;
+		bool Synchronized;
+		TServiceEventType EventType;
 	};
 
 	/// Instanciated callback item
 	struct TCallbackArgItemMExt : public TCallbackArgItemM
 	{
-		NLNET::TServiceId			ServiceId;
-		std::string					ServiceName;
+		NLNET::TServiceId ServiceId;
+		std::string ServiceName;
 
-		TCallbackArgItemMExt( const TCallbackArgItemM& src, const std::string& servName, NLNET::TServiceId servId )
+		TCallbackArgItemMExt(const TCallbackArgItemM &src, const std::string &servName, NLNET::TServiceId servId)
 		{
 			Cb = src.Cb;
 			Arg = src.Arg;
@@ -551,95 +542,92 @@ private:
 	};
 
 	/// Type of map of service up callbacks with their user data.
-	typedef std::map< std::string, std::list<TCallbackArgItemM> >	TNameMappedCallbackM;
+	typedef std::map<std::string, std::list<TCallbackArgItemM>> TNameMappedCallbackM;
 
 	/// Type of set of known 'service mirror up' (service ids)
-	typedef std::set< NLNET::TServiceId >	TNotifiedServices;
+	typedef std::set<NLNET::TServiceId> TNotifiedServices;
 
 	/// Shared memory allocator
-	CPropertyAllocatorClient	_PropAllocator;
+	CPropertyAllocatorClient _PropAllocator;
 
 	/// Map of entity types and ranges owned
-	TEntityTypesOwned			_EntityTypesOwned;
+	TEntityTypesOwned _EntityTypesOwned;
 
 	/// Number of entity types declared to the MS with no answer yet received
-	sint						_PendingEntityTypesRanges;
+	sint _PendingEntityTypesRanges;
 
 	/// The datasets with keys as strings (names)
-	TNDataSets					_NDataSets;
+	TNDataSets _NDataSets;
 
 	/// Map of datasets with keys as CSheetId
-	TSDataSets					_SDataSets;
+	TSDataSets _SDataSets;
 
 	/// Map of datasets sheets
-	TSDataSetSheets				_SDataSetSheets;
+	TSDataSetSheets _SDataSetSheets;
 
 	/// Names of datasets to load
-	std::vector<std::string>	_DataSetsToLoad;
+	std::vector<std::string> _DataSetsToLoad;
 
 	/// "Mirror ready at level 1" callback
-	TMirrorReadyCallback		_ReadyL1Callback;
+	TMirrorReadyCallback _ReadyL1Callback;
 
 	/// "Mirror ready at level 2" callbacks
 	std::vector<TMirrorReadyCallback> _ReadyL2Callbacks;
 
 	/// Map of 'service mirror up' callbacks (by service name)
-	TNameMappedCallbackM		_ServiceUpDnCallbacks;
+	TNameMappedCallbackM _ServiceUpDnCallbacks;
 
 	/// 'Service mirror up' callbacks for *
-	std::vector<TCallbackArgItemM>		_ServiceUpDnUniCallbacks;
+	std::vector<TCallbackArgItemM> _ServiceUpDnUniCallbacks;
 
 	// All defered callbacks for synchronized mode
-	std::vector<TCallbackArgItemMExt>	_SynchronizedServiceUpDnCallbackQueue;
+	std::vector<TCallbackArgItemMExt> _SynchronizedServiceUpDnCallbackQueue;
 
 	/// Set of services that are known 'mirror ready'
-	TNotifiedServices			_ServicesMirrorUpNotified;
+	TNotifiedServices _ServicesMirrorUpNotified;
 
 	/// Tick update callback
-	TNotificationCallback		_TickUpdateFunc;
+	TNotificationCallback _TickUpdateFunc;
 
 	/// Notification of mirror changes callback
-	TNotificationCallback		_NotificationCallback;
+	TNotificationCallback _NotificationCallback;
 
 	/// User sync callback (called after the mirror one)
-	TNotificationCallback		_UserSyncCallback;
+	TNotificationCallback _UserSyncCallback;
 
 	/// Tick release callback
-	TNotificationCallback		_TickReleaseFunc;
+	TNotificationCallback _TickReleaseFunc;
 
 	/// General status
-	bool						_MirrorAllReady;
+	bool _MirrorAllReady;
 
 	/// Status of mirror service detection and range mirror manager online state
-	bool						_MirrorGotReadyLevel1;
+	bool _MirrorGotReadyLevel1;
 
 	/// Status of mirror start commands (to call them only once when mirror gets ready at level 2)
-	bool						_MirrorGotReadyLevel2;
+	bool _MirrorGotReadyLevel2;
 
 	/// Status of expectation of the list of non-subscribed properties allocated on the local MS
-	bool						_ListOfOtherPropertiesReceived;
+	bool _ListOfOtherPropertiesReceived;
 
 	/// Flag set between ReadyLevel2 and MirrorAllReady, to detect if the local MS is back (for resyncing)
-	bool						_AwaitingAllMirrorsOnline;
+	bool _AwaitingAllMirrorsOnline;
 
 	/// True if we are in code synchronized with the mirror service
-	bool						_IsExecutingSynchronizedCode;
+	bool _IsExecutingSynchronizedCode;
 
 	/// True if the service wants to quit
-	bool						_ClosureRequested;
+	bool _ClosureRequested;
 
 	/// Mirror Traffic Reduction Tag (corresponding to the tags of the 'self' trackers)
-	TMTRTag						_MTRTag;
+	TMTRTag _MTRTag;
 
 public:
-
 	/// A particular entity to use in mirror commands when no argument provided
-	NLMISC::CEntityId			MonitoredEntity;
+	NLMISC::CEntityId MonitoredEntity;
 };
 
-
-const CMirror::TServiceEventType ETMirrorUp=0, ETServiceUp=1, ETServiceDn=2, ETMirrorDn=3;
-
+const CMirror::TServiceEventType ETMirrorUp = 0, ETServiceUp = 1, ETServiceDn = 2, ETMirrorDn = 3;
 
 /*
  * Tick update

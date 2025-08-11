@@ -52,12 +52,10 @@ namespace MAX {
 
 IStorageObject::IStorageObject()
 {
-
 }
 
 IStorageObject::~IStorageObject()
 {
-
 }
 
 std::string IStorageObject::toString()
@@ -86,9 +84,9 @@ bool IStorageObject::isContainer() const
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-CStorageContainer::CStorageContainer() : m_ChunksOwnsPointers(true)
+CStorageContainer::CStorageContainer()
+    : m_ChunksOwnsPointers(true)
 {
-
 }
 
 CStorageContainer::~CStorageContainer()
@@ -164,7 +162,8 @@ void CStorageContainer::toString(std::ostream &ostream, const std::string &pad) 
 		std::stringstream ss;
 		ss << std::hex << std::setfill('0');
 		ss << std::setw(4) << it->first;
-		ostream << "\n" << pad << i << " 0x" << ss.str() << ": ";
+		ostream << "\n"
+		        << pad << i << " 0x" << ss.str() << ": ";
 		it->second->toString(ostream, padpad);
 		++i;
 	}
@@ -306,12 +305,10 @@ IStorageObject *CStorageContainer::createChunkById(uint16 id, bool container)
 
 CStorageRaw::CStorageRaw()
 {
-
 }
 
 CStorageRaw::~CStorageRaw()
 {
-
 }
 
 std::string CStorageRaw::className() const
@@ -332,9 +329,11 @@ void CStorageRaw::toString(std::ostream &ostream, const std::string &pad) const
 	//          Moo: (Foo) "What" }
 	// only increase pad when multi-lining sub-items
 	ostream << "(" << className() << ") { ";
-	ostream << "\n" << pad << "Size: " << Value.size();
+	ostream << "\n"
+	        << pad << "Size: " << Value.size();
 	bool isString = true;
-	ostream << "\n" << pad << "String: ";
+	ostream << "\n"
+	        << pad << "String: ";
 	for (TType::size_type i = 0; i < Value.size(); ++i)
 	{
 		char c = Value[i];
@@ -349,7 +348,8 @@ void CStorageRaw::toString(std::ostream &ostream, const std::string &pad) const
 	ostream << " ";
 	if (!isString || Value.size() <= 4)
 	{
-		ostream << "\n" << pad << "Hex: ";
+		ostream << "\n"
+		        << pad << "Hex: ";
 		for (TType::size_type i = 0; i < Value.size(); ++i)
 		{
 			std::stringstream ss;
@@ -359,8 +359,10 @@ void CStorageRaw::toString(std::ostream &ostream, const std::string &pad) const
 	}
 	if (Value.size() == 4)
 	{
-		ostream << "\n" << pad << "Int: " << (*(sint32 *)(void *)(&Value[0])) << " ";
-		ostream << "\n" << pad << "Float: " << (*(float *)(void *)(&Value[0])) << " ";
+		ostream << "\n"
+		        << pad << "Int: " << (*(sint32 *)(void *)(&Value[0])) << " ";
+		ostream << "\n"
+		        << pad << "Float: " << (*(float *)(void *)(&Value[0])) << " ";
 	}
 	ostream << "} ";
 }

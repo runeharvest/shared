@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 
 	sint res = 0;
 
-	for(uint i = 0; i < filePathes.size(); ++i)
+	for (uint i = 0; i < filePathes.size(); ++i)
 	{
 		std::string filePath = filePathes[i];
 

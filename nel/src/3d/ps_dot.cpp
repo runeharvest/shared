@@ -29,11 +29,9 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 static const uint dotBufSize = 1024; // size used for point particles batching
-
 
 ///////////////////////////
 // CPSDot implementation //
@@ -43,18 +41,16 @@ static const uint dotBufSize = 1024; // size used for point particles batching
 CVertexBuffer CPSDot::_DotVb;
 CVertexBuffer CPSDot::_DotVbColor;
 
-
 ///===================================================================
 template <class T>
 inline void DrawDot(T it,
-					CVertexBuffer &vb,
-					CPSAttribMaker<NLMISC::CRGBA> *colorScheme,
-					uint leftToDo,
-					CPSLocated *owner,
-					CMaterial &mat,
-					IDriver *driver,
-					uint32 srcStep
-				   )
+    CVertexBuffer &vb,
+    CPSAttribMaker<NLMISC::CRGBA> *colorScheme,
+    uint leftToDo,
+    CPSLocated *owner,
+    CMaterial &mat,
+    IDriver *driver,
+    uint32 srcStep)
 {
 	NL_PS_FUNC(DrawDot)
 	nlassert(leftToDo != 0);
@@ -71,30 +67,28 @@ inline void DrawDot(T it,
 		vb.setNumVertices(toProcess); // because of volatile vb copy, indicate the numebr of vertices to copy
 		{
 			CVertexBufferReadWrite vba;
-			vb.lock (vba);
+			vb.lock(vba);
 			if (colorScheme)
 			{
 				// compute the colors
 				colorScheme->make(owner,
-								  total - leftToDo,
-								  vba.getColorPointer(),
-								  vb.getVertexSize(),
-								  toProcess,
-								  false,
-								  srcStep
-								 );
+				    total - leftToDo,
+				    vba.getColorPointer(),
+				    vb.getVertexSize(),
+				    toProcess,
+				    false,
+				    srcStep);
 
 				itEnd = it + toProcess;
-				uint8    *currPos = (uint8 *) vba.getVertexCoordPointer();
+				uint8 *currPos = (uint8 *)vba.getVertexCoordPointer();
 				uint32 stride = vb.getVertexSize();
 				do
 				{
 					CHECK_VERTEX_BUFFER(vb, currPos);
-					*((CVector *) currPos) =  *it;
-					++it ;
+					*((CVector *)currPos) = *it;
+					++it;
 					currPos += stride;
-				}
-				while (it != itEnd);
+				} while (it != itEnd);
 			}
 			else if (srcStep == (1 << 16)) // make sure we haven't got auto-lod and that the step is 1.0
 			{
@@ -105,36 +99,33 @@ inline void DrawDot(T it,
 			else
 			{
 				itEnd = it + toProcess;
-				uint8    *currPos = (uint8 *) vba.getVertexCoordPointer();
+				uint8 *currPos = (uint8 *)vba.getVertexCoordPointer();
 				do
 				{
 					CHECK_VERTEX_BUFFER(vb, currPos);
-					*((CVector *) currPos) =  *it;
-					++it ;
+					*((CVector *)currPos) = *it;
+					++it;
 					currPos += sizeof(float[3]);
-				}
-				while (it != itEnd);
+				} while (it != itEnd);
 			}
 		}
 		driver->activeVertexBuffer(vb);
 		driver->renderRawPoints(mat, 0, toProcess);
 
 		leftToDo -= toProcess;
-	}
-	while (leftToDo);
+	} while (leftToDo);
 }
-
 
 ///===================================================================
 void CPSDot::draw(bool opaque)
 {
-//	if (!FilterPS[0]) return;
+	//	if (!FilterPS[0]) return;
 	NL_PS_FUNC(CPSDot_draw)
 	PARTICLES_CHECK_MEM;
 	if (!_Owner->getSize()) return;
 
 	uint32 step;
-	uint   numToProcess;
+	uint numToProcess;
 	computeSrcStep(step, numToProcess);
 	if (!numToProcess) return;
 
@@ -142,8 +133,6 @@ void CPSDot::draw(bool opaque)
 	setupDriverModelMatrix();
 	IDriver *driver = getDriver();
 	CVertexBuffer &vb = _ColorScheme ? _DotVbColor : _DotVb;
-
-
 
 	/// update the material if the global color of the system is variable
 	CParticleSystem &ps = *(_Owner->getOwner());
@@ -180,37 +169,32 @@ void CPSDot::draw(bool opaque)
 	}
 	//////
 
-
-
 	// Use the right drawing routine (auto-lod and non auto-lod)
 	if (step == (1 << 16))
 	{
 		DrawDot(_Owner->getPos().begin(),
-				vb,
-				_ColorScheme,
-				numToProcess,
-			    _Owner,
-				_Mat,
-				driver,
-				step
-			   );
+		    vb,
+		    _ColorScheme,
+		    numToProcess,
+		    _Owner,
+		    _Mat,
+		    driver,
+		    step);
 	}
 	else
 	{
 		DrawDot(TIteratorVectStep1616(_Owner->getPos().begin(), 0, step),
-				vb,
-				_ColorScheme,
-				numToProcess,
-			    _Owner,
-				_Mat,
-				driver,
-				step
-			   );
+		    vb,
+		    _ColorScheme,
+		    numToProcess,
+		    _Owner,
+		    _Mat,
+		    driver,
+		    step);
 	}
 
 	PARTICLES_CHECK_MEM;
 }
-
 
 ///===================================================================
 /// init the vertex buffers
@@ -225,7 +209,6 @@ void CPSDot::initVertexBuffers()
 	_DotVbColor.setPreferredMemory(CVertexBuffer::AGPVolatile, true); // keep local mem because of interleaved fill
 	_DotVbColor.setNumVertices(dotBufSize);
 	_DotVbColor.setName("CPSDot::_DotVbColor");
-
 }
 
 ///===================================================================
@@ -243,7 +226,7 @@ uint32 CPSDot::getNumWantedTris() const
 {
 	NL_PS_FUNC(CPSDot_getNumWantedTris)
 	nlassert(_Owner);
-	//return _Owner->getMaxSize();
+	// return _Owner->getMaxSize();
 	return _Owner->getSize();
 }
 
@@ -271,7 +254,7 @@ void CPSDot::updateMatAndVbForColor(void)
 bool CPSDot::hasTransparentFaces(void)
 {
 	NL_PS_FUNC(CPSDot_hasTransparentFaces)
-	return getBlendingMode() != CPSMaterial::alphaTest ;
+	return getBlendingMode() != CPSMaterial::alphaTest;
 }
 
 ///===================================================================
@@ -292,10 +275,9 @@ void CPSDot::resize(uint32 size)
 ///===================================================================
 void CPSDot::serial(NLMISC::IStream &f)
 {
-	NL_PS_FUNC(CPSDot_IStream )
+	NL_PS_FUNC(CPSDot_IStream)
 
 	f.serialVersion(1);
-
 
 	CPSParticle::serial(f);
 	CPSColoredParticle::serialColorScheme(f);

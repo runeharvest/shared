@@ -10,13 +10,8 @@
 #include <afxcview.h> // CTreeView base class
 #include "Logic_editorDoc.h"
 
-
-typedef CArray<HTREEITEM,HTREEITEM&> HTreeItemArray;
-typedef CMap<HTREEITEM,HTREEITEM&,CEvent *, CEvent *&> CMapHTreeItemToEvent;
-
-
-
-
+typedef CArray<HTREEITEM, HTREEITEM &> HTreeItemArray;
+typedef CMap<HTREEITEM, HTREEITEM &, CEvent *, CEvent *&> CMapHTreeItemToEvent;
 
 /////////////////////////////////////////////////////////////////////////////
 // CStatesView view
@@ -24,48 +19,46 @@ typedef CMap<HTREEITEM,HTREEITEM&,CEvent *, CEvent *&> CMapHTreeItemToEvent;
 class CStatesView : public CTreeView
 {
 protected:
-	CStatesView();           // protected constructor used by dynamic creation
+	CStatesView(); // protected constructor used by dynamic creation
 	DECLARE_DYNCREATE(CStatesView)
 
-// Attributes
+	// Attributes
 protected:
 	// map HTREEITEM to the adress of the associated CEvent object
-	CMapHTreeItemToEvent	m_mapItemToEvent;
-	CEvent	*				m_pSelectedEvent;
-	CState	*				m_pSelectedState;
+	CMapHTreeItemToEvent m_mapItemToEvent;
+	CEvent *m_pSelectedEvent;
+	CState *m_pSelectedState;
 
-
-// Operations
+	// Operations
 public:
-
 	// expand/collapse the tree ctrl
 	void expand(UINT = TVE_EXPAND, HTREEITEM = NULL);
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CStatesView)
-	public:
+public:
 	virtual void OnInitialUpdate();
-	protected:
-	virtual void OnDraw(CDC* pDC);      // overridden to draw this view
-	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+
+protected:
+	virtual void OnDraw(CDC *pDC); // overridden to draw this view
+	virtual void OnUpdate(CView *pSender, LPARAM lHint, CObject *pHint);
+	virtual BOOL PreCreateWindow(CREATESTRUCT &cs);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	virtual ~CStatesView();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	virtual void Dump(CDumpContext &dc) const;
 #endif
 
 	// Generated message map functions
 protected:
 	//{{AFX_MSG(CStatesView)
-	afx_msg void OnKillFocus(CWnd* pNewWnd);
-	afx_msg void OnSelchanged(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnKillFocus(CWnd *pNewWnd);
+	afx_msg void OnSelchanged(NMHDR *pNMHDR, LRESULT *pResult);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

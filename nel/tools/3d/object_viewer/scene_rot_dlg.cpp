@@ -24,9 +24,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // CSceneRotDlg dialog
 
-
-CSceneRotDlg::CSceneRotDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CSceneRotDlg::IDD, pParent)
+CSceneRotDlg::CSceneRotDlg(CWnd *pParent /*=NULL*/)
+    : CDialog(CSceneRotDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CSceneRotDlg)
 	RotX = _T("");
@@ -35,8 +34,7 @@ CSceneRotDlg::CSceneRotDlg(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
-
-void CSceneRotDlg::DoDataExchange(CDataExchange* pDX)
+void CSceneRotDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSceneRotDlg)
@@ -46,11 +44,10 @@ void CSceneRotDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CSceneRotDlg, CDialog)
-	//{{AFX_MSG_MAP(CSceneRotDlg)
-		// NOTE: the ClassWizard will add message map macros here
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CSceneRotDlg)
+// NOTE: the ClassWizard will add message map macros here
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////

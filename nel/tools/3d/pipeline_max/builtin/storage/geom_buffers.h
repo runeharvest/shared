@@ -94,7 +94,7 @@ struct CGeomPolyFaceInfo
 	/// Bitfield with smoothing groups
 	uint32 SmoothingGroups;
 	/// Cuts at local vertex index to local vertex index
-	std::vector<std::pair<uint32, uint32> > Triangulation;
+	std::vector<std::pair<uint32, uint32>> Triangulation;
 	void serial(NLMISC::IStream &stream);
 	std::string toString() const;
 };

@@ -21,20 +21,14 @@
 #include "nel/3d/lighting_manager.h"
 #include "nel/3d/fast_ptr_list.h"
 
+namespace NL3D {
 
-namespace	NL3D
-{
-
-
-using NLMISC::CVector;
-using NLMISC::CPlane;
 using NLMISC::CMatrix;
+using NLMISC::CPlane;
+using NLMISC::CVector;
 
-
-class	CTransform;
-class	CPointLightModel;
-
-
+class CTransform;
+class CPointLightModel;
 
 // ***************************************************************************
 /**
@@ -51,59 +45,51 @@ class	CPointLightModel;
 class CLightTrav : public CTraversal
 {
 public:
-
 	/// Constructor
 	CLightTrav(bool bSmallScene);
 
 	/// ITrav/ITravScene Implementation.
 	//@{
-	void				traverse();
+	void traverse();
 	//@}
 
 	/// \name LightingList. Filled during clip traversal.
 	//@{
 	/// Clear the list of lighted models.
-	void				clearLightedList();
+	void clearLightedList();
 	/// Add a model to the list of lighted models. \b DOESN'T \b CHECK if already inserted.
-	void				addLightedModel(CTransform *m)
+	void addLightedModel(CTransform *m)
 	{
-		_LightedList[_CurrentNumVisibleModels]= m;
+		_LightedList[_CurrentNumVisibleModels] = m;
 		_CurrentNumVisibleModels++;
 	}
 	// for createModel().
-	void				reserveLightedList(uint numModels);
+	void reserveLightedList(uint numModels);
 	//@}
 
 	/// \name LightingList. Add a PointLightModel to the list.
 	//@{
-	void				addPointLightModel(CPointLightModel *pl);
+	void addPointLightModel(CPointLightModel *pl);
 	//@}
-
 
 public:
 	// False by default. setuped by CScene
-	bool				LightingSystemEnabled;
+	bool LightingSystemEnabled;
 
 	/// The lightingManager, where objects/lights are inserted, and modelContributions are computed
-	CLightingManager	LightingManager;
+	CLightingManager LightingManager;
 
-
-// ********************
+	// ********************
 private:
-
 	// A grow only list of models to be lighted.
-	std::vector<CTransform*>		_LightedList;
-	uint32							_CurrentNumVisibleModels;
+	std::vector<CTransform *> _LightedList;
+	uint32 _CurrentNumVisibleModels;
 
 	// A fast linked list of models to be lighted.
-	CFastPtrList<CPointLightModel>	_DynamicLightList;
-
+	CFastPtrList<CPointLightModel> _DynamicLightList;
 };
 
-
-
 }
-
 
 #endif // NL_LIGHT_TRAV_H
 

@@ -22,11 +22,9 @@
 #include "u_material.h"
 #include <vector>
 
+namespace NL3D {
 
-namespace NL3D
-{
-
-class	UVisualCollisionMesh;
+class UVisualCollisionMesh;
 
 // ***************************************************************************
 /**
@@ -41,7 +39,6 @@ class	UVisualCollisionMesh;
 class UShape
 {
 public:
-
 	/** Get the mesh under Triangle Form.
 	 *	For now only CMesh and CMeshMultiLod (CMeshGeom only) are supported.
 	 *	Warning! return false if the Mesh has already been rendered!! (VertexBuffer resident)
@@ -49,33 +46,32 @@ public:
 	 *	\param indices triplets of indices to vertices
 	 *	\return false if cannot be converted.
 	 */
-	bool			getMeshTriangles(std::vector<NLMISC::CVector> &vertices, std::vector<uint32> &indices) const;
+	bool getMeshTriangles(std::vector<NLMISC::CVector> &vertices, std::vector<uint32> &indices) const;
 
 	/** Return a Visual Collision Mesh if the shape has one (else return empty one)
 	 *	For now return someting if Mesh / MeshMultiLod with some lightmap only (supposed big meshs)!
 	 */
-	void			getVisualCollisionMesh(UVisualCollisionMesh	&colMesh) const;
+	void getVisualCollisionMesh(UVisualCollisionMesh &colMesh) const;
 
 	/// \name Material access.
 	// @{
 	/** return number of materials this mesh instance use.
 	 *	return 0 if not supported (not a CMeshBase)
 	 */
-	uint			getNumMaterials() const;
+	uint getNumMaterials() const;
 	/** return a local access on a material, typically to get diffuse etc...
 	 *	return NULL if not supported (not a CMeshBase) or if materialId is too big
 	 *	You should typically just read material values since some mutators (selectTextureSet...) may lead
 	 *	to undefined behaviors
 	 */
-	UMaterial		getMaterial(uint materialId) const;
+	UMaterial getMaterial(uint materialId) const;
 	// @}
 
 	// Return the Default setup choosed for this shape, for UInstance::setOpacity(). return false if not supported (not a CMeshBase)
-	bool			getDefaultOpacity() const;
+	bool getDefaultOpacity() const;
 
 	// Return the Default setup computed for this shape, for UInstance::setTransparency(). return false if not supported (not a CMeshBase)
-	bool			getDefaultTransparency() const;
-
+	bool getDefaultTransparency() const;
 
 	/// Proxy interface
 
@@ -83,21 +79,19 @@ public:
 	UShape() { _Object = NULL; }
 	UShape(class IShape *object) { _Object = object; }
 	/// Attach an object to this proxy
-	void			attach(class IShape *object) { _Object = object; }
+	void attach(class IShape *object) { _Object = object; }
 	/// Detach the object
-	void			detach() { _Object = NULL; }
+	void detach() { _Object = NULL; }
 	/// Return true if the proxy is empty() (not attached)
-	bool			empty() const {return _Object==NULL;}
+	bool empty() const { return _Object == NULL; }
 	/// For advanced usage, get the internal object ptr
-	class IShape	*getObjectPtr() const {return _Object;}
+	class IShape *getObjectPtr() const { return _Object; }
 
 private:
-	class IShape	*_Object;
+	class IShape *_Object;
 };
 
-
 } // NL3D
-
 
 #endif // NL_U_SHAPE_H
 

@@ -28,31 +28,32 @@
 
 class CDialogProgress : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CDialogProgress(CWnd* pParent = NULL);   // standard constructor
+	CDialogProgress(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CDialogProgress)
-	enum { IDD = IDD_DIALOG_PROGRESS };
-	CStatic	ProgressText;
-	CProgressCtrl	ProgressBar;
+	enum
+	{
+		IDD = IDD_DIALOG_PROGRESS
+	};
+	CStatic ProgressText;
+	CProgressCtrl ProgressBar;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDialogProgress)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CDialogProgress)
-		// NOTE: the ClassWizard will add member functions here
+	// NOTE: the ClassWizard will add member functions here
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

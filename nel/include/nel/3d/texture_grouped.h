@@ -21,10 +21,7 @@
 #include "nel/3d/texture.h"
 #include "nel/misc/uv.h"
 
-
-
 namespace NL3D {
-
 
 using NLMISC::CSmartPtr;
 using NLMISC::CUV;
@@ -40,13 +37,11 @@ using NLMISC::CUV;
 class CTextureGrouped : public ITexture
 {
 public:
-
 	/// default ctor. by default, there are no texture present
 	CTextureGrouped();
 
 	/// copy ctor
 	CTextureGrouped(const CTextureGrouped &src);
-
 
 	/// = operator
 	CTextureGrouped &operator=(const CTextureGrouped &src);
@@ -68,10 +63,8 @@ public:
 	 */
 	void setTextures(CSmartPtr<ITexture> *textureTab, uint nbTex, bool checkValid = true);
 
-
 	/// Retrieve the number of textures grouped in this one
 	uint32 getNbTextures(void) const { return _NbTex; }
-
 
 	/** Retrieve pointers to the textures.
 	 *  \param textureTab a tab containing enough space for the pointers
@@ -97,13 +90,11 @@ public:
 		return _TexUVs[index].uv0;
 	}
 
-
 	/**
 	 * sharing system.
 	 */
-	virtual bool			supportSharing() const;
-	virtual std::string		getShareName() const;
-
+	virtual bool supportSharing() const;
+	virtual std::string getShareName() const;
 
 	/**
 	 * Generate the texture.
@@ -111,8 +102,7 @@ public:
 	void doGenerate(bool async = false);
 
 	/// serialization
-	virtual void	serial(NLMISC::IStream &f);
-
+	virtual void serial(NLMISC::IStream &f);
 
 	/// a group of 4 uvs
 	struct TFourUV
@@ -121,7 +111,7 @@ public:
 	};
 
 	// a list of uv's
-	typedef std::vector< TFourUV > TFourUVList;
+	typedef std::vector<TFourUV> TFourUVList;
 
 	// Get a tab of 4 UVs for a texture in the group : 0 = top-left, 1 = top-right, 2 = bottom-right, 3 = bottom-left
 	const TFourUV &getUVQuad(uint texIndex)
@@ -143,9 +133,7 @@ public:
 		}
 	}
 
-
 	virtual void release();
-
 
 	NLMISC_DECLARE_CLASS(CTextureGrouped);
 
@@ -153,7 +141,7 @@ protected:
 	uint32 _NbTex; // for caching
 
 	/// pointers to the original textures
-	typedef std::vector< CSmartPtr<ITexture> > TTexList;
+	typedef std::vector<CSmartPtr<ITexture>> TTexList;
 	TTexList _Textures;
 
 	/// uv delta for one texture in the group
@@ -161,7 +149,6 @@ protected:
 
 	/// the UVs for each texture in the group
 	TFourUVList _TexUVs;
-
 
 	// cache sub bitmap size for each texture to avoid reloading of texture after each serial
 	static std::map<std::string, uint> _NameToSize;
@@ -180,10 +167,7 @@ protected:
 	void genUVs(uint subBitmapHeight);
 };
 
-
-
 } // NL3D
-
 
 #endif // NL_TEXTURE_GROUPED_H
 

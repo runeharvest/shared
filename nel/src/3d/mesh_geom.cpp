@@ -23,29 +23,26 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
 IMeshGeom::IMeshGeom()
 {
-	_RootInstanceId= -1;
-	_MeshBlockManager= NULL;
-	_MeshVBHeapId= 0;
-	_MeshVBHeapNumVertices= 0;
+	_RootInstanceId = -1;
+	_MeshBlockManager = NULL;
+	_MeshVBHeapId = 0;
+	_MeshVBHeapNumVertices = 0;
 }
 
 // ***************************************************************************
 IMeshGeom::~IMeshGeom()
 {
 	// If still have a VBHeap data in the manager, must free it.
-	if(_MeshVBHeapId)
+	if (_MeshVBHeapId)
 	{
 		nlassert(_MeshBlockManager);
 		_MeshBlockManager->freeMeshVBHeap(this);
 	}
 }
-
 
 } // NL3D

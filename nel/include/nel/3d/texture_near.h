@@ -21,14 +21,10 @@
 #include "nel/misc/common.h"
 #include "nel/3d/texture.h"
 
-
 // Size of a TileLightmap. Must be 10 now, because we have 2x2 tiles per Tilelightmap.
-#define NL_TILE_LIGHTMAP_SIZE	10
+#define NL_TILE_LIGHTMAP_SIZE 10
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 using NLMISC::CRGBA;
 
@@ -42,19 +38,18 @@ using NLMISC::CRGBA;
 class CTextureNear : public ITexture
 {
 public:
-
 	/// Constructor
 	CTextureNear(sint size);
 
 	/// Since texture is always in memory...
-	void			doGenerate(bool /* async */)
+	void doGenerate(bool /* async */)
 	{
 		// Do nothing. texture still in memory... :o)
 	}
 
 	/// \name Tile Lightmap mgt.
 	// @{
-	sint			getNbAvailableTiles();
+	sint getNbAvailableTiles();
 	/** return the id of the tile, locally in the texture.
 	 * nlassert() if no free tiles (use getNbAvailableTiles()).
 	 * Tile coordinate in the texture can be get with:
@@ -63,33 +58,31 @@ public:
 	 * where nbTilesByLine== sizeOfTextureNear/NL_TILE_LIGHTMAP_SIZE.
 	 * The texture is invalidate (on this part only...)
 	 */
-	uint			getTileAndFillRect(CRGBA  map[NL_TILE_LIGHTMAP_SIZE*NL_TILE_LIGHTMAP_SIZE]);
+	uint getTileAndFillRect(CRGBA map[NL_TILE_LIGHTMAP_SIZE * NL_TILE_LIGHTMAP_SIZE]);
 
 	/** given id of the tile, refill the texture.
 	 * The texture is invalidate (on this part only...)
 	 */
-	void			refillRect(uint id, CRGBA  map[NL_TILE_LIGHTMAP_SIZE*NL_TILE_LIGHTMAP_SIZE]);
+	void refillRect(uint id, CRGBA map[NL_TILE_LIGHTMAP_SIZE * NL_TILE_LIGHTMAP_SIZE]);
 
 	/// Set a tile lightmap as free for use. It is an error to free a not allocated tile. (nlassert!!)
-	void			releaseTile(uint id);
+	void releaseTile(uint id);
 	// @}
 
 	/// TextureNear are system. Do not need to serialize them...
 	// default ctor is required for compilation with NLMISC_DECLARE_CLASS, but never called...
-	CTextureNear() {nlstop;}
-	virtual void	serial(NLMISC::IStream &/* f */) {nlstop;}
+	CTextureNear() { nlstop; }
+	virtual void serial(NLMISC::IStream & /* f */) { nlstop; }
 	NLMISC_DECLARE_CLASS(CTextureNear);
 
 private:
 	/// The list of available tiles.
-	std::vector<uint>	_FreeTiles;
+	std::vector<uint> _FreeTiles;
 	/// For check, Availability of tiles.
-	std::vector<bool>	_AvailableTiles;
+	std::vector<bool> _AvailableTiles;
 };
 
-
 } // NL3D
-
 
 #endif // NL_TEXTURE_NEAR_H
 

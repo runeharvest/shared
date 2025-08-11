@@ -16,7 +16,6 @@
 
 #include "std3d.h"
 
-
 #include "nel/3d/ps_plane_basis_maker.h"
 #include "nel/3d/ps_register_plane_basis_attribs.h"
 
@@ -24,9 +23,7 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 CPlaneBasis CPSPlaneBasisGradient::DefaultPlaneBasisTab[] = { CPlaneBasis(NLMISC::CVector::I), CPlaneBasis(NLMISC::CVector::J) };
 
@@ -37,7 +34,7 @@ CPlaneBasis CPSPlaneBasisGradient::DefaultPlaneBasisTab[] = { CPlaneBasis(NLMISC
 ///============================================================================
 CPlaneBasis CPSPlaneBasisFollowSpeed::get(CPSLocated *loc, uint32 index)
 {
-   return (CPlaneBasis(loc->getSpeed()[index]));
+	return (CPlaneBasis(loc->getSpeed()[index]));
 }
 CPlaneBasis CPSPlaneBasisFollowSpeed::get(const CPSEmitterInfo &infos)
 {
@@ -46,72 +43,67 @@ CPlaneBasis CPSPlaneBasisFollowSpeed::get(const CPSEmitterInfo &infos)
 
 ///============================================================================
 void *CPSPlaneBasisFollowSpeed::make(CPSLocated *loc,
-									 uint32 startIndex,
-									 void *tab, uint32 stride,
-									 uint32 numAttrib,
-									 bool enableNoCopy /* = false*/,
-									 uint32 srcStep /*= (1 << 16)*/,
-									 bool forceClampEntry /* = false */
-									) const
+    uint32 startIndex,
+    void *tab, uint32 stride,
+    uint32 numAttrib,
+    bool enableNoCopy /* = false*/,
+    uint32 srcStep /*= (1 << 16)*/,
+    bool forceClampEntry /* = false */
+) const
 {
 	nlassert(numAttrib);
 	if (srcStep == (1 << 16))
 	{
-		TPSAttribVector::const_iterator speedIt = loc->getSpeed().begin() + startIndex
-										, endSpeedIt = loc->getSpeed().begin() + startIndex + numAttrib;
-		uint8 *ptDat  = (uint8 *) tab;
-		switch(_ProjectionPlane)
+		TPSAttribVector::const_iterator speedIt = loc->getSpeed().begin() + startIndex, endSpeedIt = loc->getSpeed().begin() + startIndex + numAttrib;
+		uint8 *ptDat = (uint8 *)tab;
+		switch (_ProjectionPlane)
 		{
-			case NoProjection:
-				do
-				{
-					*(CPlaneBasis *) ptDat = CPlaneBasis(*speedIt);
-					++ speedIt;
-					ptDat += stride;
-				}
-				while (speedIt != endSpeedIt);
+		case NoProjection:
+			do
+			{
+				*(CPlaneBasis *)ptDat = CPlaneBasis(*speedIt);
+				++speedIt;
+				ptDat += stride;
+			} while (speedIt != endSpeedIt);
 			break;
-			case XY:
-				do
-				{
-					float norm = sqrtf(speedIt->x * speedIt->x + speedIt->y * speedIt->y);
-					float invNorm = (norm != 0.f) ? 1.f / norm : 0.f;
-					CPlaneBasis &pb = *(CPlaneBasis *) ptDat;
-					pb.X.set(invNorm * speedIt->x, invNorm * speedIt->y, 0.f);
-					pb.Y.set(- pb.X.y, pb.X.x, 0.f);
-					++ speedIt;
-					ptDat += stride;
-				}
-				while (speedIt != endSpeedIt);
+		case XY:
+			do
+			{
+				float norm = sqrtf(speedIt->x * speedIt->x + speedIt->y * speedIt->y);
+				float invNorm = (norm != 0.f) ? 1.f / norm : 0.f;
+				CPlaneBasis &pb = *(CPlaneBasis *)ptDat;
+				pb.X.set(invNorm * speedIt->x, invNorm * speedIt->y, 0.f);
+				pb.Y.set(-pb.X.y, pb.X.x, 0.f);
+				++speedIt;
+				ptDat += stride;
+			} while (speedIt != endSpeedIt);
 			break;
-			case XZ:
-				do
-				{
-					float norm = sqrtf(speedIt->x * speedIt->x + speedIt->z * speedIt->z);
-					float invNorm = (norm != 0.f) ? 1.f / norm : 0.f;
-					CPlaneBasis &pb = *(CPlaneBasis *) ptDat;
-					pb.X.set(invNorm * speedIt->x, 0.f, invNorm * speedIt->z);
-					pb.Y.set(- pb.X.z, 0.f, pb.X.x);
-					++ speedIt;
-					ptDat += stride;
-				}
-				while (speedIt != endSpeedIt);
+		case XZ:
+			do
+			{
+				float norm = sqrtf(speedIt->x * speedIt->x + speedIt->z * speedIt->z);
+				float invNorm = (norm != 0.f) ? 1.f / norm : 0.f;
+				CPlaneBasis &pb = *(CPlaneBasis *)ptDat;
+				pb.X.set(invNorm * speedIt->x, 0.f, invNorm * speedIt->z);
+				pb.Y.set(-pb.X.z, 0.f, pb.X.x);
+				++speedIt;
+				ptDat += stride;
+			} while (speedIt != endSpeedIt);
 			break;
-			case YZ:
-				do
-				{
-					float norm = sqrtf(speedIt->y * speedIt->y + speedIt->z * speedIt->z);
-					float invNorm = (norm != 0.f) ? 1.f / norm : 0.f;
-					CPlaneBasis &pb = *(CPlaneBasis *) ptDat;
-					pb.X.set(0.f, invNorm * speedIt->y, invNorm * speedIt->z);
-					pb.Y.set(0.f, - pb.X.z, pb.X.y);
-					++ speedIt;
-					ptDat += stride;
-				}
-				while (speedIt != endSpeedIt);
+		case YZ:
+			do
+			{
+				float norm = sqrtf(speedIt->y * speedIt->y + speedIt->z * speedIt->z);
+				float invNorm = (norm != 0.f) ? 1.f / norm : 0.f;
+				CPlaneBasis &pb = *(CPlaneBasis *)ptDat;
+				pb.X.set(0.f, invNorm * speedIt->y, invNorm * speedIt->z);
+				pb.Y.set(0.f, -pb.X.z, pb.X.y);
+				++speedIt;
+				ptDat += stride;
+			} while (speedIt != endSpeedIt);
 			break;
-			default:
-				nlstop; // unknow projection mode
+		default:
+			nlstop; // unknow projection mode
 			break;
 		}
 		return tab;
@@ -120,58 +112,58 @@ void *CPSPlaneBasisFollowSpeed::make(CPSLocated *loc,
 	{
 		uint32 fpIndex = startIndex * srcStep;
 		const TPSAttribVector::const_iterator speedIt = loc->getSpeed().begin();
-		uint8 *ptDat  = (uint8 *) tab;
-		switch(_ProjectionPlane)
+		uint8 *ptDat = (uint8 *)tab;
+		switch (_ProjectionPlane)
 		{
-			case NoProjection:
-				while (numAttrib --)
-				{
-					*(CPlaneBasis *) ptDat = CPlaneBasis(*(speedIt + (fpIndex >> 16)));
-					ptDat += stride;
-					fpIndex += srcStep;
-				}
+		case NoProjection:
+			while (numAttrib--)
+			{
+				*(CPlaneBasis *)ptDat = CPlaneBasis(*(speedIt + (fpIndex >> 16)));
+				ptDat += stride;
+				fpIndex += srcStep;
+			}
 			break;
-			case XY:
-				while (numAttrib --)
-				{
-					const CVector *speedVect = &(*(speedIt + (fpIndex >> 16)));
-					float norm = sqrtf(speedVect->x * speedVect->x + speedVect->y * speedVect->y);
-					float invNorm = (norm != 0.f) ? 1.f / norm : 0.f;
-					CPlaneBasis &pb = *(CPlaneBasis *) ptDat;
-					pb.X.set(invNorm * speedVect->x, invNorm * speedVect->y, 0.f);
-					pb.Y.set(- pb.X.y, pb.X.x, 0.f);
-					ptDat += stride;
-					fpIndex += srcStep;
-				}
+		case XY:
+			while (numAttrib--)
+			{
+				const CVector *speedVect = &(*(speedIt + (fpIndex >> 16)));
+				float norm = sqrtf(speedVect->x * speedVect->x + speedVect->y * speedVect->y);
+				float invNorm = (norm != 0.f) ? 1.f / norm : 0.f;
+				CPlaneBasis &pb = *(CPlaneBasis *)ptDat;
+				pb.X.set(invNorm * speedVect->x, invNorm * speedVect->y, 0.f);
+				pb.Y.set(-pb.X.y, pb.X.x, 0.f);
+				ptDat += stride;
+				fpIndex += srcStep;
+			}
 			break;
-			case XZ:
-				while (numAttrib --)
-				{
-					const CVector *speedVect = &(*(speedIt + (fpIndex >> 16)));
-					float norm = sqrtf(speedVect->x * speedVect->x + speedVect->z * speedVect->z);
-					float invNorm = (norm != 0.f) ? 1.f / norm : 0.f;
-					CPlaneBasis &pb = *(CPlaneBasis *) ptDat;
-					pb.X.set(invNorm * speedVect->x, 0.f, invNorm * speedVect->z);
-					pb.Y.set(- pb.X.z, 0.f, pb.X.x);
-					ptDat += stride;
-					fpIndex += srcStep;
-				}
+		case XZ:
+			while (numAttrib--)
+			{
+				const CVector *speedVect = &(*(speedIt + (fpIndex >> 16)));
+				float norm = sqrtf(speedVect->x * speedVect->x + speedVect->z * speedVect->z);
+				float invNorm = (norm != 0.f) ? 1.f / norm : 0.f;
+				CPlaneBasis &pb = *(CPlaneBasis *)ptDat;
+				pb.X.set(invNorm * speedVect->x, 0.f, invNorm * speedVect->z);
+				pb.Y.set(-pb.X.z, 0.f, pb.X.x);
+				ptDat += stride;
+				fpIndex += srcStep;
+			}
 			break;
-			case YZ:
-				while (numAttrib --)
-				{
-					const CVector *speedVect = &(*(speedIt + (fpIndex >> 16)));
-					float norm = sqrtf(speedVect->y * speedVect->y + speedVect->z * speedVect->z);
-					float invNorm = (norm != 0.f) ? 1.f / norm : 0.f;
-					CPlaneBasis &pb = *(CPlaneBasis *) ptDat;
-					pb.X.set(0.f, invNorm * speedVect->y, invNorm * speedVect->z);
-					pb.Y.set(0.f, - pb.X.z, pb.X.y);
-					ptDat += stride;
-					fpIndex += srcStep;
-				}
+		case YZ:
+			while (numAttrib--)
+			{
+				const CVector *speedVect = &(*(speedIt + (fpIndex >> 16)));
+				float norm = sqrtf(speedVect->y * speedVect->y + speedVect->z * speedVect->z);
+				float invNorm = (norm != 0.f) ? 1.f / norm : 0.f;
+				CPlaneBasis &pb = *(CPlaneBasis *)ptDat;
+				pb.X.set(0.f, invNorm * speedVect->y, invNorm * speedVect->z);
+				pb.Y.set(0.f, -pb.X.z, pb.X.y);
+				ptDat += stride;
+				fpIndex += srcStep;
+			}
 			break;
-			default:
-				nlstop; // unknow projection mode
+		default:
+			nlstop; // unknow projection mode
 			break;
 		}
 		return tab;
@@ -180,45 +172,43 @@ void *CPSPlaneBasisFollowSpeed::make(CPSLocated *loc,
 
 ///============================================================================
 void CPSPlaneBasisFollowSpeed::make4(CPSLocated *loc,
-									 uint32 startIndex,
-									 void *tab,
-									 uint32 stride,
-									 uint32 numAttrib,
-									 uint32 srcStep /*= (1 << 16)*/
-									) const
+    uint32 startIndex,
+    void *tab,
+    uint32 stride,
+    uint32 numAttrib,
+    uint32 srcStep /*= (1 << 16)*/
+) const
 {
 	nlassert(numAttrib);
 	if (srcStep == (1 << 16))
 	{
-		TPSAttribVector::const_iterator speedIt = loc->getSpeed().begin() + startIndex
-										, endSpeedIt = loc->getSpeed().begin() + startIndex + numAttrib;
-		uint8 *ptDat  = (uint8 *) tab;
+		TPSAttribVector::const_iterator speedIt = loc->getSpeed().begin() + startIndex, endSpeedIt = loc->getSpeed().begin() + startIndex + numAttrib;
+		uint8 *ptDat = (uint8 *)tab;
 		do
 		{
-			*(CPlaneBasis *) ptDat = CPlaneBasis(*speedIt);
-			*(CPlaneBasis *) (ptDat + stride) = *(CPlaneBasis *) ptDat;
+			*(CPlaneBasis *)ptDat = CPlaneBasis(*speedIt);
+			*(CPlaneBasis *)(ptDat + stride) = *(CPlaneBasis *)ptDat;
 			ptDat += stride;
-			*(CPlaneBasis *) (ptDat + stride) = *(CPlaneBasis *) ptDat;
+			*(CPlaneBasis *)(ptDat + stride) = *(CPlaneBasis *)ptDat;
 			ptDat += stride;
-			*(CPlaneBasis *) (ptDat + stride) = *(CPlaneBasis *) ptDat;
+			*(CPlaneBasis *)(ptDat + stride) = *(CPlaneBasis *)ptDat;
 			ptDat += stride << 1;
-			++ speedIt;
-		}
-		while (speedIt != endSpeedIt);
+			++speedIt;
+		} while (speedIt != endSpeedIt);
 	}
 	else
 	{
 		uint32 fpIndex = startIndex * srcStep;
 		const TPSAttribVector::const_iterator speedIt = loc->getSpeed().begin();
-		uint8 *ptDat  = (uint8 *) tab;
-		while (numAttrib --)
+		uint8 *ptDat = (uint8 *)tab;
+		while (numAttrib--)
 		{
-			*(CPlaneBasis *) ptDat = CPlaneBasis(*(speedIt + (fpIndex >> 16)));
-			*(CPlaneBasis *) (ptDat + stride) = *(CPlaneBasis *) ptDat;
+			*(CPlaneBasis *)ptDat = CPlaneBasis(*(speedIt + (fpIndex >> 16)));
+			*(CPlaneBasis *)(ptDat + stride) = *(CPlaneBasis *)ptDat;
 			ptDat += stride;
-			*(CPlaneBasis *) (ptDat + stride) = *(CPlaneBasis *) ptDat;
+			*(CPlaneBasis *)(ptDat + stride) = *(CPlaneBasis *)ptDat;
 			ptDat += stride;
-			*(CPlaneBasis *) (ptDat + stride) = *(CPlaneBasis *) ptDat;
+			*(CPlaneBasis *)(ptDat + stride) = *(CPlaneBasis *)ptDat;
 			ptDat += stride << 1;
 			fpIndex += srcStep;
 		}
@@ -227,59 +217,55 @@ void CPSPlaneBasisFollowSpeed::make4(CPSLocated *loc,
 
 ///============================================================================
 void CPSPlaneBasisFollowSpeed::makeN(CPSLocated *loc,
-									 uint32 startIndex,
-									 void *tab,
-									 uint32 stride,
-									 uint32 numAttrib,
-									 uint32 nbReplicate,
-									 uint32 srcStep /*= (1 << 16) */
-									) const
+    uint32 startIndex,
+    void *tab,
+    uint32 stride,
+    uint32 numAttrib,
+    uint32 nbReplicate,
+    uint32 srcStep /*= (1 << 16) */
+) const
 {
 	nlassert(numAttrib);
 	if (srcStep == (1 << 16))
 	{
 		nlassert(nbReplicate > 1);
-		TPSAttribVector::const_iterator speedIt = loc->getSpeed().begin() + startIndex
-										, endSpeedIt = loc->getSpeed().begin() + startIndex + numAttrib;
-		uint8 *ptDat  = (uint8 *) tab;
+		TPSAttribVector::const_iterator speedIt = loc->getSpeed().begin() + startIndex, endSpeedIt = loc->getSpeed().begin() + startIndex + numAttrib;
+		uint8 *ptDat = (uint8 *)tab;
 		uint k;
 		do
 		{
-			*(CPlaneBasis *) ptDat = CPlaneBasis(*speedIt);
+			*(CPlaneBasis *)ptDat = CPlaneBasis(*speedIt);
 
 			k = nbReplicate - 1;
 
 			do
 			{
-				*(CPlaneBasis *) (ptDat + stride) = *(CPlaneBasis *) ptDat;
+				*(CPlaneBasis *)(ptDat + stride) = *(CPlaneBasis *)ptDat;
 				ptDat += stride;
-			}
-			while (--k);
+			} while (--k);
 			ptDat += stride;
 
-			++ speedIt;
-		}
-		while (speedIt != endSpeedIt);
+			++speedIt;
+		} while (speedIt != endSpeedIt);
 	}
 	else
 	{
 		uint32 fpIndex = startIndex * srcStep;
 		nlassert(nbReplicate > 1);
 		const TPSAttribVector::const_iterator speedIt = loc->getSpeed().begin();
-		uint8 *ptDat  = (uint8 *) tab;
+		uint8 *ptDat = (uint8 *)tab;
 		uint k;
-		while (numAttrib --)
+		while (numAttrib--)
 		{
-			*(CPlaneBasis *) ptDat = CPlaneBasis(*(speedIt + (fpIndex >> 16)));
+			*(CPlaneBasis *)ptDat = CPlaneBasis(*(speedIt + (fpIndex >> 16)));
 
 			k = nbReplicate - 1;
 
 			do
 			{
-				*(CPlaneBasis *) (ptDat + stride) = *(CPlaneBasis *) ptDat;
+				*(CPlaneBasis *)(ptDat + stride) = *(CPlaneBasis *)ptDat;
 				ptDat += stride;
-			}
-			while (--k);
+			} while (--k);
 			ptDat += stride;
 
 			fpIndex += srcStep;
@@ -287,14 +273,14 @@ void CPSPlaneBasisFollowSpeed::makeN(CPSLocated *loc,
 	}
 }
 
-
 /////////////////////////////////////////////
 // CSpinnerFunctor implementation		   //
 /////////////////////////////////////////////
 
-
 ///============================================================================
-CSpinnerFunctor::CSpinnerFunctor() : _NbSamples(0), _Axis(NLMISC::CVector::K)
+CSpinnerFunctor::CSpinnerFunctor()
+    : _NbSamples(0)
+    , _Axis(NLMISC::CVector::K)
 {
 }
 
@@ -332,7 +318,7 @@ void CSpinnerFunctor::updateSamples(void)
 {
 	if (_NbSamples == 0) return;
 	// compute step between each angle
-	const float angInc = (float) (2.f * NLMISC::Pi / _NbSamples);
+	const float angInc = (float)(2.f * NLMISC::Pi / _NbSamples);
 	_PBTab.resize(_NbSamples + 1);
 	NLMISC::CMatrix mat;
 	CPSUtil::buildSchmidtBasis(_Axis, mat);
@@ -344,12 +330,12 @@ void CSpinnerFunctor::updateSamples(void)
 		float ca = cosf(k * angInc);
 		float sa = sinf(k * angInc);
 		_PBTab[k].X.set(ca * I.x + sa * J.x,
-						ca * I.y + sa * J.y,
-						ca * I.z + sa * J.z);
+		    ca * I.y + sa * J.y,
+		    ca * I.z + sa * J.z);
 
-		_PBTab[k].Y.set(- sa * I.x + ca * J.x,
-					    - sa * I.y + ca * J.y,
-						- sa * I.z + ca * J.z);
+		_PBTab[k].Y.set(-sa * I.x + ca * J.x,
+		    -sa * I.y + ca * J.y,
+		    -sa * I.z + ca * J.z);
 	}
 }
 

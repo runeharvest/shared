@@ -25,12 +25,10 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace NLSOUND
-{
-
+namespace NLSOUND {
 
 CBackgroundSource::CBackgroundSource(CBackgroundSound *backgroundSound, bool spawn, TSpawnEndCallback cb, void *cbUserParam, NL3D::CCluster *cluster, CGroupController *groupController)
-:	CSourceCommon(backgroundSound, spawn, cb, cbUserParam, cluster, groupController)
+    : CSourceCommon(backgroundSound, spawn, cb, cbUserParam, cluster, groupController)
 {
 	_BackgroundSound = backgroundSound;
 }
@@ -46,7 +44,7 @@ TSoundId CBackgroundSource::getSound()
 	return NULL;
 }
 
-void CBackgroundSource::setGain( float gain )
+void CBackgroundSource::setGain(float gain)
 {
 	CSourceCommon::setGain(gain);
 
@@ -60,7 +58,7 @@ void CBackgroundSource::setGain( float gain )
 		}
 	}
 }
-void CBackgroundSource::setRelativeGain( float gain )
+void CBackgroundSource::setRelativeGain(float gain)
 {
 	CSourceCommon::setRelativeGain(gain);
 
@@ -72,7 +70,7 @@ void CBackgroundSource::setRelativeGain( float gain )
 	}
 }
 
-void CBackgroundSource::setPos( const NLMISC::CVector& pos )
+void CBackgroundSource::setPos(const NLMISC::CVector &pos)
 {
 	CSourceCommon::setPos(pos);
 
@@ -84,7 +82,7 @@ void CBackgroundSource::setPos( const NLMISC::CVector& pos )
 	}
 }
 
-void CBackgroundSource::setVelocity( const NLMISC::CVector& vel )
+void CBackgroundSource::setVelocity(const NLMISC::CVector &vel)
 {
 	CSourceCommon::setVelocity(vel);
 
@@ -95,7 +93,7 @@ void CBackgroundSource::setVelocity( const NLMISC::CVector& vel )
 			first->Source->setVelocity(vel);
 	}
 }
-void CBackgroundSource::setDirection( const NLMISC::CVector& dir )
+void CBackgroundSource::setDirection(const NLMISC::CVector &dir)
 {
 	CSourceCommon::setDirection(dir);
 
@@ -106,8 +104,6 @@ void CBackgroundSource::setDirection( const NLMISC::CVector& dir )
 			first->Source->setDirection(dir);
 	}
 }
-
-
 
 void CBackgroundSource::play()
 {
@@ -165,7 +161,7 @@ void CBackgroundSource::updateFilterValues(const float *filterValues)
 		if (ss.Source != 0)
 		{
 			float gain = 1.0f;
-			for (uint i=0; i<UAudioMixer::TBackgroundFlags::NB_BACKGROUND_FLAGS; ++i)
+			for (uint i = 0; i < UAudioMixer::TBackgroundFlags::NB_BACKGROUND_FLAGS; ++i)
 			{
 				if (ss.Filter.Flags[i])
 				{
@@ -184,7 +180,7 @@ void CBackgroundSource::updateFilterValues(const float *filterValues)
 			else if (gain > 0 && ss.Status != SUB_STATUS_PLAY)
 			{
 				// need to restard the sound
-//				ss.Source->setRelativeGain(gain * _Gain);
+				//				ss.Source->setRelativeGain(gain * _Gain);
 				ss.Source->setGain(ss.Source->getSound()->getGain() * gain);
 				ss.Source->setRelativeGain(_Gain);
 				ss.Source->setPitch(ss.Source->getSound()->getPitch() * _Pitch);
@@ -197,7 +193,7 @@ void CBackgroundSource::updateFilterValues(const float *filterValues)
 
 				needUpdate |= (ss.Status == SUB_STATUS_PLAY_FAIL);
 			}
-			else //if (ss.Status == SUB_STATUS_PLAY)
+			else // if (ss.Status == SUB_STATUS_PLAY)
 			{
 				// just update the gain
 				ss.Source->setGain(ss.Source->getSound()->getGain() * gain);
@@ -209,7 +205,6 @@ void CBackgroundSource::updateFilterValues(const float *filterValues)
 	// if some some sub sound fail to play...
 	if (needUpdate)
 		CAudioMixerUser::instance()->registerUpdate(this);
-
 }
 
 void CBackgroundSource::onUpdate()

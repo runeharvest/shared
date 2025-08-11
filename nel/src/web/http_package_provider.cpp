@@ -28,8 +28,7 @@ using namespace std;
 using namespace NLMISC;
 using namespace NLWEB;
 
-namespace NLWEB
-{
+namespace NLWEB {
 
 CHttpPackageProvider::CHttpPackageProvider()
 {
@@ -52,8 +51,8 @@ bool CHttpPackageProvider::getFile(std::string &filePath, const CHashKey &hash, 
 	CFile::createDirectoryTree(storageDirectory);
 	/*if (!CFile::isDirectory(storageDirectory) || !CFile::createDirectoryTree(storageDirectory))
 	{
-		nldebug("Unable to create directory '%s'", storageDirectory.c_str());
-		return false;
+	    nldebug("Unable to create directory '%s'", storageDirectory.c_str());
+	    return false;
 	}*/
 
 	// download

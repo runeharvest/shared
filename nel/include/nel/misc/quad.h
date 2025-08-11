@@ -20,9 +20,7 @@
 #include "types_nl.h"
 #include "vector.h"
 
-
 namespace NLMISC {
-
 
 // ***************************************************************************
 /**
@@ -34,18 +32,20 @@ namespace NLMISC {
 class CQuad
 {
 public:
-	CVector		V0, V1, V2, V3;
-
+	CVector V0, V1, V2, V3;
 
 public:
-
 	/// Constructor
-	CQuad() {}
+	CQuad() { }
 
 	/// Constructor
 	CQuad(const NLMISC::CVector &v0, const NLMISC::CVector &v1, const NLMISC::CVector &v2, const NLMISC::CVector &v3)
-		: V0(v0), V1(v1), V2(v2), V3(v3)
-	{}
+	    : V0(v0)
+	    , V1(v1)
+	    , V2(v2)
+	    , V3(v3)
+	{
+	}
 
 	void set(const NLMISC::CVector &v0, const NLMISC::CVector &v1, const NLMISC::CVector &v2, const NLMISC::CVector &v3)
 	{
@@ -55,7 +55,7 @@ public:
 		V3 = v3;
 	}
 
-	const CQuad &operator = ( const CQuad& q)
+	const CQuad &operator=(const CQuad &q)
 	{
 		V0 = q.V0;
 		V1 = q.V1;
@@ -63,12 +63,9 @@ public:
 		V3 = q.V3;
 		return *this;
 	}
-
 };
 
-
 } // NLMISC
-
 
 #endif // NL_QUAD_H
 

@@ -22,16 +22,18 @@
 #include "nel/misc/system_utils.h"
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 // a predicate to find an emitter in a list
 struct EmitterEqualPred
 {
-	EmitterEqualPred(IEventEmitter *e) : E(e) {}
+	EmitterEqualPred(IEventEmitter *e)
+	    : E(e)
+	{
+	}
 	IEventEmitter *E;
 	bool operator()(const std::pair<IEventEmitter *, bool> &el)
 	{
@@ -52,7 +54,7 @@ CEventEmitterMulti::~CEventEmitterMulti()
 }
 
 ///============================================================
-void	CEventEmitterMulti::addEmitter(IEventEmitter *e, bool mustDelete)
+void CEventEmitterMulti::addEmitter(IEventEmitter *e, bool mustDelete)
 {
 	nlassert(e != this); // avoid infinite recursion
 	nlassert(!isEmitter(e));
@@ -60,10 +62,10 @@ void	CEventEmitterMulti::addEmitter(IEventEmitter *e, bool mustDelete)
 }
 
 ///============================================================
-void	CEventEmitterMulti::removeEmitter(IEventEmitter *e)
+void CEventEmitterMulti::removeEmitter(IEventEmitter *e)
 {
 	TEmitterCont::iterator it = std::find_if(_Emitters.begin(), _Emitters.end(), EmitterEqualPred(e));
-	nlassert(it!= _Emitters.end());
+	nlassert(it != _Emitters.end());
 	if (it->second)
 	{
 		delete it->first;
@@ -72,7 +74,7 @@ void	CEventEmitterMulti::removeEmitter(IEventEmitter *e)
 }
 
 ///============================================================
-bool	CEventEmitterMulti::isEmitter(IEventEmitter *e) const
+bool CEventEmitterMulti::isEmitter(IEventEmitter *e) const
 {
 	TEmitterCont::const_iterator it = std::find_if(_Emitters.begin(), _Emitters.end(), EmitterEqualPred(e));
 	return it != _Emitters.end();
@@ -112,6 +114,5 @@ bool CEventEmitterMulti::pasteTextFromClipboard(std::string &text)
 	// Naush: wrapped to old API to avoid duplicate code
 	return CSystemUtils::pasteTextFromClipboard(text);
 }
-
 
 } // NLMISC

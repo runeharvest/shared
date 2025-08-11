@@ -24,11 +24,10 @@
 using namespace std;
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 CStringMapper CStringMapper::s_GlobalMapper;
 
@@ -126,10 +125,10 @@ TSStringId CStaticStringMapper::add(const std::string &str)
 	std::map<std::string, TSStringId>::iterator it = _TempStringTable.find(str);
 	if (it == _TempStringTable.end())
 	{
-		_TempStringTable.insert(pair<string,TSStringId>(str,_IdCounter));
-		_TempIdTable.insert(pair<TSStringId,string>(_IdCounter,str));
+		_TempStringTable.insert(pair<string, TSStringId>(str, _IdCounter));
+		_TempIdTable.insert(pair<TSStringId, string>(_IdCounter, str));
 		_IdCounter++;
-		return _IdCounter-1;
+		return _IdCounter - 1;
 	}
 	else
 	{
@@ -147,14 +146,14 @@ bool CStaticStringMapper::isAdded(const std::string &str) const
 // ****************************************************************************
 void CStaticStringMapper::memoryUncompress()
 {
-	std::map<std::string, TSStringId>	tempStringTable;
-	std::map<TSStringId, std::string>	tempIdTable;
-	for(uint k = 0; k < _IdToStr.size(); ++k)
+	std::map<std::string, TSStringId> tempStringTable;
+	std::map<TSStringId, std::string> tempIdTable;
+	for (uint k = 0; k < _IdToStr.size(); ++k)
 	{
-		tempStringTable[_IdToStr[k]] = (TSStringId) k;
-		tempIdTable[(TSStringId) k] = _IdToStr[k];
+		tempStringTable[_IdToStr[k]] = (TSStringId)k;
+		tempIdTable[(TSStringId)k] = _IdToStr[k];
 	}
-	delete [] _AllStrings;
+	delete[] _AllStrings;
 	_AllStrings = NULL;
 	contReset(_IdToStr);
 	_TempStringTable.swap(tempStringTable);
@@ -217,7 +216,7 @@ void CStaticStringMapper::clear()
 {
 	contReset(_TempStringTable);
 	contReset(_TempIdTable);
-	delete [] _AllStrings;
+	delete[] _AllStrings;
 	contReset(_IdToStr);
 
 	_IdCounter = 0;
@@ -252,19 +251,16 @@ void CStaticStringMapper::serial(IStream &f, std::vector<TSStringId> &strIdVect)
 	{
 		f.serialCont(vsTmp);
 		strIdVect.resize(vsTmp.size());
-		for(uint i = 0; i < vsTmp.size(); ++i)
+		for (uint i = 0; i < vsTmp.size(); ++i)
 			strIdVect[i] = add(vsTmp[i]);
-			}
+	}
 	else
 	{
 		vsTmp.resize(strIdVect.size());
 		for (uint i = 0; i < vsTmp.size(); ++i)
 			vsTmp[i] = get(strIdVect[i]);
 		f.serialCont(vsTmp);
-
 	}
 }
-
-
 
 } // namespace NLMISC

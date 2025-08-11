@@ -24,103 +24,96 @@
 #include "nel/3d/mesh.h"
 #include "nel/3d/mrm_mesh.h"
 
+namespace NL3D {
 
-namespace NL3D
-{
-
-
-using	NLMISC::CVector;
-using	NLMISC::CUV;
+using NLMISC::CUV;
+using NLMISC::CVector;
 
 /// A simple Vertex Pos/Normal/Uv
-class	CRawSkinVertex
+class CRawSkinVertex
 {
 public:
-	CVector		Pos;
-	CVector		Normal;
-	CUV			UV;
+	CVector Pos;
+	CVector Normal;
+	CUV UV;
 };
 
 /// Vertices influenced by 1 matrix only.
-class	CRawVertexNormalSkin1
+class CRawVertexNormalSkin1
 {
 public:
 	// The id of the matrix to use.
-	uint32			MatrixId[1];
-	CRawSkinVertex	Vertex;
+	uint32 MatrixId[1];
+	CRawSkinVertex Vertex;
 };
 
 /// Vertices influenced by 2 matrix only.
-class	CRawVertexNormalSkin2
+class CRawVertexNormalSkin2
 {
 public:
 	// The id of the matrix to use.
-	uint32			MatrixId[2];
-	float			Weights[2];
-	CRawSkinVertex	Vertex;
+	uint32 MatrixId[2];
+	float Weights[2];
+	CRawSkinVertex Vertex;
 };
 
 /// Vertices influenced by 3 matrix only.
-class	CRawVertexNormalSkin3
+class CRawVertexNormalSkin3
 {
 public:
-	uint32			MatrixId[3];
-	float			Weights[3];
-	CRawSkinVertex	Vertex;
+	uint32 MatrixId[3];
+	float Weights[3];
+	CRawSkinVertex Vertex;
 };
 
 /// Vertices influenced by 4 matrix only.
-class	CRawVertexNormalSkin4
+class CRawVertexNormalSkin4
 {
 public:
-	uint32			MatrixId[4];
-	float			Weights[4];
-	CRawSkinVertex	Vertex;
+	uint32 MatrixId[4];
+	float Weights[4];
+	CRawSkinVertex Vertex;
 };
 
 /// The array per lod.
-class	CRawSkinNormalCache
+class CRawSkinNormalCache
 {
 public:
 	// The vertices influenced by 1 matrix.
-	NLMISC::CObjectVector<CRawVertexNormalSkin1, false>	Vertices1;
+	NLMISC::CObjectVector<CRawVertexNormalSkin1, false> Vertices1;
 	// The vertices influenced by 2 matrix.
-	NLMISC::CObjectVector<CRawVertexNormalSkin2, false>	Vertices2;
+	NLMISC::CObjectVector<CRawVertexNormalSkin2, false> Vertices2;
 	// The vertices influenced by 3 matrix.
-	NLMISC::CObjectVector<CRawVertexNormalSkin3, false>	Vertices3;
+	NLMISC::CObjectVector<CRawVertexNormalSkin3, false> Vertices3;
 	// The vertices influenced by 4 matrix.
-	NLMISC::CObjectVector<CRawVertexNormalSkin4, false>	Vertices4;
+	NLMISC::CObjectVector<CRawVertexNormalSkin4, false> Vertices4;
 
 	// For Each array, set the max number of vertices to copy in VBSoft (not VBHard directly)
-	uint32							SoftVertices[4];
-	uint32							HardVertices[4];
+	uint32 SoftVertices[4];
+	uint32 HardVertices[4];
 	// Total Of SoftVertices
-	uint32							TotalSoftVertices;
-	uint32							TotalHardVertices;
+	uint32 TotalSoftVertices;
+	uint32 TotalHardVertices;
 
 	// The RawSkin Geomorphs.
-	std::vector<CMRMWedgeGeom>		Geomorphs;
+	std::vector<CMRMWedgeGeom> Geomorphs;
 	// The Raw Primitives.
-	std::vector<CIndexBuffer>	RdrPass;
+	std::vector<CIndexBuffer> RdrPass;
 
 	/// What RawSkin lod this cache represent. -1 if NULL
-	sint					LodId;
+	sint LodId;
 	/// To see if same Data than in the CMeshMRMGeom
-	uint					MeshDataId;
-
+	uint MeshDataId;
 
 	// Used only in case of Morphing. Same Size as the original VB. Remap the original VB to the RawSkin.
-	NLMISC::CObjectVector<CRawSkinVertex*, false>		VertexRemap;
+	NLMISC::CObjectVector<CRawSkinVertex *, false> VertexRemap;
 
 public:
 	// free up the memory
-	void				clearArrays();
+	void clearArrays();
 };
 
-
-
 } // NL3D
-
 
 #endif // NL_RAW_SKIN_H
 

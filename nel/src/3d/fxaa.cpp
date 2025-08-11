@@ -57,7 +57,12 @@ namespace {
 
 namespace NL3D {
 
-CFXAA::CFXAA(NL3D::UDriver *driver) : m_Driver(driver), m_VP(NULL), m_PP(NULL), m_Width(~0), m_Height(~0)
+CFXAA::CFXAA(NL3D::UDriver *driver)
+    : m_Driver(driver)
+    , m_VP(NULL)
+    , m_PP(NULL)
+    , m_Width(~0)
+    , m_Height(~0)
 {
 	nldebug("3D: Create FXAA");
 
@@ -131,14 +136,14 @@ CFXAA::CFXAA(NL3D::UDriver *driver) : m_Driver(driver), m_VP(NULL), m_PP(NULL), 
 	{
 		return;
 	}
-	
+
 	// create material and vb
 	{
 		m_Mat = m_Driver->createMaterial();
 		m_Mat.initUnlit();
 		m_Mat.setColor(CRGBA::White);
-		m_Mat.setBlend (false);
-		m_Mat.setAlphaTest (false);
+		m_Mat.setBlend(false);
+		m_Mat.setAlphaTest(false);
 		NL3D::CMaterial *mat = m_Mat.getObjectPtr();
 		mat->setShader(NL3D::CMaterial::Normal);
 		mat->setBlendFunc(CMaterial::one, CMaterial::zero);
@@ -153,17 +158,17 @@ CFXAA::CFXAA(NL3D::UDriver *driver) : m_Driver(driver), m_VP(NULL), m_PP(NULL), 
 
 		/*if (drv->textureCoordinateAlternativeMode())
 		{
-			m_QuadUV.Uv0 = CUV(0.f,  1.f);
-			m_QuadUV.Uv1 = CUV(1.f, 1.f);
-			m_QuadUV.Uv2 = CUV(1.f, 0.f);
-			m_QuadUV.Uv3 = CUV(0.f,  0.f);
+		    m_QuadUV.Uv0 = CUV(0.f,  1.f);
+		    m_QuadUV.Uv1 = CUV(1.f, 1.f);
+		    m_QuadUV.Uv2 = CUV(1.f, 0.f);
+		    m_QuadUV.Uv3 = CUV(0.f,  0.f);
 		}
 		else
 		{*/
-			m_QuadUV.Uv0 = CUV(0.f,  0.f);
-			m_QuadUV.Uv1 = CUV(1.f, 0.f);
-			m_QuadUV.Uv2 = CUV(1.f, 1.f);
-			m_QuadUV.Uv3 = CUV(0.f,  1.f);
+		m_QuadUV.Uv0 = CUV(0.f, 0.f);
+		m_QuadUV.Uv1 = CUV(1.f, 0.f);
+		m_QuadUV.Uv2 = CUV(1.f, 1.f);
+		m_QuadUV.Uv3 = CUV(0.f, 1.f);
 		/*}*/
 
 		/*CVertexBuffer &vb = m_VB;
@@ -223,25 +228,25 @@ void CFXAA::applyEffect()
 	float hpheight = pheight * 0.5f;
 	float n = 0.5f;
 
-	//if (width != m_Width || height != m_Height)
+	// if (width != m_Width || height != m_Height)
 	/*{
-		// Build VB
-		m_Width = width;
-		m_Height = height;
-		CVertexBufferReadWrite vba;
-		m_VB.lock(vba);
-		vba.setValueFloat3Ex(CVertexBuffer::Position, 0, 0.f, 0.f, 0.5f); // BL
-		vba.setValueFloat3Ex(CVertexBuffer::Position, 1, 1.f, 0.f, 0.5f); // BR
-		vba.setValueFloat3Ex(CVertexBuffer::Position, 2, 1.f, 1.f, 0.5f); // TR
-		vba.setValueFloat3Ex(CVertexBuffer::Position, 3, 0.f, 1.f, 0.5f); // TL
-		vba.setValueFloat2Ex(CVertexBuffer::TexCoord0, 0, 0.f, 0.f);
-		vba.setValueFloat2Ex(CVertexBuffer::TexCoord0, 1, 1.f, 0.f);
-		vba.setValueFloat2Ex(CVertexBuffer::TexCoord0, 2, 1.f, 1.f);
-		vba.setValueFloat2Ex(CVertexBuffer::TexCoord0, 3, 0.f, 1.f);
-		vba.setValueFloat4Ex(CVertexBuffer::TexCoord1, 0, 0.f - hpwidth, 0.f - hpheight, 0.f + hpwidth, 0.f + hpheight);
-		vba.setValueFloat4Ex(CVertexBuffer::TexCoord1, 1, 1.f - hpwidth, 0.f - hpheight, 1.f + hpwidth, 0.f + hpheight);
-		vba.setValueFloat4Ex(CVertexBuffer::TexCoord1, 2, 1.f - hpwidth, 1.f - hpheight, 1.f + hpwidth, 1.f + hpheight);
-		vba.setValueFloat4Ex(CVertexBuffer::TexCoord1, 3, 0.f - hpwidth, 1.f - hpheight, 0.f + hpwidth, 1.f + hpheight);
+	    // Build VB
+	    m_Width = width;
+	    m_Height = height;
+	    CVertexBufferReadWrite vba;
+	    m_VB.lock(vba);
+	    vba.setValueFloat3Ex(CVertexBuffer::Position, 0, 0.f, 0.f, 0.5f); // BL
+	    vba.setValueFloat3Ex(CVertexBuffer::Position, 1, 1.f, 0.f, 0.5f); // BR
+	    vba.setValueFloat3Ex(CVertexBuffer::Position, 2, 1.f, 1.f, 0.5f); // TR
+	    vba.setValueFloat3Ex(CVertexBuffer::Position, 3, 0.f, 1.f, 0.5f); // TL
+	    vba.setValueFloat2Ex(CVertexBuffer::TexCoord0, 0, 0.f, 0.f);
+	    vba.setValueFloat2Ex(CVertexBuffer::TexCoord0, 1, 1.f, 0.f);
+	    vba.setValueFloat2Ex(CVertexBuffer::TexCoord0, 2, 1.f, 1.f);
+	    vba.setValueFloat2Ex(CVertexBuffer::TexCoord0, 3, 0.f, 1.f);
+	    vba.setValueFloat4Ex(CVertexBuffer::TexCoord1, 0, 0.f - hpwidth, 0.f - hpheight, 0.f + hpwidth, 0.f + hpheight);
+	    vba.setValueFloat4Ex(CVertexBuffer::TexCoord1, 1, 1.f - hpwidth, 0.f - hpheight, 1.f + hpwidth, 0.f + hpheight);
+	    vba.setValueFloat4Ex(CVertexBuffer::TexCoord1, 2, 1.f - hpwidth, 1.f - hpheight, 1.f + hpwidth, 1.f + hpheight);
+	    vba.setValueFloat4Ex(CVertexBuffer::TexCoord1, 3, 0.f - hpwidth, 1.f - hpheight, 0.f + hpwidth, 1.f + hpheight);
 	}*/
 
 	// create render target

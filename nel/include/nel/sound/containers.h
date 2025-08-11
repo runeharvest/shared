@@ -33,31 +33,35 @@
 // Project includes
 
 namespace NLSOUND {
-	class CSourceCommon;
+class CSourceCommon;
 
 /// Hasher functor for hashed container with pointer key.
 template <class Pointer>
-struct THashPtr 
+struct THashPtr
 #ifndef NL_CPP17
-	: public std::unary_function<const Pointer &, size_t>
+    : public std::unary_function<const Pointer &, size_t>
 #endif
 {
-	enum { bucket_size = 4, min_buckets = 8, };
-	size_t operator () (const Pointer &ptr) const
+	enum
 	{
-		//CHashSet<uint>::hasher	h;
-		// transtype the pointer into int then hash it
-		//return h.operator()(uint(uintptr_t(ptr)));
+		bucket_size = 4,
+		min_buckets = 8,
+	};
+	size_t operator()(const Pointer &ptr) const
+	{
+		// CHashSet<uint>::hasher	h;
+		//  transtype the pointer into int then hash it
+		// return h.operator()(uint(uintptr_t(ptr)));
 		return (size_t)(uintptr_t)ptr;
 	}
-	inline bool operator() (const Pointer &ptr1, const Pointer &ptr2) const
+	inline bool operator()(const Pointer &ptr1, const Pointer &ptr2) const
 	{
 		// delegate the work to someone else as well?
 		return (uintptr_t)ptr1 < (uintptr_t)ptr2;
 	}
 };
 
-typedef CHashSet<CSourceCommon*, THashPtr<CSourceCommon*> > TSourceContainer;
+typedef CHashSet<CSourceCommon *, THashPtr<CSourceCommon *>> TSourceContainer;
 
 } /* namespace NLSOUND */
 

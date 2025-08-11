@@ -24,14 +24,12 @@
 
 using namespace NLMISC;
 
-
 namespace NLNET {
-
 
 /*
  * Set only the remote address
  */
-void CDummyTcpSock::connect( const CInetHost& addr )
+void CDummyTcpSock::connect(const CInetHost &addr)
 {
 	_RemoteAddr = addr.address();
 	_Sock = 100;
@@ -39,26 +37,23 @@ void CDummyTcpSock::connect( const CInetHost& addr )
 	_BytesReceived = 0;
 	_BytesSent = 0;
 
-	//CSynchronized<bool>::CAccessor sync( &_SyncConnected );
-	//sync.value() = true;
+	// CSynchronized<bool>::CAccessor sync( &_SyncConnected );
+	// sync.value() = true;
 	_Connected = true;
 
-	LNETL0_DEBUG( "LNETL0: Socket connected to %s", addr.toStringLong().c_str() );
+	LNETL0_DEBUG("LNETL0: Socket connected to %s", addr.toStringLong().c_str());
 }
-
 
 /*
  *Dummy disconnection
  */
 void CDummyTcpSock::disconnect()
 {
-	LNETL0_DEBUG( "LNETL0: Socket disconnecting from %s...", _RemoteAddr.asString().c_str() );
+	LNETL0_DEBUG("LNETL0: Socket disconnecting from %s...", _RemoteAddr.asString().c_str());
 
-	//CSynchronized<bool>::CAccessor sync( &_SyncConnected );
-	//sync.value() = false;
+	// CSynchronized<bool>::CAccessor sync( &_SyncConnected );
+	// sync.value() = false;
 	_Connected = false;
 }
-
-
 
 } // NLNET

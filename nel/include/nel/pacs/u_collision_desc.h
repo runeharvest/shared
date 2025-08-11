@@ -24,13 +24,11 @@
 
 #include <vector>
 
-namespace NLMISC
-{
-	class IStream;
+namespace NLMISC {
+class IStream;
 }
 
-namespace NLPACS
-{
+namespace NLPACS {
 
 /**
  * Description of the contact of a collision
@@ -42,13 +40,13 @@ namespace NLPACS
 class UCollisionDesc
 {
 public:
-	NLMISC::CVectorD		ContactPosition;
-	NLMISC::CVectorD		ContactNormal0;
-	NLMISC::CVectorD		ContactNormal1;
-	double					ContactTime;
+	NLMISC::CVectorD ContactPosition;
+	NLMISC::CVectorD ContactNormal0;
+	NLMISC::CVectorD ContactNormal1;
+	double ContactTime;
 
 	// Serial method
-	void serial (NLMISC::IStream& stream);
+	void serial(NLMISC::IStream &stream);
 };
 
 /**
@@ -68,17 +66,16 @@ public:
 		Out
 	};
 
-	UMovePrimitive::TUserData	Object0;
-	UMovePrimitive::TUserData	Object1;
-	UCollisionDesc				CollisionDesc;
-	uint8						CollisionType;
+	UMovePrimitive::TUserData Object0;
+	UMovePrimitive::TUserData Object1;
+	UCollisionDesc CollisionDesc;
+	uint8 CollisionType;
 
 	// Serial method
-	void serial (NLMISC::IStream& stream);
+	void serial(NLMISC::IStream &stream);
 };
 
 } // NLPACS
-
 
 #endif // NL_U_COLLISION_DESC_H
 

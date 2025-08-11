@@ -26,8 +26,7 @@
 typedef struct _xmlNode xmlNode;
 typedef xmlNode *xmlNodePtr;
 
-namespace NLLIGO
-{
+namespace NLLIGO {
 
 class IPrimitive;
 class IProperty;
@@ -42,7 +41,6 @@ class CLigoConfig;
 class CPrimitiveClass
 {
 public:
-
 	// Type of the primitive
 	enum TType
 	{
@@ -52,43 +50,43 @@ public:
 		Bitmap,
 		Zone,
 		Alias
-	}						Type;
+	} Type;
 
 	/// Constructor
-	CPrimitiveClass ();
+	CPrimitiveClass();
 
 	/// Class name
-	std::string				Name;
+	std::string Name;
 
 	/// Filename extension (for type File)
-	std::string				FileExtension;
+	std::string FileExtension;
 
 	/// File type (for type File)
-	std::string				FileType;
+	std::string FileType;
 
 	/// Color
-	NLMISC::CRGBA			Color;
+	NLMISC::CRGBA Color;
 
 	/// Auto init ?
-	bool					AutoInit;
+	bool AutoInit;
 
 	/// Deletable ?
-	bool					Deletable;
+	bool Deletable;
 
 	/// Collision ?
-	bool					Collision;
+	bool Collision;
 
 	/// Link children ?
-	bool					LinkBrothers;
+	bool LinkBrothers;
 
 	/// Show arrow ?
-	bool					ShowArrow;
+	bool ShowArrow;
 
 	/// Numberize on copy ?
-	bool					Numberize;
+	bool Numberize;
 
 	/// Is primitive visible ?
-	bool					Visible;
+	bool Visible;
 
 	/// Init parameters
 	class CInitParameters
@@ -97,15 +95,15 @@ public:
 		class CDefaultValue
 		{
 		public:
-			std::string		Name;
-			bool			GenID;
+			std::string Name;
+			bool GenID;
 
-			bool			operator== (const CDefaultValue &other) const
+			bool operator==(const CDefaultValue &other) const
 			{
 				return (Name == other.Name) && (GenID == other.GenID);
 			}
 
-			bool			operator< (const CDefaultValue &other) const
+			bool operator<(const CDefaultValue &other) const
 			{
 				if (Name < other.Name)
 					return true;
@@ -120,20 +118,20 @@ public:
 
 	public:
 		/// Parameter name
-		std::string					Name;
+		std::string Name;
 
 		/// Default value
-		std::vector<CDefaultValue>	DefaultValue;
+		std::vector<CDefaultValue> DefaultValue;
 	};
 
 	// Parameter description
 	class CParameter : public CInitParameters
 	{
 	public:
-		CParameter () {}
-		CParameter (const NLLIGO::IProperty &property, const char *propertyName);
-		bool operator== (const CParameter &other) const;
-		bool operator< (const CParameter &other) const;
+		CParameter() { }
+		CParameter(const NLLIGO::IProperty &property, const char *propertyName);
+		bool operator==(const CParameter &other) const;
+		bool operator<(const CParameter &other) const;
 
 		// Type
 		enum TType
@@ -143,99 +141,99 @@ public:
 			String,
 			StringArray,
 			ConstStringArray,
-		}			Type;
+		} Type;
 
 		/// Is parameter visible ?
-		bool		Visible;
+		bool Visible;
 
 		// Is a filename
-		bool		Filename;
+		bool Filename;
 
 		// Make a look up ?
-		bool		Lookup;
+		bool Lookup;
 
 		/// Is parameter read only ?
-		bool		ReadOnly;
+		bool ReadOnly;
 
 		// File extension
-		std::string	FileExtension;
+		std::string FileExtension;
 
 		// Autonaming
-		std::string	Autoname;
+		std::string Autoname;
 
 		// Folder
-		std::string	Folder;
+		std::string Folder;
 
 		// Size of multi line view
-		uint		WidgetHeight;
+		uint WidgetHeight;
 
 		// Sort entry in combo box
-		bool		SortEntries;
+		bool SortEntries;
 
 		// Editable
-		bool		Editable;
+		bool Editable;
 
 		// Display horizontal slider in multiline edit box
-		bool		DisplayHS;
+		bool DisplayHS;
 
 		// Combobox value
 		class CConstStringValue
 		{
 		public:
-			bool operator== (const CConstStringValue &other) const;
-			bool operator< (const CConstStringValue &other) const;
-			std::vector<std::string>	Values;
-			std::vector<std::string>	PrimitivePath;
-			void	appendFilePath				(std::vector<std::string> &pathList)	const;
-			void	appendPrimPath				(std::vector<std::string> &pathList, const	std::vector<const IPrimitive*>	&relativePrimPaths)	const;
-			void	getPrimitivesForPrimPath	(std::vector<const IPrimitive*>	&relativePrimPaths, const	std::vector<const IPrimitive*>	&startPrimPath)	const;
+			bool operator==(const CConstStringValue &other) const;
+			bool operator<(const CConstStringValue &other) const;
+			std::vector<std::string> Values;
+			std::vector<std::string> PrimitivePath;
+			void appendFilePath(std::vector<std::string> &pathList) const;
+			void appendPrimPath(std::vector<std::string> &pathList, const std::vector<const IPrimitive *> &relativePrimPaths) const;
+			void getPrimitivesForPrimPath(std::vector<const IPrimitive *> &relativePrimPaths, const std::vector<const IPrimitive *> &startPrimPath) const;
 		};
 
 		// Map of combobox value per context
-		std::map<std::string, CConstStringValue>	ComboValues;
+		std::map<std::string, CConstStringValue> ComboValues;
 
 		/// Get the autoname translation
-		bool	translateAutoname (std::string &result, const IPrimitive &primitive, const CPrimitiveClass &primitiveClass) const;
+		bool translateAutoname(std::string &result, const IPrimitive &primitive, const CPrimitiveClass &primitiveClass) const;
 
 		// Get a default value
-		bool	getDefaultValue (std::string &result, const IPrimitive &primitive, const CPrimitiveClass &primitiveClass, std::string *fromWhere = NULL) const;
-		bool	getDefaultValue (std::vector<std::string> &result, const IPrimitive &primitive, const CPrimitiveClass &primitiveClass, std::string *fromWhere = NULL) const;
+		bool getDefaultValue(std::string &result, const IPrimitive &primitive, const CPrimitiveClass &primitiveClass, std::string *fromWhere = NULL) const;
+		bool getDefaultValue(std::vector<std::string> &result, const IPrimitive &primitive, const CPrimitiveClass &primitiveClass, std::string *fromWhere = NULL) const;
 	};
 
 	/// Parameters
-	std::vector<CParameter>	Parameters;
+	std::vector<CParameter> Parameters;
 
 	// Child
 	class CChild
 	{
 	public:
 		/// Static child name
-		std::string	Name;
+		std::string Name;
 
 		/// Child class name
-		std::string	ClassName;
+		std::string ClassName;
 
 		/// Init parameters
-		std::vector<CInitParameters>	Parameters;
+		std::vector<CInitParameters> Parameters;
 	};
 
 	// Static Children
-	std::vector<CChild>			StaticChildren;
+	std::vector<CChild> StaticChildren;
 
 	// Dynamic Children
-	std::vector<CChild>			DynamicChildren;
+	std::vector<CChild> DynamicChildren;
 
 	// Generated Children
-	std::vector<CChild>			GeneratedChildren;
+	std::vector<CChild> GeneratedChildren;
 
 	// Read
-	bool	read (xmlNodePtr primitiveNode,
-					const char *filename,
-					const char *className,
-					std::set<std::string> &contextStrings,
-					std::map<std::string, std::string> &contextFilesLookup,
-					NLLIGO::CLigoConfig &config,
-					bool parsePrimitiveComboContent);
+	bool read(xmlNodePtr primitiveNode,
+	    const char *filename,
+	    const char *className,
+	    std::set<std::string> &contextStrings,
+	    std::map<std::string, std::string> &contextFilesLookup,
+	    NLLIGO::CLigoConfig &config,
+	    bool parsePrimitiveComboContent);
 };
 
 } // NLLIGO

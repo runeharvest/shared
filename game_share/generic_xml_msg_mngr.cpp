@@ -18,8 +18,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 
 #include "generic_xml_msg_mngr.h"
@@ -52,13 +50,12 @@ CGenericXmlMsgHeaderManager::~CGenericXmlMsgHeaderManager()
 	_Root = NULL;
 }
 
-
 // init
-void	CGenericXmlMsgHeaderManager::init(const string &filename)
+void CGenericXmlMsgHeaderManager::init(const string &filename)
 {
 	// open xml file
 	CIFile file;
-	if (!file.open (filename))
+	if (!file.open(filename))
 	{
 		nlwarning("Cannot open xml file '%s', unable to initialize generic messages", filename.c_str());
 		return;
@@ -66,14 +63,14 @@ void	CGenericXmlMsgHeaderManager::init(const string &filename)
 
 	// Init an xml stream
 	CIXml read;
-	read.init (file);
+	read.init(file);
 
 	// create root node from root xml node
 	_Root = new CNode(read.getRootNode(), 0);
 }
 
 // set callback
-bool	CGenericXmlMsgHeaderManager::setCallback(const string &msgName, TMsgHeaderCallback callback)
+bool CGenericXmlMsgHeaderManager::setCallback(const string &msgName, TMsgHeaderCallback callback)
 {
 	// check root
 	if (_Root == NULL)
@@ -83,7 +80,7 @@ bool	CGenericXmlMsgHeaderManager::setCallback(const string &msgName, TMsgHeaderC
 	}
 
 	// search for msg node
-	CNode	*node = _Root->select(msgName.c_str());
+	CNode *node = _Root->select(msgName.c_str());
 
 	// check node
 	if (node == NULL)
@@ -97,7 +94,7 @@ bool	CGenericXmlMsgHeaderManager::setCallback(const string &msgName, TMsgHeaderC
 	return true;
 }
 
-bool	CGenericXmlMsgHeaderManager::setUserData(const string &msgName, const uint64 &data, uint index)
+bool CGenericXmlMsgHeaderManager::setUserData(const string &msgName, const uint64 &data, uint index)
 {
 	// check root
 	if (_Root == NULL)
@@ -107,7 +104,7 @@ bool	CGenericXmlMsgHeaderManager::setUserData(const string &msgName, const uint6
 	}
 
 	// search for msg node
-	CNode	*node = _Root->select(msgName.c_str());
+	CNode *node = _Root->select(msgName.c_str());
 
 	// check node
 	if (node == NULL)
@@ -122,7 +119,7 @@ bool	CGenericXmlMsgHeaderManager::setUserData(const string &msgName, const uint6
 }
 
 // execute
-void	CGenericXmlMsgHeaderManager::execute(CBitMemStream &strm)
+void CGenericXmlMsgHeaderManager::execute(CBitMemStream &strm)
 {
 	// check root
 	if (_Root == NULL)
@@ -131,7 +128,7 @@ void	CGenericXmlMsgHeaderManager::execute(CBitMemStream &strm)
 		return;
 	}
 
-	CNode	*node = _Root->select(strm);
+	CNode *node = _Root->select(strm);
 
 	// check node
 	if (node == NULL)
@@ -151,7 +148,7 @@ void	CGenericXmlMsgHeaderManager::execute(CBitMemStream &strm)
 }
 
 //
-bool	CGenericXmlMsgHeaderManager::pushNameToStream(const string &msgName, CBitMemStream &strm)
+bool CGenericXmlMsgHeaderManager::pushNameToStream(const string &msgName, CBitMemStream &strm)
 {
 	bool res = (_Root->select(msgName.c_str(), strm) != NULL);
 
@@ -161,7 +158,7 @@ bool	CGenericXmlMsgHeaderManager::pushNameToStream(const string &msgName, CBitMe
 }
 
 //
-bool	CGenericXmlMsgHeaderManager::pushNameToStream(const char *msgName, CBitMemStream &strm)
+bool CGenericXmlMsgHeaderManager::pushNameToStream(const char *msgName, CBitMemStream &strm)
 {
 	bool res = (_Root->select(msgName, strm) != NULL);
 
@@ -171,22 +168,20 @@ bool	CGenericXmlMsgHeaderManager::pushNameToStream(const char *msgName, CBitMemS
 }
 
 //
-void	CGenericXmlMsgHeaderManager::popNameFromStream(string &resultName, CBitMemStream &strm)
+void CGenericXmlMsgHeaderManager::popNameFromStream(string &resultName, CBitMemStream &strm)
 {
 	_Root->select(strm, resultName);
 }
 
 //
-void	CGenericXmlMsgHeaderManager::popNameAndDescriptionFromStream(string &resultName, string& description, CBitMemStream &strm)
+void CGenericXmlMsgHeaderManager::popNameAndDescriptionFromStream(string &resultName, string &description, CBitMemStream &strm)
 {
-	CNode	*node = _Root->select(strm, resultName);
+	CNode *node = _Root->select(strm, resultName);
 	if (node != NULL)
 	{
 		description = node->Description;
 	}
 }
-
-
 
 /*
  * CGenericXmlMsgHeaderManager::CNode
@@ -195,7 +190,11 @@ void	CGenericXmlMsgHeaderManager::popNameAndDescriptionFromStream(string &result
 /*
  * Constructor
  */
-CGenericXmlMsgHeaderManager::CNode::CNode(xmlNodePtr xmlNode, uint32 value) : Value(value), UseCycle(false), NbBits(0), Callback(NULL)
+CGenericXmlMsgHeaderManager::CNode::CNode(xmlNodePtr xmlNode, uint32 value)
+    : Value(value)
+    , UseCycle(false)
+    , NbBits(0)
+    , Callback(NULL)
 {
 	UserData[0] = 0;
 	UserData[1] = 0;
@@ -203,99 +202,97 @@ CGenericXmlMsgHeaderManager::CNode::CNode(xmlNodePtr xmlNode, uint32 value) : Va
 	UserData[3] = 0;
 
 	// setup node name
-	CXMLAutoPtr name(xmlGetProp (xmlNode, (xmlChar*)"name"));
+	CXMLAutoPtr name(xmlGetProp(xmlNode, (xmlChar *)"name"));
 	if (name)
 	{
-		Name = (const char*)name;
+		Name = (const char *)name;
 	}
 
-	uint32		childValue = 0;
+	uint32 childValue = 0;
 
-	if (!strcmp((const char*)xmlNode->name, "leaf"))
+	if (!strcmp((const char *)xmlNode->name, "leaf"))
 	{
 		// only setup description and format if leaf
 
 		// setup node description
-		CXMLAutoPtr description(xmlGetProp (xmlNode, (xmlChar*)"description"));
+		CXMLAutoPtr description(xmlGetProp(xmlNode, (xmlChar *)"description"));
 		if (description)
 		{
-			Description = (const char*)description;
+			Description = (const char *)description;
 		}
 
 		// setup node description
-		CXMLAutoPtr sendto(xmlGetProp (xmlNode, (xmlChar*)"sendto"));
+		CXMLAutoPtr sendto(xmlGetProp(xmlNode, (xmlChar *)"sendto"));
 		if (sendto)
 		{
-			SendTo = (const char*)sendto;
+			SendTo = (const char *)sendto;
 		}
 
 		// setup node description
-		CXMLAutoPtr usecycle(xmlGetProp (xmlNode, (xmlChar*)"usecycle"));
+		CXMLAutoPtr usecycle(xmlGetProp(xmlNode, (xmlChar *)"usecycle"));
 
-		if (bool(usecycle) && !strcmp((const char*)usecycle, "yes"))
+		if (bool(usecycle) && !strcmp((const char *)usecycle, "yes"))
 		{
 			UseCycle = true;
 		}
 
 		// setup node format
-		CXMLAutoPtr format(xmlGetProp (xmlNode, (xmlChar*)"format"));
+		CXMLAutoPtr format(xmlGetProp(xmlNode, (xmlChar *)"format"));
 		static char buf[256];
 		if (format)
 		{
 			char *scan = &buf[0];
-			nlassert( strlen((const char *)format) < 256 );
-			strcpy( scan, (const char *)format );
+			nlassert(strlen((const char *)format) < 256);
+			strcpy(scan, (const char *)format);
 			while (*scan != '\0')
 			{
 				switch (tolower(*scan++))
 				{
-				case 's':
-					{
-						uint	numBits = 0;
-						while (isdigit(*scan))
-							numBits = numBits*10 + (*(scan++) - '0');
-						if (numBits == 0)
+				case 's': {
+					uint numBits = 0;
+					while (isdigit(*scan))
+						numBits = numBits * 10 + (*(scan++) - '0');
+					if (numBits == 0)
 						// here consider s as string
-							Format.push_back(CMessageField(String, numBits));
-						else if (numBits == 8)
+						Format.push_back(CMessageField(String, numBits));
+					else if (numBits == 8)
 						// here consider s as sint
-							Format.push_back(CMessageField(Sint8, numBits));
-						else if (numBits == 16)
-							Format.push_back(CMessageField(Sint16, numBits));
-						else if (numBits == 32)
-							Format.push_back(CMessageField(Sint32, numBits));
-						else if (numBits == 64)
-							Format.push_back(CMessageField(Sint64, numBits));
-						else
-						{
-							nlwarning("Can't use sint in format with other size than 8, 16, 32 or 64");
-						}
-					}
-					break;
-				case 'u':
+						Format.push_back(CMessageField(Sint8, numBits));
+					else if (numBits == 16)
+						Format.push_back(CMessageField(Sint16, numBits));
+					else if (numBits == 32)
+						Format.push_back(CMessageField(Sint32, numBits));
+					else if (numBits == 64)
+						Format.push_back(CMessageField(Sint64, numBits));
+					else
 					{
-						// consider uc as ucstring
-						if (*scan == 'c')
-							Format.push_back(CMessageField(UCString, 0));
-						else
-						{
-							// here consider u as uint
-							uint	numBits = 0;
-							while (isdigit(*scan))
-								numBits = numBits*10 + *(scan++) -'0';
-							if (numBits == 8)
-								Format.push_back(CMessageField(Uint8, numBits));
-							else if (numBits == 16)
-								Format.push_back(CMessageField(Uint16, numBits));
-							else if (numBits == 32 || numBits == 0)
-								Format.push_back(CMessageField(Uint32, 32));
-							else if (numBits == 64)
-								Format.push_back(CMessageField(Uint64, numBits));
-							else
-								Format.push_back(CMessageField(BitSizedUint, numBits));
-						}
+						nlwarning("Can't use sint in format with other size than 8, 16, 32 or 64");
 					}
-					break;
+				}
+				break;
+				case 'u': {
+					// consider uc as ucstring
+					if (*scan == 'c')
+						Format.push_back(CMessageField(UCString, 0));
+					else
+					{
+						// here consider u as uint
+						uint numBits = 0;
+						while (isdigit(*scan))
+							numBits = numBits * 10 + *(scan++) - '0';
+						if (numBits == 8)
+							Format.push_back(CMessageField(Uint8, numBits));
+						else if (numBits == 16)
+							Format.push_back(CMessageField(Uint16, numBits));
+						else if (numBits == 32 || numBits == 0)
+							Format.push_back(CMessageField(Uint32, 32));
+						else if (numBits == 64)
+							Format.push_back(CMessageField(Uint64, numBits));
+						else
+							Format.push_back(CMessageField(BitSizedUint, numBits));
+					}
+				}
+				break;
 				case 'f':
 					// here consider f as float
 					Format.push_back(CMessageField(Float, 32));
@@ -322,15 +319,15 @@ CGenericXmlMsgHeaderManager::CNode::CNode(xmlNodePtr xmlNode, uint32 value) : Va
 	else
 	{
 		// only parse children if not leaf
-		xmlNodePtr	xmlChild = xmlNode->children;
+		xmlNodePtr xmlChild = xmlNode->children;
 
 		while (xmlChild != NULL)
 		{
 			// check node is leaf or branch
-			if (!strcmp((const char*)xmlChild->name, "branch") || !strcmp((const char*)xmlChild->name, "leaf"))
+			if (!strcmp((const char *)xmlChild->name, "branch") || !strcmp((const char *)xmlChild->name, "leaf"))
 			{
 				// create a node from the child xml node
-				CNode	*child = new CNode(xmlChild, childValue);
+				CNode *child = new CNode(xmlChild, childValue);
 
 				// check node doesn't exist yet in parent
 				if (NodesByName.find(child->Name) == NodesByName.end())
@@ -358,8 +355,8 @@ CGenericXmlMsgHeaderManager::CNode::CNode(xmlNodePtr xmlNode, uint32 value) : Va
 
 CGenericXmlMsgHeaderManager::CNode::~CNode()
 {
-	uint	i;
-	for (i=0; i<Nodes.size(); ++i)
+	uint i;
+	for (i = 0; i < Nodes.size(); ++i)
 	{
 		delete Nodes[i];
 		Nodes[i] = NULL;

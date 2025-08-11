@@ -14,25 +14,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef CL_CHARAC_BUILD
 #define CL_CHARAC_BUILD
 
 #include "characteristics.h"
 
-namespace NLGEORGES
-{
-	class UFormElm;
+namespace NLGEORGES {
+class UFormElm;
 }
 
-
 /** Tool fct : this read a set of characteristics from a sheet, and put the result in an array.
-  * The characs can be asolute, or delta values.
-  */
+ * The characs can be asolute, or delta values.
+ */
 void loadCharacteristicsFromSheet(const NLGEORGES::UFormElm &rootNode, std::string prefix, sint8 dest[CHARACTERISTICS::NUM_CHARACTERISTICS]);
 
-
-
 #endif
-

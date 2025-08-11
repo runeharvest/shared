@@ -18,7 +18,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "stdsound.h"
 
 #include "nel/misc/file.h"
@@ -43,19 +42,18 @@ using namespace std;
 using namespace NLMISC;
 using namespace NLLIGO;
 
-
 namespace NLSOUND {
 
 // external sound are cliping after 10 meter inside the inner patate
-const float	INSIDE_FALLOF = 10.0f;
+const float INSIDE_FALLOF = 10.0f;
 const float BACKGROUND_SOUND_ALTITUDE = 5.0f;
 
-
-
 CBackgroundSoundManager::CBackgroundSoundManager()
-: _Playing(false), _DoFade(false), _LastPosition(0,0,0)
+    : _Playing(false)
+    , _DoFade(false)
+    , _LastPosition(0, 0, 0)
 {
-	for (uint i=0; i<UAudioMixer::TBackgroundFlags::NB_BACKGROUND_FLAGS; ++i)
+	for (uint i = 0; i < UAudioMixer::TBackgroundFlags::NB_BACKGROUND_FLAGS; ++i)
 	{
 		_BackgroundFlags.Flags[i] = false;
 		_FilterFadesStart[i] = 0;
@@ -70,9 +68,8 @@ CBackgroundSoundManager::~CBackgroundSoundManager()
 
 const UAudioMixer::TBackgroundFlags &CBackgroundSoundManager::getBackgroundFlags()
 {
-	return  _BackgroundFlags;
+	return _BackgroundFlags;
 }
-
 
 void CBackgroundSoundManager::setBackgroundFilterFades(const UAudioMixer::TBackgroundFilterFades &backgroundFilterFades)
 {
@@ -84,19 +81,18 @@ const UAudioMixer::TBackgroundFilterFades &CBackgroundSoundManager::getBackgroun
 	return _BackgroundFilterFades;
 }
 
-
 void CBackgroundSoundManager::addSound(const std::string &soundName, uint layerId, const std::vector<NLLIGO::CPrimVector> &points, bool isPath)
 {
 	CAudioMixerUser *mixer = CAudioMixerUser::instance();
-	TSoundData	sd;
+	TSoundData sd;
 
 	sd.SoundName = CStringMapper::map(soundName);
 	sd.Sound = mixer->getSoundId(sd.SoundName);
 	sd.Source = 0;
 
 	// Copy the points
-	sd.Points.resize (points.size ());
-	for (uint i=0; i<points.size (); i++)
+	sd.Points.resize(points.size());
+	for (uint i = 0; i < points.size(); i++)
 		sd.Points[i] = points[i];
 
 	sd.Selected = false;
@@ -106,7 +102,7 @@ void CBackgroundSoundManager::addSound(const std::string &soundName, uint layerI
 	{
 		// the sound is available !
 		// compute bouding box/
-		CVector	vmin(FLT_MAX, FLT_MAX, 0), vmax(-FLT_MAX, -FLT_MAX, 0);
+		CVector vmin(FLT_MAX, FLT_MAX, 0), vmax(-FLT_MAX, -FLT_MAX, 0);
 
 		vector<CVector>::iterator first(sd.Points.begin()), last(sd.Points.end());
 		for (; first != last; ++first)
@@ -123,7 +119,7 @@ void CBackgroundSoundManager::addSound(const std::string &soundName, uint layerI
 		sd.Surface = (vmax.x - vmin.x) * (vmax.y - vmin.y);
 
 		// add the eard distance of the sound.
-		float	dist = sd.Sound->getMaxDistance();
+		float dist = sd.Sound->getMaxDistance();
 		sd.MaxBox.x += dist;
 		sd.MaxBox.y += dist;
 		sd.MinBox.x -= dist;
@@ -137,7 +133,7 @@ void CBackgroundSoundManager::addSound(const std::string &soundName, uint layerI
 	}
 	else
 	{
-		nlwarning ("The sound '%s' can't be loaded", CStringMapper::unmap(sd.SoundName).c_str());
+		nlwarning("The sound '%s' can't be loaded", CStringMapper::unmap(sd.SoundName).c_str());
 	}
 }
 
@@ -152,39 +148,39 @@ void CBackgroundSoundManager::addSound(const std::string &rawSoundName, const st
 	if (n == 2)
 	{
 		// no layer spec, default to layer A
-		string::size_type pos1 = rawSoundName.find ("-");
-		if(pos1 == string::npos)
+		string::size_type pos1 = rawSoundName.find("-");
+		if (pos1 == string::npos)
 		{
-			nlwarning ("zone have the malformated name '%s' missing -name-", rawSoundName.c_str());
+			nlwarning("zone have the malformated name '%s' missing -name-", rawSoundName.c_str());
 			return;
 		}
 		pos1++;
 
-		string::size_type pos2 = rawSoundName.find ("-", pos1);
-		if(pos2 == string::npos)
+		string::size_type pos2 = rawSoundName.find("-", pos1);
+		if (pos2 == string::npos)
 		{
-			nlwarning ("zone have the malformated name '%s' missing -name-", rawSoundName.c_str());
+			nlwarning("zone have the malformated name '%s' missing -name-", rawSoundName.c_str());
 			return;
 		}
 
-		name = rawSoundName.substr(pos1, pos2-pos1);
+		name = rawSoundName.substr(pos1, pos2 - pos1);
 	}
 	else if (n == 3)
 	{
 		// layer spec !
-		string::size_type pos1 = rawSoundName.find ("-");
-		string::size_type pos2 = rawSoundName.find ("-", pos1+1);
-		if(pos1 == string::npos || pos2 == string::npos)
+		string::size_type pos1 = rawSoundName.find("-");
+		string::size_type pos2 = rawSoundName.find("-", pos1 + 1);
+		if (pos1 == string::npos || pos2 == string::npos)
 		{
-			nlwarning ("zone have the malformated name '%s' missing -layerId- or -name-", rawSoundName.c_str());
+			nlwarning("zone have the malformated name '%s' missing -layerId- or -name-", rawSoundName.c_str());
 			return;
 		}
 		pos1++;
 
-		string::size_type pos3 = rawSoundName.find ("-", pos2+1);
-		if(pos3 == string::npos)
+		string::size_type pos3 = rawSoundName.find("-", pos2 + 1);
+		if (pos3 == string::npos)
 		{
-			nlwarning ("zone have the malformated name '%s' missing -name-", rawSoundName.c_str());
+			nlwarning("zone have the malformated name '%s' missing -name-", rawSoundName.c_str());
 			return;
 		}
 
@@ -196,78 +192,77 @@ void CBackgroundSoundManager::addSound(const std::string &rawSoundName, const st
 
 		layerId = id - 'a';
 
-		NLMISC::clamp(layerId, 0u, BACKGROUND_LAYER-1);
+		NLMISC::clamp(layerId, 0u, BACKGROUND_LAYER - 1);
 		pos2++;
 
-		name = rawSoundName.substr(pos2, pos3-pos2);
+		name = rawSoundName.substr(pos2, pos3 - pos2);
 	}
 	else
 	{
-		nlwarning ("zone have the malformated name '%s",  rawSoundName.c_str());
+		nlwarning("zone have the malformated name '%s", rawSoundName.c_str());
 		return;
 	}
 
 	addSound(name, layerId, points, isPath);
-/*
-	TSoundData	sd;
+	/*
+	    TSoundData	sd;
 
-	sd.SoundName = name;
-	sd.Sound = mixer->getSoundId(sd.SoundName);
-	sd.Source = 0;
+	    sd.SoundName = name;
+	    sd.Sound = mixer->getSoundId(sd.SoundName);
+	    sd.Source = 0;
 
-	// Copy the points
-	sd.Points.resize (points.size ());
-	for (uint i=0; i<points.size (); i++)
-		sd.Points[i] = points[i];
+	    // Copy the points
+	    sd.Points.resize (points.size ());
+	    for (uint i=0; i<points.size (); i++)
+	        sd.Points[i] = points[i];
 
-	sd.Selected = false;
-	sd.IsPath = isPath;
+	    sd.Selected = false;
+	    sd.IsPath = isPath;
 
-	if (sd.Sound != 0)
-	{
-		// the sound is available !
-		// compute bouding box/
-		CVector	vmin(FLT_MAX, FLT_MAX, 0), vmax(-FLT_MAX, -FLT_MAX, 0);
+	    if (sd.Sound != 0)
+	    {
+	        // the sound is available !
+	        // compute bouding box/
+	        CVector	vmin(FLT_MAX, FLT_MAX, 0), vmax(-FLT_MAX, -FLT_MAX, 0);
 
-		vector<CVector>::iterator first(sd.Points.begin()), last(sd.Points.end());
-		for (; first != last; ++first)
-		{
-			vmin.x = min(first->x, vmin.x);
-			vmin.y = min(first->y, vmin.y);
-			vmax.x = max(first->x, vmax.x);
-			vmax.y = max(first->y, vmax.y);
-		}
-		sd.MaxBox = vmax;
-		sd.MinBox = vmin;
+	        vector<CVector>::iterator first(sd.Points.begin()), last(sd.Points.end());
+	        for (; first != last; ++first)
+	        {
+	            vmin.x = min(first->x, vmin.x);
+	            vmin.y = min(first->y, vmin.y);
+	            vmax.x = max(first->x, vmax.x);
+	            vmax.y = max(first->y, vmax.y);
+	        }
+	        sd.MaxBox = vmax;
+	        sd.MinBox = vmin;
 
-		// compute the surface without the sound distance
-		sd.Surface = (vmax.x - vmin.x) * (vmax.y - vmin.y);
+	        // compute the surface without the sound distance
+	        sd.Surface = (vmax.x - vmin.x) * (vmax.y - vmin.y);
 
-		// add the eard distance of the sound.
-		float	dist = sd.Sound->getMaxDistance();
-		sd.MaxBox.x += dist;
-		sd.MaxBox.y += dist;
-		sd.MinBox.x -= dist;
-		sd.MinBox.y -= dist;
+	        // add the eard distance of the sound.
+	        float	dist = sd.Sound->getMaxDistance();
+	        sd.MaxBox.x += dist;
+	        sd.MaxBox.y += dist;
+	        sd.MinBox.x -= dist;
+	        sd.MinBox.y -= dist;
 
-		sd.MaxDist = dist;
+	        sd.MaxDist = dist;
 
-		// store the sound.
-		// TODO : handle the three layer.
-		_Layers[layerId].push_back(sd);
-	}
-	else
-	{
-		nlwarning ("The sound '%s' can't be loaded", sd.SoundName.c_str());
-	}
-*/
+	        // store the sound.
+	        // TODO : handle the three layer.
+	        _Layers[layerId].push_back(sd);
+	    }
+	    else
+	    {
+	        nlwarning ("The sound '%s' can't be loaded", sd.SoundName.c_str());
+	    }
+	*/
 }
-
 
 void CBackgroundSoundManager::loadAudioFromPrimitives(const NLLIGO::IPrimitive &audioRoot)
 {
 	std::string className;
-	if(audioRoot.getPropertyByName("class", className))
+	if (audioRoot.getPropertyByName("class", className))
 	{
 		if (className == "audio")
 		{
@@ -277,7 +272,7 @@ void CBackgroundSoundManager::loadAudioFromPrimitives(const NLLIGO::IPrimitive &
 			bool oldState = _Playing;
 			unload();
 
-			for (uint i=0; i<audioRoot.getNumChildren(); ++i)
+			for (uint i = 0; i < audioRoot.getNumChildren(); ++i)
 			{
 				const NLLIGO::IPrimitive *child;
 
@@ -307,7 +302,7 @@ void CBackgroundSoundManager::loadAudioFromPrimitives(const NLLIGO::IPrimitive &
 	else
 	{
 		// try to look in the first child level
-		for (uint i=0; i<audioRoot.getNumChildren(); ++i)
+		for (uint i = 0; i < audioRoot.getNumChildren(); ++i)
 		{
 			const NLLIGO::IPrimitive *child;
 			audioRoot.getChild(child, i);
@@ -334,12 +329,11 @@ void CBackgroundSoundManager::loadSoundsFromPrimitives(const NLLIGO::IPrimitive 
 		if (className == "sounds" || className == "sound_folder")
 		{
 			// ok, it sounds or a sounds foilder
-			for (uint i=0; i<soundRoot.getNumChildren(); ++i)
+			for (uint i = 0; i < soundRoot.getNumChildren(); ++i)
 			{
 				const NLLIGO::IPrimitive *child;
 				std::string primName;
 				soundRoot.getChild(child, i);
-
 
 				if (child->getPropertyByName("class", className))
 				{
@@ -352,9 +346,9 @@ void CBackgroundSoundManager::loadSoundsFromPrimitives(const NLLIGO::IPrimitive 
 						if (!layerString.empty())
 						{
 							// TODO : handle special case for weather layer
-							layerId = layerString[layerString.size()-1] - '0';
+							layerId = layerString[layerString.size() - 1] - '0';
 						}
-						clamp(layerId, 0u, BACKGROUND_LAYER-1);
+						clamp(layerId, 0u, BACKGROUND_LAYER - 1);
 					}
 
 					child->getPropertyByName("name", primName);
@@ -365,30 +359,30 @@ void CBackgroundSoundManager::loadSoundsFromPrimitives(const NLLIGO::IPrimitive 
 
 					if (className == "sound_zone")
 					{
-						if(child->getNumVector()>2)
+						if (child->getNumVector() > 2)
 						{
-							addSound(soundName, layerId, static_cast<const CPrimZone*>(child)->VPoints, false);
+							addSound(soundName, layerId, static_cast<const CPrimZone *>(child)->VPoints, false);
 						}
 						else
 						{
-							nlwarning ("A background sound patatoid have less than 3 points '%s'", primName.c_str());
+							nlwarning("A background sound patatoid have less than 3 points '%s'", primName.c_str());
 						}
 					}
 					else if (className == "sound_path")
 					{
-						if(child->getNumVector() > 1)
+						if (child->getNumVector() > 1)
 						{
-							addSound(soundName, layerId, static_cast<const CPrimPath*>(child)->VPoints, true);
+							addSound(soundName, layerId, static_cast<const CPrimPath *>(child)->VPoints, true);
 						}
 						else
 						{
-							nlwarning ("A background sound path have less than 2 points '%s'", primName.c_str());
+							nlwarning("A background sound path have less than 2 points '%s'", primName.c_str());
 						}
 					}
 					else if (className == "sound_point")
 					{
-						std::vector<NLLIGO::CPrimVector>	points;
-						points.push_back(static_cast<const CPrimPoint*>(child)->Point);
+						std::vector<NLLIGO::CPrimVector> points;
+						points.push_back(static_cast<const CPrimPoint *>(child)->Point);
 
 						addSound(soundName, layerId, points, false);
 					}
@@ -410,7 +404,7 @@ void CBackgroundSoundManager::loadSamplesFromPrimitives(const NLLIGO::IPrimitive
 	{
 		if (className == "sample_banks")
 		{
-			for (uint i=0; i<sampleRoot.getNumChildren(); ++i)
+			for (uint i = 0; i < sampleRoot.getNumChildren(); ++i)
 			{
 				const NLLIGO::IPrimitive *child;
 				std::string primName;
@@ -424,7 +418,7 @@ void CBackgroundSoundManager::loadSamplesFromPrimitives(const NLLIGO::IPrimitive
 						const std::vector<std::string> *names;
 						if (child->getPropertyByName("bank_names", names))
 						{
-							addSampleBank(*names, static_cast<const CPrimZone*>(child)->VPoints);
+							addSampleBank(*names, static_cast<const CPrimZone *>(child)->VPoints);
 						}
 					}
 				}
@@ -442,7 +436,7 @@ void CBackgroundSoundManager::loadEffectsFromPrimitives(const NLLIGO::IPrimitive
 	{
 		if (className == "env_fx")
 		{
-			for (uint i=0; i<fxRoot.getNumChildren(); ++i)
+			for (uint i = 0; i < fxRoot.getNumChildren(); ++i)
 			{
 				const NLLIGO::IPrimitive *child;
 				std::string primName;
@@ -456,7 +450,7 @@ void CBackgroundSoundManager::loadEffectsFromPrimitives(const NLLIGO::IPrimitive
 						std::string fxName;
 						if (child->getPropertyByName("fx_name", fxName))
 						{
-							addFxZone(fxName, static_cast<const CPrimZone*>(child)->VPoints);
+							addFxZone(fxName, static_cast<const CPrimZone *>(child)->VPoints);
 						}
 					}
 				}
@@ -467,17 +461,17 @@ void CBackgroundSoundManager::loadEffectsFromPrimitives(const NLLIGO::IPrimitive
 
 void CBackgroundSoundManager::addFxZone(const std::string &fxName, const std::vector<NLLIGO::CPrimVector> &points)
 {
-	TFxZone	fxZone;
+	TFxZone fxZone;
 
 	fxZone.FxName = CStringMapper::map(fxName);
-	fxZone.Points.resize (points.size());
-	for (uint j=0; j<points.size(); j++)
+	fxZone.Points.resize(points.size());
+	for (uint j = 0; j < points.size(); j++)
 	{
 		fxZone.Points[j] = points[j];
 	}
 
 	// compute bouding box.
-	CVector	vmin(FLT_MAX, FLT_MAX, 0), vmax(-FLT_MAX, -FLT_MAX, 0);
+	CVector vmin(FLT_MAX, FLT_MAX, 0), vmax(-FLT_MAX, -FLT_MAX, 0);
 
 	vector<CVector>::iterator first(fxZone.Points.begin()), last(fxZone.Points.end());
 	for (; first != last; ++first)
@@ -493,19 +487,18 @@ void CBackgroundSoundManager::addFxZone(const std::string &fxName, const std::ve
 	_FxZones.push_back(fxZone);
 }
 
-
 void CBackgroundSoundManager::addSampleBank(const std::vector<std::string> &bankNames, const std::vector<CPrimVector> &points)
 {
-	TBanksData	bd;
-//	uint pointCount = points.size ();
-	bd.Points.resize (points.size());
-	for (uint j=0; j<points.size(); j++)
+	TBanksData bd;
+	//	uint pointCount = points.size ();
+	bd.Points.resize(points.size());
+	for (uint j = 0; j < points.size(); j++)
 	{
 		bd.Points[j] = points[j];
 	}
 
 	// compute bouding box.
-	CVector	vmin(FLT_MAX, FLT_MAX, 0), vmax(-FLT_MAX, -FLT_MAX, 0);
+	CVector vmin(FLT_MAX, FLT_MAX, 0), vmax(-FLT_MAX, -FLT_MAX, 0);
 
 	vector<CVector>::iterator first(bd.Points.begin()), last(bd.Points.end());
 	for (; first != last; ++first)
@@ -518,7 +511,7 @@ void CBackgroundSoundManager::addSampleBank(const std::vector<std::string> &bank
 	bd.MaxBox = vmax;
 	bd.MinBox = vmin;
 
-	for(uint i=0; i<bankNames.size(); ++i)
+	for (uint i = 0; i < bankNames.size(); ++i)
 	{
 		if (!bankNames[i].empty())
 			bd.Banks.push_back(bankNames[i]);
@@ -528,8 +521,7 @@ void CBackgroundSoundManager::addSampleBank(const std::vector<std::string> &bank
 	_Banks.push_back(bd);
 }
 
-
-//void CBackgroundSoundManager::loadSamplesFromRegion(const NLLIGO::CPrimRegion &region)
+// void CBackgroundSoundManager::loadSamplesFromRegion(const NLLIGO::CPrimRegion &region)
 //{
 //	_Banks.clear();
 //
@@ -560,13 +552,13 @@ void CBackgroundSoundManager::addSampleBank(const std::vector<std::string> &bank
 //			nlwarning ("A sample bank patatoid have less than 3 points '%s'", region.VZones[i].Name.c_str());
 //		}
 //	}
-//}
+// }
 
-//void CBackgroundSoundManager::loadEffecsFromRegion(const NLLIGO::CPrimRegion &region)
+// void CBackgroundSoundManager::loadEffecsFromRegion(const NLLIGO::CPrimRegion &region)
 //{
-//}
+// }
 
-//void CBackgroundSoundManager::loadSoundsFromRegion(const CPrimRegion &region)
+// void CBackgroundSoundManager::loadSoundsFromRegion(const CPrimRegion &region)
 //{
 //	uint i;
 //	// remember playing state
@@ -608,40 +600,40 @@ void CBackgroundSoundManager::addSampleBank(const std::vector<std::string> &bank
 //	// restart playing ?
 //	if (oldState)
 //		play();
-//}
+// }
 
-void CBackgroundSoundManager::load (const string &continent, NLLIGO::CLigoConfig &config)
+void CBackgroundSoundManager::load(const string &continent, NLLIGO::CLigoConfig &config)
 {
-	uint32	PACKED_VERSION = 1;
+	uint32 PACKED_VERSION = 1;
 	// First, try to load from a .primitive file (contain everythink)
 	{
 		CIFile file;
-//		CPrimRegion region;
+		//		CPrimRegion region;
 		CPrimitives primitives;
 		primitives.RootNode = new CPrimNode;
-		string fn = continent+"_audio.primitive";
+		string fn = continent + "_audio.primitive";
 
 		string path = CPath::lookup(fn, false);
 
-		if(!path.empty() && file.open (path))
+		if (!path.empty() && file.open(path))
 		{
 			// first, try to load the binary version (if up to date)
 			{
 				uint32 version;
-				string filename = continent+".background_primitive";
+				string filename = continent + ".background_primitive";
 				string binPath = CPath::lookup(filename, false, false, false);
 				if (!binPath.empty()
-					&& (CFile::getFileModificationDate(binPath) > CFile::getFileModificationDate(path)))
+				    && (CFile::getFileModificationDate(binPath) > CFile::getFileModificationDate(path)))
 				{
 					CIFile binFile(binPath);
 					binFile.serial(version);
 
 					if (version == PACKED_VERSION)
 					{
-						nlinfo ("loading '%s'", filename.c_str());
+						nlinfo("loading '%s'", filename.c_str());
 						_Banks.clear();
 						binFile.serialCont(_Banks);
-						for (uint i=0; i<BACKGROUND_LAYER; ++i)
+						for (uint i = 0; i < BACKGROUND_LAYER; ++i)
 						{
 							_Layers[i].clear();
 							binFile.serialCont(_Layers[i]);
@@ -655,20 +647,20 @@ void CBackgroundSoundManager::load (const string &continent, NLLIGO::CLigoConfig
 				}
 			}
 
-			nlinfo ("loading '%s'", fn.c_str());
+			nlinfo("loading '%s'", fn.c_str());
 
 			CIXml xml;
 			{
 				H_AUTO(BackgroundSoundMangerLoad_xml_init);
-				xml.init (file);
+				xml.init(file);
 			}
 
 			{
 				H_AUTO(BackgroundSoundMangerLoad_primitive_read);
 				primitives.read(xml.getRootNode(), fn.c_str(), config);
 			}
-//			region.serial(xml);
-			file.close ();
+			//			region.serial(xml);
+			file.close();
 
 			{
 				H_AUTO(BackgroundSoundMangerLoad_loadAudioFromPrimitive);
@@ -680,12 +672,12 @@ void CBackgroundSoundManager::load (const string &continent, NLLIGO::CLigoConfig
 			if (mixer->getPackedSheetUpdate())
 			{
 				// need to update packed sheet, so write the binary primitive version
-				string filename = mixer->getPackedSheetPath()+"/"+continent+".background_primitive";
+				string filename = mixer->getPackedSheetPath() + "/" + continent + ".background_primitive";
 				COFile file(filename);
 
 				file.serial(PACKED_VERSION);
 				file.serialCont(_Banks);
-				for (uint i=0; i<BACKGROUND_LAYER; ++i)
+				for (uint i = 0; i < BACKGROUND_LAYER; ++i)
 					file.serialCont(_Layers[i]);
 				file.serialCont(_FxZones);
 			}
@@ -694,82 +686,80 @@ void CBackgroundSoundManager::load (const string &continent, NLLIGO::CLigoConfig
 			// Jobs done !
 			return;
 		}
-
 	}
 
 	// We reach this only if the new .primitive file format is not found
 	// then, we try to load separate .prim file for sound, samples and fx
 
 	// load the sound.
-//	{
-//		CIFile file;
-//		CPrimRegion region;
-//		string fn = continent+"_audio.prim";
-//
-//		nlinfo ("loading '%s'", fn.c_str());
-//
-//		string path = CPath::lookup(fn, false);
-//
-//		if(!path.empty() && file.open (path))
-//		{
-//			CIXml xml;
-//			xml.init (file);
-//			region.serial(xml);
-//			file.close ();
-//
-//			nlinfo ("Region '%s' contains %d zones for the background sounds", continent.c_str(), region.VZones.size());
-//
-//			loadSoundsFromRegion(region);
-//		}
-//	}
-//	// load the effect.
-//	{
-//		CIFile file;
-//		CPrimRegion region;
-//		string fn = continent+"_effects.prim";
-//
-//		nlinfo ("loading '%s'", fn.c_str());
-//
-//		string path = CPath::lookup(fn, false);
-//
-//		if(!path.empty() && file.open (path))
-//		{
-//			CIXml xml;
-//			xml.init (file);
-//			region.serial(xml);
-//			file.close ();
-//
-//			nlinfo ("Region '%s' contains %d zones for the background effetcs", continent.c_str(), region.VZones.size());
-//
-//			loadEffecsFromRegion(region);
-//		}
-//	}
-//	// load the samples banks.
-//	{
-//		CIFile file;
-//		CPrimRegion region;
-//		string fn = continent+"_samples.prim";
-//
-//		nlinfo ("loading '%s'", fn.c_str());
-//
-//		string path = CPath::lookup(fn, false);
-//
-//		if(!path.empty() && file.open (path))
-//		{
-//			CIXml xml;
-//			xml.init (file);
-//			region.serial(xml);
-//			file.close ();
-//
-//			nlinfo ("Region '%s' contains %d zones for the background samples banks", continent.c_str(), region.VZones.size());
-//
-//			loadSamplesFromRegion(region);
-//		}
-//	}
+	//	{
+	//		CIFile file;
+	//		CPrimRegion region;
+	//		string fn = continent+"_audio.prim";
+	//
+	//		nlinfo ("loading '%s'", fn.c_str());
+	//
+	//		string path = CPath::lookup(fn, false);
+	//
+	//		if(!path.empty() && file.open (path))
+	//		{
+	//			CIXml xml;
+	//			xml.init (file);
+	//			region.serial(xml);
+	//			file.close ();
+	//
+	//			nlinfo ("Region '%s' contains %d zones for the background sounds", continent.c_str(), region.VZones.size());
+	//
+	//			loadSoundsFromRegion(region);
+	//		}
+	//	}
+	//	// load the effect.
+	//	{
+	//		CIFile file;
+	//		CPrimRegion region;
+	//		string fn = continent+"_effects.prim";
+	//
+	//		nlinfo ("loading '%s'", fn.c_str());
+	//
+	//		string path = CPath::lookup(fn, false);
+	//
+	//		if(!path.empty() && file.open (path))
+	//		{
+	//			CIXml xml;
+	//			xml.init (file);
+	//			region.serial(xml);
+	//			file.close ();
+	//
+	//			nlinfo ("Region '%s' contains %d zones for the background effetcs", continent.c_str(), region.VZones.size());
+	//
+	//			loadEffecsFromRegion(region);
+	//		}
+	//	}
+	//	// load the samples banks.
+	//	{
+	//		CIFile file;
+	//		CPrimRegion region;
+	//		string fn = continent+"_samples.prim";
+	//
+	//		nlinfo ("loading '%s'", fn.c_str());
+	//
+	//		string path = CPath::lookup(fn, false);
+	//
+	//		if(!path.empty() && file.open (path))
+	//		{
+	//			CIXml xml;
+	//			xml.init (file);
+	//			region.serial(xml);
+	//			file.close ();
+	//
+	//			nlinfo ("Region '%s' contains %d zones for the background samples banks", continent.c_str(), region.VZones.size());
+	//
+	//			loadSamplesFromRegion(region);
+	//		}
+	//	}
 }
 
-
-void CBackgroundSoundManager::play ()
+void CBackgroundSoundManager::play()
 {
 	if (_Playing)
 		return;
@@ -779,7 +769,7 @@ void CBackgroundSoundManager::play ()
 	CAudioMixerUser::instance()->registerUpdate(this);
 
 	// init the filter value and filter start time
-	for (uint i =0; i<UAudioMixer::TBackgroundFlags::NB_BACKGROUND_FLAGS; ++i)
+	for (uint i = 0; i < UAudioMixer::TBackgroundFlags::NB_BACKGROUND_FLAGS; ++i)
 	{
 		_FilterFadesStart[i] = 0;
 		_FilterFadeValues[i] = 1.0f * !_BackgroundFlags.Flags[i];
@@ -787,17 +777,14 @@ void CBackgroundSoundManager::play ()
 	// force an initial filtering
 	_DoFade = true;
 	updateBackgroundStatus();
-
-
 }
 
-
-void CBackgroundSoundManager::stop ()
+void CBackgroundSoundManager::stop()
 {
-	if(!_Playing)
+	if (!_Playing)
 		return;
 
-	for (uint i=0; i<BACKGROUND_LAYER; ++i)
+	for (uint i = 0; i < BACKGROUND_LAYER; ++i)
 	{
 		// stop all playing source
 		std::vector<TSoundData>::iterator first(_Layers[i].begin()), last(_Layers[i].end());
@@ -813,18 +800,18 @@ void CBackgroundSoundManager::stop ()
 	_Playing = false;
 }
 
-void CBackgroundSoundManager::unload ()
+void CBackgroundSoundManager::unload()
 {
 	stop();
 
-	for (uint i=0; i<BACKGROUND_LAYER; ++i)
+	for (uint i = 0; i < BACKGROUND_LAYER; ++i)
 	{
 		// delete all created source
 		std::vector<TSoundData>::iterator first(_Layers[i].begin()), last(_Layers[i].end());
 		for (; first != last; ++first)
 		{
 			if (first->Source)
-//				mixer->removeSource(first->Source);
+				//				mixer->removeSource(first->Source);
 				delete first->Source;
 		}
 
@@ -838,7 +825,7 @@ void CBackgroundSoundManager::unload ()
 	// TODO : erase the fx zones
 }
 
-void CBackgroundSoundManager::setListenerPosition (const CVector &listenerPosition)
+void CBackgroundSoundManager::setListenerPosition(const CVector &listenerPosition)
 {
 	if (_LastPosition == listenerPosition)
 	{
@@ -856,7 +843,6 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 		return;
 
 	CAudioMixerUser *mixer = CAudioMixerUser::instance();
-
 
 	// it s on 2d so we don't have z
 	CVector listener = _LastPosition;
@@ -887,8 +873,7 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 		for (; first != last; ++first)
 		{
 			if (listener.x >= first->MinBox.x && listener.x <= first->MaxBox.x
-				&& listener.y >= first->MinBox.y && listener.y <= first->MaxBox.y
-				)
+			    && listener.y >= first->MinBox.y && listener.y <= first->MaxBox.y)
 			{
 				// bounding box ok,
 				if (CPrimZone::contains(listener, first->Points))
@@ -915,19 +900,17 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 		}
 	}
 
-
 	// compute the list of load/unload banks.
 	{
 		H_AUTO(NLSOUND_LoadUnloadSampleBank)
 		// set of bank that must be in ram.
-		std::set<std::string>	newBanks;
+		std::set<std::string> newBanks;
 
 		std::vector<TBanksData>::iterator first(_Banks.begin()), last(_Banks.end());
 		for (; first != last; ++first)
 		{
 			if (listener.x >= first->MinBox.x && listener.x <= first->MaxBox.x
-				&& listener.y >= first->MinBox.y && listener.y <= first->MaxBox.y
-				)
+			    && listener.y >= first->MinBox.y && listener.y <= first->MaxBox.y)
 			{
 				// bounding box ok,
 				if (CPrimZone::contains(listener, first->Points))
@@ -938,34 +921,34 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 			}
 		}
 
-/*		{
-			nldebug("-----------------------------");
-			nldebug("Loaded sample banks (%u elements):", _LoadedBanks.size());
-			set<string>::iterator first(_LoadedBanks.begin()), last(_LoadedBanks.end());
-			for (; first != last; ++first)
-			{
-				const string &str = *first;
-				nldebug("  %s", first->c_str());
-			}
-		}
-		{
-			nldebug("New Sample bank list (%u elements):", newBanks.size());
-			set<string>::iterator first(newBanks.begin()), last(newBanks.end());
-			for (; first != last; ++first)
-			{
-				const string &str = *first;
-				nldebug("  %s", first->c_str());
-			}
-		}
-*/
+		/*		{
+		            nldebug("-----------------------------");
+		            nldebug("Loaded sample banks (%u elements):", _LoadedBanks.size());
+		            set<string>::iterator first(_LoadedBanks.begin()), last(_LoadedBanks.end());
+		            for (; first != last; ++first)
+		            {
+		                const string &str = *first;
+		                nldebug("  %s", first->c_str());
+		            }
+		        }
+		        {
+		            nldebug("New Sample bank list (%u elements):", newBanks.size());
+		            set<string>::iterator first(newBanks.begin()), last(newBanks.end());
+		            for (; first != last; ++first)
+		            {
+		                const string &str = *first;
+		                nldebug("  %s", first->c_str());
+		            }
+		        }
+		*/
 		// ok, now compute to set : the set of bank to load, and the set of banks to unload.
-		std::set<std::string>	noChange;
+		std::set<std::string> noChange;
 		std::set_intersection(_LoadedBanks.begin(), _LoadedBanks.end(), newBanks.begin(), newBanks.end(), std::inserter(noChange, noChange.end()));
 
-		std::set<std::string>	loadList;
+		std::set<std::string> loadList;
 		std::set_difference(newBanks.begin(), newBanks.end(), noChange.begin(), noChange.end(), std::inserter(loadList, loadList.end()));
 
-		std::set<std::string>	unloadList;
+		std::set<std::string> unloadList;
 		std::set_difference(_LoadedBanks.begin(), _LoadedBanks.end(), newBanks.begin(), newBanks.end(), std::inserter(unloadList, unloadList.end()));
 
 		// and now, load and unload....
@@ -973,7 +956,7 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 			std::set<std::string>::iterator first(loadList.begin()), last(loadList.end());
 			for (; first != last; ++first)
 			{
-//				nldebug("Trying to load sample bank %s", first->c_str());
+				//				nldebug("Trying to load sample bank %s", first->c_str());
 				mixer->loadSampleBank(true, *first);
 			}
 			_LoadedBanks.insert(loadList.begin(), loadList.end());
@@ -982,7 +965,7 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 			std::set<std::string>::iterator first(unloadList.begin()), last(unloadList.end());
 			for (; first != last; ++first)
 			{
-//				nldebug("Trying to unload sample bank %s", first->c_str());
+				//				nldebug("Trying to unload sample bank %s", first->c_str());
 				if (mixer->unloadSampleBank(*first))
 				{
 					// ok, the bank is unloaded
@@ -1004,7 +987,7 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 		rootCluster = mixer->getClusteredSound()->getRootCluster();
 
 	// Apply the same algo for each sound layer.
-	for (uint i=0; i<BACKGROUND_LAYER; ++i)
+	for (uint i = 0; i < BACKGROUND_LAYER; ++i)
 	{
 		vector<TSoundData> &layer = _Layers[i];
 		vector<uint> selectedIndex;
@@ -1018,16 +1001,16 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 		for (uint count = 0; first != last; ++first, ++count)
 		{
 			if (listener.x >= first->MinBox.x && listener.x <= first->MaxBox.x
-				&& listener.y >= first->MinBox.y && listener.y <= first->MaxBox.y
-//				&& listener.z >= first->MinBox.z && listener.z <= first->MaxBox.z
-				)
+			    && listener.y >= first->MinBox.y && listener.y <= first->MaxBox.y
+			    //				&& listener.z >= first->MinBox.z && listener.z <= first->MaxBox.z
+			)
 			{
-//				nldebug("patat %u is selected by box (%s)", count, first->SoundName.c_str());
+				//				nldebug("patat %u is selected by box (%s)", count, first->SoundName.c_str());
 				selectedIndex.push_back(count);
 			}
 			else
 			{
-//				nldebug("patat %u is rejected  by box (%s)", count, first->SoundName.c_str());
+				//				nldebug("patat %u is rejected  by box (%s)", count, first->SoundName.c_str());
 				// listener out of this box.
 				if (first->Selected && first->Source != 0)
 				{
@@ -1051,7 +1034,7 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 		// Compute new source mixing in this layer
 		{
 			/// Status of all selected sound ordered by surface.
-			list<pair<float, TSoundStatus> > status;
+			list<pair<float, TSoundStatus>> status;
 
 			// first loop to compute selected sound gain and position and order the result by surface..
 			{
@@ -1060,32 +1043,32 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 				{
 					TSoundData &sd = layer[*first];
 					CVector pos;
-					float	gain = 1.0f;
-					float	distance;
-					bool	inside = false;
+					float gain = 1.0f;
+					float distance;
+					bool inside = false;
 
 					// inside the patat ?
 
-					if(CPrimZone::contains(listener, sd.Points, distance, pos, sd.IsPath))
+					if (CPrimZone::contains(listener, sd.Points, distance, pos, sd.IsPath))
 					{
 						inside = true;
-						pos = _LastPosition;	// use the real listener position, not the 0 z centered
+						pos = _LastPosition; // use the real listener position, not the 0 z centered
 						gain = 1.0f;
-//						nlinfo ("inside patate %d name '%s' ", *first, sd.SoundName.c_str());
+						//						nlinfo ("inside patate %d name '%s' ", *first, sd.SoundName.c_str());
 					}
 					else
 					{
-						if (sd.MaxDist>0 && distance < sd.MaxDist)
+						if (sd.MaxDist > 0 && distance < sd.MaxDist)
 						{
 							// compute the gain.
-//							gain = (sd.MaxDist - distance) / sd.MaxDist;
+							//							gain = (sd.MaxDist - distance) / sd.MaxDist;
 						}
 						else
 						{
 							// too far
 							gain = 0;
 						}
-						//nlinfo ("near patate %d name '%s' from %f ", *first, sd.SoundName.c_str(), distance);
+						// nlinfo ("near patate %d name '%s' from %f ", *first, sd.SoundName.c_str(), distance);
 					}
 
 					// store the status.
@@ -1097,18 +1080,18 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 				// Sound mixing strategie :
 				// The smallest zone sound mask bigger one
 
-				float	maskFactor = 1.0f;
+				float maskFactor = 1.0f;
 
-				list<pair<float, TSoundStatus> >::iterator first(status.begin()), last(status.end());
+				list<pair<float, TSoundStatus>>::iterator first(status.begin()), last(status.end());
 				for (; first != last; ++first)
 				{
 					TSoundStatus &ss = first->second;
 
 					// special algo for music sound (don't influence / use maskFactor strategy)
-					bool	musicSound= ss.SoundData.Sound && ss.SoundData.Sound->getSoundType()==CSound::SOUND_MUSIC;
+					bool musicSound = ss.SoundData.Sound && ss.SoundData.Sound->getSoundType() == CSound::SOUND_MUSIC;
 
 					// ---- music sound special case (music competition is managed specially in the CMusicSoundManager)
-					if(musicSound)
+					if (musicSound)
 					{
 						if (ss.Gain > 0)
 						{
@@ -1118,7 +1101,7 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 							if (ss.SoundData.Source == 0)
 							{
 								// try to create the source.
-								ss.SoundData.Source = static_cast<CSourceCommon*>(mixer->createSource(ss.SoundData.Sound, false, 0, 0, rootCluster));
+								ss.SoundData.Source = static_cast<CSourceCommon *>(mixer->createSource(ss.SoundData.Sound, false, 0, 0, rootCluster));
 							}
 							if (ss.SoundData.Source != 0)
 							{
@@ -1151,12 +1134,12 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 							else
 								gain = ss.Gain;
 
-//							maskFactor -= ss.Gain;
+							//							maskFactor -= ss.Gain;
 
 							ss.SoundData.Selected = true;
 
-//							if (ss.Gain == 1)
-//							if (ss.Distance == 0)
+							//							if (ss.Gain == 1)
+							//							if (ss.Distance == 0)
 							if (ss.Inside)
 							{
 								// inside a pattate, then decrease the mask factor will we are more inside the patate
@@ -1169,7 +1152,7 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 							if (ss.SoundData.Source == 0)
 							{
 								// try to create the source.
-								ss.SoundData.Source = static_cast<CSourceCommon*>(mixer->createSource(ss.SoundData.Sound, false, 0, 0, rootCluster));
+								ss.SoundData.Source = static_cast<CSourceCommon *>(mixer->createSource(ss.SoundData.Sound, false, 0, 0, rootCluster));
 							}
 							if (ss.SoundData.Source != 0)
 							{
@@ -1179,7 +1162,7 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 								ss.Position.z = _LastPosition.z + BACKGROUND_SOUND_ALTITUDE;
 								ss.SoundData.Source->setPos(ss.Position);
 
-//								nldebug("Setting source %s at %f", ss.SoundData.SoundName.c_str(), gain);
+								//								nldebug("Setting source %s at %f", ss.SoundData.SoundName.c_str(), gain);
 								if (!ss.SoundData.Source->isPlaying())
 								{
 									// start the sound is needed.
@@ -1202,7 +1185,6 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 
 	H_AFTER(NLSOUND_UpdateSoundLayer)
 
-
 	H_BEFORE(NLSOUND_DoFadeInOut)
 	// update the fade in / out
 	if (_DoFade)
@@ -1211,8 +1193,8 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 		_DoFade = false;
 		uint i;
 
-		//for each filter
-		for (i=0; i< UAudioMixer::TBackgroundFlags::NB_BACKGROUND_FLAGS; ++i)
+		// for each filter
+		for (i = 0; i < UAudioMixer::TBackgroundFlags::NB_BACKGROUND_FLAGS; ++i)
 		{
 			if (_FilterFadesStart[i] != 0)
 			{
@@ -1258,7 +1240,7 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 
 		// update all playing background source that filter value has changed
 		// for each layer
-		for (i=0; i<BACKGROUND_LAYER; ++i)
+		for (i = 0; i < BACKGROUND_LAYER; ++i)
 		{
 			// for each patat
 			std::vector<TSoundData>::iterator first(_Layers[i].begin()), last(_Layers[i].end());
@@ -1268,10 +1250,9 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 				{
 					// update this playing sound
 					if (first->Source != 0 && first->Source->getType() == CSourceCommon::SOURCE_BACKGROUND)
-						static_cast<CBackgroundSource*>(first->Source)->updateFilterValues(_FilterFadeValues);
+						static_cast<CBackgroundSource *>(first->Source)->updateFilterValues(_FilterFadeValues);
 				}
 			}
-
 		}
 
 		if (!_DoFade)
@@ -1285,7 +1266,7 @@ void CBackgroundSoundManager::updateBackgroundStatus()
 
 void CBackgroundSoundManager::setBackgroundFlags(const UAudioMixer::TBackgroundFlags &backgroundFlags)
 {
-	for (uint i=0; i<UAudioMixer::TBackgroundFlags::NB_BACKGROUND_FLAGS; ++i)
+	for (uint i = 0; i < UAudioMixer::TBackgroundFlags::NB_BACKGROUND_FLAGS; ++i)
 	{
 		if (_BackgroundFlags.Flags[i] != backgroundFlags.Flags[i])
 		{
@@ -1293,7 +1274,7 @@ void CBackgroundSoundManager::setBackgroundFlags(const UAudioMixer::TBackgroundF
 			if (backgroundFlags.Flags[i])
 			{
 				// the filter is activated, to a fade out
-				_FilterFadesStart[i] = uint64(NLMISC::CTime::getLocalTime() - (1-_FilterFadeValues[i]) * _BackgroundFilterFades.FadeOuts[i]);
+				_FilterFadesStart[i] = uint64(NLMISC::CTime::getLocalTime() - (1 - _FilterFadeValues[i]) * _BackgroundFilterFades.FadeOuts[i]);
 				_DoFade = true;
 			}
 			else
@@ -1311,12 +1292,10 @@ void CBackgroundSoundManager::setBackgroundFlags(const UAudioMixer::TBackgroundF
 		CAudioMixerUser::instance()->registerUpdate(this);
 }
 
-
 void CBackgroundSoundManager::onUpdate()
 {
 	updateBackgroundStatus();
 }
-
 
 /*
 void CBackgroundSoundManager::update ()
@@ -1328,7 +1307,7 @@ void CBackgroundSoundManager::update ()
 uint32 CBackgroundSoundManager::getZoneNumber ()
 {
 //	return BackgroundSounds.size();
-	return 0;
+    return 0;
 }
 */
 /*
@@ -1336,91 +1315,90 @@ const vector<CVector> &CBackgroundSoundManager::getZone(uint32 zone)
 {
 //	nlassert (zone< BackgroundSounds.size());
 //	return BackgroundSounds[zone].Points;
-	static vector<CVector> v;
-	return v;
+    static vector<CVector> v;
+    return v;
 }
 */
 CVector CBackgroundSoundManager::getZoneSourcePos(uint32 /* zone */)
 {
-/*	nlassert (zone< BackgroundSounds.size());
-	CVector pos;
-	if (BackgroundSounds[zone].SourceDay != NULL)
-		BackgroundSounds[zone].SourceDay->getPos(pos);
-	return pos;
-*/
+	/*	nlassert (zone< BackgroundSounds.size());
+	    CVector pos;
+	    if (BackgroundSounds[zone].SourceDay != NULL)
+	        BackgroundSounds[zone].SourceDay->getPos(pos);
+	    return pos;
+	*/
 	return CVector();
 }
-
 
 /*
 void CBackgroundSoundManager::setDayNightRatio(float ratio)
 {
-	// 0 is day
-	// 1 is night
+    // 0 is day
+    // 1 is night
 
-	nlassert (ratio>=0.0f && ratio<=1.0f);
+    nlassert (ratio>=0.0f && ratio<=1.0f);
 
-	if (OldRatio == ratio)
-		return;
-	else
-		OldRatio = ratio;
+    if (OldRatio == ratio)
+        return;
+    else
+        OldRatio = ratio;
 
 
-	// recompute all source volume
+    // recompute all source volume
 
-	for (uint i = 0; i < BackgroundSounds.size(); i++)
-	{
-		if(ratio == 0.0f)
-		{
-			if(BackgroundSounds[i].SourceDay != NULL)
-			{
-				BackgroundSounds[i].SourceDay->setRelativeGain(1.0f);
+    for (uint i = 0; i < BackgroundSounds.size(); i++)
+    {
+        if(ratio == 0.0f)
+        {
+            if(BackgroundSounds[i].SourceDay != NULL)
+            {
+                BackgroundSounds[i].SourceDay->setRelativeGain(1.0f);
 
-				if (!BackgroundSounds[i].SourceDay->isPlaying())
-					BackgroundSounds[i].SourceDay->play();
-			}
+                if (!BackgroundSounds[i].SourceDay->isPlaying())
+                    BackgroundSounds[i].SourceDay->play();
+            }
 
-			if(BackgroundSounds[i].SourceNight != NULL)
-			{
-				if (BackgroundSounds[i].SourceNight->isPlaying())
-					BackgroundSounds[i].SourceNight->stop();
-			}
-		}
-		else if (ratio == 1.0f)
-		{
-			if(BackgroundSounds[i].SourceDay != NULL)
-			{
-				if (BackgroundSounds[i].SourceDay->isPlaying())
-					BackgroundSounds[i].SourceDay->stop();
-			}
+            if(BackgroundSounds[i].SourceNight != NULL)
+            {
+                if (BackgroundSounds[i].SourceNight->isPlaying())
+                    BackgroundSounds[i].SourceNight->stop();
+            }
+        }
+        else if (ratio == 1.0f)
+        {
+            if(BackgroundSounds[i].SourceDay != NULL)
+            {
+                if (BackgroundSounds[i].SourceDay->isPlaying())
+                    BackgroundSounds[i].SourceDay->stop();
+            }
 
-			if(BackgroundSounds[i].SourceNight != NULL)
-			{
-				BackgroundSounds[i].SourceNight->setRelativeGain(1.0f);
+            if(BackgroundSounds[i].SourceNight != NULL)
+            {
+                BackgroundSounds[i].SourceNight->setRelativeGain(1.0f);
 
-				if (!BackgroundSounds[i].SourceNight->isPlaying())
-					BackgroundSounds[i].SourceNight->play();
-			}
-		}
-		else
-		{
-			if(BackgroundSounds[i].SourceDay != NULL)
-			{
-				BackgroundSounds[i].SourceDay->setRelativeGain((1.0f-ratio));
+                if (!BackgroundSounds[i].SourceNight->isPlaying())
+                    BackgroundSounds[i].SourceNight->play();
+            }
+        }
+        else
+        {
+            if(BackgroundSounds[i].SourceDay != NULL)
+            {
+                BackgroundSounds[i].SourceDay->setRelativeGain((1.0f-ratio));
 
-				if (!BackgroundSounds[i].SourceDay->isPlaying())
-					BackgroundSounds[i].SourceDay->play();
-			}
+                if (!BackgroundSounds[i].SourceDay->isPlaying())
+                    BackgroundSounds[i].SourceDay->play();
+            }
 
-			if(BackgroundSounds[i].SourceNight != NULL)
-			{
-				BackgroundSounds[i].SourceNight->setRelativeGain(ratio);
+            if(BackgroundSounds[i].SourceNight != NULL)
+            {
+                BackgroundSounds[i].SourceNight->setRelativeGain(ratio);
 
-				if (!BackgroundSounds[i].SourceNight->isPlaying())
-					BackgroundSounds[i].SourceNight->play();
-			}
-		}
-	}
+                if (!BackgroundSounds[i].SourceNight->isPlaying())
+                    BackgroundSounds[i].SourceNight->play();
+            }
+        }
+    }
 
 }
 */
@@ -1448,7 +1426,7 @@ void CBackgroundSoundManager::TSoundData::serial(NLMISC::IStream &s)
 	}
 	else
 	{
-		s.serial(const_cast<std::string&>(NLMISC::CStringMapper::unmap(SoundName)));
+		s.serial(const_cast<std::string &>(NLMISC::CStringMapper::unmap(SoundName)));
 	}
 	s.serial(MinBox);
 	s.serial(MaxBox);
@@ -1465,11 +1443,11 @@ void CBackgroundSoundManager::TFxZone::serial(NLMISC::IStream &s)
 	if (s.isReading())
 	{
 		s.serial(str);
-		FxName= NLMISC::CStringMapper::map(str);
+		FxName = NLMISC::CStringMapper::map(str);
 	}
 	else
 	{
-		s.serial(const_cast<std::string&>(NLMISC::CStringMapper::unmap(FxName)));
+		s.serial(const_cast<std::string &>(NLMISC::CStringMapper::unmap(FxName)));
 	}
 
 	s.serialCont(Points);
@@ -1477,6 +1455,4 @@ void CBackgroundSoundManager::TFxZone::serial(NLMISC::IStream &s)
 	s.serial(MaxBox);
 }
 
-
 } // NLSOUND
-

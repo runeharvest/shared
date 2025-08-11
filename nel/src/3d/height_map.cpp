@@ -18,61 +18,54 @@
 
 #include "nel/3d/height_map.h"
 
-
 using namespace NLMISC;
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
-void			CHeightMap::resize(uint w, uint h)
+void CHeightMap::resize(uint w, uint h)
 {
-	_Width= w;
-	_Height= h;
-	Heights.resize(w*h);
+	_Width = w;
+	_Height = h;
+	Heights.resize(w * h);
 }
 
-
 // ***************************************************************************
-void			CHeightMap::buildFromBitmap(const NLMISC::CBitmap &bitmap0)
+void CHeightMap::buildFromBitmap(const NLMISC::CBitmap &bitmap0)
 {
 	// copy bitmap.
-	CBitmap		bitmap= bitmap0;
+	CBitmap bitmap = bitmap0;
 	// convert to luminance.
 	bitmap.convertToType(CBitmap::Luminance);
 
 	// resize array.
-	uint	w, h;
-	w= bitmap.getWidth();
-	h= bitmap.getHeight();
-	resize(w,h);
+	uint w, h;
+	w = bitmap.getWidth();
+	h = bitmap.getHeight();
+	resize(w, h);
 
 	// get luminance image.
-	CObjectVector<uint8>	&array= bitmap.getPixels();
+	CObjectVector<uint8> &array = bitmap.getPixels();
 	// invert the image in Y.
-	for(uint y=0;y<h;y++)
+	for (uint y = 0; y < h; y++)
 	{
-		for(uint x=0;x<w;x++)
+		for (uint x = 0; x < w; x++)
 		{
-			uint8	v= array[(h-1-y)*w+x];
-			Heights[y*w+x]= v;
+			uint8 v = array[(h - 1 - y) * w + x];
+			Heights[y * w + x] = v;
 		}
 	}
 }
 
-
 // ***************************************************************************
-float			CHeightMap::getZ(uint x, uint y) const
+float CHeightMap::getZ(uint x, uint y) const
 {
-	nlassert(x<_Width && y<_Height);
-	return Heights[y*_Width+x]*MaxZ/255;
+	nlassert(x < _Width && y < _Height);
+	return Heights[y * _Width + x] * MaxZ / 255;
 }
-
-
 
 } // NL3D

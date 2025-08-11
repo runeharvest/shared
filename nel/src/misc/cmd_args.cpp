@@ -23,13 +23,11 @@
 #include "stdmisc.h"
 #include "nel/misc/cmd_args.h"
 
-
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 CCmdArgs::CCmdArgs()
 {
@@ -78,7 +76,7 @@ void CCmdArgs::addAdditionalArg(const std::string &helpName, const std::string &
 bool CCmdArgs::haveArg(const std::string &argName) const
 {
 	// process each argument
-	for(uint i = 0; i < _Args.size(); ++i)
+	for (uint i = 0; i < _Args.size(); ++i)
 	{
 		const TArg &arg = _Args[i];
 
@@ -92,7 +90,7 @@ bool CCmdArgs::haveArg(const std::string &argName) const
 std::vector<std::string> CCmdArgs::getArg(const std::string &argName) const
 {
 	// process each argument
-	for(uint i = 0; i < _Args.size(); ++i)
+	for (uint i = 0; i < _Args.size(); ++i)
 	{
 		const TArg &arg = _Args[i];
 
@@ -107,7 +105,7 @@ std::vector<std::string> CCmdArgs::getArg(const std::string &argName) const
 bool CCmdArgs::haveLongArg(const std::string &argName) const
 {
 	// process each argument
-	for(uint i = 0; i < _Args.size(); ++i)
+	for (uint i = 0; i < _Args.size(); ++i)
 	{
 		const TArg &arg = _Args[i];
 
@@ -121,7 +119,7 @@ bool CCmdArgs::haveLongArg(const std::string &argName) const
 std::vector<std::string> CCmdArgs::getLongArg(const std::string &argName) const
 {
 	// process each argument
-	for(uint i = 0; i < _Args.size(); ++i)
+	for (uint i = 0; i < _Args.size(); ++i)
 	{
 		const TArg &arg = _Args[i];
 
@@ -136,7 +134,7 @@ std::vector<std::string> CCmdArgs::getLongArg(const std::string &argName) const
 bool CCmdArgs::needAdditionalArg() const
 {
 	// process each argument
-	for(uint i = 0; i < _Args.size(); ++i)
+	for (uint i = 0; i < _Args.size(); ++i)
 	{
 		const TArg &arg = _Args[i];
 
@@ -151,7 +149,7 @@ bool CCmdArgs::needAdditionalArg() const
 bool CCmdArgs::haveAdditionalArg() const
 {
 	// process each argument
-	for(uint i = 0; i < _Args.size(); ++i)
+	for (uint i = 0; i < _Args.size(); ++i)
 	{
 		const TArg &arg = _Args[i];
 
@@ -166,7 +164,7 @@ bool CCmdArgs::haveAdditionalArg() const
 bool CCmdArgs::haveAdditionalArg(const std::string &name) const
 {
 	// process each argument
-	for(uint i = 0; i < _Args.size(); ++i)
+	for (uint i = 0; i < _Args.size(); ++i)
 	{
 		const TArg &arg = _Args[i];
 
@@ -181,7 +179,7 @@ bool CCmdArgs::haveAdditionalArg(const std::string &name) const
 std::vector<std::string> CCmdArgs::getAdditionalArg(const std::string &name) const
 {
 	// process each argument
-	for(uint i = 0; i < _Args.size(); ++i)
+	for (uint i = 0; i < _Args.size(); ++i)
 	{
 		const TArg &arg = _Args[i];
 
@@ -218,7 +216,7 @@ bool CCmdArgs::parse(int argc, char **argv)
 	// convert C strings to STL strings
 	std::vector<std::string> args;
 
-	for(sint i = 0; i < argc; ++i)
+	for (sint i = 0; i < argc; ++i)
 	{
 #ifdef NL_OS_MAC
 		// get rid of -psn_* arguments under OS X
@@ -265,7 +263,7 @@ bool CCmdArgs::parse(const std::vector<std::string> &argv)
 			bool useLongName = name[0] == '-' && name[1] == '-';
 
 			// extract argument name
-			name = name.substr(useLongName ? 2:1);
+			name = name.substr(useLongName ? 2 : 1);
 
 			std::string value;
 
@@ -277,7 +275,7 @@ bool CCmdArgs::parse(const std::vector<std::string> &argv)
 				if (pos != std::string::npos)
 				{
 					// value is second part, name the first one
-					value = name.substr(pos+1);
+					value = name.substr(pos + 1);
 					name = name.substr(0, pos);
 				}
 			}
@@ -290,7 +288,7 @@ bool CCmdArgs::parse(const std::vector<std::string> &argv)
 			bool found = false;
 
 			// process each argument definition
-			for(uint j = 0; j < _Args.size(); ++j)
+			for (uint j = 0; j < _Args.size(); ++j)
 			{
 				TArg &arg = _Args[j];
 
@@ -311,7 +309,7 @@ bool CCmdArgs::parse(const std::vector<std::string> &argv)
 				if (!arg.helpName.empty())
 				{
 					// if the value hasn't be specified by =
-					if (value.empty() && i+1 < argc)
+					if (value.empty() && i + 1 < argc)
 					{
 						// take next argument
 						value = argv[++i];
@@ -335,7 +333,7 @@ bool CCmdArgs::parse(const std::vector<std::string> &argv)
 		else
 		{
 			// process each argument definition
-			for(uint j = 0, len = _Args.size(); j < len; ++j)
+			for (uint j = 0, len = _Args.size(); j < len; ++j)
 			{
 				TArg &arg = _Args[j];
 
@@ -378,7 +376,7 @@ void CCmdArgs::displayHelp()
 	printf("Usage: %s ", _ProgramName.c_str());
 
 	// display optional parameters
-	for(uint i = 0; i < _Args.size(); ++i)
+	for (uint i = 0; i < _Args.size(); ++i)
 	{
 		const TArg &arg = _Args[i];
 
@@ -398,19 +396,19 @@ void CCmdArgs::displayHelp()
 	}
 
 	// display required arguments
-	for(uint i = 0; i < _Args.size(); ++i)
+	for (uint i = 0; i < _Args.size(); ++i)
 	{
 		const TArg &arg = _Args[i];
 
 		// they don't have any short or long name, but need a name in help
 		if (arg.shortName.empty() && arg.longName.empty() && !arg.helpName.empty())
 		{
-			printf(" %c%s", arg.required ? '<':'[', arg.helpName.c_str());
+			printf(" %c%s", arg.required ? '<' : '[', arg.helpName.c_str());
 
 			// if support more than once argument
 			if (!arg.onlyOnce) printf("...");
 
-			printf("%c", arg.required ? '>':']');
+			printf("%c", arg.required ? '>' : ']');
 		}
 	}
 
@@ -424,7 +422,7 @@ void CCmdArgs::displayHelp()
 	printf("\nWhere options are:\n");
 
 	// display details on each argument
-	for(uint i = 0; i < _Args.size(); ++i)
+	for (uint i = 0; i < _Args.size(); ++i)
 	{
 		const TArg &arg = _Args[i];
 
@@ -464,11 +462,11 @@ void CCmdArgs::displayHelp()
 			}
 		}
 
-		for(uint j = 0; j < syntaxes.size(); ++j)
+		for (uint j = 0; j < syntaxes.size(); ++j)
 		{
 			if (j > 0)
 			{
-				printf("%s ", (j == syntaxes.size() - 1) ? " or":",");
+				printf("%s ", (j == syntaxes.size() - 1) ? " or" : ",");
 			}
 
 			printf("%s", syntaxes[j].c_str());
@@ -484,7 +482,7 @@ void CCmdArgs::displayHelp()
 	}
 
 	// process each argument
-	for(uint i = 0; i < _Args.size(); ++i)
+	for (uint i = 0; i < _Args.size(); ++i)
 	{
 		const TArg &arg = _Args[i];
 
@@ -505,4 +503,3 @@ void CCmdArgs::displayVersion()
 }
 
 }; // NAMESPACE NLMISC
-

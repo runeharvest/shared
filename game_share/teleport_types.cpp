@@ -14,23 +14,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "teleport_types.h"
 
-namespace TELEPORT_TYPES
+namespace TELEPORT_TYPES {
+// get the type of a teleport type from a string
+TTeleportType getTpTypeFromString(const std::string &str)
 {
-	//get the type of a teleport type from a string
-	TTeleportType getTpTypeFromString(const std::string & str)
-	{
-		if (str == "NONE")
-			return NONE;
-		if (str == "KAMI" || str == "KAMI_TP" )
-			return KAMI;
-		if (str == "KARAVAN" || str == "KARAVAN_TP" )
-			return KARAVAN;
-		nlwarning("invalid teleport type");
+	if (str == "NONE")
 		return NONE;
-	}
+	if (str == "KAMI" || str == "KAMI_TP")
+		return KAMI;
+	if (str == "KARAVAN" || str == "KARAVAN_TP")
+		return KARAVAN;
+	nlwarning("invalid teleport type");
+	return NONE;
+}
 }

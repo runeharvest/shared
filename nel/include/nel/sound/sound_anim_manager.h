@@ -20,19 +20,16 @@
 #ifndef NL_SOUND_ANIM_MANAGER_H
 #define NL_SOUND_ANIM_MANAGER_H
 
-
 #include "nel/misc/vector.h"
 #include "nel/sound/u_source.h"
 
-namespace NL3D
-{
-	class CCluster;
+namespace NL3D {
+class CCluster;
 }
 
 namespace NLSOUND {
 
-
-//class CSoundAnimPlayer;
+// class CSoundAnimPlayer;
 class CSoundAnimation;
 class UAudioMixer;
 
@@ -58,21 +55,18 @@ typedef sint32 TSoundAnimPlayId;
 typedef CHashMap<std::string, TSoundAnimId> TSoundAnimMap;
 
 /// Animation vector
-typedef std::vector<CSoundAnimation*> TSoundAnimVector;
+typedef std::vector<CSoundAnimation *> TSoundAnimVector;
 
 /// The set of players
-//typedef std::set<CSoundAnimPlayer*> TPlayerSet;
-
-
+// typedef std::set<CSoundAnimPlayer*> TPlayerSet;
 
 class CSoundAnimManager
 {
 public:
-
-	static CSoundAnimManager* instance() { return _Instance; }
+	static CSoundAnimManager *instance() { return _Instance; }
 	static void release() { delete _Instance; }
 
-	CSoundAnimManager(UAudioMixer* mixer);
+	CSoundAnimManager(UAudioMixer *mixer);
 	virtual ~CSoundAnimManager();
 
 	/** Load the sound animation with the specified name.
@@ -80,89 +74,87 @@ public:
 	 *  file could not be found.
 	 *  \param name The name of the animation to load.
 	 */
-	virtual TSoundAnimId			loadAnimation(std::string& name);
+	virtual TSoundAnimId loadAnimation(std::string &name);
 
 	/** Create a new sound animation with the specified name.
 	 *  Returns CSoundAnimation::NoId if the creation fails (duplicate name).
 	 *  \param name The name of the animation to load.
 	 */
-	virtual TSoundAnimId			createAnimation(std::string& name);
+	virtual TSoundAnimId createAnimation(std::string &name);
 
 	/** Save the sound animation in the specified file.
 	 *  \param filename The name of the file to save the animation in.
 	 */
-	virtual void					saveAnimation(CSoundAnimation* anim, std::string& filname);
+	virtual void saveAnimation(CSoundAnimation *anim, std::string &filname);
 
 	/** Start playing a sound animation. Returns true if the animation was
 	 *  found and is playing.
- 	 *  \param name The name of the animation to load.
+	 *  \param name The name of the animation to load.
 	 */
-	virtual TSoundAnimId			getAnimationFromName(std::string& name);
+	virtual TSoundAnimId getAnimationFromName(std::string &name);
 
 	/** Returns the animation corresponding to a name.
 	 *  \param name The name of the animation to load.
 	 */
-	virtual CSoundAnimation*		findAnimation(std::string& name);
+	virtual CSoundAnimation *findAnimation(std::string &name);
 
 	/** Start playing a sound animation. Returns an id number of this playback instance
 	 *  or -1 if the animation was not found.
- 	 *  \param name The id of the animation to play.
+	 *  \param name The id of the animation to play.
 	 */
-	virtual TSoundAnimPlayId		playAnimation(TSoundAnimId id, float time, NL3D::CCluster *cluster, CSoundContext &context);
+	virtual TSoundAnimPlayId playAnimation(TSoundAnimId id, float time, NL3D::CCluster *cluster, CSoundContext &context);
 
 	/** Start playing a sound animation. Returns an id number of this playback instance
 	 *  or -1 if the animation was not found.
- 	 *  \param name The name of the animation to play.
+	 *  \param name The name of the animation to play.
 	 */
-	virtual TSoundAnimPlayId		playAnimation(std::string& name, float time, NL3D::CCluster *cluster, CSoundContext &context);
+	virtual TSoundAnimPlayId playAnimation(std::string &name, float time, NL3D::CCluster *cluster, CSoundContext &context);
 
 	/** Stop the playing of a sound animation.
- 	 *  \param name The playback id that was returned by playAnimation.
+	 *  \param name The playback id that was returned by playAnimation.
 	 */
-	virtual void					stopAnimation(TSoundAnimPlayId playbackId);
+	virtual void stopAnimation(TSoundAnimPlayId playbackId);
 
 	/** Returns true if the animation with the specified playback ID is playing
- 	 *  \param name The playback id that was returned by playAnimation.
+	 *  \param name The playback id that was returned by playAnimation.
 	 */
-	virtual bool					isPlaying(TSoundAnimPlayId playbackId);
+	virtual bool isPlaying(TSoundAnimPlayId playbackId);
 
 	/** Update all the sound animations during playback.
 	 */
-	virtual void					update(float lastTime, float curTime);
+	virtual void update(float lastTime, float curTime);
 
 	/** Play all the events of an animation in the interval between lastTime and curTime.
 	 *  Both lastTime and curTime are measured relatively from the beginning of the
 	 *  animation.
 	 */
-	virtual void					playAnimation(TSoundAnimId id, float lastTime, float curTime, NL3D::CCluster *cluster, CSoundContext &context);
+	virtual void playAnimation(TSoundAnimId id, float lastTime, float curTime, NL3D::CCluster *cluster, CSoundContext &context);
 
 	/** Convert back from an anim ID to the anim name.
 	 */
-	virtual std::string				idToName(TSoundAnimId id);
+	virtual std::string idToName(TSoundAnimId id);
 
 protected:
-
 	/** The one and only singleton instance */
-	static CSoundAnimManager*		_Instance;
+	static CSoundAnimManager *_Instance;
 
 	/** The mixer */
-	UAudioMixer						*_Mixer;
+	UAudioMixer *_Mixer;
 
 	/** The conversion table from animation name to id */
-	TSoundAnimMap					_IdMap;
+	TSoundAnimMap _IdMap;
 
 	/** The vector of all defined animations */
-	TSoundAnimVector				_Animations;
+	TSoundAnimVector _Animations;
 
 	/** The set of all active players */
-	//TPlayerSet						_Players;
+	// TPlayerSet						_Players;
 
 	/** The id of the next player */
-	//TSoundAnimPlayId				_PlayerId;
+	// TSoundAnimPlayId				_PlayerId;
 
 	/** An auxilary vector to help remove players from the active set */
-	//std::vector<CSoundAnimPlayer*>	_Garbage;
-
+	// std::vector<CSoundAnimPlayer*>	_Garbage;
 };
 
 /**
@@ -172,8 +164,8 @@ protected:
 class ESoundAnimationNotFound : public NLMISC::Exception
 {
 public:
-	ESoundAnimationNotFound( const std::string filename ) :
-	  NLMISC::Exception( (std::string("Sound animation not found: ")+filename).c_str() ) {}
+    ESoundAnimationNotFound( const std::string filename ) :
+      NLMISC::Exception( (std::string("Sound animation not found: ")+filename).c_str() ) {}
 };
 */
 

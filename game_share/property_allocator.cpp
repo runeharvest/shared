@@ -14,19 +14,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "property_allocator.h"
-
 
 /*
  * Return a pointer to the property, or NULL if it is not ready yet (try again)
  */
-void		*CPropertyAllocator::getPropertySegment( const std::string& propName ) const
+void *CPropertyAllocator::getPropertySegment(const std::string &propName) const
 {
-	TPropertiesInMirror::const_iterator ipim = _PropertiesInMirror.find( propName );
-	if ( ipim != _PropertiesInMirror.end() )
+	TPropertiesInMirror::const_iterator ipim = _PropertiesInMirror.find(propName);
+	if (ipim != _PropertiesInMirror.end())
 	{
 		return GET_PROPERTY_INFO(ipim).Segment;
 	}
@@ -36,24 +33,23 @@ void		*CPropertyAllocator::getPropertySegment( const std::string& propName ) con
 	}
 }
 
-
 /*
  *
  */
 std::string TPropertyInfo::getFlagsString() const
 {
 	std::string s;
-	if ( flagReadOnly() )
+	if (flagReadOnly())
 		s = "RO";
-	else if ( flagWriteOnly() )
+	else if (flagWriteOnly())
 		s = "WO";
 	else
 		s = "RW";
-	if ( flagNotifyChanges() )
+	if (flagNotifyChanges())
 		s += " Ntf";
-	if ( flagGroupNotifiedByOtherProp() )
+	if (flagGroupNotifiedByOtherProp())
 		s += "-byOtherOfGrp";
-	if ( flagMonitorAssignment() )
+	if (flagMonitorAssignment())
 		s += " Mon";
 	return s;
 }

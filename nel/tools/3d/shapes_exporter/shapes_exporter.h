@@ -61,7 +61,7 @@ public:
 
 	bool exportShape(const std::string &filename, const std::string &output_path);
 	bool exportSkeleton(const std::string &skeleton, const std::vector<std::string> &parts, const std::string &output_path);
-	void setCamera(NLMISC::CAABBox &bbox, NL3D::UTransform &entity, bool high_z=false);
+	void setCamera(NLMISC::CAABBox &bbox, NL3D::UTransform &entity, bool high_z = false);
 
 	bool saveOneImage(const std::string &output_path);
 	bool renderShape(NL3D::UTransform &entity, const std::string &output_path);
@@ -71,8 +71,8 @@ public:
 	static std::string findSkeleton(const std::string &shape);
 
 	Settings settings;
-	NL3D::UDriver* Driver;
-	NL3D::UScene* Scene;
+	NL3D::UDriver *Driver;
+	NL3D::UScene *Scene;
 };
 
 #endif

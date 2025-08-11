@@ -24,9 +24,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // CSelectMovieSize dialog
 
-
-CSelectMovieSize::CSelectMovieSize(CWnd* pParent /*=NULL*/)
-	: CDialog(CSelectMovieSize::IDD, pParent)
+CSelectMovieSize::CSelectMovieSize(CWnd *pParent /*=NULL*/)
+    : CDialog(CSelectMovieSize::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CSelectMovieSize)
 	Width = 800;
@@ -34,8 +33,7 @@ CSelectMovieSize::CSelectMovieSize(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
-
-void CSelectMovieSize::DoDataExchange(CDataExchange* pDX)
+void CSelectMovieSize::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSelectMovieSize)
@@ -44,18 +42,17 @@ void CSelectMovieSize::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CSelectMovieSize, CDialog)
-	//{{AFX_MSG_MAP(CSelectMovieSize)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CSelectMovieSize)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CSelectMovieSize message handlers
 
-void CSelectMovieSize::OnOK() 
+void CSelectMovieSize::OnOK()
 {
 	// TODO: Add extra validation here
-	
+
 	CDialog::OnOK();
 }

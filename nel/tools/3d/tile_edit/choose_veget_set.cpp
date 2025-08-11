@@ -30,19 +30,17 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CChooseVegetSet dialog
 
-
-CChooseVegetSet::CChooseVegetSet(SelectionTerritoire* pParent, const std::string &oldFile)
-	: CDialog((UINT)CChooseVegetSet::IDD, (CWnd*)pParent)
+CChooseVegetSet::CChooseVegetSet(SelectionTerritoire *pParent, const std::string &oldFile)
+    : CDialog((UINT)CChooseVegetSet::IDD, (CWnd *)pParent)
 {
 	//{{AFX_DATA_INIT(CChooseVegetSet)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 	FileName = oldFile;
 	Parent = pParent;
 }
 
-
-void CChooseVegetSet::DoDataExchange(CDataExchange* pDX)
+void CChooseVegetSet::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CChooseVegetSet)
@@ -50,24 +48,23 @@ void CChooseVegetSet::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CChooseVegetSet, CDialog)
-	//{{AFX_MSG_MAP(CChooseVegetSet)
-	ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
-	ON_BN_CLICKED(IDRESET, OnReset)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CChooseVegetSet)
+ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
+ON_BN_CLICKED(IDRESET, OnReset)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CChooseVegetSet message handlers
 
-void CChooseVegetSet::OnBrowse() 
+void CChooseVegetSet::OnBrowse()
 {
 	// Select a veget set
 	static TCHAR BASED_CODE szFilter[] = _T("NeL VegetSet Files (*.vegetset)|*.vegetset|All Files (*.*)|*.*||");
 
 	// Create a file dialog
- 	CFileDialog dialog ( TRUE, _T("*.vegetset"), _T("*.vegetset"), OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, szFilter, (CWnd*)Parent);
+	CFileDialog dialog(TRUE, _T("*.vegetset"), _T("*.vegetset"), OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, szFilter, (CWnd *)Parent);
 	if (dialog.DoModal() == IDOK)
 	{
 		// Get the file name
@@ -76,21 +73,21 @@ void CChooseVegetSet::OnBrowse()
 	}
 }
 
-BOOL CChooseVegetSet::OnInitDialog() 
+BOOL CChooseVegetSet::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	if (!FileName.empty())
 		Name.SetWindowText(nlUtf8ToTStr(FileName));
 	else
-		Name.SetWindowText (_T("Browse..."));
+		Name.SetWindowText(_T("Browse..."));
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CChooseVegetSet::OnReset() 
+void CChooseVegetSet::OnReset()
 {
 	FileName.clear();
-	Name.SetWindowText (_T("Browse..."));
+	Name.SetWindowText(_T("Browse..."));
 }

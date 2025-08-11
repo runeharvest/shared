@@ -31,12 +31,9 @@
 #include <list>
 #include <functional>
 
-
-
-
 namespace NL3D {
 
-class  CFontGenerator;
+class CFontGenerator;
 struct CComputedString;
 
 /**
@@ -61,13 +58,12 @@ class CFontManager
 	uint32 _NbChar;
 
 	CSmartPtr<CMaterial> _MatFont;
-	CSmartPtr<CTextureFont>	_TexFont;
+	CSmartPtr<CTextureFont> _TexFont;
 
 	// Keep track number of textures created to properly report cache version
 	uint32 _TexCacheNr;
 
 public:
-
 	/**
 	 * Default constructor
 	 */
@@ -81,13 +77,11 @@ public:
 		_TexCacheNr = 0;
 	}
 
-
 	/**
 	 * define maximum memory allowed
 	 * \param maximum memory
 	 */
 	void setMaxMemory(uint32 mem) { _MaxMemory = mem; }
-
 
 	/**
 	 * gives maximum memory allowed
@@ -100,7 +94,7 @@ public:
 	 * \param character descriptor
 	 * \return CSmartPtr to a font texture
 	 */
-	CMaterial* getFontMaterial();
+	CMaterial *getFontMaterial();
 
 	/**
 	 * Compute primitive blocks and materials of each character of
@@ -117,71 +111,70 @@ public:
 	 */
 	/*
 	void computeString (const std::string& s,
-						CFontGenerator *fontGen,
-						const NLMISC::CRGBA &color,
-						uint32 fontSize,
-						bool embolden,
-						bool oblique,
-					    IDriver *driver,
-						CComputedString& output,
-						bool	keep800x600Ratio= true);
-						*/
+	                    CFontGenerator *fontGen,
+	                    const NLMISC::CRGBA &color,
+	                    uint32 fontSize,
+	                    bool embolden,
+	                    bool oblique,
+	                    IDriver *driver,
+	                    CComputedString& output,
+	                    bool	keep800x600Ratio= true);
+	                    */
 
 	/**
 	 * Same as computeString but works with a unicode string (ucstring)
 	 */
-	void computeString (NLMISC::CUtfStringView sv,
-						CFontGenerator *fontGen,
-						const NLMISC::CRGBA &color,
-						uint32 fontSize,
-						bool embolden,
-						bool oblique,
-					    IDriver *driver,
-						CComputedString &output,
-						bool	keep800x600Ratio= true);
+	void computeString(NLMISC::CUtfStringView sv,
+	    CFontGenerator *fontGen,
+	    const NLMISC::CRGBA &color,
+	    uint32 fontSize,
+	    bool embolden,
+	    bool oblique,
+	    IDriver *driver,
+	    CComputedString &output,
+	    bool keep800x600Ratio = true);
 
 	/**
 	 * Same as computeString but do not make vertex buffers and primitives
 	 */
-	void computeStringInfo (NLMISC::CUtfStringView sv,
-							size_t len,
-							CFontGenerator *fontGen,
-							const NLMISC::CRGBA &color,
-							uint32 fontSize,
-							bool embolden,
-							bool oblique,
-							IDriver *driver,
-							CComputedString &output,
-							bool keep800x600Ratio= true);
+	void computeStringInfo(NLMISC::CUtfStringView sv,
+	    size_t len,
+	    CFontGenerator *fontGen,
+	    const NLMISC::CRGBA &color,
+	    uint32 fontSize,
+	    bool embolden,
+	    bool oblique,
+	    IDriver *driver,
+	    CComputedString &output,
+	    bool keep800x600Ratio = true);
 
 	/**
 	 * Same as computeString but do not make vertex buffers and primitives
 	 */
-	void computeStringInfo (NLMISC::CUtfStringView sv,
-							CFontGenerator *fontGen,
-							const NLMISC::CRGBA &color,
-							uint32 fontSize,
-							bool embolden,
-							bool oblique,
-							IDriver *driver,
-							CComputedString &output,
-							bool keep800x600Ratio= true);
-
+	void computeStringInfo(NLMISC::CUtfStringView sv,
+	    CFontGenerator *fontGen,
+	    const NLMISC::CRGBA &color,
+	    uint32 fontSize,
+	    bool embolden,
+	    bool oblique,
+	    IDriver *driver,
+	    CComputedString &output,
+	    bool keep800x600Ratio = true);
 
 	/**
 	 * return a string given information about the cache
 	 */
 	std::string getCacheInformation() const;
 
-	void	dumpCache (const char *filename)
+	void dumpCache(const char *filename)
 	{
 		if (_TexFont)
-			_TexFont->dumpTextureFont (filename);
+			_TexFont->dumpTextureFont(filename);
 	}
 
 	/**
-	* invalidate the texture when the text context has been modified
-	*/
+	 * invalidate the texture when the text context has been modified
+	 */
 	void invalidate();
 
 	// get font atlas rebuild count
@@ -192,13 +185,9 @@ public:
 
 		return 0;
 	}
-
 };
 
-
-
 } // NL3D
-
 
 #endif // NL_FONT_MANAGER_H
 

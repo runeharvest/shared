@@ -34,7 +34,7 @@
 #include <nel/sound/stream_sound.h>
 
 namespace NLSOUND {
-	class CSourceMusicChannel;
+class CSourceMusicChannel;
 
 /**
  * \brief CStreamFileSound
@@ -52,23 +52,23 @@ public:
 	virtual ~CStreamFileSound();
 
 	/// Get the type of the sound.
-	virtual TSOUND_TYPE getSoundType()						{ return SOUND_STREAM_FILE; }
+	virtual TSOUND_TYPE getSoundType() { return SOUND_STREAM_FILE; }
 
 	/// Load the sound parameters from georges' form
-	virtual void		importForm(const std::string& filename, NLGEORGES::UFormElm& formRoot);
+	virtual void importForm(const std::string &filename, NLGEORGES::UFormElm &formRoot);
 
 	/// Used by the george sound plugin to check sound recursion (ie sound 'toto' use sound 'titi' witch also use sound 'toto' ...).
-	virtual void		getSubSoundList(std::vector<std::pair<std::string, CSound*> > &/* subsounds */) const { }
+	virtual void getSubSoundList(std::vector<std::pair<std::string, CSound *>> & /* subsounds */) const { }
 
 	/// Serialize the sound data.
-	virtual void		serial(NLMISC::IStream &s);
+	virtual void serial(NLMISC::IStream &s);
 
 	/// Return the length of the sound in ms
-	virtual uint32		getDuration()						{ return 0; }
+	virtual uint32 getDuration() { return 0; }
 
-	inline bool			getAsync()							{ return m_Async; }
+	inline bool getAsync() { return m_Async; }
 
-	inline const std::string &getFilePath()					{ return m_FilePath; }
+	inline const std::string &getFilePath() { return m_FilePath; }
 
 private:
 	/// Used by CSourceMusicChannel to set the filePath and default settings on other parameters.
@@ -79,8 +79,8 @@ private:
 	CStreamFileSound &operator=(const CStreamFileSound &);
 
 private:
-	bool				m_Async;
-	std::string			m_FilePath;
+	bool m_Async;
+	std::string m_FilePath;
 
 }; /* class CStreamFileSound */
 

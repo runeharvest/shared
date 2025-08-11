@@ -15,14 +15,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef NL_REGISTER_FLOAT_ATTRIB_H
 #define NL_REGISTER_FLOAT_ATTRIB_H
 
-namespace NL3D
-{
-	/// Register attribute makers based on floats (used in particle systems)
-	void PSRegisterFloatAttribs();
+namespace NL3D {
+/// Register attribute makers based on floats (used in particle systems)
+void PSRegisterFloatAttribs();
 } // NL3D
 
 #endif

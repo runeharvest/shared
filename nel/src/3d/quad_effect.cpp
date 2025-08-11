@@ -24,8 +24,7 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // a 2d edge, ordered so that p1 is the highest point of the edge
 struct CEdge
@@ -52,11 +51,7 @@ bool operator<(const CEdge &e1, const CEdge &e2) { return e1.P1.y < e2.P1.y; }
 
 typedef std::deque<CEdge> TEdgeList;
 
-
-void CQuadEffect::makeRasters(const TPoint2DVect &poly
-							, float quadWidth, float quadHeight
-							, TRasters &dest, float &startY
-						   )
+void CQuadEffect::makeRasters(const TPoint2DVect &poly, float quadWidth, float quadHeight, TRasters &dest, float &startY)
 {
 
 	dest.clear();
@@ -66,7 +61,7 @@ void CQuadEffect::makeRasters(const TPoint2DVect &poly
 
 	if (!size) return;
 
-    const float epsilon = 10E-5f;
+	const float epsilon = 10E-5f;
 	uint aelSize = 0; // size of active edge list
 
 	sint k; // loop counter
@@ -82,15 +77,14 @@ void CQuadEffect::makeRasters(const TPoint2DVect &poly
 	{
 
 		lel.push_front(
-						CEdge(poly[k], poly[k == (size - 1) ? 0 : k + 1])
-			          );
+		    CEdge(poly[k], poly[k == (size - 1) ? 0 : k + 1]));
 		if (poly[k].y < highest) { highest = poly[k].y; }
 	}
 
 	/// sort the segs
 	std::sort(lel.begin(), lel.end());
 
-	bool  borderFound;
+	bool borderFound;
 	float left = 0.f, right = 0.f, inter, diff;
 	float currY = highest;
 	startY = highest;
@@ -101,13 +95,12 @@ void CQuadEffect::makeRasters(const TPoint2DVect &poly
 	{
 		/// fetch new segment into the ael
 		while (size
-			   && lel.begin()->P1.y < (currY +  quadHeight)
-			  )
+		    && lel.begin()->P1.y < (currY + quadHeight))
 		{
 			ael.push_front(lel.front());
 			lel.pop_front();
 			--size;
-			++ aelSize;
+			++aelSize;
 		}
 
 		if (aelSize)
@@ -121,15 +114,15 @@ void CQuadEffect::makeRasters(const TPoint2DVect &poly
 				{
 					// edge has gone out of active edge list
 					elIt = ael.erase(elIt);
-					if (! --aelSize) return;
+					if (!--aelSize) return;
 					continue;
 				}
 				else
 				{
 
 					/** edge is in scope. compute its extreme positions
-					  * so we need to intersect it with the y = currY and y =  currY + quadHeight lines
-					  */
+					 * so we need to intersect it with the y = currY and y =  currY + quadHeight lines
+					 */
 
 					/// top of the edge
 					if (elIt->P1.y >= currY)
@@ -209,9 +202,8 @@ void CQuadEffect::makeRasters(const TPoint2DVect &poly
 							right = std::max(right, inter);
 						}
 					}
-
 				}
-				++ elIt;
+				++elIt;
 			}
 
 			dest.push_back(std::make_pair(left, right));
@@ -219,16 +211,12 @@ void CQuadEffect::makeRasters(const TPoint2DVect &poly
 
 		currY += quadHeight;
 
-	}
-	while (size || aelSize);
+	} while (size || aelSize);
 }
 
 //**
 
-void CQuadEffect::processPoly(const TPoint2DVect &poly
-							, float quadWidth, float quadHeight
-							, TPoint2DVect &dest
-						   )
+void CQuadEffect::processPoly(const TPoint2DVect &poly, float quadWidth, float quadHeight, TPoint2DVect &dest)
 {
 	static TRasters rDest;
 	float currY;
@@ -238,7 +226,7 @@ void CQuadEffect::processPoly(const TPoint2DVect &poly
 		TRasters::const_iterator it, endIt = rDest.end();
 		for (it = rDest.begin(); it != endIt; ++it)
 		{
-			const sint nbQuad = (sint) ceilf( (it->second - it->first) / quadWidth);
+			const sint nbQuad = (sint)ceilf((it->second - it->first) / quadWidth);
 			float currX = it->first;
 			for (sint k = 0; k < nbQuad; ++k)
 			{
@@ -249,6 +237,5 @@ void CQuadEffect::processPoly(const TPoint2DVect &poly
 		}
 	}
 }
-
 
 } // NL3D

@@ -23,4 +23,3 @@ int kbhit(void);
 int getch(void);
 
 #endif // NL_KBHIT_H
-

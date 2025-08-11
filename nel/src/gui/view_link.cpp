@@ -31,42 +31,39 @@ using namespace NL3D;
 #define new DEBUG_NEW
 #endif
 
-namespace NLGUI
+namespace NLGUI {
+
+// ***************************************************************************
+
+CViewLink::CViewLink(const TCtorParam &param)
+    : CViewText(param)
 {
-
-	// ***************************************************************************
-
-	CViewLink::CViewLink (const TCtorParam &param)
-	: CViewText(param)
-	{
-		HTML = NULL;
-	}
-
-	// ***************************************************************************
-
-	void CViewLink::setHTMLView(CGroupHTML *html)
-	{
-		HTML = html;
-	}
-
-	// ***************************************************************************
-	bool CViewLink::getMouseOverShape(string &texName, uint8 &rot, CRGBA &col)
-	{
-		if (HTML != NULL)
-		{
-			if (!LinkTitle.empty())
-			{
-				texName = LinkTitle;
-				rot= 0;
-				col = CRGBA::White;
-				return true;
-			}
-		}
-		
-		return false;
-	}
-
-
-	// ***************************************************************************
+	HTML = NULL;
 }
 
+// ***************************************************************************
+
+void CViewLink::setHTMLView(CGroupHTML *html)
+{
+	HTML = html;
+}
+
+// ***************************************************************************
+bool CViewLink::getMouseOverShape(string &texName, uint8 &rot, CRGBA &col)
+{
+	if (HTML != NULL)
+	{
+		if (!LinkTitle.empty())
+		{
+			texName = LinkTitle;
+			rot = 0;
+			col = CRGBA::White;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// ***************************************************************************
+}

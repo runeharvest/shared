@@ -28,32 +28,33 @@
 
 class CSceneRotDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CSceneRotDlg(CWnd* pParent = NULL);   // standard constructor
+	CSceneRotDlg(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CSceneRotDlg)
-	enum { IDD = IDD_SCENE_ROT };
-	CString	RotX;
-	CString	RotY;
-	CString	RotZ;
+	enum
+	{
+		IDD = IDD_SCENE_ROT
+	};
+	CString RotX;
+	CString RotY;
+	CString RotZ;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CSceneRotDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CSceneRotDlg)
-		// NOTE: the ClassWizard will add member functions here
+	// NOTE: the ClassWizard will add member functions here
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

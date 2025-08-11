@@ -26,16 +26,16 @@ using namespace NL3D;
 using namespace std;
 
 // ***************************************************************************
-CInstanceGroup* LoadInstanceGroup (const char* sFilename)
+CInstanceGroup *LoadInstanceGroup(const char *sFilename)
 {
 	CIFile file;
 	CInstanceGroup *newIG = new CInstanceGroup;
 
-	if( file.open( sFilename ) )
+	if (file.open(sFilename))
 	{
 		try
 		{
-			newIG->serial (file);
+			newIG->serial(file);
 		}
 		catch (const Exception &)
 		{
@@ -52,15 +52,15 @@ CInstanceGroup* LoadInstanceGroup (const char* sFilename)
 }
 
 // ***************************************************************************
-bool SaveInstanceGroup (const char* sFilename, CInstanceGroup *pIG)
+bool SaveInstanceGroup(const char *sFilename, CInstanceGroup *pIG)
 {
 	COFile file;
 
-	if( file.open( sFilename ) )
+	if (file.open(sFilename))
 	{
 		try
 		{
-			pIG->serial (file);
+			pIG->serial(file);
 		}
 		catch (const Exception &)
 		{
@@ -75,7 +75,7 @@ bool SaveInstanceGroup (const char* sFilename, CInstanceGroup *pIG)
 }
 
 // ***************************************************************************
-int main(int nNbArg, char**ppArgs)
+int main(int nNbArg, char **ppArgs)
 {
 
 	if (nNbArg != 4)
@@ -88,13 +88,13 @@ int main(int nNbArg, char**ppArgs)
 
 	// Load in1 and in2
 	// ****************
-	CInstanceGroup *pIG1 = LoadInstanceGroup (ppArgs[2]);
+	CInstanceGroup *pIG1 = LoadInstanceGroup(ppArgs[2]);
 	if (pIG1 == NULL)
 	{
 		cerr << "File " << ppArgs[2] << " not found" << endl;
 		return -1;
 	}
-	CInstanceGroup *pIG2 = LoadInstanceGroup (ppArgs[3]);
+	CInstanceGroup *pIG2 = LoadInstanceGroup(ppArgs[3]);
 	if (pIG2 == NULL)
 	{
 		cerr << "File " << ppArgs[3] << " not found" << endl;
@@ -112,13 +112,13 @@ int main(int nNbArg, char**ppArgs)
 	vector<CPortal> Portals1, Portals2, Portalsout;
 	vector<CPointLightNamed> PLN1, PLN2, PLNout;
 
-	pIG1->retrieve (vGP1, IA1, Clusters1, Portals1, PLN1);
-	pIG2->retrieve (vGP2, IA2, Clusters2, Portals2, PLN2);
+	pIG1->retrieve(vGP1, IA1, Clusters1, Portals1, PLN1);
+	pIG2->retrieve(vGP2, IA2, Clusters2, Portals2, PLN2);
 
 	uint32 i;
 
 	// -----------------------------------------------------------------------
-	vGPout = (vGP1+vGP2) / 2.0f;
+	vGPout = (vGP1 + vGP2) / 2.0f;
 
 	// -----------------------------------------------------------------------
 	for (i = 0; i < IA1.size(); ++i)
@@ -149,12 +149,11 @@ int main(int nNbArg, char**ppArgs)
 	for (i = 0; i < PLN2.size(); ++i)
 		PLNout.push_back(PLN2[i]);
 
-
-	pIGout->build (vGPout, IAout, Clustersout, Portalsout, PLNout);
+	pIGout->build(vGPout, IAout, Clustersout, Portalsout, PLNout);
 
 	// Save out
 	// ********
-	if (!SaveInstanceGroup (ppArgs[1], pIGout))
+	if (!SaveInstanceGroup(ppArgs[1], pIGout))
 	{
 		cerr << "Cannot save to file " << ppArgs[1] << endl;
 
@@ -174,7 +173,7 @@ int main(int nNbArg, char**ppArgs)
 	return 1;
 }
 
-// NOTES : For the moment the behaviour of the build with cluster system is 
+// NOTES : For the moment the behaviour of the build with cluster system is
 // strange because the instance of the instance group are not relinked to
 // all the clusters... But this is not a big deal because we just want to
 // add group of instances without any cluster system

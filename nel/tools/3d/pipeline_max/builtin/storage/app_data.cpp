@@ -66,9 +66,11 @@ namespace STORAGE {
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-CAppData::TKey::TKey(NLMISC::CClassId classId, TSClassId superClassId, uint32 subId) : ClassId(classId), SuperClassId(superClassId), SubId(subId)
+CAppData::TKey::TKey(NLMISC::CClassId classId, TSClassId superClassId, uint32 subId)
+    : ClassId(classId)
+    , SuperClassId(superClassId)
+    , SubId(subId)
 {
-
 }
 
 bool CAppData::TKey::operator<(const CAppData::TKey &right) const
@@ -116,7 +118,6 @@ bool CAppData::TKey::operator==(const CAppData::TKey &right) const
 
 CAppData::CAppData()
 {
-
 }
 
 CAppData::~CAppData()
@@ -147,7 +148,8 @@ void CAppData::toString(std::ostream &ostream, const std::string &pad) const
 		uint subi = 0;
 		for (TMap::const_iterator subit = m_Entries.begin(), subend = m_Entries.end(); subit != subend; ++subit)
 		{
-			ostream << "\n" << pad << "Entries[" << subi << "]: ";
+			ostream << "\n"
+			        << pad << "Entries[" << subi << "]: ";
 			subit->second->toString(ostream, padpad);
 			++subi;
 		}
@@ -159,32 +161,61 @@ void CAppData::parse(uint16 version, uint filter)
 {
 #if PMBS_APP_DATA_PARSE
 	// Cannot be parsed yet
-	if (!m_ChunksOwnsPointers) { nlerror("Already parsed"); return; }
+	if (!m_ChunksOwnsPointers)
+	{
+		nlerror("Already parsed");
+		return;
+	}
 
 	// First parse all the child nodes
 	CStorageContainer::parse(version);
 
 	// Verify
-	if (m_Chunks.size() < 2) { nlwarning("Bad container size %i", m_Chunks.size()); disown(); return; }
+	if (m_Chunks.size() < 2)
+	{
+		nlwarning("Bad container size %i", m_Chunks.size());
+		disown();
+		return;
+	}
 
 	// Header
 	TStorageObjectContainer::iterator it = m_Chunks.begin();
-	if (it->first != PMBS_APP_DATA_HEADER_CHUNK_ID) { nlwarning("Bad id %x, expected %x", (uint32)it->first, PMBS_APP_DATA_HEADER_CHUNK_ID); disown();  return; }
+	if (it->first != PMBS_APP_DATA_HEADER_CHUNK_ID)
+	{
+		nlwarning("Bad id %x, expected %x", (uint32)it->first, PMBS_APP_DATA_HEADER_CHUNK_ID);
+		disown();
+		return;
+	}
 	uint32 headerSize = static_cast<CStorageValue<uint32> *>(it->second)->Value;
 	++it;
 
 	// Entries
 	for (TStorageObjectContainer::iterator end = m_Chunks.end(); it != end; ++it)
 	{
-		if (it->first != PMBS_APP_DATA_ENTRY_CHUNK_ID) { nlwarning("Bad id %x, expected %x", (uint32)it->first, PMBS_APP_DATA_ENTRY_CHUNK_ID); disown(); return; }
+		if (it->first != PMBS_APP_DATA_ENTRY_CHUNK_ID)
+		{
+			nlwarning("Bad id %x, expected %x", (uint32)it->first, PMBS_APP_DATA_ENTRY_CHUNK_ID);
+			disown();
+			return;
+		}
 		CAppDataEntry *entry = static_cast<CAppDataEntry *>(it->second);
 		TKey key(entry->key()->ClassId, entry->key()->SuperClassId, entry->key()->SubId);
-		if (m_Entries.find(key) != m_Entries.end()) { nlwarning("Duplicate entry"); disown(); return; }
+		if (m_Entries.find(key) != m_Entries.end())
+		{
+			nlwarning("Duplicate entry");
+			disown();
+			return;
+		}
 		m_Entries[key] = entry;
 	}
 
 	// Verify or fail
-	if (m_Entries.size() != headerSize) { nlwarning("Entry count %i does not match header %i", m_Entries.size(), headerSize); disown(); return; }
+	if (m_Entries.size() != headerSize)
+	{
+		nlwarning("Entry count %i does not match header %i", m_Entries.size(), headerSize);
+		disown();
+		return;
+	}
 
 	// Take local ownership
 	m_ChunksOwnsPointers = false;
@@ -196,9 +227,21 @@ void CAppData::parse(uint16 version, uint filter)
 void CAppData::clean()
 {
 #if PMBS_APP_DATA_PARSE
-	if (m_ChunksOwnsPointers) { nldebug("Not parsed, or disowned"); return; } // Must have local ownership
-	if (m_Chunks.size() == 0) { nlwarning("Already cleaned (or did not build due to coding error)"); return; } // Already cleaned
-	if (m_Chunks.begin()->first != PMBS_APP_DATA_HEADER_CHUNK_ID) { nlerror("Bad id %x, expected %x", (uint32)m_Chunks.begin()->first, PMBS_APP_DATA_HEADER_CHUNK_ID); return; } // Cannot happen, because we won't have local ownership if parsing failed
+	if (m_ChunksOwnsPointers)
+	{
+		nldebug("Not parsed, or disowned");
+		return;
+	} // Must have local ownership
+	if (m_Chunks.size() == 0)
+	{
+		nlwarning("Already cleaned (or did not build due to coding error)");
+		return;
+	} // Already cleaned
+	if (m_Chunks.begin()->first != PMBS_APP_DATA_HEADER_CHUNK_ID)
+	{
+		nlerror("Bad id %x, expected %x", (uint32)m_Chunks.begin()->first, PMBS_APP_DATA_HEADER_CHUNK_ID);
+		return;
+	} // Cannot happen, because we won't have local ownership if parsing failed
 	delete m_Chunks.begin()->second; // Delete the header chunk, since we own it
 	m_Chunks.clear(); // Clear the remaining chunks
 
@@ -215,8 +258,16 @@ void CAppData::build(uint16 version, uint filter)
 {
 #if PMBS_APP_DATA_PARSE
 	// Must be clean first
-	if (!m_ChunksOwnsPointers && m_Chunks.size() != 0) { nlerror("Not cleaned"); return; }
-	if (m_Chunks.size() != 0) { nldebug("Not parsed, or disowned"); return; }
+	if (!m_ChunksOwnsPointers && m_Chunks.size() != 0)
+	{
+		nlerror("Not cleaned");
+		return;
+	}
+	if (m_Chunks.size() != 0)
+	{
+		nldebug("Not parsed, or disowned");
+		return;
+	}
 
 	// Set up the header in the chunks container
 	CStorageValue<uint32> *headerSize = new CStorageValue<uint32>(); // Owned locally, not by m_Chunks
@@ -238,7 +289,11 @@ void CAppData::disown()
 {
 #if PMBS_APP_DATA_PARSE
 	if (m_ChunksOwnsPointers) { nldebug("Not parsed"); }
-	if (!m_ChunksOwnsPointers && (m_Chunks.size() != (m_Entries.size() + 1))) { nlerror("Not built"); return; } // If chunks is not the owner, built chunks must match the parsed data
+	if (!m_ChunksOwnsPointers && (m_Chunks.size() != (m_Entries.size() + 1)))
+	{
+		nlerror("Not built");
+		return;
+	} // If chunks is not the owner, built chunks must match the parsed data
 	// NOTE: m_Chunks must be valid at this point!
 
 	// Disown locally
@@ -257,8 +312,16 @@ void CAppData::disown()
 void CAppData::init()
 {
 	// Cannot be init yet
-	if (!m_ChunksOwnsPointers) { nlerror("Already parsed"); return; }
-	if (m_Chunks.size() != 0) { nlerror("Already built or serialized"); return; }
+	if (!m_ChunksOwnsPointers)
+	{
+		nlerror("Already parsed");
+		return;
+	}
+	if (m_Chunks.size() != 0)
+	{
+		nlerror("Already built or serialized");
+		return;
+	}
 
 	// We own this
 	m_ChunksOwnsPointers = false;
@@ -266,64 +329,72 @@ void CAppData::init()
 /*
 const uint8 *CAppData::read(NLMISC::CClassId classId, TSClassId superClassId, uint32 subId, uint32 &size) const
 {
-	if (m_ChunksOwnsPointers) { nlwarning("Not parsed"); return NULL; }
-	TKey key(classId, superClassId, subId);
-	TMap::const_iterator it = m_Entries.find(key);
-	if (it == m_Entries.end()) { nldebug("Trying to read non-existant key, this is allowed, returning NULL"); return NULL; }
-	size = it->second->value()->Value.size();
-	return &it->second->value()->Value[0];
+    if (m_ChunksOwnsPointers) { nlwarning("Not parsed"); return NULL; }
+    TKey key(classId, superClassId, subId);
+    TMap::const_iterator it = m_Entries.find(key);
+    if (it == m_Entries.end()) { nldebug("Trying to read non-existant key, this is allowed, returning NULL"); return NULL; }
+    size = it->second->value()->Value.size();
+    return &it->second->value()->Value[0];
 }
 
 uint8 *CAppData::lock(NLMISC::CClassId classId, TSClassId superClassId, uint32 subId, uint32 capacity)
 {
-	if (m_ChunksOwnsPointers) { nlwarning("Not parsed"); return NULL; }
-	TKey key(classId, superClassId, subId);
-	TMap::const_iterator it = m_Entries.find(key);
-	CAppDataEntry *appDataEntry;
-	if (it == m_Entries.end())
-	{
-		appDataEntry = new CAppDataEntry();
-		m_Entries[key] = appDataEntry;
-		appDataEntry->key()->ClassId = classId;
-		appDataEntry->key()->SuperClassId = superClassId;
-		appDataEntry->key()->SubId = subId;
-	}
-	else
-	{
-		appDataEntry = it->second;
-	}
-	appDataEntry->key()->Size = capacity;
-	appDataEntry->value()->Value.resize(capacity);
-	return &appDataEntry->value()->Value[0];
+    if (m_ChunksOwnsPointers) { nlwarning("Not parsed"); return NULL; }
+    TKey key(classId, superClassId, subId);
+    TMap::const_iterator it = m_Entries.find(key);
+    CAppDataEntry *appDataEntry;
+    if (it == m_Entries.end())
+    {
+        appDataEntry = new CAppDataEntry();
+        m_Entries[key] = appDataEntry;
+        appDataEntry->key()->ClassId = classId;
+        appDataEntry->key()->SuperClassId = superClassId;
+        appDataEntry->key()->SubId = subId;
+    }
+    else
+    {
+        appDataEntry = it->second;
+    }
+    appDataEntry->key()->Size = capacity;
+    appDataEntry->value()->Value.resize(capacity);
+    return &appDataEntry->value()->Value[0];
 }
 
 void CAppData::unlock(NLMISC::CClassId classId, TSClassId superClassId, uint32 subId, uint32 size)
 {
-	if (m_ChunksOwnsPointers) { nlwarning("Not parsed"); return; }
-	TKey key(classId, superClassId, subId);
-	TMap::const_iterator it = m_Entries.find(key);
-	if (it == m_Entries.end()) { nlerror("Unlocking non-existant key"); return; }
-	CAppDataEntry *appDataEntry = it->second;
-	appDataEntry->key()->Size = size;
-	appDataEntry->value()->Value.resize(size);
+    if (m_ChunksOwnsPointers) { nlwarning("Not parsed"); return; }
+    TKey key(classId, superClassId, subId);
+    TMap::const_iterator it = m_Entries.find(key);
+    if (it == m_Entries.end()) { nlerror("Unlocking non-existant key"); return; }
+    CAppDataEntry *appDataEntry = it->second;
+    appDataEntry->key()->Size = size;
+    appDataEntry->value()->Value.resize(size);
 }
 
 void CAppData::fill(NLMISC::CClassId classId, TSClassId superClassId, uint32 subId, uint8 *buffer, uint32 size)
 {
-	uint8 *dest = lock(classId, superClassId, subId, size);
-	memcpy(dest, buffer, size);
+    uint8 *dest = lock(classId, superClassId, subId, size);
+    memcpy(dest, buffer, size);
 
-	// Internally not necessary, since we sent the correct size.
-	// Outside classes should unlock in case the implementation changes.
-	// unlock(classId, superClassId, subId, size);
+    // Internally not necessary, since we sent the correct size.
+    // Outside classes should unlock in case the implementation changes.
+    // unlock(classId, superClassId, subId, size);
 }
 */
 void CAppData::erase(NLMISC::CClassId classId, TSClassId superClassId, uint32 subId)
 {
-	if (m_ChunksOwnsPointers) { nlwarning("Not parsed"); return; }
+	if (m_ChunksOwnsPointers)
+	{
+		nlwarning("Not parsed");
+		return;
+	}
 	TKey key(classId, superClassId, subId);
 	TMap::const_iterator it = m_Entries.find(key);
-	if (it == m_Entries.end()) { nldebug("Trying to erase non-existant key, this is allowed, doing nothing"); return; }
+	if (it == m_Entries.end())
+	{
+		nldebug("Trying to erase non-existant key, this is allowed, doing nothing");
+		return;
+	}
 	m_Entries.erase(key);
 }
 
@@ -349,12 +420,10 @@ IStorageObject *CAppData::createChunkById(uint16 id, bool container)
 
 CAppDataEntryKey::CAppDataEntryKey()
 {
-
 }
 
 CAppDataEntryKey::~CAppDataEntryKey()
 {
-
 }
 
 std::string CAppDataEntryKey::className() const
@@ -373,10 +442,14 @@ void CAppDataEntryKey::serial(NLMISC::IStream &stream)
 void CAppDataEntryKey::toString(std::ostream &ostream, const std::string &pad) const
 {
 	ostream << "(" << className() << ") { ";
-	ostream << "\n" << pad << "ClassId: " << NLMISC::toString(ClassId);
-	ostream << "\n" << pad << "SuperClassId: " << SuperClassId;
-	ostream << "\n" << pad << "SubId: " << SubId;
-	ostream << "\n" << pad << "Size: " << Size;
+	ostream << "\n"
+	        << pad << "ClassId: " << NLMISC::toString(ClassId);
+	ostream << "\n"
+	        << pad << "SuperClassId: " << SuperClassId;
+	ostream << "\n"
+	        << pad << "SubId: " << SubId;
+	ostream << "\n"
+	        << pad << "Size: " << Size;
 	ostream << " } ";
 }
 
@@ -384,9 +457,11 @@ void CAppDataEntryKey::toString(std::ostream &ostream, const std::string &pad) c
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-CAppDataEntry::CAppDataEntry() : m_Key(NULL), m_Raw(NULL), m_Value(NULL)
+CAppDataEntry::CAppDataEntry()
+    : m_Key(NULL)
+    , m_Raw(NULL)
+    , m_Value(NULL)
 {
-
 }
 
 CAppDataEntry::~CAppDataEntry()
@@ -406,9 +481,11 @@ void CAppDataEntry::toString(std::ostream &ostream, const std::string &pad) cons
 	{
 		ostream << "(" << className() << ") [" << m_Chunks.size() << "] PARSED { ";
 		std::string padpad = pad + "\t";
-		ostream << "\n" << pad << "Key: ";
+		ostream << "\n"
+		        << pad << "Key: ";
 		m_Key->toString(ostream, padpad);
-		ostream << "\n" << pad << "Value: ";
+		ostream << "\n"
+		        << pad << "Value: ";
 		m_Value->toString(ostream, padpad);
 		ostream << "} ";
 	}
@@ -422,14 +499,29 @@ void CAppDataEntry::parse(uint16 version, uint filter)
 {
 	// CStorageContainer::parse(version);
 	// if (!m_ChunksOwnsPointers) { nlwarning("Already parsed"); return; }
-	if (m_Chunks.size() != 2) { nlwarning("Bad container size"); disown(); return; }
+	if (m_Chunks.size() != 2)
+	{
+		nlwarning("Bad container size");
+		disown();
+		return;
+	}
 
 	TStorageObjectContainer::iterator it = m_Chunks.begin();
-	if (it->first != PMBS_APP_DATA_ENTRY_KEY_CHUNK_ID) { nlwarning("Bad id %x, expected %x", (uint32)it->first, PMBS_APP_DATA_ENTRY_KEY_CHUNK_ID); disown();  return; }
+	if (it->first != PMBS_APP_DATA_ENTRY_KEY_CHUNK_ID)
+	{
+		nlwarning("Bad id %x, expected %x", (uint32)it->first, PMBS_APP_DATA_ENTRY_KEY_CHUNK_ID);
+		disown();
+		return;
+	}
 	m_Key = static_cast<CAppDataEntryKey *>(it->second);
 
 	++it;
-	if (it->first != PMBS_APP_DATA_ENTRY_VALUE_CHUNK_ID) { nlwarning("Bad id %x, expected %x", (uint32)it->first, PMBS_APP_DATA_ENTRY_VALUE_CHUNK_ID); disown(); return; }
+	if (it->first != PMBS_APP_DATA_ENTRY_VALUE_CHUNK_ID)
+	{
+		nlwarning("Bad id %x, expected %x", (uint32)it->first, PMBS_APP_DATA_ENTRY_VALUE_CHUNK_ID);
+		disown();
+		return;
+	}
 	m_Raw = static_cast<CStorageRaw *>(it->second);
 
 	// m_ChunksOwnsPointers = false;
@@ -465,7 +557,11 @@ void CAppDataEntry::build(uint16 version, uint filter)
 void CAppDataEntry::disown()
 {
 	// CStorageContainer::disown();
-	if (m_Chunks.size() != 2) { nlerror("Not built"); return; } // Built chunks must match the parsed data
+	if (m_Chunks.size() != 2)
+	{
+		nlerror("Not built");
+		return;
+	} // Built chunks must match the parsed data
 	m_Key = NULL;
 	m_Raw = NULL;
 	delete m_Value;

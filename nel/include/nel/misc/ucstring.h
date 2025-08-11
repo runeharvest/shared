@@ -43,7 +43,7 @@ public:
 	}
 
 	ucstring(const ucchar *begin, const ucchar *end)
-		: ucstringbase(begin, end)
+	    : ucstringbase(begin, end)
 	{
 	}
 
@@ -170,7 +170,6 @@ public:
 
 		return ret;
 	}
-
 };
 
 inline ucstring operator+(const ucstringbase &ucstr, ucchar c)

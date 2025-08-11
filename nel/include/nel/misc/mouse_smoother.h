@@ -20,8 +20,7 @@
 #include "types_nl.h"
 #include "vector_2f.h"
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 /**
  * This smooth position of mouse using cubic splines.
@@ -39,38 +38,42 @@ public:
 	// create a mouse smoother with the given sampling period.
 	CMouseSmoother(double samplingPeriod = 0.2);
 	/** Change the sampling period. The longer it lasts, the more smooth the movement.
-	  * NB : this reset the smoother
-	  */
-	void				setSamplingPeriod(double period);
+	 * NB : this reset the smoother
+	 */
+	void setSamplingPeriod(double period);
 	// Get the sampling period
-	double				getSamplingPeriod() const { return _SamplingPeriod; }
+	double getSamplingPeriod() const { return _SamplingPeriod; }
 	// Reset smoother. The next returned position will be the exact position of mouse (no smoothing with previous position is done)
-	void				reset();
+	void reset();
 	// \return true if no sampling has occurred since last resetor construction
-	bool				isReseted() const { return !_Init; }
+	bool isReseted() const { return !_Init; }
 	// Sample pos, and return smoothed position
-	CVector2f			samplePos(const CVector2f &wantedPos, double date);
+	CVector2f samplePos(const CVector2f &wantedPos, double date);
+
 private:
 	// sample of mouse position
 	class CSample
 	{
 	public:
-		double		      Date;
-		CVector2f		  Pos;
+		double Date;
+		CVector2f Pos;
+
 	public:
 		// default ctor
-		CSample() {}
+		CSample() { }
 		// ctor with pos & date
-		CSample(double date, const NLMISC::CVector2f &pos) : Date(date), Pos(pos)
+		CSample(double date, const NLMISC::CVector2f &pos)
+		    : Date(date)
+		    , Pos(pos)
 		{
 		}
 	};
-	double		_SamplingPeriod;
-	bool		_Init;
+	double _SamplingPeriod;
+	bool _Init;
 	/** 4 samples are needed to compute smoothed position :
-	  * Sample 0 & 2 are used to compute tangent at sample 1
-	  * Sample 1 & 3 are used to compute tangent at sample 2
-	  */
+	 * Sample 0 & 2 are used to compute tangent at sample 1
+	 * Sample 1 & 3 are used to compute tangent at sample 2
+	 */
 	CSample _Sample[4];
 };
 

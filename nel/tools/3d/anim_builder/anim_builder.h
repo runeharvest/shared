@@ -19,8 +19,6 @@
 
 #include "nel/misc/types_nl.h"
 
-
-
 #endif // NL_ANIM_BUILDER_H
 
 /* End of anim_builder.h */

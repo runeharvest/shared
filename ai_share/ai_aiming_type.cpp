@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 //
 #include "ai_aiming_type.h"
@@ -23,56 +21,54 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace AI_AIMING_TYPE
+namespace AI_AIMING_TYPE {
+// The conversion table
+NL_BEGIN_STRING_CONVERSION_TABLE(TAiAimingType)
+NL_STRING_CONVERSION_TABLE_ENTRY(Random)
+
+NL_STRING_CONVERSION_TABLE_ENTRY(Head)
+NL_STRING_CONVERSION_TABLE_ENTRY(Chest)
+NL_STRING_CONVERSION_TABLE_ENTRY(Arms)
+NL_STRING_CONVERSION_TABLE_ENTRY(Hands)
+NL_STRING_CONVERSION_TABLE_ENTRY(Legs)
+NL_STRING_CONVERSION_TABLE_ENTRY(Feet)
+
+NL_STRING_CONVERSION_TABLE_ENTRY(LeastProtected)
+NL_STRING_CONVERSION_TABLE_ENTRY(AveragestProtected)
+NL_STRING_CONVERSION_TABLE_ENTRY(MostProtected)
+
+NL_STRING_CONVERSION_TABLE_ENTRY(Unknown)
+NL_END_STRING_CONVERSION_TABLE(TAiAimingType, Conversion, Unknown)
+
+const string &toString(TAiAimingType type)
 {
-	// The conversion table
-	NL_BEGIN_STRING_CONVERSION_TABLE (TAiAimingType)
-		NL_STRING_CONVERSION_TABLE_ENTRY (Random)
+	return Conversion.toString(type);
+}
 
-		NL_STRING_CONVERSION_TABLE_ENTRY (Head)
-		NL_STRING_CONVERSION_TABLE_ENTRY (Chest)
-		NL_STRING_CONVERSION_TABLE_ENTRY (Arms)
-		NL_STRING_CONVERSION_TABLE_ENTRY (Hands)
-		NL_STRING_CONVERSION_TABLE_ENTRY (Legs)
-		NL_STRING_CONVERSION_TABLE_ENTRY (Feet)
+TAiAimingType toAimingType(const string &str)
+{
+	return Conversion.fromString(str);
+}
 
-		NL_STRING_CONVERSION_TABLE_ENTRY (LeastProtected)
-		NL_STRING_CONVERSION_TABLE_ENTRY (AveragestProtected)
-		NL_STRING_CONVERSION_TABLE_ENTRY (MostProtected)
-		
-		NL_STRING_CONVERSION_TABLE_ENTRY (Unknown)
-	NL_END_STRING_CONVERSION_TABLE(TAiAimingType, Conversion, Unknown)
-
-
-	const string &toString(TAiAimingType type)
+SLOT_EQUIPMENT::TSlotEquipment toSlot(TAiAimingType type)
+{
+	switch (type)
 	{
-		return Conversion.toString(type);
-	}
-
-	TAiAimingType toAimingType( const string &str)
-	{
-		return Conversion.fromString(str);
-	}
-
-	SLOT_EQUIPMENT::TSlotEquipment toSlot(TAiAimingType type)
-	{
-		switch(type)
-		{
-		case Head:
-			return SLOT_EQUIPMENT::HEAD;
-		case Chest:
-			return SLOT_EQUIPMENT::CHEST;
-		case Arms:
-			return SLOT_EQUIPMENT::ARMS;
-		case Hands:
-			return SLOT_EQUIPMENT::HANDS;
-		case Legs:
-			return SLOT_EQUIPMENT::LEGS;
-		case Feet:
-			return SLOT_EQUIPMENT::FEET;
-		default:
-			return SLOT_EQUIPMENT::UNDEFINED;
-		};
-	}
+	case Head:
+		return SLOT_EQUIPMENT::HEAD;
+	case Chest:
+		return SLOT_EQUIPMENT::CHEST;
+	case Arms:
+		return SLOT_EQUIPMENT::ARMS;
+	case Hands:
+		return SLOT_EQUIPMENT::HANDS;
+	case Legs:
+		return SLOT_EQUIPMENT::LEGS;
+	case Feet:
+		return SLOT_EQUIPMENT::FEET;
+	default:
+		return SLOT_EQUIPMENT::UNDEFINED;
+	};
+}
 
 }; // AI_AIMING_TYPE

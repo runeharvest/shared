@@ -23,23 +23,21 @@
 //
 #include "nel/misc/bsphere.h"
 
-
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 //===========================================================
-CSegRemanenceShape::CSegRemanenceShape() : _GeomTouched(true),
-										   _MatTouched(true),
-										   _TextureShifting(true),
-										   _NumSlices(8),
-										   _SliceTime(0.05f),
-										   _RollUpRatio(1.f),
-										   _AnimatedMat(NULL)
+CSegRemanenceShape::CSegRemanenceShape()
+    : _GeomTouched(true)
+    , _MatTouched(true)
+    , _TextureShifting(true)
+    , _NumSlices(8)
+    , _SliceTime(0.05f)
+    , _RollUpRatio(1.f)
+    , _AnimatedMat(NULL)
 {
 	_BBox.setCenter(NLMISC::CVector::Null);
 	_BBox.setHalfSize(NLMISC::CVector(3, 3, 3));
@@ -64,7 +62,7 @@ void CSegRemanenceShape::serial(NLMISC::IStream &f)
 	if (f.isReading())
 	{
 		_GeomTouched = true;
-		_MatTouched  = true;
+		_MatTouched = true;
 	}
 	if (ver >= 1)
 	{
@@ -120,19 +118,17 @@ void CSegRemanenceShape::setNumCorners(uint numCorners)
 void CSegRemanenceShape::render(IDriver *drv, CTransformShape *trans, bool opaquePass)
 {
 	if ((!opaquePass && _Mat.getBlend())
-	    || (opaquePass && !_Mat.getBlend())
-	   )
+	    || (opaquePass && !_Mat.getBlend()))
 	{
 		CSegRemanence *sr = NLMISC::safe_cast<CSegRemanence *>(trans);
-		#ifndef DEBUG_SEG_REMANENCE_DISPLAY
+#ifndef DEBUG_SEG_REMANENCE_DISPLAY
 		if (!sr->isStarted()) return;
-		#endif
+#endif
 		setupMaterial();
 		//
 		sr->render(drv, _Mat);
 	}
 }
-
 
 //===========================================================
 void CSegRemanenceShape::flushTextures(IDriver &driver, uint selectedTexture)
@@ -143,7 +139,7 @@ void CSegRemanenceShape::flushTextures(IDriver &driver, uint selectedTexture)
 //===========================================================
 CTransformShape *CSegRemanenceShape::createInstance(CScene &scene)
 {
-	CSegRemanence *sr = NLMISC::safe_cast<CSegRemanence *>(scene.createModel(NL3D::SegRemanenceShapeId) );
+	CSegRemanence *sr = NLMISC::safe_cast<CSegRemanence *>(scene.createModel(NL3D::SegRemanenceShapeId));
 	sr->Shape = this;
 	CAnimatedMaterial *aniMat = NULL;
 	if (_AnimatedMat)
@@ -156,22 +152,20 @@ CTransformShape *CSegRemanenceShape::createInstance(CScene &scene)
 	// SegRemanence are added to the "Fx" Load Balancing Group.
 	sr->setLoadBalancingGroup("Fx");
 
-	sr->ITransformable::setPos( _DefaultPos.getDefaultValue() );
-	sr->ITransformable::setRotQuat( _DefaultRotQuat.getDefaultValue() );
-	sr->ITransformable::setScale( _DefaultScale.getDefaultValue() );
+	sr->ITransformable::setPos(_DefaultPos.getDefaultValue());
+	sr->ITransformable::setRotQuat(_DefaultRotQuat.getDefaultValue());
+	sr->ITransformable::setScale(_DefaultScale.getDefaultValue());
 
 	sr->setSliceTime(_SliceTime);
 
 	return sr;
 }
 
-
 //===========================================================
 float CSegRemanenceShape::getNumTriangles(float distance)
 {
-	return (float) (_NumSlices * 2);
+	return (float)(_NumSlices * 2);
 }
-
 
 //===========================================================
 void CSegRemanenceShape::setBBox(const NLMISC::CAABBox &bbox)
@@ -220,25 +214,25 @@ void CSegRemanenceShape::setAnimatedMaterial(const std::string &name)
 {
 	nlassert(!name.empty());
 	nlassert(_AnimatedMat == NULL);
-	_AnimatedMat  = new CMaterialBase;
+	_AnimatedMat = new CMaterialBase;
 	_AnimatedMat->Name = name;
 }
 
-
-
 //===========================================================
-CSegRemanenceShape::CSegRemanenceShape(const CSegRemanenceShape &other) : IShape(other), _AnimatedMat(NULL)
+CSegRemanenceShape::CSegRemanenceShape(const CSegRemanenceShape &other)
+    : IShape(other)
+    , _AnimatedMat(NULL)
 {
 	copyFromOther(other);
 }
 
 //===========================================================
-CSegRemanenceShape &CSegRemanenceShape::operator = (const CSegRemanenceShape &other)
+CSegRemanenceShape &CSegRemanenceShape::operator=(const CSegRemanenceShape &other)
 {
 	if (&other != this)
 	{
 		copyFromOther(other);
-		(IShape &) *this = (IShape &) other; // copy base part
+		(IShape &)*this = (IShape &)other; // copy base part
 	}
 	return *this;
 }
@@ -254,40 +248,38 @@ void CSegRemanenceShape::copyFromOther(const CSegRemanenceShape &other)
 {
 	if (&other == this) return;
 	CMaterialBase *otherAnimatedMat = other._AnimatedMat != NULL ? new CMaterialBase(*other._AnimatedMat)
-																 : NULL;
+	                                                             : NULL;
 	delete _AnimatedMat;
 	_AnimatedMat = otherAnimatedMat;
 
-	_GeomTouched	 = other._GeomTouched;
-	_MatTouched      = other._MatTouched;
+	_GeomTouched = other._GeomTouched;
+	_MatTouched = other._MatTouched;
 	_TextureShifting = other._TextureShifting;
-	_NumSlices       = other._NumSlices;
-	_SliceTime       = other._SliceTime;
-	_Corners		 = other._Corners;
-	_Mat             = other._Mat;
-	_BBox			 = other._BBox;
-	_RollUpRatio     = other._RollUpRatio;
+	_NumSlices = other._NumSlices;
+	_SliceTime = other._SliceTime;
+	_Corners = other._Corners;
+	_Mat = other._Mat;
+	_BBox = other._BBox;
+	_RollUpRatio = other._RollUpRatio;
 }
 
-
-
 //===========================================================
-bool CSegRemanenceShape::clip(const std::vector<CPlane>	&pyramid, const CMatrix &worldMatrix)
+bool CSegRemanenceShape::clip(const std::vector<CPlane> &pyramid, const CMatrix &worldMatrix)
 {
 	// Speed Clip: clip just the sphere.
-	NLMISC::CBSphere	localSphere(_BBox.getCenter(), _BBox.getRadius());
-	NLMISC::CBSphere	worldSphere;
+	NLMISC::CBSphere localSphere(_BBox.getCenter(), _BBox.getRadius());
+	NLMISC::CBSphere worldSphere;
 
 	// transform the sphere in WorldMatrix (with nearly good scale info).
 	localSphere.applyTransform(worldMatrix, worldSphere);
 
 	// if out of only plane, entirely out.
-	for(sint i=0;i<(sint)pyramid.size();i++)
+	for (sint i = 0; i < (sint)pyramid.size(); i++)
 	{
 		// We are sure that pyramid has normalized plane normals.
 		// if SpherMax OUT return false.
-		float	d= pyramid[i]*worldSphere.Center;
-		if(d>worldSphere.Radius)
+		float d = pyramid[i] * worldSphere.Center;
+		if (d > worldSphere.Radius)
 			return false;
 	}
 	return true;

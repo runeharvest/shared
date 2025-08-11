@@ -1,112 +1,112 @@
 
 /**********************************************************************
  *<
-	FILE: editpat.cpp
+    FILE: editpat.cpp
 
-	DESCRIPTION:  Edit Patch OSM
+    DESCRIPTION:  Edit Patch OSM
 
-	CREATED BY: Tom Hudson, Dan Silva & Rolf Berteig
+    CREATED BY: Tom Hudson, Dan Silva & Rolf Berteig
 
-	HISTORY: created 23 June, 1995
+    HISTORY: created 23 June, 1995
 
-	IMPORTANT USAGE NOTE:
+    IMPORTANT USAGE NOTE:
 
-		When you do an operation in edit patch which will change the topology, the form
-		of the code should look like this code, taken from the vertex deletion:
+        When you do an operation in edit patch which will change the topology, the form
+        of the code should look like this code, taken from the vertex deletion:
 
-		-----
+        -----
 
-			ip->GetModContexts(mcList, nodes);
-			ClearPatchDataFlag(mcList, EPD_BEENDONE);
+            ip->GetModContexts(mcList, nodes);
+            ClearPatchDataFlag(mcList, EPD_BEENDONE);
 
-			theHold.Begin();
-		-->	RecordTopologyTags();
-			for (int i = 0; i < mcList.Count(); i++)
-		{
-		int altered = 0;
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
-		if (!patchData)
-		continue;
-		if (patchData->GetFlag(EPD_BEENDONE))
-		continue;
-		
-		  // If the mesh isn't yet cache, this will cause it to get cached.
-		  PatchMesh *patch = patchData->TempData(this)->GetPatch(t);
-		  if (!patch)
-		  continue;
-		  -->		patchData->RecordTopologyTags(patch);
-		  
-			// If this is the first edit, then the delta arrays will be allocated
-			patchData->BeginEdit(t);
-			
-			  // If any bits are set in the selection set, let's DO IT!!
-			  if (patch->vertSel.NumberSet())
-			  {
-			  altered = holdNeeded = 1;
-			  if (theHold.Holding())
-			  theHold.Put(new PatchRestore(patchData, this, patch, "DoVertDelete"));
-			  // Call the vertex delete function
-			  DeleteSelVerts(patch);
-			  -->			patchData->UpdateChanges(patch);
-			  patchData->TempData(this)->Invalidate(PART_TOPO);
-			  }
-			  patchData->SetFlag(EPD_BEENDONE, TRUE);
-			  }
-			
-			if (holdNeeded)
-		{
-		-->		ResolveTopoChanges();
-		theHold.Accept(GetString(IDS_TH_VERTDELETE));
-		}
-			else 
-		{
-		ip->DisplayTempPrompt(GetString(IDS_TH_NOVERTSSEL), PROMPT_TIME);
-		theHold.End();
-		}
-			
-			nodes.DisposeTemporary();
-			ClearPatchDataFlag(mcList, EPD_BEENDONE);
+            theHold.Begin();
+        -->	RecordTopologyTags();
+            for (int i = 0; i < mcList.Count(); i++)
+        {
+        int altered = 0;
+        EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+        if (!patchData)
+        continue;
+        if (patchData->GetFlag(EPD_BEENDONE))
+        continue;
 
-		-----
+          // If the mesh isn't yet cache, this will cause it to get cached.
+          PatchMesh *patch = patchData->TempData(this)->GetPatch(t);
+          if (!patch)
+          continue;
+          -->		patchData->RecordTopologyTags(patch);
 
-		The key elements in the "changed topology" case are the calls noted by arrows.
-		These record special tags inside the object so that after the topology is changed
-		by the modifier code, the UpdateChanges code can make a new mapping from the old
-		object topology to the new.
+            // If this is the first edit, then the delta arrays will be allocated
+            patchData->BeginEdit(t);
 
-		If the operation doesn't change the topology, then the three topology tag calls
-		aren't needed and the UpdateChanges call becomes:
+              // If any bits are set in the selection set, let's DO IT!!
+              if (patch->vertSel.NumberSet())
+              {
+              altered = holdNeeded = 1;
+              if (theHold.Holding())
+              theHold.Put(new PatchRestore(patchData, this, patch, "DoVertDelete"));
+              // Call the vertex delete function
+              DeleteSelVerts(patch);
+              -->			patchData->UpdateChanges(patch);
+              patchData->TempData(this)->Invalidate(PART_TOPO);
+              }
+              patchData->SetFlag(EPD_BEENDONE, TRUE);
+              }
 
-			patchData->UpdateChanges(patch, FALSE);
+            if (holdNeeded)
+        {
+        -->		ResolveTopoChanges();
+        theHold.Accept(GetString(IDS_TH_VERTDELETE));
+        }
+            else
+        {
+        ip->DisplayTempPrompt(GetString(IDS_TH_NOVERTSSEL), PROMPT_TIME);
+        theHold.End();
+        }
 
-		This tells UpdateChanges not to bother remapping the topology.
+            nodes.DisposeTemporary();
+            ClearPatchDataFlag(mcList, EPD_BEENDONE);
+
+        -----
+
+        The key elements in the "changed topology" case are the calls noted by arrows.
+        These record special tags inside the object so that after the topology is changed
+        by the modifier code, the UpdateChanges code can make a new mapping from the old
+        object topology to the new.
+
+        If the operation doesn't change the topology, then the three topology tag calls
+        aren't needed and the UpdateChanges call becomes:
+
+            patchData->UpdateChanges(patch, FALSE);
+
+        This tells UpdateChanges not to bother remapping the topology.
 
  *>	Copyright(c) 1994, All Rights Reserved.
  **********************************************************************/
 #include "stdafx.h"
 
 #if MAX_VERSION_MAJOR >= 14
-#	include <maxscript/maxscript.h>
-#	include <maxscript/foundation/3dmath.h>
-#	include <maxscript/foundation/numbers.h>
-#	include <maxscript/maxwrapper/maxclasses.h>
-#	include <maxscript/foundation/streams.h>
-#	include <maxscript/foundation/mxstime.h>
-#	include <maxscript/maxwrapper/mxsobjects.h>
-#	include <maxscript/compiler/parser.h>
-#	include <maxscript/macros/define_instantiation_functions.h>
+#include <maxscript/maxscript.h>
+#include <maxscript/foundation/3dmath.h>
+#include <maxscript/foundation/numbers.h>
+#include <maxscript/maxwrapper/maxclasses.h>
+#include <maxscript/foundation/streams.h>
+#include <maxscript/foundation/mxstime.h>
+#include <maxscript/maxwrapper/mxsobjects.h>
+#include <maxscript/compiler/parser.h>
+#include <maxscript/macros/define_instantiation_functions.h>
 #else
-#	include <MaxScrpt/maxscrpt.h>
-#	include <MaxScrpt/3dmath.h>
+#include <MaxScrpt/maxscrpt.h>
+#include <MaxScrpt/3dmath.h>
 //	Various MAX and MXS includes
-#	include <MaxScrpt/Numbers.h>
-#	include <MaxScrpt/MAXclses.h>
-#	include <MaxScrpt/Streams.h>
-#	include <MaxScrpt/MSTime.h>
-#	include <MaxScrpt/MAXObj.h>
-#	include <MaxScrpt/Parser.h>
+#include <MaxScrpt/Numbers.h>
+#include <MaxScrpt/MAXclses.h>
+#include <MaxScrpt/Streams.h>
+#include <MaxScrpt/MSTime.h>
+#include <MaxScrpt/MAXObj.h>
+#include <MaxScrpt/Parser.h>
 //	define the new primitives using macros from SDK
-#	include <MaxScrpt/definsfn.h>
+#include <MaxScrpt/definsfn.h>
 #endif
 
 #include "editpat.h"
@@ -118,7 +118,7 @@
 #define DBG_NAMEDSELSx
 
 // Uncomment this for vert mapper debugging
-//#define VMAP_DEBUG 1
+// #define VMAP_DEBUG 1
 
 // Forward references
 INT_PTR CALLBACK PatchSelectDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
@@ -128,7 +128,7 @@ INT_PTR CALLBACK PatchSurfDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 INT_PTR CALLBACK PatchTileDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK PatchEdgeDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
-void ResetVert (PatchMesh *patch);
+void ResetVert(PatchMesh *patch);
 
 // A handy zero point
 Point3 zeroPoint(0, 0, 0);
@@ -140,10 +140,10 @@ Point3 zeroPoint(0, 0, 0);
 extern HINSTANCE hInstance;
 
 // Select by material parameters
-int sbmParams[4]     = {1, 1, RPO_DEFAULT_TESSEL, RPO_DEFAULT_TESSEL};
+int sbmParams[4] = { 1, 1, RPO_DEFAULT_TESSEL, RPO_DEFAULT_TESSEL };
 
 // Select by smooth parameters
-DWORD sbsParams[3]   = {1, 1, 0};
+DWORD sbsParams[3] = { 1, 1, 0 };
 
 float weldThreshold = 0.1f;
 
@@ -153,20 +153,17 @@ int attachReorient = 0;
 // This is a special override value which allows us to hit-test on
 // any sub-part of a patch
 
-extern int patchHitOverride;	// If zero, no override is done
+extern int patchHitOverride; // If zero, no override is done
 
-void SetPatchHitOverride(int value) 
+void SetPatchHitOverride(int value)
 {
 	patchHitOverride = value;
 }
 
-void ClearPatchHitOverride() 
+void ClearPatchHitOverride()
 {
 	patchHitOverride = 0;
 }
-
-
-
 
 PatchDeleteUser pDel;
 extern PatchRightMenu pMenu;
@@ -174,26 +171,26 @@ extern PatchRightMenu pMenu;
 /*-------------------------------------------------------------------*/
 
 static EditPatchClassDesc editPatchDesc;
-extern ClassDesc* GetEditPatchModDesc() { return &editPatchDesc; }
+extern ClassDesc *GetEditPatchModDesc() { return &editPatchDesc; }
 
 void EditPatchClassDesc::ResetClassParams(BOOL fileReset)
 {
-	sbmParams[0]   = 1;
-	sbmParams[1]   = 1;
-	sbmParams[2]   = RPO_DEFAULT_TESSEL;
-	sbmParams[3]   = RPO_DEFAULT_TESSEL;
+	sbmParams[0] = 1;
+	sbmParams[1] = 1;
+	sbmParams[2] = RPO_DEFAULT_TESSEL;
+	sbmParams[3] = RPO_DEFAULT_TESSEL;
 	EditPatchMod::condenseMat = FALSE;
 	EditPatchMod::attachMat = ATTACHMAT_IDTOMAT;
 }
 
-/*-------------------------------------------------------------------*/		
+/*-------------------------------------------------------------------*/
 
-int EditPatchMod::Display(TimeValue t, INode* inode, ViewExp *vpt, int flags, ModContext *mc) 
-{	
+int EditPatchMod::Display(TimeValue t, INode *inode, ViewExp *vpt, int flags, ModContext *mc)
+{
 	return 0;
 }
 
-void EditPatchMod::GetWorldBoundBox(TimeValue t, INode* inode, ViewExp *vpt, Box3& box, ModContext *mc) 
+void EditPatchMod::GetWorldBoundBox(TimeValue t, INode *inode, ViewExp *vpt, Box3 &box, ModContext *mc)
 {
 	box.Init();
 }
@@ -201,22 +198,22 @@ void EditPatchMod::GetWorldBoundBox(TimeValue t, INode* inode, ViewExp *vpt, Box
 //---------------------------------------------------------------------
 // UI stuff
 
-void EditPatchMod::RecordTopologyTags() 
+void EditPatchMod::RecordTopologyTags()
 {
-	ModContextList mcList;		
+	ModContextList mcList;
 	INodeTab nodes;
 	TimeValue t = ip->GetTime();
 	ip->GetModContexts(mcList, nodes);
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
-	
+
 	for (int i = 0; i < mcList.Count(); i++)
 	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
 			continue;
-		
+
 		// If the mesh isn't yet cache, this will cause it to get cached.
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(t, rpatch);
@@ -225,55 +222,55 @@ void EditPatchMod::RecordTopologyTags()
 		patch->RecordTopologyTags();
 		patchData->SetFlag(EPD_BEENDONE, TRUE);
 	}
-	
+
 	nodes.DisposeTemporary();
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 }
 
-class ChangeNamedSetRestore : public RestoreObj 
+class ChangeNamedSetRestore : public RestoreObj
 {
 public:
 	BitArray oldset, newset;
 	int index;
 	GenericNamedSelSetList *setList;
-	
-	ChangeNamedSetRestore(GenericNamedSelSetList *sl, int ix, BitArray *o) 
+
+	ChangeNamedSetRestore(GenericNamedSelSetList *sl, int ix, BitArray *o)
 	{
 		setList = sl;
 		index = ix;
 		oldset = *o;
-	}   		
-	void Restore(int isUndo) 
+	}
+	void Restore(int isUndo)
 	{
 		newset = *(setList->sets[index]);
 		*(setList->sets[index]) = oldset;
 	}
-	void Redo() 
+	void Redo()
 	{
 		*(setList->sets[index]) = newset;
 	}
-				
-	TSTR Description() {return TSTR(_T("Change Named Sel Set"));}
+
+	TSTR Description() { return TSTR(_T("Change Named Sel Set")); }
 };
 
 // Selection set, misc fixup utility function
 // This depends on PatchMesh::RecordTopologyTags being called prior to the topo changes
-void EditPatchMod::ResolveTopoChanges() 
+void EditPatchMod::ResolveTopoChanges()
 {
-	ModContextList mcList;		
+	ModContextList mcList;
 	INodeTab nodes;
 	TimeValue t = ip->GetTime();
 	ip->GetModContexts(mcList, nodes);
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
-	
+
 	for (int i = 0; i < mcList.Count(); i++)
 	{
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
 			continue;
-		
+
 		// If the mesh isn't yet cache, this will cause it to get cached.
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(t, rpatch);
@@ -337,55 +334,56 @@ void EditPatchMod::ResolveTopoChanges()
 				theHold.Put(new ChangeNamedSetRestore(&patchData->pselSet, set, oldPS));
 			patchData->pselSet[set] = newPS;
 		}
-		
+
 		// watje 4-16-99
 		patch->HookFixTopology();
-		
+
 		patchData->SetFlag(EPD_BEENDONE, TRUE);
 	}
-	
+
 	nodes.DisposeTemporary();
 	ClearPatchDataFlag(mcList, EPD_BEENDONE);
 }
 
-class EPModContextEnumProc : public ModContextEnumProc 
+class EPModContextEnumProc : public ModContextEnumProc
 {
 	float f;
+
 public:
 	EPModContextEnumProc(float f) { this->f = f; }
-	BOOL proc(ModContext *mc);  // Return FALSE to stop, TRUE to continue.
+	BOOL proc(ModContext *mc); // Return FALSE to stop, TRUE to continue.
 };
 
-BOOL EPModContextEnumProc::proc(ModContext *mc) 
+BOOL EPModContextEnumProc::proc(ModContext *mc)
 {
-	EditPatchData *patchData =(EditPatchData*)mc->localData;
-	if (patchData)		
+	EditPatchData *patchData = (EditPatchData *)mc->localData;
+	if (patchData)
 		patchData->RescaleWorldUnits(f);
 	return TRUE;
 }
 
 // World scaling
-void EditPatchMod::RescaleWorldUnits(float f) 
+void EditPatchMod::RescaleWorldUnits(float f)
 {
 	if (TestAFlag(A_WORK1))
 		return;
 	SetAFlag(A_WORK1);
-	
+
 	// rescale all our references
 	for (int i = 0; i < NumRefs(); i++)
 	{
 		ReferenceMaker *srm = GetReference(i);
-		if (srm) 
+		if (srm)
 			srm->RescaleWorldUnits(f);
 	}
-	
+
 	// Now rescale stuff inside our data structures
 	EPModContextEnumProc proc(f);
 	EnumModContexts(&proc);
 	NotifyDependents(FOREVER, PART_GEOM, REFMSG_CHANGE);
 }
 
-void EditPatchMod::InvalidateSurfaceUI() 
+void EditPatchMod::InvalidateSurfaceUI()
 {
 	if (hSurfPanel && selLevel == EP_PATCH)
 	{
@@ -394,7 +392,7 @@ void EditPatchMod::InvalidateSurfaceUI()
 	}
 }
 
-void EditPatchMod::InvalidateTileUI() 
+void EditPatchMod::InvalidateTileUI()
 {
 	if (hTilePanel && selLevel == EP_TILE)
 	{
@@ -403,7 +401,7 @@ void EditPatchMod::InvalidateTileUI()
 	}
 }
 
-void EditPatchMod::InvalidateEdgeUI() 
+void EditPatchMod::InvalidateEdgeUI()
 {
 	if (hEdgePanel && selLevel == EP_EDGE)
 	{
@@ -418,13 +416,13 @@ BitArray *EditPatchMod::GetLevelSelectionSet(PatchMesh *patch, RPatchMesh *rpatc
 	{
 	case EP_VERTEX:
 		return &patch->vertSel;
-		
+
 	case EP_PATCH:
 		return &patch->patchSel;
-		
+
 	case EP_EDGE:
 		return &patch->edgeSel;
-		
+
 	case EP_TILE:
 		return &rpatch->tileSel;
 	}
@@ -432,8 +430,8 @@ BitArray *EditPatchMod::GetLevelSelectionSet(PatchMesh *patch, RPatchMesh *rpatc
 	return NULL;
 }
 
-void EditPatchMod::UpdateSelectDisplay() 
-{	
+void EditPatchMod::UpdateSelectDisplay()
+{
 	TSTR buf;
 	int num, j;
 
@@ -451,159 +449,155 @@ void EditPatchMod::UpdateSelectDisplay()
 	case EP_OBJECT:
 		buf.printf(GetString(IDS_TH_OBJECT_SEL));
 		break;
-		
-	case EP_VERTEX: 
+
+	case EP_VERTEX: {
+		num = 0;
+		PatchMesh *thePatch = NULL;
+		for (int i = 0; i < mcList.Count(); i++)
 		{
-			num = 0;
-			PatchMesh *thePatch = NULL;
-			for (int i = 0; i < mcList.Count(); i++)
+			EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
+			if (!patchData)
+				continue;
+
+			if (patchData->tempData && patchData->TempData(this)->PatchCached(ip->GetTime()))
 			{
-				EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
-				if (!patchData)
-					continue;		
-				
-				if (patchData->tempData && patchData->TempData(this)->PatchCached(ip->GetTime()))
+				RPatchMesh *rpatch;
+				PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
+				if (!patch)
+					continue;
+				int thisNum = patch->vertSel.NumberSet();
+				if (thisNum)
 				{
-					RPatchMesh *rpatch;
-					PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
-					if (!patch)
-						continue;
-					int thisNum = patch->vertSel.NumberSet();
-					if (thisNum)
-					{
-						num += thisNum;
-						thePatch = patch;
-					}
+					num += thisNum;
+					thePatch = patch;
 				}
 			}
-			if (num == 1)
-			{
-				for (j = 0; j < thePatch->vertSel.GetSize(); j++)
-					if (thePatch->vertSel[j])
-						break;
-					buf.printf(GetString(IDS_TH_NUMVERTSEL), j + 1);
-			}
-			else
-				buf.printf(GetString(IDS_TH_NUMVERTSELP), num);
 		}
-		break;
-		
-	case EP_PATCH: 
+		if (num == 1)
 		{
-			num = 0;
-			PatchMesh *thePatch = NULL;
-			for (int i = 0; i < mcList.Count(); i++)
+			for (j = 0; j < thePatch->vertSel.GetSize(); j++)
+				if (thePatch->vertSel[j])
+					break;
+			buf.printf(GetString(IDS_TH_NUMVERTSEL), j + 1);
+		}
+		else
+			buf.printf(GetString(IDS_TH_NUMVERTSELP), num);
+	}
+	break;
+
+	case EP_PATCH: {
+		num = 0;
+		PatchMesh *thePatch = NULL;
+		for (int i = 0; i < mcList.Count(); i++)
+		{
+			EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
+			if (!patchData)
+				continue;
+
+			if (patchData->tempData && patchData->TempData(this)->PatchCached(ip->GetTime()))
 			{
-				EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
-				if (!patchData)
-					continue;		
-				
-				if (patchData->tempData && patchData->TempData(this)->PatchCached(ip->GetTime()))
+				RPatchMesh *rpatch;
+				PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
+				if (!patch)
+					continue;
+				int thisNum = patch->patchSel.NumberSet();
+				if (thisNum)
 				{
-					RPatchMesh *rpatch;
-					PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
-					if (!patch)
-						continue;
-					int thisNum = patch->patchSel.NumberSet();
-					if (thisNum)
-					{
-						num += thisNum;
-						thePatch = patch;
-					}
+					num += thisNum;
+					thePatch = patch;
 				}
 			}
-			if (num == 1)
-			{
-				for (j = 0; j < thePatch->patchSel.GetSize(); j++)
-					if (thePatch->patchSel[j])
-						break;
-					buf.printf(GetString(IDS_TH_NUMPATCHSEL), j + 1);
-			}
-			else
-				buf.printf(GetString(IDS_TH_NUMPATCHSELP), num);
 		}
-		break;
-		
-	case EP_EDGE: 
+		if (num == 1)
 		{
-			num = 0;
-			PatchMesh *thePatch = NULL;
-			for (int i = 0; i < mcList.Count(); i++)
+			for (j = 0; j < thePatch->patchSel.GetSize(); j++)
+				if (thePatch->patchSel[j])
+					break;
+			buf.printf(GetString(IDS_TH_NUMPATCHSEL), j + 1);
+		}
+		else
+			buf.printf(GetString(IDS_TH_NUMPATCHSELP), num);
+	}
+	break;
+
+	case EP_EDGE: {
+		num = 0;
+		PatchMesh *thePatch = NULL;
+		for (int i = 0; i < mcList.Count(); i++)
+		{
+			EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
+			if (!patchData)
+				continue;
+
+			if (patchData->tempData && patchData->TempData(this)->PatchCached(ip->GetTime()))
 			{
-				EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
-				if (!patchData)
-					continue;		
-				
-				if (patchData->tempData && patchData->TempData(this)->PatchCached(ip->GetTime()))
+				RPatchMesh *rpatch;
+				PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
+				if (!patch)
+					continue;
+				int thisNum = patch->edgeSel.NumberSet();
+				if (thisNum)
 				{
-					RPatchMesh *rpatch;
-					PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
-					if (!patch)
-						continue;
-					int thisNum = patch->edgeSel.NumberSet();
-					if (thisNum)
-					{
-						num += thisNum;
-						thePatch = patch;
-					}
+					num += thisNum;
+					thePatch = patch;
 				}
 			}
-			if (num == 1)
-			{
-				for (j = 0; j < thePatch->edgeSel.GetSize(); j++)
-					if (thePatch->edgeSel[j])
-						break;
-					buf.printf(GetString(IDS_TH_NUMEDGESEL), j + 1);
-			}
-			else
-				buf.printf(GetString(IDS_TH_NUMEDGESELP), num);
 		}
-		break;
-		
-	case EP_TILE: 
+		if (num == 1)
 		{
-			num = 0;
-			RPatchMesh *thePatch = NULL;
-			for (int i = 0; i < mcList.Count(); i++)
+			for (j = 0; j < thePatch->edgeSel.GetSize(); j++)
+				if (thePatch->edgeSel[j])
+					break;
+			buf.printf(GetString(IDS_TH_NUMEDGESEL), j + 1);
+		}
+		else
+			buf.printf(GetString(IDS_TH_NUMEDGESELP), num);
+	}
+	break;
+
+	case EP_TILE: {
+		num = 0;
+		RPatchMesh *thePatch = NULL;
+		for (int i = 0; i < mcList.Count(); i++)
+		{
+			EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
+			if (!patchData)
+				continue;
+
+			if (patchData->tempData && patchData->TempData(this)->PatchCached(ip->GetTime()))
 			{
-				EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
-				if (!patchData)
-					continue;		
-				
-				if (patchData->tempData && patchData->TempData(this)->PatchCached(ip->GetTime()))
+				RPatchMesh *rpatch;
+				PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
+				if (!patch)
+					continue;
+				int thisNum = rpatch->tileSel.NumberSet();
+				if (thisNum)
 				{
-					RPatchMesh *rpatch;
-					PatchMesh *patch = patchData->TempData(this)->GetPatch(ip->GetTime(), rpatch);
-					if (!patch)
-						continue;
-					int thisNum = rpatch->tileSel.NumberSet();
-					if (thisNum)
-					{
-						num += thisNum;
-						thePatch = rpatch;
-					}
+					num += thisNum;
+					thePatch = rpatch;
 				}
 			}
-			if (num == 1)
-			{
-				for (j = 0; j < thePatch->tileSel.GetSize(); j++)
-					if (thePatch->tileSel[j])
-						break;
-				buf.printf(_T("Tile %d Selected"), j + 1);
-			}
-			else
-				buf.printf(_T("%d Tiles Selected"), num);
 		}
+		if (num == 1)
+		{
+			for (j = 0; j < thePatch->tileSel.GetSize(); j++)
+				if (thePatch->tileSel[j])
+					break;
+			buf.printf(_T("Tile %d Selected"), j + 1);
+		}
+		else
+			buf.printf(_T("%d Tiles Selected"), num);
+	}
 	break;
 	}
-	
+
 	nodes.DisposeTemporary();
 	SetDlgItemText(hSelectPanel, IDC_NUMSEL_LABEL, buf);
 }
 
-void EditPatchMod::DoVertWeld() 
+void EditPatchMod::DoVertWeld()
 {
-	ModContextList mcList;		
+	ModContextList mcList;
 	INodeTab nodes;
 	TimeValue t = ip->GetTime();
 	int holdNeeded = 0;
@@ -620,20 +614,19 @@ void EditPatchMod::DoVertWeld()
 	for (int i = 0; i < mcList.Count(); i++)
 	{
 		BOOL altered = FALSE;
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
 			continue;
 
-		
 		// If the mesh isn't yet cache, this will cause it to get cached.
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(t, rpatch);
 		if (!patch)
 			continue;
 		patchData->RecordTopologyTags(patch);
-		
+
 		// If this is the first edit, then the delta arrays will be allocated
 		patchData->BeginEdit(t);
 
@@ -646,7 +639,7 @@ void EditPatchMod::DoVertWeld()
 			// Call the patch weld function
 			if (patch->Weld(weldThreshold))
 			{
-				rpatch->Weld (patch);
+				rpatch->Weld(patch);
 				altered = holdNeeded = TRUE;
 				patchData->UpdateChanges(patch, rpatch);
 				patchData->TempData(this)->Invalidate(PART_TOPO);
@@ -654,13 +647,13 @@ void EditPatchMod::DoVertWeld()
 		}
 		patchData->SetFlag(EPD_BEENDONE, TRUE);
 	}
-	
+
 	if (holdNeeded)
 	{
 		ResolveTopoChanges();
 		theHold.Accept(GetString(IDS_TH_VERTWELD));
 	}
-	else 
+	else
 	{
 		if (!hadSel)
 			ip->DisplayTempPrompt(GetString(IDS_TH_NOVERTSSEL), PROMPT_TIME);
@@ -675,9 +668,9 @@ void EditPatchMod::DoVertWeld()
 	ip->RedrawViews(ip->GetTime(), REDRAW_NORMAL);
 }
 
-void EditPatchMod::DoVertReset ()
+void EditPatchMod::DoVertReset()
 {
-	ModContextList mcList;		
+	ModContextList mcList;
 	INodeTab nodes;
 	TimeValue t = ip->GetTime();
 	int holdNeeded = 0;
@@ -694,20 +687,19 @@ void EditPatchMod::DoVertReset ()
 	for (int i = 0; i < mcList.Count(); i++)
 	{
 		BOOL altered = FALSE;
-		EditPatchData *patchData =(EditPatchData*)mcList[i]->localData;
+		EditPatchData *patchData = (EditPatchData *)mcList[i]->localData;
 		if (!patchData)
 			continue;
 		if (patchData->GetFlag(EPD_BEENDONE))
 			continue;
 
-		
 		// If the mesh isn't yet cache, this will cause it to get cached.
 		RPatchMesh *rpatch;
 		PatchMesh *patch = patchData->TempData(this)->GetPatch(t, rpatch);
 		if (!patch)
 			continue;
 		patchData->RecordTopologyTags(patch);
-		
+
 		// If this is the first edit, then the delta arrays will be allocated
 		patchData->BeginEdit(t);
 
@@ -718,34 +710,34 @@ void EditPatchMod::DoVertReset ()
 			if (theHold.Holding())
 				theHold.Put(new PatchRestore(patchData, this, patch, rpatch, _T("DoVertReset")));
 			// Call the patch weld function
-			ResetVert (patch);
+			ResetVert(patch);
 			patchData->UpdateChanges(patch, rpatch);
 			patchData->TempData(this)->Invalidate(PART_GEOM);
 			/*if (patch->Weld(weldThreshold))
 			{
-				rpatch->Weld (patch);
-				altered = holdNeeded = TRUE;
-				patchData->UpdateChanges(patch, rpatch);
-				patchData->TempData(this)->Invalidate(PART_TOPO);
+			    rpatch->Weld (patch);
+			    altered = holdNeeded = TRUE;
+			    patchData->UpdateChanges(patch, rpatch);
+			    patchData->TempData(this)->Invalidate(PART_TOPO);
 			}*/
 		}
 		patchData->SetFlag(EPD_BEENDONE, TRUE);
 	}
-	
+
 	ResolveTopoChanges();
 	theHold.Accept(_M("Reset Vertex"));
 	/*if (holdNeeded)
 	{
-		ResolveTopoChanges();
-		theHold.Accept(GetString(IDS_TH_VERTWELD));
+	    ResolveTopoChanges();
+	    theHold.Accept(GetString(IDS_TH_VERTWELD));
 	}
-	else 
+	else
 	{
-		if (!hadSel)
-			ip->DisplayTempPrompt(GetString(IDS_TH_NOVERTSSEL), PROMPT_TIME);
-		else
-			ip->DisplayTempPrompt(GetString(IDS_TH_NOWELDPERFORMED), PROMPT_TIME);
-		theHold.End();
+	    if (!hadSel)
+	        ip->DisplayTempPrompt(GetString(IDS_TH_NOVERTSSEL), PROMPT_TIME);
+	    else
+	        ip->DisplayTempPrompt(GetString(IDS_TH_NOWELDPERFORMED), PROMPT_TIME);
+	    theHold.End();
 	}*/
 
 	nodes.DisposeTemporary();
@@ -754,7 +746,7 @@ void EditPatchMod::DoVertReset ()
 	ip->RedrawViews(ip->GetTime(), REDRAW_NORMAL);
 }
 
-void EditPatchMod::PatchSelChanged() 
+void EditPatchMod::PatchSelChanged()
 {
 	SelectionChanged();
 	if (hSurfPanel && selLevel == EP_PATCH)
@@ -766,103 +758,99 @@ void EditPatchMod::PatchSelChanged()
 }
 
 /*
-class AdvParams 
+class AdvParams
 {
 public:
-	TessSubdivStyle mStyle;
-	int mMin, mMax;
-	int mTris;
+    TessSubdivStyle mStyle;
+    int mMin, mMax;
+    int mTris;
 };
 */
-
-
-
-
 
 void EditPatchMod::LocalDataChanged()
 {
 }
 
-int GetPointIndex (int nVertex, int nPatch, PatchMesh* patch)
+int GetPointIndex(int nVertex, int nPatch, PatchMesh *patch)
 {
-	for (int n=0; n<4; n++)
+	for (int n = 0; n < 4; n++)
 	{
-		if (patch->patches[nPatch].v[n]==nVertex)
+		if (patch->patches[nPatch].v[n] == nVertex)
 			return n;
 	}
-	nlassert (0);
+	nlassert(0);
 	return 0;
 }
 
-Point3 GetInterior (int nPatch, int nInt, PatchMesh* patch)
+Point3 GetInterior(int nPatch, int nInt, PatchMesh *patch)
 {
 	return patch->vecs[patch->patches[nPatch].interior[nInt]].p;
 }
 
-void ResetVert (PatchMesh *patch)
+void ResetVert(PatchMesh *patch)
 {
 	// Make a edge table
 	// Static table to avoid alloc prb
-	CVertexNeighborhood& edgeTab=vertexNeighborhoodGlobal;
-	edgeTab.build (*patch);
+	CVertexNeighborhood &edgeTab = vertexNeighborhoodGlobal;
+	edgeTab.build(*patch);
 
 	// For each vertices
-	for (int nV=0; nV<patch->numVerts; nV++)
+	for (int nV = 0; nV < patch->numVerts; nV++)
 	{
 		// Selected ?
 		if (patch->vertSel[nV])
 		{
-			Point3 vert=patch->verts[nV].p;
-			Point3 normal (0,0,0);
+			Point3 vert = patch->verts[nV].p;
+			Point3 normal(0, 0, 0);
 
 			// Count of neigbor for vertex n
-			uint listSize=edgeTab.getNeighborCount (nV);
+			uint listSize = edgeTab.getNeighborCount(nV);
 
 			// List of neigbor
-			const uint* pList=edgeTab.getNeighborList (nV);
+			const uint *pList = edgeTab.getNeighborList(nV);
 
 			// For each neigbor
 			uint nn;
-			for (nn=0; nn<listSize; nn++)
+			for (nn = 0; nn < listSize; nn++)
 			{
 #if (MAX_RELEASE < 4000)
 				// Compute average plane
-				if (patch->edges[pList[nn]].patch1!=-1)
-					normal+=patch->PatchNormal(patch->edges[pList[nn]].patch1);
-				if (patch->edges[pList[nn]].patch2!=-1)
-					normal+=patch->PatchNormal(patch->edges[pList[nn]].patch2);
+				if (patch->edges[pList[nn]].patch1 != -1)
+					normal += patch->PatchNormal(patch->edges[pList[nn]].patch1);
+				if (patch->edges[pList[nn]].patch2 != -1)
+					normal += patch->PatchNormal(patch->edges[pList[nn]].patch2);
 #else // (MAX_RELEASE <= 4000)
-				// Compute average plane
-				if (patch->edges[pList[nn]].patches[0]!=-1)
-					normal+=patch->PatchNormal(patch->edges[pList[nn]].patches[0]);
-				if (patch->edges[pList[nn]].patches[1]!=-1)
-					normal+=patch->PatchNormal(patch->edges[pList[nn]].patches[1]);
+      // Compute average plane
+				if (patch->edges[pList[nn]].patches[0] != -1)
+					normal += patch->PatchNormal(patch->edges[pList[nn]].patches[0]);
+				if (patch->edges[pList[nn]].patches[1] != -1)
+					normal += patch->PatchNormal(patch->edges[pList[nn]].patches[1]);
 #endif // (MAX_RELEASE <= 4000)
 			}
-			
+
 			// Normalize
-			normal=normal.Normalize();
-			
+			normal = normal.Normalize();
+
 			// Plane
-			float fD=-DotProd(normal, vert);
+			float fD = -DotProd(normal, vert);
 
 			// Reset normales
-			float fNorme=0.f;
+			float fNorme = 0.f;
 
 			// For each neigbor
-			for (nn=0; nn<listSize; nn++)
+			for (nn = 0; nn < listSize; nn++)
 			{
-				Point3 vect2=patch->verts[(patch->edges[pList[nn]].v1==nV)?patch->edges[pList[nn]].v2:patch->edges[pList[nn]].v1].p;
-				vect2-=vert;
-				vect2/=3.f;
-				Point3 tmp1=CrossProd (vect2, normal);
-				tmp1=CrossProd (normal, tmp1);
-				tmp1=Normalize(tmp1);
-				int nTang=(patch->edges[pList[nn]].v1==nV)?patch->edges[pList[nn]].vec12:patch->edges[pList[nn]].vec21;
-				patch->vecs[nTang].p=vert+tmp1*DotProd (tmp1,vect2);
-				tmp1=patch->vecs[nTang].p;
-				tmp1-=vert;
-				fNorme+=tmp1.Length();
+				Point3 vect2 = patch->verts[(patch->edges[pList[nn]].v1 == nV) ? patch->edges[pList[nn]].v2 : patch->edges[pList[nn]].v1].p;
+				vect2 -= vert;
+				vect2 /= 3.f;
+				Point3 tmp1 = CrossProd(vect2, normal);
+				tmp1 = CrossProd(normal, tmp1);
+				tmp1 = Normalize(tmp1);
+				int nTang = (patch->edges[pList[nn]].v1 == nV) ? patch->edges[pList[nn]].vec12 : patch->edges[pList[nn]].vec21;
+				patch->vecs[nTang].p = vert + tmp1 * DotProd(tmp1, vect2);
+				tmp1 = patch->vecs[nTang].p;
+				tmp1 -= vert;
+				fNorme += tmp1.Length();
 			}
 
 			// Renorme new normal
@@ -870,20 +858,20 @@ void ResetVert (PatchMesh *patch)
 			ite=edgeTab[nV].begin();
 			while (ite!=edgeTab[nV].end())
 			{
-				int nTang=(patch->edges[pList[nn]].v1==nV)?patch->edges[pList[nn]].vec12:patch->edges[pList[nn]].vec21;
-				patch->vecs[nTang].p=fNorme*(Normalize(patch->vecs[nTang].p-vert))+vert;
+			    int nTang=(patch->edges[pList[nn]].v1==nV)?patch->edges[pList[nn]].vec12:patch->edges[pList[nn]].vec21;
+			    patch->vecs[nTang].p=fNorme*(Normalize(patch->vecs[nTang].p-vert))+vert;
 
-				ite++;
+			    ite++;
 			}*/
 		}
 	}
 	patch->computeInteriors();
-	patch->InvalidateGeomCache ();
+	patch->InvalidateGeomCache();
 }
 
 def_visible_primitive(turn_patch, "RykolTurnPatch");
 
-Value *turn_patch_cf (Value** arg_list, int count)
+Value *turn_patch_cf(Value **arg_list, int count)
 {
 	// Make sure we have the correct number of arguments (2)
 	check_arg_count(RykolTurnPatch, 3, count);
@@ -899,18 +887,18 @@ Value *turn_patch_cf (Value** arg_list, int count)
 
 	// Get a INode pointer from the argument passed to us
 	INode *node = arg_list[0]->to_node();
-	nlassert (node);
+	nlassert(node);
 
 	// Get a Object pointer
-	ObjectState os = node->EvalWorldState(ip->GetTime()); 
+	ObjectState os = node->EvalWorldState(ip->GetTime());
 
 	// ok ?
-	bool bRet=false;
+	bool bRet = false;
 
 	if (os.obj)
 	{
 		// Get class id
-		if (os.obj->CanConvertToType(RYKOLPATCHOBJ_CLASS_ID)) 
+		if (os.obj->CanConvertToType(RYKOLPATCHOBJ_CLASS_ID))
 		{
 			bRet = true;
 			RPO *tri = (RPO *)os.obj->ConvertToType(ip->GetTime(), RYKOLPATCHOBJ_CLASS_ID);
@@ -935,12 +923,12 @@ Value *turn_patch_cf (Value** arg_list, int count)
 			// pointer that called ConvertToType()
 			if (os.obj != tri)
 				delete tri;
-		
+
 			// redraw and update
-			node->NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE); 
+			node->NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
 			ip->RedrawViews(ip->GetTime());
 		}
 	}
 
-	return bRet?&true_value:&false_value;
+	return bRet ? &true_value : &false_value;
 }

@@ -22,43 +22,39 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 // ***************************************************************************
-void	CPlayListManager::addPlaylist(CAnimationPlaylist* plist, CChannelMixer *chanMixer)
+void CPlayListManager::addPlaylist(CAnimationPlaylist *plist, CChannelMixer *chanMixer)
 {
 	nlassert(plist);
-	if(!chanMixer)
+	if (!chanMixer)
 		return;
 	// this do all the good things.
-	_List[plist]= CNode(plist, chanMixer);
+	_List[plist] = CNode(plist, chanMixer);
 }
 
-
 // ***************************************************************************
-void	CPlayListManager::removePlaylist(CAnimationPlaylist* plist)
+void CPlayListManager::removePlaylist(CAnimationPlaylist *plist)
 {
 	nlassert(plist);
 	// this do all the good things.
 	_List.erase(plist);
 }
 
-
 // ***************************************************************************
-void	CPlayListManager::animate(TGlobalAnimationTime time)
+void CPlayListManager::animate(TGlobalAnimationTime time)
 {
-	TPlayListList::iterator		it;
+	TPlayListList::iterator it;
 
-	for(it=_List.begin();it!=_List.end();)
+	for (it = _List.begin(); it != _List.end();)
 	{
-		CNode	*node= &(it->second);
+		CNode *node = &(it->second);
 		// Test refPtrs.
-		if( node->PlayList==NULL || node->ChannelMixer==NULL)
+		if (node->PlayList == NULL || node->ChannelMixer == NULL)
 		{
 			// erase it from map.
-			TPlayListList::iterator		itDel= it++;
+			TPlayListList::iterator itDel = it++;
 			_List.erase(itDel);
 		}
 		else
@@ -71,20 +67,19 @@ void	CPlayListManager::animate(TGlobalAnimationTime time)
 	}
 }
 
-
 // ***************************************************************************
-void	CPlayListManager::setup(TGlobalAnimationTime time)
+void CPlayListManager::setup(TGlobalAnimationTime time)
 {
-	TPlayListList::iterator		it;
+	TPlayListList::iterator it;
 
-	for(it=_List.begin();it!=_List.end();)
+	for (it = _List.begin(); it != _List.end();)
 	{
-		CNode	*node= &(it->second);
+		CNode *node = &(it->second);
 		// Test refPtrs.
-		if( node->PlayList==NULL || node->ChannelMixer==NULL)
+		if (node->PlayList == NULL || node->ChannelMixer == NULL)
 		{
 			// erase it from map.
-			TPlayListList::iterator		itDel= it++;
+			TPlayListList::iterator itDel = it++;
 			_List.erase(itDel);
 		}
 		else
@@ -100,18 +95,17 @@ void	CPlayListManager::setup(TGlobalAnimationTime time)
 
 void CPlayListManager::deleteAll()
 {
-	TPlayListList::iterator	it = _List.begin();
+	TPlayListList::iterator it = _List.begin();
 	while (it != _List.end())
 	{
 		TPlayListList::iterator itDel = it;
 		++it;
-		CNode *node= &(itDel->second);
+		CNode *node = &(itDel->second);
 		delete node->ChannelMixer;
 		delete node->PlayList;
 		_List.erase(itDel);
 	}
 	_List.clear();
 }
-
 
 } // NL3D

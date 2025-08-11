@@ -13,7 +13,7 @@ extern Point3 zeroPoint;
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-EPVertMapper::~EPVertMapper() 
+EPVertMapper::~EPVertMapper()
 {
 	if (vertMap)
 	{
@@ -27,7 +27,7 @@ EPVertMapper::~EPVertMapper()
 	}
 }
 
-void EPVertMapper::Build(PatchMesh &patch) 
+void EPVertMapper::Build(PatchMesh &patch)
 {
 	verts = patch.numVerts;
 	if (vertMap)
@@ -44,7 +44,7 @@ void EPVertMapper::Build(PatchMesh &patch)
 		vecMap[i] = EPMapVert(i, patch.vecs[i].p, zeroPoint);
 }
 
-void EPVertMapper::RecordTopologyTags(PatchMesh &patch) 
+void EPVertMapper::RecordTopologyTags(PatchMesh &patch)
 {
 	int i;
 	for (i = 0; i < verts; ++i)
@@ -61,7 +61,7 @@ void EPVertMapper::RecordTopologyTags(PatchMesh &patch)
 	}
 }
 
-void EPVertMapper::UpdateMapping(PatchMesh &patch) 
+void EPVertMapper::UpdateMapping(PatchMesh &patch)
 {
 	// Flush existing mapping
 	int i;
@@ -86,7 +86,7 @@ void EPVertMapper::UpdateMapping(PatchMesh &patch)
 	}
 }
 
-void EPVertMapper::RecomputeDeltas(PatchMesh &patch) 
+void EPVertMapper::RecomputeDeltas(PatchMesh &patch)
 {
 	int i;
 	for (i = 0; i < verts; ++i)
@@ -123,17 +123,16 @@ void EPVertMapper::RecomputeDeltas(PatchMesh &patch)
 	}
 }
 
-void EPVertMapper::UpdateAndApplyDeltas(PatchMesh &inPatch, PatchMesh &outPatch) 
+void EPVertMapper::UpdateAndApplyDeltas(PatchMesh &inPatch, PatchMesh &outPatch)
 {
-	
+
 	// watje 4-27-99 here to handle 0 patch situations
 	if (inPatch.numPatches == 0)
 	{
-		//		outPatch.setNumVerts(0,TRUE); 
+		//		outPatch.setNumVerts(0,TRUE);
 		return;
 	}
-	
-	
+
 	// Update the original point locations
 	int i;
 	for (i = 0; i < verts; ++i)
@@ -172,15 +171,15 @@ void EPVertMapper::UpdateAndApplyDeltas(PatchMesh &inPatch, PatchMesh &outPatch)
 			// watje 4-27-99 instead just throwing an nlassert it pops a message box up and troes to recover
 			if (!(pv.vert >= 0 && pv.vert < outPatch.numVerts))
 			{
-				outPatch.setNumVerts(pv.vert + 1, TRUE); 
+				outPatch.setNumVerts(pv.vert + 1, TRUE);
 				TSTR title = GetString(IDS_TH_EDITPATCH_CLASS),
-					warning = GetString(IDS_PW_SURFACEERROR);
-				
+				     warning = GetString(IDS_PW_SURFACEERROR);
+
 				MessageBox(GetCOREInterface()->GetMAXHWnd(),
-					warning, title, MB_OK | MB_APPLMODAL);
+				    warning, title, MB_OK | MB_APPLMODAL);
 			}
-			
-			if (i >= inPatch.numVerts) 
+
+			if (i >= inPatch.numVerts)
 				outPatch.verts[pv.vert].p = zeroPoint;
 			else
 				outPatch.verts[pv.vert].p = pv.original + pv.delta;
@@ -199,16 +198,16 @@ void EPVertMapper::UpdateAndApplyDeltas(PatchMesh &inPatch, PatchMesh &outPatch)
 			// watje 4-27-99 instead just throwing an nlassert it pops a message box up and troes to recover
 			if (!(pv.vert >= 0 && pv.vert < outPatch.numVecs))
 			{
-				outPatch.setNumVecs(pv.vert + 1, TRUE); 
-				
+				outPatch.setNumVecs(pv.vert + 1, TRUE);
+
 				TSTR title = GetString(IDS_TH_EDITPATCH_CLASS),
-					warning = GetString(IDS_PW_SURFACEERROR);
-				
+				     warning = GetString(IDS_PW_SURFACEERROR);
+
 				MessageBox(GetCOREInterface()->GetMAXHWnd(),
-					warning, title, MB_OK | MB_APPLMODAL);
+				    warning, title, MB_OK | MB_APPLMODAL);
 			}
-			
-			if (i >= inPatch.numVecs) 
+
+			if (i >= inPatch.numVecs)
 				outPatch.vecs[pv.vert].p = zeroPoint;
 			else
 				outPatch.vecs[pv.vert].p = pv.original + pv.delta;
@@ -220,7 +219,7 @@ void EPVertMapper::UpdateAndApplyDeltas(PatchMesh &inPatch, PatchMesh &outPatch)
 	}
 }
 
-EPVertMapper& EPVertMapper::operator=(EPVertMapper &from) 
+EPVertMapper &EPVertMapper::operator=(EPVertMapper &from)
 {
 	if (vertMap)
 		delete[] vertMap;
@@ -238,7 +237,7 @@ EPVertMapper& EPVertMapper::operator=(EPVertMapper &from)
 	return *this;
 }
 
-void EPVertMapper::RescaleWorldUnits(float f) 
+void EPVertMapper::RescaleWorldUnits(float f)
 {
 	int i;
 	for (i = 0; i < verts; ++i)
@@ -257,7 +256,7 @@ void EPVertMapper::RescaleWorldUnits(float f)
 
 #define EPVM_DATA_CHUNK 0x1000
 
-IOResult EPVertMapper::Save(ISave *isave) 
+IOResult EPVertMapper::Save(ISave *isave)
 {
 	ULONG nb;
 	isave->BeginChunk(EPVM_DATA_CHUNK);
@@ -269,12 +268,12 @@ IOResult EPVertMapper::Save(ISave *isave)
 	return IO_OK;
 }
 
-IOResult EPVertMapper::Load(ILoad *iload) 
+IOResult EPVertMapper::Load(ILoad *iload)
 {
 	IOResult res;
 	ULONG nb;
 	int index = 0;
-	while (IO_OK == (res = iload->OpenChunk())) 
+	while (IO_OK == (res = iload->OpenChunk()))
 	{
 		switch (iload->CurChunkID())
 		{
@@ -292,10 +291,8 @@ IOResult EPVertMapper::Load(ILoad *iload)
 			break;
 		}
 		iload->CloseChunk();
-		if (res != IO_OK) 
+		if (res != IO_OK)
 			return res;
 	}
 	return IO_OK;
 }
-
-

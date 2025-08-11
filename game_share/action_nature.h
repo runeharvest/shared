@@ -14,49 +14,45 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_ACTION_NATURE_H
 #define RY_ACTION_NATURE_H
 
 #include "nel/misc/types_nl.h"
 
-namespace ACTNATURE
+namespace ACTNATURE {
+// action nature
+enum TActionNature
 {
-	// action nature
-	enum TActionNature
-	{
-		FIGHT = 0,
-		OFFENSIVE_MAGIC,
-		CURATIVE_MAGIC,
-		CRAFT,
-		HARVEST,
-		SEARCH_MP,
-		DODGE,
-		PARRY,
-		SHIELD_USE,
-		RECHARGE,
+	FIGHT = 0,
+	OFFENSIVE_MAGIC,
+	CURATIVE_MAGIC,
+	CRAFT,
+	HARVEST,
+	SEARCH_MP,
+	DODGE,
+	PARRY,
+	SHIELD_USE,
+	RECHARGE,
 
-		NEUTRAL,	//only for multi effect on spell,progression consider it as OFFENSIVE_MAGIC
+	NEUTRAL, // only for multi effect on spell,progression consider it as OFFENSIVE_MAGIC
 
-		UNKNOWN,
-		NB_ACTION_NATURE = UNKNOWN
-	};
+	UNKNOWN,
+	NB_ACTION_NATURE = UNKNOWN
+};
 
+/**
+ * get action nature corresponding to input string
+ * \param str the input string
+ * \return the TActionNature associated to this string (UNKNOWN if the string cannot be interpreted)
+ */
+TActionNature toActionNature(const std::string &str);
 
-	/**
-	 * get action nature corresponding to input string
-	 * \param str the input string
-	 * \return the TActionNature associated to this string (UNKNOWN if the string cannot be interpreted)
-	 */
-	TActionNature toActionNature(const std::string &str);
-
-	/**
-	 * get the action nature string corresponding to enum
-	 * \param nature the TActionNature value
-	 * \return nature as a string (or UNKNOWN)
-	 */
-	const std::string& toString(TActionNature nature);
+/**
+ * get the action nature string corresponding to enum
+ * \param nature the TActionNature value
+ * \return nature as a string (or UNKNOWN)
+ */
+const std::string &toString(TActionNature nature);
 }; // ACTNATURE
 
 #endif // RY_ACTION_NATURE_H

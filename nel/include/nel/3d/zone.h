@@ -31,10 +31,7 @@
 #include <vector>
 #include <map>
 
-
-namespace NL3D
-{
-
+namespace NL3D {
 
 class CZone;
 class CLandscape;
@@ -43,17 +40,15 @@ class CTileBank;
 
 using NLMISC::CAABBoxExt;
 
-
 // ***************************************************************************
-typedef	std::map<uint16, CZone*>			TZoneMap;
-typedef	std::map<uint16, CZone*>::iterator	ItZoneMap;
-
+typedef std::map<uint16, CZone *> TZoneMap;
+typedef std::map<uint16, CZone *>::iterator ItZoneMap;
 
 // ***************************************************************************
 /**
  * The struct for connectivity of zone vertices.
  */
-struct	CBorderVertex
+struct CBorderVertex
 {
 	/* ***********************************************
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
@@ -61,15 +56,14 @@ struct	CBorderVertex
 	 * ***********************************************/
 
 	// The index of vertex in the current zone to bind.
-	uint16			CurrentVertex;
+	uint16 CurrentVertex;
 	// The neighbor zone Id.
-	uint16			NeighborZoneId;
+	uint16 NeighborZoneId;
 	// The index of vertex in the neighbor zone to bind to CurrentVertex.
-	uint16			NeighborVertex;
+	uint16 NeighborVertex;
 
-	void			serial(NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 };
-
 
 // ***************************************************************************
 /**
@@ -79,66 +73,62 @@ struct	CBorderVertex
  * \author Nevrax France
  * \date 2000
  */
-struct	CPatchInfo
+struct CPatchInfo
 {
 	/* ***********************************************
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
 	 *	It can be loaded/called through CAsyncFileManager for instance
 	 * ***********************************************/
 public:
-
 	/** A bind Info on a edge of a patch.
 	 * Entry 0 is only useful for Bind One/One+
 	 * Entry 1 is only useful for Bind One/Two+
 	 * Entry 2/3 is only useful for Bind One/Four.
 	 */
-	struct	CBindInfo
+	struct CBindInfo
 	{
 		/** The number of patchs on this edge. 0,1, 2 or 4.  0 means no neigbor on this edge. \b 5 is a special code,
 		 * which means the same thing than NPatchs==1, but "I am one of the little patch connected to the bigger neigbor".
 		 * Like when NPatchs==1, ZoneId, Next[0] and Edge[0] must be valid.
 		 */
-		uint8			NPatchs;
+		uint8 NPatchs;
 
 		/// The neighbor zone of all neigbor patch. Often the same zone as the patch (but on zone border).
-		uint16			ZoneId;
+		uint16 ZoneId;
 		/// The neighbor patch i.
-		uint16			Next[4];
+		uint16 Next[4];
 		/// On which edge of Nexti we are binded.
-		uint8			Edge[4];
+		uint8 Edge[4];
 
 	public:
-		void			serial(NLMISC::IStream &f);
-		CBindInfo() {NPatchs=0;}
+		void serial(NLMISC::IStream &f);
+		CBindInfo() { NPatchs = 0; }
 	};
-
 
 public:
 	/// \name Patch geometry.
 	// @{
 	/// The patch coordinates.
-	CBezierPatch	Patch;
+	CBezierPatch Patch;
 	/// Tile Order for the patch.
-	uint8			OrderS, OrderT;
+	uint8 OrderS, OrderT;
 	/// The Base Size*bumpiness of the patch (/2 at each subdivide). Set to 0, if you want CZone to compute it for you.
-	float			ErrorSize;
+	float ErrorSize;
 	/// The base corner vertices indices in the current zone. Used for patch connectivity.
-	uint16			BaseVertices[4];
+	uint16 BaseVertices[4];
 
 	/** "The don't smooth" flags. For each edge of the patch (0~3), the flag means that this patch mustn't be smoothed
 	with its neightbor. The n-th edge links the vertices "n" and "(n+1)%4". The flag for the n-th edge is (1<<n). */
-	uint8			Flags;
-
+	uint8 Flags;
 
 	/// The orientation of the NoiseMap. 0,1,2,3. This represent a CCW rotation of the NoiseMap.
-	uint8			NoiseRotation;
+	uint8 NoiseRotation;
 
 	/// setup NoiseSmooth flags: used for Noise geometry and lighting. NB: convention: corner0==A, corner1==B ...
-	void			setCornerSmoothFlag(uint corner, bool smooth);
-	bool			getCornerSmoothFlag(uint corner) const;
+	void setCornerSmoothFlag(uint corner, bool smooth);
+	bool getCornerSmoothFlag(uint corner) const;
 
 	// @}
-
 
 	/// \name Patch texture.
 	// @{
@@ -146,19 +136,19 @@ public:
 	/** The Tiles for this patch. There must be OrderS*OrderT tiles.
 	 * They are stored in line first order, from S=0 to 1, and T=0 to 1.
 	 */
-	std::vector<CTileElement>	Tiles;
+	std::vector<CTileElement> Tiles;
 
 	/** The Tile colors for this patch. There must be (OrderS+1)*(OrderT+1) tile colors. Those are the colors at
 	 * the corners of the tiles.
 	 * They are stored in line first order, from S=0 to 1, and T=0 to 1.
 	 */
-	std::vector<CTileColor>		TileColors;
+	std::vector<CTileColor> TileColors;
 
 	/** The Tile lumels for this patch. There must be (OrderS*4+1)*(OrderT*4+1) tile lumels. Those are lumel value
 	 *  in tiles. There is 4x4 lumels by tiles plus last lumels.
 	 *  They are stored in line first order, from S=0 to 1, and T=0 to 1.
 	 */
-	std::vector<uint8>			Lumels;
+	std::vector<uint8> Lumels;
 
 	/** There is (OrderS/2+1) * (OrderT/2+1) tiles light influence.
 	 *	It indicates which static pointLight influence each corner of a TessBlock (block of 2*2 tiles).
@@ -168,90 +158,87 @@ public:
 	 *
 	 * They are stored in line first order, from S=0 to 1, and T=0 to 1.
 	 */
-	std::vector<CTileLightInfluence>		TileLightInfluences;
+	std::vector<CTileLightInfluence> TileLightInfluences;
 
 	// @}
 
 	/// \name Smooth flags methods
 
 	/**
-	  * Set the smooth flag for the n-th edge. flag is false if this edge must by smoothed, true else.
-	  */
-	void setSmoothFlag (uint edge, bool flag)
+	 * Set the smooth flag for the n-th edge. flag is false if this edge must by smoothed, true else.
+	 */
+	void setSmoothFlag(uint edge, bool flag)
 	{
 		// Erase it
-		Flags&=~(1<<edge);
+		Flags &= ~(1 << edge);
 
 		// Set it
-		Flags|=(((uint)flag)<<edge);
+		Flags |= (((uint)flag) << edge);
 	}
 
 	/**
-	  * Get the smooth flag for the n-th edge. Return true if this edge must by smoothed, false else.
-	  */
-	bool getSmoothFlag (uint edge)
+	 * Get the smooth flag for the n-th edge. Return true if this edge must by smoothed, false else.
+	 */
+	bool getSmoothFlag(uint edge)
 	{
 		// Test it
-		return ((Flags&(1<<edge))!=0);
+		return ((Flags & (1 << edge)) != 0);
 	}
 
 	/** Get neighbor tile across a edge
-	  *
-	  * \param patchid is the id of this patch
-	  * \param edge is the edge shared with the neigbor
-	  * \param position is the position over the edge in CCW across the patch.
-	  * So if edge == 0, position is oriented like OT
-	  * So if edge == 1, position is oriented like OS
-	  * So if edge == 2, position is oriented like -OT
-	  * So if edge == 3, position is oriented like -OS
-	  * \param patchOut will be filled with the output patch id
-	  * \param sOut will be filled with the output patch s coordinate
-	  * \param tOut will be filled with the output patch t coordinate
-	  * \param patchInfos is the vector of all patch info
-	  * \return false if no neighbor has been found or tile ratio is not the same than in this patch.
-	  */
-	bool getNeighborTile (uint patchId, uint edge, sint position, uint &patchOut, sint &sOut, sint &tOut, const std::vector<CPatchInfo> &patchInfos) const;
+	 *
+	 * \param patchid is the id of this patch
+	 * \param edge is the edge shared with the neigbor
+	 * \param position is the position over the edge in CCW across the patch.
+	 * So if edge == 0, position is oriented like OT
+	 * So if edge == 1, position is oriented like OS
+	 * So if edge == 2, position is oriented like -OT
+	 * So if edge == 3, position is oriented like -OS
+	 * \param patchOut will be filled with the output patch id
+	 * \param sOut will be filled with the output patch s coordinate
+	 * \param tOut will be filled with the output patch t coordinate
+	 * \param patchInfos is the vector of all patch info
+	 * \return false if no neighbor has been found or tile ratio is not the same than in this patch.
+	 */
+	bool getNeighborTile(uint patchId, uint edge, sint position, uint &patchOut, sint &sOut, sint &tOut, const std::vector<CPatchInfo> &patchInfos) const;
 
 	/** Adjusts a CPatchInfo array to get a symmetrized / rotated zone with matching oriented tiles.
-	  * This method only adjuste tile and vertex color array, does'nt transform vertices.
-	  *
-	  * Transform an array of patchInfo by a symmetry on OY axis followed by a 90deg CCW rotation (0, 1, 2, 3).
-	  *
-	  * The method doesn't transform vertices.
-	  * If symmetry, the method invert 0-3 and 1-2 vertices indexes to get CCW oriented patches. It will fix bind information.
-	  * The method fixes tile and color vertex arrays.
-	  * The method fixes tile rotation, 256 cases and tile transistions.
-	  *
-	  * Return false if something wrong.
-	  */
-	static bool transform (std::vector<CPatchInfo> &patchInfo, NL3D::CZoneSymmetrisation &zoneSymmetry, const NL3D::CTileBank &bank, bool symmetry, uint rotate, float snapCell, float weldThreshold, const NLMISC::CMatrix &toOriginalSpace);
+	 * This method only adjuste tile and vertex color array, does'nt transform vertices.
+	 *
+	 * Transform an array of patchInfo by a symmetry on OY axis followed by a 90deg CCW rotation (0, 1, 2, 3).
+	 *
+	 * The method doesn't transform vertices.
+	 * If symmetry, the method invert 0-3 and 1-2 vertices indexes to get CCW oriented patches. It will fix bind information.
+	 * The method fixes tile and color vertex arrays.
+	 * The method fixes tile rotation, 256 cases and tile transistions.
+	 *
+	 * Return false if something wrong.
+	 */
+	static bool transform(std::vector<CPatchInfo> &patchInfo, NL3D::CZoneSymmetrisation &zoneSymmetry, const NL3D::CTileBank &bank, bool symmetry, uint rotate, float snapCell, float weldThreshold, const NLMISC::CMatrix &toOriginalSpace);
 
 	// Transform tile and 256 case with rotation and symmetry parameters
-	static bool getTileSymmetryRotate (const NL3D::CTileBank &bank, uint tile, bool &symmetry, uint &rotate);
-	static bool transformTile (const NL3D::CTileBank &bank, uint &tile, uint &tileRotation, bool symmetry, uint rotate, bool goofy);
-	static void transform256Case (const NL3D::CTileBank &bank, uint8 &case256, uint tileRotation, bool symmetry, uint rotate, bool goofy);
+	static bool getTileSymmetryRotate(const NL3D::CTileBank &bank, uint tile, bool &symmetry, uint &rotate);
+	static bool transformTile(const NL3D::CTileBank &bank, uint &tile, uint &tileRotation, bool symmetry, uint rotate, bool goofy);
+	static void transform256Case(const NL3D::CTileBank &bank, uint8 &case256, uint tileRotation, bool symmetry, uint rotate, bool goofy);
 
 	/// \name Patch Binding.
 	// @{
-	CBindInfo		BindEdges[4];
+	CBindInfo BindEdges[4];
 	// @}
-
 
 public:
 	CPatchInfo()
 	{
-		ErrorSize= 0;
+		ErrorSize = 0;
 		// No Rotation / not smooth by default.
-		NoiseRotation= 0;
-		_CornerSmoothFlag= 0;
+		NoiseRotation = 0;
+		_CornerSmoothFlag = 0;
 	}
 
 private:
 	// Noise Smooth flags.
-	uint8			_CornerSmoothFlag;
-
+	uint8 _CornerSmoothFlag;
 };
-
 
 // ***************************************************************************
 /**
@@ -261,24 +248,23 @@ private:
  * \author Nevrax France
  * \date 2000
  */
-struct	CZoneInfo
+struct CZoneInfo
 {
 	/// zoneId the Unique ID of this zone.
-	uint16						ZoneId;
+	uint16 ZoneId;
 	/// patchs the PatchInfo of this zone.
-	std::vector<CPatchInfo>		Patchs;
+	std::vector<CPatchInfo> Patchs;
 	/** borderVertices vertices connectivity for this zone. NB: borderVertices must contains the connectivity
 	 *	across zones. It is VERY IMPORTANT to setup zone corner connectivity too. A "corner borderVertex" may appear
 	 *	3 times here. One for each other zone of the corner.
 	 */
-	std::vector<CBorderVertex>	BorderVertices;
+	std::vector<CBorderVertex> BorderVertices;
 
 	/** List of PointLights that may influences Patchs and objects walking on them.
 	 *	Must be of good size regarding to Patchs[i].TileLightInfluences data
 	 */
-	std::vector<CPointLightNamed>	PointLights;
+	std::vector<CPointLightNamed> PointLights;
 };
-
 
 // ***************************************************************************
 /**
@@ -298,16 +284,16 @@ class CZone
 {
 public:
 	// The stored patch structure for compile() - ation.
-	struct	CPatchConnect
+	struct CPatchConnect
 	{
 		// NB: same meanings than in CPatchInfo.
-		uint8			OldOrderS, OldOrderT;
-		float			ErrorSize;
-		uint16			BaseVertices[4];
-		CPatchInfo::CBindInfo		BindEdges[4];
+		uint8 OldOrderS, OldOrderT;
+		float ErrorSize;
+		uint16 BaseVertices[4];
+		CPatchInfo::CBindInfo BindEdges[4];
 
 	public:
-		void			serial(NLMISC::IStream &f);
+		void serial(NLMISC::IStream &f);
 	};
 
 public:
@@ -321,7 +307,6 @@ public:
 	/// Destructor
 	~CZone();
 
-
 	/** Build a zone.
 	 * This method do:
 	 *	- compress the patchs coordinates.
@@ -333,22 +318,19 @@ public:
 	 *
 	 * \param numVertices maximize the numgber of vertices used by this zone with this value.
 	 */
-	void			build(const CZoneInfo &zoneInfo, uint32 numVertices=0);
-
+	void build(const CZoneInfo &zoneInfo, uint32 numVertices = 0);
 
 	/** Build a zone. Deprecated.
 	 *	Should use build(CZoneInfo &) instead. see this method
 	 */
-	void			build(uint16 zoneId, const std::vector<CPatchInfo> &patchs, const std::vector<CBorderVertex> &borderVertices, uint32 numVertices=0);
-
+	void build(uint16 zoneId, const std::vector<CPatchInfo> &patchs, const std::vector<CBorderVertex> &borderVertices, uint32 numVertices = 0);
 
 	/** Build a copy of a zone.
 	 * This method do a copy of zone (should be builded but maybe not compiled).
 	 *
 	 * NB: cannot build on a compiled zone. must release the zone before....
 	 */
-	void			build(const CZone &zone);
-
+	void build(const CZone &zone);
 
 	/** Retrieve zone patchinfo.
 	 * This method uncompress the patchs coordinates and all info into the patch info/borderVertices.
@@ -356,21 +338,17 @@ public:
 	 * Same remark for TileLightInfluences, due to light sorting.
 	 *
 	 */
-	void			retrieve(CZoneInfo &zoneInfo);
-
+	void retrieve(CZoneInfo &zoneInfo);
 
 	/** Retrieve zone patchinfo. Deprecated.
 	 *	Should use retrieve(CZoneInfo &) instead. see this method.
 	 */
-	void			retrieve(std::vector<CPatchInfo> &patchs, std::vector<CBorderVertex> &borderVertices);
-
-
+	void retrieve(std::vector<CPatchInfo> &patchs, std::vector<CBorderVertex> &borderVertices);
 
 	/** Debug a zone, print binds in display.
 	 *
 	 */
-	void			debugBinds(FILE *f= stdout);
-
+	void debugBinds(FILE *f = stdout);
 
 	/** Compile a zone. Make it usable for clip()/refine()/render().
 	 * This method do:
@@ -384,7 +362,7 @@ public:
 	 * NB: assert if already compiled.
 	 * assert if zone already exist in loadedZones.
 	 */
-	void			compile(CLandscape *landscape, TZoneMap &loadedZones);
+	void compile(CLandscape *landscape, TZoneMap &loadedZones);
 
 	/** Release a zone.
 	 * This method do:
@@ -396,14 +374,12 @@ public:
 	 *
 	 * NB: no-op if not compiled.
 	 */
-	void			release(TZoneMap &loadedZones);
-
+	void release(TZoneMap &loadedZones);
 
 	/** Load/save a zone.
 	 * Save work even if zone is not compiled, but load must be done on a not compiled zone...
 	 */
-	void			serial(NLMISC::IStream &f);
-
+	void serial(NLMISC::IStream &f);
 
 	/**
 	 * Update and refresh a patch texture.
@@ -412,8 +388,7 @@ public:
 	 * \param tiles the patch texture. assert if not of good size (OrderS*OrderT). Can be NULL if you don't want to change the patch texture.
 	 * \param colors the patch texture. assert if not of good size ((OrderS+1)*(OrderT+1)). Can be NULL if you don't want to change the patch colors.
 	 */
-	void			changePatchTextureAndColor (sint numPatch, const std::vector<CTileElement> *tiles, const std::vector<CTileColor> *colors);
-
+	void changePatchTextureAndColor(sint numPatch, const std::vector<CTileElement> *tiles, const std::vector<CTileColor> *colors);
 
 	/**
 	 * refresh the geometry (re-compute vertices).
@@ -426,8 +401,7 @@ public:
 	 *		- TessBlocks BSphere may be too big. Clip is worse (too big), but doesn't matter.
 	 * \param numPatch the index of patch in this zone. assert if bad id.
 	 */
-	void			refreshTesselationGeometry(sint numPatch);
-
+	void refreshTesselationGeometry(sint numPatch);
 
 	/**
 	 * Get a patch texture.
@@ -462,37 +436,37 @@ public:
 	 *
 	 *	\return the pointer of the landscape of the zone or NULL if the zone hasn't be compiled.
 	 */
-	CLandscape*		getLandscape () const
+	CLandscape *getLandscape() const
 	{
 		return Landscape;
 	}
 
 	// NB: for all those function, CTessFace static rendering context must be setup.
 	/// Clip a zone. To know if must be rendered etc... A zone is IN if in BACK of at least one plane of the pyramid.
-	void			clip(const std::vector<CPlane>	&pyramid);
+	void clip(const std::vector<CPlane> &pyramid);
 	/// PreRender a zone (if needed).
-	void			preRender();
+	void preRender();
 	// release Far render pass/reset Tile/Far render. Delete also VB, and FaceVectors
-	void			resetRenderFarAndDeleteVBFV();
+	void resetRenderFarAndDeleteVBFV();
 	/// For changing TileMaxSubdivision. force tesselation to be under tile.
-	void			forceMergeAtTileLevel();
+	void forceMergeAtTileLevel();
 
 	/// force Refine a zone.
-	void			refineAll();
+	void refineAll();
 	/// This is especially for Pacs. exlude a patch to be refineAll()ed.
-	void			excludePatchFromRefineAll(uint patch, bool exclude);
+	void excludePatchFromRefineAll(uint patch, bool exclude);
 	/** This is especially for Pacs. see CLandscape desc.
 	 */
-	void			averageTesselationVertices();
+	void averageTesselationVertices();
 
 	// Accessors.
-	const CVector	&getPatchBias() const {return PatchBias;}
-	float			getPatchScale() const {return PatchScale;}
-	bool			compiled() const {return Compiled;}
-	uint16			getZoneId() const {return ZoneId;}
-	sint			getNumPatchs() const {return (sint)Patchs.size();}
+	const CVector &getPatchBias() const { return PatchBias; }
+	float getPatchScale() const { return PatchScale; }
+	bool compiled() const { return Compiled; }
+	uint16 getZoneId() const { return ZoneId; }
+	sint getNumPatchs() const { return (sint)Patchs.size(); }
 	// Return the Bounding Box of the zone.
-	const CAABBoxExt	&getZoneBB() const {return ZoneBB;}
+	const CAABBoxExt &getZoneBB() const { return ZoneBB; }
 
 	/**
 	 * Get a read only patch pointer.
@@ -500,7 +474,11 @@ public:
 	 * \param patch the index of patch to get.
 	 * \return A patch pointer in read only.
 	 */
-	const CPatch	*getPatch(sint patch) const {nlassert(patch>=0 && patch<(sint)Patchs.size()); return &(Patchs[patch]);}
+	const CPatch *getPatch(sint patch) const
+	{
+		nlassert(patch >= 0 && patch < (sint)Patchs.size());
+		return &(Patchs[patch]);
+	}
 
 	/**
 	 * Get a read only patch connect pointer.
@@ -508,128 +486,132 @@ public:
 	 * \param patch the index of patch to get.
 	 * \return A patch pointer in read only.
 	 */
-	const CPatchConnect	*getPatchConnect(sint patch) const
-		{nlassert(patch>=0 && patch<(sint)Patchs.size()); return &(PatchConnects[patch]);}
-
+	const CPatchConnect *getPatchConnect(sint patch) const
+	{
+		nlassert(patch >= 0 && patch < (sint)Patchs.size());
+		return &(PatchConnects[patch]);
+	}
 
 	/** apply a landscape heightfield on a zone (modification of Z control points values).
 	 *  NB: this is done in Landscape addZone(), before compile().
 	 * \param landScape the landscape which gives Z delta values, for a x,y point.
 	 */
-	void			applyHeightField(const CLandscape &landScape);
+	void applyHeightField(const CLandscape &landScape);
 
 	/** Debug purpose only : setup the colors of the patch of this zone so that it shows which tiles
-	  * have vegetable disabled, or are above, below water.
-	  * User provides a table with 4 colors for each state :
-	  * color 0 = above water
-	  * color 1 = underwater
-	  * color 2 = intersect water
-	  * color 3 = vegetable disabled
-	  */
+	 * have vegetable disabled, or are above, below water.
+	 * User provides a table with 4 colors for each state :
+	 * color 0 = above water
+	 * color 1 = underwater
+	 * color 2 = intersect water
+	 * color 3 = vegetable disabled
+	 */
 	void setupColorsFromTileFlags(const NLMISC::CRGBA colors[4]);
 
 	/** Copy the tiles flags from a src patch to a patch of this zone.
-	  * the patch must match of course...
-	  */
+	 * the patch must match of course...
+	 */
 	void copyTilesFlags(sint destPatchId, const CPatch *srcPatch);
 
 	/** Get the Bounding spehere of a patch. Stored in Zone as an array and not in CPatch for Fast Memory access
-		consideration during clipping.
-		Work only when zone compiled.
+	    consideration during clipping.
+	    Work only when zone compiled.
 	*/
-	const CBSphere	&getPatchBSphere(uint patch) const;
+	const CBSphere &getPatchBSphere(uint patch) const;
 
 	/// Is the patch clipped (ie not visible). crash if bad Id.
-	bool			isPatchRenderClipped(uint patch) const {return _PatchRenderClipped.get(patch);}
+	bool isPatchRenderClipped(uint patch) const { return _PatchRenderClipped.get(patch); }
 
-// Private part.
+	// Private part.
 private:
-/*********************************/
+	/*********************************/
 	// A smartptrisable vertex.
-	struct	CTessBaseVertex : public NLMISC::CRefCount
+	struct CTessBaseVertex : public NLMISC::CRefCount
 	{
-		CTessVertex		Vert;
+		CTessVertex Vert;
 	};
 
 	// Zone vertices.
-	typedef	NLMISC::CSmartPtr<CTessBaseVertex>	PBaseVertex;
-	typedef	std::vector<PBaseVertex>			TBaseVerticesVec;
-
+	typedef NLMISC::CSmartPtr<CTessBaseVertex> PBaseVertex;
+	typedef std::vector<PBaseVertex> TBaseVerticesVec;
 
 private:
 	// The lanscape which own this zone. Useful for texture management.
 	// Filled at compilation only.
-	CLandscape		*Landscape;
+	CLandscape *Landscape;
 
 	// Misc.
-	uint16			ZoneId;
-	bool			Compiled;
-	CAABBoxExt		ZoneBB;
-	CVector			PatchBias;
-	float			PatchScale;
+	uint16 ZoneId;
+	bool Compiled;
+	CAABBoxExt ZoneBB;
+	CVector PatchBias;
+	float PatchScale;
 
 	// The number of vertices she access (maybe on border).
-	sint32				NumVertices;
+	sint32 NumVertices;
 	// The smartptr on zone vertices.
-	TBaseVerticesVec	BaseVertices;
+	TBaseVerticesVec BaseVertices;
 	// The list of border vertices.
-	std::vector<CBorderVertex>	BorderVertices;
+	std::vector<CBorderVertex> BorderVertices;
 	// NB: No problem on corners, since zones are compile()-ed with knowledge of neighbors.
 
 	// The patchs.
-	std::vector<CPatch>			Patchs;
-	std::vector<CPatchConnect>	PatchConnects;
+	std::vector<CPatch> Patchs;
+	std::vector<CPatchConnect> PatchConnects;
 	// Clipped States and BSphere stored here and not in CPatch for faster memory access during clip
-	std::vector<CBSphere>		_PatchBSpheres;
-	NLMISC::CBitSet				_PatchRenderClipped;
-	NLMISC::CBitSet				_PatchOldRenderClipped;
-
+	std::vector<CBSphere> _PatchBSpheres;
+	NLMISC::CBitSet _PatchRenderClipped;
+	NLMISC::CBitSet _PatchOldRenderClipped;
 
 	/** List of PointLights that may influences Patchs and objects walking on them.
 	 */
-	CPointLightNamedArray			_PointLightArray;
-
+	CPointLightNamedArray _PointLightArray;
 
 private:
-	friend	class CLandscape;
-	friend	class CTessFace;
+	friend class CLandscape;
+	friend class CTessFace;
 	// Should do this, for texture mgt.
-	friend	class CPatch;
+	friend class CPatch;
 
-	sint			ClipResult;
-	enum	TClipResult {ClipIn= 0, ClipOut= 1, ClipSide= 2};
-
+	sint ClipResult;
+	enum TClipResult
+	{
+		ClipIn = 0,
+		ClipOut = 1,
+		ClipSide = 2
+	};
 
 private:
 	/**
 	 * Force border patchs (those who don't bind to current zone) to re bind() them, using new neighborood.
 	 * no-op if zone is not compiled.
 	 */
-	void			rebindBorder(TZoneMap &loadedZones);
+	void rebindBorder(TZoneMap &loadedZones);
 
-	PBaseVertex		getBaseVertex(sint vert) const {return BaseVertices[vert];}
-	CPatch			*getPatch(sint patch) {nlassert(patch>=0 && patch<(sint)Patchs.size()); return &(Patchs[patch]);}
-	static CPatch	*getZonePatch(TZoneMap &loadedZones, sint zoneId, sint patch);
+	PBaseVertex getBaseVertex(sint vert) const { return BaseVertices[vert]; }
+	CPatch *getPatch(sint patch)
+	{
+		nlassert(patch >= 0 && patch < (sint)Patchs.size());
+		return &(Patchs[patch]);
+	}
+	static CPatch *getZonePatch(TZoneMap &loadedZones, sint zoneId, sint patch);
 	// Bind the patch with ones which are loaded...
-	static void		unbindPatch(CPatch &pa);
-	static void		bindPatch(TZoneMap &loadedZones, CPatch &pa, CPatchConnect &pc, bool rebind);
+	static void unbindPatch(CPatch &pa);
+	static void bindPatch(TZoneMap &loadedZones, CPatch &pa, CPatchConnect &pc, bool rebind);
 	// Is the patch on a border of this zone???
-	bool			patchOnBorder(const CPatchConnect &pc) const;
+	bool patchOnBorder(const CPatchConnect &pc) const;
 
 	// compute AABBox, PatchBias and PatchScale, from a bbox.
-	void			computeBBScaleBias(const CAABBox	&bb);
-
+	void computeBBScaleBias(const CAABBox &bb);
 
 	// For CPatch: build a bindInfo.
-	void			buildBindInfo(uint patchId, uint edge, CZone *neighborZone, CPatch::CBindInfo	&paBind);
+	void buildBindInfo(uint patchId, uint edge, CZone *neighborZone, CPatch::CBindInfo &paBind);
 
 	// Patch Array Clip
-	void			clipPatchs(const std::vector<CPlane>	&pyramid);
+	void clipPatchs(const std::vector<CPlane> &pyramid);
 };
 
-
 } // NL3D
-
 
 #endif // NL_ZONE_H
 

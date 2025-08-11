@@ -20,11 +20,10 @@
 // Scene Exportation
 
 // A scene is made of virtual object instance
-// An object instance is 
+// An object instance is
 // - A reference to a mesh (refered by the name of the node)
 // - The transformations to get it to the world
 // - The parent
-
 
 #include "std_afx.h"
 #include "nel_export.h"
@@ -42,32 +41,32 @@ using namespace NLMISC;
 // -----------------------------------------------------------------------------------------------
 // -----------------------------------------------------------------------------------------------
 // -----------------------------------------------------------------------------------------------
-bool CNelExport::exportInstanceGroup(string filename, vector<INode*>& vectNode)
+bool CNelExport::exportInstanceGroup(string filename, vector<INode *> &vectNode)
 {
-	vector<INode*> resultInstanceNode;
-	CInstanceGroup *pIG = _ExportNel->buildInstanceGroup (vectNode, resultInstanceNode, _Ip->GetTime());
+	vector<INode *> resultInstanceNode;
+	CInstanceGroup *pIG = _ExportNel->buildInstanceGroup(vectNode, resultInstanceNode, _Ip->GetTime());
 
 	if (pIG != NULL)
 	{
 		COFile file;
-		
-		if (file.open (filename))
+
+		if (file.open(filename))
 		{
 			try
 			{
 				// Serial the skeleton
-				pIG->serial (file);
+				pIG->serial(file);
 				// All is good
 			}
 			catch (const Exception &c)
 			{
 				// Cannot save the file
-				MessageBox(NULL, MaxTStrFromUtf8(c.what()).data(), _T("NeL export"), MB_OK|MB_ICONEXCLAMATION);
+				MessageBox(NULL, MaxTStrFromUtf8(c.what()).data(), _T("NeL export"), MB_OK | MB_ICONEXCLAMATION);
 				return false;
 			}
 		}
 
-		delete	pIG;
+		delete pIG;
 	}
 	else
 	{

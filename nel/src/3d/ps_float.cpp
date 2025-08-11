@@ -26,23 +26,23 @@
 
 namespace NL3D {
 
-
 /////////////////////////////////////
 // CPSFloatGradient implementation //
 /////////////////////////////////////
 
 CPSFloatGradient::CPSFloatGradient(const float *floatTab, uint32 nbValues, uint32 nbStages, float nbCycles)
-				: CPSValueGradient<float>(nbCycles)
+    : CPSValueGradient<float>(nbCycles)
 {
-	_F.setValues(floatTab, nbValues, nbStages) ;
+	_F.setValues(floatTab, nbValues, nbStages);
 }
-
 
 ////////////////////////////////////////////
 // CPSFloatBezierCurve implementation     //
 ////////////////////////////////////////////
 
-CPSFloatCurveFunctor::CPSFloatCurveFunctor() : _NumSamples(0), _Smoothing(true)
+CPSFloatCurveFunctor::CPSFloatCurveFunctor()
+    : _NumSamples(0)
+    , _Smoothing(true)
 {
 	/*
 	_CtrlPoints.push_back(CCtrlPoint(0, 0.5f));
@@ -103,7 +103,7 @@ float CPSFloatCurveFunctor::getValue(float date) const
 	NLMISC::clamp(date, 0, 1);
 	// find a key that has a higher value
 	CPSVector<CCtrlPoint>::V::const_iterator it = _CtrlPoints.begin();
-	while ( it != _CtrlPoints.end() && it->Date <= date ) ++it;
+	while (it != _CtrlPoints.end() && it->Date <= date) ++it;
 
 	if (it == _CtrlPoints.begin()) return _CtrlPoints[0].Value;
 	if (it == _CtrlPoints.end()) return _CtrlPoints[_CtrlPoints.size() - 1].Value;
@@ -122,7 +122,7 @@ float CPSFloatCurveFunctor::getValue(float date) const
 		const float lambda2 = NLMISC::sqr(lambda);
 		const float lambda3 = lambda2 * lambda;
 		const float h1 = 2 * lambda3 - 3 * lambda2 + 1;
-		const float h2 = - 2 * lambda3 + 3 * lambda2;
+		const float h2 = -2 * lambda3 + 3 * lambda2;
 		const float h3 = lambda3 - 2 * lambda2 + lambda;
 		const float h4 = lambda3 - lambda2;
 
@@ -133,7 +133,7 @@ float CPSFloatCurveFunctor::getValue(float date) const
 ///=======================================================================================
 void CPSFloatCurveFunctor::updateTab(void)
 {
-	float step  = 1.f / _NumSamples;
+	float step = 1.f / _NumSamples;
 	float d = 0.f;
 	_Tab.resize(_NumSamples + 1);
 	uint k;
@@ -169,22 +169,22 @@ float CPSFloatCurveFunctor::getSlope(uint index) const
 	if (index == 0)
 	{
 		return _CtrlPoints[1].Date != _CtrlPoints[0].Date ? (_CtrlPoints[1].Value - _CtrlPoints[0].Value)
-															 / (_CtrlPoints[1].Date - _CtrlPoints[0].Date)
-														  : 1e6f;
+		        / (_CtrlPoints[1].Date - _CtrlPoints[0].Date)
+		                                                  : 1e6f;
 	}
 
 	// tangent for last point
 	if (index == _CtrlPoints.size() - 1)
 	{
 		return _CtrlPoints[index].Date != _CtrlPoints[index - 1].Date ? (_CtrlPoints[index].Value - _CtrlPoints[index - 1].Value)
-																		/ (_CtrlPoints[index].Date - _CtrlPoints[index - 1].Date)
-																	  : 1e6f;
+		        / (_CtrlPoints[index].Date - _CtrlPoints[index - 1].Date)
+		                                                              : 1e6f;
 	}
 
 	// tangent for other points
 	return _CtrlPoints[index + 1].Date != _CtrlPoints[index - 1].Date ? (_CtrlPoints[index + 1].Value - _CtrlPoints[index - 1].Value)
-																		/ (_CtrlPoints[index + 1].Date - _CtrlPoints[index - 1].Date)
-																	  : 1e6f;
+	        / (_CtrlPoints[index + 1].Date - _CtrlPoints[index - 1].Date)
+	                                                                  : 1e6f;
 }
 
 ///=======================================================================================

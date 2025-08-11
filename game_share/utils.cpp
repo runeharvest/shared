@@ -21,48 +21,46 @@
 #include "stdpch.h"
 #include "nel/misc/sstring.h"
 
-
 //-------------------------------------------------------------------------------------------------
 // namespaces
 //-------------------------------------------------------------------------------------------------
 
 using namespace NLMISC;
 
-
 //-----------------------------------------------------------------------------
 // cleanPath - convert a path to standardised format
 //-----------------------------------------------------------------------------
 
-CSString cleanPath(const CSString& path,bool addTrailingSlash)
+CSString cleanPath(const CSString &path, bool addTrailingSlash)
 {
 	CSString result;
 
 	// split the path up into its component elements
 	CVectorSString pathComponents;
-	path.unquoteIfQuoted().splitByOneOfSeparators("/\\",pathComponents,false,false,true,false,true);
+	path.unquoteIfQuoted().splitByOneOfSeparators("/\\", pathComponents, false, false, true, false, true);
 
 	// iterate over path components collapsing '.' and '..' entries
-	for (uint32 i=0;i<pathComponents.size();++i)
+	for (uint32 i = 0; i < pathComponents.size(); ++i)
 	{
 		// skip "." entries
-		if (pathComponents[i]==".")
+		if (pathComponents[i] == ".")
 		{
 			pathComponents[i].clear();
 			continue;
 		}
 
 		// deal with ".."
-		if (pathComponents[i]=="..")
+		if (pathComponents[i] == "..")
 		{
 			// run back through our component list looking for an element to remove
 			uint32 j;
-			for (j=i;j--;)
+			for (j = i; j--;)
 			{
 				if (!pathComponents[j].empty())
 					break;
 			}
 			// if we found an element then remove it and the '..' as well
-			if (j!=std::numeric_limits<uint32>::max())
+			if (j != std::numeric_limits<uint32>::max())
 			{
 				pathComponents[j].clear();
 				pathComponents[i].clear();
@@ -72,25 +70,25 @@ CSString cleanPath(const CSString& path,bool addTrailingSlash)
 	}
 
 	// treat the special case where original path started with a '/' or '//'
-	if (path.left(1)=="/" || path.left(1)=="\\")
+	if (path.left(1) == "/" || path.left(1) == "\\")
 	{
-		result= (path.left(2).right(1)=="/" || path.left(2).right(1)=="\\")? "//": "/";
+		result = (path.left(2).right(1) == "/" || path.left(2).right(1) == "\\") ? "//" : "/";
 	}
 
 	// concatenate the path bits
-	for (uint32 i=0;i<pathComponents.size();++i)
+	for (uint32 i = 0; i < pathComponents.size(); ++i)
 	{
 		if (!pathComponents[i].empty())
 		{
-			result+= pathComponents[i];
-			result+= '/';
+			result += pathComponents[i];
+			result += '/';
 		}
 	}
 
 	// if we're not supposed to have a trailing slash then get rid of the one that's added by default
-	if (addTrailingSlash==false && path.right(1)!='/' && path.right(1)!='\\')
+	if (addTrailingSlash == false && path.right(1) != '/' && path.right(1) != '\\')
 	{
-		result.resize(result.size()-1);
+		result.resize(result.size() - 1);
 	}
 
 	return result;

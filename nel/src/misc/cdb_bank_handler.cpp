@@ -24,93 +24,90 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NLMISC{
-	CCDBBankHandler::CCDBBankHandler(uint maxbanks) :
-_CDBBankToUnifiedIndexMapping( maxbanks, std::vector< uint >() ),
-_FirstLevelIdBitsByBank( maxbanks )
+namespace NLMISC {
+CCDBBankHandler::CCDBBankHandler(uint maxbanks)
+    : _CDBBankToUnifiedIndexMapping(maxbanks, std::vector<uint>())
+    , _FirstLevelIdBitsByBank(maxbanks)
+{
+	std::fill(_FirstLevelIdBitsByBank.begin(), _FirstLevelIdBitsByBank.end(), 0);
+	maxBanks = maxbanks;
+}
+
+uint CCDBBankHandler::getUIDForBank(uint bank) const
+{
+	uint uid = static_cast<uint>(-1);
+
+	for (uint i = 0; i < _UnifiedIndexToBank.size(); i++)
+		if (_UnifiedIndexToBank[i] == bank)
+			return i;
+
+	return uid;
+}
+
+uint CCDBBankHandler::getBankByName(const std::string &name) const
+{
+	uint b = static_cast<uint>(-1);
+
+	for (uint i = 0; i < _CDBBankNames.size(); i++)
+		if (_CDBBankNames[i].compare(name) == 0)
+			return i;
+
+	return b;
+}
+
+void CCDBBankHandler::mapNodeByBank(const std::string &bankName)
+{
+	uint b = getBankByName(bankName);
+	// no such bank
+	if (b == static_cast<uint>(-1))
+		return;
+
+	_CDBBankToUnifiedIndexMapping[b].push_back(_CDBLastUnifiedIndex);
+	++_CDBLastUnifiedIndex;
+	_UnifiedIndexToBank.push_back(b);
+}
+
+void CCDBBankHandler::fillBankNames(const char **strings, uint size)
+{
+	_CDBBankNames.clear();
+
+	for (uint i = 0; i < size; i++)
+		_CDBBankNames.push_back(std::string(strings[i]));
+}
+
+void CCDBBankHandler::reset()
+{
+	for (std::vector<std::vector<uint>>::iterator itr = _CDBBankToUnifiedIndexMapping.begin();
+	     itr != _CDBBankToUnifiedIndexMapping.end(); ++itr)
+		itr->clear();
+
+	_UnifiedIndexToBank.clear();
+	_CDBLastUnifiedIndex = 0;
+}
+
+void CCDBBankHandler::calcIdBitsByBank()
+{
+	for (uint bank = 0; bank != maxBanks; bank++)
 	{
-		std::fill( _FirstLevelIdBitsByBank.begin(), _FirstLevelIdBitsByBank.end(), 0 );
-		maxBanks = maxbanks;
-	}
+		uint nbNodesOfBank = static_cast<uint>(_CDBBankToUnifiedIndexMapping[bank].size());
+		uint idb = 0;
 
-	uint CCDBBankHandler::getUIDForBank( uint bank ) const
-	{
-		uint uid = static_cast< uint >( -1 );
+		if (nbNodesOfBank > 0)
+			for (idb = 1; nbNodesOfBank > unsigned(1 << idb); idb++);
 
-		for( uint i = 0; i < _UnifiedIndexToBank.size(); i++ )
-			if( _UnifiedIndexToBank[ i ] == bank )
-				return i;
-
-		return uid;
-	}
-
-	uint CCDBBankHandler::getBankByName( const std::string &name ) const
-	{
-		uint b = static_cast< uint >( -1 );
-
-		for( uint i = 0; i < _CDBBankNames.size(); i++ )
-			if( _CDBBankNames[ i ].compare( name ) == 0 )
-				return i;
-
-		return b;
-	}
-
-	void CCDBBankHandler::mapNodeByBank( const std::string &bankName )
-	{
-		uint b = getBankByName( bankName );
-		// no such bank
-		if( b == static_cast< uint >( -1 ) )
-			return;
-		
-		_CDBBankToUnifiedIndexMapping[ b ].push_back( _CDBLastUnifiedIndex );
-		++_CDBLastUnifiedIndex;
-		_UnifiedIndexToBank.push_back( b );
-	}
-
-	void CCDBBankHandler::fillBankNames( const char **strings, uint size )
-	{
-		_CDBBankNames.clear();
-
-		for( uint i = 0; i < size; i++ )
-			_CDBBankNames.push_back( std::string( strings[ i ] ) );
-	}
-
-	void CCDBBankHandler::reset()
-	{
-		for( std::vector< std::vector< uint > >::iterator itr =_CDBBankToUnifiedIndexMapping.begin();
-			itr != _CDBBankToUnifiedIndexMapping.end(); ++itr )
-			itr->clear();
-
-		_UnifiedIndexToBank.clear();
-		_CDBLastUnifiedIndex = 0;
-	}
-
-	void CCDBBankHandler::calcIdBitsByBank()
-	{
-		for( uint bank = 0; bank != maxBanks; bank++ )
-		{
-			uint nbNodesOfBank = static_cast< uint >( _CDBBankToUnifiedIndexMapping[ bank ].size() );
-			uint idb = 0; 
-			
-			if ( nbNodesOfBank > 0 )
-				for ( idb = 1; nbNodesOfBank > unsigned( 1 << idb ) ; idb++ )
-					;
-
-			_FirstLevelIdBitsByBank[ bank ] = idb;
-		}
-	}
-
-	void CCDBBankHandler::resize( uint newSize )
-	{
-		reset();
-
-		_CDBBankNames.clear();
-		_CDBBankToUnifiedIndexMapping.clear();
-		_FirstLevelIdBitsByBank.clear();
-
-		_CDBBankToUnifiedIndexMapping.reserve( newSize );
-		_FirstLevelIdBitsByBank.reserve( newSize );
+		_FirstLevelIdBitsByBank[bank] = idb;
 	}
 }
 
+void CCDBBankHandler::resize(uint newSize)
+{
+	reset();
 
+	_CDBBankNames.clear();
+	_CDBBankToUnifiedIndexMapping.clear();
+	_FirstLevelIdBitsByBank.clear();
+
+	_CDBBankToUnifiedIndexMapping.reserve(newSize);
+	_FirstLevelIdBitsByBank.reserve(newSize);
+}
+}

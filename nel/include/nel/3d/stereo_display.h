@@ -34,7 +34,7 @@
 // Project includes
 
 namespace NL3D {
-	
+
 class UCamera;
 class CViewport;
 class CFrustum;
@@ -55,20 +55,20 @@ struct CStereoDeviceInfo
 public:
 	enum TStereoDeviceClass
 	{
-		StereoDisplay, 
-		StereoHMD, 
+		StereoDisplay,
+		StereoHMD,
 	};
-	
+
 	enum TStereoDeviceLibrary
 	{
-		NeL3D, 
-		OVR, 
-		LibVR, 
-		OpenHMD, 
+		NeL3D,
+		OVR,
+		LibVR,
+		OpenHMD,
 	};
-	
+
 	NLMISC::CSmartPtr<IStereoDeviceFactory> Factory;
-	
+
 	TStereoDeviceLibrary Library;
 	TStereoDeviceClass Class;
 	std::string Manufacturer;
@@ -96,7 +96,7 @@ public:
 	virtual bool attachToDisplay() = 0;
 	/// Detach the driver from the display
 	virtual void detachFromDisplay() = 0;
-	
+
 	/// Gets the required screen resolution for this device
 	virtual bool getScreenResolution(uint &width, uint &height) = 0;
 	/// Set latest camera position etcetera
@@ -118,13 +118,13 @@ public:
 	virtual void getCurrentMatrix(uint cid, NL3D::UCamera *camera) const = 0;
 
 	/// At the start of a new render target
-	virtual bool wantClear() = 0;		
+	virtual bool wantClear() = 0;
 	/// The 3D scene
 	virtual bool wantScene() = 0;
 	/// Scene post processing effects
 	virtual bool wantSceneEffects() = 0;
 	/// Interface within the 3D scene
-	virtual bool wantInterface3D() = 0;	
+	virtual bool wantInterface3D() = 0;
 	/// 2D Interface
 	virtual bool wantInterface2D() = 0;
 
@@ -137,14 +137,14 @@ public:
 	virtual bool beginRenderTarget() = 0;
 	/// Returns true if a render target was fully drawn, always false if not using render targets
 	virtual bool endRenderTarget() = 0;
-	
+
 	static const char *getLibraryName(CStereoDeviceInfo::TStereoDeviceLibrary library);
 	// List all devices. Device creation factories are no longer valid after re-calling this function
 	static void listDevices(std::vector<CStereoDeviceInfo> &devicesOut);
 	static IStereoDisplay *createDevice(const CStereoDeviceInfo &deviceInfo);
 	static void releaseUnusedLibraries();
 	static void releaseAllLibraries();
-	
+
 }; /* class IStereoDisplay */
 
 } /* namespace NL3D */

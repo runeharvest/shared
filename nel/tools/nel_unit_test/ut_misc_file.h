@@ -34,8 +34,8 @@ struct CUTMiscFile : public Test::Suite
 	}
 
 private:
-	string	_SrcFile;
-	string	_DstFile;
+	string _SrcFile;
+	string _DstFile;
 
 	void setup()
 	{
@@ -53,7 +53,7 @@ private:
 		FILE *fp = NLMISC::nlfopen(_SrcFile, "wb");
 		nlverify(fp != NULL);
 
-		for (uint i=0; i<fileSize; ++i)
+		for (uint i = 0; i < fileSize; ++i)
 		{
 			uint8 c = uint8(i & 0xff);
 			nlverify(fwrite(&c, 1, 1, fp) == 1);
@@ -68,10 +68,10 @@ private:
 		TEST_ASSERT(fp != NULL);
 		if (fp)
 		{
-			for (uint i=0; i<fileSize; ++i)
+			for (uint i = 0; i < fileSize; ++i)
 			{
 				uint8 c;
-				size_t nbRead = fread(&c, 1,1, fp);
+				size_t nbRead = fread(&c, 1, 1, fp);
 				TEST_ASSERT(nbRead == 1);
 				if (nbRead != 1)
 					break;
@@ -83,25 +83,24 @@ private:
 		}
 	}
 
-
 	void copyOneBigFile()
 	{
 		// check for a big file
-		copyFileSize(1024*1024);
+		copyFileSize(1024 * 1024);
 	}
 
 	void copyDifferentFileSize()
 	{
 		// check for a series of size
-		for (uint i=0; i<10; ++i)
+		for (uint i = 0; i < 10; ++i)
 		{
 			copyFileSize(i);
 		}
 
 		srand(1234);
-		for (uint i=0; i<1024; ++i)
+		for (uint i = 0; i < 1024; ++i)
 		{
-			i += rand()%10;
+			i += rand() % 10;
 			copyFileSize(i);
 		}
 	}
@@ -120,7 +119,7 @@ private:
 		fp = NLMISC::nlfopen(_SrcFile, "wb");
 		nlverify(fp != NULL);
 
-		for (uint i=0; i<fileSize; ++i)
+		for (uint i = 0; i < fileSize; ++i)
 		{
 			uint8 c = uint8(i & 0xff);
 			nlverify(fwrite(&c, 1, 1, fp) == 1);
@@ -140,10 +139,10 @@ private:
 		TEST_ASSERT(fp != NULL);
 		if (fp)
 		{
-			for (uint i=0; i<fileSize; ++i)
+			for (uint i = 0; i < fileSize; ++i)
 			{
 				uint8 c;
-				size_t nbRead = fread(&c, 1,1, fp);
+				size_t nbRead = fread(&c, 1, 1, fp);
 				TEST_ASSERT(nbRead == 1);
 				if (nbRead != 1)
 					break;
@@ -158,25 +157,24 @@ private:
 	void moveOneBigFile()
 	{
 		// check for a big file
-		moveFileSize(1024*1024);
+		moveFileSize(1024 * 1024);
 	}
 
 	void moveDifferentFileSize()
 	{
 		// check for a series of size
-		for (uint i=0; i<10; ++i)
+		for (uint i = 0; i < 10; ++i)
 		{
 			moveFileSize(i);
 		}
 
 		srand(1234);
-		for (uint i=0; i<1024; ++i)
+		for (uint i = 0; i < 1024; ++i)
 		{
-			i += rand()%10;
+			i += rand() % 10;
 			moveFileSize(i);
 		}
 	}
-
 };
 
 #endif

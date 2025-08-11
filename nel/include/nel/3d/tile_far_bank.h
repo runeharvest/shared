@@ -25,17 +25,14 @@
 #include <vector>
 
 // Pixel count in far tiles
-#define NL_NUM_PIXELS_ON_FAR_TILE_EDGE_SHIFT 2											// a 128x128 far tile is a 4x4 bitmap in far 0
-#define NL_NUM_PIXELS_ON_FAR_TILE_EDGE (1<<NL_NUM_PIXELS_ON_FAR_TILE_EDGE_SHIFT)	// a 128x128 far tile is a 4x4 bitmap in far 0
+#define NL_NUM_PIXELS_ON_FAR_TILE_EDGE_SHIFT 2 // a 128x128 far tile is a 4x4 bitmap in far 0
+#define NL_NUM_PIXELS_ON_FAR_TILE_EDGE (1 << NL_NUM_PIXELS_ON_FAR_TILE_EDGE_SHIFT) // a 128x128 far tile is a 4x4 bitmap in far 0
 
-namespace NLMISC
-{
-	class IStream;
+namespace NLMISC {
+class IStream;
 }
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 /**
  * A bank for the far textures
@@ -47,8 +44,20 @@ class CTileFarBank
 {
 public:
 	// Order of the tile
-	enum TFarOrder { order0=0, order1=1, order2=2, orderCount };
-	enum TFarType { diffuse=0, additive=1, alpha=2, typeCount=2 };
+	enum TFarOrder
+	{
+		order0 = 0,
+		order1 = 1,
+		order2 = 2,
+		orderCount
+	};
+	enum TFarType
+	{
+		diffuse = 0,
+		additive = 1,
+		alpha = 2,
+		typeCount = 2
+	};
 
 	/// Constructor
 	CTileFarBank();
@@ -58,101 +67,100 @@ public:
 	{
 		// Friend of CTileFarBank
 		friend class CTileFarBank;
+
 	public:
 		/// Default constructor
-		CTileFar ()
+		CTileFar()
 		{
 		}
 
 		/// Return the pointer on the pixels data. Call this method only if isFill () returns true.
-		const NLMISC::CRGBA*		getPixels (TFarType type, TFarOrder order) const
+		const NLMISC::CRGBA *getPixels(TFarType type, TFarOrder order) const
 		{
 			return &_Pixels[type][order][0];
 		}
 
 		/// Return true if pixel value are presents, else return false.
-		bool				isFill (TFarType type) const
+		bool isFill(TFarType type) const
 		{
-			return _Pixels[type][0].begin()!=_Pixels[type][0].end();
+			return _Pixels[type][0].begin() != _Pixels[type][0].end();
 		}
 
 		/// Return the pixel array size. Should be 0 for empty, 64 for a 128x128 tile and 256 for a 256x256 tile.
-		uint				getSize (TFarType type, TFarOrder order) const
+		uint getSize(TFarType type, TFarOrder order) const
 		{
 			return (uint)_Pixels[type][order].size();
 		}
 
 		/// Set the pixel array of a far Tile
-		void				setPixels (TFarType type, TFarOrder order, NLMISC::CRGBA* pixels, uint size);
+		void setPixels(TFarType type, TFarOrder order, NLMISC::CRGBA *pixels, uint size);
 
 		/// Erase a pixel array type
-		void				erasePixels (TFarType type)
+		void erasePixels(TFarType type)
 		{
-			NLMISC::contReset (_Pixels[type][order0]);
-			NLMISC::contReset (_Pixels[type][order1]);
-			NLMISC::contReset (_Pixels[type][order2]);
+			NLMISC::contReset(_Pixels[type][order0]);
+			NLMISC::contReset(_Pixels[type][order1]);
+			NLMISC::contReset(_Pixels[type][order2]);
 		}
 
 		/// Serial this tile
-		void				serial (NLMISC::IStream &f);
+		void serial(NLMISC::IStream &f);
 
 	private:
 		/// RGBA Pixels vector
-		std::vector<NLMISC::CRGBA>	_Pixels[typeCount][orderCount];
+		std::vector<NLMISC::CRGBA> _Pixels[typeCount][orderCount];
 
 		/// The version of this class
-		static const sint	_Version;
+		static const sint _Version;
 	};
 
 	/// Get number of tile in this bank
-	sint					getNumTile () const
+	sint getNumTile() const
 	{
 		return (sint)_TileVector.size();
 	}
 
 	/// Resize the tile bank
-	void					setNumTile (sint numTile)
+	void setNumTile(sint numTile)
 	{
 		_TileVector.resize(numTile);
 	}
 
 	/// Get a read only far tile pointer. Return NULL if the tile doesn't exist.
-	const CTileFar*			getTile (sint tile) const
+	const CTileFar *getTile(sint tile) const
 	{
-		if (tile>=(sint)_TileVector.size())
+		if (tile >= (sint)_TileVector.size())
 			return NULL;
 
 		return &_TileVector[tile];
 	}
 
 	/// Get a far tile pointer. Return NULL if the tile doesn't exist.
-	CTileFar*				getTile (sint tile)
+	CTileFar *getTile(sint tile)
 	{
-		if (tile>=(sint)_TileVector.size())
+		if (tile >= (sint)_TileVector.size())
 			return NULL;
 
 		return &_TileVector[tile];
 	}
 
 	/// Get the tile size
-	static uint				getFarTileEdgeSize (TFarOrder order)
+	static uint getFarTileEdgeSize(TFarOrder order)
 	{
-		return 4>>(uint)order;
+		return 4 >> (uint)order;
 	}
 
 	/// Serial this bank
-	void    serial(NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 
 	/// The far tile vector
-	std::vector<CTileFar>	_TileVector;
+	std::vector<CTileFar> _TileVector;
 
 	/// The version of this class
-	static const sint	_Version;
+	static const sint _Version;
 };
 
-
 } // NL3D
-
 
 #endif // NL_TILE_FAR_BANK_H
 

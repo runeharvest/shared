@@ -55,7 +55,7 @@ IProgramDrvInfos::IProgramDrvInfos(IDriver *drv, ItGPUPrgDrvInfoPtrList it)
 
 // ***************************************************************************
 
-IProgramDrvInfos::~IProgramDrvInfos ()
+IProgramDrvInfos::~IProgramDrvInfos()
 {
 	_Driver->removeGPUPrgDrvInfoPtr(_DriverIterator);
 }
@@ -64,7 +64,6 @@ IProgramDrvInfos::~IProgramDrvInfos ()
 
 IProgram::IProgram()
 {
-	
 }
 
 // ***************************************************************************
@@ -75,24 +74,23 @@ IProgram::~IProgram()
 	m_DrvInfo.kill();
 }
 
-const char *CProgramIndex::Names[NUM_UNIFORMS] = 
-{
-	"modelView", 
-	"modelViewInverse", 
-	"modelViewTranspose", 
+const char *CProgramIndex::Names[NUM_UNIFORMS] = {
+	"modelView",
+	"modelViewInverse",
+	"modelViewTranspose",
 	"modelViewInverseTranspose",
 
-	"projection", 
-	"projectionInverse", 
-	"projectionTranspose", 
-	"projectionInverseTranspose", 
+	"projection",
+	"projectionInverse",
+	"projectionTranspose",
+	"projectionInverseTranspose",
 
-	"modelViewProjection", 
-	"modelViewProjectionInverse", 
-	"modelViewProjectionTranspose", 
-	"modelViewProjectionInverseTranspose", 
+	"modelViewProjection",
+	"modelViewProjectionInverse",
+	"modelViewProjectionTranspose",
+	"modelViewProjectionInverseTranspose",
 
-	"fog", 
+	"fog",
 };
 
 void IProgram::buildInfo(CSource *source)
@@ -112,7 +110,6 @@ void IProgram::buildInfo(CSource *source)
 
 void IProgram::buildInfo()
 {
-	
 }
 
 } /* namespace NL3D */

@@ -14,18 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef R2_DSS_BACKUP_MODULE_H
 #define R2_DSS_BACKUP_MODULE_H
 
-namespace RSMGR
-{
-	const char *const CR2SessionBackupModuleClassName = "R2SessionBackupModule";
+namespace RSMGR {
+const char *const CR2SessionBackupModuleClassName = "R2SessionBackupModule";
 }
-namespace R2
-{
-	void CR2SessionBackupModule_WantToBeLinked();
+namespace R2 {
+void CR2SessionBackupModule_WantToBeLinked();
 }
 
-#endif //R2_DSS_BACKUP_MODULE_H
-
+#endif // R2_DSS_BACKUP_MODULE_H

@@ -17,8 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_CHARACTERISTICS_H
 #define RY_CHARACTERISTICS_H
 
@@ -26,57 +24,56 @@
 
 #include <string.h>
 
-namespace CHARACTERISTICS
-{
-	enum TCharacteristics
+namespace CHARACTERISTICS {
+enum TCharacteristics
 #ifdef NL_CPP14
-		: uint8
+    : uint8
 #endif
-	{
-		constitution = 0, //HP max
-		metabolism, //Hp Regen
+{
+	constitution = 0, // HP max
+	metabolism, // Hp Regen
 
-		intelligence, //Sap Max
-		wisdom,	//Sap regen
+	intelligence, // Sap Max
+	wisdom, // Sap regen
 
-		strength, //Stamina Max
-		well_balanced, //Stamina regen
+	strength, // Stamina Max
+	well_balanced, // Stamina regen
 
-		dexterity, //Focus Max
-		will, //Focus regen
+	dexterity, // Focus Max
+	will, // Focus regen
 
-		NUM_CHARACTERISTICS,
-		Unknown = NUM_CHARACTERISTICS
-	};
+	NUM_CHARACTERISTICS,
+	Unknown = NUM_CHARACTERISTICS
+};
 
-	/**
-	 * get the right characteristic enum from the input string
-	 * \param str the input string
-	 * \return the ECharacteristics associated to this string (unknown if the string cannot be interpreted)
-	 */
-	TCharacteristics toCharacteristic( const std::string &str );
+/**
+ * get the right characteristic enum from the input string
+ * \param str the input string
+ * \return the ECharacteristics associated to this string (unknown if the string cannot be interpreted)
+ */
+TCharacteristics toCharacteristic(const std::string &str);
 
-	/**
-	 * get the code associated to his characteristic
-	 * \param c is the enum number of characteristic
-	 * \return associated code
-	 */
-	TCharacteristics getCharacteristicFromCode( const std::string &code );
+/**
+ * get the code associated to his characteristic
+ * \param c is the enum number of characteristic
+ * \return associated code
+ */
+TCharacteristics getCharacteristicFromCode(const std::string &code);
 
-	/**
-	 * get the characteristic associated to a code
-	 * \param code the code to find
-	 * \return associated enum value
-	 */
-	const std::string &getCharacteristicCode( TCharacteristics c );
+/**
+ * get the characteristic associated to a code
+ * \param code the code to find
+ * \return associated enum value
+ */
+const std::string &getCharacteristicCode(TCharacteristics c);
 
-	/**
-	 * get the right characteristic string from the gived enum
-	 * \param c is the enum number of characteristic
-	 * \return the string associated to this enum number (Unknown if enum number not exist)
-	 */
-	const std::string& toString( TCharacteristics c );
-	const std::string& toString( uint c );
+/**
+ * get the right characteristic string from the gived enum
+ * \param c is the enum number of characteristic
+ * \return the string associated to this enum number (Unknown if enum number not exist)
+ */
+const std::string &toString(TCharacteristics c);
+const std::string &toString(uint c);
 
 }; // CHARACTERISTICS
 

@@ -28,7 +28,7 @@
 using namespace std;
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
 namespace NLMISC {
@@ -45,62 +45,73 @@ class CUpdateThread : public IRunnable
 	CLog *Log;
 
 public:
-	CUpdateThread (CWindowDisplayer *disp, string windowNameEx, bool iconified, sint x, sint y, sint w, sint h, sint hs, sint fs, const std::string &fn, bool ww, CLog *log) :
-	  Disp(disp), WindowNameEx(windowNameEx), X(x), Y(y), W(w), H(h), HS(hs), Iconified(iconified), FS(fs), FN(fn), WW(ww), Log(log)
+	CUpdateThread(CWindowDisplayer *disp, string windowNameEx, bool iconified, sint x, sint y, sint w, sint h, sint hs, sint fs, const std::string &fn, bool ww, CLog *log)
+	    : Disp(disp)
+	    , WindowNameEx(windowNameEx)
+	    , X(x)
+	    , Y(y)
+	    , W(w)
+	    , H(h)
+	    , HS(hs)
+	    , Iconified(iconified)
+	    , FS(fs)
+	    , FN(fn)
+	    , WW(ww)
+	    , Log(log)
 	{
 	}
 
 	void run()
 	{
-		Disp->open (WindowNameEx, Iconified, X, Y, W, H, HS, FS, FN, WW, Log);
-		Disp->display_main ();
+		Disp->open(WindowNameEx, Iconified, X, Y, W, H, HS, FS, FN, WW, Log);
+		Disp->display_main();
 	}
 };
 
-CWindowDisplayer::~CWindowDisplayer ()
+CWindowDisplayer::~CWindowDisplayer()
 {
 	// we have to wait the exit of the thread
 	_Continue = false;
-	nlassert (_Thread != NULL);
+	nlassert(_Thread != NULL);
 	_Thread->wait();
 	delete _Thread;
 }
 
-bool CWindowDisplayer::update ()
+bool CWindowDisplayer::update()
 {
 	vector<string> copy;
 	{
-		CSynchronized<std::vector<std::string> >::CAccessor access (&_CommandsToExecute);
+		CSynchronized<std::vector<std::string>>::CAccessor access(&_CommandsToExecute);
 		copy = access.value();
-		access.value().clear ();
+		access.value().clear();
 	}
 
 	// execute all commands in the main thread
 	for (uint i = 0; i < copy.size(); i++)
 	{
-		nlassert (Log != NULL);
-		ICommand::execute (copy[i], *Log);
+		nlassert(Log != NULL);
+		ICommand::execute(copy[i], *Log);
 	}
 
 	return _Continue;
 }
 
-uint CWindowDisplayer::createLabel (const char *value)
+uint CWindowDisplayer::createLabel(const char *value)
 {
 	uint pos;
 	{
-		CSynchronized<std::vector<CLabelEntry> >::CAccessor access (&_Labels);
-		access.value().push_back (CLabelEntry(value));
-		pos = (uint)access.value().size()-1;
+		CSynchronized<std::vector<CLabelEntry>>::CAccessor access(&_Labels);
+		access.value().push_back(CLabelEntry(value));
+		pos = (uint)access.value().size() - 1;
 	}
 	return pos;
 }
 
-void CWindowDisplayer::setLabel (uint label, const string &value)
+void CWindowDisplayer::setLabel(uint label, const string &value)
 {
 	{
-		CSynchronized<std::vector<CLabelEntry> >::CAccessor access (&_Labels);
-		nlassert (label < access.value().size());
+		CSynchronized<std::vector<CLabelEntry>>::CAccessor access(&_Labels);
+		nlassert(label < access.value().size());
 		if (access.value()[label].Value != value)
 		{
 			access.value()[label].Value = value;
@@ -109,20 +120,20 @@ void CWindowDisplayer::setLabel (uint label, const string &value)
 	}
 }
 
-void CWindowDisplayer::create (string windowNameEx, bool iconified, sint x, sint y, sint w, sint h, sint hs, sint fs, const std::string &fn, bool ww, CLog *log)
+void CWindowDisplayer::create(string windowNameEx, bool iconified, sint x, sint y, sint w, sint h, sint hs, sint fs, const std::string &fn, bool ww, CLog *log)
 {
-	nlassert (_Thread == NULL);
-	_Thread = IThread::create (new CUpdateThread(this, windowNameEx, iconified, x, y, w, h, hs, fs, fn, ww, log));
+	nlassert(_Thread == NULL);
+	_Thread = IThread::create(new CUpdateThread(this, windowNameEx, iconified, x, y, w, h, hs, fs, fn, ww, log));
 
 	Log = log;
 
-	_Thread->start ();
+	_Thread->start();
 }
 
 std::string CWindowDisplayer::stringifyMessage(const NLMISC::CLog::TDisplayInfo &args, const char *message, bool needSlashR)
 {
 	bool needSpace = false;
-	//stringstream ss;
+	// stringstream ss;
 	string str;
 
 	if (args.LogType != CLog::LOG_NO)
@@ -134,7 +145,11 @@ std::string CWindowDisplayer::stringifyMessage(const NLMISC::CLog::TDisplayInfo 
 	// Write thread identifier
 	if (args.ThreadId != 0)
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 #ifdef NL_OS_WINDOWS
 		str += NLMISC::toString("%4x", args.ThreadId);
 #else
@@ -145,27 +160,43 @@ std::string CWindowDisplayer::stringifyMessage(const NLMISC::CLog::TDisplayInfo 
 
 	if (args.FileName != NULL)
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 		str += NLMISC::toString("%20s", CFile::getFilename(args.FileName).c_str());
 		needSpace = true;
 	}
 
 	if (args.Line != -1)
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 		str += NLMISC::toString("%4u", args.Line);
-		//ss << setw(4) << args.Line;
+		// ss << setw(4) << args.Line;
 		needSpace = true;
 	}
 
 	if (args.FuncName != NULL)
 	{
-		if (needSpace) { str += " "; needSpace = false; }
+		if (needSpace)
+		{
+			str += " ";
+			needSpace = false;
+		}
 		str += NLMISC::toString("%20s", args.FuncName);
 		needSpace = true;
 	}
 
-	if (needSpace) { str += ": "; needSpace = false; }
+	if (needSpace)
+	{
+		str += ": ";
+		needSpace = false;
+	}
 
 	uint nbl = 1;
 
@@ -200,7 +231,7 @@ std::string CWindowDisplayer::stringifyMessage(const NLMISC::CLog::TDisplayInfo 
 	return str;
 }
 
-void CWindowDisplayer::doDisplay (const NLMISC::CLog::TDisplayInfo &args, const char *message)
+void CWindowDisplayer::doDisplay(const NLMISC::CLog::TDisplayInfo &args, const char *message)
 {
 	uint32 color = 0xFF000000;
 
@@ -215,12 +246,12 @@ void CWindowDisplayer::doDisplay (const NLMISC::CLog::TDisplayInfo &args, const 
 	std::string str = stringifyMessage(args, message, needSlashR);
 
 	{
-		CSynchronized<std::list<std::pair<uint32, std::string> > >::CAccessor access (&_Buffer);
+		CSynchronized<std::list<std::pair<uint32, std::string>>>::CAccessor access(&_Buffer);
 		if (_HistorySize > 0 && access.value().size() >= (uint)_HistorySize)
 		{
-			access.value().erase (access.value().begin());
+			access.value().erase(access.value().begin());
 		}
-		access.value().push_back (make_pair (color, str));
+		access.value().push_back(make_pair(color, str));
 	}
 }
 

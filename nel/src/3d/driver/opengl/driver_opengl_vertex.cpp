@@ -23,9 +23,6 @@
 #include "nel/3d/index_buffer.h"
 #include "driver_opengl_vertex_buffer_hard.h"
 
-
-
-
 using namespace std;
 using namespace NLMISC;
 
@@ -33,24 +30,17 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-
-
 // ***************************************************************************
 // Flags for software vertex skinning.
-#define	NL3D_DRV_SOFTSKIN_VNEEDCOMPUTE	3
-#define	NL3D_DRV_SOFTSKIN_VMUSTCOMPUTE	1
-#define	NL3D_DRV_SOFTSKIN_VCOMPUTED		0
+#define NL3D_DRV_SOFTSKIN_VNEEDCOMPUTE 3
+#define NL3D_DRV_SOFTSKIN_VMUSTCOMPUTE 1
+#define NL3D_DRV_SOFTSKIN_VCOMPUTED 0
 // 3 means "vertex may need compute".
 // 1 means "Primitive say vertex must be computed".
 // 0 means "vertex is computed".
 
-
 // 500K min.
-#define	NL3D_DRV_VERTEXARRAY_MINIMUM_SIZE		(512*1024)
-
-
-
-
+#define NL3D_DRV_VERTEXARRAY_MINIMUM_SIZE (512 * 1024)
 
 namespace NL3D {
 
@@ -64,7 +54,8 @@ namespace NLDRIVERGL {
 
 // ***************************************************************************
 
-CVBDrvInfosGL::CVBDrvInfosGL(CDriverGL *drv, ItVBDrvInfoPtrList it, CVertexBuffer *vb) : IVBDrvInfos(drv, it, vb)
+CVBDrvInfosGL::CVBDrvInfosGL(CDriverGL *drv, ItVBDrvInfoPtrList it, CVertexBuffer *vb)
+    : IVBDrvInfos(drv, it, vb)
 {
 	H_AUTO_OGL(CVBDrvInfosGL_CVBDrvInfosGL)
 	_DriverGL = drv;
@@ -91,30 +82,30 @@ CVBDrvInfosGL::~CVBDrvInfosGL()
 	}
 	if (_SystemMemory)
 	{
-		delete [] _SystemMemory;
+		delete[] _SystemMemory;
 	}
 	_SystemMemory = NULL;
 	_VBHard = NULL;
 }
 
 // ***************************************************************************
-uint8 *CVBDrvInfosGL::lock (uint /* first */, uint /* last */, bool /* readOnly */)
+uint8 *CVBDrvInfosGL::lock(uint /* first */, uint /* last */, bool /* readOnly */)
 {
 	H_AUTO_OGL(CVBDrvInfosGL_lock)
 	if (_VBHard)
 	{
-		return (uint8*)_VBHard->lock ();
+		return (uint8 *)_VBHard->lock();
 	}
 	else
 	{
 		// Should be a system memory
-		nlassert (_SystemMemory);
+		nlassert(_SystemMemory);
 		return _SystemMemory;
 	}
 }
 
 // ***************************************************************************
-void CVBDrvInfosGL::unlock (uint first, uint last)
+void CVBDrvInfosGL::unlock(uint first, uint last)
 {
 	H_AUTO_OGL(CVBDrvInfosGL_unlock)
 	if (_VBHard)
@@ -124,40 +115,40 @@ void CVBDrvInfosGL::unlock (uint first, uint last)
 	else
 	{
 		// Should be a system memory
-		nlassert (_SystemMemory);
+		nlassert(_SystemMemory);
 	}
 }
 
 // ***************************************************************************
-bool CDriverGL::setupVertexBuffer(CVertexBuffer& VB)
+bool CDriverGL::setupVertexBuffer(CVertexBuffer &VB)
 {
 	H_AUTO_OGL(CDriverGL_setupVertexBuffer)
 	// 2. If necessary, do modifications.
 	//==================================
-	const bool touched = (VB.getTouchFlags() & (CVertexBuffer::TouchedReserve|CVertexBuffer::TouchedVertexFormat)) != 0;
-	if( touched || (VB.DrvInfos == NULL))
+	const bool touched = (VB.getTouchFlags() & (CVertexBuffer::TouchedReserve | CVertexBuffer::TouchedVertexFormat)) != 0;
+	if (touched || (VB.DrvInfos == NULL))
 	{
 		// delete first
-		if(VB.DrvInfos)
+		if (VB.DrvInfos)
 			delete VB.DrvInfos;
 		VB.DrvInfos = NULL;
 
 		// create only if some vertices
-		if(VB.getNumVertices())
+		if (VB.getNumVertices())
 		{
 			// 1. Retrieve/Create driver shader.
 			//==================================
 			// insert into driver list. (so it is deleted when driver is deleted).
-			ItVBDrvInfoPtrList	it= _VBDrvInfos.insert(_VBDrvInfos.end(), (NL3D::IVBDrvInfos*)NULL);
+			ItVBDrvInfoPtrList it = _VBDrvInfos.insert(_VBDrvInfos.end(), (NL3D::IVBDrvInfos *)NULL);
 			// create and set iterator, for future deletion.
 			CVBDrvInfosGL *info = new CVBDrvInfosGL(this, it, &VB);
-			*it= VB.DrvInfos = info;
+			*it = VB.DrvInfos = info;
 
 			// Preferred memory, AGPVolatile only goes through when ARBMapBufferRange is available
-			CVertexBuffer::TPreferredMemory preferred = VB.getPreferredMemory ();
+			CVertexBuffer::TPreferredMemory preferred = VB.getPreferredMemory();
 			if ((preferred == CVertexBuffer::RAMVolatile) || (preferred == CVertexBuffer::AGPVolatile && !_Extensions.ARBMapBufferRange))
 				preferred = CVertexBuffer::RAMPreferred;
-			const uint size = VB.capacity()*VB.getVertexSize();
+			const uint size = VB.capacity() * VB.getVertexSize();
 			uint preferredMemory = _Extensions.DisableHardwareVertexArrayAGP ? CVertexBuffer::RAMPreferred : preferred;
 			while (preferredMemory != CVertexBuffer::RAMPreferred)
 			{
@@ -177,7 +168,7 @@ bool CDriverGL::setupVertexBuffer(CVertexBuffer& VB)
 			// No memory found ? Use system memory
 			if (info->_VBHard == NULL)
 			{
-				nlassert (info->_SystemMemory == NULL);
+				nlassert(info->_SystemMemory == NULL);
 				info->_SystemMemory = new uint8[size];
 			}
 
@@ -189,37 +180,35 @@ bool CDriverGL::setupVertexBuffer(CVertexBuffer& VB)
 	return true;
 }
 
-
 // ***************************************************************************
-bool		CDriverGL::activeVertexBuffer(CVertexBuffer& VB)
+bool CDriverGL::activeVertexBuffer(CVertexBuffer &VB)
 {
 	H_AUTO_OGL(CDriverGL_activeVertexBuffer)
 	// NB: must duplicate changes in activeVertexBufferHard()
-	uint32	flags;
+	uint32 flags;
 
 	// In any case, we'll erase any special vertex setup for Lightmap Material
-	_LastVertexSetupIsLightMap= false;
+	_LastVertexSetupIsLightMap = false;
 
 	// setup
 	if (!setupVertexBuffer(VB))
 		return false;
 
-	if (VB.getNumVertices()==0)
+	if (VB.getNumVertices() == 0)
 		return true;
 
 	// Fill the buffer if in local memory
-	VB.fillBuffer ();
+	VB.fillBuffer();
 
 	// Get VB flags, to setup matrixes and arrays.
-	flags=VB.getVertexFormat();
-
+	flags = VB.getVertexFormat();
 
 	// 2. Setup Arrays.
 	//===================
 	// For MultiPass Material.
 	CVertexBufferInfo::TVBMode lastVBMode = _LastVB.VBMode;
-	CVBDrvInfosGL		*info= safe_cast<CVBDrvInfosGL*>((IVBDrvInfos*)VB.DrvInfos);
-	if (!info->_VBHard ||  (info->_VBHard && !info->_VBHard->isInvalid()))
+	CVBDrvInfosGL *info = safe_cast<CVBDrvInfosGL *>((IVBDrvInfos *)VB.DrvInfos);
+	if (!info->_VBHard || (info->_VBHard && !info->_VBHard->isInvalid()))
 	{
 		_LastVB.setupVertexBuffer(VB);
 		if (lastVBMode == CVertexBufferInfo::HwARB && _LastVB.VBMode != CVertexBufferInfo::HwARB)
@@ -233,7 +222,7 @@ bool		CDriverGL::activeVertexBuffer(CVertexBuffer& VB)
 		fenceOnCurVBHardIfNeeded(NULL);
 
 		// Disable the current vertexBufferHard if setuped.
-		if(_CurrentVertexBufferHard)
+		if (_CurrentVertexBufferHard)
 			_CurrentVertexBufferHard->disable();
 	}
 	else
@@ -247,7 +236,7 @@ bool		CDriverGL::activeVertexBuffer(CVertexBuffer& VB)
 		// Enable the vertexArrayRange of this array.
 		info->_VBHard->enable();
 	}
-	if (!info->_VBHard ||  (info->_VBHard && !info->_VBHard->isInvalid()))
+	if (!info->_VBHard || (info->_VBHard && !info->_VBHard->isInvalid()))
 	{
 		setupGlArrays(_LastVB);
 	}
@@ -255,7 +244,7 @@ bool		CDriverGL::activeVertexBuffer(CVertexBuffer& VB)
 }
 
 // ***************************************************************************
-bool CDriverGL::activeIndexBuffer(CIndexBuffer& IB)
+bool CDriverGL::activeIndexBuffer(CIndexBuffer &IB)
 {
 	H_AUTO_OGL(CDriverGL_activeIndexBuffer)
 	_LastIB.setupIndexBuffer(IB);
@@ -264,33 +253,33 @@ bool CDriverGL::activeIndexBuffer(CIndexBuffer& IB)
 
 // ***************************************************************************
 
-bool CDriverGL::renderLines(CMaterial& mat, uint32 firstIndex, uint32 nlines)
+bool CDriverGL::renderLines(CMaterial &mat, uint32 firstIndex, uint32 nlines)
 {
 	H_AUTO_OGL(CDriverGL_renderLines)
 	// update matrix and Light in OpenGL if needed
 	refreshRenderSetup();
 
 	// setup material
-	if ( !setupMaterial(mat) || _LastIB._Values == NULL )
+	if (!setupMaterial(mat) || _LastIB._Values == NULL)
 		return false;
 
 	if (_CurrentVertexBufferHard && _CurrentVertexBufferHard->isInvalid()) return true;
 	// render primitives.
 	//==============================
 	// start multipass.
-	uint	nPass;
-	nPass= beginMultiPass();
+	uint nPass;
+	nPass = beginMultiPass();
 	// draw all passes.
-	for(uint pass=0;pass<nPass; pass++)
+	for (uint pass = 0; pass < nPass; pass++)
 	{
 		// setup the pass.
 		setupPass(pass);
 		// draw the primitives.
-		if(nlines)
+		if (nlines)
 		{
 			if (_LastIB._Format == CIndexBuffer::Indices16)
 			{
-				glDrawElements(GL_LINES,2*nlines,GL_UNSIGNED_SHORT,((uint16 *) _LastIB._Values)+firstIndex);
+				glDrawElements(GL_LINES, 2 * nlines, GL_UNSIGNED_SHORT, ((uint16 *)_LastIB._Values) + firstIndex);
 			}
 			else
 			{
@@ -298,7 +287,7 @@ bool CDriverGL::renderLines(CMaterial& mat, uint32 firstIndex, uint32 nlines)
 				nlerror("not available in OpenGL ES 1.0, only use 16 bits indices");
 #else
 				nlassert(_LastIB._Format == CIndexBuffer::Indices32);
-				glDrawElements(GL_LINES,2*nlines,GL_UNSIGNED_INT,((uint32 *) _LastIB._Values)+firstIndex);
+				glDrawElements(GL_LINES, 2 * nlines, GL_UNSIGNED_INT, ((uint32 *)_LastIB._Values) + firstIndex);
 #endif
 			}
 		}
@@ -307,19 +296,19 @@ bool CDriverGL::renderLines(CMaterial& mat, uint32 firstIndex, uint32 nlines)
 	endMultiPass();
 
 	// Profiling.
-	_PrimitiveProfileIn.NLines+= nlines;
-	_PrimitiveProfileOut.NLines+= nlines;
+	_PrimitiveProfileIn.NLines += nlines;
+	_PrimitiveProfileOut.NLines += nlines;
 
 	// We have render some prims. inform the VBHard.
-	if(_CurrentVertexBufferHard)
-		_CurrentVertexBufferHard->GPURenderingAfterFence= true;
+	if (_CurrentVertexBufferHard)
+		_CurrentVertexBufferHard->GPURenderingAfterFence = true;
 
 	return true;
 }
 
 // ***************************************************************************
 
-bool CDriverGL::renderTriangles(CMaterial& mat, uint32 firstIndex, uint32 ntris)
+bool CDriverGL::renderTriangles(CMaterial &mat, uint32 firstIndex, uint32 ntris)
 {
 	H_AUTO_OGL(CDriverGL_renderTriangles);
 
@@ -327,7 +316,7 @@ bool CDriverGL::renderTriangles(CMaterial& mat, uint32 firstIndex, uint32 ntris)
 	refreshRenderSetup();
 
 	// setup material
-	if ( !setupMaterial(mat) || _LastIB._Values == NULL )
+	if (!setupMaterial(mat) || _LastIB._Values == NULL)
 		return false;
 
 	if (_CurrentVertexBufferHard && _CurrentVertexBufferHard->isInvalid()) return true;
@@ -335,22 +324,22 @@ bool CDriverGL::renderTriangles(CMaterial& mat, uint32 firstIndex, uint32 ntris)
 	// render primitives.
 	//==============================
 	// start multipass.
-	uint	nPass;
+	uint nPass;
 
-	nPass= beginMultiPass();
+	nPass = beginMultiPass();
 
 	// draw all passes.
-	for(uint pass=0;pass<nPass; pass++)
+	for (uint pass = 0; pass < nPass; pass++)
 	{
 		// setup the pass.
 		setupPass(pass);
 
 		// draw the primitives.
-		if(ntris)
+		if (ntris)
 		{
 			if (_LastIB._Format == CIndexBuffer::Indices16)
 			{
-				glDrawElements(GL_TRIANGLES,3*ntris,GL_UNSIGNED_SHORT, ((uint16 *) _LastIB._Values)+firstIndex);
+				glDrawElements(GL_TRIANGLES, 3 * ntris, GL_UNSIGNED_SHORT, ((uint16 *)_LastIB._Values) + firstIndex);
 			}
 			else
 			{
@@ -358,7 +347,7 @@ bool CDriverGL::renderTriangles(CMaterial& mat, uint32 firstIndex, uint32 ntris)
 				nlerror("not available in OpenGL ES 1.0, only use 16 bits indices");
 #else
 				nlassert(_LastIB._Format == CIndexBuffer::Indices32);
-				glDrawElements(GL_TRIANGLES,3*ntris,GL_UNSIGNED_INT, ((uint32 *) _LastIB._Values)+firstIndex);
+				glDrawElements(GL_TRIANGLES, 3 * ntris, GL_UNSIGNED_INT, ((uint32 *)_LastIB._Values) + firstIndex);
 #endif
 			}
 		}
@@ -366,14 +355,13 @@ bool CDriverGL::renderTriangles(CMaterial& mat, uint32 firstIndex, uint32 ntris)
 	// end multipass.
 	endMultiPass();
 
-
 	// Profiling.
-	_PrimitiveProfileIn.NTriangles+= ntris;
-	_PrimitiveProfileOut.NTriangles+= ntris * nPass;
+	_PrimitiveProfileIn.NTriangles += ntris;
+	_PrimitiveProfileOut.NTriangles += ntris * nPass;
 
 	// We have render some prims. inform the VBHard.
-	if(_CurrentVertexBufferHard)
-		_CurrentVertexBufferHard->GPURenderingAfterFence= true;
+	if (_CurrentVertexBufferHard)
+		_CurrentVertexBufferHard->GPURenderingAfterFence = true;
 	return true;
 }
 
@@ -383,7 +371,7 @@ bool CDriverGL::renderSimpleTriangles(uint32 firstTri, uint32 ntris)
 {
 	H_AUTO_OGL(CDriverGL_renderSimpleTriangles);
 
-	nlassert(ntris>0);
+	nlassert(ntris > 0);
 
 	// update matrix and Light in OpenGL if needed
 	refreshRenderSetup();
@@ -398,7 +386,7 @@ bool CDriverGL::renderSimpleTriangles(uint32 firstTri, uint32 ntris)
 
 	if (_LastIB._Format == CIndexBuffer::Indices16)
 	{
-		glDrawElements(GL_TRIANGLES,3*ntris,GL_UNSIGNED_SHORT, ((uint16 *) _LastIB._Values)+firstTri);
+		glDrawElements(GL_TRIANGLES, 3 * ntris, GL_UNSIGNED_SHORT, ((uint16 *)_LastIB._Values) + firstTri);
 	}
 	else
 	{
@@ -406,149 +394,146 @@ bool CDriverGL::renderSimpleTriangles(uint32 firstTri, uint32 ntris)
 		nlerror("not available in OpenGL ES 1.0, only use 16 bits indices");
 #else
 		nlassert(_LastIB._Format == CIndexBuffer::Indices32);
-		glDrawElements(GL_TRIANGLES,3*ntris,GL_UNSIGNED_INT, ((uint32 *) _LastIB._Values)+firstTri);
+		glDrawElements(GL_TRIANGLES, 3 * ntris, GL_UNSIGNED_INT, ((uint32 *)_LastIB._Values) + firstTri);
 #endif
 	}
 
 	// Profiling.
-	_PrimitiveProfileIn.NTriangles+= ntris;
-	_PrimitiveProfileOut.NTriangles+= ntris;
+	_PrimitiveProfileIn.NTriangles += ntris;
+	_PrimitiveProfileOut.NTriangles += ntris;
 
 	// We have render some prims. inform the VBHard.
-	if(_CurrentVertexBufferHard)
-		_CurrentVertexBufferHard->GPURenderingAfterFence= true;
+	if (_CurrentVertexBufferHard)
+		_CurrentVertexBufferHard->GPURenderingAfterFence = true;
 
 	return true;
 }
 
 // ***************************************************************************
 
-bool CDriverGL::renderRawPoints(CMaterial& mat, uint32 startIndex, uint32 numPoints)
+bool CDriverGL::renderRawPoints(CMaterial &mat, uint32 startIndex, uint32 numPoints)
 {
 	H_AUTO_OGL(CDriverGL_renderRawPoints)
 	// update matrix and Light in OpenGL if needed
 	refreshRenderSetup();
 
 	// setup material
-	if ( !setupMaterial(mat) )
+	if (!setupMaterial(mat))
 		return false;
 
 	if (_CurrentVertexBufferHard && _CurrentVertexBufferHard->isInvalid()) return true;
 	// render primitives.
 	//==============================
 	// start multipass.
-	uint	nPass;
-	nPass= beginMultiPass();
+	uint nPass;
+	nPass = beginMultiPass();
 	// draw all passes.
-	for(uint pass=0;pass<nPass; pass++)
+	for (uint pass = 0; pass < nPass; pass++)
 	{
 		// setup the pass.
 		setupPass(pass);
 		// draw the primitives.
-		if(numPoints)
+		if (numPoints)
 			glDrawArrays(GL_POINTS, startIndex, numPoints);
 	}
 	// end multipass.
 	endMultiPass();
 
-
 	// Profiling.
-	_PrimitiveProfileIn.NPoints+= numPoints;
-	_PrimitiveProfileOut.NPoints+= numPoints * nPass;
+	_PrimitiveProfileIn.NPoints += numPoints;
+	_PrimitiveProfileOut.NPoints += numPoints * nPass;
 
 	// We have render some prims. inform the VBHard.
-	if(_CurrentVertexBufferHard)
-		_CurrentVertexBufferHard->GPURenderingAfterFence= true;
+	if (_CurrentVertexBufferHard)
+		_CurrentVertexBufferHard->GPURenderingAfterFence = true;
 	return true;
 }
 
 // ***************************************************************************
 
-bool CDriverGL::renderRawLines(CMaterial& mat, uint32 startIndex, uint32 numLines)
+bool CDriverGL::renderRawLines(CMaterial &mat, uint32 startIndex, uint32 numLines)
 {
 	H_AUTO_OGL(CDriverGL_renderRawLines)
 	// update matrix and Light in OpenGL if needed
 	refreshRenderSetup();
 
 	// setup material
-	if ( !setupMaterial(mat) )
+	if (!setupMaterial(mat))
 		return false;
 
 	if (_CurrentVertexBufferHard && _CurrentVertexBufferHard->isInvalid()) return true;
 	// render primitives.
 	//==============================
 	// start multipass.
-	uint	nPass;
-	nPass= beginMultiPass();
+	uint nPass;
+	nPass = beginMultiPass();
 	// draw all passes.
-	for(uint pass=0;pass<nPass; pass++)
+	for (uint pass = 0; pass < nPass; pass++)
 	{
 		// setup the pass.
 		setupPass(pass);
 		// draw the primitives.
-		if(numLines)
+		if (numLines)
 			glDrawArrays(GL_LINES, startIndex << 1, numLines << 1);
 	}
 	// end multipass.
 	endMultiPass();
 
-
 	// Profiling.
-	_PrimitiveProfileIn.NLines  += numLines ;
-	_PrimitiveProfileOut.NLines += numLines  * nPass;
+	_PrimitiveProfileIn.NLines += numLines;
+	_PrimitiveProfileOut.NLines += numLines * nPass;
 
 	// We have render some prims. inform the VBHard.
-	if(_CurrentVertexBufferHard)
-		_CurrentVertexBufferHard->GPURenderingAfterFence= true;
+	if (_CurrentVertexBufferHard)
+		_CurrentVertexBufferHard->GPURenderingAfterFence = true;
 	return true;
 }
 
 // ***************************************************************************
 
-bool CDriverGL::renderRawTriangles(CMaterial& mat, uint32 startIndex, uint32 numTris)
+bool CDriverGL::renderRawTriangles(CMaterial &mat, uint32 startIndex, uint32 numTris)
 {
 	H_AUTO_OGL(CDriverGL_renderRawTriangles)
 	// update matrix and Light in OpenGL if needed
 	refreshRenderSetup();
 
 	// setup material
-	if ( !setupMaterial(mat) )
+	if (!setupMaterial(mat))
 		return false;
 
 	if (_CurrentVertexBufferHard && _CurrentVertexBufferHard->isInvalid()) return true;
 	// render primitives.
 	//==============================
 	// start multipass.
-	uint	nPass;
-	nPass= beginMultiPass();
+	uint nPass;
+	nPass = beginMultiPass();
 	// draw all passes.
-	for(uint pass=0;pass<nPass; pass++)
+	for (uint pass = 0; pass < nPass; pass++)
 	{
 		// setup the pass.
 		setupPass(pass);
 		// draw the primitives.
-		if(numTris)
+		if (numTris)
 		{
-			glDrawArrays(GL_TRIANGLES, startIndex*3, numTris*3);
+			glDrawArrays(GL_TRIANGLES, startIndex * 3, numTris * 3);
 		}
 	}
 	// end multipass.
 	endMultiPass();
 
-
 	// Profiling.
-	_PrimitiveProfileIn.NTriangles  += numTris ;
-	_PrimitiveProfileOut.NTriangles += numTris  * nPass;
+	_PrimitiveProfileIn.NTriangles += numTris;
+	_PrimitiveProfileOut.NTriangles += numTris * nPass;
 
 	// We have render some prims. inform the VBHard.
-	if(_CurrentVertexBufferHard)
-		_CurrentVertexBufferHard->GPURenderingAfterFence= true;
+	if (_CurrentVertexBufferHard)
+		_CurrentVertexBufferHard->GPURenderingAfterFence = true;
 	return true;
 }
 
 // ***************************************************************************
 
-bool CDriverGL::renderRawQuads(CMaterial& mat, uint32 startIndex, uint32 numQuads)
+bool CDriverGL::renderRawQuads(CMaterial &mat, uint32 startIndex, uint32 numQuads)
 {
 	H_AUTO_OGL(CDriverGL_renderRawQuads)
 	if (!numQuads) return true;
@@ -556,28 +541,27 @@ bool CDriverGL::renderRawQuads(CMaterial& mat, uint32 startIndex, uint32 numQuad
 	refreshRenderSetup();
 
 	// setup material
-	if ( !setupMaterial(mat) )
+	if (!setupMaterial(mat))
 		return false;
 
 	if (_CurrentVertexBufferHard && _CurrentVertexBufferHard->isInvalid()) return true;
 
 	const uint32 QUAD_BATCH_SIZE = 2048;
 	static GLshort defaultIndices[QUAD_BATCH_SIZE * 6];
-	static bool	init = false;
+	static bool init = false;
 	if (!init)
 	{
 		// setup the base index buffer
-		for(uint k = 0; k < QUAD_BATCH_SIZE; ++k)
+		for (uint k = 0; k < QUAD_BATCH_SIZE; ++k)
 		{
 			// first tri
-			defaultIndices[k * 6] = (GLshort) (k * 4);
-			defaultIndices[k * 6 + 1] = (GLshort) (k * 4 + 1);
-			defaultIndices[k * 6 + 2] = (GLshort) (k * 4 + 2);
+			defaultIndices[k * 6] = (GLshort)(k * 4);
+			defaultIndices[k * 6 + 1] = (GLshort)(k * 4 + 1);
+			defaultIndices[k * 6 + 2] = (GLshort)(k * 4 + 2);
 			// second tri
-			defaultIndices[k * 6 + 3] = (GLshort) (k * 4);
-			defaultIndices[k * 6 + 4] = (GLshort) (k * 4 + 2);
-			defaultIndices[k * 6 + 5] = (GLshort) (k * 4 + 3);
-
+			defaultIndices[k * 6 + 3] = (GLshort)(k * 4);
+			defaultIndices[k * 6 + 4] = (GLshort)(k * 4 + 2);
+			defaultIndices[k * 6 + 5] = (GLshort)(k * 4 + 3);
 		}
 		init = true;
 	}
@@ -585,10 +569,10 @@ bool CDriverGL::renderRawQuads(CMaterial& mat, uint32 startIndex, uint32 numQuad
 	// render primitives.
 	//==============================
 	// start multipass.
-	uint	nPass;
-	nPass= beginMultiPass();
+	uint nPass;
+	nPass = beginMultiPass();
 	// draw all passes.
-	for(uint pass=0;pass<nPass; pass++)
+	for (uint pass = 0; pass < nPass; pass++)
 	{
 		// setup the pass.
 		setupPass(pass);
@@ -618,7 +602,7 @@ bool CDriverGL::renderRawQuads(CMaterial& mat, uint32 startIndex, uint32 numQuad
 				GLshort indices[QUAD_BATCH_SIZE * 6];
 				GLshort *curr = indices;
 				GLshort *end = indices + 6 * numQuadsToDraw;
-				uint16 vertexIndex = (uint16) currIndex;
+				uint16 vertexIndex = (uint16)currIndex;
 				do
 				{
 					*curr++ = vertexIndex;
@@ -628,8 +612,7 @@ bool CDriverGL::renderRawQuads(CMaterial& mat, uint32 startIndex, uint32 numQuad
 					*curr++ = vertexIndex + 2;
 					*curr++ = vertexIndex + 3;
 					vertexIndex += 4;
-				}
-				while(curr != end);
+				} while (curr != end);
 				glDrawElements(GL_TRIANGLES, 6 * numQuadsToDraw, GL_UNSIGNED_SHORT, indices);
 			}
 			else
@@ -651,8 +634,7 @@ bool CDriverGL::renderRawQuads(CMaterial& mat, uint32 startIndex, uint32 numQuad
 					*curr++ = vertexIndex + 2;
 					*curr++ = vertexIndex + 3;
 					vertexIndex += 4;
-				}
-				while(curr != end);
+				} while (curr != end);
 				glDrawElements(GL_TRIANGLES, 6 * numQuadsToDraw, GL_UNSIGNED_INT, indices);
 #endif
 			}
@@ -663,55 +645,53 @@ bool CDriverGL::renderRawQuads(CMaterial& mat, uint32 startIndex, uint32 numQuad
 	// end multipass.
 	endMultiPass();
 
-
 	// Profiling.
-	_PrimitiveProfileIn.NQuads  += numQuads ;
-	_PrimitiveProfileOut.NQuads += numQuads  * nPass;
+	_PrimitiveProfileIn.NQuads += numQuads;
+	_PrimitiveProfileOut.NQuads += numQuads * nPass;
 
 	// We have render some prims. inform the VBHard.
-	if(_CurrentVertexBufferHard)
-		_CurrentVertexBufferHard->GPURenderingAfterFence= true;
+	if (_CurrentVertexBufferHard)
+		_CurrentVertexBufferHard->GPURenderingAfterFence = true;
 	return true;
 }
 
 // ***************************************************************************
 
-void		CDriverGL::setupUVPtr(uint stage, CVertexBufferInfo &VB, uint uvId)
+void CDriverGL::setupUVPtr(uint stage, CVertexBufferInfo &VB, uint uvId)
 {
 	H_AUTO_OGL(CDriverGL_setupUVPtr)
 	// sould not be called with vertex program Array setuped.
 	nlassert(!_LastSetupGLArrayVertexProgram);
 
 	_DriverGLStates.clientActiveTextureARB(stage);
-	if (VB.VertexFormat & (CVertexBuffer::TexCoord0Flag<<uvId))
+	if (VB.VertexFormat & (CVertexBuffer::TexCoord0Flag << uvId))
 	{
 		// Check type, if not supported, just ignore
-		CVertexBuffer::TType uvType = VB.Type[CVertexBuffer::TexCoord0+uvId];
-		if (uvType == CVertexBuffer::Float2 ||
-			uvType == CVertexBuffer::Float3)
+		CVertexBuffer::TType uvType = VB.Type[CVertexBuffer::TexCoord0 + uvId];
+		if (uvType == CVertexBuffer::Float2 || uvType == CVertexBuffer::Float3)
 		{
 			_DriverGLStates.enableTexCoordArray(true);
 			uint numTexCoord = (uvType == CVertexBuffer::Float2) ? 2 : 3;
 			// Setup ATI VBHard or std ptr.
-			switch(VB.VBMode)
+			switch (VB.VBMode)
 			{
 #ifndef USE_OPENGLES
-				case CVertexBufferInfo::HwATI:
-					nglArrayObjectATI(GL_TEXTURE_COORD_ARRAY, numTexCoord, GL_FLOAT, VB.VertexSize, VB.VertexObjectId,
-						              (ptrdiff_t) VB.ValuePtr[CVertexBuffer::TexCoord0+uvId]);
+			case CVertexBufferInfo::HwATI:
+				nglArrayObjectATI(GL_TEXTURE_COORD_ARRAY, numTexCoord, GL_FLOAT, VB.VertexSize, VB.VertexObjectId,
+				    (ptrdiff_t)VB.ValuePtr[CVertexBuffer::TexCoord0 + uvId]);
 				break;
 #endif
-				case CVertexBufferInfo::HwARB:
-					_DriverGLStates.bindARBVertexBuffer(VB.VertexObjectId);
-					// with arb buffers, position is relative to the start of the stream
-					glTexCoordPointer(numTexCoord,GL_FLOAT,VB.VertexSize, VB.ValuePtr[CVertexBuffer::TexCoord0+uvId]);
+			case CVertexBufferInfo::HwARB:
+				_DriverGLStates.bindARBVertexBuffer(VB.VertexObjectId);
+				// with arb buffers, position is relative to the start of the stream
+				glTexCoordPointer(numTexCoord, GL_FLOAT, VB.VertexSize, VB.ValuePtr[CVertexBuffer::TexCoord0 + uvId]);
 				break;
-				case CVertexBufferInfo::SysMem:
-				case CVertexBufferInfo::HwNVIDIA:
-					glTexCoordPointer(numTexCoord,GL_FLOAT,VB.VertexSize, VB.ValuePtr[CVertexBuffer::TexCoord0+uvId]);
+			case CVertexBufferInfo::SysMem:
+			case CVertexBufferInfo::HwNVIDIA:
+				glTexCoordPointer(numTexCoord, GL_FLOAT, VB.VertexSize, VB.ValuePtr[CVertexBuffer::TexCoord0 + uvId]);
 				break;
-                default:
-                    break;
+			default:
+				break;
 			}
 		}
 		else
@@ -723,16 +703,13 @@ void		CDriverGL::setupUVPtr(uint stage, CVertexBufferInfo &VB, uint uvId)
 		_DriverGLStates.enableTexCoordArray(false);
 }
 
-
 // ***************************************************************************
-void		CDriverGL::mapTextureStageToUV(uint stage, uint uv)
+void CDriverGL::mapTextureStageToUV(uint stage, uint uv)
 {
 	H_AUTO_OGL(CDriverGL_mapTextureStageToUV)
 	// Just call it for last VertexBuffer setuped.
 	setupUVPtr(stage, _LastVB, uv);
 }
-
-
 
 // ***************************************************************************
 // ***************************************************************************
@@ -740,76 +717,71 @@ void		CDriverGL::mapTextureStageToUV(uint stage, uint uv)
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
-bool			CDriverGL::supportVertexBufferHard() const
+bool CDriverGL::supportVertexBufferHard() const
 {
 	H_AUTO_OGL(CDriverGL_supportVertexBufferHard)
 	return _SupportVBHard;
 }
 
 // ***************************************************************************
-bool			CDriverGL::supportVolatileVertexBuffer() const
+bool CDriverGL::supportVolatileVertexBuffer() const
 {
 	H_AUTO_OGL(CDriverGL_supportVolatileVertexBuffer)
 	return _Extensions.ARBMapBufferRange;
 }
 
-
-
 // ***************************************************************************
-bool			CDriverGL::slowUnlockVertexBufferHard() const
+bool CDriverGL::slowUnlockVertexBufferHard() const
 {
 	H_AUTO_OGL(CDriverGL_slowUnlockVertexBufferHard)
 	return _SlowUnlockVBHard;
 }
 
-
 // ***************************************************************************
-uint			CDriverGL::getMaxVerticesByVertexBufferHard() const
+uint CDriverGL::getMaxVerticesByVertexBufferHard() const
 {
 	H_AUTO_OGL(CDriverGL_getMaxVerticesByVertexBufferHard)
 	return _MaxVerticesByVBHard;
 }
 
-
 // ***************************************************************************
-IVertexBufferHardGL	*CDriverGL::createVertexBufferHard(uint size, uint numVertices, CVertexBuffer::TPreferredMemory vbType, CVertexBuffer *vb)
+IVertexBufferHardGL *CDriverGL::createVertexBufferHard(uint size, uint numVertices, CVertexBuffer::TPreferredMemory vbType, CVertexBuffer *vb)
 {
 	H_AUTO_OGL(CDriverGL_createVertexBufferHard)
 	// choose the VertexArrayRange of good type
-	IVertexArrayRange	*vertexArrayRange= NULL;
-	switch(vbType)
+	IVertexArrayRange *vertexArrayRange = NULL;
+	switch (vbType)
 	{
 	case CVertexBuffer::AGPVolatile:
 	case CVertexBuffer::AGPPreferred:
-		vertexArrayRange= _AGPVertexArrayRange;
+		vertexArrayRange = _AGPVertexArrayRange;
 		break;
 	case CVertexBuffer::StaticPreferred:
 		if (getStaticMemoryToVRAM())
-			vertexArrayRange= _VRAMVertexArrayRange;
+			vertexArrayRange = _VRAMVertexArrayRange;
 		else
-			vertexArrayRange= _AGPVertexArrayRange;
+			vertexArrayRange = _AGPVertexArrayRange;
 		break;
-        default:
-            break;
+	default:
+		break;
 	}
 
 	// If this one at least created (an extension support it).
-	if( !vertexArrayRange )
+	if (!vertexArrayRange)
 		return NULL;
 	else
 	{
 		// check max vertex
-		if(numVertices > _MaxVerticesByVBHard)
+		if (numVertices > _MaxVerticesByVBHard)
 			return NULL;
 
 		// Create a CVertexBufferHardGL
-		IVertexBufferHardGL		*vbHard = NULL;
+		IVertexBufferHardGL *vbHard = NULL;
 		// let the VAR create the vbhard.
-		vbHard= vertexArrayRange->createVBHardGL(size, vb);
+		vbHard = vertexArrayRange->createVBHardGL(size, vb);
 		// if fails
-		if(!vbHard)
+		if (!vbHard)
 		{
 			return NULL;
 		}
@@ -821,272 +793,258 @@ IVertexBufferHardGL	*CDriverGL::createVertexBufferHard(uint size, uint numVertic
 	}
 }
 
-
 // ***************************************************************************
-const uint		CDriverGL::NumCoordinatesType[CVertexBuffer::NumType]=
-{
-	1,	// Double1
-	1,	// Float1
-	1,	// Short1
-	2,	// Double2
-	2,	// Float2
-	2,	// Short2
-	3,	// Double3
-	3,	// Float3
-	3,	// Short3
-	4,	// Double4
-	4,	// Float4
-	4,	// Short4
-	4	// UChar4
+const uint CDriverGL::NumCoordinatesType[CVertexBuffer::NumType] = {
+	1, // Double1
+	1, // Float1
+	1, // Short1
+	2, // Double2
+	2, // Float2
+	2, // Short2
+	3, // Double3
+	3, // Float3
+	3, // Short3
+	4, // Double4
+	4, // Float4
+	4, // Short4
+	4 // UChar4
 };
 
-
 // ***************************************************************************
-const uint		CDriverGL::GLType[CVertexBuffer::NumType]=
-{
+const uint CDriverGL::GLType[CVertexBuffer::NumType] = {
 #ifdef USE_OPENGLES
-	GL_FLOAT,	// Double1
-	GL_FLOAT,	// Float1
-	GL_SHORT,	// Short1
-	GL_FLOAT,	// Double2
-	GL_FLOAT,	// Float2
-	GL_SHORT,	// Short2
-	GL_FLOAT,	// Double3
-	GL_FLOAT,	// Float3
-	GL_SHORT,	// Short3
-	GL_FLOAT,	// Double4
-	GL_FLOAT,	// Float4
-	GL_SHORT,	// Short4
-	GL_UNSIGNED_BYTE	// UChar4
+	GL_FLOAT, // Double1
+	GL_FLOAT, // Float1
+	GL_SHORT, // Short1
+	GL_FLOAT, // Double2
+	GL_FLOAT, // Float2
+	GL_SHORT, // Short2
+	GL_FLOAT, // Double3
+	GL_FLOAT, // Float3
+	GL_SHORT, // Short3
+	GL_FLOAT, // Double4
+	GL_FLOAT, // Float4
+	GL_SHORT, // Short4
+	GL_UNSIGNED_BYTE // UChar4
 #else
-	GL_DOUBLE,	// Double1
-	GL_FLOAT,	// Float1
-	GL_SHORT,	// Short1
-	GL_DOUBLE,	// Double2
-	GL_FLOAT,	// Float2
-	GL_SHORT,	// Short2
-	GL_DOUBLE,	// Double3
-	GL_FLOAT,	// Float3
-	GL_SHORT,	// Short3
-	GL_DOUBLE,	// Double4
-	GL_FLOAT,	// Float4
-	GL_SHORT,	// Short4
-	GL_UNSIGNED_BYTE	// UChar4
+	GL_DOUBLE, // Double1
+	GL_FLOAT, // Float1
+	GL_SHORT, // Short1
+	GL_DOUBLE, // Double2
+	GL_FLOAT, // Float2
+	GL_SHORT, // Short2
+	GL_DOUBLE, // Double3
+	GL_FLOAT, // Float3
+	GL_SHORT, // Short3
+	GL_DOUBLE, // Double4
+	GL_FLOAT, // Float4
+	GL_SHORT, // Short4
+	GL_UNSIGNED_BYTE // UChar4
 #endif
 };
 
 // ***************************************************************************
-const bool CDriverGL::GLTypeIsIntegral[CVertexBuffer::NumType] =
-{
-	false,	// Double1
-	false,	// Float1
-	true,	// Short1
-	false,	// Double2
-	false,	// Float2
-	true,	// Short2
-	false,	// Double3
-	false,	// Float3
-	true,	// Short3
-	false,	// Double4
-	false,	// Float4
-	true,	// Short4
-	true	// UChar4
+const bool CDriverGL::GLTypeIsIntegral[CVertexBuffer::NumType] = {
+	false, // Double1
+	false, // Float1
+	true, // Short1
+	false, // Double2
+	false, // Float2
+	true, // Short2
+	false, // Double3
+	false, // Float3
+	true, // Short3
+	false, // Double4
+	false, // Float4
+	true, // Short4
+	true // UChar4
 };
 
-
-
 // ***************************************************************************
-const uint		CDriverGL::GLVertexAttribIndex[CVertexBuffer::NumValue]=
-{
-	0,	// Position
-	2,	// Normal
-	8,	// TexCoord0
-	9,	// TexCoord1
-	10,	// TexCoord2
-	11,	// TexCoord3
-	12,	// TexCoord4
-	13,	// TexCoord5
-	14,	// TexCoord6
-	15,	// TexCoord7
-	3,	// PrimaryColor
-	4,	// SecondaryColor
-	1,	// Weight
-	6,	// Empty (PaletteSkin)
-	5,	// Fog
-	7,	// Empty
+const uint CDriverGL::GLVertexAttribIndex[CVertexBuffer::NumValue] = {
+	0, // Position
+	2, // Normal
+	8, // TexCoord0
+	9, // TexCoord1
+	10, // TexCoord2
+	11, // TexCoord3
+	12, // TexCoord4
+	13, // TexCoord5
+	14, // TexCoord6
+	15, // TexCoord7
+	3, // PrimaryColor
+	4, // SecondaryColor
+	1, // Weight
+	6, // Empty (PaletteSkin)
+	5, // Fog
+	7, // Empty
 };
 
-
-
 // ***************************************************************************
-void		CDriverGL::setupGlArraysStd(CVertexBufferInfo &vb)
+void CDriverGL::setupGlArraysStd(CVertexBufferInfo &vb)
 {
 	H_AUTO_OGL(CDriverGL_setupGlArraysStd)
-	uint32	flags= vb.VertexFormat;
+	uint32 flags = vb.VertexFormat;
 
 	if (vb.VBMode == CVertexBufferInfo::HwARB)
 	{
 		_DriverGLStates.bindARBVertexBuffer(vb.VertexObjectId);
 	}
 
-	switch(vb.VBMode)
+	switch (vb.VBMode)
 	{
-		case CVertexBufferInfo::SysMem:
-		case CVertexBufferInfo::HwNVIDIA:
-		case CVertexBufferInfo::HwARB:
+	case CVertexBufferInfo::SysMem:
+	case CVertexBufferInfo::HwNVIDIA:
+	case CVertexBufferInfo::HwARB: {
+		// setup vertex ptr.
+		//-----------
+		uint numVertexCoord = CVertexBuffer::NumComponentsType[vb.Type[CVertexBuffer::Position]];
+		nlassert(numVertexCoord >= 2);
+		_DriverGLStates.enableVertexArray(true);
+		glVertexPointer(numVertexCoord, GL_FLOAT, vb.VertexSize, vb.ValuePtr[CVertexBuffer::Position]);
+
+		// setup normal ptr.
+		//-----------
+		// Check for normal param in vertex buffer
+		if (flags & CVertexBuffer::NormalFlag)
 		{
-			// setup vertex ptr.
-			//-----------
-			uint numVertexCoord = CVertexBuffer::NumComponentsType[vb.Type[CVertexBuffer::Position]];
-			nlassert (numVertexCoord >= 2);
-			_DriverGLStates.enableVertexArray(true);
-			glVertexPointer(numVertexCoord, GL_FLOAT, vb.VertexSize, vb.ValuePtr[CVertexBuffer::Position]);
+			// Check type
+			nlassert(vb.Type[CVertexBuffer::Normal] == CVertexBuffer::Float3);
 
-			// setup normal ptr.
-			//-----------
-			// Check for normal param in vertex buffer
-			if (flags & CVertexBuffer::NormalFlag)
-			{
-				// Check type
-				nlassert (vb.Type[CVertexBuffer::Normal]==CVertexBuffer::Float3);
-
-				_DriverGLStates.enableNormalArray(true);
-				glNormalPointer(GL_FLOAT, vb.VertexSize, vb.ValuePtr[CVertexBuffer::Normal]);
-			}
-			else
-			{
-				_DriverGLStates.enableNormalArray(false);
-			}
-
-			// Setup Color
-			//-----------
-			// Check for color param in vertex buffer
-			if (flags & CVertexBuffer::PrimaryColorFlag)
-			{
-				// Check type
-				nlassert (vb.Type[CVertexBuffer::PrimaryColor]==CVertexBuffer::UChar4);
-				_DriverGLStates.enableColorArray(true);
-				// Setup ATI VBHard or std ptr.
-				glColorPointer(4,GL_UNSIGNED_BYTE, vb.VertexSize, vb.ValuePtr[CVertexBuffer::PrimaryColor]);
-			}
-			else
-			{
-				_DriverGLStates.enableColorArray(false);
-			}
+			_DriverGLStates.enableNormalArray(true);
+			glNormalPointer(GL_FLOAT, vb.VertexSize, vb.ValuePtr[CVertexBuffer::Normal]);
 		}
-		break;
+		else
+		{
+			_DriverGLStates.enableNormalArray(false);
+		}
+
+		// Setup Color
+		//-----------
+		// Check for color param in vertex buffer
+		if (flags & CVertexBuffer::PrimaryColorFlag)
+		{
+			// Check type
+			nlassert(vb.Type[CVertexBuffer::PrimaryColor] == CVertexBuffer::UChar4);
+			_DriverGLStates.enableColorArray(true);
+			// Setup ATI VBHard or std ptr.
+			glColorPointer(4, GL_UNSIGNED_BYTE, vb.VertexSize, vb.ValuePtr[CVertexBuffer::PrimaryColor]);
+		}
+		else
+		{
+			_DriverGLStates.enableColorArray(false);
+		}
+	}
+	break;
 #ifndef USE_OPENGLES
-		case CVertexBufferInfo::HwATI:
+	case CVertexBufferInfo::HwATI: {
+		// setup vertex ptr.
+		//-----------
+		uint numVertexCoord = CVertexBuffer::NumComponentsType[vb.Type[CVertexBuffer::Position]];
+		nlassert(numVertexCoord >= 2);
+
+		_DriverGLStates.enableVertexArray(true);
+		nglArrayObjectATI(GL_VERTEX_ARRAY, numVertexCoord, GL_FLOAT, vb.VertexSize, vb.VertexObjectId, (ptrdiff_t)vb.ValuePtr[CVertexBuffer::Position]);
+		// setup normal ptr.
+		//-----------
+		// Check for normal param in vertex buffer
+		if (flags & CVertexBuffer::NormalFlag)
 		{
-			// setup vertex ptr.
-			//-----------
-			uint numVertexCoord = CVertexBuffer::NumComponentsType[vb.Type[CVertexBuffer::Position]];
-			nlassert (numVertexCoord >= 2);
-
-			_DriverGLStates.enableVertexArray(true);
-			nglArrayObjectATI(GL_VERTEX_ARRAY, numVertexCoord, GL_FLOAT, vb.VertexSize, vb.VertexObjectId, (ptrdiff_t) vb.ValuePtr[CVertexBuffer::Position]);
-			// setup normal ptr.
-			//-----------
-			// Check for normal param in vertex buffer
-			if (flags & CVertexBuffer::NormalFlag)
-			{
-				// Check type
-				nlassert (vb.Type[CVertexBuffer::Normal]==CVertexBuffer::Float3);
-				_DriverGLStates.enableNormalArray(true);
-				nglArrayObjectATI(GL_NORMAL_ARRAY, 3, GL_FLOAT, vb.VertexSize, vb.VertexObjectId, (ptrdiff_t) vb.ValuePtr[CVertexBuffer::Normal]);
-			}
-			else
-			{
-				_DriverGLStates.enableNormalArray(false);
-			}
-
-
-			// Setup Color
-			//-----------
-			// Check for color param in vertex buffer
-			if (flags & CVertexBuffer::PrimaryColorFlag)
-			{
-				// Check type
-				nlassert (vb.Type[CVertexBuffer::PrimaryColor]==CVertexBuffer::UChar4);
-
-				_DriverGLStates.enableColorArray(true);
-				nglArrayObjectATI(GL_COLOR_ARRAY, 4, GL_UNSIGNED_BYTE, vb.VertexSize, vb.VertexObjectId, (ptrdiff_t)  vb.ValuePtr[CVertexBuffer::PrimaryColor]);
-			}
-			else
-			{
-				_DriverGLStates.enableColorArray(false);
-			}
+			// Check type
+			nlassert(vb.Type[CVertexBuffer::Normal] == CVertexBuffer::Float3);
+			_DriverGLStates.enableNormalArray(true);
+			nglArrayObjectATI(GL_NORMAL_ARRAY, 3, GL_FLOAT, vb.VertexSize, vb.VertexObjectId, (ptrdiff_t)vb.ValuePtr[CVertexBuffer::Normal]);
 		}
-		break;
+		else
+		{
+			_DriverGLStates.enableNormalArray(false);
+		}
+
+		// Setup Color
+		//-----------
+		// Check for color param in vertex buffer
+		if (flags & CVertexBuffer::PrimaryColorFlag)
+		{
+			// Check type
+			nlassert(vb.Type[CVertexBuffer::PrimaryColor] == CVertexBuffer::UChar4);
+
+			_DriverGLStates.enableColorArray(true);
+			nglArrayObjectATI(GL_COLOR_ARRAY, 4, GL_UNSIGNED_BYTE, vb.VertexSize, vb.VertexObjectId, (ptrdiff_t)vb.ValuePtr[CVertexBuffer::PrimaryColor]);
+		}
+		else
+		{
+			_DriverGLStates.enableColorArray(false);
+		}
+	}
+	break;
 #endif
-		default:
-			nlassert(0);
+	default:
+		nlassert(0);
 		break;
 	}
 
 	// Setup Uvs
 	//-----------
 	// Get the routing
-	for(uint i=0; i<inlGetNumTextStages(); i++)
+	for (uint i = 0; i < inlGetNumTextStages(); i++)
 	{
 		// normal behavior: each texture has its own UV.
 		setupUVPtr(i, vb, vb.UVRouting[i]);
 	}
 }
 
-
 // ***************************************************************************
-void		CDriverGL::toggleGlArraysForNVVertexProgram()
+void CDriverGL::toggleGlArraysForNVVertexProgram()
 {
 	H_AUTO_OGL(CDriverGL_toggleGlArraysForNVVertexProgram)
 	// If change of setup type, must disable olds.
 	//=======================
 
 	// If last was a VertexProgram setup, and now it is a standard GL array setup.
-	if( _LastSetupGLArrayVertexProgram && !isVertexProgramEnabled () )
+	if (_LastSetupGLArrayVertexProgram && !isVertexProgramEnabled())
 	{
 
 		// Disable all VertexAttribs.
-		for (uint value=0; value<CVertexBuffer::NumValue; value++)
+		for (uint value = 0; value < CVertexBuffer::NumValue; value++)
 		{
 			// Index
-			uint glIndex=GLVertexAttribIndex[value];
+			uint glIndex = GLVertexAttribIndex[value];
 			_DriverGLStates.enableVertexAttribArray(glIndex, false);
 		}
 		_DriverGLStates.enableColorArray(false);
 		_DriverGLStates.enableSecondaryColorArray(false);
 
 		// no more a vertex program setup.
-		_LastSetupGLArrayVertexProgram= false;
+		_LastSetupGLArrayVertexProgram = false;
 	}
 
 	// If last was a standard GL array setup, and now it is a VertexProgram setup.
-	if( !_LastSetupGLArrayVertexProgram && isVertexProgramEnabled () )
+	if (!_LastSetupGLArrayVertexProgram && isVertexProgramEnabled())
 	{
 		// Disable all standards ptrs.
 		_DriverGLStates.enableVertexArray(false);
 		_DriverGLStates.enableNormalArray(false);
 		_DriverGLStates.enableColorArray(false);
-		for(uint i=0; i<inlGetNumTextStages(); i++)
+		for (uint i = 0; i < inlGetNumTextStages(); i++)
 		{
 			_DriverGLStates.clientActiveTextureARB(i);
 			_DriverGLStates.enableTexCoordArray(false);
 		}
 
 		// now, vertex program setup.
-		_LastSetupGLArrayVertexProgram= true;
+		_LastSetupGLArrayVertexProgram = true;
 	}
 }
 
 // ***************************************************************************
-void		CDriverGL::toggleGlArraysForARBVertexProgram()
+void CDriverGL::toggleGlArraysForARBVertexProgram()
 {
 	H_AUTO_OGL(CDriverGL_toggleGlArraysForARBVertexProgram)
 	// If change of setup type, must disable olds.
 	//=======================
 
 	// If last was a VertexProgram setup, and now it is a standard GL array setup.
-	if( _LastSetupGLArrayVertexProgram && !isVertexProgramEnabled () )
+	if (_LastSetupGLArrayVertexProgram && !isVertexProgramEnabled())
 	{
 #ifndef USE_OPENGLES
 		if (_Extensions.ATITextureEnvCombine3)
@@ -1095,7 +1053,7 @@ void		CDriverGL::toggleGlArraysForARBVertexProgram()
 			// fix for ATI : when switching from Vertex Program to fixed Pipe, must clean texture, otherwise texture may be disabled in next render
 			// (seems to be a driver bug)
 			ITexture *oldTex[IDRV_MAT_MAXTEXTURES];
-			for(uint stage=0 ; stage < inlGetNumTextStages() ; stage++)
+			for (uint stage = 0; stage < inlGetNumTextStages(); stage++)
 			{
 				oldTex[stage] = _CurrentTexture[stage];
 				// activate the texture, or disable texturing if NULL.
@@ -1111,7 +1069,7 @@ void		CDriverGL::toggleGlArraysForARBVertexProgram()
 			glEnd();
 #endif
 
-			for(uint stage=0 ; stage<inlGetNumTextStages() ; stage++)
+			for (uint stage = 0; stage < inlGetNumTextStages(); stage++)
 			{
 				// activate the texture, or disable texturing if NULL.
 				activateTexture(stage, oldTex[stage]);
@@ -1119,126 +1077,123 @@ void		CDriverGL::toggleGlArraysForARBVertexProgram()
 		}
 
 		// Disable all VertexAttribs.
-		for (uint value=0; value<CVertexBuffer::NumValue; value++)
+		for (uint value = 0; value < CVertexBuffer::NumValue; value++)
 		{
 			// Index
-			uint glIndex=GLVertexAttribIndex[value];
+			uint glIndex = GLVertexAttribIndex[value];
 			_DriverGLStates.enableVertexAttribArrayARB(glIndex, false);
 		}
 		// no more a vertex program setup.
-		_LastSetupGLArrayVertexProgram= false;
+		_LastSetupGLArrayVertexProgram = false;
 	}
 
 	// If last was a standard GL array setup, and now it is a VertexProgram setup.
-	if( !_LastSetupGLArrayVertexProgram && isVertexProgramEnabled () )
+	if (!_LastSetupGLArrayVertexProgram && isVertexProgramEnabled())
 	{
 		// Disable all standards ptrs.
 		_DriverGLStates.enableVertexArray(false);
 		_DriverGLStates.enableNormalArray(false);
 		_DriverGLStates.enableColorArray(false);
 		_DriverGLStates.enableSecondaryColorArray(false);
-		for(uint i=0; i<inlGetNumTextStages(); i++)
+		for (uint i = 0; i < inlGetNumTextStages(); i++)
 		{
 			_DriverGLStates.clientActiveTextureARB(i);
 			_DriverGLStates.enableTexCoordArray(false);
 		}
 
 		// now, vertex program setup.
-		_LastSetupGLArrayVertexProgram= true;
+		_LastSetupGLArrayVertexProgram = true;
 	}
 }
 
-
-
 // ***************************************************************************
-void		CDriverGL::toggleGlArraysForEXTVertexShader()
+void CDriverGL::toggleGlArraysForEXTVertexShader()
 {
 	H_AUTO_OGL(CDriverGL_toggleGlArraysForEXTVertexShader)
 	// If change of setup type, must disable olds.
 	//=======================
 
-
 	// If last was a VertexProgram setup, and now it is a standard GL array setup.
-	if( _LastSetupGLArrayVertexProgram && !isVertexProgramEnabled () )
+	if (_LastSetupGLArrayVertexProgram && !isVertexProgramEnabled())
 	{
 		CVertexProgram *vp = _LastSetuppedVP;
 		if (vp)
 		{
-			CVertexProgamDrvInfosGL *drvInfo = NLMISC::safe_cast<CVertexProgamDrvInfosGL *>((IProgramDrvInfos *) vp->m_DrvInfo);
+			CVertexProgamDrvInfosGL *drvInfo = NLMISC::safe_cast<CVertexProgamDrvInfosGL *>((IProgramDrvInfos *)vp->m_DrvInfo);
 			if (drvInfo)
 			{
 				// Disable all VertexAttribs.
-				for (uint value=0; value<CVertexBuffer::NumValue; value++)
+				for (uint value = 0; value < CVertexBuffer::NumValue; value++)
 				{
 					_DriverGLStates.enableVertexAttribArrayForEXTVertexShader(value, false, drvInfo->Variants);
 				}
 			}
 		}
 		// no more a vertex program setup.
-		_LastSetupGLArrayVertexProgram= false;
+		_LastSetupGLArrayVertexProgram = false;
 	}
 
 	// If last was a standard GL array setup, and now it is a VertexProgram setup.
-	if( !_LastSetupGLArrayVertexProgram && isVertexProgramEnabled () )
+	if (!_LastSetupGLArrayVertexProgram && isVertexProgramEnabled())
 	{
 		// Disable all standards ptrs.
 		_DriverGLStates.enableVertexArray(false);
 		_DriverGLStates.enableNormalArray(false);
 		_DriverGLStates.enableColorArray(false);
 		_DriverGLStates.enableSecondaryColorArray(false);
-		for(uint i=0; i<inlGetNumTextStages(); i++)
+		for (uint i = 0; i < inlGetNumTextStages(); i++)
 		{
 			_DriverGLStates.clientActiveTextureARB(i);
 			_DriverGLStates.enableTexCoordArray(false);
 		}
 
 		// now, vertex program setup.
-		_LastSetupGLArrayVertexProgram= true;
+		_LastSetupGLArrayVertexProgram = true;
 	}
 }
 
 // ***************************************************************************
-void		CDriverGL::setupGlArraysForNVVertexProgram(CVertexBufferInfo &vb)
+void CDriverGL::setupGlArraysForNVVertexProgram(CVertexBufferInfo &vb)
 {
 	H_AUTO_OGL(CDriverGL_setupGlArraysForNVVertexProgram)
-	uint16	flags= vb.VertexFormat;
+	uint16 flags = vb.VertexFormat;
 
 	if (vb.VBMode == CVertexBufferInfo::HwARB)
 		_DriverGLStates.bindARBVertexBuffer(vb.VertexObjectId);
 
 	// For each value
-	for (uint value=0; value<CVertexBuffer::NumValue; value++)
+	for (uint value = 0; value < CVertexBuffer::NumValue; value++)
 	{
-		//nldebug("3D:   value = %d", value);
-		// Flag
-		uint16 flag=1<<value;
+		// nldebug("3D:   value = %d", value);
+		//  Flag
+		uint16 flag = 1 << value;
 
 		// Type
-		CVertexBuffer::TType type=vb.Type[value];
+		CVertexBuffer::TType type = vb.Type[value];
 
 		// Index
-		uint glIndex=GLVertexAttribIndex[value];
+		uint glIndex = GLVertexAttribIndex[value];
 
 		// Not setuped value and used
 		if (flags & flag)
 		{
 			/* OpenGL Driver Bug with VertexProgram, UChar4 type, and VertexArrayRange.
-				Don't work and lead to very poor performance (1/10) (VAR is "disabled").
+			    Don't work and lead to very poor performance (1/10) (VAR is "disabled").
 			*/
 			// Test if can use glColorPointer() / glSecondaryColorPointerEXT() instead.
-			if( (glIndex==3 || glIndex==4) )
+			if ((glIndex == 3 || glIndex == 4))
 			{
-				if( type == CVertexBuffer::UChar4 )
+				if (type == CVertexBuffer::UChar4)
 				{
 					// Must disable VertexAttrib array.
 					_DriverGLStates.enableVertexAttribArray(glIndex, false);
 
 					// Active this value, with standard gl calls
-					if(glIndex==3)
+					if (glIndex == 3)
 					{
 						// Primary color
 						_DriverGLStates.enableColorArray(true);
-						glColorPointer(4,GL_UNSIGNED_BYTE, vb.VertexSize, vb.ValuePtr[value]);
+						glColorPointer(4, GL_UNSIGNED_BYTE, vb.VertexSize, vb.ValuePtr[value]);
 					}
 					else
 					{
@@ -1253,7 +1208,7 @@ void		CDriverGL::setupGlArraysForNVVertexProgram(CVertexBufferInfo &vb)
 				{
 					// Can use normal VertexAttribArray.
 					// Disable first standard Color Array.
-					if(glIndex==3)
+					if (glIndex == 3)
 						_DriverGLStates.enableColorArray(false);
 					else
 						_DriverGLStates.enableSecondaryColorArray(false);
@@ -1261,7 +1216,7 @@ void		CDriverGL::setupGlArraysForNVVertexProgram(CVertexBufferInfo &vb)
 					// Active this value
 					_DriverGLStates.enableVertexAttribArray(glIndex, true);
 #ifndef USE_OPENGLES
-					nglVertexAttribPointerNV (glIndex, NumCoordinatesType[type], GLType[type], vb.VertexSize, vb.ValuePtr[value]);
+					nglVertexAttribPointerNV(glIndex, NumCoordinatesType[type], GLType[type], vb.VertexSize, vb.ValuePtr[value]);
 #endif
 				}
 			}
@@ -1271,7 +1226,7 @@ void		CDriverGL::setupGlArraysForNVVertexProgram(CVertexBufferInfo &vb)
 				// Active this value
 				_DriverGLStates.enableVertexAttribArray(glIndex, true);
 #ifndef USE_OPENGLES
-				nglVertexAttribPointerNV (glIndex, NumCoordinatesType[type], GLType[type], vb.VertexSize, vb.ValuePtr[value]);
+				nglVertexAttribPointerNV(glIndex, NumCoordinatesType[type], GLType[type], vb.VertexSize, vb.ValuePtr[value]);
 #endif
 			}
 		}
@@ -1279,25 +1234,23 @@ void		CDriverGL::setupGlArraysForNVVertexProgram(CVertexBufferInfo &vb)
 		{
 			_DriverGLStates.enableVertexAttribArray(glIndex, false);
 			/* OpenGL Driver Bug with VertexProgram, UChar4 type, and VertexArrayRange.
-				Must also disable colorArray in standard gl calls.
+			    Must also disable colorArray in standard gl calls.
 			*/
-			if(glIndex==3)
+			if (glIndex == 3)
 				_DriverGLStates.enableColorArray(false);
-			else if(glIndex==4)
+			else if (glIndex == 4)
 				_DriverGLStates.enableSecondaryColorArray(false);
 		}
 	}
 
 	if (vb.VBMode == CVertexBufferInfo::HwARB)
 		_DriverGLStates.bindARBVertexBuffer(0);
-
 }
 
 // tells for each vertex argument if it must be normalized when it is an integral type
-static const GLboolean ARBVertexProgramMustNormalizeAttrib[] =
-{
+static const GLboolean ARBVertexProgramMustNormalizeAttrib[] = {
 	GL_FALSE, // Position
-	GL_TRUE,  // Normal
+	GL_TRUE, // Normal
 	GL_FALSE, // TexCoord0
 	GL_FALSE, // TexCoord1
 	GL_FALSE, // TexCoord2
@@ -1306,20 +1259,20 @@ static const GLboolean ARBVertexProgramMustNormalizeAttrib[] =
 	GL_FALSE, // TexCoord5
 	GL_FALSE, // TexCoord6
 	GL_FALSE, // TexCoord7
-	GL_TRUE,  // PrimaryColor
-	GL_TRUE,  // SecondaryColor
-	GL_TRUE,  // Weight
+	GL_TRUE, // PrimaryColor
+	GL_TRUE, // SecondaryColor
+	GL_TRUE, // Weight
 	GL_FALSE, // PaletteSkin
 	GL_FALSE, // Fog
 	GL_FALSE, // Empty
 };
 
 // ***************************************************************************
-void		CDriverGL::setupGlArraysForARBVertexProgram(CVertexBufferInfo &vb)
+void CDriverGL::setupGlArraysForARBVertexProgram(CVertexBufferInfo &vb)
 {
 	H_AUTO_OGL(CDriverGL_setupGlArraysForARBVertexProgram)
 
-	uint32	flags= vb.VertexFormat;
+	uint32 flags = vb.VertexFormat;
 
 	nlctassert(CVertexBuffer::NumValue == sizeof(ARBVertexProgramMustNormalizeAttrib) / sizeof(ARBVertexProgramMustNormalizeAttrib[0]));
 
@@ -1333,16 +1286,16 @@ void		CDriverGL::setupGlArraysForARBVertexProgram(CVertexBufferInfo &vb)
 	if (vb.VBMode == CVertexBufferInfo::HwATI)
 	{
 		// For each value
-		for (uint value=0; value<CVertexBuffer::NumValue; value++)
+		for (uint value = 0; value < CVertexBuffer::NumValue; value++)
 		{
 			// Flag
-			uint16 flag=1<<value;
+			uint16 flag = 1 << value;
 
 			// Type
-			CVertexBuffer::TType type=vb.Type[value];
+			CVertexBuffer::TType type = vb.Type[value];
 			{
 				// Index
-				uint glIndex=GLVertexAttribIndex[value];
+				uint glIndex = GLVertexAttribIndex[value];
 				// Not setuped value and used
 				if (flags & flag)
 				{
@@ -1352,7 +1305,7 @@ void		CDriverGL::setupGlArraysForARBVertexProgram(CVertexBufferInfo &vb)
 					{
 						mustNormalize = ARBVertexProgramMustNormalizeAttrib[value];
 					}
-					nglVertexAttribArrayObjectATI(glIndex, NumCoordinatesType[type], GLType[type], mustNormalize, vb.VertexSize, vb.VertexObjectId, (ptrdiff_t) vb.ValuePtr[value]);
+					nglVertexAttribArrayObjectATI(glIndex, NumCoordinatesType[type], GLType[type], mustNormalize, vb.VertexSize, vb.VertexObjectId, (ptrdiff_t)vb.ValuePtr[value]);
 				}
 				else
 				{
@@ -1365,16 +1318,16 @@ void		CDriverGL::setupGlArraysForARBVertexProgram(CVertexBufferInfo &vb)
 #endif
 	{
 		// For each value
-		for (uint value=0; value<CVertexBuffer::NumValue; value++)
+		for (uint value = 0; value < CVertexBuffer::NumValue; value++)
 		{
 			// Flag
-			uint16 flag=1<<value;
+			uint16 flag = 1 << value;
 
 			// Type
-			CVertexBuffer::TType type=vb.Type[value];
+			CVertexBuffer::TType type = vb.Type[value];
 			{
 				// Index
-				uint glIndex=GLVertexAttribIndex[value];
+				uint glIndex = GLVertexAttribIndex[value];
 				// Not setuped value and used
 				if (flags & flag)
 				{
@@ -1399,21 +1352,17 @@ void		CDriverGL::setupGlArraysForARBVertexProgram(CVertexBufferInfo &vb)
 	}
 }
 
-
-
 // ***************************************************************************
-void		CDriverGL::setupGlArraysForEXTVertexShader(CVertexBufferInfo &vb)
+void CDriverGL::setupGlArraysForEXTVertexShader(CVertexBufferInfo &vb)
 {
 	H_AUTO_OGL(CDriverGL_setupGlArraysForEXTVertexShader)
 
-
 	CVertexProgram *vp = _LastSetuppedVP;
 	if (!vp) return;
-	CVertexProgamDrvInfosGL *drvInfo = NLMISC::safe_cast<CVertexProgamDrvInfosGL *>((IProgramDrvInfos *) vp->m_DrvInfo);
+	CVertexProgamDrvInfosGL *drvInfo = NLMISC::safe_cast<CVertexProgamDrvInfosGL *>((IProgramDrvInfos *)vp->m_DrvInfo);
 	if (!drvInfo) return;
 
-	uint32	flags= vb.VertexFormat;
-
+	uint32 flags = vb.VertexFormat;
 
 	if (vb.VBMode == CVertexBufferInfo::HwARB)
 	{
@@ -1421,16 +1370,16 @@ void		CDriverGL::setupGlArraysForEXTVertexShader(CVertexBufferInfo &vb)
 	}
 
 	// For each value
-	for (uint value=0; value<CVertexBuffer::NumValue; value++)
+	for (uint value = 0; value < CVertexBuffer::NumValue; value++)
 	{
 		// Flag
-		uint16 flag=1<<value;
+		uint16 flag = 1 << value;
 
 		// Type
-		CVertexBuffer::TType type=vb.Type[value];
+		CVertexBuffer::TType type = vb.Type[value];
 
 		// Index
-		uint glIndex=GLVertexAttribIndex[value];
+		uint glIndex = GLVertexAttribIndex[value];
 
 		// Not setuped value and used
 		if (flags & flag & drvInfo->UsedVertexComponents)
@@ -1440,150 +1389,148 @@ void		CDriverGL::setupGlArraysForEXTVertexShader(CVertexBufferInfo &vb)
 			// use variant or open gl standard array
 			if (vb.VBMode == CVertexBufferInfo::HwATI)
 			{
-				switch(value)
+				switch (value)
 				{
-					case CVertexBuffer::Position: // position
-					{
-						nlassert(NumCoordinatesType[type] >= 2);
-						nglArrayObjectATI(GL_VERTEX_ARRAY, NumCoordinatesType[type], GLType[type], vb.VertexSize, vb.VertexObjectId, (ptrdiff_t)  vb.ValuePtr[CVertexBuffer::Position]);
-					}
+				case CVertexBuffer::Position: // position
+				{
+					nlassert(NumCoordinatesType[type] >= 2);
+					nglArrayObjectATI(GL_VERTEX_ARRAY, NumCoordinatesType[type], GLType[type], vb.VertexSize, vb.VertexObjectId, (ptrdiff_t)vb.ValuePtr[CVertexBuffer::Position]);
+				}
+				break;
+				case CVertexBuffer::Weight: // skin weight
+				{
+					nlassert(NumCoordinatesType[type] == 4); // variant, only 4 component supported
+					nglVariantArrayObjectATI(drvInfo->Variants[CDriverGL::EVSSkinWeightVariant], GLType[type], vb.VertexSize, vb.VertexObjectId, (ptrdiff_t)vb.ValuePtr[CVertexBuffer::Weight]);
+				}
+				break;
+				case CVertexBuffer::Normal: // normal
+				{
+					nlassert(NumCoordinatesType[type] == 3); // must have 3 components for normals
+					nglArrayObjectATI(GL_NORMAL_ARRAY, 3, GLType[type], vb.VertexSize, vb.VertexObjectId, (ptrdiff_t)vb.ValuePtr[value]);
+				}
+				break;
+				case CVertexBuffer::PrimaryColor: // color
+				{
+					nlassert(NumCoordinatesType[type] >= 3); // must have 3 or 4 components for primary color
+					nglArrayObjectATI(GL_COLOR_ARRAY, NumCoordinatesType[type], GLType[type], vb.VertexSize, vb.VertexObjectId, (ptrdiff_t)vb.ValuePtr[CVertexBuffer::PrimaryColor]);
+				}
+				break;
+				case CVertexBuffer::SecondaryColor: // secondary color
+				{
+					// implemented using a variant, as not available with EXTVertexShader
+					nlassert(NumCoordinatesType[type] == 4); // variant, only 4 component supported
+					nglVariantArrayObjectATI(drvInfo->Variants[CDriverGL::EVSSecondaryColorVariant], GLType[type], vb.VertexSize, vb.VertexObjectId, (ptrdiff_t)vb.ValuePtr[CVertexBuffer::SecondaryColor]);
+				}
+				break;
+				case CVertexBuffer::Fog: // fog coordinate
+				{
+					// implemented using a variant
+					nlassert(NumCoordinatesType[type] == 4); // variant, only 4 component supported
+					nglVariantArrayObjectATI(drvInfo->Variants[CDriverGL::EVSFogCoordsVariant], GLType[type], vb.VertexSize, vb.VertexObjectId, (ptrdiff_t)vb.ValuePtr[CVertexBuffer::Fog]);
+				}
+				break;
+				case CVertexBuffer::PaletteSkin: // palette skin
+				{
+					// implemented using a variant
+					nlassert(NumCoordinatesType[type] == 4); // variant, only 4 component supported
+					nglVariantArrayObjectATI(drvInfo->Variants[CDriverGL::EVSPaletteSkinVariant], GLType[type], vb.VertexSize, vb.VertexObjectId, (ptrdiff_t)vb.ValuePtr[CVertexBuffer::PaletteSkin]);
+				}
+				break;
+				case CVertexBuffer::Empty: // empty
+					nlstop;
 					break;
-					case CVertexBuffer::Weight: // skin weight
-					{
-						nlassert(NumCoordinatesType[type] == 4); // variant, only 4 component supported
-						nglVariantArrayObjectATI(drvInfo->Variants[CDriverGL::EVSSkinWeightVariant], GLType[type], vb.VertexSize, vb.VertexObjectId, (ptrdiff_t) vb.ValuePtr[CVertexBuffer::Weight]);
-					}
-					break;
-					case CVertexBuffer::Normal: // normal
-					{
-						nlassert(NumCoordinatesType[type] == 3); // must have 3 components for normals
-						nglArrayObjectATI(GL_NORMAL_ARRAY, 3, GLType[type], vb.VertexSize, vb.VertexObjectId, (ptrdiff_t) vb.ValuePtr[value]);
-					}
-					break;
-					case CVertexBuffer::PrimaryColor: // color
-					{
-						nlassert(NumCoordinatesType[type] >= 3); // must have 3 or 4 components for primary color
-						nglArrayObjectATI(GL_COLOR_ARRAY, NumCoordinatesType[type], GLType[type], vb.VertexSize, vb.VertexObjectId, (ptrdiff_t)  vb.ValuePtr[CVertexBuffer::PrimaryColor]);
-					}
-					break;
-					case CVertexBuffer::SecondaryColor: // secondary color
-					{
-						// implemented using a variant, as not available with EXTVertexShader
-						nlassert(NumCoordinatesType[type] == 4); // variant, only 4 component supported
-						nglVariantArrayObjectATI(drvInfo->Variants[CDriverGL::EVSSecondaryColorVariant], GLType[type], vb.VertexSize, vb.VertexObjectId, (ptrdiff_t) vb.ValuePtr[CVertexBuffer::SecondaryColor]);
-					}
-					break;
-					case CVertexBuffer::Fog: // fog coordinate
-					{
-						// implemented using a variant
-						nlassert(NumCoordinatesType[type] == 4); // variant, only 4 component supported
-						nglVariantArrayObjectATI(drvInfo->Variants[CDriverGL::EVSFogCoordsVariant], GLType[type], vb.VertexSize, vb.VertexObjectId, (ptrdiff_t)  vb.ValuePtr[CVertexBuffer::Fog]);
-					}
-					break;
-					case CVertexBuffer::PaletteSkin: // palette skin
-					{
-						// implemented using a variant
-						nlassert(NumCoordinatesType[type] == 4); // variant, only 4 component supported
-						nglVariantArrayObjectATI(drvInfo->Variants[CDriverGL::EVSPaletteSkinVariant], GLType[type], vb.VertexSize, vb.VertexObjectId, (ptrdiff_t) vb.ValuePtr[CVertexBuffer::PaletteSkin]);
-					}
-					break;
-					case CVertexBuffer::Empty: // empty
-						nlstop;
-						break;
-					case CVertexBuffer::TexCoord0:
-					case CVertexBuffer::TexCoord1:
-					case CVertexBuffer::TexCoord2:
-					case CVertexBuffer::TexCoord3:
-					case CVertexBuffer::TexCoord4:
-					case CVertexBuffer::TexCoord5:
-					case CVertexBuffer::TexCoord6:
-					case CVertexBuffer::TexCoord7:
-					{
-						_DriverGLStates.clientActiveTextureARB(value - CVertexBuffer::TexCoord0);
-						nglArrayObjectATI(GL_TEXTURE_COORD_ARRAY, NumCoordinatesType[type], GLType[type], vb.VertexSize, vb.VertexObjectId, (ptrdiff_t)  vb.ValuePtr[value]);
-					}
-					break;
-					default:
-						nlstop; // invalid value
+				case CVertexBuffer::TexCoord0:
+				case CVertexBuffer::TexCoord1:
+				case CVertexBuffer::TexCoord2:
+				case CVertexBuffer::TexCoord3:
+				case CVertexBuffer::TexCoord4:
+				case CVertexBuffer::TexCoord5:
+				case CVertexBuffer::TexCoord6:
+				case CVertexBuffer::TexCoord7: {
+					_DriverGLStates.clientActiveTextureARB(value - CVertexBuffer::TexCoord0);
+					nglArrayObjectATI(GL_TEXTURE_COORD_ARRAY, NumCoordinatesType[type], GLType[type], vb.VertexSize, vb.VertexObjectId, (ptrdiff_t)vb.ValuePtr[value]);
+				}
+				break;
+				default:
+					nlstop; // invalid value
 					break;
 				}
 			}
 			else
 #endif
 			{
-				switch(value)
+				switch (value)
 				{
-					case CVertexBuffer::Position: // position
-					{
-						nlassert(NumCoordinatesType[type] >= 2);
-						glVertexPointer(NumCoordinatesType[type], GLType[type], vb.VertexSize, vb.ValuePtr[value]);
-					}
-					break;
-					case CVertexBuffer::Weight: // skin weight
-					{
-						nlassert(NumCoordinatesType[type] == 4); // variant, only 4 component supported
+				case CVertexBuffer::Position: // position
+				{
+					nlassert(NumCoordinatesType[type] >= 2);
+					glVertexPointer(NumCoordinatesType[type], GLType[type], vb.VertexSize, vb.ValuePtr[value]);
+				}
+				break;
+				case CVertexBuffer::Weight: // skin weight
+				{
+					nlassert(NumCoordinatesType[type] == 4); // variant, only 4 component supported
 #ifndef USE_OPENGLES
-						nglVariantPointerEXT(drvInfo->Variants[CDriverGL::EVSSkinWeightVariant], GLType[type], vb.VertexSize, vb.ValuePtr[value]);
+					nglVariantPointerEXT(drvInfo->Variants[CDriverGL::EVSSkinWeightVariant], GLType[type], vb.VertexSize, vb.ValuePtr[value]);
 #endif
-					}
-					break;
-					case CVertexBuffer::Normal: // normal
-					{
-						nlassert(NumCoordinatesType[type] == 3); // must have 3 components for normals
-						glNormalPointer(GLType[type], vb.VertexSize, vb.ValuePtr[CVertexBuffer::Normal]);
-					}
-					break;
-					case CVertexBuffer::PrimaryColor: // color
-					{
-						nlassert(NumCoordinatesType[type] >= 3); // must have 3 or 4 components for primary color
-						glColorPointer(NumCoordinatesType[type], GLType[type], vb.VertexSize, vb.ValuePtr[value]);
-					}
-					break;
-					case CVertexBuffer::SecondaryColor: // secondary color
-					{
-						// implemented using a variant, as not available with EXTVertexShader
-						nlassert(NumCoordinatesType[type] == 4); // variant, only 4 component supported
+				}
+				break;
+				case CVertexBuffer::Normal: // normal
+				{
+					nlassert(NumCoordinatesType[type] == 3); // must have 3 components for normals
+					glNormalPointer(GLType[type], vb.VertexSize, vb.ValuePtr[CVertexBuffer::Normal]);
+				}
+				break;
+				case CVertexBuffer::PrimaryColor: // color
+				{
+					nlassert(NumCoordinatesType[type] >= 3); // must have 3 or 4 components for primary color
+					glColorPointer(NumCoordinatesType[type], GLType[type], vb.VertexSize, vb.ValuePtr[value]);
+				}
+				break;
+				case CVertexBuffer::SecondaryColor: // secondary color
+				{
+					// implemented using a variant, as not available with EXTVertexShader
+					nlassert(NumCoordinatesType[type] == 4); // variant, only 4 component supported
 #ifndef USE_OPENGLES
-						nglVariantPointerEXT(drvInfo->Variants[CDriverGL::EVSSecondaryColorVariant], GLType[type], vb.VertexSize, vb.ValuePtr[value]);
+					nglVariantPointerEXT(drvInfo->Variants[CDriverGL::EVSSecondaryColorVariant], GLType[type], vb.VertexSize, vb.ValuePtr[value]);
 #endif
-					}
-					break;
-					case CVertexBuffer::Fog: // fog coordinate
-					{
-						// implemented using a variant
-						nlassert(NumCoordinatesType[type] == 4); // variant, only 4 component supported
+				}
+				break;
+				case CVertexBuffer::Fog: // fog coordinate
+				{
+					// implemented using a variant
+					nlassert(NumCoordinatesType[type] == 4); // variant, only 4 component supported
 #ifndef USE_OPENGLES
-						nglVariantPointerEXT(drvInfo->Variants[CDriverGL::EVSFogCoordsVariant], GLType[type], vb.VertexSize, vb.ValuePtr[value]);
+					nglVariantPointerEXT(drvInfo->Variants[CDriverGL::EVSFogCoordsVariant], GLType[type], vb.VertexSize, vb.ValuePtr[value]);
 #endif
-					}
-					break;
-					case CVertexBuffer::PaletteSkin: // palette skin
-					{
-						// implemented using a variant
-						nlassert(NumCoordinatesType[type] == 4); // variant, only 4 component supported
+				}
+				break;
+				case CVertexBuffer::PaletteSkin: // palette skin
+				{
+					// implemented using a variant
+					nlassert(NumCoordinatesType[type] == 4); // variant, only 4 component supported
 #ifndef USE_OPENGLES
-						nglVariantPointerEXT(drvInfo->Variants[CDriverGL::EVSPaletteSkinVariant], GLType[type], vb.VertexSize, vb.ValuePtr[value]);
+					nglVariantPointerEXT(drvInfo->Variants[CDriverGL::EVSPaletteSkinVariant], GLType[type], vb.VertexSize, vb.ValuePtr[value]);
 #endif
-					}
+				}
+				break;
+				case CVertexBuffer::Empty: // empty
+					nlstop;
 					break;
-					case CVertexBuffer::Empty: // empty
-						nlstop;
-					break;
-					case CVertexBuffer::TexCoord0:
-					case CVertexBuffer::TexCoord1:
-					case CVertexBuffer::TexCoord2:
-					case CVertexBuffer::TexCoord3:
-					case CVertexBuffer::TexCoord4:
-					case CVertexBuffer::TexCoord5:
-					case CVertexBuffer::TexCoord6:
-					case CVertexBuffer::TexCoord7:
-					{
-						_DriverGLStates.clientActiveTextureARB(value - CVertexBuffer::TexCoord0);
-						glTexCoordPointer(NumCoordinatesType[type], GLType[type], vb.VertexSize, vb.ValuePtr[value]);
-					}
-					break;
-					default:
-						nlstop; // invalid value
+				case CVertexBuffer::TexCoord0:
+				case CVertexBuffer::TexCoord1:
+				case CVertexBuffer::TexCoord2:
+				case CVertexBuffer::TexCoord3:
+				case CVertexBuffer::TexCoord4:
+				case CVertexBuffer::TexCoord5:
+				case CVertexBuffer::TexCoord6:
+				case CVertexBuffer::TexCoord7: {
+					_DriverGLStates.clientActiveTextureARB(value - CVertexBuffer::TexCoord0);
+					glTexCoordPointer(NumCoordinatesType[type], GLType[type], vb.VertexSize, vb.ValuePtr[value]);
+				}
+				break;
+				default:
+					nlstop; // invalid value
 					break;
 				}
 			}
@@ -1595,10 +1542,8 @@ void		CDriverGL::setupGlArraysForEXTVertexShader(CVertexBufferInfo &vb)
 	}
 }
 
-
-
 // ***************************************************************************
-void		CDriverGL::setupGlArrays(CVertexBufferInfo &vb)
+void CDriverGL::setupGlArrays(CVertexBufferInfo &vb)
 {
 	H_AUTO_OGL(CDriverGL_setupGlArrays)
 
@@ -1607,7 +1552,7 @@ void		CDriverGL::setupGlArrays(CVertexBufferInfo &vb)
 	{
 		toggleGlArraysForNVVertexProgram();
 		// Use a vertex program ?
-		if (!isVertexProgramEnabled ())
+		if (!isVertexProgramEnabled())
 		{
 			setupGlArraysStd(vb);
 		}
@@ -1620,7 +1565,7 @@ void		CDriverGL::setupGlArrays(CVertexBufferInfo &vb)
 	{
 		toggleGlArraysForARBVertexProgram();
 		// Use a vertex program ?
-		if (!isVertexProgramEnabled ())
+		if (!isVertexProgramEnabled())
 		{
 			setupGlArraysStd(vb);
 		}
@@ -1633,7 +1578,7 @@ void		CDriverGL::setupGlArrays(CVertexBufferInfo &vb)
 	{
 		toggleGlArraysForEXTVertexShader();
 		// Use a vertex program ?
-		if (!isVertexProgramEnabled ())
+		if (!isVertexProgramEnabled())
 		{
 			setupGlArraysStd(vb);
 		}
@@ -1649,61 +1594,59 @@ void		CDriverGL::setupGlArrays(CVertexBufferInfo &vb)
 	}
 }
 
-
 // ***************************************************************************
-void		CVertexBufferInfo::setupVertexBuffer(CVertexBuffer &vb)
+void CVertexBufferInfo::setupVertexBuffer(CVertexBuffer &vb)
 {
 	H_AUTO_OGL(CDriverGL_setupVertexBuffer)
-	sint	i;
-	VertexFormat= vb.getVertexFormat();
-	VertexSize= vb.getVertexSize();
-	NumVertices= vb.getNumVertices();
+	sint i;
+	VertexFormat = vb.getVertexFormat();
+	VertexSize = vb.getVertexSize();
+	NumVertices = vb.getNumVertices();
 
 	// Lock the buffer
 	CVertexBufferReadWrite access;
 	uint8 *ptr;
-	CVBDrvInfosGL *info= safe_cast<CVBDrvInfosGL*>((IVBDrvInfos*)vb.DrvInfos);
-	nlassert (info);
+	CVBDrvInfosGL *info = safe_cast<CVBDrvInfosGL *>((IVBDrvInfos *)vb.DrvInfos);
+	nlassert(info);
 	if (info->_VBHard)
 	{
-		ptr = (uint8*)info->_VBHard->getPointer();
+		ptr = (uint8 *)info->_VBHard->getPointer();
 		info->_VBHard->setupVBInfos(*this);
 	}
 	else
 	{
-		nlassert (info->_SystemMemory);
+		nlassert(info->_SystemMemory);
 		ptr = info->_SystemMemory;
 		VBMode = SysMem;
 	}
 
 	// Get value pointer
-	for (i=0; i<CVertexBuffer::NumValue; i++)
+	for (i = 0; i < CVertexBuffer::NumValue; i++)
 	{
 		// Value used ?
-		if (VertexFormat&(1<<i))
+		if (VertexFormat & (1 << i))
 		{
 			// Get the pointer
-			ValuePtr[i]= ptr+vb.getValueOffEx((CVertexBuffer::TValue)i);
+			ValuePtr[i] = ptr + vb.getValueOffEx((CVertexBuffer::TValue)i);
 
 			// Type of the value
-			Type[i]=vb.getValueType (i);
+			Type[i] = vb.getValueType(i);
 		}
 	}
 
 	// Copy the UVRouting table
 	const uint8 *uvRouting = vb.getUVRouting();
-	for (i=0; i<CVertexBuffer::MaxStage; i++)
+	for (i = 0; i < CVertexBuffer::MaxStage; i++)
 	{
 		UVRouting[i] = uvRouting[i];
 	}
 }
 
-
 // ***************************************************************************
-void			CDriverGL::resetVertexArrayRange()
+void CDriverGL::resetVertexArrayRange()
 {
 	H_AUTO_OGL(CDriverGL_resetVertexArrayRange)
-	if(_CurrentVertexBufferHard)
+	if (_CurrentVertexBufferHard)
 	{
 		// Must ensure it has ended any drawing
 		_CurrentVertexBufferHard->lock();
@@ -1715,36 +1658,35 @@ void			CDriverGL::resetVertexArrayRange()
 	_VertexBufferHardSet.clear();
 
 	// After, Clear the 2 vertexArrayRange, if any.
-	if(_AGPVertexArrayRange)
+	if (_AGPVertexArrayRange)
 		_AGPVertexArrayRange->freeBlock();
-	if(_VRAMVertexArrayRange)
+	if (_VRAMVertexArrayRange)
 		_VRAMVertexArrayRange->freeBlock();
 }
 
-
 // ***************************************************************************
-bool			CDriverGL::initVertexBufferHard(uint agpMem, uint vramMem)
+bool CDriverGL::initVertexBufferHard(uint agpMem, uint vramMem)
 {
 	H_AUTO_OGL(CDriverGL_initVertexBufferHard)
-	if(!supportVertexBufferHard())
+	if (!supportVertexBufferHard())
 		return false;
 
 	// must be supported
-	if(!_AGPVertexArrayRange || !_VRAMVertexArrayRange)
+	if (!_AGPVertexArrayRange || !_VRAMVertexArrayRange)
 		return false;
 
 	// First, reset any VBHard created.
 	resetVertexArrayRange();
-	bool	ok= true;
+	bool ok = true;
 
 	// Try to allocate AGPMemory.
-	if(agpMem>0)
+	if (agpMem > 0)
 	{
-		agpMem&= ~15;	// ensure 16-bytes aligned mem count (maybe useful :) ).
-		agpMem= max(agpMem, (uint)NL3D_DRV_VERTEXARRAY_MINIMUM_SIZE);
-		while(agpMem>= NL3D_DRV_VERTEXARRAY_MINIMUM_SIZE)
+		agpMem &= ~15; // ensure 16-bytes aligned mem count (maybe useful :) ).
+		agpMem = max(agpMem, (uint)NL3D_DRV_VERTEXARRAY_MINIMUM_SIZE);
+		while (agpMem >= NL3D_DRV_VERTEXARRAY_MINIMUM_SIZE)
 		{
-			if(_AGPVertexArrayRange->allocate(agpMem, CVertexBuffer::AGPPreferred))
+			if (_AGPVertexArrayRange->allocate(agpMem, CVertexBuffer::AGPPreferred))
 			{
 				nlinfo("3D: %.u vertices supported", _MaxVerticesByVBHard);
 				nlinfo("3D: Success to allocate %.1f Mo of AGP VAR Ram", agpMem / 1000000.f);
@@ -1752,101 +1694,96 @@ bool			CDriverGL::initVertexBufferHard(uint agpMem, uint vramMem)
 			}
 			else
 			{
-				agpMem/=2;
-				agpMem &=~15;
+				agpMem /= 2;
+				agpMem &= ~15;
 			}
 		}
 
-		if(agpMem< NL3D_DRV_VERTEXARRAY_MINIMUM_SIZE)
+		if (agpMem < NL3D_DRV_VERTEXARRAY_MINIMUM_SIZE)
 		{
 			nlinfo("3D: %.u vertices supported", _MaxVerticesByVBHard);
 			nlinfo("3D: Failed to allocate %.1f Mo of AGP VAR Ram", NL3D_DRV_VERTEXARRAY_MINIMUM_SIZE / 1000000.f);
-			ok= false;
+			ok = false;
 		}
 	}
 
-
 	// Try to allocate VRAMMemory.
-	if(vramMem>0)
+	if (vramMem > 0)
 	{
-		vramMem&= ~15;	// ensure 16-bytes aligned mem count (maybe useful :) ).
-		vramMem= max(vramMem, (uint)NL3D_DRV_VERTEXARRAY_MINIMUM_SIZE);
-		while(vramMem>= NL3D_DRV_VERTEXARRAY_MINIMUM_SIZE)
+		vramMem &= ~15; // ensure 16-bytes aligned mem count (maybe useful :) ).
+		vramMem = max(vramMem, (uint)NL3D_DRV_VERTEXARRAY_MINIMUM_SIZE);
+		while (vramMem >= NL3D_DRV_VERTEXARRAY_MINIMUM_SIZE)
 		{
-			if(_VRAMVertexArrayRange->allocate(vramMem, CVertexBuffer::StaticPreferred))
+			if (_VRAMVertexArrayRange->allocate(vramMem, CVertexBuffer::StaticPreferred))
 				break;
 			else
 			{
-				vramMem/=2;
-				vramMem &=~15;
+				vramMem /= 2;
+				vramMem &= ~15;
 			}
 		}
 
-		if(vramMem< NL3D_DRV_VERTEXARRAY_MINIMUM_SIZE)
+		if (vramMem < NL3D_DRV_VERTEXARRAY_MINIMUM_SIZE)
 		{
-			ok= false;
+			ok = false;
 		}
 	}
-
 
 	return ok;
 }
 
-
 // ***************************************************************************
-uint32				CDriverGL::getAvailableVertexAGPMemory ()
+uint32 CDriverGL::getAvailableVertexAGPMemory()
 {
-	H_AUTO_OGL(CDriverGL_getAvailableVertexAGPMemory )
+	H_AUTO_OGL(CDriverGL_getAvailableVertexAGPMemory)
 	if (_AGPVertexArrayRange)
 		return _AGPVertexArrayRange->sizeAllocated();
 	else
 		return 0;
 }
 
-
 // ***************************************************************************
-uint32				CDriverGL::getAvailableVertexVRAMMemory ()
+uint32 CDriverGL::getAvailableVertexVRAMMemory()
 {
-	H_AUTO_OGL(CDriverGL_getAvailableVertexVRAMMemory )
+	H_AUTO_OGL(CDriverGL_getAvailableVertexVRAMMemory)
 	if (_VRAMVertexArrayRange)
 		return _VRAMVertexArrayRange->sizeAllocated();
 	else
 		return 0;
 }
 
-
 // ***************************************************************************
-void				CDriverGL::fenceOnCurVBHardIfNeeded(IVertexBufferHardGL *newVBHard)
+void CDriverGL::fenceOnCurVBHardIfNeeded(IVertexBufferHardGL *newVBHard)
 {
 	H_AUTO_OGL(CDriverGL_fenceOnCurVBHardIfNeeded);
 
 #ifndef USE_OPENGLES
 	// If old is not a VBHard, or if not a NVidia VBHard, no-op.
-	if( _CurrentVertexBufferHard==NULL || _CurrentVertexBufferHard->VBType != IVertexBufferHardGL::NVidiaVB)
+	if (_CurrentVertexBufferHard == NULL || _CurrentVertexBufferHard->VBType != IVertexBufferHardGL::NVidiaVB)
 		return;
 
 	// if we do not activate the same (NB: newVBHard==NULL if not a VBHard).
-	if(_CurrentVertexBufferHard!=newVBHard)
+	if (_CurrentVertexBufferHard != newVBHard)
 	{
 		// get NVidia interface
-		CVertexBufferHardGLNVidia	*vbHardNV= static_cast<CVertexBufferHardGLNVidia*>(_CurrentVertexBufferHard);
+		CVertexBufferHardGLNVidia *vbHardNV = static_cast<CVertexBufferHardGLNVidia *>(_CurrentVertexBufferHard);
 
 		// If some render() have been done with this VB.
-		if( vbHardNV->GPURenderingAfterFence )
+		if (vbHardNV->GPURenderingAfterFence)
 		{
 			/*
-				Since we won't work with this VB for a long time, we set a fence.
+			    Since we won't work with this VB for a long time, we set a fence.
 
-				NB: if the fence was previously set. NV_Fence Specification says that the new ONE replaces it.
-				This is EXACTLY what we wants, since the old one is no more interesting.
+			    NB: if the fence was previously set. NV_Fence Specification says that the new ONE replaces it.
+			    This is EXACTLY what we wants, since the old one is no more interesting.
 
-				NB: never insert a fence for said "Static Lock" VBHard. Those VBHard are said to be "static"
-				therefore, user should never modify them (else lock() is much slower...)
+			    NB: never insert a fence for said "Static Lock" VBHard. Those VBHard are said to be "static"
+			    therefore, user should never modify them (else lock() is much slower...)
 			*/
-			if( !vbHardNV->getLockHintStatic() )
+			if (!vbHardNV->getLockHintStatic())
 				vbHardNV->setFence();
 			// Since we have set a new Fence, we won't need to do it at next vbHardNV->lock()
-			vbHardNV->GPURenderingAfterFence= false;
+			vbHardNV->GPURenderingAfterFence = false;
 		}
 	}
 #endif
@@ -1866,7 +1803,7 @@ void CIndexBufferInfo::setupIndexBuffer(CIndexBuffer &ib)
 {
 	H_AUTO_OGL(CIndexBufferInfo_setupIndexBuffer)
 	CIndexBufferReadWrite access;
-	ib.lock (access);
+	ib.lock(access);
 	_Values = access.getPtr();
 	_Format = access.getFormat();
 }

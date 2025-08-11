@@ -26,7 +26,6 @@
 #include "backup_service_messages.h"
 #include "utils.h"
 
-
 //-------------------------------------------------------------------------------------------------
 // namespaces
 //-------------------------------------------------------------------------------------------------
@@ -35,33 +34,31 @@ using namespace std;
 using namespace NLNET;
 using namespace NLMISC;
 
-
 //-------------------------------------------------------------------------------------------------
 // NLMISC CVariables
 //-------------------------------------------------------------------------------------------------
 
 // configuration variables - to be setup in cfg files
-CVariable<string>	BackupServiceIP("variables","BSHost", "Host address and port of backup service (ip:port)", "localhost", 0, true );
-CVariable<uint16>	BackupServiceL3Port("variables","L3BSPort", "Port for the layer 3 backup connection", 0, 0, true );
-CVariable<string>	SlaveBackupServiceIP("variables","SlaveBSHost", "Host address and port of slave backup service (ip:port)", "", 0, true );
-CVariable<uint16>	SlaveBackupServiceL3Port("variables","L3SlaveBSPort", "Port for the layer 3 slave backup connection", 0, 0, true );
-//CVariable<string>	PDBackupServiceIP("variables","PDBSHost", "Host address and port of backup service (ip:port)", "", 0, true );
-//CVariable<string>	SlavePDBackupServiceIP("variables","SlavePDBSHost", "Host address and port of slave backup service (ip:port)", "", 0, true );
-CVariable<bool>    	UseBS("variables","UseBS", "if 1, use the backup service or use local save", true, 0, true);
+CVariable<string> BackupServiceIP("variables", "BSHost", "Host address and port of backup service (ip:port)", "localhost", 0, true);
+CVariable<uint16> BackupServiceL3Port("variables", "L3BSPort", "Port for the layer 3 backup connection", 0, 0, true);
+CVariable<string> SlaveBackupServiceIP("variables", "SlaveBSHost", "Host address and port of slave backup service (ip:port)", "", 0, true);
+CVariable<uint16> SlaveBackupServiceL3Port("variables", "L3SlaveBSPort", "Port for the layer 3 slave backup connection", 0, 0, true);
+// CVariable<string>	PDBackupServiceIP("variables","PDBSHost", "Host address and port of backup service (ip:port)", "", 0, true );
+// CVariable<string>	SlavePDBackupServiceIP("variables","SlavePDBSHost", "Host address and port of slave backup service (ip:port)", "", 0, true );
+CVariable<bool> UseBS("variables", "UseBS", "if 1, use the backup service or use local save", true, 0, true);
 
 // a variable written by the BS interface for debugging purposes
-CVariable<string>	BSPingHistory("BSIF", "BSPingHistory", "The recent BS ping time history", "", 0, true);
-
+CVariable<string> BSPingHistory("BSIF", "BSPingHistory", "The recent BS ping time history", "", 0, true);
 
 //-------------------------------------------------------------------------------------------------
 // class CGenericCallbacksRegister
 //-------------------------------------------------------------------------------------------------
 
-class CGenericRequestIdRegister: public CSingleton<CGenericRequestIdRegister>
+class CGenericRequestIdRegister : public CSingleton<CGenericRequestIdRegister>
 {
 public:
 	// add a request id / filename pair
-	void pushRequestId(uint32 requestId,const std::string& fileName);
+	void pushRequestId(uint32 requestId, const std::string &fileName);
 
 	// process all generic callbacks up to a given request id
 	// this routine is called by the ping pong system
@@ -80,20 +77,19 @@ private:
 	TRequestIds _RequestIds;
 };
 
-
 //-------------------------------------------------------------------------------------------------
 // methods CGenericCallbacksRegister
 //-------------------------------------------------------------------------------------------------
 
-void CGenericRequestIdRegister::pushRequestId(uint32 requestId,const std::string& fileName)
+void CGenericRequestIdRegister::pushRequestId(uint32 requestId, const std::string &fileName)
 {
 	// check for out of order entries in the request list
-	BOMB_IF(!_RequestIds.empty() && (requestId<_RequestIds.back().RequestId),"Ignoring out of order request id in generic callback registration for file "+CSString(fileName).quote(),return);
+	BOMB_IF(!_RequestIds.empty() && (requestId < _RequestIds.back().RequestId), "Ignoring out of order request id in generic callback registration for file " + CSString(fileName).quote(), return);
 
 	// setup a new record for this request id / file name pair
 	SRequestId theNewRequestId;
-	theNewRequestId.FileName=fileName;
-	theNewRequestId.RequestId=requestId;
+	theNewRequestId.FileName = fileName;
+	theNewRequestId.RequestId = requestId;
 
 	// append the new request to our pending requests list
 	_RequestIds.push_back(theNewRequestId);
@@ -101,18 +97,18 @@ void CGenericRequestIdRegister::pushRequestId(uint32 requestId,const std::string
 
 void CGenericRequestIdRegister::processCallbacks(uint32 lastRequestId)
 {
-	while (!_RequestIds.empty() && sint32(lastRequestId-_RequestIds.front().RequestId)>=0)
+	while (!_RequestIds.empty() && sint32(lastRequestId - _RequestIds.front().RequestId) >= 0)
 	{
 		// pop the request id out of the container
-		uint32 theRequestId= _RequestIds.front().RequestId;
-		CSString theFileName= _RequestIds.front().FileName;
+		uint32 theRequestId = _RequestIds.front().RequestId;
+		CSString theFileName = _RequestIds.front().FileName;
 		_RequestIds.pop_front();
 
 		// get a pointer to the callback object for the message we've just received
-		CBackupInterfaceSingleton* singleton= CBackupInterfaceSingleton::getInstance();
+		CBackupInterfaceSingleton *singleton = CBackupInterfaceSingleton::getInstance();
 		CBackupServiceInterface *itf;
-		NLMISC::CSmartPtr<IBackupGenericAckCallback> cb= singleton->popGenericCallback(theRequestId, itf);
-		if (cb!=NULL)
+		NLMISC::CSmartPtr<IBackupGenericAckCallback> cb = singleton->popGenericCallback(theRequestId, itf);
+		if (cb != NULL)
 		{
 			// call the calback
 			cb->callback(theFileName);
@@ -122,17 +118,15 @@ void CGenericRequestIdRegister::processCallbacks(uint32 lastRequestId)
 
 uint32 CGenericRequestIdRegister::getLastRequestId() const
 {
-	return _RequestIds.empty()? 0: _RequestIds.back().RequestId;
-
+	return _RequestIds.empty() ? 0 : _RequestIds.back().RequestId;
 }
-
 
 //-------------------------------------------------------------------------------------------------
 // Tracking state of backup services
 //-------------------------------------------------------------------------------------------------
 
 // count of the number of backup services that are up (map indexed by backup service name)
-static std::map<std::string,uint8> BackupServiceUp;
+static std::map<std::string, uint8> BackupServiceUp;
 
 // a structure used to track pingpong history with a backup service
 struct SPingPongStruct
@@ -145,13 +139,21 @@ struct SPingPongStruct
 	TTime LastAckDelay;
 	TTime LastSendTime;
 
-	SPingPongStruct(): Count(0), ReadyToPing(true), LastGenericRequestId(0) { Times.resize(20,0); LastAckDelay=0; LastSendTime=0; }
+	SPingPongStruct()
+	    : Count(0)
+	    , ReadyToPing(true)
+	    , LastGenericRequestId(0)
+	{
+		Times.resize(20, 0);
+		LastAckDelay = 0;
+		LastSendTime = 0;
+	}
 };
 // ping pong history of all connected backup services
 typedef std::map<NLNET::TServiceId, SPingPongStruct> TPingPongs;
 TPingPongs PingPongs;
 
-static void cbBSConnection( const std::string &serviceName, NLNET::TServiceId serviceId, void * /* arg */ )
+static void cbBSConnection(const std::string &serviceName, NLNET::TServiceId serviceId, void * /* arg */)
 {
 	nlinfo("Backup service connects: (name %s, Id %hu)", serviceName.c_str(), serviceId.get());
 
@@ -160,54 +162,53 @@ static void cbBSConnection( const std::string &serviceName, NLNET::TServiceId se
 
 	// increment the counter of active backup services
 	++BackupServiceUp[serviceName];
-	if (BackupServiceUp[serviceName]==1 && CBackupInterfaceSingleton::getInstance()->getBSIImplementation()==&CBSIINonModule::getInstance())
+	if (BackupServiceUp[serviceName] == 1 && CBackupInterfaceSingleton::getInstance()->getBSIImplementation() == &CBSIINonModule::getInstance())
 	{
 		CBackupInterfaceSingleton::getInstance()->connect();
 	}
 }
 
-static void cbBSDisconnection( const std::string &serviceName, NLNET::TServiceId serviceId, void * /* arg */ )
+static void cbBSDisconnection(const std::string &serviceName, NLNET::TServiceId serviceId, void * /* arg */)
 {
 	nlinfo("Backup service disconnects: (name %s, Id %hu)", serviceName.c_str(), serviceId.get());
 	PingPongs.erase(serviceId);
 
 	// decrement the counter of active backup services
 	--BackupServiceUp[serviceName];
-	if (BackupServiceUp[serviceName]==0 && CBackupInterfaceSingleton::getInstance()->getBSIImplementation()==&CBSIINonModule::getInstance())
+	if (BackupServiceUp[serviceName] == 0 && CBackupInterfaceSingleton::getInstance()->getBSIImplementation() == &CBSIINonModule::getInstance())
 	{
 		CBackupInterfaceSingleton::getInstance()->disconnect();
 	}
 }
 
-
 //-------------------------------------------------------------------------------------------------
 // message callbacks
 //-------------------------------------------------------------------------------------------------
 
-static void cbFile( NLNET::CMessage& msgin, const std::string &/* serviceName */, NLNET::TServiceId /* serviceId */ )
+static void cbFile(NLNET::CMessage &msgin, const std::string & /* serviceName */, NLNET::TServiceId /* serviceId */)
 {
 	// decorticate the input message
 	CBackupMsgReceiveFile msg;
 	msgin.serial(msg);
 
 	// get a pointer to the callback object for the message we've just received
-	CBackupInterfaceSingleton* singleton= CBackupInterfaceSingleton::getInstance();
+	CBackupInterfaceSingleton *singleton = CBackupInterfaceSingleton::getInstance();
 	CBackupServiceInterface *itf;
-	NLMISC::CSmartPtr<IBackupFileReceiveCallback> cb= singleton->popFileCallback(msg.RequestId, itf);
-	BOMB_IF(cb==NULL,"Received a file from backup service - but can't find a matching request: "+msg.FileDescription.FileName+NLMISC::toString(" (RequestId=%d)",msg.RequestId),return);
+	NLMISC::CSmartPtr<IBackupFileReceiveCallback> cb = singleton->popFileCallback(msg.RequestId, itf);
+	BOMB_IF(cb == NULL, "Received a file from backup service - but can't find a matching request: " + msg.FileDescription.FileName + NLMISC::toString(" (RequestId=%d)", msg.RequestId), return);
 
 	// make sure the file size reported by the FileDescription corresponds to the quantity of data remaining in the message
-	BOMB_IF(msg.FileDescription.FileSize!=msg.Data.length()-msg.Data.getPos(),"Throwing out file because message header is corrupt or message is incomplete: "+msg.FileDescription.FileName, return);
+	BOMB_IF(msg.FileDescription.FileSize != msg.Data.length() - msg.Data.getPos(), "Throwing out file because message header is corrupt or message is incomplete: " + msg.FileDescription.FileName, return);
 
 	// Restore the original filename (without the remote path). Assumes there can't be more than one BS interface.
 	// This will fail if the remote path has changed between the request and now.
 	msg.FileDescription.stripFilename(itf->getRemotePath());
 
 	// call the callback
-	cb->callback(msg.FileDescription,msg.Data);
+	cb->callback(msg.FileDescription, msg.Data);
 }
 
-void CBSIINonModule::cbBsReadMode( CMessage &msgin, TSockId /* from */, CCallbackNetBase &/* netbase */ )
+void CBSIINonModule::cbBsReadMode(CMessage &msgin, TSockId /* from */, CCallbackNetBase & /* netbase */)
 {
 	// extract the response from BS
 	bool readMode;
@@ -218,23 +219,23 @@ void CBSIINonModule::cbBsReadMode( CMessage &msgin, TSockId /* from */, CCallbac
 	bsi._BSInReadMode = readMode;
 }
 
-static void cbSyncFile( CMessage &msgin, TSockId /* from */, CCallbackNetBase &/* netbase */ )
+static void cbSyncFile(CMessage &msgin, TSockId /* from */, CCallbackNetBase & /* netbase */)
 {
 	// just recall the layer 5 callback with fake service info
 	cbFile(msgin, "", TServiceId(0));
 }
 
-static void cbFileClass( NLNET::CMessage& msgin, const std::string &/* serviceName */, NLNET::TServiceId /* serviceId */ )
+static void cbFileClass(NLNET::CMessage &msgin, const std::string & /* serviceName */, NLNET::TServiceId /* serviceId */)
 {
 	// decorticate the input message
 	CBackupMsgReceiveFileClass msg;
 	msgin.serial(msg);
 
 	// get a pointer to the callback object for the message we've just received
-	CBackupInterfaceSingleton* singleton= CBackupInterfaceSingleton::getInstance();
+	CBackupInterfaceSingleton *singleton = CBackupInterfaceSingleton::getInstance();
 	CBackupServiceInterface *itf;
-	NLMISC::CSmartPtr<IBackupFileClassReceiveCallback> cb= singleton->popFileClassCallback(msg.RequestId, itf);
-	BOMB_IF(cb==NULL,"Received a file class from backup service - but can't find a matching request!"+NLMISC::toString(" RequestId=%d",msg.RequestId),return);
+	NLMISC::CSmartPtr<IBackupFileClassReceiveCallback> cb = singleton->popFileClassCallback(msg.RequestId, itf);
+	BOMB_IF(cb == NULL, "Received a file class from backup service - but can't find a matching request!" + NLMISC::toString(" RequestId=%d", msg.RequestId), return);
 
 	// Restore the original filenames (without the remote path). Assumes there can't be more than one BS interface.
 	// This will fail if the remote path has changed between the request and now.
@@ -244,66 +245,75 @@ static void cbFileClass( NLNET::CMessage& msgin, const std::string &/* serviceNa
 	cb->callback(msg.Fdc);
 }
 
-static void cbSyncFileClass( CMessage &msgin, TSockId /* from */, CCallbackNetBase &/* netbase */ )
+static void cbSyncFileClass(CMessage &msgin, TSockId /* from */, CCallbackNetBase & /* netbase */)
 {
 	// just recall the layer 5 callback with fake service info
 	cbFileClass(msgin, "", TServiceId(0));
 }
 
-
-void	cbAppend(NLNET::CMessage& msgin, const std::string &/* serviceName */, NLNET::TServiceId /* serviceId */)
+void cbAppend(NLNET::CMessage &msgin, const std::string & /* serviceName */, NLNET::TServiceId /* serviceId */)
 {
-	CBackupMsgAppendCallback	inMsg;
+	CBackupMsgAppendCallback inMsg;
 	msgin.serial(inMsg);
 }
 
-
-void cbBSPingPong(NLNET::CMessage& /* msgin */, const std::string &/* serviceName */, NLNET::TServiceId serviceId)
+void cbBSPingPong(NLNET::CMessage & /* msgin */, const std::string & /* serviceName */, NLNET::TServiceId serviceId)
 {
 	// get a refference to the backup service' pingpong record
-	SPingPongStruct& thePingPong= PingPongs[serviceId];
+	SPingPongStruct &thePingPong = PingPongs[serviceId];
 
 	// workout the size of the Times vector
-	uint32 numTimes= (uint32)thePingPong.Times.size();
+	uint32 numTimes = (uint32)thePingPong.Times.size();
 
 	// store away the current time in the next available slot
-	TTime timeNow=NLMISC::CTime::getLocalTime();
-	thePingPong.Times[thePingPong.Count%numTimes]= timeNow;
+	TTime timeNow = NLMISC::CTime::getLocalTime();
+	thePingPong.Times[thePingPong.Count % numTimes] = timeNow;
 	++thePingPong.Count;
 
 	// calculate the time since the last ack
-	thePingPong.LastAckDelay= timeNow- thePingPong.LastSendTime;
+	thePingPong.LastAckDelay = timeNow - thePingPong.LastSendTime;
 
 	// flag ourselves ready to send a ping back at the next service update
-	thePingPong.ReadyToPing= true;
+	thePingPong.ReadyToPing = true;
 
 	// process the generic callbacks that are implicitly acked with this pong message
 	CGenericRequestIdRegister::getInstance().processCallbacks(thePingPong.LastGenericRequestId);
 
 	// store away the last request id for the next time round the loop
-	thePingPong.LastGenericRequestId= CGenericRequestIdRegister::getInstance().getLastRequestId();
+	thePingPong.LastGenericRequestId = CGenericRequestIdRegister::getInstance().getLastRequestId();
 }
 
-
 // Callback array for layer 5 comm (normal operation)
-static TUnifiedCallbackItem CbArray[] =
-{
-	{	"bs_file",			cbFile,			},
-	{	"BS_FILE_CLASS",	cbFileClass,	},
-	{	"APPEND",			cbAppend		},
-	{	"BS_PONG",			cbBSPingPong	},
+static TUnifiedCallbackItem CbArray[] = {
+	{
+	    "bs_file",
+	    cbFile,
+	},
+	{
+	    "BS_FILE_CLASS",
+	    cbFileClass,
+	},
+	{ "APPEND", cbAppend },
+	{ "BS_PONG", cbBSPingPong },
 };
 
 // Callback array for layer 3 comm (for synchronous file loading and initial handshake)
-TCallbackItem	CBSIINonModule::CbSyncArray[] =
-{
-	{	"BS_READ_MODE",		CBSIINonModule::cbBsReadMode,		},
-	{	"bs_file",			cbSyncFile,			},
-	{	"BS_FILE_CLASS",	cbSyncFileClass,	},
-//	{	"APPEND",			cbAppend		},
-//	{	"BS_PONG",			cbBSPingPong	},
+TCallbackItem CBSIINonModule::CbSyncArray[] = {
+	{
+	    "BS_READ_MODE",
+	    CBSIINonModule::cbBsReadMode,
+	},
+	{
+	    "bs_file",
+	    cbSyncFile,
+	},
+	{
+	    "BS_FILE_CLASS",
+	    cbSyncFileClass,
+	},
+	//	{	"APPEND",			cbAppend		},
+	//	{	"BS_PONG",			cbBSPingPong	},
 };
-
 
 //-------------------------------------------------------------------------------------------------
 // methods CBSIINonModule
@@ -311,46 +321,46 @@ TCallbackItem	CBSIINonModule::CbSyncArray[] =
 
 CBSIINonModule::CBSIINonModule()
 {
-	_Initialised= false;
-//	_HaveSeparatePDBS= false;
+	_Initialised = false;
+	//	_HaveSeparatePDBS= false;
 }
 
 void CBSIINonModule::serviceUpdate()
 {
 	// update the ping pongs...
-	for (TPingPongs::iterator it= PingPongs.begin(); it!=PingPongs.end(); ++it)
+	for (TPingPongs::iterator it = PingPongs.begin(); it != PingPongs.end(); ++it)
 	{
 		// if this connected BS is ready for another ping then send it
 		if (it->second.ReadyToPing)
 		{
 			NLNET::CMessage msgOut("BS_PING");
-			NLNET::CUnifiedNetwork::getInstance()->send( it->first, msgOut );
-			it->second.ReadyToPing= false;
-			it->second.LastSendTime= NLMISC::CTime::getLocalTime();
+			NLNET::CUnifiedNetwork::getInstance()->send(it->first, msgOut);
+			it->second.ReadyToPing = false;
+			it->second.LastSendTime = NLMISC::CTime::getLocalTime();
 		}
 	}
 
 	// build a string in an NLMISC variable for debug display
 	CSString displayStr;
 	// iterate over all of the currently connected backup services
-	for (TPingPongs::iterator it= PingPongs.begin(); it!=PingPongs.end(); ++it)
+	for (TPingPongs::iterator it = PingPongs.begin(); it != PingPongs.end(); ++it)
 	{
-		displayStr+=NLMISC::toString("%sBS(%hu)[",displayStr.empty()?"":"; ",it->first.get());
+		displayStr += NLMISC::toString("%sBS(%hu)[", displayStr.empty() ? "" : "; ", it->first.get());
 
 		// workout the size of the Times vector
-		uint32 numTimes= (uint32)it->second.Times.size();
+		uint32 numTimes = (uint32)it->second.Times.size();
 
 		// iterate down from min(...)-1 to 1
-		for (uint32 i=numTimes;--i;)
+		for (uint32 i = numTimes; --i;)
 		{
-			TTime prevTime= it->second.Times[(it->second.Count-i-1)%numTimes];
-			TTime nextTime= it->second.Times[(it->second.Count-i)%numTimes];
-			displayStr+=NLMISC::toString("%s%u",(displayStr.right(1)=="[")?"":",",(uint32)(nextTime-prevTime));
+			TTime prevTime = it->second.Times[(it->second.Count - i - 1) % numTimes];
+			TTime nextTime = it->second.Times[(it->second.Count - i) % numTimes];
+			displayStr += NLMISC::toString("%s%u", (displayStr.right(1) == "[") ? "" : ",", (uint32)(nextTime - prevTime));
 		}
 
-		displayStr+="]";
+		displayStr += "]";
 	}
-	BSPingHistory= displayStr;
+	BSPingHistory = displayStr;
 }
 
 void CBSIINonModule::release()
@@ -359,160 +369,158 @@ void CBSIINonModule::release()
 		_L3BSConn.disconnect();
 }
 
-
 void CBSIINonModule::activate()
 {
 	// if we're already initialised then just drop out
 	if (_Initialised)
 	{
 		// if there are backup services connected then we can connect right away
-		if (BackupServiceUp["BS"]!=0/* && (!_HaveSeparatePDBS || BackupServiceUp["PDBS"]!=0)*/ )
+		if (BackupServiceUp["BS"] != 0 /* && (!_HaveSeparatePDBS || BackupServiceUp["PDBS"]!=0)*/)
 		{
 			CBackupInterfaceSingleton::getInstance()->connect();
 		}
 		return;
 	}
 
-	_Initialised= true;
+	_Initialised = true;
 
-	CUnifiedNetwork::getInstance()->setServiceUpCallback ("BS", cbBSConnection, NULL);
-	CUnifiedNetwork::getInstance()->setServiceDownCallback ("BS", cbBSDisconnection, NULL);
+	CUnifiedNetwork::getInstance()->setServiceUpCallback("BS", cbBSConnection, NULL);
+	CUnifiedNetwork::getInstance()->setServiceDownCallback("BS", cbBSDisconnection, NULL);
 
-//	CUnifiedNetwork::getInstance()->setServiceUpCallback ("PDBS", cbBSConnection, NULL);
-//	CUnifiedNetwork::getInstance()->setServiceDownCallback ("PDBS", cbBSDisconnection, NULL);
+	//	CUnifiedNetwork::getInstance()->setServiceUpCallback ("PDBS", cbBSConnection, NULL);
+	//	CUnifiedNetwork::getInstance()->setServiceDownCallback ("PDBS", cbBSDisconnection, NULL);
 
 	// setup the callback array
-	CUnifiedNetwork::getInstance()->addCallbackArray( CbArray, sizeof(CbArray)/sizeof(CbArray[0]) );
+	CUnifiedNetwork::getInstance()->addCallbackArray(CbArray, sizeof(CbArray) / sizeof(CbArray[0]));
 
 	string host = BackupServiceIP.get();
-	if(host.empty())
+	if (host.empty())
 	{
 		nlwarning("Can't use backup because BSHost variable is empty");
 		return;
 	}
-	if (host.find (":") == string::npos)
-		host+= ":43990";
+	if (host.find(":") == string::npos)
+		host += ":43990";
 
 	_BSMasterAddress = CInetHost(host);
-	CUnifiedNetwork::getInstance()->addService ("BS", _BSMasterAddress);
+	CUnifiedNetwork::getInstance()->addService("BS", _BSMasterAddress);
 
 	// connect to the slave bs if any
 	host = SlaveBackupServiceIP.get();
 	if (!host.empty())
 	{
-		if (host.find (":") == string::npos)
-			host+= ":43990";
+		if (host.find(":") == string::npos)
+			host += ":43990";
 
 		_BSSlaveAddress = CInetHost(host);
-		CUnifiedNetwork::getInstance()->addService ("BS", _BSSlaveAddress);
+		CUnifiedNetwork::getInstance()->addService("BS", _BSSlaveAddress);
 	}
 
 	// connect to the global bs if any
-//	host = PDBackupServiceIP.get();
-//	_HaveSeparatePDBS= (!host.empty());
-//	if (_HaveSeparatePDBS)
-//	{
-//		if (host.find (":") == string::npos)
-//			host+= ":43990";
-//		CUnifiedNetwork::getInstance()->addService ("PDBS", CInetHost(host));
-//
-//		// connect to the global slave bs if any
-//		host = SlavePDBackupServiceIP.get();
-//		if (!host.empty())
-//		{
-//			if (host.find (":") == string::npos)
-//				host+= ":43990";
-//			CUnifiedNetwork::getInstance()->addService ("PDBS", CInetHost(host));
-//		}
-//	}
+	//	host = PDBackupServiceIP.get();
+	//	_HaveSeparatePDBS= (!host.empty());
+	//	if (_HaveSeparatePDBS)
+	//	{
+	//		if (host.find (":") == string::npos)
+	//			host+= ":43990";
+	//		CUnifiedNetwork::getInstance()->addService ("PDBS", CInetHost(host));
+	//
+	//		// connect to the global slave bs if any
+	//		host = SlavePDBackupServiceIP.get();
+	//		if (!host.empty())
+	//		{
+	//			if (host.find (":") == string::npos)
+	//				host+= ":43990";
+	//			CUnifiedNetwork::getInstance()->addService ("PDBS", CInetHost(host));
+	//		}
+	//	}
 
 	// init the l3 BS connector
 	_L3BSConn.addCallbackArray(CbSyncArray, sizeofarray(CbSyncArray));
-
 }
 
-void CBSIINonModule::dispatchRequestFile(const std::string& bsiname,uint32 requestId,const std::string& fileName)
+void CBSIINonModule::dispatchRequestFile(const std::string &bsiname, uint32 requestId, const std::string &fileName)
 {
-	nlassert(bsiname=="BS"/* || bsiname=="PDBS"*/);
+	nlassert(bsiname == "BS" /* || bsiname=="PDBS"*/);
 
 	CBackupMsgRequestFile msg;
-	msg.RequestId= requestId;
-	msg.FileName= fileName;
+	msg.RequestId = requestId;
+	msg.FileName = fileName;
 
 	NLNET::CMessage msgOut("load_file");
 	msgOut.serial(msg);
-	NLNET::CUnifiedNetwork::getInstance()->send( "BS", msgOut );
+	NLNET::CUnifiedNetwork::getInstance()->send("BS", msgOut);
 }
 
 void CBSIINonModule::deactivate()
 {
 }
 
-void CBSIINonModule::dispatchSendFile(const std::string& bsiname,uint32 requestId,const CBackupMsgSaveFile& msg)
+void CBSIINonModule::dispatchSendFile(const std::string &bsiname, uint32 requestId, const CBackupMsgSaveFile &msg)
 {
-	nlassert(bsiname=="BS"/* || bsiname=="PDBS"*/);
+	nlassert(bsiname == "BS" /* || bsiname=="PDBS"*/);
 
 	// register the request id for later use
-	CGenericRequestIdRegister::getInstance().pushRequestId(requestId,msg.FileName);
+	CGenericRequestIdRegister::getInstance().pushRequestId(requestId, msg.FileName);
 
 	// dispatch the request to the BS
-	NLNET::CUnifiedNetwork::getInstance()->send( "BS", msg.DataMsg );
+	NLNET::CUnifiedNetwork::getInstance()->send("BS", msg.DataMsg);
 }
 
-void CBSIINonModule::dispatchAppendData(const std::string& bsiname,uint32 requestId,const CBackupMsgSaveFile& msg)
+void CBSIINonModule::dispatchAppendData(const std::string &bsiname, uint32 requestId, const CBackupMsgSaveFile &msg)
 {
-	nlassert(bsiname=="BS"/* || bsiname=="PDBS"*/);
+	nlassert(bsiname == "BS" /* || bsiname=="PDBS"*/);
 
 	// register the request id for later use
-	CGenericRequestIdRegister::getInstance().pushRequestId(requestId,msg.FileName);
+	CGenericRequestIdRegister::getInstance().pushRequestId(requestId, msg.FileName);
 
 	// dispatch the request to the BS
-	NLNET::CUnifiedNetwork::getInstance()->send( "BS", msg.DataMsg );
+	NLNET::CUnifiedNetwork::getInstance()->send("BS", msg.DataMsg);
 }
 
-void CBSIINonModule::dispatchAppendText(const std::string& bsiname,uint32 requestId,const std::string& filename, const std::string& line)
+void CBSIINonModule::dispatchAppendText(const std::string &bsiname, uint32 requestId, const std::string &filename, const std::string &line)
 {
-	nlassert(bsiname=="BS"/* || bsiname=="PDBS"*/);
+	nlassert(bsiname == "BS" /* || bsiname=="PDBS"*/);
 
 	// register the request id for later use
-	CGenericRequestIdRegister::getInstance().pushRequestId(requestId,filename);
+	CGenericRequestIdRegister::getInstance().pushRequestId(requestId, filename);
 
-	CBackupMsgAppend	msg;
+	CBackupMsgAppend msg;
 	msg.FileName = filename;
 	msg.Append = line;
 
 	// dispatch the request to the BS
-	NLNET::CMessage	msgOut("APPEND");
+	NLNET::CMessage msgOut("APPEND");
 	msgOut.serial(msg);
-	NLNET::CUnifiedNetwork::getInstance()->send( "BS", msgOut );
+	NLNET::CUnifiedNetwork::getInstance()->send("BS", msgOut);
 }
 
-void CBSIINonModule::dispatchDeleteFile(const std::string& bsiname,uint32 requestId,const std::string& fileToDelete, bool keepBackupOfFile)
+void CBSIINonModule::dispatchDeleteFile(const std::string &bsiname, uint32 requestId, const std::string &fileToDelete, bool keepBackupOfFile)
 {
-	nlassert(bsiname=="BS"/* || bsiname=="PDBS"*/);
+	nlassert(bsiname == "BS" /* || bsiname=="PDBS"*/);
 
 	// register the request id for later use
-	CGenericRequestIdRegister::getInstance().pushRequestId(requestId,fileToDelete);
+	CGenericRequestIdRegister::getInstance().pushRequestId(requestId, fileToDelete);
 
 	// dispatch the request to the BS
 	NLNET::CMessage msgOut;
-	msgOut.setType( keepBackupOfFile ? "DELETE_FILE" : "DELETE_FILE_NO_BACKUP" );
-	msgOut.serial(const_cast<std::string&>(fileToDelete));
-	NLNET::CUnifiedNetwork::getInstance()->send( "BS", msgOut );
+	msgOut.setType(keepBackupOfFile ? "DELETE_FILE" : "DELETE_FILE_NO_BACKUP");
+	msgOut.serial(const_cast<std::string &>(fileToDelete));
+	NLNET::CUnifiedNetwork::getInstance()->send("BS", msgOut);
 }
 
-void CBSIINonModule::dispatchRequestFileClass(const std::string& bsiname,uint32 requestId,const std::string& directory, const std::vector<CBackupFileClass>& classes)
+void CBSIINonModule::dispatchRequestFileClass(const std::string &bsiname, uint32 requestId, const std::string &directory, const std::vector<CBackupFileClass> &classes)
 {
-	nlassert(bsiname=="BS"/* || bsiname=="PDBS"*/);
+	nlassert(bsiname == "BS" /* || bsiname=="PDBS"*/);
 
-	CBackupMsgFileClass	msg;
+	CBackupMsgFileClass msg;
 	msg.RequestId = requestId;
 	msg.Directory = directory;
 	msg.Classes = classes;
 
-	NLNET::CMessage	msgOut("GET_FILE_CLASS");
+	NLNET::CMessage msgOut("GET_FILE_CLASS");
 	msgOut.serial(msg);
-	NLNET::CUnifiedNetwork::getInstance()->send( "BS", msgOut );
+	NLNET::CUnifiedNetwork::getInstance()->send("BS", msgOut);
 }
 
 void CBSIINonModule::connectL3()
@@ -528,13 +536,14 @@ void CBSIINonModule::connectL3()
 			addr1.setPort(BackupServiceL3Port);
 
 			CInetHost addr2 = _BSMasterAddress;
-			addr2.setPort(addr2.port()+1);
+			addr2.setPort(addr2.port() + 1);
 
 			try
 			{
 				// try connecting to the BS Master on an explicit port
 				_L3BSConn.connect(addr1);
-				bsName = addr1.toStringLong();;
+				bsName = addr1.toStringLong();
+				;
 			}
 			catch (...)
 			{
@@ -553,11 +562,11 @@ void CBSIINonModule::connectL3()
 
 			if (isConnectedL3BSInReadWriteMode())
 			{
-				nlinfo("Connection to BS Master: %s in read/write mode succeeded",bsName.c_str());
+				nlinfo("Connection to BS Master: %s in read/write mode succeeded", bsName.c_str());
 				return;
 			}
 
-			nlinfo("Connection to BS Master: %s succeeded but BS is in Write Only mode",bsName.c_str());
+			nlinfo("Connection to BS Master: %s succeeded but BS is in Write Only mode", bsName.c_str());
 			_L3BSConn.disconnect();
 		}
 
@@ -570,7 +579,7 @@ void CBSIINonModule::connectL3()
 			addr1.setPort(SlaveBackupServiceL3Port);
 
 			CInetHost addr2 = _BSSlaveAddress;
-			addr2.setPort(addr2.port()+1);
+			addr2.setPort(addr2.port() + 1);
 
 			try
 			{
@@ -595,18 +604,17 @@ void CBSIINonModule::connectL3()
 
 			if (isConnectedL3BSInReadWriteMode())
 			{
-				nlinfo("Connection to BS Slave: %s in read/write mode succeeded",bsName.c_str());
+				nlinfo("Connection to BS Slave: %s in read/write mode succeeded", bsName.c_str());
 				return;
 			}
 
-			nlinfo("Connection to BS Slave: %s succeeded but BS is in Write Only mode",bsName.c_str());
+			nlinfo("Connection to BS Slave: %s succeeded but BS is in Write Only mode", bsName.c_str());
 			_L3BSConn.disconnect();
 		}
 
 		nlinfo("Sleeping a few seconds before retrying connection to backup services...");
 		nlSleep(10);
 	}
-
 }
 
 bool CBSIINonModule::isConnectedL3BSInReadWriteMode()
@@ -628,20 +636,19 @@ bool CBSIINonModule::isConnectedL3BSInReadWriteMode()
 	// wait for the response or disconnection
 	do
 	{
-		_L3BSConn.update2(-1,10);
-	}
-	while(_L3BSConn.connected() && !_BSHandshakeDone);
+		_L3BSConn.update2(-1, 10);
+	} while (_L3BSConn.connected() && !_BSHandshakeDone);
 
 	return _L3BSConn.connected() && _BSInReadMode;
 }
 
-void CBSIINonModule::dispatchSyncLoadFileClass(const std::string& bsiname,uint32 requestId,const std::string& directory, const std::vector<CBackupFileClass>& classes)
+void CBSIINonModule::dispatchSyncLoadFileClass(const std::string &bsiname, uint32 requestId, const std::string &directory, const std::vector<CBackupFileClass> &classes)
 {
-	nlassert(bsiname=="BS"/* || bsiname=="PDBS"*/);
+	nlassert(bsiname == "BS" /* || bsiname=="PDBS"*/);
 
 	do
 	{
-		CBackupMsgFileClass	msg;
+		CBackupMsgFileClass msg;
 		msg.RequestId = requestId;
 		msg.Directory = directory;
 		msg.Classes = classes;
@@ -649,45 +656,42 @@ void CBSIINonModule::dispatchSyncLoadFileClass(const std::string& bsiname,uint32
 		// make sure the L3 connection is done
 		connectL3();
 
-		NLNET::CMessage	msgOut("GET_FILE_CLASS");
+		NLNET::CMessage msgOut("GET_FILE_CLASS");
 		msgOut.serial(msg);
 
 		// send the request
-		_L3BSConn.send( msgOut );
+		_L3BSConn.send(msgOut);
 
-		CBackupInterfaceSingleton* singleton= CBackupInterfaceSingleton::getInstance();
+		CBackupInterfaceSingleton *singleton = CBackupInterfaceSingleton::getInstance();
 
 		// loop until the request is served
 		do
 		{
 			_L3BSConn.update2(-1, 10);
-		}
-		while(!singleton->fileClassCallbackDone(requestId) && _L3BSConn.connected());
+		} while (!singleton->fileClassCallbackDone(requestId) && _L3BSConn.connected());
 
-	}
-	while (!_L3BSConn.connected());
+	} while (!_L3BSConn.connected());
 }
 
-
-void CBSIINonModule::dispatchSyncLoadFile(const std::string& bsiname,uint32 requestId,const std::string& fileName, bool notBlocking)
+void CBSIINonModule::dispatchSyncLoadFile(const std::string &bsiname, uint32 requestId, const std::string &fileName, bool notBlocking)
 {
-	nlassert(bsiname=="BS"/* || bsiname=="PDBS"*/);
+	nlassert(bsiname == "BS" /* || bsiname=="PDBS"*/);
 
 	if (notBlocking)
 	{
 		bool insertResult;
-		insertResult= _L3PendingResquest.insert(make_pair(requestId,fileName)).second;
-		STOP_IF(!insertResult,"Duplicate request ID found - this is BAD!: id="<<requestId<<" for file: "<<fileName);
+		insertResult = _L3PendingResquest.insert(make_pair(requestId, fileName)).second;
+		STOP_IF(!insertResult, "Duplicate request ID found - this is BAD!: id=" << requestId << " for file: " << fileName);
 	}
 
 	// register the request id for later use
-	CGenericRequestIdRegister::getInstance().pushRequestId(requestId,fileName);
+	CGenericRequestIdRegister::getInstance().pushRequestId(requestId, fileName);
 
 	do
 	{
 		CBackupMsgRequestFile msg;
-		msg.RequestId= requestId;
-		msg.FileName= fileName;
+		msg.RequestId = requestId;
+		msg.FileName = fileName;
 
 		NLNET::CMessage msgOut("load_file");
 		msgOut.serial(msg);
@@ -696,9 +700,9 @@ void CBSIINonModule::dispatchSyncLoadFile(const std::string& bsiname,uint32 requ
 		connectL3();
 
 		// send the request
-		_L3BSConn.send( msgOut );
+		_L3BSConn.send(msgOut);
 
-		CBackupInterfaceSingleton* singleton= CBackupInterfaceSingleton::getInstance();
+		CBackupInterfaceSingleton *singleton = CBackupInterfaceSingleton::getInstance();
 
 		if (!notBlocking)
 		{
@@ -706,16 +710,15 @@ void CBSIINonModule::dispatchSyncLoadFile(const std::string& bsiname,uint32 requ
 			do
 			{
 				_L3BSConn.update2(-1, 10);
-			} while(!singleton->fileCallbackDone(requestId));
+			} while (!singleton->fileCallbackDone(requestId));
 		}
 
-	}
-	while (!_L3BSConn.connected());
+	} while (!_L3BSConn.connected());
 }
 
 void CBSIINonModule::terminateSyncLoads()
 {
-	CBackupInterfaceSingleton* singleton= CBackupInterfaceSingleton::getInstance();
+	CBackupInterfaceSingleton *singleton = CBackupInterfaceSingleton::getInstance();
 
 	// loop until all request are served
 	while (!_L3PendingResquest.empty())
@@ -748,7 +751,6 @@ void CBSIINonModule::terminateSyncLoads()
 	}
 }
 
-
 NLMISC::TTime CBSIINonModule::getLastAckTime() const
 {
 	NLMISC::TTime result;
@@ -756,24 +758,24 @@ NLMISC::TTime CBSIINonModule::getLastAckTime() const
 	// if there's no BS connected then give up
 	if (PingPongs.empty())
 	{
-		result=0;
+		result = 0;
 		return result;
 	}
 
 	// start by setting result to a really big positive number
-	result= uint64(sint64(-1))>>1;
+	result = uint64(sint64(-1)) >> 1;
 
 	// iterate over all of the currently connected backup services
-	for (TPingPongs::iterator it= PingPongs.begin(); it!=PingPongs.end(); ++it)
+	for (TPingPongs::iterator it = PingPongs.begin(); it != PingPongs.end(); ++it)
 	{
 		// get a refference to the backup service' pingpong record
-		SPingPongStruct& thePingPong= it->second;
+		SPingPongStruct &thePingPong = it->second;
 
 		// workout the size of the Times vector
-		uint32 numTimes= (uint32)thePingPong.Times.size();
+		uint32 numTimes = (uint32)thePingPong.Times.size();
 
 		// compare the last entry in the times vector to the result so far...
-		result= min(result,thePingPong.Times[(thePingPong.Count-1)%numTimes]);
+		result = min(result, thePingPong.Times[(thePingPong.Count - 1) % numTimes]);
 	}
 
 	return result;
@@ -781,7 +783,7 @@ NLMISC::TTime CBSIINonModule::getLastAckTime() const
 
 NLMISC::TTime CBSIINonModule::getLastAckDelay() const
 {
-	NLMISC::TTime result= 0;
+	NLMISC::TTime result = 0;
 
 	// if there's no BS connected then give up
 	if (PingPongs.empty())
@@ -790,13 +792,13 @@ NLMISC::TTime CBSIINonModule::getLastAckDelay() const
 	}
 
 	// iterate over all of the currently connected backup services
-	for (TPingPongs::iterator it= PingPongs.begin(); it!=PingPongs.end(); ++it)
+	for (TPingPongs::iterator it = PingPongs.begin(); it != PingPongs.end(); ++it)
 	{
 		// get a refference to the backup service' pingpong record
-		SPingPongStruct& thePingPong= it->second;
+		SPingPongStruct &thePingPong = it->second;
 
 		// compare this connection's ack delay to the result so far
-		result= max(result,thePingPong.LastAckDelay);
+		result = max(result, thePingPong.LastAckDelay);
 	}
 
 	// return the largest ack delay of all our connections

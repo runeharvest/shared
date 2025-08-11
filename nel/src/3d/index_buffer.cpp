@@ -27,8 +27,7 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 // ***************************************************************************
 // IIBDrvInfos
 // ***************************************************************************
@@ -63,7 +62,8 @@ CIndexBuffer::CIndexBuffer()
 
 // ***************************************************************************
 
-CIndexBuffer::CIndexBuffer(const CIndexBuffer &vb) : CRefCount()
+CIndexBuffer::CIndexBuffer(const CIndexBuffer &vb)
+    : CRefCount()
 {
 	/* ***********************************************
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
@@ -110,7 +110,7 @@ CIndexBuffer::~CIndexBuffer()
 
 	// Single value
 	if (DrvInfos)
-		DrvInfos->IndexBufferPtr = NULL;	// Tell the driver info to not restore memory when it will die
+		DrvInfos->IndexBufferPtr = NULL; // Tell the driver info to not restore memory when it will die
 
 	// Must kill the drv mirror of this VB.
 	DrvInfos.kill();
@@ -118,9 +118,9 @@ CIndexBuffer::~CIndexBuffer()
 
 // ***************************************************************************
 
-CIndexBuffer	&CIndexBuffer::operator=(const CIndexBuffer &vb)
+CIndexBuffer &CIndexBuffer::operator=(const CIndexBuffer &vb)
 {
-	nlassertex (!isLocked(), ("The index buffer is locked."));
+	nlassertex(!isLocked(), ("The index buffer is locked."));
 	// Single value
 	_InternalFlags = vb._InternalFlags;
 	_NbIndexes = vb._NbIndexes;
@@ -140,7 +140,7 @@ CIndexBuffer	&CIndexBuffer::operator=(const CIndexBuffer &vb)
 
 // ***************************************************************************
 
-void CIndexBuffer::setPreferredMemory (TPreferredMemory preferredMemory, bool keepLocalMemory)
+void CIndexBuffer::setPreferredMemory(TPreferredMemory preferredMemory, bool keepLocalMemory)
 {
 	if ((_PreferredMemory != preferredMemory) || (_KeepLocalMemory != keepLocalMemory))
 	{
@@ -156,11 +156,11 @@ void CIndexBuffer::setPreferredMemory (TPreferredMemory preferredMemory, bool ke
 
 void CIndexBuffer::reserve(uint32 n)
 {
-	nlassert (!isLocked());
+	nlassert(!isLocked());
 	if (_Capacity != n)
 	{
-		_Capacity= n;
-		_NbIndexes=std::min (_NbIndexes,_Capacity);
+		_Capacity = n;
+		_NbIndexes = std::min(_NbIndexes, _Capacity);
 
 		// Force non resident
 		restoreNonResidentMemory();
@@ -171,14 +171,14 @@ void CIndexBuffer::reserve(uint32 n)
 
 void CIndexBuffer::setNumIndexes(uint32 n)
 {
-	if(_Capacity<n)
+	if (_Capacity < n)
 	{
 		reserve(n);
 	}
-	if(_NbIndexes != n)
+	if (_NbIndexes != n)
 	{
 		_InternalFlags |= TouchedNumIndexes;
-		_NbIndexes=n;
+		_NbIndexes = n;
 	}
 }
 
@@ -199,13 +199,13 @@ void CIndexBuffer::deleteAllIndexes()
 {
 	if (_Capacity)
 	{
-		nlassert (!isLocked());
+		nlassert(!isLocked());
 		// free memory.
 		contReset(_NonResidentIndexes);
-		_Capacity= 0;
-		if(_NbIndexes!=0)
+		_Capacity = 0;
+		if (_NbIndexes != 0)
 		{
-			_NbIndexes=0;
+			_NbIndexes = 0;
 			_InternalFlags |= TouchedNumIndexes;
 		}
 
@@ -213,32 +213,32 @@ void CIndexBuffer::deleteAllIndexes()
 		restoreNonResidentMemory();
 
 		// Delete driver info
-		nlassert (DrvInfos == NULL);
+		nlassert(DrvInfos == NULL);
 	}
 }
 
 // ***************************************************************************
 
-void CIndexBuffer::setLocation (TLocation newLocation)
+void CIndexBuffer::setLocation(TLocation newLocation)
 {
 	// Upload ?
 	if (newLocation != NotResident)
 	{
 		// The driver must have setuped the driver info
-		nlassert (DrvInfos);
+		nlassert(DrvInfos);
 
 		// Current size of the buffer
-		const uint size = ((_PreferredMemory==RAMVolatile)||(_PreferredMemory==AGPVolatile))?_NbIndexes:_Capacity;
+		const uint size = ((_PreferredMemory == RAMVolatile) || (_PreferredMemory == AGPVolatile)) ? _NbIndexes : _Capacity;
 
 		// The buffer must not be resident
 		if (_Location != NotResident)
-			setLocation (NotResident);
+			setLocation(NotResident);
 
 		// Copy the buffer content
-		void *dest = DrvInfos->lock (0, size, false);
-		nlassert (_NonResidentIndexes.size() / getIndexNumBytes() == _Capacity);	// Internal buffer must have the good size
+		void *dest = DrvInfos->lock(0, size, false);
+		nlassert(_NonResidentIndexes.size() / getIndexNumBytes() == _Capacity); // Internal buffer must have the good size
 		if (_Capacity != 0)
-			memcpy (dest, &(_NonResidentIndexes[0]), size*getIndexNumBytes());
+			memcpy(dest, &(_NonResidentIndexes[0]), size * getIndexNumBytes());
 		DrvInfos->unlock(0, 0);
 
 		// Reset the non resident container if not a static preferred memory and not put in RAM
@@ -246,27 +246,27 @@ void CIndexBuffer::setLocation (TLocation newLocation)
 			contReset(_NonResidentIndexes);
 
 		// Clear touched flags
-		resetTouchFlags ();
+		resetTouchFlags();
 
-		_Location =	newLocation;
+		_Location = newLocation;
 		_ResidentSize = _Capacity;
 	}
 	else
 	{
 		// Resize the non resident buffer
-		_NonResidentIndexes.resize (_Capacity * getIndexNumBytes());
+		_NonResidentIndexes.resize(_Capacity * getIndexNumBytes());
 
 		// If resident in RAM, backup the data in non resident memory
 		if ((_Location == RAMResident) && (_PreferredMemory != RAMVolatile) && (_PreferredMemory != AGPVolatile) && !_KeepLocalMemory)
 		{
 			// The driver must have setuped the driver info
-			nlassert (DrvInfos);
+			nlassert(DrvInfos);
 
 			// Copy the old buffer data
-			const void *src = DrvInfos->lock (0, _ResidentSize, true);
-			uint size = std::min ((uint)(_Capacity*getIndexNumBytes()), (uint)(_ResidentSize*getIndexNumBytes()));
+			const void *src = DrvInfos->lock(0, _ResidentSize, true);
+			uint size = std::min((uint)(_Capacity * getIndexNumBytes()), (uint)(_ResidentSize * getIndexNumBytes()));
 			if (size)
-				memcpy (&(_NonResidentIndexes[0]), src, size);
+				memcpy(&(_NonResidentIndexes[0]), src, size);
 			DrvInfos->unlock(0, 0);
 		}
 
@@ -282,15 +282,14 @@ void CIndexBuffer::setLocation (TLocation newLocation)
 
 void CIndexBuffer::restoreNonResidentMemory()
 {
-	setLocation (NotResident);
+	setLocation(NotResident);
 
 	if (DrvInfos)
-		DrvInfos->IndexBufferPtr = NULL;	// Tell the driver info to not restore memory when it will die
+		DrvInfos->IndexBufferPtr = NULL; // Tell the driver info to not restore memory when it will die
 
 	// Must kill the drv mirror of this VB.
 	DrvInfos.kill();
 }
-
 
 // ***************************************************************************
 void CIndexBuffer::buildSerialVector(std::vector<uint32> &dest) const
@@ -298,11 +297,11 @@ void CIndexBuffer::buildSerialVector(std::vector<uint32> &dest) const
 	dest.resize(getNumIndexes());
 	if (_Format == Indices16)
 	{
-		const uint16 *src = (const uint16 *) &_NonResidentIndexes[0];
+		const uint16 *src = (const uint16 *)&_NonResidentIndexes[0];
 		// convert to 32 bits
-		for(uint k = 0; k < getNumIndexes(); ++k)
+		for (uint k = 0; k < getNumIndexes(); ++k)
 		{
-			dest[k] = *src ++;
+			dest[k] = *src++;
 		}
 	}
 	else
@@ -319,11 +318,11 @@ void CIndexBuffer::restoreFromSerialVector(const std::vector<uint32> &src)
 	if (_Format == Indices16)
 	{
 		_NonResidentIndexes.resize(sizeof(uint16) * src.size());
-		uint16 *dest = (uint16 *) &_NonResidentIndexes[0];
-		for(uint k = 0; k < src.size(); ++k)
+		uint16 *dest = (uint16 *)&_NonResidentIndexes[0];
+		for (uint k = 0; k < src.size(); ++k)
 		{
 			nlassert(src[k] <= 0xffff);
-			*dest++ = (uint16) src[k];
+			*dest++ = (uint16)src[k];
 		}
 	}
 	else
@@ -343,9 +342,9 @@ void CIndexBuffer::serial(NLMISC::IStream &f)
 	 * ***********************************************/
 
 	/** Version 2 : no more write only flags
-	  * Version 1 : index buffer
-	  * Version 0 : primitive block
-	  */
+	 * Version 1 : index buffer
+	 * Version 0 : primitive block
+	 */
 
 	sint ver = f.serialVersion(2);
 
@@ -353,7 +352,7 @@ void CIndexBuffer::serial(NLMISC::IStream &f)
 	if (ver < 1)
 	{
 		uint32 nb, capacity;
-		std::vector<uint32>	indexes;
+		std::vector<uint32> indexes;
 
 		// Skip lines
 		f.serial(nb, capacity);
@@ -367,8 +366,8 @@ void CIndexBuffer::serial(NLMISC::IStream &f)
 			buildSerialVector(nonResidentIndexes);
 		}
 		f.serial(nb, capacity);
-		_NbIndexes = nb*3;
-		_Capacity = capacity*3;
+		_NbIndexes = nb * 3;
+		_Capacity = capacity * 3;
 		f.serialCont(nonResidentIndexes);
 
 		if (f.isReading())
@@ -402,7 +401,7 @@ void CIndexBuffer::serial(NLMISC::IStream &f)
 		{
 			uint i;
 			bool temp;
-			for (i=0; i<PreferredCount; i++)
+			for (i = 0; i < PreferredCount; i++)
 				f.serial(temp);
 		}
 	}
@@ -417,14 +416,14 @@ void CIndexBuffer::serial(NLMISC::IStream &f)
 
 // ***************************************************************************
 
-void CIndexBuffer::fillBuffer ()
+void CIndexBuffer::fillBuffer()
 {
 	if (DrvInfos && _KeepLocalMemory)
 	{
 		// Copy the local memory in local memory
-		nlassert ((_NbIndexes * getIndexNumBytes()) <=_NonResidentIndexes.size());
-		void *dest = DrvInfos->lock (0, _NbIndexes, false);
-		NLMISC::CFastMem::memcpy (dest, &(_NonResidentIndexes[0]), _NbIndexes*getIndexNumBytes());
+		nlassert((_NbIndexes * getIndexNumBytes()) <= _NonResidentIndexes.size());
+		void *dest = DrvInfos->lock(0, _NbIndexes, false);
+		NLMISC::CFastMem::memcpy(dest, &(_NonResidentIndexes[0]), _NbIndexes * getIndexNumBytes());
 		DrvInfos->unlock(0, _NbIndexes);
 	}
 }

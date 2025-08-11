@@ -133,7 +133,7 @@ CFilterParameters::CFilterParameters(float occlusion, float occlusionLfRatio, fl
 
 	// Calculate gain for direct low-pass filter
 	float directDb = std::min(occlusionDirectRatio * occlusionLfRatio,
-		occlusionDirectRatio + occlusionLfRatio - 1.0f);
+	    occlusionDirectRatio + occlusionLfRatio - 1.0f);
 	DirectGain = decibelsToAmplitudeRatio(directDb * obstruction);
 
 	// Set direct high-frequency gain
@@ -141,7 +141,7 @@ CFilterParameters::CFilterParameters(float occlusion, float occlusionLfRatio, fl
 
 	// Calculate gain for effect low-pass filter
 	float effectDb = std::min(occlusionRoomRatio * occlusionLfRatio,
-		occlusionRoomRatio + occlusionLfRatio - 1.0f);
+	    occlusionRoomRatio + occlusionLfRatio - 1.0f);
 	EffectGain = decibelsToAmplitudeRatio(effectDb * obstruction);
 
 	// Set effect high-frequency gain

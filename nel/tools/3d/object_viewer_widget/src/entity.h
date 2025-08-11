@@ -36,225 +36,234 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <nel/3d/u_skeleton.h>
 #include <nel/3d/channel_mixer.h>
 
-namespace NL3D 
-{
-	class UPlayList;
-	class UAnimationSet;
+namespace NL3D {
+class UPlayList;
+class UAnimationSet;
 }
 
-namespace NLQT 
+namespace NLQT {
+
+class CSlotInfo
 {
+public:
+	CSlotInfo()
+	    : Animation("empty")
+	    , Skeleton("empty")
+	    , Offset(0)
+	    , StartTime(0)
+	    , EndTime(0)
+	    , StartBlend(1)
+	    , EndBlend(1)
+	    , Smoothness(1)
+	    , SpeedFactor(1)
+	    , ClampMode(0)
+	    , SkeletonInverted(false)
+	    , Enable(true) {};
 
-	class CSlotInfo
+	std::string Animation;
+	std::string Skeleton;
+	float Offset;
+	float StartTime;
+	float EndTime;
+
+	float StartBlend;
+	float EndBlend;
+	float Smoothness;
+	float SpeedFactor;
+	sint32 ClampMode;
+	bool SkeletonInverted;
+	bool Enable;
+
+	CSlotInfo &operator=(const CSlotInfo &);
+};
+
+/**
+@class CEntity
+@brief Class manage animated shape.
+@details
+Allows you to load animations for shape and skeleton weight.
+Contains a built-in playlist. Has management and playback Playlists or Mixer.
+*/
+class CEntity
+{
+public:
+	struct Mode
 	{
-	public:
-		CSlotInfo ():
-		  Animation("empty"), Skeleton("empty"),
-			  Offset(0), StartTime(0), EndTime(0),
-			  StartBlend(1),	EndBlend (1), Smoothness(1),
-			  SpeedFactor(1),	ClampMode(0),
-			  SkeletonInverted(false), 
-			  Enable(true)	{} ;
-
-		  std::string		Animation;
-		  std::string		Skeleton;
-		  float			Offset;
-		  float			StartTime;
-		  float			EndTime;
-
-		  float			StartBlend;
-		  float			EndBlend;
-		  float			Smoothness;
-		  float			SpeedFactor;
-		  sint32			ClampMode;
-		  bool			SkeletonInverted;
-		  bool			Enable;
-
-		  CSlotInfo &operator=(const CSlotInfo &);
+		enum List
+		{
+			PlayList = 1,
+			Mixer
+		};
 	};
 
-
-	/**
-	@class CEntity
-	@brief Class manage animated shape.
-	@details
-	Allows you to load animations for shape and skeleton weight. 
-	Contains a built-in playlist. Has management and playback Playlists or Mixer.
-	*/
-	class CEntity
+	/// Will need for a single or multiple animation shape
+	struct SAnimationStatus
 	{
-	public:
-		struct Mode
+		bool LoopAnim;
+		bool PlayAnim;
+		float CurrentTimeAnim;
+		float StartAnim;
+		float EndAnim;
+		float SpeedAnim;
+		int Mode;
+
+		SAnimationStatus()
+		    : LoopAnim(false)
+		    , PlayAnim(false)
+		    , CurrentTimeAnim(0)
+		    , StartAnim(0)
+		    , EndAnim(0)
+		    , SpeedAnim(1)
+		    , Mode(Mode::PlayList)
 		{
-			enum List
-			{
-				PlayList = 1,
-				Mixer
-			};
-		};
+		}
+	};
 
-		/// Will need for a single or multiple animation shape
-		struct SAnimationStatus
-		{
-			bool	LoopAnim;
-			bool	PlayAnim;
-			float	CurrentTimeAnim;
-			float	StartAnim;
-			float	EndAnim;
-			float	SpeedAnim;
-			int	Mode;
+	/// Destructor
+	~CEntity(void);
 
-			SAnimationStatus():
-			LoopAnim(false), PlayAnim(false),
-				CurrentTimeAnim(0), StartAnim(0),
-				EndAnim(0), SpeedAnim(1), Mode(Mode::PlayList) {}
-		};
+	/// Loads a file animations
+	/// @param fileName - name animation file
+	void loadAnimation(std::string &fileName);
 
-		/// Destructor
-		~CEntity(void);
+	/// Loads a file skeleton weight
+	void loadSWT(std::string &fileName);
 
-		/// Loads a file animations
-		/// @param fileName - name animation file
-		void loadAnimation(std::string &fileName);
+	/// Adds an animation to a playlist
+	/// @param name - name loaded animations
+	void addAnimToPlayList(std::string &name);
 
-		/// Loads a file skeleton weight
-		void loadSWT(std::string &fileName);
+	/// Removes the animation from a playlist
+	/// @param row - number of animations in the playlist
+	void removeAnimToPlayList(uint row);
 
-		/// Adds an animation to a playlist
-		/// @param name - name loaded animations
-		void addAnimToPlayList(std::string &name);
+	/// Swaps animations to a playlist
+	/// @param row1 - first number of animations in the playlist
+	/// @param row2 - second number of animations in the playlist
+	void swapAnimToPlayList(uint row1, uint row2);
 
-		/// Removes the animation from a playlist
-		/// @param row - number of animations in the playlist
-		void removeAnimToPlayList(uint row);
+	/// Playback animation
+	void playbackAnim(bool play);
 
-		/// Swaps animations to a playlist
-		/// @param row1 - first number of animations in the playlist
-		/// @param row2 - second number of animations in the playlist
-		void swapAnimToPlayList(uint row1, uint row2); 
+	/// Reset playlist and animation
+	void reset();
 
-		/// Playback animation 
-		void playbackAnim(bool play);
+	/// Get the total time of animation playlist
+	/// @return total time of animation
+	float getPlayListLength();
 
-		/// Reset playlist and animation
-		void reset();
+	/// get time length single animation
+	float getAnimLength(std::string name);
 
-		/// Get the total time of animation playlist
-		/// @return total time of animation
-		float getPlayListLength();
+	/// Get slot infomation
+	void setSlotInfo(uint num, CSlotInfo &slotInfo) { _SlotInfo[num] = slotInfo; }
 
-		/// get time length single animation
-		float getAnimLength(std::string name);
+	/// Set use mode playlist or mixer
+	void setMode(int mode) { _AnimationStatus.Mode = mode; }
 
-		/// Get slot infomation
-		void setSlotInfo(uint num, CSlotInfo& slotInfo) { _SlotInfo[num] = slotInfo; }
+	/// Set in place mode animation
+	void setInPlace(bool enabled) { _inPlace = enabled; }
 
-		/// Set use mode playlist or mixer
-		void setMode(int mode) { _AnimationStatus.Mode = mode; }
+	/// Get in place mode
+	bool getInPlace() { return _inPlace; }
 
-		/// Set in place mode animation
-		void setInPlace(bool enabled) { _inPlace = enabled; }
+	/// Set inc position
+	void setIncPos(bool enabled) { _incPos = enabled; }
 
-		/// Get in place mode
-		bool getInPlace() { return _inPlace; }
+	/// Get inc position
+	bool getIncPos() { return _incPos; }
 
-		/// Set inc position
-		void setIncPos(bool enabled) { _incPos = enabled; }
+	/// Get information about the current status of playing a playlist
+	/// @return struct containing current information playback
+	SAnimationStatus getStatus() { return _AnimationStatus; }
 
-		/// Get inc position
-		bool getIncPos() { return _incPos; }
+	/// Get name entity
+	/// @return name entity
+	std::string getName() { return _Name; }
 
-		/// Get information about the current status of playing a playlist
-		/// @return struct containing current information playback
-		SAnimationStatus getStatus() { return _AnimationStatus; }
+	/// Get file name shape
+	/// @return file name shape
+	std::string getFileNameShape() { return _FileNameShape; }
 
-		/// Get name entity
-		/// @return name entity
-		std::string getName() { return _Name; }
+	/// Get file name skeleton
+	/// @return file name skeleton
+	std::string getFileNameSkeleton() { return _FileNameSkeleton; }
 
-		/// Get file name shape
-		/// @return file name shape
-		std::string getFileNameShape() { return _FileNameShape; }
+	/// Get slot information
+	CSlotInfo getSlotInfo(uint num) { return _SlotInfo[num]; }
 
-		/// Get file name skeleton
-		/// @return file name skeleton
-		std::string getFileNameSkeleton() { return _FileNameSkeleton; }
+	/// Get list loaded animations files
+	std::vector<std::string> &getAnimationList() { return _AnimationList; }
 
-		/// Get slot information
-		CSlotInfo getSlotInfo(uint num) { return _SlotInfo[num]; }
+	/// Get playlist animations
+	std::vector<std::string> &getPlayListAnimation() { return _PlayListAnimation; }
 
-		/// Get list loaded animations files
-		std::vector<std::string>& getAnimationList() { return _AnimationList; }
+	/// Get list loaded skeleton weight template files
+	std::vector<std::string> &getSWTList() { return _SWTList; }
 
-		/// Get playlist animations
-		std::vector<std::string>& getPlayListAnimation() { return _PlayListAnimation; }
+	/// Get game interface for manipulating Skeleton.
+	NL3D::USkeleton getSkeleton() const { return _Skeleton; }
 
-		/// Get list loaded skeleton weight template files
-		std::vector<std::string>& getSWTList() { return _SWTList; }
+private:
+	/// Constructor
+	CEntity(void);
 
-		/// Get game interface for manipulating Skeleton.
-		NL3D::USkeleton getSkeleton() const { return _Skeleton; }
+	/// Update the animate from the playlist or channel mixer
+	/// @param time - current time in second
+	void update(NL3D::TAnimationTime time);
 
-	private:
-		/// Constructor
-		CEntity(void);
+	void resetChannel();
 
-		/// Update the animate from the playlist or channel mixer
-		/// @param time - current time in second
-		void update(NL3D::TAnimationTime time);
+	/// Update the animate from the playlist
+	void animatePlayList(NL3D::TAnimationTime time);
 
-		void resetChannel();
+	/// Update the animate from the mixer
+	void animateChannelMixer();
+	void addTransformation(NLMISC::CMatrix &current, NL3D::UAnimation *anim,
+	    float begin, float end,
+	    NL3D::UTrack *posTrack, NL3D::UTrack *rotquatTrack,
+	    NL3D::UTrack *nextPosTrack, NL3D::UTrack *nextRotquatTrack,
+	    bool removeLast);
 
-		/// Update the animate from the playlist
-		void animatePlayList(NL3D::TAnimationTime time);
+	// The name of the entity
+	std::string _Name;
+	std::string _FileNameShape;
+	std::string _FileNameSkeleton;
 
-		/// Update the animate from the mixer
-		void animateChannelMixer();
-		void addTransformation (NLMISC::CMatrix &current, NL3D::UAnimation *anim, 
-			float begin, float end, 
-			NL3D::UTrack *posTrack, NL3D::UTrack *rotquatTrack, 
-			NL3D::UTrack *nextPosTrack, NL3D::UTrack *nextRotquatTrack, 
-			bool removeLast);
+	SAnimationStatus _AnimationStatus;
 
-		// The name of the entity
-		std::string			_Name;
-		std::string			_FileNameShape;
-		std::string			_FileNameSkeleton;
+	bool _inPlace;
+	bool _incPos;
 
-		SAnimationStatus		_AnimationStatus;
+	float _CharacterScalePos;
 
-		bool 				_inPlace;
-		bool 				_incPos;
+	// The mesh instance associated to this entity
+	NL3D::UInstance _Instance;
 
-		float 				_CharacterScalePos;
+	// The skeleton binded to the instance
+	NL3D::USkeleton _Skeleton;
 
-		// The mesh instance associated to this entity
-		NL3D::UInstance			_Instance;
+	NL3D::UPlayList *_PlayList;
 
-		// The skeleton binded to the instance
-		NL3D::USkeleton			_Skeleton;
+	NL3D::UAnimationSet *_AnimationSet;
 
-		NL3D::UPlayList			*_PlayList;
+	// Animation input file
+	std::vector<std::string> _AnimationList;
 
-		NL3D::UAnimationSet		*_AnimationSet;
+	// Skeleton weight input file
+	std::vector<std::string> _SWTList;
 
-		// Animation input file
-		std::vector<std::string>	_AnimationList;
+	// Play list animation
+	std::vector<std::string> _PlayListAnimation;
 
-		// Skeleton weight input file
-		std::vector<std::string>	_SWTList;
+	// Slot info for this object
+	CSlotInfo _SlotInfo[NL3D::CChannelMixer::NumAnimationSlot];
 
-		// Play list animation
-		std::vector<std::string >	_PlayListAnimation;
+	friend class CObjectViewerWidget;
+}; /* class CEntity */
 
-		// Slot info for this object
-		CSlotInfo			_SlotInfo[NL3D::CChannelMixer::NumAnimationSlot];
-
-		friend class CObjectViewerWidget;
-	}; /* class CEntity */
-
-	typedef std::map<std::string, CEntity>	CEntities;
-	typedef CEntities::iterator		EIT;
+typedef std::map<std::string, CEntity> CEntities;
+typedef CEntities::iterator EIT;
 
 } /* namespace NLQT */
 

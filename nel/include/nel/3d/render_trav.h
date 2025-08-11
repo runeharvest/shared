@@ -35,22 +35,20 @@
 
 #include <vector>
 
+namespace NL3D {
 
-namespace	NL3D
-{
-
-using NLMISC::CVector;
-using NLMISC::CPlane;
 using NLMISC::CMatrix;
+using NLMISC::CPlane;
+using NLMISC::CVector;
 
-class	IDriver;
-class	CMaterial;
+class IDriver;
+class CMaterial;
 
-class	CTransform;
-class	CLandscapeModel;
+class CTransform;
+class CLandscapeModel;
 
-class	CVertexStreamManager;
-class   CWaterModel;
+class CVertexStreamManager;
+class CWaterModel;
 
 // ***************************************************************************
 /* Skin Manager setup
@@ -60,9 +58,9 @@ class   CWaterModel;
  *	=> size of the manager is 1280 Ko
  *	NB: 5000 vertices max for a model is a strong limitation, but it's OK for now...
  */
-#define	NL3D_MESH_SKIN_MANAGER_VERTEXFORMAT		(CVertexBuffer::PositionFlag | CVertexBuffer::NormalFlag | CVertexBuffer::TexCoord0Flag)
-#define	NL3D_MESH_SKIN_MANAGER_MAXVERTICES		5000
-#define	NL3D_MESH_SKIN_MANAGER_NUMVB			8
+#define NL3D_MESH_SKIN_MANAGER_VERTEXFORMAT (CVertexBuffer::PositionFlag | CVertexBuffer::NormalFlag | CVertexBuffer::TexCoord0Flag)
+#define NL3D_MESH_SKIN_MANAGER_MAXVERTICES 5000
+#define NL3D_MESH_SKIN_MANAGER_NUMVB 8
 
 /* Same for Shadow Generation.
  * NB: need much less Vertices because: 1/ foolish to do more. 2/ Only position=> no UV/Normal discontinuities.
@@ -70,9 +68,9 @@ class   CWaterModel;
  *	use 8 VBswap for minimal(=> no) lock() time. 2 is not enough (saw 7 ms lost because of this)
  *	=> size of the manager is 280 Ko
  */
-#define	NL3D_SHADOW_MESH_SKIN_MANAGER_VERTEXFORMAT		(CVertexBuffer::PositionFlag)
-#define	NL3D_SHADOW_MESH_SKIN_MANAGER_MAXVERTICES		3000
-#define	NL3D_SHADOW_MESH_SKIN_MANAGER_NUMVB				8
+#define NL3D_SHADOW_MESH_SKIN_MANAGER_VERTEXFORMAT (CVertexBuffer::PositionFlag)
+#define NL3D_SHADOW_MESH_SKIN_MANAGER_MAXVERTICES 3000
+#define NL3D_SHADOW_MESH_SKIN_MANAGER_NUMVB 8
 
 /// Container for lighted vertex program.
 class CVertexProgramLighted : public CVertexProgram
@@ -107,9 +105,7 @@ public:
 protected:
 	CIdxLighted m_IdxLighted;
 	CFeaturesLighted m_FeaturesLighted;
-
 };
-
 
 // ***************************************************************************
 /**
@@ -133,7 +129,6 @@ protected:
 class CRenderTrav : public CTravCameraScene
 {
 public:
-
 	/// Constructor
 	CRenderTrav();
 
@@ -144,47 +139,46 @@ public:
 	 * \param renderPart : The part of the scene that must be rendered
 	 * \param newRender true If scene render is beginning. Otherwise other parts of the scene have already been rendered.
 	 */
-	void				traverse(UScene::TRenderPart renderPart, bool newRender, bool generateShadows);
+	void traverse(UScene::TRenderPart renderPart, bool newRender, bool generateShadows);
 	//@}
 
 	/// \name RenderList.
 	//@{
 	/// Clear the list of rendered models
-	void			clearRenderList();
+	void clearRenderList();
 	/** Add a model to the list of rendered models. \b DOESN'T \b CHECK if already inserted.
 	 */
-	void			addRenderModel(CTransform *m)
+	void addRenderModel(CTransform *m)
 	{
 		// for possible removeRenderModel()
-		m->_IndexLSBInRenderList= uint8(_CurrentNumVisibleModels&255);
+		m->_IndexLSBInRenderList = uint8(_CurrentNumVisibleModels & 255);
 		// add the model in the list
-		RenderList[_CurrentNumVisibleModels]= m;
+		RenderList[_CurrentNumVisibleModels] = m;
 		_CurrentNumVisibleModels++;
 	}
 	// for createModel().
-	void			reserveRenderList(uint numModels);
+	void reserveRenderList(uint numModels);
 
 	/* This is for the rare case where objects are deleted during CScene::render(). called by deleteModel()
 	 *	This method don't need to be called by ~CTransform
 	 */
-	void			removeRenderModel(CTransform *m);
+	void removeRenderModel(CTransform *m);
 
 	/// Special for water (list of water to render)
-	void			clearWaterModelList();
+	void clearWaterModelList();
 
 	//@}
 
-
 	// setup the Driver for render
-	void			setDriver(IDriver *drv) {Driver= drv;}
-	IDriver			*getDriver() {return Driver;}
+	void setDriver(IDriver *drv) { Driver = drv; }
+	IDriver *getDriver() { return Driver; }
 	// Yoyo: temporary. May be used later if we decide to support a PBuffer to render texture for ShadowMap
-	IDriver			*getAuxDriver() {return Driver;}
-	void			setViewport (const CViewport& viewport)
+	IDriver *getAuxDriver() { return Driver; }
+	void setViewport(const CViewport &viewport)
 	{
 		_Viewport = viewport;
 	}
-	CViewport		getViewport () const
+	CViewport getViewport() const
 	{
 		return _Viewport;
 	}
@@ -192,86 +186,83 @@ public:
 	bool isCurrentPassOpaque() { return _CurrentPassOpaque; }
 
 	/** Set the order or rendering for transparent objects.
-	  * In real case, with direct order, we have:
-	  * - Underwater is rendered.
-	  * - Water is rendered.
-	  * - Objects above water are rendered.
-	  */
-	void  setLayersRenderingOrder(bool directOrder = true) { _LayersRenderingOrder = directOrder; }
-	bool  getLayersRenderingOrder() const { return _LayersRenderingOrder; }
+	 * In real case, with direct order, we have:
+	 * - Underwater is rendered.
+	 * - Water is rendered.
+	 * - Objects above water are rendered.
+	 */
+	void setLayersRenderingOrder(bool directOrder = true) { _LayersRenderingOrder = directOrder; }
+	bool getLayersRenderingOrder() const { return _LayersRenderingOrder; }
 
 	/** Setup transparency sorting
-	  * \param maxPriority Defines the valid range for priority in the [0, n] interval. By default, there's no prioriy sorting (0 -> single priority, 255 -> 256 possible priorities)
-	  *                    Objects with highers priority are displayed before any other object with lower priority,
-	  *                    whatever their distance is.
-	  * \param NbDistanceEntries Defines the granularity for distance sorting. A value of N with a view distance of D meters means
-	  *                          that the sorting accuracy will be of D / N meters at worst (when visible objects occupy the whole distance range)
-	  * NB : The memory allocated is a multiple of NumPriority * NbDistanceEntries * 2 (2 if because of water ordering)
-	  */
+	 * \param maxPriority Defines the valid range for priority in the [0, n] interval. By default, there's no prioriy sorting (0 -> single priority, 255 -> 256 possible priorities)
+	 *                    Objects with highers priority are displayed before any other object with lower priority,
+	 *                    whatever their distance is.
+	 * \param NbDistanceEntries Defines the granularity for distance sorting. A value of N with a view distance of D meters means
+	 *                          that the sorting accuracy will be of D / N meters at worst (when visible objects occupy the whole distance range)
+	 * NB : The memory allocated is a multiple of NumPriority * NbDistanceEntries * 2 (2 if because of water ordering)
+	 */
 	void setupTransparencySorting(uint8 maxPriority = 0, uint NbDistanceEntries = 1024);
-
-
 
 	/// \name Render Lighting Setup.
 	// @{
 
 	// False by default. setuped by CScene
-	bool						LightingSystemEnabled;
+	bool LightingSystemEnabled;
 
 	// Global ambient. Default is (50,50,50).
-	NLMISC::CRGBA				AmbientGlobal;
+	NLMISC::CRGBA AmbientGlobal;
 	// The Sun Setup.
-	NLMISC::CRGBA				SunAmbient, SunDiffuse, SunSpecular;
+	NLMISC::CRGBA SunAmbient, SunDiffuse, SunSpecular;
 	// set the direction of the sun. dir is normalized.
-	void						setSunDirection(const CVector &dir);
-	const CVector				getSunDirection() const {return _SunDirection;}
+	void setSunDirection(const CVector &dir);
+	const CVector getSunDirection() const { return _SunDirection; }
 
 	// @}
-
 
 	/** Set/Replace the MeshSkinManager. NULL by default => skinning is slower.
 	 *	The ptr is handled but not deleted.
 	 *	There should be one MeshSkinManager per driver.
 	 */
-	void						setMeshSkinManager(CVertexStreamManager *msm);
+	void setMeshSkinManager(CVertexStreamManager *msm);
 
 	/// get the MeshSkinManager
-	CVertexStreamManager		*getMeshSkinManager() const {return _MeshSkinManager;}
+	CVertexStreamManager *getMeshSkinManager() const { return _MeshSkinManager; }
 
 	/// get the CShadowMapManager
-	CShadowMapManager			&getShadowMapManager() {return _ShadowMapManager;}
-	const CShadowMapManager		&getShadowMapManager() const {return _ShadowMapManager;}
+	CShadowMapManager &getShadowMapManager() { return _ShadowMapManager; }
+	const CShadowMapManager &getShadowMapManager() const { return _ShadowMapManager; }
 
 	/// the MeshSkinManager for Shadow. Same Behaviour than std MeshSkinManager. NB: the Shadow MSM is inited with AuxDriver.
-	void						setShadowMeshSkinManager(CVertexStreamManager *msm);
-	CVertexStreamManager		*getShadowMeshSkinManager() const {return _ShadowMeshSkinManager;}
-
+	void setShadowMeshSkinManager(CVertexStreamManager *msm);
+	CVertexStreamManager *getShadowMeshSkinManager() const { return _ShadowMeshSkinManager; }
 
 	// add a landscape. Special for CLandscapeModel::traverseRender();
-	void			addRenderLandscape(CLandscapeModel *model);
-
+	void addRenderLandscape(CLandscapeModel *model);
 
 	/// \name Temp Debug
 	//@{
 	// Test Memory of water model render list (because someone crash it...)
 	// Yoyo: this crash seems to be fixed, but i leave the code, in case of.....
-	void			debugWaterModelMemory(const char *tag, bool dumpList= false);
+	void debugWaterModelMemory(const char *tag, bool dumpList = false);
 	//@}
 
-// ******************
+	// ******************
 public:
-
 	/// \name Render Lighting Setup. FOR MODEL TRAVERSING ONLY.
 	// @{
 
 	// Max VP Light setup Infos.
-	enum	{MaxVPLight = CVertexProgramLighted::MaxLight};
+	enum
+	{
+		MaxVPLight = CVertexProgramLighted::MaxLight
+	};
 
 	/** reset the lighting setup in the driver (all lights are disabled).
 	 *	called at beginning of traverse(). Must be called by any model (before and after rendering)
 	 *	that wish to use CDriver::setLight() instead of the standard behavior with changeLightSetup()
 	 */
-	void		resetLightSetup();
+	void resetLightSetup();
 
 	/** setup the driver to the given lightContribution.
 	 *	if lightContribution==NULL, then all currently enabled lights are disabled.
@@ -283,10 +274,10 @@ public:
 	 *	\param useLocalAttenuation if true, use Hardware Attenuation, else use global one
 	 *	(attenuation with AttFactor)
 	 */
-	void		changeLightSetup(CLightContribution	*lightContribution, bool useLocalAttenuation);
+	void changeLightSetup(CLightContribution *lightContribution, bool useLocalAttenuation);
 
 	/// Must call before beginVPLightSetup
-	void		prepareVPLightSetup();
+	void prepareVPLightSetup();
 	/** setup the driver VP constants to get info from current LightSetup.
 	 *	Only 0..3 Light + SunLights are supported. The VP do NOT support distance/Spot attenuation
 	 *	Also it does not handle World Matrix with non uniform scale correctly since lighting is made in ObjectSpace
@@ -295,13 +286,12 @@ public:
 	 *	\param supportSpecular asitsounds. PointLights and dirLight are localViewer
 	 *	\param invObjectWM the inverse of object matrix: lights are mul by this. Vp compute in object space.
 	 */
-	void		beginVPLightSetup(CVertexProgramLighted *program, const CMatrix &invObjectWM);
+	void beginVPLightSetup(CVertexProgramLighted *program, const CMatrix &invObjectWM);
 
 	/** change the driver VP LightSetup constants which depends on material.
 	 *  \param excludeStrongest This remove the strongest light from the setup. The typical use is to have it computed by using perpixel lighting.
 	 */
-	void		changeVPLightSetupMaterial(const CMaterial &mat, bool excludeStrongest);
-
+	void changeVPLightSetupMaterial(const CMaterial &mat, bool excludeStrongest);
 
 	/** tool to get a VP fragment which compute lighting with following rules:
 	 *	IN:
@@ -314,9 +304,9 @@ public:
 	 *		- R0, R1, R2, R3, R4
 	 *
 	 *	For information, constant mapping is (add ctStart):
-     *
+	 *
 	 *  == Strongest light included ==
-     *
+	 *
 	 *	if !supportSpecular:
 	 *		- 0:		AmbientColor.
 	 *		- 1..4:		DiffuseColor of 4 lights.
@@ -341,126 +331,120 @@ public:
 	 *  \param numActivePoinLights tells how many point light from 0 to 3 this VP must handle. NB: the Sun directionnal is not option
 	 *		NB: nlassert(numActiveLights<=MaxVPLight-1).
 	 */
-	static	std::string		getLightVPFragmentNeLVP(uint numActivePointLights, uint ctStart, bool supportSpecular, bool normalize);
+	static std::string getLightVPFragmentNeLVP(uint numActivePointLights, uint ctStart, bool supportSpecular, bool normalize);
 	// TODO_VP_GLSL
 
 	/** This returns a reference to a driver light, by its index
-	  * \see getStrongestLightIndex
-	  */
-	const CLight  &getDriverLight(sint index) const
+	 * \see getStrongestLightIndex
+	 */
+	const CLight &getDriverLight(sint index) const
 	{
-		nlassert(index >= 0 && index < NL3D_MAX_LIGHT_CONTRIBUTION+1);
+		nlassert(index >= 0 && index < NL3D_MAX_LIGHT_CONTRIBUTION + 1);
 		return _DriverLight[index];
 	}
 
 	/// return an index to the current strongest settuped light (or -1 if there's none)
-	sint		getStrongestLightIndex() const;
+	sint getStrongestLightIndex() const;
 
 	/** Get current color, diffuse and specular of the strongest light in the scene.
-	  * These values are modulated by the current material color, so these values are valid only after
-	  * changeVPLightSetupMaterial() has been called
-	  */
-	void		getStrongestLightColors(NLMISC::CRGBA &diffuse, NLMISC::CRGBA &specular);
+	 * These values are modulated by the current material color, so these values are valid only after
+	 * changeVPLightSetupMaterial() has been called
+	 */
+	void getStrongestLightColors(NLMISC::CRGBA &diffuse, NLMISC::CRGBA &specular);
 
 	/** return the number of VP lights currently activated (sunlight included)
 	 *	Value correct after beginVPLightSetup() only
 	 */
-	uint		getNumVPLights() const {return _VPNumLights;}
+	uint getNumVPLights() const { return _VPNumLights; }
 
 	// @}
-
 
 	/// \name MeshBlock Manager. FOR MODEL TRAVERSING AND MESHS ONLY.
 	// @{
 
 	/// The manager of meshBlock. Used to add instances.
-	CMeshBlockManager		MeshBlockManager;
+	CMeshBlockManager MeshBlockManager;
 
 	// @}
 
 	// ReSetup the Driver Frustum/Camera. Called internally and by ShadowMapManager only.
-	void			setupDriverCamera();
+	void setupDriverCamera();
 
 private:
-
 	// A grow only list of models to be rendered.
-	std::vector<CTransform*>	RenderList;
-	uint32						_CurrentNumVisibleModels;
+	std::vector<CTransform *> RenderList;
+	uint32 _CurrentNumVisibleModels;
 
 	// Ordering Table to sort transparent objects
-	COrderingTable<CTransform>			OrderOpaqueList;
-	std::vector<CLayeredOrderingTable<CTransform> >	_OrderTransparentListByPriority;
-	uint8											_MaxTransparencyPriority;
+	COrderingTable<CTransform> OrderOpaqueList;
+	std::vector<CLayeredOrderingTable<CTransform>> _OrderTransparentListByPriority;
+	uint8 _MaxTransparencyPriority;
 
-	IDriver			*Driver;
-	CViewport		_Viewport;
+	IDriver *Driver;
+	CViewport _Viewport;
 
 	// Temporary for the render
-	bool			_CurrentPassOpaque;
-	bool			_LayersRenderingOrder;
-
+	bool _CurrentPassOpaque;
+	bool _LayersRenderingOrder;
 
 	/// \name Render Lighting Setup.
 	// @{
 	// The last setup.
-	CLightContribution			*_CacheLightContribution;
-	bool						_LastLocalAttenuation;
+	CLightContribution *_CacheLightContribution;
+	bool _LastLocalAttenuation;
 	// The number of light enabled
-	uint						_NumLightEnabled;
+	uint _NumLightEnabled;
 
 	// More precise setup
-	uint						_LastSunFactor;
-	NLMISC::CRGBA				_LastFinalAmbient;
-	CPointLight					*_LastPointLight[NL3D_MAX_LIGHT_CONTRIBUTION];
-	uint8						_LastPointLightFactor[NL3D_MAX_LIGHT_CONTRIBUTION];
-	bool						_LastPointLightLocalAttenuation[NL3D_MAX_LIGHT_CONTRIBUTION];
+	uint _LastSunFactor;
+	NLMISC::CRGBA _LastFinalAmbient;
+	CPointLight *_LastPointLight[NL3D_MAX_LIGHT_CONTRIBUTION];
+	uint8 _LastPointLightFactor[NL3D_MAX_LIGHT_CONTRIBUTION];
+	bool _LastPointLightLocalAttenuation[NL3D_MAX_LIGHT_CONTRIBUTION];
 
-	CVector						_SunDirection;
+	CVector _SunDirection;
 
 	// driver Lights setuped in changeLightSetup()
-	CLight						_DriverLight[NL3D_MAX_LIGHT_CONTRIBUTION+1];
+	CLight _DriverLight[NL3D_MAX_LIGHT_CONTRIBUTION + 1];
 
 	// index of the strongest light (when used)
-	mutable uint				_StrongestLightIndex;
-	mutable bool				_StrongestLightTouched;
+	mutable uint _StrongestLightIndex;
+	mutable bool _StrongestLightTouched;
 
 	// Current vp setuped with beginVPLightSetup()
 	NLMISC::CRefPtr<CVertexProgramLighted> _VPCurrent;
 	// Current ctStart setuped with beginVPLightSetup()
-	//uint						_VPCurrentCtStart;
+	// uint						_VPCurrentCtStart;
 	// Current num of VP lights enabled.
-	uint						_VPNumLights;
+	uint _VPNumLights;
 	// Current support of specular
 	// bool						_VPSupportSpecular;
 	// Sum of all ambiant of all lights + ambiantGlobal.
-	NLMISC::CRGBAF				_VPFinalAmbient;
+	NLMISC::CRGBAF _VPFinalAmbient;
 	// Diffuse/Spec comp of all light / 255.
-	NLMISC::CRGBAF				_VPLightDiffuse[MaxVPLight];
-	NLMISC::CRGBAF				_VPLightSpecular[MaxVPLight];
+	NLMISC::CRGBAF _VPLightDiffuse[MaxVPLight];
+	NLMISC::CRGBAF _VPLightSpecular[MaxVPLight];
 
-	NLMISC::CRGBA				_StrongestLightDiffuse;
-	NLMISC::CRGBA				_StrongestLightSpecular;
+	NLMISC::CRGBA _StrongestLightDiffuse;
+	NLMISC::CRGBA _StrongestLightSpecular;
 
 	// Cache for changeVPLightSetupMaterial()
-	bool						_VPMaterialCacheDirty;
-	uint32						_VPMaterialCacheEmissive;
-	uint32						_VPMaterialCacheAmbient;
-	uint32						_VPMaterialCacheDiffuse;
-	uint32						_VPMaterialCacheSpecular;
-	float						_VPMaterialCacheShininess;
+	bool _VPMaterialCacheDirty;
+	uint32 _VPMaterialCacheEmissive;
+	uint32 _VPMaterialCacheAmbient;
+	uint32 _VPMaterialCacheDiffuse;
+	uint32 _VPMaterialCacheSpecular;
+	float _VPMaterialCacheShininess;
 
 	// @}
 
-
 	/// The manager of skin. NULL by default.
-	CVertexStreamManager		*_MeshSkinManager;
-
+	CVertexStreamManager *_MeshSkinManager;
 
 	/// The ShadowMap Manager.
-	CShadowMapManager			_ShadowMapManager;
+	CShadowMapManager _ShadowMapManager;
 	/// The SkinManager, but For Shadow rendering
-	CVertexStreamManager		*_ShadowMeshSkinManager;
-
+	CVertexStreamManager *_ShadowMeshSkinManager;
 
 	/** \name Special Landscape RenderList.
 	 *	The Landscape list is separated from std render List for optimisation purpose.
@@ -468,12 +452,12 @@ private:
 	 */
 	//@{
 	// clear the list
-	void			clearRenderLandscapeList();
+	void clearRenderLandscapeList();
 	// render the landscapes
-	void			renderLandscapes();
+	void renderLandscapes();
 
 	// A grow only list of landscapes to be rendered.
-	std::vector<CLandscapeModel*>	_LandscapeRenderList;
+	std::vector<CLandscapeModel *> _LandscapeRenderList;
 
 	// @}
 
@@ -481,20 +465,18 @@ private:
 	//@{
 	struct CWaterModelDump
 	{
-		void		*Address;
-		void		*ClippedPolyBegin;
-		void		*ClippedPolyEnd;
+		void *Address;
+		void *ClippedPolyBegin;
+		void *ClippedPolyEnd;
 	};
-	std::vector<CWaterModelDump>	_DebugWaterModelList;
+	std::vector<CWaterModelDump> _DebugWaterModelList;
 	//@}
 
 public:
 	CWaterModel *_FirstWaterModel;
 };
 
-
 }
-
 
 #endif // NL_RENDER_TRAV_H
 

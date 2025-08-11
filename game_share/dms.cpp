@@ -54,30 +54,27 @@ using namespace NLNET;
 using namespace NLMISC;
 using namespace std;
 
-extern	CVariable<uint32> TimeBeforeDisconnectionAfterKick;
+extern CVariable<uint32> TimeBeforeDisconnectionAfterKick;
 
 // If true load hibernating session and saved session at startup
-extern	CVariable<bool> DssUseBs;
+extern CVariable<bool> DssUseBs;
 // 1 minutes
-extern	CVariable<uint32> TimeBeforeAutoSaveTimeEditionSession;
+extern CVariable<uint32> TimeBeforeAutoSaveTimeEditionSession;
 // 5 minutes
-extern	CVariable<uint32> TimeBeforeStopTestInEditionSessionWithNoPlayer;
+extern CVariable<uint32> TimeBeforeStopTestInEditionSessionWithNoPlayer;
 // 15 minutes
-extern	CVariable<uint32> TimeBeforeAutoHibernateEditionSessionWithNoPlayer;
+extern CVariable<uint32> TimeBeforeAutoHibernateEditionSessionWithNoPlayer;
 // 7 days
-extern	CVariable<uint32> TimeBeforeCloseHibernatingEditionSession;
+extern CVariable<uint32> TimeBeforeCloseHibernatingEditionSession;
 
-extern	CVariable<uint32> TimeBeforeAutoCloseAnimationSessionWithNoPlayer;
+extern CVariable<uint32> TimeBeforeAutoCloseAnimationSessionWithNoPlayer;
 
+CDynamicMapService *CDynamicMapService::_Instance = 0;
 
-
-
-CDynamicMapService* CDynamicMapService::_Instance=0;
-
-CDynamicMapService::CDynamicMapService(	NLMISC::CConfigFile& confFile, NLNET::IModuleSocket * clientGateway)
-:_ConfigFile(confFile)
+CDynamicMapService::CDynamicMapService(NLMISC::CConfigFile &confFile, NLNET::IModuleSocket *clientGateway)
+    : _ConfigFile(confFile)
 {
-//	_UserConnectionMgr = new CUserConnectionMgr(this);
+	//	_UserConnectionMgr = new CUserConnectionMgr(this);
 
 	_UseNetwork = false;
 	nlassert(!_Instance);
@@ -92,35 +89,33 @@ CDynamicMapService::CDynamicMapService(	NLMISC::CConfigFile& confFile, NLNET::IM
 	{
 		IModule *imodule = mm.createModule("ServerAnimationModule", "ServerAnimationModule", "");
 		nlassert(imodule != NULL);
-		_AnimationModule = safe_cast<CServerAnimationModule* >(imodule);
+		_AnimationModule = safe_cast<CServerAnimationModule *>(imodule);
 		_AnimationModule->init(clientGateway, this);
 	}
 	{
 		IModule *imodule = mm.createModule("ServerAdminModule", "ServerAdminModule", "");
 		nlassert(imodule != NULL);
-		_AdminModule = safe_cast<CServerAdminModule* >(imodule);
+		_AdminModule = safe_cast<CServerAdminModule *>(imodule);
 		_AdminModule->init(clientGateway, this);
 	}
 	{
 		IModule *imodule = mm.createModule("ServerEditionModule", "ServerEditionModule", "");
 		nlassert(imodule != NULL);
-		_EditionModule = safe_cast<CServerEditionModule* >(imodule);
+		_EditionModule = safe_cast<CServerEditionModule *>(imodule);
 		_EditionModule->init(clientGateway, this);
 	}
 	{
 		IModule *imodule = mm.createModule("StringManagerModule", "StringManagerModule", "");
 		nlassert(imodule != NULL);
-		_StringMgrModule = safe_cast<CStringManagerModule* >(imodule);
-		_StringMgrModule->init(clientGateway,this);
+		_StringMgrModule = safe_cast<CStringManagerModule *>(imodule);
+		_StringMgrModule->init(clientGateway, this);
 	}
-
-
 }
 
 CDynamicMapService::~CDynamicMapService()
 {
 	IModuleManager &mm = IModuleManager::getInstance();
-//	_EditionModule->saveToDb();
+	//	_EditionModule->saveToDb();
 	mm.deleteModule(_EditionModule);
 	_EditionModule = 0;
 	mm.deleteModule(_AnimationModule);
@@ -132,7 +127,7 @@ CDynamicMapService::~CDynamicMapService()
 	_Instance = 0;
 }
 
-CDynamicMapService* CDynamicMapService::getInstance()
+CDynamicMapService *CDynamicMapService::getInstance()
 {
 	return _Instance;
 }
@@ -152,7 +147,6 @@ void CDynamicMapService::init()
 	TimeBeforeCloseHibernatingEditionSession = 0;
 
 	TimeBeforeAutoCloseAnimationSessionWithNoPlayer = 0;
-
 }
 
 void CDynamicMapService::init2()
@@ -160,23 +154,23 @@ void CDynamicMapService::init2()
 	_UseNetwork = true;
 }
 
-void CDynamicMapService::translateAndForwardRequested(TDataSetRow senderId,CChatGroup::TGroupType groupType,std::string id,TSessionId sessionId)
+void CDynamicMapService::translateAndForwardRequested(TDataSetRow senderId, CChatGroup::TGroupType groupType, std::string id, TSessionId sessionId)
 {
-	_StringMgrModule->translateAndForward(senderId,groupType,id,sessionId);
+	_StringMgrModule->translateAndForward(senderId, groupType, id, sessionId);
 }
 
-void CDynamicMapService::forwardIncarnChat(TChanID id,TDataSetRow senderId,ucstring sentence)
+void CDynamicMapService::forwardIncarnChat(TChanID id, TDataSetRow senderId, ucstring sentence)
 {
-	_StringMgrModule->forwardIncarnChat(id, senderId,sentence);
+	_StringMgrModule->forwardIncarnChat(id, senderId, sentence);
 }
 
-IServerAnimationModule* CDynamicMapService::getAnimationModule() const { return _AnimationModule;}
+IServerAnimationModule *CDynamicMapService::getAnimationModule() const { return _AnimationModule; }
 
-IServerEditionModule* CDynamicMapService::getEditionModule() const { return _EditionModule;}
+IServerEditionModule *CDynamicMapService::getEditionModule() const { return _EditionModule; }
 
-IServerAdminModule* CDynamicMapService::getAdminModule() const { return _AdminModule;}
+IServerAdminModule *CDynamicMapService::getAdminModule() const { return _AdminModule; }
 
-std::string CDynamicMapService::getValue(TSessionId sessionId, const std::string& msg) const
+std::string CDynamicMapService::getValue(TSessionId sessionId, const std::string &msg) const
 {
 	if (_StringMgrModule)
 	{
@@ -185,74 +179,69 @@ std::string CDynamicMapService::getValue(TSessionId sessionId, const std::string
 	return msg;
 }
 
-namespace R2
+namespace R2 {
+
+bool getCharInfo(NLNET::IModuleProxy *senderModuleProxy, uint32 &charId, NLMISC::CEntityId &clientEid, std::string &userPriv, std::string &extendedPriv)
 {
+	const NLNET::TSecurityData *securityData = senderModuleProxy->findSecurityData(rmst_client_info);
 
-	bool getCharInfo(NLNET::IModuleProxy *senderModuleProxy, uint32 & charId, NLMISC::CEntityId & clientEid, std::string & userPriv, std::string &extendedPriv)
+	if (!CDynamicMapService::getInstance()->useNetwork())
 	{
-		const NLNET::TSecurityData *securityData = senderModuleProxy->findSecurityData(rmst_client_info);
+		//		userId = 999<;
+		charId = 999 << 4;
 
-		if (!CDynamicMapService::getInstance()->useNetwork())
-		{
-	//		userId = 999<;
-			charId = 999<<4;
+		clientEid = CEntityId::Unknown;
+		clientEid.setShortId(charId);
+		clientEid.setDynamicId(0x86); // FrontendId
+		clientEid.setType(RYZOMID::player);
 
-			clientEid = CEntityId::Unknown;
-			clientEid.setShortId(charId);
-			clientEid.setDynamicId(0x86); //FrontendId
-			clientEid.setType(RYZOMID::player);
-
-			userPriv =":DEV:";
-			extendedPriv.clear();
-			return true;
-		}
-
-		if (securityData != NULL)
-		{
-			const struct TClientInfo* clientInfo= static_cast<const struct TClientInfo *>(securityData); //safe_cast ???
-			//userId = clientInfo->UserId;
-			charId = uint32(clientInfo->ClientEid.getShortId());
-			clientEid = clientInfo->ClientEid;
-			userPriv = clientInfo->UserPriv;
-			extendedPriv = clientInfo->ExtendedPriv;
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-
-	// same getCharInfo but return true only if client has been allowad by su to connect
-	bool checkSecurityInfo(NLNET::IModuleProxy *senderModuleProxy, uint32 & charId, NLMISC::CEntityId & clientEid, std::string & userPriv, std::string &extendedPriv)
-	{
-		bool ok =  getCharInfo(senderModuleProxy, charId, clientEid, userPriv, extendedPriv);
-		if (!ok )
-		{
-			nlwarning("Warning: Security issues: a client '%s' without security data try to connect... ", senderModuleProxy->getModuleName().c_str() );
-			return false;
-		}
-		IServerEditionModule* edition = CDynamicMapService::getInstance()->getEditionModule();
-		if (!edition)
-		{
-			return false;
-		}
-		ok = edition->isClientAuthorized(charId);
-		if (!ok)
-		{
-			nlwarning( "Warning: A client '%s' '%s' %u '%s' try to send messages, without begin allowed (he was disconnected)",
-				senderModuleProxy->getModuleName().c_str(), clientEid.toString().c_str(),  charId, userPriv.c_str());
-
-			edition->disconnectChar(charId);
-			edition->returnToPreviousSession(charId);
-
-			return false;
-		}
+		userPriv = ":DEV:";
+		extendedPriv.clear();
 		return true;
 	}
 
+	if (securityData != NULL)
+	{
+		const struct TClientInfo *clientInfo = static_cast<const struct TClientInfo *>(securityData); // safe_cast ???
+		// userId = clientInfo->UserId;
+		charId = uint32(clientInfo->ClientEid.getShortId());
+		clientEid = clientInfo->ClientEid;
+		userPriv = clientInfo->UserPriv;
+		extendedPriv = clientInfo->ExtendedPriv;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+// same getCharInfo but return true only if client has been allowad by su to connect
+bool checkSecurityInfo(NLNET::IModuleProxy *senderModuleProxy, uint32 &charId, NLMISC::CEntityId &clientEid, std::string &userPriv, std::string &extendedPriv)
+{
+	bool ok = getCharInfo(senderModuleProxy, charId, clientEid, userPriv, extendedPriv);
+	if (!ok)
+	{
+		nlwarning("Warning: Security issues: a client '%s' without security data try to connect... ", senderModuleProxy->getModuleName().c_str());
+		return false;
+	}
+	IServerEditionModule *edition = CDynamicMapService::getInstance()->getEditionModule();
+	if (!edition)
+	{
+		return false;
+	}
+	ok = edition->isClientAuthorized(charId);
+	if (!ok)
+	{
+		nlwarning("Warning: A client '%s' '%s' %u '%s' try to send messages, without begin allowed (he was disconnected)",
+		    senderModuleProxy->getModuleName().c_str(), clientEid.toString().c_str(), charId, userPriv.c_str());
+
+		edition->disconnectChar(charId);
+		edition->returnToPreviousSession(charId);
+
+		return false;
+	}
+	return true;
+}
 
 } // namespace R2
-
-

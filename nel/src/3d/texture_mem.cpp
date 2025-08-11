@@ -25,16 +25,14 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
-
+namespace NL3D {
 
 /*==================================================================*\
-							CTEXTUREMEM
+                            CTEXTUREMEM
 \*==================================================================*/
 
 /*------------------------------------------------------------------*\
-							doGenerate()
+                            doGenerate()
 \*------------------------------------------------------------------*/
 void CTextureMem::doGenerate(bool /* async */)
 {
@@ -42,9 +40,9 @@ void CTextureMem::doGenerate(bool /* async */)
 	{
 		if (_IsFile)
 		{
-			NLMISC::CMemStream m (true);
-			m.fill (_Data, _Length);
-			load (m);
+			NLMISC::CMemStream m(true);
+			m.fill(_Data, _Length);
+			load(m);
 		}
 		else
 		{
@@ -59,29 +57,28 @@ void CTextureMem::doGenerate(bool /* async */)
 	}
 }
 
-
 static NLMISC::CRGBA WhitePix(255, 255, 255, 255); // the texture datas ... :)
 
 ///===========================================================================
 ITexture *CTextureMem::Create1x1WhiteTex()
 {
-	static NLMISC::CSmartPtr<ITexture> tex  = NULL;
+	static NLMISC::CSmartPtr<ITexture> tex = NULL;
 	if (!tex)
 	{
-		tex = new CTextureMem((uint8 *) &WhitePix,
-							   sizeof(WhitePix),
-							   false, /* dont delete */
-							   false, /* not a file */
-							   1, 1);
+		tex = new CTextureMem((uint8 *)&WhitePix,
+		    sizeof(WhitePix),
+		    false, /* dont delete */
+		    false, /* not a file */
+		    1, 1);
 		static_cast<CTextureMem *>((ITexture *)tex)->setShareName("#WhitePix1x1");
 	}
-	return (ITexture *) tex;
+	return (ITexture *)tex;
 }
 
 ///===========================================================================
-void	CTextureMem::setAllowDegradation(bool allow)
+void CTextureMem::setAllowDegradation(bool allow)
 {
-	_AllowDegradation= allow;
+	_AllowDegradation = allow;
 }
 
 ///===========================================================================
@@ -95,6 +92,5 @@ uint32 CTextureMem::getImageHeight() const
 {
 	return _TexHeight;
 }
-
 
 } // NL3D

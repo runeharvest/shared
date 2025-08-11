@@ -21,13 +21,9 @@
 #include "nel/misc/vector.h"
 #include "nel/misc/rgba.h"
 
+namespace NL3D {
 
-namespace NL3D
-{
-
-
-class	CPointLightNamed;
-
+class CPointLightNamed;
 
 /**
  * Additional information to light Vegetables. 2 "precomputed" pointLights can
@@ -39,35 +35,35 @@ class	CPointLightNamed;
 class CVegetableLightEx
 {
 public:
-
 	/// Must not change (hardcoded)
-	enum	{MaxNumLight= 2};
+	enum
+	{
+		MaxNumLight = 2
+	};
 
 	/// Number Of light currently really enabled.
-	uint				NumLights;
+	uint NumLights;
 	/// PointLights. Used at CVegetableManager::updateLighting() to get current colors of pointLights.
-	CPointLightNamed	*PointLight[MaxNumLight];
+	CPointLightNamed *PointLight[MaxNumLight];
 	/// Direction of the light. the direction to the instance should be precomputed.
-	NLMISC::CVector		Direction[MaxNumLight];
+	NLMISC::CVector Direction[MaxNumLight];
 	/// Factor to be multiplied by color of the light. Actually it is the attenuation factor.
-	uint				PointLightFactor[MaxNumLight];
+	uint PointLightFactor[MaxNumLight];
 
 	/// Current Color of the light.
-	NLMISC::CRGBA		Color[MaxNumLight];
+	NLMISC::CRGBA Color[MaxNumLight];
 
 public:
 	CVegetableLightEx()
 	{
-		NumLights= 0;
+		NumLights = 0;
 	}
 
 	/// Fill Color array according to PointLight[] and PointLightFactor[].
-	void				computeCurrentColors();
+	void computeCurrentColors();
 };
 
-
 } // NL3D
-
 
 #endif // NL_VEGETABLE_LIGHT_EX_H
 

@@ -19,9 +19,7 @@
 
 #include "nel/misc/types_nl.h"
 
-
-namespace NLGEORGES
-{
+namespace NLGEORGES {
 
 class UType;
 class UForm;
@@ -37,36 +35,34 @@ class UFormDfn;
 class UFormLoader
 {
 public:
-	virtual ~UFormLoader() {}
+	virtual ~UFormLoader() { }
 
 	/** Load a form, use NMISC::CPath to find the file.
-	  *
-	  * The pointer on the form must be held in a CSmartPtr<UForm>. Returns NULL if the form can't be loaded.
-	  */
-	virtual UForm *loadForm (const std::string &filename) = 0;
+	 *
+	 * The pointer on the form must be held in a CSmartPtr<UForm>. Returns NULL if the form can't be loaded.
+	 */
+	virtual UForm *loadForm(const std::string &filename) = 0;
 
 	/** Load a DFN, use NMISC::CPath to find the file.
-	  *
-	  * The pointer on the form must be held in a CSmartPtr<UFormDfn>. Returns NULL if the DFN can't be loaded.
-	  */
-	virtual UFormDfn *loadFormDfn (const std::string &filename) = 0;
+	 *
+	 * The pointer on the form must be held in a CSmartPtr<UFormDfn>. Returns NULL if the DFN can't be loaded.
+	 */
+	virtual UFormDfn *loadFormDfn(const std::string &filename) = 0;
 
 	/** Load a type, use NMISC::CPath to find the file.
-	  *
-	  * The pointer on the form must be held in a CSmartPtr<UType>. Returns NULL if the type can't be loaded.
-	  */
-	virtual UType *loadFormType (const std::string &filename) = 0;
+	 *
+	 * The pointer on the form must be held in a CSmartPtr<UType>. Returns NULL if the type can't be loaded.
+	 */
+	virtual UType *loadFormType(const std::string &filename) = 0;
 
 	/// Create a form loader
-	static UFormLoader *createLoader ();
+	static UFormLoader *createLoader();
 
 	/// Create a form loader
-	static void releaseLoader (UFormLoader *loader);
+	static void releaseLoader(UFormLoader *loader);
 };
 
-
 } // NLGEORGES
-
 
 #endif // NL_U_FORM_LOADER_H
 

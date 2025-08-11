@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #include "stdpch.h"
 #include "ai_event.h"
 
@@ -31,32 +29,30 @@ NL_INSTANCE_COUNTER_IMPL(CAIStunEndEvent);
 // to get the right event type (in the AI service)
 //-------------------------------------------------------------------------
 
-
-
 //--------------------------------------------------------------
-//						CAIStunEvent::serial()  
+//						CAIStunEvent::serial()
 //--------------------------------------------------------------
 void CAIStunEvent::serial(NLMISC::IStream &f)
 {
-	if (f.isReading() )
+	if (f.isReading())
 	{
-//		CAIEventType type;
+		//		CAIEventType type;
 		uint16 size;
-//		f.serial(type);
+		//		f.serial(type);
 		f.serial(size);
 
-		if (/*type != CAIEventType("STUN") || */size != sizeof(CAIStunEvent))
+		if (/*type != CAIEventType("STUN") || */ size != sizeof(CAIStunEvent))
 		{
 			CreatureId = NLMISC::CEntityId();
 			try
 			{
 				// seek takes a param in bytes (8 bits)
-				f.seek( size, NLMISC::IStream::current);
+				f.seek(size, NLMISC::IStream::current);
 			}
-			catch(const ESeekNotSupported &)
+			catch (const ESeekNotSupported &)
 			{
 				uint8 tmp;
-				for (uint i = 0 ; i < size ; ++i)
+				for (uint i = 0; i < size; ++i)
 					f.serial(tmp);
 			}
 		}
@@ -76,21 +72,19 @@ void CAIStunEvent::serial(NLMISC::IStream &f)
 	}
 } // CAIStunEvent::serial //
 
-
-
 //--------------------------------------------------------------
-//						CAIAggroEvent::serial()  
+//						CAIAggroEvent::serial()
 //--------------------------------------------------------------
 void CAIAggroEvent::serial(NLMISC::IStream &f)
 {
-	if (f.isReading() )
+	if (f.isReading())
 	{
-//		CAIEventType type;
+		//		CAIEventType type;
 		uint16 size;
-//		f.serial(type);
+		//		f.serial(type);
 		f.serial(size);
 
-		if (/*type != CAIEventType("AGGRO") || */size != sizeof(CAIAggroEvent))
+		if (/*type != CAIEventType("AGGRO") || */ size != sizeof(CAIAggroEvent))
 		{
 			CreatureId = NLMISC::CEntityId();
 			EntityId = NLMISC::CEntityId();
@@ -98,12 +92,12 @@ void CAIAggroEvent::serial(NLMISC::IStream &f)
 			try
 			{
 				// seek takes a param in bytes (8 bits)
-				f.seek( size, NLMISC::IStream::current);
+				f.seek(size, NLMISC::IStream::current);
 			}
-			catch(const ESeekNotSupported &)
+			catch (const ESeekNotSupported &)
 			{
 				uint8 tmp;
-				for (uint i = 0 ; i < size ; ++i)
+				for (uint i = 0; i < size; ++i)
 					f.serial(tmp);
 			}
 		}
@@ -127,19 +121,16 @@ void CAIAggroEvent::serial(NLMISC::IStream &f)
 	}
 } // CAIAggroEvent::serial //
 
-
-
-
 //--------------------------------------------------------------
-//						CAIStunEndEvent::serial()  
+//						CAIStunEndEvent::serial()
 //--------------------------------------------------------------
 void CAIStunEndEvent::serial(NLMISC::IStream &f)
 {
-	if (f.isReading() )
+	if (f.isReading())
 	{
-	//	CAIEventType type;
+		//	CAIEventType type;
 		uint16 size;
-	//	f.serial(type);
+		//	f.serial(type);
 		f.serial(size);
 
 		if (/*type != CAIEventType("STUN_END") ||*/ size != sizeof(CAIStunEndEvent))
@@ -148,12 +139,12 @@ void CAIStunEndEvent::serial(NLMISC::IStream &f)
 			try
 			{
 				// seek takes a param in bytes (8 bits)
-				f.seek( size, NLMISC::IStream::current);
+				f.seek(size, NLMISC::IStream::current);
 			}
-			catch(const ESeekNotSupported &)
+			catch (const ESeekNotSupported &)
 			{
 				uint8 tmp;
-				for (uint i = 0 ; i < size ; ++i)
+				for (uint i = 0; i < size; ++i)
 					f.serial(tmp);
 			}
 		}
@@ -173,19 +164,16 @@ void CAIStunEndEvent::serial(NLMISC::IStream &f)
 	}
 } // CAIStunEndEvent::serial //
 
-
-
-
 //--------------------------------------------------------------
-//						CAISurvivalInstinctEvent::serial()  
+//						CAISurvivalInstinctEvent::serial()
 //--------------------------------------------------------------
 void CAISurvivalInstinctEvent::serial(NLMISC::IStream &f)
 {
-	if (f.isReading() )
+	if (f.isReading())
 	{
-	//	CAIEventType type;
+		//	CAIEventType type;
 		uint16 size;
-	//	f.serial(type);
+		//	f.serial(type);
 		f.serial(size);
 
 		if (/*type != CAIEventType("SURVIE") ||*/ size != sizeof(CAISurvivalInstinctEvent))
@@ -196,12 +184,12 @@ void CAISurvivalInstinctEvent::serial(NLMISC::IStream &f)
 			try
 			{
 				// seek takes a param in bytes (8 bits)
-				f.seek( size, NLMISC::IStream::current);
+				f.seek(size, NLMISC::IStream::current);
 			}
-			catch(const ESeekNotSupported &)
+			catch (const ESeekNotSupported &)
 			{
 				uint8 tmp;
-				for (uint i = 0 ; i < size ; ++i)
+				for (uint i = 0; i < size; ++i)
 					f.serial(tmp);
 			}
 		}
@@ -222,22 +210,19 @@ void CAISurvivalInstinctEvent::serial(NLMISC::IStream &f)
 		f.serial(CreatureId);
 		f.serial(EntityId);
 		f.serial(Modifier);
-		
 	}
 } // CAISurvivalInstinctEvent::serial //
 
-
-
 //--------------------------------------------------------------
-//						CAIFearEvent::serial()  
+//						CAIFearEvent::serial()
 //--------------------------------------------------------------
 void CAIFearEvent::serial(NLMISC::IStream &f)
 {
-	if (f.isReading() )
+	if (f.isReading())
 	{
-	//	CAIEventType type;
+		//	CAIEventType type;
 		uint16 size;
-	//	f.serial(type);
+		//	f.serial(type);
 		f.serial(size);
 
 		if (/*type != CAIEventType("FEAR") ||*/ size != sizeof(CAIFearEvent))
@@ -247,12 +232,12 @@ void CAIFearEvent::serial(NLMISC::IStream &f)
 			try
 			{
 				// seek takes a param in bytes (8 bits)
-				f.seek( size, NLMISC::IStream::current);
+				f.seek(size, NLMISC::IStream::current);
 			}
-			catch(const ESeekNotSupported &)
+			catch (const ESeekNotSupported &)
 			{
 				uint8 tmp;
-				for (uint i = 0 ; i < size ; ++i)
+				for (uint i = 0; i < size; ++i)
 					f.serial(tmp);
 			}
 		}
@@ -274,17 +259,16 @@ void CAIFearEvent::serial(NLMISC::IStream &f)
 	}
 } // CAIFearEvent::serial //
 
-
 //--------------------------------------------------------------
-//						CAIFearEndEvent::serial()  
+//						CAIFearEndEvent::serial()
 //--------------------------------------------------------------
 void CAIFearEndEvent::serial(NLMISC::IStream &f)
 {
-	if (f.isReading() )
+	if (f.isReading())
 	{
-		//CAIEventType type;
+		// CAIEventType type;
 		uint16 size;
-		//f.serial(type);
+		// f.serial(type);
 		f.serial(size);
 
 		if (/*type != CAIEventType("FEAR_END") ||*/ size != sizeof(CAIFearEndEvent))
@@ -294,12 +278,12 @@ void CAIFearEndEvent::serial(NLMISC::IStream &f)
 			try
 			{
 				// seek takes a param in bytes (8 bits)
-				f.seek( size, NLMISC::IStream::current);
+				f.seek(size, NLMISC::IStream::current);
 			}
-			catch(const ESeekNotSupported &)
+			catch (const ESeekNotSupported &)
 			{
 				uint8 tmp;
-				for (uint i = 0 ; i < size ; ++i)
+				for (uint i = 0; i < size; ++i)
 					f.serial(tmp);
 			}
 		}
@@ -321,18 +305,16 @@ void CAIFearEndEvent::serial(NLMISC::IStream &f)
 	}
 } // CAIFearEndEvent::serial //
 
-
-
 //--------------------------------------------------------------
-//						CAIHungerEvent::serial()  
+//						CAIHungerEvent::serial()
 //--------------------------------------------------------------
 void CAIHungerEvent::serial(NLMISC::IStream &f)
 {
-	if (f.isReading() )
+	if (f.isReading())
 	{
-		//CAIEventType type;
+		// CAIEventType type;
 		uint16 size;
-		//f.serial(type);
+		// f.serial(type);
 		f.serial(size);
 
 		if (/*type != CAIEventType("HUNGER") ||*/ size != sizeof(CAIHungerEvent))
@@ -342,12 +324,12 @@ void CAIHungerEvent::serial(NLMISC::IStream &f)
 			try
 			{
 				// seek takes a param in bytes (8 bits)
-				f.seek( size, NLMISC::IStream::current);
+				f.seek(size, NLMISC::IStream::current);
 			}
-			catch(const ESeekNotSupported &)
+			catch (const ESeekNotSupported &)
 			{
 				uint8 tmp;
-				for (uint i = 0 ; i < size ; ++i)
+				for (uint i = 0; i < size; ++i)
 					f.serial(tmp);
 			}
 		}
@@ -365,7 +347,6 @@ void CAIHungerEvent::serial(NLMISC::IStream &f)
 		f.serial(type);
 		f.serial(size);
 		f.serial(CreatureId);
-		f.serial(Modifier);		
+		f.serial(Modifier);
 	}
 } // CAIHungerEvent::serial //
-

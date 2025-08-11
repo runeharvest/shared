@@ -39,9 +39,9 @@
 class QUndoStack;
 
 namespace NLQT {
-	class CMainWindow;
-	class CConfiguration;
-	class CInternationalization;
+class CMainWindow;
+class CConfiguration;
+class CInternationalization;
 
 /**
  * CGraphicsConfig
@@ -56,14 +56,27 @@ class CGraphicsConfig : public QWidget
 public:
 	CGraphicsConfig(QWidget *parent, CConfiguration *configuration, CInternationalization *internationalization, QUndoStack *undoStack);
 	virtual ~CGraphicsConfig();
-	
+
 	void incbTranslate();
 
 	inline bool getGraphicsEnabled() const { return m_Enabled->isChecked(); }
-	inline std::string getGraphicsDriver() const { std::string v = std::string(m_Driver->currentText().toAscii()); return v; }
-	inline std::string getFontName() const { std::string v = std::string(m_FontName->text().toAscii()); return v; }
-	
-	inline NLMISC::CRGBA getBackgroundColor() const { QColor c = m_BackgroundColor->currentColor(); NLMISC::CRGBA v(c.red(), c.green(), c.blue()); return v; }
+	inline std::string getGraphicsDriver() const
+	{
+		std::string v = std::string(m_Driver->currentText().toAscii());
+		return v;
+	}
+	inline std::string getFontName() const
+	{
+		std::string v = std::string(m_FontName->text().toAscii());
+		return v;
+	}
+
+	inline NLMISC::CRGBA getBackgroundColor() const
+	{
+		QColor c = m_BackgroundColor->currentColor();
+		NLMISC::CRGBA v(c.red(), c.green(), c.blue());
+		return v;
+	}
 	inline bool getFontShadow() const { return m_FontShadow->isChecked(); }
 
 	inline std::string getScreenshotName() const { return "nel_qt"; }
@@ -113,7 +126,7 @@ private:
 private:
 	CGraphicsConfig(const CGraphicsConfig &);
 	CGraphicsConfig &operator=(const CGraphicsConfig &);
-	
+
 }; /* class CGraphicsConfig */
 
 } /* namespace NLQT */

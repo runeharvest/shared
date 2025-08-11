@@ -26,19 +26,17 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 //===========================================================================
 UWaterHeightMap &UWaterHeightMapManager::getWaterHeightMapFromID(uint32 ID)
 {
 	nlassert(GetWaterPoolManager().hasPool(ID)); // unknown pool ID!
-	return  GetWaterPoolManager().getPoolByID(ID);
+	return GetWaterPoolManager().getPoolByID(ID);
 }
 
-
 //===========================================================================
-void	UWaterHeightMapManager::setBlendFactor(UDriver *drv, float value)
+void UWaterHeightMapManager::setBlendFactor(UDriver *drv, float value)
 {
 	NLMISC::clamp(value, 0.f, 1.f);
 	GetWaterPoolManager().setBlendFactor(NLMISC::safe_cast<CDriverUser *>(drv)->getDriver(), value);
@@ -51,31 +49,30 @@ void UWaterHeightMapManager::releaseBlendTextures()
 }
 
 //===========================================================================
-uint32	UWaterInstance::getWaterHeightMapID() const
+uint32 UWaterInstance::getWaterHeightMapID() const
 {
-	CWaterModel	*object = getObjectPtr();
-	return object ->getWaterHeightMapID();
+	CWaterModel *object = getObjectPtr();
+	return object->getWaterHeightMapID();
 }
 
-
 //===========================================================================
-float	UWaterInstance::getHeightFactor() const
+float UWaterInstance::getHeightFactor() const
 {
-	CWaterModel	*object = getObjectPtr();
+	CWaterModel *object = getObjectPtr();
 	return object->getHeightFactor();
 }
 
 //===========================================================================
-float   UWaterInstance::getHeight(const NLMISC::CVector2f &pos)
+float UWaterInstance::getHeight(const NLMISC::CVector2f &pos)
 {
-	CWaterModel	*object = getObjectPtr();
+	CWaterModel *object = getObjectPtr();
 	return object->getHeight(pos);
 }
 
 //===========================================================================
-float   UWaterInstance::getAttenuatedHeight(const NLMISC::CVector2f &pos, const NLMISC::CVector &viewer)
+float UWaterInstance::getAttenuatedHeight(const NLMISC::CVector2f &pos, const NLMISC::CVector &viewer)
 {
-	CWaterModel	*object = getObjectPtr();
+	CWaterModel *object = getObjectPtr();
 	return object->getAttenuatedHeight(pos, viewer);
 }
 

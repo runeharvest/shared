@@ -17,7 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef RZ_VIEW_POLYGON_H
 #define RZ_VIEW_POLYGON_H
 
@@ -26,41 +25,40 @@
 #include "nel/misc/geom_ext.h"
 #include "nel/misc/polygon.h"
 
-namespace NLGUI
+namespace NLGUI {
+
+/** Display of an arbitrary polygon in the ui.
+ * polygon is clipped & batched
+ *
+ * \author Nicolas Vizerie
+ * \author Nevrax France
+ * \date 1/2006
+ */
+class CViewPolygon : public CViewBase
 {
+public:
+	DECLARE_UI_CLASS(CViewPolygon)
 
-	/** Display of an arbitrary polygon in the ui.
-	  * polygon is clipped & batched
-	  *
-	  * \author Nicolas Vizerie
-	  * \author Nevrax France
-	  * \date 1/2006
-	  */
-	class CViewPolygon : public CViewBase
-	{
-	public:
-        DECLARE_UI_CLASS( CViewPolygon )
+	CViewPolygon(const TCtorParam &param);
+	virtual uint32 getMemory() { return (uint32)(sizeof(*this) + _Id.size()); }
+	virtual void updateCoords();
+	virtual void draw();
+	void setVertices(const std::vector<NLMISC::CVector> &vertices);
+	// color
+	void setColorRGBA(NLMISC::CRGBA col) { _Color = col; }
+	NLMISC::CRGBA getColorRGBA() const { return _Color; }
+	// from CViewBase
+	virtual sint32 getAlpha() const { return (sint32)_Color.A; }
+	virtual void setAlpha(sint32 a);
 
-        CViewPolygon( const TCtorParam &param );
-		virtual uint32 getMemory() { return (uint32)(sizeof(*this)+_Id.size()); }
-		virtual void updateCoords();
-		virtual void draw();
-		void	setVertices(const std::vector<NLMISC::CVector> &vertices);
-		// color
-		void			setColorRGBA(NLMISC::CRGBA col) { _Color = col; }
-		NLMISC::CRGBA	getColorRGBA() const { return _Color; }
-		// from CViewBase
-		virtual sint32 getAlpha() const { return (sint32) _Color.A; }
-		virtual void setAlpha (sint32 a);
-	private:
-		NLMISC::CPolygon _Poly;
-		bool _Touched;
-		NLMISC::CRGBA				   _Color;
-		std::vector<NLMISC::CTriangle> _Tris;
-		std::vector<NLMISC::CTriangle> _RealTris; // clipped tris in screen coordinates
-	};
+private:
+	NLMISC::CPolygon _Poly;
+	bool _Touched;
+	NLMISC::CRGBA _Color;
+	std::vector<NLMISC::CTriangle> _Tris;
+	std::vector<NLMISC::CTriangle> _RealTris; // clipped tris in screen coordinates
+};
 
 }
 
 #endif
-

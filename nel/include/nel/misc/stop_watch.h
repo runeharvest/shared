@@ -22,13 +22,10 @@
 
 #include <deque>
 
-
 namespace NLMISC {
-
 
 typedef uint32 TTickDuration;
 typedef uint32 TMsDuration;
-
 
 /**
  * Stopwatch class used for performance measurements and statistics.
@@ -40,64 +37,54 @@ typedef uint32 TMsDuration;
 class CStopWatch
 {
 public:
-
 	/// Constructor. Set a non-zero queueLength for partial average calculation
-	CStopWatch( uint queueLength=0 );
-
-
+	CStopWatch(uint queueLength = 0);
 
 	/// Begin measurement
-	void						start();
+	void start();
 
 	/// Pause
-	void						pause();
+	void pause();
 
 	/// Resume
-	void						resume();
+	void resume();
 
 	/// Add time (in ticks unit) to the current measurement
-	void						addTime( TTickDuration t );
+	void addTime(TTickDuration t);
 
 	/// End measurement
-	void						stop();
+	void stop();
 
 	/// Add an external duration (in ticks unit) to the average queue
-	void						addMeasurement( TTickDuration t );
-
-
+	void addMeasurement(TTickDuration t);
 
 	/// Elapsed time in millisecond (call it after stop())
-	TMsDuration					getDuration() const;
+	TMsDuration getDuration() const;
 
 	/// Average duration of the queueLength last durations (using the queueLength argument specified in the constructor)
-	TMsDuration					getPartialAverage() const;
+	TMsDuration getPartialAverage() const;
 
 	/// Average of the duration
-	TMsDuration					getAverageDuration() const;
-
-
+	TMsDuration getAverageDuration() const;
 
 	/// Sum of the measured durations (in ticks)
-	TTickDuration				sumTicks() const { return _SumTicks; }
+	TTickDuration sumTicks() const { return _SumTicks; }
 
 	/// Number of measurements
-	uint32						measurementNumber() const { return _MeasurementNumber; }
+	uint32 measurementNumber() const { return _MeasurementNumber; }
 
 private:
+	TTicks _BeginTime;
+	TTickDuration _ElapsedTicks;
 
-	TTicks						_BeginTime;
-	TTickDuration				_ElapsedTicks;
+	TTickDuration _SumTicks;
+	uint32 _MeasurementNumber;
 
-	TTickDuration				_SumTicks;
-	uint32						_MeasurementNumber;
-
-	std::deque<TTickDuration>	_Queue;
-	uint						_QLength;
+	std::deque<TTickDuration> _Queue;
+	uint _QLength;
 };
 
-
 } // NLMISC
-
 
 #endif // NL_STOP_WATCH_H
 

@@ -35,51 +35,50 @@ NLMISC_VARIABLE(uint64, StlAllocatorMaxFree, "When EnableStlAllocatorChecker is 
 
 // setup a 'max iterations' value of 3GBytes/ sizeof(void*) (32bit)
 // => this is equivalent to the total addressable memory space under linux
-static const uintptr_t MaxIterations= 768*1024*1024;
+static const uintptr_t MaxIterations = 768 * 1024 * 1024;
 
 // the following static vector exists only for the use of the testStlMemoryAllocator() routine
 // - it is required to allow us to get hold of the stl small block memory allocator
 static std::vector<int> StaticIntVector;
 
-static bool IsCrashed= false;
+static bool IsCrashed = false;
 static jmp_buf Context;
 
-const char* StlMemoryAllocatorCrashPoint= NULL;
+const char *StlMemoryAllocatorCrashPoint = NULL;
 
 static void sigHandler(int sig)
 {
-    longjmp(Context, sig);
+	longjmp(Context, sig);
 }
 
-void testStlMemoryAllocator(const char* state)
+void testStlMemoryAllocator(const char *state)
 {
 	signal(SIGSEGV, sigHandler);
 	if (IsCrashed) return;
 
 	// setup a pointer 'p' to the first block in the allocator's linked list of free blocks
-	std::vector<uintptr_t>::allocator_type allocator= StaticIntVector.get_allocator();
+	std::vector<uintptr_t>::allocator_type allocator = StaticIntVector.get_allocator();
 	uintptr_t *p;
-	p= allocator.allocate(1);
-	allocator.deallocate(p,1);
+	p = allocator.allocate(1);
+	allocator.deallocate(p, 1);
 
 	// setup a counter to 3GBytes/ sizeof(void*) (32bit) => equivalent to the total addressable memory space under linux
-	uintptr_t counter= MaxIterations;
+	uintptr_t counter = MaxIterations;
 
-    if (setjmp(Context) == 0)
-    {
-		do 
+	if (setjmp(Context) == 0)
+	{
+		do
 		{
 			// step forwards allong the linked list
-			p= (uintptr_t*)*p;
+			p = (uintptr_t *)*p;
 
 			// if the counter hits zero then we can assume that we're in an infinite loop
-			if (--counter==0)
+			if (--counter == 0)
 				break;
-		}
-		while (p!=NULL);
+		} while (p != NULL);
 
 		// if we hit a NULL end of list terminator then return happily
-		if (p==NULL)
+		if (p == NULL)
 		{
 			uintptr_t numIterations = MaxIterations - counter;
 			StlAllocatorMaxFree = std::max((uint64)numIterations, StlAllocatorMaxFree);
@@ -91,7 +90,7 @@ void testStlMemoryAllocator(const char* state)
 		// note that our memory allocators contain invalid data so any call to 'nlassert' etc may modify
 		// data thta they shouldn't and make our debugging task harder
 		// ... so just provoke an access violation
-		*(uintptr_t**)(0) = p;
+		*(uintptr_t **)(0) = p;
 	}
 
 	// we just hit a crash case so setup flags / globals accordingly
@@ -99,4 +98,3 @@ void testStlMemoryAllocator(const char* state)
 	StlMemoryAllocatorCrashPoint = state;
 	signal(SIGSEGV, NULL);
 }
-

@@ -16,19 +16,22 @@
 
 #include "nel/misc/types_nl.h"
 #include "nel/ligo/ligo_config.h"
-namespace R2
-{
+namespace R2 {
 
 class CR2LigoConfig : public NLLIGO::CLigoConfig
 {
 public:
-	enum TScenarioType {Base, Act, Event};
+	enum TScenarioType
+	{
+		Base,
+		Act,
+		Event
+	};
+
 public:
 	virtual uint32 getFileStaticAliasMapping(const std::string &fileName) const;
 
 	uint32 getStaticAliasMapping(uint32 aiInstance, TScenarioType type) const;
-
 };
 
 }
-

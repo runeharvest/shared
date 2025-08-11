@@ -26,123 +26,119 @@
 #define new DEBUG_NEW
 #endif
 
-namespace NLGUI
+namespace NLGUI {
+inline bool isSeparator(char c)
 {
-	inline bool isSeparator (char c)
-	{
-		return (c == ' ') || (c == '\t') || (c == '\n') || (c == '\r');
-	}
+	return (c == ' ') || (c == '\t') || (c == '\n') || (c == '\r');
+}
 
-	inline bool isEndSentence (char c, char lastChar)
-	{
-		// Ex: One sentence. Another sentence.
-		//                  ^
-		// Counterexample: nevrax.com
-		//                       ^
-		return ((c == ' ') || (c == '\n'))
-			&& ((lastChar == '.') || (lastChar == '!') || (lastChar == '?') || (lastChar == '\n'));
-	}
+inline bool isEndSentence(char c, char lastChar)
+{
+	// Ex: One sentence. Another sentence.
+	//                  ^
+	// Counterexample: nevrax.com
+	//                       ^
+	return ((c == ' ') || (c == '\n'))
+	    && ((lastChar == '.') || (lastChar == '!') || (lastChar == '?') || (lastChar == '\n'));
+}
 
-	void setCase(std::string &str, TCaseMode mode)
+void setCase(std::string &str, TCaseMode mode)
+{
+	const uint length = (uint)str.length();
+	uint i;
+	bool newString = true;
+	bool newSentence = true;
+	bool newWord = true;
+	switch (mode)
 	{
-		const uint length = (uint)str.length();
-		uint i;
-		bool newString = true;
-		bool newSentence = true;
-		bool newWord = true;
-		switch (mode)
+	case CaseLower:
+		str = NLMISC::toLower(str);
+		break;
+	case CaseUpper:
+		str = NLMISC::toUpper(str);
+		break;
+	case CaseFirstStringLetterUp: {
+		std::string res;
+		res.reserve(str.size() + (str.size() >> 2));
+		for (ptrdiff_t i = 0; i < (ptrdiff_t)str.size();)
 		{
-		case CaseLower:
-			str = NLMISC::toLower(str);
-			break;
-		case CaseUpper:
-			str = NLMISC::toUpper(str);
-			break;
-		case CaseFirstStringLetterUp:
-		{
-			std::string res;
-			res.reserve(str.size() + (str.size() >> 2));
-			for (ptrdiff_t i = 0; i < (ptrdiff_t)str.size();)
+			char c = str[i];
+			if (!isSeparator(c))
 			{
-				char c = str[i];
+				if (newString)
+					NLMISC::appendToTitle(res, str, i);
+				else
+					NLMISC::appendToLower(res, str, i);
+				newString = false;
+			}
+			else
+			{
+				res += c;
+				++i;
+			}
+		}
+		str.swap(res);
+		break;
+	}
+	case CaseFirstSentenceLetterUp: {
+		std::string res;
+		res.reserve(str.size() + (str.size() >> 2));
+		char lastChar = 0;
+		for (ptrdiff_t i = 0; i < (ptrdiff_t)str.size();)
+		{
+			char c = str[i];
+			if (isEndSentence(c, lastChar))
+			{
+				newSentence = true;
+				res += c;
+				++i;
+			}
+			else
+			{
+				if (newSentence)
+					NLMISC::appendToTitle(res, str, i);
+				else
+					NLMISC::appendToLower(res, str, i);
+
 				if (!isSeparator(c))
-				{
-					if (newString)
-						NLMISC::appendToTitle(res, str, i);
-					else
-						NLMISC::appendToLower(res, str, i);
-					newString = false;
-				}
-				else
-				{
-					res += c;
-					++i;
-				}
+					newSentence = false;
 			}
-			str.swap(res);
-			break;
+			lastChar = c;
 		}
-		case CaseFirstSentenceLetterUp:
-		{
-			std::string res;
-			res.reserve(str.size() + (str.size() >> 2));
-			char lastChar = 0;
-			for (ptrdiff_t i = 0; i < (ptrdiff_t)str.size();)
-			{
-				char c = str[i];
-				if (isEndSentence(c, lastChar))
-				{
-					newSentence = true;
-					res += c;
-					++i;
-				}
-				else
-				{
-					if (newSentence)
-						NLMISC::appendToTitle(res, str, i);
-					else
-						NLMISC::appendToLower(res, str, i);
-
-					if (!isSeparator(c))
-						newSentence = false;
-				}
-				lastChar = c;
-			}
-			str.swap(res);
-			break;
-		}
-		case CaseFirstWordLetterUp:
-		{
-			std::string res;
-			res.reserve(str.size() + (str.size() >> 2));
-			char lastChar = 0;
-			for (ptrdiff_t i = 0; i < (ptrdiff_t)str.size();)
-			{
-				char c = str[i];
-				if (isSeparator(c) || isEndSentence(c, lastChar))
-				{
-					newWord = true;
-					res += c;
-					++i;
-				}
-				else
-				{
-					if (newWord)
-						NLMISC::appendToTitle(res, str, i);
-					else
-						NLMISC::appendToLower(res, str, i);
-
-					newWord = false;
-				}
-				lastChar = c;
-			}
-			str.swap(res);
-			break;
-		}
-		default:
-			break;
-		}
+		str.swap(res);
+		break;
 	}
+	case CaseFirstWordLetterUp: {
+		std::string res;
+		res.reserve(str.size() + (str.size() >> 2));
+		char lastChar = 0;
+		for (ptrdiff_t i = 0; i < (ptrdiff_t)str.size();)
+		{
+			char c = str[i];
+			if (isSeparator(c) || isEndSentence(c, lastChar))
+			{
+				newWord = true;
+				res += c;
+				++i;
+			}
+			else
+			{
+				if (newWord)
+					NLMISC::appendToTitle(res, str, i);
+				else
+					NLMISC::appendToLower(res, str, i);
+
+				newWord = false;
+			}
+			lastChar = c;
+		}
+		str.swap(res);
+		break;
+	}
+	default:
+		break;
+	}
+}
 }
 
 /* end of file */

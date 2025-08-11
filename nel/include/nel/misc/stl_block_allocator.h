@@ -17,13 +17,10 @@
 #ifndef NL_STL_BLOCK_ALLOCATOR_H
 #define NL_STL_BLOCK_ALLOCATOR_H
 
-
 #include "types_nl.h"
 #include "block_memory.h"
 
-
 namespace NLMISC {
-
 
 // ***************************************************************************
 /**
@@ -56,23 +53,24 @@ namespace NLMISC {
  * \date 2001
  */
 
-	template<class T>
-	class CSTLBlockAllocator : public std::allocator< T >
+template <class T>
+class CSTLBlockAllocator : public std::allocator<T>
+{
+public:
+	/// Constructor. Must gives a blockMemory to ctor. NB: must gives a CBlockMemory<T, false> !!!
+	CSTLBlockAllocator(CBlockMemory<T, false> * /* bm */)
 	{
-	public:
-		/// Constructor. Must gives a blockMemory to ctor. NB: must gives a CBlockMemory<T, false> !!!
-		CSTLBlockAllocator(CBlockMemory<T, false> * /* bm */)
-		{
-		}
-		/// copy ctor
-		CSTLBlockAllocator(const CSTLBlockAllocator<T> &other) : std::allocator<T>(other)
-		{
-		}
-		/// dtor
-		~CSTLBlockAllocator()
-		{
-		}
-	};
+	}
+	/// copy ctor
+	CSTLBlockAllocator(const CSTLBlockAllocator<T> &other)
+	    : std::allocator<T>(other)
+	{
+	}
+	/// dtor
+	~CSTLBlockAllocator()
+	{
+	}
+};
 
 #if 0
 #if defined(NL_OS_WINDOWS) && !defined(_STLP_MEMBER_TEMPLATE_CLASSES)
@@ -193,10 +191,9 @@ private:
 
 };
 
-
 #else // NL_OS_WINDOWS
 
-# if !defined (__STL_USE_SGI_ALLOCATORS)
+#if !defined(__STL_USE_SGI_ALLOCATORS)
 template<class T>
 class CSTLBlockAllocator : public  std::allocator< T >
 {
@@ -216,7 +213,7 @@ public:
 	}
 
 };
-# else	// !defined (__STL_USE_SGI_ALLOCATORS)
+#else // !defined (__STL_USE_SGI_ALLOCATORS)
 class CSTLBlockAllocator : public  __sgi_alloc
 {
 public:
@@ -235,15 +232,13 @@ public:
 	}
 
 };
-# endif	// !defined (__STL_USE_SGI_ALLOCATORS)
-
+#endif // !defined (__STL_USE_SGI_ALLOCATORS)
 
 #endif // NL_OS_WINDOWS
 
 #endif // 0
 
 } // NLMISC
-
 
 #endif // NL_STL_BLOCK_ALLOCATOR_H
 

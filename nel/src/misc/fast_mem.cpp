@@ -20,17 +20,15 @@
 #include "nel/misc/system_info.h"
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 #if defined(NL_OS_WINDOWS) && !defined(NL_NO_ASM)
 
-
 // ***************************************************************************
-void		*CFastMem::memcpySSE(void *dest, const void *src, size_t nbytes)
+void *CFastMem::memcpySSE(void *dest, const void *src, size_t nbytes)
 {
 	_asm
 	{
@@ -38,11 +36,11 @@ void		*CFastMem::memcpySSE(void *dest, const void *src, size_t nbytes)
 			mov edi, dest
 			mov ebx, nbytes
 
-			// edx takes number of bytes%64
+		    // edx takes number of bytes%64
 			mov	edx, ebx
 			and edx, 63
 
-			// ebx takes number of bytes/64
+		// ebx takes number of bytes/64
 			shr	ebx, 6
 			jz	byteCopy
 
@@ -50,12 +48,12 @@ void		*CFastMem::memcpySSE(void *dest, const void *src, size_t nbytes)
 	loop4k: // flush 4k into temporary buffer
 			push esi
 			mov ecx, ebx
-			// copy per block of 64 bytes. Must not override 64*64= 4096 bytes.
+		    // copy per block of 64 bytes. Must not override 64*64= 4096 bytes.
 			cmp ecx, 64
 			jle	skipMiniMize
 			mov	ecx, 64
 	skipMiniMize:
-			// eax takes the number of 64bytes packet for this block.
+		    // eax takes the number of 64bytes packet for this block.
 			mov eax, ecx
 
 	loopMemToL1:
@@ -102,14 +100,14 @@ void		*CFastMem::memcpySSE(void *dest, const void *src, size_t nbytes)
 			dec ecx
 			jnz loopL1ToMem
 
-			// Do next 4k block
+		        // Do next 4k block
 			sub ebx, eax
 			jnz loop4k
 
 			emms
 
 	byteCopy:
-			// Do last bytes with std cpy
+		    // Do last bytes with std cpy
 			mov	ecx, edx
 			rep movsb
 	}
@@ -117,13 +115,13 @@ void		*CFastMem::memcpySSE(void *dest, const void *src, size_t nbytes)
 }
 
 // ***************************************************************************
-void		CFastMem::precacheSSE(const void *src, uint nbytes)
+void CFastMem::precacheSSE(const void *src, uint nbytes)
 {
 	_asm
 	{
 			mov esi, src
 			mov ecx, nbytes
-			// 64 bytes per pass
+		    // 64 bytes per pass
 			shr ecx, 6
 			jz endLabel
 
@@ -151,13 +149,13 @@ void		CFastMem::precacheSSE(const void *src, uint nbytes)
 }
 
 // ***************************************************************************
-void		CFastMem::precacheMMX(const void *src, uint nbytes)
+void CFastMem::precacheMMX(const void *src, uint nbytes)
 {
 	_asm
 	{
 			mov esi, src
 			mov ecx, nbytes
-			// 64 bytes per pass
+		    // 64 bytes per pass
 			shr ecx, 6
 			jz endLabel
 
@@ -181,47 +179,44 @@ void		CFastMem::precacheMMX(const void *src, uint nbytes)
 	}
 }
 
-
 // ***************************************************************************
-void		CFastMem::precache(const void *src, uint nbytes)
+void CFastMem::precache(const void *src, uint nbytes)
 {
-	if(NLMISC::CSystemInfo::hasSSE())
+	if (NLMISC::CSystemInfo::hasSSE())
 		precacheSSE(src, nbytes);
-	else if(NLMISC::CSystemInfo::hasMMX())
+	else if (NLMISC::CSystemInfo::hasMMX())
 		precacheMMX(src, nbytes);
 }
 
-
 #else
 
-
 // ***************************************************************************
-void		*CFastMem::memcpySSE(void *dst, const void *src, size_t nbytes)
+void *CFastMem::memcpySSE(void *dst, const void *src, size_t nbytes)
 {
 	// Use std memcpy.
 	return memcpy(dst, src, nbytes);
 }
-void		CFastMem::precacheSSE(const void *src, uint nbytes)
+void CFastMem::precacheSSE(const void *src, uint nbytes)
 {
 	// no-op.
 }
-void		CFastMem::precacheMMX(const void *src, uint nbytes)
+void CFastMem::precacheMMX(const void *src, uint nbytes)
 {
 	// no-op.
 }
-void		CFastMem::precache(const void *src, uint nbytes)
+void CFastMem::precache(const void *src, uint nbytes)
 {
 	// no-op.
 }
 
 #endif
 
-typedef void  *(*memcpyPtr)(void *dts, const void *src, size_t nbytes);
+typedef void *(*memcpyPtr)(void *dts, const void *src, size_t nbytes);
 
-static memcpyPtr findBestmemcpy ()
+static memcpyPtr findBestmemcpy()
 {
 #if defined(NL_OS_WINDOWS) && !defined(NL_NO_ASM)
-	if (CSystemInfo::hasSSE ())
+	if (CSystemInfo::hasSSE())
 		return CFastMem::memcpySSE;
 	else
 		return ::memcpy;
@@ -230,6 +225,6 @@ static memcpyPtr findBestmemcpy ()
 #endif // NL_OS_WINDOWS
 }
 
-void  *(*CFastMem::memcpy)(void *dts, const void *src, size_t nbytes) = findBestmemcpy ();
+void *(*CFastMem::memcpy)(void *dts, const void *src, size_t nbytes) = findBestmemcpy();
 
 } // NLMISC

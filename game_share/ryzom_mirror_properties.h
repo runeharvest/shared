@@ -17,18 +17,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_RYZOM_MIRROR_PROPERTIES_H
 #define NL_RYZOM_MIRROR_PROPERTIES_H
 
 #include "nel/misc/types_nl.h"
 #include "base_types.h"
 
-
 // AI Service Tag for Mirror Traffic Reduction. Must not collide with a tag of another service.
 const TMTRTag AISTag = 1;
-
 
 /*
  * Dataset property indices. Must be assigned in mirror initialization callback,
@@ -84,12 +80,10 @@ extern TPropertyIndex DSPropertyOWNER_PEOPLE;
 extern TPropertyIndex DSPropertyOUTPOST_INFOS;
 extern TPropertyIndex DSPropertyNPC_ALIAS;
 
-
 class CMirroredDataSet;
 
 /// Assign the property indices for fe_temp
-void	initRyzomVisualPropertyIndices( CMirroredDataSet& dataset );
-
+void initRyzomVisualPropertyIndices(CMirroredDataSet &dataset);
 
 #define TYPE_POSX sint32
 #define TYPE_POSY sint32
@@ -126,7 +120,7 @@ void	initRyzomVisualPropertyIndices( CMirroredDataSet& dataset );
 #define TYPE_BARS uint32
 #define TYPE_TEAM_ID uint16
 #define TYPE_ACTION_FLAGS uint16
-#define TYPE_TARGET_LIST sint32			// dirty hack?
+#define TYPE_TARGET_LIST sint32 // dirty hack?
 #define TYPE_TARGET_LIST_ITEM sint32
 #define TYPE_VISUAL_FX sint16
 #define TYPE_AVAILABLE_IMPULSE_SIZE uint16

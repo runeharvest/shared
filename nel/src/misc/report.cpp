@@ -32,7 +32,7 @@
 #include "nel/misc/system_utils.h"
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
 #define NL_REPORT_POST_URL_ENVVAR "NL_REPORT_POST_URL"
@@ -47,8 +47,7 @@
 // Set to 1 if you want command line report tool even when the debugger is present
 #define NL_REPORT_CONSOLE_DEBUGGER 1
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 void setReportPostUrl(const char *postUrl)
 {
@@ -111,9 +110,9 @@ TReportResult report(const std::string &title, const std::string &subject, const
 	}
 
 	if (((INelContext::isContextInitialised()
-		&& INelContext::getInstance().isWindowedApplication())
-		|| CSystemUtils::detectWindowedApplication())
-		&& CFile::isExists(NL_CRASH_REPORT_TOOL))
+	         && INelContext::getInstance().isWindowedApplication())
+	        || CSystemUtils::detectWindowedApplication())
+	    && CFile::isExists(NL_CRASH_REPORT_TOOL))
 	{
 		std::string params;
 
@@ -144,9 +143,9 @@ TReportResult report(const std::string &title, const std::string &subject, const
 			TReportResult result = (TReportResult)NLMISC::launchProgramAndWaitForResult(NL_CRASH_REPORT_TOOL, params);
 
 			if (result != ReportAlwaysIgnore
-				&& result != ReportIgnore
-				&& result != ReportAbort
-				&& result != ReportBreak)
+			    && result != ReportIgnore
+			    && result != ReportAbort
+			    && result != ReportBreak)
 			{
 #if NL_DEBUG_REPORT
 				if (INelContext::isContextInitialised())
@@ -159,7 +158,7 @@ TReportResult report(const std::string &title, const std::string &subject, const
 		else
 		{
 			NLMISC::launchProgram(NL_CRASH_REPORT_TOOL, params,
-				NL_DEBUG_REPORT ? INelContext::isContextInitialised() : false); // Only log if required, avoid infinite loop
+			    NL_DEBUG_REPORT ? INelContext::isContextInitialised() : false); // Only log if required, avoid infinite loop
 			return defaultResult;
 		}
 	}
@@ -176,7 +175,7 @@ TReportResult report(const std::string &title, const std::string &subject, const
 		}
 		else
 #endif
-		if (synchronous)
+		    if (synchronous)
 		{
 #if NL_REPORT_CONSOLE
 			// An interactive console based report

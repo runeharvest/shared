@@ -25,40 +25,36 @@
 using namespace std;
 using namespace NLMISC;
 
-namespace ITEM_SPECIAL_EFFECT
+namespace ITEM_SPECIAL_EFFECT {
+// The conversion table
+const CStringConversion<TItemSpecialEffect>::CPair stringTable[] = {
+	{ "ISE_FIGHT_ADD_CRITICAL", ISE_FIGHT_ADD_CRITICAL },
+	{ "ISE_FIGHT_VAMPIRISM", ISE_FIGHT_VAMPIRISM },
+	{ "ISE_MAGIC_DIVINE_INTERVENTION", ISE_MAGIC_DIVINE_INTERVENTION },
+	{ "ISE_MAGIC_SHOOT_AGAIN", ISE_MAGIC_SHOOT_AGAIN },
+	{ "ISE_CRAFT_ADD_STAT_BONUS", ISE_CRAFT_ADD_STAT_BONUS },
+	{ "ISE_CRAFT_ADD_LIMIT", ISE_CRAFT_ADD_LIMIT },
+	{ "ISE_FORAGE_ADD_RM", ISE_FORAGE_ADD_RM },
+	{ "ISE_FORAGE_NO_RISK", ISE_FORAGE_NO_RISK },
+
+};
+
+CStringConversion<TItemSpecialEffect> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]), UNDEFINED);
+
+// convert item special effect id to item special effect name string
+const std::string &toString(TItemSpecialEffect itemSpecialEffect)
 {
-	// The conversion table
-	const CStringConversion<TItemSpecialEffect>::CPair stringTable [] =
-	{
-		 { "ISE_FIGHT_ADD_CRITICAL", ISE_FIGHT_ADD_CRITICAL },
-		 { "ISE_FIGHT_VAMPIRISM", ISE_FIGHT_VAMPIRISM },
-		 { "ISE_MAGIC_DIVINE_INTERVENTION", ISE_MAGIC_DIVINE_INTERVENTION },
-		 { "ISE_MAGIC_SHOOT_AGAIN", ISE_MAGIC_SHOOT_AGAIN },
-		 { "ISE_CRAFT_ADD_STAT_BONUS", ISE_CRAFT_ADD_STAT_BONUS },
-		 { "ISE_CRAFT_ADD_LIMIT", ISE_CRAFT_ADD_LIMIT },
-		 { "ISE_FORAGE_ADD_RM", ISE_FORAGE_ADD_RM },
-		 { "ISE_FORAGE_NO_RISK", ISE_FORAGE_NO_RISK },
+	return conversion.toString(itemSpecialEffect);
+}
 
-	};
-
-	CStringConversion<TItemSpecialEffect> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]),  UNDEFINED);
-
-
-	// convert item special effect id to item special effect name string
-	const std::string& toString( TItemSpecialEffect itemSpecialEffect )
-	{
-		return conversion.toString(itemSpecialEffect);
-	}
-
-
-	// convert item special effect name to item special effect enum value
-	TItemSpecialEffect fromString( const std::string& str )
-	{
-		return conversion.fromString(str);
-	}
-	// convert item special effect name to item special effect enum value
-	TItemSpecialEffect stringToItemSpecialEffect( const std::string& str )
-	{
-		return conversion.fromString(str);
-	}
+// convert item special effect name to item special effect enum value
+TItemSpecialEffect fromString(const std::string &str)
+{
+	return conversion.fromString(str);
+}
+// convert item special effect name to item special effect enum value
+TItemSpecialEffect stringToItemSpecialEffect(const std::string &str)
+{
+	return conversion.fromString(str);
+}
 }; // ITEM_SPECIAL_EFFECT

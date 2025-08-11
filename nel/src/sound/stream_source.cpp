@@ -35,23 +35,23 @@ using namespace NLMISC;
 namespace NLSOUND {
 
 CStreamSource::CStreamSource(CStreamSound *streamSound, bool spawn, TSpawnEndCallback cb, void *cbUserParam, NL3D::CCluster *cluster, CGroupController *groupController)
-	: CSourceCommon(streamSound, spawn, cb, cbUserParam, cluster, groupController), 
-	m_StreamSound(streamSound), 
-	m_Alpha(0.0f), 
-	m_Track(NULL), 
-	m_FreeBuffers(3),
-	m_NextBuffer(0),
-	m_LastSize(0),
-	m_BytesPerSecond(0),
-	m_WaitingForPlay(false),
-	m_PitchInv(1.0f)
+    : CSourceCommon(streamSound, spawn, cb, cbUserParam, cluster, groupController)
+    , m_StreamSound(streamSound)
+    , m_Alpha(0.0f)
+    , m_Track(NULL)
+    , m_FreeBuffers(3)
+    , m_NextBuffer(0)
+    , m_LastSize(0)
+    , m_BytesPerSecond(0)
+    , m_WaitingForPlay(false)
+    , m_PitchInv(1.0f)
 {
 	nlassert(m_StreamSound != 0);
 
 	// get a local copy of the stream sound parameter
-	m_Alpha = m_StreamSound->getAlpha();//m_Buffers
+	m_Alpha = m_StreamSound->getAlpha(); // m_Buffers
 	m_PitchInv = 1.0f / _Pitch;
-	
+
 	// create the three buffer objects
 	CAudioMixerUser *mixer = CAudioMixerUser::instance();
 	ISoundDriver *driver = mixer->getSoundDriver();
@@ -68,9 +68,21 @@ CStreamSource::~CStreamSource()
 	if (_Playing)
 		stop();
 
-	if (m_Buffers[0] != NULL) { delete m_Buffers[0]; m_Buffers[0] = NULL; }
-	if (m_Buffers[1] != NULL) { delete m_Buffers[1]; m_Buffers[1] = NULL; }
-	if (m_Buffers[2] != NULL) { delete m_Buffers[2]; m_Buffers[2] = NULL; }
+	if (m_Buffers[0] != NULL)
+	{
+		delete m_Buffers[0];
+		m_Buffers[0] = NULL;
+	}
+	if (m_Buffers[1] != NULL)
+	{
+		delete m_Buffers[1];
+		m_Buffers[1] = NULL;
+	}
+	if (m_Buffers[2] != NULL)
+	{
+		delete m_Buffers[2];
+		m_Buffers[2] = NULL;
+	}
 }
 
 void CStreamSource::initPhysicalSource()
@@ -104,7 +116,7 @@ void CStreamSource::releasePhysicalSource()
 uint32 CStreamSource::getTime()
 {
 	CAutoMutex<CMutex> autoMutex(m_BufferMutex);
-	
+
 	if (hasPhysicalSource())
 		return getPhysicalSource()->getTime();
 	else
@@ -121,10 +133,10 @@ void CStreamSource::setLooping(bool l)
 {
 	CSourceCommon::setLooping(l);
 
-	//CAutoMutex<CMutex> autoMutex(m_BufferMutex);
+	// CAutoMutex<CMutex> autoMutex(m_BufferMutex);
 	//
-	//CSourceCommon::setLooping(l);
-	//if (hasPhysicalSource())
+	// CSourceCommon::setLooping(l);
+	// if (hasPhysicalSource())
 	//	getPhysicalSource()->setLooping(l);
 }
 
@@ -139,7 +151,7 @@ CVector CStreamSource::getVirtualPos() const
 			// there is some data here, update the virtual position of the sound.
 			float dist = (css->Position - getPos()).norm();
 			CVector vpos(CAudioMixerUser::instance()->getListenPosVector() + css->Direction * (css->Dist + dist));
-			vpos = _Position * (1-css->PosAlpha) + vpos*(css->PosAlpha);
+			vpos = _Position * (1 - css->PosAlpha) + vpos * (css->PosAlpha);
 			return vpos;
 		}
 	}
@@ -152,11 +164,11 @@ void CStreamSource::play()
 	nlassert(!_Playing);
 	bool play = false;
 	CAudioMixerUser *mixer = CAudioMixerUser::instance();
-	
+
 	{
 		CAutoMutex<CMutex> autoMutex(m_BufferMutex);
-		
-		//if ((mixer->getListenPosVector() - _Position).sqrnorm() > m_StreamSound->getMaxDistance() * m_StreamSound->getMaxDistance())
+
+		// if ((mixer->getListenPosVector() - _Position).sqrnorm() > m_StreamSound->getMaxDistance() * m_StreamSound->getMaxDistance())
 		if ((_RelativeMode ? getPos().sqrnorm() : (mixer->getListenPosVector() - getPos()).sqrnorm()) > m_StreamSound->getMaxDistance() * m_StreamSound->getMaxDistance())
 		{
 			// Source is too far to play
@@ -168,11 +180,11 @@ void CStreamSource::play()
 				delete this;
 			}
 #ifdef NLSOUND_DEBUG_STREAM
-			nldebug("CStreamSource %p : play FAILED, source is too far away !", (CAudioMixerUser::IMixerEvent*)this);
+			nldebug("CStreamSource %p : play FAILED, source is too far away !", (CAudioMixerUser::IMixerEvent *)this);
 #endif
 			return;
 		}
-		
+
 		CAudioMixerUser *mixer = CAudioMixerUser::instance();
 
 		if (!hasPhysicalSource())
@@ -182,12 +194,12 @@ void CStreamSource::play()
 		{
 			ISource *pSource = getPhysicalSource();
 			nlassert(pSource != NULL);
-			
+
 			uint nbS = m_NextBuffer;
 			if (!m_NextBuffer && !m_FreeBuffers) nbS = 3;
 			for (uint i = 0; i < nbS; ++i)
 				pSource->submitStreamingBuffer(m_Buffers[i]);
-			
+
 			// pSource->setPos( _Position, false);
 			pSource->setPos(getVirtualPos(), false);
 			pSource->setMinMaxDistances(m_StreamSound->getMinDistance(), m_StreamSound->getMaxDistance(), false);
@@ -207,7 +219,7 @@ void CStreamSource::play()
 			// pSource->setLooping(_Looping);
 			pSource->setPitch(_Pitch);
 			pSource->setAlpha(m_Alpha);
-			
+
 			// and play the sound
 			nlassert(nbS); // must have buffered already!
 			play = pSource->play();
@@ -229,13 +241,13 @@ void CStreamSource::play()
 				if (_Spawn)
 				{
 					if (_SpawnEndCb != NULL)
-						_SpawnEndCb(this, _CbUserParam);					
+						_SpawnEndCb(this, _CbUserParam);
 					delete this;
 				}
 				return;
 			}
 		}
-		
+
 		if (play)
 		{
 			CSourceCommon::play();
@@ -282,7 +294,7 @@ void CStreamSource::play()
 void CStreamSource::stopInt()
 {
 	CAutoMutex<CMutex> autoMutex(m_BufferMutex);
-	
+
 	// nldebug("CStreamSource %p : stop", (CAudioMixerUser::IMixerEvent*)this);
 	// nlassert(_Playing);
 
@@ -292,21 +304,21 @@ void CStreamSource::stopInt()
 		CAudioMixerUser *mixer = CAudioMixerUser::instance();
 		mixer->removeSourceWaitingForPlay(this);
 	}
-	
+
 	if (!_Playing)
 	{
 		m_WaitingForPlay = false;
 		return;
 	}
-	
+
 	if (hasPhysicalSource())
 		releasePhysicalSource();
-	
+
 	CSourceCommon::stop();
 
 	m_FreeBuffers = 3;
 	m_NextBuffer = 0;
-	
+
 	m_WaitingForPlay = false;
 }
 
@@ -314,7 +326,7 @@ void CStreamSource::stopInt()
 void CStreamSource::stop()
 {
 	stopInt();
-	
+
 	if (_Spawn)
 	{
 		if (_SpawnEndCb != NULL)
@@ -323,7 +335,7 @@ void CStreamSource::stop()
 	}
 }
 
-void CStreamSource::setPos(const NLMISC::CVector& pos)
+void CStreamSource::setPos(const NLMISC::CVector &pos)
 {
 	CAutoMutex<CMutex> autoMutex(m_BufferMutex);
 
@@ -332,7 +344,7 @@ void CStreamSource::setPos(const NLMISC::CVector& pos)
 		getPhysicalSource()->setPos(getVirtualPos());
 }
 
-void CStreamSource::setVelocity(const NLMISC::CVector& vel)
+void CStreamSource::setVelocity(const NLMISC::CVector &vel)
 {
 	CAutoMutex<CMutex> autoMutex(m_BufferMutex);
 
@@ -344,7 +356,7 @@ void CStreamSource::setVelocity(const NLMISC::CVector& vel)
 /*
  * Set the direction vector (3D mode only, ignored in stereo mode) (default: (0,0,0) as non-directional)
  */
-void CStreamSource::setDirection(const NLMISC::CVector& dir)
+void CStreamSource::setDirection(const NLMISC::CVector &dir)
 {
 	CAutoMutex<CMutex> autoMutex(m_BufferMutex);
 
@@ -359,12 +371,12 @@ void CStreamSource::setDirection(const NLMISC::CVector& dir)
 			if (dir.isNull()) // workaround // For what?
 			{
 				getPhysicalSource()->setCone(float(Pi * 2), float(Pi * 2), 1.0f); // because the direction with 0 is not enough for a non-directional source!
-				getPhysicalSource()->setDirection(CVector::I);  // Don't send a 0 vector, DSound will complain. Send (1,0,0), it's omnidirectional anyway.
+				getPhysicalSource()->setDirection(CVector::I); // Don't send a 0 vector, DSound will complain. Send (1,0,0), it's omnidirectional anyway.
 				coneset = false;
 			}
 			else
 			{
-//				if (!coneset)
+				//				if (!coneset)
 				{
 					getPhysicalSource()->setCone(m_StreamSound->getConeInnerAngle(), m_StreamSound->getConeOuterAngle(), m_StreamSound->getConeOuterGain());
 					coneset = true;
@@ -378,7 +390,7 @@ void CStreamSource::setDirection(const NLMISC::CVector& dir)
 void CStreamSource::updateFinalGain()
 {
 	CAutoMutex<CMutex> autoMutex(m_BufferMutex);
-	
+
 	if (hasPhysicalSource())
 		getPhysicalSource()->setGain(getFinalGain());
 }
@@ -443,14 +455,15 @@ uint8 *CStreamSource::lock(uint capacity)
 bool CStreamSource::unlock(uint size)
 {
 	nlassert(m_FreeBuffers > 0);
-	
+
 	CAutoMutex<CMutex> autoMutex(m_BufferMutex);
 	IBuffer *buffer = m_Buffers[m_NextBuffer];
 	bool result = buffer->unlock(size);
 
 	if (size > 0)
 	{
-		++m_NextBuffer; m_NextBuffer %= 3;
+		++m_NextBuffer;
+		m_NextBuffer %= 3;
 		--m_FreeBuffers;
 		if (hasPhysicalSource())
 		{

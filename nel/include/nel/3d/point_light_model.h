@@ -21,17 +21,13 @@
 #include "nel/3d/transform.h"
 #include "nel/3d/fast_ptr_list.h"
 
-
 namespace NL3D {
 
-
-class	CLightTrav;
-
+class CLightTrav;
 
 // ***************************************************************************
 // ClassIds.
-const NLMISC::CClassId		PointLightModelId=NLMISC::CClassId(0x7e842eba, 0x140b6c69);
-
+const NLMISC::CClassId PointLightModelId = NLMISC::CClassId(0x7e842eba, 0x140b6c69);
 
 // ***************************************************************************
 /**
@@ -56,19 +52,16 @@ class CPointLightModel : public CTransform
 {
 public:
 	/// Call at the beginning of the program, to register the model
-	static	void	registerBasic();
-
+	static void registerBasic();
 
 public:
-
 	/** The pointLight setup (color/attenuation). Do not use PointLight.Pos to setup the position.
 	 *	Use the CTransform interface to set the position.
 	 *	To enable SpotLight, use PointLight.setType(), and use PointLight.setSpotAngle() but don't use
 	 *	PointLight.setSpotDirection to setup the direction. The direction of the spotLight is driven by
 	 *	the J vector of the Transform WorldMatrix.
 	 */
-	CPointLight		PointLight;
-
+	CPointLight PointLight;
 
 	/**	setup the deltaPosToSkeletonWhenOutOfFrustum
 	 *	When a light is sticked to a skeleton, and if this skeleton is clipped, then the position of the light
@@ -80,10 +73,9 @@ public:
 	 *	You may change this according to the approximate size of the skeleton (dwarf or giant), and you must
 	 *	take into account any mount (horse etc...). eg for a man on a elephant, a good value would be (0,0,5) :)
 	 */
-	void			setDeltaPosToSkeletonWhenOutOfFrustum(const CVector &deltaPos);
+	void setDeltaPosToSkeletonWhenOutOfFrustum(const CVector &deltaPos);
 	/// see setDeltaPosToSkeletonWhenOutOfFrustum()
-	const CVector	&getDeltaPosToSkeletonWhenOutOfFrustum() const;
-
+	const CVector &getDeltaPosToSkeletonWhenOutOfFrustum() const;
 
 	/** Special For Lightmap dynamic Lighting. if true, this light will influence lightmaped objects.
 	 *	Lightmaped objects can be lighted by ONLY ONE (preference big) dynamic light.
@@ -91,15 +83,13 @@ public:
 	 *	of those visible lights.
 	 *	NB: Lighting is made hardware per vertex.
 	 */
-	void			setInfluenceLightMap(bool enable) {_InfluenceLightMap= enable;}
-	bool			getInfluenceLightMap() const {return _InfluenceLightMap;}
-
+	void setInfluenceLightMap(bool enable) { _InfluenceLightMap = enable; }
+	bool getInfluenceLightMap() const { return _InfluenceLightMap; }
 
 	/** The traverse() method is called to update the worldPosition of the light, resetLightedModels(), and
 	 *	re-insert the light in the lightingManager.
 	 */
-	virtual void	traverseLight();
-
+	virtual void traverseLight();
 
 protected:
 	/// Constructor
@@ -108,43 +98,39 @@ protected:
 	virtual ~CPointLightModel();
 
 	/// Implement the initModel method: link to the LightModelList.
-	virtual void	initModel();
+	virtual void initModel();
 
-
-// *********************
+	// *********************
 private:
-	friend class	CLightTrav;
+	friend class CLightTrav;
 
-	static CTransform	*creator() {return new CPointLightModel;}
+	static CTransform *creator() { return new CPointLightModel; }
 
 	// Node for LightTrav
-	CFastPtrListNode	_PointLightNode;
+	CFastPtrListNode _PointLightNode;
 
 	/** tells if the pointLightModel is not hidden by user
 	 *	actually, it is the result of hrc Visibility.
 	 */
-	bool	isHrcVisible() const
+	bool isHrcVisible() const
 	{
 		return _WorldVis;
 	}
 
 	/// see setDeltaPosToSkeletonWhenOutOfFrustum()
-	CVector			_DeltaPosToSkeletonWhenOutOfFrustum;
+	CVector _DeltaPosToSkeletonWhenOutOfFrustum;
 
 	/** Same problem as _DeltaPosToSkeletonWhenOutOfFrustum, but this one is computed at each Visible frame.
 	 *	And we interpolate between actual direction and backuped direction when the spot become visible (5 frames, hardcoded)
 	 */
-	CVector			_LastWorldSpotDirectionWhenOutOfFrustum;
-	float			_TimeFromLastClippedSpotDirection;
-
+	CVector _LastWorldSpotDirectionWhenOutOfFrustum;
+	float _TimeFromLastClippedSpotDirection;
 
 	/// see setInfluenceLightMap()
-	bool			_InfluenceLightMap;
+	bool _InfluenceLightMap;
 };
 
-
 } // NL3D
-
 
 #endif // NL_POINT_LIGHT_MODEL_H
 

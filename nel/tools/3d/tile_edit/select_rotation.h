@@ -28,28 +28,29 @@
 
 class SelectRotation : public CDialog
 {
-// Construction
+	// Construction
 public:
-	SelectRotation(CWnd* pParent = NULL);   // standard constructor
+	SelectRotation(CWnd *pParent = NULL); // standard constructor
 
-	int	RotSelected;
-// Dialog Data
+	int RotSelected;
+	// Dialog Data
 	//{{AFX_DATA(SelectRotation)
-	enum { IDD = IDD_DIALOG1 };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_DIALOG1
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SelectRotation)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(SelectRotation)
 	afx_msg void OnRot0();

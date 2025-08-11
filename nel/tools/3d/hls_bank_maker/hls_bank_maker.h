@@ -19,9 +19,6 @@
 
 #include "nel/misc/types_nl.h"
 
-
-
-
 #endif // NL_HLS_BANK_MAKER_H
 
 /* End of hls_bank_maker.h */

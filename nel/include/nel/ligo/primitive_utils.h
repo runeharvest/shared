@@ -17,9 +17,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
 #ifndef PRIMITIVE_UTIL_H
 #define PRIMITIVE_UTIL_H
 
@@ -32,10 +29,9 @@
 #include <vector>
 #include <string>
 
-namespace NLLIGO
-{
+namespace NLLIGO {
 
-typedef std::vector<IPrimitive*>	TPrimitiveSet;
+typedef std::vector<IPrimitive *> TPrimitiveSet;
 
 /** Default predicate for primitive enumerator.
  *	This predicate test the class name of each primitive against a
@@ -43,14 +39,15 @@ typedef std::vector<IPrimitive*>	TPrimitiveSet;
  */
 struct TPrimitiveClassPredicate
 #ifndef NL_CPP17
-	: public std::unary_function<IPrimitive*, bool>
+    : public std::unary_function<IPrimitive *, bool>
 #endif
 {
 	TPrimitiveClassPredicate(const std::string &className)
-		:	ClassName(className)
-	{}
+	    : ClassName(className)
+	{
+	}
 
-	bool operator () (const IPrimitive *prim) const
+	bool operator()(const IPrimitive *prim) const
 	{
 		std::string *s;
 		if (prim->getPropertyByName("class", s) && *s == ClassName)
@@ -59,7 +56,7 @@ struct TPrimitiveClassPredicate
 	}
 
 	/// The primitive class name to check
-	const std::string		ClassName;
+	const std::string ClassName;
 };
 
 /** Predicate for primitive enumerator.
@@ -69,10 +66,11 @@ struct TPrimitiveClassPredicate
 struct TPrimitiveNamePredicate
 {
 	TPrimitiveNamePredicate(const std::string &name)
-		:	Name(name)
-	{}
+	    : Name(name)
+	{
+	}
 
-	bool operator () (const IPrimitive *prim) const
+	bool operator()(const IPrimitive *prim) const
 	{
 		std::string *s;
 		if (prim->getPropertyByName("name", s) && *s == Name)
@@ -81,7 +79,7 @@ struct TPrimitiveNamePredicate
 	}
 
 	/// The primitive name to check
-	const std::string		Name;
+	const std::string Name;
 };
 
 /** Predicate for primitive enumerator.
@@ -90,11 +88,12 @@ struct TPrimitiveNamePredicate
 struct TPrimitiveClassAndNamePredicate
 {
 	TPrimitiveClassAndNamePredicate(const std::string &className, const std::string &name)
-		:	ClassName(className),
-		Name(name)
-	{}
+	    : ClassName(className)
+	    , Name(name)
+	{
+	}
 
-	bool operator () (const IPrimitive *prim) const
+	bool operator()(const IPrimitive *prim) const
 	{
 		std::string *s;
 		if (prim->getPropertyByName("class", s) && *s == ClassName)
@@ -106,9 +105,9 @@ struct TPrimitiveClassAndNamePredicate
 	}
 
 	/// The primitive class name to check
-	const std::string		ClassName;
+	const std::string ClassName;
 	/// The primitive name to check
-	const std::string		Name;
+	const std::string Name;
 };
 
 /** Predicate for primitive enumerator.
@@ -117,10 +116,12 @@ struct TPrimitiveClassAndNamePredicate
 struct TPrimitivePropertyPredicate
 {
 	TPrimitivePropertyPredicate(const std::string &propName, const std::string &value)
-		:	PropName(propName), PropValue(value)
-	{}
+	    : PropName(propName)
+	    , PropValue(value)
+	{
+	}
 
-	bool operator () (const IPrimitive *prim) const
+	bool operator()(const IPrimitive *prim) const
 	{
 		std::string *s;
 		if (prim->getPropertyByName(PropName.c_str(), s) && *s == PropValue)
@@ -129,9 +130,9 @@ struct TPrimitivePropertyPredicate
 	}
 
 	/// The property name
-	const std::string		PropName;
+	const std::string PropName;
 	/// The property value
-	const std::string		PropValue;
+	const std::string PropValue;
 };
 
 /** The primitive enumerator class is used to iterate over primitive node that
@@ -153,9 +154,9 @@ public:
 	 *	method of the predicate. If the predicate return true, then the node is returned by getNextMatch.
 	 */
 	CPrimitiveEnumerator(IPrimitive *startPrim, Pred &predicate)
-		: _StartPrim(startPrim),
-		_Predicate(predicate),
-		_CurrentPrim(startPrim)
+	    : _StartPrim(startPrim)
+	    , _Predicate(predicate)
+	    , _CurrentPrim(startPrim)
 	{
 		// mark the root node as non checked
 		_IndexStack.push_back(std::numeric_limits<uint>::max());
@@ -200,31 +201,28 @@ public:
 		return NULL;
 	}
 
-
 private:
-
 	/// The root primitive for enumeration
-	IPrimitive	*_StartPrim;
+	IPrimitive *_StartPrim;
 	/// The predicate functor
-	Pred		_Predicate;
+	Pred _Predicate;
 	/// The current primitive
-	IPrimitive	*_CurrentPrim;
+	IPrimitive *_CurrentPrim;
 	/// for each recursion level, keep the index of the currently explored child.
-	std::vector<uint>	_IndexStack;
+	std::vector<uint> _IndexStack;
 };
 
 /** Build a primitive set that match the predicate
  *	This class makes use of the CPrimitiveEnumerator class to iterate
  *	on each valid node and fill the result primitive set.
-*/
+ */
 template <class Pred>
 class CPrimitiveSet
 {
 public:
-
 	void buildSet(IPrimitive *startPrimitive, Pred &predicate, TPrimitiveSet &result)
 	{
-		CPrimitiveEnumerator<Pred>	enumerator(startPrimitive, predicate);
+		CPrimitiveEnumerator<Pred> enumerator(startPrimitive, predicate);
 
 		IPrimitive *p;
 		while ((p = enumerator.getNextMatch()) != NULL)
@@ -239,10 +237,9 @@ template <class Pred>
 class CPrimitiveSetFilter
 {
 public:
-
-	void filterSet(const std::vector<IPrimitive*> &source, Pred &predicate, TPrimitiveSet &result)
+	void filterSet(const std::vector<IPrimitive *> &source, Pred &predicate, TPrimitiveSet &result)
 	{
-		std::vector<IPrimitive*>::const_iterator first(source.begin()), last(source.end());
+		std::vector<IPrimitive *>::const_iterator first(source.begin()), last(source.end());
 		for (; first != last; ++first)
 		{
 
@@ -260,14 +257,14 @@ inline bool loadXmlPrimitiveFile(CPrimitives &primDoc, const std::string &fileNa
 {
 	try
 	{
-		NLMISC::CIFile	fileIn(fileName);
+		NLMISC::CIFile fileIn(fileName);
 		NLMISC::CIXml xmlIn;
-		xmlIn.init (fileIn);
+		xmlIn.init(fileIn);
 
 		// Read it
-		return primDoc.read (xmlIn.getRootNode (), NLMISC::CFile::getFilename(fileName).c_str(), ligoConfig);
+		return primDoc.read(xmlIn.getRootNode(), NLMISC::CFile::getFilename(fileName).c_str(), ligoConfig);
 	}
-	catch(const NLMISC::Exception &e)
+	catch (const NLMISC::Exception &e)
 	{
 		nlwarning("Error reading input file '%s': '%s'", fileName.c_str(), e.what());
 		return false;
@@ -282,25 +279,25 @@ inline bool saveXmlPrimitiveFile(CPrimitives &primDoc, const std::string &fileNa
 {
 	try
 	{
-		NLMISC::COFile	fileOut(fileName);
-//		xmlDocPtr	xmlDoc = xmlNewDoc((xmlChar*)("1.0"));;
+		NLMISC::COFile fileOut(fileName);
+		//		xmlDocPtr	xmlDoc = xmlNewDoc((xmlChar*)("1.0"));;
 		NLMISC::COXml xmlOut;
-		xmlOut.init (&fileOut);
-//		NLMISC::CIXml xmlOut;
-//		xmlOut.init (fileOut);
+		xmlOut.init(&fileOut);
+		//		NLMISC::CIXml xmlOut;
+		//		xmlOut.init (fileOut);
 
 		// Read it
 		primDoc.write(xmlOut.getDocument(), fileName.c_str());
 
-		xmlOut.flush ();
+		xmlOut.flush();
 
 		fileOut.close();
 
 		return true;
 
-//		return xmlSaveFile(fileName.c_str(), xmlDoc) != -1;
+		//		return xmlSaveFile(fileName.c_str(), xmlDoc) != -1;
 	}
-	catch(const NLMISC::Exception &e)
+	catch (const NLMISC::Exception &e)
 	{
 		nlwarning("Error writing output file '%s': '%s'", fileName.c_str(), e.what());
 		return false;
@@ -316,7 +313,7 @@ inline bool saveXmlPrimitiveFile(CPrimitives &primDoc, const std::string &fileNa
 template <class Pred>
 IPrimitive *getPrimitiveChild(IPrimitive *parent, Pred &predicate)
 {
-	for (uint i=0; i<parent->getNumChildren(); ++i)
+	for (uint i = 0; i < parent->getNumChildren(); ++i)
 	{
 		IPrimitive *child;
 		if (parent->getChild(child, i) && predicate(child))
@@ -353,14 +350,13 @@ IPrimitive *getPrimitiveParent(IPrimitive *prim, Pred &predicate)
 template <class Pred>
 void filterPrimitiveChilds(IPrimitive *parent, Pred &predicate, TPrimitiveSet &result)
 {
-	for (uint i=0; i<parent->getNumChildren(); ++i)
+	for (uint i = 0; i < parent->getNumChildren(); ++i)
 	{
 		IPrimitive *child;
 		if (parent->getChild(child, i) && predicate(child))
 			result.push_back(child);
 	}
 }
-
 
 /** Build a string that represent the path to a node
  *	Note that the reverse operation does not guaranty to
@@ -373,6 +369,5 @@ std::string buildPrimPath(const IPrimitive *prim);
 void selectPrimByPath(IPrimitive *rootNode, const std::string &path, TPrimitiveSet &result);
 
 } // namespace NLLIGO
-
 
 #endif // #define PRIMITIVE_UTIL_H

@@ -39,11 +39,11 @@ class QUndoStack;
 class QScrollArea;
 
 namespace NLQT {
-	class CCommandLogDisplayer;
+class CCommandLogDisplayer;
 }
 
 namespace NLTOOLS {
-	class CPanoplyPreview;
+class CPanoplyPreview;
 
 /**
  * CMainWindow
@@ -80,7 +80,7 @@ private:
 
 	NLQT::CCommandLogDisplayer *m_CommandLog;
 	QDockWidget *m_CommandLogDock;
-	
+
 	QMenu *m_WidgetsMenu;
 	QMenu *m_HelpMenu;
 

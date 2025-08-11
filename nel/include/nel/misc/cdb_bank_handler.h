@@ -23,7 +23,7 @@
 #include <vector>
 #include "nel/misc/types_nl.h"
 
-namespace NLMISC{
+namespace NLMISC {
 
 /**
  @brief Manages the bank names and mappings of the CDB it's associated with
@@ -35,75 +35,76 @@ namespace NLMISC{
  and the other way around.
 
  */
-class CCDBBankHandler{
+class CCDBBankHandler
+{
 public:
 	/**
 	 @brief The class' constructor
 	 @param maxbanks the maximum number of banks we need to handle
 	*/
-	CCDBBankHandler( uint maxbanks );
+	CCDBBankHandler(uint maxbanks);
 
 	/// Very surprisingly this is the destructor
-	~CCDBBankHandler(){}
+	~CCDBBankHandler() { }
 
 	/**
 	 @brief   Returns the unified (node) index for the specified bank Id.
 	 @param   bank The bank whose uid we need.
 	 @return  Returns an uid or static_cast< uint >( -1 ) on failure.
 	*/
-	uint getUIDForBank( uint bank ) const;
+	uint getUIDForBank(uint bank) const;
 
 	/**
 	 @brief   Returns the bank Id for the specified unified (node) index.
 	 @param   uid The unified (node) index we need to translate to bank Id.
 	 @return  Returns a bank Id.
 	*/
-	uint getBankForUID( uint uid ) const{ return _UnifiedIndexToBank[ uid ]; }
+	uint getBankForUID(uint uid) const { return _UnifiedIndexToBank[uid]; }
 
 	/// Returns the last unified (node) index we mapped.
-	uint getLastUnifiedIndex() const{ return _CDBLastUnifiedIndex; }
+	uint getLastUnifiedIndex() const { return _CDBLastUnifiedIndex; }
 
 	/**
 	 @brief   Returns the number of bits used to store the number of nodes that belong to this bank.
 	 @param   bank The banks whose id bits we need.
 	 @return  Returns the number of bits used to store the number of nodes that belong to this bank.
 	*/
-	uint getFirstLevelIdBits( uint bank ) const{ return _FirstLevelIdBitsByBank[ bank ]; }
+	uint getFirstLevelIdBits(uint bank) const { return _FirstLevelIdBitsByBank[bank]; }
 
 	/**
 	 @brief   Returns the name of the specified bank.
 	 @param   bank The id of the bank we need the name of.
 	 @return  Returns the name of the specified bank.
 	*/
-	std::string getBankName( uint bank ) const{ return _CDBBankNames[ bank ]; }
+	std::string getBankName(uint bank) const { return _CDBBankNames[bank]; }
 
 	/**
 	 @brief   Looks up the bank Id of the bank name specified.
 	 @param   name The name of the bank whose Id we need.
 	 @return  Returns the id of the bank, or static_cast< uint >( -1 ) on fail.
 	*/
-	uint getBankByName( const std::string &name ) const;
+	uint getBankByName(const std::string &name) const;
 
 	/**
 	 @brief   Maps the specified bank name to a unified (node) index and vica versa.
 	 @param   bankName Name of the bank to map.
 	*/
-	void mapNodeByBank( const std::string &bankName );
+	void mapNodeByBank(const std::string &bankName);
 
 	/**
 	 @brief   Loads the known bank names from an array ( the order decides the bank Id ).
 	 @param   strings The array of the banks names.
 	 @param   size    The size of the array.
 	*/
-	void fillBankNames( const char **strings, uint size );
+	void fillBankNames(const char **strings, uint size);
 
 	/// Resets the node to bank mapping vector
-	void resetNodeBankMapping(){ _UnifiedIndexToBank.clear(); }
+	void resetNodeBankMapping() { _UnifiedIndexToBank.clear(); }
 
 	/// Resets all maps, and sets _CDBLastUnifiedIndex to 0.
 	void reset();
 
-	uint getUnifiedIndexToBankSize() const{ return _UnifiedIndexToBank.size(); }
+	uint getUnifiedIndexToBankSize() const { return _UnifiedIndexToBank.size(); }
 
 	/// Calculates the number of bits used to store the number of nodes that belong to the banks.
 	void calcIdBitsByBank();
@@ -114,29 +115,29 @@ public:
 	 @param   index The index of the node within the bank.
 	 @return  Returns the unified (node) index of the specified bank node.
 	*/
-	uint getServerToClientUIDMapping( uint bank, uint index ) const{ return _CDBBankToUnifiedIndexMapping[ bank ][ index ]; }
+	uint getServerToClientUIDMapping(uint bank, uint index) const { return _CDBBankToUnifiedIndexMapping[bank][index]; }
 
 	/**
 	 @brief Resizes the bank holders. WARNING: Resets data contained.
 	 @param newSize - The new maximum number of banks.
 	 */
-	void resize( uint newSize );
+	void resize(uint newSize);
 
 private:
 	/// Mapping from server database index to client database index (first-level nodes)
-	std::vector< std::vector< uint > > _CDBBankToUnifiedIndexMapping;
-	
+	std::vector<std::vector<uint>> _CDBBankToUnifiedIndexMapping;
+
 	/// Mapping from client database index to bank IDs (first-level nodes)
-	std::vector< uint > _UnifiedIndexToBank;
-	
+	std::vector<uint> _UnifiedIndexToBank;
+
 	/// Last index mapped
 	uint _CDBLastUnifiedIndex;
-	
+
 	/// Number of bits for first-level branches, by bank
-	std::vector< uint > _FirstLevelIdBitsByBank;
+	std::vector<uint> _FirstLevelIdBitsByBank;
 
 	/// Names of the CDB banks
-	std::vector< std::string > _CDBBankNames;
+	std::vector<std::string> _CDBBankNames;
 
 	/// The number of banks used
 	uint maxBanks;
@@ -145,4 +146,3 @@ private:
 }
 
 #endif
-

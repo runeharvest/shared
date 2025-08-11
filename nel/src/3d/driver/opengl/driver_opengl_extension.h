@@ -21,13 +21,12 @@
 #ifndef NL_OPENGL_EXTENSION_H
 #define NL_OPENGL_EXTENSION_H
 
-
 #include "nel/misc/types_nl.h"
 #include "nel/misc/string_common.h"
 
 #include "driver_opengl_extension_def.h"
 
-namespace	NL3D {
+namespace NL3D {
 
 #ifdef NL_STATIC
 #ifdef USE_OPENGLES
@@ -39,144 +38,143 @@ namespace NLDRIVERGL {
 
 // ***************************************************************************
 /// The extensions used by NL3D.
-struct	CGlExtensions
+struct CGlExtensions
 {
 	// Is this driver a correct OpenGL 1.2 driver?
-	bool	Version1_2;
+	bool Version1_2;
 
 	// Required Extensions.
-	bool	ARBMultiTexture;
-	uint	NbTextureStages;
-	bool	EXTTextureEnvCombine;
+	bool ARBMultiTexture;
+	uint NbTextureStages;
+	bool EXTTextureEnvCombine;
 
 	// Optional Extensions.
 	// NB: Fence extension is not here, because NVVertexArrayRange is false if GL_NV_fence is not here.
-	bool	NVVertexArrayRange;
-	uint	NVVertexArrayRangeMaxVertex;
-	bool	EXTTextureCompressionS3TC;
-	bool	EXTVertexWeighting;
-	bool	EXTSeparateSpecularColor;
-	bool	NVTextureEnvCombine4;
-	bool	ARBTextureCubeMap;
-	bool	NVVertexProgram;
-	bool	EXTVertexShader;
-	bool	NVTextureShader;
-	bool	NVOcclusionQuery;
-	bool	ARBOcclusionQuery;
-	bool	NVTextureRectangle;
-	bool	EXTTextureRectangle;
-	bool	ARBTextureRectangle;
-	bool	FrameBufferObject;
-	bool	FrameBufferBlit;
-	bool	FrameBufferMultisample;
-	bool	PackedDepthStencil;
-	bool	EXTTextureFilterAnisotropic;
-	float	EXTTextureFilterAnisotropicMaximum;
+	bool NVVertexArrayRange;
+	uint NVVertexArrayRangeMaxVertex;
+	bool EXTTextureCompressionS3TC;
+	bool EXTVertexWeighting;
+	bool EXTSeparateSpecularColor;
+	bool NVTextureEnvCombine4;
+	bool ARBTextureCubeMap;
+	bool NVVertexProgram;
+	bool EXTVertexShader;
+	bool NVTextureShader;
+	bool NVOcclusionQuery;
+	bool ARBOcclusionQuery;
+	bool NVTextureRectangle;
+	bool EXTTextureRectangle;
+	bool ARBTextureRectangle;
+	bool FrameBufferObject;
+	bool FrameBufferBlit;
+	bool FrameBufferMultisample;
+	bool PackedDepthStencil;
+	bool EXTTextureFilterAnisotropic;
+	float EXTTextureFilterAnisotropicMaximum;
 
 	// true if NVVertexProgram and if we know that VP is emulated
-	bool	NVVertexProgramEmulated;
-	bool	EXTSecondaryColor;
-	bool	EXTBlendColor;
+	bool NVVertexProgramEmulated;
+	bool EXTSecondaryColor;
+	bool EXTBlendColor;
 	// NVVertexArrayRange2.
-	bool	NVVertexArrayRange2;
+	bool NVVertexArrayRange2;
 	// equal to GL_VERTEX_ARRAY_RANGE_WITHOUT_FLUSH_NV if possible, or GL_VERTEX_ARRAY_RANGE_NV
-	uint	NVStateVARWithoutFlush;
+	uint NVStateVARWithoutFlush;
 
 	// WGL ARB extensions, true if supported
-	bool	WGLARBPBuffer;
-	bool	WGLARBPixelFormat;
-	bool	WGLEXTSwapControl;
+	bool WGLARBPBuffer;
+	bool WGLARBPixelFormat;
+	bool WGLEXTSwapControl;
 
 	// GLX extensions, true if supported
-	bool	GLXEXTSwapControl;
-	bool	GLXSGISwapControl;
-	bool	GLXMESASwapControl;
-	bool	GLXMESAQueryRenderer;
+	bool GLXEXTSwapControl;
+	bool GLXSGISwapControl;
+	bool GLXMESASwapControl;
+	bool GLXMESAQueryRenderer;
 
 	// ATI Extensions.
-	bool	ATIVertexArrayObject;
-	bool	ATIMapObjectBuffer;
-	bool	ATITextureEnvCombine3;
-	bool	ATIEnvMapBumpMap;
-	bool	ATIFragmentShader;
-	bool	ATIXTextureEnvRoute;
-	bool	ATIVertexAttribArrayObject;
+	bool ATIVertexArrayObject;
+	bool ATIMapObjectBuffer;
+	bool ATITextureEnvCombine3;
+	bool ATIEnvMapBumpMap;
+	bool ATIFragmentShader;
+	bool ATIXTextureEnvRoute;
+	bool ATIVertexAttribArrayObject;
 	// ARB Extensions
-	bool	ARBTextureCompression;
-	bool	ARBFragmentProgram;
-	bool	ARBVertexBufferObject;
-	bool	ARBMapBufferRange;
-	bool	ARBVertexProgram;
-	bool	ARBTextureNonPowerOfTwo;
-	bool	ARBMultisample;
-	bool	ARBFragmentShader;
+	bool ARBTextureCompression;
+	bool ARBFragmentProgram;
+	bool ARBVertexBufferObject;
+	bool ARBMapBufferRange;
+	bool ARBVertexProgram;
+	bool ARBTextureNonPowerOfTwo;
+	bool ARBMultisample;
+	bool ARBFragmentShader;
 
 	// NV Pixel Programs
-	bool	NVFragmentProgram2;
+	bool NVFragmentProgram2;
 
-	bool	OESDrawTexture;
-	bool	OESMapBuffer;
+	bool OESDrawTexture;
+	bool OESMapBuffer;
 
 	// extensions to get memory info
 
 	// GL_NVX_gpu_memory_info
-	bool	NVXGPUMemoryInfo;
+	bool NVXGPUMemoryInfo;
 
 	// GL_ATI_meminfo
-	bool	ATIMeminfo;
+	bool ATIMeminfo;
 
 	// WGL_AMD_gpu_association
-	bool	WGLAMDGPUAssociation;
+	bool WGLAMDGPUAssociation;
 
 	// WGL_NV_gpu_affinity
-	bool	WGLNVGPUAffinity;
+	bool WGLNVGPUAffinity;
 
 public:
-
 	/// \name Disable Hardware feature. False by default. setuped by IDriver
 	// @{
-	bool				DisableHardwareVertexProgram;
-	bool				DisableHardwarePixelProgram;
-	bool				DisableHardwareVertexArrayAGP;
-	bool				DisableHardwareTextureShader;
+	bool DisableHardwareVertexProgram;
+	bool DisableHardwarePixelProgram;
+	bool DisableHardwareVertexArrayAGP;
+	bool DisableHardwareTextureShader;
 	// @}
 
 public:
 	CGlExtensions()
 	{
 		// Fill all false by default.
-		Version1_2= false;
-		ARBMultiTexture= false;
-		NbTextureStages= 1;
-		EXTTextureEnvCombine= false;
-		ARBTextureCompression= false;
-		NVVertexArrayRange= false;
-		NVVertexArrayRangeMaxVertex= 0;
-		EXTTextureCompressionS3TC= false;
-		EXTVertexWeighting= false;
-		EXTSeparateSpecularColor= false;
-		NVTextureEnvCombine4= false;
-		ATITextureEnvCombine3= false;
-		ATIXTextureEnvRoute= false;
-		ARBTextureCubeMap= false;
-		NVTextureShader= false;
-		NVVertexProgram= false;
-		NVVertexProgramEmulated= false;
-		EXTSecondaryColor= false;
-		WGLARBPBuffer= false;
-		WGLARBPixelFormat= false;
-		WGLEXTSwapControl= false;
-		GLXEXTSwapControl= false;
-		GLXSGISwapControl= false;
-		GLXMESASwapControl= false;
-		GLXMESAQueryRenderer= false;
-		EXTBlendColor= false;
-		ATIVertexArrayObject= false;
+		Version1_2 = false;
+		ARBMultiTexture = false;
+		NbTextureStages = 1;
+		EXTTextureEnvCombine = false;
+		ARBTextureCompression = false;
+		NVVertexArrayRange = false;
+		NVVertexArrayRangeMaxVertex = 0;
+		EXTTextureCompressionS3TC = false;
+		EXTVertexWeighting = false;
+		EXTSeparateSpecularColor = false;
+		NVTextureEnvCombine4 = false;
+		ATITextureEnvCombine3 = false;
+		ATIXTextureEnvRoute = false;
+		ARBTextureCubeMap = false;
+		NVTextureShader = false;
+		NVVertexProgram = false;
+		NVVertexProgramEmulated = false;
+		EXTSecondaryColor = false;
+		WGLARBPBuffer = false;
+		WGLARBPixelFormat = false;
+		WGLEXTSwapControl = false;
+		GLXEXTSwapControl = false;
+		GLXSGISwapControl = false;
+		GLXMESASwapControl = false;
+		GLXMESAQueryRenderer = false;
+		EXTBlendColor = false;
+		ATIVertexArrayObject = false;
 		ATIEnvMapBumpMap = false;
 		ATIFragmentShader = false;
 		ATIMapObjectBuffer = false;
 		ATIVertexAttribArrayObject = false;
-		EXTVertexShader= false;
+		EXTVertexShader = false;
 		ARBFragmentProgram = false;
 		ARBVertexBufferObject = false;
 		ARBMapBufferRange = false;
@@ -206,10 +204,10 @@ public:
 		WGLAMDGPUAssociation = false;
 
 		/// \name Disable Hardware feature. False by default. setuped by IDriver
-		DisableHardwareVertexProgram= false;
-		DisableHardwarePixelProgram= false;
-		DisableHardwareVertexArrayAGP= false;
-		DisableHardwareTextureShader= false;
+		DisableHardwareVertexProgram = false;
+		DisableHardwarePixelProgram = false;
+		DisableHardwareVertexArrayAGP = false;
+		DisableHardwareTextureShader = false;
 	}
 
 	std::string toString()
@@ -290,7 +288,6 @@ public:
 
 		return result;
 	}
-
 };
 
 // ***************************************************************************
@@ -319,56 +316,56 @@ void registerGlExtensions(CGlExtensions &ext);
 // ***************************************************************************
 // The exported function names
 /* NB: We named all like nglActiveTextureARB (n for NEL :)
-	to avoid compilation conflict with future version of gl.h
-	eg: gl.h Version 1.2 define glActiveTextureARB so we can't use it.
+    to avoid compilation conflict with future version of gl.h
+    eg: gl.h Version 1.2 define glActiveTextureARB so we can't use it.
 
-	NB: we do it for all (EXT, NV, ARB extension) even it should be useful only for ARB ones.
+    NB: we do it for all (EXT, NV, ARB extension) even it should be useful only for ARB ones.
 */
 
 #ifdef USE_OPENGLES
 
 // OES_mapbuffer.
 //===============
-extern PFNGLMAPBUFFEROESPROC				nglMapBufferOES;
-extern PFNGLUNMAPBUFFEROESPROC				nglUnmapBufferOES;
-extern PFNGLGETBUFFERPOINTERVOESPROC		nglGetBufferPointervOES;
+extern PFNGLMAPBUFFEROESPROC nglMapBufferOES;
+extern PFNGLUNMAPBUFFEROESPROC nglUnmapBufferOES;
+extern PFNGLGETBUFFERPOINTERVOESPROC nglGetBufferPointervOES;
 
-extern PFNGLDRAWTEXFOESPROC					nglDrawTexfOES;
+extern PFNGLDRAWTEXFOESPROC nglDrawTexfOES;
 
 // GL_OES_framebuffer_object
-extern PFNGLISRENDERBUFFEROESPROC			nglIsRenderbufferOES;
-extern PFNGLBINDRENDERBUFFEROESPROC			nglBindRenderbufferOES;
-extern PFNGLDELETERENDERBUFFERSOESPROC		nglDeleteRenderbuffersOES;
-extern PFNGLGENRENDERBUFFERSOESPROC			nglGenRenderbuffersOES;
-extern PFNGLRENDERBUFFERSTORAGEOESPROC		nglRenderbufferStorageOES;
-extern PFNGLGETRENDERBUFFERPARAMETERIVOESPROC	nglGetRenderbufferParameterivOES;
-extern PFNGLISFRAMEBUFFEROESPROC			nglIsFramebufferOES;
-extern PFNGLBINDFRAMEBUFFEROESPROC			nglBindFramebufferOES;
-extern PFNGLDELETEFRAMEBUFFERSOESPROC		nglDeleteFramebuffersOES;
-extern PFNGLGENFRAMEBUFFERSOESPROC			nglGenFramebuffersOES;
-extern PFNGLCHECKFRAMEBUFFERSTATUSOESPROC	nglCheckFramebufferStatusOES;
-extern PFNGLFRAMEBUFFERRENDERBUFFEROESPROC	nglFramebufferRenderbufferOES;
-extern PFNGLFRAMEBUFFERTEXTURE2DOESPROC		nglFramebufferTexture2DOES;
-extern PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVOESPROC	nglGetFramebufferAttachmentParameterivOES;
-extern PFNGLGENERATEMIPMAPOESPROC			nglGenerateMipmapOES;
+extern PFNGLISRENDERBUFFEROESPROC nglIsRenderbufferOES;
+extern PFNGLBINDRENDERBUFFEROESPROC nglBindRenderbufferOES;
+extern PFNGLDELETERENDERBUFFERSOESPROC nglDeleteRenderbuffersOES;
+extern PFNGLGENRENDERBUFFERSOESPROC nglGenRenderbuffersOES;
+extern PFNGLRENDERBUFFERSTORAGEOESPROC nglRenderbufferStorageOES;
+extern PFNGLGETRENDERBUFFERPARAMETERIVOESPROC nglGetRenderbufferParameterivOES;
+extern PFNGLISFRAMEBUFFEROESPROC nglIsFramebufferOES;
+extern PFNGLBINDFRAMEBUFFEROESPROC nglBindFramebufferOES;
+extern PFNGLDELETEFRAMEBUFFERSOESPROC nglDeleteFramebuffersOES;
+extern PFNGLGENFRAMEBUFFERSOESPROC nglGenFramebuffersOES;
+extern PFNGLCHECKFRAMEBUFFERSTATUSOESPROC nglCheckFramebufferStatusOES;
+extern PFNGLFRAMEBUFFERRENDERBUFFEROESPROC nglFramebufferRenderbufferOES;
+extern PFNGLFRAMEBUFFERTEXTURE2DOESPROC nglFramebufferTexture2DOES;
+extern PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVOESPROC nglGetFramebufferAttachmentParameterivOES;
+extern PFNGLGENERATEMIPMAPOESPROC nglGenerateMipmapOES;
 
 // GL_OES_texture_cube_map
-extern PFNGLTEXGENFOESPROC					nglTexGenfOES;
-extern PFNGLTEXGENFVOESPROC					nglTexGenfvOES;
-extern PFNGLTEXGENIOESPROC					nglTexGeniOES;
-extern PFNGLTEXGENIVOESPROC					nglTexGenivOES;
-extern PFNGLTEXGENXOESPROC					nglTexGenxOES;
-extern PFNGLTEXGENXVOESPROC					nglTexGenxvOES;
-extern PFNGLGETTEXGENFVOESPROC				nglGetTexGenfvOES;
-extern PFNGLGETTEXGENIVOESPROC				nglGetTexGenivOES;
-extern PFNGLGETTEXGENXVOESPROC				nglGetTexGenxvOES;
+extern PFNGLTEXGENFOESPROC nglTexGenfOES;
+extern PFNGLTEXGENFVOESPROC nglTexGenfvOES;
+extern PFNGLTEXGENIOESPROC nglTexGeniOES;
+extern PFNGLTEXGENIVOESPROC nglTexGenivOES;
+extern PFNGLTEXGENXOESPROC nglTexGenxOES;
+extern PFNGLTEXGENXVOESPROC nglTexGenxvOES;
+extern PFNGLGETTEXGENFVOESPROC nglGetTexGenfvOES;
+extern PFNGLGETTEXGENIVOESPROC nglGetTexGenivOES;
+extern PFNGLGETTEXGENXVOESPROC nglGetTexGenxvOES;
 
 #else
 
 // ARB_multitexture
 //=================
-extern PFNGLACTIVETEXTUREARBPROC		nglActiveTextureARB;
-extern PFNGLCLIENTACTIVETEXTUREARBPROC	nglClientActiveTextureARB;
+extern PFNGLACTIVETEXTUREARBPROC nglActiveTextureARB;
+extern PFNGLCLIENTACTIVETEXTUREARBPROC nglClientActiveTextureARB;
 
 extern PFNGLMULTITEXCOORD1SARBPROC nglMultiTexCoord1sARB;
 extern PFNGLMULTITEXCOORD1IARBPROC nglMultiTexCoord1iARB;
@@ -405,236 +402,223 @@ extern PFNGLMULTITEXCOORD4IVARBPROC nglMultiTexCoord4ivARB;
 extern PFNGLMULTITEXCOORD4FVARBPROC nglMultiTexCoord4fvARB;
 extern PFNGLMULTITEXCOORD4DVARBPROC nglMultiTexCoord4dvARB;
 
-
 // ARB_TextureCompression.
 //========================
-extern PFNGLCOMPRESSEDTEXIMAGE3DARBPROC		nglCompressedTexImage3DARB;
-extern PFNGLCOMPRESSEDTEXIMAGE2DARBPROC		nglCompressedTexImage2DARB;
-extern PFNGLCOMPRESSEDTEXIMAGE1DARBPROC		nglCompressedTexImage1DARB;
-extern PFNGLCOMPRESSEDTEXSUBIMAGE3DARBPROC	nglCompressedTexSubImage3DARB;
-extern PFNGLCOMPRESSEDTEXSUBIMAGE2DARBPROC	nglCompressedTexSubImage2DARB;
-extern PFNGLCOMPRESSEDTEXSUBIMAGE1DARBPROC	nglCompressedTexSubImage1DARB;
-extern PFNGLGETCOMPRESSEDTEXIMAGEARBPROC	nglGetCompressedTexImageARB;
-
+extern PFNGLCOMPRESSEDTEXIMAGE3DARBPROC nglCompressedTexImage3DARB;
+extern PFNGLCOMPRESSEDTEXIMAGE2DARBPROC nglCompressedTexImage2DARB;
+extern PFNGLCOMPRESSEDTEXIMAGE1DARBPROC nglCompressedTexImage1DARB;
+extern PFNGLCOMPRESSEDTEXSUBIMAGE3DARBPROC nglCompressedTexSubImage3DARB;
+extern PFNGLCOMPRESSEDTEXSUBIMAGE2DARBPROC nglCompressedTexSubImage2DARB;
+extern PFNGLCOMPRESSEDTEXSUBIMAGE1DARBPROC nglCompressedTexSubImage1DARB;
+extern PFNGLGETCOMPRESSEDTEXIMAGEARBPROC nglGetCompressedTexImageARB;
 
 // VertexArrayRangeNV.
 //====================
-extern PFNGLFLUSHVERTEXARRAYRANGENVPROC		nglFlushVertexArrayRangeNV;
-extern PFNGLVERTEXARRAYRANGENVPROC			nglVertexArrayRangeNV;
+extern PFNGLFLUSHVERTEXARRAYRANGENVPROC nglFlushVertexArrayRangeNV;
+extern PFNGLVERTEXARRAYRANGENVPROC nglVertexArrayRangeNV;
 
 #ifdef NL_OS_WINDOWS
-extern PFNWGLALLOCATEMEMORYNVPROC				nwglAllocateMemoryNV;
-extern PFNWGLFREEMEMORYNVPROC					nwglFreeMemoryNV;
+extern PFNWGLALLOCATEMEMORYNVPROC nwglAllocateMemoryNV;
+extern PFNWGLFREEMEMORYNVPROC nwglFreeMemoryNV;
 #elif defined(NL_OS_UNIX) && !defined(NL_OS_MAC)
-extern PFNGLXALLOCATEMEMORYNVPROC			nglXAllocateMemoryNV;
-extern PFNGLXFREEMEMORYNVPROC				nglXFreeMemoryNV;
+extern PFNGLXALLOCATEMEMORYNVPROC nglXAllocateMemoryNV;
+extern PFNGLXFREEMEMORYNVPROC nglXFreeMemoryNV;
 #endif
-
 
 // FenceNV.
 //====================
-extern PFNGLDELETEFENCESNVPROC				nglDeleteFencesNV;
-extern PFNGLGENFENCESNVPROC					nglGenFencesNV;
-extern PFNGLISFENCENVPROC					nglIsFenceNV;
-extern PFNGLTESTFENCENVPROC					nglTestFenceNV;
-extern PFNGLGETFENCEIVNVPROC				nglGetFenceivNV;
-extern PFNGLFINISHFENCENVPROC				nglFinishFenceNV;
-extern PFNGLSETFENCENVPROC					nglSetFenceNV;
-
+extern PFNGLDELETEFENCESNVPROC nglDeleteFencesNV;
+extern PFNGLGENFENCESNVPROC nglGenFencesNV;
+extern PFNGLISFENCENVPROC nglIsFenceNV;
+extern PFNGLTESTFENCENVPROC nglTestFenceNV;
+extern PFNGLGETFENCEIVNVPROC nglGetFenceivNV;
+extern PFNGLFINISHFENCENVPROC nglFinishFenceNV;
+extern PFNGLSETFENCENVPROC nglSetFenceNV;
 
 // VertexWeighting.
 //==================
-extern PFNGLVERTEXWEIGHTFEXTPROC			nglVertexWeightfEXT;
-extern PFNGLVERTEXWEIGHTFVEXTPROC			nglVertexWeightfvEXT;
-extern PFNGLVERTEXWEIGHTPOINTEREXTPROC		nglVertexWeightPointerEXT;
-
+extern PFNGLVERTEXWEIGHTFEXTPROC nglVertexWeightfEXT;
+extern PFNGLVERTEXWEIGHTFVEXTPROC nglVertexWeightfvEXT;
+extern PFNGLVERTEXWEIGHTPOINTEREXTPROC nglVertexWeightPointerEXT;
 
 // VertexProgramExtension.
 //========================
-extern PFNGLAREPROGRAMSRESIDENTNVPROC		nglAreProgramsResidentNV;
-extern PFNGLBINDPROGRAMNVPROC				nglBindProgramNV;
-extern PFNGLDELETEPROGRAMSNVPROC			nglDeleteProgramsNV;
-extern PFNGLEXECUTEPROGRAMNVPROC			nglExecuteProgramNV;
-extern PFNGLGENPROGRAMSNVPROC				nglGenProgramsNV;
-extern PFNGLGETPROGRAMPARAMETERDVNVPROC		nglGetProgramParameterdvNV;
-extern PFNGLGETPROGRAMPARAMETERFVNVPROC		nglGetProgramParameterfvNV;
-extern PFNGLGETPROGRAMIVNVPROC				nglGetProgramivNV;
-extern PFNGLGETPROGRAMSTRINGNVPROC			nglGetProgramStringNV;
-extern PFNGLGETTRACKMATRIXIVNVPROC			nglGetTrackMatrixivNV;
-extern PFNGLGETVERTEXATTRIBDVNVPROC			nglGetVertexAttribdvNV;
-extern PFNGLGETVERTEXATTRIBFVNVPROC			nglGetVertexAttribfvNV;
-extern PFNGLGETVERTEXATTRIBIVNVPROC			nglGetVertexAttribivNV;
-extern PFNGLGETVERTEXATTRIBPOINTERVNVPROC	nglGetVertexAttribPointervNV;
-extern PFNGLISPROGRAMNVPROC					nglIsProgramNV;
-extern PFNGLLOADPROGRAMNVPROC				nglLoadProgramNV;
-extern PFNGLPROGRAMPARAMETER4DNVPROC		nglProgramParameter4dNV;
-extern PFNGLPROGRAMPARAMETER4DVNVPROC		nglProgramParameter4dvNV;
-extern PFNGLPROGRAMPARAMETER4FNVPROC		nglProgramParameter4fNV;
-extern PFNGLPROGRAMPARAMETER4FVNVPROC		nglProgramParameter4fvNV;
-extern PFNGLPROGRAMPARAMETERS4DVNVPROC		nglProgramParameters4dvNV;
-extern PFNGLPROGRAMPARAMETERS4FVNVPROC		nglProgramParameters4fvNV;
-extern PFNGLREQUESTRESIDENTPROGRAMSNVPROC	nglRequestResidentProgramsNV;
-extern PFNGLTRACKMATRIXNVPROC				nglTrackMatrixNV;
-extern PFNGLVERTEXATTRIBPOINTERNVPROC		nglVertexAttribPointerNV;
-extern PFNGLVERTEXATTRIB1DNVPROC			nglVertexAttrib1dNV;
-extern PFNGLVERTEXATTRIB1DVNVPROC			nglVertexAttrib1dvNV;
-extern PFNGLVERTEXATTRIB1FNVPROC			nglVertexAttrib1fNV;
-extern PFNGLVERTEXATTRIB1FVNVPROC			nglVertexAttrib1fvNV;
-extern PFNGLVERTEXATTRIB1SNVPROC			nglVertexAttrib1sNV;
-extern PFNGLVERTEXATTRIB1SVNVPROC			nglVertexAttrib1svNV;
-extern PFNGLVERTEXATTRIB2DNVPROC			nglVertexAttrib2dNV;
-extern PFNGLVERTEXATTRIB2DVNVPROC			nglVertexAttrib2dvNV;
-extern PFNGLVERTEXATTRIB2FNVPROC			nglVertexAttrib2fNV;
-extern PFNGLVERTEXATTRIB2FVNVPROC			nglVertexAttrib2fvNV;
-extern PFNGLVERTEXATTRIB2SNVPROC			nglVertexAttrib2sNV;
-extern PFNGLVERTEXATTRIB2SVNVPROC			nglVertexAttrib2svNV;
-extern PFNGLVERTEXATTRIB3DNVPROC			nglVertexAttrib3dNV;
-extern PFNGLVERTEXATTRIB3DVNVPROC			nglVertexAttrib3dvNV;
-extern PFNGLVERTEXATTRIB3FNVPROC			nglVertexAttrib3fNV;
-extern PFNGLVERTEXATTRIB3FVNVPROC			nglVertexAttrib3fvNV;
-extern PFNGLVERTEXATTRIB3SNVPROC			nglVertexAttrib3sNV;
-extern PFNGLVERTEXATTRIB3SVNVPROC			nglVertexAttrib3svNV;
-extern PFNGLVERTEXATTRIB4DNVPROC			nglVertexAttrib4dNV;
-extern PFNGLVERTEXATTRIB4DVNVPROC			nglVertexAttrib4dvNV;
-extern PFNGLVERTEXATTRIB4FNVPROC			nglVertexAttrib4fNV;
-extern PFNGLVERTEXATTRIB4FVNVPROC			nglVertexAttrib4fvNV;
-extern PFNGLVERTEXATTRIB4SNVPROC			nglVertexAttrib4sNV;
-extern PFNGLVERTEXATTRIB4SVNVPROC			nglVertexAttrib4svNV;
-extern PFNGLVERTEXATTRIB4UBVNVPROC			nglVertexAttrib4ubvNV;
-extern PFNGLVERTEXATTRIBS1DVNVPROC			nglVertexAttribs1dvNV;
-extern PFNGLVERTEXATTRIBS1FVNVPROC			nglVertexAttribs1fvNV;
-extern PFNGLVERTEXATTRIBS1SVNVPROC			nglVertexAttribs1svNV;
-extern PFNGLVERTEXATTRIBS2DVNVPROC			nglVertexAttribs2dvNV;
-extern PFNGLVERTEXATTRIBS2FVNVPROC			nglVertexAttribs2fvNV;
-extern PFNGLVERTEXATTRIBS2SVNVPROC			nglVertexAttribs2svNV;
-extern PFNGLVERTEXATTRIBS3DVNVPROC			nglVertexAttribs3dvNV;
-extern PFNGLVERTEXATTRIBS3FVNVPROC			nglVertexAttribs3fvNV;
-extern PFNGLVERTEXATTRIBS3SVNVPROC			nglVertexAttribs3svNV;
-extern PFNGLVERTEXATTRIBS4DVNVPROC			nglVertexAttribs4dvNV;
-extern PFNGLVERTEXATTRIBS4FVNVPROC			nglVertexAttribs4fvNV;
-extern PFNGLVERTEXATTRIBS4SVNVPROC			nglVertexAttribs4svNV;
-extern PFNGLVERTEXATTRIBS4UBVNVPROC			nglVertexAttribs4ubvNV;
+extern PFNGLAREPROGRAMSRESIDENTNVPROC nglAreProgramsResidentNV;
+extern PFNGLBINDPROGRAMNVPROC nglBindProgramNV;
+extern PFNGLDELETEPROGRAMSNVPROC nglDeleteProgramsNV;
+extern PFNGLEXECUTEPROGRAMNVPROC nglExecuteProgramNV;
+extern PFNGLGENPROGRAMSNVPROC nglGenProgramsNV;
+extern PFNGLGETPROGRAMPARAMETERDVNVPROC nglGetProgramParameterdvNV;
+extern PFNGLGETPROGRAMPARAMETERFVNVPROC nglGetProgramParameterfvNV;
+extern PFNGLGETPROGRAMIVNVPROC nglGetProgramivNV;
+extern PFNGLGETPROGRAMSTRINGNVPROC nglGetProgramStringNV;
+extern PFNGLGETTRACKMATRIXIVNVPROC nglGetTrackMatrixivNV;
+extern PFNGLGETVERTEXATTRIBDVNVPROC nglGetVertexAttribdvNV;
+extern PFNGLGETVERTEXATTRIBFVNVPROC nglGetVertexAttribfvNV;
+extern PFNGLGETVERTEXATTRIBIVNVPROC nglGetVertexAttribivNV;
+extern PFNGLGETVERTEXATTRIBPOINTERVNVPROC nglGetVertexAttribPointervNV;
+extern PFNGLISPROGRAMNVPROC nglIsProgramNV;
+extern PFNGLLOADPROGRAMNVPROC nglLoadProgramNV;
+extern PFNGLPROGRAMPARAMETER4DNVPROC nglProgramParameter4dNV;
+extern PFNGLPROGRAMPARAMETER4DVNVPROC nglProgramParameter4dvNV;
+extern PFNGLPROGRAMPARAMETER4FNVPROC nglProgramParameter4fNV;
+extern PFNGLPROGRAMPARAMETER4FVNVPROC nglProgramParameter4fvNV;
+extern PFNGLPROGRAMPARAMETERS4DVNVPROC nglProgramParameters4dvNV;
+extern PFNGLPROGRAMPARAMETERS4FVNVPROC nglProgramParameters4fvNV;
+extern PFNGLREQUESTRESIDENTPROGRAMSNVPROC nglRequestResidentProgramsNV;
+extern PFNGLTRACKMATRIXNVPROC nglTrackMatrixNV;
+extern PFNGLVERTEXATTRIBPOINTERNVPROC nglVertexAttribPointerNV;
+extern PFNGLVERTEXATTRIB1DNVPROC nglVertexAttrib1dNV;
+extern PFNGLVERTEXATTRIB1DVNVPROC nglVertexAttrib1dvNV;
+extern PFNGLVERTEXATTRIB1FNVPROC nglVertexAttrib1fNV;
+extern PFNGLVERTEXATTRIB1FVNVPROC nglVertexAttrib1fvNV;
+extern PFNGLVERTEXATTRIB1SNVPROC nglVertexAttrib1sNV;
+extern PFNGLVERTEXATTRIB1SVNVPROC nglVertexAttrib1svNV;
+extern PFNGLVERTEXATTRIB2DNVPROC nglVertexAttrib2dNV;
+extern PFNGLVERTEXATTRIB2DVNVPROC nglVertexAttrib2dvNV;
+extern PFNGLVERTEXATTRIB2FNVPROC nglVertexAttrib2fNV;
+extern PFNGLVERTEXATTRIB2FVNVPROC nglVertexAttrib2fvNV;
+extern PFNGLVERTEXATTRIB2SNVPROC nglVertexAttrib2sNV;
+extern PFNGLVERTEXATTRIB2SVNVPROC nglVertexAttrib2svNV;
+extern PFNGLVERTEXATTRIB3DNVPROC nglVertexAttrib3dNV;
+extern PFNGLVERTEXATTRIB3DVNVPROC nglVertexAttrib3dvNV;
+extern PFNGLVERTEXATTRIB3FNVPROC nglVertexAttrib3fNV;
+extern PFNGLVERTEXATTRIB3FVNVPROC nglVertexAttrib3fvNV;
+extern PFNGLVERTEXATTRIB3SNVPROC nglVertexAttrib3sNV;
+extern PFNGLVERTEXATTRIB3SVNVPROC nglVertexAttrib3svNV;
+extern PFNGLVERTEXATTRIB4DNVPROC nglVertexAttrib4dNV;
+extern PFNGLVERTEXATTRIB4DVNVPROC nglVertexAttrib4dvNV;
+extern PFNGLVERTEXATTRIB4FNVPROC nglVertexAttrib4fNV;
+extern PFNGLVERTEXATTRIB4FVNVPROC nglVertexAttrib4fvNV;
+extern PFNGLVERTEXATTRIB4SNVPROC nglVertexAttrib4sNV;
+extern PFNGLVERTEXATTRIB4SVNVPROC nglVertexAttrib4svNV;
+extern PFNGLVERTEXATTRIB4UBVNVPROC nglVertexAttrib4ubvNV;
+extern PFNGLVERTEXATTRIBS1DVNVPROC nglVertexAttribs1dvNV;
+extern PFNGLVERTEXATTRIBS1FVNVPROC nglVertexAttribs1fvNV;
+extern PFNGLVERTEXATTRIBS1SVNVPROC nglVertexAttribs1svNV;
+extern PFNGLVERTEXATTRIBS2DVNVPROC nglVertexAttribs2dvNV;
+extern PFNGLVERTEXATTRIBS2FVNVPROC nglVertexAttribs2fvNV;
+extern PFNGLVERTEXATTRIBS2SVNVPROC nglVertexAttribs2svNV;
+extern PFNGLVERTEXATTRIBS3DVNVPROC nglVertexAttribs3dvNV;
+extern PFNGLVERTEXATTRIBS3FVNVPROC nglVertexAttribs3fvNV;
+extern PFNGLVERTEXATTRIBS3SVNVPROC nglVertexAttribs3svNV;
+extern PFNGLVERTEXATTRIBS4DVNVPROC nglVertexAttribs4dvNV;
+extern PFNGLVERTEXATTRIBS4FVNVPROC nglVertexAttribs4fvNV;
+extern PFNGLVERTEXATTRIBS4SVNVPROC nglVertexAttribs4svNV;
+extern PFNGLVERTEXATTRIBS4UBVNVPROC nglVertexAttribs4ubvNV;
 
 // VertexShaderExtension.
 //========================
-extern PFNGLBEGINVERTEXSHADEREXTPROC		 nglBeginVertexShaderEXT;
-extern PFNGLENDVERTEXSHADEREXTPROC			 nglEndVertexShaderEXT;
-extern PFNGLBINDVERTEXSHADEREXTPROC			 nglBindVertexShaderEXT;
-extern PFNGLGENVERTEXSHADERSEXTPROC			 nglGenVertexShadersEXT;
-extern PFNGLDELETEVERTEXSHADEREXTPROC		 nglDeleteVertexShaderEXT;
-extern PFNGLSHADEROP1EXTPROC				 nglShaderOp1EXT;
-extern PFNGLSHADEROP2EXTPROC				 nglShaderOp2EXT;
-extern PFNGLSHADEROP3EXTPROC				 nglShaderOp3EXT;
-extern PFNGLSWIZZLEEXTPROC					 nglSwizzleEXT;
-extern PFNGLWRITEMASKEXTPROC				 nglWriteMaskEXT;
-extern PFNGLINSERTCOMPONENTEXTPROC			 nglInsertComponentEXT;
-extern PFNGLEXTRACTCOMPONENTEXTPROC			 nglExtractComponentEXT;
-extern PFNGLGENSYMBOLSEXTPROC				 nglGenSymbolsEXT;
-extern PFNGLSETINVARIANTEXTPROC				 nglSetInvariantEXT;
-extern PFNGLSETLOCALCONSTANTEXTPROC			 nglSetLocalConstantEXT;
-extern PFNGLVARIANTPOINTEREXTPROC			 nglVariantPointerEXT;
-extern PFNGLENABLEVARIANTCLIENTSTATEEXTPROC  nglEnableVariantClientStateEXT;
+extern PFNGLBEGINVERTEXSHADEREXTPROC nglBeginVertexShaderEXT;
+extern PFNGLENDVERTEXSHADEREXTPROC nglEndVertexShaderEXT;
+extern PFNGLBINDVERTEXSHADEREXTPROC nglBindVertexShaderEXT;
+extern PFNGLGENVERTEXSHADERSEXTPROC nglGenVertexShadersEXT;
+extern PFNGLDELETEVERTEXSHADEREXTPROC nglDeleteVertexShaderEXT;
+extern PFNGLSHADEROP1EXTPROC nglShaderOp1EXT;
+extern PFNGLSHADEROP2EXTPROC nglShaderOp2EXT;
+extern PFNGLSHADEROP3EXTPROC nglShaderOp3EXT;
+extern PFNGLSWIZZLEEXTPROC nglSwizzleEXT;
+extern PFNGLWRITEMASKEXTPROC nglWriteMaskEXT;
+extern PFNGLINSERTCOMPONENTEXTPROC nglInsertComponentEXT;
+extern PFNGLEXTRACTCOMPONENTEXTPROC nglExtractComponentEXT;
+extern PFNGLGENSYMBOLSEXTPROC nglGenSymbolsEXT;
+extern PFNGLSETINVARIANTEXTPROC nglSetInvariantEXT;
+extern PFNGLSETLOCALCONSTANTEXTPROC nglSetLocalConstantEXT;
+extern PFNGLVARIANTPOINTEREXTPROC nglVariantPointerEXT;
+extern PFNGLENABLEVARIANTCLIENTSTATEEXTPROC nglEnableVariantClientStateEXT;
 extern PFNGLDISABLEVARIANTCLIENTSTATEEXTPROC nglDisableVariantClientStateEXT;
-extern PFNGLBINDLIGHTPARAMETEREXTPROC		 nglBindLightParameterEXT;
-extern PFNGLBINDMATERIALPARAMETEREXTPROC	 nglBindMaterialParameterEXT;
-extern PFNGLBINDTEXGENPARAMETEREXTPROC		 nglBindTexGenParameterEXT;
-extern PFNGLBINDTEXTUREUNITPARAMETEREXTPROC	 nglBindTextureUnitParameterEXT;
-extern PFNGLBINDPARAMETEREXTPROC			 nglBindParameterEXT;
-extern PFNGLISVARIANTENABLEDEXTPROC			 nglIsVariantEnabledEXT;
-extern PFNGLGETVARIANTBOOLEANVEXTPROC		 nglGetVariantBooleanvEXT;
-extern PFNGLGETVARIANTINTEGERVEXTPROC		 nglGetVariantIntegervEXT;
-extern PFNGLGETVARIANTFLOATVEXTPROC			 nglGetVariantFloatvEXT;
-extern PFNGLGETVARIANTPOINTERVEXTPROC		 nglGetVariantPointervEXT;
-extern PFNGLGETINVARIANTBOOLEANVEXTPROC		 nglGetInvariantBooleanvEXT;
-extern PFNGLGETINVARIANTINTEGERVEXTPROC		 nglGetInvariantIntegervEXT;
-extern PFNGLGETINVARIANTFLOATVEXTPROC		 nglGetInvariantFloatvEXT;
-extern PFNGLGETLOCALCONSTANTBOOLEANVEXTPROC  nglGetLocalConstantBooleanvEXT;
-extern PFNGLGETLOCALCONSTANTINTEGERVEXTPROC  nglGetLocalConstantIntegervEXT;
-extern PFNGLGETLOCALCONSTANTFLOATVEXTPROC    nglGetLocalConstantFloatvEXT;
-
+extern PFNGLBINDLIGHTPARAMETEREXTPROC nglBindLightParameterEXT;
+extern PFNGLBINDMATERIALPARAMETEREXTPROC nglBindMaterialParameterEXT;
+extern PFNGLBINDTEXGENPARAMETEREXTPROC nglBindTexGenParameterEXT;
+extern PFNGLBINDTEXTUREUNITPARAMETEREXTPROC nglBindTextureUnitParameterEXT;
+extern PFNGLBINDPARAMETEREXTPROC nglBindParameterEXT;
+extern PFNGLISVARIANTENABLEDEXTPROC nglIsVariantEnabledEXT;
+extern PFNGLGETVARIANTBOOLEANVEXTPROC nglGetVariantBooleanvEXT;
+extern PFNGLGETVARIANTINTEGERVEXTPROC nglGetVariantIntegervEXT;
+extern PFNGLGETVARIANTFLOATVEXTPROC nglGetVariantFloatvEXT;
+extern PFNGLGETVARIANTPOINTERVEXTPROC nglGetVariantPointervEXT;
+extern PFNGLGETINVARIANTBOOLEANVEXTPROC nglGetInvariantBooleanvEXT;
+extern PFNGLGETINVARIANTINTEGERVEXTPROC nglGetInvariantIntegervEXT;
+extern PFNGLGETINVARIANTFLOATVEXTPROC nglGetInvariantFloatvEXT;
+extern PFNGLGETLOCALCONSTANTBOOLEANVEXTPROC nglGetLocalConstantBooleanvEXT;
+extern PFNGLGETLOCALCONSTANTINTEGERVEXTPROC nglGetLocalConstantIntegervEXT;
+extern PFNGLGETLOCALCONSTANTFLOATVEXTPROC nglGetLocalConstantFloatvEXT;
 
 // ATI_envmap_bumpmap extension
 
-extern  PFNGLTEXBUMPPARAMETERIVATIPROC nglTexBumpParameterivATI;
-extern  PFNGLTEXBUMPPARAMETERFVATIPROC nglTexBumpParameterfvATI;
-extern  PFNGLGETTEXBUMPPARAMETERIVATIPROC nglGetTexBumpParameterivATI;
-extern  PFNGLGETTEXBUMPPARAMETERFVATIPROC nglGetTexBumpParameterfvATI;
-
+extern PFNGLTEXBUMPPARAMETERIVATIPROC nglTexBumpParameterivATI;
+extern PFNGLTEXBUMPPARAMETERFVATIPROC nglTexBumpParameterfvATI;
+extern PFNGLGETTEXBUMPPARAMETERIVATIPROC nglGetTexBumpParameterivATI;
+extern PFNGLGETTEXBUMPPARAMETERFVATIPROC nglGetTexBumpParameterfvATI;
 
 // SecondaryColor extension
 //========================
-extern PFNGLSECONDARYCOLOR3BEXTPROC			nglSecondaryColor3bEXT;
-extern PFNGLSECONDARYCOLOR3BVEXTPROC		nglSecondaryColor3bvEXT;
-extern PFNGLSECONDARYCOLOR3DEXTPROC			nglSecondaryColor3dEXT;
-extern PFNGLSECONDARYCOLOR3DVEXTPROC		nglSecondaryColor3dvEXT;
-extern PFNGLSECONDARYCOLOR3FEXTPROC			nglSecondaryColor3fEXT;
-extern PFNGLSECONDARYCOLOR3FVEXTPROC		nglSecondaryColor3fvEXT;
-extern PFNGLSECONDARYCOLOR3IEXTPROC			nglSecondaryColor3iEXT;
-extern PFNGLSECONDARYCOLOR3IVEXTPROC		nglSecondaryColor3ivEXT;
-extern PFNGLSECONDARYCOLOR3SEXTPROC			nglSecondaryColor3sEXT;
-extern PFNGLSECONDARYCOLOR3SVEXTPROC		nglSecondaryColor3svEXT;
-extern PFNGLSECONDARYCOLOR3UBEXTPROC		nglSecondaryColor3ubEXT;
-extern PFNGLSECONDARYCOLOR3UBVEXTPROC		nglSecondaryColor3ubvEXT;
-extern PFNGLSECONDARYCOLOR3UIEXTPROC		nglSecondaryColor3uiEXT;
-extern PFNGLSECONDARYCOLOR3UIVEXTPROC		nglSecondaryColor3uivEXT;
-extern PFNGLSECONDARYCOLOR3USEXTPROC		nglSecondaryColor3usEXT;
-extern PFNGLSECONDARYCOLOR3USVEXTPROC		nglSecondaryColor3usvEXT;
-extern PFNGLSECONDARYCOLORPOINTEREXTPROC	nglSecondaryColorPointerEXT;
-
+extern PFNGLSECONDARYCOLOR3BEXTPROC nglSecondaryColor3bEXT;
+extern PFNGLSECONDARYCOLOR3BVEXTPROC nglSecondaryColor3bvEXT;
+extern PFNGLSECONDARYCOLOR3DEXTPROC nglSecondaryColor3dEXT;
+extern PFNGLSECONDARYCOLOR3DVEXTPROC nglSecondaryColor3dvEXT;
+extern PFNGLSECONDARYCOLOR3FEXTPROC nglSecondaryColor3fEXT;
+extern PFNGLSECONDARYCOLOR3FVEXTPROC nglSecondaryColor3fvEXT;
+extern PFNGLSECONDARYCOLOR3IEXTPROC nglSecondaryColor3iEXT;
+extern PFNGLSECONDARYCOLOR3IVEXTPROC nglSecondaryColor3ivEXT;
+extern PFNGLSECONDARYCOLOR3SEXTPROC nglSecondaryColor3sEXT;
+extern PFNGLSECONDARYCOLOR3SVEXTPROC nglSecondaryColor3svEXT;
+extern PFNGLSECONDARYCOLOR3UBEXTPROC nglSecondaryColor3ubEXT;
+extern PFNGLSECONDARYCOLOR3UBVEXTPROC nglSecondaryColor3ubvEXT;
+extern PFNGLSECONDARYCOLOR3UIEXTPROC nglSecondaryColor3uiEXT;
+extern PFNGLSECONDARYCOLOR3UIVEXTPROC nglSecondaryColor3uivEXT;
+extern PFNGLSECONDARYCOLOR3USEXTPROC nglSecondaryColor3usEXT;
+extern PFNGLSECONDARYCOLOR3USVEXTPROC nglSecondaryColor3usvEXT;
+extern PFNGLSECONDARYCOLORPOINTEREXTPROC nglSecondaryColorPointerEXT;
 
 // BlendColor extension
 //========================
-extern PFNGLBLENDCOLOREXTPROC				nglBlendColorEXT;
-
+extern PFNGLBLENDCOLOREXTPROC nglBlendColorEXT;
 
 // GL_ATI_vertex_array_object extension
 //========================
-extern PFNGLNEWOBJECTBUFFERATIPROC			nglNewObjectBufferATI;
-extern PFNGLISOBJECTBUFFERATIPROC			nglIsObjectBufferATI;
-extern PFNGLUPDATEOBJECTBUFFERATIPROC		nglUpdateObjectBufferATI;
-extern PFNGLGETOBJECTBUFFERFVATIPROC		nglGetObjectBufferfvATI;
-extern PFNGLGETOBJECTBUFFERIVATIPROC		nglGetObjectBufferivATI;
-extern PFNGLFREEOBJECTBUFFERATIPROC			nglFreeObjectBufferATI;
-extern PFNGLARRAYOBJECTATIPROC				nglArrayObjectATI;
-extern PFNGLGETARRAYOBJECTFVATIPROC			nglGetArrayObjectfvATI;
-extern PFNGLGETARRAYOBJECTIVATIPROC			nglGetArrayObjectivATI;
-extern PFNGLVARIANTARRAYOBJECTATIPROC		nglVariantArrayObjectATI;
-extern PFNGLGETVARIANTARRAYOBJECTFVATIPROC	nglGetVariantArrayObjectfvATI;
-extern PFNGLGETVARIANTARRAYOBJECTIVATIPROC	nglGetVariantArrayObjectivATI;
+extern PFNGLNEWOBJECTBUFFERATIPROC nglNewObjectBufferATI;
+extern PFNGLISOBJECTBUFFERATIPROC nglIsObjectBufferATI;
+extern PFNGLUPDATEOBJECTBUFFERATIPROC nglUpdateObjectBufferATI;
+extern PFNGLGETOBJECTBUFFERFVATIPROC nglGetObjectBufferfvATI;
+extern PFNGLGETOBJECTBUFFERIVATIPROC nglGetObjectBufferivATI;
+extern PFNGLFREEOBJECTBUFFERATIPROC nglFreeObjectBufferATI;
+extern PFNGLARRAYOBJECTATIPROC nglArrayObjectATI;
+extern PFNGLGETARRAYOBJECTFVATIPROC nglGetArrayObjectfvATI;
+extern PFNGLGETARRAYOBJECTIVATIPROC nglGetArrayObjectivATI;
+extern PFNGLVARIANTARRAYOBJECTATIPROC nglVariantArrayObjectATI;
+extern PFNGLGETVARIANTARRAYOBJECTFVATIPROC nglGetVariantArrayObjectfvATI;
+extern PFNGLGETVARIANTARRAYOBJECTIVATIPROC nglGetVariantArrayObjectivATI;
 
 // GL_ATI_map_object_buffer
 //===================================
 
-extern PFNGLMAPOBJECTBUFFERATIPROC			nglMapObjectBufferATI;
-extern PFNGLUNMAPOBJECTBUFFERATIPROC		nglUnmapObjectBufferATI;
-
+extern PFNGLMAPOBJECTBUFFERATIPROC nglMapObjectBufferATI;
+extern PFNGLUNMAPOBJECTBUFFERATIPROC nglUnmapObjectBufferATI;
 
 // GL_ATI_fragment_shader extension
 //===================================
 
-extern PFNGLGENFRAGMENTSHADERSATIPROC			nglGenFragmentShadersATI;
-extern PFNGLBINDFRAGMENTSHADERATIPROC			nglBindFragmentShaderATI;
-extern PFNGLDELETEFRAGMENTSHADERATIPROC			nglDeleteFragmentShaderATI;
-extern PFNGLBEGINFRAGMENTSHADERATIPROC			nglBeginFragmentShaderATI;
-extern PFNGLENDFRAGMENTSHADERATIPROC			nglEndFragmentShaderATI;
-extern PFNGLPASSTEXCOORDATIPROC					nglPassTexCoordATI;
-extern PFNGLSAMPLEMAPATIPROC					nglSampleMapATI;
-extern PFNGLCOLORFRAGMENTOP1ATIPROC				nglColorFragmentOp1ATI;
-extern PFNGLCOLORFRAGMENTOP2ATIPROC				nglColorFragmentOp2ATI;
-extern PFNGLCOLORFRAGMENTOP3ATIPROC				nglColorFragmentOp3ATI;
-extern PFNGLALPHAFRAGMENTOP1ATIPROC				nglAlphaFragmentOp1ATI;
-extern PFNGLALPHAFRAGMENTOP2ATIPROC				nglAlphaFragmentOp2ATI;
-extern PFNGLALPHAFRAGMENTOP3ATIPROC				nglAlphaFragmentOp3ATI;
-extern PFNGLSETFRAGMENTSHADERCONSTANTATIPROC	nglSetFragmentShaderConstantATI;
+extern PFNGLGENFRAGMENTSHADERSATIPROC nglGenFragmentShadersATI;
+extern PFNGLBINDFRAGMENTSHADERATIPROC nglBindFragmentShaderATI;
+extern PFNGLDELETEFRAGMENTSHADERATIPROC nglDeleteFragmentShaderATI;
+extern PFNGLBEGINFRAGMENTSHADERATIPROC nglBeginFragmentShaderATI;
+extern PFNGLENDFRAGMENTSHADERATIPROC nglEndFragmentShaderATI;
+extern PFNGLPASSTEXCOORDATIPROC nglPassTexCoordATI;
+extern PFNGLSAMPLEMAPATIPROC nglSampleMapATI;
+extern PFNGLCOLORFRAGMENTOP1ATIPROC nglColorFragmentOp1ATI;
+extern PFNGLCOLORFRAGMENTOP2ATIPROC nglColorFragmentOp2ATI;
+extern PFNGLCOLORFRAGMENTOP3ATIPROC nglColorFragmentOp3ATI;
+extern PFNGLALPHAFRAGMENTOP1ATIPROC nglAlphaFragmentOp1ATI;
+extern PFNGLALPHAFRAGMENTOP2ATIPROC nglAlphaFragmentOp2ATI;
+extern PFNGLALPHAFRAGMENTOP3ATIPROC nglAlphaFragmentOp3ATI;
+extern PFNGLSETFRAGMENTSHADERCONSTANTATIPROC nglSetFragmentShaderConstantATI;
 
 // GL_ATI_vertex_attrib_array_object
 //==================================
-extern PFNGLVERTEXATTRIBARRAYOBJECTATIPROC		nglVertexAttribArrayObjectATI;
-extern PFNGLGETVERTEXATTRIBARRAYOBJECTFVATIPROC	nglGetVertexAttribArrayObjectfvATI;
-extern PFNGLGETVERTEXATTRIBARRAYOBJECTIVATIPROC	nglGetVertexAttribArrayObjectivATI;
-
-
-
+extern PFNGLVERTEXATTRIBARRAYOBJECTATIPROC nglVertexAttribArrayObjectATI;
+extern PFNGLGETVERTEXATTRIBARRAYOBJECTFVATIPROC nglGetVertexAttribArrayObjectfvATI;
+extern PFNGLGETVERTEXATTRIBARRAYOBJECTIVATIPROC nglGetVertexAttribArrayObjectivATI;
 
 // GL_ARB_fragment_shader_extension
 //==================================
@@ -767,94 +751,89 @@ extern PFNGLGETQUERYOBJECTUIVARBPROC nglGetQueryObjectuivARB;
 
 // Pbuffer extension
 //==================
-extern PFNWGLCREATEPBUFFERARBPROC			nwglCreatePbufferARB;
-extern PFNWGLGETPBUFFERDCARBPROC			nwglGetPbufferDCARB;
-extern PFNWGLRELEASEPBUFFERDCARBPROC		nwglReleasePbufferDCARB;
-extern PFNWGLDESTROYPBUFFERARBPROC			nwglDestroyPbufferARB;
-extern PFNWGLQUERYPBUFFERARBPROC			nwglQueryPbufferARB;
-
+extern PFNWGLCREATEPBUFFERARBPROC nwglCreatePbufferARB;
+extern PFNWGLGETPBUFFERDCARBPROC nwglGetPbufferDCARB;
+extern PFNWGLRELEASEPBUFFERDCARBPROC nwglReleasePbufferDCARB;
+extern PFNWGLDESTROYPBUFFERARBPROC nwglDestroyPbufferARB;
+extern PFNWGLQUERYPBUFFERARBPROC nwglQueryPbufferARB;
 
 // Get Pixel format extension
 //===========================
-extern PFNWGLGETPIXELFORMATATTRIBIVARBPROC	nwglGetPixelFormatAttribivARB;
-extern PFNWGLGETPIXELFORMATATTRIBFVARBPROC	nwglGetPixelFormatAttribfvARB;
-extern PFNWGLCHOOSEPIXELFORMATARBPROC		nwglChoosePixelFormatARB;
-
+extern PFNWGLGETPIXELFORMATATTRIBIVARBPROC nwglGetPixelFormatAttribivARB;
+extern PFNWGLGETPIXELFORMATATTRIBFVARBPROC nwglGetPixelFormatAttribfvARB;
+extern PFNWGLCHOOSEPIXELFORMATARBPROC nwglChoosePixelFormatARB;
 
 // Swap control extension
 //===========================
-extern PFNWGLSWAPINTERVALEXTPROC			nwglSwapIntervalEXT;
-extern PFNWGLGETSWAPINTERVALEXTPROC			nwglGetSwapIntervalEXT;
-
+extern PFNWGLSWAPINTERVALEXTPROC nwglSwapIntervalEXT;
+extern PFNWGLGETSWAPINTERVALEXTPROC nwglGetSwapIntervalEXT;
 
 // WGL_ARB_extensions_string
-extern PFNWGLGETEXTENSIONSSTRINGARBPROC		nwglGetExtensionsStringARB;
-
+extern PFNWGLGETEXTENSIONSSTRINGARBPROC nwglGetExtensionsStringARB;
 
 // WGL_AMD_gpu_association
 //========================
-extern PFNWGLGETGPUIDSAMDPROC						nwglGetGPUIDsAMD;
-extern PFNWGLGETGPUINFOAMDPROC						nwglGetGPUInfoAMD;
-extern PFNWGLGETCONTEXTGPUIDAMDPROC					nwglGetContextGPUIDAMD;
-extern PFNWGLCREATEASSOCIATEDCONTEXTAMDPROC			nwglCreateAssociatedContextAMD;
-extern PFNWGLCREATEASSOCIATEDCONTEXTATTRIBSAMDPROC	nwglCreateAssociatedContextAttribsAMD;
-extern PFNWGLDELETEASSOCIATEDCONTEXTAMDPROC			nwglDeleteAssociatedContextAMD;
-extern PFNWGLMAKEASSOCIATEDCONTEXTCURRENTAMDPROC	nwglMakeAssociatedContextCurrentAMD;
-extern PFNWGLGETCURRENTASSOCIATEDCONTEXTAMDPROC		nwglGetCurrentAssociatedContextAMD;
-extern PFNWGLBLITCONTEXTFRAMEBUFFERAMDPROC			nwglBlitContextFramebufferAMD;
+extern PFNWGLGETGPUIDSAMDPROC nwglGetGPUIDsAMD;
+extern PFNWGLGETGPUINFOAMDPROC nwglGetGPUInfoAMD;
+extern PFNWGLGETCONTEXTGPUIDAMDPROC nwglGetContextGPUIDAMD;
+extern PFNWGLCREATEASSOCIATEDCONTEXTAMDPROC nwglCreateAssociatedContextAMD;
+extern PFNWGLCREATEASSOCIATEDCONTEXTATTRIBSAMDPROC nwglCreateAssociatedContextAttribsAMD;
+extern PFNWGLDELETEASSOCIATEDCONTEXTAMDPROC nwglDeleteAssociatedContextAMD;
+extern PFNWGLMAKEASSOCIATEDCONTEXTCURRENTAMDPROC nwglMakeAssociatedContextCurrentAMD;
+extern PFNWGLGETCURRENTASSOCIATEDCONTEXTAMDPROC nwglGetCurrentAssociatedContextAMD;
+extern PFNWGLBLITCONTEXTFRAMEBUFFERAMDPROC nwglBlitContextFramebufferAMD;
 
 // WGL_NV_gpu_affinity
 //====================
-extern PFNWGLENUMGPUSNVPROC							nwglEnumGpusNV;
-extern PFNWGLENUMGPUDEVICESNVPROC					nwglEnumGpuDevicesNV;
-extern PFNWGLCREATEAFFINITYDCNVPROC					nwglCreateAffinityDCNV;
-extern PFNWGLENUMGPUSFROMAFFINITYDCNVPROC			nwglEnumGpusFromAffinityDCNV;
-extern PFNWGLDELETEDCNVPROC							nwglDeleteDCNV;
+extern PFNWGLENUMGPUSNVPROC nwglEnumGpusNV;
+extern PFNWGLENUMGPUDEVICESNVPROC nwglEnumGpuDevicesNV;
+extern PFNWGLCREATEAFFINITYDCNVPROC nwglCreateAffinityDCNV;
+extern PFNWGLENUMGPUSFROMAFFINITYDCNVPROC nwglEnumGpusFromAffinityDCNV;
+extern PFNWGLDELETEDCNVPROC nwglDeleteDCNV;
 
 #elif defined(NL_OS_MAC)
 #elif defined(NL_OS_UNIX)
 
 // Swap control extensions
 //===========================
-extern PFNGLXSWAPINTERVALEXTPROC			nglXSwapIntervalEXT;
+extern PFNGLXSWAPINTERVALEXTPROC nglXSwapIntervalEXT;
 
-extern PFNGLXSWAPINTERVALSGIPROC			nglXSwapIntervalSGI;
+extern PFNGLXSWAPINTERVALSGIPROC nglXSwapIntervalSGI;
 
-extern PFNGLXSWAPINTERVALMESAPROC			nglXSwapIntervalMESA;
-extern PFNGLXGETSWAPINTERVALMESAPROC		nglXGetSwapIntervalMESA;
+extern PFNGLXSWAPINTERVALMESAPROC nglXSwapIntervalMESA;
+extern PFNGLXGETSWAPINTERVALMESAPROC nglXGetSwapIntervalMESA;
 
 // GLX_MESA_query_renderer
 // =======================
-extern PFNGLXQUERYCURRENTRENDERERINTEGERMESAPROC	nglXQueryCurrentRendererIntegerMESA;
+extern PFNGLXQUERYCURRENTRENDERERINTEGERMESAPROC nglXQueryCurrentRendererIntegerMESA;
 
 #endif
 
 // GL_EXT_framebuffer_object
-extern PFNGLISRENDERBUFFEREXTPROC				nglIsRenderbufferEXT;
-extern PFNGLISFRAMEBUFFEREXTPROC				nglIsFramebufferEXT;
-extern PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC		nglCheckFramebufferStatusEXT;
-extern PFNGLGENFRAMEBUFFERSEXTPROC				nglGenFramebuffersEXT;
-extern PFNGLBINDFRAMEBUFFEREXTPROC				nglBindFramebufferEXT;
-extern PFNGLFRAMEBUFFERTEXTURE2DEXTPROC			nglFramebufferTexture2DEXT;
-extern PFNGLGENRENDERBUFFERSEXTPROC				nglGenRenderbuffersEXT;
-extern PFNGLBINDRENDERBUFFEREXTPROC				nglBindRenderbufferEXT;
-extern PFNGLRENDERBUFFERSTORAGEEXTPROC			nglRenderbufferStorageEXT;
-extern PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC		nglFramebufferRenderbufferEXT;
-extern PFNGLDELETERENDERBUFFERSEXTPROC			nglDeleteRenderbuffersEXT;
-extern PFNGLDELETEFRAMEBUFFERSEXTPROC			nglDeleteFramebuffersEXT;
-extern PFNGLGETRENDERBUFFERPARAMETERIVEXTPROC	nglGetRenderbufferParameterivEXT;
-extern PFNGLGENERATEMIPMAPEXTPROC				nglGenerateMipmapEXT;
+extern PFNGLISRENDERBUFFEREXTPROC nglIsRenderbufferEXT;
+extern PFNGLISFRAMEBUFFEREXTPROC nglIsFramebufferEXT;
+extern PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC nglCheckFramebufferStatusEXT;
+extern PFNGLGENFRAMEBUFFERSEXTPROC nglGenFramebuffersEXT;
+extern PFNGLBINDFRAMEBUFFEREXTPROC nglBindFramebufferEXT;
+extern PFNGLFRAMEBUFFERTEXTURE2DEXTPROC nglFramebufferTexture2DEXT;
+extern PFNGLGENRENDERBUFFERSEXTPROC nglGenRenderbuffersEXT;
+extern PFNGLBINDRENDERBUFFEREXTPROC nglBindRenderbufferEXT;
+extern PFNGLRENDERBUFFERSTORAGEEXTPROC nglRenderbufferStorageEXT;
+extern PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC nglFramebufferRenderbufferEXT;
+extern PFNGLDELETERENDERBUFFERSEXTPROC nglDeleteRenderbuffersEXT;
+extern PFNGLDELETEFRAMEBUFFERSEXTPROC nglDeleteFramebuffersEXT;
+extern PFNGLGETRENDERBUFFERPARAMETERIVEXTPROC nglGetRenderbufferParameterivEXT;
+extern PFNGLGENERATEMIPMAPEXTPROC nglGenerateMipmapEXT;
 
 // GL_EXT_framebuffer_blit
-extern PFNGLBLITFRAMEBUFFEREXTPROC				nglBlitFramebufferEXT;
+extern PFNGLBLITFRAMEBUFFEREXTPROC nglBlitFramebufferEXT;
 
 // GL_EXT_framebuffer_multisample
-extern PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC	nglRenderbufferStorageMultisampleEXT;
+extern PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC nglRenderbufferStorageMultisampleEXT;
 
 // GL_ARB_multisample
-extern PFNGLSAMPLECOVERAGEARBPROC				nglSampleCoverageARB;
+extern PFNGLSAMPLECOVERAGEARBPROC nglSampleCoverageARB;
 
 #endif // USE_OPENGLES
 
 #endif // NL_OPENGL_EXTENSION_H
-

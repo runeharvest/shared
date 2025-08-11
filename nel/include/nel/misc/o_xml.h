@@ -17,7 +17,7 @@
 #ifndef NL_O_XML_H
 #define NL_O_XML_H
 
-//#define NL_DONT_USE_EXTERNAL_CODE
+// #define NL_DONT_USE_EXTERNAL_CODE
 #undef NL_DONT_USE_EXTERNAL_CODE
 
 #ifndef NL_DONT_USE_EXTERNAL_CODE
@@ -34,7 +34,6 @@ typedef xmlDoc *xmlDocPtr;
 
 namespace NLMISC {
 
-
 /**
  * Output xml stream
  *
@@ -42,34 +41,34 @@ namespace NLMISC {
  *
  * This stream use an internal stream to output final xml code.
  \code
-	// Check exceptions
-	try
-	{
-		// File stream
-		COFile file;
+    // Check exceptions
+    try
+    {
+        // File stream
+        COFile file;
 
-		// Open the file
-		file.open ("output.xml");
+        // Open the file
+        file.open ("output.xml");
 
-		// Create the XML stream
-		COXml output;
+        // Create the XML stream
+        COXml output;
 
-		// Init
-		if (output.init (&file, "1.0"))
-		{
-			// Serial the class
-			myClass.serial (output);
+        // Init
+        if (output.init (&file, "1.0"))
+        {
+            // Serial the class
+            myClass.serial (output);
 
-			// Flush the stream, write all the output file
-			output.flush ();
-		}
+            // Flush the stream, write all the output file
+            output.flush ();
+        }
 
-		// Close the file
-		file.close ();
-	}
- 	catch (const Exception &e)
-	{
-	}
+        // Close the file
+        file.close ();
+    }
+    catch (const Exception &e)
+    {
+    }
 \endcode
  *
  * \author Cyril 'Hulud' Corvazier
@@ -78,107 +77,105 @@ namespace NLMISC {
  */
 class COXml : public IStream
 {
-	friend int xmlOutputWriteCallbackForNeL ( void *context, const char *buffer, int len );
-	friend int xmlOutputCloseCallbackForNeL ( void *context );
-public:
+	friend int xmlOutputWriteCallbackForNeL(void *context, const char *buffer, int len);
+	friend int xmlOutputCloseCallbackForNeL(void *context);
 
+public:
 	/** Stream ctor
-	  *
-	  */
-	COXml ();
+	 *
+	 */
+	COXml();
 
 	/** Stream initialisation
-	  *
-	  * \param stream is the stream the class will use to output xml code.
-	  * this pointer is held by the class but won't be deleted.
-	  * \param version is the version to write in the XML header. Default is 1.0.
-	  * \return true if initialisation is successful, false if the stream passed is not an output stream.
-	  */
-	bool init (IStream *stream, const std::string &version = "1.0");
+	 *
+	 * \param stream is the stream the class will use to output xml code.
+	 * this pointer is held by the class but won't be deleted.
+	 * \param version is the version to write in the XML header. Default is 1.0.
+	 * \return true if initialisation is successful, false if the stream passed is not an output stream.
+	 */
+	bool init(IStream *stream, const std::string &version = "1.0");
 
 	/** Return the error string.
-	  * if not empty, something wrong appends
-	  */
-	static std::string getErrorString ();
+	 * if not empty, something wrong appends
+	 */
+	static std::string getErrorString();
 
 	/** Default dstor
-	  *
-	  * Flush the stream.
-	  */
-	virtual ~COXml ();
+	 *
+	 * Flush the stream.
+	 */
+	virtual ~COXml();
 
 	/** Flush the stream.
-	  *
-	  * You can only flush the stream when all xmlPushBegin - xmlPop have been closed.
-	  */
-	void flush ();
+	 *
+	 * You can only flush the stream when all xmlPushBegin - xmlPop have been closed.
+	 */
+	void flush();
 
 	/** Get root XML document pointer
-	  */
-	xmlDocPtr getDocument ();
+	 */
+	xmlDocPtr getDocument();
 
 	/** Return true if the string is valid to be stored in a XML property without modification.
-	  */
-	static bool		isStringValidForProperties (const std::string &str);
+	 */
+	static bool isStringValidForProperties(const std::string &str);
 
 private:
-
 	/// From IStream
-	virtual void	serial(uint8 &b);
-	virtual void	serial(sint8 &b);
-	virtual void	serial(uint16 &b);
-	virtual void	serial(sint16 &b);
-	virtual void	serial(uint32 &b);
-	virtual void	serial(sint32 &b);
-	virtual void	serial(uint64 &b);
-	virtual void	serial(sint64 &b);
-	virtual void	serial(float &b);
-	virtual void	serial(double &b);
-	virtual void	serial(bool &b);
+	virtual void serial(uint8 &b);
+	virtual void serial(sint8 &b);
+	virtual void serial(uint16 &b);
+	virtual void serial(sint16 &b);
+	virtual void serial(uint32 &b);
+	virtual void serial(sint32 &b);
+	virtual void serial(uint64 &b);
+	virtual void serial(sint64 &b);
+	virtual void serial(float &b);
+	virtual void serial(double &b);
+	virtual void serial(bool &b);
 #ifndef NL_OS_CYGWIN
-	virtual void	serial(char &b);
+	virtual void serial(char &b);
 #endif
-	virtual void	serial(std::string &b);
-	virtual void	serial(ucstring &b);
-	virtual void	serialBuffer(uint8 *buf, uint len);
-	virtual void	serialBit(bool &bit);
+	virtual void serial(std::string &b);
+	virtual void serial(ucstring &b);
+	virtual void serialBuffer(uint8 *buf, uint len);
+	virtual void serialBit(bool &bit);
 
-	virtual bool	xmlPushBeginInternal (const std::string &nodeName);
-	virtual bool	xmlPushEndInternal ();
-	virtual bool	xmlPopInternal ();
-	virtual bool	xmlSetAttribInternal (const std::string &attribName);
-	virtual bool	xmlBreakLineInternal ();
-	virtual bool	xmlCommentInternal (const std::string &comment);
+	virtual bool xmlPushBeginInternal(const std::string &nodeName);
+	virtual bool xmlPushEndInternal();
+	virtual bool xmlPopInternal();
+	virtual bool xmlSetAttribInternal(const std::string &attribName);
+	virtual bool xmlBreakLineInternal();
+	virtual bool xmlCommentInternal(const std::string &comment);
 
 	// Internal functions
-	void			serialSeparatedBufferOut( const std::string &value );
-	inline void		flushContentString ();
+	void serialSeparatedBufferOut(const std::string &value);
+	inline void flushContentString();
 
 	// Push mode
-	bool			_PushBegin;
+	bool _PushBegin;
 
 	// Attribute defined
-	bool			_AttribPresent;
+	bool _AttribPresent;
 
 	// Attribute name
-	std::string		_AttribName;
+	std::string _AttribName;
 
 	// The internal stream
-	IStream			*_InternalStream;
+	IStream *_InternalStream;
 
 	// Document pointer
-	xmlDocPtr		_Document;
+	xmlDocPtr _Document;
 
 	// Document version
-	std::string		_Version;
+	std::string _Version;
 
 	// Current nodes
-	xmlNodePtr		_CurrentNode;
+	xmlNodePtr _CurrentNode;
 
 	// Current content string
-	std::string		_ContentString;
+	std::string _ContentString;
 };
-
 
 } // NLMISC
 

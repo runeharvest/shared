@@ -14,43 +14,40 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_SHIELD_TYPES_H
 #define RY_SHIELD_TYPES_H
 
 #include "nel/misc/types_nl.h"
 #include "skills.h"
 
-namespace SHIELDTYPE
+namespace SHIELDTYPE {
+// Mode
+enum EShieldType
 {
-	// Mode
-	enum EShieldType
-	{
-		NONE = 0,
-		SMALL_SHIELD,
-		LARGE_SHIELD,
+	NONE = 0,
+	SMALL_SHIELD,
+	LARGE_SHIELD,
 
-		NUM_SHIELD_TYPE
-	};
+	NUM_SHIELD_TYPE
+};
 
-	// Table EShieldType to Skill.
+// Table EShieldType to Skill.
 /*	const	SKILLS::ESkills		ShieldToSkill[]=
-	{
-		SKILLS::unknown,
+    {
+        SKILLS::unknown,
 
-		SKILLS::SDSB,
-		SKILLS::SDSS,
-	};
+        SKILLS::SDSB,
+        SKILLS::SDSS,
+    };
 */
-	/**
-	 * get the right shield type from the input string
-	 * \param str the input string
-	 * \return the EShieldType associated to this string (NONE if the string cannot be interpreted)
-	 */
-	EShieldType stringToShieldType(const std::string &str);
+/**
+ * get the right shield type from the input string
+ * \param str the input string
+ * \return the EShieldType associated to this string (NONE if the string cannot be interpreted)
+ */
+EShieldType stringToShieldType(const std::string &str);
 
-	const std::string &toString(EShieldType e);
+const std::string &toString(EShieldType e);
 
 //	SKILLS::ESkills		shieldTypeToSkill(EShieldType e);
 

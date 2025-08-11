@@ -14,15 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef NL_ACTION_GENERIC_H
 #define NL_ACTION_GENERIC_H
 
 #include "nel/misc/types_nl.h"
 
 #include "action.h"
-
 
 namespace CLFECOMMON {
 
@@ -35,43 +32,41 @@ namespace CLFECOMMON {
 class CActionGeneric : public CActionImpulsion
 {
 public:
-
-	virtual ~CActionGeneric() {}
+	virtual ~CActionGeneric() { }
 
 	/** This function creates initializes its fields using the buffer.
 	 * \param buffer pointer to the buffer where the data are
 	 * \size size of the buffer
 	 */
-	virtual void unpack (NLMISC::CBitMemStream &message);
+	virtual void unpack(NLMISC::CBitMemStream &message);
 
 	/// This functions is used when you want to transform an action into an IStream.
-	virtual void serial (NLMISC::IStream &f);
+	virtual void serial(NLMISC::IStream &f);
 
 	/// Returns the size of this action when will be send to the UDP connection (in number of bits.)
-	virtual uint32 size ();
+	virtual uint32 size();
 
-	virtual void set (NLMISC::CBitMemStream &message);
+	virtual void set(NLMISC::CBitMemStream &message);
 
 	/** Same as set(), avoiding the need to alloc a bitmemstream: copy from message.getPos()
 	 *
 	 * Preconditions:
 	 * - message.getPos() + bytelen <= message.length()
 	 */
-	void setFromMessage (NLMISC::CMemStream &message, uint32 bytelen);
+	void setFromMessage(NLMISC::CMemStream &message, uint32 bytelen);
 
-	virtual NLMISC::CBitMemStream &get ();
+	virtual NLMISC::CBitMemStream &get();
 
-	static CAction *create () { return new CActionGeneric(); }
+	static CAction *create() { return new CActionGeneric(); }
 
-	static bool		ServerSide;
+	static bool ServerSide;
 
 protected:
-
 	/** This function transform the internal field and transform them into a buffer for the UDP connection.
 	 * \param buffer pointer to the buffer where the data will be written
 	 * \size size of the buffer
 	 */
-	virtual void pack (NLMISC::CBitMemStream &message);
+	virtual void pack(NLMISC::CBitMemStream &message);
 
 	/// This method intialises the action with a default state
 	virtual void reset()

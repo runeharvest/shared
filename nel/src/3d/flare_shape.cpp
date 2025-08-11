@@ -23,44 +23,42 @@
 #include "nel/3d/mesh.h"
 #include "nel/3d/shape_bank.h"
 
-
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
 namespace NL3D {
 
-
 // ***************************************************************************************************************
-CFlareShape::CFlareShape()  : _Color(NLMISC::CRGBA::White),
-							  _DazzleColor(NLMISC::CRGBA::Black),
-							  _SizeDisappear(0.f),
-							  _ScaleWhenDisappear(false),
-							  _AngleDisappear(0.f),
-							  _Persistence(1),
-							  _Spacing(1),
-							  _Attenuable(false),
-							  _AttenuationRange (1.0f),
-							  _FirstFlareKeepSize(false),
-							  _DazzleEnabled(false),
-							  _DazzleAttenuationRange(0.f),
-							  _MaxViewDistRatio (0.9f),
-							  _InfiniteDist(false),
-							  _OcclusionMeshNotFound(false),
-							  _OcclusionTestMeshInheritScaleRot(false),
-							  _LookAtMode(true)
+CFlareShape::CFlareShape()
+    : _Color(NLMISC::CRGBA::White)
+    , _DazzleColor(NLMISC::CRGBA::Black)
+    , _SizeDisappear(0.f)
+    , _ScaleWhenDisappear(false)
+    , _AngleDisappear(0.f)
+    , _Persistence(1)
+    , _Spacing(1)
+    , _Attenuable(false)
+    , _AttenuationRange(1.0f)
+    , _FirstFlareKeepSize(false)
+    , _DazzleEnabled(false)
+    , _DazzleAttenuationRange(0.f)
+    , _MaxViewDistRatio(0.9f)
+    , _InfiniteDist(false)
+    , _OcclusionMeshNotFound(false)
+    , _OcclusionTestMeshInheritScaleRot(false)
+    , _LookAtMode(true)
 {
 	// init default pos
 	for (uint k = 0; k < MaxFlareNum; ++k)
 	{
-		_Tex [k]  = NULL;
-		_Size[k]  = 1.f;
-		_Pos[k]   = k * (1.f / MaxFlareNum);
+		_Tex[k] = NULL;
+		_Size[k] = 1.f;
+		_Pos[k] = k * (1.f / MaxFlareNum);
 	}
 	_DefaultPos.setDefaultValue(CVector::Null);
 	setDistMax(1000);
 }
-
 
 // ***************************************************************************************************************
 void CFlareShape::serial(NLMISC::IStream &f)
@@ -102,7 +100,7 @@ void CFlareShape::serial(NLMISC::IStream &f)
 	f.serial(_InfiniteDist);
 	if (ver >= 2)
 	{
-		f.serial( _DistMax );
+		f.serial(_DistMax);
 	}
 	if (ver >= 4)
 	{
@@ -116,29 +114,29 @@ void CFlareShape::serial(NLMISC::IStream &f)
 }
 
 // ***************************************************************************************************************
-CTransformShape		*CFlareShape::createInstance(CScene &scene)
+CTransformShape *CFlareShape::createInstance(CScene &scene)
 {
-	CFlareModel *fm = NLMISC::safe_cast<CFlareModel *>(scene.createModel(FlareModelClassId) );
+	CFlareModel *fm = NLMISC::safe_cast<CFlareModel *>(scene.createModel(FlareModelClassId));
 	fm->Shape = this;
 	fm->_Scene = &scene;
 	// set default pos
-	fm->ITransformable::setPos( _DefaultPos.getDefaultValue() );
+	fm->ITransformable::setPos(_DefaultPos.getDefaultValue());
 	return fm;
 }
 
 // ***************************************************************************************************************
-float				CFlareShape::getNumTriangles (float distance)
+float CFlareShape::getNumTriangles(float distance)
 {
 	float count = 0;
 	for (uint k = 0; k < MaxFlareNum; ++k)
 	{
-	if (_Tex[k]) count += 2;
+		if (_Tex[k]) count += 2;
 	}
 	return count;
 }
 
 // ***************************************************************************************************************
-bool				CFlareShape::clip(const std::vector<CPlane>	&pyramid, const CMatrix &worldMatrix)
+bool CFlareShape::clip(const std::vector<CPlane> &pyramid, const CMatrix &worldMatrix)
 {
 	// compute flare pos in world basis :
 	const NLMISC::CVector pos = worldMatrix.getPos();
@@ -146,7 +144,7 @@ bool				CFlareShape::clip(const std::vector<CPlane>	&pyramid, const CMatrix &wor
 	{
 		if ((*it) * pos > _Size[0])
 		{
-			//nlwarning("clipped");
+			// nlwarning("clipped");
 			return false;
 		}
 	}
@@ -154,7 +152,7 @@ bool				CFlareShape::clip(const std::vector<CPlane>	&pyramid, const CMatrix &wor
 }
 
 // ***************************************************************************************************************
-void				CFlareShape::getAABBox(NLMISC::CAABBox &bbox) const
+void CFlareShape::getAABBox(NLMISC::CAABBox &bbox) const
 {
 	// the flare himself is a point
 	bbox.setCenter(CVector::Null);
@@ -162,18 +160,18 @@ void				CFlareShape::getAABBox(NLMISC::CAABBox &bbox) const
 }
 
 // ***************************************************************************************************************
-void				CFlareShape::flushTextures (IDriver &driver, uint selectedTexture)
+void CFlareShape::flushTextures(IDriver &driver, uint selectedTexture)
 {
 	// Flush each texture
-	for (uint tex=0; tex<MaxFlareNum; tex++)
+	for (uint tex = 0; tex < MaxFlareNum; tex++)
 	{
 		if (_Tex[tex] != NULL)
 		{
 			// Select the good texture
-			_Tex[tex]->selectTexture (selectedTexture);
+			_Tex[tex]->selectTexture(selectedTexture);
 
 			// Flush texture
-			driver.setupTexture (*_Tex[tex]);
+			driver.setupTexture(*_Tex[tex]);
 		}
 	}
 }
@@ -186,17 +184,16 @@ void CFlareShape::setOcclusionTestMeshName(const std::string &shapeName)
 	_OcclusionTestMesh = NULL;
 }
 
-
 // ***************************************************************************************************************
 CMesh *CFlareShape::getOcclusionTestMesh(CShapeBank &sb)
 {
 	if (_OcclusionTestMesh) return _OcclusionTestMesh;
 	if (_OcclusionMeshNotFound) return NULL;
 	if (_OcclusionTestMeshName.empty()) return NULL;
-	if (sb.getPresentState(_OcclusionTestMeshName)!=CShapeBank::Present)
+	if (sb.getPresentState(_OcclusionTestMeshName) != CShapeBank::Present)
 	{
 		sb.load(_OcclusionTestMeshName);
-		if (sb.getPresentState(_OcclusionTestMeshName)!=CShapeBank::Present)
+		if (sb.getPresentState(_OcclusionTestMeshName) != CShapeBank::Present)
 		{
 			_OcclusionMeshNotFound = true;
 			return NULL;
@@ -218,7 +215,5 @@ CMesh *CFlareShape::getOcclusionTestMesh(CShapeBank &sb)
 	}
 	return _OcclusionTestMesh;
 }
-
-
 
 } // NL3D

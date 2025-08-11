@@ -25,26 +25,24 @@
 #include "vegetable_wind_dlg.h"
 #include "object_viewer.h"
 
-
-#define	NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE		1000
-#define	NL_VEGETABLE_EDIT_WIND_MAX_POWER		10.f
-#define	NL_VEGETABLE_EDIT_WIND_MAX_FREQUENCY	10.f
-#define	NL_VEGETABLE_EDIT_WIND_MAX_BENDSTART	1.f
+#define NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE 1000
+#define NL_VEGETABLE_EDIT_WIND_MAX_POWER 10.f
+#define NL_VEGETABLE_EDIT_WIND_MAX_FREQUENCY 10.f
+#define NL_VEGETABLE_EDIT_WIND_MAX_BENDSTART 1.f
 
 /////////////////////////////////////////////////////////////////////////////
 // CVegetableWindDlg dialog
 
-
-CVegetableWindDlg::CVegetableWindDlg(CObjectViewer *objViewer, CWnd* pParent /*=NULL*/)
-	: CDialog(CVegetableWindDlg::IDD, pParent), _ObjViewer(objViewer)
+CVegetableWindDlg::CVegetableWindDlg(CObjectViewer *objViewer, CWnd *pParent /*=NULL*/)
+    : CDialog(CVegetableWindDlg::IDD, pParent)
+    , _ObjViewer(objViewer)
 {
 	//{{AFX_DATA_INIT(CVegetableWindDlg)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void CVegetableWindDlg::DoDataExchange(CDataExchange* pDX)
+void CVegetableWindDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CVegetableWindDlg)
@@ -57,41 +55,38 @@ void CVegetableWindDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CVegetableWindDlg, CDialog)
-	//{{AFX_MSG_MAP(CVegetableWindDlg)
-	ON_NOTIFY(NM_RELEASEDCAPTURE, IDC_SLIDER_VEGETABLE_WIND_BENDSTART, OnReleasedcaptureSliderVegetableWindBendstart)
-	ON_NOTIFY(NM_RELEASEDCAPTURE, IDC_SLIDER_VEGETABLE_WIND_FREQUENCY, OnReleasedcaptureSliderVegetableWindFrequency)
-	ON_NOTIFY(NM_RELEASEDCAPTURE, IDC_SLIDER_VEGETABLE_WIND_POWER, OnReleasedcaptureSliderVegetableWindPower)
-	ON_BN_CLICKED(IDC_BUTTON_CLOSE, OnButtonClose)
-	ON_WM_HSCROLL()
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CVegetableWindDlg)
+ON_NOTIFY(NM_RELEASEDCAPTURE, IDC_SLIDER_VEGETABLE_WIND_BENDSTART, OnReleasedcaptureSliderVegetableWindBendstart)
+ON_NOTIFY(NM_RELEASEDCAPTURE, IDC_SLIDER_VEGETABLE_WIND_FREQUENCY, OnReleasedcaptureSliderVegetableWindFrequency)
+ON_NOTIFY(NM_RELEASEDCAPTURE, IDC_SLIDER_VEGETABLE_WIND_POWER, OnReleasedcaptureSliderVegetableWindPower)
+ON_BN_CLICKED(IDC_BUTTON_CLOSE, OnButtonClose)
+ON_WM_HSCROLL()
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-
 // ***************************************************************************
-void	CVegetableWindDlg::updateView()
+void CVegetableWindDlg::updateView()
 {
-	float	a;
+	float a;
 
 	// update Power.
-	a= _ObjViewer->getVegetableWindPower();
+	a = _ObjViewer->getVegetableWindPower();
 	StaticPower.SetWindowText(nlUtf8ToTStr(NLMISC::toString("%.2f", a)));
 	NLMISC::clamp(a, 0, NL_VEGETABLE_EDIT_WIND_MAX_POWER);
-	SliderPower.SetPos((sint)(a*NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE / NL_VEGETABLE_EDIT_WIND_MAX_POWER));
+	SliderPower.SetPos((sint)(a * NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE / NL_VEGETABLE_EDIT_WIND_MAX_POWER));
 
 	// update BendStart.
-	a= _ObjViewer->getVegetableWindBendStart();
+	a = _ObjViewer->getVegetableWindBendStart();
 	StaticBendStart.SetWindowText(nlUtf8ToTStr(NLMISC::toString("%.2f", a)));
 	NLMISC::clamp(a, 0, NL_VEGETABLE_EDIT_WIND_MAX_BENDSTART);
-	SliderBendStart.SetPos((sint)(a*NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE / NL_VEGETABLE_EDIT_WIND_MAX_BENDSTART));
+	SliderBendStart.SetPos((sint)(a * NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE / NL_VEGETABLE_EDIT_WIND_MAX_BENDSTART));
 
 	// update Frequency.
-	a= _ObjViewer->getVegetableWindFrequency();
+	a = _ObjViewer->getVegetableWindFrequency();
 	StaticFrequency.SetWindowText(nlUtf8ToTStr(NLMISC::toString("%.2f", a)));
 	NLMISC::clamp(a, 0, NL_VEGETABLE_EDIT_WIND_MAX_FREQUENCY);
-	SliderFrequency.SetPos((sint)(a*NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE / NL_VEGETABLE_EDIT_WIND_MAX_FREQUENCY));
-
+	SliderFrequency.SetPos((sint)(a * NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE / NL_VEGETABLE_EDIT_WIND_MAX_FREQUENCY));
 }
 
 // ***************************************************************************
@@ -100,50 +95,48 @@ void	CVegetableWindDlg::updateView()
 // ***************************************************************************
 // ***************************************************************************
 
-
 // ***************************************************************************
-BOOL CVegetableWindDlg::OnInitDialog() 
+BOOL CVegetableWindDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
 	SliderPower.SetRange(0, NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE);
 	SliderBendStart.SetRange(0, NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE);
 	SliderFrequency.SetRange(0, NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE);
-	
+
 	// Init them and static.
 	updateView();
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-
-
 // ***************************************************************************
-void CVegetableWindDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CVegetableWindDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar)
 {
 	// test if one of my sliders.
-	CSliderCtrl	*sliderCtrl= (CSliderCtrl*)pScrollBar;
-	if( (sliderCtrl==&SliderPower || sliderCtrl==&SliderBendStart || sliderCtrl==&SliderFrequency)
-		&& nSBCode==SB_THUMBPOSITION || nSBCode==SB_THUMBTRACK)
+	CSliderCtrl *sliderCtrl = (CSliderCtrl *)pScrollBar;
+	if ((sliderCtrl == &SliderPower || sliderCtrl == &SliderBendStart || sliderCtrl == &SliderFrequency)
+	        && nSBCode == SB_THUMBPOSITION
+	    || nSBCode == SB_THUMBTRACK)
 	{
-		float	a;
-		if(sliderCtrl == &SliderPower)
+		float a;
+		if (sliderCtrl == &SliderPower)
 		{
-			a= (float)nPos * NL_VEGETABLE_EDIT_WIND_MAX_POWER / NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE;
+			a = (float)nPos * NL_VEGETABLE_EDIT_WIND_MAX_POWER / NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE;
 			_ObjViewer->setVegetableWindPower(a);
 			StaticPower.SetWindowText(nlUtf8ToTStr(NLMISC::toString("%.2f", a)));
 		}
-		else if(sliderCtrl == &SliderBendStart)
+		else if (sliderCtrl == &SliderBendStart)
 		{
-			a= (float)nPos * NL_VEGETABLE_EDIT_WIND_MAX_BENDSTART / NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE;
+			a = (float)nPos * NL_VEGETABLE_EDIT_WIND_MAX_BENDSTART / NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE;
 			_ObjViewer->setVegetableWindBendStart(a);
 			StaticBendStart.SetWindowText(nlUtf8ToTStr(NLMISC::toString("%.2f", a)));
 		}
-		else if(sliderCtrl == &SliderFrequency)
+		else if (sliderCtrl == &SliderFrequency)
 		{
-		
-			a= (float)nPos * NL_VEGETABLE_EDIT_WIND_MAX_FREQUENCY / NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE;
+
+			a = (float)nPos * NL_VEGETABLE_EDIT_WIND_MAX_FREQUENCY / NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE;
 			_ObjViewer->setVegetableWindFrequency(a);
 			StaticFrequency.SetWindowText(nlUtf8ToTStr(NLMISC::toString("%.2f", a)));
 		}
@@ -155,23 +148,23 @@ void CVegetableWindDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBa
 }
 
 // ***************************************************************************
-void CVegetableWindDlg::OnReleasedcaptureSliderVegetableWindPower(NMHDR* pNMHDR, LRESULT* pResult) 
+void CVegetableWindDlg::OnReleasedcaptureSliderVegetableWindPower(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	float	a;
-	a= (float)SliderPower.GetPos() * NL_VEGETABLE_EDIT_WIND_MAX_POWER / NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE;
+	float a;
+	a = (float)SliderPower.GetPos() * NL_VEGETABLE_EDIT_WIND_MAX_POWER / NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE;
 	_ObjViewer->setVegetableWindPower(a);
 
 	// refersh.
 	updateView();
-	
+
 	*pResult = 0;
 }
 
 // ***************************************************************************
-void CVegetableWindDlg::OnReleasedcaptureSliderVegetableWindBendstart(NMHDR* pNMHDR, LRESULT* pResult) 
+void CVegetableWindDlg::OnReleasedcaptureSliderVegetableWindBendstart(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	float	a;
-	a= (float)SliderBendStart.GetPos() * NL_VEGETABLE_EDIT_WIND_MAX_BENDSTART / NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE;
+	float a;
+	a = (float)SliderBendStart.GetPos() * NL_VEGETABLE_EDIT_WIND_MAX_BENDSTART / NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE;
 	_ObjViewer->setVegetableWindBendStart(a);
 
 	// refersh.
@@ -181,24 +174,21 @@ void CVegetableWindDlg::OnReleasedcaptureSliderVegetableWindBendstart(NMHDR* pNM
 }
 
 // ***************************************************************************
-void CVegetableWindDlg::OnReleasedcaptureSliderVegetableWindFrequency(NMHDR* pNMHDR, LRESULT* pResult) 
+void CVegetableWindDlg::OnReleasedcaptureSliderVegetableWindFrequency(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	float	a;
-	a= (float)SliderFrequency.GetPos() * NL_VEGETABLE_EDIT_WIND_MAX_FREQUENCY / NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE;
+	float a;
+	a = (float)SliderFrequency.GetPos() * NL_VEGETABLE_EDIT_WIND_MAX_FREQUENCY / NL_VEGETABLE_EDIT_WIND_SLIDER_RANGE;
 	_ObjViewer->setVegetableWindFrequency(a);
 
 	// refersh.
 	updateView();
-	
+
 	*pResult = 0;
 }
 
-
-
 // ***************************************************************************
-void CVegetableWindDlg::OnButtonClose() 
+void CVegetableWindDlg::OnButtonClose()
 {
 	// hide the window
 	ShowWindow(false);
 }
-

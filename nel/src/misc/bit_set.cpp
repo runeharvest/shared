@@ -21,18 +21,15 @@
 using namespace std;
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace	NLMISC
-{
+namespace NLMISC {
 
 // must be defined elsewhere
 #ifndef min
-#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif
-
-
 
 // ***************************************************************************
 CBitSet::CBitSet()
@@ -41,8 +38,8 @@ CBitSet::CBitSet()
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
 	 *	It can be loaded/called through CAsyncFileManager for instance
 	 * ***********************************************/
-	NumBits= 0;
-	MaskLast= 0;
+	NumBits = 0;
+	MaskLast = 0;
 }
 CBitSet::CBitSet(uint numBits)
 {
@@ -50,8 +47,8 @@ CBitSet::CBitSet(uint numBits)
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
 	 *	It can be loaded/called through CAsyncFileManager for instance
 	 * ***********************************************/
-	NumBits= 0;
-	MaskLast= 0;
+	NumBits = 0;
+	MaskLast = 0;
 	resize(numBits);
 }
 CBitSet::CBitSet(const CBitSet &bs)
@@ -60,9 +57,9 @@ CBitSet::CBitSet(const CBitSet &bs)
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
 	 *	It can be loaded/called through CAsyncFileManager for instance
 	 * ***********************************************/
-	NumBits= bs.NumBits;
-	MaskLast= bs.MaskLast;
-	Array= bs.Array;
+	NumBits = bs.NumBits;
+	MaskLast = bs.MaskLast;
+	Array = bs.Array;
 }
 CBitSet::~CBitSet()
 {
@@ -71,239 +68,231 @@ CBitSet::~CBitSet()
 	 *	It can be loaded/called through CAsyncFileManager for instance
 	 * ***********************************************/
 }
-CBitSet	&CBitSet::operator=(const CBitSet &bs)
+CBitSet &CBitSet::operator=(const CBitSet &bs)
 {
-	NumBits= bs.NumBits;
-	MaskLast= bs.MaskLast;
-	Array= bs.Array;
+	NumBits = bs.NumBits;
+	MaskLast = bs.MaskLast;
+	Array = bs.Array;
 
 	return *this;
 }
 
-
 // ***************************************************************************
-void	CBitSet::clear()
+void CBitSet::clear()
 {
 	Array.clear();
-	NumBits= 0;
-	MaskLast=0;
+	NumBits = 0;
+	MaskLast = 0;
 }
-void	CBitSet::resize(uint numBits)
+void CBitSet::resize(uint numBits)
 {
-	if(numBits==0)
+	if (numBits == 0)
 		clear();
 
-	NumBits= numBits;
-	Array.resize( (NumBits+NL_BITLEN-1) / NL_BITLEN );
-	uint	nLastBits= NumBits & (NL_BITLEN-1) ;
+	NumBits = numBits;
+	Array.resize((NumBits + NL_BITLEN - 1) / NL_BITLEN);
+	uint nLastBits = NumBits & (NL_BITLEN - 1);
 	// Generate the mask for the last word.
-	if(nLastBits==0)
-		MaskLast= ~((uint)0);
+	if (nLastBits == 0)
+		MaskLast = ~((uint)0);
 	else
-		MaskLast= (1<< nLastBits) -1;
+		MaskLast = (1 << nLastBits) - 1;
 
 	// reset to 0.
 	clearAll();
 }
-void	CBitSet::resizeNoReset(uint numBits, bool value)
+void CBitSet::resizeNoReset(uint numBits, bool value)
 {
-	if(numBits==0)
+	if (numBits == 0)
 		clear();
 
-	uint oldNum=NumBits;
-	NumBits= numBits;
-	Array.resize( (NumBits+NL_BITLEN-1) / NL_BITLEN );
-	uint	nLastBits= NumBits & (NL_BITLEN-1) ;
+	uint oldNum = NumBits;
+	NumBits = numBits;
+	Array.resize((NumBits + NL_BITLEN - 1) / NL_BITLEN);
+	uint nLastBits = NumBits & (NL_BITLEN - 1);
 	// Generate the mask for the last word.
-	if(nLastBits==0)
-		MaskLast= ~((uint)0);
+	if (nLastBits == 0)
+		MaskLast = ~((uint)0);
 	else
-		MaskLast= (1<< nLastBits) -1;
+		MaskLast = (1 << nLastBits) - 1;
 
 	// Set new bit to value
-	for (uint i=oldNum; i<(uint)NumBits; i++)
+	for (uint i = oldNum; i < (uint)NumBits; i++)
 		set(i, value);
 }
-void	CBitSet::setAll()
+void CBitSet::setAll()
 {
 	const vector<uint32>::size_type s = Array.size();
 	fill_n(Array.begin(), s, ~((uint)0));
 
 	if (s)
-		Array[s-1]&= MaskLast;
+		Array[s - 1] &= MaskLast;
 }
-void	CBitSet::clearAll()
+void CBitSet::clearAll()
 {
 	fill_n(Array.begin(), Array.size(), 0);
 }
 
-
 // ***************************************************************************
-CBitSet	CBitSet::operator~() const
+CBitSet CBitSet::operator~() const
 {
-	CBitSet	ret;
+	CBitSet ret;
 
-	ret= *this;
+	ret = *this;
 	ret.flip();
 	return ret;
 }
-CBitSet	CBitSet::operator&(const CBitSet &bs) const
+CBitSet CBitSet::operator&(const CBitSet &bs) const
 {
-	CBitSet	ret;
+	CBitSet ret;
 
-	ret= *this;
-	ret&=bs;
+	ret = *this;
+	ret &= bs;
 	return ret;
 }
-CBitSet	CBitSet::operator|(const CBitSet &bs) const
+CBitSet CBitSet::operator|(const CBitSet &bs) const
 {
-	CBitSet	ret;
+	CBitSet ret;
 
-	ret= *this;
-	ret|=bs;
+	ret = *this;
+	ret |= bs;
 	return ret;
 }
-CBitSet	CBitSet::operator^(const CBitSet &bs) const
+CBitSet CBitSet::operator^(const CBitSet &bs) const
 {
-	CBitSet	ret;
+	CBitSet ret;
 
-	ret= *this;
-	ret^=bs;
+	ret = *this;
+	ret ^= bs;
 	return ret;
 }
-
 
 // ***************************************************************************
-void	CBitSet::flip()
+void CBitSet::flip()
 {
-	if(NumBits==0)
+	if (NumBits == 0)
 		return;
 
-	for(sint i=0;i<(sint)Array.size();i++)
-		Array[i]= ~Array[i];
+	for (sint i = 0; i < (sint)Array.size(); i++)
+		Array[i] = ~Array[i];
 
-	Array[Array.size()-1]&= MaskLast;
+	Array[Array.size() - 1] &= MaskLast;
 }
-CBitSet	&CBitSet::operator&=(const CBitSet &bs)
+CBitSet &CBitSet::operator&=(const CBitSet &bs)
 {
-	if(NumBits==0)
+	if (NumBits == 0)
 		return *this;
 
 	vector<uint32>::size_type minSize = min(Array.size(), bs.Array.size());
 	vector<uint32>::size_type i;
-	for(i=0;i<minSize;i++)
-		Array[i]= Array[i] & bs.Array[i];
-	for(i=minSize;i<Array.size();i++)
-		Array[i]=0;
+	for (i = 0; i < minSize; i++)
+		Array[i] = Array[i] & bs.Array[i];
+	for (i = minSize; i < Array.size(); i++)
+		Array[i] = 0;
 
-	Array[Array.size()-1]&= MaskLast;
+	Array[Array.size() - 1] &= MaskLast;
 
 	return *this;
 }
-CBitSet	&CBitSet::operator|=(const CBitSet &bs)
+CBitSet &CBitSet::operator|=(const CBitSet &bs)
 {
-	if(NumBits==0)
+	if (NumBits == 0)
 		return *this;
 
 	vector<uint32>::size_type minSize = min(Array.size(), bs.Array.size());
 	vector<uint32>::size_type i;
-	for(i=0;i<minSize;i++)
-		Array[i]= Array[i] | bs.Array[i];
+	for (i = 0; i < minSize; i++)
+		Array[i] = Array[i] | bs.Array[i];
 	// Do nothing for bits word from minSize to Array.size().
 
-	Array[Array.size()-1]&= MaskLast;
+	Array[Array.size() - 1] &= MaskLast;
 
 	return *this;
 }
-CBitSet	&CBitSet::operator^=(const CBitSet &bs)
+CBitSet &CBitSet::operator^=(const CBitSet &bs)
 {
-	if(NumBits==0)
+	if (NumBits == 0)
 		return *this;
 
-	vector<uint32>::size_type minSize= min(Array.size(), bs.Array.size());
+	vector<uint32>::size_type minSize = min(Array.size(), bs.Array.size());
 	vector<uint32>::size_type i;
-	for(i=0;i<minSize;i++)
-		Array[i]= Array[i] ^ bs.Array[i];
+	for (i = 0; i < minSize; i++)
+		Array[i] = Array[i] ^ bs.Array[i];
 	// Do nothing for bits word from minSize to Array.size().
 
-	Array[Array.size()-1]&= MaskLast;
+	Array[Array.size() - 1] &= MaskLast;
 
 	return *this;
 }
-
 
 // ***************************************************************************
-bool	CBitSet::operator==(const CBitSet &bs) const
+bool CBitSet::operator==(const CBitSet &bs) const
 {
-	if(NumBits!=bs.NumBits)
+	if (NumBits != bs.NumBits)
 		return false;
 
-	for(sint i=0;i<(sint)Array.size();i++)
+	for (sint i = 0; i < (sint)Array.size(); i++)
 	{
-		if(Array[i]!=bs.Array[i])
+		if (Array[i] != bs.Array[i])
 			return false;
 	}
 	return true;
 }
-bool	CBitSet::operator!=(const CBitSet &bs) const
+bool CBitSet::operator!=(const CBitSet &bs) const
 {
 	return (!operator==(bs));
 }
-bool	CBitSet::compareRestrict(const CBitSet &bs) const
+bool CBitSet::compareRestrict(const CBitSet &bs) const
 {
-	sint	n=min(NumBits, bs.NumBits);
-	if(n==0) return true;
+	sint n = min(NumBits, bs.NumBits);
+	if (n == 0) return true;
 
-	sint	nA= (n+NL_BITLEN-1) / NL_BITLEN;
-	uint	mask;
+	sint nA = (n + NL_BITLEN - 1) / NL_BITLEN;
+	uint mask;
 
-	uint	nLastBits= n & (NL_BITLEN-1) ;
+	uint nLastBits = n & (NL_BITLEN - 1);
 	// Generate the mask for the last common word.
-	if(nLastBits==0)
-		mask= ~((uint)0);
+	if (nLastBits == 0)
+		mask = ~((uint)0);
 	else
-		mask= (1<< nLastBits) -1;
+		mask = (1 << nLastBits) - 1;
 
-
-	for(sint i=0;i<nA-1;i++)
+	for (sint i = 0; i < nA - 1; i++)
 	{
-		if(Array[i]!=bs.Array[i])
+		if (Array[i] != bs.Array[i])
 			return false;
 	}
-	if( (Array[nA-1]&mask) != (bs.Array[nA-1]&mask) )
+	if ((Array[nA - 1] & mask) != (bs.Array[nA - 1] & mask))
 		return false;
-
 
 	return true;
 }
-bool	CBitSet::allSet()
+bool CBitSet::allSet()
 {
-	if(NumBits==0)
+	if (NumBits == 0)
 		return false;
-	for(sint i=0;i<(sint)Array.size()-1;i++)
+	for (sint i = 0; i < (sint)Array.size() - 1; i++)
 	{
-		if( Array[i]!= (~((uint)0)) )
+		if (Array[i] != (~((uint)0)))
 			return false;
 	}
-	if( Array[Array.size()-1]!= MaskLast )
+	if (Array[Array.size() - 1] != MaskLast)
 		return false;
 	return true;
 }
-bool	CBitSet::allCleared()
+bool CBitSet::allCleared()
 {
-	if(NumBits==0)
+	if (NumBits == 0)
 		return false;
-	for(sint i=0;i<(sint)Array.size();i++)
+	for (sint i = 0; i < (sint)Array.size(); i++)
 	{
-		if( Array[i]!= 0 )
+		if (Array[i] != 0)
 			return false;
 	}
 	return true;
 }
 
-
-
-void	CBitSet::serial(IStream &f)
+void CBitSet::serial(IStream &f)
 {
 	/* ***********************************************
 	 *	WARNING: This Class/Method must be thread-safe (ctor/dtor/serial): no static access for instance
@@ -311,53 +300,50 @@ void	CBitSet::serial(IStream &f)
 	 * ***********************************************/
 
 	(void)f.serialVersion(0);
-	uint32	sz=0;
-	vector<uint32>	array32;
+	uint32 sz = 0;
+	vector<uint32> array32;
 
 	// Must support any size of uint.
-	if(f.isReading())
+	if (f.isReading())
 	{
 		f.serial(sz);
 		resize(sz);
 
 		f.serialCont(array32);
-		for(sint i=0;i<(sint)sz;i++)
+		for (sint i = 0; i < (sint)sz; i++)
 		{
-			uint32	a=array32[i/32];
-			a&= 1<<(i&31);
-			set(i, a!=0);
+			uint32 a = array32[i / 32];
+			a &= 1 << (i & 31);
+			set(i, a != 0);
 		}
 	}
 	else
 	{
-		sz= size();
+		sz = size();
 		f.serial(sz);
 
-		array32.resize(sz/32);
+		array32.resize(sz / 32);
 		fill_n(array32.begin(), array32.size(), 0);
-		for(sint i=0;i<(sint)sz;i++)
+		for (sint i = 0; i < (sint)sz; i++)
 		{
-			if(get(i))
-				array32[i/32]|= 1<<(i&31);
+			if (get(i))
+				array32[i / 32] |= 1 << (i & 31);
 		}
 		f.serialCont(array32);
 	}
 }
 
-
 /*
  * Return a string representing the bitfield with 1 and 0 (from left to right)
  */
-std::string	CBitSet::toString() const
+std::string CBitSet::toString() const
 {
 	string s;
-	for ( sint i=0; i!=(sint)size(); ++i )
+	for (sint i = 0; i != (sint)size(); ++i)
 	{
 		s += (get(i) ? '1' : '0');
 	}
 	return s;
 }
 
-
 }
-

@@ -45,9 +45,11 @@ namespace BUILTIN {
 #define PMB_GEOM_UNKNOWN0900_CHUNK_ID 0x0900
 #define PMB_GEOM_BUFFERS_CHUNK_ID 0x08fe
 
-CGeomObject::CGeomObject(CScene *scene) : CObject(scene), m_Unknown0900(NULL), m_GeomBuffers(NULL)
+CGeomObject::CGeomObject(CScene *scene)
+    : CObject(scene)
+    , m_Unknown0900(NULL)
+    , m_GeomBuffers(NULL)
 {
-
 }
 
 CGeomObject::~CGeomObject()
@@ -135,12 +137,14 @@ void CGeomObject::toStringLocal(std::ostream &ostream, const std::string &pad, u
 		std::string padpad = pad + "\t";
 		if (m_Unknown0900)
 		{
-			ostream << "\n" << pad << "GeomObject Unknown 0x0900: ";
+			ostream << "\n"
+			        << pad << "GeomObject Unknown 0x0900: ";
 			m_Unknown0900->toString(ostream, padpad);
 		}
 		if (m_GeomBuffers)
 		{
-			ostream << "\n" << pad << "GeomBuffers: ";
+			ostream << "\n"
+			        << pad << "GeomBuffers: ";
 			m_GeomBuffers->toString(ostream, padpad);
 		}
 	}
@@ -175,7 +179,7 @@ void CGeomObject::triangulatePolyFace(std::vector<STORAGE::CGeomTriIndex> &trian
 	// Each edge direction can only be traveled by one triangle.
 	// Ingenious, if I may say so myself.
 	// Bad performance by std::vector, though.
-	std::vector<std::vector<bool> > from_to;
+	std::vector<std::vector<bool>> from_to;
 	from_to.resize(nbVert);
 	for (uint i = 0; i < nbVert; ++i)
 	{

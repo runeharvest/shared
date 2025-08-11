@@ -53,9 +53,9 @@ void printStringMap(const std::string &name, std::map<char, std::string> &m, boo
 			if (zero) std::cout << "\n";
 			std::stringstream ss;
 			ss << "'\\x" << std::hex << std::setw(2) << std::setfill('0') << std::uppercase << (m[x].length() > 0 ? (unsigned char)m[x][0] : 0)
-				<< "', '\\x" << std::hex << std::setw(2) << std::setfill('0') << std::uppercase << (m[x].length() > 1 ? (unsigned char)m[x][1] : 0)
-				<< "', '\\x" << std::hex << std::setw(2) << std::setfill('0') << std::uppercase << (m[x].length() > 2 ? (unsigned char)m[x][2] : 0)
-				<< "', 0,\n";
+			   << "', '\\x" << std::hex << std::setw(2) << std::setfill('0') << std::uppercase << (m[x].length() > 1 ? (unsigned char)m[x][1] : 0)
+			   << "', '\\x" << std::hex << std::setw(2) << std::setfill('0') << std::uppercase << (m[x].length() > 2 ? (unsigned char)m[x][2] : 0)
+			   << "', 0,\n";
 			std::cout << ss.str();
 			zero = false;
 		}
@@ -305,7 +305,7 @@ void generateMap(const std::string &file, const std::string &name, const std::ve
 	printMapMapMapMap("s_" + name + "MapMapMap", "s_" + name + "MapMap", m4, 0xF0, 8);
 }
 
-int main (int argc, char **argv)
+int main(int argc, char **argv)
 {
 	std::ifstream fi("UnicodeData.txt");
 
@@ -338,7 +338,7 @@ int main (int argc, char **argv)
 		u32char up = NLMISC::atoiInt64(cols[12].c_str(), 16);
 		u32char low = NLMISC::atoiInt64(cols[13].c_str(), 16);
 		u32char tit = NLMISC::atoiInt64(cols[14].c_str(), 16);
-		
+
 		if (up) upper[c] = up;
 		if (low) lower[c] = low;
 		if (tit) title[c] = tit;
@@ -384,9 +384,9 @@ int main (int argc, char **argv)
 	}
 
 	generateMap("string_to_upper", "StringToUpper", upper);
-	//generateMap("string_to_lower", "StringToLower", lower);
-	//generateMap("string_to_title", "StringToTitle", title);
-	//generateMap("string_to_ci", "StringToCaseInsensitive", ci);
+	// generateMap("string_to_lower", "StringToLower", lower);
+	// generateMap("string_to_title", "StringToTitle", title);
+	// generateMap("string_to_ci", "StringToCaseInsensitive", ci);
 
 	std::string test = nlstr("Οὐχὶ ταὐτὰ παρίσταταί μοι γιγνώσκειν, ὦ ἄνδρες ᾿Αθηναῖοι,");
 	std::string testUpper = NLMISC::toUpper(test);

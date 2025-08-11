@@ -23,20 +23,19 @@
 #include "nel/misc/debug.h"
 
 #ifdef DEBUG_NEW
-	#define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 using namespace std;
 
 // ***************************************************************************
 
-CEvalNumExpr::TReturnState CEvalNumExpr::readDecimal (double &value)
+CEvalNumExpr::TReturnState CEvalNumExpr::readDecimal(double &value)
 {
 	// Read first integer value
-	readIntegerNumberDecimal (value);
+	readIntegerNumberDecimal(value);
 
 	// Dot ?
 	char currentChar = *_ExprPtr;
@@ -51,8 +50,8 @@ CEvalNumExpr::TReturnState CEvalNumExpr::readDecimal (double &value)
 		// Read the decimal part
 		const char *start = _ExprPtr;
 		double fract;
-		readIntegerNumberDecimal (fract);
-		fract /= (double)pow (10.0,(sint)(_ExprPtr-start));
+		readIntegerNumberDecimal(fract);
+		fract /= (double)pow(10.0, (sint)(_ExprPtr - start));
 		value += fract;
 	}
 
@@ -61,7 +60,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::readDecimal (double &value)
 
 // ***************************************************************************
 
-void CEvalNumExpr::readIntegerNumberDecimal (double &value)
+void CEvalNumExpr::readIntegerNumberDecimal(double &value)
 {
 	// Registered values
 	NL_REGISTER double regValue = 0;
@@ -92,13 +91,13 @@ void CEvalNumExpr::readIntegerNumberDecimal (double &value)
 
 // ***************************************************************************
 
-CEvalNumExpr::TReturnState CEvalNumExpr::getNextToken (TToken &token)
+CEvalNumExpr::TReturnState CEvalNumExpr::getNextToken(TToken &token)
 {
 	// Get the current char
 	uint8 currentChar = *_ExprPtr;
 
 	// Skip space
-	while ((currentChar!=0) && (currentChar<=0x20))
+	while ((currentChar != 0) && (currentChar <= 0x20))
 	{
 		_ExprPtr++;
 		currentChar = *_ExprPtr;
@@ -126,7 +125,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::getNextToken (TToken &token)
 			else
 			{
 				// Have a second character ?
-				char secondChar = *(_ExprPtr+1);
+				char secondChar = *(_ExprPtr + 1);
 
 				// What kind of 1st character
 				switch (currentChar)
@@ -135,7 +134,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::getNextToken (TToken &token)
 					if (secondChar == '=')
 					{
 						_Op = NotEqual;
-						_ExprPtr+=2;
+						_ExprPtr += 2;
 						return NoError;
 					}
 					else
@@ -148,20 +147,20 @@ CEvalNumExpr::TReturnState CEvalNumExpr::getNextToken (TToken &token)
 					if (secondChar == '&')
 					{
 						_Op = LogicalAnd;
-						_ExprPtr+=2;
+						_ExprPtr += 2;
 						return NoError;
 					}
 					else
 					{
 						_Op = And;
-						_ExprPtr+=1;
+						_ExprPtr += 1;
 						return NoError;
 					}
 				case '-':
 					if (secondChar == '>')
 					{
 						_Op = SRightShift;
-						_ExprPtr+=2;
+						_ExprPtr += 2;
 						return NoError;
 					}
 					else
@@ -174,77 +173,77 @@ CEvalNumExpr::TReturnState CEvalNumExpr::getNextToken (TToken &token)
 					if (secondChar == '<')
 					{
 						_Op = ULeftShift;
-						_ExprPtr+=2;
+						_ExprPtr += 2;
 						return NoError;
 					}
 					else if (secondChar == '=')
 					{
 						_Op = InferiorEqual;
-						_ExprPtr+=2;
+						_ExprPtr += 2;
 						return NoError;
 					}
 					else if (secondChar == '-')
 					{
 						_Op = SLeftShift;
-						_ExprPtr+=2;
+						_ExprPtr += 2;
 						return NoError;
 					}
 					else
 					{
 						_Op = Inferior;
-						_ExprPtr+=1;
+						_ExprPtr += 1;
 						return NoError;
 					}
 				case '=':
 					if (secondChar == '=')
 					{
 						_Op = Equal;
-						_ExprPtr+=2;
+						_ExprPtr += 2;
 						return NoError;
 					}
 				case '>':
 					if (secondChar == '>')
 					{
 						_Op = URightShift;
-						_ExprPtr+=2;
+						_ExprPtr += 2;
 						return NoError;
 					}
 					else if (secondChar == '=')
 					{
 						_Op = SuperiorEqual;
-						_ExprPtr+=2;
+						_ExprPtr += 2;
 						return NoError;
 					}
 					else
 					{
 						_Op = Superior;
-						_ExprPtr+=1;
+						_ExprPtr += 1;
 						return NoError;
 					}
 				case '^':
 					if (secondChar == '^')
 					{
 						_Op = LogicalXor;
-						_ExprPtr+=2;
+						_ExprPtr += 2;
 						return NoError;
 					}
 					else
 					{
 						_Op = Xor;
-						_ExprPtr+=1;
+						_ExprPtr += 1;
 						return NoError;
 					}
 				case '|':
 					if (secondChar == '|')
 					{
 						_Op = LogicalOr;
-						_ExprPtr+=2;
+						_ExprPtr += 2;
 						return NoError;
 					}
 					else
 					{
 						_Op = Or;
-						_ExprPtr+=1;
+						_ExprPtr += 1;
 						return NoError;
 					}
 				}
@@ -284,13 +283,13 @@ CEvalNumExpr::TReturnState CEvalNumExpr::getNextToken (TToken &token)
 			token = Number;
 
 			// Have a second character ?
-			char secondChar = *(_ExprPtr+1);
+			char secondChar = *(_ExprPtr + 1);
 
 			// Is an hexadecimal value ?
 			if ((currentChar == '0') && (secondChar == 'x'))
 			{
 				// Go to the number
-				_ExprPtr +=2;
+				_ExprPtr += 2;
 				currentChar = *_ExprPtr;
 
 				// Registered values
@@ -316,7 +315,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::getNextToken (TToken &token)
 				currentChar = *_ExprPtr;
 
 				// For each values
-				for(;;)
+				for (;;)
 				{
 					if ((currentChar >= '0') && (currentChar <= '9'))
 					{
@@ -354,7 +353,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::getNextToken (TToken &token)
 			else if ((currentChar == '0') && (secondChar >= '0') && (secondChar <= '9'))
 			{
 				// Go to the number
-				_ExprPtr ++;
+				_ExprPtr++;
 				currentChar = *_ExprPtr;
 
 				// Registered values
@@ -394,12 +393,12 @@ CEvalNumExpr::TReturnState CEvalNumExpr::getNextToken (TToken &token)
 			else
 			{
 				// Read value
-				TReturnState state = readDecimal (_Value);
+				TReturnState state = readDecimal(_Value);
 				if (state == NoError)
 				{
 					// Exponent ?
 					currentChar = *_ExprPtr;
-					if ( (currentChar == 'e') || (currentChar == 'E') )
+					if ((currentChar == 'e') || (currentChar == 'E'))
 					{
 						// Next char
 						_ExprPtr++;
@@ -414,7 +413,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::getNextToken (TToken &token)
 
 						// Read value
 						double exponent;
-						state = readDecimal (exponent);
+						state = readDecimal(exponent);
 						if (state == NoError)
 						{
 							// Negative value ?
@@ -422,7 +421,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::getNextToken (TToken &token)
 								exponent = -exponent;
 
 							// Raise 10 at the power of
-							_Value *= pow (10.0, exponent);
+							_Value *= pow(10.0, exponent);
 						}
 						else
 						{
@@ -446,7 +445,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::getNextToken (TToken &token)
 			_ExprPtr++;
 			currentChar = *_ExprPtr;
 			const char *start = _ExprPtr;
-			while ( (currentChar != 0) && (currentChar != '"') )
+			while ((currentChar != 0) && (currentChar != '"'))
 			{
 				_ExprPtr++;
 				currentChar = *_ExprPtr;
@@ -458,17 +457,17 @@ CEvalNumExpr::TReturnState CEvalNumExpr::getNextToken (TToken &token)
 
 			// This is a user string, copy the string
 			uint size = (uint)(_ExprPtr - start);
-			if (size >= (InternalStringLen-1))
+			if (size >= (InternalStringLen - 1))
 			{
-				_InternalStlString.resize (size);
+				_InternalStlString.resize(size);
 				uint i;
-				for (i=0; i<size; i++)
+				for (i = 0; i < size; i++)
 					_InternalStlString[i] = start[i];
-				_InternalStringPtr = _InternalStlString.c_str ();
+				_InternalStringPtr = _InternalStlString.c_str();
 			}
 			else
 			{
-				memcpy (_InternalString, start, size);
+				memcpy(_InternalString, start, size);
 				_InternalString[size] = 0;
 				_InternalStringPtr = _InternalString;
 			}
@@ -482,7 +481,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::getNextToken (TToken &token)
 
 	// Read a string
 	const char *start = _ExprPtr;
-	while ( (currentChar >= 128) || _StringChar[currentChar] )
+	while ((currentChar >= 128) || _StringChar[currentChar])
 	{
 		_ExprPtr++;
 		currentChar = *_ExprPtr;
@@ -505,38 +504,38 @@ CEvalNumExpr::TReturnState CEvalNumExpr::getNextToken (TToken &token)
 
 	// This is a user string, copy the string
 	uint size = (uint)(_ExprPtr - start);
-	if (size >= (InternalStringLen-1))
+	if (size >= (InternalStringLen - 1))
 	{
-		_InternalStlString.resize (size);
+		_InternalStlString.resize(size);
 		uint i;
-		for (i=0; i<size; i++)
+		for (i = 0; i < size; i++)
 			_InternalStlString[i] = start[i];
-		_InternalStringPtr = _InternalStlString.c_str ();
+		_InternalStringPtr = _InternalStlString.c_str();
 	}
 	else
 	{
-		memcpy (_InternalString, start, size);
+		memcpy(_InternalString, start, size);
 		_InternalString[size] = 0;
 		_InternalStringPtr = _InternalString;
 	}
 
 	// Search for a reserved word ?
 	uint begin = 0;
-	uint end = ReservedWordCount-1;
-	sint result = strcmp (_InternalStringPtr, _ReservedWord[begin]);
-	if ( result >= 0 )
+	uint end = ReservedWordCount - 1;
+	sint result = strcmp(_InternalStringPtr, _ReservedWord[begin]);
+	if (result >= 0)
 	{
 		// The first is the good ?
-		if ( result == 0 )
+		if (result == 0)
 		{
 			end = begin;
 		}
 
-		result = strcmp (_InternalStringPtr, _ReservedWord[end]);
+		result = strcmp(_InternalStringPtr, _ReservedWord[end]);
 		if (result <= 0)
 		{
 			// The last is the good ?
-			if ( result == 0 )
+			if (result == 0)
 			{
 				begin = end;
 			}
@@ -545,7 +544,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::getNextToken (TToken &token)
 			while ((end - begin) > 1)
 			{
 				uint middle = begin + (end - begin) / 2;
-				result = strcmp (_InternalStringPtr, _ReservedWord[middle]);
+				result = strcmp(_InternalStringPtr, _ReservedWord[middle]);
 				if (result == 0)
 				{
 					begin = middle;
@@ -582,14 +581,14 @@ CEvalNumExpr::TReturnState CEvalNumExpr::getNextToken (TToken &token)
 
 // ***************************************************************************
 
-CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (const char *expression, double &result,
-														 int *errorIndex, uint32 userData)
+CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression(const char *expression, double &result,
+    int *errorIndex, uint32 userData)
 {
 	// Init the ptr
 	_ExprPtr = expression;
 
 	TToken nextToken;
-	TReturnState error = evalExpression (result, nextToken, userData);
+	TReturnState error = evalExpression(result, nextToken, userData);
 	if (error == NoError)
 	{
 		// The end ?
@@ -612,7 +611,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (const char *expression,
 
 // ***************************************************************************
 
-CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TToken &nextToken, uint32 userData)
+CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression(double &finalResult, TToken &nextToken, uint32 userData)
 {
 	// Array of result
 
@@ -625,10 +624,10 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 	vector<TOperator> resultOpSup;
 
 	// Read a token
-	TReturnState error = getNextToken (nextToken);
+	TReturnState error = getNextToken(nextToken);
 	if (error != NoError)
 		return error;
-	for(;;)
+	for (;;)
 	{
 		// Unary opertor
 		uint unaryOpCount = 0;
@@ -642,17 +641,17 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 		double value;
 
 		// Unary operator ?
-		if ( (nextToken == Operator) && ( (_Op == Minus) || (_Op == Not) || (_Op == Tilde) ) )
+		if ((nextToken == Operator) && ((_Op == Minus) || (_Op == Not) || (_Op == Tilde)))
 		{
 			// Push the unary operator
-			if (unaryOpCount<InternalOperator)
+			if (unaryOpCount < InternalOperator)
 				resultUnaryOp[unaryOpCount] = _Op;
 			else
-				resultUnaryOpSup.push_back (_Op);
+				resultUnaryOpSup.push_back(_Op);
 			unaryOpCount++;
 
 			// Read next token
-			error = getNextToken (nextToken);
+			error = getNextToken(nextToken);
 			if (error != NoError)
 				return error;
 		}
@@ -661,7 +660,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 		if (nextToken == Open)
 		{
 			// Eval sub expression
-			error = evalExpression (value, nextToken, userData);
+			error = evalExpression(value, nextToken, userData);
 			if (error == NoError)
 			{
 				if (nextToken != Close)
@@ -671,12 +670,12 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 				return error;
 
 			// Get next token
-			error = getNextToken (nextToken);
+			error = getNextToken(nextToken);
 			if (error != NoError)
 				return error;
 		}
 		// This is a function ?
-		else if ( (nextToken == Function1) || (nextToken == Function2) )
+		else if ((nextToken == Function1) || (nextToken == Function2))
 		{
 			TToken backupedToken = nextToken;
 
@@ -684,7 +683,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 			TReservedWord reservedWord = _ReservedWordFound;
 
 			// Read a token
-			error = getNextToken (nextToken);
+			error = getNextToken(nextToken);
 			if (error == NoError)
 			{
 				// Open ?
@@ -695,7 +694,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 
 				// Eval an expression
 				double arg0;
-				error = evalExpression (arg0, nextToken, userData);
+				error = evalExpression(arg0, nextToken, userData);
 				if (error == NoError)
 				{
 					// 2 arg ?
@@ -705,7 +704,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 						{
 							// Second argument
 							double arg1;
-							error = evalExpression (arg1, nextToken, userData);
+							error = evalExpression(arg1, nextToken, userData);
 							if (error == NoError)
 							{
 								// Final with close ?
@@ -714,19 +713,19 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 									switch (reservedWord)
 									{
 									case Atan2:
-										value = atan2 (arg0, arg1);
+										value = atan2(arg0, arg1);
 										break;
 									case Max:
-										value = (arg0>arg1) ? arg0 : arg1;
+										value = (arg0 > arg1) ? arg0 : arg1;
 										break;
 									case Min:
-										value = (arg0<arg1) ? arg0 : arg1;
+										value = (arg0 < arg1) ? arg0 : arg1;
 										break;
 									case Pow:
-										value = pow (arg0, arg1);
+										value = pow(arg0, arg1);
 										break;
 									case Rand:
-										value = arg0 + (arg1-arg0) * (double)rand () / ((double)RAND_MAX+1.0);
+										value = arg0 + (arg1 - arg0) * (double)rand() / ((double)RAND_MAX + 1.0);
 										break;
 									default:
 										// Can't be here after getToken
@@ -750,74 +749,72 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 							switch (reservedWord)
 							{
 							case Abs:
-								value = fabs (arg0);
+								value = fabs(arg0);
 								break;
 							case Acos:
-								value = acos (arg0);
+								value = acos(arg0);
 								break;
 							case Asin:
-								value = asin (arg0);
+								value = asin(arg0);
 								break;
 							case Atan:
-								value = atan (arg0);
+								value = atan(arg0);
 								break;
 							case Ceil:
-								value = ceil (arg0);
+								value = ceil(arg0);
 								break;
 							case Cosh:
-								value = cosh (arg0);
+								value = cosh(arg0);
 								break;
 							case Cos:
-								value = cos (arg0);
+								value = cos(arg0);
 								break;
-							case Exponent:
-								{
-									int exponent;
-									(void)frexp( arg0, &exponent);
-									value = (double)exponent;
-								}
-								break;
+							case Exponent: {
+								int exponent;
+								(void)frexp(arg0, &exponent);
+								value = (double)exponent;
+							}
+							break;
 							case Exp:
-								value = exp (arg0);
+								value = exp(arg0);
 								break;
 							case Floor:
-								value = floor (arg0);
+								value = floor(arg0);
 								break;
 							case Int:
 								value = (double)(int)(arg0);
 								break;
 							case Log10:
-								value = log10 (arg0);
+								value = log10(arg0);
 								break;
 							case Log:
-								value = log (arg0);
+								value = log(arg0);
 								break;
-							case Mantissa:
-								{
-									int exponent;
-									value = frexp( arg0, &exponent);
-								}
-								break;
+							case Mantissa: {
+								int exponent;
+								value = frexp(arg0, &exponent);
+							}
+							break;
 							case Round:
-								value = floor (arg0 + 0.5);
+								value = floor(arg0 + 0.5);
 								break;
 							case Sinh:
-								value = sinh (arg0);
+								value = sinh(arg0);
 								break;
 							case Sin:
-								value = sin (arg0);
+								value = sin(arg0);
 								break;
 							case Sqrt:
-								value = sqrt (arg0);
+								value = sqrt(arg0);
 								break;
 							case Sq:
 								value = arg0 * arg0;
 								break;
 							case Tanh:
-								value = tanh (arg0);
+								value = tanh(arg0);
 								break;
 							case Tan:
-								value = tan (arg0);
+								value = tan(arg0);
 								break;
 							default:
 								// Can't be hear after getToken
@@ -835,7 +832,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 				return error;
 
 			// Get next token
-			error = getNextToken (nextToken);
+			error = getNextToken(nextToken);
 			if (error != NoError)
 				return error;
 		}
@@ -845,29 +842,29 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 			value = _Value;
 
 			// Get next token
-			error = getNextToken (nextToken);
+			error = getNextToken(nextToken);
 			if (error != NoError)
 				return error;
 		}
 		else if (nextToken == String)
 		{
 			// Copy the string
-			char			internalString[InternalStringLen];
-			std::string		internalStlString;
-			const char		*internalStringPtr;
-			if (strlen (_InternalStringPtr) >= InternalStringLen-1)
+			char internalString[InternalStringLen];
+			std::string internalStlString;
+			const char *internalStringPtr;
+			if (strlen(_InternalStringPtr) >= InternalStringLen - 1)
 			{
 				internalStlString = _InternalStringPtr;
-				internalStringPtr = internalStlString.c_str ();
+				internalStringPtr = internalStlString.c_str();
 			}
 			else
 			{
-				strcpy (internalString ,_InternalStringPtr);
+				strcpy(internalString, _InternalStringPtr);
 				internalStringPtr = internalString;
 			}
 
 			// Read a token
-			error = getNextToken (nextToken);
+			error = getNextToken(nextToken);
 			if (error == NoError)
 			{
 				// Open ?
@@ -875,26 +872,26 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 				{
 					// Eval an expression
 					double arg0;
-					error = evalExpression (arg0, nextToken, userData);
+					error = evalExpression(arg0, nextToken, userData);
 					if (error == NoError)
 					{
 						if (nextToken == Coma)
 						{
 							// Second argument
 							double arg1;
-							error = evalExpression (arg1, nextToken, userData);
+							error = evalExpression(arg1, nextToken, userData);
 							if (error == NoError)
 							{
 								// Final with close ?
 								if (nextToken == Close)
 								{
 									// Eval the function
-									error = evalFunction (internalStringPtr, arg0, arg1, value);
+									error = evalFunction(internalStringPtr, arg0, arg1, value);
 									if (error != NoError)
 										return error;
 
 									// Get next token
-									error = getNextToken (nextToken);
+									error = getNextToken(nextToken);
 									if (error != NoError)
 										return error;
 								}
@@ -909,12 +906,12 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 							if (nextToken == Close)
 							{
 								// Eval the function
-								error = evalFunction (internalStringPtr, arg0, value);
+								error = evalFunction(internalStringPtr, arg0, value);
 								if (error != NoError)
 									return error;
 
 								// Get next token
-								error = getNextToken (nextToken);
+								error = getNextToken(nextToken);
 								if (error != NoError)
 									return error;
 							}
@@ -928,7 +925,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 				else
 				{
 					// This is a user value
-					error = evalValue (internalStringPtr, value, userData);
+					error = evalValue(internalStringPtr, value, userData);
 					if (error != NoError)
 						return error;
 				}
@@ -943,15 +940,15 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 
 		// Eval unary operator
 		sint i;
-		for (i=unaryOpCount-1; i>=0; i--)
+		for (i = unaryOpCount - 1; i >= 0; i--)
 		{
-			switch ((i<InternalOperator)?resultUnaryOp[i]:resultUnaryOpSup[i-InternalOperator])
+			switch ((i < InternalOperator) ? resultUnaryOp[i] : resultUnaryOpSup[i - InternalOperator])
 			{
 			case Not:
-				value = (double)(uint)((floor (value+0.5)==0.0));
+				value = (double)(uint)((floor(value + 0.5) == 0.0));
 				break;
 			case Tilde:
-				value = (double)(~((uint)floor (value+0.5)) & std::numeric_limits<uint>::max());
+				value = (double)(~((uint)floor(value + 0.5)) & std::numeric_limits<uint>::max());
 				break;
 			case Minus:
 				value = -value;
@@ -966,7 +963,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 		if (exprCount < InternalOperator)
 			result[exprCount] = value;
 		else
-			resultSup.push_back (value);
+			resultSup.push_back(value);
 		exprCount++;
 
 		// Look for an operator
@@ -977,7 +974,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 			if (opCount < InternalOperator)
 				resultOp[opCount] = _Op;
 			else
-				resultOpSup.push_back (_Op);
+				resultOpSup.push_back(_Op);
 			opCount++;
 		}
 		else
@@ -987,7 +984,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 		}
 
 		// Next token
-		error = getNextToken (nextToken);
+		error = getNextToken(nextToken);
 	}
 
 	// Reduce the expression
@@ -995,13 +992,13 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 	while (exprCount != 1)
 	{
 		// Reduct ?
-		TOperator before = (((index-1)<InternalOperator)?resultOp[index-1]:resultOpSup[index-1-InternalOperator]);
-		TOperator after = (index < opCount)?(((index)<InternalOperator)?resultOp[index]:resultOpSup[index-InternalOperator]):NotOperator;
+		TOperator before = (((index - 1) < InternalOperator) ? resultOp[index - 1] : resultOpSup[index - 1 - InternalOperator]);
+		TOperator after = (index < opCount) ? (((index) < InternalOperator) ? resultOp[index] : resultOpSup[index - InternalOperator]) : NotOperator;
 		if ((index == opCount) || (_OperatorPrecedence[before] <= _OperatorPrecedence[after]))
 		{
 			// Eval the value
-			double &v0 = ((index-1)<InternalOperator)?result[index-1]:resultSup[index-1-InternalOperator];
-			double &v1 = ((index)<InternalOperator)?result[index]:resultSup[index-InternalOperator];
+			double &v0 = ((index - 1) < InternalOperator) ? result[index - 1] : resultSup[index - 1 - InternalOperator];
+			double &v1 = ((index) < InternalOperator) ? result[index] : resultSup[index - InternalOperator];
 
 			// Choose the operator
 			switch (before)
@@ -1023,7 +1020,7 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 				}
 				break;
 			case Remainder:
-				v0 = fmod (v0, v1);
+				v0 = fmod(v0, v1);
 				break;
 			case Plus:
 				v0 += v1;
@@ -1032,83 +1029,81 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 				v0 -= v1;
 				break;
 			case ULeftShift:
-				v0 = (double)(uint)(((uint)floor (v0 + 0.5))<<((uint)floor (v1 + 0.5)));
+				v0 = (double)(uint)(((uint)floor(v0 + 0.5)) << ((uint)floor(v1 + 0.5)));
 				break;
 			case URightShift:
-				v0 = (double)(((uint)floor (v0 + 0.5))>>((uint)floor (v1 + 0.5)));
+				v0 = (double)(((uint)floor(v0 + 0.5)) >> ((uint)floor(v1 + 0.5)));
 				break;
 			case SLeftShift:
-				v0 = (double)(sint)(((sint)floor (v0 + 0.5))<<((sint)floor (v1 + 0.5)));
+				v0 = (double)(sint)(((sint)floor(v0 + 0.5)) << ((sint)floor(v1 + 0.5)));
 				break;
 			case SRightShift:
-				v0 = (double)(((sint)floor (v0 + 0.5))>>((sint)floor (v1 + 0.5)));
+				v0 = (double)(((sint)floor(v0 + 0.5)) >> ((sint)floor(v1 + 0.5)));
 				break;
 			case Inferior:
-				v0 = (v0<v1)?1.0:0.0;
+				v0 = (v0 < v1) ? 1.0 : 0.0;
 				break;
 			case InferiorEqual:
-				v0 = (v0<=v1)?1.0:0.0;
+				v0 = (v0 <= v1) ? 1.0 : 0.0;
 				break;
 			case Superior:
-				v0 = (v0>v1)?1.0:0.0;
+				v0 = (v0 > v1) ? 1.0 : 0.0;
 				break;
 			case SuperiorEqual:
-				v0 = (v0>=v1)?1.0:0.0;
+				v0 = (v0 >= v1) ? 1.0 : 0.0;
 				break;
 			case Equal:
-				v0 = (v0==v1)?1.0:0.0;
+				v0 = (v0 == v1) ? 1.0 : 0.0;
 				break;
 			case NotEqual:
-				v0 = (v0!=v1)?1.0:0.0;
+				v0 = (v0 != v1) ? 1.0 : 0.0;
 				break;
 			case And:
-				v0 = (double)(((uint)floor (v0 + 0.5)) & ((uint)floor (v1 + 0.5)));
+				v0 = (double)(((uint)floor(v0 + 0.5)) & ((uint)floor(v1 + 0.5)));
 				break;
 			case Or:
-				v0 = (double)(((uint)floor (v0 + 0.5)) | ((uint)floor (v1 + 0.5)));
+				v0 = (double)(((uint)floor(v0 + 0.5)) | ((uint)floor(v1 + 0.5)));
 				break;
 			case Xor:
-				v0 = (double)(((uint)floor (v0 + 0.5)) ^ ((uint)floor (v1 + 0.5)));
+				v0 = (double)(((uint)floor(v0 + 0.5)) ^ ((uint)floor(v1 + 0.5)));
 				break;
 			case LogicalAnd:
-				v0 = (double)(uint)((floor (v0 + 0.5) != 0.0) && (floor (v1 + 0.5) != 0.0));
+				v0 = (double)(uint)((floor(v0 + 0.5) != 0.0) && (floor(v1 + 0.5) != 0.0));
 				break;
 			case LogicalOr:
-				v0 = (double)(uint)((floor (v0 + 0.5) != 0.0) || (floor (v1 + 0.5) != 0.0));
+				v0 = (double)(uint)((floor(v0 + 0.5) != 0.0) || (floor(v1 + 0.5) != 0.0));
 				break;
-			case LogicalXor:
-				{
-					bool b0 = floor (v0 + 0.5) != 0.0;
-					bool b1 = floor (v1 + 0.5) != 0.0;
-					v0 = (double)(uint)((b0&&!b1) || ((!b0)&&b1));
-				}
-				break;
+			case LogicalXor: {
+				bool b0 = floor(v0 + 0.5) != 0.0;
+				bool b1 = floor(v1 + 0.5) != 0.0;
+				v0 = (double)(uint)((b0 && !b1) || ((!b0) && b1));
+			}
+			break;
 			default:
 				nlstop;
 			}
 
 			// Decal others values
 			uint i = index;
-			for (; i<exprCount-1; i++)
+			for (; i < exprCount - 1; i++)
 			{
 				// Copy
-				if (i<InternalOperator)
-					result[i] = (i+1<InternalOperator)?result[i+1]:resultSup[i+1-InternalOperator];
+				if (i < InternalOperator)
+					result[i] = (i + 1 < InternalOperator) ? result[i + 1] : resultSup[i + 1 - InternalOperator];
 				else
-					resultSup[i-InternalOperator] = (i+1<InternalOperator)?result[i+1]:resultSup[i+1-InternalOperator];
+					resultSup[i - InternalOperator] = (i + 1 < InternalOperator) ? result[i + 1] : resultSup[i + 1 - InternalOperator];
 			}
 			exprCount--;
 
 			// Decal operators
-			i = index-1;
-			for (; i<opCount-1; i++)
+			i = index - 1;
+			for (; i < opCount - 1; i++)
 			{
 				// Copy
-				if (i<InternalOperator)
-					resultOp[i] = (i+1<InternalOperator)?resultOp[i+1]:resultOpSup[i+1-InternalOperator];
+				if (i < InternalOperator)
+					resultOp[i] = (i + 1 < InternalOperator) ? resultOp[i + 1] : resultOpSup[i + 1 - InternalOperator];
 				else
-					resultOpSup[i-InternalOperator] = (i+1<InternalOperator)?resultOp[i+1]:resultOpSup[i+1-InternalOperator];
-
+					resultOpSup[i - InternalOperator] = (i + 1 < InternalOperator) ? resultOp[i + 1] : resultOpSup[i + 1 - InternalOperator];
 			}
 			opCount--;
 
@@ -1126,10 +1121,10 @@ CEvalNumExpr::TReturnState CEvalNumExpr::evalExpression (double &finalResult, TT
 
 // ***************************************************************************
 
-bool CEvalNumExpr::internalCheck ()
+bool CEvalNumExpr::internalCheck()
 {
-	for (uint i=0; i<ReservedWordCount-1; i++)
-		if (strcmp (_ReservedWord[i], _ReservedWord[i+1]) >= 0)
+	for (uint i = 0; i < ReservedWordCount - 1; i++)
+		if (strcmp(_ReservedWord[i], _ReservedWord[i + 1]) >= 0)
 		{
 			nlstop;
 			return false;
@@ -1154,64 +1149,301 @@ bool CEvalNumExpr::internalCheck ()
 
 // ***************************************************************************
 
-const CEvalNumExpr::TOperator	CEvalNumExpr::_OperatorArray[128] =
-{
-	NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator,
-	NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator,
-	NotOperator, ExtOperator, NotOperator, NotOperator, NotOperator, Remainder,   ExtOperator, NotOperator, NotOperator, NotOperator, Mul,		   Plus,		NotOperator, ExtOperator, NotOperator, Div,
-	NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, ExtOperator, ExtOperator, ExtOperator, NotOperator,
-	NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator,
-	NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, ExtOperator, NotOperator,
-	NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator,
-	NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, NotOperator, ExtOperator, NotOperator, Tilde,	   NotOperator,
+const CEvalNumExpr::TOperator CEvalNumExpr::_OperatorArray[128] = {
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	ExtOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	Remainder,
+	ExtOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	Mul,
+	Plus,
+	NotOperator,
+	ExtOperator,
+	NotOperator,
+	Div,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	ExtOperator,
+	ExtOperator,
+	ExtOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	ExtOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	NotOperator,
+	ExtOperator,
+	NotOperator,
+	Tilde,
+	NotOperator,
 };
 
 // ***************************************************************************
 
-const bool CEvalNumExpr::_StringChar[128] =
-{
-	false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-	false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-	false, false, true,  true,  true,  false, false, true,  false, false, false, false, false, false, false, false,
-	true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  false, false, false, true,
-	true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-	true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  false,  true,
-	true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-	true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  false, true,  false, true,
+const bool CEvalNumExpr::_StringChar[128] = {
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	true,
+	true,
+	true,
+	false,
+	false,
+	true,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	false,
+	false,
+	false,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	false,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	false,
+	true,
+	false,
+	true,
 };
 
 // ***************************************************************************
 
-CEvalNumExpr::TReturnState CEvalNumExpr::evalValue (const char *value, double &result, uint32 userData)
+CEvalNumExpr::TReturnState CEvalNumExpr::evalValue(const char *value, double &result, uint32 userData)
 {
 	return UnknownValue;
 }
 
 // ***************************************************************************
 
-CEvalNumExpr::TReturnState CEvalNumExpr::evalFunction (const char *funcName, double arg0, double &result)
+CEvalNumExpr::TReturnState CEvalNumExpr::evalFunction(const char *funcName, double arg0, double &result)
 {
 	return UnknownFunction;
 }
 
 // ***************************************************************************
 
-CEvalNumExpr::TReturnState CEvalNumExpr::evalFunction (const char *funcName, double arg0, double arg1, double &result)
+CEvalNumExpr::TReturnState CEvalNumExpr::evalFunction(const char *funcName, double arg0, double arg1, double &result)
 {
 	return UnknownFunction;
 }
 
 // ***************************************************************************
 
-const char *CEvalNumExpr::_ReservedWord[ReservedWordCount] =
-{
+const char *CEvalNumExpr::_ReservedWord[ReservedWordCount] = {
 	"abs", // Abs
 	"acos", // Acos
 	"asin", // Asin
 	"atan", // Atan
 	"atan2", // Atan2
 	"ceil", // Ceil
-	"cos",	// Cos
+	"cos", // Cos
 	"cosh", // Cosh
 	"exp", // Exp
 	"exponent", // Exponent
@@ -1235,8 +1467,7 @@ const char *CEvalNumExpr::_ReservedWord[ReservedWordCount] =
 
 // ***************************************************************************
 
-const CEvalNumExpr::TToken CEvalNumExpr::_ReservedWordToken[ReservedWordCount] =
-{
+const CEvalNumExpr::TToken CEvalNumExpr::_ReservedWordToken[ReservedWordCount] = {
 	Function1, // Abs
 	Function1, // Acos
 	Function1, // Asin
@@ -1267,8 +1498,7 @@ const CEvalNumExpr::TToken CEvalNumExpr::_ReservedWordToken[ReservedWordCount] =
 
 // ***************************************************************************
 
-const char *CEvalNumExpr::_ErrorString[ReturnValueCount]=
-{
+const char *CEvalNumExpr::_ErrorString[ReturnValueCount] = {
 	"No error",
 	"Unknown value",
 	"Error during user defined value evaluation",
@@ -1288,40 +1518,39 @@ const char *CEvalNumExpr::_ErrorString[ReturnValueCount]=
 
 // ***************************************************************************
 
-const char* CEvalNumExpr::getErrorString (TReturnState state) const
+const char *CEvalNumExpr::getErrorString(TReturnState state) const
 {
 	return _ErrorString[state];
 }
 
 // ***************************************************************************
 
-const int CEvalNumExpr::_OperatorPrecedence[]=
-{
-	0,	// Not
-	0,	// Tilde
-	1,	// Mul
-	1,	// Div
-	1,	// Remainder
-	2,	// Plus
-	2,	// Minus
-	3,	// ULeftShift
-	3,	// URightShift
-	3,	// SLeftShift
-	3,	// SRightShift
-	4,	// Inferior
-	4,	// InferiorEqual
-	4,	// Superior
-	4,	// SuperiorEqual
-	5,	// Equal
-	5,	// NotEqual
-	6,	// And
-	7,	// Or
-	8,	// Xor
-	9,	// LogicalAnd
-	10,	// LogicalOr
-	11,	// LogicalXor
-	-1,	// OperatorCount
-	20,	// NotOperator
+const int CEvalNumExpr::_OperatorPrecedence[] = {
+	0, // Not
+	0, // Tilde
+	1, // Mul
+	1, // Div
+	1, // Remainder
+	2, // Plus
+	2, // Minus
+	3, // ULeftShift
+	3, // URightShift
+	3, // SLeftShift
+	3, // SRightShift
+	4, // Inferior
+	4, // InferiorEqual
+	4, // Superior
+	4, // SuperiorEqual
+	5, // Equal
+	5, // NotEqual
+	6, // And
+	7, // Or
+	8, // Xor
+	9, // LogicalAnd
+	10, // LogicalOr
+	11, // LogicalXor
+	-1, // OperatorCount
+	20, // NotOperator
 };
 
 // ***************************************************************************

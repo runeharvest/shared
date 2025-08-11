@@ -20,42 +20,44 @@
 #include "nel/misc/types_nl.h"
 #include <deque>
 
-namespace NLMISC
-{
+namespace NLMISC {
 
 /** An historic with user defined size.
-  * An historic is just a fifo with constraint on size
-  *
-  * \author Nicolas Vizerie
-  * \author Nevrax France
-  * \date 2004
-  */
+ * An historic is just a fifo with constraint on size
+ *
+ * \author Nicolas Vizerie
+ * \author Nevrax France
+ * \date 2004
+ */
 template <class T>
 class CHistoric
 {
 public:
-	CHistoric(uint maxSize = 0) : _MaxSize(maxSize) {}
+	CHistoric(uint maxSize = 0)
+	    : _MaxSize(maxSize)
+	{
+	}
 	// Add a value at end of historic. If historic is full then the oldest entry is removed
-	inline void		push(const T &value);
+	inline void push(const T &value);
 	// Pop the value at the end of jistoric
-	inline void		pop();
+	inline void pop();
 	// Return true is there are no values in the historics.
-	bool			empty() const { return _Historic.empty(); }
+	bool empty() const { return _Historic.empty(); }
 	// Get max number of entries in the historic.
-	uint			getMaxSize() const { return _MaxSize; }
+	uint getMaxSize() const { return _MaxSize; }
 	// Set number of entries in the historic. Oldest entries are removed
-	inline void		setMaxSize(uint maxSize);
+	inline void setMaxSize(uint maxSize);
 	// Get current size of historic
-	uint			getSize() const { return (uint)_Historic.size(); }
+	uint getSize() const { return (uint)_Historic.size(); }
 	// Access to an element in history, 0 being the oldest, size - 1 being the lastest added element
-	const T		   &operator[](uint index) const { return _Historic[index]; /* let STL do out of range check */ }
+	const T &operator[](uint index) const { return _Historic[index]; /* let STL do out of range check */ }
 	// Clear historic
-	void			clear() { _Historic.clear(); }
+	void clear() { _Historic.clear(); }
+
 private:
 	std::deque<T> _Historic;
-	uint		  _MaxSize;
+	uint _MaxSize;
 };
-
 
 ////////////////////
 // IMPLEMENTATION //
@@ -63,7 +65,7 @@ private:
 
 // ****************************************************************************************************
 template <class T>
-inline void	CHistoric<T>::push(const T &value)
+inline void CHistoric<T>::push(const T &value)
 {
 	nlassert(_Historic.size() <= _MaxSize);
 	if (_MaxSize == 0) return;
@@ -76,7 +78,7 @@ inline void	CHistoric<T>::push(const T &value)
 
 // ****************************************************************************************************
 template <class T>
-inline void	CHistoric<T>::pop()
+inline void CHistoric<T>::pop()
 {
 	nlassert(!_Historic.empty());
 	_Historic.pop_back();
@@ -84,7 +86,7 @@ inline void	CHistoric<T>::pop()
 
 // ****************************************************************************************************
 template <class T>
-inline void	CHistoric<T>::setMaxSize(uint maxSize)
+inline void CHistoric<T>::setMaxSize(uint maxSize)
 {
 	if (maxSize < getSize())
 	{
@@ -95,6 +97,5 @@ inline void	CHistoric<T>::setMaxSize(uint maxSize)
 }
 
 }
-
 
 #endif

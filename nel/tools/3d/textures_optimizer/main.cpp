@@ -51,7 +51,7 @@ std::vector<std::string> InputFilenames;
 bool parseOptions(int argc, char **argv)
 {
 	// process each argument
-	for(sint i = 1; i < argc; ++i)
+	for (sint i = 1; i < argc; ++i)
 	{
 		std::string option = argv[i];
 
@@ -70,7 +70,7 @@ bool parseOptions(int argc, char **argv)
 			{
 				// remove option prefix
 				option = option.substr(1);
-				
+
 				// Fix alpha
 				if (option == "a")
 				{
@@ -136,7 +136,7 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
-	for(uint i = 0; i < InputFilenames.size(); ++i)
+	for (uint i = 0; i < InputFilenames.size(); ++i)
 	{
 		std::string ext = NLMISC::toLowerAscii(NLMISC::CFile::getExtension(InputFilenames[i]));
 
@@ -167,7 +167,7 @@ int main(int argc, char **argv)
 		bool modified = false;
 		bool hasAlpha = false;
 		bool isGrayscale = false;
-		
+
 		if (bitmap.getPixelFormat() == NLMISC::CBitmap::RGBA && depth == 32)
 		{
 			hasAlpha = true;
@@ -195,15 +195,15 @@ int main(int argc, char **argv)
 			{
 				// get a pointer on original RGBA data
 				uint32 size = bitmap.getPixels().size();
-				uint32 *data = (uint32*)bitmap.getPixels().getPtr();
-				uint32 *endData = (uint32*)((uint8*)data + size);
+				uint32 *data = (uint32 *)bitmap.getPixels().getPtr();
+				uint32 *endData = (uint32 *)((uint8 *)data + size);
 
 				NLMISC::CRGBA *color = NULL;
 
 				// process all pixels
-				while(data < endData)
+				while (data < endData)
 				{
-					color = (NLMISC::CRGBA*)data;
+					color = (NLMISC::CRGBA *)data;
 
 					// copy red value to green and blue,
 					// because only red is used for mask
@@ -231,7 +231,7 @@ int main(int argc, char **argv)
 
 				if (FixGrayscale)
 				{
-					if (!bitmap.convertToType(hasAlpha ? NLMISC::CBitmap::AlphaLuminance:NLMISC::CBitmap::Luminance))
+					if (!bitmap.convertToType(hasAlpha ? NLMISC::CBitmap::AlphaLuminance : NLMISC::CBitmap::Luminance))
 					{
 						std::cerr << "Unable to convert to Luminance" << std::endl;
 						return 1;
@@ -268,7 +268,7 @@ int main(int argc, char **argv)
 			return 1;
 		}
 
-		uint32 newDepth = isGrayscale ? 8:24;
+		uint32 newDepth = isGrayscale ? 8 : 24;
 
 		if (hasAlpha) newDepth += 8;
 

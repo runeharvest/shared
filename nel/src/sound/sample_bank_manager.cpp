@@ -39,9 +39,10 @@ using namespace NLMISC;
 
 namespace NLSOUND {
 
-CSampleBankManager::CSampleBankManager(CAudioMixerUser *audioMixer) : m_AudioMixer(audioMixer), m_LoadedSize(0)
+CSampleBankManager::CSampleBankManager(CAudioMixerUser *audioMixer)
+    : m_AudioMixer(audioMixer)
+    , m_LoadedSize(0)
 {
-	
 }
 
 CSampleBankManager::~CSampleBankManager()
@@ -49,23 +50,22 @@ CSampleBankManager::~CSampleBankManager()
 	releaseAll();
 }
 
-
 void CSampleBankManager::init(NLGEORGES::UFormElm *mixerConfig)
 {
 	if (mixerConfig == 0)
 		return;
-	
-	NLGEORGES::UFormElm	*virtualBanks;
+
+	NLGEORGES::UFormElm *virtualBanks;
 	mixerConfig->getNodeByName(&virtualBanks, ".VirtualBanks");
 	if (virtualBanks == 0)
 		return;
-	
+
 	uint size;
 	virtualBanks->getArraySize(size);
-	
-	for (uint i=0; i<size; ++i)
+
+	for (uint i = 0; i < size; ++i)
 	{
-		NLGEORGES::UFormElm	*virtualBank;
+		NLGEORGES::UFormElm *virtualBank;
 		virtualBanks->getArrayNode(&virtualBank, i);
 
 		if (virtualBank != 0)
@@ -73,18 +73,18 @@ void CSampleBankManager::init(NLGEORGES::UFormElm *mixerConfig)
 			std::vector<TFilteredBank> vfb;
 			std::string virtualName;
 			virtualBank->getValueByName(virtualName, ".VirtualName");
-			NLGEORGES::UFormElm	*realBanks;
+			NLGEORGES::UFormElm *realBanks;
 			virtualBank->getNodeByName(&realBanks, ".FilteredBank");
 			if (realBanks != 0)
 			{
 				uint size2;
 				realBanks->getArraySize(size2);
 
-				for (uint j=0; j<size2; ++j)
+				for (uint j = 0; j < size2; ++j)
 				{
 					TFilteredBank fb;
-					std::string	bankName;
-					NLGEORGES::UFormElm	*realBank = NULL;
+					std::string bankName;
+					NLGEORGES::UFormElm *realBank = NULL;
 					realBanks->getArrayNode(&realBank, j);
 					if (realBank != 0)
 					{
@@ -129,7 +129,7 @@ CSampleBank *CSampleBankManager::findSampleBank(const NLMISC::TStringId &filenam
 
 IBuffer *CSampleBankManager::get(const NLMISC::TStringId &name)
 {
-	IBuffer* buffer;
+	IBuffer *buffer;
 	TSampleBankContainer::iterator iter;
 
 	for (iter = m_Banks.begin(); iter != m_Banks.end(); ++iter)
@@ -141,7 +141,7 @@ IBuffer *CSampleBankManager::get(const NLMISC::TStringId &name)
 		}
 	}
 
-	//nlwarning ("Try to get an unknown sample '%s'", name);
+	// nlwarning ("Try to get an unknown sample '%s'", name);
 	return 0;
 }
 
@@ -156,8 +156,7 @@ void CSampleBankManager::reload(bool async)
 	}
 }
 
-
-void CSampleBankManager::getLoadedSampleBankInfo(std::vector<std::pair<std::string, uint> > &result)
+void CSampleBankManager::getLoadedSampleBankInfo(std::vector<std::pair<std::string, uint>> &result)
 {
 	result.clear();
 

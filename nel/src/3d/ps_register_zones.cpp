@@ -16,23 +16,20 @@
 
 #include "std3d.h"
 
-
 #include "nel/3d/ps_util.h"
 #include "nel/3d/ps_zone.h"
-
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
+namespace NL3D {
+void CPSUtil::registerZones()
 {
-	void CPSUtil::registerZones()
-	{
-		NLMISC_REGISTER_CLASS(CPSZonePlane);
-		NLMISC_REGISTER_CLASS(CPSZoneSphere);
-		NLMISC_REGISTER_CLASS(CPSZoneDisc);
-		NLMISC_REGISTER_CLASS(CPSZoneRectangle);
-		NLMISC_REGISTER_CLASS(CPSZoneCylinder);
-	}
+	NLMISC_REGISTER_CLASS(CPSZonePlane);
+	NLMISC_REGISTER_CLASS(CPSZoneSphere);
+	NLMISC_REGISTER_CLASS(CPSZoneDisc);
+	NLMISC_REGISTER_CLASS(CPSZoneRectangle);
+	NLMISC_REGISTER_CLASS(CPSZoneCylinder);
+}
 } // NL3D

@@ -14,13 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 #ifndef RY_HIT_TYPE_H
 #define RY_HIT_TYPE_H
 
-namespace HITTYPE
-{
+namespace HITTYPE {
 
 enum THitType
 {
@@ -32,11 +29,6 @@ enum THitType
 	Undefined
 };
 
-
-
 }
-
-
-
 
 #endif

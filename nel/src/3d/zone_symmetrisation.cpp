@@ -26,8 +26,7 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NL3D
-{
+namespace NL3D {
 
 // ***************************************************************************
 
@@ -39,73 +38,73 @@ CZoneSymmetrisation::CZoneSymmetrisation()
 
 /*
 Bit field
-	1-0 : state layer 0
-	3-2 : state layer 1
-	5-4 : state layer 2
-	7-6 : border state
-	9-8 : oriented border state
-	10  : corner flag
+    1-0 : state layer 0
+    3-2 : state layer 1
+    5-4 : state layer 2
+    7-6 : border state
+    9-8 : oriented border state
+    10  : corner flag
 */
 
 // ***************************************************************************
 
-CZoneSymmetrisation::TState CZoneSymmetrisation::getTileState (uint patch, uint tile, uint layer) const
+CZoneSymmetrisation::TState CZoneSymmetrisation::getTileState(uint patch, uint tile, uint layer) const
 {
-	nlassert (layer<5);
-	return (TState)((_TilesLayerStates[patch][tile]>>(layer*2))&0x3);
+	nlassert(layer < 5);
+	return (TState)((_TilesLayerStates[patch][tile] >> (layer * 2)) & 0x3);
 }
 
 // ***************************************************************************
 
-CZoneSymmetrisation::TState CZoneSymmetrisation::getTileBorderState (uint patch, uint tile) const
+CZoneSymmetrisation::TState CZoneSymmetrisation::getTileBorderState(uint patch, uint tile) const
 {
-	return getTileState (patch, tile, 3);
+	return getTileState(patch, tile, 3);
 }
 
 // ***************************************************************************
 
-CZoneSymmetrisation::TState CZoneSymmetrisation::getOrientedTileBorderState (uint patch, uint tile) const
+CZoneSymmetrisation::TState CZoneSymmetrisation::getOrientedTileBorderState(uint patch, uint tile) const
 {
-	return getTileState (patch, tile, 4);
+	return getTileState(patch, tile, 4);
 }
 
 // ***************************************************************************
 
-bool CZoneSymmetrisation::getOrientedTileCorner (uint patch, uint tile)
+bool CZoneSymmetrisation::getOrientedTileCorner(uint patch, uint tile)
 {
-	return ( ( _TilesLayerStates[patch][tile] >> 10 ) & 1 ) != 0;
+	return ((_TilesLayerStates[patch][tile] >> 10) & 1) != 0;
 }
 
 // ***************************************************************************
 
-void CZoneSymmetrisation::setTileState (uint patch, uint tile, uint layer, TState state)
+void CZoneSymmetrisation::setTileState(uint patch, uint tile, uint layer, TState state)
 {
 	uint16 &ref = _TilesLayerStates[patch][tile];
-	ref &= ~(3<<(layer*2));
-	ref |= ((uint16)state)<<(layer*2);
+	ref &= ~(3 << (layer * 2));
+	ref |= ((uint16)state) << (layer * 2);
 }
 
 // ***************************************************************************
 
-void CZoneSymmetrisation::setTileBorderState (uint patch, uint tile, TState state)
+void CZoneSymmetrisation::setTileBorderState(uint patch, uint tile, TState state)
 {
-	setTileState (patch, tile, 3, state);
+	setTileState(patch, tile, 3, state);
 }
 
 // ***************************************************************************
 
-void CZoneSymmetrisation::setOrientedTileBorderState (uint patch, uint tile, TState state)
+void CZoneSymmetrisation::setOrientedTileBorderState(uint patch, uint tile, TState state)
 {
-	setTileState (patch, tile, 4, state);
+	setTileState(patch, tile, 4, state);
 }
 
 // ***************************************************************************
 
-void CZoneSymmetrisation::setOrientedTileCorner (uint patch, uint tile, bool corner)
+void CZoneSymmetrisation::setOrientedTileCorner(uint patch, uint tile, bool corner)
 {
 	uint16 &ref = _TilesLayerStates[patch][tile];
-	ref &= ~(1<<10);
-	ref |= ((uint16)corner)<<(10);
+	ref &= ~(1 << 10);
+	ref |= ((uint16)corner) << (10);
 }
 
 // ***************************************************************************
@@ -127,117 +126,117 @@ If the state is Regular, the rotation of this tile after symmetrisation will by 
 If the state is Goofy, the rotation of this tile after symmetrisation will by given by this formula : tilerot = (4-tilerot+2)&3
 
 - Getting the state of the tile:
-	- A) We flag all the zone patches as Nothing.
-	- B) We need to select patches having an open edge on the zone border. To do so, we use the snapCell and weldThreshold
-	parameters.
-	- C) Then, for each patches on the zone border, we need to know if they are Goofy or Regular.
+    - A) We flag all the zone patches as Nothing.
+    - B) We need to select patches having an open edge on the zone border. To do so, we use the snapCell and weldThreshold
+    parameters.
+    - C) Then, for each patches on the zone border, we need to know if they are Goofy or Regular.
 
-		Y
+        Y
 
-		/\
-		|
-		|  0     3
-		|   *****
-		|   *   *   This patch is regular
-		|   *   *
-		|   *****
-		|  1     2
-		|
-		|  2     1
-		|   *****
-		|   *   *   This patch is regular
-		|   *   *
-		|   *****
-		|  3     0
-		|
-		|  3     2
-		|   *****
-		|   *   *   This patch is goofy
-		|   *   *
-		|   *****
-		|  0     1
-		|
-		|  1     4
-		|   *****
-		|   *   *   This patch is goofy
-		|   *   *
-		|   *****
-		|  2     3
-		-----------------------------------------> X
+        /\
+        |
+        |  0     3
+        |   *****
+        |   *   *   This patch is regular
+        |   *   *
+        |   *****
+        |  1     2
+        |
+        |  2     1
+        |   *****
+        |   *   *   This patch is regular
+        |   *   *
+        |   *****
+        |  3     0
+        |
+        |  3     2
+        |   *****
+        |   *   *   This patch is goofy
+        |   *   *
+        |   *****
+        |  0     1
+        |
+        |  1     4
+        |   *****
+        |   *   *   This patch is goofy
+        |   *   *
+        |   *****
+        |  2     3
+        -----------------------------------------> X
 
-	- D) We flag each tiles as Nothing
-	- E) We flag each tile on an opened edge using this formula:
-		- If the patch is not Nothing do
-			- tileIsGoofy = (patchIsGoofy) XOR ((tileRotation&1) != 0)
-	- F) Then, we propagate the tile A flag across the tiles in the zone following this rules:
-		- If A is not Nothing do
-			- For each neighbor B of A do
-				- If B is different from A do
-					- If A is Regular (res Goofy), and B is Nothing, B will be Regular (res Goofy)
-					- If A is Regular (res Goofy), and B is Goofy (res Regular), -> Error
-					- Propagate B
+    - D) We flag each tiles as Nothing
+    - E) We flag each tile on an opened edge using this formula:
+        - If the patch is not Nothing do
+            - tileIsGoofy = (patchIsGoofy) XOR ((tileRotation&1) != 0)
+    - F) Then, we propagate the tile A flag across the tiles in the zone following this rules:
+        - If A is not Nothing do
+            - For each neighbor B of A do
+                - If B is different from A do
+                    - If A is Regular (res Goofy), and B is Nothing, B will be Regular (res Goofy)
+                    - If A is Regular (res Goofy), and B is Goofy (res Regular), -> Error
+                    - Propagate B
 */
 
-bool CZoneSymmetrisation::build (const std::vector<CPatchInfo> &patchInfo, float snapCell, float weldThreshold, const CTileBank &bank, CError &errorDesc, const NLMISC::CMatrix &toOriginalSpace)
+bool CZoneSymmetrisation::build(const std::vector<CPatchInfo> &patchInfo, float snapCell, float weldThreshold, const CTileBank &bank, CError &errorDesc, const NLMISC::CMatrix &toOriginalSpace)
 {
 	// * Clear errors
-	errorDesc.Errors.clear ();
+	errorDesc.Errors.clear();
 
 	// * Build the patches state
 
 	// A) Resize arrays
-	_TilesLayerStates.resize (patchInfo.size ());
+	_TilesLayerStates.resize(patchInfo.size());
 
 	// D) Resize the tile array
 	uint i;
-	for (i=0; i<patchInfo.size (); i++)
+	for (i = 0; i < patchInfo.size(); i++)
 	{
 		// Ref on the patch
 		const CPatchInfo &patch = patchInfo[i];
-		_TilesLayerStates[i].resize (0);
-		_TilesLayerStates[i].resize (patch.OrderS * patch.OrderT, 0);
+		_TilesLayerStates[i].resize(0);
+		_TilesLayerStates[i].resize(patch.OrderS * patch.OrderT, 0);
 	}
 
 	// B), C) and E) We need to select patches having an open edge on the zone border. To do so, we use the snapCell and weldThreshold parameters
-	for (i=0; i<patchInfo.size (); i++)
+	for (i = 0; i < patchInfo.size(); i++)
 	{
 		// Ref on the patch
 		const CPatchInfo &patch = patchInfo[i];
 
 		// Does this patch is over a border ?
 		TState patchState;
-		if (!setTileState (patch, i, snapCell, weldThreshold, patchState, toOriginalSpace, bank))
+		if (!setTileState(patch, i, snapCell, weldThreshold, patchState, toOriginalSpace, bank))
 		{
 			// Push an error
-			errorDesc.Errors.push_back ("Patch nb "+toString (i)+" is invalid");
+			errorDesc.Errors.push_back("Patch nb " + toString(i) + " is invalid");
 		}
 
 		// Set the oriented patch state
-		if (!setOrientedTileState (patch, i, snapCell, weldThreshold, patchState, toOriginalSpace, bank))
+		if (!setOrientedTileState(patch, i, snapCell, weldThreshold, patchState, toOriginalSpace, bank))
 		{
 			// Push an error
-			errorDesc.Errors.push_back ("Patch nb "+toString (i)+" is invalid");
+			errorDesc.Errors.push_back("Patch nb " + toString(i) + " is invalid");
 		}
 	}
 
 	// F) We flag each tile on an opened edge using this formula
 	//	- If the patch is not Nothing do
 	//		- tileIsGoofy = (patchIsGoofy) XOR ((tileRotation&1) != 0)
-	for (i=0; i<patchInfo.size (); i++)
+	for (i = 0; i < patchInfo.size(); i++)
 	{
 		// Ref on the patch
 		const CPatchInfo &patch = patchInfo[i];
 
 		// For each tile
-		uint s,t;
-		for (t=0; t<patch.OrderT; t++)
+		uint s, t;
+		for (t = 0; t < patch.OrderT; t++)
 		{
-			for (s=0; s<patch.OrderS; s++)
+			for (s = 0; s < patch.OrderS; s++)
 			{
-				if (!propagateTileState (i, s, t, patchInfo, bank, false))
+				if (!propagateTileState(i, s, t, patchInfo, bank, false))
 				{
 					// Push an error
-					errorDesc.Errors.push_back ("Error during propagation. Topology invalid.");
+					errorDesc.Errors.push_back("Error during propagation. Topology invalid.");
 					return false;
 				}
 			}
@@ -245,21 +244,21 @@ bool CZoneSymmetrisation::build (const std::vector<CPatchInfo> &patchInfo, float
 	}
 
 	// G) Force all remaining Nothing tiles to Regular
-	for (i=0; i<patchInfo.size (); i++)
+	for (i = 0; i < patchInfo.size(); i++)
 	{
 		// Ref on the patch
 		const CPatchInfo &patch = patchInfo[i];
 
 		// For each tile
-		uint s,t;
-		for (t=0; t<patch.OrderT; t++)
+		uint s, t;
+		for (t = 0; t < patch.OrderT; t++)
 		{
-			for (s=0; s<patch.OrderS; s++)
+			for (s = 0; s < patch.OrderS; s++)
 			{
-				if (!propagateTileState (i, s, t, patchInfo, bank, true))
+				if (!propagateTileState(i, s, t, patchInfo, bank, true))
 				{
 					// Push an error
-					errorDesc.Errors.push_back ("Error during propagation. Topology invalid.");
+					errorDesc.Errors.push_back("Error during propagation. Topology invalid.");
 					return false;
 				}
 			}
@@ -272,18 +271,18 @@ bool CZoneSymmetrisation::build (const std::vector<CPatchInfo> &patchInfo, float
 
 // ***************************************************************************
 
-bool CZoneSymmetrisation::snapOnGrid (float& value, float resolution, float snap)
+bool CZoneSymmetrisation::snapOnGrid(float &value, float resolution, float snap)
 {
 	// Calc the floor
-	float _floor = (float) ( resolution * floor (value / resolution) );
-	nlassert (_floor<=value);
+	float _floor = (float)(resolution * floor(value / resolution));
+	nlassert(_floor <= value);
 
 	// Calc the remainder
 	float remainder = value - _floor;
-	//nlassert ( (remainder>=0) && (remainder<resolution) );
+	// nlassert ( (remainder>=0) && (remainder<resolution) );
 
 	// Check the snape
-	if ( remainder <= snap )
+	if (remainder <= snap)
 	{
 		// Flag it
 		value = _floor;
@@ -291,7 +290,7 @@ bool CZoneSymmetrisation::snapOnGrid (float& value, float resolution, float snap
 		// Floor is good
 		return true;
 	}
-	else if ( (resolution - remainder) <= snap )
+	else if ((resolution - remainder) <= snap)
 	{
 		// Flag it
 		value = _floor + resolution;
@@ -304,7 +303,7 @@ bool CZoneSymmetrisation::snapOnGrid (float& value, float resolution, float snap
 
 // ***************************************************************************
 
-bool CZoneSymmetrisation::setTileState (const NL3D::CPatchInfo &patch, uint patchId, float snapCell, float weldThreshold, TState &state, const NLMISC::CMatrix &toOriginalSpace, const CTileBank &bank)
+bool CZoneSymmetrisation::setTileState(const NL3D::CPatchInfo &patch, uint patchId, float snapCell, float weldThreshold, TState &state, const NLMISC::CMatrix &toOriginalSpace, const CTileBank &bank)
 {
 	// Edges state
 	TState edgesState[4] = { Nothing, Nothing, Nothing, Nothing };
@@ -315,7 +314,7 @@ bool CZoneSymmetrisation::setTileState (const NL3D::CPatchInfo &patch, uint patc
 
 	// For each vertices
 	uint i;
-	for (i=0; i<4; i++)
+	for (i = 0; i < 4; i++)
 	{
 		// Snap the vertex
 		CVector original = toOriginalSpace * patch.Patch.Vertices[i];
@@ -323,14 +322,14 @@ bool CZoneSymmetrisation::setTileState (const NL3D::CPatchInfo &patch, uint patc
 		float valueV = original.y;
 
 		// Snap on U
-		if (snapOnGrid (valueU, snapCell, weldThreshold))
-			vertPosU[i] = (sint32)((valueU+0.5f) / snapCell);
+		if (snapOnGrid(valueU, snapCell, weldThreshold))
+			vertPosU[i] = (sint32)((valueU + 0.5f) / snapCell);
 		else
 			vertPosU[i] = 0x80000000;
 
 		// Snap on V
-		if (snapOnGrid (valueV, snapCell, weldThreshold))
-			vertPosV[i] = (sint32)((valueV+0.5f) / snapCell);
+		if (snapOnGrid(valueV, snapCell, weldThreshold))
+			vertPosV[i] = (sint32)((valueV + 0.5f) / snapCell);
 		else
 			vertPosV[i] = 0x80000000;
 	}
@@ -341,14 +340,14 @@ bool CZoneSymmetrisation::setTileState (const NL3D::CPatchInfo &patch, uint patc
 	bool EdgeSnaped[4] = { false, false, false, false };
 
 	// For each edges
-	for (i=0; i<4; i++)
+	for (i = 0; i < 4; i++)
 	{
 		// Vertex snapped and align on a common axis ?
-		if ( ((uint32) vertPosU[i] != 0x80000000) || ((uint32) vertPosV[i] != 0x80000000) )
+		if (((uint32)vertPosU[i] != 0x80000000) || ((uint32)vertPosV[i] != 0x80000000))
 		{
 			// Snapped on U or V ?
-			bool snapU = (vertPosU[i] == vertPosU[(i+1)&3]) && ((uint32) vertPosU[i] != 0x80000000);
-			bool snapV = (vertPosV[i] == vertPosV[(i+1)&3]) && ((uint32) vertPosV[i] != 0x80000000);
+			bool snapU = (vertPosU[i] == vertPosU[(i + 1) & 3]) && ((uint32)vertPosU[i] != 0x80000000);
+			bool snapV = (vertPosV[i] == vertPosV[(i + 1) & 3]) && ((uint32)vertPosV[i] != 0x80000000);
 
 			// If snapped on one, continue
 			if (snapU || snapV)
@@ -359,9 +358,9 @@ bool CZoneSymmetrisation::setTileState (const NL3D::CPatchInfo &patch, uint patc
 
 				// Is this edge Regular or Goofy ?
 				if (snapU)
-					edgesState[i] = (i&1)?Goofy:Regular;
+					edgesState[i] = (i & 1) ? Goofy : Regular;
 				else // (snapV)
-					edgesState[i] = (i&1)?Regular:Goofy;
+					edgesState[i] = (i & 1) ? Regular : Goofy;
 
 				// Flag the patch
 				if (edgesState[i] == Regular)
@@ -385,18 +384,18 @@ bool CZoneSymmetrisation::setTileState (const NL3D::CPatchInfo &patch, uint patc
 	else
 	{
 		// Not nothing ?
-		state = regular?Regular:Goofy;
+		state = regular ? Regular : Goofy;
 
 		// * Set the tiles
 
 		// For each edges
-		for (i=0; i<4; i++)
+		for (i = 0; i < 4; i++)
 		{
 			// Edge snapped ?
 			if (EdgeSnaped[i])
 			{
 				// For each tiles
-				uint tileCount = ((i&1)!=0)?patch.OrderS:patch.OrderT;
+				uint tileCount = ((i & 1) != 0) ? patch.OrderS : patch.OrderT;
 				sint currentTile;
 				sint delta;
 				switch (i)
@@ -406,11 +405,11 @@ bool CZoneSymmetrisation::setTileState (const NL3D::CPatchInfo &patch, uint patc
 					delta = patch.OrderS;
 					break;
 				case 1:
-					currentTile = patch.OrderS*(patch.OrderT-1);
+					currentTile = patch.OrderS * (patch.OrderT - 1);
 					delta = 1;
 					break;
 				case 2:
-					currentTile = patch.OrderS-1;
+					currentTile = patch.OrderS - 1;
 					delta = patch.OrderS;
 					break;
 				case 3:
@@ -423,14 +422,14 @@ bool CZoneSymmetrisation::setTileState (const NL3D::CPatchInfo &patch, uint patc
 					break;
 				}
 				uint j;
-				for (j=0; j<tileCount; j++)
+				for (j = 0; j < tileCount; j++)
 				{
 					// Set the border state
-					setTileBorderState (patchId, currentTile, state);
+					setTileBorderState(patchId, currentTile, state);
 
 					// For each layer
 					uint layer;
-					for (layer=0; layer<3; layer++)
+					for (layer = 0; layer < 3; layer++)
 					{
 						// Get the tiles set used here
 						uint tile = patch.Tiles[currentTile].Tile[layer];
@@ -439,7 +438,7 @@ bool CZoneSymmetrisation::setTileState (const NL3D::CPatchInfo &patch, uint patc
 							int tileSet;
 							int number;
 							CTileBank::TTileType type;
-							bank.getTileXRef (tile, tileSet, number, type);
+							bank.getTileXRef(tile, tileSet, number, type);
 
 							if ((tileSet < 0) || (tileSet >= bank.getTileSetCount()))
 							{
@@ -448,10 +447,10 @@ bool CZoneSymmetrisation::setTileState (const NL3D::CPatchInfo &patch, uint patc
 							}
 
 							// Set it only if not oriented
-							if (!bank.getTileSet (tileSet)->getOriented ())
+							if (!bank.getTileSet(tileSet)->getOriented())
 							{
 								// Set the tile state
-								setTileState (patchId, currentTile, layer, state);
+								setTileState(patchId, currentTile, layer, state);
 							}
 						}
 					}
@@ -468,7 +467,7 @@ bool CZoneSymmetrisation::setTileState (const NL3D::CPatchInfo &patch, uint patc
 
 // ***************************************************************************
 
-bool CZoneSymmetrisation::setOrientedTileState (const NL3D::CPatchInfo &patch, uint patchId, float snapCell, float weldThreshold, TState &state, const NLMISC::CMatrix &toOriginalSpace, const CTileBank &bank)
+bool CZoneSymmetrisation::setOrientedTileState(const NL3D::CPatchInfo &patch, uint patchId, float snapCell, float weldThreshold, TState &state, const NLMISC::CMatrix &toOriginalSpace, const CTileBank &bank)
 {
 	// Edges state
 	TState edgesState[4] = { Nothing, Nothing, Nothing, Nothing };
@@ -479,7 +478,7 @@ bool CZoneSymmetrisation::setOrientedTileState (const NL3D::CPatchInfo &patch, u
 
 	// For each vertices
 	uint i;
-	for (i=0; i<4; i++)
+	for (i = 0; i < 4; i++)
 	{
 		// Snap the vertex
 		CVector original = toOriginalSpace * patch.Patch.Vertices[i];
@@ -487,14 +486,14 @@ bool CZoneSymmetrisation::setOrientedTileState (const NL3D::CPatchInfo &patch, u
 		float valueV = original.y;
 
 		// Snap on U
-		if (snapOnGrid (valueU, snapCell, weldThreshold))
-			vertPosU[i] = (sint32)((valueU+0.5f) / snapCell);
+		if (snapOnGrid(valueU, snapCell, weldThreshold))
+			vertPosU[i] = (sint32)((valueU + 0.5f) / snapCell);
 		else
 			vertPosU[i] = 0x80000000;
 
 		// Snap on V
-		if (snapOnGrid (valueV, snapCell, weldThreshold))
-			vertPosV[i] = (sint32)((valueV+0.5f) / snapCell);
+		if (snapOnGrid(valueV, snapCell, weldThreshold))
+			vertPosV[i] = (sint32)((valueV + 0.5f) / snapCell);
 		else
 			vertPosV[i] = 0x80000000;
 	}
@@ -505,14 +504,14 @@ bool CZoneSymmetrisation::setOrientedTileState (const NL3D::CPatchInfo &patch, u
 	bool EdgeSnaped[4] = { false, false, false, false };
 
 	// For each edges
-	for (i=0; i<4; i++)
+	for (i = 0; i < 4; i++)
 	{
 		// Vertex snapped and align on a common axis ?
-		if ( ((uint32) vertPosU[i] != 0x80000000) || ((uint32) vertPosV[i] != 0x80000000) )
+		if (((uint32)vertPosU[i] != 0x80000000) || ((uint32)vertPosV[i] != 0x80000000))
 		{
 			// Snapped on U or V ?
-			bool snapU = (vertPosU[i] == vertPosU[(i+1)&3]) && ((uint32) vertPosU[i] != 0x80000000);
-			bool snapV = (vertPosV[i] == vertPosV[(i+1)&3]) && ((uint32) vertPosV[i] != 0x80000000);
+			bool snapU = (vertPosU[i] == vertPosU[(i + 1) & 3]) && ((uint32)vertPosU[i] != 0x80000000);
+			bool snapV = (vertPosV[i] == vertPosV[(i + 1) & 3]) && ((uint32)vertPosV[i] != 0x80000000);
 
 			// If snapped on one, continue
 			if (snapU || snapV)
@@ -522,7 +521,7 @@ bool CZoneSymmetrisation::setOrientedTileState (const NL3D::CPatchInfo &patch, u
 					return false;
 
 				// Is this edge Regular or Goofy ?
-				edgesState[i] = (i&1)?Goofy:Regular;
+				edgesState[i] = (i & 1) ? Goofy : Regular;
 
 				// Flag the patch
 				if (edgesState[i] == Regular)
@@ -539,13 +538,13 @@ bool CZoneSymmetrisation::setOrientedTileState (const NL3D::CPatchInfo &patch, u
 	// * Set the tiles
 
 	// For each edges
-	for (i=0; i<4; i++)
+	for (i = 0; i < 4; i++)
 	{
 		// Edge snapped ?
 		if (EdgeSnaped[i])
 		{
 			// For each tiles
-			uint tileCount = ((i&1)!=0)?patch.OrderS:patch.OrderT;
+			uint tileCount = ((i & 1) != 0) ? patch.OrderS : patch.OrderT;
 			sint currentTile;
 			sint delta;
 			switch (i)
@@ -555,11 +554,11 @@ bool CZoneSymmetrisation::setOrientedTileState (const NL3D::CPatchInfo &patch, u
 				delta = patch.OrderS;
 				break;
 			case 1:
-				currentTile = patch.OrderS*(patch.OrderT-1);
+				currentTile = patch.OrderS * (patch.OrderT - 1);
 				delta = 1;
 				break;
 			case 2:
-				currentTile = patch.OrderS-1;
+				currentTile = patch.OrderS - 1;
 				delta = patch.OrderS;
 				break;
 			case 3:
@@ -572,14 +571,14 @@ bool CZoneSymmetrisation::setOrientedTileState (const NL3D::CPatchInfo &patch, u
 				break;
 			}
 			uint j;
-			for (j=0; j<tileCount; j++)
+			for (j = 0; j < tileCount; j++)
 			{
 				// Set the border state
-				setOrientedTileBorderState (patchId, currentTile, edgesState[i]);
+				setOrientedTileBorderState(patchId, currentTile, edgesState[i]);
 
 				// For each layer
 				uint layer;
-				for (layer=0; layer<3; layer++)
+				for (layer = 0; layer < 3; layer++)
 				{
 					// Get the tiles set used here
 					uint tile = patch.Tiles[currentTile].Tile[layer];
@@ -589,7 +588,7 @@ bool CZoneSymmetrisation::setOrientedTileState (const NL3D::CPatchInfo &patch, u
 						int number;
 						CTileBank::TTileType type;
 
-						bank.getTileXRef (tile, tileSet, number, type);
+						bank.getTileXRef(tile, tileSet, number, type);
 						if ((tileSet < 0) || (tileSet >= bank.getTileSetCount()))
 						{
 							nlwarning("CZoneSymmetrisation::setOrientedTileState : tile %d has an unknown tileSet (%d)", tile, tileSet);
@@ -597,9 +596,9 @@ bool CZoneSymmetrisation::setOrientedTileState (const NL3D::CPatchInfo &patch, u
 						}
 
 						// Set it only if oriented
-						if (bank.getTileSet (tileSet)->getOriented ())
+						if (bank.getTileSet(tileSet)->getOriented())
 						{
-							setTileState (patchId, currentTile, layer, edgesState[i]);
+							setTileState(patchId, currentTile, layer, edgesState[i]);
 						}
 					}
 				}
@@ -611,26 +610,26 @@ bool CZoneSymmetrisation::setOrientedTileState (const NL3D::CPatchInfo &patch, u
 	}
 
 	// For each corners
-	for (i=0; i<4; i++)
+	for (i = 0; i < 4; i++)
 	{
 		// Corner snapped ?
-		uint next = (i+1)&3;
+		uint next = (i + 1) & 3;
 		if (EdgeSnaped[i] && EdgeSnaped[next])
 		{
 			// Flag tile as corner
 			switch (i)
 			{
 			case 0:
-				setOrientedTileCorner (patchId, patch.OrderS*(patch.OrderT-1), true);
+				setOrientedTileCorner(patchId, patch.OrderS * (patch.OrderT - 1), true);
 				break;
 			case 1:
-				setOrientedTileCorner (patchId, patch.OrderS*patch.OrderT-1, true);
+				setOrientedTileCorner(patchId, patch.OrderS * patch.OrderT - 1, true);
 				break;
 			case 2:
-				setOrientedTileCorner (patchId, patch.OrderS-1, true);
+				setOrientedTileCorner(patchId, patch.OrderS - 1, true);
 				break;
 			case 3:
-				setOrientedTileCorner (patchId, 0, true);
+				setOrientedTileCorner(patchId, 0, true);
 				break;
 			}
 		}
@@ -641,17 +640,17 @@ bool CZoneSymmetrisation::setOrientedTileState (const NL3D::CPatchInfo &patch, u
 
 // ***************************************************************************
 
-CVector2f st2uv (sint s, sint t, const CPatchInfo &patch)
+CVector2f st2uv(sint s, sint t, const CPatchInfo &patch)
 {
-	return CVector2f ((((float)s)+0.5f)/(float)patch.OrderS, (((float)t)+0.5f)/(float)patch.OrderT);
+	return CVector2f((((float)s) + 0.5f) / (float)patch.OrderS, (((float)t) + 0.5f) / (float)patch.OrderT);
 }
 
 // ***************************************************************************
 
-void uv2st (const CVector2f &in, sint &s, sint &t, const CPatchInfo &patch)
+void uv2st(const CVector2f &in, sint &s, sint &t, const CPatchInfo &patch)
 {
-	s = (sint)(in.x*(float)patch.OrderS);
-	t = (sint)(in.y*(float)patch.OrderT);
+	s = (sint)(in.x * (float)patch.OrderS);
+	t = (sint)(in.y * (float)patch.OrderT);
 }
 
 // ***************************************************************************
@@ -659,37 +658,45 @@ void uv2st (const CVector2f &in, sint &s, sint &t, const CPatchInfo &patch)
 class CFillStackNode
 {
 public:
-	CFillStackNode (uint16 patch, uint16 s, uint16 t, uint8 rotate, CZoneSymmetrisation::TState	state) { Patch = patch; S = s; T = t; Edge = 0; Rotate = rotate; State = state; };
-	uint16	S;
-	uint16	T;
-	uint16	Patch;
-	uint8	Edge;
-	uint8	Rotate;
-	CZoneSymmetrisation::TState	State;
+	CFillStackNode(uint16 patch, uint16 s, uint16 t, uint8 rotate, CZoneSymmetrisation::TState state)
+	{
+		Patch = patch;
+		S = s;
+		T = t;
+		Edge = 0;
+		Rotate = rotate;
+		State = state;
+	};
+	uint16 S;
+	uint16 T;
+	uint16 Patch;
+	uint8 Edge;
+	uint8 Rotate;
+	CZoneSymmetrisation::TState State;
 };
 
 // ***************************************************************************
 
-bool CZoneSymmetrisation::propagateTileState (uint patch, uint s, uint t, const std::vector<CPatchInfo> &patchInfo, const CTileBank &bank, bool forceRegular)
+bool CZoneSymmetrisation::propagateTileState(uint patch, uint s, uint t, const std::vector<CPatchInfo> &patchInfo, const CTileBank &bank, bool forceRegular)
 {
 	// For each layer
 	uint layer;
-	for (layer=0; layer<3; layer++)
+	for (layer = 0; layer < 3; layer++)
 	{
 		// Get the patch ptr
 		const CPatchInfo *currentPatchPtr = &(patchInfo[patch]);
 
 		// Get the tile index
-		uint tile = s+t*currentPatchPtr->OrderS;
+		uint tile = s + t * currentPatchPtr->OrderS;
 
 		// Get the tiles set used here
 		uint tileIndex = currentPatchPtr->Tiles[tile].Tile[layer];
 		if (tileIndex != NL_TILE_ELM_LAYER_EMPTY)
 		{
 			// Valid tile number ?
-			if (tileIndex >= (uint)bank.getTileCount ())
+			if (tileIndex >= (uint)bank.getTileCount())
 			{
-				nlwarning ("CZoneSymmetrisation::propagateTileState: Invalid tile index");
+				nlwarning("CZoneSymmetrisation::propagateTileState: Invalid tile index");
 				return false;
 			}
 
@@ -697,7 +704,7 @@ bool CZoneSymmetrisation::propagateTileState (uint patch, uint s, uint t, const 
 			int tileSetToPropagate;
 			int number;
 			CTileBank::TTileType type;
-			bank.getTileXRef (tileIndex, tileSetToPropagate, number, type);
+			bank.getTileXRef(tileIndex, tileSetToPropagate, number, type);
 
 			if ((tileSetToPropagate < 0) || (tileSetToPropagate >= bank.getTileSetCount()))
 			{
@@ -706,34 +713,34 @@ bool CZoneSymmetrisation::propagateTileState (uint patch, uint s, uint t, const 
 			else
 			{
 				// Oriented ?
-				bool oriented = bank.getTileSet (tileSetToPropagate)->getOriented ();
+				bool oriented = bank.getTileSet(tileSetToPropagate)->getOriented();
 
 				// If oriented, must not be a corner
-				if (!(oriented && getOrientedTileCorner (patch, tile)))
+				if (!(oriented && getOrientedTileCorner(patch, tile)))
 				{
 					// Current node
-					CFillStackNode currentNode (patch, s, t, currentPatchPtr->Tiles[tile].getTileOrient(layer), getTileState (patch, tile, layer));
+					CFillStackNode currentNode(patch, s, t, currentPatchPtr->Tiles[tile].getTileOrient(layer), getTileState(patch, tile, layer));
 
 					// Propagate non-Nothing tiles
-					if ( (!forceRegular && (currentNode.State != Nothing)) || (forceRegular && (currentNode.State == Nothing)) )
+					if ((!forceRegular && (currentNode.State != Nothing)) || (forceRegular && (currentNode.State == Nothing)))
 					{
 						// Force to Regular ?
 						if (forceRegular)
 						{
-							setTileState (patch, tile, layer, Regular);
+							setTileState(patch, tile, layer, Regular);
 							currentNode.State = Regular;
 						}
 
 						// Fill stack
-						vector<CFillStackNode>	stack;
-						stack.push_back (currentNode);
+						vector<CFillStackNode> stack;
+						stack.push_back(currentNode);
 
 						// While people in the stack
-						while (!stack.empty ())
+						while (!stack.empty())
 						{
 							// Pop last element
-							currentNode = stack.back ();
-							stack.pop_back ();
+							currentNode = stack.back();
+							stack.pop_back();
 
 							do
 							{
@@ -741,7 +748,7 @@ bool CZoneSymmetrisation::propagateTileState (uint patch, uint s, uint t, const 
 								currentPatchPtr = &(patchInfo[currentNode.Patch]);
 
 								// Get neighbor
-								CFillStackNode neighborNode (currentNode.Patch, currentNode.S, currentNode.T, currentNode.Rotate, currentNode.State);
+								CFillStackNode neighborNode(currentNode.Patch, currentNode.S, currentNode.T, currentNode.Rotate, currentNode.State);
 								switch (currentNode.Edge)
 								{
 								case 0:
@@ -759,7 +766,7 @@ bool CZoneSymmetrisation::propagateTileState (uint patch, uint s, uint t, const 
 								}
 
 								// Is still in patch ?
-								if ( (neighborNode.S>=patchInfo[currentNode.Patch].OrderS) || (neighborNode.T>=patchInfo[currentNode.Patch].OrderT) )
+								if ((neighborNode.S >= patchInfo[currentNode.Patch].OrderS) || (neighborNode.T >= patchInfo[currentNode.Patch].OrderT))
 								{
 									// No, found new patch
 									uint position;
@@ -786,20 +793,20 @@ bool CZoneSymmetrisation::propagateTileState (uint patch, uint s, uint t, const 
 									uint patchOut;
 									sint sOut;
 									sint tOut;
-									if (patchInfo[currentNode.Patch].getNeighborTile (currentNode.Patch, currentNode.Edge, position,
-										patchOut, sOut, tOut, patchInfo))
+									if (patchInfo[currentNode.Patch].getNeighborTile(currentNode.Patch, currentNode.Edge, position,
+									        patchOut, sOut, tOut, patchInfo))
 									{
 										// Should be another patch
-										nlassert (patchOut != currentNode.Patch);
+										nlassert(patchOut != currentNode.Patch);
 
 										// Get patch id
 										neighborNode.Patch = patchOut;
 
 										// Coordinate must be IN the patch
-										nlassert (sOut >= 0);
-										nlassert (tOut >= 0);
-										nlassert (sOut < patchInfo[neighborNode.Patch].OrderS);
-										nlassert (tOut < patchInfo[neighborNode.Patch].OrderT);
+										nlassert(sOut >= 0);
+										nlassert(tOut >= 0);
+										nlassert(sOut < patchInfo[neighborNode.Patch].OrderS);
+										nlassert(tOut < patchInfo[neighborNode.Patch].OrderT);
 
 										// Copy it
 										neighborNode.S = sOut;
@@ -808,14 +815,14 @@ bool CZoneSymmetrisation::propagateTileState (uint patch, uint s, uint t, const 
 										// Find neighbor
 										const CPatchInfo::CBindInfo &neighborBindInfo = patchInfo[currentNode.Patch].BindEdges[currentNode.Edge];
 										uint edgePatch;
-										for (edgePatch=0; edgePatch<(uint)neighborBindInfo.NPatchs; edgePatch++)
+										for (edgePatch = 0; edgePatch < (uint)neighborBindInfo.NPatchs; edgePatch++)
 										{
 											if (neighborBindInfo.Next[edgePatch] == neighborNode.Patch)
 												break;
 										}
 
 										// Must find one patch
-										nlassert (edgePatch<(uint)neighborBindInfo.NPatchs);
+										nlassert(edgePatch < (uint)neighborBindInfo.NPatchs);
 
 										// Rotation
 										neighborNode.Rotate = (currentNode.Rotate + 2 + neighborBindInfo.Edge[edgePatch] - currentNode.Edge) & 3;
@@ -839,11 +846,11 @@ bool CZoneSymmetrisation::propagateTileState (uint patch, uint s, uint t, const 
 								const CPatchInfo *neighborPatchPtr = &(patchInfo[neighborNode.Patch]);
 
 								// Get the tile index
-								uint neighborTile = neighborNode.S+neighborNode.T*neighborPatchPtr->OrderS;
+								uint neighborTile = neighborNode.S + neighborNode.T * neighborPatchPtr->OrderS;
 
 								// Look for the same tile set in the new tile
 								uint neighborLayer;
-								for (neighborLayer=0; neighborLayer<3; neighborLayer++)
+								for (neighborLayer = 0; neighborLayer < 3; neighborLayer++)
 								{
 									// Get the tile index
 									uint neighborTileIndex = neighborPatchPtr->Tiles[neighborTile].Tile[neighborLayer];
@@ -851,9 +858,9 @@ bool CZoneSymmetrisation::propagateTileState (uint patch, uint s, uint t, const 
 									if (neighborTileIndex != NL_TILE_ELM_LAYER_EMPTY)
 									{
 										// Valid tile number ?
-										if (neighborTileIndex >= (uint)bank.getTileCount ())
+										if (neighborTileIndex >= (uint)bank.getTileCount())
 										{
-											nlwarning ("CZoneSymmetrisation::propagateTileState: Invalid tile index");
+											nlwarning("CZoneSymmetrisation::propagateTileState: Invalid tile index");
 											return false;
 										}
 
@@ -861,33 +868,32 @@ bool CZoneSymmetrisation::propagateTileState (uint patch, uint s, uint t, const 
 										int neighborTileSet;
 										int neighborNumber;
 										CTileBank::TTileType neighborType;
-										bank.getTileXRef (neighborTileIndex, neighborTileSet, neighborNumber, neighborType);
+										bank.getTileXRef(neighborTileIndex, neighborTileSet, neighborNumber, neighborType);
 
 										// Same tileset ? Stop!
-										if (	(neighborTileSet == tileSetToPropagate) &&
-												(neighborNode.Rotate == neighborPatchPtr->Tiles[neighborTile].getTileOrient(neighborLayer)) )
+										if ((neighborTileSet == tileSetToPropagate) && (neighborNode.Rotate == neighborPatchPtr->Tiles[neighborTile].getTileOrient(neighborLayer)))
 											break;
 									}
 								}
 
 								// Found ?
-								if (neighborLayer<3)
+								if (neighborLayer < 3)
 								{
 									// If oriented, must not be a corner
-									if (!(oriented && getOrientedTileCorner (neighborNode.Patch, neighborTile)))
+									if (!(oriented && getOrientedTileCorner(neighborNode.Patch, neighborTile)))
 									{
 										// Propagate in the new node ?
-										TState neighborState = getTileState (neighborNode.Patch, neighborTile, neighborLayer);
+										TState neighborState = getTileState(neighborNode.Patch, neighborTile, neighborLayer);
 										if (neighborState == Nothing)
 										{
 											// Set the state
-											setTileState (neighborNode.Patch, neighborTile, neighborLayer, neighborNode.State);
+											setTileState(neighborNode.Patch, neighborTile, neighborLayer, neighborNode.State);
 
 											// Stack current node if some neighbor left to visit
 											if (currentNode.Edge < 3)
 											{
 												currentNode.Edge++;
-												stack.push_back (currentNode);
+												stack.push_back(currentNode);
 											}
 
 											// Continue with the new node
@@ -916,8 +922,7 @@ bool CZoneSymmetrisation::propagateTileState (uint patch, uint s, uint t, const 
 								else
 									// No propagation, continue
 									currentNode.Edge++;
-							}
-							while (currentNode.Edge<4);
+							} while (currentNode.Edge < 4);
 						}
 					}
 				}

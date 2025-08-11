@@ -29,41 +29,40 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-namespace NLLIGO
-{
+namespace NLLIGO {
 
 // ***************************************************************************
 
-bool CZoneEdge::build (const std::vector<NLMISC::CVector> &theEdge, const std::vector<uint32> &theId, uint rotation,
-				sint32 offsetX, sint32 offsetY, const CLigoConfig &config, CLigoError &errors)
+bool CZoneEdge::build(const std::vector<NLMISC::CVector> &theEdge, const std::vector<uint32> &theId, uint rotation,
+    sint32 offsetX, sint32 offsetY, const CLigoConfig &config, CLigoError &errors)
 {
 	// Some checks
-// no need, it s an uint	nlassert (rotation>=0);
-	nlassert (rotation<=3);
-	nlassert (theEdge.size() == theId.size());
+	// no need, it s an uint	nlassert (rotation>=0);
+	nlassert(rotation <= 3);
+	nlassert(theEdge.size() == theId.size());
 
 	// Cancels errors
-	errors.clear ();
+	errors.clear();
 
 	// Errors ?
 	bool ok = true;
 
 	// Check first position
-	CVector toCheck (theEdge[0].x, theEdge[0].y, 0);
-	if ((float)fabs (toCheck.norm())>config.Snap)
+	CVector toCheck(theEdge[0].x, theEdge[0].y, 0);
+	if ((float)fabs(toCheck.norm()) > config.Snap)
 	{
 		// Vertex error
-		errors.pushVertexError (CLigoError::UnknownError, 0);
+		errors.pushVertexError(CLigoError::UnknownError, 0);
 		ok = false;
 	}
 
 	// Check last position
-	uint lastIndex = (uint)theEdge.size()-1;
-	toCheck  = CVector (theEdge[lastIndex].x, theEdge[lastIndex].y, 0);
-	if (((toCheck-CVector (config.CellSize, 0, 0)).norm())>config.Snap)
+	uint lastIndex = (uint)theEdge.size() - 1;
+	toCheck = CVector(theEdge[lastIndex].x, theEdge[lastIndex].y, 0);
+	if (((toCheck - CVector(config.CellSize, 0, 0)).norm()) > config.Snap)
 	{
 		// Vertex error
-		errors.pushVertexError (CLigoError::UnknownError, 0);
+		errors.pushVertexError(CLigoError::UnknownError, 0);
 		ok = false;
 	}
 
@@ -82,30 +81,30 @@ bool CZoneEdge::build (const std::vector<NLMISC::CVector> &theEdge, const std::v
 
 // ***************************************************************************
 
-bool CZoneEdge::isSymetrical (const CLigoConfig &config, CLigoError &errors) const
+bool CZoneEdge::isSymetrical(const CLigoConfig &config, CLigoError &errors) const
 {
 	// Cancels errors
-	errors.clear ();
+	errors.clear();
 
 	// Errors ?
 	bool ok = true;
 
 	// For each internal vertices
 	uint vert;
-	for (vert=0; vert<_TheEdge.size(); vert++)
+	for (vert = 0; vert < _TheEdge.size(); vert++)
 	{
 		// Symmetrical value
-		CVector sym = CVector (config.CellSize-_TheEdge[vert].x, _TheEdge[vert].y, _TheEdge[vert].z);
+		CVector sym = CVector(config.CellSize - _TheEdge[vert].x, _TheEdge[vert].y, _TheEdge[vert].z);
 
 		// Others vertices
 		uint vert2;
-		for (vert2=0; vert2<_TheEdge.size(); vert2++)
+		for (vert2 = 0; vert2 < _TheEdge.size(); vert2++)
 		{
 			// Not the same ?
 			if (vert != vert2)
 			{
 				// Snapped ?
-				if ((_TheEdge[vert2]-sym).norm() <= config.Snap)
+				if ((_TheEdge[vert2] - sym).norm() <= config.Snap)
 				{
 					// Good, next one
 					break;
@@ -114,13 +113,13 @@ bool CZoneEdge::isSymetrical (const CLigoConfig &config, CLigoError &errors) con
 		}
 
 		// Not found ?
-		if (vert2>=_TheEdge.size())
+		if (vert2 >= _TheEdge.size())
 		{
 			// Error
 			ok = false;
 
 			// Push error message
-			errors.pushVertexError (CLigoError::NotSymetrical, _Id[vert]);
+			errors.pushVertexError(CLigoError::NotSymetrical, _Id[vert]);
 			errors.MainError = CLigoError::NotSymetrical;
 		}
 	}
@@ -131,7 +130,7 @@ bool CZoneEdge::isSymetrical (const CLigoConfig &config, CLigoError &errors) con
 
 // ***************************************************************************
 
-bool CZoneEdge::isTheSame (const CZoneEdge &other, const CLigoConfig &config, CLigoError &errors) const
+bool CZoneEdge::isTheSame(const CZoneEdge &other, const CLigoConfig &config, CLigoError &errors) const
 {
 	// Same vertex count ?
 	if (_TheEdge.size() != other._TheEdge.size())
@@ -146,18 +145,18 @@ bool CZoneEdge::isTheSame (const CZoneEdge &other, const CLigoConfig &config, CL
 
 	// For each internal vertices
 	uint vert;
-	for (vert=0; vert<_TheEdge.size(); vert++)
+	for (vert = 0; vert < _TheEdge.size(); vert++)
 	{
 		// The same ?
 		const CVector &pos0 = _TheEdge[vert];
 		const CVector &pos1 = other._TheEdge[vert];
-		if ((pos0-pos1).norm() > config.Snap)
+		if ((pos0 - pos1).norm() > config.Snap)
 		{
 			// Error
 			ok = false;
 
 			// Push error message
-			errors.pushVertexError (CLigoError::NotSameVertex, other._Id[vert]);
+			errors.pushVertexError(CLigoError::NotSameVertex, other._Id[vert]);
 			errors.MainError = CLigoError::NotSameVertex;
 		}
 	}
@@ -168,49 +167,49 @@ bool CZoneEdge::isTheSame (const CZoneEdge &other, const CLigoConfig &config, CL
 
 // ***************************************************************************
 
-void CZoneEdge::serial (NLMISC::IStream& s)
+void CZoneEdge::serial(NLMISC::IStream &s)
 {
 	// Serial the version
-	/*sint ver =*/ s.serialVersion (0);
+	/*sint ver =*/s.serialVersion(0);
 
-	s.xmlPush ("VERTICES");
-		s.serialCont (_TheEdge);
-	s.xmlPop ();
+	s.xmlPush("VERTICES");
+	s.serialCont(_TheEdge);
+	s.xmlPop();
 
-	s.xmlPush ("VERTICES_ID");
-		s.serialCont (_Id);
-	s.xmlPop ();
+	s.xmlPush("VERTICES_ID");
+	s.serialCont(_Id);
+	s.xmlPop();
 
-	s.xmlSerial (_Rotation, "ROTATION");
+	s.xmlSerial(_Rotation, "ROTATION");
 
-	s.xmlSerial (_OffsetX, _OffsetY, "OFFSET");
+	s.xmlSerial(_OffsetX, _OffsetY, "OFFSET");
 }
 
 // ***************************************************************************
 
-void CZoneEdge::invert (const CLigoConfig &config)
+void CZoneEdge::invert(const CLigoConfig &config)
 {
 	// Copy the array
-	const std::vector<NLMISC::CVector>	copy = _TheEdge;
+	const std::vector<NLMISC::CVector> copy = _TheEdge;
 
 	// For each internal vertices
 	uint vert;
-	for (vert=0; vert<_TheEdge.size(); vert++)
+	for (vert = 0; vert < _TheEdge.size(); vert++)
 	{
 		// Invert
-		const CVector &pos = copy[_TheEdge.size()-vert-1];
-		_TheEdge[vert] = CVector (config.CellSize - pos.x, pos.y, pos.z);
+		const CVector &pos = copy[_TheEdge.size() - vert - 1];
+		_TheEdge[vert] = CVector(config.CellSize - pos.x, pos.y, pos.z);
 	}
 }
 
 // ***************************************************************************
 
-void CZoneEdge::buildMatrix (NLMISC::CMatrix& mat, const CLigoConfig &config) const
+void CZoneEdge::buildMatrix(NLMISC::CMatrix &mat, const CLigoConfig &config) const
 {
 	// Build a transformation matrix
 	mat.identity();
-	mat.rotateZ ((float)Pi*(float)_Rotation/2.f);
-	mat.setPos (CVector (config.CellSize*(float)_OffsetX, config.CellSize*(float)_OffsetY, 0));
+	mat.rotateZ((float)Pi * (float)_Rotation / 2.f);
+	mat.setPos(CVector(config.CellSize * (float)_OffsetX, config.CellSize * (float)_OffsetY, 0));
 }
 
 // ***************************************************************************
