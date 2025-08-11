@@ -1,7 +1,7 @@
 /** \file driver_direct3d_pixel_program.cpp
  * Direct 3d driver implementation
  *
- * $Id: 744cea58b91b42dbf933dda384b1f6ad721a1493 $
+ * $Id$
  *
  * \todo manage better the init/release system (if a throw occurs in the init, we must release correctly the driver)
  */

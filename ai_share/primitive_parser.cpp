@@ -35,8 +35,8 @@
 #include "ai_actions_dr.h"
 #include "ai_alias_description_node.h"
 #include "ai_share.h"
-#include "../server_share/primitive_cfg.h"
-#include "../server_share/used_continent.h"
+#include "server_share/primitive_cfg.h"
+#include "server_share/used_continent.h"
 
 using namespace NLMISC;
 using namespace NLNET;
@@ -45,7 +45,7 @@ using namespace std;
 using namespace AITYPES;
 
 
-namespace AI_SHARE 
+namespace AI_SHARE
 {
 
 // debug
@@ -142,7 +142,7 @@ uint32 nodeAlias(const IPrimitive *prim, bool canFail = false)
 //	// if we haven't found a sensible alias value use the prim node address
 //	if (alias==0 && s!="0")
 //	{
-//		alias=(sint32)prim;		
+//		alias=(sint32)prim;
 //		if(		nodeType(prim)!=AITypeBadType
 //			&&	nodeType(prim)!=AITypeEventAction
 //			&&	nodeType(prim)!=AITypeActionZone
@@ -224,7 +224,7 @@ static bool parseVerticalPos(const IPrimitive *prim, uint32 &verticalPos, const 
 //		{
 //			tribeNames.push_back(names[i].first);
 //		}
-//		
+//
 //		inited = true;
 //	}
 //
@@ -261,7 +261,7 @@ static bool parseVerticalPos(const IPrimitive *prim, uint32 &verticalPos, const 
 
 static void lookForMissions(const IPrimitive *prim, std::vector<int> &missions, std::vector<std::string> &missionsNames)
 {
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -269,8 +269,8 @@ static void lookForMissions(const IPrimitive *prim, std::vector<int> &missions, 
 		{
 			if (NLMISC::nlstricmp(nodeClass(child),"mission")==0)
 			{
-				LOG("Found mission: %s: %s", 
-					LigoConfig->aliasToString(nodeAlias(child)).c_str(), 
+				LOG("Found mission: %s: %s",
+					LigoConfig->aliasToString(nodeAlias(child)).c_str(),
 					nodeName(child).c_str());
 				missions.push_back(nodeAlias(child));
 				missionsNames.push_back(nodeName(child));
@@ -294,7 +294,7 @@ struct SFolderRef
 
 
 
-// the following variables are setup by parsePrimGrpNpc() and referenced by parsePrimNpcBot 
+// the following variables are setup by parsePrimGrpNpc() and referenced by parsePrimNpcBot
 //oldlevel static std::string DefaultBotLevel;
 static std::string DefaultBotLook;
 static uint32	DefaultBotVerticalPos = vp_auto;
@@ -319,7 +319,7 @@ static string	CurrentGroupFamily;
 static const CAIAliasDescriptionNode *nextTreeNode(const CAIAliasDescriptionNode *treeNode,const IPrimitive *prim)
 {
 	// get hold of the node name, type and alias
-	std::string name=nodeName(prim);		
+	std::string name=nodeName(prim);
 	TAIType type=nodeType(prim);
 	uint32 uniqueId=0;
 	if (type != AITYPES::AITypeBadType)
@@ -391,7 +391,7 @@ static	void	buildAliasTree(CAIAliasDescriptionNode *treeNode,CAIAliasDescription
 					parentNode->fullName().c_str(), name.c_str(),
 					treeNode->fullName().c_str());
 			}
-			  
+
 			// create a new tree node as a child of treeNode
 			NLMISC::CSmartPtr<CAIAliasDescriptionNode>	node=new CAIAliasDescriptionNode(name,uniqueId,type,parentNode);
 
@@ -426,11 +426,11 @@ static void parsePrimStateChat(const CAIAliasDescriptionNode *treeNode,const IPr
 	const std::vector<std::string> *botKeywords=&EmptyStringVector;
 	const std::vector<std::string> *botNames=&EmptyStringVector;
 	const std::vector<std::string> *chat=&EmptyStringVector;
-	
+
 	prim->getPropertyByName("bot_keyword_filter",botKeywords);
 	prim->getPropertyByName("bots_by_name",botNames);
 	prim->getPropertyByName("chat_parameters",chat);
-	
+
 	// register the profile
 	CAIActions::begin(treeNode->getAlias());
 	CAIActions::exec("CHAT",treeNode->getAlias());
@@ -449,20 +449,20 @@ static void parsePrimStateProfile(const CAIAliasDescriptionNode *treeNode,const 
 	vector<string>	*profileParams = &EmptyStringVector;
 	const std::vector<std::string> *grpKeywords=&EmptyStringVector;
 	const std::vector<std::string> *grpNames=&EmptyStringVector;
-	
+
 	prim->getPropertyByName("ai_movement", movingProfile);
 	prim->getPropertyByName("ai_activity", activityProfile);
 	prim->getPropertyByName("ai_profile_params", profileParams);
 	prim->getPropertyByName("grp_keyword_filter", grpKeywords);
 	prim->getPropertyByName("grps_by_name", grpNames);
-	
+
 	// register the profile
 	CAIActions::begin(treeNode->getAlias());
 	CAIActions::exec("PROFILE",treeNode->getAlias());
 	CAIActions::exec("MOVEPROF", movingProfile);
 	CAIActions::exec("ACTPROF", activityProfile);
 	CAIActions::execute("PROFPARM", *profileParams);
-	
+
 	if (!grpKeywords->empty())	CAIActions::execute("GRPKEYS",*grpKeywords);
 	if (!grpNames->empty())		CAIActions::execute("GRPNAMES",*grpNames);
 	CAIActions::end(treeNode->getAlias());
@@ -506,22 +506,22 @@ static CAIEventActionNode::TSmartPtr parsePrimEventAction(const CAIAliasDescript
 	// get hold of the node name and unique id
 	std::string name=nodeName(prim);
 	uint32 uniqueId=0;
-	
+
 	result->Alias = treeNode?treeNode->getAlias():uniqueId;
-	
+
 	LOG("Parsing npc event action: %s",name.c_str());
-	
+
 	// read the main body of the parameters
 	std::string weightStr;
 	const std::vector<std::string> *parameters=&EmptyStringVector;
-	
+
 	prim->getPropertyByName("action",result->Action);
 	prim->getPropertyByName("weight",weightStr);
 	prim->getPropertyByName("parameters",parameters);
 	NLMISC::fromString(weightStr, result->Weight);
 	result->Args=*parameters;
-	
-	for (uint i=0;i<prim->getNumChildren();++i)	
+
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -562,13 +562,13 @@ static CAIEventActionNode::TSmartPtr parsePrimEventAction(const CAIAliasDescript
 			break;
 			case AITypeBadType:
 			case AITypeFolder:
-			// not handled there, but by caller		
+			// not handled there, but by caller
 			break;
 			default:
 				nlwarning("Don't know how to treat ai_type '%s'",getName(type));
 			break;
 		}
-		
+
 	}
 	return result;
 }
@@ -588,21 +588,21 @@ static void parsePrimGroupDescriptionsForAction(const CAIAliasDescriptionNode *a
 												const IPrimitive *prim,
 												uint32 logicActionAlias
 											   )
-{	
+{
 
 	// get hold of the node name and unique id
 	std::string name=nodeName(prim);
 	uint32 uniqueId=nodeAlias(prim);
 
 	// run through the dynsystem children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
 		if	(prim->getChild(child, i))
 		{
 			if (nodeType(child) == AITypeBadType) continue; // skip alias node
-			const CAIAliasDescriptionNode *childTreeNode = nextTreeNode(aliasNode, child);			
+			const CAIAliasDescriptionNode *childTreeNode = nextTreeNode(aliasNode, child);
 			string	familyTag;
 			child->getPropertyByName("family", familyTag);
 			CAIActions::exec("GRPFAM", childTreeNode, familyTag, name, logicActionAlias);
@@ -615,43 +615,43 @@ static void parsePrimGroupDescriptionsForAction(const CAIAliasDescriptionNode *a
 					//	parsePrimGroupFamily(nextTreeNode(aliasNode,child),child);
 					}
 					break;
-					
+
 				case AITypeGroupFamilyProfileFauna:
 					parsePrimGroupFamilyProfileFaunaContent(childTreeNode, child);
 	//				parsePrimGroupFamilyProfileGeneric(nextTreeNode(aliasNode,child),child, GroupFamilyFauna);
 					break;
-					
+
 				case AITypeGroupFamilyProfileTribe:
 					parsePrimGroupFamilyProfileTribeContent(childTreeNode, child);
 					break;
 				case AITypeGroupFamilyProfileNpc:
 					parsePrimGroupFamilyProfileNpcContent(childTreeNode, child);
-					break;			
-					
+					break;
+
 	//			case AITypeGroupFamilyProfileGeneric:
 	//				parsePrimGroupFamilyProfileGeneric(nextTreeNode(aliasNode,child),child, GroupFamilyTribe);
-	//				break;	
+	//				break;
 				default:
 					CAIActions::end(childTreeNode->getAlias());
 				break;
 			}
-			
+
 		}
-	}	
+	}
 }
 
 
 // add group description to already parsed event actions
 static void addGroupDescriptionToEventAction(const CAIAliasDescriptionNode *treeNode, const IPrimitive *prim, uint depth)
-{		
+{
 	uint32 uniqueId=0;
-	CAIActions::begin(treeNode?treeNode->getAlias():uniqueId);	
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	CAIActions::begin(treeNode?treeNode->getAlias():uniqueId);
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure it's valid
 		const IPrimitive *child;
 		if	(!prim->getChild(child,i))
-			continue;						
+			continue;
 		//
 		const	TAIType type=nodeType(child);
 
@@ -659,7 +659,7 @@ static void addGroupDescriptionToEventAction(const CAIAliasDescriptionNode *tree
 		switch(type)
 		{
 			case AITypeEventAction:
-			{				
+			{
 				addGroupDescriptionToEventAction(treeNode?nextTreeNode(treeNode,child):NULL,child, depth + 1);
 			}
 			break;
@@ -667,13 +667,13 @@ static void addGroupDescriptionToEventAction(const CAIAliasDescriptionNode *tree
 			case AITypeFaunaActionZone:
 			case AITypeNpcActionZone:
 				// no-op, already parsed
-			break;				
+			break;
 			case AITypeFolder:
 			{
 				string cname = nodeClass(child);
-				// parse optional group descriptions			
+				// parse optional group descriptions
 				if (cname == "group_descriptions")
-				{										
+				{
 					CAIActions::exec("SETACTN", treeNode?treeNode->getAlias():uniqueId);
 					parsePrimGroupDescriptionsForAction(treeNode?nextTreeNode(treeNode,child):NULL, child, treeNode?treeNode->getAlias():uniqueId);
 					CAIActions::exec("CLRACTN");
@@ -684,8 +684,8 @@ static void addGroupDescriptionToEventAction(const CAIAliasDescriptionNode *tree
 			default:
 				nlwarning("Don't know how to treat ai_type '%s'",getName(type));
 			break;
-		}		
-	}	
+		}
+	}
 	CAIActions::end(treeNode?treeNode->getAlias():uniqueId);
 }
 
@@ -693,22 +693,22 @@ static void addGroupDescriptionToEventAction(const CAIAliasDescriptionNode *tree
 static void parsePrimEvent(const CAIAliasDescriptionNode *treeNode,const IPrimitive *prim)
 {
 	CAIEventDescription::TSmartPtr result=new CAIEventDescription;
-	
+
 	// get hold of the node name and unique id
 	std::string name=nodeName(prim);
 	uint32 uniqueId=nodeAlias(prim);
-	
+
 	LOG("Parsing npc event: %s",name.c_str());
-	
+
 	// read the main body of the parameters
 	const std::vector<std::string> *stateKeywords=&EmptyStringVector;
 	const std::vector<std::string> *namedStates=&EmptyStringVector;
 	const std::vector<std::string> *groupKeywords=&EmptyStringVector;
 	const std::vector<std::string> *namedGroups=&EmptyStringVector;
-	
+
 	prim->getPropertyByName("event",result->EventType);
 
-	
+
 	// the event should have two children, the alias and the action
 	const IPrimitive *child;
 	std::string type;
@@ -720,19 +720,19 @@ static void parsePrimEvent(const CAIAliasDescriptionNode *treeNode,const IPrimit
 		nlwarning("Failed to find the action associated with event: %s (in %s)",name.c_str(), treeNode?treeNode->fullName().c_str():"");
 		return;
 	}
-	
+
 	result->Action=parsePrimEventAction(treeNode?nextTreeNode(treeNode,child):NULL,child);
-	
+
 	prim->getPropertyByName("state_keyword_filter",stateKeywords);
 	prim->getPropertyByName("states_by_name",namedStates);
 	prim->getPropertyByName("group_keyword_filter",groupKeywords);
 	prim->getPropertyByName("groups_by_name",namedGroups);
-	
+
 	result->StateKeywords=	*stateKeywords;
 	result->NamedStates=	*namedStates;
 	result->GroupKeywords=	*groupKeywords;
-	result->NamedGroups=	*namedGroups;	
-	
+	result->NamedGroups=	*namedGroups;
+
 	// register the event and call the parser for the associated action
 	CAIActions::begin(treeNode?treeNode->getAlias():uniqueId);
 	CAIActions::exec("EVENT",uniqueId,result);
@@ -740,8 +740,8 @@ static void parsePrimEvent(const CAIAliasDescriptionNode *treeNode,const IPrimit
 
 	// Each 'event actions' may have a group description attached to it,
 	// parse it here, because we don't want to embed those descriptions in the
-    // CAIEventDescription class				
-	addGroupDescriptionToEventAction(treeNode?nextTreeNode(treeNode,child):NULL, child, 1);		
+    // CAIEventDescription class
+	addGroupDescriptionToEventAction(treeNode?nextTreeNode(treeNode,child):NULL, child, 1);
 	CAIActions::exec("ENDEVENT"); // this will clear the logic actions map
 }
 
@@ -755,7 +755,7 @@ static void parsePrimBotKami(const CAIAliasDescriptionNode *treeNode,const IPrim
 	// get hold of the node name and unique id
 	std::string name=nodeName(prim);
 	uint32 uniqueId=nodeAlias(prim);
-	
+
 	// lookup the kami type
 	std::string kamiType;
 	if (!prim->getPropertyByName("ai_kami_type",kamiType) || (kamiType!="PREACHER" && kamiType!="GUARDIAN"))
@@ -763,7 +763,7 @@ static void parsePrimBotKami(const CAIAliasDescriptionNode *treeNode,const IPrim
 		nlwarning("ai_kami_type property not found in kami record: %s",treeNode->fullName().c_str());
 		return;
 	}
-	
+
 	// lookup the creature sheet name
 	std::string sheet;
 	if (!prim->getPropertyByName("sheet",sheet))
@@ -771,7 +771,7 @@ static void parsePrimBotKami(const CAIAliasDescriptionNode *treeNode,const IPrim
 		nlwarning("'sheet' property not found in kami record: %s",treeNode->fullName().c_str());
 		return;
 	}
-	
+
 	// lookup x,y,theta
 	const CPrimPoint *point=dynamic_cast<const CPrimPoint *>(prim);
 	if (point==NULL)
@@ -783,8 +783,8 @@ static void parsePrimBotKami(const CAIAliasDescriptionNode *treeNode,const IPrim
 	sint x=(uint32)(point->Point.x*1000);
 	sint y=(uint32)(point->Point.y*1000);
 	float theta=(float)point->Angle;
-	
-	
+
+
 	// do the business
 	LOG("Adding kami npc bot: %s: %s  pos: (%d,%d)  orientation: %.2f",kamiType.c_str(),name.c_str(),x,y,theta);
 	CAIActions::begin(treeNode->getAlias());
@@ -793,7 +793,7 @@ static void parsePrimBotKami(const CAIAliasDescriptionNode *treeNode,const IPrim
 	CAIActions::exec("STATS",25);
 	CAIActions::exec("KEYWORDS",kamiType);
 	CAIActions::exec("STARTPOS",x,y,theta);
-	
+
 	if (kamiType=="PREACHER")
 	{
 		// todo: get rid of this code :o)
@@ -802,7 +802,7 @@ static void parsePrimBotKami(const CAIAliasDescriptionNode *treeNode,const IPrim
 		chat.push_back(std::string("shop: KAMI_TP_FOREST"));
 		CAIActions::execute("CHAT",chat);
 	}
-	
+
 	CAIActions::end(treeNode->getAlias());
 }
 
@@ -811,9 +811,9 @@ static void parsePrimGrpKami(const CAIAliasDescriptionNode *treeNode,const IPrim
 	// get hold of the node name and unique id
 	std::string name=nodeName(prim);
 	uint32 uniqueId=nodeAlias(prim);
-	
+
 	LOG("Parsing group kami: %s",name.c_str());
-	
+
 	// extract x and y coords of points from patat (if there is one)
 //	std::vector <CAIActions::CArg> points;
 //	uint numPoints=prim->getNumVector();
@@ -826,17 +826,17 @@ static void parsePrimGrpKami(const CAIAliasDescriptionNode *treeNode,const IPrim
 //			points.push_back(CAIActions::CArg(pointArray[i].y));
 //		}
 //	}
-	
+
 	// setup the grp context
 	CAIActions::begin(treeNode->getAlias());
 	CAIActions::exec("GRPNPC",uniqueId);
-	
+
 	// commit the zone points
 //	if (!points.empty())
 //		CAIActions::execute("PATAT",points);
-	
+
 	// run through the group children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -856,9 +856,9 @@ static void parsePrimGrpKami(const CAIAliasDescriptionNode *treeNode,const IPrim
 					nlwarning("Didn't found ai_type when expecting 'BOT_NPC' in parsePrimGrpKami");
 				break;
 			}
-			
+
 		}
-		
+
 	}
 	CAIActions::end(treeNode->getAlias());
 }
@@ -874,7 +874,7 @@ static void parsePrimBotKaravan(const CAIAliasDescriptionNode *treeNode,const IP
 	// get hold of the node name and unique id
 	std::string name=nodeName(prim);
 	uint32 uniqueId=nodeAlias(prim);
-	
+
 	// lookup the karavan type
 	std::string karavanType;
 	if (!prim->getPropertyByName("ai_karavan_type",karavanType))
@@ -882,7 +882,7 @@ static void parsePrimBotKaravan(const CAIAliasDescriptionNode *treeNode,const IP
 		nlwarning("ai_karavan_type property not found in karavan record: %s",treeNode->fullName().c_str());
 		return;
 	}
-	
+
 	// lookup the creature sheet name
 	std::string sheet;
 	if (!prim->getPropertyByName("sheet",sheet))
@@ -890,7 +890,7 @@ static void parsePrimBotKaravan(const CAIAliasDescriptionNode *treeNode,const IP
 		nlwarning("'sheet' property not found in karavan record: %s",treeNode->fullName().c_str());
 		return;
 	}
-	
+
 	// add the bot to the current group
 	const CPrimPoint *point=dynamic_cast<const CPrimPoint *>(prim);
 	if (!point)
@@ -899,13 +899,13 @@ static void parsePrimBotKaravan(const CAIAliasDescriptionNode *treeNode,const IP
 		CAIActions::end(treeNode->getAlias());
 		return;
 	}
-	
+
 	sint x=(uint32)(point->Point.x*1000);
 	sint y=(uint32)(point->Point.y*1000);
 	float theta=(float)point->Angle;
-	
+
 	LOG("Adding karavan npc bot: %s: %s  pos: (%d,%d)  orientation: %.2f",karavanType.c_str(),name.c_str(),x,y,theta);
-	
+
 	// do the business
 	CAIActions::begin(treeNode->getAlias());
 	CAIActions::exec("BOTNPC",treeNode->getAlias());
@@ -929,22 +929,22 @@ static	void	parsePrimGrpKaravan(const CAIAliasDescriptionNode *treeNode,const IP
 	// get hold of the node name and unique id
 	std::string name=nodeName(prim);
 	uint32 uniqueId=nodeAlias(prim);
-	
+
 	LOG("Parsing group karavan: %s",name.c_str());
-	
+
 	// setup the grp context
 	CAIActions::begin(treeNode->getAlias());
 	CAIActions::exec("GRPNPC",treeNode->getAlias());
-	
+
 	// run through the group children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
 		if (prim->getChild(child,i))
 		{
 			TAIType type=nodeType(child);
-			
+
 			switch(type)
 			{
 			case AITypeBot:
@@ -957,9 +957,9 @@ static	void	parsePrimGrpKaravan(const CAIAliasDescriptionNode *treeNode,const IP
 				nlwarning("Unsupported ai_type in parsePrimGrpKaravan");
 				break;
 			}
-			
+
 		}
-		
+
 	}
 	CAIActions::end(treeNode->getAlias());
 }
@@ -970,9 +970,9 @@ static void parsePrimState(const CAIAliasDescriptionNode *treeNode,const IPrimit
 	// get hold of the node name and unique id
 	std::string name=nodeName(prim);
 	uint32 uniqueId=nodeAlias(prim);
-	
+
 	LOG("Parsing npc state with %s: %s",pointsType,name.c_str());
-	
+
 	// look for keywords
 	std::string		moveProfile;
 	std::string		activityProfile;
@@ -985,7 +985,7 @@ static void parsePrimState(const CAIAliasDescriptionNode *treeNode,const IPrimit
 
 	uint32	verticalPos;
 	parseVerticalPos(prim, verticalPos);
-	
+
 	// extract x and y coords of points from spline or patat
 	std::vector <CAIActions::CArg> points;
 	uint numPoints=prim->getNumVector();
@@ -1000,7 +1000,7 @@ static void parsePrimState(const CAIAliasDescriptionNode *treeNode,const IPrimit
 	}
 	else
 		LOG("State has no geometry: %s: %s",pointsType,name.c_str());
-	
+
 	// create the state
 	CAIActions::begin(treeNode->getAlias());
 	CAIActions::exec("STATE",uniqueId);
@@ -1010,12 +1010,12 @@ static void parsePrimState(const CAIAliasDescriptionNode *treeNode,const IPrimit
 	CAIActions::exec("VERTPOS", verticalPos);
 	if (!keywords->empty())
 		CAIActions::execute("KEYWORDS",*keywords);
-	if (!points.empty())	
+	if (!points.empty())
 		CAIActions::execute(pointsType,points);
-	
+
 	// run through the group children looking for nodes with types that we recognise
 	uint j;
-	for (j=0;j<prim->getNumChildren();++j)	
+	for (j=0;j<prim->getNumChildren();++j)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -1038,21 +1038,21 @@ static void parsePrimState(const CAIAliasDescriptionNode *treeNode,const IPrimit
 					case AITypeSpecNpc:
 						parsePrimGrpNpc(nextTreeNode(treeNode,child),child,name);
 						break;
-					case AITypeSpecFauna:						
+					case AITypeSpecFauna:
 						parsePrimGrpFauna(nextTreeNode(treeNode,child),child);
 						break;
 					case AITypeSpecKami:						// a non-deposit kami group
 						parsePrimGrpKami(nextTreeNode(treeNode,child),child);
-						break;						
+						break;
 					case AITypeSpecKaravan:
 						parsePrimGrpKaravan(nextTreeNode(treeNode,child),child);
-						break;						
-						
+						break;
+
 					default:
 						nlwarning("Don't know how to treat ai_group of type '%s' in primState",getName(nodeTypeSpec(child)));
 						break;
 					}
-					
+
 				}
 				break;
 			case AITypeEvent:
@@ -1060,7 +1060,7 @@ static void parsePrimState(const CAIAliasDescriptionNode *treeNode,const IPrimit
 				break;
 			case AITypeState:
 				parsePrimState(nextTreeNode(treeNode,child),child,"PATAT");
-				break;				
+				break;
 			case	AITypeBadType:
 			case	AITypeFolder:
 				break;
@@ -1068,19 +1068,19 @@ static void parsePrimState(const CAIAliasDescriptionNode *treeNode,const IPrimit
 				nlwarning("Don't know how to treat ai_type '%s'",getName(nodeType(child)));
 				break;
 			}
-			
+
 		}
-		
+
 	}
 	// a second loop for state profile node.
-	for (j=0;j<prim->getNumChildren();++j)	
+	for (j=0;j<prim->getNumChildren();++j)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
 		if (prim->getChild(child,j))
 		{
 			switch	(nodeType(child))
-			{				
+			{
 			case AITypeNpcStateProfile:
 				parsePrimStateProfile(nextTreeNode(treeNode,child),child);
 				break;
@@ -1092,7 +1092,7 @@ static void parsePrimState(const CAIAliasDescriptionNode *treeNode,const IPrimit
 			}
 
 		}
-		
+
 	}
 	CAIActions::end(treeNode->getAlias());
 }
@@ -1110,7 +1110,7 @@ static void parsePrimState(const CAIAliasDescriptionNode *treeNode,const IPrimit
 static void parsePrimPlaces(const CAIAliasDescriptionNode *treeNode,const IPrimitive *prim)
 {
 	// run through the group children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -1177,7 +1177,7 @@ static void parsePrimPlaces(const CAIAliasDescriptionNode *treeNode,const IPrimi
 						bool        timeDriven = false;
 						std::string timeInterval;
 						std::string dayInterval;
-				
+
 						//
 						if (child->getPropertyByName("visit_time_min", tmpStr))
 						{
@@ -1245,7 +1245,7 @@ static void parsePrimPlaces(const CAIAliasDescriptionNode *treeNode,const IPrimi
 						CAIActions::end(uniqueId);
 					}
 				}
-			} 
+			}
 		}
 	}
 }
@@ -1270,7 +1270,7 @@ static void	parsePopulation(const IPrimitive *prim, std::string &sheet, uint &co
 	{
 		throw	parsePopException(std::string("Expected ai_type FAUNA_SPAWN_ATOM but found")+type);
 	}
-		
+
 	std::string	countStr;
 
 	if	(!prim->getPropertyByName("count",countStr))
@@ -1283,7 +1283,7 @@ static void	parsePopulation(const IPrimitive *prim, std::string &sheet, uint &co
 		if (prim->getPropertyByName("creature_code", s) && !s.empty())
 			sheet = s+".creature";
 	}
-		
+
 	NLMISC::fromString(countStr, count);
 	if (count<=0)
 	{
@@ -1306,12 +1306,12 @@ static void parsePrimGrpFaunaSpawn(const CAIAliasDescriptionNode *treeNode,const
 	// we need a vector of arguments for the call to execute() at the end
 	std::vector <CAIActions::CArg> executeArgs;
 	executeArgs.push_back(CAIActions::CArg(uniqueId));
-	
+
 	// lookup the spawn type for the manager
 	std::string spawnType("ALWAYS");
 	prim->getPropertyByName("spawn_type",spawnType);
 	executeArgs.push_back(CAIActions::CArg(spawnType));
-	
+
 	// deal with the weight
 	std::string s;
 	uint32 weight = 0;
@@ -1324,10 +1324,10 @@ static void parsePrimGrpFaunaSpawn(const CAIAliasDescriptionNode *treeNode,const
 		weight=100;
 		}
 	}
-	executeArgs.push_back(CAIActions::CArg(weight));	
+	executeArgs.push_back(CAIActions::CArg(weight));
 
 	// run through the group children looking for nodes with types that we recognise
-	for (uint i=0; i<prim->getNumChildren(); ++i)	
+	for (uint i=0; i<prim->getNumChildren(); ++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -1352,7 +1352,7 @@ static void parsePrimGrpFaunaSpawn(const CAIAliasDescriptionNode *treeNode,const
 		{
 			nlwarning("FaunaGroup: %s of %s : %s", nodeName(child).c_str(), treeNode->fullName().c_str(), e.what());
 		}
-		
+
 	}
 
 	// open the parse context
@@ -1364,7 +1364,7 @@ static void parsePrimGrpFaunaSpawn(const CAIAliasDescriptionNode *treeNode,const
 		CAIActions::execute("POPVER",executeArgs);
 	else
 		nlwarning("FAUNA_SPAWN failed because population is empty, '%s'%s",
-			name.c_str(), 
+			name.c_str(),
 			LigoConfig->aliasToString(uniqueId).c_str());
 
 	// close the parse context
@@ -1405,7 +1405,7 @@ static void parsePrimGrpFauna(const CAIAliasDescriptionNode *treeNode,const IPri
 //			if (name=="FAUNA_REST")		restPlace=treeNode->getChild(i)->getAlias();
 //			if (name=="FAUNA_SPAWN")	spawnPlace=treeNode->getChild(i)->getAlias();
 //		}
-//		
+//
 //	}
 
 	// setup the grp context
@@ -1413,7 +1413,7 @@ static void parsePrimGrpFauna(const CAIAliasDescriptionNode *treeNode,const IPri
 
 	// create any places that we're going to reffer to later
 	parsePrimPlaces(nextTreeNode(treeNode,prim),prim);
-	
+
 	// time variables used for determining time spent eating, rate of progress of hunger, etc
 	std::string s;
 	if (prim->getPropertyByName("times",s) && !s.empty())
@@ -1422,7 +1422,7 @@ static void parsePrimGrpFauna(const CAIAliasDescriptionNode *treeNode,const IPri
 		sscanf(s.c_str(),"%f %f",&time1,&time2);
 		CAIActions::exec("SETTIMES",time1,time2);
 	}
-	else	
+	else
 	{
 		LOG("No 'times' record found: using default value: 10 10");
 		float time1=30.0f, time2=120.0f;
@@ -1460,13 +1460,13 @@ static void parsePrimGrpFauna(const CAIAliasDescriptionNode *treeNode,const IPri
 		CAIActions::exec("STCYCLES",cycles);
 	}
 
-	// solidarity used 
+	// solidarity used
 	s.clear();
 	prim->getPropertyByName("solidarity",s);
 	CAIActions::exec("ASSIST",uint32(nlstricmp( s.c_str(), "disabled")!=0));
 
 	// run through the group children looking for nodes with types that we recognise
-	for (uint j=0;j<prim->getNumChildren();++j)	
+	for (uint j=0;j<prim->getNumChildren();++j)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -1491,7 +1491,7 @@ static void parsePrimGrpFauna(const CAIAliasDescriptionNode *treeNode,const IPri
 			if (type!=AITypePlace && type!=AITypePlaceFauna)
 				nlwarning("Don't know how to treat ai_type '%s'",getName(type));
 			break;
-		}				
+		}
 
 	}
 	CAIActions::end(treeNode->getAlias());
@@ -1511,7 +1511,7 @@ static void parsePrimMgrFauna(const std::string &mapName,const CAIAliasDescripti
 	}
 
 	// run through the mgr children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -1520,7 +1520,7 @@ static void parsePrimMgrFauna(const std::string &mapName,const CAIAliasDescripti
 
 		// try to get a type for the child
 		TAIType type=nodeType(child);
-		
+
 		switch(type)
 		{
 		case AITypeGrp:
@@ -1531,7 +1531,7 @@ static void parsePrimMgrFauna(const std::string &mapName,const CAIAliasDescripti
 			break;
 		case AITypeEvent:
 			parsePrimEvent(nextTreeNode(treeNode,child),child);
-			break;			
+			break;
 			// this isn't an ai block so check its children
 		case AITypeBadType:
 			parsePrimMgrFauna(mapName,nextTreeNode(treeNode,child),child,folders,filename,false);
@@ -1566,7 +1566,7 @@ static void parsePrimNPCPunctualState(const CAIAliasDescriptionNode *treeNode,co
 	if (!keywords->empty())	CAIActions::execute("KEYWORDS",*keywords);
 
 	// run through the group children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -1590,7 +1590,7 @@ static void parsePrimNPCPunctualState(const CAIAliasDescriptionNode *treeNode,co
 				nlwarning("Don't know how to treat ai_type '%s'",getName(nodeType(child)));
 				break;
 			}
-			
+
 		}
 
 	}
@@ -1611,16 +1611,16 @@ static void parsePrimMgrKami(const std::string &mapName,const CAIAliasDescriptio
 	}
 
 	// run through the mgr children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
 		if (!prim->getChild(child,i))
 			continue;
-		
+
 		// try to get a type for the child
 		TAIType type=nodeType(child);
-		
+
 		switch(type)
 		{
 		case AITypeNpcStateRoute:
@@ -1635,11 +1635,11 @@ static void parsePrimMgrKami(const std::string &mapName,const CAIAliasDescriptio
 		case AITypeEvent:
 			parsePrimEvent(nextTreeNode(treeNode,child),child);
 			break;
-			
+
 		case AITypeKamiDeposit:			// a deposit
 			parsePrimState(nextTreeNode(treeNode,child),child,"PATAT");
 			break;
-			
+
 		case AITypeBadType:
 			parsePrimMgrKami(mapName,nextTreeNode(treeNode,child),child,folders,filename, false);
 			break;
@@ -1669,7 +1669,7 @@ static void parsePrimMgrKaravan(const std::string &mapName,const CAIAliasDescrip
 	}
 
 	// run through the mgr children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -1677,7 +1677,7 @@ static void parsePrimMgrKaravan(const std::string &mapName,const CAIAliasDescrip
 		{
 			// try to get a type for the child
 			TAIType type=nodeType(child);
-			
+
 			switch(type)
 			{
 			case AITypeKaravanState:
@@ -1738,10 +1738,10 @@ static void parsePrimBotNpc(const CAIAliasDescriptionNode *treeNode,const IPrimi
 
 	// setup the set of parameters that are initialised by default in parsePrimGrpNpc()
 //oldlevel 	std::string						levelStr; /*	= DefaultBotLevel;	*/
-	std::string						look; //		= DefaultBotLook;    	
+	std::string						look; //		= DefaultBotLook;
 //	std::string						fight;
-//	std::string						stats; //		= DefaultBotStats;    
-	const std::vector<std::string> *keywords	= NULL; //DefaultBotKeywords;	
+//	std::string						stats; //		= DefaultBotStats;
+	const std::vector<std::string> *keywords	= NULL; //DefaultBotKeywords;
 	const std::vector<std::string> *equipment	= NULL; //&EmptyStringVector;//	= DefaultBotEquipment;
 	const std::vector<std::string> *chat		= NULL; //DefaultBotChat;
 	static std::vector<int>			missions;
@@ -1750,7 +1750,7 @@ static void parsePrimBotNpc(const CAIAliasDescriptionNode *treeNode,const IPrimi
 	missionsNames = DefaultMissionNames;
 	std::string						isStuck;
 	uint32							verticalPos;
-	
+
 	// try to read the above parameters from prim (on failure default value persists)
 //oldlevel 	if (!prim->getPropertyByName("level", levelStr) || levelStr.empty())
 //oldlevel 		levelStr = DefaultBotLevel;
@@ -1794,7 +1794,7 @@ static void parsePrimBotNpc(const CAIAliasDescriptionNode *treeNode,const IPrimi
 	CAIActions::exec("STATS");	//,level);
 	CAIActions::exec("ISSTUCK", uint32(nlstricmp( isStuck.c_str(), "true") == 0));
 	CAIActions::exec("BLDNGBOT", uint32(false));
-//	if ( !fight.empty() ) 
+//	if ( !fight.empty() )
 //		CAIActions::exec("FIGHTBRK",fight);
 	CAIActions::execute("CHAT", *chat);
 	CAIActions::execute("EQUIP", equipmentMerged);
@@ -1808,8 +1808,8 @@ static void parsePrimBotNpc(const CAIAliasDescriptionNode *treeNode,const IPrimi
 static void parsePrimGrpParameters(const CAIAliasDescriptionNode *treeNode,const IPrimitive *prim)
 {
 	vector<string>	*profileParams = &EmptyStringVector;
- 	DefaultGrpParameters	=&EmptyStringVector;	
-	
+ 	DefaultGrpParameters	=&EmptyStringVector;
+
 	prim->getPropertyByName("grp_parameters",DefaultGrpParameters);
 	prim->getPropertyByName("ai_profile_params",profileParams);
 
@@ -1840,7 +1840,7 @@ static void parsePrimGrpNpc(const CAIAliasDescriptionNode *treeNode,const IPrimi
 
 	// bot groups contain a set of default parameters for their bot children
 //oldlevel 	DefaultBotLevel.clear();				prim->getPropertyByName("bot_level",DefaultBotLevel);
-	
+
 	DefaultBotLook.clear();					prim->getPropertyByName("bot_sheet_client",DefaultBotLook);
 //	DefaultBotStats.clear();				prim->getPropertyByName("bot_sheet_server",DefaultBotStats);
 
@@ -1852,13 +1852,13 @@ static void parsePrimGrpNpc(const CAIAliasDescriptionNode *treeNode,const IPrimi
 
 
 	parseVerticalPos(prim, DefaultBotVerticalPos, "bot_vertical_pos");
-	
+
 	DefaultGrpParameters	=&EmptyStringVector;
 	CAIActions::execute("PARAMETR",*DefaultGrpParameters);
 
 	// count the number of bots so that we can allocate the correct space for them
 	bool foundBots=false;
-	for (uint j=0;!foundBots && j<prim->getNumChildren();++j)	
+	for (uint j=0;!foundBots && j<prim->getNumChildren();++j)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -1929,7 +1929,7 @@ static void parsePrimGrpNpc(const CAIAliasDescriptionNode *treeNode,const IPrimi
 		CAIActions::exec("BOTCOUNT",0);	// tell the system that we are not using auto generated bots but named bots
 
 	// run through the group children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -1978,7 +1978,7 @@ static void parsePrimGrpNpc(const CAIAliasDescriptionNode *treeNode,const IPrimi
 	if (!keywords->empty())	CAIActions::execute("KEYWORDS",*keywords);
 
 	// run through the group children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -1995,7 +1995,7 @@ static void parsePrimGrpNpc(const CAIAliasDescriptionNode *treeNode,const IPrimi
 					parsePrimEvent(nextTreeNode(treeNode,child),child);
 				else
 					nlwarning("Don't know how to treat ai_type '%s'",getName(type));
-			} 
+			}
 		}
 	}
 
@@ -2016,7 +2016,7 @@ static void parsePrimMgrNpc(const std::string &mapName,const CAIAliasDescription
 	}
 
 	// run through the mgr children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -2070,7 +2070,7 @@ static void parsePrimMgrOutpost(std::string const& mapName, CAIAliasDescriptionN
 {
 	// get hold of the unique id
 	uint32 uniqueId = nodeAlias(prim);
-	
+
 	// setup the mgr context
 	if (firstTime)
 	{
@@ -2081,9 +2081,9 @@ static void parsePrimMgrOutpost(std::string const& mapName, CAIAliasDescriptionN
 		CAIActions::exec("MGROUTPO",treeNode->getAlias(), treeNode->getName(), mapName, filename, manualSpawn);
 		CAIActions::exec("IDTREE",treeNode);
 	}
-	
+
 	// run through the mgr children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -2122,7 +2122,7 @@ static void parsePrimMgrOutpost(std::string const& mapName, CAIAliasDescriptionN
 			}
 		}
 	}
-	
+
 	if (firstTime)
 	{
 		// now add the folders to the manager
@@ -2164,10 +2164,10 @@ static void parsePrimMgr(const IPrimitive *prim,const std::string &mapName, cons
 //		case MgrTypeKami:		typeSpec = AITypeSpecKami;		break;
 ////		case MgrTypeTribe:		typeSpec = AITypeSpecTribe;		break;
 //		case MgrTypeNpc:		typeSpec = AITypeSpecNpc;		break;
-//			
-//		// TODO: case MgrTypePet:		 
-//		// TODO: case MgrTypeGuildNpc:	
-//			
+//
+//		// TODO: case MgrTypePet:
+//		// TODO: case MgrTypeGuildNpc:
+//
 //		default: nlwarning("Unhandled ai manager type: '%s'",mgrTypeName.c_str());
 //	}
 
@@ -2188,10 +2188,10 @@ static void parsePrimMgr(const IPrimitive *prim,const std::string &mapName, cons
 //		case MgrTypeTribe:		parsePrimMgrTribe(mapName,aliasTree,prim,folders);				break;
 		case MgrTypeNpc:		parsePrimMgrNpc(mapName,aliasTree,prim,folders, filename);		break;
 		case MgrTypeOutpost:	parsePrimMgrOutpost(mapName,aliasTree,prim,folders, filename);	break;
-		
+
 		// TODO: case MgrTypePet:
 		// TODO: case MgrTypeGuildNpc:
-		
+
 		default: nlwarning("Unhandled ai manager type: '%s'",mgrTypeName.c_str());
 	}
 
@@ -2204,14 +2204,14 @@ static void parsePrimMgr(const IPrimitive *prim,const std::string &mapName, cons
 static void parsePrimMgrSpire(std::string const& mapName, CAIAliasDescriptionNode const* treeNode, IPrimitive const* prim, std::vector<SFolderRef>& folders, std::string const& filename, bool firstTime=true)
 {
 	uint32 uniqueId = nodeAlias(prim);
-	
+
 	// setup the mgr context
 	if (firstTime)
 	{
 	}
-	
+
 	parsePrimGrpSpire(treeNode, prim, "");
-	
+
 	// run through the mgr children looking for nodes with types that we recognise
 	for (uint i=0; i<prim->getNumChildren(); ++i)
 	{
@@ -2230,7 +2230,7 @@ static void parsePrimMgrSpire(std::string const& mapName, CAIAliasDescriptionNod
 			}
 		}
 	}
-	
+
 	CAIActions::end(treeNode->getAlias());
 }
 */
@@ -2239,9 +2239,9 @@ static void parsePrimSpire(IPrimitive const* prim, std::string const& mapName, s
 	// get hold of the node name and unique id
 	std::string name = nodeName(prim);
 	uint32 uniqueId = nodeAlias(prim);
-	
+
 	LOG("Parsing spire: %s", name.c_str());
-	
+
 	CPrimPoint const* point = dynamic_cast<CPrimPoint const*>(prim);
 	if (!point)
 	{
@@ -2268,34 +2268,34 @@ static void parsePrimSpire(IPrimitive const* prim, std::string const& mapName, s
 	vector<string> sheets;
 	sheets.insert(sheets.end(), "socle:"+sheet_socle);
 	sheets.insert(sheets.end(), sheet_spire->begin(), sheet_spire->end());
-	
+
 	uint32 mgrAlias = 0;
 	uint32 stateAlias = 0;
 	uint32 grpAlias = uniqueId;
 	uint32 botAlias = 0;
-	
+
 	// build the tree of aliases and the vector of folders
 	std::vector<SFolderRef> folders;
 	NLMISC::CSmartPtr<CAIAliasDescriptionNode> aliasTree = new CAIAliasDescriptionNode(name, uniqueId, AITypeManager, NULL);
 	buildAliasTree(aliasTree, aliasTree, prim, folders);
-	
+
 	CAIActions::begin(mgrAlias); // mgr
 	CAIActions::exec("SPIREMGR", mgrAlias, name, mapName, filename);
 	CAIActions::exec("IDTREE", aliasTree);
-	
+
 	CAIActions::begin(stateAlias);
 	CAIActions::exec("SPIRSTAT", stateAlias, name);
-	
+
 	CAIActions::begin(grpAlias); // grp
 	CAIActions::exec("SPIREGRP", grpAlias, name);
-	
+
 	CAIActions::begin(botAlias); // bot
 	CAIActions::exec("SPIREBOT", botAlias, name);
 	CAIActions::exec("LOOK", sheet_socle);
 	CAIActions::execute("SPIRSHTS", sheets);
 	CAIActions::exec("STARTPOS", x, y, theta, verticalPos);
 	CAIActions::end(botAlias); // bot
-	
+
 	// run through the mgr children looking for nodes with types that we recognise
 	for (uint i=0; i<prim->getNumChildren(); ++i)
 	{
@@ -2317,7 +2317,7 @@ static void parsePrimSpire(IPrimitive const* prim, std::string const& mapName, s
 	CAIActions::end(grpAlias); // grp
 	CAIActions::end(stateAlias); // state
 	CAIActions::end(mgrAlias); // mgr
-	
+
 	CAIAliasDescriptionNode::flushUnusedAliasDescription();
 }
 
@@ -2334,9 +2334,9 @@ static void parsePrimDynFaunaZone(const CAIAliasDescriptionNode *aliasNode, cons
 	prim->getPropertyByName("radius", s);
 	NLMISC::fromString(s, r);
 
-	vector<string>	*params = &EmptyStringVector;	
+	vector<string>	*params = &EmptyStringVector;
 	prim->getPropertyByName("properties", params);
-	
+
 	uint32 verticalPos;
 	parseVerticalPos(prim, verticalPos);
 
@@ -2345,7 +2345,7 @@ static void parsePrimDynFaunaZone(const CAIAliasDescriptionNode *aliasNode, cons
 	{
 		concatStr += (*params)[i] + " ";
 	}
-	
+
 	//nlinfo("creating cell zone with flags : %s", concatStr.c_str());
 
 	CAIActions::begin(aliasNode->getAlias());
@@ -2365,7 +2365,7 @@ static void parsePrimDynNpcZonePlace(const CAIAliasDescriptionNode *aliasNode, c
 
 	vector<string>	*params=&EmptyStringVector;
 	prim->getPropertyByName("properties", params);
-		
+
 	uint32 verticalPos;
 	parseVerticalPos(prim, verticalPos);
 
@@ -2373,14 +2373,14 @@ static void parsePrimDynNpcZonePlace(const CAIAliasDescriptionNode *aliasNode, c
 	CAIActions::exec("DYNNZ", aliasNode, x, y, r, verticalPos);
 
 	CAIActions::execute("DYNNZPRM", *params);
-	
+
 	CAIActions::end(aliasNode->getAlias());
 }
 static void parsePrimDynNpcZoneShape(const CAIAliasDescriptionNode *aliasNode, const IPrimitive *prim)
 {
 	uint32 verticalPos;
 	parseVerticalPos(prim, verticalPos);
-	
+
 	// extract x and y coords of points from patate
 	std::vector <CAIActions::CArg> args;
 	args.push_back(aliasNode);
@@ -2397,15 +2397,15 @@ static void parsePrimDynNpcZoneShape(const CAIAliasDescriptionNode *aliasNode, c
 	}
 	else
 		LOG("Zone has no geometry"/*": %s: %s",pointsType,name.c_str()*/);
-	
+
 	vector<string>	*params=&EmptyStringVector;
 	prim->getPropertyByName("properties", params);
-	
+
 	CAIActions::begin(aliasNode->getAlias());
 	CAIActions::execute("DYNNZSHP", args);
 
 	CAIActions::execute("DYNNZPRM", *params);
-	
+
 	CAIActions::end(aliasNode->getAlias());
 }
 static void parsePrimRoadTrigger(const CAIAliasDescriptionNode *aliasNode, const IPrimitive *prim)
@@ -2488,7 +2488,7 @@ static void parsePrimDynRoad(const CAIAliasDescriptionNode *aliasNode, const IPr
 	CAIActions::execute("ROADGEO", poly);
 
 	// run through the dynsystem children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -2514,7 +2514,7 @@ static void parsePrimGeomItems(const CAIAliasDescriptionNode *aliasNode, const I
 	uint32 uniqueId=nodeAlias(prim);
 
 	// run through the dynsystem children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -2571,7 +2571,7 @@ static void parsePrimCell(const CAIAliasDescriptionNode *aliasNode, const IPrimi
 
 
 	// run through the dynsystem children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -2582,7 +2582,7 @@ static void parsePrimCell(const CAIAliasDescriptionNode *aliasNode, const IPrimi
 				parsePrimGeomItems(nextTreeNode(aliasNode,child),child);
 		}
 	}
-	
+
 
 	CAIActions::end(aliasNode->getAlias());
 }
@@ -2613,7 +2613,7 @@ static void parsePrimCellZone(const CAIAliasDescriptionNode *aliasNode, const IP
 	CAIActions::exec("CELLZNE", aliasNode);
 
 	// run through the dynsystem children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -2641,7 +2641,7 @@ static void parsePrimCellZones(const CAIAliasDescriptionNode *aliasNode, const I
 	uint32 uniqueId=nodeAlias(prim);
 
 	// run through the dynsystem children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -2670,7 +2670,7 @@ static void parsePrimBotTemplate(const CAIAliasDescriptionNode *aliasNode, const
 	string			lookSheet;
 	bool			multiLevel = false;
 	sint32			levelDelta = 0;
-	
+
 	if (nodeClass(prim) == "bot_template_npc")
 	{
 		prim->getPropertyByName("equipment", botEquip);
@@ -2736,7 +2736,7 @@ static void parsePrimGroupTemplate(const CAIAliasDescriptionNode *aliasNode, con
 
 	prim->getPropertyByName("count_multiplied_by_sheet", s);
 	countMultipliedBySheet = (s == "true");
-	
+
 
 	if (nodeClass(prim) == "group_template_npc")
 	{
@@ -2774,7 +2774,7 @@ static void parsePrimGroupTemplate(const CAIAliasDescriptionNode *aliasNode, con
 	seasons[2] = (s == "true");
 	prim->getPropertyByName("exist_in_winter", s);
 	seasons[3] = (s == "true");
-	
+
 	prim->getPropertyByName("weight_0_25", s);
 	NLMISC::fromString(s, weights[0]);
 	prim->getPropertyByName("weight_25_50", s);
@@ -2785,9 +2785,9 @@ static void parsePrimGroupTemplate(const CAIAliasDescriptionNode *aliasNode, con
 	NLMISC::fromString(s, weights[3]);
 
 	vector<string>	*actParams = &EmptyStringVector;
-	
+
 	prim->getPropertyByName("properties", actParams);
-	
+
 	prim->getPropertyByName("total_energy_value", s);
 	grpEnergyValue = (uint32)(ENERGY_SCALE*atof(s.c_str()));
 
@@ -2798,8 +2798,8 @@ static void parsePrimGroupTemplate(const CAIAliasDescriptionNode *aliasNode, con
 	uint32 spawnType = st;
 
 	CAIActions::begin(aliasNode->getAlias());
-	CAIActions::exec("GRPTMPL", aliasNode, 
-		CurrentGroupFamily, 
+	CAIActions::exec("GRPTMPL", aliasNode,
+		CurrentGroupFamily,
 		botCount,
 		countMultipliedBySheet,
 		multiLevel
@@ -2816,7 +2816,7 @@ static void parsePrimGroupTemplate(const CAIAliasDescriptionNode *aliasNode, con
 	CAIActions::exec("GT_LVLD"+familyType,	levelDelta);
 	CAIActions::exec("GT_SEAS"+familyType, seasons[0], seasons[1], seasons[2], seasons[3]);
 	CAIActions::exec("GT_NRG"+familyType, weights[0], weights[1], weights[2], weights[3]);
-	
+
 	if (grpEnergyValue!=0)	// means not initialized.
 		CAIActions::exec("GT_GNRJ"+familyType, grpEnergyValue);
 	CAIActions::exec("GT_ACT"+familyType, /*activity,*/ spawnType);
@@ -2828,7 +2828,7 @@ static void parsePrimGroupTemplate(const CAIAliasDescriptionNode *aliasNode, con
 	std::vector <CAIActions::CArg> executeArgs;
 
 	// run through the dynsystem children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -2855,7 +2855,7 @@ static void parsePrimGroupTemplate(const CAIAliasDescriptionNode *aliasNode, con
 					{
 						nlwarning("FaunaGroup: %s of %s : %s", nodeName(child).c_str(), aliasNode->fullName().c_str(), e.what());
 					}
-					
+
 				}
 				break;
 			default:
@@ -2878,7 +2878,7 @@ static void parsePrimGroupTemplate(const CAIAliasDescriptionNode *aliasNode, con
 static	void	parsePrimGroupFamilyProfileFaunaContent(const CAIAliasDescriptionNode *aliasNode, const IPrimitive *prim)
 {
 	CAIActions::execute("TMPPRFF");
-	
+
 	const vector<string>	*foodParams = &EmptyStringVector;
 	prim->getPropertyByName("food", foodParams);
 	CAIActions::execute("TMPPRFFF", *foodParams);
@@ -2896,8 +2896,8 @@ static	void	parsePrimGroupFamilyProfileFaunaContent(const CAIAliasDescriptionNod
 	prim->getPropertyByName("energy_50_75", energy3);
 	prim->getPropertyByName("energy_75_100", energy4);
 	CAIActions::exec("CZ_NRJ", energy, energy2, energy3, energy4);
-	
-	for (uint i=0;i<prim->getNumChildren();++i)	
+
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -2911,9 +2911,9 @@ static	void	parsePrimGroupFamilyProfileFaunaContent(const CAIAliasDescriptionNod
 			default:
 				break;
 			}
-			
+
 		}
-		
+
 	}
 }
 
@@ -2924,7 +2924,7 @@ static	void	parsePrimGroupFamilyProfileFauna(const CAIAliasDescriptionNode *alia
 
 	string	familyTag;
 	CAIActions::exec("GRPFAM", aliasNode, familyTag);
-	parsePrimGroupFamilyProfileFaunaContent(aliasNode, prim);	
+	parsePrimGroupFamilyProfileFaunaContent(aliasNode, prim);
 }
 
 
@@ -2932,7 +2932,7 @@ static	void	parsePrimGroupFamilyProfileTribeContent(const CAIAliasDescriptionNod
 {
 	std::string	aggro_groups;
 	prim->getPropertyByName("aggro_groups", aggro_groups);
-	
+
 	CAIActions::exec("TMPPRFT", aggro_groups);
 
 	std::string	energy;
@@ -2945,7 +2945,7 @@ static	void	parsePrimGroupFamilyProfileTribeContent(const CAIAliasDescriptionNod
 	prim->getPropertyByName("energy_75_100", energy4);
 	CAIActions::exec("CZ_NRJ", energy, energy2, energy3, energy4);
 
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -2960,19 +2960,19 @@ static	void	parsePrimGroupFamilyProfileTribeContent(const CAIAliasDescriptionNod
 			default:
 				break;
 			}
-			
+
 		}
-		
+
 	}
 }
 
 static	void	parsePrimGroupFamilyProfileNpcContent(const CAIAliasDescriptionNode *aliasNode, const IPrimitive *prim)
-{	
+{
 	CAIActions::execute("TMPPRFN");
 
 
 	const vector<string>	*flagList = &EmptyStringVector;
-	prim->getPropertyByName("flags", flagList);	
+	prim->getPropertyByName("flags", flagList);
 	CAIActions::execute("TMPPRFNF", *flagList);
 
 	std::string	energy;
@@ -2985,7 +2985,7 @@ static	void	parsePrimGroupFamilyProfileNpcContent(const CAIAliasDescriptionNode 
 	prim->getPropertyByName("energy_75_100", energy4);
 	CAIActions::exec("CZ_NRJ", energy, energy2, energy3, energy4);
 
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -3000,9 +3000,9 @@ static	void	parsePrimGroupFamilyProfileNpcContent(const CAIAliasDescriptionNode 
 			default:
 				break;
 			}
-			
+
 		}
-		
+
 	}
 }
 
@@ -3013,7 +3013,7 @@ static	void	parsePrimGroupFamilyProfileTribe(const CAIAliasDescriptionNode *alia
 
 	string	familyTag;
 	prim->getPropertyByName("family", familyTag);
-	
+
 	CAIActions::exec("GRPFAM", aliasNode, familyTag);
 	parsePrimGroupFamilyProfileTribeContent(aliasNode, prim);
 }
@@ -3022,8 +3022,8 @@ static	void	parsePrimGroupFamilyProfileNpc(const CAIAliasDescriptionNode *aliasN
 {
 	// get hold of the node name and unique id
 	std::string name=nodeName(prim);
-	string	familyTag;	
-	
+	string	familyTag;
+
 	CAIActions::exec("GRPFAM", aliasNode, familyTag);
 	parsePrimGroupFamilyProfileNpcContent(aliasNode, prim);
 }
@@ -3035,7 +3035,7 @@ static void parsePrimGroupDescriptions(const CAIAliasDescriptionNode *aliasNode,
 	uint32 uniqueId=nodeAlias(prim);
 
 	// run through the dynsystem children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -3049,12 +3049,12 @@ static void parsePrimGroupDescriptions(const CAIAliasDescriptionNode *aliasNode,
 				//	parsePrimGroupFamily(nextTreeNode(aliasNode,child),child);
 				}
 				break;
-				
+
 			case AITypeGroupFamilyProfileFauna:
 				parsePrimGroupFamilyProfileFauna(nextTreeNode(aliasNode,child),child);
 //				parsePrimGroupFamilyProfileGeneric(nextTreeNode(aliasNode,child),child, GroupFamilyFauna);
 				break;
-				
+
 			case AITypeGroupFamilyProfileTribe:
 				parsePrimGroupFamilyProfileTribe(nextTreeNode(aliasNode,child),child);
 				break;
@@ -3062,10 +3062,10 @@ static void parsePrimGroupDescriptions(const CAIAliasDescriptionNode *aliasNode,
 			case AITypeGroupFamilyProfileNpc:
 				parsePrimGroupFamilyProfileNpc(nextTreeNode(aliasNode,child),child);
 				break;
-				
+
 //			case AITypeGroupFamilyProfileGeneric:
 //				parsePrimGroupFamilyProfileGeneric(nextTreeNode(aliasNode,child),child, GroupFamilyTribe);
-//				break;			
+//				break;
 			default:
 				break;
 			}
@@ -3084,7 +3084,7 @@ static void parsePrimDynRegion(const CAIAliasDescriptionNode *aliasNode, const I
 	CAIActions::exec("IDTREE",aliasNode);
 
 	// run through the dynsystem children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -3130,7 +3130,7 @@ static void parsePrimOutpostCharge(const CAIAliasDescriptionNode *aliasNode, con
 //	/*
 //	string civilisation;
 //	const vector<string>	*params = &EmptyStringVector;
-//	
+//
 //	prim->getPropertyByName("civilisation", civilisation);
 //	prim->getPropertyByName("parameters", params);
 //	*/
@@ -3138,11 +3138,11 @@ static void parsePrimOutpostCharge(const CAIAliasDescriptionNode *aliasNode, con
 //	CAIActions::exec("SQUADFAM", aliasNode);
 ////	CAIActions::exec("IDTREE",aliasNode);
 //	/*
-//	
+//
 //	CAIActions::execute("CHGPARM", *params);
-//	
+//
 //	*/
-//	for (uint i=0;i<prim->getNumChildren();++i)	
+//	for (uint i=0;i<prim->getNumChildren();++i)
 //	{
 //		// get a pointer to the child and make sure its valid
 //		const IPrimitive *child;
@@ -3155,11 +3155,11 @@ static void parsePrimOutpostCharge(const CAIAliasDescriptionNode *aliasNode, con
 //				parsePrimGroupTemplate(nextTreeNode(aliasNode,child),child,"O");
 //				break;
 //			}
-//			
+//
 //		}
-//		
+//
 //	}
-//	
+//
 //	CAIActions::end(aliasNode->getAlias());
 //}
 
@@ -3171,10 +3171,10 @@ static void parsePrimOutpostSpawnZone(const CAIAliasDescriptionNode *aliasNode, 
 	string s;
 	prim->getPropertyByName("radius", s);
 	NLMISC::fromString(s, r);
-	
+
 	uint32 verticalPos;
 	parseVerticalPos(prim, verticalPos);
-	
+
 	CAIActions::begin(aliasNode->getAlias());
 	CAIActions::exec("SPWNZONE", aliasNode, x, y, r, verticalPos);
 	CAIActions::end(aliasNode->getAlias());
@@ -3199,11 +3199,11 @@ static void parsePrimOutpostBuilding(CAIAliasDescriptionNode const* aliasNode, I
 //	string s;
 //	prim->getPropertyByName("radius", s);
 //	r = float(atof(s.c_str()));
-	
+
 	uint32 verticalPos;
 	parseVerticalPos(prim, verticalPos);
 	bool isStuck = true;
-	
+
 	CAIActions::begin(aliasNode->getAlias());
 	CAIActions::exec("BUILDING", uniqueId);
 	CAIActions::exec("STARTPOS", (sint32)(x*1000.f), (sint32)(y*1000.f), theta, verticalPos);
@@ -3237,12 +3237,12 @@ static void parsePrimSquadTemplate(const IPrimitive *prim, const std::string &ma
 	std::vector<SFolderRef> folders;
 	NLMISC::CSmartPtr<CAIAliasDescriptionNode>	aliasNode = new CAIAliasDescriptionNode	(name, uniqueId, AITypeOutpost, NULL);
 	buildAliasTree(aliasNode, aliasNode, prim, folders);
-	
+
 	CAIActions::begin(aliasNode->getAlias());
 	CAIActions::exec("SQD_TMPL", aliasNode, filename);
 
 	// run through the children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -3259,7 +3259,7 @@ static void parsePrimSquadTemplate(const IPrimitive *prim, const std::string &ma
 		}
 	}
 
-	CAIActions::end(aliasNode->getAlias());	
+	CAIActions::end(aliasNode->getAlias());
 }
 
 static void parsePrimOutpost(const IPrimitive *prim, const std::string &mapName, const std::string &filename)
@@ -3270,16 +3270,16 @@ static void parsePrimOutpost(const IPrimitive *prim, const std::string &mapName,
 	string familyName;
 	string continent, s;
 	stringToKeywordAndTail(mapName, continent, s);
-	
+
 	prim->getPropertyByName("owner_tribe", familyName);
 
 	// build the tree of aliases and the vector of folders
 	std::vector<SFolderRef> folders;
 	NLMISC::CSmartPtr<CAIAliasDescriptionNode>	aliasNode = new CAIAliasDescriptionNode	(name, uniqueId, AITypeOutpost, NULL);
 	buildAliasTree(aliasNode, aliasNode, prim, folders);
-	
+
 	CAIActions::begin(aliasNode->getAlias());
-	
+
 	// outpost general properties
 	CAIActions::exec("OUTPOST", aliasNode, continent, filename, familyName);
 
@@ -3300,9 +3300,9 @@ static void parsePrimOutpost(const IPrimitive *prim, const std::string &mapName,
 		else
 			nlerror( "Missing property %s in %s in %s", props[i], name.c_str(), filename.c_str() );
 	}
-	
+
 	CAIActions::exec("IDTREE",aliasNode);
-	
+
 	// build polygon data
 	vector<double>	poly;
 	const CPrimVector *v = prim->getPrimVector();
@@ -3312,9 +3312,9 @@ static void parsePrimOutpost(const IPrimitive *prim, const std::string &mapName,
 		poly.push_back(v[i].y);
 	}
 	CAIActions::execute("OUTPOGEO", poly);
-	
+
 	// run through the children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -3349,21 +3349,21 @@ static void parsePrimDynSystem(const IPrimitive *prim, const std::string &mapNam
 	// get hold of the node name and unique id
 	std::string name=nodeName(prim);
 	uint32 uniqueId=nodeAlias(prim);
-	
+
 	string contName;
 	prim->getPropertyByName("continent_name", contName);
-	
+
 	nlassertex(!contName.empty(), ("Error while loading dynamic system from '%s', the continent name is empty !", filename.c_str()));
 	// build the tree of aliases and the vector of folders
 	std::vector<SFolderRef> folders;
 	NLMISC::CSmartPtr<CAIAliasDescriptionNode>	aliasNode = new CAIAliasDescriptionNode	(name, uniqueId, AITypeDynamicSystem, NULL);
 	buildAliasTree(aliasNode, aliasNode, prim, folders);
-	
+
 	CAIActions::begin(aliasNode->getAlias());
 	CAIActions::exec("DYNSYS", contName, mapName);
-	
+
 	// run through the dynsystem children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -3382,7 +3382,7 @@ static void parsePrimDynSystem(const IPrimitive *prim, const std::string &mapNam
 			}
 		}
 	}
-	
+
 	CAIActions::exec("DYN_END");
 	CAIActions::end(aliasNode->getAlias());
 }
@@ -3398,7 +3398,7 @@ static void parsePrimNogoPointList(const IPrimitive *prim, const std::string &ma
 	CAIActions::begin(aliasNode->getAlias());
 
 	// run through the charge children looking for nodes with types that we recognise
-	for (uint i=0;i<prim->getNumChildren();++i)	
+	for (uint i=0;i<prim->getNumChildren();++i)
 	{
 		// get a pointer to the child and make sure its valid
 		const IPrimitive *child;
@@ -3424,14 +3424,14 @@ static void parsePrimNogoPointList(const IPrimitive *prim, const std::string &ma
 }
 
 static void parsePrimSafeZone(const IPrimitive *prim, const std::string &mapName, const std::string &filename)
-{	
+{
 	float x=(float)(prim->getPrimVector()->x);
 	float y=(float)(prim->getPrimVector()->y);
 	string	radiusString;
 	prim->getPropertyByName("radius",radiusString);
 	float radius;
 	NLMISC::fromString(radiusString, radius);
-	
+
 	CAIActions::exec("SAFEZONE", x, y, radius);
 }
 
@@ -3465,25 +3465,25 @@ static void parsePrimScript(const IPrimitive *prim, const std::string &mapName, 
 * a user model contains an id, a base SheetId (used later to fill unmodified attributes of the dynamic sheet)
 * and a script defining all attributes to be modified along with the new values
 */
-static void parseUserModelListRec(const IPrimitive				*prim, 
-								  const std::string				&mapName, 
-								  const std::string				&filename, 
+static void parseUserModelListRec(const IPrimitive				*prim,
+								  const std::string				&mapName,
+								  const std::string				&filename,
 								  std::vector<CAIActions::CArg> &args)
 {
 	AITYPES::TAIType type = nodeType(prim);
 	if (type == AITypeUserModelList)
 	{
-		// run through the list of children 
-		for (uint j = 0; j<prim->getNumChildren(); ++j)	
+		// run through the list of children
+		for (uint j = 0; j<prim->getNumChildren(); ++j)
 		{
 			// get a pointer to the child and make sure its valid
 			const IPrimitive *child;
 			if (!prim->getChild(child,j))
 				continue;
-			
+
 			// try to get a type for the child
 			TAIType type=nodeType(child);
-			
+
 			if (type == AITypeUserModel)
 			{
 				std::string userModelId;
@@ -3514,14 +3514,14 @@ static void parseUserModelListRec(const IPrimitive				*prim,
 	}
 	else
 	{
-		for (uint i=0;i<prim->getNumChildren();++i)	
+		for (uint i=0;i<prim->getNumChildren();++i)
 		{
 			const IPrimitive *child;
 			if (prim->getChild(child,i))
 				parseUserModelListRec(child, mapName, filename, args);
 		}
 	}
-	
+
 }
 
 /**
@@ -3551,9 +3551,9 @@ static void parsePrimUserModelList(const IPrimitive		*prim,
 * A custom loot set contains a drop probability and a script defining what item it will drop
 * (item name, quantity, quality)
 */
-static void parseCustomLootTableRec(const IPrimitive			*prim, 
-								  const std::string				&mapName, 
-								  const std::string				&filename, 
+static void parseCustomLootTableRec(const IPrimitive			*prim,
+								  const std::string				&mapName,
+								  const std::string				&filename,
 								  std::vector<CAIActions::CArg> &args)
 {
 	AITYPES::TAIType type = nodeType(prim);
@@ -3573,7 +3573,7 @@ static void parseCustomLootTableRec(const IPrimitive			*prim,
 		prim->getPropertyByName("money_base", strMoneyBase);
 		prim->getPropertyByName("money_factor", strMoneyFactor);
 		prim->getPropertyByName("money_proba", strMoneyProba);
-		
+
 		args.push_back(CAIActions::CArg(customTableId));
 
 		char *ptr = NULL;
@@ -3595,18 +3595,18 @@ static void parseCustomLootTableRec(const IPrimitive			*prim,
 		{
 			args.push_back(CAIActions::CArg(moneyBase));
 		}
-	
-		// run through the list of children 
-		for (uint j = 0; j<prim->getNumChildren(); ++j)	
+
+		// run through the list of children
+		for (uint j = 0; j<prim->getNumChildren(); ++j)
 		{
 			// get a pointer to the child and make sure its valid
 			const IPrimitive *child;
 			if (!prim->getChild(child,j))
 				continue;
-			
+
 			// try to get a type for the child
 			TAIType type=nodeType(child);
-			
+
 			if (type == AITypeCustomLootSet)
 			{
 				std::string dropProba;
@@ -3629,14 +3629,14 @@ static void parseCustomLootTableRec(const IPrimitive			*prim,
 				}
 				args.push_back(CAIActions::CArg(dropProba));
 				args.push_back(CAIActions::CArg(script));
-			
+
 			}
 		}
 		nldebug("<ParseCustomLootTable> Add custom loot table'%s'", customTableId.c_str());
 	}
 	else
 	{
-		for (uint i=0;i<prim->getNumChildren();++i)	
+		for (uint i=0;i<prim->getNumChildren();++i)
 		{
 			const IPrimitive *child;
 			if (prim->getChild(child,i))
@@ -3666,16 +3666,16 @@ static void parsePrimCustomLootTable(const IPrimitive	*prim,
 			nlinfo("<ParsePrimCustomLootTable> Custom loot tables folder declared but empty in primitive '%s'", filename.c_str());
 			return;
 		}
-		
+
 		std::vector<CAIActions::CArg> args;
 
 		args.push_back(CAIActions::CArg(size));
 		args.push_back(CAIActions::CArg(primAlias));
-	
+
 		//TODO: add the primitive aliasStaticPart in the vector in order to remove all userModels/custom loot table
 		//from AIS and EGS managers when a primitive is unloaded
-		
-		
+
+
 		//args.push_back(CAIActions::CArg(nodeAlias(prim)));
 
 		parseCustomLootTableRec(prim, mapName, filename, args);
@@ -3684,7 +3684,7 @@ static void parsePrimCustomLootTable(const IPrimitive	*prim,
 	}
 	else
 	{
-		for (uint i=0;i<prim->getNumChildren();++i)	
+		for (uint i=0;i<prim->getNumChildren();++i)
 		{
 			const IPrimitive *child;
 			if (prim->getChild(child,i))
@@ -3739,7 +3739,7 @@ static void parsePrim(const IPrimitive *prim,const std::string &mapName, const s
 	default:
 		{
 			// this node's not a manager so checkout children
-			for (uint i=0;i<prim->getNumChildren();++i)	
+			for (uint i=0;i<prim->getNumChildren();++i)
 			{
 				const IPrimitive *child;
 				if (prim->getChild(child,i))
@@ -3842,25 +3842,25 @@ void parsePrimNoStream( CPrimitives* primDoc, const std::string & streamName )
 
 	CPrimitiveContext::instance().CurrentPrimitive = primDoc;
 
-	//prim to AIAction	
+	//prim to AIAction
 	// initialise the action executor
 	CAIActions::openFile(streamName);	// AJM: note this does not open a file or stream
 
-	// do the real parsing work		
+	// do the real parsing work
 	{
 		uint32 primAlias = primDoc->getAliasStaticPart();
 		H_AUTO(parsePrimUserModelList);
-		
+
 		//first parse for user models
 		parsePrimUserModelList((IPrimitive *)primDoc->RootNode,
 			CPrimitiveCfg::getContinentNameOf(streamName)+":"+CFile::getFilenameWithoutExtension(CFile::getFilename(streamName)),
 			CFile::getFilename(CFile::getFilenameWithoutExtension(CFile::getFilename(streamName))),
 			primAlias);
-		
+
 		//then parse for custom loot table
 		H_AUTO(parsePrimCustomLootTable);
 		parsePrimCustomLootTable((IPrimitive *)primDoc->RootNode,
-			CPrimitiveCfg::getContinentNameOf(streamName)+":"+CFile::getFilenameWithoutExtension(CFile::getFilename(streamName)), 
+			CPrimitiveCfg::getContinentNameOf(streamName)+":"+CFile::getFilenameWithoutExtension(CFile::getFilename(streamName)),
 			CFile::getFilename(CFile::getFilenameWithoutExtension(CFile::getFilename(streamName))),
 			primAlias);
 		H_AUTO(parsePrim);
@@ -3879,7 +3879,7 @@ void parsePrimNoStream( CPrimitives* primDoc, const std::string & streamName )
 void parsePrimFile(const std::string &filename)
 {
 	H_AUTO(parsePrimFile);
-	
+
 	nldebug("PARSING PRIM FILE %s", filename.c_str());
 	// Call init() !!
 	nlassert (LigoConfig != NULL);
@@ -3912,9 +3912,9 @@ void parsePrimFile(const std::string &filename)
 		nlinfo("Opening in %s", filename.c_str());
 		opened = (fileIn.open (sFilename.c_str()));
 	}
-	
-	nlinfo("Load&parse primitive file '%s' (in '%s')", 
-		CFile::getFilename(filename).c_str(), 
+
+	nlinfo("Load&parse primitive file '%s' (in '%s')",
+		CFile::getFilename(filename).c_str(),
 		sFilename.c_str());
 
 	// Test if binary caching is wanted
@@ -3923,7 +3923,7 @@ void parsePrimFile(const std::string &filename)
 	if (cachePrimsVar)
 	{
 		cachePrims = cachePrimsVar->asInt() != 0;
-	}	
+	}
 	bool cachePrimsLog = false;
 	CConfigFile::CVar *cachePrimsLogVar = IService::getInstance()->ConfigFile.getVarPtr("CachePrimsLog");
 	if (cachePrimsLogVar)
@@ -4001,17 +4001,17 @@ void parsePrimFile(const std::string &filename)
 	{
 		uint32 primAlias = prims.getAliasStaticPart();
 		H_AUTO(parsePrimUserModelList);
-		
+
 		//first parse for user models
 		parsePrimUserModelList((IPrimitive *)prims.RootNode,
 			CPrimitiveCfg::getContinentNameOf(filename)+":"+CFile::getFilenameWithoutExtension(CFile::getFilename(sFilename)),
 			CFile::getFilename(CFile::getFilenameWithoutExtension(CFile::getFilename(sFilename))),
 			primAlias);
-		
+
 		//then parse for custom loot table
 		H_AUTO(parsePrimCustomLootTable);
 		parsePrimCustomLootTable((IPrimitive *)prims.RootNode,
-			CPrimitiveCfg::getContinentNameOf(filename)+":"+CFile::getFilenameWithoutExtension(CFile::getFilename(sFilename)), 
+			CPrimitiveCfg::getContinentNameOf(filename)+":"+CFile::getFilenameWithoutExtension(CFile::getFilename(sFilename)),
 			CFile::getFilename(CFile::getFilenameWithoutExtension(CFile::getFilename(sFilename))),
 			primAlias);
 	H_AUTO(parsePrim);
@@ -4136,7 +4136,7 @@ NLMISC_COMMAND(loadMap,"load a complete set of primitive files","<map name>")
 
 	const	string	continentName=CPrimitiveCfg::getContinentNameOf(args[0]);
 	nlassert(continentName.size()>0);
-	
+
 	vector<string>::const_iterator first(map.begin()), last(map.end());
 	for (; first != last; ++first)
 	{
@@ -4164,7 +4164,7 @@ NLMISC_COMMAND(loadMap,"load a complete set of primitive files","<map name>")
 				continue;
 		}
 
-		// check primitive already loaded		
+		// check primitive already loaded
 		if	(filename.empty())
 			continue;
 

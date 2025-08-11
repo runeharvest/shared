@@ -22,9 +22,7 @@
 
 #include "nel/sound/driver/sound_driver.h"
 
-#ifdef HAVE_CONFIG_H
-#	include "config.h"
-#elif defined(NL_STATIC)
+#ifdef defined(NL_STATIC)
 // Driver availability for NL_STATIC compilation.
 #	undef NL_FMOD_AVAILABLE
 #	undef NL_OPENAL_AVAILABLE
@@ -35,7 +33,7 @@
 #	else
 #		define NL_OPENAL_AVAILABLE
 #	endif
-#endif // HAVE_CONFIG_H
+#endif
 
 #ifdef NL_OS_WINDOWS
 #	ifndef NL_COMP_MINGW
@@ -235,9 +233,9 @@ std::vector<ISoundDriver::TDriver> ISoundDriver::getAvailableDrivers()
 ISoundDriver *ISoundDriver::createDriver(IStringMapperProvider *stringMapper, TDriver driverType)
 {
 #ifdef NL_STATIC
-	
+
 	nlinfo("Creating statically linked sound driver %s", getDriverName(driverType));
-	
+
 	ISoundDriver *result = NULL;
 	switch (driverType)
 	{
@@ -267,9 +265,9 @@ ISoundDriver *ISoundDriver::createDriver(IStringMapperProvider *stringMapper, TD
 		// unavailable driver = FAIL
 		default: throw ESoundDriverNotFound(getDriverName(driverType));
 	}
-	if (!result) throw ESoundDriverCantCreateDriver(getDriverName(driverType)); 
+	if (!result) throw ESoundDriverCantCreateDriver(getDriverName(driverType));
 	return result;
-	
+
 #else
 
 	ISDRV_CREATE_PROC createSoundDriver = NULL;

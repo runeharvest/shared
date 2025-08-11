@@ -28,14 +28,11 @@
 #include "nel/3d/vertex_buffer.h"
 #include "nel/3d/index_buffer.h"
 
-#ifdef HAVE_CONFIG_H
-#	include "config.h"
-#else
+
 #	define NL_OPENGL_AVAILABLE
 #	ifdef NL_OS_WINDOWS
 #		define NL_DIRECT3D_AVAILABLE
 #	endif
-#endif // HAVE_CONFIG_H
 
 #ifdef NL_OS_WINDOWS
 #	ifndef NL_COMP_MINGW
