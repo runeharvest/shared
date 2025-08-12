@@ -53,50 +53,48 @@ using namespace NL3D;
 
 #define LOG_ALL_INFO_TO_FILE
 
+string OutputRootPath;
+string OutputDirectory;
+string OutputPath;
+string TessellationPath;
+string IGBoxes;
+uint TessellateLevel;
+bool ReduceSurfaces;
+bool SmoothBorders;
+bool ComputeElevation;
+bool ComputeLevels;
+vector<string> ZoneNames;
+string ZoneExt;
+string ZoneNHExt = ".zonenhw";
+string ZoneLookUpPath;
+bool ProcessAllPasses;
+bool CheckPrims;
+bool TessellateZones;
+bool MoulineZones;
+bool TessellateAndMoulineZones;
+bool ProcessRetrievers;
+string PreprocessDirectory;
+float WaterThreshold = 0.0f;
+bool UseZoneSquare;
+string ZoneUL;
+string ZoneDR;
+string GlobalRetriever;
+string RetrieverBank;
+string GlobalUL;
+string GlobalDR;
+bool ProcessGlobal;
+string LevelDesignWorldPath;
+string IgLandPath;
+string IgVillagePath;
+bool Verbose = false;
+bool CheckConsistency = true;
 
-
-string												OutputRootPath;
-string												OutputDirectory;
-string												OutputPath;
-string												TessellationPath;
-string												IGBoxes;
-uint												TessellateLevel;
-bool												ReduceSurfaces;
-bool												SmoothBorders;
-bool												ComputeElevation;
-bool												ComputeLevels;
-vector<string>										ZoneNames;
-string												ZoneExt;
-string												ZoneNHExt = ".zonenhw";
-string												ZoneLookUpPath;
-bool												ProcessAllPasses;
-bool												CheckPrims;
-bool												TessellateZones;
-bool												MoulineZones;
-bool												TessellateAndMoulineZones;
-bool												ProcessRetrievers;
-string												PreprocessDirectory;
-float												WaterThreshold = 0.0f;
-bool												UseZoneSquare;
-string												ZoneUL;
-string												ZoneDR;
-string												GlobalRetriever;
-string												RetrieverBank;
-string												GlobalUL;
-string												GlobalDR;
-bool												ProcessGlobal;
-string												LevelDesignWorldPath;
-string												IgLandPath;
-string												IgVillagePath;
-bool												Verbose = false;
-bool												CheckConsistency = true;
-
-CPrimChecker										PrimChecker;
+CPrimChecker PrimChecker;
 
 /****************************************************************\
-					initMoulinette
+                    initMoulinette
 \****************************************************************/
-int		getInt(CConfigFile &cf, const string &varName, int defaultValue=0)
+int getInt(CConfigFile &cf, const string &varName, int defaultValue = 0)
 {
 	CConfigFile::CVar *var = cf.getVarPtr(varName);
 	if (Verbose)
@@ -109,7 +107,7 @@ int		getInt(CConfigFile &cf, const string &varName, int defaultValue=0)
 	return var ? var->asInt() : defaultValue;
 }
 
-float		getFloat(CConfigFile &cf, const string &varName, float defaultValue=0.0)
+float getFloat(CConfigFile &cf, const string &varName, float defaultValue = 0.0)
 {
 	CConfigFile::CVar *var = cf.getVarPtr(varName);
 	if (Verbose)
@@ -122,7 +120,7 @@ float		getFloat(CConfigFile &cf, const string &varName, float defaultValue=0.0)
 	return var ? var->asFloat() : defaultValue;
 }
 
-string	getString(CConfigFile &cf, const string &varName, const string &defaultValue="")
+string getString(CConfigFile &cf, const string &varName, const string &defaultValue = "")
 {
 	CConfigFile::CVar *var = cf.getVarPtr(varName);
 	if (Verbose)
@@ -135,36 +133,34 @@ string	getString(CConfigFile &cf, const string &varName, const string &defaultVa
 	return var ? var->asString() : defaultValue;
 }
 
-bool	getBool(CConfigFile &cf, const string &varName, bool defaultValue=false)
+bool getBool(CConfigFile &cf, const string &varName, bool defaultValue = false)
 {
 	CConfigFile::CVar *var = cf.getVarPtr(varName);
 	if (Verbose)
 	{
 		if (var)
-			nlinfo("Read %s = %s", varName.c_str(), (var->asInt()!=0 ? "true" : "false"));
+			nlinfo("Read %s = %s", varName.c_str(), (var->asInt() != 0 ? "true" : "false"));
 		else
 			nlinfo("Couldn't read %s, using default = '%s'", varName.c_str(), (defaultValue ? "true" : "false"));
 	}
 	return var ? (var->asInt() != 0) : defaultValue;
 }
 
-
-
-void	initMoulinette()
+void initMoulinette()
 {
 	registerSerial3d();
 
 	try
 	{
 #ifdef NL_OS_UNIX
-	        std::string homeDir = getenv("HOME");
-        	NLMISC::CPath::addSearchPath( homeDir + "/.nel");
+		std::string homeDir = getenv("HOME");
+		NLMISC::CPath::addSearchPath(homeDir + "/.nel");
 #endif // NL_OS_UNIX
 
-	        NLMISC::CPath::addSearchPath(NL_BRB_CFG);
+		NLMISC::CPath::addSearchPath(NL_BRB_CFG);
 
 		CConfigFile cf;
-		uint			i;
+		uint i;
 
 		cf.load("build_rbank.cfg");
 
@@ -172,10 +168,9 @@ void	initMoulinette()
 		if (verboseVar && verboseVar->asInt() != 0)
 			Verbose = true;
 
-
 		// Read paths
 		CConfigFile::CVar *cvPathes = cf.getVarPtr("Pathes");
-		for (i=0; cvPathes != NULL && i<cvPathes->size(); ++i)
+		for (i = 0; cvPathes != NULL && i < cvPathes->size(); ++i)
 			CPath::addSearchPath(cvPathes->asString(i));
 
 		ProcessAllPasses = getBool(cf, "ProcessAllPasses", false);
@@ -193,7 +188,7 @@ void	initMoulinette()
 
 		CheckConsistency = getBool(cf, "CheckConsistency", true);
 
-		//if (TessellateZones || MoulineZones)
+		// if (TessellateZones || MoulineZones)
 		{
 			ZoneExt = getString(cf, "ZoneExt", ".zonew");
 			ZoneNHExt = getString(cf, "ZoneNHExt", ".zonenhw");
@@ -204,7 +199,7 @@ void	initMoulinette()
 			TessellateLevel = getInt(cf, "TessellateLevel");
 		}
 
-		//if (MoulineZones)
+		// if (MoulineZones)
 		{
 			LevelDesignWorldPath = getString(cf, "LevelDesignWorldPath");
 			IgLandPath = getString(cf, "IgLandPath");
@@ -215,7 +210,7 @@ void	initMoulinette()
 			ComputeLevels = getBool(cf, "ComputeLevels", true);
 		}
 
-		//if (MoulineZones || ProcessRetrievers || ProcessGlobal)
+		// if (MoulineZones || ProcessRetrievers || ProcessGlobal)
 		{
 			SmoothBorders = getBool(cf, "SmoothBorders", true);
 			PreprocessDirectory = getString(cf, "PreprocessDirectory");
@@ -225,10 +220,10 @@ void	initMoulinette()
 			else
 				OutputDirectory = getString(cf, "RawDirectory");
 
-			OutputPath = OutputRootPath+OutputDirectory;
+			OutputPath = OutputRootPath + OutputDirectory;
 		}
 
-		//if (ProcessGlobal)
+		// if (ProcessGlobal)
 		{
 			GlobalRetriever = getString(cf, "GlobalRetriever");
 			RetrieverBank = getString(cf, "RetrieverBank");
@@ -236,43 +231,42 @@ void	initMoulinette()
 			GlobalDR = getString(cf, "GlobalDR");
 		}
 
-
 		ZoneNames.clear();
 		if (UseZoneSquare)
 		{
 			ZoneUL = getString(cf, "ZoneUL");
 			ZoneDR = getString(cf, "ZoneDR");
 
-			uint	ul = getZoneIdByName(ZoneUL),
-					dr = getZoneIdByName(ZoneDR);
-			uint	x0 = ul%256, 
-					y0 = ul/256,
-					x1 = dr%256, 
-					y1 = dr/256;
-			uint	x, y;
-			for (y=y0; y<=y1; ++y)
-				for (x=x0; x<=x1; ++x)
-					ZoneNames.push_back(getZoneNameById(x+y*256));
+			uint ul = getZoneIdByName(ZoneUL),
+			     dr = getZoneIdByName(ZoneDR);
+			uint x0 = ul % 256,
+			     y0 = ul / 256,
+			     x1 = dr % 256,
+			     y1 = dr / 256;
+			uint x, y;
+			for (y = y0; y <= y1; ++y)
+				for (x = x0; x <= x1; ++x)
+					ZoneNames.push_back(getZoneNameById(x + y * 256));
 		}
 		else
 		{
 			CConfigFile::CVar *cvZones = cf.getVarPtr("Zones");
-			for (i=0; cvZones != NULL && i<cvZones->size(); i++)
+			for (i = 0; cvZones != NULL && i < cvZones->size(); i++)
 				ZoneNames.push_back(cvZones->asString(i));
 		}
 	}
 	catch (const EConfigFile &e)
 	{
-		nlwarning("Problem in config file : %s\n", e.what ());
+		nlwarning("Problem in config file : %s\n", e.what());
 	}
 }
 
 /****************************************************************\
-					moulineZones
+                    moulineZones
 \****************************************************************/
-void	moulineZones(vector<string> &zoneNames)
+void moulineZones(vector<string> &zoneNames)
 {
-	uint	i;
+	uint i;
 
 	if (CheckPrims)
 	{
@@ -284,12 +278,11 @@ void	moulineZones(vector<string> &zoneNames)
 	if (ProcessAllPasses)
 	{
 
-		for (i=0; i<zoneNames.size(); ++i)
+		for (i = 0; i < zoneNames.size(); ++i)
 		{
 			nlinfo("Generate final .lr for zone %s", zoneNames[i].c_str());
 			processAllPasses(zoneNames[i]);
 		}
-
 	}
 
 	if (ProcessGlobal)
@@ -300,23 +293,23 @@ void	moulineZones(vector<string> &zoneNames)
 }
 
 /****************************************************************\
-							MAIN
+                            MAIN
 \****************************************************************/
 int main(int argc, char **argv)
 {
 	// Filter addSearchPath
 	NLMISC::createDebug();
-	InfoLog->addNegativeFilter ("adding the path");
+	InfoLog->addNegativeFilter("adding the path");
 
 	CFileDisplayer fd(getLogDirectory() + "evallog.log", true);
 
 #ifdef LOG_ALL_INFO_TO_FILE
 	createDebug();
-	DebugLog->addDisplayer (&fd);
-	ErrorLog->addDisplayer (&fd);
-	WarningLog->addDisplayer (&fd);
-	InfoLog->addDisplayer (&fd);
-	AssertLog->addDisplayer (&fd);
+	DebugLog->addDisplayer(&fd);
+	ErrorLog->addDisplayer(&fd);
+	WarningLog->addDisplayer(&fd);
+	InfoLog->addDisplayer(&fd);
+	AssertLog->addDisplayer(&fd);
 
 	ErrorLog->removeDisplayer("DEFAULT_MBD");
 #endif
@@ -327,13 +320,13 @@ int main(int argc, char **argv)
 		initMoulinette();
 
 		// Compute the zone surfaces
-		TTime	before, after;
+		TTime before, after;
 
-		uint	i;
+		uint i;
 		if (argc > 1)
 		{
 			ZoneNames.clear();
-			for (i=1; i<(uint)argc; ++i)
+			for (i = 1; i < (uint)argc; ++i)
 			{
 				if (argv[i][0] != '-')
 				{
@@ -378,22 +371,22 @@ int main(int argc, char **argv)
 		moulineZones(ZoneNames);
 		after = CTime::getLocalTime();
 
-		uint	totalSeconds = (uint)((after-before)/1000);
-		uint	workDay = totalSeconds/86400,
-				workHour = (totalSeconds-86400*workDay)/3600,
-				workMinute = (totalSeconds-86400*workDay-3600*workHour)/60,
-				workSecond = (totalSeconds-86400*workDay-3600*workHour-60*workMinute);
+		uint totalSeconds = (uint)((after - before) / 1000);
+		uint workDay = totalSeconds / 86400,
+		     workHour = (totalSeconds - 86400 * workDay) / 3600,
+		     workMinute = (totalSeconds - 86400 * workDay - 3600 * workHour) / 60,
+		     workSecond = (totalSeconds - 86400 * workDay - 3600 * workHour - 60 * workMinute);
 		if (Verbose)
 			nlinfo("total computation time: %d days, %d hours, %d minutes and %d seconds", workDay, workHour, workMinute, workSecond);
 	}
 	catch (const Exception &e)
 	{
-		nlwarning ("main trapped an exception: '%s'\n", e.what ());
+		nlwarning("main trapped an exception: '%s'\n", e.what());
 	}
 #ifndef NL_DEBUG
 /*	catch (...)
 	{
-		nlwarning("main trapped an unknown exception\n");
+	    nlwarning("main trapped an unknown exception\n");
 	}*/
 #endif // NL_DEBUG
 

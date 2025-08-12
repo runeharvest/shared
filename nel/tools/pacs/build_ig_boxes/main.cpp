@@ -47,39 +47,42 @@ using namespace NL3D;
 #define NL_BIB_CFG "."
 #endif // NL_BIB_CFG
 
-string												Output;
-string												IGPath;
-vector<string>										IGs;
+string Output;
+string IGPath;
+vector<string> IGs;
 
 class CIGBox
 {
 public:
-	CIGBox() {}
-	CIGBox(const string &name, const CAABBox &bbox) : Name(name), BBox(bbox) {}
-	string			Name;
-	CAABBox			BBox;
-	void			serial(NLMISC::IStream &f) { f.serial(Name, BBox); }
+	CIGBox() { }
+	CIGBox(const string &name, const CAABBox &bbox)
+	    : Name(name)
+	    , BBox(bbox)
+	{
+	}
+	string Name;
+	CAABBox BBox;
+	void serial(NLMISC::IStream &f) { f.serial(Name, BBox); }
 };
 
-vector<CIGBox>										Boxes;
-set<string>											NonWaterShapes;
-
+vector<CIGBox> Boxes;
+set<string> NonWaterShapes;
 
 //
 
-int		getInt(CConfigFile &cf, const string &varName)
+int getInt(CConfigFile &cf, const string &varName)
 {
 	CConfigFile::CVar &var = cf.getVar(varName);
 	return var.asInt();
 }
 
-string	getString(CConfigFile &cf, const string &varName)
+string getString(CConfigFile &cf, const string &varName)
 {
 	CConfigFile::CVar &var = cf.getVar(varName);
 	return var.asString();
 }
 
-void	init()
+void init()
 {
 	registerSerial3d();
 
@@ -92,21 +95,21 @@ void	init()
 		NLMISC::CPath::addSearchPath(NL_BIB_CFG);
 
 		CConfigFile cf;
-		uint			i;
-	
+		uint i;
+
 		cf.load("build_ig_boxes.cfg");
-	
+
 		Output = getString(cf, "Output");
 		// nlinfo("Output=%s", Output.c_str());
 
 		CConfigFile::CVar &cvIGs = cf.getVar("IGs");
-		for (i=0; i<cvIGs.size(); i++)
+		for (i = 0; i < cvIGs.size(); i++)
 		{
 			IGs.push_back(cvIGs.asString(i));
 		}
 
 		CConfigFile::CVar &cvPathes = cf.getVar("Pathes");
-		for (i=0; i<cvPathes.size(); ++i)
+		for (i = 0; i < cvPathes.size(); ++i)
 		{
 			nlinfo("Using search path %s", cvPathes.asString(i).c_str());
 			CPath::addSearchPath(cvPathes.asString(i));
@@ -114,7 +117,7 @@ void	init()
 	}
 	catch (const EConfigFile &e)
 	{
-		printf ("Problem in config file : %s\n", e.what ());
+		printf("Problem in config file : %s\n", e.what());
 	}
 }
 
@@ -133,59 +136,59 @@ int main(int argc, char **argv)
 		// Init
 		init();
 
-		uint	i, j, k;
+		uint i, j, k;
 
-		for (i=0; i<IGs.size(); ++i)
+		for (i = 0; i < IGs.size(); ++i)
 		{
 			// load ig associated to the zone
-			string			igName = IGs[i]+".ig";
-			CIFile			igStream(CPath::lookup(igName));
-			CInstanceGroup	ig;
+			string igName = IGs[i] + ".ig";
+			CIFile igStream(CPath::lookup(igName));
+			CInstanceGroup ig;
 			igStream.serial(ig);
 
-			CAABBox			igBBox;
-			bool			boxSet = false;
+			CAABBox igBBox;
+			bool boxSet = false;
 
 			nlinfo("Generating BBOX for %s", igName.c_str());
 
 			// search in group for water instance
-			for (j=0; j<ig._InstancesInfos.size(); ++j)
+			for (j = 0; j < ig._InstancesInfos.size(); ++j)
 			{
 				/*
 				   Ben: c'est degueulasse, mais c'est les coders a la 3D, y savent pas coder
 				   Hld: ouai, mais ca marche pas ton truc, alors p'tet qu'on sait pas coder mais toi non plus :p Special Dedicace to SupaGreg!
 				string	shapeName = ig._InstancesInfos[j].Name+".shape";
 				*/
-				string	shapeName = ig._InstancesInfos[j].Name;
-				if (CFile::getExtension (shapeName) == "")
+				string shapeName = ig._InstancesInfos[j].Name;
+				if (CFile::getExtension(shapeName) == "")
 					shapeName += ".shape";
 
 				if (NonWaterShapes.find(shapeName) != NonWaterShapes.end())
 					continue;
 
-				string	shapeNameLookup = CPath::lookup (shapeName, false, false);
+				string shapeNameLookup = CPath::lookup(shapeName, false, false);
 				if (!shapeNameLookup.empty())
 				{
-					CIFile			f;
-					if (f.open (shapeNameLookup))
+					CIFile f;
+					if (f.open(shapeNameLookup))
 					{
-						CShapeStream	shape;
+						CShapeStream shape;
 						shape.serial(f);
 
-						CWaterShape	*wshape = dynamic_cast<CWaterShape *>(shape.getShapePointer());
+						CWaterShape *wshape = dynamic_cast<CWaterShape *>(shape.getShapePointer());
 						if (wshape == NULL)
 						{
 							NonWaterShapes.insert(shapeName);
 							continue;
 						}
 
-						CMatrix	matrix;
+						CMatrix matrix;
 						ig.getInstanceMatrix(j, matrix);
 
-						CPolygon			wpoly;
+						CPolygon wpoly;
 						wshape->getShapeInWorldSpace(wpoly);
 
-						for (k=0; k<wpoly.Vertices.size(); ++k)
+						for (k = 0; k < wpoly.Vertices.size(); ++k)
 						{
 							if (boxSet)
 							{
@@ -200,7 +203,7 @@ int main(int argc, char **argv)
 					}
 					else
 					{
-						nlwarning ("Can't load shape %s", shapeNameLookup.c_str());
+						nlwarning("Can't load shape %s", shapeNameLookup.c_str());
 					}
 				}
 				else
@@ -216,17 +219,17 @@ int main(int argc, char **argv)
 			}
 		}
 
-		COFile	output(Output);
+		COFile output(Output);
 		output.serialCont(Boxes);
 	}
 	catch (const Exception &e)
 	{
-		fprintf (stderr,"main trapped an exception: '%s'\n", e.what ());
+		fprintf(stderr, "main trapped an exception: '%s'\n", e.what());
 	}
 #ifndef NL_DEBUG
 	catch (...)
 	{
-		fprintf(stderr,"main trapped an unknown exception\n");
+		fprintf(stderr, "main trapped an unknown exception\n");
 	}
 #endif // NL_DEBUG
 

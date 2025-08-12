@@ -47,22 +47,23 @@ namespace MAX {
  * \author Jan Boon (Kaetemi)
  * CConfig
  */
-class CConfig : public CStorageContainer {
+class CConfig : public CStorageContainer
+{
 public:
-  CConfig();
-  virtual ~CConfig();
+	CConfig();
+	virtual ~CConfig();
 
-  // inherited
-  virtual std::string className() const;
-  virtual void toString(std::ostream &ostream,
-                        const std::string &pad = "") const;
-  virtual void parse(uint16 version, uint filter = 0);
-  virtual void clean();
-  virtual void build(uint16 version, uint filter = 0);
-  virtual void disown();
+	// inherited
+	virtual std::string className() const;
+	virtual void toString(std::ostream &ostream,
+	    const std::string &pad = "") const;
+	virtual void parse(uint16 version, uint filter = 0);
+	virtual void clean();
+	virtual void build(uint16 version, uint filter = 0);
+	virtual void disown();
 
 protected:
-  virtual IStorageObject *createChunkById(uint16 id, bool container);
+	virtual IStorageObject *createChunkById(uint16 id, bool container);
 
 }; /* class CConfig */
 
@@ -72,22 +73,23 @@ protected:
  * \author Jan Boon (Kaetemi)
  * CConfig
  */
-class CConfig20a0 : public CStorageContainer {
+class CConfig20a0 : public CStorageContainer
+{
 public:
-  CConfig20a0();
-  virtual ~CConfig20a0();
+	CConfig20a0();
+	virtual ~CConfig20a0();
 
-  // inherited
-  virtual std::string className() const;
-  virtual void toString(std::ostream &ostream,
-                        const std::string &pad = "") const;
-  virtual void parse(uint16 version, uint filter = 0);
-  virtual void clean();
-  virtual void build(uint16 version, uint filter = 0);
-  virtual void disown();
+	// inherited
+	virtual std::string className() const;
+	virtual void toString(std::ostream &ostream,
+	    const std::string &pad = "") const;
+	virtual void parse(uint16 version, uint filter = 0);
+	virtual void clean();
+	virtual void build(uint16 version, uint filter = 0);
+	virtual void disown();
 
 protected:
-  virtual IStorageObject *createChunkById(uint16 id, bool container);
+	virtual IStorageObject *createChunkById(uint16 id, bool container);
 
 }; /* class CConfig20a0 */
 
@@ -97,22 +99,23 @@ protected:
  * \author Jan Boon (Kaetemi)
  * CConfig20a0Entry
  */
-class CConfig20a0Entry : public CStorageContainer {
+class CConfig20a0Entry : public CStorageContainer
+{
 public:
-  CConfig20a0Entry();
-  virtual ~CConfig20a0Entry();
+	CConfig20a0Entry();
+	virtual ~CConfig20a0Entry();
 
-  // inherited
-  virtual std::string className() const;
-  virtual void toString(std::ostream &ostream,
-                        const std::string &pad = "") const;
-  virtual void parse(uint16 version, uint filter = 0);
-  virtual void clean();
-  virtual void build(uint16 version, uint filter = 0);
-  virtual void disown();
+	// inherited
+	virtual std::string className() const;
+	virtual void toString(std::ostream &ostream,
+	    const std::string &pad = "") const;
+	virtual void parse(uint16 version, uint filter = 0);
+	virtual void clean();
+	virtual void build(uint16 version, uint filter = 0);
+	virtual void disown();
 
 protected:
-  virtual IStorageObject *createChunkById(uint16 id, bool container);
+	virtual IStorageObject *createChunkById(uint16 id, bool container);
 
 }; /* class CConfig20a0Entry */
 
@@ -122,22 +125,23 @@ protected:
  * \author Jan Boon (Kaetemi)
  * CConfig
  */
-class CConfigScript : public CStorageContainer {
+class CConfigScript : public CStorageContainer
+{
 public:
-  CConfigScript();
-  virtual ~CConfigScript();
+	CConfigScript();
+	virtual ~CConfigScript();
 
-  // inherited
-  virtual std::string className() const;
-  virtual void toString(std::ostream &ostream,
-                        const std::string &pad = "") const;
-  virtual void parse(uint16 version, uint filter = 0);
-  virtual void clean();
-  virtual void build(uint16 version, uint filter = 0);
-  virtual void disown();
+	// inherited
+	virtual std::string className() const;
+	virtual void toString(std::ostream &ostream,
+	    const std::string &pad = "") const;
+	virtual void parse(uint16 version, uint filter = 0);
+	virtual void clean();
+	virtual void build(uint16 version, uint filter = 0);
+	virtual void disown();
 
 protected:
-  virtual IStorageObject *createChunkById(uint16 id, bool container);
+	virtual IStorageObject *createChunkById(uint16 id, bool container);
 
 }; /* class CConfigScript */
 
@@ -147,22 +151,23 @@ protected:
  * \author Jan Boon (Kaetemi)
  * CConfig
  */
-class CConfigScriptEntry : public CStorageContainer {
+class CConfigScriptEntry : public CStorageContainer
+{
 public:
-  CConfigScriptEntry();
-  virtual ~CConfigScriptEntry();
+	CConfigScriptEntry();
+	virtual ~CConfigScriptEntry();
 
-  // inherited
-  virtual std::string className() const;
-  virtual void toString(std::ostream &ostream,
-                        const std::string &pad = "") const;
-  virtual void parse(uint16 version, uint filter = 0);
-  virtual void clean();
-  virtual void build(uint16 version, uint filter = 0);
-  virtual void disown();
+	// inherited
+	virtual std::string className() const;
+	virtual void toString(std::ostream &ostream,
+	    const std::string &pad = "") const;
+	virtual void parse(uint16 version, uint filter = 0);
+	virtual void clean();
+	virtual void build(uint16 version, uint filter = 0);
+	virtual void disown();
 
 protected:
-  virtual IStorageObject *createChunkById(uint16 id, bool container);
+	virtual IStorageObject *createChunkById(uint16 id, bool container);
 
 }; /* class CConfigScriptEntry */
 
@@ -172,20 +177,21 @@ protected:
  * \author Jan Boon (Kaetemi)
  * CConfigScriptHeader
  */
-class CConfigScriptHeader : public IStorageObject {
+class CConfigScriptHeader : public IStorageObject
+{
 public:
-  CConfigScriptHeader();
-  virtual ~CConfigScriptHeader();
+	CConfigScriptHeader();
+	virtual ~CConfigScriptHeader();
 
-  // public data
-  uint32 SuperClassID;
-  NLMISC::CClassId ClassID;
+	// public data
+	uint32 SuperClassID;
+	NLMISC::CClassId ClassID;
 
-  // inherited
-  virtual std::string className() const;
-  virtual void serial(NLMISC::IStream &stream);
-  virtual void toString(std::ostream &ostream,
-                        const std::string &pad = "") const;
+	// inherited
+	virtual std::string className() const;
+	virtual void serial(NLMISC::IStream &stream);
+	virtual void toString(std::ostream &ostream,
+	    const std::string &pad = "") const;
 
 }; /* class CConfigScriptHeader */
 
@@ -196,22 +202,23 @@ public:
  * CConfigScriptMetaContainer
  * This is totally hilarious.
  */
-class CConfigScriptMetaContainer : public CStorageContainer {
+class CConfigScriptMetaContainer : public CStorageContainer
+{
 public:
-  CConfigScriptMetaContainer();
-  virtual ~CConfigScriptMetaContainer();
+	CConfigScriptMetaContainer();
+	virtual ~CConfigScriptMetaContainer();
 
-  // inherited
-  virtual std::string className() const;
-  virtual void toString(std::ostream &ostream,
-                        const std::string &pad = "") const;
-  virtual void parse(uint16 version, uint filter = 0);
-  virtual void clean();
-  virtual void build(uint16 version, uint filter = 0);
-  virtual void disown();
+	// inherited
+	virtual std::string className() const;
+	virtual void toString(std::ostream &ostream,
+	    const std::string &pad = "") const;
+	virtual void parse(uint16 version, uint filter = 0);
+	virtual void clean();
+	virtual void build(uint16 version, uint filter = 0);
+	virtual void disown();
 
 protected:
-  virtual IStorageObject *createChunkById(uint16 id, bool container);
+	virtual IStorageObject *createChunkById(uint16 id, bool container);
 
 }; /* class CConfigScriptMetaContainer */
 
@@ -221,19 +228,20 @@ protected:
  * \author Jan Boon (Kaetemi)
  * CConfigScriptMetaString
  */
-class CConfigScriptMetaString : public IStorageObject {
+class CConfigScriptMetaString : public IStorageObject
+{
 public:
-  CConfigScriptMetaString();
-  virtual ~CConfigScriptMetaString();
+	CConfigScriptMetaString();
+	virtual ~CConfigScriptMetaString();
 
-  // public data
-  std::string Value;
+	// public data
+	std::string Value;
 
-  // inherited
-  virtual std::string className() const;
-  virtual void serial(NLMISC::IStream &stream);
-  virtual void toString(std::ostream &ostream,
-                        const std::string &pad = "") const;
+	// inherited
+	virtual std::string className() const;
+	virtual void serial(NLMISC::IStream &stream);
+	virtual void toString(std::ostream &ostream,
+	    const std::string &pad = "") const;
 
 }; /* class CConfigScriptMetaString */
 

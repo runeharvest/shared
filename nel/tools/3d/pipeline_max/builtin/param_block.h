@@ -46,10 +46,11 @@ namespace BUILTIN {
  * \author Jan Boon (Kaetemi)
  * CParamBlock
  */
-class CParamBlock : public CReferenceTarget {
+class CParamBlock : public CReferenceTarget
+{
 public:
-  CParamBlock(CScene *scene);
-  virtual ~CParamBlock();
+	CParamBlock(CScene *scene);
+	virtual ~CParamBlock();
 
 }; /* class CParamBlock */
 

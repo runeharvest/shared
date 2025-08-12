@@ -28,7 +28,7 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-void vertex_buffer_heap_dummy_cpp() {}
+void vertex_buffer_heap_dummy_cpp() { }
 
 // This code is not used actually and doesn't compile
 // just preproc comment it

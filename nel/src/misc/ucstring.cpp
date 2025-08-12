@@ -21,16 +21,19 @@
 #include "nel/misc/utf_string_view.h"
 #include "stdmisc.h"
 
-void ucstring::toString(std::string &str) const {
-  str = nlmove(NLMISC::CUtfStringView(*this).toUtf8());
+void ucstring::toString(std::string &str) const
+{
+	str = nlmove(NLMISC::CUtfStringView(*this).toUtf8());
 }
 
-std::string ucstring::toUtf8() const {
-  return NLMISC::CUtfStringView(*this).toUtf8();
+std::string ucstring::toUtf8() const
+{
+	return NLMISC::CUtfStringView(*this).toUtf8();
 }
 
-void ucstring::fromUtf8(const std::string &stringUtf8) {
-  *this = NLMISC::CUtfStringView(stringUtf8).toUtf16();
+void ucstring::fromUtf8(const std::string &stringUtf8)
+{
+	*this = NLMISC::CUtfStringView(stringUtf8).toUtf16();
 }
 
 /* end of file */

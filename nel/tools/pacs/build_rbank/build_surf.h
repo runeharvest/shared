@@ -43,55 +43,52 @@
 
 #include "prim_checker.h"
 
+extern std::string OutputRootPath;
+extern std::string OutputDirectory;
+extern std::string OutputPath;
+extern std::string TessellationPath;
+extern std::string IGBoxes;
+extern uint TessellateLevel;
+extern bool ReduceSurfaces;
+extern bool SmoothBorders;
+extern bool ComputeElevation;
+extern bool ComputeLevels;
+extern std::vector<std::string> ZoneNames;
+extern std::string ZoneExt;
+extern std::string ZoneNHExt;
+extern std::string ZoneLookUpPath;
 
+extern bool ProcessAllPasses;
+extern bool CheckPrims;
+extern bool TessellateZones;
+extern bool MoulineZones;
+extern bool TessellateAndMoulineZones;
+extern bool ProcessRetrievers;
+extern std::string PreprocessDirectory;
 
-extern std::string				OutputRootPath;
-extern std::string				OutputDirectory;
-extern std::string				OutputPath;
-extern std::string				TessellationPath;
-extern std::string				IGBoxes;
-extern uint						TessellateLevel;
-extern bool						ReduceSurfaces;
-extern bool						SmoothBorders;
-extern bool						ComputeElevation;
-extern bool						ComputeLevels;
-extern std::vector<std::string>	ZoneNames;
-extern std::string				ZoneExt;
-extern std::string				ZoneNHExt;
-extern std::string				ZoneLookUpPath;
+extern float WaterThreshold;
 
-extern bool						ProcessAllPasses;
-extern bool						CheckPrims;
-extern bool						TessellateZones;
-extern bool						MoulineZones;
-extern bool						TessellateAndMoulineZones;
-extern bool						ProcessRetrievers;
-extern std::string				PreprocessDirectory;
+extern bool UseZoneSquare;
+extern std::string ZoneUL;
+extern std::string ZoneDR;
 
-extern float					WaterThreshold;
+extern std::string GlobalRetriever;
+extern std::string RetrieverBank;
+extern std::string GlobalUL;
+extern std::string GlobalDR;
+extern bool ProcessGlobal;
+extern bool Verbose;
+extern bool CheckConsistency;
 
-extern bool						UseZoneSquare;
-extern std::string				ZoneUL;
-extern std::string				ZoneDR;
+extern CPrimChecker PrimChecker;
 
-extern std::string				GlobalRetriever;
-extern std::string				RetrieverBank;
-extern std::string				GlobalUL;
-extern std::string				GlobalDR;
-extern bool						ProcessGlobal;
-extern bool						Verbose;
-extern bool						CheckConsistency;
+std::string getZoneNameById(uint16 id);
+uint16 getZoneIdByName(std::string &name);
+NLMISC::CAABBox getZoneBBoxById(uint16 id);
+uint16 getZoneIdByPos(NLMISC::CVector &pos);
+NL3D::CMesh *generateMeshFromBBox(const NLMISC::CAABBox &bbox, NLMISC::CRGBA color = NLMISC::CRGBA(255, 128, 0));
 
-extern CPrimChecker				PrimChecker;
-
-std::string			getZoneNameById(uint16 id);
-uint16				getZoneIdByName(std::string &name);
-NLMISC::CAABBox		getZoneBBoxById(uint16 id);
-uint16				getZoneIdByPos(NLMISC::CVector &pos);
-NL3D::CMesh			*generateMeshFromBBox(const NLMISC::CAABBox &bbox, NLMISC::CRGBA color = NLMISC::CRGBA(255, 128, 0));
-
-namespace NLPACS
-{
+namespace NLPACS {
 
 class CSurfElement;
 class CComputableSurfaceBorder;
@@ -99,21 +96,9 @@ class CComputableSurface;
 class CPatchTessellation;
 class CZoneTessellation;
 
-
-
 /**/
 
-const sint32	UnaffectedSurfaceId = -1;
-
-
-
-
-
-
-
-
-
-
+const sint32 UnaffectedSurfaceId = -1;
 
 /**
  * CSurfElement is an element of an iso-criteria surface. It is basically a CTriangle, and
@@ -128,48 +113,47 @@ public:
 	/**
 	 *
 	 */
-	uint32							ElemId;
+	uint32 ElemId;
 
 	/**
 	 * The support of the surface element.
 	 * The index to the 3 vertices of the triangle.
 	 */
-	uint32							Tri[3];
+	uint32 Tri[3];
 
 	/**
 	 * The element normal vector
 	 */
-	NLMISC::CVector					Normal;
+	NLMISC::CVector Normal;
 
 	/**
 	 * The area of the element
 	 */
-	float							Area;
+	float Area;
 
 	/**
 	 * The zone id
 	 */
-	uint16							ZoneId;
+	uint16 ZoneId;
 
 	/**
 	 * The tessellation vertices
 	 */
-	std::vector<NLMISC::CVector>	*Vertices;
-
+	std::vector<NLMISC::CVector> *Vertices;
 
 	/* Here the surface criteria.
 	   Probably some normal quantization, material, flags ... */
-	uint8							WaterShape;
-	uint8							QuantHeight;
+	uint8 WaterShape;
+	uint8 QuantHeight;
 
-	uint32							ForceMerge;
-	
-	bool							ForceInvalid;
-	bool							IsBorder;
-	bool							IsValid;
-	bool							IsMergable;
-	bool							ClusterHint;
-	bool							IsUnderWater;
+	uint32 ForceMerge;
+
+	bool ForceInvalid;
+	bool IsBorder;
+	bool IsValid;
+	bool IsMergable;
+	bool ClusterHint;
+	bool IsUnderWater;
 
 	enum
 	{
@@ -177,22 +161,21 @@ public:
 		NumOrientationQuantas = 4
 	};
 
-
-	/** 
+	/**
 	 * The links to the neighboring elements.
 	 * Each edge is related to the opposite vertex in the triangle */
-	CSurfElement		*EdgeLinks[3];
+	CSurfElement *EdgeLinks[3];
 
 	/**
 	 * A flag for each edge, set if the edge has already been evaluated (in
 	 * the surface border computation.
 	 */
-	bool				EdgeFlag[3];
+	bool EdgeFlag[3];
 
 	/**
 	 * The Id of the surface container.
 	 */
-	sint32				SurfaceId;
+	sint32 SurfaceId;
 
 public:
 	/**
@@ -222,40 +205,38 @@ public:
 	}
 
 	/// Computes the bbox of the surface element.
-	NLMISC::CAABBox	getBBox() const;
-
+	NLMISC::CAABBox getBBox() const;
 
 	/**
 	 * Computes the various criteria values (associated to quantas)
 	 */
-	void	computeQuantas(CZoneTessellation *zoneTessel);
+	void computeQuantas(CZoneTessellation *zoneTessel);
 
 	/**
 	 * Removes properly all links to the CSurfElement.
 	 */
-	void	removeLinks()
+	void removeLinks()
 	{
-		uint	i, j;
-		for (i=0; i<3; ++i)
+		uint i, j;
+		for (i = 0; i < 3; ++i)
 		{
 			if (EdgeLinks[i] != NULL)
-				for (j=0; j<3; ++j)
+				for (j = 0; j < 3; ++j)
 					if (EdgeLinks[i]->EdgeLinks[j] == this)
 						EdgeLinks[i]->EdgeLinks[j] = NULL;
 			EdgeLinks[i] = NULL;
 		}
-
 	}
 
 	/**
 	 * Get zone Id on edge
 	 */
-	sint32	getZoneIdOnEdge(uint edge) const
+	sint32 getZoneIdOnEdge(uint edge) const
 	{
 		return (EdgeLinks[edge] != NULL ? EdgeLinks[edge]->ZoneId : -1);
 	}
 
-	void	serial(NLMISC::IStream &f, std::vector<CSurfElement> &tessellation)
+	void serial(NLMISC::IStream &f, std::vector<CSurfElement> &tessellation)
 	{
 		f.serial(ElemId);
 		f.serial(Tri[0], Tri[1], Tri[2]);
@@ -264,9 +245,9 @@ public:
 
 		if (f.isReading())
 		{
-			sint32	s;
-			uint	i;
-			for (i=0; i<3; ++i)
+			sint32 s;
+			uint i;
+			for (i = 0; i < 3; ++i)
 			{
 				f.serial(s);
 				EdgeLinks[i] = (s >= 0 ? &tessellation[s] : NULL);
@@ -274,9 +255,9 @@ public:
 		}
 		else
 		{
-			sint32	s;
-			uint	i;
-			for (i=0; i<3; ++i)
+			sint32 s;
+			uint i;
+			for (i = 0; i < 3; ++i)
 			{
 				s = (EdgeLinks[i] != NULL ? EdgeLinks[i]->ElemId : -1);
 				f.serial(s);
@@ -284,12 +265,6 @@ public:
 		}
 	}
 };
-
-
-
-
-
-
 
 /**
  * CComputableSurfaceBorder separates geometrically 2 distinct CComputableSurface objects
@@ -300,47 +275,44 @@ public:
 class CComputableSurfaceBorder
 {
 public:
-	std::vector<NLMISC::CVector>	Vertices;
+	std::vector<NLMISC::CVector> Vertices;
 
-	sint32							Left;
-	sint32							Right;
+	sint32 Left;
+	sint32 Right;
 
-	float							Length;
+	float Length;
 
-	sint8							Edge;
+	sint8 Edge;
 
-	bool							DontSmooth;
+	bool DontSmooth;
 
 public:
 	/// Constructor.
-	CComputableSurfaceBorder(sint32 left = 0, sint32 right = 0, sint edge=-1) : Left(left), Right(right), Edge(edge), DontSmooth(false) {}
+	CComputableSurfaceBorder(sint32 left = 0, sint32 right = 0, sint edge = -1)
+	    : Left(left)
+	    , Right(right)
+	    , Edge(edge)
+	    , DontSmooth(false)
+	{
+	}
 
 	/// Dump the vertices that constitue the border.
-	void	dump();
+	void dump();
 
 	/// Smoothes the border (and so reduces the number of vertices).
-	void	smooth(float val);
+	void smooth(float val);
 
 	/// Computes the length of the border
-	void	computeLength()
+	void computeLength()
 	{
-		sint	n;
+		sint n;
 		Length = 0.0;
-		for (n=0; n<(sint)Vertices.size()-1; ++n)
+		for (n = 0; n < (sint)Vertices.size() - 1; ++n)
 		{
-			Length += (Vertices[n+1]-Vertices[n]).norm();
+			Length += (Vertices[n + 1] - Vertices[n]).norm();
 		}
 	}
 };
-
-
-
-
-
-
-
-
-
 
 /**
  * CComputableSurface is a compact connex set of CSurfElement.
@@ -351,58 +323,62 @@ public:
 class CComputableSurface
 {
 public:
-
 public:
 	/// The Id of the surface
-	sint32									SurfaceId;
+	sint32 SurfaceId;
 
 	/// The references on the elements that belong to the surface
-	std::vector<CSurfElement *>				Elements;
+	std::vector<CSurfElement *> Elements;
 
 	/// The object that stores all the borders used in the computed area
-	std::vector<CComputableSurfaceBorder>	*BorderKeeper;
+	std::vector<CComputableSurfaceBorder> *BorderKeeper;
 
 	/// The border in the surface, by id
-	std::vector<uint16>						BorderIds;
+	std::vector<uint16> BorderIds;
 
-	bool									IsUnderWater;
-	bool									ClusterHint;
+	bool IsUnderWater;
+	bool ClusterHint;
 
-	float									Area;
-	float									WaterHeight;
-	uint8									QuantHeight;
+	float Area;
+	float WaterHeight;
+	uint8 QuantHeight;
 
 	/// The BBox of the whole zone (in which the surface should be contained.)
-	NLMISC::CAABBox							BBox;
+	NLMISC::CAABBox BBox;
 
 	/// The height storage quad tree
-	CSurfaceQuadTree						HeightQuad;
+	CSurfaceQuadTree HeightQuad;
 
 	/// The center of the surface
-	NLMISC::CVector							Center;
+	NLMISC::CVector Center;
 
 public:
 	/**
 	 * Constructor.
 	 * Builds an empty surface.
 	 */
-	CComputableSurface() : SurfaceId(UnaffectedSurfaceId), BorderKeeper(NULL), ClusterHint(false)	{}
+	CComputableSurface()
+	    : SurfaceId(UnaffectedSurfaceId)
+	    , BorderKeeper(NULL)
+	    , ClusterHint(false)
+	{
+	}
 
 	/**
 	 * Flood fills the surface elements to find iso-criteria surfaces.
 	 * Every linked surface element which has the same quantas values and a surfaceid == -1
 	 * are marked and recursively called.
 	 */
-	template<class A>
-	void	floodFill(CSurfElement *first, sint32 surfId, const A &cmp, CZoneTessellation *zoneTessel)
+	template <class A>
+	void floodFill(CSurfElement *first, sint32 surfId, const A &cmp, CZoneTessellation *zoneTessel)
 	{
 		if (Verbose)
 		{
 			nldebug("flood fill surface %d", surfId);
 		}
 
-		std::vector<CSurfElement *>	stack;
-		sint					i;
+		std::vector<CSurfElement *> stack;
+		sint i;
 
 		stack.push_back(first);
 		first->SurfaceId = surfId;
@@ -410,27 +386,26 @@ public:
 		SurfaceId = surfId;
 		ClusterHint = first->ClusterHint;
 		QuantHeight = first->QuantHeight;
-		uint	waterShape = first->WaterShape;
+		uint waterShape = first->WaterShape;
 
 		IsUnderWater = first->IsUnderWater;
 
-		//WaterHeight = IsUnderWater ? zoneTessel->WaterShapes[first->WaterShape].Vertices[0].z : 123456.0f;
-		bool	tamere;
-		WaterHeight = IsUnderWater ? PrimChecker.waterHeight(first->WaterShape, tamere)+WaterThreshold : 123456.0f;
+		// WaterHeight = IsUnderWater ? zoneTessel->WaterShapes[first->WaterShape].Vertices[0].z : 123456.0f;
+		bool tamere;
+		WaterHeight = IsUnderWater ? PrimChecker.waterHeight(first->WaterShape, tamere) + WaterThreshold : 123456.0f;
 
-
-		uint32	currentZoneId = first->ZoneId;
+		uint32 currentZoneId = first->ZoneId;
 
 		Area = 0.0;
 
 		while (!stack.empty())
 		{
-			CSurfElement	*pop = stack.back();
+			CSurfElement *pop = stack.back();
 			stack.pop_back();
 			Elements.push_back(pop);
 			Area += pop->Area;
 
-			for (i=0; i<3; ++i)
+			for (i = 0; i < 3; ++i)
 			{
 				if (pop->EdgeLinks[i] != NULL && pop->EdgeLinks[i]->SurfaceId == UnaffectedSurfaceId && cmp.equal(first, pop->EdgeLinks[i]))
 				{
@@ -446,37 +421,23 @@ public:
 		}
 
 		Center = NLMISC::CVector::Null;
-		for (i=0; i<(sint)Elements.size(); ++i)
+		for (i = 0; i < (sint)Elements.size(); ++i)
 		{
-			std::vector<NLMISC::CVector>	&vertices = *Elements[i]->Vertices;
-			Center += (vertices[Elements[i]->Tri[0]]+vertices[Elements[i]->Tri[1]]+vertices[Elements[i]->Tri[2]]);
+			std::vector<NLMISC::CVector> &vertices = *Elements[i]->Vertices;
+			Center += (vertices[Elements[i]->Tri[0]] + vertices[Elements[i]->Tri[1]] + vertices[Elements[i]->Tri[2]]);
 		}
-		Center /= (float)(Elements.size()*3);
+		Center /= (float)(Elements.size() * 3);
 	}
 
-
 	/// Builds the border of the CComputableSurface.
-	void	buildBorders(CZoneTessellation *zoneTessel);
+	void buildBorders(CZoneTessellation *zoneTessel);
 
 	/// Check Surface Consistency
-	bool	checkConsistency();
+	bool checkConsistency();
 
 private:
-	void	followBorder(CZoneTessellation *zoneTessel, CSurfElement *first, uint edge, uint sens, std::vector<NLMISC::CVector> &vstore, bool &loop);
+	void followBorder(CZoneTessellation *zoneTessel, CSurfElement *first, uint edge, uint sens, std::vector<NLMISC::CVector> &vstore, bool &loop);
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * CZoneTessellation is the whole tessellation of a given CZone.
@@ -487,102 +448,101 @@ private:
 class CZoneTessellation
 {
 private:
-	std::vector<CSurfElement>				_Tessellation;
-	std::vector<NLMISC::CVector>			_Vertices;
+	std::vector<CSurfElement> _Tessellation;
+	std::vector<NLMISC::CVector> _Vertices;
 
 protected:
-
-	std::vector<uint16>						_ZoneIds;
-	std::vector<const NL3D::CZone*>			_ZonePtrs;
+	std::vector<uint16> _ZoneIds;
+	std::vector<const NL3D::CZone *> _ZonePtrs;
 
 public:
 	class CMergeForceBox
 	{
 	public:
-		NLMISC::CAABBox						MergeBox;
-		uint32								MergeId;
-		void	serial(NLMISC::IStream &f)		{ f.serial(MergeBox, MergeId); }
+		NLMISC::CAABBox MergeBox;
+		uint32 MergeId;
+		void serial(NLMISC::IStream &f) { f.serial(MergeBox, MergeId); }
 	};
 
 public:
 	/// The zone valid tessellation elements.
-	std::vector<CSurfElement *>				Elements;
+	std::vector<CSurfElement *> Elements;
 
 	///
-	NLMISC::CAABBox							BBox;
-	NLMISC::CAABBox							OriginalBBox;
-	NLMISC::CAABBox							BestFittingBBox;
+	NLMISC::CAABBox BBox;
+	NLMISC::CAABBox OriginalBBox;
+	NLMISC::CAABBox BestFittingBBox;
 	// Yoyo: if zone is empty, we must not apply the Translation delta to zone
-	bool									BestFittingBBoxSetuped;
+	bool BestFittingBBoxSetuped;
 
 	///
-	NLMISC::CVector							Translation;
+	NLMISC::CVector Translation;
 
 	///
-	sint32									CentralZoneId;
+	sint32 CentralZoneId;
 
-	std::vector<NLMISC::CPolygon>			WaterShapes;
-	NL3D::CQuadGrid<uint32>					WaterGrid;
+	std::vector<NLMISC::CPolygon> WaterShapes;
+	NL3D::CQuadGrid<uint32> WaterGrid;
 
-	/** 
+	/**
 	 * The tessellation refinement. The size of the tessellation is equal to 2m/Refinement
 	 * (say, for instance, a refinement of 2 means a 1m large tessellation.)
 	 */
-	sint16									Refinement;
+	sint16 Refinement;
 
 	/**
 	 * The surfaces composing the tessellation.
 	 */
-	std::vector<CComputableSurface>			Surfaces;
-	std::vector<CComputableSurface>			ExtSurfaces;
+	std::vector<CComputableSurface> Surfaces;
+	std::vector<CComputableSurface> ExtSurfaces;
 
 	/**
 	 * The borders for the whole CZone.
 	 */
-	std::vector<CComputableSurfaceBorder>	Borders;
+	std::vector<CComputableSurfaceBorder> Borders;
 
 	/**
 	 * The box that force merge into surface
 	 */
-	std::vector<CMergeForceBox>				ForceMerge;
+	std::vector<CMergeForceBox> ForceMerge;
 
 	/**
 	 * Flags
 	 */
-	std::vector<uint8>						VerticesFlags;
+	std::vector<uint8> VerticesFlags;
 
 public:
 	/**
 	 * Constructor
 	 * Creates an empty tessellation.
 	 */
-	CZoneTessellation() {}
+	CZoneTessellation() { }
 
 	/**
 	 * Clear
 	 */
-	void	clear();
+	void clear();
 
 	/**
 	 * Sets a zone tessellation up for building later.
 	 */
-	bool	setup(uint16 zoneId, sint16 refinement, const NLMISC::CVector &translation);
+	bool setup(uint16 zoneId, sint16 refinement, const NLMISC::CVector &translation);
 
 	/**
 	 * Adds a zone light tessellation to the quad tree container.
 	 */
-	void	addToContainer(const NL3D::CZone &zone);
-	NL3D::CMesh	*generateCollisionMesh();
+	void addToContainer(const NL3D::CZone &zone);
+	NL3D::CMesh *generateCollisionMesh();
 
 	/**
 	 * Builds the whole zone tessellation (with linkage) from the given zone.
 	 */
-	void	build();
+	void build();
 
 	/**
 	 * Sets the water polygons up.
 	 */
-	void	addWaterShape(const NLMISC::CPolygon &poly)
+	void addWaterShape(const NLMISC::CPolygon &poly)
 	{
 		WaterShapes.push_back(poly);
 	}
@@ -590,66 +550,55 @@ public:
 	/**
 	 * Compile the whole zone tessellation and creates surfaces
 	 */
-	void	compile();
+	void compile();
 
 	/**
 	 * Generates a CMesh from the tessellation.
 	 */
-	NL3D::CMesh	*generateMesh();
+	NL3D::CMesh *generateMesh();
 
 	/**
 	 * Generates borders for the whole zone tessellation.
 	 * \param smooth how much to smooth the borders
 	 */
-	void	generateBorders(float smooth);
+	void generateBorders(float smooth);
 
 	/**
 	 *
 	 */
-	NLMISC::CAABBox	computeBBox() const;
+	NLMISC::CAABBox computeBBox() const;
 
 	/**
 	 * Save tessellation
 	 */
-	void	saveTessellation(NLMISC::COFile &output);
+	void saveTessellation(NLMISC::COFile &output);
 
 	/**
 	 * Load tessellation
 	 */
-	void	loadTessellation(NLMISC::CIFile &input);
+	void loadTessellation(NLMISC::CIFile &input);
 
 private:
-	void	checkSameLandscapeHmBinds(const NL3D::CLandscape &landscape, const NL3D::CLandscape &landscapeNoHm);
+	void checkSameLandscapeHmBinds(const NL3D::CLandscape &landscape, const NL3D::CLandscape &landscapeNoHm);
 };
-
-
 
 class CSurfElemCompareSimple
 {
 public:
-
-	bool	equal(const CSurfElement *a, const CSurfElement *b) const
+	bool equal(const CSurfElement *a, const CSurfElement *b) const
 	{
-		return	a->IsValid == b->IsValid &&
-				a->ForceInvalid == b->ForceInvalid;
+		return a->IsValid == b->IsValid && a->ForceInvalid == b->ForceInvalid;
 	}
 };
 
 class CSurfElemCompareNormal
 {
 public:
-
-	bool	equal(const CSurfElement *a, const CSurfElement *b) const
+	bool equal(const CSurfElement *a, const CSurfElement *b) const
 	{
-		return	b->IsValid &&
-				a->ClusterHint == b->ClusterHint &&
-				a->ZoneId == b->ZoneId &&
-				a->IsUnderWater == b->IsUnderWater &&
-				a->WaterShape == b->WaterShape &&
-				a->QuantHeight == b->QuantHeight;
+		return b->IsValid && a->ClusterHint == b->ClusterHint && a->ZoneId == b->ZoneId && a->IsUnderWater == b->IsUnderWater && a->WaterShape == b->WaterShape && a->QuantHeight == b->QuantHeight;
 	}
 };
-
 
 }; // NLPACS
 

@@ -47,8 +47,8 @@ using namespace NL3D;
 using namespace std;
 
 NLLIGO::CLigoConfig LigoConfig;
-extern bool						Verbose;
-extern float					WaterThreshold;
+extern bool Verbose;
+extern float WaterThreshold;
 
 /*
  * Constructor
@@ -57,12 +57,10 @@ CPrimChecker::CPrimChecker()
 {
 }
 
-
-
 /*
  *		init()
  */
-bool	CPrimChecker::build(const string &primitivesPath, const string &igLandPath, const string &igVillagePath, const string &outputDirectory, bool forceRebuild)
+bool CPrimChecker::build(const string &primitivesPath, const string &igLandPath, const string &igVillagePath, const string &outputDirectory, bool forceRebuild)
 {
 	if (Verbose)
 		nlinfo("Checking pacs.packed_prims consistency");
@@ -70,22 +68,22 @@ bool	CPrimChecker::build(const string &primitivesPath, const string &igLandPath,
 	NLLIGO::Register();
 
 	// Init ligo
-	if (!LigoConfig.readPrimitiveClass ("world_editor_classes.xml", false))
+	if (!LigoConfig.readPrimitiveClass("world_editor_classes.xml", false))
 	{
 		// Should be in R:\leveldesign\world_edit_files
-		nlwarning ("Can't load ligo primitive config file world_editor_classes.xml");
+		nlwarning("Can't load ligo primitive config file world_editor_classes.xml");
 		return false;
 	}
 
-	uint	i, j;
-	string	outputfname = CPath::standardizePath(outputDirectory)+"pacs.packed_prims";
+	uint i, j;
+	string outputfname = CPath::standardizePath(outputDirectory) + "pacs.packed_prims";
 
 	_Grid.clear();
 
-	vector<string>	files;
+	vector<string> files;
 	CPath::getPathContent(primitivesPath, true, false, true, files);
 
-	for (i=0; i<files.size(); ++i)
+	for (i = 0; i < files.size(); ++i)
 	{
 		if (CFile::getExtension(files[i]) == "primitive")
 		{
@@ -97,67 +95,67 @@ bool	CPrimChecker::build(const string &primitivesPath, const string &igLandPath,
 	CPath::getPathContent(igLandPath, true, false, true, files);
 	CPath::getPathContent(igVillagePath, true, false, true, files);
 
-	set<string>		noWaterShapes;
+	set<string> noWaterShapes;
 
-	for (i=0; i<files.size(); ++i)
+	for (i = 0; i < files.size(); ++i)
 	{
 		try
 		{
 			// load ig associated to the zone
-			string	igname = files[i];
+			string igname = files[i];
 
 			if (CFile::getExtension(igname) != "ig")
 				continue;
 
-			string	ignamelookup = CPath::lookup(igname);
-			//nlinfo("Reading ig '%s'", ignamelookup.c_str());
-			CIFile			igStream(ignamelookup);
-			CInstanceGroup	ig;
+			string ignamelookup = CPath::lookup(igname);
+			// nlinfo("Reading ig '%s'", ignamelookup.c_str());
+			CIFile igStream(ignamelookup);
+			CInstanceGroup ig;
 			igStream.serial(ig);
 
 			// search in group for water instance
-			for (j=0; j<ig._InstancesInfos.size(); ++j)
+			for (j = 0; j < ig._InstancesInfos.size(); ++j)
 			{
-				string	shapeName = ig._InstancesInfos[j].Name;
-				if (CFile::getExtension (shapeName) == "")
+				string shapeName = ig._InstancesInfos[j].Name;
+				if (CFile::getExtension(shapeName) == "")
 					shapeName += ".shape";
 
 				if (noWaterShapes.find(shapeName) != noWaterShapes.end())
 					continue;
 
-				string	shapeNameLookup = CPath::lookup (shapeName, false, false);
+				string shapeNameLookup = CPath::lookup(shapeName, false, false);
 				if (!shapeNameLookup.empty())
 				{
-					CIFile			f;
-					if (f.open (shapeNameLookup))
+					CIFile f;
+					if (f.open(shapeNameLookup))
 					{
-						CShapeStream	shape;
+						CShapeStream shape;
 						shape.serial(f);
 
-						CWaterShape	*wshape = dynamic_cast<CWaterShape*>(shape.getShapePointer());
+						CWaterShape *wshape = dynamic_cast<CWaterShape *>(shape.getShapePointer());
 						if (wshape == NULL)
 						{
 							noWaterShapes.insert(shapeName);
 							continue;
 						}
 
-						//nlinfo("Render water shape '%s'", shapeNameLookup.c_str());
+						// nlinfo("Render water shape '%s'", shapeNameLookup.c_str());
 
-						CMatrix	matrix;
+						CMatrix matrix;
 						ig.getInstanceMatrix(j, matrix);
 
-						CPolygon			wpoly;
-						//wshape->getShapeInWorldSpace(wpoly);
-						CPolygon2D			wpoly2d = wshape->getShape();
+						CPolygon wpoly;
+						// wshape->getShapeInWorldSpace(wpoly);
+						CPolygon2D wpoly2d = wshape->getShape();
 
-						uint	k;
-						for (k=0; k<wpoly2d.Vertices.size(); ++k)
+						uint k;
+						for (k = 0; k < wpoly2d.Vertices.size(); ++k)
 						{
 							wpoly.Vertices.push_back(matrix * wpoly2d.Vertices[k]);
 						}
 
-						float	zwater = wpoly.Vertices[0].z - WaterThreshold;
-						uint16	idx = (uint16)_WaterHeight.size();
+						float zwater = wpoly.Vertices[0].z - WaterThreshold;
+						uint16 idx = (uint16)_WaterHeight.size();
 						_WaterHeight.push_back(zwater);
 						render(wpoly, idx);
 
@@ -167,13 +165,13 @@ bool	CPrimChecker::build(const string &primitivesPath, const string &igLandPath,
 					else if (Verbose)
 					{
 						noWaterShapes.insert(shapeName);
-						nlwarning ("Can't load shape %s", shapeNameLookup.c_str());
+						nlwarning("Can't load shape %s", shapeNameLookup.c_str());
 					}
 				}
 				else if (Verbose)
 				{
 					noWaterShapes.insert(shapeName);
-					nlwarning ("Can't find shape %s", shapeName.c_str());
+					nlwarning("Can't find shape %s", shapeName.c_str());
 				}
 			}
 		}
@@ -183,7 +181,7 @@ bool	CPrimChecker::build(const string &primitivesPath, const string &igLandPath,
 		}
 	}
 
-	COFile	f;
+	COFile f;
 	if (f.open(outputfname))
 	{
 		f.serial(_Grid);
@@ -197,16 +195,14 @@ bool	CPrimChecker::build(const string &primitivesPath, const string &igLandPath,
 	return true;
 }
 
-
-
 /*
  *		load()
  */
-bool	CPrimChecker::load(const string &outputDirectory)
+bool CPrimChecker::load(const string &outputDirectory)
 {
-	string	outputfname = CPath::standardizePath(outputDirectory)+"pacs.packed_prims";
+	string outputfname = CPath::standardizePath(outputDirectory) + "pacs.packed_prims";
 
-	CIFile	f;
+	CIFile f;
 	if (f.open(outputfname))
 	{
 		f.serial(_Grid);
@@ -221,25 +217,21 @@ bool	CPrimChecker::load(const string &outputDirectory)
 	return true;
 }
 
-
-
-
-
 /*
  *		readFile()
  */
-void	CPrimChecker::readFile(const string &filename)
+void CPrimChecker::readFile(const string &filename)
 {
-	string	fullpath = CPath::lookup(filename, false);
+	string fullpath = CPath::lookup(filename, false);
 
 	if (fullpath.empty())
 		return;
 
 	// lookup for primitive file
-	CIFile		f(fullpath);
-	CIXml		xml;
+	CIFile f(fullpath);
+	CIXml xml;
 
-	CPrimitives	prims;
+	CPrimitives prims;
 
 	// load xml file
 	xml.init(f);
@@ -249,12 +241,12 @@ void	CPrimChecker::readFile(const string &filename)
 	// read nodes
 	if (!prims.read(xml.getRootNode(), filename.c_str(), LigoConfig))
 	{
-		nlwarning("Can't use primitive file '%s', xml parse error",  filename.c_str());
+		nlwarning("Can't use primitive file '%s', xml parse error", filename.c_str());
 		return;
 	}
 
 	// get CPrimNode
-	CPrimNode	*primRootNode = prims.RootNode;
+	CPrimNode *primRootNode = prims.RootNode;
 
 	// read recursive node
 	readPrimitive(primRootNode);
@@ -263,26 +255,26 @@ void	CPrimChecker::readFile(const string &filename)
 /*
  *		readPrimitive()
  */
-void	CPrimChecker::readPrimitive(IPrimitive *primitive)
+void CPrimChecker::readPrimitive(IPrimitive *primitive)
 {
-	string	className;
+	string className;
 
 	// check good class and check primitive has a class name
-	if (dynamic_cast<CPrimZone*>(primitive) != NULL && primitive->getPropertyByName("class", className))
+	if (dynamic_cast<CPrimZone *>(primitive) != NULL && primitive->getPropertyByName("class", className))
 	{
 		if (className == "pacs_include")
-			render(static_cast<CPrimZone*>(primitive), Include);
+			render(static_cast<CPrimZone *>(primitive), Include);
 		else if (className == "pacs_exclude")
-			render(static_cast<CPrimZone*>(primitive), Exclude);
+			render(static_cast<CPrimZone *>(primitive), Exclude);
 		else if (className == "pacs_cluster_hint")
-			render(static_cast<CPrimZone*>(primitive), ClusterHint);
+			render(static_cast<CPrimZone *>(primitive), ClusterHint);
 	}
 
 	// parse children
-	uint	i;
-	for (i=0; i<primitive->getNumChildren(); ++i)
+	uint i;
+	for (i = 0; i < primitive->getNumChildren(); ++i)
 	{
-		IPrimitive	*child;
+		IPrimitive *child;
 
 		if (!primitive->getChild(child, i))
 			continue;
@@ -291,30 +283,29 @@ void	CPrimChecker::readPrimitive(IPrimitive *primitive)
 	}
 }
 
-
 /*
  *		render()
  */
-void	CPrimChecker::render(CPrimZone *zone, uint8 bits)
+void CPrimChecker::render(CPrimZone *zone, uint8 bits)
 {
 	if (zone->VPoints.size() < 3)
 		return;
 
-	string	name;
+	string name;
 	if (zone->getPropertyByName("name", name) && Verbose)
 		nlinfo("Rendering CPrimZone '%s'", name.c_str());
 
 	// get the bouding box of the CPrimZone
-	CAABBox	box;
+	CAABBox box;
 
 	box.setCenter(zone->VPoints[0]);
 	box.setHalfSize(CVector::Null);
 
-	uint	i;
-	for (i=1; i<zone->VPoints.size(); ++i)
+	uint i;
+	for (i = 1; i < zone->VPoints.size(); ++i)
 		box.extend(zone->VPoints[i]);
 
-	sint32	xmin, ymin, xmax, ymax;
+	sint32 xmin, ymin, xmax, ymax;
 
 	xmin = (sint32)(floor(box.getMin().x));
 	ymin = (sint32)(floor(box.getMin().y));
@@ -323,18 +314,17 @@ void	CPrimChecker::render(CPrimZone *zone, uint8 bits)
 	ymax = (sint32)(ceil(box.getMax().y));
 
 	// Fill grid with points that belong to the CPrimZone
-	sint32	x, y;
-	for (y=ymin; y<=ymax; ++y)
-		for (x=xmin; x<=xmax; ++x)
+	sint32 x, y;
+	for (y = ymin; y <= ymax; ++y)
+		for (x = xmin; x <= xmax; ++x)
 			if (zone->contains(CVector((float)x, (float)y, 0.0f)))
 				_Grid.set(x, y, bits);
 }
 
-
 /*
  * Render a water shape, as a CPolygon
  */
-void	CPrimChecker::render(const CPolygon &poly, uint16 value)
+void CPrimChecker::render(const CPolygon &poly, uint16 value)
 {
 	static const sint centerOffset = 20480; // zones are max 40960
 	CPolygon polyOffset = poly;
@@ -342,42 +332,42 @@ void	CPrimChecker::render(const CPolygon &poly, uint16 value)
 		// center to computeBorders range (-32k to 32k)
 		polyOffset.Vertices[i] += CVector(-centerOffset, centerOffset, 0);
 
-	list<CPolygon>		convex;
+	list<CPolygon> convex;
 
 	// divide poly in convex polys
 	if (!polyOffset.toConvexPolygons(convex, CMatrix::Identity))
 	{
 		convex.clear();
-		CPolygon	reverse = polyOffset;
+		CPolygon reverse = polyOffset;
 		std::reverse(reverse.Vertices.begin(), reverse.Vertices.end());
 		if (!reverse.toConvexPolygons(convex, CMatrix::Identity))
 			return;
 	}
 
-	list<CPolygon>::iterator	it;
-	for (it=convex.begin(); it!=convex.end(); ++it)
+	list<CPolygon>::iterator it;
+	for (it = convex.begin(); it != convex.end(); ++it)
 	{
-		CPolygon2D					convex2d(*it);
+		CPolygon2D convex2d(*it);
 
-		CPolygon2D::TRasterVect		rasterized;
-		sint						ymin;
+		CPolygon2D::TRasterVect rasterized;
+		sint ymin;
 
 		convex2d.computeBorders(rasterized, ymin);
 		ymin -= centerOffset; // uncenter
 
-		sint	dy;
-		for (dy=0; dy<(sint)rasterized.size(); ++dy)
+		sint dy;
+		for (dy = 0; dy < (sint)rasterized.size(); ++dy)
 		{
-			sint	x;
+			sint x;
 
-			for (x=rasterized[dy].first; x<=rasterized[dy].second; ++x)
+			for (x = rasterized[dy].first; x <= rasterized[dy].second; ++x)
 			{
-				uint8	prevBits = _Grid.get((uint)x + centerOffset, (uint)(ymin + dy));
+				uint8 prevBits = _Grid.get((uint)x + centerOffset, (uint)(ymin + dy));
 
 				// only set if there was not a water shape there or if previous was lower
 				if ((prevBits & Water) != 0)
 				{
-					uint16	prevWS = _Grid.index((uint)x + centerOffset, (uint)(ymin + dy));
+					uint16 prevWS = _Grid.index((uint)x + centerOffset, (uint)(ymin + dy));
 
 					if (_WaterHeight[value] < _WaterHeight[prevWS])
 						continue;
@@ -388,13 +378,12 @@ void	CPrimChecker::render(const CPolygon &poly, uint16 value)
 			}
 		}
 	}
-
 }
 
 /*
  * Render a CPolygon of bit value
  */
-void	CPrimChecker::renderBits(const CPolygon &poly, uint8 bits)
+void CPrimChecker::renderBits(const CPolygon &poly, uint8 bits)
 {
 	static const sint centerOffset = 20480; // zones are max 40960
 	CPolygon polyOffset = poly;
@@ -402,41 +391,38 @@ void	CPrimChecker::renderBits(const CPolygon &poly, uint8 bits)
 		// center to computeBorders range (-32k to 32k)
 		polyOffset.Vertices[i] += CVector(-centerOffset, centerOffset, 0);
 
-	list<CPolygon>		convex;
+	list<CPolygon> convex;
 
 	// divide poly in convex polys
 	if (!polyOffset.toConvexPolygons(convex, CMatrix::Identity))
 	{
 		convex.clear();
-		CPolygon	reverse = polyOffset;
+		CPolygon reverse = polyOffset;
 		std::reverse(reverse.Vertices.begin(), reverse.Vertices.end());
 		if (!reverse.toConvexPolygons(convex, CMatrix::Identity))
 			return;
 	}
 
-	list<CPolygon>::iterator	it;
-	for (it=convex.begin(); it!=convex.end(); ++it)
+	list<CPolygon>::iterator it;
+	for (it = convex.begin(); it != convex.end(); ++it)
 	{
-		CPolygon2D					convex2d(*it);
+		CPolygon2D convex2d(*it);
 
-		CPolygon2D::TRasterVect		rasterized;
-		sint						ymin;
+		CPolygon2D::TRasterVect rasterized;
+		sint ymin;
 
 		convex2d.computeBorders(rasterized, ymin);
 		ymin -= centerOffset; // uncenter
 
-		sint	dy;
-		for (dy=0; dy<(sint)rasterized.size(); ++dy)
+		sint dy;
+		for (dy = 0; dy < (sint)rasterized.size(); ++dy)
 		{
-			sint	x;
+			sint x;
 
-			for (x=rasterized[dy].first; x<=rasterized[dy].second; ++x)
+			for (x = rasterized[dy].first; x <= rasterized[dy].second; ++x)
 			{
 				_Grid.set((uint)x + centerOffset, (uint)(ymin + dy), bits);
 			}
 		}
 	}
-
 }
-
-

@@ -46,34 +46,35 @@ namespace EPOLY {
  * \author Jan Boon (Kaetemi)
  * CEditablePoly
  */
-class CEditablePoly : public PIPELINE::MAX::BUILTIN::CPolyObject {
+class CEditablePoly : public PIPELINE::MAX::BUILTIN::CPolyObject
+{
 public:
-  CEditablePoly(CScene *scene);
-  virtual ~CEditablePoly();
+	CEditablePoly(CScene *scene);
+	virtual ~CEditablePoly();
 
-  // class desc
-  static const ucstring DisplayName;
-  static const char *InternalName;
-  static const NLMISC::CClassId ClassId;
-  static const TSClassId SuperClassId;
+	// class desc
+	static const ucstring DisplayName;
+	static const char *InternalName;
+	static const NLMISC::CClassId ClassId;
+	static const TSClassId SuperClassId;
 
-  // inherited
-  virtual void parse(uint16 version, uint filter = 0);
-  virtual void clean();
-  virtual void build(uint16 version, uint filter = 0);
-  virtual void disown();
-  virtual void init();
-  virtual bool inherits(const NLMISC::CClassId classId) const;
-  virtual const ISceneClassDesc *classDesc() const;
-  virtual void toStringLocal(std::ostream &ostream, const std::string &pad = "",
-                             uint filter = 0) const;
+	// inherited
+	virtual void parse(uint16 version, uint filter = 0);
+	virtual void clean();
+	virtual void build(uint16 version, uint filter = 0);
+	virtual void disown();
+	virtual void init();
+	virtual bool inherits(const NLMISC::CClassId classId) const;
+	virtual const ISceneClassDesc *classDesc() const;
+	virtual void toStringLocal(std::ostream &ostream, const std::string &pad = "",
+	    uint filter = 0) const;
 
 protected:
-  // inherited
-  virtual IStorageObject *createChunkById(uint16 id, bool container);
+	// inherited
+	virtual IStorageObject *createChunkById(uint16 id, bool container);
 
 private:
-  TStorageObjectContainer m_EditablePolyUnknown;
+	TStorageObjectContainer m_EditablePolyUnknown;
 
 }; /* class CEditablePoly */
 

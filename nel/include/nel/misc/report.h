@@ -33,12 +33,13 @@ namespace NLMISC {
 #define NL_REPORT_DEFAULT NLMISC::ReportBreak
 #endif
 
-enum TReportResult {
-  // See also crash_report_widget.h EReturnValue
-  ReportAlwaysIgnore = 21,
-  ReportIgnore = 22,
-  ReportAbort = 23,
-  ReportBreak = 24
+enum TReportResult
+{
+	// See also crash_report_widget.h EReturnValue
+	ReportAlwaysIgnore = 21,
+	ReportIgnore = 22,
+	ReportAbort = 23,
+	ReportBreak = 24
 };
 
 /** Display a crash report
@@ -54,9 +55,9 @@ enum TReportResult {
  * \return the button clicked or defaultResult
  */
 TReportResult report(const std::string &title, const std::string &subject,
-                     const std::string &body, const std::string &attachment,
-                     bool synchronous, bool sendReport,
-                     TReportResult defaultResult);
+    const std::string &body, const std::string &attachment,
+    bool synchronous, bool sendReport,
+    TReportResult defaultResult);
 
 /// Set the Url of the web service used to post crash reports to. String is
 /// copied

@@ -51,43 +51,44 @@ namespace BUILTIN {
  * \author Jan Boon (Kaetemi)
  * CGeomGeomObject
  */
-class CGeomObject : public CObject {
+class CGeomObject : public CObject
+{
 public:
-  CGeomObject(CScene *scene);
-  virtual ~CGeomObject();
+	CGeomObject(CScene *scene);
+	virtual ~CGeomObject();
 
-  // class desc
-  static const ucstring DisplayName;
-  static const char *InternalName;
-  static const char *InternalNameUnknown;
-  static const NLMISC::CClassId ClassId;
-  static const TSClassId SuperClassId;
+	// class desc
+	static const ucstring DisplayName;
+	static const char *InternalName;
+	static const char *InternalNameUnknown;
+	static const NLMISC::CClassId ClassId;
+	static const TSClassId SuperClassId;
 
-  // inherited
-  virtual void parse(uint16 version, uint filter = 0);
-  virtual void clean();
-  virtual void build(uint16 version, uint filter = 0);
-  virtual void disown();
-  virtual void init();
-  virtual bool inherits(const NLMISC::CClassId classId) const;
-  virtual const ISceneClassDesc *classDesc() const;
-  virtual void toStringLocal(std::ostream &ostream, const std::string &pad = "",
-                             uint filter = 0) const;
+	// inherited
+	virtual void parse(uint16 version, uint filter = 0);
+	virtual void clean();
+	virtual void build(uint16 version, uint filter = 0);
+	virtual void disown();
+	virtual void init();
+	virtual bool inherits(const NLMISC::CClassId classId) const;
+	virtual const ISceneClassDesc *classDesc() const;
+	virtual void toStringLocal(std::ostream &ostream, const std::string &pad = "",
+	    uint filter = 0) const;
 
-  static void
-  triangulatePolyFace(std::vector<STORAGE::CGeomTriIndex> &triangles,
-                      const STORAGE::CGeomPolyFaceInfo &polyFace);
+	static void
+	triangulatePolyFace(std::vector<STORAGE::CGeomTriIndex> &triangles,
+	    const STORAGE::CGeomPolyFaceInfo &polyFace);
 
-  // read access
-  inline STORAGE::CGeomBuffers *geomBuffers() const { return m_GeomBuffers; }
+	// read access
+	inline STORAGE::CGeomBuffers *geomBuffers() const { return m_GeomBuffers; }
 
 protected:
-  // inherited
-  virtual IStorageObject *createChunkById(uint16 id, bool container);
+	// inherited
+	virtual IStorageObject *createChunkById(uint16 id, bool container);
 
 private:
-  IStorageObject *m_Unknown0900;
-  STORAGE::CGeomBuffers *m_GeomBuffers;
+	IStorageObject *m_Unknown0900;
+	STORAGE::CGeomBuffers *m_GeomBuffers;
 
 }; /* class CGeomObject */
 

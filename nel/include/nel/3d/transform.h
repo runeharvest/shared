@@ -845,7 +845,7 @@ private:
 		// Skinning
 		IsSkeleton = 0x1000, // set if the model is a skeleton (faster than dynamic_cast)
 		IsSkinned = 0x2000, // true if the model is isSkinnable() and if currently skinned
-		// Misc
+		                    // Misc
 		IsDeleteChannelMixer = 0x4000,
 		IsForceAnimDetail = 0x8000,
 		IsMeshBaseInstance = 0x10000,

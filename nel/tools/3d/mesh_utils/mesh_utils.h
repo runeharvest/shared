@@ -22,19 +22,20 @@
 
 #include <string>
 
-struct CMeshUtilsSettings {
-  CMeshUtilsSettings();
+struct CMeshUtilsSettings
+{
+	CMeshUtilsSettings();
 
-  // Absolute Paths
-  std::string SourceFilePath;
-  std::string DestinationDirectoryPath;
-  std::string ToolDependLog;
-  std::string ToolErrorLog;
+	// Absolute Paths
+	std::string SourceFilePath;
+	std::string DestinationDirectoryPath;
+	std::string ToolDependLog;
+	std::string ToolErrorLog;
 
-  // Relative Directories
-  /*std::string ShapeDirectory;
-  std::string IGDirectory;
-  std::string SkelDirectory;*/
+	// Relative Directories
+	/*std::string ShapeDirectory;
+	std::string IGDirectory;
+	std::string SkelDirectory;*/
 };
 
 int exportScene(const CMeshUtilsSettings &settings);

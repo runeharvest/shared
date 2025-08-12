@@ -96,10 +96,10 @@ private:
 		std::vector<IMeshGeom *> RdrMeshGeoms;
 
 #if 0 // todo hulud remove / restore VBHeap
-		/// The actual VertexBufferHeap
+      /// The actual VertexBufferHeap
 		CVertexBufferHeap			VBHeap;
 #endif // todo hulud remove / restore VBHeap
-		/// List of MeshGeom to clear VBHeap info.
+       /// List of MeshGeom to clear VBHeap info.
 		std::vector<IMeshGeom *> AllocatedMeshGeoms;
 		/// List of Id free in AllocatedMeshGeoms
 		std::vector<uint> FreeIds;

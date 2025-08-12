@@ -1,10 +1,10 @@
 /**
-* Build Samplebank
-* \file build_samplebank.cpp
-* \brief Build Samplebank
-* \date 2010-03-06 21:36GMT
-* \author Jan Boon (Kaetemi)
-*/
+ * Build Samplebank
+ * \file build_samplebank.cpp
+ * \brief Build Samplebank
+ * \date 2010-03-06 21:36GMT
+ * \author Jan Boon (Kaetemi)
+ */
 
 // NeL - MMORPG Framework <http://dev.ryzom.com/projects/nel/>
 // Copyright (C) 2010  Jan BOON (Kaetemi) <jan.boon@kaetemi.be>
@@ -74,10 +74,10 @@ int main(int nNbArg, char **ppArgs)
 		return EXIT_FAILURE;
 	}
 	string sampleBankName = string(ppArgs[3]);
-	
+
 	// build the sample bank
 	UAudioMixer::buildSampleBank(samplebanksDir, buildSampleBanksDir, sampleBankName);
-	
+
 	// and that's all folks
 	return EXIT_SUCCESS;
 }

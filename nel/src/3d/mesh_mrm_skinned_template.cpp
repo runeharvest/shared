@@ -119,7 +119,7 @@ void CMeshMRMSkinnedGeom::applyArrayRawSkinNormal1(CRawVertexNormalSkinned1 *src
 			fld		[esi]src.Vertex.x // uop: 0/1
 			fld		[esi]src.Vertex.y // uop: 0/1
 			fld		[esi]src.Vertex.z // uop: 0/1
-			                // vout.x= (a11*vin.x + a12*vin.y + a13*vin.z + a14);
+			                                 // vout.x= (a11*vin.x + a12*vin.y + a13*vin.z + a14);
 			fld		[eax]CMatrix3x4.a11 // uop: 0/1
 			fmul	st, st(3) // uop: 1/0 (5)
 			fld		[eax]CMatrix3x4.a12 // uop: 0/1
@@ -313,7 +313,7 @@ void CMeshMRMSkinnedGeom::applyArrayRawSkinNormal2(CRawVertexNormalSkinned2 *src
 			faddp	st(1), st // uop: 1/0 (3)
 			fld		[eax]CMatrix3x4.a14 // uop: 0/1
 			faddp	st(1), st // uop: 1/0 (3)
-			    // mul by scale
+			   // mul by scale
 			fmul	[esi+0]src.Weights
 
 			        // 2nd matrix
@@ -420,7 +420,7 @@ void CMeshMRMSkinnedGeom::applyArrayRawSkinNormal2(CRawVertexNormalSkinned2 *src
 			fld		[eax]CMatrix3x4.a13 // uop: 0/1
 			fmul	st, st(2) // uop: 1/0 (5)
 			faddp	st(1), st // uop: 1/0 (3)
-			    // mul by scale
+			   // mul by scale
 			fmul	[esi+0]src.Weights
 
 			        // 2nd matrix
@@ -590,12 +590,12 @@ void CMeshMRMSkinnedGeom::applyArrayRawSkinNormal3(CRawVertexNormalSkinned3 *src
 			lea		eax, [eax*2+eax]
 			shl		eax, 4
 			add		eax, boneMat3x4 // uop: 1/0
-			    // ebx= matrix1
+			           // ebx= matrix1
 			mov		ebx, [esi+4]src.MatrixId // uop: 0/1
 			lea		ebx, [ebx*2+ebx]
 			shl		ebx, 4
 			add		ebx, boneMat3x4 // uop: 1/0
-			    // edx= matrix2
+			           // edx= matrix2
 			mov		edx, [esi+8]src.MatrixId // uop: 0/1
 			lea		edx, [edx*2+edx]
 			shl		edx, 4
@@ -618,7 +618,7 @@ void CMeshMRMSkinnedGeom::applyArrayRawSkinNormal3(CRawVertexNormalSkinned3 *src
 			faddp	st(1), st // uop: 1/0 (3)
 			fld		[eax]CMatrix3x4.a14 // uop: 0/1
 			faddp	st(1), st // uop: 1/0 (3)
-			    // mul by scale
+			   // mul by scale
 			fmul	[esi+0]src.Weights
 
 			        // 2nd matrix
@@ -769,7 +769,7 @@ void CMeshMRMSkinnedGeom::applyArrayRawSkinNormal3(CRawVertexNormalSkinned3 *src
 			fld		[eax]CMatrix3x4.a13 // uop: 0/1
 			fmul	st, st(2) // uop: 1/0 (5)
 			faddp	st(1), st // uop: 1/0 (3)
-			    // mul by scale
+			   // mul by scale
 			fmul	[esi+0]src.Weights
 
 			        // 2nd matrix

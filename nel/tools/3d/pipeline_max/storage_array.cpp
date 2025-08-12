@@ -41,7 +41,7 @@ using namespace std;
 namespace PIPELINE {
 namespace MAX {
 
-void blahblahblah() {}
+void blahblahblah() { }
 
 } /* namespace MAX */
 } /* namespace PIPELINE */

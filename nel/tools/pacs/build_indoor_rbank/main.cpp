@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include <vector>
 
 #include <stdlib.h>
@@ -41,83 +40,80 @@ using namespace NLMISC;
 #define NL_BIRB_CFG "."
 #endif // NL_BIB_CFG
 
-bool			AddToRetriever = true;
-bool			Merge = true;
-string			MergePath = "c:/data_test/";
-string			MergeInputPrefix = "fyros";
-string			MergeOutputPrefix = "city_landscape_fyros";
-string			MeshPath = "c:/data_test/";
-vector<string>	Meshes;
-string			OutputPath = "c:/data_test/";
-string			OutputPrefix = "city_fyros";
+bool AddToRetriever = true;
+bool Merge = true;
+string MergePath = "c:/data_test/";
+string MergeInputPrefix = "fyros";
+string MergeOutputPrefix = "city_landscape_fyros";
+string MeshPath = "c:/data_test/";
+vector<string> Meshes;
+string OutputPath = "c:/data_test/";
+string OutputPrefix = "city_fyros";
 
-
-CVector	getZoneCenterById(uint16 id)
+CVector getZoneCenterById(uint16 id)
 {
-	CAABBox		bbox;
-	uint		x, y;
-	const float	zdim = 160.0f;
+	CAABBox bbox;
+	uint x, y;
+	const float zdim = 160.0f;
 
-	x = id%256;
-	y = id/256;
+	x = id % 256;
+	y = id / 256;
 
-	return CVector(zdim*((float)x+0.5f), -zdim*((float)y+0.5f), 0.0f);
+	return CVector(zdim * ((float)x + 0.5f), -zdim * ((float)y + 0.5f), 0.0f);
 }
 
-uint32	getIdByCoord(uint x, uint y)
+uint32 getIdByCoord(uint x, uint y)
 {
-	return y*256+x;
+	return y * 256 + x;
 }
 
 uint16 getZoneIdByName(string &name)
 {
-	sint		y = 0, x = 0;
-	const char	*str = name.c_str();
+	sint y = 0, x = 0;
+	const char *str = name.c_str();
 
 	while (*str != '_')
-		y = y*10 + *(str++)-'0';
+		y = y * 10 + *(str++) - '0';
 
 	++str;
 
-	x = (str[0]-'A')*26+(str[1]-'A');
+	x = (str[0] - 'A') * 26 + (str[1] - 'A');
 
-	return (y-1)*256+x;
+	return (y - 1) * 256 + x;
 }
 
-template<class A>
+template <class A>
 void serialAndSave(A &a, string fn)
 {
-	COFile	f;
+	COFile f;
 	f.open(fn);
 	f.serial(a);
 	f.close();
 }
 
-template<class A>
+template <class A>
 void openAndSerial(A &a, string fn)
 {
-	CIFile	f;
+	CIFile f;
 	f.open(fn);
 	f.serial(a);
 	f.close();
 }
 
-
-
 // config management
-int		getInt(CConfigFile &cf, const string &varName)
+int getInt(CConfigFile &cf, const string &varName)
 {
 	CConfigFile::CVar &var = cf.getVar(varName);
 	return var.asInt();
 }
 
-string	getString(CConfigFile &cf, const string &varName)
+string getString(CConfigFile &cf, const string &varName)
 {
 	CConfigFile::CVar &var = cf.getVar(varName);
 	return var.asString();
 }
 
-void	initConfig()
+void initConfig()
 {
 	try
 	{
@@ -128,9 +124,9 @@ void	initConfig()
 		NLMISC::CPath::addSearchPath(NL_BIRB_CFG);
 
 		CConfigFile cf;
-	
+
 		cf.load("build_indoor_rbank.cfg");
-	
+
 		Merge = getInt(cf, "Merge") != 0;
 		AddToRetriever = getInt(cf, "AddToRetriever") != 0;
 		MergePath = getString(cf, "MergePath");
@@ -141,30 +137,28 @@ void	initConfig()
 		OutputPath = getString(cf, "OutputPath");
 		OutputPrefix = getString(cf, "OutputPrefix");
 
-		CConfigFile::CVar	&meshes = cf.getVar("Meshes");
-		uint				i;
-		for (i=0; i<(uint)meshes.size(); i++)
+		CConfigFile::CVar &meshes = cf.getVar("Meshes");
+		uint i;
+		for (i = 0; i < (uint)meshes.size(); i++)
 			Meshes.push_back(meshes.asString(i));
 	}
 	catch (const EConfigFile &e)
 	{
-		printf ("Problem in config file : %s\n", e.what ());
+		printf("Problem in config file : %s\n", e.what());
 	}
 }
-
-
 
 //
 void makeGlobalRetriever(vector<CVector> &translation)
 {
-	CGlobalRetriever	gr;
-	CRetrieverBank		rb;
+	CGlobalRetriever gr;
+	CRetrieverBank rb;
 
 	if (Merge)
 	{
-		openAndSerial(rb, MergePath+MergeInputPrefix+".rbank");
+		openAndSerial(rb, MergePath + MergeInputPrefix + ".rbank");
 		gr.setRetrieverBank(&rb);
-		openAndSerial(gr, MergePath+MergeInputPrefix+".gr");
+		openAndSerial(gr, MergePath + MergeInputPrefix + ".gr");
 	}
 	else
 	{
@@ -172,25 +166,25 @@ void makeGlobalRetriever(vector<CVector> &translation)
 		gr.init();
 	}
 
-	TTime		start, end;
-	
+	TTime start, end;
+
 	start = CTime::getLocalTime();
 
-	vector<uint>	ninst;
+	vector<uint> ninst;
 
-	uint	i;
-	for (i=0; i<Meshes.size(); ++i)
+	uint i;
+	for (i = 0; i < Meshes.size(); ++i)
 	{
-		CLocalRetriever		lr;
+		CLocalRetriever lr;
 		try
 		{
-			openAndSerial(lr, OutputPath+Meshes[i]+".lr");
+			openAndSerial(lr, OutputPath + Meshes[i] + ".lr");
 
-			uint	rid = rb.addRetriever(lr);
+			uint rid = rb.addRetriever(lr);
 
 			if (AddToRetriever)
 			{
-				uint	iid = (gr.makeInstance(rid, 0, -translation[i])).getInstanceId();
+				uint iid = (gr.makeInstance(rid, 0, -translation[i])).getInstanceId();
 
 				ninst.push_back(iid);
 			}
@@ -203,105 +197,103 @@ void makeGlobalRetriever(vector<CVector> &translation)
 
 	gr.initQuadGrid();
 
-	for (i=0; i<ninst.size(); ++i)
+	for (i = 0; i < ninst.size(); ++i)
 		gr.makeLinks(ninst[i]);
 
-
 	end = CTime::getLocalTime();
-	nlinfo("instance making and linking work time: %.3f", (double)(end-start)/1000.0);
+	nlinfo("instance making and linking work time: %.3f", (double)(end - start) / 1000.0);
 
-	COFile	output;
+	COFile output;
 
 	/*
-	 * This way, at the end of the build process, 
+	 * This way, at the end of the build process,
 	 * the rbank should be 5 bytes only and lr should be saved as well next to the rbank
 	 */
 
 	if (Merge)
 	{
-		serialAndSave(gr, OutputPath+MergeOutputPrefix+".gr");
-		rb.saveShortBank(OutputPath, MergeOutputPrefix, true);	// save 5 bytes rbank and lr as well
+		serialAndSave(gr, OutputPath + MergeOutputPrefix + ".gr");
+		rb.saveShortBank(OutputPath, MergeOutputPrefix, true); // save 5 bytes rbank and lr as well
 
-//		serialAndSave(rb, OutputPath+MergeOutputPrefix+".rbank");
+		//		serialAndSave(rb, OutputPath+MergeOutputPrefix+".rbank");
 	}
 	else
 	{
-		serialAndSave(gr, OutputPath+OutputPrefix+".gr");
-		rb.saveShortBank(OutputPath, OutputPrefix, true);		// save 5 bytes rbank and lr as well
+		serialAndSave(gr, OutputPath + OutputPrefix + ".gr");
+		rb.saveShortBank(OutputPath, OutputPrefix, true); // save 5 bytes rbank and lr as well
 
-//		serialAndSave(rb, OutputPath+OutputPrefix+".rbank");
+		//		serialAndSave(rb, OutputPath+OutputPrefix+".rbank");
 	}
 
 	gr.check();
 
-/*
-	UGlobalPosition	gpos;
+	/*
+	    UGlobalPosition	gpos;
 
-	gpos = gr.retrievePosition(CVector(18630, -24604, 0));
-	const CLocalRetriever	&lr = gr.getRetriever(gr.getInstance(gpos.InstanceId).getRetrieverId());
-	lr.dumpSurface(gpos.LocalPosition.Surface, gr.getInstance(gpos.InstanceId).getOrigin());
-*/
+	    gpos = gr.retrievePosition(CVector(18630, -24604, 0));
+	    const CLocalRetriever	&lr = gr.getRetriever(gr.getInstance(gpos.InstanceId).getRetrieverId());
+	    lr.dumpSurface(gpos.LocalPosition.Surface, gr.getInstance(gpos.InstanceId).getOrigin());
+	*/
 }
 
 void createRetriever(vector<CVector> &translation)
 {
-	uint	i;
+	uint i;
 
 	translation.resize(Meshes.size());
 
-	for (i=0; i<Meshes.size(); ++i)
+	for (i = 0; i < Meshes.size(); ++i)
 	{
-		CLocalRetriever			lr;
-		CCollisionMeshBuild		cmb;
+		CLocalRetriever lr;
+		CCollisionMeshBuild cmb;
 
-		string					meshName = Meshes[i];
+		string meshName = Meshes[i];
 
 		nlinfo("compute retriever %s", meshName.c_str());
 
 		try
 		{
-			openAndSerial(cmb, MeshPath+meshName+".cmb");
+			openAndSerial(cmb, MeshPath + meshName + ".cmb");
 
 			{
-				vector<bool>	usedMaterials;
-				uint			j;
-				uint			maxMat = 0;
+				vector<bool> usedMaterials;
+				uint j;
+				uint maxMat = 0;
 
-				for (j=0; j<cmb.Faces.size(); ++j)
+				for (j = 0; j < cmb.Faces.size(); ++j)
 					if (cmb.Faces[j].Material > (sint)maxMat)
 						maxMat = cmb.Faces[j].Material;
 
-				usedMaterials.resize(maxMat+1);
+				usedMaterials.resize(maxMat + 1);
 
-				for (j=0; j<usedMaterials.size(); ++j)
+				for (j = 0; j < usedMaterials.size(); ++j)
 					usedMaterials[j] = false;
-				for (j=0; j<cmb.Faces.size(); ++j)
+				for (j = 0; j < cmb.Faces.size(); ++j)
 					usedMaterials[cmb.Faces[j].Material] = true;
 
-				for (j=0; j<usedMaterials.size(); ++j)
+				for (j = 0; j < usedMaterials.size(); ++j)
 					if (usedMaterials[j])
 						nlinfo("Material %d used", j);
 			}
 
-
 			computeRetriever(cmb, lr, translation[i], true);
-/*
-			// TEMP
-			uint	tt;
-			for (tt=0; tt<lr.getSurfaces().size(); ++tt)
-				lr.dumpSurface(tt);
-			//
-*/
-			
+			/*
+			            // TEMP
+			            uint	tt;
+			            for (tt=0; tt<lr.getSurfaces().size(); ++tt)
+			                lr.dumpSurface(tt);
+			            //
+			*/
+
 			// Compute an identifier name
 			string indentifier = meshName;
-			string::size_type sharpPos = indentifier.rfind ('#');
+			string::size_type sharpPos = indentifier.rfind('#');
 			if (sharpPos != string::npos)
-				indentifier = indentifier.substr (0, sharpPos);
+				indentifier = indentifier.substr(0, sharpPos);
 			lr.setIdentifier(indentifier);
 
 			// Save the lr file
-			serialAndSave(lr, OutputPath+meshName+".lr");
+			serialAndSave(lr, OutputPath + meshName + ".lr");
 		}
 		catch (const Exception &e)
 		{
@@ -310,21 +302,20 @@ void createRetriever(vector<CVector> &translation)
 	}
 }
 
-
 // pacs test
 
-void	serialGPos(UGlobalPosition &gp, NLMISC::IStream &f)
+void serialGPos(UGlobalPosition &gp, NLMISC::IStream &f)
 {
 	f.serial(gp.InstanceId, gp.LocalPosition.Surface, gp.LocalPosition.Estimation);
 }
 
 struct CGlobalPositionCompare
 {
-	UGlobalPosition		ClientPosition,
-						RetrievedPosition;
-	bool				Compare;
+	UGlobalPosition ClientPosition,
+	    RetrievedPosition;
+	bool Compare;
 
-	void				serial(NLMISC::IStream &f)
+	void serial(NLMISC::IStream &f)
 	{
 		serialGPos(ClientPosition, f);
 		serialGPos(RetrievedPosition, f);
@@ -332,25 +323,24 @@ struct CGlobalPositionCompare
 	}
 };
 
-vector<CGlobalPositionCompare>	StoredPosition;
+vector<CGlobalPositionCompare> StoredPosition;
 
-
-void	loadAndDumpPositions()
+void loadAndDumpPositions()
 {
-	CIFile	f;
+	CIFile f;
 
 	f.open("backup.position");
 	f.serialCont(StoredPosition);
 	f.close();
 
-	uint	i;
-	for (i=0; i<StoredPosition.size(); ++i)
+	uint i;
+	for (i = 0; i < StoredPosition.size(); ++i)
 	{
-		CGlobalPositionCompare	&c = StoredPosition[i];
+		CGlobalPositionCompare &c = StoredPosition[i];
 		nlinfo("cmp=%s cl(%4d,%4d,%.8f,%.8f,%.8f) gr(%4d,%4d,%.8f,%.8f,%.8f)",
-				c.Compare ? "true" : "false",
-				c.ClientPosition.InstanceId, c.ClientPosition.LocalPosition.Surface, c.ClientPosition.LocalPosition.Estimation.x, c.ClientPosition.LocalPosition.Estimation.y, c.ClientPosition.LocalPosition.Estimation.z,
-				c.RetrievedPosition.InstanceId, c.RetrievedPosition.LocalPosition.Surface, c.RetrievedPosition.LocalPosition.Estimation.x, c.RetrievedPosition.LocalPosition.Estimation.y, c.RetrievedPosition.LocalPosition.Estimation.z);
+		    c.Compare ? "true" : "false",
+		    c.ClientPosition.InstanceId, c.ClientPosition.LocalPosition.Surface, c.ClientPosition.LocalPosition.Estimation.x, c.ClientPosition.LocalPosition.Estimation.y, c.ClientPosition.LocalPosition.Estimation.z,
+		    c.RetrievedPosition.InstanceId, c.RetrievedPosition.LocalPosition.Surface, c.RetrievedPosition.LocalPosition.Estimation.x, c.RetrievedPosition.LocalPosition.Estimation.y, c.RetrievedPosition.LocalPosition.Estimation.z);
 	}
 }
 
@@ -359,22 +349,21 @@ void	loadAndDumpPositions()
 /*
 int main(int argc, char **argv)
 {
-	CRetrieverBank	bank;
-	CIFile			f("R:/code/ryzom/data/3d/continents/matis/pacs/matis.rbank");
+    CRetrieverBank	bank;
+    CIFile			f("R:/code/ryzom/data/3d/continents/matis/pacs/matis.rbank");
 
-	f.serial(bank);
+    f.serial(bank);
 
-	bank.saveShortBank("R:/code/ryzom/data/3d/continents/matis/pacs", "matis");
+    bank.saveShortBank("R:/code/ryzom/data/3d/continents/matis/pacs", "matis");
 }
 */
 
-
 int main(int argc, char **argv)
 {
-	vector<CVector>	translation;
-	TTime			start, end;
+	vector<CVector> translation;
+	TTime start, end;
 
-	createDebug ();
+	createDebug();
 	ErrorLog->removeDisplayer("DEFAULT_MBD");
 
 	initConfig();
@@ -382,19 +371,16 @@ int main(int argc, char **argv)
 	start = CTime::getLocalTime();
 	createRetriever(translation);
 
-//	translation[0] = CVector(-4670.0f, 3579.0f, 0.0f);
+	//	translation[0] = CVector(-4670.0f, 3579.0f, 0.0f);
 
 	makeGlobalRetriever(translation);
 	end = CTime::getLocalTime();
 
-	nlinfo("%.3f seconds work", (double)(end-start)/1000.0);
+	nlinfo("%.3f seconds work", (double)(end - start) / 1000.0);
 
-	uint	i;
-	for (i=0; i<translation.size(); ++i)
+	uint i;
+	for (i = 0; i < translation.size(); ++i)
 		nlinfo("CVector\ttranslation_%d = CVector(%.1ff, %.1ff, %.1ff);", i, translation[i].x, translation[i].y, translation[i].z);
 
 	return 0;
 }
-
-
-

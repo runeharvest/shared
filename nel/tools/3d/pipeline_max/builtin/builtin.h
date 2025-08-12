@@ -48,13 +48,14 @@ namespace BUILTIN {
  * \author Jan Boon (Kaetemi)
  * CBuiltin
  */
-class CBuiltin {
+class CBuiltin
+{
 public:
-  static void registerClasses(CSceneClassRegistry *registry);
+	static void registerClasses(CSceneClassRegistry *registry);
 
 private:
-  CBuiltin();
-  virtual ~CBuiltin();
+	CBuiltin();
+	virtual ~CBuiltin();
 
 }; /* class CBuiltin */
 

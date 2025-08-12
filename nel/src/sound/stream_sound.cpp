@@ -26,50 +26,55 @@
 
 namespace NLSOUND {
 
-CStreamSound::CStreamSound() : m_Alpha(1.0f) {}
+CStreamSound::CStreamSound()
+    : m_Alpha(1.0f)
+{
+}
 
-CStreamSound::~CStreamSound() {}
+CStreamSound::~CStreamSound() { }
 
 void CStreamSound::importForm(const std::string &filename,
-                              NLGEORGES::UFormElm &root) {
-  // cannot do this debug check because used also by CStreamFileSound
-  /*NLGEORGES::UFormElm *psoundType;
-  std::string dfnName;
+    NLGEORGES::UFormElm &root)
+{
+	// cannot do this debug check because used also by CStreamFileSound
+	/*NLGEORGES::UFormElm *psoundType;
+	std::string dfnName;
 
-  // some basic checking.
-  root.getNodeByName(&psoundType, ".SoundType");
-  nlassert(psoundType != NULL);
-  psoundType->getDfnName(dfnName);
-  nlassert(dfnName == "stream_sound.dfn");*/
+	// some basic checking.
+	root.getNodeByName(&psoundType, ".SoundType");
+	nlassert(psoundType != NULL);
+	psoundType->getDfnName(dfnName);
+	nlassert(dfnName == "stream_sound.dfn");*/
 
-  // Call the base class
-  CSound::importForm(filename, root);
+	// Call the base class
+	CSound::importForm(filename, root);
 
-  // MaxDistance
-  root.getValueByName(_MaxDist, ".SoundType.MaxDistance");
+	// MaxDistance
+	root.getValueByName(_MaxDist, ".SoundType.MaxDistance");
 
-  // MinDistance
-  root.getValueByName(_MinDist, ".SoundType.MinDistance");
+	// MinDistance
+	root.getValueByName(_MinDist, ".SoundType.MinDistance");
 
-  // Alpha
-  root.getValueByName(m_Alpha, ".SoundType.Alpha");
+	// Alpha
+	root.getValueByName(m_Alpha, ".SoundType.Alpha");
 
 #if NLSOUND_SHEET_VERSION_BUILT < 2
-  _GroupController = CGroupControllerRoot::getInstance()->getGroupController(
-      NLSOUND_SHEET_V1_DEFAULT_SOUND_STREAM_GROUP_CONTROLLER);
+	_GroupController = CGroupControllerRoot::getInstance()->getGroupController(
+	    NLSOUND_SHEET_V1_DEFAULT_SOUND_STREAM_GROUP_CONTROLLER);
 #endif
 }
 
-void CStreamSound::serial(NLMISC::IStream &s) {
-  CSound::serial(s);
+void CStreamSound::serial(NLMISC::IStream &s)
+{
+	CSound::serial(s);
 
-  s.serial(_MinDist);
-  s.serial(m_Alpha);
+	s.serial(_MinDist);
+	s.serial(m_Alpha);
 
 #if NLSOUND_SHEET_VERSION_BUILT < 2
-  if (s.isReading())
-    _GroupController = CGroupControllerRoot::getInstance()->getGroupController(
-        NLSOUND_SHEET_V1_DEFAULT_SOUND_STREAM_GROUP_CONTROLLER);
+	if (s.isReading())
+		_GroupController = CGroupControllerRoot::getInstance()->getGroupController(
+		    NLSOUND_SHEET_V1_DEFAULT_SOUND_STREAM_GROUP_CONTROLLER);
 #endif
 }
 

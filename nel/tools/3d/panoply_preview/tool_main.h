@@ -24,7 +24,8 @@
 
 // Project includes
 
-namespace NLTOOLS {} /* namespace NLTOOLS */
+namespace NLTOOLS {
+} /* namespace NLTOOLS */
 
 #endif /* #ifndef NLTOOLS_MAIN_H */
 

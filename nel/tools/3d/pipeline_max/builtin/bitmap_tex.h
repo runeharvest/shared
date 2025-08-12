@@ -46,10 +46,11 @@ namespace BUILTIN {
  * \author Jan Boon (Kaetemi)
  * CBitmapTex
  */
-class CBitmapTex : public CTexmap {
+class CBitmapTex : public CTexmap
+{
 public:
-  CBitmapTex(CScene *scene);
-  virtual ~CBitmapTex();
+	CBitmapTex(CScene *scene);
+	virtual ~CBitmapTex();
 
 }; /* class CBitmapTex */
 

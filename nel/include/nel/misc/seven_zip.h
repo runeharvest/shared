@@ -27,15 +27,15 @@ namespace NLMISC {
 
 // utility func to decompress a monofile 7zip archive
 bool unpack7Zip(const std::string &sevenZipFileName,
-                const std::string &destFileName);
+    const std::string &destFileName);
 
 // utility func to decompress a single LZMA packed file
 bool unpackLZMA(const std::string &lzmaFileName,
-                const std::string &destFileName);
+    const std::string &destFileName);
 
 // utility func to decompress a single LZMA packed file
 bool unpackLZMA(const std::string &lzmaFileName,
-                const std::string &destFileName, CHashKey &sha1);
+    const std::string &destFileName, CHashKey &sha1);
 
 // utility func to compress a single file to LZMA packed file
 bool packLZMA(const std::string &srcFileName, const std::string &lzmaFileName);

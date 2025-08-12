@@ -1,10 +1,10 @@
 /**
-* Build Sound
-* \file build_sound.cpp
-* \brief Build Sound
-* \date 2009-06-02 21:25GMT
-* \author Jan Boon (Kaetemi)
-*/
+ * Build Sound
+ * \file build_sound.cpp
+ * \brief Build Sound
+ * \date 2009-06-02 21:25GMT
+ * \author Jan Boon (Kaetemi)
+ */
 
 // NeL - MMORPG Framework <http://dev.ryzom.com/projects/nel/>
 // Copyright (C) 2009-2019  Jan BOON (Kaetemi) <jan.boon@kaetemi.be>
@@ -104,7 +104,7 @@ int main(int nNbArg, char **ppArgs)
 		nlerrornoex("Directory build_samplebanks '%s' does not exist", buildSampleBanksDir.c_str());
 		return EXIT_FAILURE;
 	}
-	
+
 	// add search paths
 	CPath::addSearchPath(leveldesignDir, true, false);
 	std::string relativeDfnDir = dfnDir; // only add dfn if not a subdir of leveldesignDir
@@ -117,13 +117,31 @@ int main(int nNbArg, char **ppArgs)
 	audioMixer->setSamplePaths(samplebanksDir, buildSampleBanksDir);
 	// set the location where the packed_sheets will be exported
 	audioMixer->setPackedSheetOption(exportDir, true);
-	
+
 	// this here does the magic, we actually don't need the driver but whatever
-	try { audioMixer->init(0, false, false, NULL, true, UAudioMixer::DriverOpenAl); } catch (...) { 
-	try { audioMixer->init(0, false, false, NULL, true, UAudioMixer::DriverXAudio2); } catch (...) { 
-	try { audioMixer->init(0, false, false, NULL, true, UAudioMixer::DriverFMod); } 
-	catch (...) { return EXIT_FAILURE; } } }
-	
+	try
+	{
+		audioMixer->init(0, false, false, NULL, true, UAudioMixer::DriverOpenAl);
+	}
+	catch (...)
+	{
+		try
+		{
+			audioMixer->init(0, false, false, NULL, true, UAudioMixer::DriverXAudio2);
+		}
+		catch (...)
+		{
+			try
+			{
+				audioMixer->init(0, false, false, NULL, true, UAudioMixer::DriverFMod);
+			}
+			catch (...)
+			{
+				return EXIT_FAILURE;
+			}
+		}
+	}
+
 	// and that's all folks
 	delete audioMixer;
 	return EXIT_SUCCESS;

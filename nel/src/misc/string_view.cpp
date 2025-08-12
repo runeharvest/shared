@@ -23,7 +23,7 @@
 
 namespace NLMISC {
 
-void nothing_here_string_view_nl() {}
+void nothing_here_string_view_nl() { }
 
 } /* namespace NLMISC */
 

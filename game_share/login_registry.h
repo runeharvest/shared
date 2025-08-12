@@ -17,13 +17,14 @@
 #ifndef RY_LOGIN_REGISTRY
 #define RY_LOGIN_REGISTRY
 
-struct CLoginRegistry {
-  // Utility function to get a unique install id from the registry
-  static std::string getProductInstallId();
-  // retrieve login step from the registry (0 if no step yet)
-  static uint getLoginStep();
-  // set current login step in the registry
-  static void setLoginStep(uint step);
+struct CLoginRegistry
+{
+	// Utility function to get a unique install id from the registry
+	static std::string getProductInstallId();
+	// retrieve login step from the registry (0 if no step yet)
+	static uint getLoginStep();
+	// set current login step in the registry
+	static void setLoginStep(uint step);
 };
 
 #endif

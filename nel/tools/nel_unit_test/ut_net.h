@@ -28,14 +28,16 @@
 #include "ut_net_module.h"
 // Add a line here when adding a new test CLASS
 
-struct CUTNet : public Test::Suite {
-  CUTNet() {
-    add(std::auto_ptr<Test::Suite>(new CUTNetLayer3));
-    add(std::auto_ptr<Test::Suite>(new CUTNetMessage));
-    add(std::auto_ptr<Test::Suite>(new CUTNetModule));
-    add(std::auto_ptr<Test::Suite>(new CUTNetAddress));
-    // Add a line here when adding a new test CLASS
-  }
+struct CUTNet : public Test::Suite
+{
+	CUTNet()
+	{
+		add(std::auto_ptr<Test::Suite>(new CUTNetLayer3));
+		add(std::auto_ptr<Test::Suite>(new CUTNetMessage));
+		add(std::auto_ptr<Test::Suite>(new CUTNetModule));
+		add(std::auto_ptr<Test::Suite>(new CUTNetAddress));
+		// Add a line here when adding a new test CLASS
+	}
 };
 
 #endif

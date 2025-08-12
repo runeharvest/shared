@@ -46,10 +46,11 @@ namespace BUILTIN {
  * \author Jan Boon (Kaetemi)
  * CModifier
  */
-class CModifier : public CBaseObject {
+class CModifier : public CBaseObject
+{
 public:
-  CModifier(CScene *scene);
-  virtual ~CModifier();
+	CModifier(CScene *scene);
+	virtual ~CModifier();
 
 }; /* class CModifier */
 

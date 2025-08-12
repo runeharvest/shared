@@ -57,39 +57,40 @@ class CClassEntry;
  * static copy of the actual ISceneClassDesc. This class only contains
  * CClassEntry instances, which should not be used directly.
  */
-class CClassDirectory3 : public CStorageContainer {
+class CClassDirectory3 : public CStorageContainer
+{
 public:
-  CClassDirectory3(CDllDirectory *dllDirectory);
-  virtual ~CClassDirectory3();
+	CClassDirectory3(CDllDirectory *dllDirectory);
+	virtual ~CClassDirectory3();
 
-  // inherited
-  virtual std::string className() const;
-  virtual void toString(std::ostream &ostream,
-                        const std::string &pad = "") const;
-  virtual void parse(uint16 version, uint filter = 0);
-  virtual void clean();
-  virtual void build(uint16 version, uint filter = 0);
-  virtual void disown();
+	// inherited
+	virtual std::string className() const;
+	virtual void toString(std::ostream &ostream,
+	    const std::string &pad = "") const;
+	virtual void parse(uint16 version, uint filter = 0);
+	virtual void clean();
+	virtual void build(uint16 version, uint filter = 0);
+	virtual void disown();
 
-  // public
-  // Get a class entry corresponding to a chunk index, pointers become invalid
-  // after reset
-  const CClassEntry *get(uint16 index) const;
-  // Reset the class directory, all class entry pointers become invalid, use
-  // class id and scene class registry
-  void reset();
-  // Get or create the chunk index for a class by class description
-  uint16 getOrCreateIndex(const ISceneClassDesc *sceneClassDesc);
+	// public
+	// Get a class entry corresponding to a chunk index, pointers become invalid
+	// after reset
+	const CClassEntry *get(uint16 index) const;
+	// Reset the class directory, all class entry pointers become invalid, use
+	// class id and scene class registry
+	void reset();
+	// Get or create the chunk index for a class by class description
+	uint16 getOrCreateIndex(const ISceneClassDesc *sceneClassDesc);
 
 protected:
-  virtual IStorageObject *createChunkById(uint16 id, bool container);
+	virtual IStorageObject *createChunkById(uint16 id, bool container);
 
 private:
-  TStorageObjectContainer m_ChunkCache;
-  std::vector<CClassEntry *> m_Entries;
-  std::map<NLMISC::CClassId, uint16> m_ClassIdToIndex;
+	TStorageObjectContainer m_ChunkCache;
+	std::vector<CClassEntry *> m_Entries;
+	std::map<NLMISC::CClassId, uint16> m_ClassIdToIndex;
 
-  CDllDirectory *m_DllDirectory;
+	CDllDirectory *m_DllDirectory;
 
 }; /* class CClassDirectory3 */
 
@@ -99,21 +100,22 @@ private:
  * \author Jan Boon (Kaetemi)
  * CClassEntryHeader
  */
-class CClassEntryHeader : public IStorageObject {
+class CClassEntryHeader : public IStorageObject
+{
 public:
-  CClassEntryHeader();
-  virtual ~CClassEntryHeader();
+	CClassEntryHeader();
+	virtual ~CClassEntryHeader();
 
-  // public data
-  sint32 DllIndex;
-  NLMISC::CClassId ClassId;
-  uint32 SuperClassId;
+	// public data
+	sint32 DllIndex;
+	NLMISC::CClassId ClassId;
+	uint32 SuperClassId;
 
-  // inherited
-  virtual std::string className() const;
-  virtual void serial(NLMISC::IStream &stream);
-  virtual void toString(std::ostream &ostream,
-                        const std::string &pad = "") const;
+	// inherited
+	virtual std::string className() const;
+	virtual void serial(NLMISC::IStream &stream);
+	virtual void toString(std::ostream &ostream,
+	    const std::string &pad = "") const;
 
 }; /* class CClassEntryHeader */
 
@@ -123,37 +125,39 @@ public:
  * \author Jan Boon (Kaetemi)
  * CClassEntry
  */
-class CClassEntry : public CStorageContainer {
+class CClassEntry : public CStorageContainer
+{
 public:
-  CClassEntry();
-  CClassEntry(CDllDirectory *dllDirectory,
-              const ISceneClassDesc *sceneClassDesc);
-  virtual ~CClassEntry();
+	CClassEntry();
+	CClassEntry(CDllDirectory *dllDirectory,
+	    const ISceneClassDesc *sceneClassDesc);
+	virtual ~CClassEntry();
 
-  // inherited
-  virtual std::string className() const;
-  virtual void toString(std::ostream &ostream,
-                        const std::string &pad = "") const;
-  virtual void parse(uint16 version, uint filter = 0);
-  virtual void clean();
-  virtual void build(uint16 version, uint filter = 0);
-  virtual void disown();
+	// inherited
+	virtual std::string className() const;
+	virtual void toString(std::ostream &ostream,
+	    const std::string &pad = "") const;
+	virtual void parse(uint16 version, uint filter = 0);
+	virtual void clean();
+	virtual void build(uint16 version, uint filter = 0);
+	virtual void disown();
 
-  // read access
-  const ucstring &displayName() const { return m_Name->Value; }
-  sint32 dllIndex() const { return m_Header->DllIndex; }
-  NLMISC::CClassId classId() const { return m_Header->ClassId; }
-  uint32 superClassId() const { return m_Header->SuperClassId; }
+	// read access
+	const ucstring &displayName() const { return m_Name->Value; }
+	sint32 dllIndex() const { return m_Header->DllIndex; }
+	NLMISC::CClassId classId() const { return m_Header->ClassId; }
+	uint32 superClassId() const { return m_Header->SuperClassId; }
 
-  // debug
-  void overrideClassId(NLMISC::CClassId classId) {
-    m_Header->ClassId = classId;
-  }
+	// debug
+	void overrideClassId(NLMISC::CClassId classId)
+	{
+		m_Header->ClassId = classId;
+	}
 
 protected:
-  virtual IStorageObject *createChunkById(uint16 id, bool container);
-  CClassEntryHeader *m_Header;
-  CStorageValue<ucstring> *m_Name;
+	virtual IStorageObject *createChunkById(uint16 id, bool container);
+	CClassEntryHeader *m_Header;
+	CStorageValue<ucstring> *m_Name;
 
 }; /* class CClassEntry */
 

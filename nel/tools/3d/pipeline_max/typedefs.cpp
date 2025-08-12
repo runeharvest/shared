@@ -41,7 +41,7 @@ using namespace std;
 namespace PIPELINE {
 namespace MAX {
 
-void blahblahblah_typedefs() {}
+void blahblahblah_typedefs() { }
 
 } /* namespace MAX */
 } /* namespace PIPELINE */

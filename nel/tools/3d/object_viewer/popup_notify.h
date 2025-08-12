@@ -21,9 +21,10 @@ class CWnd;
 
 // this interface allow windows to be notified when one of their popup ha been
 // removed
-struct IPopupNotify {
-  /// call when the window implementing this has been destroyed
-  virtual void childPopupClosed(CWnd *child) = 0;
+struct IPopupNotify
+{
+	/// call when the window implementing this has been destroyed
+	virtual void childPopupClosed(CWnd *child) = 0;
 };
 
 #endif

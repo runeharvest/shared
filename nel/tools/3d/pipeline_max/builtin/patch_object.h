@@ -50,31 +50,32 @@ namespace BUILTIN {
  * \author Jan Boon (Kaetemi)
  * CPatchObject
  */
-class CPatchObject : public CGeomObject {
+class CPatchObject : public CGeomObject
+{
 public:
-  CPatchObject(CScene *scene);
-  virtual ~CPatchObject();
+	CPatchObject(CScene *scene);
+	virtual ~CPatchObject();
 
-  // class desc
-  static const ucstring DisplayName;
-  static const char *InternalName;
-  static const NLMISC::CClassId ClassId;
-  static const TSClassId SuperClassId;
+	// class desc
+	static const ucstring DisplayName;
+	static const char *InternalName;
+	static const NLMISC::CClassId ClassId;
+	static const TSClassId SuperClassId;
 
-  // inherited
-  virtual void parse(uint16 version, uint filter = 0);
-  virtual void clean();
-  virtual void build(uint16 version, uint filter = 0);
-  virtual void disown();
-  virtual void init();
-  virtual bool inherits(const NLMISC::CClassId classId) const;
-  virtual const ISceneClassDesc *classDesc() const;
-  virtual void toStringLocal(std::ostream &ostream, const std::string &pad = "",
-                             uint filter = 0) const;
+	// inherited
+	virtual void parse(uint16 version, uint filter = 0);
+	virtual void clean();
+	virtual void build(uint16 version, uint filter = 0);
+	virtual void disown();
+	virtual void init();
+	virtual bool inherits(const NLMISC::CClassId classId) const;
+	virtual const ISceneClassDesc *classDesc() const;
+	virtual void toStringLocal(std::ostream &ostream, const std::string &pad = "",
+	    uint filter = 0) const;
 
 protected:
-  // inherited
-  virtual IStorageObject *createChunkById(uint16 id, bool container);
+	// inherited
+	virtual IStorageObject *createChunkById(uint16 id, bool container);
 
 }; /* class CPatchObject */
 

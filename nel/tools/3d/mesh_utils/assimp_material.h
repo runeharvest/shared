@@ -24,7 +24,7 @@ class CMaterial;
 
 struct CMeshUtilsContext;
 void assimpMaterial(NL3D::CMaterial &mat, CMeshUtilsContext &context,
-                    const aiMaterial *am);
+    const aiMaterial *am);
 void assimpMaterials(CMeshUtilsContext &context);
 
 /* end of file */

@@ -27,16 +27,17 @@
 
 namespace NLWEB {
 
-class CHttpPostTask : public NLMISC::IRunnable {
+class CHttpPostTask : public NLMISC::IRunnable
+{
 public:
-  CHttpPostTask(const std::string &host, const std::string &page,
-                const std::string &params);
-  void run(void);
+	CHttpPostTask(const std::string &host, const std::string &page,
+	    const std::string &params);
+	void run(void);
 
 private:
-  std::string m_Host;
-  std::string m_Page;
-  std::string m_Params;
+	std::string m_Host;
+	std::string m_Page;
+	std::string m_Params;
 };
 
 } // namespace NLWEB

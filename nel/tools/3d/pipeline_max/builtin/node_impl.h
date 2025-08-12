@@ -46,47 +46,48 @@ namespace BUILTIN {
  * \author Jan Boon (Kaetemi)
  * CNodeImpl
  */
-class CNodeImpl : public INode {
+class CNodeImpl : public INode
+{
 public:
-  CNodeImpl(CScene *scene);
-  virtual ~CNodeImpl();
+	CNodeImpl(CScene *scene);
+	virtual ~CNodeImpl();
 
-  // class desc
-  static const ucstring DisplayName;
-  static const char *InternalName;
-  static const NLMISC::CClassId ClassId;
-  static const TSClassId SuperClassId;
+	// class desc
+	static const ucstring DisplayName;
+	static const char *InternalName;
+	static const NLMISC::CClassId ClassId;
+	static const TSClassId SuperClassId;
 
-  // inherited
-  virtual void parse(uint16 version, uint filter = 0);
-  virtual void clean();
-  virtual void build(uint16 version, uint filter = 0);
-  virtual void disown();
-  virtual void init();
-  virtual bool inherits(const NLMISC::CClassId classId) const;
-  virtual const ISceneClassDesc *classDesc() const;
-  virtual void toStringLocal(std::ostream &ostream, const std::string &pad = "",
-                             uint filter = 0) const;
+	// inherited
+	virtual void parse(uint16 version, uint filter = 0);
+	virtual void clean();
+	virtual void build(uint16 version, uint filter = 0);
+	virtual void disown();
+	virtual void init();
+	virtual bool inherits(const NLMISC::CClassId classId) const;
+	virtual const ISceneClassDesc *classDesc() const;
+	virtual void toStringLocal(std::ostream &ostream, const std::string &pad = "",
+	    uint filter = 0) const;
 
-  // node interface
-  virtual INode *parent();
-  virtual void setParent(INode *node);
-  // virtual void addChild(INode *node);
-  // virtual void removeChild(INode *node); // does not delete
-  virtual const ucstring &userName() const;
+	// node interface
+	virtual INode *parent();
+	virtual void setParent(INode *node);
+	// virtual void addChild(INode *node);
+	// virtual void removeChild(INode *node); // does not delete
+	virtual const ucstring &userName() const;
 
-  // read access
-  inline uint32 nodeVersion() const { return m_NodeVersion; }
+	// read access
+	inline uint32 nodeVersion() const { return m_NodeVersion; }
 
 protected:
-  // inherited
-  virtual IStorageObject *createChunkById(uint16 id, bool container);
+	// inherited
+	virtual IStorageObject *createChunkById(uint16 id, bool container);
 
 private:
-  uint32 m_NodeVersion;
-  NLMISC::CRefPtr<INode> m_Parent;
-  uint32 m_ParentFlags;
-  ucstring m_UserName;
+	uint32 m_NodeVersion;
+	NLMISC::CRefPtr<INode> m_Parent;
+	uint32 m_ParentFlags;
+	ucstring m_UserName;
 
 }; /* class CNodeImpl */
 

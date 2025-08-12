@@ -36,7 +36,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CBranch_patcherApp construction
 
-CBranch_patcherApp::CBranch_patcherApp() {}
+CBranch_patcherApp::CBranch_patcherApp() { }
 
 /////////////////////////////////////////////////////////////////////////////
 // The one and only CBranch_patcherApp object
@@ -46,17 +46,21 @@ CBranch_patcherApp theApp;
 /////////////////////////////////////////////////////////////////////////////
 // CBranch_patcherApp initialization
 
-BOOL CBranch_patcherApp::InitInstance() {
-  // Standard initialization
+BOOL CBranch_patcherApp::InitInstance()
+{
+	// Standard initialization
 
-  CBranch_patcherDlg dlg;
-  m_pMainWnd = &dlg;
-  INT_PTR nResponse = dlg.DoModal();
-  if (nResponse == IDOK) {
-  } else if (nResponse == IDCANCEL) {
-  }
+	CBranch_patcherDlg dlg;
+	m_pMainWnd = &dlg;
+	INT_PTR nResponse = dlg.DoModal();
+	if (nResponse == IDOK)
+	{
+	}
+	else if (nResponse == IDCANCEL)
+	{
+	}
 
-  // Since the dialog has been closed, return FALSE so that we exit the
-  //  application, rather than start the application's message pump.
-  return FALSE;
+	// Since the dialog has been closed, return FALSE so that we exit the
+	//  application, rather than start the application's message pump.
+	return FALSE;
 }

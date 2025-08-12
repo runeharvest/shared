@@ -18,13 +18,14 @@
 #include <QApplication>
 #include <nel/misc/app_context.h>
 
-int main(int argc, char *argv[]) {
-  NLMISC::CApplicationContext myApplicationContext;
+int main(int argc, char *argv[])
+{
+	NLMISC::CApplicationContext myApplicationContext;
 
-  QApplication app(argc, argv);
+	QApplication app(argc, argv);
 
-  QNelWindow window;
-  window.show();
+	QNelWindow window;
+	window.show();
 
-  return app.exec();
+	return app.exec();
 }

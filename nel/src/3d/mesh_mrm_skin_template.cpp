@@ -575,7 +575,7 @@ void CMeshMRMGeom::applyArrayRawSkinNormal1(CRawVertexNormalSkin1 *src, uint8 *d
 			fld		[esi]src.Vertex.Pos.x // uop: 0/1
 			fld		[esi]src.Vertex.Pos.y // uop: 0/1
 			fld		[esi]src.Vertex.Pos.z // uop: 0/1
-			                // vout.x= (a11*vin.x + a12*vin.y + a13*vin.z + a14);
+			                                     // vout.x= (a11*vin.x + a12*vin.y + a13*vin.z + a14);
 			fld		[eax]CMatrix3x4.a11 // uop: 0/1
 			fmul	st, st(3) // uop: 1/0 (5)
 			fld		[eax]CMatrix3x4.a12 // uop: 0/1
@@ -769,7 +769,7 @@ void CMeshMRMGeom::applyArrayRawSkinNormal2(CRawVertexNormalSkin2 *src, uint8 *d
 			faddp	st(1), st // uop: 1/0 (3)
 			fld		[eax]CMatrix3x4.a14 // uop: 0/1
 			faddp	st(1), st // uop: 1/0 (3)
-			    // mul by scale
+			   // mul by scale
 			fmul	[esi+0]src.Weights
 
 			        // 2nd matrix
@@ -876,7 +876,7 @@ void CMeshMRMGeom::applyArrayRawSkinNormal2(CRawVertexNormalSkin2 *src, uint8 *d
 			fld		[eax]CMatrix3x4.a13 // uop: 0/1
 			fmul	st, st(2) // uop: 1/0 (5)
 			faddp	st(1), st // uop: 1/0 (3)
-			    // mul by scale
+			   // mul by scale
 			fmul	[esi+0]src.Weights
 
 			        // 2nd matrix
@@ -1046,12 +1046,12 @@ void CMeshMRMGeom::applyArrayRawSkinNormal3(CRawVertexNormalSkin3 *src, uint8 *d
 			lea		eax, [eax*2+eax]
 			shl		eax, 4
 			add		eax, boneMat3x4 // uop: 1/0
-			    // ebx= matrix1
+			           // ebx= matrix1
 			mov		ebx, [esi+4]src.MatrixId // uop: 0/1
 			lea		ebx, [ebx*2+ebx]
 			shl		ebx, 4
 			add		ebx, boneMat3x4 // uop: 1/0
-			    // edx= matrix2
+			           // edx= matrix2
 			mov		edx, [esi+8]src.MatrixId // uop: 0/1
 			lea		edx, [edx*2+edx]
 			shl		edx, 4
@@ -1074,7 +1074,7 @@ void CMeshMRMGeom::applyArrayRawSkinNormal3(CRawVertexNormalSkin3 *src, uint8 *d
 			faddp	st(1), st // uop: 1/0 (3)
 			fld		[eax]CMatrix3x4.a14 // uop: 0/1
 			faddp	st(1), st // uop: 1/0 (3)
-			    // mul by scale
+			   // mul by scale
 			fmul	[esi+0]src.Weights
 
 			        // 2nd matrix
@@ -1225,7 +1225,7 @@ void CMeshMRMGeom::applyArrayRawSkinNormal3(CRawVertexNormalSkin3 *src, uint8 *d
 			fld		[eax]CMatrix3x4.a13 // uop: 0/1
 			fmul	st, st(2) // uop: 1/0 (5)
 			faddp	st(1), st // uop: 1/0 (3)
-			    // mul by scale
+			   // mul by scale
 			fmul	[esi+0]src.Weights
 
 			        // 2nd matrix

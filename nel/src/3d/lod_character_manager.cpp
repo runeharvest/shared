@@ -545,7 +545,7 @@ bool CLodCharacterManager::addRenderCharacterKey(CLodCharacterInstance &instance
 			theLoop:
 				    // **** compute lighting
 				mov		esi,normalPtr // uop: 0/1
-				    // dot3
+				          // dot3
 				fld		dword ptr [esi] // uop: 0/1
 				fmul	lightObjectSpace.x // uop: 1/1 (5)
 				fld		dword ptr [esi+4] // uop: 0/1
@@ -555,7 +555,7 @@ bool CLodCharacterManager::addRenderCharacterKey(CLodCharacterInstance &instance
 				fmul	lightObjectSpace.z // uop: 1/1 (5)
 				faddp	st(1),st // uop: 1/0 (3)
 				fistp	f8 // uop: 2/0/1/1 (5)
-				        // next
+				            // next
 				add		esi, 12 // uop: 1/0
 				mov		normalPtr, esi // uop: 0/0/1/1
 
@@ -604,7 +604,7 @@ bool CLodCharacterManager::addRenderCharacterKey(CLodCharacterInstance &instance
 				fstp	st // uop: 1/0
 				fstp	st // uop: 1/0
 				fstp	st // uop: 1/0
-				            // next
+				               // next
 				add		esi, 6 // uop: 1/0
 				mov		vertPtr, esi // uop: 0/0/1/1
 

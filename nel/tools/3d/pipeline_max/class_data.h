@@ -47,22 +47,23 @@ namespace MAX {
  * \author Jan Boon (Kaetemi)
  * CClassData
  */
-class CClassData : public CStorageContainer {
+class CClassData : public CStorageContainer
+{
 public:
-  CClassData();
-  virtual ~CClassData();
+	CClassData();
+	virtual ~CClassData();
 
-  // inherited
-  virtual std::string className() const;
-  virtual void toString(std::ostream &ostream,
-                        const std::string &pad = "") const;
-  virtual void parse(uint16 version, uint filter = 0);
-  virtual void clean();
-  virtual void build(uint16 version, uint filter = 0);
-  virtual void disown();
+	// inherited
+	virtual std::string className() const;
+	virtual void toString(std::ostream &ostream,
+	    const std::string &pad = "") const;
+	virtual void parse(uint16 version, uint filter = 0);
+	virtual void clean();
+	virtual void build(uint16 version, uint filter = 0);
+	virtual void disown();
 
 protected:
-  virtual IStorageObject *createChunkById(uint16 id, bool container);
+	virtual IStorageObject *createChunkById(uint16 id, bool container);
 
 }; /* class CClassData */
 
@@ -72,22 +73,23 @@ protected:
  * \author Jan Boon (Kaetemi)
  * CClassDataEntry
  */
-class CClassDataEntry : public CStorageContainer {
+class CClassDataEntry : public CStorageContainer
+{
 public:
-  CClassDataEntry();
-  virtual ~CClassDataEntry();
+	CClassDataEntry();
+	virtual ~CClassDataEntry();
 
-  // inherited
-  virtual std::string className() const;
-  virtual void toString(std::ostream &ostream,
-                        const std::string &pad = "") const;
-  virtual void parse(uint16 version, uint filter = 0);
-  virtual void clean();
-  virtual void build(uint16 version, uint filter = 0);
-  virtual void disown();
+	// inherited
+	virtual std::string className() const;
+	virtual void toString(std::ostream &ostream,
+	    const std::string &pad = "") const;
+	virtual void parse(uint16 version, uint filter = 0);
+	virtual void clean();
+	virtual void build(uint16 version, uint filter = 0);
+	virtual void disown();
 
 protected:
-  virtual IStorageObject *createChunkById(uint16 id, bool container);
+	virtual IStorageObject *createChunkById(uint16 id, bool container);
 
 }; /* class CClassDataEntry */
 
@@ -97,20 +99,21 @@ protected:
  * \author Jan Boon (Kaetemi)
  * CClassDataHeader
  */
-class CClassDataHeader : public IStorageObject {
+class CClassDataHeader : public IStorageObject
+{
 public:
-  CClassDataHeader();
-  virtual ~CClassDataHeader();
+	CClassDataHeader();
+	virtual ~CClassDataHeader();
 
-  // public data
-  NLMISC::CClassId ClassID;
-  uint32 SuperClassID;
+	// public data
+	NLMISC::CClassId ClassID;
+	uint32 SuperClassID;
 
-  // inherited
-  virtual std::string className() const;
-  virtual void serial(NLMISC::IStream &stream);
-  virtual void toString(std::ostream &ostream,
-                        const std::string &pad = "") const;
+	// inherited
+	virtual std::string className() const;
+	virtual void serial(NLMISC::IStream &stream);
+	virtual void toString(std::ostream &ostream,
+	    const std::string &pad = "") const;
 
 }; /* class CClassDataHeader */
 

@@ -18,20 +18,21 @@ Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)
 
 #include "../shared_widgets/common.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 
-  // Standard initialization
-  // If you are not using these features and wish to reduce the size
-  // of your final executable, you should remove from the following
-  // the specific initialization routines you do not need.
-  NLMISC::CApplicationContext myApplicationContext;
+	// Standard initialization
+	// If you are not using these features and wish to reduce the size
+	// of your final executable, you should remove from the following
+	// the specific initialization routines you do not need.
+	NLMISC::CApplicationContext myApplicationContext;
 
-  NLQT::preApplication();
-  Q_INIT_RESOURCE(tile_edit_qt);
-  QApplication app(argc, argv);
+	NLQT::preApplication();
+	Q_INIT_RESOURCE(tile_edit_qt);
+	QApplication app(argc, argv);
 
-  CTile_edit_dlg tileEdit;
-  tileEdit.show();
+	CTile_edit_dlg tileEdit;
+	tileEdit.show();
 
-  return app.exec();
+	return app.exec();
 }

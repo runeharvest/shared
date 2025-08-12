@@ -24,7 +24,8 @@
 
 // Project includes
 
-namespace NLQT {} /* namespace NLQT */
+namespace NLQT {
+} /* namespace NLQT */
 
 #endif /* #ifndef NLQT_NEL_QT_H */
 

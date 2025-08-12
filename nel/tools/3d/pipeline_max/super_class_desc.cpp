@@ -41,7 +41,7 @@
 namespace PIPELINE {
 namespace MAX {
 
-void nyannyannyan() {}
+void nyannyannyan() { }
 
 } /* namespace MAX */
 } /* namespace PIPELINE */

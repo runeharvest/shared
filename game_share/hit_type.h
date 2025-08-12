@@ -19,13 +19,14 @@
 
 namespace HITTYPE {
 
-enum THitType {
-  Failed = 0,
-  Hit,
-  HitResidual,
-  CriticalHit,
-  CriticalHitResidual,
-  Undefined
+enum THitType
+{
+	Failed = 0,
+	Hit,
+	HitResidual,
+	CriticalHit,
+	CriticalHitResidual,
+	Undefined
 };
 
 }

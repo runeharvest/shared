@@ -46,51 +46,53 @@ namespace MAX {
  * \author Jan Boon (Kaetemi)
  * CSceneClassRegistry
  */
-class CSceneClassRegistry {
+class CSceneClassRegistry
+{
 public:
-  CSceneClassRegistry();
-  virtual ~CSceneClassRegistry();
+	CSceneClassRegistry();
+	virtual ~CSceneClassRegistry();
 
-  /// Add a class to the registry
-  void add(const ISceneClassDesc *desc);
-  /// Remove a class from the registry
-  void remove(TSClassId superClassId, const NLMISC::CClassId classId);
+	/// Add a class to the registry
+	void add(const ISceneClassDesc *desc);
+	/// Remove a class from the registry
+	void remove(TSClassId superClassId, const NLMISC::CClassId classId);
 
-  /// Add a superclass to the registry
-  void add(const ISuperClassDesc *desc);
-  /// Remove a superclass from the registry
-  void remove(const TSClassId superClassId);
+	/// Add a superclass to the registry
+	void add(const ISuperClassDesc *desc);
+	/// Remove a superclass from the registry
+	void remove(const TSClassId superClassId);
 
-  /// Create a class by class id
-  CSceneClass *create(CScene *scene, TSClassId superClassId,
-                      const NLMISC::CClassId classId) const;
+	/// Create a class by class id
+	CSceneClass *create(CScene *scene, TSClassId superClassId,
+	    const NLMISC::CClassId classId) const;
 
-  /// Create an unknown class by superclass id
-  CSceneClass *createUnknown(CScene *scene, TSClassId superClassId,
-                             const NLMISC::CClassId classId,
-                             const ucstring &displayName,
-                             const ucstring &dllFilename,
-                             const ucstring &dllDescription) const;
+	/// Create an unknown class by superclass id
+	CSceneClass *createUnknown(CScene *scene, TSClassId superClassId,
+	    const NLMISC::CClassId classId,
+	    const ucstring &displayName,
+	    const ucstring &dllFilename,
+	    const ucstring &dllDescription) const;
 
-  /// Destroy a class by pointer
-  void destroy(CSceneClass *sceneClass) const;
+	/// Destroy a class by pointer
+	void destroy(CSceneClass *sceneClass) const;
 
-  /// Return the description of a class by class id
-  const ISceneClassDesc *describe(TSClassId superClassId,
-                                  const NLMISC::CClassId classId) const;
+	/// Return the description of a class by class id
+	const ISceneClassDesc *describe(TSClassId superClassId,
+	    const NLMISC::CClassId classId) const;
 
 private:
-  struct TKey {
-    TKey(TSClassId superClassId, NLMISC::CClassId classId);
-    TSClassId SuperClassId;
-    NLMISC::CClassId ClassId;
-    bool operator<(const TKey &right) const;
-    bool operator>(const TKey &right) const;
-    bool operator==(const TKey &right) const;
-  };
+	struct TKey
+	{
+		TKey(TSClassId superClassId, NLMISC::CClassId classId);
+		TSClassId SuperClassId;
+		NLMISC::CClassId ClassId;
+		bool operator<(const TKey &right) const;
+		bool operator>(const TKey &right) const;
+		bool operator==(const TKey &right) const;
+	};
 
-  std::map<TKey, const ISceneClassDesc *> m_ClassDescriptions;
-  std::map<TSClassId, const ISuperClassDesc *> m_SuperClassDescriptions;
+	std::map<TKey, const ISceneClassDesc *> m_ClassDescriptions;
+	std::map<TSClassId, const ISuperClassDesc *> m_SuperClassDescriptions;
 
 }; /* class CSceneClassRegistry */
 

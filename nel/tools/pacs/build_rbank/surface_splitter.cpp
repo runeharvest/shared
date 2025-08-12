@@ -28,13 +28,12 @@ CSurfaceSplitter::CSurfaceSplitter()
 {
 }
 
-
 //
-void	CSurfaceSplitter::build(CLocalRetriever &lr)
+void CSurfaceSplitter::build(CLocalRetriever &lr)
 {
 	nlinfo("--- Build SurfaceSplitter...");
 	nlinfo("------------------------------------------");
-	uint	i;
+	uint i;
 
 	initEdgeGrid();
 
@@ -42,17 +41,17 @@ void	CSurfaceSplitter::build(CLocalRetriever &lr)
 	_NumSurfaces = 0;
 	_NumTips = 0;
 
-	for (i=0; i<lr.getChains().size(); ++i)
+	for (i = 0; i < lr.getChains().size(); ++i)
 		buildChain(lr, i);
 
-	for (i=0; i<lr.getSurfaces().size(); ++i)
+	for (i = 0; i < lr.getSurfaces().size(); ++i)
 		buildSurface(lr, i);
 
 	nlinfo("converted %d chains & %d surfaces", lr.getChains().size(), lr.getSurfaces().size());
 	_NumSurfaces = (uint)lr.getSurfaces().size();
 	_NumChains = (uint)lr.getChains().size();
 
-	//splitChains();
+	// splitChains();
 
 	dump();
 
@@ -60,64 +59,64 @@ void	CSurfaceSplitter::build(CLocalRetriever &lr)
 }
 
 //
-void	CSurfaceSplitter::buildChain(CLocalRetriever &lr, uint chain)
+void CSurfaceSplitter::buildChain(CLocalRetriever &lr, uint chain)
 {
-	const NLPACS::CChain	&pacsChain = lr.getChain(chain);
+	const NLPACS::CChain &pacsChain = lr.getChain(chain);
 
-	CSurfaceId				left = pacsChain.getLeft() >= 0 ? CSurfaceId(0, (uint16)pacsChain.getLeft()) : CSurfaceId();
-	CSurfaceId				right = pacsChain.getRight() >= 0 ? CSurfaceId(0, (uint16)pacsChain.getRight()) : CSurfaceId();
-	vector<CVector2s64>		vertices;
+	CSurfaceId left = pacsChain.getLeft() >= 0 ? CSurfaceId(0, (uint16)pacsChain.getLeft()) : CSurfaceId();
+	CSurfaceId right = pacsChain.getRight() >= 0 ? CSurfaceId(0, (uint16)pacsChain.getRight()) : CSurfaceId();
+	vector<CVector2s64> vertices;
 
-	uint	i;
+	uint i;
 	// walk through all subchains
-	for (i=0; i<pacsChain.getSubChains().size(); ++i)
+	for (i = 0; i < pacsChain.getSubChains().size(); ++i)
 	{
-		uint	ochain = pacsChain.getSubChain(i);
-		const NLPACS::COrderedChain	&pacsOChain = lr.getOrderedChain(ochain);
+		uint ochain = pacsChain.getSubChain(i);
+		const NLPACS::COrderedChain &pacsOChain = lr.getOrderedChain(ochain);
 
-		sint	j;
+		sint j;
 		// walk through subchain, forward or backward
 		if (pacsOChain.isForward())
 		{
-			for (j=0; j<(sint)pacsOChain.getVertices().size()-1; ++j)
+			for (j = 0; j < (sint)pacsOChain.getVertices().size() - 1; ++j)
 				vertices.push_back(CVector2s64(pacsOChain[j]));
 		}
 		else
 		{
-			for (j=(sint)pacsOChain.getVertices().size()-1; j>0; --j)
+			for (j = (sint)pacsOChain.getVertices().size() - 1; j > 0; --j)
 				vertices.push_back(CVector2s64(pacsOChain[j]));
 		}
 
 		// add final chain point
-		if (i == pacsChain.getSubChains().size()-1)
+		if (i == pacsChain.getSubChains().size() - 1)
 			vertices.push_back(CVector2s64(pacsOChain[j]));
 	}
 
-	addChain(left,right, vertices);
+	addChain(left, right, vertices);
 }
 
 //
-void	CSurfaceSplitter::buildSurface(CLocalRetriever &lr, uint surface)
+void CSurfaceSplitter::buildSurface(CLocalRetriever &lr, uint surface)
 {
-	const NLPACS::CRetrievableSurface	&pacsSurface = lr.getSurface(surface);
-	CSurface							newSurface;
+	const NLPACS::CRetrievableSurface &pacsSurface = lr.getSurface(surface);
+	CSurface newSurface;
 
 	newSurface.Id = CSurfaceId(0, surface);
 
-	uint	i;
+	uint i;
 	// walk through all loops
-	for (i=0; i<pacsSurface.getLoops().size(); ++i)
+	for (i = 0; i < pacsSurface.getLoops().size(); ++i)
 	{
-		const NLPACS::CRetrievableSurface::TLoop	&pacsLoop = pacsSurface.getLoop(i);
+		const NLPACS::CRetrievableSurface::TLoop &pacsLoop = pacsSurface.getLoop(i);
 		newSurface.Loops.push_back(CSurfaceSplitter::CLoop());
 		newSurface.Loops.back().Surface = newSurface.Id;
 
-		uint	j;
+		uint j;
 		// walk through loop
-		for (j=0; j<pacsLoop.size(); ++j)
+		for (j = 0; j < pacsLoop.size(); ++j)
 		{
-			uint	chainIndex = pacsLoop[j];
-			uint	chain = pacsSurface.getChain(chainIndex).Chain;
+			uint chainIndex = pacsLoop[j];
+			uint chain = pacsSurface.getChain(chainIndex).Chain;
 
 			newSurface.Loops.back().Chains.push_back(CChainId(chain));
 		}
@@ -126,26 +125,23 @@ void	CSurfaceSplitter::buildSurface(CLocalRetriever &lr, uint surface)
 	_Surfaces.insert(make_pair(newSurface.Id, newSurface));
 }
 
-
-
 //
-void	CSurfaceSplitter::initEdgeGrid()
+void CSurfaceSplitter::initEdgeGrid()
 {
 	_Edges.create(256, 2.0f);
 }
 
-
 //
-void	CSurfaceSplitter::splitChains()
+void CSurfaceSplitter::splitChains()
 {
 	nlinfo("Split chains...");
 
-	uint	numInters = 0;
-	uint	i;
+	uint numInters = 0;
+	uint i;
 
-	for (i=0; i<_NumChains; ++i)
+	for (i = 0; i < _NumChains; ++i)
 	{
-		TChainMap::iterator	it = _Chains.find(CChainId(i));
+		TChainMap::iterator it = _Chains.find(CChainId(i));
 		if (it != _Chains.end())
 			splitChain(it, numInters);
 	}
@@ -154,40 +150,40 @@ void	CSurfaceSplitter::splitChains()
 }
 
 //
-void	CSurfaceSplitter::splitChain(TChainMap::iterator it, uint &numInters)
+void CSurfaceSplitter::splitChain(TChainMap::iterator it, uint &numInters)
 {
-	CChain	&chain = (*it).second;
+	CChain &chain = (*it).second;
 
 	if (chain.DontSplit)
 		return;
 
-	uint	edge;
+	uint edge;
 	// for each edge of the chain, test for other edges collision
-	for (edge=0; edge<chain.Vertices.size()-1; ++edge)
+	for (edge = 0; edge < chain.Vertices.size() - 1; ++edge)
 	{
-		CVector	p0 = chain.Vertices[edge].asVector();
-		CVector	p1 = chain.Vertices[edge+1].asVector();
-		CVector	pmin, pmax;
+		CVector p0 = chain.Vertices[edge].asVector();
+		CVector p1 = chain.Vertices[edge + 1].asVector();
+		CVector pmin, pmax;
 		pmin.minof(p0, p1);
 		pmax.maxof(p0, p1);
 
 		_Edges.select(pmin, pmax);
 
-		CFixed64	closerDist(10.0);
-		bool		collisionFound = false;
-		CEdgeId		collidingEdge;
-		CVector2s64	collision;
+		CFixed64 closerDist(10.0);
+		bool collisionFound = false;
+		CEdgeId collidingEdge;
+		CVector2s64 collision;
 
-		TEdgeGrid::CIterator	it;
-		for (it=_Edges.begin(); it!=_Edges.end(); ++it)
+		TEdgeGrid::CIterator it;
+		for (it = _Edges.begin(); it != _Edges.end(); ++it)
 		{
-			CEdgeId		iedge = *it;
+			CEdgeId iedge = *it;
 
 			//
-			if (chain.Id == iedge.Chain && (edge == iedge.Edge || edge+1 == iedge.Edge || edge-1 == iedge.Edge))
+			if (chain.Id == iedge.Chain && (edge == iedge.Edge || edge + 1 == iedge.Edge || edge - 1 == iedge.Edge))
 				continue;
 
-			CChain		*ichain = getChain(iedge.Chain);
+			CChain *ichain = getChain(iedge.Chain);
 
 			if (ichain == NULL)
 			{
@@ -198,15 +194,15 @@ void	CSurfaceSplitter::splitChain(TChainMap::iterator it, uint &numInters)
 			if (ichain->DontSplit)
 				continue;
 
-			CVector2s64	inters;
-			CFixed64	ndist;
+			CVector2s64 inters;
+			CFixed64 ndist;
 
-			if (intersect(chain.Vertices[edge], chain.Vertices[edge+1], ichain->Vertices[iedge.Edge], ichain->Vertices[iedge.Edge+1], inters, ndist))
+			if (intersect(chain.Vertices[edge], chain.Vertices[edge + 1], ichain->Vertices[iedge.Edge], ichain->Vertices[iedge.Edge + 1], inters, ndist))
 			{
-				if (inters != chain.Vertices[edge+1] || edge != chain.Vertices.size()-2)
+				if (inters != chain.Vertices[edge + 1] || edge != chain.Vertices.size() - 2)
 				{
 					++numInters;
-					nlinfo("Intersection: %d:%d[%.3f,%.3f-%.3f,%.3f]-%d:%d[%.3f,%.3f-%.3f,%.3f] : [%.3f,%.3f]", chain.Id.Id, edge, p0.x, p0.y, p1.x, p1.y, iedge.Chain.Id, iedge.Edge, ichain->Vertices[iedge.Edge].asVector().x, ichain->Vertices[iedge.Edge].asVector().y, ichain->Vertices[iedge.Edge+1].asVector().x, ichain->Vertices[iedge.Edge+1].asVector().y, inters.asVector().x, inters.asVector().y);
+					nlinfo("Intersection: %d:%d[%.3f,%.3f-%.3f,%.3f]-%d:%d[%.3f,%.3f-%.3f,%.3f] : [%.3f,%.3f]", chain.Id.Id, edge, p0.x, p0.y, p1.x, p1.y, iedge.Chain.Id, iedge.Edge, ichain->Vertices[iedge.Edge].asVector().x, ichain->Vertices[iedge.Edge].asVector().y, ichain->Vertices[iedge.Edge + 1].asVector().x, ichain->Vertices[iedge.Edge + 1].asVector().y, inters.asVector().x, inters.asVector().y);
 
 					if (closerDist > ndist)
 					{
@@ -217,7 +213,7 @@ void	CSurfaceSplitter::splitChain(TChainMap::iterator it, uint &numInters)
 				}
 				else
 				{
-					nlinfo("Intersection: %d:%d[%.3f,%.3f-%.3f,%.3f]-%d:%d[%.3f,%.3f-%.3f,%.3f] : [%.3f,%.3f] -- SKIPPED", chain.Id.Id, edge, p0.x, p0.y, p1.x, p1.y, iedge.Chain.Id, iedge.Edge, ichain->Vertices[iedge.Edge].asVector().x, ichain->Vertices[iedge.Edge].asVector().y, ichain->Vertices[iedge.Edge+1].asVector().x, ichain->Vertices[iedge.Edge+1].asVector().y, inters.asVector().x, inters.asVector().y);
+					nlinfo("Intersection: %d:%d[%.3f,%.3f-%.3f,%.3f]-%d:%d[%.3f,%.3f-%.3f,%.3f] : [%.3f,%.3f] -- SKIPPED", chain.Id.Id, edge, p0.x, p0.y, p1.x, p1.y, iedge.Chain.Id, iedge.Edge, ichain->Vertices[iedge.Edge].asVector().x, ichain->Vertices[iedge.Edge].asVector().y, ichain->Vertices[iedge.Edge + 1].asVector().x, ichain->Vertices[iedge.Edge + 1].asVector().y, inters.asVector().x, inters.asVector().y);
 				}
 			}
 		}
@@ -230,21 +226,21 @@ void	CSurfaceSplitter::splitChain(TChainMap::iterator it, uint &numInters)
 				// self colliding chain
 
 				// check order
-				//nlassert(edge >= 0); // always true for unsigned
+				// nlassert(edge >= 0); // always true for unsigned
 				nlassert(edge < collidingEdge.Edge);
-				nlassert(collidingEdge.Edge < chain.Vertices.size()-1);
+				nlassert(collidingEdge.Edge < chain.Vertices.size() - 1);
 
 				// must split the chain in 3 parts
-				uint				e;
-				vector<CVector2s64>	begin;
-				vector<CVector2s64>	middle;
-				vector<CVector2s64>	end;
-				vector<CChainId>	v;
-				CChainId			beginId;
-				CChainId			middleId;
-				CChainId			endId;
+				uint e;
+				vector<CVector2s64> begin;
+				vector<CVector2s64> middle;
+				vector<CVector2s64> end;
+				vector<CChainId> v;
+				CChainId beginId;
+				CChainId middleId;
+				CChainId endId;
 
-				for (e=0; e<=edge; ++e)
+				for (e = 0; e <= edge; ++e)
 					begin.push_back(chain.Vertices[e]);
 
 				begin.push_back(collision);
@@ -252,7 +248,7 @@ void	CSurfaceSplitter::splitChain(TChainMap::iterator it, uint &numInters)
 				if (collision != chain.Vertices[e])
 					middle.push_back(collision);
 
-				for (; e<=collidingEdge.Edge; ++e)
+				for (; e <= collidingEdge.Edge; ++e)
 					middle.push_back(chain.Vertices[e]);
 
 				middle.push_back(collision);
@@ -260,7 +256,7 @@ void	CSurfaceSplitter::splitChain(TChainMap::iterator it, uint &numInters)
 				if (collision != chain.Vertices[e])
 					end.push_back(collision);
 
-				for (; e<chain.Vertices.size(); ++e)
+				for (; e < chain.Vertices.size(); ++e)
 					end.push_back(chain.Vertices[e]);
 
 				beginId = addChain(chain.Left, chain.Right, begin, true);
@@ -275,19 +271,19 @@ void	CSurfaceSplitter::splitChain(TChainMap::iterator it, uint &numInters)
 			}
 			else
 			{
-				//nlassert(edge >= 0); // always true for unsigned
-				nlassert(edge < chain.Vertices.size()-1);
+				// nlassert(edge >= 0); // always true for unsigned
+				nlassert(edge < chain.Vertices.size() - 1);
 
 				// split the chain
-				uint				e;
-				vector<CVector2s64>	begin;
-				vector<CVector2s64>	end;
-				vector<CChainId>	v;
-				CChainId			beginId;
-				CChainId			endId;
+				uint e;
+				vector<CVector2s64> begin;
+				vector<CVector2s64> end;
+				vector<CChainId> v;
+				CChainId beginId;
+				CChainId endId;
 
 				// split the first chain
-				for (e=0; e<=edge; ++e)
+				for (e = 0; e <= edge; ++e)
 					begin.push_back(chain.Vertices[e]);
 
 				begin.push_back(collision);
@@ -295,7 +291,7 @@ void	CSurfaceSplitter::splitChain(TChainMap::iterator it, uint &numInters)
 				if (collision != chain.Vertices[e])
 					end.push_back(collision);
 
-				for (; e<chain.Vertices.size(); ++e)
+				for (; e < chain.Vertices.size(); ++e)
 					end.push_back(chain.Vertices[e]);
 
 				beginId = addChain(chain.Left, chain.Right, begin, true);
@@ -312,9 +308,9 @@ void	CSurfaceSplitter::splitChain(TChainMap::iterator it, uint &numInters)
 				v.clear();
 
 				// split the second chain
-				CChain	*collide = getChain(collidingEdge.Chain);
+				CChain *collide = getChain(collidingEdge.Chain);
 
-				for (e=0; e<=collidingEdge.Edge; ++e)
+				for (e = 0; e <= collidingEdge.Edge; ++e)
 					begin.push_back(collide->Vertices[e]);
 
 				begin.push_back(collision);
@@ -322,7 +318,7 @@ void	CSurfaceSplitter::splitChain(TChainMap::iterator it, uint &numInters)
 				if (collision != collide->Vertices[e])
 					end.push_back(collision);
 
-				for (; e<collide->Vertices.size(); ++e)
+				for (; e < collide->Vertices.size(); ++e)
 					end.push_back(collide->Vertices[e]);
 
 				beginId = addChain(collide->Left, collide->Right, begin);
@@ -340,10 +336,10 @@ void	CSurfaceSplitter::splitChain(TChainMap::iterator it, uint &numInters)
 }
 
 //
-bool	CSurfaceSplitter::intersect(const CVector2s64 &v0, const CVector2s64 &v1,
-									const CVector2s64 &c0, const CVector2s64 &c1,
-									CVector2s64 &intersect,
-									CFixed64 &ndist)
+bool CSurfaceSplitter::intersect(const CVector2s64 &v0, const CVector2s64 &v1,
+    const CVector2s64 &c0, const CVector2s64 &c1,
+    CVector2s64 &intersect,
+    CFixed64 &ndist)
 {
 	if (v0 == c0 || v0 == c1)
 		return false;
@@ -355,36 +351,36 @@ bool	CSurfaceSplitter::intersect(const CVector2s64 &v0, const CVector2s64 &v1,
 		return true;
 	}
 
-	CVector2s64		nnc(c0.y-c1.y, c1.x-c0.x),
-					nnv(v0.y-v1.y, v1.x-v0.x);
+	CVector2s64 nnc(c0.y - c1.y, c1.x - c0.x),
+	    nnv(v0.y - v1.y, v1.x - v0.x);
 
-	CFixed64		dv = (v1-v0)*nnc;
+	CFixed64 dv = (v1 - v0) * nnc;
 
 	// vectors are colinears ?
 	if ((sint64)dv == 0)
 		return false;
 
-	CFixed64		nv = (c0-v0)*nnc;
+	CFixed64 nv = (c0 - v0) * nnc;
 
 	if ((sint64)dv < 0)
-		dv=-dv, nv=-nv;
+		dv = -dv, nv = -nv;
 	// intersection outside main edge ? (or at first point ?)
-	if ((sint64)nv<=0 || nv>dv)
+	if ((sint64)nv <= 0 || nv > dv)
 		return false;
 
-	CFixed64		dc = (c1-c0)*(c1-c0);
+	CFixed64 dc = (c1 - c0) * (c1 - c0);
 	// second edge null ?
 	if ((sint64)dc == 0)
 		return false;
 
-	CFixed64		lv = nv/dv;
+	CFixed64 lv = nv / dv;
 
 	if ((sint64)lv == 0)
 		return false;
 
-	CFixed64		nc = (v0-c0 + (v1-v0)*lv)*(c1-c0);
+	CFixed64 nc = (v0 - c0 + (v1 - v0) * lv) * (c1 - c0);
 	// intersection outside colliding edge ?
-	if ((sint64)nc<0 || nc>dc)
+	if ((sint64)nc < 0 || nc > dc)
 		return false;
 
 	// treat each singular case
@@ -396,30 +392,28 @@ bool	CSurfaceSplitter::intersect(const CVector2s64 &v0, const CVector2s64 &v1,
 		intersect = c1;
 	else
 		// compute intersecting point
-		intersect = v0 + (v1-v0)*lv;
+		intersect = v0 + (v1 - v0) * lv;
 
 	ndist = lv;
 
 	return true;
 }
 
-
-
 //
-CSurfaceSplitter::CChainId	CSurfaceSplitter::addChain(const CSurfaceId &left, const CSurfaceId &right, const vector<CVector2s64> &points, bool dontSplit)
+CSurfaceSplitter::CChainId CSurfaceSplitter::addChain(const CSurfaceId &left, const CSurfaceId &right, const vector<CVector2s64> &points, bool dontSplit)
 {
-	pair<TChainMap::iterator, bool>	res = _Chains.insert(make_pair(CChainId(_NumChains++), CChain()));
+	pair<TChainMap::iterator, bool> res = _Chains.insert(make_pair(CChainId(_NumChains++), CChain()));
 
-	CChain	&chain = (*(res.first)).second;
+	CChain &chain = (*(res.first)).second;
 
 	chain.Id = (*(res.first)).first;
 	chain.Left = left;
 	chain.Right = right;
 
-	uint	i;
-	for (i=0; i<points.size()-1; ++i)
+	uint i;
+	for (i = 0; i < points.size() - 1; ++i)
 	{
-		if (points[i] == points[i+1])
+		if (points[i] == points[i + 1])
 		{
 			nlwarning("--- !! points are together !! ---");
 			nlstop;
@@ -429,16 +423,16 @@ CSurfaceSplitter::CChainId	CSurfaceSplitter::addChain(const CSurfaceId &left, co
 	chain.Vertices = points;
 	chain.DontSplit = dontSplit;
 
-	uint	edge;
-	for (edge=0; edge<chain.Vertices.size()-1; ++edge)
+	uint edge;
+	for (edge = 0; edge < chain.Vertices.size() - 1; ++edge)
 	{
-		CVector	p0 = chain.Vertices[edge].asVector();
-		CVector	p1 = chain.Vertices[edge+1].asVector();
+		CVector p0 = chain.Vertices[edge].asVector();
+		CVector p1 = chain.Vertices[edge + 1].asVector();
 
 		p0.z = -100.0f;
 		p1.z = +100.0f;
 
-		CVector	pmin, pmax;
+		CVector pmin, pmax;
 		pmin.minof(p0, p1);
 		pmax.maxof(p0, p1);
 
@@ -449,18 +443,18 @@ CSurfaceSplitter::CChainId	CSurfaceSplitter::addChain(const CSurfaceId &left, co
 }
 
 //
-void	CSurfaceSplitter::removeChain(CChainId chainId)
+void CSurfaceSplitter::removeChain(CChainId chainId)
 {
 	// get chain it
-	TChainMap::iterator	it = _Chains.find(chainId);
+	TChainMap::iterator it = _Chains.find(chainId);
 
 	if (it == _Chains.end())
 		return;
 
-	CChain	&chain = (*it).second;
+	CChain &chain = (*it).second;
 
-	CSurface	*surf;
-	
+	CSurface *surf;
+
 	if ((surf = getSurface(chain.Left)))
 		surf->removeChain(chainId);
 
@@ -469,40 +463,40 @@ void	CSurfaceSplitter::removeChain(CChainId chainId)
 }
 
 //
-void	CSurfaceSplitter::replaceChain(CChainId chainId, const vector<CChainId> &chains)
+void CSurfaceSplitter::replaceChain(CChainId chainId, const vector<CChainId> &chains)
 {
 	// get chain it
-	TChainMap::iterator	it = _Chains.find(chainId);
+	TChainMap::iterator it = _Chains.find(chainId);
 
 	if ((it == _Chains.end()))
 		return;
 
-	CChain	&chain = (*it).second;
+	CChain &chain = (*it).second;
 
-	CSurface	*surf;
+	CSurface *surf;
 
 	nlinfo("-- Replace --");
 	dumpChain(chainId);
 	nlinfo("-- By --");
-	uint	c;
-	for (c=0; c<chains.size(); ++c)
+	uint c;
+	for (c = 0; c < chains.size(); ++c)
 		dumpChain(chains[c]);
 	nlinfo("-- End Replace --");
-	
+
 	if ((surf = getSurface(chain.Left)))
 	{
-		uint	loop;
-		for (loop=0; loop<surf->Loops.size(); ++loop)
+		uint loop;
+		for (loop = 0; loop < surf->Loops.size(); ++loop)
 		{
-			CLoop	&ploop = surf->Loops[loop];
-			vector<CChainId>::iterator	it;
-			for (it=ploop.Chains.begin(); it!=ploop.Chains.end(); ++it)
+			CLoop &ploop = surf->Loops[loop];
+			vector<CChainId>::iterator it;
+			for (it = ploop.Chains.begin(); it != ploop.Chains.end(); ++it)
 			{
 				if (*it == chainId)
 				{
 					it = ploop.Chains.erase(it);
-					sint	i;
-					for (i=(sint)chains.size()-1; i>=0; --i)
+					sint i;
+					for (i = (sint)chains.size() - 1; i >= 0; --i)
 					{
 						it = ploop.Chains.insert(it, chains[i]);
 					}
@@ -513,18 +507,18 @@ void	CSurfaceSplitter::replaceChain(CChainId chainId, const vector<CChainId> &ch
 
 	if ((surf = getSurface(chain.Right)))
 	{
-		uint	loop;
-		for (loop=0; loop<surf->Loops.size(); ++loop)
+		uint loop;
+		for (loop = 0; loop < surf->Loops.size(); ++loop)
 		{
-			CLoop	&ploop = surf->Loops[loop];
-			vector<CChainId>::iterator	it;
-			for (it=ploop.Chains.begin(); it!=ploop.Chains.end(); ++it)
+			CLoop &ploop = surf->Loops[loop];
+			vector<CChainId>::iterator it;
+			for (it = ploop.Chains.begin(); it != ploop.Chains.end(); ++it)
 			{
 				if (*it == chainId)
 				{
 					it = ploop.Chains.erase(it);
-					uint	i;
-					for (i=0; i<chains.size(); ++i)
+					uint i;
+					for (i = 0; i < chains.size(); ++i)
 					{
 						it = ploop.Chains.insert(it, chains[i]);
 					}
@@ -533,8 +527,8 @@ void	CSurfaceSplitter::replaceChain(CChainId chainId, const vector<CChainId> &ch
 		}
 	}
 
-	uint	i;
-	for (i=0; i<chain.Iterators.size(); ++i)
+	uint i;
+	for (i = 0; i < chain.Iterators.size(); ++i)
 		_Edges.erase(chain.Iterators[i]);
 
 	_Chains.erase(it);

@@ -46,10 +46,11 @@ namespace BUILTIN {
  * \author Jan Boon (Kaetemi)
  * CStdMat
  */
-class CStdMat : public CMtl {
+class CStdMat : public CMtl
+{
 public:
-  CStdMat(CScene *scene);
-  virtual ~CStdMat();
+	CStdMat(CScene *scene);
+	virtual ~CStdMat();
 
 }; /* class CStdMat */
 

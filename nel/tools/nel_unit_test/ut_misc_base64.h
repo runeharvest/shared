@@ -19,68 +19,72 @@
 
 #include <nel/misc/base64.h>
 
-struct CUTMiscBase64 : public Test::Suite {
-  CUTMiscBase64() {
-    TEST_ADD(CUTMiscBase64::testEncode);
-    TEST_ADD(CUTMiscBase64::testDecode);
-    TEST_ADD(CUTMiscBase64::testDecodeNoPadding);
-    TEST_ADD(CUTMiscBase64::testDecodeInvalid);
-  }
+struct CUTMiscBase64 : public Test::Suite
+{
+	CUTMiscBase64()
+	{
+		TEST_ADD(CUTMiscBase64::testEncode);
+		TEST_ADD(CUTMiscBase64::testDecode);
+		TEST_ADD(CUTMiscBase64::testDecodeNoPadding);
+		TEST_ADD(CUTMiscBase64::testDecodeInvalid);
+	}
 
-  void testEncode() {
-    TEST_ASSERT("" == NLMISC::base64::encode(""));
+	void testEncode()
+	{
+		TEST_ASSERT("" == NLMISC::base64::encode(""));
 
-    TEST_ASSERT("AA==" == NLMISC::base64::encode(std::string(1, '\0')));
-    TEST_ASSERT("YQ==" == NLMISC::base64::encode("a"));
-    TEST_ASSERT("YWI=" == NLMISC::base64::encode("ab"));
-    TEST_ASSERT("YWJj" == NLMISC::base64::encode("abc"));
+		TEST_ASSERT("AA==" == NLMISC::base64::encode(std::string(1, '\0')));
+		TEST_ASSERT("YQ==" == NLMISC::base64::encode("a"));
+		TEST_ASSERT("YWI=" == NLMISC::base64::encode("ab"));
+		TEST_ASSERT("YWJj" == NLMISC::base64::encode("abc"));
 
-    std::string expect =
-        "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWj"
-        "AxMjM0NTY3ODkhQCMwXiYqKCk7Ojw+LC4gW117fQ==";
-    std::string encoded =
-        NLMISC::base64::encode("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTU"
-                               "VWXYZ0123456789!@#0^&*();:<>,. []{}");
-    TEST_ASSERT(expect == encoded);
-  }
+		std::string expect = "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWj"
+		                     "AxMjM0NTY3ODkhQCMwXiYqKCk7Ojw+LC4gW117fQ==";
+		std::string encoded = NLMISC::base64::encode("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTU"
+		                                             "VWXYZ0123456789!@#0^&*();:<>,. []{}");
+		TEST_ASSERT(expect == encoded);
+	}
 
-  void testDecode() {
-    TEST_ASSERT("" == NLMISC::base64::decode(""));
-    TEST_ASSERT("" == NLMISC::base64::decode("="));
-    TEST_ASSERT("" == NLMISC::base64::decode("=="));
-    TEST_ASSERT("" == NLMISC::base64::decode("==="));
-    TEST_ASSERT("" == NLMISC::base64::decode("===="));
+	void testDecode()
+	{
+		TEST_ASSERT("" == NLMISC::base64::decode(""));
+		TEST_ASSERT("" == NLMISC::base64::decode("="));
+		TEST_ASSERT("" == NLMISC::base64::decode("=="));
+		TEST_ASSERT("" == NLMISC::base64::decode("==="));
+		TEST_ASSERT("" == NLMISC::base64::decode("===="));
 
-    TEST_ASSERT(std::string(1, '\0') == NLMISC::base64::decode("AA=="));
-    TEST_ASSERT("a" == NLMISC::base64::decode("YQ=="));
-    TEST_ASSERT("ab" == NLMISC::base64::decode("YWI="));
-    TEST_ASSERT("abc" == NLMISC::base64::decode("YWJj"));
+		TEST_ASSERT(std::string(1, '\0') == NLMISC::base64::decode("AA=="));
+		TEST_ASSERT("a" == NLMISC::base64::decode("YQ=="));
+		TEST_ASSERT("ab" == NLMISC::base64::decode("YWI="));
+		TEST_ASSERT("abc" == NLMISC::base64::decode("YWJj"));
 
-    std::string expect = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0"
-                         "123456789!@#0^&*();:<>,. []{}";
-    std::string decoded = NLMISC::base64::decode(
-        "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWj"
-        "AxMjM0NTY3ODkhQCMwXiYqKCk7Ojw+LC4gW117fQ==");
-    TEST_ASSERT(expect == decoded);
-  }
+		std::string expect = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0"
+		                     "123456789!@#0^&*();:<>,. []{}";
+		std::string decoded = NLMISC::base64::decode(
+		    "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWj"
+		    "AxMjM0NTY3ODkhQCMwXiYqKCk7Ojw+LC4gW117fQ==");
+		TEST_ASSERT(expect == decoded);
+	}
 
-  void testDecodeNoPadding() {
-    TEST_ASSERT(std::string(1, '\0') == NLMISC::base64::decode("AA"));
-    TEST_ASSERT("a" == NLMISC::base64::decode("YQ"));
-    TEST_ASSERT("ab" == NLMISC::base64::decode("YWI"));
+	void testDecodeNoPadding()
+	{
+		TEST_ASSERT(std::string(1, '\0') == NLMISC::base64::decode("AA"));
+		TEST_ASSERT("a" == NLMISC::base64::decode("YQ"));
+		TEST_ASSERT("ab" == NLMISC::base64::decode("YWI"));
 
-    std::string expect = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0"
-                         "123456789!@#0^&*();:<>,. []{}";
-    std::string decoded = NLMISC::base64::decode(
-        "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWj"
-        "AxMjM0NTY3ODkhQCMwXiYqKCk7Ojw+LC4gW117fQ");
-    TEST_ASSERT(expect == decoded);
-  }
+		std::string expect = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0"
+		                     "123456789!@#0^&*();:<>,. []{}";
+		std::string decoded = NLMISC::base64::decode(
+		    "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWj"
+		    "AxMjM0NTY3ODkhQCMwXiYqKCk7Ojw+LC4gW117fQ");
+		TEST_ASSERT(expect == decoded);
+	}
 
-  void testDecodeInvalid() {
-    TEST_ASSERT("" == NLMISC::base64::decode("A"));
-    TEST_ASSERT("" == NLMISC::base64::decode("A==="));
-  }
+	void testDecodeInvalid()
+	{
+		TEST_ASSERT("" == NLMISC::base64::decode("A"));
+		TEST_ASSERT("" == NLMISC::base64::decode("A==="));
+	}
 };
 
 #endif

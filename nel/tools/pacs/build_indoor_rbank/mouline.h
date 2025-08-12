@@ -24,19 +24,16 @@
 #include "nel/misc/file.h"
 
 // External class declaration
-namespace NLPACS
-{
-	class CCollisionMeshBuild;
-	class CLocalRetriever;
+namespace NLPACS {
+class CCollisionMeshBuild;
+class CLocalRetriever;
 };
 
-
 // Computation functions
-void	computeRetriever(NLPACS::CCollisionMeshBuild &cmb,
-						 NLPACS::CLocalRetriever &lr,
-						 NLMISC::CVector &translation,
-						 bool useCmbTrivialTranslation = true);
-
+void computeRetriever(NLPACS::CCollisionMeshBuild &cmb,
+    NLPACS::CLocalRetriever &lr,
+    NLMISC::CVector &translation,
+    bool useCmbTrivialTranslation = true);
 
 #endif // NL_MOULINE_H
 

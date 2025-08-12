@@ -44,21 +44,22 @@ namespace NLSOUND {
  */
 class CGroupControllerRoot
     : public CGroupController,
-      public NLMISC::CManualSingleton<CGroupControllerRoot> {
+      public NLMISC::CManualSingleton<CGroupControllerRoot>
+{
 public:
-  CGroupControllerRoot();
-  virtual ~CGroupControllerRoot();
+	CGroupControllerRoot();
+	virtual ~CGroupControllerRoot();
 
-  /// Gets the group controller in a certain path with separator '/', if it
-  /// doesn't exist yet it will be created.
-  CGroupController *getGroupController(const std::string &path);
+	/// Gets the group controller in a certain path with separator '/', if it
+	/// doesn't exist yet it will be created.
+	CGroupController *getGroupController(const std::string &path);
 
 protected:
-  virtual std::string getPath();
-  virtual void calculateFinalGain();
-  virtual void increaseSources();
-  virtual void decreaseSources();
-  static bool isReservedName(const std::string &nodeName);
+	virtual std::string getPath();
+	virtual void calculateFinalGain();
+	virtual void increaseSources();
+	virtual void decreaseSources();
+	static bool isReservedName(const std::string &nodeName);
 
 }; /* class CGroupControllerRoot */
 

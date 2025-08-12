@@ -36,25 +36,25 @@ using namespace NLPACS;
 // a reference on an edge
 struct CEdgeKey
 {
-	uint32	V0;
-	uint32	V1;
+    uint32	V0;
+    uint32	V1;
 
-	CEdgeKey() {}
-	CEdgeKey(uint32 v0, uint32 v1) : V0(v0), V1(v1) {}
+    CEdgeKey() {}
+    CEdgeKey(uint32 v0, uint32 v1) : V0(v0), V1(v1) {}
 
-	bool	operator() (const CEdgeKey &a, const CEdgeKey &b)
-	{
-		return a.V0 < b.V0 || (a.V0 == b.V0 && a.V1 < b.V1);
-	}
+    bool	operator() (const CEdgeKey &a, const CEdgeKey &b)
+    {
+        return a.V0 < b.V0 || (a.V0 == b.V0 && a.V1 < b.V1);
+    }
 };
 
 // the info on an edge
 struct CEdgeInfo
 {
-	sint32	Left, LeftEdge;
-	sint32	Right, RightEdge;
+    sint32	Left, LeftEdge;
+    sint32	Right, RightEdge;
 
-	CEdgeInfo(sint32 left=-1, sint32 leftEdge=-1, sint32 right=-1, sint32 rightEdge=-1) : Left(left), LeftEdge(leftEdge), Right(right), RightEdge(rightEdge) {}
+    CEdgeInfo(sint32 left=-1, sint32 leftEdge=-1, sint32 right=-1, sint32 rightEdge=-1) : Left(left), LeftEdge(leftEdge), Right(right), RightEdge(rightEdge) {}
 };
 
 typedef	map<CEdgeKey, CEdgeInfo, CEdgeKey>	TLinkRelloc;
@@ -64,103 +64,101 @@ typedef TLinkRelloc::iterator				ItTLinkRelloc;
 //
 void	linkMesh(CCollisionMeshBuild &cmb, bool linkInterior)
 {
-	uint			i, j;
-	TLinkRelloc		relloc;
+    uint			i, j;
+    TLinkRelloc		relloc;
 
-	// check each edge of each face
-	for (i=0; i<cmb.Faces.size(); ++i)
-	{
-		if (cmb.Faces[i].Surface == CCollisionFace::ExteriorSurface && linkInterior ||
-			cmb.Faces[i].Surface >= CCollisionFace::InteriorSurfaceFirst && !linkInterior)
-			continue;
+    // check each edge of each face
+    for (i=0; i<cmb.Faces.size(); ++i)
+    {
+        if (cmb.Faces[i].Surface == CCollisionFace::ExteriorSurface && linkInterior ||
+            cmb.Faces[i].Surface >= CCollisionFace::InteriorSurfaceFirst && !linkInterior)
+            continue;
 
-		for (j=0; j<3; ++j)
-		{
-			cmb.Faces[i].Edge[j] = -1;
+        for (j=0; j<3; ++j)
+        {
+            cmb.Faces[i].Edge[j] = -1;
 
-			uint	edge = (j+2)%3;
-			uint32	va = cmb.Faces[i].V[j],
-					vb = cmb.Faces[i].V[(j+1)%3];
+            uint	edge = (j+2)%3;
+            uint32	va = cmb.Faces[i].V[j],
+                    vb = cmb.Faces[i].V[(j+1)%3];
 
-			ItTLinkRelloc	it;
-			if ((it = relloc.find(CEdgeKey(va, vb))) != relloc.end())
-			{
-				// in this case, the left triangle of the edge has already been found.
-				// should throw an error
-				nlerror("On face %d, edge %d: left side of edge (%d,%d) already linked to face %d",
-						i, edge, va, vb, (*it).second.Left);
-			}
-			else if ((it = relloc.find(CEdgeKey(vb, va))) != relloc.end())
-			{
-				// in this case, we must check the right face has been set yet
-				if ((*it).second.Right != -1)
-				{
-					nlerror("On face %d, edge %d: right side of edge (%d,%d) already linked to face %d",
-							i, edge, vb, va, (*it).second.Right);
-				}
+            ItTLinkRelloc	it;
+            if ((it = relloc.find(CEdgeKey(va, vb))) != relloc.end())
+            {
+                // in this case, the left triangle of the edge has already been found.
+                // should throw an error
+                nlerror("On face %d, edge %d: left side of edge (%d,%d) already linked to face %d",
+                        i, edge, va, vb, (*it).second.Left);
+            }
+            else if ((it = relloc.find(CEdgeKey(vb, va))) != relloc.end())
+            {
+                // in this case, we must check the right face has been set yet
+                if ((*it).second.Right != -1)
+                {
+                    nlerror("On face %d, edge %d: right side of edge (%d,%d) already linked to face %d",
+                            i, edge, vb, va, (*it).second.Right);
+                }
 
-				(*it).second.Right = i;
-				(*it).second.RightEdge = edge;
-			}
-			else
-			{
-				// if the edge wasn't present yet, create it and set it up.
-				relloc.insert(make_pair(CEdgeKey(va, vb), CEdgeInfo(i, edge, -1, -1)));
-			}
-		}
-	}
+                (*it).second.Right = i;
+                (*it).second.RightEdge = edge;
+            }
+            else
+            {
+                // if the edge wasn't present yet, create it and set it up.
+                relloc.insert(make_pair(CEdgeKey(va, vb), CEdgeInfo(i, edge, -1, -1)));
+            }
+        }
+    }
 
-	// for each checked edge, update the edge info inside the faces
-	ItTLinkRelloc	it;
-	for (it=relloc.begin(); it!=relloc.end(); ++it)
-	{
-		sint32	left, leftEdge;
-		sint32	right, rightEdge;
+    // for each checked edge, update the edge info inside the faces
+    ItTLinkRelloc	it;
+    for (it=relloc.begin(); it!=relloc.end(); ++it)
+    {
+        sint32	left, leftEdge;
+        sint32	right, rightEdge;
 
-		// get the link info on the edge
-		left = (*it).second.Left;
-		leftEdge = (*it).second.LeftEdge;
-		right = (*it).second.Right;
-		rightEdge = (*it).second.RightEdge;
+        // get the link info on the edge
+        left = (*it).second.Left;
+        leftEdge = (*it).second.LeftEdge;
+        right = (*it).second.Right;
+        rightEdge = (*it).second.RightEdge;
 
-		// update both faces
-		if (left != -1)
-			cmb.Faces[left].Edge[leftEdge] = right;
-		if (right != -1)
-			cmb.Faces[right].Edge[rightEdge] = left;
-	}
+        // update both faces
+        if (left != -1)
+            cmb.Faces[left].Edge[leftEdge] = right;
+        if (right != -1)
+            cmb.Faces[right].Edge[rightEdge] = left;
+    }
 }
 */
 
-
-
-void	buildExteriorMesh(CCollisionMeshBuild &cmb, CExteriorMesh &em)
+void buildExteriorMesh(CCollisionMeshBuild &cmb, CExteriorMesh &em)
 {
-	uint							startFace = 0;
-	vector<CExteriorMesh::CEdge>	edges;
+	uint startFace = 0;
+	vector<CExteriorMesh::CEdge> edges;
 
-	uint	i;
-	for (i=0; i<cmb.Faces.size(); ++i)
+	uint i;
+	for (i = 0; i < cmb.Faces.size(); ++i)
 	{
 		cmb.Faces[i].EdgeFlags[0] = false;
 		cmb.Faces[i].EdgeFlags[1] = false;
 		cmb.Faces[i].EdgeFlags[2] = false;
 	}
-	
+
 	while (true)
 	{
 		// find the first non interior face
-		uint	i, edge;
-		bool	found = false;
-		for (i=startFace; i<cmb.Faces.size() && !found; ++i)
+		uint i, edge;
+		bool found = false;
+		for (i = startFace; i < cmb.Faces.size() && !found; ++i)
 		{
 			if (cmb.Faces[i].Surface != CCollisionFace::ExteriorSurface)
 				continue;
 
-			for (edge=0; edge<3 && !found; ++edge)
+			for (edge = 0; edge < 3 && !found; ++edge)
 				if (cmb.Faces[i].Edge[edge] == -1 && !cmb.Faces[i].EdgeFlags[edge])
 				{
-//					nlassert(cmb.Faces[i].Material != 0xdeadbeef);
+					//					nlassert(cmb.Faces[i].Material != 0xdeadbeef);
 					found = true;
 					break;
 				}
@@ -173,22 +171,22 @@ void	buildExteriorMesh(CCollisionMeshBuild &cmb, CExteriorMesh &em)
 		if (!found)
 			break;
 
-//		cmb.Faces[i].Material = 0xdeadbeef;
+		//		cmb.Faces[i].Material = 0xdeadbeef;
 
-		startFace = i+1;
+		startFace = i + 1;
 
-		sint32		current = i;
-		sint32		next = cmb.Faces[current].Edge[edge];
+		sint32 current = i;
+		sint32 next = cmb.Faces[current].Edge[edge];
 
-		sint		oedge;
-		sint		pivot = (edge+1)%3;
-		sint		nextEdge = edge;
-		bool		allowThis = true;
+		sint oedge;
+		sint pivot = (edge + 1) % 3;
+		sint nextEdge = edge;
+		bool allowThis = true;
 
-		uint		numLink = 0;
-		uint		firstEdge = (uint)edges.size();
+		uint numLink = 0;
+		uint firstEdge = (uint)edges.size();
 
-		vector<CExteriorMesh::CEdge>	loop;
+		vector<CExteriorMesh::CEdge> loop;
 
 		while (true)
 		{
@@ -202,24 +200,23 @@ void	buildExteriorMesh(CCollisionMeshBuild &cmb, CExteriorMesh &em)
 				// if the next edge belongs to the border, then go on the same element
 				cmb.Faces[current].EdgeFlags[nextEdge] = true;
 				/// \todo get the real edge link
-				sint	link = (cmb.Faces[current].Visibility[nextEdge]) ? -1 : 0;	//(numLink++);
+				sint link = (cmb.Faces[current].Visibility[nextEdge]) ? -1 : 0; //(numLink++);
 
-				//edges.push_back(CExteriorMesh::CEdge(cmb.Vertices[cmb.Faces[current].V[pivot]], link));
+				// edges.push_back(CExteriorMesh::CEdge(cmb.Vertices[cmb.Faces[current].V[pivot]], link));
 				loop.push_back(CExteriorMesh::CEdge(cmb.Vertices[cmb.Faces[current].V[pivot]], link));
 
-				pivot = (pivot+1)%3;
-				nextEdge = (nextEdge+1)%3;
+				pivot = (pivot + 1) % 3;
+				nextEdge = (nextEdge + 1) % 3;
 				next = cmb.Faces[current].Edge[nextEdge];
 			}
 			else
 			{
 				// if the next element is inside the surface, then go to the next element
-				for (oedge=0; oedge<3 && cmb.Faces[next].Edge[oedge]!=current; ++oedge)
-					;
+				for (oedge = 0; oedge < 3 && cmb.Faces[next].Edge[oedge] != current; ++oedge);
 				nlassert(oedge != 3);
 				current = next;
-				pivot = (oedge+2)%3;
-				nextEdge = (oedge+1)%3;
+				pivot = (oedge + 2) % 3;
+				nextEdge = (oedge + 1) % 3;
 				next = cmb.Faces[current].Edge[nextEdge];
 			}
 		}
@@ -228,7 +225,7 @@ void	buildExteriorMesh(CCollisionMeshBuild &cmb, CExteriorMesh &em)
 		// this way, collisions won't be checked in the pacs engine
 		if (loop.size() >= 3)
 		{
-			uint	n = (uint)loop.size();
+			uint n = (uint)loop.size();
 			while (loop.front().Link >= 0 && loop.back().Link >= 0 && n > 0)
 			{
 				loop.push_back(loop.front());
@@ -239,15 +236,15 @@ void	buildExteriorMesh(CCollisionMeshBuild &cmb, CExteriorMesh &em)
 		loop.push_back(loop.front());
 		loop.back().Link = -2;
 		edges.insert(edges.end(), loop.begin(), loop.end());
-		//edges.push_back(edges[firstEdge]);
-		//edges.back().Link = -2;
+		// edges.push_back(edges[firstEdge]);
+		// edges.back().Link = -2;
 	}
 
-	bool	previousWasLink = false;
-	sint	previousLink = -1;
-	for (i=0; i<edges.size(); ++i)
+	bool previousWasLink = false;
+	sint previousLink = -1;
+	for (i = 0; i < edges.size(); ++i)
 	{
-//		nldebug("ext-mesh: vertex=%d (%.2f,%.2f,%.2f) link=%d", i, edges[i].Start.x, edges[i].Start.y, edges[i].Start.z, edges[i].Link);
+		//		nldebug("ext-mesh: vertex=%d (%.2f,%.2f,%.2f) link=%d", i, edges[i].Start.x, edges[i].Start.y, edges[i].Start.z, edges[i].Link);
 		if (edges[i].Link >= 0)
 		{
 			if (!previousWasLink)
@@ -264,37 +261,36 @@ void	buildExteriorMesh(CCollisionMeshBuild &cmb, CExteriorMesh &em)
 	em.setEdges(edges);
 }
 
-
 //
-void	linkExteriorToInterior(CLocalRetriever &lr)
+void linkExteriorToInterior(CLocalRetriever &lr)
 {
-	CExteriorMesh					em = lr.getExteriorMesh();
-	vector<CExteriorMesh::CEdge>	edges = em.getEdges();
-	vector<CExteriorMesh::CLink>	links;
-	const vector<CChain>			&chains = lr.getChains();
-	const vector<COrderedChain3f>	&ochains = lr.getFullOrderedChains();
-	const vector<uint16>			&bchains = lr.getBorderChains();
+	CExteriorMesh em = lr.getExteriorMesh();
+	vector<CExteriorMesh::CEdge> edges = em.getEdges();
+	vector<CExteriorMesh::CLink> links;
+	const vector<CChain> &chains = lr.getChains();
+	const vector<COrderedChain3f> &ochains = lr.getFullOrderedChains();
+	const vector<uint16> &bchains = lr.getBorderChains();
 
 	{
-		uint	i;
+		uint i;
 
 		nlinfo("Border chains (to be linked) for this retriever:");
 
-		for (i=0; i<bchains.size(); ++i)
+		for (i = 0; i < bchains.size(); ++i)
 		{
 			char w[256];
 			std::stringstream ss;
-			const CChain	&chain = chains[bchains[i]];
+			const CChain &chain = chains[bchains[i]];
 			sprintf(w, "Border chain %d: chain=%d ", i, bchains[i]);
 			ss << w;
-			uint	och;
-			for (och=0; och<chain.getSubChains().size(); ++och)
+			uint och;
+			for (och = 0; och < chain.getSubChains().size(); ++och)
 			{
-				const COrderedChain3f	&ochain = ochains[chain.getSubChain(och)];
+				const COrderedChain3f &ochain = ochains[chain.getSubChain(och)];
 				sprintf(w, "subchain=%d", chain.getSubChain(och));
 				ss << w;
-				uint	v;
-				for (v=0; v<ochain.getVertices().size(); ++v)
+				uint v;
+				for (v = 0; v < ochain.getVertices().size(); ++v)
 				{
 					sprintf(w, " (%.2f,%.2f)", ochain[v].x, ochain[v].y);
 					ss << w;
@@ -305,8 +301,8 @@ void	linkExteriorToInterior(CLocalRetriever &lr)
 		}
 	}
 
-	uint	edge, ch;
-	for (edge=0; edge+1<edges.size(); )
+	uint edge, ch;
+	for (edge = 0; edge + 1 < edges.size();)
 	{
 		if (edges[edge].Link == -1 || edges[edge].Link == -2)
 		{
@@ -314,26 +310,25 @@ void	linkExteriorToInterior(CLocalRetriever &lr)
 			continue;
 		}
 
-		uint	startedge = edge;
-		uint	stopedge;
+		uint startedge = edge;
+		uint stopedge;
 
-		for (stopedge=edge; stopedge+1<edges.size() && edges[stopedge+1].Link == edges[startedge].Link; ++stopedge)
-			;
+		for (stopedge = edge; stopedge + 1 < edges.size() && edges[stopedge + 1].Link == edges[startedge].Link; ++stopedge);
 
-		edge = stopedge+1;
+		edge = stopedge + 1;
 
-		CVector	start = edges[startedge].Start, stop = edges[stopedge+1].Start;
-		bool	found = false;
+		CVector start = edges[startedge].Start, stop = edges[stopedge + 1].Start;
+		bool found = false;
 
-		for (ch=0; ch<bchains.size() && !found; ++ch)
+		for (ch = 0; ch < bchains.size() && !found; ++ch)
 		{
 			// get the border chain.
-			//const CChain	&chain = chains[bchains[ch]];
+			// const CChain	&chain = chains[bchains[ch]];
 
-			const CVector	&cstart = lr.getStartVector(bchains[ch]),
-							&cstop = lr.getStopVector(bchains[ch]);
+			const CVector &cstart = lr.getStartVector(bchains[ch]),
+			              &cstop = lr.getStopVector(bchains[ch]);
 
-			float d = (start-cstart).norm()+(stop-cstop).norm();
+			float d = (start - cstart).norm() + (stop - cstop).norm();
 			if (d < 1.0e-1f)
 			{
 				found = true;
@@ -342,7 +337,7 @@ void	linkExteriorToInterior(CLocalRetriever &lr)
 		}
 
 		// create a link
-		CExteriorMesh::CLink	link;
+		CExteriorMesh::CLink link;
 
 		if (!found)
 		{
@@ -359,12 +354,10 @@ void	linkExteriorToInterior(CLocalRetriever &lr)
 
 		// enlarge the links
 		if (edges[startedge].Link >= (sint)links.size())
-			links.resize(edges[startedge].Link+1);
+			links.resize(edges[startedge].Link + 1);
 
 		// if the link already exists, warning
-		if (links[edges[startedge].Link].BorderChainId != 0xFFFF ||
-			links[edges[startedge].Link].ChainId != 0xFFFF ||
-			links[edges[startedge].Link].SurfaceId != 0xFFFF)
+		if (links[edges[startedge].Link].BorderChainId != 0xFFFF || links[edges[startedge].Link].ChainId != 0xFFFF || links[edges[startedge].Link].SurfaceId != 0xFFFF)
 		{
 			nlwarning("in linkInteriorToExterior():");
 			nlwarning("link %d already set!!", edges[startedge].Link);
@@ -374,17 +367,13 @@ void	linkExteriorToInterior(CLocalRetriever &lr)
 		links[edges[startedge].Link] = link;
 	}
 
-//	em.setEdges(edges);
+	//	em.setEdges(edges);
 	em.setLinks(links);
 	lr.setExteriorMesh(em);
 }
 
-
-
-
-
 //
-void	computeRetriever(CCollisionMeshBuild &cmb, CLocalRetriever &lr, CVector &translation, bool useCmbTrivialTranslation)
+void computeRetriever(CCollisionMeshBuild &cmb, CLocalRetriever &lr, CVector &translation, bool useCmbTrivialTranslation)
 {
 	// set the retriever
 	lr.setType(CLocalRetriever::Interior);
@@ -399,46 +388,46 @@ void	computeRetriever(CCollisionMeshBuild &cmb, CLocalRetriever &lr, CVector &tr
 		translation.z = 0.0f;
 	}
 
-	uint	i, j;
+	uint i, j;
 
-	for (i=0; i<cmb.Faces.size(); ++i)
+	for (i = 0; i < cmb.Faces.size(); ++i)
 	{
-		CVector		normal = ((cmb.Vertices[cmb.Faces[i].V[1]]-cmb.Vertices[cmb.Faces[i].V[0]])^(cmb.Vertices[cmb.Faces[i].V[2]]-cmb.Vertices[cmb.Faces[i].V[0]])).normed();
+		CVector normal = ((cmb.Vertices[cmb.Faces[i].V[1]] - cmb.Vertices[cmb.Faces[i].V[0]]) ^ (cmb.Vertices[cmb.Faces[i].V[2]] - cmb.Vertices[cmb.Faces[i].V[0]])).normed();
 
 		if (normal.z < 0.0f)
 		{
 			nlwarning("Face %d in cmb (%s) has negative normal! -- face is flipped", i, cmb.Faces[i].Surface == CCollisionFace::InteriorSurfaceFirst ? "interior" : "exterior");
-/*
-			std::swap(cmb.Faces[i].V[1], cmb.Faces[i].V[2]);
-			std::swap(cmb.Faces[i].Visibility[1], cmb.Faces[i].Visibility[2]);
-*/
+			/*
+			            std::swap(cmb.Faces[i].V[1], cmb.Faces[i].V[2]);
+			            std::swap(cmb.Faces[i].Visibility[1], cmb.Faces[i].Visibility[2]);
+			*/
 		}
 	}
 
 	// first link faces
-/*
-	linkMesh(cmb, false);
-	linkMesh(cmb, true);
-*/
-	vector<string>	errors;
-	
+	/*
+	    linkMesh(cmb, false);
+	    linkMesh(cmb, true);
+	*/
+	vector<string> errors;
+
 	cmb.link(false, errors);
 	cmb.link(true, errors);
 
 	if (!errors.empty())
 	{
 		nlwarning("Edge issues reported !!");
-		uint	i;
-		for (i=0; i<errors.size(); ++i)
+		uint i;
+		for (i = 0; i < errors.size(); ++i)
 			nlwarning("%s", errors[i].c_str());
 		nlerror("Can't continue.");
 	}
-	
+
 	// translate the meshbuild to the local axis
 	cmb.translate(translation);
 
 	// find the exterior mesh border
-	CExteriorMesh	extMesh;
+	CExteriorMesh extMesh;
 	buildExteriorMesh(cmb, extMesh);
 	lr.setExteriorMesh(extMesh);
 
@@ -459,32 +448,32 @@ void	computeRetriever(CCollisionMeshBuild &cmb, CLocalRetriever &lr, CVector &tr
 	lr.unify();
 
 	lr.computeCollisionChainQuad();
-/*
-	//
-	for (i=0; i<lr.getSurfaces().size(); ++i)
-		lr.dumpSurface(i);
-*/
+	/*
+	    //
+	    for (i=0; i<lr.getSurfaces().size(); ++i)
+	        lr.dumpSurface(i);
+	*/
 	//
 	linkExteriorToInterior(lr);
 
 	// compute the bbox of the retriever
-	CAABBox	bbox;
-	bool	first = true;
+	CAABBox bbox;
+	bool first = true;
 
-	for (i=0; i<extMesh.getEdges().size(); ++i)
+	for (i = 0; i < extMesh.getEdges().size(); ++i)
 		if (!first)
 			bbox.extend(extMesh.getEdge(i).Start);
 		else
-			bbox.setCenter(extMesh.getEdge(i).Start), first=false;
+			bbox.setCenter(extMesh.getEdge(i).Start), first = false;
 
-	for (i=0; i<lr.getOrderedChains().size(); ++i)
-		for (j=0; j<lr.getOrderedChain(i).getVertices().size(); ++j)
+	for (i = 0; i < lr.getOrderedChains().size(); ++i)
+		for (j = 0; j < lr.getOrderedChain(i).getVertices().size(); ++j)
 			if (!first)
 				bbox.extend(lr.getOrderedChain(i)[j].unpack3f());
 			else
-				bbox.setCenter(lr.getOrderedChain(i)[j].unpack3f()), first=false;
+				bbox.setCenter(lr.getOrderedChain(i)[j].unpack3f()), first = false;
 
-	CVector	bboxhs = bbox.getHalfSize();
+	CVector bboxhs = bbox.getHalfSize();
 	bboxhs.z = 10000.0f;
 	bbox.setHalfSize(bboxhs);
 

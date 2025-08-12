@@ -45,7 +45,7 @@ void outString(const string &sText)
 
 // ***************************************************************************
 // test every 4 pixels for 2 reason: DXTC and speed
-const	uint32	posStep= 4;
+const uint32 posStep = 4;
 
 // ***************************************************************************
 // Try all position to put pSrc in pDst
@@ -58,33 +58,34 @@ bool tryAllPos(NLMISC::CBitmap *pSrc, NLMISC::CBitmap *pDst, sint32 &x, sint32 &
 	// Recalculate real size of the source (without padding to power of 2)
 	uint32 nSrcWidth = pSrc->getWidth(), nSrcHeight = pSrc->getHeight();
 
-	if (nSrcWidth > pDst->getWidth() ) return false;
-	if (nSrcHeight > pDst->getHeight() ) return false;
+	if (nSrcWidth > pDst->getWidth()) return false;
+	if (nSrcHeight > pDst->getHeight()) return false;
 
 	// For all position test if the Src plane can be put in
-	for (j = 0; j <= (pDst->getHeight() - nSrcHeight); j+= posStep)
-	for (i = 0; i <= (pDst->getWidth() - nSrcWidth); i+= posStep)
-	{
-		x = i; y = j;
-		
-		uint32 a, b;
-		bool bCanPut = true;
-		for (b = 0; b < nSrcHeight; ++b)
+	for (j = 0; j <= (pDst->getHeight() - nSrcHeight); j += posStep)
+		for (i = 0; i <= (pDst->getWidth() - nSrcWidth); i += posStep)
 		{
-			for (a = 0; a < nSrcWidth; ++a)
+			x = i;
+			y = j;
+
+			uint32 a, b;
+			bool bCanPut = true;
+			for (b = 0; b < nSrcHeight; ++b)
 			{
-				if (rDstPix[4*((x+a)+(y+b)*pDst->getWidth())+3] != 0)
+				for (a = 0; a < nSrcWidth; ++a)
 				{
-					bCanPut = false;
-					break;
+					if (rDstPix[4 * ((x + a) + (y + b) * pDst->getWidth()) + 3] != 0)
+					{
+						bCanPut = false;
+						break;
+					}
 				}
+				if (bCanPut == false)
+					break;
 			}
-			if (bCanPut == false)
-				break;
+			if (bCanPut)
+				return true;
 		}
-		if (bCanPut)
-			return true;
-	}
 	return false;
 }
 
@@ -101,45 +102,45 @@ void putPixel(uint8 *dst, uint8 *src, bool alphaTransfert)
 }
 
 // ***************************************************************************
-bool putIn(NLMISC::CBitmap *pSrc, NLMISC::CBitmap *pDst, sint32 x, sint32 y, bool alphaTransfert=true)
+bool putIn(NLMISC::CBitmap *pSrc, NLMISC::CBitmap *pDst, sint32 x, sint32 y, bool alphaTransfert = true)
 {
 	uint8 *rSrcPix = &pSrc->getPixels()[0];
 	uint8 *rDstPix = &pDst->getPixels()[0];
 
-	uint	wSrc= pSrc->getWidth();
-	uint	hSrc= pSrc->getHeight();
+	uint wSrc = pSrc->getWidth();
+	uint hSrc = pSrc->getHeight();
 	for (uint b = 0; b < hSrc; ++b)
-	for (uint a = 0; a < wSrc; ++a)
-	{
-		if (rDstPix[4*((x+a)+(y+b)*pDst->getWidth())+3] != 0)
-			return false;
+		for (uint a = 0; a < wSrc; ++a)
+		{
+			if (rDstPix[4 * ((x + a) + (y + b) * pDst->getWidth()) + 3] != 0)
+				return false;
 
-		// write
-		putPixel(rDstPix + 4*((x+a)+(y+b)*pDst->getWidth()), rSrcPix+ 4*(a+b*pSrc->getWidth()), alphaTransfert);
-	}
+			// write
+			putPixel(rDstPix + 4 * ((x + a) + (y + b) * pDst->getWidth()), rSrcPix + 4 * (a + b * pSrc->getWidth()), alphaTransfert);
+		}
 
 	// DXTC compression optim: fill last column block and last row block of 4 pixels with block color (don't let black or undefined)
-	uint	wSrc4= 4*((wSrc+3)/4);
-	uint	hSrc4= 4*((hSrc+3)/4);
+	uint wSrc4 = 4 * ((wSrc + 3) / 4);
+	uint hSrc4 = 4 * ((hSrc + 3) / 4);
 	// expand on W
-	if(wSrc<wSrc4)
+	if (wSrc < wSrc4)
 	{
-		for(uint a=wSrc;a<wSrc4;a++)
+		for (uint a = wSrc; a < wSrc4; a++)
 		{
-			for(uint b=0;b<hSrc4;b++)
+			for (uint b = 0; b < hSrc4; b++)
 			{
-				putPixel(rDstPix + 4*((x+a)+(y+b)*pDst->getWidth()), rDstPix + 4*((x+wSrc-1)+(y+b)*pDst->getWidth()), alphaTransfert);
+				putPixel(rDstPix + 4 * ((x + a) + (y + b) * pDst->getWidth()), rDstPix + 4 * ((x + wSrc - 1) + (y + b) * pDst->getWidth()), alphaTransfert);
 			}
 		}
 	}
 	// expand on H
-	if(hSrc<hSrc4)
+	if (hSrc < hSrc4)
 	{
-		for(uint b=hSrc;b<hSrc4;b++)
+		for (uint b = hSrc; b < hSrc4; b++)
 		{
-			for(uint a=0;a<wSrc4;a++)
+			for (uint a = 0; a < wSrc4; a++)
 			{
-				putPixel(rDstPix + 4*((x+a)+(y+b)*pDst->getWidth()), rDstPix + 4*((x+a)+(y+hSrc-1)*pDst->getWidth()), alphaTransfert);
+				putPixel(rDstPix + 4 * ((x + a) + (y + b) * pDst->getWidth()), rDstPix + 4 * ((x + a) + (y + hSrc - 1) * pDst->getWidth()), alphaTransfert);
 			}
 		}
 	}
@@ -152,7 +153,7 @@ string getBaseName(const string &fullname)
 {
 	string basename;
 	string::size_type pos = fullname.rfind('_');
-	if (pos != string::npos) basename = fullname.substr(0, pos+1);
+	if (pos != string::npos) basename = fullname.substr(0, pos + 1);
 	return basename;
 }
 
@@ -167,13 +168,13 @@ void enlargeCanvas(NLMISC::CBitmap &b)
 		nNewWidth *= 2;
 
 	NLMISC::CBitmap b2;
-	b2.resize (nNewWidth, nNewHeight, NLMISC::CBitmap::RGBA);
-	
+	b2.resize(nNewWidth, nNewHeight, NLMISC::CBitmap::RGBA);
+
 	CObjectVector<uint8> &rPixelBitmap = b2.getPixels(0);
-	for (sint32 i = 0; i < nNewWidth*nNewHeight*4; ++i)
+	for (sint32 i = 0; i < nNewWidth * nNewHeight * 4; ++i)
 		rPixelBitmap[i] = 0;
-	
-	putIn (&b, &b2, 0, 0);
+
+	putIn(&b, &b2, 0, 0);
 	b = b2;
 }
 
@@ -199,7 +200,6 @@ bool writeFileDependingOnFilename(const std::string &filename, CBitmap &bitmap)
 
 	return false;
 }
-
 
 // ***************************************************************************
 // main
@@ -260,7 +260,7 @@ int main(int argc, char **argv)
 	string fmtName = args.getAdditionalArg("output_filename").front();
 
 	// append PNG extension if no one provided
-	if (fmtName.rfind('.') == string::npos) fmtName += "." + (outputFormat.empty() ? "png":outputFormat);
+	if (fmtName.rfind('.') == string::npos) fmtName += "." + (outputFormat.empty() ? "png" : outputFormat);
 
 	if (extractElements)
 	{
@@ -378,11 +378,11 @@ int main(int argc, char **argv)
 	vector<string> AllMapNames;
 	vector<string>::iterator it = inputDirs.begin(), itEnd = inputDirs.end();
 
-	while( it != itEnd )
+	while (it != itEnd)
 	{
 		string sDir = *it++;
 
-		if( !CFile::isDirectory(sDir) )
+		if (!CFile::isDirectory(sDir))
 		{
 			outString(toString("ERROR: directory %s does not exist", sDir.c_str()));
 			return -1;
@@ -391,13 +391,13 @@ int main(int argc, char **argv)
 		CPath::getPathContent(sDir, false, false, true, AllMapNames);
 	}
 
-	vector<NLMISC::CBitmap*> AllMaps;
+	vector<NLMISC::CBitmap *> AllMaps;
 	sint32 j;
 
 	// Load all maps
 	sint32 mapSize = (sint32)AllMapNames.size();
-	AllMaps.resize( mapSize );
-	for(sint i = 0; i < mapSize; ++i )
+	AllMaps.resize(mapSize);
+	for (sint i = 0; i < mapSize; ++i)
 	{
 		NLMISC::CBitmap *pBtmp = NULL;
 
@@ -428,10 +428,10 @@ int main(int argc, char **argv)
 				tmp->resample(tmp->getWidth() + borderSize * 2, tmp->getHeight() + borderSize * 2);
 				// top, bottom
 				tmp->blit(pBtmp, borderSize, 0);
-				tmp->blit(pBtmp, borderSize, borderSize*2);
+				tmp->blit(pBtmp, borderSize, borderSize * 2);
 				// left, right
 				tmp->blit(pBtmp, 0, borderSize);
-				tmp->blit(pBtmp, borderSize*2, borderSize);
+				tmp->blit(pBtmp, borderSize * 2, borderSize);
 				// center
 				tmp->blit(pBtmp, borderSize, borderSize);
 
@@ -451,34 +451,34 @@ int main(int argc, char **argv)
 	}
 
 	// Sort all maps by decreasing size
-	for (sint i = 0; i < mapSize-1; ++i)
-	for (j = i+1; j < mapSize; ++j)
-	{
-		NLMISC::CBitmap *pBI = AllMaps[i];
-		NLMISC::CBitmap *pBJ = AllMaps[j];
-		if ((pBI->getWidth()*pBI->getHeight()) < (pBJ->getWidth()*pBJ->getHeight()))
+	for (sint i = 0; i < mapSize - 1; ++i)
+		for (j = i + 1; j < mapSize; ++j)
 		{
-			NLMISC::CBitmap *pBTmp = AllMaps[i];
-			AllMaps[i] = AllMaps[j];
-			AllMaps[j] = pBTmp;
+			NLMISC::CBitmap *pBI = AllMaps[i];
+			NLMISC::CBitmap *pBJ = AllMaps[j];
+			if ((pBI->getWidth() * pBI->getHeight()) < (pBJ->getWidth() * pBJ->getHeight()))
+			{
+				NLMISC::CBitmap *pBTmp = AllMaps[i];
+				AllMaps[i] = AllMaps[j];
+				AllMaps[j] = pBTmp;
 
-			string sTmp = AllMapNames[i];
-			AllMapNames[i] = AllMapNames[j];
-			AllMapNames[j] = sTmp;
+				string sTmp = AllMapNames[i];
+				AllMapNames[i] = AllMapNames[j];
+				AllMapNames[j] = sTmp;
+			}
 		}
-	}
 
 	// Place all maps into the global texture
 	NLMISC::CBitmap GlobalTexture, GlobalMask;
-	GlobalTexture.resize (1, 1, NLMISC::CBitmap::RGBA);
-	GlobalMask.resize (1, 1, NLMISC::CBitmap::RGBA);
+	GlobalTexture.resize(1, 1, NLMISC::CBitmap::RGBA);
+	GlobalMask.resize(1, 1, NLMISC::CBitmap::RGBA);
 	CObjectVector<uint8> &rPixelBitmap = GlobalTexture.getPixels(0);
 	rPixelBitmap[0] = rPixelBitmap[1] = rPixelBitmap[2] = rPixelBitmap[3] = 0;
 	CObjectVector<uint8> &rPixelMask = GlobalMask.getPixels(0);
 	rPixelMask[0] = rPixelMask[1] = rPixelMask[2] = rPixelMask[3] = 0;
 	vector<NLMISC::CUV> UVMin, UVMax;
-	UVMin.resize (mapSize, NLMISC::CUV(0.0f, 0.0f));
-	UVMax.resize (mapSize, NLMISC::CUV(0.0f, 0.0f));
+	UVMin.resize(mapSize, NLMISC::CUV(0.0f, 0.0f));
+	UVMax.resize(mapSize, NLMISC::CUV(0.0f, 0.0f));
 
 	for (sint i = 0; i < mapSize; ++i)
 	{
@@ -486,12 +486,12 @@ int main(int argc, char **argv)
 		while (!tryAllPos(AllMaps[i], &GlobalMask, x, y))
 		{
 			// Enlarge global texture
-			enlargeCanvas (GlobalTexture);
-			enlargeCanvas (GlobalMask);
+			enlargeCanvas(GlobalTexture);
+			enlargeCanvas(GlobalMask);
 		}
 
-		putIn (AllMaps[i], &GlobalTexture, x, y);
-		putIn (AllMaps[i], &GlobalMask, x, y, false);
+		putIn(AllMaps[i], &GlobalTexture, x, y);
+		putIn(AllMaps[i], &GlobalMask, x, y, false);
 
 		UVMin[i].U = (float)x + borderSize;
 		UVMin[i].V = (float)y + borderSize;
@@ -528,7 +528,7 @@ int main(int argc, char **argv)
 	}
 
 	// Write UV text file
-	if( !buildSubset )
+	if (!buildSubset)
 	{
 		fmtName = fmtName.substr(0, fmtName.rfind('.'));
 		fmtName += ".txt";
@@ -539,10 +539,10 @@ int main(int argc, char **argv)
 			{
 				// get the string whitout path
 				string fileName = CFile::getFilename(AllMapNames[i]);
-				fprintf (f, "%s %.12f %.12f %.12f %.12f\n", fileName.c_str(), UVMin[i].U, UVMin[i].V, UVMax[i].U, UVMax[i].V);
+				fprintf(f, "%s %.12f %.12f %.12f %.12f\n", fileName.c_str(), UVMin[i].U, UVMin[i].V, UVMax[i].U, UVMax[i].V);
 			}
 
-			fclose (f);
+			fclose(f);
 
 			outString(toString("Writing UV file %s", fmtName.c_str()));
 		}
@@ -555,14 +555,14 @@ int main(int argc, char **argv)
 	{
 		// Load existing uv file
 		CIFile iFile;
-		string filename = CPath::lookup (existingUVfilename, false);
+		string filename = CPath::lookup(existingUVfilename, false);
 
-		if( filename.empty() || !iFile.open(filename) )
+		if (filename.empty() || !iFile.open(filename))
 		{
 			outString(toString("ERROR: Unable to open %s", existingUVfilename.c_str()));
 			return -1;
 		}
-		
+
 		// Write subset UV text file
 		fmtName = fmtName.substr(0, fmtName.rfind('.'));
 		fmtName += ".txt";
@@ -579,8 +579,8 @@ int main(int argc, char **argv)
 		float uvMinU, uvMinV, uvMaxU, uvMaxV;
 		while (!iFile.eof())
 		{
-			iFile.getline (bufTmp, 256);
-			if (sscanf (bufTmp, "%s %f %f %f %f", tgaName, &uvMinU, &uvMinV, &uvMaxU, &uvMaxV) != 5)
+			iFile.getline(bufTmp, 256);
+			if (sscanf(bufTmp, "%s %f %f %f %f", tgaName, &uvMinU, &uvMinV, &uvMaxU, &uvMaxV) != 5)
 			{
 				nlwarning("Can't parse %s", bufTmp);
 				continue;
@@ -595,33 +595,33 @@ int main(int argc, char **argv)
 			sTGAname = CFile::getFilenameWithoutExtension(sTGAname);
 
 			sint i;
-			
+
 			string findTGAName;
 			for (i = 0; i < mapSize; ++i)
 			{
 				// get the string whitout path
 				findTGAName = toLowerAscii(CFile::getFilenameWithoutExtension(AllMapNames[i]));
-				if( findTGAName == sTGAname )
+				if (findTGAName == sTGAname)
 					break;
 			}
 
 			// append extension
 			sTGAname += "." + tgaExt;
-			
-			if( i == mapSize )
+
+			if (i == mapSize)
 			{
 				// not present in subset: offset existing uv's to (0,0), preserving size
-				fprintf (f, "%s %.12f %.12f %.12f %.12f\n", sTGAname.c_str(), 0.0f, 0.0f, uvMaxU - uvMinU, uvMaxV - uvMinV); 
+				fprintf(f, "%s %.12f %.12f %.12f %.12f\n", sTGAname.c_str(), 0.0f, 0.0f, uvMaxU - uvMinU, uvMaxV - uvMinV);
 			}
 			else
 			{
 				// present in subset: use new uv's
-				fprintf (f, "%s %.12f %.12f %.12f %.12f\n", sTGAname.c_str(), UVMin[i].U, UVMin[i].V, UVMax[i].U, UVMax[i].V);
+				fprintf(f, "%s %.12f %.12f %.12f %.12f\n", sTGAname.c_str(), UVMin[i].U, UVMin[i].V, UVMax[i].U, UVMax[i].V);
 			}
-		}	
-		fclose (f);
+		}
+		fclose(f);
 		outString(toString("Writing UV file: %s", fmtName.c_str()));
 	}
-	
+
 	return 0;
 }

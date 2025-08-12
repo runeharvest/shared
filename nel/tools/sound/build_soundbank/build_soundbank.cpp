@@ -1,10 +1,10 @@
 /**
-* Build Soundbank
-* \file build_soundbank.cpp
-* \brief Build Soundbank
-* \date 2010-03-06 21:43GMT
-* \author Jan Boon (Kaetemi)
-*/
+ * Build Soundbank
+ * \file build_soundbank.cpp
+ * \brief Build Soundbank
+ * \date 2010-03-06 21:43GMT
+ * \author Jan Boon (Kaetemi)
+ */
 
 // NeL - MMORPG Framework <http://dev.ryzom.com/projects/nel/>
 // Copyright (C) 2010-2019  Jan BOON (Kaetemi) <jan.boon@kaetemi.be>
@@ -79,7 +79,7 @@ int main(int nNbArg, char **ppArgs)
 		nlerrornoex("Directory build_packed_sheets '%s' does not exist", exportDir.c_str());
 		return EXIT_FAILURE;
 	}
-	
+
 	// add search paths
 	CPath::addSearchPath(leveldesignDir, true, false);
 	std::string relativeDfnDir = dfnDir; // only add dfn if not a subdir of leveldesignDir
@@ -90,7 +90,7 @@ int main(int nNbArg, char **ppArgs)
 	UAudioMixer::buildSoundBank(exportDir);
 	UAudioMixer::buildClusteredSoundGroupSheets(exportDir);
 	UAudioMixer::buildUserVarBindingSheets(exportDir);
-	
+
 	// and that's all folks
 	return EXIT_SUCCESS;
 }

@@ -19,13 +19,13 @@
 
 #include <string>
 
-void		processAllPasses(std::string &zoneName);
+void processAllPasses(std::string &zoneName);
 /*
 void		tessellateAndMoulineZone(std::string &zoneName);
 void		processRetriever(std::string &zoneName);
 */
-void		processGlobalRetriever();
-void		updateRetrieverBank();
+void processGlobalRetriever();
+void updateRetrieverBank();
 
 #endif // NL_MOULINETTE_H
 

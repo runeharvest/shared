@@ -21,8 +21,7 @@
 #define NLSOUND_AUDIO_DECODER_MP3_H
 #include <nel/misc/types_nl.h>
 
-#if !defined(NL_OS_WINDOWS) ||                                                 \
-    (NL_COMP_VC_VERSION > 90) /* VS2008 does not have stdint.h */
+#if !defined(NL_OS_WINDOWS) || (NL_COMP_VC_VERSION > 90) /* VS2008 does not have stdint.h */
 
 #include <nel/sound/audio_decoder.h>
 
@@ -39,60 +38,61 @@ namespace NLSOUND {
  * CAudioDecoderMP3
  * Create trough IAudioDecoder, type "mp3"
  */
-class CAudioDecoderMP3 : public IAudioDecoder {
+class CAudioDecoderMP3 : public IAudioDecoder
+{
 protected:
-  NLMISC::IStream *_Stream;
+	NLMISC::IStream *_Stream;
 
-  bool _IsSupported;
-  bool _Loop;
-  bool _IsMusicEnded;
-  sint32 _StreamOffset;
-  sint32 _StreamSize;
+	bool _IsSupported;
+	bool _Loop;
+	bool _IsMusicEnded;
+	sint32 _StreamOffset;
+	sint32 _StreamSize;
 
-  drmp3 _Decoder;
+	drmp3 _Decoder;
 
-  // set to total pcm frames after getLength() is called
-  uint64 _PCMFrameCount;
+	// set to total pcm frames after getLength() is called
+	uint64 _PCMFrameCount;
 
 public:
-  CAudioDecoderMP3(NLMISC::IStream *stream, bool loop);
-  virtual ~CAudioDecoderMP3();
+	CAudioDecoderMP3(NLMISC::IStream *stream, bool loop);
+	virtual ~CAudioDecoderMP3();
 
-  inline NLMISC::IStream *getStream() { return _Stream; }
-  inline sint32 getStreamSize() { return _StreamSize; }
-  inline sint32 getStreamOffset() { return _StreamOffset; }
+	inline NLMISC::IStream *getStream() { return _Stream; }
+	inline sint32 getStreamSize() { return _StreamSize; }
+	inline sint32 getStreamOffset() { return _StreamOffset; }
 
-  // Return true if mp3 is valid
-  bool isFormatSupported() const;
+	// Return true if mp3 is valid
+	bool isFormatSupported() const;
 
-  /// Get information on a music file (only ID3v1 tag is read.
-  static bool getInfo(NLMISC::IStream *stream, std::string &artist,
-                      std::string &title, float &length);
+	/// Get information on a music file (only ID3v1 tag is read.
+	static bool getInfo(NLMISC::IStream *stream, std::string &artist,
+	    std::string &title, float &length);
 
-  /// Get how many bytes the music buffer requires for output minimum.
-  virtual uint32 getRequiredBytes();
+	/// Get how many bytes the music buffer requires for output minimum.
+	virtual uint32 getRequiredBytes();
 
-  /// Get an amount of bytes between minimum and maximum (can be lower than
-  /// minimum if at end).
-  virtual uint32 getNextBytes(uint8 *buffer, uint32 minimum, uint32 maximum);
+	/// Get an amount of bytes between minimum and maximum (can be lower than
+	/// minimum if at end).
+	virtual uint32 getNextBytes(uint8 *buffer, uint32 minimum, uint32 maximum);
 
-  /// Get the amount of channels (2 is stereo) in output.
-  virtual uint8 getChannels();
+	/// Get the amount of channels (2 is stereo) in output.
+	virtual uint8 getChannels();
 
-  /// Get the samples per second (often 44100) in output.
-  virtual uint getSamplesPerSec();
+	/// Get the samples per second (often 44100) in output.
+	virtual uint getSamplesPerSec();
 
-  /// Get the bits per sample (often 16) in output.
-  virtual uint8 getBitsPerSample();
+	/// Get the bits per sample (often 16) in output.
+	virtual uint8 getBitsPerSample();
 
-  /// Get if the music has ended playing (never true if loop).
-  virtual bool isMusicEnded();
+	/// Get if the music has ended playing (never true if loop).
+	virtual bool isMusicEnded();
 
-  /// Get the total time in seconds.
-  virtual float getLength();
+	/// Get the total time in seconds.
+	virtual float getLength();
 
-  /// Set looping
-  virtual void setLooping(bool loop);
+	/// Set looping
+	virtual void setLooping(bool loop);
 
 }; /* class CAudioDecoderMP3 */
 

@@ -45,73 +45,81 @@ namespace MAX {
  * \author Jan Boon (Kaetemi)
  * CStorageChunks
  */
-class CStorageChunks {
+class CStorageChunks
+{
 private:
-  struct CChunk {
-    // Size of the chunk header, 6 for 32 bit, 14 for 64 bit
-    uint8 HeaderSize;
-    // Where the header starts
-    sint32 OffsetBegin;
+	struct CChunk
+	{
+		// Size of the chunk header, 6 for 32 bit, 14 for 64 bit
+		uint8 HeaderSize;
+		// Where the header starts
+		sint32 OffsetBegin;
 
-    // Identifier
-    uint16 Id;
-    // Size including header size
-    uint32 Size;
+		// Identifier
+		uint16 Id;
+		// Size including header size
+		uint32 Size;
 
-    inline sint32 getSizeWithHeader() const {
-      return (sint32)(Size & 0x7FFFFFFF);
-    }
-    inline sint32 getSize() const {
-      return getSizeWithHeader() - (sint32)HeaderSize;
-    }
-    inline bool isContainer() const {
-      return (Size & 0x80000000) == 0x80000000;
-    }
-    inline sint32 endOfChunk() const {
-      return OffsetBegin + getSizeWithHeader();
-    }
-    inline sint32 getDataBegin() const {
-      return OffsetBegin + (sint32)HeaderSize;
-    }
-  };
+		inline sint32 getSizeWithHeader() const
+		{
+			return (sint32)(Size & 0x7FFFFFFF);
+		}
+		inline sint32 getSize() const
+		{
+			return getSizeWithHeader() - (sint32)HeaderSize;
+		}
+		inline bool isContainer() const
+		{
+			return (Size & 0x80000000) == 0x80000000;
+		}
+		inline sint32 endOfChunk() const
+		{
+			return OffsetBegin + getSizeWithHeader();
+		}
+		inline sint32 getDataBegin() const
+		{
+			return OffsetBegin + (sint32)HeaderSize;
+		}
+	};
 
 public:
-  CStorageChunks(NLMISC::IStream &stream, sint64 size = 0);
-  virtual ~CStorageChunks();
+	CStorageChunks(NLMISC::IStream &stream, sint64 size = 0);
+	virtual ~CStorageChunks();
 
-  // Returns true if there's another chunk, false if no more chunks in this
-  // container or if the current chunk is not a container
-  bool enterChunk();
-  // Reads and skips chunks until the one with given id is found, or writes a
-  // chunk with this id
-  bool enterChunk(uint16 id, bool container);
-  // Returns the number of skipped bytes in read more, returns chunk size
-  // including header in write mode
-  sint32 leaveChunk();
+	// Returns true if there's another chunk, false if no more chunks in this
+	// container or if the current chunk is not a container
+	bool enterChunk();
+	// Reads and skips chunks until the one with given id is found, or writes a
+	// chunk with this id
+	bool enterChunk(uint16 id, bool container);
+	// Returns the number of skipped bytes in read more, returns chunk size
+	// including header in write mode
+	sint32 leaveChunk();
 
-  inline bool is64Bit() const { return m_Is64Bit; }
-  inline void set64Bit(bool enabled = true) { m_Is64Bit = enabled; }
+	inline bool is64Bit() const { return m_Is64Bit; }
+	inline void set64Bit(bool enabled = true) { m_Is64Bit = enabled; }
 
-  inline uint16 getChunkId() const { return currentChunk()->Id; }
-  inline sint32 getChunkSize() const { return currentChunk()->getSize(); }
-  inline bool isChunkContainer() const { return currentChunk()->isContainer(); }
-  inline bool endOfChunk() const {
-    return /*m_Chunks.size() == 1 ? eof() :*/ m_Stream.getPos() >=
-           currentChunk()->endOfChunk();
-  }
+	inline uint16 getChunkId() const { return currentChunk()->Id; }
+	inline sint32 getChunkSize() const { return currentChunk()->getSize(); }
+	inline bool isChunkContainer() const { return currentChunk()->isContainer(); }
+	inline bool endOfChunk() const
+	{
+		return /*m_Chunks.size() == 1 ? eof() :*/ m_Stream.getPos() >= currentChunk()->endOfChunk();
+	}
 
-  inline NLMISC::IStream &stream() { return m_Stream; }
-
-private:
-  inline const CChunk *currentChunk() const {
-    return &m_Chunks[m_Chunks.size() - 1];
-  }
-  inline CChunk *currentChunk() { return &m_Chunks[m_Chunks.size() - 1]; }
+	inline NLMISC::IStream &stream() { return m_Stream; }
 
 private:
-  NLMISC::IStream &m_Stream;
-  std::vector<CChunk> m_Chunks;
-  bool m_Is64Bit;
+	inline const CChunk *currentChunk() const
+	{
+		return &m_Chunks[m_Chunks.size() - 1];
+	}
+	inline CChunk *currentChunk() { return &m_Chunks[m_Chunks.size() - 1]; }
+
+private:
+	NLMISC::IStream &m_Stream;
+	std::vector<CChunk> m_Chunks;
+	bool m_Is64Bit;
 
 }; /* class CStorageChunks */
 
