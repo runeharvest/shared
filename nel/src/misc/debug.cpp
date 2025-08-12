@@ -1349,20 +1349,7 @@ void createDebug(const char *logPath, bool logInFile, bool eraseLastLog)
 #if LOG_IN_FILE
 		if (logInFile)
 		{
-			string fn;
-			if (logPath != NULL)
-			{
-				LogPath = CPath::standardizePath(logPath);
-				fn += LogPath;
-			}
-			else
-			{
-				// we want the log.log to be in the current directory
-				//				char	tmpPath[1024];
-				//				fn += getcwd(tmpPath, 1024);
-				//				fn += "/";
-			}
-			fn += "log.log";
+			string fn = "logs/log.log";
 #if FINAL_VERSION
 			fd = new CFileDisplayer(fn, true, "DEFAULT_FD");
 #else // FINAL_VERSION

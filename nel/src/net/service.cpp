@@ -701,9 +701,7 @@ sint IService::main(const char *serviceShortName, const char *serviceLongName, u
 		// Init debug/log stuffs (must be first things otherwise we can't log if errors)
 		//
 
-		// get the log dir if any in the command line
-		if (haveArg('L'))
-			LogDirectory = CPath::standardizePath(getArg('L'));
+		LogDirectory = CPath::standardizePath("logs/");
 
 		changeLogDirectory(LogDirectory);
 
