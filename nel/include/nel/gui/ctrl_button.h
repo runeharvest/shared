@@ -32,73 +32,75 @@ class CEventDescriptor;
  * \author Nevrax France
  * \date 2002
  */
-class CCtrlButton : public CCtrlBaseButton {
+class CCtrlButton : public CCtrlBaseButton
+{
 public:
-  DECLARE_UI_CLASS(CCtrlButton)
+	DECLARE_UI_CLASS(CCtrlButton)
 
-  /// Constructor
-  CCtrlButton(const TCtorParam &param) : CCtrlBaseButton(param) {
-    _Scale = false;
-    _Align = 0;
-  }
+	/// Constructor
+	CCtrlButton(const TCtorParam &param)
+	    : CCtrlBaseButton(param)
+	{
+		_Scale = false;
+		_Align = 0;
+	}
 
-  void setAlignFromString(const std::string &s);
+	void setAlignFromString(const std::string &s);
 
-  std::string getProperty(const std::string &name) const;
-  void setProperty(const std::string &name, const std::string &value);
-  xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
+	std::string getProperty(const std::string &name) const;
+	void setProperty(const std::string &name, const std::string &value);
+	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
 
-  // Init part
-  virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+	// Init part
+	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
 
-  virtual void updateCoords();
+	virtual void updateCoords();
 
-  virtual uint32 getMemory() { return (uint32)(sizeof(*this) + _Id.size()); }
+	virtual uint32 getMemory() { return (uint32)(sizeof(*this) + _Id.size()); }
 
-  virtual bool getMouseOverShape(std::string & /* texName */, uint8 & /* rot */,
-                                 NLMISC::CRGBA & /* col */);
+	virtual bool getMouseOverShape(std::string & /* texName */, uint8 & /* rot */, NLMISC::CRGBA & /* col */);
 
-  // Display part
-  virtual void draw();
+	// Display part
+	virtual void draw();
 
-  void setTexture(const std::string &name);
-  void setTexturePushed(const std::string &name);
-  void setTextureOver(const std::string &name);
+	void setTexture(const std::string &name);
+	void setTexturePushed(const std::string &name);
+	void setTextureOver(const std::string &name);
 
-  void fitTexture();
+	void fitTexture();
 
-  std::string getTexture() const;
-  std::string getTexturePushed() const;
-  std::string getTextureOver() const;
+	std::string getTexture() const;
+	std::string getTexturePushed() const;
+	std::string getTextureOver() const;
 
-  bool isTextureValid() const { return _TextureIdNormal != -1; }
+	bool isTextureValid() const { return _TextureIdNormal != -1; }
 
-  // test if the texture must scale
-  bool getScale() const { return _Scale; }
-  void setScale(bool scale) { _Scale = scale; }
+	// test if the texture must scale
+	bool getScale() const { return _Scale; }
+	void setScale(bool scale) { _Scale = scale; }
 
-  /// \from CInterfaceElement
-  sint32 getMaxUsedW() const;
-  sint32 getMinUsedW() const;
+	/// \from CInterfaceElement
+	sint32 getMaxUsedW() const;
+	sint32 getMinUsedW() const;
 
-  REFLECT_EXPORT_START(CCtrlButton, CCtrlBaseButton)
-  REFLECT_STRING("texture", getTexture, setTexture);
-  REFLECT_STRING("texture_pushed", getTexturePushed, setTexturePushed);
-  REFLECT_STRING("texture_over", getTextureOver, setTextureOver);
-  REFLECT_BOOL("scale", getScale, setScale);
-  REFLECT_EXPORT_END
+	REFLECT_EXPORT_START(CCtrlButton, CCtrlBaseButton)
+	REFLECT_STRING("texture", getTexture, setTexture);
+	REFLECT_STRING("texture_pushed", getTexturePushed, setTexturePushed);
+	REFLECT_STRING("texture_over", getTextureOver, setTextureOver);
+	REFLECT_BOOL("scale", getScale, setScale);
+	REFLECT_EXPORT_END
 
 protected:
-  CViewRenderer::CTextureId _TextureIdNormal;
-  CViewRenderer::CTextureId _TextureIdPushed;
-  CViewRenderer::CTextureId _TextureIdOver;
+	CViewRenderer::CTextureId _TextureIdNormal;
+	CViewRenderer::CTextureId _TextureIdPushed;
+	CViewRenderer::CTextureId _TextureIdOver;
 
 private:
-  bool _Scale;
-  sint32 _Align; /// 1st bit - Left/Right (0/1) 2nd bit - Bottom/Top (0/1)
+	bool _Scale;
+	sint32 _Align; /// 1st bit - Left/Right (0/1) 2nd bit - Bottom/Top (0/1)
 };
 
-} // namespace NLGUI
+}
 
 #endif // RZ_CTRL_BUTTON_H
 

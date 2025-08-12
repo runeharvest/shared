@@ -1,8 +1,8 @@
 // logic_editor_exe.cpp : Defines the entry point for the application.
 //
 
-#include "../logic_editor_dll/logic_editor_interface.h"
 #include "stdafx.h"
+#include "../logic_editor_dll/logic_editor_interface.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -27,28 +27,29 @@
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-int APIENTRY _tWinMain(HINSTANCE /* hInstance */, HINSTANCE /* hPrevInstance */,
-                       LPTSTR /* lpCmdLine */, int /* nCmdShow */) {
-  // Create a logic editor
-  ILogicEditor *logicEditor = ILogicEditor::getInterface();
+int APIENTRY _tWinMain(HINSTANCE /* hInstance */, HINSTANCE /* hPrevInstance */, LPTSTR /* lpCmdLine */, int /* nCmdShow */)
+{
+	// Create a logic editor
+	ILogicEditor *logicEditor = ILogicEditor::getInterface();
 
-  if (logicEditor) {
-    // test the default file creation
-    // logicEditor->createDefaultFile();
+	if (logicEditor)
+	{
+		// test the default file creation
+		// logicEditor->createDefaultFile();
 
-    // Init ui
-    logicEditor->initUI();
-    // logicEditor->initUILight(0,0,800,800);
+		// Init ui
+		logicEditor->initUI();
+		// logicEditor->initUILight(0,0,800,800);
 
-    // Go
-    logicEditor->go();
+		// Go
+		logicEditor->go();
 
-    // Release ui
-    logicEditor->releaseUI();
+		// Release ui
+		logicEditor->releaseUI();
 
-    // Delete the pointer
-    ILogicEditor::releaseInterface(logicEditor);
-  }
+		// Delete the pointer
+		ILogicEditor::releaseInterface(logicEditor);
+	}
 
-  return 0;
+	return 0;
 }

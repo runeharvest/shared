@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "modifier.h"
 #include <nel/misc/types_nl.h>
+#include "modifier.h"
 
 // STL includes
 
@@ -42,9 +42,14 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CModifier::CModifier(CScene *scene) : CBaseObject(scene) {}
+CModifier::CModifier(CScene *scene)
+    : CBaseObject(scene)
+{
+}
 
-CModifier::~CModifier() {}
+CModifier::~CModifier()
+{
+}
 
 } /* namespace BUILTIN */
 } /* namespace MAX */

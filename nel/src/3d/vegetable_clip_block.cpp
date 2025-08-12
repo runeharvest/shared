@@ -25,52 +25,63 @@
 namespace NL3D {
 
 // ***************************************************************************
-CVegetableClipBlock::CVegetableClipBlock() {
-  _Empty = true;
-  _RenderNext = NULL;
-  _NumIgs = 0;
+CVegetableClipBlock::CVegetableClipBlock()
+{
+	_Empty = true;
+	_RenderNext = NULL;
+	_NumIgs = 0;
 }
 
 // ***************************************************************************
-void CVegetableClipBlock::extendBBoxOnly(const CVector &vec) {
-  if (!_BBox.include(vec)) {
-    _BBox.extend(vec);
-  }
+void CVegetableClipBlock::extendBBoxOnly(const CVector &vec)
+{
+	if (!_BBox.include(vec))
+	{
+		_BBox.extend(vec);
+	}
 }
 
 // ***************************************************************************
-void CVegetableClipBlock::updateSphere() {
-  _BSphere.Center = _BBox.getCenter();
-  _BSphere.Radius = _BBox.getRadius();
+void CVegetableClipBlock::updateSphere()
+{
+	_BSphere.Center = _BBox.getCenter();
+	_BSphere.Radius = _BBox.getRadius();
 }
 
 // ***************************************************************************
-void CVegetableClipBlock::extendSphere(const CVector &vec) {
-  if (_Empty) {
-    _Empty = false;
-    _BBox.setCenter(vec);
-    _BBox.setHalfSize(CVector::Null);
-    _BSphere.Center = vec;
-    _BSphere.Radius = 0;
-  } else {
-    extendBBoxOnly(vec);
-    updateSphere();
-  }
+void CVegetableClipBlock::extendSphere(const CVector &vec)
+{
+	if (_Empty)
+	{
+		_Empty = false;
+		_BBox.setCenter(vec);
+		_BBox.setHalfSize(CVector::Null);
+		_BSphere.Center = vec;
+		_BSphere.Radius = 0;
+	}
+	else
+	{
+		extendBBoxOnly(vec);
+		updateSphere();
+	}
 }
 
 // ***************************************************************************
-bool CVegetableClipBlock::clip(const std::vector<CPlane> &pyramid) {
-  if (_Empty)
-    return false;
+bool CVegetableClipBlock::clip(const std::vector<CPlane> &pyramid)
+{
+	if (_Empty)
+		return false;
 
-  for (uint i = 0; i < pyramid.size(); i++) {
-    // If entirely out.
-    if (!_BSphere.clipBack(pyramid[i])) {
-      return false;
-    }
-  }
+	for (uint i = 0; i < pyramid.size(); i++)
+	{
+		// If entirely out.
+		if (!_BSphere.clipBack(pyramid[i]))
+		{
+			return false;
+		}
+	}
 
-  return true;
+	return true;
 }
 
-} // namespace NL3D
+} // NL3D

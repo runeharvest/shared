@@ -17,8 +17,8 @@
 #ifndef RY_CONSTANTS_H
 #define RY_CONSTANTS_H
 
-#include "nel/misc/entity_id.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/entity_id.h"
 
 // define for xp gains calculation
 #define MAX_DELTA_LVL 50
@@ -39,12 +39,11 @@ const sint32 MaxTalkingOutpostBuildingDistSquare = 256; // 16 m
 const sint32 MaxAnimalCommandDistSquare = 900; // 30 m
 
 // raw material source bar speeds
-const float DeltaMoveBarPerSec = 60.0f;   // 60 units per second
+const float DeltaMoveBarPerSec = 60.0f; // 60 units per second
 const float DeltaResetBarPerSec = 130.0f; // 130 units per second
-const float DeltaTimeBarPerSec = 5.0f;    // 5 units per second
+const float DeltaTimeBarPerSec = 5.0f; // 5 units per second
 
-// ring editor/animator dynamic channel offset (most significant bit of short id
-// set to 1)
+// ring editor/animator dynamic channel offset (most significant bit of short id set to 1)
 const uint64 RingDynChanOffset = UINT64_CONSTANT(0x8000000000);
 
 #endif

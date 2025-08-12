@@ -34,45 +34,43 @@ class CMutex;
  * \author Nevrax France
  * \date 2000
  */
-class IDisplayer {
+class IDisplayer
+{
 public:
-  /// Constructor
-  IDisplayer(const char *displayerName = "");
+	/// Constructor
+	IDisplayer(const char *displayerName = "");
 
-  /// Destructor
-  virtual ~IDisplayer();
+	/// Destructor
+	virtual ~IDisplayer();
 
-  /// Display the string where it does.
-  void display(const CLog::TDisplayInfo &args, const char *message);
+	/// Display the string where it does.
+	void display(const CLog::TDisplayInfo &args, const char *message);
 
-  /// This is the identifier for a displayer, it is used to find or remove a
-  /// displayer
-  std::string DisplayerName;
+	/// This is the identifier for a displayer, it is used to find or remove a displayer
+	std::string DisplayerName;
 
 protected:
-  /// Method to implement in the derived class
-  virtual void doDisplay(const CLog::TDisplayInfo &args,
-                         const char *message) = 0;
+	/// Method to implement in the derived class
+	virtual void doDisplay(const CLog::TDisplayInfo &args, const char *message) = 0;
 
-  // Return the header string with date (for the first line of the log)
-  static const char *HeaderString();
+	// Return the header string with date (for the first line of the log)
+	static const char *HeaderString();
 
 public:
-  /// Convert log type to string
-  static const char *logTypeToString(CLog::TLogType logType,
-                                     bool longFormat = false);
+	/// Convert log type to string
+	static const char *logTypeToString(CLog::TLogType logType, bool longFormat = false);
 
-  /// Convert the current date to human string
-  static const char *dateToHumanString();
+	/// Convert the current date to human string
+	static const char *dateToHumanString();
 
-  /// Convert date to "2000/01/14 10:05:17" string
-  static const char *dateToHumanString(time_t date);
+	/// Convert date to "2000/01/14 10:05:17" string
+	static const char *dateToHumanString(time_t date);
 
-  /// Convert date to "784551148" string (time in second from 1975)
-  static const char *dateToComputerString(time_t date);
+	/// Convert date to "784551148" string (time in second from 1975)
+	static const char *dateToComputerString(time_t date);
 
 private:
-  CMutex *_Mutex;
+	CMutex *_Mutex;
 };
 
 /**
@@ -82,13 +80,17 @@ private:
  * \author Nevrax France
  * \date 2000
  */
-class CStdDisplayer : virtual public IDisplayer {
+class CStdDisplayer : virtual public IDisplayer
+{
 public:
-  CStdDisplayer(const char *displayerName = "") : IDisplayer(displayerName) {}
+	CStdDisplayer(const char *displayerName = "")
+	    : IDisplayer(displayerName)
+	{
+	}
 
 protected:
-  /// Display the string to stdout and OutputDebugString on Windows
-  virtual void doDisplay(const CLog::TDisplayInfo &args, const char *message);
+	/// Display the string to stdout and OutputDebugString on Windows
+	virtual void doDisplay(const CLog::TDisplayInfo &args, const char *message);
 };
 
 /**
@@ -98,33 +100,33 @@ protected:
  * \author Nevrax France
  * \date 2000
  */
-class CFileDisplayer : virtual public IDisplayer {
+class CFileDisplayer : virtual public IDisplayer
+{
 public:
-  /// Constructor
-  CFileDisplayer(const std::string &filename, bool eraseLastLog = false,
-                 const char *displayerName = "", bool raw = false);
+	/// Constructor
+	CFileDisplayer(const std::string &filename, bool eraseLastLog = false, const char *displayerName = "", bool raw = false);
 
-  CFileDisplayer();
+	CFileDisplayer();
 
-  ~CFileDisplayer();
+	~CFileDisplayer();
 
-  /// Set Parameter of the displayer if not set at the ctor time
-  void setParam(const std::string &filename, bool eraseLastLog = false);
+	/// Set Parameter of the displayer if not set at the ctor time
+	void setParam(const std::string &filename, bool eraseLastLog = false);
 
 protected:
-  /// Put the string into the file.
-  virtual void doDisplay(const CLog::TDisplayInfo &args, const char *message);
+	/// Put the string into the file.
+	virtual void doDisplay(const CLog::TDisplayInfo &args, const char *message);
 
 private:
-  std::string _FileName;
+	std::string _FileName;
 
-  FILE *_FilePointer;
+	FILE *_FilePointer;
 
-  bool _NeedHeader;
+	bool _NeedHeader;
 
-  uint _LastLogSizeChecked;
+	uint _LastLogSizeChecked;
 
-  bool _Raw;
+	bool _Raw;
 };
 
 /**
@@ -134,19 +136,23 @@ private:
  * \author Nevrax France
  * \date 2000
  */
-class CMsgBoxDisplayer : virtual public IDisplayer {
+class CMsgBoxDisplayer : virtual public IDisplayer
+{
 public:
-  CMsgBoxDisplayer(const char *displayerName = "")
-      : IDisplayer(displayerName), IgnoreNextTime(false) {}
+	CMsgBoxDisplayer(const char *displayerName = "")
+	    : IDisplayer(displayerName)
+	    , IgnoreNextTime(false)
+	{
+	}
 
-  bool IgnoreNextTime;
+	bool IgnoreNextTime;
 
 protected:
-  /// Put the string into the file.
-  virtual void doDisplay(const CLog::TDisplayInfo &args, const char *message);
+	/// Put the string into the file.
+	virtual void doDisplay(const CLog::TDisplayInfo &args, const char *message);
 };
 
-} // namespace NLMISC
+}
 
 #endif // NL_DISPLAYER_H
 

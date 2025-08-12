@@ -14,15 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "type_skill_mod.h"
 #include "stdpch.h"
+#include "type_skill_mod.h"
 
 #define PERSISTENT_TOKEN_FAMILY RyzomTokenFamily
 
 // ----------------------------------------------------------------------------
-// If the following macro is defined then the macros such as PERSISTENT_CLASS,
-// PERSISTENT_DATA, PERSISTENT_PRE_STORE, etc are undefined after inclusion of
-// persistent_data_template.h
+// If the following macro is defined then the macros such as PERSISTENT_CLASS, PERSISTENT_DATA, PERSISTENT_PRE_STORE, etc
+// are undefined after inclusion of persistent_data_template.h
 #define PERSISTENT_MACROS_AUTO_UNDEF
 
 //-----------------------------------------------------------------------------
@@ -30,14 +29,15 @@
 //-----------------------------------------------------------------------------
 #define PERSISTENT_CLASS CTypeSkillMod
 
-#define PERSISTENT_PRE_STORE H_AUTO(CTypeSkillModStore);
+#define PERSISTENT_PRE_STORE \
+	H_AUTO(CTypeSkillModStore);
 
-#define PERSISTENT_PRE_APPLY H_AUTO(CTypeSkillModApply);
+#define PERSISTENT_PRE_APPLY \
+	H_AUTO(CTypeSkillModApply);
 
-#define PERSISTENT_DATA                                                        \
-  PROP(sint32, Modifier)                                                       \
-  PROP2(Type, std::string, EGSPD::CClassificationType::toString(Type),         \
-        Type = EGSPD::CClassificationType::fromString(val))
+#define PERSISTENT_DATA    \
+	PROP(sint32, Modifier) \
+	PROP2(Type, std::string, EGSPD::CClassificationType::toString(Type), Type = EGSPD::CClassificationType::fromString(val))
 
 // #pragma message( PERSISTENT_GENERATION_MESSAGE )
 

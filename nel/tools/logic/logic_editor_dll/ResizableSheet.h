@@ -19,75 +19,73 @@
 // ResizableSheet.h : header file
 //
 
-class CResizableSheet : public CPropertySheet {
-  DECLARE_DYNAMIC(CResizableSheet)
+class CResizableSheet : public CPropertySheet
+{
+	DECLARE_DYNAMIC(CResizableSheet)
 
-  // Construction
+	// Construction
 public:
-  CResizableSheet();
-  CResizableSheet(UINT nIDCaption, CWnd *pParentWnd = NULL,
-                  UINT iSelectPage = 0);
-  CResizableSheet(LPCTSTR pszCaption, CWnd *pParentWnd = NULL,
-                  UINT iSelectPage = 0);
+	CResizableSheet();
+	CResizableSheet(UINT nIDCaption, CWnd *pParentWnd = NULL, UINT iSelectPage = 0);
+	CResizableSheet(LPCTSTR pszCaption, CWnd *pParentWnd = NULL, UINT iSelectPage = 0);
 
-  // Attributes
+	// Attributes
 private:
-  // flags
-  BOOL m_bEnableSaveRestore;
-  BOOL m_bSavePage;
+	// flags
+	BOOL m_bEnableSaveRestore;
+	BOOL m_bSavePage;
 
-  // internal status
-  CString m_sSection; // section name and
-  CString m_sEntry;   // entry for save/restore
+	// internal status
+	CString m_sSection; // section name and
+	CString m_sEntry; // entry for save/restore
 
-  BOOL m_bInitDone; // if all internal vars initialized
+	BOOL m_bInitDone; // if all internal vars initialized
 
-  // layout variables
-  SIZE m_szLayoutPage;
-  SIZE m_szLayoutTabLine;   // tab control or wizard line
-  SIZE m_szLayoutButton[7]; // each index corresponds to a possible button
+	// layout variables
+	SIZE m_szLayoutPage;
+	SIZE m_szLayoutTabLine; // tab control or wizard line
+	SIZE m_szLayoutButton[7]; // each index corresponds to a possible button
 
-  // Operations
+	// Operations
 public:
-  // Overrides
-  // ClassWizard generated virtual function overrides
-  //{{AFX_VIRTUAL(CResizableSheet)
+	// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CResizableSheet)
 public:
-  virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog();
 
 protected:
-  //}}AFX_VIRTUAL
+	//}}AFX_VIRTUAL
 
-  // Implementation
+	// Implementation
 public:
-  virtual ~CResizableSheet();
+	virtual ~CResizableSheet();
 
-  // used internally
+	// used internally
 private:
-  void PresetLayout();
-  void Construct();
-  void LoadWindowRect();
-  void SaveWindowRect();
-  void ArrangeLayout();
+	void PresetLayout();
+	void Construct();
+	void LoadWindowRect();
+	void SaveWindowRect();
+	void ArrangeLayout();
 
-  // callable from derived classes
+	// callable from derived classes
 protected:
-  void SetMaximizedRect(const CRect &rc); // set window rect when maximized
-  void ResetMaximizedRect();              // reset to default maximized rect
-  void EnableSaveRestore(
-      LPCTSTR pszSection, LPCTSTR pszEntry,
-      BOOL bWithPage = FALSE); // section and entry in app's profile
-  int GetMinWidth();           // minimum width to display all buttons
+	void SetMaximizedRect(const CRect &rc); // set window rect when maximized
+	void ResetMaximizedRect(); // reset to default maximized rect
+	void EnableSaveRestore(LPCTSTR pszSection,
+	    LPCTSTR pszEntry, BOOL bWithPage = FALSE); // section and entry in app's profile
+	int GetMinWidth(); // minimum width to display all buttons
 
-  // Generated message map functions
+	// Generated message map functions
 protected:
-  //{{AFX_MSG(CResizableSheet)
-  afx_msg void OnSize(UINT nType, int cx, int cy);
-  afx_msg void OnDestroy();
-  afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-  //}}AFX_MSG
-  afx_msg void OnPageChanged();
-  DECLARE_MESSAGE_MAP()
+	//{{AFX_MSG(CResizableSheet)
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnDestroy();
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	//}}AFX_MSG
+	afx_msg void OnPageChanged();
+	DECLARE_MESSAGE_MAP()
 };
 
 /////////////////////////////////////////////////////////////////////////////

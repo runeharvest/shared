@@ -17,8 +17,8 @@
 #ifndef NL_VEGETABLE_BLEND_LAYER_MODEL_H
 #define NL_VEGETABLE_BLEND_LAYER_MODEL_H
 
-#include "nel/3d/transform.h"
 #include "nel/misc/types_nl.h"
+#include "nel/3d/transform.h"
 
 namespace NL3D {
 
@@ -28,62 +28,63 @@ class IDriver;
 
 // ***************************************************************************
 // ClassIds.
-const NLMISC::CClassId VegetableBlendLayerModelId =
-    NLMISC::CClassId(0x77375163, 0x2fca1003);
+const NLMISC::CClassId VegetableBlendLayerModelId = NLMISC::CClassId(0x77375163, 0x2fca1003);
 
 // ***************************************************************************
 /**
- * A CVegetableBlendLayerModel does not have to be created by user. It is an
- *internal class of CVegetableManager. It is used to draw AlphaBlend ZSort
- *rdrPass vegetables. Thoses vegetables are rendered in separate Z ordered
- *	layer, so transparency with other transparents objects is well performed
- *(as best as it can).
+ * A CVegetableBlendLayerModel does not have to be created by user. It is an internal class of CVegetableManager.
+ *	It is used to draw AlphaBlend ZSort rdrPass vegetables. Thoses vegetables are rendered in separate Z ordered
+ *	layer, so transparency with other transparents objects is well performed (as best as it can).
  *
  * \author Lionel Berenguier
  * \author Nevrax France
  * \date 2001
  */
-class CVegetableBlendLayerModel : public CTransform {
+class CVegetableBlendLayerModel : public CTransform
+{
 public:
-  /// Call at the beginning of the program, to register the model
-  static void registerBasic();
+	/// Call at the beginning of the program, to register the model
+	static void registerBasic();
 
 public:
-  /** The vegetableManager which create us, and will delete us.
-   */
-  CVegetableManager *VegetableManager;
+	/** The vegetableManager which create us, and will delete us.
+	 */
+	CVegetableManager *VegetableManager;
 
-  /** Public (for vegetableManager only!!) list of vegetable SortBlocks to
-   *render. this is a vector<> because not so much reallocation, and it is just
-   *an array of ptrs, so very little memory load.
-   */
-  std::vector<CVegetableSortBlock *> SortBlocks;
+	/** Public (for vegetableManager only!!) list of vegetable SortBlocks to render.
+	 *	this is a vector<> because not so much reallocation, and it is just an array of ptrs, so
+	 *	very little memory load.
+	 */
+	std::vector<CVegetableSortBlock *> SortBlocks;
 
-  /** Ugly but it works: setup directly both the worldMatrix and the
-   *localMatrix. NB: LayerModels are always created in the root.
-   */
-  void setWorldPos(const CVector &pos);
+	/** Ugly but it works: setup directly both the worldMatrix and the localMatrix.
+	 *	NB: LayerModels are always created in the root.
+	 */
+	void setWorldPos(const CVector &pos);
 
-  /// \name CTransform traverse specialisation
-  // @{
-  virtual bool clip() { return true; }
-  virtual void traverseRender();
-  // @}
+	/// \name CTransform traverse specialisation
+	// @{
+	virtual bool clip()
+	{
+		return true;
+	}
+	virtual void traverseRender();
+	// @}
 
 protected:
-  /// Constructor
-  CVegetableBlendLayerModel();
-  /// Destructor
-  virtual ~CVegetableBlendLayerModel() {}
+	/// Constructor
+	CVegetableBlendLayerModel();
+	/// Destructor
+	virtual ~CVegetableBlendLayerModel() { }
 
 private:
-  static CTransform *creator() { return new CVegetableBlendLayerModel(); }
+	static CTransform *creator() { return new CVegetableBlendLayerModel(); }
 
-  /// render method
-  void render(IDriver *driver);
+	/// render method
+	void render(IDriver *driver);
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_VEGETABLE_BLEND_LAYER_MODEL_H
 

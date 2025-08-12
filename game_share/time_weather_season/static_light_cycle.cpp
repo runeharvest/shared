@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "static_light_cycle.h"
-#include "nel/georges/u_form.h"
-#include "nel/georges/u_form_elm.h"
 #include "stdpch.h"
+#include "static_light_cycle.h"
+#include "nel/georges/u_form_elm.h"
+#include "nel/georges/u_form.h"
 
 using namespace NLGEORGES;
 using namespace NLMISC;
@@ -26,68 +26,60 @@ using namespace std;
 //-----------------------------------------------
 // CStaticLightCycle readGeorges
 //-----------------------------------------------
-void CStaticLightCycle::readGeorges(
-    const NLMISC::CSmartPtr<NLGEORGES::UForm> &form,
-    const NLMISC::CSheetId &sheetId) {
-  if (form) {
-    UFormElm &root = form->getRootNode();
+void CStaticLightCycle::readGeorges(const NLMISC::CSmartPtr<NLGEORGES::UForm> &form, const NLMISC::CSheetId &sheetId)
+{
+	if (form)
+	{
+		UFormElm &root = form->getRootNode();
 
-    vector<string> season;
-    season.push_back(string("Spring"));
-    season.push_back(string("Summer"));
-    season.push_back(string("Autumn"));
-    season.push_back(string("Winter"));
+		vector<string> season;
+		season.push_back(string("Spring"));
+		season.push_back(string("Summer"));
+		season.push_back(string("Autumn"));
+		season.push_back(string("Winter"));
 
-    uint NbSeasons = 4;
-    LightCycles.resize(NbSeasons);
+		uint NbSeasons = 4;
+		LightCycles.resize(NbSeasons);
 
-    for (uint i = 0; i < NbSeasons; ++i) {
-      UFormElm *SeasonElt = NULL;
-      if (!(root.getNodeByName(&SeasonElt, season[i]) && SeasonElt)) {
-        nlwarning("<CStaticLightCycle readGeorges> can get node %s in sheet %s",
-                  season[i].c_str(), sheetId.toString().c_str());
-      } else {
-        // Day hour
-        if (!SeasonElt->getValueByName(LightCycles[i].DayHour, "DayHour")) {
-          nlwarning("<CStaticLightCycle readGeorges> can get value DayHour in "
-                    "node %d on SeasonElt structure in sheet %s",
-                    i, sheetId.toString().c_str());
-        }
+		for (uint i = 0; i < NbSeasons; ++i)
+		{
+			UFormElm *SeasonElt = NULL;
+			if (!(root.getNodeByName(&SeasonElt, season[i]) && SeasonElt))
+			{
+				nlwarning("<CStaticLightCycle readGeorges> can get node %s in sheet %s", season[i].c_str(), sheetId.toString().c_str());
+			}
+			else
+			{
+				// Day hour
+				if (!SeasonElt->getValueByName(LightCycles[i].DayHour, "DayHour"))
+				{
+					nlwarning("<CStaticLightCycle readGeorges> can get value DayHour in node %d on SeasonElt structure in sheet %s", i, sheetId.toString().c_str());
+				}
 
-        // Day to dusk hour
-        if (!SeasonElt->getValueByName(LightCycles[i].DayToDuskHour,
-                                       "DayToDuskHour")) {
-          nlwarning(
-              "<CStaticLightCycle readGeorges> can get value DayToDuskHour in "
-              "node %d on SeasonElt structure in sheet %s",
-              i, sheetId.toString().c_str());
-        }
+				// Day to dusk hour
+				if (!SeasonElt->getValueByName(LightCycles[i].DayToDuskHour, "DayToDuskHour"))
+				{
+					nlwarning("<CStaticLightCycle readGeorges> can get value DayToDuskHour in node %d on SeasonElt structure in sheet %s", i, sheetId.toString().c_str());
+				}
 
-        // Dusk to night hour
-        if (!SeasonElt->getValueByName(LightCycles[i].DuskToNightHour,
-                                       "DuskToNightHour")) {
-          nlwarning(
-              "<CStaticLightCycle readGeorges> can get value DuskToNightHour "
-              "in node %d on SeasonElt structure in sheet %s",
-              i, sheetId.toString().c_str());
-        }
+				// Dusk to night hour
+				if (!SeasonElt->getValueByName(LightCycles[i].DuskToNightHour, "DuskToNightHour"))
+				{
+					nlwarning("<CStaticLightCycle readGeorges> can get value DuskToNightHour in node %d on SeasonElt structure in sheet %s", i, sheetId.toString().c_str());
+				}
 
-        // Night hour
-        if (!SeasonElt->getValueByName(LightCycles[i].NightHour, "NightHour")) {
-          nlwarning("<CStaticLightCycle readGeorges> can get value NightHour "
-                    "in node %d on SeasonElt structure in sheet %s",
-                    i, sheetId.toString().c_str());
-        }
+				// Night hour
+				if (!SeasonElt->getValueByName(LightCycles[i].NightHour, "NightHour"))
+				{
+					nlwarning("<CStaticLightCycle readGeorges> can get value NightHour in node %d on SeasonElt structure in sheet %s", i, sheetId.toString().c_str());
+				}
 
-        // Night to day hour
-        if (!SeasonElt->getValueByName(LightCycles[i].NightToDayHour,
-                                       "NightToDayHour")) {
-          nlwarning(
-              "<CStaticLightCycle readGeorges> can get value NightToDayHour in "
-              "node %d on SeasonElt structure in sheet %s",
-              i, sheetId.toString().c_str());
-        }
-      }
-    }
-  }
+				// Night to day hour
+				if (!SeasonElt->getValueByName(LightCycles[i].NightToDayHour, "NightToDayHour"))
+				{
+					nlwarning("<CStaticLightCycle readGeorges> can get value NightToDayHour in node %d on SeasonElt structure in sheet %s", i, sheetId.toString().c_str());
+				}
+			}
+		}
+	}
 } // CStaticLightCycle readGeorges

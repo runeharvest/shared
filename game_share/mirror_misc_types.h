@@ -29,36 +29,44 @@ typedef std::list<CMirroredDataSet *> TDataSetList;
 /**
  *
  */
-struct TEntitiesCreatedInEntityType {
-  TEntitiesCreatedInEntityType(sint32 maxnb) : MaxNb(maxnb), CurrentNb(0) {}
+struct TEntitiesCreatedInEntityType
+{
+	TEntitiesCreatedInEntityType(sint32 maxnb)
+	    : MaxNb(maxnb)
+	    , CurrentNb(0)
+	{
+	}
 
-  sint32 MaxNb;
-  sint32 CurrentNb;
-  TDataSetList DataSetList;
+	sint32 MaxNb;
+	sint32 CurrentNb;
+	TDataSetList DataSetList;
 };
 
-// typedef CHashMap< uint8, TEntitiesCreatedInEntityType, std::hash<uint> >
-// TEntityTypesOwned;
+// typedef CHashMap< uint8, TEntitiesCreatedInEntityType, std::hash<uint> > TEntityTypesOwned;
 typedef CHashMap<uint8, TEntitiesCreatedInEntityType> TEntityTypesOwned;
 #define GET_ENTITY_TYPE_OWNED(it) ((*it).second)
 
 /*
  * Dataset map
  */
-class TNDataSets : public CHashMap<std::string, CMirroredDataSet *> {
+class TNDataSets : public CHashMap<std::string, CMirroredDataSet *>
+{
 public:
-  /// Operator [] which does not create an object when the key is not found, but
-  /// throws EMirror()
-  CMirroredDataSet &operator[](const std::string &key) {
-    iterator ids = find(key);
-    if (ids != end()) {
-      return GET_NDATASET(ids);
-    } else {
-      throw EMirror();
-    }
-  }
+	/// Operator [] which does not create an object when the key is not found, but throws EMirror()
+	CMirroredDataSet &operator[](const std::string &key)
+	{
+		iterator ids = find(key);
+		if (ids != end())
+		{
+			return GET_NDATASET(ids);
+		}
+		else
+		{
+			throw EMirror();
+		}
+	}
 
-  static CMirroredDataSet *InvalidDataSet;
+	static CMirroredDataSet *InvalidDataSet;
 };
 
 /*

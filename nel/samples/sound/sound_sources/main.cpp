@@ -24,8 +24,8 @@
  */
 
 #include "nel/misc/debug.h"
-#include "nel/misc/path.h"
 #include "nel/misc/time_nl.h"
+#include "nel/misc/path.h"
 #include "nel/misc/vector.h"
 using namespace NLMISC;
 
@@ -45,97 +45,100 @@ UAudioMixer *AudioMixer = NULL;
 /*
  * Initialization
  */
-void Init() {
-  try {
+void Init()
+{
+	try
+	{
 
-    CPath::addSearchPath(NL_SOUND_DATA "/data", true, false);
+		CPath::addSearchPath(NL_SOUND_DATA "/data", true, false);
 
-    /*
-     * 1. Create the audio mixer object and init it.
-     * If the sound driver cannot be loaded, an exception is thrown.
-     */
-    AudioMixer = UAudioMixer::createAudioMixer();
+		/*
+		 * 1. Create the audio mixer object and init it.
+		 * If the sound driver cannot be loaded, an exception is thrown.
+		 */
+		AudioMixer = UAudioMixer::createAudioMixer();
 
-    // Set the sample path before init, this allow the mixer to build the sample
-    // banks
-    AudioMixer->setSamplePath("data/samplebank");
-    // Packed sheet option, this mean we want packed sheet generated in 'data'
-    // folder
-    AudioMixer->setPackedSheetOption("data", true);
+		// Set the sample path before init, this allow the mixer to build the sample banks
+		AudioMixer->setSamplePath("data/samplebank");
+		// Packed sheet option, this mean we want packed sheet generated in 'data' folder
+		AudioMixer->setPackedSheetOption("data", true);
 
-    printf("Select NLSOUND Driver:\n");
-    std::vector<UAudioMixer::TDriverInfo> drivers = UAudioMixer::getDrivers();
-    if (drivers.size() == 0)
-      nlerror("No sound drivers available");
+		printf("Select NLSOUND Driver:\n");
+		std::vector<UAudioMixer::TDriverInfo> drivers = UAudioMixer::getDrivers();
+		if (drivers.size() == 0)
+			nlerror("No sound drivers available");
 
-    for (uint i = 0; i < drivers.size(); ++i)
-      printf(" [%d] %s\n", i, drivers[i].Name);
+		for (uint i = 0; i < drivers.size(); ++i)
+			printf(" [%d] %s\n", i, drivers[i].Name);
 
-    printf("> ");
-    int selection = getchar() - '0';
-    printf("\n");
+		printf("> ");
+		int selection = getchar() - '0';
+		printf("\n");
 
-    UAudioMixer::TDriver selectedDriver = UAudioMixer::DriverAuto;
-    if (selection >= 0 && selection < drivers.size())
-      selectedDriver = drivers[selection].ID;
+		UAudioMixer::TDriver selectedDriver = UAudioMixer::DriverAuto;
+		if (selection >= 0 && selection < drivers.size())
+			selectedDriver = drivers[selection].ID;
 
-    // init with 32 tracks, EAX enabled, no ADPCM, and activate automatic sample
-    // bank loading
-    AudioMixer->init(32, true, false, NULL, true, selectedDriver);
+		// init with 32 tracks, EAX enabled, no ADPCM, and activate automatic sample bank loading
+		AudioMixer->init(32, true, false, NULL, true, selectedDriver);
 
-    /*
-     * 2. Initialize listener's position and orientation (in NeL coordinate
-     * system).
-     */
-    CVector initpos(0.0f, 0.0f, 0.0f);
-    CVector frontvec(0.0f, 1.0f, 0.0f);
-    CVector upvec(0.0f, 0.0f, 1.0f);
-    AudioMixer->getListener()->setPos(initpos);
-    AudioMixer->getListener()->setOrientation(frontvec, upvec);
-  } catch (const Exception &e) {
-    nlerror("Error: %s", e.what());
-  }
+		/*
+		 * 2. Initialize listener's position and orientation (in NeL coordinate system).
+		 */
+		CVector initpos(0.0f, 0.0f, 0.0f);
+		CVector frontvec(0.0f, 1.0f, 0.0f);
+		CVector upvec(0.0f, 0.0f, 1.0f);
+		AudioMixer->getListener()->setPos(initpos);
+		AudioMixer->getListener()->setOrientation(frontvec, upvec);
+	}
+	catch (const Exception &e)
+	{
+		nlerror("Error: %s", e.what());
+	}
 }
 
 /*
  * Adding a source
  */
-USource *OnAddSource(const char *name, float x, float y, float z) {
-  /*
-   * Create a source with sound 'name', and set some of its initial properties,
-   * if successful
-   */
-  USource *source = AudioMixer->createSource(CStringMapper::map(name));
-  if (source != NULL) {
-    source->setPos(CVector(x, y, z));
+USource *OnAddSource(const char *name, float x, float y, float z)
+{
+	/*
+	 * Create a source with sound 'name', and set some of its initial properties, if successful
+	 */
+	USource *source = AudioMixer->createSource(CStringMapper::map(name));
+	if (source != NULL)
+	{
+		source->setPos(CVector(x, y, z));
 
-    /* The initial gain, pitch and looping state are stored
-     * in the "source sounds file".
-     */
-    source->setLooping(true);
-    source->play(); // start playing immediately
-  } else {
-    nlwarning("Sound '%s' not found", name);
-  }
-  return source;
+		/* The initial gain, pitch and looping state are stored
+		 * in the "source sounds file".
+		 */
+		source->setLooping(true);
+		source->play(); // start playing immediately
+	}
+	else
+	{
+		nlwarning("Sound '%s' not found", name);
+	}
+	return source;
 }
 
 /*
  * When moving the listener, wait for a short delay
  */
-void OnMove(const CVector &listenerpos) {
-  // Move forward
-  AudioMixer->getListener()->setPos(listenerpos);
+void OnMove(const CVector &listenerpos)
+{
+	// Move forward
+	AudioMixer->getListener()->setPos(listenerpos);
 
-  // Wait 20 ms
-  TTime time = CTime::getLocalTime();
-  while (CTime::getLocalTime() < time + 20)
-    ;
+	// Wait 20 ms
+	TTime time = CTime::getLocalTime();
+	while (CTime::getLocalTime() < time + 20);
 
-  /* If we used spawned sources or "envsounds" or if we had
-   * a large number of sources, we should call:
-   * AudioMixer->update();
-   */
+	/* If we used spawned sources or "envsounds" or if we had
+	 * a large number of sources, we should call:
+	 * AudioMixer->update();
+	 */
 }
 
 /*
@@ -150,67 +153,68 @@ void OnMove(const CVector &listenerpos) {
  *       -----x (right)
  * \endverbatim
  */
-int main() {
-  CApplicationContext *appContext =
-      new CApplicationContext(); // crash at end if on stack ...
+int main()
+{
+	CApplicationContext *appContext = new CApplicationContext(); // crash at end if on stack ...
 
-  // Initialization
-  Init();
+	// Initialization
+	Init();
 
-  // First step: we create two sources
-  printf("Press ENTER to start playing the two sources\n");
-  printf("One is 20 meters ahead, on the right\n");
-  printf("The other is 5 meters ahead, on the left\n");
-  getchar();
-  USource *src1 = OnAddSource("beep", 1.0f, 20.0f,
-                              0.0f); // Beep on the right, 20 meters ahead
-  USource *src2 = OnAddSource("tuut", -2.0f, 5.0f,
-                              0.0f); // Tuut on the left, 5 meters ahead
+	// First step: we create two sources
+	printf("Press ENTER to start playing the two sources\n");
+	printf("One is 20 meters ahead, on the right\n");
+	printf("The other is 5 meters ahead, on the left\n");
+	getchar();
+	USource *src1 = OnAddSource("beep", 1.0f, 20.0f, 0.0f); // Beep on the right, 20 meters ahead
+	USource *src2 = OnAddSource("tuut", -2.0f, 5.0f, 0.0f); // Tuut on the left, 5 meters ahead
 
-  // Second step: we will move the listener ahead
-  printf("Press ENTER again to start moving the listener\n");
-  getchar();
+	// Second step: we will move the listener ahead
+	printf("Press ENTER again to start moving the listener\n");
+	getchar();
 
-  // Listener orientation is constant in this example (see initialization)
+	// Listener orientation is constant in this example (see initialization)
 
-  // Move forward, then backward, twice
-  CVector listenervel;
-  CVector listenerpos(0.0f, 0.0f, 0.0f);
-  for (uint i = 0; i != 2; i++) {
-    printf("%u of 2\n", i + 1);
+	// Move forward, then backward, twice
+	CVector listenervel;
+	CVector listenerpos(0.0f, 0.0f, 0.0f);
+	for (uint i = 0; i != 2; i++)
+	{
+		printf("%u of 2\n", i + 1);
 
-    // Forward velocity
-    listenervel.set(0.0f, 0.5f, 0.0f);
-    AudioMixer->getListener()->setVelocity(listenervel);
+		// Forward velocity
+		listenervel.set(0.0f, 0.5f, 0.0f);
+		AudioMixer->getListener()->setVelocity(listenervel);
 
-    // Move forward: set position every frame
-    printf("Moving forward, going past the sources...\n");
-    for (listenerpos.y = 0.0f; listenerpos.y < 30.0f; listenerpos.y += 0.1f) {
-      OnMove(listenerpos);
-      AudioMixer->update();
-    }
+		// Move forward: set position every frame
+		printf("Moving forward, going past the sources...\n");
+		for (listenerpos.y = 0.0f; listenerpos.y < 30.0f; listenerpos.y += 0.1f)
+		{
+			OnMove(listenerpos);
+			AudioMixer->update();
+		}
 
-    // Backward velocity
-    listenervel.set(0.0f, -0.5f, 0.0f);
-    AudioMixer->getListener()->setVelocity(listenervel);
+		// Backward velocity
+		listenervel.set(0.0f, -0.5f, 0.0f);
+		AudioMixer->getListener()->setVelocity(listenervel);
 
-    // Move backward: set position every frame
-    printf("Moving backward, going back to the start position...\n");
-    for (listenerpos.y = 30.0f; listenerpos.y > 0.0f; listenerpos.y -= 0.1f) {
-      OnMove(listenerpos);
-      AudioMixer->update();
-    }
-  }
+		// Move backward: set position every frame
+		printf("Moving backward, going back to the start position...\n");
+		for (listenerpos.y = 30.0f; listenerpos.y > 0.0f; listenerpos.y -= 0.1f)
+		{
+			OnMove(listenerpos);
+			AudioMixer->update();
+		}
+	}
 
-  // Finalization
-  printf("Press ENTER again to exit\n");
-  getchar();
+	// Finalization
+	printf("Press ENTER again to exit\n");
+	getchar();
 
-  delete src1;
-  delete src2;
-  delete AudioMixer;
+	delete src1;
+	delete src2;
+	delete AudioMixer;
 
-  delete appContext;
+	delete appContext;
 
-  return 0;
+	return 0;
 }

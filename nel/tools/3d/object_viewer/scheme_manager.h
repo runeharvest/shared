@@ -19,38 +19,38 @@
 
 #include <nel/misc/stream.h>
 
-#include <algorithm>
-#include <map>
 #include <string>
+#include <map>
+#include <algorithm>
 
 namespace NL3D {
 class CPSAttribMakerBase;
 }
 
-class CSchemeManager {
+class CSchemeManager
+{
 public:
-  /// dtor
-  ~CSchemeManager();
+	/// dtor
+	~CSchemeManager();
 
-  typedef std::pair<std::string, NL3D::CPSAttribMakerBase *> TSchemeInfo;
-  // insert a new scheme in the collection. The scheme is then owned by this
-  // object
-  void insertScheme(const std::string &name, NL3D::CPSAttribMakerBase *scheme);
-  // get all the schemes with the given type
-  void getSchemes(const std::string &type, std::vector<TSchemeInfo> &dest);
-  // serial this collection
-  void serial(NLMISC::IStream &f);
-  // swap this collection with another one
-  void swap(CSchemeManager &other);
-  // remove a scheme from the bank, given a pointer on it
-  void remove(NL3D::CPSAttribMakerBase *am);
-  // rename a scheme, given a pointer on it
-  void rename(NL3D::CPSAttribMakerBase *am, const std::string &newName);
+	typedef std::pair<std::string, NL3D::CPSAttribMakerBase *> TSchemeInfo;
+	// insert a new scheme in the collection. The scheme is then owned by this object
+	void insertScheme(const std::string &name, NL3D::CPSAttribMakerBase *scheme);
+	// get all the schemes with the given type
+	void getSchemes(const std::string &type, std::vector<TSchemeInfo> &dest);
+	// serial this collection
+	void serial(NLMISC::IStream &f);
+	// swap this collection with another one
+	void swap(CSchemeManager &other);
+	// remove a scheme from the bank, given a pointer on it
+	void remove(NL3D::CPSAttribMakerBase *am);
+	// rename a scheme, given a pointer on it
+	void rename(NL3D::CPSAttribMakerBase *am, const std::string &newName);
 
 protected:
-  typedef std::pair<std::string, NL3D::CPSAttribMakerBase *> TSchemeInfo;
-  typedef std::multimap<std::string, TSchemeInfo> TSchemeMap;
-  TSchemeMap _SchemeMap;
+	typedef std::pair<std::string, NL3D::CPSAttribMakerBase *> TSchemeInfo;
+	typedef std::multimap<std::string, TSchemeInfo> TSchemeMap;
+	TSchemeMap _SchemeMap;
 };
 
 extern CSchemeManager SchemeManager;

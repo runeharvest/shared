@@ -18,10 +18,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "nel/gui/dbview_quantity.h"
-#include "nel/misc/i18n.h"
-#include "nel/misc/xml_auto_ptr.h"
 #include "stdpch.h"
+#include "nel/gui/dbview_quantity.h"
+#include "nel/misc/xml_auto_ptr.h"
+#include "nel/misc/i18n.h"
 
 using namespace std;
 using namespace NL3D;
@@ -31,138 +31,164 @@ using namespace NLMISC;
 #define new DEBUG_NEW
 #endif
 
-NLMISC_REGISTER_OBJECT(CViewBase, CDBViewQuantity, std::string,
-                       "text_quantity");
+NLMISC_REGISTER_OBJECT(CViewBase, CDBViewQuantity, std::string, "text_quantity");
 
 namespace NLGUI {
 
 // ***************************************************************************
-CDBViewQuantity::CDBViewQuantity(const TCtorParam &param) : CViewText(param) {}
-
-std::string CDBViewQuantity::getProperty(const std::string &name) const {
-  if (name == "value") {
-    if (_Number.getNodePtr() != NULL)
-      return _Number.getNodePtr()->getFullName();
-    else
-      return "";
-  } else if (name == "valuemax") {
-    if (_NumberMax.getNodePtr() != NULL)
-      return _NumberMax.getNodePtr()->getFullName();
-    else
-      return "";
-  } else if (name == "emptytext") {
-    return _EmptyText;
-  } else
-    return CViewText::getProperty(name);
+CDBViewQuantity::CDBViewQuantity(const TCtorParam &param)
+    : CViewText(param)
+{
 }
 
-void CDBViewQuantity::setProperty(const std::string &name,
-                                  const std::string &value) {
-  if (name == "value") {
-    _Number.link(value.c_str());
-    return;
-  } else if (name == "valuemax") {
-    _NumberMax.link(value.c_str());
-    return;
-  } else if (name == "emptytext") {
-    _EmptyText = value;
-    return;
-  } else
-    CViewText::setProperty(name, value);
+std::string CDBViewQuantity::getProperty(const std::string &name) const
+{
+	if (name == "value")
+	{
+		if (_Number.getNodePtr() != NULL)
+			return _Number.getNodePtr()->getFullName();
+		else
+			return "";
+	}
+	else if (name == "valuemax")
+	{
+		if (_NumberMax.getNodePtr() != NULL)
+			return _NumberMax.getNodePtr()->getFullName();
+		else
+			return "";
+	}
+	else if (name == "emptytext")
+	{
+		return _EmptyText;
+	}
+	else
+		return CViewText::getProperty(name);
 }
 
-xmlNodePtr CDBViewQuantity::serialize(xmlNodePtr parentNode,
-                                      const char *type) const {
-  xmlNodePtr node = CViewText::serialize(parentNode, type);
-  if (node == NULL)
-    return NULL;
-
-  xmlSetProp(node, BAD_CAST "type", BAD_CAST "text_quantity");
-
-  if (_Number.getNodePtr() != NULL)
-    xmlSetProp(node, BAD_CAST "value",
-               BAD_CAST _Number.getNodePtr()->getFullName().c_str());
-  else
-    xmlSetProp(node, BAD_CAST "value", BAD_CAST "");
-
-  if (_NumberMax.getNodePtr() != NULL)
-    xmlSetProp(node, BAD_CAST "valuemax",
-               BAD_CAST _NumberMax.getNodePtr()->getFullName().c_str());
-  else
-    xmlSetProp(node, BAD_CAST "valuemax", BAD_CAST "");
-
-  xmlSetProp(node, BAD_CAST "emptytext", BAD_CAST _EmptyText.c_str());
-
-  return node;
+void CDBViewQuantity::setProperty(const std::string &name, const std::string &value)
+{
+	if (name == "value")
+	{
+		_Number.link(value.c_str());
+		return;
+	}
+	else if (name == "valuemax")
+	{
+		_NumberMax.link(value.c_str());
+		return;
+	}
+	else if (name == "emptytext")
+	{
+		_EmptyText = value;
+		return;
+	}
+	else
+		CViewText::setProperty(name, value);
 }
 
-// ***************************************************************************
-bool CDBViewQuantity::parse(xmlNodePtr cur, CInterfaceGroup *parentGroup) {
-  if (!CViewText::parse(cur, parentGroup))
-    return false;
+xmlNodePtr CDBViewQuantity::serialize(xmlNodePtr parentNode, const char *type) const
+{
+	xmlNodePtr node = CViewText::serialize(parentNode, type);
+	if (node == NULL)
+		return NULL;
 
-  // link to the db
-  CXMLAutoPtr ptr;
-  ptr = xmlGetProp(cur, (xmlChar *)"value");
-  if (ptr)
-    _Number.link(ptr);
-  else {
-    nlinfo("no value in %s", _Id.c_str());
-    return false;
-  }
-  ptr = xmlGetProp(cur, (xmlChar *)"valuemax");
-  if (ptr)
-    _NumberMax.link(ptr);
-  else {
-    nlinfo("no max value in %s", _Id.c_str());
-    return false;
-  }
+	xmlSetProp(node, BAD_CAST "type", BAD_CAST "text_quantity");
 
-  // empty opt
-  ptr = xmlGetProp(cur, (xmlChar *)"emptytext");
-  if (ptr) {
-    const char *propPtr = ptr;
-    if (NLMISC::startsWith(propPtr, "ui"))
-      _EmptyText = CI18N::get(propPtr);
-    else
-      _EmptyText = propPtr;
-  }
+	if (_Number.getNodePtr() != NULL)
+		xmlSetProp(node, BAD_CAST "value", BAD_CAST _Number.getNodePtr()->getFullName().c_str());
+	else
+		xmlSetProp(node, BAD_CAST "value", BAD_CAST "");
 
-  // init cache.
-  _Cache = 0;
-  _CacheMax = 0;
-  buildTextFromCache();
+	if (_NumberMax.getNodePtr() != NULL)
+		xmlSetProp(node, BAD_CAST "valuemax", BAD_CAST _NumberMax.getNodePtr()->getFullName().c_str());
+	else
+		xmlSetProp(node, BAD_CAST "valuemax", BAD_CAST "");
 
-  return true;
+	xmlSetProp(node, BAD_CAST "emptytext", BAD_CAST _EmptyText.c_str());
+
+	return node;
 }
 
 // ***************************************************************************
-void CDBViewQuantity::draw() {
-  if (_Number.hasValue() && _NumberMax.hasValue()) {
-    // change text
-    sint32 val = _Number.getSInt32();
-    sint32 valMax = _NumberMax.getSInt32();
-    if (_Cache != val || _CacheMax != valMax) {
-      _Cache = val;
-      _CacheMax = valMax;
-      buildTextFromCache();
-    }
-  }
+bool CDBViewQuantity::parse(xmlNodePtr cur, CInterfaceGroup *parentGroup)
+{
+	if (!CViewText::parse(cur, parentGroup))
+		return false;
 
-  // parent call
-  CViewText::draw();
+	// link to the db
+	CXMLAutoPtr ptr;
+	ptr = xmlGetProp(cur, (xmlChar *)"value");
+	if (ptr)
+		_Number.link(ptr);
+	else
+	{
+		nlinfo("no value in %s", _Id.c_str());
+		return false;
+	}
+	ptr = xmlGetProp(cur, (xmlChar *)"valuemax");
+	if (ptr)
+		_NumberMax.link(ptr);
+	else
+	{
+		nlinfo("no max value in %s", _Id.c_str());
+		return false;
+	}
+
+	// empty opt
+	ptr = xmlGetProp(cur, (xmlChar *)"emptytext");
+	if (ptr)
+	{
+		const char *propPtr = ptr;
+		if (NLMISC::startsWith(propPtr, "ui"))
+			_EmptyText = CI18N::get(propPtr);
+		else
+			_EmptyText = propPtr;
+	}
+
+	// init cache.
+	_Cache = 0;
+	_CacheMax = 0;
+	buildTextFromCache();
+
+	return true;
 }
 
 // ***************************************************************************
-void CDBViewQuantity::buildTextFromCache() {
-  if (_Cache == 0 && !_EmptyText.empty()) {
-    setText(_EmptyText);
-  } else {
-    char buf[256];
-    smprintf(buf, 256, "%d/%d", _Cache, _CacheMax);
-    setText(toString((const char *)buf));
-  }
+void CDBViewQuantity::draw()
+{
+	if (_Number.hasValue() && _NumberMax.hasValue())
+	{
+		// change text
+		sint32 val = _Number.getSInt32();
+		sint32 valMax = _NumberMax.getSInt32();
+		if (_Cache != val || _CacheMax != valMax)
+		{
+			_Cache = val;
+			_CacheMax = valMax;
+			buildTextFromCache();
+		}
+	}
+
+	// parent call
+	CViewText::draw();
 }
 
-void CDBViewQuantity::forceLink() {}
-} // namespace NLGUI
+// ***************************************************************************
+void CDBViewQuantity::buildTextFromCache()
+{
+	if (_Cache == 0 && !_EmptyText.empty())
+	{
+		setText(_EmptyText);
+	}
+	else
+	{
+		char buf[256];
+		smprintf(buf, 256, "%d/%d", _Cache, _CacheMax);
+		setText(toString((const char *)buf));
+	}
+}
+
+void CDBViewQuantity::forceLink()
+{
+}
+}

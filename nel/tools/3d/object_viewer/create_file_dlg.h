@@ -14,8 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined(                                                                  \
-    AFX_CREATE_FILE_DLG_H__AB5F0D7B_8B35_48B9_8ABB_DE9367A8F9FA__INCLUDED_)
+#if !defined(AFX_CREATE_FILE_DLG_H__AB5F0D7B_8B35_48B9_8ABB_DE9367A8F9FA__INCLUDED_)
 #define AFX_CREATE_FILE_DLG_H__AB5F0D7B_8B35_48B9_8ABB_DE9367A8F9FA__INCLUDED_
 
 #if _MSC_VER > 1000
@@ -27,60 +26,61 @@
 /////////////////////////////////////////////////////////////////////////////
 // CCreateFileDlg dialog
 
-class CCreateFileDlg : public CDialog {
-  // Construction
+class CCreateFileDlg : public CDialog
+{
+	// Construction
 public:
-  CCreateFileDlg(const CString &title, const std::string &defaultBasePath,
-                 const std::string &extension,
-                 CWnd *pParent = NULL); // standard constructor
+	CCreateFileDlg(const CString &title, const std::string &defaultBasePath, const std::string &extension, CWnd *pParent = NULL); // standard constructor
 
-  // Dialog Data
-  //{{AFX_DATA(CCreateFileDlg)
-  enum { IDD = IDD_CREATE_FILE };
-  // NOTE: the ClassWizard will add data members here
-  //}}AFX_DATA
+	// Dialog Data
+	//{{AFX_DATA(CCreateFileDlg)
+	enum
+	{
+		IDD = IDD_CREATE_FILE
+	};
+	// NOTE: the ClassWizard will add data members here
+	//}}AFX_DATA
 
-  // get chosen filename without path
-  std::string getFileName() const { return _Filename; }
-  // get chosen path
-  std::string getPath() const { return _Path; }
-  // get full path (path + filename)
-  std::string getFullPath() const { return _FullPath; }
-  // Touch the selected file after DoModal() has been called.
-  // The user will be asked confirmation if file already exists.
-  // Appropriate error msgs will be issued if creation fails.
-  bool touchFile();
+	// get chosen filename without path
+	std::string getFileName() const { return _Filename; }
+	// get chosen path
+	std::string getPath() const { return _Path; }
+	// get full path (path + filename)
+	std::string getFullPath() const { return _FullPath; }
+	// Touch the selected file after DoModal() has been called.
+	// The user will be asked confirmation if file already exists.
+	// Appropriate error msgs will be issued if creation fails.
+	bool touchFile();
 
-  // Overrides
-  // ClassWizard generated virtual function overrides
-  //{{AFX_VIRTUAL(CCreateFileDlg)
+	// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CCreateFileDlg)
 protected:
-  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
-                                                   //}}AFX_VIRTUAL
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	//}}AFX_VIRTUAL
 
-  // Implementation
+	// Implementation
 protected:
-  std::string _Extension;
-  std::string _Filename;
-  std::string _Path;
-  std::string _FullPath;
-  std::string _DefaultBasePath;
-  // Generated message map functions
-  //{{AFX_MSG(CCreateFileDlg)
-  afx_msg void OnBrowse();
-  virtual BOOL OnInitDialog();
-  //}}AFX_MSG
-  DECLARE_MESSAGE_MAP()
-  // from CDialog
-  void OnOK();
-  void OnCancel();
+	std::string _Extension;
+	std::string _Filename;
+	std::string _Path;
+	std::string _FullPath;
+	std::string _DefaultBasePath;
+	// Generated message map functions
+	//{{AFX_MSG(CCreateFileDlg)
+	afx_msg void OnBrowse();
+	virtual BOOL OnInitDialog();
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
+	// from CDialog
+	void OnOK();
+	void OnCancel();
 
 private:
-  CString _Title;
+	CString _Title;
 };
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before
-// the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
 #endif // !defined(AFX_CREATE_FILE_DLG_H__AB5F0D7B_8B35_48B9_8ABB_DE9367A8F9FA__INCLUDED_)

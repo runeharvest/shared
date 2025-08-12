@@ -26,8 +26,8 @@
 #endif
 
 namespace NLGUI {
-CViewBase *CInterfaceFactory::createClass(const std::string &name) {
-  return NLMISC_GET_FACTORY(CViewBase, std::string)
-      .createObject(std::string(name), CViewBase::TCtorParam());
+CViewBase *CInterfaceFactory::createClass(const std::string &name)
+{
+	return NLMISC_GET_FACTORY(CViewBase, std::string).createObject(std::string(name), CViewBase::TCtorParam());
 }
-} // namespace NLGUI
+}

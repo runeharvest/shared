@@ -17,24 +17,25 @@
 #ifndef RY_AI_AIMING_TYPE_H
 #define RY_AI_AIMING_TYPE_H
 
-#include "game_share/slot_equipment.h"
 #include "nel/misc/types_nl.h"
+#include "game_share/slot_equipment.h"
 
 namespace AI_AIMING_TYPE {
-enum TAiAimingType {
-  Random = 0,
-  Head,
-  Chest,
-  Arms,
-  Hands,
-  Legs,
-  Feet,
+enum TAiAimingType
+{
+	Random = 0,
+	Head,
+	Chest,
+	Arms,
+	Hands,
+	Legs,
+	Feet,
 
-  LeastProtected,
-  AveragestProtected,
-  MostProtected,
+	LeastProtected,
+	AveragestProtected,
+	MostProtected,
 
-  Unknown,
+	Unknown,
 };
 
 /// convert a flag to a string
@@ -46,7 +47,7 @@ TAiAimingType toAimingType(const std::string &str);
 /// convert a slot to a combat flag
 SLOT_EQUIPMENT::TSlotEquipment toSlot(TAiAimingType type);
 
-}; // namespace AI_AIMING_TYPE
+}; // AI_AIMING_TYPE
 
 #endif // RY_AI_AIMING_TYPE_H
 /* End of ai_aiming_type.h */

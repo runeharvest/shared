@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "update1.h"
 #include <nel/misc/types_nl.h>
+#include "update1.h"
 
 // STL includes
 
@@ -45,22 +45,29 @@ namespace PIPELINE {
 namespace MAX {
 namespace UPDATE1 {
 
-CUpdate1::CUpdate1() {}
-
-CUpdate1::~CUpdate1() {}
-
-void CUpdate1::registerClasses(CSceneClassRegistry *registry) {
-  registry->add(&EditableMeshClassDesc);
+CUpdate1::CUpdate1()
+{
 }
 
-const ucchar *CDllPluginDescUpdate1::displayName() const {
-  static const ucstring value = ucstring("Editable Mesh Object (Ryzom Core)");
-  return value.c_str();
+CUpdate1::~CUpdate1()
+{
 }
 
-const ucchar *CDllPluginDescUpdate1::internalName() const {
-  static const ucstring value = ucstring("update1.dlo");
-  return value.c_str();
+void CUpdate1::registerClasses(CSceneClassRegistry *registry)
+{
+	registry->add(&EditableMeshClassDesc);
+}
+
+const ucchar *CDllPluginDescUpdate1::displayName() const
+{
+	static const ucstring value = ucstring("Editable Mesh Object (Ryzom Core)");
+	return value.c_str();
+}
+
+const ucchar *CDllPluginDescUpdate1::internalName() const
+{
+	static const ucstring value = ucstring("update1.dlo");
+	return value.c_str();
 }
 
 const CDllPluginDescUpdate1 DllPluginDescUpdate1;

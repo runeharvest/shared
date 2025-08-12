@@ -17,69 +17,68 @@
 #ifndef NL_PLAY_LIST_MANAGER_H
 #define NL_PLAY_LIST_MANAGER_H
 
+#include "nel/misc/types_nl.h"
 #include "nel/3d/animation_playlist.h"
 #include "nel/3d/channel_mixer.h"
-#include "nel/misc/types_nl.h"
 #include <map>
 
 namespace NL3D {
 
 // ***************************************************************************
 /**
- * This class handles a list of pair PlayList/ChannelMixer RefPointer. It is
- * just a container, with a animate() method. PlayList/ChannelMixer are sotred
- * with RefPtr. They are auto-removed from the list if the playlist or the
- * channelmixer is deleted (done in animate()). \author Lionel Berenguier
+ * This class handles a list of pair PlayList/ChannelMixer RefPointer. It is just a container, with a animate() method.
+ * PlayList/ChannelMixer are sotred with RefPtr. They are auto-removed from the list if the playlist or the channelmixer is
+ * deleted (done in animate()).
+ * \author Lionel Berenguier
  * \author Nevrax France
  * \date 2001
  */
-class CPlayListManager {
+class CPlayListManager
+{
 public:
-  /// Constructor
-  CPlayListManager() {}
+	/// Constructor
+	CPlayListManager() { }
 
-  /// add a playlist/channelmixer to the manager. nlassert(plist). chanMixer
-  /// replaced if playlist already IN.
-  void addPlaylist(CAnimationPlaylist *plist, CChannelMixer *chanMixer);
+	/// add a playlist/channelmixer to the manager. nlassert(plist). chanMixer replaced if playlist already IN.
+	void addPlaylist(CAnimationPlaylist *plist, CChannelMixer *chanMixer);
 
-  /// remove a playlist/channelmixer from the manager. nlassert(plist). no op if
-  /// not here.
-  void removePlaylist(CAnimationPlaylist *plist);
+	/// remove a playlist/channelmixer from the manager. nlassert(plist). no op if not here.
+	void removePlaylist(CAnimationPlaylist *plist);
 
-  /** animate all the playlist: setupMixer() the channelMixer, and eval(false)
-   * (eval global part). If a playlist/channelmixer has been deleted (RefPtr),
-   * the node is removed from the list.
-   */
-  void animate(TGlobalAnimationTime time);
+	/** animate all the playlist: setupMixer() the channelMixer, and eval(false) (eval global part).
+	 * If a playlist/channelmixer has been deleted (RefPtr), the node is removed from the list.
+	 */
+	void animate(TGlobalAnimationTime time);
 
-  /** steup all the playlist: setupMixer() the channelMixer.
-   * If a playlist/channelmixer has been deleted (RefPtr), the node is removed
-   * from the list.
-   */
-  void setup(TGlobalAnimationTime time);
+	/** steup all the playlist: setupMixer() the channelMixer.
+	 * If a playlist/channelmixer has been deleted (RefPtr), the node is removed from the list.
+	 */
+	void setup(TGlobalAnimationTime time);
 
-  /** Perform a deletion of all pair playlist channel mixer
-   */
-  void deleteAll();
-  // ***************************
+	/** Perform a deletion of all pair playlist channel mixer
+	 */
+	void deleteAll();
+	// ***************************
 private:
-  struct CNode {
-    NLMISC::CRefPtr<CAnimationPlaylist> PlayList;
-    NLMISC::CRefPtr<CChannelMixer> ChannelMixer;
+	struct CNode
+	{
+		NLMISC::CRefPtr<CAnimationPlaylist> PlayList;
+		NLMISC::CRefPtr<CChannelMixer> ChannelMixer;
 
-    CNode() {}
-    CNode(CAnimationPlaylist *pl, CChannelMixer *mix) {
-      PlayList = pl;
-      ChannelMixer = mix;
-    }
-  };
+		CNode() { }
+		CNode(CAnimationPlaylist *pl, CChannelMixer *mix)
+		{
+			PlayList = pl;
+			ChannelMixer = mix;
+		}
+	};
 
-  /// CAnimationPlaylist* is just the key.
-  typedef std::map<CAnimationPlaylist *, CNode> TPlayListList;
-  TPlayListList _List;
+	/// CAnimationPlaylist* is just the key.
+	typedef std::map<CAnimationPlaylist *, CNode> TPlayListList;
+	TPlayListList _List;
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_PLAY_LIST_MANAGER_H
 

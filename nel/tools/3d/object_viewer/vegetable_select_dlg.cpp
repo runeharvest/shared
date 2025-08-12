@@ -20,28 +20,30 @@
 // vegetable_select_dlg.cpp : implementation file
 //
 
-#include "vegetable_select_dlg.h"
-#include "object_viewer.h"
 #include "std_afx.h"
+#include "object_viewer.h"
+#include "vegetable_select_dlg.h"
 #include "vegetable_dlg.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CVegetableSelectDlg dialog
 
-CVegetableSelectDlg::CVegetableSelectDlg(CVegetableDlg *vegetableDlg,
-                                         CWnd *pParent /*=NULL*/)
-    : CDialog(CVegetableSelectDlg::IDD, pParent), _VegetableDlg(vegetableDlg) {
-  //{{AFX_DATA_INIT(CVegetableSelectDlg)
-  VegetableSelected = -1;
-  //}}AFX_DATA_INIT
+CVegetableSelectDlg::CVegetableSelectDlg(CVegetableDlg *vegetableDlg, CWnd *pParent /*=NULL*/)
+    : CDialog(CVegetableSelectDlg::IDD, pParent)
+    , _VegetableDlg(vegetableDlg)
+{
+	//{{AFX_DATA_INIT(CVegetableSelectDlg)
+	VegetableSelected = -1;
+	//}}AFX_DATA_INIT
 }
 
-void CVegetableSelectDlg::DoDataExchange(CDataExchange *pDX) {
-  CDialog::DoDataExchange(pDX);
-  //{{AFX_DATA_MAP(CVegetableSelectDlg)
-  DDX_Control(pDX, IDC_LIST1, VegetableList);
-  DDX_LBIndex(pDX, IDC_LIST1, VegetableSelected);
-  //}}AFX_DATA_MAP
+void CVegetableSelectDlg::DoDataExchange(CDataExchange *pDX)
+{
+	CDialog::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(CVegetableSelectDlg)
+	DDX_Control(pDX, IDC_LIST1, VegetableList);
+	DDX_LBIndex(pDX, IDC_LIST1, VegetableSelected);
+	//}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(CVegetableSelectDlg, CDialog)
@@ -53,21 +55,24 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CVegetableSelectDlg message handlers
 
-BOOL CVegetableSelectDlg::OnInitDialog() {
-  CDialog::OnInitDialog();
+BOOL CVegetableSelectDlg::OnInitDialog()
+{
+	CDialog::OnInitDialog();
 
-  // Init the control list.
-  uint num = _VegetableDlg->getNumVegetables();
-  for (uint i = 0; i < num; i++) {
-    VegetableList.AddString(nlUtf8ToTStr(_VegetableDlg->getVegetableName(i)));
-  }
+	// Init the control list.
+	uint num = _VegetableDlg->getNumVegetables();
+	for (uint i = 0; i < num; i++)
+	{
+		VegetableList.AddString(nlUtf8ToTStr(_VegetableDlg->getVegetableName(i)));
+	}
 
-  return TRUE; // return TRUE unless you set the focus to a control
-               // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CVegetableSelectDlg::OnDblclkList1() {
-  UpdateData();
-  // DblClck select the name.
-  EndDialog(IDOK);
+void CVegetableSelectDlg::OnDblclkList1()
+{
+	UpdateData();
+	// DblClck select the name.
+	EndDialog(IDOK);
 }

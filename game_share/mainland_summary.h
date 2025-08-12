@@ -31,35 +31,39 @@
  * \author Nevrax France
  * \date 2006
  */
-struct CMainlandSummary {
-  CMainlandSummary() : Id(0) {
-    LanguageCode = "en";
-    Online = false;
-  }
+struct CMainlandSummary
+{
+	CMainlandSummary()
+	    : Id(0)
+	{
+		LanguageCode = "en";
+		Online = false;
+	}
 
-  /// mainland Id
-  TSessionId Id;
+	/// mainland Id
+	TSessionId Id;
 
-  /// description
-  ucstring Name; // TODO: UTF-8 (serial)
+	/// description
+	ucstring Name; // TODO: UTF-8 (serial)
 
-  /// description
-  ucstring Description; // TODO: UTF-8 (serial)
+	/// description
+	ucstring Description; // TODO: UTF-8 (serial)
 
-  /// language code
-  std::string LanguageCode;
+	/// language code
+	std::string LanguageCode;
 
-  /// true if mainland is up
-  bool Online;
+	/// true if mainland is up
+	bool Online;
 
-  /// serialisation coming from a stream (net message)
-  void serial(NLMISC::IStream &f) {
-    f.serial(Id);
-    f.serial(Name);
-    f.serial(Description);
-    f.serial(LanguageCode);
-    f.serial(Online);
-  }
+	/// serialisation coming from a stream (net message)
+	void serial(NLMISC::IStream &f)
+	{
+		f.serial(Id);
+		f.serial(Name);
+		f.serial(Description);
+		f.serial(LanguageCode);
+		f.serial(Online);
+	}
 };
 
 #endif

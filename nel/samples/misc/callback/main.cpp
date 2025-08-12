@@ -29,26 +29,34 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <nel/misc/callback.h>
 #include <nel/misc/debug.h>
 
-class CTestClass {
+class CTestClass
+{
 public:
-  void helloWorld(int y) { nldebug("Method call: %i, %i", y, x); }
-  int x;
+	void helloWorld(int y)
+	{
+		nldebug("Method call: %i, %i", y, x);
+	}
+	int x;
 };
 
-void functionCall(int i) { nldebug("Function call: %i", i); }
+void functionCall(int i)
+{
+	nldebug("Function call: %i", i);
+}
 
 typedef NLMISC::CCallback<void, int> TCallbackType;
 
-int main(int argc, char **argv) {
-  CTestClass tc;
-  tc.x = 42;
+int main(int argc, char **argv)
+{
+	CTestClass tc;
+	tc.x = 42;
 
-  TCallbackType cbMethod = TCallbackType(&tc, &CTestClass::helloWorld);
-  TCallbackType cbFunction = TCallbackType(functionCall);
-  cbMethod(100);
-  cbFunction(99);
+	TCallbackType cbMethod = TCallbackType(&tc, &CTestClass::helloWorld);
+	TCallbackType cbFunction = TCallbackType(functionCall);
+	cbMethod(100);
+	cbFunction(99);
 
-  getchar();
+	getchar();
 
-  return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }

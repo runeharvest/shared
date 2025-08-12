@@ -21,6 +21,6 @@
 namespace NL3D {
 /// Register attribute makers based on colors (used in particle systems)
 void PSRegisterColorAttribs();
-} // namespace NL3D
+} // NL3D
 
 #endif

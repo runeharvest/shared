@@ -48,17 +48,17 @@
 // STL includes
 
 // NeL includes
-#include <nel/misc/geom_ext.h>
 #include <nel/misc/smart_ptr.h>
+#include <nel/misc/geom_ext.h>
 
 // Project includes
-#include <nel/3d/frustum.h>
-#include <nel/3d/index_buffer.h>
 #include <nel/3d/stereo_hmd.h>
-#include <nel/3d/u_driver.h>
-#include <nel/3d/u_material.h>
-#include <nel/3d/vertex_buffer.h>
+#include <nel/3d/frustum.h>
 #include <nel/3d/viewport.h>
+#include <nel/3d/u_material.h>
+#include <nel/3d/u_driver.h>
+#include <nel/3d/index_buffer.h>
+#include <nel/3d/vertex_buffer.h>
 
 struct ovrHmdDesc_;
 typedef const ovrHmdDesc_ *ovrHmd;
@@ -78,139 +78,137 @@ class CStereoOVRDeviceFactory;
  * \author Jan Boon (Kaetemi)
  * CStereoOVR
  */
-class CStereoOVR : public IStereoHMD {
+class CStereoOVR : public IStereoHMD
+{
 public:
-  CStereoOVR(const CStereoOVRDeviceFactory *factory);
-  virtual ~CStereoOVR();
+	CStereoOVR(const CStereoOVRDeviceFactory *factory);
+	virtual ~CStereoOVR();
 
-  /// Sets driver and generates necessary render targets
-  virtual void setDriver(NL3D::UDriver *driver);
+	/// Sets driver and generates necessary render targets
+	virtual void setDriver(NL3D::UDriver *driver);
 
-  /// Attach the driver to the display
-  virtual bool attachToDisplay();
-  /// Detach the driver from the display
-  virtual void detachFromDisplay();
+	/// Attach the driver to the display
+	virtual bool attachToDisplay();
+	/// Detach the driver from the display
+	virtual void detachFromDisplay();
 
-  /// Gets the required screen resolution for this device
-  virtual bool getScreenResolution(uint &width, uint &height);
-  /// Set latest camera position etcetera
-  virtual void updateCamera(uint cid, const NL3D::UCamera *camera);
-  /// Get the frustum to use for clipping
-  virtual void getClippingFrustum(uint cid, NL3D::UCamera *camera) const;
-  /// Get the original frustum of the camera
-  virtual void getOriginalFrustum(uint cid, NL3D::UCamera *camera) const;
+	/// Gets the required screen resolution for this device
+	virtual bool getScreenResolution(uint &width, uint &height);
+	/// Set latest camera position etcetera
+	virtual void updateCamera(uint cid, const NL3D::UCamera *camera);
+	/// Get the frustum to use for clipping
+	virtual void getClippingFrustum(uint cid, NL3D::UCamera *camera) const;
+	/// Get the original frustum of the camera
+	virtual void getOriginalFrustum(uint cid, NL3D::UCamera *camera) const;
 
-  /// Is there a next pass
-  virtual bool nextPass();
-  /// Gets the current viewport
-  virtual const NL3D::CViewport &getCurrentViewport() const;
-  /// Gets the current camera frustum
-  virtual const NL3D::CFrustum &getCurrentFrustum(uint cid) const;
-  /// Gets the current camera frustum
-  virtual void getCurrentFrustum(uint cid, NL3D::UCamera *camera) const;
-  /// Gets the current camera matrix
-  virtual void getCurrentMatrix(uint cid, NL3D::UCamera *camera) const;
+	/// Is there a next pass
+	virtual bool nextPass();
+	/// Gets the current viewport
+	virtual const NL3D::CViewport &getCurrentViewport() const;
+	/// Gets the current camera frustum
+	virtual const NL3D::CFrustum &getCurrentFrustum(uint cid) const;
+	/// Gets the current camera frustum
+	virtual void getCurrentFrustum(uint cid, NL3D::UCamera *camera) const;
+	/// Gets the current camera matrix
+	virtual void getCurrentMatrix(uint cid, NL3D::UCamera *camera) const;
 
-  /// At the start of a new render target
-  virtual bool wantClear();
-  /// The 3D scene
-  virtual bool wantScene();
-  /// Scene post processing effects
-  virtual bool wantSceneEffects();
-  /// Interface within the 3D scene
-  virtual bool wantInterface3D();
-  /// 2D Interface
-  virtual bool wantInterface2D();
+	/// At the start of a new render target
+	virtual bool wantClear();
+	/// The 3D scene
+	virtual bool wantScene();
+	/// Scene post processing effects
+	virtual bool wantSceneEffects();
+	/// Interface within the 3D scene
+	virtual bool wantInterface3D();
+	/// 2D Interface
+	virtual bool wantInterface2D();
 
-  /// Is this the first 3D scene of the frame
-  virtual bool isSceneFirst();
-  /// Is this the last 3D scene of the frame
-  virtual bool isSceneLast();
+	/// Is this the first 3D scene of the frame
+	virtual bool isSceneFirst();
+	/// Is this the last 3D scene of the frame
+	virtual bool isSceneLast();
 
-  /// Returns true if a new render target was set, always fase if not using
-  /// render targets
-  virtual bool beginRenderTarget();
-  /// Returns true if a render target was fully drawn, always false if not using
-  /// render targets
-  virtual bool endRenderTarget();
+	/// Returns true if a new render target was set, always fase if not using render targets
+	virtual bool beginRenderTarget();
+	/// Returns true if a render target was fully drawn, always false if not using render targets
+	virtual bool endRenderTarget();
 
-  /// Get the HMD orientation
-  virtual NLMISC::CQuat getOrientation() const;
+	/// Get the HMD orientation
+	virtual NLMISC::CQuat getOrientation() const;
 
-  /// Set the GUI reference
-  virtual void setInterfaceMatrix(const NL3D::CMatrix &matrix);
+	/// Set the GUI reference
+	virtual void setInterfaceMatrix(const NL3D::CMatrix &matrix);
 
-  /// Get GUI center (1 = width, 1 = height, 0 = center)
-  virtual void getInterface2DShift(uint cid, float &x, float &y,
-                                   float distance) const;
+	/// Get GUI center (1 = width, 1 = height, 0 = center)
+	virtual void getInterface2DShift(uint cid, float &x, float &y, float distance) const;
 
-  /// Set the head model, eye position relative to orientation point
-  virtual void setEyePosition(const NLMISC::CVector &v);
-  /// Get the head model, eye position relative to orientation point
-  virtual const NLMISC::CVector &getEyePosition() const;
+	/// Set the head model, eye position relative to orientation point
+	virtual void setEyePosition(const NLMISC::CVector &v);
+	/// Get the head model, eye position relative to orientation point
+	virtual const NLMISC::CVector &getEyePosition() const;
 
-  /// Set the scale of the game in units per meter
-  virtual void setScale(float s);
+	/// Set the scale of the game in units per meter
+	virtual void setScale(float s);
 
-  /// Calculates internal camera information based on the reference camera
-  void initCamera(uint cid, const NL3D::UCamera *camera);
-  /// Render GUI
-  void renderGUI();
+	/// Calculates internal camera information based on the reference camera
+	void initCamera(uint cid, const NL3D::UCamera *camera);
+	/// Render GUI
+	void renderGUI();
 
-  /// Checks if the device used by this class was actually created
-  bool isDeviceCreated();
+	/// Checks if the device used by this class was actually created
+	bool isDeviceCreated();
 
-  static void listDevices(std::vector<CStereoDeviceInfo> &devicesOut);
-  static bool isLibraryInUse();
-  static void releaseLibrary();
+	static void listDevices(std::vector<CStereoDeviceInfo> &devicesOut);
+	static bool isLibraryInUse();
+	static void releaseLibrary();
 
 private:
-  ovrHmd m_DevicePtr;
-  bool m_DebugDevice;
+	ovrHmd m_DevicePtr;
+	bool m_DebugDevice;
 
-  int m_Stage;
-  int m_SubStage;
+	int m_Stage;
+	int m_SubStage;
 
-  CViewport m_RegularViewport;
-  CViewport m_EyeViewport[NL_OVR_EYE_COUNT];
-  CFrustum m_EyeFrustumBase[NL_OVR_EYE_COUNT];
-  uint m_RenderTargetWidth;
-  uint m_RenderTargetHeight;
-  NLMISC::CVector2f m_EyeUVScaleOffset[NL_OVR_EYE_COUNT][2];
-  float m_EyeViewAdjustX[NL_OVR_EYE_COUNT];
+	CViewport m_RegularViewport;
+	CViewport m_EyeViewport[NL_OVR_EYE_COUNT];
+	CFrustum m_EyeFrustumBase[NL_OVR_EYE_COUNT];
+	uint m_RenderTargetWidth;
+	uint m_RenderTargetHeight;
+	NLMISC::CVector2f m_EyeUVScaleOffset[NL_OVR_EYE_COUNT][2];
+	float m_EyeViewAdjustX[NL_OVR_EYE_COUNT];
 
-  CVertexBuffer m_VB[NL_OVR_EYE_COUNT];
-  CIndexBuffer m_IB[NL_OVR_EYE_COUNT];
-  uint32 m_NbTris[NL_OVR_EYE_COUNT];
+	CVertexBuffer m_VB[NL_OVR_EYE_COUNT];
+	CIndexBuffer m_IB[NL_OVR_EYE_COUNT];
+	uint32 m_NbTris[NL_OVR_EYE_COUNT];
 
-  CFrustum m_ClippingFrustum[NL_STEREO_MAX_USER_CAMERAS];
-  CFrustum m_LeftFrustum[NL_STEREO_MAX_USER_CAMERAS];
-  CFrustum m_RightFrustum[NL_STEREO_MAX_USER_CAMERAS];
-  CFrustum m_OriginalFrustum[NL_STEREO_MAX_USER_CAMERAS];
-  CMatrix m_CameraMatrix[NL_STEREO_MAX_USER_CAMERAS];
-  CMatrix m_InterfaceCameraMatrix;
-  mutable bool m_OrientationCached;
-  mutable NLMISC::CQuat m_OrientationCache;
+	CFrustum m_ClippingFrustum[NL_STEREO_MAX_USER_CAMERAS];
+	CFrustum m_LeftFrustum[NL_STEREO_MAX_USER_CAMERAS];
+	CFrustum m_RightFrustum[NL_STEREO_MAX_USER_CAMERAS];
+	CFrustum m_OriginalFrustum[NL_STEREO_MAX_USER_CAMERAS];
+	CMatrix m_CameraMatrix[NL_STEREO_MAX_USER_CAMERAS];
+	CMatrix m_InterfaceCameraMatrix;
+	mutable bool m_OrientationCached;
+	mutable NLMISC::CQuat m_OrientationCache;
 
-  UDriver *m_Driver;
+	UDriver *m_Driver;
 
-  CTextureUser *m_GUITexture;
-  NL3D::CTextureUser *m_SceneTexture;
+	CTextureUser *m_GUITexture;
+	NL3D::CTextureUser *m_SceneTexture;
 
-  UMaterial m_UnlitMat;
+	UMaterial m_UnlitMat;
 
-  UDriver::CMode m_OriginalMode;
-  sint32 m_OriginalWinPosX;
-  sint32 m_OriginalWinPosY;
-  bool m_AttachedDisplay;
+	UDriver::CMode m_OriginalMode;
+	sint32 m_OriginalWinPosX;
+	sint32 m_OriginalWinPosY;
+	bool m_AttachedDisplay;
 
-  /*
-  NL3D::UMaterial m_BarrelMat;
-  NLMISC::CQuadUV m_BarrelQuadLeft;
-  NLMISC::CQuadUV m_BarrelQuadRight;
-  NLMISC::CRefPtr<CPixelProgramOVR> m_PixelProgram;*/
-  NLMISC::CVector m_EyePosition;
-  float m_Scale;
+	/*
+	NL3D::UMaterial m_BarrelMat;
+	NLMISC::CQuadUV m_BarrelQuadLeft;
+	NLMISC::CQuadUV m_BarrelQuadRight;
+	NLMISC::CRefPtr<CPixelProgramOVR> m_PixelProgram;*/
+	NLMISC::CVector m_EyePosition;
+	float m_Scale;
 
 }; /* class CStereoOVR */
 

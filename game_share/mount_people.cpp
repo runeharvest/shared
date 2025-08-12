@@ -16,8 +16,8 @@
 
 #include "stdpch.h"
 
-#include "mount_people.h"
 #include "nel/misc/string_conversion.h"
+#include "mount_people.h"
 
 using namespace std;
 using namespace NLMISC;
@@ -31,12 +31,14 @@ NL_STRING_CONVERSION_TABLE_ENTRY(Matis)
 NL_STRING_CONVERSION_TABLE_ENTRY(Tryker)
 NL_END_STRING_CONVERSION_TABLE(TMountPeople, MountPeopleConversion, Zorai)
 
-TMountPeople fromString(const std::string &str) {
-  return MountPeopleConversion.fromString(str);
+TMountPeople fromString(const std::string &str)
+{
+	return MountPeopleConversion.fromString(str);
 }
 
-const std::string &toString(TMountPeople people) {
-  return MountPeopleConversion.toString(people);
+const std::string &toString(TMountPeople people)
+{
+	return MountPeopleConversion.toString(people);
 }
 
 } // namespace MOUNT_PEOPLE

@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "multi_mtl.h"
 #include <nel/misc/types_nl.h>
+#include "multi_mtl.h"
 
 // STL includes
 
@@ -42,9 +42,13 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CMultiMtl::CMultiMtl() {}
+CMultiMtl::CMultiMtl()
+{
+}
 
-CMultiMtl::~CMultiMtl() {}
+CMultiMtl::~CMultiMtl()
+{
+}
 
 } /* namespace BUILTIN */
 } /* namespace MAX */

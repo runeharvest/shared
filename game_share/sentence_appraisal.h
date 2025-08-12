@@ -21,37 +21,35 @@
 
 namespace SENTENCE_APPRAISAL {
 // Mode
-enum ESentenceAppraisal {
-  Undefined = 0,
-  // related to difficulty
-  ChildPlay,
-  RealEasy,
-  Easy,
-  FairlyEasy,
-  Average, // 5
-  QuiteDifficult,
-  Difficult,
-  ReallyDifficult,
-  Harsh,
-  ExtremelyDifficult, // 10
+enum ESentenceAppraisal
+{
+	Undefined = 0,
+	// related to difficulty
+	ChildPlay,
+	RealEasy,
+	Easy,
+	FairlyEasy,
+	Average, // 5
+	QuiteDifficult,
+	Difficult,
+	ReallyDifficult,
+	Harsh,
+	ExtremelyDifficult, // 10
 
-  // text not related to difficulty but displayed in the difficulty field on
-  // clients
-  FeatureUnderConstruction,
-  InvalidSentence,
-  ErrorCreating,
-  Uncomplete,
-  Cheater, // 15
+	// text not related to difficulty but displayed in the difficulty field on clients
+	FeatureUnderConstruction,
+	InvalidSentence,
+	ErrorCreating,
+	Uncomplete,
+	Cheater, // 15
 
-  // max value is 15 so only use 4 bits in the database, if more values are
-  // added don't forget to allow more bits in DB
+	// max value is 15 so only use 4 bits in the database, if more values are added don't forget to allow more bits in DB
 };
 
 /**
  * get the right enum value from the input string
  * \param str the input string
- * \return the ESentenceAppraisal associated to this string (Undefined if the
- * string cannot be interpreted)
+ * \return the ESentenceAppraisal associated to this string (Undefined if the string cannot be interpreted)
  */
 ESentenceAppraisal toAppraisal(const std::string &str);
 
@@ -62,7 +60,7 @@ ESentenceAppraisal toAppraisal(const std::string &str);
  */
 const std::string &toString(ESentenceAppraisal type);
 
-}; // namespace SENTENCE_APPRAISAL
+}; // SENTENCE_APPRAISAL
 
 #endif // SENTENCE_APPRAISAL
 /* End of sentence_appraisal.h */

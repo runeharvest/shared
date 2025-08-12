@@ -17,10 +17,10 @@
 #ifndef NL_SHADOW_SKIN_H
 #define NL_SHADOW_SKIN_H
 
-#include "nel/3d/matrix_3x4.h"
-#include "nel/misc/stream.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/stream.h"
 #include "nel/misc/vector.h"
+#include "nel/3d/matrix_3x4.h"
 
 namespace NL3D {
 
@@ -28,27 +28,31 @@ namespace NL3D {
 /**
  * Vertex for CShadowSkin
  */
-class CShadowVertex {
+class CShadowVertex
+{
 public:
-  NLMISC::CVector Vertex;
-  uint32 MatrixId;
-  void serial(NLMISC::IStream &f) {
-    (void)f.serialVersion(0);
+	NLMISC::CVector Vertex;
+	uint32 MatrixId;
+	void serial(NLMISC::IStream &f)
+	{
+		(void)f.serialVersion(0);
 
-    f.serial(Vertex);
-    f.serial(MatrixId);
-  }
+		f.serial(Vertex);
+		f.serial(MatrixId);
+	}
 
-  // operator for sort
-  bool operator==(const CShadowVertex &v) const {
-    return MatrixId == v.MatrixId && Vertex == v.Vertex;
-  }
-  bool operator<(const CShadowVertex &v) const {
-    if (MatrixId != v.MatrixId)
-      return MatrixId < v.MatrixId;
-    else
-      return Vertex < v.Vertex;
-  }
+	// operator for sort
+	bool operator==(const CShadowVertex &v) const
+	{
+		return MatrixId == v.MatrixId && Vertex == v.Vertex;
+	}
+	bool operator<(const CShadowVertex &v) const
+	{
+		if (MatrixId != v.MatrixId)
+			return MatrixId < v.MatrixId;
+		else
+			return Vertex < v.Vertex;
+	}
 };
 
 // ***************************************************************************
@@ -58,32 +62,30 @@ public:
  * \author Nevrax France
  * \date 2004
  */
-class CShadowSkin {
+class CShadowSkin
+{
 public:
-  std::vector<CShadowVertex> Vertices;
-  std::vector<uint32> Triangles;
+	std::vector<CShadowVertex> Vertices;
+	std::vector<uint32> Triangles;
 
 public:
-  // skinning
-  void applySkin(NLMISC::CVector *dst, std::vector<CMatrix3x4> &boneMat3x4);
+	// skinning
+	void applySkin(NLMISC::CVector *dst, std::vector<CMatrix3x4> &boneMat3x4);
 
-  /** return ray intersection.
-   *	\return false if no triangles, true if can do the test (even if don't
-   *intersect!) if intersect, dist2D=0, and distZ= Depth Distance if don't
-   *intersect, dist2D="nearest distance to the ray", and distZ=0 \param
-   *computeDist2D if false and don't intersect, then return dist2D=FLT_MAX, and
-   *distZ=0
-   */
-  bool getRayIntersection(const NLMISC::CMatrix &toRaySpace,
-                          class CSkeletonModel &skeleton,
-                          const std::vector<uint32> &matrixInfluences,
-                          float &dist2D, float &distZ, bool computeDist2D);
+	/** return ray intersection.
+	 *	\return false if no triangles, true if can do the test (even if don't intersect!)
+	 *	if intersect, dist2D=0, and distZ= Depth Distance
+	 *	if don't intersect, dist2D="nearest distance to the ray", and distZ=0
+	 *	\param computeDist2D if false and don't intersect, then return dist2D=FLT_MAX, and distZ=0
+	 */
+	bool getRayIntersection(const NLMISC::CMatrix &toRaySpace, class CSkeletonModel &skeleton,
+	    const std::vector<uint32> &matrixInfluences, float &dist2D, float &distZ, bool computeDist2D);
 
 private:
-  static uint NumCacheVertexShadow;
+	static uint NumCacheVertexShadow;
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_SHADOW_SKIN_H
 

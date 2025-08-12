@@ -17,16 +17,16 @@
 #ifndef RY_MSG_BRICK_SERVICE_H
 #define RY_MSG_BRICK_SERVICE_H
 
-#include "nel/misc/entity_id.h"
-#include "nel/misc/sheet_id.h"
-#include "nel/misc/time_nl.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/time_nl.h"
+#include "nel/misc/sheet_id.h"
+#include "nel/misc/entity_id.h"
 
-#include "game_share/ryzom_entity_id.h"
 #include "game_share/synchronised_message.h"
+#include "game_share/ryzom_entity_id.h"
 
-#include "ai_share/ai_event_report.h"
 #include "game_share/base_types.h"
+#include "ai_share/ai_event_report.h"
 
 /**
  * Class CEGSExecutePhraseMsg, message class used by npcs to execute a phrase
@@ -34,62 +34,78 @@
  * \author Nevrax France
  * \date 2002
  */
-class CEGSExecutePhraseMsg : public CMirrorTransportClass {
+class CEGSExecutePhraseMsg : public CMirrorTransportClass
+{
 public:
-  CEGSExecutePhraseMsg() : CMirrorTransportClass() {}
+	CEGSExecutePhraseMsg()
+	    : CMirrorTransportClass()
+	{
+	}
 
-  CEGSExecutePhraseMsg(const TDataSetRow &actorRowId,
-                       const TDataSetRow &targetRowId,
-                       const NLMISC::CSheetId &phraseId)
-      : CMirrorTransportClass(), ActorRowId(actorRowId),
-        TargetRowId(targetRowId), PhraseId(phraseId) {}
+	CEGSExecutePhraseMsg(const TDataSetRow &actorRowId, const TDataSetRow &targetRowId, const NLMISC::CSheetId &phraseId)
+	    : CMirrorTransportClass()
+	    , ActorRowId(actorRowId)
+	    , TargetRowId(targetRowId)
+	    , PhraseId(phraseId)
+	{
+	}
 
-  TDataSetRow ActorRowId;
-  TDataSetRow TargetRowId;
-  NLMISC::CSheetId PhraseId;
+	TDataSetRow ActorRowId;
+	TDataSetRow TargetRowId;
+	NLMISC::CSheetId PhraseId;
 
-  virtual void description() {
-    className("CEGSExecutePhraseMsg");
-    property("actorRowId", PropDataSetRow, TDataSetRow(), ActorRowId);
-    property("targetRowId", PropDataSetRow, TDataSetRow(), TargetRowId);
-    property("phrase", PropSheetId, NLMISC::CSheetId::Unknown, PhraseId);
-  }
+	virtual void description()
+	{
+		className("CEGSExecutePhraseMsg");
+		property("actorRowId", PropDataSetRow, TDataSetRow(), ActorRowId);
+		property("targetRowId", PropDataSetRow, TDataSetRow(), TargetRowId);
+		property("phrase", PropSheetId, NLMISC::CSheetId::Unknown, PhraseId);
+	}
 
-  virtual void callback(const std::string &name, NLNET::TServiceId id);
+	virtual void callback(const std::string &name, NLNET::TServiceId id);
 };
 
 /**
- * Class CEGSExecuteAiActionMsg, message class used by npcs to execute an ai
- * action \author David Fleury \author Nevrax France \date 2002
+ * Class CEGSExecuteAiActionMsg, message class used by npcs to execute an ai action
+ * \author David Fleury
+ * \author Nevrax France
+ * \date 2002
  */
-class CEGSExecuteAiActionMsg : public CMirrorTransportClass {
+class CEGSExecuteAiActionMsg : public CMirrorTransportClass
+{
 public:
-  CEGSExecuteAiActionMsg() : CMirrorTransportClass() {}
+	CEGSExecuteAiActionMsg()
+	    : CMirrorTransportClass()
+	{
+	}
 
-  CEGSExecuteAiActionMsg(const TDataSetRow &actorRowId,
-                         const TDataSetRow &targetRowId,
-                         const NLMISC::CSheetId &actionId, float damageCoef = 1,
-                         float damageSpeedCoef = 1)
-      : CMirrorTransportClass(), ActorRowId(actorRowId),
-        TargetRowId(targetRowId), ActionId(actionId), DamageCoef(damageCoef),
-        DamageSpeedCoef(damageSpeedCoef) {}
+	CEGSExecuteAiActionMsg(const TDataSetRow &actorRowId, const TDataSetRow &targetRowId, const NLMISC::CSheetId &actionId, float damageCoef = 1, float damageSpeedCoef = 1)
+	    : CMirrorTransportClass()
+	    , ActorRowId(actorRowId)
+	    , TargetRowId(targetRowId)
+	    , ActionId(actionId)
+	    , DamageCoef(damageCoef)
+	    , DamageSpeedCoef(damageSpeedCoef)
+	{
+	}
 
-  TDataSetRow ActorRowId;
-  TDataSetRow TargetRowId;
-  NLMISC::CSheetId ActionId;
-  float DamageCoef;
-  float DamageSpeedCoef;
+	TDataSetRow ActorRowId;
+	TDataSetRow TargetRowId;
+	NLMISC::CSheetId ActionId;
+	float DamageCoef;
+	float DamageSpeedCoef;
 
-  virtual void description() {
-    className("CEGSExecuteAiActionMsg");
-    property("actorRowId", PropDataSetRow, TDataSetRow(), ActorRowId);
-    property("targetRowId", PropDataSetRow, TDataSetRow(), TargetRowId);
-    property("actionId", PropSheetId, NLMISC::CSheetId::Unknown, ActionId);
-    property("damageCoef", PropFloat, 1.f, DamageCoef);
-    property("damageSpeedCoef", PropFloat, 1.f, DamageSpeedCoef);
-  }
+	virtual void description()
+	{
+		className("CEGSExecuteAiActionMsg");
+		property("actorRowId", PropDataSetRow, TDataSetRow(), ActorRowId);
+		property("targetRowId", PropDataSetRow, TDataSetRow(), TargetRowId);
+		property("actionId", PropSheetId, NLMISC::CSheetId::Unknown, ActionId);
+		property("damageCoef", PropFloat, 1.f, DamageCoef);
+		property("damageSpeedCoef", PropFloat, 1.f, DamageSpeedCoef);
+	}
 
-  virtual void callback(const std::string &name, NLNET::TServiceId id) {}
+	virtual void callback(const std::string &name, NLNET::TServiceId id) { }
 };
 
 /**
@@ -98,28 +114,33 @@ public:
  * \author Nevrax France
  * \date 2003
  */
-class CEGSExecuteMsg : public CMirrorTransportClass {
+class CEGSExecuteMsg : public CMirrorTransportClass
+{
 public:
-  TDataSetRow ActorRowId;
-  TDataSetRow TargetRowId;
-  std::vector<NLMISC::CSheetId> BrickIds;
-  bool Cyclic;
+	TDataSetRow ActorRowId;
+	TDataSetRow TargetRowId;
+	std::vector<NLMISC::CSheetId> BrickIds;
+	bool Cyclic;
 
-  uint8 Index; // index of the phrase in the player memorized phrase interface
-               // if != 0xff
+	uint8 Index; // index of the phrase in the player memorized phrase interface if != 0xff
 
-  CEGSExecuteMsg() : Cyclic(false), Index(0xff) {}
+	CEGSExecuteMsg()
+	    : Cyclic(false)
+	    , Index(0xff)
+	{
+	}
 
-  virtual void description() {
-    className("CEGSExecuteMsg");
-    property("actorRowId", PropDataSetRow, TDataSetRow(), ActorRowId);
-    property("targetRowId", PropDataSetRow, TDataSetRow(), TargetRowId);
-    propertyCont("brickIds", PropSheetId, BrickIds);
-    property("cyclic", PropBool, false, Cyclic);
-    property("index", PropUInt8, (uint8)0xff, Index);
-  }
+	virtual void description()
+	{
+		className("CEGSExecuteMsg");
+		property("actorRowId", PropDataSetRow, TDataSetRow(), ActorRowId);
+		property("targetRowId", PropDataSetRow, TDataSetRow(), TargetRowId);
+		propertyCont("brickIds", PropSheetId, BrickIds);
+		property("cyclic", PropBool, false, Cyclic);
+		property("index", PropUInt8, (uint8)0xff, Index);
+	}
 
-  virtual void callback(const std::string &name, NLNET::TServiceId id) {}
+	virtual void callback(const std::string &name, NLNET::TServiceId id) { }
 };
 
 /**
@@ -128,76 +149,84 @@ public:
  * \author Nevrax France
  * \date 2002
  */
-class CBSAIEventReportMsg : public CMirrorTransportClass {
+class CBSAIEventReportMsg : public CMirrorTransportClass
+{
 public:
-  std::vector<TDataSetRow> Originator;
-  std::vector<TDataSetRow> Target;
-  std::vector<uint8> AffectedStat;
-  std::vector<sint32> DeltaValue;
-  std::vector<float> AggroAdd;
-  //	std::vector<float>			AggroMul;
-  std::vector<uint8> ActionType;
+	std::vector<TDataSetRow> Originator;
+	std::vector<TDataSetRow> Target;
+	std::vector<uint8> AffectedStat;
+	std::vector<sint32> DeltaValue;
+	std::vector<float> AggroAdd;
+	//	std::vector<float>			AggroMul;
+	std::vector<uint8> ActionType;
 
-  CBSAIEventReportMsg() {}
+	CBSAIEventReportMsg()
+	{
+	}
 
-  // void pushBack( const TDataSetRow& originator, const TDataSetRow& target,
-  // const CAiEventReport &report)
-  void pushBack(const CAiEventReport &report) {
-    const uint size = (uint)Originator.size();
-    const uint nbElts =
-        report.AffectedStats.empty() ? 1 : (uint)report.AffectedStats.size();
+	// void pushBack( const TDataSetRow& originator, const TDataSetRow& target, const CAiEventReport &report)
+	void pushBack(const CAiEventReport &report)
+	{
+		const uint size = (uint)Originator.size();
+		const uint nbElts = report.AffectedStats.empty() ? 1 : (uint)report.AffectedStats.size();
 
-    Originator.resize(size + nbElts);
-    Target.resize(size + nbElts);
-    AffectedStat.resize(size + nbElts);
-    DeltaValue.resize(size + nbElts, 0);
-    AggroAdd.resize(size + nbElts, 0.0f);
-    //		AggroMul.resize(size+nbElts,1.0f);
-    ActionType.resize(size + nbElts, 0);
+		Originator.resize(size + nbElts);
+		Target.resize(size + nbElts);
+		AffectedStat.resize(size + nbElts);
+		DeltaValue.resize(size + nbElts, 0);
+		AggroAdd.resize(size + nbElts, 0.0f);
+		//		AggroMul.resize(size+nbElts,1.0f);
+		ActionType.resize(size + nbElts, 0);
 
-    for (uint i = 0; i < nbElts; ++i) {
-      Originator[size + i] = report.Originator;
-      Target[size + i] = report.Target;
-      ActionType[size + i] = (uint8)report.Type;
+		for (uint i = 0; i < nbElts; ++i)
+		{
+			Originator[size + i] = report.Originator;
+			Target[size + i] = report.Target;
+			ActionType[size + i] = (uint8)report.Type;
 
-      if (i < report.AffectedStats.size()) {
-        AffectedStat[size + i] = (uint8)report.AffectedStats[i];
-        DeltaValue[size + i] = report.DeltaValue[i];
-      }
+			if (i < report.AffectedStats.size())
+			{
+				AffectedStat[size + i] = (uint8)report.AffectedStats[i];
+				DeltaValue[size + i] = report.DeltaValue[i];
+			}
 
-      if (i == 0) {
-        AggroAdd[size + i] = report.AggroAdd;
-        //				AggroMul[size + i] = report.AggroMul;
-      } else {
-        AggroAdd[size + i] = 0.0f;
-        //				AggroMul[size + i] = 1.0f;
-      }
-    }
-  }
+			if (i == 0)
+			{
+				AggroAdd[size + i] = report.AggroAdd;
+				//				AggroMul[size + i] = report.AggroMul;
+			}
+			else
+			{
+				AggroAdd[size + i] = 0.0f;
+				//				AggroMul[size + i] = 1.0f;
+			}
+		}
+	}
 
-  void clear() {
-    Originator.clear();
-    Target.clear();
-    AffectedStat.clear();
-    DeltaValue.clear();
-    AggroAdd.clear();
-    //		AggroMul.clear();
-    ActionType.clear();
-  }
+	void clear()
+	{
+		Originator.clear();
+		Target.clear();
+		AffectedStat.clear();
+		DeltaValue.clear();
+		AggroAdd.clear();
+		//		AggroMul.clear();
+		ActionType.clear();
+	}
 
-  virtual void description() {
-    className("CBSAIEventReportMsg");
-    propertyCont("Originator", PropDataSetRow, Originator);
-    propertyCont("Target", PropDataSetRow, Target);
-    propertyCont("AffectedStat", PropUInt8, AffectedStat);
-    propertyCont("DeltaValue", PropSInt32, DeltaValue);
-    propertyCont("AggroAdd", PropFloat, AggroAdd);
-    //		propertyCont	("AggroMul",		PropFloat,	AggroMul
-    //);
-    propertyCont("ActionType", PropUInt8, ActionType);
-  }
+	virtual void description()
+	{
+		className("CBSAIEventReportMsg");
+		propertyCont("Originator", PropDataSetRow, Originator);
+		propertyCont("Target", PropDataSetRow, Target);
+		propertyCont("AffectedStat", PropUInt8, AffectedStat);
+		propertyCont("DeltaValue", PropSInt32, DeltaValue);
+		propertyCont("AggroAdd", PropFloat, AggroAdd);
+		//		propertyCont	("AggroMul",		PropFloat,	AggroMul		);
+		propertyCont("ActionType", PropUInt8, ActionType);
+	}
 
-  virtual void callback(const std::string &name, NLNET::TServiceId id);
+	virtual void callback(const std::string &name, NLNET::TServiceId id);
 };
 
 /**
@@ -208,21 +237,25 @@ public:
  * \Class sent from EGS to AIS to set AIS bots to dead mode.
  */
 
-class CBSAIDeathReport : public CMirrorTransportClass {
+class CBSAIDeathReport : public CMirrorTransportClass
+{
 public:
-  std::vector<TDataSetRow> Bots;    // Bots to mark as dead.
-  std::vector<TDataSetRow> Killers; // killer of each bot
-  std::vector<bool> Zombies; // if true indicate this bot is detected as zombie
+	std::vector<TDataSetRow> Bots; // Bots to mark as dead.
+	std::vector<TDataSetRow> Killers; // killer of each bot
+	std::vector<bool> Zombies; // if true indicate this bot is detected as zombie
 
-  CBSAIDeathReport() {}
+	CBSAIDeathReport()
+	{
+	}
 
-  virtual void description() {
-    className("CBSAIDeathReport");
-    propertyCont("Bots", PropDataSetRow, Bots);
-    propertyCont("Killers", PropDataSetRow, Killers);
-    propertyVector("Zombies", PropBool, Zombies);
-  }
-  virtual void callback(const std::string &name, NLNET::TServiceId id);
+	virtual void description()
+	{
+		className("CBSAIDeathReport");
+		propertyCont("Bots", PropDataSetRow, Bots);
+		propertyCont("Killers", PropDataSetRow, Killers);
+		propertyVector("Zombies", PropBool, Zombies);
+	}
+	virtual void callback(const std::string &name, NLNET::TServiceId id);
 };
 
 #endif // RY_MSG_BRICK_SERVICE_H

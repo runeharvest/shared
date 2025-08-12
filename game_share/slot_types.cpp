@@ -21,134 +21,137 @@
 
 namespace SLOTTYPE {
 
-TSlotType stringToSlotType(const std::string &str, bool warning) {
-  if (str == "HEAD" || str == "Head")
-    return HEAD;
+TSlotType stringToSlotType(const std::string &str, bool warning)
+{
+	if (str == "HEAD" || str == "Head")
+		return HEAD;
 
-  if (str == "ARMS" || str == "Arms")
-    return ARMS;
+	if (str == "ARMS" || str == "Arms")
+		return ARMS;
 
-  if (str == "RIGHT_HAND")
-    return RIGHT_HAND;
+	if (str == "RIGHT_HAND")
+		return RIGHT_HAND;
 
-  if (str == "LEFT_HAND")
-    return LEFT_HAND;
+	if (str == "LEFT_HAND")
+		return LEFT_HAND;
 
-  if (str == "TWO_HANDS")
-    return TWO_HANDS;
+	if (str == "TWO_HANDS")
+		return TWO_HANDS;
 
-  if (str == "RIGHT_HAND_EXCLUSIVE")
-    return RIGHT_HAND_EXCLUSIVE;
+	if (str == "RIGHT_HAND_EXCLUSIVE")
+		return RIGHT_HAND_EXCLUSIVE;
 
-  if (str == "HANDS" || str == "Hands")
-    return HANDS;
+	if (str == "HANDS" || str == "Hands")
+		return HANDS;
 
-  if (str == "CHEST" || str == "Chest")
-    return CHEST;
+	if (str == "CHEST" || str == "Chest")
+		return CHEST;
 
-  if (str == "LEGS" || str == "Legs")
-    return LEGS;
+	if (str == "LEGS" || str == "Legs")
+		return LEGS;
 
-  if (str == "FEET" || str == "Feet")
-    return FEET;
+	if (str == "FEET" || str == "Feet")
+		return FEET;
 
-  if (str == "HEADDRESS" || str == "Headdress")
-    return HEADDRESS;
+	if (str == "HEADDRESS" || str == "Headdress")
+		return HEADDRESS;
 
-  if (str == "EARS" || str == "Ears")
-    return EARS;
+	if (str == "EARS" || str == "Ears")
+		return EARS;
 
-  if (str == "FACE" || str == "Face")
-    return FACE;
+	if (str == "FACE" || str == "Face")
+		return FACE;
 
-  if (str == "NECKLACE" || str == "Necklace")
-    return NECKLACE;
+	if (str == "NECKLACE" || str == "Necklace")
+		return NECKLACE;
 
-  if (str == "SHOULDER" || str == "Shoulder")
-    return SHOULDER;
+	if (str == "SHOULDER" || str == "Shoulder")
+		return SHOULDER;
 
-  if (str == "BACK" || str == "Back")
-    return BACK;
+	if (str == "BACK" || str == "Back")
+		return BACK;
 
-  if (str == "WRIST" || str == "Wrist")
-    return WRIST;
+	if (str == "WRIST" || str == "Wrist")
+		return WRIST;
 
-  if (str == "FINGERS" || str == "Fingers")
-    return FINGERS;
+	if (str == "FINGERS" || str == "Fingers")
+		return FINGERS;
 
-  if (str == "ANKLE" || str == "Ankle")
-    return ANKLE;
+	if (str == "ANKLE" || str == "Ankle")
+		return ANKLE;
 
-  if (str == "AMMO" || str == "Ammo")
-    return AMMO;
+	if (str == "AMMO" || str == "Ammo")
+		return AMMO;
 
-  //		if (str == "SHEATH" || str == "Sheath" ) // fourreau
-  //			return SHEATH;
+	//		if (str == "SHEATH" || str == "Sheath" ) // fourreau
+	//			return SHEATH;
 
-  if (str == "UNDEFINED")
-    return UNDEFINED;
+	if (str == "UNDEFINED")
+		return UNDEFINED;
 
-  if (warning)
-    nlwarning("<stringToSlotType> Unknown type %s", str.c_str());
-  return UNDEFINED;
+	if (warning)
+		nlwarning("<stringToSlotType> Unknown type %s", str.c_str());
+	return UNDEFINED;
 }
 
 //-----------------------------------------------
 // convertTypeToVisualSlot :
 // Convert a slot type into a visual slot.
 //-----------------------------------------------
-EVisualSlot convertTypeToVisualSlot(TSlotType type) {
-  switch (type) {
-  case CHEST:
-    return CHEST_SLOT;
-    break;
+EVisualSlot convertTypeToVisualSlot(TSlotType type)
+{
+	switch (type)
+	{
+	case CHEST:
+		return CHEST_SLOT;
+		break;
 
-  case LEGS:
-    return LEGS_SLOT;
-    break;
+	case LEGS:
+		return LEGS_SLOT;
+		break;
 
-  case HEAD:
-    return HEAD_SLOT;
-    break;
+	case HEAD:
+		return HEAD_SLOT;
+		break;
 
-  case ARMS:
-    return ARMS_SLOT;
-    break;
+	case ARMS:
+		return ARMS_SLOT;
+		break;
 
-  case FACE:
-    return FACE_SLOT;
-    break;
+	case FACE:
+		return FACE_SLOT;
+		break;
 
-  case HANDS:
-    return HANDS_SLOT;
-    break;
+	case HANDS:
+		return HANDS_SLOT;
+		break;
 
-  case FEET:
-    return FEET_SLOT;
-    break;
+	case FEET:
+		return FEET_SLOT;
+		break;
 
-  case RIGHT_HAND:
-  case TWO_HANDS:
-  case RIGHT_HAND_EXCLUSIVE:
-    return RIGHT_HAND_SLOT;
-    break;
+	case RIGHT_HAND:
+	case TWO_HANDS:
+	case RIGHT_HAND_EXCLUSIVE:
+		return RIGHT_HAND_SLOT;
+		break;
 
-  case LEFT_HAND:
-    return LEFT_HAND_SLOT;
-    break;
+	case LEFT_HAND:
+		return LEFT_HAND_SLOT;
+		break;
 
-  case UNDEFINED:
-  case EARS:
-  case NECKLACE:
-  case SHOULDER:
-  case ANKLE:
-  case FINGERS:
-  case HEADDRESS:
-  case WRIST:
-  case BACK:
-  default:
-    return HIDDEN_SLOT;
-    break;
-  }
+	case UNDEFINED:
+	case EARS:
+	case NECKLACE:
+	case SHOULDER:
+	case ANKLE:
+	case FINGERS:
+	case HEADDRESS:
+	case WRIST:
+	case BACK:
+	default:
+		return HIDDEN_SLOT;
+		break;
+	}
 } // convertTypeToVisualSlot //
-}; // namespace SLOTTYPE
+}; // SLOTTYPE

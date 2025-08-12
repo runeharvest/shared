@@ -17,44 +17,50 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "stdpch.h"
+#include "nel/misc/event_server.h"
 #include "nel/gui/event_listener.h"
 #include "nel/gui/interface_group.h"
 #include "nel/gui/widget_manager.h"
-#include "nel/misc/event_server.h"
-#include "stdpch.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
 #endif
 
 namespace NLGUI {
-CEventListener::CEventListener() {
-  inputHandler.setListener(CWidgetManager::getInstance());
+CEventListener::CEventListener()
+{
+	inputHandler.setListener(CWidgetManager::getInstance());
 }
 
-CEventListener::~CEventListener() {}
-
-void CEventListener::addToServer(NLMISC::CEventServer *server) {
-  server->addListener(NLMISC::EventMouseMoveId, this);
-  server->addListener(NLMISC::EventMouseDownId, this);
-  server->addListener(NLMISC::EventMouseUpId, this);
-  server->addListener(NLMISC::EventMouseWheelId, this);
-  server->addListener(NLMISC::EventMouseDblClkId, this);
-
-  eventServer = server;
+CEventListener::~CEventListener()
+{
 }
 
-void CEventListener::removeFromServer() {
-  eventServer->removeListener(NLMISC::EventMouseMoveId, this);
-  eventServer->removeListener(NLMISC::EventMouseDownId, this);
-  eventServer->removeListener(NLMISC::EventMouseUpId, this);
-  eventServer->removeListener(NLMISC::EventMouseWheelId, this);
-  eventServer->removeListener(NLMISC::EventMouseDblClkId, this);
+void CEventListener::addToServer(NLMISC::CEventServer *server)
+{
+	server->addListener(NLMISC::EventMouseMoveId, this);
+	server->addListener(NLMISC::EventMouseDownId, this);
+	server->addListener(NLMISC::EventMouseUpId, this);
+	server->addListener(NLMISC::EventMouseWheelId, this);
+	server->addListener(NLMISC::EventMouseDblClkId, this);
 
-  eventServer = NULL;
+	eventServer = server;
 }
 
-void CEventListener::operator()(const NLMISC::CEvent &evnt) {
-  inputHandler.handleEvent(evnt);
+void CEventListener::removeFromServer()
+{
+	eventServer->removeListener(NLMISC::EventMouseMoveId, this);
+	eventServer->removeListener(NLMISC::EventMouseDownId, this);
+	eventServer->removeListener(NLMISC::EventMouseUpId, this);
+	eventServer->removeListener(NLMISC::EventMouseWheelId, this);
+	eventServer->removeListener(NLMISC::EventMouseDblClkId, this);
+
+	eventServer = NULL;
 }
-} // namespace NLGUI
+
+void CEventListener::operator()(const NLMISC::CEvent &evnt)
+{
+	inputHandler.handleEvent(evnt);
+}
+}

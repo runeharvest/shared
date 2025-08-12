@@ -17,9 +17,9 @@
 #ifndef NL_VEGETABLE_LIGHT_EX_H
 #define NL_VEGETABLE_LIGHT_EX_H
 
-#include "nel/misc/rgba.h"
 #include "nel/misc/types_nl.h"
 #include "nel/misc/vector.h"
+#include "nel/misc/rgba.h"
 
 namespace NL3D {
 
@@ -32,34 +32,38 @@ class CPointLightNamed;
  * \author Nevrax France
  * \date 2002
  */
-class CVegetableLightEx {
+class CVegetableLightEx
+{
 public:
-  /// Must not change (hardcoded)
-  enum { MaxNumLight = 2 };
+	/// Must not change (hardcoded)
+	enum
+	{
+		MaxNumLight = 2
+	};
 
-  /// Number Of light currently really enabled.
-  uint NumLights;
-  /// PointLights. Used at CVegetableManager::updateLighting() to get current
-  /// colors of pointLights.
-  CPointLightNamed *PointLight[MaxNumLight];
-  /// Direction of the light. the direction to the instance should be
-  /// precomputed.
-  NLMISC::CVector Direction[MaxNumLight];
-  /// Factor to be multiplied by color of the light. Actually it is the
-  /// attenuation factor.
-  uint PointLightFactor[MaxNumLight];
+	/// Number Of light currently really enabled.
+	uint NumLights;
+	/// PointLights. Used at CVegetableManager::updateLighting() to get current colors of pointLights.
+	CPointLightNamed *PointLight[MaxNumLight];
+	/// Direction of the light. the direction to the instance should be precomputed.
+	NLMISC::CVector Direction[MaxNumLight];
+	/// Factor to be multiplied by color of the light. Actually it is the attenuation factor.
+	uint PointLightFactor[MaxNumLight];
 
-  /// Current Color of the light.
-  NLMISC::CRGBA Color[MaxNumLight];
+	/// Current Color of the light.
+	NLMISC::CRGBA Color[MaxNumLight];
 
 public:
-  CVegetableLightEx() { NumLights = 0; }
+	CVegetableLightEx()
+	{
+		NumLights = 0;
+	}
 
-  /// Fill Color array according to PointLight[] and PointLightFactor[].
-  void computeCurrentColors();
+	/// Fill Color array according to PointLight[] and PointLightFactor[].
+	void computeCurrentColors();
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_VEGETABLE_LIGHT_EX_H
 

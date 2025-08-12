@@ -22,25 +22,27 @@
  * They'll be deleted in the dtor
  */
 
-class CDialogStack {
+class CDialogStack
+{
 public:
-  void pushWnd(CWnd *wnd) {
-    // a window must be registered only once
-    nlassert(std::find(_WndList.begin(), _WndList.end(), wnd) ==
-             _WndList.end());
-    _WndList.push_back(wnd);
-  }
+	void pushWnd(CWnd *wnd)
+	{
+		// a window must be registered only once
+		nlassert(std::find(_WndList.begin(), _WndList.end(), wnd) == _WndList.end());
+		_WndList.push_back(wnd);
+	}
 
-  ~CDialogStack() {
-    for (std::vector<CWnd *>::iterator it = _WndList.begin();
-         it != _WndList.end(); ++it) {
-      (*it)->DestroyWindow();
-      delete *it;
-    }
-  }
+	~CDialogStack()
+	{
+		for (std::vector<CWnd *>::iterator it = _WndList.begin(); it != _WndList.end(); ++it)
+		{
+			(*it)->DestroyWindow();
+			delete *it;
+		}
+	}
 
 protected:
-  std::vector<CWnd *> _WndList;
+	std::vector<CWnd *> _WndList;
 };
 
 #endif

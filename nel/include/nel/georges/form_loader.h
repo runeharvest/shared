@@ -20,9 +20,9 @@
 #ifndef NL_FORM_LOADER_H
 #define NL_FORM_LOADER_H
 
-#include "nel/georges/u_form_loader.h"
-#include "nel/misc/smart_ptr.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/smart_ptr.h"
+#include "nel/georges/u_form_loader.h"
 
 namespace NLGEORGES {
 
@@ -38,38 +38,38 @@ class CForm;
  * \author Nevrax France
  * \date 2002
  */
-class CFormLoader : public UFormLoader {
+class CFormLoader : public UFormLoader
+{
 public:
-  virtual ~CFormLoader();
-  // From UFormLoader
-  UForm *loadForm(const std::string &filename);
-  UFormDfn *loadFormDfn(const std::string &filename);
-  UType *loadFormType(const std::string &filename);
+	virtual ~CFormLoader();
+	// From UFormLoader
+	UForm *loadForm(const std::string &filename);
+	UFormDfn *loadFormDfn(const std::string &filename);
+	UType *loadFormType(const std::string &filename);
 
-  // Load type and formDfn
-  CType *loadType(const std::string &filename);
-  CFormDfn *loadFormDfn(const std::string &filename, bool forceLoad);
+	// Load type and formDfn
+	CType *loadType(const std::string &filename);
+	CFormDfn *loadFormDfn(const std::string &filename, bool forceLoad);
 
 private:
-  // Error handling
-  virtual void warning(bool exception, const std::string &function,
-                       const char *format, ...) const;
+	// Error handling
+	virtual void warning(bool exception, const std::string &function, const char *format, ...) const;
 
-  typedef std::map<std::string, NLMISC::CRefPtr<CType>> TTypeMap;
-  typedef std::map<std::string, NLMISC::CRefPtr<CFormDfn>> TFormDfnMap;
-  typedef std::map<std::string, NLMISC::CRefPtr<CForm>> TFormMap;
+	typedef std::map<std::string, NLMISC::CRefPtr<CType>> TTypeMap;
+	typedef std::map<std::string, NLMISC::CRefPtr<CFormDfn>> TFormDfnMap;
+	typedef std::map<std::string, NLMISC::CRefPtr<CForm>> TFormMap;
 
-  // Map of filename / CRefPtr<CType>
-  TTypeMap _MapType;
+	// Map of filename / CRefPtr<CType>
+	TTypeMap _MapType;
 
-  // Map of filename / CRefPtr<CFormDfnCFormDfn>
-  TFormDfnMap _MapFormDfn;
+	// Map of filename / CRefPtr<CFormDfnCFormDfn>
+	TFormDfnMap _MapFormDfn;
 
-  // Map of form / CRefPtr<CForm>
-  TFormMap _MapForm;
+	// Map of form / CRefPtr<CForm>
+	TFormMap _MapForm;
 };
 
-} // namespace NLGEORGES
+} // NLGEORGES
 
 #endif // NL_FORM_LOADER_H
 

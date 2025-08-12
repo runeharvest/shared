@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "TileView.h"
 #include "stdafx.h"
 #include "tile_edit_exe.h"
+#include "TileView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -27,9 +27,13 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // TileView
 
-TileView::TileView() {}
+TileView::TileView()
+{
+}
 
-TileView::~TileView() {}
+TileView::~TileView()
+{
+}
 
 BEGIN_MESSAGE_MAP(TileView, CListCtrl)
 //{{AFX_MSG_MAP(TileView)
@@ -42,34 +46,39 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // TileView message handlers
 
-void TileView::OnDropFiles(HDROP hDropInfo) {
-  // TODO: Add your message handler code here and/or call default
-  //	*parent=this->GetParent();
-  //	if (parent) parent->
+void TileView::OnDropFiles(HDROP hDropInfo)
+{
+	// TODO: Add your message handler code here and/or call default
+	//	*parent=this->GetParent();
+	//	if (parent) parent->
 
-  CListCtrl::OnDropFiles(hDropInfo);
+	CListCtrl::OnDropFiles(hDropInfo);
 }
 
-void TileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
-  // TODO: Add your message handler code here and/or call default
+void TileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// TODO: Add your message handler code here and/or call default
 
-  CListCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
+	CListCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
-int TileView::OnMouseActivate(CWnd *pDesktopWnd, UINT nHitTest, UINT message) {
-  // TODO: Add your message handler code here and/or call default
+int TileView::OnMouseActivate(CWnd *pDesktopWnd, UINT nHitTest, UINT message)
+{
+	// TODO: Add your message handler code here and/or call default
 
-  return CListCtrl::OnMouseActivate(pDesktopWnd, nHitTest, message);
+	return CListCtrl::OnMouseActivate(pDesktopWnd, nHitTest, message);
 }
 
-BOOL TileView::OnCommand(WPARAM wParam, LPARAM lParam) {
-  // TODO: Add your specialized code here and/or call the base class
+BOOL TileView::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+	// TODO: Add your specialized code here and/or call the base class
 
-  return CListCtrl::OnCommand(wParam, lParam);
+	return CListCtrl::OnCommand(wParam, lParam);
 }
 
-LRESULT TileView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) {
-  // TODO: Add your specialized code here and/or call the base class
+LRESULT TileView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	// TODO: Add your specialized code here and/or call the base class
 
-  return CListCtrl::WindowProc(message, wParam, lParam);
+	return CListCtrl::WindowProc(message, wParam, lParam);
 }

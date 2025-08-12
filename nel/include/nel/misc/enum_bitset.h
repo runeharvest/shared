@@ -17,18 +17,26 @@
 #ifndef NL_ENUM_BIYSET_H
 #define NL_ENUM_BIYSET_H
 
-#include "sstring.h"
 #include "types_nl.h"
+#include "sstring.h"
 
 namespace NLMISC {
-template <class EnumType, typename BitsetType> struct TSimpleEnum {
-  static BitsetType getValue(EnumType value) { return BitsetType(value); }
+template <class EnumType, typename BitsetType>
+struct TSimpleEnum
+{
+	static BitsetType getValue(EnumType value)
+	{
+		return BitsetType(value);
+	}
 };
 
-template <class EnumType, typename BitsetType> struct TContainedEnum {
-  static BitsetType getValue(EnumType value) {
-    return BitsetType(value.getValue());
-  }
+template <class EnumType, typename BitsetType>
+struct TContainedEnum
+{
+	static BitsetType getValue(EnumType value)
+	{
+		return BitsetType(value.getValue());
+	}
 };
 
 /** Utility to build 'ored' bit set from a 2 powered enum.
@@ -62,8 +70,7 @@ template <class EnumType, typename BitsetType> struct TContainedEnum {
  *		maxFoo
  *	};
  *
- *	// Create the enum bit set, using enum foo, coded on an uint32 and
- *limited
+ *	// Create the enum bit set, using enum foo, coded on an uint32 and limited
  *	// to the value maxFoo in order to check for invalid values.
  *	CEnumBitSet<foo, uint32, maxFoo>	myset;
  *	myset.setEnumValue(value1);
@@ -74,92 +81,119 @@ template <class EnumType, typename BitsetType> struct TContainedEnum {
  *	myset.checkEnumValue(value2);	// return false
  *	myset.checkEnumValue(value4);	// return false
  */
-template <class EnumType, typename BitsetType = uint32,
-          BitsetType maxValue = UINT_MAX, char Delimiter = ',',
-          class EnumAccessor = TSimpleEnum<EnumType, BitsetType>,
-          class SimpleEnumType = EnumType>
-struct CEnumBitset {
-  // Default constructor with no flag set
-  CEnumBitset() : Bitset(0) {}
+template <class EnumType,
+    typename BitsetType = uint32,
+    BitsetType maxValue = UINT_MAX,
+    char Delimiter = ',',
+    class EnumAccessor = TSimpleEnum<EnumType, BitsetType>,
+    class SimpleEnumType = EnumType>
+struct CEnumBitset
+{
+	// Default constructor with no flag set
+	CEnumBitset()
+	    : Bitset(0)
+	{
+	}
 
-  // Constructor with one flag set
-  CEnumBitset(EnumType value) : Bitset(0) { setEnumValue(value); }
+	// Constructor with one flag set
+	CEnumBitset(EnumType value)
+	    : Bitset(0)
+	{
+		setEnumValue(value);
+	}
 
-  // Constructor with a enumerated string
-  CEnumBitset(const std::string &valueList) : Bitset(0) {
-    fromString(valueList);
-  }
+	// Constructor with a enumerated string
+	CEnumBitset(const std::string &valueList)
+	    : Bitset(0)
+	{
+		fromString(valueList);
+	}
 
-  /// Add a bit
-  void addEnumValue(EnumType value) {
-    nlwarning("Deprecated, please use setEnumValue");
-    setEnumValue(value);
-    //		nlassert(value < maxValue);
-    //		Bitset |= value;
-  }
+	/// Add a bit
+	void addEnumValue(EnumType value)
+	{
+		nlwarning("Deprecated, please use setEnumValue");
+		setEnumValue(value);
+		//		nlassert(value < maxValue);
+		//		Bitset |= value;
+	}
 
-  /// set a bit
-  void setEnumValue(EnumType value) {
-    nlassert(EnumAccessor::getValue(value) < maxValue);
-    Bitset |= EnumAccessor::getValue(value);
-  }
+	/// set a bit
+	void setEnumValue(EnumType value)
+	{
+		nlassert(EnumAccessor::getValue(value) < maxValue);
+		Bitset |= EnumAccessor::getValue(value);
+	}
 
-  /// clear a bit
-  void clearEnumValue(EnumType value) {
-    nlassert(EnumAccessor::getValue(value) < maxValue);
-    Bitset &= ~(EnumAccessor::getValue(value));
-  }
+	/// clear a bit
+	void clearEnumValue(EnumType value)
+	{
+		nlassert(EnumAccessor::getValue(value) < maxValue);
+		Bitset &= ~(EnumAccessor::getValue(value));
+	}
 
-  bool checkEnumValue(EnumType value) {
-    return (Bitset & EnumAccessor::getValue(value)) ==
-           EnumAccessor::getValue(value);
-  }
+	bool checkEnumValue(EnumType value)
+	{
+		return (Bitset & EnumAccessor::getValue(value)) == EnumAccessor::getValue(value);
+	}
 
-  std::string toString() const {
-    CSString result;
+	std::string toString() const
+	{
+		CSString result;
 
-    std::string delim;
-    delim += Delimiter;
+		std::string delim;
+		delim += Delimiter;
 
-    // count up to 64 bits
-    BitsetType value = 1;
-    uint i = 0;
-    for (; i < 64; value <<= 1, ++i) {
-      if (Bitset & value) {
-        if (!result.empty())
-          result << delim;
-        // this bit is set, add a string
-        result << EnumType::toString(SimpleEnumType(value));
-      }
-    }
+		// count up to 64 bits
+		BitsetType value = 1;
+		uint i = 0;
+		for (; i < 64; value <<= 1, ++i)
+		{
+			if (Bitset & value)
+			{
+				if (!result.empty())
+					result << delim;
+				// this bit is set, add a string
+				result << EnumType::toString(SimpleEnumType(value));
+			}
+		}
 
-    return result;
-  }
+		return result;
+	}
 
-  bool fromString(const std::string &valueList) {
-    std::vector<std::string> values;
+	bool fromString(const std::string &valueList)
+	{
+		std::vector<std::string> values;
 
-    std::string delim;
-    delim += Delimiter;
+		std::string delim;
+		delim += Delimiter;
 
-    NLMISC::explode(valueList, delim, values, true);
+		NLMISC::explode(valueList, delim, values, true);
 
-    for (uint i = 0; i < values.size(); ++i) {
-      setEnumValue(EnumType(values[i]));
-    }
+		for (uint i = 0; i < values.size(); ++i)
+		{
+			setEnumValue(EnumType(values[i]));
+		}
 
-    return true;
-  }
+		return true;
+	}
 
-  bool operator==(const CEnumBitset &other) const {
-    return Bitset == other.Bitset;
-  }
+	bool operator==(const CEnumBitset &other) const
+	{
+		return Bitset == other.Bitset;
+	}
 
-  bool operator!=(const CEnumBitset &other) const { return !operator==(other); }
+	bool operator!=(const CEnumBitset &other) const
+	{
+		return !operator==(other);
+	}
 
-  void serial(NLMISC::IStream &s) { s.serial(Bitset); }
+	void serial(NLMISC::IStream &s)
+	{
+		s.serial(Bitset);
+	}
 
-  BitsetType Bitset;
+	BitsetType Bitset;
 };
 
 } // namespace NLMISC

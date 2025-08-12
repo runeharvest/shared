@@ -18,8 +18,8 @@
 
 #include "nel/3d/track.h"
 
-#include "nel/misc/hierarchical_timer.h"
 #include "nel/misc/rgba.h"
+#include "nel/misc/hierarchical_timer.h"
 
 using namespace NLMISC;
 
@@ -51,144 +51,158 @@ static CAnimatedValueBlock AnimatedValueBlock;
 
 // ***************************************************************************
 
-bool ITrack::interpolate(TAnimationTime time, float &res) {
-  NL3D_HAUTO_UTRACK_INTERPOLATE;
+bool ITrack::interpolate(TAnimationTime time, float &res)
+{
+	NL3D_HAUTO_UTRACK_INTERPOLATE;
 
-  // Evaluate it
-  const CAnimatedValueFloat *value;
-  value = dynamic_cast<const CAnimatedValueFloat *>(
-      &eval(time, AnimatedValueBlock));
+	// Evaluate it
+	const CAnimatedValueFloat *value;
+	value = dynamic_cast<const CAnimatedValueFloat *>(&eval(time, AnimatedValueBlock));
 
-  // Type is good ?
-  if (value) {
-    // Ok, return the value
-    res = value->Value;
-    return true;
-  } else
-    // No, return false
-    return false;
+	// Type is good ?
+	if (value)
+	{
+		// Ok, return the value
+		res = value->Value;
+		return true;
+	}
+	else
+		// No, return false
+		return false;
 }
 
 // ***************************************************************************
 
-bool ITrack::interpolate(TAnimationTime time, sint32 &res) {
-  NL3D_HAUTO_UTRACK_INTERPOLATE;
+bool ITrack::interpolate(TAnimationTime time, sint32 &res)
+{
+	NL3D_HAUTO_UTRACK_INTERPOLATE;
 
-  // Evaluate it
-  const CAnimatedValueInt *value;
-  value =
-      dynamic_cast<const CAnimatedValueInt *>(&eval(time, AnimatedValueBlock));
+	// Evaluate it
+	const CAnimatedValueInt *value;
+	value = dynamic_cast<const CAnimatedValueInt *>(&eval(time, AnimatedValueBlock));
 
-  // Type is good ?
-  if (value) {
-    // Ok, return the value
-    res = value->Value;
-    return true;
-  } else
-    // No, return false
-    return false;
+	// Type is good ?
+	if (value)
+	{
+		// Ok, return the value
+		res = value->Value;
+		return true;
+	}
+	else
+		// No, return false
+		return false;
 }
 
 // ***************************************************************************
 
-bool ITrack::interpolate(TAnimationTime time, CRGBA &res) {
-  NL3D_HAUTO_UTRACK_INTERPOLATE;
+bool ITrack::interpolate(TAnimationTime time, CRGBA &res)
+{
+	NL3D_HAUTO_UTRACK_INTERPOLATE;
 
-  // Evaluate it
-  const CAnimatedValueRGBA *value;
-  value =
-      dynamic_cast<const CAnimatedValueRGBA *>(&eval(time, AnimatedValueBlock));
+	// Evaluate it
+	const CAnimatedValueRGBA *value;
+	value = dynamic_cast<const CAnimatedValueRGBA *>(&eval(time, AnimatedValueBlock));
 
-  // Type is good ?
-  if (value) {
-    // Ok, return the value
-    res = value->Value;
-    return true;
-  } else
-    // No, return false
-    return false;
+	// Type is good ?
+	if (value)
+	{
+		// Ok, return the value
+		res = value->Value;
+		return true;
+	}
+	else
+		// No, return false
+		return false;
 }
 
 // ***************************************************************************
 
-bool ITrack::interpolate(TAnimationTime time, CVector &res) {
-  NL3D_HAUTO_UTRACK_INTERPOLATE;
+bool ITrack::interpolate(TAnimationTime time, CVector &res)
+{
+	NL3D_HAUTO_UTRACK_INTERPOLATE;
 
-  // Evaluate it
-  const CAnimatedValueVector *value;
-  value = dynamic_cast<const CAnimatedValueVector *>(
-      &eval(time, AnimatedValueBlock));
+	// Evaluate it
+	const CAnimatedValueVector *value;
+	value = dynamic_cast<const CAnimatedValueVector *>(&eval(time, AnimatedValueBlock));
 
-  // Type is good ?
-  if (value) {
-    // Ok, return the value
-    res = value->Value;
-    return true;
-  } else
-    // No, return false
-    return false;
+	// Type is good ?
+	if (value)
+	{
+		// Ok, return the value
+		res = value->Value;
+		return true;
+	}
+	else
+		// No, return false
+		return false;
 }
 
 // ***************************************************************************
 
-bool ITrack::interpolate(TAnimationTime time, CQuat &res) {
-  NL3D_HAUTO_UTRACK_INTERPOLATE;
+bool ITrack::interpolate(TAnimationTime time, CQuat &res)
+{
+	NL3D_HAUTO_UTRACK_INTERPOLATE;
 
-  // Evaluate it
-  const CAnimatedValueQuat *value;
-  value =
-      dynamic_cast<const CAnimatedValueQuat *>(&eval(time, AnimatedValueBlock));
+	// Evaluate it
+	const CAnimatedValueQuat *value;
+	value = dynamic_cast<const CAnimatedValueQuat *>(&eval(time, AnimatedValueBlock));
 
-  // Type is good ?
-  if (value) {
-    // Ok, return the value
-    res = value->Value;
-    return true;
-  } else
-    // No, return false
-    return false;
+	// Type is good ?
+	if (value)
+	{
+		// Ok, return the value
+		res = value->Value;
+		return true;
+	}
+	else
+		// No, return false
+		return false;
 }
 
 // ***************************************************************************
 
-bool ITrack::interpolate(TAnimationTime time, std::string &res) {
-  NL3D_HAUTO_UTRACK_INTERPOLATE;
+bool ITrack::interpolate(TAnimationTime time, std::string &res)
+{
+	NL3D_HAUTO_UTRACK_INTERPOLATE;
 
-  // Evaluate it
-  const CAnimatedValueString *value;
-  value = dynamic_cast<const CAnimatedValueString *>(
-      &eval(time, AnimatedValueBlock));
+	// Evaluate it
+	const CAnimatedValueString *value;
+	value = dynamic_cast<const CAnimatedValueString *>(&eval(time, AnimatedValueBlock));
 
-  // Type is good ?
-  if (value) {
-    // Ok, return the value
-    res = value->Value;
-    return true;
-  } else
-    // No, return false
-    return false;
+	// Type is good ?
+	if (value)
+	{
+		// Ok, return the value
+		res = value->Value;
+		return true;
+	}
+	else
+		// No, return false
+		return false;
 }
 
 // ***************************************************************************
 
-bool ITrack::interpolate(TAnimationTime time, bool &res) {
-  NL3D_HAUTO_UTRACK_INTERPOLATE;
+bool ITrack::interpolate(TAnimationTime time, bool &res)
+{
+	NL3D_HAUTO_UTRACK_INTERPOLATE;
 
-  // Evaluate it
-  const CAnimatedValueBool *value;
-  value =
-      dynamic_cast<const CAnimatedValueBool *>(&eval(time, AnimatedValueBlock));
+	// Evaluate it
+	const CAnimatedValueBool *value;
+	value = dynamic_cast<const CAnimatedValueBool *>(&eval(time, AnimatedValueBlock));
 
-  // Type is good ?
-  if (value) {
-    // Ok, return the value
-    res = value->Value;
-    return true;
-  } else
-    // No, return false
-    return false;
+	// Type is good ?
+	if (value)
+	{
+		// Ok, return the value
+		res = value->Value;
+		return true;
+	}
+	else
+		// No, return false
+		return false;
 }
 
 // ***************************************************************************
 
-} // namespace NL3D
+} // NL3D

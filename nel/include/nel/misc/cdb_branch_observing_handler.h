@@ -27,111 +27,101 @@ namespace NLMISC {
 /**
  @brief Manages the CDB branch observers.
 
- When a leaf's data changes, it notifies the branch, which then marks the
- observers as notifiable. The marked observers can then be notified and flushed
- on request.
+ When a leaf's data changes, it notifies the branch, which then marks the observers as notifiable.
+ The marked observers can then be notified and flushed on request.
 
  */
-class CCDBBranchObservingHandler {
+class CCDBBranchObservingHandler
+{
 
-  enum { MAX_OBS_LST = 2 };
-
-public:
-  CCDBBranchObservingHandler();
-
-  ~CCDBBranchObservingHandler();
-
-  /// Notifies the observers, and flushes the list
-  void flushObserverCalls();
-
-  void reset();
-
-  void
-  addBranchObserver(CCDBNodeBranch *branch,
-                    ICDBNode::IPropertyObserver *observer,
-                    const std::vector<std::string> &positiveLeafNameFilter);
-
-  void addBranchObserver(CCDBNodeBranch *branch, const char *dbPathFromThisNode,
-                         ICDBNode::IPropertyObserver &observer,
-                         const char **positiveLeafNameFilter,
-                         uint positiveLeafNameFilterSize);
-
-  void removeBranchObserver(CCDBNodeBranch *branch,
-                            ICDBNode::IPropertyObserver *observer);
-
-  void removeBranchObserver(CCDBNodeBranch *branch,
-                            const char *dbPathFromThisNode,
-                            ICDBNode::IPropertyObserver &observer);
-
-  /// Observer for branch observer flush events.
-  class IBranchObserverCallFlushObserver : public CRefCount {
-  public:
-    virtual ~IBranchObserverCallFlushObserver() {}
-    virtual void onObserverCallFlush() = 0;
-  };
-
-private:
-  void triggerFlushObservers();
+	enum
+	{
+		MAX_OBS_LST = 2
+	};
 
 public:
-  void addFlushObserver(IBranchObserverCallFlushObserver *observer);
-  void removeFlushObserver(IBranchObserverCallFlushObserver *observer);
+	CCDBBranchObservingHandler();
+
+	~CCDBBranchObservingHandler();
+
+	/// Notifies the observers, and flushes the list
+	void flushObserverCalls();
+
+	void reset();
+
+	void addBranchObserver(CCDBNodeBranch *branch, ICDBNode::IPropertyObserver *observer, const std::vector<std::string> &positiveLeafNameFilter);
+
+	void addBranchObserver(CCDBNodeBranch *branch, const char *dbPathFromThisNode, ICDBNode::IPropertyObserver &observer, const char **positiveLeafNameFilter, uint positiveLeafNameFilterSize);
+
+	void removeBranchObserver(CCDBNodeBranch *branch, ICDBNode::IPropertyObserver *observer);
+
+	void removeBranchObserver(CCDBNodeBranch *branch, const char *dbPathFromThisNode, ICDBNode::IPropertyObserver &observer);
+
+	/// Observer for branch observer flush events.
+	class IBranchObserverCallFlushObserver : public CRefCount
+	{
+	public:
+		virtual ~IBranchObserverCallFlushObserver() { }
+		virtual void onObserverCallFlush() = 0;
+	};
 
 private:
-  /**
-   @brief Handle to a branch observer.
+	void triggerFlushObservers();
 
-   The handle stores the owner branch, the observer and remembers if it's marked
-   for notifying the observer. Also it manages adding/removing itself to/from
-   the marked observer handles list, which is handled by
-   CCDBBranchObservingHandler.
+public:
+	void addFlushObserver(IBranchObserverCallFlushObserver *observer);
+	void removeFlushObserver(IBranchObserverCallFlushObserver *observer);
 
-   */
-  class CCDBDBBranchObserverHandle
-      : public CCDBNodeBranch::ICDBDBBranchObserverHandle {
+private:
+	/**
+	 @brief Handle to a branch observer.
 
-  public:
-    CCDBDBBranchObserverHandle(ICDBNode::IPropertyObserver *observer,
-                               CCDBNodeBranch *owner,
-                               CCDBBranchObservingHandler *handler);
+	 The handle stores the owner branch, the observer and remembers if it's marked for notifying the observer.
+	 Also it manages adding/removing itself to/from the marked observer handles list, which is handled by CCDBBranchObservingHandler.
 
-    ~CCDBDBBranchObserverHandle();
+	 */
+	class CCDBDBBranchObserverHandle : public CCDBNodeBranch::ICDBDBBranchObserverHandle
+	{
 
-    ICDBNode *owner() { return _owner; }
+	public:
+		CCDBDBBranchObserverHandle(ICDBNode::IPropertyObserver *observer, CCDBNodeBranch *owner, CCDBBranchObservingHandler *handler);
 
-    ICDBNode::IPropertyObserver *observer() { return _observer; }
+		~CCDBDBBranchObserverHandle();
 
-    bool observesLeaf(const std::string &leafName);
+		ICDBNode *owner() { return _owner; }
 
-    bool inList(uint list);
+		ICDBNode::IPropertyObserver *observer() { return _observer; }
 
-    void addToFlushableList();
+		bool observesLeaf(const std::string &leafName);
 
-    void removeFromFlushableList(uint list);
+		bool inList(uint list);
 
-    void removeFromFlushableList();
+		void addToFlushableList();
 
-  private:
-    bool _inList[MAX_OBS_LST];
+		void removeFromFlushableList(uint list);
 
-    std::vector<std::string> _observedLeaves;
+		void removeFromFlushableList();
 
-    CCDBNodeBranch *_owner;
+	private:
+		bool _inList[MAX_OBS_LST];
 
-    NLMISC::CRefPtr<ICDBNode::IPropertyObserver> _observer;
+		std::vector<std::string> _observedLeaves;
 
-    CCDBBranchObservingHandler *_handler;
-  };
+		CCDBNodeBranch *_owner;
 
-  std::list<CCDBNodeBranch::ICDBDBBranchObserverHandle *>
-      flushableObservers[MAX_OBS_LST];
+		NLMISC::CRefPtr<ICDBNode::IPropertyObserver> _observer;
 
-  CCDBNodeBranch::ICDBDBBranchObserverHandle *currentHandle;
+		CCDBBranchObservingHandler *_handler;
+	};
 
-  uint currentList;
+	std::list<CCDBNodeBranch::ICDBDBBranchObserverHandle *> flushableObservers[MAX_OBS_LST];
 
-  std::vector<IBranchObserverCallFlushObserver *> flushObservers;
+	CCDBNodeBranch::ICDBDBBranchObserverHandle *currentHandle;
+
+	uint currentList;
+
+	std::vector<IBranchObserverCallFlushObserver *> flushObservers;
 };
-} // namespace NLMISC
+}
 
 #endif

@@ -30,25 +30,24 @@ enum EItemOrigin
     : uint8
 #endif
 {
-  COMMON = 0,
-  FYROS,
-  MATIS,
-  TRYKER,
-  ZORAI,
-  REFUGEE,
-  TRIBE,
-  KAMI,
-  KARAVAN,
+	COMMON = 0,
+	FYROS,
+	MATIS,
+	TRYKER,
+	ZORAI,
+	REFUGEE,
+	TRIBE,
+	KAMI,
+	KARAVAN,
 
-  UNKNOWN,
-  NUM_ITEM_ORIGIN = UNKNOWN
+	UNKNOWN,
+	NUM_ITEM_ORIGIN = UNKNOWN
 };
 
 /**
  * get the right EItemOrigin enum from the input string
  * \param str the input string
- * \return the EItemOrigin associated to this string (UNKNOWN if the string
- * cannot be interpreted)
+ * \return the EItemOrigin associated to this string (UNKNOWN if the string cannot be interpreted)
  */
 EItemOrigin stringToEnum(const std::string &str);
 

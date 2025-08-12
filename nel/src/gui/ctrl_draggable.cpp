@@ -17,8 +17,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "nel/gui/ctrl_draggable.h"
 #include "stdpch.h"
+#include "nel/gui/ctrl_draggable.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -28,9 +28,11 @@ namespace NLGUI {
 
 CCtrlDraggable *CCtrlDraggable::_LastDraggedSheet = NULL;
 
-CCtrlDraggable::CCtrlDraggable(const TCtorParam &param) : CCtrlBase(param) {
-  dragged = false;
-  draggable = false;
+CCtrlDraggable::CCtrlDraggable(const TCtorParam &param)
+    : CCtrlBase(param)
+{
+	dragged = false;
+	draggable = false;
 }
 
-} // namespace NLGUI
+}

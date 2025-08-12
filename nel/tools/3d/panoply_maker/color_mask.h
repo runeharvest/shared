@@ -20,14 +20,15 @@
 #include "color_modifier.h"
 #include <string>
 
-struct CColorMask {
-  // the extension used for this color mask.
-  // Example : if this is named 'mask1', a base texture
-  // 'tex.tga' will use this mask if there's a tex_mask1.tga file
-  std::string MaskExt;
+struct CColorMask
+{
+	// the extension used for this color mask.
+	// Example : if this is named 'mask1', a base texture
+	// 'tex.tga' will use this mask if there's a tex_mask1.tga file
+	std::string MaskExt;
 
-  /// the various color modifiers that must be applied on textures
-  TColorModifierVect CMs;
+	/// the various color modifiers that must be applied on textures
+	TColorModifierVect CMs;
 };
 
 typedef std::vector<CColorMask> TColorMaskVect;

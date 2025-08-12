@@ -17,8 +17,8 @@
 #ifndef NL_STOP_WATCH_H
 #define NL_STOP_WATCH_H
 
-#include "time_nl.h"
 #include "types_nl.h"
+#include "time_nl.h"
 
 #include <deque>
 
@@ -29,60 +29,62 @@ typedef uint32 TMsDuration;
 
 /**
  * Stopwatch class used for performance measurements and statistics.
- * To measure the duration of a cycle, call stop(), get the results, then call
- * start(). \author Olivier Cado \author Nevrax France \date 2001
+ * To measure the duration of a cycle, call stop(), get the results, then call start().
+ * \author Olivier Cado
+ * \author Nevrax France
+ * \date 2001
  */
-class CStopWatch {
+class CStopWatch
+{
 public:
-  /// Constructor. Set a non-zero queueLength for partial average calculation
-  CStopWatch(uint queueLength = 0);
+	/// Constructor. Set a non-zero queueLength for partial average calculation
+	CStopWatch(uint queueLength = 0);
 
-  /// Begin measurement
-  void start();
+	/// Begin measurement
+	void start();
 
-  /// Pause
-  void pause();
+	/// Pause
+	void pause();
 
-  /// Resume
-  void resume();
+	/// Resume
+	void resume();
 
-  /// Add time (in ticks unit) to the current measurement
-  void addTime(TTickDuration t);
+	/// Add time (in ticks unit) to the current measurement
+	void addTime(TTickDuration t);
 
-  /// End measurement
-  void stop();
+	/// End measurement
+	void stop();
 
-  /// Add an external duration (in ticks unit) to the average queue
-  void addMeasurement(TTickDuration t);
+	/// Add an external duration (in ticks unit) to the average queue
+	void addMeasurement(TTickDuration t);
 
-  /// Elapsed time in millisecond (call it after stop())
-  TMsDuration getDuration() const;
+	/// Elapsed time in millisecond (call it after stop())
+	TMsDuration getDuration() const;
 
-  /// Average duration of the queueLength last durations (using the queueLength
-  /// argument specified in the constructor)
-  TMsDuration getPartialAverage() const;
+	/// Average duration of the queueLength last durations (using the queueLength argument specified in the constructor)
+	TMsDuration getPartialAverage() const;
 
-  /// Average of the duration
-  TMsDuration getAverageDuration() const;
+	/// Average of the duration
+	TMsDuration getAverageDuration() const;
 
-  /// Sum of the measured durations (in ticks)
-  TTickDuration sumTicks() const { return _SumTicks; }
+	/// Sum of the measured durations (in ticks)
+	TTickDuration sumTicks() const { return _SumTicks; }
 
-  /// Number of measurements
-  uint32 measurementNumber() const { return _MeasurementNumber; }
+	/// Number of measurements
+	uint32 measurementNumber() const { return _MeasurementNumber; }
 
 private:
-  TTicks _BeginTime;
-  TTickDuration _ElapsedTicks;
+	TTicks _BeginTime;
+	TTickDuration _ElapsedTicks;
 
-  TTickDuration _SumTicks;
-  uint32 _MeasurementNumber;
+	TTickDuration _SumTicks;
+	uint32 _MeasurementNumber;
 
-  std::deque<TTickDuration> _Queue;
-  uint _QLength;
+	std::deque<TTickDuration> _Queue;
+	uint _QLength;
 };
 
-} // namespace NLMISC
+} // NLMISC
 
 #endif // NL_STOP_WATCH_H
 

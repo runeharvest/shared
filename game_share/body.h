@@ -24,27 +24,32 @@
 namespace BODY {
 /** Side of body
  */
-enum TSide { Right = 0, Left };
+enum TSide
+{
+	Right = 0,
+	Left
+};
 
 /**
  * describe the different body types, according to the considered entity
  */
-enum TBodyType {
-  Homin = 0,
-  Quadruped,
-  LandKitin,
-  FlyingKitin,
-  Fish,
-  Bird,
-  Plant,
+enum TBodyType
+{
+	Homin = 0,
+	Quadruped,
+	LandKitin,
+	FlyingKitin,
+	Fish,
+	Bird,
+	Plant,
 
-  NbBodyTypes,
-  UnknownBodyType = NbBodyTypes,
+	NbBodyTypes,
+	UnknownBodyType = NbBodyTypes,
 };
 
 /**
- * Following enum describe the body parts according to considered entity (body)
- * type MUST be always in this order (regarding slot)
+ * Following enum describe the body parts according to considered entity (body) type
+ * MUST be always in this order (regarding slot)
  *
  * HEAD
  * CHEST
@@ -54,72 +59,73 @@ enum TBodyType {
  * FEET
  * NbBodySlotParts = 6
  */
-enum TBodyPart {
-  BeginHomin = 0,
-  HHead = BeginHomin,
-  HChest,
-  HArms,
-  HHands,
-  HLegs,
-  HFeet,
-  EndHomin = HFeet,
+enum TBodyPart
+{
+	BeginHomin = 0,
+	HHead = BeginHomin,
+	HChest,
+	HArms,
+	HHands,
+	HLegs,
+	HFeet,
+	EndHomin = HFeet,
 
-  BeginQuadruped,
-  QHead = BeginQuadruped,
-  QBody,
-  QFrontPaws,
-  QFrontHooves,
-  QRearPaws,
-  QRearHooves,
-  EndHomins = QRearHooves,
+	BeginQuadruped,
+	QHead = BeginQuadruped,
+	QBody,
+	QFrontPaws,
+	QFrontHooves,
+	QRearPaws,
+	QRearHooves,
+	EndHomins = QRearHooves,
 
-  BeginLandKitin,
-  LKHead = BeginLandKitin,
-  LKBody,
-  LKFrontPaws1,
-  LKFrontPaws2,
-  LKRearPaws1,
-  LKRearPaws2,
-  EndLandKitin = LKRearPaws2,
+	BeginLandKitin,
+	LKHead = BeginLandKitin,
+	LKBody,
+	LKFrontPaws1,
+	LKFrontPaws2,
+	LKRearPaws1,
+	LKRearPaws2,
+	EndLandKitin = LKRearPaws2,
 
-  BeginFlyingKitin,
-  FKHead = BeginFlyingKitin,
-  FKBody,
-  FKPaws1,
-  FKPaws2,
-  FKWings1,
-  FKWings2,
-  EndFlyingKitin = FKWings2,
+	BeginFlyingKitin,
+	FKHead = BeginFlyingKitin,
+	FKBody,
+	FKPaws1,
+	FKPaws2,
+	FKWings1,
+	FKWings2,
+	EndFlyingKitin = FKWings2,
 
-  BeginFish,
-  FHead = BeginFish,
-  FBody,
-  FFrontFins1,
-  FFrontFins2,
-  FRearFins1,
-  FRearFins2,
-  EndFish = FRearFins2,
+	BeginFish,
+	FHead = BeginFish,
+	FBody,
+	FFrontFins1,
+	FFrontFins2,
+	FRearFins1,
+	FRearFins2,
+	EndFish = FRearFins2,
 
-  BeginBird,
-  BHead = BeginBird,
-  BBody,
-  BFeet1,
-  BFeet2,
-  BWings1,
-  BWings2,
-  EndBird = BWings2,
+	BeginBird,
+	BHead = BeginBird,
+	BBody,
+	BFeet1,
+	BFeet2,
+	BWings1,
+	BWings2,
+	EndBird = BWings2,
 
-  BeginPlant,
-  PUpperTrunk = BeginPlant,
-  PTrunk,
-  PLeaves1,
-  PLeaves2,
-  PLowerTrunk,
-  PVisibleRoots,
-  EndPlant = PVisibleRoots,
+	BeginPlant,
+	PUpperTrunk = BeginPlant,
+	PTrunk,
+	PLeaves1,
+	PLeaves2,
+	PLowerTrunk,
+	PVisibleRoots,
+	EndPlant = PVisibleRoots,
 
-  NbBodyParts,
-  UnknownBodyPart = NbBodyParts,
+	NbBodyParts,
+	UnknownBodyPart = NbBodyParts,
 };
 
 /**
@@ -148,11 +154,10 @@ SLOT_EQUIPMENT::TSlotEquipment toSlotEquipement(TBodyPart part);
 /// get a body part from a body type and a slot type
 TBodyPart getBodyPart(TBodyType type, SLOT_EQUIPMENT::TSlotEquipment slot);
 
-// from any body part, gives the matching body part for homins, or
-// UnknownBodyPart
+// from any body part, gives the matching body part for homins, or UnknownBodyPart
 TBodyPart getMatchingHominBodyPart(TBodyPart src);
 
-}; // namespace BODY
+}; // BODY
 
 #endif // RY_BODY_H
 /* End of body.h */

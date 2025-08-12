@@ -21,32 +21,32 @@
 
 namespace WEAPONTYPE {
 // Mode
-enum EWeaponType {
-  UNKNOWN = 0,
+enum EWeaponType
+{
+	UNKNOWN = 0,
 
-  HANDS,
+	HANDS,
 
-  HEAVY,
-  MEDIUM,
-  LIGHT,
+	HEAVY,
+	MEDIUM,
+	LIGHT,
 
-  LIGHT_GUN,
-  MEDIUM_GUN,
-  HEAVY_GUN,
+	LIGHT_GUN,
+	MEDIUM_GUN,
+	HEAVY_GUN,
 
 };
 
 /**
  * get the right weapon type from the input string
  * \param str the input string
- * \return the EWeaponType associated to this string (UNKNOWN if the string
- * cannot be interpreted)
+ * \return the EWeaponType associated to this string (UNKNOWN if the string cannot be interpreted)
  */
 EWeaponType stringToWeaponType(const std::string &str);
 
 std::string toString(EWeaponType type);
 
-}; // namespace WEAPONTYPE
+}; // WEAPONTYPE
 
 #endif // RY_WEAPON_TYPES_H
 /* End of weapon_types.h */

@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "root_node.h"
 #include <nel/misc/types_nl.h>
+#include "root_node.h"
 
 // STL includes
 
@@ -42,49 +42,71 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CRootNode::CRootNode(CScene *scene) : INode(scene) {}
+CRootNode::CRootNode(CScene *scene)
+    : INode(scene)
+{
+}
 
-CRootNode::~CRootNode() {}
+CRootNode::~CRootNode()
+{
+}
 
 const ucstring CRootNode::DisplayName = ucstring("RootNode");
 const char *CRootNode::InternalName = "RootNode";
-const NLMISC::CClassId CRootNode::ClassId =
-    NLMISC::CClassId(0x00000002, 0x00000000);
+const NLMISC::CClassId CRootNode::ClassId = NLMISC::CClassId(0x00000002, 0x00000000);
 const TSClassId CRootNode::SuperClassId = INode::SuperClassId;
 const CRootNodeClassDesc RootNodeClassDesc(&DllPluginDescBuiltin);
 
-void CRootNode::parse(uint16 version, uint filter) { INode::parse(version); }
-
-void CRootNode::clean() { INode::clean(); }
-
-void CRootNode::build(uint16 version, uint filter) { INode::build(version); }
-
-void CRootNode::disown() { INode::disown(); }
-
-void CRootNode::init() { INode::init(); }
-
-bool CRootNode::inherits(const NLMISC::CClassId classId) const {
-  if (classId == classDesc()->classId())
-    return true;
-  return INode::inherits(classId);
+void CRootNode::parse(uint16 version, uint filter)
+{
+	INode::parse(version);
 }
 
-const ISceneClassDesc *CRootNode::classDesc() const {
-  return &RootNodeClassDesc;
+void CRootNode::clean()
+{
+	INode::clean();
 }
 
-void CRootNode::toStringLocal(std::ostream &ostream, const std::string &pad,
-                              uint filter) const {
-  INode::toStringLocal(ostream, pad);
+void CRootNode::build(uint16 version, uint filter)
+{
+	INode::build(version);
 }
 
-const ucstring &CRootNode::userName() const {
-  static const ucstring v = ucstring("Root Node");
-  return v;
+void CRootNode::disown()
+{
+	INode::disown();
 }
 
-IStorageObject *CRootNode::createChunkById(uint16 id, bool container) {
-  return INode::createChunkById(id, container);
+void CRootNode::init()
+{
+	INode::init();
+}
+
+bool CRootNode::inherits(const NLMISC::CClassId classId) const
+{
+	if (classId == classDesc()->classId()) return true;
+	return INode::inherits(classId);
+}
+
+const ISceneClassDesc *CRootNode::classDesc() const
+{
+	return &RootNodeClassDesc;
+}
+
+void CRootNode::toStringLocal(std::ostream &ostream, const std::string &pad, uint filter) const
+{
+	INode::toStringLocal(ostream, pad);
+}
+
+const ucstring &CRootNode::userName() const
+{
+	static const ucstring v = ucstring("Root Node");
+	return v;
+}
+
+IStorageObject *CRootNode::createChunkById(uint16 id, bool container)
+{
+	return INode::createChunkById(id, container);
 }
 
 } /* namespace BUILTIN */

@@ -17,44 +17,50 @@
 // ValueBlenderDlg.cpp : implementation file
 //
 
+#include "std_afx.h"
+#include "object_viewer.h"
 #include "value_blender_dlg.h"
 #include "edit_attrib_dlg.h"
-#include "object_viewer.h"
 #include "popup_notify.h"
-#include "std_afx.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CValueBlenderDlg dialog
 
 CValueBlenderDlg::CValueBlenderDlg(IValueBlenderDlgClient *creationInterface,
-                                   bool destroyInterface, CWnd *pParent,
-                                   IPopupNotify *pn,
-                                   CParticleWorkspace::CNode *ownerNode)
-    : _CreateInterface(creationInterface),
-      CDialog(CValueBlenderDlg::IDD, pParent), _PN(pn),
-      _DestroyInterface(destroyInterface), _Node(ownerNode) {
-  //{{AFX_DATA_INIT(CValueBlenderDlg)
-  //}}AFX_DATA_INIT
+    bool destroyInterface,
+    CWnd *pParent,
+    IPopupNotify *pn,
+    CParticleWorkspace::CNode *ownerNode)
+    : _CreateInterface(creationInterface)
+    , CDialog(CValueBlenderDlg::IDD, pParent)
+    , _PN(pn)
+    , _DestroyInterface(destroyInterface)
+    , _Node(ownerNode)
+{
+	//{{AFX_DATA_INIT(CValueBlenderDlg)
+	//}}AFX_DATA_INIT
 }
 
-CValueBlenderDlg::~CValueBlenderDlg() {
-  if (_DestroyInterface)
-    delete _CreateInterface;
-  delete _Dlg1;
-  delete _Dlg2;
+CValueBlenderDlg::~CValueBlenderDlg()
+{
+	if (_DestroyInterface) delete _CreateInterface;
+	delete _Dlg1;
+	delete _Dlg2;
 }
 
-void CValueBlenderDlg::init(CWnd *pParent) {
-  CDialog::Create(IDD_VALUE_BLENDER, pParent);
-  ShowWindow(SW_SHOW);
+void CValueBlenderDlg::init(CWnd *pParent)
+{
+	CDialog::Create(IDD_VALUE_BLENDER, pParent);
+	ShowWindow(SW_SHOW);
 }
 
-void CValueBlenderDlg::DoDataExchange(CDataExchange *pDX) {
-  CDialog::DoDataExchange(pDX);
-  //{{AFX_DATA_MAP(CValueBlenderDlg)
-  DDX_Control(pDX, IDC_VALUE2, m_Value2);
-  DDX_Control(pDX, IDC_VALUE1, m_Value1);
-  //}}AFX_DATA_MAP
+void CValueBlenderDlg::DoDataExchange(CDataExchange *pDX)
+{
+	CDialog::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(CValueBlenderDlg)
+	DDX_Control(pDX, IDC_VALUE2, m_Value2);
+	DDX_Control(pDX, IDC_VALUE1, m_Value1);
+	//}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(CValueBlenderDlg, CDialog)
@@ -66,26 +72,27 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CValueBlenderDlg message handlers
 
-BOOL CValueBlenderDlg::OnInitDialog() {
-  CDialog::OnInitDialog();
-  UpdateData();
-  nlassert(_CreateInterface);
-  _Dlg1 = _CreateInterface->createDialog(0, _Node);
-  _Dlg2 = _CreateInterface->createDialog(1, _Node);
-  RECT r, or ;
-  GetWindowRect(& or);
-  m_Value1.GetWindowRect(&r);
-  _Dlg1->init(r.left - or.left, r.top - or.top, this);
-  m_Value2.GetWindowRect(&r);
-  _Dlg2->init(r.left - or.left, r.top - or.top, this);
+BOOL CValueBlenderDlg::OnInitDialog()
+{
+	CDialog::OnInitDialog();
+	UpdateData();
+	nlassert(_CreateInterface);
+	_Dlg1 = _CreateInterface->createDialog(0, _Node);
+	_Dlg2 = _CreateInterface->createDialog(1, _Node);
+	RECT r, or ;
+	GetWindowRect(& or);
+	m_Value1.GetWindowRect(&r);
+	_Dlg1->init(r.left - or.left, r.top - or.top, this);
+	m_Value2.GetWindowRect(&r);
+	_Dlg2->init(r.left - or.left, r.top - or.top, this);
 
-  UpdateData(FALSE);
-  return TRUE; // return TRUE unless you set the focus to a control
-               // EXCEPTION: OCX Property Pages should return FALSE
+	UpdateData(FALSE);
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CValueBlenderDlg::OnClose() {
-  if (_PN)
-    _PN->childPopupClosed(this);
-  // CDialog::OnClose();
+void CValueBlenderDlg::OnClose()
+{
+	if (_PN) _PN->childPopupClosed(this);
+	// CDialog::OnClose();
 }

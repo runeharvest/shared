@@ -24,10 +24,10 @@
 #include <QMainWindow>
 
 // NeL includes
-#include <nel/3d/animation_time.h>
 #include <nel/misc/rgba.h>
-#include <nel/misc/time_nl.h>
 #include <nel/misc/ucstring.h>
+#include <nel/misc/time_nl.h>
+#include <nel/3d/animation_time.h>
 #include <nel/net/login_cookie.h>
 
 // Project includes
@@ -51,40 +51,40 @@ class CPanoplyPreview;
  * \date 2014-09-19 09:38GMT
  * \author Jan BOON (jan.boon@kaetemi.be)
  */
-class CMainWindow : public QMainWindow {
-  Q_OBJECT
+class CMainWindow : public QMainWindow
+{
+	Q_OBJECT
 
 public:
-  CMainWindow(const QMap<QString, QSize> &customSizeHints, QWidget *parent = 0,
-              Qt::WindowFlags flags = 0);
-  virtual ~CMainWindow();
+	CMainWindow(const QMap<QString, QSize> &customSizeHints, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+	virtual ~CMainWindow();
 
-  inline QMenu *widgetsMenu() { return m_WidgetsMenu; }
+	inline QMenu *widgetsMenu() { return m_WidgetsMenu; }
 
 private slots:
-  void about();
+	void about();
 
 private:
-  void createActions();
-  void createMenus();
-  void createToolBars();
-  void createStatusBar();
-  void createDockWindows();
+	void createActions();
+	void createMenus();
+	void createToolBars();
+	void createStatusBar();
+	void createDockWindows();
 
 private:
-  CMainWindow(const CMainWindow &);
-  CMainWindow &operator=(const CMainWindow &);
+	CMainWindow(const CMainWindow &);
+	CMainWindow &operator=(const CMainWindow &);
 
 private:
-  CPanoplyPreview *m_PanoplyPreview;
+	CPanoplyPreview *m_PanoplyPreview;
 
-  NLQT::CCommandLogDisplayer *m_CommandLog;
-  QDockWidget *m_CommandLogDock;
+	NLQT::CCommandLogDisplayer *m_CommandLog;
+	QDockWidget *m_CommandLogDock;
 
-  QMenu *m_WidgetsMenu;
-  QMenu *m_HelpMenu;
+	QMenu *m_WidgetsMenu;
+	QMenu *m_HelpMenu;
 
-  QAction *m_AboutAct;
+	QAction *m_AboutAct;
 
 }; /* class CMainWindow */
 

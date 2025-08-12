@@ -25,11 +25,11 @@
 // - The transformations to get it to the world
 // - The parent
 
+#include "std_afx.h"
+#include "nel_export.h"
 #include "../nel_mesh_lib/export_nel.h"
 #include "../nel_patch_lib/rpo.h"
 #include "nel/3d/scene_group.h"
-#include "nel_export.h"
-#include "std_afx.h"
 
 #include <vector>
 
@@ -41,31 +41,36 @@ using namespace NLMISC;
 // -----------------------------------------------------------------------------------------------
 // -----------------------------------------------------------------------------------------------
 // -----------------------------------------------------------------------------------------------
-bool CNelExport::exportInstanceGroup(string filename,
-                                     vector<INode *> &vectNode) {
-  vector<INode *> resultInstanceNode;
-  CInstanceGroup *pIG = _ExportNel->buildInstanceGroup(
-      vectNode, resultInstanceNode, _Ip->GetTime());
+bool CNelExport::exportInstanceGroup(string filename, vector<INode *> &vectNode)
+{
+	vector<INode *> resultInstanceNode;
+	CInstanceGroup *pIG = _ExportNel->buildInstanceGroup(vectNode, resultInstanceNode, _Ip->GetTime());
 
-  if (pIG != NULL) {
-    COFile file;
+	if (pIG != NULL)
+	{
+		COFile file;
 
-    if (file.open(filename)) {
-      try {
-        // Serial the skeleton
-        pIG->serial(file);
-        // All is good
-      } catch (const Exception &c) {
-        // Cannot save the file
-        MessageBox(NULL, MaxTStrFromUtf8(c.what()).data(), _T("NeL export"),
-                   MB_OK | MB_ICONEXCLAMATION);
-        return false;
-      }
-    }
+		if (file.open(filename))
+		{
+			try
+			{
+				// Serial the skeleton
+				pIG->serial(file);
+				// All is good
+			}
+			catch (const Exception &c)
+			{
+				// Cannot save the file
+				MessageBox(NULL, MaxTStrFromUtf8(c.what()).data(), _T("NeL export"), MB_OK | MB_ICONEXCLAMATION);
+				return false;
+			}
+		}
 
-    delete pIG;
-  } else {
-    // No node found with a SWT Modifier
-  }
-  return true;
+		delete pIG;
+	}
+	else
+	{
+		// No node found with a SWT Modifier
+	}
+	return true;
 }

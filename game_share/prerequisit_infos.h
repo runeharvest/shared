@@ -20,41 +20,59 @@
 #include "nel/misc/types_nl.h"
 #include <vector>
 
-struct CPrerequisitDesc {
-  inline CPrerequisitDesc()
-      : Description(0), Validated(false), IsMandatory(true) {}
+struct CPrerequisitDesc
+{
+	inline CPrerequisitDesc()
+	    : Description(0)
+	    , Validated(false)
+	    , IsMandatory(true)
+	{
+	}
 
-  inline CPrerequisitDesc(uint32 desc, bool ok, bool mandatory)
-      : Description(desc), Validated(ok), IsMandatory(mandatory) {}
+	inline CPrerequisitDesc(uint32 desc, bool ok, bool mandatory)
+	    : Description(desc)
+	    , Validated(ok)
+	    , IsMandatory(mandatory)
+	{
+	}
 
-  /// serial
-  void serial(NLMISC::IStream &s) {
-    s.serial(Description);
-    s.serial(Validated);
-    s.serial(IsMandatory);
-  }
+	/// serial
+	void serial(NLMISC::IStream &s)
+	{
+		s.serial(Description);
+		s.serial(Validated);
+		s.serial(IsMandatory);
+	}
 
-  /// string id used to describe the prerequisit
-  uint32 Description;
-  /// status (true = ok, false = prerequisit not met)
-  bool Validated;
-  /// is mandatory or not
-  bool IsMandatory;
+	/// string id used to describe the prerequisit
+	uint32 Description;
+	/// status (true = ok, false = prerequisit not met)
+	bool Validated;
+	/// is mandatory or not
+	bool IsMandatory;
 };
 
 /**
- * class used to store the mission prerequisit infos and to send it to the
- * client \author David Fleury \author Nevrax France \date 2005
+ * class used to store the mission prerequisit infos and to send it to the client
+ * \author David Fleury
+ * \author Nevrax France
+ * \date 2005
  */
-class CPrerequisitInfos {
+class CPrerequisitInfos
+{
 public:
-  /// ctor
-  CPrerequisitInfos() {}
+	/// ctor
+	CPrerequisitInfos()
+	{
+	}
 
-  /// serial
-  void serial(NLMISC::IStream &s) { s.serialCont(Prerequisits); }
+	/// serial
+	void serial(NLMISC::IStream &s)
+	{
+		s.serialCont(Prerequisits);
+	}
 
-  std::vector<CPrerequisitDesc> Prerequisits;
+	std::vector<CPrerequisitDesc> Prerequisits;
 };
 
 #endif // RY_PREREQUISITS_H //

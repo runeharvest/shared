@@ -46,63 +46,62 @@
 
 #ifndef QTCOLORPICKER_H
 #define QTCOLORPICKER_H
+#include <QtGui/QPushButton>
 #include <QtCore/QString>
 #include <QtGui/QColor>
-#include <QtGui/QPushButton>
 
+#include <QtGui/QLabel>
 #include <QtCore/QEvent>
 #include <QtGui/QFocusEvent>
-#include <QtGui/QLabel>
 
 #define QT_QTCOLORPICKER_EXPORT
 
 class ColorPickerPopup;
 
-class QT_QTCOLORPICKER_EXPORT QtColorPicker : public QPushButton {
-  Q_OBJECT
+class QT_QTCOLORPICKER_EXPORT QtColorPicker : public QPushButton
+{
+	Q_OBJECT
 
-  Q_PROPERTY(
-      bool colorDialog READ colorDialogEnabled WRITE setColorDialogEnabled)
+	Q_PROPERTY(bool colorDialog READ colorDialogEnabled WRITE setColorDialogEnabled)
 
 public:
-  QtColorPicker(QWidget *parent = 0, int columns = -1,
-                bool enableColorDialog = true);
+	QtColorPicker(QWidget *parent = 0,
+	    int columns = -1, bool enableColorDialog = true);
 
-  ~QtColorPicker();
+	~QtColorPicker();
 
-  void insertColor(const QColor &color, const QString &text = QString::null,
-                   int index = -1);
+	void insertColor(const QColor &color, const QString &text = QString::null, int index = -1);
 
-  QColor currentColor() const;
+	QColor currentColor() const;
 
-  QColor color(int index) const;
+	QColor color(int index) const;
 
-  void setColorDialogEnabled(bool enabled);
-  bool colorDialogEnabled() const;
+	void setColorDialogEnabled(bool enabled);
+	bool colorDialogEnabled() const;
 
-  void setStandardColors();
+	void setStandardColors();
 
-  static QColor getColor(const QPoint &pos, bool allowCustomColors = true);
+	static QColor getColor(const QPoint &pos, bool allowCustomColors = true);
 
 public Q_SLOTS:
-  void setCurrentColor(const QColor &col);
+	void setCurrentColor(const QColor &col);
 
 Q_SIGNALS:
-  void colorChanged(const QColor &);
+	void colorChanged(const QColor &);
 
 protected:
-  void paintEvent(QPaintEvent *e);
+	void paintEvent(QPaintEvent *e);
 
 private Q_SLOTS:
-  void buttonPressed(bool toggled);
-  void popupClosed();
+	void buttonPressed(bool toggled);
+	void popupClosed();
 
 private:
-  ColorPickerPopup *popup;
-  QColor col;
-  bool withColorDialog;
-  bool dirty;
-  bool firstInserted;
+	ColorPickerPopup *popup;
+	QColor col;
+	bool withColorDialog;
+	bool dirty;
+	bool firstInserted;
 };
 
 #endif

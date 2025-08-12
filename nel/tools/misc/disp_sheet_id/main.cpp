@@ -23,71 +23,76 @@
 #include <unistd.h>
 
 /// This is our Unix-variant to the Windows _getch function.
-int _getch() {
-  struct termios oldt, newt;
-  int ch;
-  tcgetattr(STDIN_FILENO, &oldt);
-  newt = oldt;
-  newt.c_lflag &= ~(ICANON | ECHO);
-  tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-  ch = getchar();
-  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-  return ch;
+int _getch()
+{
+	struct termios oldt, newt;
+	int ch;
+	tcgetattr(STDIN_FILENO, &oldt);
+	newt = oldt;
+	newt.c_lflag &= ~(ICANON | ECHO);
+	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+	ch = getchar();
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+	return ch;
 }
 
 #endif
 
-#include "nel/misc/common.h"
 #include "nel/misc/path.h"
 #include "nel/misc/sheet_id.h"
+#include "nel/misc/common.h"
 #include <vector>
 
 using namespace std;
 using namespace NLMISC;
 
 // ***************************************************************************
-class CPred {
+class CPred
+{
 public:
-  bool operator()(const CSheetId &a, const CSheetId &b) {
-    return a.toString() < b.toString();
-  }
+	bool operator()(const CSheetId &a, const CSheetId &b)
+	{
+		return a.toString() < b.toString();
+	}
 };
 
 // ***************************************************************************
 /// Dispaly info cmd line
-int main(int argc, const char *argv[]) {
-  if (argc < 2) {
-    puts("Usage: disp_sheet_id path");
-    puts("    display a raw list of file names sorted by name with their "
-         "sheet_id associated");
-    puts("    output in sheetid.txt");
-    puts("Press any key");
-    _getch();
-    return -1;
-  }
+int main(int argc, const char *argv[])
+{
+	if (argc < 2)
+	{
+		puts("Usage: disp_sheet_id path");
+		puts("    display a raw list of file names sorted by name with their sheet_id associated");
+		puts("    output in sheetid.txt");
+		puts("Press any key");
+		_getch();
+		return -1;
+	}
 
-  NLMISC::CApplicationContext appContext;
+	NLMISC::CApplicationContext appContext;
 
-  CPath::addSearchPath(argv[1]);
+	CPath::addSearchPath(argv[1]);
 
-  CSheetId::init(false);
+	CSheetId::init(false);
 
-  std::vector<CSheetId> sheets;
-  CSheetId::buildIdVector(sheets);
+	std::vector<CSheetId> sheets;
+	CSheetId::buildIdVector(sheets);
 
-  // sort by name
-  CPred Pred;
-  sort(sheets.begin(), sheets.end(), Pred);
+	// sort by name
+	CPred Pred;
+	sort(sheets.begin(), sheets.end(), Pred);
 
-  // display.
-  FILE *out = nlfopen("sheetid.txt", "wb");
-  if (out) {
-    for (uint i = 0; i < sheets.size(); i++) {
-      fprintf(out, "%s : %d\n", sheets[i].toString().c_str(),
-              sheets[i].asInt());
-    }
-    fclose(out);
-  }
+	// display.
+	FILE *out = nlfopen("sheetid.txt", "wb");
+	if (out)
+	{
+		for (uint i = 0; i < sheets.size(); i++)
+		{
+			fprintf(out, "%s : %d\n", sheets[i].toString().c_str(), sheets[i].asInt());
+		}
+		fclose(out);
+	}
 
-  return 0;
+	return 0;
 }

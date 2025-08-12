@@ -21,8 +21,8 @@
 #ifndef NL_SOUND_BANK_H
 #define NL_SOUND_BANK_H
 
-#include "nel/misc/string_mapper.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/string_mapper.h"
 #include "nel/sound/audio_mixer_user.h"
 #include <string>
 
@@ -38,86 +38,86 @@ class CSimpleSound;
  * \author Nevrax France
  * \date 2001
  */
-class CSoundBank {
+class CSoundBank
+{
 public:
-  void registerBufferAssoc(CSimpleSound *sound, IBuffer *buffer);
-  void unregisterBufferAssoc(CSimpleSound *sound, IBuffer *buffer);
+	void registerBufferAssoc(CSimpleSound *sound, IBuffer *buffer);
+	void unregisterBufferAssoc(CSimpleSound *sound, IBuffer *buffer);
 
-  /** Called by CSampleBank when a sample(buffer) is unloaded.
-   *	Remove link from CSound to unloaded IBuffer.
-   */
-  void bufferUnloaded(const NLMISC::TStringId &bufferName);
-  /** Called by CSampleBank when a sample(buffer) is loaded.
-   *	Regenerate link between CSound and IBuffer.
-   */
-  void bufferLoaded(const NLMISC::TStringId &bufferName, IBuffer *buffer);
+	/** Called by CSampleBank when a sample(buffer) is unloaded.
+	 *	Remove link from CSound to unloaded IBuffer.
+	 */
+	void bufferUnloaded(const NLMISC::TStringId &bufferName);
+	/** Called by CSampleBank when a sample(buffer) is loaded.
+	 *	Regenerate link between CSound and IBuffer.
+	 */
+	void bufferLoaded(const NLMISC::TStringId &bufferName, IBuffer *buffer);
 
-  /// Constructor
-  CSoundBank() : _Loaded(false) {}
+	/// Constructor
+	CSoundBank()
+	    : _Loaded(false)
+	{
+	}
 
-  /// Destructor
-  virtual ~CSoundBank();
+	/// Destructor
+	virtual ~CSoundBank();
 
-  /// Load all the sounds.
-  void load(const std::string &packedSheetDir, bool packedSheetUpdate);
+	/// Load all the sounds.
+	void load(const std::string &packedSheetDir, bool packedSheetUpdate);
 
-  /// Remove all the sounds in this bank.
-  void unload();
+	/// Remove all the sounds in this bank.
+	void unload();
 
-  /// Returns true if the sounds in this bank have been loaded.
-  bool isLoaded();
+	/// Returns true if the sounds in this bank have been loaded.
+	bool isLoaded();
 
-  /// Return a sound corresponding to a name.
-  CSound *getSound(const NLMISC::TStringId &name);
+	/// Return a sound corresponding to a name.
+	CSound *getSound(const NLMISC::TStringId &name);
 
-  /// Return the names of the sounds
-  void getNames(std::vector<NLMISC::TStringId> &names);
+	/// Return the names of the sounds
+	void getNames(std::vector<NLMISC::TStringId> &names);
 
-  /// Return the number of sounds in this bank.
-  uint countSounds();
+	/// Return the number of sounds in this bank.
+	uint countSounds();
 
-  void addSound(CSound *sound);
-  void removeSound(const NLMISC::TStringId &name);
+	void addSound(CSound *sound);
+	void removeSound(const NLMISC::TStringId &name);
 
 private:
-  /// CSoundBank singleton instance.
-  // static CSoundBank		*_Instance;
+	/// CSoundBank singleton instance.
+	// static CSoundBank		*_Instance;
 
-  typedef CHashSet<class CSimpleSound *, THashPtr<CSimpleSound *>>
-      TSimpleSoundContainer;
-  //	typedef std::hash_map<std::string, TSimpleSoundContainer >
-  //TBufferAssocContainer;
-  typedef CHashMap<NLMISC::TStringId, TSimpleSoundContainer,
-                   NLMISC::CStringIdHashMapTraits>
-      TBufferAssocContainer;
-  /// Sound names hash map
-  //	typedef std::hash_map<std::string, CSound*>
-  //TSoundTable;
-  typedef CHashMap<NLMISC::TStringId, CSound *, NLMISC::CStringIdHashMapTraits>
-      TSoundTable;
+	typedef CHashSet<class CSimpleSound *, THashPtr<CSimpleSound *>> TSimpleSoundContainer;
+	//	typedef std::hash_map<std::string, TSimpleSoundContainer >				TBufferAssocContainer;
+	typedef CHashMap<NLMISC::TStringId, TSimpleSoundContainer, NLMISC::CStringIdHashMapTraits> TBufferAssocContainer;
+	/// Sound names hash map
+	//	typedef std::hash_map<std::string, CSound*>								TSoundTable;
+	typedef CHashMap<NLMISC::TStringId, CSound *, NLMISC::CStringIdHashMapTraits> TSoundTable;
 
-  /// Assoc from buffer to sound. Used for sound unloading.
-  TBufferAssocContainer _BufferAssoc;
+	/// Assoc from buffer to sound. Used for sound unloading.
+	TBufferAssocContainer _BufferAssoc;
 
-  // Buffer
-  TSoundTable _Sounds;
+	// Buffer
+	TSoundTable _Sounds;
 
-  // Did we load the buffers.
-  bool _Loaded;
+	// Did we load the buffers.
+	bool _Loaded;
 };
 
 /**
  * ESoundFileNotFound
  */
 
-class ESoundBankNotFound : public NLMISC::Exception {
+class ESoundBankNotFound : public NLMISC::Exception
+{
 public:
-  ESoundBankNotFound(const std::string filename)
-      : NLMISC::Exception(
-            (std::string("Sound bank not found: ") + filename).c_str()) {}
+	ESoundBankNotFound(const std::string filename)
+	    : NLMISC::Exception((std::string("Sound bank not found: ") + filename).c_str())
+	{
+	}
 };
 
-} // namespace NLSOUND
+} // NLSOUND
 
 #endif // NL_SOUND_BANK_H
 

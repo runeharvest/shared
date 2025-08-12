@@ -17,8 +17,8 @@
 #ifndef NL_MATERIAL_LIGO_H
 #define NL_MATERIAL_LIGO_H
 
-#include "nel/ligo/zone_template.h"
 #include "nel/misc/types_nl.h"
+#include "nel/ligo/zone_template.h"
 
 // NeL include
 // #include "3d/zone.h"
@@ -35,24 +35,24 @@ class CLigoConfig;
  * \author Nevrax France
  * \date 2001
  */
-class CMaterial {
+class CMaterial
+{
 public:
-  /// Build method
-  bool build(const CZoneTemplate &tplt, const CLigoConfig &config,
-             CLigoError &errors);
+	/// Build method
+	bool build(const CZoneTemplate &tplt, const CLigoConfig &config, CLigoError &errors);
 
-  /// Return the material edge
-  const CZoneEdge &getEdge() const { return _ZoneEdge; }
+	/// Return the material edge
+	const CZoneEdge &getEdge() const { return _ZoneEdge; }
 
-  /// Serial method
-  void serial(NLMISC::IStream &s);
+	/// Serial method
+	void serial(NLMISC::IStream &s);
 
 private:
-  // The zone template for this material
-  CZoneEdge _ZoneEdge;
+	// The zone template for this material
+	CZoneEdge _ZoneEdge;
 };
 
-} // namespace NLLIGO
+}
 
 #endif // NL_MATERIAL_LIGO_H
 

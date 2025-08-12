@@ -35,12 +35,16 @@ namespace NL3D {
 
 // ***************************************************************************
 
-CGeometryProgram::CGeometryProgram() {}
+CGeometryProgram::CGeometryProgram()
+{
+}
 
 // ***************************************************************************
 
-CGeometryProgram::~CGeometryProgram() {}
+CGeometryProgram::~CGeometryProgram()
+{
+}
 
 // ***************************************************************************
 
-} // namespace NL3D
+} // NL3D

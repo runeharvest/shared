@@ -17,8 +17,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "AvailabilityMacros.h"
 #import <Cocoa/Cocoa.h>
+#include "AvailabilityMacros.h"
 
 #ifdef NL_STATIC
 #ifdef USE_OPENGLES
@@ -35,7 +35,7 @@ using NL3D::CDriverGL;
                                  <NSWindowDelegate>
 #endif
 {
-  CDriverGL *_driver;
+	CDriverGL *_driver;
 }
 
 - (id)initWithDriver:(CDriverGL *)driver;

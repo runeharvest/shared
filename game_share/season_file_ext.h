@@ -21,17 +21,26 @@
 #include "season.h"
 
 /**
- * helper to get season file extension ( we have to do it there as season.h is a
- * generated file ) \author Nicolas Brigand \author Nevrax France \date 2004
+ * helper to get season file extension ( we have to do it there as season.h is a generated file )
+ * \author Nicolas Brigand
+ * \author Nevrax France
+ * \date 2004
  */
-class CSeasonFileExt {
+class CSeasonFileExt
+{
 public:
-  static const char *getExtension(uint16 s) {
-    static const char *seasonEXT[] = {"_Sp", "_Su", "_Au", "_Wi", "Unknown"};
-    if (s >= EGSPD::CSeason::Invalid)
-      return seasonEXT[EGSPD::CSeason::Invalid];
-    return seasonEXT[s];
-  }
+	static const char *getExtension(uint16 s)
+	{
+		static const char *seasonEXT[] = {
+			"_Sp",
+			"_Su",
+			"_Au",
+			"_Wi",
+			"Unknown"
+		};
+		if (s >= EGSPD::CSeason::Invalid) return seasonEXT[EGSPD::CSeason::Invalid];
+		return seasonEXT[s];
+	}
 };
 
 #endif // RY_SEASON_FILE_EXT_H

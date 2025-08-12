@@ -31,51 +31,52 @@ typedef xmlDoc *xmlDocPtr;
 
 namespace NLGEORGES {
 
-class CFileHeader {
+class CFileHeader
+{
 public:
-  /// Default constructor
-  CFileHeader();
+	/// Default constructor
+	CFileHeader();
 
-  // Form states
-  enum TState {
-    Modified = 0,
-    Checked,
-    StateCount,
-  };
+	// Form states
+	enum TState
+	{
+		Modified = 0,
+		Checked,
+		StateCount,
+	};
 
-  /// Add a log
-  void addLog(const std::string &log);
+	/// Add a log
+	void addLog(const std::string &log);
 
-  /// Set the comment
-  void setComments(const std::string &comments);
+	/// Set the comment
+	void setComments(const std::string &comments);
 
-  /// Major version number
-  uint32 MajorVersion;
+	/// Major version number
+	uint32 MajorVersion;
 
-  /// Minor version number
-  uint32 MinorVersion;
+	/// Minor version number
+	uint32 MinorVersion;
 
-  /// State of the form
-  TState State;
+	/// State of the form
+	TState State;
 
-  /// Comments of the form
-  std::string Comments;
+	/// Comments of the form
+	std::string Comments;
 
-  /// Log of the form
-  std::string Log;
+	/// Log of the form
+	std::string Log;
 
-  /// ** IO functions
-  void read(xmlNodePtr root);
-  void write(xmlNodePtr node) const;
+	/// ** IO functions
+	void read(xmlNodePtr root);
+	void write(xmlNodePtr node) const;
 
-  // Get state string
-  static const char *getStateString(TState state);
+	// Get state string
+	static const char *getStateString(TState state);
 
-  // Error handling
-  void warning(bool exception, const std::string &function, const char *format,
-               ...) const;
+	// Error handling
+	void warning(bool exception, const std::string &function, const char *format, ...) const;
 };
 
-} // namespace NLGEORGES
+} // NLGEORGES
 
 #endif // NL_HEADER_H

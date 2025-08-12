@@ -24,15 +24,19 @@
 
 namespace NLMISC {
 
-void CLine::project(const CVector &inV, CVector &outV) {
-  CVector seg = V1 - V0;
-  float n = seg.sqrnorm();
-  if (n == 0.f) {
-    outV = V0;
-  } else {
-    float dp = (inV - V0) * seg;
-    outV = V0 + (dp / n) * seg;
-  }
+void CLine::project(const CVector &inV, CVector &outV)
+{
+	CVector seg = V1 - V0;
+	float n = seg.sqrnorm();
+	if (n == 0.f)
+	{
+		outV = V0;
+	}
+	else
+	{
+		float dp = (inV - V0) * seg;
+		outV = V0 + (dp / n) * seg;
+	}
 }
 
-} // namespace NLMISC
+} // NLMISC

@@ -31,19 +31,24 @@ namespace NL3D {
 
 // ***************************************************************************
 
-CVertexProgram::CVertexProgram() {}
-
-// ***************************************************************************
-
-CVertexProgram::CVertexProgram(const char *nelvp) {
-  CSource *source = new CSource();
-  source->Profile = IProgram::nelvp;
-  source->setSource(nelvp);
-  addSource(source);
+CVertexProgram::CVertexProgram()
+{
 }
 
 // ***************************************************************************
 
-CVertexProgram::~CVertexProgram() {}
+CVertexProgram::CVertexProgram(const char *nelvp)
+{
+	CSource *source = new CSource();
+	source->Profile = IProgram::nelvp;
+	source->setSource(nelvp);
+	addSource(source);
+}
 
-} // namespace NL3D
+// ***************************************************************************
+
+CVertexProgram::~CVertexProgram()
+{
+}
+
+} // NL3D

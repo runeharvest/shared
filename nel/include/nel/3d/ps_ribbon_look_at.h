@@ -17,156 +17,149 @@
 #ifndef NL_PS_PARTICLE_RIBBON_LOOK_AT_H
 #define NL_PS_PARTICLE_RIBBON_LOOK_AT_H
 
-#include "nel/3d/index_buffer.h"
 #include "nel/3d/ps_ribbon_base.h"
 #include "nel/3d/vertex_buffer.h"
+#include "nel/3d/index_buffer.h"
 
 namespace NL3D {
 
-/** A ribbon look at particle. It is like a ribbon, but textured (with no
- * animation), and it always faces the user
+/** A ribbon look at particle. It is like a ribbon, but textured (with no animation), and it always faces the user
  */
-class CPSRibbonLookAt : public CPSRibbonBase,
-                        public CPSSizedParticle,
-                        public CPSColoredParticle,
-                        public CPSMaterial,
-                        public CPSTexturedParticleNoAnim {
+class CPSRibbonLookAt : public CPSRibbonBase, public CPSSizedParticle, public CPSColoredParticle, public CPSMaterial, public CPSTexturedParticleNoAnim
+{
 public:
-  ///\name Object
-  ///@{
-  /// ctor
-  CPSRibbonLookAt();
-  /// dtor
-  ~CPSRibbonLookAt();
-  /// serialisation. Derivers must override this, and call their parent version
-  virtual void serial(NLMISC::IStream &f);
-  //
-  NLMISC_DECLARE_CLASS(CPSRibbonLookAt);
-  ///@}
+	///\name Object
+	///@{
+	/// ctor
+	CPSRibbonLookAt();
+	/// dtor
+	~CPSRibbonLookAt();
+	/// serialisation. Derivers must override this, and call their parent version
+	virtual void serial(NLMISC::IStream &f);
+	//
+	NLMISC_DECLARE_CLASS(CPSRibbonLookAt);
+	///@}
 
-  ///\name Texture
-  ///@{
-  /// set the texture for this particle
-  void setTexture(CSmartPtr<ITexture> tex);
-  /// get the texture used for this particle
-  ITexture *getTexture(void) { return _Tex; }
-  const ITexture *getTexture(void) const { return _Tex; }
-  ///@}
+	///\name Texture
+	///@{
+	/// set the texture for this particle
+	void setTexture(CSmartPtr<ITexture> tex);
+	/// get the texture used for this particle
+	ITexture *getTexture(void) { return _Tex; }
+	const ITexture *getTexture(void) const { return _Tex; }
+	///@}
 
-  ///\name Behaviour
-  ///@{
-  /** (de)activate color fading
-   * when its done, colors fades to black along the tail.
-   * NOT SUPPORTED FOR NOW
-   */
-  virtual void setColorFading(bool onOff = true) {}
+	///\name Behaviour
+	///@{
+	/** (de)activate color fading
+	 * when its done, colors fades to black along the tail.
+	 * NOT SUPPORTED FOR NOW
+	 */
+	virtual void setColorFading(bool onOff = true) { }
 
-  /** Test whether color fading is activated.
-   * NOT SUPPORTED FOR NOW
-   */
-  virtual bool getColorFading(void) const { return false; }
+	/** Test whether color fading is activated.
+	 * NOT SUPPORTED FOR NOW
+	 */
+	virtual bool getColorFading(void) const { return false; }
 
-  /** tells in which basis is the tail
-   *  It requires one transform per particle if it is not the same as the
-   * located that hold that particle The default is false. With that you can
-   * control if a rotation of the system will rotate the tail
-   */
-  virtual void setSystemBasis(bool yes) {}
+	/** tells in which basis is the tail
+	 *  It requires one transform per particle if it is not the same as the located that hold that particle
+	 *  The default is false. With that you can control if a rotation of the system will rotate the tail
+	 */
+	virtual void setSystemBasis(bool yes) { }
 
-  /// return true if the tails are in the system basis
-  virtual bool isInSystemBasis(void) const { return true; }
+	/// return true if the tails are in the system basis
+	virtual bool isInSystemBasis(void) const { return true; }
 
-  // void setPersistAfterDeath(bool persit = true);
+	// void setPersistAfterDeath(bool persit = true);
 
-  /** return true if the ribbon light persist after death
-   *  \see _PersistAfterDeath()
-   */
-  // bool getPersistAfterDeath(void) const { return _DyingRibbons != NULL; }
+	/** return true if the ribbon light persist after death
+	 *  \see _PersistAfterDeath()
+	 */
+	// bool getPersistAfterDeath(void) const { return _DyingRibbons != NULL; }
 
-  ///@}
+	///@}
 
-  /// inherited from CPSParticle
-  virtual void step(TPSProcessPass pass);
+	/// inherited from CPSParticle
+	virtual void step(TPSProcessPass pass);
 
-  /// return true if there are transparent faces in the object
-  virtual bool hasTransparentFaces(void);
+	/// return true if there are transparent faces in the object
+	virtual bool hasTransparentFaces(void);
 
-  /// return true if there are Opaque faces in the object
-  virtual bool hasOpaqueFaces(void);
+	/// return true if there are Opaque faces in the object
+	virtual bool hasOpaqueFaces(void);
 
-  virtual uint32 getNumWantedTris() const;
+	virtual uint32 getNumWantedTris() const;
 
-  /// from CPSParticle : return true if there are lightable faces in the object
-  virtual bool hasLightableFaces() { return false; }
-  //
-  virtual bool supportGlobalColorLighting() const { return true; }
-  // from CPSLocatedBindable
-  virtual void enumTexs(std::vector<NLMISC::CSmartPtr<ITexture>> &dest,
-                        IDriver &drv);
+	/// from CPSParticle : return true if there are lightable faces in the object
+	virtual bool hasLightableFaces() { return false; }
+	//
+	virtual bool supportGlobalColorLighting() const { return true; }
+	// from CPSLocatedBindable
+	virtual void enumTexs(std::vector<NLMISC::CSmartPtr<ITexture>> &dest, IDriver &drv);
 
-  // from CPSParticle
-  virtual void setZBias(float value) { CPSMaterial::setZBias(value); }
-  virtual float getZBias() const { return CPSMaterial::getZBias(); }
+	// from CPSParticle
+	virtual void setZBias(float value) { CPSMaterial::setZBias(value); }
+	virtual float getZBias() const { return CPSMaterial::getZBias(); }
 
 protected:
-  CSmartPtr<ITexture> _Tex;
+	CSmartPtr<ITexture> _Tex;
 
-  // the number of dying ribbons that are present
-  // uint32							_NbDyingRibbons;
-  // a counter to tell how much frame is left for each ribbon
-  // std::vector<uint32>				_DyingRibbonsLifeLeft;
-  /// inherited from CPSLocatedBindable
-  virtual void newElement(const CPSEmitterInfo &info);
-  /// inherited from CPSLocatedBindable
-  virtual void deleteElement(uint32 index);
-  /// inherited from CPSLocatedBindable
-  virtual void resize(uint32 size);
-  virtual CPSLocated *getSizeOwner(void) { return _Owner; }
-  virtual CPSLocated *getColorOwner(void) { return _Owner; }
+	// the number of dying ribbons that are present
+	// uint32							_NbDyingRibbons;
+	// a counter to tell how much frame is left for each ribbon
+	// std::vector<uint32>				_DyingRibbonsLifeLeft;
+	/// inherited from CPSLocatedBindable
+	virtual void newElement(const CPSEmitterInfo &info);
+	/// inherited from CPSLocatedBindable
+	virtual void deleteElement(uint32 index);
+	/// inherited from CPSLocatedBindable
+	virtual void resize(uint32 size);
+	virtual CPSLocated *getSizeOwner(void) { return _Owner; }
+	virtual CPSLocated *getColorOwner(void) { return _Owner; }
 
 private:
-  /// update the material and the vb so that they match the color scheme.
-  /// Inherited from CPSColoredParticle
-  virtual void updateMatAndVbForColor(void);
+	/// update the material and the vb so that they match the color scheme. Inherited from CPSColoredParticle
+	virtual void updateMatAndVbForColor(void);
 
-  /// display a set of ribbons
-  void displayRibbons(uint32 nbRibbons, uint32 srcStep);
+	/// display a set of ribbons
+	void displayRibbons(uint32 nbRibbons, uint32 srcStep);
 
-  /**\name Vertex buffers & their corresponding index buffers. We keep a map of
-   * pretextured vertex buffer (with or without colors). Vb for ribbons that
-   * have the same size are shared.
-   */
+	/**\name Vertex buffers & their corresponding index buffers. We keep a map of pretextured vertex buffer (with or without colors).
+	 * Vb for ribbons that have the same size are shared.
+	 */
 
-  //@{
+	//@{
 
-  /** a struct containing a vertex buffer and a primitive block
-   */
-  class CVBnPB {
-  public:
-    CVertexBuffer VB;
-    CIndexBuffer PB;
+	/** a struct containing a vertex buffer and a primitive block
+	 */
+	class CVBnPB
+	{
+	public:
+		CVertexBuffer VB;
+		CIndexBuffer PB;
 
-  public:
-    CVBnPB() {
-      NL_SET_IB_NAME(PB, "CPSRibbonLookAt::CVBnPB::PB");
-      VB.setName("CPSRibbonLookAt::CVBnPB::VB");
-    }
-  };
-  typedef CHashMap<uint, CVBnPB> TVBMap;
+	public:
+		CVBnPB()
+		{
+			NL_SET_IB_NAME(PB, "CPSRibbonLookAt::CVBnPB::PB");
+			VB.setName("CPSRibbonLookAt::CVBnPB::VB");
+		}
+	};
+	typedef CHashMap<uint, CVBnPB> TVBMap;
 
-  static TVBMap _VBMap;        // index buffers with no color
-  static TVBMap _ColoredVBMap; // index buffer + colors
+	static TVBMap _VBMap; // index buffers with no color
+	static TVBMap _ColoredVBMap; // index buffer + colors
 
-  /// get a vertex buffer and a primitive suited for the current ribbon
-  CVBnPB &getVBnPB();
+	/// get a vertex buffer and a primitive suited for the current ribbon
+	CVBnPB &getVBnPB();
 
-  /// get the number of ribbons contained in a vb for a given length. (e.g the
-  /// number of ribbons that can be batched)
-  uint getNumRibbonsInVB() const;
-  //@}
+	/// get the number of ribbons contained in a vb for a given length. (e.g the number of ribbons that can be batched)
+	uint getNumRibbonsInVB() const;
+	//@}
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_PS_RIBBON_LOOK_AT_H
 

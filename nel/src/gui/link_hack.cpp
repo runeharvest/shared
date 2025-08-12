@@ -18,12 +18,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "stdpch.h"
 #include "nel/gui/dbview_bar3.h"
 #include "nel/gui/dbview_number.h"
 #include "nel/gui/dbview_quantity.h"
-#include "nel/gui/group_editbox_decor.h"
 #include "nel/gui/view_pointer.h"
-#include "stdpch.h"
+#include "nel/gui/group_editbox_decor.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -35,17 +35,17 @@ void force_link_dbgroup_select_number_cpp();
 void force_link_dbgroup_combo_box_cpp();
 void force_link_group_wheel_cpp();
 
-/// Necessary so the linker doesn't drop the code of these classes from the
-/// library
-void LinkHack() {
-  CDBViewBar3::forceLink();
-  CDBViewNumber::forceLink();
-  CDBViewQuantity::forceLink();
-  CViewPointer::forceLink();
-  ifexprufct_forcelink();
-  force_link_dbgroup_select_number_cpp();
-  force_link_dbgroup_combo_box_cpp();
-  force_link_group_wheel_cpp();
-  CGroupEditBoxDecor::forceLink();
+/// Necessary so the linker doesn't drop the code of these classes from the library
+void LinkHack()
+{
+	CDBViewBar3::forceLink();
+	CDBViewNumber::forceLink();
+	CDBViewQuantity::forceLink();
+	CViewPointer::forceLink();
+	ifexprufct_forcelink();
+	force_link_dbgroup_select_number_cpp();
+	force_link_dbgroup_combo_box_cpp();
+	force_link_group_wheel_cpp();
+	CGroupEditBoxDecor::forceLink();
 }
-} // namespace NLGUI
+}

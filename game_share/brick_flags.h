@@ -17,77 +17,78 @@
 #ifndef RY_BRICK_FLAGS_H
 #define RY_BRICK_FLAGS_H
 
-#include "effect_families.h"
 #include "nel/misc/types_nl.h"
 #include "power_types.h"
 #include "slot_equipment.h"
+#include "effect_families.h"
 
 namespace BRICK_FLAGS {
-enum TBrickFlag {
-  // If you modify this enums, modify the interface's version in config.xml
-  BeginCombatFlags = 0,
-  Miss = BeginCombatFlags,
-  Fumble,
-  Hit,
-  CriticalHit,
+enum TBrickFlag
+{
+	// If you modify this enums, modify the interface's version in config.xml
+	BeginCombatFlags = 0,
+	Miss = BeginCombatFlags,
+	Fumble,
+	Hit,
+	CriticalHit,
 
-  Parry,
-  Dodge,
-  ShieldUsed,
+	Parry,
+	Dodge,
+	ShieldUsed,
 
-  Head,
-  Chest,
-  Arms,
-  Hands,
-  Legs,
-  Feet,
+	Head,
+	Chest,
+	Arms,
+	Hands,
+	Legs,
+	Feet,
 
-  Feint,
+	Feint,
 
-  Stun,
-  Bleed,
-  SlowMove,
-  SlowAttacks,
-  EndCombatFlags = SlowAttacks,
+	Stun,
+	Bleed,
+	SlowMove,
+	SlowAttacks,
+	EndCombatFlags = SlowAttacks,
 
-  NbCombatFlags,
+	NbCombatFlags,
 
-  // END combat flags MUST be < 32
+	// END combat flags MUST be < 32
 
-  // WARNING Power Flags MUST be in the same order than in power_types.h
-  BeginPowerFlags = 32,
-  Taunt = BeginPowerFlags,
-  Shielding,
-  SpeedingUp,
-  LifeConcentration,
-  StaminaConcentration,
-  SapConcentration,
-  ConvertStamina,
-  ConvertSap,
-  Berserk,
-  BalanceHp,
-  Heal,
-  Invulnerability,
-  EnchantWeapon,
-  ChgCharac,
-  ModDefense,
-  ModCraftSuccess,
-  ModMeleeSuccess,
-  ModRangeSuccess,
-  ModMagicSuccess,
-  ModForageSuccess,
-  // consumable items related powers
-  HealHpC,
-  HealSapC,
-  HealStaC,
-  HealFocusC,
-  EndPowerFlags = HealFocusC,
+	// WARNING Power Flags MUST be in the same order than in power_types.h
+	BeginPowerFlags = 32,
+	Taunt = BeginPowerFlags,
+	Shielding,
+	SpeedingUp,
+	LifeConcentration,
+	StaminaConcentration,
+	SapConcentration,
+	ConvertStamina,
+	ConvertSap,
+	Berserk,
+	BalanceHp,
+	Heal,
+	Invulnerability,
+	EnchantWeapon,
+	ChgCharac,
+	ModDefense,
+	ModCraftSuccess,
+	ModMeleeSuccess,
+	ModRangeSuccess,
+	ModMagicSuccess,
+	ModForageSuccess,
+	// consumable items related powers
+	HealHpC,
+	HealSapC,
+	HealStaC,
+	HealFocusC,
+	EndPowerFlags = HealFocusC,
 
-  NbPowerFlags = EndPowerFlags - 31,
+	NbPowerFlags = EndPowerFlags - 31,
 
-  Aura = 63,
+	Aura = 63,
 
-  UnknownFlag,
+	UnknownFlag,
 };
 
 /// convert a flag to a string
@@ -105,7 +106,7 @@ TBrickFlag slotToFlag(SLOT_EQUIPMENT::TSlotEquipment slot);
 /// convert an effect family to a flag
 TBrickFlag effectFamilyToFlag(EFFECT_FAMILIES::TEffectFamily family);
 
-}; // namespace BRICK_FLAGS
+}; // BRICK_FLAGS
 
 #endif // RY_BRICK_FLAGS_H
 /* End of brick_flags.h */

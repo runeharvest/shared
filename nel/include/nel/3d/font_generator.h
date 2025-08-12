@@ -46,64 +46,60 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2000
  */
-class CFontGenerator {
+class CFontGenerator
+{
 public:
-  /** Constructor
-   * \param fontFileName path+filename (ex: "c:\winnt\fonts\arial.ttf")
-   */
-  CFontGenerator(const std::string &fontFileName,
-                 const std::string &fontExFileName = "");
+	/** Constructor
+	 * \param fontFileName path+filename (ex: "c:\winnt\fonts\arial.ttf")
+	 */
+	CFontGenerator(const std::string &fontFileName, const std::string &fontExFileName = "");
 
-  virtual ~CFontGenerator();
+	virtual ~CFontGenerator();
 
-  /** generate and return a bitmap
-   * \param c the unicode char
-   * \param size size of the generated font in ??? format
-   * \param embolden set embolden style (bold)
-   * \param oblique set oblique style (slanted, italic)
-   * \param width width of the generated bitmap, this value is set by this
-   * function \param height height of the generated bitmap, this value is set by
-   * this function \param pitch pitch of the generated bitmap (+ or - the number
-   * of bytes per row), this value is set by this function
-   */
-  uint8 *getBitmap(u32char c, uint32 size, bool embolden, bool oblique,
-                   uint32 &width, uint32 &height, uint32 &pitch, sint32 &left,
-                   sint32 &top, sint32 &advx, uint32 &glyphIndex);
+	/** generate and return a bitmap
+	 * \param c the unicode char
+	 * \param size size of the generated font in ??? format
+	 * \param embolden set embolden style (bold)
+	 * \param oblique set oblique style (slanted, italic)
+	 * \param width width of the generated bitmap, this value is set by this function
+	 * \param height height of the generated bitmap, this value is set by this function
+	 * \param pitch pitch of the generated bitmap (+ or - the number of bytes per row), this value is set by this function
+	 */
+	uint8 *getBitmap(u32char c, uint32 size, bool embolden, bool oblique, uint32 &width, uint32 &height, uint32 &pitch, sint32 &left, sint32 &top, sint32 &advx, uint32 &glyphIndex);
 
-  /** returns the width and height of a character using a specific size and
-   *
-   * \warning this function is not very fast (but faster than getBitmap())
-   * because it has to load the char before.
-   */
-  void getSizes(u32char c, uint32 size, uint32 &width, uint32 &height);
+	/** returns the width and height of a character using a specific size and
+	 *
+	 * \warning this function is not very fast (but faster than getBitmap()) because it has to load the char before.
+	 */
+	void getSizes(u32char c, uint32 size, uint32 &width, uint32 &height);
 
-  void getKerning(u32char left, u32char right, sint32 &kernx);
+	void getKerning(u32char left, u32char right, sint32 &kernx);
 
-  uint32 getCharIndex(u32char c);
+	uint32 getCharIndex(u32char c);
 
-  uint32 getUID() { return _UID; }
+	uint32 getUID() { return _UID; }
 
-  std::string getFontFileName() const;
+	std::string getFontFileName() const;
 
 private:
-  static uint32 _FontGeneratorCounterUID;
-  uint32 _UID;
-  std::string _FontFileName;
-  std::vector<std::string> _FontFileNames;
+	static uint32 _FontGeneratorCounterUID;
+	uint32 _UID;
+	std::string _FontFileName;
+	std::vector<std::string> _FontFileNames;
 
 #ifndef NL_DONT_USE_EXTERNAL_CODE
-  const char *getFT2Error(FT_Error fte);
+	const char *getFT2Error(FT_Error fte);
 
-  static FT_Library _Library;
-  static uint _LibraryInit;
+	static FT_Library _Library;
+	static uint _LibraryInit;
 
-  std::vector<FT_Face> _Faces;
+	std::vector<FT_Face> _Faces;
 #else // NL_DONT_USE_EXTERNAL_CODE
 
 #endif // NL_DONT_USE_EXTERNAL_CODE
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_FONT_GENERATOR_H
 

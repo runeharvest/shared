@@ -29,54 +29,53 @@ enum EItemFamily
     : uint8
 #endif
 {
-  UNDEFINED = 0,
-  SERVICE,
-  ARMOR,
-  MELEE_WEAPON,
-  RANGE_WEAPON,
-  AMMO,
-  RAW_MATERIAL,
-  SHIELD,
-  CRAFTING_TOOL,
-  HARVEST_TOOL,
-  TAMING_TOOL,
-  TRAINING_TOOL,
-  AI,
-  BRICK,
-  FOOD,
-  JEWELRY,
-  CORPSE,
-  CARRION,
-  BAG,
-  STACK,
-  DEAD_SEED,
-  TELEPORT,
-  GUILD_FLAG,
-  LIVING_SEED,
-  LITTLE_SEED,
-  MEDIUM_SEED,
-  BIG_SEED,
-  VERY_BIG_SEED,
-  MISSION_ITEM,
-  CRYSTALLIZED_SPELL,
-  ITEM_SAP_RECHARGE,
-  PET_ANIMAL_TICKET,
-  GUILD_OPTION,
-  HANDLED_ITEM,
-  COSMETIC,
-  CONSUMABLE,
-  XP_CATALYSER,
-  SCROLL,
-  SCROLL_R2,
-  COMMAND_TICKET,
-  GENERIC_ITEM
+	UNDEFINED = 0,
+	SERVICE,
+	ARMOR,
+	MELEE_WEAPON,
+	RANGE_WEAPON,
+	AMMO,
+	RAW_MATERIAL,
+	SHIELD,
+	CRAFTING_TOOL,
+	HARVEST_TOOL,
+	TAMING_TOOL,
+	TRAINING_TOOL,
+	AI,
+	BRICK,
+	FOOD,
+	JEWELRY,
+	CORPSE,
+	CARRION,
+	BAG,
+	STACK,
+	DEAD_SEED,
+	TELEPORT,
+	GUILD_FLAG,
+	LIVING_SEED,
+	LITTLE_SEED,
+	MEDIUM_SEED,
+	BIG_SEED,
+	VERY_BIG_SEED,
+	MISSION_ITEM,
+	CRYSTALLIZED_SPELL,
+	ITEM_SAP_RECHARGE,
+	PET_ANIMAL_TICKET,
+	GUILD_OPTION,
+	HANDLED_ITEM,
+	COSMETIC,
+	CONSUMABLE,
+	XP_CATALYSER,
+	SCROLL,
+	SCROLL_R2,
+	COMMAND_TICKET,
+	GENERIC_ITEM
 };
 
 /**
  * get the right item family from the input string
  * \param str the input string
- * \return the EItemFamily associated to this string (UNDEFINED if the string
- * cannot be interpreted)
+ * \return the EItemFamily associated to this string (UNDEFINED if the string cannot be interpreted)
  */
 EItemFamily stringToItemFamily(const std::string &str);
 
@@ -88,8 +87,7 @@ EItemFamily stringToItemFamily(const std::string &str);
 const std::string &toString(EItemFamily itemFamily);
 
 /**
- * returns true if items of this family are destroyed when they are completely
- * worned out
+ * returns true if items of this family are destroyed when they are completely worned out
  */
 bool destroyedWhenWorned(EItemFamily family);
 
@@ -101,7 +99,7 @@ bool isResellable(EItemFamily fam);
 bool isTextCustomizable(EItemFamily fam);
 /// is craftable
 
-}; // namespace ITEMFAMILY
+}; // ITEMFAMILY
 
 #endif // RY_ITEM_FAMILY_H
 /* End of item_family.h */

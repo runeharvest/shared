@@ -17,11 +17,11 @@
 #ifndef SP_TYPE_H
 #define SP_TYPE_H
 
-#include <map>
-#include <nel/misc/common.h>
-#include <nel/misc/debug.h>
 #include <nel/misc/types_nl.h>
+#include <nel/misc/debug.h>
+#include <nel/misc/common.h>
 #include <vector>
+#include <map>
 
 // User #includes
 
@@ -38,51 +38,53 @@ namespace EGSPD {
 /** TSPType
  * defined at game_share/pd_scripts/sp_type.pds:6
  */
-class CSPType {
+class CSPType
+{
 
 public:
-  /// \name Enum values
-  // @{
+	/// \name Enum values
+	// @{
 
-  enum TSPType {
-    Fight = 0,
-    Magic = 1,
-    Craft = 2,
-    Harvest = 3,
-    ___TSPType_useSize = 4,
-    Unknown = 4,
-    EndSPType = 4,
-  };
+	enum TSPType
+	{
+		Fight = 0,
+		Magic = 1,
+		Craft = 2,
+		Harvest = 3,
+		___TSPType_useSize = 4,
+		Unknown = 4,
+		EndSPType = 4,
+	};
 
-  // @}
+	// @}
 
 public:
-  /// \name Conversion methods
-  // @{
+	/// \name Conversion methods
+	// @{
 
-  /**
-   * Use these methods to convert from enum value to string (and vice versa)
-   */
+	/**
+	 * Use these methods to convert from enum value to string (and vice versa)
+	 */
 
-  static const std::string &toString(TSPType v);
-  static CSPType::TSPType fromString(const std::string &v);
+	static const std::string &toString(TSPType v);
+	static CSPType::TSPType fromString(const std::string &v);
 
-  // @}
+	// @}
 
 private:
-  /// \name Enum initialisation
-  // @{
+	/// \name Enum initialisation
+	// @{
 
-  static void init();
-  static bool _Initialised;
-  static std::string _UnknownString;
-  static std::vector<std::string> _StrTable;
-  static std::map<std::string, TSPType> _ValueMap;
+	static void init();
+	static bool _Initialised;
+	static std::string _UnknownString;
+	static std::vector<std::string> _StrTable;
+	static std::map<std::string, TSPType> _ValueMap;
 
-  // @}
+	// @}
 };
 
-} // namespace EGSPD
+} // End of EGSPD
 
 //
 // Inline implementations

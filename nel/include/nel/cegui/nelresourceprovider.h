@@ -35,36 +35,36 @@
 #define __NELRESOURCEPROVIDER_H__
 
 // standard includes
-#include <list>
 #include <set>
+#include <list>
 
 // CEGUI includes
 #include "CEGUIBase.h"
 #include "CEGUIRenderer.h"
-#include "CEGUISystem.h"
 #include "CEGUITexture.h"
+#include "CEGUISystem.h"
 
 // NeL includes
-#include <nel/misc/common.h>
-#include <nel/misc/config_file.h>
+#include <nel/misc/file.h>
+#include <nel/misc/path.h>
 #include <nel/misc/debug.h>
+#include <nel/misc/vector.h>
+#include <nel/misc/matrix.h>
+#include <nel/misc/common.h>
 #include <nel/misc/events.h>
 #include <nel/misc/fast_mem.h>
-#include <nel/misc/file.h>
-#include <nel/misc/matrix.h>
-#include <nel/misc/mem_displayer.h>
-#include <nel/misc/path.h>
+#include <nel/misc/config_file.h>
 #include <nel/misc/system_info.h>
-#include <nel/misc/vector.h>
+#include <nel/misc/mem_displayer.h>
 
+#include <nel/3d/u_scene.h>
 #include <nel/3d/u_camera.h>
 #include <nel/3d/u_driver.h>
-#include <nel/3d/u_instance.h>
-#include <nel/3d/u_material.h>
-#include <nel/3d/u_particle_system_instance.h>
-#include <nel/3d/u_scene.h>
-#include <nel/3d/u_text_context.h>
 #include <nel/3d/u_texture.h>
+#include <nel/3d/u_material.h>
+#include <nel/3d/u_instance.h>
+#include <nel/3d/u_text_context.h>
+#include <nel/3d/u_particle_system_instance.h>
 
 #ifdef NL_OS_WINDOWS
 #ifdef NEL_CEGUIRENDERER_EXPORTS
@@ -72,19 +72,19 @@
 #else // NEL_CEGUI_RENDERER_EXPORTS
 #define DLLSPEC __declspec(dllimport)
 #endif // NEL_CEGUI_RENDERER_EXPORTS
-#else  // NL_OS_WINDOWS
+#else // NL_OS_WINDOWS
 #define DLLSPEC
 #endif // NL_OS_WINDOWS
 
 // Start of CEGUI namespace section
 namespace CEGUI {
-class DLLSPEC NeLResourceProvider : public ResourceProvider {
+class DLLSPEC NeLResourceProvider : public ResourceProvider
+{
 public:
-  NeLResourceProvider();
-  ~NeLResourceProvider();
+	NeLResourceProvider();
+	~NeLResourceProvider();
 
-  void loadRawDataContainer(const String &filename, RawDataContainer &output,
-                            const String &resourceGroup);
+	void loadRawDataContainer(const String &filename, RawDataContainer &output, const String &resourceGroup);
 };
 }; // end namespace CEGUI
 

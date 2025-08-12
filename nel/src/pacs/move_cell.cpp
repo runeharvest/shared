@@ -24,27 +24,29 @@ namespace NLPACS {
 
 // ***************************************************************************
 
-CMoveCell::CMoveCell() {
-  _FirstX = NULL;
-  _LastX = NULL;
-  /*_FirstY=NULL;
-  _LastY=NULL;*/
+CMoveCell::CMoveCell()
+{
+	_FirstX = NULL;
+	_LastX = NULL;
+	/*_FirstY=NULL;
+	_LastY=NULL;*/
 }
 
 // ***************************************************************************
 
-void CMoveCell::unlinkX(CMoveElement *element) {
-  // Check first last
-  if (_FirstX == element)
-    _FirstX = element->NextX;
-  if (_LastX == element)
-    _LastX = element->PreviousX;
+void CMoveCell::unlinkX(CMoveElement *element)
+{
+	// Check first last
+	if (_FirstX == element)
+		_FirstX = element->NextX;
+	if (_LastX == element)
+		_LastX = element->PreviousX;
 
-  // Relink to others
-  if (element->NextX)
-    element->NextX->PreviousX = element->PreviousX;
-  if (element->PreviousX)
-    element->PreviousX->NextX = element->NextX;
+	// Relink to others
+	if (element->NextX)
+		element->NextX->PreviousX = element->PreviousX;
+	if (element->PreviousX)
+		element->PreviousX->NextX = element->NextX;
 }
 
 // ***************************************************************************
@@ -67,29 +69,28 @@ void CMoveCell::unlinkX(CMoveElement *element) {
 
 // ***************************************************************************
 
-void CMoveCell::linkX(CMoveElement *previous, CMoveElement *element,
-                      CMoveElement *next) {
-  // Link the element
-  element->NextX = next;
-  element->PreviousX = previous;
+void CMoveCell::linkX(CMoveElement *previous, CMoveElement *element, CMoveElement *next)
+{
+	// Link the element
+	element->NextX = next;
+	element->PreviousX = previous;
 
-  // Link to others
-  if (previous)
-    previous->NextX = element;
-  if (next)
-    next->PreviousX = element;
+	// Link to others
+	if (previous)
+		previous->NextX = element;
+	if (next)
+		next->PreviousX = element;
 
-  // Check first / last
-  if (previous == NULL)
-    _FirstX = element;
-  if (next == NULL)
-    _LastX = element;
+	// Check first / last
+	if (previous == NULL)
+		_FirstX = element;
+	if (next == NULL)
+		_LastX = element;
 }
 
 // ***************************************************************************
 
-/*void CMoveCell::linkY (CMoveElement *previous, CMoveElement *element,
-CMoveElement *next)
+/*void CMoveCell::linkY (CMoveElement *previous, CMoveElement *element, CMoveElement *next)
 {
     // Link the element
     element->NextY=next;
@@ -110,97 +111,95 @@ CMoveElement *next)
 
 // ***************************************************************************
 
-void CMoveCell::updateSortedLists(CMoveElement *element, uint8 worldImage) {
-  // ** Update sorted list on X
+void CMoveCell::updateSortedLists(CMoveElement *element, uint8 worldImage)
+{
+	// ** Update sorted list on X
 
-  // Primitive pointer
-  CMovePrimitive *primitive = element->Primitive;
+	// Primitive pointer
+	CMovePrimitive *primitive = element->Primitive;
 
-  // Get the world image
-  CPrimitiveWorldImage *wI = primitive->getWorldImage(worldImage);
+	// Get the world image
+	CPrimitiveWorldImage *wI = primitive->getWorldImage(worldImage);
 
-  // Test if we will go to the right
-  CMoveElement *ptr = element->NextX;
-  if (ptr && (wI->getBBXMin() >
-              ptr->Primitive->getWorldImage(worldImage)->getBBXMin())) {
-    // Unlink
-    unlinkX(element);
+	// Test if we will go to the right
+	CMoveElement *ptr = element->NextX;
+	if (ptr && (wI->getBBXMin() > ptr->Primitive->getWorldImage(worldImage)->getBBXMin()))
+	{
+		// Unlink
+		unlinkX(element);
 
-    // Adjust the list localisation
-    while (ptr->NextX &&
-           (wI->getBBXMin() >
-            ptr->NextX->Primitive->getWorldImage(worldImage)->getBBXMin())) {
-      // Next ptr
-      ptr = ptr->NextX;
-    }
+		// Adjust the list localisation
+		while (ptr->NextX && (wI->getBBXMin() > ptr->NextX->Primitive->getWorldImage(worldImage)->getBBXMin()))
+		{
+			// Next ptr
+			ptr = ptr->NextX;
+		}
 
-    // Here we go
-    linkX(ptr, element, ptr->NextX);
-  } else {
-    // Test if we will go to the left
-    ptr = element->PreviousX;
-    if (ptr && (ptr->Primitive->getWorldImage(worldImage)->getBBXMin() >
-                wI->getBBXMin())) {
-      // Unlink
-      unlinkX(element);
+		// Here we go
+		linkX(ptr, element, ptr->NextX);
+	}
+	else
+	{
+		// Test if we will go to the left
+		ptr = element->PreviousX;
+		if (ptr && (ptr->Primitive->getWorldImage(worldImage)->getBBXMin() > wI->getBBXMin()))
+		{
+			// Unlink
+			unlinkX(element);
 
-      // Adjust the list localisation
-      while (
-          ptr->PreviousX &&
-          (ptr->PreviousX->Primitive->getWorldImage(worldImage)->getBBXMin() >
-           wI->getBBXMin())) {
-        // Next ptr
-        ptr = ptr->PreviousX;
-      }
+			// Adjust the list localisation
+			while (ptr->PreviousX && (ptr->PreviousX->Primitive->getWorldImage(worldImage)->getBBXMin() > wI->getBBXMin()))
+			{
+				// Next ptr
+				ptr = ptr->PreviousX;
+			}
 
-      // Here we go
-      linkX(ptr->PreviousX, element, ptr);
-    }
-  }
+			// Here we go
+			linkX(ptr->PreviousX, element, ptr);
+		}
+	}
 
-  /*	// ** Update sorted list on Y
+	/*	// ** Update sorted list on Y
 
-      // Test if we will go to the right
-      ptr=element->NextY;
-      if (ptr && (primitive->getBBYMin() > ptr->Primitive->getBBYMin()) )
-      {
-          // Unlink
-          unlinkY (element);
+	    // Test if we will go to the right
+	    ptr=element->NextY;
+	    if (ptr && (primitive->getBBYMin() > ptr->Primitive->getBBYMin()) )
+	    {
+	        // Unlink
+	        unlinkY (element);
 
-          // Adjust the list localisation
-          while (ptr->NextY && (primitive->getBBYMin() >
-     ptr->NextY->Primitive->getBBYMin()) )
-          {
-              // Next ptr
-              ptr=ptr->NextY;
-          }
+	        // Adjust the list localisation
+	        while (ptr->NextY && (primitive->getBBYMin() > ptr->NextY->Primitive->getBBYMin()) )
+	        {
+	            // Next ptr
+	            ptr=ptr->NextY;
+	        }
 
-          // Here we go
-          linkY (ptr, element, ptr->NextY);
-      }
-      else
-      {
-          // Test if we will go to the left
-          ptr=element->PreviousY;
-          if (ptr && (ptr->Primitive->getBBYMin() > primitive->getBBYMin()) )
-          {
-              // Unlink
-              unlinkY (element);
+	        // Here we go
+	        linkY (ptr, element, ptr->NextY);
+	    }
+	    else
+	    {
+	        // Test if we will go to the left
+	        ptr=element->PreviousY;
+	        if (ptr && (ptr->Primitive->getBBYMin() > primitive->getBBYMin()) )
+	        {
+	            // Unlink
+	            unlinkY (element);
 
-              // Adjust the list localisation
-              while (ptr->PreviousY && (ptr->PreviousY->Primitive->getBBYMin() >
-     primitive->getBBYMin()) )
-              {
-                  // Next ptr
-                  ptr=ptr->PreviousY;
-              }
+	            // Adjust the list localisation
+	            while (ptr->PreviousY && (ptr->PreviousY->Primitive->getBBYMin() > primitive->getBBYMin()) )
+	            {
+	                // Next ptr
+	                ptr=ptr->PreviousY;
+	            }
 
-              // Here we go
-              linkY (ptr->PreviousY, element, ptr);
-          }
-      }*/
+	            // Here we go
+	            linkY (ptr->PreviousY, element, ptr);
+	        }
+	    }*/
 }
 
 // ***************************************************************************
 
-} // namespace NLPACS
+} // NLPACS

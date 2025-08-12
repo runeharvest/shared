@@ -20,27 +20,26 @@
 #include "nel/misc/types_nl.h"
 
 namespace TEMP_INV_MODE {
-// All the mode the temporary inventory can be opened (needed for Database
-// SERVER:INVENTORY:TEMP:TYPE)
-enum TInventoryMode {
-  Harvest = 0,
-  Loot,
-  Quarter,
-  Forage,
-  BagFull,
-  Craft,
-  MissionReward,
-  Crystallize,
+// All the mode the temporary inventory can be opened (needed for Database SERVER:INVENTORY:TEMP:TYPE)
+enum TInventoryMode
+{
+	Harvest = 0,
+	Loot,
+	Quarter,
+	Forage,
+	BagFull,
+	Craft,
+	MissionReward,
+	Crystallize,
 
-  NbModes,
-  Unknown,
+	NbModes,
+	Unknown,
 };
 
 /**
  * get the right mode from the input string
  * \param str the input string
- * \return the TInventoryMode associated to this string (Unknown if the string
- * cannot be interpreted)
+ * \return the TInventoryMode associated to this string (Unknown if the string cannot be interpreted)
  */
 TInventoryMode toInvMode(const std::string &str);
 
@@ -51,7 +50,7 @@ TInventoryMode toInvMode(const std::string &str);
  */
 const std::string &toString(TInventoryMode mode);
 
-}; // namespace TEMP_INV_MODE
+}; // TEMP_INV_MODE
 
 #endif // RYZOM_TEMP_INV_MODE_H
 /* End of temp_inventory_mode.h */

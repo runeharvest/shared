@@ -17,8 +17,8 @@
 #include "std3d.h"
 
 #include "nel/3d/hrc_trav.h"
-#include "nel/3d/scene.h"
 #include "nel/misc/hierarchical_timer.h"
+#include "nel/3d/scene.h"
 
 using namespace std;
 using namespace NLMISC;
@@ -30,20 +30,20 @@ using namespace NLMISC;
 namespace NL3D {
 
 // ***************************************************************************
-void CHrcTrav::traverse() {
-  H_AUTO(NL3D_TravHRC);
+void CHrcTrav::traverse()
+{
+	H_AUTO(NL3D_TravHRC);
 
-  _MovingObjects.clear();
+	_MovingObjects.clear();
 
-  // Traverse the graph.
-  if (Scene->getRoot())
-    Scene->getRoot()->traverseHrc();
+	// Traverse the graph.
+	if (Scene->getRoot())
+		Scene->getRoot()->traverseHrc();
 
-  // Inc the date.
-  // NB: Now, models update is done before ALL traversals.
-  // Hence, we must inc the value before scene rendering. This is equivalent to
-  // start with 1, and inc at end of traverse().
-  CurrentDate++;
+	// Inc the date.
+	// NB: Now, models update is done before ALL traversals.
+	// Hence, we must inc the value before scene rendering. This is equivalent to start with 1, and inc at end of traverse().
+	CurrentDate++;
 }
 
-} // namespace NL3D
+}

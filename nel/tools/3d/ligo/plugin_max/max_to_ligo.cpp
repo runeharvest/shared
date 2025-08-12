@@ -36,9 +36,9 @@
 #include "nel/misc/stream.h"
 
 // From ligo library
+#include "nel/ligo/zone_template.h"
 #include "nel/ligo/ligo_config.h"
 #include "nel/ligo/ligo_error.h"
-#include "nel/ligo/zone_template.h"
 #include "nel/misc/path.h"
 
 #include "../../plugin_max/nel_3dsmax_shared/string_common.h"
@@ -53,134 +53,136 @@ namespace NLLIGO {
 
 // ***************************************************************************
 
-int getScriptAppDataPatchMesh(Animatable *node, uint32 id, int def) {
-  // Get the chunk
-  AppDataChunk *ap =
-      node->GetAppDataChunk(MAXSCRIPT_UTILITY_CLASS_ID, UTILITY_CLASS_ID, id);
+int getScriptAppDataPatchMesh(Animatable *node, uint32 id, int def)
+{
+	// Get the chunk
+	AppDataChunk *ap = node->GetAppDataChunk(MAXSCRIPT_UTILITY_CLASS_ID, UTILITY_CLASS_ID, id);
 
-  // Not found ? return default
-  if (ap == NULL)
-    return def;
+	// Not found ? return default
+	if (ap == NULL)
+		return def;
 
-  // String to int
-  int value;
-  if (sscanf((const char *)ap->data, "%d", &value) == 1)
-    return value;
-  else
-    return def;
+	// String to int
+	int value;
+	if (sscanf((const char *)ap->data, "%d", &value) == 1)
+		return value;
+	else
+		return def;
 }
 
 // ***************************************************************************
 
-bool CMaxToLigo::buildZoneTemplate(INode *pNode, const PatchMesh &patchMesh,
-                                   CZoneTemplate &zoneTemplate,
-                                   const CLigoConfig &config,
-                                   CLigoError &errors, TimeValue time) {
-  // Vertices
-  std::vector<NLMISC::CVector> vertices;
-  vertices.resize(patchMesh.numVerts);
+bool CMaxToLigo::buildZoneTemplate(INode *pNode, const PatchMesh &patchMesh, CZoneTemplate &zoneTemplate, const CLigoConfig &config, CLigoError &errors, TimeValue time)
+{
+	// Vertices
+	std::vector<NLMISC::CVector> vertices;
+	vertices.resize(patchMesh.numVerts);
 
-  // Indexies
-  std::vector<std::pair<uint, uint>> indexes;
+	// Indexies
+	std::vector<std::pair<uint, uint>> indexes;
 
-  // Get node matrix
-  Matrix3 local = pNode->GetObjectTM(time);
+	// Get node matrix
+	Matrix3 local = pNode->GetObjectTM(time);
 
-  // For each vertices
-  for (uint vert = 0; vert < (uint)patchMesh.numVerts; vert++) {
-    // Transform the vertex
-    Point3 v = local * patchMesh.verts[vert].p;
+	// For each vertices
+	for (uint vert = 0; vert < (uint)patchMesh.numVerts; vert++)
+	{
+		// Transform the vertex
+		Point3 v = local * patchMesh.verts[vert].p;
 
-    // Copy it
-    vertices[vert].x = v.x;
-    vertices[vert].y = v.y;
-    vertices[vert].z = v.z;
-  }
+		// Copy it
+		vertices[vert].x = v.x;
+		vertices[vert].y = v.y;
+		vertices[vert].z = v.z;
+	}
 
-  // Symetric ?
-  bool sym =
-      getScriptAppDataPatchMesh(pNode, NEL3D_APPDATA_ZONE_SYMMETRY, 0) != 0;
+	// Symetric ?
+	bool sym = getScriptAppDataPatchMesh(pNode, NEL3D_APPDATA_ZONE_SYMMETRY, 0) != 0;
 
-  // For each edges
-  for (uint edge = 0; edge < (uint)patchMesh.numEdges; edge++) {
-    // Open edge ?
+	// For each edges
+	for (uint edge = 0; edge < (uint)patchMesh.numEdges; edge++)
+	{
+		// Open edge ?
 #if (MAX_RELEASE < 4000)
-    if (patchMesh.edges[edge].patch2 < 0)
-#else  // (MAX_RELEASE < 4000)
-    if (patchMesh.edges[edge].patches.Count() < 2)
+		if (patchMesh.edges[edge].patch2 < 0)
+#else // (MAX_RELEASE < 4000)
+		if (patchMesh.edges[edge].patches.Count() < 2)
 #endif // (MAX_RELEASE < 4000)
-    {
-      // Add this edge
-      if (sym)
-        indexes.push_back(pair<uint, uint>(patchMesh.edges[edge].v2,
-                                           patchMesh.edges[edge].v1));
-      else
-        indexes.push_back(pair<uint, uint>(patchMesh.edges[edge].v1,
-                                           patchMesh.edges[edge].v2));
-    }
-  }
+		{
+			// Add this edge
+			if (sym)
+				indexes.push_back(pair<uint, uint>(patchMesh.edges[edge].v2, patchMesh.edges[edge].v1));
+			else
+				indexes.push_back(pair<uint, uint>(patchMesh.edges[edge].v1, patchMesh.edges[edge].v2));
+		}
+	}
 
-  // Build it
-  return zoneTemplate.build(vertices, indexes, config, errors);
+	// Build it
+	return zoneTemplate.build(vertices, indexes, config, errors);
 }
 
 // ***************************************************************************
-bool CMaxToLigo::loadLigoConfigFile(CLigoConfig &config, Interface &it,
-                                    bool dialog) {
-  // Get the module path
-  HMODULE hModule = hInstance;
-  if (hModule) {
-    // Get the path
-    TCHAR sModulePath[256];
-    int res = GetModuleFileName(hModule, sModulePath, 256);
+bool CMaxToLigo::loadLigoConfigFile(CLigoConfig &config, Interface &it, bool dialog)
+{
+	// Get the module path
+	HMODULE hModule = hInstance;
+	if (hModule)
+	{
+		// Get the path
+		TCHAR sModulePath[256];
+		int res = GetModuleFileName(hModule, sModulePath, 256);
 
-    // Success ?
-    if (res) {
-      // Path
-      std::string path =
-          NLMISC::CFile::getPath(MCharStrToUtf8(sModulePath)) + "ligoscape.cfg";
+		// Success ?
+		if (res)
+		{
+			// Path
+			std::string path = NLMISC::CFile::getPath(MCharStrToUtf8(sModulePath)) + "ligoscape.cfg";
 
-      try {
-        // Load the config file
-        config.readConfigFile(path, false);
+			try
+			{
+				// Load the config file
+				config.readConfigFile(path, false);
 
-        // ok
-        return true;
-      } catch (const Exception &e) {
-        // Print an error message
-        char msg[512];
-        smprintf(msg, 512, "Error loading the config file ligoscape.cfg: %s",
-                 e.what());
-        errorMessage(msg, "NeL Ligo load config file", it, dialog);
-      }
-    }
-  }
+				// ok
+				return true;
+			}
+			catch (const Exception &e)
+			{
+				// Print an error message
+				char msg[512];
+				smprintf(msg, 512, "Error loading the config file ligoscape.cfg: %s", e.what());
+				errorMessage(msg, "NeL Ligo load config file", it, dialog);
+			}
+		}
+	}
 
-  // Can't found the module
-  return false;
-}
-
-// ***************************************************************************
-
-void CMaxToLigo::errorMessage(const std::string &msg, const std::string &title,
-                              Interface &it, bool dialog) {
-  // Text or dialog ?
-  if (dialog) {
-    // Dialog message
-    ucstring ucmsg, uctitle;
-    ucmsg.fromUtf8(msg);
-    uctitle.fromUtf8(title);
-    MessageBoxW(it.GetMAXHWnd(), (LPCWSTR)ucmsg.c_str(),
-                (LPCWSTR)uctitle.c_str(), MB_OK | MB_ICONEXCLAMATION);
-  } else {
-    // Text message
-    mprintf(_M("%s\n"), MaxTStrFromUtf8(msg).data());
-  }
-
-  // Output in log
-  nlwarning("LIGO ERROR : %s", msg.c_str());
+	// Can't found the module
+	return false;
 }
 
 // ***************************************************************************
 
-} // namespace NLLIGO
+void CMaxToLigo::errorMessage(const std::string &msg, const std::string &title, Interface &it, bool dialog)
+{
+	// Text or dialog ?
+	if (dialog)
+	{
+		// Dialog message
+		ucstring ucmsg, uctitle;
+		ucmsg.fromUtf8(msg);
+		uctitle.fromUtf8(title);
+		MessageBoxW(it.GetMAXHWnd(), (LPCWSTR)ucmsg.c_str(), (LPCWSTR)uctitle.c_str(), MB_OK | MB_ICONEXCLAMATION);
+	}
+	else
+	{
+		// Text message
+		mprintf(_M("%s\n"), MaxTStrFromUtf8(msg).data());
+	}
+
+	// Output in log
+	nlwarning("LIGO ERROR : %s", msg.c_str());
+}
+
+// ***************************************************************************
+
+}

@@ -17,49 +17,50 @@
 #ifndef NLMISC_STREAMED_PACKAGE_MANAGER_H
 #define NLMISC_STREAMED_PACKAGE_MANAGER_H
 
-#include <nel/misc/app_context.h>
-#include <nel/misc/i_streamed_package_provider.h>
-#include <nel/misc/streamed_package.h>
 #include <nel/misc/types_nl.h>
+#include <nel/misc/app_context.h>
+#include <nel/misc/streamed_package.h>
+#include <nel/misc/i_streamed_package_provider.h>
 
 namespace NLMISC {
 
-class CStreamedPackageManager {
-  NLMISC_SAFE_RELEASABLE_SINGLETON_DECL(CStreamedPackageManager);
+class CStreamedPackageManager
+{
+	NLMISC_SAFE_RELEASABLE_SINGLETON_DECL(CStreamedPackageManager);
 
 public:
-  CStreamedPackageManager();
-  ~CStreamedPackageManager();
+	CStreamedPackageManager();
+	~CStreamedPackageManager();
 
-  /// package: ex. /games/nel/data/characters_maps_hr.snp
-  bool loadPackage(const std::string &package);
+	/// package: ex. /games/nel/data/characters_maps_hr.snp
+	bool loadPackage(const std::string &package);
 
-  /// Get a file list
-  void list(std::vector<std::string> &fileNames, const std::string &package);
+	/// Get a file list
+	void list(std::vector<std::string> &fileNames, const std::string &package);
 
-  /// Unload all packages
-  void unloadAll();
+	/// Unload all packages
+	void unloadAll();
 
-  /// Get an existing file or download if necessary. This call is blocking
-  /// filePath: [out] ex. /games/nel/stream/00/00/000000000..
-  /// fileName: [in] ex. fy_hof_underwear.dds
-  bool getFile(std::string &filePath, const std::string &fileName);
+	/// Get an existing file or download if necessary. This call is blocking
+	/// filePath: [out] ex. /games/nel/stream/00/00/000000000..
+	/// fileName: [in] ex. fy_hof_underwear.dds
+	bool getFile(std::string &filePath, const std::string &fileName);
 
-  /// Get file size
-  /// fileSize: [out]
-  /// fileName: [in] ex. fy_hof_underwear.dds
-  bool getFileSize(uint32 &fileSize, const std::string &fileName);
+	/// Get file size
+	/// fileSize: [out]
+	/// fileName: [in] ex. fy_hof_underwear.dds
+	bool getFileSize(uint32 &fileSize, const std::string &fileName);
 
 public:
-  /// Streamed package provider. This downloads the files
-  IStreamedPackageProvider *Provider;
+	/// Streamed package provider. This downloads the files
+	IStreamedPackageProvider *Provider;
 
 private:
-  typedef std::map<std::string, CStreamedPackage> TPackages;
-  TPackages m_Packages;
+	typedef std::map<std::string, CStreamedPackage> TPackages;
+	TPackages m_Packages;
 
-  typedef std::map<std::string, const CStreamedPackage::CEntry *> TEntries;
-  TEntries m_Entries;
+	typedef std::map<std::string, const CStreamedPackage::CEntry *> TEntries;
+	TEntries m_Entries;
 
 }; /* class CStreamedPackageManager */
 

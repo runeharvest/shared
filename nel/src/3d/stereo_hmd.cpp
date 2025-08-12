@@ -22,8 +22,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "nel/3d/stereo_hmd.h"
 #include "std3d.h"
+#include "nel/3d/stereo_hmd.h"
 
 // STL includes
 
@@ -41,9 +41,13 @@ using namespace std;
 
 namespace NL3D {
 
-IStereoHMD::IStereoHMD() {}
+IStereoHMD::IStereoHMD()
+{
+}
 
-IStereoHMD::~IStereoHMD() {}
+IStereoHMD::~IStereoHMD()
+{
+}
 
 } /* namespace NL3D */
 

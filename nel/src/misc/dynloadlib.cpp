@@ -30,44 +30,43 @@ using namespace std;
 
 namespace NLMISC {
 
-NL_LIB_HANDLE nlLoadLibrary(const std::string &libName) {
-  NL_LIB_HANDLE res = 0;
+NL_LIB_HANDLE nlLoadLibrary(const std::string &libName)
+{
+	NL_LIB_HANDLE res = 0;
 #ifdef NL_OS_WINDOWS
-  res = LoadLibraryW(nlUtf8ToWide(libName));
+	res = LoadLibraryW(nlUtf8ToWide(libName));
 #elif defined(NL_OS_UNIX)
-  res = dlopen(libName.c_str(), RTLD_NOW);
+	res = dlopen(libName.c_str(), RTLD_NOW);
 #else
 #error "You must code nlLoadLibrary() for your platform"
 #endif
-  if (res == 0)
-    nlwarning("Load library '%s' failed: %s", libName.c_str(),
-              NLMISC::formatErrorMessage(NLMISC::getLastError()).c_str());
-  return res;
+	if (res == 0) nlwarning("Load library '%s' failed: %s", libName.c_str(), NLMISC::formatErrorMessage(NLMISC::getLastError()).c_str());
+	return res;
 }
 
-bool nlFreeLibrary(NL_LIB_HANDLE libHandle) {
+bool nlFreeLibrary(NL_LIB_HANDLE libHandle)
+{
 #ifdef NL_OS_WINDOWS
-  return FreeLibrary(libHandle) > 0;
+	return FreeLibrary(libHandle) > 0;
 #elif defined(NL_OS_UNIX)
-  return dlclose(libHandle) == 0;
+	return dlclose(libHandle) == 0;
 #else
 #error "You must code nlFreeLibrary() for your platform"
 #endif
 }
 
-void *nlGetSymbolAddress(NL_LIB_HANDLE libHandle, const std::string &procName) {
-  void *res = 0;
+void *nlGetSymbolAddress(NL_LIB_HANDLE libHandle, const std::string &procName)
+{
+	void *res = 0;
 #ifdef NL_OS_WINDOWS
-  res = (void *)GetProcAddress(libHandle, procName.c_str());
+	res = (void *)GetProcAddress(libHandle, procName.c_str());
 #elif defined(NL_OS_UNIX)
-  res = dlsym(libHandle, procName.c_str());
+	res = dlsym(libHandle, procName.c_str());
 #else
 #error "You must code nlGetProcAddress() for your platform"
 #endif
-  if (res == 0)
-    nlwarning("Getting symbol address of '%s' failed: %s", procName.c_str(),
-              NLMISC::formatErrorMessage(NLMISC::getLastError()).c_str());
-  return res;
+	if (res == 0) nlwarning("Getting symbol address of '%s' failed: %s", procName.c_str(), NLMISC::formatErrorMessage(NLMISC::getLastError()).c_str());
+	return res;
 }
 
 // Again some OS specifics stuff
@@ -86,208 +85,246 @@ const string nlLibExt(".so");
 
 std::vector<std::string> CLibrary::_LibPaths;
 
-CLibrary::CLibrary(const CLibrary & /* other */) {
-  // Nothing to do has it is forbidden.
-  // Allowing copy require to manage reference count from CLibrary to the module
-  // resource.
-  nlassert(false);
+CLibrary::CLibrary(const CLibrary & /* other */)
+{
+	// Nothing to do has it is forbidden.
+	// Allowing copy require to manage reference count from CLibrary to the module resource.
+	nlassert(false);
 }
 
-CLibrary &CLibrary::operator=(const CLibrary & /* other */) {
-  // Nothing to do has it is forbidden.
-  // Allowing assignment require to manage reference count from CLibrary to the
-  // module resource.
-  nlassert(false);
-  return *this;
+CLibrary &CLibrary::operator=(const CLibrary & /* other */)
+{
+	// Nothing to do has it is forbidden.
+	// Allowing assignment require to manage reference count from CLibrary to the module resource.
+	nlassert(false);
+	return *this;
 }
 
-std::string CLibrary::makeLibName(const std::string &baseName) {
-  return nlLibPrefix + baseName + nlLibSuffix + nlLibExt;
+std::string CLibrary::makeLibName(const std::string &baseName)
+{
+	return nlLibPrefix + baseName + nlLibSuffix + nlLibExt;
 }
 
-std::string CLibrary::cleanLibName(const std::string &decoratedName) {
-  // remove path and extension
-  string ret = CFile::getFilenameWithoutExtension(decoratedName);
+std::string CLibrary::cleanLibName(const std::string &decoratedName)
+{
+	// remove path and extension
+	string ret = CFile::getFilenameWithoutExtension(decoratedName);
 
-  if (!nlLibPrefix.empty()) {
-    // remove prefix
-    if (ret.find(nlLibPrefix) == 0)
-      ret = ret.substr(nlLibPrefix.size());
-  }
-  if (!nlLibSuffix.empty()) {
-    // remove suffix
-    if (ret.substr(ret.size() - nlLibSuffix.size()) == nlLibSuffix)
-      ret = ret.substr(0, ret.size() - nlLibSuffix.size());
-  }
+	if (!nlLibPrefix.empty())
+	{
+		// remove prefix
+		if (ret.find(nlLibPrefix) == 0)
+			ret = ret.substr(nlLibPrefix.size());
+	}
+	if (!nlLibSuffix.empty())
+	{
+		// remove suffix
+		if (ret.substr(ret.size() - nlLibSuffix.size()) == nlLibSuffix)
+			ret = ret.substr(0, ret.size() - nlLibSuffix.size());
+	}
 
-  return ret;
+	return ret;
 }
 
-void CLibrary::addLibPaths(const std::vector<std::string> &paths) {
-  for (uint i = 0; i < paths.size(); ++i) {
-    string newPath = CPath::standardizePath(paths[i]);
+void CLibrary::addLibPaths(const std::vector<std::string> &paths)
+{
+	for (uint i = 0; i < paths.size(); ++i)
+	{
+		string newPath = CPath::standardizePath(paths[i]);
 
-    // only add new path
-    if (std::find(_LibPaths.begin(), _LibPaths.end(), newPath) ==
-        _LibPaths.end()) {
-      _LibPaths.push_back(newPath);
-    }
-  }
+		// only add new path
+		if (std::find(_LibPaths.begin(), _LibPaths.end(), newPath) == _LibPaths.end())
+		{
+			_LibPaths.push_back(newPath);
+		}
+	}
 }
 
-void CLibrary::addLibPath(const std::string &path) {
-  string newPath = CPath::standardizePath(path);
+void CLibrary::addLibPath(const std::string &path)
+{
+	string newPath = CPath::standardizePath(path);
 
-  // only add new path
-  if (std::find(_LibPaths.begin(), _LibPaths.end(), newPath) ==
-      _LibPaths.end()) {
-    _LibPaths.push_back(newPath);
-  }
+	// only add new path
+	if (std::find(_LibPaths.begin(), _LibPaths.end(), newPath) == _LibPaths.end())
+	{
+		_LibPaths.push_back(newPath);
+	}
 }
 
 CLibrary::CLibrary()
-    : _LibHandle(NULL), _Ownership(true), _PureNelLibrary(NULL) {}
+    : _LibHandle(NULL)
+    , _Ownership(true)
+    , _PureNelLibrary(NULL)
+{
+}
 
 CLibrary::CLibrary(NL_LIB_HANDLE libHandle, bool ownership)
-    : _PureNelLibrary(NULL) {
-  _LibHandle = libHandle;
-  _Ownership = ownership;
-  _LibFileName = "unknown";
+    : _PureNelLibrary(NULL)
+{
+	_LibHandle = libHandle;
+	_Ownership = ownership;
+	_LibFileName = "unknown";
 }
 
-CLibrary::CLibrary(const std::string &libName, bool addNelDecoration,
-                   bool tryLibPath, bool ownership)
-    : _PureNelLibrary(NULL) {
-  loadLibrary(libName, addNelDecoration, tryLibPath, ownership);
-  // Assert here !
-  nlassert(_LibHandle != NULL);
+CLibrary::CLibrary(const std::string &libName, bool addNelDecoration, bool tryLibPath, bool ownership)
+    : _PureNelLibrary(NULL)
+{
+	loadLibrary(libName, addNelDecoration, tryLibPath, ownership);
+	// Assert here !
+	nlassert(_LibHandle != NULL);
 }
 
-CLibrary::~CLibrary() {
-  if (_LibHandle != NULL && _Ownership) {
-    nlFreeLibrary(_LibHandle);
-  }
+CLibrary::~CLibrary()
+{
+	if (_LibHandle != NULL && _Ownership)
+	{
+		nlFreeLibrary(_LibHandle);
+	}
 }
 
-bool CLibrary::loadLibrary(const std::string &libName, bool addNelDecoration,
-                           bool tryLibPath, bool ownership) {
-  _Ownership = ownership;
-  string libPath = libName;
+bool CLibrary::loadLibrary(const std::string &libName, bool addNelDecoration, bool tryLibPath, bool ownership)
+{
+	_Ownership = ownership;
+	string libPath = libName;
 
-  if (addNelDecoration)
-    libPath = makeLibName(libPath);
+	if (addNelDecoration)
+		libPath = makeLibName(libPath);
 
-  if (tryLibPath) {
-    // remove any directory spec
-    string filename = CFile::getFilename(libPath);
+	if (tryLibPath)
+	{
+		// remove any directory spec
+		string filename = CFile::getFilename(libPath);
 
-    for (uint i = 0; i < _LibPaths.size(); ++i) {
-      string pathname = _LibPaths[i] + filename;
-      if (CFile::isExists(pathname)) {
-        // we found it, replace libPath
-        libPath = pathname;
-        break;
-      }
-    }
-  }
+		for (uint i = 0; i < _LibPaths.size(); ++i)
+		{
+			string pathname = _LibPaths[i] + filename;
+			if (CFile::isExists(pathname))
+			{
+				// we found it, replace libPath
+				libPath = pathname;
+				break;
+			}
+		}
+	}
 
-  nldebug("Loading dynamic library '%s'", libPath.c_str());
-  // load the lib now
-  _LibHandle = nlLoadLibrary(libPath);
-  _LibFileName = libPath;
-  // MTR: some new error handling. Just logs if it couldn't load the handle.
-  if (_LibHandle == NULL) {
+	nldebug("Loading dynamic library '%s'", libPath.c_str());
+	// load the lib now
+	_LibHandle = nlLoadLibrary(libPath);
+	_LibFileName = libPath;
+	// MTR: some new error handling. Just logs if it couldn't load the handle.
+	if (_LibHandle == NULL)
+	{
 #ifdef NL_OS_UNIX
-    const char *errormsg = dlerror();
+		const char *errormsg = dlerror();
 #else
-    const char *errormsg = "Verify DLL existence";
+		const char *errormsg = "Verify DLL existence";
 #endif
-    nlwarning("Loading library %s failed: %s", libPath.c_str(), errormsg);
-  } else {
-    // check for 'pure' NeL library
-    void *entryPoint =
-        getSymbolAddress(NL_MACRO_TO_STR(NLMISC_PURE_LIB_ENTRY_POINT));
-    if (entryPoint != NULL) {
-      // rebuild the interface pointer
-      _PureNelLibrary = *(reinterpret_cast<INelLibrary **>(entryPoint));
-      // call the private initialization method.
-      _PureNelLibrary->_onLibraryLoaded(INelContext::getInstance());
-    }
-  }
+		nlwarning("Loading library %s failed: %s", libPath.c_str(), errormsg);
+	}
+	else
+	{
+		// check for 'pure' NeL library
+		void *entryPoint = getSymbolAddress(NL_MACRO_TO_STR(NLMISC_PURE_LIB_ENTRY_POINT));
+		if (entryPoint != NULL)
+		{
+			// rebuild the interface pointer
+			_PureNelLibrary = *(reinterpret_cast<INelLibrary **>(entryPoint));
+			// call the private initialization method.
+			_PureNelLibrary->_onLibraryLoaded(INelContext::getInstance());
+		}
+	}
 
-  return _LibHandle != NULL;
+	return _LibHandle != NULL;
 }
 
-void CLibrary::freeLibrary() {
-  if (_LibHandle) {
-    nlassert(_Ownership);
+void CLibrary::freeLibrary()
+{
+	if (_LibHandle)
+	{
+		nlassert(_Ownership);
 
-    if (_PureNelLibrary) {
-      // call the private finalization method.
-      _PureNelLibrary->_onLibraryUnloaded();
-    }
+		if (_PureNelLibrary)
+		{
+			// call the private finalization method.
+			_PureNelLibrary->_onLibraryUnloaded();
+		}
 
-    nldebug("Freeing dynamic library '%s'", _LibFileName.c_str());
-    nlFreeLibrary(_LibHandle);
+		nldebug("Freeing dynamic library '%s'", _LibFileName.c_str());
+		nlFreeLibrary(_LibHandle);
 
-    _PureNelLibrary = NULL;
-    _LibHandle = NULL;
-    _Ownership = false;
-    _LibFileName.clear();
-  }
+		_PureNelLibrary = NULL;
+		_LibHandle = NULL;
+		_Ownership = false;
+		_LibFileName.clear();
+	}
 }
 
-void *CLibrary::getSymbolAddress(const std::string &symbolName) {
-  nlassert(_LibHandle != NULL);
+void *CLibrary::getSymbolAddress(const std::string &symbolName)
+{
+	nlassert(_LibHandle != NULL);
 
-  return nlGetSymbolAddress(_LibHandle, symbolName);
+	return nlGetSymbolAddress(_LibHandle, symbolName);
 }
 
-bool CLibrary::isLibraryLoaded() { return _LibHandle != NULL; }
-
-bool CLibrary::isLibraryPure() {
-  return _LibHandle != NULL && _PureNelLibrary != NULL;
+bool CLibrary::isLibraryLoaded()
+{
+	return _LibHandle != NULL;
 }
 
-INelLibrary *CLibrary::getNelLibraryInterface() {
-  if (!isLibraryPure())
-    return NULL;
-
-  return _PureNelLibrary;
+bool CLibrary::isLibraryPure()
+{
+	return _LibHandle != NULL && _PureNelLibrary != NULL;
 }
 
-INelLibrary::~INelLibrary() {
-  // cleanup ram
-  if (_LibContext != NULL)
-    delete _LibContext;
+INelLibrary *CLibrary::getNelLibraryInterface()
+{
+	if (!isLibraryPure())
+		return NULL;
+
+	return _PureNelLibrary;
 }
 
-void INelLibrary::_onLibraryLoaded(INelContext &nelContext) {
-  ++_LoadingCounter;
+INelLibrary::~INelLibrary()
+{
+	// cleanup ram
+	if (_LibContext != NULL)
+		delete _LibContext;
+}
 
-  if (_LoadingCounter == 1) {
-    // Linux relocates all symbols, so this is unnecessary.
+void INelLibrary::_onLibraryLoaded(INelContext &nelContext)
+{
+	++_LoadingCounter;
+
+	if (_LoadingCounter == 1)
+	{
+		// Linux relocates all symbols, so this is unnecessary.
 #ifdef NL_OS_WINDOWS
-    // initialize NeL context
-    nlassert(!NLMISC::INelContext::isContextInitialised());
+		// initialize NeL context
+		nlassert(!NLMISC::INelContext::isContextInitialised());
 #endif // NL_OS_WINDOWS
 
-    _LibContext = new CLibraryContext(nelContext);
-  } else {
-    nlassert(NLMISC::INelContext::isContextInitialised());
-  }
+		_LibContext = new CLibraryContext(nelContext);
+	}
+	else
+	{
+		nlassert(NLMISC::INelContext::isContextInitialised());
+	}
 
-  onLibraryLoaded(_LoadingCounter == 1);
+	onLibraryLoaded(_LoadingCounter == 1);
 }
 
-void INelLibrary::_onLibraryUnloaded() {
-  nlassert(_LoadingCounter > 0);
+void INelLibrary::_onLibraryUnloaded()
+{
+	nlassert(_LoadingCounter > 0);
 
-  onLibraryUnloaded(_LoadingCounter == 1);
+	onLibraryUnloaded(_LoadingCounter == 1);
 
-  --_LoadingCounter;
+	--_LoadingCounter;
 }
 
-uint32 INelLibrary::getLoadingCounter() { return _LoadingCounter; }
+uint32 INelLibrary::getLoadingCounter()
+{
+	return _LoadingCounter;
+}
 
 } // namespace NLMISC

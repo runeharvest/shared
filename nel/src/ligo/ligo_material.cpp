@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "nel/ligo/ligo_material.h"
 #include "stdligo.h"
+#include "nel/ligo/ligo_material.h"
 
 // Ligo include
 #include "nel/ligo/ligo_error.h"
@@ -30,66 +30,71 @@ namespace NLLIGO {
 
 // ***************************************************************************
 
-bool CMaterial::build(const CZoneTemplate &tplt, const CLigoConfig &config,
-                      CLigoError &errors) {
-  // Clear errors
-  errors.clear();
+bool CMaterial::build(const CZoneTemplate &tplt, const CLigoConfig &config, CLigoError &errors)
+{
+	// Clear errors
+	errors.clear();
 
-  // Edge vector
-  const std::vector<CZoneEdge> &edges = tplt.getEdges();
+	// Edge vector
+	const std::vector<CZoneEdge> &edges = tplt.getEdges();
 
-  // This template should have 4 edges
-  if (edges.size() != 4) {
-    errors.MainError = CLigoError::MustHave4Edges;
-    return false;
-  }
+	// This template should have 4 edges
+	if (edges.size() != 4)
+	{
+		errors.MainError = CLigoError::MustHave4Edges;
+		return false;
+	}
 
-  // The 1st edge must be symetrical
-  if (!edges[0].isSymetrical(config, errors))
-    return false;
+	// The 1st edge must be symetrical
+	if (!edges[0].isSymetrical(config, errors))
+		return false;
 
-  // Error code
-  bool ok = true;
+	// Error code
+	bool ok = true;
 
-  // The others must be the same edges
-  uint edge;
-  for (edge = 1; edge < edges.size(); edge++) {
-    // The same edge ?
-    if (!edges[0].isTheSame(edges[edge], config, errors)) {
-      // Error
-      ok = false;
-    }
-  }
+	// The others must be the same edges
+	uint edge;
+	for (edge = 1; edge < edges.size(); edge++)
+	{
+		// The same edge ?
+		if (!edges[0].isTheSame(edges[edge], config, errors))
+		{
+			// Error
+			ok = false;
+		}
+	}
 
-  // Build ?
-  if (ok) {
-    // Ok, build the material
-    _ZoneEdge = edges[0];
-  }
+	// Build ?
+	if (ok)
+	{
+		// Ok, build the material
+		_ZoneEdge = edges[0];
+	}
 
-  // Return error code
-  return ok;
+	// Return error code
+	return ok;
 }
 
 // ***************************************************************************
 
-void CMaterial::serial(NLMISC::IStream &s) {
-  // Serial the main node
-  s.xmlPush("LIGO_MATERIAL");
+void CMaterial::serial(NLMISC::IStream &s)
+{
+	// Serial the main node
+	s.xmlPush("LIGO_MATERIAL");
 
-  // Serial the header
-  s.serialCheck(NELID("TMOL"));
+	// Serial the header
+	s.serialCheck(NELID("TMOL"));
 
-  // Serial the version
-  /*sint ver =*/s.serialVersion(0);
+	// Serial the version
+	/*sint ver =*/s.serialVersion(0);
 
-  // Serial the zoneedge
-  s.xmlSerial(_ZoneEdge, "ZONE_EDGE");
+	// Serial the zoneedge
+	s.xmlSerial(_ZoneEdge, "ZONE_EDGE");
 
-  // Close the main node
-  s.xmlPop();
+	// Close the main node
+	s.xmlPop();
 }
 
 // ***************************************************************************
 
-} // namespace NLLIGO
+}

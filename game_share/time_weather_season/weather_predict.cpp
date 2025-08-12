@@ -17,76 +17,69 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "weather_predict.h"
 #include "stdpch.h"
-#include "time_and_season.h"
-#include "weather_function.h"
+#include "weather_predict.h"
 #include "weather_setup.h"
+#include "weather_function.h"
+#include "time_and_season.h"
 //
 #include "../light_cycle.h"
 #include "../season.h"
 //
+#include "weather_function_params_sheet_base.h"
 #include "nel/misc/algo.h"
 #include "nel/misc/wang_hash.h"
-#include "weather_function_params_sheet_base.h"
 //
 
-float CPredictWeather::getCycleWeatherValue(uint64 cycle,
-                                            const CWeatherFunction &wf) {
-  uint numWS = wf.getNumWeatherSetups();
-  if (!numWS)
-    return 0.f;
-  uint32 value = NLMISC::wangHash64(cycle) % wf.getWeatherSetupsTotalWeight();
-  uint32 currWeight = 0;
-  for (uint k = 0; k < numWS; ++k) {
-    if (value >= currWeight &&
-        value < currWeight + wf.getWeatherSetupWeight(k)) {
-      return (((float)(value - currWeight) /
-               (float)wf.getWeatherSetupWeight(k)) +
-              (float)k) /
-             numWS;
-    }
-    currWeight += wf.getWeatherSetupWeight(k);
-  }
-  return 1.f;
+float CPredictWeather::getCycleWeatherValue(uint64 cycle, const CWeatherFunction &wf)
+{
+	uint numWS = wf.getNumWeatherSetups();
+	if (!numWS) return 0.f;
+	uint32 value = NLMISC::wangHash64(cycle) % wf.getWeatherSetupsTotalWeight();
+	uint32 currWeight = 0;
+	for (uint k = 0; k < numWS; ++k)
+	{
+		if (value >= currWeight && value < currWeight + wf.getWeatherSetupWeight(k))
+		{
+			return (((float)(value - currWeight) / (float)wf.getWeatherSetupWeight(k)) + (float)k) / numWS;
+		}
+		currWeight += wf.getWeatherSetupWeight(k);
+	}
+	return 1.f;
 }
 
-float CPredictWeather::predictWeather(
-    uint64 day, float hour, const CWeatherFunctionParamsSheetBase &wfp,
-    const CWeatherFunction wf[EGSPD::CSeason::Invalid]) {
-  if (!wf) {
-    return 1.f;
-  }
-  if (wfp.DayLength <= 0.f || wfp.CycleLength == 0)
-    return 0.f;
-  nlassert(hour >= 0);
-  day += (uint64)(hour / (float)wfp.DayLength);
-  hour = fmodf(hour, (float)wfp.DayLength);
-  // test in which cycle we are, we use this as a seed to a random fct to get
-  // reproductible behaviour
-  nlassert(wfp.CycleLength != 0.f);
-  float weatherValue;
-  uint64 currHour = (day * wfp.DayLength) + (uint)hour;
-  uint64 cycle = currHour / wfp.CycleLength;
-  uint64 cycleStartHour =
-      cycle * wfp.CycleLength; // global start hour of the cycle
-  // the last hour of each cycle does a transition
-  if (currHour - cycleStartHour < wfp.CycleLength - 1) {
-    // not a transition
-    EGSPD::CSeason::TSeason season = CRyzomTime::getSeasonByDay((uint32)day);
-    weatherValue = getCycleWeatherValue(cycle, wf[season]);
-  } else {
-    // this is a transition
-    EGSPD::CSeason::TSeason season = CRyzomTime::getSeasonByDay((uint32)day);
-    EGSPD::CSeason::TSeason nextSeason = CRyzomTime::getSeasonByDay(
-        (uint32)((cycleStartHour + wfp.CycleLength) & 0xFFFFFFFF) /
-        wfp.DayLength);
-    float blendFactor = (float)fmod(hour, 1);
-    weatherValue =
-        blendFactor * getCycleWeatherValue(cycle + 1, wf[nextSeason]) +
-        (1.f - blendFactor) * getCycleWeatherValue(cycle, wf[season]);
-  }
-  return weatherValue;
+float CPredictWeather::predictWeather(uint64 day, float hour, const CWeatherFunctionParamsSheetBase &wfp, const CWeatherFunction wf[EGSPD::CSeason::Invalid])
+{
+	if (!wf)
+	{
+		return 1.f;
+	}
+	if (wfp.DayLength <= 0.f || wfp.CycleLength == 0) return 0.f;
+	nlassert(hour >= 0);
+	day += (uint64)(hour / (float)wfp.DayLength);
+	hour = fmodf(hour, (float)wfp.DayLength);
+	// test in which cycle we are, we use this as a seed to a random fct to get reproductible behaviour
+	nlassert(wfp.CycleLength != 0.f);
+	float weatherValue;
+	uint64 currHour = (day * wfp.DayLength) + (uint)hour;
+	uint64 cycle = currHour / wfp.CycleLength;
+	uint64 cycleStartHour = cycle * wfp.CycleLength; // global start hour of the cycle
+	// the last hour of each cycle does a transition
+	if (currHour - cycleStartHour < wfp.CycleLength - 1)
+	{
+		// not a transition
+		EGSPD::CSeason::TSeason season = CRyzomTime::getSeasonByDay((uint32)day);
+		weatherValue = getCycleWeatherValue(cycle, wf[season]);
+	}
+	else
+	{
+		// this is a transition
+		EGSPD::CSeason::TSeason season = CRyzomTime::getSeasonByDay((uint32)day);
+		EGSPD::CSeason::TSeason nextSeason = CRyzomTime::getSeasonByDay((uint32)((cycleStartHour + wfp.CycleLength) & 0xFFFFFFFF) / wfp.DayLength);
+		float blendFactor = (float)fmod(hour, 1);
+		weatherValue = blendFactor * getCycleWeatherValue(cycle + 1, wf[nextSeason]) + (1.f - blendFactor) * getCycleWeatherValue(cycle, wf[season]);
+	}
+	return weatherValue;
 }
 
 /*
@@ -95,8 +88,7 @@ float CPredictWeather::predictWeather(
 using namespace std::rel_ops;
 using namespace std;
 
-inline bool operator == (const CWeatherFunctionParamsSheetBase &lhs, const
-CWeatherFunctionParamsSheetBase &rhs)
+inline bool operator == (const CWeatherFunctionParamsSheetBase &lhs, const CWeatherFunctionParamsSheetBase &rhs)
 {
     return    lhs.CycleLength == rhs.CycleLength &&
               lhs.MaximaRatio == rhs.MaximaRatio &&
@@ -117,19 +109,17 @@ struct CFctCtrlPoint
 
 // fct to order ctrl point by date
 /*
-static inline bool operator <  (const CFctCtrlPoint &lhs, const CFctCtrlPoint
-&rhs) { return lhs.X < rhs.X; } static inline bool operator == (const
-CFctCtrlPoint &lhs, const CFctCtrlPoint &rhs) { return lhs.X == rhs.X; }
+static inline bool operator <  (const CFctCtrlPoint &lhs, const CFctCtrlPoint &rhs) { return lhs.X < rhs.X; }
+static inline bool operator == (const CFctCtrlPoint &lhs, const CFctCtrlPoint &rhs) { return lhs.X == rhs.X; }
 */
 
-/** Tool fct to evaluate the value of a function f(x) defined by a set of points
- * joined by segments \param x point at which the function must be evaluated
+/** Tool fct to evaluate the value of a function f(x) defined by a set of points joined by segments
+ * \param x point at which the function must be evaluated
  * \param points A set of (x, y) pair which define the function
  * \param numPoints The number of points if the set
  */
 /*
-static float evalSegFunction(float x, const CFctCtrlPoint *points, uint
-numPoints)
+static float evalSegFunction(float x, const CFctCtrlPoint *points, uint numPoints)
 {
     nlassert(points);
     nlassert(numPoints > 0);
@@ -142,9 +132,8 @@ numPoints)
     // slope is oo ? If yes return next value. (arbitrary)
     if (points[index].X == points[index + 1].X) return points[index + 1].Y;
     // interpolate linearly
-    float lambda = (x - points[index].X) / (points[index + 1].X -
-points[index].X); return lambda * points[index + 1].Y + (1.f - lambda)  *
-points[index].Y;
+    float lambda = (x - points[index].X) / (points[index + 1].X - points[index].X);
+    return lambda * points[index + 1].Y + (1.f - lambda)  * points[index].Y;
 }
 */
 
@@ -167,44 +156,36 @@ static inline void initRand(NLMISC::CRandom &rg, uint64 cycleNumber)
 /** Get value for fair weather in the range [0, 1] for the given season
  */
 /*
-static float getFairWeatherValue(EGSPD::CSeason::TSeason season, const
-CWeatherFunction wf[EGSPD::CSeason::Invalid])
+static float getFairWeatherValue(EGSPD::CSeason::TSeason season, const CWeatherFunction wf[EGSPD::CSeason::Invalid])
 {
     nlassert(season < EGSPD::CSeason::Invalid);
     if (!wf) return 0.f;
     if (wf[season].getNumWeatherSetups() == 0.f) return 0.f;
-    return wf[season].getFairWeatherValue() / (float)
-wf[season].getNumWeatherSetups();
+    return wf[season].getFairWeatherValue() / (float) wf[season].getNumWeatherSetups();
 }
 */
 
 //================================================================
 /** Get start value for a weather cycle
  * NB : During a day->night or night->day transition, the weather should be fair
- * NB : During the first cycle of the first day of the season, the weather
- * should start in a fair way (because seasons don't have the same weather
- * setups, we must be sure that the transition is correct)
+ * NB : During the first cycle of the first day of the season, the weather should start in a fair way (because seasons don't have the same weather setups, we must be sure that the transition is correct)
  */
 /*
-static float getCycleStartValue(uint64 day, uint64 totalHour, const
-CWeatherFunctionParamsSheetBase &wfp, const CWeatherFunction
-wf[EGSPD::CSeason::Invalid])
+static float getCycleStartValue(uint64 day, uint64 totalHour, const CWeatherFunctionParamsSheetBase &wfp, const CWeatherFunction wf[EGSPD::CSeason::Invalid])
 {
     uint64 cycle = totalHour / wfp.CycleLength;
     uint64 cycleStartHour = cycle * wfp.CycleLength;
-    uint64 dayStartHour = day * wfp.DayLength; // the global hour at which the
-day starts
+    uint64 dayStartHour = day * wfp.DayLength; // the global hour at which the day starts
 
     EGSPD::CSeason::TSeason season = CRyzomTime::getSeasonByDay((uint32)day);
 
 
-    // When a weather cycle starts at a season, and end at another one, this is
-a special case where Weather value must be set to "fair weather" uint64
-dayForEndCycle = (cycleStartHour + wfp.CycleLength) / wfp.DayLength; if
-(CRyzomTime::getSeasonByDay((uint32)day) != season)
+    // When a weather cycle starts at a season, and end at another one, this is a special case where Weather value must be set to "fair weather"
+    uint64 dayForEndCycle = (cycleStartHour + wfp.CycleLength) / wfp.DayLength;
+    if (CRyzomTime::getSeasonByDay((uint32)day) != season)
     {
-        // yes this is a transition cycle, so return the fair weather value for
-the previous season return getFairWeatherValue(season, wf);
+        // yes this is a transition cycle, so return the fair weather value for the previous season
+        return getFairWeatherValue(season, wf);
     }
 
 
@@ -236,11 +217,10 @@ the previous season return getFairWeatherValue(season, wf);
         {
             if (wf[season].getNumWeatherSetups() == 0.f) return 0.f;
             float ratio = randomGenerator.frand(1.f);
-            CWeatherFunction::TInterval inter =
-wf[season].getPressureInterval(0);
-            // delta interval in forms is expressed in the range [0,
-numWeatherSetups] float delta = ratio * inter.second + (1.f - ratio) *
-inter.first; return delta / (float) wf[season].getNumWeatherSetups();
+            CWeatherFunction::TInterval inter = wf[season].getPressureInterval(0);
+            // delta interval in forms is expressed in the range [0, numWeatherSetups]
+            float delta = ratio * inter.second + (1.f - ratio) * inter.first;
+            return delta / (float) wf[season].getNumWeatherSetups();
         }
         else
         {
@@ -252,9 +232,7 @@ inter.first; return delta / (float) wf[season].getNumWeatherSetups();
 
 //================================================================
 /*
-float CPredictWeather::predictWeather(uint64 day, float hour, const
-CWeatherFunctionParamsSheetBase &wfp, const CWeatherFunction *wf,
-EWeatherCycleType *cycleTypeDest)
+float CPredictWeather::predictWeather(uint64 day, float hour, const CWeatherFunctionParamsSheetBase &wfp, const CWeatherFunction *wf, EWeatherCycleType *cycleTypeDest)
 {
     if (!wf)
     {
@@ -264,11 +242,11 @@ EWeatherCycleType *cycleTypeDest)
     nlassert(hour >= 0);
     day += (uint64) (hour / (float) wfp.DayLength);
     hour = fmodf(hour, (float) wfp.DayLength);
-    // test in which cycle we are, we use this as a seed to a random fct to get
-reproductible behaviour nlassert(wfp.CycleLength != 0.f); uint64 currHour = (day
-* wfp.DayLength) + (uint) hour; uint64 cycle = currHour / wfp.CycleLength;
-    uint64 cycleStartHour = cycle * wfp.CycleLength; // global start hour of the
-cycle
+    // test in which cycle we are, we use this as a seed to a random fct to get reproductible behaviour
+    nlassert(wfp.CycleLength != 0.f);
+    uint64 currHour = (day * wfp.DayLength) + (uint) hour;
+    uint64 cycle = currHour / wfp.CycleLength;
+    uint64 cycleStartHour = cycle * wfp.CycleLength; // global start hour of the cycle
     // cache previous results, this avoid to recompute the weather function
     static const CFctCtrlPoint	 *lastFct;
     static uint				     lastNumPoints;
@@ -277,11 +255,9 @@ cycle
     static EWeatherCycleType     weatherCycle = HighPressure;
     static const CWeatherFunction *lastWf = NULL;
 
-    if (cycle != lastCycle || lastDesc != wfp || lastWf != wf) // are we in a
-new cycle of weather
+    if (cycle != lastCycle || lastDesc != wfp || lastWf != wf) // are we in a new cycle of weather
     {
-        EGSPD::CSeason::TSeason season =
-CRyzomTime::getSeasonByDay((uint32)day);
+        EGSPD::CSeason::TSeason season = CRyzomTime::getSeasonByDay((uint32)day);
 
         // must recompute fonction
         lastDesc  = wfp;
@@ -289,29 +265,28 @@ CRyzomTime::getSeasonByDay((uint32)day);
         lastWf = wf;
 
         // special case : see if the weather is at a transition of season
-        uint64 endCycleDay = (cycleStartHour + wfp.CycleLength) / wfp.DayLength;
-// which day is it at the end of the cycle EGSPD::CSeason::TSeason nextSeason =
-CRyzomTime::getSeasonByDay((uint32)endCycleDay); if (nextSeason != season)
+        uint64 endCycleDay = (cycleStartHour + wfp.CycleLength) / wfp.DayLength; // which day is it at the end of the cycle
+        EGSPD::CSeason::TSeason nextSeason = CRyzomTime::getSeasonByDay((uint32)endCycleDay);
+        if (nextSeason != season)
         {
-            // special transition case : we switch between fair weather value
-for season 1 and for season 2
-            // The function may not be continue at the point where the season
-change, if the value for fair weather isn't the same in both seasons static
-CFctCtrlPoint transitionFct[4]; transitionFct[0].X = 0.f; transitionFct[0].Y =
-getFairWeatherValue(season, wf); transitionFct[1].X = (float) (endCycleDay *
-wfp.DayLength - cycleStartHour); transitionFct[1].Y =
-getFairWeatherValue(season, wf);; transitionFct[2].X = transitionFct[1].X;
+            // special transition case : we switch between fair weather value for season 1 and for season 2
+            // The function may not be continue at the point where the season change, if the value for fair weather isn't the same in both seasons
+            static CFctCtrlPoint transitionFct[4];
+            transitionFct[0].X = 0.f;
+            transitionFct[0].Y = getFairWeatherValue(season, wf);
+            transitionFct[1].X = (float) (endCycleDay * wfp.DayLength - cycleStartHour);
+            transitionFct[1].Y = getFairWeatherValue(season, wf);;
+            transitionFct[2].X = transitionFct[1].X;
             transitionFct[2].Y = getFairWeatherValue(nextSeason, wf);;
             transitionFct[3].X = (float) wfp.CycleLength;
-            transitionFct[3].Y = getCycleStartValue(day, cycleStartHour +
-wfp.CycleLength, wfp, wf); // start value for the next cycle lastFct =
-transitionFct; lastNumPoints = sizeof(transitionFct) / sizeof(transitionFct[0]);
+            transitionFct[3].Y = getCycleStartValue(day, cycleStartHour + wfp.CycleLength, wfp, wf); // start value for the next cycle
+            lastFct = transitionFct;
+            lastNumPoints = sizeof(transitionFct) / sizeof(transitionFct[0]);
             weatherCycle = SeasonTransition;
         }
         else
         {
-            uint64 dayStartHour = day * wfp.DayLength; // the global hour at
-which the day starts
+            uint64 dayStartHour = day * wfp.DayLength; // the global hour at which the day starts
 
             NLMISC::CRandom randomGenerator;
             // set seed
@@ -333,8 +308,7 @@ which the day starts
                 // high pressure. There is fair weather, or mist
                 // The cycle always starts with a fair weather value
                 // The mist value is constant for all the cycle
-                // For each hour, we see if there is mist, and set the function
-accordingly
+                // For each hour, we see if there is mist, and set the function accordingly
 
                 static std::vector<CFctCtrlPoint> lpFct;
                 lpFct.resize(wfp.CycleLength);
@@ -351,11 +325,10 @@ accordingly
                     else
                     {
                         float ratio = randomGenerator.frand(1.f);
-                        CWeatherFunction::TInterval inter =
-wf[season].getPressureInterval(1);
-                        // delta interval in forms is expressed in the range [0,
-numWeatherSetups] float weatherSetupValue = ratio * inter.second + (1.f - ratio)
-* inter.first; A = weatherSetupValue / (float) wf[season].getNumWeatherSetups();
+                        CWeatherFunction::TInterval inter = wf[season].getPressureInterval(1);
+                        // delta interval in forms is expressed in the range [0, numWeatherSetups]
+                        float weatherSetupValue = ratio * inter.second + (1.f - ratio) * inter.first;
+                        A = weatherSetupValue / (float) wf[season].getNumWeatherSetups();
                     }
                 }
 
@@ -375,10 +348,8 @@ numWeatherSetups] float weatherSetupValue = ratio * inter.second + (1.f - ratio)
                     }
                     else
                     {
-                        bool inMist = (wf[season].MistStartHour <=
-wf[season].MistEndHour) ? currHour >= wf[season].MistStartHour && currHour <=
-wf[season].MistEndHour : currHour >= wf[season].MistStartHour || currHour <=
-wf[season].MistEndHour;
+                        bool inMist = (wf[season].MistStartHour <= wf[season].MistEndHour) ? currHour >= wf[season].MistStartHour && currHour <= wf[season].MistEndHour
+                                                                                           : currHour >= wf[season].MistStartHour || currHour <= wf[season].MistEndHour;
                         // is it a mist hour ?
                         if (inMist)
                         {
@@ -386,8 +357,7 @@ wf[season].MistEndHour;
                         }
                         else
                         {
-                            lpFct[k] = CFctCtrlPoint((float) k,
-fairWeatherValue);
+                            lpFct[k] = CFctCtrlPoint((float) k, fairWeatherValue);
                         }
                         // take next hour
 
@@ -395,9 +365,8 @@ fairWeatherValue);
                 }
 
                 // ends with start value of next cycle
-                float endValue   = getCycleStartValue(day, cycleStartHour +
-wfp.CycleLength, wfp, wf); lpFct[wfp.CycleLength - 1] = CFctCtrlPoint((float)
-wfp.CycleLength - 1, endValue);
+                float endValue   = getCycleStartValue(day, cycleStartHour + wfp.CycleLength, wfp, wf);
+                lpFct[wfp.CycleLength - 1] = CFctCtrlPoint((float) wfp.CycleLength - 1, endValue);
 
                 lastFct = &lpFct[0];
                 lastNumPoints = lpFct.size();
@@ -431,19 +400,18 @@ wfp.CycleLength - 1, endValue);
                 //
                 //
 
-                float A = randomGenerator.frand(wfp.MaxARatio) *
-wfp.CycleLength; float C = randomGenerator.frand(1.f); if (wf)
+                float A = randomGenerator.frand(wfp.MaxARatio) * wfp.CycleLength;
+                float C = randomGenerator.frand(1.f);
+                if (wf)
                 {
                     C *= wf[season].LowPressureValueFactor;
                 }
                 float D = 2.f * (wfp.CycleLength - A) / 3.f;
                 float E = C * wfp.MaximaRatio;
-                float F = wfp.MinDRatio + randomGenerator.frand(wfp.MaxDRatio -
-wfp.MinDRatio);
+                float F = wfp.MinDRatio + randomGenerator.frand(wfp.MaxDRatio - wfp.MinDRatio);
 
-                float startValue = getCycleStartValue(day, cycleStartHour, wfp,
-wf); float endValue   = getCycleStartValue(day, cycleStartHour +
-wfp.CycleLength, wfp, wf);
+                float startValue = getCycleStartValue(day, cycleStartHour, wfp, wf);
+                float endValue   = getCycleStartValue(day, cycleStartHour + wfp.CycleLength, wfp, wf);
 
                 static CFctCtrlPoint hpFct[6];
                 hpFct[0].X = 0.f;
@@ -470,9 +438,9 @@ wfp.CycleLength, wfp, wf);
     {
         *cycleTypeDest = weatherCycle;
     }
-    float weatherValue = evalSegFunction((float) (currHour - cycleStartHour) +
-fmodf(hour, 1.f), lastFct, lastNumPoints); NLMISC::clamp(weatherValue,
-0.f, 1.f); return weatherValue;
+    float weatherValue = evalSegFunction((float) (currHour - cycleStartHour) + fmodf(hour, 1.f), lastFct, lastNumPoints);
+    NLMISC::clamp(weatherValue, 0.f, 1.f);
+    return weatherValue;
 }
 */
 
@@ -488,19 +456,17 @@ struct CFloatValue
 
 //================================================================
 /*
-void CPredictWeather::generateWeatherStats(const std::string &fileName, const
-CWeatherFunctionParamsSheetBase &wfp, const CWeatherFunction
-wf[EGSPD::CSeason::Invalid])
+void CPredictWeather::generateWeatherStats(const std::string &fileName, const CWeatherFunctionParamsSheetBase &wfp, const CWeatherFunction wf[EGSPD::CSeason::Invalid])
 {
     if (!wf)
     {
-        nlwarning("CWeatherFunctionParams::generateWeatherStats : no weather
-function has been supplied!"); return;
+        nlwarning("CWeatherFunctionParams::generateWeatherStats : no weather function has been supplied!");
+        return;
     }
     if (fileName.empty())
     {
-        nlwarning("CWeatherFunctionParams::generateWeatherStats : the stats
-fileName is empty!"); return;
+        nlwarning("CWeatherFunctionParams::generateWeatherStats : the stats fileName is empty!");
+        return;
     }
     // give the amount for each weather setup
     typedef std::map<std::string, CFloatValue> TWeatherStatMap;
@@ -513,8 +479,8 @@ fileName is empty!"); return;
     // make stats for 1000 days
     for(uint64 day = startDay; day < startDay + numSamples; ++day)
     {
-        EGSPD::CSeason::TSeason season =
-CRyzomTime::getSeasonByDay((uint32)day); const uint numSamples = 500;
+        EGSPD::CSeason::TSeason season = CRyzomTime::getSeasonByDay((uint32)day);
+        const uint numSamples = 500;
         // Take 2000 sample of weather state along the day
         for(k = 0; k < numSamples; ++k)
         {
@@ -523,21 +489,16 @@ CRyzomTime::getSeasonByDay((uint32)day); const uint numSamples = 500;
             if (wf[season].getNumWeatherSetups() == 0.f) continue;
             if (wf[season].getNumWeatherSetups() == 1.f)
             {
-                std::string wsName =
-NLMISC::CStringMapper::unmap(wf[season].getWeatherSetup(0)->SetupName);
+                std::string wsName = NLMISC::CStringMapper::unmap(wf[season].getWeatherSetup(0)->SetupName);
                 stats[season][wsName].Value += 1;
             }
             else
             {
-                float weatherSetupValue = weatherValue *
-(wf[season].getNumWeatherSetups() - 1); std::string wsName0 =
-NLMISC::CStringMapper::unmap(wf[season].getWeatherSetup((uint)
-weatherSetupValue)->SetupName); std::string wsName1 =
-NLMISC::CStringMapper::unmap(wf[season].getWeatherSetup(std::min(((uint)
-weatherSetupValue) + 1, wf[season].getNumWeatherSetups() - 1))->SetupName);
-                stats[season][wsName0].Value += 1.f -
-fmodf(weatherSetupValue, 1.f); stats[season][wsName1].Value +=
-fmodf(weatherSetupValue, 1.f);
+                float weatherSetupValue = weatherValue * (wf[season].getNumWeatherSetups() - 1);
+                std::string wsName0 = NLMISC::CStringMapper::unmap(wf[season].getWeatherSetup((uint) weatherSetupValue)->SetupName);
+                std::string wsName1 = NLMISC::CStringMapper::unmap(wf[season].getWeatherSetup(std::min(((uint) weatherSetupValue) + 1, wf[season].getNumWeatherSetups() - 1))->SetupName);
+                stats[season][wsName0].Value += 1.f - fmodf(weatherSetupValue, 1.f);
+                stats[season][wsName1].Value += fmodf(weatherSetupValue, 1.f);
             }
         }
     }
@@ -556,11 +517,10 @@ fmodf(weatherSetupValue, 1.f);
 
     // make sum of setups contributions for each seasons
     double setupContributionSum[EGSPD::CSeason::Invalid];
-    std::fill(setupContributionSum, setupContributionSum +
-EGSPD::CSeason::EndSeason, 0); for(k = 0; k < EGSPD::CSeason::Invalid; ++k)
+    std::fill(setupContributionSum, setupContributionSum + EGSPD::CSeason::EndSeason, 0);
+    for(k = 0; k < EGSPD::CSeason::Invalid; ++k)
     {
-        for(TWeatherStatMap::const_iterator statIt = stats[k].begin(); statIt !=
-stats[k].end(); ++statIt)
+        for(TWeatherStatMap::const_iterator statIt = stats[k].begin(); statIt != stats[k].end(); ++statIt)
         {
             setupContributionSum[k] += statIt->second.Value;
         }
@@ -577,14 +537,12 @@ stats[k].end(); ++statIt)
     output +="\n";
 
     // write percents for each weather setups
-    for(std::set<string>::const_iterator it = seasonsNames.begin(); it !=
-seasonsNames.end(); ++it)
+    for(std::set<string>::const_iterator it = seasonsNames.begin(); it != seasonsNames.end(); ++it)
     {
         output += *it + ";";
         for(k = 0; k < EGSPD::CSeason::Invalid; ++k)
         {
-            output += NLMISC::toString("%.1f;", (float) (100 *
-stats[k][*it].Value / setupContributionSum[k]));
+            output += NLMISC::toString("%.1f;", (float) (100 * stats[k][*it].Value / setupContributionSum[k]));
         }
         output +="\n";
     }
@@ -592,8 +550,8 @@ stats[k][*it].Value / setupContributionSum[k]));
     NLMISC::COFile outputFile;
     if (!outputFile.open(fileName))
     {
-        nlwarning("Couldn't open %s to write weather statistics",
-fileName.c_str()); return;
+        nlwarning("Couldn't open %s to write weather statistics", fileName.c_str());
+        return;
     }
     try
     {

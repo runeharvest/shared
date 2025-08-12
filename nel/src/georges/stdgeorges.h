@@ -19,21 +19,21 @@
 
 #if defined(_MSC_VER) && defined(_DEBUG)
 #define _CRTDBG_MAP_ALLOC
-#include <crtdbg.h>
 #include <stdlib.h>
+#include <crtdbg.h>
 #define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
-#include "nel/misc/common.h"
-#include "nel/misc/debug.h"
 #include "nel/misc/types_nl.h"
 #include <cmath>
-#include <ctime>
-#include <limits>
 #include <list>
 #include <map>
-#include <string>
 #include <vector>
+#include <string>
+#include <ctime>
+#include <limits>
+#include "nel/misc/debug.h"
+#include "nel/misc/common.h"
 
 // Include from libxml2
 #include <libxml/parser.h>

@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "poly_object.h"
 #include <nel/misc/types_nl.h>
+#include "poly_object.h"
 
 // STL includes
 
@@ -42,74 +42,101 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CPolyObject::CPolyObject(CScene *scene) : CGeomObject(scene) {}
+CPolyObject::CPolyObject(CScene *scene)
+    : CGeomObject(scene)
+{
+}
 
-CPolyObject::~CPolyObject() {}
+CPolyObject::~CPolyObject()
+{
+}
 
 const ucstring CPolyObject::DisplayName = ucstring("PolyObject");
 const char *CPolyObject::InternalName = "PolyObject";
-const NLMISC::CClassId CPolyObject::ClassId =
-    NLMISC::CClassId(0x59772461, 0x6e1141e8); /* Not official, please correct */
+const NLMISC::CClassId CPolyObject::ClassId = NLMISC::CClassId(0x59772461, 0x6e1141e8); /* Not official, please correct */
 const TSClassId CPolyObject::SuperClassId = CGeomObject::SuperClassId;
 const CPolyObjectClassDesc PolyObjectClassDesc(&DllPluginDescBuiltin);
 
-void CPolyObject::parse(uint16 version, uint filter) {
-  if (filter == 0) {
-    CGeomObject::parse(version);
-  } else if (filter == PMB_POLY_OBJECT_PARSE_FILTER) {
-    if (!m_ChunksOwnsPointers) {
-      CGeomObject::parse(version, PMB_GEOM_OBJECT_PARSE_FILTER);
-      // 0x0906
-      // 0x0908
-      // 0x090a
-      // 0x090c
-    }
-  }
+void CPolyObject::parse(uint16 version, uint filter)
+{
+	if (filter == 0)
+	{
+		CGeomObject::parse(version);
+	}
+	else if (filter == PMB_POLY_OBJECT_PARSE_FILTER)
+	{
+		if (!m_ChunksOwnsPointers)
+		{
+			CGeomObject::parse(version, PMB_GEOM_OBJECT_PARSE_FILTER);
+			// 0x0906
+			// 0x0908
+			// 0x090a
+			// 0x090c
+		}
+	}
 }
 
-void CPolyObject::clean() { CGeomObject::clean(); }
-
-void CPolyObject::build(uint16 version, uint filter) {
-  if (filter == 0) {
-    CGeomObject::build(version);
-  } else if (filter == PMB_POLY_OBJECT_PARSE_FILTER) {
-    CGeomObject::build(version, PMB_GEOM_OBJECT_PARSE_FILTER);
-    // 0x0906
-    // 0x0908
-    // 0x090a
-    // 0x090c
-  }
+void CPolyObject::clean()
+{
+	CGeomObject::clean();
 }
 
-void CPolyObject::disown() { CGeomObject::disown(); }
-
-void CPolyObject::init() { CGeomObject::init(); }
-
-bool CPolyObject::inherits(const NLMISC::CClassId classId) const {
-  if (classId == classDesc()->classId())
-    return true;
-  return CGeomObject::inherits(classId);
+void CPolyObject::build(uint16 version, uint filter)
+{
+	if (filter == 0)
+	{
+		CGeomObject::build(version);
+	}
+	else if (filter == PMB_POLY_OBJECT_PARSE_FILTER)
+	{
+		CGeomObject::build(version, PMB_GEOM_OBJECT_PARSE_FILTER);
+		// 0x0906
+		// 0x0908
+		// 0x090a
+		// 0x090c
+	}
 }
 
-const ISceneClassDesc *CPolyObject::classDesc() const {
-  return &PolyObjectClassDesc;
+void CPolyObject::disown()
+{
+	CGeomObject::disown();
 }
 
-void CPolyObject::toStringLocal(std::ostream &ostream, const std::string &pad,
-                                uint filter) const {
-  if (filter == 0) {
-    CGeomObject::toStringLocal(ostream, pad);
-  } else if (filter == PMB_POLY_OBJECT_PARSE_FILTER) {
-    CGeomObject::toStringLocal(ostream, pad, PMB_GEOM_OBJECT_PARSE_FILTER);
-    // 0x0906
-    // 0x0908
-    // 0x090a
-    // 0x090c
-  }
+void CPolyObject::init()
+{
+	CGeomObject::init();
 }
 
-IStorageObject *CPolyObject::createChunkById(uint16 id, bool container) {
-  return CGeomObject::createChunkById(id, container);
+bool CPolyObject::inherits(const NLMISC::CClassId classId) const
+{
+	if (classId == classDesc()->classId()) return true;
+	return CGeomObject::inherits(classId);
+}
+
+const ISceneClassDesc *CPolyObject::classDesc() const
+{
+	return &PolyObjectClassDesc;
+}
+
+void CPolyObject::toStringLocal(std::ostream &ostream, const std::string &pad, uint filter) const
+{
+	if (filter == 0)
+	{
+		CGeomObject::toStringLocal(ostream, pad);
+	}
+	else if (filter == PMB_POLY_OBJECT_PARSE_FILTER)
+	{
+		CGeomObject::toStringLocal(ostream, pad, PMB_GEOM_OBJECT_PARSE_FILTER);
+		// 0x0906
+		// 0x0908
+		// 0x090a
+		// 0x090c
+	}
+}
+
+IStorageObject *CPolyObject::createChunkById(uint16 id, bool container)
+{
+	return CGeomObject::createChunkById(id, container);
 }
 
 } /* namespace BUILTIN */

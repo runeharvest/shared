@@ -1,8 +1,8 @@
-#include "../nel_3dsmax_shared/nel_3dsmax_shared.h"
-#include "nel/misc/app_context.h"
-#include "nel/misc/debug.h"
-#include "nel_patch_paint.h"
 #include "stdafx.h"
+#include "nel_patch_paint.h"
+#include "nel/misc/debug.h"
+#include "nel/misc/app_context.h"
+#include "../nel_3dsmax_shared/nel_3dsmax_shared.h"
 #include <maxversion.h>
 
 HINSTANCE hInstance;
@@ -15,52 +15,58 @@ using namespace NLMISC;
 #endif
 
 /** public functions **/
-BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved) {
-  // initialize nel context
-  if (!NLMISC::INelContext::isContextInitialised()) {
-    new NLMISC::CLibraryContext(GetSharedNelContext());
-    nldebug("NeL Patch Paint: DllMain");
-  }
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
+{
+	// initialize nel context
+	if (!NLMISC::INelContext::isContextInitialised())
+	{
+		new NLMISC::CLibraryContext(GetSharedNelContext());
+		nldebug("NeL Patch Paint: DllMain");
+	}
 
-  hInstance = hinstDLL;
+	hInstance = hinstDLL;
 
-  if (!controlsInit) {
-    controlsInit = TRUE;
+	if (!controlsInit)
+	{
+		controlsInit = TRUE;
 
-    // jaguar controls
+		// jaguar controls
 #if MAX_VERSION_MAJOR < 14
-    InitCustomControls(hInstance);
+		InitCustomControls(hInstance);
 #endif
 
 #ifdef OLD3DCONTROLS
-    // initialize 3D controls
-    Ctl3dRegister(hinstDLL);
-    Ctl3dAutoSubclass(hinstDLL);
+		// initialize 3D controls
+		Ctl3dRegister(hinstDLL);
+		Ctl3dAutoSubclass(hinstDLL);
 #endif
 
-    // initialize Chicago controls
-    InitCommonControls();
-  }
+		// initialize Chicago controls
+		InitCommonControls();
+	}
 
-  switch (fdwReason) {
-  case DLL_PROCESS_ATTACH:
-    break;
-  case DLL_THREAD_ATTACH:
-    break;
-  case DLL_THREAD_DETACH:
-    break;
-  case DLL_PROCESS_DETACH:
-    break;
-  }
-  return (TRUE);
+	switch (fdwReason)
+	{
+	case DLL_PROCESS_ATTACH:
+		break;
+	case DLL_THREAD_ATTACH:
+		break;
+	case DLL_THREAD_DETACH:
+		break;
+	case DLL_PROCESS_DETACH:
+		break;
+	}
+	return (TRUE);
 }
 
 //------------------------------------------------------
 // This is the interface to Jaguar:
 //------------------------------------------------------
 
-__declspec(dllexport) const TCHAR *LibDescription() {
-  return _T("NeL patch painter");
+__declspec(dllexport) const TCHAR *
+LibDescription()
+{
+	return _T("NeL patch painter");
 }
 
 #ifndef DESIGN_VER
@@ -68,13 +74,14 @@ __declspec(dllexport) const TCHAR *LibDescription() {
 /// MUST CHANGE THIS NUMBER WHEN ADD NEW CLASS
 __declspec(dllexport) int LibNumberClasses() { return 1; }
 
-__declspec(dllexport) ClassDesc *LibClassDesc(int i) {
-  switch (i) {
-  case 0:
-    return GetEditPatchModDesc();
-  default:
-    return 0;
-  }
+__declspec(dllexport) ClassDesc *
+LibClassDesc(int i)
+{
+	switch (i)
+	{
+	case 0: return GetEditPatchModDesc();
+	default: return 0;
+	}
 }
 
 #else
@@ -86,42 +93,50 @@ __declspec(dllexport) ClassDesc *LibClassDesc(int i) {
 /// MUST CHANGE THIS NUMBER WHEN ADD NEW CLASS
 __declspec(dllexport) int LibNumberClasses() { return 1; }
 
-__declspec(dllexport) ClassDesc *LibClassDesc(int i) {
-  switch (i) {
-  case 0:
-    return GetEditPatchModDesc();
-  default:
-    return 0;
-  }
+__declspec(dllexport) ClassDesc *
+LibClassDesc(int i)
+{
+	switch (i)
+	{
+	case 0: return GetEditPatchModDesc();
+	default: return 0;
+	}
 }
 
 #endif
 
 // Return version so can detect obsolete DLLs
-__declspec(dllexport) ULONG LibVersion() { return VERSION_3DSMAX; }
+__declspec(dllexport) ULONG
+LibVersion() { return VERSION_3DSMAX; }
 
 // Let the plug-in register itself for deferred loading
-__declspec(dllexport) ULONG CanAutoDefer() { return 1; }
-
-BOOL CALLBACK DefaultSOTProc(HWND hWnd, UINT msg, WPARAM wParam,
-                             LPARAM lParam) {
-  IObjParam *ip = (IObjParam *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
-
-  switch (msg) {
-  case WM_INITDIALOG:
-    SetWindowLongPtr(hWnd, GWLP_USERDATA, lParam);
-    break;
-
-  default:
-    return FALSE;
-  }
-  return TRUE;
+__declspec(dllexport) ULONG CanAutoDefer()
+{
+	return 1;
 }
 
-TCHAR *GetString(int id) {
-  static TCHAR buf[256];
+BOOL CALLBACK DefaultSOTProc(
+    HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	IObjParam *ip = (IObjParam *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
-  if (hInstance)
-    return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : NULL;
-  return NULL;
+	switch (msg)
+	{
+	case WM_INITDIALOG:
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, lParam);
+		break;
+
+	default:
+		return FALSE;
+	}
+	return TRUE;
+}
+
+TCHAR *GetString(int id)
+{
+	static TCHAR buf[256];
+
+	if (hInstance)
+		return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : NULL;
+	return NULL;
 }

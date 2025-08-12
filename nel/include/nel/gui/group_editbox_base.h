@@ -24,48 +24,43 @@
 
 namespace NLGUI {
 
-class CGroupEditBoxBase : public CInterfaceGroup {
+class CGroupEditBoxBase : public CInterfaceGroup
+{
 public:
-  DECLARE_UI_CLASS(CGroupEditBoxBase)
+	DECLARE_UI_CLASS(CGroupEditBoxBase)
 
-  CGroupEditBoxBase(const TCtorParam &param);
-  ~CGroupEditBoxBase();
+	CGroupEditBoxBase(const TCtorParam &param);
+	~CGroupEditBoxBase();
 
-  // True if the editBox can recover the focus on enter. if not, it does not
-  // erase OldCapturedKeyboard when loose focus
-  bool getRecoverFocusOnEnter() const { return _RecoverFocusOnEnter; }
-  void setRecoverFocusOnEnter(bool state) { _RecoverFocusOnEnter = state; }
+	// True if the editBox can recover the focus on enter. if not, it does not erase OldCapturedKeyboard when loose focus
+	bool getRecoverFocusOnEnter() const { return _RecoverFocusOnEnter; }
+	void setRecoverFocusOnEnter(bool state) { _RecoverFocusOnEnter = state; }
 
-  std::string getAHOnFocus() { return _AHOnFocus; }
-  std::string getAHOnFocusParams() { return _AHOnFocusParams; }
+	std::string getAHOnFocus() { return _AHOnFocus; }
+	std::string getAHOnFocusParams() { return _AHOnFocusParams; }
 
-  // disable any current selection
-  static void disableSelection() { _CurrSelection = NULL; }
+	// disable any current selection
+	static void disableSelection() { _CurrSelection = NULL; }
 
-  // Get / set current selection
-  static CGroupEditBoxBase *getCurrSelection() { return _CurrSelection; }
-  static void setCurrSelection(CGroupEditBoxBase *selection) {
-    _CurrSelection = selection;
-  }
+	// Get / set current selection
+	static CGroupEditBoxBase *getCurrSelection() { return _CurrSelection; }
+	static void setCurrSelection(CGroupEditBoxBase *selection) { _CurrSelection = selection; }
 
-  void draw() {}
+	void draw() { }
 
-  REFLECT_EXPORT_START(CGroupEditBoxBase, CInterfaceGroup)
-  REFLECT_BOOL("enter_recover_focus", getRecoverFocusOnEnter,
-               setRecoverFocusOnEnter);
-  REFLECT_EXPORT_END
+	REFLECT_EXPORT_START(CGroupEditBoxBase, CInterfaceGroup)
+	REFLECT_BOOL("enter_recover_focus", getRecoverFocusOnEnter, setRecoverFocusOnEnter);
+	REFLECT_EXPORT_END
 
 protected:
-  bool _RecoverFocusOnEnter : 1;
+	bool _RecoverFocusOnEnter : 1;
 
-  std::string _AHOnFocus;
-  std::string _AHOnFocusParams;
+	std::string _AHOnFocus;
+	std::string _AHOnFocusParams;
 
-  static CGroupEditBoxBase
-      *_CurrSelection; // the edit box for which the selection is currently
-                       // active, or NULL if there's none
+	static CGroupEditBoxBase *_CurrSelection; // the edit box for which the selection is currently active, or NULL if there's none
 };
 
-} // namespace NLGUI
+}
 
 #endif

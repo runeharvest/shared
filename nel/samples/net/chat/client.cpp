@@ -20,8 +20,7 @@
  * This client connects to a front-end server using login system.
  *
  * Before running this client, the front end service sample must run,
- * and also the NeL naming_service, time_service, login_service,
- * welcome_service.
+ * and also the NeL naming_service, time_service, login_service, welcome_service.
  *
  */
 
@@ -31,11 +30,11 @@
 
 #include <string>
 
-#include "nel/misc/bit_mem_stream.h"
-#include "nel/misc/config_file.h"
-#include "nel/misc/debug.h"
-#include "nel/misc/path.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/debug.h"
+#include "nel/misc/config_file.h"
+#include "nel/misc/bit_mem_stream.h"
+#include "nel/misc/path.h"
 
 #include "nel/net/callback_client.h"
 
@@ -67,78 +66,93 @@ using namespace NLNET;
 string CurrentEditString;
 
 // ***************************************************************************
-void serverSentChat(CMessage &msgin, TSockId from, CCallbackNetBase &netbase) {
-  // Called when the server sent a CHAT message
-  string text;
-  msgin.serial(text);
-  printf("%s\n", text.c_str());
+void serverSentChat(CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
+{
+	// Called when the server sent a CHAT message
+	string text;
+	msgin.serial(text);
+	printf("%s\n", text.c_str());
 }
 
 // ***************************************************************************
 // All messages handled by this server
 #define NB_CB 1
-TCallbackItem CallbackArray[NB_CB] = {{"CHAT", serverSentChat}};
+TCallbackItem CallbackArray[NB_CB] = {
+	{ "CHAT", serverSentChat }
+};
 
 /*
  * main
  */
-int main(int argc, char **argv) {
-  NLMISC::CApplicationContext applicationContext;
+int main(int argc, char **argv)
+{
+	NLMISC::CApplicationContext applicationContext;
 
-  CCallbackClient *Client;
+	CCallbackClient *Client;
 
-  NLMISC::CPath::addSearchPath(CHAT_DIR);
+	NLMISC::CPath::addSearchPath(CHAT_DIR);
 
-  // Read the host where to connect in the client.cfg file
-  CConfigFile ConfigFile;
-  ConfigFile.load(NLMISC::CPath::lookup("client.cfg"));
-  string LSHost(ConfigFile.getVar("LSHost").asString());
+	// Read the host where to connect in the client.cfg file
+	CConfigFile ConfigFile;
+	ConfigFile.load(NLMISC::CPath::lookup("client.cfg"));
+	string LSHost(ConfigFile.getVar("LSHost").asString());
 
-  // Init and Connect the client to the server located on port 3333
-  Client = new CCallbackClient();
-  Client->addCallbackArray(CallbackArray, NB_CB);
+	// Init and Connect the client to the server located on port 3333
+	Client = new CCallbackClient();
+	Client->addCallbackArray(CallbackArray, NB_CB);
 
-  printf("Please wait connecting...\n");
-  try {
-    CInetAddress addr(LSHost + ":3333");
-    Client->connect(addr);
-  } catch (const ESocket &e) {
-    printf("%s\n", e.what());
-    return 0;
-  }
+	printf("Please wait connecting...\n");
+	try
+	{
+		CInetAddress addr(LSHost + ":3333");
+		Client->connect(addr);
+	}
+	catch (const ESocket &e)
+	{
+		printf("%s\n", e.what());
+		return 0;
+	}
 
-  if (!Client->connected()) {
-    printf("Connection Error\n");
-    return 0;
-  }
-  printf("Connected.\n");
-
-#ifdef NL_OS_UNIX
-  init_keyboard();
-#endif
-  // The main loop
-  do {
-    int c;
-    if (kbhit()) {
-      c = getch();
-      if (c == KEY_ESC) {
-        break; // FINSIH
-      } else if (c == KEY_ENTER) {
-        CMessage msg;
-        msg.setType("CHAT");
-        msg.serial(CurrentEditString);
-        Client->send(msg);
-        CurrentEditString = "";
-      } else {
-        CurrentEditString += c;
-      }
-    }
-    Client->update();
-  } while (Client->connected());
+	if (!Client->connected())
+	{
+		printf("Connection Error\n");
+		return 0;
+	}
+	printf("Connected.\n");
 
 #ifdef NL_OS_UNIX
-  close_keyboard();
+	init_keyboard();
 #endif
-  // Finishing
-  delete Client;
+	// The main loop
+	do
+	{
+		int c;
+		if (kbhit())
+		{
+			c = getch();
+			if (c == KEY_ESC)
+			{
+				break; // FINSIH
+			}
+			else if (c == KEY_ENTER)
+			{
+				CMessage msg;
+				msg.setType("CHAT");
+				msg.serial(CurrentEditString);
+				Client->send(msg);
+				CurrentEditString = "";
+			}
+			else
+			{
+				CurrentEditString += c;
+			}
+		}
+		Client->update();
+	} while (Client->connected());
+
+#ifdef NL_OS_UNIX
+	close_keyboard();
+#endif
+	// Finishing
+	delete Client;
 }

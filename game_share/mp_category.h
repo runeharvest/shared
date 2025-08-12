@@ -20,21 +20,21 @@
 #include "nel/misc/types_nl.h"
 
 namespace MP_CATEGORY {
-enum TMPCategory {
-  Exotic = 0,
-  Faber,
-  Upgrade,
+enum TMPCategory
+{
+	Exotic = 0,
+	Faber,
+	Upgrade,
 
-  NbCategories,
+	NbCategories,
 
-  Undefined = NbCategories,
+	Undefined = NbCategories,
 };
 
 /**
  * get the right mp category from the input string
  * \param str the input string
- * \return the TMPCategory associated to this string (UNDEFINED if the string
- * cannot be interpreted)
+ * \return the TMPCategory associated to this string (UNDEFINED if the string cannot be interpreted)
  */
 TMPCategory stringToMPCategory(const std::string &str);
 
@@ -45,7 +45,7 @@ TMPCategory stringToMPCategory(const std::string &str);
  */
 const std::string &mpCategoryToString(TMPCategory cat);
 
-} // namespace MP_CATEGORY
+} // MP_CATEGORY
 
 #endif // RY_MP_CATEGORY_H
 /* End of mp_category.h */

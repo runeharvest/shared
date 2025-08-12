@@ -17,9 +17,9 @@
 #ifndef RY_BASIC_EFFECT_H
 #define RY_BASIC_EFFECT_H
 
+#include "nel/misc/types_nl.h"
 #include "game_share/base_types.h"
 #include "game_share/effect_families.h"
-#include "nel/misc/types_nl.h"
 
 /**
  * <Class description>
@@ -27,56 +27,60 @@
  * \author Nevrax France
  * \date 2003
  */
-class CBasicEffect {
+class CBasicEffect
+{
 public:
-  /// Constructor
-  CBasicEffect(EFFECT_FAMILIES::TEffectFamily family,
-               const TDataSetRow &creatorId, const TDataSetRow &targetRowId)
-      : _CreatorRowId(creatorId), _TargetRowId(targetRowId), _Family(family),
-        _EffectId(0) {
-    _EffectId = ++_EffectCounter;
-  }
+	/// Constructor
+	CBasicEffect(EFFECT_FAMILIES::TEffectFamily family, const TDataSetRow &creatorId, const TDataSetRow &targetRowId)
+	    : _CreatorRowId(creatorId)
+	    , _TargetRowId(targetRowId)
+	    , _Family(family)
+	    , _EffectId(0)
+	{
+		_EffectId = ++_EffectCounter;
+	}
 
-  CBasicEffect(EFFECT_FAMILIES::TEffectFamily family,
-               const TDataSetRow &creatorId, const TDataSetRow &targetRowId,
-               uint32 effectId)
-      : _CreatorRowId(creatorId), _TargetRowId(targetRowId), _Family(family),
-        _EffectId(effectId) {}
+	CBasicEffect(EFFECT_FAMILIES::TEffectFamily family, const TDataSetRow &creatorId, const TDataSetRow &targetRowId, uint32 effectId)
+	    : _CreatorRowId(creatorId)
+	    , _TargetRowId(targetRowId)
+	    , _Family(family)
+	    , _EffectId(effectId)
+	{
+	}
 
-  /// Destructor
-  virtual ~CBasicEffect() {}
+	/// Destructor
+	virtual ~CBasicEffect() { }
 
-  /// get the effect creator Id
-  inline const TDataSetRow &creatorRowId() const { return _CreatorRowId; }
+	/// get the effect creator Id
+	inline const TDataSetRow &creatorRowId() const { return _CreatorRowId; }
 
-  /// get the effect target rowId
-  inline const TDataSetRow &targetRowId() const { return _TargetRowId; }
+	/// get the effect target rowId
+	inline const TDataSetRow &targetRowId() const { return _TargetRowId; }
 
-  /// get the effect family
-  inline EFFECT_FAMILIES::TEffectFamily family() const { return _Family; }
+	/// get the effect family
+	inline EFFECT_FAMILIES::TEffectFamily family() const { return _Family; }
 
-  /// get the effect Id
-  inline uint32 effectId() const { return _EffectId; }
+	/// get the effect Id
+	inline uint32 effectId() const { return _EffectId; }
 
-  /// get the effect counter
-  inline static uint32 effectCounter() { return _EffectCounter; }
+	/// get the effect counter
+	inline static uint32 effectCounter() { return _EffectCounter; }
 
 protected:
-  /// effect creator Id
-  TDataSetRow _CreatorRowId;
+	/// effect creator Id
+	TDataSetRow _CreatorRowId;
 
-  /// effect target Id
-  TDataSetRow _TargetRowId;
+	/// effect target Id
+	TDataSetRow _TargetRowId;
 
-  /// effect family
-  EFFECT_FAMILIES::TEffectFamily _Family;
+	/// effect family
+	EFFECT_FAMILIES::TEffectFamily _Family;
 
-  /// effect ID
-  uint32 _EffectId;
+	/// effect ID
+	uint32 _EffectId;
 
-  /// counter, increased by one with every effect creation, give a unique Id per
-  /// effect
-  static uint32 _EffectCounter;
+	/// counter, increased by one with every effect creation, give a unique Id per effect
+	static uint32 _EffectCounter;
 };
 
 #endif // RY_BASIC_EFFECT_H

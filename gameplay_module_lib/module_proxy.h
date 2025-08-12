@@ -17,31 +17,34 @@
 #ifndef RY_MODULE_PROXY_H
 #define RY_MODULE_PROXY_H
 
-#include "nel/misc/smart_ptr.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/smart_ptr.h"
 
 class IModuleCore;
 
 /**
  * A proxy to a module core. Usulful to abstract the core completly
- * If you dont have a module but need a proxy ( e.g. : just before creating the
- * module), build it with IModuleProxy( IModuleCore * core) Otherwise, use the
- * getProxy method of your module, and inside a module method \author Nicolas
- * Brigand \author Nevrax France \date 2004
+ * If you dont have a module but need a proxy ( e.g. : just before creating the module), build it with IModuleProxy( IModuleCore * core)
+ * Otherwise, use the getProxy method of your module, and inside a module method
+ * \author Nicolas Brigand
+ * \author Nevrax France
+ * \date 2004
  */
-template <class T> class IModuleProxy {
+template <class T>
+class IModuleProxy
+{
 public:
-  /// ctor ( needed by the module class )
-  IModuleProxy() {}
-  /// ctor to use if you are not in a module ( CAUTION : the only real case is
-  /// when you have to interact with a core before creating the module )
-  IModuleProxy(IModuleCore *core) {
-    _ModuleCore = dynamic_cast<T *>(core);
-    MODULE_AST(_ModuleCore);
-  }
+	/// ctor ( needed by the module class )
+	IModuleProxy() { }
+	/// ctor to use if you are not in a module ( CAUTION : the only real case is when you have to interact with a core before creating the module )
+	IModuleProxy(IModuleCore *core)
+	{
+		_ModuleCore = dynamic_cast<T *>(core);
+		MODULE_AST(_ModuleCore);
+	}
 
 protected:
-  NLMISC::CRefPtr<T> _ModuleCore;
+	NLMISC::CRefPtr<T> _ModuleCore;
 };
 
 #endif // RY_MODULE_PROXY_H

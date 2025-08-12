@@ -35,38 +35,43 @@ namespace NLMISC {
  * \author Nevrax France
  * \date 2001
  */
-class CPThread : public IThread {
+class CPThread : public IThread
+{
 public:
-  enum TThreadState {
-    ThreadStateNone,
-    ThreadStateRunning,
-    ThreadStateFinished,
-  };
+	enum TThreadState
+	{
+		ThreadStateNone,
+		ThreadStateRunning,
+		ThreadStateFinished,
+	};
 
-  /// Constructor
-  CPThread(IRunnable *runnable, uint32 stackSize);
+	/// Constructor
+	CPThread(IRunnable *runnable, uint32 stackSize);
 
-  virtual ~CPThread();
+	virtual ~CPThread();
 
-  virtual void start();
-  virtual bool isRunning();
-  virtual void terminate();
-  virtual void wait();
-  virtual bool setCPUMask(uint64 cpuMask);
-  virtual uint64 getCPUMask();
-  virtual void setPriority(TThreadPriority priority);
-  virtual std::string getUserName();
+	virtual void start();
+	virtual bool isRunning();
+	virtual void terminate();
+	virtual void wait();
+	virtual bool setCPUMask(uint64 cpuMask);
+	virtual uint64 getCPUMask();
+	virtual void setPriority(TThreadPriority priority);
+	virtual std::string getUserName();
 
-  virtual IRunnable *getRunnable() { return Runnable; }
+	virtual IRunnable *getRunnable()
+	{
+		return Runnable;
+	}
 
-  /// Internal use
-  IRunnable *Runnable;
+	/// Internal use
+	IRunnable *Runnable;
 
-  TThreadState _State;
-  pthread_t _ThreadHandle;
+	TThreadState _State;
+	pthread_t _ThreadHandle;
 
 private:
-  uint32 _StackSize;
+	uint32 _StackSize;
 };
 
 /**
@@ -75,14 +80,15 @@ private:
  * \author Nevrax France
  * \date 2001
  */
-class CPProcess : public IProcess {
+class CPProcess : public IProcess
+{
 public:
-  virtual ~CPProcess() {}
-  virtual uint64 getCPUMask();
-  virtual bool setCPUMask(uint64 mask);
+	virtual ~CPProcess() { }
+	virtual uint64 getCPUMask();
+	virtual bool setCPUMask(uint64 mask);
 };
 
-} // namespace NLMISC
+} // NLMISC
 
 #endif // NL_OS_UNIX
 

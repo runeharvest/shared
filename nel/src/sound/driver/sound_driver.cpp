@@ -58,12 +58,11 @@ const uint32 ISoundDriver::InterfaceVersion = 0x17; // Nimetu
 
 #ifdef NL_STATIC
 
-#define NLSOUND_DECLARE_DRIVER(__soundDriver)                                  \
-  extern ISoundDriver *createISoundDriverInstance##__soundDriver(              \
-      ISoundDriver::IStringMapperProvider *stringMapper);                      \
-  extern uint32 interfaceVersion##__soundDriver();                             \
-  extern void outputProfile##__soundDriver(std::string &out);                  \
-  extern ISoundDriver::TDriver getDriverType##__soundDriver();
+#define NLSOUND_DECLARE_DRIVER(__soundDriver)                                                                          \
+	extern ISoundDriver *createISoundDriverInstance##__soundDriver(ISoundDriver::IStringMapperProvider *stringMapper); \
+	extern uint32 interfaceVersion##__soundDriver();                                                                   \
+	extern void outputProfile##__soundDriver(std::string &out);                                                        \
+	extern ISoundDriver::TDriver getDriverType##__soundDriver();
 
 #ifdef NL_FMOD_AVAILABLE
 NLSOUND_DECLARE_DRIVER(FMod)
@@ -80,8 +79,7 @@ NLSOUND_DECLARE_DRIVER(XAudio2)
 
 #else
 
-typedef ISoundDriver *(*ISDRV_CREATE_PROC)(
-    ISoundDriver::IStringMapperProvider *stringMapper);
+typedef ISoundDriver *(*ISDRV_CREATE_PROC)(ISoundDriver::IStringMapperProvider *stringMapper);
 const char *IDRV_CREATE_PROC_NAME = "NLSOUND_createISoundDriverInstance";
 
 typedef uint32 (*ISDRV_VERSION_PROC)(void);
@@ -90,107 +88,106 @@ const char *IDRV_VERSION_PROC_NAME = "NLSOUND_interfaceVersion";
 #endif
 
 /// Return driver name from type.
-const char *ISoundDriver::getDriverName(TDriver driverType) {
-  switch (driverType) {
-  case DriverAuto:
-    return "AUTO";
-  case DriverFMod:
-    return "FMod";
-  case DriverOpenAl:
-    return "OpenAL";
-  case DriverDSound:
-    return "DSound";
-  case DriverXAudio2:
-    return "XAudio2";
-  default:
-    return "UNKNOWN";
-  }
+const char *ISoundDriver::getDriverName(TDriver driverType)
+{
+	switch (driverType)
+	{
+	case DriverAuto: return "AUTO";
+	case DriverFMod: return "FMod";
+	case DriverOpenAl: return "OpenAL";
+	case DriverDSound: return "DSound";
+	case DriverXAudio2: return "XAudio2";
+	default: return "UNKNOWN";
+	}
 }
 
 /// Return driver filename from type.
-std::string ISoundDriver::getDriverFileName(TDriver driverType) {
-  switch (driverType) {
-  case DriverFMod:
+std::string ISoundDriver::getDriverFileName(TDriver driverType)
+{
+	switch (driverType)
+	{
+	case DriverFMod:
 #if defined(NL_COMP_MINGW)
-    return "libnel_drv_fmod_win";
+		return "libnel_drv_fmod_win";
 #elif defined(NL_OS_WINDOWS)
-    return "nel_drv_fmod_win";
+		return "nel_drv_fmod_win";
 #elif defined(NL_OS_UNIX)
-    return "nel_drv_fmod";
+		return "nel_drv_fmod";
 #else
 #error "Driver name not define for this platform"
 #endif // NL_OS_UNIX / NL_OS_WINDOWS
-    break;
-  case DriverOpenAl:
+		break;
+	case DriverOpenAl:
 #if defined(NL_COMP_MINGW)
-    return "libnel_drv_openal_win";
+		return "libnel_drv_openal_win";
 #elif defined(NL_OS_WINDOWS)
-    return "nel_drv_openal_win";
+		return "nel_drv_openal_win";
 #elif defined(NL_OS_UNIX)
-    return "nel_drv_openal";
+		return "nel_drv_openal";
 #else
 #error "Driver name not define for this platform"
 #endif
-    break;
-  case DriverDSound:
+		break;
+	case DriverDSound:
 #if defined(NL_COMP_MINGW)
-    return "libnel_drv_dsound_win";
+		return "libnel_drv_dsound_win";
 #elif defined(NL_OS_WINDOWS)
-    return "nel_drv_dsound_win";
+		return "nel_drv_dsound_win";
 #elif defined(NL_OS_UNIX)
-    return "";
+		return "";
 #else
 #error "Driver name not define for this platform"
 #endif
-    break;
-  case DriverXAudio2:
+		break;
+	case DriverXAudio2:
 #if defined(NL_COMP_MINGW)
-    return "libnel_drv_xaudio2_win";
+		return "libnel_drv_xaudio2_win";
 #elif defined(NL_OS_WINDOWS)
-    return "nel_drv_xaudio2_win";
+		return "nel_drv_xaudio2_win";
 #elif defined(NL_OS_UNIX)
-    return "";
+		return "";
 #else
 #error "Driver name not define for this platform"
 #endif
-    break;
-  case DriverAuto:
+		break;
+	case DriverAuto:
 #if defined(NL_COMP_MINGW)
-    return "libnel_drv_xaudio2_win";
+		return "libnel_drv_xaudio2_win";
 #elif defined(NL_OS_WINDOWS)
-    return "nel_drv_xaudio2_win";
+		return "nel_drv_xaudio2_win";
 #elif defined(NL_OS_UNIX)
-    return "nel_drv_openal";
+		return "nel_drv_openal";
 #else
 #error "Driver name not define for this platform"
 #endif
-    break;
-  default:
-    break;
-  }
+		break;
+	default:
+		break;
+	}
 
-  return "";
+	return "";
 }
 
 ///
-std::vector<ISoundDriver::TDriver> ISoundDriver::getAvailableDrivers() {
-  static std::vector<TDriver> m_AvailableDrivers;
+std::vector<ISoundDriver::TDriver> ISoundDriver::getAvailableDrivers()
+{
+	static std::vector<TDriver> m_AvailableDrivers;
 
-  if (!m_AvailableDrivers.empty())
-    return m_AvailableDrivers;
+	if (!m_AvailableDrivers.empty())
+		return m_AvailableDrivers;
 
 #ifdef NL_STATIC
 #ifdef NL_FMOD_AVAILABLE
-  m_AvailableDrivers.push_back(DriverFMod);
+	m_AvailableDrivers.push_back(DriverFMod);
 #endif
 #ifdef NL_OPENAL_AVAILABLE
-  m_AvailableDrivers.push_back(DriverOpenAl);
+	m_AvailableDrivers.push_back(DriverOpenAl);
 #endif
 #ifdef NL_DSOUND_AVAILABLE
-  m_AvailableDrivers.push_back(DriverDSound);
+	m_AvailableDrivers.push_back(DriverDSound);
 #endif
 #ifdef NL_XAUDIO2_AVAILABLE
-  m_AvailableDrivers.push_back(DriverXAudio2);
+	m_AvailableDrivers.push_back(DriverXAudio2);
 #endif
 
 #else // NL_STATIC
@@ -204,156 +201,138 @@ std::vector<ISoundDriver::TDriver> ISoundDriver::getAvailableDrivers() {
 			m_AvailableDrivers.push_back(vec[i]);
 	}
 #else
-  CLibrary driverLib;
+	CLibrary driverLib;
 #if defined(NL_OS_UNIX) && defined(NL_DRIVER_PREFIX)
-  driverLib.addLibPath(NL_DRIVER_PREFIX);
+	driverLib.addLibPath(NL_DRIVER_PREFIX);
 #endif
-  nlinfo("Detecting available sound drivers");
-  for (uint i = (uint)DriverAuto + 1; i < (uint)NumDrivers; i++) {
-    std::string dllName = getDriverFileName((TDriver)i);
-    if (!dllName.empty()) {
-      // Load it (adding standard nel pre/suffix, looking in library path and
-      // taking ownership)
-      if (driverLib.loadLibrary(dllName, true, true, true)) {
-        m_AvailableDrivers.push_back((TDriver)i);
-        driverLib.freeLibrary();
-      }
-    }
-  }
+	nlinfo("Detecting available sound drivers");
+	for (uint i = (uint)DriverAuto + 1; i < (uint)NumDrivers; i++)
+	{
+		std::string dllName = getDriverFileName((TDriver)i);
+		if (!dllName.empty())
+		{
+			// Load it (adding standard nel pre/suffix, looking in library path and taking ownership)
+			if (driverLib.loadLibrary(dllName, true, true, true))
+			{
+				m_AvailableDrivers.push_back((TDriver)i);
+				driverLib.freeLibrary();
+			}
+		}
+	}
 #endif
 
 #endif
 
-  return m_AvailableDrivers;
+	return m_AvailableDrivers;
 }
 
 /*
  * The static method which builds the sound driver instance
  */
-ISoundDriver *ISoundDriver::createDriver(IStringMapperProvider *stringMapper,
-                                         TDriver driverType) {
+ISoundDriver *ISoundDriver::createDriver(IStringMapperProvider *stringMapper, TDriver driverType)
+{
 #ifdef NL_STATIC
 
-  nlinfo("Creating statically linked sound driver %s",
-         getDriverName(driverType));
+	nlinfo("Creating statically linked sound driver %s", getDriverName(driverType));
 
-  ISoundDriver *result = NULL;
-  switch (driverType) {
-    // switch between available drivers
+	ISoundDriver *result = NULL;
+	switch (driverType)
+	{
+		// switch between available drivers
 #ifdef NL_FMOD_AVAILABLE
-  case DriverFMod:
-    result = createISoundDriverInstanceFMod(stringMapper);
-    break;
+	case DriverFMod: result = createISoundDriverInstanceFMod(stringMapper); break;
 #endif
 #ifdef NL_OPENAL_AVAILABLE
-  case DriverOpenAl:
-    result = createISoundDriverInstanceOpenAl(stringMapper);
-    break;
+	case DriverOpenAl: result = createISoundDriverInstanceOpenAl(stringMapper); break;
 #endif
 #ifdef NL_DSOUND_AVAILABLE
-  case DriverDSound:
-    result = createISoundDriverInstanceDSound(stringMapper);
-    break;
+	case DriverDSound: result = createISoundDriverInstanceDSound(stringMapper); break;
 #endif
 #ifdef NL_XAUDIO2_AVAILABLE
-  case DriverXAudio2:
-    result = createISoundDriverInstanceXAudio2(stringMapper);
-    break;
+	case DriverXAudio2: result = createISoundDriverInstanceXAudio2(stringMapper); break;
 #endif
-    // auto driver = first available in this order: FMod, OpenAl, XAudio2,
-    // DSound
+		// auto driver = first available in this order: FMod, OpenAl, XAudio2, DSound
 #if defined(NL_FMOD_AVAILABLE)
-  case DriverAuto:
-    result = createISoundDriverInstanceFMod(stringMapper);
-    break;
+	case DriverAuto: result = createISoundDriverInstanceFMod(stringMapper); break;
 #elif defined(NL_OPENAL_AVAILABLE)
-  case DriverAuto:
-    result = createISoundDriverInstanceOpenAl(stringMapper);
-    break;
+	case DriverAuto: result = createISoundDriverInstanceOpenAl(stringMapper); break;
 #elif defined(NL_XAUDIO2_AVAILABLE)
-  case DriverAuto:
-    result = createISoundDriverInstanceXAudio2(stringMapper);
-    break;
+	case DriverAuto: result = createISoundDriverInstanceXAudio2(stringMapper); break;
 #elif defined(NL_DSOUND_AVAILABLE)
-  case DriverAuto:
-    result = createISoundDriverInstanceDSound(stringMapper);
-    break;
+	case DriverAuto: result = createISoundDriverInstanceDSound(stringMapper); break;
 #endif
-  // unavailable driver = FAIL
-  default:
-    throw ESoundDriverNotFound(getDriverName(driverType));
-  }
-  if (!result)
-    throw ESoundDriverCantCreateDriver(getDriverName(driverType));
-  return result;
+	// unavailable driver = FAIL
+	default: throw ESoundDriverNotFound(getDriverName(driverType));
+	}
+	if (!result) throw ESoundDriverCantCreateDriver(getDriverName(driverType));
+	return result;
 
 #else
 
-  ISDRV_CREATE_PROC createSoundDriver = NULL;
-  ISDRV_VERSION_PROC versionDriver = NULL;
+	ISDRV_CREATE_PROC createSoundDriver = NULL;
+	ISDRV_VERSION_PROC versionDriver = NULL;
 
-  // dll selected
-  std::string dllName = getDriverFileName(driverType);
-  if (dllName.empty())
-    throw ESoundDriverCantCreateDriver(
-        ("Driver '%s' not available for this platform",
-         ISoundDriver::getDriverName(driverType)));
+	// dll selected
+	std::string dllName = getDriverFileName(driverType);
+	if (dllName.empty())
+		throw ESoundDriverCantCreateDriver(("Driver '%s' not available for this platform", ISoundDriver::getDriverName(driverType)));
 
-  CLibrary driverLib;
+	CLibrary driverLib;
 
 #if defined(NL_OS_UNIX) && defined(NL_DRIVER_PREFIX)
-  driverLib.addLibPath(NL_DRIVER_PREFIX);
+	driverLib.addLibPath(NL_DRIVER_PREFIX);
 #endif
 
-  // Load it (adding standard nel pre/suffix, looking in library path and not
-  // taking ownership)
-  if (!driverLib.loadLibrary(dllName, true, true, false)) {
-    throw ESoundDriverNotFound(dllName);
-  }
+	// Load it (adding standard nel pre/suffix, looking in library path and not taking ownership)
+	if (!driverLib.loadLibrary(dllName, true, true, false))
+	{
+		throw ESoundDriverNotFound(dllName);
+	}
 
-  /**
-   *  MTR: Is there a way with NLMISC to replace SearchFile() ? Until then, no
-   * info for Linux.
-   */
+	/**
+	 *  MTR: Is there a way with NLMISC to replace SearchFile() ? Until then, no info for Linux.
+	 */
 #ifdef NL_OS_WINDOWS
-  wchar_t buffer[1024], *ptr;
-  uint len = SearchPathW(NULL, nlUtf8ToWide(dllName), NULL, 1023, buffer, &ptr);
-  if (len)
-    nlinfo("Using the library '%s' that is in the directory: '%s'",
-           dllName.c_str(), wideToUtf8(buffer).c_str());
+	wchar_t buffer[1024], *ptr;
+	uint len = SearchPathW(NULL, nlUtf8ToWide(dllName), NULL, 1023, buffer, &ptr);
+	if (len)
+		nlinfo("Using the library '%s' that is in the directory: '%s'", dllName.c_str(), wideToUtf8(buffer).c_str());
 #endif
 
-  createSoundDriver =
-      (ISDRV_CREATE_PROC)driverLib.getSymbolAddress(IDRV_CREATE_PROC_NAME);
-  if (createSoundDriver == NULL) {
+	createSoundDriver = (ISDRV_CREATE_PROC)driverLib.getSymbolAddress(IDRV_CREATE_PROC_NAME);
+	if (createSoundDriver == NULL)
+	{
 #ifdef NL_OS_WINDOWS
-    nlinfo("Error: %u", GetLastError());
+		nlinfo("Error: %u", GetLastError());
 #else
-    nlinfo("Error: Unable to load Sound Driver.");
+		nlinfo("Error: Unable to load Sound Driver.");
 #endif
-    throw ESoundDriverCorrupted(dllName);
-  }
+		throw ESoundDriverCorrupted(dllName);
+	}
 
-  versionDriver =
-      (ISDRV_VERSION_PROC)driverLib.getSymbolAddress(IDRV_VERSION_PROC_NAME);
-  if (versionDriver != NULL) {
-    if (versionDriver() < ISoundDriver::InterfaceVersion)
-      throw ESoundDriverOldVersion(dllName);
-    else if (versionDriver() > ISoundDriver::InterfaceVersion)
-      throw ESoundDriverUnknownVersion(dllName);
-  }
+	versionDriver = (ISDRV_VERSION_PROC)driverLib.getSymbolAddress(IDRV_VERSION_PROC_NAME);
+	if (versionDriver != NULL)
+	{
+		if (versionDriver() < ISoundDriver::InterfaceVersion)
+			throw ESoundDriverOldVersion(dllName);
+		else if (versionDriver() > ISoundDriver::InterfaceVersion)
+			throw ESoundDriverUnknownVersion(dllName);
+	}
 
-  ISoundDriver *ret = createSoundDriver(stringMapper);
-  if (ret == NULL) {
-    throw ESoundDriverCantCreateDriver(dllName);
-  } else {
-    // Fill the DLL name
-    ret->_DllName = driverLib.getLibFileName();
-  }
+	ISoundDriver *ret = createSoundDriver(stringMapper);
+	if (ret == NULL)
+	{
+		throw ESoundDriverCantCreateDriver(dllName);
+	}
+	else
+	{
+		// Fill the DLL name
+		ret->_DllName = driverLib.getLibFileName();
+	}
 
-  return ret;
+	return ret;
 
 #endif /* NL_STATIC */
 }
 
-} // namespace NLSOUND
+} // NLSOUND

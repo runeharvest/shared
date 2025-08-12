@@ -34,11 +34,10 @@ using NL3D::CDriverGL;
                                       <NSApplicationDelegate>
 #endif
 {
-  CDriverGL *_driver;
+	CDriverGL *_driver;
 }
 
 - (id)initWithDriver:(CDriverGL *)driver;
-- (NSApplicationTerminateReply)applicationShouldTerminate:
-    (NSApplication *)sender;
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender;
 
 @end

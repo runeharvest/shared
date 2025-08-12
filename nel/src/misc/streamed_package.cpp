@@ -20,42 +20,48 @@
 #include "stdmisc.h"
 
 // Project includes
-#include <nel/misc/stream.h>
 #include <nel/misc/streamed_package.h>
+#include <nel/misc/stream.h>
 
 namespace NLMISC {
 
-CStreamedPackage::CStreamedPackage() {
-  // init
+CStreamedPackage::CStreamedPackage()
+{
+	// init
 }
 
-CStreamedPackage::~CStreamedPackage() {
-  // release
+CStreamedPackage::~CStreamedPackage()
+{
+	// release
 }
 
-void CStreamedPackage::serial(NLMISC::IStream &f) {
-  f.serialCheck(NELID("SNPK"));
+void CStreamedPackage::serial(NLMISC::IStream &f)
+{
+	f.serialCheck(NELID("SNPK"));
 
-  uint version = 1;
-  f.serialVersion(version);
+	uint version = 1;
+	f.serialVersion(version);
 
-  f.serialCont(Entries);
+	f.serialCont(Entries);
 }
 
-void CStreamedPackage::CEntry::serial(NLMISC::IStream &f) {
-  uint version = 1;
-  f.serialVersion(version);
+void CStreamedPackage::CEntry::serial(NLMISC::IStream &f)
+{
+	uint version = 1;
+	f.serialVersion(version);
 
-  f.serial(Name);
-  f.serial(Hash);
-  f.serial(Size);
-  f.serial(LastModified);
+	f.serial(Name);
+	f.serial(Hash);
+	f.serial(Size);
+	f.serial(LastModified);
 }
 
-void CStreamedPackage::makePath(std::string &result, const CHashKey &hash) {
-  std::string lowerHash = NLMISC::toLowerAscii(hash.toString());
-  result = std::string("/") + lowerHash.substr(0, 2) + "/" +
-           lowerHash.substr(2, 2) + "/" + lowerHash.substr(4);
+void CStreamedPackage::makePath(std::string &result, const CHashKey &hash)
+{
+	std::string lowerHash = NLMISC::toLowerAscii(hash.toString());
+	result = std::string("/") + lowerHash.substr(0, 2)
+	    + "/" + lowerHash.substr(2, 2)
+	    + "/" + lowerHash.substr(4);
 }
 
 } /* namespace NLMISC */

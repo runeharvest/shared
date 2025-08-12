@@ -24,7 +24,11 @@
 
 namespace NL3D {
 
-ILogicInfo::ILogicInfo() {}
-ILogicInfo::~ILogicInfo() {}
+ILogicInfo::ILogicInfo()
+{
+}
+ILogicInfo::~ILogicInfo()
+{
+}
 
-} // namespace NL3D
+} // NL3D

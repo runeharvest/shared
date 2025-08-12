@@ -15,62 +15,68 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "nel/misc/debug.h"
-#include <string>
 #include <windows.h>
+#include <string>
 
 using namespace std;
 
-int main(int argc, char *argv[]) {
-  // Help ?
-  if (argc < 3) {
-    printf("exec_timeout [timeout(ms)] [prog.exe] [arg0] [arg1]...\nReturn "
-           "0:error, 1:ok, 2:timeout\n");
-    return 0;
-  } else {
-    // String
-    string argu;
+int main(int argc, char *argv[])
+{
+	// Help ?
+	if (argc < 3)
+	{
+		printf("exec_timeout [timeout(ms)] [prog.exe] [arg0] [arg1]...\nReturn 0:error, 1:ok, 2:timeout\n");
+		return 0;
+	}
+	else
+	{
+		// String
+		string argu;
 
-    // Build the argus
-    for (int i = 2; i < argc; i++) {
-      argu += argv[i];
-      if (i < argc - 1)
-        argu += " ";
-    }
+		// Build the argus
+		for (int i = 2; i < argc; i++)
+		{
+			argu += argv[i];
+			if (i < argc - 1)
+				argu += " ";
+		}
 
-    // Process information
-    PROCESS_INFORMATION process_info;
+		// Process information
+		PROCESS_INFORMATION process_info;
 
-    // Timeout
-    DWORD timeout = atoi(argv[1]);
+		// Timeout
+		DWORD timeout = atoi(argv[1]);
 
-    // Startup info
-    STARTUPINFO startupInfo;
-    GetStartupInfo(&startupInfo);
+		// Startup info
+		STARTUPINFO startupInfo;
+		GetStartupInfo(&startupInfo);
 
-    // Exec
-    if (CreateProcess(NULL, (char *)(argu.c_str()), NULL, NULL, TRUE,
-                      CREATE_NEW_PROCESS_GROUP, NULL, NULL, &startupInfo,
-                      &process_info)) {
-      // Return message
-      switch (WaitForSingleObject(process_info.hProcess, timeout)) {
-      case WAIT_OBJECT_0:
-        return 1;
-      case WAIT_ABANDONED:
-        return 0;
-      case WAIT_TIMEOUT:
-        if (TerminateProcess(process_info.hProcess, 0)) {
-          nlwarning("ERROR: Timeout in process %s", (char *)(argu.c_str()));
-          return 2;
-        } else
-          nlwarning("ERROR: Error while terminate current process %s",
-                    (char *)(argu.c_str()));
-        return 0;
-      }
-    } else
-      nlwarning("ERROR: Error can't exec process %s", (char *)(argu.c_str()));
-    return 0;
-  }
+		// Exec
+		if (CreateProcess(NULL, (char *)(argu.c_str()), NULL, NULL, TRUE, CREATE_NEW_PROCESS_GROUP, NULL, NULL, &startupInfo, &process_info))
+		{
+			// Return message
+			switch (WaitForSingleObject(process_info.hProcess, timeout))
+			{
+			case WAIT_OBJECT_0:
+				return 1;
+			case WAIT_ABANDONED:
+				return 0;
+			case WAIT_TIMEOUT:
+				if (TerminateProcess(process_info.hProcess, 0))
+				{
+					nlwarning("ERROR: Timeout in process %s", (char *)(argu.c_str()));
+					return 2;
+				}
+				else
+					nlwarning("ERROR: Error while terminate current process %s", (char *)(argu.c_str()));
+				return 0;
+			}
+		}
+		else
+			nlwarning("ERROR: Error can't exec process %s", (char *)(argu.c_str()));
+		return 0;
+	}
 
-  // Ok
-  return 1;
+	// Ok
+	return 1;
 }

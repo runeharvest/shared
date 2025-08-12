@@ -23,7 +23,7 @@
 namespace NLMISC {
 class IStream;
 struct EStream;
-} // namespace NLMISC
+}
 
 namespace NL3D {
 
@@ -38,44 +38,46 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2001
  */
-class CSkeletonWeight {
+class CSkeletonWeight
+{
 public:
-  /// An element of the template. A pair of node name / node weight.
-  class CNode {
-  public:
-    /// Name of the node
-    std::string Name;
+	/// An element of the template. A pair of node name / node weight.
+	class CNode
+	{
+	public:
+		/// Name of the node
+		std::string Name;
 
-    /// Weight of the node
-    float Weight;
+		/// Weight of the node
+		float Weight;
 
-    /// Serial the node
-    void serial(NLMISC::IStream &f);
-  };
+		/// Serial the node
+		void serial(NLMISC::IStream &f);
+	};
 
-  /// A vector of template elements.
-  typedef std::vector<CNode> TNodeArray;
+	/// A vector of template elements.
+	typedef std::vector<CNode> TNodeArray;
 
-  /// Get number of node in this template
-  uint getNumNode() const;
+	/// Get number of node in this template
+	uint getNumNode() const;
 
-  /// Get a node name
-  const std::string &getNodeName(uint node) const;
+	/// Get a node name
+	const std::string &getNodeName(uint node) const;
 
-  /// Get a node weight
-  float getNodeWeight(uint node) const;
+	/// Get a node weight
+	float getNodeWeight(uint node) const;
 
-  /// Build the template
-  void build(const TNodeArray &array);
+	/// Build the template
+	void build(const TNodeArray &array);
 
-  /// Serial the template
-  void serial(NLMISC::IStream &f);
+	/// Serial the template
+	void serial(NLMISC::IStream &f);
 
 private:
-  TNodeArray _Elements;
+	TNodeArray _Elements;
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_SKELETON_WEIGHT_H
 

@@ -20,9 +20,9 @@
 #ifndef NL_VIEW_BITMAP_COMBO_H
 #define NL_VIEW_BITMAP_COMBO_H
 
-#include "nel/3d/u_texture.h"
-#include "nel/gui/view_base.h"
 #include "nel/misc/cdb.h"
+#include "nel/gui/view_base.h"
+#include "nel/3d/u_texture.h"
 #include <string>
 #include <vector>
 
@@ -64,23 +64,24 @@ namespace NLGUI {
  * * : where bitmap are displayed
  */
 
-struct CComboBoxDesc {
-  bool parse(xmlNodePtr cur, CInterfaceElement *owner);
-  void addObserver(NLMISC::ICDBNode::IPropertyObserver *obs);
-  void getGridSize(uint &numRow, uint &numCol) const;
-  void getDimensions(uint &width, uint &height) const;
-  CInterfaceProperty NumRow;
-  CInterfaceProperty NumCol;
-  CInterfaceProperty CurrSelected;
-  CInterfaceProperty ItemWidth;
-  CInterfaceProperty ItemHeight;
-  CInterfaceProperty Unrolled;
-  CInterfaceProperty WGapSelected;
-  CInterfaceProperty WGap;
-  CInterfaceProperty HGapSelected;
-  CInterfaceProperty HGap;
-  CInterfaceProperty NumSel;
-  CInterfaceProperty Align;
+struct CComboBoxDesc
+{
+	bool parse(xmlNodePtr cur, CInterfaceElement *owner);
+	void addObserver(NLMISC::ICDBNode::IPropertyObserver *obs);
+	void getGridSize(uint &numRow, uint &numCol) const;
+	void getDimensions(uint &width, uint &height) const;
+	CInterfaceProperty NumRow;
+	CInterfaceProperty NumCol;
+	CInterfaceProperty CurrSelected;
+	CInterfaceProperty ItemWidth;
+	CInterfaceProperty ItemHeight;
+	CInterfaceProperty Unrolled;
+	CInterfaceProperty WGapSelected;
+	CInterfaceProperty WGap;
+	CInterfaceProperty HGapSelected;
+	CInterfaceProperty HGap;
+	CInterfaceProperty NumSel;
+	CInterfaceProperty Align;
 };
 
 /**
@@ -89,83 +90,84 @@ struct CComboBoxDesc {
  * \author Nevrax France
  * \date 2002
  */
-class CViewBitmapCombo : public CViewBase,
-                         public NLMISC::ICDBNode::IPropertyObserver {
+class CViewBitmapCombo : public CViewBase, public NLMISC::ICDBNode::IPropertyObserver
+{
 public:
-  DECLARE_UI_CLASS(CViewBitmapCombo)
+	DECLARE_UI_CLASS(CViewBitmapCombo)
 
-  typedef std::vector<sint32> TIdArray;
-  typedef std::vector<std::string> TStringArray;
-  typedef std::vector<NLMISC::CRGBA> TColorArray;
+	typedef std::vector<sint32> TIdArray;
+	typedef std::vector<std::string> TStringArray;
+	typedef std::vector<NLMISC::CRGBA> TColorArray;
 
 public:
-  /// ctor
-  CViewBitmapCombo(const TCtorParam &param);
+	/// ctor
+	CViewBitmapCombo(const TCtorParam &param);
 
-  std::string getProperty(const std::string &name) const;
-  void setProperty(const std::string &name, const std::string &value);
-  xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
+	std::string getProperty(const std::string &name) const;
+	void setProperty(const std::string &name, const std::string &value);
+	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
 
-  /**
-   * parse an xml node and initialize the base view members. Must call
-   * CViewBase::parse \param cur : pointer to the xml node to be parsed \param
-   * parentGroup : the parent group of the view \partam id : a refence to the
-   * string that will receive the view ID \return true if success
-   */
-  bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
-  virtual uint32 getMemory() { return (uint32)(sizeof(*this) + _Id.size()); }
-  /**
-   * draw the view
-   */
-  void draw();
+	/**
+	 * parse an xml node and initialize the base view members. Must call CViewBase::parse
+	 * \param cur : pointer to the xml node to be parsed
+	 * \param parentGroup : the parent group of the view
+	 * \partam id : a refence to the string that will receive the view ID
+	 * \return true if success
+	 */
+	bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+	virtual uint32 getMemory() { return (uint32)(sizeof(*this) + _Id.size()); }
+	/**
+	 * draw the view
+	 */
+	void draw();
 
-  // access to texture & colors
-  const TStringArray &getTexs() const { return _Texs; }
-  const TStringArray &getTexsOver() const { return _TexsOver; }
-  const TStringArray &getTexsPushed() const { return _TexsPushed; }
-  //
-  const TColorArray &getColors() const { return _Col; }
-  const TColorArray &getColorsOver() const { return _ColOver; }
-  const TColorArray &getColorsPushed() const { return _ColPushed; }
-  //
-  void setTexs(const char *const tex[], uint numTex);
-  void setTexsOver(const char *const tex[], uint numTex);
-  void setTexsPushed(const char *const tex[], uint numTex);
-  //
-  void setColors(const NLMISC::CRGBA colors[], uint numColors);
-  void setColorsOver(const NLMISC::CRGBA colors[], uint numColors);
-  void setColorsPushed(const NLMISC::CRGBA colors[], uint numColors);
+	// access to texture & colors
+	const TStringArray &getTexs() const { return _Texs; }
+	const TStringArray &getTexsOver() const { return _TexsOver; }
+	const TStringArray &getTexsPushed() const { return _TexsPushed; }
+	//
+	const TColorArray &getColors() const { return _Col; }
+	const TColorArray &getColorsOver() const { return _ColOver; }
+	const TColorArray &getColorsPushed() const { return _ColPushed; }
+	//
+	void setTexs(const char *const tex[], uint numTex);
+	void setTexsOver(const char *const tex[], uint numTex);
+	void setTexsPushed(const char *const tex[], uint numTex);
+	//
+	void setColors(const NLMISC::CRGBA colors[], uint numColors);
+	void setColorsOver(const NLMISC::CRGBA colors[], uint numColors);
+	void setColorsPushed(const NLMISC::CRGBA colors[], uint numColors);
 
-  ///////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////
 private:
-  //
-  TStringArray _Texs;
-  TStringArray _TexsOver;
-  TStringArray _TexsPushed;
-  TIdArray _TexsId;
-  TIdArray _TexsOverId;
-  TIdArray _TexsPushedId;
-  TColorArray _Col;
-  TColorArray _ColOver;
-  TColorArray _ColPushed;
-  CComboBoxDesc _CD;
-  CInterfaceElement *_Owner;
+	//
+	TStringArray _Texs;
+	TStringArray _TexsOver;
+	TStringArray _TexsPushed;
+	TIdArray _TexsId;
+	TIdArray _TexsOverId;
+	TIdArray _TexsPushedId;
+	TColorArray _Col;
+	TColorArray _ColOver;
+	TColorArray _ColPushed;
+	CComboBoxDesc _CD;
+	CInterfaceElement *_Owner;
 
 private:
-  void parseTexList(const std::string &names, TStringArray &dest);
-  void parseColList(const std::string &names, TColorArray &dest);
-  void getTexList(const TStringArray &arr, std::string &dest) const;
-  void getColList(const TColorArray &arr, std::string &dest) const;
-  void setupSize();
-  void getDimensions(uint &numRow, uint &numCol);
-  // From ICDBNode::IPropertyObserver
-  void update(NLMISC::ICDBNode *leaf);
-  // Return a color from the array, or white if it is empty
-  static NLMISC::CRGBA getCol(const TColorArray &array, uint index);
-  static const std::string *getTex(const TStringArray &array, uint index);
-  static sint32 getTexId(const TIdArray &array, uint index);
+	void parseTexList(const std::string &names, TStringArray &dest);
+	void parseColList(const std::string &names, TColorArray &dest);
+	void getTexList(const TStringArray &arr, std::string &dest) const;
+	void getColList(const TColorArray &arr, std::string &dest) const;
+	void setupSize();
+	void getDimensions(uint &numRow, uint &numCol);
+	// From ICDBNode::IPropertyObserver
+	void update(NLMISC::ICDBNode *leaf);
+	// Return a color from the array, or white if it is empty
+	static NLMISC::CRGBA getCol(const TColorArray &array, uint index);
+	static const std::string *getTex(const TStringArray &array, uint index);
+	static sint32 getTexId(const TIdArray &array, uint index);
 };
 
-} // namespace NLGUI
+}
 
 #endif

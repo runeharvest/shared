@@ -21,23 +21,23 @@
 // STL includes
 
 // Qt includes
-#include <QImage>
-#include <QLineEdit>
-#include <QPixmap>
-#include <QSlider>
-#include <QTextEdit>
 #include <QWidget>
+#include <QTextEdit>
+#include <QLineEdit>
+#include <QSlider>
+#include <QImage>
+#include <QPixmap>
 
 // NeL includes
-#include <nel/misc/displayer.h>
 #include <nel/misc/log.h>
+#include <nel/misc/displayer.h>
 
 // Project includes
 
 namespace NLMISC {
 class CBitmap;
 class IThread;
-} // namespace NLMISC
+}
 
 namespace NLTOOLS {
 class CMainWindow;
@@ -49,70 +49,72 @@ class CColorThread;
  * \date 2014-09-19 09:38GMT
  * \author Jan BOON (jan.boon@kaetemi.be)
  */
-class CPanoplyPreview : public QWidget {
-  Q_OBJECT
+class CPanoplyPreview : public QWidget
+{
+	Q_OBJECT
 
 public:
-  CPanoplyPreview(CMainWindow *parent);
-  virtual ~CPanoplyPreview();
+	CPanoplyPreview(CMainWindow *parent);
+	virtual ~CPanoplyPreview();
 
-  void displayBitmap(const NLMISC::CBitmap &bitmap); // Called from thread!
+	void displayBitmap(const NLMISC::CBitmap &bitmap); // Called from thread!
 
 protected:
-  virtual void paintEvent(QPaintEvent *e);
+	virtual void paintEvent(QPaintEvent *e);
 
 signals:
-  void tSigBitmap();
+	void tSigBitmap();
 
 private slots:
-  void tSlotBitmap();
+	void tSlotBitmap();
 
-  void colorEdited(const QString &text);
-  void maskEdited(const QString &text);
-  void goPushed(bool);
+	void colorEdited(const QString &text);
+	void maskEdited(const QString &text);
+	void goPushed(bool);
 
-  void hueChanged(int value);
-  void lightnessChanged(int value);
-  void saturationChanged(int value);
-  void luminosityChanged(int value);
-  void contrastChanged(int value);
-
-private:
-  void createDockWindows(CMainWindow *mainWindow);
+	void hueChanged(int value);
+	void lightnessChanged(int value);
+	void saturationChanged(int value);
+	void luminosityChanged(int value);
+	void contrastChanged(int value);
 
 private:
-  NLMISC::IThread *m_Thread;
-  CColorThread *m_ColorThread;
-
-  QString m_ColorFile;
-  QString m_MaskFile;
-
-  QImage *m_Image;
-  QPixmap *m_Pixmap;
-
-  NLMISC::CMutex m_ImageMutex;
+	void createDockWindows(CMainWindow *mainWindow);
 
 private:
-  CPanoplyPreview(const CPanoplyPreview &);
-  CPanoplyPreview &operator=(const CPanoplyPreview &);
+	NLMISC::IThread *m_Thread;
+	CColorThread *m_ColorThread;
+
+	QString m_ColorFile;
+	QString m_MaskFile;
+
+	QImage *m_Image;
+	QPixmap *m_Pixmap;
+
+	NLMISC::CMutex m_ImageMutex;
+
+private:
+	CPanoplyPreview(const CPanoplyPreview &);
+	CPanoplyPreview &operator=(const CPanoplyPreview &);
 
 }; /* class CPanoplyPreview */
 
-class CSliderTextEdit : public QSlider {
-  Q_OBJECT
+class CSliderTextEdit : public QSlider
+{
+	Q_OBJECT
 
 public:
-  CSliderTextEdit(QWidget *parent, QLineEdit *lineEdit, float scale);
-  virtual ~CSliderTextEdit();
+	CSliderTextEdit(QWidget *parent, QLineEdit *lineEdit, float scale);
+	virtual ~CSliderTextEdit();
 
 private slots:
-  void lineEditTextEdited(const QString &text);
-  void sliderValueChanged(int value);
+	void lineEditTextEdited(const QString &text);
+	void sliderValueChanged(int value);
 
 private:
-  QLineEdit *m_LineEdit;
-  bool m_Updating;
-  float m_Scale;
+	QLineEdit *m_LineEdit;
+	bool m_Updating;
+	float m_Scale;
 };
 
 } /* namespace NLTOOLS */

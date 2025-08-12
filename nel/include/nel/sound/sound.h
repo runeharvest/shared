@@ -20,11 +20,11 @@
 #ifndef NL_SOUND_H
 #define NL_SOUND_H
 
-#include "nel/georges/u_form_elm.h"
+#include "nel/misc/types_nl.h"
 #include "nel/misc/stream.h"
 #include "nel/misc/string_mapper.h"
-#include "nel/misc/types_nl.h"
 #include "nel/sound/u_source.h"
+#include "nel/georges/u_form_elm.h"
 #include <string>
 
 namespace NLSOUND {
@@ -36,8 +36,7 @@ class CGroupController;
 
 /// Sound names hash map
 // typedef std::hash_map<std::string, CSound*> TSoundMap;
-typedef CHashMap<NLMISC::TStringId, CSound *, NLMISC::CStringIdHashMapTraits>
-    TSoundMap;
+typedef CHashMap<NLMISC::TStringId, CSound *, NLMISC::CStringIdHashMapTraits> TSoundMap;
 
 /// Sound names set (for ambiant sounds)
 typedef std::set<CSound *> TSoundSet;
@@ -50,125 +49,119 @@ const double Sqrt12_2 = 1.0594630943592952645618252949463; // 2^1/12
  * \author Nevrax France
  * \date 2001
  */
-class CSound {
-  friend class CAudioMixerUser;
+class CSound
+{
+	friend class CAudioMixerUser;
 
 public:
-  /// Factory for specialized sound.
-  static CSound *createSound(const std::string &filename,
-                             NLGEORGES::UFormElm &formRoot);
+	/// Factory for specialized sound.
+	static CSound *createSound(const std::string &filename, NLGEORGES::UFormElm &formRoot);
 
-  enum TSOUND_TYPE {
-    SOUND_SIMPLE,
-    SOUND_COMPLEX,
-    SOUND_BACKGROUND,
-    SOUND_CONTEXT,
-    SOUND_MUSIC, // soon to be deprecated hopefully
-    SOUND_STREAM,
-    SOUND_STREAM_FILE
-  };
+	enum TSOUND_TYPE
+	{
+		SOUND_SIMPLE,
+		SOUND_COMPLEX,
+		SOUND_BACKGROUND,
+		SOUND_CONTEXT,
+		SOUND_MUSIC, // soon to be deprecated hopefully
+		SOUND_STREAM,
+		SOUND_STREAM_FILE
+	};
 
-  /// Constructor
-  CSound();
-  /// Destructor
-  virtual ~CSound();
+	/// Constructor
+	CSound();
+	/// Destructor
+	virtual ~CSound();
 
-  /// Get the type of the sound.
-  virtual TSOUND_TYPE getSoundType() = 0;
+	/// Get the type of the sound.
+	virtual TSOUND_TYPE getSoundType() = 0;
 
-  /// Load the sound parameters from georges' form
-  virtual void importForm(const std::string &filename,
-                          NLGEORGES::UFormElm &formRoot);
+	/// Load the sound parameters from georges' form
+	virtual void importForm(const std::string &filename, NLGEORGES::UFormElm &formRoot);
 
-  /// Return the looping state
-  bool getLooping() const { return _Looping; }
-  /// Return the gain
-  float getGain() const { return _Gain; }
-  /// Return the pitch
-  float getPitch() const { return _Pitch; }
-  /// Return the initial priority
-  TSoundPriority getPriority() const { return _Priority; }
-  /// Return true if cone is meaningful
-  // virtual bool		isDetailed() const = 0; // not used?
-  /// Return the inner angle of the cone
-  float getConeInnerAngle() const { return _ConeInnerAngle; }
-  /// Return the outer angle of the cone
-  float getConeOuterAngle() const { return _ConeOuterAngle; }
-  /// Return the outer gain of the cone
-  float getConeOuterGain() const { return _ConeOuterGain; }
-  /// Return the direction vector.
-  const NLMISC::CVector &getDirectionVector() const { return _Direction; }
-  /// Return the length of the sound in ms
-  virtual uint32 getDuration() = 0;
-  /// Return the name (must be unique)
-  const NLMISC::TStringId &getName() const { return _Name; }
+	/// Return the looping state
+	bool getLooping() const { return _Looping; }
+	/// Return the gain
+	float getGain() const { return _Gain; }
+	/// Return the pitch
+	float getPitch() const { return _Pitch; }
+	/// Return the initial priority
+	TSoundPriority getPriority() const { return _Priority; }
+	/// Return true if cone is meaningful
+	// virtual bool		isDetailed() const = 0; // not used?
+	/// Return the inner angle of the cone
+	float getConeInnerAngle() const { return _ConeInnerAngle; }
+	/// Return the outer angle of the cone
+	float getConeOuterAngle() const { return _ConeOuterAngle; }
+	/// Return the outer gain of the cone
+	float getConeOuterGain() const { return _ConeOuterGain; }
+	/// Return the direction vector.
+	const NLMISC::CVector &getDirectionVector() const { return _Direction; }
+	/// Return the length of the sound in ms
+	virtual uint32 getDuration() = 0;
+	/// Return the name (must be unique)
+	const NLMISC::TStringId &getName() const { return _Name; }
 
-  /// Return the min distance (if detailed()) (default 1.0f if not implemented
-  /// by sound type)
-  virtual float getMinDistance() const { return _MinDist; }
-  /// Return the max distance (if detailed())
-  virtual float getMaxDistance() const { return _MaxDist; }
+	/// Return the min distance (if detailed()) (default 1.0f if not implemented by sound type)
+	virtual float getMinDistance() const { return _MinDist; }
+	/// Return the max distance (if detailed())
+	virtual float getMaxDistance() const { return _MaxDist; }
 
-  inline CGroupController *getGroupController() const {
-    return _GroupController;
-  }
+	inline CGroupController *getGroupController() const { return _GroupController; }
 
-  /// Set looping
-  void setLooping(bool looping) { _Looping = looping; }
+	/// Set looping
+	void setLooping(bool looping) { _Looping = looping; }
 
-  /// Used by the george sound plugin to check sound recursion (ie sound 'toto'
-  /// use sound 'titi' witch also use sound 'toto' ...).
-  virtual void getSubSoundList(
-      std::vector<std::pair<std::string, CSound *>> &subsounds) const = 0;
+	/// Used by the george sound plugin to check sound recursion (ie sound 'toto' use sound 'titi' witch also use sound 'toto' ...).
+	virtual void getSubSoundList(std::vector<std::pair<std::string, CSound *>> &subsounds) const = 0;
 
-  virtual void serial(NLMISC::IStream &s);
+	virtual void serial(NLMISC::IStream &s);
 
-  NLMISC::TStringId getUserVarControler() { return _UserVarControler; }
+	NLMISC::TStringId getUserVarControler() { return _UserVarControler; }
 
-  bool operator<(const CSound &otherSound) const {
-    return NLMISC::CStringMapper::unmap(_Name) <
-           NLMISC::CStringMapper::unmap(otherSound._Name);
-  }
+	bool operator<(const CSound &otherSound) const
+	{
+		return NLMISC::CStringMapper::unmap(_Name) < NLMISC::CStringMapper::unmap(otherSound._Name);
+	}
 
 protected:
-  // Static properties
-  float _Gain;  // [0,1]
-  float _Pitch; // ]0,1]
-  TSoundPriority _Priority;
-  float _ConeInnerAngle, _ConeOuterAngle, _ConeOuterGain;
-  NLMISC::CVector _Direction;
+	// Static properties
+	float _Gain; // [0,1]
+	float _Pitch; // ]0,1]
+	TSoundPriority _Priority;
+	float _ConeInnerAngle, _ConeOuterAngle, _ConeOuterGain;
+	NLMISC::CVector _Direction;
 
-  bool _Looping;
+	bool _Looping;
 
-  /// Distance to where the source is played at maximum volume. Used for
-  /// stealing physical sources. Note: for compatibility reasons, _MinDist is
-  /// not serial()'ized here in CSound. _MaxDist is.
-  float _MinDist;
-  /// Clipping distance for complex or backgound sound.
-  float _MaxDist;
+	/// Distance to where the source is played at maximum volume. Used for stealing physical sources.
+	/// Note: for compatibility reasons, _MinDist is not serial()'ized here in CSound. _MaxDist is.
+	float _MinDist;
+	/// Clipping distance for complex or backgound sound.
+	float _MaxDist;
 
-  // Sound name.
-  NLMISC::TStringId _Name;
-  /// An optional user var controler.
-  NLMISC::TStringId _UserVarControler;
+	// Sound name.
+	NLMISC::TStringId _Name;
+	/// An optional user var controler.
+	NLMISC::TStringId _UserVarControler;
 
-  /// The group controller, always exists, owned by the audio mixer
-  CGroupController *_GroupController;
+	/// The group controller, always exists, owned by the audio mixer
+	CGroupController *_GroupController;
 };
 
 /**
  * ESoundFileNotFound
  */
-class ESoundFileNotFound : public NLMISC::Exception {
+class ESoundFileNotFound : public NLMISC::Exception
+{
 public:
-  ESoundFileNotFound(const std::string filename)
-      : NLMISC::Exception(
-            (std::string("Sound file not found, or invalid file format: ") +
-             filename)
-                .c_str()) {}
+	ESoundFileNotFound(const std::string filename)
+	    : NLMISC::Exception((std::string("Sound file not found, or invalid file format: ") + filename).c_str())
+	{
+	}
 };
 
-} // namespace NLSOUND
+} // NLSOUND
 
 #endif // NL_SOUND_H
 

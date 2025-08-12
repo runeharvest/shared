@@ -34,31 +34,31 @@ namespace NLGUI {
  * \author Nevrax France
  * \date 1/2006
  */
-class CViewPolygon : public CViewBase {
+class CViewPolygon : public CViewBase
+{
 public:
-  DECLARE_UI_CLASS(CViewPolygon)
+	DECLARE_UI_CLASS(CViewPolygon)
 
-  CViewPolygon(const TCtorParam &param);
-  virtual uint32 getMemory() { return (uint32)(sizeof(*this) + _Id.size()); }
-  virtual void updateCoords();
-  virtual void draw();
-  void setVertices(const std::vector<NLMISC::CVector> &vertices);
-  // color
-  void setColorRGBA(NLMISC::CRGBA col) { _Color = col; }
-  NLMISC::CRGBA getColorRGBA() const { return _Color; }
-  // from CViewBase
-  virtual sint32 getAlpha() const { return (sint32)_Color.A; }
-  virtual void setAlpha(sint32 a);
+	CViewPolygon(const TCtorParam &param);
+	virtual uint32 getMemory() { return (uint32)(sizeof(*this) + _Id.size()); }
+	virtual void updateCoords();
+	virtual void draw();
+	void setVertices(const std::vector<NLMISC::CVector> &vertices);
+	// color
+	void setColorRGBA(NLMISC::CRGBA col) { _Color = col; }
+	NLMISC::CRGBA getColorRGBA() const { return _Color; }
+	// from CViewBase
+	virtual sint32 getAlpha() const { return (sint32)_Color.A; }
+	virtual void setAlpha(sint32 a);
 
 private:
-  NLMISC::CPolygon _Poly;
-  bool _Touched;
-  NLMISC::CRGBA _Color;
-  std::vector<NLMISC::CTriangle> _Tris;
-  std::vector<NLMISC::CTriangle>
-      _RealTris; // clipped tris in screen coordinates
+	NLMISC::CPolygon _Poly;
+	bool _Touched;
+	NLMISC::CRGBA _Color;
+	std::vector<NLMISC::CTriangle> _Tris;
+	std::vector<NLMISC::CTriangle> _RealTris; // clipped tris in screen coordinates
 };
 
-} // namespace NLGUI
+}
 
 #endif

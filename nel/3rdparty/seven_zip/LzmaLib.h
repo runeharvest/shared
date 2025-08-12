@@ -30,9 +30,8 @@ LzmaCompress
 ------------
 
 outPropsSize -
-     In:  the pointer to the size of outProps buffer; *outPropsSize =
-LZMA_PROPS_SIZE = 5. Out: the pointer to the size of written properties in
-outProps buffer; *outPropsSize = LZMA_PROPS_SIZE = 5.
+     In:  the pointer to the size of outProps buffer; *outPropsSize = LZMA_PROPS_SIZE = 5.
+     Out: the pointer to the size of written properties in outProps buffer; *outPropsSize = LZMA_PROPS_SIZE = 5.
 
   LZMA Encoder will use defult values for any parameter, if it is
   -1  for any from: level, loc, lp, pb, fb, numThreads
@@ -68,14 +67,13 @@ lc - The number of literal context bits (high bits of previous literal).
 
 lp - The number of literal pos bits (low bits of current position for literals).
      It can be in the range from 0 to 4. The default value is 0.
-     The lp switch is intended for periodical data when the period is equal to
-2^lp. For example, for 32-bit (4 bytes) periodical data you can use lp=2. Often
-it's better to set lc=0, if you change lp switch.
+     The lp switch is intended for periodical data when the period is equal to 2^lp.
+     For example, for 32-bit (4 bytes) periodical data you can use lp=2. Often it's
+     better to set lc=0, if you change lp switch.
 
 pb - The number of pos bits (low bits of current position).
      It can be in the range from 0 to 4. The default value is 2.
-     The pb switch is intended for periodical data when the period is equal
-2^pb.
+     The pb switch is intended for periodical data when the period is equal 2^pb.
 
 fb - Word size (the number of fast bytes).
      It can be in the range from 5 to 273. The default value is 32.
@@ -95,17 +93,15 @@ Returns:
   SZ_ERROR_THREAD     - errors in multithreading functions (only for Mt version)
 */
 
-MY_STDAPI LzmaCompress(unsigned char *dest, size_t *destLen,
-                       const unsigned char *src, size_t srcLen,
-                       unsigned char *outProps,
-                       size_t *outPropsSize, /* *outPropsSize must be = 5 */
-                       int level,            /* 0 <= level <= 9, default = 5 */
-                       unsigned dictSize,    /* default = (1 << 24) */
-                       int lc,               /* 0 <= lc <= 8, default = 3  */
-                       int lp,               /* 0 <= lp <= 4, default = 0  */
-                       int pb,               /* 0 <= pb <= 4, default = 2  */
-                       int fb,               /* 5 <= fb <= 273, default = 32 */
-                       int numThreads        /* 1 or 2, default = 2 */
+MY_STDAPI LzmaCompress(unsigned char *dest, size_t *destLen, const unsigned char *src, size_t srcLen,
+    unsigned char *outProps, size_t *outPropsSize, /* *outPropsSize must be = 5 */
+    int level, /* 0 <= level <= 9, default = 5 */
+    unsigned dictSize, /* default = (1 << 24) */
+    int lc, /* 0 <= lc <= 8, default = 3  */
+    int lp, /* 0 <= lp <= 4, default = 0  */
+    int pb, /* 0 <= pb <= 4, default = 2  */
+    int fb, /* 5 <= fb <= 273, default = 32 */
+    int numThreads /* 1 or 2, default = 2 */
 );
 
 /*
@@ -127,9 +123,8 @@ Returns:
   SZ_ERROR_INPUT_EOF   - it needs more bytes in input buffer (src)
 */
 
-MY_STDAPI LzmaUncompress(unsigned char *dest, size_t *destLen,
-                         const unsigned char *src, SizeT *srcLen,
-                         const unsigned char *props, size_t propsSize);
+MY_STDAPI LzmaUncompress(unsigned char *dest, size_t *destLen, const unsigned char *src, SizeT *srcLen,
+    const unsigned char *props, size_t propsSize);
 
 EXTERN_C_END
 

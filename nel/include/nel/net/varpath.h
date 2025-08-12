@@ -19,27 +19,35 @@
 
 #include "nel/misc/types_nl.h"
 
-class CVarPath {
+class CVarPath
+{
 public:
-  CVarPath(const std::string &raw) : RawVarPath(raw) { decode(); }
+	CVarPath(const std::string &raw)
+	    : RawVarPath(raw)
+	{
+		decode();
+	}
 
-  void decode();
+	void decode();
 
-  std::vector<std::pair<std::string, std::string>> Destination;
+	std::vector<std::pair<std::string, std::string>> Destination;
 
-  void display();
+	void display();
 
-  /// returns true if there's no more . in the path
-  bool isFinal();
+	/// returns true if there's no more . in the path
+	bool isFinal();
 
-  bool empty() { return Destination.empty(); }
+	bool empty()
+	{
+		return Destination.empty();
+	}
 
 private:
-  std::string getToken();
+	std::string getToken();
 
-  std::string RawVarPath;
+	std::string RawVarPath;
 
-  uint32 TokenPos;
+	uint32 TokenPos;
 };
 
 #endif // NL_VARPATH_H

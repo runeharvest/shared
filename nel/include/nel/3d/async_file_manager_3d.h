@@ -20,9 +20,9 @@
 #ifndef NL_ASYNC_FILE_MANAGER_3D_H
 #define NL_ASYNC_FILE_MANAGER_3D_H
 
-#include "nel/misc/async_file_manager.h"
-#include "nel/misc/thread.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/thread.h"
+#include "nel/misc/async_file_manager.h"
 
 namespace NL3D {
 
@@ -38,105 +38,104 @@ class CTextureFile;
  * \author Nevrax France
  * \date 2002
  */
-class CAsyncFileManager3D {
+class CAsyncFileManager3D
+{
 
-  NLMISC_SAFE_RELEASABLE_SINGLETON_DECL(CAsyncFileManager3D);
-  CAsyncFileManager3D();
+	NLMISC_SAFE_RELEASABLE_SINGLETON_DECL(CAsyncFileManager3D);
+	CAsyncFileManager3D();
 
 public:
-  //	static CAsyncFileManager3D &getInstance (); // Must be called instead of
-  //constructing the object
-  static void terminate(); // release singleton
+	//	static CAsyncFileManager3D &getInstance (); // Must be called instead of constructing the object
+	static void terminate(); // release singleton
 
-  void loadMesh(const std::string &sMeshName, IShape **ppShp, IDriver *pDriver,
-                const NLMISC::CVector &position, uint textureSlot);
-  bool cancelLoadMesh(const std::string &sMeshName);
+	void loadMesh(const std::string &sMeshName, IShape **ppShp, IDriver *pDriver, const NLMISC::CVector &position, uint textureSlot);
+	bool cancelLoadMesh(const std::string &sMeshName);
 
-  void loadIG(const std::string &igName, CInstanceGroup **ppIG);
-  void loadIGUser(const std::string &igName, UInstanceGroup **ppIG);
+	void loadIG(const std::string &igName, CInstanceGroup **ppIG);
+	void loadIGUser(const std::string &igName, UInstanceGroup **ppIG);
 
-  void loadTexture(CTextureFile *textureFile, bool *pSgn,
-                   const NLMISC::CVector &position);
-  bool cancelLoadTexture(CTextureFile *textFile);
+	void loadTexture(CTextureFile *textureFile, bool *pSgn, const NLMISC::CVector &position);
+	bool cancelLoadTexture(CTextureFile *textFile);
 
-  // Do not use these methods with the bigfile manager
-  void loadFile(const std::string &fileName, uint8 **pPtr);
-  void loadFiles(const std::vector<std::string> &vFileNames,
-                 const std::vector<uint8 **> &vPtrs);
+	// Do not use these methods with the bigfile manager
+	void loadFile(const std::string &fileName, uint8 **pPtr);
+	void loadFiles(const std::vector<std::string> &vFileNames, const std::vector<uint8 **> &vPtrs);
 
-  void signal(bool *pSgn); // Signal a end of loading for a group of "mesh or
-                           // file" added
-  void cancelSignal(bool *pSgn);
+	void signal(bool *pSgn); // Signal a end of loading for a group of "mesh or file" added
+	void cancelSignal(bool *pSgn);
 
 private:
-  //	CAsyncFileManager3D (); // Singleton mode -> access it with the
-  //getInstance function
+	//	CAsyncFileManager3D (); // Singleton mode -> access it with the getInstance function
 
-  //	static CAsyncFileManager3D *_Singleton;
+	//	static CAsyncFileManager3D *_Singleton;
 
-  friend class CLoadMeshCancel;
-  friend class CLoadTextureCancel;
+	friend class CLoadMeshCancel;
+	friend class CLoadTextureCancel;
 
-  // All the tasks
-  // -------------
+	// All the tasks
+	// -------------
 
-  // Load a .shape
-  class CMeshLoad : public NLMISC::IRunnablePos {
-    IShape **_ppShp;
-    IDriver *_pDriver;
-    uint _SelectedTexture;
+	// Load a .shape
+	class CMeshLoad : public NLMISC::IRunnablePos
+	{
+		IShape **_ppShp;
+		IDriver *_pDriver;
+		uint _SelectedTexture;
 
-  public:
-    std::string MeshName;
+	public:
+		std::string MeshName;
 
-  public:
-    CMeshLoad(const std::string &meshName, IShape **ppShp, IDriver *pDriver,
-              const NLMISC::CVector &position, uint selectedTexture);
-    void run(void);
-    void getName(std::string &result) const;
-  };
+	public:
+		CMeshLoad(const std::string &meshName, IShape **ppShp, IDriver *pDriver, const NLMISC::CVector &position, uint selectedTexture);
+		void run(void);
+		void getName(std::string &result) const;
+	};
 
-  // Load a .ig
-  class CIGLoad : public NLMISC::IRunnable {
-    std::string _IGName;
-    CInstanceGroup **_ppIG;
+	// Load a .ig
+	class CIGLoad : public NLMISC::IRunnable
+	{
+		std::string _IGName;
+		CInstanceGroup **_ppIG;
 
-  public:
-    CIGLoad(const std::string &meshName, CInstanceGroup **ppIG);
-    void run(void);
-    void getName(std::string &result) const;
-  };
+	public:
+		CIGLoad(const std::string &meshName, CInstanceGroup **ppIG);
+		void run(void);
+		void getName(std::string &result) const;
+	};
 
-  // Load a .ig User Interface
-  class CIGLoadUser : public NLMISC::IRunnable {
-    std::string _IGName;
-    UInstanceGroup **_ppIG;
+	// Load a .ig User Interface
+	class CIGLoadUser : public NLMISC::IRunnable
+	{
+		std::string _IGName;
+		UInstanceGroup **_ppIG;
 
-  public:
-    CIGLoadUser(const std::string &meshName, UInstanceGroup **ppIG);
-    void run(void);
-    void getName(std::string &result) const;
-  };
+	public:
+		CIGLoadUser(const std::string &meshName, UInstanceGroup **ppIG);
+		void run(void);
+		void getName(std::string &result) const;
+	};
 
-  // Load a texture
-  class CTextureLoad : public NLMISC::IRunnablePos {
-  public:
-    CTextureFile *TextureFile;
-    bool *Signal;
+	// Load a texture
+	class CTextureLoad : public NLMISC::IRunnablePos
+	{
+	public:
+		CTextureFile *TextureFile;
+		bool *Signal;
 
-  public:
-    CTextureLoad(CTextureFile *textureFile, bool *psgn,
-                 const NLMISC::CVector &position)
-        : TextureFile(textureFile), Signal(psgn) {
-      Position = position;
-    }
+	public:
+		CTextureLoad(CTextureFile *textureFile, bool *psgn, const NLMISC::CVector &position)
+		    : TextureFile(textureFile)
+		    , Signal(psgn)
+		{
+			Position = position;
+		}
 
-    void run();
-    void getName(std::string &result) const;
-  };
+		void run();
+		void getName(std::string &result) const;
+	};
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_ASYNC_FILE_MANAGER_3D_H
 

@@ -33,20 +33,21 @@ int controlsInit = FALSE;
 static char THIS_FILE[] = __FILE__;
 #endif
 
-class CMfcdllApp : public CWinApp {
+class CMfcdllApp : public CWinApp
+{
 public:
-  CMfcdllApp();
-  virtual BOOL InitInstance();
-  // Overrides
-  // ClassWizard generated virtual function overrides
-  //{{AFX_VIRTUAL(CMfcdllApp)
-  //}}AFX_VIRTUAL
+	CMfcdllApp();
+	virtual BOOL InitInstance();
+	// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CMfcdllApp)
+	//}}AFX_VIRTUAL
 
-  //{{AFX_MSG(CMfcdllApp)
-  // NOTE - the ClassWizard will add and remove member functions here.
-  //    DO NOT EDIT what you see in these blocks of generated code !
-  //}}AFX_MSG
-  DECLARE_MESSAGE_MAP()
+	//{{AFX_MSG(CMfcdllApp)
+	// NOTE - the ClassWizard will add and remove member functions here.
+	//    DO NOT EDIT what you see in these blocks of generated code !
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 };
 
 //
@@ -89,9 +90,10 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CMfcdllApp construction
 
-CMfcdllApp::CMfcdllApp() {
-  // TODO: add construction code here,
-  // Place all significant initialization in InitInstance
+CMfcdllApp::CMfcdllApp()
+{
+	// TODO: add construction code here,
+	// Place all significant initialization in InitInstance
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -99,59 +101,65 @@ CMfcdllApp::CMfcdllApp() {
 
 CMfcdllApp theApp;
 
-BOOL CMfcdllApp::InitInstance() {
-  hInstance = m_hInstance; // Hang on to this DLL's instance handle.
+BOOL CMfcdllApp::InitInstance()
+{
+	hInstance = m_hInstance; // Hang on to this DLL's instance handle.
 
-  if (!controlsInit) {
-    controlsInit = TRUE;
-    InitCustomControls(hInstance); // Initialize MAX's custom controls
-    InitCommonControls();          // Initialize Win95 controls
-  }
+	if (!controlsInit)
+	{
+		controlsInit = TRUE;
+		InitCustomControls(hInstance); // Initialize MAX's custom controls
+		InitCommonControls(); // Initialize Win95 controls
+	}
 
-  return (TRUE);
+	return (TRUE);
 }
 
 // This function returns a string that describes the DLL and where the user
 // could purchase the DLL if they don't have it.
-__declspec(dllexport) const TCHAR *LibDescription() {
-  AFX_MANAGE_STATE(AfxGetStaticModuleState());
+__declspec(dllexport) const TCHAR *LibDescription()
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-  return GetString(IDS_LIBDESCRIPTION);
+	return GetString(IDS_LIBDESCRIPTION);
 }
 
 // This function returns the number of plug-in classes this DLL
 // TODO: Must change this number when adding a new class
-__declspec(dllexport) int LibNumberClasses() {
-  AFX_MANAGE_STATE(AfxGetStaticModuleState());
+__declspec(dllexport) int LibNumberClasses()
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-  return 1;
+	return 1;
 }
 
 // This function returns the number of plug-in classes this DLL
-__declspec(dllexport) ClassDesc *LibClassDesc(int i) {
-  AFX_MANAGE_STATE(AfxGetStaticModuleState());
+__declspec(dllexport) ClassDesc *LibClassDesc(int i)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-  switch (i) {
-  case 0:
-    return GetTile_editDesc();
-  default:
-    return 0;
-  }
+	switch (i)
+	{
+	case 0: return GetTile_editDesc();
+	default: return 0;
+	}
 }
 
 // This function returns a pre-defined constant indicating the version of
 // the system under which it was compiled.  It is used to allow the system
 // to catch obsolete DLLs.
-__declspec(dllexport) ULONG LibVersion() {
-  AFX_MANAGE_STATE(AfxGetStaticModuleState());
+__declspec(dllexport) ULONG LibVersion()
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-  return VERSION_3DSMAX;
+	return VERSION_3DSMAX;
 }
 
-TCHAR *GetString(int id) {
-  static TCHAR buf[256];
+TCHAR *GetString(int id)
+{
+	static TCHAR buf[256];
 
-  if (hInstance)
-    return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : NULL;
-  return NULL;
+	if (hInstance)
+		return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : NULL;
+	return NULL;
 }

@@ -16,8 +16,8 @@
 
 #include "std3d.h"
 
-#include "nel/3d/mesh_block_manager.h"
 #include "nel/3d/mesh_geom.h"
+#include "nel/3d/mesh_block_manager.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -26,20 +26,23 @@
 namespace NL3D {
 
 // ***************************************************************************
-IMeshGeom::IMeshGeom() {
-  _RootInstanceId = -1;
-  _MeshBlockManager = NULL;
-  _MeshVBHeapId = 0;
-  _MeshVBHeapNumVertices = 0;
+IMeshGeom::IMeshGeom()
+{
+	_RootInstanceId = -1;
+	_MeshBlockManager = NULL;
+	_MeshVBHeapId = 0;
+	_MeshVBHeapNumVertices = 0;
 }
 
 // ***************************************************************************
-IMeshGeom::~IMeshGeom() {
-  // If still have a VBHeap data in the manager, must free it.
-  if (_MeshVBHeapId) {
-    nlassert(_MeshBlockManager);
-    _MeshBlockManager->freeMeshVBHeap(this);
-  }
+IMeshGeom::~IMeshGeom()
+{
+	// If still have a VBHeap data in the manager, must free it.
+	if (_MeshVBHeapId)
+	{
+		nlassert(_MeshBlockManager);
+		_MeshBlockManager->freeMeshVBHeap(this);
+	}
 }
 
-} // namespace NL3D
+} // NL3D

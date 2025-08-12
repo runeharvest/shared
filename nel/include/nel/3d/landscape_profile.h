@@ -17,8 +17,8 @@
 #ifndef NL_LANDSCAPE_PROFILE_H
 #define NL_LANDSCAPE_PROFILE_H
 
-#include "nel/3d/tessellation.h"
 #include "nel/misc/types_nl.h"
+#include "nel/3d/tessellation.h"
 
 #ifdef NL_NO_DEBUG
 #undef NL3D_PROFILE_LAND
@@ -59,7 +59,7 @@ extern sint ProfNFar1SetupMaterial;
 extern sint ProfNPatchRdrFar0;
 extern sint ProfNPatchRdrFar1;
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_LANDSCAPE_PROFILE_H
 

@@ -40,105 +40,107 @@
 #define MAX_LENGTH_GROUP 25
 
 /////////////////////////////////////////////////////////////////////////////
-// Browse dialog : contient les boutons de parametres et la fenetre des textures
-// (TileView)
+// Browse dialog : contient les boutons de parametres et la fenetre des textures (TileView)
 
 #define EDGEFILE_EXT ".edge"
 
-class Browse : public CDialog {
-  // Construction
+class Browse : public CDialog
+{
+	// Construction
 public:
-  Browse(int nland, CWnd *pParent = NULL); // standard constructor
-  void Init();
+	Browse(int nland, CWnd *pParent = NULL); // standard constructor
+	void Init();
 
-  void LoadInThread(void);
-  static unsigned long __stdcall MyControllingFunction(void *pParam);
-  void UpdateAll(void);
-  //	TileCtrl m_ctrl;
+	void LoadInThread(void);
+	static unsigned long __stdcall MyControllingFunction(void *pParam);
+	void UpdateAll(void);
+	//	TileCtrl m_ctrl;
 
-  // my data
-  RECT minpos;            // position minimum de la fenetre
-  int border_x, border_y; // taille de la bordure de la fenetre tile_ctrl a
-                          // droite et en bas
-  int oldsel;
-  RECT last_sel;
-  int selection;
-  int lbutton;
-  int control;
-  CPoint OriginalPos;
-  int land;
-  void OnDestroy();
-  void UpdateFlags();
-  void Flags(int flagNumber, bool value);
+	// my data
+	RECT minpos; // position minimum de la fenetre
+	int border_x, border_y; // taille de la bordure de la fenetre tile_ctrl a droite et en bas
+	int oldsel;
+	RECT last_sel;
+	int selection;
+	int lbutton;
+	int control;
+	CPoint OriginalPos;
+	int land;
+	void OnDestroy();
+	void UpdateFlags();
+	void Flags(int flagNumber, bool value);
 
-  //	listgroup theListGroup;
+	//	listgroup theListGroup;
 
-  // Dialog Data
-  //{{AFX_DATA(Browse)
-  enum { IDD = IDD_BROWSER };
-  int m_128x128;
-  CTView m_ctrl;
-  CStatic m_bmpsel;
-  CButton m_infotexte;
-  CButton m_rb_zoom1;
-  CButton m_rb_num;
-  CButton m_rb_jour;
-  int SubGroup0;
-  int SubGroup1;
-  int SubGroup2;
-  int SubGroup3;
-  int SubGroup4;
-  int SubGroup5;
-  int SubGroup6;
-  int SubGroup7;
-  int SubGroup10;
-  int SubGroup11;
-  int SubGroup8;
-  int SubGroup9;
-  int Oriented;
-  //}}AFX_DATA
+	// Dialog Data
+	//{{AFX_DATA(Browse)
+	enum
+	{
+		IDD = IDD_BROWSER
+	};
+	int m_128x128;
+	CTView m_ctrl;
+	CStatic m_bmpsel;
+	CButton m_infotexte;
+	CButton m_rb_zoom1;
+	CButton m_rb_num;
+	CButton m_rb_jour;
+	int SubGroup0;
+	int SubGroup1;
+	int SubGroup2;
+	int SubGroup3;
+	int SubGroup4;
+	int SubGroup5;
+	int SubGroup6;
+	int SubGroup7;
+	int SubGroup10;
+	int SubGroup11;
+	int SubGroup8;
+	int SubGroup9;
+	int Oriented;
+	//}}AFX_DATA
 
-  // Overrides
-  // ClassWizard generated virtual function overrides
-  //{{AFX_VIRTUAL(Browse)
+	// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(Browse)
 protected:
-  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
-  virtual BOOL PreCreateWindow(CREATESTRUCT &cs);
-  virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
-  //}}AFX_VIRTUAL
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	virtual BOOL PreCreateWindow(CREATESTRUCT &cs);
+	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	//}}AFX_VIRTUAL
 
-  // Implementation
+	// Implementation
 protected:
-  // Generated message map functions
-  //{{AFX_MSG(Browse)
-  afx_msg void OnSize(UINT nType, int cx, int cy);
-  afx_msg void OnAlpha();
-  afx_msg void OnChangeVariety();
-  afx_msg void OnJour();
-  afx_msg void OnNuit();
-  afx_msg void OnNum();
-  afx_msg void OnCancel();
-  afx_msg void OnOk();
-  afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
-  afx_msg void OnSelchangeListtype();
-  afx_msg void OnUpdateTiles();
-  afx_msg void OnBatchLoad();
-  afx_msg void OnSubgroup0();
-  afx_msg void OnSubgroup1();
-  afx_msg void OnSubgroup2();
-  afx_msg void OnSubgroup3();
-  afx_msg void OnSubgroup4();
-  afx_msg void OnSubgroup5();
-  afx_msg void OnSubgroup6();
-  afx_msg void OnSubgroup7();
-  afx_msg void OnSubgroup8();
-  afx_msg void OnSubgroup9();
-  afx_msg void OnSubgroup10();
-  afx_msg void OnSubgroup11();
-  afx_msg void OnExportBorder();
-  afx_msg void OnImportBorder();
-  //}}AFX_MSG
-  DECLARE_MESSAGE_MAP()
+	// Generated message map functions
+	//{{AFX_MSG(Browse)
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnAlpha();
+	afx_msg void OnChangeVariety();
+	afx_msg void OnJour();
+	afx_msg void OnNuit();
+	afx_msg void OnNum();
+	afx_msg void OnCancel();
+	afx_msg void OnOk();
+	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnSelchangeListtype();
+	afx_msg void OnUpdateTiles();
+	afx_msg void OnBatchLoad();
+	afx_msg void OnSubgroup0();
+	afx_msg void OnSubgroup1();
+	afx_msg void OnSubgroup2();
+	afx_msg void OnSubgroup3();
+	afx_msg void OnSubgroup4();
+	afx_msg void OnSubgroup5();
+	afx_msg void OnSubgroup6();
+	afx_msg void OnSubgroup7();
+	afx_msg void OnSubgroup8();
+	afx_msg void OnSubgroup9();
+	afx_msg void OnSubgroup10();
+	afx_msg void OnSubgroup11();
+	afx_msg void OnExportBorder();
+	afx_msg void OnImportBorder();
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 };
 
 #endif // !defined(AFX_BROWSE_H__7C7A251D_86AF_4E56_8404_4B4073004C40__INCLUDED_)

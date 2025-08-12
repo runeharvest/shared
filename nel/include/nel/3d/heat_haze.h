@@ -17,9 +17,9 @@
 #ifndef NL_HEAT_HAZE_H
 #define NL_HEAT_HAZE_H
 
-#include "nel/3d/vertex_buffer.h"
-#include "nel/misc/smart_ptr.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/smart_ptr.h"
+#include "nel/3d/vertex_buffer.h"
 
 namespace NL3D {
 
@@ -35,13 +35,14 @@ class CScene;
  * \author Nevrax France
  * \date 2001
  */
-class CHeatHaze {
+class CHeatHaze
+{
 public:
-  // you must have setup effect2d before calling this
-  static void performHeatHaze(uint width, uint height, CScene &s, IDriver *drv);
+	// you must have setup effect2d before calling this
+	static void performHeatHaze(uint width, uint height, CScene &s, IDriver *drv);
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_HEAT_HAZE_H
 

@@ -131,11 +131,11 @@ typedef void *EGLClientBuffer;
 /* Reserved 0x3041-0x304F for additional config attributes */
 
 /* Config attribute values */
-#define EGL_SLOW_CONFIG 0x3050           /* EGL_CONFIG_CAVEAT value */
+#define EGL_SLOW_CONFIG 0x3050 /* EGL_CONFIG_CAVEAT value */
 #define EGL_NON_CONFORMANT_CONFIG 0x3051 /* EGL_CONFIG_CAVEAT value */
-#define EGL_TRANSPARENT_RGB 0x3052       /* EGL_TRANSPARENT_TYPE value */
-#define EGL_RGB_BUFFER 0x308E            /* EGL_COLOR_BUFFER_TYPE value */
-#define EGL_LUMINANCE_BUFFER 0x308F      /* EGL_COLOR_BUFFER_TYPE value */
+#define EGL_TRANSPARENT_RGB 0x3052 /* EGL_TRANSPARENT_TYPE value */
+#define EGL_RGB_BUFFER 0x308E /* EGL_COLOR_BUFFER_TYPE value */
+#define EGL_LUMINANCE_BUFFER 0x308F /* EGL_COLOR_BUFFER_TYPE value */
 
 /* More config attribute values, for EGL_TEXTURE_FORMAT */
 #define EGL_NO_TEXTURE 0x305C
@@ -144,20 +144,18 @@ typedef void *EGLClientBuffer;
 #define EGL_TEXTURE_2D 0x305F
 
 /* Config attribute mask bits */
-#define EGL_PBUFFER_BIT 0x0001                 /* EGL_SURFACE_TYPE mask bits */
-#define EGL_PIXMAP_BIT 0x0002                  /* EGL_SURFACE_TYPE mask bits */
-#define EGL_WINDOW_BIT 0x0004                  /* EGL_SURFACE_TYPE mask bits */
-#define EGL_VG_COLORSPACE_LINEAR_BIT 0x0020    /* EGL_SURFACE_TYPE mask bits */
-#define EGL_VG_ALPHA_FORMAT_PRE_BIT 0x0040     /* EGL_SURFACE_TYPE mask bits */
-#define EGL_MULTISAMPLE_RESOLVE_BOX_BIT 0x0200 /* EGL_SURFACE_TYPE mask bits   \
-                                                */
-#define EGL_SWAP_BEHAVIOR_PRESERVED_BIT 0x0400 /* EGL_SURFACE_TYPE mask bits   \
-                                                */
+#define EGL_PBUFFER_BIT 0x0001 /* EGL_SURFACE_TYPE mask bits */
+#define EGL_PIXMAP_BIT 0x0002 /* EGL_SURFACE_TYPE mask bits */
+#define EGL_WINDOW_BIT 0x0004 /* EGL_SURFACE_TYPE mask bits */
+#define EGL_VG_COLORSPACE_LINEAR_BIT 0x0020 /* EGL_SURFACE_TYPE mask bits */
+#define EGL_VG_ALPHA_FORMAT_PRE_BIT 0x0040 /* EGL_SURFACE_TYPE mask bits */
+#define EGL_MULTISAMPLE_RESOLVE_BOX_BIT 0x0200 /* EGL_SURFACE_TYPE mask bits */
+#define EGL_SWAP_BEHAVIOR_PRESERVED_BIT 0x0400 /* EGL_SURFACE_TYPE mask bits */
 
-#define EGL_OPENGL_ES_BIT 0x0001  /* EGL_RENDERABLE_TYPE mask bits */
-#define EGL_OPENVG_BIT 0x0002     /* EGL_RENDERABLE_TYPE mask bits */
+#define EGL_OPENGL_ES_BIT 0x0001 /* EGL_RENDERABLE_TYPE mask bits */
+#define EGL_OPENVG_BIT 0x0002 /* EGL_RENDERABLE_TYPE mask bits */
 #define EGL_OPENGL_ES2_BIT 0x0004 /* EGL_RENDERABLE_TYPE mask bits */
-#define EGL_OPENGL_BIT 0x0008     /* EGL_RENDERABLE_TYPE mask bits */
+#define EGL_OPENGL_BIT 0x0008 /* EGL_RENDERABLE_TYPE mask bits */
 
 /* QueryString targets */
 #define EGL_VENDOR 0x3053
@@ -187,12 +185,12 @@ typedef void *EGLClientBuffer;
 #define EGL_SINGLE_BUFFER 0x3085
 
 /* OpenVG color spaces */
-#define EGL_VG_COLORSPACE_sRGB 0x3089   /* EGL_VG_COLORSPACE value */
+#define EGL_VG_COLORSPACE_sRGB 0x3089 /* EGL_VG_COLORSPACE value */
 #define EGL_VG_COLORSPACE_LINEAR 0x308A /* EGL_VG_COLORSPACE value */
 
 /* OpenVG alpha formats */
 #define EGL_VG_ALPHA_FORMAT_NONPRE 0x308B /* EGL_ALPHA_FORMAT value */
-#define EGL_VG_ALPHA_FORMAT_PRE 0x308C    /* EGL_ALPHA_FORMAT value */
+#define EGL_VG_ALPHA_FORMAT_PRE 0x308C /* EGL_ALPHA_FORMAT value */
 
 /* Constant scale factor by which fractional display resolutions &
  * aspect ratio are scaled when queried as integer values.
@@ -216,8 +214,7 @@ typedef void *EGLClientBuffer;
 #define EGL_CONTEXT_CLIENT_VERSION 0x3098
 
 /* Multisample resolution behaviors */
-#define EGL_MULTISAMPLE_RESOLVE_DEFAULT                                        \
-  0x309A                                   /* EGL_MULTISAMPLE_RESOLVE value */
+#define EGL_MULTISAMPLE_RESOLVE_DEFAULT 0x309A /* EGL_MULTISAMPLE_RESOLVE value */
 #define EGL_MULTISAMPLE_RESOLVE_BOX 0x309B /* EGL_MULTISAMPLE_RESOLVE value */
 
 /* BindAPI/QueryAPI targets */
@@ -250,40 +247,30 @@ typedef void *EGLClientBuffer;
 EGLAPI EGLint EGLAPIENTRY eglGetError(void);
 
 EGLAPI EGLDisplay EGLAPIENTRY eglGetDisplay(EGLNativeDisplayType display_id);
-EGLAPI EGLBoolean EGLAPIENTRY eglInitialize(EGLDisplay dpy, EGLint *major,
-                                            EGLint *minor);
+EGLAPI EGLBoolean EGLAPIENTRY eglInitialize(EGLDisplay dpy, EGLint *major, EGLint *minor);
 EGLAPI EGLBoolean EGLAPIENTRY eglTerminate(EGLDisplay dpy);
 
 EGLAPI const char *EGLAPIENTRY eglQueryString(EGLDisplay dpy, EGLint name);
 
 EGLAPI EGLBoolean EGLAPIENTRY eglGetConfigs(EGLDisplay dpy, EGLConfig *configs,
-                                            EGLint config_size,
-                                            EGLint *num_config);
-EGLAPI EGLBoolean EGLAPIENTRY eglChooseConfig(EGLDisplay dpy,
-                                              const EGLint *attrib_list,
-                                              EGLConfig *configs,
-                                              EGLint config_size,
-                                              EGLint *num_config);
-EGLAPI EGLBoolean EGLAPIENTRY eglGetConfigAttrib(EGLDisplay dpy,
-                                                 EGLConfig config,
-                                                 EGLint attribute,
-                                                 EGLint *value);
+    EGLint config_size, EGLint *num_config);
+EGLAPI EGLBoolean EGLAPIENTRY eglChooseConfig(EGLDisplay dpy, const EGLint *attrib_list,
+    EGLConfig *configs, EGLint config_size,
+    EGLint *num_config);
+EGLAPI EGLBoolean EGLAPIENTRY eglGetConfigAttrib(EGLDisplay dpy, EGLConfig config,
+    EGLint attribute, EGLint *value);
 
-EGLAPI EGLSurface EGLAPIENTRY eglCreateWindowSurface(EGLDisplay dpy,
-                                                     EGLConfig config,
-                                                     EGLNativeWindowType win,
-                                                     const EGLint *attrib_list);
-EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(
-    EGLDisplay dpy, EGLConfig config, const EGLint *attrib_list);
-EGLAPI EGLSurface EGLAPIENTRY eglCreatePixmapSurface(EGLDisplay dpy,
-                                                     EGLConfig config,
-                                                     EGLNativePixmapType pixmap,
-                                                     const EGLint *attrib_list);
-EGLAPI EGLBoolean EGLAPIENTRY eglDestroySurface(EGLDisplay dpy,
-                                                EGLSurface surface);
-EGLAPI EGLBoolean EGLAPIENTRY eglQuerySurface(EGLDisplay dpy,
-                                              EGLSurface surface,
-                                              EGLint attribute, EGLint *value);
+EGLAPI EGLSurface EGLAPIENTRY eglCreateWindowSurface(EGLDisplay dpy, EGLConfig config,
+    EGLNativeWindowType win,
+    const EGLint *attrib_list);
+EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(EGLDisplay dpy, EGLConfig config,
+    const EGLint *attrib_list);
+EGLAPI EGLSurface EGLAPIENTRY eglCreatePixmapSurface(EGLDisplay dpy, EGLConfig config,
+    EGLNativePixmapType pixmap,
+    const EGLint *attrib_list);
+EGLAPI EGLBoolean EGLAPIENTRY eglDestroySurface(EGLDisplay dpy, EGLSurface surface);
+EGLAPI EGLBoolean EGLAPIENTRY eglQuerySurface(EGLDisplay dpy, EGLSurface surface,
+    EGLint attribute, EGLint *value);
 
 EGLAPI EGLBoolean EGLAPIENTRY eglBindAPI(EGLenum api);
 EGLAPI EGLenum EGLAPIENTRY eglQueryAPI(void);
@@ -293,40 +280,34 @@ EGLAPI EGLBoolean EGLAPIENTRY eglWaitClient(void);
 EGLAPI EGLBoolean EGLAPIENTRY eglReleaseThread(void);
 
 EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferFromClientBuffer(
-    EGLDisplay dpy, EGLenum buftype, EGLClientBuffer buffer, EGLConfig config,
-    const EGLint *attrib_list);
+    EGLDisplay dpy, EGLenum buftype, EGLClientBuffer buffer,
+    EGLConfig config, const EGLint *attrib_list);
 
-EGLAPI EGLBoolean EGLAPIENTRY eglSurfaceAttrib(EGLDisplay dpy,
-                                               EGLSurface surface,
-                                               EGLint attribute, EGLint value);
-EGLAPI EGLBoolean EGLAPIENTRY eglBindTexImage(EGLDisplay dpy,
-                                              EGLSurface surface,
-                                              EGLint buffer);
-EGLAPI EGLBoolean EGLAPIENTRY eglReleaseTexImage(EGLDisplay dpy,
-                                                 EGLSurface surface,
-                                                 EGLint buffer);
+EGLAPI EGLBoolean EGLAPIENTRY eglSurfaceAttrib(EGLDisplay dpy, EGLSurface surface,
+    EGLint attribute, EGLint value);
+EGLAPI EGLBoolean EGLAPIENTRY eglBindTexImage(EGLDisplay dpy, EGLSurface surface, EGLint buffer);
+EGLAPI EGLBoolean EGLAPIENTRY eglReleaseTexImage(EGLDisplay dpy, EGLSurface surface, EGLint buffer);
 
 EGLAPI EGLBoolean EGLAPIENTRY eglSwapInterval(EGLDisplay dpy, EGLint interval);
 
 EGLAPI EGLContext EGLAPIENTRY eglCreateContext(EGLDisplay dpy, EGLConfig config,
-                                               EGLContext share_context,
-                                               const EGLint *attrib_list);
+    EGLContext share_context,
+    const EGLint *attrib_list);
 EGLAPI EGLBoolean EGLAPIENTRY eglDestroyContext(EGLDisplay dpy, EGLContext ctx);
 EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay dpy, EGLSurface draw,
-                                             EGLSurface read, EGLContext ctx);
+    EGLSurface read, EGLContext ctx);
 
 EGLAPI EGLContext EGLAPIENTRY eglGetCurrentContext(void);
 EGLAPI EGLSurface EGLAPIENTRY eglGetCurrentSurface(EGLint readdraw);
 EGLAPI EGLDisplay EGLAPIENTRY eglGetCurrentDisplay(void);
 EGLAPI EGLBoolean EGLAPIENTRY eglQueryContext(EGLDisplay dpy, EGLContext ctx,
-                                              EGLint attribute, EGLint *value);
+    EGLint attribute, EGLint *value);
 
 EGLAPI EGLBoolean EGLAPIENTRY eglWaitGL(void);
 EGLAPI EGLBoolean EGLAPIENTRY eglWaitNative(EGLint engine);
-EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay dpy,
-                                             EGLSurface surface);
+EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay dpy, EGLSurface surface);
 EGLAPI EGLBoolean EGLAPIENTRY eglCopyBuffers(EGLDisplay dpy, EGLSurface surface,
-                                             EGLNativePixmapType target);
+    EGLNativePixmapType target);
 
 /* This is a generic function pointer type, whose name indicates it must
  * be cast to the proper type *and calling convention* before use.

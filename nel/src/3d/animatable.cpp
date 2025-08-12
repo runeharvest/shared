@@ -27,15 +27,12 @@ namespace NL3D {
 
 // ***************************************************************************
 
-sint IAnimatable::addValue(CChannelMixer *chanMixer, uint valueId,
-                           uint ownerValueId, const std::string &prefix,
-                           bool detail) {
-  nlassert(chanMixer);
-  return chanMixer->addChannel(prefix + getValueName(valueId), this,
-                               getValue(valueId), getDefaultTrack(valueId),
-                               valueId, ownerValueId, detail);
+sint IAnimatable::addValue(CChannelMixer *chanMixer, uint valueId, uint ownerValueId, const std::string &prefix, bool detail)
+{
+	nlassert(chanMixer);
+	return chanMixer->addChannel(prefix + getValueName(valueId), this, getValue(valueId), getDefaultTrack(valueId), valueId, ownerValueId, detail);
 }
 
 // ***************************************************************************
 
-} // namespace NL3D
+} // NL3D

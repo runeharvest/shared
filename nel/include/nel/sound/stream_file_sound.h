@@ -42,49 +42,45 @@ class CSourceMusicChannel;
  * \author Jan Boon (Kaetemi)
  * CStreamFileSound
  */
-class CStreamFileSound : public CStreamSound {
+class CStreamFileSound : public CStreamSound
+{
 public:
-  friend class CSourceMusicChannel;
+	friend class CSourceMusicChannel;
 
 public:
-  CStreamFileSound();
-  virtual ~CStreamFileSound();
+	CStreamFileSound();
+	virtual ~CStreamFileSound();
 
-  /// Get the type of the sound.
-  virtual TSOUND_TYPE getSoundType() { return SOUND_STREAM_FILE; }
+	/// Get the type of the sound.
+	virtual TSOUND_TYPE getSoundType() { return SOUND_STREAM_FILE; }
 
-  /// Load the sound parameters from georges' form
-  virtual void importForm(const std::string &filename,
-                          NLGEORGES::UFormElm &formRoot);
+	/// Load the sound parameters from georges' form
+	virtual void importForm(const std::string &filename, NLGEORGES::UFormElm &formRoot);
 
-  /// Used by the george sound plugin to check sound recursion (ie sound 'toto'
-  /// use sound 'titi' witch also use sound 'toto' ...).
-  virtual void getSubSoundList(
-      std::vector<std::pair<std::string, CSound *>> & /* subsounds */) const {}
+	/// Used by the george sound plugin to check sound recursion (ie sound 'toto' use sound 'titi' witch also use sound 'toto' ...).
+	virtual void getSubSoundList(std::vector<std::pair<std::string, CSound *>> & /* subsounds */) const { }
 
-  /// Serialize the sound data.
-  virtual void serial(NLMISC::IStream &s);
+	/// Serialize the sound data.
+	virtual void serial(NLMISC::IStream &s);
 
-  /// Return the length of the sound in ms
-  virtual uint32 getDuration() { return 0; }
+	/// Return the length of the sound in ms
+	virtual uint32 getDuration() { return 0; }
 
-  inline bool getAsync() { return m_Async; }
+	inline bool getAsync() { return m_Async; }
 
-  inline const std::string &getFilePath() { return m_FilePath; }
+	inline const std::string &getFilePath() { return m_FilePath; }
 
 private:
-  /// Used by CSourceMusicChannel to set the filePath and default settings on
-  /// other parameters.
-  void setMusicFilePath(const std::string &filePath, bool async = true,
-                        bool loop = false);
+	/// Used by CSourceMusicChannel to set the filePath and default settings on other parameters.
+	void setMusicFilePath(const std::string &filePath, bool async = true, bool loop = false);
 
 private:
-  CStreamFileSound(const CStreamFileSound &);
-  CStreamFileSound &operator=(const CStreamFileSound &);
+	CStreamFileSound(const CStreamFileSound &);
+	CStreamFileSound &operator=(const CStreamFileSound &);
 
 private:
-  bool m_Async;
-  std::string m_FilePath;
+	bool m_Async;
+	std::string m_FilePath;
 
 }; /* class CStreamFileSound */
 

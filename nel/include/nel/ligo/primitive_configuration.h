@@ -17,8 +17,8 @@
 #ifndef NL_PRIMITIVE_CONFIGURATION_H
 #define NL_PRIMITIVE_CONFIGURATION_H
 
-#include "nel/misc/rgba.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/rgba.h"
 #include <vector>
 
 // Forward declarations for libxml2
@@ -37,32 +37,33 @@ class IPrimitive;
  * \author Nevrax France
  * \date 2001
  */
-class CPrimitiveConfigurations {
+class CPrimitiveConfigurations
+{
 public:
-  // The name of the matching values
-  std::string Name;
+	// The name of the matching values
+	std::string Name;
 
-  // The configuration color
-  NLMISC::CRGBA Color;
+	// The configuration color
+	NLMISC::CRGBA Color;
 
-  // Matching pairs
-  class CMatchGroup {
-  public:
-    std::vector<std::pair<std::string, std::string>> Pairs;
-  };
+	// Matching pairs
+	class CMatchGroup
+	{
+	public:
+		std::vector<std::pair<std::string, std::string>> Pairs;
+	};
 
-  // The pair of name / value parameter to match
-  std::vector<CMatchGroup> MatchPairs;
+	// The pair of name / value parameter to match
+	std::vector<CMatchGroup> MatchPairs;
 
-  // Read from a xml tree
-  bool read(xmlNodePtr configurationNode, const char *filename,
-            const char *name, class CLigoConfig &config);
+	// Read from a xml tree
+	bool read(xmlNodePtr configurationNode, const char *filename, const char *name, class CLigoConfig &config);
 
-  // Test if this primitive belong this configuration
-  bool belong(const IPrimitive &primitive) const;
+	// Test if this primitive belong this configuration
+	bool belong(const IPrimitive &primitive) const;
 };
 
-} // namespace NLLIGO
+}
 
 #endif // NL_PRIMITIVE_CONFIGURATION_H
 

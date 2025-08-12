@@ -17,31 +17,31 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "select_string.h"
-#include "object_viewer.h"
 #include "std_afx.h"
+#include "object_viewer.h"
+#include "select_string.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CSelectString dialog
 
-CSelectString::CSelectString(const std::vector<std::string> &vectString,
-                             const std::string &title, CWnd *pParent,
-                             bool empty)
-    : CDialog(CSelectString::IDD, pParent) {
-  //{{AFX_DATA_INIT(CSelectString)
-  //}}AFX_DATA_INIT
-  Title = title;
-  Strings = vectString;
-  Selection = -1;
-  Empty = empty;
+CSelectString::CSelectString(const std::vector<std::string> &vectString, const std::string &title, CWnd *pParent, bool empty)
+    : CDialog(CSelectString::IDD, pParent)
+{
+	//{{AFX_DATA_INIT(CSelectString)
+	//}}AFX_DATA_INIT
+	Title = title;
+	Strings = vectString;
+	Selection = -1;
+	Empty = empty;
 }
 
-void CSelectString::DoDataExchange(CDataExchange *pDX) {
-  CDialog::DoDataExchange(pDX);
-  //{{AFX_DATA_MAP(CSelectString)
-  DDX_Control(pDX, IDEMPTY, EmptyCtrl);
-  DDX_Control(pDX, IDC_LIST, ListCtrl);
-  //}}AFX_DATA_MAP
+void CSelectString::DoDataExchange(CDataExchange *pDX)
+{
+	CDialog::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(CSelectString)
+	DDX_Control(pDX, IDEMPTY, EmptyCtrl);
+	DDX_Control(pDX, IDC_LIST, ListCtrl);
+	//}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(CSelectString, CDialog)
@@ -55,47 +55,52 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CSelectString message handlers
 
-void CSelectString::OnOK() {
-  // TODO: Add extra validation here
-  if (Selection != -1)
-    CDialog::OnOK();
-  else
-    CDialog::OnCancel();
+void CSelectString::OnOK()
+{
+	// TODO: Add extra validation here
+	if (Selection != -1)
+		CDialog::OnOK();
+	else
+		CDialog::OnCancel();
 }
 
-void CSelectString::OnDblclkList() {
-  // TODO: Add your control notification handler code here
-  OnSelchangeList();
-  OnOK();
+void CSelectString::OnDblclkList()
+{
+	// TODO: Add your control notification handler code here
+	OnSelchangeList();
+	OnOK();
 }
 
-BOOL CSelectString::OnInitDialog() {
-  CDialog::OnInitDialog();
+BOOL CSelectString::OnInitDialog()
+{
+	CDialog::OnInitDialog();
 
-  // Change title
-  SetWindowText(nlUtf8ToTStr(Title));
+	// Change title
+	SetWindowText(nlUtf8ToTStr(Title));
 
-  // Empty button ?
-  EmptyCtrl.ShowWindow(Empty ? SW_SHOW : SW_HIDE);
+	// Empty button ?
+	EmptyCtrl.ShowWindow(Empty ? SW_SHOW : SW_HIDE);
 
-  // Add string
-  for (uint s = 0; s < Strings.size(); s++)
-    ListCtrl.InsertString(-1, nlUtf8ToTStr(Strings[s]));
+	// Add string
+	for (uint s = 0; s < Strings.size(); s++)
+		ListCtrl.InsertString(-1, nlUtf8ToTStr(Strings[s]));
 
-  return TRUE; // return TRUE unless you set the focus to a control
-               // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CSelectString::OnSelchangeList() {
-  // Get selection
-  UpdateData();
-  Selection = ListCtrl.GetCurSel();
-  if (Selection == LB_ERR)
-    Selection = -1;
+void CSelectString::OnSelchangeList()
+{
+	// Get selection
+	UpdateData();
+	Selection = ListCtrl.GetCurSel();
+	if (Selection == LB_ERR)
+		Selection = -1;
 }
 
-void CSelectString::OnEmpty() {
-  // TODO: Add your control notification handler code here
-  Selection = -1;
-  CDialog::OnOK();
+void CSelectString::OnEmpty()
+{
+	// TODO: Add your control notification handler code here
+	Selection = -1;
+	CDialog::OnOK();
 }

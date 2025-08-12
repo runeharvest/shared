@@ -16,8 +16,8 @@
 
 #include "stdpch.h"
 
-#include "nel/misc/common.h"
 #include "nel/misc/debug.h"
+#include "nel/misc/common.h"
 #include "nel/misc/string_conversion.h"
 
 #include "mode_and_behaviour.h"
@@ -25,11 +25,8 @@
 using namespace std;
 
 namespace NLMISC {
-std::string toString(const MBEHAV::CBehaviour &b) {
-  return MBEHAV::behaviourToString(b.Behaviour) + " " +
-         NLMISC::toString(b.Data);
-}
-}; // namespace NLMISC
+std::string toString(const MBEHAV::CBehaviour &b) { return MBEHAV::behaviourToString(b.Behaviour) + " " + NLMISC::toString(b.Data); }
+};
 
 namespace MBEHAV {
 //
@@ -133,32 +130,26 @@ NL_STRING_CONVERSION_TABLE_ENTRY(RANGE_ATTACK)
 // Combat creature
 NL_STRING_CONVERSION_TABLE_ENTRY(CREATURE_ATTACK_0)
 NL_STRING_CONVERSION_TABLE_ENTRY(CREATURE_ATTACK_1)
-NL_END_STRING_CONVERSION_TABLE(EBehaviour, BehaviourConversion,
-                               UNKNOWN_BEHAVIOUR)
+NL_END_STRING_CONVERSION_TABLE(EBehaviour, BehaviourConversion, UNKNOWN_BEHAVIOUR)
 
 // conversion between mode and string
-EMode stringToMode(const std::string &str) {
-  return ModeConversion.fromString(str);
-}
+EMode stringToMode(const std::string &str) { return ModeConversion.fromString(str); }
 const string &modeToString(EMode mode) { return ModeConversion.toString(mode); }
 
 // conversion between behaviour and string
-EBehaviour stringToBehaviour(const std::string &str) {
-  return BehaviourConversion.fromString(str);
-}
-const std::string &behaviourToString(EBehaviour behav) {
-  return BehaviourConversion.toString(behav);
-}
+EBehaviour stringToBehaviour(const std::string &str) { return BehaviourConversion.fromString(str); }
+const std::string &behaviourToString(EBehaviour behav) { return BehaviourConversion.toString(behav); }
 
 //-----------------------------------------------
 // initMap :
 //-----------------------------------------------
-void initMap() {
-  //--------- EMOTE ----------//
-  for (uint i = EMOTE_BEGIN; i < EMOTE_END; ++i) {
-    BehaviourConversion.insert(
-        NLMISC::toString("EMOTE_%d", i - EMOTE_BEGIN).c_str(), (EBehaviour)i);
-  }
+void initMap()
+{
+	//--------- EMOTE ----------//
+	for (uint i = EMOTE_BEGIN; i < EMOTE_END; ++i)
+	{
+		BehaviourConversion.insert(NLMISC::toString("EMOTE_%d", i - EMOTE_BEGIN).c_str(), (EBehaviour)i);
+	}
 }
 
-}; // namespace MBEHAV
+}; // MBEHAV

@@ -30,11 +30,11 @@
  * \author Nevrax France
  * \date 2003
  */
-class CCrypt {
+class CCrypt
+{
 public:
-  /// Crypts password using salt
-  static std::string crypt(const std::string &password,
-                           const std::string &salt);
+	/// Crypts password using salt
+	static std::string crypt(const std::string &password, const std::string &salt);
 };
 
 #endif // NL_CRYPT_H

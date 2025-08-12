@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "param_block.h"
 #include <nel/misc/types_nl.h>
+#include "param_block.h"
 
 // STL includes
 
@@ -42,9 +42,14 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CParamBlock::CParamBlock(CScene *scene) : CReferenceTarget(scene) {}
+CParamBlock::CParamBlock(CScene *scene)
+    : CReferenceTarget(scene)
+{
+}
 
-CParamBlock::~CParamBlock() {}
+CParamBlock::~CParamBlock()
+{
+}
 
 } /* namespace BUILTIN */
 } /* namespace MAX */

@@ -20,8 +20,8 @@
 #ifndef NL_GROUP_MODAL_H
 #define NL_GROUP_MODAL_H
 
-#include "nel/gui/group_frame.h"
 #include "nel/misc/types_nl.h"
+#include "nel/gui/group_frame.h"
 
 namespace NLGUI {
 
@@ -32,48 +32,47 @@ namespace NLGUI {
  * \author Nevrax France
  * \date 2002
  */
-class CGroupModal : public CGroupFrame {
+class CGroupModal : public CGroupFrame
+{
 public:
-  DECLARE_UI_CLASS(CGroupModal)
+	DECLARE_UI_CLASS(CGroupModal)
 
-  bool SpawnOnMousePos : 1;
-  bool ExitClickOut : 1;
-  bool ExitClickL : 1;
-  bool ExitClickR : 1;
-  bool ForceInsideScreen : 1;
-  bool ExitKeyPushed : 1;
-  sint32 SpawnMouseX, SpawnMouseY;
-  std::string Category;
+	bool SpawnOnMousePos : 1;
+	bool ExitClickOut : 1;
+	bool ExitClickL : 1;
+	bool ExitClickR : 1;
+	bool ForceInsideScreen : 1;
+	bool ExitKeyPushed : 1;
+	sint32 SpawnMouseX, SpawnMouseY;
+	std::string Category;
 
-  std::string OnClickOut; // Launched when clicking out of the window, and
-                          // BEFORE a new control has been cpatured
-  std::string OnClickOutParams;
-  std::string OnPostClickOut; // Launched when clicking out of the window, and
-                              // AFTER a new control has been captured
-  std::string OnPostClickOutParams;
+	std::string OnClickOut; // Launched when clicking out of the window, and BEFORE a new control has been cpatured
+	std::string OnClickOutParams;
+	std::string OnPostClickOut; // Launched when clicking out of the window, and AFTER a new control has been captured
+	std::string OnPostClickOutParams;
 
 public:
-  /// Constructor
-  CGroupModal(const TCtorParam &param);
+	/// Constructor
+	CGroupModal(const TCtorParam &param);
 
-  std::string getProperty(const std::string &name) const;
-  void setProperty(const std::string &name, const std::string &value);
-  xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
+	std::string getProperty(const std::string &name) const;
+	void setProperty(const std::string &name, const std::string &value);
+	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
 
-  virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
-  virtual void updateCoords();
-  void setBaseX(sint32 x) { _MouseDeltaX = x; }
-  void setBaseY(sint32 y) { _MouseDeltaY = y; }
+	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+	virtual void updateCoords();
+	void setBaseX(sint32 x) { _MouseDeltaX = x; }
+	void setBaseY(sint32 y) { _MouseDeltaY = y; }
 
-  REFLECT_EXPORT_START(CGroupModal, CGroupFrame)
-  REFLECT_EXPORT_END
+	REFLECT_EXPORT_START(CGroupModal, CGroupFrame)
+	REFLECT_EXPORT_END
 
-  // ******************
+	// ******************
 protected:
-  sint32 _MouseDeltaX, _MouseDeltaY;
+	sint32 _MouseDeltaX, _MouseDeltaY;
 };
 
-} // namespace NLGUI
+}
 
 #endif // NL_GROUP_MODAL_H
 

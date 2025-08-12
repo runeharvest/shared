@@ -24,9 +24,10 @@
 
 namespace NL3D {
 
-ULight *ULight::createLight() {
-  // return the new light
-  return new CLightUser;
+ULight *ULight::createLight()
+{
+	// return the new light
+	return new CLightUser;
 }
 
-} // namespace NL3D
+} // NL3D

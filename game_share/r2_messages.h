@@ -21,122 +21,143 @@
 #include <string>
 
 // nel
-#include "nel/misc/entity_id.h"
-#include "nel/misc/stream.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/stream.h"
+#include "nel/misc/entity_id.h"
 
 // game share
 #include "game_share/base_types.h"
 
-#include "object.h" //for CObjectSerializer
 #include "r2_types.h"
+#include "object.h" //for CObjectSerializer
 // #include "scenario.h"
 #include "small_string_manager.h"
 
 namespace R2 {
 
-class CAnimationProp {
+class CAnimationProp
+{
 public:
-  enum TNpcAnimationProperty {
+	enum TNpcAnimationProperty
+	{
 
-    Spawnable = 0x00000001,   // Object that are not in permanent content
-    Alive = 0x00000002,       // Plant, Herbivore, Carnivore, Cuthroat
-    Controlable = 0x00000004, // As Living without plants
-    Speaking = 0x00000008,    // Human
-    SpeakedAs = (1 << 4),     //
-    Controled = (1 << 5),
-    Grouped = (1 << 6)
+		Spawnable = 0x00000001, // Object that are not in permanent content
+		Alive = 0x00000002, // Plant, Herbivore, Carnivore, Cuthroat
+		Controlable = 0x00000004, // As Living without plants
+		Speaking = 0x00000008, // Human
+		SpeakedAs = (1 << 4), //
+		Controled = (1 << 5),
+		Grouped = (1 << 6)
 
-  };
+	};
 };
 
 // message sent by EGS to GPMS to set player flags
-class CMessageSetGPMSPlayerFlags {
+class CMessageSetGPMSPlayerFlags
+{
 public:
-  // ctor - with parameterised initialisation of all data fields
-  CMessageSetGPMSPlayerFlags(TDataSetRow playerIndex, bool limitSpeed)
-      : PlayerIndex(playerIndex), LimitSpeed(limitSpeed) {}
+	// ctor - with parameterised initialisation of all data fields
+	CMessageSetGPMSPlayerFlags(TDataSetRow playerIndex, bool limitSpeed)
+	    : PlayerIndex(playerIndex)
+	    , LimitSpeed(limitSpeed)
+	{
+	}
 
-  // ctor - default
-  CMessageSetGPMSPlayerFlags() { LimitSpeed = false; }
+	// ctor - default
+	CMessageSetGPMSPlayerFlags()
+	{
+		LimitSpeed = false;
+	}
 
-  // serial
-  void serial(NLMISC::IStream &stream) {
-    stream.serial(PlayerIndex);
-    stream.serial(LimitSpeed);
-  }
+	// serial
+	void serial(NLMISC::IStream &stream)
+	{
+		stream.serial(PlayerIndex);
+		stream.serial(LimitSpeed);
+	}
 
-  // public data
-  TDataSetRow PlayerIndex;
-  bool LimitSpeed;
+	// public data
+	TDataSetRow PlayerIndex;
+	bool LimitSpeed;
 };
 
-class CClientMessageAdventureUserConnection {
+class CClientMessageAdventureUserConnection
+{
 public:
-  CClientMessageAdventureUserConnection() {}
+	CClientMessageAdventureUserConnection()
+	{
+	}
 
-  void serial(NLMISC::IStream &stream) {
-    stream.serial(SessionId);
-    stream.serial(AiInstance);
-    stream.serial(EditSlotId);
-    stream.serial(HighLevel);
-    stream.serial(Mode);
-    stream.serial(MustTp);
-    stream.serial(InCache);
-    stream.serial(VersionName);
-    stream.serialEnum(SessionType);
-    stream.serial(InitialActIndex);
-    stream.serial(RingAccess);
-    stream.serial(IsSessionOwner);
-    stream.serial(EditSessionLink);
-  }
+	void serial(NLMISC::IStream &stream)
+	{
+		stream.serial(SessionId);
+		stream.serial(AiInstance);
+		stream.serial(EditSlotId);
+		stream.serial(HighLevel);
+		stream.serial(Mode);
+		stream.serial(MustTp);
+		stream.serial(InCache);
+		stream.serial(VersionName);
+		stream.serialEnum(SessionType);
+		stream.serial(InitialActIndex);
+		stream.serial(RingAccess);
+		stream.serial(IsSessionOwner);
+		stream.serial(EditSessionLink);
+	}
 
 public:
-  uint32 AiInstance;
-  TSessionId SessionId;
-  uint32 Mode; // 1 edition, 2 Test, 3 Animation
-  uint32 EditSlotId;
-  CObjectSerializerClient HighLevel;
-  bool MustTp;
-  bool InCache;
-  std::string VersionName;
-  TScenarioSessionType SessionType;
-  uint32 InitialActIndex;
-  std::string RingAccess;
-  bool IsSessionOwner;
-  TSessionId EditSessionLink;
+	uint32 AiInstance;
+	TSessionId SessionId;
+	uint32 Mode; // 1 edition, 2 Test, 3 Animation
+	uint32 EditSlotId;
+	CObjectSerializerClient HighLevel;
+	bool MustTp;
+	bool InCache;
+	std::string VersionName;
+	TScenarioSessionType SessionType;
+	uint32 InitialActIndex;
+	std::string RingAccess;
+	bool IsSessionOwner;
+	TSessionId EditSessionLink;
 };
 
-class CAnimationMessageAnimationStart {
+class CAnimationMessageAnimationStart
+{
 public:
-  enum TAnimationType { Test, Play, Unkown }; // when eTest finish reconnect
-
-public:
-  CAnimationMessageAnimationStart() { StartingAct = 1; }
-
-  CAnimationMessageAnimationStart(
-      const CAnimationMessageAnimationStart &other) {
-    NLMISC::CMemStream mem;
-    mem.serial(const_cast<CAnimationMessageAnimationStart &>(other));
-    mem.invert();
-    serial(mem);
-  }
-
-  void serial(NLMISC::IStream &stream) {
-    stream.serialCont(AnimatorCharId);
-    stream.serial(SessionId, RtData);
-    stream.serial(StartingAct);
-    stream.serial(AiInstance);
-    stream.serial(ScenarioHeader);
-  }
+	enum TAnimationType
+	{
+		Test,
+		Play,
+		Unkown
+	}; // when eTest finish reconnect
 
 public:
-  std::vector<uint32> AnimatorCharId;
-  TSessionId SessionId;
-  uint32 AiInstance;
-  CObjectSerializerServer RtData;
-  TScenarioHeaderSerializer ScenarioHeader;
-  uint32 StartingAct;
+	CAnimationMessageAnimationStart() { StartingAct = 1; }
+
+	CAnimationMessageAnimationStart(const CAnimationMessageAnimationStart &other)
+	{
+		NLMISC::CMemStream mem;
+		mem.serial(const_cast<CAnimationMessageAnimationStart &>(other));
+		mem.invert();
+		serial(mem);
+	}
+
+	void serial(NLMISC::IStream &stream)
+	{
+		stream.serialCont(AnimatorCharId);
+		stream.serial(SessionId, RtData);
+		stream.serial(StartingAct);
+		stream.serial(AiInstance);
+		stream.serial(ScenarioHeader);
+	}
+
+public:
+	std::vector<uint32> AnimatorCharId;
+	TSessionId SessionId;
+	uint32 AiInstance;
+	CObjectSerializerServer RtData;
+	TScenarioHeaderSerializer ScenarioHeader;
+	uint32 StartingAct;
 };
 
 } // namespace R2

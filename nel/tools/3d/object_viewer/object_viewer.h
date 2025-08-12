@@ -14,8 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined(                                                                  \
-    AFX_OBJECT_VIEWER_H__9B22CB84_1929_11D5_9CD4_0050DAC3A412__INCLUDED_)
+#if !defined(AFX_OBJECT_VIEWER_H__9B22CB84_1929_11D5_9CD4_0050DAC3A412__INCLUDED_)
 #define AFX_OBJECT_VIEWER_H__9B22CB84_1929_11D5_9CD4_0050DAC3A412__INCLUDED_
 
 #if _MSC_VER > 1000
@@ -23,54 +22,37 @@
 #endif // _MSC_VER > 1000
 
 #define REGKEY_OBJ_VIEW _T("Software\\Nevrax\\nel\\object_viewer")
-#define REGKEY_OBJ_VIEW_OPENGL_WND                                             \
-  _T("Software\\Nevrax\\nel\\object_viewer\\opengl_wnd")
-#define REGKEY_OBJ_VIEW_SCENE_DLG                                              \
-  _T("Software\\Nevrax\\nel\\object_viewer\\scene_dlg")
-#define REGKEY_OBJ_VIEW_ANIMATION_DLG                                          \
-  _T("Software\\Nevrax\\nel\\object_viewer\\animation_dlg")
-#define REGKEY_OBJ_VIEW_ANIMATION_SET_DLG                                      \
-  _T("Software\\Nevrax\\nel\\object_viewer\\animation_set_dlg")
-#define REGKEY_OBJ_VIEW_SLOT_DLG                                               \
-  _T("Software\\Nevrax\\nel\\object_viewer\\slot_dlg")
-#define REGKEY_OBJ_PARTICLE_DLG                                                \
-  _T("Software\\Nevrax\\nel\\object_viewer\\particle_dlg")
-#define REGKEY_OBJ_DAYNIGHT_DLG                                                \
-  _T("Software\\Nevrax\\nel\\object_viewer\\daynight_dlg")
-#define REGKEY_OBJ_WATERPOOL_DLG                                               \
-  _T("Software\\Nevrax\\nel\\object_viewer\\daynight_dlg")
-#define REGKEY_OBJ_VIEW_VEGETABLE_DLG                                          \
-  _T("Software\\Nevrax\\nel\\object_viewer\\vegetable_dlg")
-#define REGKEY_OBJ_GLOBAL_WIND_DLG                                             \
-  _T("Software\\Nevrax\\nel\\object_viewer\\global_wind_dlg")
-#define REGKEY_OBJ_SOUND_ANIM_DLG                                              \
-  _T("Software\\Nevrax\\nel\\object_viewer\\sound_anim_dlg")
-#define REGKEY_OBJ_LIGHT_GROUP_DLG                                             \
-  _T("Software\\Nevrax\\nel\\object_viewer\\light_group_dlg")
-#define REGKEY_CHOOSE_FRAME_DELAY_DLG                                          \
-  _T("Software\\Nevrax\\nel\\object_viewer\\choose_frame_delay_dlg")
-#define REGKEY_CHOOSE_BG_COLOR_DLG                                             \
-  _T("Software\\Nevrax\\nel\\object_viewer\\choose_bg_color_dlg")
-#define REGKEY_CHOOSE_SUN_COLOR_DLG                                            \
-  _T("Software\\Nevrax\\nel\\object_viewer\\choose_sun_color_dlg")
-#define REGKEY_SKELETON_SCALE_DLG                                              \
-  _T("Software\\Nevrax\\nel\\object_viewer\\skeleton_scale_dlg")
-#define REGKEY_TUNE_MRM_DLG                                                    \
-  _T("Software\\Nevrax\\nel\\object_viewer\\tune_mrm_dlg")
+#define REGKEY_OBJ_VIEW_OPENGL_WND _T("Software\\Nevrax\\nel\\object_viewer\\opengl_wnd")
+#define REGKEY_OBJ_VIEW_SCENE_DLG _T("Software\\Nevrax\\nel\\object_viewer\\scene_dlg")
+#define REGKEY_OBJ_VIEW_ANIMATION_DLG _T("Software\\Nevrax\\nel\\object_viewer\\animation_dlg")
+#define REGKEY_OBJ_VIEW_ANIMATION_SET_DLG _T("Software\\Nevrax\\nel\\object_viewer\\animation_set_dlg")
+#define REGKEY_OBJ_VIEW_SLOT_DLG _T("Software\\Nevrax\\nel\\object_viewer\\slot_dlg")
+#define REGKEY_OBJ_PARTICLE_DLG _T("Software\\Nevrax\\nel\\object_viewer\\particle_dlg")
+#define REGKEY_OBJ_DAYNIGHT_DLG _T("Software\\Nevrax\\nel\\object_viewer\\daynight_dlg")
+#define REGKEY_OBJ_WATERPOOL_DLG _T("Software\\Nevrax\\nel\\object_viewer\\daynight_dlg")
+#define REGKEY_OBJ_VIEW_VEGETABLE_DLG _T("Software\\Nevrax\\nel\\object_viewer\\vegetable_dlg")
+#define REGKEY_OBJ_GLOBAL_WIND_DLG _T("Software\\Nevrax\\nel\\object_viewer\\global_wind_dlg")
+#define REGKEY_OBJ_SOUND_ANIM_DLG _T("Software\\Nevrax\\nel\\object_viewer\\sound_anim_dlg")
+#define REGKEY_OBJ_LIGHT_GROUP_DLG _T("Software\\Nevrax\\nel\\object_viewer\\light_group_dlg")
+#define REGKEY_CHOOSE_FRAME_DELAY_DLG _T("Software\\Nevrax\\nel\\object_viewer\\choose_frame_delay_dlg")
+#define REGKEY_CHOOSE_BG_COLOR_DLG _T("Software\\Nevrax\\nel\\object_viewer\\choose_bg_color_dlg")
+#define REGKEY_CHOOSE_SUN_COLOR_DLG _T("Software\\Nevrax\\nel\\object_viewer\\choose_sun_color_dlg")
+#define REGKEY_SKELETON_SCALE_DLG _T("Software\\Nevrax\\nel\\object_viewer\\skeleton_scale_dlg")
+#define REGKEY_TUNE_MRM_DLG _T("Software\\Nevrax\\nel\\object_viewer\\tune_mrm_dlg")
 
-#include "animation_dlg.h"
-#include "animation_set_dlg.h"
-#include "main_dlg.h"
-#include "object_viewer_interface.h"
 #include "resource.h"
+#include "object_viewer_interface.h"
+#include "main_dlg.h"
+#include "animation_set_dlg.h"
+#include "animation_dlg.h"
 
 #include "nel/3d/animation_set.h"
 #include "nel/3d/channel_mixer.h"
-#include "nel/3d/cloud_scape.h"
-#include "nel/3d/event_mouse_listener.h"
-#include "nel/3d/font_manager.h"
-#include "nel/3d/light.h"
 #include "nel/3d/shape.h"
+#include "nel/3d/event_mouse_listener.h"
+#include "nel/3d/light.h"
+#include "nel/3d/font_manager.h"
+#include "nel/3d/cloud_scape.h"
 #include "nel/misc/event_listener.h"
 #include "nel/misc/stream.h"
 
@@ -84,7 +66,7 @@ class CTileVegetableDesc;
 class CLandscapeModel;
 class CVisualCollisionManager;
 class CVisualCollisionEntity;
-} // namespace NL3D
+}
 
 class CMainFrame;
 
@@ -106,591 +88,563 @@ class CTuneMrmDlg;
 // See object_viewer.cpp for the implementation of this class
 //
 
-class CObject_viewerApp : public CWinApp {
+class CObject_viewerApp : public CWinApp
+{
 public:
-  CObject_viewerApp();
+	CObject_viewerApp();
 
-  // Overrides
-  // ClassWizard generated virtual function overrides
-  //{{AFX_VIRTUAL(CObject_viewerApp)
-  //}}AFX_VIRTUAL
+	// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CObject_viewerApp)
+	//}}AFX_VIRTUAL
 
-  //{{AFX_MSG(CObject_viewerApp)
-  //}}AFX_MSG
-  DECLARE_MESSAGE_MAP()
+	//{{AFX_MSG(CObject_viewerApp)
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
-class CSlotInfo {
+class CSlotInfo
+{
 public:
-  CSlotInfo();
-  std::string Animation;
-  std::string Skeleton;
-  sint32 Offset;
-  sint32 StartTime;
-  sint32 EndTime;
-  float StartBlend;
-  float EndBlend;
-  float Smoothness;
-  float SpeedFactor;
-  sint32 ClampMode;
-  bool SkeletonInverted;
-  bool Enable;
+	CSlotInfo();
+	std::string Animation;
+	std::string Skeleton;
+	sint32 Offset;
+	sint32 StartTime;
+	sint32 EndTime;
+	float StartBlend;
+	float EndBlend;
+	float Smoothness;
+	float SpeedFactor;
+	sint32 ClampMode;
+	bool SkeletonInverted;
+	bool Enable;
 
-  // Serial
-  void serial(NLMISC::IStream &s);
+	// Serial
+	void serial(NLMISC::IStream &s);
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
-class CInstanceSave {
+class CInstanceSave
+{
 public:
-  CInstanceSave();
+	CInstanceSave();
 
-  // Play list of this object
-  std::vector<std::string> PlayList;
+	// Play list of this object
+	std::vector<std::string> PlayList;
 
-  // Slot info for this object
-  CSlotInfo SlotInfo[NL3D::CChannelMixer::NumAnimationSlot];
+	// Slot info for this object
+	CSlotInfo SlotInfo[NL3D::CChannelMixer::NumAnimationSlot];
 
-  // Camera info
-  NL3D::CCameraInfo CameraInfo;
+	// Camera info
+	NL3D::CCameraInfo CameraInfo;
 
-  // Camera ?
-  bool Camera;
+	// Camera ?
+	bool Camera;
 
-  // Input file
-  std::string ShapeFilename;
+	// Input file
+	std::string ShapeFilename;
 
-  // Skeleton id
-  uint32 SkeletonId;
+	// Skeleton id
+	uint32 SkeletonId;
 
-  // Bin bone name
-  std::string BindBoneName;
+	// Bin bone name
+	std::string BindBoneName;
 
-  // Is a skeleton
-  bool IsSkeleton;
+	// Is a skeleton
+	bool IsSkeleton;
 
-  // Animation input file
-  std::vector<std::string> AnimationFileName;
+	// Animation input file
+	std::vector<std::string> AnimationFileName;
 
-  // Skeleton weight input file
-  std::vector<std::string> SWTFileName;
+	// Skeleton weight input file
+	std::vector<std::string> SWTFileName;
 
-  // Serial
-  void serial(NLMISC::IStream &s);
+	// Serial
+	void serial(NLMISC::IStream &s);
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
-class CInstanceInfo {
+class CInstanceInfo
+{
 public:
-  CInstanceInfo();
-  ~CInstanceInfo();
+	CInstanceInfo();
+	~CInstanceInfo();
 
-  // Camera pointer
-  NL3D::CCamera *Camera;
+	// Camera pointer
+	NL3D::CCamera *Camera;
 
-  // Transform shape pointer
-  NL3D::CTransformShape *TransformShape;
+	// Transform shape pointer
+	NL3D::CTransformShape *TransformShape;
 
-  // Animation set of this instance
-  NL3D::CAnimationSet AnimationSet;
+	// Animation set of this instance
+	NL3D::CAnimationSet AnimationSet;
 
-  // Channel mixer of this instance
-  NL3D::CChannelMixer ChannelMixer;
+	// Channel mixer of this instance
+	NL3D::CChannelMixer ChannelMixer;
 
-  // True, must delete this shape
-  bool MustDelete;
+	// True, must delete this shape
+	bool MustDelete;
 
-  // Save information
-  CInstanceSave Saved;
+	// Save information
+	CInstanceSave Saved;
 
-  // The current playlist
-  NL3D::CAnimationPlaylist Playlist;
+	// The current playlist
+	NL3D::CAnimationPlaylist Playlist;
 
-  // Set an animation playlist
-  void setAnimationPlaylist(float frameRate);
+	// Set an animation playlist
+	void setAnimationPlaylist(float frameRate);
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
-class CObjectViewer : public IObjectViewer {
+class CObjectViewer : public IObjectViewer
+{
 public:
-  // Name of particle workspace, just used to save config file
-  std::string ParticleWorkspaceFilename;
-  friend class CMainFrame;
-  friend class CAnimationSetDlg;
+	// Name of particle workspace, just used to save config file
+	std::string ParticleWorkspaceFilename;
+	friend class CMainFrame;
+	friend class CAnimationSetDlg;
 
 public:
-  CObjectViewer();
-  virtual ~CObjectViewer();
+	CObjectViewer();
+	virtual ~CObjectViewer();
 
-  // Init the UI
-  bool initUI(HWND parent = NULL);
+	// Init the UI
+	bool initUI(HWND parent = NULL);
 
-  // Go
-  void go();
+	// Go
+	void go();
 
-  virtual bool isInstanceRunning() { return _InstanceRunning; }
+	virtual bool isInstanceRunning() { return _InstanceRunning; }
 
-  // Release the UI
-  void releaseUI();
+	// Release the UI
+	void releaseUI();
 
-  // Set single animtion.
-  void setSingleAnimation(NL3D::CAnimation *pAnim, const std::string &name,
-                          uint instance);
+	// Set single animtion.
+	void setSingleAnimation(NL3D::CAnimation *pAnim, const std::string &name, uint instance);
 
-  // Set automatic animation
-  void setAutoAnimation(NL3D::CAnimationSet *pAnimSet);
+	// Set automatic animation
+	void setAutoAnimation(NL3D::CAnimationSet *pAnimSet);
 
-  // Add a mesh
-  uint addMesh(NL3D::IShape *pMeshShape, const std::string &meshName,
-               uint skelIndex, const char *bindSkelName = NULL,
-               bool createInstance = true);
+	// Add a mesh
+	uint addMesh(NL3D::IShape *pMeshShape, const std::string &meshName, uint skelIndex, const char *bindSkelName = NULL, bool createInstance = true);
 
-  // Add a camera
-  uint addCamera(const NL3D::CCameraInfo &cameraInfo,
-                 const std::string &cameraName);
+	// Add a camera
+	uint addCamera(const NL3D::CCameraInfo &cameraInfo, const std::string &cameraName);
 
-  // Add a skel
-  uint addSkel(NL3D::IShape *pSkelShape, const std::string &skelName);
+	// Add a skel
+	uint addSkel(NL3D::IShape *pSkelShape, const std::string &skelName);
 
-  // remove all instances from the scene
-  void removeAllInstancesFromScene();
+	// remove all instances from the scene
+	void removeAllInstancesFromScene();
 
-  // Start / stop fxs (remanence for now..)
-  void enableFXs(bool enabled);
+	// Start / stop fxs (remanence for now..)
+	void enableFXs(bool enabled);
 
-  /// Force all the instances of the scene to use the given texture set (if
-  /// available)
-  void activateTextureSet(uint index);
+	/// Force all the instances of the scene to use the given texture set (if available)
+	void activateTextureSet(uint index);
 
-  /// Select random textures sets
-  void shuffleTextureSet();
+	/// Select random textures sets
+	void shuffleTextureSet();
 
-  // Load a mesh
-  bool loadMesh(std::vector<std::string> &meshFilename,
-                const std::string &skeleton = "");
+	// Load a mesh
+	bool loadMesh(std::vector<std::string> &meshFilename, const std::string &skeleton = "");
 
-  // Load an instance group
-  bool loadInstanceGroup(const std::string &igFilename);
+	// Load an instance group
+	bool loadInstanceGroup(const std::string &igFilename);
 
-  // Set ambient color
-  void setAmbientColor(const NLMISC::CRGBA &color);
+	// Set ambient color
+	void setAmbientColor(const NLMISC::CRGBA &color);
 
-  // Set ambient color
-  void setLight(unsigned char id, const NL3D::CLight &light);
+	// Set ambient color
+	void setLight(unsigned char id, const NL3D::CLight &light);
 
-  // Get edited object, 0xffffffff if no object edited
-  uint getEditedObject();
+	// Get edited object, 0xffffffff if no object edited
+	uint getEditedObject();
 
-  // Set edited object, 0xffffffff if no object edited
-  void setEditedObject(uint selected);
+	// Set edited object, 0xffffffff if no object edited
+	void setEditedObject(uint selected);
 
-  // Get an instance
-  CInstanceInfo *getInstance(uint instance);
+	// Get an instance
+	CInstanceInfo *getInstance(uint instance);
 
-  // Get the slot dialog
-  CMainDlg *getSlotDlg();
+	// Get the slot dialog
+	CMainDlg *getSlotDlg();
 
-  // Get number of instances
-  uint getNumInstance() const;
+	// Get number of instances
+	uint getNumInstance() const;
 
-  // Add an animation
-  void addAnimation(NL3D::CAnimation *anim, const std::string &filename,
-                    const std::string &name, uint instance);
+	// Add an animation
+	void addAnimation(NL3D::CAnimation *anim, const std::string &filename, const std::string &name, uint instance);
 
-  // Update all objects that depend on the animation set
-  void refreshAnimationListeners();
+	// Update all objects that depend on the animation set
+	void refreshAnimationListeners();
 
-  // Load a shape
-  void resetCamera();
+	// Load a shape
+	void resetCamera();
 
-  // get the mouse listener
-  NL3D::CEvent3dMouseListener &getMouseListener(void) { return _MouseListener; }
-  const NL3D::CEvent3dMouseListener &getMouseListener(void) const {
-    return _MouseListener;
-  }
+	// get the mouse listener
+	NL3D::CEvent3dMouseListener &getMouseListener(void) { return _MouseListener; }
+	const NL3D::CEvent3dMouseListener &getMouseListener(void) const { return _MouseListener; }
 
-  // get the particle dialog
-  CParticleDlg *getParticleDialog(void) const { return _ParticleDlg; }
+	// get the particle dialog
+	CParticleDlg *getParticleDialog(void) const { return _ParticleDlg; }
 
-  // get the frame delay dialog
-  CChooseFrameDelay *getFrameDelayDlg() const { return _ChooseFrameDelayDlg; }
+	// get the frame delay dialog
+	CChooseFrameDelay *getFrameDelayDlg() const { return _ChooseFrameDelayDlg; }
 
-  // Load animation
-  void loadAnimation(const std::string &fileName, uint instance);
+	// Load animation
+	void loadAnimation(const std::string &fileName, uint instance);
 
-  // Load a skeleton template
-  void loadSWT(const std::string &fileName, uint instance);
+	// Load a skeleton template
+	void loadSWT(const std::string &fileName, uint instance);
 
-  /// Not exported
-  // @{
+	/// Not exported
+	// @{
 
-  void setAnimTime(float animStart, float animEnd);
+	void setAnimTime(float animStart, float animEnd);
 
-  // Reset the slots
-  void resetSlots(uint instance);
+	// Reset the slots
+	void resetSlots(uint instance);
 
-  // Reinit and refill the channel mixer channels
-  void reinitChannels();
+	// Reinit and refill the channel mixer channels
+	void reinitChannels();
 
-  // Return the frame rate
-  float getFrameRate();
+	// Return the frame rate
+	float getFrameRate();
 
-  // Serial the config
-  void serial(NLMISC::IStream &f);
+	// Serial the config
+	void serial(NLMISC::IStream &f);
 
-  /// set the backgournd color
-  void setBackGroundColor(const NLMISC::CRGBA &col) { _BackGroundColor = col; }
+	/// set the backgournd color
+	void setBackGroundColor(const NLMISC::CRGBA &col) { _BackGroundColor = col; }
 
-  /// get the background color
-  NLMISC::CRGBA getBackGroundColor(void) { return _BackGroundColor; }
+	/// get the background color
+	NLMISC::CRGBA getBackGroundColor(void) { return _BackGroundColor; }
 
-  /// Get font manager
-  NL3D::CFontManager *getFontManager() { return &_FontManager; };
+	/// Get font manager
+	NL3D::CFontManager *getFontManager() { return &_FontManager; };
 
-  /// Get font generator
-  NL3D::CFontGenerator *getFontGenerator() { return _FontGenerator; };
-  // @}
+	/// Get font generator
+	NL3D::CFontGenerator *getFontGenerator() { return _FontGenerator; };
+	// @}
 
-  /** an interface for objects that want to be called during the loop
-   * First use : display of an optional bbox for a particle system
-   */
-  struct IMainLoopCallBack {
-    /// this will be called each time the main loop is processed
-    virtual void goPostRender() = 0;
-    virtual void goPreRender() = 0;
-  };
+	/** an interface for objects that want to be called during the loop
+	 * First use : display of an optional bbox for a particle system
+	 */
+	struct IMainLoopCallBack
+	{
+		/// this will be called each time the main loop is processed
+		virtual void goPostRender() = 0;
+		virtual void goPreRender() = 0;
+	};
 
-  /** add an object that will be notified each time a frame is processed
-   * \see removeMainLoopCallBack()
-   */
-  void registerMainLoopCallBack(IMainLoopCallBack *i);
+	/** add an object that will be notified each time a frame is processed
+	 * \see removeMainLoopCallBack()
+	 */
+	void registerMainLoopCallBack(IMainLoopCallBack *i);
 
-  /// remove an object that was registered with registerMainLoopCallBack()
-  void removeMainLoopCallBack(IMainLoopCallBack *i);
+	/// remove an object that was registered with registerMainLoopCallBack()
+	void removeMainLoopCallBack(IMainLoopCallBack *i);
 
-  /// set the lag in milliseconds between each frame; 0 is the default
-  void setFrameDelay(uint32 milliSec) { _FrameDelay = milliSec; }
+	/// set the lag in milliseconds between each frame; 0 is the default
+	void setFrameDelay(uint32 milliSec) { _FrameDelay = milliSec; }
 
-  /// get the frame delay in milliseconds
-  uint32 getFrameDelay() const { return _FrameDelay; }
+	/// get the frame delay in milliseconds
+	uint32 getFrameDelay() const { return _FrameDelay; }
 
-  /// eval sound tracks
-  void evalSoundTrack(float lastTime, float currentTime);
+	/// eval sound tracks
+	void evalSoundTrack(float lastTime, float currentTime);
 
-  /// Setup the playlist with the playlist
-  void setupPlaylist(float time);
+	/// Setup the playlist with the playlist
+	void setupPlaylist(float time);
 
-  /// Enable disable channels
-  void enableChannels();
+	/// Enable disable channels
+	void enableChannels();
 
-  /// Setup transform positions
-  void setupPositions();
+	/// Setup transform positions
+	void setupPositions();
 
-  /// Manage matrix increment
-  void addTransformation(NLMISC::CMatrix &current, NL3D::CAnimation *anim,
-                         float begin, float end, NL3D::ITrack *posTrack,
-                         NL3D::ITrack *rotquatTrack, NL3D::ITrack *nextPosTrack,
-                         NL3D::ITrack *nextRotquatTrack, bool removeLast);
+	/// Manage matrix increment
+	void addTransformation(NLMISC::CMatrix &current, NL3D::CAnimation *anim, float begin, float end, NL3D::ITrack *posTrack, NL3D::ITrack *rotquatTrack,
+	    NL3D::ITrack *nextPosTrack, NL3D::ITrack *nextRotquatTrack, bool removeLast);
 
-  /// inherited from CObjectViewerInterface
-  void setWaterPoolManager(NL3D::CWaterPoolManager &wpm) { _Wpm = &wpm; }
+	/// inherited from CObjectViewerInterface
+	void setWaterPoolManager(NL3D::CWaterPoolManager &wpm) { _Wpm = &wpm; }
 
-  NL3D::CWaterPoolManager &getWaterPoolManager() const { return *_Wpm; }
+	NL3D::CWaterPoolManager &getWaterPoolManager() const { return *_Wpm; }
 
-  // Reload textures
-  void reloadTextures();
+	// Reload textures
+	void reloadTextures();
 
-  /** inherited from CObjectViewerInterface
-   */
-  virtual uint addInstanceGroup(NL3D::CInstanceGroup *ig);
+	/** inherited from CObjectViewerInterface
+	 */
+	virtual uint addInstanceGroup(NL3D::CInstanceGroup *ig);
 
-  /** inherited from CObjectViewerInterface
-   */
-  virtual void setupSceneLightingSystem(bool enable,
-                                        const NLMISC::CVector &sunDir,
-                                        NLMISC::CRGBA sunAmbiant,
-                                        NLMISC::CRGBA sunDiffuse,
-                                        NLMISC::CRGBA sunSpecular);
+	/** inherited from CObjectViewerInterface
+	 */
+	virtual void setupSceneLightingSystem(bool enable, const NLMISC::CVector &sunDir, NLMISC::CRGBA sunAmbiant, NLMISC::CRGBA sunDiffuse, NLMISC::CRGBA sunSpecular);
 
-  /** inherited from CObjectViewerInterface
-   */
-  virtual void
-  enableDynamicObjectLightingTest(NLPACS::CGlobalRetriever *globalRetriever,
-                                  NL3D::CInstanceGroup *ig);
+	/** inherited from CObjectViewerInterface
+	 */
+	virtual void enableDynamicObjectLightingTest(NLPACS::CGlobalRetriever *globalRetriever, NL3D::CInstanceGroup *ig);
 
-  /// \name Landscape Vegetable Edition
-  // @{
+	/// \name Landscape Vegetable Edition
+	// @{
 
-  /// true if landscape is created
-  bool isVegetableLandscapeCreated() const {
-    return _VegetableLandscape != NULL;
-  }
+	/// true if landscape is created
+	bool isVegetableLandscapeCreated() const { return _VegetableLandscape != NULL; }
 
-  /// load the landscape with help of setup in object_viewer.cfg. return true if
-  /// OK.
-  bool createVegetableLandscape();
+	/// load the landscape with help of setup in object_viewer.cfg. return true if OK.
+	bool createVegetableLandscape();
 
-  /// if created, show the landscape
-  void showVegetableLandscape();
-  /// if created, hide the landscape
-  void hideVegetableLandscape();
+	/// if created, show the landscape
+	void showVegetableLandscape();
+	/// if created, hide the landscape
+	void hideVegetableLandscape();
 
-  /// display vegetable with landscape
-  void enableLandscapeVegetable(bool enable);
+	/// display vegetable with landscape
+	void enableLandscapeVegetable(bool enable);
 
-  /// refresh the vegetables in landscape, with the new vegetableSet
-  void refreshVegetableLandscape(const NL3D::CTileVegetableDesc &tvdesc);
+	/// refresh the vegetables in landscape, with the new vegetableSet
+	void refreshVegetableLandscape(const NL3D::CTileVegetableDesc &tvdesc);
 
-  /// get vegetable Wind wetup.
-  float getVegetableWindPower() const { return _VegetableWindPower; }
-  float getVegetableWindBendStart() const { return _VegetableWindBendMin; }
-  float getVegetableWindFrequency() const { return _VegetableWindFreq; }
-  /// set vegetable Wind wetup (updat view if possible)
-  void setVegetableWindPower(float w);
-  void setVegetableWindBendStart(float w);
-  void setVegetableWindFrequency(float w);
+	/// get vegetable Wind wetup.
+	float getVegetableWindPower() const { return _VegetableWindPower; }
+	float getVegetableWindBendStart() const { return _VegetableWindBendMin; }
+	float getVegetableWindFrequency() const { return _VegetableWindFreq; }
+	/// set vegetable Wind wetup (updat view if possible)
+	void setVegetableWindPower(float w);
+	void setVegetableWindBendStart(float w);
+	void setVegetableWindFrequency(float w);
 
-  /// if enable, snap the camera to the ground of the landscape.
-  void snapToGroundVegetableLandscape(bool enable);
+	/// if enable, snap the camera to the ground of the landscape.
+	void snapToGroundVegetableLandscape(bool enable);
 
-  // @}
+	// @}
 
-  /// Get/Set global Scene wind setup
-  float getGlobalWindPower() const;
-  void setGlobalWindPower(float w);
+	/// Get/Set global Scene wind setup
+	float getGlobalWindPower() const;
+	void setGlobalWindPower(float w);
 
-  /// Get the scene roor for manip.
-  NL3D::CTransform *getSceneRoot() const { return _SceneRoot; }
+	/// Get the scene roor for manip.
+	NL3D::CTransform *getSceneRoot() const { return _SceneRoot; }
 
-  // Shoot the scene
-  void shootScene();
+	// Shoot the scene
+	void shootScene();
 
-  // Camera methods
+	// Camera methods
 
-  // Return -1 if no current camera
-  sint getCurrentCamera() const;
+	// Return -1 if no current camera
+	sint getCurrentCamera() const;
 
-  // -1 If no current camera
-  void setCurrentCamera(sint currentCamera);
+	// -1 If no current camera
+	void setCurrentCamera(sint currentCamera);
 
-  // Get the instance id of a camera
-  uint getCameraInstance(uint cameraId) const;
+	// Get the instance id of a camera
+	uint getCameraInstance(uint cameraId) const;
 
-  // Get the camera count
-  uint getNumCamera() const;
+	// Get the camera count
+	uint getNumCamera() const;
 
-  // Reinit camera
-  void initCamera();
+	// Reinit camera
+	void initCamera();
 
-  /** popup a dialog to choose a bone in the scene
-   * \return true is a bone has been selected
-   */
-  bool chooseBone(const std::string &caption, NL3D::CSkeletonModel *&skel,
-                  uint &boneIndex, std::string *skelName = NULL,
-                  std::string *boneName = NULL);
+	/** popup a dialog to choose a bone in the scene
+	 * \return true is a bone has been selected
+	 */
+	bool chooseBone(const std::string &caption, NL3D::CSkeletonModel *&skel, uint &boneIndex, std::string *skelName = NULL, std::string *boneName = NULL);
 
-  // test if there's a skeleton in the scene
-  bool isSkeletonPresent() const;
+	// test if there's a skeleton in the scene
+	bool isSkeletonPresent() const;
 
-  // get the main frame
-  CMainFrame *getMainFrame() const { return _MainFrame; }
+	// get the main frame
+	CMainFrame *getMainFrame() const { return _MainFrame; }
 
-  const NLMISC::CMatrix &getFXUserMatrix() const { return _FXUserMatrix; }
-  void setFXUserMatrix(const NLMISC::CMatrix &fxUserMatrix) {
-    _FXUserMatrix = fxUserMatrix;
-  }
+	const NLMISC::CMatrix &getFXUserMatrix() const { return _FXUserMatrix; }
+	void setFXUserMatrix(const NLMISC::CMatrix &fxUserMatrix) { _FXUserMatrix = fxUserMatrix; }
 
-  void setSceneMatrixVisible(bool visible) { _SceneMatrixVisible = visible; }
-  bool getSceneMatrixVisible() const { return _SceneMatrixVisible; }
-  void setFXMatrixVisible(bool visible) { _FXMatrixVisible = visible; }
-  bool getFXMatrixVisible() const { return _FXMatrixVisible; }
-  void setFXUserMatrixVisible(bool visible) { _FXUserMatrixVisible = visible; }
-  bool getFXUserMatrixVisible() const { return _FXUserMatrixVisible; }
-  void setOcclusionTestMeshsVisible(bool visible) {
-    _OcclusionTestMeshsVisible = visible;
-  }
-  bool getOcclusionTestMeshsVisible() const {
-    return _OcclusionTestMeshsVisible;
-  }
+	void setSceneMatrixVisible(bool visible) { _SceneMatrixVisible = visible; }
+	bool getSceneMatrixVisible() const { return _SceneMatrixVisible; }
+	void setFXMatrixVisible(bool visible) { _FXMatrixVisible = visible; }
+	bool getFXMatrixVisible() const { return _FXMatrixVisible; }
+	void setFXUserMatrixVisible(bool visible) { _FXUserMatrixVisible = visible; }
+	bool getFXUserMatrixVisible() const { return _FXUserMatrixVisible; }
+	void setOcclusionTestMeshsVisible(bool visible) { _OcclusionTestMeshsVisible = visible; }
+	bool getOcclusionTestMeshsVisible() const { return _OcclusionTestMeshsVisible; }
 
 private:
-  CMainFrame *_MainFrame;
-  CAnimationDlg *_AnimationDlg;
-  CMainDlg *_SlotDlg;
-  CAnimationSetDlg *_AnimationSetDlg;
-  CParticleDlg *_ParticleDlg;
-  CDayNightDlg *_DayNightDlg;
-  CWaterPoolEditor *_WaterPoolDlg;
-  CVegetableDlg *_VegetableDlg;
-  CSoundAnimDlg *_SoundAnimDlg;
-  CLightGroupFactor *_LightGroupDlg;
-  CChooseFrameDelay *_ChooseFrameDelayDlg;
-  CChooseBGColorDlg *_ChooseBGColorDlg;
-  CChooseSunColorDlg *_ChooseSunColorDlg;
-  CSkeletonScaleDlg *_SkeletonScaleDlg;
-  CTuneMrmDlg *_TuneMRMDlg;
-  uint32 _SelectedObject;
-  sint _CurrentCamera;
+	CMainFrame *_MainFrame;
+	CAnimationDlg *_AnimationDlg;
+	CMainDlg *_SlotDlg;
+	CAnimationSetDlg *_AnimationSetDlg;
+	CParticleDlg *_ParticleDlg;
+	CDayNightDlg *_DayNightDlg;
+	CWaterPoolEditor *_WaterPoolDlg;
+	CVegetableDlg *_VegetableDlg;
+	CSoundAnimDlg *_SoundAnimDlg;
+	CLightGroupFactor *_LightGroupDlg;
+	CChooseFrameDelay *_ChooseFrameDelayDlg;
+	CChooseBGColorDlg *_ChooseBGColorDlg;
+	CChooseSunColorDlg *_ChooseSunColorDlg;
+	CSkeletonScaleDlg *_SkeletonScaleDlg;
+	CTuneMrmDlg *_TuneMRMDlg;
+	uint32 _SelectedObject;
+	sint _CurrentCamera;
 
-  // FX user matrix
-  NLMISC::CMatrix _FXUserMatrix;
+	// FX user matrix
+	NLMISC::CMatrix _FXUserMatrix;
 
-  // Vector of camera
-  std::vector<uint> _Cameras;
+	// Vector of camera
+	std::vector<uint> _Cameras;
 
-  // Vector of loaded instance
-  std::vector<CInstanceInfo *> _ListInstance;
+	// Vector of loaded instance
+	std::vector<CInstanceInfo *> _ListInstance;
 
-  CGlobalWindDlg *_GlobalWindDlg;
-  NL3D::CEvent3dMouseListener _MouseListener;
-  NLMISC::CRGBA _HotSpotColor;
-  float _HotSpotSize;
-  NLMISC::CRGBA _BackGroundColor;
-  NLMISC::CVector _SceneCenter;
-  // List of static InstanceGroup.
-  std::vector<class NL3D::CInstanceGroup *> _ListIG;
+	CGlobalWindDlg *_GlobalWindDlg;
+	NL3D::CEvent3dMouseListener _MouseListener;
+	NLMISC::CRGBA _HotSpotColor;
+	float _HotSpotSize;
+	NLMISC::CRGBA _BackGroundColor;
+	NLMISC::CVector _SceneCenter;
+	// List of static InstanceGroup.
+	std::vector<class NL3D::CInstanceGroup *> _ListIG;
 
-  // Font mgt
-  NL3D::CFontManager _FontManager;
-  NL3D::CFontGenerator *_FontGenerator;
-  std::string _FontPath;
-  std::vector<IMainLoopCallBack *> _CallBackList;
-  uint32 _FrameDelay;
-  float _CameraFocal;
-  float _LastTime;
-  NL3D::CWaterPoolManager *_Wpm;
+	// Font mgt
+	NL3D::CFontManager _FontManager;
+	NL3D::CFontGenerator *_FontGenerator;
+	std::string _FontPath;
+	std::vector<IMainLoopCallBack *> _CallBackList;
+	uint32 _FrameDelay;
+	float _CameraFocal;
+	float _LastTime;
+	NL3D::CWaterPoolManager *_Wpm;
 
-  /// \name Vegetable Edition
-  // @{
-  /// Our landscape
-  NL3D::CLandscapeModel *_VegetableLandscape;
+	/// \name Vegetable Edition
+	// @{
+	/// Our landscape
+	NL3D::CLandscapeModel *_VegetableLandscape;
 
-  // File info to build it
-  std::string _VegetableLandscapeTileBank;
-  std::string _VegetableLandscapeTileFarBank;
-  std::vector<std::string> _VegetableLandscapeZoneNames;
+	// File info to build it
+	std::string _VegetableLandscapeTileBank;
+	std::string _VegetableLandscapeTileFarBank;
+	std::vector<std::string> _VegetableLandscapeZoneNames;
 
-  // Misc.
-  float _VegetableLandscapeThreshold;
-  float _VegetableLandscapeTileNear;
-  NLMISC::CRGBA _VegetableLandscapeAmbient;
-  NLMISC::CRGBA _VegetableLandscapeDiffuse;
-  std::string _VegetableTexture;
-  NLMISC::CRGBA _VegetableAmbient;
-  NLMISC::CRGBA _VegetableDiffuse;
-  NLMISC::CVector _VegetableLightDir;
-  // Vegetable wind.
-  NLMISC::CVector _VegetableWindDir;
-  float _VegetableWindFreq;
-  float _VegetableWindPower;
-  float _VegetableWindBendMin;
+	// Misc.
+	float _VegetableLandscapeThreshold;
+	float _VegetableLandscapeTileNear;
+	NLMISC::CRGBA _VegetableLandscapeAmbient;
+	NLMISC::CRGBA _VegetableLandscapeDiffuse;
+	std::string _VegetableTexture;
+	NLMISC::CRGBA _VegetableAmbient;
+	NLMISC::CRGBA _VegetableDiffuse;
+	NLMISC::CVector _VegetableLightDir;
+	// Vegetable wind.
+	NLMISC::CVector _VegetableWindDir;
+	float _VegetableWindFreq;
+	float _VegetableWindPower;
+	float _VegetableWindBendMin;
 
-  bool _VegetableEnabled;
+	bool _VegetableEnabled;
 
-  // Collision
-  bool _VegetableSnapToGround;
-  float _VegetableSnapHeight;
-  NL3D::CVisualCollisionManager *_VegetableCollisionManager;
-  NL3D::CVisualCollisionEntity *_VegetableCollisionEntity;
+	// Collision
+	bool _VegetableSnapToGround;
+	float _VegetableSnapHeight;
+	NL3D::CVisualCollisionManager *_VegetableCollisionManager;
+	NL3D::CVisualCollisionEntity *_VegetableCollisionEntity;
 
-  // load cfg.
-  void loadVegetableLandscapeCfg(NLMISC::CConfigFile &cf);
+	// load cfg.
+	void loadVegetableLandscapeCfg(NLMISC::CConfigFile &cf);
 
-  // @}
+	// @}
 
-  // Lightigng Setup (from cfg).
-  bool _SceneLightEnabled;
-  NLMISC::CVector _SceneLightSunDir;
-  NLMISC::CRGBA _SceneLightSunAmbiant;
-  NLMISC::CRGBA _SceneLightSunDiffuse;
-  NLMISC::CRGBA _SceneLightSunSpecular;
+	// Lightigng Setup (from cfg).
+	bool _SceneLightEnabled;
+	NLMISC::CVector _SceneLightSunDir;
+	NLMISC::CRGBA _SceneLightSunAmbiant;
+	NLMISC::CRGBA _SceneLightSunDiffuse;
+	NLMISC::CRGBA _SceneLightSunSpecular;
 
-  /// \name dynamic object lighting testing
-  // @{
-  NLPACS::CGlobalRetriever *_GlobalRetriever;
-  NL3D::CTransformShape *_ObjectLightTest;
-  std::string _ObjectLightTestShape;
-  // The matrix not snapped by pacs.
-  NLMISC::CMatrix _ObjectLightTestMatrix;
+	/// \name dynamic object lighting testing
+	// @{
+	NLPACS::CGlobalRetriever *_GlobalRetriever;
+	NL3D::CTransformShape *_ObjectLightTest;
+	std::string _ObjectLightTestShape;
+	// The matrix not snapped by pacs.
+	NLMISC::CMatrix _ObjectLightTestMatrix;
 
-  bool _FXMatrixVisible;
-  bool _FXUserMatrixVisible;
-  bool _SceneMatrixVisible;
-  bool _OcclusionTestMeshsVisible;
+	bool _FXMatrixVisible;
+	bool _FXUserMatrixVisible;
+	bool _SceneMatrixVisible;
+	bool _OcclusionTestMeshsVisible;
 
-  // the lightInfo linked to the ig.
-  class COVLogicInfo : public NL3D::ILogicInfo {
-  public:
-    NLPACS::UGlobalPosition GPos;
-    NL3D::CInstanceGroup *Ig;
-    NLPACS::CGlobalRetriever *GlobalRetriever;
+	// the lightInfo linked to the ig.
+	class COVLogicInfo : public NL3D::ILogicInfo
+	{
+	public:
+		NLPACS::UGlobalPosition GPos;
+		NL3D::CInstanceGroup *Ig;
+		NLPACS::CGlobalRetriever *GlobalRetriever;
 
-    virtual void
-    getStaticLightSetup(NLMISC::CRGBA sunAmbient,
-                        std::vector<NL3D::CPointLightInfluence> &pointLightList,
-                        uint8 &sunContribution, NLMISC::CRGBA &ambient);
-  };
-  // instnace
-  COVLogicInfo _ObjectLightTestLogicInfo;
+		virtual void getStaticLightSetup(NLMISC::CRGBA sunAmbient, std::vector<NL3D::CPointLightInfluence> &pointLightList, uint8 &sunContribution, NLMISC::CRGBA &ambient);
+	};
+	// instnace
+	COVLogicInfo _ObjectLightTestLogicInfo;
 
-  // @}
+	// @}
 
-  static bool _InstanceRunning;
+	static bool _InstanceRunning;
 
-  // Scale the pos of the skeleton
-  float _CharacterScalePos;
+	// Scale the pos of the skeleton
+	float _CharacterScalePos;
 
-  // Driver in direct3d ?
-  bool _Direct3d;
+	// Driver in direct3d ?
+	bool _Direct3d;
 
-  // Fog
-  bool _Fog;
-  float _FogStart;
-  float _FogEnd;
-  NLMISC::CRGBA _FogColor;
+	// Fog
+	bool _Fog;
+	float _FogStart;
+	float _FogEnd;
+	NLMISC::CRGBA _FogColor;
 
-  // Cloud scape
-  NL3D::SCloudScapeSetup _CSS;
-  NL3D::CCloudScape *_CS;
+	// Cloud scape
+	NL3D::SCloudScapeSetup _CSS;
+	NL3D::CCloudScape *_CS;
 
-  // The root of all objects added to the scene. Rotated for user convenience
-  NL3D::CTransform *_SceneRoot;
+	// The root of all objects added to the scene. Rotated for user convenience
+	NL3D::CTransform *_SceneRoot;
 
-  // load the config file
-  void loadConfigFile();
-  // get path of the dll
-  std::string getModulePath() const;
-  // load driver name from the config file
-  void loadDriverName();
+	// load the config file
+	void loadConfigFile();
+	// get path of the dll
+	std::string getModulePath() const;
+	// load driver name from the config file
+	void loadDriverName();
 
-  void drawFXUserMatrix();
-  void drawFXMatrix();
-  void drawSceneMatrix();
+	void drawFXUserMatrix();
+	void drawFXMatrix();
+	void drawSceneMatrix();
 
-  void drawNamedMatrix(const NLMISC::CMatrix &matrix, const std::string &name,
-                       NLMISC::CRGBA color, float textZOffset, float testSize);
+	void drawNamedMatrix(const NLMISC::CMatrix &matrix, const std::string &name, NLMISC::CRGBA color, float textZOffset, float testSize);
 };
 
 void setRegisterWindowState(const CWnd *pWnd, const TCHAR *keyName);
 void getRegisterWindowState(CWnd *pWnd, const TCHAR *keyName, bool resize);
 
-/** display a localized message box. Caption an message text are retrieved from
- * the string table \param parentWindow    Pointer to initiator of the message
- * box \param messageStringID ID in string table of the message box content
+/** display a localized message box. Caption an message text are retrieved from the string table
+ * \param parentWindow    Pointer to initiator of the message box
+ * \param messageStringID ID in string table of the message box content
  * \param captionStringID ID in string table of the message box caption
- * \param nType		   Type of message box (the same as the last parameter
- * of ::MessageBox) \return				   Same value than
- * ::MessageBox
+ * \param nType		   Type of message box (the same as the last parameter of ::MessageBox)
+ * \return				   Same value than ::MessageBox
  */
-int localizedMessageBox(HWND parentWindow, int messageStringID,
-                        int captionStringID, UINT nType);
-int localizedMessageBox(HWND parentWindow, const TCHAR *message,
-                        int captionStringID, UINT nType);
+int localizedMessageBox(HWND parentWindow, int messageStringID, int captionStringID, UINT nType);
+int localizedMessageBox(HWND parentWindow, const TCHAR *message, int captionStringID, UINT nType);
 
 // Return a string from the string table
 CString getStrRsc(uint stringID);
@@ -698,7 +652,6 @@ CString getStrRsc(uint stringID);
 bool browseFolder(const CString &caption, CString &destFolder, HWND parent);
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before
-// the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
 #endif // !defined(AFX_OBJECT_VIEWER_H__9B22CB84_1929_11D5_9CD4_0050DAC3A412__INCLUDED_)

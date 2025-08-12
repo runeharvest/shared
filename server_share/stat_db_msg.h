@@ -22,50 +22,61 @@
 
 #include "stat_db_common.h"
 
-struct CStatDBValueLeafMsg {
-  void serial(NLMISC::IStream &f) {
-    f.serial(Path);
-    f.serial(Value);
-  }
+struct CStatDBValueLeafMsg
+{
+	void serial(NLMISC::IStream &f)
+	{
+		f.serial(Path);
+		f.serial(Value);
+	}
 
-  CStatDBValueLeafMsg() : Value(0) {}
+	CStatDBValueLeafMsg()
+	    : Value(0)
+	{
+	}
 
-  std::string Path;
-  sint32 Value;
+	std::string Path;
+	sint32 Value;
 };
 
-struct CStatDBTableLeafMsg {
-  void serial(NLMISC::IStream &f) {
-    f.serial(Path);
-    f.serialCont(PlayerValues);
-    f.serialCont(GuildValues);
-  }
+struct CStatDBTableLeafMsg
+{
+	void serial(NLMISC::IStream &f)
+	{
+		f.serial(Path);
+		f.serialCont(PlayerValues);
+		f.serialCont(GuildValues);
+	}
 
-  std::string Path;
-  std::map<NLMISC::CEntityId, sint32> PlayerValues;
-  std::map<EGSPD::TGuildId, sint32> GuildValues;
+	std::string Path;
+	std::map<NLMISC::CEntityId, sint32> PlayerValues;
+	std::map<EGSPD::TGuildId, sint32> GuildValues;
 };
 
-struct CStatDBNamesMsg {
-  void serial(NLMISC::IStream &f) {
-    f.serialCont(PlayerNames);
-    f.serialCont(GuildNames);
-  }
+struct CStatDBNamesMsg
+{
+	void serial(NLMISC::IStream &f)
+	{
+		f.serialCont(PlayerNames);
+		f.serialCont(GuildNames);
+	}
 
-  std::map<NLMISC::CEntityId, std::string> PlayerNames;
-  std::map<EGSPD::TGuildId, std::string> GuildNames;
+	std::map<NLMISC::CEntityId, std::string> PlayerNames;
+	std::map<EGSPD::TGuildId, std::string> GuildNames;
 };
 
-struct CStatDBAllLeavesMsg {
-  void serial(NLMISC::IStream &f) {
-    f.serialCont(ValueLeavesMsg);
-    f.serialCont(TableLeavesMsg);
-    f.serial(NamesMsg);
-  }
+struct CStatDBAllLeavesMsg
+{
+	void serial(NLMISC::IStream &f)
+	{
+		f.serialCont(ValueLeavesMsg);
+		f.serialCont(TableLeavesMsg);
+		f.serial(NamesMsg);
+	}
 
-  std::vector<CStatDBValueLeafMsg> ValueLeavesMsg;
-  std::vector<CStatDBTableLeafMsg> TableLeavesMsg;
-  CStatDBNamesMsg NamesMsg;
+	std::vector<CStatDBValueLeafMsg> ValueLeavesMsg;
+	std::vector<CStatDBTableLeafMsg> TableLeavesMsg;
+	CStatDBNamesMsg NamesMsg;
 };
 
 #endif // RY_STAT_DB_MSG_H

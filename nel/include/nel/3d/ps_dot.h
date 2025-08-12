@@ -17,9 +17,9 @@
 #ifndef NL_PS_DOT_H
 #define NL_PS_DOT_H
 
-#include "nel/3d/particle_system.h"
 #include "nel/3d/ps_particle_basic.h"
 #include "nel/3d/vertex_buffer.h"
+#include "nel/3d/particle_system.h"
 
 namespace NL3D {
 
@@ -30,67 +30,66 @@ namespace NL3D {
  *	this is just a coloured dot
  */
 
-class CPSDot : public CPSParticle,
-               public CPSColoredParticle,
-               public CPSMaterial {
+class CPSDot : public CPSParticle, public CPSColoredParticle, public CPSMaterial
+{
 public:
-  /// ctor
-  CPSDot() {
-    init();
-    CParticleSystem::getSerializeIdentifierFlag();
-    _Name = std::string("point");
-  }
+	/// ctor
+	CPSDot()
+	{
+		init();
+		CParticleSystem::getSerializeIdentifierFlag();
+		_Name = std::string("point");
+	}
 
-  NLMISC_DECLARE_CLASS(CPSDot);
+	NLMISC_DECLARE_CLASS(CPSDot);
 
-  /// serialisation
-  void serial(NLMISC::IStream &f);
+	/// serialisation
+	void serial(NLMISC::IStream &f);
 
-  /// return true if there are transparent faces in the object
-  virtual bool hasTransparentFaces(void);
+	/// return true if there are transparent faces in the object
+	virtual bool hasTransparentFaces(void);
 
-  /// return true if there are Opaque faces in the object
-  virtual bool hasOpaqueFaces(void);
+	/// return true if there are Opaque faces in the object
+	virtual bool hasOpaqueFaces(void);
 
-  /// from CPSParticle : return true if there are lightable faces in the object
-  virtual bool hasLightableFaces() { return false; }
+	/// from CPSParticle : return true if there are lightable faces in the object
+	virtual bool hasLightableFaces() { return false; }
 
-  /// return the max number of faces needed for display. This is needed for LOD
-  /// balancing
-  virtual uint32 getNumWantedTris() const;
+	/// return the max number of faces needed for display. This is needed for LOD balancing
+	virtual uint32 getNumWantedTris() const;
 
-  /// init the vertex buffers
-  static void initVertexBuffers();
+	/// init the vertex buffers
+	static void initVertexBuffers();
 
-  // from CPSParticle
-  virtual bool supportGlobalColorLighting() const { return true; }
+	// from CPSParticle
+	virtual bool supportGlobalColorLighting() const { return true; }
 
-  // from CPSParticle
-  virtual void setZBias(float value) { CPSMaterial::setZBias(value); }
-  virtual float getZBias() const { return CPSMaterial::getZBias(); }
+	// from CPSParticle
+	virtual void setZBias(float value) { CPSMaterial::setZBias(value); }
+	virtual float getZBias() const { return CPSMaterial::getZBias(); }
 
 protected:
-  virtual void draw(bool opaque);
-  virtual CPSLocated *getColorOwner(void) { return _Owner; }
-  void init(void);
-  static CVertexBuffer _DotVb;
-  static CVertexBuffer _DotVbColor;
+	virtual void draw(bool opaque);
+	virtual CPSLocated *getColorOwner(void) { return _Owner; }
+	void init(void);
+	static CVertexBuffer _DotVb;
+	static CVertexBuffer _DotVbColor;
 
-  /// update the material and the vb so that they match the color scheme
-  virtual void updateMatAndVbForColor(void);
+	/// update the material and the vb so that they match the color scheme
+	virtual void updateMatAndVbForColor(void);
 
-  /** Set the max number of dot
-   */
-  void resize(uint32 size);
+	/** Set the max number of dot
+	 */
+	void resize(uint32 size);
 
-  /// we don't save datas so it does nothing for now
-  void newElement(const CPSEmitterInfo &info);
+	/// we don't save datas so it does nothing for now
+	void newElement(const CPSEmitterInfo &info);
 
-  /// we don't save datas so it does nothing for now
-  void deleteElement(uint32);
+	/// we don't save datas so it does nothing for now
+	void deleteElement(uint32);
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_PS_DOT_H
 

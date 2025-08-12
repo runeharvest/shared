@@ -42,36 +42,39 @@ class IStereoDisplay;
 class UTexture;
 class UDriver;
 
-class IStereoDeviceFactory : public NLMISC::CRefCount {
+class IStereoDeviceFactory : public NLMISC::CRefCount
+{
 public:
-  IStereoDeviceFactory() {}
-  virtual ~IStereoDeviceFactory() {}
-  virtual IStereoDisplay *createDevice() const = 0;
+	IStereoDeviceFactory() { }
+	virtual ~IStereoDeviceFactory() { }
+	virtual IStereoDisplay *createDevice() const = 0;
 };
 
-struct CStereoDeviceInfo {
+struct CStereoDeviceInfo
+{
 public:
-  enum TStereoDeviceClass {
-    StereoDisplay,
-    StereoHMD,
-  };
+	enum TStereoDeviceClass
+	{
+		StereoDisplay,
+		StereoHMD,
+	};
 
-  enum TStereoDeviceLibrary {
-    NeL3D,
-    OVR,
-    LibVR,
-    OpenHMD,
-  };
+	enum TStereoDeviceLibrary
+	{
+		NeL3D,
+		OVR,
+		LibVR,
+		OpenHMD,
+	};
 
-  NLMISC::CSmartPtr<IStereoDeviceFactory> Factory;
+	NLMISC::CSmartPtr<IStereoDeviceFactory> Factory;
 
-  TStereoDeviceLibrary Library;
-  TStereoDeviceClass Class;
-  std::string Manufacturer;
-  std::string ProductName;
-  std::string Serial; // A unique device identifier
-  bool AllowAuto;     // Allow this device to be automatically selected when no
-                      // device is configured
+	TStereoDeviceLibrary Library;
+	TStereoDeviceClass Class;
+	std::string Manufacturer;
+	std::string ProductName;
+	std::string Serial; // A unique device identifier
+	bool AllowAuto; // Allow this device to be automatically selected when no device is configured
 };
 
 /**
@@ -80,70 +83,67 @@ public:
  * \author Jan Boon (Kaetemi)
  * IStereoDisplay
  */
-class IStereoDisplay {
+class IStereoDisplay
+{
 public:
-  IStereoDisplay();
-  virtual ~IStereoDisplay();
+	IStereoDisplay();
+	virtual ~IStereoDisplay();
 
-  /// Sets driver and generates necessary render targets
-  virtual void setDriver(NL3D::UDriver *driver) = 0;
+	/// Sets driver and generates necessary render targets
+	virtual void setDriver(NL3D::UDriver *driver) = 0;
 
-  /// Attach the driver to the display, return true if attached
-  virtual bool attachToDisplay() = 0;
-  /// Detach the driver from the display
-  virtual void detachFromDisplay() = 0;
+	/// Attach the driver to the display, return true if attached
+	virtual bool attachToDisplay() = 0;
+	/// Detach the driver from the display
+	virtual void detachFromDisplay() = 0;
 
-  /// Gets the required screen resolution for this device
-  virtual bool getScreenResolution(uint &width, uint &height) = 0;
-  /// Set latest camera position etcetera
-  virtual void updateCamera(uint cid, const NL3D::UCamera *camera) = 0;
-  /// Get the frustum to use for clipping
-  virtual void getClippingFrustum(uint cid, NL3D::UCamera *camera) const = 0;
-  /// Get the original frustum of the camera
-  virtual void getOriginalFrustum(uint cid, NL3D::UCamera *camera) const = 0;
+	/// Gets the required screen resolution for this device
+	virtual bool getScreenResolution(uint &width, uint &height) = 0;
+	/// Set latest camera position etcetera
+	virtual void updateCamera(uint cid, const NL3D::UCamera *camera) = 0;
+	/// Get the frustum to use for clipping
+	virtual void getClippingFrustum(uint cid, NL3D::UCamera *camera) const = 0;
+	/// Get the original frustum of the camera
+	virtual void getOriginalFrustum(uint cid, NL3D::UCamera *camera) const = 0;
 
-  /// Is there a next pass
-  virtual bool nextPass() = 0;
-  /// Gets the current viewport
-  virtual const NL3D::CViewport &getCurrentViewport() const = 0;
-  /// Gets the current camera frustum
-  virtual const NL3D::CFrustum &getCurrentFrustum(uint cid) const = 0;
-  /// Gets the current camera frustum
-  virtual void getCurrentFrustum(uint cid, NL3D::UCamera *camera) const = 0;
-  /// Gets the current camera matrix
-  virtual void getCurrentMatrix(uint cid, NL3D::UCamera *camera) const = 0;
+	/// Is there a next pass
+	virtual bool nextPass() = 0;
+	/// Gets the current viewport
+	virtual const NL3D::CViewport &getCurrentViewport() const = 0;
+	/// Gets the current camera frustum
+	virtual const NL3D::CFrustum &getCurrentFrustum(uint cid) const = 0;
+	/// Gets the current camera frustum
+	virtual void getCurrentFrustum(uint cid, NL3D::UCamera *camera) const = 0;
+	/// Gets the current camera matrix
+	virtual void getCurrentMatrix(uint cid, NL3D::UCamera *camera) const = 0;
 
-  /// At the start of a new render target
-  virtual bool wantClear() = 0;
-  /// The 3D scene
-  virtual bool wantScene() = 0;
-  /// Scene post processing effects
-  virtual bool wantSceneEffects() = 0;
-  /// Interface within the 3D scene
-  virtual bool wantInterface3D() = 0;
-  /// 2D Interface
-  virtual bool wantInterface2D() = 0;
+	/// At the start of a new render target
+	virtual bool wantClear() = 0;
+	/// The 3D scene
+	virtual bool wantScene() = 0;
+	/// Scene post processing effects
+	virtual bool wantSceneEffects() = 0;
+	/// Interface within the 3D scene
+	virtual bool wantInterface3D() = 0;
+	/// 2D Interface
+	virtual bool wantInterface2D() = 0;
 
-  /// Is this the first 3D scene of the frame
-  virtual bool isSceneFirst() = 0;
-  /// Is this the last 3D scene of the frame
-  virtual bool isSceneLast() = 0;
+	/// Is this the first 3D scene of the frame
+	virtual bool isSceneFirst() = 0;
+	/// Is this the last 3D scene of the frame
+	virtual bool isSceneLast() = 0;
 
-  /// Returns true if a new render target was set, always fase if not using
-  /// render targets
-  virtual bool beginRenderTarget() = 0;
-  /// Returns true if a render target was fully drawn, always false if not using
-  /// render targets
-  virtual bool endRenderTarget() = 0;
+	/// Returns true if a new render target was set, always fase if not using render targets
+	virtual bool beginRenderTarget() = 0;
+	/// Returns true if a render target was fully drawn, always false if not using render targets
+	virtual bool endRenderTarget() = 0;
 
-  static const char *
-  getLibraryName(CStereoDeviceInfo::TStereoDeviceLibrary library);
-  // List all devices. Device creation factories are no longer valid after
-  // re-calling this function
-  static void listDevices(std::vector<CStereoDeviceInfo> &devicesOut);
-  static IStereoDisplay *createDevice(const CStereoDeviceInfo &deviceInfo);
-  static void releaseUnusedLibraries();
-  static void releaseAllLibraries();
+	static const char *getLibraryName(CStereoDeviceInfo::TStereoDeviceLibrary library);
+	// List all devices. Device creation factories are no longer valid after re-calling this function
+	static void listDevices(std::vector<CStereoDeviceInfo> &devicesOut);
+	static IStereoDisplay *createDevice(const CStereoDeviceInfo &deviceInfo);
+	static void releaseUnusedLibraries();
+	static void releaseAllLibraries();
 
 }; /* class IStereoDisplay */
 

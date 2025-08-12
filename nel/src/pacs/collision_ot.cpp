@@ -24,18 +24,20 @@ namespace NLPACS {
 // ***************************************************************************
 
 // Remove the collision from the primitives
-void CCollisionOTDynamicInfo::removeFromPrimitives() {
-  _FirstPrimitive->removeCollisionOTInfo(this);
-  _SecondPrimitive->removeCollisionOTInfo(this);
+void CCollisionOTDynamicInfo::removeFromPrimitives()
+{
+	_FirstPrimitive->removeCollisionOTInfo(this);
+	_SecondPrimitive->removeCollisionOTInfo(this);
 }
 
 // ***************************************************************************
 
 // Remove the collision from the primitives
-void CCollisionOTStaticInfo::removeFromPrimitives() {
-  _Primitive->removeCollisionOTInfo(this);
+void CCollisionOTStaticInfo::removeFromPrimitives()
+{
+	_Primitive->removeCollisionOTInfo(this);
 }
 
 // ***************************************************************************
 
-} // namespace NLPACS
+} // NLPACS

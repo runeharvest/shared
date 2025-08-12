@@ -16,8 +16,8 @@
 
 #include "stdpch.h"
 
-#include "damage_types.h"
 #include "nel/misc/debug.h"
+#include "damage_types.h"
 #include "nel/misc/string_conversion.h"
 
 namespace DMGTYPE {
@@ -35,32 +35,35 @@ NL_STRING_CONVERSION_TABLE_ENTRY(SHOCK)
 NL_STRING_CONVERSION_TABLE_ENTRY(UNDEFINED)
 NL_END_STRING_CONVERSION_TABLE(EDamageType, DMGTYPEConversion, UNDEFINED)
 
-EDamageType stringToDamageType(const std::string &str) {
-  return DMGTYPEConversion.fromString(str);
+EDamageType stringToDamageType(const std::string &str)
+{
+	return DMGTYPEConversion.fromString(str);
 }
 
-const std::string &toString(EDamageType type) {
-  return DMGTYPEConversion.toString(type);
+const std::string &toString(EDamageType type)
+{
+	return DMGTYPEConversion.toString(type);
 }
 
-RESISTANCE_TYPE::TResistanceType
-getAssociatedResistanceType(EDamageType dmgType) {
-  switch (dmgType) {
-  case ACID:
-  case ROT:
-    return RESISTANCE_TYPE::PrimaryRoot;
-  case COLD:
-  case SHOCK:
-    return RESISTANCE_TYPE::Lacustre;
-  case ELECTRICITY:
-    return RESISTANCE_TYPE::Jungle;
-  case FIRE:
-    return RESISTANCE_TYPE::Desert;
-  case POISON:
-    return RESISTANCE_TYPE::Forest;
-  default:
-    return RESISTANCE_TYPE::None;
-  };
+RESISTANCE_TYPE::TResistanceType getAssociatedResistanceType(EDamageType dmgType)
+{
+	switch (dmgType)
+	{
+	case ACID:
+	case ROT:
+		return RESISTANCE_TYPE::PrimaryRoot;
+	case COLD:
+	case SHOCK:
+		return RESISTANCE_TYPE::Lacustre;
+	case ELECTRICITY:
+		return RESISTANCE_TYPE::Jungle;
+	case FIRE:
+		return RESISTANCE_TYPE::Desert;
+	case POISON:
+		return RESISTANCE_TYPE::Forest;
+	default:
+		return RESISTANCE_TYPE::None;
+	};
 }
 
-}; // namespace DMGTYPE
+}; // DMGTYPE

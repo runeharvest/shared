@@ -21,14 +21,14 @@
 namespace CTEAM {
 const uint16 InvalidTeamId = 0xFFFF;
 const uint8 TeamMaxNbMembers = 9;
-} // namespace CTEAM
+}
 
 #define RZ_MAX_BUILDING_PER_OUTPOST 4
 
 /**
- * Type representing a unique id in the AI system. Unique id are guaranted to be
- * the same between two server sessions They are used to get a bot entity id
- * from the AI service Null value : 0
+ * Type representing a unique id in the AI system. Unique id are guaranted to be the same between two server sessions
+ * They are used to get a bot entity id from the AI service
+ * Null value : 0
  */
 typedef uint32 TAIAlias;
 

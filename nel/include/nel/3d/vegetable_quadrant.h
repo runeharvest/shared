@@ -17,9 +17,9 @@
 #ifndef NL_VEGETABLE_QUADRANT_H
 #define NL_VEGETABLE_QUADRANT_H
 
-#include "nel/3d/vegetable_def.h"
 #include "nel/misc/types_nl.h"
 #include "nel/misc/vector.h"
+#include "nel/3d/vegetable_def.h"
 
 namespace NL3D {
 
@@ -32,16 +32,17 @@ using NLMISC::CVector;
  * \author Nevrax France
  * \date 2001
  */
-class CVegetableQuadrant {
+class CVegetableQuadrant
+{
 public:
-  /// Constructor
-  CVegetableQuadrant();
+	/// Constructor
+	CVegetableQuadrant();
 
-  // Directions of quadrants
-  static CVector Dirs[NL3D_VEGETABLE_NUM_QUADRANT];
+	// Directions of quadrants
+	static CVector Dirs[NL3D_VEGETABLE_NUM_QUADRANT];
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_VEGETABLE_QUADRANT_H
 

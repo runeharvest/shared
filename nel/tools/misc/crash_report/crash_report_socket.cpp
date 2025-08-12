@@ -20,53 +20,60 @@
 
 #include "crash_report_socket.h"
 #include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QNetworkRequest>
 #include <QUrl>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QUrlQuery>
 #endif
 
-class CCrashReportSocketPvt {
+class CCrashReportSocketPvt
+{
 public:
-  QNetworkAccessManager mgr;
+	QNetworkAccessManager mgr;
 };
 
-CCrashReportSocket::CCrashReportSocket(QObject *parent) : QObject(parent) {
-  m_pvt = new CCrashReportSocketPvt();
+CCrashReportSocket::CCrashReportSocket(QObject *parent)
+    : QObject(parent)
+{
+	m_pvt = new CCrashReportSocketPvt();
 
-  connect(&m_pvt->mgr, SIGNAL(finished(QNetworkReply *)), this,
-          SLOT(onFinished(QNetworkReply *)));
+	connect(&m_pvt->mgr, SIGNAL(finished(QNetworkReply *)), this, SLOT(onFinished(QNetworkReply *)));
 }
 
-CCrashReportSocket::~CCrashReportSocket() { delete m_pvt; }
-
-void CCrashReportSocket::sendReport(const SCrashReportData &data) {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-  QUrlQuery params;
-#else
-  QUrl params;
-#endif
-  params.addQueryItem("report", data.report);
-  params.addQueryItem("descr", data.description);
-  params.addQueryItem("email", data.email);
-
-  QUrl url(m_url);
-  QNetworkRequest request(url);
-  request.setRawHeader("Connection", "close");
-
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-  QByteArray postData = params.query(QUrl::FullyEncoded).toUtf8();
-#else
-  QByteArray postData = params.encodedQuery();
-#endif
-
-  m_pvt->mgr.post(request, postData);
+CCrashReportSocket::~CCrashReportSocket()
+{
+	delete m_pvt;
 }
 
-void CCrashReportSocket::onFinished(QNetworkReply *reply) {
-  if (reply->error() != QNetworkReply::NoError)
-    Q_EMIT reportFailed();
-  else
-    Q_EMIT reportSent();
+void CCrashReportSocket::sendReport(const SCrashReportData &data)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+	QUrlQuery params;
+#else
+	QUrl params;
+#endif
+	params.addQueryItem("report", data.report);
+	params.addQueryItem("descr", data.description);
+	params.addQueryItem("email", data.email);
+
+	QUrl url(m_url);
+	QNetworkRequest request(url);
+	request.setRawHeader("Connection", "close");
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+	QByteArray postData = params.query(QUrl::FullyEncoded).toUtf8();
+#else
+	QByteArray postData = params.encodedQuery();
+#endif
+
+	m_pvt->mgr.post(request, postData);
+}
+
+void CCrashReportSocket::onFinished(QNetworkReply *reply)
+{
+	if (reply->error() != QNetworkReply::NoError)
+		Q_EMIT reportFailed();
+	else
+		Q_EMIT reportSent();
 }

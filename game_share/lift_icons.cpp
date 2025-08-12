@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "lift_icons.h"
-#include "nel/misc/string_conversion.h"
 #include "stdpch.h"
+#include "nel/misc/string_conversion.h"
+#include "lift_icons.h"
 
 namespace LIFT_ICONS {
 
@@ -31,10 +31,12 @@ NL_STRING_CONVERSION_TABLE_ENTRY(PlayerRoom)
 NL_STRING_CONVERSION_TABLE_ENTRY(None)
 NL_END_STRING_CONVERSION_TABLE(TLiftIcon, LiftIconConversion, None)
 
-const std::string &toString(TLiftIcon icon) {
-  return LiftIconConversion.toString(icon);
+const std::string &toString(TLiftIcon icon)
+{
+	return LiftIconConversion.toString(icon);
 }
-TLiftIcon toLiftIcon(const std::string &str) {
-  return LiftIconConversion.fromString(str);
+TLiftIcon toLiftIcon(const std::string &str)
+{
+	return LiftIconConversion.fromString(str);
 }
-} // namespace LIFT_ICONS
+}

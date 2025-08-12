@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "storage_file.h"
 #include <nel/misc/types_nl.h>
+#include "storage_file.h"
 
 // STL includes
 
@@ -40,9 +40,13 @@ using namespace std;
 
 namespace PIPELINE {
 
-CStorageFile::CStorageFile() {}
+CStorageFile::CStorageFile()
+{
+}
 
-CStorageFile::~CStorageFile() {}
+CStorageFile::~CStorageFile()
+{
+}
 
 } /* namespace PIPELINE */
 

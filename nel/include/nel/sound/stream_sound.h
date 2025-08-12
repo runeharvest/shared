@@ -37,38 +37,36 @@ namespace NLSOUND {
  * \date 2010-01-28 07:29GMT
  * \author Jan Boon (Kaetemi)
  */
-class CStreamSound : public CSound {
+class CStreamSound : public CSound
+{
 public:
-  CStreamSound();
-  virtual ~CStreamSound();
+	CStreamSound();
+	virtual ~CStreamSound();
 
-  /// Get the type of the sound.
-  virtual TSOUND_TYPE getSoundType() { return SOUND_STREAM; }
+	/// Get the type of the sound.
+	virtual TSOUND_TYPE getSoundType() { return SOUND_STREAM; }
 
-  /// Load the sound parameters from georges' form
-  virtual void importForm(const std::string &filename,
-                          NLGEORGES::UFormElm &formRoot);
+	/// Load the sound parameters from georges' form
+	virtual void importForm(const std::string &filename, NLGEORGES::UFormElm &formRoot);
 
-  /// Used by the george sound plugin to check sound recursion (ie sound 'toto'
-  /// use sound 'titi' witch also use sound 'toto' ...).
-  virtual void getSubSoundList(
-      std::vector<std::pair<std::string, CSound *>> & /* subsounds */) const {}
+	/// Used by the george sound plugin to check sound recursion (ie sound 'toto' use sound 'titi' witch also use sound 'toto' ...).
+	virtual void getSubSoundList(std::vector<std::pair<std::string, CSound *>> & /* subsounds */) const { }
 
-  /// Serialize the sound data.
-  virtual void serial(NLMISC::IStream &s);
+	/// Serialize the sound data.
+	virtual void serial(NLMISC::IStream &s);
 
-  /// Return the length of the sound in ms
-  virtual uint32 getDuration() { return 0; }
+	/// Return the length of the sound in ms
+	virtual uint32 getDuration() { return 0; }
 
-  /// Return the alpha attenuation value.
-  float getAlpha() const { return m_Alpha; }
+	/// Return the alpha attenuation value.
+	float getAlpha() const { return m_Alpha; }
 
 private:
-  CStreamSound(const CStreamSound &);
-  CStreamSound &operator=(const CStreamSound &);
+	CStreamSound(const CStreamSound &);
+	CStreamSound &operator=(const CStreamSound &);
 
 private:
-  float m_Alpha;
+	float m_Alpha;
 
 }; /* class CStreamSound */
 

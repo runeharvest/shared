@@ -22,9 +22,10 @@
 
 namespace NLGUI {
 /// Watches the currently selected GUI widget
-class IEditorSelectionWatcher {
+class IEditorSelectionWatcher
+{
 public:
-  /// Notifies the watcher about the change
-  virtual void selectionChanged() = 0;
+	/// Notifies the watcher about the change
+	virtual void selectionChanged() = 0;
 };
-} // namespace NLGUI
+}

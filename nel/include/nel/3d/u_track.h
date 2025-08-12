@@ -26,208 +26,191 @@ class CQuat;
 class CRGBA;
 class CVector;
 
-} // namespace NLMISC
+}
 
 namespace NL3D {
 
 /**
  * A track is a fonction that interpolate a value over the time.
  *
- * Kind of interpolation is hidden to the user. It can be Bezier, TCB, linear,
- * noise interpolation. This interface give access to the interpolation
- * fonction.
+ * Kind of interpolation is hidden to the user. It can be Bezier, TCB, linear, noise interpolation.
+ * This interface give access to the interpolation fonction.
  *
  * \author Cyril 'Hulud' Corvazier
  * \author Nevrax France
  * \date 2001
  */
-class UTrack : public NLMISC::IStreamable {
+class UTrack : public NLMISC::IStreamable
+{
 public:
-  /// \name Time range methods.
-  // @{
+	/// \name Time range methods.
+	// @{
 
-  /**
-   * Get the begin time of the track
-   */
-  virtual TAnimationTime getBeginTime() const = 0;
+	/**
+	 * Get the begin time of the track
+	 */
+	virtual TAnimationTime getBeginTime() const = 0;
 
-  /**
-   * Get the end time of the track
-   */
-  virtual TAnimationTime getEndTime() const = 0;
+	/**
+	 * Get the end time of the track
+	 */
+	virtual TAnimationTime getEndTime() const = 0;
 
-  // @}
+	// @}
 
-  /// \name Interpolation methods.
-  // @{
+	/// \name Interpolation methods.
+	// @{
 
-  /**
-   * Interplation a float value. You should be sure that the track you use to
-   * interpolate your value is a float track! An assertion will be raised in
-   * debug if the type is wrong.
-   *
-   * \param time is the time you want the evaluate the value. If time higher
-   * than the time gived by getEndTime (), the value returned is the
-   * interpolation value at getEndTime (). If time smaller than the time gived
-   * by getBeginTime (), the value returned is the interpolation value at
-   * getBeginTime (). \param res is the reference on the value to get the
-   * result. \return true if interplation is successful. false if the type asked
-   * is wrong.
-   */
-  virtual bool interpolate(TAnimationTime time, float &res) = 0;
+	/**
+	 * Interplation a float value. You should be sure that the track you use to interpolate
+	 * your value is a float track! An assertion will be raised in debug if the type is wrong.
+	 *
+	 * \param time is the time you want the evaluate the value. If time higher than the time
+	 * gived by getEndTime (), the value returned is the interpolation value at getEndTime ().
+	 * If time smaller than the time gived by getBeginTime (), the value returned is the
+	 * interpolation value at getBeginTime ().
+	 * \param res is the reference on the value to get the result.
+	 * \return true if interplation is successful. false if the type asked is wrong.
+	 */
+	virtual bool interpolate(TAnimationTime time, float &res) = 0;
 
-  /**
-   * Interplation an integer value. You should be sure that the track you use to
-   * interpolate your value is an integer track! An assertion will be raised in
-   * debug if the type is wrong.
-   *
-   * \param time is the time you want the evaluate the value. If time higher
-   * than the time gived by getEndTime (), the value returned is the
-   * interpolation value at getEndTime (). If time smaller than the time gived
-   * by getBeginTime (), the value returned is the interpolation value at
-   * getBeginTime (). \param res is the reference on the value to get the
-   * result. \return true if interplation is successful. false if the type asked
-   * is wrong.
-   */
-  virtual bool interpolate(TAnimationTime time, sint32 &res) = 0;
+	/**
+	 * Interplation an integer value. You should be sure that the track you use to interpolate
+	 * your value is an integer track! An assertion will be raised in debug if the type is wrong.
+	 *
+	 * \param time is the time you want the evaluate the value. If time higher than the time
+	 * gived by getEndTime (), the value returned is the interpolation value at getEndTime ().
+	 * If time smaller than the time gived by getBeginTime (), the value returned is the
+	 * interpolation value at getBeginTime ().
+	 * \param res is the reference on the value to get the result.
+	 * \return true if interplation is successful. false if the type asked is wrong.
+	 */
+	virtual bool interpolate(TAnimationTime time, sint32 &res) = 0;
 
-  /**
-   * Interplation a CRGBA value. You should be sure that the track you use to
-   * interpolate your value is an CRGBA track! An assertion will be raised in
-   * debug if the type is wrong.
-   *
-   * \param time is the time you want the evaluate the value. If time higher
-   * than the time gived by getEndTime (), the value returned is the
-   * interpolation value at getEndTime (). If time smaller than the time gived
-   * by getBeginTime (), the value returned is the interpolation value at
-   * getBeginTime (). \param res is the reference on the value to get the
-   * result. \return true if interplation is successful. false if the type asked
-   * is wrong.
-   */
-  virtual bool interpolate(TAnimationTime time, NLMISC::CRGBA &res) = 0;
+	/**
+	 * Interplation a CRGBA value. You should be sure that the track you use to interpolate
+	 * your value is an CRGBA track! An assertion will be raised in debug if the type is wrong.
+	 *
+	 * \param time is the time you want the evaluate the value. If time higher than the time
+	 * gived by getEndTime (), the value returned is the interpolation value at getEndTime ().
+	 * If time smaller than the time gived by getBeginTime (), the value returned is the
+	 * interpolation value at getBeginTime ().
+	 * \param res is the reference on the value to get the result.
+	 * \return true if interplation is successful. false if the type asked is wrong.
+	 */
+	virtual bool interpolate(TAnimationTime time, NLMISC::CRGBA &res) = 0;
 
-  /**
-   * Interplation a CVector value. You should be sure that the track you use to
-   * interpolate your value is a CVector track! An assertion will be raised in
-   * debug if the type is wrong.
-   *
-   * \param time is the time you want the evaluate the value. If time higher
-   * than the time gived by getEndTime (), the value returned is the
-   * interpolation value at getEndTime (). If time smaller than the time gived
-   * by getBeginTime (), the value returned is the interpolation value at
-   * getBeginTime (). \param res is the reference on the value to get the
-   * result. \return true if interplation is successful. false if the type asked
-   * is wrong.
-   */
-  virtual bool interpolate(TAnimationTime time, NLMISC::CVector &res) = 0;
+	/**
+	 * Interplation a CVector value. You should be sure that the track you use to interpolate
+	 * your value is a CVector track! An assertion will be raised in debug if the type is wrong.
+	 *
+	 * \param time is the time you want the evaluate the value. If time higher than the time
+	 * gived by getEndTime (), the value returned is the interpolation value at getEndTime ().
+	 * If time smaller than the time gived by getBeginTime (), the value returned is the
+	 * interpolation value at getBeginTime ().
+	 * \param res is the reference on the value to get the result.
+	 * \return true if interplation is successful. false if the type asked is wrong.
+	 */
+	virtual bool interpolate(TAnimationTime time, NLMISC::CVector &res) = 0;
 
-  /**
-   * Interplation a CQuat value. You should be sure that the track you use to
-   * interpolate your value is a CQuat track! An assertion will be raised in
-   * debug if the type is wrong.
-   *
-   * \param time is the time you want the evaluate the value. If time higher
-   * than the time gived by getEndTime (), the value returned is the
-   * interpolation value at getEndTime (). If time smaller than the time gived
-   * by getBeginTime (), the value returned is the interpolation value at
-   * getBeginTime (). \param res is the reference on the value to get the
-   * result. \return true if interplation is successful. false if the type asked
-   * is wrong.
-   */
-  virtual bool interpolate(TAnimationTime time, NLMISC::CQuat &res) = 0;
+	/**
+	 * Interplation a CQuat value. You should be sure that the track you use to interpolate
+	 * your value is a CQuat track! An assertion will be raised in debug if the type is wrong.
+	 *
+	 * \param time is the time you want the evaluate the value. If time higher than the time
+	 * gived by getEndTime (), the value returned is the interpolation value at getEndTime ().
+	 * If time smaller than the time gived by getBeginTime (), the value returned is the
+	 * interpolation value at getBeginTime ().
+	 * \param res is the reference on the value to get the result.
+	 * \return true if interplation is successful. false if the type asked is wrong.
+	 */
+	virtual bool interpolate(TAnimationTime time, NLMISC::CQuat &res) = 0;
 
-  /**
-   * Interplation a string value. You should be sure that the track you use to
-   * interpolate your value is a string track! An assertion will be raised in
-   * debug if the type is wrong.
-   *
-   * \param time is the time you want the evaluate the value. If time higher
-   * than the time gived by getEndTime (), the value returned is the
-   * interpolation value at getEndTime (). If time smaller than the time gived
-   * by getBeginTime (), the value returned is the interpolation value at
-   * getBeginTime (). \param res is the reference on the value to get the
-   * result. \return true if interplation is successful. false if the type asked
-   * is wrong.
-   */
-  virtual bool interpolate(TAnimationTime time, std::string &res) = 0;
+	/**
+	 * Interplation a string value. You should be sure that the track you use to interpolate
+	 * your value is a string track! An assertion will be raised in debug if the type is wrong.
+	 *
+	 * \param time is the time you want the evaluate the value. If time higher than the time
+	 * gived by getEndTime (), the value returned is the interpolation value at getEndTime ().
+	 * If time smaller than the time gived by getBeginTime (), the value returned is the
+	 * interpolation value at getBeginTime ().
+	 * \param res is the reference on the value to get the result.
+	 * \return true if interplation is successful. false if the type asked is wrong.
+	 */
+	virtual bool interpolate(TAnimationTime time, std::string &res) = 0;
 
-  /**
-   * Interplation a bool value. You should be sure that the track you use to
-   * interpolate your value is a bool track! An assertion will be raised in
-   * debug if the type is wrong.
-   *
-   * \param time is the time you want the evaluate the value. If time higher
-   * than the time gived by getEndTime (), the value returned is the
-   * interpolation value at getEndTime (). If time smaller than the time gived
-   * by getBeginTime (), the value returned is the interpolation value at
-   * getBeginTime (). \param res is the reference on the value to get the
-   * result. \return true if interplation is successful. false if the type asked
-   * is wrong.
-   */
-  virtual bool interpolate(TAnimationTime time, bool &res) = 0;
+	/**
+	 * Interplation a bool value. You should be sure that the track you use to interpolate
+	 * your value is a bool track! An assertion will be raised in debug if the type is wrong.
+	 *
+	 * \param time is the time you want the evaluate the value. If time higher than the time
+	 * gived by getEndTime (), the value returned is the interpolation value at getEndTime ().
+	 * If time smaller than the time gived by getBeginTime (), the value returned is the
+	 * interpolation value at getBeginTime ().
+	 * \param res is the reference on the value to get the result.
+	 * \return true if interplation is successful. false if the type asked is wrong.
+	 */
+	virtual bool interpolate(TAnimationTime time, bool &res) = 0;
 
-  // @}
+	// @}
 };
 
 /** This is a keyframer track interface.
- * Once you've got a track, you can know whether its a keyframer track by using
- * a dynamic_cast
+ * Once you've got a track, you can know whether its a keyframer track by using a dynamic_cast
  */
-class UTrackKeyframer {
+class UTrackKeyframer
+{
 public:
-  class UKeyLinearFloat {
-  public:
-    TAnimationTime Time;
-    float Value;
-  };
+	class UKeyLinearFloat
+	{
+	public:
+		TAnimationTime Time;
+		float Value;
+	};
 
-  class UKeyBezierFloat {
-  public:
-    TAnimationTime Time;
-    float Value;
-    float TanIn, TanOut;
-    bool Step;
-  };
+	class UKeyBezierFloat
+	{
+	public:
+		TAnimationTime Time;
+		float Value;
+		float TanIn, TanOut;
+		bool Step;
+	};
 
-  class UKeyTCBFloat {
-  public:
-    TAnimationTime Time;
-    float Value;
-    float Tension;
-    float Continuity;
-    float Bias;
-    float EaseFrom;
-    float EaseTo;
-  };
+	class UKeyTCBFloat
+	{
+	public:
+		TAnimationTime Time;
+		float Value;
+		float Tension;
+		float Continuity;
+		float Bias;
+		float EaseFrom;
+		float EaseTo;
+	};
 
-  UTrackKeyframer() {}
-  virtual ~UTrackKeyframer() {}
+	UTrackKeyframer() { }
+	virtual ~UTrackKeyframer() { }
 
-  static UTrackKeyframer *createLinearFloatTrack();
-  static UTrackKeyframer *createBezierFloatTrack();
-  static UTrackKeyframer *createTCBFloatTrack();
+	static UTrackKeyframer *createLinearFloatTrack();
+	static UTrackKeyframer *createBezierFloatTrack();
+	static UTrackKeyframer *createTCBFloatTrack();
 
 public:
-  /** Retrieve the keys that are in the given range ]t1, t2] of the track. They
-   * can then be evaluated \param result a vector that will be cleared, and
-   * filled with the date ofthe keys
-   */
-  virtual void getKeysInRange(TAnimationTime t1, TAnimationTime t2,
-                              std::vector<TAnimationTime> &result) = 0;
+	/** Retrieve the keys that are in the given range ]t1, t2] of the track. They can then be evaluated
+	 * \param result a vector that will be cleared, and filled with the date ofthe keys
+	 */
+	virtual void getKeysInRange(TAnimationTime t1, TAnimationTime t2, std::vector<TAnimationTime> &result) = 0;
 
-  /// Fail if not A Float Linear Keyframer
-  virtual bool addLinearFloatKey(const UKeyLinearFloat & /* key */) {
-    return false;
-  }
-  /// Fail if not A Float Bezier Keyframer
-  virtual bool addBezierFloatKey(const UKeyBezierFloat & /* key */) {
-    return false;
-  }
-  /// Fail if not A Float TCB Keyframer
-  virtual bool addTCBFloatKey(const UKeyTCBFloat & /* key */) { return false; }
+	/// Fail if not A Float Linear Keyframer
+	virtual bool addLinearFloatKey(const UKeyLinearFloat & /* key */) { return false; }
+	/// Fail if not A Float Bezier Keyframer
+	virtual bool addBezierFloatKey(const UKeyBezierFloat & /* key */) { return false; }
+	/// Fail if not A Float TCB Keyframer
+	virtual bool addTCBFloatKey(const UKeyTCBFloat & /* key */) { return false; }
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_U_TRACK_H
 

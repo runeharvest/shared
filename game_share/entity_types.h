@@ -72,14 +72,12 @@ const uint32 NB_FAKE_DISC_PROPERTIES_UPDATED_PER_CYCLE = 2;
 #endif
 
 // typedef	uint64	TBKEntityId;
-// typedef uint16	TFTEntityId;	// Frontend entity id type, range
-// about 1..5000 [NB: doesn't exist any longer]
+// typedef uint16	TFTEntityId;	// Frontend entity id type, range about 1..5000 [NB: doesn't exist any longer]
 typedef uint16 TProperty;
 typedef uint8 TPropIndex;
 
 // KAE: Commented because not used
-// const uint32 NB_PROPERTIES = 256; //number of TProperty elements (if you
-// change this, change the ids of special properties in the Front-end Service!)
+// const uint32 NB_PROPERTIES = 256; //number of TProperty elements (if you change this, change the ids of special properties in the Front-end Service!)
 
 /// Main type for positions/distances. Unit: millimeter
 typedef sint32 TCoord;
@@ -111,8 +109,7 @@ const TPropIndex FIRST_DISCREET_PROPINDEX = 4;
 /*
  * These properties belong to players, npc
  *
- * Note: due to some hardcoding in client interface scripts, DO NOT change these
- * values.
+ * Note: due to some hardcoding in client interface scripts, DO NOT change these values.
  */
 
 // Sheet
@@ -159,8 +156,7 @@ const TCoord THRESHOLD_RIDER_ENTITY_ID = MAX_THRESHOLD;
 // Contextual properties
 const TPropIndex PROPERTY_CONTEXTUAL = 14;
 const TCoord THRESHOLD_CONTEXTUAL = 100000;
-const TCoord THRESHOLD_CONTEXTUAL_NPC =
-    MAX_THRESHOLD; // necessary for mission icon switch on/off
+const TCoord THRESHOLD_CONTEXTUAL_NPC = MAX_THRESHOLD; // necessary for mission icon switch on/off
 
 // Client bars (HP...)
 const TPropIndex PROPERTY_BARS = 15;
@@ -173,10 +169,8 @@ const double THRESHOLD_BARS_CLIENT_M = 28.0;
 
 // Client bars (HP...)
 const TPropIndex PROPERTY_TARGET_LIST = 16;
-const TCoord THRESHOLD_TARGET_LIST =
-    (TCoord)(100000 * sqrt(2.0)); // Projectiles reach is 100 meters, must apply
-                                  // a sqrt(2.0) fector to get the max
-                                  // equivalent manhatan distance
+const TCoord THRESHOLD_TARGET_LIST = (TCoord)(100000 * sqrt(2.0)); // Projectiles reach is 100 meters, must apply a sqrt(2.0)
+                                                                   // fector to get the max equivalent manhatan distance
 
 const TPropIndex PROPERTY_TARGET_LIST_0 = 16;
 const TPropIndex PROPERTY_TARGET_LIST_1 = 17;
@@ -226,182 +220,138 @@ const uint NB_VISUAL_PROPERTIES = 28;
 const uint MAX_PROPERTIES_PER_ENTITY = NB_VISUAL_PROPERTIES;
 
 // Special constant for unassociating
-const TPropIndex PROPERTY_DISASSOCIATION =
-    std::numeric_limits<TPropIndex>::max() - 1;
+const TPropIndex PROPERTY_DISASSOCIATION = std::numeric_limits<TPropIndex>::max() - 1;
 
 // Names (debug info)
-inline const char *getPropText(TPropIndex p) {
-  static const char unknowProp[] = "UNKNOWN";
-  switch (p) {
-  case PROPERTY_POSITION:
-    return "POS";
-  case PROPERTY_POSY:
-    return "Y";
-  case PROPERTY_POSZ:
-    return "Z";
-  case PROPERTY_ORIENTATION:
-    return "THETA";
-  case PROPERTY_SHEET:
-    return "SHEET";
-  case PROPERTY_BEHAVIOUR:
-    return "BEHAVIOUR";
-  case PROPERTY_NAME_STRING_ID:
-    return "NAME";
-  case PROPERTY_TARGET_ID:
-    return "TARGET_ID";
-  case PROPERTY_MODE:
-    return "MODE";
-  case PROPERTY_VPA:
-    return "VPA";
-  case PROPERTY_VPB:
-    return "VPB";
-  case PROPERTY_VPC:
-    return "VPC";
-  case PROPERTY_ENTITY_MOUNTED_ID:
-    return "ENTITY_MOUNTED";
-  case PROPERTY_RIDER_ENTITY_ID:
-    return "RIDER_ENTITY";
-  case PROPERTY_CONTEXTUAL:
-    return "CONTEXTUAL";
-  case PROPERTY_BARS:
-    return "BARS";
-  case PROPERTY_TARGET_LIST:
-    return "TARGET_LIST";
-  case PROPERTY_VISUAL_FX:
-    return "VISUAL_FX";
-  case PROPERTY_GUILD_SYMBOL:
-    return "TARGET_GUILD_SYMBOL";
-  case PROPERTY_GUILD_NAME_ID:
-    return "TARGET_GUILD_NAME_ID";
-  case PROPERTY_EVENT_FACTION_ID:
-    return "EVENT_FACTION_ID";
-  case PROPERTY_PVP_MODE:
-    return "PVP_MODE";
-  case PROPERTY_PVP_CLAN:
-    return "PVP_CLAN";
-  case PROPERTY_OWNER_PEOPLE:
-    return "OWNER_PEOPLE";
-  case PROPERTY_OUTPOST_INFOS:
-    return "OUTPOST_INFOS";
-  // case PROPERTY_STATUS: return "STATUS";
-  //  yoyo: cannot return a toString()!! (local object)
-  default:
-    return unknowProp;
-  }
+inline const char *getPropText(TPropIndex p)
+{
+	static const char unknowProp[] = "UNKNOWN";
+	switch (p)
+	{
+	case PROPERTY_POSITION: return "POS";
+	case PROPERTY_POSY: return "Y";
+	case PROPERTY_POSZ: return "Z";
+	case PROPERTY_ORIENTATION: return "THETA";
+	case PROPERTY_SHEET: return "SHEET";
+	case PROPERTY_BEHAVIOUR: return "BEHAVIOUR";
+	case PROPERTY_NAME_STRING_ID: return "NAME";
+	case PROPERTY_TARGET_ID: return "TARGET_ID";
+	case PROPERTY_MODE: return "MODE";
+	case PROPERTY_VPA: return "VPA";
+	case PROPERTY_VPB: return "VPB";
+	case PROPERTY_VPC: return "VPC";
+	case PROPERTY_ENTITY_MOUNTED_ID: return "ENTITY_MOUNTED";
+	case PROPERTY_RIDER_ENTITY_ID: return "RIDER_ENTITY";
+	case PROPERTY_CONTEXTUAL: return "CONTEXTUAL";
+	case PROPERTY_BARS: return "BARS";
+	case PROPERTY_TARGET_LIST: return "TARGET_LIST";
+	case PROPERTY_VISUAL_FX: return "VISUAL_FX";
+	case PROPERTY_GUILD_SYMBOL: return "TARGET_GUILD_SYMBOL";
+	case PROPERTY_GUILD_NAME_ID: return "TARGET_GUILD_NAME_ID";
+	case PROPERTY_EVENT_FACTION_ID: return "EVENT_FACTION_ID";
+	case PROPERTY_PVP_MODE: return "PVP_MODE";
+	case PROPERTY_PVP_CLAN: return "PVP_CLAN";
+	case PROPERTY_OWNER_PEOPLE: return "OWNER_PEOPLE";
+	case PROPERTY_OUTPOST_INFOS: return "OUTPOST_INFOS";
+	// case PROPERTY_STATUS: return "STATUS";
+	//  yoyo: cannot return a toString()!! (local object)
+	default: return unknowProp;
+	}
 }
 
 // Short Names (debug info)
-inline const char *getPropShortText(TPropIndex p) {
-  static const char unknowProp[] = "???";
-  switch (p) {
-  case PROPERTY_POSITION:
-    return "POS";
-  case PROPERTY_POSY:
-    return "POY";
-  case PROPERTY_POSZ:
-    return "POZ";
-  case PROPERTY_ORIENTATION:
-    return "THE";
-  case PROPERTY_SHEET:
-    return "SHT";
-  case PROPERTY_BEHAVIOUR:
-    return "BHV";
-  case PROPERTY_NAME_STRING_ID:
-    return "NME";
-  case PROPERTY_TARGET_ID:
-    return "TGT";
-  case PROPERTY_MODE:
-    return "MOD";
-  case PROPERTY_VPA:
-    return "VPA";
-  case PROPERTY_VPB:
-    return "VPB";
-  case PROPERTY_VPC:
-    return "VPC";
-  case PROPERTY_ENTITY_MOUNTED_ID:
-    return "MNT";
-  case PROPERTY_RIDER_ENTITY_ID:
-    return "RDR";
-  case PROPERTY_CONTEXTUAL:
-    return "CTX";
-  case PROPERTY_BARS:
-    return "BRS";
-  case PROPERTY_TARGET_LIST:
-    return "TLS";
-  case PROPERTY_VISUAL_FX:
-    return "VFX";
-  case PROPERTY_GUILD_SYMBOL:
-    return "TGS";
-  case PROPERTY_GUILD_NAME_ID:
-    return "TGN";
-  case PROPERTY_EVENT_FACTION_ID:
-    return "EVF";
-  case PROPERTY_PVP_MODE:
-    return "PVPM";
-  case PROPERTY_PVP_CLAN:
-    return "PVPC";
-  case PROPERTY_OWNER_PEOPLE:
-    return "OWP";
-  case PROPERTY_OUTPOST_INFOS:
-    return "OTP";
-  // case PROPERTY_STATUS: return "STA";
-  //  yoyo: cannot return a toString()!! (local object)
-  default:
-    return unknowProp;
-  }
+inline const char *getPropShortText(TPropIndex p)
+{
+	static const char unknowProp[] = "???";
+	switch (p)
+	{
+	case PROPERTY_POSITION: return "POS";
+	case PROPERTY_POSY: return "POY";
+	case PROPERTY_POSZ: return "POZ";
+	case PROPERTY_ORIENTATION: return "THE";
+	case PROPERTY_SHEET: return "SHT";
+	case PROPERTY_BEHAVIOUR: return "BHV";
+	case PROPERTY_NAME_STRING_ID: return "NME";
+	case PROPERTY_TARGET_ID: return "TGT";
+	case PROPERTY_MODE: return "MOD";
+	case PROPERTY_VPA: return "VPA";
+	case PROPERTY_VPB: return "VPB";
+	case PROPERTY_VPC: return "VPC";
+	case PROPERTY_ENTITY_MOUNTED_ID: return "MNT";
+	case PROPERTY_RIDER_ENTITY_ID: return "RDR";
+	case PROPERTY_CONTEXTUAL: return "CTX";
+	case PROPERTY_BARS: return "BRS";
+	case PROPERTY_TARGET_LIST: return "TLS";
+	case PROPERTY_VISUAL_FX: return "VFX";
+	case PROPERTY_GUILD_SYMBOL: return "TGS";
+	case PROPERTY_GUILD_NAME_ID: return "TGN";
+	case PROPERTY_EVENT_FACTION_ID: return "EVF";
+	case PROPERTY_PVP_MODE: return "PVPM";
+	case PROPERTY_PVP_CLAN: return "PVPC";
+	case PROPERTY_OWNER_PEOPLE: return "OWP";
+	case PROPERTY_OUTPOST_INFOS: return "OTP";
+	// case PROPERTY_STATUS: return "STA";
+	//  yoyo: cannot return a toString()!! (local object)
+	default: return unknowProp;
+	}
 }
 
 /// Set an entry in the threshold table
-inline void setThreshold(TCoord *table, TPropIndex propIndex, TCoord dist,
-                         uint nbPropIndices, bool check = false) {
-  static uint NbThresholdsSet =
-      0; // needs to be instanciated only in FS, where the function is used
-  if (check) {
-    if (NbThresholdsSet != NB_VISUAL_PROPERTIES)
-      nlerror("%u distance thresholds missing",
-              NB_VISUAL_PROPERTIES - NbThresholdsSet);
-  } else {
-    NbThresholdsSet += nbPropIndices;
-    if (table[propIndex] == -1) {
-      table[propIndex] = dist;
-    } else if (table[propIndex] != dist) {
-      nlwarning("Found two different DistThreshold %d and %d for the same "
-                "propIndex %hu",
-                table[propIndex], dist, propIndex);
-    }
-  }
+inline void setThreshold(TCoord *table, TPropIndex propIndex, TCoord dist, uint nbPropIndices, bool check = false)
+{
+	static uint NbThresholdsSet = 0; // needs to be instanciated only in FS, where the function is used
+	if (check)
+	{
+		if (NbThresholdsSet != NB_VISUAL_PROPERTIES)
+			nlerror("%u distance thresholds missing", NB_VISUAL_PROPERTIES - NbThresholdsSet);
+	}
+	else
+	{
+		NbThresholdsSet += nbPropIndices;
+		if (table[propIndex] == -1)
+		{
+			table[propIndex] = dist;
+		}
+		else if (table[propIndex] != dist)
+		{
+			nlwarning("Found two different DistThreshold %d and %d for the same propIndex %hu", table[propIndex], dist, propIndex);
+		}
+	}
 }
 
 /// Check if there is no unset threshold
-inline void checkThresholds() { setThreshold(NULL, 0, 0, 0, true); }
+inline void checkThresholds()
+{
+	setThreshold(NULL, 0, 0, 0, true);
+}
 
 /// Initialize threshold table
-inline void initThresholdTable(TCoord *table) {
-  setThreshold(table, PROPERTY_POSITION, THRESHOLD_POSITION, 3);
-  setThreshold(table, PROPERTY_ORIENTATION, THRESHOLD_ORIENTATION, 1);
-  setThreshold(table, PROPERTY_SHEET, THRESHOLD_SHEET, 1);
-  setThreshold(table, PROPERTY_BEHAVIOUR, THRESHOLD_BEHAVIOUR, 1);
-  setThreshold(table, PROPERTY_NAME_STRING_ID, THRESHOLD_NAME_STRING_ID, 1);
-  setThreshold(table, PROPERTY_TARGET_ID, THRESHOLD_TARGET_ID, 1);
-  setThreshold(table, PROPERTY_MODE, THRESHOLD_MODE, 1);
-  setThreshold(table, PROPERTY_VPA, THRESHOLD_VPA, 1);
-  setThreshold(table, PROPERTY_VPB, THRESHOLD_VPB, 1);
-  setThreshold(table, PROPERTY_VPC, THRESHOLD_VPC, 1);
-  setThreshold(table, PROPERTY_ENTITY_MOUNTED_ID, THRESHOLD_ENTITY_MOUNTED_ID,
-               1);
-  setThreshold(table, PROPERTY_RIDER_ENTITY_ID, THRESHOLD_RIDER_ENTITY_ID, 1);
-  setThreshold(table, PROPERTY_CONTEXTUAL, THRESHOLD_CONTEXTUAL, 1);
-  setThreshold(table, PROPERTY_BARS, THRESHOLD_BARS, 1);
-  setThreshold(table, PROPERTY_TARGET_LIST, THRESHOLD_TARGET_LIST, 4);
-  setThreshold(table, PROPERTY_GUILD_SYMBOL, THRESHOLD_GUILD_SYMBOL, 1);
-  setThreshold(table, PROPERTY_GUILD_NAME_ID, THRESHOLD_GUILD_NAME_ID, 1);
-  setThreshold(table, PROPERTY_VISUAL_FX, THRESHOLD_VISUAL_FX, 1);
-  setThreshold(table, PROPERTY_EVENT_FACTION_ID, THRESHOLD_EVENT_FACTION_ID, 1);
-  setThreshold(table, PROPERTY_PVP_MODE, THRESHOLD_PVP_MODE, 1);
-  setThreshold(table, PROPERTY_PVP_CLAN, THRESHOLD_PVP_CLAN, 1);
-  setThreshold(table, PROPERTY_OWNER_PEOPLE, THRESHOLD_OWNER_PEOPLE, 1);
-  setThreshold(table, PROPERTY_OUTPOST_INFOS, THRESHOLD_OUTPOST_INFOS, 1);
-  checkThresholds();
+inline void initThresholdTable(TCoord *table)
+{
+	setThreshold(table, PROPERTY_POSITION, THRESHOLD_POSITION, 3);
+	setThreshold(table, PROPERTY_ORIENTATION, THRESHOLD_ORIENTATION, 1);
+	setThreshold(table, PROPERTY_SHEET, THRESHOLD_SHEET, 1);
+	setThreshold(table, PROPERTY_BEHAVIOUR, THRESHOLD_BEHAVIOUR, 1);
+	setThreshold(table, PROPERTY_NAME_STRING_ID, THRESHOLD_NAME_STRING_ID, 1);
+	setThreshold(table, PROPERTY_TARGET_ID, THRESHOLD_TARGET_ID, 1);
+	setThreshold(table, PROPERTY_MODE, THRESHOLD_MODE, 1);
+	setThreshold(table, PROPERTY_VPA, THRESHOLD_VPA, 1);
+	setThreshold(table, PROPERTY_VPB, THRESHOLD_VPB, 1);
+	setThreshold(table, PROPERTY_VPC, THRESHOLD_VPC, 1);
+	setThreshold(table, PROPERTY_ENTITY_MOUNTED_ID, THRESHOLD_ENTITY_MOUNTED_ID, 1);
+	setThreshold(table, PROPERTY_RIDER_ENTITY_ID, THRESHOLD_RIDER_ENTITY_ID, 1);
+	setThreshold(table, PROPERTY_CONTEXTUAL, THRESHOLD_CONTEXTUAL, 1);
+	setThreshold(table, PROPERTY_BARS, THRESHOLD_BARS, 1);
+	setThreshold(table, PROPERTY_TARGET_LIST, THRESHOLD_TARGET_LIST, 4);
+	setThreshold(table, PROPERTY_GUILD_SYMBOL, THRESHOLD_GUILD_SYMBOL, 1);
+	setThreshold(table, PROPERTY_GUILD_NAME_ID, THRESHOLD_GUILD_NAME_ID, 1);
+	setThreshold(table, PROPERTY_VISUAL_FX, THRESHOLD_VISUAL_FX, 1);
+	setThreshold(table, PROPERTY_EVENT_FACTION_ID, THRESHOLD_EVENT_FACTION_ID, 1);
+	setThreshold(table, PROPERTY_PVP_MODE, THRESHOLD_PVP_MODE, 1);
+	setThreshold(table, PROPERTY_PVP_CLAN, THRESHOLD_PVP_CLAN, 1);
+	setThreshold(table, PROPERTY_OWNER_PEOPLE, THRESHOLD_OWNER_PEOPLE, 1);
+	setThreshold(table, PROPERTY_OUTPOST_INFOS, THRESHOLD_OUTPOST_INFOS, 1);
+	checkThresholds();
 }
 
 typedef uint8 TCLEntityId; // Client entity id type, range in 1..255
@@ -418,166 +368,173 @@ class TVPNodeBase;
 
 TVPNodeBase *NewNode();
 
-#define setNodePropIndex(name)                                                 \
-  get##name##node()->PropIndex = CLFECOMMON::PROPERTY_##name
+#define setNodePropIndex(name) \
+	get##name##node()->PropIndex = CLFECOMMON::PROPERTY_##name
 
 /*
  * Base class for nodes of the visual property tree
  */
-class TVPNodeBase {
+class TVPNodeBase
+{
 public:
-  TVPNodeBase *VPParent;
-  TVPNodeBase *VPA;
-  TVPNodeBase *VPB;
-  CLFECOMMON::TPropIndex PropIndex;
-  bool BranchHasPayload;
+	TVPNodeBase *VPParent;
+	TVPNodeBase *VPA;
+	TVPNodeBase *VPB;
+	CLFECOMMON::TPropIndex PropIndex;
+	bool BranchHasPayload;
 
-  /// Constructor
-  TVPNodeBase()
-      : VPParent(NULL), VPA(NULL), VPB(NULL),
-        PropIndex(std::numeric_limits<TPropIndex>::max()),
-        BranchHasPayload(false) {}
-  virtual ~TVPNodeBase() {}
-  /// Return true if the node is root of a tree
-  bool isRoot() const { return VPParent == NULL; }
+	/// Constructor
+	TVPNodeBase()
+	    : VPParent(NULL)
+	    , VPA(NULL)
+	    , VPB(NULL)
+	    , PropIndex(std::numeric_limits<TPropIndex>::max())
+	    , BranchHasPayload(false)
+	{
+	}
+	virtual ~TVPNodeBase() { }
+	/// Return true if the node is root of a tree
+	bool isRoot() const { return VPParent == NULL; }
 
-  /// Return true if the node is leaf of a tree
-  bool isLeaf() const {
-    return PropIndex != std::numeric_limits<TPropIndex>::max();
-  }
+	/// Return true if the node is leaf of a tree
+	bool isLeaf() const { return PropIndex != std::numeric_limits<TPropIndex>::max(); }
 
-  /// Return the level of the node in a tree (root=1)
-  uint getLevel() const {
-    const TVPNodeBase *node = this;
-    uint level = 0;
-    do {
-      ++level;
-      node = node->VPParent;
-    } while (node);
-    return level;
-  }
+	/// Return the level of the node in a tree (root=1)
+	uint getLevel() const
+	{
+		const TVPNodeBase *node = this;
+		uint level = 0;
+		do
+		{
+			++level;
+			node = node->VPParent;
+		} while (node);
+		return level;
+	}
 
-  // From the main root
-  TVPNodeBase *getPOSITIONnode() { return VPA; }
-  TVPNodeBase *getORIENTATIONnode() { return VPB->VPA; }
+	// From the main root
+	TVPNodeBase *getPOSITIONnode() { return VPA; }
+	TVPNodeBase *getORIENTATIONnode() { return VPB->VPA; }
 
-  // From the discrete root (mainroot->VPB->VPB)
-  TVPNodeBase *getSHEETnode() { return VPA->VPA->VPA; }
-  TVPNodeBase *getBEHAVIOURnode() { return VPA->VPA->VPB->VPA; }
-  TVPNodeBase *getOWNER_PEOPLEnode() { return VPA->VPA->VPB->VPB; }
-  TVPNodeBase *getNAME_STRING_IDnode() { return VPA->VPB->VPA->VPA; }
-  TVPNodeBase *getCONTEXTUALnode() { return VPA->VPB->VPA->VPB; }
-  TVPNodeBase *getTARGET_LISTnode() { return VPA->VPB->VPB->VPA; }
-  TVPNodeBase *getTARGET_IDnode() { return VPA->VPB->VPB->VPB; }
-  TVPNodeBase *getMODEnode() { return VPB->VPA->VPA->VPA; }
-  TVPNodeBase *getVPAnode() { return VPB->VPA->VPA->VPB; }
-  TVPNodeBase *getBARSnode() { return VPB->VPA->VPB->VPA; }
-  TVPNodeBase *getVISUAL_FXnode() { return VPB->VPA->VPB->VPB; }
-  TVPNodeBase *getVPBnode() { return VPB->VPB->VPA->VPA; }
-  TVPNodeBase *getVPCnode() { return VPB->VPB->VPA->VPB->VPA; }
-  TVPNodeBase *getEVENT_FACTION_IDnode() {
-    return VPB->VPB->VPA->VPB->VPB->VPA;
-  }
-  TVPNodeBase *getPVP_MODEnode() { return VPB->VPB->VPA->VPB->VPB->VPB->VPA; }
-  TVPNodeBase *getPVP_CLANnode() { return VPB->VPB->VPA->VPB->VPB->VPB->VPB; }
-  TVPNodeBase *getENTITY_MOUNTED_IDnode() { return VPB->VPB->VPB->VPA->VPA; }
-  TVPNodeBase *getRIDER_ENTITY_IDnode() { return VPB->VPB->VPB->VPA->VPB; }
-  TVPNodeBase *getOUTPOST_INFOSnode() { return VPB->VPB->VPB->VPB->VPA; }
-  TVPNodeBase *getGUILD_SYMBOLnode() { return VPB->VPB->VPB->VPB->VPB->VPA; }
-  TVPNodeBase *getGUILD_NAME_IDnode() { return VPB->VPB->VPB->VPB->VPB->VPB; }
+	// From the discrete root (mainroot->VPB->VPB)
+	TVPNodeBase *getSHEETnode() { return VPA->VPA->VPA; }
+	TVPNodeBase *getBEHAVIOURnode() { return VPA->VPA->VPB->VPA; }
+	TVPNodeBase *getOWNER_PEOPLEnode() { return VPA->VPA->VPB->VPB; }
+	TVPNodeBase *getNAME_STRING_IDnode() { return VPA->VPB->VPA->VPA; }
+	TVPNodeBase *getCONTEXTUALnode() { return VPA->VPB->VPA->VPB; }
+	TVPNodeBase *getTARGET_LISTnode() { return VPA->VPB->VPB->VPA; }
+	TVPNodeBase *getTARGET_IDnode() { return VPA->VPB->VPB->VPB; }
+	TVPNodeBase *getMODEnode() { return VPB->VPA->VPA->VPA; }
+	TVPNodeBase *getVPAnode() { return VPB->VPA->VPA->VPB; }
+	TVPNodeBase *getBARSnode() { return VPB->VPA->VPB->VPA; }
+	TVPNodeBase *getVISUAL_FXnode() { return VPB->VPA->VPB->VPB; }
+	TVPNodeBase *getVPBnode() { return VPB->VPB->VPA->VPA; }
+	TVPNodeBase *getVPCnode() { return VPB->VPB->VPA->VPB->VPA; }
+	TVPNodeBase *getEVENT_FACTION_IDnode() { return VPB->VPB->VPA->VPB->VPB->VPA; }
+	TVPNodeBase *getPVP_MODEnode() { return VPB->VPB->VPA->VPB->VPB->VPB->VPA; }
+	TVPNodeBase *getPVP_CLANnode() { return VPB->VPB->VPA->VPB->VPB->VPB->VPB; }
+	TVPNodeBase *getENTITY_MOUNTED_IDnode() { return VPB->VPB->VPB->VPA->VPA; }
+	TVPNodeBase *getRIDER_ENTITY_IDnode() { return VPB->VPB->VPB->VPA->VPB; }
+	TVPNodeBase *getOUTPOST_INFOSnode() { return VPB->VPB->VPB->VPB->VPA; }
+	TVPNodeBase *getGUILD_SYMBOLnode() { return VPB->VPB->VPB->VPB->VPB->VPA; }
+	TVPNodeBase *getGUILD_NAME_IDnode() { return VPB->VPB->VPB->VPB->VPB->VPB; }
 
-  // WHEN ADDING A PROPERTY, CHECK IF ENUM FOR CNetworkConnection::AddNewEntity
-  // BASE INDEX IS STILL VALID!
-  // and don't forget to update NB_VISUAL_PROPERTIES
+	// WHEN ADDING A PROPERTY, CHECK IF ENUM FOR CNetworkConnection::AddNewEntity
+	// BASE INDEX IS STILL VALID!
+	// and don't forget to update NB_VISUAL_PROPERTIES
 
-  // Return the number of visual properties
-  uint buildTree() {
-    makeChildren();
-    setNodePropIndex(POSITION);
-    VPB->makeChildren();
-    setNodePropIndex(ORIENTATION);
+	// Return the number of visual properties
+	uint buildTree()
+	{
+		makeChildren();
+		setNodePropIndex(POSITION);
+		VPB->makeChildren();
+		setNodePropIndex(ORIENTATION);
 
-    TVPNodeBase *discreetRoot = VPB->VPB;
-    discreetRoot->makeDescendants(
-        3); // 8 leaves + those created by additional makeChildren()
-    discreetRoot->setNodePropIndex(SHEET);
-    discreetRoot->VPA->VPA->VPB->makeChildren();
-    discreetRoot->setNodePropIndex(BEHAVIOUR);
-    discreetRoot->setNodePropIndex(OWNER_PEOPLE);
-    discreetRoot->VPA->VPB->VPA->makeChildren();
-    discreetRoot->setNodePropIndex(NAME_STRING_ID);
-    discreetRoot->setNodePropIndex(CONTEXTUAL);
-    discreetRoot->VPA->VPB->VPB->makeChildren();
-    discreetRoot->setNodePropIndex(TARGET_LIST);
-    discreetRoot->setNodePropIndex(TARGET_ID);
-    discreetRoot->VPB->VPA->VPA->makeChildren();
-    discreetRoot->setNodePropIndex(MODE);
-    discreetRoot->setNodePropIndex(VPA);
-    discreetRoot->VPB->VPA->VPB->makeChildren();
-    discreetRoot->setNodePropIndex(BARS);
-    discreetRoot->setNodePropIndex(VISUAL_FX);
-    discreetRoot->VPB->VPB->VPA->makeChildren();
-    discreetRoot->setNodePropIndex(VPB);
-    discreetRoot->VPB->VPB->VPA->VPB->makeChildren();
-    discreetRoot->setNodePropIndex(VPC);
-    discreetRoot->VPB->VPB->VPA->VPB->VPB->makeChildren();
-    discreetRoot->setNodePropIndex(EVENT_FACTION_ID);
-    discreetRoot->VPB->VPB->VPA->VPB->VPB->VPB->makeChildren();
-    discreetRoot->setNodePropIndex(PVP_MODE);
-    discreetRoot->setNodePropIndex(PVP_CLAN);
-    discreetRoot->VPB->VPB->VPB->makeChildren();
-    discreetRoot->VPB->VPB->VPB->VPA->makeChildren();
-    discreetRoot->setNodePropIndex(ENTITY_MOUNTED_ID);
-    discreetRoot->setNodePropIndex(RIDER_ENTITY_ID);
-    discreetRoot->VPB->VPB->VPB->VPB->makeChildren();
-    discreetRoot->setNodePropIndex(OUTPOST_INFOS);
-    discreetRoot->VPB->VPB->VPB->VPB->VPB->makeChildren();
-    discreetRoot->setNodePropIndex(GUILD_SYMBOL);
-    discreetRoot->setNodePropIndex(GUILD_NAME_ID);
+		TVPNodeBase *discreetRoot = VPB->VPB;
+		discreetRoot->makeDescendants(3); // 8 leaves + those created by additional makeChildren()
+		discreetRoot->setNodePropIndex(SHEET);
+		discreetRoot->VPA->VPA->VPB->makeChildren();
+		discreetRoot->setNodePropIndex(BEHAVIOUR);
+		discreetRoot->setNodePropIndex(OWNER_PEOPLE);
+		discreetRoot->VPA->VPB->VPA->makeChildren();
+		discreetRoot->setNodePropIndex(NAME_STRING_ID);
+		discreetRoot->setNodePropIndex(CONTEXTUAL);
+		discreetRoot->VPA->VPB->VPB->makeChildren();
+		discreetRoot->setNodePropIndex(TARGET_LIST);
+		discreetRoot->setNodePropIndex(TARGET_ID);
+		discreetRoot->VPB->VPA->VPA->makeChildren();
+		discreetRoot->setNodePropIndex(MODE);
+		discreetRoot->setNodePropIndex(VPA);
+		discreetRoot->VPB->VPA->VPB->makeChildren();
+		discreetRoot->setNodePropIndex(BARS);
+		discreetRoot->setNodePropIndex(VISUAL_FX);
+		discreetRoot->VPB->VPB->VPA->makeChildren();
+		discreetRoot->setNodePropIndex(VPB);
+		discreetRoot->VPB->VPB->VPA->VPB->makeChildren();
+		discreetRoot->setNodePropIndex(VPC);
+		discreetRoot->VPB->VPB->VPA->VPB->VPB->makeChildren();
+		discreetRoot->setNodePropIndex(EVENT_FACTION_ID);
+		discreetRoot->VPB->VPB->VPA->VPB->VPB->VPB->makeChildren();
+		discreetRoot->setNodePropIndex(PVP_MODE);
+		discreetRoot->setNodePropIndex(PVP_CLAN);
+		discreetRoot->VPB->VPB->VPB->makeChildren();
+		discreetRoot->VPB->VPB->VPB->VPA->makeChildren();
+		discreetRoot->setNodePropIndex(ENTITY_MOUNTED_ID);
+		discreetRoot->setNodePropIndex(RIDER_ENTITY_ID);
+		discreetRoot->VPB->VPB->VPB->VPB->makeChildren();
+		discreetRoot->setNodePropIndex(OUTPOST_INFOS);
+		discreetRoot->VPB->VPB->VPB->VPB->VPB->makeChildren();
+		discreetRoot->setNodePropIndex(GUILD_SYMBOL);
+		discreetRoot->setNodePropIndex(GUILD_NAME_ID);
 
-    return NB_VISUAL_PROPERTIES;
-  }
+		return NB_VISUAL_PROPERTIES;
+	}
 
-  void makeChildren() {
-    VPA = NewNode();
-    VPA->VPParent = this;
-    VPB = NewNode();
-    VPB->VPParent = this;
-  }
+	void makeChildren()
+	{
+		VPA = NewNode();
+		VPA->VPParent = this;
+		VPB = NewNode();
+		VPB->VPParent = this;
+	}
 
-  void makeDescendants(uint nbLevels) {
-    makeChildren();
-    if (nbLevels > 1) {
-      VPA->makeDescendants(nbLevels - 1);
-      VPB->makeDescendants(nbLevels - 1);
-    }
-  }
+	void makeDescendants(uint nbLevels)
+	{
+		makeChildren();
+		if (nbLevels > 1)
+		{
+			VPA->makeDescendants(nbLevels - 1);
+			VPB->makeDescendants(nbLevels - 1);
+		}
+	}
 };
 
-} // namespace CLFECOMMON
+} // CLFECOMMON
 
 /*
  * This coordinate may be relative (e.g. in a ship) or absolute
  */
-inline CLFECOMMON::TCoord getRelativeCoordinateFrom64(uint64 posvalue) {
-  // In Most Significant DWord
-  return (CLFECOMMON::TCoord)(posvalue >> 32);
+inline CLFECOMMON::TCoord getRelativeCoordinateFrom64(uint64 posvalue)
+{
+	// In Most Significant DWord
+	return (CLFECOMMON::TCoord)(posvalue >> 32);
 }
 
 /*
  * This coordinate is always absolute
  */
-inline CLFECOMMON::TCoord getAbsoluteCoordinateFrom64(uint64 posvalue) {
-  // In Least Significant DWord
-  return (CLFECOMMON::TCoord)posvalue;
+inline CLFECOMMON::TCoord getAbsoluteCoordinateFrom64(uint64 posvalue)
+{
+	// In Least Significant DWord
+	return (CLFECOMMON::TCoord)posvalue;
 }
 
 /*
  * This coordinates are always absolute
  */
 /*inline void getAbsoluteCoordinates2D( const uint64 *posvalue,
-                                      CLFECOMMON::TCoord& posx,
-CLFECOMMON::TCoord& posy )
+                                      CLFECOMMON::TCoord& posx, CLFECOMMON::TCoord& posy )
 {
     // In Least Significant DWord
     posx = (CLFECOMMON::TCoord)(posvalue[CLFECOMMON::PROPERTY_POSX]);

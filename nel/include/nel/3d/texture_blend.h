@@ -17,76 +17,78 @@
 #ifndef NL_TEXTURE_BLEND_H
 #define NL_TEXTURE_BLEND_H
 
-#include "nel/3d/texture.h"
 #include "nel/misc/types_nl.h"
+#include "nel/3d/texture.h"
 
 namespace NL3D {
 
 /**
- * This is a helper texture that helps to blend between 2 others textures. It
- * may help where sharing is needed. (for example, with a texture that blend
- * between day / night, and that is shared by several object). The default is to
- * have sharing enabled. NB : sharing is only supported if the 2 blending
- * textures support sharing IMPORTANT: you should setup all your blend texture
- * after changing the blend factor to avoid previous texture to be left in VRAM
+ * This is a helper texture that helps to blend between 2 others textures. It may help where sharing is needed.
+ * (for example, with a texture that blend between day / night, and that is shared by several object). The default is
+ * to have sharing enabled.
+ * NB : sharing is only supported if the 2 blending textures support sharing
+ * IMPORTANT: you should setup all your blend texture after changing the blend factor to avoid previous texture
+ * to be left in VRAM
  * \author Nicolas Vizerie
  * \author Nevrax France
  * \date 2001
  */
-class CTextureBlend : public ITexture {
+class CTextureBlend : public ITexture
+{
 public:
-  NLMISC_DECLARE_CLASS(CTextureBlend);
-  /// ctor
-  CTextureBlend();
+	NLMISC_DECLARE_CLASS(CTextureBlend);
+	/// ctor
+	CTextureBlend();
 
-  /// Set one of the textures between which to blend. If set to NULL, the result
-  /// texture will be a dummy texture
-  void setBlendTexture(uint index, ITexture *tex);
+	/// Set one of the textures between which to blend. If set to NULL, the result texture will be a dummy texture
+	void setBlendTexture(uint index, ITexture *tex);
 
-  /// Get a blend texture
-  ITexture *getBlendtexture(uint index) {
-    nlassert(index < 2);
-    return (ITexture *)_BlendTex[index];
-  }
-  const ITexture *getBlendtexture(uint index) const {
-    nlassert(index < 2);
-    return (ITexture *)_BlendTex[index];
-  }
+	/// Get a blend texture
+	ITexture *getBlendtexture(uint index)
+	{
+		nlassert(index < 2);
+		return (ITexture *)_BlendTex[index];
+	}
+	const ITexture *getBlendtexture(uint index) const
+	{
+		nlassert(index < 2);
+		return (ITexture *)_BlendTex[index];
+	}
 
-  /** Set the blend factor between textures. It must range from 0 to 256.
-   * \return true if the texture has been touched
-   */
-  bool setBlendFactor(uint16 factor);
+	/** Set the blend factor between textures. It must range from 0 to 256.
+	 * \return true if the texture has been touched
+	 */
+	bool setBlendFactor(uint16 factor);
 
-  /// Get the blend factor between the textures (from 0 to 255)
-  uint16 getBlendFactor() const { return _BlendFactor; }
+	/// Get the blend factor between the textures (from 0 to 255)
+	uint16 getBlendFactor() const { return _BlendFactor; }
 
-  ///\name Texture sharing
-  // @{
-  virtual bool supportSharing() const;
-  virtual std::string getShareName() const;
-  /// enable / disable sharing support
-  void enableSharing(bool enabled = false);
-  /// test whether texture sharing is enabled
-  bool isSharingEnabled() const { return _SharingEnabled; }
-  // @}
+	///\name Texture sharing
+	// @{
+	virtual bool supportSharing() const;
+	virtual std::string getShareName() const;
+	/// enable / disable sharing support
+	void enableSharing(bool enabled = false);
+	/// test whether texture sharing is enabled
+	bool isSharingEnabled() const { return _SharingEnabled; }
+	// @}
 
-  /// Generate this texture data's.
-  virtual void doGenerate(bool async);
+	/// Generate this texture data's.
+	virtual void doGenerate(bool async);
 
-  /// release this texture datas
-  virtual void release();
+	/// release this texture datas
+	virtual void release();
 
-  // serial this texture datas
-  virtual void serial(NLMISC::IStream &f);
+	// serial this texture datas
+	virtual void serial(NLMISC::IStream &f);
 
 private:
-  uint16 _BlendFactor;
-  NLMISC::CSmartPtr<ITexture> _BlendTex[2];
-  bool _SharingEnabled;
+	uint16 _BlendFactor;
+	NLMISC::CSmartPtr<ITexture> _BlendTex[2];
+	bool _SharingEnabled;
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_TEXTURE_BLEND_H
 

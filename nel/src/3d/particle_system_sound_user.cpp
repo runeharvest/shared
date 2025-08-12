@@ -16,11 +16,10 @@
 
 #include "std3d.h"
 
-// #include "nel/3d/u_particle_system_sound.h" we don't include this to avoid a
-// link with NLSOUND
+// #include "nel/3d/u_particle_system_sound.h" we don't include this to avoid a link with NLSOUND
 #include "nel/3d/particle_system.h"
-#include "nel/3d/u_ps_sound_impl.h"
 #include "nel/3d/u_ps_sound_interface.h"
+#include "nel/3d/u_ps_sound_impl.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -28,38 +27,46 @@
 
 namespace NL3D {
 
-void assignSoundServerToPS(UPSSoundServer *soundServer) {
-  CParticleSystem::registerSoundServer(soundServer);
+void assignSoundServerToPS(UPSSoundServer *soundServer)
+{
+	CParticleSystem::registerSoundServer(soundServer);
 } // NL3D
 
 /// init the particle system sound with the given AudioMixer
-void UParticleSystemSound::setPSSound(NLSOUND::UAudioMixer *audioMixer) {
-  static CPSSoundServImpl soundServer;
-  soundServer.init(audioMixer);
-  if (audioMixer) {
-    assignSoundServerToPS(&soundServer);
-  } else {
-    assignSoundServerToPS(NULL);
-  }
+void UParticleSystemSound::setPSSound(NLSOUND::UAudioMixer *audioMixer)
+{
+	static CPSSoundServImpl soundServer;
+	soundServer.init(audioMixer);
+	if (audioMixer)
+	{
+		assignSoundServerToPS(&soundServer);
+	}
+	else
+	{
+		assignSoundServerToPS(NULL);
+	}
 }
 
-void CPSSoundInstanceImpl::release(void) {
-  if (!_Spawned) // remove this source from the audio mixer if it hasn't been
-                 // spawned
-  {
-    if (_SoundServImpl->getAudioMixer()) {
-      //			_SoundServImpl->getAudioMixer()->removeSource(_Source);
-      delete _Source;
-    }
-  } else {
-    if (_Source) // tells this spawned source not to notify us when it ends
-    {
-      _Source->unregisterSpawnCallBack();
-    }
-  }
-  delete this;
+void CPSSoundInstanceImpl::release(void)
+{
+	if (!_Spawned) // remove this source from the audio mixer if it hasn't been spawned
+	{
+		if (_SoundServImpl->getAudioMixer())
+		{
+			//			_SoundServImpl->getAudioMixer()->removeSource(_Source);
+			delete _Source;
+		}
+	}
+	else
+	{
+		if (_Source) // tells this spawned source not to notify us when it ends
+		{
+			_Source->unregisterSpawnCallBack();
+		}
+	}
+	delete this;
 }
 
-} // namespace NL3D
+}
 
 /* End of particle_system_sound_user.cpp */

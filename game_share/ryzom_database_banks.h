@@ -23,18 +23,18 @@ const uint CDB_BANK_SHIFT = 5;
 /**
  * Database bank identifiers (please change CDBBankNames in cpp accordingly)
  */
-enum TCDBBank {
-  CDBPlayer,
-  CDBGuild,
-  /* CDBContinent, */ CDBOutpost,
-  /* CDBGlobal, */ NB_CDB_BANKS,
-  INVALID_CDB_BANK
+enum TCDBBank
+{
+	CDBPlayer,
+	CDBGuild,
+	/* CDBContinent, */ CDBOutpost,
+	/* CDBGlobal, */ NB_CDB_BANKS,
+	INVALID_CDB_BANK
 };
 
 // Utility macro
-#define FILL_nbits_WITH_NB_BITS_FOR_CDBBANK                                    \
-  for (nbits = 1; (1 << nbits) < NB_CDB_BANKS; ++nbits) {                      \
-  }
+#define FILL_nbits_WITH_NB_BITS_FOR_CDBBANK \
+	for (nbits = 1; (1 << nbits) < NB_CDB_BANKS; ++nbits) { }
 
 #endif // NL_RYZOM_DATABASE_BANKS_H
 

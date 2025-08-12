@@ -22,8 +22,8 @@
 
 #if defined(_MSC_VER) && defined(_DEBUG)
 #define _CRTDBG_MAP_ALLOC
-#include <crtdbg.h>
 #include <stdlib.h>
+#include <crtdbg.h>
 #define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
@@ -50,27 +50,28 @@
 #include <typeinfo>
 #include <utility>
 #include <vector>
+#include <cstdlib>
 
 // Include from libxml2
 #include <libxml/parser.h>
 
-#include "nel/misc/common.h"
-#include "nel/misc/config_file.h"
-#include "nel/misc/debug.h"
-#include "nel/misc/fast_mem.h"
-#include "nel/misc/file.h"
-#include "nel/misc/hierarchical_timer.h"
-#include "nel/misc/i_xml.h"
-#include "nel/misc/matrix.h"
-#include "nel/misc/mem_displayer.h"
-#include "nel/misc/o_xml.h"
-#include "nel/misc/path.h"
-#include "nel/misc/rgba.h"
-#include "nel/misc/stream.h"
-#include "nel/misc/string_common.h"
-#include "nel/misc/system_info.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/debug.h"
+#include "nel/misc/common.h"
+#include "nel/misc/fast_mem.h"
+#include "nel/misc/system_info.h"
+#include "nel/misc/mem_displayer.h"
+#include "nel/misc/matrix.h"
+#include "nel/misc/stream.h"
+#include "nel/misc/path.h"
+#include "nel/misc/string_common.h"
+#include "nel/misc/config_file.h"
+#include "nel/misc/i_xml.h"
+#include "nel/misc/o_xml.h"
+#include "nel/misc/hierarchical_timer.h"
 #include "nel/misc/vector.h"
+#include "nel/misc/rgba.h"
+#include "nel/misc/file.h"
 
 #ifdef NL_OS_WINDOWS
 #ifndef NL_COMP_MINGW

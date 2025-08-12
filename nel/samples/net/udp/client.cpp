@@ -18,32 +18,32 @@
 // Includes
 //
 
-#include "nel/misc/common.h"
-#include "nel/misc/config_file.h"
+#include "nel/misc/types_nl.h"
 #include "nel/misc/debug.h"
+#include "nel/misc/common.h"
 #include "nel/misc/mem_stream.h"
 #include "nel/misc/time_nl.h"
-#include "nel/misc/types_nl.h"
+#include "nel/misc/config_file.h"
 
+#include "nel/net/udp_sock.h"
 #include "nel/net/callback_client.h"
 #include "nel/net/inet_address.h"
 #include "nel/net/udp_sim_sock.h"
-#include "nel/net/udp_sock.h"
 
 #include "graph.h"
 
 #ifdef USE_3D
 
-#include "nel/3d/event_mouse_listener.h"
-#include "nel/3d/u_animation_set.h"
-#include "nel/3d/u_camera.h"
 #include "nel/3d/u_driver.h"
+#include "nel/3d/u_scene.h"
+#include "nel/3d/u_camera.h"
 #include "nel/3d/u_instance.h"
+#include "nel/3d/u_animation_set.h"
 #include "nel/3d/u_play_list.h"
 #include "nel/3d/u_play_list_manager.h"
-#include "nel/3d/u_scene.h"
 #include "nel/3d/u_text_context.h"
 #include "nel/3d/u_texture.h"
+#include "nel/3d/event_mouse_listener.h"
 
 using namespace NL3D;
 #endif
@@ -85,14 +85,10 @@ CConfigFile ConfigFile;
 
 #ifdef USE_3D
 
-CGraph FpsGraph("frame rate (fps)", 10.0f, 110.0f, 100.0f, 100.0f,
-                CRGBA(128, 0, 0, 128), 1000, 150.0f);
-CGraph DownloadGraph("download (bps)", 10.0f, 260.0f, 100.0f, 100.0f,
-                     CRGBA(0, 0, 128, 128), 1000, 20000.0f);
-CGraph UploadGraph("upload (bps)", 10.0f, 360.0f, 100.0f, 100.0f,
-                   CRGBA(0, 128, 128, 128), 1000, 20000.0f);
-CGraph LagGraph("lag (ms)", 150.0f, 110.0f, 100.0f, 100.0f,
-                CRGBA(128, 64, 64, 128), 100000, 2000.0f);
+CGraph FpsGraph("frame rate (fps)", 10.0f, 110.0f, 100.0f, 100.0f, CRGBA(128, 0, 0, 128), 1000, 150.0f);
+CGraph DownloadGraph("download (bps)", 10.0f, 260.0f, 100.0f, 100.0f, CRGBA(0, 0, 128, 128), 1000, 20000.0f);
+CGraph UploadGraph("upload (bps)", 10.0f, 360.0f, 100.0f, 100.0f, CRGBA(0, 128, 128, 128), 1000, 20000.0f);
+CGraph LagGraph("lag (ms)", 150.0f, 110.0f, 100.0f, 100.0f, CRGBA(128, 64, 64, 128), 100000, 2000.0f);
 
 #endif
 
@@ -100,294 +96,316 @@ CGraph LagGraph("lag (ms)", 150.0f, 110.0f, 100.0f, 100.0f,
 // Functions
 //
 
-void exit(const string &reason) {
-  if (!reason.empty())
-    InfoLog->displayRawNL("%s", reason.c_str());
-  InfoLog->displayRawNL("Press <enter> to exit");
-  getchar();
-  exit(EXIT_FAILURE);
+void exit(const string &reason)
+{
+	if (!reason.empty())
+		InfoLog->displayRawNL("%s", reason.c_str());
+	InfoLog->displayRawNL("Press <enter> to exit");
+	getchar();
+	exit(EXIT_FAILURE);
 }
 
 //
 // Config file functions
 //
 
-void createConfigFile() {
-  FILE *fp = nlfopen("client.cfg", "wt");
-  if (fp == NULL) {
-    InfoLog->displayRawNL("Can't create client.cfg");
-  } else {
-    fprintf(fp, "ServerAddress = \"%s\";\n", ServerAddr.c_str());
-    fprintf(fp, "SimInLag = 0;\n");
-    fprintf(fp, "SimInPacketLost = 0;\n");
-    fprintf(fp, "SimOutLag = 0;\n");
-    fprintf(fp, "SimOutPacketLost = 0;\n");
-    fprintf(fp, "SimOutPacketDuplication = 0;\n");
-    fprintf(fp, "SimOutPacketDisordering = 0;\n");
-    fprintf(fp, "ConnectionName = \"\";\n");
-    fclose(fp);
-  }
+void createConfigFile()
+{
+	FILE *fp = nlfopen("client.cfg", "wt");
+	if (fp == NULL)
+	{
+		InfoLog->displayRawNL("Can't create client.cfg");
+	}
+	else
+	{
+		fprintf(fp, "ServerAddress = \"%s\";\n", ServerAddr.c_str());
+		fprintf(fp, "SimInLag = 0;\n");
+		fprintf(fp, "SimInPacketLost = 0;\n");
+		fprintf(fp, "SimOutLag = 0;\n");
+		fprintf(fp, "SimOutPacketLost = 0;\n");
+		fprintf(fp, "SimOutPacketDuplication = 0;\n");
+		fprintf(fp, "SimOutPacketDisordering = 0;\n");
+		fprintf(fp, "ConnectionName = \"\";\n");
+		fclose(fp);
+	}
 }
 
-void checkConnectionName() {
-  if (ConnectionName.size() > 30) {
-    exit("Bad connection name (must be <= 30 characters)");
-  }
+void checkConnectionName()
+{
+	if (ConnectionName.size() > 30)
+	{
+		exit("Bad connection name (must be <= 30 characters)");
+	}
 
-  if (ConnectionName.size() > 0 &&
-      ConnectionName[ConnectionName.size() - 1] == '\n') {
-    ConnectionName = ConnectionName.substr(0, ConnectionName.size() - 1);
-  }
+	if (ConnectionName.size() > 0 && ConnectionName[ConnectionName.size() - 1] == '\n')
+	{
+		ConnectionName = ConnectionName.substr(0, ConnectionName.size() - 1);
+	}
 
-  if (ConnectionName.size() <= 0) {
-    exit("Bad connection name (must be > 0 character)");
-  }
+	if (ConnectionName.size() <= 0)
+	{
+		exit("Bad connection name (must be > 0 character)");
+	}
 
-  for (uint i = 0; i < ConnectionName.size(); i++) {
-    if (!isalnum(ConnectionName[i])) {
-      exit("Bad connection name, only alpha numeric characters is allowed "
-           "(char '%c' is not alphanum)");
-    }
-  }
+	for (uint i = 0; i < ConnectionName.size(); i++)
+	{
+		if (!isalnum(ConnectionName[i]))
+		{
+			exit("Bad connection name, only alpha numeric characters is allowed (char '%c' is not alphanum)");
+		}
+	}
 }
 
-void loadConfigFile() {
-  FILE *fp = nlfopen("client.cfg", "rt");
-  if (fp == NULL) {
-    createConfigFile();
-  } else {
-    fclose(fp);
-  }
+void loadConfigFile()
+{
+	FILE *fp = nlfopen("client.cfg", "rt");
+	if (fp == NULL)
+	{
+		createConfigFile();
+	}
+	else
+	{
+		fclose(fp);
+	}
 
-  ConfigFile.load("client.cfg");
+	ConfigFile.load("client.cfg");
 
-  // set internet simulation values
-  CUdpSimSock::setSimValues(ConfigFile);
+	// set internet simulation values
+	CUdpSimSock::setSimValues(ConfigFile);
 
-  ServerAddr = ConfigFile.getVar("ServerAddress").asString();
+	ServerAddr = ConfigFile.getVar("ServerAddress").asString();
 
-  ConnectionName = ConfigFile.getVar("ConnectionName").asString();
+	ConnectionName = ConfigFile.getVar("ConnectionName").asString();
 
-  if (ConnectionName.empty()) {
-    InfoLog->displayRawNL("Please, enter a connection name");
-    InfoLog->displayRawNL(
-        "(only alphanumeric character limited to 30 character, no space)");
-    InfoLog->displayRawNL(
-        "For example enter your name and/or your location (ie: \"AceHome\"),");
-    InfoLog->displayRawNL("It'll be use to find your stat file easier:");
-    char cn[128];
-    if (fgets(cn, 127, stdin) == NULL) {
-      exit("Error during the keyboard scanning");
-    }
-    ConnectionName = cn;
-    checkConnectionName();
-    ConfigFile.getVar("ConnectionName").setAsString(ConnectionName);
-    ConfigFile.save();
-  } else {
-    checkConnectionName();
-  }
+	if (ConnectionName.empty())
+	{
+		InfoLog->displayRawNL("Please, enter a connection name");
+		InfoLog->displayRawNL("(only alphanumeric character limited to 30 character, no space)");
+		InfoLog->displayRawNL("For example enter your name and/or your location (ie: \"AceHome\"),");
+		InfoLog->displayRawNL("It'll be use to find your stat file easier:");
+		char cn[128];
+		if (fgets(cn, 127, stdin) == NULL)
+		{
+			exit("Error during the keyboard scanning");
+		}
+		ConnectionName = cn;
+		checkConnectionName();
+		ConfigFile.getVar("ConnectionName").setAsString(ConnectionName);
+		ConfigFile.save();
+	}
+	else
+	{
+		checkConnectionName();
+	}
 }
 
 //
 // Callbacks
 //
 
-void cbInfo(CMessage &msgin, TSockId from, CCallbackNetBase &netbase) {
-  string line;
-  msgin.serial(line);
-  InfoLog->displayRawNL("%s", line.c_str());
+void cbInfo(CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
+{
+	string line;
+	msgin.serial(line);
+	InfoLog->displayRawNL("%s", line.c_str());
 
 #ifdef USE_3D
-  string token = "MeanPongTime ";
-  string::size_type pos = line.find(token);
-  string::size_type pos2 = line.find(" ", pos + token.size());
-  float val;
-  NLMISC::fromString(line.substr(pos + token.size(), pos2 - pos - token.size()),
-                     val);
-  LagGraph.addOneValue(val);
+	string token = "MeanPongTime ";
+	string::size_type pos = line.find(token);
+	string::size_type pos2 = line.find(" ", pos + token.size());
+	float val;
+	NLMISC::fromString(line.substr(pos + token.size(), pos2 - pos - token.size()), val);
+	LagGraph.addOneValue(val);
 #endif
 }
 
-void cbInit(CMessage &msgin, TSockId from, CCallbackNetBase &netbase) {
-  msgin.serial(Session);
+void cbInit(CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
+{
+	msgin.serial(Session);
 
-  // create the UDP connection
-  nlassert(UdpSock == NULL);
-  UdpSock = new CUdpSimSock(false);
-  try {
-    UdpSock->connect(CInetAddress(ServerAddr, UDPPort));
-  } catch (const Exception &e) {
-    InfoLog->displayRawNL("Cannot connect to remote UDP host '%s': %s",
-                          ServerAddr.c_str(), e.what());
-    exit("");
-  }
+	// create the UDP connection
+	nlassert(UdpSock == NULL);
+	UdpSock = new CUdpSimSock(false);
+	try
+	{
+		UdpSock->connect(CInetAddress(ServerAddr, UDPPort));
+	}
+	catch (const Exception &e)
+	{
+		InfoLog->displayRawNL("Cannot connect to remote UDP host '%s': %s", ServerAddr.c_str(), e.what());
+		exit("");
+	}
 }
 
-void cbStart(CMessage &msgin, TSockId from, CCallbackNetBase &netbase) {
-  InfoLog->displayRawNL("Bench is starting..");
+void cbStart(CMessage &msgin, TSockId from, CCallbackNetBase &netbase)
+{
+	InfoLog->displayRawNL("Bench is starting..");
 
-  Mode = 1;
+	Mode = 1;
 }
 
-void cbDisconnect(TSockId from, void *arg) {
-  exit("Lost the server connection. You should not have the last client "
-       "version\nGet it here: http://www.nevrax.org/download/bench.zip");
+void cbDisconnect(TSockId from, void *arg)
+{
+	exit("Lost the server connection. You should not have the last client version\nGet it here: http://www.nevrax.org/download/bench.zip");
 }
 
 TCallbackItem CallbackArray[] = {
-    {"INIT", cbInit},
-    {"INFO", cbInfo},
-    {"START", cbStart},
+	{ "INIT", cbInit },
+	{ "INFO", cbInfo },
+	{ "START", cbStart },
 };
 
 //
 // Main
 //
-int main(int argc, char **argv) {
-  createDebug();
-  DebugLog->addNegativeFilter(" ");
+int main(int argc, char **argv)
+{
+	createDebug();
+	DebugLog->addNegativeFilter(" ");
 
-  InfoLog->displayRawNL(
-      "\nNevrax UDP benchmark client\n\nPress <CTRL-C> to exit");
+	InfoLog->displayRawNL("\nNevrax UDP benchmark client\n\nPress <CTRL-C> to exit");
 
-  CPath::addSearchPath(UDP_DIR);
+	CPath::addSearchPath(UDP_DIR);
 
-  loadConfigFile();
+	loadConfigFile();
 
-  CCallbackClient *cc = new CCallbackClient;
+	CCallbackClient *cc = new CCallbackClient;
 
-  cc->addCallbackArray(CallbackArray,
-                       sizeof(CallbackArray) / sizeof(CallbackArray[0]));
-  cc->setDisconnectionCallback(cbDisconnect, NULL);
+	cc->addCallbackArray(CallbackArray, sizeof(CallbackArray) / sizeof(CallbackArray[0]));
+	cc->setDisconnectionCallback(cbDisconnect, NULL);
 
-  try {
-    InfoLog->displayRawNL("Try to connect to %s:%d", ServerAddr.c_str(),
-                          TCPPort);
-    cc->connect(CInetAddress(ServerAddr, TCPPort));
+	try
+	{
+		InfoLog->displayRawNL("Try to connect to %s:%d", ServerAddr.c_str(), TCPPort);
+		cc->connect(CInetAddress(ServerAddr, TCPPort));
 
-    CMessage msgout("INIT");
-    msgout.serial(ConnectionName);
-    msgout.serial(Version);
-    cc->send(msgout);
+		CMessage msgout("INIT");
+		msgout.serial(ConnectionName);
+		msgout.serial(Version);
+		cc->send(msgout);
 
-    InfoLog->displayRawNL("Waiting the server answer...");
-  } catch (const Exception &e) {
-    InfoLog->displayRawNL("Can't connect to %s:%d (%s)\n", ServerAddr.c_str(),
-                          TCPPort, e.what());
-    exit("");
-  }
+		InfoLog->displayRawNL("Waiting the server answer...");
+	}
+	catch (const Exception &e)
+	{
+		InfoLog->displayRawNL("Can't connect to %s:%d (%s)\n", ServerAddr.c_str(), TCPPort, e.what());
+		exit("");
+	}
 
-  uint8 *packet = new uint8[MaxUDPPacketSize];
-  uint32 psize;
+	uint8 *packet = new uint8[MaxUDPPacketSize];
+	uint32 psize;
 
 #ifdef USE_3D
 
-  UDriver *Driver = UDriver::createDriver();
-  Driver->setDisplay(UDriver::CMode(800, 600, 32, true));
-  UScene *Scene = Driver->createScene(false);
-  UCamera Camera = Scene->getCam();
-  Camera.setTransformMode(UTransform::DirectMatrix);
-  UTextContext *TextContext =
-      Driver->createTextContext(CPath::lookup("n019003l.pfb"));
-  TextContext->setFontSize(18);
+	UDriver *Driver = UDriver::createDriver();
+	Driver->setDisplay(UDriver::CMode(800, 600, 32, true));
+	UScene *Scene = Driver->createScene(false);
+	UCamera Camera = Scene->getCam();
+	Camera.setTransformMode(UTransform::DirectMatrix);
+	UTextContext *TextContext = Driver->createTextContext(CPath::lookup("n019003l.pfb"));
+	TextContext->setFontSize(18);
 
-  Camera.setPerspective(80 * (float)Pi / 180, 1.33f, 0.15f, 1000);
+	Camera.setPerspective(80 * (float)Pi / 180, 1.33f, 0.15f, 1000);
 
-  CEvent3dMouseListener MouseListener;
-  MouseListener.addToServer(Driver->EventServer);
-  MouseListener.setFrustrum(Camera.getFrustum());
-  MouseListener.setHotSpot(CVector(0, 0, 0));
-  CMatrix initMat;
-  initMat.setPos(CVector(0, -5, 0));
-  MouseListener.setMatrix(initMat);
+	CEvent3dMouseListener MouseListener;
+	MouseListener.addToServer(Driver->EventServer);
+	MouseListener.setFrustrum(Camera.getFrustum());
+	MouseListener.setHotSpot(CVector(0, 0, 0));
+	CMatrix initMat;
+	initMat.setPos(CVector(0, -5, 0));
+	MouseListener.setMatrix(initMat);
 
 #endif
 
-  while (cc->connected()) {
+	while (cc->connected())
+	{
 #ifdef USE_3D
 
-    // Manip.
-    Camera.setMatrix(MouseListener.getViewMatrix());
+		// Manip.
+		Camera.setMatrix(MouseListener.getViewMatrix());
 
-    Driver->EventServer.pump();
-    if (Driver->AsyncListener.isKeyPushed(KeyESCAPE))
-      return EXIT_SUCCESS;
+		Driver->EventServer.pump();
+		if (Driver->AsyncListener.isKeyPushed(KeyESCAPE))
+			return EXIT_SUCCESS;
 
-    Driver->clearBuffers(CRGBA(255, 255, 255, 0));
+		Driver->clearBuffers(CRGBA(255, 255, 255, 0));
 
-    Scene->render();
+		Scene->render();
 
-    CGraph::render(*Driver, *TextContext);
+		CGraph::render(*Driver, *TextContext);
 
-    Driver->swapBuffers();
+		Driver->swapBuffers();
 
-    FpsGraph.addValue(1);
+		FpsGraph.addValue(1);
 
 #endif
 
-    CConfigFile::checkConfigFiles();
+		CConfigFile::checkConfigFiles();
 
-    // update TCP connection
-    cc->update();
+		// update TCP connection
+		cc->update();
 
-    // update UDP connection
-    if (UdpSock != NULL) {
-      if (Mode == 0) {
-        // init the UDP connection
-        CMemStream msgout;
-        msgout.serial(Mode);
-        msgout.serial(Session);
-        uint32 size = msgout.length();
+		// update UDP connection
+		if (UdpSock != NULL)
+		{
+			if (Mode == 0)
+			{
+				// init the UDP connection
+				CMemStream msgout;
+				msgout.serial(Mode);
+				msgout.serial(Session);
+				uint32 size = msgout.length();
 #ifdef USE_3D
-        UploadGraph.addValue((float)size);
+				UploadGraph.addValue((float)size);
 #endif
-        UdpSock->send(msgout.buffer(), size);
-        nldebug("Sent init udp connection");
-        nlSleep(100);
-      }
+				UdpSock->send(msgout.buffer(), size);
+				nldebug("Sent init udp connection");
+				nlSleep(100);
+			}
 
-      while (UdpSock->dataAvailable()) {
-        psize = MaxUDPPacketSize;
-        UdpSock->receive(packet, psize);
+			while (UdpSock->dataAvailable())
+			{
+				psize = MaxUDPPacketSize;
+				UdpSock->receive(packet, psize);
 #ifdef USE_3D
-        DownloadGraph.addValue((float)psize);
+				DownloadGraph.addValue((float)psize);
 #endif
-        CMemStream msgin(true);
-        memcpy(msgin.bufferToFill(psize), packet, psize);
+				CMemStream msgin(true);
+				memcpy(msgin.bufferToFill(psize), packet, psize);
 
-        sint64 t = 0;
-        msgin.serial(t);
+				sint64 t = 0;
+				msgin.serial(t);
 
-        uint32 p = 0;
-        msgin.serial(p);
+				uint32 p = 0;
+				msgin.serial(p);
 
-        uint32 b = 0;
-        msgin.serial(b);
+				uint32 b = 0;
+				msgin.serial(b);
 
-        // I received a ping, send a pong
+				// I received a ping, send a pong
 
-        CMemStream msgout;
-        msgout.serial(Mode);
-        msgout.serial(t);
-        msgout.serial(p);
-        msgout.serial(b);
-        uint8 dummy = 0;
-        while (msgout.length() < 200)
-          msgout.serial(dummy);
+				CMemStream msgout;
+				msgout.serial(Mode);
+				msgout.serial(t);
+				msgout.serial(p);
+				msgout.serial(b);
+				uint8 dummy = 0;
+				while (msgout.length() < 200)
+					msgout.serial(dummy);
 
-        uint32 size = msgout.length();
-        nlassert(size == 200);
+				uint32 size = msgout.length();
+				nlassert(size == 200);
 
 #ifdef USE_3D
-        UploadGraph.addValue((float)size);
+				UploadGraph.addValue((float)size);
 #endif
-        UdpSock->send(msgout.buffer(), size);
-      }
-    }
+				UdpSock->send(msgout.buffer(), size);
+			}
+		}
 
-    nlSleep(1);
-  }
+		nlSleep(1);
+	}
 
-  exit("");
-  return EXIT_SUCCESS;
+	exit("");
+	return EXIT_SUCCESS;
 }

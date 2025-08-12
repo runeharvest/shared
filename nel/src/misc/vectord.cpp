@@ -29,4 +29,4 @@ const CVectorD CVectorD::I(1, 0, 0);
 const CVectorD CVectorD::J(0, 1, 0);
 const CVectorD CVectorD::K(0, 0, 1);
 
-} // namespace NLMISC
+}

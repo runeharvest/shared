@@ -17,10 +17,10 @@
 #ifndef NL_VISUAL_COLLISION_ENTITY_USER_H
 #define NL_VISUAL_COLLISION_ENTITY_USER_H
 
+#include "nel/misc/types_nl.h"
 #include "nel/3d/u_visual_collision_entity.h"
 #include "nel/3d/visual_collision_entity.h"
 #include "nel/3d/visual_collision_manager.h"
-#include "nel/misc/types_nl.h"
 
 namespace NL3D {
 
@@ -30,42 +30,45 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2001
  */
-class CVisualCollisionEntityUser : public UVisualCollisionEntity {
+class CVisualCollisionEntityUser : public UVisualCollisionEntity
+{
 public:
-  /// Constructor. create entity.
-  CVisualCollisionEntityUser(CVisualCollisionManager *manager) {
-    _Manager = manager;
-    _Entity = _Manager->createEntity();
-  }
-  /// dtor, delete the entity.
-  ~CVisualCollisionEntityUser() { _Manager->deleteEntity(_Entity); }
+	/// Constructor. create entity.
+	CVisualCollisionEntityUser(CVisualCollisionManager *manager)
+	{
+		_Manager = manager;
+		_Entity = _Manager->createEntity();
+	}
+	/// dtor, delete the entity.
+	~CVisualCollisionEntityUser()
+	{
+		_Manager->deleteEntity(_Entity);
+	}
 
-  virtual bool snapToGround(CVector &pos);
-  virtual bool snapToGround(CVector &pos, CVector &normal);
+	virtual bool snapToGround(CVector &pos);
+	virtual bool snapToGround(CVector &pos, CVector &normal);
 
-  virtual void setGroundMode(bool groundMode);
-  virtual void setCeilMode(bool ceilMode);
-  virtual bool getGroundMode() const;
-  virtual bool getCeilMode() const;
+	virtual void setGroundMode(bool groundMode);
+	virtual void setCeilMode(bool ceilMode);
+	virtual bool getGroundMode() const;
+	virtual bool getCeilMode() const;
 
-  virtual void setSnapToRenderedTesselation(bool snapMode);
-  virtual bool getSnapToRenderedTesselation() const;
+	virtual void setSnapToRenderedTesselation(bool snapMode);
+	virtual bool getSnapToRenderedTesselation() const;
 
-  virtual bool getSurfaceInfo(const CVector &pos, CSurfaceInfo &surfaceInfo);
+	virtual bool getSurfaceInfo(const CVector &pos, CSurfaceInfo &surfaceInfo);
 
-  virtual bool
-  getStaticLightSetup(NLMISC::CRGBA sunAmbient, const CVector &pos,
-                      std::vector<CPointLightInfluence> &pointLightList,
-                      uint8 &sunContribution, NLMISC::CRGBA &localAmbient);
+	virtual bool getStaticLightSetup(NLMISC::CRGBA sunAmbient, const CVector &pos, std::vector<CPointLightInfluence> &pointLightList,
+	    uint8 &sunContribution, NLMISC::CRGBA &localAmbient);
 
-  virtual void displayDebugGrid(UDriver &drv) const;
+	virtual void displayDebugGrid(UDriver &drv) const;
 
 private:
-  CVisualCollisionManager *_Manager;
-  CVisualCollisionEntity *_Entity;
+	CVisualCollisionManager *_Manager;
+	CVisualCollisionEntity *_Entity;
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_VISUAL_COLLISION_ENTITY_USER_H
 

@@ -24,37 +24,33 @@ class CWeatherSetupSheetBase;
 
 /** Weather manager gather all weather setups (or derived class)
  */
-class CWeatherManager {
+class CWeatherManager
+{
 public:
-  // dtor
-  virtual ~CWeatherManager();
-  /** Setup the manager from a set of weather sheets and their name
-   * NB : arrays of names and sheets must have the same size or an assertion
-   * occurs
-   */
-  virtual void init(const std::vector<const CWeatherSetupSheetBase *> &sheets,
-                    const std::vector<std::string> &sheetNames);
-  /// Release all datas (fx models..). Should be called before deleting the
-  /// scene
-  void release();
-  /// get a weather setup from its name, and return a pointer to the setup or
-  /// NULL
-  const CWeatherSetup *getSetup(const char *name) const;
-  ////////////////////////////////////////////////////////////////////////////////////
+	// dtor
+	virtual ~CWeatherManager();
+	/** Setup the manager from a set of weather sheets and their name
+	 * NB : arrays of names and sheets must have the same size or an assertion occurs
+	 */
+	virtual void init(const std::vector<const CWeatherSetupSheetBase *> &sheets, const std::vector<std::string> &sheetNames);
+	/// Release all datas (fx models..). Should be called before deleting the scene
+	void release();
+	/// get a weather setup from its name, and return a pointer to the setup or NULL
+	const CWeatherSetup *getSetup(const char *name) const;
+	////////////////////////////////////////////////////////////////////////////////////
 protected:
-  /** For derivers : Build a new CWeatherSetup or derived class to be used by
-   * this manager Derivers may add additionnal infos into setups
-   */
-  virtual CWeatherSetup *newWeatherSetup() const { return new CWeatherSetup; }
-  /** For derivers : once a setup has been loaded, 'init' is called with that
-   * setup as a parameter, so additionnal setup can be done
-   */
-  virtual void setupLoaded(CWeatherSetup * /* setup */) {}
+	/** For derivers : Build a new CWeatherSetup or derived class to be used by this manager
+	 * Derivers may add additionnal infos into setups
+	 */
+	virtual CWeatherSetup *newWeatherSetup() const { return new CWeatherSetup; }
+	/** For derivers : once a setup has been loaded, 'init' is called with that setup as a parameter, so
+	 * additionnal setup can be done
+	 */
+	virtual void setupLoaded(CWeatherSetup * /* setup */) { }
 
 private:
-  typedef std::map<std::string, NLMISC::CSmartPtr<CWeatherSetup>>
-      TWeatherSetupMap;
-  TWeatherSetupMap _WeatherSetupMap;
+	typedef std::map<std::string, NLMISC::CSmartPtr<CWeatherSetup>> TWeatherSetupMap;
+	TWeatherSetupMap _WeatherSetupMap;
 };
 
 #endif

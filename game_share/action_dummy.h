@@ -17,8 +17,8 @@
 #ifndef NL_ACTION_DUMMY_H
 #define NL_ACTION_DUMMY_H
 
-#include "action.h"
 #include "nel/misc/types_nl.h"
+#include "action.h"
 
 namespace CLFECOMMON {
 
@@ -28,49 +28,51 @@ namespace CLFECOMMON {
  * \author Nevrax France
  * \date 2001
  */
-class CActionDummy : public CAction {
+class CActionDummy : public CAction
+{
 public:
-  /** This function creates initializes its fields using the buffer.
-   * \param buffer pointer to the buffer where the data are
-   * \size size of the buffer
-   */
-  virtual void unpack(NLMISC::CBitMemStream &message) {
-    message.serial(Dummy1);
-    message.serial(Dummy2);
-  }
+	/** This function creates initializes its fields using the buffer.
+	 * \param buffer pointer to the buffer where the data are
+	 * \size size of the buffer
+	 */
+	virtual void unpack(NLMISC::CBitMemStream &message)
+	{
+		message.serial(Dummy1);
+		message.serial(Dummy2);
+	}
 
-  /// This functions is used when you want to transform an action into an
-  /// IStream.
-  virtual void serial(NLMISC::IStream &f) {
-    f.serial(Dummy1);
-    f.serial(Dummy2);
-  }
+	/// This functions is used when you want to transform an action into an IStream.
+	virtual void serial(NLMISC::IStream &f)
+	{
+		f.serial(Dummy1);
+		f.serial(Dummy2);
+	}
 
-  /** Returns the size of this action when it will be send to the UDP
-   * connection: the size is IN BITS, not in bytes (the actual size is this one
-   * plus the header size)
-   */
-  virtual uint32 size() { return sizeof(Dummy1) * 8 + sizeof(Dummy2) * 8; }
+	/** Returns the size of this action when it will be send to the UDP connection:
+	 * the size is IN BITS, not in bytes (the actual size is this one plus the header size)
+	 */
+	virtual uint32 size() { return sizeof(Dummy1) * 8 + sizeof(Dummy2) * 8; }
 
-  static CAction *create() { return new CActionDummy(); }
+	static CAction *create() { return new CActionDummy(); }
 
-  uint32 Dummy1;
-  uint32 Dummy2;
+	uint32 Dummy1;
+	uint32 Dummy2;
 
 protected:
-  /** This function transform the internal field and transform them into a
-   * buffer for the UDP connection. \param buffer pointer to the buffer where
-   * the data will be written \size size of the buffer
-   */
-  virtual void pack(NLMISC::CBitMemStream &message) {
-    message.serial(Dummy1);
-    message.serial(Dummy2);
-  }
+	/** This function transform the internal field and transform them into a buffer for the UDP connection.
+	 * \param buffer pointer to the buffer where the data will be written
+	 * \size size of the buffer
+	 */
+	virtual void pack(NLMISC::CBitMemStream &message)
+	{
+		message.serial(Dummy1);
+		message.serial(Dummy2);
+	}
 
-  friend class CActionFactory;
+	friend class CActionFactory;
 };
 
-} // namespace CLFECOMMON
+}
 
 #endif // NL_ACTION_DUMMY_H
 

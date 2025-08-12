@@ -24,75 +24,72 @@
 
 namespace NL3D {
 
-void MakePrivate(uint8 *dest, const NLMISC::CRGBA *src1,
-                 const NLMISC::CRGBA *src2, uint32 stride, uint32 numAttrib,
-                 CPSBinOp::BinOp op) {
-  switch (op) {
-  case CPSBinOp::modulate: {
-    // CRGBA OPTIMISATION
-    NLMISC::CRGBA::modulateColors((NLMISC::CRGBA *)dest, src1, src2, numAttrib,
-                                  sizeof(NLMISC::CRGBA), stride);
-  } break;
-  case CPSBinOp::add: {
-    // CRGBA OPTIMISATION
-    NLMISC::CRGBA::addColors((NLMISC::CRGBA *)dest, src1, src2, numAttrib,
-                             sizeof(NLMISC::CRGBA), stride);
-  } break;
-  case CPSBinOp::subtract: {
-    // CRGBA OPTIMISATION
-    NLMISC::CRGBA::subtractColors((NLMISC::CRGBA *)dest, src1, src2, numAttrib,
-                                  sizeof(NLMISC::CRGBA), stride);
-  } break;
-  default:
-    break;
-  }
+void MakePrivate(uint8 *dest, const NLMISC::CRGBA *src1, const NLMISC::CRGBA *src2, uint32 stride, uint32 numAttrib, CPSBinOp::BinOp op)
+{
+	switch (op)
+	{
+	case CPSBinOp::modulate: {
+		// CRGBA OPTIMISATION
+		NLMISC::CRGBA::modulateColors((NLMISC::CRGBA *)dest, src1, src2, numAttrib, sizeof(NLMISC::CRGBA), stride);
+	}
+	break;
+	case CPSBinOp::add: {
+		// CRGBA OPTIMISATION
+		NLMISC::CRGBA::addColors((NLMISC::CRGBA *)dest, src1, src2, numAttrib, sizeof(NLMISC::CRGBA), stride);
+	}
+	break;
+	case CPSBinOp::subtract: {
+		// CRGBA OPTIMISATION
+		NLMISC::CRGBA::subtractColors((NLMISC::CRGBA *)dest, src1, src2, numAttrib, sizeof(NLMISC::CRGBA), stride);
+	}
+	break;
+	default: break;
+	}
 }
 
-void Make4Private(uint8 *dest, const NLMISC::CRGBA *src1,
-                  const NLMISC::CRGBA *src2, uint32 stride, uint32 numAttrib,
-                  CPSBinOp::BinOp op) {
-  switch (op) {
-  case CPSBinOp::modulate: {
-    // CRGBA OPTIMISATION
-    NLMISC::CRGBA::modulateColors((NLMISC::CRGBA *)dest, src1, src2, numAttrib,
-                                  sizeof(NLMISC::CRGBA), stride, 4);
-  } break;
-  case CPSBinOp::add: {
-    // CRGBA OPTIMISATION
-    NLMISC::CRGBA::addColors((NLMISC::CRGBA *)dest, src1, src2, numAttrib,
-                             sizeof(NLMISC::CRGBA), stride, 4);
-  } break;
-  case CPSBinOp::subtract: {
-    // CRGBA OPTIMISATION
-    NLMISC::CRGBA::subtractColors((NLMISC::CRGBA *)dest, src1, src2, numAttrib,
-                                  sizeof(NLMISC::CRGBA), stride, 4);
-  } break;
-  default:
-    break;
-  }
+void Make4Private(uint8 *dest, const NLMISC::CRGBA *src1, const NLMISC::CRGBA *src2, uint32 stride, uint32 numAttrib, CPSBinOp::BinOp op)
+{
+	switch (op)
+	{
+	case CPSBinOp::modulate: {
+		// CRGBA OPTIMISATION
+		NLMISC::CRGBA::modulateColors((NLMISC::CRGBA *)dest, src1, src2, numAttrib, sizeof(NLMISC::CRGBA), stride, 4);
+	}
+	break;
+	case CPSBinOp::add: {
+		// CRGBA OPTIMISATION
+		NLMISC::CRGBA::addColors((NLMISC::CRGBA *)dest, src1, src2, numAttrib, sizeof(NLMISC::CRGBA), stride, 4);
+	}
+	break;
+	case CPSBinOp::subtract: {
+		// CRGBA OPTIMISATION
+		NLMISC::CRGBA::subtractColors((NLMISC::CRGBA *)dest, src1, src2, numAttrib, sizeof(NLMISC::CRGBA), stride, 4);
+	}
+	break;
+	default: break;
+	}
 }
 
-void MakeNPrivate(uint8 *dest, const NLMISC::CRGBA *src1,
-                  const NLMISC::CRGBA *src2, uint32 stride, uint32 numAttrib,
-                  CPSBinOp::BinOp op, uint nbReplicate) {
-  switch (op) {
-  case CPSBinOp::modulate: {
-    // CRGBA OPTIMISATION
-    NLMISC::CRGBA::modulateColors((NLMISC::CRGBA *)dest, src1, src2, numAttrib,
-                                  sizeof(NLMISC::CRGBA), stride, nbReplicate);
-  } break;
-  case CPSBinOp::add: {
-    // CRGBA OPTIMISATION
-    NLMISC::CRGBA::addColors((NLMISC::CRGBA *)dest, src1, src2, numAttrib,
-                             sizeof(NLMISC::CRGBA), stride, nbReplicate);
-  } break;
-  case CPSBinOp::subtract: {
-    // CRGBA OPTIMISATION
-    NLMISC::CRGBA::subtractColors((NLMISC::CRGBA *)dest, src1, src2, numAttrib,
-                                  sizeof(NLMISC::CRGBA), stride, nbReplicate);
-  } break;
-  default:
-    break;
-  }
+void MakeNPrivate(uint8 *dest, const NLMISC::CRGBA *src1, const NLMISC::CRGBA *src2, uint32 stride, uint32 numAttrib, CPSBinOp::BinOp op, uint nbReplicate)
+{
+	switch (op)
+	{
+	case CPSBinOp::modulate: {
+		// CRGBA OPTIMISATION
+		NLMISC::CRGBA::modulateColors((NLMISC::CRGBA *)dest, src1, src2, numAttrib, sizeof(NLMISC::CRGBA), stride, nbReplicate);
+	}
+	break;
+	case CPSBinOp::add: {
+		// CRGBA OPTIMISATION
+		NLMISC::CRGBA::addColors((NLMISC::CRGBA *)dest, src1, src2, numAttrib, sizeof(NLMISC::CRGBA), stride, nbReplicate);
+	}
+	break;
+	case CPSBinOp::subtract: {
+		// CRGBA OPTIMISATION
+		NLMISC::CRGBA::subtractColors((NLMISC::CRGBA *)dest, src1, src2, numAttrib, sizeof(NLMISC::CRGBA), stride, nbReplicate);
+	}
+	break;
+	default: break;
+	}
 }
-} // namespace NL3D
+} // NL3D

@@ -37,14 +37,16 @@ NL_END_STRING_CONVERSION_TABLE(TResistanceType, ResistanceTypeConversion, None)
 //-----------------------------------------------
 // fromString:
 //-----------------------------------------------
-TResistanceType fromString(const std::string &str) {
-  return ResistanceTypeConversion.fromString(str);
+TResistanceType fromString(const std::string &str)
+{
+	return ResistanceTypeConversion.fromString(str);
 }
 
 //-----------------------------------------------
 // toString :
 //-----------------------------------------------
-const std::string &toString(TResistanceType resistance_type) {
-  return ResistanceTypeConversion.toString(resistance_type);
+const std::string &toString(TResistanceType resistance_type)
+{
+	return ResistanceTypeConversion.toString(resistance_type);
 }
-}; // namespace RESISTANCE_TYPE
+};

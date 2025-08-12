@@ -27,13 +27,13 @@
  */
 
 // We're building a server, using the NeL Service framework.
-// We need the naming service to know where the ping service is, so we're using
-// CNamingClient. We're using CCallbackClient when we talk to the naming
-// service. We're using CCallbackServer when we talk to our clients.
+// We need the naming service to know where the ping service is, so we're using CNamingClient.
+// We're using CCallbackClient when we talk to the naming service.
+// We're using CCallbackServer when we talk to our clients.
+#include "nel/net/service.h"
+#include "nel/net/naming_client.h"
 #include "nel/net/callback_client.h"
 #include "nel/net/callback_server.h"
-#include "nel/net/naming_client.h"
-#include "nel/net/service.h"
 using namespace NLNET;
 
 #include <deque>
@@ -42,8 +42,7 @@ using namespace std;
 // The front-end server is also a client of the ping service
 CCallbackClient *ToPingService;
 
-// Temp storage (a queue because the connection to the ping service is reliable,
-// the order is preserved)
+// Temp storage (a queue because the connection to the ping service is reliable, the order is preserved)
 deque<TSockId> ClientIds;
 
 /*
@@ -52,8 +51,7 @@ deque<TSockId> ClientIds;
  * Arguments:
  * - msgin:	the incoming message (coming from a client)
  * - from: the "sockid" of the sender client
- * - frontendserver: the CCallbackNetBase object (which really is a
- * CCallbackServer object, for a server)
+ * - frontendserver: the CCallbackNetBase object (which really is a CCallbackServer object, for a server)
  *
  * Input (expected message from a client): PING
  * - uint32: ping counter
@@ -61,37 +59,42 @@ deque<TSockId> ClientIds;
  * Output (sent message to the ping server): PONG
  * - uint32: ping counter
  */
-void cbPing(CMessage &msgin, TSockId from, CCallbackNetBase &frontendserver) {
-  uint32 counter;
+void cbPing(CMessage &msgin, TSockId from, CCallbackNetBase &frontendserver)
+{
+	uint32 counter;
 
-  // Input
-  msgin.serial(counter);
-  ClientIds.push_back(from); // store client sockid
+	// Input
+	msgin.serial(counter);
+	ClientIds.push_back(from); // store client sockid
 
-  // Output
-  CMessage msgout("PING");
-  msgout.serial(counter);
-  vector<uint8> vect(400000);
-  msgout.serialCont(vect);
-  ToPingService->send(msgout);
+	// Output
+	CMessage msgout("PING");
+	msgout.serial(counter);
+	vector<uint8> vect(400000);
+	msgout.serialCont(vect);
+	ToPingService->send(msgout);
 
-  nlinfo("Received PING number %u from %s", counter,
-         frontendserver.hostAddress(from).asString().c_str());
+	nlinfo("Received PING number %u from %s", counter, frontendserver.hostAddress(from).asString().c_str());
 }
 
 /*
  * Disconnection callback, called when a client disconnects
  */
-void discCallback(TSockId from, void *p) {
-  // Remove all occurences of from in the queue
-  deque<TSockId>::iterator iq;
-  for (iq = ClientIds.begin(); iq != ClientIds.end();) {
-    if (*iq == from) {
-      iq = ClientIds.erase(iq);
-    } else {
-      iq++;
-    }
-  }
+void discCallback(TSockId from, void *p)
+{
+	// Remove all occurences of from in the queue
+	deque<TSockId>::iterator iq;
+	for (iq = ClientIds.begin(); iq != ClientIds.end();)
+	{
+		if (*iq == from)
+		{
+			iq = ClientIds.erase(iq);
+		}
+		else
+		{
+			iq++;
+		}
+	}
 }
 
 /*
@@ -100,8 +103,7 @@ void discCallback(TSockId from, void *p) {
  * Arguments:
  * - msgin:	the incoming message (coming from the ping server)
  * - from: the "sockid" of the sender (usually useless for a CCallbackClient)
- * - clientofthepingserver: the CCallbackNetBase object (which really is a
- * CCallbackClient object)
+ * - clientofthepingserver: the CCallbackNetBase object (which really is a CCallbackClient object)
  *
  * Input (expected message from the ping server): PONG
  * - uint32: ping counter
@@ -110,81 +112,82 @@ void discCallback(TSockId from, void *p) {
  * Output (sent message to a client): PONG
  * - uint32: ping counter
  */
-void cbPong(CMessage &msgin, TSockId from,
-            CCallbackNetBase &clientofthepingserver) {
-  uint32 counter;
-  TSockId clientfrom;
+void cbPong(CMessage &msgin, TSockId from, CCallbackNetBase &clientofthepingserver)
+{
+	uint32 counter;
+	TSockId clientfrom;
 
-  // Input: process the reply of the ping service
-  msgin.serial(counter);
-  clientfrom = ClientIds.front(); // retrieve client sockid
-  ClientIds.pop_front();
+	// Input: process the reply of the ping service
+	msgin.serial(counter);
+	clientfrom = ClientIds.front(); // retrieve client sockid
+	ClientIds.pop_front();
 
-  // Output: send the reply to the client
-  CCallbackServer *server = IService::getInstance()->getServer();
-  CMessage msgout("PONG");
-  msgout.serial(counter);
-  server->send(msgout, clientfrom);
+	// Output: send the reply to the client
+	CCallbackServer *server = IService::getInstance()->getServer();
+	CMessage msgout("PONG");
+	msgout.serial(counter);
+	server->send(msgout, clientfrom);
 
-  nlinfo("Sent PONG number %u to %s", counter, clientfrom->asString().c_str());
+	nlinfo("Sent PONG number %u to %s", counter, clientfrom->asString().c_str());
 }
 
 /*
  * Callback array for messages received from a client
  */
 TCallbackItem CallbackArray[] = {
-    {"PING", cbPing} // when receiving a "PING" message, call cbPing()
+	{ "PING", cbPing } // when receiving a "PING" message, call cbPing()
 };
 
 /*
  * Callback array for message received from the ping service
  */
 TCallbackItem PingServiceCallbackArray[] = {
-    {"PONG", cbPong} // when receiving a "PONG" message, call cbPong()
+	{ "PONG", cbPong } // when receiving a "PONG" message, call cbPong()
 };
 
 /*
  * CFrontEndService, based on IService
  */
-class CFrontEndService : public IService {
+class CFrontEndService : public IService
+{
 public:
-  /*
-   * Initialization
-   */
-  void init() {
-    // Connect to the ping service
-    ToPingService =
-        new CCallbackClient(IService::getRecordingState(), "PS.nmr");
-    ToPingService->addCallbackArray(PingServiceCallbackArray,
-                                    sizeof(PingServiceCallbackArray) /
-                                        sizeof(PingServiceCallbackArray[0]));
-    if (!CNamingClient::lookupAndConnect("PS", *ToPingService)) {
-      nlerror("Ping Service not available");
-    }
+	/*
+	 * Initialization
+	 */
+	void init()
+	{
+		// Connect to the ping service
+		ToPingService = new CCallbackClient(IService::getRecordingState(), "PS.nmr");
+		ToPingService->addCallbackArray(PingServiceCallbackArray, sizeof(PingServiceCallbackArray) / sizeof(PingServiceCallbackArray[0]));
+		if (!CNamingClient::lookupAndConnect("PS", *ToPingService))
+		{
+			nlerror("Ping Service not available");
+		}
 
-    // Disconnection callback for the clients
-    IService::getServer()->setDisconnectionCallback(discCallback, NULL);
-  }
+		// Disconnection callback for the clients
+		IService::getServer()->setDisconnectionCallback(discCallback, NULL);
+	}
 
-  /*
-   * Update
-   */
-  bool update() {
-    ToPingService->update(20); // 20 ms max
-    return ToPingService
-        ->connected(); // true continues, false stops the service
-  }
+	/*
+	 * Update
+	 */
+	bool update()
+	{
+		ToPingService->update(20); // 20 ms max
+		return ToPingService->connected(); // true continues, false stops the service
+	}
 
-  /*
-   * Finalization
-   */
-  void release() { delete ToPingService; }
+	/*
+	 * Finalization
+	 */
+	void release()
+	{
+		delete ToPingService;
+	}
 };
 
 /*
- * Declare a service with the class CFrontEndService, the names "FS" (short) and
- * "frontend_service" (long). The port is set to 37000 and the main callback
- * array is CallbackArray.
+ * Declare a service with the class CFrontEndService, the names "FS" (short) and "frontend_service" (long).
+ * The port is set to 37000 and the main callback array is CallbackArray.
  */
-NLNET_OLD_SERVICE_MAIN(CFrontEndService, "FS", "frontend_service", 37000,
-                       CallbackArray, "", "")
+NLNET_OLD_SERVICE_MAIN(CFrontEndService, "FS", "frontend_service", 37000, CallbackArray, "", "")

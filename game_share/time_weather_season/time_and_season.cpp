@@ -41,16 +41,18 @@ NL_STRING_CONVERSION_TABLE_ENTRY(UNKNOWN)
 NL_END_STRING_CONVERSION_TABLE(EMonth, ConversionType, UNKNOWN)
 
 ///
-EMonth toMonth(const std::string &str) {
-  return ConversionType.fromString(str);
+EMonth toMonth(const std::string &str)
+{
+	return ConversionType.fromString(str);
 }
 
 ///
-const std::string &toString(EMonth month) {
-  return ConversionType.toString(month);
+const std::string &toString(EMonth month)
+{
+	return ConversionType.toString(month);
 }
 
-}; // namespace MONTH
+}; // MONTH
 
 namespace WEEKDAY {
 NL_BEGIN_STRING_CONVERSION_TABLE(EWeekDay)
@@ -64,32 +66,35 @@ NL_STRING_CONVERSION_TABLE_ENTRY(UNKNOWN)
 NL_END_STRING_CONVERSION_TABLE(EWeekDay, ConversionType, UNKNOWN)
 
 ///
-EWeekDay toWeekDay(const std::string &str) {
-  return ConversionType.fromString(str);
+EWeekDay toWeekDay(const std::string &str)
+{
+	return ConversionType.fromString(str);
 }
 
 ///
-const std::string &toString(EWeekDay day) {
-  return ConversionType.toString(day);
+const std::string &toString(EWeekDay day)
+{
+	return ConversionType.toString(day);
 }
 
-}; // namespace WEEKDAY
+}; // WEEKDAY
 
-void CRyzomTime::updateRyzomClock(uint32 gameCyle) {
-  static const float ticksPerHour = (float)RYZOM_HOURS_IN_TICKS;
+void CRyzomTime::updateRyzomClock(uint32 gameCyle)
+{
+	static const float ticksPerHour = (float)RYZOM_HOURS_IN_TICKS;
 
-  uint32 totalTicks = gameCyle + _TickOffset;
-  uint32 days = totalTicks / RYZOM_DAY_IN_TICKS;
-  uint32 dayCycle = totalTicks - (days * RYZOM_DAY_IN_TICKS);
-  // Avoid rollover for low amount of days
-  if (days >= RYZOM_START_SPRING)
-    days -= RYZOM_START_SPRING;
-  else
-    days = 0;
-  float hours = (float)dayCycle / ticksPerHour;
+	uint32 totalTicks = gameCyle + _TickOffset;
+	uint32 days = totalTicks / RYZOM_DAY_IN_TICKS;
+	uint32 dayCycle = totalTicks - (days * RYZOM_DAY_IN_TICKS);
+	// Avoid rollover for low amount of days
+	if (days >= RYZOM_START_SPRING)
+		days -= RYZOM_START_SPRING;
+	else
+		days = 0;
+	float hours = (float)dayCycle / ticksPerHour;
 
-  _RyzomDay = days;
-  _RyzomTime = hours;
+	_RyzomDay = days;
+	_RyzomTime = hours;
 }
 
 /* end of file */

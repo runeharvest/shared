@@ -17,8 +17,8 @@
 #ifndef NL_CHANGE_TRACKER_CLIENT_H
 #define NL_CHANGE_TRACKER_CLIENT_H
 
-#include "change_tracker_base.h"
 #include "nel/misc/types_nl.h"
+#include "change_tracker_base.h"
 
 const uint32 INVALID_TRACKER = ~0;
 
@@ -30,50 +30,54 @@ const uint32 INVALID_TRACKER = ~0;
  * \author Nevrax France
  * \date 2002
  */
-class CChangeTrackerClient : public CChangeTrackerBase {
+class CChangeTrackerClient : public CChangeTrackerBase
+{
 public:
-  CChangeTrackerClient()
-      : CChangeTrackerBase(), _CurrentNotifiedRow(), _LastNotifiedRow(),
-        _PointingToGroupTracker(false) {}
+	CChangeTrackerClient()
+	    : CChangeTrackerBase()
+	    , _CurrentNotifiedRow()
+	    , _LastNotifiedRow()
+	    , _PointingToGroupTracker(false)
+	{
+	}
 
-  /// Access the tracker header and item array (shared memory)
-  void access(sint32 shmid);
+	/// Access the tracker header and item array (shared memory)
+	void access(sint32 shmid);
 
-  /// Release the tracker (unaccess shared memory + release mutex)
-  void release();
+	/// Release the tracker (unaccess shared memory + release mutex)
+	void release();
 
-  /// Instead of accessing an smid, use another tracker's data (set it after
-  /// operator=())
-  void setPointingToGroupTracker() { _PointingToGroupTracker = true; }
+	/// Instead of accessing an smid, use another tracker's data (set it after operator=())
+	void setPointingToGroupTracker() { _PointingToGroupTracker = true; }
 
-  /// Return true if the tracker is not allocating for itself, using the data of
-  /// another tracker
-  bool isPointingToGroupTracker() const { return _PointingToGroupTracker; }
+	/// Return true if the tracker is not allocating for itself, using the data of another tracker
+	bool isPointingToGroupTracker() const { return _PointingToGroupTracker; }
 
-  /// Assignment operator
-  CChangeTrackerClient &operator=(const CChangeTrackerClient &src) {
-    CChangeTrackerBase::operator=(src);
-    _CurrentNotifiedRow = src._CurrentNotifiedRow;
-    _LastNotifiedRow = src._LastNotifiedRow;
-    return *this;
-  }
+	/// Assignment operator
+	CChangeTrackerClient &operator=(const CChangeTrackerClient &src)
+	{
+		CChangeTrackerBase::operator=(src);
+		_CurrentNotifiedRow = src._CurrentNotifiedRow;
+		_LastNotifiedRow = src._LastNotifiedRow;
+		return *this;
+	}
 
-  /// Serial ids
-  void serial(NLMISC::IStream &s) {
-    CChangeTrackerBase::serial(s);
-    s.serial(_PointingToGroupTracker);
-  }
+	/// Serial ids
+	void serial(NLMISC::IStream &s)
+	{
+		CChangeTrackerBase::serial(s);
+		s.serial(_PointingToGroupTracker);
+	}
 
 private:
-  /// The current row that is being notified
-  TDataSetRow _CurrentNotifiedRow;
+	/// The current row that is being notified
+	TDataSetRow _CurrentNotifiedRow;
 
-  /// The last row that has been notified (acknowledged)
-  TDataSetRow _LastNotifiedRow;
+	/// The last row that has been notified (acknowledged)
+	TDataSetRow _LastNotifiedRow;
 
-  /// True if the tracker is not allocating for itself, using the data of
-  /// another tracker
-  bool _PointingToGroupTracker;
+	/// True if the tracker is not allocating for itself, using the data of another tracker
+	bool _PointingToGroupTracker;
 };
 
 /**
@@ -83,23 +87,31 @@ private:
  * \author Nevrax France
  * \date 2002
  */
-class CChangeTrackerClientProp : public CChangeTrackerClient {
+class CChangeTrackerClientProp : public CChangeTrackerClient
+{
 public:
-  CChangeTrackerClientProp()
-      : CChangeTrackerClient(), _PropIndex(INVALID_PROPERTY_INDEX) {}
+	CChangeTrackerClientProp()
+	    : CChangeTrackerClient()
+	    , _PropIndex(INVALID_PROPERTY_INDEX)
+	{
+	}
 
-  CChangeTrackerClientProp(TPropertyIndex propIndex)
-      : CChangeTrackerClient(), _PropIndex(propIndex) {}
+	CChangeTrackerClientProp(TPropertyIndex propIndex)
+	    : CChangeTrackerClient()
+	    , _PropIndex(propIndex)
+	{
+	}
 
-  TPropertyIndex propIndex() const { return _PropIndex; }
+	TPropertyIndex propIndex() const { return _PropIndex; }
 
-  void serial(NLMISC::IStream &s) {
-    CChangeTrackerClient::serial(s);
-    s.serial(_PropIndex);
-  }
+	void serial(NLMISC::IStream &s)
+	{
+		CChangeTrackerClient::serial(s);
+		s.serial(_PropIndex);
+	}
 
 private:
-  TPropertyIndex _PropIndex;
+	TPropertyIndex _PropIndex;
 };
 
 #endif // NL_CHANGE_TRACKER_CLIENT_H

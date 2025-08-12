@@ -32,58 +32,67 @@ namespace CLFECOMMON {
  * \author Nevrax France
  * \date 2001
  */
-class CActionLogin : public CAction {
+class CActionLogin : public CAction
+{
 public:
-  /** This function creates initializes its fields using the buffer.
-   * \param buffer pointer to the buffer where the data are
-   * \size size of the buffer
-   */
-  virtual void unpack(NLMISC::CBitMemStream &message) {
-    uint32 ua, uk, ui;
-    message.serial(ua);
-    message.serial(uk);
-    message.serial(ui);
-    Cookie.set(ua, uk, ui);
-  }
+	/** This function creates initializes its fields using the buffer.
+	 * \param buffer pointer to the buffer where the data are
+	 * \size size of the buffer
+	 */
+	virtual void unpack(NLMISC::CBitMemStream &message)
+	{
+		uint32 ua, uk, ui;
+		message.serial(ua);
+		message.serial(uk);
+		message.serial(ui);
+		Cookie.set(ua, uk, ui);
+	}
 
-  /** Returns the size of this action when it will be send to the UDP
-   * connection: the size is IN BITS, not in bytes (the actual size is this one
-   * plus the header size)
-   */
-  virtual uint32 size() { return 3 * 32; }
+	/** Returns the size of this action when it will be send to the UDP connection:
+	 * the size is IN BITS, not in bytes (the actual size is this one plus the header size)
+	 */
+	virtual uint32 size() { return 3 * 32; }
 
-  static CAction *create() { return new CActionLogin(); }
+	static CAction *create() { return new CActionLogin(); }
 
-  void setCookie(NLNET::CLoginCookie &lc) { Cookie = lc; }
+	void setCookie(NLNET::CLoginCookie &lc)
+	{
+		Cookie = lc;
+	}
 
-  const NLNET::CLoginCookie &getCookie() const { return Cookie; }
+	const NLNET::CLoginCookie &getCookie() const { return Cookie; }
 
 protected:
-  NLNET::CLoginCookie Cookie;
+	NLNET::CLoginCookie Cookie;
 
-  /** This function transform the internal field and transform them into a
-   * buffer for the UDP connection. \param buffer pointer to the buffer where
-   * the data will be written \size size of the buffer
-   */
-  virtual void pack(NLMISC::CBitMemStream &message) {
-    uint32 ua, uk, ui;
-    if (Cookie.isValid()) {
-      ua = Cookie.getUserAddr();
-      uk = Cookie.getUserKey();
-      ui = Cookie.getUserId();
-    }
-    // if not valid, serialize dummy things
-    message.serial(ua);
-    message.serial(uk);
-    message.serial(ui);
-  }
+	/** This function transform the internal field and transform them into a buffer for the UDP connection.
+	 * \param buffer pointer to the buffer where the data will be written
+	 * \size size of the buffer
+	 */
+	virtual void pack(NLMISC::CBitMemStream &message)
+	{
+		uint32 ua, uk, ui;
+		if (Cookie.isValid())
+		{
+			ua = Cookie.getUserAddr();
+			uk = Cookie.getUserKey();
+			ui = Cookie.getUserId();
+		}
+		// if not valid, serialize dummy things
+		message.serial(ua);
+		message.serial(uk);
+		message.serial(ui);
+	}
 
-  virtual void reset() { Cookie.clear(); }
+	virtual void reset()
+	{
+		Cookie.clear();
+	}
 
-  friend class CActionFactory;
+	friend class CActionFactory;
 };
 
-} // namespace CLFECOMMON
+}
 
 #endif // NL_ACTION_LOGIN_H
 

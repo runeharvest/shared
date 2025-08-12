@@ -19,189 +19,189 @@
 
 #include <nel/misc/types_nl.h>
 
-#include "change_tracker_client.h"
-#include "data_set_base.h"
 #include <nel/misc/entity_id.h>
+#include "data_set_base.h"
+#include "change_tracker_client.h"
 
 #include <queue>
 #include <vector>
 
-#define SEND_MSG_1V_TO_MIRROR(name, type1, value1)                             \
-  CMessage msgout##name(#name);                                                \
-  type1 type1##value1 = value1;                                                \
-  msgout##name.serial(type1##value1);                                          \
-  CUnifiedNetwork::getInstance()->send(localMSId(), msgout##name);
+#define SEND_MSG_1V_TO_MIRROR(name, type1, value1) \
+	CMessage msgout##name(#name);                  \
+	type1 type1##value1 = value1;                  \
+	msgout##name.serial(type1##value1);            \
+	CUnifiedNetwork::getInstance()->send(localMSId(), msgout##name);
 
-#define SEND_MSG_2V_TO_MIRROR(name, type1, value1, type2, value2)              \
-  CMessage msgout##name(#name);                                                \
-  type1 type1##value1 = value1;                                                \
-  msgout##name.serial(type1##value1);                                          \
-  type2 type2##value2 = value2;                                                \
-  msgout##name.serial(type2##value2);                                          \
-  CUnifiedNetwork::getInstance()->send(localMSId(), msgout##name);
+#define SEND_MSG_2V_TO_MIRROR(name, type1, value1, type2, value2) \
+	CMessage msgout##name(#name);                                 \
+	type1 type1##value1 = value1;                                 \
+	msgout##name.serial(type1##value1);                           \
+	type2 type2##value2 = value2;                                 \
+	msgout##name.serial(type2##value2);                           \
+	CUnifiedNetwork::getInstance()->send(localMSId(), msgout##name);
 
-#define SEND_MSG_3V_TO_MIRROR(name, type1, value1, type2, value2, type3,       \
-                              value3)                                          \
-  CMessage msgout##name(#name);                                                \
-  type1 type1##value1 = value1;                                                \
-  msgout##name.serial(type1##value1);                                          \
-  type2 type2##value2 = value2;                                                \
-  msgout##name.serial(type2##value2);                                          \
-  type3 type3##value3 = value3;                                                \
-  msgout##name.serial(type3##value3);                                          \
-  CUnifiedNetwork::getInstance()->send(localMSId(), msgout##name);
+#define SEND_MSG_3V_TO_MIRROR(name, type1, value1, type2, value2, type3, value3) \
+	CMessage msgout##name(#name);                                                \
+	type1 type1##value1 = value1;                                                \
+	msgout##name.serial(type1##value1);                                          \
+	type2 type2##value2 = value2;                                                \
+	msgout##name.serial(type2##value2);                                          \
+	type3 type3##value3 = value3;                                                \
+	msgout##name.serial(type3##value3);                                          \
+	CUnifiedNetwork::getInstance()->send(localMSId(), msgout##name);
 
-#define SEND_MSG_1P_TO_MIRROR(name, value1)                                    \
-  CMessage msgout##name(#name);                                                \
-  msgout##name.serial(value1);                                                 \
-  CUnifiedNetwork::getInstance()->send(localMSId(), msgout##name);
+#define SEND_MSG_1P_TO_MIRROR(name, value1) \
+	CMessage msgout##name(#name);           \
+	msgout##name.serial(value1);            \
+	CUnifiedNetwork::getInstance()->send(localMSId(), msgout##name);
 
-#define SEND_MSG_2P_TO_MIRROR(name, value1, value2)                            \
-  CMessage msgout##name(#name);                                                \
-  msgout##name.serial(value1);                                                 \
-  msgout##name.serial(value2);                                                 \
-  CUnifiedNetwork::getInstance()->send(localMSId(), msgout##name);
+#define SEND_MSG_2P_TO_MIRROR(name, value1, value2) \
+	CMessage msgout##name(#name);                   \
+	msgout##name.serial(value1);                    \
+	msgout##name.serial(value2);                    \
+	CUnifiedNetwork::getInstance()->send(localMSId(), msgout##name);
 
-#define SEND_MSG_3P_TO_MIRROR(name, value1, value2, value3)                    \
-  CMessage msgout##name(#name);                                                \
-  msgout##name.serial(value1);                                                 \
-  msgout##name.serial(value2);                                                 \
-  msgout##name.serial(value3);                                                 \
-  CUnifiedNetwork::getInstance()->send(localMSId(), msgout##name);
+#define SEND_MSG_3P_TO_MIRROR(name, value1, value2, value3) \
+	CMessage msgout##name(#name);                           \
+	msgout##name.serial(value1);                            \
+	msgout##name.serial(value2);                            \
+	msgout##name.serial(value3);                            \
+	CUnifiedNetwork::getInstance()->send(localMSId(), msgout##name);
 
-#define SEND_MSG_1PC_TO_MIRROR(name, value1)                                   \
-  CMessage msgout##name(#name);                                                \
-  msgout##name.serialCont(value1);                                             \
-  CUnifiedNetwork::getInstance()->send(localMSId(), msgout##name);
+#define SEND_MSG_1PC_TO_MIRROR(name, value1) \
+	CMessage msgout##name(#name);            \
+	msgout##name.serialCont(value1);         \
+	CUnifiedNetwork::getInstance()->send(localMSId(), msgout##name);
 
-struct TRowAllocation {
-  TRowAllocation(NLMISC::TGameCycle tick, TDataSetIndex row)
-      : RemovalDate(tick), EntityIndex(row) {}
+struct TRowAllocation
+{
+	TRowAllocation(NLMISC::TGameCycle tick, TDataSetIndex row)
+	    : RemovalDate(tick)
+	    , EntityIndex(row)
+	{
+	}
 
-  NLMISC::TGameCycle RemovalDate;
-  TDataSetIndex EntityIndex;
+	NLMISC::TGameCycle RemovalDate;
+	TDataSetIndex EntityIndex;
 };
 
 /**
  * Row allocation management, within a range.
- * TODO: maybe, push all rows into the FILO at beginning (otherwise when there
- * are only a few entities, the time between releasing a row and reusing it
- * might be short).
+ * TODO: maybe, push all rows into the FILO at beginning (otherwise when there are
+ * only a few entities, the time between releasing a row and reusing it might be short).
  */
-class TEntityRange {
+class TEntityRange
+{
 public:
-  /// Constructor
-  TEntityRange(TDataSetIndex first = 0, TDataSetIndex last = 0) {
-    initRange(first, last);
-  }
+	/// Constructor
+	TEntityRange(TDataSetIndex first = 0, TDataSetIndex last = 0)
+	{
+		initRange(first, last);
+	}
 
-  /// Init range
-  void initRange(TDataSetIndex first, TDataSetIndex last) {
-    _First = first;
-    _OuterBound = last + 1;
-    _NextFree = first;
-  }
+	/// Init range
+	void initRange(TDataSetIndex first, TDataSetIndex last)
+	{
+		_First = first;
+		_OuterBound = last + 1;
+		_NextFree = first;
+	}
 
-  /// Acquire a new row. Set *previouslyUsed to true if the row was used and
-  /// released before
-  TDataSetIndex getNewEntityIndex(bool *previouslyUsed);
+	/// Acquire a new row. Set *previouslyUsed to true if the row was used and released before
+	TDataSetIndex getNewEntityIndex(bool *previouslyUsed);
 
-  /// Release a row previously acquired
-  void releaseEntityIndex(TDataSetIndex entityIndex);
+	/// Release a row previously acquired
+	void releaseEntityIndex(TDataSetIndex entityIndex);
 
-  /// Return the next free row (not among previously released rows)
-  TDataSetIndex nextFree() const { return _NextFree; }
+	/// Return the next free row (not among previously released rows)
+	TDataSetIndex nextFree() const { return _NextFree; }
 
-  /// Return the first row of the range
-  TDataSetIndex first() const { return _First; }
+	/// Return the first row of the range
+	TDataSetIndex first() const { return _First; }
 
-  /// Return the last row of the range
-  TDataSetIndex last() const { return _OuterBound - 1; }
+	/// Return the last row of the range
+	TDataSetIndex last() const { return _OuterBound - 1; }
 
-  /// Return the number of rows ready to be given back
-  TDataSetIndex nbReleasedIndexes() const {
-    return (TDataSetIndex)_ReleasedIndexes.size();
-  }
+	/// Return the number of rows ready to be given back
+	TDataSetIndex nbReleasedIndexes() const { return (TDataSetIndex)_ReleasedIndexes.size(); }
 
-  /// Serial the range (minimal info)
-  void serial(NLMISC::IStream &s) {
-    s.serial(_First);
-    s.serial(_OuterBound);
-  }
+	/// Serial the range (minimal info)
+	void serial(NLMISC::IStream &s)
+	{
+		s.serial(_First);
+		s.serial(_OuterBound);
+	}
 
 private:
-  /// The first row that was never acquired before
-  TDataSetIndex _NextFree;
+	/// The first row that was never acquired before
+	TDataSetIndex _NextFree;
 
-  /// The first row of the range
-  TDataSetIndex _First;
+	/// The first row of the range
+	TDataSetIndex _First;
 
-  /// One past the last row of the range
-  TDataSetIndex _OuterBound;
+	/// One past the last row of the range
+	TDataSetIndex _OuterBound;
 
-  /// FIFO container for released rows to give back
-  std::queue<TRowAllocation> _ReleasedIndexes;
+	/// FIFO container for released rows to give back
+	std::queue<TRowAllocation> _ReleasedIndexes;
 };
 
 /**
  * Information about declared range
  */
-class TDeclaredEntityRange {
+class TDeclaredEntityRange
+{
 public:
-  /// Constructor
-  TDeclaredEntityRange(const TEntityRange &src,
-                       NLNET::TServiceId8 declaratorService) {
-    _First = src.first();
-    _Size = src.last() - src.first() + 1;
-    _ServiceId = declaratorService;
-  }
+	/// Constructor
+	TDeclaredEntityRange(const TEntityRange &src, NLNET::TServiceId8 declaratorService)
+	{
+		_First = src.first();
+		_Size = src.last() - src.first() + 1;
+		_ServiceId = declaratorService;
+	}
 
-  /// Base index of the range
-  TDataSetIndex baseIndex() const { return _First; }
+	/// Base index of the range
+	TDataSetIndex baseIndex() const { return _First; }
 
-  /// Size of the range
-  TDataSetIndex size() const { return _Size; }
+	/// Size of the range
+	TDataSetIndex size() const { return _Size; }
 
-  /// Declarator service id
-  NLNET::TServiceId8 serviceId() const { return _ServiceId; }
+	/// Declarator service id
+	NLNET::TServiceId8 serviceId() const { return _ServiceId; }
 
-  /// Serial
-  /*void					serial( NLMISC::IStream& s )
-  {
-      s.serial( _First );
-      s.serial( _Size );
-      s.serial( _ServiceId );
-  }
+	/// Serial
+	/*void					serial( NLMISC::IStream& s )
+	{
+	    s.serial( _First );
+	    s.serial( _Size );
+	    s.serial( _ServiceId );
+	}
 
-  friend bool operator<  ( const TDeclaredEntityRange& r1, const
-  TDeclaredEntityRange& r2 ); friend bool operator== ( const
-  TDeclaredEntityRange& r1, const TDeclaredEntityRange& r2 );
-  */
+	friend bool operator<  ( const TDeclaredEntityRange& r1, const TDeclaredEntityRange& r2 );
+	friend bool operator== ( const TDeclaredEntityRange& r1, const TDeclaredEntityRange& r2 );
+	*/
 
 private:
-  TDataSetIndex _First;
-  TDataSetIndex _Size;
-  NLNET::TServiceId8 _ServiceId;
+	TDataSetIndex _First;
+	TDataSetIndex _Size;
+	NLNET::TServiceId8 _ServiceId;
 };
 
 /*
 /// Sorting operator
-bool operator< ( const TDeclaredEntityRange& r1, const TDeclaredEntityRange& r2
-)
+bool operator< ( const TDeclaredEntityRange& r1, const TDeclaredEntityRange& r2 )
 {
     return r1.baseIndex() < r2.baseIndex();
 }
 
 /// Equality operator
-bool operator== ( const TDeclaredEntityRange& r1, const TDeclaredEntityRange& r2
-)
+bool operator== ( const TDeclaredEntityRange& r1, const TDeclaredEntityRange& r2 )
 {
     return (r1.baseIndex() == r2.baseIndex()) && (r1.size() == r2.size());
 }
 */
 
-// typedef std::hash_map< uint8, TEntityRange, std::hash<uint> >
-// TEntityRangeOfType;
+// typedef std::hash_map< uint8, TEntityRange, std::hash<uint> > TEntityRangeOfType;
 typedef std::map<uint8, TEntityRange> TEntityRangeOfType;
 #define GET_ENTITY_TYPE_RANGE(it) ((*it).second)
 
@@ -216,7 +216,8 @@ typedef std::vector<CChangeTrackerClient> TTrackerListForEnt;
 
 typedef std::vector<TTrackerListForProp> TTrackersLists;
 
-template <class T, class CPropLocationClass> class CMirrorPropValue;
+template <class T, class CPropLocationClass>
+class CMirrorPropValue;
 
 class CPropertyAllocatorClient;
 

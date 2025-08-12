@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "editable_patch.h"
 #include <nel/misc/types_nl.h>
+#include "editable_patch.h"
 
 // STL includes
 
@@ -42,48 +42,65 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CEditablePatch::CEditablePatch(CScene *scene) : CPatchObject(scene) {}
+CEditablePatch::CEditablePatch(CScene *scene)
+    : CPatchObject(scene)
+{
+}
 
-CEditablePatch::~CEditablePatch() {}
+CEditablePatch::~CEditablePatch()
+{
+}
 
 const ucstring CEditablePatch::DisplayName = ucstring("EditablePatch");
 const char *CEditablePatch::InternalName = "EditablePatch";
-const NLMISC::CClassId CEditablePatch::ClassId =
-    NLMISC::CClassId(0x00001030, 0x00000000);
+const NLMISC::CClassId CEditablePatch::ClassId = NLMISC::CClassId(0x00001030, 0x00000000);
 const TSClassId CEditablePatch::SuperClassId = CPatchObject::SuperClassId;
 const CEditablePatchClassDesc EditablePatchClassDesc(&DllPluginDescBuiltin);
 
-void CEditablePatch::parse(uint16 version, uint filter) {
-  CPatchObject::parse(version);
+void CEditablePatch::parse(uint16 version, uint filter)
+{
+	CPatchObject::parse(version);
 }
 
-void CEditablePatch::clean() { CPatchObject::clean(); }
-
-void CEditablePatch::build(uint16 version, uint filter) {
-  CPatchObject::build(version);
+void CEditablePatch::clean()
+{
+	CPatchObject::clean();
 }
 
-void CEditablePatch::disown() { CPatchObject::disown(); }
-
-void CEditablePatch::init() { CPatchObject::init(); }
-
-bool CEditablePatch::inherits(const NLMISC::CClassId classId) const {
-  if (classId == classDesc()->classId())
-    return true;
-  return CPatchObject::inherits(classId);
+void CEditablePatch::build(uint16 version, uint filter)
+{
+	CPatchObject::build(version);
 }
 
-const ISceneClassDesc *CEditablePatch::classDesc() const {
-  return &EditablePatchClassDesc;
+void CEditablePatch::disown()
+{
+	CPatchObject::disown();
 }
 
-void CEditablePatch::toStringLocal(std::ostream &ostream,
-                                   const std::string &pad, uint filter) const {
-  CPatchObject::toStringLocal(ostream, pad);
+void CEditablePatch::init()
+{
+	CPatchObject::init();
 }
 
-IStorageObject *CEditablePatch::createChunkById(uint16 id, bool container) {
-  return CPatchObject::createChunkById(id, container);
+bool CEditablePatch::inherits(const NLMISC::CClassId classId) const
+{
+	if (classId == classDesc()->classId()) return true;
+	return CPatchObject::inherits(classId);
+}
+
+const ISceneClassDesc *CEditablePatch::classDesc() const
+{
+	return &EditablePatchClassDesc;
+}
+
+void CEditablePatch::toStringLocal(std::ostream &ostream, const std::string &pad, uint filter) const
+{
+	CPatchObject::toStringLocal(ostream, pad);
+}
+
+IStorageObject *CEditablePatch::createChunkById(uint16 id, bool container)
+{
+	return CPatchObject::createChunkById(id, container);
 }
 
 } /* namespace BUILTIN */

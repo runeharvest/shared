@@ -17,9 +17,9 @@
 #ifndef NL_S3TC_COMPRESSOR_H
 #define NL_S3TC_COMPRESSOR_H
 
+#include <nel/misc/types_nl.h>
 #include <nel/misc/bitmap.h>
 #include <nel/misc/stream.h>
-#include <nel/misc/types_nl.h>
 
 // ***************************************************************************
 #define DXT1 1
@@ -41,9 +41,8 @@
 #define DDSCAPS_TEXTURE 0x00001000l
 #define DDSCAPS_MIPMAP 0x00400000l
 
-#define MAKEFOURCC(ch0, ch1, ch2, ch3)                                         \
-  ((uint32)(uint8)(ch0) | ((uint32)(uint8)(ch1) << 8) |                        \
-   ((uint32)(uint8)(ch2) << 16) | ((uint32)(uint8)(ch3) << 24))
+#define MAKEFOURCC(ch0, ch1, ch2, ch3) \
+	((uint32)(uint8)(ch0) | ((uint32)(uint8)(ch1) << 8) | ((uint32)(uint8)(ch2) << 16) | ((uint32)(uint8)(ch3) << 24))
 
 #endif
 
@@ -54,41 +53,43 @@
  * \author Nevrax France
  * \date 2002
  */
-class CS3TCCompressor {
+class CS3TCCompressor
+{
 public:
-  /// Constructor
-  CS3TCCompressor();
+	/// Constructor
+	CS3TCCompressor();
 
-  void compress(const NLMISC::CBitmap &bmpSrc, bool optMipMap, uint algo,
-                NLMISC::IStream &output);
+	void compress(const NLMISC::CBitmap &bmpSrc, bool optMipMap, uint algo, NLMISC::IStream &output);
 
-  typedef struct {
-    uint32 dwSize;
-    uint32 dwFlags;
-    uint32 dwFourCC;
-    uint32 dwRGBBitCount;
-    uint32 dwRBitMask;
-    uint32 dwGBitMask;
-    uint32 dwBBitMask;
-    uint32 dwABitMask;
-  } DDS_PIXELFORMAT;
+	typedef struct
+	{
+		uint32 dwSize;
+		uint32 dwFlags;
+		uint32 dwFourCC;
+		uint32 dwRGBBitCount;
+		uint32 dwRBitMask;
+		uint32 dwGBitMask;
+		uint32 dwBBitMask;
+		uint32 dwABitMask;
+	} DDS_PIXELFORMAT;
 
-  typedef struct {
-    uint32 dwSize;
-    uint32 dwFlags;
-    uint32 dwHeight;
-    uint32 dwWidth;
-    uint32 dwLinearSize;
-    uint32 dwDepth;
-    uint32 dwMipMapCount;
-    uint32 dwReserved1[11];
-    DDS_PIXELFORMAT ddpf;
-    uint32 dwCaps;
-    uint32 dwCaps2;
-    uint32 dwCaps3;
-    uint32 dwCaps4;
-    uint32 dwReserved2;
-  } DDS_HEADER;
+	typedef struct
+	{
+		uint32 dwSize;
+		uint32 dwFlags;
+		uint32 dwHeight;
+		uint32 dwWidth;
+		uint32 dwLinearSize;
+		uint32 dwDepth;
+		uint32 dwMipMapCount;
+		uint32 dwReserved1[11];
+		DDS_PIXELFORMAT ddpf;
+		uint32 dwCaps;
+		uint32 dwCaps2;
+		uint32 dwCaps3;
+		uint32 dwCaps4;
+		uint32 dwReserved2;
+	} DDS_HEADER;
 };
 
 #endif // NL_S3TC_COMPRESSOR_H

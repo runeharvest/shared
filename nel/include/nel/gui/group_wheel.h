@@ -25,28 +25,29 @@
 namespace NLGUI {
 
 // Special group to handle the mouse wheel message
-class CInterfaceGroupWheel : public CInterfaceGroup {
+class CInterfaceGroupWheel : public CInterfaceGroup
+{
 public:
-  DECLARE_UI_CLASS(CInterfaceGroupWheel)
+	DECLARE_UI_CLASS(CInterfaceGroupWheel)
 
-  /// Constructor
-  CInterfaceGroupWheel(const TCtorParam &param);
+	/// Constructor
+	CInterfaceGroupWheel(const TCtorParam &param);
 
-  std::string getProperty(const std::string &name) const;
-  void setProperty(const std::string &name, const std::string &value);
-  xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
+	std::string getProperty(const std::string &name) const;
+	void setProperty(const std::string &name, const std::string &value);
+	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
 
-  /// Coming from CInterfaceElement
-  virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
-  virtual bool handleEvent(const NLGUI::CEventDescriptor &event);
+	/// Coming from CInterfaceElement
+	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+	virtual bool handleEvent(const NLGUI::CEventDescriptor &event);
 
 private:
-  IActionHandler *_AHWheelUp;
-  CStringShared _AHWheelUpParams;
-  IActionHandler *_AHWheelDown;
-  CStringShared _AHWheelDownParams;
+	IActionHandler *_AHWheelUp;
+	CStringShared _AHWheelUpParams;
+	IActionHandler *_AHWheelDown;
+	CStringShared _AHWheelDownParams;
 };
 
-} // namespace NLGUI
+}
 
 #endif

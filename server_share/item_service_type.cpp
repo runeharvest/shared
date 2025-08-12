@@ -16,8 +16,8 @@
 
 #include "stdpch.h"
 
-#include "item_service_type.h"
 #include "nel/misc/string_conversion.h"
+#include "item_service_type.h"
 
 using namespace std;
 using namespace NLMISC;
@@ -31,15 +31,16 @@ NL_STRING_CONVERSION_TABLE_ENTRY(StableFeedAnimal3)
 NL_STRING_CONVERSION_TABLE_ENTRY(StableFeedAnimal4)
 NL_STRING_CONVERSION_TABLE_ENTRY(StableFeedAllAnimals)
 NL_STRING_CONVERSION_TABLE_ENTRY(SpeedUpDPLoss)
-NL_END_STRING_CONVERSION_TABLE(TItemServiceType, ItemServiceTypeConversion,
-                               Unknown)
+NL_END_STRING_CONVERSION_TABLE(TItemServiceType, ItemServiceTypeConversion, Unknown)
 
-TItemServiceType fromString(const std::string &str) {
-  return ItemServiceTypeConversion.fromString(str);
+TItemServiceType fromString(const std::string &str)
+{
+	return ItemServiceTypeConversion.fromString(str);
 }
 
-const std::string &toString(TItemServiceType itemServiceType) {
-  return ItemServiceTypeConversion.toString(itemServiceType);
+const std::string &toString(TItemServiceType itemServiceType)
+{
+	return ItemServiceTypeConversion.toString(itemServiceType);
 }
 
 } // namespace ITEM_SERVICE_TYPE

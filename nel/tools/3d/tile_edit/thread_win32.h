@@ -32,21 +32,22 @@
 #include "thread.h"
 #include <windows.h>
 
-class CL_Thread_Win32 : public CL_Thread {
+class CL_Thread_Win32 : public CL_Thread
+{
 public:
-  CL_Thread_Win32(CL_Runnable *runnable);
-  virtual ~CL_Thread_Win32();
+	CL_Thread_Win32(CL_Runnable *runnable);
+	virtual ~CL_Thread_Win32();
 
-  virtual void start();
-  virtual void terminate();
-  virtual void wait();
+	virtual void start();
+	virtual void terminate();
+	virtual void wait();
 
 private:
-  static unsigned long __stdcall func_proxy(void *arg);
+	static unsigned long __stdcall func_proxy(void *arg);
 
-  HANDLE thread_handle;
-  DWORD thread_id;
-  CL_Runnable *runnable;
+	HANDLE thread_handle;
+	DWORD thread_id;
+	CL_Runnable *runnable;
 };
 
 #endif

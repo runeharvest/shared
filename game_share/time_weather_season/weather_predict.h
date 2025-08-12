@@ -29,29 +29,30 @@ class UFormElm;
 class CWeatherFunctionParamsSheetBase;
 
 // utility class to predict weather
-struct CPredictWeather {
-  enum EWeatherCycleType {
-    HighPressure = 0,
-    LowPressure,
-    SeasonTransition,
-    WeatherCycleCount
-  };
+struct CPredictWeather
+{
+	enum EWeatherCycleType
+	{
+		HighPressure = 0,
+		LowPressure,
+		SeasonTransition,
+		WeatherCycleCount
+	};
 
-  /** Get the value for weather at the given date.
-   * wf is an array with 4 weather functions: one for each season
-   * They gives intervals in which a random offset can be taken and added to the
-   * weather value. If a NULL pointer is provided, no offset is added. See
-   * season.h in game_share for season ordering \param ls Decription of light
-   * cycle for each season. It is used to avoid weather transition when night is
-   * falling or at the start of the day
-   */
-  static float
-  predictWeather(uint64 day, float hour,
-                 const CWeatherFunctionParamsSheetBase &wfp,
-                 const CWeatherFunction wf[EGSPD::CSeason::Invalid]);
+	/** Get the value for weather at the given date.
+	 * wf is an array with 4 weather functions: one for each season
+	 * They gives intervals in which a random offset can be taken and added to the weather value.
+	 * If a NULL pointer is provided, no offset is added.
+	 * See season.h in game_share for season ordering
+	 * \param ls Decription of light cycle for each season. It is used to avoid weather transition when night is falling or at the start of the day
+	 */
+	static float predictWeather(uint64 day,
+	    float hour,
+	    const CWeatherFunctionParamsSheetBase &wfp,
+	    const CWeatherFunction wf[EGSPD::CSeason::Invalid]);
 
 private:
-  static float getCycleWeatherValue(uint64 cycle, const CWeatherFunction &wf);
+	static float getCycleWeatherValue(uint64 cycle, const CWeatherFunction &wf);
 };
 
 #endif

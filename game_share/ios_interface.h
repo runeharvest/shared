@@ -22,8 +22,8 @@
 //-------------------------------------------------------------------------------------------------
 
 // nel
-#include "nel/misc/common.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/common.h"
 #include "nel/net/message.h"
 #include "nel/net/unified_network.h"
 
@@ -31,27 +31,31 @@
 // struct CBackupMsgReceiveFile
 //-------------------------------------------------------------------------------------------------
 
-struct CIOSMsgSetPhrase {
-  std::string PhraseName;
-  ucstring Txt;
+struct CIOSMsgSetPhrase
+{
+	std::string PhraseName;
+	ucstring Txt;
 
-  CIOSMsgSetPhrase(const std::string &phraseName, const ucstring &txt) {
-    PhraseName = phraseName;
-    Txt = txt;
-  }
+	CIOSMsgSetPhrase(const std::string &phraseName, const ucstring &txt)
+	{
+		PhraseName = phraseName;
+		Txt = txt;
+	}
 
-  CIOSMsgSetPhrase(const std::string &phraseName, const std::string &txt) {
-    PhraseName = phraseName;
-    Txt.fromUtf8(txt);
-  }
+	CIOSMsgSetPhrase(const std::string &phraseName, const std::string &txt)
+	{
+		PhraseName = phraseName;
+		Txt.fromUtf8(txt);
+	}
 
-  void send() const {
-    NLNET::CMessage msg("SET_PHRASE");
-    msg.serial(const_cast<CIOSMsgSetPhrase *>(this)->PhraseName);
-    ucstring ucTxt = ucstring(PhraseName + "(){[") + Txt + ucstring("]}");
-    msg.serial(ucTxt);
-    NLNET::CUnifiedNetwork::getInstance()->send("IOS", msg);
-  }
+	void send() const
+	{
+		NLNET::CMessage msg("SET_PHRASE");
+		msg.serial(const_cast<CIOSMsgSetPhrase *>(this)->PhraseName);
+		ucstring ucTxt = ucstring(PhraseName + "(){[") + Txt + ucstring("]}");
+		msg.serial(ucTxt);
+		NLNET::CUnifiedNetwork::getInstance()->send("IOS", msg);
+	}
 };
 
 //-------------------------------------------------------------------------------------------------

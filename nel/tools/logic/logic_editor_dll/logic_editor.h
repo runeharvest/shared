@@ -12,35 +12,36 @@
 #error include 'stdafx.h' before including this file for PCH
 #endif
 
-#include "logic_editor_interface.h"
 #include "resource.h" // main symbols
+#include "logic_editor_interface.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CLogic_editorApp
 // See logic.cpp for the implementation of this class
 //
 
-class CLogic_editorApp : public CWinApp {
+class CLogic_editorApp : public CWinApp
+{
 
-  CMultiDocTemplate *_DocTemplate;
+	CMultiDocTemplate *_DocTemplate;
 
 public:
-  CLogic_editorApp();
-  void newDoc();
+	CLogic_editorApp();
+	void newDoc();
 
-  // Overrides
-  // ClassWizard generated virtual function overrides
-  //{{AFX_VIRTUAL(CLogic_editorApp)
+	// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CLogic_editorApp)
 public:
-  // virtual BOOL InitInstance();
-  // }}AFX_VIRTUAL
-  virtual BOOL initInstance(int x = 0, int y = 0, int cx = 0, int cy = 0);
+	// virtual BOOL InitInstance();
+	// }}AFX_VIRTUAL
+	virtual BOOL initInstance(int x = 0, int y = 0, int cx = 0, int cy = 0);
 
-  // Implementation
-  //{{AFX_MSG(CLogic_editorApp)
-  // afx_msg void OnAppAbout();
-  //}}AFX_MSG
-  DECLARE_MESSAGE_MAP()
+	// Implementation
+	//{{AFX_MSG(CLogic_editorApp)
+	// afx_msg void OnAppAbout();
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 };
 
 /**
@@ -50,54 +51,54 @@ public:
  * \author Nevrax France
  * \date 2001
  */
-class CLogicEditor : public ILogicEditor {
+class CLogicEditor : public ILogicEditor
+{
 
 public:
-  /**
-   *	CLogicEditor
-   */
-  CLogicEditor();
+	/**
+	 *	CLogicEditor
+	 */
+	CLogicEditor();
 
-  /**
-   *	Init the UI
-   */
-  void initUI(HWND parent = NULL);
+	/**
+	 *	Init the UI
+	 */
+	void initUI(HWND parent = NULL);
 
-  /**
-   *	Init the UI Light version
-   */
-  virtual void initUILight(int x, int y, int cx, int cy);
+	/**
+	 *	Init the UI Light version
+	 */
+	virtual void initUILight(int x, int y, int cx, int cy);
 
-  /**
-   *	Go
-   */
-  void go();
+	/**
+	 *	Go
+	 */
+	void go();
 
-  /**
-   *	Get the main frame
-   */
-  virtual void *getMainFrame();
+	/**
+	 *	Get the main frame
+	 */
+	virtual void *getMainFrame();
 
-  /**
-   *	load file
-   */
-  virtual void loadFile(const TCHAR *fileName);
+	/**
+	 *	load file
+	 */
+	virtual void loadFile(const TCHAR *fileName);
 
-  /**
-   * create a default file
-   */
-  virtual void createDefaultFile(const TCHAR *filename = _T("logic.logic "));
+	/**
+	 * create a default file
+	 */
+	virtual void createDefaultFile(const TCHAR *filename = _T("logic.logic "));
 
-  /**
-   *	Release the UI
-   */
-  void releaseUI();
+	/**
+	 *	Release the UI
+	 */
+	void releaseUI();
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before
-// the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
 #endif // !defined(AFX_LOGIC_H__AACA5CA3_6F95_4278_9DF5_6ED0839DBBDC__INCLUDED_)

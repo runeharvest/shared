@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "scene_class_unknown.h"
 #include <nel/misc/types_nl.h>
+#include "scene_class_unknown.h"
 
 // STL includes
 
@@ -45,54 +45,68 @@ namespace MAX {
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-CSceneClassUnknownDllPluginDesc::CSceneClassUnknownDllPluginDesc(
-    const ucstring &dllFilename, const ucstring &dllDescription)
-    : m_InternalName(dllFilename), m_DisplayName(dllDescription) {}
-
-const ucchar *CSceneClassUnknownDllPluginDesc::internalName() const {
-  return m_InternalName.c_str();
+CSceneClassUnknownDllPluginDesc::CSceneClassUnknownDllPluginDesc(const ucstring &dllFilename, const ucstring &dllDescription)
+    : m_InternalName(dllFilename)
+    , m_DisplayName(dllDescription)
+{
 }
 
-const ucchar *CSceneClassUnknownDllPluginDesc::displayName() const {
-  return m_DisplayName.c_str();
+const ucchar *CSceneClassUnknownDllPluginDesc::internalName() const
+{
+	return m_InternalName.c_str();
+}
+
+const ucchar *CSceneClassUnknownDllPluginDesc::displayName() const
+{
+	return m_DisplayName.c_str();
 }
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-CSceneClassUnknownDesc::CSceneClassUnknownDesc(const NLMISC::CClassId classId,
-                                               const TSClassId superClassId,
-                                               const ucstring &displayName,
-                                               const std::string &internalName,
-                                               const ucstring &dllFilename,
-                                               const ucstring &dllDescription)
-    : m_DisplayName(displayName), m_InternalName(internalName),
-      m_ClassId(classId), m_SuperClassId(superClassId),
-      m_DllPluginDesc(dllFilename, dllDescription) {}
-
-CSceneClass *CSceneClassUnknownDesc::create(CScene *scene) const {
-  nlassert(false);
+CSceneClassUnknownDesc::CSceneClassUnknownDesc(const NLMISC::CClassId classId, const TSClassId superClassId, const ucstring &displayName, const std::string &internalName, const ucstring &dllFilename, const ucstring &dllDescription)
+    : m_DisplayName(displayName)
+    , m_InternalName(internalName)
+    , m_ClassId(classId)
+    , m_SuperClassId(superClassId)
+    , m_DllPluginDesc(dllFilename, dllDescription)
+{
 }
 
-void CSceneClassUnknownDesc::destroy(CSceneClass *sc) const { delete sc; }
-
-const ucchar *CSceneClassUnknownDesc::displayName() const {
-  return m_DisplayName.c_str();
+CSceneClass *CSceneClassUnknownDesc::create(CScene *scene) const
+{
+	nlassert(false);
 }
 
-const char *CSceneClassUnknownDesc::internalName() const {
-  return m_InternalName.c_str();
+void CSceneClassUnknownDesc::destroy(CSceneClass *sc) const
+{
+	delete sc;
 }
 
-NLMISC::CClassId CSceneClassUnknownDesc::classId() const { return m_ClassId; }
-
-TSClassId CSceneClassUnknownDesc::superClassId() const {
-  return m_SuperClassId;
+const ucchar *CSceneClassUnknownDesc::displayName() const
+{
+	return m_DisplayName.c_str();
 }
 
-const IDllPluginDescInternal *CSceneClassUnknownDesc::dllPluginDesc() const {
-  return &m_DllPluginDesc;
+const char *CSceneClassUnknownDesc::internalName() const
+{
+	return m_InternalName.c_str();
+}
+
+NLMISC::CClassId CSceneClassUnknownDesc::classId() const
+{
+	return m_ClassId;
+}
+
+TSClassId CSceneClassUnknownDesc::superClassId() const
+{
+	return m_SuperClassId;
+}
+
+const IDllPluginDescInternal *CSceneClassUnknownDesc::dllPluginDesc() const
+{
+	return &m_DllPluginDesc;
 }
 
 ////////////////////////////////////////////////////////////////////////

@@ -22,9 +22,9 @@
 
 #if defined(_MSC_VER) && defined(_DEBUG)
 #define _CRTDBG_MAP_ALLOC
-#include <crtdbg.h>
-#include <malloc.h>
 #include <stdlib.h>
+#include <malloc.h>
+#include <crtdbg.h>
 #define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #elif defined(_MSC_VER)
 #include <malloc.h>
@@ -67,9 +67,9 @@
 #define WINVER 0x0500
 #define NOMINMAX
 #endif
-#include <wincrypt.h>
-#include <windows.h>
 #include <winsock2.h>
+#include <windows.h>
+#include <wincrypt.h>
 #ifdef X509_NAME
 #undef X509_NAME
 #endif
@@ -77,9 +77,9 @@
 
 #include <libxml/parser.h>
 
-#include <openssl/err.h>
-#include <openssl/ssl.h>
 #include <openssl/x509.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
 
 #include <curl/curl.h>
 

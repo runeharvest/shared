@@ -28,17 +28,15 @@ class CStatDBTableLeaf;
  * \author Nevrax France
  * \date 2005 July
  */
-class CStatDBNodeVisitor {
+class CStatDBNodeVisitor
+{
 public:
-  virtual void visitBranch(CStatDBBranch * /* branch */,
-                           const std::string & /* path */) {}
-  virtual void visitValueLeaf(CStatDBValueLeaf * /* valueLeaf */,
-                              const std::string & /* path */) {}
-  virtual void visitTableLeaf(CStatDBTableLeaf * /* tableLeaf */,
-                              const std::string & /* path */) {}
+	virtual void visitBranch(CStatDBBranch * /* branch */, const std::string & /* path */) { }
+	virtual void visitValueLeaf(CStatDBValueLeaf * /* valueLeaf */, const std::string & /* path */) { }
+	virtual void visitTableLeaf(CStatDBTableLeaf * /* tableLeaf */, const std::string & /* path */) { }
 
 protected:
-  CStatDBNodeVisitor() {}
+	CStatDBNodeVisitor() { }
 };
 
 #endif // RY_STAT_DB_TREE_VISITOR_H

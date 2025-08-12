@@ -21,17 +21,17 @@
 
 /** Class to unpack / pack visual fx infos from a visual property
  */
-class CVisualFX {
+class CVisualFX
+{
 public:
-  bool AuraReceipt;
-  MAGICFX::TAuraFX Aura;
-  uint Link; // match the MAGICFX::TMagicFx enum, but with 1 added (0 means no
-             // link)
+	bool AuraReceipt;
+	MAGICFX::TAuraFX Aura;
+	uint Link; // match the MAGICFX::TMagicFx enum, but with 1 added (0 means no link)
 public:
-  // build from a visual property
-  void unpack(sint64 src);
-  // build a visual property from that object
-  void pack(sint64 &dest);
+	// build from a visual property
+	void unpack(sint64 src);
+	// build a visual property from that object
+	void pack(sint64 &dest);
 };
 
 /////////////
@@ -39,16 +39,17 @@ public:
 /////////////
 
 // **********************************************************************************************
-inline void CVisualFX::unpack(sint64 vp) {
-  Aura = (MAGICFX::TAuraFX)(vp & 31);
-  Link = (uint)((vp >> 5) & 31);
-  AuraReceipt = (vp & (1 << 10)) != 0;
+inline void CVisualFX::unpack(sint64 vp)
+{
+	Aura = (MAGICFX::TAuraFX)(vp & 31);
+	Link = (uint)((vp >> 5) & 31);
+	AuraReceipt = (vp & (1 << 10)) != 0;
 }
 
 // **********************************************************************************************
-inline void CVisualFX::pack(sint64 &dest) {
-  dest = ((sint64)AuraReceipt << 10) | ((sint64)(Aura & 31)) |
-         ((sint64)(Link & 31) << 5);
+inline void CVisualFX::pack(sint64 &dest)
+{
+	dest = ((sint64)AuraReceipt << 10) | ((sint64)(Aura & 31)) | ((sint64)(Link & 31) << 5);
 }
 
 #endif

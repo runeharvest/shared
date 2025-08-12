@@ -16,8 +16,8 @@
 
 #include "stdpch.h"
 
-#include "action_nature.h"
 #include "nel/misc/debug.h"
+#include "action_nature.h"
 // nel
 #include "nel/misc/string_conversion.h"
 
@@ -41,14 +41,16 @@ NL_END_STRING_CONVERSION_TABLE(TActionNature, ActionNatureConversion, UNKNOWN)
 //-----------------------------------------------
 // toActionNature :
 //-----------------------------------------------
-TActionNature toActionNature(const std::string &str) {
-  return ActionNatureConversion.fromString(str);
+TActionNature toActionNature(const std::string &str)
+{
+	return ActionNatureConversion.fromString(str);
 }
 
 //-----------------------------------------------
 // toString :
 //-----------------------------------------------
-const std::string &toString(TActionNature nature) {
-  return ActionNatureConversion.toString(nature);
+const std::string &toString(TActionNature nature)
+{
+	return ActionNatureConversion.toString(nature);
 }
-}; // namespace ACTNATURE
+}; // ACTNATURE

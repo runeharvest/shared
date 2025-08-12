@@ -17,8 +17,8 @@
 #ifndef NL_READER_WRITER_H
 #define NL_READER_WRITER_H
 
-#include "mutex.h"
 #include "types_nl.h"
+#include "mutex.h"
 
 #ifdef NL_CPP17
 #include <shared_mutex>
@@ -28,18 +28,31 @@ namespace NLMISC {
 
 #ifdef NL_CPP17
 
-class CReaderWriter {
+class CReaderWriter
+{
 private:
-  std::shared_mutex m_Mutex;
+	std::shared_mutex m_Mutex;
 
 public:
-  void enterReader() { m_Mutex.lock_shared(); }
+	void enterReader()
+	{
+		m_Mutex.lock_shared();
+	}
 
-  void leaveReader() { m_Mutex.unlock_shared(); }
+	void leaveReader()
+	{
+		m_Mutex.unlock_shared();
+	}
 
-  void enterWriter() { m_Mutex.lock(); }
+	void enterWriter()
+	{
+		m_Mutex.lock();
+	}
 
-  void leaveWriter() { m_Mutex.unlock(); }
+	void leaveWriter()
+	{
+		m_Mutex.unlock();
+	}
 };
 
 #else
@@ -50,95 +63,117 @@ public:
  * \author Nevrax France
  * \date 2001
  */
-class CReaderWriter {
+class CReaderWriter
+{
 private:
-  CMutex _Fairness;
-  CMutex _ReadersMutex;
-  CMutex _RWMutex;
-  sint _ReadersLevel;
+	CMutex _Fairness;
+	CMutex _ReadersMutex;
+	CMutex _RWMutex;
+	sint _ReadersLevel;
 
 public:
-  CReaderWriter();
-  ~CReaderWriter();
+	CReaderWriter();
+	~CReaderWriter();
 
-  void enterReader() {
-    const_cast<CMutex &>(_Fairness).enter();
-    const_cast<CMutex &>(_ReadersMutex).enter();
-    ++_ReadersLevel;
-    if (_ReadersLevel == 1)
-      const_cast<CMutex &>(_RWMutex).enter();
-    const_cast<CMutex &>(_ReadersMutex).leave();
-    const_cast<CMutex &>(_Fairness).leave();
-  }
+	void enterReader()
+	{
+		const_cast<CMutex &>(_Fairness).enter();
+		const_cast<CMutex &>(_ReadersMutex).enter();
+		++_ReadersLevel;
+		if (_ReadersLevel == 1)
+			const_cast<CMutex &>(_RWMutex).enter();
+		const_cast<CMutex &>(_ReadersMutex).leave();
+		const_cast<CMutex &>(_Fairness).leave();
+	}
 
-  void leaveReader() {
-    const_cast<CMutex &>(_ReadersMutex).enter();
-    --_ReadersLevel;
-    if (_ReadersLevel == 0)
-      const_cast<CMutex &>(_RWMutex).leave();
-    const_cast<CMutex &>(_ReadersMutex).leave();
-  }
+	void leaveReader()
+	{
+		const_cast<CMutex &>(_ReadersMutex).enter();
+		--_ReadersLevel;
+		if (_ReadersLevel == 0)
+			const_cast<CMutex &>(_RWMutex).leave();
+		const_cast<CMutex &>(_ReadersMutex).leave();
+	}
 
-  void enterWriter() {
-    const_cast<CMutex &>(_Fairness).enter();
-    const_cast<CMutex &>(_RWMutex).enter();
-    const_cast<CMutex &>(_Fairness).leave();
-  }
+	void enterWriter()
+	{
+		const_cast<CMutex &>(_Fairness).enter();
+		const_cast<CMutex &>(_RWMutex).enter();
+		const_cast<CMutex &>(_Fairness).leave();
+	}
 
-  void leaveWriter() { const_cast<CMutex &>(_RWMutex).leave(); }
+	void leaveWriter()
+	{
+		const_cast<CMutex &>(_RWMutex).leave();
+	}
 };
 
 #endif
 
 /**
- * This class uses a CReaderWriter object to implement a synchronized object
- * (see mutex.h for standard CSynchronized.) \author Benjamin Legros \author
- * Nevrax France \date 2001
+ * This class uses a CReaderWriter object to implement a synchronized object (see mutex.h for standard CSynchronized.)
+ * \author Benjamin Legros
+ * \author Nevrax France
+ * \date 2001
  */
-template <class T> class CRWSynchronized {
+template <class T>
+class CRWSynchronized
+{
 public:
-  class CReadAccessor {
-    CRWSynchronized<T> *_RWSynchronized;
+	class CReadAccessor
+	{
+		CRWSynchronized<T> *_RWSynchronized;
 
-  public:
-    CReadAccessor(CRWSynchronized<T> *cs) {
-      _RWSynchronized = cs;
-      const_cast<CReaderWriter &>(_RWSynchronized->_RWSync).enterReader();
-    }
+	public:
+		CReadAccessor(CRWSynchronized<T> *cs)
+		{
+			_RWSynchronized = cs;
+			const_cast<CReaderWriter &>(_RWSynchronized->_RWSync).enterReader();
+		}
 
-    ~CReadAccessor() {
-      const_cast<CReaderWriter &>(_RWSynchronized->_RWSync).leaveReader();
-    }
+		~CReadAccessor()
+		{
+			const_cast<CReaderWriter &>(_RWSynchronized->_RWSync).leaveReader();
+		}
 
-    const T &value() { return const_cast<const T &>(_RWSynchronized->_Value); }
-  };
+		const T &value()
+		{
+			return const_cast<const T &>(_RWSynchronized->_Value);
+		}
+	};
 
-  class CWriteAccessor {
-    CRWSynchronized<T> *_RWSynchronized;
+	class CWriteAccessor
+	{
+		CRWSynchronized<T> *_RWSynchronized;
 
-  public:
-    CWriteAccessor(CRWSynchronized<T> *cs) {
-      _RWSynchronized = cs;
-      const_cast<CReaderWriter &>(_RWSynchronized->_RWSync).enterWriter();
-    }
+	public:
+		CWriteAccessor(CRWSynchronized<T> *cs)
+		{
+			_RWSynchronized = cs;
+			const_cast<CReaderWriter &>(_RWSynchronized->_RWSync).enterWriter();
+		}
 
-    ~CWriteAccessor() {
-      const_cast<CReaderWriter &>(_RWSynchronized->_RWSync).leaveWriter();
-    }
+		~CWriteAccessor()
+		{
+			const_cast<CReaderWriter &>(_RWSynchronized->_RWSync).leaveWriter();
+		}
 
-    T &value() { return const_cast<T &>(_RWSynchronized->_Value); }
-  };
+		T &value()
+		{
+			return const_cast<T &>(_RWSynchronized->_Value);
+		}
+	};
 
 private:
-  friend class CRWSynchronized::CReadAccessor;
-  friend class CRWSynchronized::CWriteAccessor;
+	friend class CRWSynchronized::CReadAccessor;
+	friend class CRWSynchronized::CWriteAccessor;
 
-  CReaderWriter _RWSync;
+	CReaderWriter _RWSync;
 
-  T _Value;
+	T _Value;
 };
 
-} // namespace NLMISC
+} // NLMISC
 
 #endif // NL_READER_WRITER_H
 

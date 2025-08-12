@@ -21,32 +21,32 @@
 
 namespace BRICK_TYPE {
 // Mode
-enum EBrickType {
-  MAGIC = 0,
-  COMBAT,
-  FABER,
-  FORAGE_PROSPECTION,
-  FORAGE_EXTRACTION,
-  HARVEST,
-  QUARTER,
-  TRACKING,
-  SHOPKEEPER,
-  TRAINING,
-  MISCELLANEOUS,
-  COMMERCE,
-  SPECIAL_POWER,
-  PROC_ENCHANTEMENT,
-  TIMED_ACTION,
-  BRICK_TYPE_COUNT,
-  BONUS,
-  UNKNOWN // Warning: Shouldn't exceed 32
+enum EBrickType
+{
+	MAGIC = 0,
+	COMBAT,
+	FABER,
+	FORAGE_PROSPECTION,
+	FORAGE_EXTRACTION,
+	HARVEST,
+	QUARTER,
+	TRACKING,
+	SHOPKEEPER,
+	TRAINING,
+	MISCELLANEOUS,
+	COMMERCE,
+	SPECIAL_POWER,
+	PROC_ENCHANTEMENT,
+	TIMED_ACTION,
+	BRICK_TYPE_COUNT,
+	BONUS,
+	UNKNOWN // Warning: Shouldn't exceed 32
 };
 
 /**
  * get the right brick type from the input string
  * \param str the input string
- * \return the EBrickType associated to this string (UNKNOWN if the string
- * cannot be interpreted)
+ * \return the EBrickType associated to this string (UNKNOWN if the string cannot be interpreted)
  */
 EBrickType toBrickType(const std::string &str);
 
@@ -57,7 +57,7 @@ EBrickType toBrickType(const std::string &str);
  */
 const std::string &toString(EBrickType type);
 
-} // namespace BRICK_TYPE
+} // BRICK_TYPE
 
 #endif // RY_BRICK_TYPES_H
 /* End of brick_types.h */

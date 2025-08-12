@@ -20,8 +20,8 @@
 #ifndef NL_U_FORM_H
 #define NL_U_FORM_H
 
-#include "nel/misc/smart_ptr.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/smart_ptr.h"
 #include <set>
 
 namespace NLMISC {
@@ -35,53 +35,51 @@ class UFormElm;
 /**
  * This class provide an interface to access Georges form
  */
-class UForm : public NLMISC::CRefCount {
+class UForm : public NLMISC::CRefCount
+{
 public:
-  virtual ~UForm();
+	virtual ~UForm();
 
-  /**
-   * Access form nodes
-   */
+	/**
+	 * Access form nodes
+	 */
 
-  /// Get a mutable pointer on the root element of the form. It is a struct
-  /// node.
-  virtual UFormElm &getRootNode() = 0;
+	/// Get a mutable pointer on the root element of the form. It is a struct node.
+	virtual UFormElm &getRootNode() = 0;
 
-  /// Get a const pointer on the root element of the form. It is a struct node.
-  virtual const UFormElm &getRootNode() const = 0;
+	/// Get a const pointer on the root element of the form. It is a struct node.
+	virtual const UFormElm &getRootNode() const = 0;
 
-  /** Write the form in a stream.
-   *
-   * \param stream is the stream used to write the form
-   */
-  virtual void write(NLMISC::IStream &stream) = 0;
+	/** Write the form in a stream.
+	 *
+	 * \param stream is the stream used to write the form
+	 */
+	virtual void write(NLMISC::IStream &stream) = 0;
 
-  /**
-   * Access form parents
-   */
+	/**
+	 * Access form parents
+	 */
 
-  /// Get a mutable pointer on the root element of the form. It is a struct
-  /// node.
-  virtual uint getNumParent() const = 0;
+	/// Get a mutable pointer on the root element of the form. It is a struct node.
+	virtual uint getNumParent() const = 0;
 
-  /// Get a mutable pointer on the root element of the form. It is a struct
-  /// node.
-  virtual UForm *getParentForm(uint parent) const = 0;
+	/// Get a mutable pointer on the root element of the form. It is a struct node.
+	virtual UForm *getParentForm(uint parent) const = 0;
 
-  // Get the form filename with extension
-  virtual const std::string &getFilename() const = 0;
+	// Get the form filename with extension
+	virtual const std::string &getFilename() const = 0;
 
-  /**
-   * Get the comment
-   */
-  virtual const std::string &getComment() const = 0;
+	/**
+	 * Get the comment
+	 */
+	virtual const std::string &getComment() const = 0;
 
-  /**
-   * Get dependency files
-   */
-  virtual void getDependencies(std::set<std::string> &dependencies) const = 0;
+	/**
+	 * Get dependency files
+	 */
+	virtual void getDependencies(std::set<std::string> &dependencies) const = 0;
 };
 
-} // namespace NLGEORGES
+} // NLGEORGES
 
 #endif // NL_U_FORM_H

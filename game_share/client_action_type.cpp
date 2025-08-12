@@ -26,26 +26,37 @@ namespace CLIENT_ACTION_TYPE {
 // ***************************************************************************
 // The conversion table
 const CStringConversion<TClientActionType>::CPair stringTable[] = {
-    {"None", None},
+	{ "None", None },
 
-    {"Combat", Combat}, {"Spell", Spell},       {"Faber", Faber},
-    {"Repair", Repair}, {"Refine", Refine},     {"Memorize", Memorize},
-    {"Forage", Forage}, {"Harvest", Harvest},   {"Training", Training},
-    {"Tame", Tame},     {"Teleport", Teleport}, {"Disconnect", Disconnect},
-    {"Mount", Mount},   {"Unmount", Unmount},   {"ConsumeItem", ConsumeItem},
+	{ "Combat", Combat },
+	{ "Spell", Spell },
+	{ "Faber", Faber },
+	{ "Repair", Repair },
+	{ "Refine", Refine },
+	{ "Memorize", Memorize },
+	{ "Forage", Forage },
+	{ "Harvest", Harvest },
+	{ "Training", Training },
+	{ "Tame", Tame },
+	{ "Teleport", Teleport },
+	{ "Disconnect", Disconnect },
+	{ "Mount", Mount },
+	{ "Unmount", Unmount },
+	{ "ConsumeItem", ConsumeItem },
 };
 
-CStringConversion<TClientActionType>
-    conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]), None);
+CStringConversion<TClientActionType> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]), None);
 
 // ***************************************************************************
-const std::string &toString(TClientActionType e) {
-  return conversion.toString(e);
+const std::string &toString(TClientActionType e)
+{
+	return conversion.toString(e);
 }
 
 // ***************************************************************************
-TClientActionType fromString(const std::string &s) {
-  return conversion.fromString(s);
+TClientActionType fromString(const std::string &s)
+{
+	return conversion.fromString(s);
 }
 
-}; // namespace CLIENT_ACTION_TYPE
+};

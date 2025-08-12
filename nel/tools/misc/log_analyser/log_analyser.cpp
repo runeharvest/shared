@@ -17,9 +17,9 @@
 // log_analyser.cpp : Defines the class behaviors for the application.
 //
 
+#include "stdafx.h"
 #include "log_analyser.h"
 #include "log_analyserDlg.h"
-#include "stdafx.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -41,9 +41,10 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CLog_analyserApp construction
 
-CLog_analyserApp::CLog_analyserApp() {
-  // TODO: add construction code here,
-  // Place all significant initialization in InitInstance
+CLog_analyserApp::CLog_analyserApp()
+{
+	// TODO: add construction code here,
+	// Place all significant initialization in InitInstance
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -54,24 +55,28 @@ CLog_analyserApp theApp;
 /////////////////////////////////////////////////////////////////////////////
 // CLog_analyserApp initialization
 
-BOOL CLog_analyserApp::InitInstance() {
-  // Standard initialization
-  // If you are not using these features and wish to reduce the size
-  //  of your final executable, you should remove from the following
-  //  the specific initialization routines you do not need.
+BOOL CLog_analyserApp::InitInstance()
+{
+	// Standard initialization
+	// If you are not using these features and wish to reduce the size
+	//  of your final executable, you should remove from the following
+	//  the specific initialization routines you do not need.
 
-  CLog_analyserDlg dlg;
-  m_pMainWnd = &dlg;
-  INT_PTR nResponse = dlg.DoModal();
-  if (nResponse == IDOK) {
-    // TODO: Place code here to handle when the dialog is
-    //  dismissed with OK
-  } else if (nResponse == IDCANCEL) {
-    // TODO: Place code here to handle when the dialog is
-    //  dismissed with Cancel
-  }
+	CLog_analyserDlg dlg;
+	m_pMainWnd = &dlg;
+	INT_PTR nResponse = dlg.DoModal();
+	if (nResponse == IDOK)
+	{
+		// TODO: Place code here to handle when the dialog is
+		//  dismissed with OK
+	}
+	else if (nResponse == IDCANCEL)
+	{
+		// TODO: Place code here to handle when the dialog is
+		//  dismissed with Cancel
+	}
 
-  // Since the dialog has been closed, return FALSE so that we exit the
-  //  application, rather than start the application's message pump.
-  return FALSE;
+	// Since the dialog has been closed, return FALSE so that we exit the
+	//  application, rather than start the application's message pump.
+	return FALSE;
 }

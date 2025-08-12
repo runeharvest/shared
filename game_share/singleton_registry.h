@@ -19,12 +19,9 @@
   NOTE: The following extension would be intelligent:
   ---------------------------------------------------
   - add 'preInit', 'preServiceUpdate', 'preTickUpdate' and 'preRelease' methods
-  - add 'postInit', 'postServiceUpdate', 'postTickUpdate' and 'postRelease'
-  methods
-  - call all 'preXXX' methods followed by all XXX methods followed by all
-  postXXX methods
-  => This allows one to open log files etc in pre-init, start counters in
-  pre-update, stop counters in post-update, etc...
+  - add 'postInit', 'postServiceUpdate', 'postTickUpdate' and 'postRelease' methods
+  - call all 'preXXX' methods followed by all XXX methods followed by all postXXX methods
+  => This allows one to open log files etc in pre-init, start counters in pre-update, stop counters in post-update, etc...
 
 */
 
@@ -41,105 +38,110 @@
 // class IServiceSingleton
 //-------------------------------------------------------------------------------------------------
 
-class IServiceSingleton {
+class IServiceSingleton
+{
 public:
-  // overloadable method called at service initialisation
-  virtual void init() {}
+	// overloadable method called at service initialisation
+	virtual void init() { }
 
-  // overloadable method called in the service update
-  virtual void serviceUpdate() {}
+	// overloadable method called in the service update
+	virtual void serviceUpdate() { }
 
-  // overloadable method called in the tick update
-  virtual void tickUpdate() {}
+	// overloadable method called in the tick update
+	virtual void tickUpdate() { }
 
-  // overloadable method called at service release
-  virtual void release() {}
+	// overloadable method called at service release
+	virtual void release() { }
 
 protected:
-  // protect from untrolled instantiation
-  // this method registers the singleton with the singleton registry
-  IServiceSingleton();
-  virtual ~IServiceSingleton() {}
+	// protect from untrolled instantiation
+	// this method registers the singleton with the singleton registry
+	IServiceSingleton();
+	virtual ~IServiceSingleton() { }
 
 private:
-  // prohibit copy
-  IServiceSingleton(const IServiceSingleton &);
+	// prohibit copy
+	IServiceSingleton(const IServiceSingleton &);
 };
 
 //-------------------------------------------------------------------------------------------------
 // class CSingletonRegistry
 //-------------------------------------------------------------------------------------------------
 
-class CSingletonRegistry {
+class CSingletonRegistry
+{
 public:
-  // public interface for getting hold of the singleton instance
-  static CSingletonRegistry *getInstance();
+	// public interface for getting hold of the singleton instance
+	static CSingletonRegistry *getInstance();
 
-  // registration of an IServiceSingleton object with the singleton
-  void registerSingleton(IServiceSingleton *);
+	// registration of an IServiceSingleton object with the singleton
+	void registerSingleton(IServiceSingleton *);
 
-  // methods called from the service loop
-  void init();
-  void serviceUpdate();
-  void tickUpdate();
-  void release();
+	// methods called from the service loop
+	void init();
+	void serviceUpdate();
+	void tickUpdate();
+	void release();
 
 private:
-  // prohibit uncontrolled instantiation
-  CSingletonRegistry() {}
-  CSingletonRegistry(const CSingletonRegistry &);
+	// prohibit uncontrolled instantiation
+	CSingletonRegistry() { }
+	CSingletonRegistry(const CSingletonRegistry &);
 
-  typedef std::set<IServiceSingleton *> TSingletons;
-  TSingletons _Singletons;
+	typedef std::set<IServiceSingleton *> TSingletons;
+	TSingletons _Singletons;
 };
 
 //-------------------------------------------------------------------------------------------------
 // inlines IServiceSingleton
 //-------------------------------------------------------------------------------------------------
 
-inline IServiceSingleton::IServiceSingleton() {
-  CSingletonRegistry::getInstance()->registerSingleton(this);
+inline IServiceSingleton::IServiceSingleton()
+{
+	CSingletonRegistry::getInstance()->registerSingleton(this);
 }
 
 //-------------------------------------------------------------------------------------------------
 // inlines CSingletonRegistry
 //-------------------------------------------------------------------------------------------------
 
-inline CSingletonRegistry *CSingletonRegistry::getInstance() {
-  static CSingletonRegistry *instance = NULL;
-  if (instance == NULL) {
-    instance = new CSingletonRegistry;
-  }
-  return instance;
+inline CSingletonRegistry *CSingletonRegistry::getInstance()
+{
+	static CSingletonRegistry *instance = NULL;
+	if (instance == NULL)
+	{
+		instance = new CSingletonRegistry;
+	}
+	return instance;
 }
 
-inline void
-CSingletonRegistry::registerSingleton(IServiceSingleton *singleton) {
-  _Singletons.insert(singleton);
+inline void CSingletonRegistry::registerSingleton(IServiceSingleton *singleton)
+{
+	_Singletons.insert(singleton);
 }
 
-inline void CSingletonRegistry::init() {
-  for (TSingletons::iterator it = _Singletons.begin(); it != _Singletons.end();
-       ++it)
-    (*it)->init();
+inline void CSingletonRegistry::init()
+{
+	for (TSingletons::iterator it = _Singletons.begin(); it != _Singletons.end(); ++it)
+		(*it)->init();
 }
 
-inline void CSingletonRegistry::tickUpdate() {
-  for (TSingletons::iterator it = _Singletons.begin(); it != _Singletons.end();
-       ++it)
-    (*it)->tickUpdate();
+inline void CSingletonRegistry::tickUpdate()
+{
+	for (TSingletons::iterator it = _Singletons.begin(); it != _Singletons.end(); ++it)
+		(*it)->tickUpdate();
 }
 
-inline void CSingletonRegistry::serviceUpdate() {
-  for (TSingletons::iterator it = _Singletons.begin(); it != _Singletons.end();
-       ++it)
-    (*it)->serviceUpdate();
+inline void CSingletonRegistry::serviceUpdate()
+{
+	for (TSingletons::iterator it = _Singletons.begin(); it != _Singletons.end(); ++it)
+		(*it)->serviceUpdate();
 }
 
-inline void CSingletonRegistry::release() {
-  for (TSingletons::iterator it = _Singletons.begin(); it != _Singletons.end();
-       ++it)
-    (*it)->release();
+inline void CSingletonRegistry::release()
+{
+	for (TSingletons::iterator it = _Singletons.begin(); it != _Singletons.end(); ++it)
+		(*it)->release();
 }
 
 //-------------------------------------------------------------------------------------------------

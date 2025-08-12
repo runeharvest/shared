@@ -30,116 +30,120 @@ namespace NLLIGO {
  * \author Nevrax France
  * \date 2001
  */
-class CLigoError {
+class CLigoError
+{
 public:
-  enum TError {
-    /// No error
-    NoError = 0,
+	enum TError
+	{
+		/// No error
+		NoError = 0,
 
-    /// No vertices in the edge list
-    NoEdgeVertices,
+		/// No vertices in the edge list
+		NoEdgeVertices,
 
-    /// Opened edges detected
-    OpenedEdge,
+		/// Opened edges detected
+		OpenedEdge,
 
-    /// Multiple edge on the boundary
-    MultipleEdge,
+		/// Multiple edge on the boundary
+		MultipleEdge,
 
-    /// Vertex list invalid. One vertex should be a corner.
-    VertexList,
+		/// Vertex list invalid. One vertex should be a corner.
+		VertexList,
 
-    /// The vertex has not been inserted in the edge list
-    NotInserted,
+		/// The vertex has not been inserted in the edge list
+		NotInserted,
 
-    /// The vertex has been inserted in the edge list
-    Inserted,
+		/// The vertex has been inserted in the edge list
+		Inserted,
 
-    /// Flat zone, all vertex are in the same corner
-    FlatZone,
+		/// Flat zone, all vertex are in the same corner
+		FlatZone,
 
-    /// 4 edge to define a material
-    MustHave4Edges,
+		/// 4 edge to define a material
+		MustHave4Edges,
 
-    /// 4 edge to define a material
-    NotSymetrical,
+		/// 4 edge to define a material
+		NotSymetrical,
 
-    /// Not same number of vertices
-    NotSameVerticesNumber,
+		/// Not same number of vertices
+		NotSameVerticesNumber,
 
-    /// Vertex is not the same
-    NotSameVertex,
+		/// Vertex is not the same
+		NotSameVertex,
 
-    /// No corner found
-    NoCornerFound,
+		/// No corner found
+		NoCornerFound,
 
-    /// Two corner vertices
-    TwoCornerVertices,
+		/// Two corner vertices
+		TwoCornerVertices,
 
-    /// Corner is missing
-    CornerIsMissing,
+		/// Corner is missing
+		CornerIsMissing,
 
-    /// Boundary vertex used by multiple edge
-    VertexAlreadyUsed,
+		/// Boundary vertex used by multiple edge
+		VertexAlreadyUsed,
 
-    /// Unknown error
-    UnknownError,
+		/// Unknown error
+		UnknownError,
 
-    /// Error count
-    ErrorCount
-  };
+		/// Error count
+		ErrorCount
+	};
 
-  /// Constructor
-  CLigoError();
+	/// Constructor
+	CLigoError();
 
-  /// Clear the container
-  void clear();
+	/// Clear the container
+	void clear();
 
-  /// Push a vertex error code
-  void pushVertexError(TError code, uint id, uint edge = 0xffffffff);
+	/// Push a vertex error code
+	void pushVertexError(TError code, uint id, uint edge = 0xffffffff);
 
-  /// Get num vertex error
-  uint numVertexError() const;
+	/// Get num vertex error
+	uint numVertexError() const;
 
-  /// Get a vertex error
-  TError getVertexError(uint error, uint &id, uint &edge) const;
+	/// Get a vertex error
+	TError getVertexError(uint error, uint &id, uint &edge) const;
 
-  /// Get an error string
-  static const char *getStringError(TError errorCode);
+	/// Get an error string
+	static const char *getStringError(TError errorCode);
 
 public:
-  /// Main error code
-  TError MainError;
+	/// Main error code
+	TError MainError;
 
 private:
-  /// Vertex error
-  class CVertex {
-  public:
-    /// Constructor
-    CVertex(TError code, uint id, uint edge) {
-      Code = code;
-      Id = id;
-      Edge = edge;
-    }
+	/// Vertex error
+	class CVertex
+	{
+	public:
+		/// Constructor
+		CVertex(TError code, uint id, uint edge)
+		{
+			Code = code;
+			Id = id;
+			Edge = edge;
+		}
 
-  public:
-    /// Error code on this vertex
-    TError Code;
+	public:
+		/// Error code on this vertex
+		TError Code;
 
-    /// Vertex id
-    uint Id;
+		/// Vertex id
+		uint Id;
 
-    /// Edge id (no always used)
-    uint Edge;
-  };
+		/// Edge id (no always used)
+		uint Edge;
+	};
 
-  /// Vertex error
-  std::vector<CVertex> _VertexError;
+	/// Vertex error
+	std::vector<CVertex> _VertexError;
 
-  /// Error string
-  static const char *_StringError[];
+	/// Error string
+	static const char *_StringError[];
 };
 
-} // namespace NLLIGO
+}
 
 #endif // NL_LIGO_ERROR_H
 

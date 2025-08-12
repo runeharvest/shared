@@ -26,4 +26,4 @@ namespace NLMISC {
 
 const CVector2f CVector2f::Null(0, 0);
 
-} // namespace NLMISC
+} // NLMISC

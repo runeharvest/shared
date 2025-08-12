@@ -17,46 +17,50 @@
 #ifndef NL_TILE_LIGHT_INFLUENCE_H
 #define NL_TILE_LIGHT_INFLUENCE_H
 
-#include "nel/misc/stream.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/stream.h"
 
 namespace NL3D {
 
 /**
  *	For landscape.
  *	A descriptor of light which influence a corner of a TessBlock:
- *		2 lights Ids (points to PointLight in zone), with 2
- *diffuseLightFactor. \author Lionel Berenguier \author Nevrax France \date 2001
+ *		2 lights Ids (points to PointLight in zone), with 2 diffuseLightFactor.
+ * \author Lionel Berenguier
+ * \author Nevrax France
+ * \date 2001
  */
-class CTileLightInfluence {
+class CTileLightInfluence
+{
 public:
-  /// We support only 2 light per corner. Should never be changed.
-  enum { NumLightPerCorner = 2 };
+	/// We support only 2 light per corner. Should never be changed.
+	enum
+	{
+		NumLightPerCorner = 2
+	};
 
 public:
-  /// Constructor
-  CTileLightInfluence() {}
+	/// Constructor
+	CTileLightInfluence() { }
 
-  /** List of lights.
-   *	Id==0xFF => no light. if Light[i]==0xFF, then Light[j] with j>i is
-   *supposed disalbed too.
-   */
-  uint8 Light[NumLightPerCorner];
+	/** List of lights.
+	 *	Id==0xFF => no light. if Light[i]==0xFF, then Light[j] with j>i is supposed disalbed too.
+	 */
+	uint8 Light[NumLightPerCorner];
 
-  /// i: 0 or 1. factor E [0..255] is the factor of influence (gouraud) of the
-  /// ith light. NB: stored on 4 bits.
-  void setDiffuseLightFactor(uint i, uint8 factor);
-  /// see setDiffuseLightFactor(). return uint8 E [0, 255]
-  uint8 getDiffuseLightFactor(uint i) const;
+	/// i: 0 or 1. factor E [0..255] is the factor of influence (gouraud) of the ith light. NB: stored on 4 bits.
+	void setDiffuseLightFactor(uint i, uint8 factor);
+	/// see setDiffuseLightFactor(). return uint8 E [0, 255]
+	uint8 getDiffuseLightFactor(uint i) const;
 
-  void serial(NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 
 private:
-  /// Packed
-  uint8 PackedLightFactor;
+	/// Packed
+	uint8 PackedLightFactor;
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_TILE_LIGHT_INFLUENCE_H
 

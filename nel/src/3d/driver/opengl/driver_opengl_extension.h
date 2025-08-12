@@ -21,8 +21,8 @@
 #ifndef NL_OPENGL_EXTENSION_H
 #define NL_OPENGL_EXTENSION_H
 
-#include "nel/misc/string_common.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/string_common.h"
 
 #include "driver_opengl_extension_def.h"
 
@@ -38,278 +38,269 @@ namespace NLDRIVERGL {
 
 // ***************************************************************************
 /// The extensions used by NL3D.
-struct CGlExtensions {
-  // Is this driver a correct OpenGL 1.2 driver?
-  bool Version1_2;
+struct CGlExtensions
+{
+	// Is this driver a correct OpenGL 1.2 driver?
+	bool Version1_2;
 
-  // Required Extensions.
-  bool ARBMultiTexture;
-  uint NbTextureStages;
-  bool EXTTextureEnvCombine;
+	// Required Extensions.
+	bool ARBMultiTexture;
+	uint NbTextureStages;
+	bool EXTTextureEnvCombine;
 
-  // Optional Extensions.
-  // NB: Fence extension is not here, because NVVertexArrayRange is false if
-  // GL_NV_fence is not here.
-  bool NVVertexArrayRange;
-  uint NVVertexArrayRangeMaxVertex;
-  bool EXTTextureCompressionS3TC;
-  bool EXTVertexWeighting;
-  bool EXTSeparateSpecularColor;
-  bool NVTextureEnvCombine4;
-  bool ARBTextureCubeMap;
-  bool NVVertexProgram;
-  bool EXTVertexShader;
-  bool NVTextureShader;
-  bool NVOcclusionQuery;
-  bool ARBOcclusionQuery;
-  bool NVTextureRectangle;
-  bool EXTTextureRectangle;
-  bool ARBTextureRectangle;
-  bool FrameBufferObject;
-  bool FrameBufferBlit;
-  bool FrameBufferMultisample;
-  bool PackedDepthStencil;
-  bool EXTTextureFilterAnisotropic;
-  float EXTTextureFilterAnisotropicMaximum;
+	// Optional Extensions.
+	// NB: Fence extension is not here, because NVVertexArrayRange is false if GL_NV_fence is not here.
+	bool NVVertexArrayRange;
+	uint NVVertexArrayRangeMaxVertex;
+	bool EXTTextureCompressionS3TC;
+	bool EXTVertexWeighting;
+	bool EXTSeparateSpecularColor;
+	bool NVTextureEnvCombine4;
+	bool ARBTextureCubeMap;
+	bool NVVertexProgram;
+	bool EXTVertexShader;
+	bool NVTextureShader;
+	bool NVOcclusionQuery;
+	bool ARBOcclusionQuery;
+	bool NVTextureRectangle;
+	bool EXTTextureRectangle;
+	bool ARBTextureRectangle;
+	bool FrameBufferObject;
+	bool FrameBufferBlit;
+	bool FrameBufferMultisample;
+	bool PackedDepthStencil;
+	bool EXTTextureFilterAnisotropic;
+	float EXTTextureFilterAnisotropicMaximum;
 
-  // true if NVVertexProgram and if we know that VP is emulated
-  bool NVVertexProgramEmulated;
-  bool EXTSecondaryColor;
-  bool EXTBlendColor;
-  // NVVertexArrayRange2.
-  bool NVVertexArrayRange2;
-  // equal to GL_VERTEX_ARRAY_RANGE_WITHOUT_FLUSH_NV if possible, or
-  // GL_VERTEX_ARRAY_RANGE_NV
-  uint NVStateVARWithoutFlush;
+	// true if NVVertexProgram and if we know that VP is emulated
+	bool NVVertexProgramEmulated;
+	bool EXTSecondaryColor;
+	bool EXTBlendColor;
+	// NVVertexArrayRange2.
+	bool NVVertexArrayRange2;
+	// equal to GL_VERTEX_ARRAY_RANGE_WITHOUT_FLUSH_NV if possible, or GL_VERTEX_ARRAY_RANGE_NV
+	uint NVStateVARWithoutFlush;
 
-  // WGL ARB extensions, true if supported
-  bool WGLARBPBuffer;
-  bool WGLARBPixelFormat;
-  bool WGLEXTSwapControl;
+	// WGL ARB extensions, true if supported
+	bool WGLARBPBuffer;
+	bool WGLARBPixelFormat;
+	bool WGLEXTSwapControl;
 
-  // GLX extensions, true if supported
-  bool GLXEXTSwapControl;
-  bool GLXSGISwapControl;
-  bool GLXMESASwapControl;
-  bool GLXMESAQueryRenderer;
+	// GLX extensions, true if supported
+	bool GLXEXTSwapControl;
+	bool GLXSGISwapControl;
+	bool GLXMESASwapControl;
+	bool GLXMESAQueryRenderer;
 
-  // ATI Extensions.
-  bool ATIVertexArrayObject;
-  bool ATIMapObjectBuffer;
-  bool ATITextureEnvCombine3;
-  bool ATIEnvMapBumpMap;
-  bool ATIFragmentShader;
-  bool ATIXTextureEnvRoute;
-  bool ATIVertexAttribArrayObject;
-  // ARB Extensions
-  bool ARBTextureCompression;
-  bool ARBFragmentProgram;
-  bool ARBVertexBufferObject;
-  bool ARBMapBufferRange;
-  bool ARBVertexProgram;
-  bool ARBTextureNonPowerOfTwo;
-  bool ARBMultisample;
-  bool ARBFragmentShader;
+	// ATI Extensions.
+	bool ATIVertexArrayObject;
+	bool ATIMapObjectBuffer;
+	bool ATITextureEnvCombine3;
+	bool ATIEnvMapBumpMap;
+	bool ATIFragmentShader;
+	bool ATIXTextureEnvRoute;
+	bool ATIVertexAttribArrayObject;
+	// ARB Extensions
+	bool ARBTextureCompression;
+	bool ARBFragmentProgram;
+	bool ARBVertexBufferObject;
+	bool ARBMapBufferRange;
+	bool ARBVertexProgram;
+	bool ARBTextureNonPowerOfTwo;
+	bool ARBMultisample;
+	bool ARBFragmentShader;
 
-  // NV Pixel Programs
-  bool NVFragmentProgram2;
+	// NV Pixel Programs
+	bool NVFragmentProgram2;
 
-  bool OESDrawTexture;
-  bool OESMapBuffer;
+	bool OESDrawTexture;
+	bool OESMapBuffer;
 
-  // extensions to get memory info
+	// extensions to get memory info
 
-  // GL_NVX_gpu_memory_info
-  bool NVXGPUMemoryInfo;
+	// GL_NVX_gpu_memory_info
+	bool NVXGPUMemoryInfo;
 
-  // GL_ATI_meminfo
-  bool ATIMeminfo;
+	// GL_ATI_meminfo
+	bool ATIMeminfo;
 
-  // WGL_AMD_gpu_association
-  bool WGLAMDGPUAssociation;
+	// WGL_AMD_gpu_association
+	bool WGLAMDGPUAssociation;
 
-  // WGL_NV_gpu_affinity
-  bool WGLNVGPUAffinity;
-
-public:
-  /// \name Disable Hardware feature. False by default. setuped by IDriver
-  // @{
-  bool DisableHardwareVertexProgram;
-  bool DisableHardwarePixelProgram;
-  bool DisableHardwareVertexArrayAGP;
-  bool DisableHardwareTextureShader;
-  // @}
+	// WGL_NV_gpu_affinity
+	bool WGLNVGPUAffinity;
 
 public:
-  CGlExtensions() {
-    // Fill all false by default.
-    Version1_2 = false;
-    ARBMultiTexture = false;
-    NbTextureStages = 1;
-    EXTTextureEnvCombine = false;
-    ARBTextureCompression = false;
-    NVVertexArrayRange = false;
-    NVVertexArrayRangeMaxVertex = 0;
-    EXTTextureCompressionS3TC = false;
-    EXTVertexWeighting = false;
-    EXTSeparateSpecularColor = false;
-    NVTextureEnvCombine4 = false;
-    ATITextureEnvCombine3 = false;
-    ATIXTextureEnvRoute = false;
-    ARBTextureCubeMap = false;
-    NVTextureShader = false;
-    NVVertexProgram = false;
-    NVVertexProgramEmulated = false;
-    EXTSecondaryColor = false;
-    WGLARBPBuffer = false;
-    WGLARBPixelFormat = false;
-    WGLEXTSwapControl = false;
-    GLXEXTSwapControl = false;
-    GLXSGISwapControl = false;
-    GLXMESASwapControl = false;
-    GLXMESAQueryRenderer = false;
-    EXTBlendColor = false;
-    ATIVertexArrayObject = false;
-    ATIEnvMapBumpMap = false;
-    ATIFragmentShader = false;
-    ATIMapObjectBuffer = false;
-    ATIVertexAttribArrayObject = false;
-    EXTVertexShader = false;
-    ARBFragmentProgram = false;
-    ARBVertexBufferObject = false;
-    ARBMapBufferRange = false;
-    ARBVertexProgram = false;
-    NVTextureRectangle = false;
-    EXTTextureRectangle = false;
-    EXTTextureFilterAnisotropic = false;
-    EXTTextureFilterAnisotropicMaximum = 0.f;
-    ARBTextureRectangle = false;
-    ARBTextureNonPowerOfTwo = false;
-    ARBMultisample = false;
-    ARBFragmentShader = false;
-    NVOcclusionQuery = false;
-    ARBOcclusionQuery = false;
-    FrameBufferObject = false;
-    FrameBufferBlit = false;
-    FrameBufferMultisample = false;
-    PackedDepthStencil = false;
-    NVVertexArrayRange2 = false;
-    NVStateVARWithoutFlush = 0;
+	/// \name Disable Hardware feature. False by default. setuped by IDriver
+	// @{
+	bool DisableHardwareVertexProgram;
+	bool DisableHardwarePixelProgram;
+	bool DisableHardwareVertexArrayAGP;
+	bool DisableHardwareTextureShader;
+	// @}
 
-    OESDrawTexture = false;
-    OESMapBuffer = false;
+public:
+	CGlExtensions()
+	{
+		// Fill all false by default.
+		Version1_2 = false;
+		ARBMultiTexture = false;
+		NbTextureStages = 1;
+		EXTTextureEnvCombine = false;
+		ARBTextureCompression = false;
+		NVVertexArrayRange = false;
+		NVVertexArrayRangeMaxVertex = 0;
+		EXTTextureCompressionS3TC = false;
+		EXTVertexWeighting = false;
+		EXTSeparateSpecularColor = false;
+		NVTextureEnvCombine4 = false;
+		ATITextureEnvCombine3 = false;
+		ATIXTextureEnvRoute = false;
+		ARBTextureCubeMap = false;
+		NVTextureShader = false;
+		NVVertexProgram = false;
+		NVVertexProgramEmulated = false;
+		EXTSecondaryColor = false;
+		WGLARBPBuffer = false;
+		WGLARBPixelFormat = false;
+		WGLEXTSwapControl = false;
+		GLXEXTSwapControl = false;
+		GLXSGISwapControl = false;
+		GLXMESASwapControl = false;
+		GLXMESAQueryRenderer = false;
+		EXTBlendColor = false;
+		ATIVertexArrayObject = false;
+		ATIEnvMapBumpMap = false;
+		ATIFragmentShader = false;
+		ATIMapObjectBuffer = false;
+		ATIVertexAttribArrayObject = false;
+		EXTVertexShader = false;
+		ARBFragmentProgram = false;
+		ARBVertexBufferObject = false;
+		ARBMapBufferRange = false;
+		ARBVertexProgram = false;
+		NVTextureRectangle = false;
+		EXTTextureRectangle = false;
+		EXTTextureFilterAnisotropic = false;
+		EXTTextureFilterAnisotropicMaximum = 0.f;
+		ARBTextureRectangle = false;
+		ARBTextureNonPowerOfTwo = false;
+		ARBMultisample = false;
+		ARBFragmentShader = false;
+		NVOcclusionQuery = false;
+		ARBOcclusionQuery = false;
+		FrameBufferObject = false;
+		FrameBufferBlit = false;
+		FrameBufferMultisample = false;
+		PackedDepthStencil = false;
+		NVVertexArrayRange2 = false;
+		NVStateVARWithoutFlush = 0;
 
-    NVXGPUMemoryInfo = false;
-    ATIMeminfo = false;
-    WGLAMDGPUAssociation = false;
+		OESDrawTexture = false;
+		OESMapBuffer = false;
 
-    /// \name Disable Hardware feature. False by default. setuped by IDriver
-    DisableHardwareVertexProgram = false;
-    DisableHardwarePixelProgram = false;
-    DisableHardwareVertexArrayAGP = false;
-    DisableHardwareTextureShader = false;
-  }
+		NVXGPUMemoryInfo = false;
+		ATIMeminfo = false;
+		WGLAMDGPUAssociation = false;
 
-  std::string toString() {
-    std::string result = "OpenGL version ";
-    result += Version1_2 ? "1.2 or above(*)" : "1.1 or below";
-    result += "; Available extensions:";
+		/// \name Disable Hardware feature. False by default. setuped by IDriver
+		DisableHardwareVertexProgram = false;
+		DisableHardwarePixelProgram = false;
+		DisableHardwareVertexArrayAGP = false;
+		DisableHardwareTextureShader = false;
+	}
 
-    result += "\n  Texturing: ";
-    result += ARBMultiTexture ? "ARBMultiTexture " : "";
-    result += EXTTextureEnvCombine ? "EXTTextureEnvCombine(*) " : "";
-    result += ARBTextureCompression ? "ARBTextureCompression " : "";
-    result += EXTTextureCompressionS3TC ? "EXTTextureCompressionS3TC " : "";
-    result += NVTextureEnvCombine4 ? "NVTextureEnvCombine4 " : "";
-    result += ATITextureEnvCombine3 ? "ATITextureEnvCombine3 " : "";
-    result += ATIXTextureEnvRoute ? "ATITextureEnvRoute " : "";
-    result += ARBTextureCubeMap ? "ARBTextureCubeMap " : "";
-    result += ATIEnvMapBumpMap ? "ATIEnvMapBumpMap " : "";
-    result += NVTextureRectangle ? "NVTextureRectangle " : "";
-    result += EXTTextureRectangle ? "EXTTextureRectangle " : "";
-    result += ARBTextureRectangle ? "ARBTextureRectangle " : "";
-    result += EXTTextureFilterAnisotropic
-                  ? "EXTTextureFilterAnisotropic (Maximum = " +
-                        NLMISC::toString(EXTTextureFilterAnisotropicMaximum) +
-                        ") "
-                  : "";
-    result += ARBTextureNonPowerOfTwo ? "ARBTextureNonPowerOfTwo " : "";
-    result += "texture stages(*) = ";
-    result += NLMISC::toString(NbTextureStages);
+	std::string toString()
+	{
+		std::string result = "OpenGL version ";
+		result += Version1_2 ? "1.2 or above(*)" : "1.1 or below";
+		result += "; Available extensions:";
 
-    result += "\n  Programs:  ";
-    result += NVTextureShader ? "NVTextureShader " : "";
-    result += ATIFragmentShader ? "ATIFragmentShader " : "";
-    result += ARBFragmentProgram ? "ARBFragmentProgram " : "";
-    result += NVFragmentProgram2 ? "NVFragmentProgram2 " : "";
-    result += ARBVertexProgram ? "ARBVertexProgram " : "";
-    result += NVVertexProgram ? "NVVertexProgram " : "";
-    result += EXTVertexShader ? "EXTVertexShader " : "";
-    result += NVVertexProgramEmulated ? "NVVertexProgramEmulated " : "";
+		result += "\n  Texturing: ";
+		result += ARBMultiTexture ? "ARBMultiTexture " : "";
+		result += EXTTextureEnvCombine ? "EXTTextureEnvCombine(*) " : "";
+		result += ARBTextureCompression ? "ARBTextureCompression " : "";
+		result += EXTTextureCompressionS3TC ? "EXTTextureCompressionS3TC " : "";
+		result += NVTextureEnvCombine4 ? "NVTextureEnvCombine4 " : "";
+		result += ATITextureEnvCombine3 ? "ATITextureEnvCombine3 " : "";
+		result += ATIXTextureEnvRoute ? "ATITextureEnvRoute " : "";
+		result += ARBTextureCubeMap ? "ARBTextureCubeMap " : "";
+		result += ATIEnvMapBumpMap ? "ATIEnvMapBumpMap " : "";
+		result += NVTextureRectangle ? "NVTextureRectangle " : "";
+		result += EXTTextureRectangle ? "EXTTextureRectangle " : "";
+		result += ARBTextureRectangle ? "ARBTextureRectangle " : "";
+		result += EXTTextureFilterAnisotropic ? "EXTTextureFilterAnisotropic (Maximum = " + NLMISC::toString(EXTTextureFilterAnisotropicMaximum) + ") " : "";
+		result += ARBTextureNonPowerOfTwo ? "ARBTextureNonPowerOfTwo " : "";
+		result += "texture stages(*) = ";
+		result += NLMISC::toString(NbTextureStages);
 
-    result += "\n  Misc:      ";
-    result += EXTVertexWeighting ? "EXTVertexWeighting " : "";
-    result += EXTSeparateSpecularColor ? "EXTSeparateSpecularColor " : "";
-    result += EXTSecondaryColor ? "EXTSecondaryColor " : "";
-    result += EXTBlendColor ? "EXTBlendColor " : "";
-    result += NVOcclusionQuery ? "NVOcclusionQuery " : "";
-    result += ARBOcclusionQuery ? "ARBOcclusionQuery " : "";
-    result += NVStateVARWithoutFlush ? "NVStateVARWithoutFlush " : "";
-    result += ARBMultisample ? "ARBMultisample " : "";
-    result += NVXGPUMemoryInfo ? "NVXGPUMemoryInfo " : "";
-    result += ATIMeminfo ? "ATIMeminfo " : "";
+		result += "\n  Programs:  ";
+		result += NVTextureShader ? "NVTextureShader " : "";
+		result += ATIFragmentShader ? "ATIFragmentShader " : "";
+		result += ARBFragmentProgram ? "ARBFragmentProgram " : "";
+		result += NVFragmentProgram2 ? "NVFragmentProgram2 " : "";
+		result += ARBVertexProgram ? "ARBVertexProgram " : "";
+		result += NVVertexProgram ? "NVVertexProgram " : "";
+		result += EXTVertexShader ? "EXTVertexShader " : "";
+		result += NVVertexProgramEmulated ? "NVVertexProgramEmulated " : "";
+
+		result += "\n  Misc:      ";
+		result += EXTVertexWeighting ? "EXTVertexWeighting " : "";
+		result += EXTSeparateSpecularColor ? "EXTSeparateSpecularColor " : "";
+		result += EXTSecondaryColor ? "EXTSecondaryColor " : "";
+		result += EXTBlendColor ? "EXTBlendColor " : "";
+		result += NVOcclusionQuery ? "NVOcclusionQuery " : "";
+		result += ARBOcclusionQuery ? "ARBOcclusionQuery " : "";
+		result += NVStateVARWithoutFlush ? "NVStateVARWithoutFlush " : "";
+		result += ARBMultisample ? "ARBMultisample " : "";
+		result += NVXGPUMemoryInfo ? "NVXGPUMemoryInfo " : "";
+		result += ATIMeminfo ? "ATIMeminfo " : "";
 
 #ifdef NL_OS_WINDOWS
-    result += "\n  WindowsGL: ";
-    result += WGLARBPBuffer ? "WGLARBPBuffer " : "";
-    result += WGLARBPixelFormat ? "WGLARBPixelFormat " : "";
-    result += WGLEXTSwapControl ? "WGLEXTSwapControl " : "";
-    result += WGLAMDGPUAssociation ? "WGLAMDGPUAssociation " : "";
+		result += "\n  WindowsGL: ";
+		result += WGLARBPBuffer ? "WGLARBPBuffer " : "";
+		result += WGLARBPixelFormat ? "WGLARBPixelFormat " : "";
+		result += WGLEXTSwapControl ? "WGLEXTSwapControl " : "";
+		result += WGLAMDGPUAssociation ? "WGLAMDGPUAssociation " : "";
 #elif defined(NL_OS_MAC)
 #elif defined(NL_OS_UNIX)
-    result += "\n  GLX: ";
-    result += GLXEXTSwapControl ? "GLXEXTSwapControl " : "";
-    result += GLXSGISwapControl ? "GLXSGISwapControl " : "";
-    result += GLXMESASwapControl ? "GLXMESASwapControl " : "";
-    result += GLXMESAQueryRenderer ? "GLXMESAQueryRenderer " : "";
+		result += "\n  GLX: ";
+		result += GLXEXTSwapControl ? "GLXEXTSwapControl " : "";
+		result += GLXSGISwapControl ? "GLXSGISwapControl " : "";
+		result += GLXMESASwapControl ? "GLXMESASwapControl " : "";
+		result += GLXMESAQueryRenderer ? "GLXMESAQueryRenderer " : "";
 #endif
 
-    result += "\n  Array/VBO: ";
-    result += NVVertexArrayRange
-                  ? ("NVVertexArrayRange (MaxVertex = " +
-                     NLMISC::toString(NVVertexArrayRangeMaxVertex) + ") ")
-                  : "";
-    result += NVVertexArrayRange2 ? "NVVertexArrayRange2 " : "";
-    result += ATIVertexArrayObject ? "ATIVertexArrayObject " : "";
-    result += ATIVertexAttribArrayObject ? "ATIVertexAttribArrayObject " : "";
-    result += ARBVertexBufferObject ? "ARBVertexBufferObject " : "";
-    result += ARBMapBufferRange ? "ARBMapBufferRange " : "";
-    result += ATIMapObjectBuffer ? "ATIMapObjectBuffer " : "";
+		result += "\n  Array/VBO: ";
+		result += NVVertexArrayRange ? ("NVVertexArrayRange (MaxVertex = " + NLMISC::toString(NVVertexArrayRangeMaxVertex) + ") ") : "";
+		result += NVVertexArrayRange2 ? "NVVertexArrayRange2 " : "";
+		result += ATIVertexArrayObject ? "ATIVertexArrayObject " : "";
+		result += ATIVertexAttribArrayObject ? "ATIVertexAttribArrayObject " : "";
+		result += ARBVertexBufferObject ? "ARBVertexBufferObject " : "";
+		result += ARBMapBufferRange ? "ARBMapBufferRange " : "";
+		result += ATIMapObjectBuffer ? "ATIMapObjectBuffer " : "";
 
-    result += "\n  FBO:       ";
-    result += FrameBufferObject ? "FramebufferObject " : "";
-    result += FrameBufferBlit ? "FrameBufferBlit " : "";
-    result += FrameBufferMultisample ? "FrameBufferMultisample " : "";
-    result += PackedDepthStencil ? "PackedDepthStencil " : "";
+		result += "\n  FBO:       ";
+		result += FrameBufferObject ? "FramebufferObject " : "";
+		result += FrameBufferBlit ? "FrameBufferBlit " : "";
+		result += FrameBufferMultisample ? "FrameBufferMultisample " : "";
+		result += PackedDepthStencil ? "PackedDepthStencil " : "";
 
-    return result;
-  }
+		return result;
+	}
 };
 
 // ***************************************************************************
 
 #ifdef USE_OPENGLES
-/// This function will test and register EGL functions before than the gl
-/// context is created
+/// This function will test and register EGL functions before than the gl context is created
 bool registerEGlExtensions(CGlExtensions &ext, EGLDisplay dpy);
 #elif defined(NL_OS_WINDOWS)
-/// This function will test and register WGL functions before than the gl
-/// context is created
+/// This function will test and register WGL functions before than the gl context is created
 bool registerWGlExtensions(CGlExtensions &ext, HDC hDC);
 #elif defined(NL_OS_MAC)
 #elif defined(NL_OS_UNIX)
-/// This function will test and register GLX functions before than the gl
-/// context is created
+/// This function will test and register GLX functions before than the gl context is created
 bool registerGlXExtensions(CGlExtensions &ext, Display *dpy, sint screen);
 #endif // NL_OS_WINDOWS
 
@@ -320,7 +311,7 @@ void registerGlExtensions(CGlExtensions &ext);
 } // NLDRIVERGL/ES
 #endif
 
-} // namespace NL3D
+} // NL3D
 
 // ***************************************************************************
 // The exported function names
@@ -328,8 +319,7 @@ void registerGlExtensions(CGlExtensions &ext);
     to avoid compilation conflict with future version of gl.h
     eg: gl.h Version 1.2 define glActiveTextureARB so we can't use it.
 
-    NB: we do it for all (EXT, NV, ARB extension) even it should be useful only
-   for ARB ones.
+    NB: we do it for all (EXT, NV, ARB extension) even it should be useful only for ARB ones.
 */
 
 #ifdef USE_OPENGLES
@@ -356,8 +346,7 @@ extern PFNGLGENFRAMEBUFFERSOESPROC nglGenFramebuffersOES;
 extern PFNGLCHECKFRAMEBUFFERSTATUSOESPROC nglCheckFramebufferStatusOES;
 extern PFNGLFRAMEBUFFERRENDERBUFFEROESPROC nglFramebufferRenderbufferOES;
 extern PFNGLFRAMEBUFFERTEXTURE2DOESPROC nglFramebufferTexture2DOES;
-extern PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVOESPROC
-    nglGetFramebufferAttachmentParameterivOES;
+extern PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVOESPROC nglGetFramebufferAttachmentParameterivOES;
 extern PFNGLGENERATEMIPMAPOESPROC nglGenerateMipmapOES;
 
 // GL_OES_texture_cube_map
@@ -628,10 +617,8 @@ extern PFNGLSETFRAGMENTSHADERCONSTANTATIPROC nglSetFragmentShaderConstantATI;
 // GL_ATI_vertex_attrib_array_object
 //==================================
 extern PFNGLVERTEXATTRIBARRAYOBJECTATIPROC nglVertexAttribArrayObjectATI;
-extern PFNGLGETVERTEXATTRIBARRAYOBJECTFVATIPROC
-    nglGetVertexAttribArrayObjectfvATI;
-extern PFNGLGETVERTEXATTRIBARRAYOBJECTIVATIPROC
-    nglGetVertexAttribArrayObjectivATI;
+extern PFNGLGETVERTEXATTRIBARRAYOBJECTFVATIPROC nglGetVertexAttribArrayObjectfvATI;
+extern PFNGLGETVERTEXATTRIBARRAYOBJECTIVATIPROC nglGetVertexAttribArrayObjectivATI;
 
 // GL_ARB_fragment_shader_extension
 //==================================
@@ -790,13 +777,10 @@ extern PFNWGLGETGPUIDSAMDPROC nwglGetGPUIDsAMD;
 extern PFNWGLGETGPUINFOAMDPROC nwglGetGPUInfoAMD;
 extern PFNWGLGETCONTEXTGPUIDAMDPROC nwglGetContextGPUIDAMD;
 extern PFNWGLCREATEASSOCIATEDCONTEXTAMDPROC nwglCreateAssociatedContextAMD;
-extern PFNWGLCREATEASSOCIATEDCONTEXTATTRIBSAMDPROC
-    nwglCreateAssociatedContextAttribsAMD;
+extern PFNWGLCREATEASSOCIATEDCONTEXTATTRIBSAMDPROC nwglCreateAssociatedContextAttribsAMD;
 extern PFNWGLDELETEASSOCIATEDCONTEXTAMDPROC nwglDeleteAssociatedContextAMD;
-extern PFNWGLMAKEASSOCIATEDCONTEXTCURRENTAMDPROC
-    nwglMakeAssociatedContextCurrentAMD;
-extern PFNWGLGETCURRENTASSOCIATEDCONTEXTAMDPROC
-    nwglGetCurrentAssociatedContextAMD;
+extern PFNWGLMAKEASSOCIATEDCONTEXTCURRENTAMDPROC nwglMakeAssociatedContextCurrentAMD;
+extern PFNWGLGETCURRENTASSOCIATEDCONTEXTAMDPROC nwglGetCurrentAssociatedContextAMD;
 extern PFNWGLBLITCONTEXTFRAMEBUFFERAMDPROC nwglBlitContextFramebufferAMD;
 
 // WGL_NV_gpu_affinity
@@ -821,8 +805,7 @@ extern PFNGLXGETSWAPINTERVALMESAPROC nglXGetSwapIntervalMESA;
 
 // GLX_MESA_query_renderer
 // =======================
-extern PFNGLXQUERYCURRENTRENDERERINTEGERMESAPROC
-    nglXQueryCurrentRendererIntegerMESA;
+extern PFNGLXQUERYCURRENTRENDERERINTEGERMESAPROC nglXQueryCurrentRendererIntegerMESA;
 
 #endif
 
@@ -846,8 +829,7 @@ extern PFNGLGENERATEMIPMAPEXTPROC nglGenerateMipmapEXT;
 extern PFNGLBLITFRAMEBUFFEREXTPROC nglBlitFramebufferEXT;
 
 // GL_EXT_framebuffer_multisample
-extern PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC
-    nglRenderbufferStorageMultisampleEXT;
+extern PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC nglRenderbufferStorageMultisampleEXT;
 
 // GL_ARB_multisample
 extern PFNGLSAMPLECOVERAGEARBPROC nglSampleCoverageARB;

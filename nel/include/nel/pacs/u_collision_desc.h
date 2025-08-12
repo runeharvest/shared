@@ -37,15 +37,16 @@ namespace NLPACS {
  * \author Nevrax France
  * \date 2001
  */
-class UCollisionDesc {
+class UCollisionDesc
+{
 public:
-  NLMISC::CVectorD ContactPosition;
-  NLMISC::CVectorD ContactNormal0;
-  NLMISC::CVectorD ContactNormal1;
-  double ContactTime;
+	NLMISC::CVectorD ContactPosition;
+	NLMISC::CVectorD ContactNormal0;
+	NLMISC::CVectorD ContactNormal1;
+	double ContactTime;
 
-  // Serial method
-  void serial(NLMISC::IStream &stream);
+	// Serial method
+	void serial(NLMISC::IStream &stream);
 };
 
 /**
@@ -55,20 +56,26 @@ public:
  * \author Nevrax France
  * \date 2001
  */
-class UTriggerInfo {
+class UTriggerInfo
+{
 public:
-  enum { In = 0, Inside, Out };
+	enum
+	{
+		In = 0,
+		Inside,
+		Out
+	};
 
-  UMovePrimitive::TUserData Object0;
-  UMovePrimitive::TUserData Object1;
-  UCollisionDesc CollisionDesc;
-  uint8 CollisionType;
+	UMovePrimitive::TUserData Object0;
+	UMovePrimitive::TUserData Object1;
+	UCollisionDesc CollisionDesc;
+	uint8 CollisionType;
 
-  // Serial method
-  void serial(NLMISC::IStream &stream);
+	// Serial method
+	void serial(NLMISC::IStream &stream);
 };
 
-} // namespace NLPACS
+} // NLPACS
 
 #endif // NL_U_COLLISION_DESC_H
 

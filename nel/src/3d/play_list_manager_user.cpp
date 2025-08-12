@@ -28,39 +28,42 @@ using namespace NLMISC;
 namespace NL3D {
 
 // ***************************************************************************
-UPlayList *CPlayListManagerUser::createPlayList(UAnimationSet *animSet) {
-  if (!animSet)
-    nlerror("createPlayList(): animSet==NULL");
+UPlayList *CPlayListManagerUser::createPlayList(UAnimationSet *animSet)
+{
+	if (!animSet)
+		nlerror("createPlayList(): animSet==NULL");
 
-  CPlayListUser *pl =
-      new CPlayListUser(safe_cast<CAnimationSetUser *>(animSet)->_AnimationSet);
-  _PlayLists.insert(pl);
+	CPlayListUser *pl = new CPlayListUser(safe_cast<CAnimationSetUser *>(animSet)->_AnimationSet);
+	_PlayLists.insert(pl);
 
-  _PlayListManager.addPlaylist(&pl->_PlayList, &pl->_ChannelMixer);
+	_PlayListManager.addPlaylist(&pl->_PlayList, &pl->_ChannelMixer);
 
-  return pl;
+	return pl;
 }
 
 // ***************************************************************************
-void CPlayListManagerUser::deletePlayList(UPlayList *playList) {
-  CPlayListUser *pl = safe_cast<CPlayListUser *>(playList);
+void CPlayListManagerUser::deletePlayList(UPlayList *playList)
+{
+	CPlayListUser *pl = safe_cast<CPlayListUser *>(playList);
 
-  _PlayListManager.removePlaylist(&pl->_PlayList);
-  _PlayLists.erase(pl, "deletePlayList(): bad playList");
+	_PlayListManager.removePlaylist(&pl->_PlayList);
+	_PlayLists.erase(pl, "deletePlayList(): bad playList");
 }
 
 // ***************************************************************************
-void CPlayListManagerUser::animate(TGlobalAnimationTime time) {
-  H_AUTO(NL3D_Render_PlayListMgr_Animate);
+void CPlayListManagerUser::animate(TGlobalAnimationTime time)
+{
+	H_AUTO(NL3D_Render_PlayListMgr_Animate);
 
-  _PlayListManager.animate(time);
+	_PlayListManager.animate(time);
 }
 
 // ***************************************************************************
-void CPlayListManagerUser::setup(TGlobalAnimationTime time) {
-  H_AUTO(NL3D_Render_PlayListMgr_Setup);
+void CPlayListManagerUser::setup(TGlobalAnimationTime time)
+{
+	H_AUTO(NL3D_Render_PlayListMgr_Setup);
 
-  _PlayListManager.setup(time);
+	_PlayListManager.setup(time);
 }
 
-} // namespace NL3D
+} // NL3D

@@ -22,34 +22,33 @@
 #include <string>
 
 namespace SCORES {
-enum TScores {
-  hit_points = 0,
-  stamina,
-  sap,
-  focus,
+enum TScores
+{
+	hit_points = 0,
+	stamina,
+	sap,
+	focus,
 
-  NUM_SCORES,
-  unknown = NUM_SCORES
+	NUM_SCORES,
+	unknown = NUM_SCORES
 };
 
 /**
  * get the right score enum from the input string
  * \param str the input string
- * \return the TScores associated to this string (Unknown if the string cannot
- * be interpreted)
+ * \return the TScores associated to this string (Unknown if the string cannot be interpreted)
  */
 TScores toScore(const std::string &str);
 
 /**
  * get the right score string from the gived enum
  * \param s is the enum number
- * \return the string associated to this enum number (Unknown if the enum number
- * not exist)
+ * \return the string associated to this enum number (Unknown if the enum number not exist)
  */
 const std::string &toString(TScores s);
 const std::string &toString(uint s);
 
-}; // namespace SCORES
+}; // SCORES
 
 #endif // RY_SCORES_H
 /* End of scores.h */

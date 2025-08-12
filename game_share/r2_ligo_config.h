@@ -14,18 +14,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "nel/ligo/ligo_config.h"
 #include "nel/misc/types_nl.h"
+#include "nel/ligo/ligo_config.h"
 namespace R2 {
 
-class CR2LigoConfig : public NLLIGO::CLigoConfig {
+class CR2LigoConfig : public NLLIGO::CLigoConfig
+{
 public:
-  enum TScenarioType { Base, Act, Event };
+	enum TScenarioType
+	{
+		Base,
+		Act,
+		Event
+	};
 
 public:
-  virtual uint32 getFileStaticAliasMapping(const std::string &fileName) const;
+	virtual uint32 getFileStaticAliasMapping(const std::string &fileName) const;
 
-  uint32 getStaticAliasMapping(uint32 aiInstance, TScenarioType type) const;
+	uint32 getStaticAliasMapping(uint32 aiInstance, TScenarioType type) const;
 };
 
-} // namespace R2
+}

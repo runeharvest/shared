@@ -20,9 +20,9 @@
 #ifndef NL_EVENT_EMITTER_H
 #define NL_EVENT_EMITTER_H
 
+#include "types_nl.h"
 #include "event_server.h"
 #include "smart_ptr.h"
-#include "types_nl.h"
 
 namespace NLMISC {
 
@@ -36,23 +36,23 @@ class CEventServer;
  *
  */
 /* *** IMPORTANT ********************
- * *** IF YOU MODIFY THE STRUCTURE OF THIS CLASS, PLEASE INCREMENT
- * IDriver::InterfaceVersion TO INVALIDATE OLD DRIVER DLL
+ * *** IF YOU MODIFY THE STRUCTURE OF THIS CLASS, PLEASE INCREMENT IDriver::InterfaceVersion TO INVALIDATE OLD DRIVER DLL
  * **********************************
  */
-class IEventEmitter : public NLMISC::CRefCount {
+class IEventEmitter : public NLMISC::CRefCount
+{
 public:
-  /// dtor
-  virtual ~IEventEmitter() {}
-  /**
-   * sends all events to server
-   * (should call CEventServer method postEvent() )
-   * \param server
-   */
-  virtual void submitEvents(CEventServer &server, bool allWindows) = 0;
+	/// dtor
+	virtual ~IEventEmitter() { }
+	/**
+	 * sends all events to server
+	 * (should call CEventServer method postEvent() )
+	 * \param server
+	 */
+	virtual void submitEvents(CEventServer &server, bool allWindows) = 0;
 };
 
-} // namespace NLMISC
+} // NLMISC
 
 #endif // NL_EVENT_EMITTER_H
 

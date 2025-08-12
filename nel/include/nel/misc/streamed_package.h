@@ -20,35 +20,37 @@
 #ifndef NLMISC_STREAMED_PACKAGE_H
 #define NLMISC_STREAMED_PACKAGE_H
 
-#include <nel/misc/sha1.h>
 #include <nel/misc/types_nl.h>
+#include <nel/misc/sha1.h>
 
 namespace NLMISC {
 
-class CStreamedPackage {
+class CStreamedPackage
+{
 public:
-  struct CEntry {
-    std::string Name;
-    CHashKey Hash;
-    uint32 Size;
-    uint32 LastModified;
+	struct CEntry
+	{
+		std::string Name;
+		CHashKey Hash;
+		uint32 Size;
+		uint32 LastModified;
 
-    void serial(NLMISC::IStream &f);
-  };
-
-public:
-  CStreamedPackage();
-  ~CStreamedPackage();
-
-  void serial(NLMISC::IStream &f);
-
-  /// result: [out] ex. /00/00/000000000..
-  /// hash: [in]
-  static void makePath(std::string &result, const CHashKey &hash);
+		void serial(NLMISC::IStream &f);
+	};
 
 public:
-  typedef std::vector<CEntry> TEntries;
-  TEntries Entries;
+	CStreamedPackage();
+	~CStreamedPackage();
+
+	void serial(NLMISC::IStream &f);
+
+	/// result: [out] ex. /00/00/000000000..
+	/// hash: [in]
+	static void makePath(std::string &result, const CHashKey &hash);
+
+public:
+	typedef std::vector<CEntry> TEntries;
+	TEntries Entries;
 
 }; /* class CStreamedPackage */
 

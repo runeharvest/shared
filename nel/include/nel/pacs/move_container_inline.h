@@ -23,32 +23,34 @@ namespace NLPACS {
 
 // ***************************************************************************
 
-inline void CMoveContainer::changed(CMovePrimitive *primitive,
-                                    uint8 worldImage) {
-  // Primitive noncollisionable ?
-  if (primitive->isCollisionable()) {
-    // Get the world image
-    CPrimitiveWorldImage *wI;
+inline void CMoveContainer::changed(CMovePrimitive *primitive, uint8 worldImage)
+{
+	// Primitive noncollisionable ?
+	if (primitive->isCollisionable())
+	{
+		// Get the world image
+		CPrimitiveWorldImage *wI;
 
-    wI = primitive->getWorldImage(worldImage);
+		wI = primitive->getWorldImage(worldImage);
 
-    // Not yet in the list ?
-    if (!wI->isInModifiedListFlag()) {
-      // Flag it
-      wI->setInModifiedListFlag(true);
+		// Not yet in the list ?
+		if (!wI->isInModifiedListFlag())
+		{
+			// Flag it
+			wI->setInModifiedListFlag(true);
 
-      // Link it
-      wI->linkInModifiedList(_ChangedRoot[worldImage]);
+			// Link it
+			wI->linkInModifiedList(_ChangedRoot[worldImage]);
 
-      // Change root list
-      _ChangedRoot[worldImage] = primitive;
-    }
-  }
+			// Change root list
+			_ChangedRoot[worldImage] = primitive;
+		}
+	}
 }
 
 // ***************************************************************************
 
-} // namespace NLPACS
+} // NLPACS
 
 #endif // NL_MOVE_CONTAINER_INLINE_H
 

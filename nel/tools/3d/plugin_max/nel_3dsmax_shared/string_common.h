@@ -20,21 +20,17 @@
 #ifndef NLMAX_STRING_COMMON_H
 #define NLMAX_STRING_COMMON_H
 
-#include <nel/misc/string_common.h>
 #include <nel/misc/ucstring.h>
+#include <nel/misc/string_common.h>
 
 #if (MAX_VERSION_MAJOR < 15)
 #define GET_OBJECT_NAME_CONST
-#define NOTIFY_REF_PARAMS                                                      \
-  Interval changeInt, RefTargetHandle hTarget, PartID &partID,                 \
-      RefMessage message
+#define NOTIFY_REF_PARAMS Interval changeInt, RefTargetHandle hTarget, PartID &partID, RefMessage message
 #define NOTIFY_REF_PROPAGATE , BOOL propagate
 #define nl_p_end end
 #else
 #define GET_OBJECT_NAME_CONST const
-#define NOTIFY_REF_PARAMS                                                      \
-  const Interval &changeInt, RefTargetHandle hTarget, PartID &partID,          \
-      RefMessage message, BOOL propagate
+#define NOTIFY_REF_PARAMS const Interval &changeInt, RefTargetHandle hTarget, PartID &partID, RefMessage message, BOOL propagate
 #define nl_p_end p_end
 #endif
 
@@ -48,26 +44,29 @@
 #define NL_GET_CLASS_NAME_CONST const
 #endif
 
-static TSTR MaxTStrFromUtf8(const std::string &src) {
-  TSTR dst;
+static TSTR MaxTStrFromUtf8(const std::string &src)
+{
+	TSTR dst;
 #if (MAX_VERSION_MAJOR < 15)
-  dst = nlUtf8ToTStr(src);
+	dst = nlUtf8ToTStr(src);
 #else
-  dst.FromUTF8(src.c_str());
+	dst.FromUTF8(src.c_str());
 #endif
-  return dst;
+	return dst;
 }
 
-static std::string MaxTStrToUtf8(const TSTR &src) {
+static std::string MaxTStrToUtf8(const TSTR &src)
+{
 #if (MAX_VERSION_MAJOR < 15)
-  return NLMISC::tStrToUtf8(src.data());
+	return NLMISC::tStrToUtf8(src.data());
 #else
-  return src.ToUTF8().data();
+	return src.ToUTF8().data();
 #endif
 }
 
-static std::string MCharStrToUtf8(const MCHAR *src) {
-  return NLMISC::tStrToUtf8(src);
+static std::string MCharStrToUtf8(const MCHAR *src)
+{
+	return NLMISC::tStrToUtf8(src);
 }
 
 #endif /* #ifndef NLMAX_STRING_COMMON_H */

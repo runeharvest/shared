@@ -20,8 +20,8 @@
 #ifndef RZ_CTRL_TOOLTIP_H
 #define RZ_CTRL_TOOLTIP_H
 
-#include "nel/3d/u_texture.h"
 #include "nel/gui/ctrl_base.h"
+#include "nel/3d/u_texture.h"
 
 namespace NLGUI {
 class CEventDescriptor;
@@ -31,24 +31,28 @@ class CEventDescriptor;
  * \author Nevrax France
  * \date 2003
  */
-class CCtrlToolTip : public CCtrlBase {
+class CCtrlToolTip : public CCtrlBase
+{
 public:
-  DECLARE_UI_CLASS(CCtrlToolTip)
-  /// Constructor
-  CCtrlToolTip(const TCtorParam &param) : CCtrlBase(param) {}
+	DECLARE_UI_CLASS(CCtrlToolTip)
+	/// Constructor
+	CCtrlToolTip(const TCtorParam &param)
+	    : CCtrlBase(param)
+	{
+	}
 
-  virtual bool handleEvent(const NLGUI::CEventDescriptor &eventDesc);
-  virtual void draw();
-  xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
-  virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
-  // Can do nothing with tooltip (but display it :) )
-  virtual bool isCapturable() const { return false; }
-  virtual void serial(NLMISC::IStream &f);
+	virtual bool handleEvent(const NLGUI::CEventDescriptor &eventDesc);
+	virtual void draw();
+	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
+	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+	// Can do nothing with tooltip (but display it :) )
+	virtual bool isCapturable() const { return false; }
+	virtual void serial(NLMISC::IStream &f);
 
 public:
 };
 
-} // namespace NLGUI
+}
 
 #endif // RZ_CTRL_TOOLTIP_H
 

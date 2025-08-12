@@ -35,8 +35,8 @@
 #include <nel/misc/thread.h>
 
 // Project includes
-#include <nel/sound/stream_file_sound.h>
 #include <nel/sound/stream_source.h>
+#include <nel/sound/stream_file_sound.h>
 
 namespace NLSOUND {
 class IAudioDecoder;
@@ -47,68 +47,62 @@ class IAudioDecoder;
  * \author Jan Boon (Kaetemi)
  * CStreamFileSource
  */
-class CStreamFileSource : public CStreamSource, private NLMISC::IRunnable {
+class CStreamFileSource : public CStreamSource, private NLMISC::IRunnable
+{
 public:
-  CStreamFileSource(CStreamFileSound *streamFileSound = NULL,
-                    bool spawn = false, TSpawnEndCallback cb = 0,
-                    void *cbUserParam = 0, NL3D::CCluster *cluster = 0,
-                    CGroupController *groupController = NULL);
-  virtual ~CStreamFileSource();
+	CStreamFileSource(CStreamFileSound *streamFileSound = NULL, bool spawn = false, TSpawnEndCallback cb = 0, void *cbUserParam = 0, NL3D::CCluster *cluster = 0, CGroupController *groupController = NULL);
+	virtual ~CStreamFileSource();
 
-  /// Return the source type
-  TSOURCE_TYPE getType() const { return SOURCE_STREAM_FILE; }
+	/// Return the source type
+	TSOURCE_TYPE getType() const { return SOURCE_STREAM_FILE; }
 
-  /// \name Playback control
-  //@{
-  /// Play
-  virtual void play();
-  /// Stop playing
-  virtual void stop();
-  /// Get playing state. Return false even if the source has stopped on its own.
-  virtual bool isPlaying();
-  /// Pause (following legacy music channel implementation)
-  void pause();
-  /// Resume (following legacy music channel implementation)
-  void resume();
-  /// check if song ended (following legacy music channel implementation)
-  bool isEnded();
-  /// (following legacy music channel implementation)
-  float getLength();
-  /// check if still loading (following legacy music channel implementation)
-  bool isLoadingAsync();
-  //@}
+	/// \name Playback control
+	//@{
+	/// Play
+	virtual void play();
+	/// Stop playing
+	virtual void stop();
+	/// Get playing state. Return false even if the source has stopped on its own.
+	virtual bool isPlaying();
+	/// Pause (following legacy music channel implementation)
+	void pause();
+	/// Resume (following legacy music channel implementation)
+	void resume();
+	/// check if song ended (following legacy music channel implementation)
+	bool isEnded();
+	/// (following legacy music channel implementation)
+	float getLength();
+	/// check if still loading (following legacy music channel implementation)
+	bool isLoadingAsync();
+	//@}
 
-  /// \name Decoding thread
-  //@{
-  virtual void getName(std::string &result) const {
-    result = "CStreamFileSource";
-  }
-  virtual void run();
-  //@}
+	/// \name Decoding thread
+	//@{
+	virtual void getName(std::string &result) const { result = "CStreamFileSource"; }
+	virtual void run();
+	//@}
 
-  // TODO: getTime
+	// TODO: getTime
 
 private:
-  bool prepareDecoder();
-  inline bool bufferMore(uint bytes);
+	bool prepareDecoder();
+	inline bool bufferMore(uint bytes);
 
 private:
-  CStreamFileSource(const CStreamFileSource &);
-  CStreamFileSource &operator=(const CStreamFileSource &);
+	CStreamFileSource(const CStreamFileSource &);
+	CStreamFileSource &operator=(const CStreamFileSource &);
 
 private:
-  inline CStreamFileSound *getStreamFileSound() {
-    return static_cast<CStreamFileSound *>(m_StreamSound);
-  }
+	inline CStreamFileSound *getStreamFileSound() { return static_cast<CStreamFileSound *>(m_StreamSound); }
 
-  NLMISC::IThread *m_Thread;
+	NLMISC::IThread *m_Thread;
 
-  IAudioDecoder *m_AudioDecoder;
+	IAudioDecoder *m_AudioDecoder;
 
-  std::string m_LookupPath;
+	std::string m_LookupPath;
 
-  bool m_Paused;
-  bool m_DecodingEnded;
+	bool m_Paused;
+	bool m_DecodingEnded;
 
 }; /* class CStreamFileSource */
 

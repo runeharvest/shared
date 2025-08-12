@@ -19,8 +19,8 @@
 
 #if defined(_MSC_VER) && defined(_DEBUG)
 #define _CRTDBG_MAP_ALLOC
-#include <crtdbg.h>
 #include <stdlib.h>
+#include <crtdbg.h>
 #define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
@@ -34,23 +34,23 @@
 #include <cmath>
 #include <limits>
 
-#include "nel/misc/big_file.h"
 #include "nel/misc/common.h"
-#include "nel/misc/debug.h"
-#include "nel/misc/dynloadlib.h"
-#include "nel/misc/fast_mem.h"
-#include "nel/misc/file.h"
-#include "nel/misc/hierarchical_timer.h"
-#include "nel/misc/matrix.h"
-#include "nel/misc/path.h"
-#include "nel/misc/singleton.h"
 #include "nel/misc/time_nl.h"
+#include "nel/misc/singleton.h"
+#include "nel/misc/fast_mem.h"
+#include "nel/misc/debug.h"
 #include "nel/misc/vector.h"
+#include "nel/misc/path.h"
+#include "nel/misc/file.h"
+#include "nel/misc/matrix.h"
+#include "nel/misc/big_file.h"
+#include "nel/misc/hierarchical_timer.h"
+#include "nel/misc/dynloadlib.h"
 
-#include "nel/sound/driver/buffer.h"
-#include "nel/sound/driver/listener.h"
 #include "nel/sound/driver/sound_driver.h"
+#include "nel/sound/driver/buffer.h"
 #include "nel/sound/driver/source.h"
+#include "nel/sound/driver/listener.h"
 
 #endif
 

@@ -20,11 +20,11 @@
 #ifndef RZ_INTERFACE_ANIM_H
 #define RZ_INTERFACE_ANIM_H
 
-#include "nel/3d/animation_time.h"
-#include "nel/3d/u_track.h"
+#include "nel/gui/interface_property.h"
 #include "nel/gui/interface_group.h"
 #include "nel/gui/interface_link.h"
-#include "nel/gui/interface_property.h"
+#include "nel/3d/animation_time.h"
+#include "nel/3d/u_track.h"
 
 namespace NLGUI {
 
@@ -34,42 +34,49 @@ namespace NLGUI {
  * \author Nevrax France
  * \date 2003
  */
-class CInterfaceTrack {
+class CInterfaceTrack
+{
 
 public:
-  CInterfaceTrack();
-  virtual ~CInterfaceTrack();
+	CInterfaceTrack();
+	virtual ~CInterfaceTrack();
 
-  virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
 
-  void update(double currentTime);
+	void update(double currentTime);
 
-  bool isDynamic() { return _Dynamic; }
+	bool isDynamic() { return _Dynamic; }
 
-  void eval(); // Evaluate dynamic keys
+	void eval(); // Evaluate dynamic keys
 
 private:
-  enum ETrackType { Track_Linear, Track_TCB, Track_Bezier };
+	enum ETrackType
+	{
+		Track_Linear,
+		Track_TCB,
+		Track_Bezier
+	};
 
-  struct SDynKey {
-    std::string Time;
-    std::string Value;
-    std::string InTan;
-    std::string OutTan;
-    std::string Step;
-    std::string Tension;
-    std::string Continuity;
-    std::string Bias;
-    std::string EaseTo;
-    std::string EaseFrom;
-  };
+	struct SDynKey
+	{
+		std::string Time;
+		std::string Value;
+		std::string InTan;
+		std::string OutTan;
+		std::string Step;
+		std::string Tension;
+		std::string Continuity;
+		std::string Bias;
+		std::string EaseTo;
+		std::string EaseFrom;
+	};
 
-  bool _Dynamic;
-  std::vector<SDynKey> _DynKeys;
+	bool _Dynamic;
+	std::vector<SDynKey> _DynKeys;
 
-  ETrackType _Type;
-  NL3D::UTrackKeyframer *_TrackKeyFramer;
-  std::vector<CInterfaceLink::CTargetInfo> _Targets;
+	ETrackType _Type;
+	NL3D::UTrackKeyframer *_TrackKeyFramer;
+	std::vector<CInterfaceLink::CTargetInfo> _Targets;
 };
 
 /**
@@ -78,42 +85,43 @@ private:
  * \author Nevrax France
  * \date 2003
  */
-class CInterfaceAnim {
+class CInterfaceAnim
+{
 
 public:
-  CInterfaceAnim();
-  virtual ~CInterfaceAnim();
+	CInterfaceAnim();
+	virtual ~CInterfaceAnim();
 
-  virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
 
-  void update();
-  void start();
-  void stop();
+	void update();
+	void start();
+	void stop();
 
-  bool isFinished() { return _Finished; }
-  bool isDisableButtons() { return _DisableButtons; }
+	bool isFinished() { return _Finished; }
+	bool isDisableButtons() { return _DisableButtons; }
 
 protected:
-  CInterfaceGroup *_Parent;
+	CInterfaceGroup *_Parent;
 
-  // Parsed properties
-  double _Duration;
-  bool _DisableButtons;
+	// Parsed properties
+	double _Duration;
+	bool _DisableButtons;
 
-  std::string _AHOnFinish;
-  std::string _AHOnFinishParams;
+	std::string _AHOnFinish;
+	std::string _AHOnFinishParams;
 
-  std::string _Id;
+	std::string _Id;
 
-  std::vector<CInterfaceTrack *> _Tracks;
+	std::vector<CInterfaceTrack *> _Tracks;
 
-  // Current anim
-  double _CurrentTime;
-  bool _Finished;
-  bool _AnimHasToBeStopped;
+	// Current anim
+	double _CurrentTime;
+	bool _Finished;
+	bool _AnimHasToBeStopped;
 };
 
-} // namespace NLGUI
+}
 
 #endif // NL_INTERFACE_ANIM_H
 

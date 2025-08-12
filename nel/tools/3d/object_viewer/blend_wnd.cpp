@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "blend_wnd.h"
 #include "std_afx.h"
-#include <nel/3d/animation_playlist.h>
+#include "blend_wnd.h"
 #include <nel/misc/common.h>
+#include <nel/3d/animation_playlist.h>
 
 using namespace NL3D;
 using namespace NLMISC;
@@ -28,138 +28,129 @@ using namespace NLMISC;
 
 // ***************************************************************************
 
-CBlendWnd::CBlendWnd() {}
-
-// ***************************************************************************
-
-void CBlendWnd::MakePoint(const RECT &src, POINT &dst, float x, float y) {
-  float widthClient = (float)src.right - (float)src.left;
-  float heightClient = (float)src.bottom - (float)src.top;
-  dst.x = src.left + (int)(widthClient * x);
-  dst.y = src.top + (int)(heightClient * y);
+CBlendWnd::CBlendWnd()
+{
 }
 
 // ***************************************************************************
 
-void CBlendWnd::MakeRect(const RECT &src, RECT &dst, float x, float y,
-                         float width, float height) {
-  float widthClient = (float)src.right - (float)src.left;
-  float heightClient = (float)src.bottom - (float)src.top;
-  dst.left = src.left + (int)(widthClient * x);
-  dst.top = src.top + (int)(heightClient * y);
-  dst.right = src.left + (int)(widthClient * (x + width));
-  dst.bottom = src.top + (int)(heightClient * (y + height));
+void CBlendWnd::MakePoint(const RECT &src, POINT &dst, float x, float y)
+{
+	float widthClient = (float)src.right - (float)src.left;
+	float heightClient = (float)src.bottom - (float)src.top;
+	dst.x = src.left + (int)(widthClient * x);
+	dst.y = src.top + (int)(heightClient * y);
 }
 
 // ***************************************************************************
 
-void CBlendWnd::OnPaint(const RECT &client, CDC *pDc, float StartBlend,
-                        float EndBlend, float StartBlendTime,
-                        float EndBlendTime, float Smoothness, float StartTime,
-                        float EndTime, bool enabled) {
-  // Get the good color
-  COLORREF color = (enabled ? COLOR_BLEND_ENABLE : COLOR_BLEND_DISABLE);
+void CBlendWnd::MakeRect(const RECT &src, RECT &dst, float x, float y, float width, float height)
+{
+	float widthClient = (float)src.right - (float)src.left;
+	float heightClient = (float)src.bottom - (float)src.top;
+	dst.left = src.left + (int)(widthClient * x);
+	dst.top = src.top + (int)(heightClient * y);
+	dst.right = src.left + (int)(widthClient * (x + width));
+	dst.bottom = src.top + (int)(heightClient * (y + height));
+}
 
-  // *** Paint the left rect
+// ***************************************************************************
 
-  // Offset start
-  float offsetLeft = (StartBlendTime - StartTime) / (EndTime - StartTime);
-  clamp(offsetLeft, 0, 1);
+void CBlendWnd::OnPaint(const RECT &client, CDC *pDc, float StartBlend, float EndBlend, float StartBlendTime, float EndBlendTime,
+    float Smoothness, float StartTime, float EndTime, bool enabled)
+{
+	// Get the good color
+	COLORREF color = (enabled ? COLOR_BLEND_ENABLE : COLOR_BLEND_DISABLE);
 
-  // Fill the background
-  pDc->FillSolidRect(&client, GetSysColor(COLOR_SCROLLBAR));
+	// *** Paint the left rect
 
-  // Make a rect for left
-  RECT left;
-  MakeRect(client, left, 0.f, 1.f - StartBlend, offsetLeft, StartBlend);
-  pDc->FillSolidRect(&left, color);
+	// Offset start
+	float offsetLeft = (StartBlendTime - StartTime) / (EndTime - StartTime);
+	clamp(offsetLeft, 0, 1);
 
-  // *** Paint the right rect
+	// Fill the background
+	pDc->FillSolidRect(&client, GetSysColor(COLOR_SCROLLBAR));
 
-  // Offset start
-  float offsetRight = (EndBlendTime - StartTime) / (EndTime - StartTime);
-  clamp(offsetRight, 0, 1);
+	// Make a rect for left
+	RECT left;
+	MakeRect(client, left, 0.f, 1.f - StartBlend, offsetLeft, StartBlend);
+	pDc->FillSolidRect(&left, color);
 
-  // Make a rect for left
-  RECT right;
-  MakeRect(client, right, offsetRight, 1.f - EndBlend, 1.f - offsetRight,
-           EndBlend);
-  pDc->FillSolidRect(&right, color);
+	// *** Paint the right rect
 
-  // *** Paint the inter zone
+	// Offset start
+	float offsetRight = (EndBlendTime - StartTime) / (EndTime - StartTime);
+	clamp(offsetRight, 0, 1);
 
-  // Set pen and brush color
-  CPen myPen(PS_NULL, 0, color);
-  CBrush myBrush(color);
-  CPen *oldPen = NULL;
-  CBrush *oldBrush = NULL;
+	// Make a rect for left
+	RECT right;
+	MakeRect(client, right, offsetRight, 1.f - EndBlend, 1.f - offsetRight, EndBlend);
+	pDc->FillSolidRect(&right, color);
 
-  // Then initialize it
-  oldPen = pDc->SelectObject(&myPen);
-  oldBrush = pDc->SelectObject(&myBrush);
+	// *** Paint the inter zone
 
-  for (uint i = 0; i < SEGMENT_COUNT; i++) {
-    // Offset of the polygon
-    float firstOffset = offsetLeft + (float)i * (offsetRight - offsetLeft) /
-                                         (float)SEGMENT_COUNT;
-    float nextOffset = offsetLeft + (float)(i + 1) *
-                                        (offsetRight - offsetLeft) /
-                                        (float)SEGMENT_COUNT;
+	// Set pen and brush color
+	CPen myPen(PS_NULL, 0, color);
+	CBrush myBrush(color);
+	CPen *oldPen = NULL;
+	CBrush *oldBrush = NULL;
 
-    // Get time
-    float firstTime = StartBlendTime + (float)i *
-                                           (EndBlendTime - StartBlendTime) /
-                                           (float)SEGMENT_COUNT;
-    float nextTime = StartBlendTime + (float)(i + 1) *
-                                          (EndBlendTime - StartBlendTime) /
-                                          (float)SEGMENT_COUNT;
+	// Then initialize it
+	oldPen = pDc->SelectObject(&myPen);
+	oldBrush = pDc->SelectObject(&myBrush);
 
-    // Get the values
-    float firstValue = CAnimationPlaylist::getWeightValue(
-        StartBlendTime, EndBlendTime, firstTime, StartBlend, EndBlend,
-        Smoothness);
-    float nextValue = CAnimationPlaylist::getWeightValue(
-        StartBlendTime, EndBlendTime, nextTime, StartBlend, EndBlend,
-        Smoothness);
+	for (uint i = 0; i < SEGMENT_COUNT; i++)
+	{
+		// Offset of the polygon
+		float firstOffset = offsetLeft + (float)i * (offsetRight - offsetLeft) / (float)SEGMENT_COUNT;
+		float nextOffset = offsetLeft + (float)(i + 1) * (offsetRight - offsetLeft) / (float)SEGMENT_COUNT;
 
-    // Setup polygon points
-    POINT polygon[4];
-    MakePoint(client, polygon[0], firstOffset, 1.f);
-    MakePoint(client, polygon[1], firstOffset, 1.f - firstValue);
-    MakePoint(client, polygon[2], nextOffset, 1.f - nextValue);
-    MakePoint(client, polygon[3], nextOffset, 1.f);
+		// Get time
+		float firstTime = StartBlendTime + (float)i * (EndBlendTime - StartBlendTime) / (float)SEGMENT_COUNT;
+		float nextTime = StartBlendTime + (float)(i + 1) * (EndBlendTime - StartBlendTime) / (float)SEGMENT_COUNT;
 
-    // Draw the polygon
-    pDc->Polygon(polygon, 4);
-  }
+		// Get the values
+		float firstValue = CAnimationPlaylist::getWeightValue(StartBlendTime, EndBlendTime, firstTime, StartBlend, EndBlend, Smoothness);
+		float nextValue = CAnimationPlaylist::getWeightValue(StartBlendTime, EndBlendTime, nextTime, StartBlend, EndBlend, Smoothness);
 
-  // Draw limit line
-  CPen myBlackPen(PS_SOLID, 1, RGB(0, 0, 0));
-  pDc->SelectObject(&myBlackPen);
+		// Setup polygon points
+		POINT polygon[4];
+		MakePoint(client, polygon[0], firstOffset, 1.f);
+		MakePoint(client, polygon[1], firstOffset, 1.f - firstValue);
+		MakePoint(client, polygon[2], nextOffset, 1.f - nextValue);
+		MakePoint(client, polygon[3], nextOffset, 1.f);
 
-  POINT p0;
-  POINT p1;
-  // MakePoint (client, p0, offsetLeft, 1.f-StartBlend);
-  MakePoint(client, p0, offsetLeft, 0.f);
-  MakePoint(client, p1, offsetLeft, 1.f);
-  pDc->MoveTo(p0);
-  pDc->LineTo(p1);
-  // MakePoint (client, p0, offsetRight, 1.f-EndBlend);
-  MakePoint(client, p0, offsetRight, 0.f);
-  MakePoint(client, p1, offsetRight, 1.f);
-  pDc->MoveTo(p0);
-  pDc->LineTo(p1);
+		// Draw the polygon
+		pDc->Polygon(polygon, 4);
+	}
 
-  // Make frame
-  pDc->MoveTo(client.left, client.top);
-  pDc->LineTo(client.right, client.top);
-  pDc->LineTo(client.right, client.bottom);
-  pDc->LineTo(client.left, client.bottom);
-  pDc->LineTo(client.left, client.top);
+	// Draw limit line
+	CPen myBlackPen(PS_SOLID, 1, RGB(0, 0, 0));
+	pDc->SelectObject(&myBlackPen);
 
-  // Then reselect old object
-  pDc->SelectObject(oldPen);
-  pDc->SelectObject(oldBrush);
+	POINT p0;
+	POINT p1;
+	// MakePoint (client, p0, offsetLeft, 1.f-StartBlend);
+	MakePoint(client, p0, offsetLeft, 0.f);
+	MakePoint(client, p1, offsetLeft, 1.f);
+	pDc->MoveTo(p0);
+	pDc->LineTo(p1);
+	// MakePoint (client, p0, offsetRight, 1.f-EndBlend);
+	MakePoint(client, p0, offsetRight, 0.f);
+	MakePoint(client, p1, offsetRight, 1.f);
+	pDc->MoveTo(p0);
+	pDc->LineTo(p1);
+
+	// Make frame
+	pDc->MoveTo(client.left, client.top);
+	pDc->LineTo(client.right, client.top);
+	pDc->LineTo(client.right, client.bottom);
+	pDc->LineTo(client.left, client.bottom);
+	pDc->LineTo(client.left, client.top);
+
+	// Then reselect old object
+	pDc->SelectObject(oldPen);
+	pDc->SelectObject(oldBrush);
 }
 
 // ***************************************************************************

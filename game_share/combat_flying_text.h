@@ -21,17 +21,18 @@
 
 namespace COMBAT_FLYING_TEXT {
 // Type for message "COMBAT:FLYING_TEXT"
-enum TCombatFlyingText {
-  None = 0,
-  TargetDodge,
-  TargetParry,
-  TargetEvade,
-  SelfEvade,
-  TargetResist,
-  SelfResist,
-  SelfInterrupt,
-  SelfFailure
+enum TCombatFlyingText
+{
+	None = 0,
+	TargetDodge,
+	TargetParry,
+	TargetEvade,
+	SelfEvade,
+	TargetResist,
+	SelfResist,
+	SelfInterrupt,
+	SelfFailure
 };
-} // namespace COMBAT_FLYING_TEXT
+}
 
 #endif

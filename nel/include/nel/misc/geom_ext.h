@@ -17,12 +17,12 @@
 #ifndef NL_TRIANGLE_EXT_H
 #define NL_TRIANGLE_EXT_H
 
-#include "line.h"
-#include "quad.h"
-#include "rgba.h"
-#include "triangle.h"
 #include "types_nl.h"
+#include "line.h"
+#include "triangle.h"
+#include "quad.h"
 #include "uv.h"
+#include "rgba.h"
 
 namespace NLMISC {
 
@@ -39,18 +39,20 @@ namespace NLMISC {
  * \author Nevrax France
  * \date 2000
  */
-class CLineColor : public CLine {
+class CLineColor : public CLine
+{
 public:
-  CRGBA Color0, Color1;
+	CRGBA Color0, Color1;
 
 public:
-  /// Constructor
-  CLineColor() {}
+	/// Constructor
+	CLineColor() { }
 
-  CLineColor &operator=(const CLine &line) {
-    *((CLine *)this) = line;
-    return *this;
-  }
+	CLineColor &operator=(const CLine &line)
+	{
+		*((CLine *)this) = line;
+		return *this;
+	}
 };
 
 // ***************************************************************************
@@ -60,18 +62,20 @@ public:
  * \author Nevrax France
  * \date 2000
  */
-class CLineUV : public CLine {
+class CLineUV : public CLine
+{
 public:
-  CUV Uv0, Uv1;
+	CUV Uv0, Uv1;
 
 public:
-  /// Constructor
-  CLineUV() {}
+	/// Constructor
+	CLineUV() { }
 
-  CLineUV &operator=(const CLine &line) {
-    *((CLine *)this) = line;
-    return *this;
-  }
+	CLineUV &operator=(const CLine &line)
+	{
+		*((CLine *)this) = line;
+		return *this;
+	}
 };
 
 // ***************************************************************************
@@ -81,19 +85,21 @@ public:
  * \author Nevrax France
  * \date 2000
  */
-class CLineColorUV : public CLine {
+class CLineColorUV : public CLine
+{
 public:
-  CRGBA Color0, Color1;
-  CUV Uv0, Uv1;
+	CRGBA Color0, Color1;
+	CUV Uv0, Uv1;
 
 public:
-  /// Constructor
-  CLineColorUV() {}
+	/// Constructor
+	CLineColorUV() { }
 
-  CLineColorUV &operator=(const CLine &line) {
-    *((CLine *)this) = line;
-    return *this;
-  }
+	CLineColorUV &operator=(const CLine &line)
+	{
+		*((CLine *)this) = line;
+		return *this;
+	}
 };
 
 // ***************************************************************************
@@ -109,18 +115,20 @@ public:
  * \author Nevrax France
  * \date 2000
  */
-class CTriangleColor : public CTriangle {
+class CTriangleColor : public CTriangle
+{
 public:
-  CRGBA Color0, Color1, Color2;
+	CRGBA Color0, Color1, Color2;
 
 public:
-  /// Constructor
-  CTriangleColor() {}
+	/// Constructor
+	CTriangleColor() { }
 
-  CTriangleColor &operator=(const CTriangle &tri) {
-    *((CTriangle *)this) = tri;
-    return *this;
-  }
+	CTriangleColor &operator=(const CTriangle &tri)
+	{
+		*((CTriangle *)this) = tri;
+		return *this;
+	}
 };
 
 // ***************************************************************************
@@ -130,18 +138,20 @@ public:
  * \author Nevrax France
  * \date 2000
  */
-class CTriangleUV : public CTriangle {
+class CTriangleUV : public CTriangle
+{
 public:
-  CUV Uv0, Uv1, Uv2;
+	CUV Uv0, Uv1, Uv2;
 
 public:
-  /// Constructor
-  CTriangleUV() {}
+	/// Constructor
+	CTriangleUV() { }
 
-  CTriangleUV &operator=(const CTriangle &tri) {
-    *((CTriangle *)this) = tri;
-    return *this;
-  }
+	CTriangleUV &operator=(const CTriangle &tri)
+	{
+		*((CTriangle *)this) = tri;
+		return *this;
+	}
 };
 
 // ***************************************************************************
@@ -151,19 +161,21 @@ public:
  * \author Nevrax France
  * \date 2000
  */
-class CTriangleColorUV : public CTriangle {
+class CTriangleColorUV : public CTriangle
+{
 public:
-  CRGBA Color0, Color1, Color2;
-  CUV Uv0, Uv1, Uv2;
+	CRGBA Color0, Color1, Color2;
+	CUV Uv0, Uv1, Uv2;
 
 public:
-  /// Constructor
-  CTriangleColorUV() {}
+	/// Constructor
+	CTriangleColorUV() { }
 
-  CTriangleColorUV &operator=(const CTriangle &tri) {
-    *((CTriangle *)this) = tri;
-    return *this;
-  }
+	CTriangleColorUV &operator=(const CTriangle &tri)
+	{
+		*((CTriangle *)this) = tri;
+		return *this;
+	}
 };
 
 // ***************************************************************************
@@ -179,18 +191,20 @@ public:
  * \author Nevrax France
  * \date 2000
  */
-class CQuadColor : public CQuad {
+class CQuadColor : public CQuad
+{
 public:
-  CRGBA Color0, Color1, Color2, Color3;
+	CRGBA Color0, Color1, Color2, Color3;
 
 public:
-  /// Constructor
-  CQuadColor() {}
+	/// Constructor
+	CQuadColor() { }
 
-  CQuadColor &operator=(const CQuad &quad) {
-    *((CQuad *)this) = quad;
-    return *this;
-  }
+	CQuadColor &operator=(const CQuad &quad)
+	{
+		*((CQuad *)this) = quad;
+		return *this;
+	}
 };
 
 // ***************************************************************************
@@ -200,18 +214,20 @@ public:
  * \author Nevrax France
  * \date 2000
  */
-class CQuadUV : public CQuad {
+class CQuadUV : public CQuad
+{
 public:
-  CUV Uv0, Uv1, Uv2, Uv3;
+	CUV Uv0, Uv1, Uv2, Uv3;
 
 public:
-  /// Constructor
-  CQuadUV() {}
+	/// Constructor
+	CQuadUV() { }
 
-  CQuadUV &operator=(const CQuad &quad) {
-    *((CQuad *)this) = quad;
-    return *this;
-  }
+	CQuadUV &operator=(const CQuad &quad)
+	{
+		*((CQuad *)this) = quad;
+		return *this;
+	}
 };
 
 // ***************************************************************************
@@ -221,19 +237,21 @@ public:
  * \author Nevrax France
  * \date 2000
  */
-class CQuadColorUV : public CQuad {
+class CQuadColorUV : public CQuad
+{
 public:
-  CRGBA Color0, Color1, Color2, Color3;
-  CUV Uv0, Uv1, Uv2, Uv3;
+	CRGBA Color0, Color1, Color2, Color3;
+	CUV Uv0, Uv1, Uv2, Uv3;
 
 public:
-  /// Constructor
-  CQuadColorUV() {}
+	/// Constructor
+	CQuadColorUV() { }
 
-  CQuadColorUV &operator=(const CQuad &quad) {
-    *((CQuad *)this) = quad;
-    return *this;
-  }
+	CQuadColorUV &operator=(const CQuad &quad)
+	{
+		*((CQuad *)this) = quad;
+		return *this;
+	}
 };
 
 // ***************************************************************************
@@ -243,12 +261,13 @@ public:
  * \author Nevrax France
  * \date 2000
  */
-class CQuadColorUV2 : public CQuadColorUV {
+class CQuadColorUV2 : public CQuadColorUV
+{
 public:
-  CUV Uv02, Uv12, Uv22, Uv32;
+	CUV Uv02, Uv12, Uv22, Uv32;
 };
 
-} // namespace NLMISC
+} // NLMISC
 
 #endif // NL_TRIANGLE_EXT_H
 

@@ -24,71 +24,72 @@
 
 #include "game_share/object.h"
 
-#include <map>
 #include <set>
+#include <map>
 
 namespace R2 {
 
-class CSmallStringManager {
+class CSmallStringManager
+{
 public:
-  CSmallStringManager();
+	CSmallStringManager();
 
-  ~CSmallStringManager();
+	~CSmallStringManager();
 
-  CSmallStringManager(CObject *textManager);
+	CSmallStringManager(CObject *textManager);
 
-  uint32 registerString(const std::string &phrase, uint32 nb = 1);
+	uint32 registerString(const std::string &phrase, uint32 nb = 1);
 
-  void unregisterString(const std::string &phrase, uint32 nb = 1);
+	void unregisterString(const std::string &phrase, uint32 nb = 1);
 
-  void unregisterStringById(uint32 id, uint32 nb = 1);
+	void unregisterStringById(uint32 id, uint32 nb = 1);
 
-  const std::string &getString(uint32 id) const;
+	const std::string &getString(uint32 id) const;
 
-  void serial(NLMISC::IStream &stream);
+	void serial(NLMISC::IStream &stream);
 
-  void release();
+	void release();
 
 private:
-  uint32 getNewId();
+	uint32 getNewId();
 
-  std::map<std::string, uint32> _StringToId;
+	std::map<std::string, uint32> _StringToId;
 
-  std::map<uint32, std::pair<std::string, uint32>> _IdToString;
+	std::map<uint32, std::pair<std::string, uint32>> _IdToString;
 
-  std::set<uint32> _FreeIds;
+	std::set<uint32> _FreeIds;
 
-  uint32 _MaxId;
+	uint32 _MaxId;
 };
 
-class CStringTableManager {
+class CStringTableManager
+{
 public:
-  typedef std::map<std::string, uint32> TLocalTable; // TableId -> StringId
+	typedef std::map<std::string, uint32> TLocalTable; // TableId -> StringId
 
 public:
-  ~CStringTableManager();
+	~CStringTableManager();
 
-  void release();
+	void release();
 
-  void setValue(uint32 tableId, const std::string &localId,
-                const std::string &value);
+	void setValue(uint32 tableId, const std::string &localId, const std::string &value);
 
-  std::string getValue(uint32 tableId, const std::string &localId) const;
+	std::string getValue(uint32 tableId, const std::string &localId) const;
 
-  void createTable(uint32 tableId); // create empty table
+	void createTable(uint32 tableId); // create empty table
 
-  void releaseTable(uint32 tableId);
+	void releaseTable(uint32 tableId);
 
-  virtual TLocalTable *getLocalTable(uint32 tableId) const;
-
-private:
-  typedef std::map<uint32, TLocalTable *> TLocalTables; // SessionId -> Table
+	virtual TLocalTable *getLocalTable(uint32 tableId) const;
 
 private:
+	typedef std::map<uint32, TLocalTable *> TLocalTables; // SessionId -> Table
+
 private:
-  CSmallStringManager _StringMgr;
-  TLocalTables _LocalTables;
+private:
+	CSmallStringManager _StringMgr;
+	TLocalTables _LocalTables;
 };
-} // namespace R2
+}
 
 #endif // SMALL_STRING_MANAGER

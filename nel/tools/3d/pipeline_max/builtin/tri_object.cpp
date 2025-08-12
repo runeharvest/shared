@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "tri_object.h"
 #include <nel/misc/types_nl.h>
+#include "tri_object.h"
 
 // STL includes
 
@@ -42,74 +42,101 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CTriObject::CTriObject(CScene *scene) : CGeomObject(scene) {}
+CTriObject::CTriObject(CScene *scene)
+    : CGeomObject(scene)
+{
+}
 
-CTriObject::~CTriObject() {}
+CTriObject::~CTriObject()
+{
+}
 
 const ucstring CTriObject::DisplayName = ucstring("TriObject");
 const char *CTriObject::InternalName = "TriObject";
-const NLMISC::CClassId CTriObject::ClassId =
-    NLMISC::CClassId(0x4553fa6, 0x30f8421e); /* Not official, please correct */
+const NLMISC::CClassId CTriObject::ClassId = NLMISC::CClassId(0x4553fa6, 0x30f8421e); /* Not official, please correct */
 const TSClassId CTriObject::SuperClassId = CGeomObject::SuperClassId;
 const CTriObjectClassDesc TriObjectClassDesc(&DllPluginDescBuiltin);
 
-void CTriObject::parse(uint16 version, uint filter) {
-  if (filter == 0) {
-    CGeomObject::parse(version);
-  } else if (filter == PMB_TRI_OBJECT_PARSE_FILTER) {
-    if (!m_ChunksOwnsPointers) {
-      CGeomObject::parse(version, PMB_GEOM_OBJECT_PARSE_FILTER);
-      // 0x0901
-      // 0x0902
-      // 0x0904
-      // 0x0903
-    }
-  }
+void CTriObject::parse(uint16 version, uint filter)
+{
+	if (filter == 0)
+	{
+		CGeomObject::parse(version);
+	}
+	else if (filter == PMB_TRI_OBJECT_PARSE_FILTER)
+	{
+		if (!m_ChunksOwnsPointers)
+		{
+			CGeomObject::parse(version, PMB_GEOM_OBJECT_PARSE_FILTER);
+			// 0x0901
+			// 0x0902
+			// 0x0904
+			// 0x0903
+		}
+	}
 }
 
-void CTriObject::clean() { CGeomObject::clean(); }
-
-void CTriObject::build(uint16 version, uint filter) {
-  if (filter == 0) {
-    CGeomObject::build(version);
-  } else if (filter == PMB_TRI_OBJECT_PARSE_FILTER) {
-    CGeomObject::build(version, PMB_GEOM_OBJECT_PARSE_FILTER);
-    // 0x0901
-    // 0x0902
-    // 0x0904
-    // 0x0903
-  }
+void CTriObject::clean()
+{
+	CGeomObject::clean();
 }
 
-void CTriObject::disown() { CGeomObject::disown(); }
-
-void CTriObject::init() { CGeomObject::init(); }
-
-bool CTriObject::inherits(const NLMISC::CClassId classId) const {
-  if (classId == classDesc()->classId())
-    return true;
-  return CGeomObject::inherits(classId);
+void CTriObject::build(uint16 version, uint filter)
+{
+	if (filter == 0)
+	{
+		CGeomObject::build(version);
+	}
+	else if (filter == PMB_TRI_OBJECT_PARSE_FILTER)
+	{
+		CGeomObject::build(version, PMB_GEOM_OBJECT_PARSE_FILTER);
+		// 0x0901
+		// 0x0902
+		// 0x0904
+		// 0x0903
+	}
 }
 
-const ISceneClassDesc *CTriObject::classDesc() const {
-  return &TriObjectClassDesc;
+void CTriObject::disown()
+{
+	CGeomObject::disown();
 }
 
-void CTriObject::toStringLocal(std::ostream &ostream, const std::string &pad,
-                               uint filter) const {
-  if (filter == 0) {
-    CGeomObject::toStringLocal(ostream, pad);
-  } else if (filter == PMB_TRI_OBJECT_PARSE_FILTER) {
-    CGeomObject::toStringLocal(ostream, pad, PMB_GEOM_OBJECT_PARSE_FILTER);
-    // 0x0901
-    // 0x0902
-    // 0x0904
-    // 0x0903
-  }
+void CTriObject::init()
+{
+	CGeomObject::init();
 }
 
-IStorageObject *CTriObject::createChunkById(uint16 id, bool container) {
-  return CGeomObject::createChunkById(id, container);
+bool CTriObject::inherits(const NLMISC::CClassId classId) const
+{
+	if (classId == classDesc()->classId()) return true;
+	return CGeomObject::inherits(classId);
+}
+
+const ISceneClassDesc *CTriObject::classDesc() const
+{
+	return &TriObjectClassDesc;
+}
+
+void CTriObject::toStringLocal(std::ostream &ostream, const std::string &pad, uint filter) const
+{
+	if (filter == 0)
+	{
+		CGeomObject::toStringLocal(ostream, pad);
+	}
+	else if (filter == PMB_TRI_OBJECT_PARSE_FILTER)
+	{
+		CGeomObject::toStringLocal(ostream, pad, PMB_GEOM_OBJECT_PARSE_FILTER);
+		// 0x0901
+		// 0x0902
+		// 0x0904
+		// 0x0903
+	}
+}
+
+IStorageObject *CTriObject::createChunkById(uint16 id, bool container)
+{
+	return CGeomObject::createChunkById(id, container);
 }
 
 } /* namespace BUILTIN */

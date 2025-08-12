@@ -22,4 +22,6 @@
 
 #include "login_service_itf.h"
 
-namespace LS {}
+namespace LS {
+
+}

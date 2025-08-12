@@ -19,8 +19,8 @@
 
 #include "nel/misc/types_nl.h"
 
-#include "u_ps_sound_impl.h"
 #include "u_ps_sound_interface.h"
+#include "u_ps_sound_impl.h"
 
 namespace NL3D {
 
@@ -35,13 +35,14 @@ void assignSoundServerToPS(UPSSoundServer *soundServer);
  * \author Nevrax France
  * \date 2001
  */
-class UParticleSystemSound {
+class UParticleSystemSound
+{
 public:
-  /// init the particle system sound with the given AudioMixer
-  static void setPSSound(NLSOUND::UAudioMixer *audioMixer);
+	/// init the particle system sound with the given AudioMixer
+	static void setPSSound(NLSOUND::UAudioMixer *audioMixer);
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_U_PARTICLE_SYSTEM_SOUND_H
 

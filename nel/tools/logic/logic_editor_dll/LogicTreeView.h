@@ -1,5 +1,4 @@
-#if !defined(                                                                  \
-    AFX_LOGICTREEVIEW_H__EB843012_833A_4979_AECA_63302172A812__INCLUDED_)
+#if !defined(AFX_LOGICTREEVIEW_H__EB843012_833A_4979_AECA_63302172A812__INCLUDED_)
 #define AFX_LOGICTREEVIEW_H__EB843012_833A_4979_AECA_63302172A812__INCLUDED_
 
 #if _MSC_VER > 1000
@@ -11,47 +10,47 @@
 /////////////////////////////////////////////////////////////////////////////
 // CLogicTreeView view
 
-class CLogicTreeView : public CView {
+class CLogicTreeView : public CView
+{
 protected:
-  CLogicTreeView(); // protected constructor used by dynamic creation
-  DECLARE_DYNCREATE(CLogicTreeView)
+	CLogicTreeView(); // protected constructor used by dynamic creation
+	DECLARE_DYNCREATE(CLogicTreeView)
 
-  // Attributes
+	// Attributes
 protected:
 public:
-  /// the splitter window in the view
-  CSplitterWnd m_wndSplitter;
+	/// the splitter window in the view
+	CSplitterWnd m_wndSplitter;
 
-  // Operations
+	// Operations
 public:
-  // Overrides
-  // ClassWizard generated virtual function overrides
-  //{{AFX_VIRTUAL(CLogicTreeView)
+	// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CLogicTreeView)
 protected:
-  virtual void OnDraw(CDC *pDC); // overridden to draw this view
-                                 //}}AFX_VIRTUAL
+	virtual void OnDraw(CDC *pDC); // overridden to draw this view
+	//}}AFX_VIRTUAL
 
-  // Implementation
+	// Implementation
 protected:
-  virtual ~CLogicTreeView();
+	virtual ~CLogicTreeView();
 #ifdef _DEBUG
-  virtual void AssertValid() const;
-  virtual void Dump(CDumpContext &dc) const;
+	virtual void AssertValid() const;
+	virtual void Dump(CDumpContext &dc) const;
 #endif
 
-  // Generated message map functions
+	// Generated message map functions
 protected:
-  //{{AFX_MSG(CLogicTreeView)
-  afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-  afx_msg void OnSize(UINT nType, int cx, int cy);
-  //}}AFX_MSG
-  DECLARE_MESSAGE_MAP()
+	//{{AFX_MSG(CLogicTreeView)
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before
-// the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
 #endif // !defined(AFX_LOGICTREEVIEW_H__EB843012_833A_4979_AECA_63302172A812__INCLUDED_)

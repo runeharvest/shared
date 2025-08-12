@@ -17,10 +17,10 @@
 #ifndef NL_VIEWPORT_H
 #define NL_VIEWPORT_H
 
-#include "nel/3d/frustum.h"
-#include "nel/misc/matrix.h"
 #include "nel/misc/types_nl.h"
 #include "nel/misc/vector.h"
+#include "nel/misc/matrix.h"
+#include "nel/3d/frustum.h"
 
 #ifdef _X
 #undef _X
@@ -36,75 +36,70 @@ using NLMISC::CVector;
  *
  */
 /* *** IMPORTANT ********************
- * *** IF YOU MODIFY THE STRUCTURE OF THIS CLASS, PLEASE INCREMENT
- * IDriver::InterfaceVersion TO INVALIDATE OLD DRIVER DLL
+ * *** IF YOU MODIFY THE STRUCTURE OF THIS CLASS, PLEASE INCREMENT IDriver::InterfaceVersion TO INVALIDATE OLD DRIVER DLL
  * **********************************
  */
-class CViewport {
+class CViewport
+{
 public:
-  /// Default constructor. Setup a fullscreen viewport
-  CViewport();
+	/// Default constructor. Setup a fullscreen viewport
+	CViewport();
 
-  /**
-   * Constructor
-   *
-   * \param x coordinate of the left edge of the viewport in the window
-   * coordinate system . Must be between 0.f and 1.f. \param y coordinate of the
-   * bottom edge of the viewport in the window coordinate system . Must be
-   * between 0.f and 1.f. \param width of the view port. Must be between 0.f
-   * and 1.f-x. \param height of the view port. Must be between 0.f and 1.f-y.
-   */
-  void init(float x, float y, float width, float height);
+	/**
+	 * Constructor
+	 *
+	 * \param x coordinate of the left edge of the viewport in the window coordinate system . Must be between 0.f and 1.f.
+	 * \param y coordinate of the bottom edge of the viewport in the window coordinate system . Must be between 0.f and 1.f.
+	 * \param width of the view port. Must be between 0.f and 1.f-x.
+	 * \param height of the view port. Must be between 0.f and 1.f-y.
+	 */
+	void init(float x, float y, float width, float height);
 
-  /// Setup a fullscreen viewport.
-  void initFullScreen();
+	/// Setup a fullscreen viewport.
+	void initFullScreen();
 
-  /// Setup a 16/9 viewport.
-  void init16_9();
+	/// Setup a 16/9 viewport.
+	void init16_9();
 
-  /** Get a 3d ray with a 2d point
-   *
-   * \param x is the x coordinate in the window coordinate system of the 2d
-   * point. \param y is the y coordinate in the window coordinate system of the
-   * 2d point. \param pos gets the position of a 3d point on the ray. It is also
-   * the position of the camera \param dir gets the direction of the ray. The
-   * direction is the same than the camera one. It is NOT normalized. \param
-   * camMatrix is the matrix of the camera in use in this viewport. \param
-   * camFrust is the frustum of the camera in use in this viewport.
-   */
-  void getRayWithPoint(float x, float y, CVector &pos, CVector &dir,
-                       const CMatrix &camMatrix,
-                       const CFrustum &camFrust) const;
+	/** Get a 3d ray with a 2d point
+	 *
+	 * \param x is the x coordinate in the window coordinate system of the 2d point.
+	 * \param y is the y coordinate in the window coordinate system of the 2d point.
+	 * \param pos gets the position of a 3d point on the ray. It is also the position of the camera
+	 * \param dir gets the direction of the ray. The direction is the same than the camera one. It is NOT normalized.
+	 * \param camMatrix is the matrix of the camera in use in this viewport.
+	 * \param camFrust is the frustum of the camera in use in this viewport.
+	 */
+	void getRayWithPoint(float x, float y, CVector &pos, CVector &dir, const CMatrix &camMatrix, const CFrustum &camFrust) const;
 
-  /** Get the viewport values
-   *
-   * \param x get the x coordinate of the left edge of the viewport in the
-   * window coordinate system . Must be between 0.f and 1.f. \param y get the y
-   * coordinate of the bottom edge of the viewport in the window coordinate
-   * system . Must be between 0.f and 1.f. \param width get the width of the
-   * view port. Must be between 0.f and 1.f-x. \param height get the height of
-   * the view port. Must be between 0.f and 1.f-y.
-   */
-  void getValues(float &x, float &y, float &width, float &height) const {
-    x = _X;
-    y = _Y;
-    width = _Width;
-    height = _Height;
-  }
+	/** Get the viewport values
+	 *
+	 * \param x get the x coordinate of the left edge of the viewport in the window coordinate system . Must be between 0.f and 1.f.
+	 * \param y get the y coordinate of the bottom edge of the viewport in the window coordinate system . Must be between 0.f and 1.f.
+	 * \param width get the width of the view port. Must be between 0.f and 1.f-x.
+	 * \param height get the height of the view port. Must be between 0.f and 1.f-y.
+	 */
+	void getValues(float &x, float &y, float &width, float &height) const
+	{
+		x = _X;
+		y = _Y;
+		width = _Width;
+		height = _Height;
+	}
 
-  float getX() const { return _X; }
-  float getY() const { return _Y; }
-  float getWidth() const { return _Width; }
-  float getHeight() const { return _Height; }
+	float getX() const { return _X; }
+	float getY() const { return _Y; }
+	float getWidth() const { return _Width; }
+	float getHeight() const { return _Height; }
 
 private:
-  float _X;
-  float _Y;
-  float _Width;
-  float _Height;
+	float _X;
+	float _Y;
+	float _Width;
+	float _Height;
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_VIEWPORT_H
 

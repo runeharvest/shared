@@ -22,26 +22,26 @@
 
 namespace NL3D {
 
-/** This class is an interface for object for a particle system that need a
- * direction (forces, emitter...) Some of these object support global value as a
- * direction (see CParticleSystem::setGlobalVectorValue), so calls to setDir
- * then have no effect.
+/** This class is an interface for object for a particle system that need a direction (forces, emitter...)
+ *  Some of these object support global value as a direction (see CParticleSystem::setGlobalVectorValue), so
+ *  calls to setDir then have no effect.
  */
 
-class CPSDirection {
+class CPSDirection
+{
 public:
-  virtual ~CPSDirection() {}
-  virtual void setDir(const NLMISC::CVector &v) = 0;
-  virtual NLMISC::CVector getDir(void) const = 0;
-  virtual bool supportGlobalVectorValue() const { return false; }
-  /** The direction is taken from a global vector defined in the particle system
-   * NULL or an empty string as a name disable the use of a global value
-   */
-  virtual void enableGlobalVectorValue(const std::string & /* name */) {}
-  virtual std::string getGlobalVectorValueName() const { return ""; }
+	virtual ~CPSDirection() { }
+	virtual void setDir(const NLMISC::CVector &v) = 0;
+	virtual NLMISC::CVector getDir(void) const = 0;
+	virtual bool supportGlobalVectorValue() const { return false; }
+	/** The direction is taken from a global vector defined in the particle system
+	 * NULL or an empty string as a name disable the use of a global value
+	 */
+	virtual void enableGlobalVectorValue(const std::string & /* name */) { }
+	virtual std::string getGlobalVectorValueName() const { return ""; }
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_PS_DIRECTION_H
 

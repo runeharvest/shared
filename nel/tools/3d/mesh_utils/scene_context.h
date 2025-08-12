@@ -26,10 +26,10 @@
 #include "mesh_utils.h"
 #include "scene_meta.h"
 
-#include <nel/misc/matrix.h>
-#include <nel/misc/smart_ptr.h>
 #include <nel/misc/sstring.h>
 #include <nel/pipeline/tool_logger.h>
+#include <nel/misc/smart_ptr.h>
+#include <nel/misc/matrix.h>
 
 #include <nel/3d/shape.h>
 
@@ -43,34 +43,41 @@
 namespace NL3D {
 class IShape;
 class CMaterial;
-} // namespace NL3D
+}
 
-struct CNodeContext {
-  CNodeContext() : InternalNode(NULL), IsBone(false) {}
+struct CNodeContext
+{
+	CNodeContext()
+	    : InternalNode(NULL)
+	    , IsBone(false)
+	{
+	}
 
-  const NL_NODE_INTERNAL_TYPE *InternalNode;
-  bool IsBone;
+	const NL_NODE_INTERNAL_TYPE *InternalNode;
+	bool IsBone;
 
-  // NLMISC::CMatrix Transform; // TODO
-  NLMISC::CSmartPtr<NL3D::IShape> Shape;
+	// NLMISC::CMatrix Transform; // TODO
+	NLMISC::CSmartPtr<NL3D::IShape> Shape;
 };
 
 typedef std::map<NLMISC::CSString, CNodeContext> TNodeContextMap;
-struct CMeshUtilsContext {
-  CMeshUtilsContext(const CMeshUtilsSettings &settings)
-      : Settings(settings), InternalScene(NULL) {}
+struct CMeshUtilsContext
+{
+	CMeshUtilsContext(const CMeshUtilsSettings &settings)
+	    : Settings(settings)
+	    , InternalScene(NULL)
+	{
+	}
 
-  const CMeshUtilsSettings &Settings;
+	const CMeshUtilsSettings &Settings;
 
-  NLPIPELINE::CToolLogger ToolLogger;
+	NLPIPELINE::CToolLogger ToolLogger;
 
-  const NL_SCENE_INTERNAL_TYPE *InternalScene;
-  CSceneMeta SceneMeta;
+	const NL_SCENE_INTERNAL_TYPE *InternalScene;
+	CSceneMeta SceneMeta;
 
-  TNodeContextMap
-      Nodes; // Impl note: Should never end up containing the scene root node.
-  // std::map<const aiMesh *, NLMISC::CSString> MeshNames; // Maps meshes to a
-  // node name ********************* todo ***************
+	TNodeContextMap Nodes; // Impl note: Should never end up containing the scene root node.
+	// std::map<const aiMesh *, NLMISC::CSString> MeshNames; // Maps meshes to a node name ********************* todo ***************
 };
 
 #endif /* NL_SCENE_CONTEXT_H */

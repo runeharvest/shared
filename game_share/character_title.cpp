@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "stdpch.h"
 #include "character_title.h"
 #include "nel/misc/common.h"
 #include "nel/misc/string_conversion.h"
-#include "stdpch.h"
 
 namespace CHARACTER_TITLE {
 
@@ -264,15 +264,16 @@ NL_STRING_CONVERSION_TABLE_ENTRY(EM)
 NL_STRING_CONVERSION_TABLE_ENTRY(EG)
 NL_STRING_CONVERSION_TABLE_ENTRY(OBSERVER)
 
-NL_END_STRING_CONVERSION_TABLE(ECharacterTitle, CharacterTitlesConversion,
-                               NB_CHARACTER_TITLE)
+NL_END_STRING_CONVERSION_TABLE(ECharacterTitle, CharacterTitlesConversion, NB_CHARACTER_TITLE)
 
-std::string toString(const ECharacterTitle &r) {
-  return CharacterTitlesConversion.toString(r);
+std::string toString(const ECharacterTitle &r)
+{
+	return CharacterTitlesConversion.toString(r);
 }
 
-ECharacterTitle toCharacterTitle(const std::string &ct) {
-  return CharacterTitlesConversion.fromString(ct);
+ECharacterTitle toCharacterTitle(const std::string &ct)
+{
+	return CharacterTitlesConversion.fromString(ct);
 }
 
-} // namespace CHARACTER_TITLE
+} // CHARACTER_TITLE

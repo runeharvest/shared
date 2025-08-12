@@ -27,13 +27,13 @@
 #include <nel/misc/types_nl.h>
 
 // STL includes
-#include <map>
 #include <string>
+#include <map>
 
 // NeL includes
 #include <nel/misc/common.h>
-#include <nel/sound/containers.h>
 #include <nel/sound/u_group_controller.h>
+#include <nel/sound/containers.h>
 
 // Project includes
 
@@ -46,54 +46,57 @@ class CGroupControllerRoot;
  * \author Jan Boon (Kaetemi)
  * CGroupController
  */
-class CGroupController : public UGroupController {
+class CGroupController : public UGroupController
+{
 public:
-  friend class CGroupControllerRoot;
+	friend class CGroupControllerRoot;
 
 private:
-  CGroupController *m_Parent;
-  std::map<std::string, CGroupController *> m_Children;
+	CGroupController *m_Parent;
+	std::map<std::string, CGroupController *> m_Children;
 
-  /// Gain as set by the interface
-  float m_Gain;
+	/// Gain as set by the interface
+	float m_Gain;
 
-  /// Gain including parent gain
-  float m_FinalGain;
+	/// Gain including parent gain
+	float m_FinalGain;
 
-  int m_NbSourcesInclChild;
-  TSourceContainer m_Sources;
+	int m_NbSourcesInclChild;
+	TSourceContainer m_Sources;
 
 public:
-  CGroupController(CGroupController *parent);
+	CGroupController(CGroupController *parent);
 
-  /// \name UGroupController
-  //@{
-  virtual void setGain(float gain) {
-    NLMISC::clamp(gain, 0.0f, 1.0f);
-    if (m_Gain != gain) {
-      m_Gain = gain;
-      updateSourceGain();
-    }
-  }
-  virtual float getGain() { return m_Gain; }
-  //@}
+	/// \name UGroupController
+	//@{
+	virtual void setGain(float gain)
+	{
+		NLMISC::clamp(gain, 0.0f, 1.0f);
+		if (m_Gain != gain)
+		{
+			m_Gain = gain;
+			updateSourceGain();
+		}
+	}
+	virtual float getGain() { return m_Gain; }
+	//@}
 
-  inline float getFinalGain() const { return m_FinalGain; }
+	inline float getFinalGain() const { return m_FinalGain; }
 
-  void addSource(CSourceCommon *source);
-  void removeSource(CSourceCommon *source);
+	void addSource(CSourceCommon *source);
+	void removeSource(CSourceCommon *source);
 
-  virtual std::string getPath();
+	virtual std::string getPath();
 
 protected:
-  virtual ~CGroupController(); // subnodes can only be deleted by the root
+	virtual ~CGroupController(); // subnodes can only be deleted by the root
 
 private:
-  inline float calculateTotalGain() { return m_Gain; }
-  virtual void calculateFinalGain();
-  virtual void increaseSources();
-  virtual void decreaseSources();
-  void updateSourceGain();
+	inline float calculateTotalGain() { return m_Gain; }
+	virtual void calculateFinalGain();
+	virtual void increaseSources();
+	virtual void decreaseSources();
+	void updateSourceGain();
 
 }; /* class CGroupController */
 

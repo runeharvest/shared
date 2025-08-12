@@ -22,7 +22,7 @@
 namespace EMOTE_LIST_PARSER {
 /// fill the specified parameter with the emote names, linked with their index
 bool initEmoteList(std::map<std::string, uint32> &emoteContainer);
-} // namespace EMOTE_LIST_PARSER
+}
 
 #endif // RY_EMOTE_LIST_PARSER_H
 

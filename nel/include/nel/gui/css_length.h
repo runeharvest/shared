@@ -17,8 +17,8 @@
 #ifndef CL_CSS_LENGTH_H
 #define CL_CSS_LENGTH_H
 
-#include "nel/gui/css_types.h"
 #include "nel/misc/types_nl.h"
+#include "nel/gui/css_types.h"
 
 namespace NLGUI {
 /**
@@ -27,45 +27,53 @@ namespace NLGUI {
  * \author Meelis Mägi (Nimetu)
  */
 
-class CSSLength {
+class CSSLength
+{
 public:
-  enum Kind { Auto, Relative, Fixed };
+	enum Kind
+	{
+		Auto,
+		Relative,
+		Fixed
+	};
 
-  CSSLength(float value = 0, CSSUnitType unit = CSS_UNIT_NONE, Kind kind = Auto)
-      : m_Value(value), m_Unit(unit), m_Kind(Auto) {}
+	CSSLength(float value = 0, CSSUnitType unit = CSS_UNIT_NONE, Kind kind = Auto)
+	    : m_Value(value)
+	    , m_Unit(unit)
+	    , m_Kind(Auto)
+	{
+	}
 
-  void setAuto() { m_Kind = Auto; }
-  bool parseValue(const std::string &value, bool allowPercent = true,
-                  bool allowNegative = false);
-  void setFloatValue(float f, const std::string &unit);
+	void setAuto() { m_Kind = Auto; }
+	bool parseValue(const std::string &value, bool allowPercent = true, bool allowNegative = false);
+	void setFloatValue(float f, const std::string &unit);
 
-  float getValue() const;
-  float getFloat() const { return m_Value; }
+	float getValue() const;
+	float getFloat() const { return m_Value; }
 
-  bool isPercent() const { return m_Unit == CSS_UNIT_PERCENT; }
+	bool isPercent() const { return m_Unit == CSS_UNIT_PERCENT; }
 
-  bool isAuto() const { return m_Kind == Auto; }
-  bool isRelative() const { return m_Kind == Relative; }
+	bool isAuto() const { return m_Kind == Auto; }
+	bool isRelative() const { return m_Kind == Relative; }
 
-  // % uses relValue
-  // em uses emSize
-  // rem uses remSize
-  // vw,vh,vi,vb,vmin,vmax uses vwSize/vhSize
-  float calculate(uint32 relValue, uint32 emSize, uint32 remSize, uint32 vwSize,
-                  uint32 whSize) const;
+	// % uses relValue
+	// em uses emSize
+	// rem uses remSize
+	// vw,vh,vi,vb,vmin,vmax uses vwSize/vhSize
+	float calculate(uint32 relValue, uint32 emSize, uint32 remSize, uint32 vwSize, uint32 whSize) const;
 
-  CSSUnitType getUnit() const { return m_Unit; }
+	CSSUnitType getUnit() const { return m_Unit; }
 
-  std::string toString() const;
+	std::string toString() const;
 
 private:
-  void setUnit(const std::string &unit);
+	void setUnit(const std::string &unit);
 
-  float m_Value;
-  CSSUnitType m_Unit;
-  Kind m_Kind;
+	float m_Value;
+	CSSUnitType m_Unit;
+	Kind m_Kind;
 };
 
-} // namespace NLGUI
+} // namespace
 
 #endif // CL_CSS_LENGTH_H

@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "taming_tool_type.h"
 #include "stdpch.h"
+#include "taming_tool_type.h"
 // nel
 #include "nel/misc/string_conversion.h"
 
@@ -25,24 +25,24 @@ using namespace NLMISC;
 namespace TAMING_TOOL_TYPE {
 // The conversion table
 const CStringConversion<TTamingToolType>::CPair stringTable[] = {
-    {"Unknown", Unknown},
-    {"Cattleprod", Cattleprod},
-    {"Stick", Stick},
-    {"Whip", Whip},
+	{ "Unknown", Unknown },
+	{ "Cattleprod", Cattleprod },
+	{ "Stick", Stick },
+	{ "Whip", Whip },
 };
 
-CStringConversion<TTamingToolType>
-    conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]),
-               Unknown);
+CStringConversion<TTamingToolType> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]), Unknown);
 
 // convert type id to type name string
-const std::string &toString(TTamingToolType type) {
-  return conversion.toString(type);
+const std::string &toString(TTamingToolType type)
+{
+	return conversion.toString(type);
 }
 
 // convert type name to type enum value
-TTamingToolType toToolType(const std::string &str) {
-  return conversion.fromString(str);
+TTamingToolType toToolType(const std::string &str)
+{
+	return conversion.fromString(str);
 }
 
-} // namespace TAMING_TOOL_TYPE
+} // TAMING_TOOL_TYPE

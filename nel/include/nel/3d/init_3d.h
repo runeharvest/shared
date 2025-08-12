@@ -30,7 +30,7 @@ namespace NL3D {
  */
 void init3d();
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_INIT_3D_H
 

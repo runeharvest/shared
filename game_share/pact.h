@@ -27,24 +27,26 @@
 // Name space People in game share
 namespace GSPACT {
 // All different people
-enum EPactNature {
-  Unknown = 0,
-  Kamique,
-  Caravane,
+enum EPactNature
+{
+	Unknown = 0,
+	Kamique,
+	Caravane,
 
-  NUM_PACT_NATURE = Caravane // 2
+	NUM_PACT_NATURE = Caravane // 2
 };
 
-enum EPactType {
-  Type1 = 0,
-  Type2,
-  Type3,
-  Type4,
-  Type5,
-  Type6,
-  UnknownType,
+enum EPactType
+{
+	Type1 = 0,
+	Type2,
+	Type3,
+	Type4,
+	Type5,
+	Type6,
+	UnknownType,
 
-  NUM_PACT_TYPE = UnknownType // 6
+	NUM_PACT_TYPE = UnknownType // 6
 };
 
 /// Return a string according to the enum parameter

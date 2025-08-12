@@ -43,16 +43,17 @@ namespace PIPELINE {
  * \author Jan Boon (Kaetemi)
  * CStorageFile
  */
-class CStorageFile {
+class CStorageFile
+{
 protected:
-  // pointers
-  // ...
+	// pointers
+	// ...
 
-  // instances
-  // ...
+	// instances
+	// ...
 public:
-  CStorageFile();
-  virtual ~CStorageFile();
+	CStorageFile();
+	virtual ~CStorageFile();
 }; /* class CStorageFile */
 
 } /* namespace PIPELINE */

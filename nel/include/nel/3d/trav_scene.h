@@ -35,77 +35,83 @@ using NLMISC::CVector;
  * \author Nevrax France
  * \date 2000
  */
-class CTraversal {
+class CTraversal
+{
 public:
-  CScene *Scene; // the scene owning this traversal (if any)
+	CScene *Scene; // the scene owning this traversal (if any)
 public:
-  /// ctor
-  CTraversal() : Scene(NULL) {}
+	/// ctor
+	CTraversal()
+	    : Scene(NULL)
+	{
+	}
 };
 
 // ***************************************************************************
 /**
- * A ITravScene traversal, with camera setup  (common to CRenderTrav and
- * CClipTrav).
+ * A ITravScene traversal, with camera setup  (common to CRenderTrav and CClipTrav).
  *
  */
-class CTravCameraScene : public CTraversal {
+class CTravCameraScene : public CTraversal
+{
 public:
-  /** \name FOR MODEL TRAVERSING ONLY.  (Read only)
-   * Those variables are valid only in traverse().
-   */
-  //@{
-  // NB: znear and zfar are >0 (if perspective).
-  float Left, Right, Bottom, Top, Near, Far;
-  bool Perspective;
-  NLMISC::CMatrix CamMatrix;  // The camera matrix.
-  NLMISC::CMatrix ViewMatrix; // ViewMatrix= CamMatrix.inverted();
-  NLMISC::CVector CamPos;     // The camera position in world space.
-  NLMISC::CVector CamLook;    // The Y direction of the camera in world space.
-                              //@}
+	/** \name FOR MODEL TRAVERSING ONLY.  (Read only)
+	 * Those variables are valid only in traverse().
+	 */
+	//@{
+	// NB: znear and zfar are >0 (if perspective).
+	float Left, Right, Bottom, Top, Near, Far;
+	bool Perspective;
+	NLMISC::CMatrix CamMatrix; // The camera matrix.
+	NLMISC::CMatrix ViewMatrix; // ViewMatrix= CamMatrix.inverted();
+	NLMISC::CVector CamPos; // The camera position in world space.
+	NLMISC::CVector CamLook; // The Y direction of the camera in world space.
+	//@}
 
 public:
-  /// Setup the camera mode as a perspective/ortho camera. NB: znear and zfar
-  /// must be >0 (if perspective).
-  void setFrustum(float left, float right, float bottom, float top, float znear,
-                  float zfar, bool perspective = true) {
-    Left = left;
-    Right = right;
-    Bottom = bottom;
-    Top = top;
-    Near = znear;
-    Far = zfar;
-    Perspective = perspective;
-  }
-  /// Setup the camera mode as a perspective/ortho camera. NB: znear and zfar
-  /// must be >0 (if perspective).
-  void setFrustum(float width, float height, float znear, float zfar,
-                  bool perspective = true) {
-    setFrustum(-width / 2, width / 2, -height / 2, height / 2, znear, zfar,
-               perspective);
-  }
-  /// Setup the camera matrix (a translation/rotation matrix).
-  void setCamMatrix(const NLMISC::CMatrix &camMatrix) { CamMatrix = camMatrix; }
+	/// Setup the camera mode as a perspective/ortho camera. NB: znear and zfar must be >0 (if perspective).
+	void setFrustum(float left, float right, float bottom, float top, float znear, float zfar, bool perspective = true)
+	{
+		Left = left;
+		Right = right;
+		Bottom = bottom;
+		Top = top;
+		Near = znear;
+		Far = zfar;
+		Perspective = perspective;
+	}
+	/// Setup the camera mode as a perspective/ortho camera. NB: znear and zfar must be >0 (if perspective).
+	void setFrustum(float width, float height, float znear, float zfar, bool perspective = true)
+	{
+		setFrustum(-width / 2, width / 2, -height / 2, height / 2, znear, zfar, perspective);
+	}
+	/// Setup the camera matrix (a translation/rotation matrix).
+	void setCamMatrix(const NLMISC::CMatrix &camMatrix)
+	{
+		CamMatrix = camMatrix;
+	}
 
-  /// Constructor.
-  CTravCameraScene() {
-    setFrustum(1.0f, 1.0f, 0.01f, 1.0f);
-    CamMatrix.identity();
-    ViewMatrix.identity();
-    CamPos = NLMISC::CVector::Null;
-    CamLook = NLMISC::CVector::Null;
-  }
+	/// Constructor.
+	CTravCameraScene()
+	{
+		setFrustum(1.0f, 1.0f, 0.01f, 1.0f);
+		CamMatrix.identity();
+		ViewMatrix.identity();
+		CamPos = NLMISC::CVector::Null;
+		CamLook = NLMISC::CVector::Null;
+	}
 
 protected:
-  /// update the dependent information.
-  void update() {
-    ViewMatrix = CamMatrix.inverted();
-    CamPos = CamMatrix.getPos();
-    CamLook = CamMatrix.mulVector(NLMISC::CVector::J);
-  }
+	/// update the dependent information.
+	void update()
+	{
+		ViewMatrix = CamMatrix.inverted();
+		CamPos = CamMatrix.getPos();
+		CamLook = CamMatrix.mulVector(NLMISC::CVector::J);
+	}
 };
 
-} // namespace NL3D
+}
 
 #endif // NL_TRAV_SCENE_H
 

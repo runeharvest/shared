@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "super_class_unknown.h"
 #include <nel/misc/types_nl.h>
+#include "super_class_unknown.h"
 
 // STL includes
 
@@ -42,9 +42,13 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CSuperClassUnknown::CSuperClassUnknown() {}
+CSuperClassUnknown::CSuperClassUnknown()
+{
+}
 
-CSuperClassUnknown::~CSuperClassUnknown() {}
+CSuperClassUnknown::~CSuperClassUnknown()
+{
+}
 
 } /* namespace BUILTIN */
 } /* namespace MAX */

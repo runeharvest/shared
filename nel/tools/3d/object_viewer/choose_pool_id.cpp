@@ -17,25 +17,28 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "choose_pool_id.h"
-#include "object_viewer.h"
 #include "std_afx.h"
+#include "object_viewer.h"
+#include "choose_pool_id.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CChoosePoolID dialog
 
 CChoosePoolID::CChoosePoolID(bool freezeID, CWnd *pParent /*=NULL*/)
-    : CDialog(CChoosePoolID::IDD, pParent), _FreezeID(freezeID) {
-  //{{AFX_DATA_INIT(CChoosePoolID)
-  // NOTE: the ClassWizard will add member initialization here
-  //}}AFX_DATA_INIT
+    : CDialog(CChoosePoolID::IDD, pParent)
+    , _FreezeID(freezeID)
+{
+	//{{AFX_DATA_INIT(CChoosePoolID)
+	// NOTE: the ClassWizard will add member initialization here
+	//}}AFX_DATA_INIT
 }
 
-void CChoosePoolID::DoDataExchange(CDataExchange *pDX) {
-  CDialog::DoDataExchange(pDX);
-  //{{AFX_DATA_MAP(CChoosePoolID)
-  // NOTE: the ClassWizard will add DDX and DDV calls here
-  //}}AFX_DATA_MAP
+void CChoosePoolID::DoDataExchange(CDataExchange *pDX)
+{
+	CDialog::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(CChoosePoolID)
+	// NOTE: the ClassWizard will add DDX and DDV calls here
+	//}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(CChoosePoolID, CDialog)
@@ -46,30 +49,36 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CChoosePoolID message handlers
 
-void CChoosePoolID::OnOK() {
-  CString val;
-  GetDlgItem(IDC_POOL_ID)->GetWindowText(val);
+void CChoosePoolID::OnOK()
+{
+	CString val;
+	GetDlgItem(IDC_POOL_ID)->GetWindowText(val);
 
-  if (NLMISC::fromString(NLMISC::tStrToUtf8(val), PoolID)) {
-    GetDlgItem(IDC_POOL_NAME)->GetWindowText(val);
-    Name = NLMISC::tStrToUtf8(val);
-    CDialog::OnOK();
-  } else {
-    MessageBox(_T("Invalid value"), _T("error"), MB_OK);
-  }
+	if (NLMISC::fromString(NLMISC::tStrToUtf8(val), PoolID))
+	{
+		GetDlgItem(IDC_POOL_NAME)->GetWindowText(val);
+		Name = NLMISC::tStrToUtf8(val);
+		CDialog::OnOK();
+	}
+	else
+	{
+		MessageBox(_T("Invalid value"), _T("error"), MB_OK);
+	}
 }
 
-BOOL CChoosePoolID::OnInitDialog() {
-  CDialog::OnInitDialog();
+BOOL CChoosePoolID::OnInitDialog()
+{
+	CDialog::OnInitDialog();
 
-  std::string val = NLMISC::toString(PoolID);
+	std::string val = NLMISC::toString(PoolID);
 
-  GetDlgItem(IDC_POOL_ID)->SetWindowText(nlUtf8ToTStr(val));
-  GetDlgItem(IDC_POOL_NAME)->SetWindowText(nlUtf8ToTStr(Name));
+	GetDlgItem(IDC_POOL_ID)->SetWindowText(nlUtf8ToTStr(val));
+	GetDlgItem(IDC_POOL_NAME)->SetWindowText(nlUtf8ToTStr(Name));
 
-  if (_FreezeID) {
-    GetDlgItem(IDC_POOL_ID)->EnableWindow(FALSE);
-  }
-  return TRUE; // return TRUE unless you set the focus to a control
-               // EXCEPTION: OCX Property Pages should return FALSE
+	if (_FreezeID)
+	{
+		GetDlgItem(IDC_POOL_ID)->EnableWindow(FALSE);
+	}
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }

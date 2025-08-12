@@ -17,8 +17,8 @@
 #ifndef NLWEB_HTTP_PACKAGE_PROVIDER_H
 #define NLWEB_HTTP_PACKAGE_PROVIDER_H
 
-#include <nel/misc/i_streamed_package_provider.h>
 #include <nel/misc/types_nl.h>
+#include <nel/misc/i_streamed_package_provider.h>
 
 /// NeL Streamed Packages are like NeL Big Packages, but storing only
 /// the file hash, allowing to load the file from a remote source instead.
@@ -42,30 +42,29 @@
 
 namespace NLWEB {
 
-class CHttpPackageProvider : public NLMISC::IStreamedPackageProvider {
+class CHttpPackageProvider : public NLMISC::IStreamedPackageProvider
+{
 public:
-  CHttpPackageProvider();
-  virtual ~CHttpPackageProvider();
+	CHttpPackageProvider();
+	virtual ~CHttpPackageProvider();
 
-  /// Download a file. This call is blocking
-  /// filePath: [out] ex. /games/nel/stream/00/00/000000000..
-  /// hash: [in]
-  /// name: [in] name for debugging purposes
-  virtual bool getFile(std::string &filePath, const NLMISC::CHashKey &hash,
-                       const std::string &name) NL_OVERRIDE;
+	/// Download a file. This call is blocking
+	/// filePath: [out] ex. /games/nel/stream/00/00/000000000..
+	/// hash: [in]
+	/// name: [in] name for debugging purposes
+	virtual bool getFile(std::string &filePath, const NLMISC::CHashKey &hash, const std::string &name) NL_OVERRIDE;
 
 public:
-  /// Set storage path (ex. stream/)
-  std::string Path;
+	/// Set storage path (ex. stream/)
+	std::string Path;
 
-  /// Loads a package into the package manager (ex.
-  /// http://cdn.ryzom.dev/open/stream/)
-  typedef std::vector<std::string> THosts;
-  THosts Hosts;
+	/// Loads a package into the package manager (ex. http://cdn.ryzom.dev/open/stream/)
+	typedef std::vector<std::string> THosts;
+	THosts Hosts;
 
 }; /* class CHttpPackageProvider */
 
-} // namespace NLWEB
+} /* namespace NLMISC */
 
 #endif /* #ifndef NLWEB_HTTP_PACKAGE_PROVIDER_H */
 

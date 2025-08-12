@@ -43,50 +43,50 @@ class CStreamFileSource;
  * \author Jan Boon (Kaetemi)
  * CSourceMusicChannel
  */
-class CSourceMusicChannel : public IMusicChannel {
+class CSourceMusicChannel : public IMusicChannel
+{
 public:
-  CSourceMusicChannel();
-  virtual ~CSourceMusicChannel();
+	CSourceMusicChannel();
+	virtual ~CSourceMusicChannel();
 
-  /** Play some music (.ogg etc...)
-   *	NB: if an old music was played, it is first stop with stopMusic()
-   *	\param filepath file path, CPath::lookup is done here
-   *  \param async stream music from hard disk, preload in memory if false
-   *	\param loop must be true to play the music in loop.
-   */
-  virtual bool play(const std::string &filepath, bool async, bool loop);
+	/** Play some music (.ogg etc...)
+	 *	NB: if an old music was played, it is first stop with stopMusic()
+	 *	\param filepath file path, CPath::lookup is done here
+	 *  \param async stream music from hard disk, preload in memory if false
+	 *	\param loop must be true to play the music in loop.
+	 */
+	virtual bool play(const std::string &filepath, bool async, bool loop);
 
-  /// Stop the music previously loaded and played (the Memory is also freed)
-  virtual void stop();
+	/// Stop the music previously loaded and played (the Memory is also freed)
+	virtual void stop();
 
-  /// Makes sure any resources are freed, but keeps available for next play call
-  virtual void reset();
+	/// Makes sure any resources are freed, but keeps available for next play call
+	virtual void reset();
 
-  /// Pause the music previously loaded and played (the Memory is not freed)
-  virtual void pause();
+	/// Pause the music previously loaded and played (the Memory is not freed)
+	virtual void pause();
 
-  /// Resume the music previously paused
-  virtual void resume();
+	/// Resume the music previously paused
+	virtual void resume();
 
-  /// Return true if a song is finished.
-  virtual bool isEnded();
+	/// Return true if a song is finished.
+	virtual bool isEnded();
 
-  /// Return true if the song is still loading asynchronously and hasn't started
-  /// playing yet (false if not async), used to delay fading
-  virtual bool isLoadingAsync();
+	/// Return true if the song is still loading asynchronously and hasn't started playing yet (false if not async), used to delay fading
+	virtual bool isLoadingAsync();
 
-  /// Return the total length (in second) of the music currently played
-  virtual float getLength();
+	/// Return the total length (in second) of the music currently played
+	virtual float getLength();
 
-  /** Set the music volume (if any music played). (volume value inside [0 , 1])
-   *(default: 1) NB: the volume of music is NOT affected by IListener::setGain()
-   */
-  virtual void setVolume(float gain);
+	/** Set the music volume (if any music played). (volume value inside [0 , 1]) (default: 1)
+	 *	NB: the volume of music is NOT affected by IListener::setGain()
+	 */
+	virtual void setVolume(float gain);
 
 private:
-  CStreamFileSound m_Sound;
-  CStreamFileSource *m_Source;
-  float m_Gain;
+	CStreamFileSound m_Sound;
+	CStreamFileSource *m_Source;
+	float m_Gain;
 
 }; /* class CSourceMusicChannel */
 

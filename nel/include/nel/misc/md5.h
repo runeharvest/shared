@@ -56,38 +56,40 @@ class IStream;
    */
 
 // ****************************************************************************
-struct CHashKeyMD5 {
-  uint8 Data[16];
+struct CHashKeyMD5
+{
+	uint8 Data[16];
 
-  void clear();
-  std::string toString() const;
-  bool fromString(const std::string &in);
-  bool operator==(const CHashKeyMD5 &in) const;
-  bool operator!=(const CHashKeyMD5 &in) const;
-  bool operator<(const CHashKeyMD5 &in) const;
+	void clear();
+	std::string toString() const;
+	bool fromString(const std::string &in);
+	bool operator==(const CHashKeyMD5 &in) const;
+	bool operator!=(const CHashKeyMD5 &in) const;
+	bool operator<(const CHashKeyMD5 &in) const;
 
-  void serial(NLMISC::IStream &s);
+	void serial(NLMISC::IStream &s);
 };
 
 // ****************************************************************************
-class CMD5Context {
+class CMD5Context
+{
 
 public:
-  void init();
-  void update(const uint8 *pBufIn, uint32 nBufLength);
-  void final(CHashKeyMD5 &out);
+	void init();
+	void update(const uint8 *pBufIn, uint32 nBufLength);
+	void final(CHashKeyMD5 &out);
 
 private:
-  uint32 State[4];  // state (ABCD)
-  uint32 Count[2];  // number of bits, modulo 2^64 (lsb first)
-  uint8 Buffer[64]; // input buffer
+	uint32 State[4]; // state (ABCD)
+	uint32 Count[2]; // number of bits, modulo 2^64 (lsb first)
+	uint8 Buffer[64]; // input buffer
 
-  static uint8 Padding[64];
+	static uint8 Padding[64];
 
 private:
-  void transform(uint32 state[4], const uint8 block[64]);
-  void encode(uint8 *output, const uint32 *input, uint len);
-  void decode(uint32 *output, const uint8 *input, uint len);
+	void transform(uint32 state[4], const uint8 block[64]);
+	void encode(uint8 *output, const uint32 *input, uint len);
+	void decode(uint32 *output, const uint8 *input, uint len);
 };
 
 // ****************************************************************************
@@ -106,8 +108,7 @@ inline bool operator <(const struct CHashKeyMD5 &a,const struct CHashKeyMD5 &b)
 }
 */
 
-// This function get a filename (it works with big files) and returns his MD5
-// hash key
+// This function get a filename (it works with big files) and returns his MD5 hash key
 CHashKeyMD5 getMD5(const std::string &filename);
 
 // This function get a buffer with size and returns his MD5 hash key

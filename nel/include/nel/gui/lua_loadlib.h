@@ -21,8 +21,8 @@
 #define LUA_LOADLIB_H
 
 extern "C" {
-#include <lauxlib.h>
 #include <lua.h>
+#include <lauxlib.h>
 #include <lualib.h>
 }
 

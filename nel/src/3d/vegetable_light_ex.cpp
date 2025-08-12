@@ -16,8 +16,8 @@
 
 #include "std3d.h"
 
-#include "nel/3d/point_light_named.h"
 #include "nel/3d/vegetable_light_ex.h"
+#include "nel/3d/point_light_named.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -25,15 +25,17 @@
 
 namespace NL3D {
 
-void CVegetableLightEx::computeCurrentColors() {
-  for (uint i = 0; i < NumLights; i++) {
-    // get the light.
-    CPointLightNamed *pl = PointLight[i];
-    // get the attenuation
-    uint att = PointLightFactor[i];
-    // modulate the color with it. Use the Unanimated one!!
-    Color[i].modulateFromui(pl->getUnAnimatedDiffuse(), att);
-  }
+void CVegetableLightEx::computeCurrentColors()
+{
+	for (uint i = 0; i < NumLights; i++)
+	{
+		// get the light.
+		CPointLightNamed *pl = PointLight[i];
+		// get the attenuation
+		uint att = PointLightFactor[i];
+		// modulate the color with it. Use the Unanimated one!!
+		Color[i].modulateFromui(pl->getUnAnimatedDiffuse(), att);
+	}
 }
 
-} // namespace NL3D
+} // NL3D

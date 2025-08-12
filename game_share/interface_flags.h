@@ -20,34 +20,33 @@
 #include "skills.h"
 
 namespace INTERFACE_FLAGS {
-enum TInterfaceFlag {
-  Magic = 0,
-  Combat,
-  Special,
-  Commerce,
-  FaberCreate,
-  FaberRefine,
-  FaberRepair,
-  Tracking,
+enum TInterfaceFlag
+{
+	Magic = 0,
+	Combat,
+	Special,
+	Commerce,
+	FaberCreate,
+	FaberRefine,
+	FaberRepair,
+	Tracking,
 
-  NBFLAGS, // 8
+	NBFLAGS, // 8
 
-  Unknown,
+	Unknown,
 };
 
 /**
  * get the right string from the given enum value
  * \param jop the TInterfaceFlag value to convert
- * \return the string associated to this enum number (Unknown if the enum number
- * not exist)
+ * \return the string associated to this enum number (Unknown if the enum number not exist)
  */
 const std::string &toString(TInterfaceFlag type);
 
 /**
  * get the right TInterfaceFlag from its string
  * \param str the input string
- * \return the TInterfaceFlag associated to this string (unknown if the string
- * cannot be interpreted)
+ * \return the TInterfaceFlag associated to this string (unknown if the string cannot be interpreted)
  */
 TInterfaceFlag toInterfaceFlag(const std::string &str);
 
@@ -65,6 +64,6 @@ TInterfaceFlag toInterfaceFlag(SKILLS::ESkills skill);
  */
 SKILLS::ESkills toSkill(TInterfaceFlag flag);
 
-} // namespace INTERFACE_FLAGS
+} // INTERFACE_FLAGS
 
 #endif // RY_INTERFACE_FLAGS_H //

@@ -45,7 +45,7 @@ namespace NL3D {
 /// The precision of frequency factor: 1/16.
 #define NL3D_VEGETABLE_FREQUENCY_FACTOR_PREC 16
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_VEGETABLE_DEF_H
 

@@ -17,49 +17,54 @@
 #ifndef NL_SHIFTED_TRIANGLE_CACHE_H
 #define NL_SHIFTED_TRIANGLE_CACHE_H
 
-#include "nel/3d/index_buffer.h"
-#include "nel/misc/object_vector.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/object_vector.h"
+#include "nel/3d/index_buffer.h"
 
 namespace NL3D {
 
 // ***************************************************************************
 /**
- * This is a cache of indices which are the copy of CMesh/CMeshMRM indices, but
- *shifted according to a value. This is useful for skinning. \author Lionel
- *Berenguier \author Nevrax France \date 2002
+ * This is a cache of indices which are the copy of CMesh/CMeshMRM indices, but shifted according to a value.
+ *	This is useful for skinning.
+ * \author Lionel Berenguier
+ * \author Nevrax France
+ * \date 2002
  */
-class CShiftedTriangleCache {
+class CShiftedTriangleCache
+{
 public:
-  struct CRdrPass {
-    /// Point to CShiftedTriangleCache::Triangles
-    uint32 Triangles;
-    uint32 NumTriangles;
-  };
+	struct CRdrPass
+	{
+		/// Point to CShiftedTriangleCache::Triangles
+		uint32 Triangles;
+		uint32 NumTriangles;
+	};
 
 public:
-  /// The Raw triangles array
-  CIndexBuffer RawIndices;
-  /// List of triangles, per rdrPass
-  NLMISC::CObjectVector<CRdrPass, false> RdrPass;
+	/// The Raw triangles array
+	CIndexBuffer RawIndices;
+	/// List of triangles, per rdrPass
+	NLMISC::CObjectVector<CRdrPass, false> RdrPass;
 
-  /// What MRM lod this cache represent. -1 if NULL
-  sint LodId;
-  /// To see if same Data than in the CMeshMRMGeom
-  uint MeshDataId;
-  /// the shift value used to compute this indices.
-  uint BaseVertex;
+	/// What MRM lod this cache represent. -1 if NULL
+	sint LodId;
+	/// To see if same Data than in the CMeshMRMGeom
+	uint MeshDataId;
+	/// the shift value used to compute this indices.
+	uint BaseVertex;
 
-  // free up the memory
-  void clearArrays();
+	// free up the memory
+	void clearArrays();
 
-  // ctor
-  CShiftedTriangleCache() {
-    NL_SET_IB_NAME(RawIndices, "CShiftedTriangleCache");
-  }
+	// ctor
+	CShiftedTriangleCache()
+	{
+		NL_SET_IB_NAME(RawIndices, "CShiftedTriangleCache");
+	}
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_SHIFTED_TRIANGLE_CACHE_H
 

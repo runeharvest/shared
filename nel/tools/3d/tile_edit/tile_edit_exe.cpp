@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "stdafx.h"
 #include "tile_edit_exe.h"
 #include "SelectionTerritoire.h"
-#include "stdafx.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -37,9 +37,10 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CTile_edit_exeApp construction
 
-CTile_edit_exeApp::CTile_edit_exeApp() {
-  // TODO: add construction code here,
-  // Place all significant initialization in InitInstance
+CTile_edit_exeApp::CTile_edit_exeApp()
+{
+	// TODO: add construction code here,
+	// Place all significant initialization in InitInstance
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -50,21 +51,23 @@ CTile_edit_exeApp theApp;
 /////////////////////////////////////////////////////////////////////////////
 // CTile_edit_exeApp initialization
 
-BOOL CTile_edit_exeApp::InitInstance() {
-  //	AfxEnableControlContainer();
+BOOL CTile_edit_exeApp::InitInstance()
+{
+	//	AfxEnableControlContainer();
 
-  // Standard initialization
-  // If you are not using these features and wish to reduce the size
-  //  of your final executable, you should remove from the following
-  //  the specific initialization routines you do not need.
+	// Standard initialization
+	// If you are not using these features and wish to reduce the size
+	//  of your final executable, you should remove from the following
+	//  the specific initialization routines you do not need.
 
-  Start();
+	Start();
 
-  // Since the dialog has been closed, return FALSE so that we exit the
-  //  application, rather than start the application's message pump.
-  return FALSE;
+	// Since the dialog has been closed, return FALSE so that we exit the
+	//  application, rather than start the application's message pump.
+	return FALSE;
 }
 
-void CTile_edit_exeApp::OnSaveAs() {
-  // TODO: Add your control notification handler code here
+void CTile_edit_exeApp::OnSaveAs()
+{
+	// TODO: Add your control notification handler code here
 }

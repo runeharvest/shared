@@ -20,8 +20,8 @@
 #define NL_SCENE_META_H
 #include <nel/misc/types_nl.h>
 
-#include <nel/misc/smart_ptr.h>
 #include <nel/misc/sstring.h>
+#include <nel/misc/smart_ptr.h>
 
 #include <nel/3d/material.h>
 
@@ -33,76 +33,74 @@ namespace NL3D {
 class CMaterial;
 }
 
-enum TMesh {
-  TMeshDisabled = 0,
-  TMeshShape = 1,
-  TMeshCollisionInt = 2,
-  TMeshCollisionExt = 3,
-  TMeshZone = 4,
-  TMeshPortal = 5,
-  TMeshCluster = 6,
+enum TMesh
+{
+	TMeshDisabled = 0,
+	TMeshShape = 1,
+	TMeshCollisionInt = 2,
+	TMeshCollisionExt = 3,
+	TMeshZone = 4,
+	TMeshPortal = 5,
+	TMeshCluster = 6,
 };
 
-enum TBone {
-  TBoneAuto = 0,
-  TBoneForce = 1, // Force this node to be part of a skeleton
-  TBoneRoot = 2,  // Make this node the skeleton root, it will be exported using
-                  // the scene name. There can only be one (editor should keep
-                  // track and disable)
+enum TBone
+{
+	TBoneAuto = 0,
+	TBoneForce = 1, // Force this node to be part of a skeleton
+	TBoneRoot = 2, // Make this node the skeleton root, it will be exported using the scene name. There can only be one (editor should keep track and disable)
 };
 
-struct CNodeMeta {
-  CNodeMeta();
+struct CNodeMeta
+{
+	CNodeMeta();
 
-  bool AddToIG; // Add this node to an instance group
-  TMesh ExportMesh;
-  TBone ExportBone;
+	bool AddToIG; // Add this node to an instance group
+	TMesh ExportMesh;
+	TBone ExportBone;
 
-  std::string InstanceShape;
-  std::string InstanceName;
-  std::string InstanceGroupName;
+	std::string InstanceShape;
+	std::string InstanceName;
+	std::string InstanceGroupName;
 
-  bool AutoAnim;
-  // std::vector<NLMISC::CSString> Materials; // In case there's an issue with
-  // nameless materials in some format... Map to material entirely in the meta
-  // editor.
+	bool AutoAnim;
+	// std::vector<NLMISC::CSString> Materials; // In case there's an issue with nameless materials in some format... Map to material entirely in the meta editor.
 
-  void serial(NLMISC::IStream &s);
+	void serial(NLMISC::IStream &s);
 };
 
-enum TSkel {
-  TSkelLocal = 0, // Export smallest skeleton possible from connected bones
-  TSkelRoot =
-      1, // Export skeleton from a direct child node in the scene root node
-  TSkelFull = 2, // Include all connected child nodes in the skeleton
+enum TSkel
+{
+	TSkelLocal = 0, // Export smallest skeleton possible from connected bones
+	TSkelRoot = 1, // Export skeleton from a direct child node in the scene root node
+	TSkelFull = 2, // Include all connected child nodes in the skeleton
 };
 
-typedef std::map<NLMISC::CSString, NLMISC::CSmartPtr<NL3D::CMaterial>>
-    TMaterialMap;
-struct CSceneMeta {
-  CSceneMeta();
+typedef std::map<NLMISC::CSString, NLMISC::CSmartPtr<NL3D::CMaterial>> TMaterialMap;
+struct CSceneMeta
+{
+	CSceneMeta();
 
-  bool ImportShape;
-  bool ImportSkel;
-  bool ImportAnim;
-  bool ImportCmb;
-  bool ImportIG;
+	bool ImportShape;
+	bool ImportSkel;
+	bool ImportAnim;
+	bool ImportCmb;
+	bool ImportIG;
 
-  bool ExportDefaultIG; // Export a default instance group from nodes the scene
-                        // that do not have an instance group set
-  TSkel SkeletonMode;
+	bool ExportDefaultIG; // Export a default instance group from nodes the scene that do not have an instance group set
+	TSkel SkeletonMode;
 
-  std::map<NLMISC::CSString, CNodeMeta> Nodes;
-  TMaterialMap Materials;
+	std::map<NLMISC::CSString, CNodeMeta> Nodes;
+	TMaterialMap Materials;
 
-  const std::string &metaFilePath() const { return m_MetaFilePath; }
+	const std::string &metaFilePath() const { return m_MetaFilePath; }
 
-  bool load(const std::string &filePath);
-  void save();
-  void serial(NLMISC::IStream &s);
+	bool load(const std::string &filePath);
+	void save();
+	void serial(NLMISC::IStream &s);
 
 private:
-  std::string m_MetaFilePath;
+	std::string m_MetaFilePath;
 };
 
 #endif /* NL_SCENE_META_H */

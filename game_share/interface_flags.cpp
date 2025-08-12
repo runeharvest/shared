@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "interface_flags.h"
 #include "stdpch.h"
+#include "interface_flags.h"
 // nel
 #include "nel/misc/string_conversion.h"
 
@@ -25,40 +25,42 @@ using namespace NLMISC;
 namespace INTERFACE_FLAGS {
 // The conversion table
 const CStringConversion<TInterfaceFlag>::CPair stringTable[] = {
-    {"Magic", Magic},
-    {"Combat", Combat},
-    {"Special", Special},
-    {"Commerce", Commerce},
-    {"FaberCreate", FaberCreate},
-    {"FaberRefine", FaberRefine},
-    {"FaberRepair", FaberRepair},
-    {"Tracking", Tracking},
+	{ "Magic", Magic },
+	{ "Combat", Combat },
+	{ "Special", Special },
+	{ "Commerce", Commerce },
+	{ "FaberCreate", FaberCreate },
+	{ "FaberRefine", FaberRefine },
+	{ "FaberRepair", FaberRepair },
+	{ "Tracking", Tracking },
 
-    {"Unknown", Unknown},
+	{ "Unknown", Unknown },
 };
 
-CStringConversion<TInterfaceFlag>
-    conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]),
-               Unknown);
+CStringConversion<TInterfaceFlag> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]), Unknown);
 
 // convert type id to type name string
-const std::string &toString(TInterfaceFlag type) {
-  return conversion.toString(type);
+const std::string &toString(TInterfaceFlag type)
+{
+	return conversion.toString(type);
 }
 
 // convert type name to type enum value
-TInterfaceFlag toInterfaceFlag(const std::string &str) {
-  return conversion.fromString(str);
+TInterfaceFlag toInterfaceFlag(const std::string &str)
+{
+	return conversion.fromString(str);
 }
 
 // convert a skill to an interface flag
-TInterfaceFlag toInterfaceFlag(SKILLS::ESkills skill) {
-  return conversion.fromString(SKILLS::toString(skill));
+TInterfaceFlag toInterfaceFlag(SKILLS::ESkills skill)
+{
+	return conversion.fromString(SKILLS::toString(skill));
 }
 
 // convert an interface flag to a skill
-SKILLS::ESkills toSkill(TInterfaceFlag flag) {
-  return SKILLS::toSkill(conversion.toString(flag));
+SKILLS::ESkills toSkill(TInterfaceFlag flag)
+{
+	return SKILLS::toSkill(conversion.toString(flag));
 }
 
-} // namespace INTERFACE_FLAGS
+} // INTERFACE_FLAGS

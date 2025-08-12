@@ -17,79 +17,79 @@
 #ifndef NL_QUAD_GRID_CLIP_CLUSTER_H
 #define NL_QUAD_GRID_CLIP_CLUSTER_H
 
-#include "nel/3d/clip_trav.h"
-#include "nel/3d/fast_ptr_list.h"
-#include "nel/misc/aabbox.h"
 #include "nel/misc/types_nl.h"
+#include "nel/3d/clip_trav.h"
+#include "nel/misc/aabbox.h"
+#include "nel/3d/fast_ptr_list.h"
 
 namespace NL3D {
 
 class CQuadGridClipCluster;
 
 // ***************************************************************************
-class CQuadGridClipClusterListDist {
+class CQuadGridClipClusterListDist
+{
 public:
-  // An entry for each distance setup.
-  std::vector<CFastPtrList<CTransformShape>> Models;
+	// An entry for each distance setup.
+	std::vector<CFastPtrList<CTransformShape>> Models;
 
 public:
-  // If 0 clipSons of all dist Setup, esle start from minDistSetup
-  void clipSons(uint minDistSetup);
+	// If 0 clipSons of all dist Setup, esle start from minDistSetup
+	void clipSons(uint minDistSetup);
 
-  // insert a model in this listDist at the good place
-  void insertModel(uint distSetup, CTransformShape *model);
+	// insert a model in this listDist at the good place
+	void insertModel(uint distSetup, CTransformShape *model);
 
-  // erase all models and relink to rootCluster
-  void resetSons(CClipTrav *clipTrav);
+	// erase all models and relink to rootCluster
+	void resetSons(CClipTrav *clipTrav);
 };
 
 // ***************************************************************************
-class CQuadGridClipClusterQTreeNode {
+class CQuadGridClipClusterQTreeNode
+{
 public:
-  CQuadGridClipCluster *Owner;
+	CQuadGridClipCluster *Owner;
 
-  // 4 Sons
-  CQuadGridClipClusterQTreeNode *Sons[4];
+	// 4 Sons
+	CQuadGridClipClusterQTreeNode *Sons[4];
 
-  // List of objects inserted in this node
-  CQuadGridClipClusterListDist ListNode;
+	// List of objects inserted in this node
+	CQuadGridClipClusterListDist ListNode;
 
-  // The BBox of this node.
-  NLMISC::CAABBox BBox;
-  NLMISC::CAABBoxExt BBoxExt;
-  bool Empty;
+	// The BBox of this node.
+	NLMISC::CAABBox BBox;
+	NLMISC::CAABBoxExt BBoxExt;
+	bool Empty;
 
-  // Am i the root?
-  bool RootNode;
-  // Am i a leaf?
-  bool LeafNode;
+	// Am i the root?
+	bool RootNode;
+	// Am i a leaf?
+	bool LeafNode;
 
-  // The reference 2D BBox pivot to know how to insert models
-  NLMISC::CAABBox PivotBBox;
+	// The reference 2D BBox pivot to know how to insert models
+	NLMISC::CAABBox PivotBBox;
 
 public:
-  CQuadGridClipClusterQTreeNode();
-  ~CQuadGridClipClusterQTreeNode();
+	CQuadGridClipClusterQTreeNode();
+	~CQuadGridClipClusterQTreeNode();
 
-  // init me and sons
-  void init(CQuadGridClipCluster *owner, uint level, bool rootNode,
-            const NLMISC::CAABBox &pivot);
+	// init me and sons
+	void init(CQuadGridClipCluster *owner, uint level, bool rootNode, const NLMISC::CAABBox &pivot);
 
-  // clip the cluster or his sons
-  void clip(CClipTrav *clipTrav);
+	// clip the cluster or his sons
+	void clip(CClipTrav *clipTrav);
 
-  // No cluster clip
-  void noFrustumClip(CClipTrav *clipTrav);
+	// No cluster clip
+	void noFrustumClip(CClipTrav *clipTrav);
 
-  // insert a model in this listDist at the good place
-  void insertModel(const NLMISC::CAABBox &worldBBox, uint distSetup,
-                   CTransformShape *model);
+	// insert a model in this listDist at the good place
+	void insertModel(const NLMISC::CAABBox &worldBBox, uint distSetup, CTransformShape *model);
 
-  // erase all models and relink to rootCluster
-  void resetSons(CClipTrav *clipTrav);
+	// erase all models and relink to rootCluster
+	void resetSons(CClipTrav *clipTrav);
 
-  // count numchildren and add sons
-  void profileNumChildren(uint distLevel, uint &result) const;
+	// count numchildren and add sons
+	void profileNumChildren(uint distLevel, uint &result) const;
 };
 
 // ***************************************************************************
@@ -99,45 +99,45 @@ public:
  * \author Nevrax France
  * \date 2001
  */
-class CQuadGridClipCluster {
+class CQuadGridClipCluster
+{
 public:
-  // For insertion in the QuadGridClipManager
-  CFastPtrListNode ListNode;
+	// For insertion in the QuadGridClipManager
+	CFastPtrListNode ListNode;
 
 public:
-  /// Constructor
-  CQuadGridClipCluster(uint numDist, float distMax,
-                       const NLMISC::CAABBox &pivot);
-  ~CQuadGridClipCluster();
+	/// Constructor
+	CQuadGridClipCluster(uint numDist, float distMax, const NLMISC::CAABBox &pivot);
+	~CQuadGridClipCluster();
 
-  void addModel(const NLMISC::CAABBox &worldBBox, CTransformShape *model);
-  // NB: the BBox is not recomputed.
-  void removeModel(CTransformShape *model);
+	void addModel(const NLMISC::CAABBox &worldBBox, CTransformShape *model);
+	// NB: the BBox is not recomputed.
+	void removeModel(CTransformShape *model);
 
-  void clip(CClipTrav *clipTrav);
+	void clip(CClipTrav *clipTrav);
 
-  // NB it is possible that profileNumChildren()==0 and isEmpty()==false!!
-  bool isEmpty() const { return _Root.Empty; }
-  const NLMISC::CAABBox &getBBox() const { return _Root.BBox; }
-  sint profileNumChildren(uint distLevel) const;
+	// NB it is possible that profileNumChildren()==0 and isEmpty()==false!!
+	bool isEmpty() const { return _Root.Empty; }
+	const NLMISC::CAABBox &getBBox() const { return _Root.BBox; }
+	sint profileNumChildren(uint distLevel) const;
 
-  void resetSons(CClipTrav *clipTrav);
+	void resetSons(CClipTrav *clipTrav);
 
 protected:
-  friend class CQuadGridClipClusterQTreeNode;
+	friend class CQuadGridClipClusterQTreeNode;
 
-  // The max distance tested
-  float _DistMax;
-  // The number of distance not infinite.
-  uint _NumDist;
-  // _NumDist+1 (the infinite distance)
-  uint _NumDistTotal;
+	// The max distance tested
+	float _DistMax;
+	// The number of distance not infinite.
+	uint _NumDist;
+	// _NumDist+1 (the infinite distance)
+	uint _NumDistTotal;
 
-  // The Root of QuadTree.
-  CQuadGridClipClusterQTreeNode _Root;
+	// The Root of QuadTree.
+	CQuadGridClipClusterQTreeNode _Root;
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_QUAD_GRID_CLIP_CLUSTER_H
 

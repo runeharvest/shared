@@ -17,53 +17,59 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "weather_manager.h"
-#include "nel/misc/path.h"
 #include "stdpch.h"
 #include "weather_setup_sheet_base.h"
+#include "weather_manager.h"
+#include "nel/misc/path.h"
 
 using namespace NLMISC;
 using namespace std;
 
 //================================================================================================
-void CWeatherManager::init(
-    const std::vector<const CWeatherSetupSheetBase *> &sheets,
-    const std::vector<std::string> &sheetNames) {
-  nlassert(sheets.size() == sheetNames.size());
-  for (uint k = 0; k < sheets.size(); ++k) {
-    if (sheets[k]) {
-      std::string id = NLMISC::toLowerAscii(
-          NLMISC::CFile::getFilenameWithoutExtension(sheetNames[k]));
-      CWeatherSetup *ws = newWeatherSetup();
-      if (ws) {
-        if (_WeatherSetupMap[id] != 0) {
-          nlwarning("Duplicated weather setup : %s", id.c_str());
-        }
-        _WeatherSetupMap[id] = ws;
-        (CCloudStateSheet &)ws->CloudState =
-            sheets[k]->CloudState; // copy parent obj part
-        (CWeatherStateSheet &)ws->WeatherState = sheets[k]->WeatherState;
-        ws->SetupName = sheets[k]->SetupName;
-        // copy the setup name in the weather state for blending ops
-        ws->WeatherState.BestSetupName = ws->SetupName;
-        // do additionnal init if needed
-        setupLoaded(ws);
-      }
-    }
-  }
+void CWeatherManager::init(const std::vector<const CWeatherSetupSheetBase *> &sheets, const std::vector<std::string> &sheetNames)
+{
+	nlassert(sheets.size() == sheetNames.size());
+	for (uint k = 0; k < sheets.size(); ++k)
+	{
+		if (sheets[k])
+		{
+			std::string id = NLMISC::toLowerAscii(NLMISC::CFile::getFilenameWithoutExtension(sheetNames[k]));
+			CWeatherSetup *ws = newWeatherSetup();
+			if (ws)
+			{
+				if (_WeatherSetupMap[id] != 0)
+				{
+					nlwarning("Duplicated weather setup : %s", id.c_str());
+				}
+				_WeatherSetupMap[id] = ws;
+				(CCloudStateSheet &)ws->CloudState = sheets[k]->CloudState; // copy parent obj part
+				(CWeatherStateSheet &)ws->WeatherState = sheets[k]->WeatherState;
+				ws->SetupName = sheets[k]->SetupName;
+				// copy the setup name in the weather state for blending ops
+				ws->WeatherState.BestSetupName = ws->SetupName;
+				// do additionnal init if needed
+				setupLoaded(ws);
+			}
+		}
+	}
 }
 
 //================================================================================================
-CWeatherManager::~CWeatherManager() { release(); }
+CWeatherManager::~CWeatherManager()
+{
+	release();
+}
 
 //================================================================================================
-void CWeatherManager::release() { NLMISC::contReset(_WeatherSetupMap); }
+void CWeatherManager::release()
+{
+	NLMISC::contReset(_WeatherSetupMap);
+}
 //================================================================================================
-const CWeatherSetup *CWeatherManager::getSetup(const char *name) const {
-  std::string id =
-      NLMISC::toLowerAscii(CFile::getFilenameWithoutExtension(name));
-  TWeatherSetupMap::const_iterator it = _WeatherSetupMap.find(id);
-  if (it == _WeatherSetupMap.end())
-    return NULL;
-  return it->second;
+const CWeatherSetup *CWeatherManager::getSetup(const char *name) const
+{
+	std::string id = NLMISC::toLowerAscii(CFile::getFilenameWithoutExtension(name));
+	TWeatherSetupMap::const_iterator it = _WeatherSetupMap.find(id);
+	if (it == _WeatherSetupMap.end()) return NULL;
+	return it->second;
 }

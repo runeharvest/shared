@@ -16,8 +16,8 @@
 
 #include "std3d.h"
 
-#include "nel/3d/lod_character_shape.h"
 #include "nel/3d/lod_character_shape_bank.h"
+#include "nel/3d/lod_character_shape.h"
 
 using namespace NLMISC;
 using namespace std;
@@ -29,81 +29,92 @@ using namespace std;
 namespace NL3D {
 
 // ***************************************************************************
-CLodCharacterShapeBank::CLodCharacterShapeBank() {}
-
-// ***************************************************************************
-void CLodCharacterShapeBank::reset() {
-  contReset(_ShapeArray);
-  contReset(_ShapeMap);
+CLodCharacterShapeBank::CLodCharacterShapeBank()
+{
 }
 
 // ***************************************************************************
-uint32 CLodCharacterShapeBank::addShape() {
-  // Alloc a new shape
-  _ShapeArray.resize(_ShapeArray.size() + 1);
-
-  return (uint32)_ShapeArray.size() - 1;
+void CLodCharacterShapeBank::reset()
+{
+	contReset(_ShapeArray);
+	contReset(_ShapeMap);
 }
 
 // ***************************************************************************
-sint32 CLodCharacterShapeBank::getShapeIdByName(const std::string &name) const {
-  CstItStrIdMap it = _ShapeMap.find(name);
-  if (it == _ShapeMap.end())
-    return -1;
-  else
-    return it->second;
+uint32 CLodCharacterShapeBank::addShape()
+{
+	// Alloc a new shape
+	_ShapeArray.resize(_ShapeArray.size() + 1);
+
+	return (uint32)_ShapeArray.size() - 1;
 }
 
 // ***************************************************************************
-const CLodCharacterShape *
-CLodCharacterShapeBank::getShape(uint32 shapeId) const {
-  if (shapeId >= _ShapeArray.size())
-    return NULL;
-  else
-    return &_ShapeArray[shapeId];
+sint32 CLodCharacterShapeBank::getShapeIdByName(const std::string &name) const
+{
+	CstItStrIdMap it = _ShapeMap.find(name);
+	if (it == _ShapeMap.end())
+		return -1;
+	else
+		return it->second;
 }
 
 // ***************************************************************************
-CLodCharacterShape *CLodCharacterShapeBank::getShapeFullAcces(uint32 shapeId) {
-  if (shapeId >= _ShapeArray.size())
-    return NULL;
-  else
-    return &_ShapeArray[shapeId];
+const CLodCharacterShape *CLodCharacterShapeBank::getShape(uint32 shapeId) const
+{
+	if (shapeId >= _ShapeArray.size())
+		return NULL;
+	else
+		return &_ShapeArray[shapeId];
 }
 
 // ***************************************************************************
-bool CLodCharacterShapeBank::compile() {
-  bool error = false;
-
-  // clear the map
-  contReset(_ShapeMap);
-
-  // build the map
-  for (uint i = 0; i < _ShapeArray.size(); i++) {
-    const string &name = _ShapeArray[i].getName();
-    ItStrIdMap it = _ShapeMap.find(name);
-    if (it == _ShapeMap.end())
-      _ShapeMap.insert(make_pair(name, i));
-    else {
-      error = true;
-      nlwarning("Found a CLod with same name in the bank: %s", name.c_str());
-    }
-  }
-
-  return error;
+CLodCharacterShape *CLodCharacterShapeBank::getShapeFullAcces(uint32 shapeId)
+{
+	if (shapeId >= _ShapeArray.size())
+		return NULL;
+	else
+		return &_ShapeArray[shapeId];
 }
 
 // ***************************************************************************
-uint CLodCharacterShapeBank::getNumShapes() const {
-  return (uint)_ShapeArray.size();
+bool CLodCharacterShapeBank::compile()
+{
+	bool error = false;
+
+	// clear the map
+	contReset(_ShapeMap);
+
+	// build the map
+	for (uint i = 0; i < _ShapeArray.size(); i++)
+	{
+		const string &name = _ShapeArray[i].getName();
+		ItStrIdMap it = _ShapeMap.find(name);
+		if (it == _ShapeMap.end())
+			_ShapeMap.insert(make_pair(name, i));
+		else
+		{
+			error = true;
+			nlwarning("Found a CLod with same name in the bank: %s", name.c_str());
+		}
+	}
+
+	return error;
 }
 
 // ***************************************************************************
-void CLodCharacterShapeBank::serial(NLMISC::IStream &f) {
-  (void)f.serialVersion(0);
-
-  f.serialCont(_ShapeArray);
-  f.serialCont(_ShapeMap);
+uint CLodCharacterShapeBank::getNumShapes() const
+{
+	return (uint)_ShapeArray.size();
 }
 
-} // namespace NL3D
+// ***************************************************************************
+void CLodCharacterShapeBank::serial(NLMISC::IStream &f)
+{
+	(void)f.serialVersion(0);
+
+	f.serialCont(_ShapeArray);
+	f.serialCont(_ShapeMap);
+}
+
+} // NL3D

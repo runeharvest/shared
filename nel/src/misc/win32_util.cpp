@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "stdmisc.h"
 #include "nel/misc/win32_util.h"
 #include "nel/misc/i18n.h"
-#include "stdmisc.h"
 
 #ifdef NL_OS_WINDOWS
 
@@ -27,51 +27,54 @@
 namespace NLMISC {
 
 //*************************************************************************************
-void CWin32Util::localizeWindow(HWND wnd) {
-  if (!wnd)
-    return;
-  sint textLength = GetWindowTextLengthW(wnd);
-  if (textLength > 0) {
-    wchar_t str[1024];
-    GetWindowTextW(wnd, str, 1024);
-    std::string winText = wideToUtf8(str);
-    if (CI18N::hasTranslation(winText)) {
-      if (!SetWindowTextW(wnd, (const WCHAR *)CI18N::get(winText).c_str())) {
-        nlwarning("SetWindowText failed: %s",
-                  formatErrorMessage(getLastError()).c_str());
-      }
-    }
-  }
-  HWND currSon = GetWindow(wnd, GW_CHILD);
-  if (currSon) {
-    HWND lastSon = GetWindow(currSon, GW_HWNDLAST);
-    for (;;) {
-      localizeWindow(currSon);
-      if (currSon == lastSon)
-        break;
-      currSon = GetWindow(currSon, GW_HWNDNEXT);
-    }
-  }
+void CWin32Util::localizeWindow(HWND wnd)
+{
+	if (!wnd) return;
+	sint textLength = GetWindowTextLengthW(wnd);
+	if (textLength > 0)
+	{
+		wchar_t str[1024];
+		GetWindowTextW(wnd, str, 1024);
+		std::string winText = wideToUtf8(str);
+		if (CI18N::hasTranslation(winText))
+		{
+			if (!SetWindowTextW(wnd, (const WCHAR *)CI18N::get(winText).c_str()))
+			{
+				nlwarning("SetWindowText failed: %s", formatErrorMessage(getLastError()).c_str());
+			}
+		}
+	}
+	HWND currSon = GetWindow(wnd, GW_CHILD);
+	if (currSon)
+	{
+		HWND lastSon = GetWindow(currSon, GW_HWNDLAST);
+		for (;;)
+		{
+			localizeWindow(currSon);
+			if (currSon == lastSon) break;
+			currSon = GetWindow(currSon, GW_HWNDNEXT);
+		}
+	}
 }
 
 //*************************************************************************************
-void CWin32Util::appendChildWindows(HWND parentWnd,
-                                    std::vector<HWND> &childWindows) {
-  if (!parentWnd)
-    return;
-  HWND currSon = GetWindow(parentWnd, GW_CHILD);
-  if (currSon) {
-    HWND lastSon = GetWindow(currSon, GW_HWNDLAST);
-    for (;;) {
-      childWindows.push_back(currSon);
-      appendChildWindows(currSon, childWindows);
-      if (currSon == lastSon)
-        break;
-      currSon = GetWindow(currSon, GW_HWNDNEXT);
-    }
-  }
+void CWin32Util::appendChildWindows(HWND parentWnd, std::vector<HWND> &childWindows)
+{
+	if (!parentWnd) return;
+	HWND currSon = GetWindow(parentWnd, GW_CHILD);
+	if (currSon)
+	{
+		HWND lastSon = GetWindow(currSon, GW_HWNDLAST);
+		for (;;)
+		{
+			childWindows.push_back(currSon);
+			appendChildWindows(currSon, childWindows);
+			if (currSon == lastSon) break;
+			currSon = GetWindow(currSon, GW_HWNDNEXT);
+		}
+	}
 }
 
-} // namespace NLMISC
+} // NLMISC
 
 #endif

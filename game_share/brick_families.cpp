@@ -16,8 +16,8 @@
 
 #include "stdpch.h"
 
-#include "brick_families.h"
 #include "nel/misc/debug.h"
+#include "brick_families.h"
 // nel
 #include "nel/misc/string_conversion.h"
 
@@ -399,8 +399,7 @@ NL_STRING_CONVERSION_TABLE_ENTRY(BCMTCA)
 NL_STRING_CONVERSION_TABLE_ENTRY(BCTTCA)
 NL_STRING_CONVERSION_TABLE_ENTRY(BCZTCA)
 
-// Faber Raw material // DO NOT REMOVE THIS !!! faber raw materials is not a
-// bricks !
+// Faber Raw material // DO NOT REMOVE THIS !!! faber raw materials is not a bricks !
 NL_STRING_CONVERSION_TABLE_ENTRY(FARawMaterial)
 
 // Faber Tools // DO NOT REMOVE THIS !!! faber tools is not a bricks !
@@ -569,51 +568,51 @@ NL_END_STRING_CONVERSION_TABLE(TBrickFamily, BrickFamilyConversion, Unknown)
 //-----------------------------------------------
 // toSBrickFamily :
 //-----------------------------------------------
-TBrickFamily toSBrickFamily(const std::string &str) {
-  //		uint16 nb = BrickFamilyConversion.getNbPairs();
-  //		nlassert( uint16(NbFamilies+1) == nb - 1 );
-  return BrickFamilyConversion.fromString(str);
+TBrickFamily toSBrickFamily(const std::string &str)
+{
+	//		uint16 nb = BrickFamilyConversion.getNbPairs();
+	//		nlassert( uint16(NbFamilies+1) == nb - 1 );
+	return BrickFamilyConversion.fromString(str);
 } // toBrickFamily //
 
 //-----------------------------------------------
 // toString :
 //-----------------------------------------------
-const std::string &toString(TBrickFamily family) {
-  return BrickFamilyConversion.toString(family);
+const std::string &toString(TBrickFamily family)
+{
+	return BrickFamilyConversion.toString(family);
 } // toString //
 
 //-----------------------------------------------
 // brickType :
 //-----------------------------------------------
-BRICK_TYPE::EBrickType brickType(TBrickFamily rootFamily) {
-  if (rootFamily >= BeginCombat && rootFamily <= EndCombat)
-    return BRICK_TYPE::COMBAT;
-  else if (rootFamily >= BeginMagic && rootFamily <= EndMagic)
-    return BRICK_TYPE::MAGIC;
-  else if (rootFamily >= BeginFaber && rootFamily <= EndFaber)
-    return BRICK_TYPE::FABER;
-  else if (rootFamily >= BeginHarvest && rootFamily <= EndHarvest)
-    return BRICK_TYPE::HARVEST;
-  else if (rootFamily >= BeginForageProspection &&
-           rootFamily <= EndForageProspection)
-    return BRICK_TYPE::FORAGE_PROSPECTION;
-  else if (rootFamily >= BeginForageExtraction &&
-           rootFamily <= EndForageExtraction)
-    return BRICK_TYPE::FORAGE_EXTRACTION;
-  else if (rootFamily >= BeginSpecialPowers && rootFamily <= EndSpecialPowers)
-    return BRICK_TYPE::SPECIAL_POWER;
-  else if (rootFamily >= BeginProcEnchantement &&
-           rootFamily <= EndProcEnchantement)
-    return BRICK_TYPE::PROC_ENCHANTEMENT;
-  else if (rootFamily >= BeginTraining && rootFamily <= EndTraining)
-    return BRICK_TYPE::TRAINING;
-  else if (rootFamily >= BeginTimedActions && rootFamily <= EndTimedActions)
-    return BRICK_TYPE::TIMED_ACTION;
-  else if (rootFamily >= BeginBonus && rootFamily <= EndBonus)
-    return BRICK_TYPE::BONUS;
-  else
-    // ADD HERE NEW BRICK TYPES
-    return BRICK_TYPE::UNKNOWN;
+BRICK_TYPE::EBrickType brickType(TBrickFamily rootFamily)
+{
+	if (rootFamily >= BeginCombat && rootFamily <= EndCombat)
+		return BRICK_TYPE::COMBAT;
+	else if (rootFamily >= BeginMagic && rootFamily <= EndMagic)
+		return BRICK_TYPE::MAGIC;
+	else if (rootFamily >= BeginFaber && rootFamily <= EndFaber)
+		return BRICK_TYPE::FABER;
+	else if (rootFamily >= BeginHarvest && rootFamily <= EndHarvest)
+		return BRICK_TYPE::HARVEST;
+	else if (rootFamily >= BeginForageProspection && rootFamily <= EndForageProspection)
+		return BRICK_TYPE::FORAGE_PROSPECTION;
+	else if (rootFamily >= BeginForageExtraction && rootFamily <= EndForageExtraction)
+		return BRICK_TYPE::FORAGE_EXTRACTION;
+	else if (rootFamily >= BeginSpecialPowers && rootFamily <= EndSpecialPowers)
+		return BRICK_TYPE::SPECIAL_POWER;
+	else if (rootFamily >= BeginProcEnchantement && rootFamily <= EndProcEnchantement)
+		return BRICK_TYPE::PROC_ENCHANTEMENT;
+	else if (rootFamily >= BeginTraining && rootFamily <= EndTraining)
+		return BRICK_TYPE::TRAINING;
+	else if (rootFamily >= BeginTimedActions && rootFamily <= EndTimedActions)
+		return BRICK_TYPE::TIMED_ACTION;
+	else if (rootFamily >= BeginBonus && rootFamily <= EndBonus)
+		return BRICK_TYPE::BONUS;
+	else
+		// ADD HERE NEW BRICK TYPES
+		return BRICK_TYPE::UNKNOWN;
 } // brickType //
 
-}; // namespace BRICK_FAMILIES
+}; // BRICK_FAMILIES

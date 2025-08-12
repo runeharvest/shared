@@ -20,16 +20,16 @@
 #ifndef NL_FONT_MANAGER_H
 #define NL_FONT_MANAGER_H
 
-#include "nel/3d/material.h"
-#include "nel/3d/texture.h"
-#include "nel/3d/texture_font.h"
-#include "nel/misc/smart_ptr.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/smart_ptr.h"
 #include "nel/misc/utf_string_view.h"
+#include "nel/3d/texture.h"
+#include "nel/3d/material.h"
+#include "nel/3d/texture_font.h"
 
-#include <functional>
-#include <list>
 #include <map>
+#include <list>
+#include <functional>
 
 namespace NL3D {
 
@@ -51,125 +51,143 @@ struct CComputedString;
  * \author Nevrax France
  * \date 2000
  */
-class CFontManager {
-  uint32 _MemSize;
-  uint32 _MaxMemory;
-  uint32 _NbChar;
+class CFontManager
+{
+	uint32 _MemSize;
+	uint32 _MaxMemory;
+	uint32 _NbChar;
 
-  CSmartPtr<CMaterial> _MatFont;
-  CSmartPtr<CTextureFont> _TexFont;
+	CSmartPtr<CMaterial> _MatFont;
+	CSmartPtr<CTextureFont> _TexFont;
 
-  // Keep track number of textures created to properly report cache version
-  uint32 _TexCacheNr;
+	// Keep track number of textures created to properly report cache version
+	uint32 _TexCacheNr;
 
 public:
-  /**
-   * Default constructor
-   */
-  CFontManager() {
-    _MemSize = 0;
-    _MaxMemory = 1000000;
-    _NbChar = 0;
-    _MatFont = NULL;
-    _TexFont = NULL;
-    _TexCacheNr = 0;
-  }
+	/**
+	 * Default constructor
+	 */
+	CFontManager()
+	{
+		_MemSize = 0;
+		_MaxMemory = 1000000;
+		_NbChar = 0;
+		_MatFont = NULL;
+		_TexFont = NULL;
+		_TexCacheNr = 0;
+	}
 
-  /**
-   * define maximum memory allowed
-   * \param maximum memory
-   */
-  void setMaxMemory(uint32 mem) { _MaxMemory = mem; }
+	/**
+	 * define maximum memory allowed
+	 * \param maximum memory
+	 */
+	void setMaxMemory(uint32 mem) { _MaxMemory = mem; }
 
-  /**
-   * gives maximum memory allowed
-   * \return maximum memory
-   */
-  uint32 getMaxMemory() const { return _MaxMemory; }
+	/**
+	 * gives maximum memory allowed
+	 * \return maximum memory
+	 */
+	uint32 getMaxMemory() const { return _MaxMemory; }
 
-  /**
-   * manages fonts in memory using CSmartPtr
-   * \param character descriptor
-   * \return CSmartPtr to a font texture
-   */
-  CMaterial *getFontMaterial();
+	/**
+	 * manages fonts in memory using CSmartPtr
+	 * \param character descriptor
+	 * \return CSmartPtr to a font texture
+	 */
+	CMaterial *getFontMaterial();
 
-  /**
-   * Compute primitive blocks and materials of each character of
-   * the string.
-   * \param s string to compute
-   * \param fontGen font generator
-   * \param color primitive blocks color
-   * \param fontSize font size
-   * \param embolden font style bold
-   * \param oblique font style slanted (italic)
-   * \param desc display descriptor (screen size, font ratio)
-   * \param output computed string
-   * \param keep800x600Ratio true if you want that CFontManager look at Driver
-   * window size, and resize fontSize so it keeps same size...
-   */
-  /*
-  void computeString (const std::string& s,
-                      CFontGenerator *fontGen,
-                      const NLMISC::CRGBA &color,
-                      uint32 fontSize,
-                      bool embolden,
-                      bool oblique,
-                      IDriver *driver,
-                      CComputedString& output,
-                      bool	keep800x600Ratio= true);
-                      */
+	/**
+	 * Compute primitive blocks and materials of each character of
+	 * the string.
+	 * \param s string to compute
+	 * \param fontGen font generator
+	 * \param color primitive blocks color
+	 * \param fontSize font size
+	 * \param embolden font style bold
+	 * \param oblique font style slanted (italic)
+	 * \param desc display descriptor (screen size, font ratio)
+	 * \param output computed string
+	 * \param keep800x600Ratio true if you want that CFontManager look at Driver window size, and resize fontSize so it keeps same size...
+	 */
+	/*
+	void computeString (const std::string& s,
+	                    CFontGenerator *fontGen,
+	                    const NLMISC::CRGBA &color,
+	                    uint32 fontSize,
+	                    bool embolden,
+	                    bool oblique,
+	                    IDriver *driver,
+	                    CComputedString& output,
+	                    bool	keep800x600Ratio= true);
+	                    */
 
-  /**
-   * Same as computeString but works with a unicode string (ucstring)
-   */
-  void computeString(NLMISC::CUtfStringView sv, CFontGenerator *fontGen,
-                     const NLMISC::CRGBA &color, uint32 fontSize, bool embolden,
-                     bool oblique, IDriver *driver, CComputedString &output,
-                     bool keep800x600Ratio = true);
+	/**
+	 * Same as computeString but works with a unicode string (ucstring)
+	 */
+	void computeString(NLMISC::CUtfStringView sv,
+	    CFontGenerator *fontGen,
+	    const NLMISC::CRGBA &color,
+	    uint32 fontSize,
+	    bool embolden,
+	    bool oblique,
+	    IDriver *driver,
+	    CComputedString &output,
+	    bool keep800x600Ratio = true);
 
-  /**
-   * Same as computeString but do not make vertex buffers and primitives
-   */
-  void computeStringInfo(NLMISC::CUtfStringView sv, size_t len,
-                         CFontGenerator *fontGen, const NLMISC::CRGBA &color,
-                         uint32 fontSize, bool embolden, bool oblique,
-                         IDriver *driver, CComputedString &output,
-                         bool keep800x600Ratio = true);
+	/**
+	 * Same as computeString but do not make vertex buffers and primitives
+	 */
+	void computeStringInfo(NLMISC::CUtfStringView sv,
+	    size_t len,
+	    CFontGenerator *fontGen,
+	    const NLMISC::CRGBA &color,
+	    uint32 fontSize,
+	    bool embolden,
+	    bool oblique,
+	    IDriver *driver,
+	    CComputedString &output,
+	    bool keep800x600Ratio = true);
 
-  /**
-   * Same as computeString but do not make vertex buffers and primitives
-   */
-  void computeStringInfo(NLMISC::CUtfStringView sv, CFontGenerator *fontGen,
-                         const NLMISC::CRGBA &color, uint32 fontSize,
-                         bool embolden, bool oblique, IDriver *driver,
-                         CComputedString &output, bool keep800x600Ratio = true);
+	/**
+	 * Same as computeString but do not make vertex buffers and primitives
+	 */
+	void computeStringInfo(NLMISC::CUtfStringView sv,
+	    CFontGenerator *fontGen,
+	    const NLMISC::CRGBA &color,
+	    uint32 fontSize,
+	    bool embolden,
+	    bool oblique,
+	    IDriver *driver,
+	    CComputedString &output,
+	    bool keep800x600Ratio = true);
 
-  /**
-   * return a string given information about the cache
-   */
-  std::string getCacheInformation() const;
+	/**
+	 * return a string given information about the cache
+	 */
+	std::string getCacheInformation() const;
 
-  void dumpCache(const char *filename) {
-    if (_TexFont)
-      _TexFont->dumpTextureFont(filename);
-  }
+	void dumpCache(const char *filename)
+	{
+		if (_TexFont)
+			_TexFont->dumpTextureFont(filename);
+	}
 
-  /**
-   * invalidate the texture when the text context has been modified
-   */
-  void invalidate();
+	/**
+	 * invalidate the texture when the text context has been modified
+	 */
+	void invalidate();
 
-  // get font atlas rebuild count
-  uint32 getCacheVersion() const {
-    if (_TexFont)
-      return (_TexFont->getCacheVersion() << 16) + _TexCacheNr;
+	// get font atlas rebuild count
+	uint32 getCacheVersion() const
+	{
+		if (_TexFont)
+			return (_TexFont->getCacheVersion() << 16) + _TexCacheNr;
 
-    return 0;
-  }
+		return 0;
+	}
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_FONT_MANAGER_H
 

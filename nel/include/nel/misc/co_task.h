@@ -35,10 +35,11 @@ struct TCoTaskData;
 
 /** The coroutine task class encapsulate the coroutines detail and provide
  *	an easy to use simple master/slave coroutine model.
- *	The concept is that the main thread is the 'master' (or parent)
- *coroutine and that the task is run by a slave coroutine. Therefore, you can
- *'start' the task, 'yield' the focus from the task to it's parent, 'resume' the
- *task from the parent, check for termination of the task, and/or wait for it.
+ *	The concept is that the main thread is the 'master' (or parent) coroutine
+ *	and that the task is run by a slave coroutine.
+ *	Therefore, you can 'start' the task, 'yield' the focus from the task to it's
+ *	parent, 'resume' the task from the parent, check for termination of the task,
+ *	and/or wait for it.
  *
  *	Note that for safety reasons, the CCoTask do not provide mean to for
  *	the termination of the task. Like for threads, 'killing' a task while
@@ -51,20 +52,18 @@ struct TCoTaskData;
  *
  *	If you don't know about coroutines, a short description follow :
  *		* Coroutines are some sort of multi-threading
- *		* Coroutines are not preemptive, it's the application code that
- *choose task swapping point
+ *		* Coroutines are not preemptive, it's the application code that choose
+ *			task swapping point
  *		* thus, coroutines don't need heavy synchronization (like mutex)
- *		* coroutines are said to be lighter than thread during context
- *switch
- *		* coroutines don't replace preemptives threads, they have their
- *own application domain
+ *		* coroutines are said to be lighter than thread during context switch
+ *		* coroutines don't replace preemptives threads, they have their own application domain
  *
  *
- *	Please note that this class is really simple (compared to what can be
- *done with coroutines) but match the need for a very simple mean to have two
- *task running side by side with predefined sync point. You can build the same
- *think using thread and mutex, but it will be a lot more complex to build and
- *debug.
+ *	Please note that this class is really simple (compared to what can be done with coroutines)
+ *	but match the need for a very simple mean to have two task running side by side with
+ *	predefined sync point.
+ *	You can build the same think using thread and mutex, but it will be a lot more complex
+ *	to build and debug.
  *
  *  A simple sample :
  *	CMyTask : public CCoTask
@@ -114,89 +113,96 @@ struct TCoTaskData;
  *
  *
  */
-class CCoTask {
-  /// Flag stating if the task is started or not
-  bool _Started;
-  /// Flag statig if the task should terminate as soon as possible
-  bool _TerminationRequested;
-  /// Flag stating if the task is finished (run() have returned)
-  bool _Finished;
+class CCoTask
+{
+	/// Flag stating if the task is started or not
+	bool _Started;
+	/// Flag statig if the task should terminate as soon as possible
+	bool _TerminationRequested;
+	/// Flag stating if the task is finished (run() have returned)
+	bool _Finished;
 
-  /// Pointer on internal platform specific data
-  TCoTaskData *_PImpl;
+	/// Pointer on internal platform specific data
+	TCoTaskData *_PImpl;
 
-  friend struct TCoTaskData;
+	friend struct TCoTaskData;
 
-  /// Coroutine bootstrap function
-  void start();
+	/// Coroutine bootstrap function
+	void start();
 
 public:
-  /** Get the current task object.
-   *	Return NULL if the current thread context is not in a CCoTask coroutine
-   */
-  static CCoTask *getCurrentTask();
+	/** Get the current task object.
+	 *	Return NULL if the current thread context is not in a CCoTask coroutine
+	 */
+	static CCoTask *getCurrentTask();
 
-  /** Constructor with stack size for the task.
-   *	The default stack size is 8 KB because it sound cool and because
-   *	I found many coroutine code that use a 8 KB stack.
-   *	If you need to start many (more than some 10th) tasks with very
-   *	little stack usage, you could reduce you coroutine memory overhead
-   *	by lowering the stack size.
-   */
-  CCoTask(uint stackSize = NL_TASK_STACK_SIZE);
-  /** Destructor. If the task is running, set the termination requested flag
-   *	and resume the task until it terminate.
-   *	If you task is badly designed, your destructor will never return,
-   *waiting indefinitely for the task to terminate.
-   */
-  virtual ~CCoTask();
+	/** Constructor with stack size for the task.
+	 *	The default stack size is 8 KB because it sound cool and because
+	 *	I found many coroutine code that use a 8 KB stack.
+	 *	If you need to start many (more than some 10th) tasks with very
+	 *	little stack usage, you could reduce you coroutine memory overhead
+	 *	by lowering the stack size.
+	 */
+	CCoTask(uint stackSize = NL_TASK_STACK_SIZE);
+	/** Destructor. If the task is running, set the termination requested flag
+	 *	and resume the task until it terminate.
+	 *	If you task is badly designed, your destructor will never return, waiting
+	 *	indefinitely for the task to terminate.
+	 */
+	virtual ~CCoTask();
 
-  /* Start or resume task execution.
-   * If called from the current task context, do nothing (execution continue in
-   * the current task)
-   */
-  void resume();
+	/* Start or resume task execution.
+	 * If called from the current task context, do nothing (execution continue in the
+	 * current task)
+	 */
+	void resume();
 
-  /// to call from the task, yield execution focus to parent task
-  void yield();
+	/// to call from the task, yield execution focus to parent task
+	void yield();
 
-  /** Check if task is started.
-   *	A task is not started until you call resume().
-   */
-  bool isStarted() { return _Started; }
-  /// check for task completion
-  bool isFinished() { return _Finished; }
+	/** Check if task is started.
+	 *	A task is not started until you call resume().
+	 */
+	bool isStarted()
+	{
+		return _Started;
+	}
+	/// check for task completion
+	bool isFinished()
+	{
+		return _Finished;
+	}
 
-  /// parent task ask for task ending (run function should check this and
-  /// terminate asap)
-  void requestTerminate();
+	/// parent task ask for task ending (run function should check this and terminate asap)
+	void requestTerminate();
 
-  /** check if termination request have been called (mainly used by task user
-   *code to check for terminating the task on request).
-   */
-  bool isTerminationRequested() { return _TerminationRequested; }
+	/** check if termination request have been called (mainly used by task user code
+	 *	to check for terminating the task on request).
+	 */
+	bool isTerminationRequested()
+	{
+		return _TerminationRequested;
+	}
 
-  /** Called by parent task, wait until the task terminate. Note obviously that
-   *this call can lead to an infinite wait if the task function is not willing
-   *to terminate itself.
-   */
-  void wait();
+	/** Called by parent task, wait until the task terminate. Note obviously that this call can lead to an
+	 *	infinite wait if the task function is not willing to terminate itself.
+	 */
+	void wait();
 
-  /** the run method to implement by the derived class. This is where
-   *	you put the co routine code.
-   *	Coroutine terminate when this method return.
-   */
-  virtual void run() = 0;
+	/** the run method to implement by the derived class. This is where
+	 *	you put the co routine code.
+	 *	Coroutine terminate when this method return.
+	 */
+	virtual void run() = 0;
 
-  /** Wait (using 'yield') until some amount of time (in milliseconds) has
-   * ellapsed, or until termination is requested. This should be called inside
-   * this task 'run()', else an assertion is raised
-   */
-  void sleep(uint milliseconds);
+	/** Wait (using 'yield') until some amount of time (in milliseconds) has ellapsed, or until termination is requested.
+	 *  This should be called inside this task 'run()', else an assertion is raised
+	 */
+	void sleep(uint milliseconds);
 
-  /** Release internal instance.
-   */
-  static void releaseInstance();
+	/** Release internal instance.
+	 */
+	static void releaseInstance();
 };
 
 } // namespace NLMISC

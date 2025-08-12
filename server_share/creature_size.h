@@ -21,22 +21,22 @@
 
 namespace CREATURE_SIZE {
 // Size
-enum ECreatureSize {
-  SMALL = 0,
-  HOMIN,
-  BIG,
+enum ECreatureSize
+{
+	SMALL = 0,
+	HOMIN,
+	BIG,
 
-  // the number of size existing
-  NB_SIZE,
+	// the number of size existing
+	NB_SIZE,
 
-  UNKNOWN,
+	UNKNOWN,
 };
 
 /**
  * get the ECreatureSize size from the input string
  * \param str the input string
- * \return the ECreatureSize associated to this string (UNKNOWN if the string
- * cannot be interpreted)
+ * \return the ECreatureSize associated to this string (UNKNOWN if the string cannot be interpreted)
  */
 ECreatureSize stringToCreatureSize(const std::string &str);
 
@@ -47,7 +47,7 @@ ECreatureSize stringToCreatureSize(const std::string &str);
  */
 const std::string &creatureSizeToString(ECreatureSize size);
 
-}; // namespace CREATURE_SIZE
+}; // CREATURE_SIZE
 
 #endif // RY_CREATURE_SIZE_H
 /* End of creature_size.h */

@@ -19,24 +19,24 @@
 
 namespace RANGE_WEAPON_TYPE {
 
-enum TRangeWeaponType {
-  Generic = 0,
-  Gatlin,
-  Missile,
-  RangeWeaponTypeCount,
-  Unknown = RangeWeaponTypeCount
+enum TRangeWeaponType
+{
+	Generic = 0,
+	Gatlin,
+	Missile,
+	RangeWeaponTypeCount,
+	Unknown = RangeWeaponTypeCount
 };
 
 /**
  * get the right range weapon type from the input string
  * \param str the input string
- * \return the TRangeWeaponType associated to this string (UNKNOWN if the string
- * cannot be interpreted)
+ * \return the TRangeWeaponType associated to this string (UNKNOWN if the string cannot be interpreted)
  */
 TRangeWeaponType stringToRangeWeaponType(const std::string &str);
 
 std::string toString(TRangeWeaponType type);
 
-} // namespace RANGE_WEAPON_TYPE
+} // RANGE_WEAPON_TYPE
 
 #endif

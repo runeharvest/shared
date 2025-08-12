@@ -27,76 +27,77 @@
 
 using NLMISC::CRGBA;
 
-#include "color_button.h"
 #include "edit_attrib_dlg.h"
-#include "edit_ex.h"
+#include "color_button.h"
 #include "ps_wrapper.h"
+#include "edit_ex.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CColorEdit dialog
 
 class CColorButton;
 
-class CColorEdit : public CEditAttribDlg, CEditEx::IListener {
-  // Construction
+class CColorEdit : public CEditAttribDlg, CEditEx::IListener
+{
+	// Construction
 public:
-  // construct the dialog.
-  CColorEdit(CWnd *pParent = NULL); // standard constructor
+	// construct the dialog.
+	CColorEdit(CWnd *pParent = NULL); // standard constructor
 
-  // inherited from CEditAttribDlg
-  virtual void init(uint32 x, uint32 y, CWnd *pParent);
+	// inherited from CEditAttribDlg
+	virtual void init(uint32 x, uint32 y, CWnd *pParent);
 
-  // Dialog Data
-  //{{AFX_DATA(CColorEdit)
-  enum { IDD = IDD_COLOR_EDIT };
-  CEditEx m_BlueEditCtrl;
-  CEditEx m_AlphaEditCtrl;
-  CEditEx m_GreenEditCtrl;
-  CEditEx m_RedEditCtrl;
-  CScrollBar m_AlphaCtrl;
-  CScrollBar m_GreenCtrl;
-  CScrollBar m_BlueCtrl;
-  CScrollBar m_RedCtrl;
-  CColorButton m_Color;
-  //}}AFX_DATA
+	// Dialog Data
+	//{{AFX_DATA(CColorEdit)
+	enum
+	{
+		IDD = IDD_COLOR_EDIT
+	};
+	CEditEx m_BlueEditCtrl;
+	CEditEx m_AlphaEditCtrl;
+	CEditEx m_GreenEditCtrl;
+	CEditEx m_RedEditCtrl;
+	CScrollBar m_AlphaCtrl;
+	CScrollBar m_GreenCtrl;
+	CScrollBar m_BlueCtrl;
+	CScrollBar m_RedCtrl;
+	CColorButton m_Color;
+	//}}AFX_DATA
 
-  // Overrides
-  // ClassWizard generated virtual function overrides
-  //{{AFX_VIRTUAL(CColorEdit)
+	// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CColorEdit)
 protected:
-  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
-                                                   //}}AFX_VIRTUAL
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	//}}AFX_VIRTUAL
 
-  // Implementation
+	// Implementation
 
 public:
-  // set a wrapper to get the datas
-  void setWrapper(IPSWrapperRGBA *wrapper) { _Wrapper = wrapper; }
+	// set a wrapper to get the datas
+	void setWrapper(IPSWrapperRGBA *wrapper) { _Wrapper = wrapper; }
 
 protected:
-  /// inherited from CEditEx::IListener
-  virtual void editExValueChanged(CEditEx *ctrl);
-  CColorButton &getColorCtrl(void) {
-    return *(CColorButton *)GetDlgItem(IDC_PARTICLE_COLOR);
-  }
-  void updateEdits();
+	/// inherited from CEditEx::IListener
+	virtual void editExValueChanged(CEditEx *ctrl);
+	CColorButton &getColorCtrl(void) { return *(CColorButton *)GetDlgItem(IDC_PARTICLE_COLOR); }
+	void updateEdits();
 
-  // wrapper to the datas
-  IPSWrapperRGBA *_Wrapper;
+	// wrapper to the datas
+	IPSWrapperRGBA *_Wrapper;
 
-  // once the xrapper has been set, this display the basis
-  void updateColorFromReader(void);
+	// once the xrapper has been set, this display the basis
+	void updateColorFromReader(void);
 
-  // Generated message map functions
-  //{{AFX_MSG(CColorEdit)
-  afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
-  afx_msg void OnBrowseColor();
-  //}}AFX_MSG
-  DECLARE_MESSAGE_MAP()
+	// Generated message map functions
+	//{{AFX_MSG(CColorEdit)
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
+	afx_msg void OnBrowseColor();
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before
-// the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
 #endif // !defined(AFX_COLOR_EDIT_H__50C45CFE_2188_4161_B565_C773FE029BF3__INCLUDED_)

@@ -16,8 +16,8 @@
 
 #include "std3d.h"
 
-#include "nel/3d/u_visual_collision_mesh.h"
 #include "nel/3d/visual_collision_manager_user.h"
+#include "nel/3d/u_visual_collision_mesh.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -26,29 +26,27 @@
 namespace NL3D {
 
 // ***************************************************************************
-uint CVisualCollisionManagerUser::addMeshInstanceCollision(
-    const UVisualCollisionMesh &mesh, const NLMISC::CMatrix &instanceMatrix,
-    bool avoidCollisionWhenInside, bool avoidCollisionWhenOutside) {
-  // if empty proxy abort
-  if (mesh.empty())
-    return 0;
-  return _Manager.addMeshInstanceCollision(mesh.getMeshPtr(), instanceMatrix,
-                                           avoidCollisionWhenInside,
-                                           avoidCollisionWhenOutside);
+uint CVisualCollisionManagerUser::addMeshInstanceCollision(const UVisualCollisionMesh &mesh, const NLMISC::CMatrix &instanceMatrix, bool avoidCollisionWhenInside, bool avoidCollisionWhenOutside)
+{
+	// if empty proxy abort
+	if (mesh.empty())
+		return 0;
+	return _Manager.addMeshInstanceCollision(mesh.getMeshPtr(), instanceMatrix, avoidCollisionWhenInside, avoidCollisionWhenOutside);
 }
 
 // ***************************************************************************
-void CVisualCollisionManagerUser::getMeshs(
-    const NLMISC::CAABBox &aabbox, std::vector<CMeshInstanceColInfo> &dest) {
-  static std::vector<CVisualCollisionManager::CMeshInstanceColInfo> colInfos;
-  _Manager.getMeshs(aabbox, colInfos);
-  dest.resize(colInfos.size());
-  for (uint k = 0; k < colInfos.size(); ++k) {
-    dest[k].Mesh.attach(colInfos[k].Mesh);
-    dest[k].WorldMatrix = colInfos[k].WorldMatrix;
-    dest[k].ID = colInfos[k].ID;
-    dest[k].WorldBBox = colInfos[k].WorldBBox;
-  }
+void CVisualCollisionManagerUser::getMeshs(const NLMISC::CAABBox &aabbox, std::vector<CMeshInstanceColInfo> &dest)
+{
+	static std::vector<CVisualCollisionManager::CMeshInstanceColInfo> colInfos;
+	_Manager.getMeshs(aabbox, colInfos);
+	dest.resize(colInfos.size());
+	for (uint k = 0; k < colInfos.size(); ++k)
+	{
+		dest[k].Mesh.attach(colInfos[k].Mesh);
+		dest[k].WorldMatrix = colInfos[k].WorldMatrix;
+		dest[k].ID = colInfos[k].ID;
+		dest[k].WorldBBox = colInfos[k].WorldBBox;
+	}
 }
 
-} // namespace NL3D
+} // NL3D

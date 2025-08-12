@@ -52,14 +52,16 @@ NL_END_STRING_CONVERSION_TABLE(TTypeId, TypeConversion, unknown)
 //-----------------------------------------------
 // toRespawnPointType :
 //-----------------------------------------------
-TTypeId fromString(const std::string &str) {
-  return TypeConversion.fromString(str);
+TTypeId fromString(const std::string &str)
+{
+	return TypeConversion.fromString(str);
 }
 
 //-----------------------------------------------
 // toString :
 //-----------------------------------------------
-const std::string &toString(TTypeId respawn_point_type) {
-  return TypeConversion.toString(respawn_point_type);
+const std::string &toString(TTypeId respawn_point_type)
+{
+	return TypeConversion.toString(respawn_point_type);
 }
 }; // namespace RYZOMID

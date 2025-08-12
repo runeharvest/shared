@@ -38,13 +38,15 @@ NL_STRING_CONVERSION_TABLE_ENTRY(Plant)
 NL_END_STRING_CONVERSION_TABLE(TBodyType, ConversionType, UnknownBodyType)
 
 ///
-TBodyType toBodyType(const std::string &str) {
-  return ConversionType.fromString(str);
+TBodyType toBodyType(const std::string &str)
+{
+	return ConversionType.fromString(str);
 }
 
 ///
-const std::string &toString(TBodyType type) {
-  return ConversionType.toString(type);
+const std::string &toString(TBodyType type)
+{
+	return ConversionType.toString(type);
 }
 
 NL_BEGIN_STRING_CONVERSION_TABLE(TBodyPart)
@@ -99,88 +101,97 @@ NL_STRING_CONVERSION_TABLE_ENTRY(PVisibleRoots)
 NL_END_STRING_CONVERSION_TABLE(TBodyPart, ConversionLoc, UnknownBodyPart)
 
 ///
-TBodyPart toBodyPart(const std::string &str) {
-  return ConversionLoc.fromString(str);
+TBodyPart toBodyPart(const std::string &str)
+{
+	return ConversionLoc.fromString(str);
 }
 
 ///
-const std::string &toString(TBodyPart loc) {
-  return ConversionLoc.toString(loc);
+const std::string &toString(TBodyPart loc)
+{
+	return ConversionLoc.toString(loc);
 }
 
 /// convert a body part to a slot equipement
-SLOT_EQUIPMENT::TSlotEquipment toSlotEquipement(TBodyPart loc) {
-  if (loc >= 0 && loc < NbBodySlotParts) {
-    switch (loc % NbBodySlotParts) {
-    case 0:
-      return (SLOT_EQUIPMENT::HEAD);
-    case 1:
-      return (SLOT_EQUIPMENT::CHEST);
-    case 2:
-      return (SLOT_EQUIPMENT::ARMS);
-    case 3:
-      return (SLOT_EQUIPMENT::HANDS);
-    case 4:
-      return (SLOT_EQUIPMENT::LEGS);
-    case 5:
-      return (SLOT_EQUIPMENT::FEET);
-    default:
-      return SLOT_EQUIPMENT::UNDEFINED;
-    };
-  } else
-    return SLOT_EQUIPMENT::UNDEFINED;
+SLOT_EQUIPMENT::TSlotEquipment toSlotEquipement(TBodyPart loc)
+{
+	if (loc >= 0 && loc < NbBodySlotParts)
+	{
+		switch (loc % NbBodySlotParts)
+		{
+		case 0:
+			return (SLOT_EQUIPMENT::HEAD);
+		case 1:
+			return (SLOT_EQUIPMENT::CHEST);
+		case 2:
+			return (SLOT_EQUIPMENT::ARMS);
+		case 3:
+			return (SLOT_EQUIPMENT::HANDS);
+		case 4:
+			return (SLOT_EQUIPMENT::LEGS);
+		case 5:
+			return (SLOT_EQUIPMENT::FEET);
+		default:
+			return SLOT_EQUIPMENT::UNDEFINED;
+		};
+	}
+	else
+		return SLOT_EQUIPMENT::UNDEFINED;
 }
 
 /// get a body part from a body type and a slot type
-TBodyPart getBodyPart(TBodyType type, SLOT_EQUIPMENT::TSlotEquipment slot) {
-  uint8 index;
-  switch (slot) {
-  case SLOT_EQUIPMENT::HEAD:
-    index = 0;
-    break;
-  case SLOT_EQUIPMENT::CHEST:
-    index = 1;
-    break;
-  case SLOT_EQUIPMENT::ARMS:
-    index = 2;
-    break;
-  case SLOT_EQUIPMENT::HANDS:
-    index = 3;
-    break;
-  case SLOT_EQUIPMENT::LEGS:
-    index = 4;
-    break;
-  case SLOT_EQUIPMENT::FEET:
-    index = 5;
-    break;
-  default:
-    return UnknownBodyPart;
-  };
+TBodyPart getBodyPart(TBodyType type, SLOT_EQUIPMENT::TSlotEquipment slot)
+{
+	uint8 index;
+	switch (slot)
+	{
+	case SLOT_EQUIPMENT::HEAD:
+		index = 0;
+		break;
+	case SLOT_EQUIPMENT::CHEST:
+		index = 1;
+		break;
+	case SLOT_EQUIPMENT::ARMS:
+		index = 2;
+		break;
+	case SLOT_EQUIPMENT::HANDS:
+		index = 3;
+		break;
+	case SLOT_EQUIPMENT::LEGS:
+		index = 4;
+		break;
+	case SLOT_EQUIPMENT::FEET:
+		index = 5;
+		break;
+	default:
+		return UnknownBodyPart;
+	};
 
-  switch (type) {
-  case Homin:
-    return (TBodyPart)(BeginHomin + index);
-  case Quadruped:
-    return (TBodyPart)(BeginQuadruped + index);
-  case LandKitin:
-    return (TBodyPart)(BeginLandKitin + index);
-  case FlyingKitin:
-    return (TBodyPart)(BeginFlyingKitin + index);
-  case Fish:
-    return (TBodyPart)(BeginFish + index);
-  case Bird:
-    return (TBodyPart)(BeginBird + index);
-  case Plant:
-    return (TBodyPart)(BeginPlant + index);
-  default:
-    return UnknownBodyPart;
-  };
+	switch (type)
+	{
+	case Homin:
+		return (TBodyPart)(BeginHomin + index);
+	case Quadruped:
+		return (TBodyPart)(BeginQuadruped + index);
+	case LandKitin:
+		return (TBodyPart)(BeginLandKitin + index);
+	case FlyingKitin:
+		return (TBodyPart)(BeginFlyingKitin + index);
+	case Fish:
+		return (TBodyPart)(BeginFish + index);
+	case Bird:
+		return (TBodyPart)(BeginBird + index);
+	case Plant:
+		return (TBodyPart)(BeginPlant + index);
+	default:
+		return UnknownBodyPart;
+	};
 }
 
-TBodyPart getMatchingHominBodyPart(TBodyPart src) {
-  if ((uint)src >= NbBodyParts)
-    return UnknownBodyPart;
-  return (TBodyPart)(src % 6);
+TBodyPart getMatchingHominBodyPart(TBodyPart src)
+{
+	if ((uint)src >= NbBodyParts) return UnknownBodyPart;
+	return (TBodyPart)(src % 6);
 }
 
-}; // namespace BODY
+}; // BODY

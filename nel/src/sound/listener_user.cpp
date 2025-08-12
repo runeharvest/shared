@@ -19,20 +19,21 @@
 
 #include "stdsound.h"
 
-#include "nel/sound/audio_mixer_user.h"
 #include "nel/sound/listener_user.h"
+#include "nel/sound/audio_mixer_user.h"
 
 namespace NLSOUND {
 
 /*
  * Set the position vector (default: (0,0,0)) (3D mode only)
  */
-void CListenerUser::setPos(const NLMISC::CVector &pos) {
-  // Change position
-  _DrvListener->setPos(pos);
+void CListenerUser::setPos(const NLMISC::CVector &pos)
+{
+	// Change position
+	_DrvListener->setPos(pos);
 
-  // Select environment effect
-  CAudioMixerUser::instance()->applyListenerMove(pos);
+	// Select environment effect
+	CAudioMixerUser::instance()->applyListenerMove(pos);
 }
 
-} // namespace NLSOUND
+} // NLSOUND

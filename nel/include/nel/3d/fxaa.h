@@ -29,8 +29,8 @@
 // STL includes
 
 // NeL includes
-#include <nel/misc/geom_ext.h>
 #include <nel/misc/smart_ptr.h>
+#include <nel/misc/geom_ext.h>
 
 // Project includes
 #include <nel/3d/u_material.h>
@@ -51,26 +51,26 @@ class CVertexProgram;
  * \author Jan Boon (Kaetemi)
  * CFXAA
  */
-class CFXAA {
+class CFXAA
+{
 public:
-  CFXAA(NL3D::UDriver *driver);
-  virtual ~CFXAA();
+	CFXAA(NL3D::UDriver *driver);
+	virtual ~CFXAA();
 
-  /// Apply effect to current render target. Render target must be managed by
-  /// render target manager
-  virtual void applyEffect();
+	/// Apply effect to current render target. Render target must be managed by render target manager
+	virtual void applyEffect();
 
 private:
-  UDriver *m_Driver;
+	UDriver *m_Driver;
 
-  NL3D::UMaterial m_Mat;
-  // NL3D::CVertexBuffer m_VB;
-  NLMISC::CQuadUV m_QuadUV;
-  CVertexProgram *m_VP;
-  CPixelProgram *m_PP;
+	NL3D::UMaterial m_Mat;
+	// NL3D::CVertexBuffer m_VB;
+	NLMISC::CQuadUV m_QuadUV;
+	CVertexProgram *m_VP;
+	CPixelProgram *m_PP;
 
-  uint m_Width;
-  uint m_Height;
+	uint m_Width;
+	uint m_Height;
 
 }; /* class CFXAA */
 

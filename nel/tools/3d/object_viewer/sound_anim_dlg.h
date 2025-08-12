@@ -14,16 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined(                                                                  \
-    AFX_SOUND_ANIM_DLG_H__0D6C3D3A_BCBB_4EEA_8E35_27EAD9500A1C__INCLUDED_)
+#if !defined(AFX_SOUND_ANIM_DLG_H__0D6C3D3A_BCBB_4EEA_8E35_27EAD9500A1C__INCLUDED_)
 #define AFX_SOUND_ANIM_DLG_H__0D6C3D3A_BCBB_4EEA_8E35_27EAD9500A1C__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
 #endif
 
-#include "resource.h"
 #include "sound_anim_view.h"
+#include "resource.h"
 
 class CObjectViewer;
 class CAnimationDlg;
@@ -31,62 +30,64 @@ class CAnimationDlg;
 namespace NLSOUND {
 class CSoundAnimation;
 class CSoundAnimMarker;
-} // namespace NLSOUND
+}
 
-class CSoundAnimDlg : public CDialog {
-  // Construction
+class CSoundAnimDlg : public CDialog
+{
+	// Construction
 public:
-  CSoundAnimDlg(CObjectViewer *objView, CAnimationDlg *animDlg,
-                CWnd *pParent = NULL);
+	CSoundAnimDlg(CObjectViewer *objView, CAnimationDlg *animDlg, CWnd *pParent = NULL);
 
-  void setAnimTime(float animStart, float animEnd);
-  void handle();
-  void refresh(BOOL update) { _AnimView.refresh(update); }
-  void updateScroll(uint pos, uint min, uint max);
-  void selectMarker(NLSOUND::CSoundAnimMarker *marker);
+	void setAnimTime(float animStart, float animEnd);
+	void handle();
+	void refresh(BOOL update) { _AnimView.refresh(update); }
+	void updateScroll(uint pos, uint min, uint max);
+	void selectMarker(NLSOUND::CSoundAnimMarker *marker);
 
 protected:
-  void updateSounds();
+	void updateSounds();
 
-  CObjectViewer *_ObjView;
-  CAnimationDlg *_AnimationDlg;
-  CSoundAnimView _AnimView;
-  NLSOUND::CSoundAnimMarker *_SelectedMarker;
+	CObjectViewer *_ObjView;
+	CAnimationDlg *_AnimationDlg;
+	CSoundAnimView _AnimView;
+	NLSOUND::CSoundAnimMarker *_SelectedMarker;
 
 public:
-  // VC++ wizardry
+	// VC++ wizardry
 
-  // Dialog Data
-  //{{AFX_DATA(CSoundAnimDlg)
-  enum { IDD = IDD_SOUND_ANIM_DLG };
-  //}}AFX_DATA
+	// Dialog Data
+	//{{AFX_DATA(CSoundAnimDlg)
+	enum
+	{
+		IDD = IDD_SOUND_ANIM_DLG
+	};
+	//}}AFX_DATA
 
-  // Overrides
-  //{{AFX_VIRTUAL(CSoundAnimDlg)
+	// Overrides
+	//{{AFX_VIRTUAL(CSoundAnimDlg)
 protected:
-  virtual void DoDataExchange(CDataExchange *pDX);
-  //}}AFX_VIRTUAL
+	virtual void DoDataExchange(CDataExchange *pDX);
+	//}}AFX_VIRTUAL
 
-  // Implementation
+	// Implementation
 protected:
-  // Generated message map functions
-  //{{AFX_MSG(CSoundAnimDlg)
-  afx_msg void OnAddSound();
-  afx_msg void OnRemoveSound();
-  afx_msg void OnSave();
-  afx_msg void OnZoomIn();
-  afx_msg void OnZoomOut();
-  afx_msg void OnMark();
-  afx_msg void OnDelete();
-  afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-  virtual BOOL OnInitDialog();
-  afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
-  //}}AFX_MSG
-  DECLARE_MESSAGE_MAP()
+	// Generated message map functions
+	//{{AFX_MSG(CSoundAnimDlg)
+	afx_msg void OnAddSound();
+	afx_msg void OnRemoveSound();
+	afx_msg void OnSave();
+	afx_msg void OnZoomIn();
+	afx_msg void OnZoomOut();
+	afx_msg void OnMark();
+	afx_msg void OnDelete();
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	virtual BOOL OnInitDialog();
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before
-// the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
 #endif // !defined(AFX_SOUND_ANIM_DLG_H__0D6C3D3A_BCBB_4EEA_8E35_27EAD9500A1C__INCLUDED_)

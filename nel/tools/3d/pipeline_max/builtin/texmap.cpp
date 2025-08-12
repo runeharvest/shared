@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "texmap.h"
 #include <nel/misc/types_nl.h>
+#include "texmap.h"
 
 // STL includes
 
@@ -42,9 +42,14 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CTexmap::CTexmap(CScene *scene) : CMtlBase(scene) {}
+CTexmap::CTexmap(CScene *scene)
+    : CMtlBase(scene)
+{
+}
 
-CTexmap::~CTexmap() {}
+CTexmap::~CTexmap()
+{
+}
 
 } /* namespace BUILTIN */
 } /* namespace MAX */

@@ -17,8 +17,8 @@
 #ifndef NL_VECTORD_H
 #define NL_VECTORD_H
 
-#include "vector.h"
 #include <cmath>
+#include "vector.h"
 
 namespace NLMISC {
 
@@ -29,100 +29,116 @@ namespace NLMISC {
  * \author Nevrax France
  * \date 2000
  */
-class CVectorD {
+class CVectorD
+{
 public: // Attributes.
-  double x, y, z;
+	double x, y, z;
 
 public: // const.
-  /// Null vector (0,0,0).
-  static const CVectorD Null;
-  /// I vector (1,0,0).
-  static const CVectorD I;
-  /// J vector (0,1,0).
-  static const CVectorD J;
-  /// K vector (0,0,1).
-  static const CVectorD K;
+	/// Null vector (0,0,0).
+	static const CVectorD Null;
+	/// I vector (1,0,0).
+	static const CVectorD I;
+	/// J vector (0,1,0).
+	static const CVectorD J;
+	/// K vector (0,0,1).
+	static const CVectorD K;
 
 public: // Methods.
-  /// @name Object.
-  //@{
-  /// Constructor which does nothing.
-  CVectorD() {}
-  /// Constructor .
-  CVectorD(double _x, double _y, double _z) : x(_x), y(_y), z(_z) {}
-  /// Constructor with a CVector.
-  CVectorD(const CVector &v) : x(v.x), y(v.y), z(v.z) {}
-  /// Copy Constructor.
-  CVectorD(const CVectorD &v) : x(v.x), y(v.y), z(v.z) {}
-  //@}
+	/// @name Object.
+	//@{
+	/// Constructor which does nothing.
+	CVectorD() { }
+	/// Constructor .
+	CVectorD(double _x, double _y, double _z)
+	    : x(_x)
+	    , y(_y)
+	    , z(_z)
+	{
+	}
+	/// Constructor with a CVector.
+	CVectorD(const CVector &v)
+	    : x(v.x)
+	    , y(v.y)
+	    , z(v.z)
+	{
+	}
+	/// Copy Constructor.
+	CVectorD(const CVectorD &v)
+	    : x(v.x)
+	    , y(v.y)
+	    , z(v.z)
+	{
+	}
+	//@}
 
-  /// @name Base Maths.
-  //@{
-  CVectorD &operator+=(const CVectorD &v);
-  CVectorD &operator-=(const CVectorD &v);
-  CVectorD &operator*=(double f);
-  CVectorD &operator/=(double f);
-  CVectorD operator+(const CVectorD &v) const;
-  CVectorD operator-(const CVectorD &v) const;
-  CVectorD operator*(double f) const;
-  CVectorD operator/(double f) const;
-  CVectorD operator-() const;
-  //@}
+	/// @name Base Maths.
+	//@{
+	CVectorD &operator+=(const CVectorD &v);
+	CVectorD &operator-=(const CVectorD &v);
+	CVectorD &operator*=(double f);
+	CVectorD &operator/=(double f);
+	CVectorD operator+(const CVectorD &v) const;
+	CVectorD operator-(const CVectorD &v) const;
+	CVectorD operator*(double f) const;
+	CVectorD operator/(double f) const;
+	CVectorD operator-() const;
+	//@}
 
-  /// @name Advanced Maths.
-  //@{
-  /// Dot product.
-  double operator*(const CVectorD &v) const;
-  /** Cross product.
-   * compute the cross product *this ^ v.
-   */
-  CVectorD operator^(const CVectorD &v) const;
-  /// Return the norm of the vector.
-  double norm() const;
-  /// Return the square of the norm of the vector.
-  double sqrnorm() const;
-  /// Normalize the vector.
-  void normalize();
-  /// Return the vector normalized.
-  CVectorD normed() const;
-  //@}
+	/// @name Advanced Maths.
+	//@{
+	/// Dot product.
+	double operator*(const CVectorD &v) const;
+	/** Cross product.
+	 * compute the cross product *this ^ v.
+	 */
+	CVectorD operator^(const CVectorD &v) const;
+	/// Return the norm of the vector.
+	double norm() const;
+	/// Return the square of the norm of the vector.
+	double sqrnorm() const;
+	/// Normalize the vector.
+	void normalize();
+	/// Return the vector normalized.
+	CVectorD normed() const;
+	//@}
 
-  /// @name Misc.
-  //@{
-  void set(double _x, double _y, double _z);
-  bool operator==(const CVectorD &v) const;
-  bool operator!=(const CVectorD &v) const;
-  bool isNull() const;
-  /**
-   * Setup the vector with spheric coordinates.
-   * sphericToCartesian(1,0,0) build the I vector  ((1,0,0)).
-   * the formula is:  \n
-   * x= r*cos(theta)*cos(phi) \n
-   * y= r*sin(theta)*cos(phi) \n
-   * z= r*sin(phi) \n
-   * \sa cartesianToSpheric()
-   */
-  void sphericToCartesian(double r, double theta, double phi);
-  /**
-   * Get the sphreic coordinates of the vector.
-   * See sphericToCartesian() to know coordinates conventions.
-   * \sa sphericToCartesian()
-   */
-  void cartesianToSpheric(double &r, double &theta, double &phi) const;
-  void serial(IStream &f);
-  CVectorD &operator=(const CVector &v);
-  operator CVector() const;
-  // copy content into a CVector
-  void copyTo(CVector &dest) const;
-  // conersion to a CVector
-  CVector asVector() const;
-  //@}
+	/// @name Misc.
+	//@{
+	void set(double _x, double _y, double _z);
+	bool operator==(const CVectorD &v) const;
+	bool operator!=(const CVectorD &v) const;
+	bool isNull() const;
+	/**
+	 * Setup the vector with spheric coordinates.
+	 * sphericToCartesian(1,0,0) build the I vector  ((1,0,0)).
+	 * the formula is:  \n
+	 * x= r*cos(theta)*cos(phi) \n
+	 * y= r*sin(theta)*cos(phi) \n
+	 * z= r*sin(phi) \n
+	 * \sa cartesianToSpheric()
+	 */
+	void sphericToCartesian(double r, double theta, double phi);
+	/**
+	 * Get the sphreic coordinates of the vector.
+	 * See sphericToCartesian() to know coordinates conventions.
+	 * \sa sphericToCartesian()
+	 */
+	void cartesianToSpheric(double &r, double &theta, double &phi) const;
+	void serial(IStream &f);
+	CVectorD &operator=(const CVector &v);
+	operator CVector() const;
+	// copy content into a CVector
+	void copyTo(CVector &dest) const;
+	// conersion to a CVector
+	CVector asVector() const;
+	//@}
 
-  // friends.
-  friend CVectorD operator*(double f, const CVectorD &v0);
+	// friends.
+	friend CVectorD operator*(double f, const CVectorD &v0);
 };
 
-} // namespace NLMISC
+}
 
 #include "vectord_inline.h"
 

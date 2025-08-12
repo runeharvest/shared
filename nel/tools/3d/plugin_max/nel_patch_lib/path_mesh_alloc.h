@@ -17,19 +17,22 @@
 #ifndef NL_PATH_MESH_ALLOC_H
 #define NL_PATH_MESH_ALLOC_H
 
-#include "nel/misc/smart_ptr.h"
 #include "nel/misc/types_nl.h"
-#include <list>
+#include "nel/misc/smart_ptr.h"
 #include <vector>
+#include <list>
 
-template <class T> class CArrayElement : public NLMISC::CRefCount {
+template <class T>
+class CArrayElement : public NLMISC::CRefCount
+{
 public:
-  CArrayElement(uint defaultSize) {
-    _Array.reserve(defaultSize);
-    _Allocated = false;
-  }
-  bool _Allocated;
-  std::vector<T> _Array;
+	CArrayElement(uint defaultSize)
+	{
+		_Array.reserve(defaultSize);
+		_Allocated = false;
+	}
+	bool _Allocated;
+	std::vector<T> _Array;
 };
 
 /**
@@ -38,78 +41,87 @@ public:
  * \author Nevrax France
  * \date 2001
  */
-template <class T> class CPathMeshAlloc {
+template <class T>
+class CPathMeshAlloc
+{
 public:
-  /// Constructor
-  CPathMeshAlloc(uint defaultSize) {
-    _DefaultSize = defaultSize;
-    _BlockAllocated = 0;
-  }
+	/// Constructor
+	CPathMeshAlloc(uint defaultSize)
+	{
+		_DefaultSize = defaultSize;
+		_BlockAllocated = 0;
+	}
 
-  // Allocate a vector
-  std::vector<T> *allocate() {
-    _BlockAllocated++;
+	// Allocate a vector
+	std::vector<T> *allocate()
+	{
+		_BlockAllocated++;
 
-    // Some trace
-    nldebug("Allocate, %d blocks %d max\n", _BlockAllocated, _ArrayList.size());
+		// Some trace
+		nldebug("Allocate, %d blocks %d max\n", _BlockAllocated, _ArrayList.size());
 
-    // Look for a free element
-    ListArray::iterator ite = _ArrayList.begin();
+		// Look for a free element
+		ListArray::iterator ite = _ArrayList.begin();
 
-    // for each element
-    while (ite != _ArrayList.end()) {
-      // Find one ?
-      if (!((*ite)->_Allocated)) {
-        (*ite)->_Allocated = true;
-        return &((*ite)->_Array);
-      }
-      ite++;
-    }
+		// for each element
+		while (ite != _ArrayList.end())
+		{
+			// Find one ?
+			if (!((*ite)->_Allocated))
+			{
+				(*ite)->_Allocated = true;
+				return &((*ite)->_Array);
+			}
+			ite++;
+		}
 
-    // ** Not find, add an entry
+		// ** Not find, add an entry
 
-    // Create
-    CArrayElement<T> *pElement = new CArrayElement<T>(_DefaultSize);
+		// Create
+		CArrayElement<T> *pElement = new CArrayElement<T>(_DefaultSize);
 
-    // Push back the enrty
-    _ArrayList.push_back(NLMISC::CSmartPtr<CArrayElement<T>>(pElement));
-    ite = _ArrayList.end();
-    ite--;
-    (*ite)->_Allocated = true;
-    return &((*ite)->_Array);
-  }
+		// Push back the enrty
+		_ArrayList.push_back(NLMISC::CSmartPtr<CArrayElement<T>>(pElement));
+		ite = _ArrayList.end();
+		ite--;
+		(*ite)->_Allocated = true;
+		return &((*ite)->_Array);
+	}
 
-  // Free a vector
-  void free(std::vector<T> *ptr) {
-    _BlockAllocated--;
+	// Free a vector
+	void free(std::vector<T> *ptr)
+	{
+		_BlockAllocated--;
 
-    // Some trace
-    nldebug("Allocate, %d blocks %d max\n", _BlockAllocated, _ArrayList.size());
+		// Some trace
+		nldebug("Allocate, %d blocks %d max\n", _BlockAllocated, _ArrayList.size());
 
-    // Look for the good array
-    ListArray::iterator ite = _ArrayList.begin();
+		// Look for the good array
+		ListArray::iterator ite = _ArrayList.begin();
 
-    // for each element
-    while (ite != _ArrayList.end()) {
-      // Find one ?
-      if (&((*ite)->_Array) == ptr) {
-        (*ite)->_Allocated = false;
-        return;
-      }
-      ite++;
-    }
+		// for each element
+		while (ite != _ArrayList.end())
+		{
+			// Find one ?
+			if (&((*ite)->_Array) == ptr)
+			{
+				(*ite)->_Allocated = false;
+				return;
+			}
+			ite++;
+		}
 
-    // No, should be somewhere
-    nlassert(0); // no!
-  }
+		// No, should be somewhere
+		nlassert(0); // no!
+	}
 
 private:
-  // Typedef
-  typedef std::list<NLMISC::CSmartPtr<CArrayElement<T>>> ListArray;
+	// Typedef
+	typedef std::list<NLMISC::CSmartPtr<CArrayElement<T>>> ListArray;
 
-  uint _DefaultSize;
-  uint _BlockAllocated;
-  ListArray _ArrayList;
+	uint _DefaultSize;
+	uint _BlockAllocated;
+	ListArray _ArrayList;
 };
 
 #endif // NL_PATH_MESH_ALLOC_H

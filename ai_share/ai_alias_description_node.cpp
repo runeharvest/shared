@@ -23,8 +23,7 @@ using namespace NLMISC;
 // using namespace NLNET;
 using namespace std;
 
-std::vector<NLMISC::CSmartPtr<CAIAliasDescriptionNode>>
-    CAIAliasDescriptionNode::_aliasDescriptionList;
+std::vector<NLMISC::CSmartPtr<CAIAliasDescriptionNode>> CAIAliasDescriptionNode::_aliasDescriptionList;
 
 //---------------------------------------------------------------------------------------
 // Stuff used for management of log messages
@@ -35,19 +34,16 @@ bool VerboseAliasDescriptionNodeLog = false;
 // Control over verbose nature of logging
 //---------------------------------------------------------------------------------------
 
-NLMISC_COMMAND(
-    verboseAliasNodeTreeParserLog,
-    "Turn on or off or check the state of verbose .primitive parser logging",
-    "") {
-  if (args.size() > 1)
-    return false;
+NLMISC_COMMAND(verboseAliasNodeTreeParserLog, "Turn on or off or check the state of verbose .primitive parser logging", "")
+{
+	if (args.size() > 1)
+		return false;
 
-  if (args.size() == 1)
-    StrToBool(VerboseAliasDescriptionNodeLog, args[0]);
+	if (args.size() == 1)
+		StrToBool(VerboseAliasDescriptionNodeLog, args[0]);
 
-  nlinfo("verbose Logging is %s",
-         VerboseAliasDescriptionNodeLog ? "ON" : "OFF");
-  return true;
+	nlinfo("verbose Logging is %s", VerboseAliasDescriptionNodeLog ? "ON" : "OFF");
+	return true;
 }
 
 //---------------------------------------------------------------------------------------

@@ -17,52 +17,61 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "nel_3dsmax_shared.h"
-#include "../nel_patch_lib/rpo.h"
-#include "nel/misc/app_context.h"
 #include "stdafx.h"
+#include "../nel_patch_lib/rpo.h"
+#include "nel_3dsmax_shared.h"
+#include "nel/misc/app_context.h"
 
-BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call,
-                      LPVOID lpReserved) {
-  // initialize nel context
-  if (!NLMISC::INelContext::isContextInitialised()) {
-    GetSharedNelContext();
-    nldebug("NeL 3ds Max Shared: DllMain");
-  }
+BOOL APIENTRY DllMain(HANDLE hModule,
+    DWORD ul_reason_for_call,
+    LPVOID lpReserved)
+{
+	// initialize nel context
+	if (!NLMISC::INelContext::isContextInitialised())
+	{
+		GetSharedNelContext();
+		nldebug("NeL 3ds Max Shared: DllMain");
+	}
 
-  switch (ul_reason_for_call) {
-  case DLL_PROCESS_ATTACH:
-  case DLL_THREAD_ATTACH:
-  case DLL_THREAD_DETACH:
-  case DLL_PROCESS_DETACH:
-    break;
-  }
-  return TRUE;
+	switch (ul_reason_for_call)
+	{
+	case DLL_PROCESS_ATTACH:
+	case DLL_THREAD_ATTACH:
+	case DLL_THREAD_DETACH:
+	case DLL_PROCESS_DETACH:
+		break;
+	}
+	return TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------
 
-void init() {}
+void init()
+{
+}
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------
 
 // The static allocator
 static CPatchAllocator Allocator;
 
-NEL_3DSMAX_SHARED_API CPatchAllocator &GetAllocator() {
-  // Init fonction
-  init();
+NEL_3DSMAX_SHARED_API CPatchAllocator &GetAllocator()
+{
+	// Init fonction
+	init();
 
-  return Allocator;
+	return Allocator;
 }
 
-NEL_3DSMAX_SHARED_API NLMISC::INelContext &GetSharedNelContext() {
-  if (!NLMISC::INelContext::isContextInitialised()) {
-    new NLMISC::CApplicationContext();
-    NLMISC::createDebug();
-    NLMISC::INelContext::getInstance().setWindowedApplication(true);
-  }
-  return NLMISC::INelContext::getInstance();
+NEL_3DSMAX_SHARED_API NLMISC::INelContext &GetSharedNelContext()
+{
+	if (!NLMISC::INelContext::isContextInitialised())
+	{
+		new NLMISC::CApplicationContext();
+		NLMISC::createDebug();
+		NLMISC::INelContext::getInstance().setWindowedApplication(true);
+	}
+	return NLMISC::INelContext::getInstance();
 }
 
 /* end of file */

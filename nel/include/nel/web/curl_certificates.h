@@ -26,16 +26,17 @@
 typedef void CURL;
 
 namespace NLWEB {
-class CCurlCertificates {
+class CCurlCertificates
+{
 public:
-  // allow to use custom PEM certificates
-  static void addCertificateFile(const std::string &cert);
+	// allow to use custom PEM certificates
+	static void addCertificateFile(const std::string &cert);
 
-  // set all CURL options to use custom SSL context function
-  static void useCertificates(CURL *curl);
+	// set all CURL options to use custom SSL context function
+	static void useCertificates(CURL *curl);
 };
 
-} // namespace NLWEB
+} // namespace
 #endif
 
 /* end of file */

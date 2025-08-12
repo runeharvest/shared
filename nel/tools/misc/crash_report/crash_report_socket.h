@@ -25,28 +25,29 @@
 class CCrashReportSocketPvt;
 class QNetworkReply;
 
-class CCrashReportSocket : public QObject {
-  Q_OBJECT
+class CCrashReportSocket : public QObject
+{
+	Q_OBJECT
 
 public:
-  CCrashReportSocket(QObject *parent);
-  ~CCrashReportSocket();
+	CCrashReportSocket(QObject *parent);
+	~CCrashReportSocket();
 
-  void setURL(const char *URL) { m_url = URL; }
-  QString url() const { return m_url; }
+	void setURL(const char *URL) { m_url = URL; }
+	QString url() const { return m_url; }
 
-  void sendReport(const SCrashReportData &data);
+	void sendReport(const SCrashReportData &data);
 
 Q_SIGNALS:
-  void reportSent();
-  void reportFailed();
+	void reportSent();
+	void reportFailed();
 
 private Q_SLOTS:
-  void onFinished(QNetworkReply *reply);
+	void onFinished(QNetworkReply *reply);
 
 private:
-  CCrashReportSocketPvt *m_pvt;
-  QString m_url;
+	CCrashReportSocketPvt *m_pvt;
+	QString m_url;
 };
 
 #endif

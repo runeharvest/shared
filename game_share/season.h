@@ -17,11 +17,11 @@
 #ifndef SEASON_H
 #define SEASON_H
 
-#include <map>
-#include <nel/misc/common.h>
-#include <nel/misc/debug.h>
 #include <nel/misc/types_nl.h>
+#include <nel/misc/debug.h>
+#include <nel/misc/common.h>
 #include <vector>
+#include <map>
 
 // User #includes
 
@@ -38,52 +38,54 @@ namespace EGSPD {
 /** TSeason
  * defined at game_share/pd_scripts/season.pds:6
  */
-class CSeason {
+class CSeason
+{
 
 public:
-  /// \name Enum values
-  // @{
+	/// \name Enum values
+	// @{
 
-  enum TSeason {
-    Spring = 0,
-    Summer = 1,
-    Autumn = 2,
-    Winter = 3,
-    Invalid = 4,
-    ___TSeason_useSize = 5,
-    Unknown = 5,
-    EndSeason = 5,
-  };
+	enum TSeason
+	{
+		Spring = 0,
+		Summer = 1,
+		Autumn = 2,
+		Winter = 3,
+		Invalid = 4,
+		___TSeason_useSize = 5,
+		Unknown = 5,
+		EndSeason = 5,
+	};
 
-  // @}
+	// @}
 
 public:
-  /// \name Conversion methods
-  // @{
+	/// \name Conversion methods
+	// @{
 
-  /**
-   * Use these methods to convert from enum value to string (and vice versa)
-   */
+	/**
+	 * Use these methods to convert from enum value to string (and vice versa)
+	 */
 
-  static const std::string &toString(TSeason v);
-  static CSeason::TSeason fromString(const std::string &v);
+	static const std::string &toString(TSeason v);
+	static CSeason::TSeason fromString(const std::string &v);
 
-  // @}
+	// @}
 
 private:
-  /// \name Enum initialisation
-  // @{
+	/// \name Enum initialisation
+	// @{
 
-  static void init();
-  static bool _Initialised;
-  static std::string _UnknownString;
-  static std::vector<std::string> _StrTable;
-  static std::map<std::string, TSeason> _ValueMap;
+	static void init();
+	static bool _Initialised;
+	static std::string _UnknownString;
+	static std::vector<std::string> _StrTable;
+	static std::map<std::string, TSeason> _ValueMap;
 
-  // @}
+	// @}
 };
 
-} // namespace EGSPD
+} // End of EGSPD
 
 //
 // Inline implementations

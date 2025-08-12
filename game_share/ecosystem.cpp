@@ -19,8 +19,8 @@
 
 #include "stdpch.h"
 
-#include "ecosystem.h"
 #include "nel/misc/debug.h"
+#include "ecosystem.h"
 
 using namespace std;
 
@@ -37,46 +37,42 @@ const static string PrimaryRootString = "PrimaryRoot";
 //-----------------------------------------------
 // stringToEcosystem : case-unsensitive comparison
 //-----------------------------------------------
-EECosystem stringToEcosystem(const string &str) {
-  string strL = NLMISC::toLowerAscii(str);
-  if (strL == NLMISC::toLowerAscii(CommonString))
-    return common_ecosystem;
-  if (strL == NLMISC::toLowerAscii(DesertString))
-    return desert;
-  if (strL == NLMISC::toLowerAscii(ForestString))
-    return forest;
-  if (strL == NLMISC::toLowerAscii(LacustreString))
-    return lacustre;
-  if (strL == NLMISC::toLowerAscii(JungleString))
-    return jungle;
-  if (strL == NLMISC::toLowerAscii(GooString))
-    return goo;
-  if (strL == NLMISC::toLowerAscii(PrimaryRootString))
-    return primary_root;
-  return unknown;
+EECosystem stringToEcosystem(const string &str)
+{
+	string strL = NLMISC::toLowerAscii(str);
+	if (strL == NLMISC::toLowerAscii(CommonString)) return common_ecosystem;
+	if (strL == NLMISC::toLowerAscii(DesertString)) return desert;
+	if (strL == NLMISC::toLowerAscii(ForestString)) return forest;
+	if (strL == NLMISC::toLowerAscii(LacustreString)) return lacustre;
+	if (strL == NLMISC::toLowerAscii(JungleString)) return jungle;
+	if (strL == NLMISC::toLowerAscii(GooString)) return goo;
+	if (strL == NLMISC::toLowerAscii(PrimaryRootString)) return primary_root;
+	return unknown;
 } // stringToEcosystem //
 
 //-----------------------------------------------
 // toString :
 //-----------------------------------------------
-const string &toString(EECosystem e) {
-  switch (e) {
-  case common_ecosystem:
-    return CommonString;
-  case desert:
-    return DesertString;
-  case forest:
-    return ForestString;
-  case lacustre:
-    return LacustreString;
-  case jungle:
-    return JungleString;
-  case goo:
-    return GooString;
-  case primary_root:
-    return PrimaryRootString;
-  default:
-    return UnknownString;
-  }
+const string &toString(EECosystem e)
+{
+	switch (e)
+	{
+	case common_ecosystem:
+		return CommonString;
+	case desert:
+		return DesertString;
+	case forest:
+		return ForestString;
+	case lacustre:
+		return LacustreString;
+	case jungle:
+		return JungleString;
+	case goo:
+		return GooString;
+	case primary_root:
+		return PrimaryRootString;
+	default:
+		return UnknownString;
+	}
 } // toString  //
-}; // namespace ECOSYSTEM
+}; // ECOSYSTEM

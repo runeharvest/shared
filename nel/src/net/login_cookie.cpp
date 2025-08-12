@@ -19,8 +19,8 @@
 
 #include "stdnet.h"
 
-#include "nel/misc/wang_hash.h"
 #include "nel/net/login_cookie.h"
+#include "nel/misc/wang_hash.h"
 
 using namespace std;
 using namespace NLMISC;
@@ -30,66 +30,71 @@ namespace NLNET {
 /*
  * Comparison == operator
  */
-bool operator==(const CLoginCookie &c1, const CLoginCookie &c2) {
-  nlassert(c1._Valid && c2._Valid);
+bool operator==(const CLoginCookie &c1, const CLoginCookie &c2)
+{
+	nlassert(c1._Valid && c2._Valid);
 
-  return c1._UserAddr == c2._UserAddr && c1._UserKey == c2._UserKey &&
-         c1._UserId == c2._UserId;
+	return c1._UserAddr == c2._UserAddr && c1._UserKey == c2._UserKey && c1._UserId == c2._UserId;
 }
 
 /*
  * Comparison != operator
  */
-bool operator!=(const CLoginCookie &c1, const CLoginCookie &c2) {
-  return !(c1 == c2);
+bool operator!=(const CLoginCookie &c1, const CLoginCookie &c2)
+{
+	return !(c1 == c2);
 }
 
 CLoginCookie::CLoginCookie(uint32 addr, uint32 id)
-    : _Valid(true), _UserAddr(addr), _UserId(id) {
-  // generates the key for this cookie
-  _UserKey = generateKey();
+    : _Valid(true)
+    , _UserAddr(addr)
+    , _UserId(id)
+{
+	// generates the key for this cookie
+	_UserKey = generateKey();
 }
 
-uint32 CLoginCookie::generateKey() {
-  // This is a very poor random number generator that ensures no duplicates are
-  // generated within the same hour
+uint32 CLoginCookie::generateKey()
+{
+	// This is a very poor random number generator that ensures no duplicates are generated within the same hour
 
-  static uint32 salt0;
-  static uint32 salt1;
-  static bool seeded;
+	static uint32 salt0;
+	static uint32 salt1;
+	static bool seeded;
 
-  uint32 t = (uint32)time(NULL);
+	uint32 t = (uint32)time(NULL);
 
-  if (!seeded) {
-    // Generate a not very random number as an extra salt to obfuscate the key
+	if (!seeded)
+	{
+		// Generate a not very random number as an extra salt to obfuscate the key
 #ifdef NL_CPP14
-    srand(std::random_device()());
+		srand(std::random_device()());
 #else
-    srand(wangHash(t));
+		srand(wangHash(t));
 #endif
-    salt0 = wangHash(rand() | rand() << 8 | rand() << 16 | rand() << 24);
-    salt1 = wangHash(rand() | rand() << 8 | rand() << 16 | rand() << 24);
-    seeded = true;
-  }
+		salt0 = wangHash(rand() | rand() << 8 | rand() << 16 | rand() << 24);
+		salt1 = wangHash(rand() | rand() << 8 | rand() << 16 | rand() << 24);
+		seeded = true;
+	}
 
-  // Random number and counter
-  uint32 r = rand(); // FIXME: Not thread safe!
-  static uint32 n = 0;
-  n += rand() & 3;
+	// Random number and counter
+	uint32 r = rand(); // FIXME: Not thread safe!
+	static uint32 n = 0;
+	n += rand() & 3;
 
-  // Time moves the counter forward, but the counter may go ahead of time
-  t <<= 12;
-  if (t > n) {
-    // Move forward along with extra random bits
-    n = (t + (rand() & 0xFFF));
-  }
+	// Time moves the counter forward, but the counter may go ahead of time
+	t <<= 12;
+	if (t > n)
+	{
+		// Move forward along with extra random bits
+		n = (t + (rand() & 0xFFF));
+	}
 
-  // 12bits for the time (in second) => loop in 1 hour
-  // 12bits for the inc number => can generate 1024 keys per second without any
-  // problem (if you generate more than this number, time will just go faster)
-  //  8bits for random => 256 case
-  // double salted for obfuscating
-  return wangHash(((n & 0xFFFFFF) << 8 | (r & 0xFF)) ^ salt0) ^ salt1;
+	// 12bits for the time (in second) => loop in 1 hour
+	// 12bits for the inc number => can generate 1024 keys per second without any problem (if you generate more than this number, time will just go faster)
+	//  8bits for random => 256 case
+	// double salted for obfuscating
+	return wangHash(((n & 0xFFFFFF) << 8 | (r & 0xFF)) ^ salt0) ^ salt1;
 }
 
 /* test key generation
@@ -107,4 +112,4 @@ void main()
 }
 */
 
-} // namespace NLNET
+} // NL.

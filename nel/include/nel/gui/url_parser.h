@@ -25,37 +25,38 @@ namespace NLGUI {
  * \author Meelis Mägi
  * \date 2015
  */
-class CUrlParser {
+class CUrlParser
+{
 public:
-  CUrlParser() {}
+	CUrlParser() { }
 
-  // parse uri to components
-  CUrlParser(const std::string &url);
+	// parse uri to components
+	CUrlParser(const std::string &url);
 
-  // parse uri to components
-  void parse(std::string uri);
+	// parse uri to components
+	void parse(std::string uri);
 
-  // serialize URL back to string
-  std::string toString() const;
+	// serialize URL back to string
+	std::string toString() const;
 
-  // inherit scheme, domain, path from given url
-  void inherit(const std::string &url);
+	// inherit scheme, domain, path from given url
+	void inherit(const std::string &url);
 
-  // if current parts can compose absolute url or not
-  bool isAbsolute() const;
+	// if current parts can compose absolute url or not
+	bool isAbsolute() const;
 
-  // resolve relative path like './a/../b' to absolute path '/a/b'
-  static void resolveRelativePath(std::string &path);
+	// resolve relative path like './a/../b' to absolute path '/a/b'
+	static void resolveRelativePath(std::string &path);
 
 public:
-  std::string scheme;
-  std::string authority;
-  std::string host;
-  std::string path;
-  std::string query;
-  std::string hash;
+	std::string scheme;
+	std::string authority;
+	std::string host;
+	std::string path;
+	std::string query;
+	std::string hash;
 };
 
-} // namespace NLGUI
+} // namespace
 
 #endif // CL_URL_PARSER_H

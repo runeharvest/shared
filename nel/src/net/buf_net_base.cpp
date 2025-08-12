@@ -28,15 +28,11 @@ namespace NLNET {
 
 uint32 NbNetworkTask = 0;
 
-// The value that will be used if setMaxExpectedBlockSize() is not called (or
-// called with a negative argument)
-uint32 CBufNetBase::DefaultMaxExpectedBlockSize =
-    1048576; // 10 M unless changed by a NeL variable
+// The value that will be used if setMaxExpectedBlockSize() is not called (or called with a negative argument)
+uint32 CBufNetBase::DefaultMaxExpectedBlockSize = 1048576; // 10 M unless changed by a NeL variable
 
-// The value that will be used if setMaxSentBlockSize() is not called (or called
-// with a negative argument)
-uint32 CBufNetBase::DefaultMaxSentBlockSize =
-    1048576; // 10 M unless changed by a NeL variable
+// The value that will be used if setMaxSentBlockSize() is not called (or called with a negative argument)
+uint32 CBufNetBase::DefaultMaxSentBlockSize = 1048576; // 10 M unless changed by a NeL variable
 
 /***************************************************************************************************
  * User main thread
@@ -52,34 +48,40 @@ CBufNetBase::CBufNetBase(bool isDataAvailablePipeSelfManaged)
 CBufNetBase::CBufNetBase()
     :
 #endif
-      _RecvFifo("CBufNetBase::_RecvFifo"), _DisconnectionCallback(NULL),
-      _DisconnectionCbArg(NULL),
-      _MaxExpectedBlockSize(DefaultMaxExpectedBlockSize),
-      _MaxSentBlockSize(DefaultMaxSentBlockSize), _DataAvailable(false) {
-  // Debug info for mutexes
+    _RecvFifo("CBufNetBase::_RecvFifo")
+    , _DisconnectionCallback(NULL)
+    , _DisconnectionCbArg(NULL)
+    , _MaxExpectedBlockSize(DefaultMaxExpectedBlockSize)
+    , _MaxSentBlockSize(DefaultMaxSentBlockSize)
+    , _DataAvailable(false)
+{
+	// Debug info for mutexes
 #ifdef MUTEX_DEBUG
-  initAcquireTimeMap();
+	initAcquireTimeMap();
 #endif
 #if defined(NL_OS_UNIX)
-  _IsDataAvailablePipeSelfManaged = isDataAvailablePipeSelfManaged;
-  if (_IsDataAvailablePipeSelfManaged) {
-    if (::pipe(_DataAvailablePipeHandle) != 0)
-      nlwarning("Unable to create D.A. pipe");
-  }
+	_IsDataAvailablePipeSelfManaged = isDataAvailablePipeSelfManaged;
+	if (_IsDataAvailablePipeSelfManaged)
+	{
+		if (::pipe(_DataAvailablePipeHandle) != 0)
+			nlwarning("Unable to create D.A. pipe");
+	}
 #elif defined(NL_OS_WINDOWS)
-  _DataAvailableHandle = NULL;
+	_DataAvailableHandle = NULL;
 #endif
 }
 
 /*
  * Destructor
  */
-CBufNetBase::~CBufNetBase() {
+CBufNetBase::~CBufNetBase()
+{
 #ifdef NL_OS_UNIX
-  if (_IsDataAvailablePipeSelfManaged) {
-    ::close(_DataAvailablePipeHandle[PipeRead]);
-    ::close(_DataAvailablePipeHandle[PipeWrite]);
-  }
+	if (_IsDataAvailablePipeSelfManaged)
+	{
+		::close(_DataAvailablePipeHandle[PipeRead]);
+		::close(_DataAvailablePipeHandle[PipeWrite]);
+	}
 #endif
 }
 
@@ -87,73 +89,73 @@ CBufNetBase::~CBufNetBase() {
  * Push message into receive queue (mutexed)
  * TODO OPTIM never use this function
  */
-void CBufNetBase::pushMessageIntoReceiveQueue(
-    const std::vector<uint8> &buffer) {
-  // sint32 mbsize;
-  {
-    // nldebug( "BNB: Acquiring the receive queue... ");
-    CFifoAccessor recvfifo(&_RecvFifo);
-    // nldebug( "BNB: Acquired, pushing the received buffer... ");
-    recvfifo.value().push(buffer);
-    // nldebug( "BNB: Pushed, releasing the receive queue..." );
-    // mbsize = recvfifo.value().size() / 1048576;
-    setDataAvailableFlag(true);
-  }
+void CBufNetBase::pushMessageIntoReceiveQueue(const std::vector<uint8> &buffer)
+{
+	// sint32 mbsize;
+	{
+		// nldebug( "BNB: Acquiring the receive queue... ");
+		CFifoAccessor recvfifo(&_RecvFifo);
+		// nldebug( "BNB: Acquired, pushing the received buffer... ");
+		recvfifo.value().push(buffer);
+		// nldebug( "BNB: Pushed, releasing the receive queue..." );
+		// mbsize = recvfifo.value().size() / 1048576;
+		setDataAvailableFlag(true);
+	}
 #if defined(NL_OS_UNIX)
-  // Wake-up main thread (outside the critical section of CFifoAccessor, to
-  // allow main thread to be read the fifo; if the main thread sees the Data
-  // Available flag is true but the pipe not written yet, it will block on
-  // read()).
-  uint8 b = 0;
-  if (write(_DataAvailablePipeHandle[PipeWrite], &b, 1) == -1) {
-    nlwarning("LNETL1: Write pipe failed in pushMessageIntoReceiveQueue");
-  }
-  // nldebug( "Pipe: 1 byte written (%p)", this );
+	// Wake-up main thread (outside the critical section of CFifoAccessor, to allow main thread to be
+	// read the fifo; if the main thread sees the Data Available flag is true but the pipe not written
+	// yet, it will block on read()).
+	uint8 b = 0;
+	if (write(_DataAvailablePipeHandle[PipeWrite], &b, 1) == -1)
+	{
+		nlwarning("LNETL1: Write pipe failed in pushMessageIntoReceiveQueue");
+	}
+	// nldebug( "Pipe: 1 byte written (%p)", this );
 #elif defined(NL_OS_WINDOWS)
-  if (_DataAvailableHandle)
-    SetEvent(_DataAvailableHandle);
+	if (_DataAvailableHandle)
+		SetEvent(_DataAvailableHandle);
 #endif
-  // nldebug( "BNB: Released." );
-  // if ( mbsize > 1 )
-  //{
-  //	nlwarning( "The receive queue size exceeds %d MB", mbsize );
-  // }
+	// nldebug( "BNB: Released." );
+	// if ( mbsize > 1 )
+	//{
+	//	nlwarning( "The receive queue size exceeds %d MB", mbsize );
+	// }
 }
 
 /*
  * Push message into receive queue (mutexed)
  */
-void CBufNetBase::pushMessageIntoReceiveQueue(const uint8 *buffer,
-                                              uint32 size) {
-  // sint32 mbsize;
-  {
-    // nldebug( "BNB: Acquiring the receive queue... ");
-    CFifoAccessor recvfifo(&_RecvFifo);
-    // nldebug( "BNB: Acquired, pushing the received buffer... ");
-    recvfifo.value().push(buffer, size);
-    // nldebug( "BNB: Pushed, releasing the receive queue..." );
-    // mbsize = recvfifo.value().size() / 1048576;
-    setDataAvailableFlag(true);
+void CBufNetBase::pushMessageIntoReceiveQueue(const uint8 *buffer, uint32 size)
+{
+	// sint32 mbsize;
+	{
+		// nldebug( "BNB: Acquiring the receive queue... ");
+		CFifoAccessor recvfifo(&_RecvFifo);
+		// nldebug( "BNB: Acquired, pushing the received buffer... ");
+		recvfifo.value().push(buffer, size);
+		// nldebug( "BNB: Pushed, releasing the receive queue..." );
+		// mbsize = recvfifo.value().size() / 1048576;
+		setDataAvailableFlag(true);
 #if defined(NL_OS_UNIX)
-    // Wake-up main thread
-    uint8 b = 0;
-    if (write(_DataAvailablePipeHandle[PipeWrite], &b, 1) == -1) {
-      nlwarning("LNETL1: Write pipe failed in pushMessageIntoReceiveQueue");
-    }
-    nldebug("Pipe: 1 byte written");
+		// Wake-up main thread
+		uint8 b = 0;
+		if (write(_DataAvailablePipeHandle[PipeWrite], &b, 1) == -1)
+		{
+			nlwarning("LNETL1: Write pipe failed in pushMessageIntoReceiveQueue");
+		}
+		nldebug("Pipe: 1 byte written");
 #elif defined(NL_OS_WINDOWS)
-    if (_DataAvailableHandle)
-      SetEvent(_DataAvailableHandle);
+		if (_DataAvailableHandle)
+			SetEvent(_DataAvailableHandle);
 #endif
-  }
-  // nldebug( "BNB: Released." );
-  /*if ( mbsize > 1 )
-  {
-      nlwarning( "The receive queue size exceeds %d MB", mbsize );
-  }*/
+	}
+	// nldebug( "BNB: Released." );
+	/*if ( mbsize > 1 )
+	{
+	    nlwarning( "The receive queue size exceeds %d MB", mbsize );
+	}*/
 }
 
-NLMISC_CATEGORISED_VARIABLE(nel, uint32, NbNetworkTask,
-                            "Number of server and client thread");
+NLMISC_CATEGORISED_VARIABLE(nel, uint32, NbNetworkTask, "Number of server and client thread");
 
-} // namespace NLNET
+} // NLNET

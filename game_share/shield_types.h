@@ -22,12 +22,13 @@
 
 namespace SHIELDTYPE {
 // Mode
-enum EShieldType {
-  NONE = 0,
-  SMALL_SHIELD,
-  LARGE_SHIELD,
+enum EShieldType
+{
+	NONE = 0,
+	SMALL_SHIELD,
+	LARGE_SHIELD,
 
-  NUM_SHIELD_TYPE
+	NUM_SHIELD_TYPE
 };
 
 // Table EShieldType to Skill.
@@ -42,8 +43,7 @@ enum EShieldType {
 /**
  * get the right shield type from the input string
  * \param str the input string
- * \return the EShieldType associated to this string (NONE if the string cannot
- * be interpreted)
+ * \return the EShieldType associated to this string (NONE if the string cannot be interpreted)
  */
 EShieldType stringToShieldType(const std::string &str);
 
@@ -51,7 +51,7 @@ const std::string &toString(EShieldType e);
 
 //	SKILLS::ESkills		shieldTypeToSkill(EShieldType e);
 
-}; // namespace SHIELDTYPE
+}; // SHIELDTYPE
 
 #endif // RY_SHIELD_TYPES_H
 /* End of shield_types.h */

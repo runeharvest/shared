@@ -25,31 +25,38 @@ class UFormElm;
 }
 
 // Setup for a directionnal light
-struct CDirLightSetup {
-  NLMISC::CRGBA Ambiant;
-  NLMISC::CRGBA Diffuse;
-  NLMISC::CRGBA Specular;
-  NLMISC::CVector Direction;
-  // default ctor
-  CDirLightSetup();
-  // ctor
-  CDirLightSetup(NLMISC::CRGBA ambiant, NLMISC::CRGBA diffuse,
-                 NLMISC::CRGBA specular, const NLMISC::CVector &dir)
-      : Ambiant(ambiant), Diffuse(diffuse), Specular(specular), Direction(dir) {
-  }
-  // blend
-  void blend(const CDirLightSetup &setup0, const CDirLightSetup &setup1,
-             float blendFactor);
-  // modulate
-  void modulate(float level);
-  /** load from sheet.
-   * \return true if the loading was ok
-   */
-  bool build(const NLGEORGES::UFormElm &elm);
-  //
-  void serial(NLMISC::IStream &f) {
-    f.serial(Ambiant, Diffuse, Specular, Direction);
-  }
+struct CDirLightSetup
+{
+	NLMISC::CRGBA Ambiant;
+	NLMISC::CRGBA Diffuse;
+	NLMISC::CRGBA Specular;
+	NLMISC::CVector Direction;
+	// default ctor
+	CDirLightSetup();
+	// ctor
+	CDirLightSetup(NLMISC::CRGBA ambiant,
+	    NLMISC::CRGBA diffuse,
+	    NLMISC::CRGBA specular,
+	    const NLMISC::CVector &dir)
+	    : Ambiant(ambiant)
+	    , Diffuse(diffuse)
+	    , Specular(specular)
+	    , Direction(dir)
+	{
+	}
+	// blend
+	void blend(const CDirLightSetup &setup0, const CDirLightSetup &setup1, float blendFactor);
+	// modulate
+	void modulate(float level);
+	/** load from sheet.
+	 * \return true if the loading was ok
+	 */
+	bool build(const NLGEORGES::UFormElm &elm);
+	//
+	void serial(NLMISC::IStream &f)
+	{
+		f.serial(Ambiant, Diffuse, Specular, Direction);
+	}
 };
 
 #endif

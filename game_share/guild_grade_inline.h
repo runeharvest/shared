@@ -22,35 +22,37 @@ namespace EGSPD {
 /* -----------------------------------------
  * Inline implementation of CGuildGrade
  * ----------------------------------------- */
-inline const std::string &CGuildGrade::toString(TGuildGrade v) {
-  if (v < 0 || v >= ___TGuildGrade_useSize) {
-    nlwarning("TGuildGrade::toString(): value '%u' is not matched, \"Unknown\" "
-              "string returned",
-              v);
-    return _UnknownString;
-  }
-  if (!_Initialised) {
-    init();
-  }
-  return _StrTable[v];
+inline const std::string &CGuildGrade::toString(TGuildGrade v)
+{
+	if (v < 0 || v >= ___TGuildGrade_useSize)
+	{
+		nlwarning("TGuildGrade::toString(): value '%u' is not matched, \"Unknown\" string returned", v);
+		return _UnknownString;
+	}
+	if (!_Initialised)
+	{
+		init();
+	}
+	return _StrTable[v];
 }
-inline CGuildGrade::TGuildGrade CGuildGrade::fromString(const std::string &v) {
-  if (!_Initialised) {
-    init();
-  }
-  if (v == _UnknownString) {
-    return Unknown;
-  }
-  const std::map<std::string, TGuildGrade>::const_iterator it =
-      _ValueMap.find(NLMISC::toLowerAscii(v));
-  if (it == _ValueMap.end()) {
-    nlwarning("TGuildGrade::toString(): string '%s' is not matched, 'Unknown' "
-              "enum value returned",
-              v.c_str());
-    return Unknown;
-  }
-  return (*it).second;
+inline CGuildGrade::TGuildGrade CGuildGrade::fromString(const std::string &v)
+{
+	if (!_Initialised)
+	{
+		init();
+	}
+	if (v == _UnknownString)
+	{
+		return Unknown;
+	}
+	const std::map<std::string, TGuildGrade>::const_iterator it = _ValueMap.find(NLMISC::toLowerAscii(v));
+	if (it == _ValueMap.end())
+	{
+		nlwarning("TGuildGrade::toString(): string '%s' is not matched, 'Unknown' enum value returned", v.c_str());
+		return Unknown;
+	}
+	return (*it).second;
 }
 // End of inline implementation of CGuildGrade
 
-} // namespace EGSPD
+} // End of EGSPD

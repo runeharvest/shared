@@ -32,35 +32,44 @@ uint CMRMMeshFinal::CWedge::NumAttributesToCompare = 0;
 bool CMRMMeshFinal::CWedge::CompareSkinning = false;
 
 // ***************************************************************************
-CMRMMesh::CMRMMesh() { NumAttributes = 0; }
-
-// ***************************************************************************
-sint CMRMMeshFinal::findInsertWedge(const CWedge &w) {
-  sint ret;
-  TWedgeMap::iterator it;
-  it = _WedgeMap.find(w);
-
-  // if not found, must add it.
-  if (it == _WedgeMap.end()) {
-    ret = (sint)Wedges.size();
-    // insert into the map, with good id.
-    _WedgeMap.insert(make_pair(w, ret));
-    // add it to the array.
-    Wedges.push_back(w);
-  } else {
-    ret = it->second;
-  }
-
-  return ret;
+CMRMMesh::CMRMMesh()
+{
+	NumAttributes = 0;
 }
 
 // ***************************************************************************
-CMRMMeshFinal::CWedge::CWedge() {
-  Vertex = NLMISC::CVector::Null;
-  NSkinMatUsed = 0;
-  for (uint k = 0; k < NL3D_MRM_MAX_ATTRIB; ++k) {
-    Attributes[k].set(0, 0, 0, 0);
-  }
+sint CMRMMeshFinal::findInsertWedge(const CWedge &w)
+{
+	sint ret;
+	TWedgeMap::iterator it;
+	it = _WedgeMap.find(w);
+
+	// if not found, must add it.
+	if (it == _WedgeMap.end())
+	{
+		ret = (sint)Wedges.size();
+		// insert into the map, with good id.
+		_WedgeMap.insert(make_pair(w, ret));
+		// add it to the array.
+		Wedges.push_back(w);
+	}
+	else
+	{
+		ret = it->second;
+	}
+
+	return ret;
 }
 
-} // namespace NL3D
+// ***************************************************************************
+CMRMMeshFinal::CWedge::CWedge()
+{
+	Vertex = NLMISC::CVector::Null;
+	NSkinMatUsed = 0;
+	for (uint k = 0; k < NL3D_MRM_MAX_ATTRIB; ++k)
+	{
+		Attributes[k].set(0, 0, 0, 0);
+	}
+}
+
+} // NL3D

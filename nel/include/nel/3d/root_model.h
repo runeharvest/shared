@@ -17,8 +17,8 @@
 #ifndef NL_ROOT_MODEL_H
 #define NL_ROOT_MODEL_H
 
-#include "nel/3d/transform.h"
 #include "nel/misc/types_nl.h"
+#include "nel/3d/transform.h"
 
 namespace NL3D {
 
@@ -28,35 +28,38 @@ const NLMISC::CClassId RootModelId = NLMISC::CClassId(0x25f0505d, 0x75c69f9);
 
 // ***************************************************************************
 /**
- * The purpose of this model is to do nothing in traverse*() but traverseSons()
- * for Hrc and Clip \author Lionel Berenguier \author Nevrax France \date 2001
+ * The purpose of this model is to do nothing in traverse*() but traverseSons() for Hrc and Clip
+ * \author Lionel Berenguier
+ * \author Nevrax France
+ * \date 2001
  */
-class CRootModel : public CTransform {
+class CRootModel : public CTransform
+{
 public:
-  /// Call at the beginning of the program, to register the model
-  static void registerBasic();
+	/// Call at the beginning of the program, to register the model
+	static void registerBasic();
 
-  /// \name CTransform traverse specialisation
-  // @{
-  virtual void traverseHrc();
-  virtual void traverseClip();
-  virtual void traverseAnimDetail();
-  virtual void traverseLoadBalancing();
-  virtual void traverseLight();
-  virtual void traverseRender();
-  // @}
+	/// \name CTransform traverse specialisation
+	// @{
+	virtual void traverseHrc();
+	virtual void traverseClip();
+	virtual void traverseAnimDetail();
+	virtual void traverseLoadBalancing();
+	virtual void traverseLight();
+	virtual void traverseRender();
+	// @}
 
 protected:
-  /// Constructor
-  CRootModel() {}
-  /// Destructor
-  virtual ~CRootModel() {}
+	/// Constructor
+	CRootModel() { }
+	/// Destructor
+	virtual ~CRootModel() { }
 
 private:
-  static CTransform *creator() { return new CRootModel; }
+	static CTransform *creator() { return new CRootModel; }
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_ROOT_MODEL_H
 

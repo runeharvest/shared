@@ -16,24 +16,25 @@
 
 #include "stdpch.h"
 
-#include "loot_harvest_state.h"
 #include "nel/misc/debug.h"
+#include "loot_harvest_state.h"
 
 namespace LHSTATE {
-TLHState stringToLHState(const std::string &str) {
-  if (str == "NONE" || str == "None")
-    return NONE;
+TLHState stringToLHState(const std::string &str)
+{
+	if (str == "NONE" || str == "None")
+		return NONE;
 
-  if (str == "LOOTABLE" || str == "Lootable")
-    return LOOTABLE;
+	if (str == "LOOTABLE" || str == "Lootable")
+		return LOOTABLE;
 
-  if (str == "HARVESTABLE" || str == "Harvestable")
-    return HARVESTABLE;
+	if (str == "HARVESTABLE" || str == "Harvestable")
+		return HARVESTABLE;
 
-  if (str == "LOOTABLE_HARVESTABLE")
-    return LOOTABLE_HARVESTABLE;
+	if (str == "LOOTABLE_HARVESTABLE")
+		return LOOTABLE_HARVESTABLE;
 
-  nlwarning("<stringToLHState> Unknown type %s", str.c_str());
-  return NONE;
+	nlwarning("<stringToLHState> Unknown type %s", str.c_str());
+	return NONE;
 }
-}; // namespace LHSTATE
+}; // LHSTATE

@@ -35,8 +35,7 @@ inline IModule::IModule( CModuleParent* parent, IModuleCore* referencedCore)
 //----------------------------------------------------------------------------
 inline void IModule::onParentDestruction()
 {
-    MODULE_INFO( "the parent of a module was destroyed, calling overriden
-handler" );
+    MODULE_INFO( "the parent of a module was destroyed, calling overriden handler" );
     // get a ref poniter on the module
     NLMISC::CRefPtr<IModule> ptr(this);
     // call the derived class handler
@@ -48,16 +47,15 @@ handler" );
         delete ptr;
     }
     else
-        MODULE_INFO( "the module was deleted by the overriden handler. We dont
-have to delete it" );
+        MODULE_INFO( "the module was deleted by the overriden handler. We dont have to delete it" );
 
 }
 
 //----------------------------------------------------------------------------
 inline void IModule::onReferencedDestruction()
 {
-    MODULE_INFO( "The module reference was deleted. Remove the module from the
-parent and delete it" ); MODULE_AST( _Parent != NULL );
+    MODULE_INFO( "The module reference was deleted. Remove the module from the parent and delete it" );
+    MODULE_AST( _Parent != NULL );
     // get a ref poniter on the module
     NLMISC::CRefPtr<IModule> ptr(this);
     // remove it from the parent

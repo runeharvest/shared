@@ -17,8 +17,8 @@
 #ifndef NL_U_PRIMITIVE_BLOCK_H
 #define NL_U_PRIMITIVE_BLOCK_H
 
-#include "nel/pacs/u_move_primitive.h"
 #include <string>
+#include "nel/pacs/u_move_primitive.h"
 
 namespace NLMISC {
 class IStream;
@@ -34,27 +34,27 @@ namespace NLPACS {
  * \author Nevrax France
  * \date 2002
  */
-class UPrimitiveBlock {
+class UPrimitiveBlock
+{
 public:
-  // dtor
-  virtual ~UPrimitiveBlock() {}
-  /** Create a primitive block from a stream.
-   * This may raise exception if loading failed
-   */
-  static UPrimitiveBlock *createPrimitiveBlock(NLMISC::IStream &src);
-  /** Create a primitive block from its file name.
-   * This may raise exceptions if loading failed.
-   */
-  static UPrimitiveBlock *
-  createPrimitiveBlockFromFile(const std::string &fileName);
+	// dtor
+	virtual ~UPrimitiveBlock() { }
+	/** Create a primitive block from a stream.
+	 * This may raise exception if loading failed
+	 */
+	static UPrimitiveBlock *createPrimitiveBlock(NLMISC::IStream &src);
+	/** Create a primitive block from its file name.
+	 * This may raise exceptions if loading failed.
+	 */
+	static UPrimitiveBlock *createPrimitiveBlockFromFile(const std::string &fileName);
 
-  /// get the number of primitives in the block
-  virtual uint getNbPrimitive() = 0;
+	/// get the number of primitives in the block
+	virtual uint getNbPrimitive() = 0;
 
-  /// return the user data for a primitive of the block
-  virtual UMovePrimitive::TUserData getUserData(uint nPrimNb) = 0;
+	/// return the user data for a primitive of the block
+	virtual UMovePrimitive::TUserData getUserData(uint nPrimNb) = 0;
 };
 
-} // namespace NLPACS
+}
 
 #endif

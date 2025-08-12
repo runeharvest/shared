@@ -21,27 +21,27 @@
 
 namespace ARMORTYPE {
 // Mode
-enum EArmorType {
-  UNKNOWN = 0,
-  HEAVY,
-  MEDIUM,
-  LIGHT,
-  ALL,
+enum EArmorType
+{
+	UNKNOWN = 0,
+	HEAVY,
+	MEDIUM,
+	LIGHT,
+	ALL,
 
-  NUM_ARMOR_TYPE
+	NUM_ARMOR_TYPE
 };
 
 /**
  * get the right armor type from the input string
  * \param str the input string
- * \return the EDamageType associated to this string (UNKNOWN if the string
- * cannot be interpreted)
+ * \return the EDamageType associated to this string (UNKNOWN if the string cannot be interpreted)
  */
 EArmorType toArmorType(const std::string &str);
 
 const std::string &toString(EArmorType e);
 
-}; // namespace ARMORTYPE
+}; // ARMORTYPE
 
 #endif // RY_ARMOR_TYPES_H
 /* End of armor_types.h */

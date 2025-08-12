@@ -24,54 +24,59 @@ namespace NLMISC {
 
 /**
  * This smooth position of mouse using cubic splines.
- * The mouse is sampled at the given period. The higher the period, the smoother
- * the movement. However there is a delay of 2 * samplingPeriod between the user
- * moving the mouse and the pointer reaching the wanted position.
+ * The mouse is sampled at the given period. The higher the period, the smoother the movement.
+ * However there is a delay of 2 * samplingPeriod between the user moving the mouse and the pointer reaching
+ * the wanted position.
  *
  * \author Nicolas Vizerie
  * \author Nevrax France
  * \date 1/2004
  */
-class CMouseSmoother {
+class CMouseSmoother
+{
 public:
-  // create a mouse smoother with the given sampling period.
-  CMouseSmoother(double samplingPeriod = 0.2);
-  /** Change the sampling period. The longer it lasts, the more smooth the
-   * movement. NB : this reset the smoother
-   */
-  void setSamplingPeriod(double period);
-  // Get the sampling period
-  double getSamplingPeriod() const { return _SamplingPeriod; }
-  // Reset smoother. The next returned position will be the exact position of
-  // mouse (no smoothing with previous position is done)
-  void reset();
-  // \return true if no sampling has occurred since last resetor construction
-  bool isReseted() const { return !_Init; }
-  // Sample pos, and return smoothed position
-  CVector2f samplePos(const CVector2f &wantedPos, double date);
+	// create a mouse smoother with the given sampling period.
+	CMouseSmoother(double samplingPeriod = 0.2);
+	/** Change the sampling period. The longer it lasts, the more smooth the movement.
+	 * NB : this reset the smoother
+	 */
+	void setSamplingPeriod(double period);
+	// Get the sampling period
+	double getSamplingPeriod() const { return _SamplingPeriod; }
+	// Reset smoother. The next returned position will be the exact position of mouse (no smoothing with previous position is done)
+	void reset();
+	// \return true if no sampling has occurred since last resetor construction
+	bool isReseted() const { return !_Init; }
+	// Sample pos, and return smoothed position
+	CVector2f samplePos(const CVector2f &wantedPos, double date);
 
 private:
-  // sample of mouse position
-  class CSample {
-  public:
-    double Date;
-    CVector2f Pos;
+	// sample of mouse position
+	class CSample
+	{
+	public:
+		double Date;
+		CVector2f Pos;
 
-  public:
-    // default ctor
-    CSample() {}
-    // ctor with pos & date
-    CSample(double date, const NLMISC::CVector2f &pos) : Date(date), Pos(pos) {}
-  };
-  double _SamplingPeriod;
-  bool _Init;
-  /** 4 samples are needed to compute smoothed position :
-   * Sample 0 & 2 are used to compute tangent at sample 1
-   * Sample 1 & 3 are used to compute tangent at sample 2
-   */
-  CSample _Sample[4];
+	public:
+		// default ctor
+		CSample() { }
+		// ctor with pos & date
+		CSample(double date, const NLMISC::CVector2f &pos)
+		    : Date(date)
+		    , Pos(pos)
+		{
+		}
+	};
+	double _SamplingPeriod;
+	bool _Init;
+	/** 4 samples are needed to compute smoothed position :
+	 * Sample 0 & 2 are used to compute tangent at sample 1
+	 * Sample 1 & 3 are used to compute tangent at sample 2
+	 */
+	CSample _Sample[4];
 };
 
-} // namespace NLMISC
+} // NLMISC
 
 #endif

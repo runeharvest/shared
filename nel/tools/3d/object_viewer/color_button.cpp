@@ -17,18 +17,23 @@
 // color_button.cpp : implementation file
 //
 
-#include "color_button.h"
-#include "object_viewer.h"
 #include "std_afx.h"
+#include "object_viewer.h"
+#include "color_button.h"
 
 WNDPROC CColorButton::_BasicButtonWndProc = NULL;
 
 /////////////////////////////////////////////////////////////////////////////
 // CColorButton
 
-CColorButton::CColorButton() : _Color(CRGBA::White) {}
+CColorButton::CColorButton()
+    : _Color(CRGBA::White)
+{
+}
 
-CColorButton::~CColorButton() {}
+CColorButton::~CColorButton()
+{
+}
 
 BEGIN_MESSAGE_MAP(CColorButton, CButton)
 //{{AFX_MSG_MAP(CColorButton)
@@ -38,20 +43,21 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CColorButton message handlers
 
-void CColorButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
-  // TODO: Add your code to draw the specified item
-  HDC dc = lpDrawItemStruct->hDC;
+void CColorButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
+{
+	// TODO: Add your code to draw the specified item
+	HDC dc = lpDrawItemStruct->hDC;
 
-  RECT r;
+	RECT r;
 
-  GetClientRect(&r);
+	GetClientRect(&r);
 
-  r.left += 4;
-  r.top += 4;
-  r.bottom -= 4;
-  r.right -= 4;
-  GetClientRect(&r);
-  CBrush b;
-  b.CreateSolidBrush(RGB(_Color.R, _Color.G, _Color.B));
-  ::FillRect(dc, &r, (HBRUSH)b);
+	r.left += 4;
+	r.top += 4;
+	r.bottom -= 4;
+	r.right -= 4;
+	GetClientRect(&r);
+	CBrush b;
+	b.CreateSolidBrush(RGB(_Color.R, _Color.G, _Color.B));
+	::FillRect(dc, &r, (HBRUSH)b);
 }

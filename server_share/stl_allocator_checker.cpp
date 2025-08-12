@@ -17,32 +17,28 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stl_allocator_checker.h"
+#include "stdpch.h"
+#include <vector>
+#include <signal.h>
+#include <setjmp.h>
+#include "nel/misc/types_nl.h"
 #include "nel/misc/common.h"
 #include "nel/misc/debug.h"
-#include "nel/misc/types_nl.h"
 #include "nel/misc/variable.h"
-#include "stdpch.h"
-#include <setjmp.h>
-#include <signal.h>
-#include <vector>
+#include "stl_allocator_checker.h"
 
 bool EnableStlAllocatorChecker = false;
 NLMISC_VARIABLE(bool, EnableStlAllocatorChecker, "Enable stl allocator tests");
 
 uint64 StlAllocatorMaxFree = 0;
-NLMISC_VARIABLE(uint64, StlAllocatorMaxFree,
-                "When EnableStlAllocatorChecker is true, this value gives the "
-                "largest number of free blocks encountered");
+NLMISC_VARIABLE(uint64, StlAllocatorMaxFree, "When EnableStlAllocatorChecker is true, this value gives the largest number of free blocks encountered");
 
 // setup a 'max iterations' value of 3GBytes/ sizeof(void*) (32bit)
 // => this is equivalent to the total addressable memory space under linux
 static const uintptr_t MaxIterations = 768 * 1024 * 1024;
 
-// the following static vector exists only for the use of the
-// testStlMemoryAllocator() routine
-// - it is required to allow us to get hold of the stl small block memory
-// allocator
+// the following static vector exists only for the use of the testStlMemoryAllocator() routine
+// - it is required to allow us to get hold of the stl small block memory allocator
 static std::vector<int> StaticIntVector;
 
 static bool IsCrashed = false;
@@ -50,55 +46,55 @@ static jmp_buf Context;
 
 const char *StlMemoryAllocatorCrashPoint = NULL;
 
-static void sigHandler(int sig) { longjmp(Context, sig); }
+static void sigHandler(int sig)
+{
+	longjmp(Context, sig);
+}
 
-void testStlMemoryAllocator(const char *state) {
-  signal(SIGSEGV, sigHandler);
-  if (IsCrashed)
-    return;
+void testStlMemoryAllocator(const char *state)
+{
+	signal(SIGSEGV, sigHandler);
+	if (IsCrashed) return;
 
-  // setup a pointer 'p' to the first block in the allocator's linked list of
-  // free blocks
-  std::vector<uintptr_t>::allocator_type allocator =
-      StaticIntVector.get_allocator();
-  uintptr_t *p;
-  p = allocator.allocate(1);
-  allocator.deallocate(p, 1);
+	// setup a pointer 'p' to the first block in the allocator's linked list of free blocks
+	std::vector<uintptr_t>::allocator_type allocator = StaticIntVector.get_allocator();
+	uintptr_t *p;
+	p = allocator.allocate(1);
+	allocator.deallocate(p, 1);
 
-  // setup a counter to 3GBytes/ sizeof(void*) (32bit) => equivalent to the
-  // total addressable memory space under linux
-  uintptr_t counter = MaxIterations;
+	// setup a counter to 3GBytes/ sizeof(void*) (32bit) => equivalent to the total addressable memory space under linux
+	uintptr_t counter = MaxIterations;
 
-  if (setjmp(Context) == 0) {
-    do {
-      // step forwards allong the linked list
-      p = (uintptr_t *)*p;
+	if (setjmp(Context) == 0)
+	{
+		do
+		{
+			// step forwards allong the linked list
+			p = (uintptr_t *)*p;
 
-      // if the counter hits zero then we can assume that we're in an infinite
-      // loop
-      if (--counter == 0)
-        break;
-    } while (p != NULL);
+			// if the counter hits zero then we can assume that we're in an infinite loop
+			if (--counter == 0)
+				break;
+		} while (p != NULL);
 
-    // if we hit a NULL end of list terminator then return happily
-    if (p == NULL) {
-      uintptr_t numIterations = MaxIterations - counter;
-      StlAllocatorMaxFree =
-          std::max((uint64)numIterations, StlAllocatorMaxFree);
-      signal(SIGSEGV, NULL);
-      return;
-    }
+		// if we hit a NULL end of list terminator then return happily
+		if (p == NULL)
+		{
+			uintptr_t numIterations = MaxIterations - counter;
+			StlAllocatorMaxFree = std::max((uint64)numIterations, StlAllocatorMaxFree);
+			signal(SIGSEGV, NULL);
+			return;
+		}
 
-    // if we're here it's because there's been a problem
-    // note that our memory allocators contain invalid data so any call to
-    // 'nlassert' etc may modify data thta they shouldn't and make our debugging
-    // task harder
-    // ... so just provoke an access violation
-    *(uintptr_t **)(0) = p;
-  }
+		// if we're here it's because there's been a problem
+		// note that our memory allocators contain invalid data so any call to 'nlassert' etc may modify
+		// data thta they shouldn't and make our debugging task harder
+		// ... so just provoke an access violation
+		*(uintptr_t **)(0) = p;
+	}
 
-  // we just hit a crash case so setup flags / globals accordingly
-  IsCrashed = true;
-  StlMemoryAllocatorCrashPoint = state;
-  signal(SIGSEGV, NULL);
+	// we just hit a crash case so setup flags / globals accordingly
+	IsCrashed = true;
+	StlMemoryAllocatorCrashPoint = state;
+	signal(SIGSEGV, NULL);
 }

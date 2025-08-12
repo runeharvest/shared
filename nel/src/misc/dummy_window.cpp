@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "nel/misc/dummy_window.h"
 #include "stdmisc.h"
+#include "nel/misc/dummy_window.h"
 
 #ifdef NL_OS_WINDOWS
 
@@ -25,57 +25,69 @@
 
 namespace NLMISC {
 
-static LRESULT CALLBACK nlDefaultWinProc(HWND hwnd, UINT uMsg, WPARAM wParam,
-                                         LPARAM lParam) {
-  return DefWindowProc(hwnd, uMsg, wParam, lParam);
+static LRESULT CALLBACK nlDefaultWinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
 // ***************************************************************
-CDummyWindow::CDummyWindow() : _HWnd(NULL) {}
-
-// ***************************************************************
-bool CDummyWindow::init(HINSTANCE hInstance, WNDPROC winProc) {
-  release();
-  static const char *INVISIBLE_WINDOW_CLASS = "nl_invisible_wnd_class";
-  WNDCLASSEXA wc;
-  wc.cbSize = sizeof(WNDCLASSEXA);
-  if (!GetClassInfoExA(hInstance, INVISIBLE_WINDOW_CLASS, &wc)) {
-    wc.cbSize = sizeof(WNDCLASSEXA);
-    wc.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
-    wc.lpfnWndProc = nlDefaultWinProc;
-    wc.cbClsExtra = 0;
-    wc.cbWndExtra = 0;
-    wc.hInstance = hInstance;
-    wc.hIcon = NULL;
-    wc.hCursor = NULL;
-    wc.hbrBackground = NULL;
-    wc.lpszMenuName = NULL;
-    wc.lpszClassName = INVISIBLE_WINDOW_CLASS;
-    wc.hIconSm = NULL;
-    RegisterClassExA(&wc);
-  }
-  _HWnd = CreateWindowA(INVISIBLE_WINDOW_CLASS, "", WS_POPUP, CW_USEDEFAULT,
-                        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, 0,
-                        hInstance, 0);
-  if (_HWnd) {
-    if (winProc)
-      SetWindowLongPtrA(_HWnd, GWLP_WNDPROC, (LONG_PTR)winProc);
-    return true;
-  }
-  return false;
+CDummyWindow::CDummyWindow()
+    : _HWnd(NULL)
+{
 }
 
 // ***************************************************************
-void CDummyWindow::release() {
-  if (_HWnd) {
-    DestroyWindow(_HWnd);
-    _HWnd = NULL;
-  }
+bool CDummyWindow::init(HINSTANCE hInstance, WNDPROC winProc)
+{
+	release();
+	static const char *INVISIBLE_WINDOW_CLASS = "nl_invisible_wnd_class";
+	WNDCLASSEXA wc;
+	wc.cbSize = sizeof(WNDCLASSEXA);
+	if (!GetClassInfoExA(hInstance, INVISIBLE_WINDOW_CLASS, &wc))
+	{
+		wc.cbSize = sizeof(WNDCLASSEXA);
+		wc.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+		wc.lpfnWndProc = nlDefaultWinProc;
+		wc.cbClsExtra = 0;
+		wc.cbWndExtra = 0;
+		wc.hInstance = hInstance;
+		wc.hIcon = NULL;
+		wc.hCursor = NULL;
+		wc.hbrBackground = NULL;
+		wc.lpszMenuName = NULL;
+		wc.lpszClassName = INVISIBLE_WINDOW_CLASS;
+		wc.hIconSm = NULL;
+		RegisterClassExA(&wc);
+	}
+	_HWnd = CreateWindowA(INVISIBLE_WINDOW_CLASS, "", WS_POPUP,
+	    CW_USEDEFAULT, CW_USEDEFAULT,
+	    CW_USEDEFAULT, CW_USEDEFAULT,
+	    NULL, 0,
+	    hInstance, 0);
+	if (_HWnd)
+	{
+		if (winProc) SetWindowLongPtrA(_HWnd, GWLP_WNDPROC, (LONG_PTR)winProc);
+		return true;
+	}
+	return false;
 }
 
 // ***************************************************************
-CDummyWindow::~CDummyWindow() { release(); }
+void CDummyWindow::release()
+{
+	if (_HWnd)
+	{
+		DestroyWindow(_HWnd);
+		_HWnd = NULL;
+	}
+}
 
-} // namespace NLMISC
+// ***************************************************************
+CDummyWindow::~CDummyWindow()
+{
+	release();
+}
+
+} // NLMISC
 
 #endif // NL_OS_WINDOWS

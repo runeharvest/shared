@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "select_rotation.h"
 #include "stdafx.h"
 #include "tile_edit_exe.h"
+#include "select_rotation.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -28,17 +28,19 @@ static char THIS_FILE[] = __FILE__;
 // SelectRotation dialog
 
 SelectRotation::SelectRotation(CWnd *pParent /*=NULL*/)
-    : CDialog(SelectRotation::IDD, pParent) {
-  //{{AFX_DATA_INIT(SelectRotation)
-  // NOTE: the ClassWizard will add member initialization here
-  //}}AFX_DATA_INIT
+    : CDialog(SelectRotation::IDD, pParent)
+{
+	//{{AFX_DATA_INIT(SelectRotation)
+	// NOTE: the ClassWizard will add member initialization here
+	//}}AFX_DATA_INIT
 }
 
-void SelectRotation::DoDataExchange(CDataExchange *pDX) {
-  CDialog::DoDataExchange(pDX);
-  //{{AFX_DATA_MAP(SelectRotation)
-  // NOTE: the ClassWizard will add DDX and DDV calls here
-  //}}AFX_DATA_MAP
+void SelectRotation::DoDataExchange(CDataExchange *pDX)
+{
+	CDialog::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(SelectRotation)
+	// NOTE: the ClassWizard will add DDX and DDV calls here
+	//}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(SelectRotation, CDialog)
@@ -53,26 +55,30 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // SelectRotation message handlers
 
-void SelectRotation::OnRot0() {
-  // TODO: Add your control notification handler code here
-  RotSelected = 0;
-  OnOK();
+void SelectRotation::OnRot0()
+{
+	// TODO: Add your control notification handler code here
+	RotSelected = 0;
+	OnOK();
 }
 
-void SelectRotation::OnRot1() {
-  // TODO: Add your control notification handler code here
-  RotSelected = 1;
-  OnOK();
+void SelectRotation::OnRot1()
+{
+	// TODO: Add your control notification handler code here
+	RotSelected = 1;
+	OnOK();
 }
 
-void SelectRotation::OnRot2() {
-  // TODO: Add your control notification handler code here
-  RotSelected = 2;
-  OnOK();
+void SelectRotation::OnRot2()
+{
+	// TODO: Add your control notification handler code here
+	RotSelected = 2;
+	OnOK();
 }
 
-void SelectRotation::OnRot3() {
-  // TODO: Add your control notification handler code here
-  RotSelected = 3;
-  OnOK();
+void SelectRotation::OnRot3()
+{
+	// TODO: Add your control notification handler code here
+	RotSelected = 3;
+	OnOK();
 }

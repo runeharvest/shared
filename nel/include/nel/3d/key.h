@@ -17,11 +17,11 @@
 #ifndef NL_KEY_H
 #define NL_KEY_H
 
-#include "nel/misc/quat.h"
-#include "nel/misc/rgba.h"
-#include "nel/misc/stream.h"
 #include "nel/misc/types_nl.h"
 #include "nel/misc/vector.h"
+#include "nel/misc/quat.h"
+#include "nel/misc/stream.h"
+#include "nel/misc/rgba.h"
 
 // NOT TESTED, JUST COMPILED. FOR PURPOSE ONLY.
 
@@ -35,29 +35,32 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2001
  */
-template <class T> class CKey {
+template <class T>
+class CKey
+{
 public:
-  /// synonym for T.
-  typedef T TValueType;
+	/// synonym for T.
+	typedef T TValueType;
 
 public:
-  /// Serial
-  void serial(NLMISC::IStream &f) {
-    // Version number
-    (void)f.serialVersion(0);
+	/// Serial
+	void serial(NLMISC::IStream &f)
+	{
+		// Version number
+		(void)f.serialVersion(0);
 
-    // Serial the value
-    f.serial(Value);
-  };
+		// Serial the value
+		f.serial(Value);
+	};
 
-  /// The key value
-  T Value;
+	/// The key value
+	T Value;
 
-  // *********************
+	// *********************
 public:
-  // PRIVATE. used by ITrackKeyFramer, not serialised (compiled).
-  // 1/(nextKeyTime-thisKeyTime).
-  float OODeltaTime;
+	// PRIVATE. used by ITrackKeyFramer, not serialised (compiled).
+	// 1/(nextKeyTime-thisKeyTime).
+	float OODeltaTime;
 };
 
 // ***************************************************************************
@@ -68,36 +71,39 @@ public:
  * \author Nevrax France
  * \date 2001
  */
-template <class T> class CKeyTCB : public CKey<T> {
+template <class T>
+class CKeyTCB : public CKey<T>
+{
 public:
-  /// Serial
-  void serial(NLMISC::IStream &f) {
-    // Version number
-    (void)f.serialVersion(0);
+	/// Serial
+	void serial(NLMISC::IStream &f)
+	{
+		// Version number
+		(void)f.serialVersion(0);
 
-    // Serial the value
-    f.serial(this->Value);
-    f.serial(Tension);
-    f.serial(Continuity);
-    f.serial(Bias);
-    f.serial(EaseTo);
-    f.serial(EaseFrom);
-  };
+		// Serial the value
+		f.serial(this->Value);
+		f.serial(Tension);
+		f.serial(Continuity);
+		f.serial(Bias);
+		f.serial(EaseTo);
+		f.serial(EaseFrom);
+	};
 
-  float Tension;
-  float Continuity;
-  float Bias;
-  float EaseTo;
-  float EaseFrom;
+	float Tension;
+	float Continuity;
+	float Bias;
+	float EaseTo;
+	float EaseFrom;
 
-  // *********************
+	// *********************
 public:
-  // PRIVATE. used by ITrackKeyFramer, not serialised (compiled).
-  // computed tangents.
-  T TanTo, TanFrom;
-  // computed ease parameters, with next key.
-  float Ease0, Ease1;
-  float EaseK, EaseKOverEase0, EaseKOverEase1;
+	// PRIVATE. used by ITrackKeyFramer, not serialised (compiled).
+	// computed tangents.
+	T TanTo, TanFrom;
+	// computed ease parameters, with next key.
+	float Ease0, Ease1;
+	float EaseK, EaseKOverEase0, EaseKOverEase1;
 };
 
 // ***************************************************************************
@@ -108,35 +114,38 @@ public:
  * \author Nevrax France
  * \date 2001
  */
-template <class T> class CKeyBezier : public CKey<T> {
+template <class T>
+class CKeyBezier : public CKey<T>
+{
 public:
-  /// Serial
-  void serial(NLMISC::IStream &f) {
-    // Version number
-    (void)f.serialVersion(0);
+	/// Serial
+	void serial(NLMISC::IStream &f)
+	{
+		// Version number
+		(void)f.serialVersion(0);
 
-    // Serial the value
-    f.serial(this->Value);
-    f.serial(InTan);
-    f.serial(OutTan);
-    f.serial(Step);
-  };
+		// Serial the value
+		f.serial(this->Value);
+		f.serial(InTan);
+		f.serial(OutTan);
+		f.serial(Step);
+	};
 
-  /// \name Tangents.
-  /** Those are NOT the true Bezier control points: they are tangents relative
-   *to Value, and relative to keyTime: CPIn= Value + InTan * dt0/3;
-   *\n CPOut= Value + OutTan * dt1/3;		\n where:	dt0= curKey.time
-   *- prevKey.time		\n dt1= nextKey.time - curKey.time
-   *\n
-   *
-   * and when not possible (first/last key), dt= getRangeDelta() is used.
-   *
-   */
-  // @{
-  T InTan;
-  T OutTan;
-  bool Step;
-  // @}
+	/// \name Tangents.
+	/** Those are NOT the true Bezier control points: they are tangents relative to Value, and relative to keyTime:
+	 *		CPIn= Value + InTan * dt0/3;		\n
+	 *		CPOut= Value + OutTan * dt1/3;		\n
+	 *	where:	dt0= curKey.time - prevKey.time		\n
+	 *			dt1= nextKey.time - curKey.time		\n
+	 *
+	 * and when not possible (first/last key), dt= getRangeDelta() is used.
+	 *
+	 */
+	// @{
+	T InTan;
+	T OutTan;
+	bool Step;
+	// @}
 };
 
 // ***************************************************************************
@@ -146,77 +155,78 @@ public:
 // ***************************************************************************
 /**
  * Implementation of CKeyTCB for rotation.
- * WARNING!!! the value (an angleaxis!!) is a rotation relative to the preceding
- * key!!  (unlike CKeyBezier) WARNING!!! the axis of the value (an angleaxis) is
- * relative to World Space!!, not relative to preceding key basis. (like in 3DS
- * Max).
+ * WARNING!!! the value (an angleaxis!!) is a rotation relative to the preceding key!!  (unlike CKeyBezier)
+ * WARNING!!! the axis of the value (an angleaxis) is relative to World Space!!, not relative to preceding key basis. (like in 3DS Max).
  *
  * \author Lionel berenguier
  * \author Nevrax France
  * \date 2001
  */
 template <>
-class CKeyTCB<NLMISC::CAngleAxis> : public CKey<NLMISC::CAngleAxis> {
+class CKeyTCB<NLMISC::CAngleAxis> : public CKey<NLMISC::CAngleAxis>
+{
 public:
-  /// Serial
-  void serial(NLMISC::IStream &f) {
-    // Version number
-    (void)f.serialVersion(0);
+	/// Serial
+	void serial(NLMISC::IStream &f)
+	{
+		// Version number
+		(void)f.serialVersion(0);
 
-    // Serial the value
-    f.serial(Value);
-    f.serial(Tension);
-    f.serial(Continuity);
-    f.serial(Bias);
-    f.serial(EaseTo);
-    f.serial(EaseFrom);
-  };
+		// Serial the value
+		f.serial(Value);
+		f.serial(Tension);
+		f.serial(Continuity);
+		f.serial(Bias);
+		f.serial(EaseTo);
+		f.serial(EaseFrom);
+	};
 
-  float Tension;
-  float Continuity;
-  float Bias;
-  float EaseTo;
-  float EaseFrom;
+	float Tension;
+	float Continuity;
+	float Bias;
+	float EaseTo;
+	float EaseFrom;
 
-  // *********************
+	// *********************
 public:
-  // PRIVATE. used by ITrackKeyFramer, not serialised (compiled).
-  // Local AngleAxis to the preceding Key (axis is in local basis, unlike
-  // "Value" where the axis is in World space ).
-  NLMISC::CAngleAxis LocalAngleAxis;
-  // computed quaternions/tangents.
-  NLMISC::CQuat Quat, A, B;
-  // computed ease parameters, with next key.
-  float Ease0, Ease1;
-  float EaseK, EaseKOverEase0, EaseKOverEase1;
+	// PRIVATE. used by ITrackKeyFramer, not serialised (compiled).
+	// Local AngleAxis to the preceding Key (axis is in local basis, unlike "Value" where the axis is in World space ).
+	NLMISC::CAngleAxis LocalAngleAxis;
+	// computed quaternions/tangents.
+	NLMISC::CQuat Quat, A, B;
+	// computed ease parameters, with next key.
+	float Ease0, Ease1;
+	float EaseK, EaseKOverEase0, EaseKOverEase1;
 };
 
 // ***************************************************************************
 /**
- * Implementation of CKeyBezier for rotation. (no tangents for "bezier
- * rotation", it is a "smooth rotation"). WARNING!!! the Value (a Quat!!) is a
- * ABSOLUTE rotation (unlike CKeyTCB)
+ * Implementation of CKeyBezier for rotation. (no tangents for "bezier rotation", it is a "smooth rotation").
+ * WARNING!!! the Value (a Quat!!) is a ABSOLUTE rotation (unlike CKeyTCB)
  *
  * \author Lionel berenguier
  * \author Nevrax France
  * \date 2001
  */
-template <> class CKeyBezier<NLMISC::CQuat> : public CKey<NLMISC::CQuat> {
+template <>
+class CKeyBezier<NLMISC::CQuat> : public CKey<NLMISC::CQuat>
+{
 public:
-  /// Serial
-  void serial(NLMISC::IStream &f) {
-    // Version number
-    (void)f.serialVersion(0);
+	/// Serial
+	void serial(NLMISC::IStream &f)
+	{
+		// Version number
+		(void)f.serialVersion(0);
 
-    // Serial the value
-    f.serial(Value);
-  };
+		// Serial the value
+		f.serial(Value);
+	};
 
-  // *********************
+	// *********************
 public:
-  // PRIVATE. used by ITrackKeyFramer, not serialised (compiled).
-  // computed quaternions/tangents.
-  NLMISC::CQuat A;
+	// PRIVATE. used by ITrackKeyFramer, not serialised (compiled).
+	// computed quaternions/tangents.
+	NLMISC::CQuat A;
 };
 
 // ***************************************************************************
@@ -231,24 +241,21 @@ typedef CKey<NLMISC::CVector> CKeyVector;
 typedef CKey<NLMISC::CQuat> CKeyQuat;
 typedef CKey<NLMISC::CRGBA> CKeyRGBA;
 typedef CKey<sint32> CKeyInt;
-// NB: For precision and optimisation (space/speed), RGBA and sint32
-// const/linear tracks use CKeyRGBA and CKeyInt keys repsectively.
+// NB: For precision and optimisation (space/speed), RGBA and sint32 const/linear tracks use CKeyRGBA and CKeyInt keys repsectively.
 
 // ** TCB keys
 typedef CKeyTCB<float> CKeyTCBFloat;
 typedef CKeyTCB<NLMISC::CVector> CKeyTCBVector;
 typedef CKeyTCB<NLMISC::CAngleAxis> CKeyTCBQuat;
-// NB: RGBA and sint32 TCB tracks use CKeyTCBVector and CKeyTCBFloat
-// respectively.
+// NB: RGBA and sint32 TCB tracks use CKeyTCBVector and CKeyTCBFloat respectively.
 
 // ** Bezier keys
 typedef CKeyBezier<float> CKeyBezierFloat;
 typedef CKeyBezier<NLMISC::CVector> CKeyBezierVector;
 typedef CKeyBezier<NLMISC::CQuat> CKeyBezierQuat;
-// NB: RGBA and sint32 bezier tracks use CKeyBezierVector and CKeyBezierFloat
-// respectively.
+// NB: RGBA and sint32 bezier tracks use CKeyBezierVector and CKeyBezierFloat respectively.
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_KEY_H
 

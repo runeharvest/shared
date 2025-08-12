@@ -19,24 +19,25 @@
 // See data_mirror.cpp for the implementation of this class
 //
 
-class CData_mirrorApp : public CWinApp {
+class CData_mirrorApp : public CWinApp
+{
 public:
-  CData_mirrorApp();
+	CData_mirrorApp();
 
-  // Overrides
-  // ClassWizard generated virtual function overrides
-  //{{AFX_VIRTUAL(CData_mirrorApp)
+	// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CData_mirrorApp)
 public:
-  virtual BOOL InitInstance();
-  //}}AFX_VIRTUAL
+	virtual BOOL InitInstance();
+	//}}AFX_VIRTUAL
 
-  // Implementation
+	// Implementation
 
-  //{{AFX_MSG(CData_mirrorApp)
-  // NOTE - the ClassWizard will add and remove member functions here.
-  //    DO NOT EDIT what you see in these blocks of generated code !
-  //}}AFX_MSG
-  DECLARE_MESSAGE_MAP()
+	//{{AFX_MSG(CData_mirrorApp)
+	// NOTE - the ClassWizard will add and remove member functions here.
+	//    DO NOT EDIT what you see in these blocks of generated code !
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 };
 
 // From the config file
@@ -48,13 +49,11 @@ extern std::string CurrentDir;
 extern std::set<std::string> IgnoreFiles;
 extern bool BinaryCompare;
 
-bool RegisterDirectoryAppCommand(const char *appName, const char *command,
-                                 const char *app);
+bool RegisterDirectoryAppCommand(const char *appName, const char *command, const char *app);
 
 /////////////////////////////////////////////////////////////////////////////
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before
-// the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
 #endif // !defined(AFX_DATA_MIRROR_H__A4CAF592_6AED_44B9_870E_1EB47C6AA8CE__INCLUDED_)

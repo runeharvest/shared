@@ -18,8 +18,8 @@
 #define NL_HRC_TRAV_H
 
 #include "nel/3d/trav_scene.h"
-#include "nel/misc/debug.h"
 #include "nel/misc/matrix.h"
+#include "nel/misc/debug.h"
 
 namespace NL3D {
 
@@ -38,43 +38,43 @@ class CTransformShape;
  * \author Nevrax France
  * \date 2000
  */
-class CHrcTrav : public CTraversal {
+class CHrcTrav : public CTraversal
+{
 public:
-  /// The visibility flag. In the root case, Herit means Show.
-  enum TVisibility {
-    Show = 0, // The model is shown in hte hierarchy
-    Hide,     // The model is hidden in hte hierarchy
-    Herit,    // The model herit the visibilty from his father
+	/// The visibility flag. In the root case, Herit means Show.
+	enum TVisibility
+	{
+		Show = 0, // The model is shown in hte hierarchy
+		Hide, // The model is hidden in hte hierarchy
+		Herit, // The model herit the visibilty from his father
 
-    VisibilityCount
-  };
-
-public:
-  /// Constructor
-  CHrcTrav() {
-    // NB: Now, models update is done before ALL traversals.
-    // Hence, we must inc the value before scene rendering. This is equivalent
-    // to start with 1, and inc at end of traverse().
-    CurrentDate = 1;
-  }
-
-  /// \name ITrav/ITravScene Implementation.
-  //@{
-  void traverse();
-  //@}
+		VisibilityCount
+	};
 
 public:
-  // ClusterSystem. The moving object for the current frame (only TransformShape
-  // can be inserted dynamiccaly in Clusters).
-  std::vector<CTransformShape *> _MovingObjects;
+	/// Constructor
+	CHrcTrav()
+	{
+		// NB: Now, models update is done before ALL traversals.
+		// Hence, we must inc the value before scene rendering. This is equivalent to start with 1, and inc at end of traverse().
+		CurrentDate = 1;
+	}
 
-  // ONLY FOR MODELS.
+	/// \name ITrav/ITravScene Implementation.
+	//@{
+	void traverse();
+	//@}
 
-  sint64 CurrentDate; // The current date of the traversal, useful for matrix
-                      // update.
+public:
+	// ClusterSystem. The moving object for the current frame (only TransformShape can be inserted dynamiccaly in Clusters).
+	std::vector<CTransformShape *> _MovingObjects;
+
+	// ONLY FOR MODELS.
+
+	sint64 CurrentDate; // The current date of the traversal, useful for matrix update.
 };
 
-} // namespace NL3D
+}
 
 #endif // NL_HRC_TRAV_H
 

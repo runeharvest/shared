@@ -20,16 +20,16 @@
 #ifndef R2_OBJECT_H
 #define R2_OBJECT_H
 
-#include "nel/misc/mem_stream.h"
+#include "nel/misc/types_nl.h"
 #include "nel/misc/smart_ptr.h"
 #include "nel/misc/time_nl.h"
-#include "nel/misc/types_nl.h"
+#include "nel/misc/mem_stream.h"
 
+#include <string>
+#include <vector>
 #include <list>
 #include <map>
 #include <queue>
-#include <string>
-#include <vector>
 
 namespace R2 {
 
@@ -42,179 +42,175 @@ class CObjectInteger;
 class CSerializeContext;
 
 // vistor triggered at traversal of object tree. see CObject::visit
-struct IObjectVisitor {
-  virtual ~IObjectVisitor() {}
+struct IObjectVisitor
+{
+	virtual ~IObjectVisitor() { }
 
-  virtual void visit(CObjectRefId & /* obj */) {}
-  virtual void visit(CObjectString & /* obj */) {}
-  virtual void visit(CObjectNumber & /* obj */) {}
-  virtual void visit(CObjectInteger & /* obj */) {}
-  virtual void visit(CObjectTable & /* obj */) {}
+	virtual void visit(CObjectRefId & /* obj */) { }
+	virtual void visit(CObjectString & /* obj */) { }
+	virtual void visit(CObjectNumber & /* obj */) { }
+	virtual void visit(CObjectInteger & /* obj */) { }
+	virtual void visit(CObjectTable & /* obj */) { }
 };
 
-class CObject : public NLMISC::CRefCount {
+class CObject : public NLMISC::CRefCount
+{
 public:
-  typedef NLMISC::CRefPtr<CObject> TRefPtr;
-  typedef NLMISC::CSmartPtr<CObject> TSmartPtr;
+	typedef NLMISC::CRefPtr<CObject> TRefPtr;
+	typedef NLMISC::CSmartPtr<CObject> TSmartPtr;
 
-  // recursively visit hierarchy of objects
-  void visit(IObjectVisitor &visitor);
+	// recursively visit hierarchy of objects
+	void visit(IObjectVisitor &visitor);
 
-  virtual ~CObject();
+	virtual ~CObject();
 
-  virtual CObject *clone() const;
+	virtual CObject *clone() const;
 
-  void serialize(std::string &out) const;
+	void serialize(std::string &out) const;
 
-  virtual void doSerialize(std::string &out,
-                           CSerializeContext &context) const = 0;
+	virtual void doSerialize(std::string &out, CSerializeContext &context) const = 0;
 
-  virtual const char *getTypeAsString() const = 0;
+	virtual const char *getTypeAsString() const = 0;
 
-  CObject *findAttr(const std::string &first) const;
+	CObject *findAttr(const std::string &first) const;
 
-  CObject *findAttr(const std::string &first, const std::string &second) const;
+	CObject *findAttr(const std::string &first, const std::string &second) const;
 
-  CObject *findAttr(const std::string &first, const std::string &second,
-                    const std::string &third) const;
+	CObject *findAttr(const std::string &first, const std::string &second, const std::string &third) const;
 
-  CObject *findAttr(const std::vector<std::string> &attrName) const;
-  // test type
-  bool isNumber(const std::string &prop = "") const;
+	CObject *findAttr(const std::vector<std::string> &attrName) const;
+	// test type
+	bool isNumber(const std::string &prop = "") const;
 
-  bool isInteger(const std::string &prop = "") const;
+	bool isInteger(const std::string &prop = "") const;
 
-  bool isString(const std::string &prop = "") const;
+	bool isString(const std::string &prop = "") const;
 
-  bool isTable(const std::string &prop = "") const;
+	bool isTable(const std::string &prop = "") const;
 
-  bool isRefId(const std::string &prop = "") const;
+	bool isRefId(const std::string &prop = "") const;
 
-  virtual bool insert(const std::string &key, CObject *value,
-                      sint32 position = -1);
+	virtual bool insert(const std::string &key, CObject *value, sint32 position = -1);
 
-  // to Value
-  double toNumber(const std::string &prop = "") const;
+	// to Value
+	double toNumber(const std::string &prop = "") const;
 
-  sint64 toInteger(const std::string &prop = "") const;
+	sint64 toInteger(const std::string &prop = "") const;
 
-  std::string toString(const std::string &prop = "") const;
+	std::string toString(const std::string &prop = "") const;
 
-  CObjectTable *toTable(const std::string &prop = "") const;
+	CObjectTable *toTable(const std::string &prop = "") const;
 
-  virtual sint32 findIndex(const CObject *child) const;
+	virtual sint32 findIndex(const CObject *child) const;
 
-  // find index from a key, or -1 if not found
-  virtual sint32 findIndex(const std::string &key) const;
+	// find index from a key, or -1 if not found
+	virtual sint32 findIndex(const std::string &key) const;
 
-  // as table
-  virtual CObject *getAttr(const std::string &name) const;
+	// as table
+	virtual CObject *getAttr(const std::string &name) const;
 
-  virtual std::string getKey(uint32 pos) const;
+	virtual std::string getKey(uint32 pos) const;
 
-  virtual CObject *getValueAtPos(uint32 pos) const;
+	virtual CObject *getValueAtPos(uint32 pos) const;
 
-  virtual uint32 getSize() const;
+	virtual uint32 getSize() const;
 
-  virtual CObject *take(sint32 pos);
+	virtual CObject *take(sint32 pos);
 
-  virtual bool canTake(sint32 pos) const;
+	virtual bool canTake(sint32 pos) const;
 
-  // add Value
+	// add Value
 
-  void add(const std::string &key, CObject *value);
+	void add(const std::string &key, CObject *value);
 
-  void add(CObject *value);
+	void add(CObject *value);
 
-  void add(const std::string &key, const std::string &value);
+	void add(const std::string &key, const std::string &value);
 
-  void add(const std::string &key, double value);
+	void add(const std::string &key, double value);
 
-  void add(const std::string &key, sint64 value);
+	void add(const std::string &key, sint64 value);
 
-  // set Value
-  virtual bool set(const std::string &key, const std::string &value);
+	// set Value
+	virtual bool set(const std::string &key, const std::string &value);
 
-  virtual bool set(const std::string &key, double value);
+	virtual bool set(const std::string &key, double value);
 
-  virtual bool set(const std::string &key, sint64 value);
+	virtual bool set(const std::string &key, sint64 value);
 
-  virtual bool setObject(const std::string &key, CObject *value);
+	virtual bool setObject(const std::string &key, CObject *value);
 
-  CObject *getParent() const;
+	CObject *getParent() const;
 
-  void setParent(CObject *parent);
+	void setParent(CObject *parent);
 
-  // tmp for debug
-  virtual void dump(const std::string prefix = "", uint depth = 0) const = 0;
+	// tmp for debug
+	virtual void dump(const std::string prefix = "", uint depth = 0) const = 0;
 
-  /** In place copy of object "src" into this object
-   * Type and fields must match, otherwise error msg are printed
-   */
-  void inPlaceCopy(const CObject &src);
+	/** In place copy of object "src" into this object
+	 * Type and fields must match, otherwise error msg are printed
+	 */
+	void inPlaceCopy(const CObject &src);
 
-  virtual bool equal(const CObject * /* other */) const { return false; }
+	virtual bool equal(const CObject * /* other */) const { return false; }
 
-  static std::string uint32ToInstanceId(uint32 id);
+	static std::string uint32ToInstanceId(uint32 id);
 
-  static uint32 instanceIdToUint32(const std::string &instanceId);
+	static uint32 instanceIdToUint32(const std::string &instanceId);
 
-  // set / get the 'ghost' flag, meaning that this objet only exist for the
-  // client
-  bool getGhost() const;
-  virtual void setGhost(bool ghost);
+	// set / get the 'ghost' flag, meaning that this objet only exist for the client
+	bool getGhost() const;
+	virtual void setGhost(bool ghost);
 
-  virtual void checkIntegrity() const {}
+	virtual void checkIntegrity() const { }
 
-  /** Find the shortest name for this object as a (instanceId, attrName,
-   * position) triplet \return false if such a name could not be found
-   */
-  bool getShortestName(std::string &instanceId, std::string &attrName,
-                       sint32 &position) const;
-  bool getNameInParent(std::string &instanceId, std::string &attrName,
-                       sint32 &position) const;
+	/** Find the shortest name for this object as a (instanceId, attrName, position) triplet
+	 * \return false if such a name could not be found
+	 */
+	bool getShortestName(std::string &instanceId, std::string &attrName, sint32 &position) const;
+	bool getNameInParent(std::string &instanceId, std::string &attrName, sint32 &position) const;
 
 protected:
-  explicit CObject();
+	explicit CObject();
 
-  virtual bool doIsNumber() const;
+	virtual bool doIsNumber() const;
 
-  virtual bool doIsInteger() const;
+	virtual bool doIsInteger() const;
 
-  virtual bool doIsString() const;
+	virtual bool doIsString() const;
 
-  virtual bool doIsTable() const;
+	virtual bool doIsTable() const;
 
-  virtual bool doIsRefId() const;
+	virtual bool doIsRefId() const;
 
-  virtual double doToNumber() const;
+	virtual double doToNumber() const;
 
-  virtual sint64 doToInteger() const;
+	virtual sint64 doToInteger() const;
 
-  virtual std::string doToString() const;
+	virtual std::string doToString() const;
 
-  virtual CObjectTable *doToTable() const;
-
-public:
-  virtual void previsit(std::vector<TRefPtr> &sons);
+	virtual CObjectTable *doToTable() const;
 
 public:
-  virtual void inPlaceCopyTo(CObject &dest) const = 0;
-  virtual void inPlaceCopy(const CObjectString &src);
-  virtual void inPlaceCopy(const CObjectNumber &src);
-  virtual void inPlaceCopy(const CObjectTable &src);
+	virtual void previsit(std::vector<TRefPtr> &sons);
+
+public:
+	virtual void inPlaceCopyTo(CObject &dest) const = 0;
+	virtual void inPlaceCopy(const CObjectString &src);
+	virtual void inPlaceCopy(const CObjectNumber &src);
+	virtual void inPlaceCopy(const CObjectTable &src);
 
 protected:
-  void copyMismatchMsg(const CObject &src);
-  virtual void visitInternal(IObjectVisitor &visitor) = 0;
+	void copyMismatchMsg(const CObject &src);
+	virtual void visitInternal(IObjectVisitor &visitor) = 0;
 
 private:
-  CObject *_Parent;
+	CObject *_Parent;
 
 protected:
-  bool _Ghost;
+	bool _Ghost;
 
-  uint32 _Validation;
+	uint32 _Validation;
 };
 
 /*inline std::ostream& operator<<( std::ostream& os, const CObject& c )
@@ -223,352 +219,363 @@ protected:
     return os;
 }*/
 
-class CObjectString : public CObject {
+class CObjectString : public CObject
+{
 public:
-  explicit CObjectString(const std::string &value);
+	explicit CObjectString(const std::string &value);
 
-  virtual const char *getTypeAsString() const;
+	virtual const char *getTypeAsString() const;
 
-  virtual CObject *clone() const;
+	virtual CObject *clone() const;
 
-  virtual bool set(const std::string &key, const std::string &value);
+	virtual bool set(const std::string &key, const std::string &value);
 
-  virtual bool setObject(const std::string &key, CObject *value);
+	virtual bool setObject(const std::string &key, CObject *value);
 
-  const std::string &getValue() const { return _Value; }
+	const std::string &getValue() const { return _Value; }
 
-  virtual void dump(const std::string prefix = "", uint depth = 0) const;
+	virtual void dump(const std::string prefix = "", uint depth = 0) const;
 
-  virtual bool equal(const CObject *other) const;
+	virtual bool equal(const CObject *other) const;
 
 protected:
-  virtual void visitInternal(IObjectVisitor &visitor);
+	virtual void visitInternal(IObjectVisitor &visitor);
 
-  virtual void doSerialize(std::string &out, CSerializeContext &context) const;
+	virtual void doSerialize(std::string &out, CSerializeContext &context) const;
 
-  virtual std::string doToString() const;
+	virtual std::string doToString() const;
 
-  virtual bool doIsString() const;
+	virtual bool doIsString() const;
 
-  virtual void inPlaceCopyTo(CObject &dest) const;
-  virtual void inPlaceCopy(const CObjectString &src);
+	virtual void inPlaceCopyTo(CObject &dest) const;
+	virtual void inPlaceCopy(const CObjectString &src);
 
 private:
-  std::string _Value;
+	std::string _Value;
 };
 
 // A single string from the server viewpoint
-// From client viewpoint, derived class 'observes' a target object and tells
-// when it has been deleted or created
-class CObjectRefId : public CObjectString {
+// From client viewpoint, derived class 'observes' a target object and tells when it has been deleted
+// or created
+class CObjectRefId : public CObjectString
+{
 public:
-  explicit CObjectRefId(const std::string &value);
-  ~CObjectRefId();
-  virtual const char *getTypeAsString() const;
-  virtual CObject *clone() const;
-  virtual bool equal(const CObject *other) const;
+	explicit CObjectRefId(const std::string &value);
+	~CObjectRefId();
+	virtual const char *getTypeAsString() const;
+	virtual CObject *clone() const;
+	virtual bool equal(const CObject *other) const;
 
 protected:
-  virtual void visitInternal(IObjectVisitor &visitor);
-  virtual bool doIsRefId() const;
-  virtual void doSerialize(std::string &out, CSerializeContext &context) const;
+	virtual void visitInternal(IObjectVisitor &visitor);
+	virtual bool doIsRefId() const;
+	virtual void doSerialize(std::string &out, CSerializeContext &context) const;
 };
 
-class CObjectNumber : public CObject {
+class CObjectNumber : public CObject
+{
 
 public:
-  explicit CObjectNumber(double value);
-  explicit CObjectNumber(sint64 value);
+	explicit CObjectNumber(double value);
+	explicit CObjectNumber(sint64 value);
 
-  virtual const char *getTypeAsString() const NL_OVERRIDE;
+	virtual const char *getTypeAsString() const NL_OVERRIDE;
 
-  virtual bool set(const std::string &key, sint64 value) NL_OVERRIDE;
-  virtual bool set(const std::string &key, double value) NL_OVERRIDE;
-  virtual bool set(const std::string &key,
-                   const std::string &value) NL_OVERRIDE;
+	virtual bool set(const std::string &key, sint64 value) NL_OVERRIDE;
+	virtual bool set(const std::string &key, double value) NL_OVERRIDE;
+	virtual bool set(const std::string &key, const std::string &value) NL_OVERRIDE;
 
-  virtual bool setObject(const std::string &key, CObject *value) NL_OVERRIDE;
+	virtual bool setObject(const std::string &key, CObject *value) NL_OVERRIDE;
 
-  virtual CObject *clone() const NL_OVERRIDE;
+	virtual CObject *clone() const NL_OVERRIDE;
 
-  double getNumberValue() const {
-    return m_IsInteger ? m_Value.Integer : m_Value.Number;
-  }
-  sint64 getIntegerValue() const {
-    return m_IsInteger ? m_Value.Integer : m_Value.Number;
-  }
+	double getNumberValue() const { return m_IsInteger ? m_Value.Integer : m_Value.Number; }
+	sint64 getIntegerValue() const { return m_IsInteger ? m_Value.Integer : m_Value.Number; }
 
-  virtual void dump(const std::string prefix = "",
-                    uint depth = 0) const NL_OVERRIDE;
+	virtual void dump(const std::string prefix = "", uint depth = 0) const NL_OVERRIDE;
 
-  virtual bool equal(const CObject *other) const NL_OVERRIDE;
+	virtual bool equal(const CObject *other) const NL_OVERRIDE;
 
 protected:
-  virtual void doSerialize(std::string &out,
-                           CSerializeContext &context) const NL_OVERRIDE;
+	virtual void doSerialize(std::string &out, CSerializeContext &context) const NL_OVERRIDE;
 
-  virtual bool doIsNumber() const NL_OVERRIDE;
+	virtual bool doIsNumber() const NL_OVERRIDE;
 
-  virtual double doToNumber() const NL_OVERRIDE;
+	virtual double doToNumber() const NL_OVERRIDE;
 
-  virtual bool doIsInteger() const NL_OVERRIDE;
+	virtual bool doIsInteger() const NL_OVERRIDE;
 
-  virtual sint64 doToInteger() const NL_OVERRIDE;
+	virtual sint64 doToInteger() const NL_OVERRIDE;
 
-  virtual std::string doToString() const NL_OVERRIDE;
+	virtual std::string doToString() const NL_OVERRIDE;
 
-  virtual void inPlaceCopyTo(CObject &dest) const NL_OVERRIDE;
-  virtual void inPlaceCopy(const CObjectNumber &src) NL_OVERRIDE;
+	virtual void inPlaceCopyTo(CObject &dest) const NL_OVERRIDE;
+	virtual void inPlaceCopy(const CObjectNumber &src) NL_OVERRIDE;
 
-  virtual void visitInternal(IObjectVisitor &visitor) NL_OVERRIDE;
+	virtual void visitInternal(IObjectVisitor &visitor) NL_OVERRIDE;
 
 private:
-  bool m_IsInteger;
-  union {
-    double Number;
-    sint64 Integer;
-  } m_Value;
+	bool m_IsInteger;
+	union
+	{
+		double Number;
+		sint64 Integer;
+	} m_Value;
 };
 
-class CObjectTable : public CObject {
+class CObjectTable : public CObject
+{
 
 public:
-  typedef NLMISC::CRefPtr<CObjectTable> TRefPtr;
-  typedef NLMISC::CRefPtr<const CObjectTable> TRefPtrConst;
+	typedef NLMISC::CRefPtr<CObjectTable> TRefPtr;
+	typedef NLMISC::CRefPtr<const CObjectTable> TRefPtrConst;
 
-  explicit CObjectTable();
+	explicit CObjectTable();
 
-  virtual ~CObjectTable();
+	virtual ~CObjectTable();
 
-  virtual const char *getTypeAsString() const;
+	virtual const char *getTypeAsString() const;
 
-  virtual bool insert(const std::string &key, CObject *value, sint32 pos);
+	virtual bool insert(const std::string &key, CObject *value, sint32 pos);
 
-  virtual CObject *clone() const;
+	virtual CObject *clone() const;
 
-  virtual void doSerialize(std::string &out, CSerializeContext &context) const;
+	virtual void doSerialize(std::string &out, CSerializeContext &context) const;
 
-  virtual CObject *getAttr(const std::string &name) const;
+	virtual CObject *getAttr(const std::string &name) const;
 
-  virtual std::string getKey(uint32 pos) const;
+	virtual std::string getKey(uint32 pos) const;
 
-  virtual CObject *getValueAtPos(uint32 pos) const;
+	virtual CObject *getValueAtPos(uint32 pos) const;
 
-  virtual sint32 findIndex(const CObject *child) const;
+	virtual sint32 findIndex(const CObject *child) const;
 
-  // find index from a key, or -1 if not found
-  virtual sint32 findIndex(const std::string &key) const;
+	// find index from a key, or -1 if not found
+	virtual sint32 findIndex(const std::string &key) const;
 
-  virtual uint32 getSize() const;
+	virtual uint32 getSize() const;
 
-  virtual bool set(const std::string &key, const std::string &value);
+	virtual bool set(const std::string &key, const std::string &value);
 
-  virtual bool set(const std::string &key, double value);
+	virtual bool set(const std::string &key, double value);
 
-  virtual bool setObject(const std::string &key, CObject *value);
+	virtual bool setObject(const std::string &key, CObject *value);
 
-  virtual CObject *take(sint32 pos);
+	virtual CObject *take(sint32 pos);
 
-  virtual bool canTake(sint32 pos) const;
+	virtual bool canTake(sint32 pos) const;
 
-  void clear();
+	void clear();
 
-  void sort();
+	void sort();
 
-  virtual void dump(const std::string prefix = "", uint depth = 0) const;
+	virtual void dump(const std::string prefix = "", uint depth = 0) const;
 
-  virtual bool equal(const CObject *other) const;
+	virtual bool equal(const CObject *other) const;
 
-  virtual void setGhost(bool ghost);
+	virtual void setGhost(bool ghost);
 
-  virtual void checkIntegrity() const;
-
-protected:
-  virtual void visitInternal(IObjectVisitor &visitor);
-
-  virtual bool doIsTable() const;
-
-  virtual CObjectTable *doToTable() const;
-
-  virtual void inPlaceCopyTo(CObject &dest) const;
-  virtual void inPlaceCopy(const CObjectTable &src);
-
-  virtual void previsit(std::vector<CObject::TRefPtr> &sons);
-
-  /** Compute absolute position, return true if index is valid
-   * A negative index indicate an offset from the end of the table (-1 for the
-   * last element)
-   */
-protected:
-  typedef std::vector<std::pair<std::string, CObject *>> TContainer;
+	virtual void checkIntegrity() const;
 
 protected:
-  TContainer _Value;
+	virtual void visitInternal(IObjectVisitor &visitor);
+
+	virtual bool doIsTable() const;
+
+	virtual CObjectTable *doToTable() const;
+
+	virtual void inPlaceCopyTo(CObject &dest) const;
+	virtual void inPlaceCopy(const CObjectTable &src);
+
+	virtual void previsit(std::vector<CObject::TRefPtr> &sons);
+
+	/** Compute absolute position, return true if index is valid
+	 * A negative index indicate an offset from the end of the table (-1 for the last element)
+	 */
+protected:
+	typedef std::vector<std::pair<std::string, CObject *>> TContainer;
+
+protected:
+	TContainer _Value;
 };
 
-class CTypedObject : public CObjectTable {
+class CTypedObject : public CObjectTable
+{
 public:
-  CTypedObject(const std::string &type);
-  virtual bool isOk() const;
+	CTypedObject(const std::string &type);
+	virtual bool isOk() const;
 };
 
-class CNameGiver {
+class CNameGiver
+{
 public:
-  CNameGiver();
-  sint32 getNewId(const std::string &type = "");
-  std::string getNewName(const std::string &type = "", sint32 id = -1);
-  void setMaxId(const std::string &eid, sint32 id);
-  sint32 getMaxId(const std::string &eid);
-  void clear();
+	CNameGiver();
+	sint32 getNewId(const std::string &type = "");
+	std::string getNewName(const std::string &type = "", sint32 id = -1);
+	void setMaxId(const std::string &eid, sint32 id);
+	sint32 getMaxId(const std::string &eid);
+	void clear();
 
 private:
-  std::map<std::string, sint32> _Value;
+	std::map<std::string, sint32> _Value;
 };
 
 class CObjectGenerator;
 
 // NB nico : added 'virtual' because client derives its own factory
-class CObjectFactory {
+class CObjectFactory
+{
 public:
-  CObjectFactory(const std::string &prefix);
-  void registerGenerator(CObject *classObject);
-  virtual ~CObjectFactory();
-  virtual CObject *newBasic(const std::string &type);
-  CObject *newAvanced(const std::string &type);
-  CObject *newComponent(const std::string &type);
-  CObjectGenerator *getGenerator(const std::string &type);
-  std::string getNewName(const std::string &type = "") const;
-  void setMaxId(const std::string &eid, sint32 id);
-  void setPrefix(const std::string &prefix);
-  sint32 getMaxId(const std::string &eid) const;
-  void clear();
+	CObjectFactory(const std::string &prefix);
+	void registerGenerator(CObject *classObject);
+	virtual ~CObjectFactory();
+	virtual CObject *newBasic(const std::string &type);
+	CObject *newAvanced(const std::string &type);
+	CObject *newComponent(const std::string &type);
+	CObjectGenerator *getGenerator(const std::string &type);
+	std::string getNewName(const std::string &type = "") const;
+	void setMaxId(const std::string &eid, sint32 id);
+	void setPrefix(const std::string &prefix);
+	sint32 getMaxId(const std::string &eid) const;
+	void clear();
 
 private:
-  CNameGiver *_NameGiver;
-  std::string _Prefix;
-  std::map<std::string, CObjectGenerator *> _Map;
+	CNameGiver *_NameGiver;
+	std::string _Prefix;
+	std::map<std::string, CObjectGenerator *> _Map;
 };
 
-class CObjectGenerator {
+class CObjectGenerator
+{
 public:
-  CObject *instanciate(CObjectFactory *factory) const;
-  CObjectGenerator(CObject *objectClass, CObjectFactory *factory)
-      : _ObjectClass(objectClass) {
-    createDefaultValues(factory);
-  }
-  ~CObjectGenerator();
-  CObject *getDefaultValue(const std::string &propName) const;
-  std::string getBaseClass() const;
+	CObject *instanciate(CObjectFactory *factory) const;
+	CObjectGenerator(CObject *objectClass, CObjectFactory *factory)
+	    : _ObjectClass(objectClass)
+	{
+		createDefaultValues(factory);
+	}
+	~CObjectGenerator();
+	CObject *getDefaultValue(const std::string &propName) const;
+	std::string getBaseClass() const;
 
 protected:
-  void createDefaultValues(CObjectFactory *factory);
+	void createDefaultValues(CObjectFactory *factory);
 
 private:
-  typedef std::map<std::string, CObject *> TDefaultValues;
+	typedef std::map<std::string, CObject *> TDefaultValues;
 
 private:
-  CObject *_ObjectClass;
-  TDefaultValues _DefaultValues;
+	CObject *_ObjectClass;
+	TDefaultValues _DefaultValues;
 };
 
-class CClass : public CObjectTable {
+class CClass : public CObjectTable
+{
 public:
-  CClass(const std::string &classType);
-  void addAttribute(const std::string &name, const std::string &type);
-  void addAttribute(const std::string &name, const std::string &type,
-                    const std::string &defaultValue);
+	CClass(const std::string &classType);
+	void addAttribute(const std::string &name, const std::string &type);
+	void addAttribute(const std::string &name, const std::string &type, const std::string &defaultValue);
 
 private:
-  std::string _ClassType;
+	std::string _ClassType;
 };
 
-class CClassAttribute : public CObjectTable {
+class CClassAttribute : public CObjectTable
+{
 public:
-  CClassAttribute(const std::string &propName, const std::string &propType) {
-    add("Name", propName);
-    add("Type", propType);
-  }
-  CClassAttribute(const std::string &propName, const std::string &propType,
-                  const std::string &defaultValue) {
-    add("Name", propName);
-    add("Type", propType);
-    add("DefaultValue", defaultValue);
-  }
-  // virtual CObject* instanciate() const = 0;
+	CClassAttribute(const std::string &propName, const std::string &propType)
+	{
+		add("Name", propName);
+		add("Type", propType);
+	}
+	CClassAttribute(const std::string &propName, const std::string &propType, const std::string &defaultValue)
+	{
+		add("Name", propName);
+		add("Type", propType);
+		add("DefaultValue", defaultValue);
+	}
+	// virtual CObject* instanciate() const = 0;
 
-  virtual bool verify(CObject * /* prop */) const { return true; }
+	virtual bool verify(CObject * /* prop */) const { return true; }
 };
 
 // Don't take ownership
-class CObjectSerializer {
+class CObjectSerializer
+{
 public:
-  // for client : factory to use when reading objects
-  CObjectFactory *Factory;
+	// for client : factory to use when reading objects
+	CObjectFactory *Factory;
 
-  // to force static serializer memory cleanup
-  static void releaseInstance();
+	// to force static serializer memory cleanup
+	static void releaseInstance();
 
 protected:
-  CObjectSerializer(CObjectFactory *factory, CObject *data = 0);
+	CObjectSerializer(CObjectFactory *factory, CObject *data = 0);
 
 public:
-  void serial(NLMISC::IStream &stream);
-  CObject *getData() const;
-  // make a copy of data (the caller must handle data)
-  void setData(CObject *data);
-  // :XXX: don't delete _Data
-  ~CObjectSerializer();
-  static void serialStringInstanceId(NLMISC::IStream &stream,
-                                     std::string &data);
+	void serial(NLMISC::IStream &stream);
+	CObject *getData() const;
+	// make a copy of data (the caller must handle data)
+	void setData(CObject *data);
+	// :XXX: don't delete _Data
+	~CObjectSerializer();
+	static void serialStringInstanceId(NLMISC::IStream &stream, std::string &data);
 
-  bool isCompresed() const { return _Compressed; }
+	bool isCompresed() const { return _Compressed; }
 
-  void compress();
+	void compress();
 
-  void uncompress() const;
+	void uncompress() const;
 
-  void swap(CObjectSerializer &other);
-  void setVersion(uint32 version) { _Version = version; }
-  uint32 getVersion() const { return _Version; }
+	void swap(CObjectSerializer &other);
+	void setVersion(uint32 version) { _Version = version; }
+	uint32 getVersion() const { return _Version; }
 
 private:
-  CObjectSerializer(const CObjectSerializer &lh);
-  CObjectSerializer &operator=(const CObjectSerializer &rh);
-  void uncompressImpl();
+	CObjectSerializer(const CObjectSerializer &lh);
+	CObjectSerializer &operator=(const CObjectSerializer &rh);
+	void uncompressImpl();
 
 private:
-  CObject *_Data;
-  bool _Compressed;
-  bool _MustUncompress;
-  uint8 *_CompressedBuffer;
-  uint32 _CompressedLen;
-  uint32 _UncompressedLen;
-  uint32 _Version;
+	CObject *_Data;
+	bool _Compressed;
+	bool _MustUncompress;
+	uint8 *_CompressedBuffer;
+	uint32 _CompressedLen;
+	uint32 _UncompressedLen;
+	uint32 _Version;
 
 public:
-  uint32 Level;
-  bool Log;
+	uint32 Level;
+	bool Log;
 };
 
-class CObjectSerializerClient : public CObjectSerializer {
-  static CObjectFactory *_ClientObjecFactory;
+class CObjectSerializerClient : public CObjectSerializer
+{
+	static CObjectFactory *_ClientObjecFactory;
 
 public:
-  // constructor for client side serializer, we use the client side factory
-  CObjectSerializerClient(CObject *data = 0)
-      : CObjectSerializer(_ClientObjecFactory, data) {
-    nlassert(_ClientObjecFactory != NULL);
-  }
+	// constructor for client side serializer, we use the client side factory
+	CObjectSerializerClient(CObject *data = 0)
+	    : CObjectSerializer(_ClientObjecFactory, data)
+	{
+		nlassert(_ClientObjecFactory != NULL);
+	}
 
-  static void setClientObjectFactory(CObjectFactory *factory) {
-    _ClientObjecFactory = factory;
-  }
+	static void setClientObjectFactory(CObjectFactory *factory)
+	{
+		_ClientObjecFactory = factory;
+	}
 };
 
-class CObjectSerializerServer : public CObjectSerializer {
+class CObjectSerializerServer : public CObjectSerializer
+{
 public:
-  // constructor for server side serializer, we don't use object factory
-  CObjectSerializerServer(CObject *data = 0) : CObjectSerializer(NULL, data) {}
+	// constructor for server side serializer, we don't use object factory
+	CObjectSerializerServer(CObject *data = 0)
+	    : CObjectSerializer(NULL, data)
+	{
+	}
 };
 
 } // namespace R2

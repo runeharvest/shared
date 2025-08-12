@@ -17,12 +17,12 @@
 #ifndef NL_PLAY_LIST_MANAGER_USER_H
 #define NL_PLAY_LIST_MANAGER_USER_H
 
-#include "nel/3d/animation_set_user.h"
+#include "nel/misc/types_nl.h"
+#include "nel/3d/u_play_list_manager.h"
 #include "nel/3d/play_list_manager.h"
 #include "nel/3d/play_list_user.h"
+#include "nel/3d/animation_set_user.h"
 #include "nel/3d/ptr_set.h"
-#include "nel/3d/u_play_list_manager.h"
-#include "nel/misc/types_nl.h"
 
 namespace NL3D {
 
@@ -33,35 +33,37 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2001
  */
-class CPlayListManagerUser : public UPlayListManager {
+class CPlayListManagerUser : public UPlayListManager
+{
 private:
-  CPlayListManager _PlayListManager;
-  CPtrSet<CPlayListUser> _PlayLists;
+	CPlayListManager _PlayListManager;
+	CPtrSet<CPlayListUser> _PlayLists;
 
 public:
-  /// Constructor
-  CPlayListManagerUser() {}
+	/// Constructor
+	CPlayListManagerUser()
+	{
+	}
 
-  /** Create a playlist, instance of an animation set. nlerror
-   * if(animSet==NULL).
-   */
-  virtual UPlayList *createPlayList(UAnimationSet *animSet);
-  /** Delete a playlist. nlerror if not found. no-op if playList==NULL.
-   */
-  virtual void deletePlayList(UPlayList *playList);
+	/** Create a playlist, instance of an animation set. nlerror if(animSet==NULL).
+	 */
+	virtual UPlayList *createPlayList(UAnimationSet *animSet);
+	/** Delete a playlist. nlerror if not found. no-op if playList==NULL.
+	 */
+	virtual void deletePlayList(UPlayList *playList);
 
-  /** Animate all the playlist. Only the globals channels are animated.
-   * NB: all AnimationTime are in second.
-   */
-  virtual void animate(TGlobalAnimationTime time);
+	/** Animate all the playlist. Only the globals channels are animated.
+	 * NB: all AnimationTime are in second.
+	 */
+	virtual void animate(TGlobalAnimationTime time);
 
-  /** Setup all the playlist.
-   * NB: all AnimationTime are in second.
-   */
-  virtual void setup(TGlobalAnimationTime time);
+	/** Setup all the playlist.
+	 * NB: all AnimationTime are in second.
+	 */
+	virtual void setup(TGlobalAnimationTime time);
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_PLAY_LIST_MANAGER_USER_H
 

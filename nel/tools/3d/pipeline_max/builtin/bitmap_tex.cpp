@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "bitmap_tex.h"
 #include <nel/misc/types_nl.h>
+#include "bitmap_tex.h"
 
 // STL includes
 
@@ -42,9 +42,14 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CBitmapTex::CBitmapTex(CScene *scene) : CTexmap(scene) {}
+CBitmapTex::CBitmapTex(CScene *scene)
+    : CTexmap(scene)
+{
+}
 
-CBitmapTex::~CBitmapTex() {}
+CBitmapTex::~CBitmapTex()
+{
+}
 
 } /* namespace BUILTIN */
 } /* namespace MAX */

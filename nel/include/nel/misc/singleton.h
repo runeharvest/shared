@@ -17,10 +17,10 @@
 #ifndef NL_SINGLETON_H
 #define NL_SINGLETON_H
 
-#include "nel/misc/app_context.h"
 #include "nel/misc/common.h"
 #include "nel/misc/debug.h"
 #include "nel/misc/thread.h"
+#include "nel/misc/app_context.h"
 
 namespace NLMISC {
 
@@ -41,44 +41,53 @@ namespace NLMISC {
  * \date 2004
  */
 
-template <class T> class CSingleton {
+template <class T>
+class CSingleton
+{
 public:
-  virtual ~CSingleton() {}
+	virtual ~CSingleton() { }
 
-  /// returns a reference and not a pointer to be sure that the user
-  /// doesn't have to test the return value and can directly access the class
-  static T &getInstance() {
-    if (!Instance) {
-      Instance = new T;
-      nlassert(Instance);
-    }
-    return *Instance;
-  }
+	/// returns a reference and not a pointer to be sure that the user
+	/// doesn't have to test the return value and can directly access the class
+	static T &getInstance()
+	{
+		if (!Instance)
+		{
+			Instance = new T;
+			nlassert(Instance);
+		}
+		return *Instance;
+	}
 
-  /// shorter version of getInstance()
-  static T &instance() { return getInstance(); }
+	/// shorter version of getInstance()
+	static T &instance() { return getInstance(); }
 
-  static void releaseInstance() {
-    if (Instance) {
-      delete Instance;
-      Instance = NULL;
-    }
-  }
+	static void releaseInstance()
+	{
+		if (Instance)
+		{
+			delete Instance;
+			Instance = NULL;
+		}
+	}
 
 protected:
-  /// no public ctor to be sure that the user can't create an instance
-  CSingleton() {}
+	/// no public ctor to be sure that the user can't create an instance
+	CSingleton()
+	{
+	}
 
-  static T *Instance;
+	static T *Instance;
 };
 
-template <class T> T *CSingleton<T>::Instance = 0;
+template <class T>
+T *CSingleton<T>::Instance = 0;
 
-/** A variant of the singleton, not fully compliant with the standard design
- pattern *	It is more appropriate for object built from a factory but that
- must *	be instanciate only once. *	The singleton paradigm allow easy access
- to the unique instance but *	I removed the automatic instanciation of
- getInstance().
+/** A variant of the singleton, not fully compliant with the standard design pattern
+ *	It is more appropriate for object built from a factory but that must
+ *	be instanciate only once.
+ *	The singleton paradigm allow easy access to the unique instance but
+ *	I removed the automatic instanciation of getInstance().
  *
  *	Consequently, the getInstance return a pointer that can be NULL
  *	if the singleton has not been build yet.
@@ -106,56 +115,68 @@ template <class T> T *CSingleton<T>::Instance = 0;
  * \date 2005
  */
 
-template <class T> class CManualSingleton {
-  static T *&_instance() {
-    static T *instance = NULL;
+template <class T>
+class CManualSingleton
+{
+	static T *&_instance()
+	{
+		static T *instance = NULL;
 
-    return instance;
-  }
+		return instance;
+	}
 
 protected:
-  CManualSingleton() {
-    nlassert(_instance() == NULL);
-    _instance() = static_cast<T *>(this);
-  }
+	CManualSingleton()
+	{
+		nlassert(_instance() == NULL);
+		_instance() = static_cast<T *>(this);
+	}
 
-  ~CManualSingleton() {
-    nlassert(_instance() == this);
-    _instance() = NULL;
-  }
+	~CManualSingleton()
+	{
+		nlassert(_instance() == this);
+		_instance() = NULL;
+	}
 
 public:
-  static bool isInitialized() { return _instance() != NULL; }
+	static bool isInitialized()
+	{
+		return _instance() != NULL;
+	}
 
-  static T *getInstance() {
-    nlassert(_instance() != NULL);
+	static T *getInstance()
+	{
+		nlassert(_instance() != NULL);
 
-    return _instance();
-  }
+		return _instance();
+	}
 };
 
 /** A macro for safe global variable value.
- *	Concept : global initialized variable value are inherently unsafe
- *because the order of initialisation if undefined. If some init code use static
- *value, you may encounter hazardous error, depending on you compiler will, when
- *you read the value of a global, you may read it before it is initialized. This
- *little class is a workaround that allow a safe global value. A drawback is
- *that the value is enclosed inside a function and thus not accessible in the
- *debugger. use getGlobal_<name>() to retrieve a reference to the value.
+ *	Concept : global initialized variable value are inherently unsafe because the order of
+ *	initialisation if undefined. If some init code use static value, you
+ *	may encounter hazardous error, depending on you compiler will, when you
+ *	read the value of a global, you may read it before it is initialized.
+ *	This little class is a workaround that allow a safe global value.
+ *	A drawback is that the value is enclosed inside a function and thus not
+ *	accessible in the debugger.
+ *	use getGlobal_<name>() to retrieve a reference to the value.
  */
-#define NL_MISC_SAFE_GLOBAL(type, name, value)                                 \
-  type &getGlobal_##name() {                                                   \
-    static type theVar = (value);                                              \
-    return theVar;                                                             \
-  }
+#define NL_MISC_SAFE_GLOBAL(type, name, value) \
+	type &getGlobal_##name()                   \
+	{                                          \
+		static type theVar = (value);          \
+		return theVar;                         \
+	}
 
-#define NL_MISC_SAFE_CLASS_GLOBAL(type, name, value)                           \
-  static type &getGlobal_##name() {                                            \
-    static type theVar = (value);                                              \
-    return theVar;                                                             \
-  }
+#define NL_MISC_SAFE_CLASS_GLOBAL(type, name, value) \
+	static type &getGlobal_##name()                  \
+	{                                                \
+		static type theVar = (value);                \
+		return theVar;                               \
+	}
 
-} // namespace NLMISC
+} // NLMISC
 
 #endif // NL_SINGLETON_H
 

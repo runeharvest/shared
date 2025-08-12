@@ -38,86 +38,99 @@ using namespace std;
 
 namespace NLSOUND {
 
-CSourceMusicChannel::CSourceMusicChannel() : m_Source(NULL), m_Gain(1.0f) {}
-
-CSourceMusicChannel::~CSourceMusicChannel() {
-  nlassert(!m_Source);
-  delete m_Source;
-  m_Source = NULL;
+CSourceMusicChannel::CSourceMusicChannel()
+    : m_Source(NULL)
+    , m_Gain(1.0f)
+{
 }
 
-bool CSourceMusicChannel::play(const std::string &filepath, bool async,
-                               bool loop) {
-  // delete previous source if any
-  // note that this waits for the source's thread to finish if the source was
-  // still playing
-  if (m_Source)
-    delete m_Source;
-
-  m_Sound.setMusicFilePath(filepath, async, loop);
-
-  m_Source = new CStreamFileSource(&m_Sound, false, NULL, NULL, NULL, NULL);
-  m_Source->setSourceRelativeMode(true);
-  m_Source->setPos(NLMISC::CVector::Null);
-  m_Source->setRelativeGain(m_Gain);
-
-  m_Source->play();
-
-  return m_Source->isPlaying();
+CSourceMusicChannel::~CSourceMusicChannel()
+{
+	nlassert(!m_Source);
+	delete m_Source;
+	m_Source = NULL;
 }
 
-void CSourceMusicChannel::stop() {
-  // stop but don't delete the source, deleting source may cause waiting for
-  // thread
-  if (m_Source)
-    m_Source->stop();
+bool CSourceMusicChannel::play(const std::string &filepath, bool async, bool loop)
+{
+	// delete previous source if any
+	// note that this waits for the source's thread to finish if the source was still playing
+	if (m_Source)
+		delete m_Source;
+
+	m_Sound.setMusicFilePath(filepath, async, loop);
+
+	m_Source = new CStreamFileSource(&m_Sound, false, NULL, NULL, NULL, NULL);
+	m_Source->setSourceRelativeMode(true);
+	m_Source->setPos(NLMISC::CVector::Null);
+	m_Source->setRelativeGain(m_Gain);
+
+	m_Source->play();
+
+	return m_Source->isPlaying();
 }
 
-void CSourceMusicChannel::reset() {
-  // forces the source to be deleted, happens when audio mixer is reset
-  delete m_Source;
-  m_Source = NULL;
+void CSourceMusicChannel::stop()
+{
+	// stop but don't delete the source, deleting source may cause waiting for thread
+	if (m_Source)
+		m_Source->stop();
 }
 
-void CSourceMusicChannel::pause() {
-  if (m_Source)
-    m_Source->pause();
+void CSourceMusicChannel::reset()
+{
+	// forces the source to be deleted, happens when audio mixer is reset
+	delete m_Source;
+	m_Source = NULL;
 }
 
-void CSourceMusicChannel::resume() {
-  if (m_Source)
-    m_Source->resume();
+void CSourceMusicChannel::pause()
+{
+	if (m_Source)
+		m_Source->pause();
 }
 
-bool CSourceMusicChannel::isEnded() {
-  if (m_Source) {
-    if (m_Source->isEnded()) {
-      // we can delete the source now without worrying about thread wait
-      delete m_Source;
-      m_Source = NULL;
-      return true;
-    }
-    return false;
-  }
-  return true;
+void CSourceMusicChannel::resume()
+{
+	if (m_Source)
+		m_Source->resume();
 }
 
-bool CSourceMusicChannel::isLoadingAsync() {
-  if (m_Source)
-    return m_Source->isLoadingAsync();
-  return false;
+bool CSourceMusicChannel::isEnded()
+{
+	if (m_Source)
+	{
+		if (m_Source->isEnded())
+		{
+			// we can delete the source now without worrying about thread wait
+			delete m_Source;
+			m_Source = NULL;
+			return true;
+		}
+		return false;
+	}
+	return true;
 }
 
-float CSourceMusicChannel::getLength() {
-  if (m_Source)
-    return m_Source->getLength();
-  return 0.0f;
+bool CSourceMusicChannel::isLoadingAsync()
+{
+	if (m_Source)
+		return m_Source->isLoadingAsync();
+	return false;
 }
 
-void CSourceMusicChannel::setVolume(float gain) {
-  m_Gain = gain;
-  if (m_Source)
-    m_Source->setRelativeGain(gain);
+float CSourceMusicChannel::getLength()
+{
+	if (m_Source)
+		return m_Source->getLength();
+	return 0.0f;
+}
+
+void CSourceMusicChannel::setVolume(float gain)
+{
+	m_Gain = gain;
+	if (m_Source)
+		m_Source->setRelativeGain(gain);
 }
 
 } /* namespace NLSOUND */

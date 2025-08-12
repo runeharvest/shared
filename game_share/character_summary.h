@@ -22,11 +22,11 @@
 
 #include "nel/misc/ucstring.h"
 
+#include "player_visual_properties.h"
+#include "people.h"
+#include "roles.h"
 #include "character_title.h"
 #include "far_position.h"
-#include "people.h"
-#include "player_visual_properties.h"
-#include "roles.h"
 
 /**
  * CCharacterSummary
@@ -35,50 +35,52 @@
  * \author Nevrax France
  * \date 2001
  */
-struct CCharacterSummary {
-  CCharacterSummary() {
-    Mainland = TSessionId(0);
-    Name.erase();
-    Location = 0;
-    VisualPropA = 0;
-    VisualPropB = 0;
-    VisualPropC = 0;
-    People = EGSPD::CPeople::Unknown;
-    Title = CHARACTER_TITLE::NB_CHARACTER_TITLE;
-    CharacterSlot = 255;
-    InRingSession = false;
-    HasEditSession = false;
-    InNewbieland = false;
-  }
+struct CCharacterSummary
+{
+	CCharacterSummary()
+	{
+		Mainland = TSessionId(0);
+		Name.erase();
+		Location = 0;
+		VisualPropA = 0;
+		VisualPropB = 0;
+		VisualPropC = 0;
+		People = EGSPD::CPeople::Unknown;
+		Title = CHARACTER_TITLE::NB_CHARACTER_TITLE;
+		CharacterSlot = 255;
+		InRingSession = false;
+		HasEditSession = false;
+		InNewbieland = false;
+	}
 
-  /// mainland
-  TSessionId Mainland;
+	/// mainland
+	TSessionId Mainland;
 
-  /// name
-  ucstring Name; // TODO: UTF-8 (serial)
+	/// name
+	ucstring Name; // TODO: UTF-8 (serial)
 
-  /// Localisation
-  uint32 Location;
+	/// Localisation
+	uint32 Location;
 
-  /// visual property for appearance
-  SPropVisualA VisualPropA;
-  SPropVisualB VisualPropB;
-  SPropVisualC VisualPropC;
+	/// visual property for appearance
+	SPropVisualA VisualPropA;
+	SPropVisualB VisualPropB;
+	SPropVisualC VisualPropC;
 
-  EGSPD::CPeople::TPeople People;
+	EGSPD::CPeople::TPeople People;
 
-  NLMISC::CSheetId SheetId;
+	NLMISC::CSheetId SheetId;
 
-  CHARACTER_TITLE::ECharacterTitle Title;
+	CHARACTER_TITLE::ECharacterTitle Title;
 
-  uint8 CharacterSlot;
+	uint8 CharacterSlot;
 
-  bool InRingSession;
-  bool HasEditSession;
-  bool InNewbieland;
+	bool InRingSession;
+	bool HasEditSession;
+	bool InNewbieland;
 
-  /// serialisation coming from a stream (net message)
-  void serial(NLMISC::IStream &f);
+	/// serialisation coming from a stream (net message)
+	void serial(NLMISC::IStream &f);
 };
 
 #endif

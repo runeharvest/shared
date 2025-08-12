@@ -17,8 +17,8 @@
 #ifndef NL_SKELETON_SPAWN_SCRIPT_H
 #define NL_SKELETON_SPAWN_SCRIPT_H
 
-#include "nel/misc/smart_ptr.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/smart_ptr.h"
 
 #include "nel/3d/transform_shape.h"
 
@@ -29,71 +29,76 @@ class CSkeletonModel;
 
 // ***************************************************************************
 /**
- * For each skeleton, an animation of script can be assigned to spawn and
- *unspawn models, which are sticked to some bones of the skeleton. This is the
- *managers which read the scripts, spawn and unspawn instances according to
- *changes of scripts (changes which are made through animation) \author Lionel
- *Berenguier \author Nevrax France \date 2004
+ * For each skeleton, an animation of script can be assigned to spawn and unspawn models, which are sticked
+ *	to some bones of the skeleton.
+ *	This is the managers which read the scripts, spawn and unspawn instances according to changes of scripts
+ *	(changes which are made through animation)
+ * \author Lionel Berenguier
+ * \author Nevrax France
+ * \date 2004
  */
-class CSkeletonSpawnScript {
+class CSkeletonSpawnScript
+{
 public:
-  CSkeletonSpawnScript();
-  ~CSkeletonSpawnScript();
+	CSkeletonSpawnScript();
+	~CSkeletonSpawnScript();
 
-  /// evaluate the current skeleton script
-  void evaluate(CSkeletonModel *skeleton);
+	/// evaluate the current skeleton script
+	void evaluate(CSkeletonModel *skeleton);
 
-  /// Must call it at destruction of the owner skeleton
-  void release(CScene *scene);
+	/// Must call it at destruction of the owner skeleton
+	void release(CScene *scene);
 
 private:
-  friend class CSSSModelRequest;
+	friend class CSSSModelRequest;
 
-  // script cache to compare at each evaluate()
-  std::string _Cache;
-  // List of instance spawned
-  struct CInstance {
-    // the 3D model created (NULL if failed). NB: a CRefPtr is used, in case of
-    // "AutoDeletable ParticleSystem" usage
-    NLMISC::CRefPtr<CTransformShape> Model;
-    // this is a copy of the line in script, to compare for possible deletion
-    std::string ScriptLine;
-    class CParticleSystemModel *PS;
-    CInstance() {
-      Model = NULL;
-      PS = NULL;
-    }
-  };
-  std::vector<CInstance> _Instances;
+	// script cache to compare at each evaluate()
+	std::string _Cache;
+	// List of instance spawned
+	struct CInstance
+	{
+		// the 3D model created (NULL if failed). NB: a CRefPtr is used, in case of "AutoDeletable ParticleSystem" usage
+		NLMISC::CRefPtr<CTransformShape> Model;
+		// this is a copy of the line in script, to compare for possible deletion
+		std::string ScriptLine;
+		class CParticleSystemModel *PS;
+		CInstance()
+		{
+			Model = NULL;
+			PS = NULL;
+		}
+	};
+	std::vector<CInstance> _Instances;
 
-  // real parse stuff from _Cache
-  void parseCache(CScene *scene, CSkeletonModel *skeleton);
+	// real parse stuff from _Cache
+	void parseCache(CScene *scene, CSkeletonModel *skeleton);
 
-  // execute the request, or append to scene
-  void addModelCreationRequest(class CSSSModelRequest &req, CScene *scene);
+	// execute the request, or append to scene
+	void addModelCreationRequest(class CSSSModelRequest &req, CScene *scene);
 };
 
 // ***************************************************************************
 /** Used by CSkeletonSpawnScript, to delay model creation
  */
-class CSSSModelRequest {
+class CSSSModelRequest
+{
 public:
-  // Name o shape to create
-  std::string Shape;
-  // Skeleton to bind to
-  NLMISC::CRefPtr<NL3D::CSkeletonModel> Skel;
-  // Bone Id to stick to
-  uint BoneId;
-  // where to store the instance result
-  uint InstanceId;
-  // SSSWO mode
-  bool SSSWO;
+	// Name o shape to create
+	std::string Shape;
+	// Skeleton to bind to
+	NLMISC::CRefPtr<NL3D::CSkeletonModel> Skel;
+	// Bone Id to stick to
+	uint BoneId;
+	// where to store the instance result
+	uint InstanceId;
+	// SSSWO mode
+	bool SSSWO;
 
-  // execute the creation request
-  void execute();
+	// execute the creation request
+	void execute();
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_SKELETON_SPAWN_SCRIPT_H
 

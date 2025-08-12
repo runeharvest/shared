@@ -23,8 +23,7 @@
 #define LOGIC_EDITOR_EXPORT __declspec(dllimport)
 #endif // LOGIC_EDITOR_EXPORT
 
-// Increment this version number each time you distribute a new version of the
-// dll.
+// Increment this version number each time you distribute a new version of the dll.
 #define LOGIC_EDITOR_VERSION 2
 
 /**
@@ -34,45 +33,43 @@
  * \author Nevrax France
  * \date 2001
  */
-class ILogicEditor {
+class ILogicEditor
+{
 public:
-  virtual ~ILogicEditor() {}
+	virtual ~ILogicEditor() { }
 
-  // Init the UI
-  virtual void initUI(HWND parent = NULL) = 0;
+	// Init the UI
+	virtual void initUI(HWND parent = NULL) = 0;
 
-  // Init the UI Light version
-  virtual void initUILight(int x, int y, int cx, int cy) = 0;
+	// Init the UI Light version
+	virtual void initUILight(int x, int y, int cx, int cy) = 0;
 
-  // Go
-  virtual void go() = 0;
+	// Go
+	virtual void go() = 0;
 
-  // Release the UI
-  virtual void releaseUI() = 0;
+	// Release the UI
+	virtual void releaseUI() = 0;
 
-  // Get the main frame
-  virtual void *getMainFrame() = 0;
+	// Get the main frame
+	virtual void *getMainFrame() = 0;
 
-  // load a logic file
-  virtual void loadFile(const TCHAR *fileName) = 0;
+	// load a logic file
+	virtual void loadFile(const TCHAR *fileName) = 0;
 
-  // create a default file
-  virtual void
-  createDefaultFile(const TCHAR *filename = _T("logic.logic ")) = 0;
+	// create a default file
+	virtual void createDefaultFile(const TCHAR *filename = _T("logic.logic ")) = 0;
 
-  // Get instance
-  static LOGIC_EDITOR_EXPORT ILogicEditor *
-  getInterface(int version = LOGIC_EDITOR_VERSION);
+	// Get instance
+	static LOGIC_EDITOR_EXPORT ILogicEditor *getInterface(int version = LOGIC_EDITOR_VERSION);
 
-  // Release instance
-  static LOGIC_EDITOR_EXPORT void releaseInterface(ILogicEditor *logicEditor);
+	// Release instance
+	static LOGIC_EDITOR_EXPORT void releaseInterface(ILogicEditor *logicEditor);
 };
 
-// To export the names in a good format that can be human readable and not with
-// the heavy style of the MFC we have to do it in 'old-school' mode
+// To export the names in a good format that can be human readable and not with the heavy style
+// of the MFC we have to do it in 'old-school' mode
 extern "C" {
-LOGIC_EDITOR_EXPORT ILogicEditor *
-ILogicEditorGetInterface(int version = LOGIC_EDITOR_VERSION);
+LOGIC_EDITOR_EXPORT ILogicEditor *ILogicEditorGetInterface(int version = LOGIC_EDITOR_VERSION);
 LOGIC_EDITOR_EXPORT void ILogicEditorReleaseInterface(ILogicEditor *pWE);
 }
 

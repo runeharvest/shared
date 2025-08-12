@@ -20,8 +20,8 @@
 #ifndef NL_EVENT_EMITTER_MULTI_H
 #define NL_EVENT_EMITTER_MULTI_H
 
-#include "event_emitter.h"
 #include "types_nl.h"
+#include "event_emitter.h"
 #include <vector>
 
 namespace NLMISC {
@@ -30,33 +30,34 @@ namespace NLMISC {
  * This is useful when you don't have the opportunity to register more than
  * one event emitter to an event server.
  */
-class CEventEmitterMulti : public IEventEmitter {
+class CEventEmitterMulti : public IEventEmitter
+{
 public:
-  /// dtor
-  virtual ~CEventEmitterMulti();
-  /// add an emitter
-  void addEmitter(IEventEmitter *e, bool mustDelete);
-  /// remove an emitter (and delete it if necessary)
-  void removeEmitter(IEventEmitter *e);
-  /// test whether e is in the emitter list
-  bool isEmitter(IEventEmitter *e) const;
-  // Get the number of registered emitters
-  uint getNumEmitters() const { return (uint)_Emitters.size(); }
-  // Get an emitter
-  IEventEmitter *getEmitter(uint index);
-  const IEventEmitter *getEmitter(uint index) const;
-  /// From IEventEmitter. This call submitEvents on all the emitters
-  virtual void submitEvents(CEventServer &server, bool allWindows);
+	/// dtor
+	virtual ~CEventEmitterMulti();
+	/// add an emitter
+	void addEmitter(IEventEmitter *e, bool mustDelete);
+	/// remove an emitter (and delete it if necessary)
+	void removeEmitter(IEventEmitter *e);
+	/// test whether e is in the emitter list
+	bool isEmitter(IEventEmitter *e) const;
+	// Get the number of registered emitters
+	uint getNumEmitters() const { return (uint)_Emitters.size(); }
+	// Get an emitter
+	IEventEmitter *getEmitter(uint index);
+	const IEventEmitter *getEmitter(uint index) const;
+	/// From IEventEmitter. This call submitEvents on all the emitters
+	virtual void submitEvents(CEventServer &server, bool allWindows);
 
-  virtual bool copyTextToClipboard(const std::string &text);
-  virtual bool pasteTextFromClipboard(std::string &text);
+	virtual bool copyTextToClipboard(const std::string &text);
+	virtual bool pasteTextFromClipboard(std::string &text);
 
 private:
-  typedef std::vector<std::pair<IEventEmitter *, bool>> TEmitterCont;
-  TEmitterCont _Emitters;
+	typedef std::vector<std::pair<IEventEmitter *, bool>> TEmitterCont;
+	TEmitterCont _Emitters;
 };
 
-} // namespace NLMISC
+} // NLMISC
 
 #endif // NL_EVENT_EMITTER_MULTI_H
 

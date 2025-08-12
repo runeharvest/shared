@@ -40,29 +40,35 @@ NL_STRING_CONVERSION_TABLE_ENTRY(MostProtected)
 NL_STRING_CONVERSION_TABLE_ENTRY(Unknown)
 NL_END_STRING_CONVERSION_TABLE(TAiAimingType, Conversion, Unknown)
 
-const string &toString(TAiAimingType type) { return Conversion.toString(type); }
-
-TAiAimingType toAimingType(const string &str) {
-  return Conversion.fromString(str);
+const string &toString(TAiAimingType type)
+{
+	return Conversion.toString(type);
 }
 
-SLOT_EQUIPMENT::TSlotEquipment toSlot(TAiAimingType type) {
-  switch (type) {
-  case Head:
-    return SLOT_EQUIPMENT::HEAD;
-  case Chest:
-    return SLOT_EQUIPMENT::CHEST;
-  case Arms:
-    return SLOT_EQUIPMENT::ARMS;
-  case Hands:
-    return SLOT_EQUIPMENT::HANDS;
-  case Legs:
-    return SLOT_EQUIPMENT::LEGS;
-  case Feet:
-    return SLOT_EQUIPMENT::FEET;
-  default:
-    return SLOT_EQUIPMENT::UNDEFINED;
-  };
+TAiAimingType toAimingType(const string &str)
+{
+	return Conversion.fromString(str);
 }
 
-}; // namespace AI_AIMING_TYPE
+SLOT_EQUIPMENT::TSlotEquipment toSlot(TAiAimingType type)
+{
+	switch (type)
+	{
+	case Head:
+		return SLOT_EQUIPMENT::HEAD;
+	case Chest:
+		return SLOT_EQUIPMENT::CHEST;
+	case Arms:
+		return SLOT_EQUIPMENT::ARMS;
+	case Hands:
+		return SLOT_EQUIPMENT::HANDS;
+	case Legs:
+		return SLOT_EQUIPMENT::LEGS;
+	case Feet:
+		return SLOT_EQUIPMENT::FEET;
+	default:
+		return SLOT_EQUIPMENT::UNDEFINED;
+	};
+}
+
+}; // AI_AIMING_TYPE

@@ -23,72 +23,72 @@
 using namespace std;
 using namespace NLMISC;
 
-int main(int argc, char **argv) {
-  {
-    uint8 val;
-    val = 0;
-    printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
-    val = -1;
-    printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
-    val = 1;
-    printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
-    val = 255;
-    printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
-  }
+int main(int argc, char **argv)
+{
+	{
+		uint8 val;
+		val = 0;
+		printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
+		val = -1;
+		printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
+		val = 1;
+		printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
+		val = 255;
+		printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
+	}
 
-  {
-    sint8 val;
-    val = 0;
-    printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
-    val = -128;
-    printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
-    val = 1;
-    printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
-    val = 127;
-    printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
-  }
+	{
+		sint8 val;
+		val = 0;
+		printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
+		val = -128;
+		printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
+		val = 1;
+		printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
+		val = 127;
+		printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
+	}
 
-  {
-    uint16 val;
-    val = -12158;
-    printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
-    val = 12557;
-    printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
-  }
+	{
+		uint16 val;
+		val = -12158;
+		printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
+		val = 12557;
+		printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
+	}
 
-  {
-    sint16 val;
-    val = -12158;
-    printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
-    val = 12557;
-    printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
-  }
+	{
+		sint16 val;
+		val = -12158;
+		printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
+		val = 12557;
+		printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
+	}
 
-  {
-    uint32 val;
-    val = -121556418;
-    printf("'%u' should be equal to '%s' \n", val, toString(val).c_str());
-    val = 125848847;
-    printf("'%u' should be equal to '%s' \n", val, toString(val).c_str());
-  }
+	{
+		uint32 val;
+		val = -121556418;
+		printf("'%u' should be equal to '%s' \n", val, toString(val).c_str());
+		val = 125848847;
+		printf("'%u' should be equal to '%s' \n", val, toString(val).c_str());
+	}
 
-  {
-    sint32 val;
-    val = -120547158;
-    printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
-    val = 12555857;
-    printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
-  }
+	{
+		sint32 val;
+		val = -120547158;
+		printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
+		val = 12555857;
+		printf("'%d' should be equal to '%s' \n", val, toString(val).c_str());
+	}
 
-  string str;
-  str += "This is an example of the use of toString(). It's a number " +
-         toString(156);
-  str += " and now a float " + toString(15.55f);
+	string str;
+	str += "This is an example of the use of toString(). It's a number " + toString(156);
+	str += " and now a float " + toString(15.55f);
 
-  printf("%s\n", str.c_str());
+	printf("%s\n", str.c_str());
 
-  printf("\nPress <return> to exit\n");
-  getchar();
+	printf("\nPress <return> to exit\n");
+	getchar();
 
-  return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }

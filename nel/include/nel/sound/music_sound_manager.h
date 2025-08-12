@@ -17,8 +17,8 @@
 #ifndef NL_MUSIC_SOUND_MANAGER_H
 #define NL_MUSIC_SOUND_MANAGER_H
 
-#include "nel/misc/time_nl.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/time_nl.h"
 
 namespace NLSOUND {
 
@@ -32,45 +32,42 @@ class CMusicSound;
  * \author Nevrax France
  * \date 2004
  */
-class CMusicSoundManager {
+class CMusicSoundManager
+{
 public:
-  /// Constructor
-  CMusicSoundManager();
+	/// Constructor
+	CMusicSoundManager();
 
-  /// Add a source that want to play music. Called by CMusicSource::play()
-  void addMusicSourcePlaying(CMusicSource *musicSource);
-  /// Remove a source that want to play music. Called by CMusicSource::stop()
-  void removeMusicSourcePlaying(CMusicSource *musicSource);
+	/// Add a source that want to play music. Called by CMusicSource::play()
+	void addMusicSourcePlaying(CMusicSource *musicSource);
+	/// Remove a source that want to play music. Called by CMusicSource::stop()
+	void removeMusicSourcePlaying(CMusicSource *musicSource);
 
-  /// update concurrent music
-  void update();
+	/// update concurrent music
+	void update();
 
-  /// enable or disable the music sound manager (disable it if you want to play
-  /// user MP3 for instance)
-  void enable(bool enable);
+	/// enable or disable the music sound manager (disable it if you want to play user MP3 for instance)
+	void enable(bool enable);
 
-  /// set false to avoid getMinimumPlayTime() and getTimeBeforeCanReplay()
-  /// behavior. default to true
-  void enableTimeConstraint(bool enable) { _TimeConstraintEnabled = enable; }
+	/// set false to avoid getMinimumPlayTime() and getTimeBeforeCanReplay() behavior. default to true
+	void enableTimeConstraint(bool enable) { _TimeConstraintEnabled = enable; }
 
 private:
-  bool _Enabled;
-  bool _TimeConstraintEnabled;
-  // The current music sound actually playing
-  CMusicSound *_CurrentMusicPlaying;
-  NLMISC::TTime _PlayStartTime;
-  // All music sources that want to play. Only one can really play at a time (in
-  // _CurrentMusicPlaying)
-  std::set<CMusicSource *> _Sources;
-  // The sources that were already played in the current zones. Only not looped
-  // sounds can be in this set
-  std::set<CMusicSource *> _AlreadyPlayedSources;
+	bool _Enabled;
+	bool _TimeConstraintEnabled;
+	// The current music sound actually playing
+	CMusicSound *_CurrentMusicPlaying;
+	NLMISC::TTime _PlayStartTime;
+	// All music sources that want to play. Only one can really play at a time (in _CurrentMusicPlaying)
+	std::set<CMusicSource *> _Sources;
+	// The sources that were already played in the current zones. Only not looped sounds can be in this set
+	std::set<CMusicSource *> _AlreadyPlayedSources;
 
-  void startMusic(CMusicSound *, CMusicSource *);
-  void stopMusic(bool allowFade);
+	void startMusic(CMusicSound *, CMusicSource *);
+	void stopMusic(bool allowFade);
 };
 
-} // namespace NLSOUND
+} // NLSOUND
 
 #endif // NL_MUSIC_SOUND_MANAGER_H
 

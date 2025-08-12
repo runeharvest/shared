@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "i_node.h"
 #include <nel/misc/types_nl.h>
+#include "i_node.h"
 
 // STL includes
 #include <iomanip>
@@ -43,142 +43,176 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-INode::INode(CScene *scene) : CReferenceTarget(scene) {}
+INode::INode(CScene *scene)
+    : CReferenceTarget(scene)
+{
+}
 
-INode::~INode() {}
+INode::~INode()
+{
+}
 
 const ucstring INode::DisplayName = ucstring("Node Interface");
 const char *INode::InternalName = "Node";
 const char *INode::InternalNameUnknown = "NodeUnknown";
-const NLMISC::CClassId INode::ClassId =
-    NLMISC::CClassId(0x8f5b13, 0x624d477d); /* Not official, please correct */
+const NLMISC::CClassId INode::ClassId = NLMISC::CClassId(0x8f5b13, 0x624d477d); /* Not official, please correct */
 const TSClassId INode::SuperClassId = 0x00000001;
 const CNodeClassDesc NodeClassDesc(&DllPluginDescBuiltin);
 const CNodeSuperClassDesc NodeSuperClassDesc(&NodeClassDesc);
 
-void INode::parse(uint16 version, uint filter) {
-  CReferenceTarget::parse(version);
+void INode::parse(uint16 version, uint filter)
+{
+	CReferenceTarget::parse(version);
 }
 
-void INode::clean() { CReferenceTarget::clean(); }
-
-void INode::build(uint16 version, uint filter) {
-  CReferenceTarget::build(version);
+void INode::clean()
+{
+	CReferenceTarget::clean();
 }
 
-void INode::disown() { CReferenceTarget::disown(); }
-
-void INode::init() { CReferenceTarget::init(); }
-
-bool INode::inherits(const NLMISC::CClassId classId) const {
-  if (classId == classDesc()->classId())
-    return true;
-  return CReferenceTarget::inherits(classId);
+void INode::build(uint16 version, uint filter)
+{
+	CReferenceTarget::build(version);
 }
 
-const ISceneClassDesc *INode::classDesc() const { return &NodeClassDesc; }
-
-void INode::toStringLocal(std::ostream &ostream, const std::string &pad,
-                          uint filter) const {
-  CReferenceTarget::toStringLocal(ostream, pad);
-  // Print the implied connected children
-  ostream << "\n" << pad << "Children: IMPLICIT { ";
-  uint i = 0;
-  for (std::set<NLMISC::CRefPtr<INode>>::iterator it = m_Children.begin(),
-                                                  end = m_Children.end();
-       it != end; ++it) {
-    INode *node = (*it);
-    nlassert(node);
-    if (node) {
-      ostream << "\n" << pad << "\t" << i << ": <ptr=0x";
-      {
-        std::stringstream ss;
-        ss << std::hex << std::setfill('0');
-        ss << std::setw(16) << (uint64)(void *)node;
-        ostream << ss.str();
-      }
-      ostream << "> ";
-      ostream << "(" << ucstring(node->classDesc()->displayName()).toUtf8()
-              << ", " << node->classDesc()->classId().toString() << ") ";
-      ostream << node->userName().toUtf8() << " ";
-    } else {
-      ostream << "\n" << pad << "\t" << i << ": NULL ";
-    }
-    ++i;
-  }
-  ostream << "} ";
+void INode::disown()
+{
+	CReferenceTarget::disown();
 }
 
-INode *INode::parent() {
-  nlerror("Unkown node class, cannot get parent node");
-  return NULL;
+void INode::init()
+{
+	CReferenceTarget::init();
 }
 
-void INode::setParent(INode *node) {
-  nlerror("Unkown node class, cannot set parent node");
+bool INode::inherits(const NLMISC::CClassId classId) const
+{
+	if (classId == classDesc()->classId()) return true;
+	return CReferenceTarget::inherits(classId);
 }
 
-void INode::addChild(INode *node) { m_Children.insert(node); }
-
-void INode::removeChild(INode *node) { m_Children.erase(node); }
-
-const ucstring &INode::userName() const {
-  static const ucstring v = ucstring("Invalid INode");
-  return v;
+const ISceneClassDesc *INode::classDesc() const
+{
+	return &NodeClassDesc;
 }
 
-INode *INode::find(const ucstring &userName) const {
-  ucstring unl = NLMISC::toLower(userName);
-  for (std::set<NLMISC::CRefPtr<INode>>::iterator it = m_Children.begin(),
-                                                  end = m_Children.end();
-       it != end; ++it) {
-    INode *node = (*it);
-    nlassert(node);
-    if (NLMISC::toLower(node->userName()) == unl)
-      return node;
-  }
-  return NULL;
+void INode::toStringLocal(std::ostream &ostream, const std::string &pad, uint filter) const
+{
+	CReferenceTarget::toStringLocal(ostream, pad);
+	// Print the implied connected children
+	ostream << "\n"
+	        << pad << "Children: IMPLICIT { ";
+	uint i = 0;
+	for (std::set<NLMISC::CRefPtr<INode>>::iterator it = m_Children.begin(), end = m_Children.end(); it != end; ++it)
+	{
+		INode *node = (*it);
+		nlassert(node);
+		if (node)
+		{
+			ostream << "\n"
+			        << pad << "\t" << i << ": <ptr=0x";
+			{
+				std::stringstream ss;
+				ss << std::hex << std::setfill('0');
+				ss << std::setw(16) << (uint64)(void *)node;
+				ostream << ss.str();
+			}
+			ostream << "> ";
+			ostream << "(" << ucstring(node->classDesc()->displayName()).toUtf8() << ", " << node->classDesc()->classId().toString() << ") ";
+			ostream << node->userName().toUtf8() << " ";
+		}
+		else
+		{
+			ostream << "\n"
+			        << pad << "\t" << i << ": NULL ";
+		}
+		++i;
+	}
+	ostream << "} ";
 }
 
-void INode::dumpNodes(std::ostream &ostream, const std::string &pad) const {
-  ostream << "<ptr=0x";
-  {
-    std::stringstream ss;
-    ss << std::hex << std::setfill('0');
-    ss << std::setw(16) << (uint64)(void *)this;
-    ostream << ss.str();
-  }
-  ostream << "> " << userName().toUtf8() << " [" << m_Children.size() << "] { ";
-  CReferenceMaker *object = getReference(1);
-  if (object) // TODO: Implement!
-  {
-    ostream << "\n" << pad << "Object: ";
-    ostream << "<ptr=0x";
-    {
-      std::stringstream ss;
-      ss << std::hex << std::setfill('0');
-      ss << std::setw(16) << (uint64)(void *)object;
-      ostream << ss.str();
-    }
-    ostream << "> ";
-    ostream << ucstring(object->classDesc()->displayName()).toUtf8() << " ";
-  }
-  uint i = 0;
-  std::string padpad = pad + "\t";
-  for (std::set<NLMISC::CRefPtr<INode>>::iterator it = m_Children.begin(),
-                                                  end = m_Children.end();
-       it != end; ++it) {
-    INode *node = (*it);
-    nlassert(node);
-    ostream << "\n" << pad << i << ": ";
-    node->dumpNodes(ostream, padpad);
-    ++i;
-  }
-  ostream << "} ";
+INode *INode::parent()
+{
+	nlerror("Unkown node class, cannot get parent node");
+	return NULL;
 }
 
-IStorageObject *INode::createChunkById(uint16 id, bool container) {
-  return CReferenceTarget::createChunkById(id, container);
+void INode::setParent(INode *node)
+{
+	nlerror("Unkown node class, cannot set parent node");
+}
+
+void INode::addChild(INode *node)
+{
+	m_Children.insert(node);
+}
+
+void INode::removeChild(INode *node)
+{
+	m_Children.erase(node);
+}
+
+const ucstring &INode::userName() const
+{
+	static const ucstring v = ucstring("Invalid INode");
+	return v;
+}
+
+INode *INode::find(const ucstring &userName) const
+{
+	ucstring unl = NLMISC::toLower(userName);
+	for (std::set<NLMISC::CRefPtr<INode>>::iterator it = m_Children.begin(), end = m_Children.end(); it != end; ++it)
+	{
+		INode *node = (*it);
+		nlassert(node);
+		if (NLMISC::toLower(node->userName()) == unl)
+			return node;
+	}
+	return NULL;
+}
+
+void INode::dumpNodes(std::ostream &ostream, const std::string &pad) const
+{
+	ostream << "<ptr=0x";
+	{
+		std::stringstream ss;
+		ss << std::hex << std::setfill('0');
+		ss << std::setw(16) << (uint64)(void *)this;
+		ostream << ss.str();
+	}
+	ostream << "> " << userName().toUtf8() << " [" << m_Children.size() << "] { ";
+	CReferenceMaker *object = getReference(1);
+	if (object) // TODO: Implement!
+	{
+		ostream << "\n"
+		        << pad << "Object: ";
+		ostream << "<ptr=0x";
+		{
+			std::stringstream ss;
+			ss << std::hex << std::setfill('0');
+			ss << std::setw(16) << (uint64)(void *)object;
+			ostream << ss.str();
+		}
+		ostream << "> ";
+		ostream << ucstring(object->classDesc()->displayName()).toUtf8() << " ";
+	}
+	uint i = 0;
+	std::string padpad = pad + "\t";
+	for (std::set<NLMISC::CRefPtr<INode>>::iterator it = m_Children.begin(), end = m_Children.end(); it != end; ++it)
+	{
+		INode *node = (*it);
+		nlassert(node);
+		ostream << "\n"
+		        << pad << i << ": ";
+		node->dumpNodes(ostream, padpad);
+		++i;
+	}
+	ostream << "} ";
+}
+
+IStorageObject *INode::createChunkById(uint16 id, bool container)
+{
+	return CReferenceTarget::createChunkById(id, container);
 }
 
 } /* namespace BUILTIN */

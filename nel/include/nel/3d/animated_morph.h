@@ -17,10 +17,10 @@
 #ifndef NL_ANIMATED_MORPH_H
 #define NL_ANIMATED_MORPH_H
 
+#include "nel/misc/types_nl.h"
+#include "nel/misc/smart_ptr.h"
 #include "nel/3d/animatable.h"
 #include "nel/3d/track.h"
-#include "nel/misc/smart_ptr.h"
-#include "nel/misc/types_nl.h"
 #include <map>
 
 namespace NL3D {
@@ -32,18 +32,19 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2001
  */
-class CMorphBase : public NLMISC::CRefCount {
+class CMorphBase : public NLMISC::CRefCount
+{
 public:
-  CMorphBase();
+	CMorphBase();
 
-  // Name of this material, for Animation access.
-  std::string Name;
+	// Name of this material, for Animation access.
+	std::string Name;
 
-  // Default tracks.
-  CTrackDefaultFloat DefaultFactor;
+	// Default tracks.
+	CTrackDefaultFloat DefaultFactor;
 
-  /// save/load.
-  void serial(NLMISC::IStream &f);
+	/// save/load.
+	void serial(NLMISC::IStream &f);
 };
 
 // ***************************************************************************
@@ -53,52 +54,53 @@ public:
  * \author Nevrax France
  * \date 2001
  */
-class CAnimatedMorph : public IAnimatable {
+class CAnimatedMorph : public IAnimatable
+{
 public:
-  /// \name ctor / setup.
-  // @{
-  /** Constructor.
-   */
-  CAnimatedMorph(CMorphBase *mb);
-  // @}
+	/// \name ctor / setup.
+	// @{
+	/** Constructor.
+	 */
+	CAnimatedMorph(CMorphBase *mb);
+	// @}
 
-  /// \name Herited from IAnimatable
-  // @{
-  /// Added values.
-  enum TAnimValues {
-    OwnerBit = IAnimatable::AnimValueLast,
-    FactorValue,
-    AnimValueLast
-  };
+	/// \name Herited from IAnimatable
+	// @{
+	/// Added values.
+	enum TAnimValues
+	{
+		OwnerBit = IAnimatable::AnimValueLast,
+		FactorValue,
+		AnimValueLast
+	};
 
-  /// From IAnimatable
-  virtual IAnimatedValue *getValue(uint valueId);
+	/// From IAnimatable
+	virtual IAnimatedValue *getValue(uint valueId);
 
-  /// From IAnimatable
-  virtual const char *getValueName(uint valueId) const;
+	/// From IAnimatable
+	virtual const char *getValueName(uint valueId) const;
 
-  /// From IAnimatable.
-  virtual ITrack *getDefaultTrack(uint valueId);
+	/// From IAnimatable.
+	virtual ITrack *getDefaultTrack(uint valueId);
 
-  /// From IAnimatable.
-  virtual void registerToChannelMixer(CChannelMixer *chanMixer,
-                                      const std::string &prefix);
+	/// From IAnimatable.
+	virtual void registerToChannelMixer(CChannelMixer *chanMixer, const std::string &prefix);
 
-  // @}
+	// @}
 
-  float getFactor() const { return _Factor.Value; }
-  void setFactor(float rFactor) { _Factor.Value = rFactor; }
+	float getFactor() const { return _Factor.Value; }
+	void setFactor(float rFactor) { _Factor.Value = rFactor; }
 
-  const std::string &getName() const { return _MorphBase->Name; }
+	const std::string &getName() const { return _MorphBase->Name; }
 
-  // ********************
+	// ********************
 private:
-  CMorphBase *_MorphBase;
+	CMorphBase *_MorphBase;
 
-  CAnimatedValueFloat _Factor;
+	CAnimatedValueFloat _Factor;
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_ANIMATED_MORPH_H
 

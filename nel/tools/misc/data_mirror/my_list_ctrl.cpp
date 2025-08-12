@@ -1,16 +1,20 @@
 // my_list_ctrl.cpp : implementation file
 //
 
-#include "my_list_ctrl.h"
-#include "data_mirror.h"
 #include "stdafx.h"
+#include "data_mirror.h"
+#include "my_list_ctrl.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CMyListCtrl
 
-CMyListCtrl::CMyListCtrl() {}
+CMyListCtrl::CMyListCtrl()
+{
+}
 
-CMyListCtrl::~CMyListCtrl() {}
+CMyListCtrl::~CMyListCtrl()
+{
+}
 
 BEGIN_MESSAGE_MAP(CMyListCtrl, CListCtrl)
 //{{AFX_MSG_MAP(CMyListCtrl)
@@ -21,9 +25,10 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CMyListCtrl message handlers
 
-void CMyListCtrl::OnItemclick(NMHDR *pNMHDR, LRESULT *pResult) {
-  HD_NOTIFY *phdn = (HD_NOTIFY *)pNMHDR;
-  // TODO: Add your control notification handler code here
+void CMyListCtrl::OnItemclick(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	HD_NOTIFY *phdn = (HD_NOTIFY *)pNMHDR;
+	// TODO: Add your control notification handler code here
 
-  *pResult = 0;
+	*pResult = 0;
 }

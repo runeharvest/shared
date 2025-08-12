@@ -26,45 +26,45 @@
 namespace std {
 float fabsf(float f);
 double fabsl(double f);
-} // namespace std
+}
 #endif
 
 #include <assert.h>
-#include <commctrl.h>
-#include <iparamb2.h>
-#include <iparamm2.h>
-#include <istdplug.h>
-#include <locale.h>
-#include <max.h>
-#include <shlobj.h>
-#include <utilapi.h>
 #include <windows.h>
+#include <locale.h>
 #include <windowsx.h>
+#include <commctrl.h>
+#include <max.h>
+#include <iparamb2.h>
+#include <istdplug.h>
+#include <iparamm2.h>
+#include <utilapi.h>
+#include <shlobj.h>
 #undef STRICT
 #include <maxversion.h>
 #if MAX_VERSION_MAJOR >= 14
-#include <maxscript/compiler/parser.h>
-#include <maxscript/foundation/3dmath.h>
-#include <maxscript/foundation/mxstime.h>
-#include <maxscript/foundation/numbers.h>
-#include <maxscript/foundation/streams.h>
-#include <maxscript/macros/define_instantiation_functions.h>
 #include <maxscript/maxscript.h>
+#include <maxscript/foundation/3dmath.h>
+#include <maxscript/foundation/numbers.h>
 #include <maxscript/maxwrapper/maxclasses.h>
+#include <maxscript/foundation/streams.h>
+#include <maxscript/foundation/mxstime.h>
 #include <maxscript/maxwrapper/mxsobjects.h>
+#include <maxscript/compiler/parser.h>
+#include <maxscript/macros/define_instantiation_functions.h>
 #else
-#include <MaxScrpt/3dmath.h>
-#include <MaxScrpt/definsfn.h>
-#include <MaxScrpt/maxclses.h>
-#include <MaxScrpt/maxobj.h>
 #include <MaxScrpt/maxscrpt.h>
-#include <MaxScrpt/mstime.h>
+#include <MaxScrpt/3dmath.h>
 #include <MaxScrpt/numbers.h>
-#include <MaxScrpt/parser.h>
+#include <MaxScrpt/maxclses.h>
 #include <MaxScrpt/streams.h>
+#include <MaxScrpt/mstime.h>
+#include <MaxScrpt/maxobj.h>
+#include <MaxScrpt/parser.h>
+#include <MaxScrpt/definsfn.h>
 #endif
-#include <animtbl.h>
 #include <stdmat.h>
+#include <animtbl.h>
 #ifdef min
 #undef min
 #endif

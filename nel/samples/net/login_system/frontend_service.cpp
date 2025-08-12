@@ -23,17 +23,16 @@
  * To run this program, ensure there is a file "frontend_service.cfg"
  * containing the location of the naming service (NSHost, NSPort)
  * in the working directory.
- * The NeL naming_service, time_service, login_service, welcome_service must be
- * running.
+ * The NeL naming_service, time_service, login_service, welcome_service must be running.
  */
 
 // We're using the NeL Service framework and layer 5.
-#include "nel/misc/bit_mem_stream.h"
 #include "nel/misc/config_file.h"
+#include "nel/misc/bit_mem_stream.h"
 
 #include "nel/net/callback_server.h"
-#include "nel/net/login_server.h"
 #include "nel/net/service.h"
+#include "nel/net/login_server.h"
 
 #ifdef NL_OS_WINDOWS
 #ifndef NL_COMP_MINGW
@@ -62,53 +61,61 @@ using namespace NLMISC;
 /*
  * Connection callback for a client
  */
-void onConnectionClient(TSockId from, const CLoginCookie &cookie) {
-  nlinfo("The client with uniq Id %d is connected", cookie.getUserId());
+void onConnectionClient(TSockId from, const CLoginCookie &cookie)
+{
+	nlinfo("The client with uniq Id %d is connected", cookie.getUserId());
 
-  // store the user id in appId
-  from->setAppId(cookie.getUserId());
+	// store the user id in appId
+	from->setAppId(cookie.getUserId());
 }
 
 /*
  * Disconnection callback for a client
  */
-void onDisconnectClient(TSockId from, void *arg) {
-  nlinfo("A client with uniq Id %d has disconnected", from->appId());
+void onDisconnectClient(TSockId from, void *arg)
+{
+	nlinfo("A client with uniq Id %d has disconnected", from->appId());
 
-  // tell the login system that this client is disconnected
-  CLoginServer::clientDisconnected((uint32)from->appId());
+	// tell the login system that this client is disconnected
+	CLoginServer::clientDisconnected((uint32)from->appId());
 }
 
 /*
  * CFrontEndService, based on IService
  */
-class CFrontEndService : public IService {
+class CFrontEndService : public IService
+{
 private:
-  /// The server on which the clients connect
-  CCallbackServer _FServer;
+	/// The server on which the clients connect
+	CCallbackServer _FServer;
 
 public:
-  /*
-   * Initialization
-   */
-  void init() {
-    // connect the front end login system
-    uint16 fsPort = 37373;
-    try {
-      fsPort = IService::ConfigFile.getVar("FSPort").asInt();
-    } catch (const EUnknownVar &) {
-    }
-    _FServer.init(fsPort);
-    CLoginServer::init(_FServer, onConnectionClient);
+	/*
+	 * Initialization
+	 */
+	void init()
+	{
+		// connect the front end login system
+		uint16 fsPort = 37373;
+		try
+		{
+			fsPort = IService::ConfigFile.getVar("FSPort").asInt();
+		}
+		catch (const EUnknownVar &)
+		{
+		}
+		_FServer.init(fsPort);
+		CLoginServer::init(_FServer, onConnectionClient);
 
-    //
-    _FServer.setDisconnectionCallback(onDisconnectClient, NULL);
-  }
+		//
+		_FServer.setDisconnectionCallback(onDisconnectClient, NULL);
+	}
 
-  bool update() {
-    _FServer.update();
-    return true;
-  }
+	bool update()
+	{
+		_FServer.update();
+		return true;
+	}
 };
 
 #else // USE_UDP
@@ -122,77 +129,82 @@ public:
 /*
  * CFrontEndService, based on IService
  */
-class CFrontEndService : public IService {
+class CFrontEndService : public IService
+{
 private:
-  /// The server on which the clients connect
-  CUdpSock *_FServer;
+	/// The server on which the clients connect
+	CUdpSock *_FServer;
 
 public:
-  /*
-   * Initialization
-   */
-  void init() {
-    // connect the front end login system
-    uint16 fesPort = 37373;
-    try {
-      fesPort = IService5::ConfigFile.getVar("FESPort").asInt();
-    } catch (const EUnknownVar &) {
-    }
+	/*
+	 * Initialization
+	 */
+	void init()
+	{
+		// connect the front end login system
+		uint16 fesPort = 37373;
+		try
+		{
+			fesPort = IService5::ConfigFile.getVar("FESPort").asInt();
+		}
+		catch (const EUnknownVar &)
+		{
+		}
 
-    // Socket
-    _FServer = new CUdpSock(false);
-    nlassert(_FServer);
+		// Socket
+		_FServer = new CUdpSock(false);
+		nlassert(_FServer);
 
-    // Test of multihomed host
-    vector<CInetAddress> addrlist;
-    addrlist = CInetAddress::localAddresses();
-    vector<CInetAddress>::iterator ivi;
-    for (ivi = addrlist.begin(); ivi != addrlist.end(); ++ivi) {
-      nlinfo("%s", (*ivi).asIPString().c_str());
-    }
-    addrlist[0].setPort(fesPort);
-    _FServer->bind(addrlist[0]);
+		// Test of multihomed host
+		vector<CInetAddress> addrlist;
+		addrlist = CInetAddress::localAddresses();
+		vector<CInetAddress>::iterator ivi;
+		for (ivi = addrlist.begin(); ivi != addrlist.end(); ++ivi)
+		{
+			nlinfo("%s", (*ivi).asIPString().c_str());
+		}
+		addrlist[0].setPort(fesPort);
+		_FServer->bind(addrlist[0]);
 
-    CLoginServer::init(*_FServer, NULL);
-  }
+		CLoginServer::init(*_FServer, NULL);
+	}
 
-  bool update() {
-    uint8 buf[64000];
-    uint len;
-    CInetAddress addr;
+	bool update()
+	{
+		uint8 buf[64000];
+		uint len;
+		CInetAddress addr;
 
-    while (_FServer->dataAvailable()) {
-      len = 64000;
-      _FServer->receivedFrom(buf, len, addr);
+		while (_FServer->dataAvailable())
+		{
+			len = 64000;
+			_FServer->receivedFrom(buf, len, addr);
 
-      CBitMemStream msgin(true);
-      msgin.clear();
-      memcpy(msgin.bufferToFill(len), &buf[0], len);
+			CBitMemStream msgin(true);
+			msgin.clear();
+			memcpy(msgin.bufferToFill(len), &buf[0], len);
 
-      CLoginCookie lc;
-      msgin.serial(lc);
+			CLoginCookie lc;
+			msgin.serial(lc);
 
-      nlinfo("Receive the cookie %s from %s", lc.toString().c_str(),
-             addr.asString().c_str());
+			nlinfo("Receive the cookie %s from %s", lc.toString().c_str(), addr.asString().c_str());
 
-      string res = CLoginServer::isValidCookie(lc);
+			string res = CLoginServer::isValidCookie(lc);
 
-      // send the result
-      CBitMemStream msgout;
-      msgout.serial(res);
-      uint32 l = msgout.length();
-      _FServer->sendTo(msgout.buffer(), l, addr);
-    }
-    return true;
-  }
+			// send the result
+			CBitMemStream msgout;
+			msgout.serial(res);
+			uint32 l = msgout.length();
+			_FServer->sendTo(msgout.buffer(), l, addr);
+		}
+		return true;
+	}
 };
 
 #endif // USE_UDP
 
 /*
- * Declare a service with the class CFrontEndService, the names "FS" (short) and
- * "frontend_service" (long). The port is dynamically find and there's no
- * callback array.
+ * Declare a service with the class CFrontEndService, the names "FS" (short) and "frontend_service" (long).
+ * The port is dynamically find and there's no callback array.
  */
-NLNET_SERVICE_MAIN(CFrontEndService, "FS", "frontend_service", 0,
-                   EmptyCallbackArray, NL_LS_CFG, "")
+NLNET_SERVICE_MAIN(CFrontEndService, "FS", "frontend_service", 0, EmptyCallbackArray, NL_LS_CFG, "")

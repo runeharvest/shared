@@ -43,61 +43,61 @@ const uint RYZOM_START_HOUR = 9;
 
 namespace MONTH {
 // Month
-enum EMonth {
-  Winderly = 0,
-  Germinally,
-  Folially,
-  Floris,
-  Medis,
-  Thermis,
-  Harvestor,
-  Frutor,
-  Fallenor,
-  Pluvia,
-  Mystia,
-  Nivia,
+enum EMonth
+{
+	Winderly = 0,
+	Germinally,
+	Folially,
+	Floris,
+	Medis,
+	Thermis,
+	Harvestor,
+	Frutor,
+	Fallenor,
+	Pluvia,
+	Mystia,
+	Nivia,
 
-  UNKNOWN,
-  NUM_MONTH = UNKNOWN
+	UNKNOWN,
+	NUM_MONTH = UNKNOWN
 };
 
 /**
  * get the right month type from the input string
  * \param str the input string
- * \return the EMonth associated to this string (UNKNOWN if the string cannot be
- * interpreted)
+ * \return the EMonth associated to this string (UNKNOWN if the string cannot be interpreted)
  */
 EMonth toMonth(const std::string &str);
 
 const std::string &toString(EMonth e);
 
-}; // namespace MONTH
+}; // MONTH
 
 namespace WEEKDAY {
 // Week day
-enum EWeekDay {
-  Prima = 0,
-  Dua,
-  Tria,
-  Quarta,
-  Quinteth,
-  Holeth,
+enum EWeekDay
+{
+	Prima = 0,
+	Dua,
+	Tria,
+	Quarta,
+	Quinteth,
+	Holeth,
 
-  UNKNOWN,
-  NUM_WEEKDAY = UNKNOWN
+	UNKNOWN,
+	NUM_WEEKDAY = UNKNOWN
 };
 
 /**
  * get the right day type from the input string
  * \param str the input string
- * \return the EWeekDay associated to this string (UNKNOWN if the string cannot
- * be interpreted)
+ * \return the EWeekDay associated to this string (UNKNOWN if the string cannot be interpreted)
  */
 EWeekDay toWeekDay(const std::string &str);
 
 const std::string &toString(EWeekDay e);
 
-}; // namespace WEEKDAY
+}; // WEEKDAY
 
 /**
  * Ryzom Time, date and season
@@ -105,107 +105,95 @@ const std::string &toString(EWeekDay e);
  * \author Nevrax France
  * \date 2002
  */
-class CRyzomTime {
+class CRyzomTime
+{
 public:
-  typedef EGSPD::CSeason::TSeason ESeason; // see game_share/season.h
+	typedef EGSPD::CSeason::TSeason ESeason; // see game_share/season.h
 
-  enum ETimeOfDay { dawn = 0, day, evening, nightfall, night };
+	enum ETimeOfDay
+	{
+		dawn = 0,
+		day,
+		evening,
+		nightfall,
+		night
+	};
 
-  enum EWeather {
-    best = 0,
-    good,
-    bad,
-    worst,
-    unknownWeather,
-    nbWeather = unknownWeather
-  };
+	enum EWeather
+	{
+		best = 0,
+		good,
+		bad,
+		worst,
+		unknownWeather,
+		nbWeather = unknownWeather
+	};
 
-  // default constructor
-  CRyzomTime() {
-    _RyzomDay = 0;
-    _RyzomTime = 0.f;
-    _TickOffset = 0;
-  }
+	// default constructor
+	CRyzomTime()
+	{
+		_RyzomDay = 0;
+		_RyzomTime = 0.f;
+		_TickOffset = 0;
+	}
 
-  // Update ryzom clock when tick occurs, local time must be given if
-  // localUpdateRyzomClock() and getLocalRyzomTime() is used
-  void updateRyzomClock(uint32 gameCyle);
+	// Update ryzom clock when tick occurs, local time must be given if localUpdateRyzomClock() and getLocalRyzomTime() is used
+	void updateRyzomClock(uint32 gameCyle);
 
-  // get ryzom time (synchronized with server)
-  inline float getRyzomTime() const { return _RyzomTime; }
+	// get ryzom time (synchronized with server)
+	inline float getRyzomTime() const { return _RyzomTime; }
 
-  // get ryzom day
-  inline uint32 getRyzomDay() const { return _RyzomDay; }
+	// get ryzom day
+	inline uint32 getRyzomDay() const { return _RyzomDay; }
 
-  // get ryzom Year
-  inline uint32 getRyzomYear() const {
-    return _RyzomDay / RYZOM_YEAR_IN_DAY + RYZOM_START_YEAR;
-  }
+	// get ryzom Year
+	inline uint32 getRyzomYear() const { return _RyzomDay / RYZOM_YEAR_IN_DAY + RYZOM_START_YEAR; }
 
-  // get ryzom week
-  inline uint32 getRyzomWeek() const {
-    return (_RyzomDay % RYZOM_YEAR_IN_DAY) / RYZOM_WEEK_IN_DAY;
-  }
+	// get ryzom week
+	inline uint32 getRyzomWeek() const { return (_RyzomDay % RYZOM_YEAR_IN_DAY) / RYZOM_WEEK_IN_DAY; }
 
-  // get Season
-  inline ESeason getRyzomSeason() const { return getSeasonByDay(_RyzomDay); }
+	// get Season
+	inline ESeason getRyzomSeason() const { return getSeasonByDay(_RyzomDay); }
 
-  // get Season
-  static inline ESeason getSeasonByDay(uint32 day) {
-    return (ESeason)(((day % RYZOM_YEAR_IN_DAY) / RYZOM_SEASON_IN_DAY) %
-                     (EGSPD::CSeason::Invalid));
-  }
+	// get Season
+	static inline ESeason getSeasonByDay(uint32 day) { return (ESeason)(((day % RYZOM_YEAR_IN_DAY) / RYZOM_SEASON_IN_DAY) % (EGSPD::CSeason::Invalid)); }
 
-  // get ryzom month
-  inline uint getRyzomMonth() const {
-    return (_RyzomDay % RYZOM_YEAR_IN_DAY) / RYZOM_MONTH_IN_DAY;
-  }
+	// get ryzom month
+	inline uint getRyzomMonth() const { return (_RyzomDay % RYZOM_YEAR_IN_DAY) / RYZOM_MONTH_IN_DAY; }
 
-  // get ryzom month in cycle
-  inline MONTH::EMonth getRyzomMonthInCurrentCycle() const {
-    return (MONTH::EMonth)(getRyzomMonth() % RYZOM_CYCLE_IN_MONTH);
-  }
+	// get ryzom month in cycle
+	inline MONTH::EMonth getRyzomMonthInCurrentCycle() const { return (MONTH::EMonth)(getRyzomMonth() % RYZOM_CYCLE_IN_MONTH); }
 
-  // get ryzom cycle
-  inline uint32 getRyzomCycle() const {
-    return getRyzomMonth() / RYZOM_CYCLE_IN_MONTH;
-  }
+	// get ryzom cycle
+	inline uint32 getRyzomCycle() const { return getRyzomMonth() / RYZOM_CYCLE_IN_MONTH; }
 
-  // get ryzom day of week
-  inline WEEKDAY::EWeekDay getRyzomDayOfWeek() const {
-    return (WEEKDAY::EWeekDay)(_RyzomDay % RYZOM_WEEK_IN_DAY);
-  }
+	// get ryzom day of week
+	inline WEEKDAY::EWeekDay getRyzomDayOfWeek() const { return (WEEKDAY::EWeekDay)(_RyzomDay % RYZOM_WEEK_IN_DAY); }
 
-  // get ryzom day of month
-  inline uint32 getRyzomDayOfMonth() const {
-    return (_RyzomDay % RYZOM_MONTH_IN_DAY);
-  }
+	// get ryzom day of month
+	inline uint32 getRyzomDayOfMonth() const { return (_RyzomDay % RYZOM_MONTH_IN_DAY); }
 
-  // get ryzom day of season
-  inline uint32 getRyzomDayOfSeason() const {
-    return (_RyzomDay % RYZOM_SEASON_IN_DAY);
-  }
+	// get ryzom day of season
+	inline uint32 getRyzomDayOfSeason() const { return (_RyzomDay % RYZOM_SEASON_IN_DAY); }
 
-  // get ryzom day of year
-  inline uint32 getRyzomDayOfYear() const {
-    return (_RyzomDay % RYZOM_YEAR_IN_DAY);
-  }
+	// get ryzom day of year
+	inline uint32 getRyzomDayOfYear() const { return (_RyzomDay % RYZOM_YEAR_IN_DAY); }
 
-  // inc tick offet
-  inline void increaseTickOffset(uint32 offset) { _TickOffset += offset; }
+	// inc tick offet
+	inline void increaseTickOffset(uint32 offset) { _TickOffset += offset; }
 
-  // dec tick offet
-  inline void decreaseTickOffset(uint32 offset) { _TickOffset -= offset; }
+	// dec tick offet
+	inline void decreaseTickOffset(uint32 offset) { _TickOffset -= offset; }
 
-  // reset tick offet
-  inline void resetTickOffset() { _TickOffset = 0; }
+	// reset tick offet
+	inline void resetTickOffset() { _TickOffset = 0; }
 
 private:
-  CStaticLightCycle _StaticLightCycleSheet;
+	CStaticLightCycle _StaticLightCycleSheet;
 
-  uint32 _RyzomDay;
-  float _RyzomTime;
-  uint32 _TickOffset;
+	uint32 _RyzomDay;
+	float _RyzomTime;
+	uint32 _TickOffset;
 };
 
 extern CRyzomTime RyzomTime;

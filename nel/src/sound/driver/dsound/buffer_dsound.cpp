@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "stddsound.h"
 #include "buffer_dsound.h"
 #include "sound_driver_dsound.h"
-#include "stddsound.h"
 
 #define NOMINMAX
-#include <mmsystem.h>
 #include <windows.h>
+#include <mmsystem.h>
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -117,133 +117,152 @@ static const std::string EmptyString;
 }
 */
 
-CBufferDSound::CBufferDSound() : _Data(NULL), _Capacity(0), _Size(0) {
-  _Name = CStringMapper::map(EmptyString);
-  _Format = Mono16;
-  _Freq = 0;
+CBufferDSound::CBufferDSound()
+    : _Data(NULL)
+    , _Capacity(0)
+    , _Size(0)
+{
+	_Name = CStringMapper::map(EmptyString);
+	_Format = Mono16;
+	_Freq = 0;
 }
 
-CBufferDSound::~CBufferDSound() {
-  //	nldebug("Destroying DirectSound buffer %s (%p)",
-  //CSoundDriverDSound::instance()->getStringMapper()->unmap(_Name).c_str(),
-  //this);
+CBufferDSound::~CBufferDSound()
+{
+	//	nldebug("Destroying DirectSound buffer %s (%p)", CSoundDriverDSound::instance()->getStringMapper()->unmap(_Name).c_str(), this);
 
-  if (_Data) {
-    delete[] _Data;
-    _Data = NULL;
-  }
+	if (_Data)
+	{
+		delete[] _Data;
+		_Data = NULL;
+	}
 }
 
-void CBufferDSound::setName(NLMISC::TStringId bufferName) {
-  _Name = bufferName;
+void CBufferDSound::setName(NLMISC::TStringId bufferName)
+{
+	_Name = bufferName;
 }
 
-/// Set the sample format. (channels = 1, 2, ...; bitsPerSample = 8, 16;
-/// frequency = samples per second, 44100, ...)
-void CBufferDSound::setFormat(TBufferFormat format, uint8 channels,
-                              uint8 bitsPerSample, uint32 frequency) {
-  bufferFormatToSampleFormat(format, channels, bitsPerSample, _Format);
-  _Freq = frequency;
+/// Set the sample format. (channels = 1, 2, ...; bitsPerSample = 8, 16; frequency = samples per second, 44100, ...)
+void CBufferDSound::setFormat(TBufferFormat format, uint8 channels, uint8 bitsPerSample, uint32 frequency)
+{
+	bufferFormatToSampleFormat(format, channels, bitsPerSample, _Format);
+	_Freq = frequency;
 }
 
-/// Get a writable pointer to the buffer of specified size. Returns NULL in case
-/// of failure. It is only guaranteed that the original data is still available
-/// when using StorageSoftware and the specified size is not larger than the
-/// available data. Call setStorageMode() and setFormat() first.
-uint8 *CBufferDSound::lock(uint capacity) {
-  if (_Data) {
-    if (capacity > _Capacity) {
-      delete[] _Data;
-      _Data = NULL;
-    }
-  }
+/// Get a writable pointer to the buffer of specified size. Returns NULL in case of failure. It is only guaranteed that the original data is still available when using StorageSoftware and the specified size is not larger than the available data. Call setStorageMode() and setFormat() first.
+uint8 *CBufferDSound::lock(uint capacity)
+{
+	if (_Data)
+	{
+		if (capacity > _Capacity)
+		{
+			delete[] _Data;
+			_Data = NULL;
+		}
+	}
 
-  if (!_Data) {
-    _Data = new uint8[capacity];
-    _Capacity = capacity;
-    if (_Size > capacity)
-      _Size = capacity;
-  }
+	if (!_Data)
+	{
+		_Data = new uint8[capacity];
+		_Capacity = capacity;
+		if (_Size > capacity)
+			_Size = capacity;
+	}
 
-  return _Data;
+	return _Data;
 }
 
-/// Notify that you are done writing to this buffer, so it can be copied over to
-/// hardware if needed. Returns true if ok.
-bool CBufferDSound::unlock(uint size) {
-  if (size > _Capacity) {
-    _Size = _Capacity;
-    return false;
-  } else {
-    _Size = size;
-    return true;
-  }
+/// Notify that you are done writing to this buffer, so it can be copied over to hardware if needed. Returns true if ok.
+bool CBufferDSound::unlock(uint size)
+{
+	if (size > _Capacity)
+	{
+		_Size = _Capacity;
+		return false;
+	}
+	else
+	{
+		_Size = size;
+		return true;
+	}
 }
 
-/// Copy the data with specified size into the buffer. A readable local copy is
-/// only guaranteed when OptionLocalBufferCopy is set. Returns true if ok.
-bool CBufferDSound::fill(const uint8 *src, uint size) {
-  uint8 *dest = lock(size);
-  if (dest == NULL)
-    return false;
-  CFastMem::memcpy(dest, src, size);
-  return unlock(size);
+/// Copy the data with specified size into the buffer. A readable local copy is only guaranteed when OptionLocalBufferCopy is set. Returns true if ok.
+bool CBufferDSound::fill(const uint8 *src, uint size)
+{
+	uint8 *dest = lock(size);
+	if (dest == NULL) return false;
+	CFastMem::memcpy(dest, src, size);
+	return unlock(size);
 }
 
 /// Return the sample format information.
-void CBufferDSound::getFormat(TBufferFormat &format, uint8 &channels,
-                              uint8 &bitsPerSample, uint32 &frequency) const {
-  sampleFormatToBufferFormat(_Format, format, channels, bitsPerSample);
-  frequency = _Freq;
+void CBufferDSound::getFormat(TBufferFormat &format, uint8 &channels, uint8 &bitsPerSample, uint32 &frequency) const
+{
+	sampleFormatToBufferFormat(_Format, format, channels, bitsPerSample);
+	frequency = _Freq;
 }
 
 /// Return the size of the buffer, in bytes.
-uint CBufferDSound::getSize() const { return _Size; }
-
-float CBufferDSound::getDuration() const {
-  float frames = (float)_Size;
-
-  switch (_Format) {
-  case Mono8:
-    break;
-  case Mono16ADPCM:
-    frames *= 2.0f;
-    break;
-  case Mono16:
-    frames /= 2.0f;
-    break;
-  case Stereo8:
-    frames /= 2.0f;
-    break;
-  case Stereo16:
-    frames /= 4.0f;
-    break;
-  }
-
-  return 1000.0f * frames / (float)_Freq;
+uint CBufferDSound::getSize() const
+{
+	return _Size;
 }
 
-bool CBufferDSound::isStereo() const {
-  return (_Format == Stereo8) || (_Format == Stereo16);
+float CBufferDSound::getDuration() const
+{
+	float frames = (float)_Size;
+
+	switch (_Format)
+	{
+	case Mono8:
+		break;
+	case Mono16ADPCM:
+		frames *= 2.0f;
+		break;
+	case Mono16:
+		frames /= 2.0f;
+		break;
+	case Stereo8:
+		frames /= 2.0f;
+		break;
+	case Stereo16:
+		frames /= 4.0f;
+		break;
+	}
+
+	return 1000.0f * frames / (float)_Freq;
+}
+
+bool CBufferDSound::isStereo() const
+{
+	return (_Format == Stereo8) || (_Format == Stereo16);
 }
 
 /// Return the name of this buffer
-NLMISC::TStringId CBufferDSound::getName() const { return _Name; }
+NLMISC::TStringId CBufferDSound::getName() const
+{
+	return _Name;
+}
 
 /// Return true if the buffer is loaded. Used for async load/unload.
-bool CBufferDSound::isBufferLoaded() const { return _Data != NULL; }
+bool CBufferDSound::isBufferLoaded() const
+{
+	return _Data != NULL;
+}
 
-/// Set the storage mode of this buffer, call before filling this buffer.
-/// Storage mode is always software if OptionSoftwareBuffer is enabled. Default
-/// is auto.
-void CBufferDSound::setStorageMode(TStorageMode /* storageMode */) {
-  // software buffering, no hardware storage mode available
+/// Set the storage mode of this buffer, call before filling this buffer. Storage mode is always software if OptionSoftwareBuffer is enabled. Default is auto.
+void CBufferDSound::setStorageMode(TStorageMode /* storageMode */)
+{
+	// software buffering, no hardware storage mode available
 }
 
 /// Get the storage mode of this buffer.
-IBuffer::TStorageMode CBufferDSound::getStorageMode() {
-  // always uses software buffers
-  return IBuffer::StorageSoftware;
+IBuffer::TStorageMode CBufferDSound::getStorageMode()
+{
+	// always uses software buffers
+	return IBuffer::StorageSoftware;
 }
 
-} // namespace NLSOUND
+} // NLSOUND

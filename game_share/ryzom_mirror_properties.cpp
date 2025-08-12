@@ -16,9 +16,9 @@
 
 #include "stdpch.h"
 
+#include "ryzom_mirror_properties.h"
 #include "mirrored_data_set.h"
 #include "mode_and_behaviour.h"
-#include "ryzom_mirror_properties.h"
 
 // See doc in .h
 // fe_temp dataset
@@ -70,114 +70,118 @@ TPropertyIndex DSPropertyOWNER_PEOPLE = INVALID_PROPERTY_INDEX;
 TPropertyIndex DSPropertyOUTPOST_INFOS = INVALID_PROPERTY_INDEX;
 TPropertyIndex DSPropertyNPC_ALIAS = INVALID_PROPERTY_INDEX;
 
-std::string BehaviourToStringCb(void *value) {
-  MBEHAV::CBehaviour behaviour(*(TYPE_BEHAVIOUR *)value);
-  return behaviour.toString();
+std::string BehaviourToStringCb(void *value)
+{
+	MBEHAV::CBehaviour behaviour(*(TYPE_BEHAVIOUR *)value);
+	return behaviour.toString();
 }
 
-std::string ModeToStringCb(void *value) {
-  MBEHAV::TMode mode(*(uint64 *)value);
-  return mode.toString();
+std::string ModeToStringCb(void *value)
+{
+	MBEHAV::TMode mode(*(uint64 *)value);
+	return mode.toString();
 }
 
-std::string CoordToString(void *value) {
-  sint32 &coord = *((sint32 *)value);
-  return NLMISC::toString("%.3f", coord / 1000.0);
+std::string CoordToString(void *value)
+{
+	sint32 &coord = *((sint32 *)value);
+	return NLMISC::toString("%.3f", coord / 1000.0);
 }
 
-std::string RowIdToStringCb(void *value) {
-  uint32 &index = *((uint32 *)value);
+std::string RowIdToStringCb(void *value)
+{
+	uint32 &index = *((uint32 *)value);
 
-  if ((index & 0xffffff) == 0xffffff)
-    return "not valid";
-  else
-    return NLMISC::toString("E%u_%u", index & 0xffffff, index >> 24);
+	if ((index & 0xffffff) == 0xffffff)
+		return "not valid";
+	else
+		return NLMISC::toString("E%u_%u", index & 0xffffff, index >> 24);
 }
 
-std::string Uint64HexToStringCb(void *value) {
-  uint64 &i64 = *((uint64 *)value);
-  uint16 *i16p = (uint16 *)(&i64);
+std::string Uint64HexToStringCb(void *value)
+{
+	uint64 &i64 = *((uint64 *)value);
+	uint16 *i16p = (uint16 *)(&i64);
 
-  return NLMISC::toString("%04x:%04x:%04x:%04x", i16p[0], i16p[1], i16p[2],
-                          i16p[3]);
+	return NLMISC::toString("%04x:%04x:%04x:%04x", i16p[0], i16p[1], i16p[2], i16p[3]);
 }
 
-#define assignProp(suffix, propName)                                           \
-  nlverify((DSProperty##suffix = dataset.getPropertyIndex(                     \
-                std::string(#propName))) != INVALID_PROPERTY_INDEX);
+#define assignProp(suffix, propName) \
+	nlverify((DSProperty##suffix = dataset.getPropertyIndex(std::string(#propName))) != INVALID_PROPERTY_INDEX);
 
 /*
  * Assign the property indices for fe_dataset
  */
-void initRyzomVisualPropertyIndices(CMirroredDataSet &dataset) {
-  assignProp(POSX, X);
-  assignProp(POSY, Y);
-  assignProp(POSZ, Z);
-  assignProp(ORIENTATION, Theta);
-  assignProp(TICK_POS, TickPos);
-  assignProp(AI_INSTANCE, AIInstance);
-  assignProp(SHEET, Sheet);
-  assignProp(SHEET_SERVER, SheetServer);
-  assignProp(BEHAVIOUR, Behaviour);
-  assignProp(NAME_STRING_ID, NameIndex);
-  assignProp(TARGET_ID, Target);
-  assignProp(CONTEXTUAL, ContextualProperty);
-  assignProp(MODE, Mode);
-  assignProp(VPA, VisualPropertyA);
-  assignProp(VPB, VisualPropertyB);
-  assignProp(VPC, VisualPropertyC);
-  assignProp(ENTITY_MOUNTED_ID, EntityMounted);
-  assignProp(RIDER_ENTITY_ID, RiderEntity);
-  assignProp(CELL, Cell);
-  assignProp(VISION_COUNTER, VisionCounter);
-  assignProp(CURRENT_HIT_POINTS, CurrentHitPoints);
-  assignProp(MAX_HIT_POINTS, MaxHitPoints);
-  assignProp(CURRENT_RUN_SPEED, CurrentRunSpeed);
-  assignProp(CURRENT_WALK_SPEED, CurrentWalkSpeed);
-  assignProp(BEST_ROLE, BestRole);
-  assignProp(BEST_ROLE_LEVEL, BestRoleLevel);
-  assignProp(STUNNED, Stunned);
-  assignProp(COMBAT_STATE, CombatState);
-  assignProp(BARS, Bars);
+void initRyzomVisualPropertyIndices(CMirroredDataSet &dataset)
+{
+	assignProp(POSX, X);
+	assignProp(POSY, Y);
+	assignProp(POSZ, Z);
+	assignProp(ORIENTATION, Theta);
+	assignProp(TICK_POS, TickPos);
+	assignProp(AI_INSTANCE, AIInstance);
+	assignProp(SHEET, Sheet);
+	assignProp(SHEET_SERVER, SheetServer);
+	assignProp(BEHAVIOUR, Behaviour);
+	assignProp(NAME_STRING_ID, NameIndex);
+	assignProp(TARGET_ID, Target);
+	assignProp(CONTEXTUAL, ContextualProperty);
+	assignProp(MODE, Mode);
+	assignProp(VPA, VisualPropertyA);
+	assignProp(VPB, VisualPropertyB);
+	assignProp(VPC, VisualPropertyC);
+	assignProp(ENTITY_MOUNTED_ID, EntityMounted);
+	assignProp(RIDER_ENTITY_ID, RiderEntity);
+	assignProp(CELL, Cell);
+	assignProp(VISION_COUNTER, VisionCounter);
+	assignProp(CURRENT_HIT_POINTS, CurrentHitPoints);
+	assignProp(MAX_HIT_POINTS, MaxHitPoints);
+	assignProp(CURRENT_RUN_SPEED, CurrentRunSpeed);
+	assignProp(CURRENT_WALK_SPEED, CurrentWalkSpeed);
+	assignProp(BEST_ROLE, BestRole);
+	assignProp(BEST_ROLE_LEVEL, BestRoleLevel);
+	assignProp(STUNNED, Stunned);
+	assignProp(COMBAT_STATE, CombatState);
+	assignProp(BARS, Bars);
 
-  //	assignProp( KAMI_FAME, KamiFame );
-  //	assignProp( KARAVAN_FAME, KaravanFame );
+	//	assignProp( KAMI_FAME, KamiFame );
+	//	assignProp( KARAVAN_FAME, KaravanFame );
 
-  assignProp(WHO_SEES_ME, WhoSeesMe);
+	assignProp(WHO_SEES_ME, WhoSeesMe);
 
-  assignProp(TEAM_ID, TeamId);
-  assignProp(RIDER_ENTITY_ID, RiderEntity);
+	assignProp(TEAM_ID, TeamId);
+	assignProp(RIDER_ENTITY_ID, RiderEntity);
 
-  assignProp(ACTION_FLAGS, ActionFlags);
+	assignProp(ACTION_FLAGS, ActionFlags);
 
-  assignProp(TARGET_LIST, TargetList);
-  assignProp(VISUAL_FX, VisualFX);
-  assignProp(GUILD_SYMBOL, GuildSymbol);
-  assignProp(GUILD_NAME_ID, GuildNameId);
-  assignProp(IN_OUTPOST_ZONE_ALIAS, InOutpostZoneAlias);
-  assignProp(IN_OUTPOST_ZONE_SIDE, InOutpostZoneSide);
-  assignProp(EVENT_FACTION_ID, EventFactionId);
-  assignProp(PVP_MODE, PvpMode);
-  assignProp(PVP_CLAN, PvpClan);
+	assignProp(TARGET_LIST, TargetList);
+	assignProp(VISUAL_FX, VisualFX);
+	assignProp(GUILD_SYMBOL, GuildSymbol);
+	assignProp(GUILD_NAME_ID, GuildNameId);
+	assignProp(IN_OUTPOST_ZONE_ALIAS, InOutpostZoneAlias);
+	assignProp(IN_OUTPOST_ZONE_SIDE, InOutpostZoneSide);
+	assignProp(EVENT_FACTION_ID, EventFactionId);
+	assignProp(PVP_MODE, PvpMode);
+	assignProp(PVP_CLAN, PvpClan);
 
-  assignProp(FUEL, Fuel);
+	assignProp(FUEL, Fuel);
 
-  assignProp(OWNER_PEOPLE, OwnerPeople);
+	assignProp(OWNER_PEOPLE, OwnerPeople);
 
-  assignProp(OUTPOST_INFOS, OutpostInfos);
+	assignProp(OUTPOST_INFOS, OutpostInfos);
 
-  assignProp(NPC_ALIAS, NPCAlias);
+	assignProp(NPC_ALIAS, NPCAlias);
 
-  dataset.setDisplayCallback(DSPropertyPOSX, CoordToString);
-  dataset.setDisplayCallback(DSPropertyPOSY, CoordToString);
-  dataset.setDisplayCallback(DSPropertyPOSZ, CoordToString);
-  dataset.setDisplayCallback(DSPropertyBEHAVIOUR, BehaviourToStringCb);
-  dataset.setDisplayCallback(DSPropertyMODE, ModeToStringCb);
-  dataset.setDisplayCallback(DSPropertyTARGET_ID, RowIdToStringCb);
-  dataset.setDisplayCallback(DSPropertyENTITY_MOUNTED_ID, RowIdToStringCb);
-  dataset.setDisplayCallback(DSPropertyRIDER_ENTITY_ID, RowIdToStringCb);
-  dataset.setDisplayCallback(DSPropertyVPA, Uint64HexToStringCb);
-  dataset.setDisplayCallback(DSPropertyVPB, Uint64HexToStringCb);
-  dataset.setDisplayCallback(DSPropertyVPC, Uint64HexToStringCb);
-  dataset.setDisplayCallback(DSPropertyWHO_SEES_ME, Uint64HexToStringCb);
+	dataset.setDisplayCallback(DSPropertyPOSX, CoordToString);
+	dataset.setDisplayCallback(DSPropertyPOSY, CoordToString);
+	dataset.setDisplayCallback(DSPropertyPOSZ, CoordToString);
+	dataset.setDisplayCallback(DSPropertyBEHAVIOUR, BehaviourToStringCb);
+	dataset.setDisplayCallback(DSPropertyMODE, ModeToStringCb);
+	dataset.setDisplayCallback(DSPropertyTARGET_ID, RowIdToStringCb);
+	dataset.setDisplayCallback(DSPropertyENTITY_MOUNTED_ID, RowIdToStringCb);
+	dataset.setDisplayCallback(DSPropertyRIDER_ENTITY_ID, RowIdToStringCb);
+	dataset.setDisplayCallback(DSPropertyVPA, Uint64HexToStringCb);
+	dataset.setDisplayCallback(DSPropertyVPB, Uint64HexToStringCb);
+	dataset.setDisplayCallback(DSPropertyVPC, Uint64HexToStringCb);
+	dataset.setDisplayCallback(DSPropertyWHO_SEES_ME, Uint64HexToStringCb);
 }

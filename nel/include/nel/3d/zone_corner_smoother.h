@@ -17,8 +17,8 @@
 #ifndef NL_ZONE_CORNER_SMOOTHER_H
 #define NL_ZONE_CORNER_SMOOTHER_H
 
-#include "nel/3d/zone.h"
 #include "nel/misc/types_nl.h"
+#include "nel/3d/zone.h"
 #include <map>
 #include <vector>
 
@@ -28,65 +28,65 @@ class CZone;
 
 // ***************************************************************************
 /**
- * A class used to setup CornerSmoothFlag in CPatch. NB: it works with a
- *compiled CZone (ie added in a landscape, and got with landscape->getZone()).
- *NB: it changes values directly in CPatch (which it should not be
- *permitted...), but don't except see the changes in realtime. \author Lionel
- *Berenguier \author Nevrax France \date 2001
+ * A class used to setup CornerSmoothFlag in CPatch. NB: it works with a compiled CZone (ie added in a landscape, and
+ *	got with landscape->getZone()). NB: it changes values directly in CPatch (which it should not be permitted...),
+ *	but don't except see the changes in realtime.
+ * \author Lionel Berenguier
+ * \author Nevrax France
+ * \date 2001
  */
-class CZoneCornerSmoother {
+class CZoneCornerSmoother
+{
 public:
-  /// Constructor
-  CZoneCornerSmoother();
+	/// Constructor
+	CZoneCornerSmoother();
 
-  /** the doit method. this Zone and his 8 neighbors should be added into a
-   *landscape. this method call setCornerSmoothFlag() on all CPatch of the zone.
-   *	All corner smooth are set to false but if:
-   *		- the corner is a vertex on a bind 1/X OR the vertex has exaclty
-   *4 patch around him. AND
-   *		- All edges sharing this corner must be smoothed
-   *getSmoothFlag()==true. AND
-   *		- All edges sharing this corner must be "SameEdgeOrder", ie the
-   *patchs sharing this edge must have same number of tiles along this edge.
-   *
-   *	This is important for noise computing, and lighting.
-   */
-  void computeAllCornerSmoothFlags(CZone *zone,
-                                   std::vector<CZone *> neighborZones);
+	/** the doit method. this Zone and his 8 neighbors should be added into a landscape.
+	 *	this method call setCornerSmoothFlag() on all CPatch of the zone.
+	 *	All corner smooth are set to false but if:
+	 *		- the corner is a vertex on a bind 1/X OR the vertex has exaclty 4 patch around him.
+	 *		AND
+	 *		- All edges sharing this corner must be smoothed getSmoothFlag()==true.
+	 *		AND
+	 *		- All edges sharing this corner must be "SameEdgeOrder", ie the patchs sharing this edge must have
+	 *		same number of tiles along this edge.
+	 *
+	 *	This is important for noise computing, and lighting.
+	 */
+	void computeAllCornerSmoothFlags(CZone *zone, std::vector<CZone *> neighborZones);
 
-  // ***************
+	// ***************
 private:
-  struct CVertexSmoothInfo {
-    uint NPatchShared;
-    bool VertexOnBind;
-    bool Smoothed;
+	struct CVertexSmoothInfo
+	{
+		uint NPatchShared;
+		bool VertexOnBind;
+		bool Smoothed;
 
-    CVertexSmoothInfo() {
-      NPatchShared = 0;
-      VertexOnBind = false;
-      // by default smoothed is true. any edge which don't agree will set it to
-      // false.
-      Smoothed = true;
-    }
-  };
+		CVertexSmoothInfo()
+		{
+			NPatchShared = 0;
+			VertexOnBind = false;
+			// by default smoothed is true. any edge which don't agree will set it to false.
+			Smoothed = true;
+		}
+	};
 
-  typedef std::map<sint, CVertexSmoothInfo> TVertexMap;
-  typedef TVertexMap::iterator ItVertexMap;
+	typedef std::map<sint, CVertexSmoothInfo> TVertexMap;
+	typedef TVertexMap::iterator ItVertexMap;
 
-  typedef std::map<const CTessVertex *, sint> TIdVertexMap;
-  typedef TIdVertexMap::iterator ItIdVertexMap;
+	typedef std::map<const CTessVertex *, sint> TIdVertexMap;
+	typedef TIdVertexMap::iterator ItIdVertexMap;
 
 private:
-  TVertexMap VertexMap;
-  TIdVertexMap IdVertexMap;
+	TVertexMap VertexMap;
+	TIdVertexMap IdVertexMap;
 
-  void buildPatchBindInfo(CPatch &pa, const CZone::CPatchConnect &pc,
-                          bool smoothEdge[4], bool cornerOnBind[4]);
-  void updateVertex(uint idVert, uint corner, bool smoothEdge[4],
-                    bool cornerOnBind[4]);
+	void buildPatchBindInfo(CPatch &pa, const CZone::CPatchConnect &pc, bool smoothEdge[4], bool cornerOnBind[4]);
+	void updateVertex(uint idVert, uint corner, bool smoothEdge[4], bool cornerOnBind[4]);
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_ZONE_CORNER_SMOOTHER_H
 

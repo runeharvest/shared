@@ -25,58 +25,62 @@
 namespace NL3D {
 
 // ***************************************************************************
-CPointLightNamed::CPointLightNamed() {
-  // copy setup from current
-  _DefaultAmbient = getAmbient();
-  _DefaultDiffuse = getDiffuse();
-  _DefaultSpecular = getSpecular();
-  _UnAnimatedDiffuse = getDiffuse();
+CPointLightNamed::CPointLightNamed()
+{
+	// copy setup from current
+	_DefaultAmbient = getAmbient();
+	_DefaultDiffuse = getDiffuse();
+	_DefaultSpecular = getSpecular();
+	_UnAnimatedDiffuse = getDiffuse();
 }
 
 // ***************************************************************************
-void CPointLightNamed::setLightFactor(NLMISC::CRGBA nFactor) {
-  setLightFactor(nFactor, nFactor);
+void CPointLightNamed::setLightFactor(NLMISC::CRGBA nFactor)
+{
+	setLightFactor(nFactor, nFactor);
 }
 
 // ***************************************************************************
-void CPointLightNamed::setLightFactor(NLMISC::CRGBA nAnimatedFactor,
-                                      NLMISC::CRGBA nUnAnimatedFactor) {
-  CRGBA col;
-  // setup current ambient.
-  col.modulateFromColor(_DefaultAmbient, nAnimatedFactor);
-  setAmbient(col);
-  // setup current diffuse.
-  col.modulateFromColor(_DefaultDiffuse, nAnimatedFactor);
-  setDiffuse(col);
-  // setup current specular.
-  col.modulateFromColor(_DefaultSpecular, nAnimatedFactor);
-  setSpecular(col);
+void CPointLightNamed::setLightFactor(NLMISC::CRGBA nAnimatedFactor, NLMISC::CRGBA nUnAnimatedFactor)
+{
+	CRGBA col;
+	// setup current ambient.
+	col.modulateFromColor(_DefaultAmbient, nAnimatedFactor);
+	setAmbient(col);
+	// setup current diffuse.
+	col.modulateFromColor(_DefaultDiffuse, nAnimatedFactor);
+	setDiffuse(col);
+	// setup current specular.
+	col.modulateFromColor(_DefaultSpecular, nAnimatedFactor);
+	setSpecular(col);
 
-  // special UnAnimatedDiffuse
-  col.modulateFromColor(_DefaultDiffuse, nUnAnimatedFactor);
-  _UnAnimatedDiffuse = col;
+	// special UnAnimatedDiffuse
+	col.modulateFromColor(_DefaultDiffuse, nUnAnimatedFactor);
+	_UnAnimatedDiffuse = col;
 }
 
 // ***************************************************************************
-void CPointLightNamed::serial(NLMISC::IStream &f) {
-  sint ver = f.serialVersion(1);
+void CPointLightNamed::serial(NLMISC::IStream &f)
+{
+	sint ver = f.serialVersion(1);
 
-  // Serialize parent.
-  CPointLight::serial(f);
+	// Serialize parent.
+	CPointLight::serial(f);
 
-  // Serialize my data
-  f.serial(AnimatedLight);
-  f.serial(_DefaultAmbient);
-  f.serial(_DefaultDiffuse);
-  f.serial(_DefaultSpecular);
+	// Serialize my data
+	f.serial(AnimatedLight);
+	f.serial(_DefaultAmbient);
+	f.serial(_DefaultDiffuse);
+	f.serial(_DefaultSpecular);
 
-  if (ver >= 1)
-    f.serial(LightGroup);
+	if (ver >= 1)
+		f.serial(LightGroup);
 
-  // read: and copy default _UnAnimatedDiffuse
-  if (f.isReading()) {
-    _UnAnimatedDiffuse = getDiffuse();
-  }
+	// read: and copy default _UnAnimatedDiffuse
+	if (f.isReading())
+	{
+		_UnAnimatedDiffuse = getDiffuse();
+	}
 }
 
-} // namespace NL3D
+} // NL3D

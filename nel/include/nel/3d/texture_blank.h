@@ -17,33 +17,31 @@
 #ifndef NL_TEXTURE_BLANK_H
 #define NL_TEXTURE_BLANK_H
 
-#include "nel/3d/texture.h"
 #include "nel/misc/types_nl.h"
+#include "nel/3d/texture.h"
 
 namespace NL3D {
 
 /**
- * This texture does generate nothing, and it is releasable. There's no
- * particular reason to use it, unless you want to copy the frame buffer in a
- * texture. You may use that texture so that the device memory will only be
- * allocated once, and the system memory (needed to create the texture, at least
- * with open gl) will be released after that. A texture_mem could have been
- * used, but it doesn't release memory by itself (added : hmm, well it does
- * since 2/2002 ...).
+ * This texture does generate nothing, and it is releasable. There's no particular reason to use it,
+ * unless you want to copy the frame buffer in a texture. You may use that texture so that the device memory
+ * will only be allocated once, and the system memory (needed to create the texture, at least with open gl) will be released after that.
+ * A texture_mem could have been used, but it doesn't release memory by itself (added : hmm, well it does since 2/2002 ...).
  */
-class CTextureBlank : public ITexture {
+class CTextureBlank : public ITexture
+{
 public:
-  NLMISC_DECLARE_CLASS(CTextureBlank);
+	NLMISC_DECLARE_CLASS(CTextureBlank);
 
 protected:
-  /// inherited from ITexture. Does nothing ...
-  void doGenerate(bool async);
+	/// inherited from ITexture. Does nothing ...
+	void doGenerate(bool async);
 
 public:
-  virtual ~CTextureBlank() {}
+	virtual ~CTextureBlank() { }
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_TEXTURE_BLANK_H
 

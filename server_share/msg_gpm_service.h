@@ -17,16 +17,16 @@
 #ifndef RY_MSG_GPM_SERVICE_H
 #define RY_MSG_GPM_SERVICE_H
 
-#include "nel/misc/entity_id.h"
-#include "nel/misc/sheet_id.h"
-#include "nel/misc/stream.h"
-#include "nel/misc/time_nl.h"
 #include "nel/misc/types_nl.h"
-#include "nel/net/transport_class.h"
+#include "nel/misc/time_nl.h"
+#include "nel/misc/stream.h"
+#include "nel/misc/sheet_id.h"
+#include "nel/misc/entity_id.h"
 #include "nel/net/unified_network.h"
+#include "nel/net/transport_class.h"
 
-#include "game_share/base_types.h"
 #include "game_share/ryzom_entity_id.h"
+#include "game_share/base_types.h"
 #include "game_share/synchronised_message.h"
 
 /****************************************************************\
@@ -35,35 +35,42 @@
  ****************************************************************
 \****************************************************************/
 
-class CEntitySheetId {
+class CEntitySheetId
+{
 public:
-  NLMISC::CEntityId EntityId;
-  NLMISC::CSheetId SheetId;
-  CEntitySheetId() {}
-  CEntitySheetId(NLMISC::CEntityId &eid, NLMISC::CSheetId &sheet)
-      : EntityId(eid), SheetId(sheet) {}
+	NLMISC::CEntityId EntityId;
+	NLMISC::CSheetId SheetId;
+	CEntitySheetId() { }
+	CEntitySheetId(NLMISC::CEntityId &eid, NLMISC::CSheetId &sheet)
+	    : EntityId(eid)
+	    , SheetId(sheet)
+	{
+	}
 
-  void serial(NLMISC::IStream &f) { f.serial(EntityId, SheetId); }
+	void serial(NLMISC::IStream &f) { f.serial(EntityId, SheetId); }
 };
 
-class CGPMPlayerPrivilege : public CMirrorTransportClass {
+class CGPMPlayerPrivilege : public CMirrorTransportClass
+{
 public:
-  enum TType {
-    Player = 0, // basic player, no particular rights
-    GM = 1,
-    CS = 2
-  };
+	enum TType
+	{
+		Player = 0, // basic player, no particular rights
+		GM = 1,
+		CS = 2
+	};
 
-  TDataSetRow PlayerIndex;
-  uint32 Type;
+	TDataSetRow PlayerIndex;
+	uint32 Type;
 
-  virtual void description() {
-    className("CGPMPlayerPrivilege");
-    property("PlayerIndex", PropDataSetRow, TDataSetRow(), PlayerIndex);
-    property("Type", PropUInt32, (uint32)Player, Type);
-  }
+	virtual void description()
+	{
+		className("CGPMPlayerPrivilege");
+		property("PlayerIndex", PropDataSetRow, TDataSetRow(), PlayerIndex);
+		property("Type", PropUInt32, (uint32)Player, Type);
+	}
 
-  virtual void callback(const std::string &name, NLNET::TServiceId id) {}
+	virtual void callback(const std::string &name, NLNET::TServiceId id) { }
 };
 
 #endif // RY_MSG_GPM_SERVICE_H

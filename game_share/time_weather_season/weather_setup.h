@@ -17,11 +17,11 @@
 #ifndef RY_WEATHER_SETUP
 #define RY_WEATHER_SETUP
 
-#include "../fog_type.h"
 #include "nel/misc/rgba.h"
-#include "nel/misc/smart_ptr.h"
-#include "nel/misc/string_mapper.h"
 #include "weather_setup_sheet_base.h"
+#include "../fog_type.h"
+#include "nel/misc/string_mapper.h"
+#include "nel/misc/smart_ptr.h"
 #include <vector>
 
 namespace NLGEORGES {
@@ -35,35 +35,34 @@ class CPrecipitation;
  * \author Nevrax France
  * \date 2002
  */
-class CWeatherState : public CWeatherStateSheet {
+class CWeatherState : public CWeatherStateSheet
+{
 public:
-  /// The first blended setup name (contribute for 1-blendFactor)
-  NLMISC::TStringId FirstSetupName;
-  /// The second blended setup name (contribute for blendFactor)
-  NLMISC::TStringId SecondSetupName;
-  // Best aprox setup name when blended (contain the original name in reference
-  // setup)
-  NLMISC::TStringId BestSetupName;
-  // 0 by default, it contains the parameters passed to a call to blend
-  float BlendFactor;
+	/// The first blended setup name (contribute for 1-blendFactor)
+	NLMISC::TStringId FirstSetupName;
+	/// The second blended setup name (contribute for blendFactor)
+	NLMISC::TStringId SecondSetupName;
+	// Best aprox setup name when blended (contain the original name in reference setup)
+	NLMISC::TStringId BestSetupName;
+	// 0 by default, it contains the parameters passed to a call to blend
+	float BlendFactor;
 
-  /** Result of the blend
-   */
-  std::string DayBackgroundFileName1;
-  std::string DuskBackgroundFileName1;
-  std::string NightBackgroundFileName1;
-  std::string DayBackgroundFileName2;
-  std::string DuskBackgroundFileName2;
-  std::string NightBackgroundFileName2;
+	/** Result of the blend
+	 */
+	std::string DayBackgroundFileName1;
+	std::string DuskBackgroundFileName1;
+	std::string NightBackgroundFileName1;
+	std::string DayBackgroundFileName2;
+	std::string DuskBackgroundFileName2;
+	std::string NightBackgroundFileName2;
 
 public:
-  // default ctor
-  CWeatherState();
-  /** Blend 2 weather state together
-   * Blend factor is clamped to [0, 1]
-   */
-  static void blend(CWeatherState &dest, const CWeatherState &s1,
-                    const CWeatherState &s2, float blendFactor);
+	// default ctor
+	CWeatherState();
+	/** Blend 2 weather state together
+	 * Blend factor is clamped to [0, 1]
+	 */
+	static void blend(CWeatherState &dest, const CWeatherState &s1, const CWeatherState &s2, float blendFactor);
 };
 
 /** Description of clouds state
@@ -71,13 +70,13 @@ public:
  * \author Nevrax France
  * \date 2002
  */
-class CCloudState : public CCloudStateSheet {
+class CCloudState : public CCloudStateSheet
+{
 public:
-  /** Blend 2 clouds state
-   * Blend factor is clamped to [0, 1]
-   */
-  static void blend(CCloudState &dest, const CCloudState &s1,
-                    const CCloudState &s2, float blendFactor);
+	/** Blend 2 clouds state
+	 * Blend factor is clamped to [0, 1]
+	 */
+	static void blend(CCloudState &dest, const CCloudState &s1, const CCloudState &s2, float blendFactor);
 };
 
 /** Weather setup base class
@@ -85,12 +84,13 @@ public:
  * \author Nevrax France
  * \date 2002
  */
-class CWeatherSetup : public NLMISC::CRefCount {
+class CWeatherSetup : public NLMISC::CRefCount
+{
 public:
-  CWeatherState WeatherState;
-  CCloudState CloudState;
-  NLMISC::TStringId SetupName;
-  virtual ~CWeatherSetup() {}
+	CWeatherState WeatherState;
+	CCloudState CloudState;
+	NLMISC::TStringId SetupName;
+	virtual ~CWeatherSetup() { }
 };
 
 #endif

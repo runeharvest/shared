@@ -17,10 +17,10 @@
 #ifndef NL_ANIM_DETAIL_TRAV_H
 #define NL_ANIM_DETAIL_TRAV_H
 
-#include "nel/3d/trav_scene.h"
+#include "nel/misc/types_nl.h"
 #include "nel/misc/matrix.h"
 #include "nel/misc/plane.h"
-#include "nel/misc/types_nl.h"
+#include "nel/3d/trav_scene.h"
 
 namespace NL3D {
 
@@ -33,57 +33,56 @@ class CTransform;
 // ***************************************************************************
 /**
  * The AnimDetail traversal.
- * There is no AnimDetail graph. traverse() use the clipTrav VisibilityList to
- * traverse all models.
+ * There is no AnimDetail graph. traverse() use the clipTrav VisibilityList to traverse all models.
  *
  * NB: see CScene for 3d conventions (orthonormal basis...)
  * \author Lionel Berenguier
  * \author Nevrax France
  * \date 2000
  */
-class CAnimDetailTrav : public CTraversal {
+class CAnimDetailTrav : public CTraversal
+{
 public:
-  /// Constructor
-  CAnimDetailTrav();
+	/// Constructor
+	CAnimDetailTrav();
 
-  /// \name ITrav/ITravScene Implementation.
-  //@{
-  /** render after Clip and before light.
-   * This order is important for possible lights sticked to bones of skeletons.
-   */
-  void traverse();
-  //@}
+	/// \name ITrav/ITravScene Implementation.
+	//@{
+	/** render after Clip and before light.
+	 * This order is important for possible lights sticked to bones of skeletons.
+	 */
+	void traverse();
+	//@}
 
 public:
-  // ONLY FOR MODEL TRAVERSING.
+	// ONLY FOR MODEL TRAVERSING.
 
-  sint64 CurrentDate; // The current date of the traversal, useful for
-                      // evaldetail just one time..
+	sint64 CurrentDate; // The current date of the traversal, useful for evaldetail just one time..
 
-  // For clipTrav. cleared at beginning of CClipTrav::traverse
-  void clearVisibleList();
+	// For clipTrav. cleared at beginning of CClipTrav::traverse
+	void clearVisibleList();
 
-  // For ClipTrav only. NB: list is cleared at beginning of traverse(). NB: only
-  // CTransform are supported
-  void addVisibleModel(CTransform *model) {
-    _VisibleList[_CurrentNumVisibleModels] = model;
-    _CurrentNumVisibleModels++;
-  }
+	// For ClipTrav only. NB: list is cleared at beginning of traverse(). NB: only CTransform are supported
+	void addVisibleModel(CTransform *model)
+	{
+		_VisibleList[_CurrentNumVisibleModels] = model;
+		_CurrentNumVisibleModels++;
+	}
 
-  // for createModel().
-  void reserveVisibleList(uint numModels);
+	// for createModel().
+	void reserveVisibleList(uint numModels);
 
-  // ********************
+	// ********************
 private:
-  /// traverse the model recursively, following Hrc hierarchy
-  void traverseHrcRecurs(CTransform *model);
+	/// traverse the model recursively, following Hrc hierarchy
+	void traverseHrcRecurs(CTransform *model);
 
-  // traverse list of model visible and useful to animDetail.
-  std::vector<CTransform *> _VisibleList;
-  uint32 _CurrentNumVisibleModels;
+	// traverse list of model visible and useful to animDetail.
+	std::vector<CTransform *> _VisibleList;
+	uint32 _CurrentNumVisibleModels;
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_ANIM_DETAIL_TRAV_H
 

@@ -7,12 +7,12 @@
 
 #define FILENAME_BUFFERSIZE 64000
 
-class CMultiFileDialog : public CFileDialog {
+class CMultiFileDialog : public CFileDialog
+{
 public:
-  CMultiFileDialog(BOOL bOpenFileDialog, LPCTSTR lpszDefExt,
-                   LPCTSTR lpszFileName, DWORD dwFlags, LPCTSTR lpszFilter,
-                   CWnd *pParentWnd);
+	CMultiFileDialog(BOOL bOpenFileDialog, LPCTSTR lpszDefExt, LPCTSTR lpszFileName,
+	    DWORD dwFlags, LPCTSTR lpszFilter, CWnd *pParentWnd);
 
 private:
-  CString m_strFileName;
+	CString m_strFileName;
 };

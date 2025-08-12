@@ -19,26 +19,28 @@
 
 /** Description of fog map parameters
  */
-class CFogMapBuild {
+class CFogMapBuild
+{
 public:
-  // Various kind of fog maps
-  enum TMapType {
-    Day = 0,
-    Night,
-    Dusk,
-    Distance,
-    Depth,
-    NoPrecipitation,
-    NumMap
-  };
-  // Name of each map
-  std::string Map[NumMap];
-  // Corner zone giving extent of the maps
-  std::string ZoneMin;
-  std::string ZoneMax;
+	// Various kind of fog maps
+	enum TMapType
+	{
+		Day = 0,
+		Night,
+		Dusk,
+		Distance,
+		Depth,
+		NoPrecipitation,
+		NumMap
+	};
+	// Name of each map
+	std::string Map[NumMap];
+	// Corner zone giving extent of the maps
+	std::string ZoneMin;
+	std::string ZoneMax;
 
 public:
-  void serial(NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 };
 
 #endif

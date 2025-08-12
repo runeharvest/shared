@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "stdpch.h"
 #include "mission_desc.h"
 #include "nel/misc/string_conversion.h"
-#include "stdpch.h"
 
 namespace MISSION_DESC {
 NL_BEGIN_STRING_CONVERSION_TABLE(TStepType)
@@ -40,28 +40,31 @@ NL_STRING_CONVERSION_TABLE_ENTRY(ZCBuilding)
 NL_STRING_CONVERSION_TABLE_ENTRY(NbReward)
 NL_END_STRING_CONVERSION_TABLE(TRewardType, RewardTypeConversion, NbReward)
 
-const std::string &toString(TStepType type) {
-  return StepTypeConversion.toString(type);
+const std::string &toString(TStepType type)
+{
+	return StepTypeConversion.toString(type);
 }
-TStepType toStepType(const std::string &str) {
-  return StepTypeConversion.fromString(str);
-}
-
-const std::string &toString(TRewardType type) {
-  return RewardTypeConversion.toString(type);
-}
-TRewardType toRewardType(const std::string &str) {
-  return RewardTypeConversion.fromString(str);
+TStepType toStepType(const std::string &str)
+{
+	return StepTypeConversion.fromString(str);
 }
 
-TClientMissionType getClientMissionType(TIconId iconId) {
-  nlctassert(sizeof(IconToClientMissionType) /
-                 sizeof(IconToClientMissionType[0]) ==
-             NumIcons);
-  if (iconId < 0 || iconId >= NumIcons)
-    return Mission;
-  else
-    return IconToClientMissionType[iconId];
+const std::string &toString(TRewardType type)
+{
+	return RewardTypeConversion.toString(type);
+}
+TRewardType toRewardType(const std::string &str)
+{
+	return RewardTypeConversion.fromString(str);
 }
 
-} // namespace MISSION_DESC
+TClientMissionType getClientMissionType(TIconId iconId)
+{
+	nlctassert(sizeof(IconToClientMissionType) / sizeof(IconToClientMissionType[0]) == NumIcons);
+	if (iconId < 0 || iconId >= NumIcons)
+		return Mission;
+	else
+		return IconToClientMissionType[iconId];
+}
+
+}

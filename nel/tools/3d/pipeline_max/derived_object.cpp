@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "derived_object.h"
 #include <nel/misc/types_nl.h>
+#include "derived_object.h"
 
 // STL includes
 
@@ -40,9 +40,13 @@ using namespace std;
 
 namespace PIPELINE {
 
-CDerivedObject::CDerivedObject() {}
+CDerivedObject::CDerivedObject()
+{
+}
 
-CDerivedObject::~CDerivedObject() {}
+CDerivedObject::~CDerivedObject()
+{
+}
 
 } /* namespace PIPELINE */
 

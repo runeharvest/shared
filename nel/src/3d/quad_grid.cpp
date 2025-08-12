@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "nel/3d/quad_grid.h"
 #include "std3d.h"
+#include "nel/3d/quad_grid.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -26,4 +26,4 @@ NLMISC::CPolygon2D CQuadGridBase::_ScaledPoly;
 NLMISC::CPolygon2D::TRasterVect CQuadGridBase::_PolyBorders;
 std::vector<uint> CQuadGridBase::_AlreadySelected;
 uint CQuadGridBase::_SelectStamp = 0;
-} // namespace NL3D
+} // NL3D

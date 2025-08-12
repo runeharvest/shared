@@ -26,21 +26,27 @@
 namespace NL3D {
 
 // ***************************************************************************
-UVisualCollisionMesh::UVisualCollisionMesh() : _Mesh(NULL) {}
-
-// ***************************************************************************
-void UVisualCollisionMesh::attach(class CVisualCollisionMesh *mesh) {
-  _Mesh = mesh;
+UVisualCollisionMesh::UVisualCollisionMesh()
+    : _Mesh(NULL)
+{
 }
 
 // ***************************************************************************
-const std::vector<NLMISC::CVector> &UVisualCollisionMesh::getVertices() const {
-  return _Mesh->getVertices();
+void UVisualCollisionMesh::attach(class CVisualCollisionMesh *mesh)
+{
+	_Mesh = mesh;
 }
 
 // ***************************************************************************
-const std::vector<uint16> &UVisualCollisionMesh::getTriangles() const {
-  return _Mesh->getTriangles();
+const std::vector<NLMISC::CVector> &UVisualCollisionMesh::getVertices() const
+{
+	return _Mesh->getVertices();
 }
 
-} // namespace NL3D
+// ***************************************************************************
+const std::vector<uint16> &UVisualCollisionMesh::getTriangles() const
+{
+	return _Mesh->getTriangles();
+}
+
+} // NL3D

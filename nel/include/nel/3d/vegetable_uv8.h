@@ -22,16 +22,18 @@
 namespace NL3D {
 
 /**
- * A simple tuple UV in 8 bits, for Dynamic Lightmap encoding in Alpha
- * components of colors \author Lionel Berenguier \author Nevrax France \date
- * 2002
+ * A simple tuple UV in 8 bits, for Dynamic Lightmap encoding in Alpha components of colors
+ * \author Lionel Berenguier
+ * \author Nevrax France
+ * \date 2002
  */
-class CVegetableUV8 {
+class CVegetableUV8
+{
 public:
-  uint8 U, V;
+	uint8 U, V;
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_VEGETABLE_UV8_H
 

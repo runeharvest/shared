@@ -35,7 +35,7 @@ class CDriverGL;
 } // NLDRIVERGL/ES
 #endif
 
-} // namespace NL3D
+}
 
 #ifdef NL_STATIC
 #ifdef USE_OPENGLES
@@ -47,10 +47,11 @@ using NL3D::NLDRIVERGL::CDriverGL;
 using NL3D::CDriverGL;
 #endif
 
-@interface CocoaOpenGLView : NSOpenGLView <NSTextInputClient> {
-  NSMutableAttributedString *_characterStorage;
-  NSRange _markedRange;
-  CDriverGL *_driver;
+@interface CocoaOpenGLView : NSOpenGLView <NSTextInputClient>
+{
+	NSMutableAttributedString *_characterStorage;
+	NSRange _markedRange;
+	CDriverGL *_driver;
 }
 
 - (id)initWithFrame:(NSRect)frame;

@@ -25,12 +25,13 @@
 namespace NL3D {
 
 // ***************************************************************************
-void CPrimitiveProfile::reset() {
-  NPoints = 0;
-  NLines = 0;
-  NTriangles = 0;
-  NQuads = 0;
-  NTriangleStrips = 0;
+void CPrimitiveProfile::reset()
+{
+	NPoints = 0;
+	NLines = 0;
+	NTriangles = 0;
+	NQuads = 0;
+	NTriangleStrips = 0;
 }
 
-} // namespace NL3D
+} // NL3D

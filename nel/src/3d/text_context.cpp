@@ -19,8 +19,8 @@
 
 #include "std3d.h"
 
-#include "nel/3d/font_generator.h"
 #include "nel/3d/text_context.h"
+#include "nel/3d/font_generator.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -31,126 +31,137 @@ namespace NL3D {
 // ------------------------------------------------------------------------------------------------
 // Constructor
 // ------------------------------------------------------------------------------------------------
-CTextContext::CTextContext() {
-  _Driver = NULL;
-  _FontManager = NULL;
-  _FontGen = NULL;
+CTextContext::CTextContext()
+{
+	_Driver = NULL;
+	_FontManager = NULL;
+	_FontGen = NULL;
 
-  _FontSize = 12;
-  _Embolden = false;
-  _Oblique = false;
+	_FontSize = 12;
+	_Embolden = false;
+	_Oblique = false;
 
-  _Color = NLMISC::CRGBA(0, 0, 0);
+	_Color = NLMISC::CRGBA(0, 0, 0);
 
-  _HotSpot = CComputedString::BottomLeft;
+	_HotSpot = CComputedString::BottomLeft;
 
-  _ScaleX = 1.0f;
-  _ScaleZ = 1.0f;
+	_ScaleX = 1.0f;
+	_ScaleZ = 1.0f;
 
-  _Shaded = false;
-  _ShadeOutline = false;
-  _ShadeExtentX = 0.001f;
-  _ShadeExtentY = 0.001f;
-  _ShadeColor = NLMISC::CRGBA(0, 0, 0);
+	_Shaded = false;
+	_ShadeOutline = false;
+	_ShadeExtentX = 0.001f;
+	_ShadeExtentY = 0.001f;
+	_ShadeColor = NLMISC::CRGBA(0, 0, 0);
 
-  _Keep800x600Ratio = true;
+	_Keep800x600Ratio = true;
 
-  _CacheNbFreePlaces = 0;
+	_CacheNbFreePlaces = 0;
 }
 
 // ------------------------------------------------------------------------------------------------
-CTextContext::~CTextContext() {
-  if (_FontGen)
-    delete _FontGen;
-  if (_FontManager)
-    _FontManager->invalidate();
+CTextContext::~CTextContext()
+{
+	if (_FontGen)
+		delete _FontGen;
+	if (_FontManager)
+		_FontManager->invalidate();
 }
 
 // ------------------------------------------------------------------------------------------------
-uint32 CTextContext::textPush(const char *format, ...) {
-  nlassert(_FontGen);
+uint32 CTextContext::textPush(const char *format, ...)
+{
+	nlassert(_FontGen);
 
-  // convert the string.
-  char *str;
-  NLMISC_CONVERT_VARGS(str, format, NLMISC::MaxCStringSize);
+	// convert the string.
+	char *str;
+	NLMISC_CONVERT_VARGS(str, format, NLMISC::MaxCStringSize);
 
-  return textPush(NLMISC::CUtfStringView(str));
+	return textPush(NLMISC::CUtfStringView(str));
 }
 
 // ------------------------------------------------------------------------------------------------
-uint32 CTextContext::textPush(NLMISC::CUtfStringView sv) {
-  nlassert(_FontGen);
+uint32 CTextContext::textPush(NLMISC::CUtfStringView sv)
+{
+	nlassert(_FontGen);
 
-  if (_CacheNbFreePlaces == 0) {
-    CComputedString csTmp;
+	if (_CacheNbFreePlaces == 0)
+	{
+		CComputedString csTmp;
 
-    _CacheStrings.push_back(csTmp);
-    if (_CacheFreePlaces.empty())
-      _CacheFreePlaces.resize(1);
-    _CacheFreePlaces[0] = (uint32)_CacheStrings.size() - 1;
-    _CacheNbFreePlaces = 1;
-  }
+		_CacheStrings.push_back(csTmp);
+		if (_CacheFreePlaces.empty())
+			_CacheFreePlaces.resize(1);
+		_CacheFreePlaces[0] = (uint32)_CacheStrings.size() - 1;
+		_CacheNbFreePlaces = 1;
+	}
 
-  // compute the string.
-  uint32 index = _CacheFreePlaces[_CacheNbFreePlaces - 1];
-  nlassert(index < _CacheStrings.size());
-  CComputedString &strToFill = _CacheStrings[index];
+	// compute the string.
+	uint32 index = _CacheFreePlaces[_CacheNbFreePlaces - 1];
+	nlassert(index < _CacheStrings.size());
+	CComputedString &strToFill = _CacheStrings[index];
 
-  _FontManager->computeString(sv, _FontGen, _Color, _FontSize, _Embolden,
-                              _Oblique, _Driver, strToFill, _Keep800x600Ratio);
-  // just compute letters, glyphs are rendered on demand before first draw
-  //_FontManager->computeStringInfo(str, _FontGen, _Color, _FontSize, _Embolden,
-  //_Oblique, _Driver, strToFill, _Keep800x600Ratio);
+	_FontManager->computeString(sv, _FontGen, _Color, _FontSize, _Embolden, _Oblique, _Driver, strToFill, _Keep800x600Ratio);
+	// just compute letters, glyphs are rendered on demand before first draw
+	//_FontManager->computeStringInfo(str, _FontGen, _Color, _FontSize, _Embolden, _Oblique, _Driver, strToFill, _Keep800x600Ratio);
 
-  _CacheNbFreePlaces--;
+	_CacheNbFreePlaces--;
 
-  return index;
+	return index;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CTextContext::erase(uint32 i) {
-  nlassertex((i < _CacheStrings.size()), ("try to erase an unknown text"));
-  _CacheStrings[i].LetterColors.clear();
-  if (_CacheFreePlaces.size() == _CacheNbFreePlaces) {
-    _CacheFreePlaces.push_back(i);
-  } else {
-    _CacheFreePlaces[_CacheNbFreePlaces] = i;
-  }
-  _CacheNbFreePlaces++;
+void CTextContext::erase(uint32 i)
+{
+	nlassertex((i < _CacheStrings.size()), ("try to erase an unknown text"));
+	_CacheStrings[i].LetterColors.clear();
+	if (_CacheFreePlaces.size() == _CacheNbFreePlaces)
+	{
+		_CacheFreePlaces.push_back(i);
+	}
+	else
+	{
+		_CacheFreePlaces[_CacheNbFreePlaces] = i;
+	}
+	_CacheNbFreePlaces++;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CTextContext::clear() {
-  _CacheFreePlaces.clear();
-  _CacheNbFreePlaces = 0;
-  _CacheStrings.clear();
+void CTextContext::clear()
+{
+	_CacheFreePlaces.clear();
+	_CacheNbFreePlaces = 0;
+	_CacheStrings.clear();
 }
 
 // ------------------------------------------------------------------------------------------------
-void CTextContext::setFontGenerator(const std::string &fontFileName,
-                                    const std::string &fontExFileName) {
-  CFontGenerator *oldFontGen = _FontGen;
-  _FontGen = new NL3D::CFontGenerator(fontFileName, fontExFileName);
-  if (oldFontGen)
-    delete oldFontGen;
+void CTextContext::setFontGenerator(const std::string &fontFileName, const std::string &fontExFileName)
+{
+	CFontGenerator *oldFontGen = _FontGen;
+	_FontGen = new NL3D::CFontGenerator(fontFileName, fontExFileName);
+	if (oldFontGen) delete oldFontGen;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CTextContext::setLetterColors(CLetterColors *letterColors, uint index) {
-  if (/*index>=0 &&*/ index < _CacheStrings.size()) {
-    _CacheStrings[index].LetterColors.clear();
-    _CacheStrings[index].LetterColors = *letterColors;
-  }
+void CTextContext::setLetterColors(CLetterColors *letterColors, uint index)
+{
+	if (/*index>=0 &&*/ index < _CacheStrings.size())
+	{
+		_CacheStrings[index].LetterColors.clear();
+		_CacheStrings[index].LetterColors = *letterColors;
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
-bool CTextContext::isSameLetterColors(CLetterColors *letterColors, uint index) {
-  if (/*index>=0 &&*/ index < _CacheStrings.size()) {
-    CLetterColors &strLetterColors = _CacheStrings[index].LetterColors;
-    return strLetterColors.isSameLetterColors(letterColors);
-  }
+bool CTextContext::isSameLetterColors(CLetterColors *letterColors, uint index)
+{
+	if (/*index>=0 &&*/ index < _CacheStrings.size())
+	{
+		CLetterColors &strLetterColors = _CacheStrings[index].LetterColors;
+		return strLetterColors.isSameLetterColors(letterColors);
+	}
 
-  return false;
+	return false;
 }
 
-} // namespace NL3D
+} // NL3D

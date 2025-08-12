@@ -17,11 +17,11 @@
 #ifndef NL_ZONE_TGT_SMOOTHER_H
 #define NL_ZONE_TGT_SMOOTHER_H
 
+#include "nel/misc/types_nl.h"
 #include "nel/3d/zone.h"
 #include "nel/misc/common.h"
-#include "nel/misc/types_nl.h"
-#include <list>
 #include <map>
+#include <list>
 #include <vector>
 
 namespace NL3D {
@@ -33,70 +33,72 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2000
  */
-class CZoneTgtSmoother {
+class CZoneTgtSmoother
+{
 public:
-  /// Constructor
-  CZoneTgtSmoother() {}
+	/// Constructor
+	CZoneTgtSmoother() { }
 
-  /// Doit method. zones are modified. zones[0] is the center zones. Other are
-  /// border zones.
-  void makeVerticesCoplanar(std::vector<CZoneInfo> &zones);
+	/// Doit method. zones are modified. zones[0] is the center zones. Other are border zones.
+	void makeVerticesCoplanar(std::vector<CZoneInfo> &zones);
 
-  // *************************
+	// *************************
 private:
-  struct CPatchId {
-    // The unique Id of the patch.
-    uint16 ZoneId;
-    uint16 PatchId;
-    // a ptr on the patch.
-    CPatchInfo *Patch;
-    // [0,3]. which vertex of this patch points on the vertex.
-    sint IdVert;
+	struct CPatchId
+	{
+		// The unique Id of the patch.
+		uint16 ZoneId;
+		uint16 PatchId;
+		// a ptr on the patch.
+		CPatchInfo *Patch;
+		// [0,3]. which vertex of this patch points on the vertex.
+		sint IdVert;
 
-    // local index on tangentes, around the vertex.
-    sint Tangents[2];
-  };
-  struct CTangentId {
-    uint16 ZoneId;
-    uint16 PatchId;
-    sint EdgeId;
-    // The two patchs which share the tangent.
-    CPatchInfo *Patchs[2];
-    // The value of this tangent.
-    CVector Tangent;
+		// local index on tangentes, around the vertex.
+		sint Tangents[2];
+	};
+	struct CTangentId
+	{
+		uint16 ZoneId;
+		uint16 PatchId;
+		sint EdgeId;
+		// The two patchs which share the tangent.
+		CPatchInfo *Patchs[2];
+		// The value of this tangent.
+		CVector Tangent;
 
-    bool isOppositeOf(const CTangentId &tgt) {
-      // 4x4 configuartion only.
-      // The opposite tangent do not have the same patchs which share this
-      // tangent.
-      if (Patchs[0] == tgt.Patchs[0])
-        return false;
-      if (Patchs[0] == tgt.Patchs[1])
-        return false;
-      if (Patchs[1] == tgt.Patchs[0])
-        return false;
-      if (Patchs[1] == tgt.Patchs[1])
-        return false;
-      return true;
-    }
-  };
+		bool isOppositeOf(const CTangentId &tgt)
+		{
+			// 4x4 configuartion only.
+			// The opposite tangent do not have the same patchs which share this tangent.
+			if (Patchs[0] == tgt.Patchs[0]) return false;
+			if (Patchs[0] == tgt.Patchs[1]) return false;
+			if (Patchs[1] == tgt.Patchs[0]) return false;
+			if (Patchs[1] == tgt.Patchs[1]) return false;
+			return true;
+		}
+	};
 
-  struct CVertexInfo {
-    // neighbors patchs.
-    std::list<CPatchId> Patchs;
-    bool OnBorder;
+	struct CVertexInfo
+	{
+		// neighbors patchs.
+		std::list<CPatchId> Patchs;
+		bool OnBorder;
 
-    CVertexInfo() { OnBorder = false; }
-  };
+		CVertexInfo()
+		{
+			OnBorder = false;
+		}
+	};
 
-  typedef std::map<sint, CVertexInfo> TVertexMap;
-  typedef TVertexMap::iterator ItVertexMap;
+	typedef std::map<sint, CVertexInfo> TVertexMap;
+	typedef TVertexMap::iterator ItVertexMap;
 
 private:
-  TVertexMap VertexMap;
+	TVertexMap VertexMap;
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_ZONE_TGT_SMOOTHER_H
 

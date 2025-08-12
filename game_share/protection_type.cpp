@@ -39,15 +39,17 @@ NL_END_STRING_CONVERSION_TABLE(TProtectionType, ProtectionTypeConversion, None)
 //-----------------------------------------------
 // fromString:
 //-----------------------------------------------
-TProtectionType fromString(const std::string &str) {
-  return ProtectionTypeConversion.fromString(str);
+TProtectionType fromString(const std::string &str)
+{
+	return ProtectionTypeConversion.fromString(str);
 }
 
 //-----------------------------------------------
 // toString :
 //-----------------------------------------------
-const std::string &toString(TProtectionType protection_type) {
-  return ProtectionTypeConversion.toString(protection_type);
+const std::string &toString(TProtectionType protection_type)
+{
+	return ProtectionTypeConversion.toString(protection_type);
 }
 
-}; // namespace PROTECTION_TYPE
+}; // PROTECTION_TYPE

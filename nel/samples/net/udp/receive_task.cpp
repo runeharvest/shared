@@ -23,16 +23,16 @@
 #ifndef NL_COMP_MINGW
 #define NOMINMAX
 #endif
-#include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <windows.h>
 #elif defined NL_OS_UNIX
 
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
 #include <unistd.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <netdb.h>
 
 #define WSAGetLastError() 0
 
@@ -46,81 +46,94 @@ using namespace NLNET;
  */
 
 /// Constructor
-TReceivedMessage::TReceivedMessage() { VAddrFrom.resize(sizeof(sockaddr_in6)); }
+TReceivedMessage::TReceivedMessage()
+{
+	VAddrFrom.resize(sizeof(sockaddr_in6));
+}
 
 /// Return a vector containing the address info
-void TReceivedMessage::addressToVector() {
-  AddrFrom.fromSockAddrInet6((sockaddr_in6 *)&*VAddrFrom.begin());
+void TReceivedMessage::addressToVector()
+{
+	AddrFrom.fromSockAddrInet6((sockaddr_in6 *)&*VAddrFrom.begin());
 }
 
 /// Set address with address info from specified vector
-void TReceivedMessage::vectorToAddress() {
-  AddrFrom.toSockAddrInet6((sockaddr_in6 *)&*VAddrFrom.begin());
+void TReceivedMessage::vectorToAddress()
+{
+	AddrFrom.toSockAddrInet6((sockaddr_in6 *)&*VAddrFrom.begin());
 }
 
 /*
  * Constructor
  */
 CReceiveTask::CReceiveTask(uint16 port, uint32 msgsize)
-    : _DatagramLength(msgsize), _ReceivedMessage(),
-      _WriteQueue("WriteQueue"), // value unspecified
-      _ExitRequired(false) {
-  // Socket
-  DataSock = new CUdpSock(false);
-  nlassert(DataSock);
+    : _DatagramLength(msgsize)
+    , _ReceivedMessage()
+    , _WriteQueue("WriteQueue")
+    , // value unspecified
+    _ExitRequired(false)
+{
+	// Socket
+	DataSock = new CUdpSock(false);
+	nlassert(DataSock);
 
-  DataSock->bind(port);
+	DataSock->bind(port);
 }
 
 /*
  * Destructor
  */
-CReceiveTask::~CReceiveTask() {
-  nlassert(DataSock != NULL);
-  delete DataSock;
-  DataSock = NULL;
+CReceiveTask::~CReceiveTask()
+{
+	nlassert(DataSock != NULL);
+	delete DataSock;
+	DataSock = NULL;
 }
 
 /*
  * Run
  */
-void CReceiveTask::run() {
-  uint maxrecvlength = _DatagramLength;
-  while (!_ExitRequired) {
-    sint64 d;
-    try {
-      // Receive into _ReceivedMessage
-      _DatagramLength = maxrecvlength;
-      _ReceivedMessage.resizeData(_DatagramLength);
-      _ReceivedMessage.setTypeEvent(TReceivedMessage::User);
-      DataSock->receivedFrom(_ReceivedMessage.userDataW(), _DatagramLength,
-                             _ReceivedMessage.AddrFrom);
-      d = CTime::getLocalTime();
-    } catch (const ESocket &) {
-      // Remove the client corresponding to the address
-      _ReceivedMessage.setTypeEvent(TReceivedMessage::RemoveClient);
-      _DatagramLength = 0;
-    }
+void CReceiveTask::run()
+{
+	uint maxrecvlength = _DatagramLength;
+	while (!_ExitRequired)
+	{
+		sint64 d;
+		try
+		{
+			// Receive into _ReceivedMessage
+			_DatagramLength = maxrecvlength;
+			_ReceivedMessage.resizeData(_DatagramLength);
+			_ReceivedMessage.setTypeEvent(TReceivedMessage::User);
+			DataSock->receivedFrom(_ReceivedMessage.userDataW(), _DatagramLength, _ReceivedMessage.AddrFrom);
+			d = CTime::getLocalTime();
+		}
+		catch (const ESocket &)
+		{
+			// Remove the client corresponding to the address
+			_ReceivedMessage.setTypeEvent(TReceivedMessage::RemoveClient);
+			_DatagramLength = 0;
+		}
 
-    // Push into the write queue
-    _ReceivedMessage.addressToVector();
-    _ReceivedMessage.resizeData(
-        _DatagramLength); // _DatagramLength was modified by receivedFrom()
-    _ReceivedMessage.setDate();
-    {
-      CSynchronized<CBufFIFO *>::CAccessor wq(&_WriteQueue);
-      wq.value()->push(_ReceivedMessage.data());
-      wq.value()->push(_ReceivedMessage.VAddrFrom);
-    }
-  }
+		// Push into the write queue
+		_ReceivedMessage.addressToVector();
+		_ReceivedMessage.resizeData(_DatagramLength); // _DatagramLength was modified by receivedFrom()
+		_ReceivedMessage.setDate();
+		{
+			CSynchronized<CBufFIFO *>::CAccessor wq(&_WriteQueue);
+			wq.value()->push(_ReceivedMessage.data());
+			wq.value()->push(_ReceivedMessage.VAddrFrom);
+		}
+	}
 
-  nlinfo("Exiting from front-end receive task");
+	nlinfo("Exiting from front-end receive task");
 }
 
 /*
  * Set new write queue
  */
-void CReceiveTask::setWriteQueue(CBufFIFO *writequeue) {
-  CSynchronized<CBufFIFO *>::CAccessor wq(&_WriteQueue);
-  wq.value() = writequeue;
+void CReceiveTask::setWriteQueue(CBufFIFO *writequeue)
+{
+	CSynchronized<CBufFIFO *>::CAccessor wq(&_WriteQueue);
+	wq.value() = writequeue;
 }

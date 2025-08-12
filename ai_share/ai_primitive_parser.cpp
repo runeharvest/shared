@@ -23,13 +23,13 @@
 #include "ai_primitive_parser.h"
 
 // game share
-#include "game_share/persistent_data.h"
 #include "game_share/utils.h"
+#include "game_share/persistent_data.h"
 
 // ai share
+#include "../ai_share/ai_share.h"
 #include "../ai_share/ai_actions.h"
 #include "../ai_share/ai_actions_dr.h"
-#include "../ai_share/ai_share.h"
 
 //-------------------------------------------------------------------------------------------------
 // namespaces
@@ -49,31 +49,30 @@ using namespace AI_SHARE;
 // class CAIPPActions
 //-------------------------------------------------------------------------------------------------
 
-class CAIPPActions : public CAIActions::IExecutor,
-                     public NLMISC::CSingleton<CAIPPActions> {
+class CAIPPActions : public CAIActions::IExecutor, public NLMISC::CSingleton<CAIPPActions>
+{
 public:
-  //----------------------------------------------------------------------------
-  // init & release
+	//----------------------------------------------------------------------------
+	// init & release
 
-  static void init(CPersistentDataRecord *pdr);
-  static void release();
+	static void init(CPersistentDataRecord *pdr);
+	static void release();
 
-  //----------------------------------------------------------------------------
-  // inheritted virtual interface
+	//----------------------------------------------------------------------------
+	// inheritted virtual interface
 
-  virtual void openFile(const std::string &fileName);
-  virtual void closeFile(const std::string &fileName);
-  virtual void begin(uint32 contextAlias);
-  virtual void end(uint32 contextAlias);
-  virtual void execute(uint64 action,
-                       const std::vector<CAIActions::CArg> &args);
+	virtual void openFile(const std::string &fileName);
+	virtual void closeFile(const std::string &fileName);
+	virtual void begin(uint32 contextAlias);
+	virtual void end(uint32 contextAlias);
+	virtual void execute(uint64 action, const std::vector<CAIActions::CArg> &args);
 
-  AI_SHARE::CAIActionsDataRecord &getDataRecord() { return _DataRecord; }
+	AI_SHARE::CAIActionsDataRecord &getDataRecord() { return _DataRecord; }
 
 protected:
-  //----------------------------------------------------------------------------
-  // the instance data used by the single instance of the class
-  CAIActionsDataRecord _DataRecord;
+	//----------------------------------------------------------------------------
+	// the instance data used by the single instance of the class
+	CAIActionsDataRecord _DataRecord;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -86,65 +85,84 @@ protected:
 // methods CAIPPActions
 //-------------------------------------------------------------------------------------------------
 
-void CAIPPActions::init(CPersistentDataRecord *pdr) {
-  getInstance()._DataRecord.init(pdr);
-  CAIActions::init(Instance);
+void CAIPPActions::init(CPersistentDataRecord *pdr)
+{
+	getInstance()._DataRecord.init(pdr);
+	CAIActions::init(Instance);
 }
 
-void CAIPPActions::release() {
-  if (Instance != NULL) {
-    CAIActions::release();
-    delete Instance;
-    Instance = NULL;
-  }
+void CAIPPActions::release()
+{
+	if (Instance != NULL)
+	{
+		CAIActions::release();
+		delete Instance;
+		Instance = NULL;
+	}
 }
 
-void CAIPPActions::openFile(const std::string &fileName) {
-  _DataRecord.addOpenFile(fileName);
+void CAIPPActions::openFile(const std::string &fileName)
+{
+	_DataRecord.addOpenFile(fileName);
 }
 
-void CAIPPActions::closeFile(const std::string &fileName) {
-  _DataRecord.addCloseFile(fileName);
+void CAIPPActions::closeFile(const std::string &fileName)
+{
+	_DataRecord.addCloseFile(fileName);
 }
 
-void CAIPPActions::execute(uint64 action,
-                           const std::vector<CAIActions::CArg> &args) {
-  _DataRecord.addExecute(action, args);
+void CAIPPActions::execute(uint64 action, const std::vector<CAIActions::CArg> &args)
+{
+	_DataRecord.addExecute(action, args);
 }
 
-void CAIPPActions::begin(uint32 context) { _DataRecord.addBegin(context); }
-
-void CAIPPActions::end(uint32 context) { _DataRecord.addEnd(context); }
-
-void CAIPrimitiveParser::init(CPersistentDataRecord *pdr) {
-  getInstance();
-  CAIPPActions::init(pdr);
+void CAIPPActions::begin(uint32 context)
+{
+	_DataRecord.addBegin(context);
 }
 
-void CAIPrimitiveParser::release() {
-  CAIPPActions::release();
-  if (Instance) {
-    delete Instance;
-    Instance = 0;
-  }
+void CAIPPActions::end(uint32 context)
+{
+	_DataRecord.addEnd(context);
 }
 
-void CAIPrimitiveParser::clear() {
-  CAIPPActions::getInstance().getDataRecord().clear();
+void CAIPrimitiveParser::init(CPersistentDataRecord *pdr)
+{
+	getInstance();
+	CAIPPActions::init(pdr);
 }
 
-void CAIPrimitiveParser::readFile(const std::string &fileName) {
-  CAIPPActions::getInstance().getDataRecord().readFile(fileName);
+void CAIPrimitiveParser::release()
+{
+	CAIPPActions::release();
+	if (Instance)
+	{
+		delete Instance;
+		Instance = 0;
+	}
 }
 
-void CAIPrimitiveParser::writeFile(const std::string &fileName) {
-  CAIPPActions::getInstance().getDataRecord().writeFile(fileName);
+void CAIPrimitiveParser::clear()
+{
+	CAIPPActions::getInstance().getDataRecord().clear();
 }
 
-void CAIPrimitiveParser::display() {
-  CAIPPActions::getInstance().getDataRecord().display();
+void CAIPrimitiveParser::readFile(const std::string &fileName)
+{
+	CAIPPActions::getInstance().getDataRecord().readFile(fileName);
 }
 
-void CAIPrimitiveParser::serial(NLMISC::IStream &stream) {
-  CAIPPActions::getInstance().getDataRecord().serial(stream);
+void CAIPrimitiveParser::writeFile(const std::string &fileName)
+{
+	CAIPPActions::getInstance().getDataRecord().writeFile(fileName);
+}
+
+void CAIPrimitiveParser::display()
+{
+	CAIPPActions::getInstance().getDataRecord().display();
+}
+
+void CAIPrimitiveParser::serial(NLMISC::IStream &stream)
+{
+	CAIPPActions::getInstance().getDataRecord().serial(stream);
 }

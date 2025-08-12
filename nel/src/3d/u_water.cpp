@@ -16,11 +16,11 @@
 
 #include "std3d.h"
 
-#include "nel/3d/driver_user.h"
 #include "nel/3d/u_water.h"
+#include "nel/3d/water_pool_manager.h"
 #include "nel/3d/water_height_map.h"
 #include "nel/3d/water_model.h"
-#include "nel/3d/water_pool_manager.h"
+#include "nel/3d/driver_user.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -29,46 +29,51 @@
 namespace NL3D {
 
 //===========================================================================
-UWaterHeightMap &UWaterHeightMapManager::getWaterHeightMapFromID(uint32 ID) {
-  nlassert(GetWaterPoolManager().hasPool(ID)); // unknown pool ID!
-  return GetWaterPoolManager().getPoolByID(ID);
+UWaterHeightMap &UWaterHeightMapManager::getWaterHeightMapFromID(uint32 ID)
+{
+	nlassert(GetWaterPoolManager().hasPool(ID)); // unknown pool ID!
+	return GetWaterPoolManager().getPoolByID(ID);
 }
 
 //===========================================================================
-void UWaterHeightMapManager::setBlendFactor(UDriver *drv, float value) {
-  NLMISC::clamp(value, 0.f, 1.f);
-  GetWaterPoolManager().setBlendFactor(
-      NLMISC::safe_cast<CDriverUser *>(drv)->getDriver(), value);
+void UWaterHeightMapManager::setBlendFactor(UDriver *drv, float value)
+{
+	NLMISC::clamp(value, 0.f, 1.f);
+	GetWaterPoolManager().setBlendFactor(NLMISC::safe_cast<CDriverUser *>(drv)->getDriver(), value);
 }
 
 //===========================================================================
-void UWaterHeightMapManager::releaseBlendTextures() {
-  GetWaterPoolManager().releaseBlendTextures();
+void UWaterHeightMapManager::releaseBlendTextures()
+{
+	GetWaterPoolManager().releaseBlendTextures();
 }
 
 //===========================================================================
-uint32 UWaterInstance::getWaterHeightMapID() const {
-  CWaterModel *object = getObjectPtr();
-  return object->getWaterHeightMapID();
+uint32 UWaterInstance::getWaterHeightMapID() const
+{
+	CWaterModel *object = getObjectPtr();
+	return object->getWaterHeightMapID();
 }
 
 //===========================================================================
-float UWaterInstance::getHeightFactor() const {
-  CWaterModel *object = getObjectPtr();
-  return object->getHeightFactor();
+float UWaterInstance::getHeightFactor() const
+{
+	CWaterModel *object = getObjectPtr();
+	return object->getHeightFactor();
 }
 
 //===========================================================================
-float UWaterInstance::getHeight(const NLMISC::CVector2f &pos) {
-  CWaterModel *object = getObjectPtr();
-  return object->getHeight(pos);
+float UWaterInstance::getHeight(const NLMISC::CVector2f &pos)
+{
+	CWaterModel *object = getObjectPtr();
+	return object->getHeight(pos);
 }
 
 //===========================================================================
-float UWaterInstance::getAttenuatedHeight(const NLMISC::CVector2f &pos,
-                                          const NLMISC::CVector &viewer) {
-  CWaterModel *object = getObjectPtr();
-  return object->getAttenuatedHeight(pos, viewer);
+float UWaterInstance::getAttenuatedHeight(const NLMISC::CVector2f &pos, const NLMISC::CVector &viewer)
+{
+	CWaterModel *object = getObjectPtr();
+	return object->getAttenuatedHeight(pos, viewer);
 }
 
-} // namespace NL3D
+} // NL3D

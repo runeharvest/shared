@@ -27,4 +27,4 @@ namespace NLMISC {
 const CQuat CQuat::Identity;
 const CQuatD CQuatD::Identity;
 
-} // namespace NLMISC
+} // NLMISC

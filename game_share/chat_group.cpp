@@ -14,35 +14,32 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "stdpch.h"
 #include "chat_group.h"
 #include "nel/misc/string_conversion.h"
-#include "stdpch.h"
 
-static const NLMISC::CStringConversion<CChatGroup::TGroupType>::CPair
-    CChatGroupStringTable[] = {
-        {"say", CChatGroup::say},
-        {"shout", CChatGroup::shout},
-        {"team", CChatGroup::team},
-        {"guild", CChatGroup::guild},
-        {"civilization", CChatGroup::civilization},
-        {"territory", CChatGroup::territory},
-        {"universe", CChatGroup::universe},
-        {"tell", CChatGroup::tell},
-        {"player", CChatGroup::player},
-        {"arround", CChatGroup::arround},
-        {"system", CChatGroup::system},
-        {"region", CChatGroup::region},
+static const NLMISC::CStringConversion<CChatGroup::TGroupType>::CPair CChatGroupStringTable[] = {
+	{ "say", CChatGroup::say },
+	{ "shout", CChatGroup::shout },
+	{ "team", CChatGroup::team },
+	{ "guild", CChatGroup::guild },
+	{ "civilization", CChatGroup::civilization },
+	{ "territory", CChatGroup::territory },
+	{ "universe", CChatGroup::universe },
+	{ "tell", CChatGroup::tell },
+	{ "player", CChatGroup::player },
+	{ "arround", CChatGroup::arround },
+	{ "system", CChatGroup::system },
+	{ "region", CChatGroup::region },
 };
-static const NLMISC::CStringConversion<CChatGroup::TGroupType>
-    CChatGroupConversion(CChatGroupStringTable,
-                         sizeof(CChatGroupStringTable) /
-                             sizeof(CChatGroupStringTable[0]),
-                         CChatGroup::nbChatMode);
+static const NLMISC::CStringConversion<CChatGroup::TGroupType> CChatGroupConversion(CChatGroupStringTable, sizeof(CChatGroupStringTable) / sizeof(CChatGroupStringTable[0]), CChatGroup::nbChatMode);
 
-CChatGroup::TGroupType CChatGroup::stringToGroupType(const std::string &str) {
-  return CChatGroupConversion.fromString(str);
+CChatGroup::TGroupType CChatGroup::stringToGroupType(const std::string &str)
+{
+	return CChatGroupConversion.fromString(str);
 }
 
-const std::string &CChatGroup::groupTypeToString(CChatGroup::TGroupType type) {
-  return CChatGroupConversion.toString(type);
+const std::string &CChatGroup::groupTypeToString(CChatGroup::TGroupType type)
+{
+	return CChatGroupConversion.toString(type);
 }

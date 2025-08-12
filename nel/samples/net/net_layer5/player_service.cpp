@@ -25,9 +25,9 @@
  */
 
 // We're using the NeL Service framework, and layer 5
-#include "nel/misc/displayer.h"
-#include "nel/misc/time_nl.h"
 #include "nel/net/service.h"
+#include "nel/misc/time_nl.h"
+#include "nel/misc/displayer.h"
 
 using namespace std;
 using namespace NLNET;
@@ -39,104 +39,117 @@ bool PingServiceUp = false;
 //
 TTime pingDate;
 
-void cbPong(CMessage &msgin, const std::string &serviceName, TServiceId sid) {
-  nlassert(PingServiceUp);
-  uint32 counter;
-  msgin.serial(counter);
-  TTime pingTime = CTime::getLocalTime() - pingDate;
+void cbPong(CMessage &msgin, const std::string &serviceName, TServiceId sid)
+{
+	nlassert(PingServiceUp);
+	uint32 counter;
+	msgin.serial(counter);
+	TTime pingTime = CTime::getLocalTime() - pingDate;
 
-  nlinfo("Received PONG %u (%u ms)", counter, pingTime);
+	nlinfo("Received PONG %u (%u ms)", counter, pingTime);
 }
 
-void sendPing() {
-  nlassert(PingServiceUp);
-  pingDate = CTime::getLocalTime();
-  uint32 counter = 0;
-  CMessage msgout("PING");
-  msgout.serial(counter);
-  nlinfo("Send PING 0");
-  CUnifiedNetwork::getInstance()->send("PS", msgout);
-}
-
-//
-void cbPos(CMessage &msgin, const std::string &serviceName, TServiceId sid) {
-  CMessage msgout("POS");
-  CUnifiedNetwork::getInstance()->send("GPMS", msgout);
-
-  nlinfo("Received POS from %s, send POS to GPMS", serviceName.c_str());
-}
-
-void cbAckPos(CMessage &msgin, const std::string &serviceName, TServiceId sid) {
-  nlinfo("Received ACK_POS from %s", serviceName.c_str());
+void sendPing()
+{
+	nlassert(PingServiceUp);
+	pingDate = CTime::getLocalTime();
+	uint32 counter = 0;
+	CMessage msgout("PING");
+	msgout.serial(counter);
+	nlinfo("Send PING 0");
+	CUnifiedNetwork::getInstance()->send("PS", msgout);
 }
 
 //
-void cbUpPS(const std::string &serviceName, TServiceId sid, void *arg) {
-  nlinfo("Ping Service connecting");
-  PingServiceUp = true;
-  sendPing();
+void cbPos(CMessage &msgin, const std::string &serviceName, TServiceId sid)
+{
+	CMessage msgout("POS");
+	CUnifiedNetwork::getInstance()->send("GPMS", msgout);
+
+	nlinfo("Received POS from %s, send POS to GPMS", serviceName.c_str());
 }
 
-void cbDownPS(const std::string &serviceName, TServiceId sid, void *arg) {
-  nlinfo("Ping Service disconnecting");
+void cbAckPos(CMessage &msgin, const std::string &serviceName, TServiceId sid)
+{
+	nlinfo("Received ACK_POS from %s", serviceName.c_str());
 }
 
 //
-void cbUpService(const std::string &serviceName, TServiceId sid, void *arg) {
-  nlinfo("Service %s %d is up", serviceName.c_str(), sid.get());
+void cbUpPS(const std::string &serviceName, TServiceId sid, void *arg)
+{
+	nlinfo("Ping Service connecting");
+	PingServiceUp = true;
+	sendPing();
 }
 
-void cbDownService(const std::string &serviceName, TServiceId sid, void *arg) {
-  nlinfo("Service %s %d is down", serviceName.c_str(), sid.get());
+void cbDownPS(const std::string &serviceName, TServiceId sid, void *arg)
+{
+	nlinfo("Ping Service disconnecting");
+}
+
+//
+void cbUpService(const std::string &serviceName, TServiceId sid, void *arg)
+{
+	nlinfo("Service %s %d is up", serviceName.c_str(), sid.get());
+}
+
+void cbDownService(const std::string &serviceName, TServiceId sid, void *arg)
+{
+	nlinfo("Service %s %d is down", serviceName.c_str(), sid.get());
 }
 
 /*
  * Callback array for messages received from a client
  */
 TUnifiedCallbackItem CallbackArray[] = {
-    {"PONG", cbPong}, {"POS", cbPos}, {"ACK_POS", cbAckPos}};
+	{ "PONG", cbPong },
+	{ "POS", cbPos },
+	{ "ACK_POS", cbAckPos }
+};
 
 //
-class CPlayerService : public IService {
+class CPlayerService : public IService
+{
 public:
-  bool update() {
-    static TTime lastPing = CTime::getLocalTime();
+	bool update()
+	{
+		static TTime lastPing = CTime::getLocalTime();
 
-    TTime ctime = CTime::getLocalTime();
+		TTime ctime = CTime::getLocalTime();
 
-    // check ping every 15 seconds
-    if (ctime - lastPing > 15000) {
-      if (PingServiceUp)
-        sendPing();
-      lastPing = ctime;
-    }
+		// check ping every 15 seconds
+		if (ctime - lastPing > 15000)
+		{
+			if (PingServiceUp)
+				sendPing();
+			lastPing = ctime;
+		}
 
-    return true;
-  }
-  /*
-   * Initialization
-   */
-  void init() {
-    DebugLog->addDisplayer(&fd);
-    InfoLog->addDisplayer(&fd);
-    WarningLog->addDisplayer(&fd);
-    ErrorLog->addDisplayer(&fd);
+		return true;
+	}
+	/*
+	 * Initialization
+	 */
+	void init()
+	{
+		DebugLog->addDisplayer(&fd);
+		InfoLog->addDisplayer(&fd);
+		WarningLog->addDisplayer(&fd);
+		ErrorLog->addDisplayer(&fd);
 
-    // Connect to the ping service
-    CUnifiedNetwork *instance = CUnifiedNetwork::getInstance();
+		// Connect to the ping service
+		CUnifiedNetwork *instance = CUnifiedNetwork::getInstance();
 
-    instance->setServiceUpCallback("PS", cbUpPS, NULL);
-    instance->setServiceDownCallback("PS", cbDownPS, NULL);
+		instance->setServiceUpCallback("PS", cbUpPS, NULL);
+		instance->setServiceDownCallback("PS", cbDownPS, NULL);
 
-    instance->setServiceUpCallback("*", cbUpService, NULL);
-    instance->setServiceDownCallback("*", cbDownService, NULL);
-  }
+		instance->setServiceUpCallback("*", cbUpService, NULL);
+		instance->setServiceDownCallback("*", cbDownService, NULL);
+	}
 };
 
 /*
- * Declare a service with the class IService, the names "PS" (short) and
- * "ping_service" (long). The port is automatically allocated (0) and the main
- * callback array is CallbackArray.
+ * Declare a service with the class IService, the names "PS" (short) and "ping_service" (long).
+ * The port is automatically allocated (0) and the main callback array is CallbackArray.
  */
-NLNET_SERVICE_MAIN(CPlayerService, "PLS", "player_service", 0, CallbackArray,
-                   "", "")
+NLNET_SERVICE_MAIN(CPlayerService, "PLS", "player_service", 0, CallbackArray, "", "")

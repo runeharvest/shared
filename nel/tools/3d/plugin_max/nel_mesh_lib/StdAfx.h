@@ -29,13 +29,13 @@
 // #include "nel/misc/types_nl.h"
 //  Max SDK includes
 // #define NOMINMAX
-#include <algorithm>
 #include <assert.h>
-#include <iparamb2.h>
+#include <algorithm>
 #include <max.h>
-#include <maxversion.h>
-#include <shaders.h>
 #include <stdmat.h>
+#include <shaders.h>
+#include <iparamb2.h>
+#include <maxversion.h>
 #if MAX_VERSION_MAJOR >= 14
 #include <maxscript/maxscript.h>
 #else
@@ -54,24 +54,23 @@
 #undef min
 #undef max
 
-#include <map>
 #include <string>
 #include <vector>
+#include <map>
 
 #include "../nel_patch_lib/rpo.h"
-#include "nel/3d/light.h"
+#include "nel/misc/time_nl.h"
+#include "nel/misc/file.h"
+#include "nel/misc/triangle.h"
+#include "nel/misc/bsphere.h"
+#include "nel/misc/string_common.h"
 #include "nel/3d/quad_tree.h"
 #include "nel/3d/scene_group.h"
 #include "nel/3d/skeleton_shape.h"
 #include "nel/3d/texture_file.h"
-#include "nel/misc/bsphere.h"
-#include "nel/misc/file.h"
-#include "nel/misc/string_common.h"
-#include "nel/misc/time_nl.h"
-#include "nel/misc/triangle.h"
+#include "nel/3d/light.h"
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before
-// the previous line.
+// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
 #endif // !defined(AFX_STDAFX_H__7B19FB21_D10C_11D4_9CD4_0050DAC3A412__INCLUDED_)

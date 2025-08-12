@@ -25,8 +25,8 @@
  */
 
 // We're using the NeL Service framework, and layer 5
-#include "nel/misc/displayer.h"
 #include "nel/net/service.h"
+#include "nel/misc/displayer.h"
 
 using namespace NLNET;
 using namespace NLMISC;
@@ -39,8 +39,7 @@ CFileDisplayer fd("ps.log");
  * Arguments:
  * - msgin:	the incoming message (coming from a client)
  * - from: the "sockid" of the sender client
- * - server: the CCallbackNetBase object (which really is a CCallbackServer
- * object, for a server)
+ * - server: the CCallbackNetBase object (which really is a CCallbackServer object, for a server)
  *
  * Input (expected message from a client): PING
  * - uint32: ping counter
@@ -48,65 +47,69 @@ CFileDisplayer fd("ps.log");
  * Output (sent message to the ping server): PONG
  * - uint32: ping counter
  */
-void cbPing(CMessage &msgin, const std::string &serviceName, TServiceId sid) {
-  uint32 counter;
+void cbPing(CMessage &msgin, const std::string &serviceName, TServiceId sid)
+{
+	uint32 counter;
 
-  // Input
-  msgin.serial(counter);
+	// Input
+	msgin.serial(counter);
 
-  // Output (uses layer 4 but this is not really necessary, see server.cpp in
-  // layer 3 example)
-  CMessage msgout("PONG");
-  msgout.serial(counter);
-  CUnifiedNetwork::getInstance()->send(sid, msgout);
+	// Output (uses layer 4 but this is not really necessary, see server.cpp in layer 3 example)
+	CMessage msgout("PONG");
+	msgout.serial(counter);
+	CUnifiedNetwork::getInstance()->send(sid, msgout);
 
-  nlinfo("PING -> PONG %u", counter);
+	nlinfo("PING -> PONG %u", counter);
 }
 
 //
-void cbUpService(const std::string &serviceName, TServiceId sid, void *arg) {
-  nlinfo("Service %s %d is up", serviceName.c_str(), sid.get());
+void cbUpService(const std::string &serviceName, TServiceId sid, void *arg)
+{
+	nlinfo("Service %s %d is up", serviceName.c_str(), sid.get());
 
-  // Output (uses layer 4 but this is not really necessary, see server.cpp in
-  // layer 3 example)
-  CMessage msgout("PONG");
-  uint32 counter = 0xFFFFFFFF;
-  msgout.serial(counter);
-  CUnifiedNetwork::getInstance()->send(sid, msgout);
+	// Output (uses layer 4 but this is not really necessary, see server.cpp in layer 3 example)
+	CMessage msgout("PONG");
+	uint32 counter = 0xFFFFFFFF;
+	msgout.serial(counter);
+	CUnifiedNetwork::getInstance()->send(sid, msgout);
 }
 
-void cbDownService(const std::string &serviceName, TServiceId sid, void *arg) {
-  nlinfo("Service %s %d is down", serviceName.c_str(), sid.get());
+void cbDownService(const std::string &serviceName, TServiceId sid, void *arg)
+{
+	nlinfo("Service %s %d is down", serviceName.c_str(), sid.get());
 }
 
 /*
  * Callback array for messages received from a client
  */
-TUnifiedCallbackItem CallbackArray[] = {{"PING", cbPing}};
+TUnifiedCallbackItem CallbackArray[] = {
+	{ "PING", cbPing }
+};
 
 //
-class CPingService : public IService {
+class CPingService : public IService
+{
 public:
-  /*
-   * Initialization
-   */
-  void init() {
-    DebugLog->addDisplayer(&fd);
-    InfoLog->addDisplayer(&fd);
-    WarningLog->addDisplayer(&fd);
-    ErrorLog->addDisplayer(&fd);
+	/*
+	 * Initialization
+	 */
+	void init()
+	{
+		DebugLog->addDisplayer(&fd);
+		InfoLog->addDisplayer(&fd);
+		WarningLog->addDisplayer(&fd);
+		ErrorLog->addDisplayer(&fd);
 
-    // Connect to the ping service
-    CUnifiedNetwork *instance = CUnifiedNetwork::getInstance();
+		// Connect to the ping service
+		CUnifiedNetwork *instance = CUnifiedNetwork::getInstance();
 
-    instance->setServiceUpCallback("*", cbUpService, NULL);
-    instance->setServiceDownCallback("*", cbDownService, NULL);
-  }
+		instance->setServiceUpCallback("*", cbUpService, NULL);
+		instance->setServiceDownCallback("*", cbDownService, NULL);
+	}
 };
 
 /*
- * Declare a service with the class IService, the names "PS" (short) and
- * "ping_service" (long). The port is automatically allocated (0) and the main
- * callback array is CallbackArray.
+ * Declare a service with the class IService, the names "PS" (short) and "ping_service" (long).
+ * The port is automatically allocated (0) and the main callback array is CallbackArray.
  */
 NLNET_SERVICE_MAIN(CPingService, "PS", "ping_service", 0, CallbackArray, "", "")

@@ -20,9 +20,9 @@
 #include "std3d.h"
 
 #include "nel/3d/init_3d.h"
-#include "nel/3d/register_3d.h"
-#include "nel/3d/scene.h"
 #include <cfloat>
+#include "nel/3d/scene.h"
+#include "nel/3d/register_3d.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -34,25 +34,24 @@ static bool _Initialized = false;
 
 namespace NL3D {
 
-void init3d() {
+void init3d()
+{
 
-  if (_Initialized)
-    return;
+	if (_Initialized)
+		return;
 
-    // Init for windows
+		// Init for windows
 #ifdef NL_OS_WINDOWS
-    // Enable FPU exceptions
+		// Enable FPU exceptions
 
-    // Enable divid by zero and  overflow exception
-    //_control87
-    //(_EM_INVALID|_EM_DENORMAL/*|_EM_ZERODIVIDE|_EM_OVERFLOW*/|_EM_UNDERFLOW|_EM_INEXACT,
-    //_MCW_EM);
+		// Enable divid by zero and  overflow exception
+		//_control87 (_EM_INVALID|_EM_DENORMAL/*|_EM_ZERODIVIDE|_EM_OVERFLOW*/|_EM_UNDERFLOW|_EM_INEXACT, _MCW_EM);
 #endif // NL_OS_WINDOWS
 
-  NL3D::registerSerial3d();
-  CScene::registerBasics();
+	NL3D::registerSerial3d();
+	CScene::registerBasics();
 
-  _Initialized = true;
+	_Initialized = true;
 }
 
-} // namespace NL3D
+} // NL3D

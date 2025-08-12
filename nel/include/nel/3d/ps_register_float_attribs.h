@@ -21,6 +21,6 @@
 namespace NL3D {
 /// Register attribute makers based on floats (used in particle systems)
 void PSRegisterFloatAttribs();
-} // namespace NL3D
+} // NL3D
 
 #endif

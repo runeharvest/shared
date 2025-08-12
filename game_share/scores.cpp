@@ -26,19 +26,26 @@ namespace SCORES {
 
 // The conversion table
 const CStringConversion<TScores>::CPair stringTable[] = {
-    {"HitPoints", hit_points},
-    {"Stamina", stamina},
-    {"Sap", sap},
-    {"Focus", focus},
+	{ "HitPoints", hit_points },
+	{ "Stamina", stamina },
+	{ "Sap", sap },
+	{ "Focus", focus },
 };
 
-CStringConversion<TScores>
-    conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]),
-               unknown);
+CStringConversion<TScores> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]), unknown);
 
-TScores toScore(const std::string &str) { return conversion.fromString(str); }
+TScores toScore(const std::string &str)
+{
+	return conversion.fromString(str);
+}
 
-const std::string &toString(TScores s) { return conversion.toString(s); }
+const std::string &toString(TScores s)
+{
+	return conversion.toString(s);
+}
 
-const std::string &toString(uint s) { return conversion.toString((TScores)s); }
-}; // namespace SCORES
+const std::string &toString(uint s)
+{
+	return conversion.toString((TScores)s);
+}
+}; // SCORES

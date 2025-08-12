@@ -17,8 +17,8 @@
 #ifndef NL_TILE_NOISE_MAP_H
 #define NL_TILE_NOISE_MAP_H
 
-#include "nel/misc/stream.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/stream.h"
 
 namespace NL3D {
 
@@ -35,16 +35,16 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2001
  */
-class CTileNoiseMap {
+class CTileNoiseMap
+{
 public:
-  // The array of pixels. -127 is mapped to -NL3D_NOISE_MAX, and +127 is mapped
-  // to NL3D_NOISE_MAX.
-  sint8 Pixels[NL3D_TILE_NOISE_MAP_SIZE * NL3D_TILE_NOISE_MAP_SIZE];
+	// The array of pixels. -127 is mapped to -NL3D_NOISE_MAX, and +127 is mapped to NL3D_NOISE_MAX.
+	sint8 Pixels[NL3D_TILE_NOISE_MAP_SIZE * NL3D_TILE_NOISE_MAP_SIZE];
 
-  void serial(NLMISC::IStream &f);
+	void serial(NLMISC::IStream &f);
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_TILE_NOISE_MAP_H
 

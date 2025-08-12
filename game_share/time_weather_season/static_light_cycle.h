@@ -17,8 +17,8 @@
 #ifndef RY_STATIC_LIGHT_CYCLE_H
 #define RY_STATIC_LIGHT_CYCLE_H
 
-#include "nel/georges/load_form.h"
 #include "nel/misc/types_nl.h"
+#include "nel/georges/load_form.h"
 
 /**
  * Class containing the data used to manage day cycles ( read from sheets )
@@ -26,40 +26,44 @@
  * \author Nevrax France
  * \date 2003
  */
-class CStaticLightCycle {
+class CStaticLightCycle
+{
 public:
-  struct SLightCycle {
-    float DayHour;
-    float DayToDuskHour;
-    float DuskToNightHour;
-    float NightHour;
-    float NightToDayHour;
+	struct SLightCycle
+	{
+		float DayHour;
+		float DayToDuskHour;
+		float DuskToNightHour;
+		float NightHour;
+		float NightToDayHour;
 
-    /// serialize
-    void serial(NLMISC::IStream &f) {
-      f.serial(DayHour);
-      f.serial(DayToDuskHour);
-      f.serial(DuskToNightHour);
-      f.serial(NightHour);
-      f.serial(NightToDayHour);
-    }
-  };
+		/// serialize
+		void serial(NLMISC::IStream &f)
+		{
+			f.serial(DayHour);
+			f.serial(DayToDuskHour);
+			f.serial(DuskToNightHour);
+			f.serial(NightHour);
+			f.serial(NightToDayHour);
+		}
+	};
 
-  std::vector<SLightCycle> LightCycles;
+	std::vector<SLightCycle> LightCycles;
 
-  /// serialize
-  void serial(NLMISC::IStream &f) { f.serialCont(LightCycles); }
+	/// serialize
+	void serial(NLMISC::IStream &f)
+	{
+		f.serialCont(LightCycles);
+	}
 
-  /// read the sheet
-  virtual void readGeorges(const NLMISC::CSmartPtr<NLGEORGES::UForm> &form,
-                           const NLMISC::CSheetId &sheetId);
+	/// read the sheet
+	virtual void readGeorges(const NLMISC::CSmartPtr<NLGEORGES::UForm> &form, const NLMISC::CSheetId &sheetId);
 
-  // return the version of this class, increments this value when the content of
-  // this class changed
-  static uint getVersion() { return 1; }
+	// return the version of this class, increments this value when the content of this class changed
+	static uint getVersion() { return 1; }
 
-  /// called when the sheet is removed
-  void removed() {}
+	/// called when the sheet is removed
+	void removed() { }
 };
 
 #endif // RY_STATIC_LIGHT_CYCLE_H

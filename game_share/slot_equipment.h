@@ -21,46 +21,45 @@
 
 namespace SLOT_EQUIPMENT {
 // Mode
-enum TSlotEquipment {
-  HEADDRESS,
-  HEAD,
-  FACE,
-  EARL,
-  EARR,
-  NECKLACE,
-  CHEST,
-  ARMS,
-  WRISTL,
-  WRISTR,
-  HANDS,
-  HANDL,
-  HANDR,
-  FINGERL,
-  FINGERR,
-  LEGS,
-  ANKLEL,
-  ANKLER,
-  FEET,
+enum TSlotEquipment
+{
+	HEADDRESS,
+	HEAD,
+	FACE,
+	EARL,
+	EARR,
+	NECKLACE,
+	CHEST,
+	ARMS,
+	WRISTL,
+	WRISTR,
+	HANDS,
+	HANDL,
+	HANDR,
+	FINGERL,
+	FINGERR,
+	LEGS,
+	ANKLEL,
+	ANKLER,
+	FEET,
 
-  NB_SLOT_EQUIPMENT,
-  UNDEFINED = NB_SLOT_EQUIPMENT
+	NB_SLOT_EQUIPMENT,
+	UNDEFINED = NB_SLOT_EQUIPMENT
 };
 
 /**
  * Convert a slot name to slot equipment enum
  * \param str the input string
- * \return the TSlotEquipment associated to this string (UNDEFINED if the string
- * cannot be interpreted)
+ * \return the TSlotEquipment associated to this string (UNDEFINED if the string cannot be interpreted)
  */
 TSlotEquipment stringToSlotEquipment(const std::string &str);
 
 /**
- * Convert a slot enum to george string (only for george read, do not use this
- * for game)
+ * Convert a slot enum to george string (only for george read, do not use this for game)
  */
 const std::string &toString(TSlotEquipment);
 
-}; // namespace SLOT_EQUIPMENT
+}; // SLOTTYPE
 
 #endif // RY_SLOT_EQUIPMENT_H
 /* End of slot_equipment.h */

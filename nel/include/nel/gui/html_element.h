@@ -17,8 +17,8 @@
 #ifndef CL_HTML_ELEMENT_H
 #define CL_HTML_ELEMENT_H
 
-#include "nel/gui/css_style.h"
 #include "nel/misc/types_nl.h"
+#include "nel/gui/css_style.h"
 
 namespace NLGUI {
 /**
@@ -26,80 +26,83 @@ namespace NLGUI {
  * \date 2019-04-25 18:23 GMT
  * \author Meelis Mägi (Nimetu)
  */
-class CHtmlElement {
+class CHtmlElement
+{
 public:
-  enum ENodeType {
-    NONE = 0,
-    ELEMENT_NODE = 1,
-    TEXT_NODE = 3,
-  };
+	enum ENodeType
+	{
+		NONE = 0,
+		ELEMENT_NODE = 1,
+		TEXT_NODE = 3,
+	};
 
-  uint ID; // libwww element enum
-  ENodeType Type;
-  std::string Value; // text node value or element node name
-  std::map<std::string, std::string> Attributes;
-  std::list<CHtmlElement> Children;
+	uint ID; // libwww element enum
+	ENodeType Type;
+	std::string Value; // text node value or element node name
+	std::map<std::string, std::string> Attributes;
+	std::list<CHtmlElement> Children;
 
-  // class names for css matching
-  std::set<std::string> ClassNames;
+	// class names for css matching
+	std::set<std::string> ClassNames;
 
-  // defined style and :before/:after pseudo elements
-  TStyle Style;
+	// defined style and :before/:after pseudo elements
+	TStyle Style;
 
-  // hierarchy
-  CHtmlElement *parent;
-  CHtmlElement *previousSibling;
-  CHtmlElement *nextSibling;
+	// hierarchy
+	CHtmlElement *parent;
+	CHtmlElement *previousSibling;
+	CHtmlElement *nextSibling;
 
-  // n'th ELEMENT_NODE in parent.Children, for :nth-child() rules
-  uint childIndex;
+	// n'th ELEMENT_NODE in parent.Children, for :nth-child() rules
+	uint childIndex;
 
-  CHtmlElement(ENodeType type = NONE, std::string value = "");
+	CHtmlElement(ENodeType type = NONE, std::string value = "");
 
-  // returns true if rhs is same pointer
-  friend bool operator==(const CHtmlElement &lhs, const CHtmlElement &rhs) {
-    return &lhs == &rhs;
-  }
+	// returns true if rhs is same pointer
+	friend bool operator==(const CHtmlElement &lhs, const CHtmlElement &rhs)
+	{
+		return &lhs == &rhs;
+	}
 
-  bool hasAttribute(const std::string &key) const;
+	bool hasAttribute(const std::string &key) const;
 
-  bool hasNonEmptyAttribute(const std::string &key) const;
+	bool hasNonEmptyAttribute(const std::string &key) const;
 
-  std::string getAttribute(const std::string &key) const;
+	std::string getAttribute(const std::string &key) const;
 
-  bool hasClass(const std::string &key) const;
+	bool hasClass(const std::string &key) const;
 
-  // update Children index/parent/next/prevSibling pointers
-  void reindexChilds();
+	// update Children index/parent/next/prevSibling pointers
+	void reindexChilds();
 
-  // escape text tag or attribute value
-  std::string htmlEscape(const std::string &val) const;
+	// escape text tag or attribute value
+	std::string htmlEscape(const std::string &val) const;
 
-  // serialize element attributes as string
-  std::string serializeAttributes(bool escape = true) const;
+	// serialize element attributes as string
+	std::string serializeAttributes(bool escape = true) const;
 
-  // serialize child elements as html string
-  std::string serializeChilds(bool escape = true) const;
+	// serialize child elements as html string
+	std::string serializeChilds(bool escape = true) const;
 
-  // serialize itself and children as html string
-  std::string serialize(bool escape = true) const;
+	// serialize itself and children as html string
+	std::string serialize(bool escape = true) const;
 
-  // debug
-  std::string toString(bool tree = false, uint depth = 0) const;
+	// debug
+	std::string toString(bool tree = false, uint depth = 0) const;
 
-  // query, get, set pseudo element style rules
-  void clearPseudo();
-  bool hasPseudo(const std::string &key) const;
-  TStyle getPseudo(const std::string &key) const;
-  void setPseudo(const std::string &key, const TStyle &style);
+	// query, get, set pseudo element style rules
+	void clearPseudo();
+	bool hasPseudo(const std::string &key) const;
+	TStyle getPseudo(const std::string &key) const;
+	void setPseudo(const std::string &key, const TStyle &style);
 
-  // return lang property for css :lang() pseudo class
-  std::string getInheritedLanguage() const;
+	// return lang property for css :lang() pseudo class
+	std::string getInheritedLanguage() const;
 
 private:
-  // pseudo elements like ":before" and ":after"
-  std::map<std::string, TStyle> _Pseudo;
+	// pseudo elements like ":before" and ":after"
+	std::map<std::string, TStyle> _Pseudo;
 };
-} // namespace NLGUI
+}
 
 #endif

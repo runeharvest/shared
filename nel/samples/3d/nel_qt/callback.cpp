@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "callback.h"
 #include <nel/misc/types_nl.h>
+#include "callback.h"
 
 // STL includes
 
@@ -31,18 +31,20 @@ namespace NLQT {
 
 typedef CCallback<bool, const int &> CTestCallback;
 bool test_blah(const int &) { return false; }
-class CTestMeeeee {
+class CTestMeeeee
+{
 public:
-  CTestMeeeee() {}
-  bool test_method(const int &) { return true; }
+	CTestMeeeee() { }
+	bool test_method(const int &) { return true; }
 };
-void dummy_callback_cpp() {
-  int whaha = 0;
-  CTestCallback testCallback;
-  testCallback.callback(whaha);
-  testCallback = CTestCallback(test_blah);
-  CTestMeeeee blahsomething;
-  testCallback = CTestCallback(&blahsomething, &CTestMeeeee::test_method);
+void dummy_callback_cpp()
+{
+	int whaha = 0;
+	CTestCallback testCallback;
+	testCallback.callback(whaha);
+	testCallback = CTestCallback(test_blah);
+	CTestMeeeee blahsomething;
+	testCallback = CTestCallback(&blahsomething, &CTestMeeeee::test_method);
 }
 
 } /* namespace NLQT */

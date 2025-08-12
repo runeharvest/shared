@@ -20,25 +20,25 @@
 #include "nel/misc/types_nl.h"
 
 namespace PROTECTION_TYPE {
-enum TProtectionType {
-  Acid = 0,
-  Cold,
-  Rot,
-  Fire,        // Fyros speciality
-  Shockwave,   // Tryker speciality
-  Poison,      // Matis speciality
-  Electricity, // Zorai speciality
+enum TProtectionType
+{
+	Acid = 0,
+	Cold,
+	Rot,
+	Fire, // Fyros speciality
+	Shockwave, // Tryker speciality
+	Poison, // Matis speciality
+	Electricity, // Zorai speciality
 
-  None,
+	None,
 
-  NB_PROTECTION_TYPE = None
+	NB_PROTECTION_TYPE = None
 };
 
 /**
  * get protection type corresponding to input string
  * \param str the input string
- * \return the TProtectionType associated to this string (nothing if the string
- * cannot be interpreted)
+ * \return the TProtectionType associated to this string (nothing if the string cannot be interpreted)
  */
 TProtectionType fromString(const std::string &str);
 
@@ -49,7 +49,7 @@ TProtectionType fromString(const std::string &str);
  */
 const std::string &toString(TProtectionType type);
 
-}; // namespace PROTECTION_TYPE
+}; // PROTECTION_TYPE
 
 #endif // RYZOM_PROTECTION_TYPE_H
 /* End of protection_type.h */

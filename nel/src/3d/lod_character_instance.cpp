@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "std3d.h"
 #include "nel/3d/lod_character_instance.h"
 #include "nel/3d/lod_character_manager.h"
-#include "std3d.h"
 
 #ifdef DEBUG_NEW
 #define new DEBUG_NEW
@@ -25,20 +25,23 @@
 namespace NL3D {
 
 // ***************************************************************************
-CLodCharacterInstance::~CLodCharacterInstance() {
-  // If the texture was allocated.
-  if (_TextureId >= 0) {
-    nlassert(_Owner);
-    _Owner->releaseInstance(*this);
-  }
+CLodCharacterInstance::~CLodCharacterInstance()
+{
+	// If the texture was allocated.
+	if (_TextureId >= 0)
+	{
+		nlassert(_Owner);
+		_Owner->releaseInstance(*this);
+	}
 }
 
 // ***************************************************************************
-const CUV *CLodCharacterInstance::getUVs() const {
-  if (_UVs.empty())
-    return NULL;
+const CUV *CLodCharacterInstance::getUVs() const
+{
+	if (_UVs.empty())
+		return NULL;
 
-  return &_UVs[0];
+	return &_UVs[0];
 }
 
-} // namespace NL3D
+} // NL3D

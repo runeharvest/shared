@@ -27,7 +27,13 @@
 // Namespace People in game share
 namespace GSGENDER {
 // All different gender
-enum EGender { male = 0, female, neutral, unknown };
+enum EGender
+{
+	male = 0,
+	female,
+	neutral,
+	unknown
+};
 
 const std::string StringMale("Male");
 const std::string StringFemale("Female");
@@ -35,29 +41,37 @@ const std::string StringNeutral("Neutral");
 const std::string StringUnknown("Unknown");
 
 /// Return an enum according to the string parameter.
-inline EGender stringToEnum(const std::string &str) {
-  if (str == StringMale) {
-    return male;
-  } else if (str == StringFemale) {
-    return female;
-  } else if (str == StringNeutral) {
-    return neutral;
-  }
-  return unknown;
+inline EGender stringToEnum(const std::string &str)
+{
+	if (str == StringMale)
+	{
+		return male;
+	}
+	else if (str == StringFemale)
+	{
+		return female;
+	}
+	else if (str == StringNeutral)
+	{
+		return neutral;
+	}
+	return unknown;
 }
 
 /// Return a string according to the enum parameter
-inline const std::string &toString(EGender gender) {
-  switch (gender) {
-  case male:
-    return StringMale;
-  case female:
-    return StringFemale;
-  case neutral:
-    return StringNeutral;
-  default:
-    return StringUnknown;
-  }
+inline const std::string &toString(EGender gender)
+{
+	switch (gender)
+	{
+	case male:
+		return StringMale;
+	case female:
+		return StringFemale;
+	case neutral:
+		return StringNeutral;
+	default:
+		return StringUnknown;
+	}
 }
 }; // namespace GSGENDER
 

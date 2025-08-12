@@ -26,49 +26,57 @@ using NLMISC::CVector;
 
 // ***************************************************************************
 /**
- * A scissor, used for IDriver rendering. NB: you can specify negative values
- * for x/y. \author Lionel Berenguier \author Nevrax France \date 2001
+ * A scissor, used for IDriver rendering. NB: you can specify negative values for x/y.
+ * \author Lionel Berenguier
+ * \author Nevrax France
+ * \date 2001
  */
 /* *** IMPORTANT ********************
- * *** IF YOU MODIFY THE STRUCTURE OF THIS CLASS, PLEASE INCREMENT
- * IDriver::InterfaceVersion TO INVALIDATE OLD DRIVER DLL
+ * *** IF YOU MODIFY THE STRUCTURE OF THIS CLASS, PLEASE INCREMENT IDriver::InterfaceVersion TO INVALIDATE OLD DRIVER DLL
  * **********************************
  */
-class CScissor {
+class CScissor
+{
 public:
-  float X;
-  float Y;
-  float Width;
-  float Height;
+	float X;
+	float Y;
+	float Width;
+	float Height;
 
-  /// Constructor. fullScreen.
-  CScissor() { initFullScreen(); }
-  /// Constructor.
-  CScissor(float x, float y, float width, float height) {
-    X = x;
-    Y = y;
-    Width = width;
-    Height = height;
-  }
+	/// Constructor. fullScreen.
+	CScissor()
+	{
+		initFullScreen();
+	}
+	/// Constructor.
+	CScissor(float x, float y, float width, float height)
+	{
+		X = x;
+		Y = y;
+		Width = width;
+		Height = height;
+	}
 
-  /// init. simple copy.
-  void init(float x, float y, float width, float height) {
-    X = x;
-    Y = y;
-    Width = width;
-    Height = height;
-  }
+	/// init. simple copy.
+	void init(float x, float y, float width, float height)
+	{
+		X = x;
+		Y = y;
+		Width = width;
+		Height = height;
+	}
 
-  /// reset to FullScreen
-  void initFullScreen() {
-    X = 0;
-    Y = 0;
-    Width = 1;
-    Height = 1;
-  }
+	/// reset to FullScreen
+	void initFullScreen()
+	{
+		X = 0;
+		Y = 0;
+		Width = 1;
+		Height = 1;
+	}
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_SCISSOR_H
 

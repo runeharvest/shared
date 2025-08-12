@@ -17,9 +17,9 @@
 #ifndef NL_LIGHT_TRAV_H
 #define NL_LIGHT_TRAV_H
 
-#include "nel/3d/fast_ptr_list.h"
-#include "nel/3d/lighting_manager.h"
 #include "nel/3d/trav_scene.h"
+#include "nel/3d/lighting_manager.h"
+#include "nel/3d/fast_ptr_list.h"
 
 namespace NL3D {
 
@@ -42,54 +42,54 @@ class CPointLightModel;
  * \author Nevrax France
  * \date 2000
  */
-class CLightTrav : public CTraversal {
+class CLightTrav : public CTraversal
+{
 public:
-  /// Constructor
-  CLightTrav(bool bSmallScene);
+	/// Constructor
+	CLightTrav(bool bSmallScene);
 
-  /// ITrav/ITravScene Implementation.
-  //@{
-  void traverse();
-  //@}
+	/// ITrav/ITravScene Implementation.
+	//@{
+	void traverse();
+	//@}
 
-  /// \name LightingList. Filled during clip traversal.
-  //@{
-  /// Clear the list of lighted models.
-  void clearLightedList();
-  /// Add a model to the list of lighted models. \b DOESN'T \b CHECK if already
-  /// inserted.
-  void addLightedModel(CTransform *m) {
-    _LightedList[_CurrentNumVisibleModels] = m;
-    _CurrentNumVisibleModels++;
-  }
-  // for createModel().
-  void reserveLightedList(uint numModels);
-  //@}
+	/// \name LightingList. Filled during clip traversal.
+	//@{
+	/// Clear the list of lighted models.
+	void clearLightedList();
+	/// Add a model to the list of lighted models. \b DOESN'T \b CHECK if already inserted.
+	void addLightedModel(CTransform *m)
+	{
+		_LightedList[_CurrentNumVisibleModels] = m;
+		_CurrentNumVisibleModels++;
+	}
+	// for createModel().
+	void reserveLightedList(uint numModels);
+	//@}
 
-  /// \name LightingList. Add a PointLightModel to the list.
-  //@{
-  void addPointLightModel(CPointLightModel *pl);
-  //@}
+	/// \name LightingList. Add a PointLightModel to the list.
+	//@{
+	void addPointLightModel(CPointLightModel *pl);
+	//@}
 
 public:
-  // False by default. setuped by CScene
-  bool LightingSystemEnabled;
+	// False by default. setuped by CScene
+	bool LightingSystemEnabled;
 
-  /// The lightingManager, where objects/lights are inserted, and
-  /// modelContributions are computed
-  CLightingManager LightingManager;
+	/// The lightingManager, where objects/lights are inserted, and modelContributions are computed
+	CLightingManager LightingManager;
 
-  // ********************
+	// ********************
 private:
-  // A grow only list of models to be lighted.
-  std::vector<CTransform *> _LightedList;
-  uint32 _CurrentNumVisibleModels;
+	// A grow only list of models to be lighted.
+	std::vector<CTransform *> _LightedList;
+	uint32 _CurrentNumVisibleModels;
 
-  // A fast linked list of models to be lighted.
-  CFastPtrList<CPointLightModel> _DynamicLightList;
+	// A fast linked list of models to be lighted.
+	CFastPtrList<CPointLightModel> _DynamicLightList;
 };
 
-} // namespace NL3D
+}
 
 #endif // NL_LIGHT_TRAV_H
 

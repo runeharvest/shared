@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stat_db_tree_pd.h"
 #include "stdpch.h"
+#include "stat_db_tree_pd.h"
 
 using namespace std;
 using namespace NLMISC;
@@ -27,9 +27,9 @@ using namespace NLMISC;
 // ****************************************************************************
 #define PERSISTENT_CLASS CStatDBValueLeafPD
 
-#define PERSISTENT_DATA                                                        \
-  PROP(string, Path)                                                           \
-  PROP(sint32, Value)
+#define PERSISTENT_DATA \
+	PROP(string, Path)  \
+	PROP(sint32, Value)
 
 // #pragma message( PERSISTENT_GENERATION_MESSAGE )
 #include "game_share/persistent_data_template.h"
@@ -37,10 +37,10 @@ using namespace NLMISC;
 // ****************************************************************************
 #define PERSISTENT_CLASS CStatDBTableLeafPD
 
-#define PERSISTENT_DATA                                                        \
-  PROP(string, Path)                                                           \
-  PROP_MAP(CEntityId, sint32, PlayerValues)                                    \
-  PROP_MAP(EGSPD::TGuildId, sint32, GuildValues)
+#define PERSISTENT_DATA                       \
+	PROP(string, Path)                        \
+	PROP_MAP(CEntityId, sint32, PlayerValues) \
+	PROP_MAP(EGSPD::TGuildId, sint32, GuildValues)
 
 // #pragma message( PERSISTENT_GENERATION_MESSAGE )
 #include "game_share/persistent_data_template.h"
@@ -48,7 +48,8 @@ using namespace NLMISC;
 // ****************************************************************************
 #define PERSISTENT_CLASS CStatDBValueLeavesPD
 
-#define PERSISTENT_DATA STRUCT_VECT(ValueLeavesPD)
+#define PERSISTENT_DATA \
+	STRUCT_VECT(ValueLeavesPD)
 
 // #pragma message( PERSISTENT_GENERATION_MESSAGE )
 #include "game_share/persistent_data_template.h"

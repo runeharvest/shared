@@ -17,159 +17,158 @@
 #ifndef NL_PS_TAIL_DOT_H
 #define NL_PS_TAIL_DOT_H
 
-#include "nel/3d/index_buffer.h"
 #include "nel/3d/ps_ribbon_base.h"
 #include "nel/3d/vertex_buffer.h"
+#include "nel/3d/index_buffer.h"
 
 namespace NL3D {
 
 /**
- *  These particle are like dot, but a tail is following them. The number of
- * segments in the tails can be tuned.
+ *  These particle are like dot, but a tail is following them. The number of segments in the tails can be tuned.
  */
-class CPSTailDot : public CPSRibbonBase,
-                   public CPSColoredParticle,
-                   public CPSMaterial {
+class CPSTailDot : public CPSRibbonBase, public CPSColoredParticle, public CPSMaterial
+{
 public:
-  ///\name Object
-  ///@{
-  /// ctor
-  CPSTailDot();
-  /// dtor
-  ~CPSTailDot();
-  /// serialisation. Derivers must override this, and call their parent version
-  virtual void serial(NLMISC::IStream &f);
-  //
-  NLMISC_DECLARE_CLASS(CPSTailDot);
-  ///@}
+	///\name Object
+	///@{
+	/// ctor
+	CPSTailDot();
+	/// dtor
+	~CPSTailDot();
+	/// serialisation. Derivers must override this, and call their parent version
+	virtual void serial(NLMISC::IStream &f);
+	//
+	NLMISC_DECLARE_CLASS(CPSTailDot);
+	///@}
 
-  ///\name Behaviour
-  ///@{
-  /** (de)activate color fading
-   * when its done, colors fades to black along the tail.
-   */
-  virtual void setColorFading(bool onOff = true) {
-    _ColorFading = onOff;
-    touch();
-  }
+	///\name Behaviour
+	///@{
+	/** (de)activate color fading
+	 * when its done, colors fades to black along the tail.
+	 */
+	virtual void setColorFading(bool onOff = true)
+	{
+		_ColorFading = onOff;
+		touch();
+	}
 
-  /** Test whether color fading is activated.
-   */
-  virtual bool getColorFading(void) const { return _ColorFading; }
+	/** Test whether color fading is activated.
+	 */
+	virtual bool getColorFading(void) const
+	{
+		return _ColorFading;
+	}
 
-  /** tells in which basis is the tail
-   *  It requires one transform per particle if it is not the same as the
-   * located that hold that particle The default is false. With that you can
-   * control if a rotation of the system will rotate the tail
-   */
-  virtual void setSystemBasis(bool yes) {}
+	/** tells in which basis is the tail
+	 *  It requires one transform per particle if it is not the same as the located that hold that particle
+	 *  The default is false. With that you can control if a rotation of the system will rotate the tail
+	 */
+	virtual void setSystemBasis(bool yes) { }
 
-  /// return true if the tails are in the system basis
-  virtual bool isInSystemBasis(void) const { return true; }
+	/// return true if the tails are in the system basis
+	virtual bool isInSystemBasis(void) const { return true; }
 
-  // void setPersistAfterDeath(bool persit = true);
+	// void setPersistAfterDeath(bool persit = true);
 
-  /** return true if the ribbon light persist after death
-   *  \see _PersistAfterDeath()
-   */
-  // bool getPersistAfterDeath(void) const { return _DyingRibbons != NULL; }
+	/** return true if the ribbon light persist after death
+	 *  \see _PersistAfterDeath()
+	 */
+	// bool getPersistAfterDeath(void) const { return _DyingRibbons != NULL; }
 
-  ///@}
+	///@}
 
-  /// inherited from CPSParticle
-  virtual void step(TPSProcessPass pass);
+	/// inherited from CPSParticle
+	virtual void step(TPSProcessPass pass);
 
-  /// return true if there are transparent faces in the object
-  virtual bool hasTransparentFaces(void);
+	/// return true if there are transparent faces in the object
+	virtual bool hasTransparentFaces(void);
 
-  /// return true if there are Opaque faces in the object
-  virtual bool hasOpaqueFaces(void);
+	/// return true if there are Opaque faces in the object
+	virtual bool hasOpaqueFaces(void);
 
-  virtual uint32 getNumWantedTris() const;
+	virtual uint32 getNumWantedTris() const;
 
-  /// from CPSParticle : return true if there are lightable faces in the object
-  virtual bool hasLightableFaces() { return false; }
+	/// from CPSParticle : return true if there are lightable faces in the object
+	virtual bool hasLightableFaces() { return false; }
 
-  virtual bool supportGlobalColorLighting() const { return true; }
+	virtual bool supportGlobalColorLighting() const { return true; }
 
-  // from CPSParticle
-  virtual void setZBias(float value) { CPSMaterial::setZBias(value); }
-  virtual float getZBias() const { return CPSMaterial::getZBias(); }
+	// from CPSParticle
+	virtual void setZBias(float value) { CPSMaterial::setZBias(value); }
+	virtual float getZBias() const { return CPSMaterial::getZBias(); }
 
 protected:
-  /// interface to derived classes
+	/// interface to derived classes
 
-  // the number of dying ribbons that are present
-  // uint32							_NbDyingRibbons;
-  // a counter to tell how much frame is left for each ribbon
-  // std::vector<uint32>				_DyingRibbonsLifeLeft;
+	// the number of dying ribbons that are present
+	// uint32							_NbDyingRibbons;
+	// a counter to tell how much frame is left for each ribbon
+	// std::vector<uint32>				_DyingRibbonsLifeLeft;
 
-  /// inherited from CPSLocatedBindable
-  virtual void newElement(const CPSEmitterInfo &info);
-  /// inherited from CPSLocatedBindable
-  virtual void deleteElement(uint32 index);
-  /// inherited from CPSLocatedBindable
-  virtual void resize(uint32 size);
-  virtual CPSLocated *getSizeOwner(void) { return _Owner; }
-  virtual CPSLocated *getColorOwner(void) { return _Owner; }
+	/// inherited from CPSLocatedBindable
+	virtual void newElement(const CPSEmitterInfo &info);
+	/// inherited from CPSLocatedBindable
+	virtual void deleteElement(uint32 index);
+	/// inherited from CPSLocatedBindable
+	virtual void resize(uint32 size);
+	virtual CPSLocated *getSizeOwner(void) { return _Owner; }
+	virtual CPSLocated *getColorOwner(void) { return _Owner; }
 
 private:
-  /// update the material and the vb so that they match the color scheme.
-  /// Inherited from CPSColoredParticle
-  virtual void updateMatAndVbForColor(void);
+	/// update the material and the vb so that they match the color scheme. Inherited from CPSColoredParticle
+	virtual void updateMatAndVbForColor(void);
 
-  /// display a set of ribbons
-  void displayRibbons(uint32 nbRibbons, uint32 srcStep);
+	/// display a set of ribbons
+	void displayRibbons(uint32 nbRibbons, uint32 srcStep);
 
-  /**\name Vertex buffers & their corresponding index buffers. We keep a map of
-   * pretextured vertex buffer (with or without colors). Vb for ribbons that
-   * have the same size are shared.
-   */
+	/**\name Vertex buffers & their corresponding index buffers. We keep a map of pretextured vertex buffer (with or without colors).
+	 * Vb for ribbons that have the same size are shared.
+	 */
 
-  //@{
-  /** a struct containing a vertex buffer and the matching a primitive block
-   */
-  class CVBnPB {
-  public:
-    CVertexBuffer VB;
-    CIndexBuffer PB;
+	//@{
+	/** a struct containing a vertex buffer and the matching a primitive block
+	 */
+	class CVBnPB
+	{
+	public:
+		CVertexBuffer VB;
+		CIndexBuffer PB;
 
-  public:
-    CVBnPB() {
-      NL_SET_IB_NAME(PB, "CPSTailDot");
-      VB.setName("CPSTailDot");
-    }
-  };
+	public:
+		CVBnPB()
+		{
+			NL_SET_IB_NAME(PB, "CPSTailDot");
+			VB.setName("CPSTailDot");
+		}
+	};
 
-  typedef CHashMap<uint, CVBnPB> TVBMap;
+	typedef CHashMap<uint, CVBnPB> TVBMap;
 
-  static TVBMap _VBMap; // index / vertex buffers with no color
-  static TVBMap
-      _FadedVBMap; // index / vertex buffers for constant color with fading
-  static TVBMap _ColoredVBMap;      // index / vertex buffer + colors
-  static TVBMap _FadedColoredVBMap; // index / vertex buffer + faded colors
+	static TVBMap _VBMap; // index / vertex buffers with no color
+	static TVBMap _FadedVBMap; // index / vertex buffers for constant color with fading
+	static TVBMap _ColoredVBMap; // index / vertex buffer + colors
+	static TVBMap _FadedColoredVBMap; // index / vertex buffer + faded colors
 
-  /// get a vertex buffer and a primitive suited for the current ribbon
-  CVBnPB &getVBnPB();
+	/// get a vertex buffer and a primitive suited for the current ribbon
+	CVBnPB &getVBnPB();
 
-  /// get the number of ribbons contained in a vb for a given length. (e.g the
-  /// number of ribbons that can be batched)
-  uint getNumRibbonsInVB() const;
-  //@}
+	/// get the number of ribbons contained in a vb for a given length. (e.g the number of ribbons that can be batched)
+	uint getNumRibbonsInVB() const;
+	//@}
 
-  bool _ColorFading : 1;
-  bool _GlobalColor : 1; // to see whether the system uses global color
-  bool _Lighted : 1;
-  bool _ForceLighted : 1;
-  bool _Touch : 1; // we use this to see if we must setup the material again
+	bool _ColorFading : 1;
+	bool _GlobalColor : 1; // to see whether the system uses global color
+	bool _Lighted : 1;
+	bool _ForceLighted : 1;
+	bool _Touch : 1; // we use this to see if we must setup the material again
 
-  void touch() { _Touch = true; }
+	void touch() { _Touch = true; }
 
-  void updateMaterial();
-  void setupGlobalColor();
+	void updateMaterial();
+	void setupGlobalColor();
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_PS_TAIL_DOT_H
 

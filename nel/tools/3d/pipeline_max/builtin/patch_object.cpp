@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "patch_object.h"
 #include <nel/misc/types_nl.h>
+#include "patch_object.h"
 
 // STL includes
 
@@ -42,48 +42,65 @@ namespace PIPELINE {
 namespace MAX {
 namespace BUILTIN {
 
-CPatchObject::CPatchObject(CScene *scene) : CGeomObject(scene) {}
+CPatchObject::CPatchObject(CScene *scene)
+    : CGeomObject(scene)
+{
+}
 
-CPatchObject::~CPatchObject() {}
+CPatchObject::~CPatchObject()
+{
+}
 
 const ucstring CPatchObject::DisplayName = ucstring("PatchObject");
 const char *CPatchObject::InternalName = "PatchObject";
-const NLMISC::CClassId CPatchObject::ClassId =
-    NLMISC::CClassId(0xd0a6b36, 0x7dce4b64); /* Not official, please correct */
+const NLMISC::CClassId CPatchObject::ClassId = NLMISC::CClassId(0xd0a6b36, 0x7dce4b64); /* Not official, please correct */
 const TSClassId CPatchObject::SuperClassId = CGeomObject::SuperClassId;
 const CPatchObjectClassDesc PatchObjectClassDesc(&DllPluginDescBuiltin);
 
-void CPatchObject::parse(uint16 version, uint filter) {
-  CGeomObject::parse(version);
+void CPatchObject::parse(uint16 version, uint filter)
+{
+	CGeomObject::parse(version);
 }
 
-void CPatchObject::clean() { CGeomObject::clean(); }
-
-void CPatchObject::build(uint16 version, uint filter) {
-  CGeomObject::build(version);
+void CPatchObject::clean()
+{
+	CGeomObject::clean();
 }
 
-void CPatchObject::disown() { CGeomObject::disown(); }
-
-void CPatchObject::init() { CGeomObject::init(); }
-
-bool CPatchObject::inherits(const NLMISC::CClassId classId) const {
-  if (classId == classDesc()->classId())
-    return true;
-  return CGeomObject::inherits(classId);
+void CPatchObject::build(uint16 version, uint filter)
+{
+	CGeomObject::build(version);
 }
 
-const ISceneClassDesc *CPatchObject::classDesc() const {
-  return &PatchObjectClassDesc;
+void CPatchObject::disown()
+{
+	CGeomObject::disown();
 }
 
-void CPatchObject::toStringLocal(std::ostream &ostream, const std::string &pad,
-                                 uint filter) const {
-  CGeomObject::toStringLocal(ostream, pad);
+void CPatchObject::init()
+{
+	CGeomObject::init();
 }
 
-IStorageObject *CPatchObject::createChunkById(uint16 id, bool container) {
-  return CGeomObject::createChunkById(id, container);
+bool CPatchObject::inherits(const NLMISC::CClassId classId) const
+{
+	if (classId == classDesc()->classId()) return true;
+	return CGeomObject::inherits(classId);
+}
+
+const ISceneClassDesc *CPatchObject::classDesc() const
+{
+	return &PatchObjectClassDesc;
+}
+
+void CPatchObject::toStringLocal(std::ostream &ostream, const std::string &pad, uint filter) const
+{
+	CGeomObject::toStringLocal(ostream, pad);
+}
+
+IStorageObject *CPatchObject::createChunkById(uint16 id, bool container)
+{
+	return CGeomObject::createChunkById(id, container);
 }
 
 } /* namespace BUILTIN */

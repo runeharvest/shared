@@ -34,14 +34,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // STL includes
 
 // Qt includes
-#include <QLineEdit>
-#include <QTextEdit>
 #include <QWidget>
+#include <QTextEdit>
+#include <QLineEdit>
 
 // NeL includes
-#include <nel/misc/callback.h>
-#include <nel/misc/displayer.h>
 #include <nel/misc/log.h>
+#include <nel/misc/displayer.h>
+#include <nel/misc/callback.h>
 
 // Project includes
 
@@ -49,57 +49,58 @@ namespace NLQT {
 
 typedef NLMISC::CCallback<void, const std::string &> TCommandExecute;
 
-class CCommandLog : public QWidget {
-  Q_OBJECT
+class CCommandLog : public QWidget
+{
+	Q_OBJECT
 
 public:
-  CCommandLog(QWidget *parent);
-  virtual ~CCommandLog();
+	CCommandLog(QWidget *parent);
+	virtual ~CCommandLog();
 
-  void setExecCommand(const TCommandExecute &func) { m_Func = func; }
-  void doDisplay(const NLMISC::CLog::TDisplayInfo &args, const char *message);
+	void setExecCommand(const TCommandExecute &func) { m_Func = func; }
+	void doDisplay(const NLMISC::CLog::TDisplayInfo &args, const char *message);
 
-  void clear() { m_DisplayerOutput->clear(); }
+	void clear() { m_DisplayerOutput->clear(); }
 
 signals:
-  void tSigDisplay(const QColor &c, const QString &text);
-  void execCommand(const QString &cmd);
+	void tSigDisplay(const QColor &c, const QString &text);
+	void execCommand(const QString &cmd);
 
 private slots:
-  void returnPressed();
-  void tSlotDisplay(const QColor &c, const QString &text);
+	void returnPressed();
+	void tSlotDisplay(const QColor &c, const QString &text);
 
 private:
-  QTextEdit *m_DisplayerOutput;
-  QLineEdit *m_CommandInput;
-  TCommandExecute m_Func;
+	QTextEdit *m_DisplayerOutput;
+	QLineEdit *m_CommandInput;
+	TCommandExecute m_Func;
 
 private:
-  CCommandLog(const CCommandLog &);
-  CCommandLog &operator=(const CCommandLog &);
+	CCommandLog(const CCommandLog &);
+	CCommandLog &operator=(const CCommandLog &);
 
 }; /* class CCommandLog */
 
-class CCommandLogDisplayer : public CCommandLog, public NLMISC::IDisplayer {
-  Q_OBJECT
+class CCommandLogDisplayer : public CCommandLog, public NLMISC::IDisplayer
+{
+	Q_OBJECT
 
 public:
-  CCommandLogDisplayer(QWidget *parent);
-  virtual ~CCommandLogDisplayer();
+	CCommandLogDisplayer(QWidget *parent);
+	virtual ~CCommandLogDisplayer();
 
 protected:
-  virtual void doDisplay(const NLMISC::CLog::TDisplayInfo &args,
-                         const char *message);
+	virtual void doDisplay(const NLMISC::CLog::TDisplayInfo &args, const char *message);
 
 private slots:
-  void execCommandLog(const QString &cmd);
+	void execCommandLog(const QString &cmd);
 
 private:
-  NLMISC::CLog m_Log;
+	NLMISC::CLog m_Log;
 
 private:
-  CCommandLogDisplayer(const CCommandLogDisplayer &);
-  CCommandLogDisplayer &operator=(const CCommandLogDisplayer &);
+	CCommandLogDisplayer(const CCommandLogDisplayer &);
+	CCommandLogDisplayer &operator=(const CCommandLogDisplayer &);
 
 }; /* class CCommandLogDisplayer */
 

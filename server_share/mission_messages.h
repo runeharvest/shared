@@ -17,12 +17,12 @@
 #ifndef RY_MISSION_MESSAGES_H
 #define RY_MISSION_MESSAGES_H
 
-#include "game_share/base_types.h"
-#include "game_share/mission_desc.h"
-#include "game_share/synchronised_message.h"
-#include "nel/misc/sheet_id.h"
 #include "nel/misc/types_nl.h"
+#include "nel/misc/sheet_id.h"
 #include "nel/net/transport_class.h"
+#include "game_share/base_types.h"
+#include "game_share/synchronised_message.h"
+#include "game_share/mission_desc.h"
 
 /**
  * Message send by EGS to AIS to request a dynamic mission
@@ -87,8 +87,7 @@ public:
     /// parameter of the reward
     uint64							RewardParam;
 
-    void addKillCreatureStep( const TDataSetRow & endingBot, const
-NLMISC::CSheetId & sheet, uint32 quantity )
+    void addKillCreatureStep( const TDataSetRow & endingBot, const NLMISC::CSheetId & sheet, uint32 quantity )
     {
         StepTypes.push_back( MISSION_DESC::KillCreature );
         EndingStepBot.push_back( endingBot );
@@ -111,8 +110,7 @@ NLMISC::CSheetId & sheet, uint32 quantity )
         propertyCont ("StepParamUint2", PropUInt32,StepParamUint2);
 
         property ("RewardParam", PropUInt64, (uint64)0, RewardParam);
-        property ("RewardType", PropUInt8, (uint8)MISSION_DESC::NbReward,
-RewardType);
+        property ("RewardType", PropUInt8, (uint8)MISSION_DESC::NbReward, RewardType);
     }
 
     virtual void callback (const std::string &name, uint8 id) {}

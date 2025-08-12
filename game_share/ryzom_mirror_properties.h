@@ -20,17 +20,15 @@
 #ifndef NL_RYZOM_MIRROR_PROPERTIES_H
 #define NL_RYZOM_MIRROR_PROPERTIES_H
 
-#include "base_types.h"
 #include "nel/misc/types_nl.h"
+#include "base_types.h"
 
-// AI Service Tag for Mirror Traffic Reduction. Must not collide with a tag of
-// another service.
+// AI Service Tag for Mirror Traffic Reduction. Must not collide with a tag of another service.
 const TMTRTag AISTag = 1;
 
 /*
  * Dataset property indices. Must be assigned in mirror initialization callback,
- * using initRyzomVisualPropertyIndices() (or manually, using
- * CMirroredDataSet::getPropertyIndex(propName)).
+ * using initRyzomVisualPropertyIndices() (or manually, using CMirroredDataSet::getPropertyIndex(propName)).
  */
 
 // fe_temp

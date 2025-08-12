@@ -29,53 +29,61 @@
 using namespace NLMISC;
 using namespace std;
 
-int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                       LPTSTR lpCmdLine, int nCmdShow) {
-  // Register 3d
-  // vl: the init doesn't seem to be important here
-  //	registerSerial3d ();
-  //	CScene::registerBasics ();
-  //	init3d ();
+int APIENTRY _tWinMain(HINSTANCE hInstance,
+    HINSTANCE hPrevInstance,
+    LPTSTR lpCmdLine,
+    int nCmdShow)
+{
+	// Register 3d
+	// vl: the init doesn't seem to be important here
+	//	registerSerial3d ();
+	//	CScene::registerBasics ();
+	//	init3d ();
 
-  // Remove command line ""
-  TCHAR commandLine[512];
-  TCHAR *commandLinePtr = commandLine;
-  _tcscpy(commandLine, lpCmdLine);
-  if (commandLine[0] == _T('"'))
-    commandLinePtr++;
-  if (commandLinePtr[_tcslen(commandLinePtr) - 1] == _T('"'))
-    commandLinePtr[_tcslen(commandLinePtr) - 1] = 0;
+	// Remove command line ""
+	TCHAR commandLine[512];
+	TCHAR *commandLinePtr = commandLine;
+	_tcscpy(commandLine, lpCmdLine);
+	if (commandLine[0] == _T('"'))
+		commandLinePtr++;
+	if (commandLinePtr[_tcslen(commandLinePtr) - 1] == _T('"'))
+		commandLinePtr[_tcslen(commandLinePtr) - 1] = 0;
 
-  // Create a object viewer
-  IObjectViewer *objectViewer = IObjectViewer::getInterface();
+	// Create a object viewer
+	IObjectViewer *objectViewer = IObjectViewer::getInterface();
 
-  if (objectViewer) {
-    // Init ui
-    if (objectViewer->initUI()) {
-      // Argument ?
-      if (_tcscmp(commandLinePtr, _T("")) != 0) {
-        // Make a string vector
-        vector<string> strVector;
-        strVector.push_back(tStrToUtf8(commandLinePtr));
+	if (objectViewer)
+	{
+		// Init ui
+		if (objectViewer->initUI())
+		{
+			// Argument ?
+			if (_tcscmp(commandLinePtr, _T("")) != 0)
+			{
+				// Make a string vector
+				vector<string> strVector;
+				strVector.push_back(tStrToUtf8(commandLinePtr));
 
-        // Try to load a shape
-        if (objectViewer->loadMesh(strVector, "")) {
-          // Reset the camera
-          objectViewer->resetCamera();
-        } else
-          return 1;
-      }
+				// Try to load a shape
+				if (objectViewer->loadMesh(strVector, ""))
+				{
+					// Reset the camera
+					objectViewer->resetCamera();
+				}
+				else
+					return 1;
+			}
 
-      // Go
-      objectViewer->go();
+			// Go
+			objectViewer->go();
 
-      // Release ui
-      objectViewer->releaseUI();
-    }
+			// Release ui
+			objectViewer->releaseUI();
+		}
 
-    // Delete the pointer
-    IObjectViewer::releaseInterface(objectViewer);
-  }
+		// Delete the pointer
+		IObjectViewer::releaseInterface(objectViewer);
+	}
 
-  return 0;
+	return 0;
 }

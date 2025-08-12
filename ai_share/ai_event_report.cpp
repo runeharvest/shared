@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "ai_event_report.h"
 #include "stdpch.h"
+#include "ai_event_report.h"
 
 using namespace std;
 using namespace NLMISC;
@@ -23,29 +23,30 @@ using namespace NLMISC;
 namespace AI_EVENT_REPORT {
 // The conversion table
 const CStringConversion<TAIReportStat>::CPair stringTable[] = {
-    {"HitPoints", HitPoints},
-    {"Stamina", Stamina},
-    {"Sap", Sap},
-    {"Unknown", Unknown},
+	{ "HitPoints", HitPoints },
+	{ "Stamina", Stamina },
+	{ "Sap", Sap },
+	{ "Unknown", Unknown },
 };
 
-CStringConversion<TAIReportStat>
-    conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]),
-               Unknown);
+CStringConversion<TAIReportStat> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]), Unknown);
 
 // convert type id to type name string
-const std::string &toString(TAIReportStat stat) {
-  return conversion.toString(stat);
+const std::string &toString(TAIReportStat stat)
+{
+	return conversion.toString(stat);
 }
 
 // convert type name to type enum value
-TAIReportStat toStat(const std::string &str) {
-  return conversion.fromString(str);
+TAIReportStat toStat(const std::string &str)
+{
+	return conversion.fromString(str);
 }
 
 // convert a score to an ai Stat
-TAIReportStat scoreToStat(SCORES::TScores score) {
-  return conversion.fromString(SCORES::toString(score));
+TAIReportStat scoreToStat(SCORES::TScores score)
+{
+	return conversion.fromString(SCORES::toString(score));
 }
 
-} // namespace AI_EVENT_REPORT
+} // AI_EVENT_REPORT

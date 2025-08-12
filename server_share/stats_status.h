@@ -21,16 +21,17 @@
 
 namespace STATS_STATUS {
 // Size
-enum EStatsStatus {
-  NORMAL = 0,
-  UNBUFFED,
-  BUFFED,
+enum EStatsStatus
+{
+	NORMAL = 0,
+	UNBUFFED,
+	BUFFED,
 
-  // the number of size existing
-  NB_STATS_STAUS,
-  UNKNOWN,
+	// the number of size existing
+	NB_STATS_STAUS,
+	UNKNOWN,
 };
-}; // namespace STATS_STATUS
+}; // STATS_STATUS
 
 #endif // RY_STATS_STATUS_H
 /* End of file stats_status.h */

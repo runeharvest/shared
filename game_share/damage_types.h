@@ -22,36 +22,35 @@
 
 namespace DMGTYPE {
 //
-enum EDamageType {
-  SLASHING = 0, // tranchant (T)
-  PIERCING,     // perforant (P)
-  BLUNT,        // contondant (C)
-  ROT,
-  ACID,
-  COLD,
-  FIRE,
-  POISON,
-  ELECTRICITY,
-  SHOCK,
-  UNDEFINED,
-  NBTYPES = UNDEFINED,
+enum EDamageType
+{
+	SLASHING = 0, // tranchant (T)
+	PIERCING, // perforant (P)
+	BLUNT, // contondant (C)
+	ROT,
+	ACID,
+	COLD,
+	FIRE,
+	POISON,
+	ELECTRICITY,
+	SHOCK,
+	UNDEFINED,
+	NBTYPES = UNDEFINED,
 };
 
 /**
  * get the right damage type from the input string
  * \param str the input string
- * \return the EDamageType associated to this string (UNDEFINED if the string
- * cannot be interpreted)
+ * \return the EDamageType associated to this string (UNDEFINED if the string cannot be interpreted)
  */
 EDamageType stringToDamageType(const std::string &str);
 
 const std::string &toString(EDamageType type);
 
 /// Return the ResistanceType associated to this damage type
-RESISTANCE_TYPE::TResistanceType
-getAssociatedResistanceType(EDamageType dmgType);
+RESISTANCE_TYPE::TResistanceType getAssociatedResistanceType(EDamageType dmgType);
 
-}; // namespace DMGTYPE
+}; // DMGTYPE
 
 #endif // RY_DAMAGE_TYPES_H
 /* End of damage_types.h */

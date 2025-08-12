@@ -55,55 +55,54 @@ namespace NLSOUND {
  * CAudioDecoderVorbis
  * Create trough IAudioDecoder, type "ogg"
  */
-class CAudioDecoderVorbis : public IAudioDecoder {
+class CAudioDecoderVorbis : public IAudioDecoder
+{
 protected:
-  // outside pointers
-  NLMISC::IStream *_Stream;
+	// outside pointers
+	NLMISC::IStream *_Stream;
 
-  // pointers
+	// pointers
 
-  // instances
-  OggVorbis_File _OggVorbisFile;
-  bool _Loop;
-  bool _IsMusicEnded;
-  sint32 _StreamOffset;
-  sint32 _StreamSize;
+	// instances
+	OggVorbis_File _OggVorbisFile;
+	bool _Loop;
+	bool _IsMusicEnded;
+	sint32 _StreamOffset;
+	sint32 _StreamSize;
 
 public:
-  CAudioDecoderVorbis(NLMISC::IStream *stream, bool loop);
-  virtual ~CAudioDecoderVorbis();
-  inline NLMISC::IStream *getStream() { return _Stream; }
-  inline sint32 getStreamSize() { return _StreamSize; }
-  inline sint32 getStreamOffset() { return _StreamOffset; }
+	CAudioDecoderVorbis(NLMISC::IStream *stream, bool loop);
+	virtual ~CAudioDecoderVorbis();
+	inline NLMISC::IStream *getStream() { return _Stream; }
+	inline sint32 getStreamSize() { return _StreamSize; }
+	inline sint32 getStreamOffset() { return _StreamOffset; }
 
-  /// Get information on a music file (only artist and title at the moment).
-  static bool getInfo(NLMISC::IStream *stream, std::string &artist,
-                      std::string &title, float &length);
+	/// Get information on a music file (only artist and title at the moment).
+	static bool getInfo(NLMISC::IStream *stream, std::string &artist, std::string &title, float &length);
 
-  /// Get how many bytes the music buffer requires for output minimum.
-  virtual uint32 getRequiredBytes();
+	/// Get how many bytes the music buffer requires for output minimum.
+	virtual uint32 getRequiredBytes();
 
-  /// Get an amount of bytes between minimum and maximum (can be lower than
-  /// minimum if at end).
-  virtual uint32 getNextBytes(uint8 *buffer, uint32 minimum, uint32 maximum);
+	/// Get an amount of bytes between minimum and maximum (can be lower than minimum if at end).
+	virtual uint32 getNextBytes(uint8 *buffer, uint32 minimum, uint32 maximum);
 
-  /// Get the amount of channels (2 is stereo) in output.
-  virtual uint8 getChannels();
+	/// Get the amount of channels (2 is stereo) in output.
+	virtual uint8 getChannels();
 
-  /// Get the samples per second (often 44100) in output.
-  virtual uint getSamplesPerSec();
+	/// Get the samples per second (often 44100) in output.
+	virtual uint getSamplesPerSec();
 
-  /// Get the bits per sample (often 16) in output.
-  virtual uint8 getBitsPerSample();
+	/// Get the bits per sample (often 16) in output.
+	virtual uint8 getBitsPerSample();
 
-  /// Get if the music has ended playing (never true if loop).
-  virtual bool isMusicEnded();
+	/// Get if the music has ended playing (never true if loop).
+	virtual bool isMusicEnded();
 
-  /// Get the total time in seconds.
-  virtual float getLength();
+	/// Get the total time in seconds.
+	virtual float getLength();
 
-  /// Set looping
-  virtual void setLooping(bool loop);
+	/// Set looping
+	virtual void setLooping(bool loop);
 }; /* class CAudioDecoderVorbis */
 
 } /* namespace NLSOUND */

@@ -17,9 +17,9 @@
 #ifndef NL_ZONE_SYMMETRISATION_H
 #define NL_ZONE_SYMMETRISATION_H
 
-#include "nel/3d/patch.h"
-#include "nel/3d/patchuv_locator.h"
 #include "nel/misc/types_nl.h"
+#include "nel/3d/patchuv_locator.h"
+#include "nel/3d/patch.h"
 
 namespace NL3D {
 
@@ -33,128 +33,118 @@ class CTileBank;
  * transform tiles when a zone is symmetrise.
  *
  * There is two states for a tile : Regular or Goofy.
- * If the tile is regular, it doesn't need specific transformation when the zone
- * is symmetrise. If the tile is goofy, the tile must be rotate by 180deg more
- * to be correct.
+ * If the tile is regular, it doesn't need specific transformation when the zone is symmetrise.
+ * If the tile is goofy, the tile must be rotate by 180deg more to be correct.
  *
  * \author Cyril 'Hulud' Corvazier
  * \author Nevrax France
  * \date 2002
  */
-class CZoneSymmetrisation {
+class CZoneSymmetrisation
+{
 public:
-  /// Symmetrie state
-  enum TState {
-    Nothing = 0,
-    Regular = 1,
-    Goofy = 2,
-  };
+	/// Symmetrie state
+	enum TState
+	{
+		Nothing = 0,
+		Regular = 1,
+		Goofy = 2,
+	};
 
-  /// Error structure
-  class CError {
-  public:
-    std::vector<std::string> Errors;
-  };
+	/// Error structure
+	class CError
+	{
+	public:
+		std::vector<std::string> Errors;
+	};
 
-  /// Constructor
-  CZoneSymmetrisation();
+	/// Constructor
+	CZoneSymmetrisation();
 
-  /**
-   * Get tile symmetry state
-   * Can return Regular, Goofy or Nothing.
-   */
-  TState getTileState(uint patch, uint tile, uint layer) const;
+	/**
+	 * Get tile symmetry state
+	 * Can return Regular, Goofy or Nothing.
+	 */
+	TState getTileState(uint patch, uint tile, uint layer) const;
 
-  /**
-   * Get tile symmetry state
-   * Can return Regular, Goofy or Nothing.
-   */
-  TState getTileBorderState(uint patch, uint tile) const;
+	/**
+	 * Get tile symmetry state
+	 * Can return Regular, Goofy or Nothing.
+	 */
+	TState getTileBorderState(uint patch, uint tile) const;
 
-  /**
-   * Get tile symmetry state for oriented tiles
-   * Can return Regular, Goofy or Nothing.
-   */
-  TState getOrientedTileBorderState(uint patch, uint tile) const;
+	/**
+	 * Get tile symmetry state for oriented tiles
+	 * Can return Regular, Goofy or Nothing.
+	 */
+	TState getOrientedTileBorderState(uint patch, uint tile) const;
 
-  /**
-   * Set oriented tile corner state
-   */
-  bool getOrientedTileCorner(uint patch, uint tile);
+	/**
+	 * Set oriented tile corner state
+	 */
+	bool getOrientedTileCorner(uint patch, uint tile);
 
-  /**
-   * Build symmetry information
-   *
-   * \param zone is the zone to build symmetry information
-   * \param snapCell is the unit size of the zones
-   * \param weldThreshold is the threshold used to check vertex over snaped
-   * positions \param errorDesc is a structure used to return errors \param
-   * toOriginalSpace is the matrix used to transform back a vertex in its
-   * original position before symmetry / rotation \return false if the patch
-   * topology is invalid for this operations
-   */
-  bool build(const std::vector<CPatchInfo> &patchInfo, float snapCell,
-             float weldThreshold, const CTileBank &bank, CError &errorDesc,
-             const NLMISC::CMatrix &toOriginalSpace);
-
-private:
-  /**
-   * Propagate tile state information for a given tile.
-   *
-   * \param i is the patch number in the zone that contain the tile to propagate
-   * \param u is the tile u coordinate in the patch
-   * \param v is the tile v coordinate in the patch
-   * \param patchInfo is a vector of patch information
-   * \param bank is the tile bank used by the landscape
-   * \param forceRegular must be true to force the first propagated tile to
-   * Regular if Nothing \return false if the patch topology is invalid for this
-   * operations true if succesful
-   */
-  bool propagateTileState(uint i, uint s, uint t,
-                          const std::vector<CPatchInfo> &patchInfo,
-                          const CTileBank &bank, bool forceRegular);
-
-  /**
-   * Set orientedtile symmetry state
-   */
-  void setTileState(uint patch, uint tile, uint layer, TState state);
-
-  /**
-   * Set border tile symmetry state
-   */
-  void setTileBorderState(uint patch, uint tile, TState state);
-
-  /**
-   * Set border oriented tile symmetry state
-   */
-  void setOrientedTileBorderState(uint patch, uint tile, TState state);
-
-  /**
-   * Set oriented tile corner state
-   */
-  void setOrientedTileCorner(uint patch, uint tile, bool corner);
-
-  /**
-   * Set tile state of a patch
-   */
-  bool setTileState(const NL3D::CPatchInfo &patch, uint patchId, float snapCell,
-                    float weldThreshold, TState &state,
-                    const NLMISC::CMatrix &toOriginalSpace,
-                    const CTileBank &bank);
-  bool setOrientedTileState(const NL3D::CPatchInfo &patch, uint patchId,
-                            float snapCell, float weldThreshold, TState &state,
-                            const NLMISC::CMatrix &toOriginalSpace,
-                            const CTileBank &bank);
-
-  // Snap a position on the grid
-  static bool snapOnGrid(float &value, float resolution, float snap);
+	/**
+	 * Build symmetry information
+	 *
+	 * \param zone is the zone to build symmetry information
+	 * \param snapCell is the unit size of the zones
+	 * \param weldThreshold is the threshold used to check vertex over snaped positions
+	 * \param errorDesc is a structure used to return errors
+	 * \param toOriginalSpace is the matrix used to transform back a vertex in its original position before symmetry / rotation
+	 * \return false if the patch topology is invalid for this operations
+	 */
+	bool build(const std::vector<CPatchInfo> &patchInfo, float snapCell, float weldThreshold, const CTileBank &bank, CError &errorDesc, const NLMISC::CMatrix &toOriginalSpace);
 
 private:
-  // The patch state array
-  std::vector<std::vector<uint16>> _TilesLayerStates;
+	/**
+	 * Propagate tile state information for a given tile.
+	 *
+	 * \param i is the patch number in the zone that contain the tile to propagate
+	 * \param u is the tile u coordinate in the patch
+	 * \param v is the tile v coordinate in the patch
+	 * \param patchInfo is a vector of patch information
+	 * \param bank is the tile bank used by the landscape
+	 * \param forceRegular must be true to force the first propagated tile to Regular if Nothing
+	 * \return false if the patch topology is invalid for this operations true if succesful
+	 */
+	bool propagateTileState(uint i, uint s, uint t, const std::vector<CPatchInfo> &patchInfo, const CTileBank &bank, bool forceRegular);
+
+	/**
+	 * Set orientedtile symmetry state
+	 */
+	void setTileState(uint patch, uint tile, uint layer, TState state);
+
+	/**
+	 * Set border tile symmetry state
+	 */
+	void setTileBorderState(uint patch, uint tile, TState state);
+
+	/**
+	 * Set border oriented tile symmetry state
+	 */
+	void setOrientedTileBorderState(uint patch, uint tile, TState state);
+
+	/**
+	 * Set oriented tile corner state
+	 */
+	void setOrientedTileCorner(uint patch, uint tile, bool corner);
+
+	/**
+	 * Set tile state of a patch
+	 */
+	bool setTileState(const NL3D::CPatchInfo &patch, uint patchId, float snapCell, float weldThreshold, TState &state, const NLMISC::CMatrix &toOriginalSpace, const CTileBank &bank);
+	bool setOrientedTileState(const NL3D::CPatchInfo &patch, uint patchId, float snapCell, float weldThreshold, TState &state, const NLMISC::CMatrix &toOriginalSpace, const CTileBank &bank);
+
+	// Snap a position on the grid
+	static bool snapOnGrid(float &value, float resolution, float snap);
+
+private:
+	// The patch state array
+	std::vector<std::vector<uint16>> _TilesLayerStates;
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_ZONE_SYMMETRISATION_H
 

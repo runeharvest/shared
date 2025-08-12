@@ -21,13 +21,13 @@
 // STL includes
 
 // Qt includes
-#include <QtGui/QLineEdit>
-#include <QtGui/QTextEdit>
 #include <QtGui/QWidget>
+#include <QtGui/QTextEdit>
+#include <QtGui/QLineEdit>
 
 // NeL includes
-#include <nel/misc/displayer.h>
 #include <nel/misc/log.h>
+#include <nel/misc/displayer.h>
 
 // Project includes
 
@@ -39,27 +39,27 @@ namespace NLQT {
  * \date 2010-02-05 20:27GMT
  * \author Jan Boon (Kaetemi)
  */
-class CCommandLog : public QWidget, public NLMISC::IDisplayer {
-  Q_OBJECT
+class CCommandLog : public QWidget, public NLMISC::IDisplayer
+{
+	Q_OBJECT
 
 public:
-  CCommandLog(QWidget *parent);
-  virtual ~CCommandLog();
+	CCommandLog(QWidget *parent);
+	virtual ~CCommandLog();
 
 protected:
-  virtual void doDisplay(const NLMISC::CLog::TDisplayInfo &args,
-                         const char *message);
+	virtual void doDisplay(const NLMISC::CLog::TDisplayInfo &args, const char *message);
 
 private slots:
-  void returnPressed();
+	void returnPressed();
 
 private:
-  QTextEdit *m_DisplayerOutput;
-  QLineEdit *m_CommandInput;
+	QTextEdit *m_DisplayerOutput;
+	QLineEdit *m_CommandInput;
 
 private:
-  CCommandLog(const CCommandLog &);
-  CCommandLog &operator=(const CCommandLog &);
+	CCommandLog(const CCommandLog &);
+	CCommandLog &operator=(const CCommandLog &);
 
 }; /* class CCommandLog */
 

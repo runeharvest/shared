@@ -29,27 +29,28 @@ namespace CLFECOMMON {
 // Classes
 //
 
-class CContinuousAction : public CAction {
+class CContinuousAction : public CAction
+{
 public:
-  /// Returns true always (continuous action by essence)
-  bool isContinuous() const { return true; }
+	/// Returns true always (continuous action by essence)
+	bool isContinuous() const { return true; }
 
-  /*virtual bool	isDelta() const = 0;
-  virtual bool	hasGaranty() const = 0;
-  virtual void	setGaranty(bool g=true) = 0;
-  virtual void	packDelta(const CAction::TValue &origin) = 0;
-  virtual void	unpackDelta(const CAction::TValue &origin) = 0;*/
-  virtual TValue getValue() const = 0;
-  // virtual TValue	getValue(const CAction::TValue &origin) const = 0;
+	/*virtual bool	isDelta() const = 0;
+	virtual bool	hasGaranty() const = 0;
+	virtual void	setGaranty(bool g=true) = 0;
+	virtual void	packDelta(const CAction::TValue &origin) = 0;
+	virtual void	unpackDelta(const CAction::TValue &origin) = 0;*/
+	virtual TValue getValue() const = 0;
+	// virtual TValue	getValue(const CAction::TValue &origin) const = 0;
 
 protected:
-  /// Default ctor that initialize Timeout value
-  CContinuousAction();
+	/// Default ctor that initialize Timeout value
+	CContinuousAction();
 
-  friend class CActionFactory;
+	friend class CActionFactory;
 };
 
-} // namespace CLFECOMMON
+}
 
 #endif // NL_CONTINUOUS_ACTION_H
 

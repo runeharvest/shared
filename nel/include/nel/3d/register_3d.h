@@ -30,7 +30,7 @@ namespace NL3D {
  */
 void registerSerial3d();
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_REGISTER_3D_H
 

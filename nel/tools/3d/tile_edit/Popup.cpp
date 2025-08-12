@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "Popup.h"
 #include "stdafx.h"
+#include "Popup.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -26,19 +26,25 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // Popup
 
-Popup::Popup() {}
+Popup::Popup()
+{
+}
 
-Popup::~Popup() {}
+Popup::~Popup()
+{
+}
 
-LRESULT Popup::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam) {
-  /*	if (message==WM_INIT)
-      {
-          int toto = 0;
-      }*/
-  if (message == WM_PAINT) {
-    int toto = 0;
-  }
-  return CWnd::DefWindowProc(message, wParam, lParam);
+LRESULT Popup::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	/*	if (message==WM_INIT)
+	    {
+	        int toto = 0;
+	    }*/
+	if (message == WM_PAINT)
+	{
+		int toto = 0;
+	}
+	return CWnd::DefWindowProc(message, wParam, lParam);
 }
 
 BEGIN_MESSAGE_MAP(Popup, CWnd)

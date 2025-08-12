@@ -14,10 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "r2_variables.h"
 #include "stdpch.h"
+#include "r2_variables.h"
 
-NLMISC::CVariable<bool> IsRingShard(
-    "variables", "IsRingShard",
-    "if 1 then use ring shard systems instead of normal shard systems", false,
-    0, true);
+NLMISC::CVariable<bool> IsRingShard("variables", "IsRingShard", "if 1 then use ring shard systems instead of normal shard systems", false, 0, true);

@@ -34,11 +34,11 @@ const CVector CVector::K(0, 0, 1);
 /*
  * Returns the contents as a printable string "x y z"
  */
-string CVector::toString() const {
-  string str;
-  str = NLMISC::toString(x) + " " + NLMISC::toString(y) + " " +
-        NLMISC::toString(z);
-  return str;
+string CVector::toString() const
+{
+	string str;
+	str = NLMISC::toString(x) + " " + NLMISC::toString(y) + " " + NLMISC::toString(z);
+	return str;
 }
 
-} // namespace NLMISC
+}

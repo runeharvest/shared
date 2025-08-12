@@ -20,10 +20,11 @@
 #include "nel/misc/types_nl.h"
 
 namespace RYZOMACTIONFLAGS {
-enum TActionFlag {
-  InWater = 1 << 1,
-  Attacks = 1 << 0,
-  Undefined = 1 << 16,
+enum TActionFlag
+{
+	InWater = 1 << 1,
+	Attacks = 1 << 0,
+	Undefined = 1 << 16,
 };
 
 /**
@@ -40,7 +41,7 @@ const std::string &toString(TActionFlag flag);
  */
 TActionFlag toActionFlag(const std::string str);
 
-}; // namespace RYZOMACTIONFLAGS
+}; // RYZOMACTIONFLAGS
 
 #endif // RY_ACTION_FLAGS_H
 

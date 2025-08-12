@@ -14,29 +14,29 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "nel/misc/types_nl.h"
 #include "nel/misc/common.h"
 #include "nel/misc/debug.h"
-#include "nel/misc/types_nl.h"
 
-#include <cmath>
-#include <cstdio>
 #include <cstdlib>
+#include <cstdio>
+#include <cmath>
 #include <ctime>
 
-#include <algorithm>
+#include <string>
+#include <vector>
 #include <list>
 #include <map>
 #include <set>
-#include <string>
-#include <vector>
+#include <algorithm>
 // #include <sstream>
-#include <deque>
 #include <exception>
-#include <iomanip>
+#include <utility>
+#include <deque>
 #include <limits>
 #include <numeric>
-#include <utility>
+#include <iomanip>
 
-#include "nel/misc/file.h"
-#include "nel/misc/path.h"
 #include "nel/misc/vector.h"
+#include "nel/misc/path.h"
+#include "nel/misc/file.h"

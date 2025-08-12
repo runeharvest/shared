@@ -17,9 +17,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "choose_veget_set.h"
 #include "stdafx.h"
 #include "tile_edit_exe.h"
+#include "choose_veget_set.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -30,21 +30,22 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CChooseVegetSet dialog
 
-CChooseVegetSet::CChooseVegetSet(SelectionTerritoire *pParent,
-                                 const std::string &oldFile)
-    : CDialog((UINT)CChooseVegetSet::IDD, (CWnd *)pParent) {
-  //{{AFX_DATA_INIT(CChooseVegetSet)
-  // NOTE: the ClassWizard will add member initialization here
-  //}}AFX_DATA_INIT
-  FileName = oldFile;
-  Parent = pParent;
+CChooseVegetSet::CChooseVegetSet(SelectionTerritoire *pParent, const std::string &oldFile)
+    : CDialog((UINT)CChooseVegetSet::IDD, (CWnd *)pParent)
+{
+	//{{AFX_DATA_INIT(CChooseVegetSet)
+	// NOTE: the ClassWizard will add member initialization here
+	//}}AFX_DATA_INIT
+	FileName = oldFile;
+	Parent = pParent;
 }
 
-void CChooseVegetSet::DoDataExchange(CDataExchange *pDX) {
-  CDialog::DoDataExchange(pDX);
-  //{{AFX_DATA_MAP(CChooseVegetSet)
-  DDX_Control(pDX, IDC_BROWSE, Name);
-  //}}AFX_DATA_MAP
+void CChooseVegetSet::DoDataExchange(CDataExchange *pDX)
+{
+	CDialog::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(CChooseVegetSet)
+	DDX_Control(pDX, IDC_BROWSE, Name);
+	//}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(CChooseVegetSet, CDialog)
@@ -57,35 +58,36 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CChooseVegetSet message handlers
 
-void CChooseVegetSet::OnBrowse() {
-  // Select a veget set
-  static TCHAR BASED_CODE szFilter[] =
-      _T("NeL VegetSet Files (*.vegetset)|*.vegetset|All Files (*.*)|*.*||");
+void CChooseVegetSet::OnBrowse()
+{
+	// Select a veget set
+	static TCHAR BASED_CODE szFilter[] = _T("NeL VegetSet Files (*.vegetset)|*.vegetset|All Files (*.*)|*.*||");
 
-  // Create a file dialog
-  CFileDialog dialog(TRUE, _T("*.vegetset"), _T("*.vegetset"),
-                     OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, szFilter,
-                     (CWnd *)Parent);
-  if (dialog.DoModal() == IDOK) {
-    // Get the file name
-    FileName = NLMISC::tStrToUtf8(dialog.GetFileName());
-    Name.SetWindowText(nlUtf8ToTStr(FileName));
-  }
+	// Create a file dialog
+	CFileDialog dialog(TRUE, _T("*.vegetset"), _T("*.vegetset"), OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, szFilter, (CWnd *)Parent);
+	if (dialog.DoModal() == IDOK)
+	{
+		// Get the file name
+		FileName = NLMISC::tStrToUtf8(dialog.GetFileName());
+		Name.SetWindowText(nlUtf8ToTStr(FileName));
+	}
 }
 
-BOOL CChooseVegetSet::OnInitDialog() {
-  CDialog::OnInitDialog();
+BOOL CChooseVegetSet::OnInitDialog()
+{
+	CDialog::OnInitDialog();
 
-  if (!FileName.empty())
-    Name.SetWindowText(nlUtf8ToTStr(FileName));
-  else
-    Name.SetWindowText(_T("Browse..."));
+	if (!FileName.empty())
+		Name.SetWindowText(nlUtf8ToTStr(FileName));
+	else
+		Name.SetWindowText(_T("Browse..."));
 
-  return TRUE; // return TRUE unless you set the focus to a control
-               // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CChooseVegetSet::OnReset() {
-  FileName.clear();
-  Name.SetWindowText(_T("Browse..."));
+void CChooseVegetSet::OnReset()
+{
+	FileName.clear();
+	Name.SetWindowText(_T("Browse..."));
 }

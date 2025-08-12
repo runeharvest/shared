@@ -46,52 +46,50 @@ namespace BUILTIN {
  * \author Jan Boon (Kaetemi)
  * INode
  */
-class INode : public CReferenceTarget {
+class INode : public CReferenceTarget
+{
 public:
-  INode(CScene *scene);
-  virtual ~INode();
+	INode(CScene *scene);
+	virtual ~INode();
 
-  // class desc
-  static const ucstring DisplayName;
-  static const char *InternalName;
-  static const char *InternalNameUnknown;
-  static const NLMISC::CClassId ClassId;
-  static const TSClassId SuperClassId;
+	// class desc
+	static const ucstring DisplayName;
+	static const char *InternalName;
+	static const char *InternalNameUnknown;
+	static const NLMISC::CClassId ClassId;
+	static const TSClassId SuperClassId;
 
-  // inherited
-  virtual void parse(uint16 version, uint filter = 0);
-  virtual void clean();
-  virtual void build(uint16 version, uint filter = 0);
-  virtual void disown();
-  virtual void init();
-  virtual bool inherits(const NLMISC::CClassId classId) const;
-  virtual const ISceneClassDesc *classDesc() const;
-  virtual void toStringLocal(std::ostream &ostream, const std::string &pad = "",
-                             uint filter = 0) const;
+	// inherited
+	virtual void parse(uint16 version, uint filter = 0);
+	virtual void clean();
+	virtual void build(uint16 version, uint filter = 0);
+	virtual void disown();
+	virtual void init();
+	virtual bool inherits(const NLMISC::CClassId classId) const;
+	virtual const ISceneClassDesc *classDesc() const;
+	virtual void toStringLocal(std::ostream &ostream, const std::string &pad = "", uint filter = 0) const;
 
-  // node interface
-  virtual INode *parent();
-  virtual void setParent(INode *node);
-  virtual void addChild(INode *node);
-  virtual void removeChild(INode *node); // does not delete
-  virtual const ucstring &userName() const;
-  INode *find(const ucstring &userName) const;
+	// node interface
+	virtual INode *parent();
+	virtual void setParent(INode *node);
+	virtual void addChild(INode *node);
+	virtual void removeChild(INode *node); // does not delete
+	virtual const ucstring &userName() const;
+	INode *find(const ucstring &userName) const;
 
-  // dump
-  void dumpNodes(std::ostream &ostream, const std::string &pad = "") const;
+	// dump
+	void dumpNodes(std::ostream &ostream, const std::string &pad = "") const;
 
-  // read access
-  /// The children that are linked to this node by the parent tag
-  inline const std::set<NLMISC::CRefPtr<INode>> &children() const {
-    return m_Children;
-  }
+	// read access
+	/// The children that are linked to this node by the parent tag
+	inline const std::set<NLMISC::CRefPtr<INode>> &children() const { return m_Children; }
 
 protected:
-  // inherited
-  virtual IStorageObject *createChunkById(uint16 id, bool container);
+	// inherited
+	virtual IStorageObject *createChunkById(uint16 id, bool container);
 
 protected:
-  std::set<NLMISC::CRefPtr<INode>> m_Children;
+	std::set<NLMISC::CRefPtr<INode>> m_Children;
 
 }; /* class INode */
 

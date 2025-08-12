@@ -17,8 +17,8 @@
 #ifndef NL_TEXTURE_CUBE_H
 #define NL_TEXTURE_CUBE_H
 
-#include "nel/3d/texture.h"
 #include "nel/misc/types_nl.h"
+#include "nel/3d/texture.h"
 
 namespace NL3D {
 
@@ -29,67 +29,68 @@ namespace NL3D {
  * \author Nevrax France
  * \date 2000
  */
-class CTextureCube : public ITexture {
+class CTextureCube : public ITexture
+{
 public:
-  enum TFace {
-    positive_x = 0,
-    negative_x,
-    positive_y,
-    negative_y,
-    positive_z,
-    negative_z
-  };
+	enum TFace
+	{
+		positive_x = 0,
+		negative_x,
+		positive_y,
+		negative_y,
+		positive_z,
+		negative_z
+	};
 
 public:
-  /**
-   * Default constructor
-   */
-  CTextureCube();
+	/**
+	 * Default constructor
+	 */
+	CTextureCube();
 
-  /**
-   * Accessors
-   */
-  void setTexture(TFace f, ITexture *t);
-  ITexture *getTexture(TFace f) { return _Textures[f]; }
+	/**
+	 * Accessors
+	 */
+	void setTexture(TFace f, ITexture *t);
+	ITexture *getTexture(TFace f) { return _Textures[f]; }
 
-  /**
-   * Set the name of the file containing the texture
-   * \param name of the file
-   */
-  // void setFileName(std::string s);
+	/**
+	 * Set the name of the file containing the texture
+	 * \param name of the file
+	 */
+	// void setFileName(std::string s);
 
-  /**
-   * sharing system.
-   */
-  virtual bool supportSharing() const { return true; }
-  virtual std::string getShareName() const;
+	/**
+	 * sharing system.
+	 */
+	virtual bool supportSharing() const { return true; }
+	virtual std::string getShareName() const;
 
-  /**
-   * Generate the texture, looking in CPath if necessary.
-   */
-  void doGenerate(bool async = false);
+	/**
+	 * Generate the texture, looking in CPath if necessary.
+	 */
+	void doGenerate(bool async = false);
 
-  virtual void release();
-  /// Does this texture is a cube texture
-  virtual bool isTextureCube() const { return true; }
+	virtual void release();
+	/// Does this texture is a cube texture
+	virtual bool isTextureCube() const { return true; }
 
-  /// Save the texture file name.
-  virtual void serial(NLMISC::IStream &f);
-  NLMISC_DECLARE_CLASS(CTextureCube);
+	/// Save the texture file name.
+	virtual void serial(NLMISC::IStream &f);
+	NLMISC_DECLARE_CLASS(CTextureCube);
 
-  /// If the face support multiple texture (such has CTextureMultiFile), this
-  /// allow to select the active set
-  virtual void selectTexture(uint index);
-  // from ITexture
-  virtual bool isSelectable() const;
-  // from ITexture
-  virtual ITexture *buildNonSelectableVersion(uint index);
+	/// If the face support multiple texture (such has CTextureMultiFile), this allow to select the active set
+	virtual void selectTexture(uint index);
+	// from ITexture
+	virtual bool isSelectable() const;
+	// from ITexture
+	virtual ITexture *buildNonSelectableVersion(uint index);
 
 private:
-  NLMISC::CSmartPtr<ITexture> _Textures[6];
+	NLMISC::CSmartPtr<ITexture> _Textures[6];
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif // NL_TEXTURE_CUBE_H
 

@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "stdpch.h"
 #include "zc_shard_common.h"
 #include "nel/misc/string_conversion.h"
-#include "stdpch.h"
 
 namespace ZCSTATE {
 
@@ -30,13 +30,15 @@ NL_STRING_CONVERSION_TABLE_ENTRY(zs_unknown)
 NL_END_STRING_CONVERSION_TABLE(TZcState, ConversionType, zs_unknown)
 
 ///
-TZcState toZcState(const std::string &str) {
-  return ConversionType.fromString(str);
+TZcState toZcState(const std::string &str)
+{
+	return ConversionType.fromString(str);
 }
 
 ///
-const std::string &toString(TZcState type) {
-  return ConversionType.toString(type);
+const std::string &toString(TZcState type)
+{
+	return ConversionType.toString(type);
 }
 
-} // namespace ZCSTATE
+}

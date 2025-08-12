@@ -17,38 +17,47 @@
 /////////////
 // INCLUDE //
 /////////////
-#include "pact.h"
 #include "stdpch.h" // First include for pre-compiled headers.
+#include "pact.h"
 
 using namespace std;
 
 namespace GSPACT {
 
 static std::string pactNatureStrings[] = {
-    "Unknown",
-    "Kamique",
-    "Caravane",
+	"Unknown",
+	"Kamique",
+	"Caravane",
 };
 
-static std::string pactTypeStrings[] = {"Type1", "Type2", "Type3",  "Type4",
-                                        "Type5", "Type6", "unknown"};
+static std::string pactTypeStrings[] = {
+	"Type1",
+	"Type2",
+	"Type3",
+	"Type4",
+	"Type5",
+	"Type6",
+	"unknown"
+};
 
-const std::string &toString(EPactNature pactNature) {
-  if ((uint)pactNature >= sizeof(pactNatureStrings) / sizeof(string)) {
-    nlwarning("<toString (EPactNature pactNature) : invalid pact nature %d",
-              pactNature);
-    return pactNatureStrings[(uint)Unknown];
-  }
-  return pactNatureStrings[(uint)pactNature];
+const std::string &toString(EPactNature pactNature)
+{
+	if ((uint)pactNature >= sizeof(pactNatureStrings) / sizeof(string))
+	{
+		nlwarning("<toString (EPactNature pactNature) : invalid pact nature %d", pactNature);
+		return pactNatureStrings[(uint)Unknown];
+	}
+	return pactNatureStrings[(uint)pactNature];
 }
 
-const std::string &toString(EPactType pactType) {
-  if ((uint)pactType >= sizeof(pactTypeStrings) / sizeof(string)) {
-    nlwarning("<toString (EPactType pactType) : invalid pact type %d",
-              pactType);
-    return pactTypeStrings[(uint)UnknownType];
-  }
-  return pactTypeStrings[(uint)pactType];
+const std::string &toString(EPactType pactType)
+{
+	if ((uint)pactType >= sizeof(pactTypeStrings) / sizeof(string))
+	{
+		nlwarning("<toString (EPactType pactType) : invalid pact type %d", pactType);
+		return pactTypeStrings[(uint)UnknownType];
+	}
+	return pactTypeStrings[(uint)pactType];
 }
 
 }; // namespace GSPACT

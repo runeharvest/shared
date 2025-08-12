@@ -39,44 +39,53 @@
 // External classes
 //
 
-class CGraph {
+class CGraph
+{
 public:
-  std::string Name;
-  float X, Y, Width, Height;
-  NLMISC::CRGBA BackColor;
-  float MaxValue;
-  float Peak;
+	std::string Name;
+	float X, Y, Width, Height;
+	NLMISC::CRGBA BackColor;
+	float MaxValue;
+	float Peak;
 
-  std::deque<float> Values;
+	std::deque<float> Values;
 
-  NLMISC::TTime Quantum;
+	NLMISC::TTime Quantum;
 
-  NLMISC::TTime CurrentQuantumStart;
+	NLMISC::TTime CurrentQuantumStart;
 
-  CGraph(std::string name, float x, float y, float width, float height,
-         NLMISC::CRGBA backColor, NLMISC::TTime quantum, float maxValue)
-      : Name(name), X(x), Y(y), Width(width), Height(height),
-        BackColor(backColor), MaxValue(maxValue), Peak(0.0f), Quantum(quantum),
-        CurrentQuantumStart(NLMISC::CTime::getLocalTime()) {
-    if (_Graphs == NULL) {
-      _Graphs = new std::vector<CGraph *>;
-    }
+	CGraph(std::string name, float x, float y, float width, float height, NLMISC::CRGBA backColor, NLMISC::TTime quantum, float maxValue)
+	    : Name(name)
+	    , X(x)
+	    , Y(y)
+	    , Width(width)
+	    , Height(height)
+	    , BackColor(backColor)
+	    , MaxValue(maxValue)
+	    , Peak(0.0f)
+	    , Quantum(quantum)
+	    , CurrentQuantumStart(NLMISC::CTime::getLocalTime())
+	{
+		if (_Graphs == NULL)
+		{
+			_Graphs = new std::vector<CGraph *>;
+		}
 
-    _Graphs->push_back(this);
-  }
+		_Graphs->push_back(this);
+	}
 
-  void addOneValue(float value = 0.0f);
-  void addValue(float value);
+	void addOneValue(float value = 0.0f);
+	void addValue(float value);
 
-  static void render(NL3D::UDriver &driver, NL3D::UTextContext &tc);
+	static void render(NL3D::UDriver &driver, NL3D::UTextContext &tc);
 
-  static bool Display;
-  static bool DisplayAverageValue;
+	static bool Display;
+	static bool DisplayAverageValue;
 
 private:
-  static std::vector<CGraph *> *_Graphs;
+	static std::vector<CGraph *> *_Graphs;
 
-  void render(NL3D::UDriver *Driver, NL3D::UTextContext *TextContext);
+	void render(NL3D::UDriver *Driver, NL3D::UTextContext *TextContext);
 };
 
 #endif

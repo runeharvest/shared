@@ -28,72 +28,71 @@ class CGroupHeaderEntry;
 
 // *****************************************************************************************************************
 /** Display a header with movable entries.
- * Usually used with a table to change the size of each column (much like the
- * windows file explorer in 'details' mode)
+ * Usually used with a table to change the size of each column (much like the windows file explorer in 'details' mode)
  *
  * \author Nicolas Vizerie
  * \author Nevrax France
  * \date 2006
  */
-class CGroupHeader : public CGroupList {
+class CGroupHeader : public CGroupList
+{
 public:
-  DECLARE_UI_CLASS(CGroupHeader)
+	DECLARE_UI_CLASS(CGroupHeader)
 
-  REFLECT_EXPORT_START(CGroupHeader, CGroupList)
-  REFLECT_LUA_METHOD("enlargeColumns", luaEnlargeColumns);
-  REFLECT_LUA_METHOD("resizeColumnsAndContainer", luaResizeColumnsAndContainer);
-  REFLECT_EXPORT_END
+	REFLECT_EXPORT_START(CGroupHeader, CGroupList)
+	REFLECT_LUA_METHOD("enlargeColumns", luaEnlargeColumns);
+	REFLECT_LUA_METHOD("resizeColumnsAndContainer", luaResizeColumnsAndContainer);
+	REFLECT_EXPORT_END
 
-  CGroupHeader(const TCtorParam &param);
+	CGroupHeader(const TCtorParam &param);
 
-  std::string getProperty(const std::string &name) const;
-  void setProperty(const std::string &name, const std::string &value);
-  xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
+	std::string getProperty(const std::string &name) const;
+	void setProperty(const std::string &name, const std::string &value);
+	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
 
-  // from CInterfaceGroup
-  virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
-  sint32 getHeaderMaxSize() const { return _HeaderMaxSize; }
-  // get the entries in this header
-  void getEntries(std::vector<CGroupHeaderEntry *> &dest);
-  // ensure that max. content of columns is visible (without the total width
-  // becoming more than 'getHeaderMaxSize()'
-  void enlargeColumns(sint32 margin);
-  // ensure that content of each column is visible
-  void resizeColumnsAndContainer(sint32 margin);
+	// from CInterfaceGroup
+	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+	sint32 getHeaderMaxSize() const { return _HeaderMaxSize; }
+	// get the entries in this header
+	void getEntries(std::vector<CGroupHeaderEntry *> &dest);
+	// ensure that max. content of columns is visible (without the total width becoming more than 'getHeaderMaxSize()'
+	void enlargeColumns(sint32 margin);
+	// ensure that content of each column is visible
+	void resizeColumnsAndContainer(sint32 margin);
 
 private:
-  sint32 _HeaderMaxSize;
-  int luaEnlargeColumns(CLuaState &ls);
-  int luaResizeColumnsAndContainer(CLuaState &ls);
+	sint32 _HeaderMaxSize;
+	int luaEnlargeColumns(CLuaState &ls);
+	int luaResizeColumnsAndContainer(CLuaState &ls);
 };
 
 // *****************************************************************************************************************
-// an entry in a header, includes a "mover control" to move it inside its parent
-// header NOTE : when not used inside a CGroupHeader, will work, but there will
-// be no 'max_size'
-class CGroupHeaderEntry : public CInterfaceGroup {
+// an entry in a header, includes a "mover control" to move it inside its parent header
+// NOTE : when not used inside a CGroupHeader, will work, but there will be no 'max_size'
+class CGroupHeaderEntry : public CInterfaceGroup
+{
 public:
-  DECLARE_UI_CLASS(CGroupHeaderEntry)
+	DECLARE_UI_CLASS(CGroupHeaderEntry)
 
-  CGroupHeaderEntry(const TCtorParam &param);
-  xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
-  // from CInterfaceGroup
-  virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
-  sint32 getMinSize() const { return _MinSize; }
-  virtual void updateCoords();
-  CInterfaceGroup *getTargetColumn() const;
+	CGroupHeaderEntry(const TCtorParam &param);
+	xmlNodePtr serialize(xmlNodePtr parentNode, const char *type) const;
+	// from CInterfaceGroup
+	virtual bool parse(xmlNodePtr cur, CInterfaceGroup *parentGroup);
+	sint32 getMinSize() const { return _MinSize; }
+	virtual void updateCoords();
+	CInterfaceGroup *getTargetColumn() const;
 
-  const std::string &getAHOnResize() const { return _AHOnResize; }
-  const std::string &getAHOnResizeParams() const { return _AHOnResizeParams; }
+	const std::string &getAHOnResize() const { return _AHOnResize; }
+	const std::string &getAHOnResizeParams() const { return _AHOnResizeParams; }
 
 private:
-  sint32 _MinSize;
-  sint32 _ResizerSize;
-  std::string _TargetColumnId;
-  std::string _AHOnResize;
-  std::string _AHOnResizeParams;
+	sint32 _MinSize;
+	sint32 _ResizerSize;
+	std::string _TargetColumnId;
+	std::string _AHOnResize;
+	std::string _AHOnResizeParams;
 };
 
-} // namespace NLGUI
+}
 
 #endif

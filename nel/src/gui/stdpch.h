@@ -23,24 +23,24 @@
 
 #if defined(_MSC_VER) && defined(_DEBUG)
 #define _CRTDBG_MAP_ALLOC
-#include <crtdbg.h>
 #include <stdlib.h>
+#include <crtdbg.h>
 #define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
-#include <ctime>
-#include <limits>
 #include <string>
+#include <limits>
+#include <ctime>
 
+#include "nel/misc/types_nl.h"
 #include "nel/misc/algo.h"
-#include "nel/misc/bit_mem_stream.h"
 #include "nel/misc/factory.h"
-#include "nel/misc/file.h"
-#include "nel/misc/hierarchical_timer.h"
+#include "nel/misc/bit_mem_stream.h"
 #include "nel/misc/i18n.h"
 #include "nel/misc/path.h"
-#include "nel/misc/types_nl.h"
+#include "nel/misc/file.h"
 #include "nel/misc/uv.h"
+#include "nel/misc/hierarchical_timer.h"
 
 #include <libxml/parser.h>
 
@@ -48,8 +48,8 @@
 #ifndef NL_COMP_MINGW
 #define NOMINMAX
 #endif
-#include <windows.h>
 #include <winsock2.h>
+#include <windows.h>
 #endif
 
 #endif

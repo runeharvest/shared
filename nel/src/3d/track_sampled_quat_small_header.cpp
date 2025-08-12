@@ -29,180 +29,195 @@ using namespace NLMISC;
 namespace NL3D {
 
 // ***************************************************************************
-CTrackSampledQuatSmallHeader::CTrackSampledQuatSmallHeader(
-    CTrackSamplePack *pack, uint8 headerIndex, uint8 numKeys, uint16 keyIndex) {
-  nlassert(pack);
-  _TrackSamplePack = pack;
-  _IndexTrackHeader = headerIndex;
-  _NumKeys = numKeys;
-  _KeyIndex = keyIndex;
+CTrackSampledQuatSmallHeader::CTrackSampledQuatSmallHeader(CTrackSamplePack *pack, uint8 headerIndex, uint8 numKeys, uint16 keyIndex)
+{
+	nlassert(pack);
+	_TrackSamplePack = pack;
+	_IndexTrackHeader = headerIndex;
+	_NumKeys = numKeys;
+	_KeyIndex = keyIndex;
 }
 
 // ***************************************************************************
-CTrackSampledQuatSmallHeader::~CTrackSampledQuatSmallHeader() {}
-
-// ***************************************************************************
-bool CTrackSampledQuatSmallHeader::getLoopMode() const {
-  return _TrackSamplePack->TrackHeaders[_IndexTrackHeader].LoopMode;
+CTrackSampledQuatSmallHeader::~CTrackSampledQuatSmallHeader()
+{
 }
 
 // ***************************************************************************
-TAnimationTime CTrackSampledQuatSmallHeader::getBeginTime() const {
-  return _TrackSamplePack->TrackHeaders[_IndexTrackHeader].BeginTime;
+bool CTrackSampledQuatSmallHeader::getLoopMode() const
+{
+	return _TrackSamplePack->TrackHeaders[_IndexTrackHeader].LoopMode;
 }
 
 // ***************************************************************************
-TAnimationTime CTrackSampledQuatSmallHeader::getEndTime() const {
-  return _TrackSamplePack->TrackHeaders[_IndexTrackHeader].EndTime;
+TAnimationTime CTrackSampledQuatSmallHeader::getBeginTime() const
+{
+	return _TrackSamplePack->TrackHeaders[_IndexTrackHeader].BeginTime;
 }
 
 // ***************************************************************************
-CTrackSampledQuatSmallHeader::TEvalType
-CTrackSampledQuatSmallHeader::evalTime(const TAnimationTime &date, uint &keyId0,
-                                       uint &keyId1, float &interpValue) {
-  /* IF YOU CHANGE THIS CODE, CHANGE too CTrackSampledQuatCommon
-   */
-
-  // Empty? quit
-  if (_NumKeys == 0)
-    return EvalDiscard;
-
-  // One Key? easy, and quit.
-  if (_NumKeys == 1) {
-    keyId0 = 0;
-    return EvalKey0;
-  }
-
-  // Get the Track header info
-  CTrackSampleHeader &trackHeader =
-      _TrackSamplePack->TrackHeaders[_IndexTrackHeader];
-
-  // manage Loop
-  //=====================
-  float localTime;
-  if (trackHeader.LoopMode) {
-    nlassert(trackHeader.TotalRange > 0);
-    // get relative to BeginTime.
-    localTime = date - trackHeader.BeginTime;
-
-    // force us to be in interval [0, _TotalRange[.
-    if (localTime < 0 || localTime >= trackHeader.TotalRange) {
-      double d = localTime * trackHeader.OOTotalRange;
-
-      // floor(d) is the truncated number of loops.
-      d = localTime - floor(d) * trackHeader.TotalRange;
-      localTime = (float)d;
-
-      // For precision problems, ensure correct range.
-      if (localTime < 0 || localTime >= trackHeader.TotalRange)
-        localTime = 0;
-    }
-  } else {
-    // get relative to BeginTime.
-    localTime = date - trackHeader.BeginTime;
-  }
-
-  // get times ptr in packed data
-  uint8 *times = &_TrackSamplePack->Times[_KeyIndex];
-
-  // Find the first key before localTime
-  //=====================
-  // get the frame in the track.
-  sint frame = (sint)floor(localTime * trackHeader.OODeltaTime);
-  // clamp to uint8
-  clamp(frame, 0, 255);
-
-  // get the key.
-  keyId0 = searchLowerBound(times, _NumKeys, (uint8)frame);
-
-  // Get the Frame of Key0.
-  uint frameKey0 = times[keyId0];
-
-  // Interpolate with next key
-  //=====================
-
-  // If not the last Key
-  if (keyId0 < (uint)_NumKeys - 1) {
-    // Get the next key.
-    keyId1 = keyId0 + 1;
-    uint frameKey1 = times[keyId1];
-
-    // unpack time.
-    float time0 = frameKey0 * trackHeader.DeltaTime;
-    float time1 = frameKey1 * trackHeader.DeltaTime;
-
-    // interpolate.
-    float t = (localTime - time0);
-    // If difference is one frame, optimize.
-    if (frameKey1 - frameKey0 == 1)
-      t *= trackHeader.OODeltaTime;
-    else
-      t /= (time1 - time0);
-    clamp(t, 0.f, 1.f);
-
-    // store this interp value.
-    interpValue = t;
-
-    return EvalInterpolate;
-  }
-  // else (last key of anim), just eval this key.
-  return EvalKey0;
+TAnimationTime CTrackSampledQuatSmallHeader::getEndTime() const
+{
+	return _TrackSamplePack->TrackHeaders[_IndexTrackHeader].EndTime;
 }
 
 // ***************************************************************************
-const IAnimatedValue &
-CTrackSampledQuatSmallHeader::eval(const TAnimationTime &date,
-                                   CAnimatedValueBlock &avBlock) {
-  /* IF YOU CHANGE THIS CODE, CHANGE too CTrackSampledQuatSmallHeader
-   */
+CTrackSampledQuatSmallHeader::TEvalType CTrackSampledQuatSmallHeader::evalTime(const TAnimationTime &date, uint &keyId0, uint &keyId1, float &interpValue)
+{
+	/* IF YOU CHANGE THIS CODE, CHANGE too CTrackSampledQuatCommon
+	 */
 
-  // **** Eval time, and get key interpolation info
-  uint keyId0;
-  uint keyId1;
-  float interpValue;
-  TEvalType evalType = evalTime(date, keyId0, keyId1, interpValue);
+	// Empty? quit
+	if (_NumKeys == 0)
+		return EvalDiscard;
 
-  // **** Eval Keys
-  // get starting keys
-  CQuatPack *keys = &_TrackSamplePack->Keys[_KeyIndex];
+	// One Key? easy, and quit.
+	if (_NumKeys == 1)
+	{
+		keyId0 = 0;
+		return EvalKey0;
+	}
 
-  // Discard?
-  if (evalType == EvalDiscard)
-    return avBlock.ValQuat;
-  // One Key? easy, and quit.
-  else if (evalType == EvalKey0) {
-    keys[keyId0].unpack(avBlock.ValQuat.Value);
-  }
-  // interpolate
-  else if (evalType == EvalInterpolate) {
-    CQuatPack valueKey0 = keys[keyId0];
-    CQuatPack valueKey1 = keys[keyId1];
+	// Get the Track header info
+	CTrackSampleHeader &trackHeader = _TrackSamplePack->TrackHeaders[_IndexTrackHeader];
 
-    // If the 2 keys have same value, just unpack.
-    if (valueKey0 == valueKey1) {
-      valueKey0.unpack(avBlock.ValQuat.Value);
-    }
-    // else interpolate
-    else {
-      // unpack key value.
-      CQuat quat0, quat1;
-      valueKey0.unpack(quat0);
-      valueKey1.unpack(quat1);
+	// manage Loop
+	//=====================
+	float localTime;
+	if (trackHeader.LoopMode)
+	{
+		nlassert(trackHeader.TotalRange > 0);
+		// get relative to BeginTime.
+		localTime = date - trackHeader.BeginTime;
 
-      // interpolate
-      avBlock.ValQuat.Value = CQuat::slerp(quat0, quat1, interpValue);
-    }
-  } else {
-    nlstop;
-  }
+		// force us to be in interval [0, _TotalRange[.
+		if (localTime < 0 || localTime >= trackHeader.TotalRange)
+		{
+			double d = localTime * trackHeader.OOTotalRange;
 
-  return avBlock.ValQuat;
+			// floor(d) is the truncated number of loops.
+			d = localTime - floor(d) * trackHeader.TotalRange;
+			localTime = (float)d;
+
+			// For precision problems, ensure correct range.
+			if (localTime < 0 || localTime >= trackHeader.TotalRange)
+				localTime = 0;
+		}
+	}
+	else
+	{
+		// get relative to BeginTime.
+		localTime = date - trackHeader.BeginTime;
+	}
+
+	// get times ptr in packed data
+	uint8 *times = &_TrackSamplePack->Times[_KeyIndex];
+
+	// Find the first key before localTime
+	//=====================
+	// get the frame in the track.
+	sint frame = (sint)floor(localTime * trackHeader.OODeltaTime);
+	// clamp to uint8
+	clamp(frame, 0, 255);
+
+	// get the key.
+	keyId0 = searchLowerBound(times, _NumKeys, (uint8)frame);
+
+	// Get the Frame of Key0.
+	uint frameKey0 = times[keyId0];
+
+	// Interpolate with next key
+	//=====================
+
+	// If not the last Key
+	if (keyId0 < (uint)_NumKeys - 1)
+	{
+		// Get the next key.
+		keyId1 = keyId0 + 1;
+		uint frameKey1 = times[keyId1];
+
+		// unpack time.
+		float time0 = frameKey0 * trackHeader.DeltaTime;
+		float time1 = frameKey1 * trackHeader.DeltaTime;
+
+		// interpolate.
+		float t = (localTime - time0);
+		// If difference is one frame, optimize.
+		if (frameKey1 - frameKey0 == 1)
+			t *= trackHeader.OODeltaTime;
+		else
+			t /= (time1 - time0);
+		clamp(t, 0.f, 1.f);
+
+		// store this interp value.
+		interpValue = t;
+
+		return EvalInterpolate;
+	}
+	// else (last key of anim), just eval this key.
+	return EvalKey0;
 }
 
 // ***************************************************************************
-void CTrackSampledQuatSmallHeader::serial(NLMISC::IStream & /* f */) {
-  // CTrackSampledQuatSmallHeader not designed to be serialsied
-  nlstop;
+const IAnimatedValue &CTrackSampledQuatSmallHeader::eval(const TAnimationTime &date, CAnimatedValueBlock &avBlock)
+{
+	/* IF YOU CHANGE THIS CODE, CHANGE too CTrackSampledQuatSmallHeader
+	 */
+
+	// **** Eval time, and get key interpolation info
+	uint keyId0;
+	uint keyId1;
+	float interpValue;
+	TEvalType evalType = evalTime(date, keyId0, keyId1, interpValue);
+
+	// **** Eval Keys
+	// get starting keys
+	CQuatPack *keys = &_TrackSamplePack->Keys[_KeyIndex];
+
+	// Discard?
+	if (evalType == EvalDiscard)
+		return avBlock.ValQuat;
+	// One Key? easy, and quit.
+	else if (evalType == EvalKey0)
+	{
+		keys[keyId0].unpack(avBlock.ValQuat.Value);
+	}
+	// interpolate
+	else if (evalType == EvalInterpolate)
+	{
+		CQuatPack valueKey0 = keys[keyId0];
+		CQuatPack valueKey1 = keys[keyId1];
+
+		// If the 2 keys have same value, just unpack.
+		if (valueKey0 == valueKey1)
+		{
+			valueKey0.unpack(avBlock.ValQuat.Value);
+		}
+		// else interpolate
+		else
+		{
+			// unpack key value.
+			CQuat quat0, quat1;
+			valueKey0.unpack(quat0);
+			valueKey1.unpack(quat1);
+
+			// interpolate
+			avBlock.ValQuat.Value = CQuat::slerp(quat0, quat1, interpValue);
+		}
+	}
+	else
+	{
+		nlstop;
+	}
+
+	return avBlock.ValQuat;
 }
 
-} // namespace NL3D
+// ***************************************************************************
+void CTrackSampledQuatSmallHeader::serial(NLMISC::IStream & /* f */)
+{
+	// CTrackSampledQuatSmallHeader not designed to be serialsied
+	nlstop;
+}
+
+} // NL3D

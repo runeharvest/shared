@@ -17,48 +17,44 @@
 #ifndef NL_WATER_ENVMAP_USER
 #define NL_WATER_ENVMAP_USER
 
-#include "nel/3d/driver_user.h"
 #include "nel/3d/u_water_env_map.h"
 #include "nel/3d/water_env_map.h"
+#include "nel/3d/driver_user.h"
 
 namespace NL3D {
 
 struct IWaterEnvMapRender;
 
-class CWaterEnvMapUser : public UWaterEnvMap {
+class CWaterEnvMapUser : public UWaterEnvMap
+{
 public:
-  class CWaterEnvMapInternal : public CWaterEnvMap {
-  public:
-    CDriverUser *Driver;
-    IWaterEnvMapRender *Rdr;
-    // From CWaterEnvMap
-    virtual void render(CTextureCube::TFace face, TGlobalAnimationTime time) {
-      nlassert(Driver);
-      if (!Rdr)
-        return;
-      Rdr->render((IWaterEnvMapRender::TFace)face, time, *Driver);
-    }
-  };
-  CWaterEnvMapInternal EnvMap;
+	class CWaterEnvMapInternal : public CWaterEnvMap
+	{
+	public:
+		CDriverUser *Driver;
+		IWaterEnvMapRender *Rdr;
+		// From CWaterEnvMap
+		virtual void render(CTextureCube::TFace face, TGlobalAnimationTime time)
+		{
+			nlassert(Driver);
+			if (!Rdr) return;
+			Rdr->render((IWaterEnvMapRender::TFace)face, time, *Driver);
+		}
+	};
+	CWaterEnvMapInternal EnvMap;
 
 public:
-  virtual ~CWaterEnvMapUser() {}
-  virtual void init(uint cubeMapSize, uint projection2DSize,
-                    TGlobalAnimationTime updateTime);
-  // Set an external renderer that will update the envmap used for water
-  // rendering. The renderer will be called during the update as needed
-  virtual void setWaterEnvMapRenderCallback(IWaterEnvMapRender *rdr) {
-    EnvMap.Rdr = rdr;
-  }
-  virtual IWaterEnvMapRender *getWaterEnvMapRenderCallback() const {
-    return EnvMap.Rdr;
-  }
-  virtual void invalidate();
-  virtual void setAlpha(uint8 alpha) { EnvMap.setAlpha(alpha); }
-  virtual uint8 getAlpha() const { return EnvMap.getAlpha(); }
-  virtual CWaterEnvMap *getWaterEnvMap() { return &EnvMap; }
+	virtual ~CWaterEnvMapUser() { }
+	virtual void init(uint cubeMapSize, uint projection2DSize, TGlobalAnimationTime updateTime);
+	// Set an external renderer that will update the envmap used for water rendering. The renderer will be called during the update as needed
+	virtual void setWaterEnvMapRenderCallback(IWaterEnvMapRender *rdr) { EnvMap.Rdr = rdr; }
+	virtual IWaterEnvMapRender *getWaterEnvMapRenderCallback() const { return EnvMap.Rdr; }
+	virtual void invalidate();
+	virtual void setAlpha(uint8 alpha) { EnvMap.setAlpha(alpha); }
+	virtual uint8 getAlpha() const { return EnvMap.getAlpha(); }
+	virtual CWaterEnvMap *getWaterEnvMap() { return &EnvMap; }
 };
 
-} // namespace NL3D
+} // NL3D
 
 #endif

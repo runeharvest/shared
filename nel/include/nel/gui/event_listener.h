@@ -20,23 +20,24 @@
 #ifndef EVENT_LISTENER
 #define EVENT_LISTENER
 
-#include "nel/gui/input_handler.h"
 #include "nel/misc/event_listener.h"
+#include "nel/gui/input_handler.h"
 
 namespace NLGUI {
-class CEventListener : public NLMISC::IEventListener {
+class CEventListener : public NLMISC::IEventListener
+{
 public:
-  CEventListener();
-  ~CEventListener();
-  void addToServer(NLMISC::CEventServer *server);
-  void removeFromServer();
-  void operator()(const NLMISC::CEvent &evnt);
+	CEventListener();
+	~CEventListener();
+	void addToServer(NLMISC::CEventServer *server);
+	void removeFromServer();
+	void operator()(const NLMISC::CEvent &evnt);
 
 private:
-  NLGUI::CInputHandler inputHandler;
-  NLMISC::CEventServer *eventServer;
+	NLGUI::CInputHandler inputHandler;
+	NLMISC::CEventServer *eventServer;
 };
 
-} // namespace NLGUI
+}
 
 #endif

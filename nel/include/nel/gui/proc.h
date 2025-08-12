@@ -21,113 +21,125 @@
 #define PROC_H
 
 #include "nel/misc/types_nl.h"
-#include <algorithm>
-#include <map>
 #include <string>
 #include <vector>
+#include <map>
+#include <algorithm>
 
 namespace NLGUI {
-class CParamBlock {
+class CParamBlock
+{
 public:
-  // -1 if not a param id, but a string
-  sint32 NumParam;
-  std::string String;
+	// -1 if not a param id, but a string
+	sint32 NumParam;
+	std::string String;
 
-  CParamBlock() { NumParam = -1; }
+	CParamBlock()
+	{
+		NumParam = -1;
+	}
 };
 
-class CProcAction {
+class CProcAction
+{
 public:
-  // a condition to launch this action handler (is an expression)
-  std::vector<CParamBlock> CondBlocks;
+	// a condition to launch this action handler (is an expression)
+	std::vector<CParamBlock> CondBlocks;
 
-  // the action handler (may be proc!!)
-  std::string Action;
-  std::string Parameters;
-  std::string Conditions;
+	// the action handler (may be proc!!)
+	std::string Action;
+	std::string Parameters;
+	std::string Conditions;
 
-  // A list of string/or param number => to build the final params at execution
-  std::vector<CParamBlock> ParamBlocks;
+	// A list of string/or param number => to build the final params at execution
+	std::vector<CParamBlock> ParamBlocks;
 
-  // build a paramBlock from a string
-  void buildParamBlock(const std::string &params);
-  // from ParamBlock, and a paramList (skip the 0th), build params.
-  void buildParams(const std::vector<std::string> &paramList,
-                   std::string &params) const;
+	// build a paramBlock from a string
+	void buildParamBlock(const std::string &params);
+	// from ParamBlock, and a paramList (skip the 0th), build params.
+	void buildParams(const std::vector<std::string> &paramList, std::string &params) const;
 
-  void buildCondBlock(const std::string &params);
+	void buildCondBlock(const std::string &params);
 
-  void buildCond(const std::vector<std::string> &paramList,
-                 std::string &cond) const;
+	void buildCond(const std::vector<std::string> &paramList, std::string &cond) const;
 
-  static void buildBlocks(const std::string &in, std::vector<CParamBlock> &out);
+	static void buildBlocks(const std::string &in, std::vector<CParamBlock> &out);
 
-  static void eval(const std::vector<std::string> &inArgs,
-                   const std::vector<CParamBlock> &inBlocks, std::string &out);
+	static void eval(const std::vector<std::string> &inArgs, const std::vector<CParamBlock> &inBlocks, std::string &out);
 };
 
-class CActionNameIs {
+class CActionNameIs
+{
 public:
-  CActionNameIs(const std::string &n) { name = n; }
+	CActionNameIs(const std::string &n)
+	{
+		name = n;
+	}
 
-  bool operator()(const CProcAction &action) {
-    if (action.Action == name)
-      return true;
-    else
-      return false;
-  }
+	bool operator()(const CProcAction &action)
+	{
+		if (action.Action == name)
+			return true;
+		else
+			return false;
+	}
 
 private:
-  std::string name;
+	std::string name;
 };
 
-class CProcedure {
+class CProcedure
+{
 public:
-  // List of the actions
-  std::vector<CProcAction> Actions;
+	// List of the actions
+	std::vector<CProcAction> Actions;
 
-  bool hasAction(const std::string &name) const {
-    std::vector<CProcAction>::const_iterator itr =
-        std::find_if(Actions.begin(), Actions.end(), CActionNameIs(name));
-    if (itr != Actions.end())
-      return true;
-    else
-      return false;
-  }
+	bool hasAction(const std::string &name) const
+	{
+		std::vector<CProcAction>::const_iterator itr
+		    = std::find_if(Actions.begin(), Actions.end(), CActionNameIs(name));
+		if (itr != Actions.end())
+			return true;
+		else
+			return false;
+	}
 
-  bool swap(uint32 i1, uint32 i2) {
-    if (i1 == i2)
-      return false;
-    if (i1 >= Actions.size())
-      return false;
-    if (i2 >= Actions.size())
-      return false;
+	bool swap(uint32 i1, uint32 i2)
+	{
+		if (i1 == i2)
+			return false;
+		if (i1 >= Actions.size())
+			return false;
+		if (i2 >= Actions.size())
+			return false;
 
-    CProcAction a = Actions[i1];
-    Actions[i1] = Actions[i2];
-    Actions[i2] = a;
+		CProcAction a = Actions[i1];
+		Actions[i1] = Actions[i2];
+		Actions[i2] = a;
 
-    return true;
-  }
+		return true;
+	}
 
-  bool addAction(const std::string &name) {
-    Actions.push_back(CProcAction());
-    Actions.back().Action = name;
+	bool addAction(const std::string &name)
+	{
+		Actions.push_back(CProcAction());
+		Actions.back().Action = name;
 
-    return true;
-  }
+		return true;
+	}
 
-  bool removeAction(uint32 i) {
-    if (i >= Actions.size())
-      return false;
-    std::vector<CProcAction>::iterator itr = Actions.begin() + i;
-    Actions.erase(itr);
+	bool removeAction(uint32 i)
+	{
+		if (i >= Actions.size())
+			return false;
+		std::vector<CProcAction>::iterator itr = Actions.begin() + i;
+		Actions.erase(itr);
 
-    return true;
-  }
+		return true;
+	}
 };
 
 typedef std::map<std::string, CProcedure> TProcedureMap;
-} // namespace NLGUI
+}
 
 #endif

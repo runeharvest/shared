@@ -27,40 +27,45 @@ using namespace NLMISC;
 namespace NL3D {
 
 // ***************************************************************************
-void CHeightMap::resize(uint w, uint h) {
-  _Width = w;
-  _Height = h;
-  Heights.resize(w * h);
+void CHeightMap::resize(uint w, uint h)
+{
+	_Width = w;
+	_Height = h;
+	Heights.resize(w * h);
 }
 
 // ***************************************************************************
-void CHeightMap::buildFromBitmap(const NLMISC::CBitmap &bitmap0) {
-  // copy bitmap.
-  CBitmap bitmap = bitmap0;
-  // convert to luminance.
-  bitmap.convertToType(CBitmap::Luminance);
+void CHeightMap::buildFromBitmap(const NLMISC::CBitmap &bitmap0)
+{
+	// copy bitmap.
+	CBitmap bitmap = bitmap0;
+	// convert to luminance.
+	bitmap.convertToType(CBitmap::Luminance);
 
-  // resize array.
-  uint w, h;
-  w = bitmap.getWidth();
-  h = bitmap.getHeight();
-  resize(w, h);
+	// resize array.
+	uint w, h;
+	w = bitmap.getWidth();
+	h = bitmap.getHeight();
+	resize(w, h);
 
-  // get luminance image.
-  CObjectVector<uint8> &array = bitmap.getPixels();
-  // invert the image in Y.
-  for (uint y = 0; y < h; y++) {
-    for (uint x = 0; x < w; x++) {
-      uint8 v = array[(h - 1 - y) * w + x];
-      Heights[y * w + x] = v;
-    }
-  }
+	// get luminance image.
+	CObjectVector<uint8> &array = bitmap.getPixels();
+	// invert the image in Y.
+	for (uint y = 0; y < h; y++)
+	{
+		for (uint x = 0; x < w; x++)
+		{
+			uint8 v = array[(h - 1 - y) * w + x];
+			Heights[y * w + x] = v;
+		}
+	}
 }
 
 // ***************************************************************************
-float CHeightMap::getZ(uint x, uint y) const {
-  nlassert(x < _Width && y < _Height);
-  return Heights[y * _Width + x] * MaxZ / 255;
+float CHeightMap::getZ(uint x, uint y) const
+{
+	nlassert(x < _Width && y < _Height);
+	return Heights[y * _Width + x] * MaxZ / 255;
 }
 
-} // namespace NL3D
+} // NL3D

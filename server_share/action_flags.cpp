@@ -28,21 +28,21 @@ using namespace NLMISC;
 namespace RYZOMACTIONFLAGS {
 // The conversion table
 const CStringConversion<TActionFlag>::CPair stringTable[] = {
-    {"Attacks", Attacks},
-    {"Undefined", Undefined},
+	{ "Attacks", Attacks },
+	{ "Undefined", Undefined },
 };
 
-CStringConversion<TActionFlag>
-    conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]),
-               Undefined);
+CStringConversion<TActionFlag> conversion(stringTable, sizeof(stringTable) / sizeof(stringTable[0]), Undefined);
 
 // convert item family id to item family name string
-const std::string &toString(TActionFlag flag) {
-  return conversion.toString(flag);
+const std::string &toString(TActionFlag flag)
+{
+	return conversion.toString(flag);
 }
 
 // convert item type name to item type enum value
-TActionFlag toActionFlag(const std::string &str) {
-  return conversion.fromString(str);
+TActionFlag toActionFlag(const std::string &str)
+{
+	return conversion.fromString(str);
 }
-}; // namespace RYZOMACTIONFLAGS
+}; // RYZOMACTIONFLAGS

@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "nel/net/module_message.h"
 #include "stdnet.h"
+#include "nel/net/module_message.h"
 
 // a stupid function to remove some more stupid visual warnings
-void foo_module_message() {}
+void foo_module_message() { }
 
 namespace NLNET {
 //	CModuleMessage::CModuleMessage(const CMessage &messageBody)

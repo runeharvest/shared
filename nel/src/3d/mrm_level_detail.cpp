@@ -25,25 +25,27 @@
 namespace NL3D {
 
 // ***************************************************************************
-void CMRMLevelDetail::compileDistanceSetup() {
-  // Compute _OODistDelta.
-  OODistanceDelta = 1.0f / (DistanceCoarsest - DistanceFinest);
-  /* Compute exponent pow, such that 0.5= dMiddle^pow;
-      ie 0.5= e(ln dMiddle * pow)
-  */
-  float dMiddle = (DistanceCoarsest - DistanceMiddle) * OODistanceDelta;
-  DistancePow = (float)(log(0.5) / log(dMiddle));
+void CMRMLevelDetail::compileDistanceSetup()
+{
+	// Compute _OODistDelta.
+	OODistanceDelta = 1.0f / (DistanceCoarsest - DistanceFinest);
+	/* Compute exponent pow, such that 0.5= dMiddle^pow;
+	    ie 0.5= e(ln dMiddle * pow)
+	*/
+	float dMiddle = (DistanceCoarsest - DistanceMiddle) * OODistanceDelta;
+	DistancePow = (float)(log(0.5) / log(dMiddle));
 }
 
 // ***************************************************************************
-float CMRMLevelDetail::getLevelDetailFromDist(float dist) {
-  if (dist <= DistanceFinest)
-    return 1;
-  if (dist >= DistanceCoarsest)
-    return 0;
+float CMRMLevelDetail::getLevelDetailFromDist(float dist)
+{
+	if (dist <= DistanceFinest)
+		return 1;
+	if (dist >= DistanceCoarsest)
+		return 0;
 
-  float d = (DistanceCoarsest - dist) * OODistanceDelta;
-  return (float)pow(d, DistancePow);
+	float d = (DistanceCoarsest - dist) * OODistanceDelta;
+	return (float)pow(d, DistancePow);
 }
 
-} // namespace NL3D
+} // NL3D
