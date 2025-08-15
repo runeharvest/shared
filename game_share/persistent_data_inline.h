@@ -49,7 +49,7 @@ inline void CPersistentDataRecord::push(TToken token, bool val)
 {
 // make sure the token is valid
 #ifdef NL_DEBUG
-	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return);
+	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return );
 #endif
 
 	// store the token and value to the relavent data buffers
@@ -61,7 +61,7 @@ inline void CPersistentDataRecord::push(TToken token, sint8 val)
 {
 // make sure the token is valid
 #ifdef NL_DEBUG
-	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return);
+	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return );
 #endif
 
 	// store the token and value to the relavent data buffers
@@ -73,7 +73,7 @@ inline void CPersistentDataRecord::push(TToken token, sint16 val)
 {
 // make sure the token is valid
 #ifdef NL_DEBUG
-	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return);
+	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return );
 #endif
 
 	// store the token and value to the relavent data buffers
@@ -85,7 +85,7 @@ inline void CPersistentDataRecord::push(TToken token, sint32 val)
 {
 // make sure the token is valid
 #ifdef NL_DEBUG
-	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return);
+	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return );
 #endif
 
 	// store the token and value to the relavent data buffers
@@ -101,7 +101,7 @@ inline void CPersistentDataRecord::push(TToken token, sint64 val)
 
 // make sure the token is valid
 #ifdef NL_DEBUG
-	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return);
+	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return );
 #endif
 
 	// store the token and value to the relavent data buffers
@@ -115,7 +115,7 @@ inline void CPersistentDataRecord::push(TToken token, uint8 val)
 {
 // make sure the token is valid
 #ifdef NL_DEBUG
-	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return);
+	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return );
 #endif
 
 	// store the token and value to the relavent data buffers
@@ -127,7 +127,7 @@ inline void CPersistentDataRecord::push(TToken token, uint16 val)
 {
 // make sure the token is valid
 #ifdef NL_DEBUG
-	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return);
+	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return );
 #endif
 
 	// store the token and value to the relavent data buffers
@@ -139,7 +139,7 @@ inline void CPersistentDataRecord::push(TToken token, uint32 val)
 {
 // make sure the token is valid
 #ifdef NL_DEBUG
-	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return);
+	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return );
 #endif
 
 	// store the token and value to the relavent data buffers
@@ -155,7 +155,7 @@ inline void CPersistentDataRecord::push(TToken token, uint64 val)
 
 // make sure the token is valid
 #ifdef NL_DEBUG
-	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return);
+	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return );
 #endif
 
 	// store the token and value to the relavent data buffers
@@ -172,7 +172,7 @@ inline void CPersistentDataRecord::push(TToken token, float val)
 
 // make sure the token is valid
 #ifdef NL_DEBUG
-	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return);
+	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return );
 #endif
 
 	// store the token and value to the relavent data buffers
@@ -188,7 +188,7 @@ inline void CPersistentDataRecord::push(TToken token, double val)
 
 // make sure the token is valid
 #ifdef NL_DEBUG
-	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return);
+	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return );
 #endif
 
 	// store the token and value to the relavent data buffers
@@ -202,7 +202,7 @@ inline void CPersistentDataRecord::push(TToken token, const std::string &val)
 {
 // make sure the token is valid
 #ifdef NL_DEBUG
-	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return);
+	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return );
 #endif
 
 	// store the token and value to the relavent data buffers
@@ -220,7 +220,7 @@ inline void CPersistentDataRecord::push(TToken token, NLMISC::CSheetId val)
 {
 // make sure the token is valid
 #ifdef NL_DEBUG
-	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return);
+	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return );
 #endif
 
 	// store the token and value to the relavent data buffers
@@ -240,7 +240,7 @@ inline void CPersistentDataRecord::push(TToken token)
 {
 // make sure the token is valid
 #ifdef NL_DEBUG
-	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return);
+	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return );
 #endif
 
 	// store the token to the relavent data buffer
@@ -251,7 +251,7 @@ inline void CPersistentDataRecord::pushStructBegin(TToken token)
 {
 // make sure the token is valid
 #ifdef NL_DEBUG
-	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return);
+	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return );
 #endif
 
 	_TokenTable.push_back(token << 3 | CArg::STRUCT_BEGIN);
@@ -261,9 +261,9 @@ inline void CPersistentDataRecord::pushStructBegin(TToken token)
 inline void CPersistentDataRecord::pushStructEnd(TToken token)
 {
 #ifdef NL_DEBUG
-	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return);
-	BOMB_IF(_WritingStructStack.empty(), "Trying to pop past end of stack", return);
-	BOMB_IF(_WritingStructStack.back() != token, "Attempting to end a structure with the wrong delimiting token", return);
+	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return );
+	BOMB_IF(_WritingStructStack.empty(), "Trying to pop past end of stack", return );
+	BOMB_IF(_WritingStructStack.back() != token, "Attempting to end a structure with the wrong delimiting token", return );
 #endif
 
 	_WritingStructStack.pop_back();
@@ -341,8 +341,8 @@ inline void CPersistentDataRecord::peekNextArg(CPersistentDataRecord::CArg &resu
 	result.setType(peekNextTokenType());
 	if (result.isExtended())
 	{
-		BOMB_IF(_ArgOffset + 1 >= _ArgTable.size(), "Attempt to overrun end of input data", return);
-		DROP_IF((_TokenTable[_TokenOffset + 0] & ~7) != (_TokenTable[_TokenOffset + 1] & ~7), "2 dwords of 64 bit have non-matching identifiers", return);
+		BOMB_IF(_ArgOffset + 1 >= _ArgTable.size(), "Attempt to overrun end of input data", return );
+		DROP_IF((_TokenTable[_TokenOffset + 0] & ~7) != (_TokenTable[_TokenOffset + 1] & ~7), "2 dwords of 64 bit have non-matching identifiers", return );
 		result._Value.i32_1 = _ArgTable[_ArgOffset + 0];
 		result._Value.i32_2 = _ArgTable[_ArgOffset + 1];
 		nlassert(result._Value.ExType == result._Value.i32_1);
@@ -352,8 +352,8 @@ inline void CPersistentDataRecord::peekNextArg(CPersistentDataRecord::CArg &resu
 		if (result._Type == CArg::EXTEND_TYPE && result._Value.ExType >= CArg::ET_64_BIT_EXTENDED_TYPES)
 		{
 			// this is a 96 bit extended type, read one more value
-			BOMB_IF(_ArgOffset + 2 >= _ArgTable.size(), "Attempt to overrun end of input data", return);
-			BOMB_IF((_TokenTable[_TokenOffset + 0] & ~7) != (_TokenTable[_TokenOffset + 2] & ~7), "3 dwords of 96 bit have non-matching identifiers", return);
+			BOMB_IF(_ArgOffset + 2 >= _ArgTable.size(), "Attempt to overrun end of input data", return );
+			BOMB_IF((_TokenTable[_TokenOffset + 0] & ~7) != (_TokenTable[_TokenOffset + 2] & ~7), "3 dwords of 96 bit have non-matching identifiers", return );
 			result._Value.ex32_2 = _ArgTable[_ArgOffset + 2];
 
 			nlassert((uint64(result._Value.ex32_2) << 32 | result._Value.ex32_1) == result._Value.ExData64);
@@ -414,7 +414,7 @@ inline const CPersistentDataRecord::CArg &CPersistentDataRecord::popNextArg(TTok
 inline void CPersistentDataRecord::popNextArg(TToken token, CPersistentDataRecord::CArg &result)
 {
 #ifdef NL_DEBUG
-	BOMB_IF(peekNextToken() != token, "Error on read code - token requested doesn't match token found", return);
+	BOMB_IF(peekNextToken() != token, "Error on read code - token requested doesn't match token found", return );
 #else
 	nlunreferenced(token);
 #endif
@@ -560,20 +560,20 @@ inline void CPersistentDataRecord::pop(TToken /* token */)
 
 inline void CPersistentDataRecord::popStructBegin(TToken token)
 {
-	DROP_IF(peekNextToken() != token, "Attempting to enter a structure with the wrong delimiting token", return);
-	DROP_IF(peekNextTokenType() != CArg::STRUCT_BEGIN, "Attempting to enter a structure with the wrong delimiting token type", return);
+	DROP_IF(peekNextToken() != token, "Attempting to enter a structure with the wrong delimiting token", return );
+	DROP_IF(peekNextTokenType() != CArg::STRUCT_BEGIN, "Attempting to enter a structure with the wrong delimiting token type", return );
 	_ReadingStructStack.push_back(token);
 	++_TokenOffset;
 }
 
 inline void CPersistentDataRecord::popStructEnd(TToken token)
 {
-	DROP_IF(_ReadingStructStack.empty(), "Attempting to pop end of a structure with nothing left in the open structure stack", return);
+	DROP_IF(_ReadingStructStack.empty(), "Attempting to pop end of a structure with nothing left in the open structure stack", return );
 	TToken nextToken = peekNextToken();
 	TToken topToken = _ReadingStructStack.back();
-	DROP_IF(topToken != token, "Attempting to pop end of a structure with the wrong delimiting token", return);
-	DROP_IF(nextToken != token, "Attempting to pop end of a structure with the wrong delimiting token", return);
-	DROP_IF(peekNextTokenType() != CArg::STRUCT_END, "Attempting to leave a structure with the wrong delimiting token type", return);
+	DROP_IF(topToken != token, "Attempting to pop end of a structure with the wrong delimiting token", return );
+	DROP_IF(nextToken != token, "Attempting to pop end of a structure with the wrong delimiting token", return );
+	DROP_IF(peekNextTokenType() != CArg::STRUCT_END, "Attempting to leave a structure with the wrong delimiting token type", return );
 	_ReadingStructStack.pop_back();
 	++_TokenOffset;
 }
@@ -955,7 +955,7 @@ inline bool CPersistentDataRecord::CArg::setType(const std::string &name)
 
 inline void CPersistentDataRecord::CArg::setType(CPersistentDataRecord::CArg::TType value)
 {
-	BOMB_IF(value < 0 || value >= CArg::NB_TYPE, "Invalid argument type", return);
+	BOMB_IF(value < 0 || value >= CArg::NB_TYPE, "Invalid argument type", return );
 	_Type = value;
 }
 
@@ -971,7 +971,7 @@ inline bool CPersistentDataRecord::CArg::isExtended() const
 
 inline void CPersistentDataRecord::CArg::push(TToken token, std::vector<TToken> &tokenTable, std::vector<uint32> &argTable) const
 {
-	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return);
+	BOMB_IF(((token << 3) >> 3) != token, "Invalid token - Insufficient numeric precision", return );
 	switch (_Type)
 	{
 	case FLAG:
@@ -1003,7 +1003,7 @@ inline void CPersistentDataRecord::CArg::push(TToken token, std::vector<TToken> 
 		break;
 
 	default:
-		BOMB("This should never happen!!!", return);
+		BOMB("This should never happen!!!", return );
 	}
 }
 

@@ -588,7 +588,7 @@ void CDriverGLStates::setVertexColorLighted(bool enable)
 			diffCol.R = (uint8)((_CurDiffuse >> 24) & 255);
 			diffCol.G = (uint8)((_CurDiffuse >> 16) & 255);
 			diffCol.B = (uint8)((_CurDiffuse >> 8) & 255);
-			diffCol.A = (uint8)((_CurDiffuse) & 255);
+			diffCol.A = (uint8)((_CurDiffuse)&255);
 			GLfloat glColor[4];
 			convColor(diffCol, glColor);
 			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, glColor);

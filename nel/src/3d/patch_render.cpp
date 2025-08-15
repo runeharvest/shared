@@ -494,8 +494,7 @@ static inline void renderFaceVector(TLandscapeIndexType *fv)
 				mov		NL3D_LandscapeGlobals_PassNTri, edx
 		}
 #else
-		__asm
-		    {
+		__asm {
 				mov		ebx, fv
 				mov		edi, NL3D_LandscapeGlobals_PassTriCurPtr
 
@@ -511,7 +510,7 @@ static inline void renderFaceVector(TLandscapeIndexType *fv)
 				test	ecx, 1
 				jne		odd_number
 				shr     ecx, 1
-			    // for alignment, first copy a single word
+			// for alignment, first copy a single word
 				movsw
 				dec	ecx
 				rep movsd
@@ -519,17 +518,17 @@ static inline void renderFaceVector(TLandscapeIndexType *fv)
 				jmp		even_number_done
 	odd_number:
 				shr ecx, 1
-			    // for alignment, first copy a single word
+			// for alignment, first copy a single word
 				movsw
 				rep movsd
 	even_number_done:
 
 				add		edx, eax // edx= NL3D_LandscapeGlobals_PassNTri + NumTri;
 
-			        // NL3D_LandscapeGlobals_PassTriCurPtr= edi= new ptr after copy
+			    // NL3D_LandscapeGlobals_PassTriCurPtr= edi= new ptr after copy
 				mov		NL3D_LandscapeGlobals_PassTriCurPtr, edi
 				mov		NL3D_LandscapeGlobals_PassNTri, edx
-		    }
+		}
 #endif
 #else
 		uint nTriIndex = *fv * 3;

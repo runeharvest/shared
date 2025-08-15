@@ -255,7 +255,10 @@ public:
 	void setUCTitle(const ucstring &title); // Compatibility
 #endif
 
-	void setPopable(bool popable) { _Popable = popable; }
+	void setPopable(bool popable)
+	{
+		_Popable = popable;
+	}
 	bool isPopable() const { return _Popable; }
 	bool isPopuped() const { return _Poped; }
 

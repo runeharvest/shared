@@ -949,7 +949,7 @@ static int drmp3_L3_read_side_info(drmp3_bs *bs, drmp3_L3_gr_info *gr, const drm
 		}
 		gr->table_select[0] = (drmp3_uint8)(tables >> 10);
 		gr->table_select[1] = (drmp3_uint8)((tables >> 5) & 31);
-		gr->table_select[2] = (drmp3_uint8)((tables) & 31);
+		gr->table_select[2] = (drmp3_uint8)((tables)&31);
 		gr->preflag = (drmp3_uint8)(DRMP3_HDR_TEST_MPEG1(hdr) ? drmp3_bs_get_bits(bs, 1) : (gr->scalefac_compress >= 500));
 		gr->scalefac_scale = (drmp3_uint8)drmp3_bs_get_bits(bs, 1);
 		gr->count1_table = (drmp3_uint8)drmp3_bs_get_bits(bs, 1);
@@ -1132,11 +1132,11 @@ static void drmp3_L3_huffman(float *dst, drmp3_bs *bs, const drmp3_L3_gr_info *g
 		bs_cache <<= (n);   \
 		bs_sh += (n);       \
 	}
-#define DRMP3_CHECK_BITS                                     \
-	while (bs_sh >= 0)                                       \
-	{                                                        \
-		bs_cache |= (drmp3_uint32) * bs_next_ptr++ << bs_sh; \
-		bs_sh -= 8;                                          \
+#define DRMP3_CHECK_BITS                                   \
+	while (bs_sh >= 0)                                     \
+	{                                                      \
+		bs_cache |= (drmp3_uint32)*bs_next_ptr++ << bs_sh; \
+		bs_sh -= 8;                                        \
 	}
 #define DRMP3_BSPOS ((bs_next_ptr - bs->buf) * 8 - 24 + bs_sh)
 
@@ -1926,7 +1926,8 @@ static void drmp3d_synth(float *xl, drmp3d_sample_t *dstl, int nch, float *lins)
 
 			DRMP3_V0(0)
 			DRMP3_V2(1)
-			DRMP3_V1(2) DRMP3_V2(3) DRMP3_V1(4) DRMP3_V2(5) DRMP3_V1(6) DRMP3_V2(7)
+			DRMP3_V1(2)
+			DRMP3_V2(3) DRMP3_V1(4) DRMP3_V2(5) DRMP3_V1(6) DRMP3_V2(7)
 
 			{
 #ifndef DR_MP3_FLOAT_OUTPUT
@@ -2028,7 +2029,8 @@ static void drmp3d_synth(float *xl, drmp3d_sample_t *dstl, int nch, float *lins)
 
 		DRMP3_S0(0)
 		DRMP3_S2(1)
-		DRMP3_S1(2) DRMP3_S2(3) DRMP3_S1(4) DRMP3_S2(5) DRMP3_S1(6) DRMP3_S2(7)
+		DRMP3_S1(2)
+		DRMP3_S2(3) DRMP3_S1(4) DRMP3_S2(5) DRMP3_S1(6) DRMP3_S2(7)
 
 		    dstr[(15 - i) * nch]
 		    = drmp3d_scale_pcm(a[1]);

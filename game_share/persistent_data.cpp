@@ -296,7 +296,7 @@ void CPersistentDataRecord::rewind()
 
 void CPersistentDataRecord::skipStruct()
 {
-	DROP_IF(!isStartOfStruct(), "Attempting to skip a struct whereas next token is not a struct", return);
+	DROP_IF(!isStartOfStruct(), "Attempting to skip a struct whereas next token is not a struct", return );
 	skipData();
 }
 

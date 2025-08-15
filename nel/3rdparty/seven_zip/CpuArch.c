@@ -44,7 +44,10 @@ static UInt32 CheckFlag(UInt32 flag)
 	    "xorl %%EDX,%%EAX\n\t"
 	    "push %%EDX\n\t"
 	    "popf\n\t"
-	    "andl %%EAX, %0\n\t" : "=c"(flag) : "c"(flag) : "%eax", "%edx");
+	    "andl %%EAX, %0\n\t"
+	    : "=c"(flag)
+	    : "c"(flag)
+	    : "%eax", "%edx");
 #endif
 	return flag;
 }

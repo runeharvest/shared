@@ -51,8 +51,7 @@ void computeGradient(const NLMISC::CRGBA *valueTab, uint32 numValues, uint32 nbS
 			step[1] = (sint16)(stepX127 * (valueTab[k + 1].G - valueTab[k].G));
 			step[2] = (sint16)(stepX127 * (valueTab[k + 1].B - valueTab[k].B));
 			step[3] = (sint16)(stepX127 * (valueTab[k + 1].A - valueTab[k].A));
-			__asm
-			    {
+			__asm {
 					pxor mm0, mm0 // mm0 = 0
 					movd mm1, col0
 					punpcklbw mm0, mm1 // store current col in mm0, each component is stored in 7:8 fixed integer
@@ -63,7 +62,7 @@ void computeGradient(const NLMISC::CRGBA *valueTab, uint32 numValues, uint32 nbS
 					mov  ecx, nbStages
 					sub  edi, eax
 				myLoop:
-				                               // unpack current color
+				    // unpack current color
 					movq        mm1, mm0
 					add			edi, eax // advance destination
 					psrlw       mm1, 7
@@ -73,7 +72,7 @@ void computeGradient(const NLMISC::CRGBA *valueTab, uint32 numValues, uint32 nbS
 					dec ecx
 					jne myLoop
 					emms
-			    }
+			}
 			dest += nbStages;
 		}
 	}

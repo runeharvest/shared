@@ -1657,158 +1657,158 @@ void CAudioMixerUser::update()
 		H_AUTO(NLSOUND_AudioMixerUpdateObjet)
 		// 1st, update the event list
 		{
-			std::vector<std::pair<IMixerUpdate *, bool>>::iterator first(_UpdateEventList.begin()), last(_UpdateEventList.end());
-			for (; first != last; ++first)
-			{
-				if (first->second)
-				{
-					//					nldebug("Inserting update %p", first->first);
-					_UpdateList.insert(first->first);
-				}
-				else
-				{
-					//					nldebug("Removing update %p", first->first);
-					_UpdateList.erase(first->first);
-				}
-			}
-			_UpdateEventList.clear();
-		}
-		// 2nd, do the update
+		    std::vector<std::pair<IMixerUpdate *, bool>>::iterator first(_UpdateEventList.begin()), last(_UpdateEventList.end());
+	for (; first != last; ++first)
+	{
+		if (first->second)
 		{
-			TMixerUpdateContainer::iterator first(_UpdateList.begin()), last(_UpdateList.end());
-			for (; first != last; ++first)
-			{
-				if (*first == 0)
-				{
-					nlwarning("NULL pointeur in update list !");
-				}
-				else
-				{
-					// call the update method.
-					const IMixerUpdate *update = *first;
-					const_cast<IMixerUpdate *>(update)->onUpdate();
-				}
-			}
+			//					nldebug("Inserting update %p", first->first);
+			_UpdateList.insert(first->first);
+		}
+		else
+		{
+			//					nldebug("Removing update %p", first->first);
+			_UpdateList.erase(first->first);
 		}
 	}
-	// send the event.
+	_UpdateEventList.clear();
+}
+// 2nd, do the update
+{
+	TMixerUpdateContainer::iterator first(_UpdateList.begin()), last(_UpdateList.end());
+	for (; first != last; ++first)
 	{
-		H_AUTO(NLSOUND_AudioMixerUpdateSendEvent)
-
-		// **** 1st, update the event list
+		if (*first == 0)
 		{
-			std::list<std::pair<NLMISC::TTime, IMixerEvent *>>::iterator first(_EventListUpdate.begin()), last(_EventListUpdate.end());
-			for (; first != last; ++first)
-			{
-				// add an event
-				//				nldebug ("Add event %p", first->second);
-				TTimedEventContainer::iterator it(_EventList.insert(make_pair(first->first, NLMISC::CDbgPtr<IMixerEvent>(first->second))));
-				_Events.insert(make_pair(first->second, it));
-			}
+			nlwarning("NULL pointeur in update list !");
+		}
+		else
+		{
+			// call the update method.
+			const IMixerUpdate *update = *first;
+			const_cast<IMixerUpdate *>(update)->onUpdate();
+		}
+	}
+}
+}
+// send the event.
+{
+	H_AUTO(NLSOUND_AudioMixerUpdateSendEvent)
 
-			_EventListUpdate.clear();
+	// **** 1st, update the event list
+	{
+		std::list<std::pair<NLMISC::TTime, IMixerEvent *>>::iterator first(_EventListUpdate.begin()), last(_EventListUpdate.end());
+		for (; first != last; ++first)
+		{
+			// add an event
+			//				nldebug ("Add event %p", first->second);
+			TTimedEventContainer::iterator it(_EventList.insert(make_pair(first->first, NLMISC::CDbgPtr<IMixerEvent>(first->second))));
+			_Events.insert(make_pair(first->second, it));
 		}
 
-		// **** 2nd, call the events
-		TTime now = NLMISC::CTime::getLocalTime();
-		while (!_EventList.empty() && _EventList.begin()->first <= now)
+		_EventListUpdate.clear();
+	}
+
+	// **** 2nd, call the events
+	TTime now = NLMISC::CTime::getLocalTime();
+	while (!_EventList.empty() && _EventList.begin()->first <= now)
+	{
+		// get the event
+		CAudioMixerUser::IMixerEvent *currentEvent = _EventList.begin()->second;
+
+		// remove the right entry in the _Events multimap.
+		TEventContainer::iterator it(_Events.lower_bound(_EventList.begin()->second));
+		while (it->first == _EventList.begin()->second.ptr())
 		{
-			// get the event
-			CAudioMixerUser::IMixerEvent *currentEvent = _EventList.begin()->second;
-
-			// remove the right entry in the _Events multimap.
-			TEventContainer::iterator it(_Events.lower_bound(_EventList.begin()->second));
-			while (it->first == _EventList.begin()->second.ptr())
+			if (it->second == _EventList.begin())
 			{
-				if (it->second == _EventList.begin())
-				{
-					_Events.erase(it);
-					break;
-				}
-				it++;
+				_Events.erase(it);
+				break;
 			}
+			it++;
+		}
 
-			// remove from the _EventList
-			_EventList.erase(_EventList.begin());
+		// remove from the _EventList
+		_EventList.erase(_EventList.begin());
 
-			// now, run the event
-			//			nldebug("Sending Event %p", _EventList.begin()->second);
-			nlassert(currentEvent);
-			currentEvent->onEvent();
+		// now, run the event
+		//			nldebug("Sending Event %p", _EventList.begin()->second);
+		nlassert(currentEvent);
+		currentEvent->onEvent();
 
 #ifdef NL_DEBUG
-			currentEvent = 0;
+		currentEvent = 0;
 #endif
+	}
+}
+
+// update the background sound
+_BackgroundSoundManager->updateBackgroundStatus();
+
+// update the background music
+_BackgroundMusicManager->update();
+
+uint i;
+// update music channels
+for (i = 0; i < _NbMusicChannelFaders; ++i)
+	_MusicChannelFaders[i].update();
+
+// Check all playing track and stop any terminated buffer.
+std::list<CSourceCommon *>::size_type nbWaitingSources = _Sources.size();
+for (i = 0; i < _Tracks.size(); ++i)
+{
+	if (!_Tracks[i]->isPlaying())
+	{
+		if (_Tracks[i]->getLogicalSource() != 0)
+		{
+			CSourceCommon *source = _Tracks[i]->getLogicalSource();
+			source->stop();
+		}
+
+		// try to play any waiting source.
+		if (!_SourceWaitingForPlay.empty() && nbWaitingSources)
+		{
+			// check if the source still exist before trying to play it
+			if (_Sources.find(_SourceWaitingForPlay.front()) != _Sources.end())
+				_SourceWaitingForPlay.front()->play();
+			//				nldebug("Before POP Sources waiting : %u", _SourceWaitingForPlay.size());
+			_SourceWaitingForPlay.pop_front();
+			--nbWaitingSources;
+			//				nldebug("After POP Sources waiting : %u", _SourceWaitingForPlay.size());
 		}
 	}
+}
 
-	// update the background sound
-	_BackgroundSoundManager->updateBackgroundStatus();
+if (_ClusteredSound)
+{
+	H_AUTO(NLSOUND_UpdateClusteredSound)
+	// update the clustered sound...
+	CVector view, up;
+	_Listener.getOrientation(view, up);
+	_ClusteredSound->update(_ListenPosition, view, up);
 
-	// update the background music
-	_BackgroundMusicManager->update();
-
-	uint i;
-	// update music channels
-	for (i = 0; i < _NbMusicChannelFaders; ++i)
-		_MusicChannelFaders[i].update();
-
-	// Check all playing track and stop any terminated buffer.
-	std::list<CSourceCommon *>::size_type nbWaitingSources = _Sources.size();
+	// update all playng track according to there cluster status
 	for (i = 0; i < _Tracks.size(); ++i)
 	{
-		if (!_Tracks[i]->isPlaying())
+		if (_Tracks[i]->isPlaying())
 		{
 			if (_Tracks[i]->getLogicalSource() != 0)
 			{
 				CSourceCommon *source = _Tracks[i]->getLogicalSource();
-				source->stop();
-			}
-
-			// try to play any waiting source.
-			if (!_SourceWaitingForPlay.empty() && nbWaitingSources)
-			{
-				// check if the source still exist before trying to play it
-				if (_Sources.find(_SourceWaitingForPlay.front()) != _Sources.end())
-					_SourceWaitingForPlay.front()->play();
-				//				nldebug("Before POP Sources waiting : %u", _SourceWaitingForPlay.size());
-				_SourceWaitingForPlay.pop_front();
-				--nbWaitingSources;
-				//				nldebug("After POP Sources waiting : %u", _SourceWaitingForPlay.size());
-			}
-		}
-	}
-
-	if (_ClusteredSound)
-	{
-		H_AUTO(NLSOUND_UpdateClusteredSound)
-		// update the clustered sound...
-		CVector view, up;
-		_Listener.getOrientation(view, up);
-		_ClusteredSound->update(_ListenPosition, view, up);
-
-		// update all playng track according to there cluster status
-		for (i = 0; i < _Tracks.size(); ++i)
-		{
-			if (_Tracks[i]->isPlaying())
-			{
-				if (_Tracks[i]->getLogicalSource() != 0)
+				ISource *isource = _Tracks[i]->getPhysicalSource();
+				if (source->getCluster() != 0)
 				{
-					CSourceCommon *source = _Tracks[i]->getLogicalSource();
-					ISource *isource = _Tracks[i]->getPhysicalSource();
-					if (source->getCluster() != 0)
+					// need to check the cluster status
+					const CClusteredSound::CClusterSoundStatus *css = _ClusteredSound->getClusterSoundStatus(source->getCluster());
+					if (css != 0)
 					{
-						// need to check the cluster status
-						const CClusteredSound::CClusterSoundStatus *css = _ClusteredSound->getClusterSoundStatus(source->getCluster());
-						if (css != 0)
-						{
-							// there is some data here, update the virtual position of the sound.
-							float dist = (css->Position - source->getPos()).norm();
-							CVector vpos(_ListenPosition + css->Direction * (css->Dist + dist));
-							//							_Tracks[i]->DrvSource->setPos(source->getPos() * (1-css->PosAlpha) + css->Position*(css->PosAlpha));
-							isource->setPos(source->getPos() * (1 - css->PosAlpha) + vpos * (css->PosAlpha));
-							// update the relative gain
-							isource->setGain(source->getFinalGain() * css->Gain);
+						// there is some data here, update the virtual position of the sound.
+						float dist = (css->Position - source->getPos()).norm();
+						CVector vpos(_ListenPosition + css->Direction * (css->Dist + dist));
+						//							_Tracks[i]->DrvSource->setPos(source->getPos() * (1-css->PosAlpha) + css->Position*(css->PosAlpha));
+						isource->setPos(source->getPos() * (1 - css->PosAlpha) + vpos * (css->PosAlpha));
+						// update the relative gain
+						isource->setGain(source->getFinalGain() * css->Gain);
 #if 0
 							if (_UseEax)
 							{
@@ -1820,30 +1820,24 @@ void CAudioMixerUser::update()
 								_Tracks[i]->getPhysicalSource()->setEAXProperty(DSPROPERTY_EAXBUFFER_OBSTRUCTION, (void*)&css->Obstruction, sizeof(css->Obstruction));
 							}
 #endif
-							if (m_EnableOcclusionObstruction)
+						if (m_EnableOcclusionObstruction)
+						{
+							H_AUTO(NLSOUND_SetEaxProperties)
+
+							CFilterParameters params(css->Occlusion, css->OcclusionLFFactor, css->OcclusionRoomRatio, css->Obstruction);
+
+							isource->setDirectGain(params.DirectGain);
+							isource->setDirectFilter(ISource::TFilter::FilterLowPass, css->DirectCutoffFrequency, css->DirectCutoffFrequency, params.DirectGainPass);
+							isource->enableDirectFilter(true);
+
+							if (m_EnableReverb)
 							{
-								H_AUTO(NLSOUND_SetEaxProperties)
-
-								CFilterParameters params(css->Occlusion, css->OcclusionLFFactor, css->OcclusionRoomRatio, css->Obstruction);
-
-								isource->setDirectGain(params.DirectGain);
-								isource->setDirectFilter(ISource::TFilter::FilterLowPass, css->DirectCutoffFrequency, css->DirectCutoffFrequency, params.DirectGainPass);
-								isource->enableDirectFilter(true);
-
-								if (m_EnableReverb)
-								{
-									isource->setEffectGain(params.EffectGain);
-									isource->setEffectFilter(ISource::TFilter::FilterLowPass, css->EffectCutoffFrequency, css->EffectCutoffFrequency, params.EffectGainPass);
-									isource->enableEffectFilter(true);
-								}
-								else
-								{
-									isource->enableEffectFilter(false);
-								}
+								isource->setEffectGain(params.EffectGain);
+								isource->setEffectFilter(ISource::TFilter::FilterLowPass, css->EffectCutoffFrequency, css->EffectCutoffFrequency, params.EffectGainPass);
+								isource->enableEffectFilter(true);
 							}
 							else
 							{
-								isource->enableDirectFilter(false);
 								isource->enableEffectFilter(false);
 							}
 						}
@@ -1859,54 +1853,60 @@ void CAudioMixerUser::update()
 						isource->enableEffectFilter(false);
 					}
 				}
+				else
+				{
+					isource->enableDirectFilter(false);
+					isource->enableEffectFilter(false);
+				}
 			}
 		}
 	}
+}
 
-	// Debug info
-	/*uint32 i;
-	nldebug( "List of the %u tracks", _NbTracks );
-	for ( i=0; i!=_NbTracks; i++ )
-	{
-	    CSimpleSource *su;
-	    if ( su = _Tracks[i]->getSource() )
-	    {
-	        nldebug( "%u: %p %s %s %s %s, vol %u",
-	                i, &_Tracks[i]->DrvSource, _Tracks[i]->isAvailable()?"FREE":"USED",
-	                _Tracks[i]->isAvailable()?"":(su->isPlaying()?"PLAYING":"STOPPED"),
-	                _Tracks[i]->isAvailable()?"":PriToCStr[su->getPriority()],
-	                _Tracks[i]->isAvailable()?"":(su->getSound()?su->getSound()->getFilename().c_str():""),
-	                (uint)(su->getGain()*100.0f) );
-	    }
-	}*/
+// Debug info
+/*uint32 i;
+nldebug( "List of the %u tracks", _NbTracks );
+for ( i=0; i!=_NbTracks; i++ )
+{
+    CSimpleSource *su;
+    if ( su = _Tracks[i]->getSource() )
+    {
+        nldebug( "%u: %p %s %s %s %s, vol %u",
+                i, &_Tracks[i]->DrvSource, _Tracks[i]->isAvailable()?"FREE":"USED",
+                _Tracks[i]->isAvailable()?"":(su->isPlaying()?"PLAYING":"STOPPED"),
+                _Tracks[i]->isAvailable()?"":PriToCStr[su->getPriority()],
+                _Tracks[i]->isAvailable()?"":(su->getSound()?su->getSound()->getFilename().c_str():""),
+                (uint)(su->getGain()*100.0f) );
+    }
+}*/
 
-	_SoundDriver->commit3DChanges();
+_SoundDriver->commit3DChanges();
 
 #if NL_PROFILE_MIXER
-	_UpdateTime = CTime::ticksToSecond(CTime::getPerformanceTime() - start);
-	_UpdateCount++;
+_UpdateTime = CTime::ticksToSecond(CTime::getPerformanceTime() - start);
+_UpdateCount++;
 #endif
 
-	/*	// display the track using...
-	    {
-	        char tmp[2048] = "";
-	        string str;
+/*	// display the track using...
+    {
+        char tmp[2048] = "";
+        string str;
 
-	        for (uint i=0; i<_NbTracks/2; ++i)
-	        {
-	            sprintf(tmp, "[%2u]%8p ", i, _Tracks[i]->getSource());
-	            str += tmp;
-	        }
-	        nldebug((string("Status1: ")+str).c_str());
-	        str.clear();
-	        for (i=_NbTracks/2; i<_NbTracks; ++i)
-	        {
-	            sprintf(tmp, "[%2u]%8p ", i, _Tracks[i]->getSource());
-	            str += tmp;
-	        }
-	//		nldebug((string("Status2: ")+str).c_str());
-	    }
-	*/
+        for (uint i=0; i<_NbTracks/2; ++i)
+        {
+            sprintf(tmp, "[%2u]%8p ", i, _Tracks[i]->getSource());
+            str += tmp;
+        }
+        nldebug((string("Status1: ")+str).c_str());
+        str.clear();
+        for (i=_NbTracks/2; i<_NbTracks; ++i)
+        {
+            sprintf(tmp, "[%2u]%8p ", i, _Tracks[i]->getSource());
+            str += tmp;
+        }
+//		nldebug((string("Status2: ")+str).c_str());
+    }
+*/
 }
 
 // ******************************************************************

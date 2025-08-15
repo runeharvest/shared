@@ -97,19 +97,27 @@ inline void _check(long /* a */) { }
 inline void _check(unsigned long /* a */) { }
 
 #ifdef NL_COMP_VC6
-inline void _check(uint8 /* a */) { }
+inline void _check(uint8 /* a */)
+{
+}
 #endif // NL_COMP_VC6
 
-inline void _check(sint8 /* a */) { }
+inline void _check(sint8 /* a */)
+{
+}
 inline void _check(uint16 /* a */) { }
 inline void _check(sint16 /* a */) { }
 
 #ifdef NL_COMP_VC6
-inline void _check(uint32 /* a */) { }
+inline void _check(uint32 /* a */)
+{
+}
 inline void _check(sint32 /* a */) { }
 #endif // NL_COMP_VC6
 
-inline void _check(uint64 /* a */) { }
+inline void _check(uint64 /* a */)
+{
+}
 inline void _check(sint64 /* a */) { }
 inline void _check(float /* a */) { }
 inline void _check(double /* a */) { }
@@ -618,7 +626,10 @@ CHECK_TYPES(std::string toString, return _toString)
 #endif // NL_OS_WINDOWS
 
 template <class T>
-std::string toStringPtr(const T *val) { return toString("%p", val); }
+std::string toStringPtr(const T *val)
+{
+	return toString("%p", val);
+}
 
 template <class T>
 std::string toStringEnum(const T &val) { return toString("%u", (uint32)val); }
@@ -647,7 +658,10 @@ inline std::string toString(const uint64 &val) { return toString("%" NL_I64 "u",
 inline std::string toString(const sint64 &val) { return toString("%" NL_I64 "d", val); }
 
 #ifdef NL_OS_WINDOWS
-inline std::string toString(const wchar_t &val) { return toString(reinterpret_cast<const uint16 &>(val)); }
+inline std::string toString(const wchar_t &val)
+{
+	return toString(reinterpret_cast<const uint16 &>(val));
+}
 #endif
 
 #ifdef NL_COMP_GCC
@@ -667,14 +681,23 @@ inline std::string toString(const long unsigned int &val)
 #endif
 
 #if (SIZEOF_SIZE_T) == 8
-inline std::string toString(const size_t &val) { return toString("%" NL_I64 "u", val); }
+inline std::string toString(const size_t &val)
+{
+	return toString("%" NL_I64 "u", val);
+}
 #else
 #ifdef NL_OS_MAC
-inline std::string toString(const size_t &val) { return toString("%u", val); }
+inline std::string toString(const size_t &val)
+{
+	return toString("%u", val);
+}
 #endif
 #endif
 
-inline std::string toString(const float &val) { return toString("%f", val); }
+inline std::string toString(const float &val)
+{
+	return toString("%f", val);
+}
 inline std::string toString(const double &val) { return toString("%lf", val); }
 inline std::string toString(const bool &val) { return val ? "1" : "0"; }
 inline std::string toString(const std::string &val) { return val; }
@@ -682,7 +705,10 @@ inline std::string toString(const std::string &val) { return val; }
 // stl vectors of bool use bit reference and not real bools, so define the operator for bit reference
 
 #ifdef NL_COMP_VC6
-inline std::string toString(const uint &val) { return toString("%u", val); }
+inline std::string toString(const uint &val)
+{
+	return toString("%u", val);
+}
 inline std::string toString(const sint &val) { return toString("%d", val); }
 #endif // NL_COMP_VC6
 
@@ -825,7 +851,10 @@ inline bool fromString(const std::string &str, double &val)
 }
 
 #ifdef NL_OS_WINDOWS
-inline bool fromString(const std::string &str, wchar_t &val) { return fromString(str, reinterpret_cast<uint16 &>(val)); }
+inline bool fromString(const std::string &str, wchar_t &val)
+{
+	return fromString(str, reinterpret_cast<uint16 &>(val));
+}
 #endif
 
 /// Fast string to bool, reliably defined for strings starting with 0, 1, t, T, f, F, y, Y, n, N, and empty strings, anything else is undefined.
@@ -844,7 +873,10 @@ inline bool fromString(const std::string &str, std::string &val)
 // stl vectors of bool use bit reference and not real bools, so define the operator for bit reference
 
 #ifdef NL_COMP_VC6
-inline bool fromString(const std::string &str, uint &val) { return sscanf(str.c_str(), "%u", &val) == 1; }
+inline bool fromString(const std::string &str, uint &val)
+{
+	return sscanf(str.c_str(), "%u", &val) == 1;
+}
 inline bool fromString(const std::string &str, sint &val) { return sscanf(str.c_str(), "%d", &val) == 1; }
 #endif // NL_COMP_VC6
 
@@ -960,7 +992,10 @@ inline std::string tStrToMbcs(const tstring &str) { return wideToMbcs((const std
 #define nlTStrToUtf8S(str, len) (NLMISC::tStrToUtf8(str, len).c_str())
 #define nlTStrToWideS(str, len) ((const wchar_t *)NLMISC::asCStr(str))
 #define nlTStrToMbcsS(str, len) (NLMISC::tStrToMbcs(str, len).c_str())
-inline tstring utf8ToTStr(const char *str) { return (const tstring &)utf8ToWide(str); }
+inline tstring utf8ToTStr(const char *str)
+{
+	return (const tstring &)utf8ToWide(str);
+}
 inline tstring utf8ToTStr(const std::string &str) { return (const tstring &)utf8ToWide(str); }
 inline tstring wideToTStr(const wchar_t *str) { return (const tchar *)str; }
 inline tstring wideToTStr(const std::wstring &str) { return (const tstring &)str; }
@@ -995,7 +1030,10 @@ inline std::string tStrToMbcs(const tstring &str) { return (const std::string &)
 #endif
 #define nlTStrToWideS(str, len) (NLMISC::tStrToWide(str, len).c_str())
 #define nlTStrToMbcsS(str, len) ((const char *)NLMISC::asCStr(str))
-inline tstring utf8ToTStr(const char *str) { return (const tstring &)utf8ToMbcs(str); }
+inline tstring utf8ToTStr(const char *str)
+{
+	return (const tstring &)utf8ToMbcs(str);
+}
 inline tstring utf8ToTStr(const std::string &str) { return (const tstring &)utf8ToMbcs(str); }
 inline tstring wideToTStr(const wchar_t *str) { return (const tstring &)wideToMbcs(str); }
 inline tstring wideToTStr(const std::wstring &str) { return (const tstring &)wideToMbcs(str); }

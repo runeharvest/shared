@@ -175,7 +175,7 @@ public:
 		// unpack.
 		R = col >> 11;
 		G = (col >> 5) & 0x3F;
-		B = (col) & 0x1F;
+		B = (col)&0x1F;
 		// to 8 bits.
 		R = (R << 3) + (R >> 2);
 		G = (G << 2) + (G >> 4);

@@ -141,8 +141,7 @@ void CRGBA::addColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, uint nu
 		/// well, this could be further optimized when stride is 4 (2 at once)
 		if (dup == 1)
 		{
-			__asm
-			{
+			__asm {
 						push        ebp
 						mov			edi, dest
 						mov			esi, src1
@@ -169,8 +168,7 @@ void CRGBA::addColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, uint nu
 		{
 			if (dup == 4)
 			{
-				__asm
-				{
+				__asm {
 							push        ebp
 							mov			edi, dest
 							mov			esi, src1
@@ -201,8 +199,7 @@ void CRGBA::addColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, uint nu
 			}
 			else
 			{
-				__asm
-				{
+				__asm {
 							push        ebp
 							mov			edi, dest
 							mov			esi, src1
@@ -301,8 +298,7 @@ void CRGBA::modulateColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, ui
 		/// well, this could be further optimized when stride is 4
 		if (dup == 1)
 		{
-			__asm
-			{
+			__asm {
 						push        ebp
 						movq        mm2, blank
 						mov			edi, dest
@@ -335,8 +331,7 @@ void CRGBA::modulateColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, ui
 			if (dup == 4)
 			{
 
-				__asm
-				{
+				__asm {
 							push        ebp
 							movq        mm2, blank
 							mov			edi, dest
@@ -371,8 +366,7 @@ void CRGBA::modulateColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, ui
 			}
 			else
 			{
-				__asm
-				{
+				__asm {
 							push        ebp
 							movq        mm2, blank
 							mov			edi, dest
@@ -476,8 +470,7 @@ void CRGBA::subtractColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, ui
 		/// well, this could be further optimized when stride is 4 (2 at once)
 		if (dup == 1)
 		{
-			__asm
-			{
+			__asm {
 						push        ebp
 						mov			edi, dest
 						mov			esi, src1
@@ -504,8 +497,7 @@ void CRGBA::subtractColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, ui
 		{
 			if (dup == 4)
 			{
-				__asm
-				{
+				__asm {
 							push        ebp
 							mov			edi, dest
 							mov			esi, src1
@@ -536,8 +528,7 @@ void CRGBA::subtractColors(CRGBA *dest, const CRGBA *src1, const CRGBA *src2, ui
 			}
 			else
 			{
-				__asm
-				{
+				__asm {
 							push        ebp
 							mov			edi, dest
 							mov			esi, src1

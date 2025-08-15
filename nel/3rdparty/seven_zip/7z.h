@@ -71,9 +71,9 @@ typedef struct
 	CNtfsFileTime *Vals;
 } CSzBitUi64s;
 
-#define SzBitArray_Check(p, i) (((p)[(i) >> 3] & (0x80 >> ((i) & 7))) != 0)
+#define SzBitArray_Check(p, i) (((p)[(i) >> 3] & (0x80 >> ((i)&7))) != 0)
 
-#define SzBitWithVals_Check(p, i) ((p)->Defs && ((p)->Defs[(i) >> 3] & (0x80 >> ((i) & 7))) != 0)
+#define SzBitWithVals_Check(p, i) ((p)->Defs && ((p)->Defs[(i) >> 3] & (0x80 >> ((i)&7))) != 0)
 
 typedef struct
 {

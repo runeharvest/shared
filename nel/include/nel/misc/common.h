@@ -82,11 +82,13 @@ inline uint64 rdtsc()
 // for GCC versions that don't implement __rdtsc()
 #ifdef NL_CPU_X86_64
 	uint64 low, high;
-	__asm__ volatile("rdtsc" : "=a"(low), "=d"(high));
+	__asm__ volatile("rdtsc"
+	                 : "=a"(low), "=d"(high));
 	return low | (high << 32);
 #else
 	uint64 ticks;
-	__asm__ volatile("rdtsc" : "=A"(ticks));
+	__asm__ volatile("rdtsc"
+	                 : "=A"(ticks));
 	return ticks;
 #endif
 #else
@@ -408,11 +410,17 @@ inline char *strupr(char *str)
  * On GNU/Linux, create stricmp using strcasecmp and use stricmp
  */
 #ifndef NL_OS_WINDOWS
-inline int stricmp(const char *lhs, const char *rhs) { return strcasecmp(lhs, rhs); }
+inline int stricmp(const char *lhs, const char *rhs)
+{
+	return strcasecmp(lhs, rhs);
+}
 inline int strnicmp(const char *lhs, const char *rhs, size_t n) { return strncasecmp(lhs, rhs, n); }
 #endif
 
-inline sint nlstricmp(const char *lhs, const char *rhs) { return stricmp(lhs, rhs); }
+inline sint nlstricmp(const char *lhs, const char *rhs)
+{
+	return stricmp(lhs, rhs);
+}
 inline sint nlstricmp(const std::string &lhs, const std::string &rhs) { return stricmp(lhs.c_str(), rhs.c_str()); }
 inline sint nlstricmp(const std::string &lhs, const char *rhs) { return stricmp(lhs.c_str(), rhs); }
 inline sint nlstricmp(const char *lhs, const std::string &rhs) { return stricmp(lhs, rhs.c_str()); }

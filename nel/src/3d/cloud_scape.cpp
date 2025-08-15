@@ -219,7 +219,7 @@ void SCloudTextureClamp::init(uint32 nWidth, uint32 nHeight, uint32 nDepth, cons
 						uint8 col = 255;
 						if (r < 1.0f)
 						{
-							col = (uint8)((r) * 223 + 32);
+							col = (uint8)((r)*223 + 32);
 						}
 						Mem[i * Width + k + (j * Height + l) * NbW * Width] = col;
 					}

@@ -63,7 +63,10 @@ public:
 	virtual ~CWinDisplayer();
 
 #ifdef NL_OS_WINDOWS
-	HWND getHWnd() const { return _HWnd; }
+	HWND getHWnd() const
+	{
+		return _HWnd;
+	}
 #endif // NL_OS_WINDOWS
 
 private:

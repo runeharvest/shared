@@ -1432,7 +1432,7 @@ void CServerEditionModule::disconnectChar(TCharId charId)
 	}
 
 	// Will he receive the message?
-	DROP_IF(_CharacterControlProxy.isNull(), "Try to disconnect a player but no EGS?", return);
+	DROP_IF(_CharacterControlProxy.isNull(), "Try to disconnect a player but no EGS?", return );
 	CCharacterControlItfProxy proxy(_CharacterControlProxy);
 	proxy.returnToPreviousSession(this, charId);
 	// proxy.disconnectChar(this, charId); // removed because prevents the client from completing its FarTP to the previous session
@@ -1518,7 +1518,7 @@ void CServerEditionModule::onModuleDown(NLNET::IModuleProxy *moduleProxy)
 			// Do not useeckSecurityInfo because we put the client in authorized list here.
 			bool ok = getCharInfo(moduleProxy, charId, clientEid, userPriv, extendedPriv);
 
-			BOMB_IF(!ok, "R2Ed: User Module '" << moduleProxy->getModuleName() << "' is disconnecting but it does not have any security info", return);
+			BOMB_IF(!ok, "R2Ed: User Module '" << moduleProxy->getModuleName() << "' is disconnecting but it does not have any security info", return );
 			TSessionId sessionId = getSessionIdByCharId(charId);
 			CEditionSession *session = getSession(sessionId);
 			if (session)
@@ -2716,7 +2716,7 @@ void CServerEditionModule::createSession(NLNET::IModuleProxy *sender, TCharId ow
 				proxy.animSessionStarted(this, sessionId, info);
 
 				CEditionSession *session = getSession(sessionId);
-				BOMB_IF(!session, "ERROR: session must exist", return);
+				BOMB_IF(!session, "ERROR: session must exist", return );
 				// ie the animator and player that just arrived before the scenario has uploaded
 				CEditionSession::TCurrentChars::const_iterator first(session->getCurrentChars().begin()), last(session->getCurrentChars().end());
 				for (; first != last; ++first)
@@ -3688,7 +3688,7 @@ void CServerEditionModule::startScenario(NLNET::IModuleProxy *senderModuleProxy,
 					CCharacterControlItfProxy proxy(_CharacterControlProxy);
 					proxy.animSessionStarted(this, body.SessionId, info);
 					CEditionSession *session = getSession(body.SessionId);
-					BOMB_IF(!session, "ERROR: session must exist", return);
+					BOMB_IF(!session, "ERROR: session must exist", return );
 					// ie the animator and player that just arrived before the scenario has uploaded
 					CEditionSession::TCurrentChars::const_iterator first(session->getCurrentChars().begin()), last(session->getCurrentChars().end());
 					for (; first != last; ++first)
@@ -5695,11 +5695,11 @@ void CServerEditionModule::setSessionStartParams(NLNET::IModuleProxy *sender, TC
 	CScenarioEntryPoints &epManager = CScenarioEntryPoints::getInstance();
 
 	CScenarioEntryPoints::CCompleteIsland *island = epManager.getIslandFromId(initialIslandLocation);
-	BOMB_IF(!island, NLMISC::toString("Session %u No Island '%s'.", sessionId.asInt(), initialIslandLocation.c_str()), return);
+	BOMB_IF(!island, NLMISC::toString("Session %u No Island '%s'.", sessionId.asInt(), initialIslandLocation.c_str()), return );
 
 	CScenarioEntryPoints::CShortEntryPoint *entryPoint = epManager.getEntryPointFromIds(initialIslandLocation, initialEntryPoint);
 
-	BOMB_IF(!entryPoint, NLMISC::toString("Session %u: No EntryPoint '%s' '%s'.", sessionId.asInt(), initialIslandLocation.c_str(), initialEntryPoint.c_str()), return);
+	BOMB_IF(!entryPoint, NLMISC::toString("Session %u: No EntryPoint '%s' '%s'.", sessionId.asInt(), initialIslandLocation.c_str(), initialEntryPoint.c_str()), return );
 
 	sint32 x = entryPoint->X;
 	sint32 y = entryPoint->Y;
@@ -5748,11 +5748,11 @@ void CServerEditionModule::teleportWhileUploadingScenario(NLNET::IModuleProxy *s
 	CScenarioEntryPoints &epManager = CScenarioEntryPoints::getInstance();
 
 	CScenarioEntryPoints::CCompleteIsland *island = epManager.getIslandFromId(initialIslandLocation);
-	BOMB_IF(!island, NLMISC::toString("Session %u No Island '%s'.", sessionId.asInt(), initialIslandLocation.c_str()), return);
+	BOMB_IF(!island, NLMISC::toString("Session %u No Island '%s'.", sessionId.asInt(), initialIslandLocation.c_str()), return );
 
 	CScenarioEntryPoints::CShortEntryPoint *entryPoint = epManager.getEntryPointFromIds(initialIslandLocation, initialEntryPoint);
 
-	BOMB_IF(!entryPoint, NLMISC::toString("Session %u: No EntryPoint '%s' '%s'.", sessionId.asInt(), initialIslandLocation.c_str(), initialEntryPoint.c_str()), return);
+	BOMB_IF(!entryPoint, NLMISC::toString("Session %u: No EntryPoint '%s' '%s'.", sessionId.asInt(), initialIslandLocation.c_str(), initialEntryPoint.c_str()), return );
 
 	sint32 x = entryPoint->X;
 	sint32 y = entryPoint->Y;
@@ -5789,7 +5789,7 @@ void CServerEditionModule::teleportWhileUploadingScenario(NLNET::IModuleProxy *s
 
 void CServerEditionModule::returnToPreviousSession(TCharId charId)
 {
-	DROP_IF(_CharacterControlProxy.isNull(), "Try to disconnect a player but no EGS?", return);
+	DROP_IF(_CharacterControlProxy.isNull(), "Try to disconnect a player but no EGS?", return );
 	nlinfo("The charId '%u' was send back to its previous session (maybe the session he was invited was closed)", charId);
 	CCharacterControlItfProxy proxy(_CharacterControlProxy);
 	proxy.returnToPreviousSession(this, charId);

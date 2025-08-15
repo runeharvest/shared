@@ -267,55 +267,55 @@ CInfoBlock::CInfoBlock(const NLMISC::CSString &name)
 
 void CInfoBlock::setDomainName(const NLMISC::CSString &entry, const NLMISC::CSString &context, uint32 &errors)
 {
-	DROP_IF(!_DomainName.empty(), context + "Attempting to set a domain name more than once for the same info block", ++errors; return);
-	DROP_IF(entry.empty(), context + "Attempting to set an empty domain name", ++errors; return);
+	DROP_IF(!_DomainName.empty(), context + "Attempting to set a domain name more than once for the same info block", ++errors; return );
+	DROP_IF(entry.empty(), context + "Attempting to set an empty domain name", ++errors; return );
 	_DomainName = entry;
 }
 
 void CInfoBlock::setShardName(const NLMISC::CSString &entry, const NLMISC::CSString &context, uint32 &errors)
 {
-	DROP_IF(!_ShardName.empty(), context + "Attempting to set a shard name more than once for the same info block", ++errors; return);
-	DROP_IF(entry.empty(), context + "Attempting to set an empty shard name", ++errors; return);
+	DROP_IF(!_ShardName.empty(), context + "Attempting to set a shard name more than once for the same info block", ++errors; return );
+	DROP_IF(entry.empty(), context + "Attempting to set an empty shard name", ++errors; return );
 	_ShardName = entry;
 }
 
 void CInfoBlock::setUniqueName(const NLMISC::CSString &entry, const NLMISC::CSString &context, uint32 &errors)
 {
-	DROP_IF(!_UniqueName.empty(), context + "Attempting to set a name more than once for the same info block", ++errors; return);
-	DROP_IF(entry.empty(), context + "Attempting to set an empty name", ++errors; return);
+	DROP_IF(!_UniqueName.empty(), context + "Attempting to set a name more than once for the same info block", ++errors; return );
+	DROP_IF(entry.empty(), context + "Attempting to set an empty name", ++errors; return );
 	_UniqueName = entry;
 }
 
 void CInfoBlock::setCmdLine(const NLMISC::CSString &entry, const NLMISC::CSString &context, uint32 &errors)
 {
-	DROP_IF(!_CmdLine.empty(), context + "Attempting to set a cmdLine more than once for the same info block", ++errors; return);
-	DROP_IF(entry.empty(), context + "Attempting to set an empty cmdLine", ++errors; return);
+	DROP_IF(!_CmdLine.empty(), context + "Attempting to set a cmdLine more than once for the same info block", ++errors; return );
+	DROP_IF(entry.empty(), context + "Attempting to set an empty cmdLine", ++errors; return );
 	_CmdLine = entry;
 }
 
 void CInfoBlock::setHost(const NLMISC::CSString &entry, const NLMISC::CSString &context, uint32 &errors)
 {
-	DROP_IF(!_Host.empty(), context + "Attempting to set a host more than once for the same info block", ++errors; return);
-	DROP_IF(entry.empty(), context + "Attempting to set an empty host", ++errors; return);
+	DROP_IF(!_Host.empty(), context + "Attempting to set a host more than once for the same info block", ++errors; return );
+	DROP_IF(entry.empty(), context + "Attempting to set an empty host", ++errors; return );
 	_Host = entry;
 }
 
 void CInfoBlock::setStartOrder(const NLMISC::CSString &entry, const NLMISC::CSString &context, uint32 &errors)
 {
-	DROP_IF(!_StartOrder.empty(), context + "Attempting to set a startOrder more than once for the same info block", ++errors; return);
-	DROP_IF(entry.empty(), context + "Attempting to set an empty startOrder", ++errors; return);
+	DROP_IF(!_StartOrder.empty(), context + "Attempting to set a startOrder more than once for the same info block", ++errors; return );
+	DROP_IF(entry.empty(), context + "Attempting to set an empty startOrder", ++errors; return );
 	_StartOrder = entry;
 }
 
 void CInfoBlock::addUseEntry(const NLMISC::CSString &entry, const NLMISC::CSString &context, uint32 &errors)
 {
-	DROP_IF(_UseEntries.find(entry) != _UseEntries.end(), context + "Ignoring duplicate refference to 'use' clause: " + entry.c_str(), return);
+	DROP_IF(_UseEntries.find(entry) != _UseEntries.end(), context + "Ignoring duplicate refference to 'use' clause: " + entry.c_str(), return );
 	_UseEntries.insert(entry);
 }
 
 void CInfoBlock::addDataEntry(const NLMISC::CSString &entry, const NLMISC::CSString &context, uint32 &errors)
 {
-	DROP_IF(_DataEntries.find(entry) != _DataEntries.end(), context + "Ignoring duplicate refference to 'data' clause: " + entry.c_str(), return);
+	DROP_IF(_DataEntries.find(entry) != _DataEntries.end(), context + "Ignoring duplicate refference to 'data' clause: " + entry.c_str(), return );
 	_DataEntries.insert(entry);
 }
 
@@ -332,12 +332,12 @@ void CInfoBlock::addCfgEntryPost(const NLMISC::CSString &entry, const NLMISC::CS
 void CInfoBlock::addCfgFile(const NLMISC::CSString &fileName, const NLMISC::CSString &context, uint32 &errors)
 {
 	// make sure a file name is supplied
-	DROP_IF(fileName.empty(), context + "No file name found following 'cfgFile'", ++errors; return);
+	DROP_IF(fileName.empty(), context + "No file name found following 'cfgFile'", ++errors; return );
 
 	// read in the src file
 	NLMISC::CSString fileContents;
 	fileContents.readFromFile(fileName);
-	DROP_IF(fileContents.empty(), "File not found: " + fileName, ++errors; return);
+	DROP_IF(fileContents.empty(), "File not found: " + fileName, ++errors; return );
 
 	// split the file contents into lines
 	NLMISC::CVectorSString lines;
@@ -350,12 +350,12 @@ void CInfoBlock::addCfgFile(const NLMISC::CSString &fileName, const NLMISC::CSSt
 void CInfoBlock::addCfgFilePost(const NLMISC::CSString &fileName, const NLMISC::CSString &context, uint32 &errors)
 {
 	// make sure a file name is supplied
-	DROP_IF(fileName.empty(), context + "No file name found following 'cfgFilePost'", ++errors; return);
+	DROP_IF(fileName.empty(), context + "No file name found following 'cfgFilePost'", ++errors; return );
 
 	// read in the src file
 	NLMISC::CSString fileContents;
 	fileContents.readFromFile(fileName);
-	DROP_IF(fileContents.empty(), "File not found: " + fileName, ++errors; return);
+	DROP_IF(fileContents.empty(), "File not found: " + fileName, ++errors; return );
 
 	// split the file contents into lines
 	NLMISC::CVectorSString lines;
@@ -616,7 +616,7 @@ void CInfoContainer::_readFile(const NLMISC::CSString &fileName, uint32 &errors,
 	// read in the src file
 	NLMISC::CSString fileContents;
 	fileContents.readFromFile(fileName);
-	DROP_IF(fileContents.empty(), "File not found: " + fileName, ++errors; return);
+	DROP_IF(fileContents.empty(), "File not found: " + fileName, ++errors; return );
 
 	// split the file into lines
 	NLMISC::CVectorSString lines;
@@ -790,7 +790,7 @@ void CInfoContainer::serial(NLMISC::IStream &stream)
 		_buildExeSet(errors);
 
 		// make sure that no errors were encountered...
-		DROP_IF(errors != 0, NLMISC::toString("Serial Failed: %u errors found", errors), clear(); return);
+		DROP_IF(errors != 0, NLMISC::toString("Serial Failed: %u errors found", errors), clear(); return );
 
 		// note - on exit, _CurrentInfoBlock refferences the last info block read
 	}
@@ -1285,7 +1285,7 @@ void CDeploymentConfigurationImplementation::serial(NLMISC::IStream &stream)
 	}
 
 	// if the serial failed for whatever reason then giveup
-	DROP_IF(container.empty(), "Failed to serial deployment configuration: ", return);
+	DROP_IF(container.empty(), "Failed to serial deployment configuration: ", return );
 
 	// copy the temp container into our internal object (incase this was a read operation)
 	_InfoContainer = container;

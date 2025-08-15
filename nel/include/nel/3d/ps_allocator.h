@@ -166,14 +166,20 @@ public:
 	};
 #endif
 
-	CPSAllocator() _STLP_NOTHROW { }
+	CPSAllocator() _STLP_NOTHROW
+	{
+	}
 
 #ifdef _STLP_MEMBER_TEMPLATES
 	template <class U>
-	CPSAllocator(const CPSAllocator<U> &) _STLP_NOTHROW { }
+	CPSAllocator(const CPSAllocator<U> &) _STLP_NOTHROW
+	{
+	}
 #endif
 
-	CPSAllocator(const CPSAllocator<T> &) _STLP_NOTHROW { }
+	CPSAllocator(const CPSAllocator<T> &) _STLP_NOTHROW
+	{
+	}
 
 	CPSAllocator<T> &operator=(const CPSAllocator<T> &other) { return *this; }
 	~CPSAllocator() _STLP_NOTHROW { }

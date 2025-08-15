@@ -482,7 +482,7 @@ CSString CPersistentDataTreeNode::getNodeName() const
 
 void CPersistentDataTreeNode::setValue(const TValue &value)
 {
-	DROP_IF(!_Children.empty(), "Ignoring attempt to set value of a node that has children: " + getNodeName(), return);
+	DROP_IF(!_Children.empty(), "Ignoring attempt to set value of a node that has children: " + getNodeName(), return );
 	_Value = value;
 	_IsValue = true;
 }
@@ -834,7 +834,7 @@ void CPersistentDataTree::setValue(const TValue &nodeName, const CSString &value
 {
 	// get hold of the named node, creating it if need be
 	CPersistentDataTreeNode *node = _Child->getDescendant(nodeName, true);
-	DROP_IF(node == NULL, "ERROR: Failed get to handle to node in order to set value: " + nodeName, return);
+	DROP_IF(node == NULL, "ERROR: Failed get to handle to node in order to set value: " + nodeName, return );
 
 	// set the node's value
 	node->setValue(value);

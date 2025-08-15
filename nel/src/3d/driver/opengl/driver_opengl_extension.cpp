@@ -586,7 +586,9 @@ namespace NLDRIVERGL {
 		nlwarning("3D: GetProcAddress(\"%s\") returns NULL", #ext); \
 		return false;                                               \
 	}                                                               \
-	else { /*nldebug("3D: GetProcAddress(\"%s\") succeed", #ext);*/ }
+	else                                                            \
+	{ /*nldebug("3D: GetProcAddress(\"%s\") succeed", #ext);*/      \
+	}
 
 // ***************************************************************************
 // Extensions registrations, and Windows function Registration.

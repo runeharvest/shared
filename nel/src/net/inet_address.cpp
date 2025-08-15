@@ -485,7 +485,7 @@ uint32 stringToInternalIPAddress(const std::string &addr)
 std::string internalIPAddressToString(uint32 addr)
 {
 	string res;
-	res = toString((addr) & 0xFF);
+	res = toString((addr)&0xFF);
 	res += ".";
 	res += toString((addr >> 8) & 0xFF);
 	res += ".";

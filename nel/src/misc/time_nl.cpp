@@ -428,12 +428,14 @@ TTicks CTime::getPerformanceTime()
 #else
 #if defined(HAVE_X86_64)
 	uint64 hi, lo;
-	__asm__ volatile(".byte 0x0f, 0x31" : "=a"(lo), "=d"(hi));
+	__asm__ volatile(".byte 0x0f, 0x31"
+	                 : "=a"(lo), "=d"(hi));
 	return (hi << 32) | (lo & 0xffffffff);
 #elif defined(HAVE_X86) and !defined(NL_OS_MAC)
 	uint64 x;
 	// RDTSC - Read time-stamp counter into EDX:EAX.
-	__asm__ volatile(".byte 0x0f, 0x31" : "=A"(x));
+	__asm__ volatile(".byte 0x0f, 0x31"
+	                 : "=A"(x));
 	return x;
 #else // HAVE_X86
 	static bool firstWarn = true;

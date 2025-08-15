@@ -764,8 +764,7 @@ void CHLSColorTexture::compressBlockRGB(CRGBA *srcRGBA, uint8 *dstDXTC)
 			    ror eax, 2
 			    mov bits, eax
 			}*/
-			__asm
-			{
+			__asm {
 				mov			esi, src
 				mov			edi, cPtr
 

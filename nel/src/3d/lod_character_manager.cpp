@@ -539,8 +539,7 @@ bool CLodCharacterManager::addRenderCharacterKey(CLodCharacterInstance &instance
 			    BENCH: ASM version: 91 cycles (Write in AGP, some cache miss problems, still good against 67)
 			           C version: 316 cycles.
 			*/
-			__asm
-			{
+			__asm {
 				mov		edi, dstPtr
 			theLoop:
 				    // **** compute lighting
@@ -555,7 +554,7 @@ bool CLodCharacterManager::addRenderCharacterKey(CLodCharacterInstance &instance
 				fmul	lightObjectSpace.z // uop: 1/1 (5)
 				faddp	st(1),st // uop: 1/0 (3)
 				fistp	f8 // uop: 2/0/1/1 (5)
-				            // next
+				             // next
 				add		esi, 12 // uop: 1/0
 				mov		normalPtr, esi // uop: 0/0/1/1
 
@@ -604,7 +603,7 @@ bool CLodCharacterManager::addRenderCharacterKey(CLodCharacterInstance &instance
 				fstp	st // uop: 1/0
 				fstp	st // uop: 1/0
 				fstp	st // uop: 1/0
-				               // next
+				                // next
 				add		esi, 6 // uop: 1/0
 				mov		vertPtr, esi // uop: 0/0/1/1
 

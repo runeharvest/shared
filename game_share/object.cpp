@@ -101,7 +101,7 @@ static void addTab(std::string &out, sint32 n)
 
 CObject::~CObject()
 {
-	BOMB_IF(_Validation != 0x01020304, "Error  (double delete)?", return);
+	BOMB_IF(_Validation != 0x01020304, "Error  (double delete)?", return );
 	_Validation = 0;
 }
 
@@ -3410,7 +3410,7 @@ void CObjectSerializerImpl::serialImpl(NLMISC::IStream &stream, CObject *&data, 
 				return;
 			}
 
-			BOMB("ClassSerializer not found: can not read data", return);
+			BOMB("ClassSerializer not found: can not read data", return );
 		}
 	}
 }

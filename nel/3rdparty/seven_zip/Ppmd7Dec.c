@@ -172,7 +172,8 @@ int Ppmd7_DecodeSymbol(CPpmd7 *p, const IPpmd7_RangeDec *rc)
 		{
 			Byte symbol;
 			CPpmd_State **pps = ps;
-			for (hiCnt = 0; (hiCnt += (*pps)->Freq) <= count; pps++);
+			for (hiCnt = 0; (hiCnt += (*pps)->Freq) <= count; pps++)
+				;
 			s = *pps;
 			rc->Decode(rc, hiCnt - s->Freq, s->Freq);
 			Ppmd_See_Update(see);

@@ -109,7 +109,7 @@ void CUdpSimSock::sendUDP(const uint8 *buffer, uint32 &len, const CInetAddress *
 	nlassert(buffer != NULL);
 	nlassert(len > 0);
 
-	if ((float)rand() / (float)(RAND_MAX) * 100.0f >= _OutPacketLoss)
+	if ((float)rand() / (float)(RAND_MAX)*100.0f >= _OutPacketLoss)
 	{
 		sint32 lag = _OutLag /*+ (rand()%40) - 20*/; // void disordering
 
@@ -120,7 +120,7 @@ void CUdpSimSock::sendUDP(const uint8 *buffer, uint32 &len, const CInetAddress *
 			CBufferizedOutPacket *bp = new CBufferizedOutPacket(&UdpSock, buffer, len, lag, addr);
 
 			// duplicate the packet
-			if ((float)rand() / (float)(RAND_MAX) * 100.0f < _OutPacketDisordering && !_BufferizedOutPackets.empty())
+			if ((float)rand() / (float)(RAND_MAX)*100.0f < _OutPacketDisordering && !_BufferizedOutPackets.empty())
 			{
 				CBufferizedOutPacket *bp2 = _BufferizedOutPackets.back();
 
@@ -137,7 +137,7 @@ void CUdpSimSock::sendUDP(const uint8 *buffer, uint32 &len, const CInetAddress *
 			_BufferizedOutPackets.push(bp);
 
 			// duplicate the packet
-			if ((float)rand() / (float)(RAND_MAX) * 100.0f < _OutPacketDuplication)
+			if ((float)rand() / (float)(RAND_MAX)*100.0f < _OutPacketDuplication)
 			{
 				CBufferizedOutPacket *bp = new CBufferizedOutPacket(&UdpSock, buffer, len, lag, addr);
 				_BufferizedOutPackets.push(bp);
@@ -150,7 +150,7 @@ void CUdpSimSock::sendUDP(const uint8 *buffer, uint32 &len, const CInetAddress *
 			sendUDPNow(buffer, len, addr);
 
 			// duplicate the packet
-			if ((float)rand() / (float)(RAND_MAX) * 100.0f < _OutPacketDuplication)
+			if ((float)rand() / (float)(RAND_MAX)*100.0f < _OutPacketDuplication)
 			{
 				sendUDPNow(buffer, len, addr);
 			}
@@ -243,7 +243,7 @@ bool CUdpSimSock::dataAvailable()
 			uint len = 10000;
 			UdpSock.receivedFrom(buffer, len, addr);
 
-			if ((float)rand() / (float)(RAND_MAX) * 100.0f >= _InPacketLoss)
+			if ((float)rand() / (float)(RAND_MAX)*100.0f >= _InPacketLoss)
 			{
 				CBufferizedOutPacket *bp = new CBufferizedOutPacket(&UdpSock, buffer, len, _InLag, &addr);
 				_BufferizedInPackets.push(bp);
@@ -258,7 +258,7 @@ bool CUdpSimSock::dataAvailable()
 	}
 	else
 	{
-		if ((float)rand() / (float)(RAND_MAX) * 100.0f >= _InPacketLoss)
+		if ((float)rand() / (float)(RAND_MAX)*100.0f >= _InPacketLoss)
 		{
 			return UdpSock.dataAvailable();
 		}

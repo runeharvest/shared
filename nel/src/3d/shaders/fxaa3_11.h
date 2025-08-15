@@ -710,7 +710,10 @@ struct FxaaTex
 GREEN AS LUMA OPTION SUPPORT FUNCTION
 ============================================================================*/
 #if (FXAA_GREEN_AS_LUMA == 0)
-FxaaFloat FxaaLuma(FxaaFloat4 rgba) { return rgba.w; }
+FxaaFloat FxaaLuma(FxaaFloat4 rgba)
+{
+	return rgba.w;
+}
 #else
 FxaaFloat FxaaLuma(FxaaFloat4 rgba) { return rgba.y; }
 #endif

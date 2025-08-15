@@ -240,7 +240,7 @@ IStatDBNodePtr CStatDBBranch::getNode(const std::string &path)
 void CStatDBBranch::getNodes(const std::string &pathPattern, std::vector<CMatchingNode> &matchingNodes,
     const std::string &currentPath)
 {
-	BOMB_IF(pathPattern.empty(), "empty path!", return);
+	BOMB_IF(pathPattern.empty(), "empty path!", return );
 
 	// DO NOT clear the vector 'matchingNodes' here because this method is recursive
 

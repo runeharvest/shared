@@ -27,7 +27,7 @@
 #define MTCODER__BLOCKS_MAX 1
 #endif
 
-#define XZ_GET_PAD_SIZE(dataSize) ((4 - ((unsigned)(dataSize) & 3)) & 3)
+#define XZ_GET_PAD_SIZE(dataSize) ((4 - ((unsigned)(dataSize)&3)) & 3)
 
 /* max pack size for LZMA2 block + check-64bytrs: */
 #define XZ_GET_MAX_BLOCK_PACK_SIZE(unpackSize) ((unpackSize) + ((unpackSize) >> 10) + 16 + 64)
@@ -35,7 +35,7 @@
 #define XZ_GET_ESTIMATED_BLOCK_TOTAL_PACK_SIZE(unpackSize) (XZ_BLOCK_HEADER_SIZE_MAX + XZ_GET_MAX_BLOCK_PACK_SIZE(unpackSize))
 
 #define XzBlock_ClearFlags(p) (p)->flags = 0;
-#define XzBlock_SetNumFilters(p, n) (p)->flags |= ((n) - 1);
+#define XzBlock_SetNumFilters(p, n) (p)->flags |= ((n)-1);
 #define XzBlock_SetHasPackSize(p) (p)->flags |= XZ_BF_PACK_SIZE;
 #define XzBlock_SetHasUnpackSize(p) (p)->flags |= XZ_BF_UNPACK_SIZE;
 
@@ -806,9 +806,9 @@ static SRes Xz_CompressBlock(
 
 		    useStream ? (fp ? (
 #ifdef USE_SUBBLOCK
-		                          (fp->id == XZ_ID_Subblock) ? &lzmaf->sb.vt :
+		                     (fp->id == XZ_ID_Subblock) ? &lzmaf->sb.vt :
 #endif
-		                                                     &lzmaf->filter.p)
+		                                                &lzmaf->filter.p)
 		                    : &checkInStream.vt)
 		              : NULL,
 

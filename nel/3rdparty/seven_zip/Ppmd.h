@@ -20,7 +20,7 @@ EXTERN_C_BEGIN
 #define PPMD_GET_MEAN_SPEC(summ, shift, round) (((summ) + (1 << ((shift) - (round)))) >> (shift))
 #define PPMD_GET_MEAN(summ) PPMD_GET_MEAN_SPEC((summ), PPMD_PERIOD_BITS, 2)
 #define PPMD_UPDATE_PROB_0(prob) ((prob) + (1 << PPMD_INT_BITS) - PPMD_GET_MEAN(prob))
-#define PPMD_UPDATE_PROB_1(prob) ((prob) - PPMD_GET_MEAN(prob))
+#define PPMD_UPDATE_PROB_1(prob) ((prob)-PPMD_GET_MEAN(prob))
 
 #define PPMD_N1 4
 #define PPMD_N2 4

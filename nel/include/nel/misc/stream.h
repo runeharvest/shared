@@ -45,13 +45,13 @@ class CMemStream;
 // ======================================================================================================
 
 // For Big/little Endian.
-#define NLMISC_BSWAP16(src) (src) = (((src) >> 8) & 0xFF) | (((src) & 0xFF) << 8)
+#define NLMISC_BSWAP16(src) (src) = (((src) >> 8) & 0xFF) | (((src)&0xFF) << 8)
 #if defined(NL_OS_WINDOWS) && !defined(NL_NO_ASM)
 #define NLMISC_BSWAP32(src) _asm mov eax, (src) _asm bswap eax _asm mov(src), eax
 #else
-#define NLMISC_BSWAP32(src) (src) = (((src) >> 24) & 0xFF) | ((((src) >> 16) & 0xFF) << 8) | ((((src) >> 8) & 0xFF) << 16) | (((src) & 0xFF) << 24)
+#define NLMISC_BSWAP32(src) (src) = (((src) >> 24) & 0xFF) | ((((src) >> 16) & 0xFF) << 8) | ((((src) >> 8) & 0xFF) << 16) | (((src)&0xFF) << 24)
 #endif
-#define NLMISC_BSWAP64(src) (src) = (((src) >> 56) & 0xFF) | ((((src) >> 48) & 0xFF) << 8) | ((((src) >> 40) & 0xFF) << 16) | ((((src) >> 32) & 0xFF) << 24) | ((((src) >> 24) & 0xFF) << 32) | ((((src) >> 16) & 0xFF) << 40) | ((((src) >> 8) & 0xFF) << 48) | (((src) & 0xFF) << 56)
+#define NLMISC_BSWAP64(src) (src) = (((src) >> 56) & 0xFF) | ((((src) >> 48) & 0xFF) << 8) | ((((src) >> 40) & 0xFF) << 16) | ((((src) >> 32) & 0xFF) << 24) | ((((src) >> 24) & 0xFF) << 32) | ((((src) >> 16) & 0xFF) << 40) | ((((src) >> 8) & 0xFF) << 48) | (((src)&0xFF) << 56)
 
 // convert a 4 characters string to uint32
 #ifdef NL_LITTLE_ENDIAN

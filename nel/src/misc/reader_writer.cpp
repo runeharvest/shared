@@ -26,7 +26,10 @@ namespace NLMISC {
 
 #ifndef NL_CPP17
 
-CReaderWriter::CReaderWriter() { _ReadersLevel = 0; }
+CReaderWriter::CReaderWriter()
+{
+	_ReadersLevel = 0;
+}
 
 CReaderWriter::~CReaderWriter()
 {

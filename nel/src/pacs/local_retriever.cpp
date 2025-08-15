@@ -438,7 +438,8 @@ void NLPACS::CLocalRetriever::computeLoopsAndTips()
 
 		for (;;)
 		{
-			for (j = 0; j < chainFlags.size() && chainFlags[j]; ++j);
+			for (j = 0; j < chainFlags.size() && chainFlags[j]; ++j)
+				;
 
 			if (j == chainFlags.size())
 				break;
@@ -1848,7 +1849,8 @@ void NLPACS::CLocalRetriever::testCollision(CCollisionSurfaceTemp &cst, const CA
 		{
 			// then look for a door that match this edge
 			uint l;
-			for (l = 0; l < _ExteriorMesh.getLinks().size() && _ExteriorMesh.getLink(l).ChainId != chainId; ++l);
+			for (l = 0; l < _ExteriorMesh.getLinks().size() && _ExteriorMesh.getLink(l).ChainId != chainId; ++l)
+				;
 
 			// if found a door, then leave the edge as is
 			if (l < _ExteriorMesh.getLinks().size())

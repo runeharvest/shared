@@ -417,13 +417,13 @@ void CAnimationSession::easterEggLooted(uint32 easterEggId, TSessionId /* scenar
 {
 
 	TActiveEasterEggs::const_iterator found = ActiveEasterEggs.find(easterEggId);
-	DROP_IF(found == ActiveEasterEggs.end(), "Error try to loot an unactive easter egg", return);
+	DROP_IF(found == ActiveEasterEggs.end(), "Error try to loot an unactive easter egg", return );
 	uint32 actId = found->second;
-	DROP_IF(actId >= Acts.size(), "Error try to loot an unactive easter egg", return);
+	DROP_IF(actId >= Acts.size(), "Error try to loot an unactive easter egg", return );
 	CRtAct *rtAct = Acts[actId];
 
 	CRtAct::TActiveEasterEggs::const_iterator found2 = rtAct->ActiveEasterEggs.find(easterEggId);
-	DROP_IF(found2 == rtAct->ActiveEasterEggs.end(), "Error try to loot an unactive easter egg", return);
+	DROP_IF(found2 == rtAct->ActiveEasterEggs.end(), "Error try to loot an unactive easter egg", return );
 	std::string fullname = found2->second;
 
 	CAiWrapper::getInstance().triggerUserTrigger(fullname, 2);
@@ -831,8 +831,8 @@ void CServerAnimationModule::scheduleStartAct(TSessionId sessionId, uint32 actId
 				uint32 nextLocationId = session->Acts[actId]->LocationId;
 				uint32 currentLoctionId = session->Acts[currentAct]->LocationId;
 
-				DROP_IF(nextLocationId >= session->Locations.size(), "Invalid Location", return);
-				DROP_IF(currentLoctionId >= session->Locations.size(), "Invalid Location", return);
+				DROP_IF(nextLocationId >= session->Locations.size(), "Invalid Location", return );
+				DROP_IF(currentLoctionId >= session->Locations.size(), "Invalid Location", return );
 
 				bool mustTp = nextLocationId != currentLoctionId;
 
@@ -1158,9 +1158,9 @@ void CServerAnimationModule::startAct(TSessionId sessionId, uint32 actId)
 	bool isLocal = !_Server->useNetwork();
 
 	CAnimationSession *animSession = getSession(sessionId);
-	DROP_IF(!animSession, "Invalid Session", return);
+	DROP_IF(!animSession, "Invalid Session", return );
 	uint32 aiInstance = animSession->AiInstance;
-	DROP_IF(actId < 1 || animSession->Pdrs.size() <= actId, "Invalid Act", return);
+	DROP_IF(actId < 1 || animSession->Pdrs.size() <= actId, "Invalid Act", return );
 
 	if (!isLocal)
 	{
@@ -1179,10 +1179,10 @@ void CServerAnimationModule::startAct(TSessionId sessionId, uint32 actId)
 	animSession->CurrentAct = actId;
 	// update entry point
 	IServerEditionModule *svEditionModule = _Server->getEditionModule(); // note: in the future the modules could be in two distinct process, thus they would need an interface/proxy communication
-	BOMB_IF(!svEditionModule, "Server edition module not found", return); // Can not happend
+	BOMB_IF(!svEditionModule, "Server edition module not found", return ); // Can not happend
 
 	CScenario *scenarioSession = svEditionModule->getScenarioById(sessionId);
-	BOMB_IF(!scenarioSession, NLMISC::toString("Scenario Session not found for session %u", sessionId.asInt()), return);
+	BOMB_IF(!scenarioSession, NLMISC::toString("Scenario Session not found for session %u", sessionId.asInt()), return );
 	CObject *scenario = scenarioSession->getHighLevel();
 
 	if (!scenario)
@@ -1203,7 +1203,7 @@ void CServerAnimationModule::startAct(TSessionId sessionId, uint32 actId)
 		}
 
 		nlwarning("ERROR: you must check the backup : session_%d_?.r2", sessionId.asInt());
-		BOMB(NLMISC::toString("BIG ERROR: Scenario was not found for session %u, it previously lead to dss crash", sessionId.asInt()), return);
+		BOMB(NLMISC::toString("BIG ERROR: Scenario was not found for session %u, it previously lead to dss crash", sessionId.asInt()), return );
 		return;
 	}
 
@@ -1245,7 +1245,7 @@ void CServerAnimationModule::startAct(TSessionId sessionId, uint32 actId)
 
 	// send position to connected users
 	CAnimationSession *session = getSession(sessionId);
-	BOMB_IF(!session, NLMISC::toString("Session not found for session %u", sessionId.asInt()), return);
+	BOMB_IF(!session, NLMISC::toString("Session not found for session %u", sessionId.asInt()), return );
 	for (uint32 i = 0; i < session->ConnectedChars.size(); ++i)
 	{
 		uint32 charId = session->ConnectedChars[i];
@@ -2388,7 +2388,7 @@ void CServerAnimationModule::onDssTarget(IModuleProxy *senderModuleProxy, const 
 	bool ok = checkSecurityInfo(senderModuleProxy, charId, eid, userPriv, extendedPriv);
 	if (!ok) { return; }
 
-	DROP_IF(!_CharacterControlProxy, "Try to send message to EGS must he is down", return);
+	DROP_IF(!_CharacterControlProxy, "Try to send message to EGS must he is down", return );
 
 	CCharacterControlItfProxy proxy(_CharacterControlProxy);
 	proxy.sendCharTargetToDss(this, eid, params);
@@ -2402,7 +2402,7 @@ void CServerAnimationModule::stopTalk(const NLMISC::CEntityId &eid, const NLMISC
 {
 	TCharId charId = static_cast<TCharId>(eid.getShortId());
 	const NLNET::TModuleProxyPtr *foundModule = getEditionModule()->getClientProxyPtr(charId);
-	BOMB_IF(foundModule == NULL, "stopTalk failed because getClientProxyPtr() returned NULL for entity " + eid.toString(), return);
+	BOMB_IF(foundModule == NULL, "stopTalk failed because getClientProxyPtr() returned NULL for entity " + eid.toString(), return );
 
 	CAnimationSession *session = getSessionByCharId(charId);
 	if (!session) { return; }
@@ -2835,7 +2835,7 @@ void CServerAnimationModule::onCharTargetReceived(NLNET::IModuleProxy *senderMod
 	TCharId charId = static_cast<TCharId>(eid.getShortId());
 
 	const NLNET::TModuleProxyPtr *foundModule = getEditionModule()->getClientProxyPtr(charId);
-	DROP_IF(!foundModule, NLMISC::toString("Invalid Char %u", charId), return);
+	DROP_IF(!foundModule, NLMISC::toString("Invalid Char %u", charId), return );
 
 	if (!alived || entityRowId == TDataSetRow() || alias == 0 || creatureId == CEntityId::Unknown)
 	{
@@ -2844,12 +2844,12 @@ void CServerAnimationModule::onCharTargetReceived(NLNET::IModuleProxy *senderMod
 	}
 
 	TCharSessions::const_iterator charSessionFound(_CharSessions.find(charId));
-	DROP_IF(charSessionFound == _CharSessions.end(), NLMISC::toString("Invalid Session for Char %u", charId), return);
+	DROP_IF(charSessionFound == _CharSessions.end(), NLMISC::toString("Invalid Session for Char %u", charId), return );
 
 	TSessionId sessionId = charSessionFound->second;
 
 	CAnimationSession *session = getSession(sessionId);
-	DROP_IF(session->Acts.empty(), NLMISC::toString("Invalid Session %u for Char %u (No act available)", charSessionFound->second.asInt(), charId), return);
+	DROP_IF(session->Acts.empty(), NLMISC::toString("Invalid Session %u for Char %u (No act available)", charSessionFound->second.asInt(), charId), return );
 
 	if (session->Acts.empty())
 	{
@@ -3460,12 +3460,12 @@ void CServerAnimationModule::scheduleStartSessionImpl(const CAnimationMessageAni
 				// lookup the previous sessin id and make sure that we have a session for thsi id
 				TSessionId previousCharSessionId = _CharSessions[*first];
 				nlinfo("R2An::scheduleStartSession Moving char (%u) from Session %u to Session %u", *first, previousCharSessionId.asInt(), msg.SessionId.asInt());
-				BOMB_IF(_Sessions.find(previousCharSessionId) == _Sessions.end(), "scheduleStartSession giving up because failed to find _Sessions entry for character", return);
+				BOMB_IF(_Sessions.find(previousCharSessionId) == _Sessions.end(), "scheduleStartSession giving up because failed to find _Sessions entry for character", return );
 				// disconnect from previous scenario
 				if (previousCharSessionId != msg.SessionId)
 				{
 					CAnimationSession *previousSession = getSession(previousCharSessionId);
-					BOMB_IF(!previousSession, "BUG: Failed to get pointer to session object with Id: " + NLMISC::toString(previousCharSessionId.asInt()), return);
+					BOMB_IF(!previousSession, "BUG: Failed to get pointer to session object with Id: " + NLMISC::toString(previousCharSessionId.asInt()), return );
 					std::vector<uint32> &chars = previousSession->ConnectedChars;
 					chars.erase(std::remove(chars.begin(), chars.end(), *first), chars.end());
 				}
@@ -3661,16 +3661,16 @@ void CServerAnimationModule::askMissionItemsDescription(NLNET::IModuleProxy *sen
 
 void CServerAnimationModule::deactivateEasterEggsFromAct(TSessionId scenarioId, uint32 actId)
 {
-	DROP_IF(_CharacterControlProxy.isNull(), "No CharacterControlProxy", return);
+	DROP_IF(_CharacterControlProxy.isNull(), "No CharacterControlProxy", return );
 
 	CAnimationSession *session = getSession(scenarioId);
-	DROP_IF(!session, toString("No Session %d", scenarioId.asInt()), return);
+	DROP_IF(!session, toString("No Session %d", scenarioId.asInt()), return );
 
-	DROP_IF(actId >= session->Acts.size(), "Error in activateEasterEgg ", return);
+	DROP_IF(actId >= session->Acts.size(), "Error in activateEasterEgg ", return );
 
 	CRtAct *rtAct = session->Acts[actId];
 
-	DROP_IF(!rtAct, "Error in activateEasterEgg ", return);
+	DROP_IF(!rtAct, "Error in activateEasterEgg ", return );
 
 	if (rtAct->ActiveEasterEggs.empty())
 	{
@@ -3685,7 +3685,7 @@ void CServerAnimationModule::deactivateEasterEggsFromAct(TSessionId scenarioId, 
 	{
 		easterEggs.insert(first->first);
 		CAnimationSession::TActiveEasterEggs::iterator toErase(session->ActiveEasterEggs.find(first->first));
-		DROP_IF(toErase == session->ActiveEasterEggs.end(), "Error in activateEasterEgg ", return);
+		DROP_IF(toErase == session->ActiveEasterEggs.end(), "Error in activateEasterEgg ", return );
 		session->ActiveEasterEggs.erase(toErase);
 	}
 
@@ -3697,13 +3697,13 @@ void CServerAnimationModule::deactivateEasterEggsFromAct(TSessionId scenarioId, 
 
 void CServerAnimationModule::deactivateEasterEgg(class NLNET::IModuleProxy * /* aisControl */, uint32 easterEggId, TSessionId scenarioId, uint32 actId)
 {
-	DROP_IF(_CharacterControlProxy.isNull(), "No CharacterControlProxy", return);
+	DROP_IF(_CharacterControlProxy.isNull(), "No CharacterControlProxy", return );
 
 	CAnimationSession *session = getSession(scenarioId);
-	DROP_IF(!session, toString("No Session %d", scenarioId.asInt()), return);
+	DROP_IF(!session, toString("No Session %d", scenarioId.asInt()), return );
 
 	// TODO Move code to session?
-	DROP_IF(actId >= session->Acts.size(), "Error in activateEasterEgg ", return);
+	DROP_IF(actId >= session->Acts.size(), "Error in activateEasterEgg ", return );
 	bool ok = session->Acts[actId]->deactivateEasterEgg(easterEggId);
 
 	if (!ok)
@@ -3724,10 +3724,10 @@ void CServerAnimationModule::deactivateEasterEgg(class NLNET::IModuleProxy * /* 
 
 void CServerAnimationModule::activateEasterEgg(class NLNET::IModuleProxy * /* aisControl */, uint32 easterEggId, TSessionId scenarioId, uint32 actId, const std::string &items, float x, float y, float z, float heading, const std::string &grpControler, const std::string &name, const std::string &look)
 {
-	DROP_IF(_CharacterControlProxy.isNull(), "No CharacterControlProxy", return);
+	DROP_IF(_CharacterControlProxy.isNull(), "No CharacterControlProxy", return );
 
 	CAnimationSession *session = getSession(scenarioId);
-	DROP_IF(!session, toString("No Session %d", scenarioId.asInt()), return);
+	DROP_IF(!session, toString("No Session %d", scenarioId.asInt()), return );
 
 	std::vector<std::string> itemNames;
 	NLMISC::splitString(items, ";", itemNames);
@@ -3740,19 +3740,19 @@ void CServerAnimationModule::activateEasterEgg(class NLNET::IModuleProxy * /* ai
 		std::string itemQt = itemNames[first];
 		NLMISC::splitString(itemQt, ":", itemAndQt);
 
-		DROP_IF(itemAndQt.size() != 2, "Syntax error in activateEasterEgg", return);
+		DROP_IF(itemAndQt.size() != 2, "Syntax error in activateEasterEgg", return );
 
 		uint32 item;
 		bool ok = NLMISC::fromString(itemAndQt[0], item);
 
-		DROP_IF(!ok, "Error  activateEasterEgg", return);
+		DROP_IF(!ok, "Error  activateEasterEgg", return );
 
 		uint32 qt;
 		ok = NLMISC::fromString(itemAndQt[1], qt);
 
-		DROP_IF(!ok, "Error in activateEasterEgg", return);
-		DROP_IF(qt > 255, "Error in activateEasterEgg", return);
-		DROP_IF(item >= session->MissionItems.size(), "Error  activateEasterEgg", return);
+		DROP_IF(!ok, "Error in activateEasterEgg", return );
+		DROP_IF(qt > 255, "Error in activateEasterEgg", return );
+		DROP_IF(item >= session->MissionItems.size(), "Error  activateEasterEgg", return );
 
 		R2::TItemAndQuantity itemAndQuantity;
 		itemAndQuantity.SheetId = session->MissionItems[item].SheetId;
@@ -3760,7 +3760,7 @@ void CServerAnimationModule::activateEasterEgg(class NLNET::IModuleProxy * /* ai
 		itemsAndQuantities.push_back(itemAndQuantity);
 	}
 
-	DROP_IF(actId >= session->Acts.size(), "Error in activateEasterEgg ", return);
+	DROP_IF(actId >= session->Acts.size(), "Error in activateEasterEgg ", return );
 	bool ok = session->Acts[actId]->activateEasterEgg(easterEggId, grpControler);
 
 	if (!ok)
@@ -3790,7 +3790,7 @@ void CServerAnimationModule::activateEasterEgg(class NLNET::IModuleProxy * /* ai
 void CServerAnimationModule::onEasterEggLooted(class NLNET::IModuleProxy * /* egs */, uint32 easterEggId, TSessionId scenarioId)
 {
 	CAnimationSession *session = getSession(scenarioId);
-	DROP_IF(!session, toString("No Session %d", scenarioId.asInt()), return);
+	DROP_IF(!session, toString("No Session %d", scenarioId.asInt()), return );
 	session->easterEggLooted(easterEggId, scenarioId);
 }
 

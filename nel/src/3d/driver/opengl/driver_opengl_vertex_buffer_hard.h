@@ -64,7 +64,9 @@ public:
 	CDriverGL *getDriver() const { return _Driver; }
 // tmp, for debug
 #ifdef NL_DEBUG
-	virtual void dumpMappedBuffers() { }
+	virtual void dumpMappedBuffers()
+	{
+	}
 #endif
 protected:
 	CDriverGL *_Driver;

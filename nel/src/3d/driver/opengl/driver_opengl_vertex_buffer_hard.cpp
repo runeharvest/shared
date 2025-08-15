@@ -73,7 +73,8 @@ IVertexBufferHardGL::IVertexBufferHardGL(CDriverGL *drv, CVertexBuffer *vb)
 	_Invalid = false;
 }
 // ***************************************************************************
-IVertexBufferHardGL::~IVertexBufferHardGL() {
+IVertexBufferHardGL::~IVertexBufferHardGL()
+{
 	H_AUTO_OGL(IVertexBufferHardGL_IVertexBufferHardGLDtor)
 }
 
@@ -637,7 +638,7 @@ CVertexBufferHardGLATI::~CVertexBufferHardGLATI()
 
 	if (_RAMMirrorVertexPtr)
 	{
-		delete[] ((uint8 *)_RAMMirrorVertexPtr);
+		delete[]((uint8 *)_RAMMirrorVertexPtr);
 		_RAMMirrorVertexPtr = NULL;
 		_RAMMirrorVertexSize = 0;
 	}

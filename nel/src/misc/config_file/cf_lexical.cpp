@@ -2950,7 +2950,8 @@ yyconst char *yy_str;
 #endif
 {
 	int len;
-	for (len = 0; yy_str[len]; ++len);
+	for (len = 0; yy_str[len]; ++len)
+		;
 
 	return yy_scan_bytes(yy_str, len);
 }
@@ -3097,7 +3098,8 @@ yyconst char *s;
 #endif
 {
 	NL_REGISTER int n;
-	for (n = 0; s[n]; ++n);
+	for (n = 0; s[n]; ++n)
+		;
 
 	return n;
 }

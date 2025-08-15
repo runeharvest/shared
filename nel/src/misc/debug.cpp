@@ -894,23 +894,33 @@ public:
 	// displayType contains the type without std:: and stl ugly things
 	void cleanType(string &rawType, string &displayType)
 	{
-		while (findAndErase(rawType, "std::"));
-		while (findAndErase(displayType, "std::"));
+		while (findAndErase(rawType, "std::"))
+			;
+		while (findAndErase(displayType, "std::"))
+			;
 
-		while (findAndErase(rawType, "_STL::"));
-		while (findAndErase(displayType, "_STL::"));
+		while (findAndErase(rawType, "_STL::"))
+			;
+		while (findAndErase(displayType, "_STL::"))
+			;
 
-		while (findAndErase(rawType, "const"));
+		while (findAndErase(rawType, "const"))
+			;
 
-		while (findAndErase(rawType, " "));
+		while (findAndErase(rawType, " "))
+			;
 
-		while (findAndErase(rawType, "&"));
+		while (findAndErase(rawType, "&"))
+			;
 
 		// rename ugly stl type
 
-		while (findAndErase(rawType, "classbasic_string<char,classchar_traits<char>,classallocator<char>>", "string"));
-		while (findAndErase(displayType, "class basic_string<char,class char_traits<char>,class allocator<char> >", "string"));
-		while (findAndErase(rawType, "classvector<char,class char_traits<char>,class allocator<char> >", "string"));
+		while (findAndErase(rawType, "classbasic_string<char,classchar_traits<char>,classallocator<char>>", "string"))
+			;
+		while (findAndErase(displayType, "class basic_string<char,class char_traits<char>,class allocator<char> >", "string"))
+			;
+		while (findAndErase(rawType, "classvector<char,class char_traits<char>,class allocator<char> >", "string"))
+			;
 	}
 
 	string getFuncInfo(uintptr_t funcAddr, uintptr_t stackAddr)
@@ -1093,7 +1103,10 @@ private:
 bool global_force_exception_flag = false;
 #define WORKAROUND_VCPP_SYNCHRONOUS_EXCEPTION \
 	if (global_force_exception_flag) force_exception_frame();
-void force_exception_frame(...) { std::cout.flush(); }
+void force_exception_frame(...)
+{
+	std::cout.flush();
+}
 
 static void exceptionTranslator(unsigned, EXCEPTION_POINTERS *pexp)
 {

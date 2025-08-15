@@ -240,7 +240,7 @@ CFileDescription &CFileDescriptionContainer::operator[](uint32 idx)
 // remove the 'n'th element from a file description container
 void CFileDescriptionContainer::removeFile(uint32 idx)
 {
-	BOMB_IF(idx >= _FileDescriptions.size(), "trying to remove files beyond the end of the file description vector", return);
+	BOMB_IF(idx >= _FileDescriptions.size(), "trying to remove files beyond the end of the file description vector", return );
 	_FileDescriptions[idx] = _FileDescriptions.back();
 	_FileDescriptions.pop_back();
 }

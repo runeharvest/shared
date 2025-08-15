@@ -273,7 +273,7 @@ typedef struct
 } CLenPriceEnc;
 
 #define GET_PRICE_LEN(p, posState, len) \
-	((p)->prices[posState][(size_t)(len) - LZMA_MATCH_LEN_MIN])
+	((p)->prices[posState][(size_t)(len)-LZMA_MATCH_LEN_MIN])
 
 /*
 #define GET_PRICE_LEN(p, posState, len) \
@@ -542,7 +542,7 @@ static const Byte kShortRepNextStates[kNumStates] = { 9, 9, 9, 9, 9, 9, 9, 11, 1
 
 #define IsLitState(s) ((s) < 7)
 #define GetLenToPosState2(len) (((len) < kNumLenToPosStates - 1) ? (len) : kNumLenToPosStates - 1)
-#define GetLenToPosState(len) (((len) < kNumLenToPosStates + 1) ? (len) - 2 : kNumLenToPosStates - 1)
+#define GetLenToPosState(len) (((len) < kNumLenToPosStates + 1) ? (len)-2 : kNumLenToPosStates - 1)
 
 #define kInfinityPrice (1 << 30)
 
@@ -1044,7 +1044,7 @@ static unsigned ReadMatchDistances(CLzmaEnc *p, unsigned *numPairsRes)
 	}
 }
 
-#define MARK_LIT ((UInt32)(Int32) - 1)
+#define MARK_LIT ((UInt32)(Int32)-1)
 
 #define MakeAs_Lit(p)         \
 	{                         \
@@ -1742,7 +1742,8 @@ static unsigned GetOptimum(CLzmaEnc *p, UInt32 position)
 		if (newLen > numAvail)
 		{
 			newLen = numAvail;
-			for (numPairs = 0; newLen > matches[numPairs]; numPairs += 2);
+			for (numPairs = 0; newLen > matches[numPairs]; numPairs += 2)
+				;
 			matches[numPairs] = (UInt32)newLen;
 			numPairs += 2;
 		}

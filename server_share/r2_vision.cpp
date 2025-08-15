@@ -148,7 +148,7 @@ void CUniverse::createInstance(uint32 aiInstance, uint32 groupId)
 	}
 
 	// ensure that the new AIInstance value is reasonable & increase _Instances vector size if required
-	BOMB_IF(aiInstance > 65535, "Failed to create Instance with implausible AIInstance value", return);
+	BOMB_IF(aiInstance > 65535, "Failed to create Instance with implausible AIInstance value", return );
 	if (_Instances.size() <= aiInstance)
 	{
 		nlinfo("Increasing Universe::AIInstance vector size to: %d", aiInstance + 1);
@@ -174,7 +174,7 @@ void CUniverse::removeInstance(uint32 aiInstance)
 
 	// make sure the instance exists
 	DROP_IF(aiInstance >= _Instances.size() || _Instances[aiInstance] == NULL,
-	    NLMISC::toString("Ignoring attempt to remove non-existant instance: %d", aiInstance), return);
+	    NLMISC::toString("Ignoring attempt to remove non-existant instance: %d", aiInstance), return );
 
 	// allow the instance to do housekeeping before being destroyed
 	_Instances[aiInstance]->release();
@@ -203,8 +203,8 @@ void CUniverse::addEntity(TDataSetRow dataSetRow, uint32 aiInstance, sint32 x, s
 	uint32 row = dataSetRow.getIndex();
 
 	// ensure that the row value is valid
-	BOMB_IF(row == 0, "Illegal attempt to manipulate entity with dataset row=0", return);
-	BOMB_IF(row > (1 << 20), NLMISC::toString("Ignoring entity with implausible row value: %d", row), return);
+	BOMB_IF(row == 0, "Illegal attempt to manipulate entity with dataset row=0", return );
+	BOMB_IF(row > (1 << 20), NLMISC::toString("Ignoring entity with implausible row value: %d", row), return );
 
 	// delegate to workhorse routine (converting y coordinate to +ve axis)
 	_addEntity(dataSetRow, aiInstance, x, -y, invisibilityLevel, isViewer);
@@ -215,8 +215,8 @@ void CUniverse::forceRefreshVision(TDataSetRow dataSetRow)
 	uint32 row = dataSetRow.getIndex();
 
 	// ensure that the row value is valid
-	BOMB_IF(row == 0, "Illegal attempt to manipulate entity with dataset row=0", return);
-	BOMB_IF(row > (1 << 20), NLMISC::toString("Ignoring entity with implausible row value: %d", row), return);
+	BOMB_IF(row == 0, "Illegal attempt to manipulate entity with dataset row=0", return );
+	BOMB_IF(row > (1 << 20), NLMISC::toString("Ignoring entity with implausible row value: %d", row), return );
 
 	SUniverseEntity &theEntity = _Entities[row];
 
@@ -239,12 +239,12 @@ void CUniverse::forceResetVision(TDataSetRow dataSetRow)
 	uint32 row = dataSetRow.getIndex();
 
 	// ensure that the row value is valid
-	BOMB_IF(row == 0, "Illegal attempt to manipulate entity with dataset row=0", return);
-	BOMB_IF(row > (1 << 20), NLMISC::toString("Ignoring entity with implausible row value: %d", row), return);
+	BOMB_IF(row == 0, "Illegal attempt to manipulate entity with dataset row=0", return );
+	BOMB_IF(row > (1 << 20), NLMISC::toString("Ignoring entity with implausible row value: %d", row), return );
 
 	// get the pointer to the entity record and ensure that the entity is a viewer
 	SUniverseEntity &theEntity = _Entities[row];
-	BOMB_IF(theEntity.ViewerRecord == NULL, "IGNORING ResetVision for non-viewer entity" + dataSetRow.toString(), return);
+	BOMB_IF(theEntity.ViewerRecord == NULL, "IGNORING ResetVision for non-viewer entity" + dataSetRow.toString(), return );
 
 	// if we're in verbose logging mode then do some logging...
 	if (VerboseVisionDelta)
@@ -264,8 +264,8 @@ void CUniverse::removeEntity(TDataSetRow dataSetRow)
 	uint32 row = dataSetRow.getIndex();
 
 	// ensure that the row value is valid
-	BOMB_IF(row == 0, "Illegal attempt to manipulate entity with dataset=0", return);
-	BOMB_IF(row >= _Entities.size(), NLMISC::toString("Ignoring attempt to remove entity with invalid row value: %d", row), return);
+	BOMB_IF(row == 0, "Illegal attempt to manipulate entity with dataset=0", return );
+	BOMB_IF(row >= _Entities.size(), NLMISC::toString("Ignoring attempt to remove entity with invalid row value: %d", row), return );
 
 	// delegate to workhorse routine
 	_removeEntity(dataSetRow);
@@ -291,8 +291,8 @@ void CUniverse::setEntityPosition(TDataSetRow dataSetRow, sint32 x, sint32 y)
 	uint32 row = dataSetRow.getIndex();
 
 	// ensure that the row value is valid
-	BOMB_IF(row == 0, "Illegal attempt to manipulate entity with dataset=0", return);
-	BOMB_IF(row >= _Entities.size(), NLMISC::toString("Ignoring attempt to set entity position with invalid row value: %d", row), return);
+	BOMB_IF(row == 0, "Illegal attempt to manipulate entity with dataset=0", return );
+	BOMB_IF(row >= _Entities.size(), NLMISC::toString("Ignoring attempt to set entity position with invalid row value: %d", row), return );
 
 	// delegate to workhorse routine (converting y coordinate to +ve axis)
 	_setEntityPosition(dataSetRow, x, -y);
@@ -314,8 +314,8 @@ void CUniverse::teleportEntity(TDataSetRow dataSetRow, uint32 aiInstance, sint32
 	uint32 row = dataSetRow.getIndex();
 
 	// ensure that the row value is valid
-	BOMB_IF(row == 0, "Illegal attempt to manipulate entity with datasetrow=0", return);
-	BOMB_IF(row >= _Entities.size(), NLMISC::toString("Ignoring attempt to set entity position with invalid row value: %d", row), return);
+	BOMB_IF(row == 0, "Illegal attempt to manipulate entity with datasetrow=0", return );
+	BOMB_IF(row >= _Entities.size(), NLMISC::toString("Ignoring attempt to set entity position with invalid row value: %d", row), return );
 
 	// ensure that the new AIInstance exists
 	BOMB_IF(aiInstance != std::numeric_limits<uint32>::max() && (aiInstance >= _Instances.size() || _Instances[aiInstance] == NULL),
@@ -632,7 +632,7 @@ inline void CInstance::setEntityPosition(uint32 entityIndex, uint32 x, uint32 y)
 	}
 	else
 	{
-		BOMB(NLMISC::toString("BIG BAD BUG - Failed to move entity with invalid index: %d", entityIndex), return);
+		BOMB(NLMISC::toString("BIG BAD BUG - Failed to move entity with invalid index: %d", entityIndex), return );
 	}
 }
 
@@ -649,7 +649,7 @@ inline void CInstance::setEntityInvisibility(uint32 entityIndex, TInvisibilityLe
 	}
 	else
 	{
-		BOMB(NLMISC::toString("BIG BAD BUG - Failed to set invisibilty level for entity with invalid index: %d", entityIndex), return);
+		BOMB(NLMISC::toString("BIG BAD BUG - Failed to set invisibilty level for entity with invalid index: %d", entityIndex), return );
 	}
 }
 
@@ -775,7 +775,7 @@ void CInstance::isolateViewer(SUniverseEntity &entity)
 		// locate the old vision group (the one we're allocated to before isolation)
 		uint32 visionId = viewerRecord->VisionId;
 		NLMISC::CSmartPtr<CVisionGroup> &oldVisionGroup = _VisionGroups[visionId];
-		BOMB_IF(visionId >= _VisionGroups.size() || oldVisionGroup == NULL, "Trying to remove entity from vision group with unknown vision id", viewerRecord->VisionId = std::numeric_limits<uint32>::max(); return);
+		BOMB_IF(visionId >= _VisionGroups.size() || oldVisionGroup == NULL, "Trying to remove entity from vision group with unknown vision id", viewerRecord->VisionId = std::numeric_limits<uint32>::max(); return );
 
 		// if we're the only viewer then already isolated so just return
 		if (oldVisionGroup->numViewers() == 1)
@@ -820,13 +820,13 @@ void CInstance::removeEntity(SUniverseEntity &entity)
 	if (viewerRecord != NULL)
 	{
 		uint32 visionId = viewerRecord->VisionId;
-		BOMB_IF(visionId >= _VisionGroups.size() || _VisionGroups[visionId] == NULL, "Trying to remove entity with unknown vision id", viewerRecord->VisionId = std::numeric_limits<uint32>::max(); return);
+		BOMB_IF(visionId >= _VisionGroups.size() || _VisionGroups[visionId] == NULL, "Trying to remove entity with unknown vision id", viewerRecord->VisionId = std::numeric_limits<uint32>::max(); return );
 		_VisionGroups[visionId]->removeViewer(viewerRecord);
 	}
 
 	// make sure the entity's InstanceIndex is valid
 	uint32 entityIndex = entity.InstanceIndex;
-	BOMB_IF(entityIndex >= _Entities.size(), "BIG BAD BUG - Entity's InstanceIndex is invalid!", return);
+	BOMB_IF(entityIndex >= _Entities.size(), "BIG BAD BUG - Entity's InstanceIndex is invalid!", return );
 
 	// move the entity currently at the back of the vector to the slot that we're liberating (NOTE: this could be us!)
 	SInstanceEntity &theEntitySlot = _Entities[entityIndex];
@@ -1003,7 +1003,7 @@ void CVisionGroup::split(CVisionGroup *other)
 	TEST(("split  grp %d into grp %d", _VisionId, other->_VisionId));
 
 	// make sure we don't try splitting an empty vision group
-	BOMB_IF(_Viewers.empty(), "Attempting to split a vision group with no members", return);
+	BOMB_IF(_Viewers.empty(), "Attempting to split a vision group with no members", return );
 
 	// setup some handy locals
 	uint32 viewerSize = (uint32)_Viewers.size();
@@ -1374,7 +1374,7 @@ CViewer::CViewer()
 void CViewer::init(TDataSetRow viewerId, CUniverse *theUniverse)
 {
 	// ensure that we don't try to init the same object more than once
-	BOMB_IF(_ViewerId != TDataSetRow(), "Call to init() for already initialised CViewer object", return);
+	BOMB_IF(_ViewerId != TDataSetRow(), "Call to init() for already initialised CViewer object", return );
 
 	// setup the viewer id required for filling in vision update messages
 	_ViewerId = viewerId;
@@ -1550,7 +1550,7 @@ void CViewer::updateVision(const TVision &vision, CUniverse *theUniverse, bool f
 	result.reset(_ViewerId);
 
 	// make sure we've been properly initialised
-	BOMB_IF(_ViewerId == TDataSetRow(), "Call to updateVision() for uninitialised CViewer object", return);
+	BOMB_IF(_ViewerId == TDataSetRow(), "Call to updateVision() for uninitialised CViewer object", return );
 
 	// if we're resting the player vision then treat ourselves as blind unless this is the first update in which case we need to
 	// be allowed to add ourselves into our own vision

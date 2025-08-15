@@ -61,17 +61,29 @@ public:
 	 */
 #ifdef TEST_POSITION_CORRECTNESS
 #pragma message(NL_LOC_MSG "TEST_POSITION_CORRECTNESS")
-	uint32 size() { return 3 * 16 + 2 * 32; }
+	uint32 size()
+	{
+		return 3 * 16 + 2 * 32;
+	}
 #else
-	uint32 size() { return 3 * 16; } // See also CActionFactory::sizeFast()
+	uint32 size()
+	{
+		return 3 * 16;
+	} // See also CActionFactory::sizeFast()
 #endif
 
 	/// Returns the maximum size of this action (INCLUDING the header size handled by CActionFactory!)
 #ifdef TEST_POSITION_CORRECTNESS
 #pragma message(NL_LOC_MSG "TEST_POSITION_CORRECTNESS")
-	static uint32 getMaxSizeInBit() { return 3 * 16 + 2 * 32; }
+	static uint32 getMaxSizeInBit()
+	{
+		return 3 * 16 + 2 * 32;
+	}
 #else
-	static uint32 getMaxSizeInBit() { return 3 * 16; }
+	static uint32 getMaxSizeInBit()
+	{
+		return 3 * 16;
+	}
 #endif
 
 	/// Returns the priority of this action, it can changed dynamically if you want
@@ -197,7 +209,9 @@ public:
 
 	CActionPosition() { }
 
-	void reset() { /*IsDelta = false; Garanty = false;*/ /*TickDate = 0;*/ }
+	void reset()
+	{ /*IsDelta = false; Garanty = false;*/ /*TickDate = 0;*/
+	}
 };
 
 }

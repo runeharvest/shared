@@ -1067,7 +1067,8 @@ static SRes SzReadFileNames(const Byte *data, size_t size, UInt32 numFiles, size
 		     p[0] != 0 || p[1] != 0
 #endif
 		     ;
-		     p += 2);
+		     p += 2)
+			;
 		pos = p - data + 2;
 		*offsets++ = (pos >> 1);
 	} while (--numFiles);

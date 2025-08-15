@@ -447,11 +447,13 @@ void CDriverGL::showCursor(bool b)
 		// update current hardware icon to avoid to have the plain arrow
 		updateCursor(true);
 
-		while (ShowCursor(b) < 0);
+		while (ShowCursor(b) < 0)
+			;
 	}
 	else
 	{
-		while (ShowCursor(b) >= 0);
+		while (ShowCursor(b) >= 0)
+			;
 	}
 
 #elif defined(NL_OS_MAC)

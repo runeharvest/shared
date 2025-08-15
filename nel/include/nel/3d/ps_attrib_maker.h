@@ -170,8 +170,7 @@ public:
 	    uint32 numAttrib,
 	    bool allowNoCopy = false,
 	    uint32 srcStep = (1 << 16),
-	    bool forceClampEntry = false) const
-	    = 0;
+	    bool forceClampEntry = false) const = 0;
 
 	/** The same as make, but it replicate each attribute 4 times, thus filling 4*numAttrib. Useful for facelookat and the like
 	 *  \see make()
@@ -181,8 +180,7 @@ public:
 	    void *tab,
 	    uint32 stride,
 	    uint32 numAttrib,
-	    uint32 srcStep = (1 << 16)) const
-	    = 0;
+	    uint32 srcStep = (1 << 16)) const = 0;
 
 	/** The same as make4, but with n replication instead of 4
 	 *  \see make4
@@ -193,8 +191,7 @@ public:
 	    uint32 stride,
 	    uint32 numAttrib,
 	    uint32 nbReplicate,
-	    uint32 srcStep = (1 << 16)) const
-	    = 0;
+	    uint32 srcStep = (1 << 16)) const = 0;
 	//@}
 
 	/// get the max value, or an evalution that is guaranteed to be > to it (meaningful for ordered set only)

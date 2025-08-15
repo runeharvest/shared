@@ -124,7 +124,7 @@ public:
 	/// Add a set of log description
 	static void addLogDefinitions(const std::vector<TLogDefinition> &logDefs)
 	{
-		BOMB_IF(getGlobal_CommStarted(), "Registering of log definition done AFTER comm started !", return);
+		BOMB_IF(getGlobal_CommStarted(), "Registering of log definition done AFTER comm started !", return );
 
 		for (uint i = 0; i < logDefs.size(); ++i)
 		{
@@ -173,8 +173,8 @@ public:
 	void sendLog(const TLogInfo &logInfo)
 	{
 		TLogDefinitions::iterator it(getLogDefinitions().find(logInfo.getLogName()));
-		BOMB_IF(it == getLogDefinitions().end(), "sendLog : Unknow log or log context named '" << logInfo.getLogName() << "'", return);
-		BOMB_IF(it->second.getParams().size() != logInfo.getParams().size(), "sendLog : on log " << logInfo.getLogName() << ", invalid number of log parameter. Need " << it->second.getParams().size() << ", received " << logInfo.getParams().size(), return);
+		BOMB_IF(it == getLogDefinitions().end(), "sendLog : Unknow log or log context named '" << logInfo.getLogName() << "'", return );
+		BOMB_IF(it->second.getParams().size() != logInfo.getParams().size(), "sendLog : on log " << logInfo.getLogName() << ", invalid number of log parameter. Need " << it->second.getParams().size() << ", received " << logInfo.getParams().size(), return );
 		_LogInfos.push_back(logInfo);
 		// log are effectively sent at next module update
 
@@ -198,9 +198,9 @@ public:
 	{
 		// check the context name
 		TLogDefinitions::iterator it(getLogDefinitions().find(contextName));
-		BOMB_IF(it == getLogDefinitions().end(), "pushLogContext : Unknow log or log context named '" << contextName << "'", return);
+		BOMB_IF(it == getLogDefinitions().end(), "pushLogContext : Unknow log or log context named '" << contextName << "'", return );
 		const TLogDefinition &ld = it->second;
-		BOMB_IF(!ld.getContext(), "Push log context with name '" << contextName << "' is not a context name", return);
+		BOMB_IF(!ld.getContext(), "Push log context with name '" << contextName << "' is not a context name", return );
 		// store the log info for the context
 		_LogInfos.push_back(TLogInfo());
 		_LogInfos.back().setLogName(contextName);
@@ -222,7 +222,7 @@ public:
 		while (it != _LogInfos.rend() && it->getTimeStamp() != 0 && it->getLogName() != contextName)
 			++it;
 
-		BOMB_IF(it == _LogInfos.rend(), "popLogContext : Can't find opening context", return);
+		BOMB_IF(it == _LogInfos.rend(), "popLogContext : Can't find opening context", return );
 
 		// ok, we have found the opening tag
 		if (it == _LogInfos.rbegin())

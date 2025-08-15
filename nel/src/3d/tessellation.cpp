@@ -2541,10 +2541,13 @@ void CTessFace::updateBindAndSplit()
 	    Therefore, FBase, FLeft and FRight are good pointers, and *FLeft and *FRight should be Ok too.
 	*/
 	nlassert(isLeaf());
-	while (!updateBindEdge(FBase, splitWanted));
+	while (!updateBindEdge(FBase, splitWanted))
+		;
 	// FLeft and FRight pointers are only valid in Leaves nodes.
-	while (!updateBindEdge(FLeft, splitWanted));
-	while (!updateBindEdge(FRight, splitWanted));
+	while (!updateBindEdge(FLeft, splitWanted))
+		;
+	while (!updateBindEdge(FRight, splitWanted))
+		;
 	// In rectangular case, we MUST also update edges of FBase.
 	// Because splitRectangular() split those two faces at the same time.
 	if (isRectangular())
@@ -2555,8 +2558,10 @@ void CTessFace::updateBindAndSplit()
 		nlassert(FBase->isLeaf());
 		// Doesn't need to update FBase->FBase, since it's me!
 		// FLeft and FRight pointers are only valid in Leaves nodes.
-		while (!FBase->updateBindEdge(FBase->FLeft, splitWanted));
-		while (!FBase->updateBindEdge(FBase->FRight, splitWanted));
+		while (!FBase->updateBindEdge(FBase->FLeft, splitWanted))
+			;
+		while (!FBase->updateBindEdge(FBase->FRight, splitWanted))
+			;
 	}
 
 	CTessFace *fmult = NULL;
@@ -2763,10 +2768,13 @@ void CTessFace::updateBind()
 	if (isLeaf())
 	{
 		bool splitWanted = false;
-		while (!updateBindEdge(FBase, splitWanted));
+		while (!updateBindEdge(FBase, splitWanted))
+			;
 		// FLeft and FRight pointers are only valid in Leaves nodes.
-		while (!updateBindEdge(FLeft, splitWanted));
-		while (!updateBindEdge(FRight, splitWanted));
+		while (!updateBindEdge(FLeft, splitWanted))
+			;
+		while (!updateBindEdge(FRight, splitWanted))
+			;
 		if (splitWanted)
 			updateBindAndSplit();
 	}

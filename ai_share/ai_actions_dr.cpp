@@ -182,8 +182,8 @@ void CAIActionsDataRecordPtr::applyToExecutor(CAIActions::IExecutor &executor)
 		{
 			if (tokenName == "file")
 			{
-				BOMB_IF(!args.empty(), "Found args with unmatched action in pdr", return);
-				BOMB_IF(contextAlias != ~0u, "Found context alias without matching context clause", return);
+				BOMB_IF(!args.empty(), "Found args with unmatched action in pdr", return );
+				BOMB_IF(contextAlias != ~0u, "Found context alias without matching context clause", return );
 
 				executor.openFile(fileName);
 				// fileName = "";
@@ -193,7 +193,7 @@ void CAIActionsDataRecordPtr::applyToExecutor(CAIActions::IExecutor &executor)
 
 			if (tokenName == "context")
 			{
-				BOMB_IF(!args.empty(), "Found args with unmatched action in pdr", return);
+				BOMB_IF(!args.empty(), "Found args with unmatched action in pdr", return );
 				//	BOMB_IF(!fileName.empty(),"Found file name without matching file clause",return);
 
 				executor.begin(contextAlias);
@@ -205,21 +205,21 @@ void CAIActionsDataRecordPtr::applyToExecutor(CAIActions::IExecutor &executor)
 
 			// if it's not a special case then it must be an argument
 			// BOMB_IF(!fileName.empty(),"Found file name without matching file clause",return);
-			BOMB_IF(contextAlias != ~0u, "Found context alias without matching context clause", return);
+			BOMB_IF(contextAlias != ~0u, "Found context alias without matching context clause", return );
 			vectAppend(args).popFromPdr(*_PdrPtr);
 			continue;
 		}
 
 		// BOMB_IF(!fileName.empty(),"Found file name without matching file clause",return);
-		BOMB_IF(contextAlias != ~0u, "Found context alias without matching context clause", return);
+		BOMB_IF(contextAlias != ~0u, "Found context alias without matching context clause", return );
 
 		if (_PdrPtr->isEndOfStruct())
 		{
-			BOMB_IF(!args.empty(), "Found args with unmatched action in pdr", return);
+			BOMB_IF(!args.empty(), "Found args with unmatched action in pdr", return );
 
 			if (tokenName == "file")
 			{
-				BOMB_IF(fileName.empty(), "PDR file invalid: found end of file marker but no file open", return);
+				BOMB_IF(fileName.empty(), "PDR file invalid: found end of file marker but no file open", return );
 				executor.closeFile(fileName);
 				fileName.clear();
 				_PdrPtr->popStructEnd(token);
@@ -228,19 +228,19 @@ void CAIActionsDataRecordPtr::applyToExecutor(CAIActions::IExecutor &executor)
 
 			if (tokenName == "context")
 			{
-				BOMB_IF(contextStack.empty(), "PDR file invalid: found more section closes than opens", return);
+				BOMB_IF(contextStack.empty(), "PDR file invalid: found more section closes than opens", return );
 				executor.end(contextStack.back());
 				contextStack.pop_back();
 				_PdrPtr->popStructEnd(token);
 				continue;
 			}
 
-			BOMB("I'm not sure we shold be here .... :( bug ???", return);
+			BOMB("I'm not sure we shold be here .... :( bug ???", return );
 		}
 
 		if (_PdrPtr->isTokenWithNoData())
 		{
-			BOMB_IF(tokenName.size() > 8, "The action name '" + tokenName + "' is invalid - it must be <= 8 characters long", return);
+			BOMB_IF(tokenName.size() > 8, "The action name '" + tokenName + "' is invalid - it must be <= 8 characters long", return );
 			executor.execute(stringToInt64(tokenName.c_str()), args);
 			args.clear();
 			_PdrPtr->pop(token);
@@ -249,7 +249,7 @@ void CAIActionsDataRecordPtr::applyToExecutor(CAIActions::IExecutor &executor)
 
 		if (tokenName == "contextAlias")
 		{
-			BOMB_IF(!args.empty(), "Found args with unmatched action in pdr", return);
+			BOMB_IF(!args.empty(), "Found args with unmatched action in pdr", return );
 
 			contextAlias = (uint32)_PdrPtr->popNextArg(token).asUint();
 			continue;
@@ -257,8 +257,8 @@ void CAIActionsDataRecordPtr::applyToExecutor(CAIActions::IExecutor &executor)
 
 		if (tokenName == "fileName")
 		{
-			BOMB_IF(!fileName.empty(), "Found a file clause within another file clause!", return);
-			BOMB_IF(!args.empty(), "Found args with unmatched action in pdr", return);
+			BOMB_IF(!fileName.empty(), "Found a file clause within another file clause!", return );
+			BOMB_IF(!args.empty(), "Found args with unmatched action in pdr", return );
 
 			fileName = _PdrPtr->popNextArg(token).asString();
 			continue;
@@ -266,7 +266,7 @@ void CAIActionsDataRecordPtr::applyToExecutor(CAIActions::IExecutor &executor)
 		// contxt wiht no value
 		if (tokenName == "context")
 		{
-			BOMB_IF(contextAlias == ~0u, "error", return);
+			BOMB_IF(contextAlias == ~0u, "error", return );
 			executor.begin(contextAlias);
 			executor.end(contextAlias);
 			contextAlias = ~0u;

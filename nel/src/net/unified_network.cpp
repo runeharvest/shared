@@ -1991,7 +1991,8 @@ bool CUnifiedNetwork::haveNamedCnx(const std::string &name, TServiceId sid)
 
 	if (range.first != range.second)
 	{
-		for (it = range.first; it != range.second && (*it).second != sid; ++it);
+		for (it = range.first; it != range.second && (*it).second != sid; ++it)
+			;
 
 		return (it != range.second);
 	}
@@ -2007,7 +2008,8 @@ void CUnifiedNetwork::addNamedCnx(const std::string &name, TServiceId sid)
 
 	if (range.first != range.second)
 	{
-		for (it = range.first; it != range.second && (*it).second != sid; ++it);
+		for (it = range.first; it != range.second && (*it).second != sid; ++it)
+			;
 
 		if (it != range.second)
 		{
@@ -2035,7 +2037,8 @@ void CUnifiedNetwork::removeNamedCnx(const std::string &name, TServiceId sid)
 	}
 
 	// select good service id
-	for (it = range.first; it != range.second && (*it).second != sid; ++it);
+	for (it = range.first; it != range.second && (*it).second != sid; ++it)
+		;
 
 	// assume id exists
 	if (it == range.second)

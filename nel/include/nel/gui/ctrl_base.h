@@ -83,7 +83,10 @@ public:
 	/// Get the ContextHelp for this control. Default is to return _ContextHelp
 	virtual void getContextHelp(std::string &help) const { help = _ContextHelp; }
 #ifdef RYZOM_LUA_UCSTRING
-	virtual void getContextHelpAsUtf16(ucstring &help) const { help.fromUtf8(_ContextHelp); } // Compatibility
+	virtual void getContextHelpAsUtf16(ucstring &help) const
+	{
+		help.fromUtf8(_ContextHelp);
+	} // Compatibility
 #endif
 	/// Get the ContextHelp for this control, with tooltip specific code. Default behaviour is identical to getContextHelp.
 	virtual void getContextHelpToolTip(std::string &help) const { getContextHelp(help); }
@@ -124,10 +127,16 @@ public:
 	std::string getDefaultContextHelp() const { return _ContextHelp; }
 	void setDefaultContextHelp(const std::string &help) { _ContextHelp = help; }
 #ifdef RYZOM_LUA_UCSTRING
-	ucstring getDefaultContextHelpAsUtf16() const { return ucstring::makeFromUtf8(_ContextHelp); } // Compatibility
+	ucstring getDefaultContextHelpAsUtf16() const
+	{
+		return ucstring::makeFromUtf8(_ContextHelp);
+	} // Compatibility
 	void setDefaultContextHelpAsUtf16(const ucstring &help) { _ContextHelp = help.toUtf8(); } // Compatibility
 #endif
-	void setOnContextHelp(const std::string &help) { _OnContextHelp = help; }
+	void setOnContextHelp(const std::string &help)
+	{
+		_OnContextHelp = help;
+	}
 	void setOnContextHelpAHParams(const std::string &p) { _OnContextHelpParams = p; }
 
 	// called when this element or a son has been captured

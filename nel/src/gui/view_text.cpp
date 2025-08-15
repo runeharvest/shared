@@ -3144,7 +3144,7 @@ static inline CRGBA getColorTag(const std::string &s, uint &index)
 	color.G += color.G << 4;
 	color.B = (pCol >> 4) & 0xF;
 	color.B += color.B << 4;
-	color.A = (pCol) & 0xF;
+	color.A = (pCol)&0xF;
 	color.A += color.A << 4;
 
 	// skip tag

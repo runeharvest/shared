@@ -140,12 +140,12 @@ static inline void fastClamp8(sint &v)
 		mov		esi, v
 		mov		eax, [esi]
 		mov		ebx, eax
-		                                   // clamp to 0.
+		                                           // clamp to 0.
 		add		eax, 0x80000000
 		sbb		ecx, ecx
 		not		ecx
 		and		ebx, ecx
-		                                         // clamp to 255.
+		                                                 // clamp to 255.
 		add		eax, 0x7FFFFF00
 		sbb		ecx, ecx
 		or		ebx, ecx
@@ -206,7 +206,8 @@ template <class T>
 T strFindReplaceAll(const T &str, const T &search, const T &replace)
 {
 	T ret = str;
-	while (strFindReplace(ret, search, replace));
+	while (strFindReplace(ret, search, replace))
+		;
 	return ret;
 }
 

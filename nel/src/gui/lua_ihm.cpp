@@ -1809,7 +1809,8 @@ std::string CLuaIHM::findReplaceAll(const std::string &str, const std::string &s
 {
 	// H_AUTO(Lua_CLuaIHM_findReplaceAll)
 	std::string ret = str;
-	while (strFindReplace(ret, search, replace));
+	while (strFindReplace(ret, search, replace))
+		;
 	return ret;
 }
 

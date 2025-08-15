@@ -84,7 +84,7 @@ private:
 void CGenericRequestIdRegister::pushRequestId(uint32 requestId, const std::string &fileName)
 {
 	// check for out of order entries in the request list
-	BOMB_IF(!_RequestIds.empty() && (requestId < _RequestIds.back().RequestId), "Ignoring out of order request id in generic callback registration for file " + CSString(fileName).quote(), return);
+	BOMB_IF(!_RequestIds.empty() && (requestId < _RequestIds.back().RequestId), "Ignoring out of order request id in generic callback registration for file " + CSString(fileName).quote(), return );
 
 	// setup a new record for this request id / file name pair
 	SRequestId theNewRequestId;
@@ -195,10 +195,10 @@ static void cbFile(NLNET::CMessage &msgin, const std::string & /* serviceName */
 	CBackupInterfaceSingleton *singleton = CBackupInterfaceSingleton::getInstance();
 	CBackupServiceInterface *itf;
 	NLMISC::CSmartPtr<IBackupFileReceiveCallback> cb = singleton->popFileCallback(msg.RequestId, itf);
-	BOMB_IF(cb == NULL, "Received a file from backup service - but can't find a matching request: " + msg.FileDescription.FileName + NLMISC::toString(" (RequestId=%d)", msg.RequestId), return);
+	BOMB_IF(cb == NULL, "Received a file from backup service - but can't find a matching request: " + msg.FileDescription.FileName + NLMISC::toString(" (RequestId=%d)", msg.RequestId), return );
 
 	// make sure the file size reported by the FileDescription corresponds to the quantity of data remaining in the message
-	BOMB_IF(msg.FileDescription.FileSize != msg.Data.length() - msg.Data.getPos(), "Throwing out file because message header is corrupt or message is incomplete: " + msg.FileDescription.FileName, return);
+	BOMB_IF(msg.FileDescription.FileSize != msg.Data.length() - msg.Data.getPos(), "Throwing out file because message header is corrupt or message is incomplete: " + msg.FileDescription.FileName, return );
 
 	// Restore the original filename (without the remote path). Assumes there can't be more than one BS interface.
 	// This will fail if the remote path has changed between the request and now.
@@ -235,7 +235,7 @@ static void cbFileClass(NLNET::CMessage &msgin, const std::string & /* serviceNa
 	CBackupInterfaceSingleton *singleton = CBackupInterfaceSingleton::getInstance();
 	CBackupServiceInterface *itf;
 	NLMISC::CSmartPtr<IBackupFileClassReceiveCallback> cb = singleton->popFileClassCallback(msg.RequestId, itf);
-	BOMB_IF(cb == NULL, "Received a file class from backup service - but can't find a matching request!" + NLMISC::toString(" RequestId=%d", msg.RequestId), return);
+	BOMB_IF(cb == NULL, "Received a file class from backup service - but can't find a matching request!" + NLMISC::toString(" RequestId=%d", msg.RequestId), return );
 
 	// Restore the original filenames (without the remote path). Assumes there can't be more than one BS interface.
 	// This will fail if the remote path has changed between the request and now.

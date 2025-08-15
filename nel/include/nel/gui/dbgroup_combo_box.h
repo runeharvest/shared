@@ -92,7 +92,10 @@ public:
 	void setViewText(const std::string &text);
 	std::string getViewText() const;
 #ifdef RYZOM_LUA_UCSTRING
-	void setViewTextAsUtf16(const ucstring &text) { setViewText(text.toUtf8()); } // Compatibility
+	void setViewTextAsUtf16(const ucstring &text)
+	{
+		setViewText(text.toUtf8());
+	} // Compatibility
 	ucstring getViewTextAsUtf16() const; // Compatibility
 #endif
 	CViewText *getViewText();

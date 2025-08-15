@@ -392,8 +392,8 @@ inline CTimerEvent::~CTimerEvent()
 
 inline void CTimerEvent::set(CTimer *owner, NLMISC::TGameCycle time)
 {
-	BOMB_IF(owner == NULL, "Impossible to set a timer with a NULL owner", return);
-	BOMB_IF(_Owner != NULL && _Owner != owner, "Attempt to change owner of an active event", return);
+	BOMB_IF(owner == NULL, "Impossible to set a timer with a NULL owner", return );
+	BOMB_IF(_Owner != NULL && _Owner != owner, "Attempt to change owner of an active event", return );
 	_Owner = owner;
 	_Time = time;
 	CTimerManager::getInstance()->getEventVector(time).push_back(this);
@@ -404,8 +404,8 @@ inline void CTimerEvent::set(CTimer *owner, NLMISC::TGameCycle time, uint32 vari
 	BOMB_IF(variation == 0, "shouldn't call this method with variation value of 0", set(owner, time));
 	BOMB_IF(variation > 256, "shouldn't call this method with variation value of >256", variation = 256);
 
-	BOMB_IF(owner == NULL, "Impossible to set a timer with a NULL owner", return);
-	BOMB_IF(_Owner != NULL && _Owner != owner, "Attempt to change owner of an active event", return);
+	BOMB_IF(owner == NULL, "Impossible to set a timer with a NULL owner", return );
+	BOMB_IF(_Owner != NULL && _Owner != owner, "Attempt to change owner of an active event", return );
 	_Owner = owner;
 
 	CTimerManager *mgr = CTimerManager::getInstance();
@@ -423,7 +423,7 @@ inline void CTimerEvent::set(CTimer *owner, NLMISC::TGameCycle time, uint32 vari
 			_Time = time + i;
 		}
 	}
-	BOMB_IF(best == NULL, "BUG: This can never happen!", return);
+	BOMB_IF(best == NULL, "BUG: This can never happen!", return );
 	best->push_back(this);
 }
 
@@ -450,7 +450,7 @@ inline void CTimerEvent::clear()
 inline void CTimerEvent::processEvent()
 {
 	CTimer *owner = _Owner;
-	BOMB_IF(owner == NULL, "Attempt to process an event that no longer has a valid owner", return);
+	BOMB_IF(owner == NULL, "Attempt to process an event that no longer has a valid owner", return );
 
 	// mark the event as expired - the state may be chnaged during the timer callback...
 	// NOTE: This operation results in '_Owner' being set to NULL

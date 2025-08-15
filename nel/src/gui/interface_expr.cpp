@@ -72,7 +72,8 @@ void formatLuaCall(const std::string &expr, std::string &tempStr)
 	        lua('getSkillFromName(\"SM\")')
 	*/
 	tempStr = expr.substr(ExprLuaId.size()); // eg: tempStr= getSkillFromName('SM')
-	while (strFindReplace(tempStr, "'", "\\\"")); // eg: tempStr= getSkillFromName(\"SM\")
+	while (strFindReplace(tempStr, "'", "\\\""))
+		; // eg: tempStr= getSkillFromName(\"SM\")
 	tempStr = string("lua('") + tempStr + "')"; // eg: tempStr= lua('getSkillFromName(\"SM\")')
 }
 

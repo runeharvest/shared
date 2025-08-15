@@ -3607,7 +3607,7 @@ inline void CBitmap::uncompress(uint16 color, NLMISC::CRGBA &r)
 	r.R += r.R >> 5;
 	r.G = ((color >> 5) & 63) << 2;
 	r.G += r.G >> 6;
-	r.B = ((color) & 31) << 3;
+	r.B = ((color)&31) << 3;
 	r.B += r.B >> 5;
 }
 
@@ -6106,8 +6106,7 @@ void CBitmap::blend(CBitmap &Bm0, CBitmap &Bm1, uint16 factor, bool inputBitmapI
 		uint16 *bf1 = (uint16 *)&blendFactor1;
 		bf0[0] = bf0[1] = bf0[2] = bf0[3] = (1 << 6) * (factor);
 		bf1[0] = bf1[1] = bf1[2] = bf1[3] = (1 << 6) * (256 - factor);
-		__asm
-		{
+		__asm {
 			mov esi, src0
 			mov eax, src1
 			mov edi, dest

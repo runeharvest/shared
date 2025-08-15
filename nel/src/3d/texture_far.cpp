@@ -801,8 +801,7 @@ inline void NL3D_asmExpandLineColor565(const uint16 *src, CRGBA *dst, uint du, u
 		return;
 
 	// Loop for pix.
-	__asm
-	{
+	__asm {
 		movq	mm7, blank
 
 		    // start at pixel 1 => increment dst, and start u= du
@@ -917,8 +916,7 @@ inline void NL3D_asmExpandLineColor8888(const CRGBA *src, CRGBA *dst, uint du, u
 		return;
 
 	// Loop for pix.
-	__asm
-	{
+	__asm {
 		movq	mm7, blank
 
 		    // start at pixel 1 => increment dst, and start u= du
@@ -990,8 +988,7 @@ inline void NL3D_asmBlendLines(CRGBA *dst, const CRGBA *src0, const CRGBA *src1,
 		return;
 
 	// Loop for pix.
-	__asm
-	{
+	__asm {
 		movq	mm7, blank
 
 		    // read the factor and expand it to 4 words.
@@ -1057,8 +1054,7 @@ static void NL3D_asmAssembleShading1x1(const uint8 *lumels, const CRGBA *colorMa
 	uint offsetUSCs = ((uint)srcUSCs - (uint)dst);
 
 	// Loop for pix.
-	__asm
-	{
+	__asm {
 		movq		mm7, blank
 
 		    // setup ptrs
@@ -1162,8 +1158,7 @@ static void NL3D_asmAssembleShading2x2(const uint8 *lumels, const CRGBA *colorMa
 	uint offsetUSCs = ((uint)srcUSCs - (uint)dst);
 
 	// Loop for pix.
-	__asm
-	{
+	__asm {
 		movq		mm7, blank
 
 		    // setup ptrs
@@ -1236,8 +1231,7 @@ static void NL3D_asmAssembleShading4x4(const uint8 *lumels, const CRGBA *colorMa
 		return;
 
 	// Loop for pix.
-	__asm
-	{
+	__asm {
 		// Use ebp as a register for faster access...
 		push		ebp
 
@@ -1674,8 +1668,7 @@ inline void NL3D_asmModulateLineColors(CRGBA *dst, const CRGBA *src0, const CRGB
 	if (len == 0)
 		return;
 
-	__asm
-	{
+	__asm {
 		movq		mm7, blank
 
 		mov			esi, src0 // esi point to src Pixels
@@ -1722,8 +1715,7 @@ inline void NL3D_asmModulateAndBlendLineColors(CRGBA *dst, const CRGBA *src0, co
 	if (len == 0)
 		return;
 
-	__asm
-	{
+	__asm {
 		movq		mm7, blank
 		movq		mm6, one
 

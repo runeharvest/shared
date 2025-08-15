@@ -14,8 +14,8 @@ static const UInt16 kInitBinEsc[] = { 0x3CDD, 0x1F3F, 0x59BF, 0x48F3, 0x64A1, 0x
 #define MAX_FREQ 124
 #define UNIT_SIZE 12
 
-#define U2B(nu) ((UInt32)(nu) * UNIT_SIZE)
-#define U2I(nu) (p->Units2Indx[(size_t)(nu) - 1])
+#define U2B(nu) ((UInt32)(nu)*UNIT_SIZE)
+#define U2I(nu) (p->Units2Indx[(size_t)(nu)-1])
 #define I2U(indx) (p->Indx2Units[indx])
 
 #ifdef PPMD_32BIT
@@ -293,7 +293,7 @@ static void *ShrinkUnits(CPpmd7 *p, void *oldPtr, unsigned oldNU, unsigned newNU
 
 static void SetSuccessor(CPpmd_State *p, CPpmd_Void_Ref v)
 {
-	(p)->SuccessorLow = (UInt16)((UInt32)(v) & 0xFFFF);
+	(p)->SuccessorLow = (UInt16)((UInt32)(v)&0xFFFF);
 	(p)->SuccessorHigh = (UInt16)(((UInt32)(v) >> 16) & 0xFFFF);
 }
 
@@ -371,7 +371,8 @@ static CTX_PTR CreateSuccessors(CPpmd7 *p, BoolInt skip)
 		c = SUFFIX(c);
 		if (c->NumStats != 1)
 		{
-			for (s = STATS(c); s->Symbol != p->FoundState->Symbol; s++);
+			for (s = STATS(c); s->Symbol != p->FoundState->Symbol; s++)
+				;
 		}
 		else
 			s = ONE_STATE(c);
@@ -395,7 +396,8 @@ static CTX_PTR CreateSuccessors(CPpmd7 *p, BoolInt skip)
 	{
 		UInt32 cf, s0;
 		CPpmd_State *s;
-		for (s = STATS(c); s->Symbol != upState.Symbol; s++);
+		for (s = STATS(c); s->Symbol != upState.Symbol; s++)
+			;
 		cf = s->Freq - 1;
 		s0 = c->SummFreq - c->NumStats - cf;
 		upState.Freq = (Byte)(1 + ((2 * cf <= s0) ? (5 * cf > s0) : ((2 * cf + 3 * s0 - 1) / (2 * s0))));

@@ -22,7 +22,7 @@
 
 #define LZMA2_LCLP_MAX 4
 
-#define LZMA2_DIC_SIZE_FROM_PROP(p) (((UInt32)2 | ((p) & 1)) << ((p) / 2 + 11))
+#define LZMA2_DIC_SIZE_FROM_PROP(p) (((UInt32)2 | ((p)&1)) << ((p) / 2 + 11))
 
 #define LZMA2_PACK_SIZE_MAX (1 << 16)
 #define LZMA2_COPY_CHUNK_SIZE LZMA2_PACK_SIZE_MAX

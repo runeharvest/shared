@@ -30,8 +30,7 @@ namespace NLMISC {
 // ***************************************************************************
 void *CFastMem::memcpySSE(void *dest, const void *src, size_t nbytes)
 {
-	_asm
-	{
+	_asm {
 			mov esi, src
 			mov edi, dest
 			mov ebx, nbytes
@@ -117,8 +116,7 @@ void *CFastMem::memcpySSE(void *dest, const void *src, size_t nbytes)
 // ***************************************************************************
 void CFastMem::precacheSSE(const void *src, uint nbytes)
 {
-	_asm
-	{
+	_asm {
 			mov esi, src
 			mov ecx, nbytes
 		    // 64 bytes per pass
@@ -151,8 +149,7 @@ void CFastMem::precacheSSE(const void *src, uint nbytes)
 // ***************************************************************************
 void CFastMem::precacheMMX(const void *src, uint nbytes)
 {
-	_asm
-	{
+	_asm {
 			mov esi, src
 			mov ecx, nbytes
 		    // 64 bytes per pass

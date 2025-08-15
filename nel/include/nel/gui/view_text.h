@@ -104,7 +104,10 @@ public:
 	void setLineMaxW(sint nMaxW, bool invalidate = true);
 	void setOverflowText(const std::string &text) { _OverflowText = text; }
 #ifdef RYZOM_LUA_UCSTRING
-	void setOverflowTextAsUtf16(const ucstring &text) { _OverflowText = text.toUtf8(); } // Compatibility
+	void setOverflowTextAsUtf16(const ucstring &text)
+	{
+		_OverflowText = text.toUtf8();
+	} // Compatibility
 #endif
 	void setMultiLine(bool bMultiLine);
 	void setMultiLineSpace(sint nMultiLineSpace);
@@ -129,7 +132,10 @@ public:
 	ucstring getTextAsUtf16() const; // Compatibility
 	ucstring getHardTextAsUtf16() const; // Compatibility
 #endif
-	bool isLocalized() const { return _Localized; }
+	bool isLocalized() const
+	{
+		return _Localized;
+	}
 	sint getFontSize() const;
 	std::string getFontName() const { return _FontName; }
 	bool getEmbolden() { return _Embolden; }
@@ -145,9 +151,15 @@ public:
 	}
 	sint getLineMaxW() const { return _LineMaxW; }
 #ifdef RYZOM_LUA_UCSTRING
-	ucstring getOverflowTextAsUtf16() const { return _OverflowText; } // Compatibility
+	ucstring getOverflowTextAsUtf16() const
+	{
+		return _OverflowText;
+	} // Compatibility
 #endif
-	bool getMultiLine() const { return _MultiLine; }
+	bool getMultiLine() const
+	{
+		return _MultiLine;
+	}
 	sint getMultiLineSpace() const { return _MultiLineSpace; }
 	bool getMultiLineMaxWOnly() const { return _MultiLineMaxWOnly; }
 	uint32 getMultiMaxLine() const { return _MultiMaxLine; }

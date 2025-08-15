@@ -134,7 +134,7 @@ public:
 		free(_Ptr);
 #else // NL_OV_USE_NEW_ALLOCATOR
 		if (_Ptr)
-			delete[] (char *)_Ptr;
+			delete[](char *) _Ptr;
 #endif // NL_OV_USE_NEW_ALLOCATOR
 		_Ptr = NULL;
 		_Size = 0;
@@ -347,7 +347,7 @@ private:
 			if (newblock && _Ptr)
 			{
 				memcpy(newblock, _Ptr, _Size * sizeof(T));
-				delete[] (char *)_Ptr;
+				delete[](char *) _Ptr;
 			}
 			newPtr = (T *)newblock;
 		}
@@ -359,7 +359,7 @@ private:
 			if (newblock && _Ptr)
 			{
 				memcpy(newblock, _Ptr, s * sizeof(T));
-				delete[] (char *)_Ptr;
+				delete[](char *) _Ptr;
 			}
 			newPtr = (T *)newblock;
 		}

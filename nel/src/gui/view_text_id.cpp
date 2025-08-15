@@ -218,7 +218,8 @@ void CViewTextID::checkCoords()
 		}
 
 		// Remove all {ros_exit}
-		while (NLMISC::strFindReplace(result, "{ros_exit}", ""));
+		while (NLMISC::strFindReplace(result, "{ros_exit}", ""))
+			;
 
 		// Modify the text?
 		if (_StringModifier)

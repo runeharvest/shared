@@ -200,9 +200,11 @@ void NLPACS::CChain::make(const vector<CVector> &vertices, sint32 left, sint32 r
 
 		// first checks if the subchain goes forward or backward.
 		if (forward)
-			for (; last < (sint)vertices.size() && isStrictlyLess(vertices[last - 1], vertices[last]); ++last);
+			for (; last < (sint)vertices.size() && isStrictlyLess(vertices[last - 1], vertices[last]); ++last)
+				;
 		else
-			for (; last < (sint)vertices.size() && isStrictlyGreater(vertices[last - 1], vertices[last]); ++last);
+			for (; last < (sint)vertices.size() && isStrictlyGreater(vertices[last - 1], vertices[last]); ++last)
+				;
 		--last;
 
 		// inserts the new subchain id within the CChain.

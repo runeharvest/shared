@@ -21,7 +21,10 @@ namespace NLMISC {
 
 #if !defined(NL_ATOMIC_CPP14) && defined(NL_ATOMIC_WIN32)
 
-void nlYield() { ::SwitchToThread(); }
+void nlYield()
+{
+	::SwitchToThread();
+}
 
 #endif /* !defined(NL_ATOMIC_CPP14) && defined(NL_ATOMIC_WIN32) */
 

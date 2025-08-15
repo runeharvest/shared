@@ -555,8 +555,7 @@ void CMeshMRMGeom::applyArrayRawSkinNormal1(CRawVertexNormalSkin1 *src, uint8 *d
 		/*  116 cycles / loop typical
 		    58 cycles / loop in theory (no memory problem)
 		*/
-		__asm
-		{
+		__asm {
 			mov		ecx, nBlockInf
 			mov		esi, src
 			mov		edi, destVertexPtr
@@ -575,7 +574,7 @@ void CMeshMRMGeom::applyArrayRawSkinNormal1(CRawVertexNormalSkin1 *src, uint8 *d
 			fld		[esi]src.Vertex.Pos.x // uop: 0/1
 			fld		[esi]src.Vertex.Pos.y // uop: 0/1
 			fld		[esi]src.Vertex.Pos.z // uop: 0/1
-			                                     // vout.x= (a11*vin.x + a12*vin.y + a13*vin.z + a14);
+			                                      // vout.x= (a11*vin.x + a12*vin.y + a13*vin.z + a14);
 			fld		[eax]CMatrix3x4.a11 // uop: 0/1
 			fmul	st, st(3) // uop: 1/0 (5)
 			fld		[eax]CMatrix3x4.a12 // uop: 0/1
@@ -731,8 +730,7 @@ void CMeshMRMGeom::applyArrayRawSkinNormal2(CRawVertexNormalSkin2 *src, uint8 *d
 		/*  154 cycles / loop typical
 		    124 cycles / loop in theory (no memory problem)
 		*/
-		__asm
-		{
+		__asm {
 			mov		ecx, nBlockInf
 			mov		esi, src
 			mov		edi, destVertexPtr
@@ -1032,8 +1030,7 @@ void CMeshMRMGeom::applyArrayRawSkinNormal3(CRawVertexNormalSkin3 *src, uint8 *d
 		    192 cycles / loop in theory (no memory problem)
 		    148 optimal
 		*/
-		__asm
-		{
+		__asm {
 			mov		ecx, nBlockInf
 			mov		esi, src
 			mov		edi, destVertexPtr

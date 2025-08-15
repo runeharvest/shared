@@ -155,7 +155,7 @@ void sendUDP(CUdpSock *client, const uint8 *packet, uint32 packetSize, const CIn
 	nlassert(packetSize > 0);
 
 #if !FINAL_VERSION
-	if ((float)rand() / (float)(RAND_MAX) * 100.0f >= PacketLoss)
+	if ((float)rand() / (float)(RAND_MAX)*100.0f >= PacketLoss)
 	{
 		sint32 lag = Lag /*+ (rand()%40) - 20*/; // void disordering
 
@@ -166,7 +166,7 @@ void sendUDP(CUdpSock *client, const uint8 *packet, uint32 packetSize, const CIn
 			CBufferizedPacket *bp = new CBufferizedPacket(client, packet, packetSize, lag, addr);
 
 			// duplicate the packet
-			if ((float)rand() / (float)(RAND_MAX) * 100.0f < PacketDisordering && !BufferizedPackets.empty())
+			if ((float)rand() / (float)(RAND_MAX)*100.0f < PacketDisordering && !BufferizedPackets.empty())
 			{
 				CBufferizedPacket *bp2 = BufferizedPackets.back();
 
@@ -183,7 +183,7 @@ void sendUDP(CUdpSock *client, const uint8 *packet, uint32 packetSize, const CIn
 			BufferizedPackets.push(bp);
 
 			// duplicate the packet
-			if ((float)rand() / (float)(RAND_MAX) * 100.0f < PacketDuplication)
+			if ((float)rand() / (float)(RAND_MAX)*100.0f < PacketDuplication)
 			{
 				CBufferizedPacket *bp = new CBufferizedPacket(client, packet, packetSize, lag, addr);
 				BufferizedPackets.push(bp);
@@ -197,7 +197,7 @@ void sendUDP(CUdpSock *client, const uint8 *packet, uint32 packetSize, const CIn
 			sendUDPNow(client, packet, packetSize, addr);
 
 			// duplicate the packet
-			if ((float)rand() / (float)(RAND_MAX) * 100.0f < PacketDuplication)
+			if ((float)rand() / (float)(RAND_MAX)*100.0f < PacketDuplication)
 			{
 				sendUDPNow(client, packet, packetSize, addr);
 			}

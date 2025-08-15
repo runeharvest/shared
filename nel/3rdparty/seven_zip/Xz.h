@@ -96,7 +96,7 @@ int XzCheck_Final(CXzCheck *p, Byte *digest);
 typedef UInt16 CXzStreamFlags;
 
 #define XzFlags_IsSupported(f) ((f) <= XZ_CHECK_MASK)
-#define XzFlags_GetCheckType(f) ((f) & XZ_CHECK_MASK)
+#define XzFlags_GetCheckType(f) ((f)&XZ_CHECK_MASK)
 #define XzFlags_HasDataCrc32(f) (Xz_GetCheckType(f) == XZ_CHECK_CRC32)
 unsigned XzFlags_GetCheckSize(CXzStreamFlags f);
 
@@ -120,7 +120,7 @@ typedef struct
 void Xz_Construct(CXzStream *p);
 void Xz_Free(CXzStream *p, ISzAllocPtr alloc);
 
-#define XZ_SIZE_OVERFLOW ((UInt64)(Int64) - 1)
+#define XZ_SIZE_OVERFLOW ((UInt64)(Int64)-1)
 
 UInt64 Xz_GetUnpackSize(const CXzStream *p);
 UInt64 Xz_GetPackSize(const CXzStream *p);

@@ -424,7 +424,8 @@ void NLPACS::CGlobalRetriever::initAll(bool initInstances)
 const NLPACS::CRetrieverInstance &NLPACS::CGlobalRetriever::makeInstance(uint32 retrieverId, uint8 orientation, const CVector &origin)
 {
 	uint id;
-	for (id = 0; id < _Instances.size() && _Instances[id].getInstanceId() != -1; ++id);
+	for (id = 0; id < _Instances.size() && _Instances[id].getInstanceId() != -1; ++id)
+		;
 
 	if (id == _Instances.size())
 		_Instances.resize(id + 1);
@@ -1012,13 +1013,15 @@ void NLPACS::CGlobalRetriever::findAStarPath(const NLPACS::UGlobalPosition &begi
 			float nextF = nextCost + nextHeuristic;
 
 			vector<CRetrieverInstance::CAStarNodeAccess>::iterator closeIt;
-			for (closeIt = close.begin(); closeIt != close.end() && *closeIt != nextNode; ++closeIt);
+			for (closeIt = close.begin(); closeIt != close.end() && *closeIt != nextNode; ++closeIt)
+				;
 
 			if (closeIt != close.end() && nextInfo.F < nextF)
 				continue;
 
 			multimap<float, CRetrieverInstance::CAStarNodeAccess>::iterator openIt;
-			for (openIt = open.begin(); openIt != open.end() && openIt->second != nextNode; ++openIt);
+			for (openIt = open.begin(); openIt != open.end() && openIt->second != nextNode; ++openIt)
+				;
 
 			if (openIt != open.end() && nextInfo.F < nextF)
 				continue;
@@ -1403,7 +1406,8 @@ void NLPACS::CGlobalRetriever::testCollisionWithCollisionChains(CCollisionSurfac
 
 					uint j;
 					sint32 cmp = (colChain.LeftSurface.RetrieverInstanceId << 16) + colChain.ChainId;
-					for (j = 0; j < checkedExtEdges.size() && (checkedExtEdges[j].first != cmp); ++j);
+					for (j = 0; j < checkedExtEdges.size() && (checkedExtEdges[j].first != cmp); ++j)
+						;
 					// if already crossed this edge, abort
 					// this a door that is crossing a surface frontier
 					if (j < checkedExtEdges.size())
@@ -1648,7 +1652,8 @@ NLPACS::CSurfaceIdent NLPACS::CGlobalRetriever::testMovementWithCollisionChains(
 			sint32 cmp = (colChain.LeftSurface.RetrieverInstanceId << 16) + colChain.ChainId;
 
 			uint j;
-			for (j = 0; j < checkedExtEdges.size() && (checkedExtEdges[j].first != cmp); ++j);
+			for (j = 0; j < checkedExtEdges.size() && (checkedExtEdges[j].first != cmp); ++j)
+				;
 			// if already crossed this edge, abort
 			// this a door that is crossing a surface frontier
 			if (j < checkedExtEdges.size())
@@ -1747,7 +1752,8 @@ NLPACS::CSurfaceIdent NLPACS::CGlobalRetriever::testMovementWithCollisionChains(
 
 				uint j;
 				sint32 cmp = (msd.LeftSurface.RetrieverInstanceId << 16) + msd.ChainId;
-				for (j = 0; j < checkedExtEdges.size() && (checkedExtEdges[j].first != cmp); ++j);
+				for (j = 0; j < checkedExtEdges.size() && (checkedExtEdges[j].first != cmp); ++j)
+					;
 				// if already crossed this edge, abort
 				// this a door that is crossing a surface frontier
 				if (j < checkedExtEdges.size())

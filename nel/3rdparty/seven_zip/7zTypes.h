@@ -53,7 +53,7 @@ typedef unsigned WRes;
 typedef int WRes;
 #define MY__FACILITY_WIN32 7
 #define MY__FACILITY__WRes MY__FACILITY_WIN32
-#define MY_SRes_HRESULT_FROM_WRes(x) ((HRESULT)(x) <= 0 ? ((HRESULT)(x)) : ((HRESULT)(((x) & 0x0000FFFF) | (MY__FACILITY__WRes << 16) | 0x80000000)))
+#define MY_SRes_HRESULT_FROM_WRes(x) ((HRESULT)(x) <= 0 ? ((HRESULT)(x)) : ((HRESULT)(((x)&0x0000FFFF) | (MY__FACILITY__WRes << 16) | 0x80000000)))
 
 #endif
 

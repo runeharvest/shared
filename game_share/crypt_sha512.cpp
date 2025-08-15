@@ -224,7 +224,8 @@ static char *sha512crypt(const char *key, const char *setting, char *output)
 	char *p;
 
 	/* reject large keys */
-	for (i = 0; i <= KEY_MAX && key[i]; i++);
+	for (i = 0; i <= KEY_MAX && key[i]; i++)
+		;
 	if (i > KEY_MAX)
 		return 0;
 	klen = i;

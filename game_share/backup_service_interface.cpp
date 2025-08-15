@@ -126,7 +126,7 @@ void CBackupServiceInterface::requestFile(const std::string &fileName, NLMISC::C
 	H_AUTO(BSIF_RequestFile);
 
 	// check that the file name is valid
-	BOMB_IF(!FileNameValidator.checkFileName(fileName), "Failed to send get file request " + CSString(fileName).quote() + " due to invalid characters in file name", return);
+	BOMB_IF(!FileNameValidator.checkFileName(fileName), "Failed to send get file request " + CSString(fileName).quote() + " due to invalid characters in file name", return );
 
 	// if there's no BS connected then complain and queue the file for loading later
 	if (!CBackupInterfaceSingleton::getInstance()->isConnected())
@@ -150,7 +150,7 @@ void CBackupServiceInterface::syncLoadFile(const std::string &fileName, NLMISC::
 	H_AUTO(BSIF_RequestFile);
 
 	// check that the file name is valid
-	BOMB_IF(!FileNameValidator.checkFileName(fileName), "Failed to send sync load file " + CSString(fileName).quote() + " due to invalid characters in file name", return);
+	BOMB_IF(!FileNameValidator.checkFileName(fileName), "Failed to send sync load file " + CSString(fileName).quote() + " due to invalid characters in file name", return );
 
 	// store away the callback for this action and retrieve the associated request id
 	uint32 requestId = CBackupInterfaceSingleton::getInstance()->pushFileCallback(cb, this);
@@ -187,7 +187,7 @@ void CBackupServiceInterface::sendFile(CBackupMsgSaveFile &msg, NLMISC::CSmartPt
 	H_AUTO(BSIF_SendFile);
 
 	// check that the file name is valid
-	BOMB_IF(!FileNameValidator.checkFileName(msg.FileName), "Failed to send save file request " + CSString(msg.FileName).quote() + " due to invalid characters in file name", return);
+	BOMB_IF(!FileNameValidator.checkFileName(msg.FileName), "Failed to send save file request " + CSString(msg.FileName).quote() + " due to invalid characters in file name", return );
 
 	// if there's no BS connected then complain and queue the file for saving later
 	if (!CBackupInterfaceSingleton::getInstance()->isConnected())
@@ -211,7 +211,7 @@ void CBackupServiceInterface::append(CBackupMsgSaveFile &msg, NLMISC::CSmartPtr<
 	H_AUTO(BSIF_AppendFile);
 
 	// check that the file name is valid
-	BOMB_IF(!FileNameValidator.checkFileName(msg.FileName), "Failed to send append request " + CSString(msg.FileName).quote() + " due to invalid characters in file name", return);
+	BOMB_IF(!FileNameValidator.checkFileName(msg.FileName), "Failed to send append request " + CSString(msg.FileName).quote() + " due to invalid characters in file name", return );
 
 	// if there's no BS connected then complain and queue the file for saving later
 	if (!CBackupInterfaceSingleton::getInstance()->isConnected())
@@ -235,7 +235,7 @@ void CBackupServiceInterface::append(const std::string &filename, const std::str
 	H_AUTO(BSIF_AppendText);
 
 	// check that the file name is valid
-	BOMB_IF(!FileNameValidator.checkFileName(filename), "Failed to send append file request " + CSString(filename).quote() + " due to invalid characters in file name", return);
+	BOMB_IF(!FileNameValidator.checkFileName(filename), "Failed to send append file request " + CSString(filename).quote() + " due to invalid characters in file name", return );
 
 	// if there's no BS connected then complain and queue the file for saving later
 	if (!CBackupInterfaceSingleton::getInstance()->isConnected())
@@ -259,7 +259,7 @@ void CBackupServiceInterface::deleteFile(const std::string &fileName, bool keepB
 	H_AUTO(BSIF_DeleteFile);
 
 	// check that the file name is valid
-	BOMB_IF(!FileNameValidator.checkFileName(fileName), "Failed to send delete request " + CSString(fileName).quote() + " due to invalid characters in file name", return);
+	BOMB_IF(!FileNameValidator.checkFileName(fileName), "Failed to send delete request " + CSString(fileName).quote() + " due to invalid characters in file name", return );
 
 	// if there's no BS connected then complain and queue the file for deleting later
 	if (!CBackupInterfaceSingleton::getInstance()->isConnected())

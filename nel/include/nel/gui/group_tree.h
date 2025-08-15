@@ -113,10 +113,16 @@ public:
 		void setText(const std::string &text) { Text = text; }
 		const std::string &getText() const { return Text; }
 #ifdef RYZOM_LUA_UCSTRING
-		void setTextAsUtf16(const ucstring &text) { Text = text.toUtf8(); } // Compatibility
+		void setTextAsUtf16(const ucstring &text)
+		{
+			Text = text.toUtf8();
+		} // Compatibility
 		ucstring getTextAsUtf16() const { return ucstring::makeFromUtf8(Text); } // Compatibility
 #endif
-		sint32 getFontSize() const { return FontSize; }
+		sint32 getFontSize() const
+		{
+			return FontSize;
+		}
 		void setFontSize(sint32 value) { FontSize = value; }
 		sint32 getYDecal() const { return YDecal; }
 		void setYDecal(sint32 value) { YDecal = value; }

@@ -286,7 +286,7 @@ private:
 	}
 	void releaseBlock(CBlock &block)
 	{
-		delete[] ((uint8 *)block.Data);
+		delete[]((uint8 *)block.Data);
 	}
 };
 

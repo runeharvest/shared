@@ -43,11 +43,11 @@ static Byte InvS[256];
 
 static const Byte Rcon[11] = { 0x00, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36 };
 
-#define xtime(x) ((((x) << 1) ^ (((x) & 0x80) != 0 ? 0x1B : 0)) & 0xFF)
+#define xtime(x) ((((x) << 1) ^ (((x)&0x80) != 0 ? 0x1B : 0)) & 0xFF)
 
 #define Ui32(a0, a1, a2, a3) ((UInt32)(a0) | ((UInt32)(a1) << 8) | ((UInt32)(a2) << 16) | ((UInt32)(a3) << 24))
 
-#define gb0(x) ((x) & 0xFF)
+#define gb0(x) ((x)&0xFF)
 #define gb1(x) (((x) >> (8)) & 0xFF)
 #define gb2(x) (((x) >> (16)) & 0xFF)
 #define gb3(x) (((x) >> (24)))

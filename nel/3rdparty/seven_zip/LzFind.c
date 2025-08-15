@@ -566,7 +566,10 @@ static void SkipMatchesSpec(UInt32 lenLimit, UInt32 curMatch, UInt32 pos, const 
 
 #define MOVE_POS_RET MOVE_POS return (UInt32)offset;
 
-static void MatchFinder_MovePos(CMatchFinder *p) { MOVE_POS; }
+static void MatchFinder_MovePos(CMatchFinder *p)
+{
+	MOVE_POS;
+}
 
 #define GET_MATCHES_HEADER2(minLen, ret_op) \
 	unsigned lenLimit;                      \

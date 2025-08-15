@@ -88,7 +88,10 @@ public:
 #endif
 
 	template <class C>
-	bool operator>(const C &other) const { return _data > CAngle(other)._data; }
+	bool operator>(const C &other) const
+	{
+		return _data > CAngle(other)._data;
+	}
 	template <class C>
 	bool operator<(const C &other) const { return _data < CAngle(other)._data; }
 	template <class C>

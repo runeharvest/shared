@@ -303,7 +303,10 @@ public:
 	 *
 	 * The default value is 100 (100ms) or the value found in the config file (UpdateTimeout)
 	 */
-	void setUpdateTimeout(NLMISC::TTime timeout) { /*if (timeout>1.0) nlerror ("IServer::setUpdateTimeout is now a double in SECOND and not ms");*/ _UpdateTimeout = timeout; }
+	void setUpdateTimeout(NLMISC::TTime timeout)
+	{ /*if (timeout>1.0) nlerror ("IServer::setUpdateTimeout is now a double in SECOND and not ms");*/
+		_UpdateTimeout = timeout;
+	}
 
 	//@}
 

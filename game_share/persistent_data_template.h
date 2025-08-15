@@ -361,7 +361,7 @@ void PERSISTENT_CLASS::store(CPersistentDataRecord &pdr _PERSISTENT_STORE_ARGS) 
 	    NL_MACRO_TO_STR(PERSISTENT_CLASS) "::store() requires token family '" NL_MACRO_TO_STR(PERSISTENT_TOKEN_FAMILY) "'"
 	                                                                                                                   " but pdr is using token family '"
 	        + pdr.getTokenFamily() + "'",
-	    return);
+	    return );
 #endif
 
 #ifdef PERSISTENT_TOKEN_CLASS

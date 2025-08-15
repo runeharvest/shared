@@ -313,8 +313,7 @@ void CFastHLSModifier::convertDDSBitmapDXTC1Or1A(CBitmap &dst, const CBitmap &sr
 
 				// for all bits, transpose with lut.
 #if defined(NL_OS_WINDOWS) && !defined(NL_NO_ASM)
-			__asm
-			{
+			__asm {
 				mov		eax, srcBits
 				mov		esi, lut
 				mov		edx, 0

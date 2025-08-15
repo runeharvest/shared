@@ -18,7 +18,7 @@ UInt64 MY_FAST_CALL XzCrc64UpdateT4(UInt64 v, const void *data, size_t size, con
 	{
 		UInt32 d = (UInt32)v ^ *(const UInt32 *)p;
 		v = (v >> 32)
-		    ^ (table + 0x300)[((d) & 0xFF)]
+		    ^ (table + 0x300)[((d)&0xFF)]
 		    ^ (table + 0x200)[((d >> 8) & 0xFF)]
 		    ^ (table + 0x100)[((d >> 16) & 0xFF)]
 		    ^ (table + 0x000)[((d >> 24))];
@@ -55,7 +55,7 @@ UInt64 MY_FAST_CALL XzCrc64UpdateT1_BeT4(UInt64 v, const void *data, size_t size
 	{
 		UInt32 d = (UInt32)(v >> 32) ^ *(const UInt32 *)p;
 		v = (v << 32)
-		    ^ (table + 0x000)[((d) & 0xFF)]
+		    ^ (table + 0x000)[((d)&0xFF)]
 		    ^ (table + 0x100)[((d >> 8) & 0xFF)]
 		    ^ (table + 0x200)[((d >> 16) & 0xFF)]
 		    ^ (table + 0x300)[((d >> 24))];

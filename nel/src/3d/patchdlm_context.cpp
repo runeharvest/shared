@@ -256,7 +256,7 @@ bool CPatchDLMContext::generate(CPatch *patch, CTextureDLM *textureDLM, CPatchDL
 	// Bound 8bits UV for Vegetable. This is to ensure vegetable Dlm UVs won't peek in neighbor lightmaps.
 	sint tmpU, tmpV;
 	// Bound U minimum
-	tmpU = (sint)ceil((DLMUBias) * 255);
+	tmpU = (sint)ceil((DLMUBias)*255);
 	clamp(tmpU, 0, 255);
 	MinU8 = tmpU;
 	// Bound U maximum
@@ -264,7 +264,7 @@ bool CPatchDLMContext::generate(CPatch *patch, CTextureDLM *textureDLM, CPatchDL
 	clamp(tmpU, (sint)MinU8, 255);
 	MaxU8 = tmpU;
 	// Bound V minimum
-	tmpV = (sint)ceil((DLMVBias) * 255);
+	tmpV = (sint)ceil((DLMVBias)*255);
 	clamp(tmpV, 0, 255);
 	MinV8 = tmpV;
 	// Bound V maximum
@@ -750,7 +750,7 @@ void CPatchDLMContext::addPointLightInfluence(const CPatchDLMPointLight &pl)
 #if defined(NL_OS_WINDOWS) && !defined(NL_NO_ASM)
 				// Fast AddClamp.
 				__asm
-				    {
+				{
 					mov	esi, dst
 
 					mov	al, [esi]dst.R
@@ -770,7 +770,7 @@ void CPatchDLMContext::addPointLightInfluence(const CPatchDLMPointLight &pl)
 					sbb	cl, cl
 					or	al, cl
 					mov	[esi]dst.B, al
-				    }
+				}
 #else
 				// add and clamp to map.
 				dst->addRGBOnly(*dst, col);
@@ -829,7 +829,7 @@ void CPatchDLMContext::addPointLightInfluence(const CPatchDLMPointLight &pl)
 #if defined(NL_OS_WINDOWS) && !defined(NL_NO_ASM)
 				// Fast AddClamp.
 				__asm
-				    {
+				{
 					mov	esi, dst
 
 					mov	al, [esi]dst.R
@@ -849,7 +849,7 @@ void CPatchDLMContext::addPointLightInfluence(const CPatchDLMPointLight &pl)
 					sbb	cl, cl
 					or	al, cl
 					mov	[esi]dst.B, al
-				    }
+				}
 #else
 				// add and clamp to map.
 				dst->addRGBOnly(*dst, col);

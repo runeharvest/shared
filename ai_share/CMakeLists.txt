@@ -1,23 +1,23 @@
 FILE(GLOB SRC *.cpp *.h)
 
-NL_TARGET_LIB(ryzom_aishare ${SRC})
+NL_TARGET_LIB(aishare ${SRC})
 
-TARGET_LINK_LIBRARIES(ryzom_aishare
-						ryzom_gameshare
-						ryzom_servershare
+TARGET_LINK_LIBRARIES(aishare
+						gameshare
+						servershare
 						nelmisc
 						nelnet
 						nelgeorges
 						nelpacs)
 
-NL_DEFAULT_PROPS(ryzom_aishare "Ryzom, Library: AI Shared")
-NL_ADD_RUNTIME_FLAGS(ryzom_aishare)
-NL_ADD_LIB_SUFFIX(ryzom_aishare)
+NL_DEFAULT_PROPS(aishare "Ryzom, Library: AI Shared")
+NL_ADD_RUNTIME_FLAGS(aishare)
+NL_ADD_LIB_SUFFIX(aishare)
 
 IF(WITH_PCH)
-  target_precompile_headers(ryzom_aishare PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/stdpch.h)
+  target_precompile_headers(aishare PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/stdpch.h)
 ENDIF()
 
 IF(WITH_INSTALL_LIBRARIES)
-  INSTALL(TARGETS ryzom_aishare LIBRARY DESTINATION ${RYZOM_LIB_PREFIX} ARCHIVE DESTINATION ${RYZOM_LIB_PREFIX} COMPONENT libraries)
+  INSTALL(TARGETS aishare LIBRARY DESTINATION ${LIB_PREFIX} ARCHIVE DESTINATION ${LIB_PREFIX} COMPONENT libraries)
 ENDIF()

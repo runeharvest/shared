@@ -93,7 +93,8 @@ void CCDBBankHandler::calcIdBitsByBank()
 		uint idb = 0;
 
 		if (nbNodesOfBank > 0)
-			for (idb = 1; nbNodesOfBank > unsigned(1 << idb); idb++);
+			for (idb = 1; nbNodesOfBank > unsigned(1 << idb); idb++)
+				;
 
 		_FirstLevelIdBitsByBank[bank] = idb;
 	}

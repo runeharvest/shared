@@ -136,7 +136,10 @@ public:
 	void cancelChange(TDataSetIndex entityIndex);
 
 	/// Get the entity index of the first changed (assumes isAllocated()). Returns LAST_CHANGED if there is no change.
-	uint32 getFirstChanged() const { /*nlinfo( "Array = %p, First = %d, _Array[First].NextChanged = %d, _Array[0].NextChanged = %d", _Array, _Header->First, _Array[_Header->First].NextChanged, _Array[0].NextChanged );*/ return _Header->First; }
+	uint32 getFirstChanged() const
+	{ /*nlinfo( "Array = %p, First = %d, _Array[First].NextChanged = %d, _Array[0].NextChanged = %d", _Array, _Header->First, _Array[_Header->First].NextChanged, _Array[0].NextChanged );*/
+		return _Header->First;
+	}
 
 	/// Pop the first change out of the tracker. Do not call if getFirstChanged() returned LAST_CHANGED.
 	void popFirstChanged()
@@ -188,7 +191,10 @@ public:
 
 protected:
 	/// Get the entity index of the next changed (assumes isAllocated() and entityIndex is valid). Returns LAST_CHANGED if there is no more change.
-	TDataSetRow getNextChanged(const TDataSetRow &entityIndex) const { /*nlinfo( "_Array[%d].NextChanged = %d", entityIndex, _Array[entityIndex].NextChanged );*/ return TDataSetRow(_Array[entityIndex.getIndex()].NextChanged); }
+	TDataSetRow getNextChanged(const TDataSetRow &entityIndex) const
+	{ /*nlinfo( "_Array[%d].NextChanged = %d", entityIndex, _Array[entityIndex].NextChanged );*/
+		return TDataSetRow(_Array[entityIndex.getIndex()].NextChanged);
+	}
 
 	/// Shared memory numeric id
 	sint32 _SMId;

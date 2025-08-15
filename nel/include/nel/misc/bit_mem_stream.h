@@ -626,7 +626,10 @@ public:
 	*/
 
 #ifdef LOG_ALL_TRAFFIC
-	void _serialAndLog(const char *argstr, uint8 &b) { serialAdaptAndLog(argstr, b, uint8); }
+	void _serialAndLog(const char *argstr, uint8 &b)
+	{
+		serialAdaptAndLog(argstr, b, uint8);
+	}
 	void _serialAndLog(const char *argstr, sint8 &b) { serialAdaptAndLog(argstr, b, sint8); }
 	void _serialAndLog(const char *argstr, uint16 &b) { serialAdaptAndLog(argstr, b, uint16); }
 	void _serialAndLog(const char *argstr, sint16 &b) { serialAdaptAndLog(argstr, b, sint16); }
@@ -638,11 +641,17 @@ public:
 	void _serialAndLog(const char *argstr, double &b) { serialAdapt64AndLog(argstr, b); }
 	void _serialAndLog(const char *argstr, bool &b) { _serialBitAndLog(argstr, b); }
 #ifndef NL_OS_CYGWIN
-	virtual void _serialAndLog(const char *argstr, char &b) { serialAdaptAndLog(argstr, b, char); }
+	virtual void _serialAndLog(const char *argstr, char &b)
+	{
+		serialAdaptAndLog(argstr, b, char);
+	}
 #endif
 #endif
 
-	virtual void serial(uint8 &b) { serialAdapt(b, uint8); }
+	virtual void serial(uint8 &b)
+	{
+		serialAdapt(b, uint8);
+	}
 	virtual void serial(sint8 &b) { serialAdapt(b, sint8); }
 	virtual void serial(uint16 &b) { serialAdapt(b, uint16); }
 	virtual void serial(sint16 &b) { serialAdapt(b, sint16); }
@@ -654,7 +663,10 @@ public:
 	virtual void serial(double &b) { serialAdapt64(b); }
 	virtual void serial(bool &b) { serialBit(b); }
 #ifndef NL_OS_CYGWIN
-	virtual void serial(char &b) { serialAdapt(b, char); }
+	virtual void serial(char &b)
+	{
+		serialAdapt(b, char);
+	}
 #endif
 
 	virtual void serial(std::string &b);

@@ -34,7 +34,7 @@
 
 void normaliseBnpFileName(std::string &fileName)
 {
-	BOMB_IF(fileName.empty(), "Can't normalise an empty bnp file name", return);
+	BOMB_IF(fileName.empty(), "Can't normalise an empty bnp file name", return );
 	if (NLMISC::CFile::getExtension(fileName).empty() && fileName[fileName.size() - 1] != '.')
 		fileName += ".bnp";
 }
