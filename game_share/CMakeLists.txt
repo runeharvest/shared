@@ -8,7 +8,7 @@ FILE(GLOB PRIV_TIME_H time_weather_season/*.h)
 
 SET(HEADER ${PRIV_H})
 
-FILE(GLOB R2 
+FILE(GLOB R2
 	dms.h dms.cpp
 	scenario.h scenario.cpp
 	user_connection_mgr.h user_connection_mgr.cpp
@@ -48,6 +48,11 @@ ADD_DEFINITIONS(${LIBXML2_DEFINITIONS})
 IF(WITH_PCH)
   target_precompile_headers(gameshare PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/stdpch.h)
 ENDIF()
+
+SET_TARGET_PROPERTIES(gameshare PROPERTIES
+  INSTALL_RPATH "$ORIGIN/lib:$ORIGIN/../lib"
+  BUILD_RPATH   "$ORIGIN/lib:$ORIGIN/../lib")
+
 
 IF((WITH_INSTALL_LIBRARIES AND WITH_STATIC) OR NOT WITH_STATIC)
   INSTALL(TARGETS gameshare LIBRARY DESTINATION ${LIB_PREFIX} ARCHIVE DESTINATION ${LIB_PREFIX} COMPONENT libraries)

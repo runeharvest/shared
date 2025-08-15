@@ -64,7 +64,7 @@ namespace NLMISC {
  * ie: myFunction, step, orderByName, lookAtThis
  *
  * System extended by Sadge July 2004
- *  - NLMISC_CATEGORISED_COMMAND now takes a 4th 'category' parameter which is used by 'help' system to organise cmmands
+ *  - NLMISC_CATEGORISED_COMMAND now takes a 4th 'category' parameter which is used by 'help' system to organise commands
  *  - All default commands added by NeL are categorised as "nel"
  *  - All commands created using the NLMISC_COMMAND macro are are categorised as "commands"
  *

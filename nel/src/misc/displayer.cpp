@@ -128,7 +128,7 @@ void IDisplayer::display(const CLog::TDisplayInfo &args, const char *message)
 	_Mutex->leave();
 }
 
-// Log format : "<LogType> <ThreadNo> <FileName> <Line> <ProcessName> : <Msg>"
+// Log format : "<LogType> <ThreadNo> <FileName>:<Line> <ProcessName> : <Msg>"
 void CStdDisplayer::doDisplay(const CLog::TDisplayInfo &args, const char *message)
 {
 	bool needSpace = false;
@@ -192,7 +192,7 @@ void CStdDisplayer::doDisplay(const CLog::TDisplayInfo &args, const char *messag
 		}
 		// ss << CFile::getFilename(args.FileName);
 		str += CFile::getFilename(args.FileName);
-		needSpace = true;
+		needSpace = false;
 	}
 
 	if (args.Line != -1)
@@ -204,7 +204,7 @@ void CStdDisplayer::doDisplay(const CLog::TDisplayInfo &args, const char *messag
 			needSpace = false;
 		}
 		// ss << args.Line;
-		str += NLMISC::toString(args.Line);
+		str += ":" + NLMISC::toString(args.Line);
 		needSpace = true;
 	}
 
@@ -515,7 +515,7 @@ void CFileDisplayer::doDisplay(const CLog::TDisplayInfo &args, const char *messa
 			needSpace = false;
 		}
 		str += CFile::getFilename(args.FileName);
-		needSpace = true;
+		needSpace = false;
 	}
 
 	if (args.Line != -1 && !_Raw)
@@ -525,7 +525,7 @@ void CFileDisplayer::doDisplay(const CLog::TDisplayInfo &args, const char *messa
 			str += " ";
 			needSpace = false;
 		}
-		str += NLMISC::toString(args.Line);
+		str += ":" + NLMISC::toString(args.Line);
 		needSpace = true;
 	}
 
@@ -628,8 +628,8 @@ void CFileDisplayer::doDisplay(const CLog::TDisplayInfo &args, const char *messa
 	}
 }
 
-// Log format in clipboard: "2000/01/15 12:05:30 <LogType> <ProcessName> <FileName> <Line>: <Msg>"
-// Log format on the screen: in debug   "<ProcessName> <FileName> <Line>: <Msg>"
+// Log format in clipboard: "2000/01/15 12:05:30 <LogType> <ProcessName> <FileName>:<Line>: <Msg>"
+// Log format on the screen: in debug   "<ProcessName> <FileName>:<Line>: <Msg>"
 //                           in release "<Msg>"
 void CMsgBoxDisplayer::doDisplay(const CLog::TDisplayInfo &args, const char *message)
 {
@@ -674,17 +674,12 @@ void CMsgBoxDisplayer::doDisplay(const CLog::TDisplayInfo &args, const char *mes
 			needSpace = false;
 		}
 		str += CFile::getFilename(args.FileName);
-		needSpace = true;
+		needSpace = false;
 	}
 
 	if (args.Line != -1)
 	{
-		if (needSpace)
-		{
-			str += " ";
-			needSpace = false;
-		}
-		str += NLMISC::toString(args.Line);
+		str += ":" + NLMISC::toString(args.Line);
 		needSpace = true;
 	}
 
@@ -733,7 +728,7 @@ void CMsgBoxDisplayer::doDisplay(const CLog::TDisplayInfo &args, const char *mes
 			needSpace = false;
 		}
 		str2 += CFile::getFilename(args.FileName);
-		needSpace = true;
+		needSpace = false;
 	}
 
 	if (args.Line != -1)
@@ -743,7 +738,7 @@ void CMsgBoxDisplayer::doDisplay(const CLog::TDisplayInfo &args, const char *mes
 			str2 += " ";
 			needSpace = false;
 		}
-		str2 += NLMISC::toString(args.Line);
+		str2 += ":" + NLMISC::toString(args.Line);
 		needSpace = true;
 	}
 
@@ -820,7 +815,7 @@ void CMsgBoxDisplayer::doDisplay(const CLog::TDisplayInfo &args, const char *mes
 			}
 		}
 
-		subject += procname + " NeL " + toString(LogTypeToString[0][args.LogType]) + " " + (args.FileName ? string(args.FileName) : "") + " " + toString(args.Line) + " " + (args.FuncName ? string(args.FuncName) : "");
+		subject += procname + " NeL " + toString(LogTypeToString[0][args.LogType]) + " " + (args.FileName ? string(args.FileName) : "") + ": " + toString(args.Line) + " " + (args.FuncName ? string(args.FuncName) : "");
 
 		// Check the envvar NEL_IGNORE_ASSERT
 		if (getenv("NEL_IGNORE_ASSERT") == NULL)

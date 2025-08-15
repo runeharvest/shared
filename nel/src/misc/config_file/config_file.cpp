@@ -329,6 +329,11 @@ void CConfigFile::load(const string &fileName, bool lookupPaths)
 	FileNames.clear();
 	FileNames.push_back(fileName);
 
+	if (fileName.size() >= 4 && fileName.substr(fileName.size() - 4) == ".cfg" && (fileName.size() < 4 || fileName.substr(0, 4) != "cfg/"))
+	{
+		FileNames[0] = "cfg/" + fileName;
+	}
+
 	if (_ConfigFiles == NULL)
 	{
 		_ConfigFiles = new std::vector<CConfigFile *>;

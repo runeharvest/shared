@@ -347,7 +347,6 @@ IService::IService()
     , _SId(0)
     , _ExitStatus(0)
     , _Initialized(false)
-    , ConfigDirectory("nel", "ConfigDirectory", "directory where config files are", ".", 0, true, cbDirectoryChanged)
     , LogDirectory("nel", "LogDirectory", "directory where the service is logging", ".", 0, true, cbDirectoryChanged)
     , RunningDirectory("nel", "RunningDirectory", "directory where the service is running on", ".", 0, true, cbDirectoryChanged)
     , Version("nel", "Version", "Version of the shard", "")
@@ -608,7 +607,6 @@ sint IService::main(const char *serviceShortName, const char *serviceLongName, u
 		if (haveArg('A'))
 			RunningDirectory = CPath::standardizePath(getArg('A'));
 
-		ConfigDirectory = CPath::standardizePath(configDir);
 		LogDirectory = CPath::standardizePath(logDir);
 		_LongName = serviceLongName;
 
@@ -618,36 +616,10 @@ sint IService::main(const char *serviceShortName, const char *serviceLongName, u
 
 		ListeningPort = servicePort;
 
-		// setDefaultEmailParams ("gw.nevrax.com", "", "cado@nevrax.com");
-
-		//
-		// Load the config file
-		//
-
-		// get the config file dir if any in the command line
-		if (haveArg('C'))
-			ConfigDirectory = CPath::standardizePath(getArg('C'));
-
-		string cfn = ConfigDirectory.c_str() + _LongName + ".cfg";
-		if (!CFile::fileExists(ConfigDirectory.c_str() + _LongName + ".cfg"))
+		string cfn = _LongName + ".cfg";
+		if (!CFile::fileExists("cfg/" + _LongName + ".cfg"))
 		{
-			// check if the default exists
-			if (!CFile::fileExists(ConfigDirectory.c_str() + _LongName + "_default.cfg"))
-			{
-				nlerror("SERVICE: Neither the config file '%s' nor the default one can be found, can't launch the service", cfn.c_str());
-			}
-			else
-			{
-				// create the basic .cfg that link the default one
-				FILE *fp = nlfopen(cfn, "w");
-				if (fp == NULL)
-				{
-					nlerror("SERVICE: Can't create config file '%s'", cfn.c_str());
-				}
-				fprintf(fp, "// link the default config file for %s\n", _LongName.c_str());
-				fprintf(fp, "RootConfigFilename = \"%s_default.cfg\";\n", _LongName.c_str());
-				fclose(fp);
-			}
+			nlerror("Failed to load %s: file not found", cfn.c_str());
 		}
 
 		ConfigFile.load(cfn);
@@ -1810,7 +1782,6 @@ NLMISC_CATEGORISED_COMMAND(nel, serviceInfo, "display information about this ser
 	log.displayNL("Service log directory: '%s'", IService::getInstance()->LogDirectory.c_str());
 	log.displayNL("Service save files directory: '%s'", IService::getInstance()->SaveFilesDirectory.c_str());
 	log.displayNL("Service write files directory: '%s'", IService::getInstance()->WriteFilesDirectory.c_str());
-	log.displayNL("Service config directory: '%s' config filename: '%s.cfg'", IService::getInstance()->ConfigDirectory.c_str(), IService::getInstance()->_LongName.c_str());
 	log.displayNL("Service id: %hu", IService::getInstance()->_SId.get());
 	log.displayNL("Service update timeout: %dms", IService::getInstance()->_UpdateTimeout);
 	log.displayNL("Service %suse naming service", IService::getInstance()->_DontUseNS ? "don't " : "");

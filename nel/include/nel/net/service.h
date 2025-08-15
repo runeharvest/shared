@@ -390,7 +390,7 @@ public:
 	NLMISC::CVariable<bool> ConvertSavesFilesDirectoryToFullPath;
 
 	/** You can provide a callback interface (only one) that will be called if any of the directory variables
-	 * (WriteFilesDirectory, SaveFilesDirectory, ConfigDirectory, LogDirectory, RunningDirectory) is changed
+	 * (WriteFilesDirectory, SaveFilesDirectory, LogDirectory, RunningDirectory) is changed
 	 * (also called for the first setting read from the .cfg file). Default is NULL.
 	 */
 	void setDirectoryChangeCallback(NLMISC::IVariableChangedCallback *cbi) { _DirectoryChangedCBI = cbi; }
@@ -478,9 +478,6 @@ private:
 
 	/// true if the service initialisation is passed
 	bool _Initialized;
-
-	/// The directory where the configfile is
-	NLMISC::CVariable<std::string> ConfigDirectory;
 
 	/// The directory where the logfiles are
 	NLMISC::CVariable<std::string> LogDirectory;
