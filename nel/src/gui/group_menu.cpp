@@ -2,6 +2,7 @@
 // Copyright (C) 2010-2022  Winch Gate Property Limited
 //
 // This source file has been modified by the following contributors:
+// Copyright (C) 2025 Xackery <lordxackery@hotmail.com>
 // Copyright (C) 2013  Laszlo KIS-ADAM (dfighter) <dfighter1985@gmail.com>
 // Copyright (C) 2014-2020  Jan BOON (Kaetemi) <jan.boon@kaetemi.be>
 //
@@ -1658,7 +1659,7 @@ const std::string CGroupSubMenu::getActionHandler(uint lineIndex) const
 	if (lineIndex > _Lines.size())
 	{
 		nlwarning("Bad index");
-		return 0;
+		return "";
 	}
 	return _Lines[lineIndex].AHName;
 }
@@ -1669,7 +1670,7 @@ const std::string CGroupSubMenu::getActionHandlerParam(uint lineIndex) const
 	if (lineIndex > _Lines.size())
 	{
 		nlwarning("Bad index");
-		return 0;
+		return "";
 	}
 	return _Lines[lineIndex].AHParams;
 }

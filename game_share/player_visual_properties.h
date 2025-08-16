@@ -6,6 +6,9 @@
 // published by the Free Software Foundation, either version 3 of the
 // License, or (at your option) any later version.
 //
+// This source file has been modified by the following contributors:
+// Copyright (C) 2025 Xackery <lordxackery@hotmail.com>
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -17,6 +20,7 @@
 #ifndef RY_PLAYER_VISUAL_PROPERTIES_H
 #define RY_PLAYER_VISUAL_PROPERTIES_H
 
+#include "nel/misc/stream.h"
 #include "nel/misc/types_nl.h"
 
 /**
@@ -45,17 +49,17 @@ struct SPropVisualA
 	// old VPA before bit extension
 	// 	struct SPropSubData // 64 bits used
 	// 	{
-	// 		uint64	Sex				: 1; // max: 2		current: 2
-	// 		uint64	JacketModel		: 7; // max: 128	current: 93
-	// 		uint64	JacketColor		: 3; // max: 8		current: 8
+	// 		uint64	Sex				: 1; // max: 2
+	// current: 2 		uint64	JacketModel		: 7; // max: 128	current:
+	// 93 		uint64	JacketColor		: 3; // max: 8		current: 8
 	// 		uint64	TrouserModel	: 7; // max: 128	current: 104
 	// 		uint64	TrouserColor	: 3; // max: 8		current: 8
 	// 		uint64	WeaponRightHand	: 9; // max: 512	current: 457
 	// 		uint64	WeaponLeftHand	: 6; // max: 64		current: 63
-	// 		uint64	ArmModel		: 7; // max: 128	current: 94
-	// 		uint64	ArmColor		: 3; // max: 8		current: 8
-	// 		uint64	HatModel		: 8; // max: 256	current: 192
-	// 		uint64	HatColor		: 3; // max: 8		current: 8
+	// 		uint64	ArmModel		: 7; // max: 128	current:
+	// 94 		uint64	ArmColor		: 3; // max: 8		current: 8
+	// 		uint64	HatModel		: 8; // max: 256	current:
+	// 192 		uint64	HatColor		: 3; // max: 8		current: 8
 	// 		uint64	RTrail			: 4;
 	// 		uint64	LTrail			: 3;
 	// 	};
@@ -79,14 +83,17 @@ struct SPropVisualA
 		return *this;
 	}
 
-	bool operator==(const SPropVisualA &p) const { return PropertyA == p.PropertyA; }
-
-	bool operator!=(const SPropVisualA &p) const { return PropertyA != p.PropertyA; }
-
-	void serial(NLMISC::IStream &f)
+	bool operator==(const SPropVisualA &p) const
 	{
-		f.serial(PropertyA);
+		return PropertyA == p.PropertyA;
 	}
+
+	bool operator!=(const SPropVisualA &p) const
+	{
+		return PropertyA != p.PropertyA;
+	}
+
+	void serial(NLMISC::IStream &f) { f.serial(PropertyA); }
 
 	std::string toString() const;
 };
@@ -108,10 +115,11 @@ struct SPropVisualB
 	// 	struct SPropSubData // 40 bits used
 	// 	{
 	// 		uint64	Name				: 16;
-	// 		uint64	HandsModel			: 9; // max: 512	current: 90
-	// 		uint64	HandsColor			: 3; // max: 8		current: 8
-	// 		uint64	FeetModel			: 9; // max: 512	current: 94
-	// 		uint64	FeetColor			: 3; // max: 8		current: 8
+	// 		uint64	HandsModel			: 9; // max: 512
+	// current: 90 		uint64	HandsColor			: 3; // max: 8
+	// current: 8 		uint64	FeetModel			: 9; // max: 512
+	// current: 94 		uint64	FeetColor			: 3; // max: 8
+	// current: 8
 	// 	};
 
 	union
@@ -133,14 +141,17 @@ struct SPropVisualB
 		return *this;
 	}
 
-	bool operator==(const SPropVisualB &p) const { return PropertyB == p.PropertyB; }
-
-	bool operator!=(const SPropVisualB &p) const { return PropertyB != p.PropertyB; }
-
-	void serial(NLMISC::IStream &f)
+	bool operator==(const SPropVisualB &p) const
 	{
-		f.serial(PropertyB);
+		return PropertyB == p.PropertyB;
 	}
+
+	bool operator!=(const SPropVisualB &p) const
+	{
+		return PropertyB != p.PropertyB;
+	}
+
+	void serial(NLMISC::IStream &f) { f.serial(PropertyB); }
 
 	std::string toString() const;
 };
@@ -169,21 +180,22 @@ struct SPropVisualC
 	// old VPC before bit extension
 	// 	struct SPropSubData // 53 bits used
 	// 	{
-	// 		uint64	MorphTarget1		: 3; // max: 8		current: 8
-	// 		uint64	MorphTarget2		: 3; // max: 8		current: 8
-	// 		uint64	MorphTarget3		: 3; // max: 8		current: 8
-	// 		uint64	MorphTarget4		: 3; // max: 8		current: 8
-	// 		uint64	MorphTarget5		: 3; // max: 8		current: 8
-	// 		uint64	MorphTarget6		: 3; // max: 8		current: 8
-	// 		uint64	MorphTarget7		: 3; // max: 8		current: 8
-	// 		uint64	MorphTarget8		: 3; // max: 8		current: 8
-	// 		uint64	EyesColor			: 3; // max: 8		current: 8
-	// 		uint64	Tattoo				: 6; // max: 64		current: 64
-	// 		uint64	CharacterHeight		: 4; // max: 16		current: 16
-	// 		uint64	TorsoWidth			: 4; // max: 16		current: 16
-	// 		uint64	ArmsWidth			: 4; // max: 16		current: 16
-	// 		uint64	LegsWidth			: 4; // max: 16		current: 16
-	// 		uint64	BreastSize			: 4; // max: 16		current: 16
+	// 		uint64	MorphTarget1		: 3; // max: 8		current:
+	// 8 		uint64	MorphTarget2		: 3; // max: 8		current: 8
+	// 		uint64	MorphTarget3		: 3; // max: 8		current:
+	// 8 		uint64	MorphTarget4		: 3; // max: 8		current: 8
+	// 		uint64	MorphTarget5		: 3; // max: 8		current:
+	// 8 		uint64	MorphTarget6		: 3; // max: 8		current: 8
+	// 		uint64	MorphTarget7		: 3; // max: 8		current:
+	// 8 		uint64	MorphTarget8		: 3; // max: 8		current: 8
+	// 		uint64	EyesColor			: 3; // max: 8
+	// current: 8 		uint64	Tattoo				: 6; // max: 64
+	// current: 64 		uint64	CharacterHeight		: 4; // max: 16		current:
+	// 16 		uint64	TorsoWidth			: 4; // max: 16		current:
+	// 16 		uint64	ArmsWidth			: 4; // max: 16		current:
+	// 16 		uint64	LegsWidth			: 4; // max: 16		current:
+	// 16 		uint64	BreastSize			: 4; // max: 16		current:
+	// 16
 	// 	};
 
 	union
@@ -205,28 +217,40 @@ struct SPropVisualC
 		return *this;
 	}
 
-	bool operator==(const SPropVisualC &p) const { return PropertyC == p.PropertyC; }
-
-	bool operator!=(const SPropVisualC &p) const { return PropertyC != p.PropertyC; }
-
-	void serial(NLMISC::IStream &f)
+	bool operator==(const SPropVisualC &p) const
 	{
-		f.serial(PropertyC);
+		return PropertyC == p.PropertyC;
 	}
+
+	bool operator!=(const SPropVisualC &p) const
+	{
+		return PropertyC != p.PropertyC;
+	}
+
+	void serial(NLMISC::IStream &f) { f.serial(PropertyC); }
 
 	// helper to get a morph target value
 	uint getMorphTargetValue(uint index) const
 	{
 		switch (index)
 		{
-		case 0: return PropertySubData.MorphTarget1;
-		case 1: return PropertySubData.MorphTarget2;
-		case 2: return PropertySubData.MorphTarget3;
-		case 3: return PropertySubData.MorphTarget4;
-		case 4: return PropertySubData.MorphTarget5;
-		case 5: return PropertySubData.MorphTarget6;
-		case 6: return PropertySubData.MorphTarget7;
-		default: nlassert(0); break;
+		case 0:
+			return PropertySubData.MorphTarget1;
+		case 1:
+			return PropertySubData.MorphTarget2;
+		case 2:
+			return PropertySubData.MorphTarget3;
+		case 3:
+			return PropertySubData.MorphTarget4;
+		case 4:
+			return PropertySubData.MorphTarget5;
+		case 5:
+			return PropertySubData.MorphTarget6;
+		case 6:
+			return PropertySubData.MorphTarget7;
+		default:
+			nlassert(0);
+			break;
 		}
 		return 0;
 	}
@@ -267,10 +291,9 @@ struct SAltLookProp
 	// 		uint64	WeaponLeftHand	: 6;
 	// 		uint64	Hat				: 1;
 	// 		uint64	Seed			: 18;
-	// 		uint64	ColorHair		: 3;	// Color for the Hair or the Helm
-	// 		uint64	RTrail			: 4;
-	// 		uint64	LTrail			: 3;
-	// 		uint64	ColorGlove		: 3;	// Color for the Gloves
+	// 		uint64	ColorHair		: 3;	// Color for the Hair or
+	// the Helm 		uint64	RTrail			: 4; 		uint64	LTrail
+	// : 3; 		uint64	ColorGlove		: 3;	// Color for the Gloves
 	// 		uint64	ColorBoot		: 3;	// Color for the Boots
 	// 		uint64	ColorArm		: 3;	// Color for the Arms
 	// 	};
@@ -299,10 +322,7 @@ struct SAltLookProp
 	//@}
 
 	// Serial
-	void serial(NLMISC::IStream &f)
-	{
-		f.serial(Summary);
-	}
+	void serial(NLMISC::IStream &f) { f.serial(Summary); }
 
 	std::string toString() const;
 };
@@ -338,10 +358,7 @@ struct SAltLookProp2
 	//@}
 
 	// Serial
-	void serial(NLMISC::IStream &f)
-	{
-		f.serial(Summary);
-	}
+	void serial(NLMISC::IStream &f) { f.serial(Summary); }
 
 	std::string toString() const;
 };

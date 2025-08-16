@@ -9,6 +9,10 @@
 // published by the Free Software Foundation, either version 3 of the
 // License, or (at your option) any later version.
 //
+//
+// This source file has been modified by the following contributors:
+// Copyright (C) 2025 Xackery <lordxackery@hotmail.com>
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -19,6 +23,10 @@
 
 #ifndef CL_SHEET_CTRL_SELECTION_H
 #define CL_SHEET_CTRL_SELECTION_H
+
+#include "nel/misc/rgba.h"
+#include <map>
+#include <vector>
 
 namespace NLGUI {
 class IActionHandler;
@@ -89,6 +97,6 @@ private:
 	TGroupNameToIndex _GroupNameToIndex;
 };
 
-}
+} // namespace NLGUI
 
 #endif

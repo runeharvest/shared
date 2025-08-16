@@ -6,6 +6,10 @@
 // published by the Free Software Foundation, either version 3 of the
 // License, or (at your option) any later version.
 //
+//
+// This source file has been modified by the following contributors:
+// Copyright (C) 2025 Xackery <lordxackery@hotmail.com>
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,6 +22,7 @@
 #define NL_PROGRESS_CALLBACK_H
 
 #include "types_nl.h"
+#include <vector>
 
 namespace NLMISC {
 
@@ -75,7 +80,7 @@ private:
 	std::vector<CCropedValues> _CropedValues;
 };
 
-} // NLMISC
+} // namespace NLMISC
 
 #endif // NL_PROGRESS_CALLBACK_H
 

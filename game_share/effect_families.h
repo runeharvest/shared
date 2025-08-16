@@ -6,6 +6,9 @@
 // published by the Free Software Foundation, either version 3 of the
 // License, or (at your option) any later version.
 //
+// This source file has been modified by the following contributors:
+// Copyright (C) 2025 Xackery <lordxackery@hotmail.com>
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -17,8 +20,9 @@
 #ifndef RY_EFFECT_FAMILIES_H
 #define RY_EFFECT_FAMILIES_H
 
-#include "nel/misc/types_nl.h"
 #include "damage_types.h"
+#include "nel/misc/sheet_id.h"
+#include "nel/misc/types_nl.h"
 #include "resistance_type.h"
 
 namespace EFFECT_FAMILIES {
@@ -231,7 +235,8 @@ enum TEffectFamily
 /**
  * get the right effect family from the input string
  * \param str the input string
- * \return the TEffectFamily associated to this string (Unknown if the string cannot be interpreted)
+ * \return the TEffectFamily associated to this string (Unknown if the string
+ * cannot be interpreted)
  */
 TEffectFamily toEffectFamily(const std::string &str);
 
@@ -247,16 +252,19 @@ const std::string &toString(TEffectFamily family);
 /// get the sheetId associated to an effect to display on client interface
 NLMISC::CSheetId getAssociatedSheetId(TEffectFamily family);
 
-/// return true if the effect is a positive one, return false if it's a negative effect
+/// return true if the effect is a positive one, return false if it's a negative
+/// effect
 bool isEffectABonus(TEffectFamily family);
 
-/// get the string to use for chat messages (empty if no associated messages or special params)
+/// get the string to use for chat messages (empty if no associated messages or
+/// special params)
 const std::string &getAssociatedChatId(TEffectFamily family);
 
 /// Return the ResistanceType associated to this effect family
-RESISTANCE_TYPE::TResistanceType getAssociatedResistanceType(TEffectFamily family);
+RESISTANCE_TYPE::TResistanceType
+getAssociatedResistanceType(TEffectFamily family);
 
-}; // EFFECT_FAMILIES
+}; // namespace EFFECT_FAMILIES
 
 #endif // RY_EFFECT_FAMILIES_H
 /* End of effect_families.h */

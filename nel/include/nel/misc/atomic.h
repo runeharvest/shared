@@ -6,6 +6,10 @@
 // published by the Free Software Foundation, either version 3 of the
 // License, or (at your option) any later version.
 //
+//
+// This source file has been modified by the following contributors:
+// Copyright (C) 2025 Xackery <lordxackery@hotmail.com>
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -36,6 +40,10 @@ level!
   - ChatGPT
 
 */
+
+#if defined(NL_CPP23)
+#define NL_ATOMIC_CPP23
+#endif
 
 #ifdef NL_CPP14
 // Disable this to test native implementation
@@ -106,13 +114,13 @@ NL_FORCE_INLINE void nlYield()
 
 enum TMemoryOrder
 {
-#if defined(NL_ATOMIC_CPP14)
-	TMemoryOrderRelaxed = std::memory_order_relaxed,
-	TMemoryOrderConsume = std::memory_order_consume,
-	TMemoryOrderAcquire = std::memory_order_acquire,
-	TMemoryOrderRelease = std::memory_order_release,
-	TMemoryOrderAcqRel = std::memory_order_acq_rel,
-	TMemoryOrderSeqCst = std::memory_order_seq_cst,
+#if defined(NL_ATOMIC_CPP23)
+	TMemoryOrderRelaxed = static_cast<int>(std::memory_order_relaxed),
+	TMemoryOrderConsume = static_cast<int>(std::memory_order_consume),
+	TMemoryOrderAcquire = static_cast<int>(std::memory_order_acquire),
+	TMemoryOrderRelease = static_cast<int>(std::memory_order_release),
+	TMemoryOrderAcqRel = static_cast<int>(std::memory_order_acq_rel),
+	TMemoryOrderSeqCst = static_cast<int>(std::memory_order_seq_cst),
 #elif defined(NL_ATOMIC_GCC_CXX11)
 	TMemoryOrderRelaxed = __ATOMIC_RELAXED,
 	TMemoryOrderConsume = __ATOMIC_CONSUME,
@@ -130,7 +138,7 @@ enum TMemoryOrder
 #endif
 };
 
-#if defined(NL_ATOMIC_CPP14) && defined(NL_ATOMIC_GCC_CXX11)
+#if defined(NL_ATOMIC_CPP23) && defined(NL_ATOMIC_GCC_CXX11)
 static_assert(std::memory_order_relaxed == __ATOMIC_RELAXED);
 static_assert(std::memory_order_consume == __ATOMIC_CONSUME);
 static_assert(std::memory_order_acquire == __ATOMIC_ACQUIRE);
@@ -593,11 +601,9 @@ public:
 	NL_FORCE_INLINE int store(int value, TMemoryOrder order = TMemoryOrderRelease)
 	{
 		if (order == TMemoryOrderRelaxed)
-			while (!OSAtomicCompareAndSwap32(load(), value, &m_Value))
-				; // relaxed
+			while (!OSAtomicCompareAndSwap32(load(), value, &m_Value)); // relaxed
 		else
-			while (!OSAtomicCompareAndSwap32Barrier(load(), value, &m_Value))
-				; // acq-rel
+			while (!OSAtomicCompareAndSwap32Barrier(load(), value, &m_Value)); // acq-rel
 	}
 
 	NL_FORCE_INLINE int fetchAdd(int value, TMemoryOrder order = TMemoryOrderAcqRel)
@@ -902,8 +908,7 @@ public:
 	NL_FORCE_INLINE CAtomicLockSpin(CAtomicFlag &flag)
 	    : m_Flag(flag)
 	{
-		while (m_Flag.testAndSet())
-			;
+		while (m_Flag.testAndSet());
 	}
 
 	NL_FORCE_INLINE ~CAtomicLockSpin()

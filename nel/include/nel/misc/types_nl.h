@@ -2,6 +2,7 @@
 // Copyright (C) 2010-2011  Winch Gate Property Limited
 //
 // This source file has been modified by the following contributors:
+// Copyright (C) 2025 Xackery <lordxackery@hotmail.com>
 // Copyright (C) 2014-2023  Jan BOON (Kaetemi) <jan.boon@kaetemi.be>
 //
 // This program is free software: you can redistribute it and/or modify
@@ -178,13 +179,22 @@
 #define NL_NO_EXCEPTION_SPECS
 #endif
 
+#if (defined(_MSC_VER) && (_MSC_VER >= 1930) && (!defined(_HAS_CXX23) || _HAS_CXX23)) || (defined(__GNUC__) && (__GNUC__ >= 13) && (__cplusplus >= 202302L))
+#define NL_CPP23
+#endif
+
 // https://docs.microsoft.com/en-us/cpp/overview/visual-cpp-language-conformance?view=vs-2019
 // https://gcc.gnu.org/projects/cxx-status.html
 #if (defined(_MSC_VER) && (_MSC_VER >= 1910) && (!defined(_HAS_CXX17) || _HAS_CXX17)) || (defined(__GNUC__) && (__GNUC__ >= 8) && (__cplusplus >= 201703L))
 #define NL_CPP17
 #endif
 
-#if (defined(_MSC_VER) && (_MSC_VER >= 1900)) || (defined(__GNUC__) && (__GNUC__ >= 6) && (__cplusplus >= 201402L))
+#if defined(NL_CPP23)
+// C++23 implies C++17 and C++14 and C++11
+#define NL_CPP17
+#define NL_CPP14
+#define NL_CPP11
+#elif (defined(_MSC_VER) && (_MSC_VER >= 1900)) || (defined(__GNUC__) && (__GNUC__ >= 6) && (__cplusplus >= 201402L))
 #define NL_CPP14
 #define NL_CPP11
 #endif

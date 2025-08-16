@@ -6,6 +6,9 @@
 // published by the Free Software Foundation, either version 3 of the
 // License, or (at your option) any later version.
 //
+// This source file has been modified by the following contributors:
+// Copyright (C) 2025 Xackery <lordxackery@hotmail.com>
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -17,6 +20,7 @@
 #ifndef NL_U_ANIMATION_H
 #define NL_U_ANIMATION_H
 
+#include "nel/3d/animation_time.h"
 #include "nel/misc/types_nl.h"
 
 namespace NL3D {
@@ -56,7 +60,8 @@ public:
 	static UAnimation *createAnimation(const char *sPath);
 
 	/**
-	 * Release an animation. This animation must have been created will createAnimation().
+	 * Release an animation. This animation must have been created will
+	 * createAnimation().
 	 *
 	 * \param animation is the animation to release.
 	 */
@@ -65,11 +70,12 @@ public:
 	// @}
 
 	/**
-	 * Get an animation track with its name. The track interface should be released
-	 * with releaseTrack.
+	 * Get an animation track with its name. The track interface should be
+	 * released with releaseTrack.
 	 *
 	 * \param name is the name of the track to get.
-	 * \return NULL if the track is not found, else a pointer on the track interface.
+	 * \return NULL if the track is not found, else a pointer on the track
+	 * interface.
 	 */
 	virtual UTrack *getTrackByName(const char *name) = 0;
 
@@ -101,7 +107,7 @@ public:
 	virtual bool allTrackLoop() const = 0;
 };
 
-} // NL3D
+} // namespace NL3D
 
 #endif // NL_U_ANIMATION_H
 

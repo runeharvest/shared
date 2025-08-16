@@ -6,6 +6,10 @@
 // published by the Free Software Foundation, either version 3 of the
 // License, or (at your option) any later version.
 //
+//
+// This source file has been modified by the following contributors:
+// Copyright (C) 2025 Xackery <lordxackery@hotmail.com>
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -17,6 +21,7 @@
 #ifndef NL_HISTORIC_H
 #define NL_HISTORIC_H
 
+#include "nel/misc/debug.h"
 #include "nel/misc/types_nl.h"
 #include <deque>
 
@@ -37,7 +42,8 @@ public:
 	    : _MaxSize(maxSize)
 	{
 	}
-	// Add a value at end of historic. If historic is full then the oldest entry is removed
+	// Add a value at end of historic. If historic is full then the oldest entry
+	// is removed
 	inline void push(const T &value);
 	// Pop the value at the end of jistoric
 	inline void pop();
@@ -49,8 +55,12 @@ public:
 	inline void setMaxSize(uint maxSize);
 	// Get current size of historic
 	uint getSize() const { return (uint)_Historic.size(); }
-	// Access to an element in history, 0 being the oldest, size - 1 being the lastest added element
-	const T &operator[](uint index) const { return _Historic[index]; /* let STL do out of range check */ }
+	// Access to an element in history, 0 being the oldest, size - 1 being the
+	// lastest added element
+	const T &operator[](uint index) const
+	{
+		return _Historic[index]; /* let STL do out of range check */
+	}
 	// Clear historic
 	void clear() { _Historic.clear(); }
 
@@ -68,7 +78,8 @@ template <class T>
 inline void CHistoric<T>::push(const T &value)
 {
 	nlassert(_Historic.size() <= _MaxSize);
-	if (_MaxSize == 0) return;
+	if (_MaxSize == 0)
+		return;
 	if (getSize() == _MaxSize)
 	{
 		_Historic.pop_front();
@@ -96,6 +107,6 @@ inline void CHistoric<T>::setMaxSize(uint maxSize)
 	_MaxSize = maxSize;
 }
 
-}
+} // namespace NLMISC
 
 #endif
