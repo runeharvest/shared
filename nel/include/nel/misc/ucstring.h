@@ -154,13 +154,7 @@ public:
 		return ucstringbase::substr(pos, n);
 	}
 
-	// for luabind (can't bind to 'substr' else ...)
-	ucstring luabind_substr(size_type pos = 0, size_type n = npos) const
-	{
-		return ucstringbase::substr(pos, n);
-	}
-
-	/// Convert the utf8 string into this ucstring (16 bits char)
+        /// Convert the utf8 string into this ucstring (16 bits char)
 	void fromUtf8(const std::string &stringUtf8);
 
 	static ucstring makeFromUtf8(const std::string &stringUtf8)

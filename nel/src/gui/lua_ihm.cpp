@@ -34,7 +34,7 @@
 #include <windows.h>
 #endif
 
-// Warning: cannot use namespace std,    when using luabind
+// Warning: cannot use namespace std
 #ifdef NL_OS_WINDOWS
 #ifndef NL_EXTENDED_FOR_SCOPE
 #undef for
@@ -49,28 +49,11 @@
 
 // Always use unique_ptr with ValyriaTear/luabind on Ubuntu 20,
 // since the setting is not stored in build_information.hpp
-#ifndef LUABIND_USE_CXX11
-#define LUABIND_USE_CXX11
-#endif
+#include <sol/sol.hpp>
 
-#include <luabind/luabind.hpp>
-// in luabind > 0.6, LUABIND_MAX_ARITY is set to 10
-#if LUABIND_MAX_ARITY == 10
-#include <luabind/operator.hpp>
-// only luabind > 0.7 have version.hpp (file checked with build system)
-#ifdef HAVE_LUABIND_VERSION
-#include <luabind/version.hpp>
-#endif
-#ifndef LUABIND_VERSION
-// luabind 0.7 doesn't define LUABIND_VERSION
-#define LUABIND_VERSION 700
-#endif
-// luabind 0.6 doesn't define LUABIND_VERSION but LUABIND_MAX_ARITY is set to 5
-#elif LUABIND_MAX_ARITY == 5
-#define LUABIND_VERSION 600
-#else
-#pragma error("luabind version not recognized")
-#endif
+namespace sol {
+template <> struct is_container<ucstring> : std::false_type {};
+} // namespace sol
 
 #include "nel/gui/lua_ihm.h"
 #include "nel/gui/reflect.h"
@@ -124,111 +107,86 @@ struct CMiscFunctions
 	{
 #if !FINAL_VERSION
 #ifdef NL_OS_WINDOWS
-		ShellExecuteW(NULL, nlUtf8ToWide(operation), nlUtf8ToWide(fileName), nlUtf8ToWide(parameters), NULL, SW_SHOWDEFAULT);
+          ShellExecuteW(NULL, nlUtf8ToWide(operation), nlUtf8ToWide(fileName),
+                        nlUtf8ToWide(parameters), NULL, SW_SHOWDEFAULT);
 #endif
 #endif
-	}
+        }
 };
 
 // ***************************************************************************
 bool CLuaIHM::pop(CLuaState &ls, NLMISC::CRGBA &dest)
 {
-	// H_AUTO(Lua_CLuaIHM_pop)
-	try
-	{
-		if (ls.isNil(-1)) return false;
-#if LUABIND_VERSION > 600
-		luabind::object obj(luabind::from_stack(ls.getStatePointer(), -1));
-		ls.pop();
-#else
-		luabind::object obj(ls.getStatePointer());
-		obj.set();
-#endif
-		dest = luabind::object_cast<NLMISC::CRGBA>(obj);
-	}
-	catch (const luabind::cast_failed &)
-	{
-		return false;
-	}
-	return true;
+  // H_AUTO(Lua_CLuaIHM_pop)
+  sol::state_view lua(ls.getStatePointer());
+  auto obj = sol::stack::pop<sol::object>(lua);
+  if (obj.is<NLMISC::CRGBA>()) {
+    dest = obj.as<NLMISC::CRGBA>();
+    return true;
+  }
+    return false;
 }
 
 // ***************************************************************************
 bool CLuaIHM::pop(CLuaState &ls, NLMISC::CVector2f &dest)
 {
-	// H_AUTO(Lua_CLuaIHM_pop)
-	try
-	{
-		if (ls.isNil(-1)) return false;
-#if LUABIND_VERSION > 600
-		luabind::object obj(luabind::from_stack(ls.getStatePointer(), -1));
-		ls.pop();
-#else
-		luabind::object obj(ls.getStatePointer());
-		obj.set();
-#endif
-		dest = luabind::object_cast<NLMISC::CVector2f>(obj);
-	}
-	catch (const luabind::cast_failed &)
-	{
-		return false;
-	}
-	return true;
+  // H_AUTO(Lua_CLuaIHM_pop)
+  sol::state_view lua(ls.getStatePointer());
+  auto obj = sol::stack::pop<sol::object>(lua);
+  if (obj.is<NLMISC::CVector2f>()) {
+    dest = obj.as<NLMISC::CVector2f>();
+    return true;
+  }
+    return false;
 }
 
 #ifdef RYZOM_LUA_UCSTRING
 // ***************************************************************************
 bool CLuaIHM::pop(CLuaState &ls, ucstring &dest)
 {
-	// H_AUTO(Lua_CLuaIHM_pop)
-	try
-	{
-		if (ls.isNil(-1)) return false;
-#if LUABIND_VERSION > 600
-		luabind::object obj(luabind::from_stack(ls.getStatePointer(), -1));
-		ls.pop();
-#else
-		luabind::object obj(ls.getStatePointer());
-		obj.set();
-#endif
-		dest = luabind::object_cast<ucstring>(obj);
-	}
-	catch (const luabind::cast_failed &)
-	{
-		return false;
-	}
-	return true;
+  // H_AUTO(Lua_CLuaIHM_pop)
+  sol::state_view lua(ls.getStatePointer());
+  auto obj = sol::stack::pop<sol::object>(lua);
+  if (obj.is<ucstring>()) {
+    dest = obj.as<ucstring>();
+    return true;
+  } else if (obj.is<std::string>()) {
+    dest.fromUtf8(obj.as<std::string>());
+    return true;
+  }
+    return false;
 }
 
 // ***************************************************************************
 bool CLuaIHM::isUCStringOnStack(CLuaState &ls, sint index)
 {
-	// H_AUTO(Lua_CLuaIHM_isUCStringOnStack)
-	ls.pushValue(index);
-	ucstring dummy;
-	return pop(ls, dummy);
+  // H_AUTO(Lua_CLuaIHM_isUCStringOnStack)
+  sol::state_view lua(ls.getStatePointer());
+  return sol::stack::check<ucstring>(lua, index) ||
+         sol::stack::check<std::string>(lua, index);
 }
 
 // ***************************************************************************
 bool CLuaIHM::getUCStringOnStack(CLuaState &ls, sint index, ucstring &dest)
 {
-	// H_AUTO(Lua_CLuaIHM_getUCStringOnStack)
-	ls.pushValue(index);
-	return pop(ls, dest);
+  // H_AUTO(Lua_CLuaIHM_getUCStringOnStack)
+  sol::state_view lua(ls.getStatePointer());
+  if (sol::stack::check<ucstring>(lua, index)) {
+    dest = sol::stack::get<ucstring>(lua, index);
+    return true;
+  }
+  if (sol::stack::check<std::string>(lua, index)) {
+    dest.fromUtf8(sol::stack::get<std::string>(lua, index));
+    return true;
+  }
+  return false;
 }
 
 // ***************************************************************************
 void CLuaIHM::push(CLuaState &ls, const ucstring &value)
 {
-	// H_AUTO(Lua_CLuaIHM_push)
-#if defined(LUABIND_STACK_HPP_INCLUDED)
-	luabind::push(ls.getStatePointer(), value);
-#elif (LUABIND_VERSION > 600)
-	luabind::detail::push(ls.getStatePointer(), value);
-#else
-	luabind::object obj(ls.getStatePointer(), value);
-	obj.pushvalue();
-#endif
+  // H_AUTO(Lua_CLuaIHM_push)
+  sol::stack::push(ls.getStatePointer(), value);
 }
 #endif
 
@@ -245,33 +203,7 @@ CLuaState *ELuaIHMException::getLuaState()
 
 }
 
-// ***************************************************************************
-#define LUA_REGISTER_BASIC(_type_)                                                        \
-	luabind::detail::yes_t is_user_defined(luabind::detail::by_value<_type_>);            \
-	_type_ convert_lua_to_cpp(lua_State *L, luabind::detail::by_value<_type_>, int index) \
-	{                                                                                     \
-		return (_type_)lua_tointeger(L, index);                                           \
-	}                                                                                     \
-	int match_lua_to_cpp(lua_State *L, luabind::detail::by_value<_type_>, int index)      \
-	{                                                                                     \
-		return lua_isnumber(L, index) ? 0 : -1;                                           \
-	}                                                                                     \
-	void convert_cpp_to_lua(lua_State *L, const _type_ &v)                                \
-	{                                                                                     \
-		lua_pushinteger(L, (lua_Integer)v);                                               \
-	}
-
-// Basic LUA types
-namespace luabind {
-namespace converters {
-LUA_REGISTER_BASIC(sint8)
-LUA_REGISTER_BASIC(uint8)
-LUA_REGISTER_BASIC(sint16)
-LUA_REGISTER_BASIC(uint16)
-LUA_REGISTER_BASIC(sint32)
-LUA_REGISTER_BASIC(uint32)
-}
-}
+// Basic LUA types are handled by sol2 automatically.
 
 namespace NLGUI {
 static CLuaString lstr_Env("Env");
@@ -669,50 +601,45 @@ CInterfaceElement *CLuaIHM::getUIRelative(CInterfaceElement *pIE, const std::str
 // ***************************************************************************
 void CLuaIHM::registerBasics(CLuaState &ls)
 {
-	// H_AUTO(Lua_CLuaIHM_registerBasics)
-	using namespace luabind;
-	lua_State *L = ls.getStatePointer();
+  // H_AUTO(Lua_CLuaIHM_registerBasics)
+  sol::state_view lua(ls.getStatePointer());
 
-	// RGBA
-	module(L)
-	    [class_<NLMISC::CRGBA>("CRGBA")
-	            .def(constructor<>())
-	            .def(constructor<const NLMISC::CRGBA &>())
-	            .def(constructor<uint8, uint8, uint8>())
-	            .def(constructor<uint8, uint8, uint8, uint8>())
-	            .def_readwrite("R", &NLMISC::CRGBA::R)
-	            .def_readwrite("G", &NLMISC::CRGBA::G)
-	            .def_readwrite("B", &NLMISC::CRGBA::B)
-	            .def_readwrite("A", &NLMISC::CRGBA::A)];
+  // RGBA
+  lua.new_usertype<NLMISC::CRGBA>(
+      "CRGBA",
+      sol::constructors<NLMISC::CRGBA(), NLMISC::CRGBA(const NLMISC::CRGBA &),
+                        NLMISC::CRGBA(uint8, uint8, uint8),
+                        NLMISC::CRGBA(uint8, uint8, uint8, uint8)>(),
+      "R", &NLMISC::CRGBA::R, "G", &NLMISC::CRGBA::G, "B", &NLMISC::CRGBA::B,
+      "A", &NLMISC::CRGBA::A);
 
 #ifdef RYZOM_LUA_UCSTRING
-	// ucstring
-	module(L)
-	    [class_<ucstring>("ucstring")
-	            .def(constructor<>())
-	            .def(constructor<const ucstring &>())
-	            .def(constructor<const std::string &>())
-	            .def(const_self + other<const std::string>())
-	            .def(other<const std::string>() + const_self)
-	            // NB nico : luabind crash not solved here -> use concatUCString as a replacement
-	            //			.def(const_self + other<const ucstring &>())
-	            .def(const_self < other<const ucstring &>())
-	            .def(const_self == other<const ucstring &>())
-	            .def("toUtf8", &ucstring::toUtf8)
-	            .def("fromUtf8", &ucstring::fromUtf8)
-	            .def("substr", &ucstring::luabind_substr)
-	            .def(luabind::tostring(const_self)) // __string metamethod
-	            .def("toString", (std::string(ucstring::*)() const) & ucstring::toString)
-	        //.def(self + other<ucstring>())
-	];
+    // ucstring
+    lua.new_usertype<ucstring>(
+        "ucstring",
+        sol::constructors<ucstring(), ucstring(const ucstring &),
+                          ucstring(const std::string &)>(),
+        sol::meta_function::addition,
+        sol::overload(
+            [](const ucstring &a, const ucstring &b) { return a + b; },
+            [](const ucstring &a, const std::string &b) {
+              return a + ucstring::makeFromUtf8(b);
+            },
+            [](const std::string &a, const ucstring &b) {
+              return ucstring::makeFromUtf8(a) + b;
+            }),
+        sol::meta_function::less_than, &ucstring::operator<,
+        sol::meta_function::equal_to, &ucstring::operator==, "toUtf8",
+        &ucstring::toUtf8, "fromUtf8", &ucstring::fromUtf8, "substr",
+        &ucstring::luabind_substr, sol::meta_function::to_string,
+        &ucstring::toString, "toString",
+        (std::string(ucstring::*)() const) & ucstring::toString);
 #endif
 
-	// CVector2f
-	module(L)
-	    [class_<NLMISC::CVector2f>("CVector2f")
-	            .def(constructor<float, float>())
-	            .def_readwrite("x", &NLMISC::CVector2f::x)
-	            .def_readwrite("y", &NLMISC::CVector2f::y)];
+    // CVector2f
+    lua.new_usertype<NLMISC::CVector2f>(
+        "CVector2f", sol::constructors<NLMISC::CVector2f(float, float)>(), "x",
+        &NLMISC::CVector2f::x, "y", &NLMISC::CVector2f::y);
 }
 
 // ***************************************************************************
@@ -1130,15 +1057,8 @@ int CLuaIHM::runExprAndPushResult(CLuaState &ls, const std::string &expr)
 			break;
 		case CInterfaceExprValue::RGBA: {
 			CRGBA color = value.getRGBA();
-#if defined(LUABIND_STACK_HPP_INCLUDED)
-			luabind::push(ls.getStatePointer(), color);
-#elif (LUABIND_VERSION > 600)
-			luabind::detail::push(ls.getStatePointer(), color);
-#else
-			luabind::object obj(ls.getStatePointer(), color);
-			obj.pushvalue();
-#endif
-			break;
+                        sol::stack::push(ls.getStatePointer(), color);
+                        break;
 		}
 		break;
 		case CInterfaceExprValue::UserType: // Yoyo: don't care UserType...
@@ -1386,27 +1306,13 @@ void CLuaIHM::luaValueFromReflectedProperty(CLuaState &ls, CReflectable &reflect
 #ifdef RYZOM_LUA_UCSTRING
 	case CReflectedProperty::UCString: {
 		ucstring str = (reflectedObject.*(property.GetMethod.GetUCString))();
-#if defined(LUABIND_STACK_HPP_INCLUDED)
-		luabind::push(ls.getStatePointer(), str);
-#elif (LUABIND_VERSION > 600)
-		luabind::detail::push(ls.getStatePointer(), str);
-#else
-		luabind::object obj(ls.getStatePointer(), str);
-		obj.pushvalue();
-#endif
-	}
+                sol::stack::push(ls.getStatePointer(), str);
+        }
 	break;
 	case CReflectedProperty::UCStringRef: {
 		ucstring str = (reflectedObject.*(property.GetMethod.GetUCStringRef))();
-#if defined(LUABIND_STACK_HPP_INCLUDED)
-		luabind::push(ls.getStatePointer(), str);
-#elif (LUABIND_VERSION > 600)
-		luabind::detail::push(ls.getStatePointer(), str);
-#else
-		luabind::object obj(ls.getStatePointer(), str);
-		obj.pushvalue();
-#endif
-	}
+                sol::stack::push(ls.getStatePointer(), str);
+        }
 	break;
 #endif
 	case CReflectedProperty::StringRef:
@@ -1414,15 +1320,8 @@ void CLuaIHM::luaValueFromReflectedProperty(CLuaState &ls, CReflectable &reflect
 		break;
 	case CReflectedProperty::RGBA: {
 		CRGBA color = (reflectedObject.*(property.GetMethod.GetRGBA))();
-#if defined(LUABIND_STACK_HPP_INCLUDED)
-		luabind::push(ls.getStatePointer(), color);
-#elif (LUABIND_VERSION > 600)
-		luabind::detail::push(ls.getStatePointer(), color);
-#else
-		luabind::object obj(ls.getStatePointer(), color);
-		obj.pushvalue();
-#endif
-	}
+                sol::stack::push(ls.getStatePointer(), color);
+        }
 	break;
 	case CReflectedProperty::LuaMethod: {
 		// must create a closure that will forward the call to the real method
@@ -1550,64 +1449,64 @@ void CLuaIHM::createLuaEnumTable(CLuaState &ls, const std::string &str)
 	}
 
 // ***************************************************************************
-#define LUABIND_FUNC(__func__) luabind::def(#__func__, &__func__)
+#define LUABIND_FUNC(__func__) #__func__, &__func__
 
 void CLuaIHM::registerIHM(CLuaState &ls)
 {
-	// H_AUTO(Lua_CLuaIHM_registerIHM)
-	CLuaStackChecker lsc(&ls);
+  // H_AUTO(Lua_CLuaIHM_registerIHM)
+  CLuaStackChecker lsc(&ls);
 
-	// *** Register a Table for ui env.
-	ls.push(IHM_LUA_ENVTABLE); // "__ui_envtable"
-	ls.newTable(); // "__ui_envtable"  {}
-	ls.setTable(LUA_REGISTRYINDEX);
+  // *** Register a Table for ui env.
+  ls.push(IHM_LUA_ENVTABLE); // "__ui_envtable"
+  ls.newTable();             // "__ui_envtable"  {}
+  ls.setTable(LUA_REGISTRYINDEX);
 
-	// *** Register the MetaTable for UI userdata
-	ls.push(IHM_LUA_METATABLE); // "__ui_metatable"
-	ls.newTable(); // "__ui_metatable"  {}
-	// set the '__index' method
-	ls.push("__index");
-	ls.push(luaUIIndex);
-	nlassert(ls.isCFunction());
-	ls.setTable(-3); // "__ui_metatable"  {"__index"= CFunc_luaUIIndex}
-	// set the '__newindex' method
-	ls.push("__newindex");
-	ls.push(luaUINewIndex);
-	nlassert(ls.isCFunction());
-	ls.setTable(-3);
-	// set the '__newindex' method
-	ls.push("__gc");
-	ls.push(luaUIDtor);
-	nlassert(ls.isCFunction());
-	ls.setTable(-3);
-	// set the '__eq' method
-	ls.push("__eq");
-	ls.push(luaUIEq);
-	nlassert(ls.isCFunction());
-	ls.setTable(-3);
-	// set the custom '__next' method
-	ls.push("__next");
-	ls.push(luaUINext);
-	nlassert(ls.isCFunction());
-	ls.setTable(-3);
-	// set registry
-	ls.setTable(LUA_REGISTRYINDEX);
+  // *** Register the MetaTable for UI userdata
+  ls.push(IHM_LUA_METATABLE); // "__ui_metatable"
+  ls.newTable();              // "__ui_metatable"  {}
+  // set the '__index' method
+  ls.push("__index");
+  ls.push(luaUIIndex);
+  nlassert(ls.isCFunction());
+  ls.setTable(-3); // "__ui_metatable"  {"__index"= CFunc_luaUIIndex}
+  // set the '__newindex' method
+  ls.push("__newindex");
+  ls.push(luaUINewIndex);
+  nlassert(ls.isCFunction());
+  ls.setTable(-3);
+  // set the '__newindex' method
+  ls.push("__gc");
+  ls.push(luaUIDtor);
+  nlassert(ls.isCFunction());
+  ls.setTable(-3);
+  // set the '__eq' method
+  ls.push("__eq");
+  ls.push(luaUIEq);
+  nlassert(ls.isCFunction());
+  ls.setTable(-3);
+  // set the custom '__next' method
+  ls.push("__next");
+  ls.push(luaUINext);
+  nlassert(ls.isCFunction());
+  ls.setTable(-3);
+  // set registry
+  ls.setTable(LUA_REGISTRYINDEX);
 
-	// *** Register Functions
-	ls.registerFunc("setOnDraw", setOnDraw);
-	ls.registerFunc("getOnDraw", getOnDraw);
-	ls.registerFunc("setCaptureKeyboard", setCaptureKeyboard);
-	ls.registerFunc("resetCaptureKeyboard", resetCaptureKeyboard);
-	ls.registerFunc("setTopWindow", setTopWindow);
-	ls.registerFunc("addOnDbChange", addOnDbChange);
-	ls.registerFunc("removeOnDbChange", removeOnDbChange);
-	ls.registerFunc("getUIId", getUIId);
-	ls.registerFunc("runAH", runAH);
-	ls.registerFunc("deleteUI", deleteUI);
-	ls.registerFunc("deleteReflectable", deleteReflectable);
-	ls.registerFunc("getWindowSize", getWindowSize);
-	ls.registerFunc("getTextureSize", getTextureSize);
-	ls.registerFunc("disableModalWindow", disableModalWindow);
+  // *** Register Functions
+  ls.registerFunc("setOnDraw", setOnDraw);
+  ls.registerFunc("getOnDraw", getOnDraw);
+  ls.registerFunc("setCaptureKeyboard", setCaptureKeyboard);
+  ls.registerFunc("resetCaptureKeyboard", resetCaptureKeyboard);
+  ls.registerFunc("setTopWindow", setTopWindow);
+  ls.registerFunc("addOnDbChange", addOnDbChange);
+  ls.registerFunc("removeOnDbChange", removeOnDbChange);
+  ls.registerFunc("getUIId", getUIId);
+  ls.registerFunc("runAH", runAH);
+  ls.registerFunc("deleteUI", deleteUI);
+  ls.registerFunc("deleteReflectable", deleteReflectable);
+  ls.registerFunc("getWindowSize", getWindowSize);
+  ls.registerFunc("getTextureSize", getTextureSize);
+  ls.registerFunc("disableModalWindow", disableModalWindow);
 #ifdef RYZOM_LUA_UCSTRING
 	ls.registerFunc("isUCString", isUCString);
 	ls.registerFunc("concatUCString", concatUCString);
@@ -1620,46 +1519,67 @@ void CLuaIHM::registerIHM(CLuaState &ls)
 	ls.registerFunc("runCommand", runCommand);
 	ls.registerFunc("getPathContent", getPathContent);
 
-	// Through LUABind API
-	lua_State *L = ls.getStatePointer();
+        // Through sol2 API
+        sol::state_view lua(ls.getStatePointer());
 
-	luabind::module(L)
-	    [luabind::def("findReplaceAll", (std::string(*)(const std::string &, const std::string &, const std::string &)) & findReplaceAll),
-	        luabind::def("findReplaceAll", (ucstring(*)(const ucstring &, const ucstring &, const ucstring &)) & findReplaceAll),
-	        luabind::def("findReplaceAll", (ucstring(*)(const ucstring &, const std::string &, const std::string &)) & findReplaceAll),
-	        luabind::def("findReplaceAll", (ucstring(*)(const ucstring &, const ucstring &, const std::string &)) & findReplaceAll),
-	        luabind::def("findReplaceAll", (ucstring(*)(const ucstring &, const std::string &, const ucstring &)) & findReplaceAll),
+        lua.set_function(
+            "findReplaceAll",
+            sol::overload(
+                (std::string(*)(const std::string &, const std::string &,
+                                const std::string &)) &
+                    findReplaceAll,
+                (ucstring(*)(const ucstring &, const ucstring &,
+                             const ucstring &)) &
+                    findReplaceAll,
+                (ucstring(*)(const ucstring &, const std::string &,
+                             const std::string &)) &
+                    findReplaceAll,
+                (ucstring(*)(const ucstring &, const ucstring &,
+                             const std::string &)) &
+                    findReplaceAll,
+                (ucstring(*)(const ucstring &, const std::string &,
+                             const ucstring &)) &
+                    findReplaceAll));
 
 #if !FINAL_VERSION
-	        LUABIND_FUNC(openDoc),
-	        LUABIND_FUNC(launchProgram),
+    lua.set_function(LUABIND_FUNC(openDoc));
+    lua.set_function(LUABIND_FUNC(launchProgram));
 #endif
 
-	        luabind::def("fileLookup", CMiscFunctions::fileLookup),
-	        luabind::def("shellExecute", CMiscFunctions::shellExecute),
-	        LUABIND_FUNC(fileExists)];
+    lua.set_function("fileLookup", CMiscFunctions::fileLookup);
+    lua.set_function("shellExecute", CMiscFunctions::shellExecute);
+    lua.set_function(LUABIND_FUNC(fileExists));
 
-	// inside i18n table
-	luabind::module(L, "i18n")
-	    [
+    // inside i18n table
+    sol::table i18n = lua.create_table_with();
+    lua["i18n"] = i18n;
 #ifdef RYZOM_LUA_UCSTRING
-	        luabind::def("get", &CI18N::getAsUtf16), // Compatibility
+    i18n.set_function("get", &CI18N::getAsUtf16); // Compatibility
 #else
-	        luabind::def("get", &CI18N::get),
+    i18n.set_function("get", &CI18N::get);
 #endif
-	        luabind::def("hasTranslation", &CI18N::hasTranslation)];
-	// inside 'nlfile' table
-	luabind::module(L, "nlfile")
-	    [luabind::def("getFilename", NLMISC::CFile::getFilename),
-	        luabind::def("getExtension", NLMISC::CFile::getExtension),
-	        luabind::def("getFilenameWithoutExtension", NLMISC::CFile::getFilenameWithoutExtension)];
-	// inside 'nltime' table
-	luabind::module(L, "nltime")
-	    [luabind::def("getPreciseLocalTime", getPreciseLocalTime),
-	        luabind::def("getSecondsSince1970", NLMISC::CTime::getSecondsSince1970),
-	        luabind::def("getLocalTime", getLocalTime) // NB : use CLuaIHM::getLocalTime instead of NLMISC::CTime::getLocalTime, because the NLMISC
-	                                                   // version returns a uint64, which can't be casted into lua numbers (doubles ...)
-	];
+    i18n.set_function("hasTranslation", &CI18N::hasTranslation);
+
+    // inside 'nlfile' table
+    sol::table nlfile = lua.create_table_with();
+    lua["nlfile"] = nlfile;
+    nlfile.set_function("getFilename", NLMISC::CFile::getFilename);
+    nlfile.set_function("getExtension", NLMISC::CFile::getExtension);
+    nlfile.set_function("getFilenameWithoutExtension",
+                        NLMISC::CFile::getFilenameWithoutExtension);
+
+    // inside 'nltime' table
+    sol::table nltime = lua.create_table_with();
+    lua["nltime"] = nltime;
+    nltime.set_function("getPreciseLocalTime", getPreciseLocalTime);
+    nltime.set_function("getSecondsSince1970",
+                        NLMISC::CTime::getSecondsSince1970);
+    nltime.set_function(
+        "getLocalTime",
+        getLocalTime); // NB : use CLuaIHM::getLocalTime instead of
+                       // NLMISC::CTime::getLocalTime, because the NLMISC
+                       // version returns a uint64, which can't be casted into
+                       // lua numbers (doubles ...)
 }
 
 // ***************************************************************************
@@ -1950,45 +1870,27 @@ void CLuaIHM::checkArgTypeUCString(CLuaState &ls, const char *funcName, uint ind
 // ***************************************************************************
 bool CLuaIHM::popString(CLuaState &ls, std::string &dest)
 {
-	// H_AUTO(Lua_CLuaIHM_popString)
-	try
-	{
-#if LUABIND_VERSION > 600
-		luabind::object obj(luabind::from_stack(ls.getStatePointer(), -1));
-		ls.pop();
-#else
-		luabind::object obj(ls.getStatePointer());
-		obj.set();
-#endif
-		dest = luabind::object_cast<std::string>(obj);
-	}
-	catch (const luabind::cast_failed &)
-	{
-		return false;
-	}
-	return true;
+  // H_AUTO(Lua_CLuaIHM_popString)
+  sol::state_view lua(ls.getStatePointer());
+  auto obj = sol::stack::pop<sol::object>(lua);
+  if (obj.is<std::string>()) {
+    dest = obj.as<std::string>();
+    return true;
+  }
+    return false;
 }
 
 // ***************************************************************************
 bool CLuaIHM::popSINT32(CLuaState &ls, sint32 &dest)
 {
-	// H_AUTO(Lua_CLuaIHM_popSINT32)
-	try
-	{
-#if LUABIND_VERSION > 600
-		luabind::object obj(luabind::from_stack(ls.getStatePointer(), -1));
-		ls.pop();
-#else
-		luabind::object obj(ls.getStatePointer());
-		obj.set();
-#endif
-		dest = luabind::object_cast<sint32>(obj);
-	}
-	catch (const luabind::cast_failed &)
-	{
-		return false;
-	}
-	return true;
+  // H_AUTO(Lua_CLuaIHM_popSINT32)
+  sol::state_view lua(ls.getStatePointer());
+  auto obj = sol::stack::pop<sol::object>(lua);
+  if (obj.is<sint32>()) {
+    dest = obj.as<sint32>();
+    return true;
+  }
+    return false;
 }
 
 // ***************************************************************************

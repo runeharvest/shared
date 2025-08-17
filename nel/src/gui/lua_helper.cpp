@@ -42,13 +42,9 @@
 
 // Always use unique_ptr with ValyriaTear/luabind on Ubuntu 20,
 // since the setting is not stored in build_information.hpp
-#ifndef LUABIND_USE_CXX11
-#define LUABIND_USE_CXX11
-#endif
-
-#include <luabind/luabind.hpp>
 #include <nel/misc/algo.h>
 #include <nel/misc/path.h>
+#include <sol/sol.hpp>
 
 #ifdef NL_OS_WINDOWS
 #include <windows.h>
@@ -290,8 +286,10 @@ CLuaState::CLuaState(bool debugger)
 	setTable(LUA_REGISTRYINDEX); // ...
 	_SmallScriptPool = 0;
 
-	// *** luabind init
-	luabind::open(_State);
+        // *** sol2 init
+        sol::state_view lua(_State);
+        // open all standard libraries
+        lua.open_libraries();
 }
 
 // ***************************************************************************
