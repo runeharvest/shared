@@ -114,6 +114,11 @@ public:
 		// nldebug("deactivate");
 	}
 
+	void q()
+	{
+		quit();
+	}
+
 	void quit()
 	{
 		nlassert(_Control != QUIT);

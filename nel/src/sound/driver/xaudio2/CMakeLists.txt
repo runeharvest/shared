@@ -7,7 +7,7 @@ SOURCE_GROUP(sfx FILES
 		listener_xaudio2.h
 		source_xaudio2.cpp
 		source_xaudio2.h)
-		
+
 SOURCE_GROUP(sfx\\utility FILES
         adpcm_xaudio2.cpp
 		adpcm_xaudio2.h)
@@ -15,7 +15,7 @@ SOURCE_GROUP(sfx\\utility FILES
 SOURCE_GROUP(music_remove FILES
         music_channel_xaudio2.cpp
 		music_channel_xaudio2.h)
-		
+
 SOURCE_GROUP(music_remove\\utility FILES
         music_buffer.cpp
 		music_buffer.h
@@ -25,7 +25,7 @@ SOURCE_GROUP(music_remove\\utility FILES
 SOURCE_GROUP(efx FILES
         effect_xaudio2.cpp
         effect_xaudio2.h)
-		
+
 NL_TARGET_DRIVER(nel_drv_xaudio2_win ${SRC})
 
 INCLUDE_DIRECTORIES(BEFORE ${DXSDK_INCLUDE_DIR})
@@ -41,8 +41,16 @@ IF(WITH_PCH)
 ENDIF()
 
 IF(WITH_INSTALL_LIBRARIES OR NOT WITH_STATIC_DRIVERS)
-  INSTALL(TARGETS nel_drv_xaudio2_win RUNTIME DESTINATION ${NL_DRIVER_PREFIX} LIBRARY DESTINATION ${NL_DRIVER_PREFIX} ARCHIVE DESTINATION ${NL_LIB_PREFIX} COMPONENT driverssound)
+  SET_TARGET_PROPERTIES(nel_drv_xaudio2_win PROPERTIES
+  INSTALL_RPATH "$ORIGIN/lib:$ORIGIN/../lib"
+  BUILD_RPATH   "$ORIGIN/lib:$ORIGIN/../lib")
+
+INSTALL(TARGETS nel_drv_xaudio2_win RUNTIME DESTINATION ${NL_DRIVER_PREFIX} LIBRARY DESTINATION ${NL_DRIVER_PREFIX} ARCHIVE DESTINATION ${NL_LIB_PREFIX} COMPONENT driverssound)
   IF(WITH_MAXPLUGIN)
-    INSTALL(TARGETS nel_drv_xaudio2_win RUNTIME DESTINATION maxplugin COMPONENT driverssound)
+    SET_TARGET_PROPERTIES(nel_drv_xaudio2_win PROPERTIES
+  INSTALL_RPATH "$ORIGIN/lib:$ORIGIN/../lib"
+  BUILD_RPATH   "$ORIGIN/lib:$ORIGIN/../lib")
+
+INSTALL(TARGETS nel_drv_xaudio2_win RUNTIME DESTINATION maxplugin COMPONENT driverssound)
   ENDIF()
 ENDIF()
