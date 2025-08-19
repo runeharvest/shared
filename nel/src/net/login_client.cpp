@@ -83,7 +83,10 @@ static void cbVerifyLoginPassword(CMessage &msgin, TSockId from, CCallbackNetBas
 		for (uint i = 0; i < nbshard; i++)
 		{
 			CLoginClient::CShardEntry se;
-			msgin.serial(se.Name, se.NbPlayers, se.Id);
+			string shardName;
+			int32_t shardID;
+			msgin.serial(shardName, se.NbPlayers, shardID);
+			se.Id = shardID;
 			CLoginClient::ShardList.push_back(se);
 		}
 	}

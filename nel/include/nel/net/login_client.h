@@ -54,7 +54,7 @@ public:
 		}
 		sint32 Id;
 		ucstring Name;
-		uint8 NbPlayers;
+		uint32_t NbPlayers;
 	};
 
 	typedef std::vector<CShardEntry> TShardList;
