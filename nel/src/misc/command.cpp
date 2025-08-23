@@ -52,6 +52,7 @@ ICommand::ICommand(const char *categoryName, const char *commandName, const char
 
 	if (comm != LocalCommands->end())
 	{
+		printf("There are 2 commands that have the same name in the project (command name '%s'), skip the second definition\n", commandName);
 		// 2 commands have the same name
 		nlstopex(("There are 2 commands that have the same name in the project (command name '%s'), skip the second definition", commandName));
 	}
